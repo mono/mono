@@ -1,5 +1,8 @@
 2004-02-25  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini-x86.c (mono_arch_regalloc_cost): Revert this change since it
+	causes regressions.
+
 	* mini.h linear-scan.c mini-x86.c mini-sparc.c mini-ppc.c: Add 'cfg'
 	argument to mono_arch_regalloc_cost.
 
