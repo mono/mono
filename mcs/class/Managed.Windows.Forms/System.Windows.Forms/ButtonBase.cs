@@ -23,6 +23,9 @@
 //	Peter Bartok	pbartok@novell.com
 //
 // $Log: ButtonBase.cs,v $
+// Revision 1.12  2004/10/13 22:32:38  pbartok
+// - Now Redraws on MouseUp for FlatStyle Flat and Popup
+//
 // Revision 1.11  2004/10/13 20:12:47  pbartok
 // - Added the Redraw on Resize that got dropped in the last rev
 //
@@ -459,6 +462,8 @@ namespace System.Windows.Forms {
 				this.Capture = false;
 				if (is_pressed) {
 					is_pressed = false;
+					Redraw();
+				} else if ((this.flat_style == FlatStyle.Flat) || (this.flat_style == FlatStyle.Popup)) {
 					Redraw();
 				}
 
