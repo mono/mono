@@ -75,7 +75,7 @@ namespace System.Net {
 			byte[] addr = new byte[length];
 			for(int i = length - 1, j = 0; i >= 0; --i, ++j) {
 				byte b = (byte)(address >> i * 8);
-				Console.WriteLine(b);
+//				Console.WriteLine(b);
 				addr[j] = b;
 			}
 			IntPtr p = _GetHostByAddress(addr, length, 2);  // TODO: set type
@@ -150,7 +150,7 @@ namespace System.Net {
 		/// </summary>
 		/// <param name=hostName>
 		///	A string containing either a DNS-style host name (e.g.
-		///	www.go-mono.com) or IP address (e.g. 193.36.10.10).
+		///	www.go-mono.com) or IP address (e.g. 129.250.184.233).
 		/// </param>
 		public static IPHostEntry Resolve(string hostName) {
 			if (hostName == null)
@@ -165,10 +165,10 @@ namespace System.Net {
 			}
 		}
 		
-		/// <remarks>
+		/// <summary>
 		/// 	Utility method. This method converts a Hostent instance to a
 		/// 	IPHostEntry instance.
-		/// </remarks>
+		/// </summary>
 		/// <param name=h>
 		///	Object which should be mapped to a IPHostEntry instance.
 		/// </param>

@@ -1,3 +1,8 @@
+2001-09-24  Mads Pultz <mpultz@get2net.dk>
+
+	* DnsTest.cs: now tests GetHostByAddress, GetHostByName,
+	  IpToString and Resolve. 
+
 2001-09-23  Mads Pultz <mpultz@get2net.dk>
 
 	* DnsTest.cs: Initial work submitted to repository.

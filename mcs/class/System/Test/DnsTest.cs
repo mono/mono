@@ -3,6 +3,15 @@
 // Author: Mads Pultz (mpultz@diku.dk)
 //
 // (C) Mads Pultz, 2001
+// 
+// This test assumes that the following Internet sites exist:
+//
+// www.go-mono.com with IP address 129.250.184.233
+// info.diku.dk with IP address 130.225.96.4
+//
+// and that the following DNS name does not exist:
+//
+// www.hopefullydoesnotexist.dk
 
 using NUnit.Framework;
 using System;
@@ -17,13 +26,9 @@ public class DnsTest: TestCase {
 		site2Name = "info.diku.dk",
 		site2Dot = "130.225.96.4",
 		noneExistingSite = "www.hopefullydoesnotexist.dk";
-	private uint site1IP = 2180692201, site2IP = 2195808260;
+	private uint site1IP = 2180692201, site2IP = 2195808260; // Big-Endian
 	
 	public DnsTest(String name): base(name) {
-		Console.WriteLine("Assuming the following sites exist for this test suite:");
-		Console.WriteLine("'{0}' with IP address '{1}' ({2})", site1Name, site1Dot, site1IP);
-		Console.WriteLine("'{0}' with IP address '{1}' ({2})", site2Name, site2Dot, site2IP);
-		Console.WriteLine("Assuming that '{0}' does not exist", noneExistingSite);
 	}
 
 	public static ITest Suite {
@@ -38,7 +43,6 @@ public class DnsTest: TestCase {
 		Assert(h.HostName.Equals(siteName));
 		Assert(h.AddressList.Length > 0);
 		Assert(h.AddressList[0].ToString() == siteDot);
-		printIPHostEntry(h);
 	}
 	
 	public void TestGetHostByName() {
@@ -68,7 +72,6 @@ public class DnsTest: TestCase {
 		IPHostEntry h = System.Net.Dns.GetHostByAddress(addr);
 		Assert(h.HostName != null);
 		Assert(h.AddressList.Length > 0);
-		printIPHostEntry(h);
 	}
 	
 	public void TestGetHostByAddressString() {
@@ -89,8 +92,7 @@ public class DnsTest: TestCase {
 		IPHostEntry h = System.Net.Dns.GetHostByAddress(addr);
 		Assert(h.HostName != null);
 		Assert(h.AddressList.Length > 0);
-		Assert(h.AddressList[0] == addr);
-		printIPHostEntry(h);
+		Assert(h.AddressList[0].ToString() == addr.ToString());
 	}
 	
 	public void TestGetHostByAddressIPAddress() {
@@ -100,8 +102,8 @@ public class DnsTest: TestCase {
 			Fail("Should raise an ArgumentNullException");
 		} catch (ArgumentNullException) {
 		}
-		SubTestGetHostByAddressIPAddress(new IPAddress(site1IP));
-		SubTestGetHostByAddressIPAddress(new IPAddress(site2IP));
+		SubTestGetHostByAddressIPAddress(new IPAddress(IPAddress.NetworkToHostOrder((int)site1IP)));
+		SubTestGetHostByAddressIPAddress(new IPAddress(IPAddress.NetworkToHostOrder((int)site2IP)));
 	}
 	
 	private void SubTestIpToString(int IpAddr) {
@@ -118,7 +120,6 @@ public class DnsTest: TestCase {
 		IPHostEntry h = System.Net.Dns.Resolve(addr);
 		Assert(h.HostName != null);
 		Assert(h.AddressList.Length > 0);
-		printIPHostEntry(h);
 	}
 	
 	public void TestResolve() {
@@ -130,18 +131,18 @@ public class DnsTest: TestCase {
 	
 	private static void printIPHostEntry(IPHostEntry h)
 	{
-	  Console.WriteLine("----------------------------------------------------");
-	  Console.WriteLine("Host name:");
-	  Console.WriteLine(h.HostName);
-	  Console.WriteLine("IP addresses:");
-	  IPAddress[] list = h.AddressList;
-	  for(int i = 0; i < list.Length; ++i)
-		Console.WriteLine(list[i]);
-	  Console.WriteLine("Aliases:");
-	  string[] aliases = h.Aliases;
-	  for(int i = 0; i < aliases.Length; ++i)
-		Console.WriteLine(aliases[i]);
-	  Console.WriteLine("----------------------------------------------------");
+		Console.WriteLine("----------------------------------------------------");
+		Console.WriteLine("Host name:");
+		Console.WriteLine(h.HostName);
+		Console.WriteLine("IP addresses:");
+		IPAddress[] list = h.AddressList;
+		for(int i = 0; i < list.Length; ++i)
+			Console.WriteLine(list[i]);
+		Console.WriteLine("Aliases:");
+		string[] aliases = h.Aliases;
+		for(int i = 0; i < aliases.Length; ++i)
+			Console.WriteLine(aliases[i]);
+		Console.WriteLine("----------------------------------------------------");
 	}
 }
 
