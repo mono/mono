@@ -953,6 +953,7 @@ namespace System.Windows.Forms {
 			hwnd.parent = Hwnd.ObjectFromHandle(cp.Parent);
 
 			ClientRect = hwnd.ClientRect;
+			ClientWindow = IntPtr.Zero;
 
 			lock (XlibLock) {
 				WholeWindow = XCreateWindow(DisplayHandle, ParentHandle, X, Y, Width, Height, 0, (int)CreateWindowArgs.CopyFromParent, (int)CreateWindowArgs.InputOutput, IntPtr.Zero, SetWindowValuemask.BitGravity | SetWindowValuemask.WinGravity | SetWindowValuemask.SaveUnder | SetWindowValuemask.OverrideRedirect, ref Attributes);
