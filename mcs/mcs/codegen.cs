@@ -292,6 +292,16 @@ namespace Mono.CSharp {
 		public bool IsStatic;
 
 		/// <summary>
+		///   Whether the actual created method is static or instance method.
+		///   Althoug the method might be declared as `static', if an anonymous
+		///   method is involved, we might turn this into an instance method.
+		///
+		///   So this reflects the low-level staticness of the method, while
+		///   IsStatic represents the semantic, high-level staticness.
+		/// </summary>
+		public bool MethodIsStatic;
+
+		/// <summary>
 		///   Whether we are emitting a field initializer
 		/// </summary>
 		public bool IsFieldInitializer;
@@ -423,9 +433,8 @@ namespace Mono.CSharp {
 		}
 		
 		Phase current_phase;
-		
 		FlowBranching current_flow_branching;
-
+		
 		public EmitContext (DeclSpace parent, DeclSpace ds, Location l, ILGenerator ig,
 				    Type return_type, int code_flags, bool is_constructor)
 		{
@@ -437,6 +446,7 @@ namespace Mono.CSharp {
 			ConstantCheckState = true;
 
 			IsStatic = (code_flags & Modifiers.STATIC) != 0;
+			MethodIsStatic = IsStatic;
 			InIterator = (code_flags & Modifiers.METHOD_YIELDS) != 0;
 			RemapToProxy = InIterator;
 			ReturnType = return_type;

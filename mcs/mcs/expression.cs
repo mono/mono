@@ -3978,8 +3978,10 @@ namespace Mono.CSharp {
 			ILGenerator ig = ec.ig;
 			int arg_idx = idx;
 
-			if (!ec.IsStatic)
+			Console.WriteLine ("Loading: " + ec.MethodIsStatic);
+			if (!ec.MethodIsStatic)
 				arg_idx++;
+			
 
 			EmitLdArg (ig, arg_idx);
 
@@ -4003,7 +4005,8 @@ namespace Mono.CSharp {
 			ILGenerator ig = ec.ig;
 			int arg_idx = idx;
 
-			if (!ec.IsStatic)
+			Console.WriteLine ("Loading: {0} at {1}", ec.MethodIsStatic, ec.id);
+			if (!ec.MethodIsStatic)
 				arg_idx++;
 
 			EmitLdArg (ig, arg_idx);
@@ -4041,7 +4044,7 @@ namespace Mono.CSharp {
 			
 			prepared = prepare_for_load;
 			
-			if (!ec.IsStatic)
+			if (!ec.MethodIsStatic)
 				arg_idx++;
 
 			if (is_ref && !prepared)
@@ -4079,7 +4082,7 @@ namespace Mono.CSharp {
 			
 			int arg_idx = idx;
 
-			if (!ec.IsStatic)
+			if (!ec.MethodIsStatic)
 				arg_idx++;
 
 			if (is_ref){
