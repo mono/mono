@@ -9,3 +9,6 @@ D/bin
 D/obj
 D/bin/*
 D/obj/*
+update.bat
+mcs.*.log
+*.dll
