@@ -1,3 +1,10 @@
+2002-02-24  Radek Doulik  <rodo@ximian.com>
+
+	* ppc/tramp.c (mono_create_method_pointer): basic delegates
+	implementation, it works for simple delegates now and I am already
+	pretty close to have it working for every delegates, but I am
+	going to sleep and finish it tomorrow?
+
 2002-02-22  Jeffrey Stedfast  <fejj@ximian.com>
 
 	* sparc/tramp.c (mono_create_trampoline): Much tinkering to get
