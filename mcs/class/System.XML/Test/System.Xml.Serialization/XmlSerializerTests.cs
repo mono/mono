@@ -653,6 +653,53 @@ namespace MonoTests.System.XmlSerialization
 			AssertEquals(Infoset("<XmlSchemaForm>unqualified</XmlSchemaForm>"), WriterText);
 		}
 		
+		[Test]
+		public void TestSerializeXmlNodeArray ()
+		{
+			XmlDocument doc = new XmlDocument ();
+			Serialize (new XmlNode [] { doc.CreateAttribute("at"), doc.CreateElement("elem1"), doc.CreateElement("elem2") }, typeof(object)); 
+			AssertEquals(Infoset("<anyType at=\"\"><elem1/><elem2/></anyType>"), WriterText);
+		}
+		
+		[Test]
+		public void TestSerializeXmlElement ()
+		{
+			XmlDocument doc = new XmlDocument ();
+			Serialize (doc.CreateElement("elem"), typeof(XmlElement)); 
+			AssertEquals(Infoset("<elem/>"), WriterText);
+		}
+		
+		[Test]
+		public void TestSerializeXmlElementSubclass ()
+		{
+			XmlDocument doc = new XmlDocument ();
+			Serialize (new MyElem (doc), typeof(XmlElement)); 
+			AssertEquals(Infoset("<myelem aa=\"1\"/>"), WriterText);
+			
+			Serialize (new MyElem (doc), typeof(MyElem)); 
+			AssertEquals(Infoset("<myelem aa=\"1\"/>"), WriterText);
+		}
+		
+		[Test]
+		public void TestSerializeXmlCDataSection ()
+		{
+			XmlDocument doc = new XmlDocument ();
+			CDataContainer c = new CDataContainer ();
+			c.cdata = doc.CreateCDataSection("data section contents");
+			Serialize (c); 
+			AssertEquals(Infoset("<CDataContainer xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><cdata><![CDATA[data section contents]]></cdata></CDataContainer>"), WriterText);
+		}
+		
+		[Test]
+		public void TestSerializeXmlNode ()
+		{
+			XmlDocument doc = new XmlDocument ();
+			NodeContainer c = new NodeContainer ();
+			c.node = doc.CreateTextNode("text");
+			Serialize (c); 
+			AssertEquals(Infoset("<NodeContainer xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><node>text</node></NodeContainer>"), WriterText);
+		}
+		
 		public static string Infoset (string sx)
 		{
 			XmlDocument doc = new XmlDocument ();

@@ -136,5 +136,46 @@ namespace MonoTests.System.XmlSerialization
 			DeserializeEncoded (typeof(Sample), s);
 		}
 		
+		
+		[Test]
+		public void TestDeserializeXmlNodeArray ()
+		{
+			object ob = Deserialize (typeof(object), "<anyType at=\"1\"><elem1/><elem2/></anyType>");
+			Assertion.Assert ("Is node array", ob is XmlNode[]);
+			
+			XmlNode[] nods = (XmlNode[]) ob; 
+			Assertion.AssertEquals ("lengh", 3, nods.Length);
+			Assertion.Assert ("#1", nods[0] is XmlAttribute);
+			Assertion.AssertEquals ("#2", "at", ((XmlAttribute)nods[0]).LocalName);
+			Assertion.AssertEquals ("#3", "1", ((XmlAttribute)nods[0]).Value);
+			Assertion.Assert ("#4", nods[1] is XmlElement);
+			Assertion.AssertEquals ("#5", "elem1", ((XmlElement)nods[1]).LocalName);
+			Assertion.Assert ("#6", nods[2] is XmlElement);
+			Assertion.AssertEquals ("#7", "elem2", ((XmlElement)nods[2]).LocalName);
+		}
+		
+		[Test]
+		public void TestDeserializeXmlElement ()
+		{
+			object ob = Deserialize (typeof(XmlElement), "<elem/>");
+			Assertion.Assert ("#1", ob is XmlElement);
+			Assertion.AssertEquals ("#2", "elem", ((XmlElement)ob).LocalName);
+		}
+		
+		[Test]
+		public void TestDeserializeXmlCDataSection ()
+		{
+			CDataContainer c = (CDataContainer) Deserialize (typeof(CDataContainer), "<CDataContainer xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><cdata><![CDATA[data section contents]]></cdata></CDataContainer>");
+			Assertion.AssertNotNull ("#1", c.cdata);
+			Assertion.AssertEquals ("#2", "data section contents", c.cdata.Value);
+		}
+		
+		[Test]
+		public void TestDeserializeXmlNode ()
+		{
+			NodeContainer c = (NodeContainer) Deserialize (typeof(NodeContainer), "<NodeContainer xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><node>text</node></NodeContainer>");
+			Assertion.Assert ("#1", c.node is XmlText);
+			Assertion.AssertEquals ("#2", "text", c.node.Value);
+		}
 	}
 }

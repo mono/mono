@@ -1,3 +1,9 @@
+2005-03-29  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* XmlSerializerTests.cs:
+	* DeserializeTests.cs: 
+	* XmlSerializerTestClasses.cs: Added some tests for xml node serialization.
+
 2005-02-28  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlReflectionImporterTests.cs : set NotWorking for trivial empty

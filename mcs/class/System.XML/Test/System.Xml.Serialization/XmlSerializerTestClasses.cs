@@ -12,6 +12,7 @@
 using System;
 using System.Collections;
 using System.Xml.Serialization;
+using System.Xml;
 
 namespace MonoTests.System.Xml.TestClasses
 {
@@ -115,5 +116,36 @@ namespace MonoTests.System.Xml.TestClasses
 		public Container2 (bool b) {
 			Items = new MyList(this);
 		}
+	}
+
+	public class MyElem: XmlElement
+	{
+		public MyElem (XmlDocument doc): base ("","myelem","", doc)
+		{
+			SetAttribute ("aa","1");
+		}
+
+		[XmlAttribute]
+		public int kk=1;
+	}
+
+	public class MyDocument: XmlDocument
+	{
+		public MyDocument ()
+		{
+		}
+
+		[XmlAttribute]
+		public int kk=1;
+	}
+	
+	public class CDataContainer
+	{
+		public XmlCDataSection cdata;
+	}
+	
+	public class NodeContainer
+	{
+		public XmlNode node;
 	}
 }
