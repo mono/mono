@@ -3429,7 +3429,8 @@ namespace Mono.CSharp {
 		{
 			Type op_type = left.Type;
 			ILGenerator ig = ec.ig;
-			int size = GetTypeSize (TypeManager.GetElementType (op_type));
+			Type element = TypeManager.GetElementType (op_type);
+			int size = GetTypeSize (element);
 			Type rtype = right.Type;
 			
 			if (rtype.IsPointer){
@@ -3442,7 +3443,7 @@ namespace Mono.CSharp {
 
 				if (size != 1){
 					if (size == 0)
-						ig.Emit (OpCodes.Sizeof, op_type);
+						ig.Emit (OpCodes.Sizeof, element);
 					else 
 						IntLiteral.EmitInt (ig, size);
 					ig.Emit (OpCodes.Div);
@@ -3457,7 +3458,7 @@ namespace Mono.CSharp {
 				right.Emit (ec);
 				if (size != 1){
 					if (size == 0)
-						ig.Emit (OpCodes.Sizeof, op_type);
+						ig.Emit (OpCodes.Sizeof, element);
 					else 
 						IntLiteral.EmitInt (ig, size);
 					if (rtype == TypeManager.int64_type)
