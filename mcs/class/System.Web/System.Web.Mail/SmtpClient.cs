@@ -167,7 +167,20 @@ namespace System.Web.Mail {
 #if NET_1_1
 		// Add all the custom headers to body part as specified in 
 		//Fields property of MailMessageWrapper
-		partHeader.Data.Add(msg.Fields.Data);
+
+        //Remove fields specific for authenticating to SMTP server.
+        //Need to incorporate AUTH command in SmtpStream to handle  
+        //Authorization info. Its a temporary fix for Bug no 68829.
+        //Will dig some more on SMTP AUTH command, and then implement
+        //Authorization. - Sanjay
+
+        if (msg.Fields.Data ["http://schemas.microsoft.com/cdo/configuration/smtpauthenticate"] != null)
+            msg.Fields.Data.Remove ("http://schemas.microsoft.com/cdo/configuration/smtpauthenticate");
+        if (msg.Fields.Data ["http://schemas.microsoft.com/cdo/configuration/sendusername"] != null)
+            msg.Fields.Data.Remove ("http://schemas.microsoft.com/cdo/configuration/sendusername");
+        if (msg.Fields.Data ["http://schemas.microsoft.com/cdo/configuration/sendpassword"] != null)
+            msg.Fields.Data.Remove ("http://schemas.microsoft.com/cdo/configuration/sendpassword");
+		partHeader.Data.Add (msg.Fields.Data);
 #endif
 
 	    smtp.WriteHeader( partHeader );

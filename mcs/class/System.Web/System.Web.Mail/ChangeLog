@@ -1,3 +1,7 @@
+2004-10-27  Sanjay Gupta <gsanjay@novell.com>
+	
+	* SmtpClient.cs: Fix for bug 68829.
+
 2004-08-27  Sanjay Gupta <gsanjay@novell.com>
 	
 	* MailMessageWrapper.cs: Added a comment to add Date header.
