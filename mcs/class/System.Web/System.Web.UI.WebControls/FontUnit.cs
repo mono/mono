@@ -78,7 +78,7 @@ namespace System.Web.UI.WebControls
 			if(value != null && value != String.Empty)
 			{
 				string low = value.ToLower(culture);
-				int index = IndexOf(low);
+				int index = GetTypeFromString(low);
 				if( index != -1)
 				{
 					type = (FontSize)fs;
@@ -91,7 +91,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
-		private int IndexOf(string strVal)
+		private int GetTypeFromString(string strVal)
 		{
 			string[] values = {
 				"smaller",
