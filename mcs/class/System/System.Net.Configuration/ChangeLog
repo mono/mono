@@ -1,0 +1,5 @@
+2003-05-09  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ConnectionManagementHandler.cs: New file that handles
+	system.net/connectionManagement section.
+

@@ -388,6 +388,7 @@ System.IO/WatcherChangeTypes.cs
 System.Net/AuthenticationManager.cs
 System.Net/Authorization.cs
 System.Net/ConnectionModes.cs
+System.Net.Configuration/ConnectionManagementHandler.cs
 System.Net/CookieCollection.cs
 System.Net/CookieContainer.cs
 System.Net/Cookie.cs
