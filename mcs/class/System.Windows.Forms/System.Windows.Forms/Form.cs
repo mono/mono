@@ -581,7 +581,7 @@
     		[MonoTODO]
     		public DialogResult ShowDialog ()
     		{
-				Win32.ShowWindow (Handle, (int) ShowWindowStyles.SW_SHOW);
+				Win32.ShowWindow (Handle, ShowWindowStyles.SW_SHOW);
 				return new DialogResult();
 			}
     
