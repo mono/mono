@@ -353,6 +353,17 @@ public class ArrayListTest : TestCase {
 			AssertEquals("ArrayList has wrong elements",
 				     6, a1.Count);
 		}
+
+		{
+			ArrayList list = new ArrayList ();
+
+			for (int i = 0; i < 100; i ++) {
+				list.Add (1);
+			}
+
+			AssertEquals ("BinarySearch off-by-one bug",
+					49, list.BinarySearch (1));
+		}
 	}
 
 	public void TestBinarySearch() {

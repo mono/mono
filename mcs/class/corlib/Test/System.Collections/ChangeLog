@@ -1,5 +1,7 @@
 2003-08-11  Duncan Mak  <duncan@ximian.com>
 
+	* ArrayListTest.cs: Added test case submitted by Tum in bug #45036.
+
 	* DictionaryBaseTest.cs: added new test provided by Carlos Barcenilla
 	(barce@frlp.utn.edu.ar).
 
