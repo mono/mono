@@ -138,23 +138,15 @@ namespace System.Xml {
 		#region overloaded CreateElement methods
 
 		[MonoTODO]
-		public new XmlElement CreateElement(string prefix,
+		public override XmlElement CreateElement(string prefix,
 				string localName, string namespaceURI) 
 		{
-			throw new NotImplementedException();
-		}
+			if ((localName == null) || (localName == String.Empty))
+				throw new ArgumentException ("The local name for elements or attributes cannot be null" +
+							     "or an empty string.");
+			string pref = prefix != null ? prefix : String.Empty;
+			return new XmlElement (pref, localName, namespaceURI != null ? namespaceURI : String.Empty, this);
 
-		[MonoTODO]
-		public new XmlElement CreateElement(string qualifiedName,
-				string namespaceURI) 
-		{
-			throw new NotImplementedException();
-		}
-
-		[MonoTODO]
-		public new XmlElement CreateElement(string name) 
-		{
-			throw new NotImplementedException();
 		}
 
 		#endregion // overloaded CreateElement Methods
@@ -186,22 +178,18 @@ namespace System.Xml {
 
 		#region overload Load methods
 
-		[MonoTODO]
 		public override void Load(Stream inStream) {
-			
+			Load (new XmlTextReader (inStream));
 		}
 
-		[MonoTODO]
 		public override void Load(string filename) {
-			throw new NotImplementedException();
+			Load (new XmlTextReader (filename));
 		}
 
-		[MonoTODO]
 		public override void Load(TextReader txtReader) {
-			throw new NotImplementedException();
+			Load (new XmlTextReader (txtReader));
 		}
 
-		[MonoTODO]
 		public override void Load(XmlReader reader) {
 			
 			DataTable dt = null;
@@ -227,10 +215,13 @@ namespace System.Xml {
 
 				// Find right table from tablecollection
 				for (int i = 0; i < DataSet.Tables.Count && dt == null; i++) {
+
 					if (reader.Name == DataSet.Tables [i].TableName) {
+
 						dt = DataSet.Tables [i];
 						dt.ColumnChanged += new DataColumnChangeEventHandler (OnDataTableColumnChanged);
-
+						dt.RowDeleted += new DataRowChangeEventHandler (OnDataTableRowDeleted);
+						dt.RowChanged += new DataRowChangeEventHandler (OnDataTableRowChanged);
 					}
 				}
 				
@@ -285,7 +276,7 @@ namespace System.Xml {
 
 		#endregion // Protected Methods
 		
-		#region Private Methods
+		#region DataSet event handlers
 
 		[MonoTODO]
 		private void OnDataTableColumnChanged(object sender, 
@@ -303,12 +294,69 @@ namespace System.Xml {
 		}
 	
 		[MonoTODO]
-		private static void OnDataTableRowDeleted(object sender,
+		private void OnDataTableRowDeleted(object sender,
 							  DataRowChangeEventArgs eventArgs)
 		{
-			throw new NotImplementedException();
+			DataRow deletedRow = null;
+			deletedRow = eventArgs.Row;
+
+			if (eventArgs.Row.XmlRowID == 0)
+				return;
+
+			int rowIndex = dataRowIDList.IndexOf (eventArgs.Row.XmlRowID);
+
+			// Remove element from xmldocument and row indexlist
+			GetElementsByTagName (deletedRow.Table.TableName) [rowIndex].RemoveAll ();
+			dataRowIDList.RemoveAt (rowIndex);
 		}
 		
+		[MonoTODO]
+		private void OnDataTableRowChanged(object sender, DataRowChangeEventArgs eventArgs)
+		{
+			switch (eventArgs.Action) {
+
+			        case DataRowAction.Delete:
+					OnDataTableRowDeleted (sender, eventArgs);
+					break;
+
+			        case DataRowAction.Add:
+					OnDataTableRowAdded (eventArgs);
+					break;
+
+			        default:
+					break;
+			} 
+		}
+
+		private void OnDataTableRowAdded (DataRowChangeEventArgs args)
+		{
+			// If XmlRowID is != 0 then it is already added
+			if (args.Row.XmlRowID != 0)
+				return;
+			
+			// Create row element. Row's name same as TableName					
+			DataRow row = args.Row;
+			row.XmlRowID = dataRowID;
+			dataRowID++;
+			XmlElement element = CreateElement (args.Row.Table.TableName);
+			Console.WriteLine ("-" + args.Row.Table.TableName);
+			
+			DocumentElement.AppendChild (element);
+			
+			XmlElement rowElement = null;
+			for (int i = 0; i < row.Table.Columns.Count; i++) {
+								
+				Console.WriteLine (row.Table.Columns [i].ToString () + " " + row[i]);
+				rowElement = CreateElement (row.Table.Columns [i].ToString ());
+				rowElement.InnerText = (string)row [i];
+				element.AppendChild (rowElement);
+			}
+		}
+
+		#endregion // DataSet event handlers
+
+		#region Private methods
+
 		[MonoTODO]
 		private DataRow LoadRow (XmlReader reader, DataRow row)
 		{
@@ -337,6 +385,6 @@ namespace System.Xml {
 			return row;
 		}
 
-		#endregion
+		#endregion // Private methods
 	}
 }

@@ -1,3 +1,8 @@
+2002-12-01  Ville Palo <vi64pa@koti.soon.fi>
+
+	* list: Added XmlDataDocument.cs
+	* System.Xml/XmlDataDocument.cs: more implementation.
+	
 2002-11-30  Daniel Morgan <danmorg@sc.rr.com>
 
 	* System.Data.Odbc/OdbcDataReader.cs: implemented GetValues() method
