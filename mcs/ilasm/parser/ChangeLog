@@ -1,5 +1,9 @@
 2003-03-19 Jackson Harper <jackson@latitudegeo.com>
 
+	* ILParser.jay: .hash algorithm can be followed by bytes
+
+2003-03-19 Jackson Harper <jackson@latitudegeo.com>
+
 	* ILParser.jay: Allow assembly refs to have dots in name.
 
 2003-03-17 Jackson Harper <jackson@latitudegeo.com>

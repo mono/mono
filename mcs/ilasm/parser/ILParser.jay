@@ -1564,7 +1564,8 @@ assemblyDecls           : /* EMPTY */
 			| assemblyDecls assemblyDecl
 			;
 
-assemblyDecl            : D_HASH K_ALGORITHM int32 
+assemblyDecl            : D_HASH K_ALGORITHM bytes
+			| D_HASH K_ALGORITHM int32
 			| secDecl
 			| asmOrRefDecl
 			;
