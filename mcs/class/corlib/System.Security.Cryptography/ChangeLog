@@ -1,3 +1,9 @@
+2003-01-05  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* CryptoAPITransform.cs: Removed all TODO. This class will not be
+	used by Mono. MS uses it with <algo>CryptoServiceProvider classes 
+	to provide a common ICryptoTransform access to CryptoAPI. 
+
 2003-01-03  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* RC2CryptoServiceProvider.cs: Now about 2 time faster by inlining 
