@@ -41,6 +41,3 @@ System.Text.RegularExpressions/PerlTest.cs
 System.Text.RegularExpressions/PerlTrials.cs
 System.Text.RegularExpressions/RegexTrial.cs
 Microsoft.CSharp/AllTests.cs
-Microsoft.CSharp/CompilerTest.cs
-Microsoft.CSharp/CompilerErrorTest.cs
-

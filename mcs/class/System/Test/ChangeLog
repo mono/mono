@@ -1,3 +1,7 @@
+2002-12-08 Jackson Harper <jackson@latitudegeo.com>
+
+	* system_linux_test.args: Remove Compiler tests
+
 2002-11-6 Jackson Harper <jackson@latitudegeo.com>
 
 	* AllTests.cs system_linux_test.args: Added Microsft.CSharp tests
