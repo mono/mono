@@ -25,7 +25,7 @@
 // REMAINING TODO:
 //	- get the date_cell_size and title_size to be pixel perfect match of SWF
 //	- show the year spin control
-//	- at some res, single selection of a date is not filling properly
+//	- remove comments around the "if (this.Capture) {" in the TimerHandler method
 
 using System;
 using System.Drawing;
@@ -75,6 +75,12 @@ namespace System.Windows.Forms {
 		internal bool 			is_shift_pressed;
 		internal DateTime		first_select_start_date;
 		private Point			month_title_click_location;
+		// this is used to see which item was actually clicked on in the beginning
+		// so that we know which item to fire on timer
+		//	0: date clicked
+		//	1: previous clicked
+		//	2: next clicked
+		private bool[]			click_state;	
 		
 		// arraylists used to store new dates
 		ArrayList 				added_bolded_dates;
@@ -96,6 +102,8 @@ namespace System.Windows.Forms {
 			
 			// mouse down timer
 			timer = new Timer ();
+			timer.Interval = 500;
+			timer.Enabled = false;
 			
 			// initialise default values 
 			DateTime now = DateTime.Now.Date;
@@ -147,13 +155,14 @@ namespace System.Windows.Forms {
 			is_previous_clicked = false;
 			is_next_clicked = false;
 			is_shift_pressed = false;
+			click_state = new bool [] {false, false, false};
 			first_select_start_date = now;
 			month_title_click_location = Point.Empty;
 
 			SetUpContextMenu ();
 
 			// event handlers
-			//timer.Tick += new EventHandler (OnTimerHandler);
+			timer.Tick += new EventHandler (TimerHandler);
 			MouseDown += new MouseEventHandler (MouseDownHandler);
 			KeyDown += new KeyEventHandler (KeyDownHandler);
 			MouseUp += new MouseEventHandler (MouseUpHandler);
@@ -1158,7 +1167,7 @@ namespace System.Windows.Forms {
 		// attempts to add the date to the selection without throwing exception
 		private void SelectDate (DateTime date) {
 			// try and add the new date to the selction range
-			if (is_shift_pressed || this.Capture) {
+			if (is_shift_pressed || (click_state [0])) {
 				SelectionRange range = new SelectionRange (first_select_start_date, date);
 				if (range.Start.AddDays (MaxSelectionCount-1) < range.End) {
 					// okay the date is beyond what is allowed, lets set the maximum we can
@@ -1324,46 +1333,143 @@ namespace System.Windows.Forms {
 				month_title_click_location = Point.Empty;
 			}
 		}
-
+		
+		// raised on the timer, for mouse hold clicks
+		private void TimerHandler (object sender, EventArgs e) {
+// NOTE: i have diabled the if this.Capture because it doesn't work
+// when this.Capture works then need to renable the if in this section
+//			// now find out which area was click
+//			if (this.Capture) {
+				HitTestInfo hti = this.HitTest (this.PointToClient (MousePosition));
+				// clear the last clicked item 
+				if (click_state [0]) {
+					// invalidate the area where the mouse was last held
+					DoMouseUp ();
+					Application.DoEvents ();
+					// register the click
+					if (hti.HitArea == HitArea.PrevMonthDate ||
+						hti.HitArea == HitArea.NextMonthDate ||
+						hti.HitArea == HitArea.Date)
+					{
+						DoDateMouseDown (hti);
+						click_state [0] = true;
+					}
+					// set the timer back to a faster refresh after the first one
+					if (timer.Interval != 20) {
+						timer.Interval = 20;
+					}
+				} else if (click_state [1] || click_state [2]) {
+					// invalidate the area where the mouse was last held
+					DoMouseUp ();
+					Application.DoEvents ();
+					// register the click
+					if (hti.HitArea == HitArea.PrevMonthButton ||
+						hti.HitArea == HitArea.NextMonthButton) {
+						DoButtonMouseDown (hti);
+						click_state [1] = (hti.HitArea == HitArea.PrevMonthButton);
+						click_state [2] = !click_state [1];
+					}
+					if (timer.Interval != 100) {
+						timer.Interval = 100;
+					}
+				}
+//			} else  {
+//				timer.Enabled = false;
+//			}
+		}
+		
+		// selects one of the buttons
+		private void DoButtonMouseDown (HitTestInfo hti) {
+			// show the click then move on
+			SetItemClick(hti);
+			if (hti.HitArea == HitArea.PrevMonthButton) {
+				// invalidate the prev monthbutton
+				this.Invalidate(
+					new Rectangle (
+						this.ClientRectangle.X + 1 + button_x_offset,
+						this.ClientRectangle.Y + 1 + (title_size.Height - button_size.Height)/2,
+						button_size.Width,
+						button_size.Height));
+				this.CurrentMonth = this.CurrentMonth.AddMonths (ScrollChange*-1);
+			} else {
+				// invalidate the next monthbutton
+				this.Invalidate(
+					new Rectangle (
+						this.ClientRectangle.Right - 1 - button_x_offset - button_size.Width,
+						this.ClientRectangle.Y + 1 + (title_size.Height - button_size.Height)/2,
+						button_size.Width,
+						button_size.Height));					
+				this.CurrentMonth = this.CurrentMonth.AddMonths (ScrollChange);
+			}
+		}
+		
+		// selects the clicked date
+		private void DoDateMouseDown (HitTestInfo hti) {
+			SetItemClick(hti);
+			this.SelectDate (clicked_date);
+			this.OnDateSelected (new DateRangeEventArgs (SelectionStart, SelectionEnd));
+		}
+		
+		// event run on the mouse up event
+		private void DoMouseUp () {
+			// invalidate the next monthbutton
+			if (this.is_next_clicked) {
+				this.Invalidate(
+					new Rectangle (
+						this.ClientRectangle.Right - 1 - button_x_offset - button_size.Width,
+						this.ClientRectangle.Y + 1 + (title_size.Height - button_size.Height)/2,
+						button_size.Width,
+						button_size.Height));
+			}					
+			// invalidate the prev monthbutton
+			if (this.is_previous_clicked) {
+				this.Invalidate(
+					new Rectangle (
+						this.ClientRectangle.X + 1 + button_x_offset,
+						this.ClientRectangle.Y + 1 + (title_size.Height - button_size.Height)/2,
+						button_size.Width,
+						button_size.Height));
+			}
+			if (this.is_date_clicked) {
+				// invalidate the area under the cursor, to remove focus rect
+				this.InvalidateDateRange (new SelectionRange (clicked_date, clicked_date));				
+			}
+			this.is_previous_clicked = false;
+			this.is_next_clicked = false;
+			this.is_date_clicked = false;
+		}
+		
 		// to check if the mouse has come down on this control
 		private void MouseDownHandler (object sender, MouseEventArgs e)
 		{
+			// clear the click_state variables
+			click_state [0] = false;
+			click_state [1] = false;
+			click_state [2] = false;
+
+			// disable the timer if it was enabled 
+			if (timer.Enabled) {
+				timer.Stop ();
+				timer.Enabled = false;
+			}
 			//establish where was hit
 			HitTestInfo hti = this.HitTest(e.X, e.Y);
-			switch(hti.HitArea) {
-				case HitArea.NextMonthButton:
-					// show the click then move on
-					SetItemClick(hti);
-					// invalidate the next monthbutton
-					this.Invalidate(
-						new Rectangle (
-							this.ClientRectangle.Right - 1 - button_x_offset - button_size.Width,
-							this.ClientRectangle.Y + 1 + (title_size.Height - button_size.Height)/2,
-							button_size.Width,
-							button_size.Height));					
-					this.CurrentMonth = this.CurrentMonth.AddMonths (ScrollChange);
-					break;
+			switch (hti.HitArea) {
 				case HitArea.PrevMonthButton:
-					// show the click then move on
-					SetItemClick(hti);
-					// invalidate the prev monthbutton
-					this.Invalidate(
-						new Rectangle (
-							this.ClientRectangle.X + 1 + button_x_offset,
-							this.ClientRectangle.Y + 1 + (title_size.Height - button_size.Height)/2,
-							button_size.Width,
-							button_size.Height));
-					this.CurrentMonth = this.CurrentMonth.AddMonths (ScrollChange*-1);
+				case HitArea.NextMonthButton:
+					DoButtonMouseDown (hti);
+					click_state [1] = (hti.HitArea == HitArea.PrevMonthDate);
+					click_state [2] = !click_state [1];					
+					timer.Interval = 500;
+					timer.Start ();
 					break;
+				case HitArea.Date:
 				case HitArea.PrevMonthDate:
-					SetItemClick(hti);
-					this.SelectDate (clicked_date);
-					this.OnDateSelected (new DateRangeEventArgs (SelectionStart, SelectionEnd));
-					break;
 				case HitArea.NextMonthDate:
-					SetItemClick(hti);
-					this.SelectDate (clicked_date);
-					this.OnDateSelected (new DateRangeEventArgs (SelectionStart, SelectionEnd));
+					DoDateMouseDown (hti);
+					click_state [0] = true;
+					timer.Interval = 250;
+					timer.Start ();
 					break;
 				case HitArea.TitleMonth:
 					month_title_click_location = hti.Point;
@@ -1375,12 +1481,6 @@ namespace System.Windows.Forms {
 					break;
 				case HitArea.TodayLink:
 					this.SetSelectionRange (DateTime.Now.Date, DateTime.Now.Date);
-					this.OnDateSelected (new DateRangeEventArgs (SelectionStart, SelectionEnd));
-					break;
-				case HitArea.Date:
-					SetItemClick(hti);
-					// see if it was a selection
-					this.SelectDate (clicked_date);
 					this.OnDateSelected (new DateRangeEventArgs (SelectionStart, SelectionEnd));
 					break;
 				default:
@@ -1497,31 +1597,10 @@ namespace System.Windows.Forms {
 		// to check if the mouse has come up on this control
 		private void MouseUpHandler (object sender, MouseEventArgs e)
 		{
-			// invalidate the next monthbutton
-			if (this.is_next_clicked) {
-				this.Invalidate(
-					new Rectangle (
-						this.ClientRectangle.Right - 1 - button_x_offset - button_size.Width,
-						this.ClientRectangle.Y + 1 + (title_size.Height - button_size.Height)/2,
-						button_size.Width,
-						button_size.Height));
-			}					
-			// invalidate the prev monthbutton
-			if (this.is_previous_clicked) {
-				this.Invalidate(
-					new Rectangle (
-						this.ClientRectangle.X + 1 + button_x_offset,
-						this.ClientRectangle.Y + 1 + (title_size.Height - button_size.Height)/2,
-						button_size.Width,
-						button_size.Height));
+			if (timer.Enabled) {
+				timer.Stop ();
 			}
-			if (this.is_date_clicked) {
-				// invalidate the area under the cursor, to remove focus rect
-				this.InvalidateDateRange (new SelectionRange (clicked_date, clicked_date));				
-			}
-			this.is_previous_clicked = false;
-			this.is_next_clicked = false;
-			this.is_date_clicked = false;
+			this.DoMouseUp ();
 		}
 
 		// raised by any key up events

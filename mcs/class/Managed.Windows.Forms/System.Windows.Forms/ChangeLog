@@ -1,3 +1,8 @@
+2004-12-12  John BouAntoun  <jba-mon@optusnet.com.au>
+	
+	* MonthCalendar.cs: Implemented click-hold for next/previous month
+	  and date selection
+	  
 2004-12-11  Peter Bartok  <pbartok@novell.com>
 
 	* X11Structs.cs:
