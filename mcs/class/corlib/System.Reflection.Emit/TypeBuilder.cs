@@ -316,7 +316,8 @@ namespace System.Reflection.Emit {
 				}
 			}
 			created = create_runtime_class (this);
-
+			if (created != null)
+				return created;
 			return this;
 		}
 

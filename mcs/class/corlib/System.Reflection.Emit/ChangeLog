@@ -1,4 +1,8 @@
 
+Mon Sep 9 17:31:12 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* TypeBuilder.cs: prepare for the real CreateType implementation.
+
 Tue Aug 27 16:57:18 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* TypeBuilder.cs: remove duplicate code and fix
