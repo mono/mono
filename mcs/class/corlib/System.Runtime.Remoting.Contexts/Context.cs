@@ -12,6 +12,7 @@
 using System.Collections;
 using System.Threading;
 using System.Runtime.Remoting;
+using System.Runtime.Remoting.Activation;
 using System.Runtime.Remoting.Messaging;
 using System.Runtime.Remoting.Lifetime;
 
@@ -22,9 +23,6 @@ namespace System.Runtime.Remoting.Contexts {
 		public int domain_id;
 		int context_id;
 		int process_id;
-
-		static Context default_context;
-		static ArrayList domain_contexts = new ArrayList();
 
 		// Default server context sink chain
 		static IMessageSink default_server_context_sink;
@@ -42,26 +40,15 @@ namespace System.Runtime.Remoting.Contexts {
 		bool frozen;
 		static int global_count;
 		
-		static Context ()
-		{
-			// Creates the default context sink chain
-
-			default_server_context_sink = new ServerContextTerminatorSink();
-			default_client_context_sink = new ClientContextTerminatorSink();
-
-			default_context = new Context ();
-			default_context.frozen = true;
-		}
-		
 		public Context ()
 		{
 			domain_id = Thread.GetDomainID();
-			context_id = global_count++;
+			context_id = 1 + global_count++;
 		}
 
 		public static Context DefaultContext {
 			get {
-				return default_context;
+				return AppDomain.InternalGetDefaultContext ();
 			}
 		}
 
@@ -69,6 +56,11 @@ namespace System.Runtime.Remoting.Contexts {
 			get {
 				return context_id;
 			}
+		}
+
+		internal bool IsDefaultContext
+		{
+			get { return context_id == 0; }
 		}
 
 		public virtual IContextProperty GetProperty (string name)
@@ -87,7 +79,7 @@ namespace System.Runtime.Remoting.Contexts {
 		{
 			if (prop == null)
 				throw new ArgumentNullException ("IContextProperty");
-			if (this == default_context)
+			if (this == DefaultContext)
 				throw new InvalidOperationException ("Can not add properties to " +
 								     "default context");
 			if (frozen)
@@ -99,38 +91,91 @@ namespace System.Runtime.Remoting.Contexts {
 			context_properties.Add (prop);
 		}
 
-		[MonoTODO("Create sinks from contributor properties")]
+		public virtual void Freeze ()
+		{
+			if (context_properties != null)
+			{
+				foreach (IContextProperty prop in context_properties)
+					prop.Freeze (this);
+			}
+		}
+
+		public override string ToString()
+		{
+			return "ContextID: " + context_id;
+		}
+
 		internal IMessageSink GetServerContextSinkChain()
 		{
 			if (server_context_sink_chain == null)
 			{
+				if (default_server_context_sink == null)
+					default_server_context_sink = new ServerContextTerminatorSink();
+
 				server_context_sink_chain = default_server_context_sink;
+
+				if (context_properties != null) {
+					foreach (IContextProperty prop in context_properties) {
+						IContributeServerContextSink contributor = prop as IContributeServerContextSink;
+						if (contributor != null)
+							server_context_sink_chain = contributor.GetServerContextSink (server_context_sink_chain);
+					}
+				}
 			}
 			return server_context_sink_chain;
 		}
 
-		[MonoTODO("Create sinks from contributor properties")]
 		internal IMessageSink GetClientContextSinkChain()
 		{
 			if (client_context_sink_chain == null)
 			{
+				if (default_client_context_sink == null)
+					default_client_context_sink = new ClientContextTerminatorSink();
+
 				client_context_sink_chain = default_client_context_sink;
+
+				if (context_properties != null) {
+					foreach (IContextProperty prop in context_properties) {
+						IContributeClientContextSink contributor = prop as IContributeClientContextSink;
+						if (contributor != null)
+							client_context_sink_chain = contributor.GetClientContextSink (client_context_sink_chain);
+					}
+				}
 			}
 			return client_context_sink_chain;
 		}
 
-		[MonoTODO("Create object sinks from contributor properties")]
 		internal IMessageSink CreateServerObjectSinkChain (MarshalByRefObject obj)
 		{
 			IMessageSink objectSink = new StackBuilderSink(obj);
 			objectSink = new ServerObjectTerminatorSink(objectSink);
-			return new Lifetime.LeaseSink(objectSink);
+			objectSink = new Lifetime.LeaseSink(objectSink);
+
+			if (context_properties != null)
+			{
+				foreach (IContextProperty prop in context_properties)
+				{
+					IContributeObjectSink contributor = prop as IContributeObjectSink;
+					if (contributor != null)
+						objectSink = contributor.GetObjectSink (obj, objectSink);
+				}
+			}
+			return objectSink;
 		}
 
-		[MonoTODO("Get sink from properties")]
 		internal IMessageSink CreateEnvoySink (MarshalByRefObject serverObject)
 		{
-			return EnvoyTerminatorSink.Instance;
+			IMessageSink sink = EnvoyTerminatorSink.Instance;
+			if (context_properties != null)
+			{
+				foreach (IContextProperty prop in context_properties)
+				{
+					IContributeEnvoySink contributor = prop as IContributeEnvoySink;
+					if (contributor != null)
+						sink = contributor.GetEnvoySink (serverObject, sink);
+				}
+			}
+			return sink;
 		}
 
 		[MonoTODO("Notify dynamic sinks")]
@@ -139,13 +184,27 @@ namespace System.Runtime.Remoting.Contexts {
 			return AppDomain.InternalSetContext (newContext);
 		}
 
-		[MonoTODO("Check type properties")]
-		internal static Context GetContextForType (Type type)
+		internal static Context CreateNewContext (IConstructionCallMessage msg)
 		{
-			// This method returns a context for a new instace of the provided type.
-			// It can be the current context or a new one.
+			// Create the new context
 
-			return default_context;
+			Context newContext = new Context();
+
+			foreach (IContextProperty prop in msg.ContextProperties)
+			{
+				if (newContext.GetProperty (prop.Name) == null)
+					newContext.SetProperty (prop);
+			}
+			newContext.Freeze();
+
+
+			// Ask each context property whether the new context is OK
+
+			foreach (IContextProperty prop in msg.ContextProperties)
+				if (!prop.IsNewContextOK (newContext)) 
+					throw new RemotingException("A context property did not approve the candidate context for activating the object");
+
+			return newContext;
 		}
 	}
 }

@@ -19,17 +19,7 @@ namespace System.Runtime.Remoting.Contexts
 		{
 			ServerIdentity identity = (ServerIdentity) RemotingServices.GetMessageTargetIdentity (msg);
 
-			if (msg is IConstructionCallMessage)
-			{
-				// Create a new context if needed
-
-				IConstructionCallMessage ctorCall = (IConstructionCallMessage)msg;
-				if (ctorCall.ActivationType.IsContextful)
-					identity.Context = Context.GetContextForType (ctorCall.ActivationType);
-			}
-
-/*			FIXME: restore when Thread.CurrentContext workds
- 			if (Threading.Thread.CurrentContext != identity.Context)
+			if (Threading.Thread.CurrentContext != identity.Context)
 			{
 				// Context switch needed
 
@@ -38,9 +28,8 @@ namespace System.Runtime.Remoting.Contexts
 				Context.SwitchToContext (oldContext);
 				return response;
 			}
-			else */
-
-			return identity.Context.GetServerContextSinkChain().SyncProcessMessage (msg);
+			else
+				return identity.Context.GetServerContextSinkChain().SyncProcessMessage (msg);
 		}
 
 		public IMessageCtrl AsyncProcessMessage (IMessage msg, IMessageSink replySink)
