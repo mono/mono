@@ -66,7 +66,7 @@ namespace NpgsqlTests
 			
 			dr.Read();
 			Boolean result = dr.GetBoolean(4);
-			Assertion.AssertEquals(true, result);
+			Assert.AreEqual(true, result);
 			
 		}
 		
@@ -85,7 +85,7 @@ namespace NpgsqlTests
 			
 			Int64 a = dr.GetChars(1, 0, result, 0, 6);
 			
-			Assertion.AssertEquals("Random", new String(result));
+			Assert.AreEqual("Random", new String(result));
 			/*ConsoleWriter cw = new ConsoleWriter(Console.Out);
 			
 			cw.WriteLine(result);*/
@@ -109,7 +109,7 @@ namespace NpgsqlTests
 			//ConsoleWriter cw = new ConsoleWriter(Console.Out);
 			
 			//cw.WriteLine(result.GetType().Name);
-			Assertion.AssertEquals(4, result);
+			Assert.AreEqual(4, result);
 			
 		}
 		
@@ -126,7 +126,7 @@ namespace NpgsqlTests
 			
 			Int16 result = dr.GetInt16(1);
 			
-			Assertion.AssertEquals(2, result);
+			Assert.AreEqual(2, result);
 			
 		}
 		
@@ -144,7 +144,7 @@ namespace NpgsqlTests
 			Decimal result = dr.GetDecimal(3);
 			
 						
-			Assertion.AssertEquals(4.23M, result);
+			Assert.AreEqual(4.2300000M, result);
 			
 		}
 	
@@ -164,7 +164,7 @@ namespace NpgsqlTests
 			//Double result = Double.Parse(dr.GetInt32(2).ToString());
 		  Double result = dr.GetDouble(2);
 			
-			Assertion.AssertEquals(.123456789012345D, result);
+			Assert.AreEqual(.123456789012345D, result);
 			
 		}
 		
@@ -182,7 +182,7 @@ namespace NpgsqlTests
 			//Single result = Single.Parse(dr.GetInt32(2).ToString());
 		  Single result = dr.GetFloat(1);
 			
-			Assertion.AssertEquals(.123456F, result);
+			Assert.AreEqual(.123456F, result);
 			
 		}
 		
@@ -199,7 +199,7 @@ namespace NpgsqlTests
 			
 			String result = dr.GetString(1);
 			
-			Assertion.AssertEquals("Random text", result);
+			Assert.AreEqual("Random text", result);
 			
 		}
 		
@@ -225,7 +225,7 @@ namespace NpgsqlTests
 			
 			String result = dr.GetString(1);
 			
-			Assertion.AssertEquals(test, result);
+			Assert.AreEqual(test, result);
 			
 		}
 		
@@ -250,7 +250,7 @@ namespace NpgsqlTests
 			
 			String result = dr.GetString(1);
 			
-			Assertion.AssertEquals(test, result);
+			Assert.AreEqual(test, result);
 			
 		}
 		
@@ -267,7 +267,7 @@ namespace NpgsqlTests
 			
 			String result = (String) dr["field_text"];
 			
-			Assertion.AssertEquals("Random text", result);
+			Assert.AreEqual("Random text", result);
 			
 		}
 		
@@ -477,9 +477,9 @@ namespace NpgsqlTests
 			NpgsqlDataReader dr = command.ExecuteReader();
             
             dr.Read();
-            Assertion.AssertEquals(false, dr.IsDBNull(0));
+            Assert.AreEqual(false, dr.IsDBNull(0));
             dr.Read();
-            Assertion.AssertEquals(true, dr.IsDBNull(0));
+            Assert.AreEqual(true, dr.IsDBNull(0));
             
                 
         }
@@ -493,11 +493,44 @@ namespace NpgsqlTests
 			NpgsqlDataReader dr = command.ExecuteReader();
             
             dr.Read();
-            Assertion.AssertEquals(false, dr.IsDBNull(0));
+            Assert.AreEqual(false, dr.IsDBNull(0));
             
         }
-		
-		
+        
+        
+        
+        [Test]
+        public void TypesNames()
+        {
+        	_conn.Open();
+            NpgsqlCommand command = new NpgsqlCommand("select * from tablea where 1 = 2;", _conn);
+			
+			NpgsqlDataReader dr = command.ExecuteReader();
+            
+            dr.Read();
+            
+            Assert.AreEqual("int4", dr.GetDataTypeName(0));
+            Assert.AreEqual("text", dr.GetDataTypeName(1));
+            Assert.AreEqual("int4", dr.GetDataTypeName(2));
+            Assert.AreEqual("int8", dr.GetDataTypeName(3));
+            Assert.AreEqual("bool", dr.GetDataTypeName(4));
+            
+            dr.Close();
+            
+            command.CommandText = "select * from tableb where 1 = 2";
+            
+            dr = command.ExecuteReader();
+            
+            dr.Read();
+            
+            Assert.AreEqual("int4", dr.GetDataTypeName(0));
+            Assert.AreEqual("int2", dr.GetDataTypeName(1));
+            Assert.AreEqual("timestamp", dr.GetDataTypeName(2));
+            Assert.AreEqual("numeric", dr.GetDataTypeName(3));
+            
+            
+            
+        }
 		
 		
 	

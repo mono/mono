@@ -23,13 +23,13 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-
-
 using System;
 using System.Collections;
 using System.IO;
 using System.Text;
 using System.Net;
+
+using NpgsqlTypes;
 
 namespace Npgsql
 {
@@ -43,13 +43,14 @@ namespace Npgsql
     // Should it be a struct or a class?
     internal struct NpgsqlRowDescriptionFieldData
     {
-        public String 	name;                      // Protocol 2/3
-        public Int32    table_oid;                 // Protocol 3
-        public Int16    column_attribute_number;   // Protocol 3
-        public Int32		type_oid;                  // Protocol 2/3
-        public Int16		type_size;                 // Protocol 2/3
-        public Int32		type_modifier;		         // Protocol 2/3
-        public FormatCode    format_code;               // Protocol 3. 0 text, 1 binary
+        public String                   name;                      // Protocol 2/3
+        public Int32                    table_oid;                 // Protocol 3
+        public Int16                    column_attribute_number;   // Protocol 3
+        public Int32                    type_oid;                  // Protocol 2/3
+        public Int16                    type_size;                 // Protocol 2/3
+        public Int32                    type_modifier;		       // Protocol 2/3
+        public FormatCode               format_code;               // Protocol 3. 0 text, 1 binary
+        public NpgsqlBackendTypeInfo    type_info;                 // everything we know about this field type
     }
 
     /// <summary>
@@ -63,32 +64,31 @@ namespace Npgsql
         private static readonly String CLASSNAME = "NpgsqlRowDescription";
 
 
-        private ArrayList	fields_data = new ArrayList();
+        private ArrayList                fields_data = new ArrayList();
+        private ArrayList                fields_index = new ArrayList();
 
-        private ArrayList   fields_index = new ArrayList();
-
-        private ProtocolVersion protocol_version;
+        private ProtocolVersion          protocol_version;
 
         public NpgsqlRowDescription(ProtocolVersion protocolVersion)
         {
             protocol_version = protocolVersion;
         }
 
-        public void ReadFromStream(Stream input_stream, Encoding encoding)
+        public void ReadFromStream(Stream input_stream, Encoding encoding, NpgsqlBackendTypeMapping type_mapping)
         {
             switch (protocol_version) {
             case ProtocolVersion.Version2 :
-                ReadFromStream_Ver_2(input_stream, encoding);
+                ReadFromStream_Ver_2(input_stream, encoding, type_mapping);
                 break;
 
             case ProtocolVersion.Version3 :
-                ReadFromStream_Ver_3(input_stream, encoding);
+                ReadFromStream_Ver_3(input_stream, encoding, type_mapping);
                 break;
 
             }
         }
 
-        public void ReadFromStream_Ver_2(Stream input_stream, Encoding encoding)
+        private void ReadFromStream_Ver_2(Stream input_stream, Encoding encoding, NpgsqlBackendTypeMapping type_mapping)
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "ReadFromStream_Ver_2");
 
@@ -114,6 +114,7 @@ namespace Npgsql
                 input_stream.Read(input_buffer, 0, 4 + 2 + 4);
 
                 fd.type_oid = IPAddress.NetworkToHostOrder(BitConverter.ToInt32(input_buffer, 0));
+                fd.type_info = type_mapping[fd.type_oid];
                 fd.type_size = IPAddress.NetworkToHostOrder(BitConverter.ToInt16(input_buffer, 4));
                 fd.type_modifier = IPAddress.NetworkToHostOrder(BitConverter.ToInt32(input_buffer, 6));
 
@@ -124,7 +125,7 @@ namespace Npgsql
             }
         }
 
-        public void ReadFromStream_Ver_3(Stream input_stream, Encoding encoding)
+        private void ReadFromStream_Ver_3(Stream input_stream, Encoding encoding, NpgsqlBackendTypeMapping type_mapping)
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "ReadFromStream_Ver_3");
 
@@ -146,6 +147,7 @@ namespace Npgsql
                 fd.table_oid = PGUtil.ReadInt32(input_stream, input_buffer);
                 fd.column_attribute_number = PGUtil.ReadInt16(input_stream, input_buffer);
                 fd.type_oid = PGUtil.ReadInt32(input_stream, input_buffer);
+                fd.type_info = type_mapping[fd.type_oid];
                 fd.type_size = PGUtil.ReadInt16(input_stream, input_buffer);
                 fd.type_modifier = PGUtil.ReadInt32(input_stream, input_buffer);
                 fd.format_code = (FormatCode)PGUtil.ReadInt16(input_stream, input_buffer);
@@ -185,7 +187,7 @@ namespace Npgsql
                 result++;
             }
 
-            return -1;
+            throw new ArgumentOutOfRangeException("fieldName", fieldName, "Field name not found"); 
         }
 
     }

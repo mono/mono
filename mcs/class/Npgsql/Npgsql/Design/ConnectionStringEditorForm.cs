@@ -54,15 +54,15 @@ namespace Npgsql.Design {
 			resman = new System.Resources.ResourceManager(typeof(ConnectionStringEditorForm));
 
 			this.pgconn.ConnectionString = ConnectionString;
-			this.tb_password.Text = this.pgconn.Password;
-			this.tb_port.Text = this.pgconn.ServerPort.ToString();
-			this.tb_server.Text = this.pgconn.ServerName;
-			this.tb_username.Text = this.pgconn.UserName;
+			this.tb_server.Text = this.pgconn.Host;
+			this.tb_port.Text = this.pgconn.Port.ToString();
 			this.tb_timeout.Text = this.pgconn.ConnectionTimeout.ToString();
 			if (this.pgconn.Database != "") {
 				this.cb_select_db.Items.Add(this.pgconn.Database);
 				this.cb_select_db.SelectedIndex = 0;
 			}
+			this.tb_username.Text = this.pgconn.UserName;
+			this.tb_password.Text = this.pgconn.Password;
 		}
 
 		/// <summary>
@@ -727,8 +727,8 @@ namespace Npgsql.Design {
 					return false;
 				}
 				sw.Write("Server={0};", this.tb_server.Text);
-				if(this.tb_port.Text != String.Empty){
-					sw.Write("Port={0};", tb_port.Text);
+				if(this.tb_port.Text != String.Empty && Convert.ToInt32(this.tb_port.Text) != ConnectionStringDefaults.Port){
+					sw.Write("{0}={1};", ConnectionStringKeys.Port, tb_port.Text);
 				}
 				// this happens if the user clicks Ok or Check Connection
 				// before selecting a database
@@ -739,15 +739,14 @@ namespace Npgsql.Design {
 					// this happens if the user clicks the database-combobox
 					// in order to select a database
 				else if(fillComboBox == true && (String)this.cb_select_db.Text == String.Empty){
-					sw.Write("Database=template1;");
+					sw.Write("{0}=template1;", ConnectionStringKeys.Database);
 				}
 				else{
-					sw.Write("Database={0};", this.cb_select_db.Text);
+					sw.Write("{0}={1};", ConnectionStringKeys.Database, this.cb_select_db.Text);
 				}
 				try{
-					if(this.tb_timeout.Text == String.Empty){}
-					else if(Int32.Parse(this.tb_timeout.Text) > 0){
-						sw.Write("Connect Timeout={0};", this.tb_timeout.Text);
+					if(this.tb_timeout.Text != String.Empty && Convert.ToInt32(this.tb_timeout.Text) != ConnectionStringDefaults.Timeout){
+						sw.Write("{0}={1};", ConnectionStringKeys.Timeout, this.tb_timeout.Text);
 					}
 				}
 					// don't mind if the value is nonsense - just don't put it into the string
@@ -760,7 +759,8 @@ namespace Npgsql.Design {
 					return false;
 				}
 
-				sw.Write("User Id={0};Password={1};", this.tb_username.Text, this.tb_password.Text);
+				sw.Write("{0}={1};", ConnectionStringKeys.UserName, this.tb_username.Text);
+				sw.Write("{0}={1};", ConnectionStringKeys.Password, this.tb_password.Text);
 				this.pgconn.ConnectionString = sw.ToString();
 				this.pgconn.Open();
 				if(fillComboBox == true){

@@ -11,6 +11,7 @@ Npgsql/NpgsqlCommand.cs
 Npgsql/NpgsqlCommandBuilder.cs
 Npgsql/NpgsqlConnectedState.cs
 Npgsql/NpgsqlConnection.cs
+Npgsql/NpgsqlConnectionString.cs
 Npgsql/NpgsqlConnector.cs
 Npgsql/NpgsqlConnectorPool.cs
 Npgsql/NpgsqlDataAdapter.cs
@@ -46,4 +47,7 @@ Npgsql/Design/NpgsqlParameterConverter.cs
 Npgsql/Design/NpgsqlParametersEditor.cs
 Npgsql/Design/NpgsqlSysDescriptionAttribute.cs
 NpgsqlTypes/NpgsqlTypesHelper.cs
+NpgsqlTypes/NpgsqlDbType.cs
+NpgsqlTypes/NpgsqlTypeConverters.cs
+NpgsqlTypes/NpgsqlTypes.cs
 

@@ -29,12 +29,26 @@ using System.Text;
 
 namespace Npgsql
 {
+    /// <summary>
+    /// EventArgs class to send Notice parameters, which are just NpgsqlError's in a lighter context.
+    /// </summary>
+    public class NpgsqlNoticeEventArgs : EventArgs
+    {
+        /// <summary>
+        /// Notice information.
+        /// </summary>
+        public NpgsqlError Notice = null;
+
+        internal NpgsqlNoticeEventArgs(NpgsqlError eNotice)
+        {
+            Notice = eNotice;
+        }
+    }
 
     /// <summary>
     /// This class represents the ErrorResponse and NoticeResponse
     /// message sent from PostgreSQL server.
     /// </summary>
-    ///
     public sealed class NpgsqlError
     {
         // Logging related values
@@ -186,14 +200,9 @@ namespace Npgsql
             return B.ToString();
         }
 
-        private NpgsqlError()
-        {}
-
-
         internal NpgsqlError(ProtocolVersion protocolVersion)
         {
             protocol_version = protocolVersion;
-
         }
 
         /// <summary>

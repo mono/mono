@@ -25,8 +25,8 @@ using System;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
-using System.Resources;
 using System.Collections;
+
 using Mono.Security.Protocol.Tls;
 
 namespace Npgsql
@@ -54,14 +54,37 @@ namespace Npgsql
         }
 
 
-        public override void Open(NpgsqlConnection context)
+
+        /// <summary>
+        /// Resolve a host name or IP address.
+        /// This is needed because if you call Dns.Resolve() with an IP address, it will attempt
+        /// to resolve it as a host name, when it should just convert it to an IP address.
+        /// </summary>
+        /// <param name="HostName"></param>
+        private static IPAddress ResolveIPHost(String HostName)
+        {
+
+            try
+            {
+                // Is it a raw IP address?
+                return IPAddress.Parse(HostName);
+            }
+            catch (FormatException)
+            {
+                // Not an IP, must be a host name...
+                return Dns.Resolve(HostName).AddressList[0];
+            }
+        }
+
+        public override void Open(NpgsqlConnector context)
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "Open");
-            
-            TcpClient tcpc = new TcpClient(context.ServerName, context.ServerPort);
+
+            TcpClient tcpc = new TcpClient();
+            tcpc.Connect(new IPEndPoint(ResolveIPHost(context.Host), context.Port));
             Stream stream = tcpc.GetStream();
-            
-            // If the PostgreSQL server has SSL connections enabled Open SslClientStream if (response == 'S') {
+
+            // If the PostgreSQL server has SSL connectors enabled Open SslClientStream if (response == 'S') {
             if (context.SSL)
             {
                 PGUtil.WriteInt32(stream, 8);
@@ -70,32 +93,23 @@ namespace Npgsql
                 Char response = (Char)stream.ReadByte();
                 if (response == 'S')
                 {
-                    stream = new SslClientStream(tcpc.GetStream(),
-                                                 context.ServerName,
-                                                 true,
-                                                 Mono.Security.Protocol.Tls.SecurityProtocolType.Default);
-                    /*stream = new SslClientStream(
-                        tcpc.GetStream(),
-                        context.ServerName,
-                        true,
-                        Tls.SecurityProtocolType.Tls|
-                        Tls.SecurityProtocolType.Ssl3);*/
+                    stream = new SslClientStream(
+                                 tcpc.GetStream(),
+                                 context.Host,
+                                 true,
+                                 Mono.Security.Protocol.Tls.SecurityProtocolType.Default
+                             );
 
-
+                    ((SslClientStream)stream).ClientCertSelectionDelegate = new CertificateSelectionCallback(context.DefaultCertificateSelectionCallback);
                     ((SslClientStream)stream).ServerCertValidationDelegate = new CertificateValidationCallback(context.DefaultCertificateValidationCallback);
-                    ((SslClientStream)stream).ClientCertSelectionDelegate = context.CertificateSelectionCallback;
-                    ((SslClientStream)stream).PrivateKeyCertSelectionDelegate = context.PrivateKeySelectionCallback;
-
+                    ((SslClientStream)stream).PrivateKeyCertSelectionDelegate = new PrivateKeySelectionCallback(context.DefaultPrivateKeySelectionCallback);
                 }
             }
 
+            context.Stream = stream;
 
-
-            context.Connector.Stream = stream;
-
-            NpgsqlEventLog.LogMsg(resman, "Log_ConnectedTo", LogLevel.Normal, context.ServerName, context.ServerPort);
+            NpgsqlEventLog.LogMsg(resman, "Log_ConnectedTo", LogLevel.Normal, context.Host, context.Port);
             ChangeState(context, NpgsqlConnectedState.Instance);
-            context.Startup();
         }
 
     }

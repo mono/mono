@@ -97,43 +97,22 @@
 	<resheader name="writer">
 		<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
 	</resheader>
-	<data name="Description_ConnectionString">
-		<value>La información utilizada para conectarse a una Base de Datos de PostgreSQL, es como sigue 'Server=X;Port=X;Database=X;User Id=X;Password=X;'</value>
+	<data name="Exception_WrongKeyVal">
+		<value>key=value argument incorrect in ConnectionString</value>
 	</data>
-	<data name="Description_ConnectionTimeout">
-		<value>El valor actual de connection timeout, 'Connect Timeout=X' en la cadena de conexión</value>
+	<data name="Exception_InvalidBooleanKeyVal">
+		<value>expecting {0}=[True/False] value in ConnectionString</value>
 	</data>
-	<data name="Description_Database">
-		<value>La Base de Datos PostgreSQL actual, 'Database=X' en la cadena de conexión</value>
+	<data name="Exception_InvalidIntegerKeyVal">
+		<value>expecting {0}=[Numeric] value in ConnectionString</value>
 	</data>
-	<data name="Exception_NoNestedTransactions">
-		<value>Las transacciones concurrentes y anidades no son soportadas.</value>
+	<data name="Exception_IntegerKeyValMax">
+		<value>numeric value {0} in ConnectionString exceeds maximum value {1}</value>
 	</data>
-	<data name="Exception_InvalidDbName">
-		<value>Nombre de Base de Datos inválido: {0}</value>
+	<data name="Exception_IntegerKeyValMin">
+		<value>numeric value {0} in ConnectionString is below minimum value {1}</value>
 	</data>
-	<data name="Exception_MissingConnStrArg">
-		<value>¡Falta un argumento en la cadena de conexión!</value>
-	</data>
-	<data name="Exception_ConnOpen">
-		<value>La conexión está abierta actualmente</value>
-	</data>
-	<data name="Exception_ConnStrEmpty">
-		<value>ConnectionString no puede estar vacia.</value>
-	</data>
-	<data name="Exception_SocketEx">
-		<value>ocurrió una excepción SocketException</value>
-	</data>
-	<data name="Exception_OpenError">
-		<value>Han ocurrido errores en Open()</value>
-	</data>
-	<data name="Exception_CloseError">
-		<value>Error en Close()</value>
-	</data>
-	<data name="Log_ConnectionStringValues">
-		<value>Opción de la cadena de conexión: {0} = {1}</value>
-	</data>
-	<data name="Exception_ChangeDatabaseOnOpenConn">
-		<value>La conexión no está abierta. Use 'Database=X;' en la cadena de conexión para asignar la Base de Datos para una conexión cerrada.</value>
+	<data name="Exception_InvalidProtocolVersionKeyVal">
+		<value>expecting {0}=[Protocol Version] value in ConnectionString</value>
 	</data>
 </root>

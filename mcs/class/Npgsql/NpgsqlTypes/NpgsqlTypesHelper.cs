@@ -1,4 +1,3 @@
-
 // NpgsqlTypes.NpgsqlTypesHelper.cs
 //
 // Author:
@@ -28,534 +27,840 @@ using System.Globalization;
 using System.Data;
 using System.Net;
 using System.Text;
-using System.IO;
-using Npgsql;
 using System.Resources;
+using Npgsql;
 
 
 namespace NpgsqlTypes
 {
-
-    /*internal struct NpgsqlTypeMapping
-    {
-      public String        _backendTypeName;
-      public Type          _frameworkType;
-      public Int32         _typeOid;
-      public NpgsqlDbType  _npgsqlDbType;
-      
-      public NpgsqlTypeMapping(String backendTypeName, Type frameworkType, Int32 typeOid, NpgsqlDbType npgsqlDbType)
-      {
-        _backendTypeName = backendTypeName;
-        _frameworkType = frameworkType;
-        _typeOid = typeOid;
-        _npgsqlDbType = npgsqlDbType;
-        
-      }
-    }*/
-
-
     /// <summary>
     ///	This class contains helper methods for type conversion between
     /// the .Net type system and postgresql.
     /// </summary>
-    internal class NpgsqlTypesHelper
+    internal abstract class NpgsqlTypesHelper
     {
-
-        private static Hashtable _oidToNameMappings = new Hashtable();
-
         // Logging related values
-        private static readonly String CLASSNAME = "NpgsqlDataReader";
+        private static readonly String CLASSNAME = "NpgsqlTypesHelper";
         private static ResourceManager resman = new ResourceManager(typeof(NpgsqlTypesHelper));
 
-        // From include/utils/datetime.h. Thanks to Carlos Guzman Alvarez
-        private static readonly DateTime postgresEpoch = new DateTime(2000, 1, 1);
+        /// <summary>
+        /// A cache of basic datatype mappings keyed by server version.  This way we don't
+        /// have to load the basic type mappings for every connection.
+        /// </summary>
+        private static Hashtable BackendTypeMappingCache = new Hashtable();
+        private static NpgsqlNativeTypeMapping NativeTypeMapping = null;
 
-        private static readonly string[] DateFormats = new String[] 
+
+        /// <summary>
+        /// Find a NpgsqlNativeTypeInfo in the default types map that can handle objects
+        /// of the given NpgsqlDbType.
+        /// </summary>
+        public static NpgsqlNativeTypeInfo GetNativeTypeInfo(NpgsqlDbType NpgsqlDbType)
         {
-          "yyyy-MM-dd",
-        };
+            NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "GetBackendTypeNameFromNpgsqlDbType");
 
-        private static readonly string[] TimeFormats = new String[]
+            VerifyDefaultTypesMap();
+            return NativeTypeMapping[NpgsqlDbType];
+        }
+        
+        /// <summary>
+        /// Find a NpgsqlNativeTypeInfo in the default types map that can handle objects
+        /// of the given DbType.
+        /// </summary>
+        public static NpgsqlNativeTypeInfo GetNativeTypeInfo(DbType DbType)
         {
-          "HH:mm:ss.ffffff",
-          "HH:mm:ss.fffff",	
-          "HH:mm:ss.ffff",
-          "HH:mm:ss.fff",
-          "HH:mm:ss.ff",
-          "HH:mm:ss.f",
-          "HH:mm:ss",
-          "HH:mm:ss.ffffffzz",
-          "HH:mm:ss.fffffzz",	
-          "HH:mm:ss.ffffzz",
-          "HH:mm:ss.fffzz",
-          "HH:mm:ss.ffzz",
-          "HH:mm:ss.fzz",
-          "HH:mm:sszz"
-        };
+            NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "GetBackendTypeNameFromNpgsqlDbType");
 
-        private static readonly string[] DateTimeFormats = new String[] 
+            VerifyDefaultTypesMap();
+            return NativeTypeMapping[DbType];
+        }
+        
+        
+
+        /// <summary>
+        /// Find a NpgsqlNativeTypeInfo in the default types map that can handle objects
+        /// of the given System.Type.
+        /// </summary>
+        public static NpgsqlNativeTypeInfo GetNativeTypeInfo(Type Type)
         {
-          "yyyy-MM-dd HH:mm:ss.ffffff",
-          "yyyy-MM-dd HH:mm:ss.fffff",	
-          "yyyy-MM-dd HH:mm:ss.ffff",
-          "yyyy-MM-dd HH:mm:ss.fff",
-          "yyyy-MM-dd HH:mm:ss.ff",
-          "yyyy-MM-dd HH:mm:ss.f",
-          "yyyy-MM-dd HH:mm:ss",
-          "yyyy-MM-dd HH:mm:ss.ffffffzz",
-          "yyyy-MM-dd HH:mm:ss.fffffzz",	
-          "yyyy-MM-dd HH:mm:ss.ffffzz",
-          "yyyy-MM-dd HH:mm:ss.fffzz",
-          "yyyy-MM-dd HH:mm:ss.ffzz",
-          "yyyy-MM-dd HH:mm:ss.fzz",
-          "yyyy-MM-dd HH:mm:sszz"
-        };
+            NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "GetBackendTypeNameFromNpgsqlDbType");
 
-        public static String GetBackendTypeNameFromDbType(DbType dbType)
-        {
-            NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "GetBackendTypeNameFromDbType");
-
-            switch (dbType)
-            {
-            case DbType.Binary:
-                return "bytea";
-            case DbType.Boolean:
-                return "bool";
-            case DbType.Single:
-                return "float4";
-            case DbType.Double:
-                return "float8";
-            case DbType.Int64:
-                return "int8";
-            case DbType.Int32:
-                return "int4";
-            case DbType.Decimal:
-                return "numeric";
-            case DbType.Int16:
-                return "int2";
-            case DbType.String:
-            case DbType.AnsiString:
-                return "text";
-            case DbType.DateTime:
-                return "timestamp";
-            case DbType.Date:
-                return "date";
-            case DbType.Time:
-                return "time";
-            default:
-                throw new InvalidCastException(String.Format(resman.GetString("Exception_TypeNotSupported"), dbType));
-
-            }
+            VerifyDefaultTypesMap();
+            return NativeTypeMapping[Type];
         }
 
-        public static Object ConvertBackendBytesToStytemType(Hashtable oidToNameMapping, Byte[] data, Encoding encoding, Int32 fieldValueSize, Int32 typeOid, Int32 typeModifier)
+        // CHECKME
+        // Not sure what to do with this one.  I don't believe we ever ask for a binary
+        // formatting, so this shouldn't even be used right now.
+        // At some point this will need to be merged into the type converter system somehow?
+        public static Object ConvertBackendBytesToSystemType(NpgsqlBackendTypeInfo TypeInfo, Byte[] data, Encoding encoding, Int32 fieldValueSize, Int32 typeModifier)
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "ConvertBackendBytesToStytemType");
-            //[TODO] Find a way to eliminate this checking. It is just used at bootstrap time
-            // when connecting because we don't have yet loaded typeMapping. The switch below
-            // crashes with NullPointerReference when it can't find the typeOid.
 
-            if (!oidToNameMapping.ContainsKey(typeOid))
+            /*
+            // We are never guaranteed to know about every possible data type the server can send us.
+            // When we encounter an unknown type, we punt and return the data without modification.
+            if (TypeInfo == null)
                 return data;
 
-            switch ((DbType)oidToNameMapping[typeOid])
+            switch (TypeInfo.NpgsqlDbType)
             {
-            case DbType.Binary:
+            case NpgsqlDbType.Binary:
                 return data;
-            case DbType.Boolean:
+            case NpgsqlDbType.Boolean:
                 return BitConverter.ToBoolean(data, 0);
-            case DbType.DateTime:
+            case NpgsqlDbType.DateTime:
                 return DateTime.MinValue.AddTicks(IPAddress.NetworkToHostOrder(BitConverter.ToInt64(data, 0)));
 
-            case DbType.Int16:
+            case NpgsqlDbType.Int16:
                 return IPAddress.NetworkToHostOrder(BitConverter.ToInt16(data, 0));
-            case DbType.Int32:
+            case NpgsqlDbType.Int32:
                 return IPAddress.NetworkToHostOrder(BitConverter.ToInt32(data, 0));
-            case DbType.Int64:
+            case NpgsqlDbType.Int64:
                 return IPAddress.NetworkToHostOrder(BitConverter.ToInt64(data, 0));
-            case DbType.String:
-            case DbType.AnsiString:
-            case DbType.StringFixedLength:
+            case NpgsqlDbType.String:
+            case NpgsqlDbType.AnsiString:
+            case NpgsqlDbType.StringFixedLength:
                 return encoding.GetString(data, 0, fieldValueSize);
             default:
                 throw new InvalidCastException("Type not supported in binary format");
-            }
-
-
+            }*/
+            
+            return null;
         }
-
-        private static string QuoteString(bool Quote, string S)
-        {
-            if (Quote) {
-                return string.Format("'{0}'", S);
-            } else {
-                return S;
-            }
-        }
-
-        public static String ConvertNpgsqlParameterToBackendStringValue(NpgsqlParameter parameter, Boolean QuoteStrings)
-        {
-            // HACK (?)
-            // glenebob@nwlink.com 05/20/2004
-            // bool QuoteString is a bit of a hack.
-            // When using the version 3 extended query support, we do not need to do quoting of parameters.
-            // The backend handles that properly.
-
-            NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "ConvertNpgsqlParameterToBackendStringValue");
-
-            if ((parameter.Value == DBNull.Value) || (parameter.Value == null))
-                return "NULL";
-
-            switch(parameter.DbType)
-            {
-            case DbType.Binary:
-                return QuoteString(QuoteStrings, ConvertByteArrayToBytea((Byte[])parameter.Value));
-
-            case DbType.Boolean:
-                return ((bool)parameter.Value) ? "TRUE" : "FALSE";
-
-            case DbType.Int64:
-            case DbType.Int32:
-            case DbType.Int16:
-                return parameter.Value.ToString();
-
-            case DbType.Single:
-                // To not have a value implicitly converted to float8, we add quotes.
-                return QuoteString(QuoteStrings, ((Single)parameter.Value).ToString(NumberFormatInfo.InvariantInfo));
-
-            case DbType.Double:
-                return ((Double)parameter.Value).ToString(NumberFormatInfo.InvariantInfo);
-
-            case DbType.Date:
-                return QuoteString(QuoteStrings, ((DateTime)parameter.Value).ToString("yyyy-MM-dd", DateTimeFormatInfo.InvariantInfo));
-
-            case DbType.Time:
-                return QuoteString(QuoteStrings, ((DateTime)parameter.Value).ToString("HH:mm:ss.fff", DateTimeFormatInfo.InvariantInfo));
-
-            case DbType.DateTime:
-                return QuoteString(QuoteStrings, ((DateTime)parameter.Value).ToString("yyyy-MM-dd HH:mm:ss.fff", DateTimeFormatInfo.InvariantInfo));
-
-            case DbType.Decimal:
-                return ((Decimal)parameter.Value).ToString(NumberFormatInfo.InvariantInfo);
-
-            case DbType.String:
-            case DbType.AnsiString:
-            case DbType.StringFixedLength:
-                return QuoteString(QuoteStrings, parameter.Value.ToString().Replace("'", "''"));
-
-            default:
-                // This should not happen!
-                throw new InvalidCastException(String.Format(resman.GetString("Exception_TypeNotSupported"), parameter.DbType));
-
-            }
-
-        }
-
 
         ///<summary>
         /// This method is responsible to convert the string received from the backend
         /// to the corresponding NpgsqlType.
+        /// The given TypeInfo is called upon to do the conversion.
+        /// If no TypeInfo object is provided, no conversion is performed.
         /// </summary>
-        ///
-        public static Object ConvertBackendStringToSystemType(Hashtable oidToNameMapping, String data, Int32 typeOid, Int32 typeModifier)
+        public static Object ConvertBackendStringToSystemType(NpgsqlBackendTypeInfo TypeInfo, String data, Int16 typeSize, Int32 typeModifier)
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "ConvertBackendStringToSystemType");
-            //[TODO] Find a way to eliminate this checking. It is just used at bootstrap time
-            // when connecting because we don't have yet loaded typeMapping. The switch below
-            // crashes with NullPointerReference when it can't find the typeOid.
 
-            if (!oidToNameMapping.ContainsKey(typeOid))
+            if (TypeInfo != null) {
+                return TypeInfo.ConvertToNative(data, typeSize, typeModifier);
+            } else {
                 return data;
+            }
+        }
 
-            switch ((DbType)oidToNameMapping[typeOid])
-            {
-            case DbType.Binary:
-                return ConvertByteAToByteArray(data);
-
-            case DbType.Boolean:
-                return (data.ToLower() == "t" ? true : false);
-
-            case DbType.Single:
-                return Single.Parse(data, NumberFormatInfo.InvariantInfo);
-
-            case DbType.Double:
-                return Double.Parse(data, NumberFormatInfo.InvariantInfo);
-
-            case DbType.Int16:
-                return Int16.Parse(data);
-            case DbType.Int32:
-                return Int32.Parse(data);
-
-            case DbType.Int64:
-                return Int64.Parse(data);
-
-            case DbType.Decimal:
-                // Got this manipulation of typemodifier from jdbc driver - file AbstractJdbc1ResultSetMetaData.java.html method getColumnDisplaySize
-                {
-                    typeModifier -= 4;
-                    //Console.WriteLine("Numeric from server: {0} digitos.digitos {1}.{2}", data, (typeModifier >> 16) & 0xffff, typeModifier & 0xffff);
-                    return Decimal.Parse(data, NumberFormatInfo.InvariantInfo);
-
+        /// <summary>
+        /// Create the one and only native to backend type map.
+        /// This map is used when formatting native data
+        /// types to backend representations.
+        /// </summary>
+        private static void VerifyDefaultTypesMap()
+        {
+            lock(CLASSNAME) {
+                if (NativeTypeMapping != null) {
+                    return;
                 }
 
-            case DbType.DateTime:
+                NativeTypeMapping = new NpgsqlNativeTypeMapping();
 
-                // Get the date time parsed in all expected formats for timestamp.
-                return DateTime.ParseExact(data,
-                                           DateTimeFormats,
-                                           DateTimeFormatInfo.InvariantInfo,
-                                           DateTimeStyles.NoCurrentDateDefault | DateTimeStyles.AllowWhiteSpaces);
+                NativeTypeMapping.AddType("text", NpgsqlDbType.Text, DbType.String, true,
+                new ConvertNativeToBackendHandler(BasicNativeToBackendTypeConverter.ToString));
 
-            case DbType.Date:
-                return DateTime.ParseExact(data,
-                                           DateFormats,
-                                           DateTimeFormatInfo.InvariantInfo,
-                                           DateTimeStyles.AllowWhiteSpaces);
+                NativeTypeMapping.AddDbTypeAlias("text", DbType.StringFixedLength);
+                NativeTypeMapping.AddDbTypeAlias("text", DbType.AnsiString);
+                NativeTypeMapping.AddDbTypeAlias("text", DbType.AnsiStringFixedLength);
+                NativeTypeMapping.AddTypeAlias("text", typeof(String));
 
-            case DbType.Time:
+                NativeTypeMapping.AddType("bytea", NpgsqlDbType.Bytea, DbType.Binary, true,
+                new ConvertNativeToBackendHandler(BasicNativeToBackendTypeConverter.ToBinary));
 
-                return DateTime.ParseExact(data,
-                                           TimeFormats,
-                                           DateTimeFormatInfo.InvariantInfo,
-                                           DateTimeStyles.NoCurrentDateDefault | DateTimeStyles.AllowWhiteSpaces);
+                NativeTypeMapping.AddTypeAlias("bytea", typeof(Byte[]));
 
-            case DbType.String:
-            case DbType.AnsiString:
-            case DbType.StringFixedLength:
-                return data;
-            default:
-                throw new InvalidCastException(String.Format(resman.GetString("Exception_TypeNotSupported"),  oidToNameMapping[typeOid]));
+                NativeTypeMapping.AddType("bool", NpgsqlDbType.Boolean, DbType.Boolean, false,
+                new ConvertNativeToBackendHandler(BasicNativeToBackendTypeConverter.ToBoolean));
 
+                NativeTypeMapping.AddTypeAlias("bool", typeof(Boolean));
+                                
+                NativeTypeMapping.AddType("int2", NpgsqlDbType.Smallint, DbType.Int16, false,
+                null);
 
+                NativeTypeMapping.AddTypeAlias("int2", typeof(Int16));
+                
+                NativeTypeMapping.AddType("int4", NpgsqlDbType.Integer, DbType.Int32, false,
+                null);
+
+                NativeTypeMapping.AddTypeAlias("int4", typeof(Int32));
+
+                NativeTypeMapping.AddType("int8", NpgsqlDbType.Bigint, DbType.Int64, false,
+                null);
+
+                NativeTypeMapping.AddTypeAlias("int8", typeof(Int64));
+
+                NativeTypeMapping.AddType("float4", NpgsqlDbType.Real, DbType.Single, false,
+                null);
+
+                NativeTypeMapping.AddTypeAlias("float4", typeof(Single));
+
+                NativeTypeMapping.AddType("float8", NpgsqlDbType.Double, DbType.Double, false,
+                null);
+
+                NativeTypeMapping.AddTypeAlias("float8", typeof(Double));
+
+                NativeTypeMapping.AddType("numeric", NpgsqlDbType.Numeric, DbType.Decimal, false,
+                null);
+
+                NativeTypeMapping.AddTypeAlias("numeric", typeof(Decimal));
+
+                NativeTypeMapping.AddType("currency", NpgsqlDbType.Money, DbType.Currency, true,
+                new ConvertNativeToBackendHandler(BasicNativeToBackendTypeConverter.ToMoney));
+
+                NativeTypeMapping.AddType("date", NpgsqlDbType.Date, DbType.Date, true,
+                new ConvertNativeToBackendHandler(BasicNativeToBackendTypeConverter.ToDate));
+
+                NativeTypeMapping.AddType("time", NpgsqlDbType.Time, DbType.Time, true,
+                new ConvertNativeToBackendHandler(BasicNativeToBackendTypeConverter.ToTime));
+
+                NativeTypeMapping.AddType("timestamp", NpgsqlDbType.Timestamp, DbType.DateTime, true,
+                new ConvertNativeToBackendHandler(BasicNativeToBackendTypeConverter.ToDateTime));
+
+                NativeTypeMapping.AddTypeAlias("timestamp", typeof(DateTime));
+
+                NativeTypeMapping.AddType("point", NpgsqlDbType.Point, DbType.Object, true,
+                new ConvertNativeToBackendHandler(ExtendedNativeToBackendTypeConverter.ToPoint));
+
+                NativeTypeMapping.AddTypeAlias("point", typeof(NpgsqlPoint));
+                
+                NativeTypeMapping.AddType("box", NpgsqlDbType.Box, DbType.Object, true,
+                new ConvertNativeToBackendHandler(ExtendedNativeToBackendTypeConverter.ToBox));
+
+                NativeTypeMapping.AddTypeAlias("box", typeof(NpgsqlBox));
+                
+                NativeTypeMapping.AddType("lseg", NpgsqlDbType.LSeg, DbType.Object, true,
+                new ConvertNativeToBackendHandler(ExtendedNativeToBackendTypeConverter.ToLSeg));
+
+                NativeTypeMapping.AddTypeAlias("lseg", typeof(NpgsqlLSeg));
+
+                NativeTypeMapping.AddType("path", NpgsqlDbType.Path, DbType.Object, true,
+                new ConvertNativeToBackendHandler(ExtendedNativeToBackendTypeConverter.ToPath));
+
+                NativeTypeMapping.AddTypeAlias("path", typeof(NpgsqlPath));
+
+                NativeTypeMapping.AddType("polygon", NpgsqlDbType.Polygon, DbType.Object, true,
+                new ConvertNativeToBackendHandler(ExtendedNativeToBackendTypeConverter.ToPolygon));
+
+                NativeTypeMapping.AddTypeAlias("polygon", typeof(NpgsqlPolygon));
+
+                NativeTypeMapping.AddType("circle", NpgsqlDbType.Circle, DbType.Object, true,
+                new ConvertNativeToBackendHandler(ExtendedNativeToBackendTypeConverter.ToCircle));
+
+                NativeTypeMapping.AddTypeAlias("circle", typeof(NpgsqlCircle));
             }
         }
 
-
-
         ///<summary>
-        /// This method gets a type oid and return the equivalent
-        /// Npgsql type.
-        /// </summary>
-        ///
-
-        public static Type GetSystemTypeFromTypeOid(Hashtable oidToNameMapping, Int32 typeOid)
-        {
-            NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "GetSystemTypeFromTypeOid");
-            // This method gets a db type identifier and return the equivalent
-            // system type.
-
-            //[TODO] Find a way to eliminate this checking. It is just used at bootstrap time
-            // when connecting because we don't have yet loaded typeMapping. The switch below
-            // crashes with NullPointerReference when it can't find the typeOid.
-
-
-
-            if (!oidToNameMapping.ContainsKey(typeOid))
-                return Type.GetType("System.String");
-
-            switch ((DbType)oidToNameMapping[typeOid])
-            {
-            case DbType.Binary:
-                return Type.GetType("System.Byte[]");
-            case DbType.Boolean:
-                return Type.GetType("System.Boolean");
-            case DbType.Int16:
-                return Type.GetType("System.Int16");
-            case DbType.Single:
-                return Type.GetType("System.Single");
-            case DbType.Double:
-                return Type.GetType("System.Double");
-            case DbType.Int32:
-                return Type.GetType("System.Int32");
-            case DbType.Int64:
-                return Type.GetType("System.Int64");
-            case DbType.Decimal:
-                return Type.GetType("System.Decimal");
-            case DbType.DateTime:
-            case DbType.Date:
-            case DbType.Time:
-                return Type.GetType("System.DateTime");
-            case DbType.String:
-            case DbType.AnsiString:
-            case DbType.StringFixedLength:
-                return Type.GetType("System.String");
-            default:
-                throw new InvalidCastException(String.Format(resman.GetString("Exception_TypeNotSupported"), oidToNameMapping[typeOid]));
-
-            }
-
-
-        }
-
-
-        ///<summary>
-        /// This method is responsible to send query to get the oid-to-name mapping.
+        /// This method creates (or retrieves from cache) a mapping between type and OID 
+        /// of all natively supported postgresql data types.
         /// This is needed as from one version to another, this mapping can be changed and
         /// so we avoid hardcoding them.
         /// </summary>
-        public static Hashtable LoadTypesMapping(NpgsqlConnection conn)
+        /// <returns>NpgsqlTypeMapping containing all known data types.  The mapping must be
+        /// cloned before it is modified because it is cached; changes made by one connection may
+        /// effect another connection.</returns>
+        public static NpgsqlBackendTypeMapping CreateAndLoadInitialTypesMapping(NpgsqlConnector conn)
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "LoadTypesMapping");
 
             // [TODO] Verify another way to get higher concurrency.
-            lock(typeof(NpgsqlTypesHelper))
+            lock(CLASSNAME)
             {
-                Hashtable oidToNameMapping = (Hashtable) _oidToNameMappings[conn.ServerVersion];
+                // Check the cache for an initial types map.
+                NpgsqlBackendTypeMapping oidToNameMapping = (NpgsqlBackendTypeMapping) BackendTypeMappingCache[conn.ServerVersion];
 
                 if (oidToNameMapping != null)
                 {
-                    //conn.OidToNameMapping = oidToNameMapping;
                     return oidToNameMapping;
                 }
 
+                // Not in cache, create a new one.
+                oidToNameMapping = new NpgsqlBackendTypeMapping();
 
-                oidToNameMapping = new Hashtable();
-                //conn.OidToNameMapping = oidToNameMapping;
-
-                // Bootstrap value as the datareader below will use ConvertStringToNpgsqlType above.
-                //oidToNameMapping.Add(26, "oid");
-
-                NpgsqlCommand command = new NpgsqlCommand("select oid, typname from pg_type where typname in ('bool', 'bytea', 'date', 'float4', 'float8', 'int2', 'int4', 'int8', 'numeric', 'text', 'time', 'timestamp', 'timestamptz', 'timetz');", conn);
-
-                NpgsqlDataReader dr = command.ExecuteReader();
-
-                // Data was read. Clear the mapping from previous bootstrap value so we don't get
-                // exceptions trying to add duplicate key.
-                // oidToNameMapping.Clear();
-
-                while (dr.Read())
+                // Create a list of all natively supported postgresql data types.
+                NpgsqlBackendTypeInfo[] TypeInfoList = new NpgsqlBackendTypeInfo[]
                 {
-                    // Add the key as a Int32 value so the switch in ConvertStringToNpgsqlType can use it
-                    // in the search. If don't, the key is added as string and the switch doesn't work.
+                    new NpgsqlBackendTypeInfo(0, "unknown", NpgsqlDbType.Text, DbType.String, typeof(String),
+                        null),
 
-                    DbType type;
-                    String typeName = (String) dr[1];
+                    new NpgsqlBackendTypeInfo(0, "char", NpgsqlDbType.Text, DbType.String, typeof(String),
+                        null),
 
-                    switch (typeName)
-                    {
-                    case "bool":
-                        type = DbType.Boolean;
-                        break;
-                    case "bytea":
-                        type = DbType.Binary;
-                        break;
-                    case "date":
-                        type = DbType.Date;
-                        break;
-                    case "float4":
-                        type = DbType.Single;
-                        break;
-                    case "float8":
-                        type = DbType.Double;
-                        break;
-                    case "int2":
-                        type = DbType.Int16;
-                        break;
-                    case "int4":
-                        type = DbType.Int32;
-                        break;
-                    case "int8":
-                        type = DbType.Int64;
-                        break;
-                    case "numeric":
-                        type = DbType.Decimal;
-                        break;
-                    case "time":
-                    case "timetz":
-                        type = DbType.Time;
-                        break;
-                    case "timestamp":
-                    case "timestamptz":
-                        type = DbType.DateTime;
-                        break;
-                    default:
-                        type = DbType.String; // Default dbtype of the oid. Unsupported types will be returned as String.
-                        break;
-                    }
+                    new NpgsqlBackendTypeInfo(0, "bpchar", NpgsqlDbType.Text, DbType.String, typeof(String),
+                        null),
+
+                    new NpgsqlBackendTypeInfo(0, "varchar", NpgsqlDbType.Text, DbType.String, typeof(String),
+                        null),
+
+                    new NpgsqlBackendTypeInfo(0, "text", NpgsqlDbType.Text, DbType.String, typeof(String),
+                        null),
+                        
+                    new NpgsqlBackendTypeInfo(0, "name", NpgsqlDbType.Text, DbType.String, typeof(String),
+                        null),
+
+                    new NpgsqlBackendTypeInfo(0, "bytea", NpgsqlDbType.Bytea, DbType.Binary, typeof(Byte[]),
+                        new ConvertBackendToNativeHandler(BasicBackendToNativeTypeConverter.ToBinary)),
 
 
-                    oidToNameMapping.Add(Int32.Parse((String)dr[0]), type);
-                }
+                    new NpgsqlBackendTypeInfo(0, "bool", NpgsqlDbType.Boolean, DbType.Boolean, typeof(Boolean),
+                        new ConvertBackendToNativeHandler(BasicBackendToNativeTypeConverter.ToBoolean)),
 
-                _oidToNameMappings.Add(conn.ServerVersion, oidToNameMapping);
+
+                    new NpgsqlBackendTypeInfo(0, "int2", NpgsqlDbType.Smallint, DbType.Int16, typeof(Int16),
+                        null),
+
+                    new NpgsqlBackendTypeInfo(0, "int4", NpgsqlDbType.Integer, DbType.Int32, typeof(Int32),
+                        null),
+
+                    new NpgsqlBackendTypeInfo(0, "int8", NpgsqlDbType.Bigint, DbType.Int64, typeof(Int64),
+                        null),
+
+                    new NpgsqlBackendTypeInfo(0, "oid", NpgsqlDbType.Bigint, DbType.Int64, typeof(Int64),
+                        null),
+
+
+                    new NpgsqlBackendTypeInfo(0, "float4", NpgsqlDbType.Real, DbType.Single, typeof(Single),
+                        null),
+
+                    new NpgsqlBackendTypeInfo(0, "float8", NpgsqlDbType.Double, DbType.Double, typeof(Double),
+                        null),
+
+                    new NpgsqlBackendTypeInfo(0, "numeric", NpgsqlDbType.Numeric, DbType.Decimal, typeof(Decimal),
+                        null),
+
+                    new NpgsqlBackendTypeInfo(0, "money", NpgsqlDbType.Money, DbType.Decimal, typeof(Decimal),
+                        new ConvertBackendToNativeHandler(BasicBackendToNativeTypeConverter.ToMoney)),
+
+
+                    new NpgsqlBackendTypeInfo(0, "date", NpgsqlDbType.Date, DbType.Date, typeof(DateTime),
+                        new ConvertBackendToNativeHandler(BasicBackendToNativeTypeConverter.ToDate)),
+
+                    new NpgsqlBackendTypeInfo(0, "time", NpgsqlDbType.Time, DbType.Time, typeof(DateTime),
+                        new ConvertBackendToNativeHandler(BasicBackendToNativeTypeConverter.ToTime)),
+
+                    new NpgsqlBackendTypeInfo(0, "timetz", NpgsqlDbType.Time, DbType.Time, typeof(DateTime),
+                        new ConvertBackendToNativeHandler(BasicBackendToNativeTypeConverter.ToTime)),
+
+                    new NpgsqlBackendTypeInfo(0, "timestamp", NpgsqlDbType.Timestamp, DbType.DateTime, typeof(DateTime),
+                        new ConvertBackendToNativeHandler(BasicBackendToNativeTypeConverter.ToDateTime)),
+
+                    new NpgsqlBackendTypeInfo(0, "timestamptz", NpgsqlDbType.Timestamp, DbType.DateTime, typeof(DateTime),
+                        new ConvertBackendToNativeHandler(BasicBackendToNativeTypeConverter.ToDateTime)),
+
+
+                    new NpgsqlBackendTypeInfo(0, "point", NpgsqlDbType.Point, DbType.Object, typeof(NpgsqlPoint),
+                        new ConvertBackendToNativeHandler(ExtendedBackendToNativeTypeConverter.ToPoint)),
+
+                    new NpgsqlBackendTypeInfo(0, "lseg", NpgsqlDbType.LSeg, DbType.Object, typeof(NpgsqlLSeg),
+                        new ConvertBackendToNativeHandler(ExtendedBackendToNativeTypeConverter.ToLSeg)),
+
+                    new NpgsqlBackendTypeInfo(0, "path", NpgsqlDbType.Path, DbType.Object, typeof(NpgsqlPath),
+                        new ConvertBackendToNativeHandler(ExtendedBackendToNativeTypeConverter.ToPath)),
+
+                    new NpgsqlBackendTypeInfo(0, "box", NpgsqlDbType.Box, DbType.Object, typeof(NpgsqlBox),
+                        new ConvertBackendToNativeHandler(ExtendedBackendToNativeTypeConverter.ToBox)),
+
+                    new NpgsqlBackendTypeInfo(0, "circle", NpgsqlDbType.Circle, DbType.Object, typeof(NpgsqlCircle),
+                        new ConvertBackendToNativeHandler(ExtendedBackendToNativeTypeConverter.ToCircle)),
+
+                    new NpgsqlBackendTypeInfo(0, "polygon", NpgsqlDbType.Polygon, DbType.Object, typeof(NpgsqlPolygon),
+                        new ConvertBackendToNativeHandler(ExtendedBackendToNativeTypeConverter.ToPolygon)),
+                };
+
+                // Attempt to map each type info in the list to an OID on the backend and
+                // add each mapped type to the new type mapping object.
+                LoadTypesMappings(conn, oidToNameMapping, TypeInfoList);
+
+                // Add this mapping to the per-server-version cache so we don't have to
+                // do these expensive queries on every connection startup.
+                BackendTypeMappingCache.Add(conn.ServerVersion, oidToNameMapping);
+
                 return oidToNameMapping;
             }
 
 
         }
 
-
-
-        private static Byte[] ConvertByteAToByteArray(String byteA)
+        /// <summary>
+        /// Attempt to map types by issuing a query against pg_type.
+        /// This function takes a list of NpgsqlTypeInfo and attempts to resolve the OID field
+        /// of each by querying pg_type.  If the mapping is found, the type info object is
+        /// updated (OID) and added to the provided NpgsqlTypeMapping object.
+        /// </summary>
+        /// <param name="conn">NpgsqlConnector to send query through.</param>
+        /// <param name="TypeMappings">Mapping object to add types too.</param>
+        /// <param name="TypeInfoList">List of types that need to have OID's mapped.</param>
+        public static void LoadTypesMappings(NpgsqlConnector conn, NpgsqlBackendTypeMapping TypeMappings, IList TypeInfoList)
         {
-            NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "ConvertByteAToByteArray");
-            Int32 octalValue = 0;
-            Int32 byteAPosition = 0;
+            StringBuilder       InList = new StringBuilder();
+            Hashtable           NameIndex = new Hashtable();
 
-            Int32 byteAStringLength = byteA.Length;
-
-            MemoryStream ms = new MemoryStream();
-
-            while (byteAPosition < byteAStringLength)
-            {
-
-
-                // The IsDigit is necessary in case we receive a \ as the octal value and not
-                // as the indicator of a following octal value in decimal format.
-                // i.e.: \201\301P\A
-                if (byteA[byteAPosition] == '\\')
-
-                    if (byteAPosition + 1 == byteAStringLength)
-                    {
-                        octalValue = '\\';
-                        byteAPosition++;
-                    }
-                    else if (Char.IsDigit(byteA[byteAPosition + 1]))
-                    {
-                        octalValue = (Byte.Parse(byteA[byteAPosition + 1].ToString()) << 6);
-                        octalValue |= (Byte.Parse(byteA[byteAPosition + 2].ToString()) << 3);
-                        octalValue |= Byte.Parse(byteA[byteAPosition + 3].ToString());
-                        byteAPosition += 4;
-
-                    }
-                    else
-                    {
-                        octalValue = '\\';
-                        byteAPosition += 2;
-                    }
-
-
-                else
-                {
-                    octalValue = (Byte)byteA[byteAPosition];
-                    byteAPosition++;
-                }
-
-
-                ms.WriteByte((Byte)octalValue);
-
+            // Build a clause for the SELECT statement.
+            // Build a name->typeinfo mapping so we can match the results of the query
+            /// with the list of type objects efficiently.
+            foreach (NpgsqlBackendTypeInfo TypeInfo in TypeInfoList) {
+                NameIndex.Add(TypeInfo.Name, TypeInfo);
+                InList.AppendFormat("{0}'{1}'", ((InList.Length > 0) ? ", " : ""), TypeInfo.Name);
             }
 
-            return ms.ToArray();
+            if (InList.Length == 0) {
+                return;
+            }
 
+            NpgsqlCommand       command = new NpgsqlCommand("SELECT oid, typname FROM pg_type WHERE typname IN (" + InList.ToString() + ")", conn);
+            NpgsqlDataReader    dr = command.ExecuteReader();
 
+            while (dr.Read()) {
+                NpgsqlBackendTypeInfo TypeInfo = (NpgsqlBackendTypeInfo)NameIndex[dr[1].ToString()];
+
+                TypeInfo._OID = Convert.ToInt32(dr[0]);
+
+                TypeMappings.AddType(TypeInfo);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Delegate called to convert the given backend data to its native representation.
+    /// </summary>
+    internal delegate Object ConvertBackendToNativeHandler(NpgsqlBackendTypeInfo TypeInfo, String BackendData, Int16 TypeSize, Int32 TypeModifier);
+    /// <summary>
+    /// Delegate called to convert the given native data to its backand representation.
+    /// </summary>
+    internal delegate String ConvertNativeToBackendHandler(NpgsqlNativeTypeInfo TypeInfo, Object NativeData);
+
+    /// <summary>
+    /// Represents a backend data type.
+    /// This class can be called upon to convert a backend field representation to a native object.
+    /// </summary>
+    internal class NpgsqlBackendTypeInfo
+    {
+        private event ConvertBackendToNativeHandler _ConvertBackendToNative;
+
+        internal Int32           _OID;
+        private String           _Name;
+        private NpgsqlDbType     _NpgsqlDbType;
+        private DbType           _DbType;
+        private Type             _Type;
+
+        /// <summary>
+        /// Construct a new NpgsqlTypeInfo with the given attributes and conversion handlers.
+        /// </summary>
+        /// <param name="OID">Type OID provided by the backend server.</param>
+        /// <param name="Name">Type name provided by the backend server.</param>
+        /// <param name="NpgsqlDbType">NpgsqlDbType</param>
+        /// <param name="Type">System type to convert fields of this type to.</param>
+        /// <param name="ConvertBackendToNative">Data conversion handler.</param>
+        public NpgsqlBackendTypeInfo(Int32 OID, String Name, NpgsqlDbType NpgsqlDbType, DbType DbType, Type Type,
+                              ConvertBackendToNativeHandler ConvertBackendToNative)
+        {
+            _OID = OID;
+            _Name = Name;
+            _NpgsqlDbType = NpgsqlDbType;
+            _DbType = DbType;
+            _Type = Type;
+            _ConvertBackendToNative = ConvertBackendToNative;
         }
 
-        private static String ConvertByteArrayToBytea(Byte[] byteArray)
+        /// <summary>
+        /// Type OID provided by the backend server.
+        /// </summary>
+        public Int32 OID
         {
-            NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "ConvertByteArrayToBytea");
-            int len = byteArray.Length;
-            char[] res = new char[len * 5];
-            for (int i=0, o=0; i<len; ++i, o += 5)
-            {
-                byte item = byteArray[i];
-                res[o] = res[o + 1] = '\\';
-                res[o + 2] = (char)('0' + (7 & (item >> 6)));
-                res[o + 3] = (char)('0' + (7 & (item >> 3)));
-                res[o + 4] = (char)('0' + (7 & item));
-            }
-            return new String(res);
+          get { return _OID; }
+        }
 
+        /// <summary>
+        /// Type name provided by the backend server.
+        /// </summary>
+        public String Name
+        { get { return _Name; } }
+
+        /// <summary>
+        /// NpgsqlDbType.
+        /// </summary>
+        public NpgsqlDbType NpgsqlDbType
+        { get { return _NpgsqlDbType; } }
+
+        /// <summary>
+        /// NpgsqlDbType.
+        /// </summary>
+        public DbType DbType
+        { get { return _DbType; } }
+        
+        /// <summary>
+        /// System type to convert fields of this type to.
+        /// </summary>
+        public Type Type
+        { get { return _Type; } }
+
+        /// <summary>
+        /// Perform a data conversion from a backend representation to 
+        /// a native object.
+        /// </summary>
+        /// <param name="BackendData">Data sent from the backend.</param>
+        /// <param name="TypeModifier">Type modifier field sent from the backend.</param>
+        public Object ConvertToNative(String BackendData, Int16 TypeSize, Int32 TypeModifier)
+        {
+            if (_ConvertBackendToNative != null) {
+                return _ConvertBackendToNative(this, BackendData, TypeSize, TypeModifier);
+            } else {
+                try {
+                    return Convert.ChangeType(BackendData, Type, CultureInfo.InvariantCulture);
+                } catch {
+                    return BackendData;
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Represents a backend data type.
+    /// This class can be called upon to convert a native object to its backend field representation,
+    /// </summary>
+    internal class NpgsqlNativeTypeInfo
+    {
+        private event ConvertNativeToBackendHandler _ConvertNativeToBackend;
+
+        private String           _Name;
+        private NpgsqlDbType     _NpgsqlDbType;
+        private DbType           _DbType;
+        private Boolean          _Quote;
+
+        /// <summary>
+        /// Construct a new NpgsqlTypeInfo with the given attributes and conversion handlers.
+        /// </summary>
+        /// <param name="OID">Type OID provided by the backend server.</param>
+        /// <param name="Name">Type name provided by the backend server.</param>
+        /// <param name="NpgsqlDbType">NpgsqlDbType</param>
+        /// <param name="Type">System type to convert fields of this type to.</param>
+        /// <param name="ConvertBackendToNative">Data conversion handler.</param>
+        /// <param name="ConvertNativeToBackend">Data conversion handler.</param>
+        public NpgsqlNativeTypeInfo(String Name, NpgsqlDbType NpgsqlDbType, DbType DbType, Boolean Quote,
+                              ConvertNativeToBackendHandler ConvertNativeToBackend)
+        {
+            _Name = Name;
+            _NpgsqlDbType = NpgsqlDbType;
+            _DbType = DbType;
+            _Quote = Quote;
+            _ConvertNativeToBackend = ConvertNativeToBackend;
+        }
+
+        /// <summary>
+        /// Type name provided by the backend server.
+        /// </summary>
+        public String Name
+        { get { return _Name; } }
+
+        /// <summary>
+        /// NpgsqlDbType.
+        /// </summary>
+        public NpgsqlDbType NpgsqlDbType
+        { get { return _NpgsqlDbType; } }
+
+        /// <summary>
+        /// DbType.
+        /// </summary>
+        public DbType DbType
+        { get { return _DbType; } }
+        
+        
+        /// <summary>
+        /// Apply quoting.
+        /// </summary>
+        public Boolean Quote
+        { get { return _Quote; } }
+
+        /// <summary>
+        /// Perform a data conversion from a native object to
+        /// a backend representation.
+        /// DBNull will always be converted to "NULL".
+        /// </summary>
+        /// <param name="NativeData">Native .NET object to be converted.</param>
+        /// <param name="SuppressQuoting">Never add quotes (only applies to certain types).</param>
+        public String ConvertToBackend(Object NativeData, Boolean SuppressQuoting)
+        {
+            if (NativeData == DBNull.Value) {
+                return "NULL";
+            } else if (_ConvertNativeToBackend != null) {
+                return QuoteString(! SuppressQuoting, _ConvertNativeToBackend(this, NativeData));
+            } else {
+                return QuoteString(! SuppressQuoting, (String)Convert.ChangeType(NativeData, typeof(String), CultureInfo.InvariantCulture));
+            }
+        }
+
+        private static String QuoteString(Boolean Quote, String S)
+        {
+            if (Quote) {
+                return String.Format("'{0}'", S);
+            } else {
+                return S;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Provide mapping between type OID, type name, and a NpgsqlBackendTypeInfo object that represents it.
+    /// </summary>
+    internal class NpgsqlBackendTypeMapping
+    {
+        private Hashtable       OIDIndex;
+        private Hashtable       NameIndex;
+
+        /// <summary>
+        /// Construct an empty mapping.
+        /// </summary>
+        public NpgsqlBackendTypeMapping()
+        {
+            OIDIndex = new Hashtable();
+            NameIndex = new Hashtable();
+        }
+
+        /// <summary>
+        /// Copy constuctor.
+        /// </summary>
+        private NpgsqlBackendTypeMapping(NpgsqlBackendTypeMapping Other)
+        {
+            OIDIndex = (Hashtable)Other.OIDIndex.Clone();
+            NameIndex = (Hashtable)Other.NameIndex.Clone();
+        }
+
+        /// <summary>
+        /// Add the given NpgsqlBackendTypeInfo to this mapping.
+        /// </summary>
+        public void AddType(NpgsqlBackendTypeInfo T)
+        {
+            if (OIDIndex.Contains(T.OID)) {
+                throw new Exception("Type already mapped");
+            }
+
+            OIDIndex[T.OID] = T;
+            NameIndex[T.Name] = T;
+        }
+
+        /// <summary>
+        /// Add a new NpgsqlBackendTypeInfo with the given attributes and conversion handlers to this mapping.
+        /// </summary>
+        /// <param name="OID">Type OID provided by the backend server.</param>
+        /// <param name="Name">Type name provided by the backend server.</param>
+        /// <param name="NpgsqlDbType">NpgsqlDbType</param>
+        /// <param name="Type">System type to convert fields of this type to.</param>
+        /// <param name="ConvertBackendToNative">Data conversion handler.</param>
+        public void AddType(Int32 OID, String Name, NpgsqlDbType NpgsqlDbType, DbType DbType, Type Type,
+                            ConvertBackendToNativeHandler BackendConvert)
+        {
+            AddType(new NpgsqlBackendTypeInfo(OID, Name, NpgsqlDbType, DbType, Type, BackendConvert));
+        }
+
+        /// <summary>
+        /// Get the number of type infos held.
+        /// </summary>
+        public Int32 Count
+        { get { return NameIndex.Count; } }
+
+        /// <summary>
+        /// Retrieve the NpgsqlBackendTypeInfo with the given backend type OID, or null if none found.
+        /// </summary>
+        public NpgsqlBackendTypeInfo this [Int32 OID]
+        {
+            get
+            {
+                return (NpgsqlBackendTypeInfo)OIDIndex[OID];
+            }
+        }
+
+        /// <summary>
+        /// Retrieve the NpgsqlBackendTypeInfo with the given backend type name, or null if none found.
+        /// </summary>
+        public NpgsqlBackendTypeInfo this [String Name]
+        {
+            get
+            {
+                return (NpgsqlBackendTypeInfo)NameIndex[Name];
+            }
+        }
+
+        /// <summary>
+        /// Make a shallow copy of this type mapping.
+        /// </summary>
+        public NpgsqlBackendTypeMapping Clone()
+        {
+            return new NpgsqlBackendTypeMapping(this);
+        }
+
+        /// <summary>
+        /// Determine if a NpgsqlBackendTypeInfo with the given backend type OID exists in this mapping.
+        /// </summary>
+        public Boolean ContainsOID(Int32 OID)
+        {
+            return OIDIndex.ContainsKey(OID);
+        }
+
+        /// <summary>
+        /// Determine if a NpgsqlBackendTypeInfo with the given backend type name exists in this mapping.
+        /// </summary>
+        public Boolean ContainsName(String Name)
+        {
+            return NameIndex.ContainsKey(Name);
+        }
+    }
+
+
+
+    /// <summary>
+    /// Provide mapping between type Type, NpgsqlDbType and a NpgsqlNativeTypeInfo object that represents it.
+    /// </summary>
+    internal class NpgsqlNativeTypeMapping
+    {
+        private Hashtable       NameIndex;
+        private Hashtable       NpgsqlDbTypeIndex;
+        private Hashtable       DbTypeIndex;
+        private Hashtable       TypeIndex;
+
+        /// <summary>
+        /// Construct an empty mapping.
+        /// </summary>
+        public NpgsqlNativeTypeMapping()
+        {
+            NameIndex = new Hashtable();
+            NpgsqlDbTypeIndex = new Hashtable();
+            DbTypeIndex = new Hashtable();
+            TypeIndex = new Hashtable();
+        }
+
+        /// <summary>
+        /// Add the given NpgsqlNativeTypeInfo to this mapping.
+        /// </summary>
+        public void AddType(NpgsqlNativeTypeInfo T)
+        {
+            if (NameIndex.Contains(T.Name)) {
+                throw new Exception("Type already mapped");
+            }
+
+            NameIndex[T.Name] = T;
+            NpgsqlDbTypeIndex[T.NpgsqlDbType] = T;
+            DbTypeIndex[T.DbType] = T;
+        }
+
+        /// <summary>
+        /// Add a new NpgsqlNativeTypeInfo with the given attributes and conversion handlers to this mapping.
+        /// </summary>
+        /// <param name="OID">Type OID provided by the backend server.</param>
+        /// <param name="Name">Type name provided by the backend server.</param>
+        /// <param name="NpgsqlDbType">NpgsqlDbType</param>
+        /// <param name="ConvertBackendToNative">Data conversion handler.</param>
+        /// <param name="ConvertNativeToBackend">Data conversion handler.</param>
+        public void AddType(String Name, NpgsqlDbType NpgsqlDbType, DbType DbType, Boolean Quote,
+                            ConvertNativeToBackendHandler NativeConvert)
+        {
+            AddType(new NpgsqlNativeTypeInfo(Name, NpgsqlDbType, DbType, Quote, NativeConvert));
+        }
+
+        public void AddNpgsqlDbTypeAlias(String Name, NpgsqlDbType NpgsqlDbType)
+        {
+            if (NpgsqlDbTypeIndex.Contains(NpgsqlDbType)) {
+                throw new Exception("NpgsqlDbType already aliased");
+            }
+
+            NpgsqlDbTypeIndex[NpgsqlDbType] = NameIndex[Name];
+        }
+        
+        public void AddDbTypeAlias(String Name, DbType DbType)
+        {
+            if (DbTypeIndex.Contains(DbType)) {
+                throw new Exception("NpgsqlDbType already aliased");
+            }
+
+            DbTypeIndex[DbType] = NameIndex[Name];
+        }
+
+        public void AddTypeAlias(String Name, Type Type)
+        {
+            if (TypeIndex.Contains(Type)) {
+                throw new Exception("Type already aliased");
+            }
+
+            TypeIndex[Type] = NameIndex[Name];
+        }
+
+        /// <summary>
+        /// Get the number of type infos held.
+        /// </summary>
+        public Int32 Count
+        { get { return NameIndex.Count; } }
+
+        /// <summary>
+        /// Retrieve the NpgsqlNativeTypeInfo with the given backend type name, or null if none found.
+        /// </summary>
+        public NpgsqlNativeTypeInfo this [String Name]
+        {
+            get
+            {
+                return (NpgsqlNativeTypeInfo)NameIndex[Name];
+            }
+        }
+
+        /// <summary>
+        /// Retrieve the NpgsqlNativeTypeInfo with the given NpgsqlDbType, or null if none found.
+        /// </summary>
+        public NpgsqlNativeTypeInfo this [NpgsqlDbType NpgsqlDbType]
+        {
+            get
+            {
+                return (NpgsqlNativeTypeInfo)NpgsqlDbTypeIndex[NpgsqlDbType];
+            }
+        }
+        
+        /// <summary>
+        /// Retrieve the NpgsqlNativeTypeInfo with the given DbType, or null if none found.
+        /// </summary>
+        public NpgsqlNativeTypeInfo this [DbType DbType]
+        {
+            get
+            {
+                return (NpgsqlNativeTypeInfo)DbTypeIndex[DbType];
+            }
+        }
+        
+        
+
+        /// <summary>
+        /// Retrieve the NpgsqlNativeTypeInfo with the given Type, or null if none found.
+        /// </summary>
+        public NpgsqlNativeTypeInfo this [Type Type]
+        {
+            get
+            {
+                return (NpgsqlNativeTypeInfo)TypeIndex[Type];            
+            }
+        }
+
+        /// <summary>
+        /// Determine if a NpgsqlNativeTypeInfo with the given backend type name exists in this mapping.
+        /// </summary>
+        public Boolean ContainsName(String Name)
+        {
+            return NameIndex.ContainsKey(Name);
+        }
+
+        /// <summary>
+        /// Determine if a NpgsqlNativeTypeInfo with the given NpgsqlDbType exists in this mapping.
+        /// </summary>
+        public Boolean ContainsNpgsqlDbType(NpgsqlDbType NpgsqlDbType)
+        {
+            return NpgsqlDbTypeIndex.ContainsKey(NpgsqlDbType);
+        }
+
+        /// <summary>
+        /// Determine if a NpgsqlNativeTypeInfo with the given Type name exists in this mapping.
+        /// </summary>
+        public Boolean ContainsType(Type Type)
+        {
+            return TypeIndex.ContainsKey(Type);
         }
     }
 }

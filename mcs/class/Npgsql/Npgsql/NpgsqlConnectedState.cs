@@ -48,11 +48,11 @@ namespace Npgsql
             }
         }
 
-        public override void Startup(NpgsqlConnection context)
+        public override void Startup(NpgsqlConnector context)
         {
             NpgsqlStartupPacket startupPacket  = new NpgsqlStartupPacket(296, //Not used.
                                                   context.BackendProtocolVersion,
-                                                  context.DatabaseName,
+                                                  context.Database,
                                                   context.UserName,
                                                   "",
                                                   "",

@@ -106,6 +106,9 @@
 	<data name="Description_Database">
 		<value>Current PostgreSQL database, 'Database=X' in the connection string</value>
 	</data>
+	<data name="Log_ConnectionStringValues">
+		<value>ConnectionString Option: {0} = {1}</value>
+	</data>
 	<data name="Exception_NoNestedTransactions">
 		<value>Nested/Concurrent transactions aren't supported.</value>
 	</data>
@@ -132,23 +135,5 @@
 	</data>
 	<data name="Exception_CloseError">
 		<value>Error in Close()</value>
-	</data>
-	<data name="Exception_WrongKeyVal">
-		<value>key=value argument incorrect in ConnectionString</value>
-	</data>
-	<data name="Exception_InvalidBooleanKeyVal">
-		<value>expecting key=[boolean] value in ConnectionString</value>
-	</data>
-	<data name="Exception_InvalidIntegerKeyVal">
-		<value>expecting key=[numeric] value in ConnectionString</value>
-	</data>
-	<data name="Log_ConnectionStringValues">
-		<value>Connection string option: {0} = {1}</value>
-	</data>
-	<data name="Exception_ChangeDatabaseOnOpenConn">
-		<value>The connection is not open. Use 'Database=X;' in the connection string to set the database for a closed connection.</value>
-	</data>
-    <data name="Exception_BackendErrors">
-		<value>There have been errors reported by the backend.</value>
 	</data>
 </root>

@@ -174,16 +174,15 @@ namespace Npgsql
             if (msglevel > level)
                 return;
 
-            if(Parameters.Length == 0)
-            {
-                string message = resman.GetString(ResourceString);
-                LogMsg(message, msglevel);
+            string message = resman.GetString(ResourceString);
+
+            if (message == null) {
+                message = String.Format("Unable to find resource string {0} for class {1}", ResourceString, resman.BaseName);
+            } else if (Parameters.Length > 0) {
+                message = String.Format(message, Parameters);
             }
-            else
-            {
-                string message = String.Format(resman.GetString(ResourceString), Parameters);
-                LogMsg(message, msglevel);
-            }
+
+            LogMsg(message, msglevel);
         }
 
         /// <summary>

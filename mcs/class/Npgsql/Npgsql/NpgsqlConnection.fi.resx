@@ -130,9 +130,6 @@
 	<data name="Exception_CloseError">
 		<value>Virhe Close()-kutsussa</value>
 	</data>
-	<data name="Exception_WrongKeyVal">
-		<value>Virheellinen key=value -argumentti liittymistiedoissa</value>
-	</data>
 	<data name="Log_ConnectionStringValues">
 		<value>Liittymistietojen argumentti: {0} = {1}</value>
 	</data>

@@ -130,9 +130,6 @@
 	<data name="Exception_CloseError">
 		<value>Beim Aufruf von Close() sind Fehler aufgetreten</value>
 	</data>
-	<data name="Exception_WrongKeyVal">
-		<value>Schlüssel=Wert Argumentpaar im ConnectionString ist ungültig</value>
-	</data>
 	<data name="Log_ConnectionStringValues">
 		<value>ConnectionString Option: {0} = {1}</value>
 	</data>

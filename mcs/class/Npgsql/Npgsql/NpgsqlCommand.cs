@@ -23,28 +23,31 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-
 using System;
 using System.Data;
-using System.Net;
-using System.Net.Sockets;
-using System.IO;
 using System.Text;
+using System.Resources;
 using System.ComponentModel;
 using System.Collections;
+
 using NpgsqlTypes;
 using Npgsql.Design;
 
 namespace Npgsql
 {
     /// <summary>
-    /// Represents a SQL statement or function (stored procedure) to execute against a PostgreSQL database. This class cannot be inherited.
+    /// Represents a SQL statement or function (stored procedure) to execute
+    /// against a PostgreSQL database. This class cannot be inherited.
     /// </summary>
     [System.Drawing.ToolboxBitmapAttribute(typeof(NpgsqlCommand)), ToolboxItem(true)]
     public sealed class NpgsqlCommand : Component, IDbCommand
     {
+        // Logging related values
+        private static readonly String CLASSNAME = "NpgsqlCommand";
+        private static ResourceManager resman = new ResourceManager(typeof(NpgsqlCommand));
 
         private NpgsqlConnection            connection;
+        private NpgsqlConnector             connector;
         private NpgsqlTransaction           transaction;
         private String                      text;
         private Int32                       timeout;
@@ -56,10 +59,6 @@ namespace Npgsql
 
         private NpgsqlParse                 parse;
         private NpgsqlBind                  bind;
-
-        // Logging related values
-        private static readonly String CLASSNAME = "NpgsqlCommand";
-        private System.Resources.ResourceManager resman;
 
         // Constructors
 
@@ -89,26 +88,33 @@ namespace Npgsql
         /// <param name="transaction">The <see cref="Npgsql.NpgsqlTransaction">NpgsqlTransaction</see> in which the <see cref="Npgsql.NpgsqlCommand">NpgsqlCommand</see> executes.</param>
         public NpgsqlCommand(String cmdText, NpgsqlConnection connection, NpgsqlTransaction transaction)
         {
-            resman = new System.Resources.ResourceManager(this.GetType());
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, CLASSNAME);
 
             planName = String.Empty;
             text = cmdText;
             this.connection = connection;
+            if (this.connection != null)
+            	this.connector = connection.Connector;
+            
             parameters = new NpgsqlParameterCollection();
             timeout = 20;
             type = CommandType.Text;
             this.Transaction = transaction;
         }
 
-        /*
         /// <summary>
-        /// Finalizer for <see cref="Npgsql.NpgsqlCommand">NpgsqlCommand</see>.
+        /// Used to execute internal commands.
         /// </summary>
-        ~NpgsqlCommand ()
+        internal NpgsqlCommand(String cmdText, NpgsqlConnector connector)
         {
-            Dispose(false);
-        }*/
+            resman = new System.Resources.ResourceManager(this.GetType());
+            NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, CLASSNAME);
+
+            planName = String.Empty;
+            text = cmdText;
+            this.connector = connector;
+            type = CommandType.Text;
+        }
 
         // Public properties.
         /// <summary>
@@ -183,7 +189,7 @@ namespace Npgsql
 
             set
             {
-                connection = (NpgsqlConnection) value;
+                Connection = (NpgsqlConnection) value;
                 NpgsqlEventLog.LogPropertySet(LogLevel.Debug, CLASSNAME, "IDbCommand.Connection", value);
             }
         }
@@ -205,10 +211,23 @@ namespace Npgsql
             {
                 if (this.transaction != null && this.transaction.Connection == null)
                     this.transaction = null;
-                if (this.connection != null && this.connection.InTransaction == true)
+                if (this.connection != null && this.Connector.Transaction != null)
                     throw new InvalidOperationException(resman.GetString("Exception_SetConnectionInTransaction"));
                 this.connection = value;
+                if (this.connection != null)
+                	connector = this.connection.Connector;
+                
                 NpgsqlEventLog.LogPropertySet(LogLevel.Debug, CLASSNAME, "Connection", value);
+            }
+        }
+
+        internal NpgsqlConnector Connector {
+            get
+            {
+                if (connector == null && this.connection != null)
+                    connector = this.connection.Connector;
+                    
+                return connector;
             }
         }
 
@@ -326,12 +345,12 @@ namespace Npgsql
             ExecuteCommand();
 
             // If nothing is returned, just return -1.
-            if(connection.Mediator.CompletedResponses.Count == 0) {
+            if(Connector.Mediator.CompletedResponses.Count == 0) {
                 return -1;
             }
 
             // Check if the response is available.
-            String firstCompletedResponse = (String)connection.Mediator.CompletedResponses[0];
+            String firstCompletedResponse = (String)Connector.Mediator.CompletedResponses[0];
 
             if (firstCompletedResponse == null)
                 return -1;
@@ -414,7 +433,7 @@ namespace Npgsql
             ExecuteCommand();
 
             // Get the resultsets and create a Datareader with them.
-            return new NpgsqlDataReader(connection.Mediator.ResultSets, connection.Mediator.CompletedResponses, connection, cb);
+            return new NpgsqlDataReader(Connector.Mediator.ResultSets, Connector.Mediator.CompletedResponses, connection, cb);
         }
 
         ///<summary>
@@ -430,16 +449,16 @@ namespace Npgsql
                 for (Int32 i = 0; i < parameters.Count; i++)
                 {
                     // Do not quote strings, or escape existing quotes - this will be handled by the backend.
-                    parameterValues[i] = NpgsqlTypesHelper.ConvertNpgsqlParameterToBackendStringValue(parameters[i], false);
+                    parameterValues[i] = parameters[i].TypeInfo.ConvertToBackend(parameters[i].Value, true);
                 }
                 bind.ParameterValues = parameterValues;
             }
 
-            connection.Bind(bind);
-            connection.Mediator.RequireReadyForQuery = false;
-            connection.Flush();
+            Connector.Bind(bind);
+            Connector.Mediator.RequireReadyForQuery = false;
+            Connector.Flush();
 
-            connection.CheckErrorsAndNotifications();
+            connector.CheckErrorsAndNotifications();
         }
 
         /// <summary>
@@ -470,7 +489,7 @@ namespace Npgsql
             // Only the first column of the first row must be returned.
 
             // Get ResultSets.
-            ArrayList resultSets = connection.Mediator.ResultSets;
+            ArrayList resultSets = Connector.Mediator.ResultSets;
 
             // First data is the RowDescription object.
             // Check all resultsets as insert commands could have been sent along
@@ -501,13 +520,13 @@ namespace Npgsql
             // Check the connection state.
             CheckConnectionState();
 
-            if (! connection.SupportsPrepare) {
+            if (! Connector.SupportsPrepare) {
                 return;	// Do nothing.
             }
 
-            if (connection.BackendProtocolVersion == ProtocolVersion.Version2)
+            if (connector.BackendProtocolVersion == ProtocolVersion.Version2)
             {
-                NpgsqlCommand command = new NpgsqlCommand(GetPrepareCommandText(), connection );
+                NpgsqlCommand command = new NpgsqlCommand(GetPrepareCommandText(), connector );
                 command.ExecuteNonQuery();
             }
             else
@@ -518,12 +537,12 @@ namespace Npgsql
 
                 parse = new NpgsqlParse(planName, GetParseCommandText(), new Int32[] {});
 
-                connection.Parse(parse);
-                connection.Mediator.RequireReadyForQuery = false;
-                connection.Flush();
+                Connector.Parse(parse);
+                Connector.Mediator.RequireReadyForQuery = false;
+                Connector.Flush();
 
                 // Check for errors and/or notifications and do the Right Thing.
-                connection.CheckErrorsAndNotifications();
+                connector.CheckErrorsAndNotifications();
 
                 bind = new NpgsqlBind(portalName, planName, new Int16[] {0}, null, new Int16[] {0});
             }
@@ -558,13 +577,11 @@ namespace Npgsql
         private void CheckConnectionState()
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "CheckConnectionState");
-
+            
             // Check the connection state.
-            if (connection == null)
-                throw new InvalidOperationException(resman.GetString("Exception_ConnectionNull"));
-            if (connection.State != ConnectionState.Open)
+            if (Connector == null || Connector.State != ConnectionState.Open) {
                 throw new InvalidOperationException(resman.GetString("Exception_ConnectionNotOpen"));
-
+            }
         }
 
         /// <summary>
@@ -592,31 +609,34 @@ namespace Npgsql
             String result = text;
 
             if (type == CommandType.StoredProcedure)
-                if (connection.SupportsPrepare)
+                if (Connector.SupportsPrepare)
                     result = "select * from " + result; // This syntax is only available in 7.3+ as well SupportsPrepare.
                 else
                     result = "select " + result;				// Only a single result return supported. 7.2 and earlier.
             else if (type == CommandType.TableDirect)
                 return "select * from " + result; // There is no parameter support on table direct.
 
-            if (parameters.Count == 0)
+            if (parameters == null || parameters.Count == 0)
                 return result;
 
 
             //CheckParameters();
 
-            String parameterName;
-
             for (Int32 i = 0; i < parameters.Count; i++)
             {
-                parameterName = parameters[i].ParameterName;
-
-                result = ReplaceParameterValue(result, parameterName, NpgsqlTypesHelper.ConvertNpgsqlParameterToBackendStringValue(parameters[i], true));
-
+                NpgsqlParameter Param = parameters[i];
+                
+                // FIXME DEBUG ONLY
+                // adding the '::<datatype>' on the end of a parameter is a highly
+                // questionable practice, but it is great for debugging!
+                result = ReplaceParameterValue(
+                            result,
+                            Param.ParameterName,
+                            Param.TypeInfo.ConvertToBackend(Param.Value, false) + "::" + Param.TypeInfo.Name
+                         );
             }
 
             return result;
-
         }
 
 
@@ -634,7 +654,7 @@ namespace Npgsql
 
             for (Int32 i = 0; i < parameters.Count; i++)
             {
-                result.Append(NpgsqlTypesHelper.ConvertNpgsqlParameterToBackendStringValue(parameters[i], false) + ',');
+                result.Append(parameters[i].TypeInfo.ConvertToBackend(parameters[i].Value, false) + ',');
             }
 
             result = result.Remove(result.Length - 1, 1);
@@ -722,7 +742,8 @@ namespace Npgsql
 
                 for (i = 0; i < parameters.Count; i++)
                 {
-                    command.Append(NpgsqlTypesHelper.GetBackendTypeNameFromDbType(parameters[i].DbType));
+//                    command.Append(NpgsqlTypesHelper.GetDefaultTypeInfo(parameters[i].DbType));
+                    command.Append(parameters[i].TypeInfo.Name);
 
                     command.Append(',');
                 }
@@ -755,7 +776,9 @@ namespace Npgsql
                         (result[paramEnd] == ' ' ||
                          result[paramEnd] == ',' ||
                          result[paramEnd] == ')' ||
-                         result[paramEnd] == ';'))
+                         result[paramEnd] == ';' ||
+                         result[paramEnd] == '\n' ||
+                         result[paramEnd] == '\t'))
                 {
                     result = result.Substring(0, paramStart) + paramVal + result.Substring(paramEnd);
                     found = true;
@@ -783,28 +806,43 @@ namespace Npgsql
         {
             // Check the connection state first.
             CheckConnectionState();
+	    
+            // reset any responses just before getting new ones
+            connector.Mediator.ResetResponses();
+
 
             if (parse == null) {
-                connection.Query(this);
+                Connector.Query(this);
 
                 // Check for errors and/or notifications and do the Right Thing.
-                connection.CheckErrorsAndNotifications();
-            } else {
-                BindParameters();
+                connector.CheckErrorsAndNotifications();
+            } 
+            else 
+            {
+                try
+                {
+					
+                    BindParameters();
 
-                // Check for errors and/or notifications and do the Right Thing.
-                connection.CheckErrorsAndNotifications();
+                    // Check for errors and/or notifications and do the Right Thing.
+                    connector.CheckErrorsAndNotifications();
 
-                connection.Execute(new NpgsqlExecute(bind.PortalName, 0));
+                    connector.Execute(new NpgsqlExecute(bind.PortalName, 0));
 
-                // Check for errors and/or notifications and do the Right Thing.
-                connection.CheckErrorsAndNotifications();
-            }
-            /*	else
-            		throw new NotImplementedException(resman.GetString("Exception_CommandTypeTableDirect"));*/
+                    // Check for errors and/or notifications and do the Right Thing.
+                    connector.CheckErrorsAndNotifications();
+                }
+                finally
+                {
+                    // As per documentation:
+                    // "[...] When an error is detected while processing any extended-query message,
+                    // the backend issues ErrorResponse, then reads and discards messages until a
+                    // Sync is reached, then issues ReadyForQuery and returns to normal message processing.[...]"
+                    // So, send a sync command if we get any problems.
+
+                    connector.Sync();
+                }
+            }           
         }
-
-
     }
-
 }

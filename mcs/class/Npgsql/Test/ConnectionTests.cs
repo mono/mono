@@ -59,7 +59,7 @@ namespace NpgsqlTests
 		{
 			try{
 				_conn.Open();
-				//Assertion.AssertEquals("ConnectionOpen", ConnectionState.Open, _conn.State);
+				//Assert.AreEqual("ConnectionOpen", ConnectionState.Open, _conn.State);
 			} catch (Exception e)
 			{
 				Console.WriteLine(e.ToString());
@@ -79,7 +79,7 @@ namespace NpgsqlTests
 			
 			String result = (String)command.ExecuteScalar();
 			
-			Assertion.AssertEquals("template1", result);
+			Assert.AreEqual("template1", result);
 				
 		}
 		

@@ -61,7 +61,7 @@ namespace Npgsql
 
 
 
-        public override void Query( NpgsqlConnection context, NpgsqlCommand command )
+        public override void Query( NpgsqlConnector context, NpgsqlCommand command )
         {
 
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "Query");
@@ -80,7 +80,7 @@ namespace Npgsql
 
         }
 
-        public override void Parse(NpgsqlConnection context, NpgsqlParse parse)
+        public override void Parse(NpgsqlConnector context, NpgsqlParse parse)
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "Parse");
             BufferedStream stream = new BufferedStream(context.Stream);
@@ -89,7 +89,7 @@ namespace Npgsql
         }
 
 
-        public override void Sync(NpgsqlConnection context)
+        public override void Sync(NpgsqlConnector context)
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "Sync");
             _syncMessage.WriteToStream(context.Stream, context.Encoding);
@@ -97,14 +97,14 @@ namespace Npgsql
             ProcessBackendResponses(context);
         }
 
-        public override void Flush(NpgsqlConnection context)
+        public override void Flush(NpgsqlConnector context)
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "Flush");
             _flushMessage.WriteToStream(context.Stream, context.Encoding);
             ProcessBackendResponses(context);
         }
 
-        public override void Bind(NpgsqlConnection context, NpgsqlBind bind)
+        public override void Bind(NpgsqlConnector context, NpgsqlBind bind)
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "Bind");
             BufferedStream stream = new BufferedStream(context.Stream);
@@ -113,7 +113,7 @@ namespace Npgsql
 
         }
 
-        public override void Execute(NpgsqlConnection context, NpgsqlExecute execute)
+        public override void Execute(NpgsqlConnector context, NpgsqlExecute execute)
         {
 
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "Execute");
@@ -125,5 +125,21 @@ namespace Npgsql
             Sync(context);
         }
 
+        public override void Close( NpgsqlConnector context )
+        {
+            NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "Close");   
+            Stream stream = context.Stream;
+            stream.WriteByte((Byte)'X');
+            if (context.BackendProtocolVersion >= ProtocolVersion.Version3)
+                PGUtil.WriteInt32(stream, 4);
+            stream.Flush();
+
+            try {
+                stream.Close();
+            } catch {}
+
+            context.Stream = null;
+            ChangeState( context, NpgsqlClosedState.Instance );
+        }
     }
 }

@@ -32,6 +32,8 @@ using System.Data;
 using System.Collections;
 using System.ComponentModel;
 using Npgsql.Design;
+using NpgsqlTypes;
+
 
 namespace Npgsql
 {
@@ -152,7 +154,7 @@ namespace Npgsql
         /// <param name="parameterName">The name of the parameter.</param>
         /// <param name="parameterType">One of the DbType values.</param>
         /// <returns>The index of the new <see cref="Npgsql.NpgsqlParameter">NpgsqlParameter</see> object.</returns>
-        public NpgsqlParameter Add(string parameterName, DbType parameterType)
+        public NpgsqlParameter Add(string parameterName, NpgsqlDbType parameterType)
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "Add", parameterName, parameterType);
             return this.Add(new NpgsqlParameter(parameterName, parameterType));
@@ -165,7 +167,7 @@ namespace Npgsql
         /// <param name="parameterType">One of the DbType values.</param>
         /// <param name="size">The length of the column.</param>
         /// <returns>The index of the new <see cref="Npgsql.NpgsqlParameter">NpgsqlParameter</see> object.</returns>
-        public NpgsqlParameter Add(string parameterName, DbType parameterType, int size)
+        public NpgsqlParameter Add(string parameterName, NpgsqlDbType parameterType, int size)
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "Add", parameterName, parameterType, size);
             return this.Add(new NpgsqlParameter(parameterName, parameterType, size));
@@ -179,7 +181,7 @@ namespace Npgsql
         /// <param name="size">The length of the column.</param>
         /// <param name="sourceColumn">The name of the source column.</param>
         /// <returns>The index of the new <see cref="Npgsql.NpgsqlParameter">NpgsqlParameter</see> object.</returns>
-        public NpgsqlParameter Add(string parameterName, DbType parameterType, int size, string sourceColumn)
+        public NpgsqlParameter Add(string parameterName, NpgsqlDbType parameterType, int size, string sourceColumn)
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "Add", parameterName, parameterType, size, sourceColumn);
             return this.Add(new NpgsqlParameter(parameterName, parameterType, size, sourceColumn));
@@ -235,7 +237,7 @@ namespace Npgsql
 
             // Iterate values to see what is the index of parameter.
             Int32 index = 0;
-            if (parameterName[0] != ':')
+            if ( (parameterName[0] != ':') && (parameterName[0] != '@') )
                 parameterName = ':' + parameterName;
 
             foreach(NpgsqlParameter parameter in this)

@@ -28,8 +28,8 @@ using System.Collections;
 using System.IO;
 using System.Text;
 using System.Net;
-using NpgsqlTypes;
 
+using NpgsqlTypes;
 
 namespace Npgsql
 {

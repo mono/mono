@@ -26,6 +26,7 @@
 
 using System;
 using System.Text;
+using System.Resources;
 using System.Data;
 
 
@@ -37,11 +38,11 @@ namespace Npgsql
     public sealed class NpgsqlTransaction : MarshalByRefObject, IDbTransaction
     {
         private static readonly String CLASSNAME = "NpgsqlTransaction";
+        private static ResourceManager resman = new ResourceManager(typeof(NpgsqlTransaction));
 
-        private NpgsqlConnection	_conn				= null;
-        private IsolationLevel		_isolation	= IsolationLevel.ReadCommitted;
-        private bool _disposing = false;
-        private System.Resources.ResourceManager resman;
+        private NpgsqlConnection    _conn = null;
+        private IsolationLevel      _isolation = IsolationLevel.ReadCommitted;
+        private bool                _disposing = false;
 
         internal NpgsqlTransaction(NpgsqlConnection conn) : this(conn, IsolationLevel.ReadCommitted)
         {}
@@ -67,10 +68,9 @@ namespace Npgsql
 
             commandText.Append("; BEGIN");
 
-
-            NpgsqlCommand command = new NpgsqlCommand(commandText.ToString(), conn);
+            NpgsqlCommand command = new NpgsqlCommand(commandText.ToString(), conn.Connector);
             command.ExecuteNonQuery();
-            _conn.InTransaction = true;
+            _conn.Connector.Transaction = this;
         }
 
         /// <summary>
@@ -106,6 +106,10 @@ namespace Npgsql
         {
             get
             {
+                if (_conn == null) {
+                    throw new InvalidOperationException(resman.GetString("Exception_NoTransaction"));
+                }
+
                 return _isolation;
             }
         }
@@ -125,7 +129,7 @@ namespace Npgsql
             if(disposing && this._conn != null)
             {
                 this._disposing = true;
-                if (_conn.InTransaction)
+                if (_conn.Connector.Transaction != null)
                     this.Rollback();
             }
         }
@@ -135,10 +139,16 @@ namespace Npgsql
         /// </summary>
         public void Commit()
         {
+            if (_conn == null) {
+                throw new InvalidOperationException(resman.GetString("Exception_NoTransaction"));
+            }
+
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "Commit");
-            NpgsqlCommand command = new NpgsqlCommand("COMMIT", _conn);
+
+            NpgsqlCommand command = new NpgsqlCommand("COMMIT", _conn.Connector);
             command.ExecuteNonQuery();
-            _conn.InTransaction = false;
+            _conn.Connector.Transaction = null;
+            _conn = null;
         }
 
         /// <summary>
@@ -146,10 +156,28 @@ namespace Npgsql
         /// </summary>
         public void Rollback()
         {
+            if (_conn == null) {
+                throw new InvalidOperationException(resman.GetString("Exception_NoTransaction"));
+            }
+
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "Rollback");
-            NpgsqlCommand command = new NpgsqlCommand("ROLLBACK", _conn);
+
+            NpgsqlCommand command = new NpgsqlCommand("ROLLBACK", _conn.Connector);
             command.ExecuteNonQuery();
-            _conn.InTransaction = false;
+            _conn.Connector.Transaction = null;
+            _conn = null;
+        }
+
+        /// <summary>
+        /// Cancel the transaction without telling the backend about it.  This is
+        /// used to make the transaction go away when closing a connection.
+        /// </summary>
+        internal void Cancel()
+        {
+            if (_conn != null) {
+                _conn.Connector.Transaction = null;
+                _conn = null;
+            }
         }
 
         internal bool Disposing{

@@ -109,11 +109,12 @@ namespace NpgsqlTests
 			NpgsqlDataReader dr2 = new NpgsqlCommand("select * from tableb where field_serial > 4", _conn).ExecuteReader();
 			dr2.Read();
 			
-			Assertion.AssertEquals(4, dr2[1]);
-			Assertion.AssertEquals(7.3M, dr2[3]);
 			
+			Assert.AreEqual(4, dr2[1]);
+			Assert.AreEqual(7.3000000M, dr2[3]);
 			
 			new NpgsqlCommand("delete from tableb where field_serial > 4", _conn).ExecuteNonQuery();
+			
 			
 						
 		}
@@ -131,12 +132,12 @@ namespace NpgsqlTests
 		  
 		  da.Fill(ds);
 		  
-		  Assertion.AssertEquals(1, ds.Tables.Count);
-		  Assertion.AssertEquals(4, ds.Tables[0].Columns.Count);
-		  Assertion.AssertEquals("field_serial", ds.Tables[0].Columns[0].ColumnName);
-		  Assertion.AssertEquals("field_int2", ds.Tables[0].Columns[1].ColumnName);
-		  Assertion.AssertEquals("field_timestamp", ds.Tables[0].Columns[2].ColumnName);
-		  Assertion.AssertEquals("field_numeric", ds.Tables[0].Columns[3].ColumnName);
+		  Assert.AreEqual(1, ds.Tables.Count);
+		  Assert.AreEqual(4, ds.Tables[0].Columns.Count);
+		  Assert.AreEqual("field_serial", ds.Tables[0].Columns[0].ColumnName);
+		  Assert.AreEqual("field_int2", ds.Tables[0].Columns[1].ColumnName);
+		  Assert.AreEqual("field_timestamp", ds.Tables[0].Columns[2].ColumnName);
+		  Assert.AreEqual("field_numeric", ds.Tables[0].Columns[3].ColumnName);
 		  
 		}
         

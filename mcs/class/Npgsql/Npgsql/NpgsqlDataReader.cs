@@ -26,15 +26,15 @@
 using System;
 using System.Data;
 using System.Collections;
-using NpgsqlTypes;
 
+using NpgsqlTypes;
 
 namespace Npgsql
 {
     /// <summary>
     /// Provides a means of reading a forward-only stream of rows from a PostgreSQL backend.  This class cannot be inherited.
     /// </summary>
-    public class NpgsqlDataReader : IDataReader, IEnumerable
+    public sealed class NpgsqlDataReader : IDataReader, IEnumerable
     {
         private NpgsqlConnection 	_connection;
         private ArrayList 			_resultsets;
@@ -77,7 +77,8 @@ namespace Npgsql
 
         private void CheckHaveResultSet()
         {
-            if (! HaveResultSet()) {
+            if (! HaveResultSet())
+            {
                 throw new InvalidOperationException("Cannot read data. No result set.");
             }
         }
@@ -86,9 +87,12 @@ namespace Npgsql
         {
             CheckHaveResultSet();
 
-            if (_rowIndex < 0) {
+            if (_rowIndex < 0)
+            {
                 throw new InvalidOperationException("DataReader positioned before beginning of result set. Did you call Read()?");
-            } else if (_rowIndex >= _currentResultset.Count) {
+            }
+            else if (_rowIndex >= _currentResultset.Count)
+            {
                 throw new InvalidOperationException("DataReader positioned beyond end of result set.");
             }
         }
@@ -147,19 +151,35 @@ namespace Npgsql
             {
                 NpgsqlEventLog.LogPropertyGet(LogLevel.Debug, CLASSNAME, "RecordsAffected");
 
-                if (HaveResultSet()) {
+                if (HaveResultSet())
+                {
                     return -1;
                 }
 
                 String[] _returnStringTokens = ((String)_responses[_resultsetIndex]).Split(null);	// whitespace separator.
 
-                try {
+                try
+                {
                     return Int32.Parse(_returnStringTokens[_returnStringTokens.Length - 1]);
                 }
-                catch (FormatException) {
+                catch (FormatException)
+                {
                     return -1;
                 }
             }
+        }
+
+        /// <summary>
+        /// Indicates if NpgsqlDatareader has rows to be read.
+        /// </summary>
+
+        public Boolean HasRows
+        {
+        	get
+        	{
+            	return _currentResultset.Count > 0;
+            }
+
         }
 
         /// <summary>
@@ -170,8 +190,10 @@ namespace Npgsql
             if ((_behavior & CommandBehavior.CloseConnection) == CommandBehavior.CloseConnection)
             {
                 _connection.Close();
-                _isClosed = true;
+
             }
+
+            _isClosed = true;
         }
 
         /// <summary>
@@ -204,10 +226,13 @@ namespace Npgsql
 
             CheckHaveResultSet();
 
-            if (_rowIndex < _currentResultset.Count) {
+            if (_rowIndex < _currentResultset.Count)
+            {
                 _rowIndex++;
                 return (_rowIndex < _currentResultset.Count);
-            } else {
+            }
+            else
+            {
                 return false;
             }
         }
@@ -252,10 +277,23 @@ namespace Npgsql
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "GetName");
 
-            if (! HaveResultSet())
-                return String.Empty;
-            else
-                return _currentResultset.RowDescription[Index].name;
+            CheckHaveResultSet();
+
+            return _currentResultset.RowDescription[Index].name;
+        }
+
+        /// <summary>
+        /// Return the data type OID of the column at index <param name="Index"></param>.
+        /// </summary>
+        public String GetDataTypeOID(Int32 Index)
+        {
+            NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "GetDataTypeName");
+
+            CheckHaveResultSet();
+
+            NpgsqlBackendTypeInfo  TI = GetTypeInfo(Index);
+
+            return _currentResultset.RowDescription[Index].type_oid.ToString();
         }
 
         /// <summary>
@@ -263,11 +301,20 @@ namespace Npgsql
         /// </summary>
         public String GetDataTypeName(Int32 Index)
         {
-            // FIXME: have a type name instead of the oid
-            if (! HaveResultSet())
-                return String.Empty;
+            NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "GetDataTypeName");
+
+            CheckHaveResultSet();
+
+            NpgsqlBackendTypeInfo  TI = GetTypeInfo(Index);
+
+            if (TI == null)
+            {
+                return _currentResultset.RowDescription[Index].type_oid.ToString();
+            }
             else
-                return (_currentResultset.RowDescription[Index].type_oid).ToString();
+            {
+                return TI.Name;
+            }
         }
 
         /// <summary>
@@ -277,12 +324,64 @@ namespace Npgsql
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "GetFieldType");
 
+            CheckHaveResultSet();
 
-            if (! HaveResultSet())
-                return null;
+            NpgsqlBackendTypeInfo  TI = GetTypeInfo(Index);
+
+            if (TI == null)
+            {
+                return typeof(String);  //Default type is string.
+            }
             else
-                return NpgsqlTypesHelper.GetSystemTypeFromTypeOid(_connection.OidToNameMapping, _currentResultset.RowDescription[Index].type_oid);
+            {
+                return TI.Type;
+            }
         }
+
+        /// <summary>
+        /// Return the data DbType of the column at index <param name="Index"></param>.
+        /// </summary>
+        public DbType GetFieldDbType(Int32 Index)
+        {
+            NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "GetFieldType");
+
+            CheckHaveResultSet();
+
+            NpgsqlBackendTypeInfo  TI = GetTypeInfo(Index);
+
+            if (TI == null)
+            {
+                return DbType.String;
+            }
+            else
+            {
+                //return TI.DBType;
+                return DbType.String;
+            }
+        }
+        
+        /// <summary>
+        /// Return the data NpgsqlDbType of the column at index <param name="Index"></param>.
+        /// </summary>
+        public NpgsqlDbType GetFieldNpgsqlDbType(Int32 Index)
+        {
+            NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "GetFieldType");
+
+            CheckHaveResultSet();
+
+            NpgsqlBackendTypeInfo  TI = GetTypeInfo(Index);
+
+            if (TI == null)
+            {
+                return NpgsqlDbType.Text;
+            }
+            else
+            {
+                return TI.NpgsqlDbType;
+                
+            }
+        }
+        
 
         /// <summary>
         /// Return the value of the column at index <param name="Index"></param>.
@@ -291,7 +390,8 @@ namespace Npgsql
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "GetValue");
 
-            if (Index < 0 || Index >= _currentResultset.RowDescription.NumFields) {
+            if (Index < 0 || Index >= _currentResultset.RowDescription.NumFields)
+            {
                 throw new IndexOutOfRangeException("Column index out of range");
             }
 
@@ -314,7 +414,8 @@ namespace Npgsql
             // It's also possible to pass an array with more that FieldCount elements.
             Int32 maxColumnIndex = (Values.Length < FieldCount) ? Values.Length : FieldCount;
 
-            for (Int32 i = 0; i < maxColumnIndex; i++) {
+            for (Int32 i = 0; i < maxColumnIndex; i++)
+            {
                 Values[i] = GetValue(i);
             }
 
@@ -522,6 +623,11 @@ namespace Npgsql
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "IsDBNull");
 
             return (GetValue(i) == DBNull.Value);
+        }
+
+        internal NpgsqlBackendTypeInfo GetTypeInfo(Int32 FieldIndex)
+        {
+            return _currentResultset.RowDescription[FieldIndex].type_info;
         }
 
         private DataTable GetResultsetSchema()

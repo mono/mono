@@ -100,4 +100,7 @@
 	<data name="Exception_UnsopportedIsolationLevel">
 		<value>Must be Read Committed or Serializable.</value>
 	</data>
+	<data name="Exception_NoTransaction">
+		<value>No transaction in progress.</value>
+	</data>
 </root>
