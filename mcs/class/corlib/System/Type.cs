@@ -944,7 +944,7 @@ namespace System {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		static extern Type GetGenericTypeDefinition (Type t);
 
-		public Type GetGenericTypeDefinition ()
+		public virtual Type GetGenericTypeDefinition ()
 		{
 			Type res = GetGenericTypeDefinition (this);
 			if (res == null)

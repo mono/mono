@@ -1,3 +1,7 @@
+2003-09-04  Martin Baulig  <martin@ximian.com>
+
+	* Type.cs (GetGenericTypeDefinition): Make this method virtual.
+
 2003-08-27  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Array.cs: added the new overloaded CreateInstance, GetValue, SetValue
