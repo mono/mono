@@ -134,6 +134,14 @@ namespace System.Web
 			if (null != _Response)
 				_Response.ChangedCookieColl();
 		}
+
+		internal void MakeCookieExpire (string name, string path)
+		{
+			DateTime expirationTime = new DateTime (1999, 10, 12); // This is the date MS sends!
+			HttpCookie willExpire = new HttpCookie (name, String.Empty, path, expirationTime);
+			Remove (name);
+			Add (willExpire);
+		}
 	}
 }
 

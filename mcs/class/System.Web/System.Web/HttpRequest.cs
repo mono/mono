@@ -61,6 +61,7 @@ namespace System.Web {
 		private HttpBrowserCapabilities _browser;
 
 		private HttpCookieCollection cookies;
+		private bool rewritten;
 
 		public HttpRequest(string Filename, string Url, string Querystring) {
 			_iContentLength = -1;
@@ -697,11 +698,12 @@ namespace System.Web {
 
 		public string PhysicalPath {
 			get {
-				if (null != _WorkerRequest) {
-					_sPathTranslated = _WorkerRequest.GetFilePathTranslated();
-					if (null == _sPathTranslated) {
-						_sPathTranslated = _WorkerRequest.MapPath(FilePath);
-					}
+				if (_sPathTranslated == null && _WorkerRequest != null) {
+					if (rewritten)
+						_sPathTranslated = _WorkerRequest.GetFilePathTranslated ();
+
+					if (null == _sPathTranslated)
+						_sPathTranslated = _WorkerRequest.MapPath (FilePath);
 				}
 
 				return _sPathTranslated;
@@ -876,6 +878,21 @@ namespace System.Web {
 			}
 		}
 
+		internal string RootVirtualDir {
+			get {
+				if (_sRequestRootVirtualDir == null) {
+					_sRequestRootVirtualDir = FilePath;
+					int pos = _sRequestRootVirtualDir.LastIndexOf ('/');
+					if (pos == -1 || pos == 0)
+						_sRequestRootVirtualDir = "/";
+					else
+						_sRequestRootVirtualDir = _sRequestRootVirtualDir.Substring (0, pos);
+				}
+
+				return _sRequestRootVirtualDir;
+			}
+		}
+		
 		public byte [] BinaryRead(int count) {
 			int iSize = TotalBytes;
 			if (iSize == 0) {
@@ -927,29 +944,34 @@ namespace System.Web {
 			return arrRet;
 		}
 
-		public string MapPath(string VirtualPath)
+		public string MapPath (string VirtualPath)
 		{
-			if (_sRequestRootVirtualDir == null) {
-				_sRequestRootVirtualDir = FilePath;
-				int pos = _sRequestRootVirtualDir.LastIndexOf ('/');
-				if (pos == -1 || pos == 0)
-					_sRequestRootVirtualDir = "/";
-				else
-					_sRequestRootVirtualDir = _sRequestRootVirtualDir.Substring (0, pos);
-			}
-			return MapPath (VirtualPath, _sRequestRootVirtualDir, true);
+			return MapPath (VirtualPath, RootVirtualDir, true);
 		}
 
-		[MonoTODO]
-		public string MapPath(string virtualPath, string baseVirtualDir, bool allowCrossAppMapping)
+		[MonoTODO("allowCrossAppMapping?")]
+		public string MapPath (string virtualPath, string baseVirtualDir, bool allowCrossAppMapping)
 		{
 			if (_WorkerRequest == null)
 				throw new HttpException ("No HttpWorkerRequest!!!");
 
 			if (virtualPath == null || virtualPath.Length == 0)
 				virtualPath = ".";
+			else
+				virtualPath = virtualPath.Trim ();
 
-			virtualPath = System.IO.Path.Combine (baseVirtualDir, virtualPath);
+			if (System.IO.Path.DirectorySeparatorChar != '/')
+				virtualPath = virtualPath.Replace (System.IO.Path.DirectorySeparatorChar, '/');
+
+			if (UrlUtils.IsRooted (virtualPath)) {
+				virtualPath = UrlUtils.Reduce (virtualPath);
+			} else {
+				if (baseVirtualDir == null)
+					virtualPath = UrlUtils.Combine (RootVirtualDir, virtualPath);
+				else
+					virtualPath = UrlUtils.Combine (baseVirtualDir, virtualPath);
+			}
+
 			return _WorkerRequest.MapPath (virtualPath);
 		}
 

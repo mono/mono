@@ -96,34 +96,35 @@ namespace System.Web.Util
 		
 		public static void FailIfPhysicalPath(string path)
 		{
-			if(path!= null && path.Length > 0)
+			if(path!= null && path.Length > 1)
 			{
-				if(path[0]==':' || path.StartsWith(@"\\"))
+				if(path[1]==':' || path.StartsWith(@"\\"))
 					throw new HttpException(HttpRuntime.FormatResourceString("Physical_path_not_allowed", path));
 			}
 		}
 		
-		public static string Combine(string basePath, string relPath)
+		public static string Combine (string basePath, string relPath)
 		{
-			FailIfPhysicalPath(relPath);
-			if(IsRootUrl(relPath))
-			{
-				if(relPath != null && relPath.Length > 0)
-				{
-					return Reduce(relPath);
-				}
+			FailIfPhysicalPath (relPath);
+			if (IsRootUrl (relPath)) {
+				if (relPath != null && relPath.Length > 0)
+					return Reduce (relPath);
+
 				return String.Empty;
 			}
-			if(relPath.Length < 3 || relPath[0]!='~' || (relPath[0]!='/' && relPath[0]!='\\'))
-			{
-				if(basePath==null || basePath.Length==1 || basePath[0]=='/')
+
+			if (relPath.Length < 3 || relPath [0] != '~' || relPath [0] == '/' || relPath [0] == '\\') {
+				if (basePath == null || basePath.Length == 1 || basePath [0] == '/')
 					basePath = String.Empty;
-				return Reduce(basePath + "/" + relPath);
+
+				return Reduce (basePath + "/" + relPath);
 			}
+
 			string vPath = HttpRuntime.AppDomainAppVirtualPath;
-			if(vPath.Length <= 1)
+			if (vPath.Length <= 1)
 				vPath = String.Empty;
-			return Reduce(vPath + "/" + relPath.Substring(2));
+
+			return Reduce (vPath + "/" + relPath.Substring (2));
 		}
 		
 		public static bool IsValidProtocol(string protocol)

@@ -324,7 +324,6 @@ System.Web.Util/FileChangesMonitor.cs
 System.Web.Util/FilePathParser.cs
 System.Web.Util/IISVersionInfo.cs
 System.Web.Util/NativeFileChangeEventHandler.cs
-System.Web.Util/PathUtil.cs
 System.Web.Util/UrlUtils.cs
 System.Web.Util/WebEncoding.cs
 System.Web.Util/WebEqualComparer.cs

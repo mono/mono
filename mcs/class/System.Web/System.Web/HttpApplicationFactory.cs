@@ -78,7 +78,7 @@ namespace System.Web {
 			if (File.Exists(_appFilename)) {
 				// Setup filemonitor for all filedepend also. CacheDependency?
 
-				_appType = GlobalAsaxCompiler.CompileApplicationType (_appFilename);
+				_appType = GlobalAsaxCompiler.CompileApplicationType (_appFilename, context);
 				if (_appType == null)
 					throw new ApplicationException ("Error compiling application file (global.asax).");
 			} else {

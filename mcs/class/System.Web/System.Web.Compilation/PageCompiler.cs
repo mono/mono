@@ -85,6 +85,7 @@ namespace System.Web.Compilation
 			AspParser parser = new AspParser (inputFile, input);
 			parser.Parse ();
 			AspGenerator generator = new AspGenerator (inputFile, parser.Elements);
+			generator.Context = pageParser.Context;
 			generator.BaseType = pageParser.BaseType.ToString ();
 			generator.ProcessElements ();
 			pageParser.Text = generator.GetCode ().ReadToEnd ();

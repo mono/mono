@@ -112,12 +112,8 @@ namespace System.Web.UI {
 			if (virtualPath == null)
 				throw new ArgumentNullException ("virtualPath");
 
-			if (virtualPath [0] == '/')
-				throw new ArgumentException ("Path cannot be rooted", "virtualPath");
-
-			virtualPath = PathUtil.Combine (TemplateSourceDirectory, virtualPath);
-
-			return UserControlCompiler.CompileUserControlType (new UserControlParser (virtualPath));
+			string vpath = UrlUtils.Combine (TemplateSourceDirectory, virtualPath);
+			return UserControlCompiler.CompileUserControlType (new UserControlParser (vpath, Context));
 		}
 
 		public Control LoadControl (string virtualPath)

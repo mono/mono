@@ -176,8 +176,9 @@ namespace System.Web
 
 			if (_Cookies != null) {
 				int length = _Cookies.Count;
-				for (int i = 0; i < length; i++)
+				for (int i = 0; i < length; i++) {
 					oHeaders.Add (_Cookies.Get (i).GetCookieHeader ());
+				}
 			}
 
 			return oHeaders;
@@ -269,10 +270,18 @@ namespace System.Web
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO()]
 		public string ApplyAppPathModifier (string virtualPath)
 		{
-			throw new NotImplementedException ();
+			if (virtualPath == null)
+				return null;
+
+			if (UrlUtils.IsRelativeUrl (virtualPath)) {
+				virtualPath = UrlUtils.Combine (_Context.Request.RootVirtualDir, virtualPath);
+			} else if (UrlUtils.IsRooted (virtualPath)) {
+				virtualPath = UrlUtils.Reduce (virtualPath);
+			}
+
+			return virtualPath;
 		}
 
 		public bool Buffer
@@ -751,6 +760,7 @@ namespace System.Web
 
 			Clear ();
 
+			url = ApplyAppPathModifier (url);
 			StatusCode = 302;
 			AppendHeader (HttpWorkerRequest.HeaderLocation, url);
 

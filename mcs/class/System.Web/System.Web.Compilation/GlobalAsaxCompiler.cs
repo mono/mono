@@ -19,6 +19,7 @@ namespace System.Web.Compilation
 	{
 		string filename;
 		string sourceFile;
+		HttpContext context;
 
 		private GlobalAsaxCompiler (string filename)
 		{
@@ -60,7 +61,7 @@ namespace System.Web.Compilation
 			}
 		}
 
-		public static Type CompileApplicationType (string filename)
+		public static Type CompileApplicationType (string filename, HttpContext context)
 		{
 			CompilationCacheItem item = CachingCompiler.GetCached (filename);
 			if (item != null && item.Result != null) {
@@ -71,6 +72,7 @@ namespace System.Web.Compilation
 			}
 
 			GlobalAsaxCompiler gac = new GlobalAsaxCompiler (filename);
+			gac.context = context;
 			return gac.GetCompiledType ();
 		}
 
@@ -80,6 +82,7 @@ namespace System.Web.Compilation
 			AspParser parser = new AspParser (filename, input);
 			parser.Parse ();
 			AspGenerator generator = new AspGenerator (filename, parser.Elements);
+			generator.Context = context;
 			generator.BaseType = typeof (HttpApplication).ToString ();
 			generator.ProcessElements ();
 			string generated = generator.GetCode ().ReadToEnd ();

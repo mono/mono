@@ -325,6 +325,8 @@ class AspGenerator
 	bool isUserControl;
 	bool isApplication;
 
+	HttpContext context;
+
 	enum UserControlResult
 	{
 		OK = 0,
@@ -395,6 +397,11 @@ class AspGenerator
 
 			return options;
 		}
+	}
+	
+	internal HttpContext Context {
+		get { return context; }
+		set { context = value; }
 	}
 	
 	public void AddInterface (string iface)
@@ -581,8 +588,7 @@ class AspGenerator
 				throw new ApplicationException ("Source file extension for controls " + 
 								"must be .ascx");
 
-			string srcLocation = PathUtil.Combine (null, src);
-			UserControlData data = GenerateUserControl (srcLocation);
+			UserControlData data = GenerateUserControl (src, Context);
 			switch (data.result) {
 			case UserControlResult.OK:
 				prolog.AppendFormat ("\tusing {0};\n", "ASP");
@@ -1728,6 +1734,21 @@ class AspGenerator
 		}
 	}
 
+	private string GetTemplateDirectory ()
+	{
+		string templatePath = Path.GetDirectoryName (fullPath);
+		string appPath = Path.GetDirectoryName (HttpRuntime.AppDomainAppPath);
+
+		if (templatePath == appPath)
+			return "/";
+
+		templatePath = templatePath.Substring (appPath.Length);
+		if (Path.DirectorySeparatorChar != '/')
+			templatePath = templatePath.Replace (Path.DirectorySeparatorChar, '/');
+			
+		return templatePath;
+	}
+
 	private void End ()
 	{
 		classDecl = "\tpublic class " + className + " : " + parent + interfaces + " {\n"; 
@@ -1765,12 +1786,11 @@ class AspGenerator
 				"\t\tprotected System.Web.HttpApplication ApplicationInstance\n\t\t{\n" +
 				"\t\t\tget { return (System.Web.HttpApplication) this.Context.ApplicationInstance; }\n" +
 				"\t\t}\n\n");
-			//FIXME: add TemplateSourceDirectory: don't know what for...yet!
-			//FIXME: it should be the path from the root where the file resides
+
 			constructor.AppendFormat (
 				"\t\tpublic override string TemplateSourceDirectory\n\t\t{{\n" +
 				"\t\t\tget {{ return \"{0}\"; }}\n" +
-				"\t\t}}\n\n", Path.GetDirectoryName (fullPath)); // FIXME: should be rooted on .appVPath
+				"\t\t}}\n\n", GetTemplateDirectory ());
 
 			epilog.Append ("\n\t\tprotected override void FrameworkInitialize ()\n\t\t{\n" +
 					"\t\t\tthis.__BuildControlTree (this);\n");
@@ -1832,17 +1852,12 @@ class AspGenerator
 		public string assemblyName;
 	}
 
-	private static UserControlData GenerateUserControl (string src)
+	private static UserControlData GenerateUserControl (string src, HttpContext context)
 	{
 		UserControlData data = new UserControlData ();
 		data.result = UserControlResult.OK;
 
-		if (!File.Exists (src)) {
-			data.result = UserControlResult.FileNotFound;
-			return data;
-		}
-
-		UserControlCompiler compiler = new UserControlCompiler (new UserControlParser (src));
+		UserControlCompiler compiler = new UserControlCompiler (new UserControlParser (src, context));
 		Type t = compiler.GetCompiledType ();
 		if (t == null) {
 			data.result = UserControlResult.CompilationFailed;

@@ -99,6 +99,7 @@ namespace System.Web.Compilation
 			AspParser parser = new AspParser (inputFile, input);
 			parser.Parse ();
 			AspGenerator generator = new AspGenerator (inputFile, parser.Elements);
+			generator.Context = userControlParser.Context;
 			generator.BaseType = userControlParser.BaseType.ToString ();
 			generator.ProcessElements ();
 			userControlParser.Text = generator.GetCode ().ReadToEnd ();

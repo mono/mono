@@ -1,3 +1,12 @@
+2002-12-18  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* BaseParser.cs: use MapPath and context to locate files.
+	* Control.cs: implemented MapPathSecure.
+	* TemplateControl.cs: use UrlUtils to generate the path.
+	* TemplateControlParser.cs: use the context and MapPath.
+	* UserControl.cs: implemented MapPath.
+	* UserControlParser.cs: added context parameter to constructor.
+
 2002-12-17  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Control.cs: implemented MapPathSecure.

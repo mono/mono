@@ -135,10 +135,9 @@ namespace System.Web.UI
 			FrameworkInitialize ();
 		}
 
-		[MonoTODO]
 		public string MapPath (string virtualPath)
 		{
-			throw new NotImplementedException ();
+			return Request.MapPath (virtualPath, TemplateSourceDirectory, true);
 		}
 
 		protected override void LoadViewState (object savedState)

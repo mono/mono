@@ -7,8 +7,10 @@
 //
 // (C) 2002 Ximian, Inc. (http://www.ximian.com)
 //
+
 using System.IO;
 using System.Web;
+using System.Web.Util;
 
 namespace System.Web.UI
 {
@@ -26,7 +28,10 @@ namespace System.Web.UI
 
 		internal string MapPath (string path, bool allowCrossAppMapping)
 		{
-			return context.Request.MapPath (path, baseVDir, allowCrossAppMapping);
+			if (context == null)
+				throw new HttpException ("context is null!!");
+
+			return context.Request.MapPath (path, BaseVirtualDir, allowCrossAppMapping);
 		}
 
 		internal string PhysicalPath (string path)
@@ -34,7 +39,7 @@ namespace System.Web.UI
 			if (Path.DirectorySeparatorChar != '/')
 				path = path.Replace ('/', '\\');
 				
-			return Path.GetFullPath (Path.Combine (baseVDir, path));
+			return Path.GetFullPath (Path.Combine (BaseVirtualDir, path));
 		}
 
 		internal HttpContext Context
@@ -42,13 +47,16 @@ namespace System.Web.UI
 			get {
 				return context;
 			}
+			set {
+				context = value;
+			}
 		}
 
 		internal string BaseDir
 		{
 			get {
 				if (baseDir == null)
-					baseDir = MapPath (baseVDir, false);
+					baseDir = MapPath (BaseVirtualDir, false);
 
 				return baseDir;
 			}
@@ -57,6 +65,9 @@ namespace System.Web.UI
 		internal string BaseVirtualDir
 		{
 			get {
+				if (baseVDir == null)
+					baseVDir = UrlUtils.GetDirectory (context.Request.FilePath);
+
 				return baseVDir;
 			}
 		}

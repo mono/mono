@@ -14,14 +14,15 @@ namespace System.Web.UI
 {
 	public sealed class UserControlParser : TemplateControlParser
 	{
-		internal UserControlParser (string inputFile)
+		internal UserControlParser (string inputFile, HttpContext context)
 		{
-			InputFile = inputFile;
+			Context = context;
+			InputFile = context.Request.MapPath (inputFile);
 		}
 		
 		public static Type GetCompiledType (string virtualPath, string inputFile, HttpContext context)
 		{
-			UserControlParser ucp = new UserControlParser (inputFile);
+			UserControlParser ucp = new UserControlParser (inputFile, context);
 			Type t = ucp.CompileIntoType ();
 			return t;
 		}

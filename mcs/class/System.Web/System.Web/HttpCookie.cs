@@ -41,6 +41,15 @@ namespace System.Web
 			_Path = "/";
 		}
 
+		internal HttpCookie (string name, string value, string path, DateTime expires)
+		{
+			_Name = name;
+			_Value = value;
+			_Path = path;
+			if (expires != DateTime.MinValue)
+				Expires = expires;
+		}
+		
 		internal HttpResponseHeader GetCookieHeader ()
 		{
 			StringBuilder oSetCookie = new StringBuilder ();

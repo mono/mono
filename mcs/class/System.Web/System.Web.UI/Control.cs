@@ -423,7 +423,8 @@ namespace System.Web.UI
 		[MonoTODO("Secure?")]
                 protected string MapPathSecure(string virtualPath)
                 {
-			return Context.Request.MapPath (virtualPath);
+			string combined = UrlUtils.Combine (TemplateSourceDirectory, virtualPath);
+			return Context.Request.MapPath (combined);
                 }
 
                 protected virtual bool OnBubbleEvent(object source, EventArgs args) //DIT

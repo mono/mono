@@ -10,6 +10,7 @@ using System;
 using System.Collections;
 using System.IO;
 using System.Web.Compilation;
+using System.Web.Util;
 
 namespace System.Web.UI
 {
@@ -17,7 +18,8 @@ namespace System.Web.UI
 	{
 		internal object GetCompiledInstance (string virtualPath, string inputFile, HttpContext context)
 		{
-			InputFile = inputFile;
+			Context = context;
+			InputFile = MapPath (virtualPath);
 			Type type = CompileIntoType ();
 			if (type == null)
 				return null;

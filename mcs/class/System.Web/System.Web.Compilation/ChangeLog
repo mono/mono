@@ -1,3 +1,13 @@
+2002-12-18  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AspGenerator.cs: now it uses the current HttpContext when creating
+	user controls. TemplateSourceDirectory is no longer a dummy value.
+
+	* GlobalAsaxCompiler.cs:
+	* PageCompiler.cs:
+	* UserControlCompiler.cs: set the context which will be used to locate
+	the files.
+	
 2002-12-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AspGenerator.cs: added support for AutoEventWireup attribute in

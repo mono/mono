@@ -266,7 +266,7 @@ namespace System.Web {
 		public static string AppDomainAppVirtualPath {
 			get {
 				if (appDomainAppVirtualPath == null)
-					appDomainAppPath = (string) AppDomain.CurrentDomain.GetData (".appVPath");
+					appDomainAppVirtualPath = (string) AppDomain.CurrentDomain.GetData (".appVPath");
 
 				return appDomainAppVirtualPath;
 			}
