@@ -655,6 +655,38 @@ namespace Mono.CSharp {
 			return true;
 		}
 
+		public bool UpdateConstraints (EmitContext ec, Constraints new_constraints, bool check)
+		{
+			//
+			// We're used in partial generic type definitions.
+			// If `check' is false, we just encountered the first ClassPart which has
+			// constraints - they become our "real" constraints.
+			// Otherwise we're called after the type parameters have already been defined
+			// and check whether the constraints are the same in all parts.
+			//
+			if (!check) {
+				if (type != null)
+					throw new InvalidOperationException ();
+				constraints = new_constraints;
+				return true;
+			}
+
+			if (type == null)
+				throw new InvalidOperationException ();
+
+			if (constraints == null)
+				return new_constraints == null;
+			else if (new_constraints == null)
+				return false;
+
+			if (!new_constraints.Resolve (ec))
+				return false;
+			if (!new_constraints.ResolveTypes (ec))
+				return false;
+
+			return constraints.CheckInterfaceMethod (ec, new_constraints);
+		}
+
 		public override string DocCommentHeader {
 			get {
 				throw new InvalidOperationException (

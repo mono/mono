@@ -1,5 +1,19 @@
 2005-03-02  Martin Baulig  <martin@ximian.com>
 
+	* decl.cs (DeclSpace.SetParameterInfo): Make this virtual.
+
+	* class.cs (ClassPart.SetParameterInfo): Override this.
+	(PartialContainer.SetParameterInfo): Override this.
+	(TypeContainer.CheckConstraints): New protected method.
+	(PartialContainer.CheckConstraints): Override this and check
+	whether the same contraints were specified in all parts of a
+	partial generic type definition.
+	(PartialContainer.UpdateConstraints): New public method.
+
+	* generic.cs (TypeParameter.UpdateConstraints): New public method.
+
+2005-03-02  Martin Baulig  <martin@ximian.com>
+
 	Committing a patch from Carlos Alberto Cortez to fix #72887.
 
 	* convert.cs (Convert.ExplicitReferenceConversionExists): Allow

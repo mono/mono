@@ -1254,14 +1254,18 @@ namespace Mono.CSharp {
 					CurrentTypeParameters [i - offset].DefineConstraints ();
 
 				current_type = new ConstructedType (Name, TypeParameters, Location);
-			}
 
-			if (IsGeneric) {
-				foreach (TypeParameter type_param in TypeParameters)
+				foreach (TypeParameter type_param in TypeParameters) {
 					if (!type_param.DefineType (ec)) {
 						error = true;
 						return null;
 					}
+				}
+
+				if (!CheckConstraints (ec)) {
+					error = true;
+					return null;
+				}
 			}
 
 			if ((Kind == Kind.Struct) && TypeManager.value_type == null)
@@ -1375,6 +1379,11 @@ namespace Mono.CSharp {
 			}
 
 			return TypeBuilder;
+		}
+
+		protected virtual bool CheckConstraints (EmitContext ec)
+		{
+			return true;
 		}
 
 		protected virtual bool DefineNestedTypes ()
@@ -2629,6 +2638,30 @@ namespace Mono.CSharp {
 					return null;
 				}
 
+				if (pc.IsGeneric) {
+					if (pc.CountTypeParameters != member_name.CountTypeArguments) {
+						Report.Error (
+							264, loc, "Partial declarations of `{0}' " +
+							"must have the same type parameter names in " +
+							"the same order", member_name.GetTypeName ());
+						return null;
+					}
+
+					string[] pc_names = pc.MemberName.TypeArguments.GetDeclarations ();
+					string[] names = member_name.TypeArguments.GetDeclarations ();
+
+					for (int i = 0; i < pc.CountTypeParameters; i++) {
+						if (pc_names [i] == names [i])
+							continue;
+
+						Report.Error (
+							264, loc, "Partial declarations of `{0}' " +
+							"must have the same type parameter names in " +
+							"the same order", member_name.GetTypeName ());
+						return null;
+					}
+				}
+
 				return pc;
 			}
 
@@ -2636,6 +2669,8 @@ namespace Mono.CSharp {
 			RootContext.Tree.RecordDecl (full_name, pc);
 			parent.AddType (pc);
 			pc.Register ();
+			// This is needed to define our type parameters; we define the constraints later.
+			pc.SetParameterInfo (null);
 			return pc;
 		}
 
@@ -2706,6 +2741,78 @@ namespace Mono.CSharp {
 			return PendingImplementation.GetPendingImplementations (this);
 		}
 
+		ArrayList constraints_lists;
+
+		public void UpdateConstraints (ArrayList constraints_list)
+		{
+			//
+			// This is called for each ClassPart in a partial generic type declaration.
+			//
+			// If no constraints were specified for the part, just return.
+			// Otherwise, if we're called with constraints for the first time, they become
+			// the type's constraint.  If we're called with constraints again, we just
+			// store them somewhere so we can later check whether there are no conflicts.
+			//
+			if (constraints_list == null)
+				return;
+
+			if (constraints_lists != null) {
+				constraints_lists.Add (constraints_list);
+				return;
+			}
+
+			DoUpdateConstraints (null, constraints_list, false);
+
+			constraints_lists = new ArrayList ();
+		}
+
+		protected bool DoUpdateConstraints (EmitContext ec, ArrayList constraints_list, bool check)
+		{
+			for (int i = 0; i < TypeParameters.Length; i++) {
+				string name = TypeParameters [i].Name;
+
+				Constraints constraints = null;
+				if (constraints_list != null) {
+					foreach (Constraints constraint in constraints_list) {
+						if (constraint.TypeParameter == name) {
+							constraints = constraint;
+							break;
+						}
+					}
+				}
+
+				if (!TypeParameters [i].UpdateConstraints (ec, constraints, check)) {
+					Report.Error (265, Location, "Partial declarations of `{0}' have " +
+						      "inconsistent constraints for type parameter `{1}'.",
+						      MemberName.GetTypeName (), name);
+					return false;
+				}
+			}
+
+			return true;
+		}
+
+		protected override bool CheckConstraints (EmitContext ec)
+		{
+			if (constraints_lists == null)
+				return true;
+
+			//
+			// If constraints were specified in more than one part of a
+			// partial generic type definition, they must be identical.
+			//
+			// Note that we must resolve them and then compute the fully
+			// resolved types since different parts may have different
+			// `using' aliases.  See gen-129.cs for an example.
+
+			foreach (ArrayList constraints_list in constraints_lists) {
+				if (!DoUpdateConstraints (ec, constraints_list, true))
+					return false;
+			}
+
+			return true;
+		}
+
 		public ClassPart AddPart (NamespaceEntry ns, int mod, Attributes attrs,
 					  Location l)
 		{
@@ -2756,6 +2863,11 @@ namespace Mono.CSharp {
 		{
 			return PartialContainer.VerifyImplements (
 				interface_type, full, name, loc);
+		}
+
+		public override void SetParameterInfo (ArrayList constraints_list)
+		{
+			PartialContainer.UpdateConstraints (constraints_list);
 		}
 
 		public override MemberCache BaseCache {

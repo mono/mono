@@ -1413,7 +1413,7 @@ namespace Mono.CSharp {
 			return type_param_list;
 		}
 
-		public void SetParameterInfo (ArrayList constraints_list)
+		public virtual void SetParameterInfo (ArrayList constraints_list)
 		{
 			if (!is_generic) {
 				if (constraints_list != null) {
