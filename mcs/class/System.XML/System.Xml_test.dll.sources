@@ -24,6 +24,8 @@ System.Xml/XmlUrlResolverTests.cs
 System.Xml/XmlValidatingReaderTests.cs
 System.Xml/XmlWhiteSpaceTests.cs
 System.Xml/XmlWriterTests.cs
+System.Xml/XsdParticleValidationTests.cs
+System.Xml/XsdValidatingReaderTests.cs
 System.Xml.Schema/XmlSchemaTests.cs
 System.Xml.Serialization/XmlSerializerTests.cs
 System.Xml.Serialization/XmlSerializerTestClasses.cs

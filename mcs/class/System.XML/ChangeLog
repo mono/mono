@@ -1,3 +1,10 @@
+2003-08-24  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* System.Xml.dll.sources : added XsdParticleValidationState.cs
+	  and XsdValidatingReader.cs.
+	* System.Xml_test.dll.sources : added XsdParticleValidationTests.cs
+	  and XsdValidatingReaderTests.cs.
+
 2003-08-18 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* System.Xml.dll.sources: add files from Oleg.
