@@ -1,3 +1,7 @@
+2002-05-15  Dick Porter  <dick@ximian.com>
+
+	* wait.c: Fix a deadlock in WaitForMultipleObjects
+
 2002-05-14  Dick Porter  <dick@ximian.com>
 
 	* io.c: Fix a cut&paste error, found by
