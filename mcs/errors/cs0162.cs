@@ -1,6 +1,6 @@
 // cs0162.cs: Unreachable code detected
 // Line: 12
-// Compiler options: -t:library
+// Compiler options: -warnaserror -warn:2
 
 using System;
 

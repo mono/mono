@@ -9,8 +9,6 @@ ifeq (default, $(PROFILE))
 MCS = MONO_PATH="$(topdir)/class/lib/$(PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(INTERNAL_MCS)
 endif
 
-LOCAL_MCS_FLAGS = /nowarn:162 --wlevel 4
-
 GENERICS_COMPILE = $(CSCOMPILE) /target:library
 
 RUNTEST_PL = ./runtest.pl

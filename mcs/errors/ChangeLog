@@ -1,3 +1,13 @@
+2004-12-17 Marek Safar <marek.safar@seznam.cz>
+
+	* makefile: Removed LOCAL_MCS_FLAGS. Every test should
+	have its own.
+
+	* cs1621.cs, cs1014.cs, cs1615.cs, cs1609.cs, cs1627.cs,
+	cs1599-2.cs, cs1620.cs, cs0686.cs, cs1534.cs, cs1007.cs,
+	cs1626.cs, cs1599.cs, cs1670.cs, cs1646.cs, cs0683.cs,
+	cs1638.cs, cs0103-2.cs: New error tests.
+
 2004-12-14 Marek Safar <marek.safar@seznam.cz>
 
 	* cs0418-2.cs, cs0418.cs, cs0441.cs, cs0662.cs
