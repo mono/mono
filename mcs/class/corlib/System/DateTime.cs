@@ -6,16 +6,28 @@
 //
 //   (C) 2001 Marcel Narings
 
+using System;
 using System.Globalization ;
+
+
 namespace System
 {
-
-	public struct DateTime : IComparable //, IFormattable, IConvertible
+	/// <summary>
+	/// The DateTime structure represents dates and time ranging from 1-1-0001 12:00:00 AM to 31-12-9999 23:59:00 Common Era.
+	/// </summary>
+	/// 
+	public struct DateTime : IComparable , IFormattable  , IConvertible
 	{
 		long ticks;
 
-		public static readonly DateTime MaxValue = new DateTime(3155378975999999999L);
-		public static readonly DateTime MinValue = new DateTime(0L);
+		private const long MaxTicks = 3155378975999999999L;
+		private const long MinTicks = 0L;
+		private const int dp400 = 146097;
+		private const int dp100 = 36524;
+		private const int dp4 = 1461;
+		
+		public static readonly DateTime MaxValue = new DateTime (MaxTicks);
+		public static readonly DateTime MinValue = new DateTime (MinTicks);
 		
 		private enum Which 
 		{
@@ -24,8 +36,73 @@ namespace System
 			Month,
 			Year
 		};
+	
+		private static int[] daysmonth = { 0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };	
+		private static int[] daysmonthleap = { 0, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };	
+
+		private static long AbsoluteDays (int year, int month, int day)
+		{
+			int[] days;
+			int temp = 0, m=1 ;
+		
+			days = (IsLeapYear(year) ? daysmonthleap  : daysmonth);
+			
+			while (m < month)
+				temp += days[m++];
+			return ((day-1) + temp + (365* (year-1)) + ((year-1)/4) - ((year-1)/100) + ((year-1)/400));
+		}
+
+		private int FromTicks(Which what)
+		{
+			int num400, num100, num4, numyears; 
+			int M =1;
+
+			int[] days = daysmonth;
+			int totaldays = (int) (ticks / TimeSpan.TicksPerDay);
+			
+			num400 = (totaldays / dp400);
+			totaldays -=  num400 * dp400;
+		
+			num100 = (totaldays / dp100);
+			if (num100 == 4)   // leap
+				num100 = 3;
+			totaldays -= (num100 * dp100);
+
+			num4 = totaldays / dp4;
+			totaldays -= (num4 * dp4);
+
+			numyears = totaldays / 365 ;
+			
+			if (numyears == 4)  //leap
+				numyears =3 ;
+			if (what == Which.Year )
+				return num400*400 + num100*100 + num4*4 + numyears + 1;
+
+			totaldays -= (numyears * 365) ;
+			if (what == Which.DayYear )
+				return totaldays + 1;
+			
+			if  ((numyears==3) && ((num100 == 3) || !(num4 == 24)) ) //31 dec leapyear
+				days = daysmonthleap;
+			        
+			while (totaldays >= days[M])
+				totaldays -= days[M++];
+
+			if (what == Which.Month )
+				return M;
+
+			return totaldays +1; 
+
+
+		}
+
 
 		// Constructors
+		
+		/// <summary>
+		/// Constructs a DateTime for specified ticks
+		/// </summary>
+		/// 
 		public DateTime (long newticks) 
 		{
 			ticks = newticks;
@@ -71,7 +148,8 @@ namespace System
 		public DateTime (int year, int month, int day, int hour, int minute, int second, int millisecond, Calendar calendar)
 			: this(year, month, day, hour, minute, second, millisecond) 
 		{
-			// TODO implement calendar
+			if ( calendar == null)
+				throw new ArgumentNullException();
 		}
 
 
@@ -97,7 +175,7 @@ namespace System
 		{
 			get 
 			{ 
-				return (DayOfWeek) (((ticks / TimeSpan.TicksPerDay)+1) % 7); 
+				return ( (DayOfWeek) (((ticks / TimeSpan.TicksPerDay)+1) % 7) ); 
 			}
 		}
 
@@ -113,7 +191,7 @@ namespace System
 		{
 			get 
 			{ 
-				return (int) ((ticks % TimeSpan.TicksPerDay) / TimeSpan.TicksPerHour);  
+				return ( (int) ((ticks % TimeSpan.TicksPerDay) / TimeSpan.TicksPerHour) );  
 			}
 		}
 
@@ -121,7 +199,7 @@ namespace System
 		{
 			get 
 			{ 
-				return (int) (ticks % TimeSpan.TicksPerSecond / TimeSpan.TicksPerMillisecond); 
+				return ( (int) (ticks % TimeSpan.TicksPerSecond / TimeSpan.TicksPerMillisecond) ); 
 			}
 		}
 		
@@ -129,24 +207,30 @@ namespace System
 		{
 			get 
 			{ 
-				return (int) (ticks % TimeSpan.TicksPerHour / TimeSpan.TicksPerMinute); 
+				return ( (int) (ticks % TimeSpan.TicksPerHour / TimeSpan.TicksPerMinute) ); 
 			}
 		}
 
 		public int Month 
 		{
-			get 
+			get	
 			{ 
 				return FromTicks(Which.Month); 
 			}
 		}
 
-		// TODO IMPLEMENT ME 
-		//public static DateTime Now {get;}
+		// TODO implement me  		 
+		public static DateTime Now 
+		{
+			get	
+			{ 
+				return new DateTime (0); 
+			}
+		}
 
 		public int Second 
 		{
-			get 
+			get	
 			{ 
 				return (int) (ticks % TimeSpan.TicksPerMinute / TimeSpan.TicksPerSecond); 
 			}
@@ -154,7 +238,7 @@ namespace System
 
 		public long Ticks
 		{ 
-			get 
+			get	
 			{ 
 				return ticks ; 
 			}
@@ -162,7 +246,7 @@ namespace System
 	
 		public TimeSpan TimeOfDay 
 		{
-			get 
+			get	
 			{ 
 				return new TimeSpan(ticks % TimeSpan.TicksPerDay );
 			}
@@ -170,10 +254,21 @@ namespace System
 		}
 
 		//TODO implement
-		//public static DateTime Today {get;}
+		public static DateTime Today 
+		{
+			get	
+			{
+				return new DateTime (0);
+			}
+		}
 
 		//TODO implement
-		//public static DateTime UtcNow {get;}
+		public static DateTime UtcNow 
+		{
+			get {
+				return new DateTime (0);
+			}
+		}
 
 		public int Year 
 		{
@@ -183,57 +278,98 @@ namespace System
 			}
 		}
 
-
 		/* methods */
 
-		public DateTime AddTicks( long t )
+		public DateTime Add (TimeSpan ts)
 		{
-			return new DateTime(ticks + t);
+			long newticks ;
+
+			newticks = ticks + ts.Ticks ;
+
+			if (ts.Ticks < MinTicks || ts.Ticks > MaxTicks || 
+				newticks < MinTicks || newticks > MaxTicks)
+				throw new ArgumentException ();
+			
+			return new DateTime (newticks);
 		}
 
-		// FIXME: Implement me.
-		public DateTime AddDays( double days )
+		public DateTime AddDays (double days)
 		{
-			return new DateTime (0);
-		}
-
-		// TODO: Implement me.
-		public DateTime AddHours( double hours )
-		{
-			return new DateTime (0);
-		}
-
-		// TODO: Implement me.
-		public DateTime AddMilliseconds( double ms	)
-		{
-			return new DateTime (0);
-		}
-
-		// TODO: Implement me.
-		public DateTime AddMinutes(	double minutes )
-		{
-			return new DateTime (0);
+			return AddMilliseconds (days * 86400000);
 		}
 		
-		// TODO: Implement me.
-		public DateTime AddMonths( int months )
+		public DateTime AddTicks (long t)
 		{
-			return new DateTime (0);
+			long newticks = ticks + t; 
+
+			if (t<MinTicks || t>MaxTicks || newticks<MinTicks || newticks>MaxTicks)
+				throw new ArgumentException ();
+
+			return new DateTime(newticks);
 		}
 
-		// TODO: Implement me.
-		public DateTime AddSeconds(double seconds )
+		public DateTime AddHours (double hours)
 		{
-			return new DateTime (0);
+			return AddMilliseconds (hours * 3600000);
 		}
 
-		// TODO: Implement me.
-		public DateTime AddYears(int years )
+		public DateTime AddMilliseconds (double ms)
 		{
-			return new DateTime (0);
+			long msticks, newticks;
+			
+			msticks = (long) (ms += ms > 0 ? 0.5 : -0.5) * TimeSpan.TicksPerMillisecond ; 
+			newticks = ticks + msticks ;
+
+			if (msticks < MinTicks || msticks > MaxTicks ||
+				newticks < MinTicks || newticks > MaxTicks)
+				throw new ArgumentException ();
+
+			return new DateTime (newticks);
 		}
 
-		public static int Compare( DateTime t1,	DateTime t2	)
+		public DateTime AddMinutes (double minutes)
+		{
+			return AddMilliseconds (minutes * 60000);
+		}
+		
+		public DateTime AddMonths (int months)
+		{
+			int day, month, year,  maxday ;
+			DateTime temp ;
+
+			day = this.Day;
+			month = this.Month + (months % 12);
+			year = this.Year + months/12 ;
+			
+			if (month < 1)
+			{
+				month = 12 + month ;
+				year -- ;
+			}
+			else if (month>12) 
+			{
+				month = month -12;
+				year ++;
+			}
+			maxday = DaysInMonth(year, month);
+			if (day > maxday)
+				day = maxday;
+
+			temp = new DateTime (year, month, day);
+            return  temp.Add (this.TimeOfDay);
+		}
+
+		public DateTime AddSeconds (double seconds)
+		{
+			return AddMilliseconds (seconds*1000);
+		}
+
+		public DateTime AddYears (int years )
+		{
+			return AddMonths(years * 12);
+		}
+
+		public static int Compare (DateTime t1,	DateTime t2)
 		{
 			if (t1.ticks < t2.ticks) 
 				return -1;
@@ -243,7 +379,6 @@ namespace System
 				return 0;
 		}
 
-		// FIXME check this
 		public int CompareTo (object v)
 		{
 			if ( v == null)
@@ -255,19 +390,16 @@ namespace System
 			return Compare (this , (DateTime) v);
 		}
 
-		public static int DaysInMonth(int year, int month)
+		public static int DaysInMonth (int year, int month)
 		{
-			int[] dayspermonth = new int[13] { 0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };	
+			int[] days ;
 
 			if (month < 1 || month >12)
 				throw new ArgumentOutOfRangeException ();
-		 
-			if (month == 2 && IsLeapYear(year))
-				return 29;
-			else
-				return dayspermonth[month];			
-		}
 
+			days = (IsLeapYear(year) ? daysmonthleap  : daysmonth);
+			return days[month];			
+		}
 		
 		public override bool Equals (object o)
 		{
@@ -277,35 +409,46 @@ namespace System
 			return ((DateTime) o).ticks == ticks;
 		}
 
-		public static new bool Equals(DateTime t1, DateTime t2 )
+		public static bool Equals (DateTime t1, DateTime t2 )
 		{
 			return (t1.ticks == t2.ticks );
 		}
 
 		// TODO: Implement me.
-		public static DateTime FromFileTime(long fileTime) 
+		public static DateTime FromFileTime (long fileTime) 
 		{
-			return new DateTime(0);
+			return new DateTime (0);
 		}
 
 		// TODO: Implement me.
-		public static DateTime FromOADate(double d)
+		public static DateTime FromOADate (double d)
 		{
-			return new DateTime(0);
+				return new DateTime(0);
 		}
 		
 		// TODO: Implement me.
-		//public string[] GetDateTimeFormats();
+		public string[] GetDateTimeFormats() 
+		{
+			return null;
+		}
 
 		//TODO: implement me 
-		//public string[] GetDateTimeFormats(	char format	)
+		public string[] GetDateTimeFormats(	char format	)
+		{
+			return null;
+		}
 		
 		// TODO: implement me 
-		//public string[] GetDateTimeFormats(	IFormatProvider provider)
+		public string[] GetDateTimeFormats(	IFormatProvider provider)
+		{
+			return null;
+		}
 
 		//TODO: implement me 
-		//public string[] GetDateTimeFormats(char format,IFormatProvider provider	)
-
+		public string[] GetDateTimeFormats(char format,IFormatProvider provider	)
+		{
+			return null;
+		}
 
 		public override int GetHashCode ()
 		{
@@ -317,9 +460,9 @@ namespace System
 			return TypeCode.DateTime;
 		}
 
-		public static bool IsLeapYear(int year)
+		public static bool IsLeapYear (int year)
 		{
-			return ( !(year %4 > 0 ) && (year %100 > 0) || !(year %400 > 0) ) ;
+			return  ( (year % 4 == 0 && year % 100 != 0) || year % 400 == 0) ;
 		}
 
 		public static DateTime Parse (string s)
@@ -346,7 +489,7 @@ namespace System
 			return new DateTime (0);
 		}
 
-		public static DateTime ParseExact(	string s, string format, IFormatProvider provider,	DateTimeStyles style )
+		public static DateTime ParseExact(string s, string format, IFormatProvider provider, DateTimeStyles style )
 		{
 			// TODO: Implement me
 			return new DateTime (0);
@@ -361,12 +504,12 @@ namespace System
 		}
 		
 		public TimeSpan Subtract(DateTime dt )
-		{   //TODO : implement me
+		{   
 			return new TimeSpan(ticks - dt.ticks );
 		}
 
 		public DateTime Subtract(TimeSpan ts)
-		{	// TODO : implement me 
+		{	
 			return new DateTime(ticks - ts.Ticks );
 		}
 
@@ -385,13 +528,13 @@ namespace System
 		public string ToLongDateString()
 		{
 			// TODO implement me 
-			return "";
+			return "ToLongDateString";
 		}
 
 		public string ToLongTimeString()
 		{
 			// TODO implement me 
-			return "";
+			return "ToLongTimeString";
 		}
 
 		public double ToOADate()
@@ -403,39 +546,37 @@ namespace System
 		public string ToShortDateString()
 		{
 			// TODO implement me 
-			return "";
+			return "ToShortDateString";
 		}
 
 		public string ToShortTimeString()
 		{
 			// TODO implement me
-			return "";
+			return "ToShortTimeString";
 		}
         
-
 		public override string ToString ()
 		{
 			// TODO: Implement me
-
-			return "";
+			return "" ;
 		}
 
 		public string ToString (IFormatProvider fp)
 		{
 			// TODO: Implement me.
-			return "";
+			return "ToString1";
 		}
 
 		public string ToString (string format)
 		{
 			// TODO: Implement me.
-			return "";
+			return "ToString2";
 		}
 
 		public string ToString (string format, IFormatProvider fp)
 		{
 			// TODO: Implement me.
-			return "";
+				return "" ;
 		}
 
 		public DateTime ToUniversalTime()
@@ -446,113 +587,129 @@ namespace System
 
 		/*  OPERATORS */
 
-		public static DateTime operator +( DateTime d,	TimeSpan t )
+		public static DateTime operator +(DateTime d, TimeSpan t)
 		{
-			return new DateTime (d.ticks + t.Ticks );
+			return new DateTime (d.ticks + t.Ticks);
 		}
 
-		public static bool operator ==(	DateTime d1, DateTime d2 )
+		public static bool operator ==(DateTime d1, DateTime d2)
 		{
-			return (d1.ticks == d2.ticks );
+			return (d1.ticks == d2.ticks);
 		}
 
 		public static bool operator >(DateTime t1,DateTime t2)
 		{
-			return (t1.ticks > t2.ticks );
+			return (t1.ticks > t2.ticks);
 		}
 
-		public static bool operator >=(	DateTime t1,DateTime t2	)
+		public static bool operator >=(DateTime t1,DateTime t2)
 		{
 			return (t1.ticks >= t2.ticks);
 		}
 
-		public static bool operator !=( DateTime d1, DateTime d2)
+		public static bool operator !=(DateTime d1, DateTime d2)
 		{
-			return (d1.ticks != d2.ticks );
+			return (d1.ticks != d2.ticks);
 		}
 
-		public static bool operator <( DateTime t1,	DateTime t2	)
+		public static bool operator <(DateTime t1,	DateTime t2)
 		{
 			return (t1.ticks < t2.ticks );
 		}
 
-		public static bool operator <=(	DateTime t1,DateTime t2	)
+		public static bool operator <=(DateTime t1,DateTime t2)
 		{
-			return (t1.ticks <= t2.ticks );
+			return (t1.ticks <= t2.ticks);
 		}
 
 		public static TimeSpan operator -(DateTime d1,DateTime d2)
 		{
-			return new TimeSpan(d1.ticks - d2.ticks );
+			return new TimeSpan(d1.ticks - d2.ticks);
 		}
 
 		public static DateTime operator -(DateTime d,TimeSpan t	)
 		{
-			return new DateTime (d.ticks - t.Ticks );
+			return new DateTime (d.ticks - t.Ticks);
 		}
 
-
-
-		private static long AbsoluteDays (int year, int month, int day)
+		public bool ToBoolean(IFormatProvider provider)
 		{
-			int[] days = new int[13] { 0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };	
-			int temp = 0, m=1 ;
-		
-			if (IsLeapYear(year))
-				days[2] = 29;
-			while (m < month)
-				temp += days[m++];
-			return ((day-1) + temp + (365* (year-1)) + ((year-1)/4) - ((year-1)/100) + ((year-1)/400));
-			
+			throw new InvalidCastException();
 		}
-
-		private  int FromTicks(Which what)
+		
+		public byte ToByte(IFormatProvider provider)
 		{
-			const int dp400 = 146097;
-			const int dp100 = 36524;
-			const int dp4 = 1461;
-		
-			int[] days = new int[13] { 0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };	
-			int totaldays = (int) (ticks / TimeSpan.TicksPerDay );
-		
-			int num400 = (totaldays / dp400);
-			totaldays -=  num400 * dp400;
-		
-			int num100 = (totaldays / dp100);
-			if (num100 == 4)   // leap
-				num100 = 3;
-			totaldays -= (num100 * dp100);
-
-			int num4 = totaldays / dp4;
-			totaldays -= (num4 * dp4);
-
-			int numyears = totaldays / 365 ;
-			
-			if (numyears == 4)  //leap
-				numyears =3 ;
-			if (what == Which.Year )
-				return num400*400 + num100*100 + num4*4 + numyears + 1;
-
-			totaldays -= (numyears * 365) ;
-			if (what ==Which.DayYear )
-				return totaldays + 1;
-			
-			if  ((numyears==3) && ((num100 == 3) || !(num4 == 24)) ) //31 dec leapyear
-				days[2] = 29;
-		
-	        
-			int M =1;
-			while (totaldays >= days[M])
-				totaldays -= days[M++];
-
-			if (what == Which.Month )
-				return M;
-
-			return totaldays +1;
+			throw new InvalidCastException();
 		}
 
+		public char ToChar(IFormatProvider provider)
+		{
+			throw new InvalidCastException();
+		}
+
+		// TODO Implement me  
+		public System.DateTime ToDateTime(IFormatProvider provider)
+		{
+			return new System.DateTime(this.ticks);
+		} 
+		
+		public decimal ToDecimal(IFormatProvider provider)
+		{
+			 throw new InvalidCastException();
+		}
+
+		public double ToDouble(IFormatProvider provider)
+		{
+			throw new InvalidCastException();
+		}
+
+		public Int16 ToInt16(IFormatProvider provider)
+		{
+			throw new InvalidCastException();
+		}
+
+		public Int32 ToInt32(IFormatProvider provider)
+		{
+			throw new InvalidCastException();
+		}
+
+		public Int64 ToInt64(IFormatProvider provider)
+		{
+			throw new InvalidCastException();
+		}
+
+		public SByte ToSByte(IFormatProvider provider)
+		{
+			throw new InvalidCastException();
+		}
+
+		public Single ToSingle(IFormatProvider provider)
+		{
+			throw new InvalidCastException();
+		}
+
+		public object ToType(Type conversionType,IFormatProvider provider)
+		{
+			throw new InvalidCastException();
+		}
+
+		UInt16 System.IConvertible.ToUInt16(IFormatProvider provider)
+		{
+			throw new InvalidCastException();
+		}
+
+		public UInt32 ToUInt32(IFormatProvider provider)
+		{
+			throw new InvalidCastException();
+		}
+
+		public UInt64 ToUInt64(IFormatProvider provider)
+		{
+			throw new InvalidCastException();
+		}
 	}
 }
+
 namespace System
 {
 	public enum DayOfWeek
@@ -567,4 +724,3 @@ namespace System
 	}
 }
 
-		

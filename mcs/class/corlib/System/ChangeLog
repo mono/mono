@@ -1,3 +1,9 @@
+2001-08-02  Marcel Narings  <marcel@narings.nl>
+	
+	* DateTime.cs: Cleaned up a bit. Added the Add* family members.
+	Added exceptions. Added IConvertible. Still needs some platform 
+	dependend stuff, the Parse and ToString members
+
 2001-08-01  Dietmar Maurer  <dietmar@ximian.com>
 
 	* Type.cs (GetTypeFromHandle): added placeholder 
