@@ -1,4 +1,9 @@
+2002-04-17	Patrik Torstensson <patrik.torstensson@labs2.com>
 
+	* threads.c: implemented all of the new interlocked icalls.
+	* string-icalls.c: fix a bug in insert.
+	* icalls.c: added the icalls for interlocked, removed old string functions.
+	
 Mon Apr 22 19:44:16 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* loader.c: fix off-by-one error when reading argument names.
