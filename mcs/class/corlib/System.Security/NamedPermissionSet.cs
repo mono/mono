@@ -29,6 +29,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Runtime.InteropServices;
 using System.Security.Permissions;
 
 namespace System.Security {
@@ -121,6 +122,7 @@ namespace System.Security {
 		}
 
 #if NET_2_0
+		[ComVisible (false)]
 		public override bool Equals (object obj)
 		{
 			if (obj == null)
@@ -132,6 +134,7 @@ namespace System.Security {
 			return ((name == nps.Name) && base.Equals (obj));
 		}
 
+		[ComVisible (false)]
 		public override int GetHashCode ()
 		{
 			int hc = base.GetHashCode ();

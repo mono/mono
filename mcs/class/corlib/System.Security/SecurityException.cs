@@ -64,21 +64,25 @@ namespace System.Security {
 		// Properties
 
 #if NET_2_0
+		[ComVisible (false)]
 		public SecurityAction Action {
 			get { return _action; }
 			set { _action = value; }
 		}
 
+		[ComVisible (false)]
 		public object Demanded {
 			get { return _demanded; }
 			set { _demanded = value; }
 		}
 
+		[ComVisible (false)]
 		public object DenySetInstance {
 			get { return _denyset; }
 			set { _denyset = value; }
 		}
 
+		[ComVisible (false)]
 		public AssemblyName FailedAssemblyInfo {
 			get { return _assembly; }
 			set { _assembly = value; }
@@ -89,17 +93,20 @@ namespace System.Security {
 			set { _firstperm = value; }
 		}
 
+		[ComVisible (false)]
 		public MethodInfo Method {
 			get { return _method; }
 			set { _method = value; }
 		}
 
 		[Obsolete]
+		[ComVisible (false)]
 		public IPermission PermissionThatFailed {
 			get { return _permfailed; }
 			set { _permfailed = value; }
 		}
 
+		[ComVisible (false)]
 		public object PermitOnlySetInstance {
 			get { return _permitset; }
 			set { _permitset = value; }

@@ -247,6 +247,7 @@ namespace System.Security {
 
 #if NET_2_0
 		[MonoTODO]
+		[ComVisible (false)]
 		public override bool Equals (object obj)
 		{
 			if (obj == null)
@@ -262,6 +263,7 @@ namespace System.Security {
 
 #if NET_2_0
 		[MonoTODO]
+		[ComVisible (false)]
 		public override int GetHashCode ()
 		{
 			return base.GetHashCode ();

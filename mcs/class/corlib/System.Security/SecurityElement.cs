@@ -31,6 +31,7 @@
 
 using System.Globalization;
 using System.Collections;
+using System.Runtime.InteropServices;
 using System.Text;
 
 using Mono.Xml;
@@ -221,6 +222,7 @@ namespace System.Security
 		}
 
 #if NET_2_0
+		[ComVisible (false)]
 		public SecurityElement Copy ()
 		{
 			return new SecurityElement (this);

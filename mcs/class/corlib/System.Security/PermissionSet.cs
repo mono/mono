@@ -33,6 +33,7 @@ using System.Collections;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Security.Permissions;
@@ -545,6 +546,7 @@ namespace System.Security {
 		}
 
 #if NET_2_0
+		[ComVisible (false)]
 		public override bool Equals (object obj)
 		{
 			if (obj == null)
@@ -569,6 +571,7 @@ namespace System.Security {
 			return true;
 		}
 
+		[ComVisible (false)]
 		public override int GetHashCode ()
 		{
 			if (list.Count == 0)

@@ -1,3 +1,14 @@
+2004-11-30  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CodeAccessPermission.cs:
+	* NamedPermissionSet.cs:
+	* PermissionSet.cs:
+	* SecurityElement.cs:
+	* SecurityException.cs:
+		Added ComVisible attributes to match 2.0 October Preview.
+	* SecureString.cs: Added an internal method to get the unencrypted 
+	string (required to use the string inside mscorlib).
+
 2004-10-19  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SecurityManager.cs: Changed private static methods to use a single

@@ -293,6 +293,21 @@ namespace System.Security {
 			Buffer.BlockCopy (_dec, 0, _enc, 0, _enc.Length);
 			Array.Clear (_dec, 0, _dec.Length);
 		}
+
+		// dangerous method (put a LinkDemand on it)
+		internal byte[] GetBuffer ()
+		{
+			byte[] secret = null;
+			try {
+				Decrypt ();
+				secret = (byte[]) _dec.Clone ();
+			}
+			finally {
+				Array.Clear (_dec, 0, _dec.Length);
+			}
+			// NOTE: CALLER IS RESPONSIBLE TO ZEROIZE THE DATA
+			return secret;
+		}
 	}
 }
 
