@@ -1,3 +1,14 @@
+2005-02-09  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* cas1.cs: Changed for an easier to test case.
+	* cas2-5: New. "Normal" LinkDemand test cases.
+	* icall1.cs, icall2.cs: Updated to work on both Mono and MS runtime.
+	* icall2-6.cs: New. More internal call test cases.
+	* Makefile: Updated makefile.
+	* pinvoke1-2.cs: Updated to work on both Mono and MS runtime.
+	* pinvoke3-4.cs: New. More P/Invoke test cases.
+	* README: Updated informations.
+
 2005-02-08  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* aptc1.cs: New. Partial trust test case.
