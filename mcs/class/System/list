@@ -1,3 +1,4 @@
+-r System.Xml --noconfig
 System\TODOAttribute.cs
 System\Uri.cs
 System\UriFormatException.cs
@@ -133,3 +134,6 @@ System.Text.RegularExpressions\replace.cs
 System.Text.RegularExpressions\syntax.cs
 System.Threading\ThreadExceptionEventArgs.cs
 System.Threading\ThreadExceptionEventHandler.cs
+System.Diagnostics\Switch.cs
+System.Diagnostics\TraceListener.cs
+System.Net\IPv6Address.cs
