@@ -1,3 +1,8 @@
+2004-10-29  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlDocumentNavigator.cs : GetNode() should consider namespace nodes.
+	* XmlNode.cs : dustclean.
+
 2004-10-28  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlDocument.cs : use XPathEditableDocument again.

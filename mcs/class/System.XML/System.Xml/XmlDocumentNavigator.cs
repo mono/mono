@@ -646,12 +646,12 @@ namespace System.Xml
 			NsNode = null;
 		}
 
-		internal XmlNode Node { get { return NsNode != null ? NsNode : node; } }
+		private XmlNode Node { get { return NsNode != null ? NsNode : node; } }
 
-                XmlNode IHasXmlNode.GetNode ()
-                {
-                        return node;
-                }
+		XmlNode IHasXmlNode.GetNode ()
+		{
+			return Node;
+		}
 
 		#endregion
 	}

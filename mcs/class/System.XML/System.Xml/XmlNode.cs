@@ -749,10 +749,7 @@ namespace System.Xml
 			XPathNodeIterator iter = nav.Select (expr);
 			if (!iter.MoveNext ())
 				return null;
-if (iter.Current is IHasXmlNode)
 			return ((IHasXmlNode) iter.Current).GetNode ();
-else
-throw new Exception ("It should be IHasXmlNode: " + iter.Current.GetType ());
 		}
 
 		internal static void SetReadOnly (XmlNode n)
