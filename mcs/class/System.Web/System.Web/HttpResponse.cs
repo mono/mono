@@ -810,8 +810,7 @@ namespace System.Web
 
 						SendHeaders ();
 						length = _Writer.BufferSize;
-						if (length != 0)
-							_WorkerRequest.SendCalculatedContentLength ((int) length);
+						_WorkerRequest.SendCalculatedContentLength ((int) length);
 					} else {
 						if (_lContentLength == 0 && _iStatusCode == 200 &&
 						   _sTransferEncoding == null) {
