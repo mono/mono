@@ -18,7 +18,7 @@ using Mono.Xml.Xsl;
 
 namespace Mono.Xml.XPath 
 {
-	public abstract class Pattern 
+	internal abstract class Pattern 
 	{
 		internal static Pattern Compile (string s, Compiler comp)
 		{		
