@@ -76,7 +76,7 @@ namespace System.Windows.Forms {
     		AccessibleRole accessibleRole;
     		bool allowDrop;
     		AnchorStyles anchor;
-    		protected Color backColor;
+    		internal Color backColor;
     		Image backgroundImage;
     		//BindingContext bindingContext;
     		Rectangle bounds;
@@ -87,7 +87,7 @@ namespace System.Windows.Forms {
     		DockStyle dock;
     		bool enabled;
     		Font font;
-    		protected Color foreColor;
+    		internal Color foreColor;
     		ImeMode imeMode;
     		bool isAccessible;
     		// Point location;  // using bounds to store location
@@ -95,9 +95,9 @@ namespace System.Windows.Forms {
     		Region region;
     		RightToLeft rightToLeft;
     		bool tabStop;
-    		protected string text;
-    		protected bool visible;
-    		protected ControlStyles controlStyles_;
+    		internal string text;
+    		internal bool visible;
+    		internal ControlStyles controlStyles_;
 		Cursor  cursor;
 
 		int clientWidth;
@@ -119,7 +119,7 @@ namespace System.Windows.Forms {
 		internal CallWinControlProcMask callWinControlProcMask;
 		
 		object tag;
-		protected bool mouseIsInside_;
+		internal bool mouseIsInside_;
 		
 		// BeginInvoke () etc. helpers
 		static int InvokeMessage = Win32.RegisterWindowMessage ("mono_control_invoke_helper");
@@ -290,14 +290,24 @@ namespace System.Windows.Forms {
     
     		// --- Properties ---
     		// Properties only supporting .NET framework, not stubbed out:
-    		//  - protected bool RenderRightToLeft {get;}
-    		//  - public IWindowTarget WindowTarget {get; set;}
-    		//[MonoTODO]
-    		//public AccessibleObject AccessibilityObject {
-    		//	get {
-    		//		throw new NotImplementedException ();
-    		//	}
-    		//}
+			protected bool RenderRightToLeft {
+				get{
+    				throw new NotImplementedException ();
+				}
+			}
+			public IWindowTarget WindowTarget {
+				get {
+					throw new NotImplementedException ();
+				}
+				set {
+				}
+			}
+    		[MonoTODO]
+    		public AccessibleObject AccessibilityObject {
+    			get {
+    				throw new NotImplementedException ();
+    			}
+    		}
     
     		public string AccessibleDefaultActionDescription {
     			get {
@@ -695,8 +705,9 @@ namespace System.Windows.Forms {
     		}
     
 		//Compact Framework
-    		public virtual bool Enabled {
-    			get {
+			//public virtual bool Enabled {
+			public bool Enabled {
+				get {
 				return enabled;
     				//return Win32.IsWindowEnabled (Handle);
     			}
@@ -1314,11 +1325,11 @@ namespace System.Windows.Forms {
     			throw new NotImplementedException ();
     		}
     	
-    		// [MonoTODO]
-   		//public IContainerControl GetContainerControl () 
-    		//{
-    		//	throw new NotImplementedException ();
-    		//}
+    		 [MonoTODO]
+   			public IContainerControl GetContainerControl () 
+    		{
+    			throw new NotImplementedException ();
+    		}
 
 		internal Control getNextFocusedControlCore (Control parent, Control ctl, bool forward)
 		{
@@ -1636,16 +1647,16 @@ namespace System.Windows.Forms {
     				DoubleClick (this, e);
     		}
     		
-    		protected virtual void OnDragDrop (DragEventArgs e)
+    		protected virtual void OnDragDrop (DragEventArgs drgevent)
     		{
     			if (DragDrop != null)
-    				DragDrop (this, e);
+    				DragDrop (this, drgevent);
     		}
     		
-    		protected virtual void OnDragEnter (DragEventArgs e)
+    		protected virtual void OnDragEnter (DragEventArgs drgevent)
     		{
     			if (DragEnter != null)
-    				DragEnter (this, e);
+    				DragEnter (this, drgevent);
     		}
     		
     		protected virtual void OnDragLeave (EventArgs e)
@@ -1654,10 +1665,10 @@ namespace System.Windows.Forms {
     				DragLeave (this, e);
     		}
     		
-    		protected virtual void OnDragOver (DragEventArgs e)
+    		protected virtual void OnDragOver (DragEventArgs drgevent)
     		{
     			if (DragOver != null)
-    				DragOver (this, e);
+    				DragOver (this, drgevent);
     		}
     		
 		//Compact Framework
@@ -1685,10 +1696,10 @@ namespace System.Windows.Forms {
     				ForeColorChanged (this, e);
     		}
     		
-    		protected virtual void OnGiveFeedback (GiveFeedbackEventArgs e)
+    		protected virtual void OnGiveFeedback (GiveFeedbackEventArgs gfbevent)
     		{
     			if (GiveFeedback != null)
-    				GiveFeedback (this, e);
+    				GiveFeedback (this, gfbevent);
     		}
     		
 		//Compact Framework
@@ -1722,10 +1733,10 @@ namespace System.Windows.Forms {
     			}
     		}
     		
-    		protected virtual void OnHelpRequested (HelpEventArgs e) 
+    		protected virtual void OnHelpRequested (HelpEventArgs hevent) 
     		{
     			if (HelpRequested != null)
-    				HelpRequested (this, e);
+    				HelpRequested (this, hevent);
     		}
     		
     		protected virtual void OnImeModeChanged (EventArgs e) 
@@ -1762,11 +1773,11 @@ namespace System.Windows.Forms {
     
     		}
     		
-    		protected virtual void OnLayout (LayoutEventArgs e) 
+    		protected virtual void OnLayout (LayoutEventArgs levent) 
     		{
-			DoDockAndAnchorLayout (e);
+			DoDockAndAnchorLayout (levent);
     			if (Layout != null)
-    				Layout (this, e);
+    				Layout (this, levent);
     		}
     		
     		protected virtual void OnLeave (EventArgs e) 
@@ -1891,11 +1902,11 @@ namespace System.Windows.Forms {
     		}
     		
 		//Compact Framework
-    		protected virtual void OnPaintBackground (PaintEventArgs e) 
+    		protected virtual void OnPaintBackground (PaintEventArgs pevent) 
     		{
 			if (GetStyle (ControlStyles.UserPaint)) {
 				Brush br = new SolidBrush (BackColor);
-				e.Graphics.FillRectangle (br, e.ClipRectangle);
+				pevent.Graphics.FillRectangle (br, pevent.ClipRectangle);
 				br.Dispose ();
 			}
 		}
@@ -1964,10 +1975,10 @@ namespace System.Windows.Forms {
     		}
     		
     		protected virtual void OnQueryContinueDrag (
-							    QueryContinueDragEventArgs e) 
+							    QueryContinueDragEventArgs qcdevent) 
     		{
     			if (QueryContinueDrag != null)
-    				QueryContinueDrag (this, e);
+    				QueryContinueDrag (this, qcdevent);
     		}
     		
 		//Compact Framework
@@ -2034,12 +2045,12 @@ namespace System.Windows.Forms {
     				Validated (this, e);
     		}
     		
-    		//[MonoTODO]
+    		[MonoTODO]
    		// CancelEventArgs not ready
-    		//protected virtual void OnValidating (CancelEventArgs e) 
-    		//{
-    		//	throw new NotImplementedException ();
-    		//}
+    		protected virtual void OnValidating (CancelEventArgs e) 
+    		{
+    			throw new NotImplementedException ();
+    		}
     		
     		[MonoTODO]
 		protected virtual void OnVisibleChanged (EventArgs e) 
@@ -2275,6 +2286,8 @@ namespace System.Windows.Forms {
     		{
 			//FIXME:
 		}
+			public virtual void ResetCursor(){
+			}
     		
     		[MonoTODO]
 		public virtual void ResetRightToLeft () 
@@ -3151,7 +3164,7 @@ namespace System.Windows.Forms {
     		public event EventHandler Validated;
     		//[MonoTODO]
    		// CancelEventHandler not yet defined
-    		//public event CancelEventHandler Validating {
+    		public event CancelEventHandler Validating;
     		
     		public event EventHandler VisibleChanged;
     		

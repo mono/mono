@@ -577,15 +577,7 @@ namespace System.Windows.Forms {
 				//FIXME:
 			}
 		}
-		[MonoTODO]
-		public override bool Enabled  {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				//FIXME:
-			}
-		}
+
 		[MonoTODO]
 		public Day FirstDayOfWeek  {
 			get {
