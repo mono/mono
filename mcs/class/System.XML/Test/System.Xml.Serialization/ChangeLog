@@ -1,3 +1,7 @@
+2005-02-07  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* DeserializeTests.cs: Added test case for bug #72265.
+
 2005-01-30  Nick Drochak  <ndrochak@ieee.org>
 
 	* ComplexDataStructure.cs:

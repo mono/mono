@@ -34,9 +34,25 @@ namespace MonoTests.System.XmlSerialization
 			return Deserialize (t, xr);
 		}
 
+		private object DeserializeEncoded (Type t, string xml)
+		{
+			StringReader sr = new StringReader (xml);
+			XmlReader xr = new XmlTextReader (sr);
+			return DeserializeEncoded (t, xr);
+		}
+
 		private object Deserialize (Type t, XmlReader xr)
 		{
 			XmlSerializer ser = new XmlSerializer (t);
+			result = ser.Deserialize (xr);
+			return result;
+		}
+
+		private object DeserializeEncoded (Type t, XmlReader xr)
+		{
+			SoapReflectionImporter im = new SoapReflectionImporter ();
+			XmlTypeMapping tm = im.ImportTypeMapping (t);
+			XmlSerializer ser = new XmlSerializer (tm);
 			result = ser.Deserialize (xr);
 			return result;
 		}
@@ -105,5 +121,19 @@ namespace MonoTests.System.XmlSerialization
 			ms.Position = 0;
 			c = (Container2) serializer.Deserialize (ms);
 		}
+		
+		[Test]
+		public void DeserializeArrayReferences ()
+		{
+			string s = "<Sample xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">";
+			s += "<ArrayText xmlns:n3=\"http://schemas.xmlsoap.org/soap/encoding/\" xsi:type=\"n3:Array\" n3:arrayType=\"xsd:string[2]\">";
+			s += "<item href=\"#id-606830706\"></item>";
+			s += "<item xsi:type=\"xsd:string\">Hola</item>";
+			s += "</ArrayText>";
+			s += "<string id=\"id-606830706\" xsi:type=\"xsd:string\">Adeu</string>";
+			s += "</Sample>";
+			DeserializeEncoded (typeof(Sample), s);
+		}
+		
 	}
 }
