@@ -1,3 +1,8 @@
+
+Sat Apr 6 20:07:48 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* icall.c: internalcall implementation for ValueType.Equals().
+
 2002-04-06  Dietmar Maurer  <dietmar@ximian.com>
 
 	* object.c (mono_message_init): moved 
