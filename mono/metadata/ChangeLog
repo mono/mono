@@ -1,3 +1,17 @@
+2003-04-27  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug-debugger.h (MonoDebuggerEvent): Renamed
+	MONO_DEBUGGER_EVENT_BREAKPOINT_TRAMPOLINE to
+	MONO_DEBUGGER_EVENT_BREAKPOINT.
+	(mono_breakpoint_trampoline_code): Removed.
+	(mono_debugger_event_handler): The last argument is now a
+	`guint32'.
+	(mono_debugger_insert_breakpoint_full): Removed the
+	`use_trampoline' argument.
+	(mono_debugger_method_has_breakpoint): Likewise.
+	(mono_debugger_trampoline_breakpoint_callback): Renamed to
+	mono_debugger_breakpoint_callback(); take the method and
+	breakpoint number as arguments.
 
 Sat Apr 26 19:25:31 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
