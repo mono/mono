@@ -1,3 +1,8 @@
+
+Mon Apr 19 19:39:47 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c: some fixes to bootstrap mcs/corlib/etc.
+
 2004-04-19  Zoltan Varga  <vargaz@freemail.hu>
 
 	* liveness.c: Mark variables as volatile in all basic blocks reachable
