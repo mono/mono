@@ -67,6 +67,7 @@ namespace System.Web.Services.Protocols {
 		[MonoTODO]
                 public override void WriteReturns (object[] returnValues, Stream outputStream)
                 {
+			//xmlReturnWriter.Write (Response, outputStream, returnValue);
                         throw new NotImplementedException ();
                 }
 
