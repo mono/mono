@@ -1,3 +1,8 @@
+2004-12-06  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* RSAManaged.cs: Implement key blinding for RSA decryption with, or
+	without, using CRT.
+
 2004-11-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PKCS1.cs: Merge from HEAD. Fix PKCS#1 v1.5 decryption when the 
