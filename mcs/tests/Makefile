@@ -12,7 +12,17 @@ DISTFILES = README.tests $(wildcard *.cs)
 USE_MCS_FLAGS :=
 
 #
-# If you add any tests here, please do also add them to README.Tests !
+# All new tests go in here
+# These tests are not run by GMCS since the corresponding code is not yet in there.
+# Martin Baulig will manually move them into TEST_SOURCES after merging the code into GMCS.
+#
+NEW_TEST_SOURCES = \
+	test-297
+
+#
+# Please do _not_ add any tests here - all new tests must go into NEW_TEST_SOURCES
+# Martin Baulig is the only one who may add tests here - after merging the latest MCS patches
+# into GMCS
 #
 
 TEST_SOURCES = \
@@ -50,7 +60,10 @@ TEST_SOURCES = \
 	cls-test-11 cls-test-14 cls-test-15 cls-test-16 \
 	mtest-1-dll mtest-1-exe
 
+ALL_TEST_SOURCES = $(NEW_TEST_SOURCES) $(TEST_SOURCES)
+
 GENERIC_SOURCES = \
+	gen-13-dll gen-13-exe gen-17-dll gen-17-exe gen-47-dll gen-47-exe		\
 	gen-1   gen-2   gen-3   gen-4   gen-5   gen-6   gen-7   gen-8   gen-9   gen-10 \
 	gen-11  gen-12          gen-14  gen-15  gen-16          gen-18  gen-19  gen-20 \
 	gen-21  gen-22  gen-23  gen-24  gen-25  gen-26  gen-27  gen-28  gen-29  gen-30 \
@@ -59,9 +72,6 @@ GENERIC_SOURCES = \
 	gen-51  gen-52  gen-53  gen-54  gen-55  gen-56          gen-58  gen-59  gen-60 \
 	        gen-62  gen-63  gen-64  gen-65  gen-66  gen-67  gen-68  gen-69  gen-70 \
 	gen-71  gen-72  gen-73  gen-74  gen-75  gen-76  gen-77
-
-GENERIC_MULTI_SOURCES = \
-	gen-13  gen-17  gen-47
 
 #
 # C# 2.0 tests 
@@ -130,7 +140,7 @@ test-compiler-jit-real:
 	@rm -f *.exe *.dll $(TEST_TAG).log $(TEST_TAG)-*.log ; \
 	logfile="$(TEST_TAG).log" ; \
 	echo 'Running $(TEST_TAG) tests with flags "$(TEST_RUNTIME)" ... ' ; \
-	for i in $(TEST_SOURCES) ; do \
+	for i in $(ALL_TEST_SOURCES) ; do \
 	    options=`sed -n 's,^// Compiler options:,,p' $$i.cs`; \
 	    testlogfile="$(TEST_TAG)-$$i.log" ; \
 	    echo -n "$$i: "; \
@@ -160,79 +170,31 @@ test-compiler-jit-real:
 	done ; \
 	if test -z "$$failed"; then :; else echo "Failing tests: $$failed"; exit 1; fi
 
-test-compiler-jit-multi:
-	@rm -f *.exe *.dll $(TEST_TAG).log $(TEST_TAG)-*.log ; \
-	logfile="$(TEST_TAG).log" ; \
-	echo 'Running $(TEST_TAG) tests with flags "$(TEST_RUNTIME)" ... ' ; \
-	for i in $(TEST_SOURCES) ; do \
-	    options=`sed -n 's,^// Compiler options:,,p' $$i-dll.cs`; \
-	    testlogfile="$(TEST_TAG)-$$i-dll.log" ; \
-	    echo -n "$$i: "; \
-	    echo "*** $(MONO_PATH) $(INTERNAL_MCS) $$options /target:library $$i-dll.cs" > $$testlogfile ; \
-	    if $(INTERNAL_MCS) $$options /target:library $$i-dll.cs >> $$testlogfile 2>&1 ; then \
-		: ; \
-	    else \
-		echo "Exit code: $$?" >> $$testlogfile ; \
-		failed="$$failed $$i" ; \
-		echo "FAIL: $$i: compilation" >> $$logfile ; \
-	        echo FAILED COMPILATION ; cat $$testlogfile ; \
-	    fi ; \
-	    if test -f $$i-dll.dll; then \
-		options=`sed -n 's,^// Compiler options:,,p' $$i-exe.cs`; \
-		testlogfile="$(TEST_TAG)-$$i-exe.log" ; \
-		echo "*** $(MONO_PATH) $(INTERNAL_MCS) $$options /r:$$i-dll.dll $$i-exe.cs" > $$testlogfile ; \
-		if $(INTERNAL_MCS) $$options /r:$$i-dll.dll $$i-exe.cs >> $$testlogfile 2>&1 ; then \
-		    : ; \
-		else \
-		    echo "Exit code: $$?" >> $$testlogfile ; \
-		    failed="$$failed $$i" ; \
-		    echo "FAIL: $$i: compilation" >> $$logfile ; \
-		    echo FAILED COMPILATION ; cat $$testlogfile ; \
-		fi ; \
-	    fi ; \
-	    if test -f $$i-exe.exe; then \
-	        echo "*** $(TEST_RUNTIME) ./$$i-exe.exe" >> $$testlogfile ; \
-	        if $(TEST_RUNTIME) ./$$i-exe.exe >> $$testlogfile 2>&1 ; then \
-		    echo "PASS: $$i" >> $$logfile ; \
-	            echo OK ; rm -f $$testlogfile ; \
-	        else \
-		    echo "Exit code: $$?" >> $$testlogfile ; \
-		    failed="$$failed $$i" ; \
-		    echo "FAIL: $$i" >> $$logfile ; \
-	            echo FAILED ; cat $$testlogfile ; \
-		fi ; \
-	    fi ; \
-	done ; \
-	if test -z "$$failed"; then :; else echo "Failing tests: $$failed"; exit 1; fi
-
 GENERIC_KNOWN_FAILURES = test-55 test-289
 
 # 
 # Tests the generics compiler, and excludes GENERIC_KNOWN_FAILURES from the build
 #
-test-generic: test-generic-1 test-generic-2 test-generic-3 test-generic-4
+test-generic: test-generic-1 test-generic-2 test-generic-3
 
 test-generic-1:
 	sources=`echo $(TEST_SOURCES) | tr ' ' '\n' | grep -v "$(GENERIC_KNOWN_FAILURES)"| tr '\n' ' ' `;  \
-	make MONO_PATH="../class/lib/net_2_0$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" TEST_RUNTIME="MONO_PATH=$$MONO_PATH $(RUNTIME) --debug" INTERNAL_MCS="mono ../gmcs/gmcs.exe" test-compiler-jit-real TEST_SOURCES="$$sources" TEST_TAG=gmcs
+	make MONO_PATH="../class/lib/net_2_0$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" TEST_RUNTIME="MONO_PATH=$$MONO_PATH $(RUNTIME) --debug" INTERNAL_MCS="mono ../gmcs/gmcs.exe" test-compiler-jit-real ALL_TEST_SOURCES="$$sources" TEST_TAG=gmcs
 
 test-generic-2:
-	make MONO_PATH="../class/lib/net_2_0$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" TEST_RUNTIME="MONO_PATH=$$MONO_PATH $(RUNTIME) --debug" INTERNAL_MCS="mono ../gmcs/gmcs.exe" test-compiler-jit-real TEST_SOURCES="$(TEST2_SOURCES)" TEST_TAG=gmcs-v2
+	make MONO_PATH="../class/lib/net_2_0$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" TEST_RUNTIME="MONO_PATH=$$MONO_PATH $(RUNTIME) --debug" INTERNAL_MCS="mono ../gmcs/gmcs.exe" test-compiler-jit-real ALL_TEST_SOURCES="$(TEST2_SOURCES)" TEST_TAG=gmcs-v2
 
 test-generic-3:
-	make MONO_PATH="../class/lib/net_2_0$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" TEST_RUNTIME="MONO_PATH=$$MONO_PATH $(RUNTIME) --debug" INTERNAL_MCS="mono ../gmcs/gmcs.exe" test-compiler-jit-real TEST_SOURCES="$(GENERIC_SOURCES)" TEST_TAG=gmcs-v3
-
-test-generic-4:
-	make MONO_PATH="../class/lib/net_2_0$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" TEST_RUNTIME="MONO_PATH=$$MONO_PATH $(RUNTIME) --debug" INTERNAL_MCS="mono ../gmcs/gmcs.exe" test-compiler-jit-multi TEST_SOURCES="$(GENERIC_MULTI_SOURCES)" TEST_TAG=gmcs-v4
+	make MONO_PATH="../class/lib/net_2_0$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" TEST_RUNTIME="MONO_PATH=$$MONO_PATH $(RUNTIME) --debug" INTERNAL_MCS="mono ../gmcs/gmcs.exe" test-compiler-jit-real ALL_TEST_SOURCES="$(GENERIC_SOURCES)" TEST_TAG=gmcs-v3
 
 #
 # Tests the 2.0 features
 #
 test-2:
-	make INTERNAL_MCS="mono ../mcs/mcs.exe /langversion:default" test-compiler-jit-real TEST_SOURCES="$(TEST2_SOURCES)" TEST_TAG=mcs-v2
+	make INTERNAL_MCS="mono ../mcs/mcs.exe /langversion:default" test-compiler-jit-real ALL_TEST_SOURCES="$(TEST2_SOURCES)" TEST_TAG=mcs-v2
 
 test-unsafe-compiler-jit:
-	make INTERNAL_MCS="$(INTERNAL_MCS) /unsafe" test-compiler-jit-real TEST_SOURCES="$(UNSAFE_SOURCES)" TEST_TAG=mcs-unsafe
+	make INTERNAL_MCS="$(INTERNAL_MCS) /unsafe" test-compiler-jit-real ALL_TEST_SOURCES="$(UNSAFE_SOURCES)" TEST_TAG=mcs-unsafe
 
 #
 # Tests that require separate compilation
