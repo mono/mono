@@ -1,3 +1,7 @@
+2003-09-21  Miguel de Icaza  <miguel@ximian.com>
+
+	* Pen.cs: Add Clone method.
+
 2003-09-08  Duncan Mak  <duncan@ximian.com>
 
 	* gdk-helpers.cs: Remember to call gdk_init before hand.

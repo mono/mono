@@ -10,6 +10,7 @@
 //
 
 using System;
+using System.Drawing.Drawing2D;
 
 namespace System.Drawing {
 	namespace Win32Impl {
@@ -27,12 +28,12 @@ namespace System.Drawing {
 			}
 		}
 
-		public sealed class Pen : MarshalByRefObject, IPen { //, ICloneable, IDisposable {
+		public sealed class Pen : MarshalByRefObject, IPen, IDisposable {
 			System.Drawing.Brush brush;
 			Color color;
 			float width;
 			internal IntPtr hpen_ = IntPtr.Zero;
-			//PenAlignment alignment;
+			PenAlignment alignment;
 		
 			public Pen (System.Drawing.Brush brush)
 			{
@@ -67,16 +68,16 @@ namespace System.Drawing {
 			//
 			// Properties
 			//
-			//		public PenAlignment Alignment {
-			//			get {
-			//				return alignment;
-			//			}
-			//
-			//			set {
-			//				alignment = value;
-			//			}
-			//		}
-
+			public PenAlignment Alignment {
+				get {
+					return alignment;
+				}
+				
+				set {
+					alignment = value;
+				}
+			}
+			
 			System.Drawing.Brush IPen.Brush 
 			{
 				get 
@@ -115,15 +116,15 @@ namespace System.Drawing {
 				}
 			}
 
-			//		public object Clone ()
-			//		{
-			//			Pen p = new Pen (brush, width);
-			//			
-			//			p.color = color;
-			//			p.alignment = alignment;
-			//
-			//			return p;
-			//		}
+			public object Clone ()
+			{
+				Pen p = new Pen (brush, width);
+				
+				p.color = color;
+				p.alignment = alignment;
+			
+				return p;
+			}
 
 			void IDisposable.Dispose ()
 			{

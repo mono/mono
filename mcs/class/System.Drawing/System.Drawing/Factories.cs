@@ -21,43 +21,68 @@ internal class Factories {
 	private static string FactoryClassNameBase = "System.Drawing.Win32Impl.";
 	private static Assembly FactoryAssembly;
 
-	static object CreateObjectOfType( string type) {
+	static object CreateObjectOfType (string type)
+	{
 		object obj = FactoryAssembly.CreateInstance(FactoryClassNameBase + type);
 		if( obj == null) {
-			System.Console.WriteLine("Factory {0} is not implemented", FactoryClassNameBase + type );
-			throw new NotImplementedException();
+			string msg = String.Format ("Factory {0}{1} is not implemented", FactoryClassNameBase, type);
+			System.Console.WriteLine(msg);
+			throw new NotImplementedException(msg);
 		}
 		return obj;
 	}
 
-	internal static IBitmapFactory GetBitmapFactory () {
+	internal static IBitmapFactory GetBitmapFactory ()
+	{
 		return CreateObjectOfType("BitmapFactory") as IBitmapFactory;
 	}
 
-	internal static IFontFactory GetFontFactory () {
+	internal static IFontFactory GetFontFactory ()
+	{
 		return CreateObjectOfType("FontFactory") as IFontFactory;
 	}
 
-	internal static IGraphicsFactory GetGraphicsFactory () {
+	internal static IGraphicsFactory GetGraphicsFactory ()
+	{
 		return CreateObjectOfType("GraphicsFactory") as IGraphicsFactory;
 	}
 
-	internal static IPenFactory GetPenFactory () {
+	internal static IPenFactory GetPenFactory ()
+	{
 		return CreateObjectOfType("PenFactory") as IPenFactory;
 	}
 
-	internal static ISolidBrushFactory GetSolidBrushFactory () {
+	internal static ISolidBrushFactory GetSolidBrushFactory ()
+	{
 		return CreateObjectOfType("SolidBrushFactory") as ISolidBrushFactory;
 	}
 	
-	internal static IFontCollectionFactory GetFontCollectionFactory() {
+	internal static IFontCollectionFactory GetFontCollectionFactory()
+	{
 		return CreateObjectOfType("FontCollectionFactory") as IFontCollectionFactory;
 	}
 
-	internal static IFontFamilyFactory GetFontFamilyFactory() {
+	internal static IFontFamilyFactory GetFontFamilyFactory()
+	{
 		return CreateObjectOfType("FontFamilyFactory") as IFontFamilyFactory;
 	}
 
+	//
+	// Initializes the implementation that will be used to provide
+	// System.Drawing facilities.  Currently Cairo and Wine
+	// implementations are available.
+	//
+	// If Windows.Forms has been initialized, the Domain
+	// information will have the key Mono.Running.Windows.Forms
+	// set to true and we will make this the default.  Otherwise
+	// the Cairo-based implementation is picked.
+	// 
+	// A factory can be forced by setting the "SystemDrawingImpl"
+	// environment variable to either Win32Impl or Cairo.
+	//
+	// This can also be controlled by the <system.drawing> entry
+	// in the application configuration directory.
+	//
 	static Factories ()
 	{
 		FactoryAssembly = Assembly.GetExecutingAssembly();

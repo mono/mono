@@ -7,24 +7,31 @@
 //
 using System;
 using System.Drawing.Drawing2D;
+using System.Runtime.InteropServices;
+
 namespace System.Drawing
 {
-	/// <summary>
-	/// Summary description for Region.
-	/// </summary>
-	/// 
-	//[ComVisible(false)]
-	public sealed class Region// : MarshalByRefObject, IDisposable
+	[ComVisible(false)]
+	public sealed class Region : MarshalByRefObject, IDisposable
 	{
-		public Region() {
+		public Region()
+		{
+			
+		}
+		
+		public Region (Rectangle rect)
+		{
 
 		}
 
-		public Region( Rectangle rect) {
-
+		[ComVisible(false)]
+		public Region Clone()
+		{
+			return this;
 		}
-		//[comVisible(false)]
-		//public Region(GraphicsPath path) {
-		//}
+
+		public void Dispose ()
+		{
+		}
 	}
 }

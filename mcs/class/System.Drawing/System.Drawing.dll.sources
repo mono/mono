@@ -83,15 +83,6 @@ System.Drawing/impl/wine/TextureBrush.cs
 System.Drawing/impl/wine/win32Enums.cs
 System.Drawing/impl/wine/win32Structs.cs
 System.Drawing/impl/wine/win32functions.cs
-System.Drawing/impl/Xr/Bitmap.cs
-System.Drawing/impl/Xr/Font.cs
-System.Drawing/impl/Xr/Image.cs
-System.Drawing/impl/Xr/GDKfunctions.cs
-System.Drawing/impl/Xr/Graphics.cs
-System.Drawing/impl/Xr/Pen.cs
-System.Drawing/impl/Xr/SolidBrush.cs
-System.Drawing/impl/Xr/Xrfunctions.cs
-System.Drawing/impl/Xr/FontFamily.cs
 System.Drawing.Design/UITypeEditorEditStyle.cs
 System.Drawing.Design/IPropertyValueUIService.cs
 System.Drawing.Design/PropertyValueItem.cs

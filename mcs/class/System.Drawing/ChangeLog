@@ -1,3 +1,7 @@
+2003-09-21  Miguel de Icaza  <miguel@ximian.com>
+
+	* System.Drawing.dll.sources: Remove xr implementation. 
+
 2003-09-21  Alexandre Pigolkine <pigolkine@gmx.de>
 	* System.Drawing.dll.sources	removed 2 files from Printing namespace
 

@@ -1,62 +1,43 @@
 //
 // System.Drawing.Pen.cs
 //
-// Author:
+// Authors:
 //   Miguel de Icaza (miguel@ximian.com)
 //   Alexandre Pigolkine (pigolkine@gmx.de)
+//
 // (C) Ximian, Inc.  http://www.ximian.com
 //
 
 using System;
+using System.Drawing.Drawing2D;
 
 namespace System.Drawing {
 
 	internal interface IPenFactory {
-		IPen Pen(Brush brush, float width);
-		IPen Pen(Color color, float width);
+		IPen Pen (Brush brush, float width);
+		IPen Pen (Color color, float width);
 	}
 
-	internal interface IPen  : IDisposable {
+	internal interface IPen  : IDisposable, ICloneable {
 		
-		//
-		// Properties
-		//
-//		PenAlignment Alignment {
-//			get {
-//				return alignment;
-//			}
-//
-//			set {
-//				alignment = value;
-//			}
-//		}
-
 		Brush Brush {
-			get ;
-
-			set ;
+			get;
+			set;
 		}
 
 		Color Color {
-			get ;
-
-			set ;
+			get;
+			set;
 		}
 
 		float Width {
-			get ;
-			set ;
+			get;
+			set;
 		}
 
-//		object Clone ()
-//		{
-//			Pen p = new Pen (brush, width);
-//			
-//			p.color = color;
-//			p.alignment = alignment;
-//
-//			return p;
-//		}
-
+		PenAlignment Alignment {
+			get;
+			set;
+		}
 	}
 }

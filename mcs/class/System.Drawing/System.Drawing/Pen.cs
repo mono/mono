@@ -9,18 +9,18 @@
 //
 
 using System;
+using System.Drawing.Drawing2D;
 
 namespace System.Drawing {
 
-	public sealed class Pen : MarshalByRefObject { //, ICloneable, IDisposable {
+	public sealed class Pen : MarshalByRefObject, ICloneable, IDisposable {
 		Brush brush;
 		Color color;
 		float width;
 
 		internal IPen implementation;
 		internal static IPenFactory factory = Factories.GetPenFactory();
-		//PenAlignment alignment;
-		
+
 		public Pen (Brush brush)
 		{
 			implementation = factory.Pen(brush, 1);
@@ -52,15 +52,15 @@ namespace System.Drawing {
 		//
 		// Properties
 		//
-//		public PenAlignment Alignment {
-//			get {
-//				return alignment;
-//			}
-//
-//			set {
-//				alignment = value;
-//			}
-//		}
+		public PenAlignment Alignment {
+			get {
+				return implementation.Alignment;
+			}
+
+			set {
+				implementation.Alignment = value;
+			}
+		}
 
 		public Brush Brush {
 			get {
@@ -90,26 +90,21 @@ namespace System.Drawing {
 				width = value;
 			}
 		}
-
-//		public object Clone ()
-//		{
-//			Pen p = new Pen (brush, width);
-//			
-//			p.color = color;
-//			p.alignment = alignment;
-//
-//			return p;
-//		}
+		
+		public object Clone ()
+		{
+			return implementation.Clone ();
+		}
 
 		public void Dispose ()
 		{
-			implementation.Dispose();
 			Dispose (true);
 			System.GC.SuppressFinalize (this);
 		}
 
 		void Dispose (bool disposing)
 		{
+			implementation.Dispose();
 		}
 
 		~Pen ()

@@ -10,6 +10,7 @@
 //
 
 using System;
+using System.Drawing.Drawing2D;
 
 namespace System.Drawing.Cairo {
 
@@ -31,7 +32,8 @@ namespace System.Drawing.Cairo {
                 System.Drawing.Brush brush = null;
                 Color color = Color.Black;
                 float width = 1.0F;
-
+		PenAlignment alignment;
+		
                 void CommonInit()
                 {
                         //nativeObject_ = Xr.MonoGI_CreatePen((double)color.R, (double)color.G, (double)color.B,(double)width);
@@ -78,15 +80,15 @@ namespace System.Drawing.Cairo {
                 //
                 // Properties
                 //
-                //		public PenAlignment Alignment {
-                //			get {
-                //				return alignment;
-                //			}
-                //
-                //			set {
-                //				alignment = value;
-                //			}
-                //		}
+                public PenAlignment Alignment {
+                	get {
+                		return alignment;
+                	}
+                
+                	set {
+                		alignment = value;
+                	}
+                }
 
                 System.Drawing.Brush IPen.Brush {
                         get {
@@ -136,6 +138,15 @@ namespace System.Drawing.Cairo {
                 {
                         Dispose (false);
                 }
+
+		public object Clone ()
+		{
+			Pen copy = new Pen (brush, width);
+			copy.color = color;
+			copy.alignment = alignment;
+			
+			return copy;
+		}
         }
 }
 

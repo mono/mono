@@ -8,11 +8,13 @@
 //
 
 namespace System.Drawing {
-	namespace Win32Impl	{
+
+	namespace Win32Impl {
 
 		internal class FontFactory : IFontFactory {
 
-			IFont IFontFactory.Font(FontFamily family, float emSize, FontStyle style, GraphicsUnit unit, byte charSet, bool isVertical){
+			IFont IFontFactory.Font(FontFamily family, float emSize, FontStyle style, GraphicsUnit unit, byte charSet, bool isVertical)
+			{
 				return new Font(family, emSize, style, unit, charSet, isVertical);
 			}
 
