@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<project name="doctools" default="status">
+	<target name="shared">
+		<mkdir dir="./build" />
+		<csc target="library" output="./build/Mono.Doc.Utils.dll">
+			<sources>
+				<includes name="./src/shared/*.cs" />
+			</sources>
+		</csc>
+	</target>
+
+	<target name="status" depends="shared">
+		<csc target="executable" output="./build/statusgen.exe">
+			<arg value="/r:./build/Mono.Doc.Utils.dll" />
+
+			<sources>
+				<includes name="./src/statusgen/*.cs" />
+			</sources>
+		</csc>
+	</target>
+</project>
