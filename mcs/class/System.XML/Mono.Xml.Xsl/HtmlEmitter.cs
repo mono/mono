@@ -226,9 +226,8 @@ namespace Mono.Xml.Xsl
 			case "SMALL": case "SPAN": case "STRIKE": case "STRONG":
 			case "STYLE": case "SUB": case "SUP":
 			case "TABLE": case "TBODY": case "TD": case "TEXTAREA":
-			case "TFOOT": case "THEAD": case "TITLE": case "TR": case "TT":
-			case "U": case "UL":
-			case "VAR":
+			case "TFOOT": case "TH": case "THEAD": case "TITLE":
+			case "TR": case "TT": case "U": case "UL": case "VAR":
 				return true;
 			}
 			return false;
