@@ -1,5 +1,12 @@
 2004-03-30  Lluis Sanchez Gual <lluis@ximian.com>
 
+	* CaseInsensitiveHashCodeProvider.cs: Use the CultureInfo of the calling
+	thread, not the one of the thread that created the instance.
+	* Comparer.cs: Added DefaultInvariant property and missing constructor.
+	Use the specified culture info to compare strings.
+
+2004-03-30  Lluis Sanchez Gual <lluis@ximian.com>
+
 	* CaseInsensitiveHashCodeProvider.cs: Added support for CultureInfo.
 	  Implemented property DefaultInvariant.
 

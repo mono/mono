@@ -25,7 +25,6 @@ namespace System.Collections {
 
 		public CaseInsensitiveComparer ()
 		{
-		    cinfo = Thread.CurrentThread.CurrentCulture;
 		}
 
 		public CaseInsensitiveComparer (CultureInfo culture)
@@ -59,6 +58,7 @@ namespace System.Collections {
 			}
 		}
 
+#if NET_1_1
 		public static CaseInsensitiveComparer DefaultInvariant {
 			get {
 				if(default_invariant_comparer==null) {
@@ -72,6 +72,7 @@ namespace System.Collections {
 				return(default_invariant_comparer);
 			}
 		}
+#endif
 
 		//
 		// Instance methods
@@ -86,10 +87,14 @@ namespace System.Collections {
   		    string sa = a as string;
 		    string sb = b as string;
 
-		    if ((sa != null) && (sb != null))
-			return String.Compare (sa,sb,true,cinfo);
-		    
-		    return Comparer.Default.Compare (a,b);
+		    if ((sa != null) && (sb != null)) {
+				if (cinfo != null)
+					return cinfo.CompareInfo.Compare (sa, sb, CompareOptions.IgnoreCase);
+				else
+					return Thread.CurrentThread.CurrentCulture.CompareInfo.Compare (sa, sb, CompareOptions.IgnoreCase);
+			}
+		    else
+			    return Comparer.Default.Compare (a,b);
 		}
 
 
