@@ -29,9 +29,12 @@
 //	Jaak Simm		jaaksimm@firm.ee
 //	John Sohn		jsohn@columbus.rr.com
 //
-// $Revision: 1.74 $
+// $Revision: 1.75 $
 // $Modtime: $
 // $Log: Control.cs,v $
+// Revision 1.75  2004/10/22 17:49:35  jackson
+// oops
+//
 // Revision 1.74  2004/10/22 17:41:28  jackson
 // Check to see if the window should have its background repainted by X when drawing.
 //
@@ -2004,7 +2007,7 @@ namespace System.Windows.Forms
 				return;
 			}
 
-			XplatUI.Invalidate(Handle, rc, GetStyle (ControlStyles.AllPaintingInWmPaint));
+			XplatUI.Invalidate(Handle, rc, !GetStyle (ControlStyles.AllPaintingInWmPaint));
 
 			if (invalidateChildren) {
 				for (int i=0; i<child_controls.Count; i++) child_controls[i].Invalidate();
