@@ -932,7 +932,7 @@ namespace Mono.CSharp {
 			}
 
 			if (exist) {
-				using (FileStream fs = new FileStream (filename, FileMode.Open)) {
+				using (FileStream fs = new FileStream (filename, FileMode.Open, FileAccess.Read)) {
 					byte[] snkeypair = new byte [fs.Length];
 					fs.Read (snkeypair, 0, snkeypair.Length);
 

@@ -1,3 +1,7 @@
+2004-04-30  Jackson Harper  <jackson@ximian.com>
+
+	* codegen.cs: Open keys readonly.
+	
 2004-04-30  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* typemanager.cs: don't report cyclic struct layout when a struct
