@@ -1,3 +1,7 @@
+2004-04-10  Vladimir Vukicevic  <vladimir@pobox.com>
+
+	* Image.cs: Save should use encoder.FormatID, not Clsid
+
 2004-04-06  Jordi Mas i Hernandez <jordi@ximian.com>
 	* Region.cs: fixes GdipCombineRegionRect and GdipCombineRegionRectI signature
 	* gdipFunctions.cs: fixes GdipCombineRegionRect and GdipCombineRegionRectI signature

@@ -244,13 +244,13 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 	[MonoTODO ("Ignoring EncoderParameters")]
 	public void Save(Stream stream, ImageCodecInfo encoder, EncoderParameters encoderParams)
 	{
-		Save (stream, new ImageFormat (encoder.Clsid));
+		Save (stream, new ImageFormat (encoder.FormatID));
 	}
 	
 	[MonoTODO ("Ignoring EncoderParameters")]	
 	public void Save(string filename, ImageCodecInfo encoder, EncoderParameters encoderParams)
 	{
-		Save (filename, new ImageFormat (encoder.Clsid));
+		Save (filename, new ImageFormat (encoder.FormatID));
 	}
 	
 	[MonoTODO]	
