@@ -1,3 +1,16 @@
+2004-09-15  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* MapCodeGenerator.cs: Moved generation of XmlInclude attributes from
+	  ExportDerivedTypes to the new ExportDerivedTypeAttributes method.
+	* XmlReflectionImporter.cs: In ImportClassMapping, moved the call to
+	  ImportIncludedTypes to the end, to make sure that the current map has all
+	  needed data before derived maps are constructed.
+	* XmlSchemaExporter.cs: Generate the base class of simple types that are
+	  not primitive types. Set the correct value for IsMixed in extended types.
+	* XmlSchemaImporter.cs: In ImportSimpleContent, take into account that
+	  the base class of a simple type doesn't need to be a xsd type.
+	  All those patches fix bug #65654.
+
 2004-09-03  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* XmlSerializer.cs: When the XmlReader is created by XmlSerializer, use

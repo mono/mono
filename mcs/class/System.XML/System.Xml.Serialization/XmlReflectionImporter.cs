@@ -282,8 +282,6 @@ namespace System.Xml.Serialization {
 //				throw helper.CreateError (map, ex.Message);
 //			}
 
-			ImportIncludedTypes (type, defaultNamespace);
-			
 			// Import extra classes
 
 			if (type == typeof (object) && includedTypes != null)
@@ -297,19 +295,23 @@ namespace System.Xml.Serialization {
 			if (type.BaseType != null)
 			{
 				XmlTypeMapping bmap = ImportClassMapping (type.BaseType, root, defaultNamespace);
+				ClassMap cbmap = bmap.ObjectMap as ClassMap;
 				
 				if (type.BaseType != typeof (object)) {
 					map.BaseMap = bmap;
-					classMap.SetCanBeSimpleType (false);
+					if (!cbmap.HasSimpleContent)
+						classMap.SetCanBeSimpleType (false);
 				}
 				
 				// At this point, derived classes of this map must be already registered
 				
 				RegisterDerivedMap (bmap, map);
 				
-				if (((ClassMap)bmap.ObjectMap).HasSimpleContent && classMap.ElementMembers != null && classMap.ElementMembers.Count != 1)
+				if (cbmap.HasSimpleContent && classMap.ElementMembers != null && classMap.ElementMembers.Count != 1)
 					throw new InvalidOperationException (String.Format (errSimple, map.TypeData.TypeName, map.BaseMap.TypeData.TypeName));
 			}
+			
+			ImportIncludedTypes (type, defaultNamespace);
 			
 			if (classMap.XmlTextCollector != null && !classMap.HasSimpleContent)
 			{

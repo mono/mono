@@ -137,7 +137,7 @@ namespace System.Xml.Serialization {
 				if (codeClass != null) {
 					codeClass.CustomAttributes = null;
 					GenerateClass (map, codeClass);
-					ExportDerivedTypes (map, codeClass, true);
+					ExportDerivedTypeAttributes (map, codeClass);
 				}
 				return;
 			}
@@ -151,12 +151,13 @@ namespace System.Xml.Serialization {
 			
 			codeClass = new CodeTypeDeclaration (map.TypeData.TypeName);
 			SetMapExported (map, codeClass);
-			
+
 			AddCodeType (codeClass, map.Documentation);
 			codeClass.Attributes = MemberAttributes.Public;
 
 			GenerateClass (map, codeClass);
-
+			ExportDerivedTypeAttributes (map, codeClass);
+			
 			ExportMembersMapCode (codeClass, (ClassMap)map.ObjectMap, map.XmlTypeNamespace, map.BaseMap);
 
 			if (map.BaseMap != null && map.BaseMap.TypeData.SchemaType != SchemaTypes.XmlNode)
@@ -168,20 +169,27 @@ namespace System.Xml.Serialization {
 					AddInclude (map.BaseMap);
 				}
 			}
-
-			ExportDerivedTypes (map, codeClass, false);
+			ExportDerivedTypes (map, codeClass);
 		}
 		
-		void ExportDerivedTypes (XmlTypeMapping map, CodeTypeDeclaration codeClass, bool onlyIncludes)
+		void ExportDerivedTypeAttributes (XmlTypeMapping map, CodeTypeDeclaration codeClass)
+		{
+			foreach (XmlTypeMapping tm in map.DerivedTypes)
+			{
+				GenerateClassInclude (codeClass.CustomAttributes, tm);
+				ExportDerivedTypeAttributes (tm, codeClass);
+			}
+		}
+
+		void ExportDerivedTypes (XmlTypeMapping map, CodeTypeDeclaration codeClass)
 		{
 			foreach (XmlTypeMapping tm in map.DerivedTypes)
 			{
 				if (codeClass.CustomAttributes == null) 
 					codeClass.CustomAttributes = new CodeAttributeDeclarationCollection ();
 
-				GenerateClassInclude (codeClass.CustomAttributes, tm);
-				if (!onlyIncludes && tm.IncludeInSchema) ExportMapCode (tm);
-				ExportDerivedTypes (tm, codeClass, onlyIncludes);
+				ExportMapCode (tm);
+				ExportDerivedTypes (tm, codeClass);
 			}
 		}
 

@@ -245,8 +245,11 @@ namespace System.Xml.Serialization {
 				ext.AnyAttribute = anyAttribute;
 				if (map.BaseMap == null)
 					ext.BaseTypeName = cmap.SimpleContentBaseType;
-				else
+				else {
 					ext.BaseTypeName = new XmlQualifiedName (map.BaseMap.XmlType, map.BaseMap.XmlTypeNamespace);
+					ImportNamespace (schema, map.BaseMap.XmlTypeNamespace);
+					ExportClassSchema (map.BaseMap);
+				}
 			}
 			else if (map.BaseMap != null && map.BaseMap.IncludeInSchema)
 			{
@@ -261,7 +264,8 @@ namespace System.Xml.Serialization {
 				ExportMembersMapSchema (schema, cmap, map.BaseMap, ext.Attributes, out particle, out anyAttribute);
 				ext.Particle = particle;
 				ext.AnyAttribute = anyAttribute;
-				stype.IsMixed = cmap.XmlTextCollector != null;
+				stype.IsMixed = HasMixedContent (map);
+				cstype.IsMixed = BaseHasMixedContent (map);
 
 				ImportNamespace (schema, map.BaseMap.XmlTypeNamespace);
 				ExportClassSchema (map.BaseMap);
@@ -278,6 +282,18 @@ namespace System.Xml.Serialization {
 			
 			foreach (XmlTypeMapping dmap in map.DerivedTypes)
 				if (dmap.TypeData.SchemaType == SchemaTypes.Class) ExportClassSchema (dmap);
+		}
+		
+		bool BaseHasMixedContent (XmlTypeMapping map)
+		{
+			ClassMap cmap = (ClassMap)map.ObjectMap;
+			return (cmap.XmlTextCollector != null && (map.BaseMap != null && DefinedInBaseMap (map.BaseMap, cmap.XmlTextCollector)));
+		}
+
+		bool HasMixedContent (XmlTypeMapping map)
+		{
+			ClassMap cmap = (ClassMap)map.ObjectMap;
+			return (cmap.XmlTextCollector != null && (map.BaseMap == null || !DefinedInBaseMap (map.BaseMap, cmap.XmlTextCollector)));
 		}
 
 		void ExportMembersMapSchema (XmlSchema schema, ClassMap map, XmlTypeMapping baseMap, XmlSchemaObjectCollection outAttributes, out XmlSchemaSequence particle, out XmlSchemaAnyAttribute anyAttribute)
@@ -304,7 +320,9 @@ namespace System.Xml.Serialization {
 					}
 					else if (memType == typeof(XmlTypeMapMemberElement))
 					{
-						seq.Items.Add (GetSchemaElement (schema, (XmlTypeMapElementInfo) member.ElementInfo [0], member.DefaultValue, true));
+						XmlSchemaParticle elem = GetSchemaElement (schema, (XmlTypeMapElementInfo) member.ElementInfo [0], member.DefaultValue, true);
+						if (elem != null)
+							seq.Items.Add (elem);
 					}
 					else
 					{

@@ -780,6 +780,8 @@ namespace System.Xml.Serialization
 		
 		void ImportParticleContent (XmlQualifiedName typeQName, ClassMap cmap, XmlSchemaParticle particle, CodeIdentifiers classIds, bool multiValue, ref bool isMixed)
 		{
+			if (particle == null) return;
+			
 			if (particle is XmlSchemaGroupRef)
 				particle = GetRefGroupParticle ((XmlSchemaGroupRef)particle);
 
@@ -1020,18 +1022,34 @@ namespace System.Xml.Serialization
 
 		void ImportSimpleContent (XmlQualifiedName typeQName, XmlTypeMapping map, XmlSchemaSimpleContent content, CodeIdentifiers classIds, bool isMixed)
 		{
-			ClassMap cmap = (ClassMap)map.ObjectMap;
-			
-			XmlQualifiedName qname = GetContentBaseType (content.Content);
-
-			XmlTypeMapMemberElement member = new XmlTypeMapMemberElement ();
-			member.Name = classIds.AddUnique("Value", member);
-			member.TypeData = FindBuiltInType (qname);
-			member.ElementInfo.Add (CreateTextElementInfo (typeQName.Namespace, member, member.TypeData));
-			member.IsXmlTextCollector = true;
-			cmap.AddMember (member);
-
 			XmlSchemaSimpleContentExtension ext = content.Content as XmlSchemaSimpleContentExtension;
+			ClassMap cmap = (ClassMap)map.ObjectMap;
+			XmlQualifiedName qname = GetContentBaseType (content.Content);
+			
+			if (qname.Namespace != XmlSchema.Namespace)
+			{
+				// Add base map members to this map
+	
+				XmlTypeMapping baseMap = ImportType (qname, null);
+				BuildPendingMap (baseMap);
+				ClassMap baseClassMap = (ClassMap)baseMap.ObjectMap;
+	
+				foreach (XmlTypeMapMember member in baseClassMap.AllMembers)
+					cmap.AddMember (member);
+	
+				map.BaseMap = baseMap;
+				baseMap.DerivedTypes.Add (map);
+			}
+			else
+			{
+				XmlTypeMapMemberElement member = new XmlTypeMapMemberElement ();
+				member.Name = classIds.AddUnique("Value", member);
+				member.TypeData = FindBuiltInType (qname);
+				member.ElementInfo.Add (CreateTextElementInfo (typeQName.Namespace, member, member.TypeData));
+				member.IsXmlTextCollector = true;
+				cmap.AddMember (member);
+			}
+			
 			if (ext != null)
 				ImportAttributes (typeQName, cmap, ext.Attributes, ext.AnyAttribute, classIds);
 		}
@@ -1132,9 +1150,7 @@ namespace System.Xml.Serialization
 
 			if (ext != null) {
 				// Add the members of this map
-				if (ext.Particle != null)
-					ImportParticleComplexContent (typeQName, cmap, ext.Particle, classIds, isMixed);
-
+				ImportParticleComplexContent (typeQName, cmap, ext.Particle, classIds, isMixed);
 				ImportAttributes (typeQName, cmap, ext.Attributes, ext.AnyAttribute, classIds);
 			}
 			else {
