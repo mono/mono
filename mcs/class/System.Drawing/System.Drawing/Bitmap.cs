@@ -26,38 +26,6 @@ using System.Drawing.Imaging;
 using System.Runtime.Serialization;
 
 namespace System.Drawing {
-	struct BITMAPFILEHEADER {        // File info header
-		public uint bfType;      // Specifies the type of file. This member must be BM.
-		public uint bfSize;      // Specifies the size of the file, in bytes.
-		public uint bfReserved1; // Reserved; must be set to zero.
-		public uint bfReserved2; // Reserved; must be set to zero.
-		public uint bfOffBits;   // Specifies the byte offset from the BITMAPFILEHEADER
-                                         // structure to the actual bitmap data in the file.
-	}
-	struct BITMAPINFOHEADER {        // bitmap info header
-		public uint   biSize;
-		public int    biWidth;
-		public int    biHeight;
-		public ushort biPlanes;
-		public ushort biBitCount;
-		public uint   biCompression;
-		public uint   biSizeImage;
-		public int    biXPelsPerMeter;
-		public int    biYPelsPerMeter;
-		public uint   biClrUsed;
-		public uint   biClrImportant;
-	}
-
-	struct RGBQUAD {
-		public byte rgbBlue;
-		public byte rgbGreen;
-		public byte rgbRed;
-		public byte rgbReserved;
-	}
-	struct BITMAPINFO {              // bitmap info
-		public BITMAPINFOHEADER bitmapinfoheader;
-		public RGBQUAD[] colorpalette;
-	}
 
 	[Serializable]
 	public sealed class Bitmap : Image {

@@ -7,6 +7,9 @@
 //
 // Many methods are still commented. I'll care about them when all necessary
 // classes are implemented.
+// 
+// Alexandre Pigolkine (pigolkine@gmx.de)
+// 
 //
 namespace System.Drawing {
 
@@ -14,6 +17,54 @@ using System;
 using System.Runtime.Remoting;
 using System.Runtime.Serialization;
 using System.Drawing.Imaging;
+using System.IO;
+
+internal class InternalImageInfo {
+	Size			imageSize;
+	PixelFormat		format;
+	int				stride;
+	ColorPalette	palette;
+	byte[]			image;
+	ImageFormat		rawFormat;
+
+	internal InternalImageInfo() {
+		palette = new ColorPalette();
+		imageSize = new Size(0,0);
+		format = PixelFormat.Format32bppArgb;
+		image = new byte[0];
+		stride = 0;
+	}
+
+	internal Size Size {
+		get { return imageSize; }
+		set { imageSize = value; }
+	}
+
+	internal PixelFormat Format {
+		get { return format; }
+		set { format = value; }
+	}
+
+	internal ColorPalette Palette {
+		get { return palette; }
+		set { palette = value; }
+	}
+
+	internal byte[] RawImageBytes {
+		get { return image; }
+		set { image = value; }
+	}
+
+	internal int Stride {
+		get { return stride; }
+		set { stride = value; }
+	}
+
+	internal ImageFormat RawFormat {
+		get { return rawFormat; }
+		set { rawFormat = value; }
+	}
+}
 
 [Serializable]
 //[ComVisible(true)]
@@ -21,8 +72,8 @@ using System.Drawing.Imaging;
 public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISerializable {
 
 	internal IImage	implementation_ = null;
-
 	protected Size imageSize_;
+	
 	// constructor
 	public Image () {}
 
@@ -59,13 +110,79 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		// Fixme: implement me
 		throw new NotImplementedException ();
 	}
+
+	internal static InternalImageInfo Decode( Stream streamIn) {
+		Stream stream = streamIn;
+		InternalImageInfo	result = new InternalImageInfo();
+		if (!stream.CanSeek) {
+			// FIXME: if stream.CanSeek == false, copy to a MemoryStream and read nicely 
+		}
+		ImageCodecInfo[] availableDecoders = ImageCodecInfo.GetImageDecoders();
+		long pos = stream.Position;
+		ImageCodecInfo codecToUse = null;
+		foreach( ImageCodecInfo info in availableDecoders) {
+			for (int i = 0; i < info.SignaturePatterns.Length; i++) {
+				stream.Seek(pos, SeekOrigin.Begin);
+				bool codecFound = true;
+				for (int iPattern = 0; iPattern < info.SignaturePatterns[i].Length; iPattern++) {
+					byte pattern = (byte)stream.ReadByte();
+					pattern &= info.SignatureMasks[i][iPattern];
+					if( pattern != info.SignaturePatterns[i][iPattern]) {
+						codecFound = false;
+						break;
+					}
+				}
+				if (codecFound) {
+					codecToUse = info;
+					break;
+				}
+			}
+		}
+		stream.Seek (pos, SeekOrigin.Begin);
+		if (codecToUse != null && codecToUse.decode != null) {
+			codecToUse.decode( stream, result);
+		}
+		return result;
+	}
 	
-//	public static int GetPixelFormatSize (PixelFormat pixfmt)
-//	{
-//		// Fixme: implement me
-//		throw new NotImplementedException ();
-//	}
-//
+	public static int GetPixelFormatSize (PixelFormat pixfmt)
+	{
+		int result = 0;
+		switch (pixfmt) {
+			case PixelFormat.Format16bppArgb1555:
+			case PixelFormat.Format16bppGrayScale:
+			case PixelFormat.Format16bppRgb555:
+			case PixelFormat.Format16bppRgb565:
+				result = 16;
+				break;
+			case PixelFormat.Format1bppIndexed:
+				result = 1;
+				break;
+			case PixelFormat.Format24bppRgb:
+				result = 24;
+				break;
+			case PixelFormat.Format32bppArgb:
+			case PixelFormat.Format32bppPArgb:
+			case PixelFormat.Format32bppRgb:
+				result = 32;
+				break;
+			case PixelFormat.Format48bppRgb:
+				result = 48;
+				break;
+			case PixelFormat.Format4bppIndexed:
+				result = 4;
+				break;
+			case PixelFormat.Format64bppArgb:
+			case PixelFormat.Format64bppPArgb:
+				result = 64;
+				break;
+			case PixelFormat.Format8bppIndexed:
+				result = 8;
+				break;
+		}
+		return result;
+	}
+
 //	public static bool IsAlphaPixelFormat (PixelFormat pixfmt)
 //	{
 //		// Fixme: implement me
@@ -114,12 +231,33 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 
 	public void Save (string filename)
 	{
-		// Fixme: implement me
-		implementation_.Save(filename);
+		//implementation_.Save(filename);
+		Save( filename, RawFormat);
 	}
 
-	//public void Save(Stream stream, ImageFormat format);
-	//public void Save(string filename, ImageFormat format);
+	internal virtual InternalImageInfo ConvertToInternalImageInfo() {
+		return implementation_.ConvertToInternalImageInfo();
+	}
+
+	public void Save(Stream stream, ImageFormat format) {
+		InternalImageInfo imageInfo = ConvertToInternalImageInfo();
+		ImageCodecInfo[] encoders = ImageCodecInfo.GetImageEncoders();
+		foreach( ImageCodecInfo encoder in encoders) {
+			if (encoder.FormatID == format.Guid) {
+				if(encoder.encode != null) {
+					encoder.encode(stream, imageInfo);
+				}
+			}
+		}
+	}
+
+	public void Save(string filename, ImageFormat format) {
+		FileStream fs = new FileStream( filename, FileMode.Create);
+		Save(fs, format);
+		fs.Flush();
+		fs.Close();
+	}
+
 	//public void Save(Stream stream, ImageCodecInfo encoder,
 	//                 EncoderParameters encoderParams);
 	//public void Save(string filename, ImageCodecInfo encoder,
@@ -184,8 +322,17 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		}
 	}
 	
-	//public PropertyItem[] PropertyItems {get;}
-	//public ImageFormat RawFormat {get;}
+	public PropertyItem[] PropertyItems {
+		get {
+			return implementation_.PropertyItems;
+		}
+	}
+
+	public ImageFormat RawFormat {
+		get {
+			return implementation_.RawFormat;
+		}
+	}
 
 	public Size Size {
 		get {

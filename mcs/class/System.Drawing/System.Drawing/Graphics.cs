@@ -270,7 +270,7 @@ namespace System.Drawing
 		[MonoTODO]
 		public void DrawImage (Image image, int x, int y)
 		{
-			throw new NotImplementedException ();
+			implementation_.DrawImage(image, x, y, image.Width, image.Height);
 		}
 
 		[MonoTODO]
@@ -979,13 +979,13 @@ namespace System.Drawing
 		[MonoTODO]
 		public void Flush ()
 		{
-			throw new NotImplementedException ();
+			Flush(FlushIntention.Flush);
 		}
 
 		[MonoTODO]
 		public void Flush (FlushIntention intention)
 		{
-			throw new NotImplementedException ();
+			implementation_.Flush(intention);
 		}
 
 		[MonoTODO]
