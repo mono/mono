@@ -1,3 +1,8 @@
+2002-03-05  Dietmar Maurer  <dietmar@ximian.com>
+
+	* Int16.cs (Parse): do not overflow on max negative value
+
+	* Int32.cs (Parse): do not overflow on max negative value
 
 Mon Mar 4 20:36:05 CET 2002 Paolo Molaro <lupus@ximian.com>
 

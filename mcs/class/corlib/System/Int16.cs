@@ -54,10 +54,9 @@ namespace System {
 		{
 			short val = 0;
 			int len;
-			int i;
-			bool neg = false;
+			int i, sign = 1;
 			bool digits_seen = false;
-			
+
 			if (s == null)
 				throw new ArgumentNullException (Locale.GetText ("s is null"));
 
@@ -77,7 +76,7 @@ namespace System {
 			if (c == '+')
 				i++;
 			else if (c == '-'){
-				neg = true;
+				sign = -1;
 				i++;
 			}
 			
@@ -85,7 +84,7 @@ namespace System {
 				c = s [i];
 
 				if (c >= '0' && c <= '9'){
-					val = checked ((short) (val * 10 + (c - '0')));
+					val = checked ((short) (val * 10 + (c - '0') * sign));
 					digits_seen = true;
 				} else {
 					if (Char.IsWhiteSpace (c)){
@@ -101,9 +100,6 @@ namespace System {
 			if (!digits_seen)
 				throw new FormatException ();
 			
-			if (neg)
-				val = checked ((short) -val);
-
 			return val;
 		}
 
