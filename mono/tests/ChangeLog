@@ -1,4 +1,9 @@
-2005-02-19    <vargaz@freemail.hu>
+2005-02-21  Ben Maurer  <bmaurer@ximian.com>
+
+	* abort-stress-1.cs, abort-stress-2.cs: Stress tests for thread
+	aborting. The second one deadlocks, so it is disabled
+
+2005-02-19  Zoltan Varga  <vargaz@freemail.hu>
 
 	* pinvoke3.cs libtest.c: Add more small struct tests.
 
