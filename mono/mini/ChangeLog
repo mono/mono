@@ -1,3 +1,6 @@
+2005-01-27  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-exceptions.c: Fix a warning.
 
 Thu Jan 27 13:38:34 CET 2005 Paolo Molaro <lupus@ximian.com>
 
