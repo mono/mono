@@ -1,7 +1,6 @@
 using System;
 using System.Diagnostics;
 using System.Xml;
-
 using NUnit.Framework;
 
 namespace Ximian.Mono.Tests
@@ -11,11 +10,58 @@ namespace Ximian.Mono.Tests
 		public XmlDocumentTests() : base("Ximian.Mono.Tests.XmlDocumentTests testsuite") { }
 		public XmlDocumentTests(string name) : base(name) { }
 
+		private XmlDocument document;
+
+		protected override void SetUp()
+		{
+			document = new XmlDocument();
+		}
+		
+		public void TestLoadXmlSingleElement()
+		{
+			AssertNull(document.DocumentElement);
+			document.LoadXml("<foo/>");
+			AssertNotNull(document.DocumentElement);
+
+			AssertSame(document.FirstChild, document.DocumentElement);
+			AssertSame(document.ChildNodes[0], document.DocumentElement);
+		}
+
+		public void TestLoadXmlExceptionClearsDocument()
+		{
+			document.LoadXml("<foo/>");
+			Assert(document.ChildNodes.Count > 0);
+			
+			try 
+			{
+				document.LoadXml("<123/>");
+				Fail("An XmlException should have been thrown.");
+			}
+			catch (XmlException) {}
+
+			Assert(document.ChildNodes.Count == 0);
+		}
+
+		public void TestLoadXmlElementWithChildElement()
+		{
+			document.LoadXml("<foo><bar/></foo>");
+			Assert(document.ChildNodes.Count == 1);
+			Assert(document.ChildNodes[0].ChildNodes.Count == 1);
+			AssertEquals("foo", document.DocumentElement.LocalName);
+			AssertEquals("bar", document.DocumentElement.ChildNodes[0].LocalName);
+		}
+
+		public void TestLoadXmlElementWithTextNode()
+		{
+// XmlText isn't implemented yet and XmlDocument.CreateTextNode isn't either.
+//			document.LoadXml("<foo>bar</foo>");
+//			AssertEquals("bar", document.DocumentElement.ChildNodes[0].LocalName);
+//			Assert(document.DocumentElement.ChildNodes[0].NodeType == XmlNodeType.Text);
+		}
+
 		public void TestDocumentElement()
 		{
-			XmlDocument document = new XmlDocument();
 			AssertNull(document.DocumentElement);
-
 			XmlElement element = document.CreateElement("foo", "bar", "http://foo/");
 			AssertNotNull(element);
 

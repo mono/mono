@@ -414,8 +414,47 @@ namespace System.Xml
 
 		public virtual void LoadXml(string xml)
 		{
-			// TODO - implement XmlDocument.LoadXml
-			throw new NotImplementedException("XmlDocument.LoadXml not implemented.");
+			XmlReader	xmlReader = new XmlTextReader(new StringReader(xml));
+			XmlNode		currentNode = this;
+			XmlNode		newNode;
+
+			// Reset our document
+			// For now this just means removing all our children but later this
+			// may turn out o need to call a private method that resets other things
+			// like properties we have, etc.
+			RemoveAll();
+
+			// Wrapping in try/catch for now until XmlTextReader starts throwing XmlException
+			try 
+			{
+				while (xmlReader.Read())
+				{
+					switch(xmlReader.NodeType)
+					{
+						case XmlNodeType.Element:
+							newNode = CreateElement(xmlReader.Name, xmlReader.LocalName, xmlReader.NamespaceURI);
+							currentNode.AppendChild(newNode);
+							if (!xmlReader.IsEmptyElement)
+							{
+								currentNode = newNode;
+							}
+							break;
+						
+						case XmlNodeType.Text:
+							newNode = CreateTextNode(xmlReader.Value);
+							currentNode.AppendChild(newNode);
+							break;
+
+						case XmlNodeType.EndElement:
+							currentNode = currentNode.ParentNode;
+							break;
+					}
+				}
+			}
+			catch(Exception e)
+			{
+				throw new XmlException(e.Message, e);
+			}
 		}
 
 		public virtual void Save(Stream outStream)
@@ -504,6 +543,7 @@ namespace System.Xml
 		//===========================================================================
 		public XmlDocument() : base(null)
 		{
+			FOwnerDocument = this;
 		}
 
 

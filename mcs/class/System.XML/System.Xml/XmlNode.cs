@@ -336,7 +336,7 @@ namespace System.Xml
 		/// <returns></returns>
 		public virtual XmlNode AppendChild (XmlNode newChild)
 		{
-			_childNodes.Add(newChild);
+			((XmlNodeListAsArrayList)ChildNodes).Add(newChild);
 			return newChild;
 		}
 

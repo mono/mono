@@ -1,5 +1,10 @@
 2002-02-28  Jason Diamond <jason@injektilo.org>
 
+	* XmlDocumentTests.cs: Tests for XmlDocument.LoadXml courtesy of
+	Kral Ferch <kral.ferch@hotmail.com>.
+
+2002-02-28  Jason Diamond <jason@injektilo.org>
+
 	* XmlTextReaderTests.cs: Test for XmlException when parse fail.
 
 2002-02-27  Martin Baulig  <martin@gnome.org>

@@ -1,5 +1,10 @@
 2002-02-28  Jason Diamond <jason@injektilo.org>
 
+	* XmlDocument.cs, XmlNode.cs: Initial implementation of LoadXml 
+	courtesy of Kral Ferch <kral.ferch@hotmail.com>.
+
+2002-02-28  Jason Diamond <jason@injektilo.org>
+
 	* XmlException.cs, XmlReader.cs, XmlTextReader.cs: Reformatted, 
 	added missing members and MonoTODO attributes.
 	
