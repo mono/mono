@@ -142,7 +142,7 @@ namespace System.Runtime.Remoting
 			lock (this) 
 			{
 				if (_serverObject == null) {
-					MarshalByRefObject server = (MarshalByRefObject) Activator.CreateInstance (_objectType);
+					MarshalByRefObject server = (MarshalByRefObject) Activator.CreateInstance (_objectType, true);
 					AttachServerObject (server, Context.DefaultContext);
 					StartTrackingLifetime ((ILease)server.InitializeLifetimeService ());
 				}
@@ -175,7 +175,7 @@ namespace System.Runtime.Remoting
 		{
 			// SingleCallIdentity creates and disposes an instance in each call
 
-			MarshalByRefObject obj = (MarshalByRefObject)Activator.CreateInstance (_objectType);
+			MarshalByRefObject obj = (MarshalByRefObject)Activator.CreateInstance (_objectType, true);
 			obj.ObjectIdentity = this;
 			IMessageSink serverSink = _context.CreateServerObjectSinkChain(obj);
 			IMessage result = serverSink.SyncProcessMessage (msg);
@@ -185,7 +185,7 @@ namespace System.Runtime.Remoting
 
 		public override IMessageCtrl AsyncObjectProcessMessage (IMessage msg, IMessageSink replySink)
 		{
-			MarshalByRefObject obj = (MarshalByRefObject)Activator.CreateInstance (_objectType);
+			MarshalByRefObject obj = (MarshalByRefObject)Activator.CreateInstance (_objectType, true);
 			IMessageSink serverSink = _context.CreateServerObjectSinkChain(obj);
 			if (obj is IDisposable) replySink = new DisposerReplySink(replySink, ((IDisposable)obj));
 			return serverSink.AsyncProcessMessage (msg, replySink);

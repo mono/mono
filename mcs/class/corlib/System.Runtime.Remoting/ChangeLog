@@ -1,3 +1,8 @@
+2003-11-24  Jackson Harper <jackson@ximian.com>
+
+	* ServerIdentity.cs: Get non public types, so remote objects can
+	be non public or have non public constructors.
+	
 2003-11-19  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* InternalRemotingServices.cs: Added missing attributes.
