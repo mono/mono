@@ -163,7 +163,8 @@ Mono_Posix_Syscall_getpwnam_r (const char *name,
 			return -1;
 		}
 		buf = buf2;
-	} while ((r = getpwnam_r (name, &_pwbuf, buf, buflen, pwbufp)) && r == ERANGE);
+	} while ((r = getpwnam_r (name, &_pwbuf, buf, buflen, pwbufp)) && 
+			recheck_range (r));
 
 	if (r == 0 && copy_passwd (pwbuf, &_pwbuf) == -1)
 		r = errno = ENOMEM;
@@ -198,7 +199,8 @@ Mono_Posix_Syscall_getpwuid_r (mph_uid_t uid,
 			return -1;
 		}
 		buf = buf2;
-	} while ((r = getpwuid_r (uid, &_pwbuf, buf, buflen, pwbufp)) && r == ERANGE);
+	} while ((r = getpwuid_r (uid, &_pwbuf, buf, buflen, pwbufp)) && 
+			recheck_range (r));
 
 	if (r == 0 && copy_passwd (pwbuf, &_pwbuf) == -1)
 		r = errno = ENOMEM;

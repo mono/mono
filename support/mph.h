@@ -22,9 +22,10 @@
 #ifndef INC_mph_H
 #define INC_mph_H
 
-#include <stdint.h>  /* for SIZE_MAX */
-#include <limits.h>
-#include <glib/gtypes.h>
+#include <stdint.h>             /* for SIZE_MAX */
+#include <limits.h>             /* LONG_MAX, ULONG_MAX */
+#include <errno.h>              /* for ERANGE */
+#include <glib/gtypes.h>        /* for g* types, etc. */
 
 #ifdef _LARGEFILE64_SOURCE
 #define MPH_USE_64_API
@@ -84,6 +85,27 @@ typedef    gint64 mph_clock_t;
 #define mph_return_if_off_t_overflow(var) mph_return_if_long_overflow(var)
 #define mph_return_if_ssize_t_overflow(var) mph_return_if_long_overflow(var)
 #define mph_return_if_time_t_overflow(var) mph_return_if_long_overflow(var)
+
+/*
+ * Helper function for functions which use ERANGE (such as getpwnam_r and
+ * getgrnam_r).  These functions accept buffers which are dynamically
+ * allocated so that they're only as large as necessary.  However, Linux and
+ * Mac OS X differ on how to signal an error value.
+ *
+ * Linux returns the error value directly, while Mac OS X is more traditional,
+ * returning -1 and setting errno accordingly.
+ *
+ * Unify the checking in one place.
+ */
+static inline int
+recheck_range (int ret)
+{
+	if (ret == ERANGE)
+		return 1;
+	if (ret == -1)
+		return errno == ERANGE;
+	return 0;
+}
 
 #endif /* ndef INC_mph_H */
 

@@ -172,7 +172,8 @@ Mono_Posix_Syscall_getgrnam_r (const char *name,
 			return -1;
 		}
 		buf = buf2;
-	} while ((r = getgrnam_r (name, &_grbuf, buf, buflen, gbufp)) && r == ERANGE);
+	} while ((r = getgrnam_r (name, &_grbuf, buf, buflen, gbufp)) && 
+			recheck_range (r));
 
 	if (r == 0 && copy_group (gbuf, &_grbuf) == -1)
 		r = errno = ENOMEM;
@@ -207,7 +208,8 @@ Mono_Posix_Syscall_getgrgid_r (mph_gid_t gid,
 			return -1;
 		}
 		buf = buf2;
-	} while ((r = getgrgid_r (gid, &_grbuf, buf, buflen, gbufp)) && r == ERANGE);
+	} while ((r = getgrgid_r (gid, &_grbuf, buf, buflen, gbufp)) && 
+			recheck_range (r));
 
 	if (r == 0 && copy_group (gbuf, &_grbuf) == -1)
 		r = errno = ENOMEM;
