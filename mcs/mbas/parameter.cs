@@ -24,11 +24,13 @@ namespace Mono.CSharp {
 		[Flags]
 		public enum Modifier : byte {
 			NONE    = 0,
+			VAL 	= 0,
 			REF     = 1,
 			OUT     = 2,
 			PARAMS  = 4,
 			// This is a flag which says that it's either REF or OUT.
-			ISBYREF = 8
+			ISBYREF = 8,
+			OPTIONAL = 16
 		}
 
 		public readonly Expression TypeName;
@@ -36,14 +38,39 @@ namespace Mono.CSharp {
 		public Attributes OptAttributes;
 		public readonly string Name;
 		public Type parameter_type;
-		
+		public readonly Expression ParameterInitializer;
+		public readonly bool IsOptional;
+
 		public Parameter (Expression type, string name, Modifier mod, Attributes attrs)
 		{
 			Name = name;
 			ModFlags = mod;
 			TypeName = type;
 			OptAttributes = attrs;
+			ParameterInitializer = null;
+			IsOptional = false;
 		}
+
+		public Parameter (Expression type, string name, Modifier mod, Attributes attrs, Expression pi)
+		{
+			Name = name;
+			ModFlags = mod;
+			TypeName = type;
+			OptAttributes = attrs;
+			ParameterInitializer = pi;
+			IsOptional = false;
+		}
+		
+		public Parameter (Expression type, string name, Modifier mod, Attributes attrs, Expression pi, bool opt)
+		{
+			Name = name;
+			ModFlags = mod;
+			TypeName = type;
+			OptAttributes = attrs;
+			ParameterInitializer = pi;
+			IsOptional = opt;
+		}
+		
 
 		// <summary>
 		//   Resolve is used in method definitions
@@ -144,6 +171,58 @@ namespace Mono.CSharp {
 			}
 		}
 		
+		public bool HasOptional()
+		{
+			bool res = false;
+
+			foreach (Parameter p in FixedParameters) 
+			{
+				if (p.IsOptional) 
+				{
+					res = true;
+					break;
+				}
+			}
+			return (res);
+		}
+		
+		/// <summary>
+		///   Returns the number of standard (i.e. non-optional) parameters
+		/// </summary>		
+		public int CountStandardParams()
+		{
+			int res = 0;
+			
+			foreach (Parameter p in FixedParameters) {
+				if (!p.IsOptional)
+					res++;
+			}
+			return (res);
+		}
+		
+		/// <summary>
+		///   Returns the number of optional parameters
+		/// </summary>		
+		public int CountOptionalParams()
+		{
+			int res = 0;
+			
+			foreach (Parameter p in FixedParameters) {
+				if (p.IsOptional)
+					res++;
+			}
+			return (res);
+		}		
+
+		public Expression GetDefaultValue (int i)
+		{
+			Parameter p = FixedParameters[i];
+			if (p.IsOptional)
+				return p.ParameterInitializer;
+			else
+				return null;
+		}
+
 		public void AppendParameter (Parameter p)
 		{
 			if (FixedParameters != null) 

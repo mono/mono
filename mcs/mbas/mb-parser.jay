@@ -991,7 +991,7 @@ opt_formal_parameter_list
 	| formal_parameter_list	
 	  { 
 	  	$$ = $1;	
-	    	Parameter p = ((Parameters) $1).FixedParameters[0];
+	    	//Parameter p = ((Parameters) $1).FixedParameters[0];
 	  }
 	;
 	
@@ -1039,9 +1039,19 @@ fixed_parameters
 fixed_parameter
 	: opt_attributes
 	  opt_parameter_modifier
-	  IDENTIFIER opt_type_spec
+	  IDENTIFIER opt_type_spec opt_variable_initializer
 	  {
-		$$ = new Parameter ((Expression) $4, (string) $3, (Parameter.Modifier) $2, (Attributes) $1);
+	  	Parameter.Modifier pm = (Parameter.Modifier)$2;
+	  	bool opt_parm = ((pm & Parameter.Modifier.OPTIONAL) != 0);
+	  	
+	  	if (opt_parm && ($5 == null))
+	  		Report.Error (999, "Optional parameters must have a default value");
+	  	
+	  	if (opt_parm)
+	  		pm = Parameter.Modifier.NONE;	//FIXME: should take into account BYREF
+	  		
+		$$ = new Parameter ((Expression) $4, (string) $3, 
+					pm, (Attributes) $1, (Expression) $5, opt_parm);
 	  }
 	;
 	
@@ -1064,14 +1074,19 @@ opt_type_spec
 	;
 	
 opt_parameter_modifier
-	: /* empty */		{ $$ = Parameter.Modifier.NONE; }
-	| parameter_modifier
+	: /* empty */		{ $$ = Parameter.Modifier.VAL; 	}
+	| parameter_modifiers	{ $$ = $1;			}
 	;
 
+parameter_modifiers
+	: parameter_modifiers parameter_modifier 	{ $$ = (Parameter.Modifier)$1 | (Parameter.Modifier)$2;	}
+	| parameter_modifier				{ $$ = $1;	}
+	;
+	
 parameter_modifier
 	: BYREF			{ $$ = Parameter.Modifier.REF | Parameter.Modifier.ISBYREF; }
-	| BYVAL			{ $$ = Parameter.Modifier.NONE; } /* FIXME */
-	| OPTIONAL		{ $$ = Parameter.Modifier.NONE; } /* FIXME */
+	| BYVAL			{ $$ = Parameter.Modifier.VAL; }
+	| OPTIONAL		{ $$ = Parameter.Modifier.OPTIONAL; } 
 	;	
 
 opt_actual_parameters 
@@ -1790,8 +1805,8 @@ dim_separators
 	;	
 		
 opt_variable_initializer
-	: /* empty */ { $$ = null; }
-	| ASSIGN variable_initializer  { $$ = null; }
+	: /* empty */ 			{ $$ = null; }
+	| ASSIGN variable_initializer  	{ $$ = $2; }
 	;
 	
 array_initialization_modifier
@@ -2040,6 +2055,10 @@ argument
 	  {
 		$$ = new Argument ((Expression) $2, Argument.AType.Ref);
 	  }
+	| /* empty */
+	  {
+	  	$$ = new Argument (new EmptyExpression (), Argument.AType.NoArg);
+	  }
 	;
 
 variable_reference
@@ -2060,7 +2079,7 @@ element_access
 		// SimpleName is when you have
 		// Blah i;
 		Expression expr = (Expression) $1;
-		//Console.WriteLine ("Accessing member " + expr + " with " + $2);
+		
 		if (!(expr is SimpleName || expr is MemberAccess)) {
 			Error_ExpectingTypeName (lexer.Location, expr);
 			$$ = TypeManager.system_object_expr;

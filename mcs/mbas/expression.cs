@@ -3136,7 +3136,8 @@ namespace Mono.CSharp {
 		public enum AType : byte {
 			Expression,
 			Ref,
-			Out
+			Out,
+			NoArg
 		};
 
 		public readonly AType ArgType;
@@ -3188,9 +3189,16 @@ namespace Mono.CSharp {
 
 			return true;
 		}
-		
+
 		public bool Resolve (EmitContext ec, Location loc)
 		{
+			// Optional void arguments - MyCall (1,,2) - are resolved later
+			// in VerifyArgsCompat
+			if (ArgType == AType.NoArg) 
+			{
+					return true;				
+			}
+
 			if (ArgType == AType.Ref) {
 				Expr = Expr.Resolve (ec);
 				if (Expr == null)
@@ -3270,6 +3278,7 @@ namespace Mono.CSharp {
 		bool is_base;
 
 		static Hashtable method_parameter_cache;
+		static MemberFilter CompareName;
 
 		static Invocation ()
 		{
@@ -3288,6 +3297,7 @@ namespace Mono.CSharp {
 			this.expr = expr;
 			Arguments = arguments;
 			loc = l;
+			CompareName = new MemberFilter (compare_name_filter);
 		}
 
 		public Expression Expr {
@@ -3692,60 +3702,151 @@ namespace Mono.CSharp {
 			return true;
 		}
 
+		static bool CheckParameterAgainstArgument (EmitContext ec, ParameterData pd, int i, Argument a, Type ptype)
+		{
+			Parameter.Modifier a_mod = a.GetParameterModifier () &
+				~(Parameter.Modifier.OUT | Parameter.Modifier.REF);
+			Parameter.Modifier p_mod = pd.ParameterModifier (i) &
+				~(Parameter.Modifier.OUT | Parameter.Modifier.REF);
+
+			if (a_mod == p_mod ||
+			    (a_mod == Parameter.Modifier.NONE && p_mod == Parameter.Modifier.PARAMS)) {
+				if (a_mod == Parameter.Modifier.NONE)
+					if (!ImplicitConversionExists (ec, a.Expr, ptype))
+						return false;
+				
+				if ((a_mod & Parameter.Modifier.ISBYREF) != 0) {
+					Type pt = pd.ParameterType (i);
+					
+					if (!pt.IsByRef)
+						pt = TypeManager.LookupType (pt.FullName + "&");
+
+					if (pt != a.Type)
+						return false;
+				}
+			} else
+				return false;		
+				
+			return true;					
+		}
+		
 		/// <summary>
 		///  Determines if the candidate method is applicable (section 14.4.2.1)
 		///  to the given set of arguments
 		/// </summary>
-		static bool IsApplicable (EmitContext ec, ArrayList arguments, MethodBase candidate)
+		static bool IsApplicable (EmitContext ec, ref ArrayList arguments, MethodBase candidate)
 		{
-			int arg_count;
-
+			int arg_count, ps_count, po_count;
+			Type param_type;
+			
 			if (arguments == null)
 				arg_count = 0;
 			else
 				arg_count = arguments.Count;
 
 			ParameterData pd = GetParameterData (candidate);
-
+			Parameters ps = GetFullParameters (candidate);
+			
+			if (ps == null) {
+				ps_count = 0;
+				po_count = 0;
+			}
+			else
+			{
+				ps_count = ps.CountStandardParams();			
+				po_count = ps.CountOptionalParams();
+			}
 			int pd_count = pd.Count;
 
-			if (arg_count != pd.Count)
-				return false;
-			
-			for (int i = arg_count; i > 0; ) {
-				i--;
-
-				Argument a = (Argument) arguments [i];
-
-				Parameter.Modifier a_mod = a.GetParameterModifier () &
-					~(Parameter.Modifier.OUT | Parameter.Modifier.REF);
-				Parameter.Modifier p_mod = pd.ParameterModifier (i) &
-					~(Parameter.Modifier.OUT | Parameter.Modifier.REF);
-
-				if (a_mod == p_mod ||
-				    (a_mod == Parameter.Modifier.NONE && p_mod == Parameter.Modifier.PARAMS)) {
-					if (a_mod == Parameter.Modifier.NONE)
-						if (!ImplicitConversionExists (ec, a.Expr, pd.ParameterType (i)))
-							return false;
-					
-					if ((a_mod & Parameter.Modifier.ISBYREF) != 0) {
-						Type pt = pd.ParameterType (i);
-
-						if (!pt.IsByRef)
-							pt = TypeManager.LookupType (pt.FullName + "&");
-
-						if (pt != a.Type)
-							return false;
-					}
-				} else
+			// Validate argument count
+			if (po_count == 0) {
+				if (arg_count != pd.Count)
 					return false;
+			}
+			else
+			{
+				if ((arg_count < ps_count) || (arg_count > pd_count))
+					return false;	
+			}       
+			
+			if (arg_count > 0) {
+				for (int i = arg_count; i > 0 ; ) {
+					i--;
+	
+					Argument a = (Argument) arguments [i];
+					if (a.ArgType == Argument.AType.NoArg){
+						Parameter p = (Parameter) ps.FixedParameters[i];
+						a = new Argument (p.ParameterInitializer, Argument.AType.Expression);
+						param_type = p.ParameterInitializer.Type;
+					}
+					else
+						param_type = pd.ParameterType (i);
+	
+					if (!CheckParameterAgainstArgument (ec, pd, i, a, param_type))
+						return (false);
+				}
+			}
+			else
+			{
+				// If we have no arguments AND the first parameter is optional
+				// we must check for a candidate (the loop above wouldn't)	
+				if (po_count > 0) {
+					ArrayList arglist = new ArrayList();
+					
+					// Since we got so far, there's no need to check if
+					// arguments are optional; we simply retrieve
+					// parameter default values and build a brand-new 
+					// argument list.
+					
+					for (int i = 0; i < ps.FixedParameters.Length; i++) {
+						Parameter p = ps.FixedParameters[i];
+						Argument a = new Argument (p.ParameterInitializer, Argument.AType.Expression);
+						a.Resolve(ec, Location.Null);
+						arglist.Add (a);
+					}
+					arguments = arglist;
+					return true;
+				}
+			}
+			// We've found a candidate, so we exchange the dummy NoArg arguments
+			// with new arguments containing the default value for that parameter
+			for (int i = 0; i < arg_count; i++) {
+				Argument a = (Argument) arguments [i];
+				if (a.ArgType == Argument.AType.NoArg){
+					Parameter p = (Parameter) ps.FixedParameters[i];
+					a = new Argument (p.ParameterInitializer, Argument.AType.Expression);
+					a.Resolve(ec, Location.Null);
+					arguments [i] = a;
+				}				
 			}
 
 			return true;
 		}
 		
-		
+		static bool compare_name_filter (MemberInfo m, object filterCriteria)
+		{
+			return (m.Name == ((string) filterCriteria));
+		}
 
+		static Parameters GetFullParameters (MethodBase mb)
+		{
+			TypeContainer tc = TypeManager.LookupTypeContainer (mb.DeclaringType);
+			InternalParameters ip = TypeManager.LookupParametersByBuilder(mb);
+			
+			return (ip != null) ? ip.Parameters : null;
+		}
+		
+		// We need an overload for OverloadResolve because Invocation.DoResolve
+		// must pass Arguments by reference, since a later call to IsApplicable
+		// can change the argument list if optional parameters are defined
+		// in the method declaration
+		public static MethodBase OverloadResolve (EmitContext ec, MethodGroupExpr me,
+							  ArrayList Arguments, Location loc)
+		{
+			ArrayList a = Arguments;
+			return OverloadResolve (ec, me, ref a, loc);	
+		}
+		
 		/// <summary>
 		///   Find the Applicable Function Members (7.4.2.1)
 		///
@@ -3763,7 +3864,7 @@ namespace Mono.CSharp {
 		///
 		/// </summary>
 		public static MethodBase OverloadResolve (EmitContext ec, MethodGroupExpr me,
-							  ArrayList Arguments, Location loc)
+							  ref ArrayList Arguments, Location loc)
 		{
 			ArrayList afm = new ArrayList ();
 			MethodBase method = null;
@@ -3771,7 +3872,6 @@ namespace Mono.CSharp {
 			int argument_count;
 			ArrayList candidates = new ArrayList ();
 			
-
 			foreach (MethodBase candidate in me.Methods){
 				int x;
 
@@ -3784,7 +3884,7 @@ namespace Mono.CSharp {
 				}
 
 				// Check if candidate is applicable (section 14.4.2.1)
-				if (!IsApplicable (ec, Arguments, candidate))
+				if (!IsApplicable (ec, ref Arguments, candidate))
 					continue;
 
 				candidates.Add (candidate);
@@ -3800,6 +3900,7 @@ namespace Mono.CSharp {
 				argument_count = 0;
 			else
 				argument_count = Arguments.Count;
+			
 			
 			//
 			// Now we see if we can find params functions, applicable in their expanded form
@@ -3860,7 +3961,7 @@ namespace Mono.CSharp {
 				// so we debar the params method.
 				//
 				if (IsParamsMethodApplicable (ec, Arguments, candidate) &&
-				    IsApplicable (ec, Arguments, method))
+				    IsApplicable (ec, ref Arguments, method))
 					continue;
 					
 				int x = BetterFunction (ec, Arguments, method, candidate,
@@ -3878,7 +3979,6 @@ namespace Mono.CSharp {
 			// And now check if the arguments are all compatible, perform conversions
 			// if necessary etc. and return if everything is all right
 			//
-
 			if (VerifyArgumentsCompat (ec, Arguments, argument_count, method,
 						   chose_params_expanded, null, loc))
 				return method;
@@ -3896,8 +3996,9 @@ namespace Mono.CSharp {
 			return (VerifyArgumentsCompat (ec, Arguments, argument_count,
 				method, chose_params_expanded, delegate_type, loc, null));
 		}
-
-		public static bool VerifyArgumentsCompat (EmitContext ec, ArrayList Arguments,
+										  
+		public static bool VerifyArgumentsCompat (EmitContext ec, 
+							  ArrayList Arguments,
 							  int argument_count,
 							  MethodBase method, 
 							  bool chose_params_expanded,
@@ -3912,7 +4013,7 @@ namespace Mono.CSharp {
 				Argument a = (Argument) Arguments [j];
 				Expression a_expr = a.Expr;
 				Type parameter_type = pd.ParameterType (j);
-
+				
 				if (pd.ParameterModifier (j) == Parameter.Modifier.PARAMS &&
 				    chose_params_expanded)
 					parameter_type = TypeManager.TypeToCoreType (parameter_type.GetElementType ());
@@ -4020,6 +4121,9 @@ namespace Mono.CSharp {
 			{
 				foreach (Argument a in Arguments)
 				{
+					if ((a.ArgType == Argument.AType.NoArg) && (!(expr is MethodGroupExpr)))
+						Report.Error (999, "This item cannot have empty arguments");
+
 					if (!a.Resolve (ec, loc))
 						return null;
 				}
@@ -4028,7 +4132,7 @@ namespace Mono.CSharp {
 			if (expr is MethodGroupExpr) 
 			{
 				MethodGroupExpr mg = (MethodGroupExpr) expr;
-				method = OverloadResolve (ec, mg, Arguments, loc);
+				method = OverloadResolve (ec, mg, ref Arguments, loc);
 
 				if (method == null)
 				{
@@ -4149,7 +4253,7 @@ namespace Mono.CSharp {
 					IntConstant.EmitInt (ig, 0);
 					ig.Emit (OpCodes.Newarr, pd.ParameterType (0).GetElementType ());
 				}
-
+Console.WriteLine ("No arguments");
 				return;
 			}
 
