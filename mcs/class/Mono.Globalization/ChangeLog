@@ -1,0 +1,7 @@
+2003-04-11  Duncan Mak  <duncan@ximian.com>
+
+	* ??.xml: Remove the empty Parent element.
+
+	* *.xml: Remove the IsNeutralCulture information and add in specific
+        culture information as well.
+        
