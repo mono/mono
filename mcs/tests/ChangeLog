@@ -1,3 +1,7 @@
+2005-03-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* xml-036.cs, xml-036-ref.xml, Makefile : added test for bug #73384.
+
 2005-03-10  Raja R Harinath  <rharinath@novell.com>
 
 	* mtest-7-exe.cs, mtest-7-dll.cs: New test from #73516.
