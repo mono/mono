@@ -26,6 +26,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 using System;
+using System.Globalization;
 using System.Text;
 using System.Web;
 using System.Collections.Specialized;
@@ -98,7 +99,9 @@ namespace System.Web
 
 			if (_ExpiresSet && _Expires != DateTime.MinValue) {
 				oSetCookie.Append ("; expires=");
-				oSetCookie.Append (_Expires.ToUniversalTime ().ToString ("ddd, dd-MMM-yyyy HH':'mm':'ss '+0000'"));
+				DateTime ut = _Expires.ToUniversalTime ();
+				oSetCookie.Append (ut.ToString ("ddd, dd-MMM-yyyy HH':'mm':'ss 'GMT'",
+								DateTimeFormatInfo.InvariantInfo));
 			}
 
 			if (_Secure)
