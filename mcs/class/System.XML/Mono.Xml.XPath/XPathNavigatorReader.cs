@@ -447,8 +447,7 @@ namespace Mono.Xml.XPath
 						nextIsEOF = true;
 					attributeCount = GetAttributeCount ();
 					return true;
-				case XPathNodeType.Namespace:
-				case XPathNodeType.Attribute:
+				default:
 					nextIsEOF = true;
 					return true;
 				}
