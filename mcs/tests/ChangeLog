@@ -1,3 +1,7 @@
+2002-03-27  Miguel de Icaza  <miguel@ximian.com>
+
+	* test-18.cs: Augment test with the multi-flow try/catch.
+
 2002-03-21  Miguel de Icaza  <miguel@ximian.com>
 
 	* test-49.cs: Improved test to excerise the coverage.

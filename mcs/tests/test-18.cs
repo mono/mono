@@ -20,6 +20,18 @@ class X {
 		}
 	}
 
+	static int ret (int a)
+	{
+		try {
+			if (a == 1)
+				throw new Exception ();
+			
+			return 1;
+		} catch {
+			return 2;
+		}
+	}
+	
 	static int Main ()
 	{
 		m ();
@@ -28,6 +40,13 @@ class X {
 		if (j != 1)
 			return 2;
 
+		if (ret (1) != 2)
+			return 3;
+
+		if (ret (10) != 1)
+			return 4;
+		
 		return 0;
 	}
 }
+
