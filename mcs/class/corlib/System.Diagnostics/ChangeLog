@@ -1,3 +1,7 @@
+2002-04-08  Nick Drochak  <ndrochak@gol.com>
+
+	* ConditionalAttribute.cs: Add AttributeUsage attribute for methods.
+
 2002-01-23  Duncan Mak  <duncan@ximian.com>
 
 	* DebuggerStepThroughAttribute.cs:
