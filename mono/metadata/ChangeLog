@@ -1,3 +1,8 @@
+2002-10-14  Martin Baulig  <martin@gnome.org>
+
+	* debug-mono-symfile.c (ves_icall_MonoDebugger_GetType): Use
+	mono_class_get() instead of looking in the class cache.	
+
 2002-10-13  Martin Baulig  <martin@gnome.org>
 
 	* debug-mono-symfile.c: Set version number to 28, include the
