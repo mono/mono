@@ -1,3 +1,6 @@
+2004-10-06 Anirban Bhattacharjee <banirban@novell.com>
+	* mb-parser.jay: Added support for Call keyword in invocation statement
+
 2004-10-01 Anirban Bhattacharjee <banirban@novell.com>
 	* ecore.cs: Bug fixing - when event raised from other assembly
 

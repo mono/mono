@@ -3762,7 +3762,16 @@ invocation_expression
 		}
 		$$ = new Invocation ((Expression) $1, (ArrayList) $3, lexer.Location);
 //		Console.WriteLine ("Invocation: {0} with {1} arguments", $1, ($3 != null) ? ((ArrayList) $3).Count : 0);
-	  } 
+	  }
+	| CALL primary_expression OPEN_PARENS opt_argument_list CLOSE_PARENS
+	  {
+		if ($2 == null) {
+			Location l = lexer.Location;
+			Report.Error (1, l, "THIS IS CRAZY");
+		}
+		$$ = new Invocation ((Expression) $2, (ArrayList) $3, lexer.Location);
+//		Console.WriteLine ("Invocation: {0} with {1} arguments", $2, ($3 != null) ? ((ArrayList) $3).Count : 0);
+	  }
 	;
 	
 base_access
