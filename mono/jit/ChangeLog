@@ -1,3 +1,7 @@
+2002-02-21  Dietmar Maurer  <dietmar@ximian.com>
+
+	* x86.brg: impl. SHR_UN for lreg, added new test, bug fix for BNE_UN 
+
 2002-02-19  Dietmar Maurer  <dietmar@ximian.com>
 
 	* emit-x86.c (arch_compile_method): add shared code to mono_root_domain
