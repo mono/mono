@@ -713,7 +713,14 @@ namespace System {
 		protected abstract bool IsCOMObjectImpl ();
 		protected abstract bool IsPointerImpl ();
 		protected abstract bool IsPrimitiveImpl ();
-		protected abstract bool IsValueTypeImpl ();
+		
+		protected virtual bool IsValueTypeImpl ()
+		{
+			if (this == typeof (Enum) || this == typeof (ValueType))
+				return false;
+
+			return IsSubclassOf (typeof (Enum));
+		}
 		
 		protected virtual bool IsContextfulImpl ()
 		{

@@ -1,5 +1,10 @@
 2002-08-23  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* Type.cs:
+	(IsValueTypeImpl): it's virtual, not abstract. Implemented.
+
+2002-08-23  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* ArgumentException.cs: use the field instead of the property for
 	param_name.
 
