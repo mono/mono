@@ -1101,9 +1101,15 @@ class AspGenerator
 		else if (type == typeof (string [])) {
 			string [] subStrings = att.Split (',');
 			current_function.AppendFormat ("\t\t\t__ctrl.{0} = new String [] {{\n", var_name);
-			foreach (string s in subStrings)
-				current_function.AppendFormat ("\t\t\t\t\"{0}\",\n", s.Trim ());
-			current_function.Append ("\t\t\t\t};\n");
+			int end = subStrings.Length;
+			for (int i = 0; i < end; i++) {
+				string s = subStrings [i].Trim ();
+				current_function.AppendFormat ("\t\t\t\t\"{0}\"", s);
+				if (i == end - 1)
+					current_function.Append ("\t\t\t\t};\n");
+				else
+					current_function.Append (",\n");
+			}
 		} else {
 			throw new ApplicationException ("Unsupported type in property: " + 
 							type.ToString ());

@@ -1,5 +1,10 @@
 2003-01-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* AspGenerator.cs: make the generated file compile with csc after last
+	change.
+
+2003-01-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* AspGenerator.cs: removed unused variable. Added support for
 	properties/fields of type string [].
 
