@@ -482,10 +482,8 @@ namespace System.Runtime.InteropServices
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
-		public static IntPtr UnsafeAddrOfPinnedArrayElement (Array arr, int index) {
-			throw new NotImplementedException ();
-		}
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern static IntPtr UnsafeAddrOfPinnedArrayElement (Array arr, int index);
 
 		public static void WriteByte (IntPtr ptr, byte val) {
 			WriteByte (ptr, 0, val);
