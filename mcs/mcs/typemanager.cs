@@ -1283,6 +1283,11 @@ public class TypeManager {
 			return true;
 		}
 
+		if (!RootContext.StdLib && (t == TypeManager.decimal_type))
+			// We need this explicit check here to make it work when
+			// compiling corlib.
+			return true;
+
 		Report.Error (
 			208, loc,
 			"Cannot take the address or size of a variable of a managed type ('" +

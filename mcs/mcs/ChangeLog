@@ -1,5 +1,10 @@
 2002-06-27  Martin Baulig  <martin@gnome.org>
 
+	* typemanager.cs (TypeManager.VerifyUnManaged): Added explicit check
+	for System.Decimal when compiling corlib.
+
+2002-06-27  Martin Baulig  <martin@gnome.org>
+
 	* statement.cs (Switch.TableSwitchEmit): Make this work with empty
 	switch blocks which contain nothing but a default clause.
 
