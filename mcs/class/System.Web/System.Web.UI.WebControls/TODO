@@ -88,7 +88,7 @@ SelectedDatesCollection
 * TableCellCollection
 * TableCellControlBuilder
 * TableHeaderCell
-& TableItemStyle
+* TableItemStyle
 * TableRow
 * TableRowCollection
 TableStyle

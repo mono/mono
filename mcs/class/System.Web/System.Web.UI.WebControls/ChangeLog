@@ -1,6 +1,7 @@
-2002-01-25      Gaurav Vaish <gvaish@iitk.ac.in>
+2002-01-26      Gaurav Vaish <gvaish@iitk.ac.in>
 
 	* RadioButton.cs              - Completed
+	* TextBox.cs                  - Partial Implementation
 
 2002-01-25      Gaurav Vaish <gvaish@iitk.ac.in>
 
@@ -92,7 +93,7 @@
 2001-12-02	Gaurav Vaish <gvaish@iitk.ac.in>
 
 	CheckBoxList.cs            - Partial Implementation.
-                                     All except "Render"
+	                             All except "Render"
 
 2001-12-01	Gaurav Vaish <gvaish@iitk.ac.in>
 
@@ -103,15 +104,15 @@
 	CheckBox.cs                - Completed
 	ListControl.cs             - Initial Implementation
 	CheckBoxList.cs            - Started with it, but first needed
-                                     ListControl. Left it.
+	                             ListControl. Left it.
 
 2001-11-29	Gaurav Vaish <gvaish@iitk.ac.in>
 
 	CalendarDay.cs             - Making a note that this
-                                     has been implemented
+	                             has been implemented
 	Calendar.cs                - Making a note that have made some changes.
-                                     Unimplmented functions throw
-                                     NotImplementedException
+	                             Unimplmented functions throw
+	                             NotImplementedException
 	CheckBox.cs                - Can now "Render" and "LoadPostData"
 
 
@@ -127,7 +128,7 @@
 	BoundColumn.cs             - Initial Implementation
 	BaseCompareValidator.cs    - Minor Changes
 	DataList.cs, BaseValidator.cs, BaseDataList.cs
-                                   - Added more functions, other changes
+	                           - Added more functions, other changes
 	
 2001-10-28	Gaurav Vaish <gvaish@iitk.ac.in>
 	WebControl.cs              - Initial Implementation
@@ -157,17 +158,17 @@
 	NextPrevFormat.cs          - Implemented
 	PagerMode.cs               - Implemented
 	PagerPosition.cs           - Implemented
-        RepeatDirection.cs         - Implemented
+	RepeatDirection.cs         - Implemented
 	RepeatLayout.cs            - Implemented
 	TextAlign.cs               - Implemented
 	TextBoxMode.cs             - Implemented
 	TitleFormat.cs             - Implemented
 	UnitType.cs                - Implemented
 	ValidationCompareOperator.cs
-                                   - Implemented
+	                           - Implemented
 	ValidationDataType.cs      - Implemented
 	ValidationSummaryDisplayMode.cs
-                                   - Implemented
+	                           - Implemented
 	ValidatorDisplay.cs        - Implemented
 	VerticalAlign.cs           - Implemented
 
