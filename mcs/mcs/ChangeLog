@@ -1,4 +1,9 @@
 
+Wed Jun 4 13:19:04 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* delegate.cs: transfer custom attributes for paramenters from
+	the delegate declaration to Invoke and BeginInvoke.
+
 Tue Jun 3 11:11:08 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* attribute.cs: handle custom marshalers and emit marshal info

@@ -99,6 +99,10 @@ namespace Mono.CSharp {
 		{
 			MethodAttributes mattr;
 			int i;
+			ParameterBuilder pb;
+			Attributes cattr;
+			EmitContext ec = new EmitContext (this, this, Location, null,
+							  null, ModFlags, false);
 
 			// FIXME: POSSIBLY make this static, as it is always constant
 			//
@@ -205,7 +209,10 @@ namespace Mono.CSharp {
 				
 				for (; i < top; i++) {
 					p = Parameters.FixedParameters [i];
-					InvokeBuilder.DefineParameter (i+1, p.Attributes, p.Name);
+					pb = InvokeBuilder.DefineParameter (i+1, p.Attributes, p.Name);
+					cattr = p.OptAttributes;
+					if (cattr != null)
+						Attribute.ApplyAttributes (ec, pb, pb, cattr);
 
 					if ((p.ModFlags & Parameter.Modifier.ISBYREF) != 0)
 						out_params++;
@@ -214,8 +221,11 @@ namespace Mono.CSharp {
 			if (Parameters.ArrayParameter != null){
 				Parameter p = Parameters.ArrayParameter;
 				
-				InvokeBuilder.DefineParameter (
+				pb = InvokeBuilder.DefineParameter (
 					i+1, p.Attributes, p.Name);
+				cattr = p.OptAttributes;
+				if (cattr != null)
+					Attribute.ApplyAttributes (ec, pb, pb, cattr);
 			}
 			
 			InvokeBuilder.SetImplementationFlags (MethodImplAttributes.Runtime);
@@ -252,13 +262,19 @@ namespace Mono.CSharp {
 				for (i = 0 ; i < top; i++) {
 					p = Parameters.FixedParameters [i];
 
-					BeginInvokeBuilder.DefineParameter (i+1, p.Attributes, p.Name);
+					pb = BeginInvokeBuilder.DefineParameter (i+1, p.Attributes, p.Name);
+					cattr = p.OptAttributes;
+					if (cattr != null)
+						Attribute.ApplyAttributes (ec, pb, pb, cattr);
 				}
 			}
 			if (Parameters.ArrayParameter != null){
 				Parameter p = Parameters.ArrayParameter;
 				
-				BeginInvokeBuilder.DefineParameter (i+1, p.Attributes, p.Name);
+				pb = BeginInvokeBuilder.DefineParameter (i+1, p.Attributes, p.Name);
+				cattr = p.OptAttributes;
+				if (cattr != null)
+					Attribute.ApplyAttributes (ec, pb, pb, cattr);
 				i++;
 			}
 
