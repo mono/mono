@@ -1,3 +1,8 @@
+2005-01-19  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SecurityManagerTest.cs: Added new tests for 2.0. Fixed a test to work
+	even if the SecurityManager.CheckExecutionRights is false.
+
 2005-01-10  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PermissionSetCollectionTest.cs: Added tests for to see if alternates

@@ -176,6 +176,10 @@ namespace MonoTests.System.Security {
 			PermissionSet denied = null;
 			SecurityManager.ResolvePolicy (null, null, null, null, out denied);
 			// null is missing the Execution right
+			if (!SecurityManager.CheckExecutionRights) {
+				// unless we turned it off during development ;-)
+				Assert.Ignore ("SecurityManager.CheckExecutionRights turned off");
+			}
 		}
 
 		[Test]
@@ -245,5 +249,55 @@ namespace MonoTests.System.Security {
 			PolicyLevel adl = PolicyLevel.CreateAppDomainLevel ();
 			SecurityManager.SavePolicyLevel (adl);
 		}
+#if NET_2_0
+		[Test]
+		public void GetZoneAndOrigin ()
+		{
+			ArrayList zone = null;
+			ArrayList origin = null;
+			SecurityManager.GetZoneAndOrigin (out zone, out origin);
+			Assert.IsNotNull (zone, "Zone");
+			Assert.AreEqual (0, zone.Count, "Zone.Count");
+			Assert.IsNotNull (origin, "Origin");
+			Assert.AreEqual (0, origin.Count, "Origin.Count");
+		}
+
+		[Test]
+		public void ResolvePolicy_Evidence_ArrayNull ()
+		{
+			Evidence[] e = null;
+			PermissionSet ps = SecurityManager.ResolvePolicy (e);
+			Assert.IsNotNull (ps, "PermissionSet");
+			Assert.IsFalse (ps.IsUnrestricted (), "IsUnrestricted");
+			Assert.AreEqual (0, ps.Count, "Count");
+		}
+
+		[Test]
+		public void ResolvePolicy_Evidence_ArrayEmpty ()
+		{
+			Evidence[] e = new Evidence [0];
+			PermissionSet ps = SecurityManager.ResolvePolicy (e);
+			Assert.IsNotNull (ps, "PermissionSet");
+			Assert.IsFalse (ps.IsUnrestricted (), "IsUnrestricted");
+			Assert.AreEqual (0, ps.Count, "Count");
+		}
+
+		[Test]
+		public void ResolvePolicy_Evidence_Array ()
+		{
+			Evidence[] e = new Evidence[] { new Evidence () };
+			PermissionSet ps = SecurityManager.ResolvePolicy (e);
+			Assert.IsNotNull (ps, "PermissionSet");
+			Assert.IsFalse (ps.IsUnrestricted (), "IsUnrestricted");
+			Assert.AreEqual (0, ps.Count, "Count");
+		}
+
+		[Test]
+		[ExpectedException (typeof (NullReferenceException))]
+		public void ResolveSystemPolicy_Null ()
+		{
+			SecurityManager.ResolveSystemPolicy (null);
+		}
+#endif
 	}
 }
