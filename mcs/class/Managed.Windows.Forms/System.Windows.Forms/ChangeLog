@@ -1,5 +1,12 @@
 2004-12-16  Peter Bartok  <pbartok@novell.com>
 
+	* TextBoxBase.cs: Initial check-in. DO NOT TRY TO USE THIS YET. It
+	  contains a lot of code that's not supposed to be there for the
+	  real thing, but required for developing/testing the textbox
+	  backend.
+
+2004-12-16  Peter Bartok  <pbartok@novell.com>
+
 	* TextControl.cs:
 	- Fixed Streamline method
 	- Added FindTag method to Line
