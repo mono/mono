@@ -70,8 +70,8 @@ namespace System.Reflection.Emit {
         private Object generic_params; /* so offsets don't change */
 #endif
 	private RefEmitPermissionSet[] permissions;	
-	#endregion
 	private Type created;
+	#endregion
 	string fullname;
 
 	public const int UnspecifiedTypeSize = 0;

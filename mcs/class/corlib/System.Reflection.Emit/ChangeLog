@@ -1,3 +1,7 @@
+2004-09-30  Zoltan Varga  <vargaz@freemail.hu>
+
+	* TypeBuilder.cs: Make 'created' field visible to the runtime.
+
 2004-09-28  Martin Baulig  <martin@ximian.com>
 
 	* GenericTypeParameterBuilder.cs
