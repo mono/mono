@@ -264,5 +264,43 @@ public class ConstructorBuilderTest : Assertion
 		} catch (NotSupportedException) {
 		}
 	}
+
+	public void TestSetCustomAttribute () {
+		TypeBuilder tb = module.DefineType ("class21", TypeAttributes.Public);
+		ConstructorBuilder cb = tb.DefineConstructor (
+			 0, 0, 
+			new Type [1] {typeof(int)});
+		cb.GetILGenerator ().Emit (OpCodes.Ret);
+
+		// Null argument
+		try {
+			cb.SetCustomAttribute (null);
+			Fail ();
+		} catch (ArgumentNullException) {
+		}
+
+		byte[] custAttrData = { 1, 0, 0, 0, 0};
+		Type attrType = Type.GetType
+			("System.Reflection.AssemblyKeyNameAttribute");
+		Type[] paramTypes = new Type[1];
+		paramTypes[0] = typeof(String);
+		ConstructorInfo ctorInfo =
+			attrType.GetConstructor(paramTypes);
+
+		cb.SetCustomAttribute (ctorInfo, custAttrData);
+
+		// Null arguments again
+		try {
+			cb.SetCustomAttribute (null, new byte[2]);
+			Fail ();
+		} catch (ArgumentNullException) {
+		}
+
+		try {
+			cb.SetCustomAttribute (ctorInfo, null);
+			Fail ();
+		} catch (ArgumentNullException) {
+		}
+	}
 }
 }

@@ -1,5 +1,7 @@
 2003-02-10  Zoltan Varga  <vargaz@freemail.hu>
 
+	* ConstructorBuilderTest.cs: added SetCustomAttribute() tests.
+
 	* MethodBuilderTest.cs: updated to NUNIT2 conventions.
 
 	* ConstructorBuilderTest.cs: New file.
