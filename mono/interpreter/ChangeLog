@@ -1,3 +1,7 @@
+2004-08-17 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* interp.c: thread local alloc
+
 2004-08-05  Bernie Solomon  <bernard@ugsolutions.com>
 
 	* interp.c: (mono_interp_init) use g_thread_supported
