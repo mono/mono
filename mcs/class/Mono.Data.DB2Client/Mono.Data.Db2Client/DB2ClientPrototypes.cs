@@ -28,7 +28,7 @@ namespace DB2ClientCS
 		[DllImport("db2cli.dll", EntryPoint = "SQLGetDiagRec")]
 			unsafe public static extern short SQLGetDiagRec( short handleType, IntPtr handle, short recNum, [Out] StringBuilder sqlState, ref IntPtr nativeErrorPtr, [Out] StringBuilder errorMessage, short bufferLength, ref IntPtr shortTextLengthPtr);
 		[DllImport("db2cli.Dll", EntryPoint = "SQLSetConnectAttr")]
-			unsafe public static extern short SQLSetConnectAttr(IntPtr sqlHdbc, long sqlAttr, IntPtr sqlValuePtr, long sqlStrLength);
+			unsafe public static extern short SQLSetConnectAttr(IntPtr sqlHdbc, long sqlAttr, [In] IntPtr sqlValuePtr, long sqlValueLength);
 		[DllImport("db2cli.Dll", EntryPoint = "SQLEndTran")]
 			unsafe public static extern short SQLEndTran (short handleType, IntPtr handle, short fType);
 		[DllImport("db2cli.Dll", EntryPoint = "SQLCancel")]
@@ -49,5 +49,11 @@ namespace DB2ClientCS
 			unsafe public static extern short  SQLBindCol(IntPtr stmtHandle, ushort colNum, int dataType,[In][Out] IntPtr dataBufferPtr, int dataBufferLength, ref IntPtr StrLen_or_IndPtr);
 		[DllImport("db2cli.dll", EntryPoint = "SQLDriverConnect")]
 			unsafe public static extern short SQLDriverConnect(IntPtr hdbc, int centered, [In] string inConnectStr, [In] int inStrLength, [Out] StringBuilder outConnectStr, [Out] int outStrCapacity, [Out] IntPtr outStrLengthReturned, [In] int completion);
+		[DllImport("db2cli.dll", EntryPoint = "SQLPrepare")]
+			unsafe public static extern short SQLPrepare(IntPtr stmtHandle, string stmt, int length);
+		[DllImport("SQLDescribeParam", EntryPoint = "SQLDescribeParam")]
+			unsafe public static extern short SQLDescribeParam(IntPtr stmtHandle, [In] IntPtr paramNumber, [Out] IntPtr paramSize, [Out] IntPtr decimalDigits, [Out] IntPtr nullable);
+		[DllImport("db2cli.dll", EntryPoint = "SQLNumParams")]
+			unsafe public static extern short SQLNumParams(IntPtr stmtHandle, ref IntPtr numParams);
 	}
 }

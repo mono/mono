@@ -38,72 +38,44 @@ namespace DB2ClientCS
 			hwndStmt = com.statementHandle;    //We have access to the results through the statement handle
 
 			short sqlRet;
-			StringBuilder colName = new StringBuilder(18);
-			short colNameMaxLength=18;
-			IntPtr colNameLength=IntPtr.Zero;
-			IntPtr sqlDataType=IntPtr.Zero;
-			IntPtr colSize=IntPtr.Zero;
-			IntPtr scale=IntPtr.Zero;
-			IntPtr nullable=IntPtr.Zero;
+
 			DB2ClientUtils util = new DB2ClientUtils();
 			rs = new DataTable();
 			
 			sqlRet = DB2ClientPrototypes.SQLNumResultCols(hwndStmt, ref numCols);
 			util.DB2CheckReturn(sqlRet, DB2ClientConstants.SQL_HANDLE_STMT, hwndStmt, "DB2ClientDataReader - SQLNumResultCols");
+
 			IntPtr[] dbVals = new IntPtr[numCols];
 			IntPtr[] sqlLen_or_IndPtr = new IntPtr[numCols];
-			for (ushort i=1; i<=numCols; i++) 
-			{
-				sqlRet = DB2ClientPrototypes.SQLDescribeCol(hwndStmt, i, colName, colNameMaxLength, colNameLength, ref sqlDataType, ref colSize, ref scale, ref nullable);
-				util.DB2CheckReturn(sqlRet, DB2ClientConstants.SQL_HANDLE_STMT, hwndStmt, "DB2ClientDataReader - SQLDescribeCol");
-				///At this point I have the data type information as well, but for now I will insert the data as
-				///Ansi strings and see how it goes.  Maybe we can speed things up later...
-				///
-				rs.Columns.Add(colName.ToString());
 
-				sqlLen_or_IndPtr[i-1] = new IntPtr();
-				dbVals[i-1] = Marshal.AllocHGlobal(colSize.ToInt32()+1);
+			PrepareResults(dbVals, sqlLen_or_IndPtr);
+			FetchResults(dbVals, sqlLen_or_IndPtr, rs);
 
-				try 
-				{
-					switch (sqlDataType.ToInt32()) 
-					{
-						case DB2ClientConstants.SQL_DECIMAL:	//These types are treated as SQL_C_CHAR for binding purposes
-						case DB2ClientConstants.SQL_TYPE_DATE:
-						case DB2ClientConstants.SQL_TYPE_TIME:
-						case DB2ClientConstants.SQL_TYPE_TIMESTAMP:
-						case DB2ClientConstants.SQL_VARCHAR:
-							sqlRet = DB2ClientPrototypes.SQLBindCol(hwndStmt, i, DB2ClientConstants.SQL_C_CHAR,  dbVals[i-1],(short)colSize.ToInt32()+1, ref sqlLen_or_IndPtr[i-1]);
-							break;
-						default:
-							sqlRet = DB2ClientPrototypes.SQLBindCol(hwndStmt, i, (short)sqlDataType.ToInt32(), dbVals[i-1],(short)colSize.ToInt32()+1, ref sqlLen_or_IndPtr[i-1]);
-							break;
-					}
-					util.DB2CheckReturn(sqlRet, DB2ClientConstants.SQL_HANDLE_STMT, hwndStmt, "DB2ClientDataReader - SQLBindCol");
-				}
-				catch(DB2ClientException e) 
-				{
-					System.Console.Write(e.Message);
-				}
-				isClosed = false;
-			}
-			sqlRet = DB2ClientPrototypes.SQLFetch(hwndStmt);
-			util.DB2CheckReturn(sqlRet, DB2ClientConstants.SQL_HANDLE_STMT, hwndStmt, "DB2ClientDataReader - SQLFetch 1");
-			while(sqlRet != DB2ClientConstants.SQL_NO_DATA_FOUND)
-			{
-				DataRow newRow = rs.NewRow();
-				for (short y=1;y<=numCols;y++) 
-				{
-					newRow[y-1] = Marshal.PtrToStringAnsi(dbVals[y-1]);
-					util.DB2CheckReturn(sqlRet, DB2ClientConstants.SQL_HANDLE_STMT, hwndStmt, "DB2ClientDataReader - SQLFetch 2");
-				}
-				rs.Rows.Add(newRow);
 
-				sqlRet = DB2ClientPrototypes.SQLFetch(hwndStmt);
-			}		
-			for (int n=0;n<numCols;n++)
-				Marshal.FreeHGlobal(dbVals[n]);
 		}
+		/// <summary>
+		/// Constructor for use with prepared statements
+		/// </summary>
+		/// 
+		internal DB2ClientDataReader(DB2ClientConnection con, DB2ClientCommand com, bool prepared)
+		{
+			db2Conn = con;
+			hwndStmt = com.statementHandle;    //We have access to the results through the statement handle
+
+			short sqlRet;
+
+			DB2ClientUtils util = new DB2ClientUtils();
+			rs = new DataTable();
+			
+			sqlRet = DB2ClientPrototypes.SQLNumResultCols(hwndStmt, ref numCols);
+			util.DB2CheckReturn(sqlRet, DB2ClientConstants.SQL_HANDLE_STMT, hwndStmt, "DB2ClientDataReader - SQLNumResultCols");
+
+			IntPtr[] dbVals = new IntPtr[numCols];
+			IntPtr[] sqlLen_or_IndPtr = new IntPtr[numCols];
+
+			PrepareResults(dbVals, sqlLen_or_IndPtr);
+		}
+
 		public void Dispose()
 		{
 			Close();
@@ -204,6 +176,87 @@ namespace DB2ClientCS
 			
 		}
 		#endregion
+
+		#region Describe/Bind/Fetch functions
+		///
+		///Broke these out so that we can use different paths for Immediate executions and Prepared executions
+		/// <summary>
+		/// Does the describe and bind steps for the query result set.  Called for both immediate and prepared queries. 
+		/// </summary>
+		private void PrepareResults(IntPtr[] dbVals, IntPtr[] sqlLen_or_IndPtr)
+		{
+			short sqlRet;
+			StringBuilder colName = new StringBuilder(18);
+			short colNameMaxLength=18;
+			IntPtr colNameLength=IntPtr.Zero;
+			IntPtr sqlDataType=IntPtr.Zero;
+			IntPtr colSize=IntPtr.Zero;
+			IntPtr scale=IntPtr.Zero;
+			IntPtr nullable=IntPtr.Zero;
+			DB2ClientUtils util = new DB2ClientUtils();
+			for (ushort i=1; i<=numCols; i++) 
+			{
+				sqlRet = DB2ClientPrototypes.SQLDescribeCol(hwndStmt, i, colName, colNameMaxLength, colNameLength, ref sqlDataType, ref colSize, ref scale, ref nullable);
+				util.DB2CheckReturn(sqlRet, DB2ClientConstants.SQL_HANDLE_STMT, hwndStmt, "DB2ClientDataReader - SQLDescribeCol");
+				///At this point I have the data type information as well, but for now I will insert the data as
+				///Ansi strings and see how it goes.  Maybe we can speed things up later...
+				///
+				rs.Columns.Add(colName.ToString());
+
+				sqlLen_or_IndPtr[i-1] = new IntPtr();
+				dbVals[i-1] = Marshal.AllocHGlobal(colSize.ToInt32()+1);
+
+				try 
+				{
+					switch (sqlDataType.ToInt32()) 
+					{
+						case DB2ClientConstants.SQL_DECIMAL:	//These types are treated as SQL_C_CHAR for binding purposes
+						case DB2ClientConstants.SQL_TYPE_DATE:
+						case DB2ClientConstants.SQL_TYPE_TIME:
+						case DB2ClientConstants.SQL_TYPE_TIMESTAMP:
+						case DB2ClientConstants.SQL_VARCHAR:
+							sqlRet = DB2ClientPrototypes.SQLBindCol(hwndStmt, i, DB2ClientConstants.SQL_C_CHAR,  dbVals[i-1],(short)colSize.ToInt32()+1, ref sqlLen_or_IndPtr[i-1]);
+							break;
+						default:
+							sqlRet = DB2ClientPrototypes.SQLBindCol(hwndStmt, i, (short)sqlDataType.ToInt32(), dbVals[i-1],(short)colSize.ToInt32()+1, ref sqlLen_or_IndPtr[i-1]);
+							break;
+					}
+					util.DB2CheckReturn(sqlRet, DB2ClientConstants.SQL_HANDLE_STMT, hwndStmt, "DB2ClientDataReader - SQLBindCol");
+				}
+				catch(DB2ClientException e) 
+				{
+					System.Console.Write(e.Message);
+				}
+				isClosed = false;
+			}
+		}
+/// <summary>
+/// FetchResults does  what it says.
+/// </summary>
+/// <param name="dbVals"></param>
+/// <param name="sqlLen_or_IndPtr"></param>
+/// <param name="rs"></param>
+		private void FetchResults(IntPtr[] dbVals, IntPtr[] sqlLen_or_IndPtr, DataTable rs) 
+		{
+			short sqlRet = 0;
+			DB2ClientUtils util = new DB2ClientUtils();
+
+			sqlRet = DB2ClientPrototypes.SQLFetch(hwndStmt);
+			util.DB2CheckReturn(sqlRet, DB2ClientConstants.SQL_HANDLE_STMT, hwndStmt, "DB2ClientDataReader - SQLFetch 1");
+
+			while(sqlRet != DB2ClientConstants.SQL_NO_DATA_FOUND)
+			{
+				DataRow newRow = rs.NewRow();
+				for (short y=1;y<=numCols;y++) 
+					newRow[y-1] = Marshal.PtrToStringAnsi(dbVals[y-1]);
+
+				rs.Rows.Add(newRow);
+				sqlRet = DB2ClientPrototypes.SQLFetch(hwndStmt);
+				util.DB2CheckReturn(sqlRet, DB2ClientConstants.SQL_HANDLE_STMT, hwndStmt, "DB2ClientDataReader - SQLFetch 2");
+			}		
+			for (int n=0;n<numCols;n++)
+				Marshal.FreeHGlobal(dbVals[n]);
+		}
 		#endregion
 
 		#region IDataRecord Interface
@@ -456,3 +509,4 @@ namespace DB2ClientCS
 	}
 
 }
+#endregion

@@ -8,6 +8,7 @@
 #endregion
 using System;
 using System.Data;
+using System.Runtime.InteropServices;
 
 namespace DB2ClientCS
 {
@@ -15,21 +16,22 @@ namespace DB2ClientCS
 	/// DB2ClientTransaction.  DB2 requires nothing specific to be done to open a transaction, so we set the 
 	/// isolation level, make sure AUTOCOMMIT is off.  DB2 Also allows you to set transaction isolation
 	/// at the statement level, but I haven't worked that in here yet.
+	/// NOTE:  AT THE MOMENT, SETTING OF THE ISOLATION LEVEL IS NOT WORKING
 	/// </summary>
-	public class DB2ClientTransaction : IDbTransaction
+	unsafe public class DB2ClientTransaction : IDbTransaction
 	{
+		DB2ClientUtils util = new DB2ClientUtils();
 		IsolationLevel IL = IsolationLevel.Unspecified;
 		DB2ClientConnection db2Conn;
 		public DB2ClientTransaction(DB2ClientConnection con, IsolationLevel isoL)
 		{
-			IL = isoL;
 			long db2IsoL = DB2ClientConstants.SQL_TXN_READ_COMMITTED;
 			db2Conn = con;
 			short sqlRet;
 
 			switch (isoL) 
 			{
-				case System.Data.IsolationLevel.Chaos:
+				case System.Data.IsolationLevel.Chaos:			//No DB2equivalent, default to SQL_TXN_READ_COMMITTED
 					break;
 				case System.Data.IsolationLevel.ReadCommitted:		//SQL_TXN_READ_COMMITTED
 					db2IsoL = DB2ClientConstants.SQL_TXN_READ_COMMITTED;
@@ -45,10 +47,13 @@ namespace DB2ClientCS
 					break;
 			}
 
+			IL = isoL;
 			IntPtr iso = new IntPtr(db2IsoL);
 			IntPtr attr = new IntPtr(DB2ClientConstants.SQL_AUTOCOMMIT_OFF);
 			sqlRet = DB2ClientPrototypes.SQLSetConnectAttr(db2Conn.DBHandle, DB2ClientConstants.SQL_AUTOCOMMIT, attr, 0);
-			sqlRet = DB2ClientPrototypes.SQLSetConnectAttr(db2Conn.DBHandle, DB2ClientConstants.SQL_TXN_ISOLATION, iso, 0);
+			util.DB2CheckReturn(sqlRet, DB2ClientConstants.SQL_HANDLE_DBC, db2Conn.DBHandle, "Error setting AUTOCOMMIT OFF in transaction CTOR.");
+//			sqlRet = DB2ClientPrototypes.SQLSetConnectAttr(db2Conn.DBHandle, DB2ClientConstants.SQL_TXN_ISOLATION, iso, 0);
+//			util.DB2CheckReturn(sqlRet, DB2ClientConstants.SQL_HANDLE_DBC, db2Conn.DBHandle, "Error setting TRANSCTION ISOLATION in transaction CTOR.");
 			
 		}
 

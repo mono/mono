@@ -25,6 +25,7 @@ namespace DB2ClientCS
 		private int commandTimeout;
 		private bool prepared = false;
 		private IntPtr hwndStmt;  //Our statement handle
+		private IDataParameterCollection parameters;
 
 		#endregion
 
@@ -67,7 +68,7 @@ namespace DB2ClientCS
 		#endregion
 		#region CommandText property
 		///
-		///The query
+		///The query;  If it gets set, reset the prepared property
 		///
 		public string CommandText
 		{
@@ -77,6 +78,7 @@ namespace DB2ClientCS
 			}
 			set
 			{
+				prepared = false;
 				commandText = value;
 			}
 		}
@@ -137,7 +139,7 @@ namespace DB2ClientCS
 		{
 			get
 			{
-				throw new DB2ClientException("TBD");
+				return parameters;
 			}
 		}
 		#endregion
@@ -245,9 +247,16 @@ namespace DB2ClientCS
 		///
 		public IDataReader ExecuteReader()
 		{
-			
-			ExecuteNonQuery();
-			DB2ClientDataReader reader = new DB2ClientDataReader(db2Conn, this);
+			DB2ClientDataReader reader;
+
+			if (!prepared) 
+			{
+				ExecuteNonQuery();
+				reader = new DB2ClientDataReader(db2Conn, this);
+			}
+			else
+				reader = new DB2ClientDataReader(db2Conn, this, prepared);
+
 			return reader;
 
 		}
@@ -268,11 +277,18 @@ namespace DB2ClientCS
 
 		#region Prepare
 		///
-		/// Prepare
+		/// Prepare.  
 		/// 
 		public void Prepare()
 		{
-			throw new DB2ClientException("TBD");
+			DB2ClientUtils util = new DB2ClientUtils();
+			short sqlRet = 0;
+
+			IntPtr numParams = IntPtr.Zero;
+			sqlRet = DB2ClientPrototypes.SQLPrepare(hwndStmt, commandText, commandText.Length);
+			util.DB2CheckReturn(sqlRet, DB2ClientConstants.SQL_HANDLE_STMT, hwndStmt, "SQLPrepare error.");
+			sqlRet = DB2ClientPrototypes.SQLNumParams(hwndStmt, ref numParams);
+			util.DB2CheckReturn(sqlRet, DB2ClientConstants.SQL_HANDLE_STMT, hwndStmt, "SQLNumParams error.");
 		}
 		#endregion
 	}
