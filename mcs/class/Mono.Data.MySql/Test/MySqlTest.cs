@@ -299,11 +299,14 @@ namespace Test.Mono.Data.MySql {
 				dt.Rows.Count);
 
 			// display the schema
+			string colName;
+			string colValue;
 			foreach (DataRow schemaRow in dt.Rows) {
-				foreach (DataColumn schemaCol in dt.Columns)
-					Console.WriteLine(schemaCol.ColumnName + 
-						" = " + 
-						schemaRow[schemaCol]);
+				foreach (DataColumn schemaCol in dt.Columns) {
+					colName = schemaCol.ColumnName;
+					colValue = (schemaRow[schemaCol]).ToString();
+					Console.WriteLine(colName + " = " + colValue);
+				}
 				Console.WriteLine();
 			}
 
@@ -321,7 +324,7 @@ namespace Test.Mono.Data.MySql {
 					metadataValue = 
 						"    Col " + 
 						c + ": " + 
-						dr["ColumnName"];
+						dr["ColumnName"].ToString();
 						
 					// column data
 					if(rdr.IsDBNull(c) == true)
@@ -329,7 +332,7 @@ namespace Test.Mono.Data.MySql {
 					else
 						dataValue = 
 							": " + 
-							rdr.GetValue(c);
+							rdr.GetValue(c).ToString();
 					
 					// display column meta data and data
 					output = metadataValue + dataValue;					

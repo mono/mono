@@ -114,7 +114,7 @@ namespace Mono.Data.MySql {
 				dataTableSchema.Columns.Add ("BaseColumnName", typeof (string));
 				dataTableSchema.Columns.Add ("BaseSchemaName", typeof (string));
 				dataTableSchema.Columns.Add ("BaseTableName", typeof (string));
-				dataTableSchema.Columns.Add ("DataType", typeof(string));
+				dataTableSchema.Columns.Add ("DataType", typeof(Type));
 				dataTableSchema.Columns.Add ("AllowDBNull", typeof (bool));
 				dataTableSchema.Columns.Add ("ProviderType", typeof (int));
 				dataTableSchema.Columns.Add ("IsAliased", typeof (bool));
@@ -164,7 +164,7 @@ namespace Mono.Data.MySql {
 					dbType = MySqlHelper.MySqlTypeToDbType(fieldEnum);
 					typ = MySqlHelper.DbTypeToSystemType (dbType);
 					string st = typ.ToString();
-					schemaRow["DataType"] = st;
+					schemaRow["DataType"] = typ;
 
 					schemaRow["AllowDBNull"] = false;
 					

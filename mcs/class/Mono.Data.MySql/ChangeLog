@@ -1,5 +1,13 @@
 2002-10-13  Daniel Morgan <danmorg@sc.rr.com>
 
+	* Mono.Data.MySql/MySqlDataReader.cs: change "DataType" in 
+	schema DataTable to be typeof(Type) instead of 
+	typeof(string) to make it more like MS.NET
+	
+	* Test/MySqlTest.cs: tweaks
+
+2002-10-13  Daniel Morgan <danmorg@sc.rr.com>
+
 	* Mono.Data.MySql/MySqlCommand.cs:
 	* Mono.Data.MySql/MySqlConnection.cs:
 	* Mono.Data.MySql/MySqlDataReader.cs:
