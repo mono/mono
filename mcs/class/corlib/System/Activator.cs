@@ -118,9 +118,9 @@ namespace System
 			//Assembly assembly = Assembly.Load (assemblyFile, securityInfo);
 			Assembly assembly = null;
 			if(assemblyName == null)
-				assembly = Assembly.GetCallingAssembly ();
-			else
-				assembly = Assembly.Load (assemblyName);
+				assemblyName = Assembly.GetCallingAssembly().GetName().Name;
+			
+			assembly = Assembly.Load (assemblyName);
 
 			Type type = assembly.GetType (typeName, true, ignoreCase);
 			object obj = CreateInstance (type, bindingAttr, binder, args, culture, activationAttributes);
