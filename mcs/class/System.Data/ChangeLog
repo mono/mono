@@ -1,3 +1,11 @@
+2004-11-10  Martin Baulig  <martin@ximian.com>
+
+	 * System.Data.Sql/ISqlCommand.cs,
+	 System.Data.Sql/ISqlConnection.cs,
+	 System.Data.Sql/ISqlExecutionContext.cs,
+	 System.Data.Sql/ISqlParameterCollection.cs,
+	 System.Data.Sql/ISqlTransaction.cs: Added `new' modifiers where needed.
+
 2004-10-06  Umadevi S <sumadevi@novell.com>
 	* System.Data.dll.sources : Added ISqlNotificationReceiver, SqlNotifcationType,
 		SqlNotificationInfo, SqlNotificationSource

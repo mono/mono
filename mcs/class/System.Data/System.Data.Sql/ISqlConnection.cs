@@ -45,11 +45,11 @@ namespace System.Data.Sql {
 
 		#region Methods
 
-		ISqlTransaction BeginTransaction ();
-		ISqlTransaction BeginTransaction (IsolationLevel iso);
+		new ISqlTransaction BeginTransaction ();
+		new ISqlTransaction BeginTransaction (IsolationLevel iso);
 		ISqlTransaction BeginTransaction (string transactionName);
 		ISqlTransaction BeginTransaction (IsolationLevel iso, string transactionName);
-		ISqlCommand CreateCommand ();
+		new ISqlCommand CreateCommand ();
 		ISqlCommand CreateCommand (string commandText);
 		ISqlExecutionContext CreateExecutionContext (SqlDefinition sqlDefinition);
 

@@ -39,9 +39,9 @@ namespace System.Data.Sql {
 	{
 		#region Properties
 
-		ISqlConnection Connection { get; set; }
+		new ISqlConnection Connection { get; set; }
 		SqlNotificationRequest Notification { get; set; }
-		ISqlTransaction Transaction { get; set; }
+		new ISqlTransaction Transaction { get; set; }
 		
 
 		#endregion // Properties
@@ -49,8 +49,8 @@ namespace System.Data.Sql {
 		#region Methods
 
 		ISqlReader ExecutePageReader (CommandBehavior behavior, int startRow, int pageSize);
-		ISqlReader ExecuteReader ();
-		ISqlReader ExecuteReader (CommandBehavior behavior);
+		new ISqlReader ExecuteReader ();
+		new ISqlReader ExecuteReader (CommandBehavior behavior);
 		ISqlResultSet ExecuteResultSet (ResultSetOptions options);
 		ISqlResultSet ExecuteResultSet (ResultSetOptions options, string cursorname);
 		ISqlRecord ExecuteRow ();

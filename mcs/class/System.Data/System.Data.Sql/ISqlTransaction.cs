@@ -37,7 +37,7 @@ namespace System.Data.Sql {
 	{
 		#region Properties
 
-		ISqlConnection Connection { get; }
+		new ISqlConnection Connection { get; }
 
 		#endregion // Properties
 

@@ -39,20 +39,20 @@ namespace System.Data.Sql {
 	{
 		#region Properties
 
-		ISqlConnection Connection { get; set; }
+		new ISqlConnection Connection { get; set; }
 		SqlNotificationRequest Notification { get; set; }
-		ISqlParameterCollection Parameters { get; }
-		ISqlTransaction Transaction { get; set; }
+		new ISqlParameterCollection Parameters { get; }
+		new ISqlTransaction Transaction { get; set; }
 
 		#endregion // Properties
 
 		#region Methods
 
-		ISqlParameter CreateParameter ();
+		new ISqlParameter CreateParameter ();
 
 		ISqlReader ExecutePageReader (CommandBehavior behavior, int startRow, int pageSize);
-		ISqlReader ExecuteReader ();
-		ISqlReader ExecuteReader (CommandBehavior behavior);
+		new ISqlReader ExecuteReader ();
+		new ISqlReader ExecuteReader (CommandBehavior behavior);
  		ISqlResultSet ExecuteResultSet (ResultSetOptions options);
 		ISqlResultSet ExecuteResultSet (ResultSetOptions options, string cursorname);
 		ISqlRecord ExecuteRow ();

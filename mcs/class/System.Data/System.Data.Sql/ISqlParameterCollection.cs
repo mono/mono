@@ -40,8 +40,8 @@ namespace System.Data.Sql {
 	{
 		#region Properties
 
-		ISqlParameter this [[Optional] int index] { get; set; }
-		ISqlParameter this [[Optional] string name] { get; set; }
+		new ISqlParameter this [[Optional] int index] { get; set; }
+		new ISqlParameter this [[Optional] string name] { get; set; }
 
 		#endregion // Properties
 
