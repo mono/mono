@@ -221,7 +221,6 @@ namespace MonoTests.System
 			Assertion.AssertEquals("#6c", "file", uri.Scheme);
 			Assertion.AssertEquals("#6d", "one_file.txt", uri.Host);
 			Assertion.AssertEquals("#6e", "", uri.AbsolutePath);
-
 		}
 		
 		[Test]
@@ -244,6 +243,12 @@ namespace MonoTests.System
 
 			uri = new Uri (@"\\server\share\filename.ext");			
 			Assertion.Assert ("#6", uri.IsUnc);
+
+			uri = new Uri ("/home/user/dir/filename.ext");
+			Assertion.Assert ("#7", !uri.IsUnc);
+
+			uri = new Uri (@"a:\dir\filename.ext");
+			Assertion.Assert ("#8", !uri.IsUnc);
 		}
 
 		[Test]

@@ -1,3 +1,7 @@
+2003-12-08  Ravindra  <rkumar@novell.com>
+
+	* UriTest.cs: Added IsUnc tests for local file paths.
+
 2003-10-10  Pedro Martínez Julá  <yoros.wanadoo.es>
 
 	* UriTest.cs: added some test for "file://one_file.txt". Uri used to
