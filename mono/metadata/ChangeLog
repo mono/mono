@@ -1,3 +1,15 @@
+2004-02-02  Zoltan Varga  <vargaz@freemail.hu>
+
+	* reflection.h (MonoReflectionTypeBuilder): Add 'permissions' field.
+
+	* reflection.c (mono_image_get_type_info): Save declarative security
+	info.
+
+	* reflection.c (mono_image_get_field_info): Handle uninitialized 
+	unmanaged fields as well.
+
+	* appdomain.c: Bump corlib version.
+
 2004-02-01  Martin Baulig  <martin@ximian.com>
 
 	* loader.c (method_from_methodspec): Use `ginst->mtype_argc/v' for
