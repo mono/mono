@@ -2,13 +2,15 @@
 // StrongNameTest.cs - NUnit Test Cases for Strong Name Key File
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot (sebastien@ximian.com)
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com)
 //
 
 using System;
 using System.IO;
+using System.Security.Cryptography;
 using System.Text;
 
 using Mono.Security;
@@ -799,8 +801,13 @@ namespace MonoTests.Mono.Security {
 		[TearDown]
 		public void CleanUp () 
 		{
-			File.Delete (Signed);
-			File.Delete (Delay);
+			try {
+				if (File.Exists (Signed))
+					File.Delete (Signed);
+				if (File.Exists (Delay))
+					File.Delete (Delay);
+			}
+			catch {} // don't mess up results
 		}
 
 		[Test]
@@ -849,5 +856,57 @@ namespace MonoTests.Mono.Security {
 			// and verify it's still valid
 			Assert ("ReSign/Verify", sn.Verify (Signed));
 		}
+		
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void StrongName_ByteNull () 
+		{
+			byte[] data = null;
+			sn = new StrongName (data); 
+		}
+		
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void StrongName_RSANull () 
+		{
+			RSA rsa = null;
+			sn = new StrongName (rsa); 
+		}
+		
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void BadKey () 
+		{
+			byte[] bad = new byte [0]; 
+			sn = new StrongName (bad); 
+		}
+	
+		[Test]
+		public void ECMA () 
+		{
+			byte[] ecma = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }; 
+			sn = new StrongName (ecma);
+			Assert ("CanSign", !sn.CanSign);
+		}
+
+		[Test]
+		public void TokenAlgorithm_MD5 () 
+		{
+			sn.TokenAlgorithm = "MD5";
+		} 
+
+		[Test]
+		public void TokenAlgorithm_SHA1 () 
+		{
+			sn.TokenAlgorithm = "SHA1";
+		} 
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void TokenAlgorithm_Bad () 
+		{
+			sn.TokenAlgorithm = "SHA384";
+		} 
+	
 	}
 }
