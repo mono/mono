@@ -36,22 +36,26 @@ namespace System.Windows.Forms {
 		public override Color BackColor {
 			get
 			{
-				throw new NotImplementedException ();
+				//FIXME:
+				return base.BackColor;
 			}
 			set
 			{
-				throw new NotImplementedException ();
+				//FIXME:
+				base.BackColor = value;
 			}
 		}
 		[MonoTODO]
 		public override Image BackgroundImage {
 			get
 			{
-				throw new NotImplementedException ();
+				//FIXME:
+				return base.BackgroundImage;
 			}
 			set
 			{
-				throw new NotImplementedException ();
+				//FIXME:
+				base.BackgroundImage = value;
 			}
 		}
 		[MonoTODO]
@@ -62,7 +66,7 @@ namespace System.Windows.Forms {
 			}
 			set
 			{
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -73,18 +77,20 @@ namespace System.Windows.Forms {
 			}
 			set
 			{
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
 		public override Color ForeColor {
 			get
 			{
-				throw new NotImplementedException ();
+				//FIXME:
+				return base.ForeColor;
 			}
 			set
 			{
-				throw new NotImplementedException ();
+				//FIXME:
+				base.ForeColor = value;
 			}
 		}
 		[MonoTODO]
@@ -95,7 +101,7 @@ namespace System.Windows.Forms {
 			}
 			set
 			{
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -106,7 +112,7 @@ namespace System.Windows.Forms {
 			}
 			set
 			{
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -117,7 +123,7 @@ namespace System.Windows.Forms {
 			}
 			set
 			{
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -128,7 +134,7 @@ namespace System.Windows.Forms {
 			}
 			set
 			{
-				imageIndex = value;
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -139,7 +145,7 @@ namespace System.Windows.Forms {
 			}
 			set
 			{
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -150,7 +156,7 @@ namespace System.Windows.Forms {
 			}
 			set
 			{
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -161,7 +167,7 @@ namespace System.Windows.Forms {
 			}
 			set
 			{
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -172,7 +178,7 @@ namespace System.Windows.Forms {
 			}
 			set
 			{
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -190,7 +196,7 @@ namespace System.Windows.Forms {
 			}
 			set
 			{
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -201,7 +207,7 @@ namespace System.Windows.Forms {
 			}
 			set
 			{
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -212,7 +218,7 @@ namespace System.Windows.Forms {
 			}
 			set
 			{
-				selectedImageIndex = value;
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -223,7 +229,7 @@ namespace System.Windows.Forms {
 			}
 			set
 			{
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -234,7 +240,7 @@ namespace System.Windows.Forms {
 			}
 			set
 			{
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -245,7 +251,7 @@ namespace System.Windows.Forms {
 			}
 			set
 			{
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -256,7 +262,7 @@ namespace System.Windows.Forms {
 			}
 			set
 			{
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -267,18 +273,18 @@ namespace System.Windows.Forms {
 			}
 			set
 			{
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 
 		public override string Text {
-			//FIXME just to get it to run
-			get
-			{
+			get {
+				//FIXME:
 				return base.Text;
 			}
 			set
 			{
+				//FIXME:
 				base.Text = value;
 			}
 		}
@@ -302,22 +308,22 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public void BeginUpdate() 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		public void CollapseAll()
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		public void EndUpdate()
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		public void ExpandAll()
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		public TreeNode GetNodeAt(Point pt)
@@ -337,32 +343,22 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public override string ToString()
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			return base.ToString();
 		}
 		
 		// --- Public Events
 		
-		[MonoTODO]
 		public event TreeViewEventHandler AfterCheck;
-		[MonoTODO]
 		public event TreeViewEventHandler AfterCollapse;
-		[MonoTODO]
 		public event TreeViewEventHandler AfterExpand;
-		[MonoTODO]
 		public event NodeLabelEditEventHandler AfterLabelEdit;
-		[MonoTODO]
 		public event TreeViewEventHandler AfterSelect;
-		[MonoTODO]
 		public event TreeViewCancelEventHandler BeforeCheck;
-		[MonoTODO]
 		public event TreeViewCancelEventHandler BeforeCollapse;
-		[MonoTODO]
 		public event TreeViewCancelEventHandler BeforeExpand;
-		[MonoTODO]
 		public event NodeLabelEditEventHandler BeforeLabelEdit;
-		[MonoTODO]
 		public event TreeViewCancelEventHandler BeforeSelect;
-		[MonoTODO]
 		public event ItemDragEventHandler ItemDrag;
 		//public new event PaintEventHandler Paint;
         
@@ -395,7 +391,7 @@ namespace System.Windows.Forms {
 		protected override Size DefaultSize {
 			get
 			{
-				throw new NotImplementedException ();
+				return new Size(121,97);//Correct size.
 			}
 		}
 		
@@ -408,100 +404,103 @@ namespace System.Windows.Forms {
 			base.CreateHandle();
 		}
 
-		//inherited
-		//protected override void Dispose(bool disposing)
-		//{
-		//	throw new NotImplementedException ();
-		//}
+
 		[MonoTODO]
 		protected override bool IsInputKey(Keys keyData)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			return base.IsInputKey(keyData);
 		}
 		[MonoTODO]
 		protected virtual void OnAfterCheck(TreeViewEventArgs e)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		protected virtual void OnAfterCollapse(TreeViewEventArgs e)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		protected virtual void OnAfterExpand(TreeViewEventArgs e)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		protected virtual void OnAfterLabelEdit(NodeLabelEditEventArgs e)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		protected virtual void OnAfterSelect(TreeViewEventArgs e)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		protected virtual void OnBeforeCheck(TreeViewCancelEventArgs e)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		protected virtual void OnBeforeCollapse(TreeViewCancelEventArgs e)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		protected virtual void OnBeforeExpand(TreeViewCancelEventArgs e)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		protected virtual void OnBeforeLabelEdit(NodeLabelEditEventArgs e)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		protected virtual void OnBeforeSelect(TreeViewCancelEventArgs e)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		protected override void OnHandleCreated(EventArgs e)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			base.OnHandleCreated(e);
 		}
 		[MonoTODO]
 		protected override void OnHandleDestroyed(EventArgs e)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			base.OnHandleDestroyed(e);
 		}
 		[MonoTODO]
 		protected virtual void OnItemDrag(ItemDragEventArgs e)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		protected override void OnKeyDown(KeyEventArgs e)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			base.OnKeyDown(e);
 		}
 		[MonoTODO]
 		protected override void OnKeyPress(KeyPressEventArgs e)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			base.OnKeyPress(e);
 		}
 		[MonoTODO]
 		protected override void OnKeyUp(KeyEventArgs e)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+            base.OnKeyUp(e);
 		}
 		[MonoTODO]
 		protected override void WndProc(ref Message m)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			base.WndProc(ref m);
 		}
 	}
 }

@@ -38,7 +38,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 
@@ -48,7 +48,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 
@@ -58,7 +58,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 
@@ -68,7 +68,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 
@@ -110,7 +110,7 @@ namespace System.Windows.Forms {
 				}		
 
 				CreateParams createParams = new CreateParams ();
-				createParams.Caption = "";
+				createParams.Caption = "Hello World";
 				createParams.ClassName = "mono_scrollable_control";
 				createParams.X = Left;
 				createParams.Y = Top;
@@ -126,6 +126,8 @@ namespace System.Windows.Forms {
 				createParams.Parent = (IntPtr) 0;
 	  
 				createParams.Style = (int) WindowStyles.WS_OVERLAPPEDWINDOW;
+				//test version with scroll bars.
+				//createParams.Style = (int) (WindowStyles.WS_OVERLAPPEDWINDOW | WindowStyles.WS_HSCROLL | WindowStyles.WS_VSCROLL);
 	  
 				return createParams;			
 			}
@@ -137,7 +139,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 
@@ -147,7 +149,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 
@@ -170,26 +172,31 @@ namespace System.Windows.Forms {
 		protected virtual void AdjustFormScrollbars (
 			bool displayScrollbars)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 
 		protected override void OnLayout (LayoutEventArgs e) {
+			//FIXME:
 			base.OnLayout (e);
 		}
 
 		protected override void OnMouseWheel (MouseEventArgs e) {
+			//FIXME:
 			base.OnMouseWheel (e);
 		}
 
 		protected override void OnVisibleChanged (EventArgs e) {
+			//FIXME:
 			base.OnVisibleChanged (e);
 		}
 
 		protected override void ScaleCore (float dx, float dy) {
+			//FIXME:
 			base.ScaleCore (dx, dy);
 		}
 
 		protected override void WndProc (ref Message m) {
+			//FIXME:
 			base.WndProc (ref m);
 		}
 		
@@ -334,7 +341,6 @@ namespace System.Windows.Forms {
 					" Left = " + left.ToString();
 			}
 		}
-		
 	}
 }
 

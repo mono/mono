@@ -27,7 +27,7 @@ namespace System.Windows.Forms {
 			}
 			set
 			{
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -38,29 +38,32 @@ namespace System.Windows.Forms {
 			}
 			set
 			{
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
 		public override Color BackColor {
-			get
-			{
-				throw new NotImplementedException ();
+			get {
+				//FIXME:
+				return base.BackColor;
 			}
 			set
 			{
-				throw new NotImplementedException ();
+				//FIXME:
+				base.BackColor = value;
 			}
 		}
 		[MonoTODO]
 		public override Image BackgroundImage {
 			get
 			{
-				throw new NotImplementedException ();
+				//FIXME:
+				return base.BackgroundImage;
 			}
 			set
 			{
-				throw new NotImplementedException ();
+				//FIXME:
+				base.BackgroundImage = value;
 			}
 		}
 		[MonoTODO]
@@ -71,7 +74,7 @@ namespace System.Windows.Forms {
 			}
 			set
 			{
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -85,11 +88,13 @@ namespace System.Windows.Forms {
 		public override Color ForeColor {
 			get
 			{
-				throw new NotImplementedException ();
+				//FIXME:
+				return base.ForeColor;
 			}
 			set
 			{
-				throw new NotImplementedException ();
+				//FIXME:
+				base.ForeColor = value;
 			}
 		}
 		[MonoTODO]
@@ -100,7 +105,7 @@ namespace System.Windows.Forms {
 			}
 			set
 			{
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -111,7 +116,7 @@ namespace System.Windows.Forms {
 			}
 			set
 			{
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -122,7 +127,7 @@ namespace System.Windows.Forms {
 			}
 			set
 			{
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -133,7 +138,7 @@ namespace System.Windows.Forms {
 			}
 			set
 			{
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -144,7 +149,7 @@ namespace System.Windows.Forms {
 			}
 			set
 			{
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -162,7 +167,7 @@ namespace System.Windows.Forms {
 			}
 			set
 			{
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -173,7 +178,7 @@ namespace System.Windows.Forms {
 			}
 			set
 			{
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -184,7 +189,7 @@ namespace System.Windows.Forms {
 			}
 			set
 			{
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -195,17 +200,19 @@ namespace System.Windows.Forms {
 			}
 			set
 			{
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
 		public override string Text {
 			get
 			{
+				//FIXME:
 				return base.Text;
 			}
 			set
 			{
+				//FIXME:
 				base.Text = value;
 			}
 		}
@@ -225,7 +232,7 @@ namespace System.Windows.Forms {
 			}
 			set
 			{
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		
@@ -234,76 +241,70 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public void AppendText(string text) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		public void Clear()
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		public void ClearUndo()
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		public void Copy()
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		public void Cut()
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		public void Paste()
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		public void ScrollToCaret()
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		public void Select(int start, int length) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		public void SelectAll()
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		public override string ToString()
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			return base.ToString();
 		}
 		[MonoTODO]
 		public void Undo()
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		// --- Public Events
 		
-		[MonoTODO]
 		public event EventHandler AcceptsTabChanged;
-		[MonoTODO]
 		public event EventHandler AutoSizeChanged;
-		[MonoTODO]
 		public event EventHandler BorderStyleChanged;
 		//[MonoTODO]
 		//public event EventHandler Click;
-		[MonoTODO]
 		public event EventHandler HideSelectionChanged;
-		[MonoTODO]
 		public event EventHandler ModifiedChanged;
-		[MonoTODO]
 		public event EventHandler MultilineChanged;
-		[MonoTODO]
 		public event EventHandler ReadOnlyChanged;
         
         // --- Protected Properties
@@ -335,7 +336,7 @@ namespace System.Windows.Forms {
 		protected override Size DefaultSize {
 			get
 			{
-				throw new NotImplementedException ();
+				return new Size(100,20); //Correct size
 			}
 		}
 		
@@ -344,77 +345,85 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override void CreateHandle()
 		{
+			//FIXME:
 			base.CreateHandle();
 		}
 		[MonoTODO]
 		protected override bool IsInputKey(Keys keyData)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			return base.IsInputKey(keyData);
 		}
 		[MonoTODO]
 		protected virtual void OnAcceptsTabChanged(EventArgs e)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		protected virtual void OnAutoSizeChanged(EventArgs e)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		protected virtual void OnBorderStyleChanged(EventArgs e)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		protected override void OnFontChanged(EventArgs e)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			base.OnFontChanged(e);
 		}
 		[MonoTODO]
 		protected override void OnHandleCreated(EventArgs e)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			base.OnHandleCreated(e);
 		}
 		[MonoTODO]
 		protected override void OnHandleDestroyed(EventArgs e)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			base.OnHandleDestroyed(e);
 		}
 		[MonoTODO]
 		protected virtual void OnHideSelectionChanged(EventArgs e)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		protected virtual void OnModifiedChanged(EventArgs e)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		protected virtual void OnMultilineChanged(EventArgs e)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		protected virtual void OnReadOnlyChanged(EventArgs e)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		protected override bool ProcessDialogKey(Keys keyData)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			return base.ProcessDialogKey(keyData);
 		}
 		[MonoTODO]
 		protected override void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			base.SetBoundsCore(x, y, width, height, specified);
 		}
 		[MonoTODO]
 		protected override void WndProc(ref Message m)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			base.WndProc(ref m);
 		}
 	}
 }

@@ -35,9 +35,8 @@ using System.ComponentModel;
 		[MonoTODO]
 		public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
 		{
-			throw new NotImplementedException ();
 			//FIXME: Implment our own conversion
-			//return base.CanConvertTo(context, culture, value, destinationType);
+			return base.ConvertTo(context, culture, value, destinationType);
 		}
 	}
 }

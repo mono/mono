@@ -23,8 +23,6 @@ using System.Drawing;
 namespace System.Windows.Forms {
 
 	// <summary>
-	//	This is only a template.  Nothing is implemented yet.
-	//
 	// </summary>
 
      public class ScrollBar : Control {
@@ -48,20 +46,24 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public override Color BackColor {
 			get {
-				throw new NotImplementedException ();
+				//FIXME:
+				return base.BackColor;
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
+				base.BackColor = value;
 			}
 		}
 
 		[MonoTODO]
 		public override Image BackgroundImage {
 			get {
-				throw new NotImplementedException ();
+				//FIXME:
+				return base.BackgroundImage;
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
+				base.BackgroundImage = value;
 			}
 		}
 
@@ -69,10 +71,12 @@ namespace System.Windows.Forms {
 		 [MonoTODO]
 		public override Color ForeColor {
 			get {
-				throw new NotImplementedException ();
+				//FIXME:
+				return base.ForeColor;
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
+				base.ForeColor = value;
 			}
 		}
 
@@ -82,7 +86,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:		
 			}
 		}
 
@@ -93,7 +97,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:		
 			}
 		}
 
@@ -104,7 +108,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:		
 			}
 		}
 
@@ -115,7 +119,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:		
 			}
 		}
 
@@ -126,7 +130,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:		
 			}
 		}
 
@@ -148,7 +152,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:		
 			}
 		}
 
@@ -168,14 +172,7 @@ namespace System.Windows.Forms {
 		//
 
 		[MonoTODO]
-		public event ScrollEventHandler Scroll {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event ScrollEventHandler Scroll;
 
 		//Compact FrameWork
 		public event EventHandler ValueChanged;
@@ -212,7 +209,8 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override ImeMode DefaultImeMode {
 			get {
-				throw new NotImplementedException ();
+				//FIXME:
+				return base.DefaultImeMode;
 			}
 		}
 
@@ -224,13 +222,15 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override void OnEnabledChanged(EventArgs e)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			base.OnEnabledChanged(e);
 		}
 
 		[MonoTODO]
 		protected override void OnHandleCreated(EventArgs e)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			base.OnHandleCreated(e);
 		}
 	 }
 }

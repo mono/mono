@@ -34,35 +34,41 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 
 		[MonoTODO]
 		public override Image BackgroundImage {
 			get {
-				throw new NotImplementedException ();
+				//FIXME:
+				return base.BackgroundImage;
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
+				base.BackgroundImage = value;
 			}
 		}
 		[MonoTODO]
 		public override Font Font {
 			get {
-				throw new NotImplementedException ();
+				//FIXME:
+				return base.Font;
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
+				base.Font = value;
 			}
 		}
 		[MonoTODO]
 		public override Color ForeColor {
 			get {
-				throw new NotImplementedException ();
+				//FIXME:
+				return base.ForeColor;
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
+				base.ForeColor = value;
 			}
 		}
 		[MonoTODO]
@@ -71,7 +77,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -80,7 +86,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -89,7 +95,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -98,7 +104,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -107,15 +113,17 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
 		public override string Text {
 			get {
+				//FIXME:
 				return base.Text;
 			}
 			set {
+				//FIXME:
 				base.Text = value;
 			}
 		}
@@ -125,7 +133,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -134,7 +142,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -143,7 +151,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		
@@ -152,12 +160,13 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public void SetRange(int minValue, int maxValue) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		public override string ToString() 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			return base.ToString();
 		}
 		
 		// --- Public Events
@@ -195,7 +204,8 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override ImeMode DefaultImeMode {
 			get {
-				throw new NotImplementedException ();
+				//FIXME:
+				return base.DefaultImeMode;
 			}
 		}
 		[MonoTODO]
@@ -217,40 +227,46 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override bool IsInputKey(Keys keyData) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			return IsInputKey(keyData);
 		}
 		[MonoTODO]
 		protected override void OnBackColorChanged(EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			base.OnBackColorChanged(e);
 		}
 		[MonoTODO]
 		protected override void OnHandleCreated(EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			base.OnHandleCreated(e);
 		}
 
 		[MonoTODO]
 		protected virtual void OnScroll(EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 
 		[MonoTODO]
 		protected override void OnMouseWheel(MouseEventArgs e) { // .NET V1.1 Beta.
-			throw new NotImplementedException ();
+			//FIXME:
+			base.OnMouseWheel(e);
 		}
 
 		[MonoTODO]
 		protected override void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			base.SetBoundsCore(x, y, width, height, specified);
 		}
 
 		[MonoTODO]
 		protected override void WndProc(ref Message m)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			base.WndProc(ref m);
 		}
 
 		void ISupportInitialize.BeginInit(){

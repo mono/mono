@@ -17,7 +17,6 @@ using System.ComponentModel;
 namespace System.Windows.Forms {
 
 	// <summary>
-	//	This is only a template.  Nothing is implemented yet.
 	//	Represents a Windows status bar control.
 	// </summary>
 	public class StatusBar : Control {
@@ -45,7 +44,8 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public override string ToString()
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			return base.ToString();
 		}
 
 		//
@@ -60,49 +60,55 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected virtual void OnDrawItem(StatusBarDrawItemEventArgs e)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 
 		[MonoTODO]
 		protected override void OnHandleCreated(EventArgs e)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			base.OnHandleCreated(e);
 		}
 
 		[MonoTODO]
 		protected override void OnHandleDestroyed(EventArgs e)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			base.OnHandleDestroyed(e);
 		}
 
 		[MonoTODO]
 		protected override void OnLayout(LayoutEventArgs e)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			base.OnLayout(e);
 		}
 
 		[MonoTODO]
 		protected override void OnMouseDown(MouseEventArgs e)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			base.OnMouseDown(e);
 		}
 
 		[MonoTODO]
 		protected virtual void OnPanelClick(StatusBarPanelClickEventArgs e)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 
 		[MonoTODO]
 		protected override void OnResize(EventArgs e)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			base.OnResize(e);
 		}
 
 		[MonoTODO]
 		protected override void WndProc(ref Message m)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			base.WndProc(ref m);
 		}
 
 		//
@@ -117,15 +123,23 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public override Color BackColor {
 
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
 		}
 
 		[MonoTODO]
 		public override Image BackgroundImage {
 
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
 		}
 
 		//just to get it to run

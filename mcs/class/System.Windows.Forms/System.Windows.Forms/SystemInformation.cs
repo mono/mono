@@ -17,15 +17,6 @@ namespace System.Windows.Forms {
 	public class SystemInformation {
 
 		//
-		//  --- Protected Methods
-		//
-		[MonoTODO]
-		~SystemInformation()
-		{
-			throw new NotImplementedException ();
-		}
-
-		//
 		//  --- Public Properties
 		//
 		[MonoTODO]

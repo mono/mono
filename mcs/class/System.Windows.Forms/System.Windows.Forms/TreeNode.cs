@@ -45,7 +45,7 @@ namespace System.Windows.Forms {
 			}
 			set
 			{
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -166,7 +166,7 @@ namespace System.Windows.Forms {
 			}
 			set
 			{
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -177,7 +177,7 @@ namespace System.Windows.Forms {
 			}
 			set
 			{
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -216,7 +216,7 @@ namespace System.Windows.Forms {
 			}
 			set
 			{
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -227,7 +227,7 @@ namespace System.Windows.Forms {
 			}
 			set
 			{
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -238,7 +238,7 @@ namespace System.Windows.Forms {
 			}
 			set
 			{
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -254,7 +254,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public void BeginEdit()
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		public virtual object Clone()
@@ -264,27 +264,27 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public void Collapse()
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		public void EndEdit(bool cancel)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		public void EnsureVisible()
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		public void Expand()
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		public void ExpandAll()
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		public static TreeNode FromHandle(TreeView tree, IntPtr handle)
@@ -299,17 +299,18 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public void Remove()
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		public void Toggle()
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		public override string ToString()
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			return base.ToString();
 		}
 	}
 }

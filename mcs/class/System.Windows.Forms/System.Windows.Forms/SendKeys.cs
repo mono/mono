@@ -18,18 +18,7 @@ namespace System.Windows.Forms {
 		//
 		//  --- Public Methods
 		//
-		[MonoTODO]
-		public override bool Equals(object obj)
-		{
-			//FIXME:
-			return base.Equals(obj);
-		}
 
-		[MonoTODO]
-		public override int GetHashCode() {
-			//FIXME add our proprities
-			return base.GetHashCode();
-		}
 		[MonoTODO]
 		static void Flush()
 		{

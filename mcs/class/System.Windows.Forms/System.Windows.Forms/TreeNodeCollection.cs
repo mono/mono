@@ -38,7 +38,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		
@@ -57,12 +57,12 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public virtual void AddRange(TreeNode[] nodes) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		public virtual void Clear() 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		public bool Contains(TreeNode node) 
@@ -72,7 +72,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public void CopyTo(Array dest, int index) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		public IEnumerator GetEnumerator() 
@@ -87,17 +87,17 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public virtual void Insert(int index, TreeNode node) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		public void Remove(TreeNode node) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		public virtual void RemoveAt(int index) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		/// <summary>
 		/// IList Interface implmentation.
@@ -121,7 +121,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set{
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		
@@ -147,17 +147,17 @@ namespace System.Windows.Forms {
 
 		[MonoTODO]
 		void IList.Insert(int index, object value){
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 
 		[MonoTODO]
 		void IList.Remove( object value){
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 
 		[MonoTODO]
 		void IList.RemoveAt( int index){
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		// End of IList interface
 		/// <summary>
@@ -179,7 +179,7 @@ namespace System.Windows.Forms {
 			}
 		}
 		void ICollection.CopyTo(Array array, int index){
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		// End Of ICollection
 	}
