@@ -1,3 +1,8 @@
+2003-02-08  Tim Coleman <tim@timcoleman.com>
+	* System.Data.OracleClient/OciGlueLib_GCC_linux.make:
+	added makefile for ociglue shared lib on Linux platform
+	and compiler gcc.
+
 2002-12-08  Daniel Morgan <danmorg@sc.rr.com>
 
 	* list
