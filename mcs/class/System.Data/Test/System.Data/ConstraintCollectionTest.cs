@@ -324,6 +324,47 @@ namespace MonoTests.System.Data
                         AssertEquals ("A4", "UK2", _table2.Constraints [1].ConstraintName);
 
 		}
+		
+		[Test]
+		public void TestAddRange2()
+                {
+                        DataTable table = new DataTable ("Table");
+                        DataColumn column1 = new DataColumn ("col1");
+                        DataColumn column2 = new DataColumn ("col2");
+                        DataColumn column3 = new DataColumn ("col3");
+                        table.Columns.Add (column1);
+                        table.Columns.Add (column2);
+                        table.Columns.Add (column3);
+                        string []columnNames = {"col1", "col2", "col3"};
+                                                                                                    
+                        Constraint []constraints = new Constraint[3];
+                        constraints [0] = new UniqueConstraint ("Unique1",column1);
+                        constraints [1] = new UniqueConstraint ("Unique2",column2);
+                        constraints [2] = new UniqueConstraint ("Unique3", columnNames, true);
+                                                                                                    
+                        table.BeginInit();
+                        //Console.WriteLine(table.InitStatus == DataTable.initStatus.BeginInit);
+                        table.Constraints.AddRange (constraints);
+                                                                                                    
+                        //Check the table property of UniqueConstraint Object
+                        try{
+                                Assertion.Assert ("#01", constraints [2].Table == null);
+                        }
+                        catch (Exception e){
+                                Assertion.Assert ("#A02", "System.NullReferenceException".Equals (e.GetType().ToString()));
+                        }
+                                                                                                    
+                        table.EndInit();
+                                                                                                    
+                        // After EndInit is called the constraints associated with most recent call to AddRange() must be
+			// added to the ConstraintCollection
+                        Assertion.Assert ("#A03", constraints [2].Table.ToString().Equals ("Table"));
+                        Assertion.Assert ("#A04", table.Constraints.Contains ("Unique1"));
+                        Assertion.Assert ("#A05", table.Constraints.Contains ("Unique2"));
+                        Assertion.Assert ("#A06", table.Constraints.Contains ("Unique3"));
+                }
+        
+
 
 		[Test]
 		public void Clear()
