@@ -2293,7 +2293,6 @@ namespace nunit.trees.TreeSet
 
 
 
-#if FIXME_THREADING_TESTS
 	namespace Sync
 	{
 		[TestFixture]
@@ -2484,7 +2483,6 @@ namespace nunit.trees.TreeSet
 			public void Dispose() { tree = null; }
 		}
 	}
-#endif
 
 
 	namespace Hashing

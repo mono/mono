@@ -1786,7 +1786,6 @@ namespace nunit.arrays.sorted
 
 
 
-#if FIXME_THREADING_TESTS
 	namespace Sync
 	{
 		[TestFixture]
@@ -1977,7 +1976,6 @@ namespace nunit.arrays.sorted
 			public void Dispose() { tree = null; }
 		}
 	}
-#endif
 
 
 
