@@ -23,91 +23,6 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.23 $
-// $Modtime: $
-// $Log: XplatUIX11.cs,v $
-// Revision 1.23  2004/08/13 21:25:32  pbartok
-// - Cleanup
-// - Fixed resizing/exposure handling
-//
-// Revision 1.22  2004/08/13 19:00:15  jordi
-// implements PointToClient (ScreenToClient)
-//
-// Revision 1.21  2004/08/13 18:52:59  pbartok
-// - Added generation of WM_POSCHANGED
-// - Changed GetWindowPos to also provide client area size
-//
-// Revision 1.20  2004/08/12 22:59:03  pbartok
-// - Implemented method to get current mouse position
-//
-// Revision 1.19  2004/08/11 22:20:59  pbartok
-// - Signature fixes
-//
-// Revision 1.18  2004/08/11 19:19:44  pbartok
-// - We had SetWindowPos and MoveWindow to set window positions and size,
-//   removed MoveWindow. We have GetWindowPos, so it made sense to keep
-//   SetWindowPos as matching counterpart
-// - Added some X11 sanity checking
-//
-// Revision 1.17  2004/08/11 18:55:46  pbartok
-// - Added method to calculate difference between decorated window and raw
-//   client area
-//
-// Revision 1.16  2004/08/10 17:39:22  pbartok
-// - Added GetWindowPos method
-//
-// Revision 1.15  2004/08/09 22:09:47  pbartok
-// - Added handling for middle and right mousebutton
-// - Added handling for mouse wheel
-// - Added handling for key state and mouse state and position
-// - Now properly generates WM_xBUTTONx messages and WM_MOUSEWHEEL messages
-//
-// Revision 1.14  2004/08/09 20:55:59  pbartok
-// - Removed Run method, was only required for initial development
-//
-// Revision 1.13  2004/08/09 20:51:25  pbartok
-// - Implemented GrabWindow/ReleaseWindow methods to allow pointer capture
-//
-// Revision 1.12  2004/08/09 19:48:08  pbartok
-// - Fixed default sizing for child windows
-//
-// Revision 1.11  2004/08/09 18:56:55  pbartok
-// - Added generation of WM_DESTROY message
-// - Added handling of window manager induced shutdown
-//
-// Revision 1.10  2004/08/09 16:05:16  jackson
-// These properties are handled by the theme now.
-//
-// Revision 1.9  2004/08/08 21:08:10  jordi
-// fixes keyboard crash
-//
-// Revision 1.8  2004/08/06 23:46:56  pbartok
-// - Implemented GetParent
-//
-// Revision 1.7  2004/08/06 23:17:44  pbartok
-// - Fixed Refresh and Invalidate
-//
-// Revision 1.6  2004/08/06 21:30:56  pbartok
-// - Fixed recursive loop when resizing
-// - Improved/fixed redrawing on expose messages
-//
-// Revision 1.5  2004/08/06 15:53:39  jordi
-// X11 keyboard navigation
-//
-// Revision 1.4  2004/08/06 14:02:33  pbartok
-// - Fixed reparenting
-// - Fixed window border creation
-//
-// Revision 1.3  2004/08/05 21:38:02  pbartok
-// - Attempted fix for reparenting problems
-//
-// Revision 1.2  2004/08/04 20:11:24  pbartok
-// - Added Invalidate handling
-//
-// Revision 1.1  2004/07/09 05:21:25  pbartok
-// - Initial check-in
-//
-//
 
 // NOT COMPLETE
 
@@ -134,8 +49,10 @@ namespace System.Windows.Forms {
 		internal static Keys		key_state;
 		internal static MouseButtons	mouse_state;
 		internal static Point		mouse_position;
-		internal static Rectangle	paint_area;
 		internal static	bool		is_visible;
+
+		private Hashtable handle_data;
+
 		#endregion	// Local Variables
 
 		internal override Keys ModifierKeys {
@@ -178,7 +95,6 @@ namespace System.Windows.Forms {
 			key_state = Keys.None;
 			mouse_state = MouseButtons.None;
 			mouse_position = Point.Empty;
-			paint_area = new Rectangle(0, 0, 0, 0);
 			root_window = XRootWindow(DisplayHandle, 0);
 
 			// Create the foster parent
@@ -190,6 +106,8 @@ namespace System.Windows.Forms {
 			// Prepare for shutdown
 			wm_protocols=XInternAtom(DisplayHandle, "WM_PROTOCOLS", false);
 			wm_delete_window=XInternAtom(DisplayHandle, "WM_DELETE_WINDOW", false);
+
+			handle_data = new Hashtable ();
 		}
 
 		~XplatUIX11() {
@@ -324,6 +242,11 @@ namespace System.Windows.Forms {
 
 		internal override void DestroyWindow(IntPtr handle) {
 			XDestroyWindow(DisplayHandle, handle);
+			HandleData data = (HandleData) handle_data [handle];
+			if (data != null) {
+				data.Dispose ();
+				handle_data = null;
+			}
 			return;
 		}
 
@@ -355,18 +278,24 @@ namespace System.Windows.Forms {
 		[MonoTODO("Add support for internal table of windows/DCs for looking up paint area and cleanup")]
 		internal override PaintEventArgs PaintEventStart(IntPtr handle) {
 			PaintEventArgs	paint_event;
-			Rectangle	update_area;
 
-			// FIXME: Assign proper values
-			update_area = new Rectangle();
-			paint_event = new PaintEventArgs(Graphics.FromHwnd(handle), update_area);
+			HandleData data = (HandleData) handle_data [handle];
+			if (data == null) {
+				throw new Exception ("null data on paint event start: " + handle);
+
+			}
+
+			data.DeviceContext = Graphics.FromHwnd (handle);
+			paint_event = new PaintEventArgs(data.DeviceContext, data.InvalidArea);
 
 			return paint_event;
 		}
 
 		internal override void PaintEventEnd(IntPtr handle) {
-			// FIXME: Lookup in the internal list how to clean
-			;
+			HandleData data = (HandleData) handle_data [handle];
+			if (data == null)
+				throw new Exception ("null data on PaintEventEnd");
+			data.ClearInvalidArea ();
 		}
 
 		internal override void SetWindowPos(IntPtr handle, int x, int y, int width, int height) {
@@ -550,6 +479,7 @@ namespace System.Windows.Forms {
 		internal override bool GetMessage(ref MSG msg, IntPtr hWnd, int wFilterMin, int wFilterMax) {
 			XEvent	xevent = new XEvent();
 
+		begin:
 			XNextEvent(DisplayHandle, ref xevent);
 			msg.hwnd=xevent.AnyEvent.window;
 
@@ -666,12 +596,21 @@ namespace System.Windows.Forms {
 				}
 
 				case XEventName.Expose: {
-					// We might be able to do some optimizations by using count and combining regions
+					HandleData data = (HandleData) handle_data [xevent.AnyEvent.window];
+					if (data == null) {
+						data = new HandleData ();
+						handle_data [xevent.AnyEvent.window] = data;
+					}
+
+					data.AddToInvalidArea (xevent.ExposeEvent.x, xevent.ExposeEvent.y,
+							xevent.ExposeEvent.width, xevent.ExposeEvent.height);
+
+					// Only paint on the last of a series of expose events
+					if (xevent.ExposeEvent.count > 0) {
+						goto begin;
+					}
+
 					msg.message=Msg.WM_PAINT;
-					paint_area.X=xevent.ExposeEvent.x;
-					paint_area.Y=xevent.ExposeEvent.y;
-					paint_area.Width=xevent.ExposeEvent.width;
-					paint_area.Height=xevent.ExposeEvent.height;
 					break;
 				}
 
@@ -690,6 +629,10 @@ namespace System.Windows.Forms {
 						return false;
 					}
 					return true;
+					break;
+				}
+				default: {
+					msg.message = Msg.WM_NULL;
 					break;
 				}
 			}
