@@ -1,3 +1,8 @@
+2004-04-13  Gert Driesen (drieseng@users.sourceforge.net)
+
+	* class.c: Added comment to ensure the System.MonoDummy class
+	is removed when no longer necessary
+
 2004-04-13  Miguel de Icaza  <miguel@ximian.com>
 
 	* appdomain.c: Pass arguments to the bootstraping exceptions to
