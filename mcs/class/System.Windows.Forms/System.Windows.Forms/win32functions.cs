@@ -1248,8 +1248,11 @@ namespace System.Windows.Forms{
 			
 			IntPtr hdc = paintOn.GetHdc();
 			int prevColor = Win32.SetTextColor(hdc, RGB(color));
+
 #if ToHfontIsWorking
 			IntPtr prevFont = Win32.SelectObject(hdc, font.ToHfont());
+#else
+			Console.WriteLine("DrawText ToHfont() hack active");
 #endif
 			BackgroundMode prevBkMode = Win32.SetBkMode(hdc, BackgroundMode.TRANSPARENT);
 			Win32.DrawText(hdc, text, text.Length, ref rc, 
