@@ -14,6 +14,8 @@
 	SecurityAttribute.
 	* SiteIdentityPermissionTest.cs: New unit tests for 
 	SiteIdentityPermission. Lacks tests for wilcards.
+	* UrlIdentityPermissionTest.cs: New unit tests for 
+	UrlIdentityPermission. Lacks tests for wilcards.
 
 2003-08-19  Sebastien Pouliot  <sebastien@ximian.com>
 
