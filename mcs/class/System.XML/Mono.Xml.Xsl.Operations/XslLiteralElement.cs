@@ -54,7 +54,20 @@ namespace Mono.Xml.Xsl.Operations {
 			public XslLiteralAttribute (Compiler c)
 			{
 				this.prefix = c.Input.Prefix;
-				this.nsUri = c.Input.NamespaceURI;
+				if (prefix.Length > 0) {
+					string alias = 
+						c.CurrentStylesheet.GetActualPrefix (prefix);
+					if (alias != prefix) {
+						prefix = alias;
+						XPathNavigator clone = c.Input.Clone ();
+						clone.MoveToParent ();
+						nsUri = clone.GetNamespace (alias);
+					}
+					else
+						nsUri = c.Input.NamespaceURI;
+				}
+				else
+					nsUri = String.Empty;
 				this.localname = c.Input.LocalName;
 				this.val = new XslAvt (c.Input.Value, c);
 			}

@@ -1,5 +1,10 @@
 2005-03-07  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XslLiteralElement.cs : literal attributes should also consider
+	  namespace aliases.
+
+2005-03-07  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XslAttribute.cs,
 	  XslLiteralElement.cs :
 	  Now namespace aliases are collected in prior to template
