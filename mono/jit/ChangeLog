@@ -1,5 +1,17 @@
 2002-12-30  Martin Baulig  <martin@ximian.com>
 
+	* debug.c (MonoDebuggerInfo): Put back `symbol_file_modified'.
+	This variable now specifies that the symbol tables have been
+	modified after the last notification has been send.  The debugger
+	uses this flag to check whether it needs to reload the symbol
+	tables or not.
+	(debugger_compile_method): Just send a notification to the
+	debugger, but don't set the modified flag.  It may or may not be
+	set when the debugger gets the notification - depending on whether
+	the JIT compilation added a new method to the symbol tables.
+
+2002-12-30  Martin Baulig  <martin@ximian.com>
+
 	* debug.c (debugger_compile_method): This is a wrapper around
 	mono_compile_method() which always sends a notification to the
 	debugger.
