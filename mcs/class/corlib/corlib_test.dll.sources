@@ -120,6 +120,7 @@ System.Runtime.Remoting/SynchronizationAttributeTest.cs
 System.Runtime.Serialization/FormatterServicesTests.cs
 System.Runtime.Serialization/ObjectIDGeneratorTests.cs
 System.Runtime.Serialization/SerializationTest.cs
+System.Runtime.Serialization/ArraySerializationTest.cs
 System/SByteTest.cs
 System.Security/CodeAccessPermissionTest.cs
 System.Security.Cryptography/AllTests2.cs
