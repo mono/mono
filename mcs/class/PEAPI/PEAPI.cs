@@ -1697,15 +1697,15 @@ namespace PEAPI
     /// <summary>
     ///   Add a generic type parameter.
     /// </summary>
-    public void AddGenericParameter (short index, Type constraint) {
-            metaData.AddToTable (MDTable.GenericParam, new GenericParameter (this, index, constraint));
+    public void AddGenericParameter (short index) {
+            metaData.AddToTable (MDTable.GenericParam, new GenericParameter (this, index));
     }
 
     /// <summary>
     ///  Add a named generic type parameter
     /// </summary>
-    public void AddGenericParameter (short index, Type constraint, string name) {
-        metaData.AddToTable (MDTable.GenericParam, new GenericParameter (this, index, constraint, name));
+    public void AddGenericParameter (short index, string name) {
+        metaData.AddToTable (MDTable.GenericParam, new GenericParameter (this, index, name));
     }
 
     /// <summary>
@@ -3946,39 +3946,19 @@ namespace PEAPI
         internal class GenericParameter : MetaDataElement
         {
                 ClassDef owner;
-                Type constraint;
                 string name;
                 uint nameIx;
                 short index;
 
-                private GenericParameter (ClassDef owner, short index) {
+                public GenericParameter (ClassDef owner, short index) {
 			this.owner = owner;
                         this.index = index;
                         tabIx = MDTable.GenericParam;
                 }
 
-                public GenericParameter (ClassDef owner, short index, Type constraint)
-                        : this (owner, index) {
-                        this.constraint = constraint;
-                }
-
-                public GenericParameter (ClassDef owner, short index, Type constraint,
-                        string name) : this (owner, index, constraint) {
+                public GenericParameter (ClassDef owner, short index,
+                        string name) : this (owner, index) {
                         this.name = name;
-                }
-
-                public Type Constraint {
-                        get { return constraint; }
-                        set { constraint = value; }
-                }
-
-                public string Name {
-                        get { return name; }
-                        set { name = value; }
-                }
-
-                internal ClassDef Owner {
-                        set { owner = value; }
                 }
 
                 internal sealed override uint Size(MetaData md) {
@@ -4006,6 +3986,30 @@ namespace PEAPI
                 }
 
     
+        }
+
+        internal class GenericParamConstraint : MetaDataElement
+        {
+                GenericParameter param;
+                Type type;
+
+                public GenericParamConstraint (GenericParameter param, Type type) {
+                        this.param = param;
+                        this.type = type;
+                        tabIx = MDTable.GenericParamConstraint;
+                }
+
+                internal sealed override uint Size(MetaData md) {
+                        return (uint) (md.TableIndexSize(MDTable.GenericParam) +
+                                       md.CodedIndexSize(CIx.TypeDefOrRef));
+                }
+
+                internal sealed override void Write(FileImage output) {
+                        output.WriteIndex(MDTable.GenericParam, param.Row);
+                        output.WriteCodedIndex(CIx.TypeDefOrRef, type);
+                }
+
+
         }
   /**************************************************************************/
 	/// <summary>

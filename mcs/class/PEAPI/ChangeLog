@@ -1,3 +1,8 @@
+2003-07-14 Jackson Harper <jackson@latitudegeo.com>
+
+	* PEAPI.cs: Cleanup methods for generics, now that constraints and
+	params are seperated.
+		
 2003-05-31 Jackson Harper <jackson@latitudegeo.com>
 
 	* PEAPI.cs: Initial work on implementing custom
