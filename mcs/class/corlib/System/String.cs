@@ -1649,7 +1649,8 @@ namespace System {
 			bool matches = true;
 			int end;
 
-			for (end = this.length - 1; end > 0; end--) {
+			for (end = this.length - 1; matches && end > 0; end--) {
+
 				if (trimChars != null) {
 					matches = false;
 					foreach (char c in trimChars) {
@@ -1660,6 +1661,9 @@ namespace System {
 				} else {
 					matches = is_lwsp (this.c_str[end]);
 				}
+
+				if (!matches)
+					return Substring (0, end+1);
 			}
 
 			if (end == 0)

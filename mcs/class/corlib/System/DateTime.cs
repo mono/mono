@@ -568,10 +568,20 @@ namespace System
 					       DateTimeFormatInfo dfi,
 					       DateTimeStyles style)
 		{
-			bool useutc = false;
+			bool useutc = false, use_localtime = true;
 
 			if (format.Length == 1)
 				format = _GetStandardPattern (format[0], dfi, out useutc);
+
+			if ((style & DateTimeStyles.AllowLeadingWhite) != 0) {
+				format = format.TrimStart (null);
+				s = s.TrimStart (null);
+			}
+
+			if ((style & DateTimeStyles.AllowTrailingWhite) != 0) {
+				format = format.TrimEnd (null);
+				s = s.TrimEnd (null);
+			}
 
 			char[] chars = format.ToCharArray ();
 			int len = format.Length, pos = 0, num = 0;
@@ -585,6 +595,18 @@ namespace System
 
 			while (pos+num < len)
 			{
+				if (Char.IsWhiteSpace (s[0])) {
+					s = s.Substring (1);
+
+					if (Char.IsWhiteSpace (chars[pos])) {
+						pos++;
+						continue;
+					}
+
+					if ((style & DateTimeStyles.AllowInnerWhite) == 0)
+						return false;
+				}
+
 				if (chars[pos] == '\'') {
 					num = 1;
 					while (pos+num < len) {
@@ -861,6 +883,9 @@ namespace System
 				TimeZone tz = TimeZone.CurrentTimeZone;
 				utcoffset = tz.GetUtcOffset (result);
 			} else {
+				if ((style & DateTimeStyles.AdjustToUniversal) != 0)
+					use_localtime = false;
+
 				if (tzoffmin == -1)
 					tzoffmin = 0;
 				if (tzoffset == -1)
@@ -873,7 +898,7 @@ namespace System
 
 			long newticks = (result.ticks - utcoffset).Ticks;
 
-			result = new DateTime (true, newticks);
+			result = new DateTime (use_localtime, newticks);
 
 			return true;
 		}
