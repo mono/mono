@@ -1,3 +1,24 @@
+2002-12-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* appdomain.[ch]: handle the assembly preload event to try loading the
+	assemblies using the paths we have in the current domain.
+
+	* assembly.[ch]: created an assembly preload hook that is called to try
+	loading the assembly by other means that the ones provided here.
+
+	* domain.c: initialize the domain search path.
+
+	From now on, assemblies (TODO: except corlib and System) are loaded
+	according to these rules when using mono_assembly_load ():
+
+		1. It tries to load the assembly from the ApplicationBase
+		of the current domain appending .dll and .exe (TODO: have to
+		try loading from name/name.dll and name/name.exe).
+
+		2. It tries the search path specified in PrivateBinPath for the
+		current domain (if any).
+
+		3. Previous behavior.
 
 Wed Dec 4 16:02:25 CET 2002 Paolo Molaro <lupus@ximian.com>
 
