@@ -1,7 +1,5 @@
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
 
- <xsd:element name="bookstore" type="bookstoreType"/>
-
  <xsd:complexType name="bookstoreType">
   <xsd:sequence maxOccurs="unbounded">
    <xsd:element name="book"  type="bookType"/>
@@ -23,5 +21,7 @@
    <xsd:element name="last-name" type="xsd:string"/>
   </xsd:sequence>
  </xsd:complexType>
+
+ <xsd:element name="bookstore" type="bookstoreType"/>
 
 </xsd:schema>
