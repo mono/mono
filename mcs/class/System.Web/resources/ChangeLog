@@ -1,3 +1,8 @@
+2005-03-11  Lluis Sanchez Gual <lluis@novell.com>
+
+	* webform.js: ClientSubmit option set to true means submit
+	performed by asp.net, not by the browser.
+
 2005-02-04  Lluis Sanchez Gual <lluis@novell.com>
 
 	* webform.js: Added webform script.

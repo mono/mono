@@ -7,7 +7,7 @@ function WebForm_DoPostback (ctrl, par, url, apb, pval, tf, csubm, vg)
 	if (url != null)
 		theForm.action = url;
 		
-	if (!csubm)
+	if (csubm)
 		__doPostBack (ctrl, par);
 }
 
