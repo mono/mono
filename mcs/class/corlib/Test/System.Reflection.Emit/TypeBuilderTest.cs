@@ -1774,11 +1774,13 @@ public class TypeBuilderTest : Assertion
 
 		Assert ("06", !tb.IsAssignableFrom (typeof (IDisposable)));
 		tb.AddInterfaceImplementation (typeof (IDisposable));
+
+		// Fails under .net, so we don't support it either
+		//Assert ("07", tb.IsAssignableFrom (typeof (IDisposable)));
 	}
 
 	[Test]
 	[Category("NotDotNet")]
-	[Category("NotWorking")]
 	public void TestIsAssignableTo_NotDotNet () {
 		Type icomparable = typeof (IComparable);
 
@@ -1789,10 +1791,8 @@ public class TypeBuilderTest : Assertion
 
 		tb.AddInterfaceImplementation (typeof (IDisposable));
 
-		Assert ("02", tb.IsAssignableFrom (typeof (IDisposable)));
-
 		// bug #73469
-		Assert ("07", typeof (Bar[]).IsAssignableFrom (module.GetType (tb.FullName + "[]")));
+		Assert ("02", typeof (Bar[]).IsAssignableFrom (module.GetType (tb.FullName + "[]")));
 	}
 }
 }
