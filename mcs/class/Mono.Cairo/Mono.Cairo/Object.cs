@@ -82,13 +82,13 @@ namespace Cairo {
                         CairoAPI.cairo_set_rgb_color (state, r, g, b);
                 }
 
-                public double Tolerence {
+                public double Tolerance {
                         set {
-                                CairoAPI.cairo_set_tolerence (state, value);
+                                CairoAPI.cairo_set_tolerance (state, value);
                         }
 
                         get {
-                                return CairoAPI.cairo_current_tolerence (state);
+                                return CairoAPI.cairo_current_tolerance (state);
                         }
                 }                                
 
