@@ -1,3 +1,11 @@
+2005-01-13  Miguel de Icaza  <miguel@ximian.com>
+
+	* ecore.cs (IsAccessorAccessible): Accessibility to private fields
+	of a different type is only allowed to private fields of a
+	containing type, not on fields of a base class.
+
+	See test-174.cs and error cs0122-9.cs
+
 2005-01-13  Raja R Harinath  <rharinath@novell.com>
 
 	Fix test-335.cs (bug #58126).

@@ -230,9 +230,9 @@ namespace Mono.CSharp {
 			//
 			if (ma == MethodAttributes.Private) {
 				Type declaring_type = mi.DeclaringType;
-					
+
 				if (invocation_type != declaring_type)
-					return TypeManager.IsNestedFamilyAccessible (invocation_type, declaring_type);
+					return TypeManager.IsNestedChildOf (invocation_type, declaring_type);
 
 				return true;
 			}
