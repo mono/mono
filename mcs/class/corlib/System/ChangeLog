@@ -1,3 +1,8 @@
+
+Thu Apr 18 17:16:15 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* MonoType.cs: make GetElementType its own icall.
+
 2002-04-18  Nick Drochak <ndrochak@gol.com>
 
 	* String.cs: Modified file. Re-add methods needed by the unit tests.

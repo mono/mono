@@ -145,12 +145,8 @@ namespace System
 			return null;
 		}
 
-		public override Type GetElementType()
-		{
-			MonoTypeInfo info;
-			get_type_info (_impl, out info);
-			return info.etype;
-		}
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern override Type GetElementType();
 
 		public override Type UnderlyingSystemType {
 			get {
