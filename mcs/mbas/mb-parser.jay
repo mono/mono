@@ -128,7 +128,7 @@ namespace Mono.MonoBASIC
 		// An out-of-band stack.
 		//
 		Stack oob_stack;
-		
+	
 		ArrayList current_rank_specifiers;
 
 		//To handle the End of a block 
@@ -948,7 +948,7 @@ opt_params
         : /* empty */   { $$ = Parameters.EmptyReadOnlyParameters; }
         | OPEN_PARENS CLOSE_PARENS      { $$ = Parameters.EmptyReadOnlyParameters; }
         | OPEN_PARENS _mark_ opt_formal_parameter_list CLOSE_PARENS     { $$ = $3; }
-        | OPEN_PARENS _mark_ error
+        | OPEN_PARENS _mark_  
           {
                 Report.Error(30203,(Location)$2, "Identifier Expected");
                 $$ = Parameters.EmptyReadOnlyParameters;
@@ -1038,23 +1038,23 @@ attribute_sections
 	;
 
 attribute_section
-	: OP_LT attribute_list OP_GT opt_end_of_stmt
+	: OP_LT _mark_ attribute_list OP_GT opt_end_of_stmt
  	  {
  	  	$$ = null;
-		if ($2 != null) {
-			if (expecting_global_attribs && !(bool) $4) {
-				Report.Error (30205, lexer.Location, "End of statement expected");
+		if ($3 != null) {
+			if (expecting_global_attribs && !(bool) $5) {
+				Report.Error (30205, (Location)$2, "End of statement expected");
 				break;
 			}
 			
 			if (expecting_local_attribs)  {
-				if ((bool) $4) {
-					Report.Error (32035, lexer.Location, "Use a line continuation after the attribute specifier to apply it to the following statement.");
+				if ((bool) $5) {
+					Report.Error (32035, (Location)$2, "Use a line continuation after the attribute specifier to apply it to the following statement.");
 					break;
 				}
 			}
 
-			$$ = $2;
+			$$ = $3;
 		}
  	  }
  	; 
@@ -2498,17 +2498,17 @@ opt_evt_handler
     ;
 
 evt_handler
-	: qualified_identifier
+	: qualified_identifier _mark_ 
 	  {
-		$$ = (Expression) DecomposeQI ((string)$1, lexer.Location);	
+		$$ = (Expression) DecomposeQI ((string)$1, (Location)$2);	
 	  }
 	| base_access
 	  {
 		$$ = $1;
 	  }
-	| ME DOT qualified_identifier
+	| ME DOT qualified_identifier _mark_
 	  {
-		$$ = (Expression) DecomposeQI ((string)$3, lexer.Location);	
+		$$ = (Expression) DecomposeQI ((string)$3, (Location)$4);	
 	  }
 	/*| MYBASE DOT qualified_identifier
 	  {
@@ -2523,10 +2523,7 @@ constructor_declaration
 		push_into_stack((int)Start_block.SUB, (Location)$2);
 	  	current_local_parameters = (Parameters) $4;
 	  	start_block();
-		oob_stack.Push (lexer.Location);
-
-		Location l = (Location) oob_stack.Pop ();
-		$$ = new Constructor ((string) "New", (Parameters) $4, (ConstructorInitializer) null, l);
+		$$ = new Constructor ((string) "New", (Parameters) $4, (ConstructorInitializer) null, (Location)$2);
 		$1 = $$;
 	  }
 	  opt_statement_list
@@ -2886,9 +2883,9 @@ goto_statement
 	;
 	
 throw_statement
-	: THROW opt_expression
+	: THROW _mark_ opt_expression
 	  {
-		$$ = new Throw ((Expression) $2, lexer.Location);
+		$$ = new Throw ((Expression) $3, (Location)$2);
 	  }
 	;	
 		        
@@ -3732,7 +3729,7 @@ object_creation_expression
 	;
 	
 array_creation_expression
-	: object_creation_expression opt_rank_specifiers array_initializer
+	: object_creation_expression opt_rank_specifiers _mark_ array_initializer 
 	  {
 	  	New n = (New) $1;
 	  	ArrayList dims = new ArrayList();
@@ -3746,20 +3743,20 @@ array_creation_expression
 	  	Expression atype = n.RequestedType;
 
 		if ($2 != null)
-			atype = DecomposeQI (atype.ToString () + VariableDeclaration.BuildRanks ((ArrayList)$2, true, lexer.Location), lexer.Location);
+			atype = DecomposeQI (atype.ToString () + VariableDeclaration.BuildRanks ((ArrayList)$2, true, (Location)$3), (Location)$3);
 
-		ArrayList init = (ArrayList) $3;
+		ArrayList init = (ArrayList) $4;
 		if (init.Count == 0)
 			init = null;
   	
 	  	if (VariableDeclaration.IndexesSpecifiedInRank(dims)) {
 	  		VariableDeclaration.VBFixIndexList (ref dims);
-	  		$$ = new ArrayCreation (atype, dims, "", init, lexer.Location); 
+	  		$$ = new ArrayCreation (atype, dims, "", init, (Location)$3); 
 	  	}
 	  	else
 	  	{
 	  		string rank = VariableDeclaration.BuildRank (dims);
-	  		$$ = new ArrayCreation (atype, rank, (ArrayList) $3, lexer.Location); 
+	  		$$ = new ArrayCreation (atype, rank, (ArrayList) $4, (Location)$3); 
 	  	}
 	  	//Console.WriteLine ("Creating a new array of type " + (atype.ToString()) + " with rank '" + dims + "'");
 	  }
@@ -3913,7 +3910,7 @@ variable_declarator
 						 "Array types specified in too many places");	
 				
 				if (VariableDeclaration.IndexesSpecifiedInRank (args))	  	  
-					Report.Error (30638, "Array bounds cannot appear in type specifiers.");	
+					Report.Error (30638, (Location)$1,"Array bounds cannot appear in type specifiers.");	
 				
 				current_rank_specifiers = new ArrayList ();
 				current_rank_specifiers.Add (args);				
@@ -4011,9 +4008,9 @@ opt_type_spec
 		
 opt_type_with_ranks
 	: opt_type_spec	
-	| AS type rank_specifiers
+	| AS type _mark_ rank_specifiers
 	  {
-		$$ = DecomposeQI ($2.ToString() + VariableDeclaration.BuildRanks ((ArrayList)$3, true, lexer.Location), lexer.Location);
+		$$ = DecomposeQI ($2.ToString() + VariableDeclaration.BuildRanks ((ArrayList)$4, true, (Location)$3), (Location)$3);
 	  }
 	;
 	
@@ -4165,10 +4162,10 @@ primary_expression
 	| parenthesized_expression
 	| this_access
 	| base_access
-	| qualified_identifier
+	| qualified_identifier _mark_
 	  {
 		string name = (string) $1;
-		$$ = DecomposeQI (name, lexer.Location);
+		$$ = DecomposeQI (name, (Location)$2);
 	  }
 	| get_type_expression
 	| member_access
@@ -4223,19 +4220,19 @@ parenthesized_expression
 	;
 
 member_access
-	: primary_expression DOT identifier
+	: primary_expression DOT _mark_ identifier
 	  {
 	  	if ($1 != null) {
-	  		string id_name = (string)$3;
+	  		string id_name = (string)$4;
 	  		if (id_name.ToUpper() == "NEW")
 	  			id_name = ".ctor";
-			$$ = new MemberAccess ((Expression) $1, id_name, lexer.Location);
+			$$ = new MemberAccess ((Expression) $1, id_name, (Location)$3);
 		}
 		else
 		{
 			if (with_stack.Count > 0) {
 				Expression e = (Expression) with_stack.Peek();
-				$$ = new MemberAccess (e, (string) $3, lexer.Location);
+				$$ = new MemberAccess (e, (string) $4, (Location)$3);
 			}
 			else
 			{
@@ -4243,19 +4240,19 @@ member_access
 			}
 		}
 	  }
-/*	| primary_expression DOT NEW
+/*	| primary_expression DOT _mark_ NEW
 	  {
-		$$ = new MemberAccess ((Expression) $1, (string) ".ctor", lexer.Location);
+		$$ = new MemberAccess ((Expression) $1, (string) ".ctor", (Location)$3);
 	  }	  */
-	| predefined_type DOT identifier
+	| predefined_type DOT _mark_ identifier
 	  {
 	  	if ($1 != null)
-			$$ = new MemberAccess ((Expression) $1, (string) $3, lexer.Location);
+			$$ = new MemberAccess ((Expression) $1, (string) $4, (Location)$3);
 		else
 		{
 			if (with_stack.Count > 0) {
 				Expression e = (Expression) with_stack.Peek();
-				$$ = new MemberAccess (e, (string) $3, lexer.Location);
+				$$ = new MemberAccess (e, (string) $4, (Location)$3);
 			}
 			else
 			{
@@ -4270,18 +4267,8 @@ predefined_type
 	;
 
 invocation_expression
-	: primary_expression OPEN_PARENS opt_argument_list _mark_ CLOSE_PARENS
-	  {
-		if ($1 == null) {
-			Location l = (Location)$4;
-			Report.Error (1, l, "THIS IS CRAZY");
-		}
-		$$ = new Invocation ((Expression) $1, (ArrayList) $3, (Location)$4);
-//		Console.WriteLine ("Invocation: {0} with {1} arguments", $1, ($3 != null) ? ((ArrayList) $3).Count : 0);
-	  }
-
 // To support Mid$()
-	| primary_expression DOLAR_SIGN OPEN_PARENS opt_argument_list _mark_ CLOSE_PARENS
+	: primary_expression opt_dolar_sign OPEN_PARENS opt_argument_list _mark_ CLOSE_PARENS
 	  {
 		if ($1 == null) {
 			Location l = (Location)$5;
@@ -4313,7 +4300,12 @@ invocation_expression
 		$$ = new Invocation ((Expression) $1, args, (Location)$3);
 	  }
 	;
-	
+
+opt_dolar_sign
+	: DOLAR_SIGN
+	| /*empty*/
+	;	
+
 base_access
 	: MYBASE DOT IDENTIFIER
 	  {
@@ -4884,7 +4876,7 @@ pp_directive
 	| HASH END IF _mark_ 
 	  {
 		/*FIXME: IF without ENDIF not working properly. Error line is not diplayed properly*/
-	
+		
 		  IfElseStateMachine.Token tok = IfElseStateMachine.Token.ENDIF;
 		  try {
 			  ifElseStateMachine.HandleToken(tok);

@@ -1,3 +1,7 @@
+2005-04-05 Ritvik Mayank <mritvik@novell.com>
+  	   Patch Submitted by Sudharsan V <vsudharsan@novell.com>
+	* mb-parser.jay : correction for reflecting the correct Line No. in the Error message	
+
 2005-03-31 Manjula GHM <mmanjula@novell.com>
 	*mb-tokenizer.cs:To fix make test failure
 2005-03-31 Manjula GHM <mmanjula@novell.com>
