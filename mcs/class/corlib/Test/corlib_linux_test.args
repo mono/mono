@@ -74,6 +74,7 @@ System.Security.Cryptography/RNGCryptoServiceProviderTest.cs
 System.Security.Cryptography/RijndaelManagedTest.cs
 System.Security.Cryptography/SymmetricAlgorithmTest.cs
 System.Security.Cryptography/FromBase64Transform.cs
+System.Security.Cryptography/MD5Test.cs
 System.Security.Permissions/AllTests.cs
 System.Security.Permissions/FileIOPermissionTest.cs
 System.Text/AllTests.cs

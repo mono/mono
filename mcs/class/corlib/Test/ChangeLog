@@ -1,3 +1,7 @@
+2002-09-23  Andrew Birkett  <andy@nobugs.org>
+
+	* corlib_linux_test.args: Added MD5Test
+
 2002-09-22  Andrew Birkett  <andy@nobugs.org>
 
 	* System.Security.Cryptography/RijndaelManagedTest.cs: BlockSize
