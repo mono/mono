@@ -1,3 +1,9 @@
+2002-08-28  Dick Porter  <dick@ximian.com>
+
+	* mono.c: mono_set_rootdir() doesnt take any args now
+
+	* Makefile.am: Export HOST_CC for w32 builds
+
 2002-08-28  Dietmar Maurer  <dietmar@ximian.com>
 
 	* jit.c (mono_store_tree): only allocate vars if really necessary
