@@ -562,6 +562,11 @@ namespace System.Reflection
 			}
 		}
 
+		protected override bool IsValueTypeImpl ()
+		{
+			return false;
+		}
+
 		public override bool IsSubclassOf (Type c)
 		{
 			return BaseType == c || BaseType.IsSubclassOf (c);

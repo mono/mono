@@ -1,6 +1,11 @@
 2004-04-01  Martin Baulig  <martin@ximian.com>
 
-	* MonoGenericInst.cs (MonoGenericParam.IsSubclassOf): Override this.
+	* MonoGenericInst.cs (MonoGenericParam.IsValueTypeImpl): Override
+	this and always return false.
+
+2004-04-01  Martin Baulig  <martin@ximian.com>
+
+	* MonoGenericInst.cs (MonoGenericParam.IsSubclassOf): Override this.	
 
 2004-03-30  Martin Baulig  <martin@ximian.com>
 
