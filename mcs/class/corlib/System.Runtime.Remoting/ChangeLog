@@ -1,3 +1,9 @@
+2003-11-25  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* InternalRemotingServices.cs: Implemented GetCachedSoapAttribute().
+	* SoapServices.cs: Implemented missing methods.
+	* WellKnownClientTypeEntry.cs: Initialize object_url in constructor.
+
 2003-11-24  Jackson Harper <jackson@ximian.com>
 
 	* ServerIdentity.cs: Get non public types, so remote objects can
