@@ -135,6 +135,12 @@ public class VersionTest : TestCase
 
 		Assert ("A1", v1.Equals (v2));
 		Assert ("A2", !ReferenceEquals (v1, v2));
+
+		Version v3 = new Version (); // 0.0
+		v2 = (Version) v3.Clone ();
+
+		Assert ("A3", v3.Equals (v2));
+		Assert ("A4", !ReferenceEquals (v3, v2));
 	}
 
 	public void TestCompareTo ()

@@ -1,3 +1,8 @@
+2004-08-17  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* VersionTest.cs: Added tests when cloning a version with no build and
+	no revision numbers (-1).
+
 2004-08-09  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ApplicationIdTest.cs: New. Unit tests for ApplicationId (NET_2_0).
