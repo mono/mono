@@ -35,7 +35,7 @@ class ResGen {
 		if (swf != null)
 			return;
 		try {
-			swf = Assembly.LoadWithPartialName ("System.Windows.Forms");
+			swf = Assembly.Load (Consts.AssemblySystem_Windows_Forms);
 			resxr = swf.GetType ("System.Resources.ResXResourceReader");
 			resxw = swf.GetType ("System.Resources.ResXResourceWriter");
 		} catch (Exception e) {
