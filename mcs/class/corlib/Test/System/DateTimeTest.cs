@@ -339,7 +339,7 @@ public class DateTimeTest : Assertion
 		AssertEquals ("D07a", 2002, t1.Year);
 		AssertEquals ("D07b", 02, t1.Month);
 		AssertEquals ("D07c", 25, t1.Day);
-		AssertEquals ("D07d", 04, t1.Hour);
+		AssertEquals ("D07d", 04 + TimeZone.CurrentTimeZone.GetUtcOffset(t1).Hours, t1.Hour);
 		AssertEquals ("D07e", 25, t1.Minute);
 		AssertEquals ("D07f", 13, t1.Second);
 		t1 = DateTime.ParseExact ("Monday, 25 February 2002 04:25:13", "U", null);
@@ -567,7 +567,7 @@ public class DateTimeTest : Assertion
 		AssertEquals ("H10a", 2002, t1.Year);
 		AssertEquals ("H10b", 02, t1.Month);
 		AssertEquals ("H10c", 25, t1.Day);
-		AssertEquals ("H10d", 04, t1.Hour);
+		AssertEquals ("H10d", 04 - TimeZone.CurrentTimeZone.GetUtcOffset(t1).Hours, t1.Hour);
 		AssertEquals ("H10e", 25, t1.Minute);
 		AssertEquals ("H10f", 13, t1.Second);
 

@@ -1,3 +1,10 @@
+2003-11-01  Pedro Martínez Juliá  <yoros@wanadoo.es>
+
+	* DateTimeTest.cs: Changed the Asserts to fix some things related to
+	universal time, we can't test the equality if one DateTime is into
+	the code and the other comes from the TimeZone. Different TimeZones,
+	different errors in the test.
+
 2003-10-31  Pedro Martínez Juliá  <yoros@wanadoo.es>
 
 	* DateTimeTest.cs: Removed Universal Time in ToString because in
