@@ -43,7 +43,12 @@ namespace System.Windows.Forms {
 				// Do not call default WndProc here
 				// let the control decide what to do
     				// base.WndProc (ref m);
-       				control.WndProc (ref m);
+				//Console.WriteLine ("Control WndProc {0}", control.GetType().ToString());
+					if (m.Msg == Msg.WM_DRAWITEM) {
+						m.Result = (IntPtr)1;
+					}
+					else
+       					control.WndProc (ref m);
     			}
     		}
     		
@@ -104,6 +109,12 @@ namespace System.Windows.Forms {
 		private static readonly int DISPOSING        = BitVector32.CreateMask (CREATED);
 		private static readonly int TOPLEVEL         = BitVector32.CreateMask (DISPOSING);
 
+		internal enum CallWinControlProcMask : uint {
+			MOUSE_MESSAGES = 0x0001,
+			KEYBOARD_MESSAGES = 0x0002
+		}
+		internal CallWinControlProcMask callWinControlProcMask;
+		
 		object tag;
 		protected bool mouseIsInside_;
 		
@@ -187,7 +198,8 @@ namespace System.Windows.Forms {
     		{
     			childControls = CreateControlsInstance ();
 
-			statuses = new BitVector32 (); 
+			statuses = new BitVector32 ();
+				callWinControlProcMask = CallWinControlProcMask.MOUSE_MESSAGES | CallWinControlProcMask.KEYBOARD_MESSAGES;
 			
     			accessibleDefaultActionDescription = null;
     			accessibleDescription = null;
@@ -552,7 +564,17 @@ namespace System.Windows.Forms {
 		// default handling is needed.
 		protected void CallControlWndProc (ref Message msg) {
 			if (ControlRealWndProc != IntPtr.Zero) {
-				msg.Result = (IntPtr)Win32.CallWindowProc (ControlRealWndProc, msg.HWnd, (int)msg.Msg, msg.WParam.ToInt32 (), msg.LParam.ToInt32 ());
+				bool callControlProc = true;
+				if ((callWinControlProcMask & CallWinControlProcMask.MOUSE_MESSAGES) == 0 && msg.IsMouseMessage) {
+					callControlProc = false;
+				}
+				if ((callWinControlProcMask & CallWinControlProcMask.KEYBOARD_MESSAGES) == 0 && msg.IsKeyboardMessage) {
+					callControlProc = false;
+				}
+				if (callControlProc) {
+					//Console.WriteLine ("CallControl {0}", msg.Msg);
+					msg.Result = (IntPtr)Win32.CallWindowProc (ControlRealWndProc, msg.HWnd, (int)msg.Msg, msg.WParam.ToInt32 (), msg.LParam.ToInt32 ());
+				}
 			}
 			else {
 				DefWndProc (ref msg);
@@ -1105,12 +1127,29 @@ namespace System.Windows.Forms {
     		
     		/// --- methods ---
     		/// internal .NET framework supporting methods, not stubbed out:
-    		/// - protected virtual void NotifyInvalidate (Rectangle invalidatedArea)
-    		/// - protected void RaiseDragEvent (object key,DragEventArgs e);
-    		/// - protected void RaiseKeyEvent (object key,KeyEventArgs e);
-    		/// - protected void RaiseMouseEvent (object key,MouseEventArgs e);
-    		/// - protected void RaisePaintEvent (object key,PaintEventArgs e);
-    		/// - protected void ResetMouseEventArgs ();
+    		protected virtual void NotifyInvalidate (Rectangle invalidatedArea)
+			{
+			}
+			
+    		protected void RaiseDragEvent (object key,DragEventArgs e)
+			{
+			}
+			
+    		protected void RaiseKeyEvent (object key,KeyEventArgs e)
+			{
+			}
+			
+    		protected void RaiseMouseEvent (object key,MouseEventArgs e)
+			{
+			}
+			
+    		protected void RaisePaintEvent (object key,PaintEventArgs e)
+			{
+			}
+			
+    		protected void ResetMouseEventArgs ()
+			{
+			}
     		
     		[MonoTODO]
 		protected void AccessibilityNotifyClients (

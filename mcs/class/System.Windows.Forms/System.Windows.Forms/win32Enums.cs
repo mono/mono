@@ -155,6 +155,7 @@ namespace System.Windows.Forms{
 		//		public const uint WM_NCXBUTTONUP      = 0x00ac;
 		//		public const uint WM_NCXBUTTONDBLCLK  = 0x00ad;
 		WM_KEYDOWN                = 0x0100,
+		WM_KEYFIRST               = 0x0100,
 		WM_KEYUP                  = 0x0101,
 		WM_CHAR                   = 0x0102,
 		WM_DEADCHAR               = 0x0103,
@@ -197,6 +198,7 @@ namespace System.Windows.Forms{
 		WM_CTLCOLORSCROLLBAR      = 0x0137,
 		WM_CTLCOLORSTATIC         = 0x0138,
 		WM_MOUSEMOVE              = 0x0200,
+		WM_MOUSEFIRST			  = 0x0200, 
 		WM_LBUTTONDOWN            = 0x0201,
 		WM_LBUTTONUP              = 0x0202,
 		WM_LBUTTONDBLCLK          = 0x0203,
@@ -207,6 +209,7 @@ namespace System.Windows.Forms{
 		WM_MBUTTONUP              = 0x0208,
 		WM_MBUTTONDBLCLK          = 0x0209,
 		WM_MOUSEWHEEL             = 0x020A,
+		WM_MOUSELAST             = 0x020D,
 		//		public const uint WM_XBUTTONDOWN      = 0x020B;
 		//		public const uint WM_XBUTTONUP        = 0x020C;
 		//		public const uint WM_XBUTTONDBLCLK    = 0x020D;

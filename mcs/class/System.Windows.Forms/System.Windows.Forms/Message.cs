@@ -136,6 +136,18 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		internal bool IsMouseMessage {
+			get {
+				return Msg > Msg.WM_MOUSEFIRST && Msg < Msg.WM_MOUSELAST;
+			}
+		}
+		
+		internal bool IsKeyboardMessage {
+			get {
+				return Msg > Msg.WM_KEYFIRST && Msg < Msg.WM_KEYLAST;
+			}
+		}
+		
 		public static Message create(IntPtr hWnd, Msg msg, IntPtr wparam, IntPtr lparam)
 		{
 			Message NewMessage =  new Message();

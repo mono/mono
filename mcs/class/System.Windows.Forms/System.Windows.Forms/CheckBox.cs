@@ -40,6 +40,8 @@ namespace System.Windows.Forms {
 			textAlign = ContentAlignment.MiddleCenter;
 
 			SubClassWndProc_ = true;
+			SetStyle (ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
+			callWinControlProcMask &= ~(CallWinControlProcMask.MOUSE_MESSAGES | CallWinControlProcMask.KEYBOARD_MESSAGES);
 		}
 		
 		// --- CheckBox Properties ---
@@ -108,6 +110,8 @@ namespace System.Windows.Forms {
 				if( autoCheck) {
 					createParams.Style |= (int)ButtonStyles.BS_AUTOCHECKBOX;
 				}
+				//createParams.Style |= (int) ButtonStyles.BS_OWNERDRAW;
+
 				return createParams;
 			}
 		}
@@ -184,10 +188,31 @@ namespace System.Windows.Forms {
 			Win32.SendMessage(Handle, (int)ButtonMessages.BM_SETCHECK, (int)checkState, 0);
 		}
 		
+		protected override void OnMouseDown (MouseEventArgs e) 
+		{
+			base.OnMouseDown (e);
+		}
+		
 		[MonoTODO]
 		protected override void OnMouseUp(MouseEventArgs e) 
 		{
-			//FIXME:
+			if (ThreeState) {
+				switch (CheckState) {
+					case CheckState.Unchecked:
+						CheckState = CheckState.Checked;
+					break;
+					case CheckState.Indeterminate:
+						CheckState = CheckState.Unchecked;
+					break;
+					case CheckState.Checked:
+						CheckState = CheckState.Indeterminate;
+					break;
+				}
+			}
+			else {
+				Checked = Checked ? false : true;
+			}
+			Invalidate ();
 			base.OnMouseUp(e);
 		}
 		// end of [event methods]
@@ -209,6 +234,60 @@ namespace System.Windows.Forms {
 			}
 			else{
 				return "CheckBox" +  " Unchecked";
+			}
+		}
+		
+   		protected virtual void OnPaintBackground (PaintEventArgs e) 
+   		{
+   			// just do nothing to avoid flickering
+		}
+		
+		protected override void OnPaint (PaintEventArgs e) 
+		{
+			Rectangle paintBounds = ClientRectangle;
+			Bitmap bmp = new Bitmap( paintBounds.Width, paintBounds.Height,e.Graphics);
+			Graphics paintOn = Graphics.FromImage(bmp);
+			
+			SolidBrush sb = new SolidBrush (BackColor);
+			paintOn.FillRectangle (sb, paintBounds);
+			sb.Dispose ();
+			
+			Rectangle checkRect = new Rectangle(paintBounds.Left,paintBounds.Top,paintBounds.Height,paintBounds.Height);
+			Rectangle textRect = new Rectangle( checkRect.Right,paintBounds.Top,paintBounds.Width - checkRect.Width - 1,paintBounds.Height);
+			paintOn.DrawString(Text, Font, SystemBrushes.ControlText, textRect.X, textRect.Y);
+			
+			ButtonState state = ButtonState.Normal;
+			if (FlatStyle == FlatStyle.Flat) {
+				state |= ButtonState.Flat;
+			}
+			
+			if (Checked) {
+				state |= ButtonState.Checked;
+			}
+			
+			if (ThreeState && CheckState == CheckState.Indeterminate) {
+				state |= ButtonState.Pushed;
+			}
+			ControlPaint.DrawCheckBox (paintOn, checkRect, state);
+			
+			if (Focused) {
+				ControlPaint.DrawFocusRectangle (paintOn, textRect);
+			}
+			
+			e.Graphics.DrawImage(bmp, 0, 0, paintBounds.Width, paintBounds.Height);
+			paintOn.Dispose ();
+			bmp.Dispose();
+		}
+		
+		protected override void WndProc (ref Message m) {
+			switch (m.Msg) {
+				case Msg.WM_DRAWITEM: {
+					m.Result = (IntPtr)1;
+				}
+					break;
+				default:
+					base.WndProc (ref m);
+					break;
 			}
 		}
 		

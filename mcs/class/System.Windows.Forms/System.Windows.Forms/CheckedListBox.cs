@@ -195,18 +195,18 @@ namespace System.Windows.Forms {
 			Bitmap bmp = new Bitmap( e.Bounds.Width, e.Bounds.Height,e.Graphics);
 			Graphics paintOn = Graphics.FromImage(bmp);
 			
-			e.Graphics.FillRectangle(SystemBrushes.Window, e.Bounds);
+			paintOn.FillRectangle(SystemBrushes.Window, e.Bounds);
 			
 			Rectangle checkRect = new Rectangle( e.Bounds.Left, e.Bounds.Top, e.Bounds.Height, e.Bounds.Height);
 			checkRect.Inflate(-1,-1);
 			Rectangle textRect = new Rectangle( checkRect.Right, e.Bounds.Top, e.Bounds.Width - checkRect.Width - 1, e.Bounds.Height);
 			
 			if( (e.State & DrawItemState.Selected) != 0) {
-				e.Graphics.FillRectangle(SystemBrushes.Highlight, textRect);
-				e.Graphics.DrawString(Items_[e.Index].ToString(), Font, SystemBrushes.HighlightText, textRect.X, textRect.Y);
+				paintOn.FillRectangle(SystemBrushes.Highlight, textRect);
+				paintOn.DrawString(Items_[e.Index].ToString(), Font, SystemBrushes.HighlightText, textRect.X, textRect.Y);
 			}
 			else {
-				e.Graphics.DrawString(Items_[e.Index].ToString(), Font, SystemBrushes.ControlText, textRect.X, textRect.Y);
+				paintOn.DrawString(Items_[e.Index].ToString(), Font, SystemBrushes.ControlText, textRect.X, textRect.Y);
 			}
 		
 			ButtonState state = ButtonState.Normal;
@@ -218,13 +218,14 @@ namespace System.Windows.Forms {
 				state |= ButtonState.Checked;
 			}
 			
-			ControlPaint.DrawCheckBox(e.Graphics, checkRect, state);
+			ControlPaint.DrawCheckBox (paintOn, checkRect, state);
 			
 			if( 0 != (DrawItemState.Focus & e.State)) {
-				ControlPaint.DrawFocusRectangle(e.Graphics, textRect);
+				ControlPaint.DrawFocusRectangle (paintOn, textRect);
 			}
-			
-			//base.OnDrawItem(e);
+			e.Graphics.DrawImage(bmp, 0, 0, e.Bounds.Width, e.Bounds.Height);
+			paintOn.Dispose ();
+			bmp.Dispose();
 		}
 		
 		[MonoTODO]

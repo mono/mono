@@ -47,6 +47,7 @@ namespace System.Windows.Forms {
 					WindowStyles.WS_VISIBLE |
 					WindowStyles.WS_CLIPSIBLINGS );
 				createParams.Style |= (int)Win32.ContentAlignment2SystemButtonStyle(TextAlign);
+				//createParams.Style |= (int) ButtonStyles.BS_OWNERDRAW;
 				// CHECKME : this call is commented because (IMHO) Control.CreateHandle suppose to do this
 				// and this function is CreateParams, not CreateHandle
 				// window.CreateHandle (createParams);
@@ -135,9 +136,6 @@ namespace System.Windows.Forms {
 			
 			Color controlColor = BackColor; //SystemColors.Control;
 			Color textColor = ForeColor; // SystemColors.ControlText;
-			if (BackColor == System.Drawing.Color.Red) {
-				Color t = System.Drawing.Color.Red;
-			}
 			//Graphics paintOn = e.Graphics;
 			Rectangle rc = paintBounds;
 			Rectangle rcImageClip = paintBounds;
@@ -284,16 +282,6 @@ namespace System.Windows.Forms {
 					m.Result = (IntPtr)1;
 				}
 					break;
-/*			
-				case Msg.WM_ERASEBKGND:
-					if( FlatStyle != FlatStyle.System) {
-						m.Result = (IntPtr)1;
-					}
-					else {
-						base.WndProc (ref m);
-					}
-					break;
-*/			
 				default:
 					base.WndProc (ref m);
 					break;
