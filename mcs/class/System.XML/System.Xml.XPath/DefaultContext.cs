@@ -219,12 +219,11 @@ namespace System.Xml.XPath
 			
 			XPathNavigator n = iter.Current.Clone ();
 			ArrayList rgNodes = new ArrayList ();
-			foreach (string strArg in strArgs.Split (rgchWhitespace))
-			{
-				if (n.MoveToId (strArg)) {
+			string [] ids = strArgs.Split (rgchWhitespace);
+			for (int i = 0; i < ids.Length; i++)
+				if (n.MoveToId (ids [i]))
 					rgNodes.Add (n.Clone ());
-				}
-			}
+
 			rgNodes.Sort (XPathNavigatorComparer.Instance);
 			return new EnumeratorIterator (iter, rgNodes.GetEnumerator ());
 		}
@@ -637,8 +636,8 @@ namespace System.Xml.XPath
 				str = iter.Current.Value;
 			System.Text.StringBuilder sb = new System.Text.StringBuilder ();
 			bool fSpace = false;
-			foreach (char ch in str)
-			{
+			for (int i = 0; i < str.Length; i++) {
+				char ch = str [i];
 				if (ch == ' ' || ch == '\t' || ch == '\r' || ch == '\n')
 				{
 					fSpace = true;

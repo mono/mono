@@ -71,8 +71,8 @@ namespace System.Xml.XPath
 		public MergedIterator (BaseIterator iter ) : base (iter) {}
 		protected MergedIterator (MergedIterator other) : base (other)
 		{
-			foreach (XPathNodeIterator iter in other._iters)
-				_iters.Add (iter.Clone ());
+			for (int i = 0; i < other._iters.Count; i++)
+				_iters.Add (((XPathNodeIterator) other._iters [i]).Clone ());
 			_pos = other._pos;
 			_index = other._index;
 		}
@@ -1057,7 +1057,6 @@ namespace System.Xml.XPath
 		public override bool RequireSorting { get { return true; } }
 	}
 
-	// WARNING: Before using be sure about IEnumerator argument, because
 	internal class EnumeratorIterator : BaseIterator
 	{
 		protected IEnumerator _enum;

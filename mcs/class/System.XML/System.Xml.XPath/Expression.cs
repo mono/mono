@@ -583,8 +583,8 @@ namespace System.Xml.XPath
 						while (iterR.MoveNext ())
 						{
 							string strR = XPathFunctions.ToString (iterR.Current.Value);
-							foreach (string strL in rgNodesL)
-								if (strL == strR == trueVal)
+							for (int l = 0; l < rgNodesL.Count; l++)
+								if ((strR == (string) rgNodesL [l]) == trueVal)
 									return true;
 						}
 					}
@@ -670,8 +670,8 @@ namespace System.Xml.XPath
 						while (iterR.MoveNext ())
 						{
 							double numR = XPathFunctions.ToNumber (iterR.Current.Value);
-							foreach (double numL in rgNodesL)
-								if (Compare (numL, numR))
+							for (int l = 0; l < rgNodesL.Count; l++)
+								if (Compare (numR, (double) rgNodesL [l]))
 									return true;
 						}
 					}
@@ -1397,8 +1397,8 @@ namespace System.Xml.XPath
 		public override String ToString ()
 		{
 			String strArgs = "";
-			foreach (Expression arg in _args)
-			{
+			for (int i = 0; i < _args.Count; i++) {
+				Expression arg = (Expression) _args [i];
 				if (strArgs != "")
 					strArgs += ", ";
 				strArgs += arg.ToString ();
