@@ -88,6 +88,8 @@ namespace System.Text {
 		public StringBuilder(int capacity) : this (String.Empty, 0, 0, capacity) {}
 
 		public StringBuilder(int capacity, int maxCapacity) : this (String.Empty, 0, 0, capacity) {
+			if (maxCapacity < 1)
+				throw new System.ArgumentOutOfRangeException ("maxCapacity", "maxCapacity is less than one.");
 			if (capacity > maxCapacity)
 				throw new System.ArgumentOutOfRangeException ("capacity", "Capacity exceeds maximum capacity.");
 

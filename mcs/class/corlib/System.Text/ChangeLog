@@ -1,3 +1,7 @@
+2005-01-14 Lluis Sanches Gual  <lluis@novell.com>
+
+	* StringBuilder.cs: Improved parameter check.
+
 2005-01-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* StringBuilder.cs: when creating the StringBuilder from a string, the
