@@ -2217,6 +2217,15 @@ namespace Mono.CSharp {
 			method = method.BindGenericParameters (infered_types);
 			return true;
 		}
+
+		public static bool IsNullableType (Type t)
+		{
+			if (!t.IsGenericInstance)
+				return false;
+
+			Type gt = t.GetGenericTypeDefinition ();
+			return gt == generic_nullable_type;
+		}
 	}
 
 	public class NullCoalescingOperator : Expression
@@ -2239,6 +2248,141 @@ namespace Mono.CSharp {
 
 		public override void Emit (EmitContext ec)
 		{
+		}
+	}
+
+	public abstract class Nullable
+	{
+		protected sealed class NullableInfo
+		{
+			public readonly Type Type;
+			public readonly Type UnderlyingType;
+			public readonly MethodInfo HasValue;
+			public readonly MethodInfo Value;
+			public readonly ConstructorInfo Constructor;
+
+			public NullableInfo (Type type)
+			{
+				Type = type;
+				UnderlyingType = TypeManager.GetTypeArguments (type) [0];
+
+				PropertyInfo has_value_pi = type.GetProperty ("HasValue");
+				PropertyInfo value_pi = type.GetProperty ("Value");
+
+				HasValue = has_value_pi.GetGetMethod (false);
+				Value = value_pi.GetGetMethod (false);
+				Constructor = type.GetConstructor (new Type[] { UnderlyingType });
+			}
+		}
+
+		public class NullLiteral : Expression, IMemoryLocation {
+			public NullLiteral (Type target_type, Location loc)
+			{
+				this.type = target_type;
+				this.loc = loc;
+
+				eclass = ExprClass.Value;
+			}
+		
+			public override Expression DoResolve (EmitContext ec)
+			{
+				return this;
+			}
+
+			public override void Emit (EmitContext ec)
+			{
+				LocalTemporary value_target = new LocalTemporary (ec, type);
+
+				value_target.AddressOf (ec, AddressOp.Store);
+				ec.ig.Emit (OpCodes.Initobj, type);
+				value_target.Emit (ec);
+			}
+
+			public void AddressOf (EmitContext ec, AddressOp Mode)
+			{
+				LocalTemporary value_target = new LocalTemporary (ec, type);
+					
+				value_target.AddressOf (ec, AddressOp.Store);
+				ec.ig.Emit (OpCodes.Initobj, type);
+				((IMemoryLocation) value_target).AddressOf (ec, Mode);
+			}
+		}
+
+		public class LiftedConversion : Expression
+		{
+			Expression source;
+			bool is_explicit;
+			NullableInfo source_info, target_info;
+			Expression conversion;
+
+			protected LiftedConversion (Expression source, Type target_type, bool is_explicit,
+						    Location loc)
+			{
+				this.source = source;
+				this.type = target_type;
+				this.is_explicit = is_explicit;
+				this.loc = loc;
+
+				eclass = source.eclass;
+			}
+
+			public static Expression Create (EmitContext ec, Expression source, Type target_type,
+							 bool is_explicit, Location loc)
+			{
+				Expression expr = new LiftedConversion (source, target_type, is_explicit, loc);
+				return expr.Resolve (ec);
+			}
+
+			public override Expression DoResolve (EmitContext ec)
+			{
+				source_info = new NullableInfo (source.Type);
+				target_info = new NullableInfo (type);
+
+				source = source.Resolve (ec);
+				if (source == null)
+					return null;
+
+				if (is_explicit)
+					conversion = Convert.ExplicitConversionStandard (
+						ec, new EmptyExpression (source_info.UnderlyingType),
+						target_info.UnderlyingType, loc);
+				else
+					conversion = Convert.ImplicitConversionStandard (
+						ec, new EmptyExpression (source_info.UnderlyingType),
+						target_info.UnderlyingType, loc);
+
+				if (conversion == null)
+					return null;
+
+				return this;
+			}
+
+			public override void Emit (EmitContext ec)
+			{
+				ILGenerator ig = ec.ig;
+				Label has_value_label = ig.DefineLabel ();
+				Label end_label = ig.DefineLabel ();
+
+				((IMemoryLocation) source).AddressOf (ec, AddressOp.LoadStore);
+				ig.EmitCall (OpCodes.Call, source_info.HasValue, null);
+				ig.Emit (OpCodes.Brtrue, has_value_label);
+
+				LocalTemporary value_target = new LocalTemporary (ec, type);
+				value_target.AddressOf (ec, AddressOp.Store);
+				ig.Emit (OpCodes.Initobj, type);
+				value_target.Emit (ec);
+				value_target.Release (ec);
+				ig.Emit (OpCodes.Br, end_label);
+
+				ig.MarkLabel (has_value_label);
+
+				((IMemoryLocation) source).AddressOf (ec, AddressOp.LoadStore);
+				ig.EmitCall (OpCodes.Call, source_info.Value, null);
+				conversion.Emit (ec);
+				ig.Emit (OpCodes.Newobj, target_info.Constructor);
+
+				ig.MarkLabel (end_label);
+			}
 		}
 	}
 }

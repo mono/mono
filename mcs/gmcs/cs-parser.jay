@@ -2521,7 +2521,11 @@ pointer_type
 	;
 
 non_expression_type
-	: builtin_types	
+	: builtin_types opt_nullable
+	  {
+		if ((bool) $2)
+			$$ = new NullableType ((Expression) $1, lexer.Location);
+	  }
 	| non_expression_type rank_specifier
 	  {
 		$$ = new ComposedCast ((Expression) $1, (string) $2, lexer.Location);

@@ -548,8 +548,13 @@ namespace Mono.CSharp {
 		/// </summary>
 		public static bool ImplicitConversionExists (EmitContext ec, Expression expr, Type target_type)
 		{
-			if ((expr is NullLiteral) && target_type.IsGenericParameter)
-				return TypeParameter_to_Null (target_type);
+			if (expr is NullLiteral) {
+				if (target_type.IsGenericParameter)
+					return TypeParameter_to_Null (target_type);
+
+				if (TypeManager.IsNullableType (target_type))
+					return true;
+			}
 
 			if (ImplicitStandardConversionExists (ec, expr, target_type))
 				return true;
@@ -774,6 +779,9 @@ namespace Mono.CSharp {
 				return true;
 
 			if (target_type == TypeManager.void_ptr_type && expr_type.IsPointer)
+				return true;
+
+			if (TypeManager.IsNullableType (expr_type) && TypeManager.IsNullableType (target_type))
 				return true;
 
 			if (expr_type == TypeManager.anonymous_method_type){
@@ -1219,8 +1227,16 @@ namespace Mono.CSharp {
 			Type expr_type = expr.Type;
 			Expression e;
 
-			if ((expr is NullLiteral) && target_type.IsGenericParameter)
-				return TypeParameter_to_Null (expr, target_type, loc);
+			if (expr is NullLiteral) {
+				if (target_type.IsGenericParameter)
+					return TypeParameter_to_Null (expr, target_type, loc);
+
+				if (TypeManager.IsNullableType (target_type))
+					return new Nullable.NullLiteral (target_type, loc);
+			}
+
+			if (TypeManager.IsNullableType (expr_type) && TypeManager.IsNullableType (target_type))
+				return Nullable.LiftedConversion.Create (ec, expr, target_type, false, loc);
 
 			if (expr.eclass == ExprClass.MethodGroup){
 				if (!TypeManager.IsDelegateType (target_type)){
@@ -1905,6 +1921,9 @@ namespace Mono.CSharp {
 			if (ne != null)
 				return ne;
 
+			if (TypeManager.IsNullableType (expr.Type) && TypeManager.IsNullableType (target_type))
+				return Nullable.LiftedConversion.Create (ec, expr, target_type, true, loc);
+
 			ne = ExplicitNumericConversion (ec, expr, target_type, loc);
 			if (ne != null)
 				return ne;
@@ -2011,6 +2030,9 @@ namespace Mono.CSharp {
 
 			if (ne != null)
 				return ne;
+
+			if (TypeManager.IsNullableType (expr.Type) && TypeManager.IsNullableType (target_type))
+				return Nullable.LiftedConversion.Create (ec, expr, target_type, true, l);
 
 			ne = ExplicitNumericConversion (ec, expr, target_type, l);
 			if (ne != null)
