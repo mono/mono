@@ -1,5 +1,10 @@
 2002-04-12  Martin Baulig  <martin@gnome.org>
 
+	* gdb-variable-scopes.patch: A patch for GDB (against the latest CVS version)
+	to implement variable lifetimes.
+
+2002-04-12  Martin Baulig  <martin@gnome.org>
+
 	* MonoDwarfFileWriter.cs (DieVariable): Provide info about the variable's
 	lifetime using DW_AT_begin_scope and a new baulig extension DW_AT_end_scope.
 
