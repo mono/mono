@@ -163,7 +163,7 @@ namespace System.Threading
 			return(WaitOne_internal(os_handle, ms, exitContext));
 		}
 
-		protected static readonly IntPtr InvalidHandle;
+		protected static readonly IntPtr InvalidHandle = IntPtr.Zero;
 
 		private bool disposed = false;
 
@@ -175,24 +175,17 @@ namespace System.Threading
 		
 		protected virtual void Dispose(bool explicitDisposing) {
 			// Check to see if Dispose has already been called.
-			if(!this.disposed) {
-				this.disposed=true;
-				// If this is a call to Dispose,
-				// dispose all managed resources.
-				if(explicitDisposing) {
-					// Free up stuff here
-					//Components.Dispose();
-				}
+			if (!disposed) {
+				disposed=true;
+				if (os_handle == InvalidHandle)
+					return;
 
-				// Release unmanaged resources
-				// Note that this is not thread safe.
-				// Another thread could start
-				// disposing the object after the
-				// managed resources are disposed, but
-				// before the disposed flag is set to
-				// true.
-				//Release(handle);
-				//handle=IntPtr.Zero;
+				lock (this) {
+					if (os_handle != InvalidHandle) {
+						NativeEventCalls.CloseEvent_internal (os_handle);
+						os_handle = InvalidHandle;
+					}
+				}
 			}
 		}
 

@@ -1,4 +1,9 @@
 
+2003-06-02  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* NativeEventCalls.cs: added CloseEvent_intenal.
+	* WaitHandle.cs: call CloseEvent_internal when disposing.
+
 2003-05-31  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* RegisteredWaitHandle.cs: check that the callback is not null before
