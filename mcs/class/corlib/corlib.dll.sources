@@ -719,6 +719,7 @@ System.Runtime.Remoting.Proxies/RemotingProxy.cs
 System.Runtime.Remoting.Proxies/ProxyAttribute.cs
 System.Runtime.Remoting.Services/ITrackingHandler.cs
 System.Runtime.Remoting.Services/TrackingServices.cs
+System.Runtime.Serialization/Formatter.cs
 System.Runtime.Serialization/FormatterConverter.cs
 System.Runtime.Serialization/FormatterServices.cs
 System.Runtime.Serialization/IDeserializationCallback.cs
@@ -752,11 +753,14 @@ System.Runtime.Serialization.Formatters/InternalObjectTypeE.cs
 System.Runtime.Serialization.Formatters/InternalParseStateE.cs
 System.Runtime.Serialization.Formatters/InternalParseTypeE.cs
 System.Runtime.Serialization.Formatters/InternalPrimitiveTypeE.cs
+System.Runtime.Serialization.Formatters/InternalRM.cs
 System.Runtime.Serialization.Formatters/InternalSerializerTypeE.cs
+System.Runtime.Serialization.Formatters/InternalST.cs
 System.Runtime.Serialization.Formatters/ISoapMessage.cs
 System.Runtime.Serialization.Formatters/ServerFault.cs
 System.Runtime.Serialization.Formatters/SoapFault.cs
 System.Runtime.Serialization.Formatters/SoapMessage.cs
+System.Runtime.Serialization.Formatters/TypeFilterLevel.cs
 System.Runtime.Serialization.Formatters.Binary/BinaryFormatter.cs
 System.Runtime.Serialization.Formatters.Binary/BinaryCommon.cs
 System.Runtime.Serialization.Formatters.Binary/ObjectReader.cs

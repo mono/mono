@@ -1,3 +1,11 @@
+2003-11-18  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* corlib.dll.sources: Added some files:
+		System.Runtime.Serialization.Formatter.cs
+		System.Runtime.Serialization.Formatters/InternalRM.cs
+		System.Runtime.Serialization.Formatters/InternalST.cs
+		System.Runtime.Serialization.Formatters/TypeFilterLevel.cs
+
 2003-11-17  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* corlib.dll.sources: Added some files:
