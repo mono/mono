@@ -2859,9 +2859,20 @@ array_creation_expression
 	  }
 	;	
 
+delegate_creation_expression
+	: NEW type OPEN_PARENS ADDRESSOF opt_argument_list CLOSE_PARENS
+	  {
+		New n = new New ((Expression) $2, (ArrayList) $5, lexer.Location);
+		if (n==null)
+			Console.WriteLine("empty");
+		$$ = n;
+	  }
+	;
+
 new_expression
 	: object_creation_expression
 	| array_creation_expression
+	| delegate_creation_expression
 	;
 
 declaration_statement
@@ -2873,7 +2884,6 @@ declaration_statement
 			$$ = declare_local_variables ((Expression) de.Key, (ArrayList) de.Value, lexer.Location);
 		}
 	  }
-
 	| local_constant_declaration 
 	  {
 		if ($1 != null){
@@ -3141,7 +3151,12 @@ opt_type_decl
 	  	New n = new New ((Expression)$3, (ArrayList) $5, lexer.Location);
 	  	$$ = (Expression) n;
 	  }
-	;
+	| AS NEW type OPEN_PARENS ADDRESSOF opt_argument_list CLOSE_PARENS 
+	  {
+	  	New n = new New ((Expression)$3, (ArrayList) $6, lexer.Location);
+	  	$$ = (Expression) n;
+	  }
+ 	;
 		
 opt_array_name_modifier
 	: /* empty */ 				{ $$ = null; }
@@ -3551,12 +3566,6 @@ prefixed_unary_expression
 	  {
 		$$ = new Unary (Unary.Operator.UnaryNegation, (Expression) $2, lexer.Location);
 	  }
-	| ADDRESSOF prefixed_unary_expression
-	  {
-	  	// FIXME: We should generate an error if AddressOf is NOT used
-	  	// during delegate creation
-		$$ = $2;
-	  }	  
 	;
 
 multiplicative_expression
@@ -3706,6 +3715,15 @@ assignment_expression
 	  { 
 		$$ = new Assign ((Expression) $1, (Expression) $3, lexer.Location);
 	  }
+	/*| prefixed_unary_expression ASSIGN ADDRESSOF argument_list
+	  { 
+			// fixme: this is not working
+			// d = AddressOf F
+			// type of d has to  get resolved somewhere
+			Console.WriteLine("right");
+			New n = new New ((Expression) $1, (ArrayList) $4, lexer.Location);
+			$$ = new Assign ((Expression) $1, (Expression) n, lexer.Location);
+	  }*/
 	| prefixed_unary_expression OP_MULT_ASSIGN expression
 	  {
 		Location l = lexer.Location;
