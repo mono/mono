@@ -1,3 +1,12 @@
+2003-02-25  Miguel de Icaza  <miguel@ximian.com>
+
+	* assign.cs (CompoundAssign.DoLResolve): Resolve the original
+	source first, this will guarantee that we have a valid expression
+	before calling in lower levels functions that will require a
+	resolved object.  Then use this original_source in the
+	target.ResolveLValue instead of the original source that was
+	passed to us.
+
 2003-02-23  Martin Baulig  <martin@ximian.com>
 
 	* statement.cs (Block.Emit): Override this and set ec.CurrentBlock
