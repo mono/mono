@@ -63,8 +63,8 @@ namespace System
 				}
 				else
 				{
-					r = (object[]) Array.CreateInstance (res[0].GetType (), 0);
-
+					r = (object[]) Array.CreateInstance (res[0].GetType (), 1);
+					r[0] = res[0];
 				}
 				return r;
 			}
