@@ -1,3 +1,9 @@
+2002-07-05  Ajay kumar Dwivedi <adwiv@yahoo.com>
+	
+	* XmlSeriailizer: Serialize method can serialize XmlSchema perfectly.
+
+	* XmlSerializerNamespaces: Reverted to use of a single Hashtable.
+
 2002-07-02  Ajay kumar Dwivedi <adwiv@yahoo.com>
 	
 	* XmlSeriailizer: Updated Serialize() method.

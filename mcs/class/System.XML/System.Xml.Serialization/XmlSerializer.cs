@@ -3,9 +3,9 @@
 //
 // Author:
 //   John Donagher (john@webmeta.com)
-//
-// (C) 2002 John Donagher
-//
+//	 Ajay kumar Dwivedi (adwiv@yahoo.com)
+// (C) 2002 John Donagher, Ajay kumar Dwivedi
+// 
 
 using System.Xml.Serialization;
 using System.Xml;
@@ -26,7 +26,7 @@ namespace System.Xml.Serialization
 		private Type[] extraTypes;
 		private XmlRootAttribute rootAttribute;
 		private string defaultNamespace;
-		private Hashtable typeTable;
+		private static Hashtable typeTable;
 		private bool useOrder;
 		
 		private bool isNullable;
@@ -68,7 +68,7 @@ namespace System.Xml.Serialization
 
 		internal XmlSerializer(Hashtable typeTable)
 		{
-			this.typeTable = typeTable;
+			typeTable = typeTable;
 		}
 
 		public XmlSerializer (Type type, XmlAttributeOverrides overrides, Type[] extraTypes, XmlRootAttribute root, string defaultNamespace)
@@ -159,39 +159,113 @@ namespace System.Xml.Serialization
 		#endregion 
 
 		public void Serialize (XmlWriter writer, object o, XmlSerializerNamespaces namespaces)
-		{
-			Type objType = o.GetType();
-			writer.WriteStartDocument();
+		{	
 			if(namespaces == null)
+			{
 				namespaces = new XmlSerializerNamespaces();
+			}
+			if(namespaces.Count == 0)
+			{
+				namespaces.Add("xsd", System.Xml.Schema.XmlSchema.Namespace);
+				namespaces.Add("xsi", System.Xml.Schema.XmlSchema.InstanceNamespace);
+			}
 
-			Hashtable memberTable = (Hashtable)((object[])typeTable[objType])[0];
+			Type objType = o.GetType();
+			string rootName = objType.Name;
+			string rootNs	= null;
+			XmlSerializerNamespaces nss = new XmlSerializerNamespaces();
+			XmlQualifiedName[] qnames;
 
-			if(memberTable == null)
+			writer.WriteStartDocument();
+			
+			object[] memberObj = (object[])typeTable[objType];
+			if(memberObj == null)
 				throw new Exception("Unknown Type "+objType+" encounterd during Serialization");
+			Hashtable memberTable = (Hashtable)memberObj[0];
 
 			XmlAttributes attrs = (XmlAttributes)memberTable[""];
 			//If we have been passed an XmlRoot, set it on the base class
 			if(rootAttribute != null)
 				attrs.XmlRoot = rootAttribute;
-			//TODO: Handle the XmlRoot Attribute
+			
 			if(attrs.XmlRoot != null)
 			{
 				isNullable = attrs.XmlRoot.IsNullable;
+				if(attrs.XmlRoot.ElementName != null)
+					rootName = attrs.XmlRoot.ElementName;
+				rootNs	= attrs.XmlRoot.Namespace;
 			}
-			//TODO: If the type has a xmlns member, get the namespaces.
-			
-			writer.WriteStartElement(objType.Name);
-			SerializeMembers(writer, o, namespaces);
+
+			//XMLNS attributes in the Root
+			XmlAttributes XnsAttrs = (XmlAttributes)((object[])typeTable[objType])[1];
+			if(XnsAttrs != null)
+			{
+				MemberInfo member = XnsAttrs.MemberInfo;
+				FieldInfo fInfo = member as FieldInfo;
+				PropertyInfo propInfo = member as PropertyInfo;
+				XmlSerializerNamespaces xns;
+				if(fInfo != null)
+					xns = (XmlSerializerNamespaces) fInfo.GetValue(o);
+				else
+					xns = (XmlSerializerNamespaces) propInfo.GetValue(o,null);
+				
+				qnames = xns.ToArray();
+				foreach(XmlQualifiedName qname in qnames)
+				{
+					nss.Add(qname.Name, qname.Namespace);
+				}				
+			}
+			//XmlNs from the namespaces passed
+			qnames = namespaces.ToArray();
+			foreach(XmlQualifiedName qname in qnames)
+			{
+				if(writer.LookupPrefix(qname.Namespace) != qname.Name)
+				{
+					nss.Add(qname.Name, qname.Namespace);
+				}
+			}
+
+			if(namespaces.GetPrefix(rootNs) != null)
+				writer.WriteStartElement(namespaces.GetPrefix(rootNs),rootName, rootNs);
+
+			qnames = nss.ToArray();
+			foreach(XmlQualifiedName qname in qnames)
+			{
+				if(writer.LookupPrefix(qname.Namespace) != qname.Name)
+				{
+					writer.WriteAttributeString("xmlns", qname.Name, null, qname.Namespace);
+				}
+			}
+
+			SerializeMembers(writer, o, true);//, namespaces);
 			writer.WriteEndElement();
 		}
 
-		private void SerializeMembers ( XmlWriter writer, object o, XmlSerializerNamespaces namespaces)
+		private void SerializeMembers ( XmlWriter writer, object o, bool isRoot)
 		{
 			Type objType = o.GetType();
-			XmlAttributes XnsAttrs = (XmlAttributes)((object[])typeTable[objType])[1];			
+			XmlAttributes XnsAttrs = (XmlAttributes)((object[])typeTable[objType])[1];
 			ArrayList attrList = (ArrayList)((object[])typeTable[objType])[2];
 			ArrayList elemList = (ArrayList)((object[])typeTable[objType])[3];
+
+			if(!isRoot && XnsAttrs != null)
+			{
+				MemberInfo member = XnsAttrs.MemberInfo;
+				FieldInfo fInfo = member as FieldInfo;
+				PropertyInfo propInfo = member as PropertyInfo;
+				XmlSerializerNamespaces xns;
+				if(fInfo != null)
+					xns = (XmlSerializerNamespaces) fInfo.GetValue(o);
+				else
+					xns = (XmlSerializerNamespaces) propInfo.GetValue(o,null);
+				
+				XmlQualifiedName[] qnames = xns.ToArray();
+				foreach(XmlQualifiedName qname in qnames)
+				{
+					if(writer.LookupPrefix(qname.Namespace) != qname.Name)
+						writer.WriteAttributeString("xmlns", qname.Name, null, qname.Namespace);
+				}
+			}
 
 			//Serialize the Attributes.
 			foreach(XmlAttributes attrs in attrList)
@@ -231,11 +305,35 @@ namespace System.Xml.Serialization
 					writer.WriteEndAttribute();
 					continue;
 				}
+
+				else if(attributeValue is XmlQualifiedName[])
+				{
+					XmlQualifiedName[] qnames = (XmlQualifiedName[]) attributeValue;
+					writer.WriteStartAttribute(attributeName, attributeNs);
+					int count = 0;
+					foreach(XmlQualifiedName qname in qnames)
+					{
+						if(qname.IsEmpty)
+							continue;
+						if(count++ > 0)
+							writer.WriteWhitespace(" ");
+						writer.WriteQualifiedName(qname.Name, qname.Namespace);
+					}
+					writer.WriteEndAttribute();
+					continue;
+				}
+				else if(attributeValue is XmlAttribute[])
+				{
+					XmlAttribute[] xmlattrs = (XmlAttribute[]) attributeValue;
+					foreach(XmlAttribute xmlattr in xmlattrs)
+						xmlattr.WriteTo(writer);
+					continue;
+				}
 				attributeValString = GetXmlValue(attributeValue);
-				
+
 				if(attributeValString != GetXmlValue(attrs.XmlDefaultValue))
 				{
-					writer.WriteAttributeString(attributeName, attributeNs, attributeValString);
+						writer.WriteAttributeString(attributeName, attributeNs, attributeValString);
 				}
 			}
 
@@ -265,11 +363,11 @@ namespace System.Xml.Serialization
 				elementName = attrs.GetElementName(elementType, member.Name);
 				elementNs	= attrs.GetElementNamespace(elementType);
 
-				WriteElement(writer, namespaces, attrs, elementName, elementNs, elementType, elementValue);
+				WriteElement(writer, attrs, elementName, elementNs, elementType, elementValue);
 			}
 		}
 
-		private void WriteElement(XmlWriter writer, XmlSerializerNamespaces namespaces, XmlAttributes attrs, 
+		private void WriteElement(XmlWriter writer, XmlAttributes attrs, 
 			string name, string ns, Type type, Object value)
 		{
 			if(IsInbuiltType(type))
@@ -298,7 +396,7 @@ namespace System.Xml.Serialization
 			else if(type.IsArray && value != null)
 			{
 				writer.WriteStartElement(name, ns);
-				SerializeArray(writer, value, namespaces);
+				SerializeArray(writer, value);
 				writer.WriteEndElement();
 			}
 			else if(value is ICollection)
@@ -323,7 +421,7 @@ namespace System.Xml.Serialization
 							itemName = attrs.GetElementName(itemval.GetType(), name);
 							itemNs	= attrs.GetElementNamespace(itemval.GetType());
 							writer.WriteStartElement(itemName, itemNs);
-							SerializeMembers(writer, itemval, namespaces);
+							SerializeMembers(writer, itemval, false);
 							writer.WriteEndElement();
 						}
 					}
@@ -342,7 +440,7 @@ namespace System.Xml.Serialization
 				string itemName = attrs.GetElementName(value.GetType(), name);
 				string itemNs	= attrs.GetElementNamespace(value.GetType());
 				writer.WriteStartElement(itemName, itemNs);
-				SerializeMembers(writer, value, namespaces);
+				SerializeMembers(writer, value, false);
 				writer.WriteEndElement();
 			}
 			else
@@ -350,7 +448,7 @@ namespace System.Xml.Serialization
 			}
 		}
 
-		private void SerializeArray( XmlWriter writer, object o, XmlSerializerNamespaces namespaces)
+		private void SerializeArray( XmlWriter writer, object o)
 		{
 
 		}
@@ -443,7 +541,10 @@ namespace System.Xml.Serialization
 						continue;
 					//If this member is a XmlNs type, set the XmlNs object.
 					if(attrs.Xmlns)
+					{
 						memberObj[1] = attrs;
+						continue;
+					}
 					//If the member is a attribute Type, Add to attribute list
 					if(attrs.isAttribute)
 						attrList.Add(attrs);
@@ -480,7 +581,7 @@ namespace System.Xml.Serialization
 					//Exceptions are properties whose return type is array, ICollection or IEnumerable
 					//Indexers are not serialized unless the class Implements ICollection.
 					if(!(propInfo.PropertyType.IsArray || Implements(propInfo.PropertyType,typeof(ICollection)) || 
-						Implements(propInfo.PropertyType,typeof(IEnumerable))))
+						(propInfo.PropertyType != typeof(string) && Implements(propInfo.PropertyType,typeof(IEnumerable)))))
 					{
 						if(!(propInfo.CanRead && propInfo.CanWrite) || propInfo.GetIndexParameters().Length != 0)
 							continue;
@@ -666,13 +767,43 @@ namespace System.Xml.Serialization
 			if(value is Enum)
 			{
 				Type type = value.GetType();
+				
 				if(typeTable.ContainsKey(type))
 				{
 					Hashtable memberTable = (Hashtable)(typeTable[type]);
-					if(memberTable.ContainsKey(value.ToString()))
-						return (string)memberTable[value.ToString()];
+					if(type.IsDefined(typeof(FlagsAttribute),false))
+					{
+						//If value is exactly a single enum member
+						if(memberTable.Contains(value.ToString()))
+							return (string)memberTable[value.ToString()];
+
+						string retval = "";
+						int count=0;
+						int enumval = (int) value;
+						string[] names = Enum.GetNames(type);
+						foreach(string key in names)
+						{
+							if(!memberTable.ContainsKey(key))
+								continue;
+							//Otherwise multiple values.
+							int val = (int)Enum.Parse(type, key);
+							if(val != 0 && (enumval & val) == val)
+							{
+								retval += " " + (string)memberTable[Enum.GetName(type,val)];
+							}
+						}
+						retval = retval.Trim();
+						if(retval.Length == 0)
+							return null;
+						return retval;
+					}
 					else
-						return null;
+					{
+						if(memberTable.ContainsKey(value.ToString()))
+							return (string)memberTable[value.ToString()];
+						else
+							return null;
+					}
 				}
 				else
 				{
