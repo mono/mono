@@ -221,6 +221,12 @@ namespace Mono.Security.Cryptography {
 				if ((d == null) || (p == null) || (q == null))
 					throw new CryptographicException ("Missing private key");
 				param.D = d.GetBytes ();
+				// hack for bugzilla #57941 where D wasn't provided
+				if (param.D.Length != param.Modulus.Length) {
+					byte[] normalizedD = new byte [param.Modulus.Length];
+					Buffer.BlockCopy (param.D, 0, normalizedD, (normalizedD.Length - param.D.Length), param.D.Length);
+					param.D = normalizedD;
+				}
 				param.P = p.GetBytes ();
 				param.Q = q.GetBytes ();
 				// but CRT parameters are optionals

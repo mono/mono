@@ -133,10 +133,15 @@ namespace Mono.Security.Cryptography {
 				Array.Reverse (rsap.InverseQ);
 				pos += byteHalfLen;
 
-				// BYTE privateExponent[rsapubkey.bitlen/8];
-				rsap.D = new byte [byteLen];
-				Buffer.BlockCopy (blob, pos, rsap.D, 0, byteLen);
-				Array.Reverse (rsap.D);
+				// ok, this is hackish but CryptoAPI support it so...
+				// note: only works because CRT is used by default
+				// http://bugzilla.ximian.com/show_bug.cgi?id=57941
+				rsap.D = new byte [byteLen]; // must be allocated
+				if (pos + byteLen + offset <= blob.Length) {
+					// BYTE privateExponent[rsapubkey.bitlen/8];
+					Buffer.BlockCopy (blob, pos, rsap.D, 0, byteLen);
+					Array.Reverse (rsap.D);
+				}
 
 				RSA rsa = (RSA)RSA.Create ();
 				rsa.ImportParameters (rsap);
