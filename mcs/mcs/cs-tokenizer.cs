@@ -14,25 +14,6 @@
   Do something with the integer and float suffixes, pass full datatype?
   Make sure we accept the proper Unicode ranges, per the spec.
 
-  Open issues:
-
-  * Data type handling
-  
-	  Currently I am returning different tokens for the various
-	  kinds of floating point types (float, double, decimal) and I
-	  am only returning a single token for all integer values
-	  (integer, unsigned int, etc) as an experiment as to see
-	  which mechanism is better.
-	
-	  I do not know yet how I will be doing the mapping of "int"
-	  to things like System.Int32 and so on.  I am confused.  MAN
-	  I AM C
-	
-	  Indeed, this might be the core of the problem, I should
-	  *probably* just return a TYPE token and have the value of
-	  the token be stuff like `System.Int32', `System.UInt32',
-	  `System.Double' and so on.  I will see.
-
   * Error reporting.
 
           I was returning Token.ERROR on errors and setting an
@@ -257,7 +238,7 @@ namespace CIR
 
 		public Location Location {
 			get {
-				return new Location (ref_name, col, ref_line);
+				return new Location (ref_line);
 			}
 		}
 		
@@ -266,6 +247,8 @@ namespace CIR
 			this.ref_name = fname;
 			reader = new System.IO.StreamReader (input);
 			putback_char = -1;
+
+			Location.Push (fname);
 		}
 
 		bool is_identifier_start_character (char c)
@@ -903,29 +886,93 @@ namespace CIR
 		}
 	}
 
-	public class Location {
-		public readonly string Name;
-		public readonly int    Col;
-		public readonly int    Row;
+	// <summary>
+	//   Keeps track of the location in the program
+	//
+	//   This uses a compact representation and a couple of auxiliary
+	//   structures to keep track of tokens to (file,line) mappings.
+	//
+	//   We could probably also keep track of columns by storing those
+	//   in 8 bits (and say, map anything after char 255 to be `255+').
+	// </summary>
+	public struct Location {
+		public int token; 
 
-		public Location (string name, int col, int row)
+		static Hashtable map;
+		static ArrayList list;
+		static int global_count;
+		static int module_base;
+
+		static void Reset ()
 		{
-			Name = name;
-			Col = col;
-			Row = row;
+			map = new Hashtable ();
+			list = new ArrayList ();
+			global_count = 0;
+			module_base = 0;
 		}
-
+		
+		static Location ()
+		{
+			Reset ();
+		}
+	
+		public void Push (string name)
+		{
+			map.Add (global_count, name);
+			list.Add (global_count);
+			module_base = global_count;
+		}
+		
+		public Location (int row)
+		{
+			if (row < 0)
+				token = -1;
+			else {
+				token = module_base + row;
+				global_count = token;
+			}
+		}
+		
 		//
 		// Whether the Location is Null
 		//
 		static public bool IsNull (Location l)
 		{
-			return l == null;
+			return l.token == -1;
 		}
 
 		static public Location Null {
 			get {
-				return null;
+				return new Location (-1);
+			}
+		}
+
+		public string Name {
+			get {
+				if (token < 0)
+					return "Internal";
+				
+				foreach (int b in list){
+					if (token < b)
+						continue;
+					return (string) map [b];
+				}
+
+				return "Unknown";
+			}
+		}
+
+		public int Row {
+			get {
+				if (token < 0)
+					return 1;
+				
+				foreach (int b in list){
+					if (token < b)
+						continue;
+					return token - b;
+				}
+				return 0;
 			}
 		}
 	}

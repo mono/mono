@@ -57,7 +57,7 @@ namespace CIR
 		
 		public Tree (RootContext rc)
 		{
-			root_types = new TypeContainer (rc, null, "", new Location ("Internal", 1, 1));
+			root_types = new TypeContainer (rc, null, "", new Location (-1));
 			this.rc = rc;
 		}
 

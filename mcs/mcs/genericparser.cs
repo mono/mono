@@ -52,7 +52,7 @@ namespace Mono.Languages
 		// method everywhere you need it ?
 		static public void error (int code, CIR.Location l, string text)
 		{
-			Console.WriteLine (l.Name + "(" + l.Row + "," + l.Col +
+			Console.WriteLine (l.Name + "(" + l.Row + "," + 
 					   "): Error CS" + code + ": " + text);
 			global_errors++;
 		}

@@ -26,7 +26,7 @@ namespace CIR {
 		       
 		public void Error (int code, Location l, string text)
 		{
-			string msg = l.Name + "(" + l.Row + "," + l.Col +
+			string msg = l.Name + "(" + l.Row + 
 				"): Error CS"+code+": " + text;
 
 			RealError (msg);
@@ -34,7 +34,7 @@ namespace CIR {
 
 		public void Warning (int code, Location l, string text)
 		{
-			Console.WriteLine (l.Name + "(" + l.Row + "," + l.Col +
+			Console.WriteLine (l.Name + "(" + l.Row + 
 					   "): Warning CS"+code+": " + text);
 			warnings++;
 		}

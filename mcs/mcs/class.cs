@@ -540,8 +540,8 @@ namespace CIR {
 			int mods = 0;
 
 			c = new Constructor (Name, new Parameters (null, null),
-					     new ConstructorBaseInitializer (null, new Location ("", 0, 0)),
-					     new Location ("Internal", 1, 1));
+					     new ConstructorBaseInitializer (null, new Location (-1)),
+					     new Location (-1));
 			AddConstructor (c);
 			c.Block = new Block (null);
 			
@@ -1611,7 +1611,7 @@ namespace CIR {
 			
 			OperatorMethod = new Method (ReturnType, ModFlags, MethodName,
 						     new Parameters (param_list, null),
-						     OptAttributes, null);
+						     OptAttributes, Location.Null);
 			
 			OperatorMethod.Define (parent);
 			OperatorMethodBuilder = OperatorMethod.MethodBuilder;

@@ -436,7 +436,7 @@ namespace CIR {
 
 			Console.WriteLine ("The InternalTypeConstructor is: " + expr);
 			Expression ne = new New (target.FullName, args,
-						 new Location ("FIXME", 1, 1));
+						 new Location (-1));
 
 			return ne.Resolve (tc);
 		}
@@ -1329,7 +1329,7 @@ namespace CIR {
 			if (expr.Type == target_type)
 				return expr;
 
-			return ConvertImplicit (tc, expr, target_type, new Location ("FIXME", 1, 1));
+			return ConvertImplicit (tc, expr, target_type, new Location (-1));
 		}
 
 		void report23 (Report r, Type t)
@@ -1478,7 +1478,7 @@ namespace CIR {
 				// It is also not clear if we should convert to Float
 				// or Double initially.
 				//
-				Location l = new Location ("FIXME", 1, 1);
+				Location l = new Location (-1);
 				
 				if (expr_type == TypeManager.uint32_type){
 					//
@@ -1925,7 +1925,7 @@ namespace CIR {
 			if (expr.Type == target_type)
 				return expr;
 
-			return ConvertImplicit (tc, expr, target_type, new Location ("FIXME", 1, 1));
+			return ConvertImplicit (tc, expr, target_type, new Location (-1));
 		}
 		
 		//

@@ -114,7 +114,7 @@ namespace CIR {
 
 			if (e.Type != TypeManager.bool_type)
 				e = Expression.ConvertImplicit (parent, e, TypeManager.bool_type,
-								new Location ("FIXME", 1, 1));
+								new Location (-1));
 
 			if (e == null){
 				parent.RootContext.Report.Error (

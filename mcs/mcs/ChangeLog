@@ -1,3 +1,8 @@
+2001-10-01  Miguel de Icaza  <miguel@ximian.com>
+
+	* cs-tokenizer.cs: Reimplemented Location to be a struct with a
+	single integer which is really efficient
+
 2001-10-01  Ravi Pratap  <ravi@ximian.com>
 
 	*  expression.cs (Expression::ImplicitUserConversion): Use location
