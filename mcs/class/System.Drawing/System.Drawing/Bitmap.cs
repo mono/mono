@@ -54,7 +54,7 @@ namespace System.Drawing {
 			int bmp_size = stride * height;		
 			
 			IntPtr bmp;
-			Status s = GDIPlus.GdipCreateBitmapFromScan0 (width, height, stride, PixelFormat.Format32bppArgb, IntPtr.Zero, 
+			Status s = GDIPlus.GdipCreateBitmapFromScan0 (width, height, stride, format, IntPtr.Zero, 
 				out bmp);
 			GDIPlus.CheckStatus (s);
 			nativeObject = (IntPtr) bmp;
