@@ -1,87 +1,65 @@
 #include <mono/jit/jit.h>
 #include <stdio.h>
+#include <semaphore.h>
 
-//
-// The Mono and WINE header files have overlapping definitions in the
-// header files. Since we are only using a few functions and definitions
-// define them here to avoid conflicts.
-//
-// these are defined in jit.h
-//  typedef long LONG;
-//  typedef unsigned long DWORD;
-//  typedef unsigned short WORD;
-//  typedef UINT HANDLE;
-//  typedef HINSTANCE HMODULE;
-
+/*
+ * The Mono and WINE header files have overlapping definitions in the
+ * header files. Since we are only using a few functions and definitions
+ * define them here to avoid conflicts.
+ */
 #define __stdcall __attribute__((__stdcall__))
-#define CALLBACK    __stdcall
-#define WINAPI      __stdcall
 #define PASCAL      __stdcall
 
 typedef int INT;
 typedef unsigned int UINT;
 typedef char CHAR;
 typedef CHAR *LPSTR;
-typedef const CHAR *LPCSTR;
-
-typedef UINT WPARAM;
-typedef LONG LPARAM;
-typedef LONG LRESULT;
-typedef WORD ATOM;
-
-typedef void* HWND;
 typedef void* HINSTANCE;
-typedef void* HICON;
-typedef void* HCURSOR;
-typedef void* HBRUSH;
-
-typedef LRESULT (CALLBACK *WNDPROC) (HWND, UINT, WPARAM, LPARAM);
-
-typedef struct
-{
-	UINT style;
-	WNDPROC lpfnWndProc;
-	INT cbClsExtra;
-	INT cbWndExtra;
-	HINSTANCE hInstance;
-	HICON hIcon;
-	HCURSOR hCursor;
-	HBRUSH hbrBackground;
-	LPCSTR lpszMenuName;
-	LPCSTR lpszClassName;
-} WNDCLASSA;
-
-ATOM WINAPI RegisterClassA (const WNDCLASSA *);
-HMODULE WINAPI GetModuleHandleA (LPCSTR);
-INT WINAPI MessageBoxExA (HWND, LPCSTR, LPCSTR, UINT, WORD);
 
 HINSTANCE applicationInstance = NULL;
 
-// register WNDCLASS for use in embeded application, this is a work around
-// for Bugzilla item #29548
-int PASCAL MonoRegisterClass (UINT style, WNDPROC lpfnWndProc, INT cbClsExtra,
-			      INT cbWndExtra, HINSTANCE hInstance, HICON hIcon,
-			      HCURSOR hCursor, HBRUSH hbrBackground, 
-			      LPCSTR lpszMenuName, LPCSTR lpszClassName)
+/*
+ * unresolved symbols when linking w/o pthread (testing):
+ *   pthread_kill
+ *   sem_post
+ *   sem_init
+ *   sem_wait
+ *   sem_destroy
+ */
+#if 0
+int pthread_kill (pthread_t thread, int signo)
 {
-	WNDCLASSA wc;
-	int retval = 0;
-
-	wc.lpszClassName = lpszClassName;
-	wc.lpfnWndProc = lpfnWndProc;
-	wc.style = style;
-	wc.hInstance = applicationInstance;
-	wc.hIcon = hIcon;
-	wc.hCursor = hCursor;
-	wc.hbrBackground = hbrBackground;
-	wc.lpszMenuName = lpszMenuName;
-	wc.cbClsExtra = cbClsExtra;
-	wc.cbWndExtra = cbWndExtra;
-	
-	retval = RegisterClassA (&wc);
-	
-	return retval;
+  printf ("pthread_kill\n");
+  return 0;
 }
+
+int sem_init (sem_t *sem, int pshared, unsigned int value)
+{
+  printf ("sem_init\n");
+  return 0;
+}
+
+int sem_post (sem_t * sem) 
+{
+  printf ("sem_post\n");
+  return 0;
+}
+
+int sem_wait (sem_t * sem)
+{
+  printf ("sem_wait\n");
+  return 0;
+}
+
+int sem_destroy(sem_t * sem)
+{
+  printf ("sem_destroy\n");
+  return 0;
+}
+#endif
+
+/* not defined in the public headers but we it to load the DLL mappings */
+void mono_config_parse (const char *filename);
 
 int PASCAL WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, 
 		    LPSTR lpszCmdLine, int nCmdShow)
@@ -91,6 +69,9 @@ int PASCAL WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	int retval = 0;
 
 	applicationInstance = hInstance;
+
+	printf ("parsing configuration file\n");
+	mono_config_parse (NULL);
 
 	printf ("initializing JIT engine\n");	
 	domain = mono_jit_init (lpszCmdLine);

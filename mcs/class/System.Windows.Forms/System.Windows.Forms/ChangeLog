@@ -1,3 +1,7 @@
+  2003-31-1  John Sohn <jsohn@columbus.rr.com>
+	* makefile: cleaned and reduced dependencies to hard-coded paths
+	* monostub.c: updated for compliance with the latest Mono and WineLib
+
   2002-12-9  DennisHayes <dennish@raytek.com>	
 
 	* Form.cs
