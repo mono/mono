@@ -1,3 +1,7 @@
+2002-04-30  Dick Porter  <dick@ximian.com>
+
+	* interp.c: Tell glib to not abort when g_log() etc print
+	recursively
 
 Mon Apr 22 16:52:03 CEST 2002 Paolo Molaro <lupus@ximian.com>
 

@@ -1,3 +1,15 @@
+2002-04-30  Dick Porter  <dick@ximian.com>
+
+	* socket-io.c: Cope with SOCKET being an integer rather than a
+	pointer now.
+
+	* threads.c: Added Thread_free_internal, to deal with thread
+	handle cleanup.  Moved calls to handle_store() and handle_remove()
+	to start_wrapper(), so each can only be called once.  Allocate
+	synchronisation blocks with GC_malloc(), and use GC finalisation
+	to close the handles.
+
+	* icall.c: added System.Threading.Thread::Thread_free_internal
 
 Mon Apr 29 15:33:27 CEST 2002 Paolo Molaro <lupus@ximian.com>
 

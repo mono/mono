@@ -1,3 +1,14 @@
+2002-04-30  Dick Porter  <dick@ximian.com>
+
+	* Completely rewrote the handle waiting code: removed the helper
+	thread and its attendant complexity.  All handle waiting is now
+	abstracted into the WaitForSingleObject() and
+	WaitForMultipleObjects() functions.
+
+	* Implemented inter-process sharing of handles using sysv shared
+	memory.  This makes handles even more opaque, with a handle now
+	just an index into an array.
+	
 2002-04-25  Dan Lewis  <dihlewis@yahoo.co.uk>
 
 	* io.c: unitialized pointer in GetCurrentDirectory.

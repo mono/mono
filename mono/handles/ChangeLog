@@ -1,0 +1,10 @@
+2002-04-30  Dick Porter  <dick@ximian.com>
+
+	* shmdel.c:
+	* scratch.c:
+	* hps.c:
+	* Makefile.am: Some tools to help debug shared memory handles:
+	'hps' shows handle status, 'scratch' displays info about scratch
+	data (such as handle names), 'shmdel' deletes the shared memory
+	segment.
+
