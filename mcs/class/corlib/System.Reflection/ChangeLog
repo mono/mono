@@ -1,3 +1,8 @@
+2003-01-01  Rachel Hestilow <hestilow@ximian.com>
+
+	* MonoField.cs (SetValue): Fix logic typo. Check that obj is
+	non-null only for the non-static case.
+
 2002-12-30  Sebastien Pouliot <spouliot@videotron.ca>
 
 	* AssemblyName.cs: Fixed null cultureinfo in FullName (as reported by 

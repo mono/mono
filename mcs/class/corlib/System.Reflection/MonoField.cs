@@ -101,7 +101,7 @@ namespace System.Reflection {
 
 		public override void SetValue (object obj, object val, BindingFlags invokeAttr, Binder binder, CultureInfo culture)
 		{
-			if (IsStatic && obj == null)
+			if (!IsStatic && obj == null)
 				throw new ArgumentNullException ("obj");
 			if (binder == null)
 				binder = Binder.DefaultBinder;
