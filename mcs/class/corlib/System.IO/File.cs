@@ -273,8 +273,11 @@ namespace System.IO
 				throw new FileNotFoundException (Locale.GetText ("{0} does not exist", src), src);
 			if (MonoIO.ExistsDirectory (dest, out error))
 					throw new IOException (Locale.GetText ("{0} is a directory", dest));	
-			if (MonoIO.Exists (dest, out error))
-				throw new IOException (Locale.GetText ("{0} already exists", dest));
+
+			// Don't check for this error here to allow the runtime to check if src and dest
+			// are equal. Comparing src and dest is not enough.
+			//if (MonoIO.Exists (dest, out error))
+			//	throw new IOException (Locale.GetText ("{0} already exists", dest));
 
 			string DirName;
 			DirName = Path.GetDirectoryName(src);
@@ -284,8 +287,11 @@ namespace System.IO
 			if (DirName != String.Empty && !Directory.Exists (DirName))
 				throw new DirectoryNotFoundException(Locale.GetText ("Destination directory not found: {0}", DirName));
 
-			if (!MonoIO.MoveFile (src, dest, out error))
+			if (!MonoIO.MoveFile (src, dest, out error)) {
+				if (error == MonoIOError.ERROR_ALREADY_EXISTS)
+					throw MonoIO.GetException (dest, error);
 				throw MonoIO.GetException (error);
+			}
 		}
 		
 		public static FileStream Open (string path, FileMode mode)
