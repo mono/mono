@@ -182,9 +182,10 @@ namespace System.Windows.Forms {
 		//
 		//  --- Destructor
 		//
-		[MonoTODO]
 		~NativeWindow ()
 		{
+			if ( windowHandle != IntPtr.Zero )
+				DestroyHandle ( );
 		}
 
  		static private IntPtr WndProc (

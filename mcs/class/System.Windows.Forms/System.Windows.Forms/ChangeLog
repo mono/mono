@@ -1,4 +1,9 @@
 2003-06-09 Aleksey Ryabchuk <ryabchuk@yahoo.com>
+	* Conrols.cs : Disposing property, Dispose method
+	* Cursor.cs  : Show, Hide, Copy cursor
+	* NativeWindow.cs : destructor
+
+2003-06-09 Aleksey Ryabchuk <ryabchuk@yahoo.com>
 	* Control.cs : Cursor property, handle WM_SETCURSOR
 	* Cursor.cs : started implementation
 	* Cursors.cs : load system cursor types

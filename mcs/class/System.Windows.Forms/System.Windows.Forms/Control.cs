@@ -99,6 +99,7 @@
 		private static readonly int DISPOSED	     = BitVector32.CreateMask( LAYOUT_PENDING );
 		private static readonly int RECREATING_HANDLE= BitVector32.CreateMask( DISPOSED );
 		private static readonly int CREATED          = BitVector32.CreateMask( RECREATING_HANDLE );
+		private static readonly int DISPOSING        = BitVector32.CreateMask( CREATED );
 
 			object tag;
 			protected bool mouseIsInside_;
@@ -641,11 +642,8 @@
     			}
     		}
     		
-    		[MonoTODO]
     		public bool Disposing {
-    			get {
-    				throw new NotImplementedException ();
-    			}
+    			get { return statuses [ DISPOSING ]; }
     		}
     		
     		public virtual DockStyle Dock {
@@ -1201,11 +1199,21 @@
 			}
 		}
     	
-    		protected override void Dispose (bool disposing) 
+    		protected override void Dispose ( bool disposing ) 
     		{
-			statuses [ DISPOSED ] = true;
-				//FIXME: 
-    			base.Dispose(disposing);
+			lock ( this ) {
+				statuses [ DISPOSING ] = true;
+				try {
+					if ( disposing ) {
+						DestroyHandle ( );
+					}
+					// close/free unmanaged resources
+				}
+				finally {
+		    			base.Dispose( disposing );
+				}
+				statuses [ DISPOSED ] = true;
+			}
     		}
     	
     		[MonoTODO]

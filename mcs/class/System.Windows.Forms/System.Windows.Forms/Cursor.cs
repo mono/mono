@@ -103,10 +103,10 @@ namespace System.Windows.Forms {
 		#endregion
 		
 		#region Methods
-		[MonoTODO]
+
 		public IntPtr CopyHandle() 
 		{
-			throw new NotImplementedException ();
+			return Win32.CopyCursor ( Handle );
 		}
 		
 		public void Dispose() 
@@ -167,10 +167,9 @@ namespace System.Windows.Forms {
 			return base.GetHashCode();
 		}
 		
-		[MonoTODO]
 		public static void Hide() 
 		{
-			throw new NotImplementedException ();
+			Win32.ShowCursor ( false );
 		}
 		
 		/// ISerializable.GetObjectData only supports .NET framework:
@@ -180,10 +179,9 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException ();
 		}
 		
-		[MonoTODO]
 		public static void Show() 
 		{
-			throw new NotImplementedException ();
+			Win32.ShowCursor ( true );
 		}
 		
 		[MonoTODO]

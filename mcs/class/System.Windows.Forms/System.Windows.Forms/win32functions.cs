@@ -312,6 +312,12 @@ namespace System.Windows.Forms{
 		[DllImport("user32.dll", CharSet=CharSet.Auto)]
 		internal static extern IntPtr SetCursor(IntPtr hCursor);
 
+		[DllImport("user32.dll", CharSet=CharSet.Ansi)]
+		internal static extern int ShowCursor ( bool bShow );
+
+		[DllImport("user32.dll", CharSet=CharSet.Ansi)]
+		internal static extern IntPtr CopyCursor ( IntPtr pcur );
+
 		[DllImport("user32.dll", CharSet=CharSet.Auto)]
 		internal static extern IntPtr BeginPaint(IntPtr hWnd, ref PAINTSTRUCT ps);
 
