@@ -1,3 +1,9 @@
+
+Mon Feb 17 13:13:31 CET 2003 Paolo Molaro <lupus@ximian.com>
+
+	* image.c: explain the #- heap issue in a message, hopefully
+	avoiding FAQs on mono-list.
+
 2003-02-17  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* icall.c:
