@@ -319,9 +319,13 @@ namespace System
 			get {
 				if (!IsFile)
 					return path;
+
+				bool windows = (path.Length > 3 && path [1] == ':' &&
+						(path [2] == '\\' || path [2] == '/'));
+
 				if (!IsUnc) {
 					string p = Unescape (path);
-					if (System.IO.Path.DirectorySeparatorChar == '\\')
+					if (System.IO.Path.DirectorySeparatorChar == '\\' || windows)
 						return p.Replace ('/', '\\');
 					else
 						return p;
