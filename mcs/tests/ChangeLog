@@ -1,3 +1,7 @@
+2004-03-09  Joshua Tauberer <tauberer@for.net>
+
+	* test-232.cs: Tests for { ... }-style array creation
+
 2004-02-25  Marek Safar <marek.safar@seznam.cz>
 
 	* Makefile: Enable test-230.

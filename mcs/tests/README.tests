@@ -51,7 +51,7 @@ Test cases listed by Category:
 
 * Arrays and array creation
 
-  test-165.cs, test-167.cs
+  test-165.cs, test-167.cs, test-232.cs
 
 * Labels and goto
 
@@ -448,6 +448,10 @@ public class List : IEnumerable {
 test-231.cs:
 ------------
 Test for emitting callvirt when we need it.
+
+test-232.cs:
+------------
+Tests for {...}-style array creation
 
 verify-1.cs
 -----------
