@@ -312,6 +312,38 @@ namespace Mono.CSharp {
 		{
 			this.reader = reader;
 			this.buffer = new char [DefaultCacheSize];
+			
+			// Compute the preamble size
+			
+			// Let the StreamWriter autodetect the encoder
+			reader.Peek ();
+			
+			reader.BaseStream.Position = 0;
+			Encoding enc = reader.CurrentEncoding;
+			
+			// First of all, get at least a char
+			
+			byte[] auxb = new byte [50];
+			int nr = 0;
+			int nc = 0;
+			do {
+				nr += reader.BaseStream.Read (auxb, nr, auxb.Length - nr);
+				nc = enc.GetCharCount (auxb, 0, nr);
+			}
+			while (nc == 0);
+			
+			// Now, check which bytes at the beginning have no effect in the
+			// char count
+			
+			int p = 0;
+			while (enc.GetCharCount (auxb, p, nr-p) >= nc)
+				p++;
+			
+			preamble_size = p - 1;
+			reader.BaseStream.Position = 0;
+			reader.DiscardBufferedData ();
+			
+			buffer_start = preamble_size;
 		}
 
 		public SeekableStreamReader (Stream stream, Encoding encoding, bool detect_encoding_from_bytemarks)
@@ -327,6 +359,7 @@ namespace Mono.CSharp {
 		int buffer_size;        // in bytes
 		int char_count;         // count buffer[] valid characters
 		int pos;                // index into buffer[]
+		int preamble_size;
 
 		/// <remarks>
 		///   The difference to the StreamReader's BaseStream.Position is that this one is reliable; ie. it
@@ -349,6 +382,9 @@ namespace Mono.CSharp {
 					
 					return;
 				}
+				
+				if (value == 0)	// Skip preamble
+					value = preamble_size;
 
 				// Ok, now we need to seek.
 				reader.DiscardBufferedData ();
