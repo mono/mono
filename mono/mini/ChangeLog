@@ -1,5 +1,7 @@
 2003-10-12  Zoltan Varga  <vargaz@freemail.hu>
 
+	* tramp-x86.c (x86_class_init_trampoline): Fix build.
+	
 	* tramp-x86.c (x86_class_init_trampoline): Thread safety fixes.
 
 2003-10-10  Zoltan Varga  <vargaz@freemail.hu>
