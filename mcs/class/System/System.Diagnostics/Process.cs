@@ -666,7 +666,8 @@ namespace System.Diagnostics {
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static bool Start_internal(string cmd,
+		private extern static bool Start_internal(string appname,
+							  string cmdline,
 							  string dir,
 							  IntPtr stdin,
 							  IntPtr stdout,
@@ -734,8 +735,22 @@ namespace System.Diagnostics {
 				stderr_wr=MonoIO.ConsoleError;
 			}
 			
-			ret=Start_internal(startInfo.FileName + " " +
-					   startInfo.Arguments,
+			string cmdline;
+			string appname;
+			if (startInfo.UseShellExecute) {
+				appname = null;
+				string args = startInfo.Arguments;
+				if (args == null || args.Trim () == "")
+					cmdline = startInfo.FileName;
+				else
+					cmdline = startInfo.FileName + " " + startInfo.Arguments.Trim ();
+			} else {
+				appname = startInfo.FileName;
+				cmdline = startInfo.Arguments.Trim ();
+			}
+
+			ret=Start_internal(appname,
+					   cmdline,
 					   startInfo.WorkingDirectory,
 					   stdin_rd, stdout_wr, stderr_wr,
 					   ref proc_info);

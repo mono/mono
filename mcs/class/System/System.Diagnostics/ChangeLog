@@ -1,13 +1,19 @@
 2004-05-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* Process.cs: separate the command and the arguments when calling
+	Start_internal.
+
+2004-05-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* Process.cs: redirecting I/O is not permitted if UseShellExecute is
 	false. Also throw if FileName is null.
 
 2004-04-06  Lluis Sanchez Gual  <lluis@ximian.com>
 
-	* DiagnosticsConfigurationHandler.cs: If initializeData is provided, use the
-	constructor that only takes one string as parameter to construct the 
-	listener. The name is set using the Name property, not the constructor.
+	* DiagnosticsConfigurationHandler.cs: If initializeData is provided,
+	use the constructor that only takes one string as parameter to
+	construct the listener. The name is set using the Name property, not the
+	constructor.
 	
 	* TextWriterTraceListener.cs: In Write*, do nothing if no writer was 
 	provided.
