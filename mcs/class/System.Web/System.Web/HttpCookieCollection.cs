@@ -18,6 +18,7 @@ namespace System.Web
                         {
                                 return this.BaseGetAllKeys();
                         }
+                }
                 public HttpCookie this[int index]
                 {
                         get
