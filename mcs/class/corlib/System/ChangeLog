@@ -1,3 +1,7 @@
+2003-02-05  Patrik Torstensson
+
+	* AppDomain.cs: Partly fixed the unload method 
+	
 2003-02-04  Patrik Torstensson
 
 	* AppDomain.cs: Fixed lease issue with appdomain

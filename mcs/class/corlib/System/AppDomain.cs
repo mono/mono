@@ -17,6 +17,7 @@ using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Threading;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Remoting;
@@ -593,8 +594,35 @@ namespace System {
 
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public static extern void Unload (AppDomain domain);
+		public static extern void InternalUnload (int domain_id);
 		
+		// We do this because if the domain is a transparant proxy this
+		// will still return the correct domain id.
+		private int getDomainID () {
+			return Thread.GetDomainID ();
+		}
+
+		public static void Unload (AppDomain domain) {
+			// fire the event(s) that we are unload the domain
+			domain.DoOnAssemblyUnload ();
+			
+			// FIX: We need to unload the stuff in another thread
+			// and throw abort exceptions on all threads involved
+			// in any operations in the unloading domain.
+			//
+			// We need to clean the remoting references and cross app
+			// domain sinks.
+			//
+			// This is just a hack to make unload work (almost anyway)
+		
+			InternalUnload (domain.getDomainID());
+		}
+
+		private void DoOnAssemblyUnload () {
+			if (DomainUnload != null)
+				DomainUnload(this, null);
+		}
+
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern void SetData (string name, object data);
 
