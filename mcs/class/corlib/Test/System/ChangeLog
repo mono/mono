@@ -1,3 +1,11 @@
+2002-02-20  Nick Drochak  <ndrochak@gol.com>
+
+	* Int64Test.cs: One array was giving us trouble.  Not sure why, but
+	it's related to the number of elements in an Array.  For short Arrays
+	the compiler doesn't use the PrivateImplmentationDetails struct,
+	but for longer ones it does.  That's when our corlib fails. I paired
+	down the array for now.
+
 2002-02-19  Duco Fijma <duco@lorentz.xs4all.nl>
 	* GuidTest.cs: added a few cases
 
