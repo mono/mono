@@ -1,3 +1,12 @@
+2002-05-12  Daniel Morgan <danmorg@sc.rr.com>
+
+	* IComponent.cs
+	* ISite.cs: added using System
+	 
+	* MarshalByValueComponent.cs: changed all throwing of Not ImplementedException
+	to // TODOs and added using System.  The throwing of the exceptions prevented
+	System.Data from running.
+
 2002-05-10  Rodrigo Moya <rodrigo@ximian.com>
 
 	* EventDescriptorCollection.cs (this[index]): call eventList[index],

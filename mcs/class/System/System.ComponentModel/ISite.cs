@@ -7,6 +7,8 @@
 // (C) Ximian, Inc.  http://www.ximian.com
 //
 
+using System;
+
 namespace System.ComponentModel {
 
 	public interface ISite : IServiceProvider {

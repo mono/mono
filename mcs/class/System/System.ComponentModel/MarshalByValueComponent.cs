@@ -7,6 +7,8 @@
 // (C) Ximian, Inc
 //
 
+using System;
+
 namespace System.ComponentModel
 {
 	/// <summary>
@@ -16,45 +18,58 @@ namespace System.ComponentModel
 	{
 		[MonoTODO]
 		public MarshalByValueComponent () {
-			throw new NotImplementedException ();
+			// TODO: need to implement for some component model
+			//        but do not throw a NotImplementedException
 		}
 
 		[MonoTODO]
 		public void Dispose () {
-			throw new NotImplementedException ();
+			// TODO: need to do, but do not
+			// throw a NotImplementedException
 		}
 
+		[MonoTODO]
 		protected virtual void Dispose (bool disposing) {
 		}
 
+		[MonoTODO]
 		public virtual object GetService (Type service) {
 			return null;
 		}
 		
 		public virtual IContainer Container {
+			[MonoTODO]
 			get {
 				return null;
 			}
 		}
 
 		public virtual bool DesignMode {
+			[MonoTODO]
 			get {
 				return false;
 			}
 		}
 
 		public virtual ISite Site {
+			[MonoTODO]
 			get {
+				// TODO: need to get Site
 				return null;
 			}
+
+			[MonoTODO]
 			set {
+				// TODO: need to set Site
 			}
 		}
 
-		[MonoTODO]
 		protected EventHandlerList Events {
+			[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				// TODO: need to do, but do not
+				// throw a NotImplementedException
+				return null;
 			}
 		}
 		
