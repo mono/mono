@@ -1,5 +1,9 @@
 2004-07-27 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* DataList.cs: s/HasChildren/HasControls()/.
+
+2004-07-27 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* DataList.cs: style.
 
 2004-07-27 Alon Gazit <along@mainsoft.com>
