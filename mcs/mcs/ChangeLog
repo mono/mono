@@ -1,5 +1,11 @@
 2002-07-29  Martin Baulig  <martin@gnome.org>
 
+	* parameter.cs (Parameter.Modifier): Added `ISBYREF = OUT|REF'.
+	(Parameter.GetParameterInfo (DeclSpace, int, out bool)): Changed
+	the out parameter to `out Parameter.Modifier mod'.
+
+2002-07-29  Martin Baulig  <martin@gnome.org>
+
 	* expression.cs (ParameterReference.ParameterReference): Added
 	`Location loc' argument to the constructor.
 
@@ -39,17 +45,6 @@
 	pop it again when we're done with the switch.
 	(switch_section): The new block is a child of the current_block.
 	Fixes bug #24007, added test-152.cs.
-
-2002-07-27  Martin Baulig  <martin@gnome.org>
-
-	These two changes won't give us any performance or code-size
-	improvements, but they make my control flow analyis much simpler.
-
-	* statement.cs (While.Emit): Did some loop-inversion here; emit the
-	test, then the body of the while and then a jump back to the test.
-	(For.Emit): Did some loop-inversion here; emit the initialization,
-	then the test, then the body, then the incrementation and then a jump
-	back to the test.
 
 2002-07-27  Martin Baulig  <martin@gnome.org>
 
