@@ -1,3 +1,8 @@
+2005-01-18  Zoltan Varga  <vargaz@freemail.hu>
+
+	* exceptions-sparc.c tramp-sparc.c: Allocate code using the global code
+	manager.
+
 2005-01-17  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini.c (mono_create_jump_trampoline): Revert last change as it causes
