@@ -10,7 +10,7 @@
 // (C) 2001, 2002 Ximian, Inc (http://www.ximian.com)
 //
 //
-#undef CACHE
+#define CACHE
 using System;
 using System.Collections;
 using System.Reflection;
@@ -1055,11 +1055,10 @@ namespace Mono.CSharp {
 				DefineMembers (delegates, defined_names);
 
 #if CACHE
-			if (TypeBuilder.BaseType != null) {
+			if (TypeBuilder.BaseType != null)
 				parent_container = TypeManager.LookupMemberContainer (TypeBuilder.BaseType);
 
-				member_cache = new MemberCache (this);
-			}
+			member_cache = new MemberCache (this);
 #endif
 
 			return true;
