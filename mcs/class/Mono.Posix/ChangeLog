@@ -1,7 +1,11 @@
 2004-11-16  Jonathan Pryor  <jonpryor@vt.edu>
 
-	* Rename Mono.Posix to Mono.Unix.
-	* Mono.Posix.dll.sources: Rename Mono.Posix to Mono.Unix.
+	+ Rename the Mono.Posix namespace to Mono.Unix.
+	+ Copy the Mono.Posix files from the mono-1-0 branch to Mono.Posix (to
+	  preserve backward compatibility).
+	* Mono.Posix.dll.sources: Rename Mono.Posix to Mono.Unix, remove
+	  IncludeAttribute and MapAttribute from Mono.Posix namespace (use the
+	  ones in Mono.Unix instead).
 	* Makefile: Update file paths to build from Mono.Unix.
 
 2004-11-05  Jonathan Pryor  <jonpryor@vt.edu>

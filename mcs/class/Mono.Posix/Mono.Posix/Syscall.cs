@@ -21,13 +21,24 @@
 //    use a set of C helper routines to map from the constants we define
 //    to the values of the native OS.
 //
-//    Bitfields are flagged with the [Map] attribute, and a helper program
+//    Bitfields were flagged with the [Map] attribute, and a helper program
 //    generates a set of map_XXXX routines that we can call to convert
 //    from our value definitions to the value definitions expected by the
 //    OS.
 //
 //    Methods that require tuning are bound as `internal syscal_NAME' methods
 //    and then a `NAME' method is exposed.
+//
+// Deprecated Warning:
+//
+//    This class is deprecated, and exists only for backward compatibility.
+//    Please use and maintain Mono.Unix.Syscall.
+//
+//    The [Map] attributes have been removed.  The naming and methodology of
+//    the mapping routines has changed.  The old map functions still exist in
+//    MonoPosixHelper, but they will not be updated any further.
+//    Consequently, there is little point in maintaining the [Map] attributes
+//    in this file, as they would only bloat MonoPosixHelper.
 //
 
 //
@@ -55,11 +66,9 @@ using System;
 using System.Text;
 using System.Runtime.InteropServices;
 
-[assembly:Mono.Posix.IncludeAttribute (new string [] {"sys/types.h", "sys/stat.h", "sys/wait.h", "unistd.h", "fcntl.h", "signal.h"},
-				       new string [] {"_GNU_SOURCE"})]
 namespace Mono.Posix {
 
-	[Map][Flags]
+	[Flags]
 	public enum OpenFlags {
 		//
 		// One of these
@@ -91,7 +100,7 @@ namespace Mono.Posix {
 		// O_LARGEFILE = 8192
 	}
 	
-	[Flags][Map]
+	[Flags]
 	public enum FileMode {
 		S_ISUID   = 2048,
 		S_ISGID   = 1024,
@@ -107,13 +116,13 @@ namespace Mono.Posix {
 		S_IXOTH   = 1
 	}
 
-	[Flags][Map]
+	[Flags]
 	public enum WaitOptions {
 		WNOHANG,
 		WUNTRACED
 	}
 
-	[Flags][Map]
+	[Flags]
 	public enum AccessMode {
 		R_OK = 1,
 		W_OK = 2,
@@ -121,7 +130,7 @@ namespace Mono.Posix {
 		F_OK = 8
 	}
 
-	[Map]
+	
 	public enum Signals {
 		SIGHUP, SIGINT, SIGQUIT, SIGILL, SIGTRAP, SIGABRT, SIGBUS,
 		SIGFPE, SIGKILL, SIGUSR1, SIGSEGV, SIGUSR2, SIGPIPE,

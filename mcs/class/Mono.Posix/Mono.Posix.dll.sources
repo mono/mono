@@ -24,8 +24,6 @@
 ./Mono.Unix/UnixUserInfo.cs
 ./Mono.Unix/UnixEndPoint.cs
 ./Mono.Posix/Catalog.cs
-./Mono.Posix/IncludeAttribute.cs
-./Mono.Posix/MapAttribute.cs
 ./Mono.Posix/PeerCred.cs
 ./Mono.Posix/Syscall.cs
 ./Mono.Posix/UnixEndPoint.cs
