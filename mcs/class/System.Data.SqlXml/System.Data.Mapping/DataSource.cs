@@ -22,7 +22,7 @@ namespace System.Data.Mapping {
 		}
 
 		[MonoTODO]
-		public string name { 
+		public string Name { 
 			get { throw new NotImplementedException (); }
 		}
 

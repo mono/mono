@@ -33,37 +33,37 @@ namespace System.Xml.Query {
 		}
 
 		[MonoTODO]
-		private bool ICollection.IsSynchronized {
+		bool ICollection.IsSynchronized {
 			get { throw new NotImplementedException (); }
 		}
 
 		[MonoTODO]
-		private object ICollection.SyncRoot {
+		object ICollection.SyncRoot {
 			get { throw new NotImplementedException (); }
 		}
 
 		[MonoTODO]
-		private bool IDictionary.IsFixedSize {
+		bool IDictionary.IsFixedSize {
 			get { throw new NotImplementedException (); }
 		}
 
 		[MonoTODO]
-		private bool IDictionary.IsReadOnly {
+		bool IDictionary.IsReadOnly {
 			get { throw new NotImplementedException (); }
 		}
 
 		[MonoTODO]
-		private ICollection IDictionary.Keys {
+		ICollection IDictionary.Keys {
 			get { throw new NotImplementedException (); }
 		}
 
 		[MonoTODO]
-		private ICollection IDictionary.Values {
+		ICollection IDictionary.Values {
 			get { throw new NotImplementedException (); }
 		}
 
 		[MonoTODO]
-		private object IDictionary.this [object key] {
+		object IDictionary.this [object key] {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
@@ -127,31 +127,31 @@ namespace System.Xml.Query {
 		}
 
 		[MonoTODO]
-		private void ICollection.CopyTo (Array array, int index)
+		void ICollection.CopyTo (Array array, int index)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		private void IDictionary.Add (object key, object value)
+		void IDictionary.Add (object key, object value)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		private bool IDictionary.Contains (object key)
+		bool IDictionary.Contains (object key)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		private void IDictionary.Remove (object key)
+		void IDictionary.Remove (object key)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		private IEnumerator IEnumerable.GetEnumerator ()
+		IEnumerator IEnumerable.GetEnumerator ()
 		{
 			throw new NotImplementedException ();
 		}

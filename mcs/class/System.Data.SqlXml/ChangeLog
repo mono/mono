@@ -1,3 +1,11 @@
+2003-12-29  Tim Coleman <tim@timcoleman.com>
+	* System.Data.SqlXml.dll.sources:
+		Remove XmlDataSourceResolver as it is broken.
+	* System.Data.Mapping/DataSource.cs:
+		Fix property name
+	* System.Xml.Query/XmlViewSchemaDictionary.cs:
+		Remove "private" from some properties	
+
 2003-12-15  Atsushi Enomoto <atsushi@ximian.com>
 
 	* System.Data.SqlXml.dll.sources: Added System.Xml classes.
