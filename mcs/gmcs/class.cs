@@ -396,7 +396,7 @@ namespace Mono.CSharp {
 			if (indexers == null)
 				indexers = new ArrayList ();
 
-			if (i.ExplicitInterfaceName != null)
+			if (i.MemberName.TypeName != null)
 				indexers.Insert (0, i);
 			else
 				indexers.Add (i);
