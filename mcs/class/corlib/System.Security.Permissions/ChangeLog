@@ -1,3 +1,9 @@
+2002-07-22  Tim Coleman <tim@timcoleman.com>
+	* ReflectionPermission.cs:
+	* EnvironmentPermission.cs:
+		Stubbs added because these are referenced
+		in System.Web.
+
 2002-07-13  Jonathan Pryor  <jonpryor@vt.edu>
 	* ResourcePermissionBase.cs: Stubbed out
 	* ResourcePermissionBaseEntry.cs: Implemented.
