@@ -52,6 +52,12 @@ class X
 		Console.WriteLine (a.a);
 	}
 
+	static void test5 (out A a)
+	{
+		test_output (a);
+		a = new A (5);
+	}
+
 	public static int Main ()
 	{
 		// Compilation-only test.
