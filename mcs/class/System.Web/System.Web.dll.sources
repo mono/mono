@@ -259,6 +259,7 @@ System.Web.UI.WebControls/BulletedListEventHandler.cs
 System.Web.UI.WebControls/Button.cs
 System.Web.UI.WebControls/ButtonColumn.cs
 System.Web.UI.WebControls/ButtonColumnType.cs
+System.Web.UI.WebControls/ButtonFieldBase.cs
 System.Web.UI.WebControls/ButtonType.cs
 System.Web.UI.WebControls/Calendar.cs
 System.Web.UI.WebControls/CalendarDay.cs
@@ -274,6 +275,7 @@ System.Web.UI.WebControls/ContentPlaceHolderBuilder.cs
 System.Web.UI.WebControls/ControlIDConverter.cs
 System.Web.UI.WebControls/CommandEventArgs.cs
 System.Web.UI.WebControls/CommandEventHandler.cs
+System.Web.UI.WebControls/CommandField.cs
 System.Web.UI.WebControls/CompareValidator.cs
 System.Web.UI.WebControls/CompositeControl.cs
 System.Web.UI.WebControls/CompositeDataBoundControl.cs
@@ -285,6 +287,7 @@ System.Web.UI.WebControls/CreateUserErrorEventArgs.cs
 System.Web.UI.WebControls/CreateUserErrorEventHandler.cs
 System.Web.UI.WebControls/CustomValidator.cs
 System.Web.UI.WebControls/DataBoundControl.cs
+System.Web.UI.WebControls/DataControlButton.cs
 System.Web.UI.WebControls/DataControlCellType.cs
 System.Web.UI.WebControls/DataControlField.cs
 System.Web.UI.WebControls/DataControlFieldCollection.cs
