@@ -136,7 +136,7 @@ namespace MonoTests.System.Data.SqlTypes
                 {
 
 			// Abs
-			AssertEquals ("#D01", (SqlDecimal)6, SqlDecimal.Abs (Test4));
+			AssertEquals ("#D01", (SqlDecimal)6m, SqlDecimal.Abs (Test4));
                 	AssertEquals ("#D02", (SqlDecimal)6464.6464m, SqlDecimal.Abs (Test1));
                 	
                 	AssertEquals ("#D03", SqlDecimal.Null, SqlDecimal.Abs (SqlDecimal.Null));
@@ -151,7 +151,7 @@ namespace MonoTests.System.Data.SqlTypes
                                 AssertEquals ("#D06", typeof (OverflowException), e.GetType ());
                         }
                         
-			AssertEquals ("#D07", (SqlDecimal)6465, SqlDecimal.Ceiling(Test1));
+			AssertEquals ("#D07", (SqlDecimal)6465m, SqlDecimal.Ceiling(Test1));
                 	AssertEquals ("#D08", SqlDecimal.Null, SqlDecimal.Ceiling(SqlDecimal.Null));
                 	
                         // Divide()
@@ -165,7 +165,7 @@ namespace MonoTests.System.Data.SqlTypes
                                 AssertEquals ("#D12", typeof (DivideByZeroException), e.GetType ());
                         }
 
-			AssertEquals ("#D13", (SqlDecimal)6464, SqlDecimal.Floor (Test1));
+			AssertEquals ("#D13", (SqlDecimal)6464m, SqlDecimal.Floor (Test1));
                 	
                         // Multiply()
                         AssertEquals ("#D14", 64646464m, SqlDecimal.Multiply (Test1, Test2).Value);
@@ -413,7 +413,7 @@ namespace MonoTests.System.Data.SqlTypes
                         }
 
                         // "*"-operator
-                        AssertEquals ("#P07", (SqlDecimal)64646464, Test1 * Test2);
+                        AssertEquals ("#P07", (SqlDecimal)64646464m, Test1 * Test2);
 
                         try {
                                 SqlDecimal test = SqlDecimal.MaxValue * Test1;

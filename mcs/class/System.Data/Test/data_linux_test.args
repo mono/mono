@@ -1,0 +1,21 @@
+--target library
+-o data_linux_test.dll
+--noconfig
+-r ../../lib/System.Data.dll
+-r ../../lib/System.dll
+-r ../../../nunit/NUnitCore_mono.dll
+System.Data.SqlTypes/AllTests.cs
+System.Data.SqlTypes/SqlBinaryTest.cs
+System.Data.SqlTypes/SqlBooleanTest.cs
+System.Data.SqlTypes/SqlByteTest.cs
+System.Data.SqlTypes/SqlDoubleTest.cs
+System.Data.SqlTypes/SqlInt16Test.cs
+System.Data.SqlTypes/SqlInt32Test.cs
+System.Data.SqlTypes/SqlInt64Test.cs
+System.Data.SqlTypes/SqlSingleTest.cs
+System.Data.SqlTypes/SqlMoneyTest.cs
+System.Data.SqlTypes/SqlDateTimeTest.cs
+System.Data.SqlTypes/SqlGuidTest.cs
+System.Data.SqlTypes/SqlDecimalTest.cs
+System.Data.SqlTypes/SqlStringTest.cs
+AllTests.cs

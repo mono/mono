@@ -20,7 +20,7 @@ namespace MonoTests.System.Data.SqlTypes
 			get {
 				TestSuite suite =  new TestSuite ();
 				suite.AddTest (new TestSuite (typeof (SqlBinaryTest)));
-				suite.AddTest (new TestSuite (typeof (SqlBooleanTest)));
+								suite.AddTest (new TestSuite (typeof (SqlBooleanTest)));
 				suite.AddTest (new TestSuite (typeof (SqlByteTest)));
 				suite.AddTest (new TestSuite (typeof (SqlDoubleTest)));
 				suite.AddTest (new TestSuite (typeof (SqlInt16Test)));
@@ -32,7 +32,7 @@ namespace MonoTests.System.Data.SqlTypes
 				suite.AddTest (new TestSuite (typeof (SqlGuidTest)));
 				suite.AddTest (new TestSuite (typeof (SqlDecimalTest)));
 				suite.AddTest (new TestSuite (typeof (SqlStringTest)));
-				return suite;
+			        return suite;
 			}
 		}
 	}

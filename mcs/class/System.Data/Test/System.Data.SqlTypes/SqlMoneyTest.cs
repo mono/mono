@@ -97,9 +97,9 @@ namespace MonoTests.System.Data.SqlTypes
 			SqlMoney TestMoney2 = new SqlMoney (2);
 
 			// Add
-                        AssertEquals ("#D01", (SqlMoney)96464.6464, SqlMoney.Add (Test1, Test2));
-                        AssertEquals ("#D02", (SqlMoney)180000, SqlMoney.Add (Test2, Test2));
-                        AssertEquals ("#D03", (SqlMoney)45000, SqlMoney.Add (Test2, Test4));
+                        AssertEquals ("#D01", (SqlMoney)96464.6464m, SqlMoney.Add (Test1, Test2));
+                        AssertEquals ("#D02", (SqlMoney)180000m, SqlMoney.Add (Test2, Test2));
+                        AssertEquals ("#D03", (SqlMoney)45000m, SqlMoney.Add (Test2, Test4));
 			
 			try {
 				SqlMoney test = SqlMoney.Add(SqlMoney.MaxValue, Test2);
@@ -109,7 +109,7 @@ namespace MonoTests.System.Data.SqlTypes
 			}
 
 			// Divide
-                        AssertEquals ("#D06", (SqlMoney)45000, SqlMoney.Divide (Test2, TestMoney2));
+                        AssertEquals ("#D06", (SqlMoney)45000m, SqlMoney.Divide (Test2, TestMoney2));
 			try {
 				SqlMoney test = SqlMoney.Divide (Test2, SqlMoney.Zero);
 				Fail ("#D07");
@@ -119,8 +119,8 @@ namespace MonoTests.System.Data.SqlTypes
 			}
 				     			
 			// Multiply
-                        AssertEquals ("#D09", (SqlMoney)581818176, SqlMoney.Multiply (Test1, Test2));
-                        AssertEquals ("#D10", (SqlMoney)(-4050000000), SqlMoney.Multiply (Test3, Test4));
+                        AssertEquals ("#D09", (SqlMoney)581818176m, SqlMoney.Multiply (Test1, Test2));
+                        AssertEquals ("#D10", (SqlMoney)(-4050000000m), SqlMoney.Multiply (Test3, Test4));
 
 			try {
 				SqlMoney test = SqlMoney.Multiply (SqlMoney.MaxValue, Test2);
@@ -130,8 +130,8 @@ namespace MonoTests.System.Data.SqlTypes
 			}
 				      
 			// Subtract
-                        AssertEquals ("#D13", (SqlMoney)0, SqlMoney.Subtract (Test2, Test3));
-                        AssertEquals ("#D14", (SqlMoney)83535.3536, SqlMoney.Subtract (Test2, Test1));
+                        AssertEquals ("#D13", (SqlMoney)0m, SqlMoney.Subtract (Test2, Test3));
+                        AssertEquals ("#D14", (SqlMoney)83535.3536m, SqlMoney.Subtract (Test2, Test1));
 			
 			try {
 				SqlMoney test = SqlMoney.Subtract (SqlMoney.MinValue, Test2);
@@ -314,7 +314,7 @@ namespace MonoTests.System.Data.SqlTypes
                 public void TestArithmeticOperators()
                 {
                         // "+"-operator
-                        AssertEquals ("#N01", (SqlMoney)96464.6464, Test1 + Test2);
+                        AssertEquals ("#N01", (SqlMoney)96464.6464m, Test1 + Test2);
      
                         try {
                                 SqlMoney test = SqlMoney.MaxValue + SqlMoney.MaxValue;
@@ -324,7 +324,7 @@ namespace MonoTests.System.Data.SqlTypes
                         }
 
                         // "/"-operator
-                        AssertEquals ("#N04", (SqlMoney)13.9219, Test2 / Test1);
+                        AssertEquals ("#N04", (SqlMoney)13.9219m, Test2 / Test1);
 
                         try {
                                 SqlMoney test = Test3 / SqlMoney.Zero;
@@ -334,7 +334,7 @@ namespace MonoTests.System.Data.SqlTypes
                         }
 
                         // "*"-operator
-                        AssertEquals ("#N07", (SqlMoney)581818176, Test1 * Test2);
+                        AssertEquals ("#N07", (SqlMoney)581818176m, Test1 * Test2);
 
                         try {
                                 SqlMoney test = SqlMoney.MaxValue * Test1;
@@ -344,7 +344,7 @@ namespace MonoTests.System.Data.SqlTypes
                         }
 
                         // "-"-operator
-                        AssertEquals ("#N10", (SqlMoney)83535.3536, Test2 - Test1);
+                        AssertEquals ("#N10", (SqlMoney)83535.3536m, Test2 - Test1);
 
                         try {
                                 SqlMoney test = SqlMoney.MinValue - SqlMoney.MaxValue;
