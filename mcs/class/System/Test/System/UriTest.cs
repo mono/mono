@@ -787,6 +787,24 @@ namespace MonoTests.System
 			UriEx2 ex = new UriEx2 ("readme.txt");
 		}
 
+		[Test]
+		public void UnixLocalPath ()
+		{
+			// This works--the location is not part of the absolute path
+			string path = "file://localhost/tmp/foo/bar";
+			Uri fileUri = new Uri( path );
+			AssertEquals (path, "/tmp/foo/bar", fileUri.AbsolutePath);
+
+			// Empty path == localhost, in theory
+			path = "file:///tmp/foo/bar";
+			fileUri = new Uri( path );
+			AssertEquals (path, "/tmp/foo/bar", fileUri.AbsolutePath);
+
+			// Empty path == localhost, in theory
+			path = "file:///c:/tmp/foo/bar";
+			fileUri = new Uri( path );
+			AssertEquals (path, "c:/tmp/foo/bar", fileUri.AbsolutePath);
+		}
 
 		public static void Print (Uri uri)
 		{
