@@ -51,6 +51,7 @@ namespace System.Web.Services.Description {
 			get { return ports; }
 		}
 
+		[XmlIgnore]
 		public ServiceDescription ServiceDescription {
 			get { return serviceDescription; }
 		}

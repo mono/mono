@@ -96,7 +96,7 @@ namespace System.Web.Services.Description {
 
 		protected override void OnInsert (int index, object value)
 		{
-			if (Count > 2 || value.GetType () == this [0].GetType ())
+			if (Count > 2 || (Count > 1 && value.GetType () == this [0].GetType ()))
 				throw new InvalidOperationException ("The operation object can only contain one input and one output message.");
 		}
 

@@ -42,6 +42,7 @@ namespace System.Web.Services.Description {
 			set { element = value; }
 		}
 		
+		[XmlIgnore]
 		public Message Message {
 			get { return message; }
 		}

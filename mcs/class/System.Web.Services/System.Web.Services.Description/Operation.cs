@@ -73,6 +73,7 @@ namespace System.Web.Services.Description {
 			set { ParameterOrder = value.Split (' '); }
 		}
 
+		[XmlIgnore]
 		public PortType PortType {
 			get { return portType; }
 		}

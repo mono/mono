@@ -42,6 +42,7 @@ namespace System.Web.Services.Description {
 			set { name = value; }
 		}
 	
+		[XmlIgnore]
 		public OperationBinding OperationBinding {
 			get { return operationBinding; }
 		}

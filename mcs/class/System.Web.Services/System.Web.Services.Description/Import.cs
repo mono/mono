@@ -45,6 +45,7 @@ namespace System.Web.Services.Description {
 			set { ns = value; }
 		}
 	
+		[XmlIgnore]
 		public ServiceDescription ServiceDescription {
 			get { return serviceDescription; }
 		}

@@ -47,6 +47,7 @@ namespace System.Web.Services.Description {
 			set { name = value; }
 		}
 
+		[XmlIgnore]
 		public Operation Operation {
 			get { return operation; }
 		}

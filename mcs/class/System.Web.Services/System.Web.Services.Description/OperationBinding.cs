@@ -40,6 +40,7 @@ namespace System.Web.Services.Description {
 
 		#region Properties
 	
+		[XmlIgnore]
 		public Binding Binding {
 			get { return binding; }
 		}

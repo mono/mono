@@ -40,6 +40,7 @@ namespace System.Web.Services.Description {
 			set { handled = value; }
 		}
 
+		[XmlIgnore]
 		public object Parent {
 			get { return parent; }
 		}

@@ -224,35 +224,6 @@ namespace System.Web.Services.Description {
 
 			#region Methods
 
-			[MonoTODO]
-			public override bool CanDeserialize (XmlReader reader)
-			{
-				throw new NotImplementedException ();
-			}
-
-			[MonoTODO]
-			protected override XmlSerializationReader CreateReader ()
-			{
-				throw new NotImplementedException ();
-			}
-
-			[MonoTODO]
-			protected override XmlSerializationWriter CreateWriter ()
-			{
-				throw new NotImplementedException ();
-			}
-			
-			[MonoTODO]
-			protected override object Deserialize (XmlSerializationReader reader)
-			{
-				throw new NotImplementedException ();
-			}
-
-			[MonoTODO]
-			protected override void Serialize (object serviceDescription, XmlSerializationWriter writer)
-			{
-				throw new NotImplementedException ();
-			}
 
 			#endregion // Methods
 		}

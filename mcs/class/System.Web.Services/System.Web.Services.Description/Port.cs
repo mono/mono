@@ -55,6 +55,7 @@ namespace System.Web.Services.Description {
 			set { name = value; }
 		}
 	
+		[XmlIgnore]
 		public Service Service {
 			get { return service; }
 		}
