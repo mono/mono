@@ -1,3 +1,8 @@
+2004-05-20  Jackson Harper  <jackson@ximian.com>
+
+	* DirectoryInfo.cs: Create subdirectories correctly if more then
+	one is supplied.
+	
 2004-05-16  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DirectoryInfo.cs: Fixed ToString() as well as FileInfo.

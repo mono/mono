@@ -77,7 +77,7 @@ namespace System.IO {
 		}
 
 		public DirectoryInfo CreateSubdirectory (string name) {
-			string path = Path.Combine (FullPath, Path.GetFileName (name));
+			string path = Path.Combine (FullPath, name);
 			Directory.CreateDirectory (path);
 
 			return new DirectoryInfo (path);
