@@ -1,5 +1,7 @@
 2003-10-13  Zoltan Varga  <vargaz@freemail.hu>
 
+	* Makefile.am (TEST_CS_SRC): Remove merged tests.
+
 	* pinvoke2.cs pinvoke3.cs: Merge tests 4-8 into these files + 
 	convert tests so they run with the test driver used by mini.
 
