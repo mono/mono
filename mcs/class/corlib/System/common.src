@@ -39,7 +39,6 @@ RankException.cs
 SByte.cs
 Single.cs
 StackOverflowException.cs
-String.cs
 SystemException.cs
 TypeCode.cs
 TypeInitializationException.cs
