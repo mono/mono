@@ -154,7 +154,6 @@ namespace System.Threading
 			t.Start ();
 		}
 
-		[MonoTODO("false return?")]
 		public bool Change (int dueTime, int period)
 		{
 			if (dueTime < -1)
@@ -163,6 +162,9 @@ namespace System.Threading
 			if (period < -1)
 				throw new ArgumentOutOfRangeException ("period");
 
+			if (runner == null)
+				return false;
+			
 			runner.DueTime = dueTime;
 			runner.Period = period;
 			runner.Abort ();
@@ -209,11 +211,11 @@ namespace System.Threading
 			GC.SuppressFinalize (this);
 		}
 
-		[MonoTODO("How do we signal the handler?")]
 		public bool Dispose (WaitHandle notifyObject)
 		{
 			Dispose ();
-			return true; //FIXME
+			NativeEventCalls.SetEvent_internal (notifyObject.Handle);
+			return true;
 		}
 
 		~Timer ()

@@ -35,6 +35,12 @@ namespace System.Threading {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public static extern void GetMaxThreads (out int workerThreads, out int completionPortThreads);
 			
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public static extern void GetMinThreads (out int workerThreads, out int completionPortThreads);
+			
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public static extern void SetMinThreads (int workerThreads, int completionPortThreads);
+			
 		public static bool QueueUserWorkItem (WaitCallback callback)
 		{
 			IAsyncResult ar = callback.BeginInvoke (null, null, null);
