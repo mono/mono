@@ -18,16 +18,23 @@ public class StringConverter : TypeConverter
 	{
 	}
 
-	[MonoTODO]
 	public override bool CanConvertFrom (ITypeDescriptorContext context, Type sourceType)
 	{
-		throw new NotImplementedException ();
+		if (sourceType == typeof(String))
+			return true;
+
+		return base.CanConvertFrom (context, sourceType);
 	}
 
-	[MonoTODO]
 	public override object ConvertFrom (ITypeDescriptorContext context, CultureInfo culture, object value)
 	{
-		throw new NotImplementedException ();
+		if (value == null)
+			return String.Empty;
+
+		if (value is string)
+			return (string) value;
+
+		return base.ConvertFrom (context, culture, value);
 	}
 }
 }

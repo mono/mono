@@ -51,13 +51,13 @@ public class TypeConverter
 		throw new NotImplementedException ();
 	}
 	
-	public virtual object ConvertFromInvariantString (string text)
+	public object ConvertFromInvariantString (string text)
 	{
 		return ConvertFromInvariantString (null, text); 
 	}
 
 	[MonoTODO]
-	public virtual object ConvertFromInvariantString (ITypeDescriptorContext context, string text)
+	public object ConvertFromInvariantString (ITypeDescriptorContext context, string text)
 	{
 		throw new NotImplementedException ();
 	}

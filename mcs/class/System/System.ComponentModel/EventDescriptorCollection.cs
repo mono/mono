@@ -81,12 +81,12 @@ namespace System.ComponentModel
 		}
 
 		[MonoTODO]
-		public virtual EventDescriptorCollection InternalSort (IComparer comparer) {
+		protected virtual EventDescriptorCollection InternalSort (IComparer comparer) {
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public virtual EventDescriptorCollection InternalSort (string[] order) {
+		protected virtual EventDescriptorCollection InternalSort (string[] order) {
 			throw new NotImplementedException ();
 		}
 		

@@ -22,7 +22,7 @@ public interface ITypeDescriptorContext : IServiceProvider
 
 	void OnComponentChanged ();
 
-	void OnComponentChanging ();
+	bool OnComponentChanging ();
 }
 
 }

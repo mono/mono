@@ -11,8 +11,8 @@ namespace System.ComponentModel
 {
 	[Serializable]
 	public enum BindableSupport {
-		Default,
 		No,
-		Yes
+		Yes,
+		Default
 	}
 }

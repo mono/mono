@@ -19,6 +19,10 @@ public sealed class TypeDescriptor
 	private static readonly string creatingDefaultConverters = "creatingDefaultConverters";
 	private static Hashtable defaultConverters;
 
+	private TypeDescriptor ()
+	{
+	}
+
 	[MonoTODO]
 	public static void AddEditorTable (Type editorBaseType, Hashtable table)
 	{

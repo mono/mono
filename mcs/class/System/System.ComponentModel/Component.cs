@@ -83,7 +83,7 @@ namespace System.ComponentModel {
 		//   Dispose resources used by this component
 		// </summary>
 		[MonoTODO]
-		public virtual void Dispose ()
+		public void Dispose ()
 		{
 			// FIXME: Not sure this is correct.
 			Dispose(false);
@@ -116,6 +116,12 @@ namespace System.ComponentModel {
 			return null;
 		}
 
+		public override string ToString ()
+		{
+			if (mySite == null)
+				return GetType ().ToString ();
+			return String.Format ("{0} [{1}]", mySite.Name, GetType ().ToString ());
+		}
 		// <summary>
 		//   FIXME: Figure out this one.
 	        // </summary>
