@@ -1,3 +1,8 @@
+2004-09-09  Zoltan Varga  <vargaz@freemail.hu>
+
+	* reflection.h reflection.c loader.c: Allow dynamic construction of
+	pinvoke methods. Fixes #65571.
+
 2004-09-08  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* object.c: In mono_message_invoke, fill the output parameter array after
