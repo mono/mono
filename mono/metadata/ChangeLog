@@ -1,3 +1,8 @@
+2004-04-20  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug-debugger.c (mono_debugger_lookup_type): Make a copy
+	of the type name before passing it to mono_reflection_type_from_name().
+
 2004-04-19  Zoltan Varga  <vargaz@freemail.hu>
 
 	* marshal.c (mono_marshal_get_managed_wrapper): Handle different string
