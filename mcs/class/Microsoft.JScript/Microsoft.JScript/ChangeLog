@@ -1,7 +1,12 @@
 2003-12-05  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
+	* jscript-lexer-parser.g: added check for non-null reference at
+	var_decl_list rule. Added single quote STRING_LITERAL lexical rule
+	and multiple lines comments rule.
+
 	* jscript-lexer-parser.g: Now I keep track of the parent for most
 	of the syntatic constructs. Fixed object_literal rule.
+
 	* ast.cs: Added field parent. This will help me to track nested
 	blocks for all of the syntatic constructs and will allow to Emit
 	everything in one single pass.

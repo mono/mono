@@ -213,12 +213,12 @@ inside_for [AST parent]
 	: (expr [parent] | ) SEMI_COLON (expr [parent] | ) SEMI_COLON (expr [parent] | )
 	// We must keep a counter c, c tells us how many decls are
 	// done, in order to interrupt if c > 1 and we are inside a "in"
-	| "var" (var_decl_list [null, null] 
+	| "var" (var_decl_list [null, null]
 		  ( SEMI_COLON (expr [parent] | ) SEMI_COLON (expr [parent] | )
 		  | "in" expr [parent]))
 	// FIXME: left_hand_side_expr in exp rule, missing
 	;
-
+	
 if_stm [AST parent] returns [AST ifStm]
 {
 	ifStm = null;
@@ -245,12 +245,12 @@ var_decl_list [VariableStatement var_stm, AST parent]
 { VariableDeclaration var_decln = null; }
 	: var_decln = var_decl [parent]
 	  { 
-		if (var_decln != null)
+		if (var_decln != null && var_stm != null)
 			var_stm.Add (var_decln);
 	  }
 	  (COMMA var_decln = var_decl [parent]
 	  { 
-		  if (var_decln != null) 
+		  if (var_decln != null && var_stm != null) 
 		  	  var_stm.Add (var_decln);
 	  }
 	  )*
@@ -854,7 +854,7 @@ object_literal
 	   ((property_name COLON)=> property_name COLON assignment_expr [null] 
 	    (COMMA property_name COLON assignment_expr [null])*
 	   | (statement [null])*
-	   ) 
+	   )
 	  CLOSE_BRACE
 	;
 
@@ -936,8 +936,10 @@ HEX_INTEGER_LITERAL: '0' ('x' | 'X') ('0'..'9' | 'a'..'f' | 'A'..'F')+
     ;
 
 STRING_LITERAL
-	: '"' (~('"' | '\\' | '\u000A' | '\u000D' | '\u2028' | '\u2029'))* '"'
+	: '"' (~('"' | '\\' | '\u000A' | '\u000D' | '\u2028' | '\u2029'))* '"' | 
+	  '\''(~('\'' | '\\' | '\u000A' | '\u000D' | '\u2028' | '\u2029'))* '\''
 	;
+
 
 IDENTIFIER
 options { testLiterals = true; }
@@ -1017,6 +1019,23 @@ SL_COMMENT
 	: "//" (~('\u000A' | '\u000D' | '\u2028' | '\u2029'))*
 	  { $setType (Token.SKIP); }
 	;
+
+ML_COMMENT
+	: "/*"
+	(options {
+		generateAmbigWarnings=false;
+	}
+	:
+		{ LA(2)!='/' }? '*'
+	|	'\r' '\n'		{ newline(); }
+	|	'\r'			{ newline(); }
+	|	'\n'			{ newline(); }
+	|	~('*'|'\n'|'\r')
+	)*
+	"*/"
+	{ $setType (Token.SKIP); }
+	;
+
 //
 // Line terminator tokens
 //
