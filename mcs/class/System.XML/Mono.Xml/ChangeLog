@@ -1,3 +1,7 @@
+2004-07-13  Atsushi Enomoto <atsushi@ximian.com>
+
+	* Added XmlFilterReader.cs.
+
 2004-06-11  Atsushi Enomoto <atsushi@ximian.com>
 
 	* IHasXmlParserContext.cs, IHasXmlSchemaInfo.cs : internal.
