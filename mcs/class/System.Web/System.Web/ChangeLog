@@ -1,3 +1,9 @@
+2005-02-22 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpRequest.cs: fail on unicode full-width '<' and '>' too. Fixes
+	a security report (http://secunia.com/advisories/14325) that wan't
+	reported to us before public disclosure.
+
 2005-02-18 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpResponse.cs: send the calculated content length even when it's 0.
