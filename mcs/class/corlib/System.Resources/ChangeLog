@@ -2,6 +2,8 @@
 
 	* Win32Resources.cs: New file.
 
+	* Win32Resources.cs: The value of properties can't be empty.
+
 2003-12-17  Zoltan Varga  <vargaz@freemail.hu>
 
 	* ResourceWriter.cs (Stream): New internal property used by Ref.Emit.

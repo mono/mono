@@ -60,7 +60,8 @@ internal class Win32VersionResource {
 
 		// Well known properties
 		foreach (string s in WellKnownProperties)
-			properties [s] = String.Empty;
+			// The value of properties can't be empty
+			properties [s] = " ";
 	}
 
 	public string FileVersion {
