@@ -46,6 +46,7 @@ namespace System.Reflection.Emit {
 		internal Type corlib_enum_type = typeof (System.Enum);
 		private int[] table_indexes;
 		internal ArrayList methods;
+		Hashtable us_string_cache = new Hashtable ();
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern void basic_init (AssemblyBuilder ab);
@@ -242,7 +243,11 @@ namespace System.Reflection.Emit {
 		private static extern int getToken (AssemblyBuilder ab, MemberInfo member);
 
 		internal int GetToken (string str) {
-			return getUSIndex (this, str);
+			if (us_string_cache.Contains (str))
+				return (int)us_string_cache [str];
+			int result = getUSIndex (this, str);
+			us_string_cache [str] = result;
+			return result;
 		}
 		
 		internal int GetToken (MemberInfo member) {

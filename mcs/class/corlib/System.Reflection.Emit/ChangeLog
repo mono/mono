@@ -1,3 +1,8 @@
+
+Thu Dec 19 00:06:57 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* AssemblyBuilder.cs: remove duplicated user string entries.
+
 2002-12-11  Zoltan Varga  <vargaz@freemail.hu>
 
 	* FieldBuilder.cs: added 'handle' field which is needed by some new
