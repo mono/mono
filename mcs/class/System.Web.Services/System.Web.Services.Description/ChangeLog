@@ -1,3 +1,7 @@
+2004-03-02  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* ProtocolImporter.cs: Little fix in schema classification.
+	
 2004-02-27  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* ExtensionManager.cs: Create all serializers for soap extensions at once.

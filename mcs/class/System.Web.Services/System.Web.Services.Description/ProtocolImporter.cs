@@ -388,10 +388,12 @@ namespace System.Web.Services.Description {
 			// Schemas not referenced by any message
 			foreach (XmlSchema sc in Schemas)
 			{
-				if (ImportsEncodedNamespace (sc))
-					soapSchemas.Add (sc);
-				else if (!soapSchemas.Contains (sc) && !xmlSchemas.Contains (sc))
-					defaultList.Add (sc);
+				if (!soapSchemas.Contains (sc) && !xmlSchemas.Contains (sc)) {
+					if (ImportsEncodedNamespace (sc))
+						soapSchemas.Add (sc);
+					else
+						defaultList.Add (sc);
+				}
 			}
 		}
 			
