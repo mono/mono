@@ -3,134 +3,164 @@
 //
 // Authors:
 //      Martin Willemoes Hansen (mwh@sysrq.dk)
+//		Lluis Sanchez Gual (lluis@ximian.com)
 //
 // (C) 2003 Martin Willemoes Hansen
 //
 
 using System.Collections;
 using System.IO;
+using System.Text;
+using System.Xml;
+using System.Reflection;
+using System.Net;
+using System.CodeDom.Compiler;
+using Microsoft.CSharp;
 
 namespace System.Runtime.Remoting.MetadataServices
 {
-        public class MetaData 
+	public class MetaData 
 	{
-		[MonoTODO]
+		internal const string WsdlNamespace = "http://schemas.xmlsoap.org/wsdl/";
+		internal const string XmlnsNamespace = "http://www.w3.org/2000/xmlns/";
+		internal const string SchemaNamespace = "http://www.w3.org/2001/XMLSchema";
+		internal const string SchemaInstanceNamespace = "http://www.w3.org/2001/XMLSchema-instance";
+		internal const string SudsNamespace = "http://www.w3.org/2000/wsdl/suds";
+		internal const string SoapEncodingNamespace = "http://schemas.xmlsoap.org/soap/encoding/";
+		internal const string SoapNamespace = "http://schemas.xmlsoap.org/wsdl/soap/";
+		
 		public MetaData() 
 		{
 		}
 
-		[MonoTODO]
+		[MonoTODO ("strong name")]
 		public static void ConvertCodeSourceFileToAssemblyFile (
 				   string codePath,
 				   string assemblyPath,
 				   string strongNameFilename)
 		{
-			throw new NotImplementedException();
+			CSharpCodeProvider prov = new CSharpCodeProvider ();
+			ICodeCompiler comp = prov.CreateCompiler ();
+			CompilerParameters pars = new CompilerParameters ();
+			pars.OutputAssembly = assemblyPath;
+			comp.CompileAssemblyFromSource (pars, codePath);
 		}
 
-		[MonoTODO]
+		[MonoTODO ("strong name")]
 		public static void ConvertCodeSourceStreamToAssemblyFile (
 				   ArrayList outCodeStreamList,
 				   string assemblyPath,
 				   string strongNameFilename)
 		{
-			throw new NotImplementedException();
+			CSharpCodeProvider prov = new CSharpCodeProvider ();
+			ICodeCompiler comp = prov.CreateCompiler ();
+			CompilerParameters pars = new CompilerParameters ();
+			pars.OutputAssembly = assemblyPath;
+			comp.CompileAssemblyFromSourceBatch (pars, (string[]) outCodeStreamList.ToArray(typeof(string)));
 		}
 
-		[MonoTODO]
 		public static void ConvertSchemaStreamToCodeSourceStream (
-				   bool b, 
-				   string str, 
-				   Stream stream, 
-				   ArrayList list)
-	        {
-			throw new NotImplementedException();
+				   bool clientProxy, 
+				   string outputDirectory, 
+				   Stream inputStream, 
+				   ArrayList outCodeStreamList)
+		{
+			ConvertSchemaStreamToCodeSourceStream (clientProxy, outputDirectory, inputStream, outCodeStreamList, null, null);
 		}
 
-		[MonoTODO]
 		public static void ConvertSchemaStreamToCodeSourceStream (
-				   bool b, 
-				   string str, 
-				   Stream stream, 
-				   ArrayList list, 
-				   string str2)
+				   bool clientProxy, 
+				   string outputDirectory, 
+				   Stream inputStream, 
+				   ArrayList outCodeStreamList, 
+				   string proxyUrl)
 		{
-			throw new NotImplementedException();
+			ConvertSchemaStreamToCodeSourceStream (clientProxy, outputDirectory, inputStream, outCodeStreamList, proxyUrl, null);
 		}
 
-		[MonoTODO]
 		public static void ConvertSchemaStreamToCodeSourceStream (
-				   bool b, 
-				   string str, 
-				   Stream stream, 
-				   ArrayList list, 
-				   string str2, 
-				   string str3)
+				   bool clientProxy, 
+				   string outputDirectory, 
+				   Stream inputStream, 
+				   ArrayList outCodeStreamList, 
+				   string proxyUrl, 
+				   string proxyNamespace)
 		{
-			throw new NotImplementedException();
+			MetaDataCodeGenerator cg = new MetaDataCodeGenerator ();
+			
+			MemoryStream memStream = new MemoryStream ();
+			CopyStream (inputStream, memStream);
+			memStream.Position = 0;
+			cg.GenerateCode (clientProxy, outputDirectory, memStream, outCodeStreamList, proxyUrl, proxyNamespace);
 		}
 
-		[MonoTODO]
-		public static void ConvertTypesToSchemaToFile (
-				   ServiceType[] servicetype, 
-				   SdlType sdltype, 
-				   string str)
+		public static void ConvertTypesToSchemaToFile (ServiceType[] servicetypes, SdlType sdltype, string path)
 		{
-			throw new NotImplementedException();
+			FileStream fs = new FileStream (path, FileMode.Create, FileAccess.Write);
+			ConvertTypesToSchemaToStream (servicetypes, sdltype, fs);
+			fs.Close ();
 		}
 
-		[MonoTODO]
-		public static void ConvertTypesToSchemaToFile (
-				   Type[] type, 
-				   SdlType sdltype, 
-				   string str)
+		public static void ConvertTypesToSchemaToFile (Type[] types, SdlType sdltype, string path)
 		{
-			throw new NotImplementedException();
+			FileStream fs = new FileStream (path, FileMode.Create, FileAccess.Write);
+			ConvertTypesToSchemaToStream (types, sdltype, fs);
+			fs.Close ();
 		}
 
-		[MonoTODO]
-		public static void ConvertTypesToSchemaToStream (
-				   ServiceType[] servicetype, 
-				   SdlType sdltype, 
-				   Stream stream)
+		public static void ConvertTypesToSchemaToStream (Type[] types, SdlType sdltype, Stream stream)
 		{
-			throw new NotImplementedException();
+			ServiceType[] st = new ServiceType [types.Length];
+			for (int n=0; n<types.Length; n++)
+				st [n] = new ServiceType (types[n]);
+				
+			ConvertTypesToSchemaToStream (st, sdltype, stream);
 		}
 
-		[MonoTODO]
-		public static void ConvertTypesToSchemaToStream (
-				   Type[] type, 
-				   SdlType sdltype, 
-				   Stream stream)
+		public static void ConvertTypesToSchemaToStream (ServiceType[] servicetypes, SdlType sdltype, Stream stream)
 		{
-			throw new NotImplementedException();
+			MetaDataExporter exporter = new MetaDataExporter ();
+			MemoryStream memStream = new MemoryStream ();
+			
+			StreamWriter sw = new StreamWriter (memStream);
+			XmlTextWriter tw = new XmlTextWriter (sw);
+			
+			exporter.ExportTypes (servicetypes, sdltype, tw);
+			tw.Flush ();
+			
+			memStream.Position = 0;
+			CopyStream (memStream, stream);
+		}
+		
+		public static void RetrieveSchemaFromUrlToFile (string url, string path)
+		{
+			FileStream fs = new FileStream (path, FileMode.Create, FileAccess.Write);
+			RetrieveSchemaFromUrlToStream (url, fs);
+			fs.Close ();
 		}
 
-		[MonoTODO]
-		public static void RetrieveSchemaFromUrlToFile (string url,
-								string path)
+		public static void RetrieveSchemaFromUrlToStream (string url, Stream outputStream)
 		{
-			throw new NotImplementedException();
+			WebRequest req = WebRequest.Create (url);
+			Stream st = req.GetResponse().GetResponseStream();
+			CopyStream (st, outputStream);
+			st.Close ();
 		}
 
-		[MonoTODO]
-		public static void RetrieveSchemaFromUrlToStream (
-				   string url,
-				   Stream outputStream)
+		public static void SaveStreamToFile (Stream inputStream, string path)
 		{
-			throw new NotImplementedException();
+			FileStream fs = new FileStream (path, FileMode.Create, FileAccess.Write);
+			CopyStream (inputStream, fs);
+			fs.Close ();
 		}
-
-		[MonoTODO]
-		public static void SaveStreamToFile (Stream inputStream,
-						     string path)
+		
+		static void CopyStream (Stream inputStream, Stream outputStream)
 		{
-			throw new NotImplementedException();
-		}
-
-		[MonoTODO]
-		~MetaData()
-		{
+			byte[] buffer = new byte [1024*5];
+			int nr = 0;
+			
+			while ((nr = inputStream.Read (buffer, 0, buffer.Length)) > 0)
+				outputStream.Write (buffer, 0, nr);
 		}
 	}
 }

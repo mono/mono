@@ -1,0 +1,7 @@
+2003-12-03  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* MetaData.cs: Implemented most of methods.
+	* ServiceType.cs: Implemented.
+	* MetaDataCodeGenerator.cs: Added. Implements code generation functionality.
+	* MetaDataExporter.cs: Added. Implements support methods for generating
+	  schemas for MetaData.
