@@ -1,3 +1,13 @@
+2004-07-21  Bernie Solomon  <bernard@ugsolutions.com>
+
+	* mintops.def: add MINT_DUP_VT
+
+	* transform.c (generate): cope with CEE_DUP on value type
+
+	* interp.c (ves_exec_method_with_context): implement MINT_DUP_VT
+	(interp_mono_runtime_invoke): don't unbox this for valuetypes
+	here as it is now done in the callers.
+
 2004-07-09  Ben Maurer  <bmaurer@ximian.com>
 	
 	* interp.c: register gc roots
