@@ -1,3 +1,8 @@
+2004-11-24  Martin Baulig  <martin@ximian.com>
+
+	* reflection.c (compare_genericparam): Correctly sort the
+	GenericParam table; fixes #69779.
+
 2004-11-23  Ben Maurer  <bmaurer@ximian.com>
 
 	* reflection.c: When writing a PE file, don't create a huge
