@@ -1,3 +1,7 @@
+2003-08-29  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* Makefile: Fixed assembly reference.
+
 2003-08-28  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* Makefile: added
