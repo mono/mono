@@ -41,8 +41,7 @@ namespace System.Drawing
                 
 		public Region()
 		{
-			RectangleF inf = new RectangleF (-4194304, -4194304, 8388608, 8388608); 
-			Status status = GDIPlus.GdipCreateRegionRect (ref inf, out nativeRegion);
+			Status status = GDIPlus.GdipCreateRegion (out nativeRegion);
 			GDIPlus.CheckStatus (status);
 		}
 

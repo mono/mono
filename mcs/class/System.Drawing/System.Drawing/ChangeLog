@@ -1,3 +1,7 @@
+2005-02-03 Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* Region.cs: revert Jackson's patch and fix this at libgdiplus level
+
 2005-02-02  Jackson Harper  <jackson@ximian.com>
 
 	* Region.cs: The default region constructor creates and infinite
