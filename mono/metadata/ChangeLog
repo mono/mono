@@ -1,3 +1,9 @@
+2004-12-23  Ben Maurer  <bmaurer@ximian.com>
+
+	* metadata.c (builtin_types): Make this `const'. Makes this get
+	put into the shareable section.
+	(mono_metadata_init): Casts to make gcc happy.
+
 2004-12-22  Zoltan Varga  <vargaz@freemail.hu>
 
 	* gc.c (mono_gc_init): Add a '\n' to the valgrind warning.
