@@ -564,7 +564,7 @@ namespace System.Collections {
 			uint step = (uint) ((h >> 5)+1) % (size-1)+1;
 			Slot[] table = this.table;
 
-			for (int i = 0; i < size;i++) {
+			for (uint i = 0; i < size;i++) {
 				int indx = (int) (spot % size);
 				Slot entry = table [indx];
 				Object k = entry.key;

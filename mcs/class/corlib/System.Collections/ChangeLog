@@ -1,3 +1,8 @@
+2004-12-20  Ben Maurer  <bmaurer@ximian.com>
+
+	* Hashtable.cs (Find): Make `i' a uint rather than an int. This
+	avoids having a long compare.
+
 2004-12-16  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* Hashtable.cs: Check for null serialization info in OnDeserialization.
