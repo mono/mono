@@ -537,8 +537,10 @@ namespace System.Web.Caching
 			}
 
 			// If we have sliding expiration and we have a correct hit, update the expiration manager
-			if (objEntry.HasSlidingExpiration)
+			if (objEntry.HasSlidingExpiration) {
 				_objExpires.Update (objEntry, ticksExpires);
+				objEntry.Expires = ticksExpires;
+			}
 
 			// Return the cache entry
 			return objEntry;

@@ -1,3 +1,10 @@
+2004-01-14  Jackson Harper <jackson@ximian.com>
+
+	* Cache.cs: When using sliding expiration update the cache objects
+	expires time as well as the expires entry expire time because the
+	objects expire time is checked when objects are pulled out. This
+	fixex bug #52778.
+	
 2004-01-11  Jackson Harper <jackson@ximian.com>
 
 	* OutputCacheModule.cs: Remove varyby objects when there are no
