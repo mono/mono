@@ -22,9 +22,12 @@
 // Author:
 //      Ravindra (rkumar@novell.com)
 //
-// $Revision: 1.1 $
+// $Revision: 1.2 $
 // $Modtime: $
 // $Log: ListViewItem.cs,v $
+// Revision 1.2  2004/10/02 11:57:56  ravindra
+// Added attributes.
+//
 // Revision 1.1  2004/09/30 13:24:45  ravindra
 // Initial implementation.
 //
@@ -32,7 +35,6 @@
 // NOT COMPLETE
 //
 
-using System;
 using System.Collections;
 using System.ComponentModel;
 using System.Drawing;
@@ -40,7 +42,11 @@ using System.Runtime.Serialization;
 
 namespace System.Windows.Forms
 {
+	[DefaultProperty ("Text")]
+	[DesignTimeVisible (false)]
 	[Serializable]
+	[ToolboxItem (false)]
+	[TypeConverter (typeof (ListViewItemConverter))]
 	public class ListViewItem : ICloneable, ISerializable
 	{
 		#region Instance Variables
@@ -107,37 +113,51 @@ namespace System.Windows.Forms
 		#endregion	// Public Constructors
 
 		#region Public Instance Properties
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public Color BackColor {
 			get { return backColor; }
 			set { this.backColor = value; }
 		}
 
+		[Browsable (false)]
 		public Rectangle Bounds {
 			get {
 				return GetBounds (ItemBoundsPortion.Entire);
 			}
 		}
 
+		[DefaultValue (false)]
+		[RefreshProperties (RefreshProperties.Repaint)]
 		public bool Checked {
 			get { return isChecked; }
 			set { isChecked = value; }
 		}
 
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public bool Focused {
 			get { return isFocused; }
 			set { isFocused = value; }
 		}
 
+		[Localizable (true)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public Font Font {
 			get { return font; }
 			set { font = value; }
 		}
 
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public Color ForeColor {
 			get { return foreColor; }
 			set { foreColor = value; }
 		}
 
+		[DefaultValue (-1)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Editor ("System.Windows.Forms.Design.ImageIndexEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
+		[Localizable (true)]
+		[TypeConverter (typeof (ImageIndexConverter))]
 		public int ImageIndex {
 			get { return imageIndex; }
 			set {
@@ -147,6 +167,7 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[Browsable (false)]
 		public ImageList ImageList {
 			get {
 				if (owner == null)
@@ -158,6 +179,7 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[Browsable (false)]
 		public int Index {
 			get {
 				if (owner == null)
@@ -167,10 +189,13 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[Browsable (false)]
 		public ListView ListView {
 			get { return owner; }
 		}
 
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public bool Selected {
 			get { return selected; }
 			set {
@@ -187,6 +212,10 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DefaultValue (-1)]
+		[Editor ("System.Windows.Forms.Design.ImageIndexEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
+		[Localizable (true)]
+		[TypeConverter (typeof (ImageIndexConverter))]
 		public int StateImageIndex {
 			get { return stateImageIndex; }
 			set {
@@ -197,20 +226,28 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public ListViewSubItemCollection SubItems {
 			get { return subItems; }
 		}
 
+		[Bindable (true)]
+		[DefaultValue (null)]
+		[Localizable (false)]
+		[TypeConverter (typeof (StringConverter))]
 		public object Tag {
 			get { return tag; }
 			set { tag = value; }
 		}
 
+		[Localizable (true)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public string Text {
 			get { return text; }
 			set { text = value; }
 		}
 
+		[DefaultValue (true)]
 		public bool UseItemStyleForSubItems {
 			get { return useItemStyle; }
 			set { useItemStyle = value; }
@@ -276,7 +313,12 @@ namespace System.Windows.Forms
 
 
 		#region Subclasses
+
+		[DefaultProperty ("Text")]
+		[DesignTimeVisible (false)]
 		[Serializable]
+		[ToolboxItem (false)]
+		//[TypeConverter (typeof (ListViewSubItemConverter))]
 		public class ListViewSubItem
 		{
 			private Color backColor;
@@ -312,6 +354,7 @@ namespace System.Windows.Forms
 				set { backColor = value; }
 			}
 
+			[Localizable (true)]
 			public Font Font {
 				get { return font; }
 				set { font = value; }
@@ -322,6 +365,7 @@ namespace System.Windows.Forms
 				set { foreColor = value; }
 			}
 
+			[Localizable (true)]
 			public string Text {
 				get { return text; }
 				set { text = value; }
@@ -357,6 +401,7 @@ namespace System.Windows.Forms
 			#endregion // Public Constructors
 
 			#region Public Properties
+			[Browsable (false)]
 			public virtual int Count {
 				get { return list.Count; }
 			}
