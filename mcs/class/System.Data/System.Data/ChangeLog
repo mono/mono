@@ -1,3 +1,30 @@
+2004-04-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataSet.cs :
+	  - In MS output, XML declaration looks to have standalone decl (yes).
+	  - ReadXml(reader) just calls to ReadXml(reader, XmlReadMode.Auto)
+	  - ReadXml(reader, mode)
+	    1) return originally specified mode, instead of (always) Auto. 
+	    2) Check empty reader.
+	    3) Check diffgram schema and content separately.
+	    4) When diffgram exists, remaining (the same-level) contents 
+	       won't be consumed. 
+	    5) Similar fact should be applied, but somewhat different. 
+	       InferSchema and IgnoreSchema just skips, Fragment reads both
+	       schema and content, others just reads schema.
+	  - Removed unused code.
+	* XmlDataLoader.cs :
+	  - Read() should skip in some ReadMode.
+	  - Don't compare schema element name as case-insensitive (well,
+	    should schemas be checked here?)
+	  - Avoided BuildDocument() not to create confusing DataSet
+	    document element.
+	  - Don't add any tables when reader has single element.
+	* XmlDiffLoader.cs :
+	  When target table was not found, MS.NET doesn't raise an error.
+	* XmlSchemaMapper.cs :
+	  When XmlSchema.Read() left xml reader at </xs:schema>, read once.
+
 2004-04-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataSet.cs :

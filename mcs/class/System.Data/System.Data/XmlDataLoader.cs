@@ -9,8 +9,10 @@
 //
 // Author:
 //     Ville Palo <vi64pa@koti.soon.fi>
+//     Atsushi Enomoto <atsushi@ximian.com>
 //
 // (c)copyright 2002 Ville Palo
+// (C)2004 Novell Inc.
 //
 // XmlDataLoader is included within the Mono Class Library.
 //
@@ -38,20 +40,17 @@ namespace System.Data
 
 		public XmlReadMode LoadData (XmlReader reader, XmlReadMode mode)
 		{
-			XmlReadMode Result = XmlReadMode.Auto;
+			XmlReadMode Result = mode;
 
 			switch (mode) {
-
-				case XmlReadMode.Fragment:
-					break;
-				case XmlReadMode.ReadSchema:
-				case XmlReadMode.IgnoreSchema:
-				case XmlReadMode.InferSchema:
-					Result = mode;
-					ReadModeSchema (reader, mode);
-					break;
-				default:
-					break;
+			case XmlReadMode.Auto:
+			case XmlReadMode.InferSchema:
+				Result = XmlReadMode.InferSchema;
+				ReadModeSchema (reader, XmlReadMode.InferSchema);
+				break;
+			default:
+				reader.Skip ();
+				break;
 			}
 
 			return Result;
@@ -64,7 +63,7 @@ namespace System.Data
 		{
 			bool inferSchema = mode == XmlReadMode.InferSchema ? true : false;
 			//check if the current element is schema.
-			if (String.Compare (reader.LocalName, "schema", true) == 0) {
+			if (reader.LocalName == "schema") {
 				
 				if (mode == XmlReadMode.InferSchema || mode == XmlReadMode.IgnoreSchema)
 					reader.Skip(); // skip the schema node.
@@ -74,7 +73,11 @@ namespace System.Data
 				reader.MoveToContent();
 			}
 			// load an XmlDocument from the reader.
-			XmlDocument doc = BuildXmlDocument(reader);
+//			XmlDocument doc = BuildXmlDocument(reader);
+			XmlDocument doc = new XmlDocument ();
+			doc.Load (reader);
+			if (doc.DocumentElement == null)
+				return;
 
 			// treatment for .net compliancy :
 			// if xml representing dataset has exactly depth of 2 elements,
@@ -82,7 +85,10 @@ namespace System.Data
 			// so we add new root element to doc 
 			// in order to create an element representing dataset.
 			int rootNodeDepth = XmlNodeElementsDepth(doc.DocumentElement);
-			if (rootNodeDepth == 2) {
+			switch (rootNodeDepth) {
+			case 1:
+				return;
+			case 2:
 				// new dataset name
 				String newDataSetName = "NewDataSet";
 				// create new document
@@ -96,7 +102,11 @@ namespace System.Data
 				datasetElement.AppendChild(root);
 				doc = newDoc;
 				// update dataset name
-				DSet.DataSetName = newDataSetName;			
+				DSet.DataSetName = newDataSetName;
+				break;
+			default:
+				DSet.DataSetName = doc.DocumentElement.LocalName;
+				break;
 			}
 
 			// set EnforceConstraint to false - we do not want any validation during 
@@ -107,6 +117,8 @@ namespace System.Data
 			// The childs are tables.
 			XmlNodeList nList = doc.DocumentElement.ChildNodes;
 
+			// FIXME: When reading DataTable (not DataSet), 
+			// the nodes are column items, not rows.
 			for (int i = 0; i < nList.Count; i++) {
 				XmlNode node = nList[i];
 				// node represents a table onky if it is of type XmlNodeType.Element

@@ -54,6 +54,8 @@ namespace System.Data {
 		public void Read (XmlReader Reader)
 		{
 			XmlSchema Schema = XmlSchema.Read (Reader, new ValidationEventHandler (OnXmlSchemaValidation));
+			if (Reader.NodeType == XmlNodeType.Element)
+				Reader.ReadEndElement ();
 			if (DSet != null) DSet.Namespace = Schema.TargetNamespace;
 
 			// read items

@@ -606,7 +606,7 @@ namespace System.Data {
 		{
 			XmlTextWriter writer = new XmlTextWriter (fileName, null);
 			writer.Formatting = Formatting.Indented;
-			writer.WriteStartDocument ();
+			writer.WriteStartDocument (true);
 			try {
 				WriteXml (writer);
 			}
@@ -632,7 +632,7 @@ namespace System.Data {
 		{
 			XmlTextWriter writer = new XmlTextWriter (filename, null);
 			writer.Formatting = Formatting.Indented;
-			writer.WriteStartDocument ();
+			writer.WriteStartDocument (true);
 			
 			try {
 				WriteXml (writer, mode);
@@ -697,7 +697,7 @@ namespace System.Data {
 		{
 			XmlTextWriter writer = new XmlTextWriter (fileName, null);
 			writer.Formatting = Formatting.Indented;
-			writer.WriteStartDocument ();
+			writer.WriteStartDocument (true);
 			try {
 				WriteXmlSchema (writer);
 			}
@@ -773,69 +773,7 @@ namespace System.Data {
 
 		public XmlReadMode ReadXml (XmlReader r)
 		{
-			// FIXME: somekinda exception?
-			if (!r.Read ())
-				return XmlReadMode.Auto; // FIXME
-
-			// Skip XML declaration and prolog
-			r.MoveToContent();
-
-			// The document can be diffgram if :
-			// 1. The first element is diffgram.
-			if (r.LocalName == "diffgram") {
-				return ReadXml (r, XmlReadMode.DiffGram);
-			}
-
-			bool schemaRead = false;
-			if (r.LocalName == "schema") {
-				ReadXmlSchema (r);
-				r.MoveToContent();
-				schemaRead = true;
-			}
-			
-			// If we read the schema the next element can be a diffgram
-			// that is what happen in web services soap message.
-			if (schemaRead && r.LocalName == "diffgram") {
-				return ReadXml (r, XmlReadMode.DiffGram);
-			}
-			
-			// Get the DataSet name.
-			// if this xml is not diffgram then the first element will be the 
-			// DataSet name.
-			string dataSetName = XmlConvert.DecodeName (r.LocalName);
-			DataSetName = dataSetName;
-			
-			r.ReadStartElement ();
-			r.MoveToContent();
-			
-			
-			// After reading the dataset name there can be three scenarios:
-			// 1. The next part will be the schema of the dataset.
-			// 2. The next part will be the data of the dataset using diffgram.
-			// 3. The next part will be the data of tha dataset without diffgram.
-			// Check if the current element is the schema
-			if (r.LocalName == "schema") {
-				ReadXmlSchema (r);
-				r.MoveToContent();
-				schemaRead = true;
-			}
-			
-			// check if the data was written in a diffgram mode.
-			if (r.LocalName == "diffgram") {
-				return ReadXml (r, XmlReadMode.DiffGram);
-			}
-			
-			// If the schema has been read we should read the rest data of the dataset
-			// with ignoreschema mode.
-			if (schemaRead) {
-				ReadXml (r, XmlReadMode.IgnoreSchema, false);
-				return XmlReadMode.ReadSchema;
-			}
-			
-			// Read the data of the dataset with inferschema.
-			return ReadXml (r, XmlReadMode.InferSchema, false);
-
-			// FIXME: Consume to End of the started level element
+			return ReadXml (r, XmlReadMode.Auto);
 		}
 
 		public XmlReadMode ReadXml (Stream stream, XmlReadMode mode)
@@ -862,65 +800,72 @@ namespace System.Data {
 		[MonoTODO]
 		public XmlReadMode ReadXml (XmlReader reader, XmlReadMode mode)
 		{
-			// we have to initiate the reader.
-			if (reader.ReadState == ReadState.Initial)
-				reader.Read();
-
+			switch (reader.ReadState) {
+			case ReadState.EndOfFile:
+			case ReadState.Error:
+			case ReadState.Closed:
+				return mode;
+			}
 			// Skip XML declaration and prolog
 			reader.MoveToContent();
+			if (reader.EOF)
+				return mode;
 
-			XmlReadMode Result = XmlReadMode.Auto;
+			XmlReadMode Result = mode;
 
-			if (mode == XmlReadMode.DiffGram) {
-#if false
-				if (reader.LocalName != "diffgram"){
-					reader.MoveToContent ();
-					reader.ReadStartElement ();	// <DataSet>
-					DataSetName = reader.LocalName;
-
-					reader.MoveToContent ();
-					if (reader.LocalName == "schema")
-						ReadXmlSchema (reader);
-
-					reader.MoveToContent ();
-				}
-				XmlDiffLoader DiffLoader = new XmlDiffLoader (this);
-				DiffLoader.Load (reader);
-				Result =  XmlReadMode.DiffGram;
-#else
-				if (reader.LocalName == "diffgram" && reader.NamespaceURI == XmlConstants.DiffgrNamespace) {
+			// If diffgram, then read the first element as diffgram 
+			if (reader.LocalName == "diffgram" && reader.NamespaceURI == XmlConstants.DiffgrNamespace) {
+				switch (mode) {
+				case XmlReadMode.Auto:
+				case XmlReadMode.DiffGram:
 					XmlDiffLoader DiffLoader = new XmlDiffLoader (this);
 					DiffLoader.Load (reader);
-					Result =  XmlReadMode.DiffGram;
+					// (and leave rest of the reader as is)
+					return  XmlReadMode.DiffGram;
+				case XmlReadMode.Fragment:
+					reader.Skip ();
+					// (and continue to read)
+					break;
+				default:
+					reader.Skip ();
+					// (and leave rest of the reader as is)
+					return mode;
 				}
-				else
-					Result = ReadXml (reader, XmlReadMode.Auto, true);
-#endif
 			}
-			else 
-				Result = ReadXml(reader, mode, true);
-
-			return Result;
-		}
-
-		private XmlReadMode ReadXml (XmlReader r, XmlReadMode mode, bool readDataSet) {
-			
-			if (readDataSet) {
-				string dataSetName = XmlConvert.DecodeName (r.LocalName);
-				DataSetName = dataSetName;
-				// get the Namespace of the DataSet.
-				string tmp = r.GetAttribute("xmlns");
-				if (tmp != null)
-					Namespace = tmp;
-				
-				r.ReadStartElement ();
-				r.MoveToContent();
+			XmlSchemaMapper SchemaMapper = null;
+			// If schema, then read the first element as schema 
+			if (reader.LocalName == "schema" && reader.NamespaceURI == XmlSchema.Namespace) {
+				switch (mode) {
+				case XmlReadMode.IgnoreSchema:
+				case XmlReadMode.InferSchema:
+					reader.Skip ();
+					// (and break up read)
+					return mode;
+				case XmlReadMode.Fragment:
+					SchemaMapper = new XmlSchemaMapper (this);
+					SchemaMapper.Read (reader);
+					// (and continue to read)
+					break;
+				default:
+					SchemaMapper = new XmlSchemaMapper (this);
+					SchemaMapper.Read (reader);
+					// (and leave rest of the reader as is)
+					return XmlReadMode.ReadSchema;
+				}
 			}
-
+			// Otherwise, read as dataset... but only when required.
+			switch (mode) {
+			case XmlReadMode.Auto:
+			case XmlReadMode.InferSchema:
+			case XmlReadMode.Fragment:
+				break;
+			default:
+				reader.Skip ();
+				return mode;
+			}
 			XmlDataLoader Loader = new XmlDataLoader (this);
-			return Loader.LoadData (r, mode);
+			return Loader.LoadData (reader, mode);
 		}
-
 		#endregion // Public Methods
 
 		#region Public Events
@@ -1291,7 +1236,7 @@ namespace System.Data {
 			xmlnsAttr.Value = Namespace;
 
 			schema.UnhandledAttributes = new XmlAttribute[] {xmlnsAttr};
-						
+
 			XmlSchemaElement elem = new XmlSchemaElement ();
 			elem.Name = XmlConvert.EncodeName (DataSetName);
 
@@ -1301,6 +1246,7 @@ namespace System.Data {
 
 			atts[1] = doc.CreateAttribute (XmlConstants.MsdataPrefix, XmlConstants.Locale, XmlConstants.MsdataNamespace);
 			atts[1].Value = locale.Name;
+
 			elem.UnhandledAttributes = atts;
 
 			schema.Items.Add (elem);

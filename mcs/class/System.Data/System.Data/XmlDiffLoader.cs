@@ -102,8 +102,13 @@ namespace System.Data {
 					DataTable t = GetTable (reader.LocalName);
 					if (t != null)
 						LoadCurrentTable (t, reader);
+#if true
+					else
+						reader.Skip ();
+#else
 					else 
 						throw new DataException (Locale.GetText ("Cannot load diffGram. Table '" + reader.LocalName + "' is missing in the destination dataset"));	
+#endif
 				}
 				else
 					reader.Skip ();
