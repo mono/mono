@@ -1,3 +1,23 @@
+2004-02-14  Zoltan Varga  <vargaz@freemail.hu>
+
+	* jit-icalls.c (mono_ldftn_nosync): New JIT icall.
+
+	* tramp-x86.c (mono_arch_create_jump_trampoline): Move arch independent
+	functionality to mini.c.
+
+	* mini.c (mono_create_jump_trampoline): New function to create a jump
+	trampoline. Return a compiled method instead of a trampoline if it
+	exists. Add a cache for jump trampolines.
+
+	* mini.c (mono_jit_find_compiled_method): New function to return a
+	compiled method if it exists.
+
+	* mini-x86.c: Call mono_create_jump_trampoline instead of 
+	mono_arch_create_jit_trampoline.
+
+	* jit-icalls.c (mono_ldftn): Do not compile the method. Instead, return
+	a jump trampoline. Fixes #52092.
+	
 2004-02-11  Zoltan Varga  <vargaz@freemail.hu>
 
 	* debug-mini.c (mono_init_debugger): Remove call to mono_verify_corlib,
