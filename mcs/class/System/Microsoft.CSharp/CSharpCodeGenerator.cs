@@ -757,7 +757,6 @@ namespace Mono.CSharp
 #if NET_2_0
 			GenerateGenericsParameters (declaration.TypeParameters);
 #endif
-			output.Write( ' ' );
 			
 			IEnumerator enumerator = declaration.BaseTypes.GetEnumerator();
 			if ( enumerator.MoveNext() ) {

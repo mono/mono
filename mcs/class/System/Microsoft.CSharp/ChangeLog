@@ -1,3 +1,9 @@
+2005-01-19  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* CSharpCodeGenerator.cs: Remove extra ' ' emitted after class name in 
+	  GenerateTypeStart().  This removes a regression test failure in
+	  MonoTests.Microsoft.CSharp.CodeGeneratorFromTypeTest.DefaultTypeTest.
+
 2005-01-12  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* CSharpCodeGenerator.cs: Avoid keywords when writing enum members.
