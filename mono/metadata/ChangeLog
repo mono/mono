@@ -1,3 +1,13 @@
+2003-12-06  Martin Baulig  <martin@ximian.com>
+
+	* class.c (mono_class_create_from_generic): Removed.
+	(mono_class_from_generic): Check `ginst->klass' before doing
+	anything else.  This is important to fully support "recursive"
+	generic types.
+
+	* metadata.c (do_mono_metadata_parse_generic_inst): Create an
+	empty `generic_inst->klass' before doing anything else.
+
 2003-12-06  Dick Porter  <dick@ximian.com>
 
 	* verify.c: 
