@@ -324,8 +324,11 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void SetWindowBackground(IntPtr handle, Color color) {
+			uint	backcolor;
+
+			backcolor = ((uint)(color.ToArgb() & 0xff0000)>>16) | (uint)(color.ToArgb() & 0xff00) | (uint)((color.ToArgb() & 0xff) << 16);
 			lock (this) {
-				XSetWindowBackground(DisplayHandle, handle, (uint)(color.ToArgb() & 0x00ffffff));
+				XSetWindowBackground(DisplayHandle, handle, backcolor);
 			}
 		}
 
@@ -848,6 +851,12 @@ namespace System.Windows.Forms {
 			return true;
 		}
 
+		internal override void SetCursorPos(IntPtr handle, int x, int y) {
+			lock (this) {
+				XWarpPointer(DisplayHandle, IntPtr.Zero, (handle!=IntPtr.Zero) ? handle : IntPtr.Zero, 0, 0, 0, 0, x, y);
+			}
+		}
+
 		internal override void GetCursorPos(IntPtr handle, out int x, out int y) {
 			IntPtr	root;
 			IntPtr	child;
@@ -1057,6 +1066,9 @@ namespace System.Windows.Forms {
 
 		[DllImport ("libX11.so", EntryPoint="XSetWindowColormap")]
 		internal extern static uint XSetWindowColormap(IntPtr display, IntPtr window, uint cmap);
+
+		[DllImport ("libX11.so", EntryPoint="XWarpPointer")]
+		internal extern static uint XWarpPointer(IntPtr display, IntPtr src_w, IntPtr dest_w, int src_x, int src_y, uint src_width, uint src_height, int dest_x, int dest_y);
 
 		// Drawing
 		[DllImport ("libX11.so", EntryPoint="XCreateGC")]
