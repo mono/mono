@@ -20,6 +20,7 @@ using System.Collections;
 namespace System.Reflection {
 
 	[Serializable]
+	[ClassInterface(ClassInterfaceType.AutoDual)]
 	public class Assembly : System.Reflection.ICustomAttributeProvider,
 		System.Security.IEvidenceFactory, System.Runtime.Serialization.ISerializable {
 		private IntPtr _mono_assembly;

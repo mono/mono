@@ -10,9 +10,11 @@
 using System;
 using System.Reflection;
 using System.Globalization;
+using System.Runtime.InteropServices;
 
 namespace System.Reflection {
 	[Serializable]
+	[ClassInterface(ClassInterfaceType.AutoDual)]
 	public abstract class PropertyInfo : MemberInfo {
 
 		public abstract PropertyAttributes Attributes { get; }

@@ -14,10 +14,12 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Globalization;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace System.Reflection {
 
 	[Serializable]
+	[ClassInterface(ClassInterfaceType.AutoDual)]
 	public abstract class FieldInfo : MemberInfo {
 
 		public abstract FieldAttributes Attributes {get;}

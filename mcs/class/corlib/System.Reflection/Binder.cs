@@ -6,10 +6,12 @@
 // (C) Ximian, Inc. 2001 - 2002
 
 using System.Globalization;
+using System.Runtime.InteropServices;
 
 namespace System.Reflection
 {
 	[Serializable]
+	[ClassInterface(ClassInterfaceType.AutoDual)]
 	public abstract class Binder
 	{
 		protected Binder () {}

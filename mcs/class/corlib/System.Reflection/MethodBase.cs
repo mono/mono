@@ -11,10 +11,12 @@ using System;
 using System.Globalization;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace System.Reflection {
 
 	[Serializable]
+	[ClassInterface(ClassInterfaceType.AutoDual)]
 	public abstract class MethodBase: MemberInfo {
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]

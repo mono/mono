@@ -9,9 +9,12 @@
 // TODO: Mucho left to implement.
 //
 
+using System.Runtime.InteropServices;
+
 namespace System.Reflection {
 
 	[Serializable]
+	[ClassInterface(ClassInterfaceType.AutoDual)]
 	public abstract class MemberInfo : ICustomAttributeProvider {
 
 		public abstract Type DeclaringType {

@@ -15,6 +15,7 @@ namespace System.Reflection {
 
 	/// <summary>
 	/// </summary>
+	[Flags]
 	public enum MethodAttributes {
 
 		/// <summary>
@@ -68,6 +69,12 @@ namespace System.Reflection {
 		/// <summary>
 		/// </summary>
 		VtableLayoutMask = 256,
+
+#if NET_1_1
+		/// <summary>
+		/// </summary>		
+		CheckAccessOnOverride = 512,
+#endif
 
 		/// <summary>
 		/// </summary>

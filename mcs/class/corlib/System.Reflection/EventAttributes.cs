@@ -15,6 +15,7 @@ namespace System.Reflection {
 
 	/// <summary>
 	/// </summary>
+	[Flags]
 	public enum EventAttributes {
 
 		/// <summary>

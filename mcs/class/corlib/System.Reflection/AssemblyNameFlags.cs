@@ -28,6 +28,10 @@ namespace System.Reflection {
 		///  Perhaps this has changed since the beta.
 		/// </summary>
 		PublicKey = 1,
+
+#if NET_1_1
+		Retargetable = 256
+#endif
 	} // AssemblyNameFlags
 
 } // System.Reflection

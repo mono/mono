@@ -9,10 +9,13 @@
 // TODO: Mucho left to implement.
 //
 
+using System;
 using System.Globalization;
+using System.Runtime.InteropServices;
 
 namespace System.Reflection {
 
+	[Guid("AFBF15E5-C37C-11d2-B88E-00A0C9B471B8")]
 	public interface IReflect {
 
 		Type UnderlyingSystemType {

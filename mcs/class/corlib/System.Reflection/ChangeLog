@@ -1,3 +1,10 @@
+2003-11-14  Zoltan Varga  <vargaz@freemail.hu>
+
+	* AssemblyNameFlags.cs MethodAttributes.cs: Add new enumerated values 
+	from NET 1.1.
+	
+	* *.cs: Add missing attributes.
+
 2003-11-11  Todd Berman  <tberman@gentoo.org>
 
 	* AssemblyName.cs (FullName): Fixed to include a proper PublicKeyToken.

@@ -9,10 +9,12 @@
 
 using System;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace System.Reflection {
 
 	[Serializable]
+	[ClassInterface(ClassInterfaceType.AutoDual)]
 	public abstract class MethodInfo: MethodBase {
 
 		public abstract MethodInfo GetBaseDefinition();
