@@ -1,3 +1,7 @@
+2004-09-10  Zoltan Varga  <vargaz@freemail.hu>
+
+	* class.h class.c: Add mono_type_get_underlying_type ().
+
 2004-09-09  Geoff Norton <gnorton@customerndna.com>
 
 	* icall.c (ves_icall_System_Reflection_Assembly_GetTypes):
