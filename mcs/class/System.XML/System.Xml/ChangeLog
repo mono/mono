@@ -1,3 +1,7 @@
+2004-10-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlWriter.cs : CreateTextWriter() is private.
+
 2004-10-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlNodeReader.cs : LookupPrefix() was only after 2.0.

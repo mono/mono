@@ -143,7 +143,7 @@ namespace System.Xml
 			return writer;
 		}
 
-		public static XmlWriter CreateTextWriter (TextWriter writer, XmlWriterSettings settings)
+		private static XmlWriter CreateTextWriter (TextWriter writer, XmlWriterSettings settings)
 		{
 			if (settings == null)
 				settings = new XmlWriterSettings ();
@@ -446,7 +446,7 @@ namespace System.Xml
 					WriteFullEndElement ();
 				}
 				break;
-			// In case of XmlAttribute, don't proceed reader.
+			// In case of XmlAttribute, don't proceed reader, and it will never be written.
 			case XmlNodeType.Attribute:
 				return;
 			case XmlNodeType.Text:
