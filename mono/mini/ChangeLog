@@ -1,3 +1,8 @@
+2004-09-10  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-sparc.c mini-x86.c mini-amd64.c: Use the new 
+	mono_type_get_underlying_type () helper function to simplify code.
+	
 2004-09-09  Martin Baulig  <martin@ximian.com>
 
 	* mini-amd64.c: Don't access `type->data.klass' directly, call
