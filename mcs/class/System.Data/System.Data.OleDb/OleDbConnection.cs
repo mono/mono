@@ -228,41 +228,45 @@ namespace System.Data.OleDb
 			if (State == ConnectionState.Open)
 				throw new InvalidOperationException ();
 
+			gdaConnection = libgda.gda_client_open_connection (libgda.GdaClient,
+                                                                          connectionString,
+                                                                          "", "");
+			
 			/* convert the connection string to its GDA equivalent */
-			args = connectionString.Split (';');
-			len = args.Length;
-			for (int i = 0; i < len; i++) {
-				string[] values = args[i].Split (separator, 2);
-				if (values[0] == "Provider") {
-					if (values[1] == "SQLOLEDB")
-						provider = "FreeTDS";
-					else if (values[1] == "MSDAORA")
-						provider = "Oracle";
-					else if (values[2] == "Microsoft.Jet.OLEDB.4.0")
-						provider = "MS Access";
-					else
-						provider = values[2];
-				}
-				else if (values[0] == "Addr" || values[0] == "Address")
-					gdaCncStr = String.Concat (gdaCncStr, "HOST=", values[1], ";");
-				else if (values[0] == "Database")
-					gdaCncStr = String.Concat (gdaCncStr, "DATABASE=", values[1], ";");
-				else if (values[0] == "Connection Lifetime")
-					connectionTimeout = System.Convert.ToInt32 (values[1]);
-				else if (values[0] == "File Name")
-					gdaCncStr = String.Concat (gdaCncStr, "FILENAME=", values[1], ";");
-				else if (values[0] == "Password" || values[0] == "Pwd")
-					gdaCncStr = String.Concat (gdaCncStr, "PASSWORD=", values[1], ";");
-				else if (values[0] == "User ID")
-					gdaCncStr = String.Concat (gdaCncStr, "USERNAME=", values[1], ";");
-			}
+			//args = connectionString.Split (';');
+			//len = args.Length;
+			//for (int i = 0; i < len; i++) {
+			//	string[] values = args[i].Split (separator, 2);
+			//	if (values[0] == "Provider") {
+			//		if (values[1] == "SQLOLEDB")
+			//			provider = "FreeTDS";
+			//		else if (values[1] == "MSDAORA")
+			//			provider = "Oracle";
+			//		else if (values[2] == "Microsoft.Jet.OLEDB.4.0")
+			//			provider = "MS Access";
+			//		else
+			//			provider = values[2];
+			//	}
+			//	else if (values[0] == "Addr" || values[0] == "Address")
+			//		gdaCncStr = String.Concat (gdaCncStr, "HOST=", values[1], ";");
+			//	else if (values[0] == "Database")
+			//		gdaCncStr = String.Concat (gdaCncStr, "DATABASE=", values[1], ";");
+			//	else if (values[0] == "Connection Lifetime")
+			//		connectionTimeout = System.Convert.ToInt32 (values[1]);
+			//	else if (values[0] == "File Name")
+			//		gdaCncStr = String.Concat (gdaCncStr, "FILENAME=", values[1], ";");
+			//	else if (values[0] == "Password" || values[0] == "Pwd")
+			//		gdaCncStr = String.Concat (gdaCncStr, "PASSWORD=", values[1], ";");
+			//	else if (values[0] == "User ID")
+			//		gdaCncStr = String.Concat (gdaCncStr, "USERNAME=", values[1], ";");
+			//}
 
 			/* open the connection */
-			System.Console.WriteLine ("Opening connection for provider " +
-						  provider + " with " + gdaCncStr);
-			gdaConnection = libgda.gda_client_open_connection_from_string (libgda.GdaClient,
-										       provider,
-										       gdaCncStr);
+			//System.Console.WriteLine ("Opening connection for provider " +
+			//		  provider + " with " + gdaCncStr);
+			//gdaConnection = libgda.gda_client_open_connection_from_string (libgda.GdaClient,
+			//							       provider,
+			//							       gdaCncStr);
 		}
 
 		[MonoTODO]
