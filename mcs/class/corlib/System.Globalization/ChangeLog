@@ -1,3 +1,11 @@
+2003-12-01  Dick Porter  <dick@ximian.com>
+
+	* CultureInfo.cs: Culture name creation is case-insensitive.
+	Implemented CurrentCulture and CurrentUICulture.
+
+	* CompareInfo.cs: Fix IndexOf and LastIndexOf so that they work
+	for combining characters.
+
 2003-11-05  Pedro Martínez Juliá  <yoros@wanadoo.es>
 
 	* DateTimeFormatInfo.cs: Hack an era for US culture. We must look

@@ -180,54 +180,104 @@ namespace System {
 		}
 
 		public static int Compare(String s1, String s2) {
-			return Compare(s1, s2, false);
+			return(Compare(s1, s2, false,
+				       CultureInfo.CurrentCulture));
 		}
 
 		public static int Compare(String s1, String s2, bool inCase) {
-			if (null == s1) {
-				if (null == s2)
-					return 0;
-				else
-					return -1;
-			} else if (null == s2)
-				return 1;
-
-			return InternalCompare(s1, 0, s2, 0, Math.Max(s1.length, s2.length), (inCase == true) ? COMPARE_INCASE : COMPARE_CASE);
+			return(Compare (s1, s2, inCase,
+					CultureInfo.CurrentCulture));
 		}
 		
-		[MonoTODO()]
-		public static int Compare(String s1, String s2, bool inCase, CultureInfo culture) {
-			return Compare(s1, s2, inCase);
+		public static int Compare(String s1, String s2, bool inCase,
+					  CultureInfo culture) {
+			if (culture == null) {
+				throw new ArgumentNullException ("culture");
+			}
+			
+			if (s1 == null) {
+				if (s2 == null) {
+					return(0);
+				} else {
+					return(-1);
+				}
+			} else if (s2 == null) {
+				return(1);
+			}
+
+			CompareOptions compopts;
+			
+			if(inCase) {
+				compopts=CompareOptions.IgnoreCase;
+			} else {
+				compopts=CompareOptions.None;
+			}
+			
+			return(culture.CompareInfo.Compare (s1, s2, compopts));
 		}
 
-		public static int Compare(String s1, int i1, String s2, int i2, int length) {
-			return Compare(s1, i1, s2, i2, length, false);
+		public static int Compare(String s1, int i1, String s2, int i2,
+					  int length) {
+			return(Compare(s1, i1, s2, i2, length, false,
+				       CultureInfo.CurrentCulture));
 		}
 
-		public static int Compare(String s1, int i1, String s2, int i2, int length, bool inCase) {
-			if (null == s1) {
-				if (null == s2)
-					return 0;
-				else
-					return -1;
-			} else if (null == s2)
-				return 1;
+		public static int Compare(String s1, int i1, String s2, int i2,
+					  int length, bool inCase) {
+			return(Compare (s1, i1, s2, i2, length, inCase,
+					CultureInfo.CurrentCulture));
+		}
+		
+		public static int Compare(String s1, int i1, String s2, int i2,
+					  int length, bool inCase,
+					  CultureInfo culture) {
+			if(culture==null) {
+				throw new ArgumentNullException ("culture");
+			}
 
-			if (length < 0 || i1 < 0 || i2 < 0)
+			if((i1 > s1.Length) ||
+			   (i2 > s2.Length) ||
+			   (i1 < 0) || (i2 < 0) || (length < 0)) {
 				throw new ArgumentOutOfRangeException ();
+			}
+			
+			if (s1 == null) {
+				if (s2 == null) {
+					return(0);
+				} else {
+					return(-1);
+				}
+			} else if (s2 == null) {
+				return(1);
+			}
+			
+			CompareOptions compopts;
+			
+			if(inCase) {
+				compopts=CompareOptions.IgnoreCase;
+			} else {
+				compopts=CompareOptions.None;
+			}
+			
+			/* Need to cap the requested length to the
+			 * length of the string, because
+			 * CompareInfo.Compare will call
+			 * String.Substring on its arguments.
+			 */
+			int len1=length;
+			int len2=length;
+			
+			if(length > (s1.Length - i1)) {
+				len1=s1.Length - i1;
+			}
 
-			if (i1 > s1.length || i2 > s2.length)
-				throw new ArgumentOutOfRangeException ();
+			if(length > (s2.Length - i2)) {
+				len2=s2.Length - i2;
+			}
 
-			if (length == 0)
-				return 0;
-
-			return InternalCompare(s1, i1, s2, i2, length, (inCase == true) ? COMPARE_INCASE : COMPARE_CASE);
-		}
-
-		[MonoTODO()]
-		public static int Compare(String s1, int i1, String s2, int i2, int length, bool inCase, CultureInfo culture) {
-			return Compare(s1, i1, s2, i2, length, inCase);
+			return(culture.CompareInfo.Compare(s1, i1, len1,
+							   s2, i2, len2,
+							   compopts));
 		}
 
 		public int CompareTo(Object value) {
@@ -248,33 +298,59 @@ namespace System {
 		}
 
 		public static int CompareOrdinal(String s1, String s2) {
-			if (null == s1 || null == s2) {
-				if ((Object)s1 == (Object) s2) {
-					return 0;
+			if (s1 == null) {
+				if (s2 == null) {
+					return(0);
+				} else {
+					return(-1);
 				}
-
-				return (s1 == null) ? -1 : 1;
+			} else if (s2 == null) {
+				return(1);
 			}
 
-			return InternalCompare(s1, 0, s2, 0, Math.Max(s1.length, s2.length), COMPARE_ORDINAL);
+			/* Invariant, because that is cheaper to
+			 * instantiate (and chances are it already has
+			 * been.)
+			 */
+			return(CultureInfo.InvariantCulture.CompareInfo.Compare (s1, s2, CompareOptions.Ordinal));
 		}
 
-		public static int CompareOrdinal(String s1, int i1, String s2, int i2, int length) {
-			if (null == s1 || null == s2) {
-				if ((Object)s1 == (Object) s2) {
-					return 0;
-				}
-
-				return (s1 == null) ? -1 : 1;
+		public static int CompareOrdinal(String s1, int i1, String s2,
+						 int i2, int length)
+		{
+			if ((i1 > s1.Length) ||
+			    (i2 > s2.Length) ||
+			    (i1 < 0) || (i2 < 0) || (length < 0)) {
+				throw new ArgumentOutOfRangeException ();
 			}
 
-			if (i1 < 0 || i2 < 0 || length < 0)
-				throw new ArgumentOutOfRangeException ();
+			if (s1 == null) {
+				if (s2 == null) {
+					return(0);
+				} else {
+					return(-1);
+				}
+			} else if (s2 == null) {
+				return(1);
+			}
 
-			if (i1 > s1.length || i2 > s2.length)
-				throw new ArgumentOutOfRangeException ();
+			/* Need to cap the requested length to the
+			 * length of the string, because
+			 * CompareInfo.Compare will call
+			 * String.Substring on its arguments.
+			 */
+			int len1=length;
+			int len2=length;
+			
+			if(length > (s1.Length - i1)) {
+				len1=s1.Length - i1;
+			}
 
-			return InternalCompare(s1, i1, s2, i2, length, COMPARE_ORDINAL);
+			if(length > (s2.Length - i2)) {
+				len2=s2.Length - i2;
+			}
+
+			return(CultureInfo.InvariantCulture.CompareInfo.Compare(s1, i1, len1, s2, i2, len2, CompareOptions.Ordinal));
 		}
 
 		public bool EndsWith(String value) {
@@ -314,55 +390,61 @@ namespace System {
 		}
 
 		public int IndexOf(char value) {
-			return InternalIndexOf(value, 0, this.length);
+			return(IndexOf(value, 0, this.length));
 		}
 
 		public int IndexOf(String value) {
-			return IndexOf(value, 0, this.length);
+			return(IndexOf(value, 0, this.length));
 		}
 
 		public int IndexOf(char value, int sindex) {
-			if (sindex < 0 || sindex > this.length) {
-				throw new ArgumentOutOfRangeException();
-			}
-
-			if (sindex == this.length)
-				return -1;
-
-			return InternalIndexOf(value, sindex, this.length - sindex);
+			return(IndexOf(value, sindex, this.length - sindex));
 		}
 
 		public int IndexOf(String value, int sindex) {
-			if (sindex == this.length)
-				return -1;
-
-			return IndexOf(value, sindex, this.length - sindex);
+			return(IndexOf(value, sindex, this.length - sindex));
 		}
 
+		/* This method is culture-insensitive */
 		public int IndexOf(char value, int sindex, int count) {
-			if (sindex < 0 || count < 0 || sindex + count > this.length)
+			if (sindex < 0 || count < 0 ||
+			    sindex + count > this.length) {
 				throw new ArgumentOutOfRangeException ();
+			}
 
-			if (sindex == 0 && this.length == 0)
-				return -1;			
-
-			return InternalIndexOf(value, sindex, count);
+			if ((sindex == 0 && this.length == 0) ||
+			    (sindex == this.length) ||
+			    (count == 0)) {
+				return(-1);
+			}
+			
+			return(CultureInfo.InvariantCulture.CompareInfo.IndexOf (this, value, sindex, count));
 		}
 		
+		/* But this one is culture-sensitive */
 		public int IndexOf(String value, int sindex, int count) {
-			if (null == value) 
+			if (value == null) {
 				throw new ArgumentNullException();
+			}
 
-			if (sindex < 0 || count < 0 || sindex + count > this.length)
+			if (sindex < 0 || count < 0 ||
+			    sindex + count > this.length) {
 				throw new ArgumentOutOfRangeException ();
+			}
 
-			if (value.length == 0)
+			if (value.length == 0) {
 				return sindex;
+			}
 			
-			if (sindex == 0 && this.length == 0)
+			if (sindex == 0 && this.length == 0) {
 				return -1;
+			}
 
-			return InternalIndexOf(value, sindex, count);
+			if (count == 0) {
+				return(-1);
+			}
+			
+			return(CultureInfo.CurrentCulture.CompareInfo.IndexOf (this, value, sindex, count));
 		}
 
 		public int LastIndexOfAny(char [] arr) {
@@ -399,67 +481,89 @@ namespace System {
 		}
 
 		public int LastIndexOf(char value) {
-			return InternalLastIndexOf(value, this.length - 1, this.length);
+			if(this.length==0) {
+				return(-1);
+			} else {
+				return(LastIndexOf(value, this.length - 1,
+						   this.length));
+			}
+			
 		}
 
 		public int LastIndexOf(String value) {
-			if (null == value) 
-				throw new ArgumentNullException();
-			
-			if (value.length == 0)
-				return length - 1;
-
-			if (this.length == 0)
-				return -1;
-
-			return InternalLastIndexOf(value, this.length - 1, this.length);
+			if(this.length==0) {
+				/* This overload does additional checking */
+				return(LastIndexOf(value, 0, 0));
+			} else {
+				return(LastIndexOf(value, this.length - 1,
+						   this.length));
+			}
 		}
 
 		public int LastIndexOf(char value, int sindex){
-			return LastIndexOf(value, sindex, sindex + 1);
+			return(LastIndexOf(value, sindex, sindex + 1));
 		}
 
 		public int LastIndexOf(String value, int sindex) {
-			return LastIndexOf(value, sindex, sindex + 1);
+			return(LastIndexOf(value, sindex, sindex + 1));
 		}
 
+		/* This method is culture-insensitive */
 		public int LastIndexOf(char value, int sindex, int count) {
-			if (sindex < 0 || count < 0)
-				throw new ArgumentOutOfRangeException ();
-
-			if (sindex >= this.length || sindex - count + 1 < 0)
-				throw new ArgumentOutOfRangeException ();
-
-			if (sindex == 0 && this.length == 0)
+			if (sindex == 0 && this.length == 0) {
 				return -1;
+			}
 
-			return InternalLastIndexOf(value, sindex, count);
+			if (sindex < 0 || count < 0) {
+				throw new ArgumentOutOfRangeException ();
+			}
+
+			if (sindex >= this.length || sindex - count + 1 < 0) {
+				throw new ArgumentOutOfRangeException ();
+			}
+			if (count == 0) {
+				return(-1);
+			}
+			
+			return(CultureInfo.InvariantCulture.CompareInfo.LastIndexOf (this, value, sindex, count));
 		}
 
+		/* But this one is culture-sensitive */
 		public int LastIndexOf(String value, int sindex, int count) {
-			if (null == value) 
+			if (null == value) {
 				throw new ArgumentNullException();
+			}
+
+			if (value == String.Empty) {
+				return(0);
+			}
+
+			if (sindex == 0 && this.length == 0) {
+				return -1;
+			}
 
 			// This check is needed to match undocumented MS behaviour
-			if (this.length == 0 && value.length > 0)
-				return -1;
+			if (this.length == 0 && value.length > 0) {
+				return(-1);
+			}
 
-			if (sindex < 0 || sindex > this.length)
+			if (value.length > sindex) {
+				return -1;
+			}
+
+			if (count == 0) {
+				return(-1);
+			}
+
+			if (sindex < 0 || sindex > this.length) {
 				throw new ArgumentOutOfRangeException ();
+			}
 
-			if (count < 0 || sindex - count + 1 < 0)
+			if (count < 0 || sindex - count + 1 < 0) {
 				throw new ArgumentOutOfRangeException ();
-
-			if (value.length > sindex)
-				return -1;
-
-			if (value == String.Empty)
-				return sindex;
-
-			if (sindex == 0 && this.length == 0)
-				return -1;
-
-			return InternalLastIndexOf(value, sindex, count);
+			}
+			
+			return(CultureInfo.CurrentCulture.CompareInfo.LastIndexOf (this, value, sindex, count));
 		}
 
 		public String PadLeft(int width) {
@@ -491,25 +595,37 @@ namespace System {
 		}
 
 		public bool StartsWith(String value) {
-			if (null == value)
-				throw new ArgumentNullException();
+			if (value == null) {
+				throw new ArgumentNullException("value");
+			}
 
-			if (this.length < value.length)
-				return false;
+			if (this.length < value.length) {
+				return(false);
+			}
 
 			return (0 == Compare(this, 0, value, 0 , value.length));
 		}
 	
     
+		/* This method is culture insensitive */
 		public String Replace (char oldChar, char newChar) {
-			return InternalReplace(oldChar, newChar);
+			return(InternalReplace(oldChar, newChar));
 		}
 
+		/* This method is culture sensitive */
 		public String Replace(String oldValue, String newValue) {
-			if (null == oldValue)
-				throw new ArgumentNullException();
+			if(oldValue==null) {
+				throw new ArgumentNullException ("oldValue");
+			}
+			if(oldValue==String.Empty) {
+				throw new ArgumentException ("oldValue is the empty string.");
+			}
 
-			return InternalReplace(oldValue, newValue);
+			if(newValue==null) {
+				newValue=String.Empty;
+			}
+			
+			return(InternalReplace (oldValue, newValue, CultureInfo.CurrentCulture.CompareInfo));
 		}
 
 		public String Remove(int sindex, int count) {
@@ -520,21 +636,19 @@ namespace System {
 		}
 
 		public String ToLower() {
-			return InternalToLower();
+			return(InternalToLower(CultureInfo.CurrentCulture));
 		}
 
-		[MonoTODO("By now, don't use culture info")]
 		public String ToLower(CultureInfo culture) {
-			return InternalToLower();
+			return(InternalToLower(culture));
 		}
 
 		public String ToUpper() {
-			return InternalToUpper();
+			return(InternalToUpper(CultureInfo.CurrentCulture));
 		}
 
-		[MonoTODO("By now, don't use culture info")]
 		public String ToUpper(CultureInfo culture) {
-			return InternalToUpper();
+			return(InternalToUpper(culture));
 		}
 
 		public override String ToString() {
@@ -1108,8 +1222,8 @@ namespace System {
 		private extern String InternalReplace(char oldChar, char newChar);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern String InternalReplace(String oldValue, String newValue);
-    
+		private extern String InternalReplace(String oldValue, string newValue, CompareInfo comp);
+		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern String InternalRemove(int sindex, int count);
 		
@@ -1123,19 +1237,7 @@ namespace System {
 		private extern String InternalTrim(char[] chars, int typ);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern int InternalIndexOf(char value, int sindex, int count);
-
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern int InternalIndexOf(string value, int sindex, int count);
-
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern int InternalIndexOfAny(char [] arr, int sindex, int count);
-
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern int InternalLastIndexOf(char value, int sindex, int count);
-
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern int InternalLastIndexOf(String value, int sindex, int count);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern int InternalLastIndexOfAny(char [] anyOf, int sindex, int count);
@@ -1144,10 +1246,10 @@ namespace System {
 		private extern String InternalPad(int width, char chr, bool right);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern String InternalToLower();
+		private extern String InternalToLower(CultureInfo culture);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern String InternalToUpper();
+		private extern String InternalToUpper(CultureInfo culture);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static String InternalAllocateStr(int length);
@@ -1163,11 +1265,5 @@ namespace System {
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static string InternalIsInterned(string str);
-
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static int InternalCompare(String s1, int i1, String s2, int i2, int length, int mode);
-
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static bool InternalEquals(String s1, String s2);
 	}
 }

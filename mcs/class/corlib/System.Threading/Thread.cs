@@ -21,6 +21,7 @@ namespace System.Threading
 		private IntPtr system_thread_handle;
 		
 		private CultureInfo current_culture;
+		private CultureInfo current_ui_culture;
 		private bool threadpool_thread;
 		private ThreadState state = ThreadState.Unstarted;
 		private object abort_exc;
@@ -264,12 +265,42 @@ namespace System.Threading
 			}
 		}
 
-		[MonoTODO]
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private static extern int current_lcid ();
+
+		/* If the current_lcid() isn't known by CultureInfo,
+		 * it will throw an exception which may cause
+		 * String.Concat to try and recursively look up the
+		 * CurrentCulture, which will throw an exception, etc.
+		 * Use a boolean to short-circuit this scenario.
+		 */
+		private static bool in_currentculture=false;
+		
 		public CultureInfo CurrentCulture {
 			get {
-				if (current_culture == null)
-					current_culture = CultureInfo.InvariantCulture;
-				return current_culture;
+				if (current_culture == null) {
+					lock (typeof (Thread)) {
+						if(current_culture==null) {
+							if(in_currentculture==true) {
+								/* Bail out */
+								current_culture = CultureInfo.InvariantCulture;
+							} else {
+								in_currentculture=true;
+							
+								try {
+									current_culture = new CultureInfo (current_lcid ());
+								} catch (ArgumentException) {
+									
+									current_culture = CultureInfo.InvariantCulture;
+								}
+							}
+						}
+						
+						in_currentculture=false;
+					}
+				}
+				
+				return(current_culture);
 			}
 			
 			set {
@@ -277,16 +308,32 @@ namespace System.Threading
 			}
 		}
 
-		[MonoTODO]
 		public CultureInfo CurrentUICulture {
 			get {
-				// FIXME
-				return(CurrentCulture);
+				if (current_ui_culture == null) {
+					lock (this) {
+						if(current_ui_culture==null) {
+							/* We don't
+							 * distinguish
+							 * between
+							 * System and
+							 * UI cultures
+							 */
+							try {
+								current_ui_culture = new CultureInfo (current_lcid ());
+							} catch (ArgumentException) {
+							
+								current_ui_culture = CultureInfo.InvariantCulture;
+							}
+						}
+					}
+				}
+				
+				return(current_ui_culture);
 			}
 			
 			set {
-				// FIXME
-				CurrentCulture=value;
+				current_ui_culture = value;
 			}
 		}
 

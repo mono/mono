@@ -20,14 +20,6 @@ namespace System.Collections {
 
 		private static CaseInsensitiveComparer default_comparer, default_invariant_comparer;
 		private CultureInfo cinfo;
-		// Class constructor
-
-		static CaseInsensitiveComparer ()
-		{
-			default_comparer = new CaseInsensitiveComparer ();
-			default_invariant_comparer = new CaseInsensitiveComparer (CultureInfo.InvariantCulture);
-		}
-
 
 		// Public instance constructor
 
@@ -48,18 +40,39 @@ namespace System.Collections {
 		// Public static properties
 		//
 
+		/* Don't do this in the class constructor, because
+		 * CultureInfo needs to be able to use
+		 * CaseInsensitiveComparer (Invariant), and the
+		 * default CIC needs to construct a CultureInfo.
+		 */
 		public static CaseInsensitiveComparer Default {
 			get {
-				return default_comparer;
+				if(default_comparer==null) {
+					lock (typeof (CaseInsensitiveComparer)) {
+						if(default_comparer==null) {
+							default_comparer=new CaseInsensitiveComparer ();
+						}
+					}
+				}
+				
+				return(default_comparer);
 			}
 		}
 
 		public static CaseInsensitiveComparer DefaultInvariant {
 			get {
-				return default_invariant_comparer;
+				if(default_invariant_comparer==null) {
+					lock (typeof (CaseInsensitiveComparer)) {
+						if(default_invariant_comparer==null) {
+							default_invariant_comparer=new CaseInsensitiveComparer (CultureInfo.InvariantCulture);
+						}
+					}
+				}
+				
+				return(default_invariant_comparer);
 			}
 		}
-		
+
 		//
 		// Instance methods
 		//

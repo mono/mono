@@ -1,3 +1,8 @@
+2003-12-01  Dick Porter  <dick@ximian.com>
+
+	* String.cs: Make Compare, IndexOf, LastIndexOf, StartsWith,
+	Replace, ToLower, ToUpper and Equals use the correct CultureInfo.
+
 2003-11-28  Dick Porter  <dick@ximian.com>
 
 	* Type.cs: 

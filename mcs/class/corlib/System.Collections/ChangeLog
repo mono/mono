@@ -1,3 +1,9 @@
+2003-12-01  Dick Porter  <dick@ximian.com>
+
+	* CaseInsensitiveComparer.cs: Construct the default comparers when
+	they're needed, to avoid a dependency loop with CultureInfo's
+	constructor.
+
 2003-12-01  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Queue.cs: patch from Carlos Barcenilla.

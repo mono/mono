@@ -216,8 +216,8 @@ namespace System.Globalization
 					    int startIndex,
 					    CompareOptions options)
 		{
-			return(IndexOf (source, value, startIndex, 0,
-					options));
+			return(IndexOf (source, value, startIndex,
+					source.Length - startIndex, options));
 		}
 
 		public virtual int IndexOf (string source, char value,
@@ -231,7 +231,8 @@ namespace System.Globalization
 					    int startIndex,
 					    CompareOptions options)
 		{
-			throw new NotImplementedException ();
+			return(IndexOf (source, value, startIndex,
+					source.Length - startIndex, options));
 		}
 
 		public virtual int IndexOf (string source, string value,
@@ -249,6 +250,12 @@ namespace System.Globalization
 					startIndex, count, options));
 		}
 
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private extern int internal_index (string source, int sindex,
+						   int count, string value,
+						   CompareOptions options,
+						   bool first);
+		
 		public virtual int IndexOf (string source, string value,
 					    int startIndex, int count,
 					    CompareOptions options)
@@ -265,19 +272,12 @@ namespace System.Globalization
 			if(count<0 || (source.Length - startIndex) < count) {
 				throw new ArgumentOutOfRangeException ("count");
 			}
-
-			int valuelen=value.Length;
-			while(count >= valuelen) {
-				if(Compare (source, startIndex, valuelen,
-					    value, 0, valuelen, options)==0) {
-					return(startIndex);
-				}
-
-				startIndex++;
-				count--;
+			if(count==0) {
+				return(-1);
 			}
 
-			return(-1);
+			return (internal_index (source, startIndex, count,
+						value, options, true));
 		}
 
 		public virtual bool IsPrefix(string source, string prefix)
@@ -427,24 +427,17 @@ namespace System.Globalization
 			if(count < 0 || (startIndex - count) < -1) {
 				throw new ArgumentOutOfRangeException("count");
 			}
+			if(count == 0) {
+				return(-1);
+			}
 
 			int valuelen=value.Length;
 			if(valuelen==0) {
 				return(0);
 			}
 
-			while(count >= valuelen) {
-				if(Compare (source, startIndex - valuelen+1,
-					    valuelen, value, 0, valuelen,
-					    options)==0) {
-					return(startIndex - valuelen+1);
-				}
-
-				startIndex++;
-				count--;
-			}
-
-			return(-1);
+			return(internal_index (source, startIndex, count,
+					       value, options, false));
 		}
 
 		public override string ToString()

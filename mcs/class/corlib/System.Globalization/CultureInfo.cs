@@ -56,8 +56,8 @@ namespace System.Globalization
 
 			static CultureMap ()
 			{
-				CultureID=new Hashtable ();
-				CultureNames=new Hashtable ();
+				CultureID=new Hashtable (CaseInsensitiveHashCodeProvider.Default, new CaseInsensitiveComparer (CultureInfo.InvariantCulture));
+				CultureNames=new Hashtable (CaseInsensitiveHashCodeProvider.Default, new CaseInsensitiveComparer (CultureInfo.InvariantCulture));
 
 				CultureMap map;
 				
@@ -1092,16 +1092,14 @@ namespace System.Globalization
 
 		public static CultureInfo CurrentCulture 
 		{
-			get 
-			{
+			get {
 				return Thread.CurrentThread.CurrentCulture;
 			}
 		}
 
 		public static CultureInfo CurrentUICulture 
 		{
-			get 
-			{
+			get {
 				return Thread.CurrentThread.CurrentUICulture;
 			}
 		}
@@ -1399,10 +1397,15 @@ namespace System.Globalization
 					bool use_user_override)
 		{
 			/* This will throw ArgumentException if the
-			 * locale isnt known
+			 * locale isnt known.
+			 *
+			 * Asking CultureMap for the name gets the
+			 * capitalisation correct, as in practise
+			 * (rather than by documentation) the name is
+			 * case-insensitive.
 			 */
-			this.name=name;
-			this.icu_name=name;
+			this.name=CultureMap.lcid_to_name (lcid);
+			this.icu_name=CultureMap.lcid_to_icuname (lcid);
 			this.use_user_override=use_user_override;
 			this.is_read_only=false;
 			this.lcid=lcid;

@@ -1,3 +1,7 @@
+2003-12-01  Dick Porter  <dick@ximian.com>
+
+	* Thread.cs: Implement CurrentCulture and CurrentUICulture
+
 2003-11-12  Miguel de Icaza  <miguel@ximian.com>
 
 	* Thread.cs: Add new VolatileRead/VolatileWrite methods from 1.1
