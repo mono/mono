@@ -1,3 +1,8 @@
+2004-01-13  Zoltan Varga  <vargaz@freemail.hu>
+
+	* debug-mini.c (record_line_number): Get rid of unneccesary memory
+	allocation.
+
 2004-01-09  Zoltan Varga  <vargaz@freemail.hu>
 
 	* exceptions-ppc.c exceptions-x86.c exceptions-sparc.c 
