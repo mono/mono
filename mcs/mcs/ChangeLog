@@ -1,5 +1,10 @@
 2002-11-24  Martin Baulig  <martin@ximian.com>
 
+	* cs-parser.jay: Make this work for uninitialized variable
+	declarations in the `for' initializer.  Fixes #32416.
+
+2002-11-24  Martin Baulig  <martin@ximian.com>
+
 	* ecore.cs (Expression.ConvertExplicit): Make casting from/to
 	System.Enum actually work.  Fixes bug #32269, added verify-6.cs.
 

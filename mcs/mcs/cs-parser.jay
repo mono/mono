@@ -3088,6 +3088,8 @@ for_statement
 				Expression expr;
 				if (decl.expression_or_array_initializer is Expression){
 					expr = (Expression) decl.expression_or_array_initializer;
+				} else if (decl.expression_or_array_initializer == null) {
+					expr = null;
 				} else {
 					ArrayList init = (ArrayList) decl.expression_or_array_initializer;
 					expr = new ArrayCreation (type, "", init, decl.Location);
@@ -3095,10 +3097,12 @@ for_statement
 					
 				LocalVariableReference var;
 				var = new LocalVariableReference (assign_block, decl.identifier, l);
+
+				if (expr != null) {
+					Assign a = new Assign (var, expr, decl.Location);
 					
-				Assign a = new Assign (var, expr, decl.Location);
-					
-				assign_block.AddStatement (new StatementExpression (a, lexer.Location));
+					assign_block.AddStatement (new StatementExpression (a, lexer.Location));
+				}
 			}
 			
 			$3 = null;
