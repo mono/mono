@@ -2,6 +2,7 @@
 
 	* Makefile (run-generics-tests): Fix quoting to better work in
 	Windows.  Remove some stray code leftover from testing.
+	(DISTFILES): Distribute *.inc files too.
 
 2005-01-10  Raja R Harinath  <rharinath@novell.com>
 

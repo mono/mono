@@ -21,6 +21,7 @@ DISTFILES = \
 	runtest.pl		\
 	do-tests.pl		\
 	$(wildcard *.cs)	\
+	$(wildcard *.inc)	\
 	mcs-expect-no-error mcs-expect-wrong-error mcs-ignore-tests \
 	gmcs-expect-no-error gmcs-expect-wrong-error gmcs-ignore-tests \
 	generics-expect-no-error generics-expect-wrong-error
