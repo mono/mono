@@ -4,9 +4,11 @@
 // Author:
 //   Derek Holden (dholden@draper.com)
 //   Bob Smith    (bob@thestuff.net)
+//   Mohammad DAMT (mdamt@cdl2000.com)
 //
 // (C) Derek Holden
 // (C) Bob Smith     http://www.thestuff.net
+// (c) 2003, PT Cakram Datalingga Duaribu   http://www.cdl2000.com
 //
 
 //
@@ -25,6 +27,12 @@ namespace System.Globalization {
 	[Serializable]
 	public sealed class NumberFormatInfo : ICloneable, IFormatProvider {
 		private bool readOnly;
+		// used for temporary storage. Used in InitPatterns ()
+		string decimalFormats;
+		string currencyFormats;
+		string percentFormats;
+		string digitPattern = "#";
+		string zeroPattern = "0";
 		
 		// Currency Related Format Info
 		private int currencyDecimalDigits;
@@ -112,6 +120,176 @@ namespace System.Globalization {
 		{
 		}
 				
+		// this is called by mono/mono/metadata/locales.c
+		void InitPatterns ()
+		{
+			string [] partOne, partTwo;
+			string [] posNeg = decimalFormats.Split (new char [1] {';'}, 2);
+			
+			if (posNeg.Length == 2) {
+				
+				partOne = posNeg [0].Split (new char [1] {'.'}, 2);
+											
+				if (partOne.Length == 2) {
+					// assumed same for both positive and negative
+					// decimal digit side
+					numberDecimalDigits = 0;					
+					for (int i = 0; i < partOne [1].Length; i ++) {						
+						if (partOne [1][i] == zeroPattern [0]) {
+							numberDecimalDigits ++;							
+						} else
+							break;						
+					}
+
+					// decimal grouping side
+					partTwo = partOne [0].Split (',');
+					if (partTwo.Length > 1) {
+						numberGroupSizes = new int [partTwo.Length - 1];
+						for (int i = 0; i < numberGroupSizes.Length; i ++) {
+							string pat = partTwo [i + 1];
+							numberGroupSizes [i] = pat.Length;
+						}
+					} else {
+						numberGroupSizes = new int [1] { 0 };
+					}
+
+					if (posNeg [1].StartsWith ("(") && posNeg [1].EndsWith (")")) {
+						numberNegativePattern = 0;
+					} else if (posNeg [1].StartsWith ("- ")) {
+						numberNegativePattern = 2;
+					} else if (posNeg [1].StartsWith ("-")) {
+						numberNegativePattern = 1;
+					} else if (posNeg [1].EndsWith (" -")) {
+						numberNegativePattern = 4;
+					} else if (posNeg [1].EndsWith ("-")) {
+						numberNegativePattern = 3;
+					} else {
+						numberNegativePattern = 1;
+					}
+				}
+			}
+
+			posNeg = currencyFormats.Split (new char [1] {';'}, 2);			
+			if (posNeg.Length == 2) {
+				partOne = posNeg [0].Split (new char [1] {'.'}, 2);
+				
+				if (partOne.Length == 2) {
+					// assumed same for both positive and negative
+					// decimal digit side
+					currencyDecimalDigits = 0;
+					for (int i = 0; i < partOne [1].Length; i ++) {
+						if (partOne [1][i] == zeroPattern [0])
+							currencyDecimalDigits ++;
+						else
+							break;
+					}
+
+					// decimal grouping side
+					partTwo = partOne [0].Split (',');
+					if (partTwo.Length > 1) {						
+						currencyGroupSizes = new int [partTwo.Length - 1];
+						for (int i = 0; i < currencyGroupSizes.Length; i ++) {
+							string pat = partTwo [i + 1];
+							currencyGroupSizes [i] = pat.Length;
+						}
+					} else {
+						currencyGroupSizes = new int [1] { 0 };
+					}
+
+					if (posNeg [1].StartsWith ("(\u00a4 ") && posNeg [1].EndsWith (")")) {
+						currencyNegativePattern = 14;
+					} else if (posNeg [1].StartsWith ("(\u00a4") && posNeg [1].EndsWith (")")) {
+						currencyNegativePattern = 0;
+					} else if (posNeg [1].StartsWith ("\u00a4 ") && posNeg [1].EndsWith ("-")) {
+						currencyNegativePattern = 11;
+					} else if (posNeg [1].StartsWith ("\u00a4") && posNeg [1].EndsWith ("-")) {
+						currencyNegativePattern = 3;
+					} else if (posNeg [1].StartsWith ("(") && posNeg [1].EndsWith (" \u00a4")) {
+						currencyNegativePattern = 15;
+					} else if (posNeg [1].StartsWith ("(") && posNeg [1].EndsWith ("\u00a4")) {
+						currencyNegativePattern = 4;
+					} else if (posNeg [1].StartsWith ("-") && posNeg [1].EndsWith (" \u00a4")) {
+						currencyNegativePattern = 8;
+					} else if (posNeg [1].StartsWith ("-") && posNeg [1].EndsWith ("\u00a4")) {
+						currencyNegativePattern = 5;
+					} else if (posNeg [1].StartsWith ("-\u00a4 ")) {
+						currencyNegativePattern = 9;
+					} else if (posNeg [1].StartsWith ("-\u00a4")) {
+						currencyNegativePattern = 1;
+					} else if (posNeg [1].StartsWith ("\u00a4 -")) {
+						currencyNegativePattern = 12;
+					} else if (posNeg [1].StartsWith ("\u00a4-")) {
+						currencyNegativePattern = 2;
+					} else if (posNeg [1].EndsWith (" \u00a4-")) {
+						currencyNegativePattern = 10;
+					} else if (posNeg [1].EndsWith ("\u00a4-")) {
+						currencyNegativePattern = 7;
+					} else if (posNeg [1].EndsWith ("- \u00a4")) {
+						currencyNegativePattern = 13;
+					} else if (posNeg [1].EndsWith ("-\u00a4")) {
+						currencyNegativePattern = 6;
+					} else {
+						currencyNegativePattern = 0;
+					}
+					
+					if (posNeg [0].StartsWith ("\u00a4 ")) {
+						currencyPositivePattern = 2;
+					} else if (posNeg [0].StartsWith ("\u00a4")) {
+						currencyPositivePattern = 0;
+					} else if (posNeg [0].EndsWith (" \u00a4")) {
+						currencyPositivePattern = 3;
+					} else if (posNeg [0].EndsWith ("\u00a4")) {
+						currencyPositivePattern = 1; 
+					} else {
+						currencyPositivePattern = 0;
+					}
+				}
+			}
+
+			// we don't have percentNegativePattern in CLDR so 
+			// the percentNegativePattern are just guesses
+			if (percentFormats.StartsWith ("%")) {
+				percentPositivePattern = 2;
+				percentNegativePattern = 2;
+			} else if (percentFormats.EndsWith (" %")) {
+				percentPositivePattern = 0;
+				percentNegativePattern = 0;
+			} else if (percentFormats.EndsWith ("%")) {
+				percentPositivePattern = 1;
+				percentNegativePattern = 1;
+			} else {
+				percentPositivePattern = 0;
+				percentNegativePattern = 0;
+			}
+
+			partOne = percentFormats.Split (new char [1] {'.'}, 2);
+			
+			if (partOne.Length == 2) {
+				// assumed same for both positive and negative
+				// decimal digit side
+				numberDecimalDigits = 0;
+				for (int i = 0; i < partOne [1].Length; i ++) {
+					if (partOne [1][i] == zeroPattern [0])
+						percentDecimalDigits ++;
+					else
+						break;
+				}
+
+				// percent grouping side
+				partTwo = partOne [0].Split (',');
+				if (partTwo.Length > 1) {
+					numberGroupSizes = new int [partTwo.Length - 1];
+					for (int i = 0; i < percentGroupSizes.Length; i ++) {
+						string pat = partTwo [i + 1];
+						percentGroupSizes [i] = pat.Length;
+					}
+				} else {
+					percentGroupSizes = new int [1] { 0 };
+				}
+			}
+			
+		}
+
 		// =========== Currency Format Properties =========== //
 
 		public int CurrencyDecimalDigits {

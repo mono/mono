@@ -1,3 +1,8 @@
+2003-12-02  Dick Porter  <dick@ximian.com>
+
+	* NumberFormatInfo.cs: Helper called by runtime locale
+	construction from ICU.  Patch by Mohammad DAMT (mdamt@cdl2000.com).
+
 2003-12-01  Dick Porter  <dick@ximian.com>
 
 	* CultureInfo.cs: Culture name creation is case-insensitive.
