@@ -24,12 +24,16 @@ namespace MonoTests.System.Resources {
 
 		static ResourceReaderTest ()
 		{
-			FileInfo code_base = new FileInfo (Assembly.GetExecutingAssembly ().Location);
 			char ds = Path.DirectorySeparatorChar;
-			string base_path = code_base.Directory.FullName + ds + "Test" + ds + "resources" + ds;
-
-			m_ResourceFile = base_path + "MyResources.resources";
-			m_BadResourceFile = base_path + "Empty.resources";
+			if (ds == '/') {
+				FileInfo code_base = new FileInfo (Assembly.GetExecutingAssembly ().Location);
+				string base_path = code_base.Directory.FullName + ds + "Test" + ds + "resources" + ds;
+				m_ResourceFile = base_path + "MyResources.resources";
+				m_BadResourceFile = base_path + "Empty.resources";
+			} else {
+				m_ResourceFile = "resources" + ds + "MyResources.resources";
+				m_BadResourceFile = "resources" + ds + "Empty.resources";
+			}
 		}
 
 		[Test]

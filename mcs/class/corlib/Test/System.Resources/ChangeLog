@@ -1,3 +1,7 @@
+2004-02-25  Jackson Harper <jackson@ximian.com>
+
+	* ResourceReaderTest.cs: Make work on windows.
+	
 2004-02-18  Jackson Harper <jackson@ximian.com>
 
 	* ResourceReaderTest.cs: Add a little logic for finding
