@@ -88,11 +88,6 @@ namespace Mono.Tools {
 					name += args [i];
 			}
 
-			if (gacdir != null && root != null) {
-				Console.WriteLine ("gacdir and root options can not be specified together.");
-				Environment.Exit (1);
-			}
-
 			if (gacdir == null)
 				gacdir = GetGacDir ();
 			else
@@ -100,8 +95,8 @@ namespace Mono.Tools {
 
 			string link_gacdir = gacdir;
 			if (root != null) {
-				libdir = Path.Combine (root, "mono");
-				gacdir = Path.Combine (libdir, "gac");
+				libdir = Path.Combine (Path.Combine (root, gacdir), "mono");
+				gacdir = Path.Combine (Path.Combine (libdir, "gac")
 			}
 
 			switch (command) {

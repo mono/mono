@@ -1,5 +1,10 @@
 2004-05-21  Jackson Harper  <jackson@ximian.com>
 
+	* driver.cs: Allow the root and gacdir to both be specified. In
+	this case they are combined.
+	
+2004-05-21  Jackson Harper  <jackson@ximian.com>
+
 	* driver.cs: Do not allow gacdir and root to be specified at the
 	same time. Cleanup help. Add help for options.
 	
