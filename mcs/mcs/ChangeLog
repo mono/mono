@@ -1,3 +1,7 @@
+2002-05-22  Miguel de Icaza  <miguel@ximian.com>
+
+	* statement.cs: Track the result of the assignment.
+
 2002-05-21  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs (MemberAccess): Improved error reporting for

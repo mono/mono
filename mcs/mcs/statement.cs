@@ -2505,23 +2505,28 @@ namespace Mono.CSharp {
 			i = 0;
 			bool old_in_try = ec.InTry;
 			ec.InTry = true;
+			bool error = false;
 			foreach (DictionaryEntry e in var_list){
 				LocalVariableReference var = (LocalVariableReference) e.Key;
 				Expression expr = (Expression) e.Value;
 				Expression a;
 
 				a = new Assign (var, expr, loc);
-				a.Resolve (ec);
+				a = a.Resolve (ec);
 				if (!need_conv)
 					converted_vars [i] = var;
 				i++;
-				if (a == null)
+				if (a == null){
+					error = true;
 					continue;
+				}
 				((ExpressionStatement) a).EmitStatement (ec);
 				
 				ig.BeginExceptionBlock ();
 
 			}
+			if (error)
+				return false;
 			Statement.Emit (ec);
 			ec.InTry = old_in_try;
 
