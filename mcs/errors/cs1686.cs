@@ -1,23 +1,16 @@
-// cs1686.cs: Can not take the address of a local variable
-// Line:
-// Compiler options: -unsafe
+class X {
+	delegate void S ();
 
-unsafe class X {
-	delegate void T ();
-
-	static void Main ()
+	unsafe void M ()
 	{
 		int i;
+		int * j ;
 
-		unsafe {
-			T t = delegate {
-				int *j = &i;
-			};
-		}
+		S s = delegate {
+			i = 1;
+		};
+		j = &i;
 	}
+
+	static void Main () {}
 }
-
-
-
-
-		
