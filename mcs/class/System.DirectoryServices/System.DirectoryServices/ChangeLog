@@ -1,3 +1,8 @@
+2005-01-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DirectoryEntry.cs, DirectoryEntries.cs :
+	  eliminate "throw new Exception".
+
 2004-09-10  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DirectoryServicesPermission.cs: Completed TODO.

@@ -242,7 +242,7 @@ namespace System.DirectoryServices
 				if(child.Properties["objectclass"].ContainsCaselessStringValue(otype))
 					return child;
 				else
-					throw new Exception("An unknown directory object was requested");
+					throw new SystemException("An unknown directory object was requested");
 			}
 			return child;
 		}

@@ -318,7 +318,7 @@ namespace System.DirectoryServices
 					if(CheckEntry(conn,Path))
 						InitEntry();
 					else
-						throw new Exception("There is no such object on the server");
+						throw new SystemException("There is no such object on the server");
 				}
 				return _Name;
 			}
@@ -338,7 +338,7 @@ namespace System.DirectoryServices
 					if(CheckEntry(conn,Path))
 						InitEntry();
 					else
-						throw new Exception("There is no such object on the server");
+						throw new SystemException("There is no such object on the server");
 				}
 				return _Parent;
 			}
