@@ -63,7 +63,7 @@ namespace System.Net
 		bool gotRequestStream;
 		int redirects;
 		bool expectContinue;
-		bool triedAuth;
+		bool authCompleted;
 		
 		// Constructors
 		
@@ -895,6 +895,7 @@ namespace System.Net
 
 		bool CheckAuthorization (WebResponse response)
 		{
+			authCompleted = false;
 			if (credentials == null)
 				return false;
 
@@ -907,6 +908,7 @@ namespace System.Net
 				return false;
 
 			webHeaders [AuthResponseHeader] = auth.Message;
+			authCompleted = auth.Complete;
 			return true;
 		}
 
@@ -923,11 +925,10 @@ namespace System.Net
 			HttpStatusCode code = 0;
 			if (throwMe == null && webResponse != null) {
 				code  = webResponse.StatusCode;
-				if (!triedAuth && code == HttpStatusCode.Unauthorized && credentials != null) {
+				if (!authCompleted && code == HttpStatusCode.Unauthorized && credentials != null) {
 					// TODO: Proxy not supported yet.
 					// || code == HttpStatuscode.ProxyAuthenticationRequired)
-					triedAuth = CheckAuthorization (webResponse);
-					if (triedAuth)
+					if (CheckAuthorization (webResponse))
 						return true;
 				}
 

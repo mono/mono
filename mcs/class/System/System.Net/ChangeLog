@@ -1,3 +1,8 @@
+2003-12-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpWebRequest.cs: deal with authentication schemes that have more
+	than 1 round trip (Ntlm).
+
 2003-12-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* NtlmClient.cs: new class that actually uses one from Mono.Http to do
