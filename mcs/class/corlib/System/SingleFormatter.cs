@@ -17,6 +17,8 @@ namespace System {
 
 	internal class SingleFormatter {
 
+		private static FloatingPointFormatter fpf;
+
 		const double p = 1000000.0d;
 		const double p10 = 10000000.0;
 		const int dec_len = 6;
@@ -29,11 +31,11 @@ namespace System {
 
 		public static string NumberToString (string format,
 				NumberFormatInfo nfi, double value) {
-			FloatingPointFormatter fpf = new FloatingPointFormatter
-				(format, nfi, value,
-				p, p10, dec_len, dec_len_min,
-				p2, p102, dec_len2, dec_len_min2);
-			return fpf.String;
+			if (fpf == null) {
+				fpf = new FloatingPointFormatter (p, p10, dec_len,
+					dec_len_min, p2, p102, dec_len2, dec_len_min2);
+			}
+			return fpf.GetStringFrom (format, nfi, value);
 		}
 		
 	}

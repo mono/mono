@@ -38,12 +38,8 @@ namespace System {
 		int dec_len_min2;
 
 		public FloatingPointFormatter
-			(string format, NumberFormatInfo nfi, double value,
-			 double p, double p10, int dec_len, int dec_len_min,
+			(double p, double p10, int dec_len, int dec_len_min,
 			 double p2, double p102, int dec_len2, int dec_len_min2) {
-			this.format = format;
-			this.nfi = nfi;
-			this.value = value;
 			this.p = this.p1 = p;
 			this.p10 = this.p101 = p10;
 			this.dec_len = this.dec_len1 = dec_len;
@@ -52,14 +48,13 @@ namespace System {
 			this.p102 = p102;
 			this.dec_len2 = dec_len2;
 			this.dec_len_min2 = dec_len_min2;
-			number_as_string = NumberToString();
 		}
 
-		public string String {
-			get { return number_as_string; }
-		}
-
-		private string NumberToString () {
+		public string GetStringFrom
+				(string format, NumberFormatInfo nfi, double value) {
+			this.format = format;
+			this.nfi = nfi;
+			this.value = value;
 			if (format == null || format == "") {
 				format = "G";
 			}
