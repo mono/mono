@@ -172,7 +172,7 @@ namespace System.Windows.Forms {
 		
 		[MonoTODO]
 		//FIXME
-		public virtual bool RightToLeft {
+		public override bool RightToLeft {
 			get {
 				throw new NotImplementedException (); 
 			}
@@ -182,7 +182,7 @@ namespace System.Windows.Forms {
 		}
 		
 		[MonoTODO]
-		ISite Site {
+		public override ISite Site {
 			set {
 				//FIXME:
 			}

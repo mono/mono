@@ -371,7 +371,7 @@ namespace System.Windows.Forms {
 			}
 		}
 		[MonoTODO]
-		public virtual bool AllowDrop  {
+		public override bool AllowDrop  {
 			get {
 				throw new NotImplementedException ();
 			}
@@ -380,7 +380,7 @@ namespace System.Windows.Forms {
 			}
 		}
 		[MonoTODO]
-		public virtual AnchorStyles Anchor  {
+		public override AnchorStyles Anchor  {
 			get {
 				throw new NotImplementedException ();
 			}
@@ -416,7 +416,7 @@ namespace System.Windows.Forms {
 			}
 		}
 		[MonoTODO]
-		public virtual BindingContext BindingContext  {
+		public override BindingContext BindingContext  {
 			get {
 				throw new NotImplementedException ();
 			}
@@ -521,7 +521,7 @@ namespace System.Windows.Forms {
 			}
 		}
 		[MonoTODO]
-		public virtual ContextMenu ContextMenu  {
+		public override ContextMenu ContextMenu  {
 			get {
 				throw new NotImplementedException ();
 			}
@@ -542,7 +542,7 @@ namespace System.Windows.Forms {
 			}
 		}
 		[MonoTODO]
-		public virtual Cursor Cursor  {
+		public override Cursor Cursor  {
 			get {
 				throw new NotImplementedException ();
 			}
@@ -557,7 +557,7 @@ namespace System.Windows.Forms {
 			}
 		}
 		[MonoTODO]
-		public virtual Rectangle DisplayRectangle  {
+		public override Rectangle DisplayRectangle  {
 			get {
 				throw new NotImplementedException ();
 			}
@@ -569,7 +569,7 @@ namespace System.Windows.Forms {
 			}
 		}
 		[MonoTODO]
-		public virtual DockStyle Dock  {
+		public override DockStyle Dock  {
 			get {
 				throw new NotImplementedException ();
 			}
@@ -578,7 +578,7 @@ namespace System.Windows.Forms {
 			}
 		}
 		[MonoTODO]
-		public bool Enabled  {
+		public override bool Enabled  {
 			get {
 				throw new NotImplementedException ();
 			}
@@ -596,13 +596,13 @@ namespace System.Windows.Forms {
 			}
 		}
 		[MonoTODO]
-		public virtual bool Focused  {
+		public override bool Focused  {
 			get {
 				throw new NotImplementedException ();
 			}
 		}
 		[MonoTODO]
-		public virtual Font Font  {
+		public override Font Font  {
 			get {
 				throw new NotImplementedException ();
 			}
@@ -620,7 +620,7 @@ namespace System.Windows.Forms {
 			}
 		}
 		[MonoTODO]
-		public IntPtr Handle  {
+		public override IntPtr Handle  {
 			get {
 				throw new NotImplementedException ();
 			}
@@ -641,7 +641,7 @@ namespace System.Windows.Forms {
 			}
 		}
 		[MonoTODO]
-		public bool InvokeRequired  {
+		public override bool InvokeRequired  {
 			get {
 				throw new NotImplementedException ();
 			}
@@ -773,7 +773,7 @@ namespace System.Windows.Forms {
 			}
 		}
 		[MonoTODO]
-		public virtual RightToLeft RightToLeft  {
+		public override RightToLeft RightToLeft  {
 			get {
 				throw new NotImplementedException ();
 			}
@@ -1509,7 +1509,7 @@ namespace System.Windows.Forms {
 			}
 		}
 		[MonoTODO]
-		protected virtual bool ShowFocusCues {
+		protected override bool ShowFocusCues {
 			get {
 				throw new NotImplementedException ();
 			}
@@ -1546,7 +1546,7 @@ namespace System.Windows.Forms {
 		public event EventHandler CursorChanged;
 		public event DateRangeEventHandler DateChanged;
 		public event DateRangeEventHandler DateSelected;
-		public event EventHandler Disposed;
+		public override event EventHandler Disposed;
 		public event EventHandler DockChanged;
 		public event DragEventHandler DragDrop;
 		public event DragEventHandler DragEnter;

@@ -1,3 +1,9 @@
+2003-06-09 Dennis Hayes <dennish@raytek.com>
+	for Gopal V <gopalv82@symonds.net>
+	* MonthCalendar.cs
+	* AxHost.cs
+	Fixed overrides
+
 2003-06-07   Alexandre Pigolkine <pigolkine@gmx.de>
 	* Control.cs
 	* Form.cs
