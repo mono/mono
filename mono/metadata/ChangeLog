@@ -1,3 +1,10 @@
+2003-02-17  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* icall.c:
+	(GetEntryAssembly): if the domain has not invoked
+	AppDomain.ExecuteAssembly yet, return the assembly of the default
+	AppDomain.
+
 2003-02-16  Zoltan Varga  <vargaz@freemail.hu>
 
 	* class.c (mono_ldtoken): make it work in dynamic assemblies.
