@@ -24,6 +24,7 @@ namespace System.Web
 		private HttpRequest _oRequest;
 		private HttpServerUtility _Server;
 		private HttpApplication _oApplication;
+		private HttpSessionState _oSession;
 		private HttpWorkerRequest _oWorkerRequest;
 		private IHttpHandler _Handler;
 		private IHttpAsyncHandler _AsyncHandler;
@@ -201,7 +202,12 @@ namespace System.Web
 		public HttpSessionState Session
 		{
 			get {
-				return (HttpSessionState) Items ["sessionstate"];
+				return (HttpSessionState) _oSession;
+			}
+
+			set {
+				//FIXME: gotta remove set
+				_oSession=value;
 			}
 		}
 
