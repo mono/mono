@@ -18,7 +18,7 @@ namespace Mono.CSharp.Debugger
 {
 	public struct OffsetTable
 	{
-		public const int Version = 24;
+		public const int Version = 25;
 		public const long Magic   = 0x45e82623fd7fa614;
 
 		public int total_file_size;
@@ -29,6 +29,8 @@ namespace Mono.CSharp.Debugger
 		public int method_table_size;
 		public int line_number_table_offset;
 		public int line_number_table_size;
+		public int local_variable_table_offset;
+		public int local_variable_table_size;
 		public int type_count;
 		public int type_index_table_offset;
 		public int type_index_table_size;
@@ -44,9 +46,11 @@ namespace Mono.CSharp.Debugger
 			method_table_size = reader.ReadInt32 ();
 			line_number_table_offset = reader.ReadInt32 ();
 			line_number_table_size = reader.ReadInt32 ();
+			local_variable_table_offset = reader.ReadInt32 ();
+			local_variable_table_size = reader.ReadInt32 ();
+			type_count = reader.ReadInt32 ();
 			type_index_table_offset = reader.ReadInt32 ();
 			type_index_table_size = reader.ReadInt32 ();
-			type_count = reader.ReadInt32 ();
 			address_table_size = reader.ReadInt32 ();
 		}
 
@@ -60,6 +64,8 @@ namespace Mono.CSharp.Debugger
 			bw.Write (method_table_size);
 			bw.Write (line_number_table_offset);
 			bw.Write (line_number_table_size);
+			bw.Write (local_variable_table_offset);
+			bw.Write (local_variable_table_size);
 			bw.Write (type_count);
 			bw.Write (type_index_table_offset);
 			bw.Write (type_index_table_size);
@@ -97,6 +103,45 @@ namespace Mono.CSharp.Debugger
 		public override string ToString ()
 		{
 			return String.Format ("[Line {0}:{1}]", Row, Offset);
+		}
+	}
+
+	public struct LocalVariableEntry
+	{
+		public readonly string Name;
+		public readonly FieldAttributes Attributes;
+		public readonly byte[] Signature;
+
+		public LocalVariableEntry (string Name, FieldAttributes Attributes, byte[] Signature)
+		{
+			this.Name = Name;
+			this.Attributes = Attributes;
+			this.Signature = Signature;
+		}
+
+		public LocalVariableEntry (IMonoBinaryReader reader)
+		{
+			int name_length = reader.ReadInt32 ();
+			byte[] name = reader.ReadBuffer (name_length);
+			Name = Encoding.UTF8.GetString (name);
+			Attributes = (FieldAttributes) reader.ReadInt32 ();
+			int sig_length = reader.ReadInt32 ();
+			Signature = reader.ReadBuffer (sig_length);
+		}
+
+		internal void Write (BinaryWriter bw)
+		{
+			byte[] name = Encoding.UTF8.GetBytes (Name);
+			bw.Write ((int) name.Length);
+			bw.Write (name);
+			bw.Write ((int) Attributes);
+			bw.Write ((int) Signature.Length);
+			bw.Write (Signature);
+		}
+
+		public override string ToString ()
+		{
+			return String.Format ("[LocalVariable {0}:{1}]", Name, Attributes);
 		}
 	}
 
@@ -184,6 +229,7 @@ namespace Mono.CSharp.Debugger
 		public readonly int NumLocals;
 
 		public int TypeIndexTableOffset;
+		public int LocalVariableTableOffset;
 		public readonly int SourceFileOffset;
 		public readonly int LineNumberTableOffset;
 		public readonly int AddressTableOffset;
@@ -194,15 +240,16 @@ namespace Mono.CSharp.Debugger
 		public readonly LineNumberEntry[] LineNumbers = null;
 		public readonly MethodAddress Address = null;
 		public readonly VariableInfo ThisVariable = null;
-		public readonly VariableInfo[] Parameters = null;
-		public readonly VariableInfo[] Locals = null;
+		public readonly VariableInfo[] ParameterVarInfo = null;
+		public readonly VariableInfo[] LocalVarInfo = null;
 		public readonly int[] ParamTypeIndices = null;
 		public readonly int[] LocalTypeIndices = null;
+		public readonly LocalVariableEntry[] Locals = null;
 
 		public static int Size
 		{
 			get {
-				return 52;
+				return 56;
 			}
 		}
 
@@ -217,6 +264,7 @@ namespace Mono.CSharp.Debugger
 
 			NumLineNumbers = reader.ReadInt32 ();
 			TypeIndexTableOffset = reader.ReadInt32 ();
+			LocalVariableTableOffset = reader.ReadInt32 ();
 			SourceFileOffset = reader.ReadInt32 ();
 			LineNumberTableOffset = reader.ReadInt32 ();
 			AddressTableOffset = reader.ReadInt32 ();
@@ -244,6 +292,18 @@ namespace Mono.CSharp.Debugger
 				reader.Position = old_pos;
 			}
 
+			if (LocalVariableTableOffset != 0) {
+				long old_pos = reader.Position;
+				reader.Position = LocalVariableTableOffset;
+
+				Locals = new LocalVariableEntry [NumLocals];
+
+				for (int i = 0; i < NumLocals; i++)
+					Locals [i] = new LocalVariableEntry (reader);
+
+				reader.Position = old_pos;
+			}
+
 			if (AddressTableSize != 0) {
 				long old_pos = address_reader.Position;
 				address_reader.Position = AddressTableOffset;
@@ -253,12 +313,12 @@ namespace Mono.CSharp.Debugger
 				address_reader.Position = VariableTableOffset;
 				if (ThisTypeIndex != 0)
 					ThisVariable = new VariableInfo (address_reader);
-				Parameters = new VariableInfo [NumParameters];
+				ParameterVarInfo = new VariableInfo [NumParameters];
 				for (int i = 0; i < NumParameters; i++)
-					Parameters [i] = new VariableInfo (address_reader);
-				Locals = new VariableInfo [NumLocals];
+					ParameterVarInfo [i] = new VariableInfo (address_reader);
+				LocalVarInfo = new VariableInfo [NumLocals];
 				for (int i = 0; i < NumLocals; i++)
-					Locals [i] = new VariableInfo (address_reader);
+					LocalVarInfo [i] = new VariableInfo (address_reader);
 				address_reader.Position = old_pos;
 			}
 
@@ -280,7 +340,8 @@ namespace Mono.CSharp.Debugger
 
 		internal MethodEntry (int token, int sf_offset, string source_file,
 				      int this_type_index, int[] param_type_indices,
-				      int[] local_type_indices, LineNumberEntry[] lines, int lnt_offset,
+				      int[] local_type_indices, LocalVariableEntry[] locals,
+				      LineNumberEntry[] lines, int lnt_offset,
 				      int addrtab_offset, int vartab_offset, int addrtab_size,
 				      int start_row, int end_row)
 		{
@@ -293,6 +354,7 @@ namespace Mono.CSharp.Debugger
 			this.NumLocals = local_type_indices.Length;
 			this.ParamTypeIndices = param_type_indices;
 			this.LocalTypeIndices = local_type_indices;
+			this.Locals = locals;
 			this.SourceFileOffset = sf_offset;
 			this.LineNumberTableOffset = lnt_offset;
 			this.AddressTableOffset = addrtab_offset;
@@ -312,6 +374,7 @@ namespace Mono.CSharp.Debugger
 			bw.Write (NumLocals);
 			bw.Write (NumLineNumbers);
 			bw.Write (TypeIndexTableOffset);
+			bw.Write (LocalVariableTableOffset);
 			bw.Write (SourceFileOffset);
 			bw.Write (LineNumberTableOffset);
 			bw.Write (AddressTableOffset);

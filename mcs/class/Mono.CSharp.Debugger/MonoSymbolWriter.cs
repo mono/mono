@@ -124,15 +124,15 @@ namespace Mono.CSharp.Debugger
 			}
 		}
 
-		public LocalVariable[] Locals {
+		public LocalVariableEntry[] Locals {
 			get {
-				LocalVariable[] retval = new LocalVariable [_locals.Count];
+				LocalVariableEntry[] retval = new LocalVariableEntry [_locals.Count];
 				_locals.CopyTo (retval);
 				return retval;
 			}
 		}
 
-		public void AddLocal (LocalVariable local)
+		public void AddLocal (LocalVariableEntry local)
 		{
 			_locals.Add (local);
 		}
@@ -192,74 +192,6 @@ namespace Mono.CSharp.Debugger
 			get {
 				return _column;
 			}
-		}
-	}
-
-	internal class Variable
-	{
-		public Variable (string name, ITypeHandle handle, SourceMethod method, int index)
-			: this (name, handle, method, index, null)
-		{ }
-
-		public Variable (string name, ITypeHandle handle, SourceMethod method,
-				 int index, SourceLine line)
-		{
-			this._name = name;
-			this._handle = handle;
-			this._method = method;
-			this._line = line;
-			this._index = index;
-		}
-
-		private readonly string _name;
-		private readonly ITypeHandle _handle;
-		private readonly SourceMethod _method;
-		private readonly SourceLine _line;
-		private readonly int _index;
-
-		// interface IVariable
-
-		public string Name {
-			get {
-				return _name;
-			}
-		}
-
-		public SourceMethod Method {
-			get {
-				return _method;
-			}
-		}
-
-		public int Index {
-			get {
-				return _index;
-			}
-		}
-
-		public ITypeHandle TypeHandle {
-			get {
-				return _handle;
-			}
-		}
-
-		public SourceLine Line {
-			get {
-				return _line;
-			}
-		}
-	}
-
-	internal class LocalVariable : Variable
-	{
-		public LocalVariable (string name, ITypeHandle handle, SourceMethod method,
-				      int index, SourceLine line)
-			: base (name, handle, method, index, line)
-		{ }
-
-		public override string ToString ()
-		{
-			return "LocalVariable (" + Index + "," + Name + ")";
 		}
 	}
 
@@ -356,13 +288,13 @@ namespace Mono.CSharp.Debugger
 			}
 		}
 
-		public LocalVariable[] Locals {
+		public LocalVariableEntry[] Locals {
 			get {
 				return _implicit_block.Locals;
 			}
 		}
 
-		public void AddLocal (LocalVariable local)
+		public void AddLocal (LocalVariableEntry local)
 		{
 			_implicit_block.AddLocal (local);
 		}
@@ -507,6 +439,7 @@ namespace Mono.CSharp.Debugger
 			int addr2,
 			int addr3)
 		{
+			throw new NotSupportedException ();
 		}
 
 		public void DefineGlobalVariable (
@@ -518,6 +451,7 @@ namespace Mono.CSharp.Debugger
 			int addr2,
 			int addr3)
 		{
+			throw new NotSupportedException ();
 		}
 
 		public void DefineLocalVariable (string name,
@@ -530,18 +464,11 @@ namespace Mono.CSharp.Debugger
 						 int startOffset,
 						 int endOffset)
 		{
-			throw new NotSupportedException ();
-		}
+			if (current_method == null)
+				return;
 
-		public void DefineLocalVariable (string name,
-						 LocalBuilder local,
-						 FieldAttributes attributes,
-						 int position,
-						 int startOffset,
-						 int endOffset)
-		{
+			current_method.AddLocal (new LocalVariableEntry (name, attributes, signature));
 		}
-
 
 		public void DefineParameter (string name,
 					     ParameterAttributes attributes,
@@ -561,6 +488,9 @@ namespace Mono.CSharp.Debugger
 						  int[] endLines,
 						  int[] endColumns)
 		{
+			if (current_method == null)
+				return;
+
 			SourceLine source_line = new SourceLine (offsets [0], lines [0], columns [0]);
 
 			if (current_method != null)
@@ -634,6 +564,7 @@ namespace Mono.CSharp.Debugger
 
 		public void OpenNamespace (string name)
 		{
+			throw new NotSupportedException ();
 		}
 
 		public int OpenScope (int startOffset)
@@ -664,6 +595,7 @@ namespace Mono.CSharp.Debugger
 
 		public void SetSymAttribute (SymbolToken parent, string name, byte[] data)
 		{
+			throw new NotSupportedException ();
 		}
 
 		public void SetUnderlyingWriter (IntPtr underlyingWriter)
@@ -673,10 +605,12 @@ namespace Mono.CSharp.Debugger
 
 		public void SetUserEntryPoint (SymbolToken entryMethod)
 		{
+			throw new NotSupportedException ();
 		}
 
 		public void UsingNamespace (string fullName)
 		{
+			throw new NotSupportedException ();
 		}
 
 		//

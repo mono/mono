@@ -99,8 +99,10 @@ namespace Mono.CSharp.Debugger
 					param_type_indices [i] = GetTypeIndex (type);
 				}
 
-				int num_locals = 0;				
-				int[] local_type_indices = new int [0];
+				int num_locals = method.Locals.Length;
+				int[] local_type_indices = new int [num_locals];
+				for (int i = 0; i < num_locals; i++)
+					local_type_indices [i] = ++last_type_index;
 
 				int type_index_table_offset = ot.type_index_table_size;
 				ot.type_index_table_size += 4 * (num_params + num_locals);
@@ -123,7 +125,7 @@ namespace Mono.CSharp.Debugger
 				MethodEntry entry = new MethodEntry (
 					(int) method.Token, (int) sources [method.SourceFile],
 					method.SourceFile.FileName, this_type_index,
-					param_type_indices, local_type_indices, lines, pos,
+					param_type_indices, local_type_indices, method.Locals, lines, pos,
 					address_table_offset, variable_table_offset, my_size + my_size2,
 					(int) method.Start.Row, (int) method.End.Row);
 
@@ -148,6 +150,20 @@ namespace Mono.CSharp.Debugger
 			}
 			ot.type_index_table_size = (int) bw.BaseStream.Position -
 				ot.type_index_table_offset;
+
+			//
+			// Write local variable table.
+			//
+
+			ot.local_variable_table_offset = (int) bw.BaseStream.Position;
+			foreach (MethodEntry entry in methods.Values) {
+				entry.LocalVariableTableOffset = (int) bw.BaseStream.Position;
+
+				for (int i = 0; i < entry.NumLocals; i++)
+					entry.Locals [i].Write (bw);
+			}
+			ot.local_variable_table_size = (int) bw.BaseStream.Position -
+				ot.local_variable_table_offset;
 
 			//
 			// Write method table
