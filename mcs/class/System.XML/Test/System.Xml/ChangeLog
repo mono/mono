@@ -1,3 +1,8 @@
+2004-01-11  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlReaderCommonTests.cs : reverted r38601. It is MS XmlTextReader
+	  that is buggy on attribute value's Prefix and NamespaceURI.
+
 2005-01-10  Nick Drochak  <ndrochak@ieee.org>
 
 	* XmlWriterTests.cs: Fix build warnings.

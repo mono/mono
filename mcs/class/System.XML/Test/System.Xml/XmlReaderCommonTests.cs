@@ -148,14 +148,6 @@ namespace MonoTests.System.Xml
 
 		private delegate void TestMethod (XmlReader reader);
 
-		private void RunTest2 (string xml, TestMethod method)
-		{
-			document.XmlResolver = null;
-			document.LoadXml (xml);
-			xnr = new XmlNodeReader (document);
-			method (xnr);
-		}
-
 		private void RunTest (string xml, TestMethod method)
 		{
 			xtr = new XmlTextReader (new StringReader (xml));
@@ -174,6 +166,10 @@ namespace MonoTests.System.Xml
 			xvr.EntityHandling = EntityHandling.ExpandCharEntities;
 			method (xvr);
 
+			document.XmlResolver = null;
+			document.LoadXml (xml);
+			xnr = new XmlNodeReader (document);
+			method (xnr);
 #if NET_2_0
 /*
 			// XPathNavigatorReader tests
@@ -239,7 +235,6 @@ namespace MonoTests.System.Xml
 		public void ReadAttributeValue ()
 		{
 			RunTest ("<root attr=''/>", new TestMethod (ReadAttributeValue));
-			RunTest2 ("<root attr=''/>", new TestMethod (ReadAttributeValue2));
 		}
 
 		public void ReadAttributeValue (XmlReader reader)
@@ -251,26 +246,10 @@ namespace MonoTests.System.Xml
 			this.AssertNodeValues (reader, XmlNodeType.Attribute,
 				1, false, "attr", "", "attr", "", "", true, 1, true);
 			Assert (reader.ReadAttributeValue ());
-			// MS.NET XmlTextReader fails. Its Prefix returns null instead of "".
+			// MS.NET XmlTextReader fails. Its Prefix returns 
+			// null instead of "". It is fixed in MS.NET 2.0.
 			this.AssertNodeValues (reader, XmlNodeType.Text,
 				2, false, "", null, "", null, "", true, 1, true);
-			Assert (reader.MoveToElement ());
-			this.AssertNodeValues (reader, XmlNodeType.Element,
-				0, true, "root", "", "root", "", "", false, 1, true);
-		}
-
-		public void ReadAttributeValue2 (XmlReader reader)
-		{
-			reader.Read ();	// root
-			Assert (reader.MoveToFirstAttribute ());
-			// It looks like that MS.NET shows AttributeCount and
-			// HasAttributes as the same as element node!
-			this.AssertNodeValues (reader, XmlNodeType.Attribute,
-				1, false, "attr", "", "attr", "", "", true, 1, true);
-			Assert (reader.ReadAttributeValue ());
-			// MS.NET XmlTextReader fails. Its Prefix returns null instead of "".
-			this.AssertNodeValues (reader, XmlNodeType.Text,
-				2, false, "", "", "", "", "", true, 1, true);
 			Assert (reader.MoveToElement ());
 			this.AssertNodeValues (reader, XmlNodeType.Element,
 				0, true, "root", "", "root", "", "", false, 1, true);
