@@ -1,3 +1,7 @@
+2003-11-24  Zoltan Varga  <vargaz@freemail.hu>
+
+	* corlib.dll.sources: Add System.Reflection.Emit/DynamicMethod.cs.
+
 2003-11-19  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* corlib_test.dll.sources: Added some test files:
