@@ -1,3 +1,7 @@
+2004-01-24  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* TypeInfo.cs: The list of interfaces may be null. Added check.
+
 2004-01-19  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* RemotingServices.cs: When marshalling a custom proxy, allow the creation
