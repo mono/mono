@@ -1,4 +1,16 @@
 
+2003-01-09	Gaurav Vaish <gvaish_mono AT lycos.com>
+
+	* MobileControl.cs       : Added some more properties (dummies).
+	* Alignment.cs,
+	* BooleanOption.cs,
+	* CommandFormat.cs,
+	* FontSize.cs,
+	* FormMethod.cs,
+	* ListDecoration.cs,
+	* ListSelectType.cs,
+	                         : Added enumerations.
+
 2003-01-08	Gaurav Vaish <gvaish_mono AT lycos.com>
 
 	* IControlAdapter.cs     : Completed interface.
