@@ -37,6 +37,9 @@ The configuration file is an xml document based on the following grammar
 			<reader>name</reader> ?
 			<writer>name</writer> ?
 			<namespace>name</namespace> ?
+			<namespaceImports> ?
+				<namespaceImport>namespace</namespaceImport> *
+			</namespaceImports>
 			<outFileName>name</outFileName> ?
 			<readerHooks> ?
 				<hook ...> *
@@ -59,6 +62,9 @@ Generation options are specified in child elements:
  * reader: name of the reader class.
  * writer: name of the writer class.
  * namespace: namespace of the reader and writer classes.
+ * namespaceImport: a list of namespaces to be added as namespace imports
+   ("using" declarations in C#) on the top of the output source.
+   It contains "namespaceImport" child elements which contains one namespace.
  * outFileName: name of the generated file.
  * readerHooks: a list of hooks to apply to the reader.
  * writerHooks: a list of hooks to apply to the writer.
@@ -190,6 +196,9 @@ This is the configuration file used to generate the serializer for ServiceDescri
 		<reader>ServiceDescriptionReaderBase</reader>
 		<writer>ServiceDescriptionWriterBase</writer>
 		<namespace>System.Web.Services.Description</namespace>
+		<namespaceImports>
+			<namespaceImport>System.Xml.Schema</namespaceImport>
+		</namespaceImports>
 		<outFileName>ServiceDescriptionSerializerBase.cs</outFileName>
 		<readerHooks>
 			<hook type="unknownElement">
@@ -202,7 +211,7 @@ This is the configuration file used to generate the serializer for ServiceDescri
 				<select>
 					<typeName>System.Xml.Schema.XmlSchema</typeName>
 				</select>
-				<replace>$OBJECT = System.Xml.Schema.XmlSchema.Read (Reader, null);</replace>
+				<replace>$OBJECT = XmlSchema.Read (Reader, null);</replace>
 			</hook>
 		</readerHooks>
 		<writerHooks>
