@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.5 $
+// $Revision: 1.6 $
 // $Modtime: $
 // $Log: X11Structs.cs,v $
+// Revision 1.6  2004/08/09 20:56:18  pbartok
+// - Added GrabMode enum
+//
 // Revision 1.5  2004/08/06 23:17:44  pbartok
 // - Fixed Refresh and Invalidate
 //
@@ -716,6 +719,11 @@ namespace System.Windows.Forms {
 		PropertyChangeMask	= 1<<22,
 		ColormapChangeMask	= 1<<23,
 		OwnerGrabButtonMask	= 1<<24
+	}
+
+	internal enum GrabMode {
+		GrabModeSync		= 0,
+		GrabModeAsync		= 1
 	}
 	#endregion
 }
