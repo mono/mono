@@ -169,6 +169,8 @@ System.Security.Policy/SiteMembershipConditionTest.cs
 System.Security.Policy/SiteTest.cs
 System.Security.Policy/StrongNameTest.cs
 System.Security.Policy/UnionCodeGroupTest.cs
+System.Security.Policy/UrlMembershipConditionTest.cs
+System.Security.Policy/UrlTest.cs
 System.Security.Policy/ZoneTest.cs
 System.Security.Principal/GenericIdentityTest.cs
 System.Security.Principal/GenericPrincipalTest.cs
