@@ -76,7 +76,11 @@ namespace System.Reflection.Emit {
 		public override Assembly Assembly {
 			get {return pmodule.Assembly;}
 		}
-		public override string AssemblyQualifiedName {get {return null;}}
+		public override string AssemblyQualifiedName {
+			get {
+				return FullName + ", " + Assembly.ToString();
+			}
+		}
 		public override Type BaseType {
 			get {
 				return parent;

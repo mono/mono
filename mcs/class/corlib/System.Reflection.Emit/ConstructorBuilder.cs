@@ -114,6 +114,15 @@ namespace System.Reflection.Emit {
 		}
 
 		public void SetCustomAttribute( CustomAttributeBuilder customBuilder) {
+			string attrname = customBuilder.Ctor.ReflectedType.FullName;
+			if (attrname == "System.Runtime.CompilerServices.MethodImplAttribute") {
+				byte[] data = customBuilder.Data;
+				int impla; // the (stupid) ctor takes a short or an int ... 
+				impla = (int)data [2];
+				impla |= ((int)data [3]) << 8;
+				SetImplementationFlags ((MethodImplAttributes)impla);
+				return;
+			}
 			if (cattrs != null) {
 				CustomAttributeBuilder[] new_array = new CustomAttributeBuilder [cattrs.Length + 1];
 				cattrs.CopyTo (new_array, 0);

@@ -1,4 +1,9 @@
 
+Tue Jul 2 18:34:49 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* TypeBuilder.cs: implemented AssemblyQualifiedName.
+	* MethodBuilder.cs, ConstructorBuilder.cs: special case custom attr.
+
 Mon Jul 1 16:17:29 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* TypeBuilder.cs: implemented AddInterfaceImplementation().
