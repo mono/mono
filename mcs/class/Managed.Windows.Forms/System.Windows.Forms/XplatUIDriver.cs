@@ -150,7 +150,8 @@ namespace System.Windows.Forms {
 		internal abstract void SetFocus(IntPtr hwnd);
 		internal abstract IntPtr GetActive();
 
-		internal abstract void ScrollWindow(IntPtr hwnd, int XAmount, int YAmount);
+		internal abstract void ScrollWindow(IntPtr hwnd, Rectangle rectangle, int XAmount, int YAmount, bool clear);
+		internal abstract void ScrollWindow(IntPtr hwnd, int XAmount, int YAmount, bool clear);
 
 		internal abstract bool GetFontMetrics(Graphics g, Font font, out int ascent, out int descent);
 

@@ -1787,7 +1787,34 @@ namespace System.Windows.Forms {
 			return GetFontMetrics(g.GetHdc(), font.ToHfont(), out ascent, out descent);
 		}
 
-		internal override void ScrollWindow(IntPtr hwnd, int XAmount, int YAmount) {
+		internal override void ScrollWindow(IntPtr hwnd, Rectangle area, int XAmount, int YAmount, bool clear) {
+			IntPtr		gc;
+			XGCValues	gc_values;
+
+			gc_values = new XGCValues();
+
+			gc = XCreateGC(DisplayHandle, hwnd, 0, ref gc_values);
+
+			XCopyArea(DisplayHandle, hwnd, hwnd, gc, area.X - XAmount, area.Y - YAmount, area.Width, area.Height, area.X, area.Y);
+
+			// Generate an expose for the area exposed by the horizontal scroll
+			if (XAmount > 0) {
+				XClearArea(DisplayHandle, hwnd, area.X, area.Y, XAmount, area.Height, clear);
+			} else if (XAmount < 0) {
+				XClearArea(DisplayHandle, hwnd, XAmount + area.X + area.Width, area.Y, -XAmount, area.Height, clear);
+			}
+
+			// Generate an expose for the area exposed by the vertical scroll
+			if (YAmount > 0) {
+				XClearArea(DisplayHandle, hwnd, area.X, area.Y, area.Width, YAmount, clear);
+			} else if (YAmount < 0) {
+				XClearArea(DisplayHandle, hwnd, area.X, YAmount + area.Y + area.Height, area.Width, -YAmount, clear);
+			}
+
+			XFreeGC(DisplayHandle, gc);
+		}
+
+		internal override void ScrollWindow(IntPtr hwnd, int XAmount, int YAmount, bool clear) {
 			IntPtr		gc;
 			XGCValues	gc_values;
 			IntPtr		root;
@@ -1809,16 +1836,16 @@ namespace System.Windows.Forms {
 
 			// Generate an expose for the area exposed by the horizontal scroll
 			if (XAmount > 0) {
-				XClearArea(DisplayHandle, hwnd, 0, 0, XAmount, height, true);
-			} else {
-				XClearArea(DisplayHandle, hwnd, XAmount + width, 0, -XAmount, height, true);
+				XClearArea(DisplayHandle, hwnd, 0, 0, XAmount, height, clear);
+			} else if (XAmount < 0) {
+				XClearArea(DisplayHandle, hwnd, XAmount + width, 0, -XAmount, height, clear);
 			}
 
 			// Generate an expose for the area exposed by the vertical scroll
 			if (YAmount > 0) {
-				XClearArea(DisplayHandle, hwnd, 0, 0, width, YAmount, true);
-			} else {
-				XClearArea(DisplayHandle, hwnd, 0, YAmount + height, width, -YAmount, true);
+				XClearArea(DisplayHandle, hwnd, 0, 0, width, YAmount, clear);
+			} else if (YAmount < 0) {
+				XClearArea(DisplayHandle, hwnd, 0, YAmount + height, width, -YAmount, clear);
 			}
 
 			XFreeGC(DisplayHandle, gc);

@@ -722,6 +722,14 @@ namespace System.Windows.Forms {
 			owned_forms.Remove(ownedForm);
 		}
 
+		public void SetDesktopBounds(int x, int y, int width, int height) {
+			DesktopBounds = new Rectangle(x, y, width, height);
+		}
+
+		public void SetDesktopLocation(int x, int y) {
+			DesktopLocation = new Point(x, y);
+		}
+
 		public DialogResult ShowDialog() {
 			return ShowDialog(null);
 		}

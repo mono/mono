@@ -1,3 +1,15 @@
+2005-01-09  Peter Bartok <pbartok@novell.com>
+
+	* XplatUI.cs, XplatUIDriver.cs, XplatUIWin32.cs, XplatUIOSX.cs,
+	  XplatUIX11.cs: Added ability to control ScrollWindow expose and 
+	  an overload for ScrollWindow to allow only scrolling a rectangle
+
+2005-01-09  Peter Bartok <pbartok@novell.com>
+
+	* Form.cs:
+	  - Implemented SetDesktopBounds method
+	  - Implemented SetDesktopLocation method
+
 2005-01-08  Jackson Harper  <jackson@ximian.com>
 
 	* TreeView.cs: Only set the vbar's Maximum and LargeChange when

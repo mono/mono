@@ -324,6 +324,7 @@ namespace System.Windows.Forms {
 
 		[Flags]
 		private enum ScrollWindowExFlags {
+			SW_NONE				= 0x0000,
 			SW_SCROLLCHILDREN		= 0x0001,
 			SW_INVALIDATE			= 0x0002,
 			SW_ERASE			= 0x0004,
@@ -1057,8 +1058,21 @@ namespace System.Windows.Forms {
 			return true;
 		}
 
-		internal override void ScrollWindow(IntPtr hwnd, int XAmount, int YAmount) {
-			Win32ScrollWindowEx(hwnd, XAmount, YAmount, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, ScrollWindowExFlags.SW_INVALIDATE | ScrollWindowExFlags.SW_ERASE);
+		internal override void ScrollWindow(IntPtr hwnd, Rectangle rectangle, int XAmount, int YAmount, bool clear) {
+			RECT	rect;
+
+			rect = new RECT();
+			rect.left = rectangle.X;
+			rect.top = rectangle.Y;
+			rect.right = rectangle.Right;
+			rect.bottom = rectangle.Bottom;
+
+			Win32ScrollWindowEx(hwnd, XAmount, YAmount, ref rect, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, clear ? (ScrollWindowExFlags.SW_INVALIDATE | ScrollWindowExFlags.SW_ERASE) : ScrollWindowExFlags.SW_NONE);
+			Win32UpdateWindow(hwnd);
+		}
+
+		internal override void ScrollWindow(IntPtr hwnd, int XAmount, int YAmount, bool clear) {
+			Win32ScrollWindowEx(hwnd, XAmount, YAmount, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, clear ? (ScrollWindowExFlags.SW_INVALIDATE | ScrollWindowExFlags.SW_ERASE) : ScrollWindowExFlags.SW_NONE);
 		}
 
 
@@ -1282,6 +1296,12 @@ namespace System.Windows.Forms {
 
 		[DllImport ("user32.dll", EntryPoint="ScrollWindowEx", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
 		private extern static bool Win32ScrollWindowEx(IntPtr hwnd, int dx, int dy, ref RECT prcScroll, ref RECT prcClip, IntPtr hrgnUpdate, out RECT prcUpdate, ScrollWindowExFlags flags);
+
+		[DllImport ("user32.dll", EntryPoint="ScrollWindowEx", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		private extern static bool Win32ScrollWindowEx(IntPtr hwnd, int dx, int dy, ref RECT prcScroll, ref RECT prcClip, IntPtr hrgnUpdate, IntPtr prcUpdate, ScrollWindowExFlags flags);
+
+		[DllImport ("user32.dll", EntryPoint="ScrollWindowEx", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		private extern static bool Win32ScrollWindowEx(IntPtr hwnd, int dx, int dy, ref RECT prcScroll, IntPtr prcClip, IntPtr hrgnUpdate, IntPtr prcUpdate, ScrollWindowExFlags flags);
 
 		[DllImport ("user32.dll", EntryPoint="ScrollWindowEx", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
 		private extern static bool Win32ScrollWindowEx(IntPtr hwnd, int dx, int dy, IntPtr prcScroll, IntPtr prcClip, IntPtr hrgnUpdate, IntPtr prcUpdate, ScrollWindowExFlags flags);

@@ -48,7 +48,7 @@ using System.Runtime.InteropServices;
 
 /// X11 Version
 namespace System.Windows.Forms {
-	internal class XplatUI {
+	public class XplatUI {
 		#region Local Variables
 		static XplatUIDriver		driver;
 		static String			default_class_name;
@@ -353,8 +353,12 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		internal static void ScrollWindow(IntPtr hwnd, int XAmount, int YAmount) {
-			driver.ScrollWindow(hwnd, XAmount, YAmount);
+		public static void ScrollWindow(IntPtr hwnd, Rectangle rectangle, int XAmount, int YAmount, bool clear) {
+			driver.ScrollWindow(hwnd, rectangle, XAmount, YAmount, clear);
+		}
+
+		public static void ScrollWindow(IntPtr hwnd, int XAmount, int YAmount, bool clear) {
+			driver.ScrollWindow(hwnd, XAmount, YAmount, clear);
 		}
 		
 		// Santa's little helper
