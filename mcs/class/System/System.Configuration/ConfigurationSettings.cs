@@ -133,7 +133,7 @@ namespace System.Configuration
 		// Remove when uncomment the previous comment
 			string assemblyName = Assembly.GetEntryAssembly ().Location;
 			string appBase = Path.GetDirectoryName (assemblyName);
-			string configFile = Path.GetFileName (assemblyName) + ".exe.config";
+			string configFile = Path.GetFileName (assemblyName) + ".config";
 		// End remove
 
 			return Path.Combine (appBase, configFile);

@@ -1,5 +1,11 @@
 2002-10-14  Martin Baulig  <martin@gnome.org>
 
+	* ConfigurationSettings.cs (DefaultConfig.GetAppConfigPath):
+	Append ".config" to the filename, not ".exe.config" since the
+	filename already has a ".exe" suffix.
+
+2002-10-14  Martin Baulig  <martin@gnome.org>
+
 	* ConfigurationSettings.cs (DefaultConfig.GetAppConfigPath): Use
 	Assembly.Location, not Assembly.FullName to get its filename.
 
