@@ -1,3 +1,7 @@
+2004-12-11  Ben Maurer  <bmaurer@ximian.com>
+
+	* thread-static-init.cs: New test.
+
 2004-12-09  Raja R Harinath  <rharinath@novell.com>
 
 	* test-driver: Clean up.

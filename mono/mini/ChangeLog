@@ -1,3 +1,9 @@
+2004-12-11  Ben Maurer  <bmaurer@ximian.com>
+
+	* mini.c (CEE_LDSFLD): Make sure that the vtable has been init'd
+	before we look in the special fields table. This fixes
+	../tests/thread-static-init.cs.
+
 2004-12-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 	* mini.c: return immediately after setting OP_ARRAY_RANK or CEE_LDLEN
 	for Array get_Rank and get_Length. Fixes bug #70465.
