@@ -18,10 +18,11 @@ using System.Xml.Xsl;
 namespace Mono.Xml.XPath {
 	public abstract class Pattern {
 		
-		public static Pattern Compile (string s)
+		internal static Pattern Compile (string s, System.Xml.Xsl.IStaticXsltContext ctx)
 		{
 			Tokenizer tokenizer = new Tokenizer (s);
 			XPathParser parser = new XPathParser ();
+			parser.Context = ctx;
 			Expression expr = (Expression) parser.yyparseSafe (tokenizer);
 			
 			return Compile (expr);

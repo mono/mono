@@ -251,7 +251,7 @@ namespace Mono.Xml.Xsl {
 		public Pattern CompilePattern (string pattern)
 		{
 			if (pattern == null || pattern == "") return null;
-			Pattern p = Pattern.Compile (pattern);
+			Pattern p = Pattern.Compile (pattern, this);
 			
 			exprStore.AddPattern (p, this);
 			

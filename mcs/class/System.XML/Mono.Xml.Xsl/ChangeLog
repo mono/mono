@@ -1,3 +1,7 @@
+2003-09-13 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* Compiler.cs: pass satic context to Pattern ctor.
+
 2003-08-30 Oleg Tkachenko <oleg@tkachenko.com>
 
 	* New files: 
