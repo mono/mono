@@ -1,3 +1,7 @@
+2004-10-19  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
+
+	* Parser.cs: set the operator properly.
+
 2004-10-11  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
 	* GlobalObject.cs: ported encodeURI, encodeURIComponent,

@@ -813,7 +813,7 @@ namespace Microsoft.JScript {
 				int tt = ts.PeekToken ();
 				if (tt == Token.MUL || tt == Token.DIV || tt == Token.MOD) {
 					ts.GetToken ();					
-					pn = new Binary (parent, pn, UnaryExpr (parent), JSToken.Multiply);
+					pn = new Binary (parent, pn, UnaryExpr (parent), ToJSToken (tt));
 					continue;
 				}
 				break;
@@ -889,6 +889,12 @@ namespace Microsoft.JScript {
 				return JSToken.StrictEqual;
 			else if (tt == Token.SHNE)
 				return JSToken.StrictNotEqual;
+			else if (tt == Token.MUL)
+				return JSToken.Multiply;
+			else if (tt == Token.DIV)
+				return JSToken.Divide;
+			else if (tt == Token.MOD)
+				return JSToken.Modulo;
 			else 
 				return JSToken.None;
 		}
