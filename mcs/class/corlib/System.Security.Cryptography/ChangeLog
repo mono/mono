@@ -1,3 +1,7 @@
+2004-04-08  Bernie Solomon  <bernard@ugsolutions.com>
+
+	* DSA.cs: Use Mono.Security.BitConverterLE
+
 2004-04-05  Bernie Solomon  <bernard@ugsolutions.com>
 
 	* DESCryptoServiceProvider.cs: Use BitConverter.IsLittleEndian

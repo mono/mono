@@ -12,6 +12,7 @@ using System;
 using System.Text;
 
 using Mono.Xml;
+using Mono.Security;
 
 // References:
 // a.	FIPS PUB 186-2: Digital Signature Standard (DSS) 
@@ -80,7 +81,7 @@ namespace System.Security.Cryptography {
 				if (counter != null) {
 					byte[] counter4b = new byte [4]; // always 4 bytes
 					Array.Copy (counter, 0, counter4b, 0, counter.Length);
-					dsaParams.Counter = BitConverter.ToInt32 (counter4b, 0);
+					dsaParams.Counter = BitConverterLE.ToInt32 (counter4b, 0);
 				}
 				ImportParameters (dsaParams);
 			}
@@ -130,7 +131,7 @@ namespace System.Security.Cryptography {
 
 					sb.Append ("<PgenCounter>");
 					// the number of bytes is important (no matter == 0x00)
-					byte[] inArr = BitConverter.GetBytes (dsaParams.Counter);
+					byte[] inArr = BitConverterLE.GetBytes (dsaParams.Counter);
 					int l = inArr.Length;
 					while (inArr[l-1] == 0x00)
 						l--;
