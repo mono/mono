@@ -32,11 +32,15 @@ class X {
 			w ("");
 
 			for (int j = 0; names [j,0] != null; j++){
+				string b = names [j, 0] + "Constant";
+				string s = "TypeManager." + names [j, 1] + "_type";
+				string n = ((string) names [j,0]).ToLower ();
+
 				if (i == j)
 					continue;
 				
-				w ("\t\t\tif (target_type == " + small + ")");
-				w ("\t\t\t\treturn new " + big + "((" + nat + ") v);");
+				w ("\t\t\tif (target_type == " + s + ")");
+				w ("\t\t\t\treturn new " + b + "((" + n + ") v);");
 			}
 			w ("\t\t}");
 		}
