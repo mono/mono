@@ -1,3 +1,8 @@
+2004-01-22  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlElement.cs : Reverted previous fix since it broke monodoc web 
+	  service.
+
 2004-01-20  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlNode.cs : When adding a node to child list, it should reject its
