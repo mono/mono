@@ -1,7 +1,0 @@
-Initial release 0.1
---------------------
-This initial release is able to load assemblies and run the tests in them.
-Only 1 at a time, though.
-
-It displays the results nicely.
-
