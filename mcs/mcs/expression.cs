@@ -6597,12 +6597,12 @@ namespace Mono.CSharp {
 
 		public Expression DoResolveType (EmitContext ec)
 		{
-			left = left.Resolve (ec, ResolveFlags.Type);
-			if (left == null)
+			Type ltype = ec.DeclSpace.ResolveType (left, false, loc);
+			if (ltype == null)
 				return null;
 
 			type = RootContext.LookupType (
-				ec.DeclSpace, left.Type.FullName + dim, false, loc);
+				ec.DeclSpace, ltype.FullName + dim, false, loc);
 			if (type == null)
 				return null;
 
