@@ -1,3 +1,10 @@
+2004-03-10  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Convert.cs: FromBase64 now ignore some characters (tab, LF, CR and
+	spaces) which fixed #54939. Changed the way that the length is 
+	validated (multiple of 4) because the ignored characters must not be
+	included in the count.
+
 2004-03-10  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* String.cs: Monostyled

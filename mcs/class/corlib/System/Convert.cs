@@ -88,31 +88,50 @@ namespace System {
 		//
 		// should be changed to a stand-alone class Base64Encoder & Base64Decoder
 		
-		public static byte[] FromBase64CharArray(char[] inArray, int offset, int length)
+		public static byte[] FromBase64CharArray (char[] inArray, int offset, int length)
 		{
 			if (inArray == null)
-				throw new ArgumentNullException();
-			
-			if ((offset < 0) || (length < 0) || (offset + length > inArray.Length))
-				throw new ArgumentOutOfRangeException();
-			
-			if (length < 4 || length % 4 != 0)
-				throw new FormatException();
-				
-			byte[] inArr = new System.Text.UTF8Encoding().GetBytes(inArray, offset, length);
-			FromBase64Transform t = new FromBase64Transform();
-			
-			return t.TransformFinalBlock(inArr, 0, inArr.Length);
+				throw new ArgumentNullException ("inArray");
+			if (offset < 0)
+				throw new ArgumentOutOfRangeException ("offset < 0");
+			if (length < 0)
+				throw new ArgumentOutOfRangeException ("length < 0");
+			if (offset + length > inArray.Length)
+				throw new ArgumentOutOfRangeException ("offset + length > array.Length");
+			// do not check length here (multiple of 4) because the
+			// string can contain ignored characters
+
+			return FromBase64 (inArray, offset, length);
 		}
 		
-		public static byte[] FromBase64String(string s)
+		public static byte[] FromBase64String (string s)
 		{
 			if (s == null)
-				throw new ArgumentNullException();
-			
-			char[] inArr = s.ToCharArray();
+				throw new ArgumentNullException ("s");
+			// do not check length here (multiple of 4) because the
+			// string can contain ignored characters
 
-			return FromBase64CharArray(inArr, 0, inArr.Length);
+			char[] chars = s.ToCharArray ();
+			return FromBase64 (chars, 0, chars.Length);
+		}
+		
+		private static byte[] FromBase64 (char[] chars, int index, int count) 
+		{
+			byte[] data = new byte [count];
+			int n = 0;
+			for (int i=0; i < count; i++) {
+				char c = chars [i];
+				// drop ignored characters
+				if (c == '\t' || c == '\r' || c == '\n' || c == ' ')
+					continue;
+				data [n++] = (byte) c;
+			}
+			// now the length must be a multiple of 4 bytes (same as % 4)
+			if ((n & 3) != 0)
+				throw new FormatException ("invalid base64 length");
+			// and we do not need to ignore whitespace this time (which is a little faster)
+			FromBase64Transform t = new FromBase64Transform (FromBase64TransformMode.DoNotIgnoreWhiteSpaces);
+			return t.TransformFinalBlock (data, 0, n);
 		}
 
 		public static TypeCode GetTypeCode (object value)
