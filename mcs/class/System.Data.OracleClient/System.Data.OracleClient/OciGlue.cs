@@ -47,26 +47,26 @@ namespace System.Data.OracleClient.OCI {
 		// http://download-west.oracle.com/docs/cd/A87861_01/NT817EE/index.htm
 		// from oracle/ora81/oci/include/oci.h
 
-		[DllImport("System.Data.OracleClient.ociglue.dll")]
+		[DllImport("ociglue")]
 		public static extern IntPtr OciGlue_Connect (out Int32 status,
 			out UInt32 ociGlueConnectionHandle, out uint errcode, 
 			string database, string username, string password);
 
-		[DllImport("System.Data.OracleClient.ociglue.dll")]
+		[DllImport("ociglue")]
 		public static extern Int32 OciGlue_Disconnect (UInt32 connection_handle);
 
-		[DllImport("System.Data.OracleClient.ociglue.dll")]
+		[DllImport("ociglue")]
 		public static extern Int32 OciGlue_PrepareAndExecuteNonQuerySimple (
 			UInt32 ociGlueConnectionHandle,
 			string sqlstmt, out int found);
 
-		[DllImport("System.Data.OracleClient.ociglue.dll")]
+		[DllImport("ociglue")]
 		public static extern UInt32 OciGlue_ConnectionCount();
 
-		[DllImport("System.Data.OracleClient.ociglue.dll")]
+		[DllImport("ociglue")]
 		public static extern IntPtr OciGlue_CheckError (Int32 status, UInt32 connection_handle);
 
-		[DllImport("System.Data.OracleClient.ociglue.dll")]
+		[DllImport("ociglue")]
 		public static extern void OciGlue_Free (IntPtr obj);
 
 		public string CheckError(Int32 status) {

@@ -1,4 +1,12 @@
 2003-02-08  Tim Coleman <tim@timcoleman.com>
+	* System.Data.OracleClient/OciGlueLib_BCC_win32.make:
+	* System.Data.OracleClient/OciGlueLib_MSVC_win32.make:
+	change name of library to ociglue.dll
+	* System.Data.OracleClient/ociglue.c:
+	Use the "database" parameter as TNSNAME.
+	* System.Data.OracleClient/OciGlue.cs:
+	Change DllImport from "System.Data.OracleClient.ociglue.dll" to
+	"ociglue".
 	* System.Data.OracleClient/OciGlueLib_GCC_linux.make:
 	added makefile for ociglue shared lib on Linux platform
 	and compiler gcc.

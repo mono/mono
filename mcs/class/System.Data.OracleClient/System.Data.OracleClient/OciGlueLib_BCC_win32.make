@@ -8,15 +8,15 @@
 # from http://www.borland.com/
 #
 
-all: System.Data.OracleClient.ociglue.dll
+all: ociglue.dll
 
-System.Data.OracleClient.ociglue.dll: ociglue.c ocglue.h
+ociglue.dll: ociglue.c ociglue.h
 	set BINC=%BORLAND_HOME%\include 
 	set BLIB=%BORLAND_HOME%\lib
 	%BORLAND_HOME%\bin\bcc32 -w-pro -c -a4 -DOCI_BORLAND -I. -I%BINC% -I..\include ociglue.c -I..\..\cygwin\home\DanielMorgan\mono\install\include\glib-2.0 -I..\..\cygwin\home\DanielMorgan\mono\install\lib\glib-2.0\include
-	echo LIBRARY System.Data.OracleClient.ociglue.dll > System.Data.OracleClient.ociglue.def
-	echo DESCRIPTION 'System.Data.OracleClient.ociglue.dll' >> System.Data.OracleClient.ociglue.def
-	echo EXPORTS >> System.Data.OracleClient.ociglue.def
-	echo _qxiqtbi=qxiqtbi >> System.Data.OracleClient.ociglue.def
-	%BORLAND_HOME%\bin\bcc32 -tWD -L%BLIB% -L..\lib\bc System.Data.OracleClient.ociglue.obj oci.lib bidsfi.lib glib-2.0.lib intl.lib iconv.lib
+	echo LIBRARY ociglue.dll > ociglue.def
+	echo DESCRIPTION 'ociglue.dll' >> ociglue.def
+	echo EXPORTS >> ociglue.def
+	echo _qxiqtbi=qxiqtbi >> ociglue.def
+	%BORLAND_HOME%\bin\bcc32 -tWD -L%BLIB% -L..\lib\bc ociglue.obj oci.lib bidsfi.lib glib-2.0.lib intl.lib iconv.lib
 	:end

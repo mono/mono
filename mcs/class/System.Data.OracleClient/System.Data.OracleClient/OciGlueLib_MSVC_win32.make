@@ -5,7 +5,7 @@
 #             to be used in Mono System.Data.OracleClient as
 #             the Oracle 8i data provider.
 #
-# Builds unmanaged C library System.Data.OracleClient.ociglue.dll
+# Builds unmanaged C library ociglue.dll
 #
 # Author: 
 #      Daniel Morgan <danmorg@sc.rr.com>
@@ -33,7 +33,7 @@
 
 # GLIB 2.0 for Win32 found at http://www.gimp.org/win32
 
-PROJECT = System.Data.OracleClient.ociglue.dll
+PROJECT = ociglue.dll
 
 GLIB_CFLAGS = -I$(GLIB_PREFIX)\include\glib-2.0 -I$(GLIB_PREFIX)\lib\glib-2.0\include
 GLIB_LIBS = /LIBPATH:$(GLIB_PREFIX)\lib glib-2.0.lib intl.lib iconv.lib
@@ -47,20 +47,20 @@ ORACLE_LIBS = /LIBPATH:%ORACLE_HOME%\oci\lib\msvc oci.lib
 
 OCIGLUELIB_CFLAGS = -I. -D_DLL -D_MT $(ORACLE_CFLAGS) $(GLIB_CFLAGS)
 OCIGLUELIB_LIBS = kernel32.lib msvcrt.lib $(ORACLE_LIBS) $(GLIB_LIBS)
-OCIGLUELIB_LINKFLAGS = /link /Dll /out:System.Data.OracleClient.ociglue.dll /nod:libc $(OCIGLUELIB_LIBS) $(OCIGLUELIB_EXPORTS)
+OCIGLUELIB_LINKFLAGS = /link /Dll /out:ociglue.dll /nod:libc $(OCIGLUELIB_LIBS) $(OCIGLUELIB_EXPORTS)
 
 OCIGLUELIB_EXPORTS = /export:OciGlue_Connect /export:OciGlue_PrepareAndExecuteNonQuerySimple /export:OciGlue_Disconnect /export:OciGlue_ConnectionCount /export:OciGlue_CheckError /export:Free
 
 SOURCE_H_FILES = ociglue.h
 SOURCE_C_FILES = ociglue.c
 
-all: System.Data.OracleClient.ociglue.dll
+all: ociglue.dll
 
 $(SOURCE_C_FILES) : $(SOURCE_H_FILES)
 
-System.Data.OracleClient.ociglue.dll : $(SOURCE_C_FILES)
+ociglue.dll : $(SOURCE_C_FILES)
 	cl  $(OCIGLUELIB_CFLAGS) $(SOURCE_C_FILES) $(OCIGLUELIB_LINKFLAGS)
 	
 clean:
-	rm -f System.Data.OracleClient.ociglue.dll
+	rm -f ociglue.dll
 	rm -f System.Data.OracleClient.ociglue.o

@@ -102,7 +102,7 @@ text *OciGlue_Connect (sword *status, ub4 *connection_handle, sb4 *errcode,
 	}
 
   *status = OCIServerAttach(oci_glue_handle->srvhp, 
-					oci_glue_handle->errhp, (text *)"", strlen(""), 0);
+					oci_glue_handle->errhp, (text *) database, strlen (database), 0);
 
 	if(*status != 0) {
 		errbuf = check_error_internal (oci_glue_handle, errcode);
