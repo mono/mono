@@ -48,7 +48,7 @@ namespace Mono.Posix {
 		[DllImport ("libc", EntryPoint="isatty")]
 		static extern int syscall_isatty (int desc);
 		
-		public static bool Isatty (int desc)
+		public static bool isatty (int desc)
 		{
 			int res = syscall_isatty (desc);
 			if (res == 1)
