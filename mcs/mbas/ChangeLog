@@ -1,4 +1,7 @@
 2004-04-16 Anirban Bhattacharjee <banirban@novell.com>
+	* mb-parser.jay: few clean-ups
+
+2004-04-16 Anirban Bhattacharjee <banirban@novell.com>
 	* class.cs: Duplicate entry point exception number changed
 		    Checked delaration of Types, fields, methods as Protected if they are member of Module type
 	* const.cs: Checked delaration of constructor as Protected if it is member of Module type

@@ -1025,9 +1025,7 @@ class_member_declarator
 	|  property_declaration			
 	|  event_declaration	
 	|  withevents_declaration	/* This is a field but must be treated specially, see below */
-	/*|  type_declaration  */
-	|  class_declaration		
-	|  enum_declaration		
+	|  type_spec_declaration
 	;
 	
 	
@@ -1217,7 +1215,7 @@ struct_member_declarator
 	| property_declaration
 	| event_declaration
 	| constructor_declaration
-	| type_declaration
+	| type_spec_declaration
 
 	/*
 	 * This is only included so we can flag error 575:
@@ -1753,30 +1751,6 @@ opt_empty_parens
 	| OPEN_PARENS CLOSE_PARENS
 	;	
 
-/*	
-static_constructor_declaration
-	: SHARED SUB NEW opt_empty_parens EOL
-	  {
-	  	current_local_parameters = Parameters.EmptyReadOnlyParameters;
-	  	start_block();
-		oob_stack.Push (lexer.Location);
-
-		Location l = (Location) oob_stack.Pop ();
-		$$ = new Constructor ((string) "New", Parameters.EmptyReadOnlyParameters, (ConstructorInitializer) null, l);
-	  }
-	  opt_statement_list
-	  { 
-		Constructor c = (Constructor) $1;
-		c.Block = (Block) end_block();
-		c.ModFlags = (int) current_modifiers;
-		c.OptAttributes = current_attributes;
-		
-		CheckDef (current_container.AddConstructor(c), c.Name, c.Location);
-		current_local_parameters = null;
-	  }
-	  END SUB EOL
-*/
-	
 constructor_declaration
 	: SUB NEW OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS EOL
 	  {
