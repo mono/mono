@@ -1,3 +1,7 @@
+2004-12-10  Lluis Sanchez Gual <lluis@novell.com>
+
+	* Makefile: Added Menu script.
+	
 2004-12-02  Lluis Sanchez Gual <lluis@novell.com>
 
 	* System.Web.dll.sources: Added new files:

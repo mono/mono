@@ -36,7 +36,8 @@ RESOURCE_FILES = \
 	resources/TreeView_tminus.gif \
 	resources/TreeView_tplus.gif \
 	resources/callback.js \
-	System.Web.UI.WebControls/TreeView.js
+	System.Web.UI.WebControls/TreeView.js \
+	System.Web.UI.WebControls/Menu.js
 
 ifeq (net_2_0, $(PROFILE))
 OTHER_RES = $(RESOURCE_FILES)
