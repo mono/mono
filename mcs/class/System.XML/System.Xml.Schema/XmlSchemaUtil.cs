@@ -82,11 +82,11 @@ namespace System.Xml.Schema
 			return true;
 		}
 
-		public static bool CheckLanguage(string lang)
-		{
+//		public static bool CheckLanguage(string lang)
+//		{
 			//check if the string conforms to http://www.w3.org/TR/2001/REC-xmlschema-2-20010502/datatypes.html#language
-			return true;
-		}
+//			return true;
+//		}
 		public static bool CheckNCName(string name)
 		{
 			//check if the string conforms to http://www.w3.org/TR/2001/REC-xmlschema-2-20010502/datatypes.html#NCName

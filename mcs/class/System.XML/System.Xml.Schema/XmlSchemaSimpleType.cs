@@ -46,19 +46,6 @@ namespace System.Xml.Schema
 			get{ return variety; }
 		}
 
-		new internal XmlSchemaDatatype Datatype
-		{
-			get {
-				XmlSchemaDatatype dt = BaseSchemaType as XmlSchemaDatatype;
-				if (dt == null) {
-					XmlSchemaSimpleType baseSimple = BaseSchemaType as XmlSchemaSimpleType;
-					if (baseSimple != null)
-						dt = baseSimple.Datatype;
-				}
-				return dt;
-			}
-		}
-
 		/// <remarks>
 		/// For a simple Type:
 		///		1. Content must be present

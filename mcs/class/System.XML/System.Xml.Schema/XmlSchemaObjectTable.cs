@@ -13,7 +13,7 @@ namespace System.Xml.Schema
 	{
 		private Hashtable table;
 
-		internal XmlSchemaObjectTable()
+		internal XmlSchemaObjectTable ()
 		{
 			table = new Hashtable(); 
 		}
@@ -34,20 +34,17 @@ namespace System.Xml.Schema
 			get{ return table.Values; }
 		}
 
-		public bool Contains(XmlQualifiedName name)
+		public bool Contains (XmlQualifiedName name)
 		{
-			return table.Contains(name);
+			return table.Contains (name);
 		}
-		public IDictionaryEnumerator GetEnumerator()
+		public IDictionaryEnumerator GetEnumerator ()
 		{
 			return new XmlSchemaObjectTableEnumerator (this);
 		}
 
-		internal void Add(XmlQualifiedName name, XmlSchemaObject value)
+		internal void Add (XmlQualifiedName name, XmlSchemaObject value)
 		{
-			if (table.ContainsKey (name))
-				throw new XmlSchemaException (
-					"Schema object for the name " + name + " already exists in this table.", value, null);
 			table [name] = value;
 		}
 
@@ -56,7 +53,7 @@ namespace System.Xml.Schema
 			table.Clear ();
 		}
 
-		internal void Set(XmlQualifiedName name, XmlSchemaObject value)
+		internal void Set (XmlQualifiedName name, XmlSchemaObject value)
 		{
 			table [name] = value;
 		}

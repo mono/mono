@@ -32,9 +32,8 @@ namespace System.Xml.Schema
 		private object minInclusiveFacet ;
 		private object minExclusiveFacet ;
 		private XmlSchemaFacet.Facet fixedFacets = XmlSchemaFacet.Facet.None; 
-		
-		
 		private static NumberStyles lengthStyle = NumberStyles.Integer;
+
 
 		public XmlSchemaSimpleTypeRestriction()
 		{
@@ -117,16 +116,16 @@ namespace System.Xml.Schema
 		private bool IsAllowedFacet(XmlSchemaFacet xsf) {
 		/* Must be called after this.ValidateActualType, as it uses actualBaseSchemaType */
 
-			XsdAnySimpleType ast = actualBaseSchemaType as XsdAnySimpleType;
+			XsdAnySimpleType ast = ActualBaseSchemaType as XsdAnySimpleType;
 			if (ast != null) {
 				// Based directly on an xsd type 
 				return ast.AllowsFacet(xsf);
 			}
 			else {
-			 XmlSchemaSimpleTypeContent st = ((XmlSchemaSimpleType)actualBaseSchemaType).Content as XmlSchemaSimpleTypeContent;
+			 XmlSchemaSimpleTypeContent st = ((XmlSchemaSimpleType)ActualBaseSchemaType).Content as XmlSchemaSimpleTypeContent;
 			 if (st != null) {
 				 XmlSchemaSimpleTypeRestriction str = st as XmlSchemaSimpleTypeRestriction;
-				 if (str != null) {
+				 if (str != null && str != this) {
 					 return str.IsAllowedFacet(xsf);
 				 }
 				 XmlSchemaSimpleTypeList stl = st as XmlSchemaSimpleTypeList;
@@ -166,8 +165,8 @@ namespace System.Xml.Schema
 			
 			XmlSchemaSimpleTypeRestriction baseSTR = null; 
 
-			if (actualBaseSchemaType is XmlSchemaSimpleType) {
-				XmlSchemaSimpleTypeContent st = ((XmlSchemaSimpleType)actualBaseSchemaType).Content as XmlSchemaSimpleTypeContent;
+			if (ActualBaseSchemaType is XmlSchemaSimpleType) {
+				XmlSchemaSimpleTypeContent st = ((XmlSchemaSimpleType)ActualBaseSchemaType).Content as XmlSchemaSimpleTypeContent;
 				baseSTR = st as XmlSchemaSimpleTypeRestriction;
 			}
 			
@@ -457,12 +456,12 @@ namespace System.Xml.Schema
 
 
 		private XsdAnySimpleType getDatatype() {
-			XsdAnySimpleType ast = actualBaseSchemaType as XsdAnySimpleType;
+			XsdAnySimpleType ast = ActualBaseSchemaType as XsdAnySimpleType;
 			if (ast != null) {
 				// Based directly on an xsd type 
 				return ast;
 			}
-			XmlSchemaSimpleTypeContent st = ((XmlSchemaSimpleType)actualBaseSchemaType).Content as XmlSchemaSimpleTypeContent;
+			XmlSchemaSimpleTypeContent st = ((XmlSchemaSimpleType)ActualBaseSchemaType).Content as XmlSchemaSimpleTypeContent;
 			
 			if (st is XmlSchemaSimpleTypeRestriction) {
 				return ((XmlSchemaSimpleTypeRestriction)st).getDatatype();
@@ -485,11 +484,11 @@ namespace System.Xml.Schema
 					 * that use the nametable and nsmgr are ones that 
 					 * we don't need to parse here.
 					 */ 
-					ret = dt.ParseValue(value, null, null);
+					ret = dt.ParseValue (value, null, null);
 				//	Console.WriteLine("Ret: " + ret);
 					// If we are based on something with facets, check that we are valid
-					if (actualBaseSchemaType is XmlSchemaSimpleType) {
-						XmlSchemaSimpleTypeContent st = ((XmlSchemaSimpleType)actualBaseSchemaType).Content as XmlSchemaSimpleTypeContent;
+					if (ActualBaseSchemaType is XmlSchemaSimpleType) {
+						XmlSchemaSimpleTypeContent st = ((XmlSchemaSimpleType) ActualBaseSchemaType).Content as XmlSchemaSimpleTypeContent;
 						if (st is XmlSchemaSimpleTypeRestriction) {
 							if (((XmlSchemaSimpleTypeRestriction)st).ValidateValueWithFacets(value, null)) {
 								return ret;

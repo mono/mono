@@ -35,20 +35,6 @@ namespace System.Xml.Schema
 			get{ return items; }
 		}
 
-		internal override XmlSchemaParticle ActualParticle {
-			get {
-				if (CompiledItems.Count == 0)
-					return XmlSchemaParticle.Empty;
-				if (ValidatedMaxOccurs == 1 &&
-					ValidatedMinOccurs == 1 &&
-					CompiledItems.Count == 1)
-					return ((XmlSchemaParticle) CompiledItems [0]).ActualParticle;
-				else
-					return this;
-			}
-		}
-
-
 		internal override int Compile(ValidationEventHandler h, XmlSchema schema)
 		{
 			// If this is already compiled this time, simply skip.
@@ -74,84 +60,139 @@ namespace System.Xml.Schema
 			this.CompilationId = schema.CompilationId;
 			return errorCount;
 		}
-		
-		internal override int Validate(ValidationEventHandler h, XmlSchema schema)
+
+
+		internal override XmlSchemaParticle GetOptimizedParticle (bool isTop)
+		{
+			if (OptimizedParticle != null)
+				return OptimizedParticle;
+			if (Items.Count == 0 || ValidatedMaxOccurs == 0) {
+				OptimizedParticle = XmlSchemaParticle.Empty;
+				return OptimizedParticle;
+			}
+			if (!isTop && ValidatedMinOccurs == 1 && ValidatedMaxOccurs == 1) {
+				if (Items.Count == 1)
+					return ((XmlSchemaParticle) Items [0]).GetOptimizedParticle (false);
+			}
+
+			XmlSchemaSequence seq = new XmlSchemaSequence ();
+			CopyInfo (seq);
+			for (int i = 0; i < Items.Count; i++) {
+				XmlSchemaParticle p = Items [i] as XmlSchemaParticle;
+				p = p.GetOptimizedParticle (false);
+				if (p == XmlSchemaParticle.Empty)
+					continue;
+
+				else if (p is XmlSchemaSequence && p.ValidatedMinOccurs == 1 && p.ValidatedMaxOccurs == 1) {
+					XmlSchemaSequence ps = p as XmlSchemaSequence;
+					for (int pi = 0; pi < ps.Items.Count; pi++) {
+						seq.Items.Add (ps.Items [pi]);
+						seq.CompiledItems.Add (ps.Items [pi]);
+					}
+				}
+				else {
+					seq.Items.Add (p);
+					seq.CompiledItems.Add (p);
+				}
+			}
+			if (seq.Items.Count == 0)
+				OptimizedParticle = XmlSchemaParticle.Empty;
+			else
+				OptimizedParticle = seq;
+			return OptimizedParticle;
+		}
+
+		internal override int Validate (ValidationEventHandler h, XmlSchema schema)
 		{
 			if (IsValidated (schema.CompilationId))
 				return errorCount;
 
 			CompiledItems.Clear ();
-			foreach (XmlSchemaObject obj in Items) {
-				errorCount += obj.Validate (h, schema);
-				CompiledItems.Add (obj);
+			foreach (XmlSchemaParticle p in Items) {
+				errorCount += p.Validate (h, schema); // This is basically extraneous for pointless item, but needed to check validation error.
+//				XmlSchemaParticle particleInPoint = p.GetParticleWithoutPointless ();
+//				if (particleInPoint != XmlSchemaParticle.Empty)
+//					CompiledItems.Add (particleInPoint);
+				CompiledItems.Add (p);
 			}
 
 			ValidationId = schema.ValidationId;
 			return errorCount;
 		}
 
-		internal override void ValidateDerivationByRestriction (XmlSchemaParticle baseParticle,
-			ValidationEventHandler h, XmlSchema schema)
+		internal override bool ValidateDerivationByRestriction (XmlSchemaParticle baseParticle,
+			ValidationEventHandler h, XmlSchema schema, bool raiseError)
 		{
 			if (this == baseParticle) // quick check
-				return;
+				return true;
 
 			XmlSchemaElement el = baseParticle as XmlSchemaElement;
 			if (el != null) {
 				// Forbidden
-				error (h, "Invalid sequence paricle derivation.");
-				return;
+				if (raiseError)
+					error (h, "Invalid sequence paricle derivation.");
+				return false;
 			}
 
 			XmlSchemaSequence seq = baseParticle as XmlSchemaSequence;
 			if (seq != null) {
 				// Recurse
-				ValidateOccurenceRangeOK (seq, h, schema);
+				if (!ValidateOccurenceRangeOK (seq, h, schema, raiseError))
+					return false;
 
 				// If it is totally optional, then ignore their contents.
 				if (seq.ValidatedMinOccurs == 0 && seq.ValidatedMaxOccurs == 0 &&
 					this.ValidatedMinOccurs == 0 && this.ValidatedMaxOccurs == 0)
-					return;
-				this.ValidateRecurse (seq, h, schema);
-				return;
+					return true;
+				return ValidateRecurse (seq, h, schema, raiseError);
 			} 
 
 			XmlSchemaAll all = baseParticle as XmlSchemaAll;
-			XmlSchemaAny any = baseParticle as XmlSchemaAny;
-			XmlSchemaChoice choice = baseParticle as XmlSchemaChoice;
 			if (all != null) {
 				// RecurseUnordered
 				XmlSchemaObjectCollection already = new XmlSchemaObjectCollection ();
 				for (int i = 0; i < this.Items.Count; i++) {
 					XmlSchemaElement de = this.Items [i] as XmlSchemaElement;
 					if (de == null) {
-						error (h, "Invalid sequence particle derivation by restriction from all.");
-						continue;
+						if (raiseError)
+							error (h, "Invalid sequence particle derivation by restriction from all.");
+						return false;
 					}
 					foreach (XmlSchemaElement e in all.Items) {
 						if (e.QualifiedName == de.QualifiedName) {
-							if (already.Contains (e))
-								error (h, "Base element particle is mapped to the derived element particle in a sequence two or more times.");
-							else {
+							if (already.Contains (e)) {
+								if (raiseError)
+									error (h, "Base element particle is mapped to the derived element particle in a sequence two or more times.");
+								return false;
+							} else {
 								already.Add (e);
-								de.ValidateDerivationByRestriction (e, h, schema);
+								if (!de.ValidateDerivationByRestriction (e, h, schema, raiseError))
+									return false;
 							}
 						}
 					}
 				}
 				foreach (XmlSchemaElement e in all.Items)
 					if (!already.Contains (e))
-						if (!e.ValidateIsEmptiable ())
-							error (h, "In base -all- particle, mapping-skipped base element which is not emptiable was found.");
-			} else if (any != null) {
-				// NSRecurseCheckCardinality
-				ValidateNSRecurseCheckCardinality (any, h, schema);
-				return;
-			} else if (choice != null) {
-				// MapAndSum
-				// In fact it is not Recurse, but it looks common.
-				ValidateRecurse (choice, h, schema);
+						if (!e.ValidateIsEmptiable ()) {
+							if (raiseError)
+								error (h, "In base -all- particle, mapping-skipped base element which is not emptiable was found.");
+							return false;
+						}
+				return true;
 			}
+			XmlSchemaAny any = baseParticle as XmlSchemaAny;
+			if (any != null) {
+				// NSRecurseCheckCardinality
+				return ValidateNSRecurseCheckCardinality (any, h, schema, raiseError);
+			}
+			XmlSchemaChoice choice = baseParticle as XmlSchemaChoice;
+			if (choice != null) {
+				// MapAndSum
+				// In fact it is not Recurse, but it looks almost common.
+				return ValidateSeqRecurseMapSumCommon (choice, h, schema, false, true, raiseError);
+			}
+			return true;
 		}
 
 		internal override decimal GetMinEffectiveTotalRange ()

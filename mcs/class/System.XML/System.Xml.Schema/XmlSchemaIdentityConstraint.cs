@@ -61,7 +61,6 @@ namespace System.Xml.Schema
 		/// 1. name must be present
 		/// 2. selector and field must be present
 		/// </remarks>
-		[MonoTODO]
 		internal override int Compile(ValidationEventHandler h, XmlSchema schema)
 		{
 			// If this is already compiled this time, simply skip.

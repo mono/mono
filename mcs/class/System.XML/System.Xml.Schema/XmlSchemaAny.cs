@@ -42,6 +42,7 @@ namespace System.Xml.Schema
 		private string nameSpace;
 		private XmlSchemaContentProcessing processing;
 		private static string xmlname = "any";
+
 		private XsdWildcard wildcard;
 
 		public XmlSchemaAny()
@@ -64,7 +65,7 @@ namespace System.Xml.Schema
 			set{ processing = value; }
 		}
 
-		// Internal
+		// Post Compilation Schema Infoset
 		internal bool HasValueAny {
 			get { return wildcard.HasValueAny; }
 		}
@@ -125,6 +126,25 @@ namespace System.Xml.Schema
 			this.CompilationId = schema.CompilationId;
 			return errorCount;
 		}
+
+		internal override XmlSchemaParticle GetOptimizedParticle (bool isTop)
+		{
+			if (OptimizedParticle != null)
+				return OptimizedParticle;
+			// Uncommenting this causes incorrect validation. 
+			// It will prevent UPA e.g. msxsdtest/Particles/particlesJf006.xsd
+//			if (ValidatedMaxOccurs == 0) {
+//				OptimizedParticle = XmlSchemaParticle.Empty;
+//				return OptimizedParticle;
+//			}
+
+			XmlSchemaAny any = new XmlSchemaAny ();
+			CopyInfo (any);
+			any.wildcard = this.wildcard;
+			OptimizedParticle = any;
+
+			return OptimizedParticle;
+		}
 		
 		internal override int Validate(ValidationEventHandler h, XmlSchema schema)
 		{
@@ -161,17 +181,19 @@ namespace System.Xml.Schema
 			return wildcard.ExamineAttributeWildcardIntersection (other, h, schema);
 		}
 
-		internal override void ValidateDerivationByRestriction (XmlSchemaParticle baseParticle, 
-			ValidationEventHandler h, XmlSchema schema)
+		internal override bool ValidateDerivationByRestriction (XmlSchemaParticle baseParticle, 
+			ValidationEventHandler h, XmlSchema schema, bool raiseError)
 		{
 			XmlSchemaAny baseAny = baseParticle as XmlSchemaAny;
 			if (baseAny == null) {
-				error (h, "Invalid particle derivation by restriction was found.");
-				return;
+				if (raiseError)
+					error (h, "Invalid particle derivation by restriction was found.");
+				return false;
 			}
 			// 3.9.6 Particle Derivation OK (Any:Any - NSSubset)
-			this.ValidateOccurenceRangeOK (baseParticle, h, schema);
-			wildcard.ValidateWildcardSubset (baseAny.wildcard, h, schema);
+			if (!ValidateOccurenceRangeOK (baseParticle, h, schema, raiseError))
+				return false;
+			return wildcard.ValidateWildcardSubset (baseAny.wildcard, h, schema, raiseError);
 		}
 
 

@@ -19,13 +19,11 @@ namespace System.Xml.Schema
 		/// 1. name must be present
 		/// 2. selector and field must be present
 		/// </remarks>
-		[MonoTODO]
 		internal override int Compile(ValidationEventHandler h, XmlSchema schema)
 		{
 			return base.Compile(h,schema);
 		}
 		
-		[MonoTODO]
 		internal override int Validate(ValidationEventHandler h, XmlSchema schema)
 		{
 			return errorCount;

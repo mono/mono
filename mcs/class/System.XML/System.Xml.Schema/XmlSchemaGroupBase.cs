@@ -27,6 +27,18 @@ namespace System.Xml.Schema
 			get{ return compiledItems; }
 		}
 
+		internal void CopyOptimizedItems (XmlSchemaGroupBase gb)
+		{
+			for (int i = 0; i < Items.Count; i++) {
+				XmlSchemaParticle p = Items [i] as XmlSchemaParticle;
+				p = p.GetOptimizedParticle (false);
+				if (p == XmlSchemaParticle.Empty)
+					continue;
+				gb.Items.Add (p);
+				gb.CompiledItems.Add (p);
+			}
+		}
+
 		internal override bool ParticleEquals (XmlSchemaParticle other)
 		{
 			XmlSchemaGroupBase gb = other as XmlSchemaGroupBase;
@@ -55,58 +67,94 @@ namespace System.Xml.Schema
 				p.CheckRecursion (depth, h, schema);
 		}
 
-		internal void ValidateNSRecurseCheckCardinality (XmlSchemaAny any,
-			ValidationEventHandler h, XmlSchema schema)
+		internal bool ValidateNSRecurseCheckCardinality (XmlSchemaAny any,
+			ValidationEventHandler h, XmlSchema schema, bool raiseError)
 		{
 			foreach (XmlSchemaParticle p in Items)
-				p.ValidateDerivationByRestriction (any, h, schema);
-			ValidateOccurenceRangeOK (any, h, schema);
+				if (!p.ValidateDerivationByRestriction (any, h, schema, raiseError))
+					return false;
+			return ValidateOccurenceRangeOK (any, h, schema, raiseError);
 		}
 
-		internal void ValidateRecurse (XmlSchemaGroupBase baseGroup,
-			ValidationEventHandler h, XmlSchema schema)
+		internal bool ValidateRecurse (XmlSchemaGroupBase baseGroup,
+			ValidationEventHandler h, XmlSchema schema, bool raiseError)
+		{
+			return ValidateSeqRecurseMapSumCommon (baseGroup, h, schema, false, false, raiseError);
+		}
+
+		internal bool ValidateSeqRecurseMapSumCommon (XmlSchemaGroupBase baseGroup,
+			ValidationEventHandler h, XmlSchema schema, bool isLax, bool isMapAndSum, bool raiseError)
 		{
 			int index = 0;
-			for (int i = 0; i < baseGroup.CompiledItems.Count; i++) {
-				XmlSchemaParticle pb = ((XmlSchemaParticle) baseGroup.CompiledItems [i]).ActualParticle;
-				if (pb == XmlSchemaParticle.Empty)
-					continue;
+			int baseIndex = 0;
+			decimal baseOccured = 0;
+			if (baseGroup.CompiledItems.Count == 0 && this.CompiledItems.Count > 0) {
+				if (raiseError)
+					error (h, "Invalid particle derivation by restriction was found. base particle does not contain particles.");
+				return false;
+			}
+
+			for (int i = 0; i < CompiledItems.Count; i++) {
+				// get non-empty derived particle
 				XmlSchemaParticle pd = null;
 				while (this.CompiledItems.Count > index) {
-					pd = ((XmlSchemaParticle) this.CompiledItems [index]).ActualParticle;
-					index++;
-					if (pd != XmlSchemaParticle.Empty)
+					pd = ((XmlSchemaParticle) this.CompiledItems [index]).GetOptimizedParticle (false);
+					if (pd != XmlSchemaParticle.Empty)// && pd.ValidatedMaxOccurs > 0)
 						break;
-				}
-				ValidateParticleSection (ref index, pd, pb, h, schema);
-			}
-			if (this.compiledItems.Count > 0 && index != this.CompiledItems.Count)
-				error (h, "Invalid particle derivation by restriction was found. Extraneous derived particle was found.");
-		}
-
-		private void ValidateParticleSection (ref int index, XmlSchemaParticle pd, XmlSchemaParticle pb, ValidationEventHandler h, XmlSchema schema)
-		{
-			if (pd == pb) // they are same particle
-				return;
-
-			if (pd != null) {
-				try {
-					XmlSchemaElement el = pd as XmlSchemaElement;
-					XmlSchemaParticle pdx = pd;
-					if (el != null && el.SubstitutingElements.Count > 0)
-						pdx = el.SubstitutingChoice;
-
-					pdx.ValidateDerivationByRestriction (pb, h, schema);
-				} catch (XmlSchemaException ex) {
-					if (!pb.ValidateIsEmptiable ())
-						error (h, "Invalid particle derivation by restriction was found. Invalid sub-particle derivation was found.", ex);
 					else
-						index--; // try the same derived particle and next base particle.
+						index++;
 				}
-			} else if (!pb.ValidateIsEmptiable ()) {
-				error (h, "Invalid particle derivation by restriction was found. Base schema particle has non-emptiable sub particle that is not mapped to the derived particle.");
-				return;
+				if (index >= CompiledItems.Count) {
+					if (raiseError)
+						error (h, "Invalid particle derivation by restriction was found. Cannot be mapped to base particle.");
+					return false;
+				}
+
+				// get non-empty base particle
+				XmlSchemaParticle pb = null;
+				while (baseGroup.CompiledItems.Count > baseIndex) {
+					pb = ((XmlSchemaParticle) baseGroup.CompiledItems [baseIndex]).GetOptimizedParticle (false);
+					if (pb == XmlSchemaParticle.Empty && pb.ValidatedMaxOccurs > 0)
+						continue;
+					if (!pd.ValidateDerivationByRestriction (pb, h, schema, false)) {
+						if (!isLax && !isMapAndSum && pb.MinOccurs > baseOccured && !pb.ValidateIsEmptiable ()) {
+							if (raiseError)
+								error (h, "Invalid particle derivation by restriction was found. Invalid sub-particle derivation was found.");
+							return false;
+						}
+						else {
+							baseOccured = 0;
+							baseIndex++;
+						}
+					} else {
+						baseOccured += pb.ValidatedMinOccurs;
+						if (baseOccured >= baseGroup.ValidatedMaxOccurs) {
+							baseOccured = 0;
+							baseIndex++;
+						}
+						index++;
+						break;
+					}
+				}
 			}
+			if (this.CompiledItems.Count > 0 && index != this.CompiledItems.Count) {
+				if (raiseError)
+					error (h, "Invalid particle derivation by restriction was found. Extraneous derived particle was found.");
+				return false;
+			}
+			if (!isLax && !isMapAndSum) {
+				if (baseOccured > 0)
+					baseIndex++;
+				for (int i = baseIndex; i < baseGroup.CompiledItems.Count; i++) {
+					XmlSchemaParticle p = baseGroup.CompiledItems [i] as XmlSchemaParticle;
+					if (!p.ValidateIsEmptiable ()) {
+						if (raiseError)
+							error (h, "Invalid particle derivation by restriction was found. There is a base particle which does not have mapped derived particle and is not emptiable.");
+						return false;
+					}
+				}
+			}
+			return true;
 		}
 	}
 }

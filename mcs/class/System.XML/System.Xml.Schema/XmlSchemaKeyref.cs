@@ -37,7 +37,6 @@ namespace System.Xml.Schema
 		/// 2. selector and field must be present
 		/// 3. refer must be present
 		/// </remarks>
-		[MonoTODO]
 		internal override int Compile(ValidationEventHandler h, XmlSchema schema)
 		{
 			base.Compile(h, schema);
@@ -50,7 +49,6 @@ namespace System.Xml.Schema
 			return errorCount;
 		}
 		
-		[MonoTODO]
 		internal override int Validate (ValidationEventHandler h, XmlSchema schema)
 		{
 			// Find target key

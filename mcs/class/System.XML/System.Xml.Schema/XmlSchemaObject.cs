@@ -131,5 +131,15 @@ namespace System.Xml.Schema
 		{
 			return this.ValidationId == validationId;
 		}
+
+		// This method is used only by particles
+		internal virtual void CopyInfo (XmlSchemaParticle obj)
+		{
+			obj.LineNumber = LineNumber;
+			obj.LinePosition = LinePosition;
+			obj.SourceUri = SourceUri;
+			obj.errorCount = errorCount;
+			// Other fields and properties may be useless for Particle.
+		}
 	}
 }

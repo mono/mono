@@ -50,7 +50,6 @@ namespace System.Xml.Schema
 		/// 1. One of itemType or a <simpleType> must be present, but not both.
 		/// 2. id must be of type ID
 		/// </remarks>
-		[MonoTODO]
 		internal override int Compile(ValidationEventHandler h, XmlSchema schema)
 		{
 			// If this is already compiled this time, simply skip.
@@ -76,14 +75,13 @@ namespace System.Xml.Schema
 			return errorCount;
 		}
 		
-		[MonoTODO]
 		internal override int Validate(ValidationEventHandler h, XmlSchema schema)
 		{
 			if (IsValidated (schema.ValidationId))
 				return errorCount;
 
 			// As far as I saw, MS.NET handles simpleType.BaseSchemaType as anySimpleType.
-			this.actualBaseSchemaType = XmlSchemaSimpleType.AnySimpleType;
+//			this.actualBaseSchemaType = XmlSchemaSimpleType.AnySimpleType;
 
 			// ListItemType
 			XmlSchemaSimpleType type = itemType;

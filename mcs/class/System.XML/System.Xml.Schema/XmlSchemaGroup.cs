@@ -57,7 +57,6 @@ namespace System.Xml.Schema
 
 		// 1. name must be present
 		// 2. MinOccurs & MaxOccurs of the Particle must be absent
-		[MonoTODO]
 		internal override int Compile(ValidationEventHandler h, XmlSchema schema)
 		{
 			// If this is already compiled this time, simply skip.
@@ -82,22 +81,7 @@ namespace System.Xml.Schema
 				if(Particle.MinOccursString != null)
 					Particle.error(h,"MinOccurs must not be present when the Particle is a child of Group");
 			
-				if(Particle is XmlSchemaChoice)
-				{
-					errorCount += ((XmlSchemaChoice)Particle).Compile(h,schema);
-				}
-				else if(Particle is XmlSchemaSequence)
-				{
-					errorCount += ((XmlSchemaSequence)Particle).Compile(h,schema);
-				}
-				else if(Particle is XmlSchemaAll)
-				{
-					errorCount += ((XmlSchemaAll)Particle).Compile(h,schema);
-				}
-				else
-				{
-					error(h,"only all,choice or sequence are allowed");
-				}
+				Particle.Compile (h, schema);
 			}
 			
 			XmlSchemaUtil.CompileID(Id,this,schema.IDCollection,h);
@@ -106,7 +90,6 @@ namespace System.Xml.Schema
 			return errorCount;
 		}
 		
-		[MonoTODO]
 		internal override int Validate(ValidationEventHandler h, XmlSchema schema)
 		{
 			if (this.IsValidated (schema.ValidationId))

@@ -12,9 +12,6 @@ using System.Xml;
 
 namespace System.Xml.Schema
 {
-	/// <summary>
-	/// Summary description for XmlSchemaAll.
-	/// </summary>
 	public class XmlSchemaChoice : XmlSchemaGroupBase
 	{
 		private XmlSchemaObjectCollection items;
@@ -36,17 +33,6 @@ namespace System.Xml.Schema
 			get{ return items; }
 		}
 
-		internal override XmlSchemaParticle ActualParticle {
-			get {
-				if (this.ValidatedMinOccurs == 1 &&
-					this.ValidatedMaxOccurs == 1 &&
-					CompiledItems.Count == 1)
-					return ((XmlSchemaParticle) CompiledItems [0]).ActualParticle;
-				else
-					return this;
-			}
-		}
-
 		internal override int Compile(ValidationEventHandler h, XmlSchema schema)
 		{
 			// If this is already compiled this time, simply skip.
@@ -55,6 +41,9 @@ namespace System.Xml.Schema
 
 			XmlSchemaUtil.CompileID(Id, this, schema.IDCollection, h);
 			CompileOccurence (h, schema);
+
+			if (Items.Count == 0)
+				this.warn (h, "Empty choice is unsatisfiable if minOccurs not equals to 0");
 
 			foreach(XmlSchemaObject obj in Items)
 			{
@@ -72,15 +61,53 @@ namespace System.Xml.Schema
 			this.CompilationId = schema.CompilationId;
 			return errorCount;
 		}
-		
-		internal override int Validate(ValidationEventHandler h, XmlSchema schema)
+
+		internal override XmlSchemaParticle GetOptimizedParticle (bool isTop)
+		{
+			if (OptimizedParticle != null)
+				return OptimizedParticle;
+
+			if (Items.Count == 0 || ValidatedMaxOccurs == 0)
+				OptimizedParticle = XmlSchemaParticle.Empty;
+			// FIXME: Regardless of isTop, it should remove pointless particle.
+			else if (!isTop && Items.Count == 1 && ValidatedMinOccurs == 1 && ValidatedMaxOccurs == 1)
+				OptimizedParticle = ((XmlSchemaParticle) Items [0]).GetOptimizedParticle (false);
+			else {
+				XmlSchemaChoice c = new XmlSchemaChoice ();
+				CopyInfo (c);
+				for (int i = 0; i < Items.Count; i++) {
+					XmlSchemaParticle p = Items [i] as XmlSchemaParticle;
+					p = p.GetOptimizedParticle (false);
+					if (p == XmlSchemaParticle.Empty)
+						continue;
+					else if (p is XmlSchemaChoice && p.ValidatedMinOccurs == 1 && p.ValidatedMaxOccurs == 1) {
+						XmlSchemaChoice pc = p as XmlSchemaChoice;
+						for (int ci = 0; ci < pc.Items.Count; ci++) {
+							c.Items.Add (pc.Items [ci]);
+							c.CompiledItems.Add (c.Items [ci]);
+						}
+					}
+					else {
+						c.Items.Add (p);
+						c.CompiledItems.Add (p);
+					}
+				}
+				if (c.Items.Count == 0)
+					OptimizedParticle = XmlSchemaParticle.Empty;
+				else
+					OptimizedParticle = c;
+			}
+			return OptimizedParticle;
+		}
+
+		internal override int Validate (ValidationEventHandler h, XmlSchema schema)
 		{
 			if (IsValidated (schema.CompilationId))
 				return errorCount;
 
 			CompiledItems.Clear ();
 			foreach (XmlSchemaParticle p in Items) {
-				errorCount += p.Validate (h, schema);
+				errorCount += p.Validate (h, schema); // This is basically extraneous for pointless item, but needed to check validation error.
 				CompiledItems.Add (p);
 			}
 
@@ -88,30 +115,91 @@ namespace System.Xml.Schema
 			return errorCount;
 		}
 
-		internal override void ValidateDerivationByRestriction (XmlSchemaParticle baseParticle,
-			ValidationEventHandler h, XmlSchema schema)
+		internal override bool ValidateDerivationByRestriction (XmlSchemaParticle baseParticle,
+			ValidationEventHandler h, XmlSchema schema, bool raiseError)
 		{
 			XmlSchemaAny any = baseParticle as XmlSchemaAny;
 			if (any != null) {
 				// NSRecurseCheckCardinality
-				this.ValidateNSRecurseCheckCardinality (any, h, schema);
-				return;
+				return ValidateNSRecurseCheckCardinality (any, h, schema, raiseError);
 			}
 
 			XmlSchemaChoice choice = baseParticle as XmlSchemaChoice;
 			if (choice != null) {
 				// RecurseLax
-				this.ValidateOccurenceRangeOK (choice, h, schema);
+				if (!ValidateOccurenceRangeOK (choice, h, schema, raiseError))
+					return false;
 
 				// If it is totally optional, then ignore their contents.
 				if (choice.ValidatedMinOccurs == 0 && choice.ValidatedMaxOccurs == 0 &&
 					this.ValidatedMinOccurs == 0 && this.ValidatedMaxOccurs == 0)
-					return;
-				this.ValidateRecurse (choice, h, schema);
-				return;
+					return true;
+//				return ValidateRecurseLax (choice, h, schema, raiseError);
+				return this.ValidateSeqRecurseMapSumCommon (choice, h, schema, true, false, raiseError);
 			}
 
-			error (h, "Invalid choice derivation by restriction was found.");
+			if (raiseError)
+				error (h, "Invalid choice derivation by restriction was found.");
+			return false;
+		}
+
+		private bool ValidateRecurseLax (XmlSchemaGroupBase baseGroup,
+			ValidationEventHandler h, XmlSchema schema, bool raiseError)
+		{
+			int index = 0;
+			for (int i = 0; i < baseGroup.CompiledItems.Count; i++) {
+				XmlSchemaParticle pb = (XmlSchemaParticle) baseGroup.CompiledItems [i];
+				pb = pb.GetOptimizedParticle (false);
+				if (pb == XmlSchemaParticle.Empty)
+					continue;
+				XmlSchemaParticle pd = null;
+				while (this.CompiledItems.Count > index) {
+					pd = (XmlSchemaParticle) this.CompiledItems [index];
+					pd = pd.GetOptimizedParticle (false);
+					index++;
+					if (pd != XmlSchemaParticle.Empty)
+						break;
+				}
+				if (!ValidateParticleSection (ref index, pd, pb, h, schema, raiseError))
+					continue;
+			}
+			if (this.CompiledItems.Count > 0 && index != this.CompiledItems.Count) {
+				if (raiseError)
+					error (h, "Invalid particle derivation by restriction was found. Extraneous derived particle was found.");
+				return false;
+			}
+			return true;
+		}
+
+		private bool ValidateParticleSection (ref int index, XmlSchemaParticle pd, XmlSchemaParticle pb, ValidationEventHandler h, XmlSchema schema, bool raiseError)
+		{
+			if (pd == pb) // they are same particle
+				return true;
+
+			if (pd != null) {
+				XmlSchemaElement el = pd as XmlSchemaElement;
+				XmlSchemaParticle pdx = pd;
+//				if (el != null && el.SubstitutingElements.Count > 0)
+//					pdx = el.SubstitutingChoice;
+
+				if (!pdx.ValidateDerivationByRestriction (pb, h, schema, false)) {
+					if (!pb.ValidateIsEmptiable ()) {
+						if (raiseError)
+							error (h, "Invalid particle derivation by restriction was found. Invalid sub-particle derivation was found.");
+						return false;
+					}
+					else {
+						index--; // try the same derived particle and next base particle.
+						return false;
+					}
+				}
+			} else if (!pb.ValidateIsEmptiable ()) {
+				if (raiseError)
+					error (h, "Invalid particle derivation by restriction was found. Base schema particle has non-emptiable sub particle that is not mapped to the derived particle.");
+				return false;
+			}
+
+			return true;
 		}
 
 		internal override decimal GetMinEffectiveTotalRange ()

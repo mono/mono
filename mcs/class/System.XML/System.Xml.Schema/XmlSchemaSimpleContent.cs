@@ -18,7 +18,6 @@ namespace System.Xml.Schema
 	{
 		private XmlSchemaContent content;
 		private static string xmlname = "simpleContent";
-		internal object actualBaseSchemaType;
 		public XmlSchemaSimpleContent()
 		{
 		}
@@ -34,7 +33,6 @@ namespace System.Xml.Schema
 		///<remarks>
 		/// 1. Content must be present and one of restriction or extention
 		///</remarks>
-		[MonoTODO]
 		internal override int Compile(ValidationEventHandler h, XmlSchema schema)
 		{
 			// If this is already compiled this time, simply skip.
@@ -66,7 +64,6 @@ namespace System.Xml.Schema
 			return errorCount;
 		}
 		
-		[MonoTODO]
 		internal override int Validate(ValidationEventHandler h, XmlSchema schema)
 		{
 			if (IsValidated (schema.ValidationId))

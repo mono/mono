@@ -17,9 +17,8 @@ namespace System.Xml.Schema
 	/// </summary>
 	public class XmlSchemaGroupRef : XmlSchemaParticle
 	{
-		private XmlSchemaGroupBase particle;
+		private XmlSchema schema;
 		private XmlQualifiedName refName;
-		private XmlQualifiedName resolvedRefName;
 		private static string xmlname = "group";
 		private XmlSchemaGroup referencedGroup;
 
@@ -27,12 +26,16 @@ namespace System.Xml.Schema
 		{
 			refName = XmlQualifiedName.Empty;
 		}
+
+		// Attribute
 		[System.Xml.Serialization.XmlAttribute("ref")]
 		public XmlQualifiedName RefName 
 		{
 			get{ return  refName; } 
 			set{ refName = value; }
 		}
+
+		// Post Compilation Schema Information
 		[XmlIgnore]
 		public XmlSchemaGroupBase Particle 
 		{
@@ -43,6 +46,7 @@ namespace System.Xml.Schema
 					return null;
 			}
 		}
+
 		internal XmlSchemaGroup TargetGroup
 		{
 			get {
@@ -52,26 +56,16 @@ namespace System.Xml.Schema
 					return referencedGroup;
 			}
 		}
-		internal override XmlSchemaParticle ActualParticle
-		{
-			get {
-				if (TargetGroup != null)
-					return TargetGroup.Particle.ActualParticle;
-				else
-					// For ValidationEventHandler and missing sub components.
-					return XmlSchemaParticle.Empty;
-			}
-		}
 
 		/// <remarks>
 		/// 1. RefName must be present
 		/// </remarks>
-		[MonoTODO]
 		internal override int Compile(ValidationEventHandler h, XmlSchema schema)
 		{
 			// If this is already compiled this time, simply skip.
 			if (this.IsComplied (schema.CompilationId))
 				return 0;
+			this.schema = schema;
 
 			XmlSchemaUtil.CompileID(Id,this,schema.IDCollection,h);
 			CompileOccurence (h, schema);
@@ -87,7 +81,6 @@ namespace System.Xml.Schema
 			return errorCount;
 		}
 		
-		[MonoTODO]
 		internal override int Validate(ValidationEventHandler h, XmlSchema schema)
 		{
 			if (IsValidated (schema.ValidationId))
@@ -97,23 +90,54 @@ namespace System.Xml.Schema
 			// it might be missing sub components.
 			if (referencedGroup == null && !schema.IsNamespaceAbsent (RefName.Namespace))
 				error (h, "Referenced group " + RefName + " was not found in the corresponding schema.");
-			else if (TargetGroup != null)
+			// See Errata E1-26: minOccurs=0 is now allowed.
+			else if (referencedGroup.Particle is XmlSchemaAll && ValidatedMaxOccurs != 1)
+				error (h, "Group reference to -all- particle must have schema component {maxOccurs}=1.");
+			if (TargetGroup != null)
 				TargetGroup.Validate (h, schema);
 
 			ValidationId = schema.ValidationId;
 			return errorCount;
 		}
 
-		internal override bool ParticleEquals (XmlSchemaParticle other)
+		bool busy; // only for avoiding infinite loop on illegal recursion cases.
+		internal override XmlSchemaParticle GetOptimizedParticle (bool isTop)
 		{
-			return ActualParticle.ParticleEquals (other.ActualParticle);
+			if (busy)
+				return XmlSchemaParticle.Empty;
+			if (OptimizedParticle != null)
+				return OptimizedParticle;
+			busy = true;
+			XmlSchemaGroup g = referencedGroup != null ? referencedGroup : schema.Groups [RefName] as XmlSchemaGroup;
+			if (g != null && g.Particle != null) {
+				OptimizedParticle = g.Particle;
+				if (OptimizedParticle != XmlSchemaParticle.Empty && (ValidatedMinOccurs != 1 || ValidatedMaxOccurs != 1)) {
+					OptimizedParticle = OptimizedParticle.GetShallowClone ();
+					OptimizedParticle.MinOccurs = this.MinOccurs;
+					OptimizedParticle.MaxOccurs = this.MaxOccurs;
+					OptimizedParticle.CompileOccurence (null, null);
+				}
+				OptimizedParticle = OptimizedParticle.GetOptimizedParticle (isTop);
+			}
+			else
+				OptimizedParticle = XmlSchemaParticle.Empty;
+			busy = false;
+			return OptimizedParticle;
 		}
 
-		internal override void ValidateDerivationByRestriction (XmlSchemaParticle baseParticle,
-			ValidationEventHandler h, XmlSchema schema)
+
+		internal override bool ParticleEquals (XmlSchemaParticle other)
+		{
+			return this.GetOptimizedParticle (true).ParticleEquals (other);
+		}
+
+		internal override bool ValidateDerivationByRestriction (XmlSchemaParticle baseParticle,
+			ValidationEventHandler h, XmlSchema schema, bool raiseError)
 		{
 			if (TargetGroup != null)
-				TargetGroup.Particle.ValidateDerivationByRestriction (baseParticle, h, schema);
+				return TargetGroup.Particle.ValidateDerivationByRestriction (baseParticle, h, schema, raiseError);
+			else
+				return false; // should not occur
 		}
 
 
@@ -145,6 +169,7 @@ namespace System.Xml.Schema
 		}
 
 
+		#region Read
 		//	<group 
 		//		 id = ID 
 		//		 ref = QName
@@ -239,5 +264,6 @@ namespace System.Xml.Schema
 			}			
 			return groupref;
 		}
+		#endregion
 	}
 }

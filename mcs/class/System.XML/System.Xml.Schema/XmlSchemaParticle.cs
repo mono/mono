@@ -11,22 +11,22 @@ namespace System.Xml.Schema
 	/// </summary>
 	public abstract class XmlSchemaParticle : XmlSchemaAnnotated
 	{
-		decimal minOccurs, maxOccurs;
-		string  minstr, maxstr;
-		static XmlSchemaParticle empty;
-		decimal validatedMinOccurs, validatedMaxOccurs;
-		internal int recursionDepth = -1;
-		private decimal minEffectiveTotalRange = -1;
-		internal bool parentIsGroupDefinition;
-
 		internal static XmlSchemaParticle Empty {
 			get {
 				if (empty == null) {
-					empty = new XmlSchemaParticleEmpty ();
+					empty = new EmptyParticle ();
 				}
 				return empty;
 			}
 		}
+
+		decimal minOccurs, maxOccurs;
+		string  minstr, maxstr;
+		static XmlSchemaParticle empty;
+		decimal validatedMinOccurs = 1, validatedMaxOccurs = 1;
+		internal int recursionDepth = -1;
+		private decimal minEffectiveTotalRange = -1;
+		internal bool parentIsGroupDefinition;
 
 		protected XmlSchemaParticle()
 		{
@@ -125,12 +125,16 @@ namespace System.Xml.Schema
 		{
 			get { return validatedMaxOccurs; }
 		}
-
-		internal virtual XmlSchemaParticle ActualParticle
-		{
-			get { return this; }
-		}
 		#endregion
+
+		internal XmlSchemaParticle OptimizedParticle;
+
+		internal abstract XmlSchemaParticle GetOptimizedParticle (bool isTop);
+
+		internal XmlSchemaParticle GetShallowClone ()
+		{
+			return (XmlSchemaParticle) MemberwiseClone ();
+		}
 
 		internal void CompileOccurence (ValidationEventHandler h, XmlSchema schema)
 		{
@@ -148,18 +152,35 @@ namespace System.Xml.Schema
 			}
 		}
 
-		internal virtual void ValidateOccurenceRangeOK (XmlSchemaParticle other,
-			ValidationEventHandler h, XmlSchema schema)
+		internal override void CopyInfo (XmlSchemaParticle obj)
+		{
+			base.CopyInfo (obj);
+			if (MaxOccursString == "unbounded")
+				obj.MaxOccurs = obj.validatedMaxOccurs = decimal.MaxValue;
+			else 
+				obj.MaxOccurs = obj.validatedMaxOccurs = this.ValidatedMaxOccurs;
+			if (MaxOccurs == 0)
+				obj.MinOccurs = obj.validatedMinOccurs = 0;
+			else
+				obj.MinOccurs = obj.validatedMinOccurs = this.ValidatedMinOccurs;
+		}
+
+		internal virtual bool ValidateOccurenceRangeOK (XmlSchemaParticle other,
+			ValidationEventHandler h, XmlSchema schema, bool raiseError)
 		{
 			if ((this.ValidatedMinOccurs < other.ValidatedMinOccurs) ||
 				(other.ValidatedMaxOccurs != decimal.MaxValue &&
-				this.ValidatedMaxOccurs > other.ValidatedMaxOccurs))
-				error (h, "Invalid derivation occurence range was found.");
+				this.ValidatedMaxOccurs > other.ValidatedMaxOccurs)) {
+				if (raiseError)
+					error (h, "Invalid derivation occurence range was found.");
+				return false;
+			}
+			return true;
 		}
 
 		internal virtual decimal GetMinEffectiveTotalRange ()
 		{
-			return 0;
+			return ValidatedMinOccurs;
 		}
 
 		internal decimal GetMinEffectiveTotalRangeAllAndSequence ()
@@ -180,13 +201,14 @@ namespace System.Xml.Schema
 			return product;
 		}
 
+		// 3.9.6 Particle Emptiable
 		internal virtual bool ValidateIsEmptiable ()
 		{
 			return this.validatedMinOccurs == 0 || this.GetMinEffectiveTotalRange () == 0;
 		}
 
-		internal abstract void ValidateDerivationByRestriction (XmlSchemaParticle baseParticle,
-			ValidationEventHandler h, XmlSchema schema);
+		internal abstract bool ValidateDerivationByRestriction (XmlSchemaParticle baseParticle,
+			ValidationEventHandler h, XmlSchema schema, bool raiseError);
 
 		internal abstract void ValidateUniqueParticleAttribution (
 			XmlSchemaObjectTable qnames, ArrayList nsNames,
@@ -201,22 +223,26 @@ namespace System.Xml.Schema
 		internal abstract bool ParticleEquals (XmlSchemaParticle other);
 
 		#region Internal Class
-		public class XmlSchemaParticleEmpty : XmlSchemaParticle
+		public class EmptyParticle : XmlSchemaParticle
 		{
-			internal XmlSchemaParticleEmpty ()
+			internal EmptyParticle ()
 			{
+			}
+
+			internal override XmlSchemaParticle GetOptimizedParticle (bool isTop)
+			{
+				return this;
 			}
 
 			internal override bool ParticleEquals (XmlSchemaParticle other)
 			{
-				return other == this || other is XmlSchemaParticleEmpty;
+				return other == this || other == XmlSchemaParticle.Empty;
 			}
 
-
-			internal override void ValidateDerivationByRestriction (XmlSchemaParticle baseParticle,
-				ValidationEventHandler h, XmlSchema schema)
+			internal override bool ValidateDerivationByRestriction (XmlSchemaParticle baseParticle,
+				ValidationEventHandler h, XmlSchema schema, bool raiseError)
 			{
-				// TODO
+				return true;
 			}
 
 			internal override void CheckRecursion (int depth, 

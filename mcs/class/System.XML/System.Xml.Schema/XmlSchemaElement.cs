@@ -255,35 +255,17 @@ namespace System.Xml.Schema
 		}
 
 		internal XmlSchemaElement SubstitutionGroupElement {
-			get { return substitutionGroupElement; }
+			get {
+				if (referencedElement != null)
+					return referencedElement.SubstitutionGroupElement;
+				else
+					return substitutionGroupElement;
+			}
 		}
 
 		#endregion
 
 		private XmlSchemaParticle substChoice;
-
-//		/*
-		// FIXME: using this causes stack overflow...
-		internal XmlSchemaParticle SubstitutingChoice {
-			get {
-				if (substChoice != null)
-					return substChoice;
-				else if (this.SubstitutingElements != null && this.SubstitutingElements.Count > 0) {
-					XmlSchemaChoice choice = new XmlSchemaChoice ();
-					substChoice = choice;
-					choice.Compile (null, schema); // compute Validated Min/Max Occurs.
-					choice.CompiledItems.Add (this);
-					for (int i = 0; i < SubstitutingElements.Count; i++) {
-						XmlSchemaElement se = SubstitutingElements [i] as XmlSchemaElement;
-						choice.CompiledItems.Add (se);
-					}
-				}
-				else
-					substChoice= this;
-				return substChoice;
-			}
-		}
-//		*/
 
 		/// <remarks>
 		/// a) If Element has parent as schema:
@@ -510,6 +492,72 @@ namespace System.Xml.Schema
 			return errorCount;
 		}
 
+		[MonoTODO ("Return clone in case when it returns itself")]
+		internal override XmlSchemaParticle GetOptimizedParticle (bool isTop)
+		{
+			if (OptimizedParticle != null)
+				return OptimizedParticle;
+			if (RefName != null && RefName != XmlQualifiedName.Empty) {
+				referencedElement = schema.Elements [RefName] as XmlSchemaElement;
+			}
+
+//			if (this.referencedElement != null)
+//				OptimizedParticle = referencedElement.GetOptimizedParticle (isTop);
+//			else 
+			if (ValidatedMaxOccurs == 0)
+				OptimizedParticle = XmlSchemaParticle.Empty;
+			// Substitution Group
+			else if (SubstitutingElements != null && SubstitutingElements.Count > 0) {
+				XmlSchemaChoice choice = new XmlSchemaChoice ();
+				choice.MinOccurs = MinOccurs;
+				choice.MaxOccurs = MaxOccurs;
+				substChoice = choice;
+				choice.Compile (null, schema); // compute Validated Min/Max Occurs.
+				XmlSchemaElement item = this.MemberwiseClone () as XmlSchemaElement;
+				item.MinOccurs = 1;
+				item.MaxOccurs = 1;
+				item.substitutionGroupElement = null;
+				item.substitutingElements = null;
+				for (int i = 0; i < SubstitutingElements.Count; i++) {
+					XmlSchemaElement se = SubstitutingElements [i] as XmlSchemaElement;
+//					choice.Items.Add (se);
+//					choice.CompiledItems.Add (se);
+					this.AddSubstElementRecursively (choice.Items, se);
+					this.AddSubstElementRecursively (choice.CompiledItems, se);
+				}
+				if (!choice.Items.Contains (item)) {
+					choice.Items.Add (item);
+					choice.CompiledItems.Add (item);
+				}
+				OptimizedParticle = choice;
+			}
+			else
+				OptimizedParticle = this;//.MemberwiseClone () as XmlSchemaElement;
+			return OptimizedParticle;
+		}
+
+		private void AddSubstElementRecursively (XmlSchemaObjectCollection col, XmlSchemaElement el)
+		{
+			if (el.SubstitutingElements != null)
+				for (int i = 0; i < el.SubstitutingElements.Count; i++)
+					this.AddSubstElementRecursively (col, el.SubstitutingElements [i] as XmlSchemaElement);
+			if (!col.Contains (el))
+				col.Add (el);
+		}
+
+		internal void FillSubstitutionElementInfo ()
+		{
+			if (this.substitutionGroupElement != null)
+				return;
+
+			if (this.SubstitutionGroup != XmlQualifiedName.Empty) {
+				XmlSchemaElement substElem = schema.Elements [SubstitutionGroup] as XmlSchemaElement;
+				this.substitutionGroupElement = substElem;
+				if (substElem != null)
+					substElem.substitutingElements.Add (this);
+			}
+		}
+
 		internal override int Validate(ValidationEventHandler h, XmlSchema schema)
 		{
 			if (IsValidated (schema.CompilationId))
@@ -530,6 +578,13 @@ namespace System.Xml.Schema
 			// actual {nillable}, {abstract} 
 			this.actualIsNillable = IsNillable;
 			this.actualIsAbstract = IsAbstract;
+
+			// Before determining element type, we need to validate substituting element
+			if (this.SubstitutionGroup != XmlQualifiedName.Empty) {
+				XmlSchemaElement substElem = substitutionGroupElement;
+				if (substElem != null)
+					substElem.Validate (h, schema);
+			}
 
 			// {type} from here
 			XmlSchemaDatatype datatype = null;
@@ -568,9 +623,14 @@ namespace System.Xml.Schema
 					error (h, "Referenced element " + RefName + " was not found in the corresponding schema.");
 			}
 			
-			// Otherwise the -ur type- definition.
-			if (elementType == null)
-				elementType = XmlSchemaComplexType.AnyType;
+			// Otherwise if there are substitution group, then the type of the substitution group element.
+			if (referencedElement == null) {
+				if (elementType == null && this.substitutionGroupElement != null)
+					elementType = substitutionGroupElement.ElementType;
+				// Otherwise, the -ur type- definition.
+				if (elementType == null)
+					elementType = XmlSchemaComplexType.AnyType;
+			}
 
 			XmlSchemaType xsType = elementType as XmlSchemaType;
 			if (xsType != null) {
@@ -582,10 +642,9 @@ namespace System.Xml.Schema
 			// {substitution group affiliation}
 			// 3. subsitution group's type derivation check.
 			if (this.SubstitutionGroup != XmlQualifiedName.Empty) {
-				XmlSchemaElement substElem = schema.Elements [SubstitutionGroup] as XmlSchemaElement;
+				XmlSchemaElement substElem = substitutionGroupElement;
 				// If el is null, then it is missing sub components .
 				if (substElem != null) {
-					substElem.Validate (h, schema);
 					XmlSchemaType substSchemaType = substElem.ElementType as XmlSchemaType;
 					if (substSchemaType != null) {
 						// 3.3.6 Properties Correct 3.
@@ -603,8 +662,6 @@ namespace System.Xml.Schema
 							xsSimpleType.ValidateTypeDerivationOK (substElem.ElementType, h, schema, true);
 					}
 
-					this.substitutionGroupElement = substElem;
-					substElem.substitutingElements.Add (this);
 				}
 				// otherwise, it might be missing sub components.
 				else if (!schema.IsNamespaceAbsent (SubstitutionGroup.Namespace))
@@ -662,23 +719,22 @@ namespace System.Xml.Schema
 			return true;
 		}
 
-		internal override void ValidateDerivationByRestriction (XmlSchemaParticle baseParticle,
-			ValidationEventHandler h, XmlSchema schema)
+		internal override bool ValidateDerivationByRestriction (XmlSchemaParticle baseParticle,
+			ValidationEventHandler h, XmlSchema schema, bool raiseError)
 		{
 			// element - NameAndTypeOK
 			XmlSchemaElement baseElement = baseParticle as XmlSchemaElement;
 			if (baseElement != null) {
-				ValidateDerivationByRestrictionNameAndTypeOK (baseElement, h, schema);
-				return;
+				return ValidateDerivationByRestrictionNameAndTypeOK (baseElement, h, schema, raiseError);
 			}
 
 			// any - NSCompat
 			XmlSchemaAny baseAny = baseParticle as XmlSchemaAny;
 			if (baseAny != null) {
 				// NSCompat
-				baseAny.ValidateWildcardAllowsNamespaceName (this.QualifiedName.Namespace, h, schema, true);
-				ValidateOccurenceRangeOK (baseAny, h, schema);
-				return;
+				if (!baseAny.ValidateWildcardAllowsNamespaceName (this.QualifiedName.Namespace, h, schema, raiseError))
+					return false;
+				return ValidateOccurenceRangeOK (baseAny, h, schema, raiseError);
 			}
 
 //*
@@ -697,49 +753,66 @@ namespace System.Xml.Schema
 				gb.Validate (h, schema);
 				// It looks weird, but here we never think about 
 				// _pointlessness_ of this groupbase particle.
-				gb.ValidateDerivationByRestriction (baseParticle, h, schema);
-				return;
+				return gb.ValidateDerivationByRestriction (baseParticle, h, schema, raiseError);
 			}
 //*/
+			return true;
 		}
 
-		private void ValidateDerivationByRestrictionNameAndTypeOK (XmlSchemaElement baseElement,
-			ValidationEventHandler h, XmlSchema schema)
+		private bool ValidateDerivationByRestrictionNameAndTypeOK (XmlSchemaElement baseElement,
+			ValidationEventHandler h, XmlSchema schema, bool raiseError)
 		{
 			// 1.
-			if (this.QualifiedName != baseElement.QualifiedName)
-				error (h, "Invalid derivation by restriction of particle was found. Both elements must have the same name.");
+			if (this.QualifiedName != baseElement.QualifiedName) {
+				if (raiseError)
+					error (h, "Invalid derivation by restriction of particle was found. Both elements must have the same name.");
+				return false;
+			}
 			// 2.
-			if (this.isNillable && !baseElement.isNillable)
-				error (h, "Invalid element derivation by restriction of particle was found. Base element is not nillable and derived type is nillable.");
+			if (this.isNillable && !baseElement.isNillable) {
+				if (raiseError)
+					error (h, "Invalid element derivation by restriction of particle was found. Base element is not nillable and derived type is nillable.");
+				return false;
+			}
 			// 3.
-			ValidateOccurenceRangeOK (baseElement, h, schema);
+			if (!ValidateOccurenceRangeOK (baseElement, h, schema, raiseError))
+				return false;
 			// 4.
 			if (baseElement.ValidatedFixedValue != null &&
-				baseElement.ValidatedFixedValue != this.ValidatedFixedValue)
-				error (h, "Invalid element derivation by restriction of particle was found. Both fixed value must be the same.");
+				baseElement.ValidatedFixedValue != this.ValidatedFixedValue) {
+				if (raiseError)
+					error (h, "Invalid element derivation by restriction of particle was found. Both fixed value must be the same.");
+				return false;
+			}
 			// 5. TODO: What is "identity constraints subset" ???
 
 			// 6. 
-			if ((baseElement.BlockResolved | this.BlockResolved) != this.BlockResolved)
-				error (h, "Invalid derivation by restriction of particle was found. Derived element must contain all of the base element's block value.");
+			if ((baseElement.BlockResolved | this.BlockResolved) != this.BlockResolved) {
+				if (raiseError)
+					error (h, "Invalid derivation by restriction of particle was found. Derived element must contain all of the base element's block value.");
+				return false;
+			}
 			// 7.
 			if (baseElement.ElementType != null) {
 				XmlSchemaComplexType derivedCType = this.ElementType as XmlSchemaComplexType;
-				if (derivedCType != null)
-					// W3C REC says that it is Type Derivation OK to be check, but
+				if (derivedCType != null) {
+					// FIXME: W3C REC says that it is Type Derivation OK to be check, but
 					// in fact it should be DerivationValid (Restriction, Complex).
 					derivedCType.ValidateDerivationValidRestriction (
 						baseElement.ElementType as XmlSchemaComplexType, h, schema);
-					// derivedCType.ValidateTypeDerivationOK (baseElement.ElementType, h, schema);
-				else {
+					derivedCType.ValidateTypeDerivationOK (baseElement.ElementType, h, schema);
+				} else {
 					XmlSchemaSimpleType derivedSType = this.ElementType as XmlSchemaSimpleType;
 					if (derivedSType != null)
 						derivedSType.ValidateTypeDerivationOK (baseElement.ElementType, h, schema, true);
-					else if (baseElement.ElementType != XmlSchemaComplexType.AnyType && baseElement.ElementType != this.ElementType)
-						error (h, "Invalid element derivation by restriction of particle was found. Both primitive types differ.");
+					else if (baseElement.ElementType != XmlSchemaComplexType.AnyType && baseElement.ElementType != this.ElementType) {
+						if (raiseError)
+							error (h, "Invalid element derivation by restriction of particle was found. Both primitive types differ.");
+						return false;
+					}
 				}
 			}
+			return true;
 		}
 
 		internal override void CheckRecursion (int depth, ValidationEventHandler h, XmlSchema schema)
@@ -753,7 +826,7 @@ namespace System.Xml.Schema
 		internal override void ValidateUniqueParticleAttribution (XmlSchemaObjectTable qnames, ArrayList nsNames,
 			ValidationEventHandler h, XmlSchema schema)
 		{
-			if (qnames.Contains (this.QualifiedName))
+			if (qnames.Contains (this.QualifiedName))// && !this.ParticleEquals ((XmlSchemaParticle) qnames [this.QualifiedName]))
 				error (h, "Ambiguous element label was detected: " + this.QualifiedName);
 			else {
 				foreach (XmlSchemaAny any in nsNames) {

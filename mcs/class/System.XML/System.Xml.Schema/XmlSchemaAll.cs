@@ -17,6 +17,7 @@ namespace System.Xml.Schema
 	/// </summary>
 	public class XmlSchemaAll : XmlSchemaGroupBase
 	{
+		private XmlSchema schema;
 		private XmlSchemaObjectCollection items;
 		private static string xmlname = "all";
 		private bool emptiable;
@@ -37,17 +38,6 @@ namespace System.Xml.Schema
 			get { return emptiable; }
 		}
 
-		internal override XmlSchemaParticle ActualParticle {
-			get {
-				if (CompiledItems.Count == 0)
-					return XmlSchemaParticle.Empty;
-				else if (CompiledItems.Count == 1)
-					return ((XmlSchemaParticle) CompiledItems [0]).ActualParticle;
-				else
-					return this;
-			}
-		}
-
 
 		/// <remarks>
 		/// 1. MaxOccurs must be one. (default is also one)
@@ -58,6 +48,8 @@ namespace System.Xml.Schema
 			// If this is already compiled this time, simply skip.
 			if (this.IsComplied (schema.CompilationId))
 				return 0;
+
+			this.schema = schema;
 
 			//FIXME: Should we reset the values on error??
 			if(MaxOccurs != Decimal.One)
@@ -73,9 +65,9 @@ namespace System.Xml.Schema
 				XmlSchemaElement elem = obj as XmlSchemaElement;
 				if(elem != null)
 				{
-					if(elem.MaxOccurs != Decimal.One && elem.MaxOccurs != Decimal.Zero)
+					if(elem.ValidatedMaxOccurs != Decimal.One && elem.ValidatedMaxOccurs != Decimal.Zero)
 					{
-						elem.error(h,"The {max occurs} of all the elements of 'all' must be 0 or 1. ");
+						elem.error (h,"The {max occurs} of all the elements of 'all' must be 0 or 1. ");
 					}
 					errorCount += elem.Compile(h, schema);
 				}
@@ -89,11 +81,46 @@ namespace System.Xml.Schema
 			return errorCount;
 		}
 
+		internal override XmlSchemaParticle GetOptimizedParticle (bool isTop)
+		{
+			if (OptimizedParticle != null)
+				return OptimizedParticle;
+			if (Items.Count == 0 || ValidatedMaxOccurs == 0) {
+				OptimizedParticle = XmlSchemaParticle.Empty;
+				return OptimizedParticle;
+			}
+			else if (Items.Count == 1) {
+				if (ValidatedMinOccurs == 1 && ValidatedMaxOccurs == 1) {
+					XmlSchemaSequence seq = new XmlSchemaSequence ();
+					this.CopyInfo (seq);
+					XmlSchemaParticle p = (XmlSchemaParticle) Items [0];
+					p = p.GetOptimizedParticle (false);
+					if (p == XmlSchemaParticle.Empty)
+						OptimizedParticle = p;
+					else {
+						seq.Items.Add (p);
+						seq.CompiledItems.Add (p);
+						seq.Compile (null, schema);
+//						seq.Validate (null, schema);
+						OptimizedParticle = seq;
+					}
+					return OptimizedParticle;
+				}
+			}
+
+			XmlSchemaAll all = new XmlSchemaAll ();
+			CopyInfo (all);
+			CopyOptimizedItems (all);
+			OptimizedParticle = all;
+
+			return OptimizedParticle;
+		}
+
 		internal override int Validate(ValidationEventHandler h, XmlSchema schema)
 		{
 			if (IsValidated (schema.CompilationId))
 				return errorCount;
-			this.CompileOccurence (h, schema);
+
 			// 3.8.6 All Group Limited :: 1.
 			// Beware that this section was corrected: E1-26 of http://www.w3.org/2001/05/xmlschema-errata#Errata1
 			if (!this.parentIsGroupDefinition && ValidatedMaxOccurs != 1)
@@ -107,7 +134,7 @@ namespace System.Xml.Schema
 					obj.ValidatedMaxOccurs != 1)
 					error (h, "MaxOccurs of a particle inside -all- compositor must be either 0 or 1.");
 				CompiledItems.Add (obj);
-				if (obj.MinOccurs > 0)
+				if (obj.ValidatedMinOccurs > 0)
 					emptiable = false;
 			}
 
@@ -115,23 +142,25 @@ namespace System.Xml.Schema
 			return errorCount;
 		}
 
-		internal override void ValidateDerivationByRestriction (XmlSchemaParticle baseParticle,
-			ValidationEventHandler h, XmlSchema schema)
+		internal override bool ValidateDerivationByRestriction (XmlSchemaParticle baseParticle,
+			ValidationEventHandler h, XmlSchema schema, bool raiseError)
 		{
 			XmlSchemaAny any = baseParticle as XmlSchemaAny;
 			XmlSchemaAll derivedAll = baseParticle as XmlSchemaAll;
 			if (any != null) {
 				// NSRecurseCheckCardinality
-				this.ValidateNSRecurseCheckCardinality (any, h, schema);
-				return;
+				return ValidateNSRecurseCheckCardinality (any, h, schema, raiseError);
 			} else if (derivedAll != null) {
 				// Recurse
-				ValidateOccurenceRangeOK (derivedAll, h, schema);
-				this.ValidateRecurse (derivedAll, h, schema);
-				return;
+				if (!ValidateOccurenceRangeOK (derivedAll, h, schema, raiseError))
+					return false;
+				return ValidateRecurse (derivedAll, h, schema, raiseError);
 			}
-			else
-				error (h, "Invalid -all- particle derivation was found.");
+			else {
+				if (raiseError)
+					error (h, "Invalid -all- particle derivation was found.");
+				return false;
+			}
 		}
 
 		internal override decimal GetMinEffectiveTotalRange ()

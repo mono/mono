@@ -213,14 +213,6 @@ namespace System.Xml.Schema
                         get{ return notations;}
                 }
 
-                // New attribute defined in W3C schema element
-                [System.Xml.Serialization.XmlAttribute("xml:lang")]
-                public string Language
-                {
-                        get{ return  language; }
-                        set{ language = value; }
-                }
-
 		internal Hashtable IDCollection
 		{
 			get { return idCollection; }
@@ -329,8 +321,8 @@ namespace System.Xml.Schema
                                 error(handler, Version + "is not a valid value for version attribute of schema");
 
                         //6. xml:lang must be a language
-                        if(!XmlSchemaUtil.CheckLanguage(Language))
-                                error(handler, Language + " is not a valid language");
+//                      if(!XmlSchemaUtil.CheckLanguage(Language))
+//                              error(handler, Language + " is not a valid language");
 
                         // Compile the content of this schema
 
@@ -559,6 +551,11 @@ namespace System.Xml.Schema
                 {
 			ValidationId = CompilationId;
 
+			// Firstly Element needs to be filled their substitution group info
+                        foreach(XmlSchemaElement elem in Elements.Values)
+				elem.FillSubstitutionElementInfo ();
+
+			// Validate
                         foreach(XmlSchemaAttribute attr in Attributes.Values)
                         {
                                 errorCount += attr.Validate(handler, this);

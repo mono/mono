@@ -142,7 +142,7 @@ namespace System.Xml.Schema
 			if (recursed)
 				return (this != XmlSchemaComplexType.AnyType);
 			recursed = true;
-			XmlSchemaType baseType = this.BaseSchemaType as XmlSchemaType;
+			XmlSchemaType baseType = this.BaseXmlSchemaType as XmlSchemaType;
 			bool result = false;
 			if (baseType != null)
 				result = baseType.ValidateRecursionCheck ();

@@ -1,5 +1,68 @@
 2004-01-21  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlSchema.cs :
+	  - Removed extra property Language.  Fill substitution-group info
+	    before ContentTypeParticle is computed.
+	* XmlSchemaComplexType.cs : ContentType and ContentTypeParticle are 
+	  now computer before Validate() (to exclude 3.4.2 from 3.4.6
+	  component constraint check).
+	* XmlSchemaObject.cs, XmlSchemaParticle.cs :
+	  Added CopyInfo() for cloning objects.
+	* XmlSchemaObjectTable.cs :
+	  Add() doesn't have to reject same named items.
+	* XmlSchemaParticle.cs :
+	  - Renamed internal class XmlSchemaParticleEmpty to EmptyParticle 
+	    (for ease of post compilation infoset comparison).
+	  - GetMinEffectiveTotalRange() should return max occurs for element and
+	    any.
+	* XmlSchemaParticle.cs,
+	  XmlSchemaAll.cs,
+	  XmlSchemaAny.cs,
+	  XmlSchemaChoice.cs,
+	  XmlSchemaElement.cs,
+	  XmlSchemaGroupBase.cs,
+	  XmlSchemaGroupRef.cs,
+	  XmlSchemaSequence.cs :
+	  - Removed ActualParticle property.
+	  - Added GetOptimizedParticle() to get ContentTypeParticle.
+	  - ContentTypeParticle is now created as different object from 
+	    user-specified "Particle" property.
+	  - Return Empty particle when model groups contains no Items.
+	  - When Items contains exactly 1 item, return the item (unless it is
+	    top level choice model group - it causes DBR problem).
+	  - ValidateDerivationValidRestriction() and related WXS 3.9.6 DBR
+	    check methods such as ValidateNSRecurseCheckCardinality() now
+	    returns a bool value and avoids exceptions on each failure time.
+	  - ValidateRecurse() now doesn't progress base particle incorrectly.
+	    (it caused incorrect order-preserving-mapping error.)
+	  - 3.9.6 Recurse, RecurseLax, MapAndSum are now treated as different.
+	* XmlSchemaAll.cs : occurence validation shoud be done against values
+	  after computation (ValidatedMaxOccurs).
+	* XmlSchemaChoice.cs : When Items is empty, then invoke warning event.
+	* XmlSchemaElement.cs :
+	  - Consider referencedElement also for SubstitutionGroupElement.  
+	  - Removed SubstitutingChoice which is not in use.
+	  - when it was targeted as substitution group by other elements, its 
+	    ContentTypeParticle should be substitution choice (see 3.9.6 
+	    Particle Valid (Restriction) term 2.1).
+	  - Added FillsubstitutionElementInfo() (see XmlSchema.cs above).
+	* XmlSchemaGroup.cs : Removed extra check on model group (because it
+	  is impossible to specify non-model-group particle).
+	* XmlSchemaIdentityConstraint.cs,
+	  XmlSchemaKey.cs,
+	  XmlSchemaKeyRef.cs,
+	  XmlSchemaUnique.cs : Removed extraneous MonoTODO.
+	* XmlSchemaSimpleContent.cs : Made actualSchemaType as internal.
+	* XmlSchemaSimpleType.cs : Removed extraneous new Datatype property.
+	* XmlSchemaSimpleTypeRestriction.cs : Renamed actualBaseSchemaType to
+	  ActualBaseSchemaType.
+	* XmlSchemaSimpleTypeList.cs, XmlSchemaSimpleTypeUnion.cs :
+	  Removed unused actualBaseSchemaType code.
+	* XmlSchemaType.cs : use recently introduced BaseXmlSchemaType.
+	* XmlSchemaUtil.cs : Removed unused CheckLanguage().
+
+2004-01-21  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlSchemaXPath.cs : wildcard with prefix (e.g. @foo:*) was
 	  incorrectly treated.
 

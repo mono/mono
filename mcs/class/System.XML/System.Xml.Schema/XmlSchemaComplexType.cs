@@ -411,7 +411,9 @@ namespace System.Xml.Schema
 				CollectContentTypeFromContentModel (h, schema);
 			} else
 				CollectContentTypeFromImmediateContent ();
-			contentTypeParticle = validatableParticle;//.GetParticleWithoutPointless ();
+			contentTypeParticle = validatableParticle.GetOptimizedParticle (true);
+			if (contentTypeParticle == XmlSchemaParticle.Empty && resolvedContentType == XmlSchemaContentType.ElementOnly)
+				resolvedContentType = XmlSchemaContentType.Empty;
 
 			CollectProcessId = schema.CompilationId;
 		}
@@ -477,7 +479,7 @@ namespace System.Xml.Schema
 					validatableParticle = XmlSchemaParticle.Empty;
 					resolvedContentType = XmlSchemaContentType.Empty;
 				} else {
-					validatableParticle = baseComplexType.ContentTypeParticle;
+					validatableParticle = baseComplexType.ValidatableParticle;
 					resolvedContentType = baseComplexType.resolvedContentType;
 				}
 			} else if (baseComplexType.validatableParticle == XmlSchemaParticle.Empty
@@ -488,7 +490,8 @@ namespace System.Xml.Schema
 			} else {
 				// - 2.3 : create a new sequences that merges both contents.
 				XmlSchemaSequence seq = new XmlSchemaSequence ();
-				seq.Items.Add (baseComplexType.ContentTypeParticle);
+				this.CopyInfo (seq);
+				seq.Items.Add (baseComplexType.validatableParticle);
 				seq.Items.Add (cce.Particle);
 				seq.Compile (h, schema);
 				seq.Validate (h, schema);
@@ -582,8 +585,8 @@ namespace System.Xml.Schema
 			}
 
 			// Additional support for 3.8.6 All Group Limited
-			if (contentTypeParticle != null) {
-				XmlSchemaAll termAll = contentTypeParticle.ActualParticle as XmlSchemaAll;
+			if (ContentTypeParticle != null) {
+				XmlSchemaAll termAll = contentTypeParticle.GetOptimizedParticle (true) as XmlSchemaAll;
 				if (termAll != null && (termAll.ValidatedMaxOccurs != 1 || contentTypeParticle.ValidatedMaxOccurs != 1)) // here contentTypeParticle is used to check occurence. FIXME: In the future contentTypeParticle will remove group references.
 					error (h, "Particle whose term is -all- and consists of complex type content particle must have maxOccurs = 1.");
 			}
@@ -714,7 +717,8 @@ namespace System.Xml.Schema
 				if (baseComplexType != null) {
 					if (baseComplexType.ContentType == XmlSchemaContentType.TextOnly) {
 						// 2.1.1
-					} else if (scr != null && baseComplexType.ContentType == XmlSchemaContentType.Mixed && baseComplexType.Particle.ValidateIsEmptiable () && scr.BaseType != null) {
+					// Here "baseComplexType.Particle != null" is required for error-ignorant case
+					} else if (scr != null && baseComplexType.ContentType == XmlSchemaContentType.Mixed && baseComplexType.Particle != null && baseComplexType.Particle.ValidateIsEmptiable () && scr.BaseType != null) {
 						// 2.1.2 && 2.2: OK
 					}
 					else
@@ -992,19 +996,27 @@ namespace System.Xml.Schema
 
 			// 5.
 			if (contentTypeParticle == XmlSchemaParticle.Empty) {
-				// TODO: 5.1
-				// 5.2
-				if (baseType.ContentTypeParticle != XmlSchemaParticle.Empty &&
-					!baseType.ContentTypeParticle.ValidateIsEmptiable ())
-				error (h, "Invalid content type derivation.");
+				// 5.1
+				if (ContentType != XmlSchemaContentType.Empty) {
+					// TODO: 5.1.1
+//					XmlSchemaSimpleType baseST = baseType as XmlSchemaSimpleType;
+					// 5.1.2
+					if (baseType.ContentType == XmlSchemaContentType.Mixed && !baseType.ContentTypeParticle.ValidateIsEmptiable ())
+						error (h, "Invalid content type derivation.");
+
+				} else {
+					// 5.2
+					if (baseType.ContentTypeParticle != XmlSchemaParticle.Empty &&
+						!baseType.ContentTypeParticle.ValidateIsEmptiable ())
+						error (h, "Invalid content type derivation.");
+				}
 			} else {
 				// 5.3 => 3.9.6 Particle Valid (Restriction)
 				if (baseType.ContentTypeParticle != null) {
 					// 3.9.6 - 1 : same particle.
 					// 3.9.6 - 2 is covered by using ActualParticle.
-					if (!contentTypeParticle.ActualParticle.ParticleEquals (baseType.ContentTypeParticle.ActualParticle))
-						contentTypeParticle.ActualParticle.ValidateDerivationByRestriction (
-							baseType.ContentTypeParticle.ActualParticle, h, schema);
+					if (!contentTypeParticle.ParticleEquals (baseType.ContentTypeParticle))
+						contentTypeParticle.ValidateDerivationByRestriction (baseType.ContentTypeParticle, h, schema, true);
 				}
 			}
 		}
