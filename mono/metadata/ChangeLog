@@ -1,3 +1,6 @@
+2002-05-13  Miguel de Icaza  <miguel@ximian.com>
+
+	* icall.c (mono_double_ParseImpl): Added ParseImpl method.
 
 Mon May 13 16:40:30 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
