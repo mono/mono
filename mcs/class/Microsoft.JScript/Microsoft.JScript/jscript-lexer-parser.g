@@ -111,20 +111,32 @@ statement [AST parent] returns [AST stm]
 	| stm = if_stm [parent]
 	| stm = iteration_stm [parent]
 	| stm = continue_stm [parent]
-	| stm = break_stm
+	| stm = break_stm [parent]
 	| stm = return_stm [parent]
 	| stm = with_stm [parent]
 	| stm = switch_stm [parent]
 	| stm = throw_stm [parent]
 	| stm = try_stm [parent]
+	| stm = block [new Block (parent), parent]
 	;
 
-block [Block elems, AST parent]
+block [Block elems, AST parent] returns [AST _block]
 {
-	AST stm = null;
+    AST stm = null;
+    _block = elems;
+    elems.parent = parent;
 }
-	: OPEN_BRACE (stm = statement [parent] { if (stm != null) elems.Add (stm); })* CLOSE_BRACE
-	;
+    : OPEN_BRACE 
+	  (stm = statement [elems]
+	  {
+		  if (stm != null) {
+			  stm.parent = elems;
+			  elems.Add (stm);
+		  }
+	  })*
+      CLOSE_BRACE
+    ;
+
 
 try_stm [AST parent] returns [Try t]
 {
@@ -234,7 +246,7 @@ return_stm [AST parent] returns [AST r]
 	: "return" (e = expr [parent] { r = new Return (parent, e); } | ) SEMI_COLON
 	;
 
-break_stm returns [AST b]
+break_stm [AST parent] returns [AST b]
 {
 	b = new Break ();
 }
@@ -307,6 +319,9 @@ if_stm [AST parent] returns [AST if_stm]
 	  (("else")=> "else" false_stm = statement [if_stm] | )
 	  {
 		  if_stm = new If (parent, cond, true_stm, false_stm);
+		  cond.parent = true_stm.parent = if_stm;
+		  if (false_stm != null)
+			  false_stm.parent = if_stm;			
 	  }
 	;
 
@@ -928,7 +943,7 @@ primary_expr [AST parent] returns [AST prim_exp]
 	Expression e = null;
 }
 	: p:"this" { prim_exp = new This (); }
-	| object_literal
+//	| object_literal
 	| id:IDENTIFIER 
 	  { 
 		Identifier ident = new Identifier (parent, id.getText ());
@@ -939,14 +954,14 @@ primary_expr [AST parent] returns [AST prim_exp]
 	| OPEN_PARENS e = expr [parent] { prim_exp = e; } CLOSE_PARENS
 	; 
 
-object_literal
-	: OPEN_BRACE 
-	   ((property_name COLON)=> property_name COLON assignment_expr [null] 
-	    (COMMA property_name COLON assignment_expr [null])*
-	   | (statement [null])*
-	   )
-	  CLOSE_BRACE
-	;
+// object_literal
+// 	: OPEN_BRACE 
+// 	   ((property_name COLON)=> property_name COLON assignment_expr [null] 
+// 	    (COMMA property_name COLON assignment_expr [null])*
+// 	   | (statement [null])*
+// 	   )
+// 	  CLOSE_BRACE
+// 	;
 
 literal [AST parent] returns [AST l]
 {
