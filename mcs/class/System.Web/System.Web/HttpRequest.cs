@@ -1155,6 +1155,8 @@ namespace System.Web {
 		internal void SetCurrentExePath (string filePath)
 		{
 			currentExePath = filePath;
+			_sPath = filePath;
+			_sFilePath = filePath;
 			_sRequestRootVirtualDir = null;
 			baseVirtualDir = null;
 			_sPathTranslated = null;

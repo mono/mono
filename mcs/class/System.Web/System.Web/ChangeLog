@@ -1,3 +1,8 @@
+2005-02-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpRequest.cs: Path and FilePath also change when RewritePath is
+	called. Fixes bug #73055.
+
 2005-02-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* HttpRequest.cs: Make sure that any access after a ValidateInput 
