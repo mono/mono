@@ -1,3 +1,6 @@
+2001-10-02  Dietmar Maurer  <dietmar@ximian.com>
+
+	* class.c (mono_class_metadata_init): bug fix: compute the right size
 
 Mon Oct 1 20:43:57 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
