@@ -22,6 +22,8 @@
 	* CspProviderFlags.cs: Moved XML comments to monodoc.
 	* DeriveBytes.cs: Moved XML comments to monodoc. Already had 100% 
 	coverage.
+	* DES.cs: Fixes to weak/semi-weak checking to pass new unit tests (it
+	requires to set odd parity on keys before comparing).
 
 2004-04-25  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 

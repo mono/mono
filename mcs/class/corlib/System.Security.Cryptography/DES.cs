@@ -10,6 +10,7 @@
 //
 
 using System;
+using System.Globalization;
 using System.Security.Cryptography;
 
 // References:
@@ -45,34 +46,36 @@ public abstract class DES : SymmetricAlgorithm {
 		return (DES) CryptoConfig.CreateFromName (algo);
 	}
 
-	internal static ulong PackKey (byte [] key) 
+	internal static ulong PackKey (byte[] key) 
 	{
+		byte[] paritySetKey = new byte [blockSizeByte];
+		// adapted from bouncycastle - see bouncycastle.txt
+		for (int i=0; i < key.Length; i++) {
+			byte b = key [i];
+			paritySetKey [i] = (byte)((b & 0xfe) |
+				((((b >> 1) ^ (b >> 2) ^ (b >> 3) ^ (b >> 4) ^
+				(b >> 5) ^ (b >> 6) ^ (b >> 7)) ^ 0x01) & 0x01));
+		}
+
 		ulong res = 0;
 		for (int i = 0, sh = 8*blockSizeByte; (sh = sh - 8) >= 0; i++) {
-			res |= (ulong) key [i] << sh;
+			res |= (ulong) paritySetKey [i] << sh;
 		}
-		return res;
-	}
 
-	internal static byte [] UnpackKey (ulong key) 
-	{
-		byte [] res = new byte [blockSizeByte];
-		for (int i = 0, sh = 8*blockSizeByte; (sh = sh - 8) >= 0; i++) {
-			res [i] = (byte) (key >> sh);
-		}
+		Array.Clear (paritySetKey, 0, paritySetKey.Length);
 		return res;
 	}
 
 	// Ek(Ek(m)) = m
-	internal static ulong [] weakKeys = {
+	internal static ulong[] weakKeys = {
 		0x0101010101010101, /* 0000000 0000000 */
 		0xFEFEFEFEFEFEFEFE, /* FFFFFFF FFFFFFF */
-		0x1F1F1F1FE0E0E0E0, /* 0000000 FFFFFFF */
-		0xE0E0E0E01F1F1F1F  /* FFFFFFF 0000000 */
+		0x1F1F1F1F0E0E0E0E, /* 0000000 FFFFFFF */
+		0xE0E0E0E0F1F1F1F1  /* FFFFFFF 0000000 */
 	};
 
 	// Ek1(Ek2(m)) = m
-	internal static ulong [] semiweakKeys = {
+	internal static ulong[] semiweakKeys = {
 		0x01FE01FE01FE01FE, 0xFE01FE01FE01FE01,
 		0x1FE01FE00EF10EF1, 0xE01FE01FF10EF10E,
 		0x01E001E001F101F1, 0xE001E001F101F101,
@@ -81,26 +84,28 @@ public abstract class DES : SymmetricAlgorithm {
 		0xE0FEE0FEF1FEF1FE, 0xFEE0FEE0FEF1FEF1
 	};
 
-	public static bool IsWeakKey (byte [] rgbKey)
+	public static bool IsWeakKey (byte[] rgbKey) 
 	{
-		if (rgbKey.Length == (blockSizeByte >> 3))
-			throw new CryptographicException ("Wrong Key Length");
+		if (rgbKey.Length != blockSizeByte)
+			throw new CryptographicException (Locale.GetText ("Wrong Key Length"));
 
 		ulong lk = PackKey (rgbKey);
 		foreach (ulong wk in weakKeys) {
-			if (lk == wk) return true;
+			if (lk == wk)
+				return true;
 		}
 		return false;
 	}
 
-	public static bool IsSemiWeakKey (byte [] rgbKey)
+	public static bool IsSemiWeakKey (byte[] rgbKey)
 	{
-		if (rgbKey.Length == (blockSizeByte >> 3))
-			throw new CryptographicException ("Wrong Key Length");
+		if (rgbKey.Length != blockSizeByte)
+			throw new CryptographicException (Locale.GetText ("Wrong Key Length"));
 
 		ulong lk = PackKey (rgbKey);
 		foreach (ulong swk in semiweakKeys) {
-			if (lk == swk) return true;
+			if (lk == swk)
+				return true;
 		}
 		return false;
 	}
@@ -117,14 +122,17 @@ public abstract class DES : SymmetricAlgorithm {
 		}
 		set {
 			if (value == null)
-				throw new ArgumentNullException ();
-			if (IsWeakKey (value) || IsSemiWeakKey (value))
-				throw new CryptographicException ();
+				throw new ArgumentNullException ("Key");
+			if (value.Length != blockSizeByte)
+				throw new ArgumentException (Locale.GetText ("Wrong Key Length"));
+			if (IsWeakKey (value))
+				throw new CryptographicException (Locale.GetText ("Weak Key"));
+			if (IsSemiWeakKey (value))
+				throw new CryptographicException (Locale.GetText ("Semi Weak Key"));
 
 			KeyValue = (byte[]) value.Clone ();
 		}
 	}
+}
 
-} // DES
-
-} // System.Security.Cryptography
+}
