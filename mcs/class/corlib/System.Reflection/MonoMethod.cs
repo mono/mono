@@ -6,10 +6,7 @@
 //   Paolo Molaro (lupus@ximian.com)
 //
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -31,11 +28,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
+using System.Security;
 
 namespace System.Reflection {
 	
@@ -110,12 +107,21 @@ namespace System.Reflection {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal extern Object InternalInvoke (Object obj, Object[] parameters);
 		
-		public override Object Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture) {
+		public override Object Invoke (Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture) 
+		{
 			if (binder == null)
 				binder = Binder.DefaultBinder;
 			ParameterInfo[] pinfo = GetParameters ();
 			if (!Binder.ConvertArgs (binder, parameters, pinfo, culture))
 				throw new ArgumentException ("parameters");
+
+			if (SecurityManager.SecurityEnabled) {
+				// sadly Attributes doesn't tell us which kind of security action this is so
+				// we must do it the hard way - and it also means that we can skip calling
+				// Attribute (which is another an icall)
+				SecurityManager.ReflectedLinkDemandInvoke (this);
+			}
+
 			try {
 				return InternalInvoke (obj, parameters);
 			} catch (InvalidOperationException) {
@@ -309,13 +315,22 @@ namespace System.Reflection {
 		 */
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal extern Object InternalInvoke (Object obj, Object[] parameters);
-		
-		public override Object Invoke (Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture) {
+
+		public override Object Invoke (Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture) 
+		{
 			if (binder == null)
 				binder = Binder.DefaultBinder;
 			ParameterInfo[] pinfo = GetParameters ();
 			if (!Binder.ConvertArgs (binder, parameters, pinfo, culture))
 				throw new ArgumentException ("parameters");
+
+			if (SecurityManager.SecurityEnabled) {
+				// sadly Attributes doesn't tell us which kind of security action this is so
+				// we must do it the hard way - and it also means that we can skip calling
+				// Attribute (which is another an icall)
+				SecurityManager.ReflectedLinkDemandInvoke (this);
+			}
+
 			try {
 				return InternalInvoke (obj, parameters);
 			} catch (InvalidOperationException) {

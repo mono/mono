@@ -1,3 +1,8 @@
+2005-03-11  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* MonoMethod.cs: Promote a LinkDemand (if present) to a full Demand 
+	(i.e. stack walk) when reflection is being used to invoke a method.
+
 2005-02-24  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* Assembly.cs: LoadFrom: Change signature to support reflection only
