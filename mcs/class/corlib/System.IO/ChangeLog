@@ -3,6 +3,8 @@
 	* MemoryStream.cs: Fixed exception reporting to match MS Fx. Fixed the
 	condition to allow zeroization of existing data when we shrink the 
 	stream.
+	* StringWriter.cs: Fixed possible integer overflow in Write. Changed
+	spaces for tabs.
 
 2004-05-22  Duncan Mak  <duncan@ximian.com>
 
