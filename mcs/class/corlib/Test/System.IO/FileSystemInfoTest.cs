@@ -18,12 +18,26 @@ namespace MonoTests.System.IO
 	[TestFixture]
         public class FileSystemInfoTest
 	{
+		string TempFolder = Path.Combine (Path.GetTempPath (), "MonoTests.System.IO.Tests");
 
-		public FileSystemInfoTest() {}
+		public FileSystemInfoTest() 
+		{
+			if (Directory.Exists (TempFolder))
+				Directory.Delete (TempFolder, true);
+			Directory.CreateDirectory (TempFolder);
 
+		}
+
+		~FileSystemInfoTest ()
+		{
+			if (Directory.Exists (TempFolder))
+				Directory.Delete (TempFolder, true);
+		}
 		[SetUp]
 		protected void SetUp() 
 		{
+			if (!Directory.Exists (TempFolder))				
+				Directory.CreateDirectory (TempFolder);
 			Thread.CurrentThread.CurrentCulture = new CultureInfo ("EN-us");
 		}
 
@@ -45,7 +59,7 @@ namespace MonoTests.System.IO
 		[Test]
 		public void CreationTimeFile ()
 		{
-			string path = "resources/FSIT.CreationTime.Test";
+			string path = TempFolder + "/FSIT.CreationTime.Test";
 			DeleteFile (path);
 
 			try {
@@ -95,7 +109,7 @@ namespace MonoTests.System.IO
 		[Test]
 		public void CreationTimeDirectory ()
 		{
-			string path = "resources/FSIT.CreationTimeDirectory.Test";
+			string path = TempFolder + "/FSIT.CreationTimeDirectory.Test";
 			DeleteDir (path);
 			
 			try {				
@@ -133,7 +147,7 @@ namespace MonoTests.System.IO
 		[Test]
 		public void CreationTimeNoFileOrDirectory ()
 		{
-			string path = "resources/FSIT.CreationTimeNoFile.Test";
+			string path = TempFolder + "/FSIT.CreationTimeNoFile.Test";
 			DeleteFile (path);
 			DeleteDir (path);
 			
@@ -168,7 +182,7 @@ namespace MonoTests.System.IO
 		[Test]
 		public void Extenssion ()
 		{
-			string path = "resources/FSIT.Extenssion.Test";
+			string path = TempFolder + "/FSIT.Extenssion.Test";
 			DeleteFile (path);
 			
 			try {
@@ -182,7 +196,7 @@ namespace MonoTests.System.IO
 		[Test]
 		public void DefaultLastAccessTime ()
 		{
-			string path = "resources/FSIT.DefaultLastAccessTime.Test";
+			string path = TempFolder + "/FSIT.DefaultLastAccessTime.Test";
 			DeleteFile (path);
 			
 			try {
@@ -205,7 +219,7 @@ namespace MonoTests.System.IO
 		[Test]
 		public void LastAccessTime ()
 		{
-			string path = "resources/FSIT.LastAccessTime.Test";
+			string path = TempFolder + "/FSIT.LastAccessTime.Test";
 			DeleteFile (path);
 
 			try {
@@ -238,8 +252,7 @@ namespace MonoTests.System.IO
 				Assertion.AssertEquals ("test#13", 2000, time.Year);
 				Assertion.AssertEquals ("test#14", 1, time.Month);
 				Assertion.AssertEquals ("test#15", 1, time.Day);
-				Assertion.AssertEquals ("test#16", 1, time.Hour);
-				
+				Assertion.AssertEquals ("test#16", 1, time.Hour);				
 				
 			} finally {
 				DeleteFile (path);
@@ -249,7 +262,7 @@ namespace MonoTests.System.IO
 		[Test]
 		public void DefaultLastWriteTime ()
 		{
-			string path = "resources/FSIT.DefaultLastWriteTime.Test";
+			string path = TempFolder + "/FSIT.DefaultLastWriteTime.Test";
 			DeleteDir (path);
 
 			try {
@@ -272,7 +285,7 @@ namespace MonoTests.System.IO
 		[Test]
 		public void LastWriteTime ()
 		{
-			string path = "resources/FSIT.LastWriteTime.Test";
+			string path = TempFolder + "/FSIT.LastWriteTime.Test";
 			DeleteDir (path);
 			
 			try {

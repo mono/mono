@@ -15,10 +15,26 @@ namespace MonoTests.System.IO
 	[TestFixture]
         public class FileInfoTest
         {
-                public FileInfoTest() {}
-                
+		string TempFolder = Path.Combine (Path.GetTempPath (), "MonoTests.System.IO.Tests");
+
+                public FileInfoTest() 
+		{
+			if (Directory.Exists (TempFolder))
+				Directory.Delete (TempFolder, true);
+			Directory.CreateDirectory (TempFolder);
+		}
+
+                ~FileInfoTest ()
+		{
+			if (Directory.Exists (TempFolder))
+				Directory.Delete (TempFolder, true);
+		}
+
                 [SetUp]
                 protected void SetUp() {
+
+			if (!Directory.Exists (TempFolder))				
+				Directory.CreateDirectory (TempFolder);
                 }
                 
                 [TearDown]
@@ -27,11 +43,11 @@ namespace MonoTests.System.IO
                 [Test]
                 public void Ctr ()
                 {
-                	string path = "resources/FIT.Ctr.Test";
+                	string path = TempFolder + "/FIT.Ctr.Test";
                 	DeleteFile (path);
                 	
                 	FileInfo info = new FileInfo (path);
-                	Assertion.AssertEquals ("test#01", true, info.DirectoryName.EndsWith ("resources"));
+                	Assertion.AssertEquals ("test#01", true, info.DirectoryName.EndsWith (".Tests"));
                 	Assertion.AssertEquals ("test#02", false, info.Exists);
                 	Assertion.AssertEquals ("test#03", ".Test", info.Extension);
                 	Assertion.AssertEquals ("test#05", "FIT.Ctr.Test", info.Name);                	
@@ -70,20 +86,20 @@ namespace MonoTests.System.IO
 		}
 			       
 		[Test]
-		public void Directory ()
+		public void DirectoryTest ()
 		{
-			string path = "resources/FIT.Directory.Test";
+			string path = TempFolder + "/FIT.Directory.Test";
 			DeleteFile (path);
 			
 			FileInfo info = new FileInfo (path);
 			DirectoryInfo dir = info.Directory;
-			Assertion.AssertEquals ("test#01", "resources", dir.Name);
+			Assertion.AssertEquals ("test#01", "MonoTests.System.IO.Tests", dir.Name);
 		}
 		
 		[Test]
 		public void Exists ()
 		{
-			string path = "resources/FIT.Exists.Test";
+			string path = TempFolder + "/FIT.Exists.Test";
 			DeleteFile (path);
 			
 			try {
@@ -102,7 +118,7 @@ namespace MonoTests.System.IO
 		[Test]
 		public void Length ()
 		{
-			string path = "resources/FIT.Length.Test";
+			string path = TempFolder + "/FIT.Length.Test";
 			DeleteFile (path);
 			
 			try {
@@ -124,7 +140,7 @@ namespace MonoTests.System.IO
 		[ExpectedException (typeof (FileNotFoundException))]
 		public void LengthException ()
 		{
-			string path = "resources/FIT.LengthException.Test";
+			string path = TempFolder + "/FIT.LengthException.Test";
 			DeleteFile (path);
 			FileInfo info = new FileInfo (path);
 			long l = info.Length;
@@ -133,7 +149,7 @@ namespace MonoTests.System.IO
 		[Test]
 		public void AppendText ()
 		{
-			string path = "resources/FIT.AppendText.Test";
+			string path = TempFolder + "/FIT.AppendText.Test";
 			DeleteFile (path);
 			
 			try {
@@ -161,8 +177,8 @@ namespace MonoTests.System.IO
 		[Test]
 		public void CopyTo ()
 		{
-			string path1 = "resources/FIT.CopyTo.Source.Test";
-			string path2 = "resources/FIT.CopyTo.Dest.Test";
+			string path1 = TempFolder + "/FIT.CopyTo.Source.Test";
+			string path2 = TempFolder + "/FIT.CopyTo.Dest.Test";
 			DeleteFile (path1);
 			DeleteFile (path2);
 			try {
@@ -183,8 +199,8 @@ namespace MonoTests.System.IO
 		[Test]
 		public void CopyTo2 ()
 		{
-			string path1 = "resources/FIT.CopyTo2.Source.Test";
-			string path2 = "resources/FIT.CopyTo2.Dest.Test";
+			string path1 = TempFolder + "/FIT.CopyTo2.Source.Test";
+			string path2 = TempFolder + "/FIT.CopyTo2.Dest.Test";
 			DeleteFile (path1);
 			DeleteFile (path2);
 			try {
@@ -206,8 +222,8 @@ namespace MonoTests.System.IO
 		[ExpectedException (typeof (IOException))]
 		public void CopyToIOException ()
 		{
-			string path1 = "resources/FIT.CopyToException.Source.Test";
-			string path2 = "resources/FIT.CopyToException.Dest.Test";
+			string path1 = TempFolder + "/FIT.CopyToException.Source.Test";
+			string path2 = TempFolder + "/FIT.CopyToException.Dest.Test";
 
 			try {
 				DeleteFile (path1);
@@ -226,8 +242,8 @@ namespace MonoTests.System.IO
 		[ExpectedException (typeof (IOException))]
 		public void CopyToIOException2 ()
 		{
-			string path1 = "resources/FIT.CopyToException.Source.Test";
-			string path2 = "resources/FIT.CopyToException.Dest.Test";
+			string path1 = TempFolder + "/FIT.CopyToException.Source.Test";
+			string path2 = TempFolder + "/FIT.CopyToException.Dest.Test";
 
 			try {
 				DeleteFile (path1);
@@ -246,7 +262,7 @@ namespace MonoTests.System.IO
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void CopyToArgumentNullException ()
 		{
-			string path = "resources/FIT.CopyToArgumentNullException.Test";
+			string path = TempFolder + "/FIT.CopyToArgumentNullException.Test";
 			DeleteFile (path);
 			try {
 				File.Create (path).Close ();
@@ -261,7 +277,7 @@ namespace MonoTests.System.IO
 		[ExpectedException (typeof (ArgumentException))]
 		public void CopyToArgumentException1 ()
 		{
-			string path = "resources/FIT.CopyToArgument1Exception.Test";
+			string path = TempFolder + "/FIT.CopyToArgument1Exception.Test";
 			DeleteFile (path);
 			
 			try {
@@ -277,7 +293,7 @@ namespace MonoTests.System.IO
 		[ExpectedException (typeof (ArgumentException))]
 		public void CopyToArgumentException2 ()
 		{
-			string path = "resources/FIT.CopyToArgument2Exception.Test";
+			string path = TempFolder + "/FIT.CopyToArgument2Exception.Test";
 			DeleteFile (path);
 			
 			try {
@@ -293,7 +309,7 @@ namespace MonoTests.System.IO
 		[ExpectedException (typeof (ArgumentException))]
 		public void CopyToArgumentException3 ()
 		{
-			string path = "resources/FIT.CopyToArgument3Exception.Test";
+			string path = TempFolder + "/FIT.CopyToArgument3Exception.Test";
 			DeleteFile (path);
 			
 			try {
@@ -309,7 +325,7 @@ namespace MonoTests.System.IO
 		[ExpectedException (typeof (ArgumentException))]
 		public void CopyToArgumentException4 ()
 		{
-			string path = "resources/FIT.CopyToArgument4Exception.Test";
+			string path = TempFolder + "/FIT.CopyToArgument4Exception.Test";
 			string path2 = "";
 			DeleteFile (path);
 			
@@ -329,7 +345,7 @@ namespace MonoTests.System.IO
 		[Test]
 		public void Create ()
 		{
-			string path = "resources/FIT.Create.Test";
+			string path = TempFolder + "/FIT.Create.Test";
 			DeleteFile (path);
 			
 			try {
@@ -351,7 +367,7 @@ namespace MonoTests.System.IO
 		[Test]
 		public void CreateText ()
 		{
-			string path = "resources/FIT.CreateText.Test";
+			string path = TempFolder + "/FIT.CreateText.Test";
 			DeleteFile (path);
 			
 			try {
@@ -371,7 +387,7 @@ namespace MonoTests.System.IO
 		[ExpectedException (typeof (UnauthorizedAccessException))]
 		public void CreateTextUnauthorizedAccessException ()
 		{
-			string path = "resources";
+			string path = TempFolder;
 			
 			FileInfo info = new FileInfo (path);
 			Assertion.AssertEquals ("test#01", false, info.Exists);
@@ -382,7 +398,7 @@ namespace MonoTests.System.IO
 		[Test]
 		public void Delete ()
 		{
-			string path = "resources/FIT.Delete.Test";
+			string path = TempFolder + "/FIT.Delete.Test";
 			DeleteFile (path);
 			
 			try {
@@ -404,7 +420,7 @@ namespace MonoTests.System.IO
 		[ExpectedException (typeof (UnauthorizedAccessException))]
 		public void DeleteUnauthorizedAccessException ()
 		{
-			string path = "resources";
+			string path = TempFolder;
 			FileInfo info = new FileInfo (path);
 			info.Delete ();			
 		}
@@ -412,8 +428,8 @@ namespace MonoTests.System.IO
 		[Test]
 		public void MoveTo ()
 		{
-			string path1 = "resources/FIT.MoveTo.Source.Test";
-			string path2 = "resources/FIT.MoveTo.Dest.Test";
+			string path1 = TempFolder + "/FIT.MoveTo.Source.Test";
+			string path2 = TempFolder + "/FIT.MoveTo.Dest.Test";
 			DeleteFile (path1);
 			DeleteFile (path2);
 			
@@ -436,8 +452,8 @@ namespace MonoTests.System.IO
 		[ExpectedException (typeof (IOException))]
 		public void MoveToIOException ()
 		{
-			string path1 = "resources/FIT.MoveToIOException.Source.Test";
-			string path2 = "resources/FIT.MoveToIOException.Dest.Test";
+			string path1 = TempFolder + "/FIT.MoveToIOException.Source.Test";
+			string path2 = TempFolder + "/FIT.MoveToIOException.Dest.Test";
 			DeleteFile (path1);
 			DeleteFile (path2);
 
@@ -457,7 +473,7 @@ namespace MonoTests.System.IO
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void MoveToArgumentNullException ()
 		{
-			string path = "resources/FIT.MoveToArgumentNullException.Test";
+			string path = TempFolder + "/FIT.MoveToArgumentNullException.Test";
 			DeleteFile (path);
 
 			try {
@@ -473,7 +489,7 @@ namespace MonoTests.System.IO
 		[ExpectedException (typeof (ArgumentException))]
 		public void MoveToArgumentException ()
 		{
-			string path = "resources/FIT.MoveToArgumentException.Test";
+			string path = TempFolder + "/FIT.MoveToArgumentException.Test";
 			DeleteFile (path);
 
 			try {
@@ -493,13 +509,13 @@ namespace MonoTests.System.IO
 		[ExpectedException (typeof (IOException))]
 		public void MoveToUnauthorizedAccessException ()
 		{
-			string path = "resources/FIT.UnauthorizedAccessException.Test";
+			string path = TempFolder + "/FIT.UnauthorizedAccessException.Test";
 			DeleteFile (path);
 
 			try {
 				File.Create (path).Close ();
 				FileInfo info = new FileInfo (path);
-				info.MoveTo ("resources");
+				info.MoveTo (TempFolder);
 			} finally {
 				DeleteFile (path);
 			}
@@ -509,8 +525,8 @@ namespace MonoTests.System.IO
 		[ExpectedException (typeof (FileNotFoundException))]
 		public void MoveToFileNotFoundException ()
 		{
-			string path1 = "resources/FIT.MoveToFileNotFoundException.Src";
-			string path2 = "resources/FIT.MoveToFileNotFoundException.Dst";
+			string path1 = TempFolder + "/FIT.MoveToFileNotFoundException.Src";
+			string path2 = TempFolder + "/FIT.MoveToFileNotFoundException.Dst";
 			DeleteFile (path1);
 			DeleteFile (path2);
 			
@@ -526,7 +542,7 @@ namespace MonoTests.System.IO
 		[Test]
 		public void Open ()
 		{
-			string path = "resources/FIT.Open.Test";
+			string path = TempFolder + "/FIT.Open.Test";
 			DeleteFile (path);
 			FileStream stream = null;
 			try {
@@ -565,7 +581,7 @@ namespace MonoTests.System.IO
 		[ExpectedException(typeof(FileNotFoundException))]
 		public void OpenFileNotFoundException ()
 		{
-			string path = "resources/FIT.OpenFileNotFoundException.Test";
+			string path = TempFolder + "/FIT.OpenFileNotFoundException.Test";
 			DeleteFile (path);
 			
 			FileInfo info = new FileInfo (path);
@@ -575,7 +591,7 @@ namespace MonoTests.System.IO
 		[Test]
 		public void OpenRead ()
 		{
-			string path = "resources/FIT.OpenRead.Test";
+			string path = TempFolder + "/FIT.OpenRead.Test";
 			DeleteFile (path);
 			FileStream stream = null;
 			try {
@@ -598,7 +614,7 @@ namespace MonoTests.System.IO
 		[ExpectedException(typeof (IOException))]
 		public void OpenReadIOException ()
 		{
-			string path = "resources/FIT.OpenReadIOException.Test";
+			string path = TempFolder + "/FIT.OpenReadIOException.Test";
 			DeleteFile (path);
 			FileStream stream = null;
 			
@@ -617,7 +633,7 @@ namespace MonoTests.System.IO
 		[ExpectedException(typeof (UnauthorizedAccessException))]
 		public void OpenReadUnauthorizedAccessException ()
 		{
-			string path = "resources";
+			string path = TempFolder;
 			
 			FileInfo info = new FileInfo (path);
 			info.OpenRead ();
@@ -626,7 +642,7 @@ namespace MonoTests.System.IO
 		[Test]
 		public void OpenText ()
 		{
-			string path = "resources/FIT.OpenText.Test";
+			string path = TempFolder + "/FIT.OpenText.Test";
 			DeleteFile (path);
 			StreamReader reader = null;
 			try {
@@ -646,7 +662,7 @@ namespace MonoTests.System.IO
 		[ExpectedException(typeof (FileNotFoundException))]
 		public void OpenTextFileNotFoundException ()
 		{
-			string path = "resources/FIT.OpenTextFileNotFoundException.Test";
+			string path = TempFolder + "/FIT.OpenTextFileNotFoundException.Test";
 			DeleteFile (path);
 			FileInfo info = new FileInfo (path);
 			info.OpenText ();
@@ -656,7 +672,7 @@ namespace MonoTests.System.IO
 		[ExpectedException(typeof (UnauthorizedAccessException))]
 		public void OpenTextUnauthorizedAccessException ()
 		{
-			string path = "resources";
+			string path = TempFolder;
 			
 			FileInfo info = new FileInfo (path);
 			info.OpenText ();
@@ -665,7 +681,7 @@ namespace MonoTests.System.IO
 		[Test]
 		public void OpenWrite ()
 		{
-			string path = "resources/FIT.OpenWrite.Test";
+			string path = TempFolder + "/FIT.OpenWrite.Test";
 			DeleteFile (path);
 			FileStream stream = null;
 			try {
@@ -687,7 +703,7 @@ namespace MonoTests.System.IO
 		[ExpectedException(typeof (UnauthorizedAccessException))]
 		public void OpenWriteUnauthorizedAccessException ()
 		{
-			string path = "resources";
+			string path = TempFolder;
 			
 			FileInfo info = new FileInfo (path);
 			info.OpenWrite ();

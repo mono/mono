@@ -51,10 +51,11 @@ public class BufferedStreamTest {
 		Assertion.AssertEquals ("test#04", 6, stream.Length);
 		Assertion.AssertEquals ("test#05", 6, stream.Position);
 		
-		if (File.Exists (".test.BufferedStreamTest.1"))
-			File.Delete (".test.BufferedStreamTest.1");
+		string path = Path.GetTempFileName ();
+		if (File.Exists (path))
+			File.Delete (path);
 		
-		FileStream file = new FileStream (".test.BufferedStreamTest.1", FileMode.OpenOrCreate, FileAccess.Write);
+		FileStream file = new FileStream (path, FileMode.OpenOrCreate, FileAccess.Write);
 		stream = new BufferedStream (file);		
 		Assertion.AssertEquals ("test#06", false, stream.CanRead);
 		Assertion.AssertEquals ("test#07", true, stream.CanSeek);
@@ -63,10 +64,10 @@ public class BufferedStreamTest {
 		Assertion.AssertEquals ("test#10", 0, stream.Position);		
 		file.Close ();
 		
-		if (File.Exists (".test.BufferedStreamTest.1"))
-			File.Delete (".test.BufferedStreamTest.1");
+		if (File.Exists (path))
+			File.Delete (path);
 		
-		file = new FileStream (".test.BufferedStreamTest.1", FileMode.OpenOrCreate, FileAccess.Write);
+		file = new FileStream (path, FileMode.OpenOrCreate, FileAccess.Write);
 		stream = new BufferedStream (file, 12);		
 		Assertion.AssertEquals ("test#11", false, stream.CanRead);
 		Assertion.AssertEquals ("test#12", true, stream.CanSeek);
@@ -75,8 +76,8 @@ public class BufferedStreamTest {
 		Assertion.AssertEquals ("test#15", 0, stream.Position);		
 
 		file.Close ();
-		if (File.Exists (".test.BufferedStreamTest.1"))
-			File.Delete (".test.BufferedStreamTest.1");
+		if (File.Exists (path))
+			File.Delete (path);
 	}
 
 	/// <summary>
@@ -278,14 +279,14 @@ public class BufferedStreamTest {
 		Assertion.AssertEquals ("test#11", 4, bytes [5]);
 		Assertion.AssertEquals ("test#10", 3, bytes [6]);
 		Assertion.AssertEquals ("test#11", 0, bytes [7]);
-		Assertion.AssertEquals ("test#12", 7, stream.Length);		
+		Assertion.AssertEquals ("test#12", 7, stream.Length);
 	}
 		
 	[Test]
 	[ExpectedException(typeof (ArgumentException))]
 	public void WriteException ()
 	{
-		BufferedStream stream = new BufferedStream (mem);		
+		BufferedStream stream = new BufferedStream (mem);
 		stream.Write (new byte [] {0,1,2,3}, 0, 10);
 	}
 
@@ -293,7 +294,7 @@ public class BufferedStreamTest {
 	[ExpectedException(typeof (ArgumentOutOfRangeException))]
 	public void WriteException2 ()
 	{
-		BufferedStream stream = new BufferedStream (mem);		
+		BufferedStream stream = new BufferedStream (mem);
 		stream.Write (new byte [] {0,1,2,3}, -10, 4);
 	}
 	

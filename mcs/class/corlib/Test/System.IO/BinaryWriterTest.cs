@@ -18,9 +18,27 @@ namespace MonoTests.System.IO {
 public class BinaryWriterTest {
 	
 	
-	public BinaryWriterTest () 
+	string TempFolder = Path.Combine (Path.GetTempPath (), "MonoTests.System.IO.Tests");
+	
+	
+	public BinaryWriterTest() 
 	{
-		;
+		if (Directory.Exists (TempFolder))
+			Directory.Delete (TempFolder, true);
+		Directory.CreateDirectory (TempFolder);
+	}
+	
+	~BinaryWriterTest ()
+	{
+		if (Directory.Exists (TempFolder))
+			Directory.Delete (TempFolder, true);
+	}
+	
+	[SetUp]
+        protected void SetUp() {
+		
+		if (!Directory.Exists (TempFolder))				
+			Directory.CreateDirectory (TempFolder);
 	}
 
 
@@ -80,14 +98,13 @@ public class BinaryWriterTest {
 	[ExpectedException(typeof(ArgumentException))]
 	public void CtorArgumentExceptionStreamCannotWrite ()
 	{
-		if (File.Exists (".BinaryWriterTest.1"))
-			File.Delete (".BinaryWriterTest.1");
-		
-		FileStream stream = new FileStream (".BinaryWriterTest.1", FileMode.OpenOrCreate, FileAccess.Read);
+		string path = TempFolder + "/.BinaryWriterTest.1";
+		DeleteFile (path);
+			
+		FileStream stream = new FileStream (path, FileMode.OpenOrCreate, FileAccess.Read);
 		BinaryWriter reader = new BinaryWriter (stream);
 		
-		if (File.Exists (".BinaryWriterTest.1"))
-			File.Delete (".BinaryWriterTest.1");
+		DeleteFile (path);
 	}
 
 	[Test]
@@ -494,5 +511,13 @@ public class BinaryWriterTest {
 		Assertion.AssertEquals ("test#10", 10, bytes [8]);
 		Assertion.AssertEquals ("test#11", 0, bytes [9]);		
 	}
+
+	private void DeleteFile (string path)
+	{
+		if (File.Exists (path))
+			File.Delete (path);
+	}
 }
+
 }
+

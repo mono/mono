@@ -13,11 +13,32 @@ using System.Text;
 namespace MonoTests.System.IO
 {
 	public class BinaryReaderTest : TestCase
-	{
-		protected override void SetUp () { }
-		
-		private string _codeFileName = "resources" + Path.DirectorySeparatorChar + "AFile.txt";
+	{		
+		string TempFolder = Path.Combine (Path.GetTempPath (), "MonoTests.System.IO.Tests");
+		private string _codeFileName;
 			
+                public BinaryReaderTest() 
+		{
+			if (Directory.Exists (TempFolder))
+				Directory.Delete (TempFolder, true);
+			Directory.CreateDirectory (TempFolder);
+			_codeFileName = TempFolder + Path.DirectorySeparatorChar + "AFile.txt";
+		}
+
+                ~BinaryReaderTest ()
+		{
+			if (Directory.Exists (TempFolder))
+				Directory.Delete (TempFolder, true);
+		}
+
+                override protected void SetUp() {
+
+			if (!Directory.Exists (TempFolder))
+				Directory.CreateDirectory (TempFolder);
+			if (!File.Exists (_codeFileName))
+				File.Create (_codeFileName).Close ();
+                }
+
 		public void TestCtor1() 
 		{
 			{
@@ -368,16 +389,14 @@ namespace MonoTests.System.IO
 	[ExpectedException(typeof(ArgumentException))]
 	public void CtorArgumentExceptionCannotWrite ()
 	{
-		if (File.Exists (".BinaryReaderTestFile.1"))
-			File.Delete (".BinaryReaderTestFile.1");
-		
-		FileStream file = new FileStream (".BinaryReaderTestFile.1", FileMode.CreateNew, FileAccess.Read);
+		string path = TempFolder + "/.BinaryReaderTestFile.1";
+		DeleteFile (path);
+
+		FileStream file = new FileStream (path, FileMode.CreateNew, FileAccess.Read);
 		BinaryReader breader = new BinaryReader (file);
 
-		if (File.Exists (".BinaryReaderTestFile.1"))
-			File.Delete (".BinaryReaderTestFile.1");
-		
-		Assertion.Fail ();
+		if (File.Exists (path))
+			File.Delete (path);		
 	}
 
 	/// <summary>
@@ -387,15 +406,15 @@ namespace MonoTests.System.IO
 	[ExpectedException(typeof(ArgumentException))]
 	public void CtorArgumentExceptionClosedStream ()
 	{
-		if (File.Exists (".BinaryReaderTestFile.2"))
-			File.Delete (".BinaryReaderTestFile.2");
-		
-		FileStream file = new FileStream (".BinaryReaderTestFile.1", FileMode.CreateNew, FileAccess.Write);
+		string path = TempFolder + "/.BinaryReaderTestFile.2";
+		DeleteFile (path);
+
+		FileStream file = new FileStream (path, FileMode.CreateNew, FileAccess.Write);
 		file.Close ();
 		BinaryReader breader = new BinaryReader (file);
 
-		if (File.Exists (".BinaryReaderTestFile.2"))
-			File.Delete (".BinaryReaderTestFile.2");		
+		if (File.Exists (path))
+			File.Delete (path);		
 	}
 
 	/// <summary>
@@ -959,6 +978,10 @@ namespace MonoTests.System.IO
 		reader.ReadUInt64 ();
 	}	
 
-	}
+	private void DeleteFile (string path)
+	{
+		if (File.Exists (path))
+			File.Delete (path);
+	}	
 }
-
+}

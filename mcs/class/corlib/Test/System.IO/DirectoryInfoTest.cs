@@ -1,4 +1,4 @@
-﻿// DirectoryInfoTest.cs - NUnit Test Cases for System.IO.DirectoryInfo class
+// DirectoryInfoTest.cs - NUnit Test Cases for System.IO.DirectoryInfo class
 //
 // Ville Palo (vi64pa@koti.soon.fi)
 // 
@@ -10,141 +10,158 @@ using System.IO;
 namespace MonoTests.System.IO
 {
 	[TestFixture]
-       	public class DirectoryInfoTest
-       	{
-               	public DirectoryInfoTest() {}
-                
-               	[SetUp]
-               	protected void SetUp() {
-               	}
-                
-               	[TearDown]
-               	protected void TearDown() {}
-                
-               	[Test]
-               	public void Ctr ()
-               	{
-               	       	string path = "resources/DIT.Ctr.Test";
-               		DeleteDir (path);
-                       	
-               	       	FileInfo info = new FileInfo (path);
-               	       	Assertion.AssertEquals ("test#01", true, info.DirectoryName.EndsWith ("resources"));
-               	       	Assertion.AssertEquals ("test#02", false, info.Exists);
-               	       	Assertion.AssertEquals ("test#03", ".Test", info.Extension);
-               	       	Assertion.AssertEquals ("test#05", "DIT.Ctr.Test", info.Name);                        
-               	}
+    	public class DirectoryInfoTest
+    	{
+		string TempFolder = Path.Combine (Path.GetTempPath (), "MonoTests.System.IO.Tests");
 
-               	[Test]
-               	[ExpectedException(typeof(ArgumentNullException))]
-               	public void CtorArgumentNullException ()
-               	{
-               	       	DirectoryInfo info = new DirectoryInfo (null);                        
-               	}
+        	public DirectoryInfoTest() 
+	        {
+			if (Directory.Exists (TempFolder))
+				Directory.Delete (TempFolder, true);
+			Directory.CreateDirectory (TempFolder);
 
-               	[Test]
-               	[ExpectedException(typeof(ArgumentException))]
-               	public void CtorArgumentException1 ()
-               	{
-               	       	DirectoryInfo info = new DirectoryInfo ("");                        
-               	}
+		}
+        
+		~DirectoryInfoTest ()
+		{
+			if (Directory.Exists (TempFolder))
+				Directory.Delete (TempFolder, true);
+		}
+		
+        	[SetUp]
+        	protected void SetUp() {
 
-               	[Test]
-               	[ExpectedException(typeof(ArgumentException))]
-               	public void CtorArgumentException2 ()
-               	{
-               	       	DirectoryInfo info = new DirectoryInfo ("      ");                        
-               	}
+			if (!Directory.Exists (TempFolder))				
+				Directory.CreateDirectory (TempFolder);
+        	}
+        
+        	[TearDown]
+        	protected void TearDown() {}
+        
+        	[Test]
+        	public void Ctr ()
+        	{
+        	    	string path = TempFolder + "/DIT.Ctr.Test";
+        		DeleteDir (path);
+            	
+        	    	FileInfo info = new FileInfo (path);
+        	    	Assertion.AssertEquals ("test#01", true, info.DirectoryName.EndsWith (".Tests"));
+        	    	Assertion.AssertEquals ("test#02", false, info.Exists);
+        	    	Assertion.AssertEquals ("test#03", ".Test", info.Extension);
+        	    	Assertion.AssertEquals ("test#05", "DIT.Ctr.Test", info.Name);            
+        	}
 
-               	[Test]
-               	[ExpectedException(typeof(ArgumentException))]
-               	public void CtorArgumentException3 ()
-               	{
-                       	string path = "";
-                       	foreach (char c in Path.InvalidPathChars) {
-                               	path += c;
-                       	}
-                       	DirectoryInfo info = new DirectoryInfo (path);
-               	}
-               	               	
-               	[Test]
-               	public void Exists ()
-               	{
-                       	string path = "resources/DIT.Exists.Test";
-                       	DeleteDir (path);
-                        
-                       	try {
-                       	       	DirectoryInfo info = new DirectoryInfo (path);
-                               	Assertion.AssertEquals ("test#01", false, info.Exists);
-                        
-                               	Directory.CreateDirectory (path);
-                               	Assertion.AssertEquals ("test#02", false, info.Exists);
-                               	info = new DirectoryInfo (path);
-                               	Assertion.AssertEquals ("test#03", true, info.Exists);                        
-                       	} finally {
-                               	DeleteDir (path);
-                       	}
-               	}
-               	
-               	[Test]
-               	public void Name ()
-               	{
-               		string path = "resources/DIT.Name.Test";
-               		DeleteDir (path);
-               		
-               		try {
-               			DirectoryInfo info = new DirectoryInfo (path);               			
-               			Assertion.AssertEquals ("test#01", "DIT.Name.Test", info.Name);
-               			
-               			info = Directory.CreateDirectory (path);
-               			Assertion.AssertEquals ("test#02", "DIT.Name.Test", info.Name);
-               			
-               			
-               		} finally {
-               			DeleteDir (path);
-               		}               		           
-               	}
-               	
-               	[Test]
-               	public void Parent ()
-               	{
-               		string path = "resources/DIT.Parent.Test";
-               		DeleteDir (path);
-               		
-               		try {
-               			DirectoryInfo info = new DirectoryInfo (path);
-               			Assertion.AssertEquals ("test#01", "resources", info.Parent.Name);
-               			
-               			info = Directory.CreateDirectory (path);
-               			Assertion.AssertEquals ("test#02", "resources", info.Parent.Name);
-               			               			
-               		} finally {
-               			DeleteDir (path);
-               		}               		                          	
-               	}
+        	[Test]
+        	[ExpectedException(typeof(ArgumentNullException))]
+        	public void CtorArgumentNullException ()
+        	{
+        	    	DirectoryInfo info = new DirectoryInfo (null);            
+        	}
 
-               	[Test]
-               	public void Create ()
-               	{
-                       	string path = "resources/DIT.Create.Test";
-                       	DeleteDir (path);
-                        
-                       	try {
-                               	DirectoryInfo info = new DirectoryInfo (path);
-                               	Assertion.AssertEquals ("test#01", false, info.Exists);
-                               	info.Create ();                                
-                               	Assertion.AssertEquals ("test#02", false, info.Exists);
-                               	info = new DirectoryInfo (path);
-                               	Assertion.AssertEquals ("test#03", true, info.Exists);
-                       	} finally {
-                               	DeleteDir (path);
-                       	}
-               	}
+        	[Test]
+        	[ExpectedException(typeof(ArgumentException))]
+        	public void CtorArgumentException1 ()
+        	{
+        	    	DirectoryInfo info = new DirectoryInfo ("");            
+        	}
+
+        	[Test]
+        	[ExpectedException(typeof(ArgumentException))]
+        	public void CtorArgumentException2 ()
+        	{
+        	    	DirectoryInfo info = new DirectoryInfo ("   ");            
+        	}
+
+        	[Test]
+        	[ExpectedException(typeof(ArgumentException))]
+        	public void CtorArgumentException3 ()
+        	{
+            	string path = "";
+            	foreach (char c in Path.InvalidPathChars) {
+                	path += c;
+            	}
+            	DirectoryInfo info = new DirectoryInfo (path);
+        	}
+        	        	
+        	[Test]
+        	public void Exists ()
+        	{
+            	string path = TempFolder + "/DIT.Exists.Test";
+            	DeleteDir (path);
+            
+            	try {
+            	    	DirectoryInfo info = new DirectoryInfo (path);
+                	Assertion.AssertEquals ("test#01", false, info.Exists);
+            
+                	Directory.CreateDirectory (path);
+                	Assertion.AssertEquals ("test#02", false, info.Exists);
+                	info = new DirectoryInfo (path);
+                	Assertion.AssertEquals ("test#03", true, info.Exists);            
+            	} finally {
+                	DeleteDir (path);
+            	}
+        	}
+        	
+        	[Test]
+        	public void Name ()
+        	{
+        		string path = TempFolder + "/DIT.Name.Test";
+        		DeleteDir (path);
+        		
+        		try {
+        			DirectoryInfo info = new DirectoryInfo (path);        			
+        			Assertion.AssertEquals ("test#01", "DIT.Name.Test", info.Name);
+        			
+        			info = Directory.CreateDirectory (path);
+        			Assertion.AssertEquals ("test#02", "DIT.Name.Test", info.Name);
+        			
+        			
+        		} finally {
+        			DeleteDir (path);
+        		}        		           
+        	}
+        	
+        	[Test]
+        	public void Parent ()
+        	{
+        		string path = TempFolder + "/DIT.Parent.Test";
+        		DeleteDir (path);
+        		
+        		try {
+        			DirectoryInfo info = new DirectoryInfo (path);
+        			Assertion.AssertEquals ("test#01", "MonoTests.System.IO.Tests", info.Parent.Name);
+        			
+        			info = Directory.CreateDirectory (path);
+        			Assertion.AssertEquals ("test#02", "MonoTests.System.IO.Tests", info.Parent.Name);
+        			        			
+        		} finally {
+        			DeleteDir (path);
+        		}        		                   	
+        	}
+
+        	[Test]
+        	public void Create ()
+        	{
+            	string path = TempFolder + "/DIT.Create.Test";
+            	DeleteDir (path);
+            
+            	try {
+                	DirectoryInfo info = new DirectoryInfo (path);
+                	Assertion.AssertEquals ("test#01", false, info.Exists);
+                	info.Create ();                
+                	Assertion.AssertEquals ("test#02", false, info.Exists);
+                	info = new DirectoryInfo (path);
+                	Assertion.AssertEquals ("test#03", true, info.Exists);
+            	} finally {
+                	DeleteDir (path);
+            	}
+        	}
 
 		[Test]
 		public void Delete1 ()
 		{
-                       	string path = "resources/DIT.Delete1.Test";
-                       	DeleteDir (path);
+            	string path = TempFolder + "/DIT.Delete1.Test";
+            	DeleteDir (path);
 			
 			try {
 				Directory.CreateDirectory (path);
@@ -164,8 +181,8 @@ namespace MonoTests.System.IO
 		[Test]
 		public void Delete2 ()
 		{
-                       	string path = "resources/DIT.Delete2.Test";
-                       	DeleteDir (path);
+            	string path = TempFolder + "/DIT.Delete2.Test";
+            	DeleteDir (path);
 			
 			try {
 				Directory.CreateDirectory (path);
@@ -187,8 +204,8 @@ namespace MonoTests.System.IO
 		[ExpectedException (typeof (IOException))]
 		public void DeleteIOException1 ()
 		{
-                       	string path = "resources/DIT.DeleteIOException1.Test";
-                       	DeleteDir (path);			
+            	string path = TempFolder + "/DIT.DeleteIOException1.Test";
+            	DeleteDir (path);			
 			
 			try {
 				Directory.CreateDirectory (path);
@@ -204,8 +221,8 @@ namespace MonoTests.System.IO
 		[ExpectedException (typeof (IOException))]
 		public void DeleteIOException2 ()
 		{
-                       	string path = "resources/DIT.DeleteIOException2.Test";
-                       	DeleteDir (path);			
+            	string path = TempFolder + "/DIT.DeleteIOException2.Test";
+            	DeleteDir (path);			
 			
 			try {
 				Directory.CreateDirectory (path);
@@ -220,7 +237,7 @@ namespace MonoTests.System.IO
 		[Test]
 		public void GetDirectories1 ()
 		{
-			string path = "resources/DIT.GetDirectories1.Test";
+			string path = TempFolder + "/DIT.GetDirectories1.Test";
 			
 			try {
 				DirectoryInfo info = Directory.CreateDirectory (path);
@@ -242,7 +259,7 @@ namespace MonoTests.System.IO
 		[Test]
 		public void GetDirectories2 ()
 		{
-			string path = "resources/DIT.GetDirectories2.Test";
+			string path = TempFolder + "/DIT.GetDirectories2.Test";
 			
 			try {
 				DirectoryInfo info = Directory.CreateDirectory (path);
@@ -271,8 +288,8 @@ namespace MonoTests.System.IO
 		[ExpectedException (typeof (DirectoryNotFoundException))]		
 		public void GetDirectoriesDirectoryNotFoundException1 ()
 		{
-                       	string path = "resources/DIT.GetDirectoriesDirectoryNotFoundException1.Test";
-                       	DeleteDir (path);
+            	string path = TempFolder + "/DIT.GetDirectoriesDirectoryNotFoundException1.Test";
+            	DeleteDir (path);
 			
 			try {
 				DirectoryInfo info = new DirectoryInfo (path);
@@ -286,8 +303,8 @@ namespace MonoTests.System.IO
 		[ExpectedException (typeof (DirectoryNotFoundException))]		
 		public void GetDirectoriesDirectoryNotFoundException2 ()
 		{
-                       	string path = "resources/DIT.GetDirectoriesDirectoryNotFoundException2.Test";
-                       	DeleteDir (path);
+            	string path = TempFolder + "/DIT.GetDirectoriesDirectoryNotFoundException2.Test";
+            	DeleteDir (path);
 			
 			try {
 				DirectoryInfo info = new DirectoryInfo (path);
@@ -301,8 +318,8 @@ namespace MonoTests.System.IO
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void GetDirectoriesArgumentNullException ()
 		{
-                       	string path = "resources/DIT.GetDirectoriesArgumentNullException.Test";
-                       	DeleteDir (path);
+            	string path = TempFolder + "/DIT.GetDirectoriesArgumentNullException.Test";
+            	DeleteDir (path);
 			
 			try {
 				DirectoryInfo info = new DirectoryInfo (path);
@@ -315,8 +332,8 @@ namespace MonoTests.System.IO
 		[Test]
 		public void GetFiles1 ()
 		{
-                       	string path = "resources/DIT.GetFiles1.Test";
-                       	DeleteDir (path);
+            	string path = TempFolder + "/DIT.GetFiles1.Test";
+            	DeleteDir (path);
 			
 			try {
 				DirectoryInfo info = Directory.CreateDirectory (path);
@@ -334,8 +351,8 @@ namespace MonoTests.System.IO
 		[Test]
 		public void GetFiles2()
 		{
-                       	string path = "resources/DIT.GetFiles2.Test";
-                       	DeleteDir (path);
+            	string path = TempFolder + "/DIT.GetFiles2.Test";
+            	DeleteDir (path);
 			
 			try {
 				DirectoryInfo info = Directory.CreateDirectory (path);
@@ -363,7 +380,7 @@ namespace MonoTests.System.IO
 		[ExpectedException (typeof (DirectoryNotFoundException))]
 		public void GetFilesDirectoryNotFoundException1 ()
 		{
-			string path = "resources/DIT.GetFilesDirectoryNotFoundException1.Test";
+			string path = TempFolder + "/DIT.GetFilesDirectoryNotFoundException1.Test";
 			DeleteDir (path);
 			
 			try {
@@ -379,7 +396,7 @@ namespace MonoTests.System.IO
 		[ExpectedException (typeof (DirectoryNotFoundException))]
 		public void GetFilesDirectoryNotFoundException2 ()
 		{
-			string path = "resources/DIT.GetFilesDirectoryNotFoundException2.Test";
+			string path = TempFolder + "/DIT.GetFilesDirectoryNotFoundException2.Test";
 			DeleteDir (path);
 			
 			try {
@@ -395,7 +412,7 @@ namespace MonoTests.System.IO
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void GetFilesArgumentNullException ()
 		{
-			string path = "resources/DIT.GetFilesArgumentNullException.Test";
+			string path = TempFolder + "/DIT.GetFilesArgumentNullException.Test";
 			DeleteDir (path);
 			
 			try {
@@ -409,8 +426,8 @@ namespace MonoTests.System.IO
 		[Test]
 		public void MoveTo ()
 		{
-			string path1 = "resources/DIT.MoveTo.Soucre.Test";
-			string path2 = "resources/DIT.MoveTo.Dest.Test";
+			string path1 = TempFolder + "/DIT.MoveTo.Soucre.Test";
+			string path2 = TempFolder + "/DIT.MoveTo.Dest.Test";
 			DeleteDir (path1);
 			DeleteDir (path2);
 			
@@ -440,7 +457,7 @@ namespace MonoTests.System.IO
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void MoveToArgumentNullException ()
 		{
-			string path = "resources/DIT.MoveToArgumentNullException.Test";
+			string path = TempFolder + "/DIT.MoveToArgumentNullException.Test";
 			DeleteDir (path);
 			
 			try {
@@ -456,7 +473,7 @@ namespace MonoTests.System.IO
 		[ExpectedException (typeof (IOException))]
 		public void MoveToIOException1 ()
 		{
-			string path = "resources/DIT.MoveToIOException1.Test";
+			string path = TempFolder + "/DIT.MoveToIOException1.Test";
 			DeleteDir (path);
 			
 			try {
@@ -471,7 +488,7 @@ namespace MonoTests.System.IO
 		[ExpectedException (typeof (ArgumentException))]
 		public void MoveToArgumentException1 ()
 		{
-			string path = "resources/DIT.MoveToArgumentException1.Test";
+			string path = TempFolder + "/DIT.MoveToArgumentException1.Test";
 			DeleteDir (path);
 			
 			try {
@@ -486,7 +503,7 @@ namespace MonoTests.System.IO
 		[ExpectedException (typeof (ArgumentException))]
 		public void MoveToArgumentException2 ()
 		{
-			string path = "resources/DIT.MoveToArgumentException2.Test";
+			string path = TempFolder + "/DIT.MoveToArgumentException2.Test";
 			DeleteDir (path);
 			
 			try {
@@ -501,7 +518,7 @@ namespace MonoTests.System.IO
 		[ExpectedException (typeof (ArgumentException))]
 		public void MoveToArgumentException3 ()
 		{
-			string path = "resources/DIT.MoveToArgumentException3.Test";
+			string path = TempFolder + "/DIT.MoveToArgumentException3.Test";
 			DeleteDir (path);
 			
 			try {
@@ -516,7 +533,7 @@ namespace MonoTests.System.IO
 		[ExpectedException (typeof (IOException))]
 		public void MoveToIOException2 ()
 		{
-			string path = "resources/DIT.MoveToIOException2.Test";
+			string path = TempFolder + "/DIT.MoveToIOException2.Test";
 			DeleteDir (path);
 			
 			try {
@@ -527,11 +544,11 @@ namespace MonoTests.System.IO
 			}			
 		}
 
-               	private void DeleteDir (string path)
-               	{
-               		if (Directory.Exists (path))
-               			Directory.Delete (path, true);
-               	}
-               			
-       	}
+        	private void DeleteDir (string path)
+        	{
+        		if (Directory.Exists (path))
+        			Directory.Delete (path, true);
+        	}
+        			
+    	}
 }
