@@ -1,3 +1,10 @@
+2002-08-02  Radek Doulik  <rodo@ximian.com>
+
+	* marshal.c (mono_mb_add_data): convert ret value to LE, suggested
+	by Dietmar as quick fix
+	(mono_marshal_get_delegate_begin_invoke): use sig->param_count +
+	16 as stack size, used on more places as quick fix before Dietmar
+	will fix it properly
 
 Fri Aug 2 17:48:17 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
