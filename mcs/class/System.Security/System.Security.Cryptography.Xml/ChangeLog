@@ -1,0 +1,25 @@
+2002-11-20  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* DataObject.cs: New. Complete implementation.
+	* DSAKeyValue.cs: New. Complete implementation.
+	* KeyInfo.cs: New. Complete implementation.
+	* KeyInfoClause.cs: New. Abstract class (complete).
+	* KeyInfoName.cs: New. Complete implementation.
+	* KeyInfoNode.cs: New. Complete implementation.
+	* KeyInfoRetrievalMethod.cs: New. Complete implementation.
+	* KeyInfoX509Data.cs: New. Complete implementation.
+	* Reference.cs: New. Incomplete implementation.
+	* RSAKeyValue.cs: New. Complete implementation.
+	* Signature.cs: New. Almost complete implementation - returned
+	XML isn't exactly like the MS implementation.
+	* SignedInfo.cs: New. Complete except SignatureLength.
+	* SignedXml.cs: New. Minimal implementation (only enveloped signatures).
+	Still many TODO!
+	* Transform.cs: New. Abstract class (complete).
+	* TransformChain.cs: New. Complete implementation.
+	* XmlDsigBase64Transform.cs: New. Stub + basic logic.
+	* XmlDsigC14NTransform.cs: New. Stub + basic logic.
+	* XmlDsigC14NWithCommentsTransform.cs: New. Stub + basic logic.
+	* XmlDsigEnvelopedSignatureTransform.cs: New. Stub + basic logic.
+	* XmlDsigXPathTransform.cs: New. Stub + basic logic.
+	* XmlDsigXsltTransform.cs: New. Stub + basic logic.
