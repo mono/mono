@@ -96,18 +96,18 @@ namespace System.Data
 
 		//call once before adding a constraint to a collection
 		//will throw an exception to prevent the add if a rule is broken
-		internal protected abstract void AddToConstraintCollectionSetup(
-				ConstraintCollection collection);
+		internal virtual void AddToConstraintCollectionSetup(
+			ConstraintCollection collection){}
 					
 		//call once before removing a constraint to a collection
 		//can throw an exception to prevent the removal
-		internal protected abstract void RemoveFromConstraintCollectionCleanup( 
-				ConstraintCollection collection);
+		internal virtual void RemoveFromConstraintCollectionCleanup( 
+			ConstraintCollection collection){}
 
 
 		//Call to Validate the constraint
 		//Will throw if constraint is violated
-		internal abstract void AssertConstraint();
+		internal virtual void AssertConstraint(){}
 		
 	}
 }

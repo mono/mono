@@ -2,3 +2,5 @@
 .response
 System.Data.dll
 library-deps.stamp
+Temp
+tmp

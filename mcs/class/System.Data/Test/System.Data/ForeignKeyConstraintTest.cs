@@ -86,7 +86,7 @@ namespace MonoTests.System.Data
 			catch (AssertionFailedError exc) {throw exc;}
 			catch (Exception exc)
 			{
-				Assertion.Fail("A1: Wrong Exception type. " + exc.ToString());
+				Assertion.Fail("A2: Wrong Exception type. " + exc.ToString());
 			}
 
 			//different datasets
@@ -99,7 +99,7 @@ namespace MonoTests.System.Data
 			catch (AssertionFailedError exc) {throw exc;}
 			catch (Exception exc)
 			{
-				Assertion.Fail("A1: Wrong Exception type. " + exc.ToString());
+				Assertion.Fail("A3: Wrong Exception type. " + exc.ToString());
 			}
 
 			//different dataTypes
@@ -112,13 +112,91 @@ namespace MonoTests.System.Data
 			catch (AssertionFailedError exc) {throw exc;}
 			catch (Exception exc)
 			{
-				Assertion.Fail("A1: Wrong Exception type. " + exc.ToString());
+				Assertion.Fail("A4: Wrong Exception type. " + exc.ToString());
 			}
 
+
+		}
+		public void TestCtorExceptions2 () 
+		{
+			DataColumn col = new DataColumn("MyCol1",typeof(int));
+
+			ForeignKeyConstraint fkc;
 			
+			//Columns must belong to a Table
+			try 
+			{
+				fkc = new ForeignKeyConstraint(col, _ds.Tables[0].Columns[0]);
+				Assertion.Fail("FTT1: Failed to throw ArgumentException.");
+			}
+			catch (ArgumentException) {}
+			catch (AssertionFailedError exc) {throw exc;}
+			catch (Exception exc)
+			{
+				Assertion.Fail("WET1: Wrong Exception type. " + exc.ToString());
+			}
+
+			//Columns must belong to the same table
+			//InvalidConstraintException
+			
+			DataColumn [] difTable = new DataColumn [] {_ds.Tables[0].Columns[2],
+									   _ds.Tables[1].Columns[0]};
+			try 
+			{
+				fkc = new ForeignKeyConstraint(difTable,new DataColumn[] {
+								 _ds.Tables[0].Columns[1],
+								_ds.Tables[0].Columns[0]});
+					
+				Assertion.Fail("FTT2: Failed to throw InvalidConstraintException.");
+			}
+			catch (InvalidConstraintException) {}
+			catch (AssertionFailedError exc) {throw exc;}
+			catch (Exception exc)
+			{
+				Assertion.Fail("WET2: Wrong Exception type. " + exc.ToString());
+			}
 
 
+			//parent columns and child columns should be the same length
+			//ArgumentException
+			DataColumn [] twoCol = 
+				new DataColumn [] {_ds.Tables[0].Columns[0],_ds.Tables[0].Columns[1]};
+							  
 
+			try 
+			{
+				fkc = new ForeignKeyConstraint(twoCol, 
+					new DataColumn[] { _ds.Tables[0].Columns[0]});
+					
+				Assertion.Fail("FTT3: Failed to throw ArgumentException.");
+			}
+			catch (ArgumentException) {}
+			catch (AssertionFailedError exc) {throw exc;}
+			catch (Exception exc)
+			{
+				Assertion.Fail("WET3: Wrong Exception type. " + exc.ToString());
+			}
+
+			//InvalidOperation: Parent and child are the same column.
+			try 
+			{
+				fkc = new ForeignKeyConstraint( _ds.Tables[0].Columns[0],
+					_ds.Tables[0].Columns[0] );
+					
+				Assertion.Fail("FTT4: Failed to throw InvalidOperationException.");
+			}
+			catch (InvalidOperationException) {}
+			catch (AssertionFailedError exc) {throw exc;}
+			catch (Exception exc)
+			{
+				Assertion.Fail("WET4: Wrong Exception type. " + exc.ToString());
+			}
+
+		}
+
+		public void TestEquals()
+		{
+			//TODO:
 		}
 	}
 }

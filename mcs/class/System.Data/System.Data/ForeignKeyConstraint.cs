@@ -78,7 +78,7 @@ namespace System.Data
 		{
 
 			//Validate 
-			_validateCtor(parentColumns, childColumns);
+			_validateColumns(parentColumns, childColumns);
 
 			//Set Constraint Name
 			base.ConstraintName = constraintName;	
@@ -88,47 +88,87 @@ namespace System.Data
 			_childColumns = childColumns;
 		}
 
-		[MonoTODO]
-		private void _validateCtor(DataColumn[] parentColumns, DataColumn[] childColumns)
+		#endregion // Constructors
+
+		#region Helpers
+
+		private void _validateColumns(DataColumn[] parentColumns, DataColumn[] childColumns)
 		{
 			//not null
 			if (null == parentColumns || null == childColumns) 
 				throw new ArgumentNullException();
 			
+			//at least one element in each array
 			if (parentColumns.Length < 1 || childColumns.Length < 1)
 				throw new ArgumentException("Neither ParentColumns or ChildColumns can't be" +
 						" zero length.");
 				
-			//DataTypes must match
-			//column sets must all be from the same table
+			//same size arrays
+			if (parentColumns.Length != childColumns.Length)
+				throw new ArgumentException("Parent columns and child columns must be the same length.");
+			
 
 			DataTable ptable = parentColumns[0].Table;
 			DataTable ctable = childColumns[0].Table;
-		
-			//not null check
-			//TODO: columns must belong to a table else ArgumentException
-			
+	
 			
 			foreach (DataColumn pc in parentColumns)
 			{
+				//not null check
+				if (null == pc.Table) 
+				{
+					throw new ArgumentException("All columns must belong to a table." + 
+							" ColumnName: " + pc.ColumnName + " does not belong to a table.");
+				}
+				
+				//All columns must belong to the same table
+				if (ptable != pc.Table)
+					throw new InvalidConstraintException("Parent columns must all belong to the same table.");
 				
 				foreach (DataColumn cc in childColumns)
 				{
+					//not null
+					if (null == pc.Table) 
+					{
+						throw new ArgumentException("All columns must belong to a table." + 
+							" ColumnName: " + pc.ColumnName + " does not belong to a table.");
+					}
+			
+					//All columns must belong to the same table.
+					if (ctable != cc.Table)
+						throw new InvalidConstraintException("Child columns must all belong to the same table.");
+						
+						
+					//Can't be the same column
+					if (pc == cc)
+						throw new InvalidOperationException("Parent and child columns can't be the same column.");
 
+					if (! pc.DataType.Equals(cc.DataType))
+					{
+						//LAMESPEC: spec says throw InvalidConstraintException
+						//		implementation throws InvalidOperationException
+						throw new InvalidOperationException("Parent column is not type compatible with it's child"
+								+ " column.");
+					}
 				}	
 			}
-
-			//Tables must be from same datasets
+			
+			
+			//Same dataset.  If both are null it's ok
 			if (ptable.DataSet != ctable.DataSet)
 			{
-				throw new InvalidOperationException("Tables must belong to the same dataset.");
+				//LAMESPEC: spec says InvalidConstraintExceptoin
+				//	impl does InvalidOperationException
+				throw new InvalidOperationException("Parent column and child column must belong to" + 
+						" tables that belong to the same DataSet.");
+						
 			}
+
 			
 		}
 		
-		#endregion // Constructors
 
-		#region Helpers
+
 		private void _validateRemoveParentConstraint(ConstraintCollection sender, 
 				Constraint constraint, ref bool cancel, ref string failReason)
 		{
@@ -261,19 +301,25 @@ namespace System.Data
 			throw new NotImplementedException ();
 		}
 
-		protected internal override void AddToConstraintCollectionSetup(
+		internal override void AddToConstraintCollectionSetup(
 				ConstraintCollection collection)
 		{
 
-			//TODO:Should run Ctor rules again
+			//run Ctor rules again
+			_validateColumns(_parentColumns, _childColumns);
 			
+			//we must have a unique constraint on the parent
 			_ensureUniqueConstraintExists(collection, _parentColumns);
+			
+			//Make sure we can create this thing
+			AssertConstraint(); //TODO:if this fails and we created a unique constraint
+						//we should probably roll it back
 			
 		}
 					
 	
 		[MonoTODO]
-		protected internal override void RemoveFromConstraintCollectionCleanup( 
+		internal override void RemoveFromConstraintCollectionCleanup( 
 				ConstraintCollection collection)
 		{
 			return; //no rules yet		
@@ -285,7 +331,11 @@ namespace System.Data
 			//Constraint only works if both tables are part of the same dataset
 			
 			//if DataSet ...
-			
+			if (Table == null || RelatedTable == null) return; //TODO: Do we want this
+
+			if (Table.DataSet == null || RelatedTable.DataSet == null) return; //	
+				
+			//TODO:
 			//check for orphaned children
 			//check for...
 			

@@ -1,3 +1,24 @@
+2002-08-19 Franklin Wise <gracenote@earthlink.net>
+	
+	* Tests: See System.Data\Test\ChangeLog
+	
+	* System.Data/UniqueConstraint.cs: More validation.
+	
+	* System.Data/ForeignKeyConstraint.cs: Added more validation rules.
+	Another LAMESPEC tag.  Implemented more of Add/Remove Setup/Cleanup
+	logic.
+	
+	* System.Data/DataTable.cs: Added more MonoTODO tags
+	
+	* class/System.Data/.cvsignore: added tmp & Temp
+
+	* System.Data/Constraint.cs: Changed abstract helpers to virtual and
+	internal.
+
+	* System.Data/ConstraintCollection.cs: Commented out unused line.
+
+	
+
 2002-08-18  Rodrigo Moya <rodrigo@ximian.com>
 
 	* System.Data.OleDb/OleDbConnection.cs (ChangeDatabase): implemented.

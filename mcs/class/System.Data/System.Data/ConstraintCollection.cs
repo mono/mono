@@ -26,7 +26,7 @@ namespace System.Data
 	[Serializable]
 	public class ConstraintCollection : InternalDataCollectionBase 
 	{
-		private bool beginInit = false;
+		//private bool beginInit = false;
 		
 		public event CollectionChangeEventHandler CollectionChanged;
 		internal event DelegateValidateRemoveConstraint ValidateRemoveConstraint;

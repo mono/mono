@@ -144,6 +144,12 @@ namespace System.Data
 			}
 		}
 		
+		private void _validateColumns(DataColumn [] columns)
+		{
+			DataTable table;
+			_validateColumns(columns, out table);
+		}
+		
 		//Validates a collection of columns with the ctor rules
 		private void _validateColumns(DataColumn [] columns, out DataTable table) {
 			table = null;
@@ -253,20 +259,22 @@ namespace System.Data
 		}
 		
 	
-		internal protected override void AddToConstraintCollectionSetup(
+		internal override void AddToConstraintCollectionSetup(
 				ConstraintCollection collection)
 		{
-			//TODO:Should run Ctor rules again
+			//run Ctor rules again
+			_validateColumns(_dataColumns);
 			
 			//make sure a unique constraint doesn't already exists for these columns
 			UniqueConstraint uc = UniqueConstraint.GetUniqueConstraintForColumnSet(collection, this.Columns);	
 			if (null != uc) throw new ArgumentException("Unique constraint already exists for these" +
-					" columns.");
+					" columns. Existing ConstraintName is " + uc.ConstraintName);
 					
+			AssertConstraint();
 		}
 					
 		
-		internal protected override void RemoveFromConstraintCollectionCleanup( 
+		internal override void RemoveFromConstraintCollectionCleanup( 
 				ConstraintCollection collection)
 		{
 		}
@@ -274,7 +282,16 @@ namespace System.Data
 		[MonoTODO]
 		internal override void AssertConstraint()
 		{
-			//Unique?
+			
+			if (_dataTable == null) return; //???
+			if (_dataColumns == null) return; //???
+
+			
+			//Unique?	
+			DataTable tbl = _dataTable;
+
+			//TODO: validate no dups	
+
 		}
 		#endregion // Methods
 	}

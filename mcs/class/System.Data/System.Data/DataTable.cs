@@ -103,6 +103,7 @@ namespace System.Data
 		/// Initializes a new instance of the DataTable class with the SerializationInfo and the StreamingContext.
 		/// </summary>
 		
+		[MonoTODO]
 		protected DataTable(SerializationInfo info, StreamingContext context)
 			: this ()
 		{
@@ -129,12 +130,16 @@ namespace System.Data
 		/// <summary>
 		/// Gets the collection of child relations for this DataTable.
 		/// </summary>
-		
+		[MonoTODO]	
 		public DataRelationCollection ChildRelations
 		{
 			get {
 				// FIXME: temporarily commented to compile
 				// return (DataRelationCollection)_childRelations;
+				
+				//We are going to have to Inherit a class from 
+				//DataRelationCollection because DRC is abstract
+				
 				throw new NotImplementedException ();
 			}
 		}
@@ -142,7 +147,7 @@ namespace System.Data
 		/// <summary>
 		/// Gets the collection of columns that belong to this table.
 		/// </summary>
-		
+
 		public DataColumnCollection Columns
 		{
 			get {
@@ -168,21 +173,22 @@ namespace System.Data
 			get { return dataSet; }
 		}
 
-		/*
+		
 
 		/// <summary>
 		/// Gets a customized view of the table which may 
 		/// include a filtered view, or a cursor position.
 		/// </summary>
-		
+		[MonoTODO]	
 		public DataView DefaultView
 		{
 			get
 			{
-				return _defaultView;
+				throw new NotImplementedException();
+//				return _defaultView;
 			}
 		}
-		*/
+		
 
 		/// <summary>
 		/// Gets or sets the expression that will return 
