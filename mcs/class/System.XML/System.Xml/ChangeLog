@@ -1,3 +1,7 @@
+2005-01-13  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlResolver.cs : throw ArgumentException in ResolveUri().
+
 2005-01-11  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlTextWriter.cs : WriteComment() was outputting extraneous EOL.
