@@ -15,16 +15,21 @@ namespace System.Runtime.Remoting.Channels.Simple
 	public class SimpleChannel : IChannelReceiver, IChannel,
 		IChannelSender
 	{
-		private int tcp_port;
+		SimpleServerChannel svr_chnl;
+		SimpleClientChannel cnt_chnl;
 		
+		string name = "simple";
+
 		public SimpleChannel ()
 	        {
-			tcp_port = 0;
+			svr_chnl = new SimpleServerChannel (0);
+			cnt_chnl = new SimpleClientChannel ();
 		}
 
 		public SimpleChannel (int port)
 		{
-			tcp_port = port;
+			svr_chnl = new SimpleServerChannel (port);
+			cnt_chnl = new SimpleClientChannel ();
 		}
 
 		[MonoTODO]
@@ -37,61 +42,50 @@ namespace System.Runtime.Remoting.Channels.Simple
 
 		public object ChannelData
 		{
-			[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				return svr_chnl.ChannelData;
 			}
 		}
 
 		public string ChannelName
 		{
-			[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				return name;
 			}
 		}
 
 		public int ChannelPriority
 		{
-			[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				return svr_chnl.ChannelPriority;
 			}
 		}
 
-		[MonoTODO]
 		public IMessageSink CreateMessageSink (string url,
 						       object remoteChannelData,
 						       out string objectURI)
 	        {
-			throw new NotImplementedException ();
+			return cnt_chnl.CreateMessageSink (url, remoteChannelData, out objectURI);
 		}
 
-		[MonoTODO]
 		public string[] GetUrlsForUri (string objectURI)
 		{
-			throw new NotImplementedException ();
+			return svr_chnl.GetUrlsForUri (objectURI);
 		}
 
 		public string Parse (string url, out string objectURI)
 		{
-			int port;
-			
-			string host = ParseSimpleURL (url, out objectURI, out port);
-
-			return "tcp://" + host + ":" + port;
+			return svr_chnl.Parse (url, out objectURI);
 		}
 
-		[MonoTODO]
 		public void StartListening (object data)
 		{
-			throw new NotImplementedException ();
+			svr_chnl.StartListening (data);
 		}
 
-		[MonoTODO]
 		public void StopListening (object data)
 		{
-			throw new NotImplementedException ();
+			svr_chnl.StopListening (data);
 		}
 
 		internal static string ParseSimpleURL (string url, out string objectURI, out int port)

@@ -58,7 +58,7 @@ namespace System.Runtime.Remoting.Channels.Simple
 		}
 
 		public SimpleServerChannel (IDictionary properties,
-					 IServerChannelSinkProvider serverSinkProvider)
+					    IServerChannelSinkProvider serverSinkProvider)
 		{
 			port = (int)properties ["port"];
 			Init (serverSinkProvider);
@@ -100,20 +100,24 @@ namespace System.Runtime.Remoting.Channels.Simple
 			}
 		}
 
-		public string GetChannelUri ()
+		string GetChannelUri ()
 		{
-			return "tcp://" + host + ":" + port;
+			return "simple://" + host + ":" + port;
 		}
 		
 		public string[] GetUrlsForUri (string uri)
 		{
-			string [] result = new String [1];
-
+			string [] chnl_uris = channel_data.ChannelUris;
+			
 			if (uri.IndexOf ('/') != 0)
-				result [0] = GetChannelUri () + "/" + uri;
-			else
-				result [0] = GetChannelUri () + uri;
+				uri = "/" + uri;
 
+			string [] result = new String [chnl_uris.Length];
+
+			for (int i = 0; i < chnl_uris.Length; i++) {
+				result [i] = chnl_uris [i] + uri;
+			}
+			
 			return result;
 		}
 
@@ -123,7 +127,7 @@ namespace System.Runtime.Remoting.Channels.Simple
 			
 			string host = SimpleChannel.ParseSimpleURL (url, out objectURI, out port);
 
-			return "tcp://" + host + ":" + port;
+			return GetChannelUri ();
 		}
 
 		void WaitForConnections ()

@@ -1,3 +1,14 @@
+2002-09-03  Dietmar Maurer  <dietmar@ximian.com>
+
+	* System.Runtime.Remoting.Channels.CORBA/CORBAChannel.cs:
+	impl. the channel wrapper.
+
+	* System.Runtime.Remoting.Channels.Simple/SimpleChannel.cs:
+	impl. the channel wrapper.
+
+	* System.Runtime.Remoting.Channels.Simple/SimpleServerChannel.cs
+	(GetUrlsForUri): use all available channel uris. 
+
 2002-08-30  Dietmar Maurer  <dietmar@ximian.com>
 
 	* System.Runtime.Remoting.Channels.Simple/SimpleWireFormat.cs: add

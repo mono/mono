@@ -15,83 +15,77 @@ namespace System.Runtime.Remoting.Channels.CORBA
 	public class CORBAChannel : IChannelReceiver, IChannel,
 		IChannelSender
 	{
-		private int tcp_port;
+		CORBAServerChannel svr_chnl;
+		CORBAClientChannel cnt_chnl;
 		
+		string name = "corba";
+
 		public CORBAChannel ()
 	        {
-			tcp_port = 0;
+			svr_chnl = new CORBAServerChannel (0);
+			cnt_chnl = new CORBAClientChannel ();
 		}
 
 		public CORBAChannel (int port)
 		{
-			tcp_port = port;
+			svr_chnl = new CORBAServerChannel (port);
+			cnt_chnl = new CORBAClientChannel ();
 		}
 
 		[MonoTODO]
 		public CORBAChannel (IDictionary properties,
-				     IClientChannelSinkProvider clientSinkProvider,
-				     IServerChannelSinkProvider serverSinkProvider)
+				      IClientChannelSinkProvider clientSinkProvider,
+				      IServerChannelSinkProvider serverSinkProvider)
 		{
 			throw new NotImplementedException ();
 		}
 
 		public object ChannelData
 		{
-			[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				return svr_chnl.ChannelData;
 			}
 		}
 
 		public string ChannelName
 		{
-			[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				return name;
 			}
 		}
 
 		public int ChannelPriority
 		{
-			[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				return svr_chnl.ChannelPriority;
 			}
 		}
 
-		[MonoTODO]
 		public IMessageSink CreateMessageSink (string url,
 						       object remoteChannelData,
 						       out string objectURI)
 	        {
-			throw new NotImplementedException ();
+			return cnt_chnl.CreateMessageSink (url, remoteChannelData, out objectURI);
 		}
 
-		[MonoTODO]
 		public string[] GetUrlsForUri (string objectURI)
 		{
-			throw new NotImplementedException ();
+			return svr_chnl.GetUrlsForUri (objectURI);
 		}
 
 		public string Parse (string url, out string objectURI)
 		{
-			int port;
-			
-			string host = ParseCORBAURL (url, out objectURI, out port);
-
-			return "corba://" + host + ":" + port;
+			return svr_chnl.Parse (url, out objectURI);
 		}
 
-		[MonoTODO]
 		public void StartListening (object data)
 		{
-			throw new NotImplementedException ();
+			svr_chnl.StartListening (data);
 		}
 
-		[MonoTODO]
 		public void StopListening (object data)
 		{
-			throw new NotImplementedException ();
+			svr_chnl.StopListening (data);
 		}
 
 		internal static string ParseCORBAURL (string url, out string objectURI, out int port)

@@ -17,7 +17,7 @@ namespace System.Runtime.Remoting.Channels.Simple
 	public class SimpleClientChannel : IChannelSender, IChannel
 	{
 		int priority = 1;					
-		string name = "tcp";
+		string name = "simple";
 		IClientChannelSinkProvider sink_provider;
 		
 		public SimpleClientChannel ()
@@ -68,7 +68,7 @@ namespace System.Runtime.Remoting.Channels.Simple
 						       out string objectURI)
 	        {
 			objectURI = null;
-			
+
 			if (url != null) {
 				if (Parse (url, out objectURI) != null)
 					return (IMessageSink) sink_provider.CreateSink (this, url,

@@ -29,24 +29,21 @@ class Test : MarshalByRefObject {
 		string url = "corba://localhost:8000/test";
 		string uri;
 		
-		IChannelReceiver svr_chnl = new CORBAServerChannel (8000);
-		
-		IChannel chnl = new CORBAClientChannel ();
+		CORBAChannel chnl = new CORBAChannel (8000);
+		ChannelServices.RegisterChannel (chnl);
 
 		Console.WriteLine ("Channel name: " + chnl.ChannelName);
 		Console.WriteLine ("Channel priority: " + chnl.ChannelPriority);
 		Console.WriteLine ("URI: " + chnl.Parse (url, out uri));
 		Console.WriteLine ("URI: " + uri);
 		
-		ChannelServices.RegisterChannel (chnl);
-
 		Test tp = (Test)RemotingServices.Connect (typeof (Test), url);
 
 		int res = tp.test_function (4, true);
 
 		Console.WriteLine ("RESULT: " + res);
 		
-		svr_chnl.StopListening (null);
+		chnl.StopListening (null);
 		
 		return 0;
 	}

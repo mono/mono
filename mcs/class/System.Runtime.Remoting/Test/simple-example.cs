@@ -29,16 +29,14 @@ class Test : MarshalByRefObject {
 		string url = "simple://localhost:8000/test";
 		string uri;
 		
-		IChannelReceiver svr_chnl = new SimpleServerChannel (8000);
-		
-		IChannel chnl = new SimpleClientChannel ();
+		SimpleChannel chnl = new SimpleChannel (8000);
+		ChannelServices.RegisterChannel (chnl);
 
 		Console.WriteLine ("Channel name: " + chnl.ChannelName);
 		Console.WriteLine ("Channel priority: " + chnl.ChannelPriority);
 		Console.WriteLine ("URI: " + chnl.Parse (url, out uri));
 		Console.WriteLine ("URI: " + uri);
 		
-		ChannelServices.RegisterChannel (chnl);
 
 		Test tp = (Test)RemotingServices.Connect (typeof (Test), url);
 
@@ -46,7 +44,7 @@ class Test : MarshalByRefObject {
 
 		Console.WriteLine ("RESULT: " + res);
 		
-		svr_chnl.StopListening (null);
+		chnl.StopListening (null);
 		
 		return 0;
 	}
