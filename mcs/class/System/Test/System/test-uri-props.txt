@@ -702,6 +702,25 @@ IPv4
 
 
 -------------------------
+file:///c:/name%20with%20space.txt
+file:///c:/name with space.txt
+file:///c:/name%20with%20space.txt
+file
+
+c:\name with space.txt
+
+-1
+True
+False
+False
+False
+Basic
+c:/name%20with%20space.txt
+c:/name%20with%20space.txt
+
+
+
+-------------------------
 http://localhost/c#
 http://localhost/c#
 http://localhost/c#
@@ -756,6 +775,25 @@ Dns
 /c
 /c
 localhost
+#
+
+-------------------------
+file://test.domain.com/c#
+file://test.domain.com/c#
+file://test.domain.com/c#
+file
+test.domain.com
+\\test.domain.com\c
+
+-1
+True
+True
+False
+False
+Dns
+/c
+/c
+test.domain.com
 #
 
 -------------------------
@@ -1041,5 +1079,24 @@ Basic
 
 
 
+
+
+-------------------------
+file:///test.domain.com/name space
+file://test.domain.com/name space
+file://test.domain.com/name%20space
+file
+test.domain.com
+\\test.domain.com\name space
+
+-1
+True
+True
+False
+False
+Dns
+/name%20space
+/name%20space
+test.domain.com
 
 

@@ -72,6 +72,7 @@ file://server/filename.ext
 \\server\share\filename.ext
 http://1.2.3.4
 file://1.2.3.4
+file:///c:/name%20with%20space.txt
 # file:
 # http:
 # makefile
@@ -88,6 +89,7 @@ file://1.2.3.4
 http://localhost/c#
 http://localhost/c#bookmark
 file://localhost/c#
+file://test.domain.com/c#
 //localhost/c#
 # below should not be allowed ...
 file://c:/c#
@@ -114,6 +116,8 @@ http://web.app.com/test.cgi?value=あいうえお
 辭典:cn_to_ja/ファイル
 ファイル:
 辭典:
+# I think it is not totally retional, but ToString() returns unespaced string.
+file:///test.domain.com/name space
 #
 #
 # MS.NET supplies no host info (consoto.com), but I think Mono is better.
