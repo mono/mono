@@ -1,5 +1,9 @@
 2004-01-20  Martin Baulig  <martin@ximian.com>
 
+	* statement.cs (Break.DoEmit): Set ec.NeedExplicitReturn; fixes #52427.
+
+2004-01-20  Martin Baulig  <martin@ximian.com>
+
 	* statement.cs (Statement.ResolveUnreachable): New public method.
 	(If, While): Do the dead-code elimination in Resolve(), not in Emit().
 	(Block.Resolve): Resolve unreachable statements.

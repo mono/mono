@@ -891,8 +891,10 @@ namespace Mono.CSharp {
 
 			if (ec.InTry || ec.InCatch)
 				ig.Emit (OpCodes.Leave, ec.LoopEnd);
-			else
+			else {
+				ec.NeedExplicitReturn = true;
 				ig.Emit (OpCodes.Br, ec.LoopEnd);
+			}
 		}
 	}
 
