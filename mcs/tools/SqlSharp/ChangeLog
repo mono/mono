@@ -1,3 +1,9 @@
+2002-11-30  Daniel Morgan <danmorg@sc.rr.com>
+
+	* SqlSharpCli.cs: allow the ODBC provider
+	to execute a query and save results an XML file
+	via the \exexml command
+
 2002-11-11  Daniel Morgan <danmorg@sc.rr.com>
 
 	* SqlSharpCli.cs: added new SQL# command \exexml 

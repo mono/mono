@@ -688,11 +688,9 @@ namespace Mono.Data.SqlSharp {
 			DbDataAdapter adapter = null;
 
 			switch(provider) {
-			// FIXME: System.Data.Odbc does not have
-			//        have a OdbcDataAdapter yet
-			//case "ODBC":
-			//	adapter = (DbDataAdapter) new OdbcDataAdapter ();
-			//	break;
+			case "ODBC":
+				adapter = (DbDataAdapter) new OdbcDataAdapter ();
+				break;
 			case "OLEDB":
 				adapter = (DbDataAdapter) new OleDbDataAdapter ();
 				break;
