@@ -2,7 +2,8 @@
 //
 // This code was automatically generated from
 // ECMA CLI XML Library Specification.
-// Generator: libgen.xsl
+// Generator: libgen.xsl [1.0; (C) Sergey Chaban (serge@wildwestsoftware.com)]
+// Created: Wed, 5 Sep 2001 06:47:33 UTC
 // Source file: all.xml
 // URL: http://devresource.hp.com/devresource/Docs/TechPapers/CSharp/all.xml
 //
@@ -13,22 +14,18 @@ namespace System.Xml {
 
 
 	/// <summary>
-	/// <para>TODO: Specifies the type of node change </para>
 	/// </summary>
 	public enum XmlNodeChangedAction {
 
 		/// <summary>
-		/// <para>TODO: A node is beeing inserted in the tree.</para>
 		/// </summary>
 		Insert = 0,
 
 		/// <summary>
-		/// <para>TODO: A node is beeing removed from the tree.</para>
 		/// </summary>
 		Remove = 1,
 
 		/// <summary>
-		/// <para>TODO: A node value is beeing changed.</para>
 		/// </summary>
 		Change = 2,
 	} // XmlNodeChangedAction

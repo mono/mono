@@ -2,7 +2,8 @@
 //
 // This code was automatically generated from
 // ECMA CLI XML Library Specification.
-// Generator: libgen.xsl
+// Generator: libgen.xsl [1.0; (C) Sergey Chaban (serge@wildwestsoftware.com)]
+// Created: Wed, 5 Sep 2001 06:31:40 UTC
 // Source file: AllTypes.xml
 // URL: http://msdn.microsoft.com/net/ecma/AllTypes.xml
 //
@@ -13,37 +14,31 @@ namespace System.Xml {
 
 
 	/// <summary>
-	/// <para> Specifies the state of an instance of the <see cref="T:System.Xml.XmlTextWriter" /> class.
-	///    </para>
 	/// </summary>
 	public enum WriteState {
 
-		/// <summary><para> An instance of the <see cref="!:System.Xml.XmlTextWriter.XmlTextWriter" qualify="true" /> class is initialized 
-		///    but none of the writing methods nor the <see cref="M:System.Xml.XmlTextWriter.Close" qualify="true" />
-		///    method have been called.
-		///    </para><para> The <see cref="M:System.Xml.XmlTextWriter.WriteEndDocument" qualify="true" /> method resets
-		/// the <see cref="P:System.Xml.XmlTextWriter.WriteState" qualify="true" /> to this
-		/// value. </para></summary>
+		/// <summary>
+		/// </summary>
 		Start = 0,
 
-		/// <summary><para> The XML declaration is being written.
-		///       </para></summary>
+		/// <summary>
+		/// </summary>
 		Prolog = 1,
 
-		/// <summary><para> An element start tag is being written.
-		///       </para></summary>
+		/// <summary>
+		/// </summary>
 		Element = 2,
 
-		/// <summary><para> An attribute value is being written.
-		///       </para></summary>
+		/// <summary>
+		/// </summary>
 		Attribute = 3,
 
-		/// <summary><para> Element content is being written.
-		///       </para></summary>
+		/// <summary>
+		/// </summary>
 		Content = 4,
 
-		/// <summary><para> The <see cref="M:System.Xml.XmlTextWriter.Close" /> method has been called.
-		///    </para></summary>
+		/// <summary>
+		/// </summary>
 		Closed = 5,
 	} // WriteState
 

@@ -2,7 +2,8 @@
 //
 // This code was automatically generated from
 // ECMA CLI XML Library Specification.
-// Generator: libgen.xsl
+// Generator: libgen.xsl [1.0; (C) Sergey Chaban (serge@wildwestsoftware.com)]
+// Created: Wed, 5 Sep 2001 06:31:27 UTC
 // Source file: AllTypes.xml
 // URL: http://msdn.microsoft.com/net/ecma/AllTypes.xml
 //
@@ -13,29 +14,27 @@ namespace System.Xml {
 
 
 	/// <summary>
-	/// <para>Specifies the state of an instance of a class derived 
-	///       from the <see cref="T:System.Xml.XmlReader" /> class.</para>
 	/// </summary>
 	public enum ReadState {
 
-		/// <summary><para>The <see cref="M:System.Xml.XmlReader.Read" /> method has not been called.</para></summary>
+		/// <summary>
+		/// </summary>
 		Initial = 0,
 
-		/// <summary><para>The <see cref="M:System.Xml.XmlReader.Read" /> method
-		///    has been called. Additional methods may be called on the reader.</para></summary>
+		/// <summary>
+		/// </summary>
 		Interactive = 1,
 
 		/// <summary>
-		///     An error occurred that prevents the
-		///     read operation from continuing.
-		///  </summary>
+		/// </summary>
 		Error = 2,
 
-		/// <summary><para> The end of the file has been
-		///       reached.</para></summary>
+		/// <summary>
+		/// </summary>
 		EndOfFile = 3,
 
-		/// <summary><para>The <see cref="M:System.Xml.XmlReader.Close" /> method has been called.</para></summary>
+		/// <summary>
+		/// </summary>
 		Closed = 4,
 	} // ReadState
 
