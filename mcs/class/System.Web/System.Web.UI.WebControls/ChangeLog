@@ -1,4 +1,10 @@
-2004-10-1i4 Sanjay Gupta <gsanjay@novell.com>
+2004-10-19 Sanjay Gupta <gsanjay@novell.com>
+	
+	* SiteMapDataSourceView.cs: Corrected class definition and updated.
+	* XmlHierarchicalDataSourceView.cs: Modified according to changes in 
+	  base class.
+
+2004-10-14 Sanjay Gupta <gsanjay@novell.com>
 	
 	* AdRotator.cs: Updated.
 

@@ -3,8 +3,10 @@
 //
 // Authors:
 //	Ben Maurer (bmaurer@users.sourceforge.net)
+//	Sanjay Gupta (gsanjay@novell.com)
 //
 // (C) 2003 Ben Maurer
+// (C) 2004 Novell, Inc. (http://www.novell.com)
 //
 
 //
@@ -32,19 +34,22 @@
 using System.Collections;
 using System.Collections.Specialized;
 using System.Text;
+using System.Web.UI;
 
 namespace System.Web.UI.WebControls {
-	public class SiteMapDataSourceView : HierarchicalDataSourceView {
+	public class SiteMapDataSourceView : DataSourceView {
 		public SiteMapDataSourceView (SiteMapNode node) : this (new SiteMapNodeCollection (node)) {}
 		public SiteMapDataSourceView (SiteMapNodeCollection collection)
 		{
 			this.collection = collection;
 		}
-		public override IHierarchicalEnumerable GetHierarchicalList ()
-		{
-			return collection;
-		}
 		
+		[MonoTODO ("Need to bring in sync with latest DataSourceView class")]
+		public override IEnumerable Select ()
+		{
+			throw new NotImplementedException ();
+		}
+
 		SiteMapNodeCollection collection;
 	}
 }
