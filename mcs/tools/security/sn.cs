@@ -43,7 +43,17 @@ namespace Mono.Tools {
 
 		static bool LoadConfig () 
 		{
-			StrongNameManager.LoadConfig ("strongnames.config");
+			string path = "strongnames.config";
+			PropertyInfo gac = typeof (System.Environment).GetProperty ("GacPath",
+					BindingFlags.Static|BindingFlags.NonPublic);
+
+			if (gac != null) {
+				MethodInfo gac_getter = gac.GetGetMethod (true);
+				path = Path.Combine ((string) gac_getter.Invoke (null, null),
+						"strongnames.config");
+			}
+			
+			StrongNameManager.LoadConfig (path);
 			// default CSP
 			return false;
 		}

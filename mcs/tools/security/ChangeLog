@@ -1,3 +1,8 @@
+2004-04-27  Jackson Harper  <jackson@ximian.com>
+
+	* sn.cs: Attempt to load the strongnames.config file from the GAC
+	path.
+	
 2004-04-26  Jackson Harper  <jackson@ximian.com>
 
 	* Makefile: use profile libraries from the default profile.
