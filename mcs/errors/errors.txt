@@ -1,0 +1,11 @@
+We use negative numbers for the compiler, and leave the possitive
+numbers to match the Microsoft numbers:
+
+-1	An Primary Expression was parsed, when a Type was expected.
+	This happens because my parser knowledge is limited, and I
+	am not good at writing grammars.  It is still an error,
+	but if I were smarter, I would have found a Bison/Yacc way
+	of handling it.
+
+-2	Internal error, an interface is being defined inside an
+	interface (This should never happen).

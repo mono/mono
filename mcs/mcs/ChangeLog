@@ -1,0 +1,147 @@
+2001-06-08  Miguel de Icaza  <miguel@ximian.com>
+
+	* ARGH.  I have screwed up my tree so many times due to the use of
+	rsync rather than using CVS.  Going to fix this at once. 
+
+	* driver.cs: Objetify driver.  Load assemblies, use assemblies to
+	load types.
+
+2001-06-07  Miguel de Icaza  <miguel@ximian.com>
+
+	* Experiment successful: Use System.Type rather that our own
+	version of Type.  
+
+2001-05-25  Miguel de Icaza  <miguel@ximian.com>
+
+	* cs-parser.jay: Removed nsAliases from here.
+
+	Use new namespaces, handle `using XXX;' 
+
+	* namespace.cs: Reimplemented namespace handling, use a recursive
+	definition of the class.  Now we can keep track of using clauses
+	and catch invalid using clauses.
+
+2001-05-24  Miguel de Icaza  <miguel@ximian.com>
+
+	* gen-treedump.cs: Adapted for all the renaming.
+
+	* expression.cs (Expression): this class now has a Type property
+	which returns an expression Type.
+
+	(Probe::, New::, TypeOf::, SizeOf::, Constant::): renamed from
+	`Type', as this has a different meaning now in the base
+
+2001-05-22  Miguel de Icaza  <miguel@ximian.com>
+
+	* interface.cs, class.cs: Removed from all the sources the
+	references to signature computation, as we can not do method
+	signature computation during the parsing time, as we are not
+	trying to solve at that point distinguishing:
+
+	class X {
+		void a (Blah x) {}
+		void a (NS.Blah x) {}
+	}
+
+	Which depending on the context might be valid or not, as we do not
+	know if Blah is the same thing as NS.Blah at that point.
+
+	* Redid everything so the code uses TypeRefs now instead of
+	Types.  TypeRefs are just temporary type placeholders, that need
+	to be resolved.  They initially have a pointer to a string and the
+	current scope in which they are used.  This is used later by the
+	compiler to resolve the reference to an actual Type. 
+
+	* DeclSpace is no longer a CIR.Type, and neither are
+	TypeContainers (Class and Struct) nor Interfaces nor Enums.  They
+	are all DeclSpaces, but no Types. 
+
+	* type.cs (TypeRefManager): This implements the TypeRef manager,
+	which keeps track of all the types that need to be resolved after
+	the parsing has finished. 
+
+2001-05-13  Miguel de Icaza  <miguel@ximian.com>
+
+	* ARGH.  We are going to have to store `foreach' as a class rather
+	than resolving it, as we need to verify error 1579 after name
+	resolution.   *OR* we could keep a flag that says `This request to
+	IEnumerator comes from a foreach statement' which we can then use
+	to generate the error.
+
+2001-05-10  Miguel de Icaza  <miguel@ximian.com>
+
+	* class.cs (TypeContainer.AddMethod): we now add methods to the
+	MethodGroup instead of the method hashtable.  
+
+	* expression.cs: Add MethodGroup abstraction, which gets us one
+	step closer to the specification in the way we handle method
+	declarations.  
+
+	* cs-parser.jay (primary_expression): qualified_identifier now
+	tried to match up an identifier to a local variable reference or
+	to a parameter reference.
+
+	current_local_parameters is now a parser global variable that
+	points to the current parameters for the block, used during name
+	lookup.
+
+	(property_declaration): Now creates an implicit `value' argument to
+	the set accessor.
+
+2001-05-09  Miguel de Icaza  <miguel@ximian.com>
+
+	* parameter.cs: Do not use `param' arguments as part of the
+	signature, per the spec.
+
+2001-05-08  Miguel de Icaza  <miguel@ximian.com>
+
+	* decl.cs: Base class for classes, structs and interfaces.  This
+	is the "Declaration Space" 
+
+	* cs-parser.jay: Use CheckDef for checking declaration errors
+	instead of having one on each function.
+
+	* class.cs: Factor out some code for handling error handling in
+	accordance to the "Declarations" section in the "Basic Concepts"
+	chapter in the ECMA C# spec.
+
+	* interface.cs: Make all interface member classes derive from
+	InterfaceMemberBase.
+
+2001-05-07  Miguel de Icaza  <miguel@ximian.com>
+
+	* Many things: all interfaces are parsed and generated in
+	gen-treedump.  Support for member variables, constructors,
+	destructors, properties, constants is there.
+
+	Beginning of the IL backend, but very little done, just there for
+	testing purposes. 
+
+2001-04-29  Miguel de Icaza  <miguel@ximian.com>
+
+	* cs-parser.jay: Fix labeled statement.
+
+	* cs-tokenizer.cs (escape): Escape " and ' always.
+	ref_line, ref_name: keep track of the line/filename as instructed
+	by #line by the compiler.
+	Parse #line.
+
+2001-04-27  Miguel de Icaza  <miguel@ximian.com>
+
+	* System.CodeDOM/CodeBinaryOperatorExpression.cs: Rearrange enum
+	to match the values in System.CodeDOM.
+
+	Divid renamed to Divide.
+
+	* System.CodeDOM/CodeForLoopStatement.cs: Always have valid
+	statements. 
+	(Statements.set): remove.
+
+	* System.CodeDOM/CodeCatchClause.cs: always have a valid
+	statements. 
+
+	* System.CodeDOM/CodeIfStatement.cs: trueStatements and
+	falseStatements always have valid values. 
+
+	* cs-parser.jay: Use System.CodeDOM now.
+
