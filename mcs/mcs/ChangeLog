@@ -1,5 +1,13 @@
 2001-12-17  Miguel de Icaza  <miguel@ximian.com>
 
+	* cs-parser.jay: Add a production in element_access that allows
+	the thing to become a "type" reference.  This way we can parse
+	things like "(string [])" as a type.
+
+	Note that this still does not handle the more complex rules of
+	casts. 
+	
+
 	* delegate.cs (Delegate.Populate): Register the delegage constructor builder here. 
 
 	* ecore.cs: (CopyNewMethods): new utility function used to

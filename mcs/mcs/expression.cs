@@ -4122,9 +4122,10 @@ namespace Mono.CSharp {
 	}
 
 	/// <summary>
-	///   An Element Access expression.  During semantic
-	///   analysis these are transformed into IndexerAccess or
-	///   ArrayAccess expressions
+	///   An Element Access expression.
+	///
+	///   During semantic analysis these are transformed into 
+	///   IndexerAccess or ArrayAccess 
 	/// </summary>
 	public class ElementAccess : Expression {
 		public ArrayList  Arguments;
@@ -4135,11 +4136,15 @@ namespace Mono.CSharp {
 		{
 			Expr = e;
 
+			loc  = l;
+			
+			if (e_list == null)
+				return;
+			
 			Arguments = new ArrayList ();
 			foreach (Expression tmp in e_list)
 				Arguments.Add (new Argument (tmp, Argument.AType.Expression));
 			
-			loc  = l;
 		}
 
 		bool CommonResolve (EmitContext ec)

@@ -1829,6 +1829,28 @@ element_access
 	  {
 		$$ = new ElementAccess ((Expression) $1, (ArrayList) $3, lexer.Location);
 	  }
+	| primary_expression rank_specifiers
+	  {
+		// So the super-trick is that primary_expression
+		// can only be either a SimpleName or a MemberAccess. 
+		// The MemberAccess case arises when you have a fully qualified type-name like :
+		// Foo.Bar.Blah i;
+		// SimpleName is when you have
+		// Blah i;
+		  
+		Expression expr = (Expression) $1;  
+		if (!(expr is SimpleName || expr is MemberAccess)) {
+			Location l = lexer.Location;
+			Report.Error (-1, l, "Invalid Type definition");
+			$$ = "System.Object";
+		}
+		
+		//
+		// So we extract the string corresponding to the SimpleName
+		// or MemberAccess
+		// 
+		$$ = new SimpleName (GetQualifiedIdentifier (expr) + (string) $2, lexer.Location);
+	  }
 	;
 
 expression_list
@@ -2039,7 +2061,7 @@ unary_expression
 	  {
 		  $$ = new Cast ((Expression) $2, (Expression) $4, lexer.Location);
 	  }
-	| OPEN_PARENS non_expression_type CLOSE_PARENS prefixed_unary_expression
+        | OPEN_PARENS non_expression_type CLOSE_PARENS prefixed_unary_expression
 	  {
 		  $$ = new Cast ((Expression) $2, (Expression) $4, lexer.Location);
 	  }
@@ -2530,6 +2552,7 @@ declaration_statement
 	  {
 		DictionaryEntry de = (DictionaryEntry) $1;
 
+		Console.WriteLine ("Declaring: " + (string) de.Key);
 		$$ = declare_local_variables ((string) de.Key, (ArrayList) de.Value, lexer.Location);
 	  }
 
@@ -3343,7 +3366,7 @@ string GetQualifiedIdentifier (Expression expr)
 	else if (expr is MemberAccess)
 		return GetQualifiedIdentifier (((MemberAccess)expr).Expr) + "." + ((MemberAccess) expr).Identifier;
 	else 
-		throw new Exception ("Expr has to be either SimpleName or MemberAccess !");
+		throw new Exception ("Expr has to be either SimpleName or MemberAccess! (" + expr + ")");
 	
 }
 
