@@ -1,5 +1,10 @@
 2004-11-17  Martin Baulig  <martin@ximian.com>
 
+	* Makefile: Reverted Miguel's last commit and correctly added his
+	pover-a and pover-b tests.
+
+2004-11-17  Martin Baulig  <martin@ximian.com>
+
 	* Makefile: Enable test-315 and gen-95.
 
 2004-11-16  Martin Baulig  <martin@ximian.com>
