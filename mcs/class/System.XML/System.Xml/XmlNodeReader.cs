@@ -308,20 +308,33 @@ namespace System.Xml
 		{
 			if (GetAttribute (name) == null)
 				return false;
-			else
+			else {
+				current = current.Attributes [name];
 				return true;
+			}
 		}
 
 		public override bool MoveToAttribute (string name, string namespaceURI)
 		{
 			if (GetAttribute (name, namespaceURI) == null)
 				return false;
-			else
+			else {
+				current = current.Attributes [name, namespaceURI];
 				return true;
+			}
+		}
+
+		private void MoveToEndElement ()
+		{
+			isEndElement = true;
+			depth--;
+			current = current.ParentNode;
 		}
 
 		public override bool MoveToElement ()
 		{
+			if (current == null)
+				return false;
 			if (current.NodeType == XmlNodeType.Attribute) {
 				current = ((XmlAttribute) current).OwnerElement;
 				return true;
@@ -360,6 +373,25 @@ namespace System.Xml
 			}
 		}
 
+		private bool MoveToNextSibling ()
+		{
+			if (nextIsEndElement) {
+				// nextIsEndElement is set only by ReadString.
+				nextIsEndElement = false;
+				MoveToEndElement ();
+			} else if (alreadyRead) {
+				alreadyRead = false;
+				return current != null;
+			}
+			if (current.NextSibling != null) {
+				isEndElement = false;
+				current = current.NextSibling;
+			} else {
+				MoveToEndElement ();
+			}
+			return current != null;
+		}
+
 		[MonoTODO("Entity handling is not supported.")]
 		public override bool Read ()
 		{
@@ -381,8 +413,7 @@ namespace System.Xml
 					return true;
 			}
 
-			if (current.NodeType == XmlNodeType.Attribute)
-				current = ((XmlAttribute) current).OwnerElement;
+			MoveToElement ();
 			isEndEntity = false;
 
 			if (isEndElement) {
@@ -395,19 +426,22 @@ namespace System.Xml
 					current = null;
 					state = ReadState.EndOfFile;
 					return false;
-				} else if (current.ParentNode.NextSibling == null) {
+				} else if (current.NextSibling == null) {
+					depth--;
 					current = current.ParentNode;
 					isEndElement = true;
 					return true;
 				} else {
-					current = current.ParentNode.NextSibling;
+					current = current.NextSibling;
 					return true;
 				}
+
 			} else if (nextIsEndElement) {
 				// nextIsEndElement is set only by ReadString.
 				nextIsEndElement = false;
 				isEndElement = true;
 				return current != null;
+
 			} else if (alreadyRead) {
 				alreadyRead = false;
 				return current != null;
@@ -421,21 +455,15 @@ namespace System.Xml
 			} else if (depth == 0) {
 				state = ReadState.EndOfFile;
 				return false;
-			} else if (current.NextSibling != null) {
-				isEndElement = false;
-				current = current.NextSibling;
-			} else {
-				isEndElement = true;
-				depth--;
-				current = current.ParentNode;
-			}
+			} else
+				MoveToNextSibling ();
 
 			return current != null;
 		}
 
 		public override bool ReadAttributeValue ()
 		{
-			if (current is XmlAttribute) {
+			if (current.NodeType == XmlNodeType.Attribute) {
 				current = current.FirstChild;
 				return current != null;
 			} else if (current.ParentNode.NodeType == XmlNodeType.Attribute) {
@@ -482,19 +510,37 @@ namespace System.Xml
 
 			XmlNode original = current;
 			StringBuilder builder = new StringBuilder();
-			foreach (XmlNode child in current.ChildNodes) {
-				if (child is XmlCharacterData && !(child is XmlComment))
-					builder.Append (child.Value);
-				else {
-					depth++;
-					current = child;
-					break;
+			if (NodeType == XmlNodeType.Element) {
+				foreach (XmlNode child in current.ChildNodes) {
+					if (child is XmlCharacterData && !(child is XmlComment))
+						builder.Append (child.Value);
+					else {
+						depth++;
+						current = child;
+						break;
+					}
 				}
-			}
-			alreadyRead = true;
-			if (current == original) {
-				nextIsEndElement = true;
-				Read ();
+				alreadyRead = true;
+				if (current == original) {
+					nextIsEndElement = true;
+					Read ();
+				}
+			} else {
+				do {
+					builder.Append (current.Value);
+					if (current.NextSibling == null) {
+						nextIsEndElement = true;
+						break;
+					} else if (current.NextSibling.NodeType == XmlNodeType.Comment)
+						break;
+					else
+						current = current.NextSibling;
+				} while (true);
+				alreadyRead = true;
+				if (current.NextSibling == null) {
+					nextIsEndElement = true;
+					Read ();
+				}
 			}
 			return builder.ToString ();
 		}
@@ -510,21 +556,11 @@ namespace System.Xml
 		[MonoTODO("test it.")]
 		public override void Skip ()
 		{
-			if (current.NodeType == XmlNodeType.Attribute)
-				current = ((XmlAttribute) current).OwnerElement.NextSibling;
-			else 
-			{
-				if(current.ChildNodes.Count > 0) {
-					current = current.FirstChild;
-					depth++;
-				} else if (current.NextSibling != null) {
-					current = current.NextSibling;
-				} else if (current.NodeType == XmlNodeType.Attribute) {
-					current = current.ParentNode;
-				} else {
-					depth--;
-				}
-			}
+			MoveToElement ();
+			if(current.ChildNodes.Count > 0)
+				MoveToNextSibling ();
+			else
+				Read ();
 		}
 		#endregion
 	}

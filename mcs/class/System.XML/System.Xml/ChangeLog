@@ -1,3 +1,10 @@
+2003-01-26  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlNode.cs : implemented ReplaceChild.
+	  removed DocElem checking at InsertBefore.
+	* XmlNodeReader.cs : fixed ReadString and Read for correct node info.
+	* XmlText.cs : implemented CloneNode and SplitText.
+
 2003-01-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* XmlCharacterData.cs: added XPathNodeType property.

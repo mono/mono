@@ -315,12 +315,10 @@ namespace System.Xml
 				if (refChild != null && newChild.OwnerDocument != refChild.OwnerDocument)
 						throw new ArgumentException ("argument nodes are on the different documents.");
 
-				if (refChild != null && this == ownerDoc &&
-				    ownerDoc.DocumentElement != null &&
-				    (newChild is XmlElement ||
-				     newChild is XmlCharacterData ||
-				     newChild is XmlEntityReference))
-					throw new XmlException ("cannot insert this node to this position.");
+				// This check is done by MS.NET 1.0, but isn't done for MS.NET 1.1. 
+				// Skip this check in the meantime...
+//				if(this == ownerDoc && ownerDoc.DocumentElement != null && (newChild is XmlElement))
+//					throw new XmlException ("multiple document element not allowed.");
 
 				// checking validity finished. then appending...
 
@@ -435,10 +433,25 @@ namespace System.Xml
 				throw new ArgumentException ();
 		}
 
-		[MonoTODO]
 		public virtual XmlNode ReplaceChild (XmlNode newChild, XmlNode oldChild)
 		{
-			throw new NotImplementedException ();
+			if(oldChild.ParentNode != this)
+				throw new InvalidOperationException ("oldChild is not a child of this node.");
+			XmlNode parent = this.ParentNode;
+			while(parent != null) {
+				if(newChild == parent)
+					throw new InvalidOperationException ("newChild is ancestor of this node.");
+				parent = parent.ParentNode;
+			}
+			foreach(XmlNode n in ChildNodes) {
+				if(n == oldChild) {
+					XmlNode prev = oldChild.PreviousSibling;
+					RemoveChild (oldChild);
+					InsertAfter (newChild, prev);
+					break;
+				}
+			}
+			return oldChild;
 		}
 
 		public XmlNodeList SelectNodes (string xpath)

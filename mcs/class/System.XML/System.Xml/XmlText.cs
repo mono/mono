@@ -52,16 +52,23 @@ namespace System.Xml
 
 		#region Methods
 
-		[MonoTODO]
 		public override XmlNode CloneNode (bool deep)
 		{
-			throw new NotImplementedException ();
+			XmlText newText = OwnerDocument.CreateTextNode(Data);
+			if(deep)
+			{
+				foreach(XmlNode child in ChildNodes)
+					newText.AppendChild(child.CloneNode(deep));
+			}
+			return newText;
 		}
 
-		[MonoTODO]
 		public virtual XmlText SplitText (int offset)
 		{
-			throw new NotImplementedException ();
+			XmlText next = OwnerDocument.CreateTextNode(this.Data.Substring(offset));
+			DeleteData(offset, Data.Length - offset);
+			this.ParentNode.InsertAfter(next, this);
+			return next;
 		}
 
 		public override void WriteContentTo (XmlWriter w) {}
