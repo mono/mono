@@ -46,7 +46,7 @@ namespace System.Xml
 		string openElementPrefix;
 		string openElementNS;
 		bool hasRoot = false;
-		ArrayList newAttributeNamespaces = new ArrayList ();
+		Hashtable newAttributeNamespaces = new Hashtable ();
 
 		XmlNamespaceManager namespaceManager = new XmlNamespaceManager (new NameTable ());
 		string savingAttributeValue = String.Empty;
@@ -222,13 +222,16 @@ namespace System.Xml
 				}
 			}
 
-			for (int n=0; n<newAttributeNamespaces.Count; n++)
+			if (newAttributeNamespaces.Count > 0)
 			{
-				string ans = (string)newAttributeNamespaces[n];
-				string aprefix = namespaceManager.LookupPrefix (ans);
-
-				string formatXmlns = String.Format (" xmlns:{0}={1}{2}{1}", aprefix, quoteChar, ans);
-				w.Write(formatXmlns);
+				foreach (DictionaryEntry ent in newAttributeNamespaces)
+				{
+					string ans = (string) ent.Value;
+					string aprefix = (string) ent.Key;
+	
+					string formatXmlns = String.Format (" xmlns:{0}={1}{2}{1}", aprefix, quoteChar, ans);
+					w.Write(formatXmlns);
+				}
 			}
 			newAttributeNamespaces.Clear ();
 		}
@@ -597,10 +600,9 @@ namespace System.Xml
 
 				if (existingPrefix == null || existingPrefix == "") 
 				{
-					newAttributeNamespaces.Add (ns);
 					if (prefix == "" || namespaceManager.LookupNamespace (prefix) != null)
-						prefix = "d" + indentLevel + "p" + newAttributeNamespaces.Count;
-					namespaceManager.AddNamespace (prefix, ns);
+						prefix = "d" + indentLevel + "p" + (newAttributeNamespaces.Count + 1);
+					newAttributeNamespaces.Add (prefix, ns);
 				}
 
 				if (prefix == String.Empty && ns != XmlnsNamespace)

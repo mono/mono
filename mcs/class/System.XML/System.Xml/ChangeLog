@@ -1,3 +1,8 @@
+2003-10-01  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* XmlTextWriter.cs : An attribute can require a prefix for the default
+	  namespace, so we need to store the prefix as well as the namespace.
+
 2003-09-30  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* DTDValidatingReader.cs : Simplified to use 
