@@ -1,3 +1,10 @@
+2004-09-23 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* appdomain.c:
+	(mono_domain_set): allow setting a domain that is being unloaded.
+	(mono_domain_unload): invoke the DomainUnload callbacks in the domain
+	being unloaded.
+
 2004-09-18  Martin Baulig  <martin@ximian.com>
 
 	* mono-debug.c, debug-mono-symfile.c: Merged my locking changes
