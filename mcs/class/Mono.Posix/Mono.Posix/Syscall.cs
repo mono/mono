@@ -44,5 +44,17 @@ namespace Mono.Posix {
 
 		[DllImport ("libc")]
 		public static extern int chmod (string file, FileMode mode);
+
+		[DllImport ("libc", EntryPoint="isatty")]
+		static extern int syscall_isatty (int desc);
+		
+		public static bool Isatty (int desc)
+		{
+			int res = syscall_isatty (desc);
+			if (res == 1)
+				return true;
+			else
+				return false;
+		}
 	}
 }
