@@ -146,10 +146,10 @@ $(makefrag2): $(sourcefile2)
 	@$(ECHO_ESCAPE) "\ttouch \$$@" >>$@
 	@rm -rf $@.new
 
-ifdef PLATFORM_CHANGE_SEPERATOR_CMD
+ifdef PLATFORM_CHANGE_SEPARATOR_CMD
 $(response2): $(sourcefile2)
 	@echo Creating $@ ...
-	@cat $< |$(PLATFORM_CHANGE_SEPERATOR_CMD) >$@
+	@cat $< |$(PLATFORM_CHANGE_SEPARATOR_CMD) >$@
 endif
 
 -include $(makefrag2)
