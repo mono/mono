@@ -20,7 +20,11 @@ namespace Mono.ILASM {
 
 		private bool is_value_class;
 		private bool is_enum_class;
-
+                private bool pinvoke_info;
+                private string pinvoke_mod;
+                private string pinvoke_meth;
+                private PEAPI.PInvokeAttr pinvoke_attr;
+                
 		public ILParser (CodeGen codegen) {
 			this.codegen = codegen;
 		}
@@ -1430,6 +1434,11 @@ method_head		: D_METHOD meth_attr call_conv param_attr type method_name
                                         (ImplAttr) $11, (string) $6, (ITypeRef) $5,
                                         (ArrayList) $9);
                                 codegen.BeginMethodDef (methdef);
+
+                                if (pinvoke_info) {
+                                        methdef.AddPInvokeInfo (pinvoke_attr, pinvoke_mod, pinvoke_meth);
+                                        pinvoke_info = false;
+                                }
                           }
 			| D_METHOD meth_attr call_conv param_attr type 
 			  K_MARSHAL OPEN_PARENS native_type CLOSE_PARENS method_name
@@ -1457,21 +1466,39 @@ meth_attr		: /* EMPTY */                   { $$ = new MethAttr (); }
 			| meth_attr K_UNMANAGEDEXP      
 			| meth_attr K_PINVOKEIMPL OPEN_PARENS comp_qstring K_AS
 				comp_qstring pinv_attr CLOSE_PARENS
+                          {
+                                pinvoke_info = true;
+                                pinvoke_mod = (string) $4;
+                                pinvoke_meth = (string) $6;
+                                pinvoke_attr = (PInvokeAttr) $7;
+                          }
 			| meth_attr K_PINVOKEIMPL OPEN_PARENS comp_qstring pinv_attr CLOSE_PARENS
+                          {
+                                pinvoke_info = true;
+                                pinvoke_mod = (string) $4;
+                                pinvoke_meth = null;
+                                pinvoke_attr = (PInvokeAttr) $5;
+                          }
 			| meth_attr K_PINVOKEIMPL OPEN_PARENS pinv_attr CLOSE_PARENS
+                          {
+                                pinvoke_info = true;
+                                pinvoke_mod = null;
+                                pinvoke_meth = null;
+                                pinvoke_attr = (PInvokeAttr) $4;
+                          }
 			;
 
-pinv_attr		: /* EMPTY */
-			| pinv_attr K_NOMANGLE
-			| pinv_attr K_ANSI
-			| pinv_attr K_UNICODE
-			| pinv_attr K_AUTOCHAR
-			| pinv_attr K_LASTERR
-			| pinv_attr K_WINAPI
-			| pinv_attr K_CDECL
-			| pinv_attr K_STDCALL
-			| pinv_attr K_THISCALL
-			| pinv_attr K_FASTCALL
+pinv_attr		: /* EMPTY */ { $$ = new PInvokeAttr (); }
+			| pinv_attr K_NOMANGLE { $$ = (PInvokeAttr) $1 | PInvokeAttr.nomangle; }
+			| pinv_attr K_ANSI { $$ = (PInvokeAttr) $1 | PInvokeAttr.ansi; }
+			| pinv_attr K_UNICODE { $$ = (PInvokeAttr) $1 | PInvokeAttr.unicode; }
+			| pinv_attr K_AUTOCHAR { $$ = (PInvokeAttr) $1 | PInvokeAttr.autochar; }
+			| pinv_attr K_LASTERR { $$ = (PInvokeAttr) $1 | PInvokeAttr.lasterr; }
+			| pinv_attr K_WINAPI { $$ = (PInvokeAttr) $1 | PInvokeAttr.winapi; }
+			| pinv_attr K_CDECL { $$ = (PInvokeAttr) $1 | PInvokeAttr.cdecl; }
+			| pinv_attr K_STDCALL { $$ = (PInvokeAttr) $1 | PInvokeAttr.stdcall; }
+			| pinv_attr K_THISCALL { $$ = (PInvokeAttr) $1 | PInvokeAttr.thiscall; }
+			| pinv_attr K_FASTCALL { $$ = (PInvokeAttr) $1 | PInvokeAttr.fastcall; }
 			;
 
 method_name		: D_CTOR
@@ -1553,16 +1580,16 @@ type_list               : /* EMPTY */
 				type_list.Add (new SentinelTypeRef ());
 				$$ = type_list;
                           }
-                        | type opt_id
+                        | param_attr type opt_id
                           {
                                 ArrayList type_list = new ArrayList ();
-                                type_list.Add ($1);
+                                type_list.Add ($2);
                                 $$ = type_list;
                           }
-                        | type_list COMMA type opt_id
+                        | type_list COMMA param_attr type opt_id
                           {
                                 ArrayList type_list = (ArrayList) $1;
-                                type_list.Add ($3);
+                                type_list.Add ($4);
                           }
                         ;
 
