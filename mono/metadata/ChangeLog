@@ -1,3 +1,13 @@
+2005-01-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* icall.c: Add new internal calls for SecurityManager.SecurityEnabled
+	and CheckExecutionRights.
+	* reflection.c|h: Keep the index of the declarative security to be 
+	used, instead of the pointer, when AOT compiler is used. Also add 
+	class initialization when requesting demands.
+	* security-manager.c|h: Implement SecurityManager.SecurityEnabled and
+	CheckExecutionRights. Both properties are now FALSE by default, and
+	unmodifiable, unless the --security option is used.
 
 Fri Jan 21 15:29:27 CET 2005 Paolo Molaro <lupus@ximian.com>
 
