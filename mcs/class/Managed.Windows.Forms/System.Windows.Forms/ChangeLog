@@ -1,3 +1,12 @@
+2005-01-12  Jackson Harper  <jackson@ximian.com>
+
+	* TreeView.cs: Refresh the tree after sorting the nodes. Always
+	draw the connecting node lines (when ShowLines is true).
+	* TreeNode.cs: The nodes index can now be updated. This is used
+	when a node collection is sorted.
+	* TreeNodeCollection.cs: Implement sorting. Nodes can be sorted on
+	insert or an existing unsorted node collection can be sorted.
+	
 2005-01-12  Peter Bartok  <pbartok@novell.com>
 
 	* ContainerControl.cs: Implemented ProcessDialogKeys()

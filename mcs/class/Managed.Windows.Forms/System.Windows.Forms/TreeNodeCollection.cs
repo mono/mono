@@ -26,7 +26,7 @@
 
 using System;
 using System.Collections;
-
+using System.Globalization;
 
 namespace System.Windows.Forms {
 
@@ -207,25 +207,59 @@ namespace System.Windows.Forms {
 			Remove ((TreeNode) node);
 		}
 
-		[MonoTODO]
 		private int AddSorted (TreeNode node)
 		{
-			SetData (node);
+			
 			if (count >= nodes.Length)
 				Grow ();
-			nodes [count++] = node;
+
+			CompareInfo compare = Application.CurrentCulture.CompareInfo;
+			int pos = 0;
+			bool found = false;
+			for (int i = 0; i < count; i++) {
+				pos = i;
+				int comp = compare.Compare (node.Text, nodes [i].Text);
+				if (comp < 0) {
+					found = true;
+					break;
+				}
+			}
+
+			// Stick it at the end
+			if (!found)
+				pos = count;
+
+			// Move the nodes up and adjust their indices
+			for (int i = count - 1; i >= pos; i--) {
+				nodes [i + 1] = nodes [i];
+				nodes [i + 1].SetIndex (i + 1);
+			}
+			count++;
+			nodes [pos] = node;
+
+			SetData (node, pos);
 			return count;
 		}
 
-		[MonoTODO]
-		internal void Sort ()
-		{
+		// Would be nice to do this without running through the collection twice
+		internal void Sort () {
 
+			Array.Sort (nodes, 0, count, new TreeNodeComparer (Application.CurrentCulture.CompareInfo));
+
+			for (int i = 0; i < count; i++) {
+				nodes [i].SetIndex (i);
+				nodes [i].Nodes.Sort ();
+			}
 		}
 
 		private void SetData (TreeNode node)
 		{
-			node.SetAddedData ((owner != null ? owner.TreeView : null), owner, count);
+			SetData (node, count);
+		}
+
+		private void SetData (TreeNode node, int pos)
+		{
+			node.SetAddedData ((owner != null ? owner.TreeView : null), owner, pos);
 		}
 
 		private void Grow ()
@@ -272,6 +306,24 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		private class TreeNodeComparer : IComparer {
+
+			private CompareInfo compare;
+		
+			public TreeNodeComparer (CompareInfo compare)
+			{
+				this.compare = compare;
+			}
+		
+			public int Compare (object x, object y)
+			{
+				TreeNode l = (TreeNode) x;
+				TreeNode r = (TreeNode) y;
+				int res = compare.Compare (l.Text, r.Text);
+
+				return (res == 0 ? l.Index - r.Index : res);
+			}
+		}
 	}
 }
 

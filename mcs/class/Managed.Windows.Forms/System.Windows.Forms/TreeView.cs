@@ -129,8 +129,10 @@ namespace System.Windows.Forms {
 			set {
 				if (sorted != value)
 					sorted = value;
-				if (sorted)
+				if (sorted) {
 					Nodes.Sort ();
+					Refresh ();
+				}
 			}
 		}
 
@@ -705,8 +707,8 @@ namespace System.Windows.Forms {
 
 			DeviceContext.DrawLine (dash, x - indent + ladjust, middle, x + radjust, middle);
 
-			if (!visible)
-				return;
+			//if (!visible)
+			//	return;
 
 			int ly = 0;
 			if (node.PrevNode != null) {

@@ -503,6 +503,11 @@ namespace System.Windows.Forms {
 			this.index = index;
 		}
 
+		internal void SetIndex (int index)
+		{
+			this.index = index;
+		}
+
 		private bool IsInClippingRect
 		{
 			get {
