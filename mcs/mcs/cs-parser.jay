@@ -1356,7 +1356,7 @@ constructor_declaration
 	: opt_attributes
 	  opt_modifiers
 	  constructor_declarator
-	  block
+	  constructor_body
 	  { 
 		Constructor c = (Constructor) $3;
 		c.Block = (Block) $4;
@@ -1399,6 +1399,11 @@ constructor_declarator
 		Location l = (Location) oob_stack.Pop ();
 		$$ = new Constructor ((string) $1, (Parameters) $3, (ConstructorInitializer) $6, l);
 	  }
+	;
+
+constructor_body
+	: block
+	| SEMICOLON 		{ $$ = null; }
 	;
 
 opt_constructor_initializer

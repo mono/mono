@@ -1,3 +1,8 @@
+2002-03-16  Miguel de Icaza  <miguel@ximian.com>
+
+	* cs-parser.jay (constructor_declaration): Update to new grammar,
+	and provide a constructor_body that can be empty.
+
 2002-03-15  Miguel de Icaza  <miguel@ximian.com>
 
 	* driver.cs: Add support for --resources.
