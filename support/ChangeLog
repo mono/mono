@@ -1,3 +1,7 @@
+2005-02-08  Zoltan Varga  <vargaz@freemail.hu>
+
+	* pwd.c (Mono_Posix_Syscall_getpwnam_r): Add another part missing from the last patch.
+
 2005-02-07  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* grp.c: Oops.  Didn't see other Solaris fix in #72292.
