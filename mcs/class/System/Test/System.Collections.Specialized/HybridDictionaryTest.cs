@@ -50,5 +50,15 @@ namespace MonoTests.System.Collections.Specialized
 			Assert ("null", !hd.Contains (null));
 			Assert ("unexisting", !hd.Contains ("unexisting"));
 		}
-	}        
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void NotEmpty () 
+		{
+			HybridDictionary hd = new HybridDictionary (true);
+			hd.Add ("CCC", "ccc");
+			AssertEquals ("Count", 1, hd.Count);
+			Assert ("null", !hd.Contains (null));
+		}
+	}
 }

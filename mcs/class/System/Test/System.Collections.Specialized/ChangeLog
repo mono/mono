@@ -1,6 +1,11 @@
+2004-06-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HybridDictionaryTest.cs: Added cases with an non-empty dictionary.
+	* NameValueCollectionTest.cs: Added tests for CopyTo(Array,int).
+
 2004-06-05  Sebastien Pouliot  <sebastien@ximian.com>
 
-	* HybridDictionaryTest.cs: Added cases with an empty diectionary.
+	* HybridDictionaryTest.cs: Added cases with an empty dictionary.
 	* NameValueCollectionTest.cs: Added tests to add and replace (set) 
 	existing values in collection. Added tests for CopyTo.
 

@@ -190,7 +190,7 @@ namespace MonoTests.System.Collections.Specialized {
 		[Test]
 		// Note: not a RankException
 		[ExpectedException (typeof (ArgumentException))]
-		public void CopyTo_MultipleDimensionArray () 
+		public void CopyTo_MultipleDimensionStringArray () 
 		{
 			string [,,] matrix = new string [2,3,4];
 			NameValueCollection c = new NameValueCollection ();
@@ -199,6 +199,16 @@ namespace MonoTests.System.Collections.Specialized {
 			c.Add ("3", "mOnO");
 			c.Add ("4", "MONO");
 			c.CopyTo (matrix, 0);
+		}
+
+		[Test]
+		// Note: not a RankException
+		[ExpectedException (typeof (ArgumentException))]
+		public void CopyTo_MultipleDimensionArray () 
+		{
+			Array a = Array.CreateInstance (typeof (string), 1, 2, 3);
+			NameValueCollection c = new NameValueCollection ();
+			c.CopyTo (a, 0);
 		}
 	}
 }
