@@ -3945,12 +3945,39 @@ namespace Mono.CSharp {
 		void EmitExpressionFinally (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
-			Label skip = ig.DefineLabel ();
-			ig.Emit (OpCodes.Ldloc, local_copy);
-			ig.Emit (OpCodes.Brfalse, skip);
-			ig.Emit (OpCodes.Ldloc, local_copy);
-			ig.Emit (OpCodes.Callvirt, TypeManager.void_dispose_void);
-			ig.MarkLabel (skip);
+			if (!local_copy.LocalType.IsValueType) {
+				Label skip = ig.DefineLabel ();
+				ig.Emit (OpCodes.Ldloc, local_copy);
+				ig.Emit (OpCodes.Brfalse, skip);
+				ig.Emit (OpCodes.Ldloc, local_copy);
+				ig.Emit (OpCodes.Callvirt, TypeManager.void_dispose_void);
+				ig.MarkLabel (skip);
+			} else {
+				Expression ml = Expression.MemberLookup(ec, TypeManager.idisposable_type, local_copy.LocalType, "Dispose", Mono.CSharp.Location.Null);
+
+				if (!(ml is MethodGroupExpr)) {
+					ig.Emit (OpCodes.Ldloc, local_copy);
+					ig.Emit (OpCodes.Box, local_copy.LocalType);
+					ig.Emit (OpCodes.Callvirt, TypeManager.void_dispose_void);
+				} else {
+					MethodInfo mi = null;
+
+					foreach (MethodInfo mk in ((MethodGroupExpr) ml).Methods) {
+						if (TypeManager.GetArgumentTypes (mk).Length == 0) {
+							mi = mk;
+							break;
+						}
+					}
+
+					if (mi == null) {
+						Report.Error(-100, Mono.CSharp.Location.Null, "Internal error: No Dispose method which takes 0 parameters.");
+						return;
+					}
+
+					ig.Emit (OpCodes.Ldloca, local_copy);
+					ig.Emit (OpCodes.Call, mi);
+				}
+			}
 		}
 		
 		public override bool Resolve (EmitContext ec)
