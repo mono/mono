@@ -1,3 +1,21 @@
+2004-05-09  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
+        * HashAlgorithm.cs,
+        NpgsqlAsciiRow.cs,
+        NpgsqlBinaryRow.cs,
+        NpgsqlClosedState.cs,
+        NpgsqlCommand.cs,
+        NpgsqlCommandBuilder.cs,
+        NpgsqlConnection.cs,
+        NpgsqlDataReader.cs,
+        NpgsqlException.cs,
+        NpgsqlParameterCollection.cs,
+        NpgsqlReadyState.cs,
+        NpgsqlTransaction.cs: Improved exception handling. Now Npgsql throws mor
+e meaningful exceptions instead of throw NpgsqlException which are now exclusive
+ly to sign server errors. Thanks Glen Parker (glenebob@nwlink.com) for the patch.
+
+
+
 2004-05-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Makefile:
