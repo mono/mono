@@ -1,3 +1,7 @@
+2004-04-30  Sanjay Gupta <gsanjay@novell.com>
+	* Image.cs: Removed calls which passes byte[] for Guid parameter.
+	* gdipFunctions.cs: Removed unwanted unix specific function calls.
+
 2004-04-30  Ravindra <rkumar@novell.com>
 
 	* Graphics.cs: Added checks for status.

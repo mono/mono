@@ -208,18 +208,8 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 	public int GetFrameCount(FrameDimension dimension)
 	{
 		int count;
-		Status status; 
 		Guid guid = dimension.Guid;
-		
-		if (Environment.OSVersion.Platform == (PlatformID) 128) 
-		{
-			byte[] g = guid.ToByteArray();
-			status = GDIPlus.GdipImageGetFrameCount (nativeObject, g, out  count);
-		} 
-		else 
-		{
-			status = GDIPlus.GdipImageGetFrameCount (nativeObject, ref guid, out  count);
-		}
+		Status status = GDIPlus.GdipImageGetFrameCount (nativeObject, ref guid, out  count); 
 
 		GDIPlus.CheckStatus (status);		
 		
@@ -333,12 +323,8 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 	public int SelectActiveFrame(FrameDimension dimension, int frameIndex)
 	{
 		Guid guid = dimension.Guid;		
-		Status st;
-		if (Environment.OSVersion.Platform == (PlatformID) 128) {
-			st = GDIPlus.GdipImageSelectActiveFrame (nativeObject, guid.ToByteArray(), frameIndex);			
-		} else {
-			st = GDIPlus.GdipImageSelectActiveFrame (nativeObject, ref guid, frameIndex);
-		}
+		Status st = GDIPlus.GdipImageSelectActiveFrame (nativeObject, ref guid, frameIndex);
+		
 		GDIPlus.CheckStatus (st);			
 		
 		return frameIndex;		
@@ -437,17 +423,9 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 
 	public ImageFormat RawFormat {
 		get {
-			Status st;
 			Guid guid;
-			if (Environment.OSVersion.Platform == (PlatformID) 128) {
-				byte[] g = new byte [16];
-				st = GDIPlus.GdipGetImageRawFormat (nativeObject, g);
-				GDIPlus.CheckStatus (st);
-				guid = new Guid (g);
-
-			} else {
-				st = GDIPlus.GdipGetImageRawFormat (nativeObject, out guid);
-			}
+			Status st = GDIPlus.GdipGetImageRawFormat (nativeObject, out guid);
+			
 			GDIPlus.CheckStatus (st);
 			raw_format = new ImageFormat (guid);
 			return raw_format;
