@@ -1,3 +1,7 @@
+2004-05-24  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
+
+	* With.cs: code generation support for 'with' stm.
+
 2004-05-21  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
 	* Statement.cs: initial code generation of 'for'.

@@ -9,6 +9,7 @@
 using System;
 using System.Text;
 using Microsoft.JScript.Vsa;
+using System.Reflection.Emit;
 
 namespace Microsoft.JScript {
 
@@ -16,8 +17,9 @@ namespace Microsoft.JScript {
 
 		AST exp, stm;
 
-		internal With (AST exp, AST stm)
+		internal With (AST parent, AST exp, AST stm)
 		{
+			this.parent = parent;
 			this.exp = exp;
 			this.stm = stm;
 		}
@@ -39,12 +41,37 @@ namespace Microsoft.JScript {
 
 		internal override bool Resolve (IdentificationTable context)
 		{
-			throw new NotImplementedException ();
+			bool r = true;
+			if (exp != null)
+				r &= exp.Resolve (context);
+			if (stm != null)
+				r &= stm.Resolve (context);
+			return r;
 		}
 
 		internal override void Emit (EmitContext ec)
 		{
-			throw new NotImplementedException ();
+			ILGenerator ig = ec.ig;
+			if (exp != null)
+				exp.Emit (ec);
+
+			ig.Emit (OpCodes.Ldarg_0);
+			ig.Emit (OpCodes.Ldfld, typeof (ScriptObject).GetField ("engine"));
+			ig.Emit (OpCodes.Call, typeof (With).GetMethod ("JScriptWith"));
+			ig.Emit (OpCodes.Pop);
+
+			ig.BeginExceptionBlock ();
+
+			if (stm != null)
+				stm.Emit (ec);
+
+			ig.BeginFinallyBlock ();
+			ig.Emit (OpCodes.Ldarg_0);
+			ig.Emit (OpCodes.Ldfld, typeof (ScriptObject).GetField ("engine"));
+			ig.Emit (OpCodes.Call, typeof (VsaEngine).GetMethod ("PopScriptObject"));
+			ig.Emit (OpCodes.Pop);			
+
+			ig.EndExceptionBlock ();
 		}
 	}
 }
