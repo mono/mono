@@ -1,3 +1,13 @@
+2004-01-14  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlAttribute.cs : when set a value, it is no longer default 
+	  (even if the value is the same as default value).
+	* XmlAttributeCollection.cs : Remove() should recover default attribute
+	  value to default, not specified value.
+	  Patch by Boris Kirzner (modified a bit)
+	* XmlDocument.cs : Reference to undeclared entity is not allowed in
+	  Load(), while allowed in ReadNode(). Added such distinguishing logic.
+
 2004-01-13  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlValidatingReader.cs : Throw exception only in case of errors.

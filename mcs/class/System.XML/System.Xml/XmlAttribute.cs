@@ -211,6 +211,7 @@ namespace System.Xml
 				}
 				else
 					firstChild.Value = value;
+				isDefault = false;
 			}
 		}
 

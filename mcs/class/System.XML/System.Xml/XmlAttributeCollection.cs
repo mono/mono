@@ -168,12 +168,13 @@ namespace System.Xml
 				ownerDocument.onNodeRemoved (node, null);
 			}
 			// If it is default, then directly create new attribute.
-			if (!retAttr.Specified) {
-				XmlAttribute attr = ownerDocument.CreateAttribute (retAttr.Prefix,
-					retAttr.LocalName, retAttr.NamespaceURI);
+			DTDAttListDeclaration attList = ownerDocument.DocumentType != null ? ownerDocument.DocumentType.DTD.AttListDecls [ownerElement.Name] : null;
+			DTDAttributeDefinition def = attList != null ? attList [retAttr.Name] : null;
+			if (def != null && def.DefaultValue != null) {
+				XmlAttribute attr = ownerDocument.CreateAttribute (
+					retAttr.Prefix, retAttr.LocalName, retAttr.NamespaceURI);
+				attr.Value = def.DefaultValue;
 				attr.SetDefault ();
-				foreach (XmlNode child in retAttr.ChildNodes)
-					attr.AppendChild (child);
 				this.SetNamedItem (attr);
 			}
 			retAttr.SetOwnerElement (null);

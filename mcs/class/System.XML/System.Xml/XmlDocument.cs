@@ -37,6 +37,12 @@ namespace System.Xml
 		XmlResolver resolver;
 		Hashtable idTable = new Hashtable ();
 
+		// MS.NET rejects undeclared entities _only_ during Load(),
+		// while ReadNode() never rejects such node. So it signs
+		// whether we are on Load() or not (MS.NET uses Loader class,
+		// but we don't have to implement Load() as such)
+		bool loadMode;
+
 		#endregion
 
 		#region Constructors
@@ -589,11 +595,16 @@ namespace System.Xml
 
 			this.baseURI = xmlReader.BaseURI;
 			// create all contents with use of ReadNode()
-			do {
-				XmlNode n = ReadNode (xmlReader);
-				if(n == null) break;
-				AppendChild (n);
-			} while (true);
+			try {
+				loadMode = true;
+				do {
+					XmlNode n = ReadNode (xmlReader);
+					if(n == null) break;
+					AppendChild (n);
+				} while (true);
+			} finally {
+				loadMode = false;
+			}
 		}
 
 		public virtual void LoadXml (string xml)
@@ -828,6 +839,9 @@ namespace System.Xml
 					break;
 
 				case XmlNodeType.EntityReference:
+					if (this.loadMode && this.DocumentType != null &&
+						DocumentType.Entities.GetNamedItem (reader.Name) == null)
+						throw new XmlException ("Reference to undeclared entity was found.");
 					newNode = CreateEntityReference (reader.Name);
 					if(currentNode != null)
 						currentNode.AppendChild (newNode);
