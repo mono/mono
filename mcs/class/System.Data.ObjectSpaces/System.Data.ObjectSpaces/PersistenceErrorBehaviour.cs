@@ -11,7 +11,7 @@
 
 namespace System.Data.ObjectSpaces
 {
-        public enum ObjectState
+        public enum PersistenceErrorBehaviour
         {
              ThrowAtFirstError,
              ThrowAfterCompletion
