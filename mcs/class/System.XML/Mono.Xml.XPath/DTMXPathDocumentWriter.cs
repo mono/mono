@@ -92,9 +92,12 @@ namespace Mono.Xml.XPath
 		int writerDepth;
 		WriteState state;
 		bool openNamespace;
+		bool isClosed;
 
 		public DTMXPathDocument CreateDocument ()
 		{
+			if (!isClosed)
+				Close ();
 			return new DTMXPathDocument (nameTable,
 				nodes,
 				attributes,
@@ -286,6 +289,7 @@ namespace Mono.Xml.XPath
 			SetNodeArrayLength (nodeIndex + 1);
 			SetAttributeArrayLength (attributeIndex + 1);
 			SetNsArrayLength (nsIndex + 1);
+			isClosed = true;
 		}
 
 		public override void Flush ()

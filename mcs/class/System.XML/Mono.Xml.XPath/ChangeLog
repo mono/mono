@@ -1,3 +1,8 @@
+2004-12-03  Atsushi Enomoto <atsushi@ximian.com>
+
+	* DTMXPathDocumentWriter.cs : Fix for DTM_CLASS switch that does not
+	  allow unadjusted arrays.
+
 2004-11-30  Atsushi Enomoto <atsushi@ximian.com>
 
 	* DTMXPathDocumentWriter.cs,
