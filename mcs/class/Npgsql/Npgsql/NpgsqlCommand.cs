@@ -320,7 +320,12 @@ namespace Npgsql {
 			// Check if there were any errors.
 			if (connection.Mediator.Errors.Count > 0) {
 				StringWriter sw = new StringWriter();
-				sw.WriteLine(String.Format(resman.GetString("Exception_MediatorErrors"), "ExecuteNonQuery"));
+				try {
+					sw.WriteLine(String.Format(resman.GetString("Exception_MediatorErrors"), "ExecuteNonQuery"));
+				}
+				catch (System.Resources.MissingManifestResourceException mmre) {
+					sw.WriteLine(String.Format("Exception_MediatorErrors", "ExecuteNonQuery"));
+				}
 				uint i = 1;
 				foreach(string error in connection.Mediator.Errors){
 					sw.WriteLine("{0}. {1}", i++, error);

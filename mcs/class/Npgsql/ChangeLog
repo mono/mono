@@ -1,3 +1,17 @@
+2003-11-08  Pedro Martínez Juliá  <yoros@wanadoo.es>
+
+	* Npgsql/NpgsqlCommandBuilder.cs: Added the command builder.
+
+	* Npgsql/NpgsqlDataAdapter.cs: Added the CommandBuilder stuff. When
+	OnRowUpdating is called we create the command necesary for updating,
+	inserting or deleting any row of the DataTable/DataSet.
+
+	* Npgsql/NpgsqlCommand.cs: Temporary try-catch. ResMan still doesn't
+	work. This must be removed when ResMan works.
+
+	* Npgsql/NpgsqlParameter: No more than one call to value.GetType()
+	is more efficient for the deep if structure types.
+
 2003-11-07  Pedro Martínez Juliá  <yoros@wanadoo.es>
 
 	* Npgsql/NpgsqlDataAdapter.cs: Fixed the mistake I did in the last

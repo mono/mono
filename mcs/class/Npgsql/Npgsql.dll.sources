@@ -8,6 +8,7 @@ Npgsql/NpgsqlBinaryRow.cs
 Npgsql/NpgsqlBind.cs
 Npgsql/NpgsqlClosedState.cs
 Npgsql/NpgsqlCommand.cs
+Npgsql/NpgsqlCommandBuilder.cs
 Npgsql/NpgsqlConnectedState.cs
 Npgsql/NpgsqlConnection.cs
 Npgsql/NpgsqlConnector.cs

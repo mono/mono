@@ -99,47 +99,67 @@ namespace Npgsql
 			// http://msdn.microsoft.com/library/en-us/cpguide/html/cpconusingparameterswithdataadapters.asp
 			// Should this be in this.Value.set{}?
 			//I don't really know so I leave it here where it will not hurt.
-			if(value == null){
-        // don't really know what to do - leave default and do further exploration
-			}else if(value.GetType() == typeof(bool)){
+			if (value == null) {
+		        // don't really know what to do - leave default and do further exploration
+				return;
+			}
+			Type type = value.GetType();
+			if (type == typeof(bool)) {
 				db_type = DbType.Boolean;
-			}else if(value.GetType() == typeof(byte)){
+			}
+			else if (type == typeof(byte)) {
 				db_type = DbType.Byte;
-			}else if(value.GetType() == typeof(byte[])){
+			}
+			else if (type == typeof(byte[])) {
 				db_type = DbType.Binary;
-			}else if(value.GetType() == typeof(char)){
+			}
+			else if (type == typeof(char)) {
 				// There is no DbType.Char
 				db_type = DbType.String;
-			}else if(value.GetType() == typeof(DateTime)){
+			}
+			else if (type == typeof(DateTime)) {
 				db_type = DbType.DateTime;
-			}else if(value.GetType() == typeof(decimal)){
+			}
+			else if (type == typeof(decimal)) {
 				db_type = DbType.Decimal;
-			}else if(value.GetType() == typeof(double)){
+			}
+			else if (type == typeof(double)) {
 				db_type = DbType.Double;
-			}else if(value.GetType() == typeof(float)){
+			}
+			else if (type == typeof(float)) {
 				db_type = DbType.Single;
-			}else if(value.GetType() == typeof(Guid)){
+			}
+			else if (type == typeof(Guid)) {
 				db_type = DbType.Guid;
-			}else if(value.GetType() == typeof(Int16)){
+			}
+			else if (type == typeof(Int16)) {
 				db_type = DbType.Int16;
-			}else if(value.GetType() == typeof(Int32)){
+			}
+			else if (type == typeof(Int32)) {
 				db_type = DbType.Int32;
-			}else if(value.GetType() == typeof(Int64)){
+			}
+			else if (type == typeof(Int64)) {
 				db_type = DbType.Int64;
-			}else if(value.GetType() == typeof(string)){
+			}
+			else if (type == typeof(string)) {
 				db_type = DbType.String;
-			}else if(value.GetType() == typeof(TimeSpan)){
+			}
+			else if (type == typeof(TimeSpan)) {
 				db_type = DbType.Time;
-			}else if(value.GetType() == typeof(UInt16)){
+			}
+			else if (type == typeof(UInt16)) {
 				db_type = DbType.UInt16;
-			}else if(value.GetType() == typeof(UInt32)){
+			}
+			else if (type == typeof(UInt32)) {
 				db_type = DbType.UInt32;
-			}else if(value.GetType() == typeof(UInt64)){
+			}
+			else if (type == typeof(UInt64)) {
 				db_type = DbType.UInt64;
-			}else if(value.GetType() == typeof(object)){
+			}
+			else if (type == typeof(object)) {
 				db_type = DbType.Object;
-			}else{
-				throw new InvalidCastException(String.Format(resman.GetString("Exception_ImpossibleToCast"), value.GetType().ToString()));
+			} else{
+				throw new InvalidCastException(String.Format(resman.GetString("Exception_ImpossibleToCast"), type.ToString()));
 			}
 
 			this.value = value;

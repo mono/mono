@@ -38,6 +38,8 @@ namespace Npgsql
 		private NpgsqlCommand		_updateCommand;
 		private NpgsqlCommand		_deleteCommand;
 		private NpgsqlCommand		_insertCommand;
+
+		private NpgsqlCommandBuilder cmd_builder;
 		
 		// Log support
 		private static readonly String CLASSNAME = "NpgsqlDataAdapter";
@@ -48,6 +50,7 @@ namespace Npgsql
 		{
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, CLASSNAME);
             _selectCommand = selectCommand;
+			cmd_builder = new NpgsqlCommandBuilder(this);
 		}
 		
 		public NpgsqlDataAdapter(String selectCommandText, NpgsqlConnection selectConnection) : this(new NpgsqlCommand(selectCommandText, selectConnection)){}
@@ -94,8 +97,29 @@ namespace Npgsql
 				)
 		{
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "OnRowUpdating");
-			//base.OnRowUpdating(value);
-			
+			switch (value.StatementType) {
+				case StatementType.Insert:
+					value.Command = _insertCommand = cmd_builder.GetInsertCommand(value.Row);
+					break;
+				case StatementType.Update:
+					value.Command = _updateCommand = cmd_builder.GetUpdateCommand(value.Row);
+					break;
+				case StatementType.Delete:
+					value.Command = _deleteCommand = cmd_builder.GetDeleteCommand(value.Row);
+					break;
+			}
+			DataColumnMappingCollection columnMappings = value.TableMapping.ColumnMappings;
+			foreach (IDataParameter parameter in value.Command.Parameters) {
+				
+				string dsColumnName = parameter.SourceColumn;
+				DataColumnMapping mapping = columnMappings [parameter.SourceColumn];
+				if (mapping != null) dsColumnName = mapping.DataSetColumn;
+				DataRowVersion rowVersion = DataRowVersion.Default;
+				if (value.StatementType == StatementType.Update) rowVersion = parameter.SourceVersion;
+				if (value.StatementType == StatementType.Delete) rowVersion = DataRowVersion.Original;
+				parameter.Value = value.Row [dsColumnName, rowVersion];
+			}
+			value.Row.AcceptChanges ();
 		}
 		
 		ITableMappingCollection IDataAdapter.TableMappings
