@@ -25,7 +25,7 @@ namespace System.Web.Configuration
 				mapper = new HandlerFactoryConfiguration ();
 			
 			if (section.Attributes != null && section.Attributes.Count != 0)
-				ThrowException ("Unrecognized attribute", section);
+				HandlersUtil.ThrowException ("Unrecognized attribute", section);
 
 			XmlNodeList httpHandlers = section.ChildNodes;
 			foreach (XmlNode child in httpHandlers) {
@@ -34,36 +34,34 @@ namespace System.Web.Configuration
 					continue;
 
 				if (ntype != XmlNodeType.Element)
-					ThrowException ("Only elements allowed", child);
+					HandlersUtil.ThrowException ("Only elements allowed", child);
 				
-				if (ntype != XmlNodeType.Element)
-					ThrowException ("Unexpected node type", child);
-
 				string name = child.Name;
 				if (name == "clear") {
 					if (child.Attributes.Count != 0)
-						ThrowException ("Unrecognized attribute", child);
+						HandlersUtil.ThrowException ("Unrecognized attribute", child);
 
 					mapper.Clear ();
 					continue;
 				}
 					
-				string verb = ExtractAttributeValue ("verb", child, false);
-				string path = ExtractAttributeValue ("path", child, false);
-				string validateStr = ExtractAttributeValue ("validate", child, true);
+				string verb = HandlersUtil.ExtractAttributeValue ("verb", child);
+				string path = HandlersUtil.ExtractAttributeValue ("path", child);
+				string validateStr = HandlersUtil.ExtractAttributeValue ("validate", child, true);
 				bool validate;
 				if (validateStr == null) {
 					validate = true;
 				} else {
 					validate = validateStr == "true";
 					if (!validate && validateStr != "false")
-						ThrowException ("Invalid value for validate attribute.", child);
+						HandlersUtil.ThrowException (
+								"Invalid value for validate attribute.", child);
 				}
 
 				if (name == "add") {
-					string type = ExtractAttributeValue ("type", child, false);
+					string type = HandlersUtil.ExtractAttributeValue ("type", child);
 					if (child.Attributes.Count != 0)
-						ThrowException ("Unrecognized attribute", child);
+						HandlersUtil.ThrowException ("Unrecognized attribute", child);
 
 					HandlerItem item = new HandlerItem (verb, path, type, validate);
 					mapper.Add (item);
@@ -72,20 +70,32 @@ namespace System.Web.Configuration
 
 				if (name == "remove") {
 					if (child.Attributes.Count != 0)
-						ThrowException ("Unrecognized attribute", child);
+						HandlersUtil.ThrowException ("Unrecognized attribute", child);
 
 					if (validate && mapper.Remove (verb, path) == null)
-						ThrowException ("There's no mapping to remove", child);
+						HandlersUtil.ThrowException ("There's no mapping to remove", child);
 					
 					continue;
 				}
-				ThrowException ("Unexpected element", child);
+				HandlersUtil.ThrowException ("Unexpected element", child);
 			}
 
 			return mapper;
 		}
+	}
 
-		static string ExtractAttributeValue (string attKey, XmlNode node, bool optional)
+	internal class HandlersUtil
+	{
+		private HandlersUtil ()
+		{
+		}
+
+		static internal string ExtractAttributeValue (string attKey, XmlNode node)
+		{
+			return ExtractAttributeValue (attKey, node, false);
+		}
+			
+		static internal string ExtractAttributeValue (string attKey, XmlNode node, bool optional)
 		{
 			XmlNode att = node.Attributes.RemoveNamedItem (attKey);
 			if (att == null) {
@@ -103,7 +113,7 @@ namespace System.Web.Configuration
 			return value;
 		}
 
-		static void ThrowException (string msg, XmlNode node)
+		static internal void ThrowException (string msg, XmlNode node)
 		{
 			if (node != null && node.Name != String.Empty)
 				msg = msg + " (node name: " + node.Name + ") ";

@@ -689,7 +689,16 @@ namespace System.Web {
 			if (handler == null)
 				throw new HttpException ("Cannot get system.web/httpHandlers handler.");
 
-			return (IHttpHandler) handler.FindHandler (type, path).Create ();
+			object result = handler.FindHandler (type, path).Create ();
+			if (result is IHttpHandler)
+				return (IHttpHandler) result;
+
+			if (result is IHttpHandlerFactory) {
+				IHttpHandlerFactory factory = (IHttpHandlerFactory) result;
+				return factory.GetHandler (context, type, file, path);
+			}
+
+			return null;
 		}
 
 		[MonoTODO()]
@@ -700,7 +709,7 @@ namespace System.Web {
 		internal void InitModules() {
 			ModulesConfiguration modules;
 
-			modules = (ModulesConfiguration) HttpContext.GetAppConfig("system.web/httpmodules");
+			modules = (ModulesConfiguration) HttpContext.GetAppConfig("system.web/httpModules");
 			if (null == modules)
 				throw new HttpException(HttpRuntime.FormatResourceString("missing_modules_config"));
 

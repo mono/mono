@@ -1,5 +1,10 @@
 2002-10-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* HttpApplication.cs: fixed type and handle factories when creating
+	IHttpHandler for a request.
+
+2002-10-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* HttpApplication.cs: use handlers from configuration.
 	* HttpContext.cs: get handlers from ConfigurationSettings.
 

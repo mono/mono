@@ -1,5 +1,13 @@
 2002-10-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* HttpHandlersSectionHandler.cs: made a couple of static methods be
+	part of a class used in other handlers.
+	* HttpModulesConfigurationHandler.cs: handler for modules.
+	* ModuleItem.cs: added IsMatch method.
+	* ModulesConfiguration.cs: made it similar to the handlers class: added 	Clear, Remove.
+
+2002-10-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* HttpHandlerTypeMapper.cs: removed.
 	* HandlerFactoryConfiguration.cs: readded. I removed it by mistake.
 	* HandlerItem.cs: only load the type if we gotta validate it.

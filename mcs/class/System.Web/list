@@ -70,6 +70,7 @@ System.Web.Configuration/HandlerFactoryConfiguration.cs
 System.Web.Configuration/HandlerFactoryProxy.cs
 System.Web.Configuration/HttpConfigurationContext.cs
 System.Web.Configuration/HttpHandlersSectionHandler.cs
+System.Web.Configuration/HttpModulesConfigurationHandler.cs
 System.Web.Configuration/HandlerItem.cs
 System.Web.Configuration/ModulesConfiguration.cs
 System.Web.Configuration/ModuleItem.cs
@@ -352,3 +353,4 @@ System.Web.Compilation/AspTokenizer.cs
 System.Web.Compilation/PageCompiler.cs
 System.Web.Compilation/TemplateFactory.cs
 System.Web.Compilation/WebServiceCompiler.cs
+System.Web.Handlers/TraceHandler.cs

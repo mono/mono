@@ -1,35 +1,75 @@
 // 
 // System.Web.Configuration.ModulesConfiguration
 //
-// Author:
-//   Patrik Torstensson (ptorsten@hotmail.com)
+// Authors:
+// 	Patrik Torstensson (ptorsten@hotmail.com)
+// 	Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//
+// (c) 2002 Ximian, Inc. (http://www.ximian.com)
 //
 using System;
 using System.Collections;
 
-namespace System.Web.Configuration {
-	[MonoTODO]
-	public class ModulesConfiguration {
-		static private ArrayList _items = new ArrayList();
+namespace System.Web.Configuration
+{
+	public class ModulesConfiguration
+	{
+		ArrayList modules;
 
-		static public void Add(string name, string type) {
-			ModuleItem item = new ModuleItem(name, type);
-			_items.Add(item);
+		public ModulesConfiguration () : this (null)
+		{
 		}
 
-		public ModulesConfiguration() {
+		public ModulesConfiguration (ModulesConfiguration parent)
+		{
+			if (parent != null)
+				modules = new ArrayList (parent.modules);
+			else
+				modules = new ArrayList ();
 		}
 
-		public HttpModuleCollection CreateCollection() {
-			HttpModuleCollection items = new HttpModuleCollection();
-			int pos = 0;
-			int count = _items.Count;
+		public void Add (ModuleItem item)
+		{
+			modules.Add (item);
+		}
 
-			for (pos = 0; pos != count; pos++) {
-				items.AddModule(((ModuleItem) _items[pos]).ModuleName, ((ModuleItem) _items[pos]).Create());
-			}
+		public ModuleItem Remove (string name)
+		{
+			int i = GetIndex (name);
+			if (i == -1)
+				return null;
+			
+			ModuleItem item = (ModuleItem) modules [i];
+			modules.RemoveAt (i);
+			return item;
+		}
+
+		public void Clear ()
+		{
+			modules.Clear ();
+		}
+
+		public HttpModuleCollection CreateCollection ()
+		{
+			HttpModuleCollection items = new HttpModuleCollection ();
+			foreach (ModuleItem item in modules)
+				items.AddModule (item.ModuleName, item.Create ());
 
 			return items;
 		}
+
+		int GetIndex (string name)
+		{
+			int end = modules.Count;
+
+			for (int i = 0; i < end; i++) {
+				ModuleItem item = (ModuleItem) modules [i];
+				if (item.IsMatch (name))
+					return i;
+			}
+
+			return -1;
+		}
 	}
 }
+

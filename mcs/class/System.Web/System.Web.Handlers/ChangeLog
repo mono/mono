@@ -1,0 +1,6 @@
+2002-10-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ChangeLog: New file.
+	* TraceHandler.cs: stubbed out. This should generate the trace page
+	when tracing is enabled.
+

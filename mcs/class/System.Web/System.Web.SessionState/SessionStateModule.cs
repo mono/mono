@@ -19,13 +19,13 @@ namespace System.Web.SessionState
 		[MonoTODO()]
 		public void Dispose ()
 		{
-			throw new NotImplementedException ();
+			//throw new NotImplementedException ();
 		}
 
 		[MonoTODO()]
 		public void Init (HttpApplication app)
 		{
-			throw new NotImplementedException ();
+			//throw new NotImplementedException ();
 		}
 
 		public event EventHandler Start;

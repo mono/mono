@@ -16,7 +16,7 @@ namespace System.Web.Configuration {
 			_typeName = type;
 			_name = name;
 
-			_type = Type.GetType(type, true);
+			_type = Type.GetType (type, true);
 			if (!typeof(IHttpModule).IsAssignableFrom(_type))
 				throw new HttpException(HttpRuntime.FormatResourceString("type_not_module"));
 		}
@@ -29,6 +29,11 @@ namespace System.Web.Configuration {
 			get {
 				return _type;
 			}
+		}
+
+		public bool IsMatch (string name)
+		{
+			return (_type.Name == name || _type.FullName == name);
 		}
 
 		public string ModuleName {
