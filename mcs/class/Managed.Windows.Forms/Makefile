@@ -6,6 +6,7 @@ LIB_MCS_FLAGS = /unsafe \
 	/r:$(corlib) /r:System.dll /r:System.Xml.dll \
 	/r:System.Drawing.dll /r:Accessibility.dll \
 	/r:Mono.Posix.dll \
+	@System.Windows.Forms.dll.resources \
 	/nowarn:649 /nowarn:169 /nowarn:67 /nowarn:108 /nowarn:114
 
 EXTRA_DISTFILES = \
@@ -13,9 +14,18 @@ EXTRA_DISTFILES = \
 
 TEST_MCS_FLAGS = /r:System.Drawing.dll
 
-all.local: SWF.csproj
-
 SWF.csproj: System.Windows.Forms.dll.sources
 	./build-csproj
 
+RESOURCES = \
+	resources/System.Windows.Forms.resources \
+	resources/System.Windows.Forms.en.resources \
+	resources/System.Windows.Forms.de.resources
+
 include ../../build/library.make
+
+$(the_lib): $(RESOURCES) SWF.csproj
+
+$(RESOURCES): %.resources: %.resx
+	$(RESGEN) $<
+
