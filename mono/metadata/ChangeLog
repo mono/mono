@@ -1,5 +1,19 @@
 2003-01-22  Martin Baulig  <martin@ximian.com>
 
+	* appdomain.h (MonoThreadStartCB): Added `MonoThread *thread' and
+	`gpointer func' arguments.	
+	(MonoThreadAttachCB): New typedef; like the old MonoThreadStartCB,
+	but added `MonoThread *thread' argument.
+	(mono_runtime_init): The last argument is now a MonoThreadAttachCB.
+
+	* threads.c (mono_new_thread_init): Added `gpointer func' argument
+	and pass it to the mono_thread_start_cb callback.
+	(mono_install_thread_callbacks): New public function to install a
+	set of callbacks which are set by the debugger.
+	(mono_thread_init): The last argument is now a MonoThreadAttachCB.
+
+2003-01-22  Martin Baulig  <martin@ximian.com>
+
 	* Makefile.am: Install debug-mono-symfile.h.
 
 2003-01-21  Aleksey Demakov <avd@openlinksw.com>
