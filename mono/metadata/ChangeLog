@@ -1,4 +1,9 @@
 
+Tue Sep 18 13:16:32 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* class.h, class.c: add mono_class_get_field_from_name ().
+	* *: Fix C comments and other ANSI C issues.
+
 Mon Sep 10 20:21:34 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* endian.h, assembly.c: fix some endianness issues.
