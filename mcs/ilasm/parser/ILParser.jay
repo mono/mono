@@ -1962,14 +1962,35 @@ event_decl		: D_ADDON method_ref
 			;
 
 prop_all		: prop_head OPEN_BRACE prop_decls CLOSE_BRACE
+                          {
+                                codegen.CurrentTypeDef.EndPropertyDef ();
+                          }
 			;
 
-prop_head		: D_PROPERTY prop_attr type id OPEN_PARENS sig_args CLOSE_PARENS init_opt
+prop_head		: D_PROPERTY prop_attr type id OPEN_PARENS type_list CLOSE_PARENS init_opt
+                          {
+                                PropertyDef prop_def = new PropertyDef ((FeatureAttr) $2, (ITypeRef) $3,
+                                        (string) $4, (ArrayList) $6);
+                                codegen.CurrentTypeDef.BeginPropertyDef (prop_def);
+
+                                if ($8 != null) {
+                                        prop_def.AddInitValue ((Constant) $8);
+                                }
+                          }
 			;
 
 prop_attr 		: /* EMPTY */
+                          {
+                                $$ = new FeatureAttr ();
+                          }
 			| prop_attr K_RTSPECIALNAME
+                          {
+                                $$ = (FeatureAttr) $1 | FeatureAttr.Rtspecialname;
+                          }
 			| prop_attr K_SPECIALNAME
+                          {
+                                $$ = (FeatureAttr) $1 | FeatureAttr.Specialname;
+                          }
 			;
 
 prop_decls		: /* EMPTY */
@@ -1977,8 +1998,17 @@ prop_decls		: /* EMPTY */
 			;
 
 prop_decl		: D_SET method_ref
+                          {
+                                codegen.CurrentTypeDef.CurrentProperty.AddSet ((MethodRef) $2);
+                          }
 			| D_GET method_ref
+                          {
+                                codegen.CurrentTypeDef.CurrentProperty.AddGet ((MethodRef) $2);
+                          }
 			| D_OTHER method_ref
+                          {
+                                codegen.CurrentTypeDef.CurrentProperty.AddOther ((MethodRef) $2);
+                          }
 			| customattr_decl
 			| extsource_spec
 			| language_decl
