@@ -264,7 +264,9 @@ namespace System.Data.SqlTypes
 
 		public static SqlDecimal ConvertToPrecScale (SqlDecimal n, int precision, int scale)
 		{
-			return new SqlDecimal ((byte)precision, (byte)scale, n.IsPositive, n.Data);
+//			return new SqlDecimal ((byte)precision, (byte)scale, n.IsPositive, n.Data);
+			// FIXME: precision
+			return AdjustScale (n, scale - n.scale, true);
 		}
 
 		public static SqlDecimal Divide (SqlDecimal x, SqlDecimal y)
@@ -542,6 +544,7 @@ namespace System.Data.SqlTypes
 			int texp = 0;
 			int rc = 0;
 			byte prec = 0; // precision
+			bool positive = ! (x.positive ^ y.positive);
 
 			prec = x.Precision >= y.Precision ? x.Precision : y.Precision;
 			DecimalDivSub (ref x, ref y, ref lo, ref hi, ref texp);
@@ -574,7 +577,7 @@ namespace System.Data.SqlTypes
 			int resultMi2 = (int)(hi);
 			int resultHi = (int)(hi >> 32);
 
-			return new SqlDecimal (prec, (byte)sc, true, resultLo,
+			return new SqlDecimal (prec, (byte)sc, positive, resultLo,
 						       resultMi, resultMi2,
 						       resultHi);
 		}
