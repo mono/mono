@@ -31,6 +31,7 @@
 
 using System;
 using System.Text;
+using System.Globalization;
 
 namespace System.Net {
 
@@ -227,10 +228,10 @@ namespace System.Net {
 			System.Net.Cookie c = obj as System.Net.Cookie;			
 			
 			return c != null &&
-			       String.Compare (this.name, c.name, true) == 0 &&
-			       String.Compare (this.val, c.val, false) == 0 &&
-			       String.Compare (this.path, c.path, false) == 0 &&
-			       String.Compare (this.domain, c.domain, true) == 0 &&
+			       String.Compare (this.name, c.name, true, CultureInfo.InvariantCulture) == 0 &&
+			       String.Compare (this.val, c.val, false, CultureInfo.InvariantCulture) == 0 &&
+			       String.Compare (this.path, c.path, false, CultureInfo.InvariantCulture) == 0 &&
+			       String.Compare (this.domain, c.domain, true, CultureInfo.InvariantCulture) == 0 &&
 			       this.version == c.version;
 		}
 
