@@ -295,11 +295,10 @@ namespace Mono.CSharp
 				if (assembly.IndexOfAny (path_chars) != -1) {
 					a = Assembly.LoadFrom (assembly);
 				} else {
-					a = LoadAssemblyFromGac (assembly);
-					if (a == null)
-						a = Assembly.LoadFrom (assembly);
-					if (a == null)
-						a = Assembly.Load (assembly);
+					string ass = assembly;
+					if (ass.EndsWith (".dll"))
+						ass = assembly.Substring (0, assembly.Length - 4);
+					a = Assembly.Load (ass);
 				}
 				TypeManager.AddAssembly (a);
 
@@ -328,40 +327,6 @@ namespace Mono.CSharp
 				Report.Error(6, "Cannot load assembly " + f.FusionLog);
 			} catch (ArgumentNullException){
 				Report.Error(6, "Cannot load assembly (null argument)");
-			}
-		}
-
-		static Assembly LoadAssemblyFromGac (string name)
-		{
-			PropertyInfo gac = typeof (System.Environment).GetProperty ("GacPath",
-					BindingFlags.Static|BindingFlags.NonPublic);
-
-			if (gac == null)
-				return null;
-
-			MethodInfo gac_get = gac.GetGetMethod (true);
-			string use_name = name;
-			string asmb_path;
-			string [] canidates;
-
-			if (name.EndsWith (".dll"))
-				use_name = name.Substring (0, name.Length - 4);
-			
-			asmb_path = Path.Combine ((string) gac_get.Invoke (null, null), use_name);
-
-			if (!Directory.Exists (asmb_path))
-				return null;
-
-			canidates = Directory.GetDirectories (asmb_path, GetSysVersion () + "*");
-			if (canidates.Length == 0)
-				canidates = Directory.GetDirectories (asmb_path);
-			if (canidates.Length == 0)
-				return null;
-			try {
-				Assembly a = Assembly.LoadFrom (Path.Combine (canidates [0], use_name + ".dll"));
-				return a;
-			} catch (Exception e) {
-				return null;
 			}
 		}
 
@@ -1426,6 +1391,7 @@ namespace Mono.CSharp
 			if (timestamps)
 				ShowTime ("Loading references");
 			link_paths.Add (GetSystemDir ());
+			link_paths.Add (Directory.GetCurrentDirectory ());
 			LoadReferences ();
 			
 			if (timestamps)
