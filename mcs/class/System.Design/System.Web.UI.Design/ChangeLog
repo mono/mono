@@ -1,3 +1,11 @@
+2003-12-15  Jackson Harper <jackson@ximian.com>
+
+	* UrlEditor.cs:
+	* ImageUrlEditor.cs:
+	* XmlUrlEditor.cs:
+	* XslUrlEditor.cs:
+	* UrlBuilderOptions.cs: Implement
+	
 2003-10-20 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* ControlDesigner.cs, DataBindingCollection.cs,
