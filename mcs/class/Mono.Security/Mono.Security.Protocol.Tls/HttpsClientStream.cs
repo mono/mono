@@ -44,12 +44,14 @@ namespace Mono.Security.Protocol.Tls {
 
 
                 public HttpsClientStream (Stream stream, X509CertificateCollection clientCertificates,
-					HttpWebRequest request)
+					HttpWebRequest request, byte [] buffer)
                         : base (stream, request.RequestUri.Host, false, SecurityProtocolType.Default, clientCertificates)
                 {
                         // this constructor permit access to the WebRequest to call
                         // ICertificatePolicy.CheckValidationResult
                         _request = request;
+			if (buffer != null)
+				InputBuffer.Write (buffer, 0, buffer.Length);
 #if !NET_1_0
                         // also saved from reflection
                         base.CheckCertRevocationStatus = ServicePointManager.CheckCertificateRevocationList;
@@ -71,3 +73,4 @@ namespace Mono.Security.Protocol.Tls {
                 }
         }
 }
+

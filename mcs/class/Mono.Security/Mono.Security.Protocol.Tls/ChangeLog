@@ -1,3 +1,8 @@
+2004-10-04 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpsClientStream.cs: the .ctor receives a pre-read buffer now.
+	* SslClientStream.cs: added InputBuffer property.
+
 2004-07-14  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SslClientStream.cs: Changed lock to "new object()" and not 
