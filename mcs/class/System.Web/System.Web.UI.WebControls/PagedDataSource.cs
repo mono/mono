@@ -346,6 +346,7 @@ namespace System.Web.UI.WebControls
 					while(cIndex < start)
 					{
 						collEnum.MoveNext();
+						cIndex++;
 					}
 				}
 				collEnum.MoveNext();
