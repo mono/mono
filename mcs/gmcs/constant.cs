@@ -1065,14 +1065,16 @@ namespace Mono.CSharp {
 		{
 			ILGenerator ig = ec.ig;
 
-			if (Value <= int.MaxValue && Value >= int.MinValue)
+			int [] words = Decimal.GetBits (Value);
+			int power = (words [3] >> 16) & 0xff;
+
+			if (power == 0 && Value <= int.MaxValue && Value >= int.MinValue)
 			{
 				IntConstant.EmitInt (ig, (int)Value);
 				ig.Emit (OpCodes.Newobj, TypeManager.void_decimal_ctor_int_arg);
 				return;
 			}
 
-			int [] words = Decimal.GetBits (Value);
 			
 			//
 			// FIXME: we could optimize this, and call a better 
@@ -1087,7 +1089,7 @@ namespace Mono.CSharp {
 			IntConstant.EmitInt (ig, words [3] >> 31);
 
 			// power
-			IntConstant.EmitInt (ig, (words [3] >> 16) & 0xff);
+			IntConstant.EmitInt (ig, power);
 
 			ig.Emit (OpCodes.Newobj, TypeManager.void_decimal_ctor_five_args);
 		}

@@ -1,10 +1,22 @@
 2004-11-29  Marek Safar  <marek.safar@seznam.cz>
 
-	Fix bug #49488
+	* class (GetClassBases): Better error 60 report.
+        (EventProperty): Disabled warning 67 detection.
 
+2004-11-29  Marek Safar  <marek.safar@seznam.cz>
+
+	Fix bug #60324
+	* cfold.cs (Assign.DoResolve): Add subtraction for DecimalConstant.
+
+	* constant.cs (DecimalConstant.Emit): Don't use int ctor for
+	precise values.
+
+2004-11-29  Marek Safar  <marek.safar@seznam.cz>
+
+	Fix bug #49488
 	* assign.cs (Assign.DoResolve): Add error 1648, 1650 report.
 
-	* decl.cs (MemberCore.MemberName). Error 1648 in compiler.
+	* decl.cs (MemberCore.MemberName): Error 1648 in compiler.
 
 2004-11-26  Miguel de Icaza  <miguel@ximian.com>
 
