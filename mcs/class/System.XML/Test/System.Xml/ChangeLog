@@ -1,3 +1,8 @@
+2004-01-20  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlElementTests.cs : Added WriteToMakesNonsenseForDefaultNSChildren.
+	* XmlTextWriterTests.cs : Added DontOutputRemovalDefaultNSDeclaration.
+
 2004-01-14  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlAttributeCollectionTests.cs : Added RemoveDefaultAttribute().

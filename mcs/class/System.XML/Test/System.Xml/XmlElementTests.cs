@@ -472,6 +472,22 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
+		public void WriteToMakesNonsenseForDefaultNSChildren ()
+		{
+			XmlDocument d = new XmlDocument ();
+			XmlElement x = d.CreateElement ("root");
+			d.AppendChild (x);
+			XmlElement a = d.CreateElement ("a");
+			XmlElement b = d.CreateElement ("b");
+			b.SetAttribute ("xmlns","probe");
+			x.AppendChild (a);
+			x.AppendChild (b);
+			XmlElement b2 = d.CreateElement ("p2", "b2", "");
+			b.AppendChild (b2);
+			AssertEquals ("<root><a /><b xmlns=\"probe\"><b2 /></b></root>", d.OuterXml);
+		}
+
+		[Test]
 		public void WriteToWithDeletedNamespacePrefix ()
 		{
 			XmlDocument doc = new XmlDocument ();

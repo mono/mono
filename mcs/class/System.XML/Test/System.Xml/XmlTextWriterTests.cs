@@ -1102,5 +1102,24 @@ namespace MonoTests.System.Xml
 			doc2.LoadXml(doc.InnerXml);
 			AssertEquals (xml.Replace ('\'', '"'), doc2.OuterXml);
 		}
+
+		[Test]
+		public void DontOutputRemovalDefaultNSDeclaration ()
+		{
+			xtw.WriteStartDocument ();
+			xtw.WriteStartElement ("foo");
+			xtw.WriteAttributeString ("xmlns", "probe");
+			xtw.WriteStartElement ("b");
+			xtw.WriteStartElement (null, "b2", null);
+			xtw.WriteEndElement (); // b2
+			xtw.WriteStartElement (null, "b2", "");
+			xtw.WriteEndElement (); // b2
+			xtw.WriteEndElement (); // b
+			xtw.WriteEndElement (); // foo
+			xtw.WriteEndDocument ();
+			xtw.Close ();
+
+			AssertEquals ("<?xml version='1.0' encoding='utf-16'?><foo xmlns='probe'><b><b2 /><b2 xmlns='' /></b></foo>", StringWriterText);
+		}
 	}
 }
