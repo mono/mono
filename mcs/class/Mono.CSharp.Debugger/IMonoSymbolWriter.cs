@@ -12,13 +12,12 @@
 using System;
 using System.Reflection;
 using System.Reflection.Emit;
-using System.Diagnostics.SymbolStore;
 using System.Collections;
 using System.IO;
 	
 namespace Mono.CSharp.Debugger
 {
-	public interface IMonoSymbolWriter : ISymbolWriter
+	public interface IMonoSymbolWriter : System.Diagnostics.SymbolStore.ISymbolWriter
 	{
 		void Initialize (string assembly_filename, string filename, string[] args);
 	}

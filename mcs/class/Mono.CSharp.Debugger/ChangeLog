@@ -1,3 +1,10 @@
+2002-09-20  Martin Baulig  <martin@gnome.org>
+
+	* IMonoSymbolWriter.cs: Use fullly qualified name for
+	System.Diagnostics.SymbolStore.ISymbolWriter rather than `using' this
+	namespace.  This allows us to use the name `ISymbolWriter' in our own
+	code.
+
 2002-09-18  Martin Baulig  <martin@gnome.org>
 
 	* MonoSymbolTable.cs: Set version number to 21.  Encode the source file
