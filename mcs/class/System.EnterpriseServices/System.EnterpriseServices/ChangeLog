@@ -1,6 +1,12 @@
 2004-05-15  Gert Driesen (drieseng@users.sourceforge.net)
 
-	* IConfigurationAttribute: added
+	* ServiceDomain.cs: added private ctor to match MS
+	* BYOT.cs: added private ctor to match MS
+	* RegistrationErrorInfo.cs: marked ctor internal
+
+2004-05-15  Gert Driesen (drieseng@users.sourceforge.net)
+
+	* IConfigurationAttribute.cs: added
 	* ApplicationAccessControlAttribute.cs:
 	* ApplicationActivationAttribute.cs:
 	* ApplicationIDAttribute.cs:

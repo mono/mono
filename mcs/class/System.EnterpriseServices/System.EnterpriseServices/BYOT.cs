@@ -10,7 +10,15 @@
 using System;
 
 namespace System.EnterpriseServices {
-	public sealed class BYOT {
+	public sealed class BYOT
+	{
+		#region Constructors
+
+		private BYOT ()
+		{
+		}
+
+		#endregion Constructors
 
 		#region Methods
 

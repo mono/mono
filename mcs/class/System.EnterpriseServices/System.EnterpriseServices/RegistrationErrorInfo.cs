@@ -26,7 +26,7 @@ namespace System.EnterpriseServices {
 		#region Constructors
 
 		[MonoTODO]
-		public RegistrationErrorInfo (string name, string majorRef, string minorRef, int errorCode) 
+		internal RegistrationErrorInfo (string name, string majorRef, string minorRef, int errorCode) 
 		{
 			this.name = name;
 			this.majorRef = majorRef;

@@ -13,6 +13,13 @@ namespace System.EnterpriseServices {
 #if NET_1_1
 	[ComVisible(false)]
 	public sealed class ServiceDomain {
+		#region Constructors
+
+		private ServiceDomain ()
+		{
+		}
+
+		#endregion Constructors
 
 		#region Methods
 
