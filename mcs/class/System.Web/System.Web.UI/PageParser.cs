@@ -54,6 +54,7 @@ namespace System.Web.UI
 			GetString (atts, "Trace", null);
 			GetString (atts, "TraceMode", null);
 			GetString (atts, "UICulture", null);
+			GetBool (atts, "ValidateRequest", true);
 
 			base.ProcessMainAttributes (atts);
 		}
