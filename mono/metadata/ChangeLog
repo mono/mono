@@ -1,3 +1,8 @@
+2002-03-12  Dan Lewis <dihlewis@yahoo.co.uk>
+
+	* icall.c: added System.Buffer support.
+	* file-io.c: moved file icalls from PAL to FileStream.
+
 2002-03-12  Dietmar Maurer  <dietmar@ximian.com>
 
 	* icall.c (ves_icall_System_Object_GetHashCode): impl.
