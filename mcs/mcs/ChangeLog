@@ -1,3 +1,8 @@
+2003-09-02  Ravi Pratap  <ravi@ximian.com>
+
+	* attribute.cs (CheckAttributeTarget): Ensure that we allow return
+	value attributes to be applied to ParameterBuilders.
+
 2003-08-26  Martin Baulig  <martin@ximian.com>
 
 	* ecore.cs (SimpleName.SimpleNameResolve): Look for members before

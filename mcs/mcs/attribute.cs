@@ -529,7 +529,7 @@ namespace Mono.CSharp {
 		}
 
                 /// <summary>
-                ///   Ensure that Attribute 'a' is being applied to the right target
+                ///   Ensure that Attribute 'a' is being applied to the right language element (target)
                 /// </summary>
 		public static bool CheckAttributeTarget (Attribute a, object element)
 		{
@@ -556,6 +556,7 @@ namespace Mono.CSharp {
                                         }
 			} else
 				targets = attr.Targets;
+
 
 			if (element is Class) {
 				if ((targets & AttributeTargets.Class) != 0)
@@ -605,7 +606,8 @@ namespace Mono.CSharp {
 				else
 					return false;
 			} else if (element is ParameterBuilder) {
-				if ((targets & AttributeTargets.Parameter) != 0)
+				if ((targets & AttributeTargets.Parameter) != 0 ||
+                                    (targets & AttributeTargets.ReturnValue) != 0)
 					return true;
 				else
 					return false;
