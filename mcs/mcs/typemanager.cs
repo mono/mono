@@ -522,7 +522,7 @@ public class TypeManager {
 		sig.args = args;
 		
 		mi = FindMembers (t, MemberTypes.Constructor,
-				  instance_and_static | BindingFlags.Public, signature_filter, sig);
+				  instance_and_static | BindingFlags.Public | BindingFlags.DeclaredOnly, signature_filter, sig);
 		if (mi == null || mi.Length == 0 || !(mi [0] is ConstructorInfo)){
 			Report.Error (-19, "Can not find the core constructor for type `" + t.Name + "'");
 			return null;

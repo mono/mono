@@ -1,3 +1,10 @@
+2002-06-17  Miguel de Icaza  <miguel@ximian.com>
+
+	* typemanager.cs (GetConstructor): Use DeclaredOnly to look the
+	constructor in the type, instead of any constructor in the type
+	hierarchy.  Thanks to Paolo for finding this bug (it showed up as
+	a bug in the Mono runtime when applying the params attribute). 
+
 2002-06-16  Rafael Teixeira  <rafaelteixeirabr@hotmail.com>
 	* changed namespace.cs to use "GenericParser.error(...)" instead of "CSharpParser.error(...)"
 
