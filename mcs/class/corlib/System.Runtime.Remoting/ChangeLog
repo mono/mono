@@ -1,3 +1,10 @@
+2003-11-26  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* InternalRemotingServices.cs: Fixed GetCachedSoapAttribute().
+	* RemotingConfiguration.cs: Implemented CustomErrorsEnabled(). 
+	  Added support for soapInterop configuration section.
+	* SoapServices.cs: Several fixes to match MS behavior.
+
 2003-11-25  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* InternalRemotingServices.cs: Implemented GetCachedSoapAttribute().

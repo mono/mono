@@ -117,7 +117,7 @@ namespace System.Runtime.Remoting {
 			GetInteropFieldInfo (ht, xmlElement, xmlNamespace, out type, out name);
 		}
 
-		public static void GetInteropFieldInfo (Hashtable fields, 
+		static void GetInteropFieldInfo (Hashtable fields, 
 										string xmlName, string xmlNamespace,
 										out Type type, out string name) 
 		{
@@ -210,59 +210,41 @@ namespace System.Runtime.Remoting {
 		public static bool GetXmlElementForInteropType (Type type, out string xmlElement, out string xmlNamespace)
 		{
 			SoapTypeAttribute att = (SoapTypeAttribute) InternalRemotingServices.GetCachedSoapAttribute (type);
-			if (att == null || (att.XmlElementName == null && att.XmlNamespace == null))
+			if (!att.IsInteropXmlElement)
 			{
 				xmlElement = null;
 				xmlNamespace = null;
 				return false;
 			}
 			
-			if (att.XmlElementName != null)
-				xmlElement = att.XmlElementName;
-			else
-				xmlElement = type.Name;
-			
-			if (att.XmlNamespace != null)
-				xmlNamespace = att.XmlNamespace;
-			else if (att.XmlTypeNamespace != null)
-				xmlNamespace = att.XmlTypeNamespace;
-			else
-				xmlNamespace = CodeXmlNamespaceForClrTypeNamespace (type.Namespace, type.Assembly.GetName().Name);
-				
+			xmlElement = att.XmlElementName;
+			xmlNamespace = att.XmlNamespace;				
 			return true;
 		}
 
 		public static string GetXmlNamespaceForMethodCall (MethodBase mb) 
 		{
-			return CodeXmlNamespaceForClrTypeNamespace (mb.DeclaringType.Name, GetAssemblyName(mb));
+			return CodeXmlNamespaceForClrTypeNamespace (mb.DeclaringType.FullName, GetAssemblyName(mb));
 		}
 
 		public static string GetXmlNamespaceForMethodResponse (MethodBase mb) 
 		{
-			return CodeXmlNamespaceForClrTypeNamespace (mb.DeclaringType.Name, GetAssemblyName(mb));
+			return CodeXmlNamespaceForClrTypeNamespace (mb.DeclaringType.FullName, GetAssemblyName(mb));
 		}
 
 		public static bool GetXmlTypeForInteropType (Type type, out string xmlType, out string xmlTypeNamespace) 
 		{
 			SoapTypeAttribute att = (SoapTypeAttribute) InternalRemotingServices.GetCachedSoapAttribute (type);
 			
-			if (att == null || (att.XmlTypeName == null && att.XmlTypeNamespace == null))
+			if (!att.IsInteropXmlType)
 			{
 				xmlType = null;
 				xmlTypeNamespace = null;
 				return false;
 			}
 			
-			if (att.XmlTypeName != null)
-				xmlType = att.XmlTypeName;
-			else
-				xmlType = type.Name;
-			
-			if (att.XmlTypeNamespace != null)
-				xmlTypeNamespace = att.XmlTypeNamespace;
-			else
-				xmlTypeNamespace = CodeXmlNamespaceForClrTypeNamespace (type.Namespace, type.Assembly.GetName().Name);
-
+			xmlType = att.XmlTypeName;
+			xmlTypeNamespace = att.XmlTypeNamespace;
 			return true;
 		}
 
@@ -308,8 +290,8 @@ namespace System.Runtime.Remoting {
 				
 				foreach (FieldInfo field in fields)
 				{
-					SoapFieldAttribute att = (SoapFieldAttribute) Attribute.GetCustomAttribute (field, typeof (SoapFieldAttribute));
-					if (att == null) continue;
+					SoapFieldAttribute att = (SoapFieldAttribute) InternalRemotingServices.GetCachedSoapAttribute (field);
+					if (!att.IsInteropXmlElement ()) continue;
 					
 					string key = GetNameKey (att.XmlElementName, att.XmlNamespace);
 					if (att.UseAttribute)
@@ -348,22 +330,15 @@ namespace System.Runtime.Remoting {
 			InternalGetSoapAction (mb);
 		}
 		
-		public static string InternalGetSoapAction (MethodBase mb)
+		static string InternalGetSoapAction (MethodBase mb)
 		{
 			lock (_soapActions.SyncRoot)
 			{
 				string action = (string) _soapActions [mb];
 				if (action == null)
 				{
-					SoapMethodAttribute att = (SoapMethodAttribute) Attribute.GetCustomAttribute (mb, typeof (SoapMethodAttribute));
-					if (att != null)
-						action = att.SoapAction;
-					
-					if (action == null)
-					{
-						string ns = CodeXmlNamespaceForClrTypeNamespace (mb.DeclaringType.FullName, GetAssemblyName(mb));
-						action = ns + "#" + mb.Name;
-					}
+					SoapMethodAttribute att = (SoapMethodAttribute) InternalRemotingServices.GetCachedSoapAttribute (mb);
+					action = att.SoapAction;
 					_soapActions [mb] = action;
 					_soapActionsMethods [action] = mb;
 				}

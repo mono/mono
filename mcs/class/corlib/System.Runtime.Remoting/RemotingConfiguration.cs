@@ -33,6 +33,7 @@ namespace System.Runtime.Remoting
 		static MiniParser parser = null; 
 		static string processGuid = null;
 		static bool defaultConfigRead = false;
+		static string _errorMode;
 
 		static Hashtable wellKnownClientEntries = new Hashtable();
 		static Hashtable activatedClientEntries = new Hashtable();
@@ -283,13 +284,21 @@ namespace System.Runtime.Remoting
 		}
 		
 #if NET_1_1
-		[MonoTODO]
 		public static bool CustomErrorsEnabled (bool isLocalRequest)
 		{
-			throw new NotImplementedException ();
+			if (_errorMode == "off") return false;
+			if (_errorMode == "on") return true;
+			return !isLocalRequest;
 		}
 #endif
 
+		internal static void SetCustomErrorsMode (string mode)
+		{
+			if (mode != "on" && mode != "off" && mode != "remoteOnly")
+				throw new RemotingException ("Invalid custom error mode: " + mode);
+				
+			_errorMode = mode;
+		}
 	}
 
 	/***************************************************************
@@ -474,14 +483,17 @@ namespace System.Runtime.Remoting
 					
 				case "interopXmlType":
 					ValidatePath (name, "soapInterop");
+					ReadInteropXml (attrs, false);
 					break;
 					
 				case "interopXmlElement":
 					ValidatePath (name, "soapInterop");
+					ReadInteropXml (attrs, false);
 					break;
 					
 				case "preLoad":
 					ValidatePath (name, "soapInterop");
+					ReadPreload (attrs);
 					break;
 					
 				case "debug":
@@ -490,6 +502,11 @@ namespace System.Runtime.Remoting
 					
 				case "channelSinkProviders":
 					ValidatePath (name, "system.runtime.remoting");
+					break;
+					
+				case "customErrors":
+					ValidatePath (name, "system.runtime.remoting");
+					RemotingConfiguration.SetCustomErrorsMode (attrs.GetValue ("mode"));
 					break;
 					
 				default:
@@ -677,6 +694,33 @@ namespace System.Runtime.Remoting
 			typeEntries.Add (new WellKnownServiceTypeEntry (type, assm, objectUri, mode));
 		}
 		
+		void ReadInteropXml (MiniParser.IAttrList attrs, bool isElement)
+		{
+			Type t = Type.GetType (GetNotNull (attrs, "clr"));
+			string[] xmlName = GetNotNull (attrs, "xml").Split (',');
+			string localName = xmlName [0].Trim ();
+			string ns = xmlName.Length > 0 ? xmlName[1].Trim() : null;
+			
+			if (isElement) SoapServices.RegisterInteropXmlElement (localName, ns, t);
+			else SoapServices.RegisterInteropXmlType (localName, ns, t);
+		}
+		
+		void ReadPreload (MiniParser.IAttrList attrs)
+		{
+			string type = attrs.GetValue ("type");
+			string assm = attrs.GetValue ("assembly");
+			
+			if (type != null && assm != null)
+				throw new RemotingException ("Type and assembly attributes cannot be specified together");
+				
+			if (type != null)
+				SoapServices.PreLoad (Type.GetType (type));
+			else if (assm != null)
+				SoapServices.PreLoad (Assembly.Load (assm));
+			else
+				throw new RemotingException ("Either type or assembly attributes must be specified");
+		}
+					
 		string GetNotNull (MiniParser.IAttrList attrs, string name)
 		{
 			string value = attrs.GetValue (name);

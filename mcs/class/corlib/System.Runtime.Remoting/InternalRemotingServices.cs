@@ -49,9 +49,21 @@ namespace System.Runtime.Remoting
 				
 				ICustomAttributeProvider ap = (ICustomAttributeProvider) reflectionObject;
 				object[] atts = ap.GetCustomAttributes (typeof(SoapAttribute), true);
-				if (atts.Length > 0) att = (SoapAttribute) atts[0];
-				else att = null;
+				if (atts.Length > 0) 
+					att = (SoapAttribute) atts[0];
+				else
+				{
+					if (reflectionObject is Type)
+						att = new SoapTypeAttribute ();
+					else if (reflectionObject is FieldInfo)
+						att = new SoapFieldAttribute ();
+					else if (reflectionObject is MethodBase)
+						att = new SoapMethodAttribute ();
+					else if (reflectionObject is ParameterInfo)
+						att = new SoapParameterAttribute ();
+				}
 				
+				att.SetReflectionObject (reflectionObject);
 				_soapAttributes [reflectionObject] = att;
 				return att;
 			}
