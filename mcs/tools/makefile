@@ -12,10 +12,15 @@ verifier.exe: verifier.cs
 CorCompare.exe:
 	(cd corcompare; make CorCompare.exe)
 
-update: CorCompare.exe
+update: CorCompare.exe cormissing.xml ../../mono/doc/pending-classes
+
+cormissing.xml: ../class/lib/corlib_cmp.dll
 	./corcompare/CorCompare.exe -x cormissing.xml ../class/lib/corlib_cmp.dll
-	./corcompare/CorCompare.exe -t ../class/lib/corlib_cmp.dll > ../../mono/doc/pending-classes.in
+
+../../mono/doc/pending-classes: ./corcompare/cormissing.xsl cormissing.xml
 	$(CSCRIPT) /nologo ./corcompare/transform.js ./corcompare/cormissing.xml ./corcompare/cormissing.xsl > ../../mono/doc/pending-classes
+#	./corcompare/CorCompare.exe -t ../class/lib/corlib_cmp.dll > ../../mono/doc/pending-classes.in
+
 
 EnumCheck: EnumCheck.exe
 
