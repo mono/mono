@@ -8,6 +8,7 @@
 //
 
 using System;
+using System.Text;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
@@ -37,6 +38,7 @@ namespace System.Reflection.Emit {
 	private ModuleBuilder pmodule;
 	private int class_size;
 	private PackingSize packing_size;
+	private	MonoGenericParam[] generic_params;
 	private Type created;
 	string fullname;
 
@@ -52,6 +54,9 @@ namespace System.Reflection.Emit {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern void create_internal_class (TypeBuilder tb);
 		
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private extern void setup_generic_class (TypeBuilder tb);
+
 		internal TypeBuilder (ModuleBuilder mb, TypeAttributes attr) {
 			this.parent = null;
 			this.attrs = attr;
@@ -469,6 +474,18 @@ namespace System.Reflection.Emit {
 			/* handle nesting_type */
 			if (is_created)
 				throw not_after_created ();
+			if (generic_params != null) {
+				StringBuilder sb = new StringBuilder ("<");
+				for (int i = 0; i < generic_params.Length; i++) {
+					if (i > 0)
+						sb.Append (",");
+					sb.Append (generic_params [i].Name);
+				}
+				sb.Append (">");
+
+				tname = String.Concat (tname, sb.ToString ());
+				fullname = GetFullName ();
+			}
 			if (methods != null) {
 				foreach (MethodBuilder method in methods) {
 					method.fixup ();
@@ -955,6 +972,13 @@ namespace System.Reflection.Emit {
 		}
 
 #if GENERICS
+		public override Type GetGenericTypeDefinition ()
+		{
+			setup_generic_class (this);
+
+			return base.GetGenericTypeDefinition ();
+		}
+
 		public override bool HasGenericParameters {
 			get {
 				throw new NotImplementedException ();
@@ -978,6 +1002,41 @@ namespace System.Reflection.Emit {
 				throw new Exception ("Unimplemented");
 			}
 		}
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private extern static Type define_generic_parameter (TypeBuilder tb, MonoGenericParam param);
+		
+		public Type DefineGenericParameter (string name, Type[] constraints)
+		{
+			MonoGenericParam gparam = new MonoGenericParam (name, constraints);
+
+			if (generic_params != null) {
+				MonoGenericParam[] new_generic_params = new MonoGenericParam [generic_params.Length+1];
+				System.Array.Copy (generic_params, new_generic_params, generic_params.Length);
+				new_generic_params [generic_params.Length] = gparam;
+				generic_params = new_generic_params;
+			} else {
+				generic_params = new MonoGenericParam [1];
+				generic_params [0] = gparam;
+			}
+
+			return define_generic_parameter (this, gparam);
+		}
 #endif
+
+		protected sealed class MonoGenericParam {
+			private readonly uint Handle;
+
+			public readonly Type Type;
+			public readonly string Name;
+			public readonly int Flags;
+			public readonly Type[] Constraints;
+
+			public MonoGenericParam (string name, Type[] constraints)
+			{
+				this.Name = name;
+				this.Constraints = constraints;
+			}
+		}
 	}
 }

@@ -1,3 +1,9 @@
+2003-08-29  Martin Baulig  <martin@ximian.com>
+
+	* TypeBuilder.cs (TypeBuilder.DefineGenericParameter): New public
+	method.  We can now create generic types.
+	(TypeBuilder.GetGenericTypeDefinition): Override this; call the
+	`setup_internal_class' interncall before calling our base impl.
 
 Sat Aug  2 13:04:55 BST 2003 Malte Hildingson <malte@amy.udd.htu.se>
 
