@@ -1,3 +1,10 @@
+2003-07-24  Miguel de Icaza  <miguel@ximian.com>
+
+	* TypeBuilder.cs: Added generics stubs.
+
+	* EnumBuilder.cs: Added generics  stubs, changed bracing style for
+	routines.
+
 2003-07-23  Duncan Mak  <duncan@ximian.com>
 
 	* SignatureHelper.cs: This class does not have the

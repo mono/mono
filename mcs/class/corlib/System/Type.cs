@@ -928,5 +928,48 @@ namespace System {
 		{
 			return FullName;
 		}
+
+#if GENERICS
+		public Type [] GetGenericParameters ()
+		{
+			if (HasGenericParameters == false)
+				return new Type [0];
+
+			throw new Exception ("Unimplemented");
+		}
+
+		public abstract bool HasGenericParameters {
+			get;
+		}
+
+		public abstract bool HasUnboundGenericParameters {
+			get;
+		}
+
+		public Type GetGenericTypeDefinition ()
+		{
+			throw new Exception ("Unimplemented");
+		}
+
+		public Type IsGenericTypeDefinition ()
+		{
+			throw new Exception ("Unimplemented");
+		}
+
+		public Type BindGenericParameters (Type [] types)
+		{
+			throw new Exception ("Unimplemented");
+		}
+
+		public abstract bool IsUnboundGenericParameter {
+			get;
+		}
+
+		public virtual int GenericParameterPosition {
+			get {
+				throw new Exception ("Unimplemented");
+			}
+		}
+#endif
 	}
 }

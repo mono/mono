@@ -1,3 +1,7 @@
+2003-07-24  Miguel de Icaza  <miguel@ximian.com>
+
+	* TypeDelegator.cs: Added generics stubs.
+
 2003-07-21  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* ParameterInfo.cs: Position is zero-based in ParameterInfo.

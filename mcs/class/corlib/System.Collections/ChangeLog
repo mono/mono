@@ -1,3 +1,7 @@
+2003-07-24  Miguel de Icaza  <miguel@ximian.com>
+
+	* ArrayList.cs: Removed MonoTODO.
+
 2003-07-07  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Hashtable.cs: made SynchedHashtable serializable. Fixes bug #45918.

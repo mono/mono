@@ -537,5 +537,31 @@ namespace System
 		{
 			UnitySerializationHolder.GetTypeData (this, info, context);
 		}
+
+#if GENERICS
+		public override bool HasGenericParameters {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		public override bool HasUnboundGenericParameters {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		public override bool IsUnboundGenericParameter {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		public override int GenericParameterPosition {
+			get {
+				throw new Exception ("Unimplemented");
+			}
+		}
+#endif
 	}
 }

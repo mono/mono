@@ -881,7 +881,8 @@ namespace System.Reflection.Emit {
 			if (is_created)
 				throw not_after_created ();
 
-			TypeBuilder datablobtype = DefineNestedType ("$ArrayType$"+InitializedDataCount.ToString(),
+			string s = "$ArrayType$"+InitializedDataCount.ToString();
+			TypeBuilder datablobtype = DefineNestedType (s,
 				TypeAttributes.NestedPrivate|TypeAttributes.ExplicitLayout|TypeAttributes.Sealed,
 				pmodule.assemblyb.corlib_value_type, null, PackingSize.Size1, data.Length);
 			datablobtype.CreateType ();
@@ -952,5 +953,31 @@ namespace System.Reflection.Emit {
 			if (name.IndexOf ((char)0) != -1)
 				throw new ArgumentException (argName, "Illegal name.");
 		}
+
+#if GENERICS
+		public override bool HasGenericParameters {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		public override bool HasUnboundGenericParameters {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		public override bool IsUnboundGenericParameter {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		public override int GenericParameterPosition {
+			get {
+				throw new Exception ("Unimplemented");
+			}
+		}
+#endif
 	}
 }

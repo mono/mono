@@ -283,7 +283,7 @@ namespace System.IO {
 				decoded_count += decoder.GetChars (input_buffer, parse_start, cbEncoded, decoded_buffer, 0);
 				parse_start = 0;
 			} while (decoded_count == 0);
-			
+
 			return decoded_count;
 		}
 

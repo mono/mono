@@ -1,7 +1,6 @@
-2003-07-24  Duncan Mak  <duncan@ximian.com>
+2003-07-24  Miguel de Icaza  <miguel@ximian.com>
 
-	* Environment.cs (GetFolderPath): Make it not print out CS0162
-	warnings.
+	* Type.cs: Added generics stubs.
 
 2003-07-23  Duncan Mak  <duncan@ximian.com>
 

@@ -15,7 +15,6 @@ using System;
 
 namespace System.Collections {
 
-	[MonoTODO ("add versioning, changing the arraylist should invalidate all enumerators")]
 	[Serializable]
 	public class ArrayList : IList, ICollection, IEnumerable, ICloneable {
 
