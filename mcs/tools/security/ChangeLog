@@ -1,3 +1,12 @@
+2003-10-18  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* sn.cs: Fixed a bug when exporting the public key from a SNK file.
+
+2003-10-11  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* AssemblyInfo.cs: changed version number to 0.28.99
+	* sn.cs: Add support for signing and verifying assemblies.
+
 2003-09-01  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* AssemblyInfo.cs: Updated version to 0.26.99 (all tools).
