@@ -168,7 +168,7 @@ namespace System.Windows.Forms  {
 			}
 		}
 
-		internal const uint INVALID_MENU_ID = (uint)-1;
+		internal const uint INVALID_MENU_ID = 0xffffffff;
 		// Variables are stored here to provide access for the base functions
 		protected uint MenuID_ = INVALID_MENU_ID;
 

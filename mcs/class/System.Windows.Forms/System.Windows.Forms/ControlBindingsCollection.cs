@@ -51,7 +51,6 @@ namespace System.Windows.Forms {
 		/// - protected override void AddCore(Binding dataBinding);
 		/// - protected override void ClearCore();
 		/// - protected override void RemoveCore(Binding dataBinding);
-		[MonoTODO]
 		public new void Add(Binding binding) 
 		{
 			throw new NotImplementedException ();
