@@ -1,4 +1,11 @@
 
+2003-04-04	Gaurav Vaish <gvaish_mono AT lycos.com>
+
+	* DeviceSpecificChoice.cs: HasTemplates { get; },
+	                         : FindAndApplyEvent(...)     - Completed
+	                         : FindAndApplyProperty(...),
+	                         : CheckOnPageEvaluator(...)  - Init impl.
+
 2003-04-03	Gaurav Vaish <gvaish_mono AT lycos.com>
 
 	* DeviceSpecific.cs      : Almost done.

@@ -167,21 +167,57 @@ namespace System.Web.UI.MobileControls
 			}
 		}
 
+		/// <summary>
+		/// Returns false if not found or not applied
+		/// </summary>
 		private bool FindAndApplyProperty(object parentObj, string key,
 		                                  string value)
 		{
-			throw new NotImplementedException();
+			bool retVal = false;
+			PropertyDescriptor pd =
+			    TypeDescriptor.GetProperties(parentObj).Find(key, true);
+			if(pd != null)
+			{
+				if(pd.Attributes.Contains(
+				   DesignerSerializationVisibilityAttribute.Hidden))
+				{
+					throw new ArgumentException("DeviceSpecificChoice" +
+					                 "_OverridingPropertyNotDeclarable");
+				}
+				throw new NotImplementedException();
+			}
 		}
 
 		private bool FindAndApplyEvent(object parentObj, string key,
 		                               string value)
 		{
-			throw new NotImplementedException();
+			bool retVal = false;
+			if(key.Length > 0)
+			{
+				if(key.ToLower().StartsWith("on"))
+				{
+					string eventName = key.Substring(2);
+					EventDescriptor ed =
+					      TypeDescriptor.GetEvents(parentObj).Find(key, true);
+					if(ed != null)
+					{
+						ed.AddEventHandler(parentObj,
+						  Delegate.CreateDelegate(ed.EventType,
+						          Owner.MobilePage, eventName));
+					}
+				}
+			}
+			return retVal;
 		}
 
 		private bool CheckOnPageEvaluator(MobileCapabilities capabilities,
 		                                  out bool evaluatorResult)
 		{
+			boolr retVal = false;
+			evaluatorResult = false;
+			TemplateControl tc = Owner.ClosestTemplateControl;
+			// I have to get the method (MethodInfo?) and then invoke
+			// the method and send back the results of the method!
 			throw new NotImplementedException();
 		}
 
@@ -189,7 +225,7 @@ namespace System.Web.UI.MobileControls
 		{
 			get
 			{
-				throw new NotImplementedException();
+				return (templates != null && templates.Count > 0);
 			}
 		}
 	}
