@@ -1,5 +1,11 @@
 2004-03-10  Sebastien Pouliot  <sebastien@ximian.com>
 
+	* FromBase64Transform.cs: Two new unit tests showing that the 
+	transform doesn't care if it's data is invalid base64. Convert class
+	is on it's own.
+
+2004-03-10  Sebastien Pouliot  <sebastien@ximian.com>
+
 	* FromBase64Transform.cs: Converted to NUnit2 format. New unit tests
 	for properties, Dispose, Reuse and ignored characters.
 

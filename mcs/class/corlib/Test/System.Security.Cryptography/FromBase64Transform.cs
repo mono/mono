@@ -144,5 +144,21 @@ namespace MonoTests.System.Security.Cryptography {
 			_algo.Clear ();
 			TransformFinalBlock ("ReuseTransform", input, expected);
 		}
+
+		[Test]
+		public void InvalidLength () 
+		{
+			byte[] input = { 114, 108, 112 };
+			byte[] result = _algo.TransformFinalBlock (input, 0, input.Length);
+			AssertEquals ("No result", 0, result.Length);
+		}
+
+		[Test]
+		public void InvalidData () 
+		{
+			byte[] input = { 114, 108, 112, 32 };
+			byte[] result = _algo.TransformFinalBlock (input, 0, input.Length);
+			AssertEquals ("No result", 0, result.Length);
+		}
 	}
 }
