@@ -1,3 +1,9 @@
+
+Wed Dec 15 11:34:13 CET 2004 Paolo Molaro <lupus@ximian.com>
+
+	* ModuleBuilder.cs, EnumBuilder.cs: actually add the enumbuilder
+	to the type list of the module (bug#70488).
+
 2004-12-09  Martin Baulig  <martin@ximian.com>
 
 	* GenericTypeParameterBuilder.cs

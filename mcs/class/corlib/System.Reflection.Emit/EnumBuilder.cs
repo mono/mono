@@ -39,7 +39,6 @@ using System.Runtime.CompilerServices;
 
 namespace System.Reflection.Emit {
 	public sealed class EnumBuilder : Type {
-		private CustomAttributeBuilder[] cattrs;
 		private TypeBuilder _tb;
 		private FieldBuilder _underlyingField;
 		private Type _underlyingType;
@@ -52,6 +51,11 @@ namespace System.Reflection.Emit {
 			_underlyingField = _tb.DefineField ("value__", underlyingType,
 				(FieldAttributes.SpecialName | FieldAttributes.Private));
 			setup_enum_type (_tb);
+		}
+
+		internal TypeBuilder GetTypeBuilder ()
+		{
+			return _tb;
 		}
 
 		public override Assembly Assembly {
@@ -332,15 +336,7 @@ namespace System.Reflection.Emit {
 
 		public void SetCustomAttribute (CustomAttributeBuilder customBuilder)
 		{
-			if (cattrs != null) {
-				CustomAttributeBuilder[] new_array = new CustomAttributeBuilder [cattrs.Length + 1];
-				cattrs.CopyTo (new_array, 0);
-				new_array [cattrs.Length] = customBuilder;
-				cattrs = new_array;
-			} else {
-				cattrs = new CustomAttributeBuilder [1];
-				cattrs [0] = customBuilder;
-			}
+			_tb.SetCustomAttribute (customBuilder);
 		}
 
 		public void SetCustomAttribute (ConstructorInfo con, byte[] binaryAttribute)

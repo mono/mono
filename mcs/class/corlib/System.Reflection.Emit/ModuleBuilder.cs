@@ -213,11 +213,8 @@ namespace System.Reflection.Emit {
 			return DefineType (name, attr, parent, null);
 		}
 
-		private TypeBuilder DefineType (string name, TypeAttributes attr, Type parent, Type[] interfaces, PackingSize packsize, int typesize) {
-			if (name_cache.Contains (name))
-				throw new ArgumentException ("Duplicate type name within an assembly.");
-
-			TypeBuilder res = new TypeBuilder (this, name, attr, parent, interfaces, packsize, typesize, null);
+		private void AddType (TypeBuilder tb)
+		{
 			if (types != null) {
 				if (types.Length == num_types) {
 					TypeBuilder[] new_types = new TypeBuilder [types.Length * 2];
@@ -227,8 +224,16 @@ namespace System.Reflection.Emit {
 			} else {
 				types = new TypeBuilder [1];
 			}
-			types [num_types] = res;
+			types [num_types] = tb;
 			num_types ++;
+		}
+
+		private TypeBuilder DefineType (string name, TypeAttributes attr, Type parent, Type[] interfaces, PackingSize packsize, int typesize) {
+			if (name_cache.Contains (name))
+				throw new ArgumentException ("Duplicate type name within an assembly.");
+
+			TypeBuilder res = new TypeBuilder (this, name, attr, parent, interfaces, packsize, typesize, null);
+			AddType (res);
 			name_cache.Add (name, res);
 			return res;
 		}
@@ -258,7 +263,13 @@ namespace System.Reflection.Emit {
 		}
 
 		public EnumBuilder DefineEnum( string name, TypeAttributes visibility, Type underlyingType) {
+			if (name_cache.Contains (name))
+				throw new ArgumentException ("Duplicate type name within an assembly.");
+
 			EnumBuilder eb = new EnumBuilder (this, name, visibility, underlyingType);
+			TypeBuilder res = eb.GetTypeBuilder ();
+			AddType (res);
+			name_cache.Add (name, res);
 			return eb;
 		}
 
