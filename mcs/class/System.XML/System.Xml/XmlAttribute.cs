@@ -8,6 +8,7 @@
 //
 
 using System;
+using System.Text;
 
 namespace System.Xml
 {
@@ -46,17 +47,30 @@ namespace System.Xml
 			}
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Setter")]
 		public override string InnerText {
 			get {
-				throw new NotImplementedException ();
-			}
+				StringBuilder builder = new StringBuilder ();
+				AppendChildValues (this, builder);
+				return builder.ToString ();
+                        }
 
 			set {
 				throw new NotImplementedException ();
 			}
 		}
 
+		private void AppendChildValues (XmlNode parent, StringBuilder builder)
+		{
+			XmlNode node = parent.FirstChild;
+			
+			while (node != null) {
+				builder.Append (node.Value);
+				AppendChildValues (node, builder);
+				node = node.NextSibling;
+                        }
+                }
+		
 		[MonoTODO ("Setter.")]
 		public override string InnerXml {
 			get {

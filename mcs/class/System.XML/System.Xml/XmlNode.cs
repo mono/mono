@@ -77,12 +77,13 @@ namespace System.Xml
 			set { throw new NotImplementedException (); }
 		}
 
-		private void AppendChildValues(XmlNode parent, StringBuilder builder)
+		private void AppendChildValues (XmlNode parent, StringBuilder builder)
 		{
 			XmlNode node = parent.FirstChild;
 
 			while (node != null) {
-				builder.Append (node.Value);
+				if (node.NodeType == XmlNodeType.Text)
+					builder.Append (node.Value);
 				AppendChildValues (node, builder);
 				node = node.NextSibling;
 			}
