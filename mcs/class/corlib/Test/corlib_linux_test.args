@@ -97,6 +97,13 @@ System.Security.Cryptography/RijndaelManagedTest.cs
 System.Security.Cryptography/RijndaelTest.cs
 System.Security.Cryptography/RNGCryptoServiceProviderTest.cs
 System.Security.Cryptography/RSATest.cs
+System.Security.Cryptography/RSACryptoServiceProviderTest.cs 
+System.Security.Cryptography/RSAOAEPKeyExchangeDeformatterTest.cs 
+System.Security.Cryptography/RSAOAEPKeyExchangeFormatterTest.cs 
+System.Security.Cryptography/RSAPKCS1KeyExchangeDeformatterTest.cs 
+System.Security.Cryptography/RSAPKCS1KeyExchangeFormatterTest.cs 
+System.Security.Cryptography/RSAPKCS1SignatureDeformatterTest.cs 
+System.Security.Cryptography/RSAPKCS1SignatureFormatterTest.cs
 System.Security.Cryptography/SHA1CryptoServiceProviderTest.cs
 System.Security.Cryptography/SHA1Test.cs
 System.Security.Cryptography/SHA256ManagedTest.cs

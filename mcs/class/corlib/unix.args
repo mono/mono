@@ -633,6 +633,7 @@ System.Security.Cryptography/MD5CryptoServiceProvider.cs
 System.Security.Cryptography/MiniParser.cs
 System.Security.Cryptography/PaddingMode.cs
 System.Security.Cryptography/PasswordDeriveBytes.cs
+System.Security.Cryptography/PKCS1.cs
 System.Security.Cryptography/PKCS1MaskGenerationMethod.cs
 System.Security.Cryptography/RandomNumberGenerator.cs
 System.Security.Cryptography/RC2.cs
