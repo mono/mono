@@ -12,7 +12,7 @@ using System.Runtime.Serialization;
 namespace System.Runtime.Remoting {
 
 	[Serializable]
-	public class RemotingException : Exception
+	public class RemotingException : SystemException
 	{
 		public RemotingException ()
 			: base ()

@@ -44,7 +44,6 @@ namespace System.Runtime.Remoting {
 
 		public string ObjectUrl {
 			get { return obj_url; }
-			set { obj_url = value; }
 		}
 
 		public override string ToString ()

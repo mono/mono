@@ -14,19 +14,26 @@ namespace System.Runtime.Remoting {
 
 	public class ActivatedClientTypeEntry : TypeEntry
 	{
-		string url;
+		string applicationUrl;
 		Type obj_type;
 		
 		public ActivatedClientTypeEntry (Type type, string appUrl)
 		{
 			AssemblyName = type.Assembly.FullName;
 			TypeName = type.FullName;
-			url = appUrl;
+			applicationUrl = appUrl;
 			obj_type = type;
 		}
 
+		public ActivatedClientTypeEntry (string typeName, string assemblyName, string appUrl)
+		{
+			AssemblyName = assemblyName;
+			TypeName = typeName;
+			applicationUrl = appUrl;
+		}
+
 		public string ApplicationUrl {
-			get { return url; }
+			get { return applicationUrl; }
 		}
 
 		public IContextAttribute [] ContextAttributes {
@@ -36,6 +43,12 @@ namespace System.Runtime.Remoting {
 
 		public Type ObjectType {
 			get { return obj_type; }
+		}
+
+		[MonoTODO]
+		public override string ToString ()
+		{
+			return TypeName + AssemblyName + ApplicationUrl;
 		}
 	}
 }

@@ -45,7 +45,6 @@ namespace System.Runtime.Remoting {
 
 		public WellKnownObjectMode Mode {
 			get { return obj_mode; }
-			set { obj_mode = value; }
 		}
 
 		public Type ObjectType {
@@ -54,7 +53,6 @@ namespace System.Runtime.Remoting {
 
 		public string ObjectUri {
 			get { return obj_uri; }
-			set { obj_uri = value; }
 		}
 
 		[MonoTODO]

@@ -72,7 +72,6 @@ namespace System.Runtime.Remoting.Messaging {
 		[MonoTODO]
 		public virtual object[] OutArgs {
 			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
 		}
 
 		[MonoTODO]
@@ -81,8 +80,9 @@ namespace System.Runtime.Remoting.Messaging {
 		}
 
 		[MonoTODO]
-		public object ReturnValue {
+		public virtual object ReturnValue {
 			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
 		}
 
 		[MonoTODO]
@@ -91,7 +91,7 @@ namespace System.Runtime.Remoting.Messaging {
 		}
 
 		[MonoTODO]
-		public virtual string Uri {
+		public string Uri {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}

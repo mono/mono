@@ -1,5 +1,5 @@
 //
-// System.Runtime.Remoting.Messaging.RemoteSurrogateSelector.cs
+// System.Runtime.Remoting.Messaging.RemotingSurrogateSelector.cs
 //
 // Author: Duncan Mak  (duncan@ximian.com)
 //
@@ -11,9 +11,9 @@ using System.Runtime.Serialization;
 
 namespace System.Runtime.Remoting.Messaging {
 
-	public class RemoteSurrogateSelector : ISurrogateSelector
+	public class RemotingSurrogateSelector : ISurrogateSelector
 	{
-		public RemoteSurrogateSelector ()
+		public RemotingSurrogateSelector ()
 		{
 		}
 		

@@ -28,88 +28,86 @@ namespace System.Runtime.Remoting.Messaging {
 		protected IDictionary InternalProperties;
 
 		[MonoTODO]
-		public virtual int ArgCount {
+		public int ArgCount {
 			get { throw new NotImplementedException (); }
 		}
 
 		[MonoTODO]
-		public virtual object[] Args {
+		public object[] Args {
+			get { throw new NotImplementedException (); }
+		}
+		
+		[MonoTODO]
+		public bool HasVarArgs {
+			get { throw new NotImplementedException (); }
+		}
+
+		[MonoTODO]
+		public int InArgCount {
+			get { throw new NotImplementedException (); }
+		}
+
+		[MonoTODO]
+		public object[] InArgs {
+			get { throw new NotImplementedException (); }
+		}
+		
+		[MonoTODO]
+		public LogicalCallContext LogicalCallContext {
+			get { throw new NotImplementedException (); }
+		}
+		
+		[MonoTODO]
+		public MethodBase MethodBase {
+			get { throw new NotImplementedException (); }
+		}
+
+		[MonoTODO]
+		public string MethodName {
+			get { throw new NotImplementedException (); }
+		}
+
+		[MonoTODO]
+		public object MethodSignature {
+			get { throw new NotImplementedException (); }
+		}
+		
+		[MonoTODO]
+		public IDictionary Properties {
+			get { throw new NotImplementedException (); }
+		}
+
+		[MonoTODO]
+		public string TypeName {
+			get { throw new NotImplementedException (); }
+		}
+
+		[MonoTODO]
+		public string Uri {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
-		
-		[MonoTODO]
-		public virtual bool HasVarArgs {
-			get { throw new NotImplementedException (); }
-		}
 
 		[MonoTODO]
-		public virtual int InArgCount {
-			get { throw new NotImplementedException (); }
-		}
-
-		[MonoTODO]
-		public virtual object[] InArgs {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
-		}
-		
-		[MonoTODO]
-		public virtual LogicalCallContext LogicalCallContext {
-			get { throw new NotImplementedException (); }
-		}
-		
-		[MonoTODO]
-		public virtual MethodBase MethodBase {
-			get { throw new NotImplementedException (); }
-		}
-
-		[MonoTODO]
-		public virtual string MethodName {
-			get { throw new NotImplementedException (); }
-		}
-
-		[MonoTODO]
-		public virtual object MethodSignature {
-			get { throw new NotImplementedException (); }
-		}
-		
-		[MonoTODO]
-		public virtual IDictionary Properties {
-			get { throw new NotImplementedException (); }
-		}
-
-		[MonoTODO]
-		public virtual string TypeName {
-			get { throw new NotImplementedException (); }
-		}
-
-		[MonoTODO]
-		public virtual string Uri {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
-		}
-
-		[MonoTODO]
-		public virtual object GetArg (int argNum)
+		public object GetArg (int argNum)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public virtual string GetArgName (int index)
+		public string GetArgName (int index)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public virtual object GetInArg (int argNum)
+		public object GetInArg (int argNum)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public virtual string GetInArgName (int index)
+		public string GetInArgName (int index)
 		{
 			throw new NotImplementedException ();
 		}
@@ -121,19 +119,19 @@ namespace System.Runtime.Remoting.Messaging {
 		} 
 
 		[MonoTODO]
-		public virtual object HeaderHandler (Header[] h)
+		public object HeaderHandler (Header[] h)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public virtual void Init ()
+		public void Init ()
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public virtual void ResolveMethod ()
+		public void ResolveMethod ()
 		{
 			throw new NotImplementedException ();
 		}

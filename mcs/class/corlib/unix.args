@@ -514,7 +514,7 @@ System.Runtime.Remoting.Messaging/MethodResponse.cs
 System.Runtime.Remoting.Messaging/MethodReturnMessageWrapper.cs
 System.Runtime.Remoting.Messaging/MonoMethodMessage.cs
 System.Runtime.Remoting.Messaging/OneWayAttribute.cs
-System.Runtime.Remoting.Messaging/RemoteSurrogateSelector.cs
+System.Runtime.Remoting.Messaging/RemotingSurrogateSelector.cs
 System.Runtime.Remoting.Messaging/ReturnMessage.cs
 System.Runtime.Remoting.Metadata/SoapAttribute.cs
 System.Runtime.Remoting.Metadata/SoapFieldAttribute.cs

@@ -44,7 +44,6 @@ namespace System.Runtime.Remoting.Messaging {
 		[MonoTODO]
 		public virtual object [] InArgs {
 			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
 		}
 		
 		[MonoTODO]
