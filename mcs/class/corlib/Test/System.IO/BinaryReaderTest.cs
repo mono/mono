@@ -971,7 +971,7 @@ namespace MonoTests.System.IO
 		MemoryStream stream = null;
 		BinaryReader reader = null;		
 		try {
-			stream = new MemoryStream (new byte [] {0, 0, 0, 0, 0, 0, 65, 0, 0, 0, 0, 0, 0, 0, 0 ,87, 98, 0, 0, 0, 0});
+			stream = new MemoryStream (new byte [] {0, 0, 0, 0, 0, 0, 65, 0, 0, 0, 0, 0, 0, 0, 0 ,128, 0, 0, 0, 0, 0});
 			reader = new BinaryReader (stream);		
 			AssertEquals ("test#01", -18295873486192640, reader.ReadDecimal ());
 		} finally {

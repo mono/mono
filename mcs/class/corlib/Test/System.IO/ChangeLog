@@ -1,3 +1,9 @@
+2004-04-12  David Sheldon <dave-mono@earth.li>
+
+  * BinaryReaderTest.cs: Changed series of bytes in 
+  ReadDecimal to be a cleaner representation of a real 
+  decimal, as was not a technically correct decimal. 
+   
 2004-04-01  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* BufferedStreamTest.cs: Added test for Position.
