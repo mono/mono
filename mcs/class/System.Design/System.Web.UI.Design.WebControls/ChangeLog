@@ -1,6 +1,10 @@
 
 2002-10-29     Gaurav Vaish <gvaish_mono@lycos.com>
 
+	* XmlDesigner.cs          : Initial implementation.
+
+2002-10-29     Gaurav Vaish <gvaish_mono@lycos.com>
+
 	* TODO                    : Update for PanelDesigner.
 	* PanelDesigner.cs        : Completed.
 
