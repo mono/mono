@@ -1,3 +1,7 @@
+2004-11-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AuthenticodeFormatter.cs, PrivateKey.cs: Backported endian fixes.
+
 2004-10-29  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AuthenticodeFormatter.cs: Fixed spcSpOpusInfo attribute (it wasn't 
