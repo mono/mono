@@ -55,8 +55,9 @@ namespace Mono.Xml.Xsl {
 			this.args = args;
 			this.root = root;
 			this.resolver = resolver != null ? resolver : new XmlUrlResolver ();
-			this.outputStack.Push (outputtter);
+			this.PushOutput (outputtter);
 			this.ApplyTemplates (root.Select ("."), QName.Empty, null);
+			this.PopOutput ();
 		}
 		
 		public XsltContext Context { get { return ctx; }}
@@ -79,7 +80,9 @@ namespace Mono.Xml.Xsl {
 		
 		public Outputter PopOutput ()
 		{
-			return (Outputter)this.outputStack.Pop ();
+			Outputter ret = (Outputter)this.outputStack.Pop ();
+			ret.Done ();
+			return ret;
 		}
 		
 		public Hashtable Outputs { get { return compiledStyle.Outputs; }}

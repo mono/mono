@@ -54,8 +54,8 @@ namespace Mono.Xml.Xsl {
 			_writer.Write(data);
 		}
 
-		public override void Close() {
-			_writer.Close();
+		public override void Done () {
+			_writer.Flush ();
 		}
 	}
 }

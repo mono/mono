@@ -43,6 +43,6 @@ namespace Mono.Xml.Xsl {
 		public abstract void WriteString(string text);
 		public abstract void WriteRaw(string data);
 		
-		public abstract void Close();
+		public abstract void Done ();
 	}
 }

@@ -1,5 +1,11 @@
 2003-08-19 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	* Outputter.cs: s/Close/Done
+	* TextOutputter.cs, XmlOutputter.cs: Flush, don't close the backing.
+	* XslTransformProcessor.cs: Flush output when popping, pop at end.
+
+2003-08-19 Ben Maurer  <bmaurer@users.sourceforge.net>
+
 	* Outputter.cs: Add support for namespaces.
 
 2003-08-19 Ben Maurer  <bmaurer@users.sourceforge.net>

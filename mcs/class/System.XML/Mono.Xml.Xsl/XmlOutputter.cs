@@ -91,8 +91,8 @@ namespace Mono.Xml.Xsl {
 			_writer.WriteRaw(data);
 		}
 
-		public override void Close() {
-			_writer.Close();
+		public override void Done () {
+			_writer.Flush ();
 		}
 	}
 }
