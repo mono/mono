@@ -1,3 +1,8 @@
+2003-11-21  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* context-static.cs: new test for ContextStaticAttribute.
+	* Makefile.am: added context-static.cs.
+
 2003-11-17  Zoltan Varga  <vargaz@freemail.hu>
 
 	* cattr-object.cs: Fix test so it does not count the attributes on the
