@@ -120,8 +120,8 @@ namespace MonoTests.System.Diagnostics {
 		// collection.
 		public void TestListeners_Add_Values()
 		{
-			const int ExpectedLevel = 5;
-			const int ExpectedSize = 3;
+			const int ExpectedLevel = 0;
+			const int ExpectedSize = 4;
 			Trace.IndentLevel = ExpectedLevel;
 			Trace.IndentSize = ExpectedSize;
 			TraceListener tl = new TextWriterTraceListener(Console.Out);

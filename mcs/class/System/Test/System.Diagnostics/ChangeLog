@@ -1,3 +1,7 @@
+2002-09-23  Nick Drochak  <ndrochak@gol.com>
+
+	* TraceTest.cs: Default level and size are 0 & 4, respectively.
+
 2002-09-19  Nick Drochak  <ndrochak@gol.com>
 
 	* TraceTest.cs: Clear list of listeners before each test.
