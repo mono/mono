@@ -1,5 +1,25 @@
 2003-11-15  Martin Baulig  <martin@ximian.com>
 
+	* class.c (mono_class_is_open_constructed_type): New public
+	function; checks whether a type is an open constructed type,
+	ie. whether it still contains type parameters.
+	(mono_class_inflate_generic_type): If we're a type parameter and
+	the inflated type is also a MONO_TYPE_(M)VAR, return the original
+	type.
+
+	* class.h (MonoGenericInst): Added `guint32 is_open'.
+
+	* loader.c (method_from_methodspec): Check whether we're an open
+	or closed constructed type and set `ginst->is_open'.
+
+	* reflection.c (mono_reflection_bind_generic_parameters): Check
+	whether we're an open or closed constructed type and set
+	`ginst->is_open'.
+	(mono_reflection_inflate_method_or_ctor): Don't inflate methods
+	from open constructed types.
+
+2003-11-15  Martin Baulig  <martin@ximian.com>
+
 	* reflection.c (mono_reflection_bind_generic_parameters): If we're
 	a generic instance (instead of a generic type declaration) with
 	unbound generic parameters, bind them to our actual types.
