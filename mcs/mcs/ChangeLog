@@ -1,3 +1,8 @@
+2002-06-02  Miguel de Icaza  <miguel@ximian.com>
+
+	* ecore.cs (SimpleNameResolve): Removed simple bug (we were
+	dereferencing a null on the static-field code path)
+
 2002-05-30  Martin Baulig  <martin@gnome.org>
 
 	* codegen.cs (InitMonoSymbolWriter): Added `string[] args' argument

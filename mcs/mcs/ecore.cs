@@ -3346,13 +3346,10 @@ namespace Mono.CSharp {
 
 					if (fi.IsStatic)
 						instance_expr = null;
-					else
+					else {
 						instance_expr = ec.This;
-
-					instance_expr = instance_expr.Resolve (ec);
-
-					if (instance_expr != null)
 						instance_expr = instance_expr.Resolve (ec);
+					} 
 					
 					return MemberAccess.ResolveMemberAccess (ec, ml, instance_expr, Location, null);
 				}
