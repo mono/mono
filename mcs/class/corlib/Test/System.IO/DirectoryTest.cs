@@ -991,6 +991,55 @@ public class DirectoryTest {
 		Directory.SetCreationTimeUtc (path, time);
 	}
 
+	[Test]
+	public void GetDirectories ()
+	{
+		string path = TempFolder;
+		string DirPath = TempFolder + Path.DirectorySeparatorChar + ".GetDirectories";
+		DeleteDirectory (DirPath);
+		
+		try {
+			Directory.CreateDirectory (DirPath);
+		
+			string [] dirs = Directory.GetDirectories (path);
+		
+			foreach (string directory in dirs) {
+			
+				if (directory == DirPath)
+					return;
+			}
+		
+			Assertion.Assert ("Directory Not Found", false);
+		} finally {
+			DeleteDirectory (DirPath);
+		}
+	}
+	
+	[Test]
+	public void GetFiles ()
+	{
+		string path = TempFolder;
+		string DirPath = TempFolder + Path.DirectorySeparatorChar + ".GetFiles";
+		if (File.Exists (DirPath))
+			File.Delete (DirPath);
+		
+		try {
+			File.Create (DirPath).Close ();
+			string [] files = Directory.GetFiles (TempFolder);
+			foreach (string directory in files) {
+			
+				if (directory == DirPath)
+					return;
+			}
+		
+			Assertion.Assert ("File Not Found", false);
+		} finally {
+			if (File.Exists (DirPath))
+				File.Delete (DirPath);
+			
+		}								
+	}
+
 	private void DeleteDirectory (string path)
 	{
 		if (Directory.Exists (path))
