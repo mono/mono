@@ -7,7 +7,7 @@ LIB_MCS_FLAGS = \
 	/nowarn:649 /nowarn:169 /nowarn:219 /nowarn:168 \
 	-r:$(corlib)				\
 	-r:System.dll			 	\
-	-r:Mono.Security
+	-r:Mono.Security.dll
 
 NO_TEST = yes
 
