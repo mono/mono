@@ -1,6 +1,6 @@
 topdir = ../..
 
-TEST_DIR = Test
+#TEST_DIR = Test
 LIBRARY = $(topdir)/class/lib/Mono.Data.SqliteClient.dll
 
 LIB_LIST = sources.list
