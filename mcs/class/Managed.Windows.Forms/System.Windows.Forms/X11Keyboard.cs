@@ -75,7 +75,7 @@ namespace System.Windows.Forms {
 			if ((xevent.KeyEvent.keycode >> 8) == 0x10)
 				xevent.KeyEvent.keycode = xevent.KeyEvent.keycode & 0xFF;
 
-			int event_time = xevent.KeyEvent.time;
+			int event_time = (int)xevent.KeyEvent.time;
 			int vkey = EventToVkey (xevent);
 
 			if (vkey == 0)

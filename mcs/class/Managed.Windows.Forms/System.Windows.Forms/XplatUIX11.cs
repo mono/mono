@@ -88,7 +88,7 @@ namespace System.Windows.Forms {
 		private static int		net_active_window;	// X Atom
 		private static int		async_method;
 		private static int		post_message;		// X Atom send to generate a PostMessage event
-		private static uint		default_colormap;	// X Colormap ID
+		private static IntPtr		default_colormap;	// X Colormap ID
 		internal static MouseButtons	mouse_state;
 		internal static Point		mouse_position;
 		internal static bool		grab_confined;		// Is the current grab (if any) confined to grab_area?
@@ -98,7 +98,7 @@ namespace System.Windows.Forms {
 		internal static Msg		click_pending_message;	// 
 		internal static IntPtr		click_pending_lparam;	// 
 		internal static IntPtr		click_pending_wparam;	// 
-		internal static int		click_pending_time;	// Last time we received a mouse click
+		internal static long		click_pending_time;	// Last time we received a mouse click
 		internal static bool		click_pending;		// True if we haven't sent the last mouse click
 		internal static int		double_click_interval;	// in milliseconds, how fast one has to click for a double click
 		internal static Stack		modal_window;		// Stack of modal window handles
@@ -421,7 +421,7 @@ namespace System.Windows.Forms {
 			int			Width;
 			int			Height;
 			MotifWmHints		mwmHints;
-			uint[]			atoms;
+			IntPtr[]	atoms;
 			int			atom_count;
 			int			BorderWidth;
 			int			protocols;
@@ -484,61 +484,65 @@ namespace System.Windows.Forms {
 					XSetTransientForHint(DisplayHandle, WindowHandle, ParentHandle);
 				}
 
+				MotifFunctions functions = 0;
+				MotifDecorations decorations = 0;
 				mwmHints = new MotifWmHints();
-				mwmHints.flags = MotifFlags.Functions | MotifFlags.Decorations;
-				mwmHints.functions = 0;
-				mwmHints.decorations = 0;
+				mwmHints.flags = (IntPtr)(MotifFlags.Functions | MotifFlags.Decorations);
+				mwmHints.functions = (IntPtr)0;
+				mwmHints.decorations = (IntPtr)0;
 				
 				if ((cp.Style & ((int)WindowStyles.WS_CAPTION)) != 0) {
-					mwmHints.functions |= MotifFunctions.Move;
-					mwmHints.decorations |= MotifDecorations.Title | MotifDecorations.Menu;
+					functions |= MotifFunctions.Move;
+					decorations |= MotifDecorations.Title | MotifDecorations.Menu;
 				}
 
 				if ((cp.Style & ((int)WindowStyles.WS_THICKFRAME)) != 0) {
-					mwmHints.functions |= MotifFunctions.Move | MotifFunctions.Resize;
-					mwmHints.decorations |= MotifDecorations.Border | MotifDecorations.ResizeH;
+					functions |= MotifFunctions.Move | MotifFunctions.Resize;
+					decorations |= MotifDecorations.Border | MotifDecorations.ResizeH;
 				}
 
 				if ((cp.Style & ((int)WindowStyles.WS_MINIMIZEBOX)) != 0) {
-					mwmHints.functions |= MotifFunctions.Minimize;
-					mwmHints.decorations |= MotifDecorations.Minimize;
+					functions |= MotifFunctions.Minimize;
+					decorations |= MotifDecorations.Minimize;
 				}
 
 				if ((cp.Style & ((int)WindowStyles.WS_MAXIMIZEBOX)) != 0) {
-					mwmHints.functions |= MotifFunctions.Maximize;
-					mwmHints.decorations |= MotifDecorations.Maximize;
+					functions |= MotifFunctions.Maximize;
+					decorations |= MotifDecorations.Maximize;
 				}
 
 				if ((cp.Style & ((int)WindowStyles.WS_SYSMENU)) != 0) {
-					mwmHints.functions |= MotifFunctions.Close;
+					functions |= MotifFunctions.Close;
 				}
 
 				if ((cp.ExStyle & ((int)WindowStyles.WS_EX_DLGMODALFRAME)) != 0) {
-					mwmHints.decorations |= MotifDecorations.Border;
+					decorations |= MotifDecorations.Border;
 				}
 
 				if ((cp.Style & ((int)WindowStyles.WS_DLGFRAME)) != 0) {
-					mwmHints.decorations |= MotifDecorations.Border;
+					decorations |= MotifDecorations.Border;
 				}
 
 				if ((cp.Style & ((int)WindowStyles.WS_BORDER)) != 0) {
-					mwmHints.decorations |= MotifDecorations.Border;
+					decorations |= MotifDecorations.Border;
 				}
-
 
 				if ((cp.ExStyle & ((int)WindowStyles.WS_EX_TOOLWINDOW)) != 0) {
-					mwmHints.functions = 0;
-					mwmHints.decorations = 0;
+					functions = 0;
+					decorations = 0;
 				}
+
+				mwmHints.functions = (IntPtr)functions;
+				mwmHints.decorations = (IntPtr)decorations;
 
 				XChangeProperty(DisplayHandle, WindowHandle, mwm_hints, mwm_hints, 32, PropertyMode.Replace, ref mwmHints, 5);
 
-				atoms = new uint[8];
+				atoms = new IntPtr[8];
 				atom_count = 0;
 
 				if ((cp.ExStyle & ((int)WindowStyles.WS_EX_TOOLWINDOW)) != 0) {
-					atoms[atom_count++] = (uint)wm_state_above;
-					atoms[atom_count++] = (uint)wm_no_taskbar;
+					atoms[atom_count++] = (IntPtr)wm_state_above;
+					atoms[atom_count++] = (IntPtr)wm_no_taskbar;
 				}
 				XChangeProperty(DisplayHandle, WindowHandle, net_wm_state, atom, 32, PropertyMode.Replace, ref atoms, atom_count);
 
@@ -1039,9 +1043,9 @@ namespace System.Windows.Forms {
 						click_pending_message = msg.message;
 						click_pending_wparam = msg.wParam;
 						click_pending_lparam = msg.lParam;
-						click_pending_time = xevent.ButtonEvent.time;
+						click_pending_time = (long)xevent.ButtonEvent.time;
 					} else {
-						if (((xevent.ButtonEvent.time - click_pending_time)<double_click_interval) && (msg.wParam == click_pending_wparam) && (msg.lParam == click_pending_lparam) && (msg.message == click_pending_message)) {
+						if ((((long)xevent.ButtonEvent.time - click_pending_time)<double_click_interval) && (msg.wParam == click_pending_wparam) && (msg.lParam == click_pending_lparam) && (msg.message == click_pending_message)) {
 							// Looks like a genuine double click, clicked twice on the same spot with the same keys
 							switch(xevent.ButtonEvent.button) {
 								case 1: {
@@ -1779,19 +1783,19 @@ namespace System.Windows.Forms {
 		internal extern static int XScreenNumberOfScreen(IntPtr display, IntPtr Screen);
 
 		[DllImport ("libX11", EntryPoint="XDefaultVisual")]
-		internal extern static uint XDefaultVisual(IntPtr display, int screen_number);
+		internal extern static IntPtr XDefaultVisual(IntPtr display, int screen_number);
 
 		[DllImport ("libX11", EntryPoint="XDefaultDepth")]
 		internal extern static uint XDefaultDepth(IntPtr display, int screen_number);
 
 		[DllImport ("libX11", EntryPoint="XDefaultColormap")]
-		internal extern static uint XDefaultColormap(IntPtr display, int screen_number);
+		internal extern static IntPtr XDefaultColormap(IntPtr display, int screen_number);
 
 		[DllImport ("libX11", EntryPoint="XLookupColor")]
-		internal extern static int XLookupColor(IntPtr display, uint Colormap, string Coloranem, ref XColor exact_def_color, ref XColor screen_def_color);
+		internal extern static int XLookupColor(IntPtr display, IntPtr Colormap, string Coloranem, ref XColor exact_def_color, ref XColor screen_def_color);
 
 		[DllImport ("libX11", EntryPoint="XAllocColor")]
-		internal extern static int XAllocColor(IntPtr display, uint Colormap, ref XColor colorcell_def);
+		internal extern static int XAllocColor(IntPtr display, IntPtr Colormap, ref XColor colorcell_def);
 
 		[DllImport ("libX11", EntryPoint="XSetTransientForHint")]
 		internal extern static int XSetTransientForHint(IntPtr display, IntPtr window, IntPtr prop_window);
@@ -1800,10 +1804,10 @@ namespace System.Windows.Forms {
 		internal extern static int XChangeProperty(IntPtr display, IntPtr window, int property, int type, int format, PropertyMode  mode, ref MotifWmHints data, int nelements);
 
 		[DllImport ("libX11", EntryPoint="XChangeProperty")]
-		internal extern static int XChangeProperty(IntPtr display, IntPtr window, int property, Atom format, int type, PropertyMode  mode, ref uint[] atoms, int nelements);
+		internal extern static int XChangeProperty(IntPtr display, IntPtr window, int property, Atom format, int type, PropertyMode  mode, ref IntPtr[] atoms, int nelements);
 
 		[DllImport ("libX11", EntryPoint="XChangeProperty")]
-		internal extern static int XChangeProperty(IntPtr display, IntPtr window, int property, int format, int type, PropertyMode  mode, ref uint[] atoms, int nelements);
+		internal extern static int XChangeProperty(IntPtr display, IntPtr window, int property, int format, int type, PropertyMode  mode, ref IntPtr[] atoms, int nelements);
 
 		[DllImport ("libX11", EntryPoint="XChangeProperty")]
 		internal extern static int XChangeProperty(IntPtr display, IntPtr window, int property, int format, int type, PropertyMode  mode, IntPtr data, int nelements);
@@ -1828,7 +1832,7 @@ namespace System.Windows.Forms {
 		internal extern static int XDrawLine(IntPtr display, IntPtr drawable, IntPtr gc, int x1, int y1, int x2, int y2);
 
 		[DllImport ("libX11", EntryPoint="XSetWindowBackground")]
-		internal extern static int XSetWindowBackground(IntPtr display, IntPtr window, uint background);
+		internal extern static int XSetWindowBackground(IntPtr display, IntPtr window, IntPtr background);
 
 		[DllImport ("libX11", EntryPoint="XCopyArea")]
 		internal extern static int XCopyArea(IntPtr display, IntPtr src, IntPtr dest, IntPtr gc, int src_x, int src_y, int width, int height, int dest_x, int dest_y);
