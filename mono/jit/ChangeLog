@@ -1,5 +1,8 @@
 2002-11-28  Dietmar Maurer  <dietmar@ximian.com>
 
+	* emit-x86.c (arch_emit_prologue): don't save caller saved
+	registers twice.
+
 	* exception.c (x86_unwind_native_frame): support exceptions inside
 	native code using gcc generated exception tables (-fexception).
 
