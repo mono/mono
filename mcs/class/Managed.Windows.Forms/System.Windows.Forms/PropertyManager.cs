@@ -97,7 +97,7 @@ namespace System.Windows.Forms {
 
 		protected internal override string GetListName (ArrayList list)
 		{
-			return String.Empty ();
+			return String.Empty;
 		}
 
 		[MonoTODO]
