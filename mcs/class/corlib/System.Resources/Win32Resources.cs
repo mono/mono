@@ -6,6 +6,8 @@
 //
 // (C) 2003 Ximian, Inc.  http://www.ximian.com
 //
+// An incomplete set of classes for manipulating Win32 resources
+//
 
 using System;
 using System.Collections;
@@ -13,6 +15,7 @@ using System.IO;
 using System.Text;
 
 namespace System.Resources {
+
 
 internal enum Win32ResourceType {
 	RT_CURSOR = 1,
@@ -37,11 +40,174 @@ internal enum Win32ResourceType {
 	RT_HTML = 23,
 }
 
+internal class NameOrId {
+	string name;
+	int id;
+
+	public NameOrId (string name) {
+		this.name = name;
+	}
+
+	public NameOrId (int id) {
+		this.id = id;
+	}
+
+	public bool IsName {
+		get {
+			return name != null;
+		}
+	}
+
+	public string Name {
+		get {
+			return name;
+		}
+	}
+
+	public int Id {
+		get {
+			return id;
+		}
+	}
+
+	public override string ToString () {
+		if (name != null)
+			return "Name(" + name + ")";
+		else
+			return "Id(" + id + ")";
+	}
+}
+
+internal abstract class Win32Resource {
+
+	NameOrId type;
+	NameOrId name;
+	int language;
+
+	internal Win32Resource (NameOrId type, NameOrId name, int language) {
+		this.type = type;
+		this.name = name;
+		this.language = language;
+	}
+
+	internal Win32Resource (Win32ResourceType type, int name, int language) {
+		this.type = new NameOrId ((int)type);
+		this.name = new NameOrId (name);
+		this.language = language;
+	}
+
+	public Win32ResourceType ResourceType {
+		get {
+			if (type.IsName)
+				return (Win32ResourceType)(-1);
+			else
+				return (Win32ResourceType)type.Id;
+		}
+	}
+
+	public NameOrId Name {
+		get {
+			return name;
+		}
+	}
+
+	public NameOrId Type {
+		get {
+			return type;
+		}
+	}
+
+	public int Language {
+		get {
+			return language;
+		}
+	}
+
+	public abstract void WriteTo (Stream s);
+
+	public override string ToString () {
+		return "Win32Resource (Kind=" + ResourceType + ", Name=" + name + ")";
+	}
+}
+
 //
-// This class represents the contents of a VS_VERSIONINFO structure and its
-// children.
+// This class represents a Win32 resource in encoded format
 //
-internal class Win32VersionResource {
+internal class Win32EncodedResource : Win32Resource {
+
+	byte[] data;
+
+	internal Win32EncodedResource (NameOrId type, NameOrId name, int language, byte[] data) : base (type, name, language) {
+		this.data = data;
+	}
+
+	public byte[] Data {
+		get {
+			return data;
+		}
+	}
+
+	public override void WriteTo (Stream s) {
+		s.Write (data, 0, data.Length);
+	}
+}
+
+//
+// This class represents a Win32 ICON resource
+//
+internal class Win32IconResource : Win32Resource {
+
+	ICONDIRENTRY icon;
+
+	public Win32IconResource (int id, int language, ICONDIRENTRY icon) : base (Win32ResourceType.RT_ICON, id, language) {
+		this.icon = icon;
+	}
+
+	public ICONDIRENTRY Icon {
+		get {
+			return icon;
+		}
+	}
+
+	public override void WriteTo (Stream s) {
+		s.Write (icon.image, 0, icon.image.Length);
+	}
+}
+
+internal class Win32GroupIconResource : Win32Resource {
+
+	Win32IconResource[] icons;
+
+	public Win32GroupIconResource (int id, int language, Win32IconResource[] icons) : base (Win32ResourceType.RT_GROUP_ICON, id, language) {
+		this.icons = icons;
+	}
+
+	public override void WriteTo (Stream s) {
+		using (BinaryWriter w = new BinaryWriter (s)) {
+			w.Write ((short)0);
+			w.Write ((short)1);
+			w.Write ((short)icons.Length);
+			for (int i = 0; i < icons.Length; ++i) {
+				Win32IconResource icon = icons [i];
+				ICONDIRENTRY entry = icon.Icon;
+
+				w.Write (entry.bWidth);
+				w.Write (entry.bHeight);
+				w.Write (entry.bColorCount);
+				w.Write ((byte)0);
+				w.Write (entry.wPlanes);
+				w.Write (entry.wBitCount);
+				w.Write ((int)entry.image.Length);
+				w.Write ((short)icon.Name.Id);
+			}
+		}
+	}
+}
+
+//
+// This class represents a Win32 VERSION resource
+//
+internal class Win32VersionResource : Win32Resource {
 
 	public string[] WellKnownProperties = {
 		"Comments",
@@ -69,7 +235,7 @@ internal class Win32VersionResource {
 
 	Hashtable properties;
 
-	public Win32VersionResource () {
+	public Win32VersionResource (int id, int language) : base (Win32ResourceType.RT_VERSION, id, language) {
 		// Initialize non-public members to the usual values used in
 		// resources
 		signature = 0xfeef04bd;
@@ -189,14 +355,14 @@ internal class Win32VersionResource {
 	}
 
 	private void emit_padding (BinaryWriter w) {
-		MemoryStream ms = (MemoryStream)w.BaseStream;
+		Stream ms = w.BaseStream;
 
 		if ((ms.Position % 4) != 0)
 			w.Write ((short)0);
 	}
 
 	private void patch_length (BinaryWriter w, long len_pos) {
-		MemoryStream ms = (MemoryStream)w.BaseStream;
+		Stream ms = w.BaseStream;
 
 		long pos = ms.Position;
 		ms.Position = len_pos;
@@ -204,7 +370,7 @@ internal class Win32VersionResource {
 		ms.Position = pos;
 	}
 
-	public void WriteTo (MemoryStream ms)
+	public override void WriteTo (Stream ms)
 	{
 		using (BinaryWriter w = new BinaryWriter (ms, Encoding.Unicode)) {
 			short len;
@@ -316,5 +482,192 @@ internal class Win32VersionResource {
 		}
 	}
 }
+
+internal class Win32ResFileReader {
+
+	Stream res_file;
+
+	public Win32ResFileReader (Stream s) {
+		res_file = s;
+	}
+
+	int read_int16 () {
+		int b1 = res_file.ReadByte ();
+		int b2 = res_file.ReadByte ();
+
+		if ((b1 == -1) || (b2 == -1))
+			return -1;
+		else
+			return b1 | (b2 << 8);
+	}
+
+	int read_int32 () {
+		int w1 = read_int16 ();
+		int w2 = read_int16 ();
+
+		if ((w1 == -1) || (w2 == -1))
+			return -1;
+		return w1 | (w2 << 16);
+	}
+
+	private void read_padding () {
+		while ((res_file.Position % 4) != 0)
+			read_int16 ();
+	}
+
+	NameOrId read_ordinal () {
+		int i = read_int16 ();
+		if ((i & 0xffff) != 0) {
+			int j = read_int16 ();
+			return new NameOrId (j);
+		}
+		else {
+			byte[] chars = new byte [16];
+			int pos = 0;
+
+			while (true) {
+				int j = read_int16 ();
+				if (j == 0)
+					break;
+				if (pos == chars.Length) {
+					byte[] new_chars = new byte [chars.Length * 2];
+					Array.Copy (chars, new_chars, chars.Length);
+					chars = new_chars;
+				}
+				chars [pos] = (byte)(j >> 8);
+				chars [pos + 1] = (byte)(j & 0xff);
+				pos += 2;
+			}
+
+			return new NameOrId (new String (Encoding.Unicode.GetChars (chars, 0, pos)));
+		}					
+	}
+
+	public ICollection ReadResources () {
+		ArrayList resources = new ArrayList ();
+
+		/* 
+		 * We can't use a BinaryReader since we have to keep track of the 
+		 * stream position for padding.
+		 */
+
+		while (true) {
+
+			read_padding ();
+
+			int data_size = read_int32 ();
+
+			if (data_size == -1)
+				/* EOF */
+				break;
+
+			int header_size = read_int32 ();
+			NameOrId type = read_ordinal ();
+			NameOrId name = read_ordinal ();
+
+			read_padding ();
+
+			int data_version = read_int32 ();
+			int memory_flags = read_int16 ();
+			int language_id = read_int16 ();
+			int version = read_int32 ();
+			int characteristics = read_int32 ();
+
+			if (data_size == 0)
+				/* Empty resource entry */
+				continue;
+
+			byte[] data = new byte [data_size];
+			res_file.Read (data, 0, data_size);
+
+			resources.Add (new Win32EncodedResource (type, name, language_id, data));
+		}
+
+		return resources;
+	}
+}
+
+//
+// This class represents one icon image in an .ico file
+//
+internal class ICONDIRENTRY {
+
+	public byte bWidth;
+	public byte bHeight;
+	public byte bColorCount;
+	public byte bReserved;
+	public Int16 wPlanes;
+	public Int16 wBitCount;
+	public Int32 dwBytesInRes;
+	public Int32 dwImageOffset;
+
+	public byte[] image;
+
+	public override string ToString () {
+		return "ICONDIRENTRY (" + bWidth + "x" + bHeight + " " + wBitCount + " bpp)";
+	}
+}
+
+//
+// This class represents a Reader for Win32 .ico files
+//
+internal class Win32IconFileReader {
+
+	Stream iconFile;
+
+	public Win32IconFileReader (Stream s) {
+		iconFile = s;
+	}
+
+	public ICONDIRENTRY[] ReadIcons () {
+		ICONDIRENTRY[] icons = null;
+
+		using (BinaryReader r = new BinaryReader (iconFile)) {
+			int idReserved = r.ReadInt16 ();
+			int idType = r.ReadInt16 ();
+			if ((idReserved != 0) || (idType != 1))
+				throw new Exception ("Invalid .ico file format");
+			long nitems = r.ReadInt16 ();
+
+			icons = new ICONDIRENTRY [nitems];
+
+			for (int i = 0; i < nitems; ++i) {
+				ICONDIRENTRY entry = new ICONDIRENTRY ();
+
+				entry.bWidth = r.ReadByte ();
+				entry.bHeight = r.ReadByte ();
+				entry.bColorCount = r.ReadByte ();
+				entry.bReserved = r.ReadByte ();
+				entry.wPlanes = r.ReadInt16 ();
+				entry.wBitCount = r.ReadInt16 ();
+				int dwBytesInRes = r.ReadInt32 ();
+				int dwImageOffset = r.ReadInt32 ();
+
+				/* Read image */
+				entry.image = new byte [dwBytesInRes];
+
+				long pos = iconFile.Position;
+				iconFile.Position = dwImageOffset;
+				iconFile.Read (entry.image, 0, dwBytesInRes);
+				iconFile.Position = pos;
+
+				/* 
+				 * The wPlanes and wBitCount members in the ICONDIRENTRY
+				 * structure can be 0, so we set them from the BITMAPINFOHEADER
+				 * structure that follows
+				 */
+
+				if (entry.wPlanes == 0)
+					entry.wPlanes = (short)(entry.image [12] | (entry.image [13] << 8));
+				if (entry.wBitCount == 0)
+					entry.wBitCount = (short)(entry.image [14] | (entry.image [15] << 8));
+
+				icons [i] = entry;
+			}
+
+			return icons;
+		}
+	}
+}	
 
 }

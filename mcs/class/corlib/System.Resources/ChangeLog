@@ -1,3 +1,10 @@
+2004-01-08  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Win32Resources.cs: Organize win32 resources into a class hierarchy
+	with the class Win32Resource as the abstract superclass. Add 
+	Win32ResFileReader and Win32IconFileReader classes and the 
+	corresponding resource types.
+
 2004-01-05  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Win32Resources.cs: New file.
