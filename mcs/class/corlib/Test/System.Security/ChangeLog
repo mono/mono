@@ -1,3 +1,7 @@
+2005-03-31  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* SecurityExceptionCas.cs: Added new tests for GetObjectData.
+
 2005-01-30  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* PermissionSetTest.cs: Changed [Ignore] to [Category("NotDotNet")] to

@@ -31,6 +31,7 @@ using NUnit.Framework;
 
 using System;
 using System.Reflection;
+using System.Runtime.Serialization;
 using System.Security;
 using System.Security.Permissions;
 
@@ -409,6 +410,27 @@ namespace MonoCasTests.System.Security {
 			// and we EXPECT it to be shown in the output 
 			// as we pass the security checks for PermissionState property
 			Assert.IsFalse (se.ToString ().IndexOf (sensitive) == -1, sensitive);
+		}
+
+		[Test]
+		public void GetObjectData ()
+		{
+			SecurityException se = new SecurityException ("message", typeof (string), "state");
+			SerializationInfo info = new SerializationInfo (typeof (SecurityException), new FormatterConverter ());
+			se.GetObjectData (info, new StreamingContext (StreamingContextStates.All));
+			Assert.AreEqual ("state", info.GetValue ("PermissionState", typeof (string)), "PermissionState");
+		}
+
+		[Test]
+		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
+		[ExpectedException (typeof (SerializationException))]
+		public void GetObjectData_Deny_Unrestricted ()
+		{
+			SecurityException se = new SecurityException ("message", typeof (string), "state");
+			SerializationInfo info = new SerializationInfo (typeof (SecurityException), new FormatterConverter ());
+			se.GetObjectData (info, new StreamingContext (StreamingContextStates.All));
+			// "PermissionState" hasn't been serialized because it's access was restricted
+			info.GetValue ("PermissionState", typeof (string));
 		}
 	}
 }
