@@ -1,6 +1,7 @@
 2001-08-08  Bob Smith  <bob@thestuff.net>
 
         * Random.cs: Many compile fixes.
+        * Random.cs: I read a bad spec. Class updated to match real spec.
 
 2001-08-06  Miguel de Icaza  <miguel@ximian.com>
 

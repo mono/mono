@@ -18,8 +18,6 @@ namespace System
                 private const int M = 2147483647;
                 private const int Q = 127773;
                 private const int R = 2836;
-                public const byte MaxValue = 0xFF;
-                public const byte MinValue = 0x00;
                 public Random()
                 {
                         S = (int)(DateTime.Now.Ticks);
@@ -30,14 +28,14 @@ namespace System
                 }
                 public virtual int Next()
                 {
-                        return (int)(this.Sample()*Random.MaxValue);
+                        return (int)(this.Sample()*Int32.MaxValue);
                 }
                 public virtual int Next(int maxValue)
                 {
-                        if (maxValue < Random.MinValue)
+                        if (maxValue < 0)
                                 throw new ArgumentOutOfRangeException("Max value is less then min value.");
-                        else if (maxValue == Random.MinValue)
-                                return Random.MinValue;
+                        else if (maxValue == 0)
+                                return 0;
                         return (int)(this.Sample()*maxValue);
                 }
                 public virtual int Next(int minValue, int maxValue)
@@ -56,7 +54,7 @@ namespace System
                         l = buffer.GetUpperBound(0);
                         for (i = buffer.GetLowerBound(0); i < l; i++)
                         {
-                                buffer[i] = (byte)(this.Sample()*Random.MaxValue);
+                                buffer[i] = (byte)(this.Sample()*Byte.MaxValue);
                         }
                 }
                 public virtual double NextDouble()
@@ -70,4 +68,3 @@ namespace System
                 }
         }
 }
-
