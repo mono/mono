@@ -1,3 +1,8 @@
+2004-08-15  Zoltan Varga  <vargaz@freemail.hu>
+
+	* reflection.c (create_dynamic_mono_image): Revert the last change 
+	since it breaks bootstrap.
+
 2004-08-14  Zoltan Varga  <vargaz@freemail.hu>
 
 	* reflection.c (create_dynamic_mono_image): Set ref_count to 1.
