@@ -60,5 +60,6 @@ System.Xml.XPath/XPathNavigatorEvaluateTests.cs
 System.Xml.XPath/XPathNavigatorMatchesTests.cs
 System.Xml.XPath/XPathNavigatorTests.cs
 System.Xml.XPath/XPathNavigatorCommonTests.cs
+System.Xml.XPath/XPathAtomicValueTests.cs
 System.Xml.Xsl/XslTransformTests.cs
 System.Xml.Xsl/MsxslScriptTests.cs

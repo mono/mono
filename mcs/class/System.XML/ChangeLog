@@ -1,3 +1,7 @@
+2004-09-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.Xml_test.dll.sources : Added XPathAtomicValueTests.cs.
+
 2004-09-08  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System.Xml_test.dll.sources : Added XmlWriterSettingsTests.cs.
