@@ -1,3 +1,7 @@
+2004-07-12  Martin Baulig  <martin@ximian.com>
+
+	* gen-58.cs: New test.
+
 2004-06-24  Raja R Harinath  <rharinath@novell.com>
 
 	* test-252.cs: Avoid reference to System.dll.
