@@ -1,3 +1,6 @@
+2002-01-04   Duco Fijma <duco@lorentz.xs4all.nl>
+	* Added System/TimeSpanTest.cs
+
 2002-01-04  John R. Hicks <angryjohn69@nc.rr.com>
 	* Added DebugTest to System.Diagnostics tests.
 2001-11-08  Nick Drochak  <ndrochak@gol.com>
