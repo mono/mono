@@ -1,3 +1,6 @@
+2004-04-12  Sanjay Gupta <gsanjay@novell.com>
+	* Icon.cs: Implemented first version
+
 2004-04-11  Peter Bartok <pbartok@novell.com>
    * Font.cs: Implemented Font.ToHfont method; used Jordi's suggestion of splitting
    the code and using our own private gdiplus function when on Unix and using Win32
