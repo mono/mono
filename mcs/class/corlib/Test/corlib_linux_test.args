@@ -125,3 +125,6 @@ System.Text/StringBuilderTest.cs
 System.Threading/AllTests.cs
 System.Threading/ThreadTest.cs
 System.Threading/MutexTest.cs
+System.Reflection/AllTests.cs
+System.Reflection/AssemblyNameTest.cs
+System.Reflection/StrongNameKeyPairTest.cs

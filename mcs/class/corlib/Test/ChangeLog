@@ -1,3 +1,8 @@
+2002-12-08  Sebastien Pouliot <spouliot@videotron.ca>
+
+	* AllTests.cs: Added System.Reflection test suite.
+	* corlib_linux_test.args: added System.Reflection test files.
+
 2002-11-09 Eduardo Garcia Cebollero <kiwnix@yahoo.es>
 	* corlib_linux_tests.args: added MutexTest.cs in System.Threading
 

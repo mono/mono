@@ -33,6 +33,7 @@ namespace MonoTests {
 				suite.AddTest(System.Runtime.Serialization.AllTests.Suite);
 				suite.AddTest(System.Runtime.CompilerServices.AllTests.Suite);
 				suite.AddTest(System.Threading.AllTests.Suite);
+				suite.AddTest(System.Reflection.AllTests.Suite);
 //				suite.AddTest(System.Security.Policy.AllTests.Suite);
 				return suite;
                         }
