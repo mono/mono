@@ -247,10 +247,15 @@ namespace System.Xml
 			get { return prefix; }
 		}
 
-		[MonoTODO]
 		public override char QuoteChar
 		{
-			get { throw new NotImplementedException (); }
+			get {
+				// value string holds attribute quotation char.
+				if (NodeType == XmlNodeType.Attribute)
+					return value [0];
+				else
+					return '"';
+			}
 		}
 
 		public override ReadState ReadState
@@ -486,7 +491,8 @@ namespace System.Xml
 
 			// If not started, then initialize attributeString when parsing is at start.
 			if(attributeStringCurrentPosition == 0)
-				attributeString = value;
+				attributeString =
+					value.Substring (1, value.Length - 2);
 
 			bool returnEntity = false;
 			value = String.Empty;
@@ -651,6 +657,9 @@ namespace System.Xml
 		{
 			this.reader = fragment;
 			can_seek = fragment != null && fragment.Peek () != -1;
+
+			if (fragType == XmlNodeType.Attribute)
+				value = "''";
 /*	for future use
 			switch(fragType)
 			{
@@ -1225,9 +1234,9 @@ namespace System.Xml
 				SkipWhitespace ();
 
 				if (name == "xmlns")
-					parserContext.NamespaceManager.AddNamespace (String.Empty, value);
+					parserContext.NamespaceManager.AddNamespace (String.Empty, ResolveAttributeValue (value));
 				else if (name.StartsWith ("xmlns:"))
-					parserContext.NamespaceManager.AddNamespace (name.Substring (6), value);
+					parserContext.NamespaceManager.AddNamespace (name.Substring (6), ResolveAttributeValue (value));
 
 				AddAttribute (name, value);
 			} while (PeekChar () != '/' && PeekChar () != '>' && PeekChar () != -1);
@@ -1236,12 +1245,15 @@ namespace System.Xml
 		// The reader is positioned on the quote character.
 		private string ReadAttribute ()
 		{
+			valueLength = 0;
+
 			int quoteChar = ReadChar ();
 
 			if (quoteChar != '\'' && quoteChar != '\"')
 				throw new XmlException ("an attribute value was not quoted");
 
-			valueLength = 0;
+			// this keeps quote char to get QuoteChar property correctly.
+			AppendValueChar (quoteChar);
 
 			while (PeekChar () != quoteChar) {
 				int ch = ReadChar ();
@@ -1263,6 +1275,7 @@ namespace System.Xml
 			}
 
 			ReadChar (); // quoteChar
+			AppendValueChar (quoteChar);
 
 			return CreateValueString ();
 		}
@@ -1690,6 +1703,9 @@ namespace System.Xml
 			if(unresolved == null) return null;
 			StringBuilder resolved = new StringBuilder();
 			int pos = 0;
+
+			// trim start/end edge of quotation character.
+			unresolved = unresolved.Substring (1, unresolved.Length - 2);
 
 			int next = unresolved.IndexOf ('&');
 			if(next < 0)
