@@ -1,3 +1,15 @@
+2003-05-07  Miguel de Icaza  <miguel@ximian.com>
+
+	Patches from Igor Nosyryev <nosyryev@attbi.com>
+	
+	* TdsComm.cs: (GetString): GetString adds extra byte to a string
+	at end. It suppose to be '\0', but '\0' is valid value in .NET
+	string, so this byte must not be used.
+ 
+	* Tds.cs (GetDecimalValue):Method reads extra byte if a DECIMAL
+	field contains NULL. As a result server's response is parsed
+	incorrectly and this method fires an exception.
+
 2003-01-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Tds70.cs:

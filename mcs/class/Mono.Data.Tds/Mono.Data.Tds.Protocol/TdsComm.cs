@@ -294,7 +294,7 @@ namespace Mono.Data.Tds.Protocol {
 				return new String (chars);
 			}
 			else {
-				byte[] result = new byte[len + 1];
+				byte[] result = new byte[len];
 				Array.Copy (GetBytes (len, false), result, len);
 				return (encoder.GetString (result));
 			}

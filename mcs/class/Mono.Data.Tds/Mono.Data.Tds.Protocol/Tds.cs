@@ -533,6 +533,9 @@ namespace Mono.Data.Tds.Protocol {
 			int[] bits = new int[4] {0,0,0,0};
 
 			int len = (comm.GetByte() & 0xff) - 1;
+			if (len < 0)
+				return null;
+			
 			bool positive = (comm.GetByte () == 1);
 
 			if (len < 0)
