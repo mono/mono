@@ -33,12 +33,7 @@ namespace System.Resources
 				throw new ArgumentException ("Stream was not readable.");
 
 			this.stream = stream;
-			reader = new XmlTextReader (stream);
-			
-			if (!IsStreamValid()){
-				throw new ArgumentException("Stream is not a valid .resources file!  It was possibly truncated.");
-			}
-			load_data ();
+			basic_setup ();
 		}
 		
 		public ResXResourceReader (string fileName)
@@ -53,10 +48,15 @@ namespace System.Resources
 				throw new FileNotFoundException ("Could not find file " + Path.GetFullPath(fileName));
 
 			stream = new FileStream (fileName, FileMode.Open);
+			basic_setup ();
+		}
+
+		void basic_setup () {
 			reader = new XmlTextReader (stream);
+			hasht = new Hashtable ();
 
 			if (!IsStreamValid()){
-				throw new ArgumentException("Stream is not a valid .resources file!  It was possibly truncated.");
+				throw new ArgumentException("Stream is not a valid .resx file!  It was possibly truncated.");
 			}
 			load_data ();
 		}
@@ -66,7 +66,7 @@ namespace System.Resources
 				return null;
 			for (int i = 0; i < reader.AttributeCount; i++) {
 				reader.MoveToAttribute (i);
-				if (reader.Name == name) {
+				if (String.Compare (reader.Name, name, true) == 0) {
 					string v = reader.Value;
 					reader.MoveToElement ();
 					return v;
@@ -79,7 +79,7 @@ namespace System.Resources
 		static string get_value (XmlTextReader reader, string name) {
 			bool gotelement = false;
 			while (reader.Read ()) {
-				if (reader.NodeType == XmlNodeType.Element && reader.Name == name) {
+				if (reader.NodeType == XmlNodeType.Element && String.Compare (reader.Name, name, true) == 0) {
 					gotelement = true;
 					break;
 				}
@@ -100,7 +100,7 @@ namespace System.Resources
 			bool gotmime = false;
 			
 			while (reader.Read ()) {
-				if (reader.NodeType == XmlNodeType.Element && reader.Name == "root") {
+				if (reader.NodeType == XmlNodeType.Element && String.Compare (reader.Name, "root", true) == 0) {
 					gotroot = true;
 					break;
 				}
@@ -108,14 +108,23 @@ namespace System.Resources
 			if (!gotroot)
 				return false;
 			while (reader.Read ()) {
-				if (reader.NodeType == XmlNodeType.Element && reader.Name == "resheader") {
+				if (reader.NodeType == XmlNodeType.Element && String.Compare (reader.Name, "resheader", true) == 0) {
 					string v = get_attr (reader, "name");
-					if (v != null && v == "resmimetype") {
+					if (v != null && String.Compare (v, "resmimetype", true) == 0) {
 						v = get_value (reader, "value");
-						if (v == "text/microsoft-resx") {
+						if (String.Compare (v, "text/microsoft-resx", true) == 0) {
 							gotmime = true;
 							break;
 						}
+					}
+				} else if (reader.NodeType == XmlNodeType.Element && String.Compare (reader.Name, "data", true) == 0) {
+					/* resheader apparently can appear anywhere, so we collect
+					 * the data even if we haven't validated yet.
+					 */
+					string n = get_attr (reader, "name");
+					if (n != null) {
+						string v = get_value (reader, "value");
+						hasht [n] = v;
 					}
 				}
 			}
@@ -124,9 +133,8 @@ namespace System.Resources
 
 		private void load_data ()
 		{
-			hasht = new Hashtable ();
 			while (reader.Read ()) {
-				if (reader.NodeType == XmlNodeType.Element && reader.Name == "data") {
+				if (reader.NodeType == XmlNodeType.Element && String.Compare (reader.Name, "data", true) == 0) {
 					string n = get_attr (reader, "name");
 					if (n != null) {
 						string v = get_value (reader, "value");
