@@ -1,3 +1,8 @@
+2004-02-07  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* GraphicsPathIterator.cs: Fixed signature, added TODOs
+	* Matrix.cs: Removed additional method
+
 2004-02-06  Ravindra <rkumar@novell.com>
 
 	* HatchBrush.cs: Using CheckStatus method instead of

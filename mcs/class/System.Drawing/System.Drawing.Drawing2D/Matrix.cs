@@ -146,22 +146,6 @@ namespace System.Drawing.Drawing2D
                 {
                         GDIPlus.GdipSetMatrixElements (nativeMatrix, 1, 0, 0, 1, 0, 0);
                 }
-
-                public override string ToString ()
-                {
-                        float [] elements = this.Elements;
-                        
-                        System.Text.StringBuilder sb = new System.Text.StringBuilder ();
-
-                        sb.Append ("(");
-                        sb.Append (elements [0] + " ");
-                        sb.Append (elements [1] + " ");
-                        sb.Append (elements [2] + " ");
-                        sb.Append (elements [3] + " ");
-                        sb.Append (elements [4] + " ");
-                        sb.Append (elements [5] + ")");                        
-                        return sb.ToString ();
-                }
         
                 public void Rotate (float angle)
                 {
