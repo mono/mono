@@ -1,3 +1,11 @@
+2003-03-13  Martin Baulig  <martin@ximian.com>
+
+	* debug-mono-symfile.h (MonoSymbolFileLexicalBlockEntry): New type.
+	(MonoDebugLexicalBlockEntry): New types.
+
+	* debug-mono-symfile.c
+	(_mono_debug_address_from_il_offset): Moved here from ../jit/debug.c.
+
 2003-03-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* process.c: ret can be any non-zero value accroding to MS doc.
