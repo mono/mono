@@ -56,6 +56,16 @@ namespace System.Xml.Serialization
 		[XmlElement ("writer")]
 		public string WriterClassName;
 		
+
+		[XmlElement ("noReader")]
+		public bool NoReader;
+
+		[XmlElement ("noWriter")]
+		public bool NoWriter;
+		
+		[XmlElement ("generateAsInternal")]
+		public bool GenerateAsInternal;
+
 		[XmlElement ("namespace")]
 		public string Namespace;
 		

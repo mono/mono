@@ -1,3 +1,16 @@
+2005-01-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SerializationCodeGeneratorConfiguration.cs,
+	  SerializationCodeGenerator.cs : Added some generation configuration:
+		<generateAsInternal>
+			write custom reader/writer as internal classes.
+		<noreader>, <nowriter>
+			They make generation of reader and/or writer optional.
+	* XmlSerializerNamespaces.cs :
+	  Now it uses ListDictionary instead of Hashtable.
+	* XmlSerializationWriter.cs : entries in XmlSerializerNamespaces are
+	  written unless there is already the same prefix-ns mapping.
+
 2005-01-12  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* XmlTypeMapElementInfo.cs: Added new IndexOfElement method.
