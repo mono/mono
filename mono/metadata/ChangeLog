@@ -1,3 +1,8 @@
+2005-01-25  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* icall.c: Renamed GetEnvironmentVariable so internal* so it was
+	possible to add imperative security checks before calling the icall.
+
 2005-01-25  Dick Porter  <dick@ximian.com>
 
 	* icall.c (ves_icall_System_CurrentTimeZone_GetTimeZoneData): Make
