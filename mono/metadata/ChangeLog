@@ -1,5 +1,10 @@
 2002-10-14  Martin Baulig  <martin@gnome.org>
 
+	* debug-mono-symfile.c: Added MONO_TYPE_I, MONO_TYPE_U and
+	MONO_TYPE_VOID.
+
+2002-10-14  Martin Baulig  <martin@gnome.org>
+
 	* debug-mono-symfile.c (ves_icall_MonoDebugger_GetType): Use
 	mono_class_get() instead of looking in the class cache.	
 
