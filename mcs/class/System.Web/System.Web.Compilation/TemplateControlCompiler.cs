@@ -695,9 +695,10 @@ namespace System.Web.Compilation
 				m.TargetObject = thisRef;
 				m.MethodName = builder.renderMethod.Name;
 
-				CodeObjectCreateExpression create = new CodeObjectCreateExpression ();
-				create.CreateType = new CodeTypeReference (typeof (RenderMethod));
-				create.Parameters.Add (m);
+				CodeDelegateCreateExpression create = new CodeDelegateCreateExpression ();
+				create.DelegateType = new CodeTypeReference (typeof (RenderMethod));
+				create.TargetObject = thisRef;
+				create.MethodName = builder.renderMethod.Name;
 
 				CodeMethodInvokeExpression invoke = new CodeMethodInvokeExpression ();
 				invoke.Method = new CodeMethodReferenceExpression (ctrlVar, "SetRenderMethodDelegate");

@@ -1,3 +1,9 @@
+2004-06-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* TemplateControlCompiler.cs: use CodeDelegateCreateExpression instead
+	of CodeObjectCreateExpression for the render method delegate. Thanks
+	to Jochen Wezel.
+
 2004-05-14  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* BaseCompiler.cs: use DynamicBase for the output assemblies.
