@@ -1,3 +1,9 @@
+2002-11-16  Daniel Morgan <danmorg@sc.rr.com>
+
+	* System.Data/DataView.cs: fix bug
+	with DataViewEnumerator causing InvalidOperationException
+	on the last item
+
 2002-11-15  Tim Coleman <tim@timcoleman.com>
 	* System.Data.Common/DbDataPermission.cs:
 	* System.Data.SqlClient/SqlClientPermission.cs:

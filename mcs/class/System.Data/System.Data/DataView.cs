@@ -552,7 +552,7 @@ namespace System.Data {
 
 			public object Current {
 				get {
-					if(on == rows.Length - 1)
+					if(on == -1 || on >= rows.Length)
 						throw new InvalidOperationException ();
 					return rows[on];
 				}
