@@ -1,5 +1,7 @@
 2004-09-21  Raja R Harinath  <rharinath@novell.com>
 
+	* profiles/net_2_0_bootstrap.make: New file.
+
 	* library.make (the_mdb): Fix.
 	(library_CLEAN_FILES): Add the new test results files too.
 
