@@ -15,11 +15,9 @@ namespace System.Xml
 		{
 		}
 
-		[MonoTODO]
 		public virtual XmlDocument CreateDocument ()
 		{
-			// return new XmlDocument (this);
-			return null;
+			return new XmlDocument (this);
 		}
 
 		public bool HasFeature (string strFeature, string strVersion)
