@@ -1,3 +1,53 @@
+2003-11-08  Martin Baulig  <martin@ximian.com>
+
+	* class.cs (TypeContainer.GetClassBases): Use TypeExpr's for the
+	return value and the `out parent' parameter.
+	(TypeContainer.DefineType): Moved the CS0644 check into
+	GetClassBases().  Don't pass the interface types to the
+	`builder.DefineType()'/`builder.DefineNestedType()', but resolve
+	them later and then call `TypeBuilder.AddInterfaceImplementation()'.
+
+	* ecore.cs (TypeExpr.IsAttribute): New property.
+	(TypeExpr.GetInterfaces): New method.
+
+	* interface.cs (Interface.GetInterfaceTypeByName): Return a
+	TypeExpr instead of a Type.
+	(Interface.GetInterfaceBases): Return TypeExpr's instead of Type's.
+	(Interface.DefineType): Don't pass the interface types to the
+	`builder.Definetype()'/`builder.DefineNestedType()', but resolve
+	them later and then call `TypeBulider.AddInterfaceImplementation()'.
+
+	* typemanager.cs (TypeManager.AddUserType): Take a `TypeExpr[]'
+	instead of a `Type[]'.
+	(TypeManager.RegisterBuilder): Likewise.
+	(TypeManager.AddUserInterface): Likewise.
+	(TypeManager.ExpandInterfaces): Take a `Type[]' instead of a
+	`Type[]' and also return a `TypeExpr[]'.
+	(TypeManager.GetInterfaces): Return a `TypeExpr[]'.
+
+2003-11-08  Martin Baulig  <martin@ximian.com>
+
+	* decl.cs (DeclSpace.ResolveTypeExpr): Return a TypeExpr, not an
+	Expression.	
+
+2003-11-08  Martin Baulig  <martin@ximian.com>
+
+	* decl.cs (DeclSpace.GetTypeResolveEmitContext): Call
+	TypeManager.ResolveExpressionTypes().
+
+	* ecore.cs (Expression.ResolveAsTypeTerminal): Return a TypeExpr
+	instead of an Expression.
+	(TypeExpr): This is now an abstract base class for `TypeExpression'.
+	(TypeExpression): New public class; formerly known as `TypeExpr'.
+
+	* expression.cs (ComposedCast): Derive from TypeExpr.
+
+	* typemanager.cs (TypeManager.system_*_expr): These are now
+	TypExpr's instead of Expression's.
+	(TypeManager.ResolveExpressionTypes): New public static function;
+	called from DeclSpace.GetTypeResolveEmitContext() to resolve all
+	of them.	
+
 2003-11-06  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs (New.DoResolve): Do not dereference value that

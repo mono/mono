@@ -203,21 +203,15 @@ namespace Mono.CSharp {
 		}
 		
 		public TypeParameterExpr (TypeParameter type_parameter, Location loc)
-			: base (type_parameter.Type, loc)
 		{
 			this.type_parameter = type_parameter;
 		}
 
-		public override Expression ResolveAsTypeStep (EmitContext ec)
+		public override TypeExpr DoResolveAsTypeStep (EmitContext ec)
 		{
 			type = type_parameter.Type;
 
 			return this;
-		}
-
-		public override string ToString ()
-		{
-			return "TypeParameterExpr[" + type_parameter.Name + "]";
 		}
 
 		public void Error_CannotUseAsUnmanagedType (Location loc)
@@ -298,7 +292,6 @@ namespace Mono.CSharp {
 		Type gt;
 		
 		public ConstructedType (string name, TypeArguments args, Location l)
-			: base (null, l)
 		{
 			loc = l;
 			this.name = name;
@@ -306,17 +299,6 @@ namespace Mono.CSharp {
 			eclass = ExprClass.Type;
 
 			full_name = name + "<" + args.ToString () + ">";
-		}
-
-		public override Expression DoResolve (EmitContext ec)
-		{
-			if (args.Resolve (ec) == false)
-				return null;
-
-			//
-			// Pretend there are not type parameters, until we get GetType support
-			//
-			return new SimpleName (name, loc).DoResolve (ec);
 		}
 
 		protected bool CheckConstraints (int index)
@@ -354,7 +336,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public override Expression ResolveAsTypeStep (EmitContext ec)
+		public override TypeExpr DoResolveAsTypeStep (EmitContext ec)
 		{
 			//
 			// First, resolve the generic type.
@@ -374,7 +356,7 @@ namespace Mono.CSharp {
 			return this;
 		}
 
-		public Type ResolveType (EmitContext ec)
+		public override Type ResolveType (EmitContext ec)
 		{
 			//
 			// Resolve the arguments.
@@ -408,18 +390,11 @@ namespace Mono.CSharp {
 			type = gt.BindGenericParameters (atypes);
 			return type;
 		}
-		
-		public override void Emit (EmitContext ec)
-		{
-			//
-			// Never reached for now
-			//
-			throw new Exception ("IMPLEMENT ME");
-		}
 
-		public override string ToString ()
-		{
-			return full_name;
+		public override string Name {
+			get {
+				return full_name;
+			}
 		}
 	}
 

@@ -251,15 +251,9 @@ namespace Mono.CSharp {
 		// value will be returned if the expression is not a type
 		// reference
 		//
-		public Expression ResolveAsTypeTerminal (EmitContext ec)
+		public TypeExpr ResolveAsTypeTerminal (EmitContext ec)
 		{
-			Expression e = ResolveAsTypeStep (ec);
-
-			if (e == null)
-				return null;
-			if (e is SimpleName)
-				return null;
-			return e;
+			return ResolveAsTypeStep (ec) as TypeExpr;
 		}
 	       
 		/// <summary>
@@ -484,7 +478,7 @@ namespace Mono.CSharp {
 			else if (mi is PropertyInfo)
 				return new PropertyExpr (ec, (PropertyInfo) mi, loc);
 		        else if (mi is Type){
-				return new TypeExpr ((System.Type) mi, loc);
+				return new TypeExpression ((System.Type) mi, loc);
 			}
 
 			return null;
@@ -1966,7 +1960,7 @@ namespace Mono.CSharp {
 			if (ec.ResolvingTypeTree){
 				if (alias_value != null){
 					if ((t = RootContext.LookupType (ds, alias_value, true, loc)) != null)
-						return new TypeExpr (t, loc);
+						return new TypeExpression (t, loc);
 				}
 
 				int errors = Report.Errors;
@@ -1976,7 +1970,7 @@ namespace Mono.CSharp {
 					return null;
 				
 				if (dt != null)
-					return new TypeExpr (dt, loc);
+					return new TypeExpression (dt, loc);
 			}
 
 			//
@@ -1984,7 +1978,7 @@ namespace Mono.CSharp {
 			//
 			if (alias_value != null){
 				if ((t = RootContext.LookupType (ds, alias_value, true, loc)) != null)
-					return new TypeExpr (t, loc);
+					return new TypeExpression (t, loc);
 				
 				// we have alias value, but it isn't Type, so try if it's namespace
 				return new SimpleName (alias_value, loc);
@@ -2003,7 +1997,7 @@ namespace Mono.CSharp {
 			//
 
 			if ((t = RootContext.LookupType (ds, Name, true, loc)) != null)
-				return new TypeExpr (t, loc);
+				return new TypeExpression (t, loc);
 				
 			// No match, maybe our parent can compose us
 			// into something meaningful.
@@ -2100,7 +2094,7 @@ namespace Mono.CSharp {
 						Type t;
 
 						if ((t = TypeManager.LookupType (Name)) != null)
-							return new TypeExpr (t, loc);
+							return new TypeExpression (t, loc);
 					
 						// No match, maybe our parent can compose us
 						// into something meaningful.
@@ -2175,26 +2169,20 @@ namespace Mono.CSharp {
 	/// <summary>
 	///   Fully resolved expression that evaluates to a type
 	/// </summary>
-	public class TypeExpr : Expression {
-		public TypeExpr (Type t, Location l)
+	public abstract class TypeExpr : Expression {
+		override public Expression ResolveAsTypeStep (EmitContext ec)
 		{
-			Type = t;
+			TypeExpr t = DoResolveAsTypeStep (ec);
+			if (t == null)
+				return null;
+
 			eclass = ExprClass.Type;
-			loc = l;
-		}
-
-		public virtual string Name {
-			get { return Type.Name; }
-		}
-
-		public override Expression ResolveAsTypeStep (EmitContext ec)
-		{
-			return this;
+			return t;
 		}
 
 		override public Expression DoResolve (EmitContext ec)
 		{
-			return this;
+			return ResolveAsTypeTerminal (ec);
 		}
 
 		override public void Emit (EmitContext ec)
@@ -2202,9 +2190,102 @@ namespace Mono.CSharp {
 			throw new Exception ("Should never be called");
 		}
 
+		public virtual bool CheckAccessLevel (DeclSpace ds)
+		{
+			return ds.CheckAccessLevel (Type);
+		}
+
+		public virtual bool AsAccessible (DeclSpace ds, int flags)
+		{
+			return ds.AsAccessible (Type, flags);
+		}
+
+		public virtual bool IsClass {
+			get { return Type.IsClass; }
+		}
+
+		public virtual bool IsValueType {
+			get { return Type.IsValueType; }
+		}
+
+		public virtual bool IsInterface {
+			get { return Type.IsInterface; }
+		}
+
+		public virtual bool IsSealed {
+			get { return Type.IsSealed; }
+		}
+
+		public virtual bool CanInheritFrom ()
+		{
+			if (Type == TypeManager.enum_type ||
+			    (Type == TypeManager.value_type && RootContext.StdLib) ||
+			    Type == TypeManager.delegate_type ||
+			    Type == TypeManager.array_type)
+				return false;
+
+			return true;
+		}
+
+		public virtual bool IsAttribute {
+			get {
+				return Type == TypeManager.attribute_type ||
+					Type.IsSubclassOf (TypeManager.attribute_type);
+			}
+		}
+
+		public virtual TypeExpr[] GetInterfaces ()
+		{
+			return TypeManager.GetInterfaces (Type);
+		}
+
+		public abstract TypeExpr DoResolveAsTypeStep (EmitContext ec);
+
+		public virtual Type ResolveType (EmitContext ec)
+		{
+			TypeExpr t = ResolveAsTypeTerminal (ec);
+			if (t == null)
+				return null;
+
+			return t.Type;
+		}
+
+		public abstract string Name {
+			get;
+		}
+
+		public override bool Equals (object obj)
+		{
+			TypeExpr tobj = obj as TypeExpr;
+			if (tobj == null)
+				return false;
+
+			return Type == tobj.Type;
+		}
+
 		public override string ToString ()
 		{
-			return Type.ToString ();
+			return Name;
+		}
+	}
+
+	public class TypeExpression : TypeExpr {
+		public TypeExpression (Type t, Location l)
+		{
+			Type = t;
+			eclass = ExprClass.Type;
+			loc = l;
+		}
+
+		public override TypeExpr DoResolveAsTypeStep (EmitContext ec)
+		{
+			return this;
+		}
+
+		public override string Name {
+			get {
+				return Type.ToString ();
+			}
 		}
 	}
 
@@ -2216,35 +2297,22 @@ namespace Mono.CSharp {
 	public class TypeLookupExpression : TypeExpr {
 		string name;
 		
-		public TypeLookupExpression (string name) : base (null, Location.Null)
+		public TypeLookupExpression (string name)
 		{
 			this.name = name;
 		}
 
-		public override string Name {
-			get { return name; }
-		}
-
-		public override Expression ResolveAsTypeStep (EmitContext ec)
+		public override TypeExpr DoResolveAsTypeStep (EmitContext ec)
 		{
 			if (type == null)
 				type = RootContext.LookupType (ec.DeclSpace, name, false, Location.Null);
 			return this;
 		}
 
-		public override Expression DoResolve (EmitContext ec)
-		{
-			return ResolveAsTypeStep (ec);
-		}
-
-		public override void Emit (EmitContext ec)
-		{
-			throw new Exception ("Should never be called");
-		}
-
-		public override string ToString ()
-		{
-			return name;
+		public override string Name {
+			get {
+				return name;
+			}
 		}
 	}
 

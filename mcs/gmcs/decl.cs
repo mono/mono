@@ -316,6 +316,8 @@ namespace Mono.CSharp {
 			type_resolve_ec = new EmitContext (parent, this, loc, null, null, ModFlags, false);
 			type_resolve_ec.ResolvingTypeTree = true;
 
+			TypeManager.ResolveExpressionTypes (type_resolve_ec);
+
 			return type_resolve_ec;
 		}
 
@@ -330,7 +332,7 @@ namespace Mono.CSharp {
 			type_resolve_ec.ContainerType = TypeBuilder;
 
 			int errors = Report.Errors;
-			Expression d = e.ResolveAsTypeTerminal (type_resolve_ec);
+			TypeExpr d = e.ResolveAsTypeTerminal (type_resolve_ec);
 
 			if (d == null || d.eclass != ExprClass.Type){
 				if (!silent && errors == Report.Errors){
@@ -340,30 +342,27 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			if (d is ConstructedType)
-				((ConstructedType) d).ResolveType (type_resolve_ec);
-
-			if (!CheckAccessLevel (d.Type)) {
-				Report.	Error (122, loc,  "`" + d.Type + "' " +
+			if (!d.CheckAccessLevel (this)) {
+				Report.	Error (122, loc,  "`" + d.Name + "' " +
 				       "is inaccessible because of its protection level");
 				return null;
 			}
 
-			return d.Type;
+			return d.ResolveType (type_resolve_ec);
 		}
 
 		// <summary>
 		//    Resolves the expression `e' for a type, and will recursively define
 		//    types. 
 		// </summary>
-		public Expression ResolveTypeExpr (Expression e, bool silent, Location loc)
+		public TypeExpr ResolveTypeExpr (Expression e, bool silent, Location loc)
 		{
 			if (type_resolve_ec == null)
 				type_resolve_ec = GetTypeResolveEmitContext (parent, loc);
 			type_resolve_ec.loc = loc;
 			type_resolve_ec.ContainerType = TypeBuilder;
 
-			Expression d = e.ResolveAsTypeTerminal (type_resolve_ec);
+			TypeExpr d = e.ResolveAsTypeTerminal (type_resolve_ec);
 			 
 			if (d == null || d.eclass != ExprClass.Type){
 				if (!silent){
@@ -1138,15 +1137,17 @@ namespace Mono.CSharp {
 		Hashtable SetupCacheForInterface (MemberCache parent)
 		{
 			Hashtable hash = SetupCache (parent);
-			Type [] ifaces = TypeManager.GetInterfaces (Container.Type);
+			TypeExpr [] ifaces = TypeManager.GetInterfaces (Container.Type);
 
-			foreach (Type iface in ifaces) {
-				if (interface_hash.Contains (iface))
+			foreach (TypeExpr iface in ifaces) {
+				Type itype = iface.Type;
+
+				if (interface_hash.Contains (itype))
 					continue;
-				interface_hash.Add (iface, true);
+				interface_hash.Add (itype, true);
 
 				IMemberContainer iface_container =
-					TypeManager.LookupMemberContainer (iface);
+					TypeManager.LookupMemberContainer (itype);
 
 				MemberCache iface_cache = iface_container.MemberCache;
 
