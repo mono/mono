@@ -1,3 +1,7 @@
+2004-08-06  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-amd64.c: pinvoke struct passing fixes.
+
 2004-08-05  Bernie Solomon  <bernard@ugsolutions.com>
 
 	* mini-sparc.c: redo change, make mono_arch_cpu_init call
