@@ -1,4 +1,8 @@
-2003-03-04  Sebastien Pouliot  <spouliot@videotron.ca>
+2003-02-08  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* Changes to refer Mono.Math and Mono.Security.Cryptography
+
+2003-02-04  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* CryptoConfig.cs: Added initital support for "machine.config" 
 	(limited to algorithms, not OIDs). Modified CreateFromName to use
