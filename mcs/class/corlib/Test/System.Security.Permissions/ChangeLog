@@ -1,5 +1,9 @@
 2003-08-18  Sebastien Pouliot  <sebastien@ximian.com>
 
+	* IsolatedStorageFilePermissionAttributeTest.cs: Added tests to check 
+	class's	attributes. Converted existing tests to NUnit 2.2 format.
+	* IsolatedStorageFilePermissionTest.cs: New. Unit tests for 
+	IsolatedStorageFilePermission.
 	* GacIdentityPermissionAttributeTest.cs: New unit tests for 
 	GacIdentityPermissionAttribute (NET_2_0).
 	* GacIdentityPermissionTest.cs: New unit tests for 
