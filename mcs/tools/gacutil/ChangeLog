@@ -1,3 +1,10 @@
+2004-12-08  Raja R Harinath  <rharinath@novell.com>
+
+	* driver.cs (Symlink): Pass additional parameter: the name of the
+	dll being installed.  If needed copy that file, not 'oldpath',
+	since 'oldpath' need not be a valid file (esp. on DESTDIR builds).
+	(Install): Update.
+
 2004-07-28  Jackson Harper  <jackson@ximian.com>
 
 	* driver.cs: Check for and install .mdb (debuger symbol files).

@@ -264,7 +264,7 @@ namespace Mono.Tools {
 					WriteLine ("ERROR: Could not create package dir file.");
 					Environment.Exit (1);
 				}
-				Symlink (Path.Combine (link_path, asmb_file), ref_path);
+				Symlink (name, Path.Combine (link_path, asmb_file), ref_path);
 
 				WriteLine ("Package exported to: " + ref_path + " -> " +
 						Path.Combine (link_path, asmb_file));
@@ -554,11 +554,14 @@ namespace Mono.Tools {
 			return c;	 
 		}
 
-		private static void Symlink (string oldpath, string newpath) {
+		// name = name of dll being installed
+		// oldpath = path the symlink points to -- cannot be assumed to be a valid file
+		// newpath = name of symlink
+		private static void Symlink (string name, string oldpath, string newpath) {
 			if (Path.DirectorySeparatorChar == '/') {
 				symlink (oldpath, newpath);
 			} else {
-				File.Copy (oldpath, newpath);
+				File.Copy (name, newpath);
 			}
 		}
 
