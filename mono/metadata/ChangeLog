@@ -1,4 +1,9 @@
 
+Tue Aug 6 17:59:44 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* class.c: move all the type size stuff into
+	class_compute_field_layout().
+
 Tue Aug 6 11:20:49 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* class.c: ensure enums have always the correct instance size.
