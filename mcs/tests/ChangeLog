@@ -1,3 +1,7 @@
+2004-12-09  Martin Baulig  <martin@ximian.com>
+
+	* Makefile: Disabled xml-022.cs and xml-028.cs.
+
 2004-12-07  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (TEST_HARNESS_EXTRAS): New.  List of files that need to

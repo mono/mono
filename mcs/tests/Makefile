@@ -226,7 +226,7 @@ ilasm:
 TEST_SOURCES_XML = \
 	xml-001 xml-002 xml-003 xml-004 xml-005 xml-006 xml-007 xml-008 xml-009 xml-010 \
 	xml-011 xml-012 xml-013 xml-014 xml-015 xml-016 xml-017 xml-018 xml-019 xml-020 \
-	xml-021 xml-022 xml-023 xml-024 xml-025 xml-026 	xml-028 xml-029 xml-030 \
+	xml-021         xml-023 xml-024 xml-025 xml-026 	        xml-029 xml-030 \
 	xml-031 xml-032
 
 # currently no formalization on 'cref' attribute was found, so there are some
