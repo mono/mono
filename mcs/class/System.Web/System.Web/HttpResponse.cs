@@ -133,7 +133,7 @@ namespace System.Web
 		}
 		
 		internal void CacheResponse (HttpRequest request) {
-			cached_response = new CachedRawResponse (_CachePolicy, request);
+			cached_response = new CachedRawResponse (_CachePolicy);
 		}
 
 		internal CachedRawResponse GetCachedResponse () {
@@ -630,6 +630,11 @@ namespace System.Web
 			OutputStream.Write (buffer, 0, buffer.Length);
 		}
 
+		internal void BinaryWrite (byte [] buffer, int start, int length)
+		{
+			OutputStream.Write (buffer, start, length);
+		}
+		
 		public void Clear ()
 		{
 			if (_Writer != null)
@@ -793,8 +798,10 @@ namespace System.Web
 				}
 
 				_WorkerRequest.FlushResponse (bFinish);
-				if (IsCached)
+				if (IsCached) {
+					cached_response.ContentLength = (int) length;
 					cached_response.SetData (_Writer.GetBuffer ());
+				}
 				_Writer.Clear ();
 			} finally {
 				if (bFinish)

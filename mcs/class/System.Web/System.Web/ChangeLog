@@ -1,3 +1,10 @@
+2003-11-21  Jackson Harper <jackson@ximian.com>
+
+	* HttpResponse.cs: When caching data set the content length in the
+	cached repsonse so that only that amount will be written back to
+	the client. Add method to write a range of binary data.
+	* HttpCacheVaryByParams.cs: Add method to retrieve param names.
+	
 2003-11-21  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpApplication.cs:

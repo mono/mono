@@ -96,5 +96,18 @@ namespace System.Web {
             }
          }
       }
+
+	   internal string [] GetParamNames ()
+	   {
+		   if (_Items == null)
+			   return null;
+
+		   string[] prms = new string [_Items.Count];
+		   int i = 0;
+		   foreach (string prm in _Items.Keys)
+			   prms [i++] = prm;
+		   
+		   return prms;
+	   }
    }
 }
