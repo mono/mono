@@ -27,11 +27,11 @@ using System.Runtime.CompilerServices;
 // by using the '*' as shown below:
 
 #if (NET_2_0)
-	[assembly: AssemblyVersion ("0.7.4.2")]
+	[assembly: AssemblyVersion ("0.7.6.2")]
 #elif (NET_1_1)
-	[assembly: AssemblyVersion ("0.7.4.1")]
+	[assembly: AssemblyVersion ("0.7.6.1")]
 #else
-	[assembly: AssemblyVersion ("0.7.4.0")]
+	[assembly: AssemblyVersion ("0.7.6.0")]
 #endif
 
 [assembly: AssemblyDelaySign (true)]

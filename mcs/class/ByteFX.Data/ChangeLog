@@ -1,5 +1,8 @@
 2004-05-18  Duncan Mak  <duncan@ximian.com>
 
+	* AssemblyInfo.cs: Gonzalo reminded me that I need to update the
+	version number as well. We're at 0.7.6 now.
+
 	* Common/StreamCreator.cs (CreateUnixSocketStream): Instead of
 	hostList [0], which is a char, use hostList directly. This fixes
 	the build.
