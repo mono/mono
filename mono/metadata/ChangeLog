@@ -1,3 +1,11 @@
+2002-03-29  Miguel de Icaza  <miguel@ximian.com>
+
+	* assembly.c (default_assembly_name_resolver): Kill memory leak. 
+	(default_assembly_name_resolver): Make the resolver take the
+	"base" directory where the assembly was originally defined, so we
+	can load DLLs that are in the same directory as the assembly that
+	is being referenced.
+
 2002-03-28  Dick Porter  <dick@ximian.com>
 
 	* file-io.h: 
