@@ -4005,7 +4005,6 @@ namespace Mono.CSharp {
 			ILGenerator ig = ec.ig;
 			int arg_idx = idx;
 
-			Console.WriteLine ("Loading: {0} at {1}", ec.MethodIsStatic, ec.id);
 			if (!ec.MethodIsStatic)
 				arg_idx++;
 
