@@ -43,10 +43,18 @@ namespace MonoTests.System
 		}
 
 		[Test]
-		public void Permille ()
+		public void PermillePercent ()
 		{
 			CultureInfo ci = CultureInfo.InvariantCulture;
-			AssertEquals ("485.7\u2030", (0.4857).ToString ("###.###\u2030"));
+			AssertEquals ("#1", "485.7\u2030", (0.4857).ToString ("###.###\u2030"));
+			NumberFormatInfo nfi = new NumberFormatInfo ();
+			nfi.NegativeSign = "";
+			nfi.PerMilleSymbol = "m";
+			nfi.PercentSymbol = "percent";
+			AssertEquals ("#2", "m485.7", 0.4857.ToString ("\u2030###.###", nfi));
+			AssertEquals ("#3", "485.7m", 0.4857.ToString ("###.###\u2030", nfi));
+			AssertEquals ("#4", "percent48.57", 0.4857.ToString ("%###.###", nfi));
+			AssertEquals ("#5", "48.57percent", 0.4857.ToString ("###.###%", nfi));
 		}
         }
 }

@@ -1,5 +1,10 @@
 2004-06-14  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* FloatingPointFormatterTest.cs : Added more permille and percent
+	  formatting test.
+
+2004-06-14  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* FloatingPointFormatterTest.cs : Added Permille formatting test.
 
 2004-06-13  Atsushi Enomoto  <atsushi@ximian.com>
