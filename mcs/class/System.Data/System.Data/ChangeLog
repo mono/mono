@@ -1,3 +1,9 @@
+2004-01-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataColumnCollection.cs : Clear() throws ArgumentException that
+	  wraps thrown innerException.
+	* XmlSchemaDataImporter.cs : removed FIXMEs.
+
 2004-01-12  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataSet.cs : When serializing DataTable, BuildSchema() is passed

@@ -425,11 +425,14 @@ namespace System.Data {
 
 			}
 			
-			columnFromName.Clear();
-			autoIncrement.Clear();
-			base.List.Clear();
-			OnCollectionChanged(e);
-			return;
+			try {
+				columnFromName.Clear();
+				autoIncrement.Clear();
+				base.List.Clear();
+				OnCollectionChanged(e);
+			} catch (Exception ex) {
+				throw new ArgumentException (ex.Message, ex);
+			}
 		}
 
 		/// <summary>

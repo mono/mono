@@ -256,15 +256,11 @@ namespace System.Data
 			XmlSchema s = new XmlSchema ();
 			XmlSchemaAttribute a = new XmlSchemaAttribute ();
 			a.Name = "foo";
-			// FIXME: mcs looks to have a bug around static 
-			// reference resolution. XmlSchema.Namespace should work.
-			a.SchemaTypeName = new XmlQualifiedName ("integer", System.Xml.Schema.XmlSchema.Namespace);
+			a.SchemaTypeName = new XmlQualifiedName ("integer", XmlSchema.Namespace);
 			s.Items.Add (a);
 			XmlSchemaAttribute b = new XmlSchemaAttribute ();
 			b.Name = "bar";
-			// FIXME: mcs looks to have a bug around static 
-			// reference resolution. XmlSchema.Namespace should work.
-			b.SchemaTypeName = new XmlQualifiedName ("decimal", System.Xml.Schema.XmlSchema.Namespace);
+			b.SchemaTypeName = new XmlQualifiedName ("decimal", XmlSchema.Namespace);
 			s.Items.Add (b);
 			XmlSchemaElement e = new XmlSchemaElement ();
 			e.Name = "bar";
@@ -302,8 +298,7 @@ namespace System.Data
 			this.dataset = dataset;
 			dataset.DataSetName = "NewDataSet"; // Initialize always
 			schema = XmlSchema.Read (reader, null);
-			// FIXME: Just XmlSchema.Namespace should work (mcs bug)
-			if (reader.NodeType == XmlNodeType.EndElement && reader.LocalName == "schema" && reader.NamespaceURI == System.Xml.Schema.XmlSchema.Namespace)
+			if (reader.NodeType == XmlNodeType.EndElement && reader.LocalName == "schema" && reader.NamespaceURI == XmlSchema.Namespace)
 				reader.ReadEndElement ();
 			schema.Compile (null);
 		}
