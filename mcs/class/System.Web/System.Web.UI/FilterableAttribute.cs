@@ -32,6 +32,7 @@ using System;
 using System.ComponentModel;
 
 namespace System.Web.UI {
+	[AttributeUsage (AttributeTargets.Class | AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
 	public sealed class FilterableAttribute : Attribute, IDisposable 
 	{
 		private bool filterable;
@@ -66,6 +67,58 @@ namespace System.Web.UI {
 				this.dispose = true;
 			}
 		}
+
+		public override bool Equals (object obj)
+		{
+			if (obj != null && obj is FilterableAttribute)
+			{
+				FilterableAttribute fa = (FilterableAttribute) obj;
+				return (this.filterable == fa.filterable);
+			}
+			return false;
+		}
+
+		public override int GetHashCode ()
+		{
+			return this.filterable.GetHashCode ();
+		}
+
+		public override bool IsDefaultAttribute ()
+		{
+			return Equals (Default);
+		}
+
+		public static bool IsObjectFilterable (object obj)
+		{
+			return IsTypeFilterable (obj.GetType ());
+		}
+
+		public static bool IsPropertyFilterable (PropertyDescriptor propDesc)
+		{
+			System.ComponentModel.AttributeCollection ac = propDesc.Attributes;
+			if (ac.Count != 0)
+			{
+				foreach (Attribute attrib in ac)
+					if (attrib.GetType () == FilterableAttribute.Default.GetType ())
+						return true;
+			}
+			return false;
+			
+		}
+
+		public static bool IsTypeFilterable (Type type)
+		{
+			Object [] ac = type.GetCustomAttributes (false);
+			if (ac.Length != 0)
+			{
+				foreach (Attribute attrib in ac)
+					if (attrib.GetType () == FilterableAttribute.Default.GetType ())
+						return true;
+			}
+			return false;			
+		}
+
+
 	}
 }
 #endif
