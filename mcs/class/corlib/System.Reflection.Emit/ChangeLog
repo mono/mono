@@ -1,4 +1,9 @@
 
+Tue May 14 17:13:48 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* MethodBuilder.cs: revert change in accessibility of
+	GetILGenerator(int).
+
 Tue May 14 13:31:17 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* FieldBuilder.cs, ParameterBuilder.cs: more special-casing of

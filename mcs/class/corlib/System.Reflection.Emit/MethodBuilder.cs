@@ -112,7 +112,7 @@ namespace System.Reflection.Emit {
 		public ILGenerator GetILGenerator () {
 			return GetILGenerator (256);
 		}
-		internal ILGenerator GetILGenerator (int size) {
+		public ILGenerator GetILGenerator (int size) {
 			ilgen = new ILGenerator (this, size);
 			return ilgen;
 		}
