@@ -537,7 +537,7 @@ namespace Mono.CSharp {
 					"No such label 'case " + val + "': for the goto case");
 			}
 
-			ec.ig.Emit (OpCodes.Br, sl.ILLabel);
+			ec.ig.Emit (OpCodes.Br, sl.ILLabelCode);
 			return false;
 		}
 	}
@@ -1067,6 +1067,7 @@ namespace Mono.CSharp {
 		object converted;
 		public Location loc;
 		public Label ILLabel;
+		public Label ILLabelCode;
 		
 		//
 		// if expr == null, then it is the default case.
@@ -1096,6 +1097,7 @@ namespace Mono.CSharp {
 		public bool ResolveAndReduce (EmitContext ec, Type required_type)
 		{
 			ILLabel = ec.ig.DefineLabel ();
+			ILLabelCode = ec.ig.DefineLabel ();
 
 			if (label == null)
 				return true;
@@ -1649,6 +1651,7 @@ namespace Mono.CSharp {
 				foreach (SwitchLabel sl in ss.Labels)
 				{
 					ig.MarkLabel (sl.ILLabel);
+					ig.MarkLabel (sl.ILLabelCode);
 					if (sl.Label == null)
 					{
 						ig.MarkLabel (lblDefault);
@@ -1762,6 +1765,8 @@ namespace Mono.CSharp {
 				if (null_found)
 					ig.MarkLabel (null_target);
 				ig.MarkLabel (sec_begin);
+				foreach (SwitchLabel sl in ss.Labels)
+					ig.MarkLabel (sl.ILLabelCode);
 				if (ss.Block.Emit (ec))
 					pending_goto_end = false;
 				else {
