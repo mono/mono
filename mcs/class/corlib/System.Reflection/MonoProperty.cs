@@ -53,7 +53,6 @@ namespace System.Reflection {
 			}
 		}
 
-		[MonoTODO]
 		public override Type PropertyType {
 			get {
 				MonoPropertyInfo info;
@@ -62,8 +61,9 @@ namespace System.Reflection {
 				if (info.get_method != null) {
 					return info.get_method.ReturnType;
 				} else {
-					// FIXME: take the last param to set_method
-					return null;
+					ParameterInfo[] parameters = info.set_method.GetParameters();
+					
+					return parameters [parameters.Length - 1].ParameterType;
 				}
 			}
 		}

@@ -1,3 +1,8 @@
+
+Mon Jul 1 18:01:49 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* MonoProperty.cs: handle properties with only a set method.
+
 2002-05-24  Martin Baulig  <martin@gnome.org>
 
 	* ParameterInfo.cs: Added internal constructor.
