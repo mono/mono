@@ -1,3 +1,8 @@
+2002-05-04  Miguel de Icaza  <miguel@ximian.com>
+
+	* delegate.cs: If we are a toplevel delegate, use our full name.
+	If we are a nested delegate, then only use our tail name.
+
 2002-05-02  Ravi Pratap  <ravi@ximian.com>
 
 	* expression.cs (IsApplicable): Ensure that we add the "&" to
