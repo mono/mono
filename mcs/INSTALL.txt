@@ -14,8 +14,9 @@ Build Process for Users.
 
 If you only want to build a snapshot or a fresh CVS checkout of the
 sources, you should go into the `mono' sibling directory and issue the
-following command:
+make fullbuild command, like this:
 
+	  cd ../mono
 	  ./autogen --prefix=/usr/local
 	  make fullbuild
 
