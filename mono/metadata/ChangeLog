@@ -1,3 +1,9 @@
+
+Fri Feb 11 17:11:20 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* object.c: don't set the value of static fields
+	(fixes bug#72494).
+
 2005-02-11  Martin Baulig  <martin@ximian.com>
 
 	* mono-debug.c (DATA_TABLE_CHUNK_SIZE): Increase to 131072.
