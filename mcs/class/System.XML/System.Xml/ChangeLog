@@ -1,5 +1,13 @@
 2003-08-03  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
+	* DTDValidatingReader.cs,
+	  XmlNodeReader.cs,
+	  XmlReader.cs,
+	  XmlTextReader.cs,
+	  XmlValidatingReader.cs : fixed pragma USE_VERSION_1_0 to NET_1_0.
+
+2003-08-03  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
 	* DTDObjectModel.cs : Added BaseURI (but not used yet).
 	  DTDAttListDeclaration.ctro() now requires root dtd object model.
 	* DTDValidatingReader.cs : Read() now expands EntityReference if

@@ -352,7 +352,7 @@ namespace System.Xml {
 			return validatingReader.ReadAttributeValue ();
 		}
 
-#if USE_VERSION_1_0
+#if NET_1_0
 		[MonoTODO]
 		public override string ReadInnerXml ()
 		{

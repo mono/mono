@@ -781,7 +781,7 @@ namespace System.Xml
 				return false;
 		}
 
-#if USE_VERSION_1_0
+#if NET_1_0
 		// Its traversal behavior is almost same as Read().
 		public override string ReadInnerXml ()
 		{

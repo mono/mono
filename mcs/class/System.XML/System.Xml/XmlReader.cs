@@ -105,11 +105,11 @@ namespace System.Xml
 			if (s != null && s.Length > 0) {
 				char[] chars = s.ToCharArray ();
 
-				if (XmlConstructs.IsNameStart (chars[0])) {
+				if (XmlChar.IsFirstNameChar (chars[0])) {
 					int i = 1;
 					int n = chars.Length;
 
-					while (i < n && XmlConstructs.IsName (chars[i]))
+					while (i < n && XmlChar.IsNameChar (chars[i]))
 						++i;
 
 					result = i == n;
@@ -129,7 +129,7 @@ namespace System.Xml
 				int i = 0;
 				int n = chars.Length;
 
-				while (i < n && XmlConstructs.IsName (chars[i]))
+				while (i < n && XmlChar.IsNameChar (chars[i]))
 					++i;
 
 				result = i == n;
@@ -307,7 +307,7 @@ namespace System.Xml
 			Read ();
 		}
 
-#if USE_VERSION_1_0
+#if NET_1_0
 		public abstract string ReadInnerXml ();
 
 		public abstract string ReadOuterXml ();

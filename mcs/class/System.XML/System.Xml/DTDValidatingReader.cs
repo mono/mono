@@ -545,7 +545,7 @@ namespace Mono.Xml
 				return reader.ReadAttributeValue ();
 		}
 
-#if USE_VERSION_1_0
+#if NET_1_0
 		public override string ReadInnerXml ()
 		{
 			// MS.NET 1.0 has a serious bug here. It skips validation.

@@ -624,7 +624,7 @@ namespace System.Xml
 			throw new NotImplementedException ();
 		}
 
-#if USE_VERSION_1_0
+#if NET_1_0
 		public override string ReadInnerXml ()
 		{
 			if (readState != ReadState.Interactive)
