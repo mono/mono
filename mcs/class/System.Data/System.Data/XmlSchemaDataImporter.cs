@@ -357,6 +357,15 @@ namespace System.Data
 			dataset.Tables.Add (contextTable);
 			nameToComponentMap.Add (name, el);
 
+			// Find Locale
+			if (el.UnhandledAttributes != null) {
+				foreach (XmlAttribute attr in el.UnhandledAttributes) {
+					if (attr.LocalName == "Locale" &&
+						attr.NamespaceURI == XmlConstants.MsdataNamespace)
+						contextTable.Locale = new CultureInfo (attr.Value);
+				}
+			}
+
 			// Handle complex type (NOTE: It is or should be 
 			// impossible the type is other than complex type).
 			XmlSchemaComplexType ct = (XmlSchemaComplexType) el.ElementType;
