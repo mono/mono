@@ -17,182 +17,182 @@ namespace System.Drawing {
 		static public Color ActiveBorder
 		{	
 			get {
-				return Color.FromArgbSystem (255, 131, 153, 177, "ActiveBorder");
+				return Color.FromArgbSystem (255, 131, 153, 177, "ActiveBorder", KnownColor.ActiveBorder);
 			}
 		}
 
 		static public Color ActiveCaption
 		{	
 			get {
-				return Color.FromArgbSystem (255, 79, 101, 125, "ActiveCaption");
+				return Color.FromArgbSystem (255, 79, 101, 125, "ActiveCaption", KnownColor.ActiveCaption);
 			}
 		}
 
 		static public Color ActiveCaptionText
 		{	
 			get {
-				return Color.FromArgbSystem (255, 255, 255, 255, "ActiveCaptionText");
+				return Color.FromArgbSystem (255, 255, 255, 255, "ActiveCaptionText", KnownColor.ActiveCaptionText);
 			}
 		}
 
 		static public Color AppWorkspace
 		{	
 			get {
-				return Color.FromArgbSystem (255, 128, 128, 128, "AppWorkspace");
+				return Color.FromArgbSystem (255, 128, 128, 128, "AppWorkspace", KnownColor.AppWorkspace);
 			}
 		}
 
 		static public Color Control
 		{	
 			get {
-				return Color.FromArgbSystem (255, 192, 192, 192, "Control");
+				return Color.FromArgbSystem (255, 192, 192, 192, "Control", KnownColor.Control);
 			}
 		}
 
 		static public Color ControlDark
 		{	
 			get {
-				return Color.FromArgbSystem (255, 79, 101, 125, "ControlDark");
+				return Color.FromArgbSystem (255, 79, 101, 125, "ControlDark", KnownColor.ControlDark);
 			}
 		}
 
 		static public Color ControlDarkDark
 		{	
 			get {
-				return Color.FromArgbSystem (255, 0, 0, 0, "ControlDarkDark");
+				return Color.FromArgbSystem (255, 0, 0, 0, "ControlDarkDark", KnownColor.ControlDarkDark);
 			}
 		}
 
 		static public Color ControlLight
 		{	
 			get {
-				return Color.FromArgbSystem (255, 131, 153, 177, "ControlLight");
+				return Color.FromArgbSystem (255, 131, 153, 177, "ControlLight", KnownColor.ControlLight);
 			}
 		}
 
 		static public Color ControlLightLight
 		{	
 			get {
-				return Color.FromArgbSystem (255, 193, 204, 217, "ControlLightLight");
+				return Color.FromArgbSystem (255, 193, 204, 217, "ControlLightLight", KnownColor.ControlLightLight);
 			}
 		}
 
 		static public Color ControlText
 		{	
 			get {
-				return Color.FromArgbSystem (255, 0, 0, 0, "ControlText");
+				return Color.FromArgbSystem (255, 0, 0, 0, "ControlText", KnownColor.ControlText);
 			}
 		}
 
 		static public Color Desktop
 		{	
 			get {
-				return Color.FromArgbSystem (255, 0, 0, 0, "Desktop");
+				return Color.FromArgbSystem (255, 0, 0, 0, "Desktop", KnownColor.Desktop);
 			}
 		}
 
 		static public Color GrayText
 		{	
 			get {
-				return Color.FromArgbSystem (255, 79, 101, 125, "GrayText");
+				return Color.FromArgbSystem (255, 79, 101, 125, "GrayText", KnownColor.GrayText);
 			}
 		}
 
 		static public Color Highlight
 		{	
 			get {
-				return Color.FromArgbSystem (255, 79, 101, 125, "Highlight");
+				return Color.FromArgbSystem (255, 79, 101, 125, "Highlight", KnownColor.Highlight);
 			}
 		}
 
 		static public Color HighlightText
 		{	
 			get {
-				return Color.FromArgbSystem (255, 255, 255, 255, "HighlightText");
+				return Color.FromArgbSystem (255, 255, 255, 255, "HighlightText", KnownColor.HighlightText);
 			}
 		}
 
 		static public Color HotTrack
 		{	
 			get {
-				return Color.FromArgbSystem (255, 0, 0, 255, "HotTrack");
+				return Color.FromArgbSystem (255, 0, 0, 255, "HotTrack", KnownColor.HotTrack);
 			}
 		}
 
 		static public Color InactiveBorder
 		{	
 			get {
-				return Color.FromArgbSystem (255, 131, 153, 177, "InactiveBorder");
+				return Color.FromArgbSystem (255, 131, 153, 177, "InactiveBorder", KnownColor.InactiveBorder);
 			}
 		}
 
 		static public Color InactiveCaption
 		{	
 			get {
-				return Color.FromArgbSystem (255, 128, 128, 128, "InactiveCaption");
+				return Color.FromArgbSystem (255, 128, 128, 128, "InactiveCaption", KnownColor.InactiveCaption);
 			}
 		}
 
 		static public Color InactiveCaptionText
 		{	
 			get {
-				return Color.FromArgbSystem (255, 193, 204, 217, "InactiveCaptionText");
+				return Color.FromArgbSystem (255, 193, 204, 217, "InactiveCaptionText", KnownColor.InactiveCaptionText);
 			}
 		}
 
 		static public Color Info
 		{	
 			get {
-				return Color.FromArgbSystem (255, 255, 255, 255, "Info");
+				return Color.FromArgbSystem (255, 255, 255, 255, "Info", KnownColor.Info);
 			}
 		}
 
 		static public Color InfoText
 		{	
 			get {
-				return Color.FromArgbSystem (255, 0, 0, 0, "InfoText");
+				return Color.FromArgbSystem (255, 0, 0, 0, "InfoText", KnownColor.InfoText);
 			}
 		}
 
 		static public Color Menu
 		{	
 			get {
-				return Color.FromArgbSystem (255, 131, 153, 177, "Menu");
+				return Color.FromArgbSystem (255, 131, 153, 177, "Menu", KnownColor.Menu);
 			}
 		}
 
 		static public Color MenuText
 		{	
 			get {
-				return Color.FromArgbSystem (255, 0, 0, 0, "MenuText");
+				return Color.FromArgbSystem (255, 0, 0, 0, "MenuText", KnownColor.MenuText);
 			}
 		}
 
 		static public Color ScrollBar
 		{	
 			get {
-				return Color.FromArgbSystem (255, 193, 204, 217, "ScrollBar");
+				return Color.FromArgbSystem (255, 193, 204, 217, "ScrollBar", KnownColor.ScrollBar);
 			}
 		}
 
 		static public Color Window
 		{	
 			get {
-				return Color.FromArgbSystem (255, 255, 255, 255, "Window");
+				return Color.FromArgbSystem (255, 255, 255, 255, "Window", KnownColor.Window);
 			}
 		}
 
 		static public Color WindowFrame
 		{	
 			get {
-				return Color.FromArgbSystem (255, 0, 0, 0, "WindowFrame");
+				return Color.FromArgbSystem (255, 0, 0, 0, "WindowFrame", KnownColor.WindowFrame);
 			}
 		}
 
 		static public Color WindowText
 		{	
 			get {
-				return Color.FromArgbSystem (255, 0, 0, 0, "WindowText");
+				return Color.FromArgbSystem (255, 0, 0, 0, "WindowText", KnownColor.WindowText);
 			}
 		}
 	}

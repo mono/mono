@@ -1,3 +1,8 @@
+2003-06-28 Alexandre Pigolkine <pigolkine@gmx.de>
+	* Color.cs			
+	* SystemColors.cs	
+		supply KnowColor enum value to save Enum.Parse at runtime
+
 2003-06-26 Alexandre Pigolkine <pigolkine@gmx.de>
 	* Graphics.cs		coordinate transformations
 	* Image.cs			small fix
