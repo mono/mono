@@ -1,5 +1,7 @@
 2005-02-20  Zoltan Varga  <vargaz@freemail.hu>
 
+	* threads.c: Use a union for long<->double conversions.
+
 	* threads-types.h threads.c icall.c: Implement the net 2.0 interlocked
 	functions based on a patch by Luca Barbieri (luca.barbieri@gmail.com).
 
