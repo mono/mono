@@ -1,12 +1,9 @@
 //
 // System.Data.Odbc.OdbcPermissionAttribute
 //
-// Author:
-//   Umadevi S (sumadevi@novell.com)
-//
-// Copyright (C) Novell Inc 2004
-//
-
+// Authors:
+//	Umadevi S (sumadevi@novell.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
@@ -30,24 +27,21 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Data;
 using System.Data.Common;
 using System.Security;
 using System.Security.Permissions;
 
-namespace System.Data.Odbc
-{
+namespace System.Data.Odbc {
+
 	[AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Class | 
 			AttributeTargets.Struct | AttributeTargets.Constructor |
 			AttributeTargets.Method, AllowMultiple=true,
 			Inherited=false)]
 	[Serializable]
-	public sealed class OdbcPermissionAttribute : DBDataPermissionAttribute
-	{
+	public sealed class OdbcPermissionAttribute : DBDataPermissionAttribute {
 
 		#region Constructors 
 
-		[MonoTODO]
 		public OdbcPermissionAttribute (SecurityAction action) 
 			: base (action)
 		{
@@ -56,27 +50,19 @@ namespace System.Data.Odbc
 		#endregion
 
 		#region Properties
-
-		[MonoTODO]
-		internal string Provider {
-			[MonoTODO]
-			get {
-				throw new NotImplementedException (); 
-			}
-			[MonoTODO]
-			set {
-				throw new NotImplementedException (); 
-			}
-		}
-
 		#endregion
 
 		#region Methods
 
-		[MonoTODO]
 		public override IPermission CreatePermission () 
 		{
-			throw new NotImplementedException ();
+			if (base.Unrestricted) {
+				return new OdbcPermission (PermissionState.Unrestricted);
+			}
+
+			OdbcPermission p = new OdbcPermission (PermissionState.None, this.AllowBlankPassword);
+			p.Add (this.ConnectionString, this.KeyRestrictions, this.KeyRestrictionBehavior);
+			return p;
 		}
 
 		#endregion

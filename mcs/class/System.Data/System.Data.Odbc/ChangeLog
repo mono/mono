@@ -1,3 +1,8 @@
+2004-09-13  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* OdbcPermission.cs: Mostly completed (needs tests).
+	* OdbcPermissionAttribute.cs: Completed.
+
 2004-08-31 Umadevi S (sumadevi@novell.com)
 	* OdbcDataReader.cs - Fixed Decimal parsing
 
