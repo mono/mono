@@ -767,8 +767,11 @@ namespace Mono.Data.Tds.Protocol {
 
 			int len = comm.GetTdsInt ();
 
+			//if the len is 0 , then the string can be a '' string 
+			// this method is called only for Text and NText. Hence will
+			// return a empty string
 			if (len == 0)
-				return DBNull.Value;
+				return "";
 
 			if (wideChars)
 				result = comm.GetString (len / 2);

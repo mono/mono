@@ -1,3 +1,7 @@
+2004-10-14 Umadevi S <sumadevi@novell.com>
+	* Tds.cs : GetTextValue method- handling zero length string correctly
+		This fixes bug #67916
+
 2004-08-14 Geoff Norton <gnorton@customerdna.com>
 
 	* TdsComm.cs: 
