@@ -1,3 +1,11 @@
+2005-02-04  Jordi Mas i Hernandez <jordi@ximian.com>
+	
+	*  Menu.cs:
+		- Implements FindMergePosition and MergeMenu functions (very poor documented)
+		- Fixes MenuItems.Add range
+	* MenuItem.cs:
+		- MergeMenu and Clone and CloneMenu functions
+
 2005-02-03  Jackson Harper  <jackson@ximian.com>
 
 	* ScrollBar.cs: Make abstract

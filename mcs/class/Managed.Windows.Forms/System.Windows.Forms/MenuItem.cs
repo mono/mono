@@ -263,7 +263,7 @@ namespace System.Windows.Forms
 		public virtual MenuItem CloneMenu ()
 		{
 			MenuItem item = new MenuItem ();
-			item.CloneMenu (item);
+			item.CloneMenu (this);
 			return item;
 		}
 
@@ -300,9 +300,12 @@ namespace System.Windows.Forms
 			base.Dispose (disposing);			
 		}
 
-		public virtual void MergeMenu ()
+		// This really clones the item
+		public virtual MenuItem MergeMenu ()
 		{
-			base.MergeMenu (this);
+			MenuItem item = new MenuItem ();
+			item.CloneMenu (this);
+			return item;
 		}
 
 		public void MergeMenu (MenuItem menuitem)

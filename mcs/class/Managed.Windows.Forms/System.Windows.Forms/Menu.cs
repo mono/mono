@@ -129,14 +129,27 @@ namespace System.Windows.Forms
 			}
 		}
 
+		// From Microsoft documentation is impossible to guess that 
+		// this method is supossed to do
 		public MenuItem FindMenuItem (int type, IntPtr value)
 		{
-			throw new NotImplementedException ();
+			return null;
 		}
 
 		protected int FindMergePosition (int mergeOrder)
 		{
-			throw new NotImplementedException ();
+			int cnt = MenuItems.Count, cur, pos;
+			
+			for (pos = 0; pos < cnt; ) {
+				cur = (pos + cnt) /2;
+				if (MenuItems[cur].MergeOrder > mergeOrder) {
+					cnt = cur;
+				} else	{
+					pos = cur +1;
+				}
+			}
+			
+			return pos;
 		}
 
 		public ContextMenu GetContextMenu ()
@@ -159,7 +172,33 @@ namespace System.Windows.Forms
 		{
 			if (menuSrc == this)
 				throw new ArgumentException ("The menu cannot be merged with itself");
-
+			
+			for (int i = 0; i < menuSrc.MenuItems.Count; i++){
+								
+				switch (menuSrc.MenuItems[i].MergeType) {
+					case MenuMerge.Remove:	// Item not included
+						break;
+						
+					case MenuMerge.Add:
+					{
+						int pos = FindMergePosition (menuSrc.MenuItems[i].MergeOrder);						
+						MenuItems.Add (pos, menuSrc.MenuItems[i].CloneMenu ());
+						break;					
+					}
+					
+					case MenuMerge.Replace:
+					case MenuMerge.MergeItems:
+					{
+						int pos = FindMergePosition (menuSrc.MenuItems[i].MergeOrder - 1);						
+						MenuItems.Add (pos, menuSrc.MenuItems[i].CloneMenu ());
+						
+						break;
+					}
+					
+					default:
+						break;
+				}			
+			}		
 		}
 
 		protected internal virtual bool ProcessCmdKey (ref Message msg, Keys keyData)
@@ -257,7 +296,7 @@ namespace System.Windows.Forms
 
 			public virtual int Add (int index, MenuItem mi)
 			{
-				if (index < 0 || index >= Count)
+				if (index < 0 || index > Count)
 					throw new ArgumentOutOfRangeException ("Index of out range");
 
 				ArrayList new_items = new ArrayList (Count + 1);
