@@ -1,5 +1,6 @@
 //
-// SecurityPermissionAttributeTest.cs - NUnit Test Cases for SecurityPermissionAttribute
+// SecurityPermissionAttributeTest.cs -
+//	NUnit Test Cases for SecurityPermissionAttribute
 //
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
@@ -290,11 +291,10 @@ namespace MonoTests.System.Security.Permissions {
 		[Test]
 		public void Attributes ()
 		{
-			SecurityPermissionAttribute a = new SecurityPermissionAttribute (SecurityAction.Assert);
 			Type t = typeof (SecurityPermissionAttribute);
 			Assert.IsTrue (t.IsSerializable, "IsSerializable");
 
-			object [] attrs = t.GetCustomAttributes (typeof (AttributeUsageAttribute), false);
+			object[] attrs = t.GetCustomAttributes (typeof (AttributeUsageAttribute), false);
 			Assert.AreEqual (1, attrs.Length, "AttributeUsage");
 			AttributeUsageAttribute aua = (AttributeUsageAttribute)attrs [0];
 			Assert.IsTrue (aua.AllowMultiple, "AllowMultiple");

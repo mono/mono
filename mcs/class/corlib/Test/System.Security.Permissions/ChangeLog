@@ -1,5 +1,49 @@
 2003-08-19  Sebastien Pouliot  <sebastien@ximian.com>
 
+	* CodeAccessSecurityAttributeTest.cs: New unit tests for abstract 
+	class CodeAccessSecurityAttribute.
+	* DataProtectionPermissionAttributeTest.cs: New unit tests for Fx 2.0
+	DataProtectionPermissionAttribute class.
+	* EnvironmentPermissionAttributeTest.cs: Added tests to check class's
+	attributes. Converted existing tests to NUnit 2.2 format. Fixed small
+	behaviour difference with Fx 2.0. 
+	* FileDialogPermissionAttributeTest.cs: Added tests to check class's
+	attributes. Converted existing tests to NUnit 2.2 format.
+	* FileIOPermissionAttributeTest.cs: Added tests to check class's
+	attributes. Converted existing tests to NUnit 2.2 format. Added tests
+	for new Fx 2.0 properties.
+	* HostProtectionAttributeTest.cs: New unit tests for Fx 2.0
+	HostProtectionAttribute class.
+	* IsolatedStoragePermissionAttributeTest.cs: New unit tests for 
+	abstract class IsolatedStoragePermissionAttribute.
+	* KeyContainerPermissionAttributeTest.cs: New unit tests for Fx 2.0
+	KeyContainerPermissionAttribute class.
+	* PermissionSetAttributeTest.cs: Added tests to check class's
+	attributes. Converted existing tests to NUnit 2.2 format. Added tests
+	for new Fx 2.0 properties.
+	* PrincipalPermissionAttributeTest.cs: Added tests to check class's
+	attributes. Converted existing tests to NUnit 2.2 format.
+	* PublisherIdentityPermissionAttributeTest.cs: Added tests to check 
+	class's	attributes. Converted existing tests to NUnit 2.2 format.
+	* ReflectionPermissionAttributeTest.cs: Added tests to check class's
+	attributes. Converted existing tests to NUnit 2.2 format.
+	* RegistryPermissionAttributeTest.cs: Added tests to check class's
+	attributes. Converted existing tests to NUnit 2.2 format. Added tests
+	for new Fx 2.0 properties.
+	* SecurityAttributeTest.cs: New unit tests for abstract class
+	SecurityAttribute.
+	* SecurityPermissionAttributeTest.cs: Removed unrequired line.
+	* SiteIdentityPermissionAttributeTest.cs: Added tests to check class's
+	attributes. Converted existing tests to NUnit 2.2 format.
+	* StrongNameIdentityPermissionAttributeTest.cs: Removed unrequired line.
+	* UIPermissionAttributeTest.cs: Removed unrequired line.
+	* UrlIdentityPermissionAttributeTest.cs: Added tests to check class's
+	attributes. Converted existing tests to NUnit 2.2 format.
+	* ZoneIdentityPermissionAttributeTest.cs: Removed unrequired line.
+
+
+2003-08-19  Sebastien Pouliot  <sebastien@ximian.com>
+
 	* SecurityPermissionAttributeTest.cs: Added unit tests for invalid 
 	SecurityAction, Flags effects and custom attributes. Converted 
 	existing tests to NUnit 2.2 format.

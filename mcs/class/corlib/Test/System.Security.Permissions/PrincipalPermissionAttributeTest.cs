@@ -2,9 +2,29 @@
 // PrincipalPermissionAttributeTest.cs - NUnit Test Cases for PrincipalPermissionAttribute
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
+// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+//
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+// 
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
 using NUnit.Framework;
@@ -15,7 +35,7 @@ using System.Security.Permissions;
 namespace MonoTests.System.Security.Permissions {
 
 	[TestFixture]
-	public class PrincipalPermissionAttributeTest : Assertion {
+	public class PrincipalPermissionAttributeTest {
 
 		private static string user = "user";
 		private static string role = "role";
@@ -24,37 +44,52 @@ namespace MonoTests.System.Security.Permissions {
 		public void Default () 
 		{
 			PrincipalPermissionAttribute a = new PrincipalPermissionAttribute (SecurityAction.Assert);
-			AssertNull ("Name", a.Name);
-			AssertNull ("Role", a.Role);
-			Assert ("Authenticated", a.Authenticated);
-			AssertEquals ("TypeId", a.ToString (), a.TypeId.ToString ());
-			Assert ("Unrestricted", !a.Unrestricted);
+			Assert.IsNull (a.Name, "Name");
+			Assert.IsNull (a.Role, "Role");
+			Assert.IsTrue (a.Authenticated, "Authenticated");
+			Assert.AreEqual (a.ToString (), a.TypeId.ToString (), "TypeId");
+			Assert.IsFalse (a.Unrestricted, "Unrestricted");
 
 			PrincipalPermission perm = (PrincipalPermission) a.CreatePermission ();
-			AssertNotNull ("CreatePermission", perm);
+			Assert.IsNotNull (perm, "CreatePermission");
 		}
 
 		[Test]
 		public void Action () 
 		{
-			PublisherIdentityPermissionAttribute a = new PublisherIdentityPermissionAttribute (SecurityAction.Assert);
-			AssertEquals ("Action=Assert", SecurityAction.Assert, a.Action);
+			PrincipalPermissionAttribute a = new PrincipalPermissionAttribute (SecurityAction.Assert);
+			Assert.AreEqual (SecurityAction.Assert, a.Action, "Action=Assert");
 			a.Action = SecurityAction.Demand;
-			AssertEquals ("Action=Demand", SecurityAction.Demand, a.Action);
+			Assert.AreEqual (SecurityAction.Demand, a.Action, "Action=Demand");
 			a.Action = SecurityAction.Deny;
-			AssertEquals ("Action=Deny", SecurityAction.Deny, a.Action);
+			Assert.AreEqual (SecurityAction.Deny, a.Action, "Action=Deny");
 			a.Action = SecurityAction.InheritanceDemand;
-			AssertEquals ("Action=InheritanceDemand", SecurityAction.InheritanceDemand, a.Action);
+			Assert.AreEqual (SecurityAction.InheritanceDemand, a.Action, "Action=InheritanceDemand");
 			a.Action = SecurityAction.LinkDemand;
-			AssertEquals ("Action=LinkDemand", SecurityAction.LinkDemand, a.Action);
+			Assert.AreEqual (SecurityAction.LinkDemand, a.Action, "Action=LinkDemand");
 			a.Action = SecurityAction.PermitOnly;
-			AssertEquals ("Action=PermitOnly", SecurityAction.PermitOnly, a.Action);
+			Assert.AreEqual (SecurityAction.PermitOnly, a.Action, "Action=PermitOnly");
 			a.Action = SecurityAction.RequestMinimum;
-			AssertEquals ("Action=RequestMinimum", SecurityAction.RequestMinimum, a.Action);
+			Assert.AreEqual (SecurityAction.RequestMinimum, a.Action, "Action=RequestMinimum");
 			a.Action = SecurityAction.RequestOptional;
-			AssertEquals ("Action=RequestOptional", SecurityAction.RequestOptional, a.Action);
+			Assert.AreEqual (SecurityAction.RequestOptional, a.Action, "Action=RequestOptional");
 			a.Action = SecurityAction.RequestRefuse;
-			AssertEquals ("Action=RequestRefuse", SecurityAction.RequestRefuse, a.Action);
+			Assert.AreEqual (SecurityAction.RequestRefuse, a.Action, "Action=RequestRefuse");
+#if NET_2_0
+			a.Action = SecurityAction.DemandChoice;
+			Assert.AreEqual (SecurityAction.DemandChoice, a.Action, "Action=DemandChoice");
+			a.Action = SecurityAction.InheritanceDemandChoice;
+			Assert.AreEqual (SecurityAction.InheritanceDemandChoice, a.Action, "Action=InheritanceDemandChoice");
+			a.Action = SecurityAction.LinkDemandChoice;
+			Assert.AreEqual (SecurityAction.LinkDemandChoice, a.Action, "Action=LinkDemandChoice");
+#endif
+		}
+
+		[Test]
+		public void Action_Invalid ()
+		{
+			PrincipalPermissionAttribute a = new PrincipalPermissionAttribute ((SecurityAction)Int32.MinValue);
+			// no validation in attribute
 		}
 
 		[Test]
@@ -64,11 +99,11 @@ namespace MonoTests.System.Security.Permissions {
 			attr.Name = null;
 			attr.Role = null;
 			attr.Authenticated = true;
-			AssertNull ("NameNullRoleNullAuthenticated.Name", attr.Name);
-			AssertNull ("NameNullRoleNullAuthenticated.Role", attr.Role);
-			Assert ("NameNullRoleNullAuthenticated.Authenticated", attr.Authenticated);
+			Assert.IsNull (attr.Name, "NameNullRoleNullAuthenticated.Name");
+			Assert.IsNull (attr.Role, "NameNullRoleNullAuthenticated.Role");
+			Assert.IsTrue (attr.Authenticated, "NameNullRoleNullAuthenticated.Authenticated");
 			PrincipalPermission p = (PrincipalPermission) attr.CreatePermission ();
-			Assert ("NameNullRoleNullAuthenticated.IsUnrestricted", p.IsUnrestricted ());
+			Assert.IsTrue (p.IsUnrestricted (), "NameNullRoleNullAuthenticated.IsUnrestricted");
 		}
 
 		[Test]
@@ -78,11 +113,11 @@ namespace MonoTests.System.Security.Permissions {
 			attr.Name = null;
 			attr.Role = null;
 			attr.Authenticated = false;
-			AssertNull ("NameNullRoleNullNonAuthenticated.Name", attr.Name);
-			AssertNull ("NameNullRoleNullNonAuthenticated.Role", attr.Role);
-			Assert ("NameNullRoleNullNonAuthenticated.Authenticated", !attr.Authenticated);
+			Assert.IsNull (attr.Name, "NameNullRoleNullNonAuthenticated.Name");
+			Assert.IsNull (attr.Role, "NameNullRoleNullNonAuthenticated.Role");
+			Assert.IsFalse (attr.Authenticated, "NameNullRoleNullNonAuthenticated.Authenticated");
 			PrincipalPermission p = (PrincipalPermission) attr.CreatePermission ();
-			Assert ("NameNullRoleNullNonAuthenticated.IsUnrestricted", !p.IsUnrestricted ());
+			Assert.IsFalse (p.IsUnrestricted (), "NameNullRoleNullNonAuthenticated.IsUnrestricted");
 		}
 
 		[Test]
@@ -92,11 +127,11 @@ namespace MonoTests.System.Security.Permissions {
 			attr.Name = user;
 			attr.Role = null;
 			attr.Authenticated = true;
-			AssertEquals ("NameRoleNullAuthenticated.Name", user, attr.Name);
-			AssertNull ("NameRoleNullAuthenticated.Role", attr.Role);
-			Assert ("NameRoleNullAuthenticated.Authenticated", attr.Authenticated);
+			Assert.AreEqual (user, attr.Name, "NameRoleNullAuthenticated.Name");
+			Assert.IsNull (attr.Role, "NameRoleNullAuthenticated.Role");
+			Assert.IsTrue (attr.Authenticated, "NameRoleNullAuthenticated.Authenticated");
 			PrincipalPermission p = (PrincipalPermission) attr.CreatePermission ();
-			Assert ("NameRoleNullAuthenticated.IsUnrestricted", !p.IsUnrestricted ());
+			Assert.IsFalse (p.IsUnrestricted (), "NameRoleNullAuthenticated.IsUnrestricted");
 		}
 
 		[Test]
@@ -106,11 +141,11 @@ namespace MonoTests.System.Security.Permissions {
 			attr.Name = user;
 			attr.Role = null;
 			attr.Authenticated = false;
-			AssertEquals ("NameRoleNullNonAuthenticated.Name", user, attr.Name);
-			AssertNull ("NameRoleNullNonAuthenticated.Role", attr.Role);
-			Assert ("NameRoleNullNonAuthenticated.Authenticated", !attr.Authenticated);
+			Assert.AreEqual (user, attr.Name, "NameRoleNullNonAuthenticated.Name");
+			Assert.IsNull (attr.Role, "NameRoleNullNonAuthenticated.Role");
+			Assert.IsFalse (attr.Authenticated, "NameRoleNullNonAuthenticated.Authenticated");
 			PrincipalPermission p = (PrincipalPermission) attr.CreatePermission ();
-			Assert ("NameRoleNullNonAuthenticated.IsUnrestricted", !p.IsUnrestricted ());
+			Assert.IsFalse (p.IsUnrestricted (), "NameRoleNullNonAuthenticated.IsUnrestricted");
 		}
 
 		[Test]
@@ -120,11 +155,11 @@ namespace MonoTests.System.Security.Permissions {
 			attr.Name = null;
 			attr.Role = role;
 			attr.Authenticated = true;
-			AssertNull ("NameNullRoleAuthenticated.Name", attr.Name);
-			AssertEquals ("NameNullRoleAuthenticated.Role", role, attr.Role);
-			Assert ("NameNullRoleAuthenticated.Authenticated", attr.Authenticated);
+			Assert.IsNull (attr.Name, "NameNullRoleAuthenticated.Name");
+			Assert.AreEqual (role, attr.Role, "NameNullRoleAuthenticated.Role");
+			Assert.IsTrue (attr.Authenticated, "NameNullRoleAuthenticated.Authenticated");
 			PrincipalPermission p = (PrincipalPermission) attr.CreatePermission ();
-			Assert ("NameNullRoleAuthenticated.IsUnrestricted", !p.IsUnrestricted ());
+			Assert.IsFalse (p.IsUnrestricted (), "NameNullRoleAuthenticated.IsUnrestricted");
 		}
 
 		[Test]
@@ -134,11 +169,11 @@ namespace MonoTests.System.Security.Permissions {
 			attr.Name = null;
 			attr.Role = role;
 			attr.Authenticated = false;
-			AssertNull ("NameNullRoleNonAuthenticated.Name", attr.Name);
-			AssertEquals ("NameNullRoleNonAuthenticated.Role", role, attr.Role);
-			Assert ("NameNullRoleNonAuthenticated.Authenticated", !attr.Authenticated);
+			Assert.IsNull (attr.Name, "NameNullRoleNonAuthenticated.Name");
+			Assert.AreEqual (role, attr.Role, "NameNullRoleNonAuthenticated.Role");
+			Assert.IsFalse (attr.Authenticated, "NameNullRoleNonAuthenticated.Authenticated");
 			PrincipalPermission p = (PrincipalPermission) attr.CreatePermission ();
-			Assert ("NameNullRoleNonAuthenticated.IsUnrestricted", !p.IsUnrestricted ());
+			Assert.IsFalse (p.IsUnrestricted (), "NameNullRoleNonAuthenticated.IsUnrestricted");
 		}
 
 		[Test]
@@ -148,11 +183,11 @@ namespace MonoTests.System.Security.Permissions {
 			attr.Name = user;
 			attr.Role = role;
 			attr.Authenticated = true;
-			AssertEquals ("NameRoleAuthenticated.Name", user, attr.Name);
-			AssertEquals ("NameRoleAuthenticated.Role", role, attr.Role);
-			Assert ("NameRoleAuthenticated.Authenticated", attr.Authenticated);
+			Assert.AreEqual (user, attr.Name, "NameRoleAuthenticated.Name");
+			Assert.AreEqual (role, attr.Role, "NameRoleAuthenticated.Role");
+			Assert.IsTrue (attr.Authenticated, "NameRoleAuthenticated.Authenticated");
 			PrincipalPermission p = (PrincipalPermission) attr.CreatePermission ();
-			Assert ("NameRoleAuthenticated.IsUnrestricted", !p.IsUnrestricted ());
+			Assert.IsFalse (p.IsUnrestricted (), "NameRoleAuthenticated.IsUnrestricted");
 		}
 
 		[Test]
@@ -162,11 +197,11 @@ namespace MonoTests.System.Security.Permissions {
 			attr.Name = user;
 			attr.Role = role;
 			attr.Authenticated = false;
-			AssertEquals ("NameRoleNonAuthenticated.Name", user, attr.Name);
-			AssertEquals ("NameRoleNonAuthenticated.Role", role, attr.Role);
-			Assert ("NameRoleNonAuthenticated.Authenticated", !attr.Authenticated);
+			Assert.AreEqual (user, attr.Name, "NameRoleNonAuthenticated.Name");
+			Assert.AreEqual (role, attr.Role, "NameRoleNonAuthenticated.Role");
+			Assert.IsFalse (attr.Authenticated, "NameRoleNonAuthenticated.Authenticated");
 			PrincipalPermission p = (PrincipalPermission) attr.CreatePermission ();
-			Assert ("NameRoleNonAuthenticated.IsUnrestricted", !p.IsUnrestricted ());
+			Assert.IsFalse (p.IsUnrestricted (), "NameRoleNonAuthenticated.IsUnrestricted");
 		}
 
 		[Test]
@@ -176,7 +211,22 @@ namespace MonoTests.System.Security.Permissions {
 			a.Unrestricted = true;
 
 			PrincipalPermission perm = (PrincipalPermission) a.CreatePermission ();
-			Assert ("CreatePermission.IsUnrestricted", perm.IsUnrestricted ());
+			Assert.IsTrue (perm.IsUnrestricted (), "CreatePermission.IsUnrestricted");
+		}
+
+		[Test]
+		public void Attributes ()
+		{
+			Type t = typeof (PrincipalPermissionAttribute);
+			Assert.IsTrue (t.IsSerializable, "IsSerializable");
+
+			object[] attrs = t.GetCustomAttributes (typeof (AttributeUsageAttribute), false);
+			Assert.AreEqual (1, attrs.Length, "AttributeUsage");
+			AttributeUsageAttribute aua = (AttributeUsageAttribute)attrs [0];
+			Assert.IsTrue (aua.AllowMultiple, "AllowMultiple");
+			Assert.IsFalse (aua.Inherited, "Inherited");
+			AttributeTargets at = (AttributeTargets.Class | AttributeTargets.Method);
+			Assert.AreEqual (at, aua.ValidOn, "ValidOn");
 		}
 	}
 }

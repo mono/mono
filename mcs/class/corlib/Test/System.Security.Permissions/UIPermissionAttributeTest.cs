@@ -142,7 +142,6 @@ namespace MonoTests.System.Security.Permissions {
 		[Test]
 		public void Attributes ()
 		{
-			UIPermissionAttribute a = new UIPermissionAttribute (SecurityAction.Assert);
 			Type t = typeof (UIPermissionAttribute);
 			Assert.IsTrue (t.IsSerializable, "IsSerializable");
 

@@ -1,10 +1,31 @@
 //
-// PublisherIdentityPermissionAttributeTest.cs - NUnit Test Cases for PublisherIdentityPermissionAttribute
+// PublisherIdentityPermissionAttributeTest.cs -
+//	NUnit Test Cases for PublisherIdentityPermissionAttribute
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
+// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+//
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+// 
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
 using NUnit.Framework;
@@ -17,7 +38,7 @@ using System.Security.Cryptography.X509Certificates;
 namespace MonoTests.System.Security.Permissions {
 
 	[TestFixture]
-	public class PublisherIdentityPermissionAttributeTest : Assertion {
+	public class PublisherIdentityPermissionAttributeTest {
 
 		private static byte[] cert1 = { 0x30,0x82,0x05,0x0F,0x30,0x82,0x03,0xF7,0xA0,0x03,0x02,0x01,0x02,0x02,0x0A,0x61,0x07,0x11,0x43,0x00,0x00,0x00,0x00,0x00,0x34,0x30,0x0D,0x06,0x09,0x2A,0x86,0x48,0x86,0xF7,0x0D,0x01,0x01,0x05,0x05,0x00,0x30,0x81,0xA6,0x31,0x0B,0x30,0x09,0x06,0x03,0x55,0x04,0x06,0x13,0x02,0x55,0x53,0x31,0x13,0x30,0x11,0x06,0x03,0x55,0x04,0x08,0x13,0x0A,0x57,0x61,0x73,0x68,0x69,0x6E,0x67,0x74,0x6F,0x6E,0x31,0x10,0x30,0x0E,0x06,0x03,0x55,0x04,0x07,0x13,0x07,0x52,0x65,0x64,0x6D,0x6F,0x6E,0x64,0x31,0x1E,0x30,0x1C,0x06,0x03,
 			0x55,0x04,0x0A,0x13,0x15,0x4D,0x69,0x63,0x72,0x6F,0x73,0x6F,0x66,0x74,0x20,0x43,0x6F,0x72,0x70,0x6F,0x72,0x61,0x74,0x69,0x6F,0x6E,0x31,0x2B,0x30,0x29,0x06,0x03,0x55,0x04,0x0B,0x13,0x22,0x43,0x6F,0x70,0x79,0x72,0x69,0x67,0x68,0x74,0x20,0x28,0x63,0x29,0x20,0x32,0x30,0x30,0x30,0x20,0x4D,0x69,0x63,0x72,0x6F,0x73,0x6F,0x66,0x74,0x20,0x43,0x6F,0x72,0x70,0x2E,0x31,0x23,0x30,0x21,0x06,0x03,0x55,0x04,0x03,0x13,0x1A,0x4D,0x69,0x63,0x72,0x6F,0x73,0x6F,0x66,0x74,0x20,0x43,0x6F,0x64,0x65,0x20,0x53,0x69,0x67,
@@ -39,70 +60,90 @@ namespace MonoTests.System.Security.Permissions {
 			0x97,0xF7,0xAB,0x0B,0x6C,0xA5,0x43,0xBA,0x6E,0x4F,0xC5,0x4E,0x00,0x30,0x16,0x3C,0x3F,0x99,0x14,0xDA,0xA2,0x20,0x08,0x8B,0xBA,0xED,0x76,0xAC,0x97,0x00,0xD5,0x6D,0x02,0x01,0x0F,0x30,0x0D,0x06,0x09,0x2A,0x86,0x48,0x86,0xF7,0x0D,0x01,0x01,0x04,0x05,0x00,0x03,0x81,0x81,0x00,0x38,0x50,0x1D,0x0A,0xD3,0x1B,0xBB,0xA2,0x9F,0x6C,0x8D,0x10,0xAA,0x42,0x1B,0x05,0x8D,0xE4,0x25,0xAB,0xFB,0x55,0xAE,0x6D,0xBA,0x53,0x67,0x15,0x07,0x9A,0xEC,0x55,0x9F,0x72,0x89,0x5F,0x24,0xB0,0xDB,0xCA,0x64,0xBD,0x64,0xAA,0xC2,0x8C,
 			0xD9,0x3D,0xA2,0x45,0xB7,0xC6,0x92,0x71,0x51,0xEF,0xED,0xE1,0x51,0x54,0x97,0x56,0x35,0xA1,0xCE,0xE4,0x44,0xC4,0x47,0x66,0xFF,0x91,0xDA,0x88,0x9C,0x23,0xC2,0xB3,0xD4,0x62,0x4A,0xBC,0x94,0x55,0x9C,0x80,0x8E,0xB3,0xDD,0x4F,0x1A,0xED,0x12,0x5A,0xB5,0x2E,0xBC,0xF8,0x4B,0xCE,0xC6,0xD4,0x70,0xB3,0xB3,0x22,0xF8,0x5E,0x5C,0x36,0x7A,0xA6,0xB8,0x39,0x73,0x46,0x43,0x5C,0x9B,0x9A,0xBD,0x1E,0x7E,0xA7,0x04,0xCF,0x25,0x36 };
 
-		[SetUp]
-		public void SetUp () 
+		[TestFixtureSetUp]
+		public void FixtureSetUp ()
 		{
-			FileStream fs = File.OpenWrite ("cert1.cer");
-			fs.Write (cert1, 0, cert1.Length);
-			fs.Close ();
-			fs = File.OpenWrite ("cert2.cer");
-			fs.Write (cert2, 0, cert2.Length);
-			fs.Close ();
+			using (FileStream fs1 = File.OpenWrite ("cert1.cer")) {
+				fs1.Write (cert1, 0, cert1.Length);
+				fs1.Close ();
+			}
+			using (FileStream fs2 = File.OpenWrite ("cert2.cer")) {
+				fs2.Write (cert2, 0, cert2.Length);
+				fs2.Close ();
+			}
 		}
 
-		[TearDown]
-		public void TearDown () 
+		[TestFixtureTearDown]
+		public void FixtureTearDown ()
 		{
-			File.Delete ("cert1.cer");
-			File.Delete ("cert2.cer");
+			try {
+				File.Delete ("cert1.cer");
+				File.Delete ("cert2.cer");
+			}
+			catch {} // don't mess up results over that
 		}
 
 		[Test]
 		public void Default () 
 		{
 			PublisherIdentityPermissionAttribute a = new PublisherIdentityPermissionAttribute (SecurityAction.Assert);
-			AssertNull ("CertFile", a.CertFile);
-			AssertNull ("SignedFile", a.SignedFile);
-			AssertNull ("X509Certificate", a.X509Certificate);
-			AssertEquals ("TypeId", a.ToString (), a.TypeId.ToString ());
-			Assert ("Unrestricted", !a.Unrestricted);
+			Assert.IsNull (a.CertFile, "CertFile");
+			Assert.IsNull (a.SignedFile, "SignedFile");
+			Assert.IsNull (a.X509Certificate, "X509Certificate");
+			Assert.AreEqual (a.ToString (), a.TypeId.ToString (), "TypeId");
+			Assert.IsFalse (a.Unrestricted, "Unrestricted");
 
 			PublisherIdentityPermission perm = (PublisherIdentityPermission) a.CreatePermission ();
-			AssertNull ("CreatePermission.Certificate", perm.Certificate);
+			Assert.IsNull (perm.Certificate, "CreatePermission.Certificate");
 		}
 
 		[Test]
 		public void Action () 
 		{
 			PublisherIdentityPermissionAttribute a = new PublisherIdentityPermissionAttribute (SecurityAction.Assert);
-			AssertEquals ("Action=Assert", SecurityAction.Assert, a.Action);
+			Assert.AreEqual (SecurityAction.Assert, a.Action, "Action=Assert");
 			a.Action = SecurityAction.Demand;
-			AssertEquals ("Action=Demand", SecurityAction.Demand, a.Action);
+			Assert.AreEqual (SecurityAction.Demand, a.Action, "Action=Demand");
 			a.Action = SecurityAction.Deny;
-			AssertEquals ("Action=Deny", SecurityAction.Deny, a.Action);
+			Assert.AreEqual (SecurityAction.Deny, a.Action, "Action=Deny");
 			a.Action = SecurityAction.InheritanceDemand;
-			AssertEquals ("Action=InheritanceDemand", SecurityAction.InheritanceDemand, a.Action);
+			Assert.AreEqual (SecurityAction.InheritanceDemand, a.Action, "Action=InheritanceDemand");
 			a.Action = SecurityAction.LinkDemand;
-			AssertEquals ("Action=LinkDemand", SecurityAction.LinkDemand, a.Action);
+			Assert.AreEqual (SecurityAction.LinkDemand, a.Action, "Action=LinkDemand");
 			a.Action = SecurityAction.PermitOnly;
-			AssertEquals ("Action=PermitOnly", SecurityAction.PermitOnly, a.Action);
+			Assert.AreEqual (SecurityAction.PermitOnly, a.Action, "Action=PermitOnly");
 			a.Action = SecurityAction.RequestMinimum;
-			AssertEquals ("Action=RequestMinimum", SecurityAction.RequestMinimum, a.Action);
+			Assert.AreEqual (SecurityAction.RequestMinimum, a.Action, "Action=RequestMinimum");
 			a.Action = SecurityAction.RequestOptional;
-			AssertEquals ("Action=RequestOptional", SecurityAction.RequestOptional, a.Action);
+			Assert.AreEqual (SecurityAction.RequestOptional, a.Action, "Action=RequestOptional");
 			a.Action = SecurityAction.RequestRefuse;
-			AssertEquals ("Action=RequestRefuse", SecurityAction.RequestRefuse, a.Action);
+			Assert.AreEqual (SecurityAction.RequestRefuse, a.Action, "Action=RequestRefuse");
+#if NET_2_0
+			a.Action = SecurityAction.DemandChoice;
+			Assert.AreEqual (SecurityAction.DemandChoice, a.Action, "Action=DemandChoice");
+			a.Action = SecurityAction.InheritanceDemandChoice;
+			Assert.AreEqual (SecurityAction.InheritanceDemandChoice, a.Action, "Action=InheritanceDemandChoice");
+			a.Action = SecurityAction.LinkDemandChoice;
+			Assert.AreEqual (SecurityAction.LinkDemandChoice, a.Action, "Action=LinkDemandChoice");
+#endif
+		}
+
+		[Test]
+		public void Action_Invalid ()
+		{
+			PublisherIdentityPermissionAttribute a = new PublisherIdentityPermissionAttribute ((SecurityAction)Int32.MinValue);
+			// no validation in attribute
 		}
 
 		[Test]
 		public void None () 
 		{
 			PublisherIdentityPermissionAttribute attr = new PublisherIdentityPermissionAttribute (SecurityAction.Assert);
-			AssertNull ("None.CertFile", attr.CertFile);
-			AssertNull ("None.SignedFile", attr.SignedFile);
-			AssertNull ("None.X509Certificate", attr.X509Certificate);
+			Assert.IsNull (attr.CertFile, "None.CertFile");
+			Assert.IsNull (attr.SignedFile, "None.SignedFile");
+			Assert.IsNull (attr.X509Certificate, "None.X509Certificate");
 			PublisherIdentityPermission p = (PublisherIdentityPermission) attr.CreatePermission ();
-			AssertNull ("None.CreatePermission", p.Certificate);
+			Assert.IsNull (p.Certificate, "None.CreatePermission");
 		}
 
 		[Test]
@@ -113,11 +154,11 @@ namespace MonoTests.System.Security.Permissions {
 			attr.CertFile = "cert1.cer";
 			attr.SignedFile = null;
 			attr.X509Certificate = null;
-			AssertEquals ("CertFile", "cert1.cer", attr.CertFile);
-			AssertNull ("SignedFile", attr.SignedFile);
-			AssertNull ("X509Certificate", attr.X509Certificate);
+			Assert.AreEqual ("cert1.cer", attr.CertFile, "CertFile");
+			Assert.IsNull (attr.SignedFile, "SignedFile");
+			Assert.IsNull (attr.X509Certificate, "X509Certificate");
 			PublisherIdentityPermission p = (PublisherIdentityPermission) attr.CreatePermission ();
-			AssertEquals ("CertFile.Certificate", x509.GetRawCertDataString (), p.Certificate.GetRawCertDataString ());
+			Assert.AreEqual (x509.GetRawCertDataString (), p.Certificate.GetRawCertDataString (), "CertFile.Certificate");
 		}
 
 		[Test]
@@ -129,11 +170,11 @@ namespace MonoTests.System.Security.Permissions {
 			attr.CertFile = null;
 			attr.SignedFile = "cert1.cer";
 			attr.X509Certificate = null;
-			AssertNull ("CertFile", attr.CertFile);
-			AssertEquals ("SignedFile", "cert1.cer", attr.SignedFile);
-			AssertNull ("X509Certificate", attr.X509Certificate);
+			Assert.IsNull (attr.CertFile, "CertFile");
+			Assert.AreEqual ("cert1.cer", attr.SignedFile, "SignedFile");
+			Assert.IsNull (attr.X509Certificate, "X509Certificate");
 			PublisherIdentityPermission p = (PublisherIdentityPermission) attr.CreatePermission ();
-			AssertEquals ("SignedFile.Certificate", x509.GetRawCertDataString (), p.Certificate.GetRawCertDataString ());
+			Assert.AreEqual (x509.GetRawCertDataString (), p.Certificate.GetRawCertDataString (), "SignedFile.Certificate");
 		}
 
 		[Test]
@@ -144,11 +185,11 @@ namespace MonoTests.System.Security.Permissions {
 			attr.CertFile = null;
 			attr.SignedFile = null;
 			attr.X509Certificate = x509.GetRawCertDataString ();
-			AssertNull ("CertFile", attr.CertFile);
-			AssertNull ("SignedFile", attr.SignedFile);
-			AssertEquals ("X509Certificate", x509.GetRawCertDataString (), attr.X509Certificate);
+			Assert.IsNull (attr.CertFile, "CertFile");
+			Assert.IsNull (attr.SignedFile, "SignedFile");
+			Assert.AreEqual (x509.GetRawCertDataString (), attr.X509Certificate, "X509Certificate");
 			PublisherIdentityPermission p = (PublisherIdentityPermission) attr.CreatePermission ();
-			AssertEquals ("X509CertificateProperty.Certificate", x509.GetRawCertDataString (), p.Certificate.GetRawCertDataString ());
+			Assert.AreEqual (x509.GetRawCertDataString (), p.Certificate.GetRawCertDataString (), "X509CertificateProperty.Certificate");
 		}
 
 		[Test]
@@ -159,18 +200,18 @@ namespace MonoTests.System.Security.Permissions {
 			attr.CertFile = "cert1.cer";
 			attr.SignedFile = "cert2.cer";
 			attr.X509Certificate = x509.GetRawCertDataString ();
-			AssertEquals ("CertFile", "cert1.cer", attr.CertFile);
-			AssertEquals ("SignedFile", "cert2.cer", attr.SignedFile);
-			AssertEquals ("X509Certificate", x509.GetRawCertDataString (), attr.X509Certificate);
+			Assert.AreEqual ("cert1.cer", attr.CertFile, "CertFile");
+			Assert.AreEqual ("cert2.cer", attr.SignedFile, "SignedFile");
+			Assert.AreEqual (x509.GetRawCertDataString (), attr.X509Certificate, "X509Certificate");
 			// from documentation X509Certificate has priority over CertFile and SignedFile
 			PublisherIdentityPermission p = (PublisherIdentityPermission) attr.CreatePermission ();
-			AssertEquals ("p.Certificate", x509.GetRawCertDataString (), p.Certificate.GetRawCertDataString ());
+			Assert.AreEqual (x509.GetRawCertDataString (), p.Certificate.GetRawCertDataString (), "p.Certificate");
 			// but no word about CertFile and SignedFile priority
 			attr.CertFile = "cert1.cer";
 			attr.SignedFile = "cert2.cer";
 			attr.X509Certificate = null;
 			p = (PublisherIdentityPermission) attr.CreatePermission ();
-			AssertEquals ("p.Certificate", x509.GetRawCertDataString (), p.Certificate.GetRawCertDataString ());
+			Assert.AreEqual (x509.GetRawCertDataString (), p.Certificate.GetRawCertDataString (), "p.Certificate");
 			// CertFile !
 		}
 
@@ -181,6 +222,21 @@ namespace MonoTests.System.Security.Permissions {
 			PublisherIdentityPermissionAttribute a = new PublisherIdentityPermissionAttribute (SecurityAction.Assert);
 			a.Unrestricted = true;
 			IPermission perm = a.CreatePermission ();
+		}
+
+		[Test]
+		public void Attributes ()
+		{
+			Type t = typeof (PublisherIdentityPermissionAttribute);
+			Assert.IsTrue (t.IsSerializable, "IsSerializable");
+
+			object [] attrs = t.GetCustomAttributes (typeof (AttributeUsageAttribute), false);
+			Assert.AreEqual (1, attrs.Length, "AttributeUsage");
+			AttributeUsageAttribute aua = (AttributeUsageAttribute)attrs [0];
+			Assert.IsTrue (aua.AllowMultiple, "AllowMultiple");
+			Assert.IsFalse (aua.Inherited, "Inherited");
+			AttributeTargets at = (AttributeTargets.Assembly | AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Constructor | AttributeTargets.Method);
+			Assert.AreEqual (at, aua.ValidOn, "ValidOn");
 		}
 	}
 }

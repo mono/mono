@@ -1,5 +1,6 @@
 //
-// StrongNameIdentityPermissionAttributeTest.cs - NUnit Test Cases for StrongNameIdentityPermissionAttribute
+// StrongNameIdentityPermissionAttributeTest.cs -
+//	NUnit Test Cases for StrongNameIdentityPermissionAttribute
 //
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
@@ -214,7 +215,6 @@ namespace MonoTests.System.Security.Permissions {
 		[Test]
 		public void Attributes ()
 		{
-			StrongNameIdentityPermissionAttribute a = new StrongNameIdentityPermissionAttribute (SecurityAction.Assert);
 			Type t = typeof (StrongNameIdentityPermissionAttribute);
 			Assert.IsTrue (t.IsSerializable, "IsSerializable");
 

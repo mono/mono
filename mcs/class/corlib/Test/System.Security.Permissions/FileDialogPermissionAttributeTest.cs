@@ -1,10 +1,31 @@
 //
-// FileDialogPermissionAttribute.cs - NUnit Test Cases for FileDialogPermission
+// FileDialogPermissionAttribute.cs - 
+//	NUnit Test Cases for FileDialogPermissionAttribute
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
+// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+//
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+// 
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
 using NUnit.Framework;
@@ -15,42 +36,57 @@ using System.Security.Permissions;
 namespace MonoTests.System.Security.Permissions {
 
 	[TestFixture]
-	public class FileDialogPermissionAttributeTest : Assertion {
+	public class FileDialogPermissionAttributeTest {
 
 		[Test]
 		public void Default () 
 		{
 			FileDialogPermissionAttribute a = new FileDialogPermissionAttribute (SecurityAction.Assert);
-			Assert ("Open", !a.Open);
-			Assert ("Save", !a.Save);
-			AssertEquals ("TypeId", a.ToString (), a.TypeId.ToString ());
-			Assert ("Unrestricted", !a.Unrestricted);
+			Assert.IsFalse (a.Open, "Open");
+			Assert.IsFalse (a.Save, "Save");
+			Assert.AreEqual (a.ToString (), a.TypeId.ToString (), "TypeId");
+			Assert.IsFalse (a.Unrestricted, "Unrestricted");
 
 			FileDialogPermission perm = (FileDialogPermission) a.CreatePermission ();
-			Assert ("CreatePermission-IsUnrestricted", !perm.IsUnrestricted ());
+			Assert.IsFalse (perm.IsUnrestricted (), "CreatePermission-IsUnrestricted");
 		}
 
 		[Test]
 		public void Action () 
 		{
 			FileDialogPermissionAttribute a = new FileDialogPermissionAttribute (SecurityAction.Assert);
-			AssertEquals ("Action=Assert", SecurityAction.Assert, a.Action);
+			Assert.AreEqual (SecurityAction.Assert, a.Action, "Action=Assert");
 			a.Action = SecurityAction.Demand;
-			AssertEquals ("Action=Demand", SecurityAction.Demand, a.Action);
+			Assert.AreEqual (SecurityAction.Demand, a.Action, "Action=Demand");
 			a.Action = SecurityAction.Deny;
-			AssertEquals ("Action=Deny", SecurityAction.Deny, a.Action);
+			Assert.AreEqual (SecurityAction.Deny, a.Action, "Action=Deny");
 			a.Action = SecurityAction.InheritanceDemand;
-			AssertEquals ("Action=InheritanceDemand", SecurityAction.InheritanceDemand, a.Action);
+			Assert.AreEqual (SecurityAction.InheritanceDemand, a.Action, "Action=InheritanceDemand");
 			a.Action = SecurityAction.LinkDemand;
-			AssertEquals ("Action=LinkDemand", SecurityAction.LinkDemand, a.Action);
+			Assert.AreEqual (SecurityAction.LinkDemand, a.Action, "Action=LinkDemand");
 			a.Action = SecurityAction.PermitOnly;
-			AssertEquals ("Action=PermitOnly", SecurityAction.PermitOnly, a.Action);
+			Assert.AreEqual (SecurityAction.PermitOnly, a.Action, "Action=PermitOnly");
 			a.Action = SecurityAction.RequestMinimum;
-			AssertEquals ("Action=RequestMinimum", SecurityAction.RequestMinimum, a.Action);
+			Assert.AreEqual (SecurityAction.RequestMinimum, a.Action, "Action=RequestMinimum");
 			a.Action = SecurityAction.RequestOptional;
-			AssertEquals ("Action=RequestOptional", SecurityAction.RequestOptional, a.Action);
+			Assert.AreEqual (SecurityAction.RequestOptional, a.Action, "Action=RequestOptional");
 			a.Action = SecurityAction.RequestRefuse;
-			AssertEquals ("Action=RequestRefuse", SecurityAction.RequestRefuse, a.Action);
+			Assert.AreEqual (SecurityAction.RequestRefuse, a.Action, "Action=RequestRefuse");
+#if NET_2_0
+			a.Action = SecurityAction.DemandChoice;
+			Assert.AreEqual (SecurityAction.DemandChoice, a.Action, "Action=DemandChoice");
+			a.Action = SecurityAction.InheritanceDemandChoice;
+			Assert.AreEqual (SecurityAction.InheritanceDemandChoice, a.Action, "Action=InheritanceDemandChoice");
+			a.Action = SecurityAction.LinkDemandChoice;
+			Assert.AreEqual (SecurityAction.LinkDemandChoice, a.Action, "Action=LinkDemandChoice");
+#endif
+		}
+
+		[Test]
+		public void Action_Invalid ()
+		{
+			FileDialogPermissionAttribute a = new FileDialogPermissionAttribute ((SecurityAction)Int32.MinValue);
+			// no validation in attribute
 		}
 
 		[Test]
@@ -59,10 +95,10 @@ namespace MonoTests.System.Security.Permissions {
 			FileDialogPermissionAttribute attr = new FileDialogPermissionAttribute (SecurityAction.Assert);
 			attr.Open = false;
 			attr.Save = false;
-			Assert ("None=Open", !attr.Open);
-			Assert ("None=Save", !attr.Save);
+			Assert.IsFalse (attr.Open, "None=Open");
+			Assert.IsFalse (attr.Save, "None=Save");
 			FileDialogPermission p = (FileDialogPermission) attr.CreatePermission ();
-			AssertEquals ("None=FileDialogPermission", FileDialogPermissionAccess.None, p.Access);
+			Assert.AreEqual (FileDialogPermissionAccess.None, p.Access, "None=FileDialogPermission");
 		}
 
 		[Test]
@@ -71,10 +107,10 @@ namespace MonoTests.System.Security.Permissions {
 			FileDialogPermissionAttribute attr = new FileDialogPermissionAttribute (SecurityAction.Assert);
 			attr.Open = true;
 			attr.Save = false;
-			Assert ("Open=Open", attr.Open);
-			Assert ("Open=Save", !attr.Save);
+			Assert.IsTrue (attr.Open, "Open=Open");
+			Assert.IsFalse (attr.Save, "Open=Save");
 			FileDialogPermission p = (FileDialogPermission) attr.CreatePermission ();
-			AssertEquals ("Open=FileDialogPermission", FileDialogPermissionAccess.Open, p.Access);
+			Assert.AreEqual (FileDialogPermissionAccess.Open, p.Access, "Open=FileDialogPermission");
 		}
 
 		[Test]
@@ -83,10 +119,10 @@ namespace MonoTests.System.Security.Permissions {
 			FileDialogPermissionAttribute attr = new FileDialogPermissionAttribute (SecurityAction.Assert);
 			attr.Open = false;
 			attr.Save = true;
-			Assert ("Save=Open", !attr.Open);
-			Assert ("Save=Save", attr.Save);
+			Assert.IsFalse (attr.Open, "Save=Open");
+			Assert.IsTrue (attr.Save, "Save=Save");
 			FileDialogPermission p = (FileDialogPermission) attr.CreatePermission ();
-			AssertEquals ("Save=FileDialogPermission", FileDialogPermissionAccess.Save, p.Access);
+			Assert.AreEqual (FileDialogPermissionAccess.Save, p.Access, "Save=FileDialogPermission");
 		}
 
 		[Test]
@@ -95,11 +131,11 @@ namespace MonoTests.System.Security.Permissions {
 			FileDialogPermissionAttribute attr = new FileDialogPermissionAttribute (SecurityAction.Assert);
 			attr.Open = true;
 			attr.Save = true;
-			Assert ("OpenSave=Open", attr.Open);
-			Assert ("OpenSave=Save", attr.Save);
+			Assert.IsTrue (attr.Open, "OpenSave=Open");
+			Assert.IsTrue (attr.Save, "OpenSave=Save");
 			FileDialogPermission p = (FileDialogPermission) attr.CreatePermission ();
-			AssertEquals ("OpenSave=FileDialogPermission", FileDialogPermissionAccess.OpenSave, p.Access);
-			Assert ("OpenSave=Unrestricted", p.IsUnrestricted ());
+			Assert.AreEqual (FileDialogPermissionAccess.OpenSave, p.Access, "OpenSave=FileDialogPermission");
+			Assert.IsTrue (p.IsUnrestricted (), "OpenSave=Unrestricted");
 		}
 
 		[Test]
@@ -109,7 +145,22 @@ namespace MonoTests.System.Security.Permissions {
 			a.Unrestricted = true;
 
 			FileDialogPermission perm = (FileDialogPermission) a.CreatePermission ();
-			Assert ("CreatePermission.IsUnrestricted", perm.IsUnrestricted ());
+			Assert.IsTrue (perm.IsUnrestricted (), "CreatePermission.IsUnrestricted");
+		}
+
+		[Test]
+		public void Attributes ()
+		{
+			Type t = typeof (FileDialogPermissionAttribute);
+			Assert.IsTrue (t.IsSerializable, "IsSerializable");
+
+			object[] attrs = t.GetCustomAttributes (typeof (AttributeUsageAttribute), false);
+			Assert.AreEqual (1, attrs.Length, "AttributeUsage");
+			AttributeUsageAttribute aua = (AttributeUsageAttribute)attrs [0];
+			Assert.IsTrue (aua.AllowMultiple, "AllowMultiple");
+			Assert.IsFalse (aua.Inherited, "Inherited");
+			AttributeTargets at = (AttributeTargets.Assembly | AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Constructor | AttributeTargets.Method);
+			Assert.AreEqual (at, aua.ValidOn, "ValidOn");
 		}
 	}
 }

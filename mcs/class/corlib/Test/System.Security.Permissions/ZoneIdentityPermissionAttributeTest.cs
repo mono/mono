@@ -1,5 +1,6 @@
 //
-// ZoneIdentityPermissionAttributeTest.cs - NUnit Test Cases for ZoneIdentityPermissionAttribute
+// ZoneIdentityPermissionAttributeTest.cs - 
+//	NUnit Test Cases for ZoneIdentityPermissionAttribute
 //
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
@@ -133,11 +134,10 @@ namespace MonoTests.System.Security.Permissions {
 		[Test]
 		public void Attributes ()
 		{
-			ZoneIdentityPermissionAttribute a = new ZoneIdentityPermissionAttribute (SecurityAction.Assert);
 			Type t = typeof (ZoneIdentityPermissionAttribute);
 			Assert.IsTrue (t.IsSerializable, "IsSerializable");
 
-			object [] attrs = t.GetCustomAttributes (typeof (AttributeUsageAttribute), false);
+			object[] attrs = t.GetCustomAttributes (typeof (AttributeUsageAttribute), false);
 			Assert.AreEqual (1, attrs.Length, "AttributeUsage");
 			AttributeUsageAttribute aua = (AttributeUsageAttribute)attrs [0];
 			Assert.IsTrue (aua.AllowMultiple, "AllowMultiple");

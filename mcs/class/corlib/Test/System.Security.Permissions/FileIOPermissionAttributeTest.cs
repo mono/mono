@@ -1,10 +1,31 @@
 //
-// FileIOPermissionAttributeTest.cs - NUnit Test Cases for FileIOPermissionAttribute
+// FileIOPermissionAttributeTest.cs -
+//	NUnit Test Cases for FileIOPermissionAttribute
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
+// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+//
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+// 
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
 using NUnit.Framework;
@@ -18,45 +39,68 @@ using System.Text;
 namespace MonoTests.System.Security.Permissions {
 
 	[TestFixture]
-	public class FileIOPermissionAttributeTest : Assertion {
+	public class FileIOPermissionAttributeTest {
 
 		[Test]
 		public void Default () 
 		{
 			FileIOPermissionAttribute a = new FileIOPermissionAttribute (SecurityAction.Assert);
-			AssertNull ("Append", a.Append);
-			AssertNull ("PathDiscovery", a.PathDiscovery);
-			AssertNull ("Read", a.Read);
-			AssertNull ("Write", a.Write);
-			AssertEquals ("TypeId", a.ToString (), a.TypeId.ToString ());
-			Assert ("Unrestricted", !a.Unrestricted);
+			Assert.IsNull (a.Append, "Append");
+			Assert.IsNull (a.PathDiscovery, "PathDiscovery");
+			Assert.IsNull (a.Read, "Read");
+			Assert.IsNull (a.Write, "Write");
+#if NET_2_0
+			Assert.IsNotNull (a.AllFiles, "AllFiles");
+			Assert.IsNotNull (a.AllLocalFiles, "AllLocalFiles");
+			Assert.IsNull (a.ChangeAccessControl, "ChangeAccessControl");
+			Assert.IsNull (a.ViewAccessControl, "ViewAccessControl");
+#endif
+
+			Assert.AreEqual (a.ToString (), a.TypeId.ToString (), "TypeId");
+			Assert.IsFalse (a.Unrestricted, "Unrestricted");
 
 			FileIOPermission perm = (FileIOPermission) a.CreatePermission ();
-			AssertEquals ("CreatePermission-AllFiles", FileIOPermissionAccess.NoAccess, perm.AllFiles);
-			AssertEquals ("CreatePermission-AllLocalFiles", FileIOPermissionAccess.NoAccess, perm.AllLocalFiles);
+			Assert.AreEqual (FileIOPermissionAccess.NoAccess, perm.AllFiles, "CreatePermission-AllFiles");
+			Assert.AreEqual (FileIOPermissionAccess.NoAccess, perm.AllLocalFiles, "CreatePermission-AllLocalFiles");
+			Assert.IsFalse (perm.IsUnrestricted (), "perm-Unrestricted");
 		}
 
 		[Test]
 		public void Action () 
 		{
 			FileIOPermissionAttribute a = new FileIOPermissionAttribute (SecurityAction.Assert);
-			AssertEquals ("Action=Assert", SecurityAction.Assert, a.Action);
+			Assert.AreEqual (SecurityAction.Assert, a.Action, "Action=Assert");
 			a.Action = SecurityAction.Demand;
-			AssertEquals ("Action=Demand", SecurityAction.Demand, a.Action);
+			Assert.AreEqual (SecurityAction.Demand, a.Action, "Action=Demand");
 			a.Action = SecurityAction.Deny;
-			AssertEquals ("Action=Deny", SecurityAction.Deny, a.Action);
+			Assert.AreEqual (SecurityAction.Deny, a.Action, "Action=Deny");
 			a.Action = SecurityAction.InheritanceDemand;
-			AssertEquals ("Action=InheritanceDemand", SecurityAction.InheritanceDemand, a.Action);
+			Assert.AreEqual (SecurityAction.InheritanceDemand, a.Action, "Action=InheritanceDemand");
 			a.Action = SecurityAction.LinkDemand;
-			AssertEquals ("Action=LinkDemand", SecurityAction.LinkDemand, a.Action);
+			Assert.AreEqual (SecurityAction.LinkDemand, a.Action, "Action=LinkDemand");
 			a.Action = SecurityAction.PermitOnly;
-			AssertEquals ("Action=PermitOnly", SecurityAction.PermitOnly, a.Action);
+			Assert.AreEqual (SecurityAction.PermitOnly, a.Action, "Action=PermitOnly");
 			a.Action = SecurityAction.RequestMinimum;
-			AssertEquals ("Action=RequestMinimum", SecurityAction.RequestMinimum, a.Action);
+			Assert.AreEqual (SecurityAction.RequestMinimum, a.Action, "Action=RequestMinimum");
 			a.Action = SecurityAction.RequestOptional;
-			AssertEquals ("Action=RequestOptional", SecurityAction.RequestOptional, a.Action);
+			Assert.AreEqual (SecurityAction.RequestOptional, a.Action, "Action=RequestOptional");
 			a.Action = SecurityAction.RequestRefuse;
-			AssertEquals ("Action=RequestRefuse", SecurityAction.RequestRefuse, a.Action);
+			Assert.AreEqual (SecurityAction.RequestRefuse, a.Action, "Action=RequestRefuse");
+#if NET_2_0
+			a.Action = SecurityAction.DemandChoice;
+			Assert.AreEqual (SecurityAction.DemandChoice, a.Action, "Action=DemandChoice");
+			a.Action = SecurityAction.InheritanceDemandChoice;
+			Assert.AreEqual (SecurityAction.InheritanceDemandChoice, a.Action, "Action=InheritanceDemandChoice");
+			a.Action = SecurityAction.LinkDemandChoice;
+			Assert.AreEqual (SecurityAction.LinkDemandChoice, a.Action, "Action=LinkDemandChoice");
+#endif
+		}
+
+		[Test]
+		public void Action_Invalid ()
+		{
+			FileDialogPermissionAttribute a = new FileDialogPermissionAttribute ((SecurityAction)Int32.MinValue);
+			// no validation in attribute
 		}
 
 		[Test]
@@ -65,17 +109,23 @@ namespace MonoTests.System.Security.Permissions {
 			string filename = Assembly.GetCallingAssembly ().Location;
 			FileIOPermissionAttribute attr = new FileIOPermissionAttribute (SecurityAction.Assert);
 			attr.All = filename;
-			AssertEquals ("All=Append", filename, attr.Append);
-			AssertEquals ("All=PathDiscovery", filename, attr.PathDiscovery);
-			AssertEquals ("All=Read", filename, attr.Read);
-			AssertEquals ("All=Write", filename, attr.Write);
-			FileIOPermission p = (FileIOPermission) attr.CreatePermission ();
-			AssertEquals ("All=FileIOPermissionAttribute-Append", filename, p.GetPathList (FileIOPermissionAccess.Append)[0]);
-			AssertEquals ("All=FileIOPermissionAttribute-PathDiscovery", filename, p.GetPathList (FileIOPermissionAccess.PathDiscovery)[0]);
-			AssertEquals ("All=FileIOPermissionAttribute-Read", filename, p.GetPathList (FileIOPermissionAccess.Read)[0]);
-			AssertEquals ("All=FileIOPermissionAttribute-Write", filename, p.GetPathList (FileIOPermissionAccess.Write)[0]);
+			Assert.AreEqual (filename, attr.Append, "All=Append");
+			Assert.AreEqual (filename, attr.PathDiscovery, "All=PathDiscovery");
+			Assert.AreEqual (filename, attr.Read, "All=Read");
+			Assert.AreEqual (filename, attr.Write, "All=Write");
+#if NET_2_0
+			Assert.IsNotNull (attr.AllFiles, "AllFiles");
+			Assert.IsNotNull (attr.AllLocalFiles, "AllLocalFiles");
+			Assert.IsNull (attr.ChangeAccessControl, "ChangeAccessControl");
+			Assert.IsNull (attr.ViewAccessControl, "ViewAccessControl");
+#endif
+			FileIOPermission p = (FileIOPermission)attr.CreatePermission ();
+			Assert.AreEqual (filename, p.GetPathList (FileIOPermissionAccess.Append) [0], "All=FileIOPermissionAttribute-Append");
+			Assert.AreEqual (filename, p.GetPathList (FileIOPermissionAccess.PathDiscovery) [0], "All=FileIOPermissionAttribute-PathDiscovery");
+			Assert.AreEqual (filename, p.GetPathList (FileIOPermissionAccess.Read) [0], "All=FileIOPermissionAttribute-Read");
+			Assert.AreEqual (filename, p.GetPathList (FileIOPermissionAccess.Write) [0], "All=FileIOPermissionAttribute-Write");
 		}
-#if !NET_1_0
+#if NET_1_1
 		[Test]
 		[ExpectedException (typeof (NotSupportedException))]
 		public void All_Get () 
@@ -90,15 +140,21 @@ namespace MonoTests.System.Security.Permissions {
 			string filename = Assembly.GetCallingAssembly ().Location;
 			FileIOPermissionAttribute attr = new FileIOPermissionAttribute (SecurityAction.Assert);
 			attr.Append = filename;
-			AssertEquals ("Append=Append", filename, attr.Append);
-			AssertNull ("PathDiscovery=null", attr.PathDiscovery);
-			AssertNull ("Read=null", attr.Read);
-			AssertNull ("Write=null", attr.Write);
-			FileIOPermission p = (FileIOPermission) attr.CreatePermission ();
-			AssertEquals ("Append=FileIOPermissionAttribute-Append", filename, p.GetPathList (FileIOPermissionAccess.Append)[0]);
-			AssertNull ("Append=FileIOPermissionAttribute-PathDiscovery", p.GetPathList (FileIOPermissionAccess.PathDiscovery));
-			AssertNull ("Append=FileIOPermissionAttribute-Read", p.GetPathList (FileIOPermissionAccess.Read));
-			AssertNull ("Append=FileIOPermissionAttribute-Write", p.GetPathList (FileIOPermissionAccess.Write));
+			Assert.AreEqual (filename, attr.Append, "Append=Append");
+			Assert.IsNull (attr.PathDiscovery, "PathDiscovery=null");
+			Assert.IsNull (attr.Read, "Read=null");
+			Assert.IsNull (attr.Write, "Write=null");
+#if NET_2_0
+			Assert.IsNotNull (attr.AllFiles, "AllFiles");
+			Assert.IsNotNull (attr.AllLocalFiles, "AllLocalFiles");
+			Assert.IsNull (attr.ChangeAccessControl, "ChangeAccessControl");
+			Assert.IsNull (attr.ViewAccessControl, "ViewAccessControl");
+#endif
+			FileIOPermission p = (FileIOPermission)attr.CreatePermission ();
+			Assert.AreEqual (filename, p.GetPathList (FileIOPermissionAccess.Append) [0], "Append=FileIOPermissionAttribute-Append");
+			Assert.IsNull (p.GetPathList (FileIOPermissionAccess.PathDiscovery), "Append=FileIOPermissionAttribute-PathDiscovery");
+			Assert.IsNull (p.GetPathList (FileIOPermissionAccess.Read), "Append=FileIOPermissionAttribute-Read");
+			Assert.IsNull (p.GetPathList (FileIOPermissionAccess.Write), "Append=FileIOPermissionAttribute-Write");
 		}
 
 		[Test]
@@ -107,15 +163,21 @@ namespace MonoTests.System.Security.Permissions {
 			string filename = Assembly.GetCallingAssembly ().Location;
 			FileIOPermissionAttribute attr = new FileIOPermissionAttribute (SecurityAction.Assert);
 			attr.PathDiscovery = filename;
-			AssertNull ("Append=null", attr.Append);
-			AssertEquals ("PathDiscovery=PathDiscovery", filename, attr.PathDiscovery);
-			AssertNull ("Read=null", attr.Read);
-			AssertNull ("Write=null", attr.Write);
-			FileIOPermission p = (FileIOPermission) attr.CreatePermission ();
-			AssertNull ("PathDiscovery=FileIOPermissionAttribute-Append", p.GetPathList (FileIOPermissionAccess.Append));
-			AssertEquals ("PathDiscovery=FileIOPermissionAttribute-PathDiscovery", filename, p.GetPathList (FileIOPermissionAccess.PathDiscovery)[0]);
-			AssertNull ("PathDiscovery=FileIOPermissionAttribute-Read", p.GetPathList (FileIOPermissionAccess.Read));
-			AssertNull ("PathDiscovery=FileIOPermissionAttribute-Write", p.GetPathList (FileIOPermissionAccess.Write));
+			Assert.IsNull (attr.Append, "Append=null");
+			Assert.AreEqual (filename, attr.PathDiscovery, "PathDiscovery=PathDiscovery");
+			Assert.IsNull (attr.Read, "Read=null");
+			Assert.IsNull (attr.Write, "Write=null");
+#if NET_2_0
+			Assert.IsNotNull (attr.AllFiles, "AllFiles");
+			Assert.IsNotNull (attr.AllLocalFiles, "AllLocalFiles");
+			Assert.IsNull (attr.ChangeAccessControl, "ChangeAccessControl");
+			Assert.IsNull (attr.ViewAccessControl, "ViewAccessControl");
+#endif
+			FileIOPermission p = (FileIOPermission)attr.CreatePermission ();
+			Assert.IsNull (p.GetPathList (FileIOPermissionAccess.Append), "PathDiscovery=FileIOPermissionAttribute-Append");
+			Assert.AreEqual (filename, p.GetPathList (FileIOPermissionAccess.PathDiscovery) [0], "PathDiscovery=FileIOPermissionAttribute-PathDiscovery");
+			Assert.IsNull (p.GetPathList (FileIOPermissionAccess.Read), "PathDiscovery=FileIOPermissionAttribute-Read");
+			Assert.IsNull (p.GetPathList (FileIOPermissionAccess.Write), "PathDiscovery=FileIOPermissionAttribute-Write");
 		}
 
 		[Test]
@@ -124,16 +186,96 @@ namespace MonoTests.System.Security.Permissions {
 			string filename = Assembly.GetCallingAssembly ().Location;
 			FileIOPermissionAttribute attr = new FileIOPermissionAttribute (SecurityAction.Assert);
 			attr.Read = filename;
-			AssertNull ("Append=null", attr.Append);
-			AssertNull ("PathDiscovery=null", attr.PathDiscovery);
-			AssertEquals ("Read=Read", filename, attr.Read);
-			AssertNull ("Write=null", attr.Write);
-			FileIOPermission p = (FileIOPermission) attr.CreatePermission ();
-			AssertNull ("PathDiscovery=FileIOPermissionAttribute-Append", p.GetPathList (FileIOPermissionAccess.Append));
-			AssertNull ("PathDiscovery=FileIOPermissionAttribute-PathDiscovery", p.GetPathList (FileIOPermissionAccess.PathDiscovery));
-			AssertEquals ("PathDiscovery=FileIOPermissionAttribute-Read", filename, p.GetPathList (FileIOPermissionAccess.Read)[0]);
-			AssertNull ("PathDiscovery=FileIOPermissionAttribute-Write", p.GetPathList (FileIOPermissionAccess.Write));
+			Assert.IsNull (attr.Append, "Append=null");
+			Assert.IsNull (attr.PathDiscovery, "PathDiscovery=null");
+			Assert.AreEqual (filename, attr.Read, "Read=Read");
+			Assert.IsNull (attr.Write, "Write=null");
+#if NET_2_0
+			Assert.IsNotNull (attr.AllFiles, "AllFiles");
+			Assert.IsNotNull (attr.AllLocalFiles, "AllLocalFiles");
+			Assert.IsNull (attr.ChangeAccessControl, "ChangeAccessControl");
+			Assert.IsNull (attr.ViewAccessControl, "ViewAccessControl");
+#endif
+			FileIOPermission p = (FileIOPermission)attr.CreatePermission ();
+			Assert.IsNull (p.GetPathList (FileIOPermissionAccess.Append), "PathDiscovery=FileIOPermissionAttribute-Append");
+			Assert.IsNull (p.GetPathList (FileIOPermissionAccess.PathDiscovery), "PathDiscovery=FileIOPermissionAttribute-PathDiscovery");
+			Assert.AreEqual (filename, p.GetPathList (FileIOPermissionAccess.Read) [0], "PathDiscovery=FileIOPermissionAttribute-Read");
+			Assert.IsNull (p.GetPathList (FileIOPermissionAccess.Write), "PathDiscovery=FileIOPermissionAttribute-Write");
 		}
+
+#if NET_2_0
+		[Test]
+		public void ChangeAccessControl ()
+		{
+			FileIOPermissionAttribute a = new FileIOPermissionAttribute (SecurityAction.Assert);
+			a.ChangeAccessControl = "mono";
+			Assert.IsNull (a.Append, "Append");
+			Assert.AreEqual ("mono", a.ChangeAccessControl, "ChangeAccessControl");
+			Assert.IsNull (a.PathDiscovery, "PathDiscovery");
+			Assert.IsNull (a.Read, "Read");
+			Assert.IsNull (a.ViewAccessControl, "ViewAccessControl");
+			Assert.IsNull (a.Write, "Write");
+
+			a.ChangeAccessControl = null;
+			Assert.IsNull (a.Append, "Append");
+			Assert.IsNull (a.ChangeAccessControl, "ChangeAccessControl");
+			Assert.IsNull (a.PathDiscovery, "PathDiscovery");
+			Assert.IsNull (a.Read, "Read");
+			Assert.IsNull (a.ViewAccessControl, "ViewAccessControl");
+			Assert.IsNull (a.Write, "Write");
+		}
+
+		[Test]
+		public void ViewAccessControl ()
+		{
+			FileIOPermissionAttribute a = new FileIOPermissionAttribute (SecurityAction.Assert);
+			a.ViewAccessControl = "mono";
+			Assert.IsNull (a.Append, "Append");
+			Assert.IsNull (a.ChangeAccessControl, "ChangeAccessControl");
+			Assert.IsNull (a.PathDiscovery, "PathDiscovery");
+			Assert.IsNull (a.Read, "Read");
+			Assert.AreEqual ("mono", a.ViewAccessControl, "ViewAccessControl");
+			Assert.IsNull (a.Write, "Write");
+
+			a.ViewAccessControl = null;
+			Assert.IsNull (a.Append, "Append");
+			Assert.IsNull (a.ChangeAccessControl, "ChangeAccessControl");
+			Assert.IsNull (a.PathDiscovery, "PathDiscovery");
+			Assert.IsNull (a.Read, "Read");
+			Assert.IsNull (a.ViewAccessControl, "ViewAccessControl");
+			Assert.IsNull (a.Write, "Write");
+		}
+
+		[Test]
+		public void ViewAndModify_Set ()
+		{
+			FileIOPermissionAttribute a = new FileIOPermissionAttribute (SecurityAction.Assert);
+			a.ViewAndModify = "mono";
+			Assert.AreEqual ("mono", a.Append, "Append");
+			Assert.IsNull (a.ChangeAccessControl, "ChangeAccessControl");
+			Assert.AreEqual ("mono", a.PathDiscovery, "PathDiscovery");
+			Assert.AreEqual ("mono", a.Read, "Read");
+			Assert.IsNull (a.ViewAccessControl, "ViewAccessControl");
+			Assert.AreEqual ("mono", a.Write, "Write");
+
+			a.ViewAndModify = null;
+			Assert.IsNull (a.Append, "Append");
+			Assert.IsNull (a.ChangeAccessControl, "ChangeAccessControl");
+			Assert.IsNull (a.PathDiscovery, "PathDiscovery");
+			Assert.IsNull (a.Read, "Read");
+			Assert.IsNull (a.ViewAccessControl, "ViewAccessControl");
+			Assert.IsNull (a.Write, "Write");
+		}
+
+		[Test]
+		[ExpectedException (typeof (NotSupportedException))]
+		public void ViewAndModify_Get ()
+		{
+			FileIOPermissionAttribute a = new FileIOPermissionAttribute (SecurityAction.Assert);
+			a.ViewAndModify = "mono";
+			Assert.AreEqual ("ViewAndModify", "mono", a.ViewAndModify);
+		}
+#endif
 
 		[Test]
 		public void Write () 
@@ -141,15 +283,15 @@ namespace MonoTests.System.Security.Permissions {
 			string filename = Assembly.GetCallingAssembly ().Location;
 			FileIOPermissionAttribute attr = new FileIOPermissionAttribute (SecurityAction.Assert);
 			attr.Write = filename;
-			AssertNull ("Append=null", attr.Append);
-			AssertNull ("PathDiscovery=null", attr.PathDiscovery);
-			AssertNull ("Read=null", attr.Read);
-			AssertEquals ("Write=Write", filename, attr.Write);
+			Assert.IsNull (attr.Append, "Append=null");
+			Assert.IsNull (attr.PathDiscovery, "PathDiscovery=null");
+			Assert.IsNull (attr.Read, "Read=null");
+			Assert.AreEqual (filename, attr.Write, "Write=Write");
 			FileIOPermission p = (FileIOPermission) attr.CreatePermission ();
-			AssertNull ("PathDiscovery=FileIOPermissionAttribute-Append", p.GetPathList (FileIOPermissionAccess.Append));
-			AssertNull ("PathDiscovery=FileIOPermissionAttribute-PathDiscovery", p.GetPathList (FileIOPermissionAccess.PathDiscovery));
-			AssertNull ("PathDiscovery=FileIOPermissionAttribute-Read", p.GetPathList (FileIOPermissionAccess.Read));
-			AssertEquals ("PathDiscovery=FileIOPermissionAttribute-Write", filename, p.GetPathList (FileIOPermissionAccess.Write)[0]);
+			Assert.IsNull (p.GetPathList (FileIOPermissionAccess.Append), "PathDiscovery=FileIOPermissionAttribute-Append");
+			Assert.IsNull (p.GetPathList (FileIOPermissionAccess.PathDiscovery), "PathDiscovery=FileIOPermissionAttribute-PathDiscovery");
+			Assert.IsNull (p.GetPathList (FileIOPermissionAccess.Read), "PathDiscovery=FileIOPermissionAttribute-Read");
+			Assert.AreEqual (filename, p.GetPathList (FileIOPermissionAccess.Write) [0], "PathDiscovery=FileIOPermissionAttribute-Write");
 		}
 
 		[Test]
@@ -159,9 +301,24 @@ namespace MonoTests.System.Security.Permissions {
 			a.Unrestricted = true;
 
 			FileIOPermission perm = (FileIOPermission) a.CreatePermission ();
-			Assert ("CreatePermission.IsUnrestricted", perm.IsUnrestricted ());
-			AssertEquals ("CreatePermission.UsageAllowed", FileIOPermissionAccess.AllAccess, perm.AllFiles);
-			AssertEquals ("CreatePermission.UserQuota", FileIOPermissionAccess.AllAccess, perm.AllLocalFiles);
+			Assert.IsTrue (perm.IsUnrestricted (), "CreatePermission.IsUnrestricted");
+			Assert.AreEqual (FileIOPermissionAccess.AllAccess, perm.AllFiles, "CreatePermission.AllFiles");
+			Assert.AreEqual (FileIOPermissionAccess.AllAccess, perm.AllLocalFiles, "CreatePermission.AllLocalFiles");
+		}
+
+		[Test]
+		public void Attributes ()
+		{
+			Type t = typeof (FileDialogPermissionAttribute);
+			Assert.IsTrue (t.IsSerializable, "IsSerializable");
+
+			object [] attrs = t.GetCustomAttributes (typeof (AttributeUsageAttribute), false);
+			Assert.AreEqual (1, attrs.Length, "AttributeUsage");
+			AttributeUsageAttribute aua = (AttributeUsageAttribute)attrs [0];
+			Assert.IsTrue (aua.AllowMultiple, "AllowMultiple");
+			Assert.IsFalse (aua.Inherited, "Inherited");
+			AttributeTargets at = (AttributeTargets.Assembly | AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Constructor | AttributeTargets.Method);
+			Assert.AreEqual (at, aua.ValidOn, "ValidOn");
 		}
 	}
 }
