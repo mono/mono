@@ -1,3 +1,8 @@
+2004-11-25  Ben Maurer  <bmaurer@ximian.com>
+
+	* statement.cs (Using.EmitExpressionFinally): make this work right
+	for valuetypes. Fixes 69926.
+
 2004-11-25  Marek Safar  <marek.safar@seznam.cz>
 
 	* cfold.cs (BinaryFold): Add addition for DecimalConstant.
