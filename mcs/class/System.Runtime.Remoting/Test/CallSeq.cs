@@ -19,17 +19,44 @@ namespace MonoTests.System.Runtime.Remoting
 		static int checkPos = 0;
 		static int writePos = 0;
 		static string name = "";
+		static ArrayList contexts = new ArrayList ();
 
 		public static void Add (string msg)
 		{
 			writePos++;
-			msg = writePos.ToString ("000") + " (d" + Thread.GetDomainID() + ",c" + Thread.CurrentContext.ContextID + ") " + msg;
+
+			msg = writePos.ToString ("000") + " (d" + CommonDomainId + ",c" + CommonContextId + ") " + msg;
 			calls.Add (msg);
+		}
+
+		public static int CommonContextId
+		{
+			get
+			{
+				int id = Thread.CurrentContext.ContextID;
+				int idc = contexts.IndexOf (id);
+				if (idc == -1)
+				{
+					idc = contexts.Count;
+					contexts.Add (id);
+				}
+				return idc;
+			}
+		}
+
+		public static int CommonDomainId
+		{
+			get
+			{
+				if (Thread.GetDomainID() != 1) return 2;
+				else return 1;
+			}
 		}
 
 		public static void Init (string str)
 		{
 			calls = new ArrayList();
+			contexts = new ArrayList ();
 			name = str;
 			checkPos = 0;
 			writePos = 0;

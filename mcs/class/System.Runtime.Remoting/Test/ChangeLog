@@ -1,4 +1,13 @@
 2003-07-23  Lluis Sanchez Gual <lluis@ximian.com>
 
+	* AsyncCalls.cs, BaseCalls.cs, HttpCalls.cs, ReflectionCalls.cs, SyncCalls.cs,
+	  TcpCalls.cs: new test suite for remoting. It tests sync calls, async calls
+	  and reflection calls using tcp and http channels.
+	* CallSeq.cs, ContextHookAttribute.cs: Add methods for getting a context and
+	  domain ids that are the same between tests runs.
+	* ContextsTest.cs: unregister channel on test shutdown.
+
+2003-07-23  Lluis Sanchez Gual <lluis@ximian.com>
+
 	* ContextsTest.cs, CallSeq.cs, ContextHookAttribute.cs, ServerObject.cs: Added.
 

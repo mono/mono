@@ -38,7 +38,7 @@ namespace MonoTests.System.Runtime.Remoting
 		public void End ()
 		{
 			Context.UnregisterDynamicProperty ("global", null, null);
-//			ChannelServices.UnregisterChannel (ch);
+			ChannelServices.UnregisterChannel (ch);
 		}
 
 		[Test]
@@ -71,6 +71,8 @@ namespace MonoTests.System.Runtime.Remoting
 		[Test]
 		public void TestRemoteContext ()
 		{
+			try
+			{
 			AppDomain domain = AppDomain.CreateDomain ("test");
 			DomainServer server = (DomainServer) domain.CreateInstanceAndUnwrap(GetType().Assembly.FullName,"MonoTests.System.Runtime.Remoting.DomainServer");
 
@@ -88,6 +90,12 @@ namespace MonoTests.System.Runtime.Remoting
 			CallSeq.Seq = server.GetRemoteSeq ();
 			CallSeq.Check (Checks.seqRemoteContext,2);
 			server.Stop ();
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine (ex);
+				throw ex;
+			}
 //			AppDomain.Unload (domain);
 		}
 
@@ -205,7 +213,7 @@ namespace MonoTests.System.Runtime.Remoting
 
 		public void Stop ()
 		{
-//			ChannelServices.UnregisterChannel (ch);
+			ChannelServices.UnregisterChannel (ch);
 		}
 	}
 
@@ -387,6 +395,7 @@ namespace MonoTests.System.Runtime.Remoting
 				"119 (d1,c1) --> ServerContextSink(x.d1) SyncProcessMessage FieldGetter",
 				"120 (d1,c1) --> ObjectSink(1.d1) SyncProcessMessage FieldGetter",
 				"121 (d1,c1) --> ObjectSink(x.d1) SyncProcessMessage FieldGetter",
+
 				"122 (d1,c1) <-- ObjectSink(x.d1) SyncProcessMessage FieldGetter",
 				"123 (d1,c1) <-- ObjectSink(1.d1) SyncProcessMessage FieldGetter",
 				"124 (d1,c1) <-- ServerContextSink(x.d1) SyncProcessMessage FieldGetter",
@@ -430,6 +439,7 @@ namespace MonoTests.System.Runtime.Remoting
 				"162 (d1,c0) <-> defcontext DynamicSink Start ParameterTest2 client:True",
 				"163 (d1,c1) <-> global DynamicSink Start ParameterTest2 client:False",
 				"164 (d1,c1) --> ServerContextSink(1.d1) SyncProcessMessage ParameterTest2",
+
 				"165 (d1,c1) --> ServerContextSink(x.d1) SyncProcessMessage ParameterTest2",
 				"166 (d1,c1) --> ObjectSink(1.d1) SyncProcessMessage ParameterTest2",
 				"167 (d1,c1) --> ObjectSink(x.d1) SyncProcessMessage ParameterTest2",

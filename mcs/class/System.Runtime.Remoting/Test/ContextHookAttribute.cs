@@ -30,7 +30,7 @@ namespace MonoTests.System.Runtime.Remoting
 		{
 			id = idp;
 			if (id != "") id += ".";
-			id += "d" + Thread.GetDomainID();
+			id += "d" + CallSeq.CommonDomainId;
 			this.newContext = newContext;
 		}
 
