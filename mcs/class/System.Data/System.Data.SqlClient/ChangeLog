@@ -1,3 +1,8 @@
+2003-12-23  Tim Coleman <tim@timcoleman.com>
+	* SqlConnection.cs:
+		Improved connection string parsing.  See
+		System.Data.Common.DbConnectionString for source.
+
 2003-12-21  Tim Coleman <tim@timcoleman.com>
 	* SqlConnection.cs:
 		Enable Integrated Security

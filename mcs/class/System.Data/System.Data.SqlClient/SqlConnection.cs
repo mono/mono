@@ -423,54 +423,87 @@ namespace System.Data.SqlClient {
 
                 void SetConnectionString (string connectionString)
                 {
-                        connectionString += ";";
-                        NameValueCollection parameters = new NameValueCollection ();
+			NameValueCollection parameters = new NameValueCollection ();
 
-                        if (connectionString == String.Empty)
-                                return;
+			if (connectionString.Length == 0)
+				return;
+			connectionString += ";";
 
-                        bool inQuote = false;
-                        bool inDQuote = false;
+			bool inQuote = false;
+			bool inDQuote = false;
+			bool inName = true;
 
-                        string name = String.Empty;
-                        string value = String.Empty;
-                        StringBuilder sb = new StringBuilder ();
+			string name = String.Empty;
+			string value = String.Empty;
+			StringBuilder sb = new StringBuilder ();
 
-                        foreach (char c in connectionString)
-                        {
-                                switch (c) {
-                                case '\'':
-                                        inQuote = !inQuote;
-                                        break;
-                                case '"' :
-                                        inDQuote = !inDQuote;
-                                        break;
-                                case ';' :
-                                        if (!inDQuote && !inQuote) {
+			for (int i = 0; i < connectionString.Length; i += 1) {
+				char c = connectionString [i];
+				char peek;
+				if (i == connectionString.Length - 1)
+					peek = '\0';
+				else
+					peek = connectionString [i + 1];
+
+				switch (c) {
+				case '\'':
+					if (inDQuote)
+						sb.Append (c);
+					else if (peek.Equals (c)) {
+						sb.Append (c);
+						i += 1;
+					}
+					else
+						inQuote = !inQuote;
+					break;
+				case '"':
+					if (inQuote)
+						sb.Append (c);
+					else if (peek.Equals (c)) {
+						sb.Append (c);
+						i += 1;
+					}
+					else
+						inDQuote = !inDQuote;
+					break;
+				case ';':
+					if (inDQuote || inQuote)
+						sb.Append (c);
+					else {
 						if (name != String.Empty && name != null) {
-                                                	value = sb.ToString ();
-                                                	parameters [name.ToUpper ().Trim ()] = value.Trim ();
+							value = sb.ToString ();
+							parameters [name.ToUpper ().Trim ()] = value.Trim ();
 						}
-                                                name = String.Empty;
-                                                value = String.Empty;
-                                                sb = new StringBuilder ();
-                                        }
-                                        else
-                                                sb.Append (c);
-                                        break;
-                                case '=' :
-                                        if (!inDQuote && !inQuote) {
-                                                name = sb.ToString ();
-                                                sb = new StringBuilder ();
-                                        }
-                                        else
-                                                sb.Append (c);
-                                        break;
-                                default:
-                                        sb.Append (c);
-                                        break;
-                                }
-                        }
+						inName = true;
+						name = String.Empty;
+						value = String.Empty;
+						sb = new StringBuilder ();
+					}
+					break;
+				case '=':
+					if (inDQuote || inQuote || !inName)
+						sb.Append (c);
+					else if (peek.Equals (c)) {
+						sb.Append (c);
+						i += 1;
+					}
+					else {
+						name = sb.ToString ();
+						sb = new StringBuilder ();
+						inName = false;
+					}
+					break;
+				case ' ':
+					if (inQuote || inDQuote)
+						sb.Append (c);
+					else if (sb.Length > 0 && !peek.Equals (';'))
+						sb.Append (c);
+					break;
+				default:
+					sb.Append (c);
+					break;
+				}
+			}
 
                         if (this.ConnectionString == null)
                         {
@@ -515,8 +548,10 @@ namespace System.Data.SqlClient {
                 private void SetProperties (NameValueCollection parameters)
                 {
                         string value;
+			string upperValue;
                         foreach (string name in parameters) {
                                 value = parameters[name];
+				upperValue = value.ToUpper ();
 
                                 switch (name) {
                                 case "APPLICATION NAME" :
@@ -533,7 +568,7 @@ namespace System.Data.SqlClient {
                                 case "CONNECTION LIFETIME" :
                                         break;
                                 case "CONNECTION RESET" :
-                                        connectionReset = !(value.ToUpper ().Equals ("FALSE") || value.ToUpper ().Equals ("NO"));
+					connectionReset = !(upperValue.Equals ("FALSE") || upperValue.Equals ("NO"));
                                         break;
                                 case "CURRENT LANGUAGE" :
                                         parms.Language = value;
@@ -553,7 +588,7 @@ namespace System.Data.SqlClient {
                                         break;
                                 case "INTEGRATED SECURITY" :
                                 case "TRUSTED_CONNECTION" :
-					parms.DomainLogin = Boolean.Parse (value);
+					parms.DomainLogin = upperValue.Equals ("TRUE") || upperValue.Equals ("YES") || upperValue.Equals ("SSPI");
                                         break;
                                 case "MAX POOL SIZE" :
                                         maxPoolSize = Int32.Parse (value);
@@ -561,6 +596,10 @@ namespace System.Data.SqlClient {
                                 case "MIN POOL SIZE" :
                                         minPoolSize = Int32.Parse (value);
                                         break;
+#if NET_1_2
+				case "MULTIPLEACTIVERESULTSETS":
+					break;
+#endif
                                 case "NET" :
                                 case "NETWORK LIBRARY" :
                                         if (!value.ToUpper ().Equals ("DBMSSOCN"))
