@@ -370,17 +370,6 @@ namespace System.Data.SqlClient {
 			reader.Close ();	
 		}
 
-		private void Dispose (bool disposing) 
-		{
-			if (!disposed) {
-				if (disposing) {
-					// Release managed resources
-				}
-				// Release unmanaged resources
-				disposed = true;
-			}
-		}
-
 		public int ExecuteNonQuery ()
 		{
 			ValidateCommand ("ExecuteNonQuery");
@@ -466,7 +455,6 @@ namespace System.Data.SqlClient {
 
 			switch (parameter.SqlDbType) {
 				case SqlDbType.BigInt :
-				case SqlDbType.Bit :
 				case SqlDbType.Decimal :
 				case SqlDbType.Float :
 				case SqlDbType.Int :
@@ -479,6 +467,10 @@ namespace System.Data.SqlClient {
 				case SqlDbType.NVarChar :
 				case SqlDbType.NChar :
 					return String.Format ("N'{0}'", parameter.Value.ToString ().Replace ("'", "''"));
+				case SqlDbType.Bit :
+					if (parameter.Value.GetType () == typeof (bool))
+						return (((bool) parameter.Value) ? "1" : "0");
+					return parameter.Value.ToString ();
 				default:
 					return String.Format ("'{0}'", parameter.Value.ToString ().Replace ("'", "''"));
 			}
@@ -521,12 +513,6 @@ namespace System.Data.SqlClient {
 		IDataReader IDbCommand.ExecuteReader (CommandBehavior behavior)
 		{
 			return ExecuteReader (behavior);
-		}
-
-		void IDisposable.Dispose ()
-		{
-			Dispose (true);
-			GC.SuppressFinalize (this);
 		}
 
 		public void Prepare ()

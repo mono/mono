@@ -51,6 +51,7 @@ namespace System.Data.SqlClient {
 			this.command = command;
 			this.fieldCount = 0;
 			this.isClosed = false;
+			this.recordsAffected = -1;
 
 			NextResult ();
 		}
@@ -78,8 +79,9 @@ namespace System.Data.SqlClient {
 		public object this [string name] {
 			get { return GetValue (GetOrdinal (name)); }
 		}
-		
+	
 		public int RecordsAffected {
+			[MonoTODO ("Make sure this gets set correctly.")]
 			get { return recordsAffected; }
 		}
 

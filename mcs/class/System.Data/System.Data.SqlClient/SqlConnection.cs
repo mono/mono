@@ -73,8 +73,7 @@ namespace System.Data.SqlClient {
 	
 		public SqlConnection (string connectionString) 
 		{
-			SetConnectionString (connectionString);
-			this.connectionString = connectionString;
+			ConnectionString = connectionString;
 		}
 
 		#endregion // Constructors
@@ -282,8 +281,13 @@ namespace System.Data.SqlClient {
 		protected override void Dispose (bool disposing) 
 		{
 			if (!disposed) { 
-				if (disposing) 
-					Close ();
+				if (disposing) {
+					if (State == ConnectionState.Open) 
+						Close ();
+					parms = null;
+					dataSource = null;
+				}
+				base.Dispose (disposing);
 				disposed = true;
 			}
 		}
