@@ -137,11 +137,22 @@ namespace System.Globalization {
 				throw new ArgumentNullException("string is null");
 			
 			Text.StringBuilder s = new Text.StringBuilder ();
-
-			s.Append (Char.ToUpper (str [0]));
-
-			for (int i = 1; i < str.Length; i ++)
-				s.Append (str [i]);
+			bool space_seen = true;
+				
+			for (int i = 0; i < str.Length; i ++){
+				char c = str [i];
+				if (Char.IsLetter (c)){
+					if (space_seen)
+						s.Append (Char.ToUpper (c));
+					else
+						s.Append (Char.ToLower (c));
+					space_seen = false;
+				} else {
+					s.Append (c);
+					if (Char.IsWhiteSpace (c))
+						space_seen = true;
+				}
+			}
 
 			return s.ToString ();
 		}
