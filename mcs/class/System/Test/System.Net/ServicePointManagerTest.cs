@@ -79,7 +79,7 @@ public class ServicePointManagerTest : TestCase
 			WriteServicePoint (sp);
 			
 		} catch (Exception e) {
-			Console.WriteLine("\nThe following Exception was raised : {0}", e.Message);
+			Fail("The following unexpected Exception was thrown : " + e);
 		}
 	}
 	

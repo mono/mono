@@ -75,7 +75,6 @@ namespace MonoTests.System.Diagnostics {
 		// Make sure we get the output we expect in the presence of indenting...
 		public void TestIndent ()
 		{
-			Console.Error.WriteLine ("TraceTest.TestIndent");
 			string value =  
 				"List of errors:" + Environment.NewLine +
 				"    Error 1: File not found" + Environment.NewLine +

@@ -1,3 +1,7 @@
+2002-09-17  Nick Drochak  <ndrochak@gol.com>
+
+	* ServicePointManagerTest.cs: Convert Console.WriteLine() into a Fail()
+
 2002-05-21  Lawrence Pit <loz@cable.a2000.nl>
 
 	* WebClientTest.cs: added

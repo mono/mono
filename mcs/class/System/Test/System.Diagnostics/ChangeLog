@@ -1,3 +1,7 @@
+2002-09-17  Nick Drochak  <ndrochak@gol.com>
+
+	* TraceTest.cs: Remove extraneous Console.WriteLine().
+
 2002-06-16  Jonathan Pryor  <jonpryor@vt.edu>
 	* TraceTest.cs: Added additional test cases.
 

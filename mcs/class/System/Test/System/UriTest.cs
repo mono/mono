@@ -19,7 +19,11 @@ namespace MonoTests.System
 
 		public UriTest (string name) : base (name) {}
 
-		protected override void SetUp () {}
+		protected bool isWin32 = false;
+
+		protected override void SetUp () {
+			isWin32 = (Path.DirectorySeparatorChar == '\\');
+		}
 
 		protected override void TearDown () {}
 
@@ -117,7 +121,12 @@ namespace MonoTests.System
 			AssertEquals ("#n8", true, uri.IsFile);
 			AssertEquals ("#n9", false, uri.IsLoopback);
 			AssertEquals ("#n10", true, uri.IsUnc);
-			AssertEquals ("#n11", @"\\myserver\mydir\mysubdir\myfile.ext", uri.LocalPath);
+
+			if (isWin32)
+				AssertEquals ("#n11", @"\\myserver\mydir\mysubdir\myfile.ext", uri.LocalPath);
+			else
+				AssertEquals ("#n11", "/myserver/mydir/mysubdir/myfile.ext", uri.LocalPath);
+
 			AssertEquals ("#n12", "/mydir/mysubdir/myfile.ext", uri.PathAndQuery);
 			AssertEquals ("#n13", -1, uri.Port);
 			AssertEquals ("#n14", "", uri.Query);
@@ -171,8 +180,6 @@ namespace MonoTests.System
 		
 		public void TestLocalPath ()
 		{
-			bool isWin32 = (Path.DirectorySeparatorChar == '\\');
-			
 			Uri uri = new Uri ("c:\\tmp\\hello.txt");
 			AssertEquals ("#1a", "file:///c:/tmp/hello.txt", uri.ToString ());
 			AssertEquals ("#1b", "c:\\tmp\\hello.txt", uri.LocalPath);
@@ -185,7 +192,7 @@ namespace MonoTests.System
 			if (isWin32)
 				AssertEquals ("#3b win32", "\\\\cygwin\\tmp\\hello.txt", uri.LocalPath);
 			else
-				AssertEquals ("#3b *nix", "//cygwin/tmp/hello.txt", uri.LocalPath);
+				AssertEquals ("#3b *nix", "/cygwin/tmp/hello.txt", uri.LocalPath);
 			AssertEquals ("#3c", "file", uri.Scheme);
 			AssertEquals ("#3d", "cygwin", uri.Host);
 			AssertEquals ("#3e", "/tmp/hello.txt", uri.AbsolutePath);
@@ -195,7 +202,7 @@ namespace MonoTests.System
 			if (isWin32)
 				AssertEquals ("#4b win32", "\\\\mymachine\\cygwin\\tmp\\hello.txt", uri.LocalPath);
 			else
-				AssertEquals ("#4b *nix", "//mymachine/cygwin/tmp/hello.txt", uri.LocalPath);
+				AssertEquals ("#4b *nix", "/mymachine/cygwin/tmp/hello.txt", uri.LocalPath);
 			AssertEquals ("#4c", "file", uri.Scheme);
 			AssertEquals ("#4d", "mymachine", uri.Host);
 			AssertEquals ("#4e", "/cygwin/tmp/hello.txt", uri.AbsolutePath);
