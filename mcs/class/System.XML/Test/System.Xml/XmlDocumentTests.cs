@@ -1075,6 +1075,19 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
+		public void LoadEntityReference ()
+		{
+			string xml = "<!DOCTYPE root [<!ELEMENT root (#PCDATA)*><!ENTITY ent 'val'>]><root attr='a &ent; string'>&ent;</root>";
+			XmlTextReader xtr = new XmlTextReader (xml, XmlNodeType.Document, null);
+			XmlDocument doc = new XmlDocument ();
+			doc.Load (xtr);
+			AssertEquals ("#text node", XmlNodeType.EntityReference, 
+				doc.DocumentElement.FirstChild.NodeType);
+			AssertEquals ("#attribute", XmlNodeType.EntityReference, 
+				doc.DocumentElement.Attributes [0].ChildNodes [1].NodeType);
+		}
+
+		[Test]
 		public void ReadNodeEmptyContent ()
 		{
 			XmlTextReader xr = new XmlTextReader ("", XmlNodeType.Element, null);

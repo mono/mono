@@ -175,5 +175,28 @@ namespace MonoTests.System.Xml
 			} 
 			catch (ArgumentNullException) {}
 		}
+
+		[Test]
+		public void Substring ()
+		{
+			comment.Value = "test string";
+			AssertEquals ("test string", comment.Substring (0, 50));
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void SubstringStartOutOfRange ()
+		{
+			comment.Value = "test string";
+			comment.Substring (-5, 10);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void SubstringCountOutOfRange ()
+		{
+			comment.Value = "test string";
+			comment.Substring (10, -5);
+		}
 	}
 }
