@@ -470,8 +470,11 @@ namespace System {
 						mantissa /= 10;
 						exponent++;
 					}
-					sb.Insert(0, (char)('0' + (mantissa % 10)) +
-							nfi.NumberDecimalSeparator);
+					if (sb.Length != 0)
+					  sb.Insert(0, nfi.NumberDecimalSeparator);
+					
+					sb.Insert(0, (char)('0' + (mantissa % 10)) );
+
 					if (exponent > 0) {
 						sb.Append("E" + nfi.PositiveSign);
 					}
