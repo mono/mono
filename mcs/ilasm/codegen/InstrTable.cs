@@ -218,6 +218,7 @@ namespace Mono.ILASM {
                         inst_table["castclass"] = new ILToken (Token.INSTR_TYPE, TypeOp.castclass);
                         inst_table["isinst"] = new ILToken (Token.INSTR_TYPE, TypeOp.isinst);
                         inst_table["unbox"] = new ILToken (Token.INSTR_TYPE, TypeOp.unbox);
+                        inst_table["unbox.any"] = new ILToken (Token.INSTR_TYPE, TypeOp.unbox_any);
                         inst_table["stobj"] = new ILToken (Token.INSTR_TYPE, TypeOp.stobj);
                         inst_table["box"] = new ILToken (Token.INSTR_TYPE, TypeOp.box);
                         inst_table["newarr"] = new ILToken (Token.INSTR_TYPE, TypeOp.newarr);

@@ -17,12 +17,18 @@ namespace Mono.ILASM {
 
         public class MethodDef {
 
+                protected class GenericInfo {
+                        public string Id;
+                        public ArrayList ConstraintList;
+                }
+
                 private PEAPI.MethAttr meth_attr;
                 private PEAPI.CallConv call_conv;
                 private PEAPI.ImplAttr impl_attr;
                 private string name;
                 private string signature;
                 private ITypeRef ret_type;
+                private ArrayList typar_list;
                 private ArrayList param_list;
                 private Hashtable named_param_table;
                 private ArrayList inst_list;
@@ -117,6 +123,26 @@ namespace Mono.ILASM {
                         this.pinvoke_mod = pinvoke_mod;
                         this.pinvoke_name = pinvoke_name;
                         pinvoke_info = true;
+                }
+
+                public void AddGenericParam (string id)
+                {
+                        if (typar_list == null)
+                                typar_list = new ArrayList ();
+
+                        GenericInfo gi = new GenericInfo ();
+                        gi.Id = id;
+
+                        typar_list.Add (gi);
+                }
+
+                public void AddGenericConstraint (int index, ITypeRef constraint)
+                {
+                        GenericInfo gi = (GenericInfo) typar_list[index];
+
+                        if (gi.ConstraintList == null)
+                                gi.ConstraintList = new ArrayList ();
+                        gi.ConstraintList.Add (constraint);
                 }
 
                 public void AddLocals (ArrayList local_list)
@@ -375,6 +401,19 @@ namespace Mono.ILASM {
                                 instr.Emit (code_gen, this, cil);
                         }
 
+                        // Generic type parameters
+                        if (typar_list != null) {
+                                short index = 0;
+                                foreach (GenericInfo gi in typar_list) {
+                                        PEAPI.GenericParameter gp = methoddef.AddGenericParameter (index++, gi.Id);
+                                        if (gi.ConstraintList != null) {
+                                                foreach (ITypeRef cnst in gi.ConstraintList) {
+                                                        cnst.Resolve (code_gen);
+                                                        gp.AddConstraint (cnst.PeapiType);
+                                                }
+                                        }
+                                }
+                        }
                 }
 
                 public LabelInfo AddLabel (string name)

@@ -1,3 +1,8 @@
+2003-10-08 Jackson Harper <jackson@ximian.com>
+
+	* InstrTable.cs: Add unbox.any instruction.
+	* MethodDef.cs: Allow generic parameters to be added to methods.
+	
 2003-10-06 Jackson Harper <jackson@latitudegeo.com>
 
 	* MethodInfo.cs: Use report to display no label error message.
