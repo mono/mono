@@ -1,3 +1,18 @@
+2002-07-16  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Color.cs: changed static properties to use FromArgbNamed. Also
+	modified the program included in comments that get the values for
+	static properties.
+
+	(FromArgbNamed): build named colors.
+	(FromKnownColor): fixed.
+	(FromName): use a hash to look up colors by name.
+	(FillColorNames): create the hash of colors.
+	(Equals): compare values and name.
+	(ToString): improved.
+
+	* ColorTranslator.cs: implemented ToHtml.
+
 2002-06-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Color.cs: added TypeConverter attribute.

@@ -1,24 +1,28 @@
-
 //
 // System.Drawing.Color.cs
 //
+// Authors:
+// 	Dennis Hayes (dennish@raytek.com)
+// 	Ben Houston  (ben@exocortex.org)
+// 	Gonzalo Paniagua (gonzalo@ximian.com)
+//
 // (C) 2002 Dennis Hayes
-// Author:
-// Dennis Hayes (dennish@raytek.com)
-// Ben Houston  (ben@exocortex.org)
+// (c) 2002 Ximian, Inc. (http://www.ximiam.com)
 //
 // TODO: Are the static/non static functions declared correctly
 
 using System;
+using System.Collections;
 using System.ComponentModel;
 using System.Reflection;
 
 namespace System.Drawing 
 {
-	[TypeConverter("System.Drawing.ColorConverter,System.Drawing")]
+	[TypeConverter(typeof(ColorConverter))]
 	[Serializable]
 	public struct Color
 	{
+		private static Hashtable colorNames;
 		// Private transparancy (A) and R,G,B fields.
 		byte a;
 		byte r;
@@ -54,6 +58,8 @@ namespace System.Drawing
 
 		public bool IsNamedColor {
 			get{
+				if (!isnamedcolor)
+					return IsKnownColor;
 				return isnamedcolor;
 			}
 		}
@@ -90,6 +96,23 @@ namespace System.Drawing
 			color.b = (byte)blue;
 			return color;
 		}
+
+		private static Color FromArgbNamed (int alpha, int red, int green, int blue, string name)
+		{
+			//TODO: convert rgb to name format "12345678"
+			CheckARGBValues(alpha, red, green, blue);
+			Color color;
+			color.isknowncolor = true;
+			color.isnamedcolor = true;
+			color.issystemcolor = false; //???
+			color.myname = name;
+			color.a = (byte)alpha;
+			color.r = (byte)red;
+			color.g = (byte)green;
+			color.b = (byte)blue;
+			return color;
+		}
+
 		public int ToArgb()
 		{
 			return a << 24 | r << 16 | g << 8 | b;
@@ -129,13 +152,9 @@ namespace System.Drawing
 
 		public static Color FromKnownColor (KnownColor KnownColorToConvert)
 		{
-//			isknowncolor = true;
-//			isnamedcolor = true;
-//			issystemcolor = true;
-
-//			name = KnownColorToConvert.ToString();
-
-			return FromName(KnownColorToConvert.ToString());
+			Color c = FromName (KnownColorToConvert.ToString ());
+			c.isknowncolor = true;
+			return c;
 		}
 
 		public KnownColor ToKnownColor () {
@@ -148,31 +167,41 @@ namespace System.Drawing
 			}
 			//return KnownColor.FromName(KnownColorToConvert.ToString());
 		}
+
+		private static void FillColorNames ()
+		{
+			colorNames = new Hashtable (CaseInsensitiveHashCodeProvider.Default,
+						    CaseInsensitiveComparer.Default);
+
+			Type type = typeof (Color);
+			PropertyInfo [] props = type.GetProperties ();
+			foreach (PropertyInfo prop in props){
+				if (prop.PropertyType != typeof (Color))
+					continue;
+
+				MethodInfo getget = prop.GetGetMethod ();
+				if (getget == null || getget.IsStatic == false)
+					continue;
+				object retval = prop.GetValue (null, null);
+				Color c = (Color) retval;
+				colorNames.Add (prop.Name, retval);
+			}
+		}
+		
 		public static Color FromName( string ColorName ) 
 		{
 //			isknowncolor = true;
 //			isnamedcolor = true;
 //			issystemcolor = true;
 			
-			string name = ColorName;
+			if (colorNames == null)
+				FillColorNames ();
+			
+			object c = colorNames [ColorName];
+			if (c == null)
+				throw new System.ArgumentException (ColorName + " is not a named color", "name");
 
-			Type colorType = typeof( Color );
-			PropertyInfo[] properties =
-				colorType.GetProperties();
-			foreach( PropertyInfo property in properties ){ 
-				if( property.Name == name ){ 
-					MethodInfo method =	property.GetGetMethod();
-					if( method != null &&
-						method.IsStatic == true
-						&&
-						method.ReturnType ==
-						colorType ){ 
-							return (Color) 
-								    method.Invoke( null, new object[0] );
-					}
-				}
-			}
-			throw new System.ArgumentException(name + " is not a named color","name");
+			return (Color) c;
 		}
 
 		// -----------------------
@@ -343,8 +372,16 @@ namespace System.Drawing
 		
 		public override bool Equals (object o)
 		{
-			if (!(o is Color))return false;
-			return (this == (Color) o);
+			if (!(o is Color))
+				return false;
+
+			Color c = (Color) o;
+			if (c.r == r && c.g == g && c.b == b) {
+				if (myname != null || c.myname != null)
+					return (myname == c.myname);
+				return true;
+			}
+			return false;
 		}
 
 		/// <summary>
@@ -387,7 +424,10 @@ namespace System.Drawing
 		
 		public override string ToString ()
 		{
-			return String.Format ("[{0},{1},{2},{3}]", a, r, g, b);
+			if (myname != "")
+				return "Color [" + myname + "]";
+
+			return String.Format ("Color [A={0}, R={1}, G={2}, B={3}]", a, r, g, b);
 		}
   
 		private static void CheckRGBValues (int red,int green,int blue)
@@ -413,871 +453,1014 @@ namespace System.Drawing
 
 		//Documentation, do not remove!
 		//This is the program that was used to generate the C# source code below.
+		//using System;
+		//using System.Diagnostics;
+		//using System.Drawing;
+		//using System.Reflection;
+		//public class m {
 		//static void Main(string[] args)
 		//{
-		//	Type cType = typeof( Color );
-		//	PropertyInfo[] properties = cType.GetProperties();
-		//	foreach( PropertyInfo property in properties ) 
-		//	{
+		//	Type cType = typeof (Color);
+		//	PropertyInfo [] properties = cType.GetProperties ();
+		//	foreach (PropertyInfo property in properties) {
 		//		MethodInfo method = property.GetGetMethod();
-		//		if( method != null && method.IsStatic && method.ReturnType == cType
-		//			) 
-		//		{
+		//		if (method != null && method.IsStatic && method.ReturnType == cType) {
 		//			Color c = (Color) method.Invoke( null, new object[0] );
-		//			Debug.WriteLine( "static public Color " + property.Name + " {" );
-		//			Debug.WriteLine( "\tget{" );
-		//			Debug.WriteLine( "\t\treturn Color.FromArgb( " + c.A + ", " + c.R
-		//				+ ", " + c.G + ", " + c.B + " );" );
-		//			Debug.WriteLine( "\t}" );
-		//			Debug.WriteLine( "}" );
+		//			Console.WriteLine("static public Color " + property.Name);
+		//			Console.WriteLine("{\t\n\tget {");
+		//			Console.WriteLine("\t\treturn Color.FromArgbNamed ({0}, {1}, {2}, {3}, \"{4}\");",
+		//						c.A, c.R, c.G, c.B, property.Name);
+		//			Console.WriteLine("\t}");
+		//			Console.WriteLine("}\n");
 		//		}
 		//	}
 		//}
+		//}
 
-		static public Color Transparent 
-		{
-			get	{
-				return Color.FromArgb( 0, 255, 255, 255 );
+		static public Color Transparent
+		{	
+			get {
+				return Color.FromArgbNamed (0, 255, 255, 255, "Transparent");
 			}
 		}
-		static public Color AliceBlue 
-		{
-			get	{
-				return Color.FromArgb( 255, 240, 248, 255 );
+
+		static public Color AliceBlue
+		{	
+			get {
+				return Color.FromArgbNamed (255, 240, 248, 255, "AliceBlue");
 			}
 		}
-		static public Color AntiqueWhite 
-		{
-			get	{
-				return Color.FromArgb( 255, 250, 235, 215 );
+
+		static public Color AntiqueWhite
+		{	
+			get {
+				return Color.FromArgbNamed (255, 250, 235, 215, "AntiqueWhite");
 			}
 		}
-		static public Color Aqua 
-		{
-			get	{
-				return Color.FromArgb( 255, 0, 255, 255 );
+
+		static public Color Aqua
+		{	
+			get {
+				return Color.FromArgbNamed (255, 0, 255, 255, "Aqua");
 			}
 		}
-		static public Color Aquamarine 
-		{
-			get	{
-				return Color.FromArgb( 255, 127, 255, 212 );
+
+		static public Color Aquamarine
+		{	
+			get {
+				return Color.FromArgbNamed (255, 127, 255, 212, "Aquamarine");
 			}
 		}
-		static public Color Azure 
-		{
-			get	{
-				return Color.FromArgb( 255, 240, 255, 255 );
+
+		static public Color Azure
+		{	
+			get {
+				return Color.FromArgbNamed (255, 240, 255, 255, "Azure");
 			}
 		}
-		static public Color Beige 
-		{
-			get	{
-				return Color.FromArgb( 255, 245, 245, 220 );
+
+		static public Color Beige
+		{	
+			get {
+				return Color.FromArgbNamed (255, 245, 245, 220, "Beige");
 			}
 		}
-		static public Color Bisque 
-		{
-			get	{
-				return Color.FromArgb( 255, 255, 228, 196 );
+
+		static public Color Bisque
+		{	
+			get {
+				return Color.FromArgbNamed (255, 255, 228, 196, "Bisque");
 			}
 		}
-		static public Color Black 
-		{
-			get	{
-				return Color.FromArgb( 255, 0, 0, 0 );
+
+		static public Color Black
+		{	
+			get {
+				return Color.FromArgbNamed (255, 0, 0, 0, "Black");
 			}
 		}
-		static public Color BlanchedAlmond 
-		{
-			get	{
-				return Color.FromArgb( 255, 255, 235, 205 );
+
+		static public Color BlanchedAlmond
+		{	
+			get {
+				return Color.FromArgbNamed (255, 255, 235, 205, "BlanchedAlmond");
 			}
 		}
-		static public Color Blue 
-		{
-			get	{
-				return Color.FromArgb( 255, 0, 0, 255 );
+
+		static public Color Blue
+		{	
+			get {
+				return Color.FromArgbNamed (255, 0, 0, 255, "Blue");
 			}
 		}
-		static public Color BlueViolet 
-		{
-			get	{
-				return Color.FromArgb( 255, 138, 43, 226 );
+
+		static public Color BlueViolet
+		{	
+			get {
+				return Color.FromArgbNamed (255, 138, 43, 226, "BlueViolet");
 			}
 		}
-		static public Color Brown 
-		{
-			get	{
-				return Color.FromArgb( 255, 165, 42, 42 );
+
+		static public Color Brown
+		{	
+			get {
+				return Color.FromArgbNamed (255, 165, 42, 42, "Brown");
 			}
 		}
-		static public Color BurlyWood 
-		{
-			get	{
-				return Color.FromArgb( 255, 222, 184, 135 );
+
+		static public Color BurlyWood
+		{	
+			get {
+				return Color.FromArgbNamed (255, 222, 184, 135, "BurlyWood");
 			}
 		}
-		static public Color CadetBlue 
-		{
-			get	{
-				return Color.FromArgb( 255, 95, 158, 160 );
+
+		static public Color CadetBlue
+		{	
+			get {
+				return Color.FromArgbNamed (255, 95, 158, 160, "CadetBlue");
 			}
 		}
-		static public Color Chartreuse 
-		{
-			get	{
-				return Color.FromArgb( 255, 127, 255, 0 );
+
+		static public Color Chartreuse
+		{	
+			get {
+				return Color.FromArgbNamed (255, 127, 255, 0, "Chartreuse");
 			}
 		}
-		static public Color Chocolate 
-		{
-			get	{
-				return Color.FromArgb( 255, 210, 105, 30 );
+
+		static public Color Chocolate
+		{	
+			get {
+				return Color.FromArgbNamed (255, 210, 105, 30, "Chocolate");
 			}
 		}
-		static public Color Coral 
-		{
-			get	{
-				return Color.FromArgb( 255, 255, 127, 80 );
+
+		static public Color Coral
+		{	
+			get {
+				return Color.FromArgbNamed (255, 255, 127, 80, "Coral");
 			}
 		}
-		static public Color CornflowerBlue 
-		{
-			get	{
-				return Color.FromArgb( 255, 100, 149, 237 );
+
+		static public Color CornflowerBlue
+		{	
+			get {
+				return Color.FromArgbNamed (255, 100, 149, 237, "CornflowerBlue");
 			}
 		}
-		static public Color Cornsilk 
-		{
-			get	{
-				return Color.FromArgb( 255, 255, 248, 220 );
+
+		static public Color Cornsilk
+		{	
+			get {
+				return Color.FromArgbNamed (255, 255, 248, 220, "Cornsilk");
 			}
 		}
-		static public Color Crimson 
-		{
-			get	{
-				return Color.FromArgb( 255, 220, 20, 60 );
+
+		static public Color Crimson
+		{	
+			get {
+				return Color.FromArgbNamed (255, 220, 20, 60, "Crimson");
 			}
 		}
-		static public Color Cyan 
-		{
-			get	{
-				return Color.FromArgb( 255, 0, 255, 255 );
+
+		static public Color Cyan
+		{	
+			get {
+				return Color.FromArgbNamed (255, 0, 255, 255, "Cyan");
 			}
 		}
-		static public Color DarkBlue 
-		{
-			get	{
-				return Color.FromArgb( 255, 0, 0, 139 );
+
+		static public Color DarkBlue
+		{	
+			get {
+				return Color.FromArgbNamed (255, 0, 0, 139, "DarkBlue");
 			}
 		}
-		static public Color DarkCyan 
-		{
-			get	{
-				return Color.FromArgb( 255, 0, 139, 139 );
+
+		static public Color DarkCyan
+		{	
+			get {
+				return Color.FromArgbNamed (255, 0, 139, 139, "DarkCyan");
 			}
 		}
-		static public Color DarkGoldenrod 
-		{
-			get	{
-				return Color.FromArgb( 255, 184, 134, 11 );
+
+		static public Color DarkGoldenrod
+		{	
+			get {
+				return Color.FromArgbNamed (255, 184, 134, 11, "DarkGoldenrod");
 			}
 		}
-		static public Color DarkGray 
-		{
-			get	{
-				return Color.FromArgb( 255, 169, 169, 169 );
+
+		static public Color DarkGray
+		{	
+			get {
+				return Color.FromArgbNamed (255, 169, 169, 169, "DarkGray");
 			}
 		}
-		static public Color DarkGreen 
-		{
-			get	{
-				return Color.FromArgb( 255, 0, 100, 0 );
+
+		static public Color DarkGreen
+		{	
+			get {
+				return Color.FromArgbNamed (255, 0, 100, 0, "DarkGreen");
 			}
 		}
-		static public Color DarkKhaki 
-		{
-			get	{
-				return Color.FromArgb( 255, 189, 183, 107 );
+
+		static public Color DarkKhaki
+		{	
+			get {
+				return Color.FromArgbNamed (255, 189, 183, 107, "DarkKhaki");
 			}
 		}
-		static public Color DarkMagenta 
-		{
-			get	{
-				return Color.FromArgb( 255, 139, 0, 139 );
+
+		static public Color DarkMagenta
+		{	
+			get {
+				return Color.FromArgbNamed (255, 139, 0, 139, "DarkMagenta");
 			}
 		}
-		static public Color DarkOliveGreen 
-		{
-			get	{
-				return Color.FromArgb( 255, 85, 107, 47 );
+
+		static public Color DarkOliveGreen
+		{	
+			get {
+				return Color.FromArgbNamed (255, 85, 107, 47, "DarkOliveGreen");
 			}
 		}
-		static public Color DarkOrange 
-		{
-			get	{
-				return Color.FromArgb( 255, 255, 140, 0 );
+
+		static public Color DarkOrange
+		{	
+			get {
+				return Color.FromArgbNamed (255, 255, 140, 0, "DarkOrange");
 			}
 		}
-		static public Color DarkOrchid 
-		{
-			get	{
-				return Color.FromArgb( 255, 153, 50, 204 );
+
+		static public Color DarkOrchid
+		{	
+			get {
+				return Color.FromArgbNamed (255, 153, 50, 204, "DarkOrchid");
 			}
 		}
-		static public Color DarkRed 
-		{
-			get	{
-				return Color.FromArgb( 255, 139, 0, 0 );
+
+		static public Color DarkRed
+		{	
+			get {
+				return Color.FromArgbNamed (255, 139, 0, 0, "DarkRed");
 			}
 		}
-		static public Color DarkSalmon 
-		{
-			get	{
-				return Color.FromArgb( 255, 233, 150, 122 );
+
+		static public Color DarkSalmon
+		{	
+			get {
+				return Color.FromArgbNamed (255, 233, 150, 122, "DarkSalmon");
 			}
 		}
-		static public Color DarkSeaGreen 
-		{
-			get	{
-				return Color.FromArgb( 255, 143, 188, 139 );
+
+		static public Color DarkSeaGreen
+		{	
+			get {
+				return Color.FromArgbNamed (255, 143, 188, 139, "DarkSeaGreen");
 			}
 		}
-		static public Color DarkSlateBlue 
-		{
-			get	{
-				return Color.FromArgb( 255, 72, 61, 139 );
+
+		static public Color DarkSlateBlue
+		{	
+			get {
+				return Color.FromArgbNamed (255, 72, 61, 139, "DarkSlateBlue");
 			}
 		}
-		static public Color DarkSlateGray 
-		{
-			get	{
-				return Color.FromArgb( 255, 47, 79, 79 );
+
+		static public Color DarkSlateGray
+		{	
+			get {
+				return Color.FromArgbNamed (255, 47, 79, 79, "DarkSlateGray");
 			}
 		}
-		static public Color DarkTurquoise 
-		{
-			get	{
-				return Color.FromArgb( 255, 0, 206, 209 );
+
+		static public Color DarkTurquoise
+		{	
+			get {
+				return Color.FromArgbNamed (255, 0, 206, 209, "DarkTurquoise");
 			}
 		}
-		static public Color DarkViolet 
-		{
-			get	{
-				return Color.FromArgb( 255, 148, 0, 211 );
+
+		static public Color DarkViolet
+		{	
+			get {
+				return Color.FromArgbNamed (255, 148, 0, 211, "DarkViolet");
 			}
 		}
-		static public Color DeepPink 
-		{
-			get	{
-				return Color.FromArgb( 255, 255, 20, 147 );
+
+		static public Color DeepPink
+		{	
+			get {
+				return Color.FromArgbNamed (255, 255, 20, 147, "DeepPink");
 			}
 		}
-		static public Color DeepSkyBlue 
-		{
-			get	{
-				return Color.FromArgb( 255, 0, 191, 255 );
+
+		static public Color DeepSkyBlue
+		{	
+			get {
+				return Color.FromArgbNamed (255, 0, 191, 255, "DeepSkyBlue");
 			}
 		}
-		static public Color DimGray 
-		{
-			get	{
-				return Color.FromArgb( 255, 105, 105, 105 );
+
+		static public Color DimGray
+		{	
+			get {
+				return Color.FromArgbNamed (255, 105, 105, 105, "DimGray");
 			}
 		}
-		static public Color DodgerBlue 
-		{
-			get	{
-				return Color.FromArgb( 255, 30, 144, 255 );
+
+		static public Color DodgerBlue
+		{	
+			get {
+				return Color.FromArgbNamed (255, 30, 144, 255, "DodgerBlue");
 			}
 		}
-		static public Color Firebrick 
-		{
-			get	{
-				return Color.FromArgb( 255, 178, 34, 34 );
+
+		static public Color Firebrick
+		{	
+			get {
+				return Color.FromArgbNamed (255, 178, 34, 34, "Firebrick");
 			}
 		}
-		static public Color FloralWhite 
-		{
-			get	{
-				return Color.FromArgb( 255, 255, 250, 240 );
+
+		static public Color FloralWhite
+		{	
+			get {
+				return Color.FromArgbNamed (255, 255, 250, 240, "FloralWhite");
 			}
 		}
-		static public Color ForestGreen 
-		{
-			get	{
-				return Color.FromArgb( 255, 34, 139, 34 );
+
+		static public Color ForestGreen
+		{	
+			get {
+				return Color.FromArgbNamed (255, 34, 139, 34, "ForestGreen");
 			}
 		}
-		static public Color Fuchsia 
-		{
-			get	{
-				return Color.FromArgb( 255, 255, 0, 255 );
+
+		static public Color Fuchsia
+		{	
+			get {
+				return Color.FromArgbNamed (255, 255, 0, 255, "Fuchsia");
 			}
 		}
-		static public Color Gainsboro 
-		{
-			get	{
-				return Color.FromArgb( 255, 220, 220, 220 );
+
+		static public Color Gainsboro
+		{	
+			get {
+				return Color.FromArgbNamed (255, 220, 220, 220, "Gainsboro");
 			}
 		}
-		static public Color GhostWhite 
-		{
-			get	{
-				return Color.FromArgb( 255, 248, 248, 255 );
+
+		static public Color GhostWhite
+		{	
+			get {
+				return Color.FromArgbNamed (255, 248, 248, 255, "GhostWhite");
 			}
 		}
-		static public Color Gold 
-		{
-			get	{
-				return Color.FromArgb( 255, 255, 215, 0 );
+
+		static public Color Gold
+		{	
+			get {
+				return Color.FromArgbNamed (255, 255, 215, 0, "Gold");
 			}
 		}
-		static public Color Goldenrod 
-		{
-			get	{
-				return Color.FromArgb( 255, 218, 165, 32 );
+
+		static public Color Goldenrod
+		{	
+			get {
+				return Color.FromArgbNamed (255, 218, 165, 32, "Goldenrod");
 			}
 		}
-		static public Color Gray 
-		{
-			get	{
-				return Color.FromArgb( 255, 128, 128, 128 );
+
+		static public Color Gray
+		{	
+			get {
+				return Color.FromArgbNamed (255, 128, 128, 128, "Gray");
 			}
 		}
-		static public Color Green 
-		{
-			get	{
-				return Color.FromArgb( 255, 0, 128, 0 );
+
+		static public Color Green
+		{	
+			get {
+				return Color.FromArgbNamed (255, 0, 128, 0, "Green");
 			}
 		}
-		static public Color GreenYellow 
-		{
-			get	{
-				return Color.FromArgb( 255, 173, 255, 47 );
+
+		static public Color GreenYellow
+		{	
+			get {
+				return Color.FromArgbNamed (255, 173, 255, 47, "GreenYellow");
 			}
 		}
-		static public Color Honeydew 
-		{
-			get	{
-				return Color.FromArgb( 255, 240, 255, 240 );
+
+		static public Color Honeydew
+		{	
+			get {
+				return Color.FromArgbNamed (255, 240, 255, 240, "Honeydew");
 			}
 		}
-		static public Color HotPink 
-		{
-			get	{
-				return Color.FromArgb( 255, 255, 105, 180 );
+
+		static public Color HotPink
+		{	
+			get {
+				return Color.FromArgbNamed (255, 255, 105, 180, "HotPink");
 			}
 		}
-		static public Color IndianRed 
-		{
-			get	{
-				return Color.FromArgb( 255, 205, 92, 92 );
+
+		static public Color IndianRed
+		{	
+			get {
+				return Color.FromArgbNamed (255, 205, 92, 92, "IndianRed");
 			}
 		}
-		static public Color Indigo 
-		{
-			get	{
-				return Color.FromArgb( 255, 75, 0, 130 );
+
+		static public Color Indigo
+		{	
+			get {
+				return Color.FromArgbNamed (255, 75, 0, 130, "Indigo");
 			}
 		}
-		static public Color Ivory 
-		{
-			get	{
-				return Color.FromArgb( 255, 255, 255, 240 );
+
+		static public Color Ivory
+		{	
+			get {
+				return Color.FromArgbNamed (255, 255, 255, 240, "Ivory");
 			}
 		}
-		static public Color Khaki 
-		{
-			get	{
-				return Color.FromArgb( 255, 240, 230, 140 );
+
+		static public Color Khaki
+		{	
+			get {
+				return Color.FromArgbNamed (255, 240, 230, 140, "Khaki");
 			}
 		}
-		static public Color Lavender 
-		{
-			get	{
-				return Color.FromArgb( 255, 230, 230, 250 );
+
+		static public Color Lavender
+		{	
+			get {
+				return Color.FromArgbNamed (255, 230, 230, 250, "Lavender");
 			}
 		}
-		static public Color LavenderBlush 
-		{
-			get	{
-				return Color.FromArgb( 255, 255, 240, 245 );
+
+		static public Color LavenderBlush
+		{	
+			get {
+				return Color.FromArgbNamed (255, 255, 240, 245, "LavenderBlush");
 			}
 		}
-		static public Color LawnGreen 
-		{
-			get	{
-				return Color.FromArgb( 255, 124, 252, 0 );
+
+		static public Color LawnGreen
+		{	
+			get {
+				return Color.FromArgbNamed (255, 124, 252, 0, "LawnGreen");
 			}
 		}
-		static public Color LemonChiffon 
-		{
-			get	{
-				return Color.FromArgb( 255, 255, 250, 205 );
+
+		static public Color LemonChiffon
+		{	
+			get {
+				return Color.FromArgbNamed (255, 255, 250, 205, "LemonChiffon");
 			}
 		}
-		static public Color LightBlue 
-		{
-			get	{
-				return Color.FromArgb( 255, 173, 216, 230 );
+
+		static public Color LightBlue
+		{	
+			get {
+				return Color.FromArgbNamed (255, 173, 216, 230, "LightBlue");
 			}
 		}
-		static public Color LightCoral 
-		{
-			get	{
-				return Color.FromArgb( 255, 240, 128, 128 );
+
+		static public Color LightCoral
+		{	
+			get {
+				return Color.FromArgbNamed (255, 240, 128, 128, "LightCoral");
 			}
 		}
-		static public Color LightCyan 
-		{
-			get	{
-				return Color.FromArgb( 255, 224, 255, 255 );
+
+		static public Color LightCyan
+		{	
+			get {
+				return Color.FromArgbNamed (255, 224, 255, 255, "LightCyan");
 			}
 		}
-		static public Color LightGoldenrodYellow 
-		{
-			get	{
-				return Color.FromArgb( 255, 250, 250, 210 );
+
+		static public Color LightGoldenrodYellow
+		{	
+			get {
+				return Color.FromArgbNamed (255, 250, 250, 210, "LightGoldenrodYellow");
 			}
 		}
-		static public Color LightGreen 
-		{
-			get	{
-				return Color.FromArgb( 255, 144, 238, 144 );
+
+		static public Color LightGreen
+		{	
+			get {
+				return Color.FromArgbNamed (255, 144, 238, 144, "LightGreen");
 			}
 		}
-		static public Color LightGray 
-		{
-			get	{
-				return Color.FromArgb( 255, 211, 211, 211 );
+
+		static public Color LightGray
+		{	
+			get {
+				return Color.FromArgbNamed (255, 211, 211, 211, "LightGray");
 			}
 		}
-		static public Color LightPink 
-		{
-			get	{
-				return Color.FromArgb( 255, 255, 182, 193 );
+
+		static public Color LightPink
+		{	
+			get {
+				return Color.FromArgbNamed (255, 255, 182, 193, "LightPink");
 			}
 		}
-		static public Color LightSalmon 
-		{
-			get	{
-				return Color.FromArgb( 255, 255, 160, 122 );
+
+		static public Color LightSalmon
+		{	
+			get {
+				return Color.FromArgbNamed (255, 255, 160, 122, "LightSalmon");
 			}
 		}
-		static public Color LightSeaGreen 
-		{
-			get	{
-				return Color.FromArgb( 255, 32, 178, 170 );
+
+		static public Color LightSeaGreen
+		{	
+			get {
+				return Color.FromArgbNamed (255, 32, 178, 170, "LightSeaGreen");
 			}
 		}
-		static public Color LightSkyBlue 
-		{
-			get	{
-				return Color.FromArgb( 255, 135, 206, 250 );
+
+		static public Color LightSkyBlue
+		{	
+			get {
+				return Color.FromArgbNamed (255, 135, 206, 250, "LightSkyBlue");
 			}
 		}
-		static public Color LightSlateGray 
-		{
-			get	{
-				return Color.FromArgb( 255, 119, 136, 153 );
+
+		static public Color LightSlateGray
+		{	
+			get {
+				return Color.FromArgbNamed (255, 119, 136, 153, "LightSlateGray");
 			}
 		}
-		static public Color LightSteelBlue 
-		{
-			get	{
-				return Color.FromArgb( 255, 176, 196, 222 );
+
+		static public Color LightSteelBlue
+		{	
+			get {
+				return Color.FromArgbNamed (255, 176, 196, 222, "LightSteelBlue");
 			}
 		}
-		static public Color LightYellow 
-		{
-			get	{
-				return Color.FromArgb( 255, 255, 255, 224 );
+
+		static public Color LightYellow
+		{	
+			get {
+				return Color.FromArgbNamed (255, 255, 255, 224, "LightYellow");
 			}
 		}
-		static public Color Lime 
-		{
-			get	{
-				return Color.FromArgb( 255, 0, 255, 0 );
+
+		static public Color Lime
+		{	
+			get {
+				return Color.FromArgbNamed (255, 0, 255, 0, "Lime");
 			}
 		}
-		static public Color LimeGreen 
-		{
-			get	{
-				return Color.FromArgb( 255, 50, 205, 50 );
+
+		static public Color LimeGreen
+		{	
+			get {
+				return Color.FromArgbNamed (255, 50, 205, 50, "LimeGreen");
 			}
 		}
-		static public Color Linen 
-		{
-			get	{
-				return Color.FromArgb( 255, 250, 240, 230 );
+
+		static public Color Linen
+		{	
+			get {
+				return Color.FromArgbNamed (255, 250, 240, 230, "Linen");
 			}
 		}
-		static public Color Magenta 
-		{
-			get	{
-				return Color.FromArgb( 255, 255, 0, 255 );
+
+		static public Color Magenta
+		{	
+			get {
+				return Color.FromArgbNamed (255, 255, 0, 255, "Magenta");
 			}
 		}
-		static public Color Maroon 
-		{
-			get	{
-				return Color.FromArgb( 255, 128, 0, 0 );
+
+		static public Color Maroon
+		{	
+			get {
+				return Color.FromArgbNamed (255, 128, 0, 0, "Maroon");
 			}
 		}
-		static public Color MediumAquamarine 
-		{
-			get	{
-				return Color.FromArgb( 255, 102, 205, 170 );
+
+		static public Color MediumAquamarine
+		{	
+			get {
+				return Color.FromArgbNamed (255, 102, 205, 170, "MediumAquamarine");
 			}
 		}
-		static public Color MediumBlue 
-		{
-			get	{
-				return Color.FromArgb( 255, 0, 0, 205 );
+
+		static public Color MediumBlue
+		{	
+			get {
+				return Color.FromArgbNamed (255, 0, 0, 205, "MediumBlue");
 			}
 		}
-		static public Color MediumOrchid 
-		{
-			get	{
-				return Color.FromArgb( 255, 186, 85, 211 );
+
+		static public Color MediumOrchid
+		{	
+			get {
+				return Color.FromArgbNamed (255, 186, 85, 211, "MediumOrchid");
 			}
 		}
-		static public Color MediumPurple 
-		{
-			get	{
-				return Color.FromArgb( 255, 147, 112, 219 );
+
+		static public Color MediumPurple
+		{	
+			get {
+				return Color.FromArgbNamed (255, 147, 112, 219, "MediumPurple");
 			}
 		}
-		static public Color MediumSeaGreen 
-		{
-			get	{
-				return Color.FromArgb( 255, 60, 179, 113 );
+
+		static public Color MediumSeaGreen
+		{	
+			get {
+				return Color.FromArgbNamed (255, 60, 179, 113, "MediumSeaGreen");
 			}
 		}
-		static public Color MediumSlateBlue 
-		{
-			get	{
-				return Color.FromArgb( 255, 123, 104, 238 );
+
+		static public Color MediumSlateBlue
+		{	
+			get {
+				return Color.FromArgbNamed (255, 123, 104, 238, "MediumSlateBlue");
 			}
 		}
-		static public Color MediumSpringGreen 
-		{
-			get	{
-				return Color.FromArgb( 255, 0, 250, 154 );
+
+		static public Color MediumSpringGreen
+		{	
+			get {
+				return Color.FromArgbNamed (255, 0, 250, 154, "MediumSpringGreen");
 			}
 		}
-		static public Color MediumTurquoise 
-		{
-			get	{
-				return Color.FromArgb( 255, 72, 209, 204 );
+
+		static public Color MediumTurquoise
+		{	
+			get {
+				return Color.FromArgbNamed (255, 72, 209, 204, "MediumTurquoise");
 			}
 		}
-		static public Color MediumVioletRed 
-		{
-			get	{
-				return Color.FromArgb( 255, 199, 21, 133 );
+
+		static public Color MediumVioletRed
+		{	
+			get {
+				return Color.FromArgbNamed (255, 199, 21, 133, "MediumVioletRed");
 			}
 		}
-		static public Color MidnightBlue 
-		{
-			get	{
-				return Color.FromArgb( 255, 25, 25, 112 );
+
+		static public Color MidnightBlue
+		{	
+			get {
+				return Color.FromArgbNamed (255, 25, 25, 112, "MidnightBlue");
 			}
 		}
-		static public Color MintCream 
-		{
-			get	{
-				return Color.FromArgb( 255, 245, 255, 250 );
+
+		static public Color MintCream
+		{	
+			get {
+				return Color.FromArgbNamed (255, 245, 255, 250, "MintCream");
 			}
 		}
-		static public Color MistyRose 
-		{
-			get	{
-				return Color.FromArgb( 255, 255, 228, 225 );
+
+		static public Color MistyRose
+		{	
+			get {
+				return Color.FromArgbNamed (255, 255, 228, 225, "MistyRose");
 			}
 		}
-		static public Color Moccasin 
-		{
-			get	{
-				return Color.FromArgb( 255, 255, 228, 181 );
+
+		static public Color Moccasin
+		{	
+			get {
+				return Color.FromArgbNamed (255, 255, 228, 181, "Moccasin");
 			}
 		}
-		static public Color NavajoWhite 
-		{
-			get	{
-				return Color.FromArgb( 255, 255, 222, 173 );
+
+		static public Color NavajoWhite
+		{	
+			get {
+				return Color.FromArgbNamed (255, 255, 222, 173, "NavajoWhite");
 			}
 		}
-		static public Color Navy 
-		{
-			get	{
-				return Color.FromArgb( 255, 0, 0, 128 );
+
+		static public Color Navy
+		{	
+			get {
+				return Color.FromArgbNamed (255, 0, 0, 128, "Navy");
 			}
 		}
-		static public Color OldLace 
-		{
-			get	{
-				return Color.FromArgb( 255, 253, 245, 230 );
+
+		static public Color OldLace
+		{	
+			get {
+				return Color.FromArgbNamed (255, 253, 245, 230, "OldLace");
 			}
 		}
-		static public Color Olive 
-		{
-			get	{
-				return Color.FromArgb( 255, 128, 128, 0 );
+
+		static public Color Olive
+		{	
+			get {
+				return Color.FromArgbNamed (255, 128, 128, 0, "Olive");
 			}
 		}
-		static public Color OliveDrab 
-		{
-			get	{
-				return Color.FromArgb( 255, 107, 142, 35 );
+
+		static public Color OliveDrab
+		{	
+			get {
+				return Color.FromArgbNamed (255, 107, 142, 35, "OliveDrab");
 			}
 		}
-		static public Color Orange 
-		{
-			get	{
-				return Color.FromArgb( 255, 255, 165, 0 );
+
+		static public Color Orange
+		{	
+			get {
+				return Color.FromArgbNamed (255, 255, 165, 0, "Orange");
 			}
 		}
-		static public Color OrangeRed 
-		{
-			get	{
-				return Color.FromArgb( 255, 255, 69, 0 );
+
+		static public Color OrangeRed
+		{	
+			get {
+				return Color.FromArgbNamed (255, 255, 69, 0, "OrangeRed");
 			}
 		}
-		static public Color Orchid 
-		{
-			get	{
-				return Color.FromArgb( 255, 218, 112, 214 );
+
+		static public Color Orchid
+		{	
+			get {
+				return Color.FromArgbNamed (255, 218, 112, 214, "Orchid");
 			}
 		}
-		static public Color PaleGoldenrod 
-		{
-			get	{
-				return Color.FromArgb( 255, 238, 232, 170 );
+
+		static public Color PaleGoldenrod
+		{	
+			get {
+				return Color.FromArgbNamed (255, 238, 232, 170, "PaleGoldenrod");
 			}
 		}
-		static public Color PaleGreen 
-		{
-			get	{
-				return Color.FromArgb( 255, 152, 251, 152 );
+
+		static public Color PaleGreen
+		{	
+			get {
+				return Color.FromArgbNamed (255, 152, 251, 152, "PaleGreen");
 			}
 		}
-		static public Color PaleTurquoise 
-		{
-			get	{
-				return Color.FromArgb( 255, 175, 238, 238 );
+
+		static public Color PaleTurquoise
+		{	
+			get {
+				return Color.FromArgbNamed (255, 175, 238, 238, "PaleTurquoise");
 			}
 		}
-		static public Color PaleVioletRed 
-		{
-			get	{
-				return Color.FromArgb( 255, 219, 112, 147 );
+
+		static public Color PaleVioletRed
+		{	
+			get {
+				return Color.FromArgbNamed (255, 219, 112, 147, "PaleVioletRed");
 			}
 		}
-		static public Color PapayaWhip 
-		{
-			get	{
-				return Color.FromArgb( 255, 255, 239, 213 );
+
+		static public Color PapayaWhip
+		{	
+			get {
+				return Color.FromArgbNamed (255, 255, 239, 213, "PapayaWhip");
 			}
 		}
-		static public Color PeachPuff 
-		{
-			get	{
-				return Color.FromArgb( 255, 255, 218, 185 );
+
+		static public Color PeachPuff
+		{	
+			get {
+				return Color.FromArgbNamed (255, 255, 218, 185, "PeachPuff");
 			}
 		}
-		static public Color Peru 
-		{
-			get	{
-				return Color.FromArgb( 255, 205, 133, 63 );
+
+		static public Color Peru
+		{	
+			get {
+				return Color.FromArgbNamed (255, 205, 133, 63, "Peru");
 			}
 		}
-		static public Color Pink 
-		{
-			get	{
-				return Color.FromArgb( 255, 255, 192, 203 );
+
+		static public Color Pink
+		{	
+			get {
+				return Color.FromArgbNamed (255, 255, 192, 203, "Pink");
 			}
 		}
-		static public Color Plum 
-		{
-			get	{
-				return Color.FromArgb( 255, 221, 160, 221 );
+
+		static public Color Plum
+		{	
+			get {
+				return Color.FromArgbNamed (255, 221, 160, 221, "Plum");
 			}
 		}
-		static public Color PowderBlue 
-		{
-			get	{
-				return Color.FromArgb( 255, 176, 224, 230 );
+
+		static public Color PowderBlue
+		{	
+			get {
+				return Color.FromArgbNamed (255, 176, 224, 230, "PowderBlue");
 			}
 		}
-		static public Color Purple 
-		{
-			get	{
-				return Color.FromArgb( 255, 128, 0, 128 );
+
+		static public Color Purple
+		{	
+			get {
+				return Color.FromArgbNamed (255, 128, 0, 128, "Purple");
 			}
 		}
-		static public Color Red 
-		{
-			get	{
-				return Color.FromArgb( 255, 255, 0, 0 );
+
+		static public Color Red
+		{	
+			get {
+				return Color.FromArgbNamed (255, 255, 0, 0, "Red");
 			}
 		}
-		static public Color RosyBrown 
-		{
-			get	{
-				return Color.FromArgb( 255, 188, 143, 143 );
+
+		static public Color RosyBrown
+		{	
+			get {
+				return Color.FromArgbNamed (255, 188, 143, 143, "RosyBrown");
 			}
 		}
-		static public Color RoyalBlue 
-		{
-			get	{
-				return Color.FromArgb( 255, 65, 105, 225 );
+
+		static public Color RoyalBlue
+		{	
+			get {
+				return Color.FromArgbNamed (255, 65, 105, 225, "RoyalBlue");
 			}
 		}
-		static public Color SaddleBrown 
-		{
-			get	{
-				return Color.FromArgb( 255, 139, 69, 19 );
+
+		static public Color SaddleBrown
+		{	
+			get {
+				return Color.FromArgbNamed (255, 139, 69, 19, "SaddleBrown");
 			}
 		}
-		static public Color Salmon 
-		{
-			get	{
-				return Color.FromArgb( 255, 250, 128, 114 );
+
+		static public Color Salmon
+		{	
+			get {
+				return Color.FromArgbNamed (255, 250, 128, 114, "Salmon");
 			}
 		}
-		static public Color SandyBrown 
-		{
-			get	{
-				return Color.FromArgb( 255, 244, 164, 96 );
+
+		static public Color SandyBrown
+		{	
+			get {
+				return Color.FromArgbNamed (255, 244, 164, 96, "SandyBrown");
 			}
 		}
-		static public Color SeaGreen 
-		{
-			get	{
-				return Color.FromArgb( 255, 46, 139, 87 );
+
+		static public Color SeaGreen
+		{	
+			get {
+				return Color.FromArgbNamed (255, 46, 139, 87, "SeaGreen");
 			}
 		}
-		static public Color SeaShell 
-		{
-			get	{
-				return Color.FromArgb( 255, 255, 245, 238 );
+
+		static public Color SeaShell
+		{	
+			get {
+				return Color.FromArgbNamed (255, 255, 245, 238, "SeaShell");
 			}
 		}
-		static public Color Sienna 
-		{
-			get	{
-				return Color.FromArgb( 255, 160, 82, 45 );
+
+		static public Color Sienna
+		{	
+			get {
+				return Color.FromArgbNamed (255, 160, 82, 45, "Sienna");
 			}
 		}
-		static public Color Silver 
-		{
-			get	{
-				return Color.FromArgb( 255, 192, 192, 192 );
+
+		static public Color Silver
+		{	
+			get {
+				return Color.FromArgbNamed (255, 192, 192, 192, "Silver");
 			}
 		}
-		static public Color SkyBlue 
-		{
-			get	{
-				return Color.FromArgb( 255, 135, 206, 235 );
+
+		static public Color SkyBlue
+		{	
+			get {
+				return Color.FromArgbNamed (255, 135, 206, 235, "SkyBlue");
 			}
 		}
-		static public Color SlateBlue 
-		{
-			get	{
-				return Color.FromArgb( 255, 106, 90, 205 );
+
+		static public Color SlateBlue
+		{	
+			get {
+				return Color.FromArgbNamed (255, 106, 90, 205, "SlateBlue");
 			}
 		}
-		static public Color SlateGray 
-		{
-			get	{
-				return Color.FromArgb( 255, 112, 128, 144 );
+
+		static public Color SlateGray
+		{	
+			get {
+				return Color.FromArgbNamed (255, 112, 128, 144, "SlateGray");
 			}
 		}
-		static public Color Snow 
-		{
-			get	{
-				return Color.FromArgb( 255, 255, 250, 250 );
+
+		static public Color Snow
+		{	
+			get {
+				return Color.FromArgbNamed (255, 255, 250, 250, "Snow");
 			}
 		}
-		static public Color SpringGreen 
-		{
-			get	{
-				return Color.FromArgb( 255, 0, 255, 127 );
+
+		static public Color SpringGreen
+		{	
+			get {
+				return Color.FromArgbNamed (255, 0, 255, 127, "SpringGreen");
 			}
 		}
-		static public Color SteelBlue 
-		{
-			get	{
-				return Color.FromArgb( 255, 70, 130, 180 );
+
+		static public Color SteelBlue
+		{	
+			get {
+				return Color.FromArgbNamed (255, 70, 130, 180, "SteelBlue");
 			}
 		}
-		static public Color Tan 
-		{
-			get	{
-				return Color.FromArgb( 255, 210, 180, 140 );
+
+		static public Color Tan
+		{	
+			get {
+				return Color.FromArgbNamed (255, 210, 180, 140, "Tan");
 			}
 		}
-		static public Color Teal 
-		{
-			get	{
-				return Color.FromArgb( 255, 0, 128, 128 );
+
+		static public Color Teal
+		{	
+			get {
+				return Color.FromArgbNamed (255, 0, 128, 128, "Teal");
 			}
 		}
-		static public Color Thistle 
-		{
-			get	{
-				return Color.FromArgb( 255, 216, 191, 216 );
+
+		static public Color Thistle
+		{	
+			get {
+				return Color.FromArgbNamed (255, 216, 191, 216, "Thistle");
 			}
 		}
-		static public Color Tomato 
-		{
-			get	{
-				return Color.FromArgb( 255, 255, 99, 71 );
+
+		static public Color Tomato
+		{	
+			get {
+				return Color.FromArgbNamed (255, 255, 99, 71, "Tomato");
 			}
 		}
-		static public Color Turquoise 
-		{
-			get	{
-				return Color.FromArgb( 255, 64, 224, 208 );
+
+		static public Color Turquoise
+		{	
+			get {
+				return Color.FromArgbNamed (255, 64, 224, 208, "Turquoise");
 			}
 		}
-		static public Color Violet 
-		{
-			get	{
-				return Color.FromArgb( 255, 238, 130, 238 );
+
+		static public Color Violet
+		{	
+			get {
+				return Color.FromArgbNamed (255, 238, 130, 238, "Violet");
 			}
 		}
-		static public Color Wheat 
-		{
-			get	{
-				return Color.FromArgb( 255, 245, 222, 179 );
+
+		static public Color Wheat
+		{	
+			get {
+				return Color.FromArgbNamed (255, 245, 222, 179, "Wheat");
 			}
 		}
-		static public Color White 
-		{
-			get	{
-				return Color.FromArgb( 255, 255, 255, 255 );
+
+		static public Color White
+		{	
+			get {
+				return Color.FromArgbNamed (255, 255, 255, 255, "White");
 			}
 		}
-		static public Color WhiteSmoke 
-		{
-			get	{
-				return Color.FromArgb( 255, 245, 245, 245 );
+
+		static public Color WhiteSmoke
+		{	
+			get {
+				return Color.FromArgbNamed (255, 245, 245, 245, "WhiteSmoke");
 			}
 		}
-		static public Color Yellow 
-		{
-			get	{
-				return Color.FromArgb( 255, 255, 255, 0 );
+
+		static public Color Yellow
+		{	
+			get {
+				return Color.FromArgbNamed (255, 255, 255, 0, "Yellow");
 			}
 		}
-		static public Color YellowGreen 
-		{
-			get	{
-				return Color.FromArgb( 255, 154, 205, 50 );
+
+		static public Color YellowGreen
+		{	
+			get {
+				return Color.FromArgbNamed (255, 154, 205, 50, "YellowGreen");
 			}
 		}
 	}

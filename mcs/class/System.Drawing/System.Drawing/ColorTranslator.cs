@@ -39,7 +39,7 @@ namespace System.Drawing {
 		/// <param name="OLEFromColor"></param>
 		/// <returns></returns>
 		public static Color FromOle(int OLEFromColor){
-			int newcolor;
+			//int newcolor;
 			//TODO: swap RB bytes i.e. AARRGGBB to AABBGGRR
 			//return Color.FromArgb(newcolor);
 			return Color.Empty;
@@ -51,24 +51,26 @@ namespace System.Drawing {
 		/// <param name="Win32FromColor"></param>
 		/// <returns></returns>
 		public static Color FromWin32(int Win32FromColor){
-			int newcolor;
+			//int newcolor;
 			//TODO: swap RB bytes i.e. AARRGGBB to AABBGGRR
 			//return Color.FromArgb(newcolor);
 			return Color.Empty;
 		}
 
-		// To converisons
-		public static string ToHtml(Color HtmlToColor){
-			//TODO: html string for unknown color is "#rrgggbb" in hex format.
-			//TODO: first pass use same for known color.
-			//TODO: second pass return name string for known colors.
-			string returnstring;
-			if(HtmlToColor.IsKnownColor){
-			}
-			else{
-			}
-			//return Color.FromKnownColor(HtmlToColor);
-			return String.Empty;
+		// To conversions
+		public static string ToHtml (Color c)
+		{
+			if (c.IsEmpty)
+				return "";
+
+			string result;
+
+			if (c.IsNamedColor)
+				result = c.ToString ();
+			else
+				result = String.Format ("#{0:X2}{1:X2}{2:X2}", c.R, c.G, c.B);
+
+			return result;
 		}
 		/// <summary>
 		/// converts from BGR to RGB
