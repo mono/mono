@@ -1,3 +1,8 @@
+2003-03-07  Martin Baulig  <martin@ximian.com>
+
+	* marshal.c (mono_marshal_free_array): That "TESTFREE %p" was
+	getting really annoying ....
+
 2003-03-07  Zoltan Varga  <vargaz@freemail.hu>
 
 	* reflection.c (fixup_method): added support for array methods.
