@@ -69,6 +69,7 @@ namespace Mono.Xml
 			attributeValues = new Hashtable ();
 			attributeLocalNames = new Hashtable ();
 			attributeNamespaces = new Hashtable ();
+			attributePrefixes = new Hashtable ();
 			this.validatingReader = validatingReader;
 			valueBuilder = new StringBuilder ();
 			idList = new ArrayList ();
@@ -104,6 +105,7 @@ namespace Mono.Xml
 		Hashtable attributeValues;
 		Hashtable attributeLocalNames;
 		Hashtable attributeNamespaces;
+		Hashtable attributePrefixes;
 		StringBuilder valueBuilder;
 		ArrayList idList;
 		ArrayList missingIDReferences;
@@ -364,6 +366,7 @@ namespace Mono.Xml
 			attributeLocalNames.Clear ();
 			attributeValues.Clear ();
 			attributeNamespaces.Clear ();
+			attributePrefixes.Clear ();
 			isWhitespace = false;
 			isSignificantWhitespace = false;
 			isText = false;
@@ -679,6 +682,7 @@ namespace Mono.Xml
 				attributes.Add (attrName);
 				attributeLocalNames.Add (attrName, reader.LocalName);
 				attributeNamespaces.Add (attrName, reader.NamespaceURI);
+				attributePrefixes.Add (attrName, reader.Prefix);
 				XmlReader targetReader = reader;
 				string attrValue = null;
 				if (currentEntityHandling == EntityHandling.ExpandCharEntities)
@@ -869,7 +873,9 @@ namespace Mono.Xml
 							attributes.Add (def.Name);
 							int colonAt = def.Name.IndexOf (':');
 							attributeLocalNames.Add (def.Name, colonAt < 0 ? def.Name : def.Name.Substring (colonAt + 1));
-							attributeNamespaces.Add (def.Name, colonAt < 0 ? def.Name : def.Name.Substring (0, colonAt));
+							string prefix = colonAt < 0 ? String.Empty : def.Name.Substring (0, colonAt);
+							attributePrefixes.Add (def.Name, prefix);
+							attributeNamespaces.Add (def.Name, reader.LookupNamespace (prefix));
 							attributeValues.Add (def.Name, def.DefaultValue);
 							break;
 						}
@@ -1040,31 +1046,40 @@ namespace Mono.Xml
 
 		public override string LocalName {
 			get {
-				if (currentTextValue != null)
+				if (currentTextValue != null || consumedAttribute)
 					return String.Empty;
-				return IsDefault ?
-					consumedAttribute ? String.Empty : currentAttribute :
-					reader.LocalName;
+				else if (NodeType == XmlNodeType.Attribute)
+					return (string) attributeLocalNames [currentAttribute];
+				else if (IsDefault)
+					return String.Empty;
+				else
+					return reader.LocalName;
 			}
 		}
 
 		public override string Name {
 			get {
-				if (currentTextValue != null)
+				if (currentTextValue != null || consumedAttribute)
 					return String.Empty;
-				return IsDefault ?
-					consumedAttribute ? String.Empty : currentAttribute :
-					reader.Name;
+				else if (NodeType == XmlNodeType.Attribute)
+					return currentAttribute;
+				else if (IsDefault)
+					return String.Empty;
+				else
+					return reader.Name;
 			}
 		}
 
 		public override string NamespaceURI {
 			get {
-				if (currentTextValue != null)
+				if (currentTextValue != null || consumedAttribute)
 					return String.Empty;
-				return IsDefault ?
-					consumedAttribute ? String.Empty : String.Empty :
-					reader.NamespaceURI;
+				else if (NodeType == XmlNodeType.Attribute)
+					return (string) attributeNamespaces [currentAttribute];
+				else if (IsDefault)
+					return String.Empty;
+				else
+					return reader.NamespaceURI;
 			}
 		}
 
@@ -1095,11 +1110,14 @@ namespace Mono.Xml
 
 		public override string Prefix {
 			get {
-				if (currentTextValue != null)
+				if (currentTextValue != null || consumedAttribute)
 					return String.Empty;
-				if (currentAttribute != null && NodeType != XmlNodeType.Attribute)
+				else if (NodeType == XmlNodeType.Attribute)
+					return (string) attributePrefixes [currentAttribute];
+				else if (IsDefault)
 					return String.Empty;
-				return IsDefault ? String.Empty : reader.Prefix;
+				else
+					return reader.Prefix;
 			}
 		}
 		

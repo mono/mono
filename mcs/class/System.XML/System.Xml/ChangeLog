@@ -1,5 +1,11 @@
 2005-02-14  Atsushi Enomoto <atsushi@ximian.com>
 
+	* DTDValidatingReader.cs : Namespaces and prefixes are not properly
+	  handled (it incorrectly assumed DTD definitions and thus always 
+	  assumed empty namespace/prefixes).
+
+2005-02-14  Atsushi Enomoto <atsushi@ximian.com>
+
 	* DTDValidatingReader.cs : element name stack might be empty when the
 	  input XmlReader contains fragments. Patch by Andrew Skiba.
 
