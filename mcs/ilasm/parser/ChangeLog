@@ -1,5 +1,9 @@
 2003-03-06 Jackson Harper <jackson@latitudegeo.com>
 
+	* ILParser.jay: Implemented class inheritence
+
+2003-03-06 Jackson Harper <jackson@latitudegeo.com>
+
 	* ILParser.jay: Pass null Location when adding class, concat dottedName pieces
 
 2003-03-06 Jackson Harper <jackson@latitudegeo.com>

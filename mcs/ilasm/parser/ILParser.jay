@@ -444,13 +444,12 @@ nameSpaceHead           : D_NAMESPACE name1
 
 classHead               : D_CLASS type_attr id extendsClause implClause
 			{
-				/*
-				currentTypeAttrs = 0;
-				currentClass = new Class ($3 as string);
-				currentClass.Attrs = currentTypeAttrs;
-				*/
-				codegen.AddClass ((TypeAttr)$2, (string) $3, null);
-				// TODO: extends/implemets
+				if ($4 != null) {
+					codegen.AddClass ((TypeAttr) $2, (string) $3, $4 as Class, null);
+				} else {
+					codegen.AddClass ((TypeAttr)$2, (string) $3, null);
+				}
+				// TODO: extends/implements
 			}
 			;
 
@@ -507,7 +506,7 @@ classAttr               : /* EMPTY */
 			;
 
 extendsClause           : /* EMPTY */                                           
-			| K_EXTENDS className 
+			| K_EXTENDS type_ref 	{$$ = $2;}
 			;
 
 implClause              : /* EMPTY */
@@ -1238,7 +1237,7 @@ variantType             : /* EMPTY */
 			| K_CLSID 
 			;
 
-type                    : K_CLASS className  
+type                    : K_CLASS className 
 			| K_OBJECT  
 			| K_STRING  
 			| K_VALUE K_CLASS className  
