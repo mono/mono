@@ -1,3 +1,8 @@
+2002-04-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* statement.cs: report the error when the foreach does not apply to an
+	array nor a collection.
+
 2002-04-19  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs: Add implicit conversions to the operator ~.

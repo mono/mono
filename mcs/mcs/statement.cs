@@ -2889,8 +2889,10 @@ namespace Mono.CSharp {
 				ForeachHelperMethods hm;
 				
 				hm = ProbeCollectionType (ec, expr.Type);
-				if (hm == null)
+				if (hm == null){
+					error1579 (expr.Type);
 					return false;
+				}
 
 				ret_val = EmitCollectionForeach (ec, var_type, hm);
 			}
