@@ -76,4 +76,39 @@
 * PropertySort.cs
 * Added some more enums. All have correct values.
 
+ 2002-5-8 Dennis Hayes <dennish@raytek.com>
+* RichTextBoxFinds.cs
+* RichTextBoxScrollBars.cs
+* RichTextBoxSelectionAttribute.cs
+* RichTextBoxSelectionTypes.cs
+* RichTextBoxStreamType.cs
+* RichTextBoxWordPunctuations.cs
+* RightToLeft.cs
+* ScrollBars.cs
+* ScrollButton.cs
+* ScrollEventType.cs
+* SecurityIDType.cs
+* SelectionMode.cs
+* Shortcut.cs
+* SizeGripStyle.cs
+* SortOrder.cs
+* StatusBarPanelAutoSize.cs
+* StatusBarPanelBorderStyle.cs
+* StatusBarPanelStyle.cs
+* StructFormat.cs
+* TabAlignment.cs
+* TabAppearance.cs
+* TabDrawMode.cs
+* TabSizeMode.cs
+* TickStyle.cs
+* ToolBarAppearance.cs
+* ToolBarButtonStyle.cs
+* ToolBarTextAlign.cs
+* TreeViewAction.cs
+* UICues.cs
+* View.cs
+* Added enums.
+* All System.Windows.Forms enums complete with correct values.
+
+
 
