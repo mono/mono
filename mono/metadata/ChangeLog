@@ -1,3 +1,9 @@
+2005-01-12  Martin Baulig  <martin@ximian.com>
+
+	* class-internals.h (MonoGenericClass): Moved the `initialized'
+	flag to MonoDynamicGenericClass, removed `init_pending'.
+	(MonoGenericInst): Added `is_reference' flag.
+
 2005-01-12  Zoltan Varga  <vargaz@freemail.hu>
 
 	* reflection.c (mono_image_create_pefile): Only set the pe_offset
