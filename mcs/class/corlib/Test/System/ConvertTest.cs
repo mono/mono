@@ -2680,7 +2680,8 @@ namespace MonoTests.System
 			catch (Exception e) {
 				AssertEquals("#S15", typeof(ArgumentOutOfRangeException), e.GetType());
 			}
-		}		
+		}
+
 		public void TestToBase64String() {
 			byte[] byteArr = {33, 127, 255, 109, 170, 54};
 			string expectedStr = "IX//bao2";
@@ -2731,8 +2732,38 @@ namespace MonoTests.System
 		 *
 		 * However the test seems to run fine using mono in a cygwin environment
 		 */
-		public void TestFromBase64CharArray() {
 
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void FromBase64CharArray_Null () 
+		{
+			Convert.FromBase64CharArray (null, 1, 5);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void FromBase64CharArray_OutOfRangeStart () 
+		{
+			Convert.FromBase64CharArray (new char [4], -1, 4);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void FromBase64CharArray_OutOfRangeLength () 
+		{
+			Convert.FromBase64CharArray (new char [4], 2, 4);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void FromBase64CharArray_InvalidLength () 
+		{
+			Convert.FromBase64CharArray (new char [4], 0, 3);
+		}
+
+		[Test]
+		public void FromBase64CharArray ()
+		{
 			char[] charArr = {'M','o','n','o','m','o','n','o'};
 			byte[] expectedByteArr = {50, 137, 232, 154, 137, 232};
 			
@@ -2741,54 +2772,6 @@ namespace MonoTests.System
 			for (int i = 0; i < fromCharArr.Length; i++){
 				AssertEquals("#U0" + i, expectedByteArr[i], fromCharArr[i]);
 			}
-
-			try {
-				Convert.FromBase64CharArray(null, 0, charArr.Length);
-				Fail();
-			}
-			catch (Exception e) {
-				AssertEquals("#U10", typeof(ArgumentNullException), e.GetType());
-			}
-			
-			try {
-				Convert.FromBase64CharArray(charArr, -1, charArr.Length);
-				Fail();
-			}
-			catch (Exception e) {
-				AssertEquals("#U11", typeof(ArgumentOutOfRangeException), e.GetType());
-			}
-
-			try {
-				Convert.FromBase64CharArray(charArr, 0, -5);
-				Fail();
-			}
-			catch (Exception e) {
-				AssertEquals("#U12", typeof(ArgumentOutOfRangeException), e.GetType());
-			}
-
-			try {
-				Convert.FromBase64CharArray(charArr, 0, 3);
-				Fail();
-			}
-			catch (Exception e) {
-				AssertEquals("#U13", typeof(FormatException), e.GetType());
-			}
-
-			try {
-				Convert.FromBase64CharArray(charArr, 0, 9);
-				Fail();
-			}
-			catch (Exception e) {
-				AssertEquals("#U14", typeof(ArgumentOutOfRangeException), e.GetType());
-			}
-
-			try {
-				Convert.FromBase64CharArray(charArr, 0, 5);
-				Fail();
-			}
-			catch (Exception e) {
-				AssertEquals("#U15", typeof(FormatException), e.GetType());
-			}
 		}
 
 		/* Have experienced some problems with FromBase64String using mono. Something about 
@@ -2796,50 +2779,65 @@ namespace MonoTests.System
 		 *
 		 * However the test seems to run fine using mono in a cygwin environment
 		 */
-		public void TestFromBase64String() {
-			string str = "Monomono";
-			string err01 = "foo";
 
-			byte[] expectedByteArr = {50, 137, 232, 154, 137, 232};
-			byte[] fromStr = Convert.FromBase64String(str);	
-
-			for (int i = 0; i < fromStr.Length; i++){
-				AssertEquals("#V0" + i, expectedByteArr[i], fromStr[i]);
-			}
-
-			try {
-				Convert.FromBase64String(null);
-				Fail();
-			}
-			catch (Exception e) {
-				AssertEquals("#V10", typeof(ArgumentNullException), e.GetType());
-			}
-
-			try {
-				Convert.FromBase64String(err01);
-				Fail();
-			}
-			catch (Exception e) {
-				AssertEquals("#V11", typeof(FormatException), e.GetType());
-			}
-
-			try {
-				Convert.FromBase64String(tryStr);
-				Fail();
-			}
-			catch (Exception e) {
-				AssertEquals("#V12", typeof(FormatException), e.GetType());
-			}
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void FromBase64String_Null () 
+		{
+			Convert.FromBase64String (null);
 		}
 
 		[Test]
-		public void TestBase64WithNewLines () 
+		[ExpectedException (typeof (FormatException))]
+		public void FromBase64String_InvalidLength () 
 		{
-			byte[] data = new byte [15];
-			string s = Convert.ToBase64String (data);
-			string base64 = s + Environment.NewLine + s;
-			byte[] doubledata = Convert.FromBase64String (base64);
-			AssertEquals ("doubledata.Length", 30, doubledata.Length);
+			Convert.FromBase64String ("foo");
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void FromBase64String_InvalidLength2 () 
+		{
+			Convert.FromBase64String (tryStr);
+		}
+
+		private const string ignored = "\t\r\n ";
+		private const string base64data = "AAAAAAAAAAAAAAAAAAAA"; // 15 bytes 0x00
+
+		[Test]
+		public void FromBase64_IgnoreCharsBefore ()
+		{
+			string s = ignored + base64data;
+			byte[] data = Convert.FromBase64String (s);
+			AssertEquals ("String-IgnoreCharsBefore-Ignored", 15, data.Length);
+
+			char[] c = s.ToCharArray ();
+			data = Convert.FromBase64CharArray (c, 0, c.Length);
+			AssertEquals ("CharArray-IgnoreCharsBefore-Ignored", 15, data.Length);
+		}
+
+		[Test]
+		public void FromBase64_IgnoreCharsInside () 
+		{
+			string s = base64data + ignored + base64data;
+			byte[] data = Convert.FromBase64String (s);
+			AssertEquals ("String-IgnoreCharsInside-Ignored", 30, data.Length);
+
+			char[] c = s.ToCharArray ();
+			data = Convert.FromBase64CharArray (c, 0, c.Length);
+			AssertEquals ("CharArray-IgnoreCharsInside-Ignored", 30, data.Length);
+		}
+
+		[Test]
+		public void FromBase64_IgnoreCharsAfter () 
+		{
+			string s = base64data + ignored;
+			byte[] data = Convert.FromBase64String (s);
+			AssertEquals ("String-IgnoreCharsAfter-Ignored", 15, data.Length);
+
+			char[] c = s.ToCharArray ();
+			data = Convert.FromBase64CharArray (c, 0, c.Length);
+			AssertEquals ("CharArray-IgnoreCharsAfter-Ignored", 15, data.Length);
 		}
 
                 public void TestConvertFromNull() {

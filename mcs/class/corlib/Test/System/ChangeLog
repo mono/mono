@@ -1,3 +1,9 @@
+2004-03-10  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ConvertTest.cs: Added a new unit tests for FromBase64String and 
+	FromBase64CharArray to check for ignored characters (tab, lf, cr 
+	and spaces). Splitted existing tests into smaller tests.
+
 2004-02-29  Zoltan Varga  <vargaz@freemail.hu>
 
 	* StringTest.cs: Add regression test for bug #54988.
