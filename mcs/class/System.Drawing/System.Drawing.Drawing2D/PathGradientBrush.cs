@@ -76,7 +76,8 @@ namespace System.Drawing.Drawing2D
 //			rectangle = (RectangleF) Marshal.PtrToStructure (rect, typeof (RectangleF));
 		}
 
-		// properties
+		// Properties
+
 		public Blend Blend {
 			get {
 				return blend;
@@ -182,7 +183,80 @@ namespace System.Drawing.Drawing2D
 			}
 		}
 
-		//methods
+		// Methods
+
+		public void MultiplyTransform (Matrix matrix)
+		{
+			MultiplyTransform (matrix, MatrixOrder.Prepend);
+		}
+
+		public void MultiplyTransform (Matrix matrix, MatrixOrder order)
+		{
+			Status status = GDIPlus.GdipMultiplyPathGradientTransform (nativeObject, matrix.nativeMatrix, order);
+			GDIPlus.CheckStatus (status);
+		}
+
+		public void ResetTransform ()
+		{
+			Status status = GDIPlus.GdipResetPathGradientTransform (nativeObject);
+			GDIPlus.CheckStatus (status);
+		}
+
+		public void RotateTransform (float angle)
+		{
+			RotateTransform (angle, MatrixOrder.Prepend);
+		}
+
+		public void RotateTransform (float angle, MatrixOrder order)
+		{
+			Status status = GDIPlus.GdipRotatePathGradientTransform (nativeObject, angle, order);
+			GDIPlus.CheckStatus (status);
+		}
+
+		public void ScaleTransform (float sx, float sy)
+		{
+			ScaleTransform (sx, sy, MatrixOrder.Prepend);
+		}
+
+		public void ScaleTransform (float sx, float sy, MatrixOrder order)
+		{
+			Status status = GDIPlus.GdipScalePathGradientTransform (nativeObject, sx, sy, order);
+			GDIPlus.CheckStatus (status);
+		}
+
+		public void SetBlendTriangularShape (float focus)
+		{
+			SetBlendTriangularShape (focus, 1.0F);
+		}
+
+		public void SetBlendTriangularShape (float focus, float scale)
+		{
+			Status status = GDIPlus.GdipSetPathGradientLinearBlend (nativeObject, focus, scale);
+			GDIPlus.CheckStatus (status);
+		}
+
+		public void SetSigmaBellShape (float focus)
+		{
+			SetSigmaBellShape (focus, 1.0F);
+		}
+
+		public void SetSigmaBellShape (float focus, float scale)
+		{
+			Status status = GDIPlus.GdipSetPathGradientSigmaBlend (nativeObject, focus, scale);
+			GDIPlus.CheckStatus (status);
+		}
+
+		public void TranslateTransform (float dx, float dy)
+		{
+			TranslateTransform (dx, dy, MatrixOrder.Prepend);
+		}
+
+		public void TranslateTransform (float dx, float dy, MatrixOrder order)
+		{
+			Status status = GDIPlus.GdipTranslatePathGradientTransform (nativeObject, dx, dy, order);
+			GDIPlus.CheckStatus (status);
+		}
+
 		public override object Clone ()
 		{
 			PathGradientBrush clone = new PathGradientBrush (nativeObject);
