@@ -36,6 +36,12 @@ namespace Mono.Security.Protocol.Tls
 {
 	internal abstract class CipherSuite
 	{
+		#region Static Fields
+
+		public static byte[] EmptyArray = new byte[0];
+
+		#endregion
+
 		#region Fields
 
 		private short					code;
@@ -220,7 +226,7 @@ namespace Mono.Security.Protocol.Tls
 			this.effectiveKeyBits		= effectiveKeyBits;
 			this.ivSize					= ivSize;
 			this.blockSize				= blockSize;
-			this.keyBlockSize			= this.keyMaterialSize*2 + this.HashSize*2 + this.ivSize*2;
+			this.keyBlockSize			= (this.keyMaterialSize + this.HashSize + this.ivSize) << 1;
 		}
 
 		#endregion

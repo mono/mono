@@ -189,8 +189,8 @@ namespace Mono.Security.Protocol.Tls
 				}
 				else
 				{
-					this.Context.ClientWriteIV = new byte[0];
-					this.Context.ServerWriteIV = new byte[0];
+					this.Context.ClientWriteIV = CipherSuite.EmptyArray;
+					this.Context.ServerWriteIV = CipherSuite.EmptyArray;
 				}
 			}
 			else

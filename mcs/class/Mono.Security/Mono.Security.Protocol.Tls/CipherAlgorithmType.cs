@@ -26,6 +26,7 @@ using System;
 
 namespace Mono.Security.Protocol.Tls
 {
+	[Serializable]
 	public enum CipherAlgorithmType
 	{
 		Des,

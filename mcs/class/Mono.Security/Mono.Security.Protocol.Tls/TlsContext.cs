@@ -88,6 +88,10 @@ namespace Mono.Security.Protocol.Tls
 		// Handshake hashes
 		private TlsStream			handshakeMessages;
 		
+
+		// Secure Random generator		
+		private RandomNumberGenerator random;
+
 		#endregion
 
 		#region Internal Constants
@@ -95,6 +99,7 @@ namespace Mono.Security.Protocol.Tls
 		internal const short MAX_FRAGMENT_SIZE	= 16384; // 2^14
 		internal const short TLS1_PROTOCOL_CODE = (0x03 << 8) | 0x01;
 		internal const short SSL3_PROTOCOL_CODE = (0x03 << 8) | 0x00;
+		internal const long  UNIX_BASE_TICKS		= 621355968000000000;
 
 		#endregion
 
@@ -291,6 +296,7 @@ namespace Mono.Security.Protocol.Tls
 			this.clientSettings		= new TlsClientSettings();
 			this.handshakeMessages	= new TlsStream();
 			this.sessionId			= null;
+			this.random				= RandomNumberGenerator.Create();
 
 			// Set client settings
 			this.ClientSettings.TargetHost		= targetHost;
@@ -303,18 +309,16 @@ namespace Mono.Security.Protocol.Tls
 		
 		public int GetUnixTime()
 		{
-			DateTime now		= DateTime.Now.ToUniversalTime();
-			TimeSpan unixTime	= now.Subtract(new DateTime(1970, 1, 1));
-
-			return (int)unixTime.TotalSeconds;
+			DateTime now = DateTime.UtcNow;
+																		     
+			return (int)(now.Ticks - UNIX_BASE_TICKS / TimeSpan.TicksPerSecond);
 		}
 
 		public byte[] GetSecureRandomBytes(int count)
 		{
 			byte[] secureBytes = new byte[count];
 
-			RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider();
-			rng.GetNonZeroBytes(secureBytes);
+			this.random.GetNonZeroBytes(secureBytes);
 			
 			return secureBytes;
 		}
@@ -348,7 +352,7 @@ namespace Mono.Security.Protocol.Tls
 
 		#endregion
 
-		#region EXCEPTION_METHODS
+		#region Exception Methods
 
 		internal TlsException CreateException(TlsAlertLevel alertLevel, TlsAlertDescription alertDesc)
 		{
