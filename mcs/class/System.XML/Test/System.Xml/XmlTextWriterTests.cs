@@ -1308,5 +1308,14 @@ namespace MonoTests.System.Xml
 			xtw.WriteString ("foo");
 			AssertEquals (WriteState.Content, xtw.WriteState);
 		}
+
+		[Test]
+		public void LookupOverridenPrefix ()
+		{
+			xtw.WriteStartElement ("out");
+			xtw.WriteAttributeString ("xmlns", "baz", "http://www.w3.org/2000/xmlns/", "xyz");
+			xtw.WriteStartElement ("baz", "foo", "abc");
+			AssertNull (xtw.LookupPrefix ("xyz"));
+		}
 	}
 }

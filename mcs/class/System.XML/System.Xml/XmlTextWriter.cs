@@ -410,6 +410,10 @@ openElements [openElementCount - 1]).IndentingOverriden;
 				throw new ArgumentException ("The Namespace cannot be empty.");
 
 			string prefix = namespaceManager.LookupPrefix (ns, false);
+			// XmlNamespaceManager might return such prefix that
+			// is *previously* mapped to ns passed above.
+			if (prefix == null || namespaceManager.LookupNamespace (prefix) != ns)
+				return null;
 
 			// XmlNamespaceManager has changed to return null when NSURI not found.
 			// (Contradiction to the ECMA documentation.)

@@ -1,3 +1,8 @@
+2005-03-02  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlTextWriter.cs : LookupPrefix() should not return those prefix
+	  that is overriden by another xmlns declaration.
+
 2005-02-26  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlEntity.cs : it was not returning SYSTEM ID when there is no

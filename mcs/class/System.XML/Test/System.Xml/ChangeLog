@@ -1,3 +1,8 @@
+2005-03-02  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlTextWriterTests.cs : Added test for LookupPrefix() for
+	  overriden prefix.
+
 2005-02-25  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlNodeTests.cs : added Clone() of readonly node returns a node
