@@ -17,7 +17,7 @@ namespace System.Xml
 	{
 		XmlNode parent;
 		ArrayList nodeList;
-		bool readOnly;
+		bool readOnly = false;
 
 		internal XmlNamedNodeMap (XmlNode parent)
 		{

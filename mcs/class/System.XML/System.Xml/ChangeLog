@@ -1,6 +1,8 @@
 2002-03-14  Duncan Mak  <duncan@ximian.com>
 
-	* XmlNodeChangedEventHandler.cs: Added to CVS.
+	* Validation.cs: Removed, replaced by ValidationType.cs.
+
+	* ValidationType.cs: Added.
 
 2002-03-13  Duncan Mak  <duncan@ximian.com>
 
