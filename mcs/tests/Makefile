@@ -26,7 +26,7 @@ USE_MCS_FLAGS :=
 # Martin Baulig will manually move them into TEST_SOURCES_common after merging the code into GMCS.
 # He may also move some to TEST_EXCLUDE_net_2_0 if some of the merges are inappropriate for GMCS.
 #
-NEW_TEST_SOURCES_common = 
+NEW_TEST_SOURCES_common = xml-033
 
 #
 # Please do _not_ add any tests here - all new tests should go into NEW_TEST_SOURCES_common
@@ -219,7 +219,8 @@ ilasm:
 TEST_SOURCES_XML = \
 	xml-001 xml-002 xml-003 xml-004 xml-005 xml-006 xml-007 xml-008 xml-009 xml-010 \
 	xml-011 xml-012 xml-013 xml-014 xml-015 xml-016 xml-017 xml-018 xml-019 xml-020 \
-	xml-021 xml-022 xml-023 xml-024 xml-025 xml-026 xml-028 xml-029 xml-030
+	xml-021 xml-022 xml-023 xml-024 xml-025 xml-026 xml-028 xml-029 xml-030 \
+	xml-031 xml-032
 
 # currently no formalization on 'cref' attribute was found, so there are some
 # differences between MS.NET and mono.

@@ -1,5 +1,10 @@
 2004-12-07  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* Makefile: was missing in the previous commit. Also, moved xml-033 to
+	  NEW_TEST_SOURCES_common (not merged in gmcs yet).
+
+2004-12-07  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Makefile, xml-033.cs, xml-033-ref.xml : test for implicit/explicit 
 	  operator doc comments. Makefile was missing xml-03*.cs
 
