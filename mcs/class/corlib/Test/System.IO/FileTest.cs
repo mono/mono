@@ -18,8 +18,26 @@ namespace MonoTests.System.IO
 {
 	public class FileTest : TestCase
 	{
+		string TempFolder = Path.Combine (Path.GetTempPath (), "MonoTests.System.IO.Tests");
+
+		public FileTest ()
+		{
+			if (Directory.Exists (TempFolder))
+				Directory.Delete (TempFolder, true);
+			Directory.CreateDirectory (TempFolder);
+		}			
+
+		~FileTest ()
+		{
+			if (Directory.Exists (TempFolder))
+				Directory.Delete (TempFolder, true);
+		}
+
 		protected override void SetUp ()
 		{
+			if (!Directory.Exists (TempFolder))				
+				Directory.CreateDirectory (TempFolder);
+		
                         Thread.CurrentThread.CurrentCulture = new CultureInfo ("EN-us");
 		}
 
@@ -36,13 +54,18 @@ namespace MonoTests.System.IO
 				Assert ("empty filename should not exist", !File.Exists (""));
 				i++;
 				Assert ("whitespace filename should not exist", !File.Exists ("  \t\t  \t \n\t\n \n"));
+				i++;				
+				string path = TempFolder + Path.DirectorySeparatorChar + "AFile.txt";
+				DeleteFile (path);
+				File.Create (path).Close ();
+				Assert ("File " + path + " should exists", File.Exists (path));
 				i++;
-				Assert ("File resources" + Path.DirectorySeparatorChar + "AFile.txt should exist", File.Exists ("resources" + Path.DirectorySeparatorChar + "AFile.txt"));
-				i++;
-				Assert ("File resources" + Path.DirectorySeparatorChar + "doesnotexist should not exist", !File.Exists ("resources" + Path.DirectorySeparatorChar + "doesnotexist"));
+				Assert ("File resources" + Path.DirectorySeparatorChar + "doesnotexist should not exist", !File.Exists (TempFolder + Path.DirectorySeparatorChar + "doesnotexist"));
 			} catch (Exception e) {
 				Fail ("Unexpected exception at i = " + i + ". e=" + e);
 			}
+			
+			
 		}
 
 		public void TestCreate ()
@@ -81,7 +104,7 @@ namespace MonoTests.System.IO
 
 			/* exception test: File.Create(directory_not_found) */
 			try {
-				stream = File.Create ("directory_does_not_exist" + Path.DirectorySeparatorChar + "foo");
+				stream = File.Create (TempFolder + Path.DirectorySeparatorChar + "directory_does_not_exist" + Path.DirectorySeparatorChar + "foo");
 				Fail ("File.Create(directory_does_not_exist) should throw DirectoryNotFoundException");
 			} catch (DirectoryNotFoundException) {
 				// do nothing, this is what we expect
@@ -92,8 +115,8 @@ namespace MonoTests.System.IO
 
 			/* positive test: create resources/foo */
 			try {
-				stream = File.Create ("resources" + Path.DirectorySeparatorChar + "foo");
-				Assert ("File should exist", File.Exists ("resources" + Path.DirectorySeparatorChar + "foo"));
+				stream = File.Create (TempFolder + Path.DirectorySeparatorChar + "foo");
+				Assert ("File should exist", File.Exists (TempFolder + Path.DirectorySeparatorChar + "foo"));
 				stream.Close ();
 			} catch (Exception e) {
 				Fail ("File.Create(resources/foo) unexpected exception caught: e=" + e.ToString());
@@ -101,8 +124,8 @@ namespace MonoTests.System.IO
 
 			/* positive test: repeat test above again to test for overwriting file */
 			try {
-				stream = File.Create ("resources" + Path.DirectorySeparatorChar + "foo");
-				Assert ("File should exist", File.Exists ("resources" + Path.DirectorySeparatorChar + "foo"));
+				stream = File.Create (TempFolder + Path.DirectorySeparatorChar + "foo");
+				Assert ("File should exist", File.Exists (TempFolder + Path.DirectorySeparatorChar + "foo"));
 				stream.Close ();
 			} catch (Exception e) {
 				Fail ("File.Create(resources/foo) unexpected exception caught: e=" + e.ToString());
@@ -186,17 +209,20 @@ namespace MonoTests.System.IO
 
 			/* positive test: copy resources/AFile.txt to resources/bar */
 			try {
-				File.Delete ("resources" + Path.DirectorySeparatorChar + "bar");
-				File.Copy ("resources" + Path.DirectorySeparatorChar + "AFile.txt", "resources" + Path.DirectorySeparatorChar + "bar");
-				Assert ("File AFile.txt should still exist", File.Exists ("resources" + Path.DirectorySeparatorChar + "AFile.txt"));
-				Assert ("File bar should exist after File.Copy", File.Exists ("resources" + Path.DirectorySeparatorChar + "bar"));
+				DeleteFile (TempFolder + Path.DirectorySeparatorChar + "bar");
+				DeleteFile (TempFolder + Path.DirectorySeparatorChar + "AFile.txt");
+
+				File.Create (TempFolder + Path.DirectorySeparatorChar + "AFile.txt").Close ();
+				File.Copy (TempFolder + Path.DirectorySeparatorChar + "AFile.txt", TempFolder + Path.DirectorySeparatorChar + "bar");
+				Assert ("File AFile.txt should still exist", File.Exists (TempFolder + Path.DirectorySeparatorChar + "AFile.txt"));
+				Assert ("File bar should exist after File.Copy", File.Exists (TempFolder + Path.DirectorySeparatorChar + "bar"));
 			} catch (Exception e) {
 				Fail ("#1 File.Copy('resources/AFile.txt', 'resources/bar') unexpected exception caught: e=" + e.ToString());
 			}
 
 			/* exception test: File.Copy(resources/AFile.txt, resources/bar) (default is overwrite == false) */
 			try {
-				File.Copy ("resources" + Path.DirectorySeparatorChar + "AFile.txt", "resources" + Path.DirectorySeparatorChar + "bar");
+				File.Copy (TempFolder + Path.DirectorySeparatorChar + "AFile.txt", TempFolder + Path.DirectorySeparatorChar + "bar");
 				Fail ("File.Copy('resources/AFile.txt', 'resources/bar') should throw IOException");
 			} catch (IOException) {
 				// do nothing, this is what we expect
@@ -207,79 +233,70 @@ namespace MonoTests.System.IO
 
 			/* positive test: copy resources/AFile.txt to resources/bar, overwrite */
 			try {
-				Assert ("File bar should exist before File.Copy", File.Exists ("resources" + Path.DirectorySeparatorChar + "bar"));
-				File.Copy ("resources" + Path.DirectorySeparatorChar + "AFile.txt", "resources" + Path.DirectorySeparatorChar + "bar", true);
-				Assert ("File AFile.txt should still exist", File.Exists ("resources" + Path.DirectorySeparatorChar + "AFile.txt"));
-				Assert ("File bar should exist after File.Copy", File.Exists ("resources" + Path.DirectorySeparatorChar + "bar"));
+				Assert ("File bar should exist before File.Copy", File.Exists (TempFolder + Path.DirectorySeparatorChar + "bar"));
+				File.Copy (TempFolder + Path.DirectorySeparatorChar + "AFile.txt", TempFolder + Path.DirectorySeparatorChar + "bar", true);
+				Assert ("File AFile.txt should still exist", File.Exists (TempFolder + Path.DirectorySeparatorChar + "AFile.txt"));
+				Assert ("File bar should exist after File.Copy", File.Exists (TempFolder + Path.DirectorySeparatorChar + "bar"));
 			} catch (Exception e) {
 				Fail ("File.Copy('resources/AFile.txt', 'resources/bar', true) unexpected exception caught: e=" + e.ToString());
 			}
 
 
 		}
-		
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void DeleteArgumentNullException ()
+		{
+			File.Delete (null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void DeleteArgumentException1 ()
+		{
+			File.Delete ("");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void DeleteArgumentException2 ()
+		{
+			File.Delete (" ");
+		}
+
+		[Test]
+		[ExpectedException (typeof (DirectoryNotFoundException))]
+		public void DeleteDirectoryNotFoundException ()
+		{
+			string path = TempFolder + Path.DirectorySeparatorChar + "directory_does_not_exist" + Path.DirectorySeparatorChar + "foo";
+			if (Directory.Exists (TempFolder + Path.DirectorySeparatorChar + "directory_does_not_exist"))
+				Directory.Delete (TempFolder + Path.DirectorySeparatorChar + "directory_does_not_exist", true);
+			File.Delete (path);			
+			DeleteFile (path);
+		}
+
+
 		public void TestDelete ()
 		{
+			string foopath = TempFolder + Path.DirectorySeparatorChar + "foo";
+			DeleteFile (foopath);
+			File.Create (foopath).Close ();
 
-			/* exception test: File.Delete(null) */
-			try {
-				File.Delete (null);
-				Fail ("File.Delete(null) should throw ArgumentNullException");
-			} catch (ArgumentNullException) {
-				// do nothing, this is what we expect
-			} catch (Exception e) {
-				Fail ("File.Delete(null) unexpected exception caught: e=" + e.ToString());
-			}
-
-			/* exception test: File.Delete("") */
-			try {
-				File.Delete ("");
-				Fail ("File.Delete('') should throw ArgumentException");
-			} catch (ArgumentException) {
-				// do nothing, this is what we expect
-			} catch (Exception e) {
-				Fail ("File.Delete('') unexpected exception caught: e=" + e.ToString());
-			}
-
-			/* exception test: File.Delete(" ") */
-			try {
-				File.Delete (" ");
-				Fail ("File.Delete(' ') should throw ArgumentException");
-			} catch (ArgumentException) {
-				// do nothing, this is what we expect
-			} catch (Exception e) {
-				Fail ("File.Delete(' ') unexpected exception caught: e=" + e.ToString());
-			}
-
-			/* exception test: File.Delete(directory_not_found) */
-			try {
-				File.Delete ("directory_does_not_exist" + Path.DirectorySeparatorChar + "foo");
-				Fail ("File.Delete(directory_does_not_exist) should throw DirectoryNotFoundException");
-			} catch (DirectoryNotFoundException) {
-				// do nothing, this is what we expect
-			} catch (Exception e) {
-				Fail ("File.Delete(directory_does_not_exist) unexpected exception caught: e=" + e.ToString());
-			}
-
-			if (!File.Exists ("resources" + Path.DirectorySeparatorChar + "foo")) {
-				FileStream f = File.Create("resources" + Path.DirectorySeparatorChar + "foo");
-				f.Close();
-			}
-
-                        Assert ("File resources" + Path.DirectorySeparatorChar + "foo should exist for TestDelete to succeed", File.Exists ("resources" + Path.DirectorySeparatorChar + "foo"));
                         try {
-                                File.Delete ("resources" + Path.DirectorySeparatorChar + "foo");
+                                File.Delete (foopath);
                         } catch (Exception e) {
-                                Fail ("Unable to delete resources" + Path.DirectorySeparatorChar + "foo: e=" + e.ToString());
+                                Fail ("Unable to delete " + foopath + " e=" + e.ToString());
                         }
-			Assert ("File resources" + Path.DirectorySeparatorChar + "foo should not exist after File.Delete", !File.Exists ("resources" + Path.DirectorySeparatorChar + "foo"));
+			Assert ("File " + foopath + " should not exist after File.Delete", !File.Exists (foopath));
+			DeleteFile (foopath);
 		}
 
 		[Test]
 		[ExpectedException(typeof (IOException))]
 		public void DeleteOpenStreamException ()
 		{
-			string path = "resources" + Path.DirectorySeparatorChar + "DeleteOpenStreamException";
+			string path = TempFolder + Path.DirectorySeparatorChar + "DeleteOpenStreamException";
 			DeleteFile (path);			
 			FileStream stream = new FileStream (path, FileMode.OpenOrCreate, FileAccess.ReadWrite);
 			File.Delete (path);
@@ -331,52 +348,56 @@ namespace MonoTests.System.IO
 		[ExpectedException(typeof (FileNotFoundException))]
 		public void MoveException7 ()
 		{
-                       	DeleteFile ("doesnotexist");
-                        File.Move ("doesnotexist", "b");
+                       	DeleteFile (TempFolder + Path.DirectorySeparatorChar + "doesnotexist");			
+                        File.Move (TempFolder + Path.DirectorySeparatorChar + "doesnotexist", "b");
 		}
 
 		[Test]
 		[ExpectedException(typeof (DirectoryNotFoundException))]
 		public void MoveException8 ()
 		{
-                        DeleteFile ("resources" + Path.DirectorySeparatorChar + "foo");
-                        File.Copy("resources" + Path.DirectorySeparatorChar + "AFile.txt", "resources" + Path.DirectorySeparatorChar + "foo", true);
-                        DeleteFile ("doesnotexist" + Path.DirectorySeparatorChar + "b");
-                        File.Move ("resources" + Path.DirectorySeparatorChar + "foo", "doesnotexist" + Path.DirectorySeparatorChar + "b");
+			string path = TempFolder + Path.DirectorySeparatorChar + "foo";
+                        DeleteFile (path);
+			File.Create (TempFolder + Path.DirectorySeparatorChar + "AFile.txt").Close ();
+                        File.Copy(TempFolder + Path.DirectorySeparatorChar + "AFile.txt", path, true);
+                        DeleteFile (TempFolder + Path.DirectorySeparatorChar + "doesnotexist" + Path.DirectorySeparatorChar + "b");
+                        File.Move (TempFolder + Path.DirectorySeparatorChar + "foo", TempFolder + Path.DirectorySeparatorChar + "doesnotexist" + Path.DirectorySeparatorChar + "b");
 		}
 
 		[Test]
 		[ExpectedException(typeof (IOException))]
 		public void MoveException9 ()
 		{
-                	File.Move ("resources" + Path.DirectorySeparatorChar + "foo", "resources");		
+                	File.Move (TempFolder + Path.DirectorySeparatorChar + "foo", TempFolder);		
 		}
 
 		public void TestMove ()
 		{
-			if (!File.Exists ("resources" + Path.DirectorySeparatorChar + "bar")) {
-				FileStream f = File.Create("resources" + Path.DirectorySeparatorChar + "bar");
+			if (!File.Exists (TempFolder + Path.DirectorySeparatorChar + "bar")) {
+				FileStream f = File.Create(TempFolder + Path.DirectorySeparatorChar + "bar");
 				f.Close();
 			}
 			
-			Assert ("File resources" + Path.DirectorySeparatorChar + "bar should exist", File.Exists ("resources" + Path.DirectorySeparatorChar + "bar"));
-			File.Move ("resources" + Path.DirectorySeparatorChar + "bar", "resources" + Path.DirectorySeparatorChar + "baz");
-			Assert ("File resources" + Path.DirectorySeparatorChar + "bar should not exist", !File.Exists ("resources" + Path.DirectorySeparatorChar + "bar"));
-			Assert ("File resources" + Path.DirectorySeparatorChar + "baz should exist", File.Exists ("resources" + Path.DirectorySeparatorChar + "baz"));
+			Assert ("File " + TempFolder + Path.DirectorySeparatorChar + "bar should exist", File.Exists (TempFolder + Path.DirectorySeparatorChar + "bar"));
+			File.Move (TempFolder + Path.DirectorySeparatorChar + "bar", TempFolder + Path.DirectorySeparatorChar + "baz");
+			Assert ("File " + TempFolder + Path.DirectorySeparatorChar + "bar should not exist", !File.Exists (TempFolder + Path.DirectorySeparatorChar + "bar"));
+			Assert ("File " + TempFolder + Path.DirectorySeparatorChar + "baz should exist", File.Exists (TempFolder + Path.DirectorySeparatorChar + "baz"));
 		}
 
 		public void TestOpen ()
 		{
                         try {
-                                FileStream stream = File.Open ("resources" + Path.DirectorySeparatorChar + "AFile.txt", FileMode.Open);
+				if (!File.Exists (TempFolder + Path.DirectorySeparatorChar + "AFile.txt"))
+					File.Create (TempFolder + Path.DirectorySeparatorChar + "AFile.txt");
+                                FileStream stream = File.Open (TempFolder + Path.DirectorySeparatorChar + "AFile.txt", FileMode.Open);
 				stream.Close ();
                         } catch (Exception e) {
-                                Fail ("Unable to open resources" + Path.DirectorySeparatorChar + "AFile.txt: e=" + e.ToString());
+                                Fail ("Unable to open " + TempFolder + Path.DirectorySeparatorChar + "AFile.txt: e=" + e.ToString());
                         }
 
                         /* Exception tests */
 			try {
-				FileStream stream = File.Open ("filedoesnotexist", FileMode.Open);
+				FileStream stream = File.Open (TempFolder + Path.DirectorySeparatorChar + "filedoesnotexist", FileMode.Open);
 				Fail ("File 'filedoesnotexist' should not exist");
 			} catch (FileNotFoundException) {
 				// do nothing, this is what we expect
@@ -388,20 +409,23 @@ namespace MonoTests.System.IO
                 [Test]
                 public void Open () 
                 {
-			FileStream stream = File.Open ("resources" + Path.DirectorySeparatorChar + "AFile.txt", FileMode.Open);
+			if (!File.Exists (TempFolder + Path.DirectorySeparatorChar + "AFile.txt"))
+				File.Create (TempFolder + Path.DirectorySeparatorChar + "AFile.txt").Close ();
+
+			FileStream stream = File.Open (TempFolder + Path.DirectorySeparatorChar + "AFile.txt", FileMode.Open);
                 	
                 	Assertion.AssertEquals ("test#01", true, stream.CanRead);
                 	Assertion.AssertEquals ("test#02", true, stream.CanSeek);
                 	Assertion.AssertEquals ("test#03", true, stream.CanWrite);
                 	stream.Close ();
                 	
-                	stream = File.Open ("resources" + Path.DirectorySeparatorChar + "AFile.txt", FileMode.Open, FileAccess.Write);
+                	stream = File.Open (TempFolder + Path.DirectorySeparatorChar + "AFile.txt", FileMode.Open, FileAccess.Write);
                 	Assertion.AssertEquals ("test#04", false, stream.CanRead);
                 	Assertion.AssertEquals ("test#05", true, stream.CanSeek);
                 	Assertion.AssertEquals ("test#06", true, stream.CanWrite);
                 	stream.Close ();
 		                	
-                	stream = File.Open ("resources" + Path.DirectorySeparatorChar + "AFile.txt", FileMode.Open, FileAccess.Read);
+                	stream = File.Open (TempFolder + Path.DirectorySeparatorChar + "AFile.txt", FileMode.Open, FileAccess.Read);
                 	Assertion.AssertEquals ("test#04", true, stream.CanRead);
                 	Assertion.AssertEquals ("test#05", true, stream.CanSeek);
                 	Assertion.AssertEquals ("test#06", false, stream.CanWrite);
@@ -413,7 +437,7 @@ namespace MonoTests.System.IO
                 public void OpenException1 ()
                 {
                 	// CreateNew + Read throws an exceptoin
-                	File.Open ("resources" + Path.DirectorySeparatorChar + "AFile.txt", FileMode.CreateNew, FileAccess.Read);
+                	File.Open (TempFolder + Path.DirectorySeparatorChar + "AFile.txt", FileMode.CreateNew, FileAccess.Read);
                 }
 
                 [Test]
@@ -421,13 +445,18 @@ namespace MonoTests.System.IO
                 public void OpenException2 ()
                 {
                 	// Append + Read throws an exceptoin
-                	File.Open ("resources" + Path.DirectorySeparatorChar + "AFile.txt", FileMode.Append, FileAccess.Read);
+			if (!File.Exists (TempFolder + Path.DirectorySeparatorChar + "AFile.txt"))
+				File.Create (TempFolder + Path.DirectorySeparatorChar + "AFile.txt");
+
+                	File.Open (TempFolder + Path.DirectorySeparatorChar + "AFile.txt", FileMode.Append, FileAccess.Read);
                 }
                 
                 [Test]
                 public void OpenRead ()
                 {
-			FileStream stream = File.OpenRead ("resources" + Path.DirectorySeparatorChar + "AFile.txt");
+			if (!File.Exists (TempFolder + Path.DirectorySeparatorChar + "AFile.txt"))
+				File.Create (TempFolder + Path.DirectorySeparatorChar + "AFile.txt");
+			FileStream stream = File.OpenRead (TempFolder + Path.DirectorySeparatorChar + "AFile.txt");
                 	Assertion.AssertEquals ("test#01", true, stream.CanRead);
                 	Assertion.AssertEquals ("test#02", true, stream.CanSeek);
                 	Assertion.AssertEquals ("test#03", false, stream.CanWrite);
@@ -437,7 +466,9 @@ namespace MonoTests.System.IO
                 [Test]
                 public void OpenWrite ()
                 {
-			FileStream stream = File.OpenWrite ("resources" + Path.DirectorySeparatorChar + "AFile.txt");
+			if (!File.Exists (TempFolder + Path.DirectorySeparatorChar + "AFile.txt"))
+				File.Create (TempFolder + Path.DirectorySeparatorChar + "AFile.txt");
+			FileStream stream = File.OpenWrite (TempFolder + Path.DirectorySeparatorChar + "AFile.txt");
                 	Assertion.AssertEquals ("test#01", false, stream.CanRead);
                 	Assertion.AssertEquals ("test#02", true, stream.CanSeek);
                 	Assertion.AssertEquals ("test#03", true, stream.CanWrite);
@@ -446,7 +477,7 @@ namespace MonoTests.System.IO
 
 		public void TestGetCreationTime ()
 		{
-                        string path = "resources" + Path.DirectorySeparatorChar + "baz";
+                        string path = TempFolder + Path.DirectorySeparatorChar + "baz";
                 	DeleteFile (path);
                 	
 			File.Create (path).Close();
@@ -461,7 +492,7 @@ namespace MonoTests.System.IO
                 public void TestGetCreationTimeException ()
                 {
                         // Test nonexistent files
-                        string path2 = "resources" + Path.DirectorySeparatorChar + "filedoesnotexist";
+                        string path2 = TempFolder + Path.DirectorySeparatorChar + "filedoesnotexist";
 			DeleteFile (path2);
                         // should throw an exception
                         File.GetCreationTime (path2);
@@ -472,7 +503,7 @@ namespace MonoTests.System.IO
                 [Test]
                 public void CreationTime ()
                 {
-                        string path = "resources" + Path.DirectorySeparatorChar + "creationTime";                	
+                        string path = TempFolder + Path.DirectorySeparatorChar + "creationTime";                	
                         if (File.Exists (path))
                         	File.Delete (path);
                         	
@@ -513,7 +544,7 @@ namespace MonoTests.System.IO
                 [Test]
                 public void LastAccessTime ()
                 {
-                        string path = "resources" + Path.DirectorySeparatorChar + "lastAccessTime";                	
+                        string path = TempFolder + Path.DirectorySeparatorChar + "lastAccessTime";                	
                         if (File.Exists (path))
                         	File.Delete (path);
                         	
@@ -554,7 +585,7 @@ namespace MonoTests.System.IO
                 [Test]
                 public void LastWriteTime ()
                 {
-                        string path = "resources" + Path.DirectorySeparatorChar + "lastWriteTime";                	
+                        string path = TempFolder + Path.DirectorySeparatorChar + "lastWriteTime";                	
                         if (File.Exists (path))
                         	File.Delete (path);
                         	
@@ -610,7 +641,7 @@ namespace MonoTests.System.IO
 		[ExpectedException(typeof(IOException))]
 		public void GetCreationTimeException3 ()
 		{
-                        string path = "resources" + Path.DirectorySeparatorChar + "GetCreationTimeException3";                	
+                        string path = TempFolder + Path.DirectorySeparatorChar + "GetCreationTimeException3";                	
 			DeleteFile (path);		
 			File.GetCreationTime (path);
 		}
@@ -647,7 +678,7 @@ namespace MonoTests.System.IO
 		[ExpectedException(typeof(IOException))]
 		public void GetCreationTimeUtcException3 ()
 		{
-                        string path = "resources" + Path.DirectorySeparatorChar + "GetCreationTimeUtcException3";                	
+                        string path = TempFolder + Path.DirectorySeparatorChar + "GetCreationTimeUtcException3";                	
 			DeleteFile (path);		
 			File.GetCreationTimeUtc (path);
 		}
@@ -684,7 +715,7 @@ namespace MonoTests.System.IO
 		[ExpectedException(typeof(IOException))]
 		public void GetLastAccessTimeException3 ()
 		{
-                        string path = "resources" + Path.DirectorySeparatorChar + "GetLastAccessTimeException3";                	
+                        string path = TempFolder + Path.DirectorySeparatorChar + "GetLastAccessTimeException3";                	
 			DeleteFile (path);		
 			File.GetLastAccessTime (path);
 		}
@@ -721,7 +752,7 @@ namespace MonoTests.System.IO
 		[ExpectedException(typeof(IOException))]
 		public void GetLastAccessTimeUtcException3 ()
 		{
-                        string path = "resources" + Path.DirectorySeparatorChar + "GetLastAccessTimeUtcException3";                	
+                        string path = TempFolder + Path.DirectorySeparatorChar + "GetLastAccessTimeUtcException3";                	
 			DeleteFile (path);			
 			File.GetLastAccessTimeUtc (path);
 		}
@@ -758,7 +789,7 @@ namespace MonoTests.System.IO
 		[ExpectedException(typeof(IOException))]
 		public void GetLastWriteTimeException3 ()
 		{
-                        string path = "resources" + Path.DirectorySeparatorChar + "GetLastAccessTimeUtcException3";                	
+                        string path = TempFolder + Path.DirectorySeparatorChar + "GetLastAccessTimeUtcException3";                	
 			DeleteFile (path);			
 			File.GetLastWriteTime (path);
 		}
@@ -795,7 +826,7 @@ namespace MonoTests.System.IO
 		[ExpectedException(typeof(IOException))]
 		public void GetLastWriteTimeUtcException3 ()
 		{
-                        string path = "resources" + Path.DirectorySeparatorChar + "GetLastWriteTimeUtcException3";
+                        string path = TempFolder + Path.DirectorySeparatorChar + "GetLastWriteTimeUtcException3";
 			DeleteFile (path);
 			File.GetLastAccessTimeUtc (path);
 		}
@@ -818,7 +849,7 @@ namespace MonoTests.System.IO
 		[ExpectedException(typeof(IOException))]
 		public void FileStreamCloseException ()
 		{
-			string path = "resources" + Path.DirectorySeparatorChar + "FileStreamCloseException";
+			string path = TempFolder + Path.DirectorySeparatorChar + "FileStreamCloseException";
 			DeleteFile (path);			
 			FileStream stream = File.Create (path);
 			File.Delete (path);
@@ -827,7 +858,7 @@ namespace MonoTests.System.IO
 		[Test]
 		public void FileStreamClose ()
 		{
-			string path = "resources" + Path.DirectorySeparatorChar + "FileStreamClose";
+			string path = TempFolder + Path.DirectorySeparatorChar + "FileStreamClose";
 			FileStream stream = File.Create (path);
 			stream.Close ();
 			File.Delete (path);
@@ -867,7 +898,7 @@ namespace MonoTests.System.IO
 		[ExpectedException(typeof (FileNotFoundException))]
 		public void SetCreationTimeFileNotFoundException1 ()
 		{
-			string path = "resources" + Path.DirectorySeparatorChar + "SetCreationTimeFileNotFoundException1";
+			string path = TempFolder + Path.DirectorySeparatorChar + "SetCreationTimeFileNotFoundException1";
 			DeleteFile (path);
 			
 			File.SetCreationTime (path, new DateTime (2000, 12, 12, 11, 59, 59));
@@ -877,7 +908,7 @@ namespace MonoTests.System.IO
 		[ExpectedException(typeof (ArgumentOutOfRangeException))]
 		public void SetCreationTimeArgumentOutOfRangeException1 ()
 		{
-			string path = "resources" + Path.DirectorySeparatorChar + "SetCreationTimeArgumentOutOfRangeException1";
+			string path = TempFolder + Path.DirectorySeparatorChar + "SetCreationTimeArgumentOutOfRangeException1";
 			DeleteFile (path);
 			File.Create (path).Close ();
 			File.SetCreationTime (path, new DateTime (1000, 12, 12, 11, 59, 59));
@@ -887,7 +918,7 @@ namespace MonoTests.System.IO
 		[ExpectedException(typeof (IOException))]
 		public void SetCreationTimeIOException1 ()
 		{
-			string path = "resources" + Path.DirectorySeparatorChar + "CreationTimeIOException1";
+			string path = TempFolder + Path.DirectorySeparatorChar + "CreationTimeIOException1";
 			DeleteFile (path);
 			File.Create (path);
 			File.SetCreationTime (path, new DateTime (1000, 12, 12, 11, 59, 59));
@@ -925,7 +956,7 @@ namespace MonoTests.System.IO
 		[ExpectedException(typeof (FileNotFoundException))]
 		public void SetCreationTimeUtcFileNotFoundException1 ()
 		{
-			string path = "resources" + Path.DirectorySeparatorChar + "SetCreationTimeUtcFileNotFoundException1";
+			string path = TempFolder + Path.DirectorySeparatorChar + "SetCreationTimeUtcFileNotFoundException1";
 			DeleteFile (path);
 			
 			File.SetCreationTimeUtc (path, new DateTime (2000, 12, 12, 11, 59, 59));
@@ -935,7 +966,7 @@ namespace MonoTests.System.IO
 		[ExpectedException(typeof (ArgumentOutOfRangeException))]
 		public void SetCreationTimeUtcArgumentOutOfRangeException1 ()
 		{
-			string path = "resources" + Path.DirectorySeparatorChar + "SetCreationTimeUtcArgumentOutOfRangeException1";
+			string path = TempFolder + Path.DirectorySeparatorChar + "SetCreationTimeUtcArgumentOutOfRangeException1";
 			DeleteFile (path);
 			File.Create (path).Close ();
 			File.SetCreationTimeUtc (path, new DateTime (1000, 12, 12, 11, 59, 59));
@@ -945,7 +976,7 @@ namespace MonoTests.System.IO
 		[ExpectedException(typeof (IOException))]
 		public void SetCreationTimeUtcIOException1 ()
 		{
-			string path = "resources" + Path.DirectorySeparatorChar + "SetCreationTimeUtcIOException1";
+			string path = TempFolder + Path.DirectorySeparatorChar + "SetCreationTimeUtcIOException1";
 			DeleteFile (path);
 			File.Create (path);
 			File.SetCreationTimeUtc (path, new DateTime (1000, 12, 12, 11, 59, 59));
@@ -985,7 +1016,7 @@ namespace MonoTests.System.IO
 		[ExpectedException(typeof (FileNotFoundException))]
 		public void SetLastAccessTimeFileNotFoundException1 ()
 		{
-			string path = "resources" + Path.DirectorySeparatorChar + "SetLastAccessTimeFileNotFoundException1";
+			string path = TempFolder + Path.DirectorySeparatorChar + "SetLastAccessTimeFileNotFoundException1";
 			DeleteFile (path);
 			
 			File.SetLastAccessTime (path, new DateTime (2000, 12, 12, 11, 59, 59));
@@ -995,7 +1026,7 @@ namespace MonoTests.System.IO
 		[ExpectedException(typeof (ArgumentOutOfRangeException))]
 		public void SetLastAccessTimeArgumentOutOfRangeException1 ()
 		{
-			string path = "resources" + Path.DirectorySeparatorChar + "SetLastTimeArgumentOutOfRangeException1";
+			string path = TempFolder + Path.DirectorySeparatorChar + "SetLastTimeArgumentOutOfRangeException1";
 			DeleteFile (path);
 			File.Create (path).Close ();
 			File.SetLastAccessTime (path, new DateTime (1000, 12, 12, 11, 59, 59));
@@ -1005,7 +1036,7 @@ namespace MonoTests.System.IO
 		[ExpectedException(typeof (IOException))]
 		public void SetLastAccessTimeIOException1 ()
 		{
-			string path = "resources" + Path.DirectorySeparatorChar + "LastAccessIOException1";
+			string path = TempFolder + Path.DirectorySeparatorChar + "LastAccessIOException1";
 			DeleteFile (path);
 			File.Create (path);
 			File.SetLastAccessTime (path, new DateTime (1000, 12, 12, 11, 59, 59));
@@ -1043,7 +1074,7 @@ namespace MonoTests.System.IO
 		[ExpectedException(typeof (FileNotFoundException))]
 		public void SetLastAccessTimeUtcFileNotFoundException1 ()
 		{
-			string path = "resources" + Path.DirectorySeparatorChar + "SetLastAccessTimeUtcFileNotFoundException1";
+			string path = TempFolder + Path.DirectorySeparatorChar + "SetLastAccessTimeUtcFileNotFoundException1";
 			DeleteFile (path);
 			
 			File.SetLastAccessTimeUtc (path, new DateTime (2000, 12, 12, 11, 59, 59));
@@ -1053,7 +1084,7 @@ namespace MonoTests.System.IO
 		[ExpectedException(typeof (ArgumentOutOfRangeException))]
 		public void SetLastAccessTimeUtcArgumentOutOfRangeException1 ()
 		{
-			string path = "resources" + Path.DirectorySeparatorChar + "SetLastAccessTimeUtcArgumentOutOfRangeException1";
+			string path = TempFolder + Path.DirectorySeparatorChar + "SetLastAccessTimeUtcArgumentOutOfRangeException1";
 			DeleteFile (path);
 			File.Create (path).Close ();
 			File.SetLastAccessTimeUtc (path, new DateTime (1000, 12, 12, 11, 59, 59));
@@ -1063,7 +1094,7 @@ namespace MonoTests.System.IO
 		[ExpectedException(typeof (IOException))]
 		public void SetLastAccessTimeUtcIOException1 ()
 		{
-			string path = "resources" + Path.DirectorySeparatorChar + "SetLastAccessTimeUtcIOException1";
+			string path = TempFolder + Path.DirectorySeparatorChar + "SetLastAccessTimeUtcIOException1";
 			DeleteFile (path);
 			File.Create (path);
 			File.SetLastAccessTimeUtc (path, new DateTime (1000, 12, 12, 11, 59, 59));
@@ -1103,7 +1134,7 @@ namespace MonoTests.System.IO
 		[ExpectedException(typeof (FileNotFoundException))]
 		public void SetLastWriteTimeFileNotFoundException1 ()
 		{
-			string path = "resources" + Path.DirectorySeparatorChar + "SetLastWriteTimeFileNotFoundException1";
+			string path = TempFolder + Path.DirectorySeparatorChar + "SetLastWriteTimeFileNotFoundException1";
 			DeleteFile (path);
 			
 			File.SetLastWriteTime (path, new DateTime (2000, 12, 12, 11, 59, 59));
@@ -1113,7 +1144,7 @@ namespace MonoTests.System.IO
 		[ExpectedException(typeof (ArgumentOutOfRangeException))]
 		public void SetLastWriteTimeArgumentOutOfRangeException1 ()
 		{
-			string path = "resources" + Path.DirectorySeparatorChar + "SetLastWriteTimeArgumentOutOfRangeException1";
+			string path = TempFolder + Path.DirectorySeparatorChar + "SetLastWriteTimeArgumentOutOfRangeException1";
 			DeleteFile (path);
 			File.Create (path).Close ();
 			File.SetLastWriteTime (path, new DateTime (1000, 12, 12, 11, 59, 59));
@@ -1123,7 +1154,7 @@ namespace MonoTests.System.IO
 		[ExpectedException(typeof (IOException))]
 		public void SetLastWriteTimeIOException1 ()
 		{
-			string path = "resources" + Path.DirectorySeparatorChar + "LastWriteTimeIOException1";
+			string path = TempFolder + Path.DirectorySeparatorChar + "LastWriteTimeIOException1";
 			DeleteFile (path);
 			File.Create (path);
 			File.SetLastWriteTime (path, new DateTime (1000, 12, 12, 11, 59, 59));
@@ -1161,7 +1192,7 @@ namespace MonoTests.System.IO
 		[ExpectedException(typeof (FileNotFoundException))]
 		public void SetLastWriteTimeUtcFileNotFoundException1 ()
 		{
-			string path = "resources" + Path.DirectorySeparatorChar + "SetLastWriteTimeUtcFileNotFoundException1";
+			string path = TempFolder + Path.DirectorySeparatorChar + "SetLastWriteTimeUtcFileNotFoundException1";
 			DeleteFile (path);
 			
 			File.SetLastAccessTimeUtc (path, new DateTime (2000, 12, 12, 11, 59, 59));
@@ -1171,7 +1202,7 @@ namespace MonoTests.System.IO
 		[ExpectedException(typeof (ArgumentOutOfRangeException))]
 		public void SetLastWriteTimeUtcArgumentOutOfRangeException1 ()
 		{
-			string path = "resources" + Path.DirectorySeparatorChar + "SetLastWriteTimeUtcArgumentOutOfRangeException1";
+			string path = TempFolder + Path.DirectorySeparatorChar + "SetLastWriteTimeUtcArgumentOutOfRangeException1";
 			DeleteFile (path);
 			File.Create (path).Close ();
 			File.SetLastWriteTimeUtc (path, new DateTime (1000, 12, 12, 11, 59, 59));
@@ -1181,7 +1212,7 @@ namespace MonoTests.System.IO
 		[ExpectedException(typeof (IOException))]
 		public void SetLastWriteTimeUtcIOException1 ()
 		{
-			string path = "resources" + Path.DirectorySeparatorChar + "SetLastWriteTimeUtcIOException1";
+			string path = TempFolder + Path.DirectorySeparatorChar + "SetLastWriteTimeUtcIOException1";
 			DeleteFile (path);
 			File.Create (path);
 			File.SetLastAccessTimeUtc (path, new DateTime (1000, 12, 12, 11, 59, 59));

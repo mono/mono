@@ -19,227 +19,370 @@ namespace MonoTests.System.IO
 {
         public class FileStreamTest : TestCase
         {
-		string bazFileName = Path.Combine ("resources", "baz");
-                public FileStreamTest() {}
-                
+		string TempFolder = Path.Combine (Path.GetTempPath (), "MonoTests.System.IO.Tests");
+
+                public FileStreamTest() 
+		{
+			if (Directory.Exists (TempFolder))
+				Directory.Delete (TempFolder, true);
+
+			Directory.CreateDirectory (TempFolder);
+		}
+
+		~FileStreamTest()
+		{
+			if (Directory.Exists (TempFolder))
+				Directory.Delete (TempFolder, true);
+		}
+
 		[SetUp]
                 protected override void SetUp ()
 		{
-			File.Delete (bazFileName);
+			if (!Directory.Exists (TempFolder))				
+				Directory.CreateDirectory (TempFolder);
                 }
 
 		[TearDown]
 		protected override void TearDown ()
 		{
-			File.Delete (bazFileName);
 		}
                 
                 public void TestCtr ()
                 {
-                	FileStream stream = new FileStream ("testfilestream.tmp.1", FileMode.Create);
-                	stream.Close ();
-                	File.Delete ("testfilestream.tmp.1");
-                	
+			string path = TempFolder + "/testfilestream.tmp.1";
+			DeleteFile (path);
+			FileStream stream = null;
+			try {
+				stream = new FileStream (path, FileMode.Create);
+			} finally {
+
+				if (stream != null)
+					stream.Close ();
+				DeleteFile (path);                	
+			}
                 }
-                
-                public void TestCtorExceptions () 
-                {
-                	FileStream stream;
-                	
-                	try {
-                		stream = new FileStream ("", FileMode.Create);
-                		Fail ();
-                	} catch (Exception e) {
-                		AssertEquals ("test#01", typeof (ArgumentException), e.GetType ());                		
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+                public void CtorArgumentException1 ()
+		{
+			FileStream stream;
+                	stream = new FileStream ("", FileMode.Create);
+			stream.Close ();
+		}			
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void CtorArgumentNullException ()
+		{
+			FileStream stream = new FileStream (null, FileMode.Create);
+			stream.Close ();
+		}
+
+		[Test]
+		[ExpectedException (typeof (FileNotFoundException))]
+		public void CtorFileNotFoundException1 ()
+		{
+			string path = TempFolder + "/thisfileshouldnotexists.test";
+			DeleteFile (path);
+			FileStream stream = null;
+                	try {                		
+                		stream = new FileStream (TempFolder + "/thisfileshouldnotexists.test", FileMode.Open);
+                	} finally {
+				if (stream != null)
+					stream.Close ();
+				DeleteFile (path);
                 	}
+		}			
+
+		[Test]
+		[ExpectedException (typeof (FileNotFoundException))]
+		public void CtorFileNotFoundException2 ()
+		{
+			string path = TempFolder + "/thisfileshouldNOTexists.test";
+			DeleteFile (path);
+			FileStream stream = null;
 
                 	try {
-                		stream = new FileStream (null, FileMode.Create);
-                		Fail ();
-                	} catch (Exception e) {
-                		AssertEquals ("test#02", typeof (ArgumentNullException), e.GetType ());                		
-                	}
-                	
-                	try {
-                		if (File.Exists ("thisfileshouldnotexists.test"))
-                			File.Delete ("thisfileshouldnotexists.test");
-                		
-                		stream = new FileStream ("thisfileshouldnotexists.test", FileMode.Open);
-                		Fail ();
-                	} catch (Exception e) {
-                		AssertEquals ("test#03", typeof (FileNotFoundException), e.GetType ());
-                	}
+                		stream = new FileStream (TempFolder + "/thisfileshouldNOTexists.test", FileMode.Truncate);
+                	} finally {
+				if (stream != null)
+					stream.Close ();
 
-                	try {
-                		if (File.Exists ("thisfileshouldNOTexists.test"))
-                			File.Delete ("thisfileshouldNOTexists.test");
-                		stream = new FileStream ("thisfileshouldNOTexists.test", FileMode.Truncate);
-                		Fail ();
-                	} catch (Exception e) {
-                		AssertEquals ("test#04", typeof (FileNotFoundException), e.GetType ());
+				DeleteFile (path);
                 	}
+		} 
 
+		[Test]
+		[ExpectedException (typeof (IOException))]
+		public void CtorIOException1 ()
+		{
+			string path = TempFolder + "/thisfileshouldexists.test";
+			FileStream stream = null;
+			DeleteFile (path);
                 	try {
-                		stream = new FileStream ("thisfileshouldexists.test", FileMode.CreateNew);
+                		stream = new FileStream (path, FileMode.CreateNew);
                 		stream.Close ();
                 		stream = null;
-                		stream = new FileStream ("thisfileshouldexists.test", FileMode.CreateNew);
-                		Fail ();
-                	} catch (Exception e) {
+                		stream = new FileStream (path, FileMode.CreateNew);
+                	} finally {
                 		
-                		if (File.Exists ("thisfileshouldexists.test")) // remove file
-                			File.Delete ("thisfileshouldexists.test");
-                		AssertEquals ("test#04", typeof (IOException), e.GetType ());
+				if (stream != null)
+					stream.Close ();
+				DeleteFile (path);
                 	} 
-                	
+
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void CtorArgumentOutOfRangeException1 ()
+		{
+			FileStream stream = null;
+			string path = TempFolder + Path.DirectorySeparatorChar + Path.GetTempFileName ();
+			DeleteFile (path);
                 	try {
-                		if (Directory.Exists ("thisDicrectoryShouldNotExists"))
-                			Directory.Delete ("thisDicrectoryShouldNotExists");                		
-                		stream = new FileStream ("thisDicrectoryShouldNotExists/eitherthisfile.test", FileMode.CreateNew);
-                		Fail ();
-                	} catch (Exception e) {
-                		AssertEquals ("test#05", typeof (DirectoryNotFoundException), e.GetType ());
-                	}
-                	
-                	try {
-                		stream = new FileStream ("test.test.test", FileMode.Append | FileMode.CreateNew);
-                		Fail ();
-                	} catch (Exception e) {
-                		AssertEquals ("test#08", typeof (ArgumentOutOfRangeException), e.GetType ());
-                	}
-                	
+                		stream = new FileStream (path, FileMode.Append | FileMode.CreateNew);
+                	} finally {
+				if (stream != null)
+					stream.Close ();
+				DeleteFile (path);
+                	}                	
+		}			
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void CtorArgumentOutOfRangeException2 ()
+		{
+			FileStream stream = null;
+			string path = TempFolder + Path.DirectorySeparatorChar + Path.GetTempFileName ();
+			DeleteFile (path);
                 	try {
                 		stream = new FileStream ("test.test.test", FileMode.Append | FileMode.Open);
-                		Fail ();
-                	} catch (Exception e) {
-                		AssertEquals ("test#09", typeof (ArgumentOutOfRangeException), e.GetType ());
+                	} finally {
+				if (stream != null)
+					stream.Close ();
+				DeleteFile (path);
                 	}                	
-                }
-                
-                public void TestCtorExceptions2 ()
-                {
-                	FileStream stream;
-                	
+		}
+
+                [Test]
+		[ExpectedException (typeof (DirectoryNotFoundException))]
+		public void CtorDirectoryNotFoundException ()
+		{
+			string path = TempFolder + "/thisDicrectoryShouldNotExists";
+			if (Directory.Exists (path))
+				Directory.Delete (path, true);
+
+			FileStream stream = null;				
                 	try {
-                		stream = new FileStream (".test.test.test.2", FileMode.CreateNew, FileAccess.Read, FileShare.None | FileShare.Inheritable);
-                		Fail ();
-                	} catch (Exception e) {
-                		AssertEquals ("test#01", typeof (ArgumentOutOfRangeException), e.GetType ());
-                	}
+                		stream = new FileStream (path + "/eitherthisfile.test", FileMode.CreateNew);
+                	} finally {
+
+				if (stream != null)
+					stream.Close ();
+
+				if (Directory.Exists (path))
+					Directory.Delete (path, true);
+                	}                		
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void CtorArgumentOutOfRangeException3 ()
+		{
+			string path = TempFolder + "/CtorArgumentOutOfRangeException1";
+			DeleteFile (path);
+			
+			FileStream stream = null;
+			try {
+				stream = new FileStream (path, FileMode.CreateNew, FileAccess.Read, FileShare.None | FileShare.Inheritable);
+			} finally {
+				if (stream != null)
+					stream.Close ();
+				DeleteFile (path);
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void CtorArgumentOutOfRangeException4 ()
+		{
+			string path = TempFolder + "/CtorArgumentOutOfRangeException2";
+			DeleteFile (path);
+
+			FileStream stream = null;
+			try {
+				stream = new FileStream (path, FileMode.Truncate, FileAccess.Read, FileShare.ReadWrite, -1);
+			} finally {
+				if (stream != null)
+					stream.Close ();
+				DeleteFile (path);
+			}
+		}			
+				
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void CtorArgumentException2 ()
+		{
+               		// FileMode.CreateNew && FileAccess.Read
+
+			string path = TempFolder + Path.DirectorySeparatorChar + Path.GetTempFileName ();
+                	FileStream stream = null;
+
+			DeleteFile (path);
 
                 	try {
                 		stream = new FileStream (".test.test.test.2", FileMode.CreateNew, FileAccess.Read, FileShare.None | FileShare.Write);
-                		Fail ();
-                	} catch (Exception e) {                		
-                		// FileMode.CreateNew && FileAccess.Read
-                		AssertEquals ("test#02", typeof (ArgumentException), e.GetType ());
+                	} finally {                		
+
+				if (stream != null)
+					stream.Close ();
+				DeleteFile (path);
                 	}
-                	
+		}
+
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void CtorArgumentOutOfRangeException5 ()
+		{
+			string path = TempFolder + Path.DirectorySeparatorChar + Path.GetTempFileName ();
+			DeleteFile (path);
+
+			FileStream stream = null;
                 	try {
-                		stream = new FileStream (".test.test.test.2", FileMode.CreateNew, FileAccess.Read, FileShare.Inheritable | FileShare.ReadWrite);
-                		Fail ();
-                	} catch (Exception e) {
-                		AssertEquals ("test#03", typeof (ArgumentOutOfRangeException), e.GetType ());
+                		stream = new FileStream (path, FileMode.CreateNew, FileAccess.Read, FileShare.Inheritable | FileShare.ReadWrite);
+                	} finally {
+				if (stream != null)
+					stream.Close ();
+				DeleteFile (path);
                 	}
+		}		
+
+		
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void CtorArgumentException3 ()
+		{
+			string path = TempFolder + Path.DirectorySeparatorChar + Path.GetTempFileName ();
+                	FileStream stream = null;
+
+			DeleteFile (path);
                 	
                 	try {
                 		stream = new FileStream (".test.test.test.2", FileMode.Truncate, FileAccess.Read);
-                		Fail ();
-                	} catch (Exception e) {
-                		// FileMode.Truncate && FileAccess.Read
-                		AssertEquals ("test#04", typeof (ArgumentException), e.GetType ());
+                	} finally {
+				if (stream != null)
+					stream.Close ();
+				
+				DeleteFile (path);
                 	}                	
-                	
+		}
+
+		[Test]
+		[ExpectedException (typeof (IOException))]
+		public void CtorIOException2 ()
+		{
+			FileStream stream = null;
                 	try {
                 		stream = new FileStream (new IntPtr (12), FileAccess.Read);
-                		Fail ();
-                	} catch (Exception e) {
-                		// Invalid handle
-                		AssertEquals ("test#05", typeof (IOException), e.GetType ());
+                	} finally {
+				if (stream != null)
+					stream.Close ();
                 	}
-                	
-                	try {
-                		stream = new FileStream (".test.test.test.2", FileMode.Truncate, FileAccess.Read, FileShare.ReadWrite, -1);
-                		Fail ();
-                	} catch (Exception e) {
-                		// FileMode.Truncate && FileAccess.Read
-                		AssertEquals ("test#06", typeof (ArgumentOutOfRangeException), e.GetType ());
-                	}                	
-                	
-                }
+		}
 
 		[Test]
 		[ExpectedException(typeof(IOException))]
 		public void CtorIOException ()
 		{			
-			string path = "resources/CTorIOException.Test";
-			if (File.Exists (path)) 
-				File.Delete (path);
+			string path = TempFolder + "/CTorIOException.Test";
+			FileStream stream = null;
+			FileStream stream2 = null;
+			DeleteFile (path);
+
+			try {
+				stream = new FileStream (path, FileMode.CreateNew);
 			
-			FileStream stream = new FileStream (path, FileMode.CreateNew);
-			
-			// used by an another process
-			FileStream stream2 = new FileStream (path, FileMode.OpenOrCreate);
+				// used by an another process
+				stream2 = new FileStream (path, FileMode.OpenOrCreate);
+			} finally {
+				if (stream != null)
+					stream.Close ();
+				if (stream2 != null)
+					stream2.Close ();
+				DeleteFile (path);
+			}
 		}
 		
 		[Test]
 		public void Flush ()
 		{
-			string path = "resources/FileStreamTest.Flush";
-			if (File.Exists (path))
-				File.Delete (path);
-			
-			FileStream stream = new FileStream (path, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.ReadWrite);
-			FileStream stream2 = new FileStream (path, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
+			string path = TempFolder + "/FileStreamTest.Flush";
+			FileStream stream = null;
+			FileStream stream2 = null;
 
-			stream.Write (new byte [] {1, 2, 3, 4, 5}, 0, 5);
+			DeleteFile (path);
+			
+			try {
+				stream = new FileStream (path, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.ReadWrite);
+				stream2 = new FileStream (path, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
+
+				stream.Write (new byte [] {1, 2, 3, 4, 5}, 0, 5);
 						
-			byte [] bytes = new byte [5];
-			stream2.Read (bytes, 0, 5);
-			
-			Assertion.AssertEquals ("test#01", 0, bytes [0]);
-			Assertion.AssertEquals ("test#02", 0, bytes [1]);
-			Assertion.AssertEquals ("test#03", 0, bytes [2]);
-			Assertion.AssertEquals ("test#04", 0, bytes [3]);
-			
-			stream.Flush ();
-			stream2.Read (bytes, 0, 5);			
-			Assertion.AssertEquals ("test#05", 1, bytes [0]);
-			Assertion.AssertEquals ("test#06", 2, bytes [1]);
-			Assertion.AssertEquals ("test#07", 3, bytes [2]);
-			Assertion.AssertEquals ("test#08", 4, bytes [3]);
-			stream.Close ();
-			stream2.Close ();
-			
-			if (File.Exists (path))
-				File.Delete (path);			
+				byte [] bytes = new byte [5];
+				stream2.Read (bytes, 0, 5);
+				
+				Assertion.AssertEquals ("test#01", 0, bytes [0]);
+				Assertion.AssertEquals ("test#02", 0, bytes [1]);
+				Assertion.AssertEquals ("test#03", 0, bytes [2]);
+				Assertion.AssertEquals ("test#04", 0, bytes [3]);
+				
+				stream.Flush ();
+				stream2.Read (bytes, 0, 5);			
+				Assertion.AssertEquals ("test#05", 1, bytes [0]);
+				Assertion.AssertEquals ("test#06", 2, bytes [1]);
+				Assertion.AssertEquals ("test#07", 3, bytes [2]);
+				Assertion.AssertEquals ("test#08", 4, bytes [3]);
+			} finally {
+				if (stream != null)
+					stream.Close ();
+				if (stream2 != null)
+					stream2.Close ();
+				
+				DeleteFile (path);
+			}
 		}
                 
                 public void TestDefaultProperties ()
                 {
-                	FileStream stream = new FileStream ("testfilestream.tmp.2", FileMode.Create);
+			string path = TempFolder + Path.DirectorySeparatorChar + "testfilestream.tmp.2";
+			DeleteFile (path);
+
+                	FileStream stream = new FileStream (path, FileMode.Create);
                 	
                 	AssertEquals ("test#01", true, stream.CanRead);
                 	AssertEquals ("test#02", true, stream.CanSeek);
                 	AssertEquals ("test#03", true, stream.CanWrite);
                 	AssertEquals ("test#04", false, stream.IsAsync);
-                	AssertEquals ("test#05", true, stream.Name.EndsWith ("testfilestream.tmp.2"));
+                	AssertEquals ("test#05", true, stream.Name.EndsWith (path));
                 	AssertEquals ("test#06", 0, stream.Position);
                 	AssertEquals ("test#07", "System.IO.FileStream", stream.ToString());                	
                 	stream.Close ();
-                	File.Delete ("testfilestream.tmp.2");
+                	DeleteFile (path);
 
-                	stream = new FileStream ("testfilestream.tmp.2", FileMode.OpenOrCreate, FileAccess.Read);
+                	stream = new FileStream (path, FileMode.OpenOrCreate, FileAccess.Read);
                 	AssertEquals ("test#08", true, stream.CanRead);
                 	AssertEquals ("test#09", true, stream.CanSeek);
                 	AssertEquals ("test#10", false, stream.CanWrite);
                 	AssertEquals ("test#11", false, stream.IsAsync);
-                	AssertEquals ("test#12", true, stream.Name.EndsWith ("testfilestream.tmp.2"));
+                	AssertEquals ("test#12", true, stream.Name.EndsWith (path));
                 	AssertEquals ("test#13", 0, stream.Position);
                 	AssertEquals ("test#14", "System.IO.FileStream", stream.ToString());                	
                 	stream.Close ();
                 	
-               		stream = new FileStream ("testfilestream.tmp.2", FileMode.Truncate, FileAccess.Write, FileShare.ReadWrite);
+               		stream = new FileStream (path, FileMode.Truncate, FileAccess.Write, FileShare.ReadWrite);
                 	AssertEquals ("test#15", false, stream.CanRead);
                 	AssertEquals ("test#16", true, stream.CanSeek);
                 	AssertEquals ("test#17", true, stream.CanWrite);
@@ -248,25 +391,24 @@ namespace MonoTests.System.IO
                 	AssertEquals ("test#20", 0, stream.Position);
                 	AssertEquals ("test#21", "System.IO.FileStream", stream.ToString());                	
                 	stream.Close ();
-                	File.Delete ("testfilestream.tmp.2");                	
-
+			DeleteFile (path);
                 }
                 
                 public void TestLock()
                 {
-                	if (File.Exists (".testFileStream.Test.1"))
-                		File.Delete (".testFileStream.Test.1");
-                	
-                	FileStream stream = new FileStream (".testFileStream.Test.1", FileMode.CreateNew, FileAccess.ReadWrite);
+			string path = TempFolder + Path.DirectorySeparatorChar + "TestLock";
+                	DeleteFile (path);
+
+                	FileStream stream = new FileStream (path, FileMode.CreateNew, FileAccess.ReadWrite);
                 	                	
 	               	stream.Write (new Byte [] {0,1,2,3,4,5,6,7,8,9,10}, 0, 10);                              	
                 	stream.Close ();
 
-                	stream = new FileStream (".testFileStream.Test.1", FileMode.Open, FileAccess.ReadWrite);
+                	stream = new FileStream (path, FileMode.Open, FileAccess.ReadWrite);
                 	
                 	stream.Lock (0, 5);
                 	
-                	FileStream stream2 = new FileStream (".testFileStream.Test.1", FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                	FileStream stream2 = new FileStream (path , FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
                 	
                 	byte [] bytes = new byte [5];
                 	try {                		
@@ -300,18 +442,15 @@ namespace MonoTests.System.IO
                 	stream.Close ();
                 	stream2.Close ();
                 	
-                	if (File.Exists (".testFileStream.Test.1"))
-                		File.Delete (".testFileStream.Test.1");
-                	                		
+                	DeleteFile (path);                		
                 }
 
                 [Test]
                 public void Seek ()
                 {
-                	string path = "resources/FST.Seek.Test";
-                	if (File.Exists (path))
-                		File.Delete (path);
-                	
+                	string path = TempFolder + "/FST.Seek.Test";
+                	DeleteFile (path);			
+
                 	FileStream stream = new FileStream (path, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.ReadWrite);
                 	FileStream stream2 = new FileStream (path, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
                 	
@@ -333,17 +472,16 @@ namespace MonoTests.System.IO
                 	                	
                 	stream.Close ();
                 	stream2.Close ();
-
-                	if (File.Exists (path))
-                		File.Delete (path);                	
+			
+			DeleteFile (path);
                 }
 
                 public void TestSeek ()
                 {
-                	if (File.Exists (".testFileStream.Test.2"))
-                		File.Delete (".testFileStream.Test.2");
-			
-			FileStream stream = new FileStream (".testFileStream.Test.2", FileMode.CreateNew, FileAccess.ReadWrite, FileShare.ReadWrite);
+			string path = TempFolder + Path.DirectorySeparatorChar + "TestSeek";
+			DeleteFile (path);
+
+			FileStream stream = new FileStream (path, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.ReadWrite);
                 	stream.Write (new byte[] {1, 2, 3, 4, 5, 6, 7, 8 , 9, 10}, 0, 10);
                 	
                 	stream.Seek (5, SeekOrigin.End);
@@ -373,17 +511,16 @@ namespace MonoTests.System.IO
 
 			stream.Flush ();
                 	stream.Close ();
-                	if (File.Exists (".testFileStream.Test.2"))
-                		File.Delete (".testFileStream.Test.2");
-                	
+
+			DeleteFile (path);
                 }
                 
                 public void TestClose ()
                 {
-                	if (File.Exists (".testFileStream.Test.3"))
-                		File.Delete (".testFileStream.Test.3");
+			string path = TempFolder + Path.DirectorySeparatorChar + "TestClose";
+			DeleteFile (path);
                 	
-                	FileStream stream = new FileStream (".testFileStream.Test.3", FileMode.CreateNew, FileAccess.ReadWrite);
+                	FileStream stream = new FileStream (path, FileMode.CreateNew, FileAccess.ReadWrite);
 
                 	stream.Write (new byte [] {1, 2, 3, 4}, 0, 4);
                 	stream.ReadByte ();                	
@@ -427,10 +564,9 @@ namespace MonoTests.System.IO
 			AssertEquals ("test#06", false, stream.CanRead);
                 	AssertEquals ("test#07", false, stream.CanSeek);
                 	AssertEquals ("test#08", false, stream.CanWrite);                	
-                	AssertEquals ("test#09", true, stream.Name.EndsWith (".testFileStream.Test.3"));
-                	
-                	if (File.Exists (".testFileStream.Test.3"))
-                		File.Delete (".testFileStream.Test.3");
+                	AssertEquals ("test#09", true, stream.Name.EndsWith (path));
+
+			DeleteFile (path);                	
                 }
 
 
@@ -443,16 +579,20 @@ namespace MonoTests.System.IO
 		[ExpectedException (typeof(NotSupportedException))]
 		public void TestWriteVerifyAccessMode ()
 		{
-			FileStream bazFileStream = null;
+			string path = TempFolder + Path.DirectorySeparatorChar + Path.GetTempFileName ();
+			DeleteFile (path);
+
+			FileStream stream = null;
 			byte[] buffer;
 
 			try {
 				buffer = Encoding.ASCII.GetBytes ("test");
-				bazFileStream = new FileStream (bazFileName, FileMode.OpenOrCreate, FileAccess.Read);
-				bazFileStream.Write (buffer, 0, buffer.Length);
+				stream = new FileStream (path, FileMode.OpenOrCreate, FileAccess.Read);
+				stream.Write (buffer, 0, buffer.Length);
 			} finally {
-				if (bazFileStream != null)
-					bazFileStream.Close();
+				if (stream != null)
+					stream.Close();
+				DeleteFile (path);
 			}
 		}
 
@@ -465,14 +605,18 @@ namespace MonoTests.System.IO
 		[ExpectedException (typeof (NotSupportedException))]
 		public void TestWriteByteVerifyAccessMode ()
 		{
-			FileStream bazFileStream = null;
+			string path = TempFolder + Path.DirectorySeparatorChar + Path.GetTempFileName ();
+			DeleteFile (path);
+
+			FileStream stream = null;
 
 			try {
-				bazFileStream = new FileStream (bazFileName, FileMode.OpenOrCreate, FileAccess.Read);
-				bazFileStream.WriteByte (Byte.MinValue);
+				stream = new FileStream (path, FileMode.OpenOrCreate, FileAccess.Read);
+				stream.WriteByte (Byte.MinValue);
 			} finally {
-				if (bazFileStream != null)
-					bazFileStream.Close ();
+				if (stream != null)
+					stream.Close ();
+				DeleteFile (path);
 			}
 		}
 
@@ -485,15 +629,18 @@ namespace MonoTests.System.IO
 		[ExpectedException (typeof (NotSupportedException))]
 		public void TestReadVerifyAccessMode ()
 		{
-			FileStream bazFileStream = null;
+			string path = TempFolder + Path.DirectorySeparatorChar + Path.GetTempFileName ();
+			DeleteFile (path);
+
+			FileStream stream = null;
 			byte[] buffer = new byte [100];
 
 			try {
-				bazFileStream = new FileStream (bazFileName, FileMode.OpenOrCreate, FileAccess.Write);
-				bazFileStream.Read (buffer, 0, buffer.Length);
+				stream = new FileStream (path, FileMode.OpenOrCreate, FileAccess.Write);
+				stream.Read (buffer, 0, buffer.Length);
 			} finally {
-				if (bazFileStream != null)
-					bazFileStream.Close ();
+				if (stream != null)
+					stream.Close ();
 			}
 		}
 
@@ -506,16 +653,28 @@ namespace MonoTests.System.IO
 		[ExpectedException (typeof (NotSupportedException))]
 		public void TestReadByteVerifyAccessMode ()
 		{
-			FileStream bazFileStream = null;
+			string path = TempFolder + Path.DirectorySeparatorChar + Path.GetTempFileName ();
+			DeleteFile (path);
+
+			FileStream stream = null;
 
 			try {
-				bazFileStream = new FileStream (bazFileName, FileMode.OpenOrCreate, FileAccess.Write);
-				int readByte = bazFileStream.ReadByte ();
+				stream = new FileStream (path, FileMode.OpenOrCreate, FileAccess.Write);
+				int readByte = stream.ReadByte ();
 			} finally {
-				if (bazFileStream != null)
-					bazFileStream.Close();
+				if (stream != null)
+					stream.Close();
+				DeleteFile (path);
 			}
 		}
+
+		private void DeleteFile (string path) 
+		{
+			if (File.Exists (path))
+				File.Delete (path);
+		}
+			
+			
         }
 }
 

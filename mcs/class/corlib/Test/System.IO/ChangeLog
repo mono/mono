@@ -1,3 +1,9 @@
+2003-05-13  Ville Palo <vi64pa@kolumbus.fi>
+
+	* FileStreamTest.cs:
+	* FileTest.cs: Clean up. Now use temp directory. also some nunit2 
+	changes
+	
 2003-05-98  Ville Palo <vi64pa@kolumbus.fi>
 
 	* FileSystemInfoTest.cs; new file
