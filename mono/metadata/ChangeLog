@@ -1,3 +1,9 @@
+
+Wed Jan 5 16:17:27 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* profiler-private.h, profiler.c, profiler.h, gc.c: sample statistical
+	profiler support.
+
 2005-01-05  Zoltan Varga  <vargaz@freemail.hu>
 
 	* domain.c object.c domain-internals.h: Revert part of r38077 since the
