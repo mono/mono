@@ -1,8 +1,9 @@
 //
 // Tests capturing of double nested variables
 //
-delegate void S ();
 using System;
+
+delegate void S ();
 
 class X {
 	static int Main ()

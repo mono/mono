@@ -1,3 +1,7 @@
+2005-03-16  Raja R Harinath  <rharinath@novell.com>
+
+	* a-capture6.cs, a-nested.cs: Fix compilation.
+
 2005-03-15  Marek Safar <marek.safar@seznam.cz>
 
 	* a-capture{2,3,4}.cs: Fixed tests.
