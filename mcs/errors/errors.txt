@@ -13,3 +13,9 @@ numbers to match the Microsoft numbers:
 -3      Constant type is not one of sbyte, byte, short, ushort, int,
 	uint, long, ulong, char, float, double, decimal, bool, string, enum
 	or null type. 
+
+-5      A search for a name on a Type returned matches that contain
+	methods and non-methods.  They have the same name, and I do
+	not know how this is possible to begin with.
+
+-6      Generic internal compiler error.
