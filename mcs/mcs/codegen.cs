@@ -477,7 +477,6 @@ namespace Mono.CSharp {
 						Console.WriteLine ("                     Block being compiled: [{0},{1}]",
 								   CurrentBlock.StartLocation, CurrentBlock.EndLocation);
 					}
-					
 					Console.WriteLine (e.GetType ().FullName + ": " + e.Message);
 					Console.WriteLine (Report.FriendlyStackTrace (e));
 					

@@ -423,6 +423,13 @@ namespace_member_declaration
 	| namespace_declaration {
 		current_namespace.DeclarationFound = true;
 	  }
+
+	| field_declaration {
+		Report.Error (116, lexer.Location, "A namespace can only contain types and namespace declarations");
+	  }
+	| method_declaration {
+		Report.Error (116, lexer.Location, "A namespace can only contain types and namespace declarations");
+	  }
 	;
 
 type_declaration
@@ -1603,20 +1610,25 @@ event_declaration
 	  {
 		Location loc = (Location) oob_stack.Pop ();
 
-		Pair pair = (Pair) $8;
-		Accessor add_accessor = null;
-		Accessor rem_accessor = null;
-
-		if (pair.First != null)
-			add_accessor = (Accessor) pair.First;
-		if (pair.Second != null)
-			rem_accessor = (Accessor) pair.Second;
-		
-		Event e = new Event ((Expression) $4, (string) $5, null, (int) $2, add_accessor, rem_accessor,
-				     (Attributes) $1, loc);
-		
-		CheckDef (current_container.AddEvent (e), e.Name, loc);
-		implicit_value_parameter_type = null;
+		if ($8 == null){
+			Report.Error (65, lexer.Location, "Event must have both add and remove accesors");
+			$$ = null;
+		} else {
+			Pair pair = (Pair) $8;
+			Accessor add_accessor = null;
+			Accessor rem_accessor = null;
+	
+			if (pair.First != null)
+				add_accessor = (Accessor) pair.First;
+			if (pair.Second != null)
+				rem_accessor = (Accessor) pair.Second;
+			
+			Event e = new Event ((Expression) $4, (string) $5, null, (int) $2, add_accessor, rem_accessor,
+					     (Attributes) $1, loc);
+			
+			CheckDef (current_container.AddEvent (e), e.Name, loc);
+			implicit_value_parameter_type = null;
+		}
 	  }
 	;
 
@@ -1629,6 +1641,8 @@ event_accessor_declarations
 	{
 		$$ = new Pair ($2, $1);
 	}	
+	| add_accessor_declaration  { $$ = null; } 
+	| remove_accessor_declaration { $$ = null; } 
 	;
 
 add_accessor_declaration

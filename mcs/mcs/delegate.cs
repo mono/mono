@@ -572,6 +572,9 @@ namespace Mono.CSharp {
 		
 	}
 
+	//
+	// A delegate-creation-expression
+	//
 	public class NewDelegate : Expression {
 
 		public ArrayList Arguments;

@@ -1,3 +1,10 @@
+2004-01-05  Miguel de Icaza  <miguel@ximian.com>
+
+	* cs-parser.jay: Add rules to improve error reporting if fields or
+	methods are declared at the namespace level (error 116)
+
+	* Add rules to catch event add/remove
+
 2004-01-04  David Sheldon <dave-mono@earth.li>
 
   * expression.cs: Added matching ")" to error message for 

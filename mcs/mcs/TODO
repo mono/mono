@@ -1,11 +1,12 @@
+Anonymous methods
+-----------------
+
+
 Iterators
 ---------
 
-	* Fix simple case (foreach)
 	* Study side effects with assign
 	* Study TemporaryStorage/LocalStorage -> Merge/rename
-
-	Big issues: try/finally in iterators.
 
 Instance idea
 -------------
@@ -103,6 +104,8 @@ Large project:
 Notes on memory allocation
 --------------------------
 
+	Outdated:
+
 	A run of the AllocationProfile shows that the compiler allocates roughly
 	30 megabytes of strings.  From those, 20 megabytes come from
 	LookupType.  
@@ -189,6 +192,8 @@ The use of DottedName
 
 	The problem is that we would still need to construct the name to pass to
 	GetType.
+
+	This has been now implemented, its called "QualifiedIdentifier"
 
 current_container/current_namespace and the DeclSpace
 -----------------------------------------------------
