@@ -1,3 +1,7 @@
+2004-04-28  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* KeyUsageExtension.cs: Added missing INSIDE_CORLIB to enum.
+
 2004-04-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AuthorityKeyIdentifierExtension.cs: FxCop-ized.

@@ -34,7 +34,12 @@ namespace Mono.Security.X509.Extensions {
 	 */
 	// note: because nothing is simple in ASN.1 bits are reversed
 	[Flags]
-	public enum KeyUsages {
+#if INSIDE_CORLIB
+	internal
+#else
+	public 
+#endif
+	enum KeyUsages {
 		digitalSignature = 0x80,
                 nonRepudiation = 0x40,
 		keyEncipherment = 0x20,
