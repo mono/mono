@@ -1,3 +1,11 @@
+
+Fri May 30 18:40:24 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c, mini-ops.h, cpu-pentium.md, inssel.brg, mini-x86.c, mini.h:
+	Implemented arglist opcode and handling of TypedReference type.
+	Fixed x86 call convention when a structure is returned.
+	Minimal support for calling static vararg methods.
+
 2003-05-30  Dietmar Maurer  <dietmar@ximian.com>
 
 	* mini.c (mini_method_compile):  always remove unreachable code,
