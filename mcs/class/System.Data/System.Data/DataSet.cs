@@ -1117,13 +1117,14 @@ namespace System.Data {
 			//part of another table structure via a nested parent relationship
 			foreach (DataTable table in tableCollection) {
 				bool isTopLevel = true;
+				/*
 				foreach (DataRelation rel in table.ParentRelations) {
 					if (rel.Nested) {
 						isTopLevel = false;
 						break;
 					}
 				}
-				
+				*/
 				if (isTopLevel) {
 					WriteTable ( writer, table, mode, version);
 				}
@@ -1150,8 +1151,25 @@ namespace System.Data {
 			SplitColumns (table, out atts, out elements, out simple);
 			//sort out the namespacing
 			string nspc = table.Namespace.Length > 0 ? table.Namespace : Namespace;
+			int relationCount = table.ParentRelations.Count;
+			DataRelation oneRel = relationCount == 1 ? table.ParentRelations [0] : null;
 
 			foreach (DataRow row in rows) {
+				// Skip rows that is a child of any tables.
+				switch (relationCount) {
+				case 0:
+					break;
+				case 1:
+					if (row.GetParentRow (oneRel) != null)
+						continue;
+					break;
+				case 2:
+					for (int i = 0; i < table.ParentRelations.Count; i++)
+						if (row.GetParentRow (table.ParentRelations [i]) != null)
+							continue;
+					break;
+				}
+
 				if (!row.HasVersion(version) || 
 				   (mode == XmlWriteMode.DiffGram && row.RowState == DataRowState.Unchanged 
 				      && version == DataRowVersion.Original))
