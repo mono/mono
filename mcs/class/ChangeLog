@@ -1,3 +1,9 @@
+2004-03-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ecma.pub: New. ECMA key to be used for strongnaming assemblies.
+	* msfinal.pub: New. Microsoft public key to be used for strongnaming
+	assemblies.
+
 2004-02-04  Marek Safar <marek.safar@seznam.cz>
 
 	* Makefile: Build System.dll in two steps. Because of the circular
