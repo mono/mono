@@ -15,7 +15,7 @@ namespace System.Collections {
 	public abstract class ReadOnlyCollectionBase : ICollection,	IEnumerable {
 
 		// private instance properties
-		private System.Collections.ArrayList myList;
+		private System.Collections.ArrayList list;
 		
 		// public instance properties
 		public int Count { get { return InnerList.Count; } }
@@ -25,11 +25,11 @@ namespace System.Collections {
 		
 		// Protected Instance Constructors
 		protected ReadOnlyCollectionBase() {
-			this.myList = new System.Collections.ArrayList();
+			this.list = new System.Collections.ArrayList();
 		}
 		
 		// Protected Instance Properties
-		protected System.Collections.ArrayList InnerList {get { return this.myList; } }
+		protected System.Collections.ArrayList InnerList {get { return this.list; } }
 		
 		// ICollection methods
 		void ICollection.CopyTo(Array array, int index) {

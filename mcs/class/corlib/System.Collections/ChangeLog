@@ -1,3 +1,8 @@
+2004-06-08  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* ReadOnlyCollectionBase.cs: Renamed internal variable to make serialization 
+	  compatible with MS.NET.
+
 2004-06-01  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SortedList.cs: Fixed case where the initial capacity was set to 0.
