@@ -53,10 +53,8 @@ namespace System
 			if (info == null)
 				throw new ArgumentNullException ("info");
 
-			this.isLongReference = info.GetBoolean("IsLongReference");
-			//TODO: How to load the exact type?
-			//Does that matter? No idea :(
-			Object target = info.GetValue("TargetObject",typeof(System.Object));
+			this.isLongReference = info.GetBoolean ("TrackResurrection");
+			Object target = info.GetValue ("TrackedObject", typeof (System.Object));
 
 			AllocateHandle(target);
 		}
@@ -99,20 +97,17 @@ namespace System
 			gcHandle.Free();
 		}
 
-		//TODO
-		public virtual void GetObjectData(SerializationInfo info,StreamingContext context)
+		public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
 		{
 			if (info == null)
 				throw new ArgumentNullException ("info");
 
-			info.AddValue("IsLongReference",this.isLongReference);
-			try
-			{
-				info.AddValue("TargetObject",Target);
-			}
-			catch(Exception)
-			{
-				info.AddValue("TargetObject",null);
+			info.AddValue ("TrackResurrection", TrackResurrection);
+			
+			try {
+				info.AddValue ("TrackedObject", Target);
+			} catch(Exception) {
+				info.AddValue("TrackedObject",null);
 			}
 		}
 	}

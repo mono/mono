@@ -25,6 +25,13 @@ namespace System.Runtime.Serialization.Formatters {
 			throw new NotImplementedException ();
 		}
 
+		public SoapFault (SerializationInfo info, StreamingContext context)
+		{
+			FaultCode = info.GetString ("faultcode");
+			FaultString = info.GetString ("faultstring");
+			Detail = info.GetValue ("detail", typeof (object));
+		}
+
 		public SoapFault (string faultCode, string faultString,
 				  string faultActor, ServerFault serverFault)
 		{
@@ -58,7 +65,9 @@ namespace System.Runtime.Serialization.Formatters {
 		public void GetObjectData (SerializationInfo info,
 					   StreamingContext context)
 		{
-			throw new NotImplementedException ();
+			info.AddValue ("faultcode", FaultCode, typeof (string));
+			info.AddValue ("faultstring", FaultString, typeof (string));
+			info.AddValue ("detail", Detail, typeof (object));
 		}
 	}
 }

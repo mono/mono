@@ -172,6 +172,12 @@ namespace System.Text.RegularExpressions {
 			}
 		}
 
+		protected Regex (SerializationInfo info, StreamingContext context) :
+			this (info.GetString ("pattern"), 
+			      (RegexOptions) info.GetValue ("options", typeof (RegexOptions))) {			
+		}
+
+
 		// public instance properties
 		
 		public RegexOptions Options {
@@ -335,9 +341,9 @@ namespace System.Text.RegularExpressions {
 		}
 
 		// ISerializable interface
-
-		public void GetObjectData (SerializationInfo info, StreamingContext context) {
-			throw new Exception ("Not implemented.");
+		public virtual void GetObjectData (SerializationInfo info, StreamingContext context) {
+			info.AddValue ("pattern", this.ToString (), typeof (string));
+			info.AddValue ("options", this.Options, typeof (RegexOptions));
 		}
 
 		// internal
