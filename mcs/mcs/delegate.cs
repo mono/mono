@@ -429,18 +429,40 @@ namespace Mono.CSharp {
 			for (int i = pd_count; i > 0; ) {
 				i--;
 
-				if (invoke_pd.ParameterType (i) == pd.ParameterType (i) &&
-				    invoke_pd.ParameterModifier (i) == pd.ParameterModifier (i))
+				Type invoke_pd_type = invoke_pd.ParameterType (i);
+				Type pd_type = pd.ParameterType (i);
+				Parameter.Modifier invoke_pd_type_mod = invoke_pd.ParameterModifier (i);
+				Parameter.Modifier pd_type_mod = pd.ParameterModifier (i);
+
+				if (invoke_pd_type == pd_type &&
+				    invoke_pd_type_mod == pd_type_mod)
 					continue;
-				else {
-					return null;
-				}
+				
+				if (invoke_pd_type.IsSubclassOf (pd_type) && 
+						invoke_pd_type_mod == pd_type_mod)
+					if (RootContext.Version == LanguageVersion.ISO_1) {
+						Report.FeatureIsNotStandardized (loc, "contravariance");
+						return null;
+					} else
+						continue;
+					
+				return null;
 			}
 
-			if (((MethodInfo) invoke_mb).ReturnType == ((MethodInfo) mb).ReturnType)
+			Type invoke_mb_retval = ((MethodInfo) invoke_mb).ReturnType;
+			Type mb_retval = ((MethodInfo) mb).ReturnType;
+			if (invoke_mb_retval == mb_retval)
 				return mb;
-			else
-				return null;
+			
+			if (mb_retval.IsSubclassOf (invoke_mb_retval))
+				if (RootContext.Version == LanguageVersion.ISO_1) {
+					Report.FeatureIsNotStandardized (loc, "covariance");
+					return null;
+				}
+				else
+					return mb;
+			
+			return null;
 		}
 
 		// <summary>
