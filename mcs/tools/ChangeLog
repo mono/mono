@@ -1,3 +1,7 @@
+2003-01-18  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* makefile, makefile.gnu: Renamed Cert2Spc.exe to cert2spc.exe.
+
 2003-01-09  Gaurav Vaish <gvaish_mono AT lycos.com>
 
 	* assemblies.xml     : Needed for Mobile controls enumerations.

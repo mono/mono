@@ -3,7 +3,7 @@ CSCRIPT=$(WINDIR)/system32/cscript.exe
 CSCFLAGS=/nologo /debug+ /debug:full 
 INSTALL = /usr/bin/install
 
-MONO_TOOLS = monostyle.exe GenerateDelegate.exe EnumCheck.exe IFaceDisco.exe ./SqlSharp/sqlsharp.exe secutil.exe Cert2Spc.exe
+MONO_TOOLS = monostyle.exe GenerateDelegate.exe EnumCheck.exe IFaceDisco.exe ./SqlSharp/sqlsharp.exe secutil.exe cert2spc.exe
 
 DIRS = 
 
@@ -69,8 +69,8 @@ IFaceDisco.exe: IFaceDisco.cs XMLUtil.cs
 secutil.exe: secutil.cs
 	$(CSC) $(CSCFLAGS) secutil.cs
 
-Cert2Spc.exe: cert2spc.cs ASN1.cs
-	$(CSC) $(CSCFLAGS) /out:Cert2Spc.exe cert2spc.cs ASN1.cs
+cert2spc.exe: cert2spc.cs ASN1.cs
+	$(CSC) $(CSCFLAGS) /out:cert2spc.exe cert2spc.cs ASN1.cs
 
 clean:
 	(cd corcompare; make clean)
