@@ -860,7 +860,8 @@ namespace System.Data.SqlClient {
 					schemaRow["ColumnSize"] = PostgresLibrary.PQfsize (pgResult, i);
 					schemaRow["NumericPrecision"] = 0;
 					schemaRow["NumericScale"] = 0;
-					if((cmdBehavior & CommandBehavior.SingleResult) == CommandBehavior.KeyInfo) {
+					// TODO: need to get KeyInfo
+					if((cmdBehavior & CommandBehavior.KeyInfo) == CommandBehavior.KeyInfo) {
 						bool IsUnique, IsKey;
 						GetKeyInfo(columnName, out IsUnique, out IsKey);
 					}
