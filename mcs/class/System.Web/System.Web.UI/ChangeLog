@@ -1,3 +1,7 @@
+2003-11-17 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* StateManagedCollection.cs: Implement.
+
 2003-11-13  Jackson Harper  <jackson@ximian.com>
 
 	* Page.cs: Initial implementation of InitOutputCache.

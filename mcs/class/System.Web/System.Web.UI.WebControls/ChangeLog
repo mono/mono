@@ -1,3 +1,12 @@
+2003-11-17 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* ControlParameter.cs:
+	* CookieParameter.cs:
+	* FormParameter.cs:
+	* Parameter.cs:
+	* QueryStringParameter.cs: New v2 files. Mostly
+	implemented, still need a few methods.
+
 2003-11-16  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ListItem.cs: prevent nullrefs ni Get/SetAttribute. Thanks to Alon

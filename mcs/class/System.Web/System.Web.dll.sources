@@ -465,3 +465,10 @@ System.Web.UI.WebControls/XmlHierarchicalEnumerable.cs
 System.Web.UI.WebControls/XmlHierarchyData.cs
 System.Web.UI/HierarchicalDataSourceControl.cs
 System.Web.UI.WebControls/DataBoundControl.cs
+System.Web.UI.WebControls/ControlParameter.cs
+System.Web.UI.WebControls/CookieParameter.cs
+System.Web.UI.WebControls/FormParameter.cs
+System.Web.UI.WebControls/Parameter.cs
+System.Web.UI.WebControls/QueryStringParameter.cs
+System.Web.UI.WebControls/SessionParameter.cs
+System.Web.UI/StateManagedCollection.cs
