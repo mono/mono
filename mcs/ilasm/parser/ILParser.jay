@@ -67,7 +67,8 @@ namespace Mono.ILASM {
 %token BANG          "!"
 %token ELLIPSIS      "..."
 %token DASH          "-"
-
+%token OPEN_ANGLE_BRACKET   "<"
+%token CLOSE_ANGLE_BRACKET  ">"
 
 
 
@@ -424,20 +425,19 @@ class_all		: class_head OPEN_BRACE class_decls
                           {
                                 codegen.CompleteClass ();
                           }
-                        
 			;
 
-class_head 		: D_CLASS class_attr id extends_clause
+class_head 		: D_CLASS class_attr id typars_clause extends_clause
                           impl_clause
                           {
                                 if ($4 != null) {
 					codegen.AddClass ((TypeAttr) $2, (string) $3, 
-						((TypeRef)$4).Type as Class, null);
+						((TypeRef)$5).Type as Class, null);
 				} else {
 					codegen.AddClass ((TypeAttr)$2, (string) $3, null);
 				}
                                 
-				ArrayList impl_list = (ArrayList) $5;
+				ArrayList impl_list = (ArrayList) $6;
 				if (impl_list != null) {
 					foreach (TypeRef type_ref in impl_list)
 						codegen.CurrentClass.AddImplementedInterface (type_ref.Type as Class);
@@ -489,6 +489,46 @@ impl_clause		: /* EMPTY */
                           }
 			;
 
+typars_clause           : /* EMPTY */
+                        | OPEN_ANGLE_BRACKET formal_typars CLOSE_ANGLE_BRACKET
+                          {
+                                $$ = $2;
+                          }
+                        ;
+
+typars                  : type
+                          {
+                                ArrayList typars_list = new ArrayList ();
+                                typars_list.Add ($1);
+                                $$ = typars_list;
+                          }
+                        | typars COMMA type
+                          {
+                                ArrayList typars_list = (ArrayList) $1;
+                                typars_list.Add ($3);
+                                $$ = typars_list;
+                          }
+                        ;
+
+formal_typars           : formal_typar
+                          {
+                                ArrayList formal_list = new ArrayList ();
+                                formal_list.Add ($1);
+                                $$ = formal_list;
+                          }
+                        | formal_typars COMMA formal_typar
+                          {
+                                ArrayList formal_list = (ArrayList) $1;
+                                formal_list.Add ($3);
+                                $$ = formal_list;
+                          }
+                        ;
+
+
+formal_typar            : type
+                        | type id
+                        ;
+                        
 class_refs		: class_ref
                           {
                                 ArrayList class_list = new ArrayList ();
@@ -536,6 +576,9 @@ class_decl		: method_all
 			| extsource_spec
 			| customattr_decl
 			| D_SIZE int32
+                          {
+                                
+                          }
 			| D_PACK int32
 			| D_OVERRIDE type_spec DOUBLE_COLON method_name
 			  K_WITH call_conv type type_spec DOUBLE_COLON method_name
@@ -710,6 +753,14 @@ type			: K_CLASS class_ref
                           {
                                 // TODO: Is this the proper full name
                                 $$ = new TypeRef (PrimitiveType.NativeUInt, "System.UIntPtr");
+                          }
+                        | BANG int32
+                          {
+                                // access class type parameter by number
+                          }
+                        | BANG BANG int32
+                          {
+                                // access method type parameter by number
                           }
 			;
 
