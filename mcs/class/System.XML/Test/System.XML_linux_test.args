@@ -25,3 +25,4 @@ XmlTextTests.cs
 XmlTextWriterTests.cs
 XmlWhiteSpaceTests.cs
 XPathNavigatorTests.cs
+XPathNavigatorMatchesTests.cs

@@ -39,6 +39,7 @@ namespace MonoTests.System.Xml
 				suite.AddTest (new TestSuite (typeof (XmlDocumentTypeTests)));
 				suite.AddTest (new TestSuite (typeof (XPathNavigatorTests)));
 				suite.AddTest (new TestSuite (typeof (SelectNodesTests)));
+				suite.AddTest (new TestSuite (typeof (XPathNavigatorMatchesTests)));
 				return suite;
 			}
 		}

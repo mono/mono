@@ -116,10 +116,27 @@ namespace System.Xml.XPath
 			return Matches (Compile (xpath));
 		}
 
-		[MonoTODO]
 		public virtual bool Matches (XPathExpression expr)
 		{
-			throw new NotImplementedException ();
+			if (expr.Expression.StartsWith ("/")) {
+				XPathNodeIterator nodes = Select (expr);
+				while (nodes.MoveNext ()) {
+					if (IsSamePosition (nodes.Current))
+						return true;
+				}
+			} else {
+				XPathNavigator navigator = Clone ();
+
+				while (navigator.MoveToParent ()) {
+					XPathNodeIterator nodes = navigator.Select (expr);
+					while (nodes.MoveNext ()) {
+						if (IsSamePosition (nodes.Current))
+							return true;
+					}
+				}
+			}
+
+			return false;
 		}
 
 		public abstract bool MoveTo (XPathNavigator other);
