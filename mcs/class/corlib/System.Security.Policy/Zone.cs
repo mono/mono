@@ -10,10 +10,10 @@ using System;
 using System.Security;
 using System.Security.Permissions;
 
-namespace System.Security.Policy
-{
-	public sealed class Zone : IIdentityPermissionFactory, IBuiltInEvidence
-	{
+namespace System.Security.Policy {
+
+	[Serializable]
+	public sealed class Zone : IIdentityPermissionFactory, IBuiltInEvidence	{
 		SecurityZone zone;
 		
 		public Zone (SecurityZone zone)

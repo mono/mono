@@ -13,6 +13,7 @@ using System.Security.Cryptography;
 
 namespace System.Security.Policy {
 
+	[Serializable]
 	public sealed class HashMembershipCondition : IMembershipCondition, 
 		ISecurityEncodable, ISecurityPolicyEncodable {
 

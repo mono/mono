@@ -1,3 +1,13 @@
+2003-06-29  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* ApplicationDirectory.cs: Added [Serializable] attribute to class.
+	* Evidence.cs: Added [Serializable] attribute to class.
+	* FirstMatchCodeGroup.cs: Added [Serializable] attribute to class.
+	* HashMembershipCondition.cs: Added [Serializable] attribute to class.
+	* NetCodeGroup.cs: Added [Serializable] attribute to class.
+	* PublisherMembershipCondition.cs: Added [Serializable] attribute to class.
+	* Zone.cs: Added [Serializable] attribute to class.
+
 2003-01-05  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* Hash.cs: Added [Serializable] and ISerializable to class declaration.

@@ -11,6 +11,7 @@ using System;
 
 namespace System.Security.Policy {
 
+	[Serializable]
 	public sealed class NetCodeGroup : CodeGroup {
 
 		public NetCodeGroup (IMembershipCondition condition) 

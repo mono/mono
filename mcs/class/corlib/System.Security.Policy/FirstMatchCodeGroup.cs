@@ -9,6 +9,7 @@ using System;
 
 namespace System.Security.Policy {
 
+	[Serializable]
 	public sealed class FirstMatchCodeGroup : CodeGroup {
 		
 		public FirstMatchCodeGroup(IMembershipCondition membershipCondition, PolicyStatement policy) :
