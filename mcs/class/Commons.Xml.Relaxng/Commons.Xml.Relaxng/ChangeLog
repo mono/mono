@@ -1,5 +1,10 @@
 2005-02-06  Atsushi Enomoto <atsushi@ximian.com>
 
+	* RelaxngReader.cs : ns attribute on root element should also be 
+	  handled as well as datatypeLibrary.
+
+2005-02-06  Atsushi Enomoto <atsushi@ximian.com>
+
 	* RelaxngReader.cs : it was not handling datatypeLibrary attribute
 	  on root element. Added DefaultNamespace handling.
 	* RelaxngGrammar.cs : added DefaultNamespace property.

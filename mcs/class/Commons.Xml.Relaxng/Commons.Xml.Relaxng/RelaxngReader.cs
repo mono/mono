@@ -71,10 +71,13 @@ namespace Commons.Xml.Relaxng
 //			: base (grammarForRelaxng == null ? reader : new RelaxngValidatingReader (reader, grammarForRelaxng))
 			: base (reader)
 		{
-			nsStack.Push (ns == null ? String.Empty : ns);
 			if (Reader.ReadState == ReadState.Initial)
 				Read ();
 			MoveToContent ();
+			string nsval = GetSpaceStrippedAttribute ("ns", String.Empty);
+			if (nsval == null)
+				nsval = ns;
+			nsStack.Push (nsval == null ? String.Empty : nsval);
 			string dtlib = GetSpaceStrippedAttribute ("datatypeLibrary", String.Empty);
 			datatypeLibraryStack.Push (dtlib != null ?
 				dtlib : String.Empty);
@@ -151,7 +154,7 @@ namespace Commons.Xml.Relaxng
 					MoveToElement ();
 				}
 				else
-					nsStack.Push (nsStack.Peek ());
+					nsStack.Push (ContextNamespace);
 
 				if (MoveToAttribute ("datatypeLibrary")) {
 					string uriString = Value.Trim ();
@@ -184,7 +187,12 @@ namespace Commons.Xml.Relaxng
 		// Properties
 
 		public string ContextNamespace {
-			get { return nsStack.Peek () as string; }
+			get {
+				if (nsStack.Count == 0)
+					// It happens only on initialization.
+					return String.Empty;
+				return nsStack.Peek () as string;
+			}
 		}
 
 		public string DatatypeLibrary {
