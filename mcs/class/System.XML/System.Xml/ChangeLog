@@ -1,5 +1,9 @@
 2003-03-21  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
+	* XmlNode.cs : add descriptions for some node type error.
+
+2003-03-21  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
 	* XmlNodeArrayList.cs, XmlNodeListChildren.cs : bugzilla #39920 fix.
 
 2003-03-19  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>

@@ -325,7 +325,7 @@ namespace System.Xml
 				return insertBeforeIntern (newChild, refChild);
 			} 
 			else
-				throw new InvalidOperationException ();
+				throw new InvalidOperationException (String.Format ("current node {0} is not allowed to have any children.", NodeType));
 		}
 
 		internal XmlNode insertBeforeIntern (XmlNode newChild, XmlNode refChild)
@@ -413,7 +413,7 @@ namespace System.Xml
 
 			if (NodeType == XmlNodeType.Document || NodeType == XmlNodeType.Element || NodeType == XmlNodeType.Attribute || NodeType == XmlNodeType.DocumentFragment) {
 				if (IsReadOnly)
-					throw new ArgumentException ();
+					throw new ArgumentException ("This node is read only.");
 
 				if (Object.ReferenceEquals (LastLinkedChild, LastLinkedChild.NextLinkedSibling) && Object.ReferenceEquals (LastLinkedChild, oldChild))
 					LastLinkedChild = null;
@@ -437,7 +437,7 @@ namespace System.Xml
 				return oldChild;
 			} 
 			else
-				throw new ArgumentException ();
+				throw new ArgumentException (String.Format ("This {0} node cannot remove child.", NodeType));
 		}
 
 		public virtual XmlNode ReplaceChild (XmlNode newChild, XmlNode oldChild)
