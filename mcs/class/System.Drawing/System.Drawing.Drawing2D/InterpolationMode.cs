@@ -22,6 +22,6 @@ namespace System.Drawing.Drawing2D {
 		HighQualityBilinear = 6,
 		Invalid = -1,
 		Low = 1,
-		NearestNeighbour = 5
+		NearestNeighbor = 5
 	}
 }

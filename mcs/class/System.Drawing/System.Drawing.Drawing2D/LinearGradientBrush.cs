@@ -32,6 +32,7 @@ namespace System.Drawing.Drawing2D
 
 
 		//public Properties
+		[MonoTODO()]
 		public Blend Blend {
 			get {
 				throw new NotImplementedException ();
@@ -40,6 +41,7 @@ namespace System.Drawing.Drawing2D
 			}
 		}
 
+		[MonoTODO()]
 		public bool GammaCorrection {
 			get {
 				throw new NotImplementedException ();
@@ -48,6 +50,7 @@ namespace System.Drawing.Drawing2D
 			}
 		}
 
+		[MonoTODO()]
 		public ColorBlend InterpolationColors {
 			get {
 				throw new NotImplementedException ();
@@ -65,11 +68,15 @@ namespace System.Drawing.Drawing2D
 				linear_colors[1] = value[1];
 			}
 		}
-		public RectangleF Rectange {
+
+		[MonoTODO()]
+		public RectangleF Rectangle {
 			get {
 				throw new NotImplementedException ();
 			}
 		}
+
+		[MonoTODO()]
 		public Matrix Transform {
 			get {
 				throw new NotImplementedException ();
@@ -78,6 +85,7 @@ namespace System.Drawing.Drawing2D
 			}
 		}
 
+		[MonoTODO()]
 		public WrapMode WrapMode {
 			get {
 				throw new NotImplementedException ();
@@ -87,27 +95,33 @@ namespace System.Drawing.Drawing2D
 		}
 
 		// Public Methods
-		
+
+		[MonoTODO()]
 		public override object Clone (){
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO()]
 		public void MultiplyTransform (Matrix matrix){
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO()]
 		public void MultiplyTransform (Matrix matrix, MatrixOrder order){
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO()]
 		public void ResetTransform (){
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO()]
 		public void RotateTransform (float angle, MatrixOrder order){
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO()]
 		public void RotateTransform (float angle){
 			throw new NotImplementedException ();
 		}

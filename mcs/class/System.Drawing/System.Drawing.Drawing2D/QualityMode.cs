@@ -15,7 +15,7 @@ namespace System.Drawing.Drawing2D {
 	/// </summary>
 	public enum QualityMode {
 		Default = 0,
-		Hight = 2,
+		High = 2,
 		Invalid = -1,
 		Low = 1
 	}

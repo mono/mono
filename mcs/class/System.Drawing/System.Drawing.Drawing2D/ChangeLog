@@ -1,3 +1,14 @@
+2003-11-13  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* QualityMode.cs: Fixed typo
+	* InterpolationMode.cs: Fixed typo
+	* RegionData.cs: Fixed signatures, partially implemented
+	* PathGradientBrush.cs: Fixed signatures
+	* PathData.cs: Fixed signature, implemented
+	* LinearGradientBrush.cs: Added missing MonoTODOs, fixed typo
+	* GraphicsContainer.cs: Added private constructor
+	* CustomLineCap.cs: Fixed typos, fixed inheritance, removed unneeded member
+
 2003-11-11 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* ColorBlend.cs (Positions): another one.

@@ -1,8 +1,9 @@
 //
 // System.Drawing.Drawing2D.GraphicsContainer.cs
 //
-// Author:
+// Authors:
 //   Dennis Hayes (dennish@Raytek.com)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2002/3 Ximian, Inc
 //
@@ -13,6 +14,8 @@ namespace System.Drawing.Drawing2D {
 	/// Summary description for GraphicsContainer.
 	/// </summary>
 	public sealed class GraphicsContainer : MarshalByRefObject {
-		//Everything is inherited!
+		private GraphicsContainer ()
+		{
+		}
 	}
 }

@@ -1,8 +1,9 @@
 //
 // System.Drawing.Drawing2D.CustomLineCap.cs
 //
-// Author:
+// Authors:
 //   Dennis Hayes (dennish@Raytek.com)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2002/3 Ximian, Inc
 //
@@ -12,9 +13,9 @@ namespace System.Drawing.Drawing2D {
 	/// <summary>
 	/// Summary description for CustomLineCap.
 	/// </summary>
-	public class CustomLineCap {// : MarshalByRefObject, ICloneable, IDisposable {
+	public class CustomLineCap : MarshalByRefObject, ICloneable, IDisposable {
 		private LineCap baseCap;
-		private float baseInsert;
+		private float baseInset;
 		private LineJoin strokeJoin;
 		private float widthScale;
 
@@ -23,7 +24,7 @@ namespace System.Drawing.Drawing2D {
 		protected CustomLineCap() {
 		}
 		public CustomLineCap(GraphicsPath fillPAth, GraphicsPath strokePath, LineCap baseCap, float baseInset) {
-			this.baseInsert = baseInsert;
+			this.baseInset = baseInset;
 		}
 		public CustomLineCap(GraphicsPath fillPAth, GraphicsPath strokePAth, LineCap baseCap) {
 			this.baseCap = baseCap;
@@ -47,12 +48,12 @@ namespace System.Drawing.Drawing2D {
 				strokeJoin = value;
 			}
 		}
-		public float BaseInsert{
+		public float BaseInset{
 			get {
-				return baseInsert;
+				return baseInset;
 			}
 			set {
-				baseInsert = value;
+				baseInset = value;
 			}
 		}
 
@@ -68,9 +69,10 @@ namespace System.Drawing.Drawing2D {
 		//Public Methods
 
 		// Implment IConeable.Clone
-		//public virtural object Clone(){
-		//					//CustomLineCap newcustomlinecap = new CustomLineCap(
-		//}
+		public object Clone(){
+			//FIXME
+			return new CustomLineCap();
+		}
 		
 		public virtual void Dispose(){
 			Dispose(true);
@@ -85,10 +87,5 @@ namespace System.Drawing.Drawing2D {
 
 		public void SetStrokeCaps(LineCap startCap, LineCap endCap){
 		}
-
-		// Protected Methods
-
-		~CustomLineCap(){
-		 }
 	}
 }

@@ -1,8 +1,9 @@
 //
 // System.Drawing.Drawing2D.PathGradientBrush.cs
 //
-// Author:
+// Authors:
 //   Dennis Hayes (dennish@Raytek.com)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2002/3 Ximian, Inc
 //
@@ -13,10 +14,16 @@ namespace System.Drawing.Drawing2D
 	/// <summary>
 	/// Summary description for PathGradientBrush.
 	/// </summary>
-	public class PathGradientBrush
+	public sealed class PathGradientBrush : Brush
 	{
-		public PathGradientBrush()
+		internal PathGradientBrush()
 		{
+		}
+
+		[MonoTODO("implement")]
+		public override object Clone ()
+		{
+			throw new NotImplementedException ();
 		}
 	}
 }
