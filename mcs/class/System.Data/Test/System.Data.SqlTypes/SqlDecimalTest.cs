@@ -425,7 +425,8 @@ namespace MonoTests.System.Data.SqlTypes
 		[Test]
                 public void Truncate()
                 {
-                	AssertEquals ("#O01", new SqlDecimal (6464.6400m).Value, SqlDecimal.Truncate (Test1, 2).Value);
+//                	AssertEquals ("#O01", new SqlDecimal (6464.6400m).Value, SqlDecimal.Truncate (Test1, 2).Value);
+                	AssertEquals ("#O01", 6464.6400m, SqlDecimal.Truncate (Test1, 2).Value);
                 }
                 
                 // OPERATORS
@@ -623,9 +624,9 @@ namespace MonoTests.System.Data.SqlTypes
 		[Test]
 		public void ToStringTest ()
 		{
-			AssertEquals ("Null", SqlDecimal.Null.ToString ());
-			AssertEquals ("-99999999999999999999999999999999999999", SqlDecimal.MinValue.ToString ());
-			AssertEquals ("99999999999999999999999999999999999999", SqlDecimal.MaxValue.ToString ());
+			AssertEquals ("#01", "Null", SqlDecimal.Null.ToString ());
+			AssertEquals ("#02", "-99999999999999999999999999999999999999", SqlDecimal.MinValue.ToString ());
+			AssertEquals ("#03", "99999999999999999999999999999999999999", SqlDecimal.MaxValue.ToString ());
 		}
 
 		[Test]
