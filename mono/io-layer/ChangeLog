@@ -1,3 +1,14 @@
+2004-05-21  Dick Porter  <dick@ximian.com>
+
+	* io.c (CreateFile): Check for existing share modes when opening
+	a file.
+
+	* handles.c: 
+	* handles-private.h: 
+	* daemon-messages.h: 
+	* daemon.c: Maintain a hash of file share modes, keying on device
+	and inode (to cope with symlinks.)
+
 2004-05-20  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* daemon-messages.c: Retry if the communication with the daemon is
