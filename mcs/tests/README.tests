@@ -31,7 +31,7 @@ Test cases listed by Category:
 
 * Member Access & Simple Names
 
-  test-151.cs test-159.cs test-160.cs test-161.cs
+  test-151.cs test-159.cs test-160.cs test-161.cs test-190.cs
 
 * Invocation
 
@@ -237,6 +237,10 @@ implement IDisposable.
 test-189.cs
 -----------
 Flow analysis wrt. nested infinite loops.  Bug #40670.
+
+test-190.cs
+-----------
+Accessing private field of outer class from which we derive.
 
 verify-1.cs
 -----------

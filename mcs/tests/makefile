@@ -32,7 +32,7 @@ TEST_SOURCES = \
 	test-161 test-162 test-163 test-164 test-165 test-166 test-167 test-168 test-169 test-170 \
 		 test-172 test-173 test-174 test-175 test-176 test-177 	        test-179\
 	test-180 test-181 test-182 test-183 test-184 test-185 test-186 test-187 \
-	test-188 test-189
+	test-188 test-189 test-190
 
 # 
 # NOTE: Slot test-178 is free, turns out it was an unsafe test.
