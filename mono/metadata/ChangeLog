@@ -1,3 +1,8 @@
+
+Tue Aug 20 15:42:15 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* appdomain.h, gc.c: added mono_domain_finalize ().
+
 2002-08-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* object.c:
