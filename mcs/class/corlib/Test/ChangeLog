@@ -1,3 +1,8 @@
+2003-07-03  Sebastien Pouliot <spouliot@videotron.ca>
+
+	* corlib_test.args: Added ZoneTest.cs in System.Security.Policy
+	* corlib_test.args: Same.
+
 2003-07-01  Sebastien Pouliot <spouliot@videotron.ca>
 
 	* corlib_test.args: Added GenetricIdentityTest.cs and 

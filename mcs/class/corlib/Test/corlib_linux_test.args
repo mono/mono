@@ -142,6 +142,7 @@ System.Security.Policy/EvidenceTest.cs
 System.Security.Policy/PublisherTest.cs
 System.Security.Policy/PublisherMembershipConditionTest.cs
 System.Security.Policy/StrongNameTest.cs
+System.Security.Policy/ZoneTest.cs
 System.Security.Principal/GenetricIdentityTest.cs
 System.Security.Principal/GenetricPrincipalTest.cs
 System.Text/ASCIIEncodingTest.cs
