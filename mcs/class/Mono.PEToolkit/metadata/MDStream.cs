@@ -5,6 +5,7 @@
 using System;
 using System.IO;
 using System.Text;
+using System.Collections;
 using System.Runtime.InteropServices;
 
 namespace Mono.PEToolkit.Metadata {
@@ -18,41 +19,37 @@ namespace Mono.PEToolkit.Metadata {
 		/// MetaData stream header as described
 		/// in ECMA CLI specs, Partition II Metadata, 23.1.2
 		/// </summary>
-		[StructLayoutAttribute(LayoutKind.Sequential)]
-		public struct Header {
+		protected class Header {
 			internal uint offs;
 			internal uint size;
 			internal string name;
 
 
-			unsafe public void Read(BinaryReader reader, MDStream stream)
-			{
-				sbyte* pName = stackalloc sbyte [32];
-				sbyte* p = pName;
+			public void Read(BinaryReader reader, MDStream stream)
+			{	
+				offs = reader.ReadUInt32 ();
+				size = reader.ReadUInt32 ();
 
-				fixed (void* pThis = &this.offs) {
-					PEUtils.ReadStruct(reader, pThis, 2 * sizeof (uint));
-				}
-
+				StringBuilder name_builder = new StringBuilder ();
 				while (true) {
 					sbyte c = reader.ReadSByte();
-					if (c == 0) break;
-					*p++ = c;
+					if (c == 0) 
+						break;
+					name_builder.Append ((char) c);
 				}
 
-				int len = (int) (p - pName);
-				if (len != 0) {
-					name = PEUtils.GetString (pName, 0, len, Encoding.ASCII);
-				} else {
+				name = name_builder.ToString ();
+				if (name.Length == 0)
 					throw new BadImageException("Invalid stream name.");
-				}
 
 				// Round up to dword boundary.
 				long pos = reader.BaseStream.Position;
-				if (stream != null) pos -= stream.Root.filePos;
+				if (stream != null) 
+					pos -= stream.Root.filePos;
 				pos += 3;
 				pos &= ~3;
-				if (stream != null) pos += stream.Root.filePos;
+				if (stream != null) 
+					pos += stream.Root.filePos;
 
 				// Advance file pointer.
 				reader.BaseStream.Position = pos;
@@ -63,7 +60,7 @@ namespace Mono.PEToolkit.Metadata {
 
 		private MetaDataRoot root;
 		private MDHeap heap;
-		internal Header hdr;
+		private Header hdr;
 		private byte [] data;
 
 
