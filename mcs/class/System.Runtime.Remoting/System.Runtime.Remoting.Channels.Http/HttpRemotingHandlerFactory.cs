@@ -41,11 +41,6 @@ namespace System.Runtime.Remoting.Channels.Http
 			{
 				if (webConfigLoaded) return;
 				
-				// Read the configuration file
-				
-				string webconfig = Path.Combine (context.Request.PhysicalApplicationPath, "web.config");
-				RemotingConfiguration.Configure (webconfig);
-				
 				// Look for a channel that wants to receive http request
 				
 				foreach (IChannel channel in ChannelServices.RegisteredChannels)

@@ -1,3 +1,8 @@
+2004-02-04  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* HttpRemotingHandlerFactory.cs: Loading of remoting configuration moved
+	  to System.Web.Configuraiton.
+
 2003-12-12  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* HttpServer.cs: Removed debug code.
