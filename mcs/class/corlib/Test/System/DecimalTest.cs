@@ -884,6 +884,26 @@ namespace MonoTests.System {
         }
 
 	[Test]
+	public void ParseInt64 () 
+	{
+		long max = Int64.MaxValue;
+		Decimal dmax = Decimal.Parse (max.ToString ());
+		AssertEquals ("Int64.MaxValue", Int64.MaxValue, Decimal.ToInt64 (dmax));
+
+		long min = Int64.MinValue;
+		Decimal dmin = Decimal.Parse (min.ToString ());
+		AssertEquals ("Int64.MinValue", Int64.MinValue, Decimal.ToInt64 (dmin));
+
+		dmax += 1.1m;
+		dmax = Decimal.Parse (dmax.ToString ());
+		AssertEquals ("Int64.MaxValue+1.1", Int64.MaxValue, Decimal.ToInt64 (dmax - 1.1m));
+
+		dmin -= 1.1m;
+		dmin = Decimal.Parse (dmin.ToString ());
+		AssertEquals ("Int64.MinValue-1.1", Int64.MinValue, Decimal.ToInt64 (dmin + 1.1m));
+	}
+
+	[Test]
 	public void ToByte () 
 	{
 		Decimal d = 254.9m;
@@ -899,6 +919,10 @@ namespace MonoTests.System {
 		AssertEquals ("Decimal.ToSByte", 126, Decimal.ToSByte (d));
 		AssertEquals ("Convert.ToSByte", 127, Convert.ToSByte (d));
 		AssertEquals ("IConvertible.ToSByte", 127, (d as IConvertible).ToSByte (null));
+		d = -d;
+		AssertEquals ("-Decimal.ToSByte", -126, Decimal.ToSByte (d));
+		AssertEquals ("-Convert.ToSByte", -127, Convert.ToSByte (d));
+		AssertEquals ("-IConvertible.ToSByte", -127, (d as IConvertible).ToSByte (null));
 	}
 
 	[Test]
@@ -908,6 +932,10 @@ namespace MonoTests.System {
 		AssertEquals ("Decimal.ToInt16", 254, Decimal.ToInt16 (d));
 		AssertEquals ("Convert.ToInt16", 255, Convert.ToInt16 (d));
 		AssertEquals ("IConvertible.ToInt16", 255, (d as IConvertible).ToInt16 (null));
+		d = -d;
+		AssertEquals ("-Decimal.ToInt16", -254, Decimal.ToInt16 (d));
+		AssertEquals ("-Convert.ToInt16", -255, Convert.ToInt16 (d));
+		AssertEquals ("-IConvertible.ToInt16", -255, (d as IConvertible).ToInt16 (null));
 	}
 
 	[Test]
@@ -926,6 +954,10 @@ namespace MonoTests.System {
 		AssertEquals ("Decimal.ToInt32", 254, Decimal.ToInt32 (d));
 		AssertEquals ("Convert.ToInt32", 255, Convert.ToInt32 (d));
 		AssertEquals ("IConvertible.ToInt32", 255, (d as IConvertible).ToInt32 (null));
+		d = -d;
+		AssertEquals ("-Decimal.ToInt32", -254, Decimal.ToInt32 (d));
+		AssertEquals ("-Convert.ToInt32", -255, Convert.ToInt32 (d));
+		AssertEquals ("-IConvertible.ToInt32", -255, (d as IConvertible).ToInt32 (null));
 	}
 
 	[Test]
@@ -943,7 +975,29 @@ namespace MonoTests.System {
 		Decimal d = 254.9m;
 		AssertEquals ("Decimal.ToInt64", 254, Decimal.ToInt64 (d));
 		AssertEquals ("Convert.ToInt64", 255, Convert.ToInt64 (d));
-		AssertEquals ("IConvertible.ToUInt64", 255, (d as IConvertible).ToUInt64 (null));
+		AssertEquals ("IConvertible.ToInt64", 255, (d as IConvertible).ToInt64 (null));
+		d = -d;
+		AssertEquals ("-Decimal.ToInt64", -254, Decimal.ToInt64 (d));
+		AssertEquals ("-Convert.ToInt64", -255, Convert.ToInt64 (d));
+		AssertEquals ("-IConvertible.ToInt64", -255, (d as IConvertible).ToInt64 (null));
+	}
+
+	[Test]
+	[ExpectedException (typeof(OverflowException))]
+	public void ToInt64_TooBig () 
+	{
+		Decimal d = (Decimal) Int64.MaxValue;
+		d += 1.1m;
+		long value = Decimal.ToInt64 (d);
+	}
+
+	[Test]
+	[ExpectedException (typeof(OverflowException))]
+	public void ToInt64_TooSmall () 
+	{
+		Decimal d = (Decimal) Int64.MinValue;
+		d -= 1.1m;
+		long value = Decimal.ToInt64 (d);
 	}
 
 	[Test]
@@ -962,6 +1016,10 @@ namespace MonoTests.System {
 		AssertEquals ("Decimal.ToSingle", 254.9f, Decimal.ToSingle (d));
 		AssertEquals ("Convert.ToSingle", 254.9f, Convert.ToSingle (d));
 		AssertEquals ("IConvertible.ToSingle", 254.9f, (d as IConvertible).ToSingle (null));
+		d = -d;
+		AssertEquals ("-Decimal.ToSingle", -254.9f, Decimal.ToSingle (d));
+		AssertEquals ("-Convert.ToSingle", -254.9f, Convert.ToSingle (d));
+		AssertEquals ("-IConvertible.ToSingle", -254.9f, (d as IConvertible).ToSingle (null));
 	}
 
 	[Test]
@@ -971,6 +1029,10 @@ namespace MonoTests.System {
 		AssertEquals ("Decimal.ToDouble", 254.9d, Decimal.ToDouble (d));
 		AssertEquals ("Convert.ToDouble", 254.9d, Convert.ToDouble (d));
 		AssertEquals ("IConvertible.ToDouble", 254.9d, (d as IConvertible).ToDouble (null));
+		d = -d;
+		AssertEquals ("-Decimal.ToDouble", -254.9d, Decimal.ToDouble (d));
+		AssertEquals ("-Convert.ToDouble", -254.9d, Convert.ToDouble (d));
+		AssertEquals ("-IConvertible.ToDouble", -254.9d, (d as IConvertible).ToDouble (null));
 	}
     }
 }
