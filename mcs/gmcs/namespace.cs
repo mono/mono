@@ -297,40 +297,30 @@ namespace Mono.CSharp {
 		}
 
 		public NamespaceEntry (NamespaceEntry parent, SourceFile file, string name, Location loc)
+			: this (parent, file, name, false, loc)
+		{ }
+
+		protected NamespaceEntry (NamespaceEntry parent, SourceFile file, string name, bool is_implicit, Location loc)
 		{
 			this.parent = parent;
 			this.file = file;
-			this.IsImplicit = false;
+			this.IsImplicit = is_implicit;
 			this.ID = ++next_id;
 
-			if (parent != null)
+			if (!is_implicit && (parent != null))
 				ns = parent.NS.GetNamespace (name, true);
 			else if (name != null)
 				ns = Namespace.LookupNamespace (name, true);
 			else
 				ns = Namespace.Root;
 			ns.AddNamespaceEntry (this);
+
+			if ((parent != null) && (parent.NS != ns.Parent))
+				implicit_parent = new NamespaceEntry (parent, file, ns.Parent.Name, true, loc);
+			else
+				implicit_parent = parent;
+
 			this.FullName = ns.Name;
-		}
-
-
-		private NamespaceEntry (NamespaceEntry parent, SourceFile file, Namespace ns)
-		{
-			this.parent = parent;
-			this.file = file;
-			this.IsImplicit = true;
-			this.ID = ++next_id;
-			this.ns = ns;
-			this.FullName = ns.Name;
-		}
-
-		NamespaceEntry doppelganger;
-		NamespaceEntry Doppelganger {
-			get {
-				if (!IsImplicit && doppelganger == null)
-					doppelganger = new NamespaceEntry (ImplicitParent, file, ns);
-				return doppelganger;
-			}
 		}
 
 		static int next_id = 0;
@@ -352,13 +342,6 @@ namespace Mono.CSharp {
 
 		public NamespaceEntry ImplicitParent {
 			get {
-				if (parent == null)
-					return null;
-				if (implicit_parent == null) {
-					implicit_parent = (parent.NS == ns.Parent)
-						? parent
-						: new NamespaceEntry (parent, file, ns.Parent);
-				}
 				return implicit_parent;
 			}
 		}
@@ -441,7 +424,10 @@ namespace Mono.CSharp {
 				rest = dotted_name.Substring (pos + 1);
 			}
 
-			FullNamedExpression o = Doppelganger.LookupNamespaceOrType (null, simple_name, loc);
+			FullNamedExpression o = NS.Lookup (null, simple_name, loc);
+			if (o == null && ImplicitParent != null)
+				o = ImplicitParent.LookupNamespaceOrType (null, simple_name, loc);
+
 			if (o == null || rest == null)
 				return o;
 
@@ -469,6 +455,7 @@ namespace Mono.CSharp {
 		private FullNamedExpression Lookup (DeclSpace ds, string name, Location loc)
 		{
 			FullNamedExpression o;
+			Namespace ns;
 
 			//
 			// If name is of the form `N.I', first lookup `N', then search a member `I' in it.
@@ -480,15 +467,14 @@ namespace Mono.CSharp {
 			//
 			int pos = name.IndexOf ('.');
 			if (pos >= 0) {
-				//throw new InternalErrorException ("Only simple names should come here");
 				string first = name.Substring (0, pos);
 				string last = name.Substring (pos + 1);
 
 				o = Lookup (ds, first, loc);
 				if (o == null)
 					return null;
-				
-				Namespace ns = o as Namespace;
+
+				ns = o as Namespace;
 				if (ns != null) {
 					o = ns.Lookup (ds, last, loc);
 					return o;
@@ -508,15 +494,15 @@ namespace Mono.CSharp {
 			if (o != null)
 				return o;
 
-			if (IsImplicit)
-				return null;
-
 			//
 			// Check aliases.
 			//
 			o = LookupAlias (name);
 			if (o != null)
 				return o;
+
+			if (name.IndexOf ('.') > 0)
+				return null;
 
 			//
 			// Check using entries.

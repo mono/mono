@@ -72,9 +72,6 @@ namespace Mono.CSharp {
 		public AttributeTargets Target;
 
 		public readonly string    Name;
-		public readonly Expression LeftExpr;
-		public readonly string Identifier;
-
 		public readonly ArrayList Arguments;
 
 		public readonly Location Location;
@@ -105,11 +102,9 @@ namespace Mono.CSharp {
 
 		static PtrHashtable usage_attr_cache = new PtrHashtable ();
 		
-		public Attribute (string target, Expression left_expr, string identifier, ArrayList args, Location loc)
+		public Attribute (string target, string name, ArrayList args, Location loc)
 		{
-			LeftExpr = left_expr;
-			Identifier = identifier;
-			Name = LeftExpr == null ? identifier : LeftExpr + "." + identifier;
+			Name = name;
 			Arguments = args;
 			Location = loc;
 			ExplicitTarget = target;
@@ -119,7 +114,7 @@ namespace Mono.CSharp {
 		{
 			Report.Error (617, Location, "Invalid attribute argument: '{0}'.  Argument must be fields " +
 				      "fields which are not readonly, static or const;  or read-write instance properties.",
-				      name);
+				      Name);
 		}
 
 		static void Error_AttributeArgumentNotValid (string extra, Location loc)
@@ -160,49 +155,26 @@ namespace Mono.CSharp {
                                       "Could not find a constructor for this argument list.");
 		}
 
-		void ResolvePossibleAttributeTypes (EmitContext ec, out Type t1, out Type t2)
-		{
-			t1 = null;
-			t2 = null;
-
-			FullNamedExpression n1 = null;
-			FullNamedExpression n2 = null;
-			string IdentifierAttribute = Identifier + "Attribute";
-			if (LeftExpr == null) {
-				n1 = new SimpleName (Identifier, Location).ResolveAsTypeStep (ec);
-
-				// FIXME: Shouldn't do this for quoted attributes: [@A]
-				n2 = new SimpleName (IdentifierAttribute, Location).ResolveAsTypeStep (ec);
-			} else {
-				FullNamedExpression l = LeftExpr.ResolveAsTypeStep (ec);
-				if (l == null) {
-					Report.Error (246, Location, "Couldn't find namespace or type '{0}'", LeftExpr);
-					return;
-				}
-				n1 = new MemberAccess (l, Identifier, Location).ResolveNamespaceOrType (ec, true);
-
-				// FIXME: Shouldn't do this for quoted attributes: [X.@A]
-				n2 = new MemberAccess (l, IdentifierAttribute, Location).ResolveNamespaceOrType (ec, true);
-			}
-
-			TypeExpr te1 = n1 == null ? null : n1 as TypeExpr;
-			TypeExpr te2 = n2 == null ? null : n2 as TypeExpr;			
-
-			if (te1 != null)
-				t1 = te1.ResolveType (ec);
-			if (te2 != null)
-				t2 = te2.ResolveType (ec);
-		}
-
 		/// <summary>
                 ///   Tries to resolve the type of the attribute. Flags an error if it can't, and complain is true.
                 /// </summary>
-		Type CheckAttributeType (EmitContext ec)
+		protected virtual Type CheckAttributeType (EmitContext ec)
 		{
-			Type t1, t2;
-			ResolvePossibleAttributeTypes (ec, out t1, out t2);
-
 			string NameAttribute = Name + "Attribute";
+			FullNamedExpression n1 = ec.ResolvingTypeTree
+				? ec.DeclSpace.FindType (Location, Name)
+				: ec.DeclSpace.LookupType (Name, true, Location);
+
+			// FIXME: Shouldn't do this for quoted attributes: [@A]
+			FullNamedExpression n2 = ec.ResolvingTypeTree
+				? ec.DeclSpace.FindType (Location, NameAttribute)
+				: ec.DeclSpace.LookupType (NameAttribute, true, Location);
+
+			TypeExpr e1 = n1 == null ? null : n1 as TypeExpr;
+			TypeExpr e2 = n2 == null ? null : n2 as TypeExpr;			
+
+			Type t1 = e1 == null ? null : e1.ResolveType (ec);
+			Type t2 = e2 == null ? null : e2.ResolveType (ec);
 
 			String err0616 = null;
 			if (t1 != null && ! t1.IsSubclassOf (TypeManager.attribute_type)) {
@@ -238,7 +210,7 @@ namespace Mono.CSharp {
 			return null;
 		}
 
-		public virtual Type ResolveType (EmitContext ec)
+		public Type ResolveType (EmitContext ec)
 		{
 			if (Type == null)
 				Type = CheckAttributeType (ec);
@@ -1219,46 +1191,52 @@ namespace Mono.CSharp {
 	{
 		public readonly NamespaceEntry ns;
 
-		public GlobalAttribute (TypeContainer container, string target, 
-					Expression left_expr, string identifier, ArrayList args, Location loc):
-			base (target, left_expr, identifier, args, loc)
+		public GlobalAttribute (TypeContainer container, string target, string name, ArrayList args, Location loc):
+			base (target, name, args, loc)
 		{
 			ns = container.NamespaceEntry;
 		}
 
-		void Enter ()
+		protected override Type CheckAttributeType (EmitContext ec)
 		{
 			// RootContext.Tree.Types has a single NamespaceEntry which gets overwritten
 			// each time a new file is parsed.  However, we need to use the NamespaceEntry
 			// in effect where the attribute was used.  Since code elsewhere cannot assume
 			// that the NamespaceEntry is right, just overwrite it.
 			//
-			// Precondition: RootContext.Tree.Types == null
+			// Precondition: RootContext.Tree.Types == null || RootContext.Tree.Types == ns.
+			//               The second case happens when we are recursively invoked from inside Emit.
 
-			if (RootContext.Tree.Types.NamespaceEntry != null)
-				throw new InternalErrorException (Location + " non-null NamespaceEntry");
+			NamespaceEntry old = null;
+			if (ec.DeclSpace == RootContext.Tree.Types) {
+				old = ec.DeclSpace.NamespaceEntry;
+				ec.DeclSpace.NamespaceEntry = ns;
+				if (old != null && old != ns)
+					throw new InternalErrorException (Location + " non-null NamespaceEntry " + old);
+			}
 
-			RootContext.Tree.Types.NamespaceEntry = ns;
-		}
+			Type retval = base.CheckAttributeType (ec);
 
-		void Leave ()
-		{
-			RootContext.Tree.Types.NamespaceEntry = null;
-		}
+			if (ec.DeclSpace == RootContext.Tree.Types)
+				ec.DeclSpace.NamespaceEntry = old;
 
-		public override Type ResolveType (EmitContext ec)
-		{
-			Enter ();
-			Type retval = base.ResolveType (ec);
-			Leave ();
 			return retval;
 		}
 
 		public override CustomAttributeBuilder Resolve (EmitContext ec)
 		{
-			Enter ();
+			if (ec.DeclSpace == RootContext.Tree.Types) {
+				NamespaceEntry old = ec.DeclSpace.NamespaceEntry;
+				ec.DeclSpace.NamespaceEntry = ns;
+				if (old != null)
+					throw new InternalErrorException (Location + " non-null NamespaceEntry " + old);
+			}
+
 			CustomAttributeBuilder retval = base.Resolve (ec);
-			Leave ();
+
+			if (ec.DeclSpace == RootContext.Tree.Types)
+				ec.DeclSpace.NamespaceEntry = null;
+
 			return retval;
 		}
 	}

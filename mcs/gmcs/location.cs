@@ -57,7 +57,7 @@ namespace Mono.CSharp {
 	///   in 8 bits (and say, map anything after char 255 to be `255+').
 	/// </remarks>
 	public struct Location {
-		int token; 
+		public int token; 
 
 		static ArrayList source_list;
 		static Hashtable source_files;

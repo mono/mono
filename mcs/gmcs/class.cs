@@ -1470,6 +1470,15 @@ namespace Mono.CSharp {
 
 		protected virtual bool DoDefineMembers ()
 		{
+			//
+			// We need to be able to use the member cache while we are checking/defining
+			//
+			if (TypeBuilder.BaseType != null)
+				base_cache = TypeManager.LookupMemberCache (TypeBuilder.BaseType);
+
+			if (TypeBuilder.IsInterface)
+				base_cache = TypeManager.LookupBaseInterfacesCache (TypeBuilder);
+
  			if (IsTopLevel) {
  				if ((ModFlags & Modifiers.NEW) != 0)
  					Error_KeywordNotAllowed (Location);
@@ -1790,10 +1799,6 @@ namespace Mono.CSharp {
 							continue;
 
 						FieldBuilder fb = con.FieldBuilder;
-						if (fb == null) {
-							if (con.Define ())
-								fb = con.FieldBuilder;
-						}
 						if (fb != null && filter (fb, criteria) == true) {
 							if (members == null)
 								members = new ArrayList ();
@@ -1981,9 +1986,6 @@ namespace Mono.CSharp {
 							continue;
 
 						TypeBuilder tb = t.TypeBuilder;
-						if (tb == null)
-							tb = t.DefineType ();
-
 						if (tb != null && (filter (tb, criteria) == true)) {
 							if (members == null)
 								members = new ArrayList ();
@@ -2586,12 +2588,6 @@ namespace Mono.CSharp {
 
 		public virtual MemberCache BaseCache {
 			get {
-				if (base_cache != null)
-					return base_cache;
-				if (TypeBuilder.BaseType != null)
-					base_cache = TypeManager.LookupMemberCache (TypeBuilder.BaseType);
-				if (TypeBuilder.IsInterface)
-					base_cache = TypeManager.LookupBaseInterfacesCache (TypeBuilder);
 				return base_cache;
 			}
 		}
@@ -5665,9 +5661,9 @@ namespace Mono.CSharp {
  			}
 
  			if ((ModFlags & (Modifiers.NEW | Modifiers.OVERRIDE)) == 0) {
-				Report.SymbolRelatedToPreviousError (conflict_symbol);
-				Report.Warning (108, Location, "The keyword new is required on '{0}' because it hides inherited member", GetSignatureForError (Parent));
-			}
+ 				Report.SymbolRelatedToPreviousError (conflict_symbol);
+ 				Report.Warning (108, Location, "The keyword new is required on '{0}' because it hides inherited member", GetSignatureForError (Parent));
+ 			}
 
 			return true;
  		}
@@ -5766,12 +5762,12 @@ namespace Mono.CSharp {
 			
 			MemberType = texpr.Type;
 
-			ec.InUnsafe = old_unsafe;
-
 			if (MemberType == TypeManager.void_type) {
 				Report.Error (1547, Location, "Keyword 'void' cannot be used in this context");
 				return false;
 			}
+
+			ec.InUnsafe = old_unsafe;
 
 			if (!CheckBase ())
 				return false;

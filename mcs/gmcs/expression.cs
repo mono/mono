@@ -431,15 +431,13 @@ namespace Mono.CSharp {
 				}
 
 				IVariable variable = Expr as IVariable;
-				bool is_fixed = variable != null && variable.VerifyFixed (false);
-
-				if (!ec.InFixedInitializer && !is_fixed) {
+				if (!ec.InFixedInitializer && ((variable == null) || !variable.VerifyFixed (false))) {
 					Error (212, "You can only take the address of an unfixed expression inside " +
 					       "of a fixed statement initializer");
 					return null;
 				}
 
-				if (ec.InFixedInitializer && is_fixed) {
+				if (ec.InFixedInitializer && ((variable != null) && variable.VerifyFixed (false))) {
 					Error (213, "You can not fix an already fixed expression");
 					return null;
 				}
@@ -663,7 +661,7 @@ namespace Mono.CSharp {
 	// after semantic analysis (this is so we can take the address
 	// of an indirection).
 	//
-	public class Indirection : Expression, IMemoryLocation, IAssignMethod, IVariable {
+	public class Indirection : Expression, IMemoryLocation, IAssignMethod {
 		Expression expr;
 		LocalTemporary temporary;
 		bool prepared;
@@ -737,21 +735,6 @@ namespace Mono.CSharp {
 		{
 			return "*(" + expr + ")";
 		}
-
-		#region IVariable Members
-
-		public VariableInfo VariableInfo {
-			get {
-				return null;
-			}
-		}
-
-		public bool VerifyFixed (bool is_expression)
-		{
-			return true;
-		}
-
-		#endregion
 	}
 	
 	/// <summary>
@@ -3475,26 +3458,17 @@ namespace Mono.CSharp {
 				//
 				left.Emit (ec);
 				ig.Emit (OpCodes.Conv_I);
-
-				Constant right_const = right as Constant;
-				if (right_const != null && size != 0) {
-					Expression ex = ConstantFold.BinaryFold (ec, Binary.Operator.Multiply, new IntConstant (size), right_const, loc);
-					if (ex == null)
-						return;
-					ex.Emit (ec);
-				} else {
-					right.Emit (ec);
-					if (size != 1){
-						if (size == 0)
-							ig.Emit (OpCodes.Sizeof, element);
-						else 
-							IntLiteral.EmitInt (ig, size);
-						if (rtype == TypeManager.int64_type)
-							ig.Emit (OpCodes.Conv_I8);
-						else if (rtype == TypeManager.uint64_type)
-							ig.Emit (OpCodes.Conv_U8);
-						ig.Emit (OpCodes.Mul);
-					}
+				right.Emit (ec);
+				if (size != 1){
+					if (size == 0)
+						ig.Emit (OpCodes.Sizeof, element);
+					else 
+						IntLiteral.EmitInt (ig, size);
+					if (rtype == TypeManager.int64_type)
+						ig.Emit (OpCodes.Conv_I8);
+					else if (rtype == TypeManager.uint64_type)
+						ig.Emit (OpCodes.Conv_U8);
+					ig.Emit (OpCodes.Mul);
 				}
 				
 				if (rtype == TypeManager.int64_type || rtype == TypeManager.uint64_type)
@@ -7309,15 +7283,7 @@ namespace Mono.CSharp {
 
 						object real_value = ((Constant) c.Expr).GetValue ();
 
-						Expression exp = Constantify (real_value, t);
-
-						if (left_is_explicit && !left_is_type && !IdenticalNameAndTypeName (ec, left_original, left, loc)) {
-							Report.SymbolRelatedToPreviousError (c);
-							error176 (loc, c.GetSignatureForError ());
-							return null;
-						}
-					
-						return exp;
+						return Constantify (real_value, t);
 					}
 				}
 
@@ -7641,11 +7607,6 @@ namespace Mono.CSharp {
 
 		public override FullNamedExpression ResolveAsTypeStep (EmitContext ec)
 		{
-			return ResolveNamespaceOrType (ec, false);
-		}
-
-		public FullNamedExpression ResolveNamespaceOrType (EmitContext ec, bool silent)
-		{
 			FullNamedExpression new_expr = expr.ResolveAsTypeStep (ec);
 
 			if (new_expr == null)
@@ -7658,7 +7619,7 @@ namespace Mono.CSharp {
 				FullNamedExpression retval = ns.Lookup (ec.DeclSpace, lookup_id, loc);
 				if ((retval != null) && (args != null))
 					retval = new ConstructedType (retval, args, loc).ResolveAsTypeStep (ec);
-				if (!silent && retval == null)
+				if (retval == null)
 					Report.Error (234, loc, "The type or namespace name `{0}' could not be found in namespace `{1}'", Identifier, ns.FullName);
 				return retval;
 			}
@@ -7677,7 +7638,7 @@ namespace Mono.CSharp {
 
 			Expression member_lookup;
 			member_lookup = MemberLookupFinal (ec, expr_type, expr_type, lookup_id, loc);
-			if (!silent && member_lookup == null) {
+			if (member_lookup == null) {
 				Report.Error (234, loc, "The type name `{0}' could not be found in type `{1}'", 
 					      Identifier, new_expr.FullName);
 				return null;
