@@ -82,17 +82,18 @@ namespace System.Web {
 
            internal void SaveData ()
            {
-                   SetRequestDetails ();
+ 		   SetRequestDetails ();
 		   data.AddControlTree ((Page) _Context.Handler);
 		   AddCookies ();
 		   AddHeaders ();
 		   AddServerVars ();
-                   data_saved = true;
-           }
+		   HttpRuntime.TraceManager.AddTraceData (data);
+		   data_saved = true;
+	   }
            
 	   internal void Render (HtmlTextWriter output)
 	   {
-                   if (data_saved)
+                   if (!data_saved)
                            SaveData ();
 		   data.Render (output);
 	   }

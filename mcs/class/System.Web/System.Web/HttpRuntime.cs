@@ -48,9 +48,9 @@ namespace System.Web {
 		private Exception _initError;
 		private TimeoutManager timeoutManager;
 		private QueueManager queueManager;
+		private TraceManager traceManager;
 		private WaitCallback doRequestCallback;
 		private int pendingCallbacks;
-
 
 		static HttpRuntime ()
 		{
@@ -79,9 +79,9 @@ namespace System.Web {
 			try {
 				_cache = new Cache ();
 				timeoutManager = new TimeoutManager ();
+				traceManager = new TraceManager ();
 
 				// TODO: Load all app domain data
-				// TODO: Trace manager
 				_endOfSendCallback = new HttpWorkerRequest.EndOfSendNotification(OnEndOfSend);
 				_handlerCallback = new AsyncCallback(OnHandlerReady);
 				_appDomainCallback = new WaitCallback(OnAppDomainUnload);
@@ -427,6 +427,12 @@ namespace System.Web {
 				return HttpRuntime._runtime.timeoutManager;
 			}
 		}
+
+                internal static TraceManager TraceManager {
+                        get {
+                                return HttpRuntime._runtime.traceManager;
+                        }
+                }
 
 		public static void Close ()
 		{

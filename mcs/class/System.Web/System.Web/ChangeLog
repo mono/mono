@@ -1,5 +1,12 @@
 2004-01-10  Jackson Harper <jackson@ximian.com>
 
+	* HttpRuntime.cs: Add trace manager
+	* TraceManager.cs: New class for handling trace configuration and
+	storing trace data objects.
+	* TraceContext.cs: Save trace data to the trace manager. Fix typo.
+	
+2004-01-10  Jackson Harper <jackson@ximian.com>
+
 	* TraceData.cs: New class for storing trace data. Data is stored
 	here instead of the trace context so it can be saved and accessed
 	from the trace handler.
