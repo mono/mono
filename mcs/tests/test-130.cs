@@ -21,7 +21,7 @@ class X {
 	public const char c5 = (char) c;
 
 	public const short s2 = (short) c;
-
+	public IntPtr p = (IntPtr) null;
 	static int Main ()
 	{
 		return 0;
