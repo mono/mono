@@ -1,4 +1,8 @@
 
+Tue Apr 15 14:15:39 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* driver.c: print overall results at the end of regression run.
+
 Tue Apr 15 11:18:46 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* inssel.brg: don't overwrite symbolic registers.
