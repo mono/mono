@@ -1,3 +1,10 @@
+2004-04-28  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-exceptions.c: New file.
+	
+	* mini.c mini-exceptions.c mini-x86.h exceptions-x86.c Makefile.am:
+	Move some parts of the x86 exception handling code to an 
+	arch-independent file so it can be shared with other ports.
 
 Tue Apr 27 12:15:59 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
