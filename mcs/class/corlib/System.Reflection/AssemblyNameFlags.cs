@@ -62,6 +62,7 @@ namespace System.Reflection {
 		ProcessPlatform = 0x6,
 		SystemPlatform = 0x8,
 		LongevityMask = 0xe,
+		LongevityUnspecified = 0x0,
 		EnableJITcompileOptimizer = 0x4000,
 		EnableJITcompileTracking = 0x8000
 #endif

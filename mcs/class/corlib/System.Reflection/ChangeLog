@@ -1,3 +1,7 @@
+2004-09-24  Zoltan Varga  <vargaz@freemail.hu>
+
+	* AssemblyNameFlags.cs: Add LongevityUnspecified.
+
 2004-09-23  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Module.cs: Remove [MonoTODO] from ResolveMember.
