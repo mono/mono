@@ -1,3 +1,8 @@
+2004-10-03  Zoltan Varga  <vargaz@freemail.hu>
+
+	* LocalVariableInfo.cs: Reorganize fields so LocalBuilder can inherit
+	from this class.
+
 2004-09-28  Zoltan Varga  <vargaz@freemail.hu>
 
 	* PropertyInfo.cs (OptionalCustomModifiers): Add [MonoTODO].

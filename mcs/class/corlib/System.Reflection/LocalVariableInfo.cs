@@ -36,9 +36,9 @@ namespace System.Reflection {
 
 	public class LocalVariableInfo {
 		#region Sync with reflection.h
-		Type local_type;
-		bool is_pinned;
-		int local_index;
+		internal Type type;
+		internal bool is_pinned;
+		internal ushort position;
 		#endregion
 
 		internal LocalVariableInfo () {
@@ -52,13 +52,13 @@ namespace System.Reflection {
 
 		public virtual int LocalIndex {
 			get {
-				return local_index;
+				return position;
 			}
 		}
 
 		public virtual Type LocalType {
 			get {
-				return local_type;
+				return type;
 			}
 		}
 	}
