@@ -1,3 +1,14 @@
+2002-04-28  Rodrigo Moya <rodrigo@ximian.com>
+
+	* System.Data/DataTableCollection.cs: more implementation.
+	(Count): added 'override' keyword, as pointer out by Martin.
+
+	* System.Data.Common/DataColumnMappingCollection.cs (Add, AddRange):
+	only call Array.Copy when there is really stuff to be copied.
+	(CopyTo): don't create the temporary array, it's not needed.
+
+	* System.Data.build: excluded newly added file from build.
+
 2002-04-27  Rodrigo Moya <rodrigo@ximian.com>
 
 	* System.Data/DataTableRelationCollection.cs: removed, it's not

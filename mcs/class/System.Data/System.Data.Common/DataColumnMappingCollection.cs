@@ -29,7 +29,8 @@ namespace System.Data.Common
 		public int Add (object obj) {
 			DataColumnMapping[] tmp = new DataColumnMapping[size + 1];
 
-			Array.Copy (mappings, tmp, size);
+			if (size > 0)
+				Array.Copy (mappings, tmp, size);
 			size++;
 			mappings = tmp;
 			mappings[size - 1] = obj;
@@ -40,7 +41,8 @@ namespace System.Data.Common
 		public void AddRange (DataColumnMapping[] values) {
 			DataColumnMapping[] tmp = new DataColumnMapping[size + values.Length];
 
-			Array.Copy (mappings, tmp, size);
+			if (size > 0)
+				Array.Copy (mappings, tmp, size);
 			for (int i = 0; i < values.Length; i++) {
 				tmp[i + size] = values[i];
 			}
@@ -67,8 +69,7 @@ namespace System.Data.Common
 		}
 
 		public void CopyTo (Array array, int index) {
-			DataColumnMapping[] tmp = new DataColumnMapping[size];
-			Array.Copy (mappings, tmp, size);
+			Array.Copy (mappings, array, size);
 		}
 
 		public DataColumnMapping GetByDataSetColumn (string value) {
