@@ -1,3 +1,8 @@
+2003-09-18  Ravi Pratap  <ravi@ximian.com>
+
+	* ConditionalAttribute.cs: AllowMultiple should be true according
+	to bug #48598.
+
 2003-09-02  Ravi Pratap  <ravi@ximian.com>
 
 	* DebuggerStepThroughAttribute.cs: Fix allowable targets to include class
