@@ -3156,7 +3156,7 @@ namespace Mono.CSharp {
 			}
 
 			if (q == null) {
-				Expression tmp = ConvertImplicitStandard (ec, argument_expr, p, loc);
+				Expression tmp = ConvertImplicit (ec, argument_expr, p, loc);
 				
 				if (tmp != null)
 					return 1;
@@ -3365,7 +3365,7 @@ namespace Mono.CSharp {
 		///  Determines is the candidate method, if a params method, is applicable
 		///  in its expanded form to the given set of arguments
 		/// </summary>
-		static bool IsParamsMethodApplicable (ArrayList arguments, MethodBase candidate)
+		static bool IsParamsMethodApplicable (EmitContext ec, ArrayList arguments, MethodBase candidate)
 		{
 			int arg_count;
 			
@@ -3404,7 +3404,7 @@ namespace Mono.CSharp {
 				if (a_mod == p_mod) {
 
 					if (a_mod == Parameter.Modifier.NONE)
-						if (!StandardConversionExists (a.Expr, pd.ParameterType (i)))
+						if (!ImplicitConversionExists (ec, a.Expr, pd.ParameterType (i)))
 							return false;
 										
 					if (a_mod == Parameter.Modifier.REF ||
@@ -3438,7 +3438,7 @@ namespace Mono.CSharp {
 		///  Determines if the candidate method is applicable (section 14.4.2.1)
 		///  to the given set of arguments
 		/// </summary>
-		static bool IsApplicable (ArrayList arguments, MethodBase candidate)
+		static bool IsApplicable (EmitContext ec, ArrayList arguments, MethodBase candidate)
 		{
 			int arg_count;
 
@@ -3465,7 +3465,7 @@ namespace Mono.CSharp {
 				if (a_mod == p_mod ||
 				    (a_mod == Parameter.Modifier.NONE && p_mod == Parameter.Modifier.PARAMS)) {
 					if (a_mod == Parameter.Modifier.NONE)
-						if (!StandardConversionExists (a.Expr, pd.ParameterType (i)))
+						if (!ImplicitConversionExists (ec, a.Expr, pd.ParameterType (i)))
 							return false;
 					
 					if (a_mod == Parameter.Modifier.REF ||
@@ -3516,7 +3516,7 @@ namespace Mono.CSharp {
 				int x;
 
 				// Check if candidate is applicable (section 14.4.2.1)
-				if (!IsApplicable (Arguments, candidate))
+				if (!IsApplicable (ec, Arguments, candidate))
 					continue;
 
 				candidates.Add (candidate);
@@ -3524,6 +3524,7 @@ namespace Mono.CSharp {
 				
 				if (x == 0)
 					continue;
+
 				method = candidate;
 			}
 
@@ -3542,15 +3543,15 @@ namespace Mono.CSharp {
 			if (method == null) {
 				candidates = new ArrayList ();
 				foreach (MethodBase candidate in me.Methods){
-					if (!IsParamsMethodApplicable (Arguments, candidate))
+					if (!IsParamsMethodApplicable (ec, Arguments, candidate))
 						continue;
 
 					candidates.Add (candidate);
 
 					int x = BetterFunction (ec, Arguments, candidate, method, true, loc);
-
 					if (x == 0)
 						continue;
+
 					method = candidate; 
 					chose_params_expanded = true;
 				}
@@ -3573,8 +3574,8 @@ namespace Mono.CSharp {
 				// number of arguments, then the expanded params method is never applicable
 				// so we debar the params method.
 				//
-				if (IsParamsMethodApplicable (Arguments, candidate) &&
-				    IsApplicable (Arguments, method))
+				if (IsParamsMethodApplicable (ec, Arguments, candidate) &&
+				    IsApplicable (ec, Arguments, method))
 					continue;
 					
 				int x = BetterFunction (ec, Arguments, method, candidate,
@@ -3622,7 +3623,7 @@ namespace Mono.CSharp {
 				if (a.Type != parameter_type){
 					Expression conv;
 					
-					conv = ConvertImplicitStandard (ec, a_expr, parameter_type, loc);
+					conv = ConvertImplicit (ec, a_expr, parameter_type, loc);
 
 					if (conv == null) {
 						if (!Location.IsNull (loc)) {

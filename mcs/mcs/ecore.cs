@@ -819,6 +819,23 @@ namespace Mono.CSharp {
 
 			return false;
 		}
+
+		/// <summary>
+		///  Same as StandardConversionExists except that it also looks at
+		///  implicit user defined conversions - needed for overload resolution
+		/// </summary>
+		public static bool ImplicitConversionExists (EmitContext ec, Expression expr, Type target_type)
+		{
+			if (StandardConversionExists (expr, target_type) == true)
+				return true;
+
+			Expression dummy = ImplicitUserConversion (ec, expr, target_type, Location.Null);
+
+			if (dummy != null)
+				return true;
+
+			return false;
+		}
 		
 		/// <summary>
 		///  Determines if a standard implicit conversion exists from
@@ -1260,7 +1277,7 @@ namespace Mono.CSharp {
 				op_name = "op_True";
 			else
 				op_name = "op_Implicit";
-			
+
 			MethodGroupExpr union3;
 			
 			mg1 = MethodLookup (ec, source_type, op_name, loc);

@@ -1,3 +1,13 @@
+2002-05-24  Ravi Pratap  <ravi@ximian.com>
+
+	* ecore.cs (ImplicitConversionExists): Wrapper function which also
+	looks at user defined conversion after making a call to 
+	StandardConversionExists - we need this for overload resolution.
+
+	* expression.cs : Update accordingly the various method calls.
+
+	This fixes 2 bugs filed against implicit user defined conversions 
+
 2002-05-22  Miguel de Icaza  <miguel@ximian.com>
 
 	* statement.cs: Track the result of the assignment.
