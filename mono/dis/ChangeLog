@@ -1,3 +1,12 @@
+2004-08-02  Martin Baulig  <martin@ximian.com>
+
+	* dump.c (dump_stream_blob): Format this nicely.
+	(dump_table_standalonesig): New public function.
+
+	* main.c (dis_locals): If --show-tokens was requested, print the
+	standalone signature token.
+	(table_list): Added "--standalonesig".
+
 2004-07-09  Jackson Harper  <jackson@ximian.com>
 
 	* get.c: Make "class" the default so only valuetypes get the
