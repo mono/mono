@@ -1,3 +1,8 @@
+2003-11-12 Jackson Harper <jackson@ximian.com>
+
+	* Environment.cs: Add MyMusic and MyPictures to the SpecialFolder
+	enum. This fixes the SWF build.
+	
 2003-11-12  Miguel de Icaza  <miguel@ximian.com>
 
 	* PlatformID.cs: Remove Unix platform, we cant expose constants

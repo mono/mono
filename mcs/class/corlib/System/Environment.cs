@@ -40,6 +40,7 @@ namespace System
 			Recent = 0x08,
 			SendTo = 0x09,
 			StartMenu = 0x0b,
+			MyMusic = 0x0d,
 			DesktopDirectory = 0x10,
 			Templates = 0x15,
 			ApplicationData	= 0x1a,
@@ -50,6 +51,7 @@ namespace System
 			CommonApplicationData	= 0x23,
 			System = 0x25,
 			ProgramFiles = 0x26,
+			MyPictures = 0x27,
 			CommonProgramFiles = 0x2b,
 		}
 
