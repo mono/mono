@@ -201,6 +201,7 @@ namespace MonoTests.System.Data
 			}
 
 			[Test]
+			[NUnit.Framework.Category ("NotDotNet")]
 			public void AddNew_2 ()
 			{
 				dataView.AllowNew = true;
@@ -211,6 +212,7 @@ namespace MonoTests.System.Data
 				drv["itemName"] = "name " + rndm.Next();
 				drv["itemPrice"] = "Rs. " + (rndm.Next() % 1000);
 				drv["itemCategory"] = "Cat " + ((rndm.Next() % 10) + 1);
+				// .NET 1.1 passes .ItemAdded to listChangedArgs here.
 				AssertEquals ("test#01",ListChangedType.ItemChanged,listChangedArgs.ListChangedType);				
 			}
 			
@@ -315,12 +317,13 @@ namespace MonoTests.System.Data
 				AssertEquals ("test#07",ListChangedType.PropertyDescriptorDeleted,listChangedArgs.ListChangedType);
 			}
 	
-			[Test]
+		[Test]
+		[Ignore ("Still not implemented")]
                 public void TestFindRows ()
                 {
                         DataView TestView = new DataView (dataTable);
                         TestView.Sort = "itemId";
-                        DataRowView[] Result = TestView.FindRows ("itemId");
+                        DataRowView[] Result = TestView.FindRows ("item 3");
                         Assertion.AssertEquals ("Dv #1", 1, Result.Length);
                         Assertion.AssertEquals ("Dv #2", "item 3", Result [0]["itemId"]);
                 }

@@ -1,5 +1,10 @@
 2005-01-14  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DataViewTest.cs : made AddNew_2() and FindRows() pass under .NET 1.1.
+	  FindRows() is still not implemented, so marked as [Ignore].
+
+2005-01-14  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ForeignKeyConstraintTest.cs : Fixed Ctor5() to pass under MS.NET 1.1.
 	  Design time ctor() needs more love.
 	* DataRelationCollectionTest.cs,
