@@ -1,3 +1,8 @@
+2004-09-05  Marek Safar  <marek.safar@seznam.cz>
+
+	* corlib.dll.sources: 
+	Added System.Collections.Generic/Dictionary.cs to the build.
+
 2004-09-03  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* corlib_test.dll.sources: Added System.Security.Permissions/

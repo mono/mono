@@ -1111,6 +1111,7 @@ System.Threading/TimerCallback.cs
 System.Threading/WaitCallback.cs
 System.Threading/WaitHandle.cs
 System.Threading/WaitOrTimerCallback.cs
+System.Collections.Generic/Dictionary.cs
 System.Collections.Generic/ICollection.cs
 System.Collections.Generic/IEnumerable.cs
 System.Collections.Generic/IEnumerator.cs
