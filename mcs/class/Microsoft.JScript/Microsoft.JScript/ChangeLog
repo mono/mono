@@ -1,3 +1,43 @@
+2004-03-07  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
+
+	* jscript-lexer-parser.g: build If's ast. Keep track of expr parent.
+
+	* expression.cs: At class Conditional renamed fields. Class
+	Expression inherits from Exp as we must keep track if we must pop
+	the last value (this is for the comma operator), track the parent,
+	at Resolve we take care of the last value of the expression, 
+
+	* VariableDeclaration.cs: updates needed because of EmitContext change.
+
+	* Statement.cs: added parent param to If constructor. Implement
+	Resolve and Emit for If statement.
+
+	* Relational.cs: Set parent. The boxing happens in the containing statement.
+
+	* FunctionDeclaration.cs: Added func_type field, will be used to determine the
+	type of the function we are generating (global function, method
+	from a class, etc) and attach to it the correct custom
+	attribute. Simplified the code for nested functions: 
+	refactored the code so no code duplication is involved, now we
+	have only one function that retrieves  the name of the function,
+	now create a new EmitContext for the body of the method.
+
+	* FormalParameterList.cs, Literal.cs, StringLiteral.cs:  use
+	current EmitContext's ILGenerator. 
+
+	* Convert.cs: Do not throw the NotImplementedException anymore for
+	method ToBoolean, for now we always return false. This must get a
+	real implementation.
+
+	* CodeGenerator.cs:  Deleted one of ILGenerator fields
+	from EmitContext, suffices using only one (more notes about the
+	change on the Functiondeclaration entry). Imitate jsc behavior for
+	compiled files names, aggregate the exe or dll extension after last dot.
+
+	* Block.cs: In order to implement the comma operator (i.e., expression,
+	assign_exp), we must track if our expressions are at a global
+	scope, in which case we must pop the last result too.
+
 2004-01-25  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
 	* Relational.cs: Initial generation of CIL for relational operators.
