@@ -12,8 +12,9 @@ DIRS =	corlib				\
 	System.Web.Services		\
 	System.Runtime.Remoting		\
 	System.Runtime.Serialization.Formatters.Soap \
-	System.Configuration.Install \
+	System.Configuration.Install 	\
 	Mono.CSharp.Debugger		\
+	Mono.PEToolkit			\
 	Microsoft.VisualBasic
 
 default: all

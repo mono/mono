@@ -21,6 +21,7 @@
 		<nant basedir="System.Configuration.Install" target="build"/>
 		<nant basedir="System.Runtime.Remoting" target="build"/>
 		<nant basedir="System.Runtime.Serialization.Formatters.Soap" target="build"/>
+		<nant basedir="Mono.PEToolkit" target="build"/>
 	</target>
 
 	<target name="test">
@@ -48,5 +49,6 @@
 		<nant basedir="System.Web.Services" target="clean"/>
 		<nant basedir="Microsoft.VisualBasic" target="clean"/>
 		<nant basedir="System.Configuration.Install" target="clean"/>
+		<nant basedir="Mono.PEToolkit" target="build"/>
 	</target>
 </project>
