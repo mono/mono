@@ -1,3 +1,9 @@
+2005-01-16  Daniel Morgan <danielmorgan@verizon.net>
+
+	* Tds.cs: TDS 5.0 (Sybase) needs to get a DECIMAL
+	differently than TDS 7.0 (SqlServer).  Fixes bug 70228.
+	Thanks to Sebastien Robitaille for the patch for Sybase.
+	
 2005-01-07  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* Tds70.cs : 

@@ -8,7 +8,7 @@
 //
 // Copyright (C) 2002 Tim Coleman
 // Portions (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-// Portions (C) 2003 Daniel Morgan
+// Portions (C) 2003,2005 Daniel Morgan
 //
 
 //
@@ -587,8 +587,14 @@ namespace Mono.Data.Tds.Protocol {
 			return result;
 		}
 
-		private object GetDecimalValue (byte precision, byte scale)
-		{
+		private object GetDecimalValue (byte precision, byte scale) {
+			if (tdsVersion < TdsVersion.tds70)
+				return GetDecimalValueTds50 (precision, scale);
+			else
+				return GetDecimalValueTds70 (precision, scale);
+		}
+		
+		private object GetDecimalValueTds70 (byte precision, byte scale) {
 			int[] bits = new int[4] {0,0,0,0};
 
 			int len = (comm.GetByte() & 0xff) - 1;
@@ -607,6 +613,43 @@ namespace Mono.Data.Tds.Protocol {
 				return new TdsBigDecimal (precision, scale, !positive, bits);
 			else
 				return new Decimal (bits[0], bits[1], bits[2], !positive, scale);
+		}
+
+		private object GetDecimalValueTds50 (byte precision, byte scale) {
+			int[] bits = new int[4] {0,0,0,0};
+
+			int len = (comm.GetByte() & 0xff);
+			if (len == 0)
+				return DBNull.Value;
+
+			byte[] dec_bytes=comm.GetBytes(len,false);	
+		
+			byte[] easy=new byte[4];
+
+			bool positive = dec_bytes[0]==1;
+
+			if (len > 17)
+				throw new OverflowException ();
+
+			for (int i = 1, index = 0; i < len && i < 16; i += 
+				4, index += 1) {
+				for(int j=0; j<4; j++)
+					if(i+j<len)
+						easy[j]=dec_bytes[len-
+							(i+j)];
+					else
+						easy[j]=0;
+				if(!BitConverter.IsLittleEndian)
+					easy=comm.Swap(easy);
+				bits[index] = BitConverter.ToInt32(easy,0);
+			}
+			if (bits [3] != 0) 
+				return new TdsBigDecimal (precision, 
+					scale, positive, bits);
+			else
+				return new Decimal(bits[0], bits[1], bits
+					[2], positive, scale);
+			
 		}
 
 		private object GetFloatValue (TdsColumnType columnType)
