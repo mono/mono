@@ -444,7 +444,7 @@ opt_actual_parameters
 
 Tokenizer lexer;
 
-public override int parse ()
+public override void parse ()
 {
 	current_namespace = new Namespace (null, "");
 	this.tree = rc.Tree;
@@ -456,7 +456,6 @@ public override int parse ()
 	lexer = new Tokenizer (input, name);
 	StringBuilder value = new StringBuilder ();
 
-	global_errors = 0;
 	try 
 	{
 		if (yacc_verbose_flag)
@@ -468,10 +467,7 @@ public override int parse ()
 	{
 		Console.WriteLine (lexer.location + "  : Parsing error ");
 		Console.WriteLine (e);
-		global_errors++;
 	}
-
-	return global_errors;
 }
 
 /* end end end */

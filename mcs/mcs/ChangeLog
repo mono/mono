@@ -1,3 +1,29 @@
+2002-06-25  Andrew Birkett  <adb@tardis.ed.ac.uk>
+
+	* driver.cs: Made error handling more consistent.  Errors now
+	tracked by Report class, so many methods which used to return int
+	now return void.  Main() now prints success/failure and 
+	errors/warnings message.
+
+	Renamed '--probe' compiler argument to '--expect-error'.  Removed
+	the magic number return values (123 and 124).  Now, if the
+	expected error occurs, the compiler exits with success (exit value
+	0).  If the compilation completes without seeing that particular
+	error, the compiler exits with failure (exit value 1).  The
+	makefile in mcs/errors has been changed to handle the new behaviour.
+
+	* report.cs: Made 'expected error' number a property and renamed
+	it from 'Probe' to 'ExpectedError'.
+
+	* genericparser.cs: Removed error handling support, since it is
+	now all done by Report class.
+
+	* cs-parser.jay, mb-parser.jay: Errors are tracked by Report
+	class, so parse() no longer returns an int.
+
+	* namespace.cs: Use Report.Error instead of GenericParser.error
+
+	
 2002-06-22  Miguel de Icaza  <miguel@ximian.com>
 
 	* class.cs (TypeContainer.AddMethod, TypeContainer.AddIndexer,

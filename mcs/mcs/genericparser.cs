@@ -19,15 +19,13 @@ namespace Mono.Languages
 	/// </summary>
 	public abstract class GenericParser
 	{
-		static protected int global_errors;
-
 		// Name of the file we are parsing
 		public string name;
 
 		// Input stream to parse from.
 		public System.IO.Stream input;
 
-		public abstract int parse ();
+		public abstract void parse ();
 
 		public virtual string[] extensions()
 		{
@@ -35,28 +33,6 @@ namespace Mono.Languages
 			return list;
 		}
 
-		/// <summary>
-		/// Emits error messages and increments a global count of them
-		/// </summary>
-		/// <param name="code"></param>
-		/// <param name="desc"></param>
-		static public void error (int code, string desc)
-		{
-			Console.WriteLine ("Error "+code+": "+ desc);
-			global_errors++;
-		}
-
-		// Emits error messages with location info.
-		// FIXME : Ideally, all error reporting should happen
-		// with Report.Error but how do you get at that non-static
-		// method everywhere you need it ?
-		static public void error (int code, Mono.CSharp.Location l, string text)
-		{
-			Console.WriteLine (l.Name + "(" + l.Row + "," + 
-					   "): Error CS" + code + ": " + text);
-			global_errors++;
-		}
-		
 		public GenericParser()
 		{
 			//

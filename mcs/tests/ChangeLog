@@ -1,3 +1,14 @@
+2002-06-25  Andrew Birkett  <adb@tardis.ed.ac.uk>
+
+	* makefile: The following tests fail under linux and have been 
+	moved to TEST_NOPASS: 40, 45, 52, 53, 91, 106, 107, 122, 132, 133
+
+	Windows-specific tests have been extracted, and are now run by the
+	test-windows rule (it'll be run under linux but fail)
+
+	The output format has been made less noisy, and is basically the
+	same as the tests in mcs/errors - like "Running test-1 ... OK".
+
 2002-06-13  Ravi Pratap  <ravi@ximian.com>
 
 	* test-131.cs : Add to test enum member attribute application.

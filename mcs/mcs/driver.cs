@@ -49,8 +49,6 @@ namespace Mono.CSharp
 		// Whether we want to only run the tokenizer
 		static bool tokenize = false;
 		
-		static int error_count = 0;
-
 		static string first_source;
 
 		static Target target = Target.Exe;
@@ -95,16 +93,15 @@ namespace Mono.CSharp
 				(int) span.TotalSeconds, span.Milliseconds, msg);
 		}
 	       
-		static int tokenize_file (string input_file)
+		static void tokenize_file (string input_file)
 		{
 			Stream input;
 
 			try {
 				input = File.OpenRead (input_file);
-
 			} catch {
 				Report.Error (2001, "Source file '" + input_file + "' could not be opened");
-				return 1;
+				return;
 			}
 
 			using (input){
@@ -120,72 +117,66 @@ namespace Mono.CSharp
 				Console.WriteLine ("Tokenized: " + tokens + " found " + errors + " errors");
 			}
 			
-			return 0;
+			return;
 		}
-		
-		static int parse (string input_file)
+
+		// MonoTODO("Change error code for aborted compilation to something reasonable")]		
+		static void parse (string input_file)
 		{
 			CSharpParser parser;
 			Stream input;
-			int errors;
 
 			try {
 				input = File.OpenRead (input_file);
 			} catch {
 				Report.Error (2001, "Source file '" + input_file + "' could not be opened");
-				return 1;
+				return;
 			}
 
 			parser = new CSharpParser (input_file, input, defines);
 			parser.yacc_verbose = yacc_verbose;
 			try {
-				errors = parser.parse ();
+				parser.parse ();
 			} catch (Exception ex) {
-				Console.WriteLine (ex);
-				Console.WriteLine ("Compilation aborted");
-				return 1;
+				Report.Error(666, "Compilation aborted: " + ex);
 			} finally {
 				input.Close ();
 			}
-
-			return errors;
 		}
 		
-		static void Usage (bool is_error)
+		static void Usage ()
 		{
 			Console.WriteLine (
 				"Mono C# compiler, (C) 2001 Ximian, Inc.\n" +
 				"mcs [options] source-files\n" +
-				"   --about         About the Mono C# compiler\n" +
-				"   --checked       Set default context to checked\n" +
-				"   --define SYM    Defines the symbol SYM\n" +
-				"   --debug         Generate debugging information\n" + 
-				"   -g              Generate debugging information\n" +
-				"   --debug-args X  Specify additional arguments for the\n" +
-				"                   symbol writer.\n" +
-				"   --fatal         Makes errors fatal\n" +
-				"   -L PATH         Adds PATH to the assembly link path\n" +
-				"   --noconfig      Disables implicit references to assemblies\n" +
-				"   --nostdlib      Does not load core libraries\n" +
-				"   --nowarn XXX    Ignores warning number XXX\n" +
-				"   -o FNAME        Specifies output file\n" +
-				"   -g, --debug     Write symbolic debugging information to FILE-debug.s\n" +
-				"   --parse         Only parses the source file\n" +
-				"   --probe X       Probes for the source to generate code X on line L\n" +
-				"   --recurse SPEC  Recursively compiles the files in SPEC ([dir]/file)\n" + 
-				"   --resource FILE Addds FILE as a resource\n" + 
-				"   --stacktrace    Shows stack trace at error location\n" +
-				"   --target KIND   Specifies the target (KIND is one of: exe, winexe, " +
-				                    "library, module)\n" +
-				"   --timestamp     Displays time stamps of various compiler events\n" +
-				"   --unsafe        Allows unsafe code\n" +
-				"   --werror        Treat warnings as errors\n" +
-				"   --wlevel LEVEL  Sets warning level (the highest is 4, the default)\n" +
-				"   -r              References an assembly\n" +
-				"   -v              Verbose parsing (for debugging the parser)\n" +
-                                "   @file           Read response file for more options");
-			if (is_error)
-				error_count++;
+				"   --about          About the Mono C# compiler\n" +
+				"   --checked        Set default context to checked\n" +
+				"   --define SYM     Defines the symbol SYM\n" +
+				"   --debug          Generate debugging information\n" + 
+				"   -g               Generate debugging information\n" +
+				"   --debug-args X   Specify additional arguments for the\n" +
+				"                    symbol writer.\n" +
+				"   --fatal          Makes errors fatal\n" +
+				"   -L PATH          Adds PATH to the assembly link path\n" +
+				"   --noconfig       Disables implicit references to assemblies\n" +
+				"   --nostdlib       Does not load core libraries\n" +
+				"   --nowarn XXX     Ignores warning number XXX\n" +
+				"   -o FNAME         Specifies output file\n" +
+				"   -g, --debug      Write symbolic debugging information to FILE-debug.s\n" +
+				"   --parse          Only parses the source file\n" +
+				"   --expect-error X Expect that error X will be encountered\n" +
+				"   --recurse SPEC   Recursively compiles the files in SPEC ([dir]/file)\n" + 
+				"   --resource FILE  Addds FILE as a resource\n" + 
+				"   --stacktrace     Shows stack trace at error location\n" +
+				"   --target KIND    Specifies the target (KIND is one of: exe, winexe, " +
+				                     "library, module)\n" +
+				"   --timestamp      Displays time stamps of various compiler events\n" +
+				"   --unsafe         Allows unsafe code\n" +
+				"   --werror         Treat warnings as errors\n" +
+				"   --wlevel LEVEL   Sets warning level (the highest is 4, the default)\n" +
+				"   -r               References an assembly\n" +
+				"   -v               Verbose parsing (for debugging the parser)\n" +
+                                "   @file            Read response file for more options");
 		}
 
 		static void About ()
@@ -200,27 +191,25 @@ namespace Mono.CSharp
 				"The compiler was written by Miguel de Icaza and Ravi Pratap");
 		}
 		
-		static void error (string msg)
-		{
-			Console.WriteLine ("Error: " + msg);
-		}
-
-		static void notice (string msg)
-		{
-			Console.WriteLine (msg);
-		}
-		
 		public static int Main (string[] args)
 		{
-			//args = new string [1];
-			//args [0] = "@list";
+			bool ok = MainDriver (args);
 			
-			MainDriver (args);
-			
-			return (error_count + Report.Errors) != 0 ? 1 : 0;
+			if (ok && Report.Errors == 0) {
+				Console.Write("Compilation succeeded");
+				if (Report.Warnings > 0) {
+					Console.Write(" - {0} warning(s)", Report.Warnings);
+				} 
+				Console.WriteLine();
+				return 0;
+			} else {
+				Console.WriteLine("Compilation failed: {0} error(s), {1} warnings",
+					Report.Errors, Report.Warnings);
+				return 1;
+			}
 		}
 
-		static public int LoadAssembly (string assembly, bool soft)
+		static public void LoadAssembly (string assembly, bool soft)
 		{
 			Assembly a;
 			string total_log = "";
@@ -228,12 +217,13 @@ namespace Mono.CSharp
 			try {
 				char[] path_chars = { '/', '\\', '.' };
 
-				if (assembly.IndexOfAny (path_chars) != -1)
+				if (assembly.IndexOfAny (path_chars) != -1) {
 					a = Assembly.LoadFrom (assembly);
-				else
+				} else {
 					a = Assembly.Load (assembly);
+				}
 				TypeManager.AddAssembly (a);
-				return 0;
+
 			} catch (FileNotFoundException){
 				foreach (string dir in link_paths){
 					string full_path = dir + "/" + assembly + ".dll";
@@ -241,47 +231,37 @@ namespace Mono.CSharp
 					try {
 						a = Assembly.LoadFrom (full_path);
 						TypeManager.AddAssembly (a);
-						return 0;
+						return;
 					} catch (FileNotFoundException ff) {
 						total_log += ff.FusionLog;
 						continue;
 					}
 				}
-				if (soft)
-					return 0;
+				if (!soft) {
+					Report.Error (6, "Cannot find assembly `" + assembly + "'" );
+					Console.WriteLine ("Log: \n" + total_log);
+				}
 			} catch (BadImageFormatException f) {
-				error ("// Bad file format while loading assembly");
-				error ("Log: " + f.FusionLog);
-				return 1;
+				Report.Error(6, "Cannot load assembly (bad file format)" + f.FusionLog);
 			} catch (FileLoadException f){
-				error ("File Load Exception: " + assembly);
-				error ("Log: " + f.FusionLog);
-				return 1;
+				Report.Error(6, "Cannot load assembly " + f.FusionLog);
 			} catch (ArgumentNullException){
-				error ("// Argument Null exception ");
-				return 1;
+				Report.Error(6, "Cannot load assembly (null argument)");
 			}
-			
-			Report.Error (6, "Can not find assembly `" + assembly + "'" );
-			Console.WriteLine ("Log: \n" + total_log);
-
-			return 0;
 		}
 
 		/// <summary>
 		///   Loads all assemblies referenced on the command line
 		/// </summary>
-		static public int LoadReferences ()
+		static public void LoadReferences ()
 		{
-			int errors = 0;
-
 			foreach (string r in references)
-				errors += LoadAssembly (r, false);
+				LoadAssembly (r, false);
 
 			foreach (string r in soft_references)
-				errors += LoadAssembly (r, true);
+				LoadAssembly (r, true);
 			
-			return errors;
+			return;
 		}
 
 		static void SetupDefaultDefines ()
@@ -364,7 +344,7 @@ namespace Mono.CSharp
 			pattern = spec;
 		}
 
-		static int ProcessFile (string f)
+		static void ProcessFile (string f)
 		{
 			if (first_source == null)
 				first_source = f;
@@ -377,21 +357,21 @@ namespace Mono.CSharp
 			} else
 				source_files.Add (f, f);
 					
-			if (tokenize)
+			if (tokenize) {
 				tokenize_file (f);
-			else
-				return parse (f);
-			return 0;
+			} else {
+				parse (f);
+			}
 		}
 
-		static int CompileFiles (string spec, bool recurse)
+		static void CompileFiles (string spec, bool recurse)
 		{
 			string path, pattern;
-			int errors = 0;
 
 			SplitPathAndPattern (spec, out path, out pattern);
 			if (pattern.IndexOf ("*") == -1){
-				return ProcessFile (spec);
+				ProcessFile (spec);
+				return;
 			}
 
 			string [] files = null;
@@ -399,16 +379,17 @@ namespace Mono.CSharp
 				files = Directory.GetFiles (path, pattern);
 			} catch (System.IO.DirectoryNotFoundException) {
 				Report.Error (2001, "Source file `" + spec + "' could not be found");
-				return 1;
+				return;
 			} catch (System.IO.IOException){
 				Report.Error (2001, "Source file `" + spec + "' could not be found");
-				return 1;
+				return;
 			}
-			foreach (string f in files)
-				errors += ProcessFile (f);
+			foreach (string f in files) {
+				ProcessFile (f);
+			}
 
 			if (!recurse)
-				return errors;
+				return;
 			
 			string [] dirs = null;
 
@@ -421,11 +402,8 @@ namespace Mono.CSharp
 					
 				// Don't include path in this string, as each
 				// directory entry already does
-				errors += CompileFiles (d + "/" + pattern, true);
+				CompileFiles (d + "/" + pattern, true);
 			}
-			
-
-			return errors;
 		}
 
 		static void DefineDefaultConfig ()
@@ -476,9 +454,10 @@ namespace Mono.CSharp
 		///    TODO: Mostly structured to debug the compiler
 		///    now, needs to be turned into a real driver soon.
 		/// </remarks>
-		static void MainDriver (string [] args)
+		// [MonoTODO("Change error code for unknown argument to something reasonable")]
+		static bool MainDriver (string [] args)
 		{
-			int errors = 0, i;
+			int i;
 			string output_file = null;
 			bool parsing_options = true;
 			
@@ -520,7 +499,7 @@ namespace Mono.CSharp
 					if (extra_args == null){
 						Report.Error (2011, "Unable to open response file: " +
 							      response_file);
-						return;
+						return false;
 					}
 
 					new_args = new string [extra_args.Length + argc];
@@ -551,8 +530,8 @@ namespace Mono.CSharp
 
 					case "--main": case "-m":
 						if ((i + 1) >= argc){
-							Usage (true);
-							return;
+							Usage ();
+							return false;
 						}
 						RootContext.MainClass = args [++i];
 						continue;
@@ -563,24 +542,24 @@ namespace Mono.CSharp
 						
 					case "/?": case "/h": case "/help":
 					case "--help":
-						Usage (false);
-						return;
+						Usage ();
+						return false;
 
 					case "--define":
 						if ((i + 1) >= argc){
-							Usage (true);
-							return;
+							Usage ();
+							return false;
 						}
 						defines.Add (args [++i]);
 						continue;
 						
-					case "--probe": {
+					case "--expect-error": {
 						int code = 0;
 
 						try {
 							code = Int32.Parse (
 								args [++i], NumberStyles.AllowLeadingSign);
-							Report.SetProbe (code);
+							Report.ExpectedError = code;
 						} catch {
 							Report.Error (-14, "Invalid number specified");
 						} 
@@ -595,8 +574,8 @@ namespace Mono.CSharp
 					case "-o": 
 					case "--output":
 						if ((i + 1) >= argc){
-							Usage (true);
-							return;
+							Usage ();
+							return false;
 						}
 						output_file = args [++i];
 						string bname = CodeGen.Basename (output_file);
@@ -614,9 +593,9 @@ namespace Mono.CSharp
 
 					case "--resource":
 						if ((i + 1) >= argc){
-							Usage (true);
+							Usage ();
 							Console.WriteLine("Missing argument to --resource"); 
-							return;
+							return false;
 						}
 						if (resources == null)
 							resources = new ArrayList ();
@@ -626,8 +605,8 @@ namespace Mono.CSharp
 							
 					case "--target":
 						if ((i + 1) >= argc){
-							Usage (true);
-							return;
+							Usage ();
+							return false;
 						}
 
 						string type = args [++i];
@@ -650,15 +629,15 @@ namespace Mono.CSharp
 							target_ext = ".dll";
 							break;
 						default:
-							Usage (true);
-							return;
+							Usage ();
+							return false;
 						}
 						continue;
 
 					case "-r":
 						if ((i + 1) >= argc){
-							Usage (true);
-							return;
+							Usage ();
+							return false;
 						}
 						
 						references.Add (args [++i]);
@@ -666,8 +645,8 @@ namespace Mono.CSharp
 						
 					case "-L":
 						if ((i + 1) >= argc){
-							Usage (true);
-							return;
+							Usage ();	
+							return false;
 						}
 						link_paths.Add (args [++i]);
 						continue;
@@ -686,16 +665,16 @@ namespace Mono.CSharp
 
 					case "--nowarn":
 						if ((i + 1) >= argc){
-							Usage (true);
-							return;
+							Usage ();
+							return false;
 						}
 						int warn;
 						
 						try {
 							warn = Int32.Parse (args [++i]);
 						} catch {
-							Usage (true);
-							return;
+							Usage ();
+							return false;
 						}
 						Report.SetIgnoreWarning (warn);
 						continue;
@@ -705,8 +684,7 @@ namespace Mono.CSharp
 							Report.Error (
 								1900,
 								"--wlevel requires an value from 0 to 4");
-							error_count++;
-							return;
+							return false;
 						}
 						int level;
 						
@@ -716,26 +694,25 @@ namespace Mono.CSharp
 							Report.Error (
 								1900,
 								"--wlevel requires an value from 0 to 4");
-							return;
+							return false;
 						}
 						if (level < 0 || level > 4){
 							Report.Error (1900, "Warning level must be 0 to 4");
-							return;
+							return false;
 						} else
 							RootContext.WarningLevel = level;
 						continue;
 						
 					case "--about":
 						About ();
-						return;
+						return true;
 
 					case "--recurse":
 						if ((i + 1) >= argc){
 							Console.WriteLine ("--recurse requires an argument");
-							error_count++;
-							return;
+							return false;
 						}
-						errors += CompileFiles (args [++i], true);
+						CompileFiles (args [++i], true); 
 						continue;
 						
 					case "--timestamp":
@@ -751,8 +728,7 @@ namespace Mono.CSharp
 					case "--debug-args":
 						if ((i + 1) >= argc){
 							Console.WriteLine ("--debug-args requires an argument");
-							error_count++;
-							return;
+							return false;
 						}
 						char[] sep = { ',' };
 						debug_arglist.AddRange (args [++i].Split (sep));
@@ -763,28 +739,27 @@ namespace Mono.CSharp
 						continue;
 
 					default:
-						Console.WriteLine ("Unknown option: " + arg);
-						errors++;
+						Report.Warning(666, "Unknown option: " + arg);
 						continue;
 					}
 				}
 
-				errors += CompileFiles (arg, false); 
+				CompileFiles (arg, false); 
 			}
 
 			if (tokenize)
-				return;
+				return true;
 			
 			if (first_source == null){
 				Report.Error (2008, "No files to compile were specified");
-				return;
+				return false;
 			}
 
 			if (Report.Errors > 0)
-				return;
+				return false;
 			
 			if (parse_only)
-				return;
+				return true;
 			
 			//
 			// Load Core Library for default compilation
@@ -795,9 +770,8 @@ namespace Mono.CSharp
 			if (load_default_config)
 				DefineDefaultConfig ();
 
-			if (errors > 0){
-				error ("Parsing failed");
-				return;
+			if (Report.Errors > 0){
+				return false;
 			}
 
 			//
@@ -805,16 +779,14 @@ namespace Mono.CSharp
 			//
 			if (timestamps)
 				ShowTime ("Loading references");
-			errors += LoadReferences ();
+			LoadReferences ();
+			
 			if (timestamps)
 				ShowTime ("   References loaded");
 			
-			if (errors > 0){
-				error ("Could not load one or more assemblies");
-				return;
+			if (Report.Errors > 0){
+				return false;
 			}
-
-			error_count = errors;
 
 			//
 			// Quick hack
@@ -844,7 +816,7 @@ namespace Mono.CSharp
 			if (!RootContext.StdLib){
 				RootContext.ResolveCore ();
 				if (Report.Errors > 0)
-					return;
+					return false;
 			}
 			
 			TypeManager.InitCoreTypes ();
@@ -866,8 +838,7 @@ namespace Mono.CSharp
 			TypeManager.InitCodeHelpers ();
 				
 			if (Report.Errors > 0){
-				error ("Compilation failed");
-				return;
+				return false;
 			}
 			
 			//
@@ -880,8 +851,7 @@ namespace Mono.CSharp
 				ShowTime ("   done");
 
 			if (Report.Errors > 0){
-				error ("Compilation failed");
-				return;
+				return false;
 			}
 
 			if (timestamps)
@@ -904,7 +874,7 @@ namespace Mono.CSharp
 				if (ep == null){
 					Report.Error (5001, "Program " + output_file +
 							      " does not have an entry point defined");
-					return;
+					return false;
 				}
 				
 				CodeGen.AssemblyBuilder.SetEntryPoint (ep, k);
@@ -928,13 +898,13 @@ namespace Mono.CSharp
 					ShowTime ("Saved symbols");
 			}
 
-			if (Report.Errors > 0){
-				error ("Compilation failed");
-				return;
-			} else if (Report.ProbeCode != 0){
-				error ("Failed to report code " + Report.ProbeCode);
-				Environment.Exit (124);
+			if (Report.ExpectedError != 0){
+				Console.WriteLine("Failed to report expected error " + Report.ExpectedError);
+				Environment.Exit (1);
+				return false;
 			}
+
+			return (Report.Errors == 0);
 		}
 
 	}

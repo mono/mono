@@ -482,7 +482,7 @@ public Tokenizer Lexer {
 	}
 }		   
 
-public override int parse ()
+public override void parse ()
 {
 	current_namespace = new Namespace (null, "");
 	current_container = RootContext.Tree.Types;
@@ -493,7 +493,6 @@ public override int parse ()
 	lexer = new Tokenizer (input, name, defines);
 	StringBuilder value = new StringBuilder ();
 
-	global_errors = 0;
 	try 
 	{
 		if (yacc_verbose_flag)
@@ -505,10 +504,7 @@ public override int parse ()
 	{
 		Console.WriteLine (lexer.location + "  : Parsing error ");
 		Console.WriteLine (e);
-		global_errors++;
 	}
-
-	return global_errors;
 }
 
 /* end end end */

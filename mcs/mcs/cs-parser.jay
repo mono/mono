@@ -3933,28 +3933,20 @@ public CSharpParser (string name, System.IO.Stream input, ArrayList defines)
 	lexer = new Tokenizer (input, name, defines);
 }
 
-public override int parse ()
+public override void parse ()
 {
-	global_errors = 0;
 	try {
 		if (yacc_verbose_flag)
 			yyparse (lexer, new yydebug.yyDebugSimple ());
 		else
 			yyparse (lexer);
 	} catch (Exception e){
-		// Console.WriteLine ("Fatal error: " + name);
-		// Console.WriteLine (lexer.location);
-
-		// 
 		// Please do not remove this, it is used during debugging
 		// of the grammar
 		//
 		Console.WriteLine (lexer.location + "  : Parsing error ");
 		Console.WriteLine (e);
-		global_errors++;
 	}
-	
-	return global_errors;
 }
 
 /* end end end */
