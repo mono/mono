@@ -327,8 +327,7 @@ namespace System
 		}
 
 		[CLSCompliant (false)]
-		[MonoTODO ("Arglist is missing")]
-		public static void WriteLine (string format, object arg0, object arg1, object arg2, object arg3)
+		internal static void WriteLine (string format, object arg0, object arg1, object arg2, object arg3)
 		{
 			stdout.WriteLine (String.Format (format, arg0, arg1, arg2, arg3));
 		}

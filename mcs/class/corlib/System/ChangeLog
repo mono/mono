@@ -1,3 +1,10 @@
+2004-05-30  Miguel de Icaza  <miguel@ximian.com>
+
+	* Console.cs: Remove *again* the version of WriteLine with four
+	arguments;  That should *not* be added.  
+
+	Flag it as internal as people migrate their code.
+
 2004-05-29  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Convert.cs: Fixed ToSByte(string,IFormatProvider) to throw 
