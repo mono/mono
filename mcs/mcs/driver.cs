@@ -1010,6 +1010,7 @@ namespace Mono.CSharp
 				ProcessStartInfo pi = new ProcessStartInfo ();
 				pi.FileName = "pkg-config";
 				pi.RedirectStandardOutput = true;
+				pi.UseShellExecute = false;
 				pi.Arguments = "--libs " + packages;
 				Process p = Process.Start (pi);
 				if (p.StandardOutput == null){
