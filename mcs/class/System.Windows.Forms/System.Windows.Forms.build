@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<!-- NAnt build file for System.XML.dll -->
+
+<project name="System.Windows.Forms" default="build">
+	<property name="debug" value="false"/>
+
+	<target name="build">
+		<mkdir dir="../lib"/>
+		<csc target="library" output="../lib/System.Windows.Forms.dll" debug="${debug}">
+			<!-- 'foo' is defined in multiple places; using definition from 'bar' -->
+			<arg value="/nowarn:1595"/>
+			<!-- Other languages may permit the internal virtual member 'foo' to be overridden -->
+			<arg value="/nowarn:0679"/>
+			<arg value="/nowarn:0649"/>
+			<sources>
+				<includes name="**/*.cs"/> 
+				<excludes name="Test/**"/>
+			</sources>
+		</csc>
+		<copy file="../lib/System.Windows.Forms.dll" tofile="Test/System.Windows.Forms.dll"/>
+		<nant basedir="Test" target="build"/>
+	</target>
+
+	<target name="test" depends="build">
+		<nant basedir="Test" target="test"/>
+	</target>
+
+	<target name="clean">
+		<nant basedir="Test" target="clean"/>
+		<delete file="../lib/System.Windows.Forms.dll" failonerror="false"/>
+		<delete file="Test/System.Windows.Forms.dll" failonerror="false"/>
+	</target>
+</project>

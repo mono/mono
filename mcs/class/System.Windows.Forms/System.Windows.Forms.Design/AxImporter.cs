@@ -37,12 +37,12 @@ namespace System.Windows.Forms.Design
 				throw new NotImplementedException ();
 			}
 		}
-		[MonoTODO]
-		public TYPELIBATTR[] GeneratedTypeLibAttribute{
-			get {
-				throw new NotImplementedException ();
-			}
-		}
+// 		[MonoTODO]
+// 		public TYPELIBATTR[] GeneratedTypeLibAttribute{
+// 			get {
+// 				throw new NotImplementedException ();
+// 			}
+// 		}
 		[MonoTODO]
 		public string GenerateFromFile(FileInfo file){
 			throw new NotImplementedException ();
@@ -56,10 +56,10 @@ namespace System.Windows.Forms.Design
 //		public string GenerateFromTypeLibrary(UCOMITTypeLib typeLib, Guid clsid){
 //			throw new NotImplementedException ();
 //		}
-		[MonoTODO]
-		public static string GetFileOfTypeLib(ref TYPELIBATTR tlibattr){
-			throw new NotImplementedException ();
-		}
+//		[MonoTODO]
+//		public static string GetFileOfTypeLib(ref TYPELIBATTR tlibattr){
+//			throw new NotImplementedException ();
+//		}
 
 		public sealed class Options{
 			public Options(){
