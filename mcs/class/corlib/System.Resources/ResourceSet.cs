@@ -7,10 +7,7 @@
 //	Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2001, 2002 Ximian, Inc.		http://www.ximian.com
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -36,6 +33,7 @@ using System.Collections;
 using System.IO;
 using System.Globalization;
 using System.Runtime.InteropServices;
+using System.Security.Permissions;
 
 namespace System.Resources
 {
@@ -61,6 +59,7 @@ namespace System.Resources
 			Reader = reader;
 		}
 
+		[SecurityPermission (SecurityAction.LinkDemand, SerializationFormatter = true)]
 		public ResourceSet (Stream stream)
 		{
 			if(stream==null) {

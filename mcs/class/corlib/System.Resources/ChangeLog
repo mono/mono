@@ -1,3 +1,9 @@
+2005-03-31  Sebastien Pouliot  <sebastien@ximian.com>
+
+	*  ResourceReader.cs, ResourceSet.cs: Added a LinkDemand for 
+	SerializationFormatter when using a Stream constructor (other ctors
+	have different security - e.g. FileIOPermission for opening a file).
+
 2005-03-22 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ResourceManager.cs: use culture.Equals in InternalGetResourceSet().
