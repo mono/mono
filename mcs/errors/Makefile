@@ -8,7 +8,7 @@ include ../build/rules.make
 MCS = $(INTERNAL_MCS)
 LOCAL_MCS_FLAGS = /nowarn:162 --wlevel 4
 
-GMCS_COMPILE = $(RUNTIME) ../gmcs/gmcs.exe $(MCS_FLAGS)
+GMCS_COMPILE = $(RUNTIME) ../gmcs/gmcs.exe /target:library $(MCS_FLAGS)
 
 RUNTEST_PL = ./runtest.pl
 
