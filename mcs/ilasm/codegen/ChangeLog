@@ -1,5 +1,12 @@
 2003-05-01 Jackson Harper <jackson@latitudegeo.com>
 
+	* CodeGen.cs: Define the contents of types after all types have
+	been resolved, this avoids the infinite loop that would occur if a
+	type was a member of its base type.
+	* TypeDef.cs: Method to define contents after being defined. 
+		
+2003-05-01 Jackson Harper <jackson@latitudegeo.com>
+
 	* TypeManager.cs: Check if type is defined before defining it.
 		
 2003-05-01 Jackson Harper <jackson@latitudegeo.com>

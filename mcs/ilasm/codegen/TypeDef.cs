@@ -126,6 +126,11 @@ namespace Mono.ILASM {
                         is_intransit = false;
                         is_defined = true;
 
+                        code_gen.AddToDefineContentsList (this);
+                }
+
+                public void DefineContents (CodeGen code_gen)
+                {
                         foreach (FieldDef fielddef in field_list) {
                                 fielddef.Define (code_gen, classdef);
                         }

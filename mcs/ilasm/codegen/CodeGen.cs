@@ -32,6 +32,8 @@ namespace Mono.ILASM {
                 private ArrayList global_method_list;
                 private ArrayList global_data_list;
 
+                private ArrayList defcont_list;
+
                 public CodeGen (string output_file, bool is_dll, bool is_assembly)
                 {
                         pefile = new PEFile (output_file, is_dll, is_assembly);
@@ -41,6 +43,8 @@ namespace Mono.ILASM {
                         global_field_list = new ArrayList ();
                         global_method_list = new ArrayList ();
                         global_data_list = new ArrayList ();
+
+                        defcont_list = new ArrayList ();
                 }
 
                 public PEFile PEFile {
@@ -138,6 +142,11 @@ namespace Mono.ILASM {
                         current_typedef = null;
                 }
 
+                public void AddToDefineContentsList (TypeDef typedef)
+                {
+                        defcont_list.Add (typedef);
+                }
+
                 public void Write ()
                 {
                         type_manager.DefineAll ();
@@ -148,6 +157,10 @@ namespace Mono.ILASM {
 
                         foreach (MethodDef methoddef in global_method_list) {
                                 methoddef.Define (this);
+                        }
+
+                        foreach (TypeDef typedef in defcont_list) {
+                                typedef.DefineContents (this);
                         }
 
                         pefile.WritePEFile ();
