@@ -1,3 +1,7 @@
+2004-09-14  Martin Baulig  <martin@ximian.com>
+
+	* Makefile: Disable test-294.cs.
+
 2004-09-14  Marek Safar <marek.safar@seznam.cz>
 
 	* test-294.cs: New test for bug #61902.
