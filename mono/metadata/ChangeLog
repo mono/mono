@@ -1,5 +1,7 @@
 2003-08-27  Zoltan Varga  <vargaz@freemail.hu>
 
+	* NOTES: New file.
+
 	* object.c (mono_class_proxy_vtable): Make it thread safe.
 
 	* pedump.c: Fix warning.
