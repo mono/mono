@@ -11,7 +11,7 @@ Test cases listed by Category:
 
 * Try/Catch blocks
 
-  verify-1.cs
+  verify-1.cs verify-2.cs
 
 Test cases listed by Number:
 ============================
@@ -29,3 +29,8 @@ verify-1.cs
 -----------
 Test whether we do not jump out of the method in a Try/Finally block.
 
+verify-2.cs
+-----------
+Test whether `return' in a Try/Catch block actually returns.  Test
+whether continue uses Leave when the branch is across Try/Catch
+boundaries.

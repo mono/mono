@@ -1,5 +1,9 @@
 2002-07-22  Martin Baulig  <martin@gnome.org>
 
+	* verify-2.cs: New test.
+
+2002-07-22  Martin Baulig  <martin@gnome.org>
+
 	* verify-1.cs: New test.  The verify-XXX.cs tests must be
 	compiled and then verified - either with `pedump --verify code'
 	or with PEverify.
