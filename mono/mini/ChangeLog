@@ -1,7 +1,12 @@
+2004-12-13 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* mini-x86.c: disabling the Interlocked optimizing code. It segfaults
+	when running xsp.
+
 2004-12-13  Patrik Torstensson  <patrik.torstensson@gmail.com>
 
-	* mini-x86.c,mini-ops.h,inssel-x86.brg,cpu-pentium.md: Implementation of Interlocked:Increment/Decrement/Add
-	as inline ops.
+	* mini-x86.c,mini-ops.h,inssel-x86.brg,cpu-pentium.md: Implementation
+	of Interlocked:Increment/Decrement/Add as inline ops.
 	(mini-x86.c (mono_arch_get_inst_for_method and mono_arch_output_basic_block))
 
 2004-12-12  Geoff Norton  <gnorton@customerdna.com>
