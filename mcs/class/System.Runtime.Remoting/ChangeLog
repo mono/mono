@@ -1,10 +1,15 @@
-2002-04-27  Lluis Sanchez Gual <lluis@ideary.com>
+2003-05-13  Lluis Sanchez Gual <lluis@ideary.com>
+
+	* BinaryServerFormatterSink.cs: The uri of the target object is now assigned
+	  to the message through the HeaderHandler delegate.
+
+2003-04-27  Lluis Sanchez Gual <lluis@ideary.com>
 
 	* TcpChannel.cs: The port property may not be an string. Fixed.
 	* TcpServerChannel.cs: Added some fixes by Jerome Laban. Implemented
 	  some channel properties.
 
-2002-04-03  Lluis Sanchez Gual <lluis@ideary.com>
+2003-04-03  Lluis Sanchez Gual <lluis@ideary.com>
 
 	* TcpMessageIO.cs: Changed header format to match MS.NET. Based on the patch
 	  sent by Jose Luís Martín.

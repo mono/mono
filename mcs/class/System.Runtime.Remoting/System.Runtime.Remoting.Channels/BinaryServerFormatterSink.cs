@@ -86,18 +86,29 @@ namespace System.Runtime.Remoting.Channels {
 							out IMessage responseMsg, out ITransportHeaders responseHeaders, out Stream responseStream)
 		{
 			sinkStack.Push (this, null);
+			ServerProcessing res;
 
-			requestMsg = (IMessage) _deserializationFormatter.Deserialize (requestStream, null);
+			try
+			{
+				string url = (string)requestHeaders[CommonTransportKeys.RequestUri];
+				string uri;
+				receiver.Parse (url, out uri);
+				if (uri == null) uri = url;
 
-			string url = (string)requestHeaders[CommonTransportKeys.RequestUri];
-			string uri;
-			receiver.Parse (url, out uri);
-			if (uri == null) uri = url;
-			requestMsg.Properties["__Uri"] = uri;
+				MethodCallHeaderHandler mhh = new MethodCallHeaderHandler(uri);
+				requestMsg = (IMessage) _deserializationFormatter.Deserialize (requestStream, new HeaderHandler(mhh.HandleHeaders));
 
-			// Fixme: check if the message is an async msg
+				// Fixme: check if the message is an async msg
 
-			ServerProcessing res = next_sink.ProcessMessage (sinkStack, requestMsg, requestHeaders, null, out responseMsg, out responseHeaders, out responseStream);
+				res = next_sink.ProcessMessage (sinkStack, requestMsg, requestHeaders, null, out responseMsg, out responseHeaders, out responseStream);
+			}
+			catch (Exception ex)
+			{
+				responseMsg = new ReturnMessage (ex, (IMethodCallMessage)requestMsg);
+				res = ServerProcessing.Complete;
+				responseHeaders = null;
+				responseStream = null;
+			}
 
 			if (res == ServerProcessing.Complete)
 			{
@@ -116,4 +127,20 @@ namespace System.Runtime.Remoting.Channels {
 		}
 
 	}
+
+	internal class MethodCallHeaderHandler
+	{
+		string _uri;
+
+		public MethodCallHeaderHandler (string uri)
+		{
+			_uri = uri;
+		}
+
+		public object HandleHeaders (Header[] headers)
+		{
+			return _uri;
+		}
+	}
 }
+
