@@ -1,3 +1,12 @@
+2002-07-22  Tim Coleman <tim@timcoleman.com>
+	* WebMethodAttribute.cs: 
+		Remove comments around TransactionOption bits
+		because I added that enum.
+	* WebServiceAttribute.cs:
+	* WebServiceBindingAttribute.cs:
+		Added "sealed" to protection level, which I missed
+		before.
+
 2002-07-19 Tim Coleman  <tim@timcoleman.com>
 	* ChangeLog:
 	* TODOAttribute.cs:

@@ -8,8 +8,8 @@
 //
 
 namespace System.Web.Services {
-	[AttributeUsage(AttributeTargets.Class)]
-	public class WebServiceAttribute : Attribute {
+	[AttributeUsage (AttributeTargets.Class)]
+	public sealed class WebServiceAttribute : Attribute {
 
 		#region Fields
 

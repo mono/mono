@@ -9,7 +9,7 @@
 
 namespace System.Web.Services {
 	[AttributeUsage(AttributeTargets.Class)]
-	public class WebServiceBindingAttribute : Attribute {
+	public sealed class WebServiceBindingAttribute : Attribute {
 
 		#region Fields
 

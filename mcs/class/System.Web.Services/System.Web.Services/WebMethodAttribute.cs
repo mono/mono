@@ -7,9 +7,7 @@
 // Copyright (C) Tim Coleman, 2002
 //
 
-/* FIXME System.EnterpriseServices doesn't exist yet.
 using System.EnterpriseServices;
-*/
 
 namespace System.Web.Services {
 	[AttributeUsage(AttributeTargets.Method)]
@@ -21,10 +19,7 @@ namespace System.Web.Services {
 		string description;
 		bool enableSession;
 		string messageName;
-
-		/* FIXME: TransactionOption is not defined because it is in System.EnterpriseServices
 		TransactionOption transactionOption;
-		*/
 
 		#endregion // Fields
 
@@ -38,10 +33,7 @@ namespace System.Web.Services {
 			enableSession = false;
 
 			messageName = String.Empty; // FIXME
-
-			/* FIXME
 			transactionOption = TransactionOption.Disabled;
-			*/
 		}
 
 		public WebMethodAttribute (bool enableSession)
@@ -49,8 +41,6 @@ namespace System.Web.Services {
 		{
 			this.enableSession = enableSession;
 		}
-
-		/* FIXME: TransactionOption is not defined, because it is in System.EnterpriseServices
 
 		public WebMethodAttribute (bool enableSession, TransactionOption transactionOption)
 		{
@@ -74,7 +64,6 @@ namespace System.Web.Services {
 			this.enableSession = enableSession;
 			this.transactionOption = transactionOption;
 		}
-		*/
 		
 		#endregion // Constructors
 
@@ -105,13 +94,10 @@ namespace System.Web.Services {
 			set { messageName = value; }
 		}
 
-		/* FIXME: TransactionOption is not defined because it is in System.EnterpriseServices
-
 		public TransactionOption TransactionOption {
 			get { return transactionOption; }
 			set { transactionOption = value; }
 		}
-		*/
 
 		#endregion // Properties
 	}
