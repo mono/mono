@@ -57,7 +57,8 @@ namespace System.Collections {
 		private ArrayList (object[] dataArray, int count, int capacity,
 				   bool fixedSize, bool readOnly, bool synchronized)
 		{
-			this.dataArray = (object []) dataArray.Clone();
+			this.dataArray = new object [capacity];
+			dataArray.CopyTo (this.dataArray, 0);
 			this.count = count;
 			this.capacity = capacity;
 			this.fixedSize = fixedSize;
