@@ -1,3 +1,8 @@
+
+Tue Dec 3 12:40:06 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* gc.c: protect handles with a critical section.
+
 2002-12-02  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* icall.c:
