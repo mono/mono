@@ -1,3 +1,13 @@
+2003-12-12  Lluis Sanchez Gual <lluis@ximian.com>
+	
+	* HttpSimpleProtocolImporter.cs: In ImportOutMembersMapping(), support part
+	  without element name (use anyType in this case).
+	  In GetOutMimeFormatter(), support MimeContentBinding.
+	* ProtocolImporter.cs, SoapProtocolImporter.cs: Improved error and warning
+	  handling. Minor fixes.
+	* DiscoveryReference.cs: In FilenameFromUrl(), improved name generation
+	  for some common cases.
+
 2003-11-11  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* ServiceDescription.cs, SoapBinding.cs, SoapHeaderBinding.cs,

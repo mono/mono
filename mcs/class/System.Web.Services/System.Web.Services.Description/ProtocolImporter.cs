@@ -242,7 +242,7 @@ namespace System.Web.Services.Description {
 				
 				EndClass ();
 			}
-			catch (Exception ex)
+			catch (InvalidOperationException ex)
 			{
 				warnings |= ServiceDescriptionImportWarnings.NoCodeGenerated;
 				UnsupportedBindingWarning (ex.Message);
@@ -255,6 +255,7 @@ namespace System.Web.Services.Description {
 			string outMessage = (operationBinding.Output.Name != null) ? operationBinding.Output.Name : operationBinding.Name;
 			string operName = operationBinding.Name;
 			
+			Operation foundOper = null;
 			foreach (Operation oper in PortType.Operations)
 			{
 				if (oper.Name == operName)
@@ -266,9 +267,10 @@ namespace System.Web.Services.Description {
 						if (omsg is OperationOutput && GetOperMessageName (omsg, operName) == outMessage) hits++;
 					}
 					if (hits == 2) return oper;
+					foundOper = oper;
 				}
 			}
-			return null;
+			return foundOper;
 		}
 		
 		string GetOperMessageName (OperationMessage msg, string operName)
@@ -331,16 +333,19 @@ namespace System.Web.Services.Description {
 
 		public void UnsupportedBindingWarning (string text)
 		{
+			warnings |= ServiceDescriptionImportWarnings.UnsupportedBindingsIgnored;
 			AddGlobalComments ("WARNING: Could not generate proxy for binding " + binding.Name + ". " + text);
 		}
 
 		public void UnsupportedOperationBindingWarning (string text)
 		{
+			warnings |= ServiceDescriptionImportWarnings.UnsupportedOperationsIgnored;
 			AddGlobalComments ("WARNING: Could not generate operation " + OperationBinding.Name + ". " + text);
 		}
 
 		public void UnsupportedOperationWarning (string text)
 		{
+			warnings |= ServiceDescriptionImportWarnings.UnsupportedOperationsIgnored;
 			AddGlobalComments ("WARNING: Could not generate operation " + OperationBinding.Name + ". " + text);
 		}
 

@@ -132,6 +132,9 @@ namespace System.Web.Services.Description
 		
 		XmlMembersMapping ImportOutMembersMapping (Message msg)
 		{
+			if (msg.Parts.Count == 1 && msg.Parts[0].Name == "Body" && msg.Parts[0].Element == XmlQualifiedName.Empty)
+				return xmlImporter.ImportAnyType (XmlQualifiedName.Empty,"");
+			
 			XmlQualifiedName[] pnames = new XmlQualifiedName [msg.Parts.Count];
 			for (int n=0; n<pnames.Length; n++)
 				pnames[n] = msg.Parts[n].Element;
@@ -260,9 +263,14 @@ namespace System.Web.Services.Description
 
 		protected virtual Type GetOutMimeFormatter ()
 		{
-			MimeXmlBinding bin = OperationBinding.Output.Extensions.Find (typeof(MimeXmlBinding)) as MimeXmlBinding;
-			if (bin == null) return typeof(NopReturnReader);
-			return typeof (XmlReturnReader);
+			if (OperationBinding.Output.Extensions.Find (typeof(MimeXmlBinding)) != null)
+				return typeof (XmlReturnReader);
+				
+			MimeContentBinding bin = (MimeContentBinding) OperationBinding.Output.Extensions.Find (typeof(MimeContentBinding));
+			if (bin != null && bin.Type == "text/xml")
+				return typeof (XmlReturnReader);
+				
+			return typeof(NopReturnReader);
 		}
 
 		#endregion

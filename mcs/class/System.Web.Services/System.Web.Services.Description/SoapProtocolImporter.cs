@@ -119,7 +119,7 @@ namespace System.Web.Services.Description {
 		protected override void EndClass ()
 		{
 			SoapTransportImporter transportImporter = SoapTransportImporter.FindTransportImporter (soapBinding.Transport);
-			if (transportImporter == null) throw new Exception ("Transport '" + soapBinding.Transport + "' not supported");
+			if (transportImporter == null) throw new InvalidOperationException ("Transport '" + soapBinding.Transport + "' not supported");
 			transportImporter.ImportContext = this;
 			transportImporter.ImportClass ();			
 		}
@@ -144,21 +144,21 @@ namespace System.Web.Services.Description {
 			try
 			{
 				SoapOperationBinding soapOper = OperationBinding.Extensions.Find (typeof (SoapOperationBinding)) as SoapOperationBinding;
-				if (soapOper == null) throw new Exception ("Soap operation binding not found");
+				if (soapOper == null) throw new InvalidOperationException ("Soap operation binding not found");
 
 				SoapBodyBinding isbb = OperationBinding.Input.Extensions.Find (typeof(SoapBodyBinding)) as SoapBodyBinding;
-				if (isbb == null) throw new Exception ("Soap body binding not found");
+				if (isbb == null) throw new InvalidOperationException ("Soap body binding not found");
 				
 				SoapBodyBinding osbb = OperationBinding.Output.Extensions.Find (typeof(SoapBodyBinding)) as SoapBodyBinding;
-				if (osbb == null) throw new Exception ("Soap body binding not found");
+				if (osbb == null) throw new InvalidOperationException ("Soap body binding not found");
 				
 				SoapBindingStyle style = soapOper.Style != SoapBindingStyle.Default ? soapOper.Style : soapBinding.Style;
 			
 				XmlMembersMapping inputMembers = ImportMembersMapping (InputMessage, isbb, style, false);
-				if (inputMembers == null) throw new Exception ("Input message not declared");
+				if (inputMembers == null) throw new InvalidOperationException ("Input message not declared");
 
 				XmlMembersMapping outputMembers = ImportMembersMapping (OutputMessage, osbb, style, true);
-				if (outputMembers == null) throw new Exception ("Output message not declared");
+				if (outputMembers == null) throw new InvalidOperationException ("Output message not declared");
 				
 				CodeMemberMethod met = GenerateMethod (memberIds, soapOper, isbb, inputMembers, outputMembers);
 				
@@ -180,7 +180,7 @@ namespace System.Web.Services.Description {
 				
 				return met;
 			}
-			catch (Exception ex)
+			catch (InvalidOperationException ex)
 			{
 				UnsupportedOperationBindingWarning (ex.Message);
 				return null;
@@ -229,6 +229,9 @@ namespace System.Web.Services.Description {
 				}
 				else
 				{
+					if (style == SoapBindingStyle.Rpc)
+						throw new InvalidOperationException ("The combination of style=rpc with use=literal is not supported");
+						
 					XmlQualifiedName[] pnames = new XmlQualifiedName [msg.Parts.Count];
 					for (int n=0; n<pnames.Length; n++)
 						pnames[n] = msg.Parts[n].Element;
@@ -264,9 +267,10 @@ namespace System.Web.Services.Description {
 
 			string messageName = memberIds.AddUnique(CodeIdentifier.MakeValid(Operation.Name),method);
 
-			method.Name = Operation.Name;
-			methodBegin.Name = memberIds.AddUnique(CodeIdentifier.MakeValid("Begin" + memberIds.MakeRightCase(Operation.Name)),method);
-			methodEnd.Name = memberIds.AddUnique(CodeIdentifier.MakeValid("End" + memberIds.MakeRightCase(Operation.Name)),method);
+			method.Name = CodeIdentifier.MakeValid(Operation.Name);
+			if (method.Name == ClassName) method.Name += "1";
+			methodBegin.Name = memberIds.AddUnique(CodeIdentifier.MakeValid("Begin" + memberIds.MakeRightCase(method.Name)),method);
+			methodEnd.Name = memberIds.AddUnique(CodeIdentifier.MakeValid("End" + memberIds.MakeRightCase(method.Name)),method);
 
 			method.ReturnType = new CodeTypeReference (typeof(void));
 			methodEnd.ReturnType = new CodeTypeReference (typeof(void));
@@ -407,7 +411,7 @@ namespace System.Web.Services.Description {
 			{
 				if (inputMembers.ElementName == "" && outputMembers.ElementName != "" || 
 					inputMembers.ElementName != "" && outputMembers.ElementName == "")
-					throw new Exception ("Parameter style is not the same for the input message and output message");
+					throw new InvalidOperationException ("Parameter style is not the same for the input message and output message");
 	
 				att = new CodeAttributeDeclaration ("System.Web.Services.Protocols.SoapDocumentMethodAttribute");
 				att.Arguments.Add (GetArg (soapOper.SoapAction));
@@ -491,9 +495,9 @@ namespace System.Web.Services.Description {
 		void ImportHeader (CodeMemberMethod method, SoapHeaderBinding hb, SoapHeaderDirection direction)
 		{
 			Message msg = ServiceDescriptions.GetMessage (hb.Message);
-			if (msg == null) throw new Exception ("Message " + hb.Message + " not found");
+			if (msg == null) throw new InvalidOperationException ("Message " + hb.Message + " not found");
 			MessagePart part = msg.Parts [hb.Part];
-			if (part == null) throw new Exception ("Message part " + hb.Part + " not found in message " + hb.Message);
+			if (part == null) throw new InvalidOperationException ("Message part " + hb.Part + " not found in message " + hb.Message);
 
 			XmlTypeMapping map;
 			if (hb.Use == SoapBindingUse.Literal)
