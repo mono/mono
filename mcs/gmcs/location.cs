@@ -74,10 +74,10 @@ namespace Mono.CSharp {
 			string path = Path.GetFullPath (name);
 
 			if (source_files.Contains (path)){
-				Report.Warning (
-					2002,
+				Report.Error (
+					1516,
 					"Source file `" + name + "' specified multiple times");
-				return;
+				Environment.Exit (1);
 			}
 
 			source_files.Add (path, ++source_count);

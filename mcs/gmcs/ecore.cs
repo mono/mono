@@ -222,18 +222,6 @@ namespace Mono.CSharp {
 		}
 
 		/// <summary>
-		/// Tests presence of ObsoleteAttribute and report proper error
-		/// </summary>
-		protected void CheckObsoleteAttribute (Type type)
-		{
-			ObsoleteAttribute obsolete_attr = AttributeTester.GetObsoleteAttribute (type);
-			if (obsolete_attr == null)
-				return;
-
-			AttributeTester.Report_ObsoleteMessage (obsolete_attr, type.FullName, loc);
-		}
-
-		/// <summary>
 		///   Performs semantic analysis on the Expression
 		/// </summary>
 		///
@@ -720,12 +708,16 @@ namespace Mono.CSharp {
 			}
 
 			if (qualifier_type != null)
-				Report.Error_T (122, loc, TypeManager.CSharpName (qualifier_type) + "." + name);
+				Report.Error (
+					122, loc, "`" + TypeManager.CSharpName (qualifier_type) + "." +
+					name + "' is inaccessible due to its protection level");
 			else if (name == ".ctor") {
 				Report.Error (143, loc, String.Format ("The type {0} has no constructors defined",
 								       TypeManager.CSharpName (queried_type)));
 			} else {
-				Report.Error_T (122, loc, name);
+				Report.Error (
+					122, loc, "`" + name + "' is inaccessible due to its " +
+					"protection level");
 		}
 		}
 
@@ -1270,7 +1262,7 @@ namespace Mono.CSharp {
 		//
 		// Default implementation of IAssignMethod.CacheTemporaries
 		//
-		public virtual void CacheTemporaries (EmitContext ec)
+		public void CacheTemporaries (EmitContext ec)
 		{
 		}
 
@@ -2087,33 +2079,6 @@ namespace Mono.CSharp {
 			return this;
 		}
 
-		Expression SimpleNameResolve (EmitContext ec, Expression right_side,
-					      bool allow_static)
-		{
-			Expression e = DoSimpleNameResolve (ec, right_side, allow_static);
-			if (e == null)
-				return null;
-
-			Block current_block = ec.CurrentBlock;
-			if (current_block != null){
-				LocalInfo vi = current_block.GetLocalInfo (Name);
-				if (is_base &&
-				    current_block.IsVariableNameUsedInChildBlock(Name)) {
-					Report.Error (135, Location,
-						      "'{0}' has a different meaning in a " +
-						      "child block", Name);
-					return null;
-				}
-			}
-
-			if (e.Type != null && e.Type.IsPointer && !ec.InUnsafe) {
-				UnsafeError (loc);
-				return null;
-			}
-
-			return e;
-		}
-
 		/// <remarks>
 		///   7.5.2: Simple Names. 
 		///
@@ -2131,7 +2096,7 @@ namespace Mono.CSharp {
 		///   Type is both an instance variable and a Type;  Type.GetType
 		///   is the static method not an instance method of type.
 		/// </remarks>
-		Expression DoSimpleNameResolve (EmitContext ec, Expression right_side, bool allow_static)
+		Expression SimpleNameResolve (EmitContext ec, Expression right_side, bool allow_static)
 		{
 			Expression e = null;
 
@@ -2140,6 +2105,11 @@ namespace Mono.CSharp {
 			//
 			Block current_block = ec.CurrentBlock;
 			if (current_block != null){
+				if (is_base && current_block.IsVariableNameUsedInChildBlock(Name)) {
+					Report.Error (135, Location, "'" + Name + "' has a different meaning in a child block");
+					return null;
+				}
+
 				LocalInfo vi = current_block.GetLocalInfo (Name);
 				if (vi != null){
 					Expression var;
@@ -2563,7 +2533,6 @@ namespace Mono.CSharp {
 		Expression instance_expression = null;
 		bool is_explicit_impl = false;
 		bool has_type_arguments = false;
- 		bool identical_type_name = false;
 		
 		public MethodGroupExpr (MemberInfo [] mi, Location l)
 		{
@@ -2635,16 +2604,6 @@ namespace Mono.CSharp {
 
 			set {
 				has_type_arguments = value;
-			}
-		}
-
-		public bool IdenticalTypeName {
-			get {
-				return identical_type_name;
-			}
-
-			set {
-				identical_type_name = value;
 			}
 		}
 
@@ -2745,10 +2704,6 @@ namespace Mono.CSharp {
 		Expression instance_expr;
 		VariableInfo variable_info;
 		
-		LocalTemporary temporary;
-		IMemoryLocation instance_ml;
-		bool have_temporary;
-		
 		public FieldExpr (FieldInfo fi, Location l)
 		{
 			FieldInfo = fi;
@@ -2816,18 +2771,6 @@ namespace Mono.CSharp {
 								       ResolveFlags.DisableFlowAnalysis);
 				if (instance_expr == null)
 					return null;
-			}
-
-			ObsoleteAttribute oa;
-			FieldBase f = TypeManager.GetField (FieldInfo);
-			if (f != null) {
-				oa = f.GetObsoleteAttribute (ec.DeclSpace);
-				if (oa != null)
-					AttributeTester.Report_ObsoleteMessage (oa, f.GetSignatureForError (), loc);
-			} else {
-				oa = AttributeTester.GetMemberObsoleteAttribute (FieldInfo);
-				if (oa != null)
-					AttributeTester.Report_ObsoleteMessage (oa, TypeManager.GetFullNameSignature (FieldInfo), loc);
 			}
 
 			// If the instance expression is a local variable or parameter.
@@ -2913,35 +2856,6 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public override void CacheTemporaries (EmitContext ec)
-		{
-			if (!FieldInfo.IsStatic && (temporary == null))
-				temporary = new LocalTemporary (ec, instance_expr.Type);
-		}
-
-		void EmitInstance (EmitContext ec)
-		{
-			if (instance_expr.Type.IsValueType)
-				CacheTemporaries (ec);
-
-			if ((temporary == null) || have_temporary)
-				return;
-
-			if (instance_expr.Type.IsValueType) {
-				instance_ml = instance_expr as IMemoryLocation;
-				if (instance_ml == null) {
-					instance_expr.Emit (ec);
-					temporary.Store (ec);
-					instance_ml = temporary;
-				}
-			} else {
-				instance_expr.Emit (ec);
-				temporary.Store (ec);
-			}
-
-			have_temporary = true;
-		}
-
 		override public void Emit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
@@ -2965,14 +2879,23 @@ namespace Mono.CSharp {
 				return;
 			}
 			
-			EmitInstance (ec);
-			if (instance_ml != null)
-				instance_ml.AddressOf (ec, AddressOp.Load);
-			else if (temporary != null)
-				temporary.Emit (ec);
-			else
+			if (instance_expr.Type.IsValueType){
+				IMemoryLocation ml;
+				LocalTemporary tempo = null;
+				
+				if (!(instance_expr is IMemoryLocation)){
+					tempo = new LocalTemporary (ec, instance_expr.Type);
+					
+					InstanceExpression.Emit (ec);
+					tempo.Store (ec);
+					ml = tempo;
+				} else
+					ml = (IMemoryLocation) instance_expr;
+				
+				ml.AddressOf (ec, AddressOp.Load);
+			} else {
 				instance_expr.Emit (ec);
-
+			}
 			if (is_volatile)
 				ig.Emit (OpCodes.Volatile);
 			
@@ -2992,13 +2915,15 @@ namespace Mono.CSharp {
 			}
 
 			if (!is_static){
-				EmitInstance (ec);
-				if (instance_ml != null)
-					instance_ml.AddressOf (ec, AddressOp.Store);
-				else if (temporary != null)
-					temporary.Emit (ec);
-				else
-					instance_expr.Emit (ec);
+				Expression instance = instance_expr;
+
+				if (instance.Type.IsValueType){
+					IMemoryLocation ml = (IMemoryLocation) instance;
+
+					ml.AddressOf (ec, AddressOp.Store);
+				} else {
+					instance.Emit (ec);
+				}
 			}
 
 			source.Emit (ec);
@@ -3073,15 +2998,26 @@ namespace Mono.CSharp {
 				// only load the pointer, and not perform an Ldobj immediately after
 				// the value has been loaded into the stack.
 				//
-				EmitInstance (ec);
-				if (instance_ml != null)
-					instance_ml.AddressOf (ec, AddressOp.LoadStore);
-				else if (temporary != null)
-					temporary.Emit (ec);
-				else if (instance_expr is This)
+				if (instance_expr is This)
 					((This)instance_expr).AddressOf (ec, AddressOp.LoadStore);
-				else
+				else if (instance_expr.Type.IsValueType && instance_expr is IMemoryLocation){
+					IMemoryLocation ml = (IMemoryLocation) instance_expr;
+
+					ml.AddressOf (ec, AddressOp.LoadStore);
+				} else {
 					instance_expr.Emit (ec);
+
+					if (instance_expr.Type.IsValueType) {
+						LocalBuilder local = ig.DeclareLocal (instance_expr.Type);
+						ig.Emit(OpCodes.Stloc, local);
+						ig.Emit(OpCodes.Ldloca, local);
+						ig.Emit(OpCodes.Ldfld, FieldInfo);
+						LocalBuilder local2 = ig.DeclareLocal(type);
+						ig.Emit(OpCodes.Stloc, local2);
+						ig.Emit(OpCodes.Ldloca, local2);
+						return;
+					}
+				}
 				ig.Emit (OpCodes.Ldflda, FieldInfo);
 			}
 		}
@@ -3120,8 +3056,6 @@ namespace Mono.CSharp {
 		bool must_do_cs1540_check;
 		
 		Expression instance_expr;
-		LocalTemporary temporary;
-		bool have_temporary;
 
 		public PropertyExpr (EmitContext ec, PropertyInfo pi, Location l)
 		{
@@ -3299,7 +3233,9 @@ namespace Mono.CSharp {
 				is_static = true;
 
 			if (setter == null && getter == null){
-				Report.Error_T (122, loc, PropertyInfo.Name);
+				Error (122, "`" + PropertyInfo.Name + "' " +
+				       "is inaccessible because of its protection level");
+				
 			}
 		}
 
@@ -3418,29 +3354,8 @@ namespace Mono.CSharp {
 			return this;
 		}
 
-		public override void CacheTemporaries (EmitContext ec)
-		{
-			if (!is_static)
-				temporary = new LocalTemporary (ec, instance_expr.Type);
-		}
-
-		Expression EmitInstance (EmitContext ec)
-		{
-			if (temporary != null){
-				if (!have_temporary){
-					instance_expr.Emit (ec);
-					temporary.Store (ec);
-					have_temporary = true;
-				}
-				return temporary;
-			} else
-				return instance_expr;
-		}
-
 		override public void Emit (EmitContext ec)
 		{
-			Expression expr = EmitInstance (ec);
-
 			//
 			// Special case: length of single dimension array property is turned into ldlen
 			//
@@ -3453,14 +3368,14 @@ namespace Mono.CSharp {
 				// support invoking GetArrayRank, so test for that case first
 				//
 				if (iet != TypeManager.array_type && (iet.GetArrayRank () == 1)){
-					expr.Emit (ec);
+					instance_expr.Emit (ec);
 					ec.ig.Emit (OpCodes.Ldlen);
 					ec.ig.Emit (OpCodes.Conv_I4);
 					return;
 				}
 			}
 
-			Invocation.EmitCall (ec, IsBase, IsStatic, expr, getter, null, loc);
+			Invocation.EmitCall (ec, IsBase, IsStatic, instance_expr, getter, null, loc);
 			
 		}
 
@@ -3469,13 +3384,11 @@ namespace Mono.CSharp {
 		//
 		public void EmitAssign (EmitContext ec, Expression source)
 		{
-			Expression expr = EmitInstance (ec);
-
 			Argument arg = new Argument (source, Argument.AType.Expression);
 			ArrayList args = new ArrayList ();
 
 			args.Add (arg);
-			Invocation.EmitCall (ec, IsBase, IsStatic, expr, setter, args, loc);
+			Invocation.EmitCall (ec, IsBase, IsStatic, instance_expr, setter, args, loc);
 		}
 
 		override public void EmitStatement (EmitContext ec)
@@ -3490,7 +3403,7 @@ namespace Mono.CSharp {
 	/// </summary>
 	public class EventExpr : Expression, IMemberExpr {
 		public readonly EventInfo EventInfo;
-		Expression instance_expr;
+		public Expression instance_expr;
 
 		bool is_static;
 		MethodInfo add_accessor, remove_accessor;

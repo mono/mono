@@ -926,11 +926,6 @@ namespace Mono.CSharp {
 			// FIXME
 		}
 
-		protected override void VerifyObsoleteAttribute()
-		{
-			// FIXME
-		}
-
 		public override AttributeTargets AttributeTargets {
 			get {
 				return AttributeTargets.Method | AttributeTargets.ReturnValue;

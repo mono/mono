@@ -63,7 +63,6 @@ public class TypeManager {
 	static public Type ienumerator_type;
 	static public Type ienumerable_type;
 	static public Type idisposable_type;
-	static public Type iconvertible_type;
 	static public Type default_member_type;
 	static public Type iasyncresult_type;
 	static public Type asynccallback_type;
@@ -84,7 +83,7 @@ public class TypeManager {
 	static public Type exception_type;
 	static public Type activator_type;
 	static public Type invalid_operation_exception_type;
-	static public Type obsolete_attribute_type;
+	static public object obsolete_attribute_type;
 	static public object conditional_attribute_type;
 	static public Type in_attribute_type;
 	static public Type cls_compliant_attribute_type;
@@ -466,14 +465,9 @@ public class TypeManager {
 		builder_to_declspace.Add (t, i);
 	}
 
-	public static void AddMethod (MethodBase builder, IMethodData method)
+	public static void AddMethod (MethodBuilder builder, MethodData method)
 	{
 		builder_to_method.Add (builder, method);
-	}
-
-	public static IMethodData GetMethod (MethodBase builder)
-	{
-		return (IMethodData) builder_to_method [builder];
 	}
 
 	public static void AddTypeParameter (Type t, TypeParameter tparam, TypeExpr[] ifaces)
@@ -697,16 +691,11 @@ public class TypeManager {
 		if (t != null)
 			return t;
 
-		if (negative_hits.Contains (name))
+		t = LookupTypeReflection (name);
+		if (t == null)
 			return null;
 
-		t = LookupTypeReflection (name);
-		
-		if (t == null)
-			negative_hits [name] = null;
-		else
 		types [name] = t;
-		
 		return t;
 	}
 
@@ -1104,7 +1093,6 @@ public class TypeManager {
 		ienumerable_type     = CoreLookupType ("System.Collections.IEnumerable");
 		idisposable_type     = CoreLookupType ("System.IDisposable");
 		icloneable_type      = CoreLookupType ("System.ICloneable");
-		iconvertible_type    = CoreLookupType ("System.IConvertible");
 		monitor_type         = CoreLookupType ("System.Threading.Monitor");
 		intptr_type          = CoreLookupType ("System.IntPtr");
 
@@ -2640,13 +2628,15 @@ public class TypeManager {
 
 	[Flags]
 	public enum MethodFlags {
+		IsObsolete = 1,
+		IsObsoleteError = 1 << 1,
 		ShouldIgnore = 1 << 2
 	}
 
 	static public bool IsGenericMethod (MethodBase mb)
 	{
 		if (mb.DeclaringType is TypeBuilder) {
-			IMethodData method = (IMethodData) builder_to_method [mb];
+			MethodData method = (MethodData) builder_to_method [mb];
 			if (method == null)
 				return false;
 
@@ -2661,7 +2651,7 @@ public class TypeManager {
 	// This emits an error 619 / warning 618 if the method is obsolete.
 	// In the former case, TypeManager.MethodFlags.IsObsoleteError is returned.
 	//
-	static public MethodFlags GetMethodFlags (MethodBase mb)
+	static public MethodFlags GetMethodFlags (MethodBase mb, Location loc)
 	{
 		MethodFlags flags = 0;
 
@@ -2669,17 +2659,14 @@ public class TypeManager {
 			mb = mb.GetGenericMethodDefinition ();
 
 		if (mb.DeclaringType is TypeBuilder){
-			IMethodData method = (IMethodData) builder_to_method [mb];
+			MethodData method = (MethodData) builder_to_method [mb];
 			if (method == null) {
 				// FIXME: implement Obsolete attribute on Property,
 				//        Indexer and Event.
 				return 0;
 			}
 
-			if (method.ShouldIgnore ())
-				flags |= MethodFlags.ShouldIgnore;
-
-			return flags;
+			return method.GetMethodFlags (loc);
 		}
 
 		object [] attrs = mb.GetCustomAttributes (true);
@@ -2689,6 +2676,23 @@ public class TypeManager {
 				continue;
 			}
 			System.Attribute a = (System.Attribute) ta;
+			if (a.TypeId == TypeManager.obsolete_attribute_type){
+				ObsoleteAttribute oa = (ObsoleteAttribute) a;
+
+				string method_desc = TypeManager.CSharpSignature (mb);
+
+				if (oa.IsError) {
+					Report.Error (619, loc, "Method `" + method_desc +
+						      "' is obsolete: `" + oa.Message + "'");
+					return MethodFlags.IsObsoleteError;
+				} else
+					Report.Warning (618, loc, "Method `" + method_desc +
+							"' is obsolete: `" + oa.Message + "'");
+
+				flags |= MethodFlags.IsObsolete;
+
+				continue;
+			}
 			
 			//
 			// Skip over conditional code.

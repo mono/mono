@@ -1119,8 +1119,6 @@ namespace Mono.CSharp {
 			if (probe_type == null)
 				return null;
 
-			CheckObsoleteAttribute (probe_type);
-
 			expr = expr.Resolve (ec);
 			if (expr == null)
 				return null;
@@ -1857,8 +1855,6 @@ namespace Mono.CSharp {
 			if (type == null)
 				return null;
 
-			CheckObsoleteAttribute (type);
-
 			eclass = ExprClass.Value;
 
 			if (expr is Constant){
@@ -1868,10 +1864,6 @@ namespace Mono.CSharp {
 					return e;
 			}
 
-			if (type.IsPointer && !ec.InUnsafe) {
-				UnsafeError (loc);
-				return null;
-			}
 			expr = Convert.ExplicitConversion (ec, expr, type, loc);
 			return expr;
 		}
@@ -3736,8 +3728,6 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			CheckObsoleteAttribute (e.Type);
-
 			if (local_info.LocalBuilder == null)
 				return ec.RemapLocalLValue (local_info, right_side);
 			
@@ -4764,7 +4754,7 @@ namespace Mono.CSharp {
                         //
                         // false is normal form, true is expanded form
                         //
-                        Hashtable candidate_to_form = null;
+                        Hashtable candidate_to_form = new PtrHashtable ();
 
 
                         //
@@ -4804,15 +4794,14 @@ namespace Mono.CSharp {
 					candidates.Add (candidate);
 					applicable_type = candidate.DeclaringType;
 					found_applicable = true;
+					candidate_to_form [candidate] = false;
 				} else if (IsParamsMethodApplicable (ec, me, Arguments, ref methods [i])) {
-					if (candidate_to_form == null)
-						candidate_to_form = new PtrHashtable ();
 					// Candidate is applicable in expanded form
 					MethodBase candidate = methods [i];
 					candidates.Add (candidate);
 					applicable_type = candidate.DeclaringType;
 					found_applicable = true; 
-					candidate_to_form [candidate] = candidate;
+					candidate_to_form [candidate] = true;
 				}
 			}
 
@@ -4828,11 +4817,11 @@ namespace Mono.CSharp {
 			for (int ix = 0; ix < candidate_top; ix++){
 				MethodBase candidate = (MethodBase) candidates [ix];
 				
-                                bool cand_params = candidate_to_form != null && candidate_to_form.Contains (candidate);
+                                bool cand_params = (bool) candidate_to_form [candidate];
                                 bool method_params = false;
 				
                                 if (method != null)
-                                        method_params = candidate_to_form != null && candidate_to_form.Contains (method);
+                                        method_params = (bool) candidate_to_form [method];
                                 
                                 int x = BetterFunction (ec, Arguments,
                                                         candidate, cand_params,
@@ -4907,7 +4896,7 @@ namespace Mono.CSharp {
 			// Now check that there are no ambiguities i.e the selected method
 			// should be better than all the others
 			//
-                        bool best_params = candidate_to_form != null && candidate_to_form.Contains (method);
+                        bool best_params = (bool) candidate_to_form [method];
 
 			for (int ix = 0; ix < candidate_top; ix++){
 				MethodBase candidate = (MethodBase) candidates [ix];
@@ -4927,7 +4916,7 @@ namespace Mono.CSharp {
 //                                      IsApplicable (ec, Arguments, method)))
 //                                         continue;
                                 
-                                bool cand_params = candidate_to_form != null && candidate_to_form.Contains (candidate);
+                                bool cand_params = (bool) candidate_to_form [candidate];
 				int x = BetterFunction (ec, Arguments,
                                                         method, best_params,
                                                         candidate, cand_params,
@@ -5354,20 +5343,8 @@ namespace Mono.CSharp {
 			MethodInfo mi = method as MethodInfo;
 			if (mi != null) {
 				type = TypeManager.TypeToCoreType (mi.ReturnType);
-				if (!mi.IsStatic && !mg.IsExplicitImpl && (mg.InstanceExpression == null)) {
+				if (!mi.IsStatic && !mg.IsExplicitImpl && (mg.InstanceExpression == null))
 					SimpleName.Error_ObjectRefRequired (ec, loc, mi.Name);
-					return null;
-				}
-
-				Expression iexpr = mg.InstanceExpression;
-				if (mi.IsStatic && (iexpr != null) && !(iexpr is This)) {
-					if (mg.IdenticalTypeName)
-						mg.InstanceExpression = null;
-					else {
-						MemberAccess.error176 (loc, mi.Name);
-						return null;
-					}
-				}
 			}
 
 			if (type.IsPointer){
@@ -5537,22 +5514,12 @@ namespace Mono.CSharp {
 			}
 
 			//
-			// This checks ObsoleteAttribute on the method and on the declaring type
+			// This checks the `ConditionalAttribute' on the method, and the
+			// ObsoleteAttribute
 			//
-			ObsoleteAttribute oa = AttributeTester.GetMethodObsoleteAttribute (method);
-			if (oa != null)
-				AttributeTester.Report_ObsoleteMessage (oa, TypeManager.CSharpSignature (method), loc);
-
-			oa = AttributeTester.GetObsoleteAttribute (method.DeclaringType);
-			if (oa != null) {
-				AttributeTester.Report_ObsoleteMessage (oa, method.DeclaringType.FullName, loc);
-			}
-
-
-			//
-			// This checks the `ConditionalAttribute' on the method
-			//
-			TypeManager.MethodFlags flags = TypeManager.GetMethodFlags (method);
+			TypeManager.MethodFlags flags = TypeManager.GetMethodFlags (method, loc);
+			if ((flags & TypeManager.MethodFlags.IsObsoleteError) != 0)
+				return;
 			if ((flags & TypeManager.MethodFlags.ShouldIgnore) != 0)
 				return;
 			
@@ -5854,8 +5821,6 @@ namespace Mono.CSharp {
 			if (type == null)
 				return null;
 			
-			CheckObsoleteAttribute (type);
-
 			bool IsDelegate = TypeManager.IsDelegateType (type);
 			
 			if (IsDelegate){
@@ -7029,8 +6994,6 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			CheckObsoleteAttribute (typearg);
-
 			type = TypeManager.type_type;
 			eclass = ExprClass.Type;
 			return this;
@@ -7097,11 +7060,6 @@ namespace Mono.CSharp {
 			}
 
 			type_queried = QueriedType.Type;
-			if (type_queried == null)
-				return null;
-
-			CheckObsoleteAttribute (type_queried);
-
 			if (!TypeManager.IsUnmanagedType (type_queried)){
 				Report.Error (208, loc, "Cannot take the size of an unmanaged type (" + TypeManager.CSharpName (type_queried) + ")");
 				return null;
@@ -7151,7 +7109,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public static void error176 (Location loc, string name)
+		static void error176 (Location loc, string name)
 		{
 			Report.Error (176, loc, "Static member `" +
 				      name + "' cannot be accessed " +
@@ -7159,15 +7117,23 @@ namespace Mono.CSharp {
 				      "type name instead");
 		}
 
-		static bool IdenticalNameAndTypeName (EmitContext ec, Expression left_original, Expression left, Location loc)
+		static bool IdenticalNameAndTypeName (EmitContext ec, Expression left_original, Location loc)
 		{
-			SimpleName sn = left_original as SimpleName;
-			if (sn == null || left == null || left.Type.Name != sn.Name)
+			if (left_original == null)
 				return false;
 
-			return RootContext.LookupType (ec.DeclSpace, sn.Name, true, loc) != null;
-		}
+			if (!(left_original is SimpleName))
+				return false;
 
+			SimpleName sn = (SimpleName) left_original;
+
+			TypeExpr t = RootContext.LookupType (ec.DeclSpace, sn.Name, true, loc);
+			if (t != null)
+				return true;
+
+			return false;
+		}
+		
 		public static Expression ResolveMemberAccess (EmitContext ec, Expression member_lookup,
 							      Expression left, Location loc,
 							      Expression left_original)
@@ -7219,7 +7185,7 @@ namespace Mono.CSharp {
 					
 					if (decl_type.IsSubclassOf (TypeManager.enum_type)) {
 						if (left_is_explicit && !left_is_type &&
-						    !IdenticalNameAndTypeName (ec, left_original, member_lookup, loc)) {
+						    !IdenticalNameAndTypeName (ec, left_original, loc)) {
 							error176 (loc, fe.FieldInfo.Name);
 							return null;
 						}					
@@ -7273,7 +7239,6 @@ namespace Mono.CSharp {
 						// accessors and private field etc so there's no need
 						// to transform ourselves.
 						//
-						ee.InstanceExpression = left;
 						return ee;
 					}
 
@@ -7287,23 +7252,21 @@ namespace Mono.CSharp {
 					if (!left_is_explicit)
 						left = null;
 					
-					ee.InstanceExpression = left;
-
 					return ResolveMemberAccess (ec, ml, left, loc, left_original);
 				}
 			}
 
 			if (member_lookup is IMemberExpr) {
 				IMemberExpr me = (IMemberExpr) member_lookup;
-				MethodGroupExpr mg = me as MethodGroupExpr;
 
 				if (left_is_type){
+					MethodGroupExpr mg = me as MethodGroupExpr;
 					if ((mg != null) && left_is_explicit && left.Type.IsInterface)
 						mg.IsExplicitImpl = left_is_explicit;
 
 					if (!me.IsStatic){
 						if ((ec.IsFieldInitializer || ec.IsStatic) &&
-						    IdenticalNameAndTypeName (ec, left_original, member_lookup, loc))
+						    IdenticalNameAndTypeName (ec, left_original, loc))
 							return member_lookup;
 
 						SimpleName.Error_ObjectRefRequired (ec, loc, me.Name);
@@ -7312,7 +7275,7 @@ namespace Mono.CSharp {
 
 				} else {
 					if (!me.IsInstance){
-						if (IdenticalNameAndTypeName (ec, left_original, left, loc))
+						if (IdenticalNameAndTypeName (ec, left_original, loc))
 							return member_lookup;
 
 						if (left_is_explicit) {
@@ -7341,9 +7304,6 @@ namespace Mono.CSharp {
 							return null;
 						}
 					}
-
-					if ((mg != null) && IdenticalNameAndTypeName (ec, left_original, left, loc))
-						mg.IdenticalTypeName = true;
 
 					me.InstanceExpression = left;
 				}
@@ -7397,7 +7357,8 @@ namespace Mono.CSharp {
 				expr_type = ((TypeExpr) expr).ResolveType (ec);
 
 				if (!ec.DeclSpace.CheckAccessLevel (expr_type)){
-					Report.Error_T (122, loc, expr_type);
+					Error (122, "`" + expr_type + "' " +
+					       "is inaccessible because of its protection level");
 					return null;
 				}
 
@@ -7408,22 +7369,8 @@ namespace Mono.CSharp {
 						object value = en.LookupEnumValue (ec, Identifier, loc);
 						
 						if (value != null){
-							ObsoleteAttribute oa = en.GetObsoleteAttribute (ec, Identifier);
-							if (oa != null) {
-								AttributeTester.Report_ObsoleteMessage (oa, en.GetSignatureForError (), Location);
-							}
-
 							Constant c = Constantify (value, en.UnderlyingType);
 							return new EnumConstant (c, expr_type);
-						}
-					} else {
-						CheckObsoleteAttribute (expr_type);
-
-						FieldInfo fi = expr_type.GetField (Identifier);
-						if (fi != null) {
-							ObsoleteAttribute oa = AttributeTester.GetMemberObsoleteAttribute (fi);
-							if (oa != null)
-								AttributeTester.Report_ObsoleteMessage (oa, TypeManager.GetFullNameSignature (fi), Location);
 						}
 					}
 				}

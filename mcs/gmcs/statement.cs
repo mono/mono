@@ -57,15 +57,6 @@ namespace Mono.CSharp {
 			return true;
 		}
 		
-		protected void CheckObsolete (Type type)
-		{
-			ObsoleteAttribute obsolete_attr = AttributeTester.GetObsoleteAttribute (type);
-			if (obsolete_attr == null)
-				return;
-
-			AttributeTester.Report_ObsoleteMessage (obsolete_attr, type.FullName, loc);
-		}
-		
 		/// <summary>
 		///   Return value indicates whether all code paths emitted return.
 		/// </summary>
@@ -1007,10 +998,10 @@ namespace Mono.CSharp {
 			return !ec.DoFlowAnalysis || ec.CurrentBranching.IsAssigned (VariableInfo);
 		}
 
-		public bool Resolve (EmitContext ec)
+		public bool Resolve (DeclSpace decl)
 		{
 			if (VariableType == null)
-				VariableType = ec.DeclSpace.ResolveType (Type, false, Location);
+				VariableType = decl.ResolveType (Type, false, Location);
 
 			if (VariableType == TypeManager.void_type) {
 				Report.Error (1547, Location,
@@ -1020,10 +1011,6 @@ namespace Mono.CSharp {
 
 			if (VariableType == null)
 				return false;
-
-// TODO: breaks the build
-//			if (VariableType.IsPointer && !ec.InUnsafe)
-//				Expression.UnsafeError (Location);
 
 			return true;
 		}
@@ -1617,7 +1604,7 @@ namespace Mono.CSharp {
 			LocalInfo[] locals;
 			if (variables != null) {
 				foreach (LocalInfo li in variables.Values)
-					li.Resolve (ec);
+					li.Resolve (ec.DeclSpace);
 
 				locals = new LocalInfo [variables.Count];
 				variables.Values.CopyTo (locals, 0);
@@ -2893,8 +2880,6 @@ namespace Mono.CSharp {
 			if (expr_type == null)
 				return false;
 
-			CheckObsolete (expr_type);
-
 			if (ec.RemapToProxy){
 				Report.Error (-210, loc, "Fixed statement not allowed in iterators");
 				return false;
@@ -3125,9 +3110,10 @@ namespace Mono.CSharp {
 		}
 	}
 	
-	public class Catch: Statement {
+	public class Catch {
 		public readonly string Name;
 		public readonly Block  Block;
+		public readonly Location Location;
 
 		Expression type_expr;
 		Type type;
@@ -3137,7 +3123,7 @@ namespace Mono.CSharp {
 			type_expr = type;
 			Name = name;
 			Block = block;
-			loc = l;
+			Location = l;
 		}
 
 		public Type CatchType {
@@ -3152,27 +3138,26 @@ namespace Mono.CSharp {
 			}
 		}
 
-		protected override void DoEmit(EmitContext ec)
-		{
-		}
-
-		public override bool Resolve (EmitContext ec)
+		public bool Resolve (EmitContext ec)
 		{
 			if (type_expr != null) {
-				type = ec.DeclSpace.ResolveType (type_expr, false, loc);
+				type = ec.DeclSpace.ResolveType (type_expr, false, Location);
 				if (type == null)
 					return false;
 
-				CheckObsolete (type);
-
 				if (type != TypeManager.exception_type && !type.IsSubclassOf (TypeManager.exception_type)){
-					Error (155, "The type caught or thrown must be derived from System.Exception");
+					Report.Error (155, Location,
+						      "The type caught or thrown must be derived " +
+						      "from System.Exception");
 					return false;
 				}
 			} else
 				type = null;
 
-			return Block.Resolve (ec);
+			if (!Block.Resolve (ec))
+				return false;
+
+			return true;
 		}
 	}
 
@@ -3212,8 +3197,6 @@ namespace Mono.CSharp {
 
 			Report.Debug (1, "START OF CATCH BLOCKS", vector);
 
-			Type[] prevCatches = new Type [Specific.Count];
-			int last_index = 0;
 			foreach (Catch c in Specific){
 				ec.CurrentBranching.CreateSibling (
 					c.Block, FlowBranching.SiblingType.Catch);
@@ -3229,17 +3212,7 @@ namespace Mono.CSharp {
 				}
 
 				if (!c.Resolve (ec))
-					return false;
-
-				Type resolvedType = c.CatchType;
-				for (int ii = 0; ii < last_index; ++ii) {
-					if (resolvedType.IsSubclassOf (prevCatches [ii])) {
-						Report.Error_T (160, c.loc, prevCatches [ii].FullName);
-						return false;
-					}
-				}
-
-				prevCatches [last_index++] = resolvedType;
+					ok = false;
 			}
 
 			Report.Debug (1, "END OF CATCH BLOCKS", ec.CurrentBranching);

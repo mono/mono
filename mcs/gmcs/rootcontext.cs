@@ -487,13 +487,13 @@ namespace Mono.CSharp {
 		}
 
 		static TypeExpr NamespaceLookup (DeclSpace ds, string name,
-						 int num_type_args, bool silent, Location loc)
+						 int num_type_args, Location loc)
 		{
 			//
 			// Try in the current namespace and all its implicit parents
 			//
 			for (NamespaceEntry ns = ds.NamespaceEntry; ns != null; ns = ns.ImplicitParent) {
-				IAlias result = ns.Lookup (ds, name, num_type_args, silent, loc);
+				IAlias result = ns.Lookup (ds, name, num_type_args, loc);
 
 				if (result == null)
 					continue;
@@ -528,6 +528,8 @@ namespace Mono.CSharp {
 
 			if (ds.Cache.Contains (name)){
 				t = (TypeExpr) ds.Cache [name];
+				if (t != null)
+					return t;
 			} else {
 				//
 				// For the case the type we are looking for is nested within this one
@@ -535,26 +537,9 @@ namespace Mono.CSharp {
 				//
 				DeclSpace containing_ds = ds;
 				while (containing_ds != null){
-					
-					// if the member cache has been created, lets use it.
-					// the member cache is MUCH faster.
-					if (containing_ds.MemberCache != null) {
-						Type type = containing_ds.MemberCache.FindNestedType (name);
-						if (type == null) {
-							containing_ds = containing_ds.Parent;
-							continue;
-						}
-
-						t = new TypeExpression (type, loc);
-						ds.Cache [name] = t;
-						return t;
-					}
-					
-					// no member cache. Do it the hard way -- reflection
 					Type current_type = containing_ds.TypeBuilder;
 					
-					while (current_type != null &&
-					       current_type != TypeManager.object_type) {
+					while (current_type != null) {
 						//
 						// nested class
 						//
@@ -571,15 +556,17 @@ namespace Mono.CSharp {
 					containing_ds = containing_ds.Parent;
 				}
 				
-				t = NamespaceLookup (ds, name, num_type_params, silent, loc);
-				if (!silent)
+				t = NamespaceLookup (ds, name, num_type_params, loc);
+				if (t != null){
 					ds.Cache [name] = t;
+					return t;
+				}
 			}
 
-			if (t == null && !silent)
+			if (!silent)
 				Report.Error (246, loc, "Cannot find type `"+name+"'");
 			
-			return t;
+			return null;
 		}
 
 		// <summary>

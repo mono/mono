@@ -772,10 +772,12 @@ namespace Mono.CSharp {
 		{
 		}
 
+		// TODO: The error can be reported more than once
 		public void AddAttributes (ArrayList attrs)
 		{
 			if (OptAttributes == null) {
 				OptAttributes = new Attributes (attrs);
+				OptAttributes.CheckTargets (ValidAttributeTargets);
 				return;
 			}
 			OptAttributes.AddAttributes (attrs);

@@ -79,7 +79,7 @@ namespace Mono.CSharp
 
 		public sealed class Reachability
 		{
-			FlowReturns returns, breaks, throws, barrier;
+			FlowReturns returns, breaks, throws, barrier, reachable;
 
 			public FlowReturns Returns {
 				get { return returns; }
@@ -93,6 +93,10 @@ namespace Mono.CSharp
 			public FlowReturns Barrier {
 				get { return barrier; }
 			}
+			public FlowReturns Reachable {
+				get { return reachable; }
+			}
+
 			public Reachability (FlowReturns returns, FlowReturns breaks,
 					     FlowReturns throws, FlowReturns barrier)
 			{
@@ -100,11 +104,15 @@ namespace Mono.CSharp
 				this.breaks = breaks;
 				this.throws = throws;
 				this.barrier = barrier;
+
+				update ();
 			}
 
 			public Reachability Clone ()
 			{
-				return new Reachability (returns, breaks, throws, barrier);
+				Reachability cloned = new Reachability (returns, breaks, throws, barrier);
+				cloned.reachable = reachable;
+				return cloned;
 			}
 
 			// <summary>
@@ -223,12 +231,7 @@ namespace Mono.CSharp
 				a.throws = AndFlowReturns (a.throws, b.throws);
 				a.barrier = AndFlowReturns (a.barrier, b.barrier);
 
-				if (a_unreachable && b_unreachable)
-					a.barrier = FlowReturns.Always;
-				else if (a_unreachable || b_unreachable)
-					a.barrier = FlowReturns.Sometimes;
-				else
-					a.barrier = FlowReturns.Never;
+				a.reachable = AndFlowReturns (a.reachable, b.reachable);
 			}
 
 			public void Or (Reachability b)
@@ -237,6 +240,8 @@ namespace Mono.CSharp
 				breaks = OrFlowReturns (breaks, b.breaks);
 				throws = OrFlowReturns (throws, b.throws);
 				barrier = OrFlowReturns (barrier, b.barrier);
+
+				update ();
 			}
 
 			public static Reachability Never ()
@@ -246,21 +251,16 @@ namespace Mono.CSharp
 					FlowReturns.Never, FlowReturns.Never);
 			}
 
-			public FlowReturns Reachable {
-				get {
-					if ((returns == FlowReturns.Always) ||
-					    (breaks == FlowReturns.Always) ||
-					    (throws == FlowReturns.Always) ||
-					    (barrier == FlowReturns.Always))
-						return FlowReturns.Never;
-					else if ((returns == FlowReturns.Never) &&
-						 (breaks == FlowReturns.Never) &&
-						 (throws == FlowReturns.Never) &&
-						 (barrier == FlowReturns.Never))
-						return FlowReturns.Always;
+			void update ()
+			{
+				if ((returns == FlowReturns.Always) || (breaks == FlowReturns.Always) ||
+				    (throws == FlowReturns.Always) || (barrier == FlowReturns.Always))
+					reachable = FlowReturns.Never;
+				else if ((returns == FlowReturns.Never) && (breaks == FlowReturns.Never) &&
+					 (throws == FlowReturns.Never) && (barrier == FlowReturns.Never))
+					reachable = FlowReturns.Always;
 				else
-						return FlowReturns.Sometimes;
-				}
+					reachable = FlowReturns.Sometimes;
 			}
 
 			public bool AlwaysBreaks {
@@ -296,42 +296,49 @@ namespace Mono.CSharp
 			}
 
 			public bool IsUnreachable {
-				get { return Reachable == FlowReturns.Never; }
+				get { return reachable == FlowReturns.Never; }
 			}
 
 			public void SetReturns ()
 			{
 				returns = FlowReturns.Always;
+				update ();
 			}
 
 			public void SetReturnsSometimes ()
 			{
 				returns = FlowReturns.Sometimes;
+				update ();
 			}
 
 			public void SetBreaks ()
 			{
 				breaks = FlowReturns.Always;
+				update ();
 			}
 
 			public void ResetBreaks ()
 			{
 				breaks = FlowReturns.Never;
+				update ();
 			}
 
 			public void SetThrows ()
 			{
 				throws = FlowReturns.Always;
+				update ();
 			}
 
 			public void SetThrowsSometimes ()
 			{
 				throws = FlowReturns.Sometimes;
+				update ();
 			}
 
 			public void SetBarrier ()
 			{
 				barrier = FlowReturns.Always;
+				update ();
 			}
 
 			static string ShortName (FlowReturns returns)
@@ -351,7 +358,7 @@ namespace Mono.CSharp
 				return String.Format ("[{0}:{1}:{2}:{3}:{4}]",
 						      ShortName (returns), ShortName (breaks),
 						      ShortName (throws), ShortName (barrier),
-						      ShortName (Reachable));
+						      ShortName (reachable));
 			}
 		}
 
@@ -1131,8 +1138,7 @@ namespace Mono.CSharp
 
 			Report.Debug (4, "MERGE TOP BLOCK", Location, vector, result.Reachability);
 
-			if ((vector.Reachability.Throws != FlowReturns.Always) &&
-			    (vector.Reachability.Barrier != FlowReturns.Always))
+			if (vector.Reachability.Throws != FlowReturns.Always)
 				CheckOutParameters (vector.Parameters, Location);
 
 			return result.Reachability;

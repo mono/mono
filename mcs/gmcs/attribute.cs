@@ -44,8 +44,6 @@ namespace Mono.CSharp {
 			}
 			set {
 				attributes = value;
-				if (attributes != null)
-					attributes.CheckTargets (ValidAttributeTargets);
 			}
 		}
 
@@ -62,14 +60,13 @@ namespace Mono.CSharp {
 		public abstract bool IsClsCompliaceRequired (DeclSpace ds);
 
 		/// <summary>
-		/// Gets list of valid attribute targets for explicit target declaration.
-		/// The first array item is default target. Don't break this rule.
+		/// Gets list of valid attribute targets for explicit target declaration
 		/// </summary>
 		protected abstract string[] ValidAttributeTargets { get; }
 	};
 
 	public class Attribute {
-		public string Target;
+		public readonly string Target;
 		public readonly string    Name;
 		public readonly ArrayList Arguments;
 
@@ -195,11 +192,6 @@ namespace Mono.CSharp {
 				Report.Error (647, Location, "Format of GUID is invalid: " + guid);
 				return false;
 			}
-		}
-
-		string GetFullMemberName (string member)
-		{
-			return Type.FullName + '.' + member;
 		}
 
 		//
@@ -363,17 +355,6 @@ namespace Mono.CSharp {
 					BindingFlags.Public | BindingFlags.Instance,
 					Location);
 
-				if (member == null) {
-					member = Expression.MemberLookup (ec, Type, member_name,
-						MemberTypes.Field | MemberTypes.Property, BindingFlags.NonPublic | BindingFlags.Instance,
-						Location);
-
-					if (member != null) {
-						Report.Error_T (122, Location, GetFullMemberName (member_name));
-						return null;
-					}
-				}
-
 				if (member == null || !(member is PropertyExpr || member is FieldExpr)) {
 					Error_InvalidNamedArgument (member_name);
 					return null;
@@ -394,13 +375,15 @@ namespace Mono.CSharp {
 						return null;
 					}
 
-					Constant c = e as Constant;
-					if (c != null) {
-						if (c.Type != pi.PropertyType) {
-							c = Const.ChangeType (Location, c, pi.PropertyType);
+					if (e is Constant) {
+						Constant c;
+						
+						if (e.Type != pi.PropertyType){
+							c = Const.ChangeType (Location, (Constant) e, pi.PropertyType);
 							if (c == null)
 								return null;
-						}
+						} else
+							c = (Constant) e;
 						
 						object o = c.GetValue ();
 						prop_values.Add (o);
@@ -435,10 +418,11 @@ namespace Mono.CSharp {
 					//
 					// Handle charset here, and set the TypeAttributes
 					
-					Constant c = e as Constant;
-					if (c != null) {
+					if (e is Constant){
+						Constant c = (Constant) e;;
+						
 						if (c.Type != fi.FieldType){
-							c = Const.ChangeType (Location, c, fi.FieldType);
+							c = Const.ChangeType (Location, (Constant) e, fi.FieldType);
 							if (c == null)
 								return null;
 						} 
@@ -560,7 +544,9 @@ namespace Mono.CSharp {
 				// class X { static void Main () {} }
 				//
 				Report.Warning (
-					-23, Location, "The compiler can not encode this attribute in .NET due to a bug in the .NET runtime. Try the Mono runtime. The exception was: " + e.Message);
+					-23, Location,
+					"The compiler can not encode this attribute in .NET due to\n" +
+					"\ta bug in the .NET runtime.  Try the Mono runtime.\nThe error was: " + e.Message);
 			}
 			
 			return cb;
@@ -679,6 +665,44 @@ namespace Mono.CSharp {
 			return ((StringConstant) arg.Expr).Value;
 		}
 
+		//
+		// This pulls the obsolete message and error flag out of an Obsolete attribute
+		//
+		public string Obsolete_GetObsoleteMessage (out bool is_error)
+		{
+			is_error = false;
+			//
+			// So we have an Obsolete, pull the data out.
+			//
+			if (Arguments == null || Arguments [0] == null)
+				return "";
+
+			ArrayList pos_args = (ArrayList) Arguments [0];
+			if (pos_args.Count == 0)
+				return "";
+			else if (pos_args.Count > 2){
+				Error_AttributeConstructorMismatch ();
+				return null;
+			}
+
+			Argument arg = (Argument) pos_args [0];	
+			if (!(arg.Expr is StringConstant)){
+				Error_AttributeConstructorMismatch ();
+				return null;
+			}
+
+			if (pos_args.Count == 2){
+				Argument arg2 = (Argument) pos_args [1];
+				if (!(arg2.Expr is BoolConstant)){
+					Error_AttributeConstructorMismatch ();
+					return null;
+				}
+				is_error = ((BoolConstant) arg2.Expr).Value;
+			}
+
+			return ((StringConstant) arg.Expr).Value;
+		}
+
 		public string IndexerName_GetIndexerName (EmitContext ec)
 		{
 			if (Arguments == null || Arguments [0] == null){
@@ -702,32 +726,6 @@ namespace Mono.CSharp {
 			}
 			
 			return sc.Value;
-		}
-
-		/// <summary>
-		/// Creates the instance of ObsoleteAttribute from this attribute instance
-		/// </summary>
-		public ObsoleteAttribute GetObsoleteAttribute (DeclSpace ds)
-		{
-			if (pos_values == null) {
-				EmitContext ec = new EmitContext (ds, ds, Location, null, null, 0, false);
-
-				// TODO: It is not neccessary to call whole Resolve (ApplyAttribute does it now) we need only ctor args.
-				// But because a lot of attribute class code must be rewritten will be better to wait...
-				Resolve (ec);
-			}
-
-			// Some error occurred
-			if (pos_values == null)
-				return null;
-
-			if (pos_values.Length == 0)
-				return new ObsoleteAttribute ();
-
-			if (pos_values.Length == 1)
-				return new ObsoleteAttribute ((string)pos_values [0]);
-
-			return new ObsoleteAttribute ((string)pos_values [0], (bool)pos_values [1]);
 		}
 
 		/// <summary>
@@ -812,6 +810,11 @@ namespace Mono.CSharp {
 			get { return ImplOptions == MethodImplOptions.InternalCall; }
 		}
 
+		protected virtual bool CanIgnoreInvalidAttribute (Attributable ias)
+		{
+			return false;
+		}
+
 		/// <summary>
 		/// Emit attribute for Attributable symbol
 		/// </summary>
@@ -823,17 +826,24 @@ namespace Mono.CSharp {
 
 			AttributeUsageAttribute usage_attr = GetAttributeUsage ();
 			if ((usage_attr.ValidOn & ias.AttributeTargets) == 0) {
+				// The parser applies toplevel attributes both to the assembly and
+				// to a top-level class, if any.  So, be silent about them.
+				if (! CanIgnoreInvalidAttribute (ias))
 					Error_AttributeNotValidForElement (this, Location);
 				return;
 			}
 
 			ias.ApplyAttributeBuilder (this, cb);
 
-			if (!usage_attr.AllowMultiple && emitted_attr.Contains (Target)) {
+			// Because default target is null (we save some space). We need to transform it here
+			// for distinction between "default" and "doesn't exist"
+			string target = Target == null ? "default" : Target;
+			string emitted = emitted_attr [Type] as string;
+			if (emitted == target && !usage_attr.AllowMultiple) {
 				Report.Error (579, Location, "Duplicate '" + Name + "' attribute");
 			}
 
-			emitted_attr [Type] = Target;
+			emitted_attr [Type] = target;
 
 			// Here we are testing attribute arguments for array usage (error 3016)
 			if (ias.IsClsCompliaceRequired (ec.DeclSpace)) {
@@ -1063,6 +1073,16 @@ namespace Mono.CSharp {
 				ec.DeclSpace.NamespaceEntry = ns;
 			return base.CheckAttributeType (ec, complain);
 		}
+
+		protected override bool CanIgnoreInvalidAttribute (Attributable ias)
+		{
+			// Ignore error if this attribute is shared between the Assembly
+			// and a top-level class.  The parser couldn't figure out which entity
+			// this attribute belongs to.  If this attribute is erroneous, it should
+			// be caught when it is processed by the top-level class.
+
+			return (Target == null && ias is CommonAssemblyModulClass);
+		}
 	}
 
 	public class Attributes {
@@ -1090,10 +1110,8 @@ namespace Mono.CSharp {
 		public void CheckTargets (string[] possible_targets)
 		{
 			foreach (Attribute a in Attrs) {
-				if (a.Target == null) {
-					a.Target = possible_targets [0];
+				if (a.Target == null)
 					continue;
-				}
 
 				if (((IList) possible_targets).Contains (a.Target))
 					continue;
@@ -1164,8 +1182,6 @@ namespace Mono.CSharp {
 	sealed class AttributeTester
 	{
 		static PtrHashtable analyzed_types = new PtrHashtable ();
-		static PtrHashtable analyzed_types_obsolete = new PtrHashtable ();
-		static PtrHashtable analyzed_member_obsolete = new PtrHashtable ();
 
 		private AttributeTester ()
 		{
@@ -1327,88 +1343,6 @@ namespace Mono.CSharp {
 				return IsClsCompliant (type.Assembly);
 
 			return ((CLSCompliantAttribute)CompliantAttribute[0]).IsCompliant;
-		}
-
-		/// <summary>
-		/// Returns instance of ObsoleteAttribute when type is obsolete
-		/// </summary>
-		public static ObsoleteAttribute GetObsoleteAttribute (Type type)
-		{
-			object type_obsolete = analyzed_types_obsolete [type];
-			if (type_obsolete == FALSE)
-				return null;
-
-			if (type_obsolete != null)
-				return (ObsoleteAttribute)type_obsolete;
-
-			ObsoleteAttribute result = null;
-			if (type.IsByRef || type.IsArray || type.IsPointer) {
-				result = GetObsoleteAttribute (TypeManager.GetElementType (type));
-			} else {
-				DeclSpace type_ds = TypeManager.LookupDeclSpace (type);
-
-				// Type is external, we can get attribute directly
-				if (type_ds == null) {
-					object[] attribute = type.GetCustomAttributes (TypeManager.obsolete_attribute_type, false);
-					if (attribute.Length == 1)
-						result = (ObsoleteAttribute)attribute [0];
-				} else {
-					result = type_ds.GetObsoleteAttribute (type_ds);
-				}
-			}
-
-			analyzed_types_obsolete.Add (type, result == null ? FALSE : result);
-			return result;
-		}
-
-		/// <summary>
-		/// Returns instance of ObsoleteAttribute when method is obsolete
-		/// </summary>
-		public static ObsoleteAttribute GetMethodObsoleteAttribute (MethodBase mb)
-		{
-			IMethodData mc = TypeManager.GetMethod (mb);
-			if (mc != null) 
-				return mc.GetObsoleteAttribute ();
-
-			// TODO: remove after Constructor will be ready for IMethodData
-			if ((mb.DeclaringType is TypeBuilder) || mb.DeclaringType.IsGenericInstance)
-				return null;
-
-			return GetMemberObsoleteAttribute (mb);
-		}
-
-		/// <summary>
-		/// Returns instance of ObsoleteAttribute when member is obsolete
-		/// </summary>
-		public static ObsoleteAttribute GetMemberObsoleteAttribute (MemberInfo mi)
-		{
-			object type_obsolete = analyzed_member_obsolete [mi];
-			if (type_obsolete == FALSE)
-				return null;
-
-			if (type_obsolete != null)
-				return (ObsoleteAttribute)type_obsolete;
-
-			ObsoleteAttribute oa = System.Attribute.GetCustomAttribute (mi, TypeManager.obsolete_attribute_type, false) as ObsoleteAttribute;
-			analyzed_member_obsolete.Add (mi, oa == null ? FALSE : oa);
-			return oa;
-		}
-
-		/// <summary>
-		/// Common method for Obsolete error/warning reporting.
-		/// </summary>
-		public static void Report_ObsoleteMessage (ObsoleteAttribute oa, string member, Location loc)
-		{
-			if (oa.IsError) {
-				Report.Error_T (619, loc, member, oa.Message);
-				return;
-			}
-
-			if (oa.Message == null) {
-				Report.Warning_T (612, loc, member);
-				return;
-			}
-			Report.Warning_T (618, loc, member, oa.Message);
 		}
 	}
 }
