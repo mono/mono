@@ -44,10 +44,15 @@ namespace Microsoft.JScript {
 		internal FormalParameterList parameters;
 		internal Block body;
 
+		internal FunctionObject (string name)
+		{
+			this.name = name;
+		}
+
 		internal FunctionObject (string name, FormalParameterList p, string ret_type, Block body)
 		{
 			//
-			// FIXME: 
+			// FIXME
 			// 1) Must collect the attributes given.
 			// 2) Check if they are semantically correct.
 			// 3) Assign those values to 'attr'.

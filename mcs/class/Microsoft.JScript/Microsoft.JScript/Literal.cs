@@ -36,6 +36,10 @@ namespace Microsoft.JScript {
 
 	internal class This : AST {
 
+		internal This ()
+		{
+		}
+
 		internal override bool Resolve (IdentificationTable context)
 		{
 			throw new NotImplementedException ();
@@ -133,6 +137,11 @@ namespace Microsoft.JScript {
 	public class ObjectLiteral : Exp {
 		
 		internal ArrayList elems;
+		
+		internal ObjectLiteral (ArrayList elems)
+		{
+			this.elems = elems;
+		}
 
 		internal ObjectLiteral (AST parent)
 		{
@@ -182,8 +191,10 @@ namespace Microsoft.JScript {
 		internal string property_name;
 		internal AST exp;
 
-		internal ObjectLiteralItem ()
+		internal ObjectLiteralItem (object obj)
 		{
+			if (obj != null)
+				property_name = obj.ToString ();
 		}
 
 		internal override bool Resolve (IdentificationTable context)
@@ -206,4 +217,25 @@ namespace Microsoft.JScript {
 			set { name = value; }
 		}
 	}
+
+	internal class RegExpLiteral : AST {
+		internal string re;
+		internal string flags;
+
+		internal RegExpLiteral (string re, string flags)
+		{
+			this.re = re;
+			this.flags = flags;
+		}
+
+		internal override bool Resolve (IdentificationTable context)
+		{
+			throw new NotImplementedException ();
+		}
+
+		internal override void Emit (EmitContext ec)
+		{
+			throw new NotImplementedException ();
+		}
+	}		
 }

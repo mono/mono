@@ -35,17 +35,12 @@ namespace Microsoft.JScript {
 
 	public sealed class JSScanner {
 
-		internal JScriptLexer Lexer;
-
 		public JSScanner ()
 		{}
 
 		public JSScanner (Context sourceContext)
 		{
-			string filename = sourceContext.Document.Name;
-			StreamReader file = new StreamReader (filename);
-
-			Lexer = new JScriptLexer (file);
+			throw new NotImplementedException ();
 		}
 
 
@@ -115,7 +110,7 @@ namespace Microsoft.JScript {
 		}
 
 
-		public static bool IsKeyboard (JSToken token)
+		public static bool IsKeyword (JSToken token)
 		{
 				throw new NotImplementedException ();
 		}

@@ -35,6 +35,17 @@ namespace Microsoft.JScript {
 
 	public class ForIn : AST {
 
+		AST lhs, obj, body;
+		
+		internal ForIn (AST parent, int line_number, AST lhs, AST obj, AST body)
+		{
+			this.parent = parent;
+			this.line_number = line_number;
+			this.lhs = lhs;
+			this.obj = obj;
+			this.body = body;
+		}
+
 		public static IEnumerator JScriptGetEnumerator (object coll)
 		{
 			throw new NotImplementedException ();

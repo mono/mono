@@ -35,7 +35,7 @@ namespace Microsoft.JScript {
 	public class SemanticAnalyser {
 
 		internal static bool print = true;
-
+		public static bool allow_member_expr_as_function_name;
 		//
 		// We must include the default 'Global Object',
 		// which contains the built-in objects: Math, String, ...
@@ -54,6 +54,18 @@ namespace Microsoft.JScript {
 		public static void Dump ()
 		{
 			Console.WriteLine (context.ToString ());
+		}
+
+		static int anon_method_counter = -1;
+		internal static string NextAnonymousMethod {
+			get { 
+				anon_method_counter++;
+				return "anonymous " + anon_method_counter; 
+			}
+		}
+
+		internal static string CurrentAnonymousMethod {
+			get { return "anonymous " + anon_method_counter; }
 		}
 	}
 }

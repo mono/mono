@@ -39,7 +39,7 @@ namespace Microsoft.JScript {
 
 		internal string id;
 		internal Type type;
-		internal string type_annot;
+		internal string type_annot = String.Empty;
 		internal AST val;
 
 		internal FieldInfo field_info;
@@ -59,14 +59,16 @@ namespace Microsoft.JScript {
 			}
 			this.val = init;
 		}
-
+		
 		public override string ToString ()
 		{
 			StringBuilder sb = new StringBuilder ();
 
 			sb.Append (id);
-			sb.Append (":" + type_annot);
-			sb.Append (" = ");
+			if (type_annot != String.Empty) {				
+				sb.Append (":" + type_annot);
+				sb.Append (" = ");
+			}
 
 			if (val != null)
 				sb.Append (val.ToString ());
@@ -78,7 +80,8 @@ namespace Microsoft.JScript {
 		{
 			ILGenerator ig = ec.ig;
 
-			if (parent == null) {				
+			if (parent == null || (parent.GetType () != typeof (FunctionDeclaration)
+					       && parent.GetType () != typeof (FunctionExpression))) {
 				FieldBuilder field_builder;
 				TypeBuilder type  = ec.type_builder;
 				

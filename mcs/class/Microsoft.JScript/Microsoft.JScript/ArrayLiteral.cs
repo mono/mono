@@ -41,7 +41,7 @@ namespace Microsoft.JScript {
 
 		public ArrayLiteral (Context context, ASTList elems)
 		{
-			throw new NotImplementedException ();
+			this.elems = elems;
 		}
 
 		internal ArrayLiteral (AST parent)

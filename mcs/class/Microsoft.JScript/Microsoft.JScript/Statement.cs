@@ -40,11 +40,12 @@ namespace Microsoft.JScript {
 
 		internal AST cond, true_stm, false_stm;
 
-		internal If (AST parent, AST condition, AST true_stm, AST false_stm)
+		internal If (AST parent, AST condition, AST true_stm, AST false_stm, int line_number)
 		{
 			this.cond = condition;
 			this.true_stm = true_stm;
 			this.false_stm = false_stm;
+			this.line_number = line_number;
 		}
 
 		public override string ToString ()
@@ -101,22 +102,24 @@ namespace Microsoft.JScript {
 
 	internal class Continue : AST {
 		
-		internal string identifier;
+		internal string label;
 
-		internal Continue (AST parent)
+		internal Continue (AST parent, string label, int line_number)
 		{
 			this.parent = parent;
+			this.label = label;
+			this.line_number = line_number;
 		}
 
 		public override string ToString ()
 		{
-			return identifier;
+			return label;
 		}
 
 		internal override bool Resolve (IdentificationTable context)
 		{
 
-			if (!InLoop && identifier == string.Empty)
+			if (!InLoop && label == string.Empty)
 				throw new Exception ("A continue can't be outside a iteration stm");
 			return true;
 		}
@@ -129,16 +132,26 @@ namespace Microsoft.JScript {
 
 	internal class Break : AST {
 
-		internal string identifier;
+		internal string label;
+
+		internal Break ()
+		{
+		}
+
+		internal Break (string label, int line_number)
+		{
+			this.label = label;
+			this.line_number = line_number;
+		}
 
 		public override string ToString ()
 		{
-			return identifier;
+			return label;
 		}
 
 		internal override bool Resolve (IdentificationTable context)
 		{
-                        if ((!InLoop && !InSwitch) && identifier == string.Empty)
+                        if ((!InLoop && !InSwitch) && label == string.Empty)
                                 throw new Exception ("A break statement can't be outside a switch or iteration stm");
                         // FIXME: when we have label_stm on the grammar, we
                         // must check that the target label is defined.
@@ -156,23 +169,29 @@ namespace Microsoft.JScript {
 
 		internal AST expression;
 
-		internal Return (AST parent, AST exp)
+		internal Return (AST parent, AST exp, int line_number)
 		{
 			this.parent = parent;
 			expression = exp;
+			this.line_number = line_number;
 		}
 
 		public override string ToString ()
 		{
-			return expression.ToString ();
+			if (expression != null)
+				return expression.ToString ();
+			else 
+				return string.Empty;
 		}
 
 		internal override bool Resolve (IdentificationTable context)
 		{
-			if (parent == null)
+			if (!InFunction)
 				throw new Exception ("error JS1018: 'return' statement outside of function");
-
-			return expression.Resolve (context);
+			if (expression != null)
+				return expression.Resolve (context);
+			else 
+				return true;
 		}
 
 		internal override void Emit (EmitContext ec)
@@ -185,11 +204,12 @@ namespace Microsoft.JScript {
 
 		AST stm, exp;
 		
-		internal DoWhile (AST parent, AST stm, AST exp)
+		internal DoWhile (AST parent, AST stm, AST exp, int line_number)
 		{
 			this.parent = parent;
 			this.stm = stm;
 			this.exp = exp;
+			this.line_number = line_number;
 		}
 
 		internal override bool Resolve (IdentificationTable context)
@@ -227,11 +247,12 @@ namespace Microsoft.JScript {
 		
 		AST exp, stm;
 
-		internal While (AST parent, AST exp, AST stm)
+		internal While (AST parent, AST exp, AST stm, int line_number)
 		{
 			this.parent = parent;
 			this.exp = exp;
 			this.stm = stm;
+			this.line_number = line_number;
 		}
 
 		internal override bool Resolve (IdentificationTable context)
@@ -271,14 +292,17 @@ namespace Microsoft.JScript {
 
 	internal class For : AST {
 		
-		AST [] exprs;
+		AST [] exprs = new AST [3];
 		AST stms;
 
-		internal For (AST parent, AST [] exprs, AST stms)
+		internal For (AST parent, int line_number, AST init, AST test, AST incr, AST body)
 		{
 			this.parent = parent;
-			this.exprs = exprs;
-			this.stms = stms;
+			this.line_number = line_number;
+			exprs [0] = init;
+			exprs [1] = test;
+			exprs [2] = incr;
+			stms = body;
 		}
 
 		internal override bool Resolve (IdentificationTable context)
@@ -345,9 +369,21 @@ namespace Microsoft.JScript {
 		internal ArrayList default_clauses;
 		internal ArrayList sec_case_clauses;
 
-		internal Switch (AST parent)
+		internal Switch (AST parent, int line_number)
 		{
 			this.parent = parent;
+			this.line_number = line_number;
+			case_clauses = new ArrayList ();
+			default_clauses = new ArrayList ();
+			sec_case_clauses = new ArrayList ();
+		}
+
+		internal void AddClause (Clause clause, ClauseType clause_type)
+		{
+			if (clause_type == ClauseType.Case)
+				case_clauses.Add (clause);
+			else if (clause_type == ClauseType.CaseAfterDefault)
+				sec_case_clauses.Add (clause);
 		}
 
 		internal override bool Resolve (IdentificationTable context)
@@ -423,6 +459,12 @@ namespace Microsoft.JScript {
 		public Clause (AST parent)
 		{
 			this.parent = parent;
+			stm_list = new ArrayList ();
+		}
+
+		internal void AddStm (AST stm)
+		{
+			stm_list.Add (stm);
 		}
 
 		internal override bool Resolve (IdentificationTable context)
@@ -455,5 +497,81 @@ namespace Microsoft.JScript {
 		internal override void Emit (EmitContext ec)
 		{
 		}	
+	}
+
+	internal class Catch : AST {
+		internal string id;
+		internal AST catch_cond;
+		internal AST stms;
+
+		FieldBuilder field_info;
+		LocalBuilder local_builder;
+
+		internal Catch (string id, AST catch_cond, AST stms, AST parent, int line_number)
+		{
+			this.id = id;
+			this.catch_cond = catch_cond;
+			this.stms = stms;
+			this.line_number = line_number;
+		}
+
+		internal override bool Resolve (IdentificationTable context)
+		{
+			bool r = true;
+			if (stms != null)
+				r &= stms.Resolve (context);
+			return r;
+		}
+
+		internal override void Emit (EmitContext ec)
+		{
+			ILGenerator ig = ec.ig;
+			Type t = typeof (object);
+			bool not_in_func = parent == null;
+
+			if (not_in_func)
+				field_info = ec.type_builder.DefineField (mangle_id (id), t, FieldAttributes.Public | FieldAttributes.Static);
+			else
+				local_builder = ig.DeclareLocal (t);
+
+			ig.BeginCatchBlock (typeof (Exception));
+			if (not_in_func) {
+				ig.Emit (OpCodes.Ldarg_0);
+				ig.Emit (OpCodes.Ldfld, typeof (ScriptObject).GetField ("engine"));
+				ig.Emit (OpCodes.Call, typeof (Try).GetMethod ("JScriptExceptionValue"));
+				ig.Emit (OpCodes.Stsfld, field_info);
+			} else {
+				ig.Emit (OpCodes.Ldarg_1);
+				ig.Emit (OpCodes.Call, typeof (Try).GetMethod ("JScriptExceptionValue"));
+				ig.Emit (OpCodes.Stloc, local_builder);
+			}
+			stms.Emit (ec);			
+		}
+
+		internal string mangle_id (string id)
+		{
+			return id + ":0";
+		}
+	}
+
+	internal class Labelled : AST {
+		internal string name;
+
+		internal Labelled (string name, int line_number)
+		{
+			this.parent = parent;
+			this.name = name;
+			this.line_number = line_number;
+		}
+
+		internal override bool Resolve (IdentificationTable context)
+		{
+			throw new NotImplementedException ();
+		}
+
+		internal override void Emit (EmitContext ec)
+		{
+			throw new NotImplementedException ();
+		}
 	}
 }

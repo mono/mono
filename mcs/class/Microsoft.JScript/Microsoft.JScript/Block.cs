@@ -37,15 +37,27 @@ namespace Microsoft.JScript {
 
 		internal ArrayList elems;
 
+		Block ()
+		{
+			elems = new ArrayList ();
+		}
+
+		internal Block (int line_number)
+			: this ()
+		{
+			this.line_number = line_number;
+		}
+
 		internal Block (AST parent)
+			: this ()
 		{
 			this.parent = parent;
-			elems = new ArrayList ();
 		}
 
 		internal void Add (AST e)
 		{
-			elems.Add (e);
+			if (e != null)
+				elems.Add (e);
 		}
 
 		public override string ToString ()
@@ -69,7 +81,6 @@ namespace Microsoft.JScript {
 				if (e is FunctionDeclaration)
 					((FunctionDeclaration) e).Emit (ec);
 			}
-
 			for (i = 0; i < n; i++) {
 				e = elems [i];
 				if (!(e is FunctionDeclaration))
@@ -83,7 +94,7 @@ namespace Microsoft.JScript {
 			bool no_effect;
 			bool r = true;
 			int i, n = elems.Count;
-
+			
 			if (parent == null || parent is FunctionDeclaration)
 				no_effect = true;
 			else

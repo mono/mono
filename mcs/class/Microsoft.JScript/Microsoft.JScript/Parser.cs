@@ -193,7 +193,7 @@ namespace Microsoft.JScript {
 			return pn;
 		}
 
-		AST Function (AST parent,FunctionType ft)
+		AST Function (AST parent, FunctionType ft)
 		{
 			FunctionType synthetic_type = ft;
 			int base_line_number = ts.LineNumber; // line number where source starts
@@ -864,7 +864,7 @@ namespace Microsoft.JScript {
 			return new StringLiteral (null, "Error");  // Only reached on error.  Try to continue.
 		}
 
-		void ArgumentList (AST parent, AST list) 
+		void ArgumentList (AST parent, ICallable list) 
 		{
 			bool matched;
 			ts.allow_reg_exp = true;
@@ -873,8 +873,7 @@ namespace Microsoft.JScript {
 
 			if (!matched) {
 				do {
-					// FIXME, add the AssignExpr to the list
-					AssignExpr (parent, false);
+					list.AddArg (AssignExpr (parent, false));
 				} while (ts.MatchToken (Token.COMMA));				
 				MustMatchToken (Token.RP, "msg.no.paren.arg");
 			}
@@ -895,14 +894,11 @@ namespace Microsoft.JScript {
 				ts.GetToken ();
 
 				/* Make a NEW node to append to. */
-				// FIXME, create Call or New ast node.
 				pn = new New (parent, MemberExpr (parent, false));
 
-				if (ts.MatchToken (Token.LP)) {
-					// FIXME, add the arguments list to pn
-					ArgumentList (parent, pn);
-				}
-
+				if (ts.MatchToken (Token.LP))
+					ArgumentList (parent, (ICallable) pn);
+				
 				/* XXX there's a check in the C source against
 				 * "too many constructor arguments" - how many
 				 * do we claim to support?
@@ -937,11 +933,10 @@ namespace Microsoft.JScript {
 					MustMatchToken (Token.RB, "msg.no.bracket.index");
 				} else if (allow_call_syntax && tt == Token.LP) {
 					/* make a call node */
-					// FIXME, create call node
-					// pn = nf.createCallOrNew(Token.CALL, pn);
-
+					pn = new Call (parent, pn);
+					
 					/* Add the arguments to pn, if any are supplied. */
-					ArgumentList (parent, pn);
+					ArgumentList (parent, (ICallable) pn);
 				} else {
 					ts.UnGetToken (tt);
 					break;

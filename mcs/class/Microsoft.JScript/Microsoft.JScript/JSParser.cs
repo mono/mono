@@ -29,26 +29,27 @@
 //
 
 using System;
+using System.IO;
 
 namespace Microsoft.JScript {
 
 	public class JSParser {
 
-		internal JScriptParser Parser;
+		internal Parser Parser;
+		internal Context context;
 
 		public JSParser (Context context)
 		{
-			JSScanner scanner = new JSScanner (context);
-			Parser = new JScriptParser (scanner.Lexer);
+			this.context = context;
+			Parser = new Parser ();
 		}
 
 
 		public ScriptBlock Parse ()
 		{
-			ScriptBlock prog = new ScriptBlock ();
-
-			prog = Parser.program ();
-			return prog;
+			string filename = context.Document.Name;
+			StreamReader r = new StreamReader (filename);
+			return (ScriptBlock) Parser.Parse (r, filename, 0);
 		}
 
 

@@ -28,11 +28,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System;
+using System.Collections;
+using System.Reflection.Emit;
+
 namespace Microsoft.JScript {
 
 	public abstract class AST {
 
 		internal AST parent;
+		protected int line_number;
 
 		//
 		// Here the actual IL code generation happens.
@@ -65,6 +70,83 @@ namespace Microsoft.JScript {
 				else
 					return parent.InSwitch;
 			}
+		}
+
+		private bool InFunction {
+			get {
+				if (parent == null)
+					return false;
+				else if (parent is FunctionDeclaration || parent is FunctionExpression)
+					return true;
+				else
+					return parent.InFunction;
+			}
+		}
+	}
+
+	public abstract class Function : AST 
+	{
+		bool check_this;
+		bool ignore_dynamic_scope;
+		bool requires_activation;
+
+		internal string prefix;
+		internal FunctionObject func_obj;
+		internal JSFunctionAttributeEnum func_type;
+
+		internal DictionaryEntry [] locals;
+		internal LocalBuilder local_func;
+		
+		internal bool CheckThis {
+			get { return check_this; }
+			set { check_this = value; }
+		}
+
+		internal bool IgnoreDynamicScope {
+			get { return ignore_dynamic_scope; }
+			set { ignore_dynamic_scope = value; }
+		}
+
+		internal bool RequiresActivation {
+			get { return requires_activation; }
+			set { requires_activation = value; }
+		}
+
+		public  void Init (Block body, FormalParameterList p)
+		{
+			func_obj.body = body;
+			func_obj.parameters = p;
+		}
+
+		internal void set_prefix ()
+		{
+			if (parent != null && parent is Function) {
+				Function tmp;
+				tmp = (Function) parent;
+				if (tmp.prefix != String.Empty)
+					prefix = tmp.prefix + "." + tmp.func_obj.name;
+				else
+					prefix = tmp.func_obj.name;
+			} else
+				prefix = String.Empty;			
+		}
+
+		internal void set_function_type ()
+		{
+			if (parent == null || parent.GetType () == typeof (ScriptBlock))
+				func_type = JSFunctionAttributeEnum.ClassicFunction;
+			else if (parent is FunctionDeclaration)
+				func_type = JSFunctionAttributeEnum.NestedFunction;
+		}
+
+		internal void set_custom_attr (MethodBuilder mb)
+		{
+			CustomAttributeBuilder attr_builder;
+			Type func_attr = typeof (JSFunctionAttribute);
+			Type [] func_attr_enum = new Type [] {typeof (JSFunctionAttributeEnum)};
+			attr_builder = new CustomAttributeBuilder (func_attr.GetConstructor (func_attr_enum), 
+								   new object [] {func_type});
+			mb.SetCustomAttribute (attr_builder);			
 		}
 	}
 }

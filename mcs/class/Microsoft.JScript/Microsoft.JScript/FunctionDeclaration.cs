@@ -36,31 +36,22 @@ using Microsoft.JScript.Vsa;
 using System.Collections;
 
 namespace Microsoft.JScript {
+	
+	public class FunctionDeclaration : Function {
 
-	public class FunctionDeclaration : AST {
-
-		internal FunctionObject Function;
-		internal DictionaryEntry [] locals;
-		internal LocalBuilder local_func;
-		internal JSFunctionAttributeEnum func_type;
-		internal string prefix;
-
+		internal FunctionDeclaration (AST parent, string name)
+			: this (parent, name, null, String.Empty, null)
+		{
+		}
+		
 		internal FunctionDeclaration (AST parent, string name, 
 					      FormalParameterList p,
 					      string return_type,
 					      Block body)
 		{
 			this.parent = parent;
-			if (parent != null) {
-				FunctionDeclaration tmp;
-				tmp = (FunctionDeclaration) parent;
-				if (tmp.prefix != String.Empty)
-					prefix = tmp.prefix + "." + tmp.Function.name;
-				else
-					prefix = tmp.Function.name;
-			} else
-				prefix = String.Empty;
-			Function = new FunctionObject (name, p, return_type, body);
+			set_prefix ();
+			func_obj = new FunctionObject (name, p, return_type, body);
 		}
 
 		public static Closure JScriptFunctionDeclaration (RuntimeTypeHandle handle, string name, 
@@ -72,21 +63,15 @@ namespace Microsoft.JScript {
 			FunctionObject f = null;
 			return new Closure (f);
 		}
-		
-		internal FunctionDeclaration ()
-		{
-			Function = new FunctionObject ();
-		}
-
 
 		public override string ToString ()
 		{
-			return Function.ToString ();
+			return func_obj.ToString ();
 		}
 
 		internal override void Emit (EmitContext ec)
 		{			
-			string name = Function.name;
+			string name = func_obj.name;
 			string full_name;
 			TypeBuilder type = ec.type_builder;
 			ILGenerator ig = ec.ig;			
@@ -96,9 +81,9 @@ namespace Microsoft.JScript {
 			else 
 				full_name = prefix + "." + name;
 
-			MethodBuilder method_builder = type.DefineMethod (full_name, Function.attr, 
-									  Function.return_type,
-									  Function.params_types ());
+			MethodBuilder method_builder = type.DefineMethod (full_name, func_obj.attr, 
+									  func_obj.return_type,
+									  func_obj.params_types ());
 			set_custom_attr (method_builder);
 			EmitContext new_ec = new EmitContext (ec.type_builder, ec.mod_builder,
 							      method_builder.GetILGenerator ());
@@ -108,21 +93,21 @@ namespace Microsoft.JScript {
 			else
 				local_func = ig.DeclareLocal (typeof (Microsoft.JScript.ScriptFunction));
 			build_closure (ec, full_name);
-			Function.body.Emit (new_ec);
+			func_obj.body.Emit (new_ec);
 			new_ec.ig.Emit (OpCodes.Ret);
 		}
 		
 		internal void build_closure (EmitContext ec, string full_name)
 		{
 			ILGenerator ig = ec.ig;
-			string name = Function.name;
+			string name = func_obj.name;
 
 			Type t = ec.mod_builder.GetType ("JScript 0");
 			ig.Emit (OpCodes.Ldtoken, t);
 			ig.Emit (OpCodes.Ldstr, name);
 			ig.Emit (OpCodes.Ldstr, full_name);
 
-			Function.parameters.Emit (ec);
+			func_obj.parameters.Emit (ec);
 			build_local_fields (ig);
 
 			ig.Emit (OpCodes.Ldc_I4_0); // FIXME: this hard coded for now.
@@ -170,6 +155,8 @@ namespace Microsoft.JScript {
 					ig.Emit (OpCodes.Ldtoken, ((FormalParam) v).type);
 				else if (v is FunctionDeclaration)
 					ig.Emit (OpCodes.Ldtoken, typeof (ScriptFunction));
+				else if (v is FunctionExpression)
+					ig.Emit (OpCodes.Ldtoken, typeof (object));
 
 				ig.Emit (OpCodes.Ldc_I4, i);
 				ig.Emit (OpCodes.Newobj, ctr_info);
@@ -177,41 +164,23 @@ namespace Microsoft.JScript {
 			}
 		}
 
-		internal void set_function_type ()
-		{
-			if (parent == null)
-				func_type = JSFunctionAttributeEnum.ClassicFunction;
-			else if (parent is FunctionDeclaration)
-				func_type = JSFunctionAttributeEnum.NestedFunction;
-		}
-
-		internal void set_custom_attr (MethodBuilder mb)
-		{
-			CustomAttributeBuilder attr_builder;
-			Type func_attr = typeof (JSFunctionAttribute);
-			Type [] func_attr_enum = new Type [] {typeof (JSFunctionAttributeEnum)};
-			attr_builder = new CustomAttributeBuilder (func_attr.GetConstructor (func_attr_enum), 
-								   new object [] {func_type});
-			mb.SetCustomAttribute (attr_builder);			
-		}
-
 		internal override bool Resolve (IdentificationTable context)
 		{
 			set_function_type ();
-			context.Enter (Function.name, this);
+			context.Enter (func_obj.name, this);
 			context.OpenBlock ();
-			FormalParameterList p = Function.parameters;
+			FormalParameterList p = func_obj.parameters;
 
 			if (p != null)
 				p.Resolve (context);
 
-			Block body = Function.body;
+			Block body = func_obj.body;
 			if (body != null)
 				body.Resolve (context);
 
 			locals = context.current_locals;
 			context.CloseBlock ();		
 			return true;
-		}
+		}		
 	}
 }

@@ -31,25 +31,27 @@ using System;
 using Microsoft.JScript.Vsa;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Collections;
 
 namespace Microsoft.JScript {
 
 	public sealed class Try : AST {
 
-		internal string catch_id;
-		internal FieldBuilder field_info;
-		internal LocalBuilder local_builder;
-		internal Block guarded_block;
-		internal Block catch_block;
-		internal Block finally_block;
+ 		internal FieldBuilder field_info;
+ 		internal LocalBuilder local_builder;
+		
+		internal AST guarded_block;
+		internal ArrayList catch_blocks;
+		internal AST finally_block;
 
-		internal Try (AST parent)
+
+		internal Try (AST guarded_block, ArrayList catch_block, AST finally_block, AST parent, int line_number)
 		{
 			this.parent = parent;
-			guarded_block = new Block (this);
-			catch_block = new Block (this);
-			finally_block = new Block (this);
-		}
+			this.guarded_block = guarded_block;
+			this.catch_blocks = catch_block;
+			this.finally_block = finally_block;
+		}		
 
 		public static Object JScriptExceptionValue (object e, VsaEngine engine)
 		{
@@ -64,20 +66,19 @@ namespace Microsoft.JScript {
 		internal override bool Resolve (IdentificationTable context)
 		{
 			bool r = true;
-
 			if (guarded_block != null)
 				r &= guarded_block.Resolve (context);
 			
-			if (catch_block != null && catch_block.elems.Count > 0) {
-				context.OpenBlock ();
-				context.Enter (catch_id, this);
-				r &= catch_block.Resolve (context);
+			if (catch_blocks != null && catch_blocks.Count > 0) {
+				foreach (Catch c in catch_blocks) {
+					context.OpenBlock ();
+					context.Enter (c.id, c);
+					r &= c.Resolve (context);
+					context.CloseBlock ();
+				}
 			}
-
-			if (finally_block != null && finally_block.elems.Count > 0)
+			if (finally_block != null)
 				r &= finally_block.Resolve (context);
-
-			context.CloseBlock ();
 			return r;
 		}
 
@@ -92,35 +93,15 @@ namespace Microsoft.JScript {
 			if (guarded_block != null)
 				guarded_block.Emit (ec);
 
-			if (not_inside_func)
-				field_info = ec.type_builder.DefineField (mangle_id (catch_id), t, FieldAttributes.Public | FieldAttributes.Static);
-			else
-				local_builder = ig.DeclareLocal (t);
-
-			if (catch_block != null && catch_block.elems.Count > 0) {
-				ig.BeginCatchBlock (typeof (Exception));
-				if (not_inside_func) {
-					ig.Emit (OpCodes.Ldarg_0);
-					ig.Emit (OpCodes.Ldfld, typeof (ScriptObject).GetField ("engine"));
-					ig.Emit (OpCodes.Call, typeof (Try).GetMethod ("JScriptExceptionValue"));
-					ig.Emit (OpCodes.Stsfld, field_info);
-				} else {
-					ig.Emit (OpCodes.Ldarg_1);
-					ig.Emit (OpCodes.Call, typeof (Try).GetMethod ("JScriptExceptionValue"));
-					ig.Emit (OpCodes.Stloc, local_builder);
-				}
-				catch_block.Emit (ec);			
-			}			
-			if (finally_block != null && finally_block.elems.Count > 0) {
+			if (catch_blocks != null && catch_blocks.Count > 0) {
+				foreach (Catch c in catch_blocks)
+					c.Emit (ec);
+			}	       	
+			if (finally_block != null) {
 				ig.BeginFinallyBlock ();
 				finally_block.Emit (ec);
 			}
 			ig.EndExceptionBlock ();
-		}
-
-		internal string mangle_id (string id)
-		{
-			return id + ":0";
 		}
 	}
 }

@@ -38,8 +38,10 @@ namespace Microsoft.JScript {
 
 		internal ArrayList var_decls;
 
-		internal VariableStatement ()
+		internal VariableStatement (AST parent, int line_number)
 		{
+			this.parent = parent;
+			this.line_number = line_number;
 			var_decls = new ArrayList ();
 		}
 

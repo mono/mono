@@ -44,7 +44,7 @@ namespace Microsoft.JScript {
 	public class Unary : UnaryOp {
 
 		internal Unary (AST parent, AST operand, JSToken oper)
-		{			
+		{		
 			this.parent = parent;
 			this.operand = operand;
 			this.oper = oper;
@@ -307,18 +307,20 @@ namespace Microsoft.JScript {
 		}
 	}
 
-	public class Call : AST {
+	internal interface ICallable {
+		void AddArg (AST arg);
+	}
+	
+	public class Call : AST, ICallable {
+		
+		internal AST member_exp;		
+		internal Args args;
 
-		internal AST member_exp;
-		internal AST args1;
-		internal AST args2;
-
-		public Call (AST parent, AST member_exp, AST args1, AST args2)
+		internal Call (AST parent, AST exp)
 		{
-			this.parent = parent;
-			this.member_exp = member_exp;
-			this.args1 = args1;
-			this.args2 = args2;
+			this.parent = parent; 
+			this.member_exp = exp;
+			this.args = new Args ();
 		}
 
 		public override string ToString ()
@@ -327,12 +329,14 @@ namespace Microsoft.JScript {
 
 			if (member_exp != null)
 				sb.Append (member_exp.ToString () + " ");
-			if (args1 != null)
-				sb.Append (args1.ToString ());
-			if (args2 != null)
-				sb.Append (args2.ToString ());
-
+			if (args != null)
+				sb.Append (args.ToString ());
 			return sb.ToString ();
+		}
+
+		public void AddArg (AST arg)
+		{
+			args.Add (arg);
 		}
 
 		internal override bool Resolve (IdentificationTable context)
@@ -341,28 +345,24 @@ namespace Microsoft.JScript {
 
 			if (member_exp != null)
 				r &= member_exp.Resolve (context);
-			if (args1 != null)
-				r &= args1.Resolve (context);
-			if (args2 != null)
-				r &= args2.Resolve (context);
+			if (args != null)
+				r &= args.Resolve (context);
 			return r;
 		}
 
 		internal override void Emit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
-			Args a1 = args1 as Args;
-			
-			if (member_exp.ToString () == "print") {
+			if (member_exp.ToString () == "print") {				
 				AST ast;
-				int n = a1.Size - 1;				
+				int n = args.Size - 1;				
 				Type script_stream = typeof (ScriptStream);
 				MethodInfo write = script_stream.GetMethod ("Write");
 				MethodInfo writeline = script_stream.GetMethod ("WriteLine");
 				MethodInfo to_string = typeof (Convert).GetMethod ("ToString",
 										   new Type [] { typeof (object), typeof (bool) });
 				for (int i = 0; i <= n; i++) {
-					ast = a1.get_element (i);
+					ast = args.get_element (i);
 					ast.Emit (ec);
 
 					if (ast is StringLiteral)
@@ -544,7 +544,8 @@ namespace Microsoft.JScript {
 
 				for (i = 0; i < size; i++)
 					sb.Append (exprs [i].ToString ());
-					sb.Append ("\n");
+
+				sb.Append ("\n");
 				return sb.ToString ();
 
 			} else return String.Empty;
@@ -644,8 +645,37 @@ namespace Microsoft.JScript {
 		{
 			string l = left.ToString ();
 			string r = right.ToString ();
-			return l + " " + r;			
+			return l + " = " + r;			
 		}
+	}
+
+	internal class New : AST, ICallable {
+
+		AST exp;
+		Args args;
+
+		internal New (AST parent, AST exp)
+		{
+			this.parent = parent;
+			this.exp = exp;
+			this.args = new Args ();
+		}
+
+		public void AddArg (AST arg)
+		{
+			args.Add (arg);
+		}
+		
+		internal override bool Resolve (IdentificationTable context)
+		{
+			throw new NotImplementedException ();
+		}
+
+		internal override void Emit (EmitContext ec)
+		{
+			throw new NotImplementedException ();
+		}
+		
 	}
 	
 	internal interface IAssignable {

@@ -43,8 +43,8 @@ namespace Microsoft.JScript {
 
 			string filename = args [0];
 			Context ctx = new Context (filename);
-			JSParser parser = new JSParser (ctx);
-			ScriptBlock prog_tree = parser.Parse ();
+ 			JSParser parser = new JSParser (ctx);
+ 			ScriptBlock prog_tree = parser.Parse ();			
 			SemanticAnalyser.Run (prog_tree);
 			CodeGenerator.Run (args [0], prog_tree);
 			Console.WriteLine ("Compilation succeeded.");

@@ -38,11 +38,12 @@ namespace Microsoft.JScript {
 
 		AST exp, stm;
 
-		internal With (AST parent, AST exp, AST stm)
+		internal With (AST parent, AST exp, AST stm, int line_number)
 		{
 			this.parent = parent;
 			this.exp = exp;
 			this.stm = stm;
+			this.line_number = line_number;
 		}
 
 		public override string ToString ()
