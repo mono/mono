@@ -1,3 +1,10 @@
+
+Fri Jul 25 18:51:45 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* cpu-g4.md, cpu-pentium.md: updates for new instructions.
+	* mini.c, mini.h: first cut at generics support: some new instructions 
+	added and changed the behaviour of some of the existing ones.
+
 2003-07-21  Miguel de Icaza  <miguel@ximian.com>
 
 	* mini.c: Removed definition of metadata_shared mutex here.
@@ -700,5 +707,6 @@ Mon Apr 7 16:31:34 CEST 2003 Paolo Molaro <lupus@ximian.com>
 	belongs.
 
 	* mini.pc.in: Call this package `mini' for the moment.
+
 
 
