@@ -1,3 +1,9 @@
+2004-07-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* debug-helpers.c: prevent SIGSEGV. It happened running xsp on monodoc
+	when no HOME env. variable was set and a NullRef was thrown in a .cctor
+	called from other .cctors.
+
 2004-07-09  Dick Porter  <dick@ximian.com>
 
 	* locales.c (ves_icall_System_String_InternalReplace_Str_Comp):
