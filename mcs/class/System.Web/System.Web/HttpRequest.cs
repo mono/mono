@@ -100,7 +100,7 @@ namespace System.Web {
 			return "HTTP_" + header.ToUpper().Replace("-", "_");
 		}
 
-		private string GetAllHeaders(bool Raw) {
+		internal string GetAllHeaders(bool Raw) {
 			StringBuilder oData;
 
 			if (null == _WorkerRequest) {
@@ -147,73 +147,9 @@ namespace System.Web {
 				return;
 			}
 
-			if (_oServerVariables == null) {
-				string sTmp;
-
-				_oServerVariables = new HttpValueCollection();
-				
-				_oServerVariables.Add("ALL_HTTP", GetAllHeaders(false));
-				_oServerVariables.Add("ALL_RAW", GetAllHeaders(true));
-
-				_oServerVariables.Add("APPL_MD_PATH", _WorkerRequest.GetServerVariable("APPL_MD_PATH"));
-				_oServerVariables.Add("AUTH_PASSWORD", _WorkerRequest.GetServerVariable("AUTH_PASSWORD"));
-				_oServerVariables.Add("CERT_COOKIE", _WorkerRequest.GetServerVariable("CERT_COOKIE"));
-				_oServerVariables.Add("CERT_FLAGS", _WorkerRequest.GetServerVariable("CERT_FLAGS"));
-				_oServerVariables.Add("CERT_ISSUER", _WorkerRequest.GetServerVariable("CERT_ISSUER"));
-				_oServerVariables.Add("CERT_KEYSIZE", _WorkerRequest.GetServerVariable("CERT_KEYSIZE"));
-				_oServerVariables.Add("CERT_SECRETKEYSIZE", _WorkerRequest.GetServerVariable("CERT_SECRETKEYSIZE"));
-				_oServerVariables.Add("CERT_SERIALNUMBER", _WorkerRequest.GetServerVariable("CERT_SERIALNUMBER"));
-				_oServerVariables.Add("CERT_SERVER_ISSUER", _WorkerRequest.GetServerVariable("CERT_SERVER_ISSUER"));
-				_oServerVariables.Add("CERT_SERVER_SUBJECT", _WorkerRequest.GetServerVariable("CERT_SERVER_SUBJECT"));
-				_oServerVariables.Add("CERT_SUBJECT", _WorkerRequest.GetServerVariable("CERT_SUBJECT"));
-
-				_oServerVariables.Add("GATEWAY_INTERFACE", _WorkerRequest.GetServerVariable("GATEWAY_INTERFACE"));
-				_oServerVariables.Add("HTTPS", _WorkerRequest.GetServerVariable("HTTPS"));
-				_oServerVariables.Add("HTTPS_KEYSIZE", _WorkerRequest.GetServerVariable("HTTPS_KEYSIZE"));
-				_oServerVariables.Add("HTTPS_SECRETKEYSIZE", _WorkerRequest.GetServerVariable("HTTPS_SECRETKEYSIZE"));
-
-				_oServerVariables.Add("CONTENT_TYPE", ContentType);
-				_oServerVariables.Add("HTTPS_SERVER_ISSUER", _WorkerRequest.GetServerVariable("HTTPS_SERVER_ISSUER"));
-				_oServerVariables.Add("HTTPS_SERVER_SUBJECT", _WorkerRequest.GetServerVariable("HTTPS_SERVER_SUBJECT"));
-				_oServerVariables.Add("INSTANCE_ID", _WorkerRequest.GetServerVariable("INSTANCE_ID"));
-				_oServerVariables.Add("INSTANCE_META_PATH", _WorkerRequest.GetServerVariable("INSTANCE_META_PATH"));
-				_oServerVariables.Add("LOCAL_ADDR", _WorkerRequest.GetLocalAddress());
-				_oServerVariables.Add("REMOTE_ADDR", UserHostAddress);
-				_oServerVariables.Add("REMOTE_HOST", UserHostName);
-				_oServerVariables.Add("REMOTE_PORT", _WorkerRequest.GetRemotePort ().ToString ());
-				_oServerVariables.Add("REQUEST_METHOD", HttpMethod);
-				_oServerVariables.Add("SERVER_NAME", _WorkerRequest.GetServerName());
-				_oServerVariables.Add("SERVER_PORT", _WorkerRequest.GetLocalPort().ToString());
-				_oServerVariables.Add("SERVER_PROTOCOL", _WorkerRequest.GetHttpVersion());
-				_oServerVariables.Add("SERVER_SOFTWARE", _WorkerRequest.GetServerVariable("SERVER_SOFTWARE"));
-
-				if (_WorkerRequest.IsSecure()) {
-					_oServerVariables.Add("SERVER_PORT_SECURE", "1");
-				} else {
-					_oServerVariables.Add("SERVER_PORT_SECURE", "0");
-				}
-
-				sTmp = _WorkerRequest.GetKnownRequestHeader(HttpWorkerRequest.HeaderContentLength);
-				if (null != sTmp) {
-					_oServerVariables.Add("CONTENT_LENGTH", sTmp);
-				}
-
-				// TODO: Should be dynamic
-				if (null != _oContext.User && _oContext.User.Identity.IsAuthenticated) {
-					_oServerVariables.Add("AUTH_TYPE", _oContext.User.Identity.AuthenticationType);
-					_oServerVariables.Add("AUTH_USER", _oContext.User.Identity.Name);
-				} else {
-					_oServerVariables.Add("AUTH_TYPE", "");
-					_oServerVariables.Add("AUTH_USER", "");
-				}
-
-				_oServerVariables.Add("PATH_INFO", PathInfo);
-				_oServerVariables.Add("PATH_TRANSLATED", PhysicalPath);
-				_oServerVariables.Add("QUERY_STRING", QueryStringRaw);
-				_oServerVariables.Add("SCRIPT_NAME", FilePath);
-				// end dynamic
-            
-				_oServerVariables.MakeReadOnly();
+			if (_oServerVariables == null){ 
+				_oServerVariables = new ServerVariablesCollection(this);            
+ 				_oServerVariables.MakeReadOnly();
 			}
 		}
 
@@ -303,6 +239,20 @@ namespace System.Web {
 			}
 
 			return _arrRawContent;
+		}
+		
+		internal HttpContext Context
+		{
+			get{
+				return _oContext;
+			}
+		}
+
+		internal HttpWorkerRequest WorkerRequest
+		{
+			get{
+				return _WorkerRequest;
+			}
 		}
 
 		public string [] AcceptTypes {

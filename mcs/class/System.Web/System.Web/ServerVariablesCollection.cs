@@ -1,3 +1,11 @@
+//
+// System.Web.ServerVariablesCollection
+//
+// Authors:
+//   	Alon Gazit (along@mainsoft.com)
+//
+// (c) 2004 Mainsoft, Inc. (http://www.mainsoft.com)
+//
 using System;
 using System.Collections;
 using System.Runtime.Serialization;
@@ -5,9 +13,7 @@ using System.Globalization;
 
 namespace System.Web
 {
-	/// <summary>
-	/// Summary description for ServerVariablesCollection.
-	/// </summary>
+
 	internal class ServerVariablesCollection:HttpValueCollection
 	{
 		private HttpRequest _request;
