@@ -1,3 +1,14 @@
+2003-04-04  Miguel de Icaza  <miguel@ximian.com>
+
+	*
+	ICSharpCode.SharpZipLib/ICSharpCode.SharpZipLib/Zip/Compression/Streams/InflaterInputStream.cs: Do not close the file.
+
+2003-04-03  Miguel de Icaza  <miguel@ximian.com>
+
+	*
+	ICSharpCode.SharpZipLib/ICSharpCode.SharpZipLib/Zip/Compression/Streams/InflaterInputStream.cs
+	(InflaterInputStream.Skip): Use a more memory friendly implementation.
+
 2003-04-17  Nick Drochak  <ndrochak@gol.com>
 
 	* library.make: Only try to run the unit tests if there is a Test
