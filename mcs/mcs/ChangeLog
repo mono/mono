@@ -36,10 +36,6 @@
 
 2003-07-07  Miguel de Icaza  <miguel@ximian.com>
 
-	* rootcontext.cs (NamespaceLookup): Accept a DeclSpace, so we can
-	call the CheckAccessLevel routine.  Only use types that pass the
-	CheckAccessLevel 
-
 	* typemanager.cs: Reverted patch from Gonzalo, my previous patch
 	already fixed it.  
 

@@ -459,9 +459,8 @@ namespace Mono.CSharp {
 			return ns.Substring (0, i);
 		}
 
-		static Type NamespaceLookup (DeclSpace ds, string name, Location loc)
+		static Type NamespaceLookup (NamespaceEntry curr_ns, string name, Location loc)
 		{
-			NamespaceEntry curr_ns = ds.Namespace;
 			Type t;
 
 			//
@@ -519,10 +518,16 @@ namespace Mono.CSharp {
 				foreach (Namespace using_ns in ns.GetUsingTable ()) {
 					string full_name = DeclSpace.MakeFQN (using_ns.Name, name);
 					match = TypeManager.LookupType (full_name);
-					if (match != null && ds.CheckAccessLevel (match)){
-						if (t != null){
-							DeclSpace.Error_AmbiguousTypeReference (loc, name, t, match);
-							return null;
+					if (match != null){
+						if (t != null) {
+							if (TypeManager.IsAccessibleFrom (t, match)) {
+								DeclSpace.Error_AmbiguousTypeReference (loc, name, t, match);
+								return null;
+							}
+							continue;
+						} else {
+							if (TypeManager.IsAccessibleFrom (CodeGen.AssemblyBuilder, match))
+								t = match;
 						}
 					}
 				}
@@ -589,7 +594,7 @@ namespace Mono.CSharp {
 					containing_ds = containing_ds.Parent;
 				}
 				
-				t = NamespaceLookup (ds, name, loc);
+				t = NamespaceLookup (ds.Namespace, name, loc);
 				if (t != null){
 					ds.Cache [name] = t;
 					return t;
