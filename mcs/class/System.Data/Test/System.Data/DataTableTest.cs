@@ -1260,6 +1260,35 @@ namespace MonoTests.System.Data
 			AssertEquals (5, doc.DocumentElement.FirstChild.ChildNodes.Count);
 		}
 
+		[Test]
+		[ExpectedException (typeof (DataException))]
+		[NUnit.Framework.Category ("NotWorking")]
+		public void SetPrimaryKeyAssertsNonNull ()
+		{
+			DataTable dt = new DataTable ("table");
+			dt.Columns.Add ("col1");
+			dt.Columns.Add ("col2");
+			dt.Constraints.Add (new UniqueConstraint (dt.Columns [0]));
+			dt.Rows.Add (new object [] {1, 3});
+			dt.Rows.Add (new object [] {DBNull.Value, 3});
+
+			dt.PrimaryKey = new DataColumn [] {dt.Columns [0]};
+		}
+
+		[Test]
+		[ExpectedException (typeof (NoNullAllowedException))]
+		[NUnit.Framework.Category ("NotWorking")]
+		public void PrimaryKeyColumnChecksNonNull ()
+		{
+			DataTable dt = new DataTable ("table");
+			dt.Columns.Add ("col1");
+			dt.Columns.Add ("col2");
+			dt.Constraints.Add (new UniqueConstraint (dt.Columns [0]));
+			dt.PrimaryKey = new DataColumn [] {dt.Columns [0]};
+			dt.Rows.Add (new object [] {1, 3});
+			dt.Rows.Add (new object [] {DBNull.Value, 3});
+		}
+
 		 [Test]
                 public void CloneSubClassTest()
                 {

@@ -1,5 +1,10 @@
 2005-01-28  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DataTableTest.cs : added tests for primary key constraint check
+	  (not working right now).
+
+2005-01-28  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* UniqueConstraintTest.cs : added DBNullAllowed().
 
 2005-01-27  Atsushi Enomoto  <atsushi@ximian.com>
