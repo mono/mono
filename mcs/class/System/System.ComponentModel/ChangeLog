@@ -1,3 +1,8 @@
+2004-04-21  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* BooleanConverter.cs: GetStandardValues must return an array of booleans,
+	  not an array of strings.
+
 2004-04-16  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* ReflectionPropertyDescriptor.cs: Access internal PropertyInfo through

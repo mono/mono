@@ -44,7 +44,7 @@ namespace System.ComponentModel
 
 		public override StandardValuesCollection GetStandardValues (ITypeDescriptorContext context)
 		{
-			return new StandardValuesCollection (new string[2] {"True", "False"} );
+			return new StandardValuesCollection (new bool[2] {true, false} );
 		}
 
 		public override bool GetStandardValuesExclusive (ITypeDescriptorContext context)
