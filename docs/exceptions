@@ -1,0 +1,54 @@
+Exception implementation (jit):
+===============================
+
+Stack unwinding:
+================
+
+We record the code address (start_address, size) of all methods. That way it is
+possible to map an instruction pointer (IP) to the method information needed
+for unwinding the stack:
+
+void handle_exception ((struct sigcontext *ctx, gpointer obj)
+{
+
+	info = mono_jit_info_table_find (mono_jit_info_table, ctx->ip);
+
+	if (info) { // we are inside managed code
+
+		if (ch =  find_catch_handler ())
+			execute_catch_handler (ch, ctx, obj); 
+		
+		execute_all_finally_handler ();
+
+		// restore register, including IP and Frame pointer
+		restore_caller_saved_registers (ji, ctx);
+
+		// continue unwinding
+		handle_exception (ctx, obj);
+
+	} else {
+
+		// not implemented 
+	}
+}
+
+
+Code generation:
+================
+
+leave: is simply translated into a branch to the target. If the leave
+instruction is inside a finally block (but not inside another handler)
+we call the finally handler before we branch to the target.
+
+finally/endfinally: is translated into subroutine ending with a "return"
+statement. The subroutine does not save EBP/ESP, because we need access to the
+local variables of the enclosing method. We have to use a "call"
+instruction to execute such finally handlers. This makes it possible to
+execute them inside the stack unwinding code.
+
+throw: we first save all regs into a sigcontext struct (we pass the
+exception object in register ECX), and then call the stack unwinding
+code.
+
+catch handler: receives the exception object in ECX. They store that
+object into a local variable, so that rethrow can access the object.
