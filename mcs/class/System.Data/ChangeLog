@@ -1,3 +1,7 @@
+2003-02-10  Nick Drochak  <ndrochak@gol.com>
+
+	* System.Data.build: Keep the standalone tests out of the dll.
+
 2003-02-09  Rodrigo Moya <rodrigo@ximian.com>
 
 	* System.Data.OleDb/OleDbConnection.cs:

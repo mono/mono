@@ -22,6 +22,8 @@
 			<sources>
 				<includes name="**/*.cs"/> 
 				<excludes name="Test/**"/>
+				<excludes name="System.Data.OleDb/TestGDA.cs"/>
+				<excludes name="System.Data.OleDb/TestOleDb.cs"/>
 			</sources>
 			<references>
 				<includes name="../lib/corlib.dll"/>
