@@ -2963,7 +2963,7 @@ namespace Mono.CSharp {
 		ArrayList Initializers;
 		Location  loc;
 		ArrayList Arguments;
-
+		
 		MethodBase method = null;
 		Type array_element_type;
 		bool IsOneDimensional = false;
@@ -2974,6 +2974,9 @@ namespace Mono.CSharp {
 		Type underlying_type;
 
 		ArrayList ArrayData;
+		ArrayList ArrayExprs;
+
+		ArrayList Bounds;
 
 		public ArrayCreation (string requested_type, ArrayList exprs,
 				      string rank, ArrayList initializers, Location l)
@@ -3059,6 +3062,8 @@ namespace Mono.CSharp {
 					error178 ();
 					return false;
 				}
+				
+				Bounds.Add (value);
 			}
 			
 			foreach (object o in probe) {
@@ -3085,6 +3090,7 @@ namespace Mono.CSharp {
 					else
 						ArrayData.Add ((object) 0);
 
+					ArrayExprs.Add (tmp);
 				}
 			}
 
@@ -3098,13 +3104,13 @@ namespace Mono.CSharp {
 				if (probe [0] is ArrayList) {
 					Expression e = new IntLiteral (probe.Count);
 					Arguments.Add (new Argument (e, Argument.AType.Expression));
-
+					Bounds.Add (probe.Count);
 					probe = (ArrayList) probe [0];
 					
 				} else {
 					Expression e = new IntLiteral (probe.Count);
 					Arguments.Add (new Argument (e, Argument.AType.Expression));
-					
+					Bounds.Add (probe.Count);
 					probe = null;
 				}
 			}
@@ -3123,6 +3129,8 @@ namespace Mono.CSharp {
 			// will need to store them in the byte blob later
 			//
 			ArrayData = new ArrayList ();
+			ArrayExprs = new ArrayList ();
+			Bounds = new ArrayList ();
 			
 			bool ret;
 
@@ -3289,13 +3297,35 @@ namespace Mono.CSharp {
 			data = new byte [count * factor];
 			
 			for (int i = 0; i < count; ++i) {
-				int val = (int) ArrayData [i];
-				for (int j = 0; j < factor; ++j) {
-					data [(i * factor) + j] = (byte) (val & 0xFF);
-					val = val >> 8;
+				
+				if (underlying_type == TypeManager.int64_type ||
+				    underlying_type == TypeManager.uint64_type){
+					long val = (long) ArrayData [i];
+
+					for (int j = 0; j < factor; ++j) {
+						data [(i * factor) + j] = (byte) (val & 0xFF);
+						val = val >> 8;
+					}
+					
+				} else if (underlying_type == TypeManager.float_type) {
+
+					// FIXME : How does one get the bits out ?
+					
+				} else if (underlying_type == TypeManager.double_type) {
+
+					// FIXME : Same here. '&' and '>>' don't work !
+				  
+				  
+				} else {
+				        int val = (int) ArrayData [i];
+				  
+				        for (int j = 0; j < factor; ++j) {
+						data [(i * factor) + j] = (byte) (val & 0xFF);
+						val = val >> 8;
+					}
 				}
 			}
-			
+
 			return data;
 		}
 		
@@ -3317,18 +3347,62 @@ namespace Mono.CSharp {
 			}
 
 			if (Initializers != null) {
-				FieldBuilder fb;
 
-				byte [] data = MakeByteBlob (ArrayData, underlying_type, loc);
-
-				if (data != null) {
-					fb = ec.TypeContainer.RootContext.MakeStaticData (data);
+				if (underlying_type != TypeManager.string_type) {
+					FieldBuilder fb;
 					
-					ig.Emit (OpCodes.Dup);
-					ig.Emit (OpCodes.Ldtoken, fb);
-					ig.Emit (OpCodes.Call, TypeManager.void_initializearray_array_fieldhandle);
+					byte [] data = MakeByteBlob (ArrayData, underlying_type, loc);
+					
+					if (data != null) {
+						fb = ec.TypeContainer.RootContext.MakeStaticData (data);
+						
+						ig.Emit (OpCodes.Dup);
+						ig.Emit (OpCodes.Ldtoken, fb);
+						ig.Emit (OpCodes.Call, TypeManager.void_initializearray_array_fieldhandle);
+					}
 				}
+
+       				//for (int i = 0; i < ArrayExprs.Count; ++i) {
+// 					Expression e = (Expression) ArrayExprs [i];
+
+// 					if (e is Literal && !(e is StringLiteral))
+// 						continue;
+
+// 					Expression elem_access = GenerateAccessExpr (i);
+// 					elem_access = elem_access.Resolve (ec);
+
+// 					if (elem_access == null)
+// 						return;
+					
+// 					Expression assign = new Assign (elem_access, e, loc);
+
+// 					assign = assign.Resolve (ec);
+
+// 					if (assign == null)
+// 						return;
+
+// 					assign.Emit (ec);
+// 				}
 			}
+		}
+
+		Expression GenerateAccessExpr (int i)
+		{
+			int n_dims = Bounds.Count;
+			
+			int [] indices = new int [n_dims];
+
+			for (int j = 0; j < n_dims; ++j) {
+				indices [j]++;
+
+
+				// FIXME : Please finish me !! I can't be completed by dumb idiots
+				// like Ravi !! :-)
+				
+				
+			}
+
+			return null;
 		}
 		
 		public override void EmitStatement (EmitContext ec)

@@ -18,7 +18,14 @@
 
 	(DelegateInvocation): Re-write accordingly.
 
-	
+	* expression.cs (ArrayCreation::Emit): Handle string initialization separately.
+
+	(MakeByteBlob): Handle types more correctly.
+
+	* expression.cs (ArrayCreation:Emit): Write preliminary code to do
+	initialization from expressions but it is incomplete because I am a complete
+	Dodo :-|
+
 2001-11-22  Miguel de Icaza  <miguel@ximian.com>
 
 	* statement.cs (If.Emit): Fix a bug that generated incorrect code

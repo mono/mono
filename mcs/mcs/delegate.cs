@@ -521,7 +521,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			// This is what MS's compiler reports. We could always choose
+			// This is what MS' compiler reports. We could always choose
 			// to be more verbose and actually give delegate-level specifics
 			
 			if (!Delegate.VerifyDelegate (ec, type, e_type, Location)) {
