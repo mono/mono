@@ -1,7 +1,7 @@
 //
 // System.Runtime.Serialization.ObjectIDGenerator.cs
 //
-// Author: Lluis Sanchez Gual (lsg@ctv.es)
+// Author: Lluis Sanchez Gual (lluis@ideary.com)
 //
 // (C) 2003 Lluis Sanchez Gual
 //
@@ -306,8 +306,7 @@ namespace System.Runtime.Serialization
 		}
 
 		protected override void FixupImpl (ObjectManager manager) {
-			Array array = (Array)ObjectToBeFixed.ObjectInstance;
-			array.SetValue (ObjectRequired.ObjectInstance, _indices);
+			ObjectToBeFixed.SetArrayValue (manager, ObjectRequired.ObjectInstance, _indices);
 		}
 	}
 
@@ -375,6 +374,16 @@ namespace System.Runtime.Serialization
 				if (containerRecord.IsRegistered)
 					containerRecord.SetMemberValue (manager, Member, ObjectInstance);
 			}
+			else if (ArrayIndex != null)
+			{
+				ObjectRecord containerRecord = manager.GetObjectRecord (IdOfContainingObj);
+				if (containerRecord.IsRegistered)
+					containerRecord.SetArrayValue (manager, ObjectInstance, ArrayIndex);
+			}
+		}
+		public void SetArrayValue (ObjectManager manager, object value, int[] indices)
+		{
+			((Array)ObjectInstance).SetValue (value, indices);
 		}
 
 		public void SetMemberValue (ObjectManager manager, string memberName, object value)
@@ -521,6 +530,11 @@ namespace System.Runtime.Serialization
 
 				ObjectRecord containerRecord = manager.GetObjectRecord (IdOfContainingObj);
 				containerRecord.SetMemberValue (manager, Member, ObjectInstance);
+			}
+			else if (ArrayIndex != null)
+			{
+				ObjectRecord containerRecord = manager.GetObjectRecord (IdOfContainingObj);
+				containerRecord.SetArrayValue (manager, ObjectInstance, ArrayIndex);
 			}
 
 			return true;

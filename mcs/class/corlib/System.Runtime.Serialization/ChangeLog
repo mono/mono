@@ -1,3 +1,8 @@
+2003-02-18  Lluis Sanchez Gual  <lluis@ideary.com>
+
+	* ObjectManager.cs: Corrected a problem with arrays of structs. Elements where
+	  not correctly updated by the final fixup.
+
 2003-01-27  Lluis Sanchez Gual  <lluis@ideary.com>
 
 	* ObjectManager.cs: Corrected a problem with IObjectReferece objects.
