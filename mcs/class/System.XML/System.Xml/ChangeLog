@@ -2,6 +2,8 @@
 
 	* XmlDocument.cs: Moved the NodeChanged EventHandler to its own
 	file, and updated the callbacks to reflect the change.
+	(XmlDocument): Added the NameTable constructor.
+	(NameTable): Also the NameTable property.
 
 	* XmlNodeChangedEventHandler.cs: Added, replacing the version that
 	was in XmlDocument.cs. It has two arguments now (object,

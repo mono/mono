@@ -12,13 +12,12 @@ using System.Xml.XPath;
 
 namespace System.Xml
 {
-//	public delegate void XmlNodeChangedEventHandler (XmlNodeChangedEventArgs args);
-
 	public class XmlDocument : XmlNode
 	{
 		#region Fields
 
-		private XmlLinkedNode lastLinkedChild;
+		XmlLinkedNode lastLinkedChild;
+		XmlNameTable nameTable;
 
 		#endregion
 
@@ -32,10 +31,9 @@ namespace System.Xml
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public XmlDocument (NameTable nt) : base (null)
 		{
-			throw new NotImplementedException ();
+			nameTable = nt;
 		}
 
 		#endregion
@@ -115,9 +113,8 @@ namespace System.Xml
 			get { return "#document"; }
 		}
 
-		[MonoTODO]
 		public XmlNameTable NameTable {
-			get { throw new NotImplementedException(); }
+			get { return nameTable; }
 		}
 
 		public override XmlNodeType NodeType {
