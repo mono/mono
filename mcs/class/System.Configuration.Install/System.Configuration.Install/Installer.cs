@@ -8,13 +8,14 @@
 
 using System.Collections;
 using System.ComponentModel;
+using System.ComponentModel.Design;
 
 namespace System.Configuration.Install
 {
 	[DefaultEvent("AfterInstall")]
 #if (!NET_2_0)
 	// .NET 2.0 (Community Preview) no longer has this attribute
-	[Designer("Microsoft.VisualStudio.Configuration.InstallerDesigner, " + Consts.AssemblyMicrosoft_VisualStudio, "System.ComponentModel.Design.IRootDesigner," + Consts.AssemblySystem)]
+	[Designer("Microsoft.VisualStudio.Configuration.InstallerDesigner, " + Consts.AssemblyMicrosoft_VisualStudio, typeof(IRootDesigner))]
 #endif
 	public class Installer : Component
 	{

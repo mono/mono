@@ -1,5 +1,10 @@
 2004-06-11  Gert Driesen <drieseng@users.sourceforge.net>
 
+	* Installer.cs: use Type instead of string argument for
+	Designer attribute
+
+2004-06-11  Gert Driesen <drieseng@users.sourceforge.net>
+
 	* AssemblyInstaller.cs: stubbed
 	* ManagedInstallerClass.cs: stubbed
 	* TransactedInstaller.cs: stubbed
