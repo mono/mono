@@ -1,3 +1,8 @@
+2004-11-22  Zoltan Varga  <vargaz@freemail.hu>
+
+	* ModuleBuilder.cs: Check that all types inside the module are created.
+	Fixes #69780.
+
 2004-10-06  Zoltan Varga  <vargaz@freemail.hu>
 
 	* ModuleBuilder.cs (GetTypes): Fix length of returned array. Fixes

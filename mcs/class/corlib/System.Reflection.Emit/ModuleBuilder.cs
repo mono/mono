@@ -628,6 +628,13 @@ namespace System.Reflection.Emit {
 		{
 			if (transient && !is_main)
 				return;
+
+			if (types != null) {
+				for (int i = 0; i < num_types; ++i)
+					if (!types [i].is_created)
+						throw new NotSupportedException ("Type '" + types [i].FullName + "' was not completed.");
+			}
+
 			if ((global_type != null) && (global_type_created == null))
 				global_type_created = global_type.CreateType ();
 
