@@ -488,7 +488,6 @@ Console.WriteLine("Destroying caret");
 						case Keys.Enter: {
 							document.Split(document.CaretLine, document.CaretTag, document.CaretPosition);
 							document.UpdateView(document.CaretLine, 2, 0);
-							//document.RecalculateDocument(CreateGraphics(), document.CaretLine.line_no, document.CaretLine.line_no+1, true);
 							document.MoveCaret(CaretDirection.CharForward);
 							return;
 						}
@@ -523,7 +522,18 @@ Console.WriteLine("Destroying caret");
 
 									line = document.GetLine(document.CaretLine.LineNo + 1);
 									document.Combine(document.CaretLine, line);
-									document.UpdateView(line, 1, 0);
+									document.UpdateView(document.CaretLine, 2, 0);
+
+									#if Debug
+										Line	check_first;
+										Line	check_second;
+
+										check_first = document.GetLine(document.CaretLine.LineNo);
+										check_second = document.GetLine(check_first.line_no + 1);
+
+										Console.WriteLine("Post-UpdateView: Y of first line: {0}, second line: {1}", check_first.Y, check_second.Y);
+									#endif
+
 									// Caret doesn't move
 								}
 							} else {
@@ -624,7 +634,7 @@ Console.WriteLine("Received expose: {0}", pevent.ClipRectangle);
 			Line	line;
 			int	pos;
 
-if (e.Button == MouseButtons.Middle) {
+if (e.Button == MouseButtons.Left) {
 			document.PositionCaret(e.X, e.Y);
 			return;
 }
@@ -662,11 +672,9 @@ document.AlignCaret();
 		}
 
 		private void TextBoxBase_MouseUp(object sender, MouseEventArgs e) {
-			if (e.Button == MouseButtons.Middle) {
-				this.caret_tag = document.FindCursor(e.X, e.Y, out caret_pos);
-				XplatUI.CreateCaret(this.Handle, 2, this.caret_tag.height);
-				XplatUI.SetCaretPos(this.Handle, (int)caret_tag.line.widths[caret_pos], caret_tag.line.Y + caret_tag.line.height - this.caret_tag.height);
-				XplatUI.CaretVisible(this.Handle, true);
+			if (e.Button == MouseButtons.Left) {
+				document.PositionCaret(e.X, e.Y);
+				document.DisplayCaret();
 				return;
 			}
 		}
