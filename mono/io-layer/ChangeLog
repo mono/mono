@@ -1,4 +1,9 @@
 
+Mon Apr 15 13:31:22 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* unicode.c: fix unicode_len() to not access uninitialized memory
+	(and updated to conform to mono code style).
+
 Fri Mar 29 17:15:11 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* io.c: EEXISTS is ignored for directory creation.
