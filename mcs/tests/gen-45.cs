@@ -8,6 +8,9 @@ class Test<A,B>
 
 	public void Hello<V,W> (Test<V,B> v, Test<A,W> w)
 	{ }
+
+	public void ArrayMethod<V> (params V[] args)
+	{ }
 }
 
 class X
@@ -18,6 +21,7 @@ class X
 		test.Foo ("Hello World");
 		test.Foo (new long[] { 3, 4, 5 }, 9L);
 		test.Hello (test, test);
+		test.ArrayMethod (3.14F, (float) 9 / 3);
 	}
 }
 
