@@ -27,7 +27,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
+using System.Runtime.InteropServices;
 
 using Mono.Security.Cryptography;
 
@@ -93,6 +93,7 @@ namespace System.Security.Cryptography {
 		}
 
 #if NET_2_0
+		[ComVisible (false)]
 		public PaddingMode Padding {
 			get { return tdes.Padding; }
 			set { tdes.Padding = value; }

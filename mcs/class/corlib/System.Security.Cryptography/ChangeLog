@@ -1,3 +1,12 @@
+2004-11-26  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CryptoAPITransform.cs: 
+	* DSACryptoServiceProvider.cs: 
+	* MACTripleDES.cs:
+	* RC2CryptoServiceProvider.cs: 
+	* RSACryptoServiceProvider.cs: 
+		Added ComVisible attributes to match 2.0 October Preview.
+
 2004-11-03  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PasswordDeriveBytes.cs: Fix default iretation count to 100. Fix

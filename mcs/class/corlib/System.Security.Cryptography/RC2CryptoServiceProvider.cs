@@ -28,8 +28,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Globalization;
+using System.Runtime.InteropServices;
 
 using Mono.Security.Cryptography;
 
@@ -87,6 +87,7 @@ namespace System.Security.Cryptography {
 		}
 #if NET_2_0
 		[MonoTODO ("Use salt in algorithm")]
+		[ComVisible (false)]
 		public bool UseSalt {
 			get { return _useSalt; }
 			set { _useSalt = value; }

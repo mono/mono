@@ -27,7 +27,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
+using System.Runtime.InteropServices;
 
 namespace System.Security.Cryptography {
 
@@ -104,6 +104,7 @@ namespace System.Security.Cryptography {
 		}
 
 #if NET_2_0
+		[ComVisible (false)]
 		public void Reset ()
 		{
 		}

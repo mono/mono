@@ -9,10 +9,6 @@
 // (C) 2002
 // Portions (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 // Portions (C) 2003 Ben Maurer
-// (C) 2004 Novell (http://www.novell.com)
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -35,9 +31,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.IO;
 using System.Globalization;
+using System.Runtime.InteropServices;
 
 using Mono.Security.Cryptography;
 
@@ -142,6 +138,7 @@ namespace System.Security.Cryptography {
 		}
 
 #if NET_2_0
+		[ComVisible (false)]
 		public 
 #else
 		internal
@@ -274,17 +271,20 @@ namespace System.Security.Cryptography {
 		// ICspAsymmetricAlgorithm
 
 		[MonoTODO ("call into KeyPairPersistence to get details")]
+		[ComVisible (false)]
 		public CspKeyContainerInfo CspKeyContainerInfo {
 			get { return null; }
 		}
 
 		[MonoTODO ("call into CryptoConvert (doesn't currently support DSA)")]
+		[ComVisible (false)]
 		public byte[] ExportCspBlob (bool includePrivateParameters)
 		{
 			return null;
 		}
 
 		[MonoTODO ("call into CryptoConvert (doesn't currently support DSA)")]
+		[ComVisible (false)]
 		public void ImportCspBlob (byte[] rawData)
 		{
 		}

@@ -29,10 +29,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.IO;
+using System.Runtime.InteropServices;
 
-using Mono.Math;
 using Mono.Security.Cryptography;
 
 namespace System.Security.Cryptography {
@@ -153,6 +152,7 @@ namespace System.Security.Cryptography {
 		}
 
 #if (NET_2_0)
+		[ComVisible (false)]
 		public 
 #else
 		internal
@@ -362,17 +362,20 @@ namespace System.Security.Cryptography {
 		// ICspAsymmetricAlgorithm
 
 		[MonoTODO ("call into KeyPairPersistence to get details")]
+		[ComVisible (false)]
 		public CspKeyContainerInfo CspKeyContainerInfo {
 			get { return null; }
 		}
 
 		[MonoTODO ("call into CryptoConvert")]
+		[ComVisible (false)]
 		public byte[] ExportCspBlob (bool includePrivateParameters)
 		{
 			return null;
 		}
 
 		[MonoTODO ("call into CryptoConvert")]
+		[ComVisible (false)]
 		public void ImportCspBlob (byte[] rawData)
 		{
 		}
