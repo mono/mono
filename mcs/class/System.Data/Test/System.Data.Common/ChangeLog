@@ -1,3 +1,8 @@
+2004-11-22  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* DbConnectionStringBuilderTest.cs: Test cases for
+	DbConnectionStringBuilder class. These are independant tests.
+
 2004-09-14  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DBDataPermissionTest.cs: New. Unit tests for DBDataPermission.

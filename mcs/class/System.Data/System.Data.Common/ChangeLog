@@ -1,3 +1,8 @@
+2004-11-22  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* DbConnectionStringBuilder.cs: Class for helping creation of db
+	connection strings added.
+
 2004-10-01  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* DbProviderFactories.cs: Implemented all the stubs. Added functionality for
