@@ -145,6 +145,11 @@ processes.  This option is only available on Unix.
 .I "MONO_CFG_DIR"
 If set, this variable overrides the default system configuration directory
 ($PREFIX/etc). It's used to locate machine.config file.
+.TP
+.I "MONO_CONFIG"
+If set, this variable overrides the default runtime configuration file
+($PREFIX/etc/mono/config). The --config command line options overrides the
+environment variable.
 .SH FILES
 On Unix assemblies are loaded from the installation lib directory.  If you set
 `prefix' to /usr, the assemblies will be located in /usr/lib.  On
