@@ -7,6 +7,7 @@
 //
 using System;
 using System.Collections;
+using System.IO;
 using System.Text;
 using System.Security;
 using System.Security.Permissions;
@@ -415,10 +416,9 @@ namespace System.Web {
 			}
 		}
 
-		[MonoTODO]
 		public static string MachineConfigurationDirectory {
 			get {
-				throw new NotImplementedException ();
+				return Path.GetDirectoryName (WebConfigurationSettings.MachineConfigPath);
 			}
 		}
 
