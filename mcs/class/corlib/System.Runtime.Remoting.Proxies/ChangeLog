@@ -1,3 +1,8 @@
+2003-10-21  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* RealProxy.cs: In PrivateInvoke() do not try to return the out parameters
+	  if the return message is an excption. This fixes bug #49926.
+	
 2003-10-08  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* RemotingProxy.cs: Added destructor that unregisters the identity.

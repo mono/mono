@@ -102,7 +102,7 @@ namespace System.Runtime.Remoting.Proxies
 
 			// todo: remove throw exception from the runtime invoke
 			if (null != exc) {
-				out_args = res_msg.OutArgs;
+				out_args = null;
 				throw exc.FixRemotingException();
 			}
 			else if (res_msg is IConstructionReturnMessage || mMsg.CallType == CallType.BeginInvoke) {
