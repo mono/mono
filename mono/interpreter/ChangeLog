@@ -1,4 +1,8 @@
 
+Mon Sep 10 20:20:36 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* interp.c: endian fixes, comments.
+
 Fri Sep 7 18:45:38 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* interp.c, interp.h: make ves_exec_method () and stackval_from_data ()

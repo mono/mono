@@ -1,3 +1,8 @@
+
+Mon Sep 10 17:24:45 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* Makefile.am: make it work for make distcheck.
+
 2001-09-09  Nick Drochak  <ndrochak@gol.com>
 
 	* Makefile.am: change CLEANFILES line to use just '=' instead of '+='

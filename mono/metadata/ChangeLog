@@ -1,4 +1,8 @@
 
+Mon Sep 10 20:21:34 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* endian.h, assembly.c: fix some endianness issues.
+
 Fri Sep 7 18:40:40 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* loader.h, load.c: add delegate_class to mono_defaults.

@@ -1,4 +1,9 @@
 
+Mon Sep 10 17:26:06 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* Makefile.am, x86/Makefile.am: conditional compile logic
+	to make porting to different targets easier.
+
 Fri Sep 7 18:43:06 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* x86/x86-codegen.h: fixes and x86_mov_membase_imm ().
