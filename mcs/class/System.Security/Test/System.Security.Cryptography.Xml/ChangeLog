@@ -1,3 +1,8 @@
+2003-07-28  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* XmlDsigC14NTransformTest.cs: Corrected test for .NET 1.1 (that was a 
+	bug in .NET 1.0). There are no more unit test failures on Windows.
+
 2003-07-27  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* KeyInfoTest.cs: Added #if NET_1_0 for the RetrievalMethod bug.

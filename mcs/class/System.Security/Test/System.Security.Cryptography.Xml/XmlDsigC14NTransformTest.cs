@@ -94,8 +94,12 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			transform.LoadInput (doc);
 			Stream s = (Stream) transform.GetOutput ();
 			string output = Stream2String (s);
-			// ??? this keeps the \r\n (0x0D, 0x0A) ???
+#if NET_1_0
+			// .NET 1.0 keeps the \r\n (0x0D, 0x0A) - bug
 			AssertEquals("XmlDocument", c14xml1, output);
+#else
+			AssertEquals("XmlDocument", "<Test xmlns=\"http://www.go-mono.com/\" attrib=\"at \"> &#xD;\n <Toto></Toto> text &amp; </Test>", output);
+#endif
 		}
 
 		[Test]
