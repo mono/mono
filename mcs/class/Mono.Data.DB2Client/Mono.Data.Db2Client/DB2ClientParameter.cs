@@ -203,7 +203,7 @@ namespace DB2ClientCS
 		{
 			get
 			{
-				return Value;
+				return dataVal;
 			}
 			set 
 			{
