@@ -2247,6 +2247,8 @@ namespace Mono.CSharp {
 			public long nFirst;
 			public long nLast;
 			public ArrayList rgKeys = null;
+			// how many items are in the bucket
+			public int Size = 1;
 			public int Length
 			{
 				get { return (int) (nLast - nFirst + 1); }
@@ -2298,10 +2300,11 @@ namespace Mono.CSharp {
 				for (int ikb = 1; ikb < rgKeyBlocks.Count; ikb++)
 				{
 					KeyBlock kb = (KeyBlock) rgKeyBlocks [ikb];
-					if ((kbCurr.Length + kb.Length) * 2 >=  KeyBlock.TotalLength (kbCurr, kb))
+					if ((kbCurr.Size + kb.Size) * 2 >=  KeyBlock.TotalLength (kbCurr, kb))
 					{
 						// merge blocks
 						kbCurr.nLast = kb.nLast;
+						kbCurr.Size += kb.Size;
 					}
 					else
 					{

@@ -1,3 +1,14 @@
+2004-03-22 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* statement.cs: Before, two switch blocks would be merged if the
+	total size of the blocks (end_item - begin_item + 1) was less than
+	two times the combined sizes of the blocks.
+
+	Now, it will only merge if after the merge at least half of the
+	slots are filled.
+
+	fixes 55885.
+
 2004-03-20  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* class.cs : csc build fix for GetMethods(). See bug #52503.
