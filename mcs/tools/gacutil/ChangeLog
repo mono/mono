@@ -1,5 +1,11 @@
 2004-06-10  Jackson Harper  <jackson@ximian.com>
 
+	* driver.cs: We don't need to check if the canidate is a file in
+	IsSwitch anymore as some other commandline handling will take care
+	of this case.
+	
+2004-06-10  Jackson Harper  <jackson@ximian.com>
+
 	* driver.cs: Don't append gacdir to /root. This breaks
 	everything. Will add another option for doing this if its needed.
 	

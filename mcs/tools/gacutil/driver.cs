@@ -501,7 +501,7 @@ namespace Mono.Tools {
 
 		private static bool IsSwitch (string arg)
 		{
-			return (arg [0] == '-' || (arg [0] == '/' && !File.Exists (arg)));
+			return (arg [0] == '-' || arg [0] == '/');
 		}
 
 		private static Command GetCommand (string arg)
