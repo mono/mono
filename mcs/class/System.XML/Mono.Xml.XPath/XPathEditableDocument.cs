@@ -6,7 +6,7 @@
 //
 // (C)2004 Novell Inc.
 //
-// Yet another implementation of XPathEditableNavigator.
+// Yet another implementation of editable XPathNavigator.
 // (Even runnable under MS.NET 2.0)
 //
 // By rewriting XPathEditableDocument.CreateNavigator() as just to 
@@ -47,9 +47,7 @@ using System.Xml.Serialization;
 
 namespace Mono.Xml.XPath
 {
-	public class XPathEditableDocument
-		: IXPathNavigable//, IXPathEditable,
-//		IRevertibleChangeTracking, IChangeTracking, IXmlSerializable
+	public class XPathEditableDocument : IXPathNavigable
 	{
 		/*
 		public static void Main ()
@@ -58,11 +56,11 @@ namespace Mono.Xml.XPath
 #if true
 				XmlDocument doc = new XmlDocument ();
 				XPathEditableDocument pd = new XPathEditableDocument (doc);
-				XPathEditableNavigator nav = pd.CreateEditor ();
+				XPathNavigator nav = pd.CreateNavigator ();
 				IChangeTracking xp = pd;
 #else
 				XPathDocument doc = new XPathDocument ();
-				XPathEditableNavigator nav = doc.CreateEditor ();
+				XPathNavigator nav = doc.CreateNavigator ();
 				IChangeTracking xp = doc;
 #endif
 				doc.LoadXml ("<root/>");
@@ -87,12 +85,12 @@ namespace Mono.Xml.XPath
 				nav.MoveToRoot ();
 				nav.MoveToFirstChild ();
 				nav.MoveToFirstChild ();
-				nav.DeleteCurrent (); // delete foo
+				nav.DeleteSelf (); // delete foo
 				Console.WriteLine (nav.Name);
 				nav.MoveToNext ();
 				Console.WriteLine (nav.Name);
 				Console.WriteLine (nav.MoveToFirstAttribute ());
-				nav.DeleteCurrent (); // delete fuga
+				nav.DeleteSelf (); // delete fuga
 
 				doc.Save (Console.Out);
 			} catch (Exception ex) {
@@ -114,19 +112,18 @@ namespace Mono.Xml.XPath
 			get { return true; }
 		}
 
-		public XPathNavigator CreateNavigator ()
-		{
-			return node.CreateNavigator ();
+		public XmlNode Node {
+			get { return node; }
 		}
 
-		public XPathEditableNavigator CreateEditor ()
+		public XPathNavigator CreateNavigator ()
 		{
 			return new XmlDocumentEditableNavigator (this);
 		}
 
 		public XmlWriter CreateWriter ()
 		{
-			return CreateEditor ().AppendChild ();
+			return CreateNavigator ().AppendChild ();
 		}
 
 		public bool HasChanges ()
@@ -601,15 +598,27 @@ namespace Mono.Xml.XPath
 		public XmlAttribute OldAttribute;
 	}
 
-	public class XmlDocumentEditableNavigator : XPathEditableNavigator, IHasXmlNode
+	public class XmlDocumentEditableNavigator : XPathNavigator, IHasXmlNode
 	{
+		static readonly bool isXmlDocumentNavigatorImpl;
+		
+		static XmlDocumentEditableNavigator ()
+		{
+			isXmlDocumentNavigatorImpl =
+				(typeof (XmlDocumentEditableNavigator).Assembly 
+				== typeof (XmlDocument).Assembly);
+		}
+
 		XPathEditableDocument document;
 		XPathNavigator navigator;
 
 		public XmlDocumentEditableNavigator (XPathEditableDocument doc)
 		{
 			document = doc;
-			navigator = doc.CreateNavigator ();
+			if (isXmlDocumentNavigatorImpl)
+				navigator = new XmlDocumentNavigator (doc.Node);
+			else
+				navigator = doc.CreateNavigator ();
 		}
 
 		public XmlDocumentEditableNavigator (XmlDocumentEditableNavigator nav)
@@ -766,8 +775,7 @@ namespace Mono.Xml.XPath
 			foreach (XmlNode c in n.ChildNodes)
 				document.DeleteNode (c);
 			XmlWriter w = document.CreateInsertionWriter (n, null);
-			// FIXME: Hmm, it does not look like using it.
-			w.WriteFromObject (value);
+			w.WriteValue (value);
 			w.Close ();
 		}
 	}

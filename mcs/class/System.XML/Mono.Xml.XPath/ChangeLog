@@ -1,3 +1,7 @@
+2004-10-28  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XPathEditableDocument.cs : fixed wrong recursion problem.
+
 2004-10-22  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XPathEditableDocument.cs :
