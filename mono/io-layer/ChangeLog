@@ -1,3 +1,42 @@
+2002-05-05  Dick Porter  <dick@ximian.com>
+
+	* wapi-private.h: 
+	* handles-private.h:
+	* io.c: 
+	* io-private.h:
+	* mutexes.c: 
+	* mutex-private.h: 
+	* processes.c: 
+	* process-private.h: 
+	* semaphores.c: 
+	* semaphore-private.h: 
+	* sockets.c: 
+	* socket-private.h: 
+	* events.c: 
+	* event-private.h: Simplify the WapiHandleOps struct: take out all
+	the file-specific entries, leaving just the items that operate on
+	handles themselves.  Split the close operation into shared and
+	private parts: shared close is called by the daemon.
+
+	* handles.c: As above, but also pass handle allocation, ref and
+	unref operations to the daemon.  Populate the handle_ops array at
+	compile time, because the daemon needs to call ops on handles too.
+	Don't bother to track open handle counts any more, the daemon does
+	that.
+	
+	* threads.c: 
+	* thread-private.h: As above, but also make the thread data
+	handle-private.
+
+	* shared.c: Fork a handle daemon if the calling process created
+	the shared memory segment.
+
+	* daemon.c:
+	* daemon-messages.c:
+	* daemon-messages.h:
+	* Makefile.am: Build a daemon to manage handle allocation and
+	destruction without needing to lock the shared memory
+
 2002-04-30  Jeffrey Stedfast  <fejj@ximian.com>
 
 	* atomic.c: Changed to use a normal mutex rather than a spinlock
