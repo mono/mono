@@ -1,3 +1,7 @@
+2002-05-27  Tim Coleman <tim@timcoleman.com>
+	* list: update to compile properly (add missing
+	files and switch path delimiter from '\' to '/').
+
 2002-05-26  Daniel Morgan <danmorg@sc.rr.com>
 
 	* System.Data/DataRow.cs
