@@ -16,9 +16,9 @@ namespace System.Drawing {
 	public sealed class FontFamily : MarshalByRefObject, IDisposable 
 	{
 		
-		static private FontFamily genericMonospace;
-		static private FontFamily genericSansSerif;
-		static private FontFamily genericSerif;
+		static private FontFamily genericMonospace = null;
+		static private FontFamily genericSansSerif = null;
+		static private FontFamily genericSerif = null;
 		private string name;
 		internal IntPtr nativeFontFamily = IntPtr.Zero;
 				
@@ -30,11 +30,13 @@ namespace System.Drawing {
 		
 		internal void refreshName()
 		{
-			int language = 0;			
-			StringBuilder sBuilder = new StringBuilder (GDIPlus.FACESIZE * UnicodeEncoding.CharSize);	
-	    		Status status = GDIPlus.GdipGetFamilyName (nativeFontFamily, sBuilder, language);
-			GDIPlus.CheckStatus (status);
-    			name = sBuilder.ToString();    		    		
+			if (nativeFontFamily != IntPtr.Zero) {
+				int language = 0;			
+				StringBuilder sBuilder = new StringBuilder (GDIPlus.FACESIZE * UnicodeEncoding.CharSize);	
+				Status status = GDIPlus.GdipGetFamilyName (nativeFontFamily, sBuilder, language);
+				GDIPlus.CheckStatus (status);
+				name = sBuilder.ToString();    		    		
+			}
 		}
 		
 		//Need to come back here, is Arial the right thing to do
@@ -243,32 +245,10 @@ namespace System.Drawing {
 		}
 		
 		public void Dispose ()
-		{
-			Status status;
-			if ( genericSerif != null ) {
-				status = GDIPlus.GdipDeleteFontFamily (genericSerif.nativeFontFamily);
-				if ( status != Status.Ok ) 
-					genericSerif.nativeFontFamily = IntPtr.Zero;					
-			}
-
-			if ( genericSansSerif != null ) 
-			{
-				status = GDIPlus.GdipDeleteFontFamily (genericSansSerif.nativeFontFamily);
-				if ( status != Status.Ok ) 
-					genericSansSerif.nativeFontFamily = IntPtr.Zero;					
-			}
-
-			if ( genericMonospace != null ) 
-			{
-				status = GDIPlus.GdipDeleteFontFamily (genericMonospace.nativeFontFamily);
-				if ( status != Status.Ok ) 
-					genericMonospace.nativeFontFamily = IntPtr.Zero;					
-			}
-
-			status = GDIPlus.GdipDeleteFontFamily (nativeFontFamily);
-			if ( status != Status.Ok ) 
-				nativeFontFamily = IntPtr.Zero;					
-			
+		{	
+			Status status = GDIPlus.GdipDeleteFontFamily (nativeFontFamily);
+			if ( status == Status.Ok ) 
+				nativeFontFamily = IntPtr.Zero;							
 		}
 		
 		

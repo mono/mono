@@ -1,5 +1,9 @@
 2004-05-12  Jordi Mas i Hernandez <jordi@ximian.com>
 
+	* FontFamily.cs: simplifies object destruction and fixes
+
+2004-05-12  Jordi Mas i Hernandez <jordi@ximian.com>
+
 	* FontFamily.cs: added destructor 
 	* Graphics.cs: added destructor to stop leaking, remove debugging code
 
