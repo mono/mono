@@ -313,7 +313,7 @@ namespace System
 				invokeAttr |= BindingFlags.DeclaredOnly;
 				ConstructorInfo[] ctors = GetConstructors (invokeAttr);
 				object state = null;
-				MethodBase ctor = binder.BindToMethod (invokeAttr, ctors, ref args, modifiers, culture, namedParameters, ref state);
+				MethodBase ctor = binder.BindToMethod (invokeAttr, ctors, ref args, modifiers, culture, namedParameters, out state);
 				if (ctor == null)
 					throw new MissingMethodException ();
 				object result = ctor.Invoke (target, invokeAttr, binder, args, culture);
@@ -339,7 +339,7 @@ namespace System
 					if (String.Compare (methods [i].Name, name, ignoreCase) == 0)
 						smethods [count++] = methods [i];
 				}
-				MethodBase m = binder.BindToMethod (invokeAttr, smethods, ref args, modifiers, culture, namedParameters, ref state);
+				MethodBase m = binder.BindToMethod (invokeAttr, smethods, ref args, modifiers, culture, namedParameters, out state);
 				if (m == null)
 					throw new MissingMethodException ();
 				object result = m.Invoke (target, invokeAttr, binder, args, culture);
@@ -375,11 +375,11 @@ namespace System
 				MethodBase[] smethods = new MethodBase [count];
 				count = 0;
 				for (i = 0; i < properties.Length; ++i) {
-					MethodBase m = properties [i].GetGetMethod ();
-					if (String.Compare (properties [i].Name, name, ignoreCase) == 0 && (m != null))
-						smethods [count++] = m;
+					MethodBase mb = properties [i].GetGetMethod ();
+					if (String.Compare (properties [i].Name, name, ignoreCase) == 0 && (mb != null))
+						smethods [count++] = mb;
 				}
-				MethodBase m = binder.BindToMethod (invokeAttr, smethods, ref args, modifiers, culture, namedParameters, ref state);
+				MethodBase m = binder.BindToMethod (invokeAttr, smethods, ref args, modifiers, culture, namedParameters, out state);
 				if (m == null)
 					throw new MissingFieldException ();
 				object result = m.Invoke (target, invokeAttr, binder, args, culture);
@@ -396,11 +396,11 @@ namespace System
 				MethodBase[] smethods = new MethodBase [count];
 				count = 0;
 				for (i = 0; i < properties.Length; ++i) {
-					MethodBase m = properties [i].GetSetMethod ();
-					if (String.Compare (properties [i].Name, name, ignoreCase) == 0 && (m != null))
-						smethods [count++] = m;
+					MethodBase mb = properties [i].GetSetMethod ();
+					if (String.Compare (properties [i].Name, name, ignoreCase) == 0 && (mb != null))
+						smethods [count++] = mb;
 				}
-				MethodBase m = binder.BindToMethod (invokeAttr, smethods, ref args, modifiers, culture, namedParameters, ref state);
+				MethodBase m = binder.BindToMethod (invokeAttr, smethods, ref args, modifiers, culture, namedParameters, out state);
 				if (m == null)
 					throw new MissingFieldException ();
 				object result = m.Invoke (target, invokeAttr, binder, args, culture);
