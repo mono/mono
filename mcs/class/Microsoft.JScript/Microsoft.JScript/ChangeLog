@@ -1,3 +1,18 @@
+2004-06-24  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
+
+	* jscript-lexer-parser.g: added ast building for object_literal,
+	it's disabled for now while I fix the "block Vs object_literal"
+	non-determinism problem on the parser. Added rule for
+	array_literal. Build PropertyName ast build.
+	* Literal.cs: fixed the negative numbers code generation (we must
+	optimize this). Added initial ObjectLiteral's class, code generation and
+	Resolve process. Added class ObjectLiteralItem and PropertyName.
+	* ArrayLiteral.cs: added internal size field as an ArrayLiteral can have
+	elisions we keep track of the "real" size here. Added constructor. Added initial
+	Resolve and Emit code.
+	* ASTList.cs: added Size property. 
+	* Globals.cs, ASTList.cs: Back to the useful namespace (M.J).
+
 2004-06-20  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
 	* CodeGenerator.cs: Added LoopBegin and LoopEnd to EmitContext, they are used by
