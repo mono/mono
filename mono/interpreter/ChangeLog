@@ -1,4 +1,8 @@
 
+Tue Apr 9 13:08:26 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* interp.c: make the interp thread-safe wrt the metadata lib.
+
 Mon Apr 8 17:15:48 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* interp.c: display return value with --trace.
