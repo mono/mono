@@ -2573,13 +2573,19 @@ namespace Mono.CSharp {
 				return CheckShiftArguments (ec);
 
 			if (oper == Operator.LogicalOr || oper == Operator.LogicalAnd){
-				if (l != TypeManager.bool_type || r != TypeManager.bool_type){
+				if (l == TypeManager.bool_type && r == TypeManager.bool_type) {
+					type = TypeManager.bool_type;
+					return this;
+				}
+
+				if (l != r) {
 					Error_OperatorCannotBeApplied ();
 					return null;
 				}
 
-				type = TypeManager.bool_type;
-				return this;
+				Expression e = new ConditionalLogicalOperator (
+					oper == Operator.LogicalAnd, left, right, l, loc);
+				return e.Resolve (ec);
 			} 
 
 			//
@@ -3138,6 +3144,86 @@ namespace Mono.CSharp {
 			get {
 				return method == null;
 			}
+		}
+	}
+
+	//
+	// User-defined conditional logical operator
+	public class ConditionalLogicalOperator : Expression {
+		Expression left, right;
+		bool is_and;
+
+		public ConditionalLogicalOperator (bool is_and, Expression left, Expression right, Type t, Location loc)
+		{
+			type = t;
+			eclass = ExprClass.Value;
+			this.loc = loc;
+			this.left = left;
+			this.right = right;
+			this.is_and = is_and;
+		}
+
+		protected void Error19 ()
+		{
+			Binary.Error_OperatorCannotBeApplied (loc, is_and ? "&&" : "||", type, type);
+		}
+
+		protected void Error218 ()
+		{
+			Error (218, "The type ('" + TypeManager.CSharpName (type) + "') must contain " +
+			       "declarations of operator true and operator false");
+		}
+
+		Expression op_true, op_false, op;
+
+		public override Expression DoResolve (EmitContext ec)
+		{
+			MethodInfo method;
+			Expression operator_group;
+
+			operator_group = MethodLookup (ec, type, is_and ? "op_BitwiseAnd" : "op_BitwiseOr", loc);
+			if (operator_group == null) {
+				Error19 ();
+				return null;
+			}
+
+			ArrayList arguments = new ArrayList ();
+			arguments.Add (new Argument (left, Argument.AType.Expression));
+			arguments.Add (new Argument (right, Argument.AType.Expression));
+			method = Invocation.OverloadResolve (ec, (MethodGroupExpr) operator_group, arguments, loc) as MethodInfo;
+			if ((method == null) || (method.ReturnType != type)) {
+				Error19 ();
+				return null;
+			}
+
+			op = new StaticCallExpr (method, arguments, loc);
+
+			op_true = GetOperatorTrue (ec, left, loc);
+			op_false = GetOperatorFalse (ec, left, loc);
+			if ((op_true == null) || (op_false == null)) {
+				Error218 ();
+				return null;
+			}
+
+			return this;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			ILGenerator ig = ec.ig;
+			Label false_target = ig.DefineLabel ();
+			Label end_target = ig.DefineLabel ();
+
+			ig.Emit (OpCodes.Nop);
+
+			Statement.EmitBoolExpression (ec, is_and ? op_false : op_true, false_target, false);
+			left.Emit (ec);
+			ig.Emit (OpCodes.Br, end_target);
+			ig.MarkLabel (false_target);
+			op.Emit (ec);
+			ig.MarkLabel (end_target);
+
+			ig.Emit (OpCodes.Nop);
 		}
 	}
 

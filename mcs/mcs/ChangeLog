@@ -1,5 +1,11 @@
 2003-07-14  Martin Baulig  <martin@ximian.com>
 
+	* expression.cs (ConditionalLogicalOperator): New public class to
+	implement user defined conditional logical operators.
+	This is section 14.11.2 in the spec and bug #40505.
+
+2003-07-14  Martin Baulig  <martin@ximian.com>
+
 	* ecore.cs (FieldExpr.DoResolveLValue): Fixed bug #46198.
 
 2003-07-14  Martin Baulig  <martin@ximian.com>

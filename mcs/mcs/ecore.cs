@@ -688,10 +688,24 @@ namespace Mono.CSharp {
 		/// </summary>
 		static public StaticCallExpr GetOperatorTrue (EmitContext ec, Expression e, Location loc)
 		{
+			return GetOperatorTrueOrFalse (ec, e, true, loc);
+		}
+
+		/// <summary>
+		///   Returns an expression that can be used to invoke operator false
+		///   on the expression if it exists.
+		/// </summary>
+		static public StaticCallExpr GetOperatorFalse (EmitContext ec, Expression e, Location loc)
+		{
+			return GetOperatorTrueOrFalse (ec, e, false, loc);
+		}
+
+		static StaticCallExpr GetOperatorTrueOrFalse (EmitContext ec, Expression e, bool is_true, Location loc)
+		{
 			MethodBase method;
 			Expression operator_group;
 
-			operator_group = MethodLookup (ec, e.Type, "op_True", loc);
+			operator_group = MethodLookup (ec, e.Type, is_true ? "op_True" : "op_False", loc);
 			if (operator_group == null)
 				return null;
 
