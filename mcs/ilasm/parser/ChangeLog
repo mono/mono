@@ -1,3 +1,8 @@
+2003-09-12 Jackson Harper <jackson@latitudegeo.com>
+
+	* ILParser.jay: Fix typo in field inits. Methods attached to
+	modified types should be type spec method refs.
+	
 2003-08-19 Jackson Harper <jackson@latitudegeo.com>
 
 	* ILParser.jay: Implement address constants and string

@@ -1207,11 +1207,11 @@ field_init		: K_FLOAT32 OPEN_PARENS float64 CLOSE_PARENS
                           }
 			| K_INT32 OPEN_PARENS int64 CLOSE_PARENS
                           {
-                                $$ = new IntConst (Convert.ToUInt32 ($3));
+                                $$ = new IntConst (Convert.ToInt32 ($3));
                           }
 			| K_INT16 OPEN_PARENS int64 CLOSE_PARENS
                           {
-                                $$ = new IntConst (Convert.ToUInt16 ($3));
+                                $$ = new IntConst (Convert.ToInt16 ($3));
                           }
 			| K_CHAR OPEN_PARENS int64 CLOSE_PARENS
                           {
@@ -1954,8 +1954,13 @@ method_ref		: call_conv type type_spec DOUBLE_COLON method_name
                                 else
                                         param_list = new ITypeRef[0];
 
-                                $$ = owner.GetMethodRef ((ITypeRef) $2,
-                                        (CallConv) $1, (string) $5, param_list);
+                                if (owner.UseTypeSpec) {
+                                        $$ = new TypeSpecMethodRef (owner, (ITypeRef) $2,
+                                                (CallConv) $1, (string) $5, param_list);
+                                } else {
+                                        $$ = owner.GetMethodRef ((ITypeRef) $2,
+                                                (CallConv) $1, (string) $5, param_list);
+                                }
                           }
 			| call_conv type method_name 
 			  OPEN_PARENS type_list CLOSE_PARENS
