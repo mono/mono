@@ -1,5 +1,10 @@
 2003-04-18  Miguel de Icaza  <miguel@ximian.com>
 
+	* typemanager.cs (GetReferenceType, GetPointerType): In .NET each
+	invocation to ModuleBuilder.GetType with the same values will
+	return a new type instance, so we need to cache its return
+	values. 
+
 	* expression.cs (Binary.ResolveOperator): Only allow the compare
 	operators on enums if they are of the same type.
 

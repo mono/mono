@@ -469,6 +469,8 @@ public class TypeManager {
 		modules = n;
 	}
 
+	static Hashtable references = new Hashtable ();
+	
 	//
 	// Gets the reference to T version of the Type (T&)
 	//
@@ -478,12 +480,21 @@ public class TypeManager {
 		
 		Type ret = t.Assembly.GetType (tname);
 
+		//
 		// If the type comes from the assembly we are building
-		if (ret == null)
-			ret = t.Module.GetType (tname);
+		// We need the Hashtable, because .NET 1.1 will return different instance types
+		// every time we call ModuleBuilder.GetType.
+		//
+		if (ret == null){
+			if (references [t] == null)
+				references [t] = CodeGen.ModuleBuilder.GetType (tname);
+			ret = (Type) references [t];
+		}
 
 		return ret;
 	}
+
+	static Hashtable pointers = new Hashtable ();
 
 	//
 	// Gets the pointer to T version of the Type  (T*)
@@ -493,10 +504,18 @@ public class TypeManager {
 		string tname = t.FullName + "*";
 		
 		Type ret = t.Assembly.GetType (tname);
-
+		
+		//
 		// If the type comes from the assembly we are building
-		if (ret == null)
-			ret = t.Module.GetType (tname);
+		// We need the Hashtable, because .NET 1.1 will return different instance types
+		// every time we call ModuleBuilder.GetType.
+		//
+		if (ret == null){
+			if (pointers [t] == null)
+				pointers [t] = CodeGen.ModuleBuilder.GetType (tname);
+			
+			ret = (Type) pointers [t];
+		}
 
 		return ret;
 	}
