@@ -3,8 +3,10 @@
 //
 // Authors: 
 //	Ville Palo (vi64pa@kolumbus.fi)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Ville Palo
+// Copyright (C) 2004 Novell (http://www.novell.com)
 //
 
 using NUnit.Framework;
@@ -224,13 +226,52 @@ public class BufferedStreamTest : Assertion {
 	}
 
 	[Test]
-	[ExpectedException(typeof (ArgumentOutOfRangeException))]
-	public void ReadException2 ()
+	[ExpectedException(typeof(ArgumentNullException))]
+	public void Read_Null () 
 	{
 		BufferedStream stream = new BufferedStream (mem);
-		
-		byte [] bytes = new byte [10];
-		stream.Read (bytes, -10, 4);
+		stream.Read (null, 0, 0);
+	}
+
+	[Test]
+	[ExpectedException(typeof(NotSupportedException))]
+	public void Read_CantRead () 
+	{
+		BufferedStream stream = new BufferedStream (mem);
+		mem.Close (); // CanRead == false
+		stream.Read (new byte [1], 0, 1);
+	}
+
+	[Test]
+	[ExpectedException(typeof(ArgumentOutOfRangeException))]
+	public void Read_OffsetNegative () 
+	{
+		BufferedStream stream = new BufferedStream (mem);
+		stream.Read (new byte [1], -1, 1); 
+	}
+
+	[Test]
+	[ExpectedException(typeof(ArgumentException))]
+	public void Read_OffsetOverflow () 
+	{
+		BufferedStream stream = new BufferedStream (mem);
+		stream.Read (new byte [1], Int32.MaxValue, 1); 
+	}
+
+	[Test]
+	[ExpectedException(typeof(ArgumentOutOfRangeException))]
+	public void Read_CountNegative () 
+	{
+		BufferedStream stream = new BufferedStream (mem);
+		stream.Read (new byte [1], 1, -1); 
+	}
+
+	[Test]
+	[ExpectedException(typeof(ArgumentException))]
+	public void Read_CountOverflow () 
+	{
+		BufferedStream stream = new BufferedStream (mem);
+		stream.Read (new byte [1], 1, Int32.MaxValue); 
 	}
 	
 	[Test]
@@ -287,11 +328,52 @@ public class BufferedStreamTest : Assertion {
 	}
 
 	[Test]
-	[ExpectedException(typeof (ArgumentOutOfRangeException))]
-	public void WriteException2 ()
+	[ExpectedException(typeof(ArgumentNullException))]
+	public void Write_Null () 
 	{
 		BufferedStream stream = new BufferedStream (mem);
-		stream.Write (new byte [] {0,1,2,3}, -10, 4);
+		stream.Write (null, 0, 0);
+	}
+
+	[Test]
+	[ExpectedException(typeof(NotSupportedException))]
+	public void Write_CantWrite () 
+	{
+		BufferedStream stream = new BufferedStream (mem);
+		mem.Close (); // CanWrite == false
+		stream.Write (new byte [1], 0, 1);
+	}
+
+	[Test]
+	[ExpectedException(typeof(ArgumentOutOfRangeException))]
+	public void Write_OffsetNegative () 
+	{
+		BufferedStream stream = new BufferedStream (mem);
+		stream.Write (new byte [1], -1, 1); 
+	}
+
+	[Test]
+	[ExpectedException(typeof(ArgumentException))]
+	public void Write_OffsetOverflow () 
+	{
+		BufferedStream stream = new BufferedStream (mem);
+		stream.Write (new byte [1], Int32.MaxValue, 1); 
+	}
+
+	[Test]
+	[ExpectedException(typeof(ArgumentOutOfRangeException))]
+	public void Write_CountNegative () 
+	{
+		BufferedStream stream = new BufferedStream (mem);
+		stream.Write (new byte [1], 1, -1); 
+	}
+
+	[Test]
+	[ExpectedException(typeof(ArgumentException))]
+	public void Write_CountOverflow () 
+	{
+		BufferedStream stream = new BufferedStream (mem);
+		stream.Write (new byte [1], 1, Int32.MaxValue); 
 	}
 	
 	[Test]
@@ -453,6 +535,5 @@ public class BufferedStreamTest : Assertion {
 		AssertEquals ("test#01", 9, stream.Position);		
 		AssertEquals ("test#02", 9, stream.ReadByte ());		
 	 }
-	 
 }
 }
