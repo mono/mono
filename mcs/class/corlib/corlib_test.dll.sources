@@ -191,6 +191,7 @@ System.Security.Permissions/RegistryPermissionAttributeTest.cs
 System.Security.Permissions/SecurityPermissionAttributeTest.cs
 System.Security.Permissions/SecurityPermissionTest.cs
 System.Security.Permissions/SiteIdentityPermissionAttributeTest.cs
+System.Security.Permissions/SiteIdentityPermissionTest.cs
 System.Security.Permissions/StrongNameIdentityPermissionAttributeTest.cs
 System.Security.Permissions/StrongNameIdentityPermissionTest.cs
 System.Security.Permissions/StrongNamePublicKeyBlobTest.cs
