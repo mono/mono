@@ -1,5 +1,9 @@
 2004-05-24  Martin Baulig  <martin@ximian.com>
 
+	* test-260.cs: New test for #53921.
+
+2004-05-24  Martin Baulig  <martin@ximian.com>
+
 	* test-259.cs: New test for #55251.
 
 2004-05-24  Martin Baulig  <martin@ximian.com>
