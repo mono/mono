@@ -1,3 +1,8 @@
+2003-01-09  Dietmar Maurer  <dietmar@ximian.com>
+
+	* loader.c (mono_method_get_marshal_info): impl.
+
+	* metadata.c (mono_metadata_field_info): use mono_metadata_get_marshal_info
 
 2003-01-09  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
