@@ -1,3 +1,9 @@
+2002-05-09  Rodrigo Moya <rodrigo@ximian.com>
+
+	* System.build: don't exclude anymore excluded files in
+	System.ComponentModel. They compile on Linux, so they might also
+	on Windows.
+
 2002-05-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* System.build: excluded EventDescriptor.cs, 
