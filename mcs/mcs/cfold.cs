@@ -967,6 +967,19 @@ namespace Mono.CSharp {
 						((BoolConstant) right).Value);
 				
 				}
+				if (left is NullLiteral){
+					if (right is NullLiteral)
+						return new BoolConstant (true);
+					else if (right is StringConstant)
+						return new BoolConstant (
+							((StringConstant) right).Value == null);
+				} else if (right is NullLiteral){
+					if (left is NullLiteral)
+						return new BoolConstant (true);
+					else if (left is StringConstant)
+						return new BoolConstant (
+							((StringConstant) left).Value == null);
+				}
 				if (left is StringConstant && right is StringConstant){
 					return new BoolConstant (
 						((StringConstant) left).Value ==
@@ -1007,6 +1020,19 @@ namespace Mono.CSharp {
 					return new BoolConstant (
 						((BoolConstant) left).Value !=
 						((BoolConstant) right).Value);
+				}
+				if (left is NullLiteral){
+					if (right is NullLiteral)
+						return new BoolConstant (false);
+					else if (right is StringConstant)
+						return new BoolConstant (
+							((StringConstant) right).Value != null);
+				} else if (right is NullLiteral){
+					if (left is NullLiteral)
+						return new BoolConstant (false);
+					else if (left is StringConstant)
+						return new BoolConstant (
+							((StringConstant) left).Value != null);
 				}
 				if (left is StringConstant && right is StringConstant){
 					return new BoolConstant (
