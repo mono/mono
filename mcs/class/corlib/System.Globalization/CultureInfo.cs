@@ -1164,7 +1164,7 @@ namespace System.Globalization
 		{
 			get {
 				if (textinfo == null) {
-					lock (textinfo) {
+					lock (this) {
 						if(textinfo == null) {
 							textinfo = new TextInfo (lcid);
 						}
