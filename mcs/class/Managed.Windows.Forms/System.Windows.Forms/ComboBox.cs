@@ -61,6 +61,7 @@ namespace System.Windows.Forms
 		private ComboListBox listbox_ctrl;		
 		private TextBox textbox_ctrl;
 		private bool process_textchanged_event;
+		private bool has_focus;
 
 		internal class ComboBoxInfo
 		{
@@ -114,12 +115,15 @@ namespace System.Windows.Forms
 			dropdown_width = -1;
 			max_length = 0;
 			integral_height = true;
-			process_textchanged_event = true;			
+			process_textchanged_event = true;
+			has_focus = false;
 
 			/* Events */
 			MouseDown += new MouseEventHandler (OnMouseDownCB);
 			MouseUp += new MouseEventHandler (OnMouseUpCB);
 			MouseMove += new MouseEventHandler (OnMouseMoveCB);
+			GotFocus += new EventHandler (OnGotFocus);
+			LostFocus += new EventHandler (OnLostFocus);
 		}
 
 		#region events
@@ -419,13 +423,13 @@ namespace System.Windows.Forms
 				else
 					return null;
 				}				
-			set {
-				if (selected_item == value)
-					return;
-
+			set {				
     				int index = Items.IndexOf (value);
 
 				if (index == -1)
+					return;
+					
+				if (selected_index == index)
 					return;
 
 				selected_index = index;
@@ -529,7 +533,7 @@ namespace System.Windows.Forms
 				int index = FindString (value);
 				
 				if (index != -1) {
-					SelectedIndex = -1;
+					SelectedIndex = index;
 					return;					
 				}
 				
@@ -912,10 +916,11 @@ namespace System.Windows.Forms
 			if (dropdown_style == ComboBoxStyle.DropDownList) {
 				DrawItemState state = DrawItemState.None;
 				Rectangle item_rect = combobox_info.textarea_drawable;
-				item_rect.Height = ItemHeight + 2;
-				
-				if (CBoxInfo.droppeddown == false) {
-					state = DrawItemState.Focus |DrawItemState.Selected;
+				item_rect.Height = ItemHeight + 2;				
+								
+				if (has_focus == true) {
+					state = DrawItemState.Selected;
+					state |= DrawItemState.Focus;
 				}
 				
 				OnDrawItem (new DrawItemEventArgs (DeviceContext, Font, item_rect,
@@ -981,6 +986,18 @@ namespace System.Windows.Forms
 
 			return -1;
 		}
+		
+		private void OnGotFocus (object sender, EventArgs e) 			
+		{			
+			has_focus = true;
+			Invalidate ();
+		}
+		
+		private void OnLostFocus (object sender, EventArgs e) 			
+		{			
+			has_focus = false;
+			Invalidate ();
+		}		
 
 		internal virtual void OnMouseDownCB (object sender, MouseEventArgs e)
     		{    			
@@ -1047,7 +1064,7 @@ namespace System.Windows.Forms
 				return;
 			
 			listbox_ctrl.SetTopItem (item);
-			listbox_ctrl.SetHighLightedItem (item);
+			listbox_ctrl.SetHighLightedItem (Items[item]);
 		}
 		
 		internal void SetControlText (string s)
@@ -1060,8 +1077,8 @@ namespace System.Windows.Forms
 		private void UpdatedItems ()
 		{
 			if (dropdown_style != ComboBoxStyle.Simple)
-				return;
-				
+				return;				
+							
 			listbox_ctrl.UpdateLastVisibleItem ();
 			listbox_ctrl.CalcListBoxArea ();
 			listbox_ctrl.Refresh ();
@@ -1162,10 +1179,11 @@ namespace System.Windows.Forms
 
 			public virtual void Clear ()
 			{
+				owner.selected_index = -1;
 				object_items.Clear ();
 				combobox_items.Clear ();
 				owner.UpdatedItems ();
-				owner.selected_index = -1;				
+				owner.Refresh ();
 			}
 			
 			public virtual bool Contains (object obj)
@@ -1224,21 +1242,28 @@ namespace System.Windows.Forms
 				if (sel_item != null) {
 					int idx = IndexOf (sel_item);
 					owner.selected_index = idx;
-					owner.listbox_ctrl.SetHighLightedItem (idx);
+					owner.listbox_ctrl.SetHighLightedItem (owner.Items[idx]);
 				}
 												
-				owner.EndUpdate ();	// Calls UpdateItemInfo				
+				owner.EndUpdate ();	// Calls UpdatedItems
 			}
 
 			public virtual void Remove (object value)
-			{
+			{				
+				if (IndexOf (value) == owner.SelectedIndex)
+					owner.SelectedItem = null;
+				
 				RemoveAt (IndexOf (value));				
+				
 			}
 
 			public virtual void RemoveAt (int index)
 			{
 				if (index < 0 || index >= Count)
 					throw new ArgumentOutOfRangeException ("Index of out range");
+					
+				if (index == owner.SelectedIndex)
+					owner.SelectedItem = null;
 
 				object_items.RemoveAt (index);
 				combobox_items.RemoveAt (index);
@@ -1291,7 +1316,7 @@ namespace System.Windows.Forms
 			private VScrollBarLB vscrollbar_ctrl;
 			private int top_item;			/* First item that we show the in the current page */
 			private int last_item;			/* Last visible item */
-			private int highlighted_item;		/* Item that is currently selected */
+			public object highlighted_item;	/* Item that is currently selected */
 			internal int page_size;			/* Number of listbox items per page */
 			private Rectangle textarea_drawable;	/* Rectangle of the drawable text area */
 			
@@ -1334,7 +1359,7 @@ namespace System.Windows.Forms
 				top_item = 0;
 				last_item = 0;
 				page_size = 0;
-				highlighted_item = -1;
+				highlighted_item = null;
 
 				MouseDown += new MouseEventHandler (OnMouseDownPUW);
 				MouseUp += new MouseEventHandler (OnMouseUpPUW);
@@ -1369,6 +1394,7 @@ namespace System.Windows.Forms
 			{				
 				int width, height;
 				int item_height = owner.ItemHeight;
+				bool show_scrollbar = false;
 				
 				if (owner.DropDownStyle == ComboBoxStyle.Simple) {
 					width = owner.CBoxInfo.listbox_area.Width;
@@ -1422,16 +1448,17 @@ namespace System.Windows.Forms
 						vscrollbar_ctrl.Maximum = 0;
 						vscrollbar_ctrl.ValueChanged += new EventHandler (VerticalScrollEvent);
 						
-						vscrollbar_ctrl.Height = height - ThemeEngine.Current.DrawComboListBoxDecorationBottom (owner.DropDownStyle) -
-							ThemeEngine.Current.DrawComboListBoxDecorationTop (owner.DropDownStyle);
-							
-						vscrollbar_ctrl.Location = new Point (width - vscrollbar_ctrl.Width - ThemeEngine.Current.DrawComboListBoxDecorationRight (owner.DropDownStyle), 
-							ThemeEngine.Current.DrawComboListBoxDecorationTop (owner.DropDownStyle));
 						Controls.Add (vscrollbar_ctrl);
 					}
 					
+					vscrollbar_ctrl.Height = height - ThemeEngine.Current.DrawComboListBoxDecorationBottom (owner.DropDownStyle) -
+							ThemeEngine.Current.DrawComboListBoxDecorationTop (owner.DropDownStyle);
+							
+					vscrollbar_ctrl.Location = new Point (width - vscrollbar_ctrl.Width - ThemeEngine.Current.DrawComboListBoxDecorationRight (owner.DropDownStyle), 
+							ThemeEngine.Current.DrawComboListBoxDecorationTop (owner.DropDownStyle));
+						
 					vscrollbar_ctrl.Maximum = owner.Items.Count - owner.MaxDropDownItems;
-					vscrollbar_ctrl.Visible = true;						
+					show_scrollbar = vscrollbar_ctrl.Visible = true;
 					
 				}
 				
@@ -1447,10 +1474,9 @@ namespace System.Windows.Forms
 				textarea_drawable.Width -= ThemeEngine.Current.DrawComboListBoxDecorationLeft (owner.DropDownStyle);
 				textarea_drawable.Height -= ThemeEngine.Current.DrawComboListBoxDecorationBottom (owner.DropDownStyle);				
 				textarea_drawable.Height -= ThemeEngine.Current.DrawComboListBoxDecorationTop (owner.DropDownStyle);
-								
 				
-				if (vscrollbar_ctrl != null && vscrollbar_ctrl.Visible)
-					textarea_drawable.Width -= vscrollbar_ctrl.Width;				
+				if (vscrollbar_ctrl != null && show_scrollbar)
+					textarea_drawable.Width -= vscrollbar_ctrl.Width;
 
 				last_item = LastVisibleItem ();				
 				page_size = textarea_drawable.Height / (item_height - 2);				
@@ -1474,7 +1500,7 @@ namespace System.Windows.Forms
 						/* Draw item */
 						state = DrawItemState.None;
 
-						if (i == highlighted_item) {
+						if (i == GetHighLightedIndex () ) {
 							state |= DrawItemState.Selected;
 							
 							if (owner.DropDownStyle == ComboBoxStyle.DropDownList) {
@@ -1488,6 +1514,16 @@ namespace System.Windows.Forms
 				}			
 				
 				ThemeEngine.Current.DrawComboListBoxDecorations (DeviceContext, owner, ClientRectangle);
+			}
+			
+			public int GetHighLightedIndex ()
+			{					
+				return owner.Items.IndexOf (highlighted_item);
+			}
+			
+			public object GetHighLightedItem ()
+			{				
+				return highlighted_item;
 			}
 
 			private Rectangle GetItemDisplayRectangle (int index, int first_displayble)
@@ -1512,6 +1548,7 @@ namespace System.Windows.Forms
 					
 				Capture = false;
 				Hide ();
+				highlighted_item = -1;
 				owner.DropDownListBoxFinished ();
 			}
 
@@ -1551,42 +1588,42 @@ namespace System.Windows.Forms
 				
 				switch (navigation) {
 				case ItemNavigation.Next: {
-					if (highlighted_item + 1 < owner.Items.Count) {
+					if (GetHighLightedIndex () + 1 < owner.Items.Count) {
 						
-						if (highlighted_item + 1 > last_item) {
+						if (GetHighLightedIndex () + 1 > last_item) {
 							top_item++;
 							vscrollbar_ctrl.Value = top_item;
 						}
-						item = highlighted_item + 1;
+						item = GetHighLightedIndex () + 1;
 					}
 					break;
 				}
 				
 				case ItemNavigation.Previous: {
-					if (highlighted_item > 0) {						
+					if (GetHighLightedIndex () > 0) {						
 						
-						if (highlighted_item - 1 < top_item) {							
+						if (GetHighLightedIndex () - 1 < top_item) {							
 							top_item--;
 							vscrollbar_ctrl.Value = top_item;							
 						}
-						item = highlighted_item - 1;
+						item = GetHighLightedIndex () - 1;
 					}					
 					break;
 				}
 				
 				case ItemNavigation.NextPage: {
-					if (highlighted_item + page_size - 1 >= owner.Items.Count) {
+					if (GetHighLightedIndex () + page_size - 1 >= owner.Items.Count) {
 						top_item = owner.Items.Count - page_size;
 						vscrollbar_ctrl.Value = top_item; 						
 						item = owner.Items.Count - 1;
 					}
 					else {
-						if (highlighted_item + page_size - 1  > last_item) {
-							top_item = highlighted_item;
-							vscrollbar_ctrl.Value = highlighted_item;
+						if (GetHighLightedIndex () + page_size - 1  > last_item) {
+							top_item = GetHighLightedIndex ();
+							vscrollbar_ctrl.Value = GetHighLightedIndex ();
 						}
 					
-						item = highlighted_item + page_size - 1;
+						item = GetHighLightedIndex () + page_size - 1;
 					}					
 					break;
 				}
@@ -1594,19 +1631,19 @@ namespace System.Windows.Forms
 				case ItemNavigation.PreviousPage: {					
 					
 					/* Go to the first item*/
-					if (highlighted_item - (page_size - 1) <= 0) {
+					if (GetHighLightedIndex () - (page_size - 1) <= 0) {
 																		
 						top_item = 0;
 						vscrollbar_ctrl.Value = top_item;
 						item = 0;			
 					}
 					else { /* One page back */
-						if (highlighted_item - (page_size - 1)  < top_item) {
-							top_item = highlighted_item - (page_size - 1);
+						if (GetHighLightedIndex () - (page_size - 1)  < top_item) {
+							top_item = GetHighLightedIndex () - (page_size - 1);
 							vscrollbar_ctrl.Value = top_item;
 						}
 					
-						item = highlighted_item - (page_size - 1);
+						item = GetHighLightedIndex () - (page_size - 1);
 					}
 					
 					break;
@@ -1617,7 +1654,7 @@ namespace System.Windows.Forms
 				}	
 				
 				if (item != -1) {
-					SetHighLightedItem (item);
+					SetHighLightedItem (owner.Items[item]);
 					
 					owner.OnSelectionChangeCommitted (new EventArgs ());
 					
@@ -1651,26 +1688,28 @@ namespace System.Windows.Forms
 				}
 			}
 			
-			public void SetHighLightedItem (int index)
+			public void SetHighLightedItem (object item)
 			{
 				Rectangle invalidate;
 				
-				if (highlighted_item == index)
+				if (GetHighLightedItem () == item)
 					return;
 				
 				/* Previous item */
-    				if (highlighted_item != -1) {
-					invalidate = GetItemDisplayRectangle (highlighted_item, top_item);
+    				if (GetHighLightedIndex () != -1) {    					
+					invalidate = GetItemDisplayRectangle (GetHighLightedIndex (), top_item);
 	    				if (ClientRectangle.Contains (invalidate))
 	    					Invalidate (invalidate);
 	    			}
 				
-    				highlighted_item = index;
-
-    				 /* Current item */
-    				invalidate = GetItemDisplayRectangle (highlighted_item, top_item);
-    				if (ClientRectangle.Contains (invalidate))
-    					Invalidate (invalidate);   					
+    				highlighted_item = item;
+    				
+    				if (highlighted_item != null) {
+	    				 /* Current item */
+	    				invalidate = GetItemDisplayRectangle (GetHighLightedIndex (), top_item);
+	    				if (ClientRectangle.Contains (invalidate))
+	    					Invalidate (invalidate);
+	    			}
     				
 			}			
 
@@ -1691,17 +1730,17 @@ namespace System.Windows.Forms
 	    			int index = IndexFromPointDisplayRectangle (e.X, e.Y);
     				if (index != -1) {    					
 					owner.SelectedIndex = index;
-					SetHighLightedItem (index);
+					SetHighLightedItem (owner.Items[index]);
 					owner.OnSelectionChangeCommitted (new EventArgs ());
 					HideWindow ();
 					return;
 				}
 				
 				if (owner.DropDownStyle == ComboBoxStyle.Simple)
-					return;		
-				
+					return;					
+								
 				/* Reroute event to scrollbar */				
-				if (vscrollbar_ctrl != null) {				
+				if (vscrollbar_ctrl != null && vscrollbar_ctrl.Visible == true) {
 		    			scrollbar_screenrect = vscrollbar_ctrl.ClientRectangle;
 		    			scrollbar_screen = PointToScreen (vscrollbar_ctrl.Location);
 		    			scrollbar_screenrect.X = scrollbar_screen.X;
@@ -1727,7 +1766,7 @@ namespace System.Windows.Forms
 				int index = IndexFromPointDisplayRectangle (e.X, e.Y);
 
     				if (index != -1) {
-					SetHighLightedItem (index);
+					SetHighLightedItem (owner.Items[index]);
 					return;
 				}
 				
@@ -1735,7 +1774,7 @@ namespace System.Windows.Forms
 					return;		
 				
 				/* Reroute event to scrollbar */
-				if (vscrollbar_ctrl != null) {	
+				if (vscrollbar_ctrl != null && vscrollbar_ctrl.Visible == true) {	
 					Rectangle scrollbar_screenrect;
 		    			Point mouse_screen, scrollbar_screen;
 		    			mouse_screen = PointToScreen (new Point (e.X, e.Y));
@@ -1764,7 +1803,7 @@ namespace System.Windows.Forms
 	    			Point mouse_screen, scrollbar_screen;
 	    			mouse_screen = PointToScreen (new Point (e.X, e.Y));
 	    			
-	    			if (vscrollbar_ctrl != null) {	
+	    			if (vscrollbar_ctrl != null && vscrollbar_ctrl.Visible == true) {	
 		    			scrollbar_screenrect = vscrollbar_ctrl.ClientRectangle;
 		    			scrollbar_screen = PointToScreen (vscrollbar_ctrl.Location);
 		    			scrollbar_screenrect.X = scrollbar_screen.X;
@@ -1792,6 +1831,9 @@ namespace System.Windows.Forms
 			{
 				if (owner.DropDownStyle != ComboBoxStyle.Simple && owner.Items.Count == 0)
 					return false;
+					
+				SetTopItem (0);
+				SetHighLightedItem (owner.SelectedItem);
 				
 				CalcListBoxArea ();				
 				Show ();

@@ -1,3 +1,11 @@
+2005-03-01  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* ComboBox.cs: 
+		- Handle focus event
+		- Fix scrollbar events
+		- Discard highlighted item if remove it
+		- Fixes SelectedItem with strings
+
 2005-03-01  Peter Bartok  <pbartok@novell.com>
 
 	* Control.cs:
