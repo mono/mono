@@ -1,3 +1,8 @@
+2004-05-20 Umadevi S <sumadevi@novell.com>
+        * Fixed bug 58406- implemented the hasrow method, test program used
+         to test with the bug report                                                        
+
+
 2004-05-13  Umadevi S  <sumadevi@novell.com>
 	
 	*  SqlClientPermission.cs, SqlDataReader.cs - added missing methods with TODO tags

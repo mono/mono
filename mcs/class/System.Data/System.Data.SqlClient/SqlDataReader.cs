@@ -35,6 +35,9 @@ namespace System.Data.SqlClient {
 		int rowsRead;
 		DataTable schemaTable;
 		bool hasRows;
+		bool haveRead;
+		bool readResult;
+		bool readResultUsed;
 
 		#endregion // Fields
 
@@ -42,6 +45,9 @@ namespace System.Data.SqlClient {
 
 		internal SqlDataReader (SqlCommand command)
 		{
+			readResult = false;
+			haveRead = false;
+			readResultUsed = false;
 			this.command = command;
 			schemaTable = ConstructSchemaTable ();
 			resultsRead = 0;
@@ -85,10 +91,14 @@ namespace System.Data.SqlClient {
 			}
 		}
 
-		[MonoTODO]
 		public bool HasRows {
 			get {
-				throw new NotImplementedException ();
+				if (haveRead) 
+					return readResult;
+			
+				haveRead = true;
+				readResult = ReadRecord ();
+				return readResult;						
 			}
 		}
 	
@@ -814,13 +824,29 @@ namespace System.Data.SqlClient {
 				return false;
 			if (!moreResults)
 				return false;
+	
+			if ((haveRead) && (!readResultUsed))
+			{
+				readResultUsed = true;
+				return true;
+			}
+			
+			
+			return (ReadRecord ());
 
+		}
+
+		internal bool ReadRecord ()
+		{
+			
 			bool result = command.Tds.NextRow ();
-
+			
 			rowsRead += 1;
-
+			
 			return result;
 		}
+				
+		
 
 		#endregion // Methods
 	}
