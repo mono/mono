@@ -1,3 +1,7 @@
+2005-02-09  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile: Minor cleanups.
+
 2005-1-7 Manjula GHM  <mmanjula@novell.com>
 
       *InheritanceC7.vb

@@ -1,5 +1,5 @@
 thisdir = mbas/Test
-SUBDIRS = misc dlls tests errors
+SUBDIRS = misc dlls tests errors rerrors
 
 DISTFILES = test-mbas.make test-mbas.pl README.tests
 
