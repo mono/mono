@@ -155,6 +155,12 @@ namespace Mono.CSharp {
 			return true;
 		}
 
+		public void Define (GenericTypeParameterBuilder type)
+		{
+			if (has_ctor_constraint)
+				type.Mono_SetConstructorConstraint ();
+		}
+
 		bool GenericConstraints.HasConstructor {
 			get { return has_ctor_constraint; }
 		}
@@ -233,8 +239,10 @@ namespace Mono.CSharp {
 		{
 			this.type = type;
 			TypeExpr[] ifaces = null;
-			if (constraints != null)
+			if (constraints != null) {
 				ifaces = constraints.InterfaceConstraints;
+				constraints.Define (type);
+			}
 			TypeManager.AddTypeParameter (type, this, ifaces);
 		}
 
