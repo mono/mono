@@ -1,10 +1,12 @@
 //
 // System.Web.UI.Control.cs
 //
-// Author:
-//   Bob Smith <bob@thestuff.net>
+// Authors:
+// 	Bob Smith <bob@thestuff.net>
+// 	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // (C) Bob Smith
+// (c) 2002 Ximian, Inc. (http://www.ximian.com)
 //
 
 /*
@@ -311,19 +313,18 @@ namespace System.Web.UI
                         get
                         {
                         	if(_viewState == null)
-                        	{
-	                        	_viewState = new StateBag(ViewStateIgnoresCase);
-    	                    	if(IsTrackingViewState)
-        	                		_viewState.TrackViewState();
-                        	}
+	                        	_viewState = new StateBag (ViewStateIgnoresCase);
+
+				if (IsTrackingViewState)
+					_viewState.TrackViewState ();
+
                         	return _viewState;
                         }
                 }
-                protected virtual bool ViewStateIgnoresCase //DIT
+                protected virtual bool ViewStateIgnoresCase
                 {
-                        get
-                        {
-                                return true;
+                        get {
+                                return false;
                         }
                 }
 
@@ -400,7 +401,8 @@ namespace System.Web.UI
 
                 protected virtual void LoadViewState(object savedState)
                 {
-			ViewState.LoadViewState (savedState);
+			if (savedState != null)
+				ViewState.LoadViewState (savedState);
                 }
                 
 		[MonoTODO]
@@ -476,11 +478,16 @@ namespace System.Web.UI
 		
                 protected virtual object SaveViewState ()
                 {
-                        return ViewState.SaveViewState ();
+			if (_viewState == null)
+				return null;
+
+			return _viewState.SaveViewState ();
                 }
 
                 protected virtual void TrackViewState()
                 {
+			if (_viewState != null)
+				_viewState.TrackViewState ();
                         _trackViewState = true;
                 }
                 
@@ -589,8 +596,6 @@ namespace System.Web.UI
                 {
                         if (_visible)
                         {
-				// By now, PreRender is fired here.
-				OnPreRender (EventArgs.Empty); //FIXME
                                 //TODO: Something about tracing here.
                                 Render(writer);
                         }
@@ -601,38 +606,51 @@ namespace System.Web.UI
                 {
                 	return relativeUrl;
                 }
+
                 public void SetRenderMethodDelegate(RenderMethod renderMethod) //DIT
                 {
                         _renderMethodDelegate = renderMethod;
                 }
+
                 protected void LoadRecursive()
                 {
                         OnLoad(EventArgs.Empty);
                         if (_controls != null) foreach (Control c in _controls) c.LoadRecursive();
                 }
+
                 protected void UnloadRecursive(Boolean dispose)
                 {
                         OnUnload(EventArgs.Empty);
                         if (_controls != null) foreach (Control c in _controls) c.UnloadRecursive(dispose);
                         if (dispose) Dispose();
                 }
+
                 protected void PreRenderRecursiveInternal()
                 {
                         OnPreRender(EventArgs.Empty);
                         if (_controls != null) foreach (Control c in _controls) c.PreRenderRecursiveInternal();
                 }
+
                 protected void InitRecursive(Control namingContainer)
                 {
                         if (_controls != null) foreach (Control c in _controls) c.InitRecursive(namingContainer);
                         OnInit(EventArgs.Empty);
+			TrackViewState ();
                 }
                 
                 protected object SaveViewStateRecursive()
                 {
-			ArrayList controlList = new ArrayList ();
-			ArrayList controlStates = new ArrayList ();
+			if (!EnableViewState || !Visible)
+				return null;
+
+			ArrayList controlList = null;
+			ArrayList controlStates = null;
 
 			foreach (Control ctrl in Controls){
+				if (controlList == null) {
+					controlList = new ArrayList ();
+					controlStates = new ArrayList ();
+				}
 				controlList.Add (ctrl);
 				controlStates.Add (ctrl.SaveViewStateRecursive ());
 			}
@@ -640,10 +658,23 @@ namespace System.Web.UI
 			return new Triplet (SaveViewState (), controlList, controlStates);
                 }
                 
-                [MonoTODO]
-                protected void LoadViewStateRecursive(Object savedState)
+                protected void LoadViewStateRecursive (object savedState)
                 {
-			throw new NotImplementedException ();
+			if (!EnableViewState || !Visible || savedState == null)
+				return;
+
+			Triplet savedInfo = (Triplet) savedState;
+			LoadViewState (savedInfo.First);
+
+			ArrayList controlList = savedInfo.Second as ArrayList;
+			if (controlList == null)
+				return;
+			ArrayList controlStates = savedInfo.Third as ArrayList;
+			int nControls = controlList.Count;
+			for (int i = 0; i < nControls; i++) {
+				if (controlStates != null)
+					Controls [i].LoadViewStateRecursive (controlStates [i]);
+			}
                 }
                 
                 void IParserAccessor.AddParsedSubObject(object obj)
@@ -680,6 +711,14 @@ namespace System.Web.UI
 			AutoID = false;
                 }
                 
+		protected internal virtual void RemovedControl (Control control)
+		{
+			control.UnloadRecursive (false);
+			control._parent = null;
+			control._page = null;
+			control._namingContainer = null;
+		}
+
                 //TODO: I think there are some needed Interface implementations to do here.
                 //TODO: Find api for INamingContainer.
         }

@@ -1,3 +1,19 @@
+2002-07-17  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Control.cs: fixed related to ViewState. Added RemovedControl.
+
+	* ControlCollection.cs: notify owner of control removal.
+	
+	* CssStyleCollection.cs: almost rewritten to make it render the style
+	attribute after changes to it.
+
+	* Page.cs: follow the guidelines in 'Control execution lifecycle'.
+	Removed Xml code.
+
+	* StateBag.cs: don't use IDictionary.GetEnumerator on the
+	HybridDictionary: it makes the program give an InvalidCastException at
+	runtime. Why?
+
 2002-07-16  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Page.cs: fire Init and Load events for all children.

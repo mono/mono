@@ -85,7 +85,7 @@ namespace System.Web.UI {
 
 		public virtual bool Contains (Control c)
 		{
-			return list.Contains (c as object);
+			return list.Contains (c);
 		}
 
 		public void CopyTo (Array array, int index)
@@ -100,12 +100,13 @@ namespace System.Web.UI {
 
 		public virtual int IndexOf (Control c)
 		{
-			return list.IndexOf (c as object);
+			return list.IndexOf (c);
 		}
 
 		public virtual void Remove (Control value)
 		{
-			list.Remove (value as object);
+			list.Remove (value);
+			owner.RemovedControl (value);
 		}
 
 		public virtual void RemoveAt (int index)
@@ -113,7 +114,9 @@ namespace System.Web.UI {
 			if (IsReadOnly)
 				throw new HttpException ();
 
+			Control value = (Control) list [index];
 			list.RemoveAt (index);
+			owner.RemovedControl (value);
 		}
 	}
 }

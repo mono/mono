@@ -18,7 +18,6 @@ using System.Text;
 using System.Web;
 using System.Web.Caching;
 using System.Web.SessionState;
-using System.Xml;
 
 namespace System.Web.UI
 {
@@ -41,11 +40,12 @@ public class Page : TemplateControl, IHttpHandler
 	private string _UICulture;
 	private HttpContext _context;
 	private ValidatorCollection _validators;
-	private bool _visible;
 	private bool _renderingForm;
 	private bool _hasForm;
 	private object _savedViewState;
 	private ArrayList _requiresPostBack;
+	private ArrayList requiresPostDataChanged;
+	private ArrayList requiresRaiseEvent;
 
 	#region Fields
 	 	protected const string postEventArgumentID = ""; //FIXME
@@ -235,8 +235,8 @@ public class Page : TemplateControl, IHttpHandler
 
 	public override bool Visible
 	{
-		get { return _visible; }
-		set { _visible = value; }
+		get { return base.Visible; }
+		set { base.Visible = value; }
 	}
 
 	#endregion
@@ -409,37 +409,30 @@ public class Page : TemplateControl, IHttpHandler
 	private void ProcessPostData ()
 	{
 		NameValueCollection data = DeterminePostBackMode ();
-		ArrayList _raisePostBack = new ArrayList ();
 
 		foreach (string id in data.AllKeys){
-			string value = data [id];
+			if (id == "__VIEWSTATE")
+				continue;
+
 			Control ctrl = FindControl (id);
 			if (ctrl != null){
 				IPostBackDataHandler pbdh = ctrl as IPostBackDataHandler;
-				IPostBackEventHandler pbeh = ctrl as IPostBackEventHandler;
 				if (pbdh != null) {
 					if (pbdh.LoadPostData (id, data) == true) {
-						pbdh.RaisePostDataChangedEvent ();
-						if (pbeh == null)
-							continue;
-						if (_requiresPostBack != null &&
-						    !(_requiresPostBack.Contains (ctrl)))
-								_raisePostBack.Add (pbeh);
+						if (requiresPostDataChanged == null)
+							requiresPostDataChanged = new ArrayList ();
+						requiresPostDataChanged.Add (ctrl);
 					}
-					continue;
 				}
 
-				if (pbeh != null)
-					pbeh.RaisePostBackEvent (null);
+				IPostBackEventHandler pbeh = ctrl as IPostBackEventHandler;
+				if (pbeh != null) {
+					if (requiresRaiseEvent == null)
+						requiresRaiseEvent = new ArrayList ();
+					requiresRaiseEvent.Add (ctrl);
+				}
 			}
 		}
-
-		foreach (IPostBackEventHandler e in _raisePostBack)
-			e.RaisePostBackEvent (null);
-
-		if (_requiresPostBack != null)
-			foreach (IPostBackEventHandler e in _requiresPostBack)
-				e.RaisePostBackEvent (null);
 	}
 
 	private bool init_done;
@@ -451,30 +444,53 @@ public class Page : TemplateControl, IHttpHandler
 			// This 2 should depend on AutoEventWireUp in Page directive. Defaults to true.
 			Init += new EventHandler (_Page_Init);
 			Load += new EventHandler (_Page_Load);
-
 			//-- Control execution lifecycle in the docs
-			InitRecursive (this);
+			InitRecursive (null);
 		}
 		_got_state = false;
 		_hasForm = false;
 		_context = context;
-		//LoadViewState ();
+		if (IsPostBack)
+			LoadPageViewState ();
 		//if (this is IPostBackDataHandler)
 		//	LoadPostData ();
+		
 		if (IsPostBack)
 			ProcessPostData ();
 
 		LoadRecursive ();
-		//if (this is IPostBackDataHandler)
-		//	RaisePostBackEvent ();
+		if (IsPostBack) {
+			RaiseChangedEvents ();
+			RaisePostBackEvents ();
+		}
 		PreRenderRecursiveInternal ();
 
+		SavePageViewState ();
 		//--
 		HtmlTextWriter output = new HtmlTextWriter (context.Response.Output);
-		foreach (Control ctrl in Controls)
-			ctrl.RenderControl (output);
+		this.RenderControl (output);
 
-		//SavePageViewState ();
+	}
+
+	internal void RaisePostBackEvents ()
+	{
+		if (requiresRaiseEvent == null)
+			return;
+
+		NameValueCollection postdata = DeterminePostBackMode ();
+		foreach (Control c in requiresRaiseEvent)
+			RaisePostBackEvent ((IPostBackEventHandler) c, postdata [c.ID]);
+		requiresRaiseEvent.Clear ();
+	}
+
+	internal void RaiseChangedEvents ()
+	{
+		if (requiresPostDataChanged == null)
+			return;
+
+		foreach (IPostBackDataHandler ipdh in requiresPostDataChanged)
+			ipdh.RaisePostDataChangedEvent ();
+		requiresPostDataChanged.Clear ();
 	}
 
 	protected virtual void RaisePostBackEvent (IPostBackEventHandler sourceControl, string eventArgument)
@@ -520,10 +536,11 @@ public class Page : TemplateControl, IHttpHandler
 		_requiresPostBack.Add (control);
 	}
 
-	[MonoTODO]
 	public virtual void RegisterRequiresRaiseEvent (IPostBackEventHandler control)
 	{
-		throw new NotImplementedException ();
+		if (requiresRaiseEvent == null)
+			requiresRaiseEvent = new ArrayList ();
+		requiresRaiseEvent.Add (control);
 	}
 
 	[MonoTODO]
@@ -532,10 +549,9 @@ public class Page : TemplateControl, IHttpHandler
 		// Do nothing
 	}
 
-	[MonoTODO]
-	protected virtual void SavePageStatetoPersistenceMedium (object viewState)
+	protected virtual void SavePageStateToPersistenceMedium (object viewState)
 	{
-		throw new NotImplementedException ();
+		_savedViewState = viewState;
 	}
 	
 	protected virtual object LoadPageStateFromPersistenceMedium ()
@@ -546,59 +562,19 @@ public class Page : TemplateControl, IHttpHandler
 	internal void LoadPageViewState()
 	{
 		object sState = LoadPageStateFromPersistenceMedium ();
-		if (sState != null)
-			LoadViewStateRecursive (sState);
-	}
-
-	protected virtual void SavePageStateToPersistenceMedium (object viewState)
-	{
-		_savedViewState = viewState;
-	}
-
-	private void SaveControlState (Control ctrl, Triplet savedData, XmlTextWriter writer)
-	{
-		writer.WriteStartElement ("control");
-		writer.WriteAttributeString ("id", ctrl.ID);
-		writer.WriteAttributeString ("type", ctrl.GetType ().ToString ());
-		StateBag state = savedData.First as StateBag;
-		if (state != null){
-			foreach (string key in state.Keys){
-				object o = state [key];
-				writer.WriteStartElement ("item");
-				writer.WriteAttributeString ("key", key);
-				if (o  == null)
-					o = "";
-				else if (o is string)
-					writer.WriteAttributeString ("value", o as string);
-				else
-					//FIXME: add more conversions to string for other types.
-					throw new NotSupportedException (o.GetType ().ToString ());
-
-				writer.WriteEndElement ();
-			}
-
-			ArrayList controlList = savedData.Second as ArrayList;
-			ArrayList stateList = savedData.Third as ArrayList;
-			int idx = 0;
-			foreach (Control child in controlList)
-				SaveControlState (child, stateList [idx++] as Triplet, writer);
+		if (sState != null) {
+			Pair pair = (Pair) sState;
+			LoadViewStateRecursive (pair.First);
+			_requiresPostBack = pair.Second as ArrayList;
 		}
-		writer.WriteEndElement ();
 	}
 
 	internal void SavePageViewState ()
 	{
-		//SavePageStateToPersistenceMedium (SaveViewStateRecursive ());
-		string outputFile = "page-" + this.ToString () + ".xml";
-		XmlTextWriter xmlWriter = new XmlTextWriter (outputFile, Encoding.UTF8);
-		xmlWriter.Formatting = Formatting.Indented;
-		xmlWriter.Indentation = 4;
-		xmlWriter.WriteStartDocument (true);
-		xmlWriter.WriteStartElement ("viewstate");
-		Triplet savedState = SaveViewStateRecursive () as Triplet;
-		SaveControlState (this, savedState, xmlWriter);
-		xmlWriter.WriteEndElement ();
-		xmlWriter.Close ();
+		Pair pair = new Pair ();
+		pair.First = SaveViewStateRecursive ();
+		pair.Second = _requiresPostBack;
+		SavePageStateToPersistenceMedium (pair);
 	}
 
 	public virtual void Validate ()

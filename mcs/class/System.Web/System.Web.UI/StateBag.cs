@@ -22,7 +22,7 @@ namespace System.Web.UI
 	{
 		private bool ignoreCase;
 		private bool marked;
-		private IDictionary bag;
+		private HybridDictionary bag;
 		
 		public StateBag (bool ignoreCase)
 		{
@@ -93,8 +93,9 @@ namespace System.Web.UI
 			else
 				val.Value = value;
 
-			if (val != null && marked)
+			if (val != null && marked) {
 				val.IsDirty = true;
+			}
 
 			return val;
 		}
@@ -153,8 +154,8 @@ namespace System.Web.UI
 			if(bag.Count > 0) {
 				ArrayList keyList = null, valList = null;
 
-				foreach(IDictionaryEnumerator current in bag) {
-					StateItem item = (StateItem)current.Value;
+				foreach (string key in bag.Keys) {
+					StateItem item = (StateItem) bag [key];
 
 					if (item.IsDirty) {
 						if (keyList == null) {
@@ -162,8 +163,8 @@ namespace System.Web.UI
 							valList = new ArrayList ();
 						}
 						
-						keyList.Add (current.Key);
-						valList.Add (current.Value);
+						keyList.Add (key);
+						valList.Add (item.Value);
 					}
 				}
 
