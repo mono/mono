@@ -1,3 +1,10 @@
+2003-09-30  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* added XsdIdentityPath.cs, XsdIdentityState.cs, XsdKeyTable.cs
+	  and XsdWildcard.cs.
+	* XsdParticleValidationState.cs, XsdValidatingReader.cs:
+	  Completely rewrote existing validation engine.
+
 2003-08-24  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XsdValidatingReader.cs,
