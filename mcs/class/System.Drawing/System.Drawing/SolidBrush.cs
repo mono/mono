@@ -37,7 +37,7 @@ namespace System.Drawing
 				if (isModifiable)
 					color = value;
 				else
-					throw new ArgumentException("You may not change this Brush because it does not belong to you.");
+					throw new ArgumentException ("You may not change this Brush because it does not belong to you.");
 			}
 		}
 		
@@ -51,7 +51,7 @@ namespace System.Drawing
 			if (isModifiable)
 				GDIPlus.GdipDeleteBrush (nativeObject);
 			else
-				throw new ArgumentException("You may not change this Brush because it does not belong to you.");
+				throw new ArgumentException ("You may not change this Brush because it does not belong to you.");
 		}
 	}
 }

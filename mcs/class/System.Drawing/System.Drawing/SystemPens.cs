@@ -208,8 +208,8 @@ namespace System.Drawing
 		
 		public static Pen FromSystemColor (Color c)
 		{
-			if(c.IsSystemColor) {
-				Pen newPen = new Pen(c);
+			if (c.IsSystemColor) {
+				Pen newPen = new Pen (c);
 				newPen.isModifiable = false;
 				return newPen;
 			}

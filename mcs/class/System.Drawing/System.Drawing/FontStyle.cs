@@ -10,6 +10,7 @@ using System;
 namespace System.Drawing 
 {
 	[Flags]
+	[Serializable]
 	public enum FontStyle {
 		Regular   = 0,
 		Bold      = 1,

@@ -16,7 +16,7 @@ namespace System.Drawing
 	/// <summary>
 	/// Summary description for StringFormat.
 	/// </summary>
-	public sealed class StringFormat : IDisposable, ICloneable
+	public sealed class StringFormat : MarshalByRefObject, IDisposable, ICloneable
 	{
 		private static StringFormat genericDefault;
 		StringAlignment alignment;

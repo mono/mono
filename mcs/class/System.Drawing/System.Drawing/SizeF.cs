@@ -12,6 +12,7 @@ using System.Runtime.InteropServices;
 
 namespace System.Drawing {
 
+	[Serializable]
 	[ComVisible (true)]
 	public struct SizeF { 
 		

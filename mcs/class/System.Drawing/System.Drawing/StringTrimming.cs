@@ -9,6 +9,7 @@
 using System;
 namespace System.Drawing 
 {
+	[Serializable]
 	public enum  StringTrimming {
 		None              = 0,
 		Character         = 1,

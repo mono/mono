@@ -9,6 +9,7 @@
 using System;
 namespace System.Drawing 
 {
+	[Serializable]
 	public enum StringAlignment {
 		Center = 1,
 		Far = 2,

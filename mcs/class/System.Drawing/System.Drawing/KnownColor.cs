@@ -10,6 +10,7 @@
 using System;
 namespace System.Drawing 
 {
+	[Serializable]
 	public enum KnownColor {
 		ActiveBorder = 1,
 		ActiveCaption = 2,

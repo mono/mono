@@ -8,6 +8,7 @@
 using System;
 namespace System.Drawing 
 {
+	[Serializable]
 	public enum RotateFlipType {
 		RotateNoneFlipNone = 0,
 		Rotate180FlipXY    = 0,

@@ -11,6 +11,7 @@ using System;
 
 namespace System.Drawing {
 	
+	[Serializable]
 	public struct RectangleF { 
 		
 		// Private position and size fields.

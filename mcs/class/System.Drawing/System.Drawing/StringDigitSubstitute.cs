@@ -9,6 +9,7 @@
 using System;
 namespace System.Drawing 
 {
+	[Serializable]
 	public enum StringDigitSubstitute {
 		User        = 0,
 		None        = 1,

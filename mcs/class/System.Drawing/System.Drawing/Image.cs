@@ -351,7 +351,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		GDIPlus.GdipDisposeImage (nativeObject);
 	}
 	
-	void Dispose (bool disposing)
+	protected virtual void Dispose (bool disposing)
 	{
 		if (nativeObject != (IntPtr) 0){
 			DisposeResources ();

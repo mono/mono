@@ -278,7 +278,7 @@ namespace System.Drawing
 		public static Brush FromSystemColor (Color c) 
 		{
 			if (c.IsSystemColor) {
-				SolidBrush newBrush = new SolidBrush(c);
+				SolidBrush newBrush = new SolidBrush (c);
 				newBrush.isModifiable = false;
 				return newBrush;
 			}

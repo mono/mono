@@ -10,6 +10,7 @@ using System;
 namespace System.Drawing 
 {
 	[Flags]
+	[Serializable]
 	public enum StringFormatFlags {
 		DirectionRightToLeft  = 0x0001,
 		DirectionVertical     = 0x0002,

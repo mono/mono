@@ -10,6 +10,7 @@ using System.ComponentModel;
 
 namespace System.Drawing 
 {
+	[Serializable]
 	[Editor ("System.Drawing.Design.ContentAlignmentEditor, " + Consts.AssemblySystem_Drawing_Design, typeof (System.Drawing.Design.UITypeEditor))]
 	public enum ContentAlignment {
 		TopLeft      = 0x001,

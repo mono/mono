@@ -9,6 +9,7 @@
 using System;
 namespace System.Drawing 
 {
+	[Serializable]
 	public enum  StringUnit{
 		World      = 0x00,
 		Display    = 0x01,

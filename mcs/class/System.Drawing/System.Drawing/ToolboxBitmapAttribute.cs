@@ -13,6 +13,7 @@ namespace System.Drawing
 	/// <summary>
 	/// Summary description for ToolboxBitmapAttribute.
 	/// </summary>
+	[AttributeUsage (AttributeTargets.Class)]
 	public class ToolboxBitmapAttribute : Attribute
 	{
 		public ToolboxBitmapAttribute(string imageFile)

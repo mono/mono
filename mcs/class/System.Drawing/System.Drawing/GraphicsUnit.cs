@@ -8,6 +8,7 @@
 using System;
 namespace System.Drawing 
 {
+	[Serializable]
 	public enum GraphicsUnit {
 		World      = 0,
 		Display    = 1,
