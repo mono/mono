@@ -1,5 +1,7 @@
 2005-03-12  Zoltan Varga  <vargaz@freemail.hu>
 
+	* tramp-amd64.c (mono_amd64_tramp_init): Fix typo.
+	
 	* tramp-amd64.c (mono_amd64_tramp_init): Init AOT trampoline as well.
 
 	* mini-amd64.h mini-amd64.c (mono_amd64_exceptions_init): Remove this.
