@@ -1,3 +1,8 @@
+2002-05-02  Dick Porter  <dick@ximian.com>
+
+	* threads.c: Use GC_debug_register_finalizer with GC_debug_malloc.
+	Don't name the synchronisation mutex.
+
 2002-04-30  Jeffrey Stedfast  <fejj@ximian.com>
 
 	* rand.c
