@@ -1,5 +1,7 @@
 2002-07-22  Dietmar Maurer  <dietmar@ximian.com>
 
+	* jit.c (mono_analyze_stack): s/k/k + 1/
+
 	* x86.brg (LOCALLOC): align to MONO_FRAME_ALIGNMENT
 
 	* emit-x86.c (arch_get_argument_info): impl.
