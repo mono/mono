@@ -437,11 +437,13 @@ namespace System.Data.Common {
 						string dsColumnName = parameter.SourceColumn;
 						DataColumnMapping mapping = columnMappings [parameter.SourceColumn];
 						if (mapping != null) dsColumnName = mapping.DataSetColumn;
-						DataRowVersion rowVersion = DataRowVersion.Proposed;
+						DataRowVersion rowVersion = DataRowVersion.Default;
 
 						// Parameter version is ignored for non-update commands
 						if (statementType == StatementType.Update) 
 							rowVersion = parameter.SourceVersion;
+						if (statementType == StatementType.Delete) 
+							rowVersion = DataRowVersion.Original;
 
 						parameter.Value = row [dsColumnName, rowVersion];
 					}
