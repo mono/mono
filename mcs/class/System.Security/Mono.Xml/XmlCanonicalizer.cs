@@ -62,7 +62,7 @@ namespace Mono.Xml {
 		{
 			xnl = nodes;
 			if (nodes == null || nodes.Count < 1)
-			    return null;
+				return new MemoryStream ();
 			return Canonicalize (nodes[0].OwnerDocument);
 		}		
 
@@ -241,6 +241,16 @@ namespace Mono.Xml {
 					if (prefix == string.Empty)
 						has_empty_namespace = true;
 				}
+			}
+			// Do element ns check
+			if (visible && !IsNamespaceRendered (node.Prefix, node.NamespaceURI)) {
+				if (node.Prefix != String.Empty) {
+					// hack hack ;-)
+					XmlAttribute attr = node.OwnerDocument.CreateAttribute ("xmlns", node.Prefix, "http://www.w3.org/2000/xmlns/");
+					attr.Value = node.NamespaceURI;
+					list.Add (attr);
+				} else if (!has_empty_namespace)
+					res.Append (" xmlns=\"" + node.NamespaceURI + "\"");
 			}
 
 			// add empty namespace if needed		    
