@@ -1,5 +1,9 @@
 2003-04-18  Miguel de Icaza  <miguel@ximian.com>
 
+	* ecore.cs (Expression.ImplicitReferenceConversion): handle target
+	types of ValueType on their own case.  Before we were giving them
+	the same treatment as objects.
+
 	* decl.cs (DeclSpace.IsValid): IsValid takes the short name and
 	fullname.  Short name is used to compare against container name.
 	Fullname is used to check against defined namespace names.

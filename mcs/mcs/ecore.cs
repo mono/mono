@@ -729,7 +729,7 @@ namespace Mono.CSharp {
 			// notice that it is possible to write "ValueType v = 1", the ValueType here
 			// is an abstract class, and not really a value type, so we apply the same rules.
 			//
-			if (target_type == TypeManager.object_type || target_type == TypeManager.value_type) {
+			if (target_type == TypeManager.object_type) {
 				//
 				// A pointer type cannot be converted to object
 				// 
@@ -740,6 +740,11 @@ namespace Mono.CSharp {
 					return new BoxedCast (expr);
 				if (expr_type.IsClass || expr_type.IsInterface || expr_type == TypeManager.enum_type)
 					return new EmptyCast (expr, target_type);
+			} else if (target_type == TypeManager.value_type) {
+				if (expr_type.IsValueType)
+					return new BoxedCast (expr);
+				if (expr is NullLiteral)
+					return new BoxedCast (expr);
 			} else if (expr_type.IsSubclassOf (target_type)) {
 				//
 				// Special case: enumeration to System.Enum.
