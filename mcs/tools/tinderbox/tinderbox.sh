@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # TOPDIR: set this to the directory containing
-# your 'mono' and 'mcs' directories
-TOPDIR=~/mono
+# your 'mono' and 'mcs' directories. Do NOT use '~' here.
+TOPDIR=$HOME/mono
 
 # BACKUP: initially this directory should contain a working install of mono.
 # this directory should minimally contain the 'bin' and 'lib' dirs.
@@ -14,15 +14,16 @@ BACKUP=$TOPDIR/install.bak
 INSTALL=$TOPDIR/install
 
 # SENDMAIL: uncomment this line if you want to send notifications.
+# be careful to check the recipients below before running this script!
 #SENDMAIL=$TOPDIR/mcs/tools/tinderbox/smtp
 
 # EMAIL_*: notification addresses. please change these before running!
 EMAIL_FATAL="piersh@friskit.com"
-#EMAIL_MESSAGE="mono-patches@lists.ximian.com"
-EMAIL_MESSAGE="piersh@friskit.com"
+EMAIL_MESSAGE="mono-patches@lists.ximian.com"
+#EMAIL_MESSAGE="piersh@friskit.com"
 #EMAIL_MESSAGE="mono-hackers-list@ximian.com"
 EMAIL_FROM="piersh@friskit.com"
-#EMAIL_CC="-c mono-hackers-list@lists.ximian.com"
+EMAIL_CC="-c mono-hackers-list@lists.ximian.com"
 EMAIL_HOST="zeus.sfhq.friskit.com"
 
 LOGBASE=$TOPDIR/.build.log
@@ -101,7 +102,7 @@ function build_mono ()
 
 	# configure mono build
 	rm -f config.cache
-	./autogen.sh --prefix=/home/server/mono/install 2>&1 | tee -a $LOG
+	./autogen.sh --prefix=$INSTALL 2>&1 | tee -a $LOG
 	[ $PIPESTATUS == "0" ] || return 1
 
 	# clean mono
