@@ -1,5 +1,12 @@
 2003-11-10  Zoltan Varga  <vargaz@freemail.hu>
 
+	* assembly.c (mono_assembly_load_references): Move the image<->assembly
+	assignment code to this function so it gets called recursively for all
+	modules.
+
+	* image.c (load_modules): Remove the assembly assignment since it is
+	now done by mono_assembly_load_references.
+	
 	* icall.c (ves_icall_System_Reflection_Assembly_InternalGetType): 
 	Add 'module' argument.
 	(mono_module_get_types): New helper function.
