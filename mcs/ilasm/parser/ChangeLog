@@ -1,5 +1,9 @@
 2003-03-30 Jackson Harper <jackson@latitudegeo.com>
 
+	* ILParser.jay: Add code from old parser to declare and define classes.
+		
+2003-03-30 Jackson Harper <jackson@latitudegeo.com>
+
 	* ILParser.jay: New grammar that I haven't made a mess of, this
 	takes all the special cases into account much better.
 		

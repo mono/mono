@@ -408,66 +408,119 @@ vtfixup_attr		: /* EMPTY */
 			;
 
 namespace_all		: namespace_head OPEN_BRACE decls CLOSE_BRACE
+                          {
+                                codegen.CurrentNameSpace = null;
+                          }
 			;
 
 namespace_head		: D_NAMESPACE comp_name
+                          {
+                                codegen.CurrentNameSpace = (string) $2;
+                          }
 			;
 
-class_all		: class_head OPEN_BRACE class_decls CLOSE_BRACE
+class_all		: class_head OPEN_BRACE class_decls
+                          CLOSE_BRACE
+                          {
+                                codegen.CurrentClass = null;
+                          }
+                        
 			;
 
-class_head 		: D_CLASS class_attr id extends_clause impl_clause
+class_head 		: D_CLASS class_attr id extends_clause
+                          impl_clause
+                          {
+                                if ($4 != null) {
+					codegen.AddClass ((TypeAttr) $2, (string) $3, 
+						((TypeRef)$4).Type as Class, null);
+				} else {
+					codegen.AddClass ((TypeAttr)$2, (string) $3, null);
+				}
+				
+				ArrayList impl_list = (ArrayList) $5;
+				if (impl_list != null) {
+					foreach (TypeRef type_ref in impl_list)
+						codegen.CurrentClass.AddImplementedInterface (type_ref.Type as Class);
+				}
+                          }
 			;
 
 class_attrs		: class_attrs class_attr
 			;
 
-class_attr		: /* EMPTY */ 
-			| class_attr K_PUBLIC
-			| class_attr K_PRIVATE
-			| class_attr K_NESTED K_PRIVATE
-			| class_attr K_NESTED K_PUBLIC
-			| class_attr K_NESTED K_FAMILY
-			| class_attr K_NESTED K_ASSEMBLY
-			| class_attr K_NESTED K_FAMANDASSEM
-			| class_attr K_NESTED K_FAMORASSEM
-			| class_attr K_VALUE
-			| class_attr K_ENUM
-			| class_attr K_INTERFACE
-			| class_attr K_SEALED
-			| class_attr K_ABSTRACT
-			| class_attr K_AUTO
-			| class_attr K_SEQUENTIAL
-			| class_attr K_EXPLICIT
-			| class_attr K_ANSI
-			| class_attr K_UNICODE
-			| class_attr K_AUTOCHAR
-			| class_attr K_IMPORT
-			| class_attr K_SERIALIZABLE
-			| class_attr K_BEFOREFIELDINIT
-			| class_attr K_SPECIALNAME
-			| class_attr K_RTSPECIALNAME
+class_attr		: /* EMPTY */                           { $$ = new TypeAttr (); }
+			| class_attr K_PUBLIC                   { $$ = (TypeAttr)$1 | TypeAttr.Public; }        
+			| class_attr K_PRIVATE                  { $$ = (TypeAttr)$1 | TypeAttr.Private; }
+			| class_attr K_NESTED K_PRIVATE         { $$ = (TypeAttr)$1 | TypeAttr.NestedPrivate; }
+			| class_attr K_NESTED K_PUBLIC          { $$ = (TypeAttr)$1 | TypeAttr.NestedPublic; }
+			| class_attr K_NESTED K_FAMILY          { $$ = (TypeAttr)$1 | TypeAttr.NestedFamily; }
+			| class_attr K_NESTED K_ASSEMBLY        { $$ = (TypeAttr)$1 | TypeAttr.NestedAssembly;}
+			| class_attr K_NESTED K_FAMANDASSEM     { $$ = (TypeAttr)$1 | TypeAttr.NestedFamAndAssem; }
+			| class_attr K_NESTED K_FAMORASSEM      { $$ = (TypeAttr)$1 | TypeAttr.NestedFamOrAssem; }
+			| class_attr K_VALUE                    {  }
+			| class_attr K_ENUM                     {  }
+			| class_attr K_INTERFACE                { $$ = (TypeAttr)$1 | TypeAttr.Interface; }
+			| class_attr K_SEALED                   { $$ = (TypeAttr)$1 | TypeAttr.Sealed; }
+			| class_attr K_ABSTRACT                 { $$ = (TypeAttr)$1 | TypeAttr.Abstract; }
+			| class_attr K_AUTO                     {  }
+			| class_attr K_SEQUENTIAL               { $$ = (TypeAttr)$1 | TypeAttr.SequentialLayout; }
+			| class_attr K_EXPLICIT                 { $$ = (TypeAttr)$1 | TypeAttr.ExplicitLayout; }
+			| class_attr K_ANSI                     {  }
+			| class_attr K_UNICODE                  { $$ = (TypeAttr)$1 | TypeAttr.UnicodeClass; }
+			| class_attr K_AUTOCHAR                 { $$ = (TypeAttr)$1 | TypeAttr.AutoClass; }
+			| class_attr K_IMPORT                   { $$ = (TypeAttr)$1 | TypeAttr.Import; }
+			| class_attr K_SERIALIZABLE             { $$ = (TypeAttr)$1 | TypeAttr.Serializable; }
+			| class_attr K_BEFOREFIELDINIT          { $$ = (TypeAttr)$1 | TypeAttr.BeforeFieldInit; }
+			| class_attr K_SPECIALNAME              { $$ = (TypeAttr)$1 | TypeAttr.SpecialName; }
+			| class_attr K_RTSPECIALNAME            { $$ = (TypeAttr)$1 | TypeAttr.RTSpecialName; }
 			;
 
 extends_clause		: /* EMPTY */
 			| K_EXTENDS class_ref
+                          {
+                                $$ = $2;
+                          }
 			;
 
 impl_clause		: /* EMPTY */
 			| K_IMPLEMENTS class_refs
+                          {
+                                $$ = $2;
+                          }
 			;
 
 class_refs		: class_ref
+                          {
+                                ArrayList class_list = new ArrayList ();
+                                class_list.Add ($1);
+                                $$ = class_list; 
+                          }
 			| class_refs COMMA class_ref
+                          {
+                                ArrayList class_list = (ArrayList) $1;
+                                class_list.Add ($3);
+                                $$ = class_list;
+                          }
 			;
 
 slashed_name		: comp_name
 			| slashed_name SLASH comp_name
+                          {
+                                $$ = String.Format ("{0}/{1}", $1, $2);
+                          }
 			;
 
 class_ref		: OPEN_BRACKET comp_name CLOSE_BRACKET slashed_name
+                          {
+                                PEAPI.Type type = codegen.ExternTable.GetClass ((string) $2, (string)$4);
+                                $$ = new TypeRef (type, (string) $4);
+                          }
 			| OPEN_BRACKET D_MODULE comp_name CLOSE_BRACKET slashed_name
 			| slashed_name
+                          {
+                                $$ = new TypeRef (codegen.ClassTable.GetReference ((string) $1, null),
+					(string) $1);
+                          }
 			;
 
 class_decls		: /* EMPTY */
