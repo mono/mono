@@ -1,4 +1,7 @@
 2004-01-15 Alon Gazit <along@mainsoft.com>
+	* RadioButtonList.cs: RepeatLayout property should affect the rendered html.	
+
+2004-01-15 Alon Gazit <along@mainsoft.com>
 	* FontInfo.cs: Add validation check to Size property.	
 
 2004-01-07 Alon Gazit <along@mainsoft.com>

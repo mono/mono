@@ -160,6 +160,7 @@ namespace System.Web.UI.WebControls
 			}
 			info.RepeatColumns = RepeatColumns;
 			info.RepeatDirection = RepeatDirection;
+			info.RepeatLayout = RepeatLayout;
 			info.RenderRepeater(writer, this, cStyle, this);
 			if(tabIndex != 0)
 			{
