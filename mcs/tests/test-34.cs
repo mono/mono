@@ -6,6 +6,10 @@ public class Blah {
 	{
 	}
 
+	public static void Bar (int i, params int [] args)
+	{
+	}
+
 	public static void Foo (int i, int j)
 	{
 	}
@@ -17,6 +21,8 @@ public class Blah {
 
 		Foo (i, j);
 		Foo (ref i, ref j);
+
+		Bar (i, j);
 
 		return  0;
 	}
