@@ -1,3 +1,10 @@
+2005-02-10  Raja R Harinath  <rharinath@novell.com>
+
+	* test-342.cs: New test for #52586.
+	* test-343.cs: New test.  Not a bugfix or regression.  Added to
+	ensure our overloading semantics are right.  See
+	errors/cs0121-4.cs for a counterpart.
+
 2005-02-09  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Makefile (TEST_EXCLUDES_net_2_0): Disable gen-72 until the runtime

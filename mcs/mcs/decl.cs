@@ -1413,7 +1413,7 @@ namespace Mono.CSharp {
 			// If we have a base class (we have a base class unless we're
 			// TypeManager.object_type), we deep-copy its MemberCache here.
 			if (Container.BaseCache != null)
-				member_hash = SetupCache (Container.BaseCache);
+				member_hash = DeepCopy (Container.BaseCache.member_hash);
 			else
 				member_hash = new Hashtable ();
 
@@ -1421,7 +1421,12 @@ namespace Mono.CSharp {
 			// method cache with all declared and inherited methods.
 			Type type = container.Type;
 			if (!(type is TypeBuilder) && !type.IsInterface) {
-				method_hash = new Hashtable ();
+				if (Container.BaseCache != null) {
+					method_hash = DeepCopy (Container.BaseCache.method_hash);
+					ClearDeclaredOnly (method_hash);
+				}
+				else
+					method_hash = new Hashtable ();
 				AddMethods (type);
 			}
 
@@ -1448,21 +1453,30 @@ namespace Mono.CSharp {
 		}
 
 		/// <summary>
-		///   Bootstrap this member cache by doing a deep-copy of our base.
+		///   Return a a deep-copy of the hashtable @other.
 		/// </summary>
-		Hashtable SetupCache (MemberCache base_class)
+		Hashtable DeepCopy (Hashtable other)
 		{
 			Hashtable hash = new Hashtable ();
 
-			if (base_class == null)
+			if (other == null)
 				return hash;
 
-			IDictionaryEnumerator it = base_class.member_hash.GetEnumerator ();
+			IDictionaryEnumerator it = other.GetEnumerator ();
 			while (it.MoveNext ()) {
 				hash [it.Key] = ((ArrayList) it.Value).Clone ();
 			 }
                                 
 			return hash;
+		}
+
+		void ClearDeclaredOnly (Hashtable hash)
+		{
+			IDictionaryEnumerator it = hash.GetEnumerator ();
+			while (it.MoveNext ()) {
+				foreach (CacheEntry ce in (ArrayList) it.Value)
+					ce.EntryType &= ~EntryType.Declared;
+			}
 		}
 
 		/// <summary>
@@ -1559,7 +1573,16 @@ namespace Mono.CSharp {
 
 		void AddMethods (BindingFlags bf, Type type)
 		{
-			MemberInfo [] members = type.GetMethods (bf);
+			//
+			// Consider the case:
+			//
+			//   class X { public virtual int f() {} }
+			//   class Y : X {}
+			// 
+			// When processing 'Y', the method_cache will already have a copy of 'f', 
+			// with ReflectedType == X.  However, we want to ensure that its ReflectedType == Y
+			// 
+			MethodBase [] members = type.GetMethods (bf);
 
                         Array.Reverse (members);
 
@@ -1573,16 +1596,27 @@ namespace Mono.CSharp {
 					method_hash.Add (name, list);
 				}
 
-				// Unfortunately, the elements returned by Type.GetMethods() aren't
-				// sorted so we need to do this check for every member.
-				BindingFlags new_bf = bf;
-				if (member.DeclaringType == type)
-					new_bf |= BindingFlags.DeclaredOnly;
+				Type declaring_type = member.DeclaringType;
+				if (declaring_type == type) {
+					list.Add (new CacheEntry (Container, member, MemberTypes.Method, bf));
+					continue;
+				}
 
-				list.Add (new CacheEntry (Container, member, MemberTypes.Method, new_bf));
+				int n = list.Count;
+				while (n-- > 0) {
+					CacheEntry entry = (CacheEntry) list [n];
+					MethodBase old = entry.Member as MethodBase;
+
+					if (member.MethodHandle.Value == old.MethodHandle.Value && 
+					    declaring_type == old.DeclaringType) {
+						entry.Member = member;
+						break;
+					}
+				}
+
+				if (n < 0)
+					throw new InternalErrorException ("cannot find inherited member " + member + " in base classes of " + type);
 			}
-
-                        
 		}
 
 		/// <summary>
@@ -1670,10 +1704,10 @@ namespace Mono.CSharp {
 			MaskType	= Constructor|Event|Field|Method|Property|NestedType
 		}
 
-		protected struct CacheEntry {
+		protected class CacheEntry {
 			public readonly IMemberContainer Container;
-			public readonly EntryType EntryType;
-			public readonly MemberInfo Member;
+			public EntryType EntryType;
+			public MemberInfo Member;
 
 			public CacheEntry (IMemberContainer container, MemberInfo member,
 					   MemberTypes mt, BindingFlags bf)

@@ -1,3 +1,8 @@
+2005-02-10  Raja R Harinath  <rharinath@novell.com>
+
+	* cs0121-4.cs: New test.  Ensure that a param method isn't
+	discarded if the signatures of other normal methods are different.
+
 2005-02-04  Zoltan Varga  <vargaz@freemail.hu>
 
 	* cs1617.cs: Add a newline so do-tests.pl can process it under
