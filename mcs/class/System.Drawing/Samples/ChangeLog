@@ -1,3 +1,7 @@
+2004-07-16  Ravindra <rkumar@novell.com>
+
+	* run-samples.sh: Some minor changes, mostly cosmetic.
+
 2004-06-11  Ravindra <rkumar@novell.com>
 
 	* run-samples.sh: Added a script to run the samples.
