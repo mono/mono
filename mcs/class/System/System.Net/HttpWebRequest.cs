@@ -565,17 +565,17 @@ namespace System.Net
 				: base (HttpWebStream.CreateSocket (webRequest), true)
 			{
 				StreamWriter webWriter = null;
-				string headerValue = null;
-
 
 				webWriter = new StreamWriter (this);
 	
-				webWriter.Write (webRequest.Method + " " + webRequest.actualUri.AbsolutePath + " HTTP/1.1\r\n");
+				webWriter.Write (webRequest.Method + " " + 
+					webRequest.actualUri.AbsolutePath + " HTTP/" + webRequest.version.ToString(2) + "\r\n");
 
-				foreach (string header in webRequest.webHeaders) {
-					headerValue = header + ": " + webRequest.webHeaders[header] + "\r\n";
-					webWriter.Write (headerValue);
-				}
+				foreach (string header in webRequest.webHeaders)
+					webWriter.Write (header + ": " + webRequest.webHeaders[header] + "\r\n");
+
+				// FIXME: write cookie headers (CookieContainer not yet implemented)
+
 				webWriter.Write ("\r\n");
 				webWriter.Flush();
 

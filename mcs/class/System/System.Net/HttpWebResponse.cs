@@ -75,7 +75,6 @@ namespace System.Net
 			}
 			
 			this.webHeaders[last] = value.ToString(); // otherwise we miss the last header
-			// TODO: parse cookies from headers
 		}
 		
 		protected HttpWebResponse (SerializationInfo serializationInfo, StreamingContext streamingContext)
@@ -342,7 +341,7 @@ namespace System.Net
 				parts = ((string)options.Dequeue()).Split ('=');
 				switch (parts[0].ToUpper()) { // cookie options are case-insensitive
 					case "COMMENT":
-						if (cookie.Comment == String.Empty)
+						if (cookie.Comment == null)
 							cookie.Comment = parts[1];
 					break;
 					case "COMMENTURL":
@@ -353,7 +352,7 @@ namespace System.Net
 						cookie.Discard = true;
 					break;
 					case "DOMAIN":
-						if (cookie.Domain == String.Empty)
+						if (cookie.Domain == null)
 							cookie.Domain = parts[1];
 					break;
 					case "MAX-AGE": // RFC Style Set-Cookie2
@@ -365,11 +364,11 @@ namespace System.Net
 							cookie.Expires = DateTime.Parse (parts[1]);
 					break;
 					case "PATH":
-						if (cookie.Path == String.Empty)
+						if (cookie.Path == null)
 							cookie.Path = parts[1];
 					break;
 					case "PORT":
-						if (cookie.Port == String.Empty)
+						if (cookie.Port == null)
 							cookie.Port = parts[1];
 					break;
 					case "SECURE":
@@ -383,6 +382,9 @@ namespace System.Net
 
 			if (cookieCollection == null)
 				cookieCollection = new CookieCollection();
+
+			if (cookie.Domain == null)
+				cookie.Domain = uri.Host;
 
 			cookieCollection.Add (cookie);
 		}
