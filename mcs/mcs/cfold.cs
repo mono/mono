@@ -70,6 +70,7 @@ namespace Mono.CSharp {
 					left = left.ToULong (loc);
 				}
 
+#if WRONG
 				if (other is SByteConstant || other is ShortConstant ||
 				    other is IntConstant || other is LongConstant){
 					Binary.Error_OperatorAmbiguous
@@ -77,6 +78,7 @@ namespace Mono.CSharp {
 					left = null;
 					right = null;
 				}
+#endif
 				return;
 			} else if (left is LongConstant || right is LongConstant){
 				//

@@ -1,5 +1,8 @@
 2002-03-15  Miguel de Icaza  <miguel@ximian.com>
 
+	* expression.cs (Binary): Fix opcode emision.
+	(UnaryMutator.EmitCode): Support checked code generation
+
 	* ecore.cs (MemberLookup): TypeManager.FindMembers will return
 	matches for events for both the Static and Instance scans,
 	pointing to the same element.   Fix that.

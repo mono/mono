@@ -709,7 +709,6 @@ namespace Mono.CSharp {
 			return GetTypeSize (t.GetElementType ());
 		}
 		
-		
 		//
 		// FIXME: We need some way of avoiding the use of temp_storage
 		// for some types of storage (parameters, local variables,
@@ -746,11 +745,36 @@ namespace Mono.CSharp {
 							IntConstant.EmitInt (ig, n);
 					} else 
 						ig.Emit (OpCodes.Ldc_I4_1);
-				
-					if (mode == Mode.PreDecrement)
-						ig.Emit (OpCodes.Sub);
-					else
-						ig.Emit (OpCodes.Add);
+
+					//
+					// Select the opcode based on the check state (then the type)
+					// and the actual operation
+					//
+					if (ec.CheckState){
+						if (expr_type == TypeManager.int32_type ||
+						    expr_type == TypeManager.int64_type){
+							if (mode == Mode.PreDecrement)
+								ig.Emit (OpCodes.Sub_Ovf);
+							else
+								ig.Emit (OpCodes.Add_Ovf);
+						} else if (expr_type == TypeManager.uint32_type ||
+							   expr_type == TypeManager.uint64_type){
+							if (mode == Mode.PreDecrement)
+								ig.Emit (OpCodes.Sub_Ovf_Un);
+							else
+								ig.Emit (OpCodes.Add_Ovf_Un);
+						} else {
+							if (mode == Mode.PreDecrement)
+								ig.Emit (OpCodes.Sub_Ovf);
+							else
+								ig.Emit (OpCodes.Add_Ovf);
+						}
+					} else {
+						if (mode == Mode.PreDecrement)
+							ig.Emit (OpCodes.Sub);
+						else
+							ig.Emit (OpCodes.Add);
+					}
 				} else
 					method.Emit (ec);
 				
@@ -787,11 +811,32 @@ namespace Mono.CSharp {
 							IntConstant.EmitInt (ig, n);
 					} else
 						ig.Emit (OpCodes.Ldc_I4_1);
-				
-					if (mode == Mode.PostDecrement)
-						ig.Emit (OpCodes.Sub);
-					else
-						ig.Emit (OpCodes.Add);
+
+					if (ec.CheckState){
+						if (expr_type == TypeManager.int32_type ||
+						    expr_type == TypeManager.int64_type){
+							if (mode == Mode.PostDecrement)
+								ig.Emit (OpCodes.Sub_Ovf);
+							else
+								ig.Emit (OpCodes.Add_Ovf);
+						} else if (expr_type == TypeManager.uint32_type ||
+							   expr_type == TypeManager.uint64_type){
+							if (mode == Mode.PostDecrement)
+								ig.Emit (OpCodes.Sub_Ovf_Un);
+							else
+								ig.Emit (OpCodes.Add_Ovf_Un);
+						} else {
+							if (mode == Mode.PostDecrement)
+								ig.Emit (OpCodes.Sub_Ovf);
+							else
+								ig.Emit (OpCodes.Add_Ovf);
+						}
+					} else {
+						if (mode == Mode.PostDecrement)
+							ig.Emit (OpCodes.Sub);
+						else
+							ig.Emit (OpCodes.Add);
+					}
 				} else {
 					method.Emit (ec);
 				}
@@ -2107,7 +2152,7 @@ namespace Mono.CSharp {
 					else if (l==TypeManager.uint32_type || l==TypeManager.uint64_type)
 						opcode = OpCodes.Add_Ovf_Un;
 					else
-						opcode = OpCodes.Mul;
+						opcode = OpCodes.Add;
 				} else
 					opcode = OpCodes.Add;
 				break;
