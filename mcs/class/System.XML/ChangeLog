@@ -1,3 +1,7 @@
+2004-01-21  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile : /nowarn:0162 is back.
+
 2004-01-20  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Makefile : amd64 build complains /nowarn:0162. It should not, but
