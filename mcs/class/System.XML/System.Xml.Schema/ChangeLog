@@ -1,3 +1,8 @@
+2004-12-11  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlSchemaUtil.cs : added static ReadTypedValie().
+	* XmlSchemaInference.cs : compile at the end of inference.
+
 2004-12-08  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlValueGetter.cs,

@@ -216,6 +216,9 @@ namespace System.Xml.Schema
 			}
 			else
 				InferElement (el, qname.Namespace, false);
+
+			// finally compile again.
+			schemas.Compile ();
 		}
 
 		private void IncludeXmlAttributes ()

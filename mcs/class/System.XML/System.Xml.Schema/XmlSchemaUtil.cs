@@ -22,6 +22,7 @@
 using System;
 using System.Xml;
 using System.Collections;
+using System.Text;
 using Mono.Xml;
 using Mono.Xml.Schema;
 using System.Xml.Serialization;
@@ -76,7 +77,7 @@ namespace System.Xml.Schema
 				table.Set (qname, obj);
 		}
 
-		public static void CompileID(string id,  XmlSchemaObject xso, Hashtable idCollection, ValidationEventHandler h)
+		public static void CompileID (string id,  XmlSchemaObject xso, Hashtable idCollection, ValidationEventHandler h)
 		{
 			//check if the string conforms to http://www.w3.org/TR/2001/REC-xmlschema-2-20010502/datatypes.html#ID
 			// 1. ID must be a NCName
@@ -91,25 +92,25 @@ namespace System.Xml.Schema
 				idCollection.Add(id,xso);
 		}
 
-		public static bool CheckAnyUri(string uri)
+		public static bool CheckAnyUri (string uri)
 		{
 			if (uri.StartsWith ("##"))
 				return false;
 			return true;
 		}
 
-		public static bool CheckNormalizedString(string token)
+		public static bool CheckNormalizedString (string token)
 		{
 			return true;
 		}
 
-		public static bool CheckNCName(string name)
+		public static bool CheckNCName (string name)
 		{
 			//check if the string conforms to http://www.w3.org/TR/2001/REC-xmlschema-2-20010502/datatypes.html#NCName
 			return XmlChar.IsNCName (name);
 		}
 
-		public static bool CheckQName(XmlQualifiedName qname)
+		public static bool CheckQName (XmlQualifiedName qname)
 		{
 			// What is this doing?
 			return true;
@@ -564,5 +565,52 @@ namespace System.Xml.Schema
 			return errorCount;
 		}
 
+#if NET_2_0
+		public static object ReadTypedValue (XmlReader reader,
+			object type, IXmlNamespaceResolver nsResolver,
+			StringBuilder tmpBuilder)
+#else
+		public static object ReadTypedValue (XmlReader reader,
+			object type, XmlNamespaceManager nsResolver,
+			StringBuilder tmpBuilder)
+#endif
+		{
+			if (tmpBuilder == null)
+				tmpBuilder = new StringBuilder ();
+			XmlSchemaDatatype dt = type as XmlSchemaDatatype;
+			XmlSchemaSimpleType st = type as XmlSchemaSimpleType;
+			if (st != null)
+				dt = st.Datatype;
+			if (dt == null)
+				return null;
+
+			switch (reader.NodeType) {
+			case XmlNodeType.Element:
+				if (reader.IsEmptyElement)
+					return null;
+
+				tmpBuilder.Length = 0;
+				bool loop = true;
+				do {
+					reader.Read ();
+					switch (reader.NodeType) {
+					case XmlNodeType.SignificantWhitespace:
+					case XmlNodeType.Text:
+					case XmlNodeType.CDATA:
+						tmpBuilder.Append (reader.Value);
+						break;
+					case XmlNodeType.Comment:
+						break;
+					default:
+						loop = false;
+						break;
+					}
+				} while (loop && !reader.EOF && reader.ReadState == ReadState.Interactive);
+				return dt.ParseValue (tmpBuilder.ToString (), reader.NameTable, nsResolver);
+			case XmlNodeType.Attribute:
+				return dt.ParseValue (reader.Value, reader.NameTable, nsResolver);
+			}
+			return null;
+		}
 	}
 }
