@@ -136,6 +136,16 @@ namespace System.Windows.Forms {
 		#region Local Variables
 		internal bool			closing;
 
+		[Flags]
+		enum Flags {
+			ShowInTaskbar	= 0x0001,
+			MaximizeBox		= 0x0002,
+			MinimizeBox		= 0x0004,
+			TopMost			= 0x0008
+		}
+
+		Flags flags = Flags.ShowInTaskbar | Flags.MaximizeBox | Flags.MinimizeBox;
+		FormBorderStyle formBorderStyle = FormBorderStyle.Sizable;
 		private static bool		autoscale;
 		private static Size		autoscale_base_size;
 		private bool			is_modal;
@@ -185,9 +195,9 @@ namespace System.Windows.Forms {
 					cp = base.CreateParams;
 
 					cp.Style = (int)(WindowStyles.WS_OVERLAPPEDWINDOW | 
-							 WindowStyles.WS_VISIBLE | 
-							 WindowStyles.WS_CLIPSIBLINGS | 
-							 WindowStyles.WS_CLIPCHILDREN);
+						WindowStyles.WS_VISIBLE | 
+						WindowStyles.WS_CLIPSIBLINGS | 
+						WindowStyles.WS_CLIPCHILDREN);
 
 					cp.Width = 250;
 					cp.Height = 250;
@@ -320,6 +330,14 @@ namespace System.Windows.Forms {
 
 
 		#region Public Static Properties
+
+		public static Form ActiveForm {
+			get {
+				//FIXME: create next driver call
+				return null;
+			}
+		}
+
 		#endregion	// Public Static Properties
 
 		#region Public Instance Properties
@@ -377,6 +395,17 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		public FormBorderStyle FormBorderStyle {
+			get {
+				return formBorderStyle;
+			}
+			set {
+				formBorderStyle = value;
+				Invalidate ();
+			}
+		}
+
+
 		public bool KeyPreview {
 			get {
 				return key_preview;
@@ -384,6 +413,18 @@ namespace System.Windows.Forms {
 
 			set {
 				key_preview = value;
+			}
+		}
+
+		public bool MaximizeBox {
+			get {
+				return (flags & Flags.MaximizeBox) != 0;
+			}
+			set {
+				if (value)
+					flags &= ~Flags.MaximizeBox;
+				else
+					flags |= Flags.MaximizeBox;
 			}
 		}
 
@@ -411,6 +452,18 @@ namespace System.Windows.Forms {
 					menu.SetForm (this);
 					MenuAPI.SetMenuBarWindow (menu.Handle, form_parent_window);
 				}
+			}
+		}
+
+		public bool MinimizeBox {
+			get {
+				return (flags & Flags.MinimizeBox) != 0;
+			}
+			set {
+				if (value)
+					flags &= ~Flags.MinimizeBox;
+				else
+					flags |= Flags.MinimizeBox;
 			}
 		}
 
@@ -455,6 +508,18 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		public bool ShowInTaskbar {
+			get {
+				return (flags & Flags.ShowInTaskbar) != 0;
+			}
+			set {
+				if (value)
+					flags &= ~Flags.ShowInTaskbar;
+				else
+					flags |= Flags.ShowInTaskbar;
+			}
+		}
+
 		public FormStartPosition StartPosition {
 			get {
 				return start_position;
@@ -490,6 +555,24 @@ namespace System.Windows.Forms {
 				}
 			}
 		}
+
+		public bool TopMost {
+			get {
+				return (flags & Flags.TopMost) != 0;
+			}
+			set {
+				if (TopMost == value)
+					return;
+
+				if (value)
+					flags &= ~Flags.TopMost;
+				else
+					flags |= Flags.TopMost;
+
+				XplatUI.SetTopmost(window.Handle, owner != null ? owner.window.Handle : IntPtr.Zero, TopMost);
+			}
+		}
+
 		#endregion	// Public Instance Properties
 
 		#region Protected Instance Properties
@@ -517,6 +600,13 @@ namespace System.Windows.Forms {
 				cp.Style |= (int)WindowStyles.WS_VISIBLE;
 				cp.Style |= (int)WindowStyles.WS_CLIPSIBLINGS;
 				cp.Style |= (int)WindowStyles.WS_CLIPCHILDREN;
+
+				if (ShowInTaskbar)
+					cp.ExStyle |= (int)WindowStyles.WS_EX_APPWINDOW;
+				if (MaximizeBox)
+					cp.Style |= (int)WindowStyles.WS_MAXIMIZEBOX;
+				if (MinimizeBox)
+					cp.Style |= (int)WindowStyles.WS_MINIMIZEBOX;
 
 				return cp;
 			}

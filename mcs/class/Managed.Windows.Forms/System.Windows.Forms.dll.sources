@@ -197,6 +197,7 @@ System.Windows.Forms/Theme.cs
 System.Windows.Forms/ThemeEngine.cs
 System.Windows.Forms/ThemeGtk.cs
 System.Windows.Forms/ThemeWin32Classic.cs
+System.Windows.Forms/ThreadExceptionDialog.cs
 System.Windows.Forms/TickStyle.cs
 System.Windows.Forms/Timer.cs
 System.Windows.Forms/TODOAttribute.cs

@@ -300,9 +300,17 @@ namespace System.Windows.Forms {
 		public static void OnThreadException(Exception t) {
 			if (Application.ThreadException != null) {
 				Application.ThreadException(null, new ThreadExceptionEventArgs(t));
-			} else {
-				XplatUI.HandleException(t);
+				return;
 			}
+
+			// TODO: Missing implementation
+			//if (SystemInformation.UserInteractive)
+			{
+				Form form = new ThreadExceptionDialog (t);
+				form.ShowDialog ();
+			}
+			//else
+				Console.WriteLine (t.ToString ());
 		}
 
 		public static void RemoveMessageFilter(IMessageFilter filter) {

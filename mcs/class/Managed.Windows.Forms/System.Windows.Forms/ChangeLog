@@ -1,5 +1,15 @@
 2004-12-03  Marek Safar  <marek.safar@seznam.cz>
 
+	* Application.cs (OnThreadException): Use ThreadExceptionDialog.
+
+	* Form.cs: Add ActiveForm, FormBorderStyle, MaximizeBox,
+	MinimizeBox, ShowInTaskbar, TopMost properties.
+
+	* ThreadExceptionDialog.cs: Implemented (disabled TextBox until
+	will be implemented).
+
+2004-12-03  Marek Safar  <marek.safar@seznam.cz>
+
 	* OwnerDrawPropertyBag.cs: New internal parameterless ctor.
 
 	* TreeNode.cs: Implemented ICloneable, Fixed to pass my simple

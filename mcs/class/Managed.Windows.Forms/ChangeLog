@@ -1,5 +1,9 @@
 2004-12-03  Marek Safar  <marek.safar@seznam.cz>
 
+	* System.Windows.Forms.dll.sources: Add ThreadExceptionDialog.cs
+
+2004-12-03  Marek Safar  <marek.safar@seznam.cz>
+
 	* Makefile: Added System.Drawing.dll deps for tests.
 
 	* System.Windows.Forms_test.dll.sources: New test files.
