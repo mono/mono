@@ -1,6 +1,15 @@
 
 2003-05-21	Gaurav Vaish <gvaish_mono AT lycos.com>
 
+	* HtmlControlAdapter.cs : A little more implementation.
+	* HtmlMobileTextWriter.cs,
+	* MultiPartWriter.cs,
+	* MobileTextWriter.cs   : Dummy implementation.
+	* MobileControl.cs      : Now implements IAttributeAccessor.
+	                          -- Commented out.
+
+2003-05-21	Gaurav Vaish <gvaish_mono AT lycos.com>
+
 	* HtmlControlAdapter.cs : Partial implementation.
 	* HtmlFormAdapter.cs    : Initial implementation.
 	* HtmlPageAdapter.cs    : Initial implementation.

@@ -69,5 +69,41 @@ namespace System.Web.UI.MobileControls.Adapters
 				return false;
 			}
 		}
+
+		[MonoTODO]
+		private void AddAttributePrivate(HtmlMobileTextWriter writer,
+		                                 string attribute)
+		{
+			//string val = Control.GetAttribute(attribute);
+			string val = String.Empty;
+			if(val != null && val.Length > 0)
+			{
+				writer.WriteAttribute(attribute, val);
+			}
+		}
+
+		protected virtual void AddAccesskey(HtmlMobileTextWriter writer)
+		{
+			if(Device.SupportsAccesskeyAttribute)
+			{
+				AddAttributePrivate(writer, "accesskey");
+			}
+		}
+		
+		protected virtual void AddAttributes(HtmlMobileTextWriter writer)
+		{
+		}
+		
+		protected virtual void AddJPhoneMultiMediaAttributes(
+		                         HtmlMobileTextWriter writer)
+		{
+			if(Device.SupportsJPhoneMultiMediaAttributes)
+			{
+				foreach(string cAttrib in multimediaAttrs)
+				{
+					AddAttributePrivate(writer, cAttrib);
+				}
+			}
+		}
 	}
 }
