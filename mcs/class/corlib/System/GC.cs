@@ -14,6 +14,7 @@ using System;
 namespace System {
 	public sealed class GC {
 		
+		[MonoTODO]
 		public static void SuppressFinalize (object obj)
 		{
 			throw new NotImplementedException ();

@@ -308,6 +308,7 @@ namespace System {
 			return attributes;
 		}
 
+		[MonoTODO]
 		public override int GetHashCode ()
 		{
 			throw new NotImplementedException ();

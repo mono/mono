@@ -33,6 +33,7 @@ namespace System
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern void get_type_info (RuntimeTypeHandle type, out MonoTypeInfo info);
 
+		[MonoTODO]
 		internal MonoType (Object obj) {
 			// this should not be used - lupus
 			type_from_obj (this, obj);
@@ -46,6 +47,7 @@ namespace System
 			return get_attributes (this);
 		}
 
+		[MonoTODO]
 		protected override ConstructorInfo GetConstructorImpl (BindingFlags bindingAttr, Binder binder, CallingConventions callConvention, Type[] types, ParameterModifier[] modifiers) {
 			throw new NotImplementedException ();
 		}
@@ -53,6 +55,7 @@ namespace System
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern override ConstructorInfo[] GetConstructors (BindingFlags bindingAttr);
 
+		[MonoTODO]
 		public override EventInfo GetEvent (string name, BindingFlags bindingAttr) {
 			throw new NotImplementedException ();
 		}
@@ -67,6 +70,7 @@ namespace System
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		[MonoTODO]
 		public extern override FieldInfo[] GetFields (BindingFlags bindingAttr);
 
 		public override Type GetInterface (string name, bool ignoreCase) {
@@ -74,6 +78,7 @@ namespace System
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		[MonoTODO]
 		public extern override Type[] GetInterfaces();
 		
 		public override MemberInfo[] GetMembers( BindingFlags bindingAttr) {

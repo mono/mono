@@ -317,6 +317,7 @@ namespace System {
 				return 1;
 		}
 
+		[MonoTODO]
 		internal static int _Compare (string strA, int indexA, string strB, int indexB,
 					      int length, CultureInfo culture,
 					      _StringCompareMode mode)
