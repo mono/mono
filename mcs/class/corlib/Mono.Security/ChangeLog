@@ -1,3 +1,10 @@
+2004-04-28  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ASN1.cs: In sync with Mono.Security.dll version.
+	* ASN1Convert.cs: In sync with Mono.Security.dll version.
+	* PKCS7.cs: In sync with Mono.Security.dll version.
+	* StrongName.cs: In sync with Mono.Security.dll version.
+
 2004-04-20  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ASN1.cs: Added SaveToFile for easier debugging. Patch from
