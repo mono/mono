@@ -1,3 +1,4 @@
+#if NET_2_0
 /*
  Copyright (c) 2003-2004 Niels Kokholm <kokholm@itu.dk> and Peter Sestoft <sestoft@dina.kvl.dk>
  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -262,3 +263,4 @@ namespace nunit.trees.RBDictionary
 		}
 	}
 }
+#endif
