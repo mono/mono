@@ -1,3 +1,6 @@
+2005-04-05 Ritvik Mayank <mritvik@novell.com>
+	* test-mbas.make : Minor change .
+
 2005-04-04 Ritvik Mayank <mritvik@novell.com>
 	* Moved the test cases to respective directories 
 

@@ -3,12 +3,12 @@ COMPILER = $(BASCOMPILE)
 endif
 
 ifndef PATTERN
-PATTERN = *.vb
+PATTERN = ./*/*.vb
 endif
 
 COMPILER_FLAGS = /libpath:../../../../class/lib/default /imports:System
 LIBRARY_OPT = /target:library
-DISTFILES = $(wildcard README.tests) $(wildcard *.vb) $(wildcard *.make) $(widlcard *.pl)
+DISTFILES = $(wildcard README.tests) $(wildcard ./*/*.vb) $(wildcard *.make) $(widlcard *.pl)
 
 run-test-local: 
 	$(MAKE) clean-local
