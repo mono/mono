@@ -1,3 +1,7 @@
+2004-11-15  Zoltan Varga  <vargaz@freemail.hu>
+
+	* cil-opcodes.xml: Add missing mono_func2.
+
 2004-11-13  Zoltan Varga  <vargaz@freemail.hu>
 
 	* cil-opcodes.xml: Add missing mono_save_lmf and mono_restore_lmf.
