@@ -1,3 +1,7 @@
+2004-07-29  Atsushi Enomoto <atsushi@ximian.com>
+
+	* Added SubtreeXmlReader.cs.
+
 2004-07-13  Atsushi Enomoto <atsushi@ximian.com>
 
 	* Added XmlFilterReader.cs.
