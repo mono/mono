@@ -104,6 +104,8 @@
 //
 // ** Identity Constraints and DataRelations
 //
+// *** DataRelations from element identity constraints
+//
 //	Only constraints on "DataSet element" is considered. All other
 //	constraint definitions are ignored. Note that it is DataSet that has
 //	the property Relations (of type DataRelationCollection).
@@ -120,6 +122,10 @@
 //		  XPath step is OK (even if the mapped node does not exist).
 //		* field to QName that is mapped to DataColumn in the DataTable
 //		  (even ./QName is not allowed)
+//
+// *** DataRelations from annotations
+//
+//	See http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpguide/html/_mapping_relationship_specified_for_nested_elements.asp and http://msdn.microsoft.com/library/en-us/cpguide/html/_specifying_relationship_between_elements_with_no_nesting.asp
 //
 // ** Informative References
 //
@@ -148,11 +154,16 @@ namespace System.Data
 			// reference resolution. XmlSchema.Namespace should work.
 			a.SchemaTypeName = new XmlQualifiedName ("integer", System.Xml.Schema.XmlSchema.Namespace);
 			s.Items.Add (a);
+			XmlSchemaElement e = new XmlSchemaElement ();
+			e.Name = "bar";
+			s.Items.Add (e);
 			s.Compile (null);
 			schemaIntegerType = a.AttributeType as XmlSchemaDatatype;
+			schemaAnyType = e.ElementType as XmlSchemaComplexType;
 		}
 
 		static readonly XmlSchemaDatatype schemaIntegerType;
+		static readonly XmlSchemaComplexType schemaAnyType;
 
 		DataSet dataset;
 		DataTable table;
@@ -181,6 +192,9 @@ namespace System.Data
 		ArrayList currentNonOrdinalColumns = new ArrayList ();
 		ArrayList currentColumnNames = new ArrayList ();
 
+		// used to determine if it handles the only one element as DataSet
+		int globalElementCount;
+
 		// .ctor()
 
 		public XmlSchemaDataImporter (DataSet dataset, XmlReader reader)
@@ -193,6 +207,21 @@ namespace System.Data
 		{
 			this.table = table;
 			ProcessMain (reader);
+		}
+
+		// types
+		struct RelationMapping
+		{
+			public RelationMapping (XmlSchemaElement el, DataTable table, DataColumn col)
+			{
+				Element = el;
+				Table = table;
+				Column = col;
+			}
+
+			public XmlSchemaElement Element;
+			public DataTable Table;
+			public DataColumn Column;
 		}
 
 		// properties
@@ -218,22 +247,34 @@ namespace System.Data
 			if (reader.NodeType == XmlNodeType.EndElement && reader.LocalName == "schema" && reader.NamespaceURI == System.Xml.Schema.XmlSchema.Namespace)
 				reader.ReadEndElement ();
 			schema.Compile (null);
-			if (schema.Id != null && dataset != null)
+			if (schema.Id != null)
 				dataset.DataSetName = schema.Id; // default
+			dataset.Namespace = schema.TargetNamespace;
 
-			foreach (XmlSchemaObject obj in schema.Items)
-				if (obj is XmlSchemaElement)
-					targetElements.Add (obj);
+			foreach (XmlSchemaObject obj in schema.Items) {
+				if (obj is XmlSchemaElement) {
+					XmlSchemaElement el = obj as XmlSchemaElement;
+					if (el.ElementType is XmlSchemaComplexType &&
+el.ElementType != schemaAnyType)
+						targetElements.Add (obj);
+				}
+			}
 
 			// This collection will grow up while processing elements.
-			int globals = targetElements.Count;
+			globalElementCount = targetElements.Count;
 
-			for (int i = 0; i < globals; i++)
+			for (int i = 0; i < globalElementCount; i++)
 				ProcessGlobalElement ((XmlSchemaElement) targetElements [i]);
 
 			// Rest are local elements.
-			for (int i = globals; i < targetElements.Count; i++)
+			for (int i = globalElementCount; i < targetElements.Count; i++)
 				ProcessDataTableElement ((XmlSchemaElement) targetElements [i]);
+
+			// Handle relation definitions written as xs:annotation.
+			// See detail: http://msdn.microsoft.com/library/shared/happyUrl/fnf_msdn.asp?Redirect=%22http://msdn.microsoft.com/404/default.asp%22
+			foreach (XmlSchemaObject obj in schema.Items)
+				if (obj is XmlSchemaAnnotation)
+					HandleAnnotations ((XmlSchemaAnnotation) obj, false);
 
 			if (datasetElement != null) {
 				// Handle constraints in the DataSet element. First keys.
@@ -275,14 +316,14 @@ namespace System.Data
 			// FIXME: It should be more simple. It is likely to occur when the type was not resulted in a DataTable
 
 			// Read the design notes for detail... it is very complicated.
-			if (schema.Elements.Count == 1 &&
-				el.SchemaType is XmlSchemaComplexType) { // i.e. defined inline (IT IS required!! but wtf?)
+
+			if (globalElementCount == 1 && el.SchemaType is XmlSchemaComplexType) {
 				XmlSchemaComplexType ct = (XmlSchemaComplexType) el.SchemaType;
 				XmlSchemaGroupBase gb = ct.ContentTypeParticle as XmlSchemaGroupBase;
 				XmlSchemaElement cpElem = gb != null && gb.Items.Count > 0 ? gb.Items [0] as XmlSchemaElement : null;
 				XmlSchemaComplexType ct2 = cpElem != null ? cpElem.ElementType as XmlSchemaComplexType : null;
 				// What a complex condition!!!!!!!!!
-				if (cpElem != null && ct2 != null && ct2.Attributes.Count == 0) {
+				if (ct2 != null && ct != schemaAnyType && ct.AttributeUses.Count == 0) {
 					ProcessDataSetElement (el);
 					return;
 				}
@@ -290,7 +331,7 @@ namespace System.Data
 
 
 			// If type is not complex, just skip this element
-			if (! (el.ElementType is XmlSchemaComplexType))
+			if (! (el.ElementType is XmlSchemaComplexType && el.ElementType != schemaAnyType))
 				return;
 
 			// Register as a top-level element
@@ -301,8 +342,7 @@ namespace System.Data
 
 		private void ProcessDataSetElement (XmlSchemaElement el)
 		{
-			if (dataset != null)
-				dataset.DataSetName = el.Name;
+			dataset.DataSetName = el.Name;
 			this.datasetElement = el;
 
 			// Search for msdata:Locale attribute
@@ -311,10 +351,7 @@ namespace System.Data
 					if (attr.LocalName == "Locale" &&
 						attr.NamespaceURI == XmlConstants.MsdataNamespace) {
 						CultureInfo ci = new CultureInfo (attr.Value);
-						if (dataset != null)
-							dataset.Locale = ci;
-						else
-							table.Locale = ci;
+						dataset.Locale = ci;
 					}
 				}
 			}
@@ -375,16 +412,32 @@ namespace System.Data
 			// Handle complex type (NOTE: It is or should be 
 			// impossible the type is other than complex type).
 			XmlSchemaComplexType ct = (XmlSchemaComplexType) el.ElementType;
+
 			// Handle attributes
 			foreach (DictionaryEntry de in ct.AttributeUses)
 				ImportColumnAttribute ((XmlSchemaAttribute) de.Value);
 
 			// Handle content type particle
 			if (ct.ContentTypeParticle is XmlSchemaElement)
-				ImportColumnElement ((XmlSchemaElement) ct.ContentTypeParticle, name);
+				ImportColumnElement (el, (XmlSchemaElement) ct.ContentTypeParticle);
 			else if (ct.ContentTypeParticle is XmlSchemaGroupBase)
-				ImportColumnGroupBase ((XmlSchemaGroupBase) ct.ContentTypeParticle, name);
+				ImportColumnGroupBase (el, (XmlSchemaGroupBase) ct.ContentTypeParticle);
 			// else if null then do nothing.
+
+			// Handle simple content
+			switch (ct.ContentType) {
+			case XmlSchemaContentType.TextOnly:
+			case XmlSchemaContentType.Mixed:
+				// LAMESPEC: When reading from XML Schema, it maps to "_text", while on the data inference, it is mapped to "_Text" (case ignorant).
+				string simpleName = el.QualifiedName.Name + "_text";
+				DataColumn simple = new DataColumn (simpleName);
+				simple.AllowDBNull = (el.MinOccurs == 0);
+				simple.ColumnMapping = MappingType.SimpleContent;
+				simple.DataType = ConvertDatatype (ct.Datatype);
+				currentNonOrdinalColumns.Add (simple);
+				currentColumnNames.Add (simpleName);
+				break;
+			}
 
 			// add columns to the table in specified order 
 			// (by msdata:Ordinal attributes)
@@ -396,15 +449,23 @@ namespace System.Data
 			foreach (DataColumn dc in currentNonOrdinalColumns)
 				contextTable.Columns.Add (dc);
 
+			HandlePopulatedRelationship (el);
+
+			contextTable = null;
+		}
+
+		private void HandlePopulatedRelationship (XmlSchemaElement el)
+		{
 			// If there is a parent column, create DataRelation and pk
 			DataColumn col = relationParentColumns [el] as DataColumn;
 			if (col != null) {
 				if (col.Table.PrimaryKey.Length > 0)
-					throw new DataException (String.Format ("There is already primary keys in the table \"{0}\".", contextTable.TableName));
+					throw new DataException (String.Format ("There is already primary key columns in the table \"{0}\".", contextTable.TableName));
 				col.Table.PrimaryKey = new DataColumn [] {col};
 
 				DataColumn child = new DataColumn ();
 				child.ColumnName = col.ColumnName;
+				child.Namespace = String.Empty; // don't copy
 				child.ColumnMapping = MappingType.Hidden;
 				child.DataType = col.DataType;
 				contextTable.Columns.Add (child);
@@ -414,19 +475,38 @@ namespace System.Data
 					rel.Nested = true;
 				dataset.Relations.Add (rel);
 			}
-
-			contextTable = null;
 		}
 
-		private void ImportColumnGroupBase (XmlSchemaGroupBase gb, string parentName)
+		/*
+		private void HandleAttributes (XmlSchemaObjectCollection atts)
+		{
+			foreach (XmlSchemaObject attrObj in atts) {
+				XmlSchemaAttribute attr = attrObj as XmlSchemaAttribute;
+				if (attr != null)
+					ImportColumnAttribute (attr);
+				else
+					HandleAttributes (((XmlSchemaAttributeGroup) attrObj).Attributes);
+			}
+		}
+		*/
+
+		private void ImportColumnGroupBase (XmlSchemaElement parent, XmlSchemaGroupBase gb)
 		{
 			foreach (XmlSchemaParticle p in gb.Items) {
 				XmlSchemaElement el = p as XmlSchemaElement;
 				if (el != null)
-					ImportColumnElement (el, parentName);
+					ImportColumnElement (parent, el);
 				else
-					ImportColumnGroupBase ((XmlSchemaGroupBase) gb, parentName);
+					ImportColumnGroupBase (parent, (XmlSchemaGroupBase) gb);
 			}
+		}
+
+		private XmlSchemaDatatype GetSchemaPrimitiveType (object type)
+		{
+			XmlSchemaDatatype dt = type as XmlSchemaDatatype;
+			if (dt == null && type != null)
+				dt = ((XmlSchemaSimpleType) type).Datatype;
+			return dt;
 		}
 
 		// Note that this column might be Hidden
@@ -434,9 +514,8 @@ namespace System.Data
 		{
 			DataColumn col = new DataColumn ();
 			col.ColumnName = attr.QualifiedName.Name;
-			XmlSchemaDatatype dt = attr.AttributeType as XmlSchemaDatatype;
-			if (dt == null && attr.AttributeType != null)
-				dt = ((XmlSchemaSimpleType) attr.AttributeType).Datatype;
+			col.Namespace = attr.QualifiedName.Namespace;
+			XmlSchemaDatatype dt = GetSchemaPrimitiveType (attr.AttributeType);
 			// This complicated check comes from the fact that
 			// MS.NET fails to map System.Object to anyType (that
 			// will cause ReadTypedObject() fail on XmlValidatingReader).
@@ -447,8 +526,14 @@ namespace System.Data
 				col.DataType = typeof (string);
 			// When attribute use="prohibited", then it is regarded as 
 			// Hidden column.
-			col.ColumnMapping = attr.Use == XmlSchemaUse.Prohibited ? MappingType.Hidden : MappingType.Attribute;
-			col.DefaultValue = attr.DefaultValue;
+			if (attr.Use == XmlSchemaUse.Prohibited)
+				col.ColumnMapping = MappingType.Hidden;
+			else {
+				col.ColumnMapping = MappingType.Attribute;
+				col.DefaultValue = GetAttributeDefaultValue (attr);
+			}
+			if (attr.Use == XmlSchemaUse.Required)
+				col.AllowDBNull = false;
 
 			FillFacet (col, attr.AttributeType as XmlSchemaSimpleType);
 
@@ -456,18 +541,22 @@ namespace System.Data
 			ImportColumnCommon (attr, attr.QualifiedName, col);
 		}
 
-		private void ImportColumnElement (XmlSchemaElement el, string parentName)
+		private void ImportColumnElement (XmlSchemaElement parent, XmlSchemaElement el)
 		{
 			// FIXME: element nest check
 
 			DataColumn col = new DataColumn ();
-			col.DefaultValue = el.DefaultValue;
+			col.DefaultValue = GetElementDefaultValue (el);
 			col.AllowDBNull = (el.MinOccurs == 0);
 
 			// FIXME: need to handle array item for maxOccurs > 1
-			if (el.ElementType is XmlSchemaComplexType)
+			if (el.ElementType is XmlSchemaComplexType && el.ElementType != schemaAnyType) {
 				// import new table and set this column as reference.
-				FillDataColumnComplexElement (el, col, parentName);
+				FillDataColumnComplexElement (parent, el, col);
+				// If the element is not referenced one, the element will be handled later.
+				if (el.RefName == XmlQualifiedName.Empty)
+					targetElements.Add (el);
+			}
 			else
 				FillDataColumnSimpleElement (el, col);
 
@@ -478,8 +567,6 @@ namespace System.Data
 		// common process for element and attribute
 		private void ImportColumnCommon (XmlSchemaAnnotated obj, XmlQualifiedName name, DataColumn col)
 		{
-			col.Namespace = name.Namespace;
-
 			int ordinal = -1;
 			if (obj.UnhandledAttributes != null) {
 				foreach (XmlAttribute attr in obj.UnhandledAttributes) {
@@ -512,44 +599,76 @@ namespace System.Data
 		}
 
 		[MonoTODO]
-		private void FillDataColumnComplexElement (XmlSchemaElement el, DataColumn col, string parentName)
+		private void FillDataColumnComplexElement (XmlSchemaElement parent, XmlSchemaElement el, DataColumn col)
 		{
 			if (targetElements.Contains (el))
 				return; // do nothing
 
-			// Those components will be handled later.
-			targetElements.Add (el);
-
-			// create identical name
-			string name = parentName + "_Id";
-			if (currentColumnNames.Contains (name))
-				throw new DataException (String.Format ("There is already a column that has the same name: {0}", name));
-
-			col.ColumnName = name;
-			col.ColumnMapping = MappingType.Hidden;
-			col.DataType = typeof (int);
+			FillUniqueKeyColumn (parent, el, col);
 
 			// For nested relations, DataRelation.Nested will be filled later
 			if (el.SchemaType != el.ElementType)
 				nestedRelationColumns [el] = col;
 
+			// FIXME: Handle "relationship" annotations
+//			if (el.Annotation != null)
+//				HandleAnnotations (el.Annotation, true);
+
 			relationParentColumns.Add (el, col);
+		}
+
+		private void FillUniqueKeyColumn (XmlSchemaElement parent, XmlSchemaElement el, DataColumn col)
+		{
+			// check name identity
+			string name = parent.QualifiedName.Name + "_Id";
+			if (currentColumnNames.Contains (name))
+				throw new DataException (String.Format ("There is already a column that has the same name: {0}", name));
+
+			col.ColumnName = name;
+			col.ColumnMapping = MappingType.Hidden;
+			col.Namespace = parent.QualifiedName.Namespace;
+			col.DataType = typeof (int);
+			col.Unique = true;
+			col.AutoIncrement = true;
+			col.AllowDBNull = false;
+		}
+
+		private void FillDataColumnRepeatedSimpleElement (XmlSchemaElement parent, XmlSchemaElement el, DataColumn col)
+		{
+			if (targetElements.Contains (el))
+				return; // do nothing
+
+			FillUniqueKeyColumn (parent, el, col);
+			// FIXME: confirm.
+			// Those components will be handled later.
+			targetElements.Add (el);
+
+			DataTable dt = new DataTable ();
+			dt.TableName = parent.QualifiedName.Name + "_" + el.QualifiedName.Name;
+			DataColumn cc = new DataColumn ();
+			cc.ColumnName = el.QualifiedName.Name;
+			cc.Namespace = dataset.Namespace;
+			cc.ColumnMapping = MappingType.Hidden;
+			cc.DataType = this.ConvertDatatype (GetSchemaPrimitiveType (el.ElementType));
 		}
 
 		private void FillDataColumnSimpleElement (XmlSchemaElement el, DataColumn col)
 		{
 			col.ColumnName = el.QualifiedName.Name;
+			col.Namespace = el.QualifiedName.Namespace;
 			col.ColumnMapping = MappingType.Element;
 			XmlSchemaDatatype dt = el.ElementType as XmlSchemaDatatype;
-			if (dt == null && el.ElementType != null)
-				dt = ((XmlSchemaSimpleType) el.ElementType).Datatype;
+			if (dt == null && el.ElementType != null) {
+				XmlSchemaSimpleType st = el.ElementType as XmlSchemaSimpleType;
+				dt = st != null ? st.Datatype : null;
+			}
 			col.DataType = ConvertDatatype (dt);
 			FillFacet (col, el.ElementType as XmlSchemaSimpleType);
 		}
 
 		private void FillFacet (DataColumn col, XmlSchemaSimpleType st)
 		{
-			if (st == null)
+			if (st == null || st.Content == null)
 				return;
 
 			// Handle restriction facets
@@ -557,7 +676,7 @@ namespace System.Data
 
 			XmlSchemaSimpleTypeRestriction restriction = st == null ? null : st.Content as XmlSchemaSimpleTypeRestriction;
 			if (restriction == null)
-				return;
+				throw new DataException ("DataSet does not suport 'list' nor 'union' simple type.");
 
 			foreach (XmlSchemaFacet f in restriction.Facets) {
 				if (f is XmlSchemaMaxLengthFacet)
@@ -720,5 +839,77 @@ namespace System.Data
 			throw new DataException ("Target identity constraint was not found: " + name);
 		}
 
+		private void HandleAnnotations (XmlSchemaAnnotation an, bool nested)
+		{
+			foreach (XmlSchemaObject content in an.Items) {
+				XmlSchemaAppInfo ai = content as XmlSchemaAppInfo;
+				if (ai != null) {
+					foreach (XmlNode n in ai.Markup) {
+						XmlElement el = n as XmlElement;
+						if (el != null && el.LocalName == "Relationship" && el.NamespaceURI == XmlConstants.MsdataNamespace)
+							HandleRelationshipAnnotation (el, nested);
+					}
+				}
+			}
+		}
+
+		private void HandleRelationshipAnnotation (XmlElement el, bool nested)
+		{
+			string ptn = el.GetAttribute ("parent", XmlConstants.MsdataNamespace);
+			string ctn = el.GetAttribute ("child", XmlConstants.MsdataNamespace);
+			string pkn = el.GetAttribute ("parentkey", XmlConstants.MsdataNamespace);
+			string fkn = el.GetAttribute ("childkey", XmlConstants.MsdataNamespace);
+
+			DataTable pt = dataset.Tables [ptn];
+			DataTable ct = dataset.Tables [ctn];
+			DataColumn pc = pt.Columns [pkn];
+			DataColumn cc = ct.Columns [fkn];
+
+			DataRelation rel = new DataRelation (el.GetAttribute ("name"), pc, cc, false);
+			rel.Nested = nested;
+			dataset.Relations.Add (rel);
+		}
+
+		private object GetElementDefaultValue (XmlSchemaElement elem)
+		{
+			// Unlike attribute, element cannot have a default value.
+			if (elem.RefName == XmlQualifiedName.Empty)
+				return elem.DefaultValue;
+			XmlSchemaElement referenced = schema.Elements [elem.RefName] as XmlSchemaElement;
+			if (referenced == null) // considering missing sub components
+				return null;
+			return referenced.DefaultValue;
+		}
+
+		private object GetAttributeDefaultValue (XmlSchemaAttribute attr)
+		{
+#if BUGGY_MS_COMPATIBLE
+			if (attr == null)
+				return null;
+			else if (attr.RefName != XmlQualifiedName.Empty) {
+				XmlSchemaAttribute referenced = schema.Attributes [attr.RefName] as XmlSchemaAttribute;
+				if (referenced != null)
+					return referenced.DefaultValue;
+				else
+					return null;
+			}
+			if (attr.DefaultValue != null)
+				return attr.DefaultValue;
+			return attr.FixedValue;
+#else
+			if (attr.DefaultValue != null)
+				return attr.DefaultValue;
+			else if (attr.FixedValue != null)
+				return attr.FixedValue;
+			else if (attr.RefName == XmlQualifiedName.Empty)
+				return null;
+			XmlSchemaAttribute referenced = schema.Attributes [attr.RefName] as XmlSchemaAttribute;
+			if (referenced == null) // considering missing sub components
+				return null;
+			if (referenced.DefaultValue != null)
+				return referenced.DefaultValue;
+			return referenced.FixedValue;
+#endif
+		}
 	}
 }

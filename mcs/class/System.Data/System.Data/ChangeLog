@@ -1,5 +1,22 @@
 2004-05-05  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlSchemaDataImporter.cs : 
+	  SimpleContent column support.
+	  Annotated relation support.
+	  Top-level element is counted only when its type is complex.
+	  xs:anyType is no longer treated as complex type.
+	  dataset existence is mandatory now. 
+	  Improved DataType and DefaultValue support.
+	  Attribute namespace is properly handled now.
+	  Prohibited attribute is now treated as hidden column.
+	  Reject list or union simple type.
+
+	  Still incomplete 1) to read relationship in some cases, 2) to 
+	  determine whether an element is dataset or table, 3) thus to
+	  exclude extraneous column, 4) to remove extraneous *_Id column.
+
+2004-05-05  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DataTable.cs :
 	  We had better reuse DataSet's ReadXmlSchema() and ReadXml() in
 	  serialization .ctor() (thus schema read/inference should be easier).
