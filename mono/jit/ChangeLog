@@ -1,5 +1,8 @@
 2002-03-01  Dietmar Maurer  <dietmar@ximian.com>
 
+	* emit-x86.c (arch_handle_exception): big fix - dont use
+	uninitialized next_bp
+
 	* x86.brg: use new mono_assert macros
 
 2002-02-28  Dietmar Maurer  <dietmar@ximian.com>
