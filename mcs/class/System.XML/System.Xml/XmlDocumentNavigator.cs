@@ -35,10 +35,9 @@ namespace System.Xml
 
 		#region Properties
 
-		[MonoTODO]
 		public override string BaseURI {
 			get {
-				throw new NotImplementedException ();
+				return node.BaseURI;
 			}
 		}
 
@@ -96,10 +95,9 @@ namespace System.Xml
 			}
 		}
 
-		[MonoTODO]
 		public override XmlNameTable NameTable {
 			get {
-				throw new NotImplementedException ();
+				return node.OwnerDocument.NameTable;
 			}
 		}
 
@@ -133,10 +131,9 @@ namespace System.Xml
 			}
 		}
 
-		[MonoTODO]
 		public override string XmlLang {
 			get {
-				throw new NotImplementedException ();
+				return node.XmlLang;
 			}
 		}
 
@@ -149,16 +146,19 @@ namespace System.Xml
 			return new XmlDocumentNavigator (node);
 		}
 
-		[MonoTODO]
 		public override string GetAttribute (string localName, string namespaceURI)
 		{
-			throw new NotImplementedException ();
+			XmlElement el = Node as XmlElement;
+			return (el != null) ? el.GetAttribute (localName, namespaceURI) : String.Empty;
 		}
 
-		[MonoTODO]
 		public override string GetNamespace (string name)
 		{
-			throw new NotImplementedException ();
+			// MSDN says "String.Empty if a matching namespace 
+			// node is not found or if the navigator is not 
+			// positioned on an element node", but in fact it
+			// returns actual namespace for the other nodes.
+			return Node.GetNamespaceOfPrefix (name);
 		}
 		
 		public override bool IsSamePosition (XPathNavigator other)
@@ -181,10 +181,17 @@ namespace System.Xml
 			return false;
 		}
 
-		[MonoTODO]
 		public override bool MoveToAttribute (string localName, string namespaceURI)
 		{
-			throw new NotImplementedException ();
+			attributesEnumerator = node.Attributes.GetEnumerator ();
+			while (attributesEnumerator.MoveNext ()) {
+				XmlAttribute attr = attributesEnumerator.Current as XmlAttribute;
+				if (attr.LocalName == localName && attr.NamespaceURI == namespaceURI) {
+					node = attr;
+					return true;
+				}
+			}
+			return false;
 		}
 
 		public override bool MoveToFirst ()
@@ -208,7 +215,9 @@ namespace System.Xml
 		public override bool MoveToFirstChild ()
 		{
 			if (HasChildren) {
-				node = node.FirstChild;
+				node = (NodeType == XPathNodeType.Root) ?
+					((XmlDocument) node).DocumentElement :
+					node.FirstChild;
 				return true;
 			}
 			return false;

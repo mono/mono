@@ -1,5 +1,13 @@
 2003-03-22  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
+	* XmlTextWriter.cs : WriteStartDocument doesn't set hasRoot=true, then
+	  WriteEndDocument without root element now raises an error correctly.
+	* XmlDocumentNavigator.cs : (MoveToFirstChild) fixed bugzilla #36672.
+	  implemented BaseURI, NameTable, XmlLang, GetAttributes, GetNamespace,
+	  MoveToAttribute.
+
+2003-03-22  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
 	* XmlElement.cs : RemoveAttribute now don't throws when specified
 	  attribute does not exist.
 

@@ -593,8 +593,6 @@ namespace System.Xml
 			if (hasRoot)
 				throw new XmlException ("WriteStartDocument called twice.");
 
-			hasRoot = true;
-
 			CheckState ();
 
 			string encodingFormatting = "";
@@ -620,6 +618,7 @@ namespace System.Xml
 			if ((prefix != null && prefix != String.Empty) && ((ns == null) || (ns == String.Empty)))
 				throw new ArgumentException ("Cannot use a prefix with an empty namespace.");
 
+			hasRoot = true;
 			CheckState ();
 			CloseStartElement ();
 			writtenAttributes.Clear ();
