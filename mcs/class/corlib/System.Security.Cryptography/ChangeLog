@@ -1,3 +1,11 @@
+2005-01-06  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* DES.cs: Change wek and semi-weak key checking to avoid memory 
+	allocations. Old version required 2 allocations (weak+semiweak) to 
+	unpack the key. New versions are 16x-20x faster.
+	*  RijndaelManaged.cs: Removed unrequired "& 0xff" when casting to 
+	byte.
+
 2005-01-03  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* DESCryptoServiceProvider.cs: Refactored ECB/ProcessBlock to allow

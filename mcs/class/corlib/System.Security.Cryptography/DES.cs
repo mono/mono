@@ -6,7 +6,7 @@
 //	Sebastien Pouliot <sebastien@ximian.com>
 //
 // Portions (C) 2002 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,9 +28,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Globalization;
-using System.Security.Cryptography;
 
 // References:
 // a.	FIPS PUB 46-3: Data Encryption Standard
@@ -40,7 +38,7 @@ namespace System.Security.Cryptography {
 
 public abstract class DES : SymmetricAlgorithm {
 
-	const int blockSizeByte = 8;
+	private const int keySizeByte = 8;
 
 	public DES ()
 	{
@@ -65,52 +63,57 @@ public abstract class DES : SymmetricAlgorithm {
 		return (DES) CryptoConfig.CreateFromName (algo);
 	}
 
-	internal static ulong PackKey (byte[] key) 
-	{
-		byte[] paritySetKey = new byte [blockSizeByte];
-		// adapted from bouncycastle - see bouncycastle.txt
-		for (int i=0; i < key.Length; i++) {
-			byte b = key [i];
-			paritySetKey [i] = (byte)((b & 0xfe) |
-				((((b >> 1) ^ (b >> 2) ^ (b >> 3) ^ (b >> 4) ^
-				(b >> 5) ^ (b >> 6) ^ (b >> 7)) ^ 0x01) & 0x01));
-		}
-
-		ulong res = 0;
-		for (int i = 0, sh = 8*blockSizeByte; (sh = sh - 8) >= 0; i++) {
-			res |= (ulong) paritySetKey [i] << sh;
-		}
-
-		Array.Clear (paritySetKey, 0, paritySetKey.Length);
-		return res;
-	}
 
 	// Ek(Ek(m)) = m
-	internal static readonly ulong[] weakKeys = {
-		0x0101010101010101, /* 0000000 0000000 */
-		0xFEFEFEFEFEFEFEFE, /* FFFFFFF FFFFFFF */
-		0x1F1F1F1F0E0E0E0E, /* 0000000 FFFFFFF */
-		0xE0E0E0E0F1F1F1F1  /* FFFFFFF 0000000 */
+	internal static readonly byte[,] weakKeys = {
+		{ 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01 },
+		{ 0x1F, 0x1F, 0x1F, 0x1F, 0x0F, 0x0F, 0x0F, 0x0F },
+		{ 0xE1, 0xE1, 0xE1, 0xE1, 0xF1, 0xF1, 0xF1, 0xF1 },
+		{ 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF },
 	};
 
 	// Ek1(Ek2(m)) = m
-	internal static readonly ulong[] semiweakKeys = {
-		0x01FE01FE01FE01FE, 0xFE01FE01FE01FE01,
-		0x1FE01FE00EF10EF1, 0xE01FE01FF10EF10E,
-		0x01E001E001F101F1, 0xE001E001F101F101,
-		0x1FFE1FFE0EFE0EFE, 0xFE1FFE1FFE0EFE0E,
-		0x011F011F010E010E, 0x1F011F010E010E01,
-		0xE0FEE0FEF1FEF1FE, 0xFEE0FEE0FEF1FEF1
+	internal static readonly byte[,] semiWeakKeys = {
+		{ 0x00, 0x1E, 0x00, 0x1E, 0x00, 0x0E, 0x00, 0x0E }, // map to packed key 011F011F010E010E
+		{ 0x00, 0xE0, 0x00, 0xE0, 0x00, 0xF0, 0x00, 0xF0 }, // map to packed key 01E001E001F101F1
+		{ 0x00, 0xFE, 0x00, 0xFE, 0x00, 0xFE, 0x00, 0xFE }, // map to packed key 01FE01FE01FE01FE
+		{ 0x1E, 0x00, 0x1E, 0x00, 0x0E, 0x00, 0x0E, 0x00 }, // map to packed key 1F011F010E010E01
+		{ 0x1E, 0xE0, 0x1E, 0xE0, 0x0E, 0xF0, 0x0E, 0xF0 }, // map to packed key 1FE01FE00EF10EF1
+		{ 0x1E, 0xFE, 0x1E, 0xFE, 0x0E, 0xFE, 0x0E, 0xFE }, // map to packed key 1FFE1FFE0EFE0EFE
+		{ 0xE0, 0x00, 0xE0, 0x00, 0xF0, 0x00, 0xF0, 0x00 }, // map to packed key E001E001F101F101
+		{ 0xE0, 0x1E, 0xE0, 0x1E, 0xF0, 0x0E, 0xF0, 0x0E }, // map to packed key E01FE01FF10EF10E
+		{ 0xE0, 0xFE, 0xE0, 0xFE, 0xF0, 0xFE, 0xF0, 0xFE }, // map to packed key E0FEE0FEF1FEF1FE
+		{ 0xFE, 0x00, 0xFE, 0x00, 0xFE, 0x00, 0xFE, 0x00 }, // map to packed key FE01FE01FE01FE01
+		{ 0xFE, 0x1E, 0xFE, 0x1E, 0xFE, 0x0E, 0xFE, 0x0E }, // map to packed key FE1FFE1FFE0EFE0E
+		{ 0xFE, 0xE0, 0xFE, 0xE0, 0xFE, 0xF0, 0xFE, 0xF0 }, // map to packed key FEE0FEE0FEF1FEF1
 	};
 
 	public static bool IsWeakKey (byte[] rgbKey) 
 	{
-		if (rgbKey.Length != blockSizeByte)
+		if (rgbKey.Length != keySizeByte)
 			throw new CryptographicException (Locale.GetText ("Wrong Key Length"));
 
-		ulong lk = PackKey (rgbKey);
-		foreach (ulong wk in weakKeys) {
-			if (lk == wk)
+		// (fast) pre-check with "weak bytes"
+		for (int i=0; i < rgbKey.Length; i++) {
+			switch (rgbKey [i] | 0x11) {
+				case 0x11:
+				case 0x1F:
+				case 0xF1:
+				case 0xFF:
+					break;
+				default:
+					return false;
+			}
+		}
+
+		// compare with known weak keys
+		for (int i=0; i < (weakKeys.Length >> 3); i++) {
+			int j = 0;
+			for (; j < rgbKey.Length; j++) {
+				if ((rgbKey [j] ^ weakKeys [i,j]) > 1)
+					break;
+			}
+			if (j==8)
 				return true;
 		}
 		return false;
@@ -118,12 +121,30 @@ public abstract class DES : SymmetricAlgorithm {
 
 	public static bool IsSemiWeakKey (byte[] rgbKey)
 	{
-		if (rgbKey.Length != blockSizeByte)
+		if (rgbKey.Length != keySizeByte)
 			throw new CryptographicException (Locale.GetText ("Wrong Key Length"));
 
-		ulong lk = PackKey (rgbKey);
-		foreach (ulong swk in semiweakKeys) {
-			if (lk == swk)
+		// (fast) pre-check with "weak bytes"
+		for (int i=0; i < rgbKey.Length; i++) {
+			switch (rgbKey [i] | 0x11) {
+				case 0x11:
+				case 0x1F:
+				case 0xF1:
+				case 0xFF:
+					break;
+				default:
+					return false;
+			}
+		}
+
+		// compare with known weak keys
+		for (int i=0; i < (semiWeakKeys.Length >> 3); i++) {
+			int j = 0;
+			for (; j < rgbKey.Length; j++) {
+				if ((rgbKey [j] ^ semiWeakKeys [i,j]) > 1)
+					break;
+			}
+			if (j==8)
 				return true;
 		}
 		return false;
@@ -141,7 +162,7 @@ public abstract class DES : SymmetricAlgorithm {
 		set {
 			if (value == null)
 				throw new ArgumentNullException ("Key");
-			if (value.Length != blockSizeByte)
+			if (value.Length != keySizeByte)
 				throw new ArgumentException (Locale.GetText ("Wrong Key Length"));
 			if (IsWeakKey (value))
 				throw new CryptographicException (Locale.GetText ("Weak Key"));

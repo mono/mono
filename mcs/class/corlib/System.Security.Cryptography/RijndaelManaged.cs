@@ -177,9 +177,9 @@ namespace System.Security.Cryptography {
 			int k = 0;
 			for (int i=0; i < exKey.Length; i++) {
 				expandedKey [k++] = (byte) (exKey[i] >> 24);
-				expandedKey [k++] = (byte) ((exKey[i] >> 16) & 0xff);
-				expandedKey [k++] = (byte) ((exKey[i] >> 8) & 0xff);
-				expandedKey [k++] = (byte) (exKey[i] & 0xff);
+				expandedKey [k++] = (byte) (exKey[i] >> 16);
+				expandedKey [k++] = (byte) (exKey[i] >> 8);
+				expandedKey [k++] = (byte) exKey[i];
 			}
 		}
 
