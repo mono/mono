@@ -1,3 +1,52 @@
+2004-08-21  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
+
+	* expression.cs: added interface ICallable and and function AddArg
+	to class Call. Added class New.
+	* driver.cs: made it use the new lexer and parser.
+	* ast.cs: added field line_number, added property InFunction,
+	added class Function that factores all the code shared between
+	FunctionDeclaration and FunctionExpression.
+	* With.cs: constructor receives line number.
+	* VariableStatement.cs: constructor receives line number.	
+	* VariableDeclaration.cs: Added check for parent being
+	FunctionDeclaration and FunctionExpression.
+	* Try.cs: Moved the code that used to take care of the catch to
+	Catch class. Constructor receives forming elements and line
+	number. Removed mangle_id.
+	* Throw.cs: constructor receives line number.
+	* Statement.cs: If, DoWhile, Return  constructor receives line number. Renamed
+	identifier to label in Continue and Break class, its constructor now
+	receives the label and line number. For class, constructor
+	receives its forming parts. Switch class, constructor receives
+	line number, added function AddClause and AddStm. Added class
+	Catch. Added class Labelled.
+	* SemanticAnalyser.cs: Added field anon_method_counter, properties
+	NextAnonymousMethod and CurrentAnonymousMethod.
+	* Parser.cs: function ArgumentList receives a ICallable list
+	instead of a AST. Now we add the arguments of a callable. Build
+	Call's ast.
+	* Literal.cs: added constructor for 'this' literal and
+	ObjectLiteral constructor. Added RegExpLiteral class, will take
+	care of regular expressions semantic analysis and code generation.
+	* JSScanner.cs: use no more the antlr based lexer. Fix typo.
+	* JSParser.cs: make it use the new port of Rhino's Parser.
+	* FunctionObject.cs: Added constructor that receives the function name.
+	* FunctionExpression.cs: made it inherit from Function class. Added
+	constructor. Factored the code that used to set the prefix to
+	Function.set_prefix (it's shared with FunctionDeclaration). Added
+	fields local_script_func and field. Implemented Resolve and Emit
+	(now we can do: var x = function (this, method, is, anonymous) {... };).	
+	* FunctionDeclaration.cs: made it inherit from Function class in
+	order to share code with FunctionExpression. Added new
+	constructor. Moved the code that used to built the prefix to
+	Function inside function set_prefix. When building the closure
+	added check for  setting the type of a FunctionExpression. Moved
+	set_function_type and set_custom_attr to class Function. 
+	* ForIn.cs: added constructor and fields lhs, obj and body.
+	* Block.cs: added default constructor and line number based
+	constructor. Check for elems not being null before adding.
+	* ArrayLiteral.cs: set elements in constructor.
+	
 2004-07-29  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
 	* Parser.cs: Added ClauseType enum. Added all the statements to current_script_or_fn,
