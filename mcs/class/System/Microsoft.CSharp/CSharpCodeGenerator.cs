@@ -890,6 +890,8 @@ namespace Mono.CSharp
 					break;
 				}
 			}
+			
+			output = GetSafeTypeName (output);
 
 			int rank = type.ArrayRank;
 			if ( rank > 0 ) {
@@ -926,6 +928,15 @@ namespace Mono.CSharp
 			if (keywordsTable == null) {
 				FillKeywordTable ();
 			}
+			if (keywordsTable.Contains (id) || typesTable.Contains (id)) return "@" + id;
+			else return id;
+		}
+
+		string GetSafeTypeName (string id)
+		{
+			if (keywordsTable == null) {
+				FillKeywordTable ();
+			}
 			if (keywordsTable.Contains (id)) return "@" + id;
 			else return id;
 		}
@@ -934,19 +945,27 @@ namespace Mono.CSharp
 		{
 			keywordsTable = new Hashtable ();
 				foreach (string keyword in keywords) keywordsTable.Add (keyword,keyword);
+			typesTable = new Hashtable ();
+				foreach (string type in types) typesTable.Add (type,type);
 		}
+
+		static Hashtable typesTable;
+		static string[] types = new string[] {
+			"object","bool","byte","float","uint","char","ulong","ushort",
+			"decimal","int","sbyte","short","double","long","string","void"
+		};
 
 		static Hashtable keywordsTable;
 		static string[] keywords = new string[] {
 			"abstract","event","new","struct","as","explicit","null","switch","base","extern",
-			"object","this","bool","false","operator","throw","break","finally","out","true",
-			"byte","fixed","override","try","case","float","params","typeof","catch","for",
-			"private","uint","char","foreach","protected","ulong","checked","goto","public",
-			"unchecked","class","if","readonly","unsafe","const","implicit","ref","ushort",
-			"continue","in","return","using","decimal","int","sbyte","virtual","default",
-			"interface","sealed","volatile","delegate","internal","short","void","do","is",
-			"sizeof","while","double","lock","stackalloc","else","long","static","enum",
-			"namespace","string"
+			"this","false","operator","throw","break","finally","out","true",
+			"fixed","override","try","case","params","typeof","catch","for",
+			"private","foreach","protected","checked","goto","public",
+			"unchecked","class","if","readonly","unsafe","const","implicit","ref",
+			"continue","in","return","using","virtual","default",
+			"interface","sealed","volatile","delegate","internal","do","is",
+			"sizeof","while","lock","stackalloc","else","static","enum",
+			"namespace"
 		};
 	}
 }

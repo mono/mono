@@ -1,3 +1,8 @@
+2004-03-29  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* CSharpCodeGenerator.cs: In GetTypeOutput, never escape runtime type names.
+	Created a new method GetSafeTypeName to support this.
+
 2004-03-15  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CSharpCodeGenerator.cs: patch from Jaroslaw Kowalski that fixes
