@@ -1,3 +1,8 @@
+2002-12-14  Daniel Morgan <danmorg@sc.rr.com>
+
+	* Mono.Data.Tds.Protocol/Tds70.cs: single quotes in SQL string
+	need to be escaped as two single quotes
+
 2002-12-01  Tim Coleman <tim@timcoleman.com>
 	* list:
 		Remove more unnecessary files.

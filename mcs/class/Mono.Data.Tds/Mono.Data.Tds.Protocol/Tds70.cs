@@ -37,10 +37,11 @@ namespace Mono.Data.Tds.Protocol {
 
 		private string BuildExec (string sql)
 		{
+			string esql = sql.Replace ("'", "''"); // escape single quote
 			if (Parameters != null && Parameters.Count > 0)
-				return BuildProcedureCall (String.Format ("sp_executesql N'{0}', N'{1}', ", sql, BuildPreparedParameters ()));
+				return BuildProcedureCall (String.Format ("sp_executesql N'{0}', N'{1}', ", esql, BuildPreparedParameters ()));
 			else
-				return BuildProcedureCall (String.Format ("sp_executesql N'{0}'", sql));
+				return BuildProcedureCall (String.Format ("sp_executesql N'{0}'", esql));
 		}
 
 		private string BuildParameters ()
