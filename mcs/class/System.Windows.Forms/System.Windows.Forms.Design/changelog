@@ -1,3 +1,7 @@
+2003-03-31  Alan Tam <Tam@SiuLung.com>
+
+	* UITypeEditor.cs: Removed because it shan't be here
+
 2002-8-4  DennisHayes <dennish@raytek.com>
 
 *  Started cheanglog
