@@ -1,3 +1,8 @@
+2004-06-08  Zoltan Varga  <vargaz@freemail.hu>
+
+	* reflection.c (mono_reflection_type_from_name): Make a copy of the
+	type name before modifying it. Fixes #59405.
+
 2004-06-08  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* culture-info.h: added fields for "all datetime patterns".
