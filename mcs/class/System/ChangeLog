@@ -1,4 +1,9 @@
 2002-07-22  Tim Coleman <tim@timcoleman.com>
+	* list.unix: Added new file
+		System.ComponentModel.RecommendedAsConfigurableAttribute.cs
+		to build on unix.
+
+2002-07-22  Tim Coleman <tim@timcoleman.com>
 	* list.unix: Added files to the build for linux
 		System.ComponentModel.BindableAttribute.cs,
 		System.ComponentModel.BindableSupport.cs,

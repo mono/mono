@@ -191,6 +191,7 @@ System.ComponentModel/DesignOnlyAttribute.cs
 System.ComponentModel/EventHandlerList.cs
 System.ComponentModel/MemberDescriptor.cs
 System.ComponentModel/PropertyDescriptorCollection.cs
+System.ComponentModel/RecommendedAsConfigurableAttribute.cs
 System.ComponentModel/ISynchronizeInvoke.cs
 System.ComponentModel/CategoryAttribute.cs
 System.ComponentModel/CollectionChangeAction.cs
