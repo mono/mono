@@ -1,3 +1,9 @@
+
+Sat Jul 13 15:06:23 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* icall.cs: icall for Type.GetTypeCode ().
+	* verify: a couple of fixes and disabled local initialization checks.
+
 2002-07-12  Dietmar Maurer  <dietmar@ximian.com>
 
 	* marshal.c: better debugging support (DEBUG_RUNTIME_CODE)
