@@ -1,3 +1,13 @@
+2003-10-15  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini.c (mono_method_to_ir): Fix initialization of typedbyref locals.
+
+	* mini.c inssel.brg: Implement typedefbyref opcodes.
+
+	* mini.c (mono_jit_compile_method): Remove unused local variable.
+
+	* mini.c (mono_jit_compile_method_inner): Ditto.
+	
 2003-10-12  Zoltan Varga  <vargaz@freemail.hu>
 
 	* tramp-x86.c (x86_class_init_trampoline): Fix build.
