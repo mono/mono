@@ -22,6 +22,7 @@ System.Runtime.Remoting.Channels.Tcp/TcpServerTransportSink.cs
 System.Runtime.Remoting.Channels.Tcp/TcpClientTransportSinkProvider.cs
 System.Runtime.Remoting.Channels.Tcp/TcpClientTransportSink.cs
 System.Runtime.Remoting.Channels.Tcp/TcpConnectionPool.cs
+System.Runtime.Remoting.Channels.Http/AggregateDictionary.cs
 System.Runtime.Remoting.Channels.Http/HttpChannel.cs
 System.Runtime.Remoting.Channels.Http/HttpClientChannel.cs
 System.Runtime.Remoting.Channels.Http/HttpHelper.cs
@@ -38,3 +39,5 @@ System.Runtime.Remoting.MetadataServices/SUDSParserException.cs
 System.Runtime.Remoting.MetadataServices/SdlChannelSink.cs
 System.Runtime.Remoting.MetadataServices/SdlType.cs
 System.Runtime.Remoting.MetadataServices/SUDSGeneratorException.cs
+System.Runtime.Remoting.Services/RemotingClientProxy.cs
+System.Runtime.Remoting.Services/RemotingService.cs
