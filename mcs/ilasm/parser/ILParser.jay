@@ -506,7 +506,7 @@ class_refs		: class_ref
 slashed_name		: comp_name
 			| slashed_name SLASH comp_name
                           {
-                                $$ = String.Format ("{0}/{1}", $1, $2);
+                                $$ = String.Format ("{0}/{1}", $1, $3);
                           }
 			;
 
