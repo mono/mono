@@ -1,3 +1,8 @@
+2005-03-09  Andrew Skiba <andrews@mainsoft.com>
+
+	* XmlTextReader.cs, XmlParserInput.cs, DTDReader.cs: fix UCM-4
+	  surrogate calculations. This fixes bug 73513.
+
 2005-03-09  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlParserInput.cs : silly mixed line endings :(
