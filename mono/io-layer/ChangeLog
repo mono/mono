@@ -1,3 +1,8 @@
+2005-03-01 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* sockets.c: translate EINPROGRESS to EWOULDBLOCK in connect. This is
+	the expected error code showed by the test case in bug #73053.
+
 2005-02-18 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* io.c: another leftover.
