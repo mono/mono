@@ -1,5 +1,10 @@
 2003-05-21 Jackson Harper <jackson@latitudegeo.com>
 
+	* ILParser.jay: When converting from int32 to int64 do an exact
+	bit conversion, not a numerical conversion.
+		
+2003-05-21 Jackson Harper <jackson@latitudegeo.com>
+
 	* ILParser.jay: INT_I8s are not int instructions, currently the
 	only INT_I8 instruction is ldc.i8 so this new code does more
 	checks then needed but is written in anticipation of some new long

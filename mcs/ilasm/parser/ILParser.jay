@@ -2014,12 +2014,9 @@ comp_qstring		: QSTRING
 int32			: INT32
                         | INT64
                           {
-                                Int64 int64 = (Int64) $1;
-
-                                if (int64 > Int32.MaxValue)
-                                        $$ = Int32.MaxValue;
-                                else if (int64 < Int32.MinValue)
-                                        $$ = Int32.MinValue;
+                                long l = (long) $1;
+                                byte[] intb = BitConverter.GetBytes (l);
+                                $$ = BitConverter.ToInt32 (intb, 0);
                           }
 			;
 
