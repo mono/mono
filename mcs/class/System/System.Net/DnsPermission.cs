@@ -92,17 +92,7 @@ namespace System.Net
 		{
              
 			SecurityElement root = new SecurityElement ("IPermission");
-
-			root.AddAttribute ("class", this.GetType ().FullName + ", " + 
-			                            "System, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
-
-/*			
-GetType ().Module doesn't work yet with Mono.. (2002-05-01)
-We need to do it as below though, because this class can be extended
-
-			root.AddAttribute ("class", this.GetType ().FullName + ", " + 
-			                            this.GetType ().Module.Assembly.FullName);
-*/			                            
+			root.AddAttribute ("class", this.GetType ().AssemblyQualifiedName);
 			root.AddAttribute ("version", "1");
 			if (m_noRestriction)
 				root.AddAttribute ("Unrestricted", "true");				

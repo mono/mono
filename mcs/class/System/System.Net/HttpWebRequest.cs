@@ -199,13 +199,8 @@ namespace System.Net
 				string str = webHeaders ["If-Modified-Since"];
 				if (str == null)
 					return DateTime.Now;
-					
-				// TODO:
-				// HTTP-date    = rfc1123-date | rfc850-date | asctime-date
-				// for now, assume rfc1123 only
 				try {
-					DateTime dt = DateTime.ParseExact (str, "r", null);
-					return dt;
+					return MonoHttpDate.Parse (str);
 				} catch (Exception) {
 					return DateTime.Now;
 				}

@@ -128,9 +128,7 @@ namespace System.Net
 				CheckDisposed ();
 				try {
 					string dtStr = webHeaders ["Last-Modified"];
-					// TODO: accept more than rfc1123 dates
-					DateTime dt = DateTime.ParseExact (dtStr, "r", null);
-					return dt;
+					return MonoHttpDate.Parse (dtStr);
 				} catch (Exception) {
 					return DateTime.Now;	
 				}
