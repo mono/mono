@@ -1,4 +1,9 @@
 
+Sat Jan 4 18:04:07 CET 2003 Paolo Molaro <lupus@ximian.com>
+
+	* Binder.cs: throw an exception if the number of arguments 
+	when invoking a method is incorrect.
+
 Thu Jan 2 19:04:58 CET 2003 Paolo Molaro <lupus@ximian.com>
 
 	* Binder.cs: In SelectMethod() look for an exact match first.

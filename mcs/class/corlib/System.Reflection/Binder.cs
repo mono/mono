@@ -34,10 +34,14 @@ namespace System.Reflection
 		}
 		
 		internal static bool ConvertArgs (Binder binder, object[] args, ParameterInfo[] pinfo, CultureInfo culture) {
-			if (args == null && pinfo.Length == 0)
-				return true;
+			if (args == null) {
+				if ( pinfo.Length == 0)
+					return true;
+				else
+					throw new TargetParameterCountException ();
+			}
 			if (pinfo.Length != args.Length)
-				return false;
+				throw new TargetParameterCountException ();
 			for (int i = 0; i < args.Length; ++i) {
 				object v = binder.ChangeType (args [i], pinfo[i].ParameterType, culture);
 				if ((v == null) && (args [i] != null))
