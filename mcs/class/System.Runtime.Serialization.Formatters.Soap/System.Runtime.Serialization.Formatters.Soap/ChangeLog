@@ -1,3 +1,8 @@
+2004-09-13  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* SoapReader.cs: Handle SOAP invocation without arguments in SoapReader.
+	  Patch by Stefan Paletta.
+
 2004-08-24  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* SoapReader.cs: Serialize byte arrays using base64 encoding.

@@ -228,48 +228,55 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 			long paramValuesId = NextAvailableId;
 			int[] indices = new int[1];
 
-			int initialDepth = xmlReader.Depth;
-			xmlReader.Read();
-			int i = 0;
-			while(xmlReader.Depth > initialDepth) 
+			if (!xmlReader.IsEmptyElement)
 			{
-				long paramId, paramHref;
-				object objParam = null;
-				paramNames.Add (xmlReader.Name);
-				Type paramType = null;
-				
-				if (message.ParamTypes != null) {
-					if (i >= message.ParamTypes.Length)
-						throw new SerializationException ("Not enough parameter types in SoapMessages");
-					paramType = message.ParamTypes [i];
-				}
-				
-				indices[0] = i;
-				objParam = DeserializeComponent(
-					paramType,
-					out paramId,
-					out paramHref,
-					paramValuesId,
-					null,
-					indices);
-				indices[0] = paramValues.Add(objParam);
-				if(paramHref != 0) 
+				int initialDepth = xmlReader.Depth;
+				xmlReader.Read();
+				int i = 0;
+				while(xmlReader.Depth > initialDepth) 
 				{
-					RecordFixup(paramValuesId, paramHref, paramValues.ToArray(), null, null, null, indices);
+					long paramId, paramHref;
+					object objParam = null;
+					paramNames.Add (xmlReader.Name);
+					Type paramType = null;
+					
+					if (message.ParamTypes != null) {
+						if (i >= message.ParamTypes.Length)
+							throw new SerializationException ("Not enough parameter types in SoapMessages");
+						paramType = message.ParamTypes [i];
+					}
+					
+					indices[0] = i;
+					objParam = DeserializeComponent(
+						paramType,
+						out paramId,
+						out paramHref,
+						paramValuesId,
+						null,
+						indices);
+					indices[0] = paramValues.Add(objParam);
+					if(paramHref != 0) 
+					{
+						RecordFixup(paramValuesId, paramHref, paramValues.ToArray(), null, null, null, indices);
+					}
+					else if(paramId != 0) 
+					{
+//						RegisterObject(paramId, objParam, null, paramValuesId, null, indices);
+					}
+					else 
+					{
+					}
+					i++;
 				}
-				else if(paramId != 0) 
-				{
-//					RegisterObject(paramId, objParam, null, paramValuesId, null, indices);
-				}
-				else 
-				{
-				}
-				i++;
+				xmlReader.ReadEndElement();
 			}
-
+			else
+			{
+				xmlReader.Read();
+			}
+			
 			message.ParamNames = (string[]) paramNames.ToArray(typeof(string));
 			message.ParamValues = paramValues.ToArray();
-			xmlReader.ReadEndElement();
 			RegisterObject(paramValuesId, message.ParamValues, null, 0, null, null);
 			return true;
 		}
