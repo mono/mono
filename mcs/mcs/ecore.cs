@@ -995,7 +995,7 @@ namespace Mono.CSharp {
 					best = t;
 					continue;
 				}
-				Console.WriteLine ("Candidate : " + t);
+				
 				if (StandardConversionExists (priv_fmet_param, best))
 					best = t;
 			}
@@ -1031,7 +1031,6 @@ namespace Mono.CSharp {
 					continue;
 				}
 
-				Console.WriteLine ("Casdkalkds " + t);
 				if (StandardConversionExists (priv_fmee_ret, t))
 					best = t;
 			}
