@@ -3,6 +3,7 @@
 //
 // Author:
 //   Christopher Podurgiel (cpodurgiel@msn.com)
+//   Stuart Caborn	<stuart.caborn@virgin.net>
 //
 // (C) Chris Podurgiel
 //
@@ -168,8 +169,9 @@ namespace System.Data
 				DataColumn column = new DataColumn(columnName);
 				
 				CollectionChangeEventArgs e = new CollectionChangeEventArgs(CollectionChangeAction.Add, this);
-				column.SetTable(parentTable);
-				base.List.Add(column);
+				column.SetTable(parentTable);				
+				int ordinal = base.List.Add(column);
+				column.SetOrdinal( ordinal );
 				OnCollectionChanged(e);
 				return column;
 			}
@@ -200,7 +202,8 @@ namespace System.Data
 				DataColumn column = new DataColumn(columnName, type);
 				CollectionChangeEventArgs e = new CollectionChangeEventArgs(CollectionChangeAction.Add, this);
 				column.SetTable(parentTable);
-				base.List.Add(column);
+				int ordinal = base.List.Add(column);
+				column.SetOrdinal( ordinal );				
 				OnCollectionChanged(e);
 				return column;
 			}
@@ -231,7 +234,8 @@ namespace System.Data
 				DataColumn column = new DataColumn(columnName, type, expression);
 				CollectionChangeEventArgs e = new CollectionChangeEventArgs(CollectionChangeAction.Add, this);
 				column.SetTable(parentTable);
-				base.List.Add(column);
+				int ordinal = base.List.Add(column);
+				column.SetOrdinal( ordinal );
 				OnCollectionChanged(e);
 				return column;
 			}
@@ -415,7 +419,16 @@ namespace System.Data
 			//TODO: can remove first with exceptions
 			//and OnChanging Event
 			CollectionChangeEventArgs e = new CollectionChangeEventArgs(CollectionChangeAction.Remove, this);
+			
+			int ordinal = column.Ordinal;
 			base.List.Remove(column);
+			
+			//Update the ordinals
+			for( int i = ordinal ; i < this.Count ; i ++ )
+			{
+				this[i].SetOrdinal( i );
+			}
+			
 			OnCollectionChanged(e);
 			return;
 		}
@@ -426,13 +439,8 @@ namespace System.Data
 		/// <param name="name">The name of the column to remove.</param>
 		public void Remove(string name)
 		{
-			//TODO: can remove first with exceptions
-			//and OnChanging Event
-			DataColumn column = this[name];
-			CollectionChangeEventArgs e = new CollectionChangeEventArgs(CollectionChangeAction.Remove, this);
-			base.List.Remove(column);
-			OnCollectionChanged(e);
-			return;
+			DataColumn column = this[name];			
+			Remove( column );
 		}
 
 		/// <summary>
@@ -441,12 +449,8 @@ namespace System.Data
 		/// <param name="index">The index of the column to remove.</param>
 		public void RemoveAt(int index)
 		{
-			//TODO: can remove first with exceptions
-			//and OnChanging Event
-			CollectionChangeEventArgs e = new CollectionChangeEventArgs(CollectionChangeAction.Remove, this);
-			base.List.RemoveAt(index);
-			OnCollectionChanged(e);
-			return;
+			DataColumn column = this[index];
+			Remove( column );
 		}
 
 		/// <summary>

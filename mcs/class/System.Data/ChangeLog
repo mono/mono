@@ -1,3 +1,22 @@
+2002-11-04  Stuart Caborn <stuart.caborn@clearswift.com>
+
+	* list: added System.Data/XmlConstants.cs to
+	Linux build
+
+    * System.Data/XmlConstants.cs: added -
+	* System.Data/DataTable.cs
+	* System.Data/DataSet.cs
+	* System.Data/DataColumn.cs
+	* System.Data/DataColumnCollection.cs
+	* System.Data/DataRelation.cs: modified	-
+	Began initial implementation of WriteXml 
+	and WriteXmlSchema. There is no support for DiffGrams 
+	yet. In WriteSchema mode, relationships are missing, 
+	all types are xs:string and the namespacing is not 
+	working properly. Added support for Ordinals in the 
+	DataColumnCollection and added support for 
+	namespaces and prefixes.
+
 2002-11-03  Ville Palo <vi64pa@koti.soon.fi>
 
 	* System.Data.SqlTypes/SqlBinary.cs: Finished and no errors generated
