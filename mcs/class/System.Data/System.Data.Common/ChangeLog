@@ -1,3 +1,10 @@
+2004-06-17  Boris Kirzner  <borisk@mainsoft.com>
+	* Datacontainer.cs : 
+	  - Store and retreival of null and DBNull values reviewed.
+	  - Added GetInt64 to support AutoIncrement of DataColumn.
+	  - Added missing CopyValue method to BitDataContainer.
+	  - Added FillValues method to propagate single value to whole container.
+	
 2004-06-10 Umadevi S <sumadevi@novell.com>
 	* DataTableMappingCollection.cs - fixed nunit testcase errors
 	IndexOfDataSetTable method

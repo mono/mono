@@ -124,9 +124,28 @@ namespace System.Data.Common
 			return (_nullValues != null) ? _nullValues[index] : true;
 		}
 
-		protected void SetNull(int index,bool isNull)
+		internal void SetNullBit(int index,bool isNull)
 		{
 			_nullValues[index] = isNull;
+		}
+
+		protected void SetNull(int index,bool isNull,bool isDbNull)
+		{
+			SetNullBit(index,isDbNull);
+			// this method must be called after setting the value into value array
+			// otherwise the dafault value will be overriden
+			if ( isNull ) {
+				// set the value to default
+				CopyValue(Column.Table.DefaultValuesRowIndex,index);
+			}
+		}
+
+		internal void FillValues(int fromIndex)
+		{
+			for(int i=0; i < Capacity; i++) {
+				CopyValue(fromIndex,i);
+				_nullValues[i] = _nullValues[fromIndex];
+			}
 		}
 
 		internal virtual void CopyValue(AbstractDataContainer fromContainer, int fromIndex, int toIndex)
@@ -141,7 +160,8 @@ namespace System.Data.Common
 
 		internal virtual void SetItemFromDataRecord(int index, IDataRecord record, int field)
 		{
-			SetNull(index,record.IsDBNull(field));
+			bool isDbNull = record.IsDBNull(field);
+			SetNull(index,false,isDbNull);
 		}
 
 		protected int CompareNulls(int index1, int index2)
@@ -158,6 +178,8 @@ namespace System.Data.Common
 		}
 
 		internal abstract int CompareValues(int index1, int index2);
+
+		internal abstract long GetInt64(int index);
 
 		#endregion //Methods
 
@@ -191,7 +213,7 @@ namespace System.Data.Common
 					else {
 						SetValue(index,Convert.ToInt16(value));
 					}
-					SetNull(index,isDbNull);
+					SetNull(index,value == null,isDbNull);
 				}
 			}
 
@@ -265,6 +287,11 @@ namespace System.Data.Common
 				return 1;
 			}
 
+			internal override long GetInt64(int index)
+			{
+				return (long) _values[index];
+			}
+
 			#endregion //Methods
 		}
 
@@ -298,7 +325,7 @@ namespace System.Data.Common
 					else {
 						SetValue(index,Convert.ToInt32(value));
 					}
-					SetNull(index,isDbNull);
+					SetNull(index,value == null,isDbNull);
 				}
 			}
 
@@ -372,6 +399,11 @@ namespace System.Data.Common
 				return 1;
 			}
 
+			internal override long GetInt64(int index)
+			{
+				return (long) _values[index];
+			}
+
 			#endregion //Methods
 		}
 
@@ -405,7 +437,7 @@ namespace System.Data.Common
 					else {
 						SetValue(index,Convert.ToInt64(value));
 					}
-					SetNull(index,isDbNull);
+					SetNull(index,value == null,isDbNull);
 				}
 			}
 
@@ -470,6 +502,11 @@ namespace System.Data.Common
 				return 1;
 			}
 
+			internal override long GetInt64(int index)
+			{
+				return _values[index];
+			}
+
 			#endregion //Methods
 		}
 
@@ -503,7 +540,7 @@ namespace System.Data.Common
 					else {
 						SetValue(index,Convert.ToSingle(value));
 					}
-					SetNull(index,isDbNull);
+					SetNull(index,value == null,isDbNull);
 				}
 			}
 
@@ -568,6 +605,11 @@ namespace System.Data.Common
 				return 1;
 			}
 
+			internal override long GetInt64(int index)
+			{
+				return Convert.ToInt64(_values[index]);
+			}
+
 			#endregion //Methods
 		}
 
@@ -601,7 +643,7 @@ namespace System.Data.Common
 					else {
 						SetValue(index,Convert.ToDouble(value));
 					}
-					SetNull(index,isDbNull);
+					SetNull(index,value == null,isDbNull);
 				}
 			}
 
@@ -666,6 +708,11 @@ namespace System.Data.Common
 				return 1;
 			}
 
+			internal override long GetInt64(int index)
+			{
+				return Convert.ToInt64(_values[index]);
+			}
+
 			#endregion //Methods
 		}
 
@@ -699,7 +746,7 @@ namespace System.Data.Common
 					else {
 						SetValue(index,Convert.ToByte(value));
 					}
-					SetNull(index,isDbNull);
+					SetNull(index,value == null,isDbNull);
 				}
 			}
 
@@ -764,6 +811,11 @@ namespace System.Data.Common
 				return 1;
 			}
 
+			internal override long GetInt64(int index)
+			{
+				return (long) _values[index];
+			}
+
 			#endregion //Methods
 		}
 
@@ -798,7 +850,7 @@ namespace System.Data.Common
 					else {
 						SetValue(index,Convert.ToBoolean(value));
 					}
-					SetNull(index,isDbNull);
+					SetNull(index,value == null,isDbNull);
 				}
 			}
 
@@ -835,6 +887,13 @@ namespace System.Data.Common
 			internal override void CopyValue(int fromIndex, int toIndex)
 			{
 				base.CopyValue(fromIndex, toIndex);
+				_values[toIndex] = _values[fromIndex];
+			}
+
+			internal override void CopyValue(AbstractDataContainer fromContainer, int fromIndex, int toIndex)
+			{
+				base.CopyValue(fromContainer, fromIndex, toIndex);
+				_values[toIndex] = ((BitDataContainer)fromContainer)._values[fromIndex];
 			}
 
 			internal override int CompareValues(int index1, int index2)
@@ -851,6 +910,11 @@ namespace System.Data.Common
 				}
 
 				return CompareNulls(index1, index2);	
+			}
+
+			internal override long GetInt64(int index)
+			{
+				return Convert.ToInt64(_values[index]);
 			}
 
 			#endregion //Methods
@@ -872,7 +936,7 @@ namespace System.Data.Common
 				}
 				set {
 					SetValue(index,value);
-					SetNull(index,value == DBNull.Value);
+					SetNull(index,value == null,value == DBNull.Value);
 				}
 			}
 
@@ -944,6 +1008,11 @@ namespace System.Data.Common
 				}
 
 				return String.Compare(obj1.ToString(), obj2.ToString());
+			}
+
+			internal override long GetInt64(int index)
+			{
+				return Convert.ToInt64(_values[index]);
 			}
 
 			#endregion //Methods
