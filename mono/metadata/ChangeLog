@@ -1,5 +1,10 @@
 2004-02-02  Zoltan Varga  <vargaz@freemail.hu>
 
+	* metadata.h: Add new marshalling conventions.
+
+	* marshal.c (mono_marshal_get_native_wrapper): Add support for unicode
+	stringbuilder marshalling. Fixes #53700.
+
 	* reflection.h (MonoReflectionTypeBuilder): Add 'permissions' field.
 
 	* reflection.c (mono_image_get_type_info): Save declarative security
