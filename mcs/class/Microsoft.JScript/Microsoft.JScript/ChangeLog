@@ -1,3 +1,10 @@
+2003-11-30  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
+
+	* CodeGenerator.cs: Set parent if 'JScript 0' to GlobalScope. Set
+	custom attribute. Build default 'JScript 0' constructor. Emit
+	default initial/final code of 'Global Code'. Create default
+	'JScript Main'.
+
 2003-11-29  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
 	* jscript-lexer-grammar.g: define new rule 'arguments' instead of
