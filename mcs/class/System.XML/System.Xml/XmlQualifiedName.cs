@@ -2,9 +2,11 @@
 // System.Xml.XmlQualifiedName.cs
 //
 // Author: Duncan Mak (duncan@ximian.com)
-//
+//		 
 // (C) Ximian, Inc.
-//
+// 
+// Modified: 
+//		21st June 2002 : Ajay kumar Dwivedi (adwiv@yahoo.com)
 
 using System;
 
@@ -14,14 +16,13 @@ namespace System.Xml
 	{
 		// Constructors		
 		public XmlQualifiedName ()
-			: base ()
+			: this (string.Empty, string.Empty)
 		{
 		}
 
 		public XmlQualifiedName (string name)
-			: base ()
+			: this (name, string.Empty)
 		{
-			this.name = name;
 		}
 
 		public XmlQualifiedName (string name, string ns)
@@ -60,13 +61,19 @@ namespace System.Xml
 		// Methods
 		public override bool Equals (object other)
 		{
+			if(!(other is XmlQualifiedName))
+				return false;
+
 			if ((XmlQualifiedName) this == (XmlQualifiedName) other)
 				return true;
 			else
 				return false;
 		}
 
-		[MonoTODO] public override int GetHashCode () { return 42; }
+		public override int GetHashCode () 
+		{ 
+			return unchecked (name.GetHashCode() + ns.GetHashCode()); 
+		}
 
 		public override string ToString ()
 		{
@@ -78,7 +85,7 @@ namespace System.Xml
 
 		public static string ToString (string name, string ns)
 		{
-			if (ns == null)
+			if (ns == string.Empty)
 				return name;
 			else				
 				return ns + ":" + name;
@@ -87,6 +94,9 @@ namespace System.Xml
 		// Operators
 		public static bool operator == (XmlQualifiedName a, XmlQualifiedName b)
 		{
+			if((Object)a == null || (Object)b == null)
+				return false;
+
 			if ((a.Name == b.Name) && (a.Namespace == b.Namespace))
 				return true;
 			else
@@ -95,7 +105,7 @@ namespace System.Xml
 
 		public static bool operator != (XmlQualifiedName a, XmlQualifiedName b)
 		{
-			if (!(a == b))
+			if (a == b)
 				return false;
 			else
 				return true;

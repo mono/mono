@@ -1,3 +1,9 @@
+2002-06-21  Ajay kumar Dwivedi <adwiv@yahoo.com>
+	
+	* XmlQualifiedName: Name and Namespaces are never null. If null is passed
+		to the constructor, set them to empty strings.
+		Fixed the Operators.
+	
 2002-06-18  Ajay kumar Dwivedi <adwiv@yahoo.com>
 	
 	* XmlTextReader.cs: HasLineInfo returns false instead of throwing an
