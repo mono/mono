@@ -1441,10 +1441,8 @@ namespace Mono.CSharp {
 			//
 			if (apply_explicit_conv_rules)
 				return FindMostEncompassedType (tgt_types_set);
-			else {
-				Console.WriteLine ("Here with: " + tgt_types_set.Count);
+			else 
 				return FindMostEncompassingType (tgt_types_set);
-			}
 		}
 		
 		/// <summary>
