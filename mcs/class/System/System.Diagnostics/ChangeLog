@@ -1,3 +1,13 @@
+2003-07-18  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* AlphabeticalEnumConverter.cs: Added
+	* EventLogEntry.cs: Implemented
+	* EventLogPermissionEntryCollection.cs: Fixed signature and implementation of indexer
+	* EventLogTraceListener.cs: Fixed signature
+	* PerformanceCounter.cs: Added missing attribute
+	* PerformanceCounterType.cs: Added missing attribute
+	* SRDescriptionAttribute.cs: Added and implemented
+
 2003-07-17  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* CounterCreationData.cs:

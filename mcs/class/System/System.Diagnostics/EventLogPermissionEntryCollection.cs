@@ -33,8 +33,9 @@ namespace System.Diagnostics
 			}	
 		}
 
-		public virtual EventLogEntry this [int index] {
-			get {return (EventLogEntry) List[index];}
+		public EventLogPermissionEntry this [int index] {
+			get { return ((EventLogPermissionEntry) List[index]); }
+			set { List[index] = value; }
 		}
 
 		public int Add(EventLogPermissionEntry value)

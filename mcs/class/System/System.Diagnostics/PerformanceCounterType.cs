@@ -8,11 +8,12 @@
 //
 
 using System;
-using System.Diagnostics;
+using System.ComponentModel;
 
 namespace System.Diagnostics {
 
 	[Serializable]
+	[TypeConverter (typeof (AlphabeticalEnumConverter))]
 	public enum PerformanceCounterType {
 		NumberOfItemsHEX32=0x00000000,
 		NumberOfItemsHEX64=0x00000100,

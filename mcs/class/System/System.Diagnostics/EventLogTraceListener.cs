@@ -17,7 +17,7 @@ using System.Diagnostics;
 namespace System.Diagnostics 
 {
 
-	public class EventLogTraceListener : TraceListener 
+	public sealed class EventLogTraceListener : TraceListener 
 	{
 		private EventLog eventLog;
 		private string source;

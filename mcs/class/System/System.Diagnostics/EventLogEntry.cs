@@ -14,105 +14,144 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.Serialization;
 
-namespace System.Diagnostics {
+namespace System.Diagnostics
+{
 
 	[Serializable]
-	[MonoTODO("Just stubbed out")]
-	[ToolboxItem (""), DesignTimeVisible (false)]
-	public sealed class EventLogEntry : Component, ISerializable {
+	[ToolboxItem (false), DesignTimeVisible (false)]
+	public sealed class EventLogEntry : Component, ISerializable
+	{
+
+		private string category;
+		private short categoryNumber;
+		private byte[] data;
+		private EventLogEntryType entryType;
+		private int eventID;
+		private int index;
+		private string machineName;
+		private string message;
+		private string[] replacementStrings;
+		private string source;
+		private DateTime timeGenerated;
+		private DateTime timeWritten;
+		private string userName;
+
+		internal EventLogEntry (string category, short categoryNumber, int index, 
+					int eventID, string message, string source,
+					string userName, string machineName, EventLogEntryType entryType,
+					DateTime timeGenerated, DateTime timeWritten, byte[] data,
+					string[] replacementStrings)
+		{
+			this.category = category;
+			this.categoryNumber = categoryNumber;
+			this.data = data;
+			this.entryType = entryType;
+			this.eventID = eventID;
+			this.index = index;
+			this.machineName = machineName;
+			this.message = message;
+			this.replacementStrings = replacementStrings;
+			this.source = source;
+			this.timeGenerated = timeGenerated;
+			this.timeWritten = timeWritten;
+			this.userName = userName;
+		}
 
 		[MonoTODO]
-		internal EventLogEntry ()
+		private EventLogEntry (SerializationInfo info, StreamingContext context)
 		{
 		}
 
-		[MonoTODO]
 		[MonitoringDescription ("The category of this event entry.")]
 		public string Category {
-			get {throw new NotImplementedException ();}
+			get { return category; }
 		}
 
-		[MonoTODO]
 		[MonitoringDescription ("An ID for the category of this event entry.")]
 		public short CategoryNumber {
-			get {throw new NotImplementedException ();}
+			get { return categoryNumber; }
 		}
 
-		[MonoTODO]
 		[MonitoringDescription ("Binary data associated with this event entry.")]
 		public byte[] Data {
-			get {throw new NotImplementedException ();}
+			get { return data; }
 		}
 
-		[MonoTODO]
 		[MonitoringDescription ("The type of this event entry.")]
 		public EventLogEntryType EntryType {
-			get {throw new NotImplementedException ();}
+			get { return entryType; }
 		}
 
-		[MonoTODO]
 		[MonitoringDescription ("An ID number for this event entry.")]
 		public int EventID {
-			get {throw new NotImplementedException ();}
+			get { return eventID; }
 		}
 
-		[MonoTODO]
 		[MonitoringDescription ("Sequence numer of this event entry.")]
 		public int Index {
-			get {throw new NotImplementedException ();}
+			get { return index; }
 		}
 
-		[MonoTODO]
 		[MonitoringDescription ("The Computer on which this event entry occured.")]
 		public string MachineName {
-			get {throw new NotImplementedException ();}
+			get { return machineName; }
 		}
 
-		[MonoTODO]
 		[Editor ("System.ComponentModel.Design.BinaryEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		[MonitoringDescription ("The message of this event entry.")]
 		public string Message {
-			get {throw new NotImplementedException ();}
+			get { return message; }
 		}
 
-		[MonoTODO]
 		[MonitoringDescription ("Application strings for this event entry.")]
 		public string[] ReplacementStrings {
-			get {throw new NotImplementedException ();}
+			get { return replacementStrings; }
 		}
 
-		[MonoTODO]
 		[MonitoringDescription ("The source application of this event entry.")]
 		public string Source {
-			get {throw new NotImplementedException ();}
+			get { return source; }
 		}
 
-		[MonoTODO]
 		[MonitoringDescription ("Generation time of this event entry.")]
 		public DateTime TimeGenerated {
-			get {throw new NotImplementedException ();}
+			get { return timeGenerated; }
 		}
 
-		[MonoTODO]
 		[MonitoringDescription ("The time at which this event entry was written to the logfile.")]
 		public DateTime TimeWritten {
-			get {throw new NotImplementedException ();}
+			get { return timeWritten; }
 		}
 
-		[MonoTODO]
 		[MonitoringDescription ("The name of a user associated with this event entry.")]
 		public string UserName {
-			get {throw new NotImplementedException ();}
+			get { return userName; }
 		}
 
-		[MonoTODO]
-		public bool Equals(EventLogEntry otherEntry)
+		public bool Equals (EventLogEntry otherEntry)
 		{
-			throw new NotImplementedException ();
+			if (otherEntry == this)
+				return true;
+
+			return (
+				(otherEntry.Category == category) &&
+				(otherEntry.CategoryNumber == categoryNumber) &&
+				(otherEntry.Data.Equals (data)) &&
+				(otherEntry.EntryType == entryType) &&
+				(otherEntry.EventID == eventID) &&
+				(otherEntry.Index == index) &&
+				(otherEntry.MachineName == machineName) &&
+				(otherEntry.Message == message) &&
+				(otherEntry.ReplacementStrings.Equals (replacementStrings)) &&
+				(otherEntry.Source == source) &&
+				(otherEntry.TimeGenerated.Equals (timeGenerated)) &&
+				(otherEntry.TimeWritten.Equals (timeWritten)) &&
+				(otherEntry.UserName == userName)
+				);
 		}
 
-		[MonoTODO]
-		void ISerializable.GetObjectData(SerializationInfo info, 
+		[MonoTODO ("Needs serialization support")]
+		void ISerializable.GetObjectData (SerializationInfo info, 
 			StreamingContext context)
 		{
 			throw new NotImplementedException ();
