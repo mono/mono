@@ -316,13 +316,7 @@ namespace System.Data {
 
 		public void RemoveAt(int index) 
 		{
-			if (index < 0 || index + 1 > List.Count)
-				throw new IndexOutOfRangeException("Index out of range, index = " 
-						+ index.ToString() + ".");
-	
-			this[index].RemoveFromConstraintCollectionCleanup(this);
-			List.RemoveAt(index);
-			OnCollectionChanged( new CollectionChangeEventArgs(CollectionChangeAction.Remove,this));
+			Remove(this[index]);
 		}
 
 		protected override ArrayList List {

@@ -1,4 +1,11 @@
 2003-10-22  Eran Domb  <erand@mainsoft.com>
+	* MergeManager.cs : Fixing bugs. Adding check for PrimaryKey matching.
+	
+	* ConstraintCollection.cs (RamoveAt): Change implemntation.
+	
+	* DataTableCollection (CanRemove): Removing cast to Constraint.
+
+2003-10-22  Eran Domb  <erand@mainsoft.com>
 	* DataRelationCollection.cs (AddCore): The unique constraint was added even if the createConstraints flag was false.
 	(Clear): The collection was cleared without removing the relation from the parent and child tables.
 	

@@ -27,7 +27,8 @@ namespace System.Data
 				throw new ArgumentNullException("sourceTable");
 
 			
-			AdjustSchema(targetSet, sourceTable, missingSchemaAction);
+			if (!AdjustSchema(targetSet, sourceTable, missingSchemaAction))
+				return;
 			checkColumnTypes(targetSet.Tables[sourceTable.TableName], sourceTable); // check that the colums datatype is the same
 			fillData(targetSet.Tables[sourceTable.TableName], sourceTable, preserveChanges);
 			
@@ -44,7 +45,8 @@ namespace System.Data
 			{
 				DataRow row = sourceRows[i];
 				DataTable sourceTable = row.Table;
-				AdjustSchema(targetSet, sourceTable, missingSchemaAction);
+				if (!AdjustSchema(targetSet, sourceTable, missingSchemaAction))
+					return;
 				checkColumnTypes(targetSet.Tables[row.Table.TableName], row.Table);
 				MergeRow(targetSet.Tables[sourceTable.TableName], row, preserveChanges);
 			}
@@ -108,7 +110,8 @@ namespace System.Data
 		
 		
 		// adjust the table schema according to the missingschemaaction param.
-		private static void AdjustSchema(DataSet targetSet, DataTable sourceTable, MissingSchemaAction missingSchemaAction)
+		// return false if adjusting fails.
+		private static bool AdjustSchema(DataSet targetSet, DataTable sourceTable, MissingSchemaAction missingSchemaAction)
 		{
 			string tableName = sourceTable.TableName;
 			
@@ -117,13 +120,17 @@ namespace System.Data
 			if (!targetSet.Tables.Contains(tableName))
 			{
 				if (missingSchemaAction == MissingSchemaAction.Ignore)
-					return;
+					return true;
 				if (missingSchemaAction == MissingSchemaAction.Error)
 					throw new ArgumentException("Target DataSet missing definition for "+ tableName + ".");
 				targetSet.Tables.Add((DataTable)sourceTable.Clone());
 			}
 			
 			DataTable table = targetSet.Tables[tableName];
+			
+			if (!CheckPrimaryKeys(table, sourceTable))
+				return false;
+			
 			for (int i = 0; i < sourceTable.Columns.Count; i++)
 			{
 				DataColumn col = sourceTable.Columns[i];
@@ -139,6 +146,64 @@ namespace System.Data
 					table.Columns.Add(new DataColumn(col.ColumnName, col.DataType, col.Expression, col.ColumnMapping));
 				}
 			}
+
+			return true;
+		}
+		
+		// find if there is a valid matching between the targetTable PrimaryKey and the
+		// sourceTable primatyKey.
+		// return true if there is a match, else return false and raise a MergeFailedEvent.
+		private static bool CheckPrimaryKeys(DataTable targetTable, DataTable sourceTable)
+		{
+			bool retVal = true;
+			// if the length of one of the tables primarykey if 0 - there is nothing to check.
+			if (targetTable.PrimaryKey.Length != 0 && sourceTable.PrimaryKey.Length != 0)
+			{
+				// if the length of primarykey is not equal - merge fails
+				if (targetTable.PrimaryKey.Length != sourceTable.PrimaryKey.Length)
+				{
+					string message = "<target>.PrimaryKey and <source>.PrimaryKey have different Length.";
+					MergeFailedEventArgs e = new MergeFailedEventArgs(sourceTable, message);
+					targetTable.DataSet.OnMergeFailed(e);
+					return false;
+				}
+				else
+				{
+					// we have to see that each primary column in the target table
+					// has a column with the same name in the sourcetable primarykey columns. 
+					bool foundMatch;
+					DataColumn[] targetDataColumns = targetTable.PrimaryKey;
+					DataColumn[] srcDataColumns = sourceTable.PrimaryKey;
+
+					// loop on all primary key columns in the targetTable.
+					for (int i = 0; i < targetDataColumns.Length; i++)
+					{
+						foundMatch = false;
+						DataColumn col = targetDataColumns[i];
+
+						// find if there is a column with the same name in the 
+						// sourceTable primary key columns.
+						for (int j = 0; j < srcDataColumns.Length; j++)
+						{
+							if (srcDataColumns[j].ColumnName == col.ColumnName)
+							{
+								retVal = false;
+								foundMatch = true;
+								break;
+							}
+						}
+						if (!foundMatch)
+						{
+							string message = "Mismatch columns in the PrimaryKey : <target>." + col.ColumnName + " versus <source>." + srcDataColumns[i].ColumnName + ".";
+							MergeFailedEventArgs e = new MergeFailedEventArgs(sourceTable, message);
+							targetTable.DataSet.OnMergeFailed(e);
+						}
+						
+					}
+				}
+			}
+
+			return retVal;
 		}
 		
 		// fill the data from the source table to the target table

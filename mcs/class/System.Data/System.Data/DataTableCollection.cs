@@ -242,7 +242,7 @@ namespace System.Data {
 				// loop on all constrains in the current table
 				while (constraintEnumerator.MoveNext())
 				{
-					Object o = (Constraint) constraintEnumerator.Current;
+					Object o = constraintEnumerator.Current;
 					// we only check ForeignKeyConstraint
 					if (o is ForeignKeyConstraint)
 					{
