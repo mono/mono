@@ -1,3 +1,9 @@
+2004-09-28  Zoltan Varga  <vargaz@freemail.hu>
+
+	* driver.c mini.h trace.c: Move the setting of the main assembly into
+	a separate function called mono_trace_set_assembly () and call it after
+	actually loading the main assembly. Fixes #66872.
+
 2004-09-25  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-amd64.h mini-amd64.c tramp-amd64.c: Allocate trampoline memory
