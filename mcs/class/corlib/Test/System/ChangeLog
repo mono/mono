@@ -1,5 +1,7 @@
 2002-02-26  Martin Baulig  <martin@gnome.org>
 
+	* DateTimeTest.cs: New test.
+
 	* TimeZoneTest.cs: New test.
 
 2002-02-25  Duco Fijma <duco@lorentz.xs4all.nl>

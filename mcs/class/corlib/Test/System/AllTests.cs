@@ -42,6 +42,7 @@ namespace MonoTests.System {
                                 suite.AddTest(UInt64Test.Suite);
 				suite.AddTest(DoubleTest.Suite);
 				suite.AddTest(TimeZoneTest.Suite);
+				suite.AddTest(DateTimeTest.Suite);
 				return suite;
                         }
                 }
