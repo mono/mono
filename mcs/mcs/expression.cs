@@ -4222,14 +4222,14 @@ namespace Mono.CSharp {
 					}
 				} else if (underlying_type == TypeManager.float_type) {
 					if (!(v is Expression)){
-						element = GetBytes ((float) v);
+						element = BitConverter.GetBytes ((float) v);
 							
 						for (int j = 0; j < factor; ++j)
 							data [idx + j] = element [j];
 					}
 				} else if (underlying_type == TypeManager.double_type) {
 					if (!(v is Expression)){
-						element = GetBytes ((double) v);
+						element = BitConverter.GetBytes ((double) v);
 
 						for (int j = 0; j < factor; ++j)
 							data [idx + j] = element [j];
