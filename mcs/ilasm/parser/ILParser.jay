@@ -820,7 +820,7 @@ localsHead              : D_LOCALS
 					
 methodDecl              : D_EMITBYTE int32 
 			| sehBlock 
-			| D_MAXSTACK int32 	
+			| D_MAXSTACK int32 
 			| localsHead OPEN_PARENS sigArgs0 CLOSE_PARENS 
 			| localsHead K_INIT OPEN_PARENS named_arg_list CLOSE_PARENS  
 				{
@@ -834,7 +834,10 @@ methodDecl              : D_EMITBYTE int32
 					}
 					*/
 				}
-			| D_ENTRYPOINT          {/* method.IsEntryPoint = true; */}
+			| D_ENTRYPOINT          
+			  { 
+				codegen.CurrentMethod.DeclareEntryPoint ();
+			  }
 			| D_ZEROINIT 
 			| dataDecl
 			| instr	{
