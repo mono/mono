@@ -1,3 +1,7 @@
+2004-04-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Win32Exception.cs: added 10024 (WSAEMFILE).
+
 2004-04-05  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* AttributeCollection.cs: Don't try to create a default attribute if the

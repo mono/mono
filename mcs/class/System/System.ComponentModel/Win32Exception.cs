@@ -76,6 +76,9 @@ namespace System.ComponentModel
 			case 10022:
 				message = Locale.GetText ("Invalid arguments");
 				break;
+			case 10024:
+				message = Locale.GetText ("Too many open files");
+				break;
 			case 10035:
 				message = Locale.GetText ("Operation on non-blocking socket would block");
 				break;
