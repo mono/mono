@@ -143,14 +143,14 @@ namespace MonoTests.System.Xml
 
 		private void AssertEndDocument (XmlReader xmlReader)
 		{
-			Assert (!xmlReader.Read ());
-			Assert (xmlReader.NodeType == XmlNodeType.None);
-			Assert (xmlReader.Depth == 0);
-			Assert (xmlReader.ReadState == ReadState.EndOfFile);
-			Assert (xmlReader.EOF);
+			Assert ("could read", !xmlReader.Read ());
+			AssertEquals ("NodeType is not XmlNodeType.None", XmlNodeType.None, xmlReader.NodeType);
+			AssertEquals ("Depth is not 0", 0, xmlReader.Depth);
+			AssertEquals ("ReadState is not ReadState.EndOfFile",  ReadState.EndOfFile, xmlReader.ReadState);
+			Assert ("not EOF", xmlReader.EOF);
 
 			xmlReader.Close ();
-			Assert (xmlReader.ReadState == ReadState.Closed);
+			AssertEquals ("ReadState is not ReadState.Cosed", ReadState.Closed, xmlReader.ReadState);
 		}
 
 		public void TestEmptyElement ()
