@@ -175,7 +175,7 @@ namespace System
 
 		protected override bool IsArrayImpl ()
 		{
-			return type_is_subtype_of (this, typeof (System.Array), false);
+			return type_is_subtype_of (this, typeof (System.Array), false) && this != typeof (System.Array);
 		}
 
 		protected override bool IsByRefImpl ()
