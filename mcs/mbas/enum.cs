@@ -492,10 +492,11 @@ namespace Mono.MonoBASIC {
 				}
 			}
 
-			FieldAttributes attr = FieldAttributes.Public | FieldAttributes.Static
+			/*FieldAttributes attr = FieldAttributes.Public | FieldAttributes.Static
 					| FieldAttributes.Literal;
-			
-			FieldBuilder fb = TypeBuilder.DefineField (name, UnderlyingType, attr);
+			*/
+			FieldBuilder fb = TypeBuilder.DefineField (name, UnderlyingType, 
+									/*attr*/ Modifiers.FieldAttr (ModFlags));
 
 			try {
 				default_value = TypeManager.ChangeType (default_value, UnderlyingType);
@@ -537,9 +538,9 @@ namespace Mono.MonoBASIC {
 			
 			object default_value = 0;
 			
-			FieldAttributes attr = FieldAttributes.Public | FieldAttributes.Static
+			/*FieldAttributes attr = FieldAttributes.Public | FieldAttributes.Static
 				             | FieldAttributes.Literal;
-
+			*/
 			
 			foreach (string name in ordered_enums) {
 				//
@@ -559,7 +560,8 @@ namespace Mono.MonoBASIC {
 
 				} else {
 					FieldBuilder fb = TypeBuilder.DefineField (
-						name, UnderlyingType, attr);
+						name, UnderlyingType, 
+							/*attr*/ Modifiers.FieldAttr (ModFlags));
 					
 					if (default_value == null) {
 					   Report.Error (30439, loc, "Enumerator value for '" + name + "' is too large to " +

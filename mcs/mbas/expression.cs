@@ -5843,30 +5843,9 @@ namespace Mono.MonoBASIC {
 				return new_expr.Resolve (ec, flags);
 			}
 					
-			//
-			// TODO: I mailed Ravi about this, and apparently we can get rid
-			// of this and put it in the right place.
-			// 
-			// Handle enums here when they are in transit.
-			// Note that we cannot afford to hit MemberLookup in this case because
-			// it will fail to find any members at all
-			//
-
 			int errors = Report.Errors;
 			
 			Type expr_type = expr.Type;
-			if ((expr is TypeExpr) && (expr_type.IsSubclassOf (TypeManager.enum_type))){
-				Enum en = TypeManager.LookupEnum (expr_type);
-				
-				if (en != null) {
-					object value = en.LookupEnumValue (ec, Identifier, loc);
-					expr_type = TypeManager.int32_type;
-					if (value != null){
-						Constant c = Constantify (value, en.UnderlyingType);
-						return new EnumConstant (c, en.UnderlyingType);
-					}
-				}
-			}
 
 			if (expr_type.IsPointer){
 				Error (23, "The '.' operator can not be applied to pointer operands (" +
@@ -5924,8 +5903,22 @@ namespace Mono.MonoBASIC {
 				return null;
 			}
 
+			if ((expr is TypeExpr) && (expr_type.IsSubclassOf (TypeManager.enum_type)))	{
+				Enum en = TypeManager.LookupEnum (expr_type);
+				
+				if (en != null) {
+					object value = en.LookupEnumValue (ec, Identifier, loc);
+					expr_type = TypeManager.int32_type;
+					if (value != null) {
+						Constant c = Constantify (value, en.UnderlyingType);
+						return new EnumConstant (c, en.UnderlyingType);
+					}
+				}
+			}
+
 			if (member_lookup is TypeExpr){
 				member_lookup.Resolve (ec, ResolveFlags.Type);
+
 				return member_lookup;
 			} else if ((flags & ResolveFlags.MaskExprClass) == ResolveFlags.Type)
 				return null;
@@ -5936,7 +5929,6 @@ namespace Mono.MonoBASIC {
 
 			// The following DoResolve/DoResolveLValue will do the definite assignment
 			// check.
-
 			if (right_side != null)
 				member_lookup = member_lookup.DoResolveLValue (ec, right_side);
 			else
