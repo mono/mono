@@ -87,7 +87,7 @@ namespace System.Web.UI.WebControls
 				throw new NotImplementedException();
 				if(attributes==null)
 				{
-					//TODO: From where to get StateBag and how? I think this method is OK!
+					//FIXME: From where to get StateBag and how? I think this method is OK!
 					if(attributeState == null)
 					{
 						attributeState = new StateBag(true);
@@ -280,7 +280,7 @@ namespace System.Web.UI.WebControls
 		public virtual void RenderBeginTag(HtmlTextWriter writer)
 		{
 			AddAttributesToRender(writer);
-			if( Enum.IsDefined(typeof(HtmlTextWriterTag), TagKey) )
+			if(Enum.IsDefined(typeof(HtmlTextWriterTag), TagKey) )
 			{
 				writer.RenderBeginTag(TagKey);
 				return;
@@ -305,7 +305,7 @@ namespace System.Web.UI.WebControls
 		{
 			get
 			{
-				if(tagName==null && Enum.IsDefined(typeof(HtmlTextWriterTag), TagKey) )
+				if(tagName==null && Enum.IsDefined(typeof(HtmlTextWriterTag), tagKey) )
 				{
 					tagName = Enum.Format(typeof(HtmlTextWriterTag), tagKey, "G").ToString();
 				}
@@ -399,8 +399,6 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
-		// Implemented procedures
-		//TODO: The scope of the functions - is public valid. Test thru Reflection
 		string IAttributeAccessor.GetAttribute(string key)
 		{
 			if(Attributes!=null)

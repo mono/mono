@@ -1,3 +1,17 @@
+2002-02-02      Gaurav Vaish <gvaish@iitk.ac.in>
+
+	* ListBox.cs                  - Implemented the following:
+	           RaisePostDataChangedEvent()
+
+2002-02-02      Gaurav Vaish <gvaish@iitk.ac.in>
+
+	* ListBox.cs                  - Supports the following properties:
+	           BorderColor, BorderStyle, BorderWidth, Rows, SelectionMode, ToolTip,
+	          Methods:
+	           AddAttributesToRender(HtmlTextWriter), OnPreRender(EventArgs),
+	           RenderContents(HtmlTextWriter)
+
+
 2002-02-01      Gaurav Vaish <gvaish@iitk.ac.in>
 
 	* TargetConverter.cs          - Completed
@@ -20,6 +34,8 @@
 	           CreateControlHierarchy(bool), CreateItem(int, ListItemType),
 	           CreateItem(int, ListItemType, bool, object), PrepareControlHierarchy(),
 	           InitializeItem(DataListItem)
+	* ListBox.cs                  - Started working.
+
 
 
 2002-01-31      Gaurav Vaish <gvaish@iitk.ac.in>

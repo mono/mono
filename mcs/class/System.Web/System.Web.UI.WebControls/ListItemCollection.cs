@@ -96,12 +96,12 @@ namespace System.Web.UI.WebControls
 			if(marked)
 				item.Dirty = true;
 		}
-		
+
 		public void Add(string item)
 		{
 			Add(new ListItem(item));
 		}
-		
+
 		public void AddRange(ListItem[] items)
 		{
 			foreach(ListItem item in items)
@@ -146,8 +146,6 @@ namespace System.Web.UI.WebControls
 			{
 				if(current.Value == value)
 				{
-					if(current is Disposable)
-						current.Dispose();
 					return current;
 				}
 			}
@@ -162,8 +160,6 @@ namespace System.Web.UI.WebControls
 				i++;
 				if(current.Value == value)
 				{
-					if(current is Disposable)
-						current.Dispose();
 					return i;
 				}
 			}

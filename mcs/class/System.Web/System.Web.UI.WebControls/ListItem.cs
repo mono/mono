@@ -172,7 +172,7 @@ namespace System.Web.UI.WebControls
 			}
 			throw new HttpException(HttpRuntime.FormatResourceString("Cannot_Have_Children_Of_Type", "ListItem", obj.GetType().ToString()));
 		}
-		
+
 		internal bool IsTrackingViewState
 		{
 			get
@@ -180,12 +180,12 @@ namespace System.Web.UI.WebControls
 				return IsSet(MARKED);
 			}
 		}
-		
+
 		internal void TrackViewState()
 		{
 			Set(MARKED);
 		}
-		
+
 		internal void LoadViewState(object state)
 		{
 			if(state is Pair)
@@ -205,7 +205,7 @@ namespace System.Web.UI.WebControls
 				Text = (string)state;
 			}
 		}
-		
+
 		internal object SaveViewState()
 		{
 			if(IsSet(DIRTY_T) && IsSet(DIRTY_V))
