@@ -1,3 +1,7 @@
+2004-03-31  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* mini.c: set the timeout to 2s when calling mono_domain_finalize.
+
 2004-03-31  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-ppc.c (mono_arch_patch_code): Fix ppc build.
