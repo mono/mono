@@ -99,17 +99,16 @@ namespace System.Web.UI.WebControls
 			switch(itemType)
 			{
 				case ListItemType.Header: toRender = headerTemplate;
-				                          break;
+							  break;
 				case ListItemType.Footer: toRender = footerTemplate;
-				                          break;
-				case ListItemType.AlternatingItem:
-				case ListItemType.Item:   toRender = itemTemplate;
-				                          break;
+							  break;
 				case ListItemType.SelectedItem:
+				case ListItemType.AlternatingItem:
+				case ListItemType.Item:	  toRender = itemTemplate;
+							  break;
+				case ListItemType.EditItem:
 					toRender = (editItemTemplate != null ? editItemTemplate : itemTemplate);
-				                          break;
-				default:                  toRender = editItemTemplate;
-				                          break;
+							  break;
 			}
 			if(toRender != null)
 			{

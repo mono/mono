@@ -1,5 +1,10 @@
 2003-11-03 Jackson Harper <jackson@ximian.com>
 
+	* TemplateColumn.cs: Use the same renderer for selected items as
+	normal items. This fixes bug #49744.
+	
+2003-11-03 Jackson Harper <jackson@ximian.com>
+
 	* DataList.cs:
 	* WebControl.cs: Fix argument out of range exceptions on
 	properties. Patch by Yaron Shkop.
