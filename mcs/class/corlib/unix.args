@@ -555,6 +555,7 @@ System.Security.Cryptography/SymmetricAlgorithm.cs
 System.Security.Cryptography/ToBase64Transform.cs
 System.Security.Cryptography/X509Certificates.cs
 System.Security.Permissions/CodeAccessSecurityAttribute.cs
+System.Security.Permissions/EnvironmentPermission.cs
 System.Security.Permissions/EnvironmentPermissionAccess.cs
 System.Security.Permissions/EnvironmentPermissionAttribute.cs
 System.Security.Permissions/FileDialogPermissionAccess.cs
@@ -570,6 +571,7 @@ System.Security.Permissions/IUnrestrictedPermission.cs
 System.Security.Permissions/PermissionSetAttribute.cs
 System.Security.Permissions/PermissionState.cs
 System.Security.Permissions/PrincipalPermissionAttribute.cs
+System.Security.Permissions/ReflectionPermission.cs
 System.Security.Permissions/ReflectionPermissionAttribute.cs
 System.Security.Permissions/ReflectionPermissionFlag.cs
 System.Security.Permissions/RegistryPermissionAccess.cs
