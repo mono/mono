@@ -89,20 +89,29 @@ namespace System.Diagnostics
 			string assertuienabled = GetAttribute (c, "assertuienabled", false, node);
 			string logfilename = GetAttribute (c, "logfilename", false, node);
 			ValidateInvalidAttributes (c, node);
-			try {
-				d ["assertuienabled"] = bool.Parse (assertuienabled);
+			if (assertuienabled != null) {
+				try {
+					d ["assertuienabled"] = bool.Parse (assertuienabled);
+				}
+				catch (Exception e) {
+					throw new ConfigurationException ("The `assertuienabled' attribute must be `true' or `false'",
+							e, node);
+				}
 			}
-			catch (Exception e) {
-				throw new ConfigurationException ("The `assertuienabled' attribute must be `true' or `false'",
-						e, node);
-			}
-			d ["logfilename"] = logfilename;
+
+			if (logfilename != null)
+				d ["logfilename"] = logfilename;
 
 			DefaultTraceListener dtl = (DefaultTraceListener) TraceImpl.Listeners["Default"];
 			if (dtl != null) {
-				dtl.AssertUiEnabled = (bool) d ["assertuienabled"];
-				dtl.LogFileName = logfilename;
+				if (assertuienabled != null)
+					dtl.AssertUiEnabled = (bool) d ["assertuienabled"];
+				if (logfilename != null)
+					dtl.LogFileName = logfilename;
 			}
+
+			if (node.ChildNodes.Count > 0)
+				ThrowUnrecognizedElement (node.ChildNodes[0]);
 		}
 
 		// name attribute is required, value is optional
@@ -127,7 +136,7 @@ namespace System.Diagnostics
 						case "add":
 							name = GetAttribute (attributes, "name", true, child);
 							value = GetAttribute (attributes, "value", false, child);
-							newNodes[name] = value;
+							newNodes[name] = AsString (value);
 							break;
 						case "remove":
 							name = GetAttribute (attributes, "name", true, child);
@@ -176,23 +185,27 @@ namespace System.Diagnostics
 			string autoflush = GetAttribute (c, "autoflush", false, node);
 			string indentsize = GetAttribute (c, "indentsize", false, node);
 			ValidateInvalidAttributes (c, node);
-			try {
-				bool b = bool.Parse (autoflush);
-				d ["autoflush"] = b;
-				TraceImpl.AutoFlush = b;
+			if (autoflush != null) {
+				try {
+					bool b = bool.Parse (autoflush);
+					d ["autoflush"] = b;
+					TraceImpl.AutoFlush = b;
+				}
+				catch (Exception e) {
+					throw new ConfigurationException ("The `autoflush' attribute must be `true' or `false'",
+							e, node);
+				}
 			}
-			catch (Exception e) {
-				throw new ConfigurationException ("The `autoflush' attribute must be `true' or `false'",
-						e, node);
-			}
-			try {
-				int n = int.Parse (indentsize);
-				d ["indentsize"] = n;
-				TraceImpl.IndentSize = n;
-			}
-			catch (Exception e) {
-				throw new ConfigurationException ("The `indentsize' attribute must be an integral value.",
-						e, node);
+			if (indentsize != null) {
+				try {
+					int n = int.Parse (indentsize);
+					d ["indentsize"] = n;
+					TraceImpl.IndentSize = n;
+				}
+				catch (Exception e) {
+					throw new ConfigurationException ("The `indentsize' attribute must be an integral value.",
+							e, node);
+				}
 			}
 		}
 
@@ -241,12 +254,19 @@ namespace System.Diagnostics
 		{
 			Type t = Type.GetType (type);
 			object[] args = null;
-			if (initializeData == string.Empty)
+			if (initializeData == null)
 				args = new object[]{name};
 			else
 				args = new object[]{initializeData, name};
-			TraceListener l = (TraceListener) Activator.CreateInstance (t, args);
-			TraceImpl.Listeners.Add (l);
+			try {
+				TraceListener l = (TraceListener) Activator.CreateInstance (t, args);
+				TraceImpl.Listeners.Add (l);
+			}
+			catch (Exception e) {
+				throw new ConfigurationException (
+						string.Format ("Invalid Type Specified: {0}", type),
+						e);
+			}
 		}
 
 		private void RemoveTraceListener (string name)
@@ -258,13 +278,18 @@ namespace System.Diagnostics
 				// The specified listener wasn't in the collection
 				// Ignore this; .NET does.
 			}
+			catch (Exception e) {
+				throw new ConfigurationException (
+						string.Format ("Unknown error removing listener: {0}", name),
+						e);
+			}
 		}
 
 		private string GetAttribute (XmlAttributeCollection attrs, string attr, bool required, XmlNode node)
 		{
 			XmlAttribute a = attrs[attr];
 
-			string r = string.Empty;
+			string r = null;
 
 			if (a != null) {
 				r = a.Value;
@@ -277,11 +302,15 @@ namespace System.Diagnostics
 
 			return r;
 		}
+		
+		private string AsString (string s)
+		{
+			return s == null ? string.Empty : s;
+		}
 
 		private void ValidateAttribute (string attribute, string value, XmlNode node)
 		{
-			// Don't need to check for null; handled in GetAttribute
-			if (value.Length == 0)
+			if (value == null || value.Length == 0)
 				throw new ConfigurationException (string.Format ("Required attribute `{0}' cannot be empty.", attribute), node);
 		}
 
