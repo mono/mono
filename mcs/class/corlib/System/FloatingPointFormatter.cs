@@ -45,6 +45,15 @@ namespace System {
 		}
 
 		private string NumberToString () {
+			if (Double.IsNaN(value)) {
+				return nfi.NaNSymbol;
+			}
+			if (Double.IsNegativeInfinity(value)) {
+				return nfi.NegativeInfinitySymbol;
+			}
+			if (Double.IsPositiveInfinity(value)) {
+				return nfi.PositiveInfinitySymbol;
+			}
 			if (format == null) {
 				format = "G";
 			}
@@ -121,16 +130,19 @@ namespace System {
 			return false;
 		}
 
-		private void Normalize
-				(double value, out long mantissa, out int exponent) {
+		private void Normalize (double value, int precision,
+				out long mantissa, out int exponent) {
 			mantissa = 0;
 			exponent = 0;
+			if (precision <= (dec_len + 1)) {
+				value = Math.Round (value, precision);
+			}
+			value = Math.Abs(value);
 			if (value == 0.0 ||
 				Double.IsInfinity(value) ||
 				Double.IsNaN(value)) {
 				return;
 			}
-			value = Math.Abs(value);
 			if (value > p10) {
 				while (value > p10) {
 					value /= 10;
@@ -151,72 +163,67 @@ namespace System {
 
 		private string FormatCurrency (int precision) {
 			StringBuilder sb = new StringBuilder();
-			if (Double.IsNaN(value)) {
-				sb.Append(nfi.NaNSymbol);
-			}
-			else if (Double.IsInfinity(value)) {
-				sb.Append(nfi.PositiveInfinitySymbol);
+			precision = (precision >= 0) ?
+				precision : nfi.CurrencyDecimalDigits;
+			int decimals = precision;
+			long mantissa;
+			int exponent;
+			Normalize(value, precision, out mantissa, out exponent);
+			if (exponent >= 0) {
+				while (decimals > 0) {
+					sb.Append("0");
+					decimals--;
+				}
 			}
 			else {
-				int decimals = (precision >= 0) ?
-					precision : nfi.CurrencyDecimalDigits;
-				long mantissa;
-				int exponent;
-				Normalize(value, out mantissa, out exponent);
-				if (exponent >= 0) {
-					while (decimals > 0) {
-						sb.Append("0");
-						decimals--;
+				int decimal_limit = -(decimals+1);
+				while (exponent < 0) {
+					if (exponent > decimal_limit) {
+						sb.Insert(0, Digits[mantissa % 10]);
 					}
+					mantissa /= 10;
+					exponent++;
+					decimals--;
 				}
-				else {
-					int decimal_limit = -(decimals+1);
-					while (exponent < 0) {
-						if (exponent > decimal_limit) {
-							sb.Insert(0, Digits[mantissa % 10]);
-						}
-						mantissa /= 10;
-						exponent++;
-						decimals--;
-					}
-					while (decimals > 0) {
-						sb.Append('0');
-						decimals--;
-					}
+				while (decimals > 0) {
+					sb.Append('0');
+					decimals--;
 				}
+			}
+			if (precision != 0) {
 				sb.Insert(0, nfi.NumberDecimalSeparator);
-				if (mantissa == 0) {
-					sb.Insert(0, "0");
+			}
+			if (mantissa == 0) {
+				sb.Insert(0, "0");
+			}
+			else {
+				int i = 0;
+				while (exponent > 0) {
+					int fin = nfi.NumberGroupSizes[i];
+					if (fin == 0) {
+						fin = int.MaxValue;
+					}
+					for (int j = 0; (j < fin) && (exponent > 0);
+							j++, exponent--) {
+						sb.Insert(0, "0");
+					}
+					sb.Insert(0, nfi.NumberGroupSeparator);
+					if (i < nfi.NumberGroupSizes.Length - 1)
+						i++;
 				}
-				else {
-					int i = 0;
-					while (exponent > 0) {
-						int fin = nfi.NumberGroupSizes[i];
-						if (fin == 0) {
-							fin = int.MaxValue;
-						}
-						for (int j = 0; (j < fin) && (exponent > 0);
-								j++, exponent--) {
-							sb.Insert(0, "0");
-						}
+				while (mantissa != 0) {
+					int fin = nfi.NumberGroupSizes[i];
+					if (fin == 0) {
+						fin = int.MaxValue;
+					}
+					for (int j = 0; (j < fin) && (mantissa != 0); j++) {
+						sb.Insert(0, Digits[mantissa % 10]);
+						mantissa /= 10;
+					}
+					if (mantissa != 0)
 						sb.Insert(0, nfi.NumberGroupSeparator);
-						if (i < nfi.NumberGroupSizes.Length - 1)
-							i++;
-					}
-					while (mantissa != 0) {
-						int fin = nfi.NumberGroupSizes[i];
-						if (fin == 0) {
-							fin = int.MaxValue;
-						}
-						for (int j = 0; (j < fin) && (mantissa != 0); j++) {
-							sb.Insert(0, Digits[mantissa % 10]);
-							mantissa /= 10;
-						}
-						if (mantissa != 0)
-							sb.Insert(0, nfi.NumberGroupSeparator);
-						if (i < nfi.NumberGroupSizes.Length - 1)
-							i++;
-					}
+					if (i < nfi.NumberGroupSizes.Length - 1)
+						i++;
 				}
 			}
 			string numb = sb.ToString();
@@ -276,112 +283,98 @@ namespace System {
 			}
 		}
 
-		[MonoTODO]
 		private string FormatExponential (int precision) {
 			StringBuilder sb = new StringBuilder();
-			if (value == 0.0) {
-				sb.Append("0");
-			}
-			else if (Double.IsNaN(value)) {
-				sb.Append(nfi.NaNSymbol);
-			}
-			else if (Double.IsPositiveInfinity(value)) {
-				sb.Append(nfi.PositiveInfinitySymbol);
-			}
-			else if (Double.IsNegativeInfinity(value)) {
-				sb.Append(nfi.NegativeInfinitySymbol);
-			}
-			else {
-				int decimals = (precision >= 0) ?
-					precision : nfi.NumberDecimalDigits;
-				long mantissa;
-				int exponent;
-				Normalize(value, out mantissa, out exponent);
-				bool not_null = false;
-				for (int i = 0; i < dec_len; i++) {
+			precision = (precision >= 0) ?
+				precision : nfi.NumberDecimalDigits;
+			int decimals = precision;
+			long mantissa;
+			int exponent;
+			Normalize(value, precision, out mantissa, out exponent);
+			bool not_null = false;
+			if (mantissa != 0.0) {
+				for (int i = 0; i < dec_len || mantissa >= 10; i++) {
 					if ((not_null == false) && ((mantissa % 10) != 0)) {
 						not_null = true;
 					}
 					if (not_null) {
 						sb.Insert(0,Digits[mantissa % 10]);
+						precision--;
 					}
 					mantissa /= 10;
 					exponent++;
 				}
-				if (sb.Length == 0) {
-					sb.Insert(0, "0");
-				}
-				sb.Insert(0,
-					Digits[mantissa % 10] + nfi.NumberDecimalSeparator);
-				if (exponent > 0) {
-					sb.Append("E" + nfi.PositiveSign);
-				}
-				else {
-					sb.Append("E" + nfi.NegativeSign);
-				}
-				sb.Append(Math.Abs(exponent).ToString());
-				if (value < 0.0) {
-					sb.Insert(0, nfi.NegativeSign);
-				}
+			}
+			precision++;
+			while (precision > 0) {
+				sb.Append('0');
+				precision--;
+			}
+			if (sb.Length == 0) {
+				sb.Insert(0, "0");
+			}
+			sb.Insert
+				(0, Digits[mantissa % 10] + nfi.NumberDecimalSeparator);
+			if (exponent >= 0) {
+				sb.Append("E" + nfi.PositiveSign);
+			}
+			else {
+				sb.Append("E" + nfi.NegativeSign);
+			}
+			sb.Append(Math.Abs(exponent).ToString("000"));
+			if (value < 0.0) {
+				sb.Insert(0, nfi.NegativeSign);
 			}
 			return sb.ToString();
 		}
 
 		private string FormatFixedPoint (int precision) {
 			StringBuilder sb = new StringBuilder();
-			if (Double.IsNaN(value)) {
-				sb.Append(nfi.NaNSymbol);
-			}
-			else if (Double.IsPositiveInfinity(value)) {
-				sb.Append(nfi.PositiveInfinitySymbol);
-			}
-			else if (Double.IsNegativeInfinity(value)) {
-				sb.Append(nfi.NegativeInfinitySymbol);
+			precision = (precision >= 0) ?
+				precision : nfi.NumberDecimalDigits;
+			int decimals = precision;
+			long mantissa;
+			int exponent;
+			Normalize(value, precision, out mantissa, out exponent);
+			if (exponent >= 0) {
+				while (decimals > 0) {
+					sb.Append("0");
+					decimals--;
+				}
 			}
 			else {
-				int decimals = (precision >= 0) ?
-					precision : nfi.NumberDecimalDigits;
-				long mantissa;
-				int exponent;
-				Normalize(value, out mantissa, out exponent);
-				if (exponent >= 0) {
-					while (decimals > 0) {
-						sb.Append("0");
-						decimals--;
-					}
-				}
-				else {
-					int decimal_limit = -(decimals + 1);
-					while (exponent < 0) {
-						if (exponent > decimal_limit) {
-							sb.Insert(0, Digits[mantissa % 10]);
-						}
-						mantissa /= 10;
-						exponent++;
-						decimals--;
-					}
-					while (decimals > 0) {
-						sb.Append('0');
-						decimals--;
-					}
-				}
-				sb.Insert(0, nfi.NumberDecimalSeparator);
-				if (mantissa == 0) {
-					sb.Insert(0, "0");
-				}
-				else {
-					while (exponent > 0) {
-						sb.Insert(0, "0");
-						exponent--;
-					}
-					while (mantissa != 0) {
+				int decimal_limit = -(decimals + 1);
+				while (exponent < 0) {
+					if (exponent > decimal_limit) {
 						sb.Insert(0, Digits[mantissa % 10]);
-						mantissa /= 10;
 					}
+					mantissa /= 10;
+					exponent++;
+					decimals--;
 				}
-				if (value < 0.0) {
-					sb.Insert(0, nfi.NegativeSign);
+				while (decimals > 0) {
+					sb.Append('0');
+					decimals--;
 				}
+			}
+			if (precision != 0) {
+				sb.Insert(0, nfi.NumberDecimalSeparator);
+			}
+			if (mantissa == 0) {
+				sb.Insert(0, "0");
+			}
+			else {
+				while (exponent > 0) {
+					sb.Insert(0, "0");
+					exponent--;
+				}
+				while (mantissa != 0) {
+					sb.Insert(0, Digits[mantissa % 10]);
+					mantissa /= 10;
+				}
+			}
+			if (value < 0.0) {
+				sb.Insert(0, nfi.NegativeSign);
 			}
 			return sb.ToString();
 		}
@@ -391,21 +384,13 @@ namespace System {
 			if (value == 0.0) {
 				sb.Append("0");
 			}
-			else if (Double.IsNaN(value)) {
-				sb.Append(nfi.NaNSymbol);
-			}
-			else if (Double.IsPositiveInfinity(value)) {
-				sb.Append(nfi.PositiveInfinitySymbol);
-			}
-			else if (Double.IsNegativeInfinity(value)) {
-				sb.Append(nfi.NegativeInfinitySymbol);
-			}
 			else {
-				int decimals = (precision >= 0) ?
+				precision = (precision >= 0) ?
 					precision : nfi.NumberDecimalDigits;
+				int decimals = precision;
 				long mantissa;
 				int exponent;
-				Normalize(value, out mantissa, out exponent);
+				Normalize(value, precision, out mantissa, out exponent);
 				if (exponent > dec_len_min && exponent <= 0) {
 					bool not_null = false;
 					while (exponent < 0) {
@@ -462,72 +447,67 @@ namespace System {
 
 		private string FormatNumber (int precision) {
 			StringBuilder sb = new StringBuilder();
-			if (Double.IsNaN(value)) {
-				sb.Append(nfi.NaNSymbol);
-			}
-			else if (Double.IsInfinity(value)) {
-				sb.Append(nfi.PositiveInfinitySymbol);
+			precision = (precision >= 0) ?
+				precision : nfi.NumberDecimalDigits;
+			int decimals = precision;
+			long mantissa;
+			int exponent;
+			Normalize(value, precision, out mantissa, out exponent);
+			if (exponent >= 0) {
+				while (decimals > 0) {
+					sb.Append("0");
+					decimals--;
+				}
 			}
 			else {
-				int decimals = (precision >= 0) ?
-					precision : nfi.NumberDecimalDigits;
-				long mantissa;
-				int exponent;
-				Normalize(value, out mantissa, out exponent);
-				if (exponent >= 0) {
-					while (decimals > 0) {
-						sb.Append("0");
-						decimals--;
+				int decimal_limit = -(decimals + 1);
+				while (exponent < 0) {
+					if (exponent > decimal_limit) {
+						sb.Insert(0, Digits[mantissa % 10]);
 					}
+					mantissa /= 10;
+					exponent++;
+					decimals--;
 				}
-				else {
-					int decimal_limit = -(decimals + 1);
-					while (exponent < 0) {
-						if (exponent > decimal_limit) {
-							sb.Insert(0, Digits[mantissa % 10]);
-						}
-						mantissa /= 10;
-						exponent++;
-						decimals--;
-					}
-					while (decimals > 0) {
-						sb.Append('0');
-						decimals--;
-					}
+				while (decimals > 0) {
+					sb.Append('0');
+					decimals--;
 				}
+			}
+			if (precision != 0) {
 				sb.Insert(0, nfi.NumberDecimalSeparator);
-				if (mantissa == 0) {
-					sb.Insert(0, "0");
+			}
+			if (mantissa == 0) {
+				sb.Insert(0, "0");
+			}
+			else {
+				int i = 0;
+				while (exponent > 0) {
+					int fin = nfi.NumberGroupSizes[i];
+					if (fin == 0) {
+						fin = int.MaxValue;
+					}
+					for (int j = 0; (j < fin) && (exponent > 0);
+							j++, exponent--) {
+						sb.Insert(0, "0");
+					}
+					sb.Insert(0, nfi.NumberGroupSeparator);
+					if (i < nfi.NumberGroupSizes.Length - 1)
+						i++;
 				}
-				else {
-					int i = 0;
-					while (exponent > 0) {
-						int fin = nfi.NumberGroupSizes[i];
-						if (fin == 0) {
-							fin = int.MaxValue;
-						}
-						for (int j = 0; (j < fin) && (exponent > 0);
-								j++, exponent--) {
-							sb.Insert(0, "0");
-						}
+				while (mantissa != 0) {
+					int fin = nfi.NumberGroupSizes[i];
+					if (fin == 0) {
+						fin = int.MaxValue;
+					}
+					for (int j = 0; (j < fin) && (mantissa != 0); j++) {
+						sb.Insert(0, Digits[mantissa % 10]);
+						mantissa /= 10;
+					}
+					if (mantissa != 0)
 						sb.Insert(0, nfi.NumberGroupSeparator);
-						if (i < nfi.NumberGroupSizes.Length - 1)
-							i++;
-					}
-					while (mantissa != 0) {
-						int fin = nfi.NumberGroupSizes[i];
-						if (fin == 0) {
-							fin = int.MaxValue;
-						}
-						for (int j = 0; (j < fin) && (mantissa != 0); j++) {
-							sb.Insert(0, Digits[mantissa % 10]);
-							mantissa /= 10;
-						}
-						if (mantissa != 0)
-							sb.Insert(0, nfi.NumberGroupSeparator);
-						if (i < nfi.NumberGroupSizes.Length - 1)
-							i++;
-					}
+					if (i < nfi.NumberGroupSizes.Length - 1)
+						i++;
 				}
 			}
 			string numb = sb.ToString();
@@ -551,76 +531,70 @@ namespace System {
 			return numb;
 		}
 
-		[MonoTODO]
 		private string FormatPercent (int precision) {
 			StringBuilder sb = new StringBuilder();
-			if (Double.IsNaN(value)) {
-				sb.Append(nfi.NaNSymbol);
-			}
-			else if (Double.IsInfinity(value)) {
-				sb.Append(nfi.PositiveInfinitySymbol);
+			precision = (precision >= 0) ?
+				precision : nfi.PercentDecimalDigits;
+			int decimals = precision;
+			long mantissa;
+			int exponent;
+			Normalize(value, precision, out mantissa, out exponent);
+			exponent += 2;
+			if (exponent >= 0) {
+				while (decimals > 0) {
+					sb.Append("0");
+					decimals--;
+				}
 			}
 			else {
-				int decimals = (precision >= 0) ?
-					precision : nfi.PercentDecimalDigits;
-				long mantissa;
-				int exponent;
-				Normalize(value, out mantissa, out exponent);
-				exponent += 2;
-				if (exponent >= 0) {
-					while (decimals > 0) {
-						sb.Append("0");
-						decimals--;
+				int decimal_limit = -(decimals + 1);
+				while (exponent < 0) {
+					if (exponent > decimal_limit) {
+						sb.Insert(0, Digits[mantissa % 10]);
 					}
+					mantissa /= 10;
+					exponent++;
+					decimals--;
 				}
-				else {
-					int decimal_limit = -(decimals + 1);
-					while (exponent < 0) {
-						if (exponent > decimal_limit) {
-							sb.Insert(0, Digits[mantissa % 10]);
-						}
-						mantissa /= 10;
-						exponent++;
-						decimals--;
-					}
-					while (decimals > 0) {
-						sb.Append('0');
-						decimals--;
-					}
+				while (decimals > 0) {
+					sb.Append('0');
+					decimals--;
 				}
+			}
+			if (precision != 0) {
 				sb.Insert(0, nfi.NumberDecimalSeparator);
-				if (mantissa == 0) {
-					sb.Insert(0, "0");
+			}
+			if (mantissa == 0) {
+				sb.Insert(0, "0");
+			}
+			else {
+				int i = 0;
+				while (exponent > 0) {
+					int fin = nfi.NumberGroupSizes[i];
+					if (fin == 0) {
+						fin = int.MaxValue;
+					}
+					for (int j = 0; (j < fin) && (exponent > 0);
+							j++, exponent--) {
+						sb.Insert(0, "0");
+					}
+					sb.Insert(0, nfi.NumberGroupSeparator);
+					if (i < nfi.NumberGroupSizes.Length - 1)
+						i++;
 				}
-				else {
-					int i = 0;
-					while (exponent > 0) {
-						int fin = nfi.NumberGroupSizes[i];
-						if (fin == 0) {
-							fin = int.MaxValue;
-						}
-						for (int j = 0; (j < fin) && (exponent > 0);
-								j++, exponent--) {
-							sb.Insert(0, "0");
-						}
+				while (mantissa != 0) {
+					int fin = nfi.NumberGroupSizes[i];
+					if (fin == 0) {
+						fin = int.MaxValue;
+					}
+					for (int j = 0; (j < fin) && (mantissa != 0); j++) {
+						sb.Insert(0, Digits[mantissa % 10]);
+						mantissa /= 10;
+					}
+					if (mantissa != 0)
 						sb.Insert(0, nfi.NumberGroupSeparator);
-						if (i < nfi.NumberGroupSizes.Length - 1)
-							i++;
-					}
-					while (mantissa != 0) {
-						int fin = nfi.NumberGroupSizes[i];
-						if (fin == 0) {
-							fin = int.MaxValue;
-						}
-						for (int j = 0; (j < fin) && (mantissa != 0); j++) {
-							sb.Insert(0, Digits[mantissa % 10]);
-							mantissa /= 10;
-						}
-						if (mantissa != 0)
-							sb.Insert(0, nfi.NumberGroupSeparator);
-						if (i < nfi.NumberGroupSizes.Length - 1)
-							i++;
-					}
+					if (i < nfi.NumberGroupSizes.Length - 1)
+						i++;
 				}
 			}
 			string numb = sb.ToString();
@@ -771,14 +745,6 @@ namespace System {
 		}
 
 		private string FormatCustomParser (string format) {
-			if (Double.IsInfinity(value)) {
-				throw new FormatException(
-					"Invalid number for this format: infinity");
-			}
-			if (Double.IsNaN(value)) {
-				throw new FormatException(
-					"Invalid number for this format: NaN");
-			}
 			long mantissa;
 			int exponent;
 			Flags f = AnalizeFormat(format);
@@ -797,12 +763,12 @@ namespace System {
 					len = 0;
 				}
 				value = Math.Round(value, len);
-				Normalize(value, out mantissa, out exponent);
+				Normalize(value, 15, out mantissa, out exponent);
 				exponent += exp;
 			}
 			else {
 				value = Math.Round(value, f.DecimalLength);
-				Normalize(value, out mantissa, out exponent);
+				Normalize(value, 15, out mantissa, out exponent);
 			}
 			StringBuilder sb = new StringBuilder();
 			if (f.ExpPos > 0) {
