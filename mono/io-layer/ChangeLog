@@ -1,3 +1,28 @@
+2005-03-09  Dick Porter  <dick@ximian.com>
+
+	* error.c (_wapi_get_win32_file_error): ENFILE and EMFILE should
+	map to ERROR_TOO_MANY_OPEN_FILES, not ERROR_NO_MORE_FILES.  Fixes
+	bug 72671.
+
+2005-03-09  Dick Porter  <dick@ximian.com>
+
+	* daemon.c (process_process_fork): Initialise the handle data
+	before using it in the error case.  This is probably the error
+	we're working around in the previous change.  Spotted by Taru Jain
+	<tjain@novell.com> and Hemanth Yamijala <YHemanth@novell.com>.
+
+2005-03-07  Dick Porter  <dick@ximian.com>
+
+	* daemon.c: It looks like g_shell_parse_argv() can return
+	argv[0]=NULL somehow, yet still not give an error.  Make sure we
+	don't pass NULL to strrchr(), working around a segfault that
+	showed up on ZLM testing.
+
+2005-03-01 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* sockets.c: translate EINPROGRESS to EWOULDBLOCK in connect. This is
+	the expected error code showed by the test case in bug #73053.
+
 2005-02-18 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* io.c: another leftover.
