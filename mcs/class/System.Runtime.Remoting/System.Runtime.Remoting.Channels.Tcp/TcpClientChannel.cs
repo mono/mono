@@ -30,7 +30,7 @@ namespace System.Runtime.Remoting.Channels.Tcp
 		{
 			priority = 1;
 
-			if (_sinkProvider != null)
+			if (sinkProvider != null)
 			{
 				_sinkProvider = sinkProvider;
 
