@@ -88,8 +88,8 @@ namespace Mono.CSharp.Debugger
 			if (!use_gnu_extensions) {
 				array_type = RegisterType (typeof (MonoArray));
 				array_bounds_type = RegisterType (typeof (MonoArrayBounds));
+				string_type = RegisterType (typeof (MonoString));
 			}
-			string_type = RegisterType (typeof (MonoString));
 		}
 
 		DateTime last_time;
@@ -201,6 +201,8 @@ namespace Mono.CSharp.Debugger
 
 		public class TypeHandle : ITypeHandle
 		{
+			protected static ArrayList external_types = new ArrayList ();
+
 			protected readonly Type type;
 			protected DieType type_die;
 			protected int token;
@@ -243,8 +245,8 @@ namespace Mono.CSharp.Debugger
 				get {
 					if ((token == 0) && !type.Equals (typeof (object)))
 						throw new InvalidOperationException ();
-					else
-						return token;
+
+					return token;
 				}
 			}
 
@@ -293,6 +295,14 @@ namespace Mono.CSharp.Debugger
 				}
 			}
 
+			public static Type[] ExternalTypes {
+				get {
+					Type[] retval = new Type [external_types.Count];
+					external_types.CopyTo (retval, 0);
+					return retval;
+				}
+			}
+
 			public virtual void CreateType (DieCompileUnit parent_die)
 			{
 				if (type_die != null)
@@ -331,22 +341,19 @@ namespace Mono.CSharp.Debugger
 					pointer_die = new DieInternalPointer (parent_die, type_die);
 					type_die.CreateType ();
 					return;
-				} else if (type.Equals (typeof (object))) {
-					type_die = new DieClassType (parent_die, this);
-					pointer_die = new DieInternalPointer (parent_die, type_die);
-					new DieInternalTypeDef (parent_die, type_die, type.FullName);
-					type_die.CreateType ();
-					return;
-				} else if (!(type is TypeBuilder)) {
-					type_die = new DieTypeDef (parent_die, void_type, type.FullName);
+				} else if (type.IsPointer || type.IsByRef) {
+					type_die = new DiePointerType (parent_die, type);
 					type_die.CreateType ();
 					return;
 				}
 
-				token = ((TypeBuilder) type).TypeToken.Token;
+				if (type is TypeBuilder)
+					token = ((TypeBuilder) type).TypeToken.Token;
+				else if (!type.Equals (typeof (object)))
+					token = external_types.Add (type) + 1;
 
 				if (type.IsPointer || type.IsByRef)
-					type_die = new DiePointerType (parent_die, this);
+					type_die = new DiePointerType (parent_die, type);
 				else if (type.IsEnum)
 					type_die = new DieEnumType (parent_die, this);
 				else if (type.IsValueType) {
@@ -1350,8 +1357,9 @@ namespace Mono.CSharp.Debugger
 				my_abbrev_id = RegisterAbbrevDeclaration (decl);
 			}
 
-			public DiePointerType (DieCompileUnit parent_die, ITypeHandle type)
-				: base (parent_die, type, my_abbrev_id)
+			public DiePointerType (DieCompileUnit parent_die, Type type)
+				: base (parent_die, parent_die.Writer.RegisterType (type.GetElementType ()),
+					my_abbrev_id)
 			{ }
 
 			public override void DoEmit ()
@@ -1574,7 +1582,7 @@ namespace Mono.CSharp.Debugger
 
 			protected const BindingFlags FieldBindingFlags =
 				BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance |
-				BindingFlags.Static;
+				BindingFlags.Static | BindingFlags.DeclaredOnly;
 
 			public override void CreateType ()
 			{
@@ -1582,6 +1590,7 @@ namespace Mono.CSharp.Debugger
 				field_types = new ITypeHandle [fields.Length];
 				field_dies = new Die [fields.Length];
 
+				int index = 0;
 				for (int i = 0; i < fields.Length; i++) {
 					Type field_type = fields [i].FieldType;
 					field_types [i] = dw.RegisterType (field_type);
@@ -1602,8 +1611,9 @@ namespace Mono.CSharp.Debugger
 						new DieStaticVariableDefinition (parent_die, fields [i].Name,
 										 field_dies [i]);
 					} else
-						field_dies [i] = new DieMember (this, fields [i].Name, i,
-										field_types [i], access);
+						field_dies [i] = new DieMember (this, fields [i].Name,
+										index++, field_types [i],
+										access);
 				}
 
 				base.CreateType ();
@@ -1740,7 +1750,7 @@ namespace Mono.CSharp.Debugger
 			}
 
 			public DieMonoStringType (Die parent_die)
-				: base (parent_die, parent_die.Writer.string_type, my_abbrev_id)
+				: base (parent_die, parent_die.Writer.void_type, my_abbrev_id)
 			{ }
 
 			public override void DoEmit ()
@@ -2370,14 +2380,15 @@ namespace Mono.CSharp.Debugger
 			}
 		}
 
-		protected const int reloc_table_version = 14;
+		protected const int reloc_table_version = 15;
 
 		protected enum Section {
 			DEBUG_INFO		= 0x01,
 			DEBUG_ABBREV		= 0x02,
 			DEBUG_LINE		= 0x03,
 			MONO_RELOC_TABLE	= 0x04,
-			MONO_LINE_NUMBERS	= 0x05
+			MONO_LINE_NUMBERS	= 0x05,
+			MONO_SYMBOL_TABLE	= 0x06
 		}
 
 		public struct AbbrevEntry {
@@ -2538,6 +2549,8 @@ namespace Mono.CSharp.Debugger
 				return "mono_reloc_table";
 			case Section.MONO_LINE_NUMBERS:
 				return "mono_line_numbers";
+			case Section.MONO_SYMBOL_TABLE:
+				return "mono_symbol_table";
 			default:
 				throw new ArgumentException ();
 			}
@@ -2723,7 +2736,7 @@ namespace Mono.CSharp.Debugger
 			current_section = section;
 		}
 
-		public void WriteSymbolTable (IMonoSymbolWriter symwriter)
+		public void WriteLineNumberTable (IMonoSymbolWriter symwriter)
 		{
 			WriteSectionStart (Section.MONO_LINE_NUMBERS);
 			aw.WriteUInt16 (reloc_table_version);
@@ -2773,6 +2786,26 @@ namespace Mono.CSharp.Debugger
 
 				aw.WriteString (source.FileName);
 			}
+
+			aw.WriteSectionEnd ();
+		}
+
+		public void WriteSymbolTable (IMonoSymbolWriter symwriter)
+		{
+			WriteSectionStart (Section.MONO_SYMBOL_TABLE);
+			aw.WriteUInt16 (reloc_table_version);
+
+			object end_index = aw.StartSubsectionWithSize ();
+
+			Type[] external_types = TypeHandle.ExternalTypes;
+
+			aw.WriteUInt32 (external_types.Length);
+			for (int i = 0; i < external_types.Length; i++) {
+				aw.WriteString (external_types [i].Namespace);
+				aw.WriteString (external_types [i].Name);
+			}
+
+			aw.EndSubsection (end_index);
 
 			aw.WriteSectionEnd ();
 		}

@@ -802,6 +802,8 @@ namespace Mono.CSharp.Debugger
 
 			writer.WriteSymbolTable (this);
 
+			writer.WriteLineNumberTable (this);
+
 			writer.Close ();
 		}
 	}

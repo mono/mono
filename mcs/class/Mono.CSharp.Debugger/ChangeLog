@@ -1,5 +1,9 @@
 2002-07-05  Martin Baulig  <martin@gnome.org>
 
+	* MonoDwarfFileWriter.cs: Added support for types in referenced assemblies.
+
+2002-07-05  Martin Baulig  <martin@gnome.org>
+
 	* MonoDwarfFileWriter.cs: Added support for arrays.
 
 	* gdb-csharp-support.patch: Updated.
