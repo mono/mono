@@ -1,3 +1,7 @@
+2004-02-18  Jackson Harper <jackson@ximian.com>
+
+	* ilasm.exe.sources: Add ExternTypeRefInst to the build.
+	
 2003-11-16 Jackson Harper <jackson@ximian.com>
 
 	* Driver.cs: Give the parser an instance of the stream reader so

@@ -15,6 +15,7 @@ codegen/DataDef.cs
 codegen/TypeRef.cs
 codegen/PeapiTypeRef.cs
 codegen/ExternTypeRef.cs
+codegen/ExternTypeRefInst.cs
 codegen/PrimitiveTypeRef.cs
 codegen/TypeManager.cs
 codegen/IInstr.cs
