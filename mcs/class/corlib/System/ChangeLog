@@ -1,3 +1,8 @@
+2004-08-17  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Version.cs: Fixed Clone so we can use it on versions with only
+	major/minor or major/minor/build.
+
 2004-08-17  Martin Baulig  <martin@ximian.com>
 
 	* MonoType.cs (MonoType.getFullName): Added `bool full_name'

@@ -157,7 +157,12 @@ namespace System
 
 		public object Clone ()
 		{
-			return new Version (_Major, _Minor, _Build, _Revision);
+			if (_Build == -1)
+				return new Version (_Major, _Minor);
+			else if (_Revision == -1)
+				return new Version (_Major, _Minor, _Build);
+			else
+				return new Version (_Major, _Minor, _Build, _Revision);
 		}
 
 		public int CompareTo (object version)
