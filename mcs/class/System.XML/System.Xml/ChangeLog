@@ -1,3 +1,8 @@
+2002-10-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* XmlDocument.cs: one more Load method implemented.
+	* XmlTextReader.cs: Depth now works.
+
 2002-09-22  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* XmlConvert.cs: IsInvalid is now internal.

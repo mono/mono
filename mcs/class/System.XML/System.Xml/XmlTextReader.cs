@@ -38,6 +38,7 @@ namespace System.Xml
 {
 	public class XmlTextReader : XmlReader, IXmlLineInfo
 	{
+		WhitespaceHandling whitespaceHandling = WhitespaceHandling.All;
 		#region Constructors
 
 		protected XmlTextReader ()
@@ -84,7 +85,10 @@ namespace System.Xml
 		[MonoTODO]
 		public XmlTextReader (Stream input, XmlNameTable nt)
  		{
-			throw new NotImplementedException ();
+			XmlNamespaceManager nsMgr = new XmlNamespaceManager (nt);
+			parserContext = new XmlParserContext (null, nsMgr, null, XmlSpace.None);
+			Init ();
+			reader = new StreamReader (input);
 		}
 
 		[MonoTODO]
@@ -108,7 +112,10 @@ namespace System.Xml
 		[MonoTODO]
 		public XmlTextReader (TextReader input, XmlNameTable nt)
 		{
-			throw new NotImplementedException ();
+			XmlNamespaceManager nsMgr = new XmlNamespaceManager (nt);
+			parserContext = new XmlParserContext (null, nsMgr, null, XmlSpace.None);
+			Init ();
+			reader = input;
 		}
 
 		[MonoTODO]
@@ -154,7 +161,9 @@ namespace System.Xml
 
 		public override int Depth
 		{
-			get { return depth > 0 ? depth : 0; }
+			get {
+				return elementDepth;
+			}
 		}
 
 		public Encoding Encoding
@@ -276,11 +285,10 @@ namespace System.Xml
 			get { return value; }
 		}
 
-		[MonoTODO]
 		public WhitespaceHandling WhitespaceHandling
 		{
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return whitespaceHandling; }
+			set { whitespaceHandling = value; }
 		}
 
 		[MonoTODO]
@@ -507,7 +515,7 @@ namespace System.Xml
 
 				while (startname != endname) {
 					ReadContent ();
-    				endname = this.Name;
+					endname = this.Name;
 				}
 
 				xmlBuffer.Replace(currentTag.ToString (), "");
@@ -521,8 +529,6 @@ namespace System.Xml
 		[MonoTODO]
 		public override string ReadOuterXml ()
 		{
-			// Still need a Well Formedness check.
-			// Will wait for Validating reader ;-)
 			if (NodeType == XmlNodeType.Attribute) {
 				return Name+"=\""+Value+"\"";
 			} else {
@@ -534,7 +540,7 @@ namespace System.Xml
 
 				while (startname != endname) {
 					ReadContent ();
-    				endname = this.Name;
+					endname = this.Name;
 				}
 				saveToXmlBuffer = false;
 				string OuterXml = xmlBuffer.ToString ();
@@ -571,6 +577,7 @@ namespace System.Xml
 		private ReadState readState;
 
 		private int depth;
+		private int elementDepth;
 		private bool depthDown;
 
 		private bool popScope;
@@ -617,7 +624,7 @@ namespace System.Xml
 		{
 			readState = ReadState.Initial;
 
-			depth = -1;
+			depth = 0;
 			depthDown = false;
 
 			popScope = false;
@@ -664,6 +671,7 @@ namespace System.Xml
 			this.name = name;
 			this.isEmptyElement = isEmptyElement;
 			this.value = value;
+			this.elementDepth = depth;
 
 			if (clearAttributes)
 				ClearAttributes ();
@@ -745,7 +753,6 @@ namespace System.Xml
 		// element or text outside of the document element.
 		private bool ReadContent ()
 		{
-			bool more = false;
 			currentTag.Length = 0;
 			if (popScope) {
 				parserContext.NamespaceManager.PopScope ();
@@ -755,22 +762,32 @@ namespace System.Xml
 			if (returnEntityReference) {
 				++depth;
 				SetEntityReferenceProperties ();
-				more = true;
 			} else {
     			switch (PeekChar ())
 				{
 				case '<':
 					ReadChar ();
 					ReadTag ();
-					more = true;
 					break;
 				case '\r':
+					if (whitespaceHandling == WhitespaceHandling.All ||
+					    whitespaceHandling == WhitespaceHandling.Significant)
+						return ReadWhitespace ();
+
 					ReadChar ();
 					return ReadContent ();
 				case '\n':
+					if (whitespaceHandling == WhitespaceHandling.All ||
+					    whitespaceHandling == WhitespaceHandling.Significant)
+						return ReadWhitespace ();
+
 					ReadChar ();
 					return ReadContent ();
 				case ' ':
+					if (whitespaceHandling == WhitespaceHandling.All ||
+					    whitespaceHandling == WhitespaceHandling.Significant)
+						return ReadWhitespace ();
+
 					SkipWhitespace ();
 					return ReadContent ();
 				case -1:
@@ -782,16 +799,14 @@ namespace System.Xml
 						String.Empty, // value
 						true // clearAttributes
 					);
-					more = false;
 					break;
 				default:
-					ReadText ();
-					more = true;
+					ReadText (true);
 					break;
 				}
 			}
 
-			return more;
+			return (PeekChar () != -1);
 		}
 
 		private void SetEntityReferenceProperties ()
@@ -855,11 +870,6 @@ namespace System.Xml
 
 			Expect ('>');
 
-			if (!depthDown)
-				++depth;
-			else
-				depthDown = false;
-
 			SetProperties (
 				XmlNodeType.Element, // nodeType
 				name, // name
@@ -867,6 +877,12 @@ namespace System.Xml
 				String.Empty, // value
 				false // clearAttributes
 			);
+
+			if (!depthDown)
+				++depth;
+			else
+				depthDown = false;
+
 		}
 
 		// The reader is positioned on the first character
@@ -934,9 +950,10 @@ namespace System.Xml
 
 		// The reader is positioned on the first character
 		// of the text.
-		private void ReadText ()
+		private void ReadText (bool cleanValue)
 		{
-			valueLength = 0;
+			if (cleanValue)
+				valueLength = 0;
 
 			int ch = PeekChar ();
 
@@ -952,14 +969,8 @@ namespace System.Xml
 			}
 
 			if (returnEntityReference && valueLength == 0) {
-				++depth;
 				SetEntityReferenceProperties ();
 			} else {
-				if (depth >= 0) {
-					++depth;
-					depthDown = true;
-				}
-
 				SetProperties (
 					XmlNodeType.Text, // nodeType
 					String.Empty, // name
@@ -1243,8 +1254,6 @@ namespace System.Xml
 				AppendValueChar ((char)ch);
 			}
 
-			++depth;
-
 			SetProperties (
 				XmlNodeType.CDATA, // nodeType
 				String.Empty, // name
@@ -1292,8 +1301,29 @@ namespace System.Xml
 		// Does not consume the first non-whitespace character.
 		private void SkipWhitespace ()
 		{
+			//FIXME: Should not skip if whitespaceHandling == WhiteSpaceHandling.None
 			while (XmlChar.IsWhitespace (PeekChar ()))
 				ReadChar ();
+		}
+
+		private bool ReadWhitespace ()
+		{
+			valueLength = 0;
+			int ch = PeekChar ();
+			do {
+				AppendValueChar (ReadChar ());
+			} while ((ch = PeekChar ()) != -1 && XmlChar.IsWhitespace (ch));
+
+			if (ch != -1 && ch != '<')
+				ReadText (false);
+			else
+				SetProperties (XmlNodeType.Whitespace,
+					       String.Empty,
+					       false,
+					       CreateValueString (),
+					       true);
+
+			return (PeekChar () != -1);
 		}
 	}
 }

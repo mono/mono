@@ -411,10 +411,9 @@ namespace System.Xml
 			Load (xmlReader);
 		}
 
-		[MonoTODO]
 		public virtual void Load (TextReader txtReader)
 		{
-			throw new NotImplementedException ();
+			Load (new XmlTextReader (txtReader));
 		}
 
 		public virtual void Load (XmlReader xmlReader)
