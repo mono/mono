@@ -66,16 +66,16 @@ namespace System.Web.Configuration
 		{
 			Encoding encoding = null;
 			try {
-				switch (enc) {
-				case "UTF-16LE":
+				switch (enc.ToLower ()) {
+				case "utf-16le":
 				case "utf-16":
 				case "ucs-2":
 				case "unicode":
-				case "ISO-10646-UCS-2":
+				case "iso-10646-ucs-2":
 					encoding = new UnicodeEncoding (false, true);
 					break;
-				case "UTF-16BE":
-				case "unicodeFFFE":
+				case "utf-16be":
+				case "unicodefffe":
 					encoding = new UnicodeEncoding (true, true);
                                         break;
 				case "utf-8":
