@@ -1,3 +1,9 @@
+2005-03-23  Atsushi Enomoto <atsushi@ximian.com>
+
+	* RncParser.jay : fixed some cast error. Supply type name for "data".
+	* RncTokenizer.cs : don't reject '-' for NCName.
+	  Don't regard documentation token as a valid token for parser.
+
 2005-02-05  Atsushi Enomoto <atsushi@ximian.com>
 
 	* RncParser.jay : handle default namespace.

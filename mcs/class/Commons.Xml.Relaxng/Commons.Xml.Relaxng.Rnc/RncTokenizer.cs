@@ -188,7 +188,7 @@ namespace Commons.Xml.Relaxng.Rnc
 					loop = false;
 					break;
 				default:
-					if (!IsTokenContinuable (c)) {
+					if (!IsNCNameChar (c)) {
 						if (c == ':') {
 							if (prefixName != null)
 								throw new RelaxngException ("Invalid colon was found.");
@@ -220,7 +220,7 @@ namespace Commons.Xml.Relaxng.Rnc
 			return s;
 		}
 
-		private bool IsTokenContinuable (int c)
+		private bool IsNCNameChar (int c)
 		{
 			switch (c) {
 			case '=':
@@ -238,7 +238,7 @@ namespace Commons.Xml.Relaxng.Rnc
 			case '*':
 			case '\\':
 			case '+':
-			case '-':
+//			case '-':
 			case '>':
 			case '#':
 			case '\'':
@@ -320,7 +320,8 @@ namespace Commons.Xml.Relaxng.Rnc
 //				if (ReadChar () != '#')
 //					throw new RelaxngException ("Invalid character after '#'.");
 				tokenValue = ReadLine ();
-				return Token.Documentation;
+//				return Token.Documentation;
+				return ParseToken ();
 			case '\'':
 			case '\"':
 				name = ReadQuoted ((char) c);

@@ -667,14 +667,11 @@ AnnotatedPrimary /* returns RelaxngPattern */
 	}
 	;
 
-AnnotatedDataExcept /* returns RelaxngPatternList */
+AnnotatedDataExcept /* returns RelaxngPattern */
 	: LeadAnnotatedDataExcept FollowAnnotations
 	{
 		// FIXME: handle followAnnotations
-		RelaxngData p = (RelaxngData) $1;
-		RelaxngPatternList l = new RelaxngPatternList ();
-		l.Add (p);
-		$$ = l;
+		$$ = $1;
 	}
 	;
 
@@ -808,12 +805,14 @@ Primary /* returns RelaxngPattern */
 DataExcept /* returns RelaxngData */
 	: DatatypeName OptParams Minus LeadAnnotatedPrimary
 	{
+		XmlQualifiedName type = (XmlQualifiedName) $1;
 		RelaxngData data = new RelaxngData ();
-		foreach (RelaxngParam p in (IList) $2)
+		data.Type = type.Name;
+		data.DatatypeLibrary = type.Namespace;
+		foreach (RelaxngParam p in (RelaxngParamList) $2)
 			data.ParamList.Add (p);
 		data.Except = new RelaxngExcept ();
-		foreach (RelaxngPattern p in (RelaxngPatternList) $4)
-			data.Except.Patterns.Add (p);
+		data.Except.Patterns.Add ((RelaxngPattern) $4);
 		$$ = data;
 	}
 	;
