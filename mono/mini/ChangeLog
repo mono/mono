@@ -1,5 +1,7 @@
 2005-03-13  Zoltan Varga  <vargaz@freemail.hu>
 
+	* exceptions-amd64.c (mono_amd64_exceptions_init): Remove this.
+
 	* mini.h mini.c tramp-*.c: Move common trampoline code to mini.c.
 
 	* mini-x86.h mini-x86.c mini-amd64.h mini-amd64.c: Get rid of the
