@@ -1,0 +1,137 @@
+Notes on the Soap Client
+------------------------
+
+* Preparing an invocation.
+
+	To send a SOAP request to a remote server, applications will
+	instantiate a class created by the WSDL compiler that derives
+	from SoapHttpClientProtocol.
+
+	The classes generated are fairly simple, they contain stubs
+	for all of the methods generated just pass the name of the
+	method and the arguments they receive to the protected
+	Invoke() method on SoapHttpClientProtocol.
+
+	To invoke a method on a SOAP server it is necessary to
+	instantiate the generated class, and possibly configure the
+	Url property of it (to point to the right server) and then
+	invoking the stubs. 
+
+	The stub will call SoapHttpClientProtocol.Invoke.  Our
+	implementation walks the stack to find the invoker and extract
+	the attributes that control the processing
+
+	SoapHttpClientProtocol will create a SoapClientMessage based
+	on this information.  The SoapClientMessage class is used to
+	pass the information to hooks or extensions in the .NET
+	Framework.  These hooks are invoked at various phases to
+	customize the SOAP message. 
+
+	For the first pass of our implementation, we will not invoke
+	any of those hooks.  They are required for things like WSS,
+	but we do not need this now.
+
+	A WebRequest object of type POST is created, and we will use
+	this to send our Soap message. 
+
+* Creating the SOAP request
+
+	The SOAP request is fairly simple;   For our initial
+	implementation we will only support the schema encoding. 
+
+	For each stub method, we need to create an XmlSerializer for
+	the parameter values, and another one for the return value.
+
+	The encoding is fairly simple, see the post on
+	mono-serialization-list for a sample program.
+
+* Processing the return value.
+
+	Soon.
+
+* Metadata
+
+	We need to extract various pieces of information from a given
+	MethodInfo.  Currently this is done in CreateMessage, but it
+	should be moved elsewhere as there is plenty more that we will
+	need to extract, and we are currently just passing all that
+	information to SoapClientMessage as internal data.
+
+	This new structure will also keep a cache of the
+	XmlSerializers that we need for encoding the arguments. 
+
+	This should contain information extracted from the method
+	attributes, at least the following play a role:
+
+		SoapDocumentMethodAttribute
+		WebMethodAttribute
+
+
+* Current shortcomings and problems.
+
+	* Need to find a list of all attributes that apply to a
+	  method.
+
+	* Need a cache that maps (type, method-name) to the
+	  precomputed MethodMetadata.  The type has to be a derived
+	  class from SoapHttpClientProtocol.
+
+	* Since we know that WebService names are *unique* we can
+	  pull the MethodMetadata based on this key, so it would be:
+
+			(type, unique-name) -> MethodMetadata
+
+	* We probably need to compute all the MethodMetadata structs
+	  in one pass for a type, as the unique-name can not be
+	  discovered unless we do a query on all the attributes
+	  attached to methods (see the sample at the end)
+
+
+* Other notes.
+
+	  VisualStudio does not allow method overloaded in web
+	  services, it requires that:
+
+		[WebMethod (MethodName="AlternateName")]
+		public int Name ()
+
+	  I tried this:
+
+		[WebMethod] public string A () {}
+		[WebMethod] public string A (int b) {}
+
+          Had to change it to:
+	
+		[WebMethod] public string A () {}
+		[WebMethod (MethodName="B")] public string A (int b) {}
+
+	  The generated stubs though for "Invoke" does not use the
+	  actual name of the web method in the call to "Invoke", it
+	  uses a sequential number:
+
+	        [System.Web.Services.WebMethodAttribute(MessageName="A1")]
+	        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/B", RequestElementName="B", RequestNamespace="http://tempuri.org/", ResponseElementName="BResponse", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+	        [return: System.Xml.Serialization.XmlElementAttribute("BResult")]
+	        public string A(int a) {
+	            object[] results = this.Invoke("A1", new object[] {
+	                        a});
+	            return ((string)(results[0]));
+	        }
+        
+	        /// <remarks/>
+	        public System.IAsyncResult BeginA1(int a, System.AsyncCallback callback, object asyncState) {
+	            return this.BeginInvoke("A1", new object[] {
+	                        a}, callback, asyncState);
+	        }
+        
+	        /// <remarks/>
+	        public string EndA1(System.IAsyncResult asyncResult) {
+	            object[] results = this.EndInvoke(asyncResult);
+	            return ((string)(results[0]));
+	        }
+
+
+	The above is interesting, because it means that the method to
+	invoke on the target should be pulled from
+	`RequestElementName', if the value is not found, then we use
+	the name of the method provided.
