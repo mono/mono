@@ -187,7 +187,7 @@ namespace Mono.CSharp
 		static void Usage ()
 		{
 			Console.WriteLine (
-				"Mono C# compiler, (C) 2001 Ximian, Inc.\n" +
+				"Mono C# compiler, (C) 2001 - 2003 Ximian, Inc.\n" +
 				"mcs [options] source-files\n" +
 				"   --about            About the Mono C# compiler\n" +
 				"   -checked[+|-]      Set default context to checked\n" +
@@ -233,7 +233,7 @@ namespace Mono.CSharp
 		static void About ()
 		{
 			Console.WriteLine (
-				"The Mono C# compiler is (C) 2001, 2002 Ximian, Inc.\n\n" +
+				"The Mono C# compiler is (C) 2001 - 2003 Ximian, Inc.\n\n" +
 				"The compiler source code is released under the terms of the GNU GPL\n\n" +
 
 				"For more information on Mono, visit the project Web site\n" +
