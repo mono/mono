@@ -1,5 +1,7 @@
 2004-09-26  Zoltan Varga  <vargaz@freemail.hu>
 
+	* icall.c (ves_icall_System_Reflection_FieldInfo_GetUnmanagedMarshal): New icall.
+
 	* reflection.c (mono_param_get_objects): Fill out MarshalAsImpl field.
 
 	* reflection.c (mono_reflection_marshal_from_marshal_spec): New 
