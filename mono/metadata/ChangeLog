@@ -1,4 +1,9 @@
 
+Tue Mar 22 16:35:57 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* icall.c: speedup and fix leaks in GetMethodsByName and
+	GetPropertiesByName.
+
 Tue Mar 22 16:34:29 CET 2005 Paolo Molaro <lupus@ximian.com>
 
 	* reflection.c: some locking fixes.
