@@ -32,7 +32,7 @@ namespace MonoTests.System
 			AssertEquals (relsrc + " Scheme", scheme, uri.Scheme);
 			AssertEquals (relsrc + " Host", host, uri.Host);
 			AssertEquals (relsrc + " Port", port, uri.Port);
-			AssertEquals (relsrc + " LocalPath", localPath, uri.LocalPath);
+			AssertEquals (relsrc + " LocalPath", uri.Scheme == Uri.UriSchemeFile ? localPath.Replace (Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar) : localPath, uri.LocalPath);
 			AssertEquals (relsrc + " Query", query, uri.Query);
 			AssertEquals (relsrc + " Fragment", fragment, uri.Fragment);
 			AssertEquals (relsrc + " IsFile", isFile, uri.IsFile);

@@ -1,3 +1,8 @@
+2004-06-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* UriTest2.cs : LocalPath values should vary depending on the running
+	  environment - so replace '/' and '\\' each other.
+
 2004-06-11  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* UriTest.cs : Added UnixLocalPath().
