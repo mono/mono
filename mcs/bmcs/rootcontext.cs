@@ -123,14 +123,24 @@ namespace Mono.CSharp {
 		}
 		
 		// 
-		// The default compiler checked state
+		// The default compiler checked state. It's "On" in case of VB.NET compiler.
 		//
-		static public bool Checked = false;
+		static public bool Checked = true;
+
 
 		//
 		// Whether to allow Unsafe code
 		//
 		static public bool Unsafe = false;
+
+		//
+		// VB.NET specific compiler options
+		//
+
+		// 
+		// The default type checking state
+		//
+		static public bool StricterTypeChecking = false;
 		
 		static string MakeFQN (string nsn, string name)
 		{

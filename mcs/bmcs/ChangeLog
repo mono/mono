@@ -1,5 +1,16 @@
 2005-03-01  Jambunathan K  <kjambunathan.devel@gmail.com>
 
+	* ecore.cs (ImplicitInvocation, ImplicitNew, FloatingToFixedCast): Added
+	* expression.cs (ImplicitInvocation, ImplicitNew): Removed
+
+	* driver.cs, rootcontext.cs: Added the 'removeintchecks' and
+	'optionstrict' command line options
+
+	* convert.cs (WideningNumericConversion,
+	NarrowingNumericConversion): Updated to refelct VB.NET semantics.
+
+2005-03-01  Jambunathan K  <kjambunathan.devel@gmail.com>
+
 	* convert.cs: Added the following conversion routines:
 	BooleanConversions, WideningStringConversions,
 	NarrowingStringConversions.

@@ -232,6 +232,13 @@ namespace Mono.CSharp
 				"   -warnaserror[+|-]  Treat warnings as errors\n" +
 				"   -warn:LEVEL        Sets warning level (the highest is 4, the default is 2)\n" +
 				"   -help2             Show other help flags\n" + 
+
+				//
+				// VB.NET specific compiler options
+				//
+				"   -removeintchecks[+|-]      Set default context to unchecked\n" +
+				"   -optionstrict[+|-]      Enables stricter type checking\n" +
+				
 				"\n" +
 				"Resources:\n" +
 				"   -linkresource:FILE[,ID] Links FILE as a resource\n" +
@@ -725,6 +732,7 @@ namespace Mono.CSharp
 			case "--checked":
 				RootContext.Checked = true;
 				return true;
+
 				
 			case "--stacktrace":
 				Report.Stacktrace = true;
@@ -887,6 +895,19 @@ namespace Mono.CSharp
 			case "--noconfig":
 				load_default_config = false;
 				return true;
+
+				//
+				// VB.NET specific compiler options
+				//
+
+			case "--removeintchecks":
+				RootContext.Checked = false;
+				return true;
+
+			case "--optionstrict":
+				RootContext.StricterTypeChecking= true;
+				return true;
+				
 			}
 
 			return false;
@@ -1141,6 +1162,7 @@ namespace Mono.CSharp
 				RootContext.Checked = false;
 				return true;
 
+
 			case "/clscheck":
 			case "/clscheck+":
 				return true;
@@ -1303,6 +1325,29 @@ namespace Mono.CSharp
 					Environment.Exit (1);
 				}
 				return true;
+
+				//
+				// VB.NET specific compiler options
+				//
+
+			case "/removeintchecks":
+			case "/removeintchecks+":
+				RootContext.Checked = false;
+				return true;
+
+			case "/removeintchecks-":
+				RootContext.Checked = true;
+				return true;
+
+			case "/optionstrict":
+			case "/optionstrict+":
+				RootContext.StricterTypeChecking = true;
+				return true;
+
+			case "/optionstrict-":
+				RootContext.StricterTypeChecking = false;
+				return true;
+
 			}
 			//Report.Error (2007, String.Format ("Unrecognized command-line option: '{0}'", option));
 			//Environment.Exit (1);

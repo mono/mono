@@ -1495,6 +1495,81 @@ namespace Mono.CSharp {
 		}
 	}
 
+	
+	/// <summary> 
+	/// ImplicitInvocation of methods or delegates. Used by the
+	/// VB.NET compiler specifically to emit calls to the
+	/// Microsoft.VisualBasic.CompilerServices helper routines
+	/// </summary>
+
+	public class ImplicitInvocation : Expression
+	{
+		const string DEFAULT_NS_PREFIX = "Microsoft.VisualBasic.CompilerServices";
+
+		Expression child;
+		
+		public ImplicitInvocation (EmitContext ec, string klass, string method, Location l, params Expression [] exprs) 
+			: this (ec, DEFAULT_NS_PREFIX, klass, method, l, exprs)
+		{
+		}
+
+		public ImplicitInvocation (EmitContext ec, string ns, string klass, string method, Location l, params Expression [] exprs)
+		{
+			ArrayList args = new ArrayList ();
+			string name = ns + "." + klass + "." + method;
+		
+			foreach (Expression expr in exprs)
+				args.Add (new Argument (expr, Argument.AType.Expression));
+
+			child = new Invocation (StringToExpression (name, l), args, l).Resolve (ec);
+		}
+
+		public override Expression DoResolve (EmitContext ec)
+		{
+			return this;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			child.Emit (ec);
+		}
+	}
+
+	/// <summary> 
+	/// Implicit Creation of types. Used by the VB.NET compiler
+	/// (in the context of Type Conversions) to emit calls to the
+	/// appropriate constructors available in the core libraries.
+	/// </summary>
+
+	public class ImplicitNew : Expression
+	{
+		Expression child;
+		
+		public ImplicitNew (EmitContext ec, string ns, string name, Location l, params Expression [] exprs)
+		{
+			name = ns + "." + name;
+			ArrayList args = new ArrayList ();
+		
+			foreach (Expression expr in exprs)
+				args.Add (new Argument (expr, Argument.AType.Expression));
+
+			child = new New (StringToExpression (name, l), args, l).Resolve (ec);
+		}
+
+		public override Expression DoResolve (EmitContext ec)
+		{
+			// This should never be invoked, we are born in fully
+			// initialized state.
+
+			return this;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			child.Emit (ec);
+		}
+	}
+
         //
 	// We need to special case this since an empty cast of
 	// a NullLiteral is still a Constant
@@ -2116,6 +2191,20 @@ namespace Mono.CSharp {
 			ec.ig.Emit (OpCodes.Ceq);
 		}			
 	}
+
+	//
+	// VB.NET specific
+	//
+	public class FloatingToFixedCast : ConvCast {
+		public FloatingToFixedCast (EmitContext ec, Expression child, Type return_type, Mode mode)
+			: base (ec, new ImplicitInvocation (ec, "System", "Math", "Round", child.Location, 
+							    (child.Type == TypeManager.float_type) ? 
+							    new OpcodeCast (child, TypeManager.double_type, OpCodes.Conv_R8) : child), 
+				return_type, mode)
+		{
+		}
+	}
+	
 	
 	/// <summary>
 	///   SimpleName expressions are formed of a single word and only happen at the beginning 
