@@ -91,6 +91,11 @@ namespace System.Web
 		// String = test=aaa&kalle=nisse
 		internal void FillFromQueryString (string sData, Encoding encoding)
 		{
+			FillFromQueryString (sData, encoding, true);
+		}
+		
+		void FillFromQueryString (string sData, Encoding encoding, bool decode)
+		{
 			_bHeaders = false;
 			if (sData == null || sData == "")
 				return;
@@ -102,7 +107,10 @@ namespace System.Web
 				eq = sValue.IndexOf ('=');
 
 				if (eq == -1) {
-					k = HttpUtility.UrlDecode (sValue.Trim (), encoding);
+					k = sValue.Trim ();
+					if (decode)
+						k = HttpUtility.UrlDecode (k, encoding);
+
 					Add (k, String.Empty);
 					continue;
 				}
@@ -115,9 +123,11 @@ namespace System.Web
 						v = String.Empty;
 				}
 
-				k = HttpUtility.UrlDecode (k, encoding);
-				if (v.Length > 0)
-					v = HttpUtility.UrlDecode (v, encoding);
+				if (decode) {
+					k = HttpUtility.UrlDecode (k, encoding);
+					if (v.Length > 0)
+						v = HttpUtility.UrlDecode (v, encoding);
+				}
 
 				Add (k, v); 
 			}		
@@ -130,7 +140,7 @@ namespace System.Web
 
 		internal void FillFromCookieString (string sData)
 		{
-			FillFromQueryString (sData, Encoding.UTF8);
+			FillFromQueryString (sData, Encoding.UTF8, false);
 		}
 
 		internal void MakeReadOnly ()

@@ -1,3 +1,7 @@
+2004-03-15  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpValueCollection.cs: don't UrlDecode cookies. Fixes bug #55254.
+
 2004-03-01  Larry Ewing  <lewing@ximian.com>
 
 	* HttpUtility.cs: fix UrlEncodeToBytes count check.
