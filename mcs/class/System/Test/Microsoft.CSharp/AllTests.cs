@@ -22,6 +22,7 @@ namespace MonoTests.Microsoft.CSharp  {
 		public static ITest Suite {
 			get {
 				TestSuite suite = new TestSuite ();
+				suite.AddTest (CompilerErrorTest.Suite);
 				suite.AddTest (CompilerTest.Suite);
 				return suite;
 			}
