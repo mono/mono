@@ -1,3 +1,8 @@
+2004-09-21  Raja R Harinath  <rharinath@novell.com>
+
+	* library.make (the_mdb): Fix.
+	(library_CLEAN_FILES): Add the new test results files too.
+
 2004-09-14  Raja R Harinath  <rharinath@novell.com>
 
 	* library.make (test_lib, btest_lib): Build separate test

@@ -30,7 +30,7 @@ makefrag = $(depsdir)/$(PROFILE)_$(LIBRARY).makefrag
 the_lib = $(topdir)/class/lib/$(PROFILE)/$(LIBRARY_NAME)
 the_lib_signature_stamp = $(makefrag:.makefrag=.was_signed)
 the_pdb = $(the_lib:.dll=.pdb)
-the_mdb = $(the_lib:.dll=.mdb)
+the_mdb = $(the_lib).mdb
 library_CLEAN_FILES += $(makefrag) $(the_lib) $(the_pdb) \
 			$(the_mdb) $(the_lib_signature_stamp)
 
@@ -38,7 +38,7 @@ ifndef NO_TEST
 test_nunit_lib = nunit.framework.dll nunit.core.dll nunit.util.dll
 test_nunit_dep = $(test_nunit_lib:%=$(topdir)/class/lib/$(PROFILE)/%)
 test_nunit_ref = $(test_nunit_dep:%=-r:%)
-library_CLEAN_FILES += TestResult.xml
+library_CLEAN_FILES += TestResult*.xml
 
 ifndef test_against
 test_against = $(the_lib)
