@@ -1,4 +1,9 @@
 
+Thu Aug 5 17:11:44 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c: fix to deal with object[] arrays in custom ctors
+	(bug #62550).
+
 Tue Aug 3 17:54:17 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
 	* gc.c: make GC warning messages use the trace API, they are just
