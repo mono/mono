@@ -1,7 +1,9 @@
 //
 // System.Runtime.Serialization.Formatter.cs
 //
-// Duncan Mak  (duncan@ximian.com)
+// Authors:
+//   Duncan Mak  (duncan@ximian.com)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) Ximian, Inc.
 //
@@ -40,16 +42,33 @@ public abstract class Formatter : IFormatter
 
 	public abstract object Deserialize (Stream serializationStream);
 
-	[MonoTODO]
 	protected virtual object GetNext (out long objID)
 	{
-		throw new NotImplementedException ();
+		if (m_objectQueue.Count == 0)
+		{
+			// set the out field to 0
+			objID = 0L;
+			return null;
+		}
+
+		Object o = m_objectQueue.Dequeue ();
+		bool FirstTime;
+		objID = m_idGenerator.HasId (o, out FirstTime);
+
+		return o;
 	}
 
-	[MonoTODO]
 	protected virtual long Schedule (object obj)
 	{
-		throw new NotImplementedException ();
+		if (obj == null)
+			return 0L;
+
+		bool FirstTime;
+		long ID = m_idGenerator.GetId (obj, out FirstTime);
+		if (FirstTime)
+			m_objectQueue.Enqueue (obj);
+
+		return ID;
 	}
 
 	public abstract void Serialize (Stream serializationStream, object graph);
@@ -74,10 +93,48 @@ public abstract class Formatter : IFormatter
 
 	protected abstract void WriteInt64 (long val, string name);
 
-	[MonoTODO]
 	protected virtual void WriteMember (string memberName, object data)
 	{
-		throw new NotImplementedException ();
+		if (data == null)
+			WriteObjectRef (data, memberName, typeof(Object));
+
+		Type dataType = data.GetType ();
+		if (dataType.IsArray)
+			WriteArray (data, memberName, dataType);
+		else if (dataType == typeof(bool))
+			WriteBoolean ((bool)data, memberName);
+		else if (dataType == typeof(byte))
+			WriteByte ((byte)data, memberName);
+		else if (dataType == typeof(char))
+			WriteChar ((char)data, memberName);
+		else if (dataType == typeof(DateTime))
+			WriteDateTime ((DateTime)data, memberName);
+		else if (dataType == typeof(decimal))
+			WriteDecimal ((decimal)data, memberName);
+		else if (dataType == typeof(double))
+			WriteDouble ((double)data, memberName);
+		else if (dataType == typeof(Int16))
+			WriteInt16 ((Int16)data, memberName);
+		else if (dataType == typeof(Int32))
+			WriteInt32 ((Int32)data, memberName);
+		else if (dataType == typeof(Int64))
+			WriteInt64 ((Int64)data, memberName);
+		else if (dataType == typeof(sbyte))
+			WriteSByte ((sbyte)data, memberName);
+		else if (dataType == typeof(float))
+			WriteSingle ((float)data, memberName);
+		else if (dataType == typeof(TimeSpan))
+			WriteTimeSpan ((TimeSpan)data, memberName);
+		else if (dataType == typeof(UInt16))
+			WriteUInt16 ((UInt16)data, memberName);
+		else if (dataType == typeof(UInt32))
+			WriteUInt32 ((UInt32)data, memberName);
+		else if (dataType == typeof(UInt64))
+			WriteUInt64 ((UInt64)data, memberName);
+		else if (dataType.IsValueType)
+			WriteValueType (data, memberName, dataType);
+
+		WriteObjectRef (data, memberName, dataType);
 	}
 
 	protected abstract void WriteObjectRef (object obj, string name, Type memberType);

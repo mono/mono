@@ -1,5 +1,5 @@
 //
-// System.Runtime.Serialization.ObjectIDGenerator.cs
+// System.Runtime.Serialization.ObjectManager.cs
 //
 // Author: Lluis Sanchez Gual (lluis@ideary.com)
 //
@@ -344,7 +344,7 @@ namespace System.Runtime.Serialization
 
 	// Object Record
 
-	public enum ObjectRecordStatus: byte { Unregistered, ReferenceUnsolved, ReferenceSolvingDelayed, ReferenceSolved }
+	internal enum ObjectRecordStatus: byte { Unregistered, ReferenceUnsolved, ReferenceSolvingDelayed, ReferenceSolved }
 
 	internal class ObjectRecord
 	{

@@ -1,3 +1,8 @@
+2003-11-18  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* ObjectManager.cs: Fixed header, internalized enum
+	* Formatter.cs: Implemented
+
 2003-11-11  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* FormatterServices.cs: Fixed some comments.
