@@ -8,15 +8,16 @@
 //
 // TODO:
 //	* Currently it is developed with MS.NET and Microsoft.CSharp namespace.
-//	* Handling members of choice fields are incomplete. No enum members are
-//	  collected and registered as the member.
-//	* Members should be checked their names, and should be supplied
-//	  XmlAttributeAttribute or XmlElementAttribute when their names already
-//	  exists.
+//	* Handling members of choice fields are on changing. No enum types are
+//	  generated and/or collected and registered as fields of the enum.
+//	* maxOccurs should be considered (and should emit member as array, if
+//	  required).
 //
 //	* It is desirable to have an alternative generator that generates
 //	  property members instead of simple fields, which checks their values 
-//	  in relation to their facets.
+//	  in relation to their facets. (It may contradict XmlTypeMapping way,
+//	  which seems not to have xml schema type itself, so we (they?) cannot 
+//	  get any facets from typemapping).
 //
 
 using System;
@@ -28,8 +29,9 @@ using System.Xml.Schema;
 using System.Xml.Serialization;
 using Microsoft.CSharp;
 
-namespace Mono.Xml.Schema
+namespace Commons.Xml.XSD2ClassLib
 {
+	/*
 	public class Driver
 	{
 		public static void Main (string [] args)
@@ -40,13 +42,22 @@ namespace Mono.Xml.Schema
 			}
 			XmlTextReader xtr = new XmlTextReader (args [0]);
 //			xtr.XmlResolver = null;
-			XmlSchema xs = XmlSchema.Read (xtr, null);
-			xs.Compile (null);
+			ValidationEventHandler errorHandler = new ValidationEventHandler (OnValidationError);
+			XmlSchema xs = XmlSchema.Read (xtr, errorHandler);
+			xs.Compile (errorHandler);
 			XmlSchemas schemas = new XmlSchemas ();
 			schemas.Add (xs);
-			new XSD2Class (schemas).Generate ();
+			new XSD2Class ().Generate (schemas);
 		}
+
+		static void OnValidationError (object o, ValidationEventArgs e)
+		{
+			// Hey... is it sane doing !?
+			Console.WriteLine (e.Exception.ToString ());
+		}
+
 	}
+	*/
 
 	public class XSD2Class
 	{
@@ -56,17 +67,25 @@ namespace Mono.Xml.Schema
 		CodeTypeDeclaration currentType;
 		Hashtable codeTypes = new Hashtable ();
 
-		public XSD2Class (XmlSchemas schemas)
-			: this (schemas, new CodeNamespace ())
+		// Constructor
+
+		public XSD2Class ()
 		{
 		}
 
-		public XSD2Class (XmlSchemas schemas, CodeNamespace codeNamespace)
-			: this (schemas, codeNamespace, new CodeCompileUnit ())
+		// Main process
+
+		public void Generate (XmlSchemas schemas)
 		{
+			Generate (schemas, new CodeNamespace ());
 		}
 
-		public XSD2Class (XmlSchemas schemas,
+		public void Generate (XmlSchemas schemas, CodeNamespace codeNamespace)
+		{
+			Generate (schemas, codeNamespace, new CodeCompileUnit ());
+		}
+
+		public void Generate (XmlSchemas schemas,
 			CodeNamespace codeNamespace,
 			CodeCompileUnit codeCompileUnit)
 		{
@@ -74,12 +93,10 @@ namespace Mono.Xml.Schema
 			this.codeCompileUnit = codeCompileUnit;
 			this.codeNamespace = codeNamespace;
 			codeCompileUnit.Namespaces.Add (codeNamespace);
-		}
 
-		public void Generate ()
-		{
 			foreach (XmlSchema schema in schemas)
 				GenerateSchemaTypes (schema);
+
 			new CSharpCodeProvider ().CreateGenerator ().GenerateCodeFromCompileUnit (codeCompileUnit, Console.Out, null);
 		}
 
@@ -89,64 +106,47 @@ namespace Mono.Xml.Schema
 				XmlSchemaElement element = sob as XmlSchemaElement;
 				if (element == null)
 					continue;
-				XmlSchemaComplexType xsType =
-					FindComplexType (element.SchemaTypeName);
-				if (xsType != null)
-					GenerateComplexTypeCode (xsType);
+				XmlSchemaComplexType xsType = element.ElementType as XmlSchemaComplexType;
+				if (xsType == null)
+					continue;
+
+				GenerateComplexType (element.QualifiedName.Name, xsType);
 			}
 		}
-		
-		public XmlTypeMapping ImportTypeMapping (XmlQualifiedName qname)
-		{
-			XmlSchemaComplexType xsType = FindComplexType (qname);
-			if (xsType == null)
-				throw new InvalidOperationException ("Type " + qname + " not found.");
 
-			GenerateComplexTypeCode (xsType);
-			return null;
+		// Type generation
+
+		private void GenerateComplexType (XmlSchemaComplexType xsType)
+		{
+			GenerateComplexType ("", xsType);
 		}
 
-		private XmlSchemaComplexType FindComplexType (XmlQualifiedName qname)
-		{
-			foreach (XmlSchema schema in schemas) {
-				foreach (XmlQualifiedName name in schema.SchemaTypes.Names) {
-					XmlSchemaType xsType = schema.SchemaTypes [name] as XmlSchemaType;
-					if (xsType is XmlSchemaSimpleType)
-						continue;
-					if (xsType.QualifiedName == qname)
-							return xsType as XmlSchemaComplexType;
-				}
-			}
-			return null;
-		}
-
-		private XmlSchemaGroup FindGroup (XmlQualifiedName qname)
-		{
-			foreach (XmlSchema schema in schemas) {
-				foreach (XmlQualifiedName name in schema.Groups.Names) {
-					XmlSchemaGroup group = schema.Groups [name] as XmlSchemaGroup;
-					if (group.Name == qname.Name)
-						return group;
-				}
-			}
-			return null;
-		}
-
-		private void GenerateComplexTypeCode (XmlSchemaComplexType xsType)
+		private void GenerateComplexType (string elementName, XmlSchemaComplexType xsType)
 		{
 			string typeName = xsType.QualifiedName.Name;
+			if (typeName == "")
+				typeName = elementName;
 			if (codeTypes.Contains (typeName))
 				return;
-Console.Out.WriteLine ("type " + typeName);
 
-			currentType = new CodeTypeDeclaration (typeName);
+			currentType = CreateType (typeName);
 			codeTypes.Add (xsType.QualifiedName.Name, currentType);
-			// anyAttribute
-			if (xsType.AnyAttribute != null) {
-				CodeMemberField cmf = new CodeMemberField (typeof (XmlAttribute), "AnyAttr");
-				cmf.Attributes = MemberAttributes.Public;
-				currentType.Members.Add (cmf);
+			codeNamespace.Types.Add (currentType);
+			// base type
+			XmlSchemaComplexType baseComplexType = xsType.BaseSchemaType as XmlSchemaComplexType;
+			if (baseComplexType != null) {
+				GenerateComplexType (baseComplexType);
+//				currentType.BaseTypes = new CodeTypeReferenceCollection ();
+				currentType.BaseTypes.Add (new CodeTypeReference (((CodeTypeDeclaration) codeTypes [baseComplexType.QualifiedName.Name]).Name));
+			} else if (xsType.BaseSchemaType != null) {
+				// TODO: insufficient. e.g. XmlQualifiedName
+				currentType.BaseTypes.Add (new CodeTypeReference (((XmlSchemaSimpleType) xsType.BaseSchemaType).Name));
 			}
+
+			// anyAttribute
+			if (xsType.AnyAttribute != null)
+				currentType.Members.Add (CreateMemberField (
+					typeof (XmlAttribute).FullName, "AnyAttr", XmlStructureType.AnyAttribute));
 
 			// attributes
 			foreach (XmlSchemaAttribute schemaAtt in xsType.Attributes)
@@ -157,11 +157,17 @@ Console.Out.WriteLine ("type " + typeName);
 				// particle
 				GenerateParticleField (xsType.Particle);
 			} else if (xsType.ContentModel != null) {
-				// content model
-				throw new NotImplementedException ();
+				XmlSchemaComplexContentExtension ce = xsType.ContentModel.Content as XmlSchemaComplexContentExtension;
+				XmlSchemaComplexContentRestriction cr = xsType.ContentModel.Content as XmlSchemaComplexContentRestriction;
+				if (ce != null)
+					GenerateParticleField (ce.Particle);
+				else if (cr != null)
+					GenerateParticleField (cr.Particle);
+				// TODO: handle simpleContent (how to?)
 			}
-			codeNamespace.Types.Add (currentType);
 		}
+
+		// Field generation
 
 		private void GenerateAttributeField (XmlSchemaAttribute schemaAtt)
 		{
@@ -169,16 +175,29 @@ Console.Out.WriteLine ("type " + typeName);
 				as XmlSchemaDatatype;
 			XmlSchemaSimpleType simple = schemaAtt.AttributeType 
 				as XmlSchemaSimpleType;
+			XmlSchemaDerivationMethod deriv =
+				XmlSchemaDerivationMethod.None;
+
 			while (primitive == null) {
-				simple = simple.BaseSchemaType 
-					as XmlSchemaSimpleType;
+				if (simple == null)	// maybe union
+					break;
 				primitive = simple.BaseSchemaType 
 					as XmlSchemaDatatype;
+				if (primitive == null) {
+					simple = simple.BaseSchemaType 
+						as XmlSchemaSimpleType;
+					if (simple != null && simple.DerivedBy != XmlSchemaDerivationMethod.None)
+						deriv = simple.DerivedBy;
+				}
 			}
 
-			CodeMemberField cmf = new CodeMemberField (primitive.ValueType, schemaAtt.QualifiedName.Name);
-			cmf.Attributes = MemberAttributes.Public;
-			cmf.CustomAttributes.Add (new CodeAttributeDeclaration (typeof (XmlAttributeAttribute).FullName));
+			Type type = primitive != null ?
+				primitive.ValueType : typeof (object);
+			bool isList = (simple != null && simple.DerivedBy == XmlSchemaDerivationMethod.List);
+			CodeTypeReference cType = new CodeTypeReference (type);
+			cType.ArrayRank = isList ? 1 : 0;
+
+			CodeMemberField cmf = CreateMemberField (cType, schemaAtt.QualifiedName.Name, XmlStructureType.Attribute);
 			currentType.Members.Add (cmf);
 		}
 
@@ -190,13 +209,23 @@ Console.Out.WriteLine ("type " + typeName);
 				schemaElem.ElementType as XmlSchemaDatatype;
 			XmlSchemaSimpleType st = 
 				schemaElem.ElementType as XmlSchemaSimpleType;
+			// TODO: see GenerateAttributeField to know how to get correct type.
 			if (st != null)
 				dt = st.Datatype;
-			if (dt != null) {
-				// simple type member.
-				cmf = new CodeMemberField (dt.ValueType,
+			bool isList = (st != null && st.DerivedBy == XmlSchemaDerivationMethod.List);
+
+			if (schemaElem.ElementType == null) {
+				CodeTypeReference cType = new CodeTypeReference (typeof (object));
+				cType.ArrayRank = isList ? 1 : 0;
+				cmf = CreateMemberField (cType,
 					schemaElem.QualifiedName.Name);
-				cmf.Attributes = MemberAttributes.Public;
+				currentType.Members.Add (cmf);
+			} else if (dt != null) {
+				// simple type member.
+				CodeTypeReference cType = new CodeTypeReference (dt.ValueType);
+				cType.ArrayRank = isList ? 1 : 0;
+				cmf = CreateMemberField (cType,
+					schemaElem.QualifiedName.Name);
 				currentType.Members.Add (cmf);
 			} else {
 				// complex type member.
@@ -204,10 +233,10 @@ Console.Out.WriteLine ("type " + typeName);
 					as XmlSchemaComplexType;
 
 				CodeTypeDeclaration ctd = currentType;
-				GenerateComplexTypeCode (ct);
+				GenerateComplexType (ct);
 				currentType = ctd;
-				cmf = new CodeMemberField (new CodeTypeReference (ct.QualifiedName.Name), schemaElem.QualifiedName.Name);
-				cmf.Attributes = MemberAttributes.Public;
+				CodeTypeDeclaration cType = codeTypes [ct.QualifiedName.Name] as CodeTypeDeclaration;
+				cmf = CreateMemberField (cType.Name, schemaElem.QualifiedName.Name);
 				currentType.Members.Add (cmf);
 			}
 		}
@@ -238,9 +267,8 @@ Console.Out.WriteLine ("type " + typeName);
 
 		private void GenerateParticleAnyField (XmlSchemaAny xsany)
 		{
-			CodeMemberField cmf = new CodeMemberField (
-				typeof (XmlElement), "Any");
-			cmf.Attributes = MemberAttributes.Public;
+			CodeMemberField cmf = CreateMemberField (
+				typeof (XmlElement).FullName, "Any");
 			currentType.Members.Add (cmf);
 		}
 
@@ -254,6 +282,143 @@ Console.Out.WriteLine ("type " + typeName);
 		{
 			foreach (XmlSchemaParticle cp in sequence.Items)
 				GenerateParticleField (cp);
+		}
+
+		private void GenerateParticleChoiceField (XmlSchemaChoice choice)
+		{
+#if true
+			foreach (XmlSchemaParticle cp in choice.Items)
+				GenerateParticleField (cp);
+#else
+			// TODO: first, collect all choice alternatives that
+			// they might be common typed elements. In such case,
+			// no enum fields and types should be created.
+			Type itemType = typeof (Object);
+
+			// enum type generation
+			// [XmlType (IncludeInSchema=false)]
+			CodeTypeDeclaration enumType = CreateType ("ItemChoiceType", false);
+			enumType.IsEnum = true;
+			// TODO: add enum members.
+			codeNamespace.Types.Add (enumType);
+
+			// add enum field
+			CodeMemberField cid = CreateMemberField (
+				enumType.Name, "ItemElementType");
+			cid.CustomAttributes.Add (new CodeAttributeDeclaration (
+					typeof (XmlIgnoreAttribute).FullName));
+			currentType.Members.Add (cid);
+
+			// add item field
+			// TODO: type should be computed whether common or not.
+			CodeMemberField cmf = CreateMemberField (
+				itemType.FullName, "Item");
+			CodeAttributeDeclaration choiceIdent =
+				new CodeAttributeDeclaration (
+				typeof (XmlChoiceIdentifierAttribute).FullName);
+			choiceIdent.Arguments.Add (new CodeAttributeArgument (
+				"MemberName",
+				new CodePrimitiveExpression (cid.Name)));
+			cmf.CustomAttributes.Add (choiceIdent);
+			currentType.Members.Add (cmf);
+#endif
+		}
+
+		private void GenerateGroupField (XmlSchemaGroup group)
+		{
+			GenerateParticleField (group.Particle);
+		}
+
+		// CreateMemberField
+
+		private CodeMemberField CreateMemberField (string typeName, string name)
+		{
+			return CreateMemberField (typeName, name, XmlStructureType.Element);
+		}
+
+		private CodeMemberField CreateMemberField (string typeName, string name, XmlStructureType sType)
+		{
+			return CreateMemberField (new CodeTypeReference (typeName), name, sType);
+		}
+
+		private CodeMemberField CreateMemberField (CodeTypeReference reference, string name)
+		{
+			return CreateMemberField (reference, name, XmlStructureType.Element);
+		}
+
+		private CodeMemberField CreateMemberField (CodeTypeReference reference, string xmlName, XmlStructureType sType)
+		{
+			int i = 1;
+			string clrName = xmlName;
+			if (CodeMemberContains (clrName)) {
+				while (CodeMemberContains (clrName + i))
+					i++;
+				clrName = clrName + i;
+			}
+
+			CodeMemberField cmf = new CodeMemberField (reference, clrName);
+			cmf.Attributes = MemberAttributes.Public;
+
+			switch (sType) {
+			case XmlStructureType.Element:
+				if (clrName != xmlName)
+					cmf.CustomAttributes.Add (CreateXmlAttribute (typeof (XmlElementAttribute), xmlName));
+				break;
+			case XmlStructureType.Attribute:
+				cmf.CustomAttributes.Add (CreateXmlAttribute (typeof (XmlAttributeAttribute), clrName != xmlName ? xmlName : null));
+				break;
+			case XmlStructureType.AnyAttribute:
+				cmf.CustomAttributes.Add (CreateXmlAttribute (typeof (XmlAnyAttributeAttribute), null));
+				reference.ArrayRank = 1;
+				break;
+			}
+
+			return cmf;
+		}
+
+		// CreateType
+
+		private CodeTypeDeclaration CreateType (string xmlName)
+		{
+			return CreateType (xmlName, true);
+		}
+
+		private CodeTypeDeclaration CreateType (string xmlName, bool includeInSchema)
+		{
+			int i = 1;
+			string clrName = CodeIdentifier.MakeValid (xmlName);
+			if (CodeTypeContains (clrName)) {
+				while (CodeTypeContains (clrName + i))
+					i++;
+				clrName = clrName + i;
+			}
+
+			CodeTypeDeclaration decl = new CodeTypeDeclaration (clrName);
+			if (includeInSchema) {
+				if (xmlName != clrName)
+					decl.CustomAttributes.Add (CreateXmlAttribute (typeof (XmlTypeAttribute), xmlName));
+			} else {
+				CodeAttributeDeclaration xt = new CodeAttributeDeclaration (typeof (XmlTypeAttribute).FullName);
+				xt.Arguments.Add (new CodeAttributeArgument (
+					"IncludeInSchema",
+					new CodePrimitiveExpression (false)));
+				decl.CustomAttributes.Add (xt);
+			}
+			return decl;
+		}
+
+		// Utilities
+
+		private XmlSchemaGroup FindGroup (XmlQualifiedName qname)
+		{
+			foreach (XmlSchema schema in schemas) {
+				foreach (XmlQualifiedName name in schema.Groups.Names) {
+					XmlSchemaGroup group = schema.Groups [name] as XmlSchemaGroup;
+					if (group.Name == qname.Name)
+						return group;
+				}
+			}
+			return null;
 		}
 
 		private bool CodeTypeContains (string name)
@@ -272,77 +437,6 @@ Console.Out.WriteLine ("type " + typeName);
 			return false;
 		}
 
-		private void GenerateParticleChoiceField (XmlSchemaChoice choice)
-		{
-			// TODO: first, check all choice alternatives that
-			// they might be common typed elements. In such case,
-			// no enum fields and types should be created.
-
-			// generate choice identifier enum type
-			int i = 1;
-			string itemName = "Item";
-			if (CodeMemberContains (itemName)) {
-				while (CodeMemberContains (itemName + i))
-					i++;
-				itemName = itemName + i;
-			}
-			i = 1;
-			string enumFieldName = "ItemElementType";
-			if (CodeMemberContains (enumFieldName)) {
-				while (CodeMemberContains (enumFieldName  + i))
-					i++;
-				enumFieldName = enumFieldName + i;
-			}
-			i = 1;
-			string typeName = "ItemChoiceType";
-			if (CodeTypeContains (typeName)) {
-				while (CodeTypeContains (typeName + i))
-					i++;
-				typeName = typeName + i;
-			}
-
-			// enum type generation
-			CodeTypeDeclaration enumType = 
-				new CodeTypeDeclaration (typeName);
-			enumType.IsEnum = true;
-			CodeAttributeDeclaration enumXmlType = 
-				new CodeAttributeDeclaration (
-					typeof (XmlTypeAttribute).FullName);
-			// [XmlType (IncludeInSchema=false)]
-			enumXmlType.Arguments.Add (
-				new CodeAttributeArgument ("IncludeInSchema",
-					new CodePrimitiveExpression (false)));
-			enumType.CustomAttributes.Add (enumXmlType);
-			// TODO: how to add enum members?
-
-			// add item field
-			CodeMemberField cmf = new CodeMemberField (
-				typeof (object), itemName);
-			cmf.Attributes = MemberAttributes.Public;
-			CodeAttributeDeclaration choiceIdent =
-				new CodeAttributeDeclaration (
-				typeof (XmlChoiceIdentifierAttribute).FullName);
-			choiceIdent.Arguments.Add (new CodeAttributeArgument (
-				"MemberName",
-				new CodePrimitiveExpression (enumFieldName)));
-			cmf.CustomAttributes.Add (choiceIdent);
-			currentType.Members.Add (cmf);
-
-			// add enum field
-			codeNamespace.Types.Add (enumType);
-
-			CodeMemberField cid = new CodeMemberField (
-				new CodeTypeReference (typeName), enumFieldName);
-			currentType.Members.Add (cid);
-
-		}
-
-		private void GenerateGroupField (XmlSchemaGroup group)
-		{
-			GenerateParticleField (group.Particle);
-		}
-
-/*
 		private CodeAttributeDeclaration CreateXmlAttribute (Type attrType, string name)
 		{
 			CodeAttributeDeclaration xmlAtt = new CodeAttributeDeclaration (attrType.FullName);
@@ -351,6 +445,40 @@ Console.Out.WriteLine ("type " + typeName);
 
 			return xmlAtt;
 		}
-*/
+
+#if false
+		// XmlSchemaImporter emulation
+
+		public XmlTypeMapping ImportTypeMapping (XmlQualifiedName qname)
+		{
+			XmlSchemaComplexType xsType = FindComplexType (qname);
+			if (xsType == null)
+				throw new InvalidOperationException ("Type " + qname + " not found.");
+
+			GenerateComplexType (xsType);
+			return null;
+		}
+
+		private XmlSchemaComplexType FindComplexType (XmlQualifiedName qname)
+		{
+			foreach (XmlSchema schema in schemas) {
+				foreach (XmlQualifiedName name in schema.SchemaTypes.Names) {
+					XmlSchemaType xsType = schema.SchemaTypes [name] as XmlSchemaType;
+					if (xsType is XmlSchemaSimpleType)
+						continue;
+					if (xsType.QualifiedName == qname)
+							return xsType as XmlSchemaComplexType;
+				}
+			}
+			return null;
+		}
+#endif
+	}
+
+	internal enum XmlStructureType
+	{
+		Element,
+		Attribute,
+		AnyAttribute
 	}
 }
