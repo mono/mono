@@ -557,19 +557,36 @@ namespace System.Windows.Forms
 		}
 
 		private void LargeIncrement ()
-    		{
-			UpdatePos (position + large_change, true);
+    		{			
+			ScrollEventArgs event_args;
+    			int pos = position + large_change;
+    			
+    			event_args = new ScrollEventArgs (ScrollEventType.LargeIncrement, pos);
+    			OnScroll (event_args);    			
+			pos = event_args.NewValue;    			
+			
+			event_args = new ScrollEventArgs (ScrollEventType.EndScroll, pos);
+			OnScroll (event_args);		
+    			pos = event_args.NewValue;    			
 
-			OnScroll (new ScrollEventArgs (ScrollEventType.LargeIncrement, position));
-			OnScroll (new ScrollEventArgs (ScrollEventType.EndScroll, position));
+			UpdatePos (pos, true);
     		}
 
     		private void LargeDecrement ()
-    		{
-			UpdatePos (position - large_change, true);
+    		{			
+			ScrollEventArgs event_args;
+    			int pos = position - large_change;
+    			
+    			event_args = new ScrollEventArgs (ScrollEventType.LargeDecrement, pos);
+    			OnScroll (event_args);
+    			pos = event_args.NewValue;    			
+			
+			event_args = new ScrollEventArgs (ScrollEventType.EndScroll, pos);
+			OnScroll (event_args);
+    			pos = event_args.NewValue;
+    			
 
-			OnScroll (new ScrollEventArgs (ScrollEventType.LargeDecrement, position));
-			OnScroll (new ScrollEventArgs (ScrollEventType.EndScroll, position));
+			UpdatePos (pos, true);
     		}    		
     		
     		private void OnResizeSB (Object o, EventArgs e)
@@ -738,7 +755,9 @@ namespace System.Windows.Forms
 						pixel_pos = thumb_pos.Y + (thumb_pixel_click_move - thumb_pixel_click_move_prev);
 						thumb_pixel_click_move_prev = thumb_pixel_click_move;
 						thumb_pixel_click_move = mouse_click;
+						
 						UpdateThumbPos (pixel_pos, true);
+						OnScroll (new ScrollEventArgs (ScrollEventType.ThumbTrack, position));
 					}
 
 				}
@@ -772,7 +791,8 @@ namespace System.Windows.Forms
 						pixel_pos = thumb_pos.X + (thumb_pixel_click_move - thumb_pixel_click_move_prev);
 						thumb_pixel_click_move_prev = thumb_pixel_click_move;
 						thumb_pixel_click_move = mouse_click;
-						UpdateThumbPos (pixel_pos, true);
+						UpdateThumbPos (pixel_pos, true);						
+						OnScroll (new ScrollEventArgs (ScrollEventType.ThumbTrack, position));
 					}
 
 				}
@@ -954,12 +974,12 @@ namespace System.Windows.Forms
 			}
 			case Keys.Home:
 			{		
-				SetValue (Minimum);
+				SetHomePosition ();				
 				break;
 			}			
 			case Keys.End:
 			{	
-				SetValue (Maximum);
+				SetEndPosition ();
 				break;
 			}
 			default:
@@ -967,22 +987,70 @@ namespace System.Windows.Forms
 			}
 
 			InvalidateDirty ();
+		}		
+		
+		private void SetEndPosition () 
+		{			
+			ScrollEventArgs event_args;
+    			int pos = Maximum;
+    			
+    			event_args = new ScrollEventArgs (ScrollEventType.Last, pos);
+    			OnScroll (event_args);
+    			pos = event_args.NewValue;    			
+			
+			event_args = new ScrollEventArgs (ScrollEventType.EndScroll, pos);
+			OnScroll (event_args);			
+    			pos = event_args.NewValue;    			
+
+			SetValue (pos);
 		}
+		
+		private void SetHomePosition ()
+		{
+			ScrollEventArgs event_args;
+    			int pos = Minimum;
+    			
+    			event_args = new ScrollEventArgs (ScrollEventType.First, pos);
+    			OnScroll (event_args);
+    			pos = event_args.NewValue;
+    						
+			event_args = new ScrollEventArgs (ScrollEventType.EndScroll, pos);
+			OnScroll (event_args);			
+			pos = event_args.NewValue;    			
+    			
+			SetValue (pos);
+		}		
 
     		private void SmallIncrement ()
     		{
-			UpdatePos (position + small_change, true);
+    			ScrollEventArgs event_args;
+    			int pos = position + small_change;
+    			
+    			event_args = new ScrollEventArgs (ScrollEventType.SmallIncrement, pos);
+    			OnScroll (event_args);    			
+    			pos = event_args.NewValue;    			
+			
+			event_args = new ScrollEventArgs (ScrollEventType.EndScroll, pos);
+			OnScroll (event_args);			
+			pos = event_args.NewValue;    			
 
-			OnScroll (new ScrollEventArgs (ScrollEventType.SmallIncrement, position));
-			OnScroll (new ScrollEventArgs (ScrollEventType.EndScroll, position));
+			UpdatePos (pos, true);
     		}
 
     		private void SmallDecrement ()
-    		{
-			UpdatePos (position - small_change, true);
+    		{			
+			ScrollEventArgs event_args;
+    			int pos = position - small_change;
+    			
+    			event_args = new ScrollEventArgs (ScrollEventType.SmallDecrement, pos);
+    			OnScroll (event_args);
+    			pos = event_args.NewValue;
+    						
+			event_args = new ScrollEventArgs (ScrollEventType.EndScroll, pos);
+			OnScroll (event_args);			
+			pos = event_args.NewValue;    			
 
-			OnScroll (new ScrollEventArgs (ScrollEventType.SmallDecrement, position));
-			OnScroll (new ScrollEventArgs (ScrollEventType.EndScroll, position));
+			UpdatePos (pos, true);
     		}
     		
     		private void SetHoldButtonClickTimer ()
@@ -1015,7 +1083,7 @@ namespace System.Windows.Forms
 			timer.Interval = 50;
 			timer_type = TimerType.RepeatThumbArea;
 			timer.Enabled = true;
-		}    		
+		}    				
 		
     		private void UpdatePos (int newPos, bool update_thumbpos)
     		{
@@ -1046,11 +1114,7 @@ namespace System.Windows.Forms
 				
 				if (ValueChanged != null)
 					ValueChanged (this, EventArgs.Empty);
-			}
-
-			if (pos != old) // Fire event
-				OnScroll (new ScrollEventArgs (ScrollEventType.ThumbTrack, pos));
-
+			}			
     		}
 
     		private void UpdateThumbPos (int pixel, bool update_value)

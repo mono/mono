@@ -1,3 +1,10 @@
+2005-03-08  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* ScrollBar.cs
+	  - Honors NewValue changes in Scroll events allowing apps to change it
+	  - Adds First and Last Scroll events
+	  - Fixes Thumb events
+
 2005-03-07  Peter Bartok  <pbartok@novell.com>
 
 	* Hwnd.cs: Added DefaultClientRectangle property
