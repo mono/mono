@@ -163,6 +163,8 @@ namespace System.Web {
 			if (null != error) {
 				WebTrace.WriteLine (error.ToString ());
 
+				// We don't want the 'headers sent error'
+				context.Response.SetHeadersSent (false);
 				context.Response.Clear ();
 				context.Response.ClearHeaders ();
 

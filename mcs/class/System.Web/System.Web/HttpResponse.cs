@@ -710,6 +710,11 @@ namespace System.Web
 			Clear();
 		}
 
+		internal void SetHeadersSent (bool val)
+		{
+			_bHeadersSent = val;
+		}
+		
 		public void ClearHeaders ()
 		{
 			if (_bHeadersSent)

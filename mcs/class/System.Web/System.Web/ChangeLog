@@ -1,3 +1,9 @@
+2004-11-12 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpResponse.cs: added internl SetHeadersSent.
+	* HttpRuntime.cs: don't throw the 'headers already sent' exception
+	if we're sending a runtime error.
+
 2004-11-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpApplication.cs: undo the TimeoutManager.(Add|Remove) shuffling.
