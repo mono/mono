@@ -3,6 +3,7 @@
 //
 // Author:
 //   stubbed out by Jaak Simm (jaaksimm@firm.ee)
+//	Dennis Hayes (dennish@raytek.com)
 //
 // (C) Ximian, Inc., 2002
 //
@@ -137,23 +138,14 @@ namespace System.Windows.Forms {
 		 */
 		 
 		[MonoTODO]
-		protected internal virtual void Edit(
-			CurrencyManager source, {
-
-
-
-
+		protected internal virtual void Edit(CurrencyManager source) {
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
 		protected internal virtual void Edit(
 			CurrencyManager source,
-			int rowNum, {
-
-
-
-
+			int rowNum) {
 			throw new NotImplementedException ();
 		}
 		

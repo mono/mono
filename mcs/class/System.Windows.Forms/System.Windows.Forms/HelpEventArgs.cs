@@ -13,14 +13,13 @@ namespace System.Windows.Forms {
 	// <summary>
 	// </summary>
 
-    public class HelpEventArgs : EventArgs {
+	public class HelpEventArgs : EventArgs {
 		private Point mousePos;
 		private  bool handled;
 		//
 		//  --- Constructor
 		//
-		public HelpEventArgs(Point mousePos)
-		{
+		public HelpEventArgs(Point mousePos) {
 			this.mousePos = mousePos;
 			handled = false; // FixMe what should we default to?
 		}
@@ -45,20 +44,21 @@ namespace System.Windows.Forms {
 		//
 		//  --- Public Methods
 		//
-		//[MonoTODO]
-		//public virtual bool Equals(object o);
-		//{
+		[MonoTODO]
+		public override bool Equals(object o) {
+			throw new NotImplementedException ();
+		}
+		//public static bool Equals(object o1, object o2) {
 		//	throw new NotImplementedException ();
 		//}
-		//[MonoTODO]
-		//public static bool Equals(object o1, object o2);
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//public virtual string ToString()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-	 }
+		[MonoTODO]
+		public override string ToString() {
+			throw new NotImplementedException ();
+		}
+		[MonoTODO]
+		public override int GetHashCode() {
+			//FIXME add our proprities
+			return base.GetHashCode();
+		}	 
+	}
 }

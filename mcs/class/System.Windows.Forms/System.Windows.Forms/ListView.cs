@@ -3,6 +3,7 @@
 //
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
+//	Dennis Hayes (dennish@raytek.com)
 //
 // (C) 2002 Ximian, Inc
 //
@@ -21,23 +22,23 @@ namespace System.Windows.Forms {
 		//  --- Constructor
 		//
 		[MonoTODO]
-		public ListView() 
-		{
+		public ListView() {
 			throw new NotImplementedException ();
 		}
 
 		//
 		//  --- Public Properties
 		//
-		[MonoTODO]
-		public ImageActivation Activation {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
-		}
+		// Is this part of the spec? I do not think so.
+		//[MonoTODO]
+		//public ImageActivation Activation {
+		//	get {
+		//		throw new NotImplementedException ();
+		//	}
+		//	set {
+		//		throw new NotImplementedException ();
+		//	}
+		//}
 		[MonoTODO]
 		public ListViewAlignment Alignment {
 			get {
@@ -108,7 +109,7 @@ namespace System.Windows.Forms {
 			}
 		}
 		[MonoTODO]
-		public CheckedListViewItemCollection CheckedItems {
+		public  CheckedListViewItemCollection CheckedItems {
 			get {
 				throw new NotImplementedException ();
 			}
@@ -286,143 +287,97 @@ namespace System.Windows.Forms {
 		//  --- Public Methods
 		//
 		[MonoTODO]
-		public void ArrangeIcons() 
-		{
+		public void ArrangeIcons() {
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		public void ArrangeIcons(ListViewAlignment align) 
-		{
+		public void ArrangeIcons(ListViewAlignment align) {
+			throw new NotImplementedException ();
+		}
+		//public IAsyncResult BeginInvoke(Delegate del) {
+		//	throw new NotImplementedException ();
+		//}
+		//public IAsyncResult BeginInvoke(Delegate del, object[] objs) {
+		//	throw new NotImplementedException ();
+		//}
+		[MonoTODO]
+		public void BeginUpdate() {
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		public IAsyncResult BeginInvoke(Delegate del) 
-		{
+		public void Clear() {
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		public IAsyncResult BeginInvoke(Delegate del, object[] objs) 
-		{
+		public void EndUpdate() {
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		public void BeginUpdate() 
-		{
+		public void EnsureVisible(int index) {
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		public void Clear() 
-		{
+		public ListViewItem GetItemAt(int x, int y) {
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		public void EndUpdate() 
-		{
+		public Rectangle RetItemRect(int val) {
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		public void EnsureVisible(int index) 
-		{
+		public Rectangle RetItemRect(int val, ItemBoundsPortion portion) {
 			throw new NotImplementedException ();
 		}
+		//public void Invalidate() {
+		//	throw new NotImplementedException ();
+		//}
+		//public void Invalidate(bool b) {
+		//	throw new NotImplementedException ();
+		//}
+		//public void Invalidate(Rectangle rect) {
+		//	throw new NotImplementedException ();
+		//}
+		//public void Invalidate(Region reg) {
+		//	throw new NotImplementedException ();
+		//}
+		//public void Invalidate(Rectangle rect, bool b) {
+		//	throw new NotImplementedException ();
+		//}
+		//public object Invoke(Delegate del) {
+		//	throw new NotImplementedException ();
+		//}
+		//public object Invoke(Delegate del, object[] objs) {
+		//	throw new NotImplementedException ();
+		//}
+		//public void PerformLayout() {
+		//	throw new NotImplementedException ();
+		//}
+		//public void PerformLayout(Control ctl, string str) {
+		//	throw new NotImplementedException ();
+		//}
+		//public void ResumeLayout() {
+		//	throw new NotImplementedException ();
+		//}
+		//public void ResumeLayout(bool b) {
+		//	throw new NotImplementedException ();
+		//}
+		//public void Scale(float val1) {
+		//	throw new NotImplementedException ();
+		//}
+		//public void Scale(float val1, float val2) {
+		//	throw new NotImplementedException ();
+		//}
+		//public void Select() {
+		//	throw new NotImplementedException ();
+		//}
+		//public void SetBounds(int val1, int val2, int val3, int val4) {
+		//	throw new NotImplementedException ();
+		//}
+		//public void SetBounds(int val1, int val2, int val3, int val4, BoundsSpecified bounds) {
+		//	throw new NotImplementedException ();
+		//}
 		[MonoTODO]
-		public ListViewItem GetItemAt(int x, int y) 
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public Rectangle RetItemRect(int val) 
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public Rectangle RetItemRect(int val, ItemBoundsPortion portion) 
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public void Invalidate() 
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public void Invalidate(bool b) 
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public void Invalidate(Rectangle rect) 
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public void Invalidate(Region reg) 
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public void Invalidate(Rectangle rect, bool b) 
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public object Invoke(Delegate del) 
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public object Invoke(Delegate del, object[] objs) 
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public void PerformLayout() 
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public void PerformLayout(Control ctl, string str) 
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public void ResumeLayout() 
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public void ResumeLayout(bool b) 
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public void Scale(float val1) 
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public void Scale(float val1, float val2) 
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public void Select() 
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public void SetBounds(int val1, int val2, int val3, int val4) 
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public void SetBounds(int val1, int val2, int val3, int val4, BoundsSpecified bounds) 
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public override string ToString() 
-		{
+		public override string ToString() {
 			throw new NotImplementedException ();
 		}
 
@@ -458,97 +413,79 @@ namespace System.Windows.Forms {
 		//  --- Protected Methods
 		//
 		[MonoTODO]
-		protected override void CreateHandle() 
-		{
+		protected override void CreateHandle() {
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		protected override void Dispose(bool b) 
-		{
+		protected override void Dispose(bool b) {
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		protected override bool IsInputKey(Keys keyData) 
-		{
+		protected override bool IsInputKey(Keys keyData) {
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		protected virtual void  OnAfterLabelEdit(LabelEditEventArgs e) 
-		{
+		protected virtual void  OnAfterLabelEdit(LabelEditEventArgs e) {
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		protected virtual void  OnBeforeLabelEdit(LabelEditEventArgs e) 
-		{
+		protected virtual void  OnBeforeLabelEdit(LabelEditEventArgs e) {
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		protected virtual void  OnColumnClick(ColumnClickEventArgs e) 
-		{
+		protected virtual void  OnColumnClick(ColumnClickEventArgs e) {
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		protected override void OnEnabledChanged(EventArgs e) 
-		{
+		protected override void OnEnabledChanged(EventArgs e) {
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		protected override void OnFontChanged(EventArgs e) 
-		{
+		protected override void OnFontChanged(EventArgs e) {
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		protected override void OnHandleCreated(EventArgs e) 
-		{
+		protected override void OnHandleCreated(EventArgs e) {
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		protected override void OnHandleDestroyed(EventArgs e) 
-		{
+		protected override void OnHandleDestroyed(EventArgs e) {
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		protected virtual void  OnItemActivate(EventArgs e) 
-		{
+		protected virtual void  OnItemActivate(EventArgs e) {
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		protected virtual void  OnItemCheck(ItemCheckEventArgs e) 
-		{
+		protected virtual void  OnItemCheck(ItemCheckEventArgs e) {
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		protected virtual void  OnItemDrag(ItemDragEventArgs e) 
-		{
+		protected virtual void  OnItemDrag(ItemDragEventArgs e) {
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		protected virtual void  OnSelectedItemChanged(EventArgs e) 
-		{
+		protected virtual void  OnSelectedItemChanged(EventArgs e) {
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		protected override void OnSystemColorsChanged(EventArgs e) 
-		{
+		protected override void OnSystemColorsChanged(EventArgs e) {
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		protected virtual void Select(bool val1, bool val2) 
-		{
+		protected override void Select(bool val1, bool val2) {
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		protected void UpdateExtendedStyles() 
-		{
+		protected void UpdateExtendedStyles() {
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		protected override void WndProc(ref Message m) 
-		{
+		protected override void WndProc(ref Message m) {
 			throw new NotImplementedException ();
 		}
 		//start subclasses
@@ -571,8 +508,7 @@ namespace System.Windows.Forms {
 			//  --- Constructor
 			//
 			[MonoTODO]
-			public SelectedListViewItemCollection(ListView owner) 
-			{
+			public SelectedListViewItemCollection(ListView owner) {
 				throw new NotImplementedException ();
 			}
 
@@ -602,235 +538,471 @@ namespace System.Windows.Forms {
 			//  --- Public Methods
 			//
 			[MonoTODO]
-			public void Clear() 
-			{
+			public void Clear() {
 				throw new NotImplementedException ();
 			}
 			[MonoTODO]
-			public bool Contains(ListViewItem item) 
-			{
+			public bool Contains(ListViewItem item) {
 				throw new NotImplementedException ();
 			}
 			[MonoTODO]
-			public void CopyTo(Array dest, int index) 
-			{
+			public void CopyTo(Array dest, int index) {
 				throw new NotImplementedException ();
 			}
 			[MonoTODO]
-			public virtual bool Equals(object o) 
-			{
+			public override bool Equals(object o) {
+				throw new NotImplementedException ();
+			}
+
+			//public static bool Equals(object o1, object o2) {
+			//	throw new NotImplementedException ();
+			//}
+			[MonoTODO]
+			public override int GetHashCode() {
+				//FIXME add our proprities
+				return base.GetHashCode();
+			}
+			[MonoTODO]
+			public IEnumerator GetEnumerator() {
 				throw new NotImplementedException ();
 			}
 			[MonoTODO]
-			public static bool Equals(object o1, object o2) 
-			{
+			public int IndexOf(ListViewItem item) {
+				throw new NotImplementedException ();
+			}
+			/// <summary>
+			/// IList Interface implmentation.
+			/// </summary>
+			bool IList.IsReadOnly{
+				get{
+					// We allow addition, removeal, and editing of items after creation of the list.
+					return false;
+				}
+			}
+			bool IList.IsFixedSize{
+				get{
+					// We allow addition and removeal of items after creation of the list.
+					return false;
+				}
+			}
+
+			//[MonoTODO]
+			object IList.this[int index]{
+				get{
+					throw new NotImplementedException ();
+				}
+				set{
+					throw new NotImplementedException ();
+				}
+			}
+		
+			[MonoTODO]
+			void IList.Clear(){
+				throw new NotImplementedException ();
+			}
+		
+			[MonoTODO]
+			int IList.Add( object value){
+				throw new NotImplementedException ();
+			}
+
+			[MonoTODO]
+			bool IList.Contains( object value){
+				throw new NotImplementedException ();
+			}
+
+			[MonoTODO]
+			int IList.IndexOf( object value){
+				throw new NotImplementedException ();
+			}
+
+			[MonoTODO]
+			void IList.Insert(int index, object value){
+				throw new NotImplementedException ();
+			}
+
+			[MonoTODO]
+			void IList.Remove( object value){
+				throw new NotImplementedException ();
+			}
+
+			[MonoTODO]
+			void IList.RemoveAt( int index){
+				throw new NotImplementedException ();
+			}
+			// End of IList interface
+			/// <summary>
+			/// ICollection Interface implmentation.
+			/// </summary>
+			int ICollection.Count{
+				get{
+					throw new NotImplementedException ();
+				}
+			}
+			bool ICollection.IsSynchronized{
+				get{
+					throw new NotImplementedException ();
+				}
+			}
+			object ICollection.SyncRoot{
+				get{
+					throw new NotImplementedException ();
+				}
+			}
+			void ICollection.CopyTo(Array array, int index){
+				throw new NotImplementedException ();
+			}
+			// End Of ICollection
+		}
+		//
+		// System.Windows.Forms.ListView.CheckedListViewItemCollection.cs
+		//
+		// Author:
+		//   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
+		//
+		// (C) 2002 Ximian, Inc
+		//
+		// <summary>
+		//	This is only a template.  Nothing is implemented yet.
+		//
+		// </summary>
+
+		public class CheckedListViewItemCollection : IList, ICollection, IEnumerable {
+
+			//
+			//  --- Constructor
+			//
+			[MonoTODO]
+			public CheckedListViewItemCollection(ListView owner) {
+				throw new NotImplementedException ();
+			}
+
+			//
+			//  --- Public Properties
+			//
+			[MonoTODO]
+			public int Count {
+				get {
+					throw new NotImplementedException ();
+				}
+			}
+			[MonoTODO]
+			public bool IsReadOnly {
+				get {
+					throw new NotImplementedException ();
+				}
+			}
+			[MonoTODO]
+			public ListViewItem this[int index] {
+				get {
+					throw new NotImplementedException ();
+				}
+			}
+
+			//
+			//  --- Public Methods
+			//
+			[MonoTODO]
+			public bool Contains(ListViewItem item) {
 				throw new NotImplementedException ();
 			}
 			[MonoTODO]
-			public IEnumerator GetEnumerator() 
-			{
+			public object CopyTo(Array dest, int index) {
 				throw new NotImplementedException ();
 			}
 			[MonoTODO]
-			public int IndexOf(ListViewItem item) 
-			{
+			public override bool Equals(object o) {
 				throw new NotImplementedException ();
 			}
-			//
-			// System.Windows.Forms.ListView.CheckedListViewItemCollection.cs
-			//
-			// Author:
-			//   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
-			//
-			// (C) 2002 Ximian, Inc
-			//
-			// <summary>
-			//	This is only a template.  Nothing is implemented yet.
-			//
-			// </summary>
+			//				[MonoTODO]
+			//				public static bool Equals(object o1, object o2) {
+			//					throw new NotImplementedException ();
+			//				}
+			[MonoTODO]
+			public override int GetHashCode() {
+				//FIXME add our proprities
+				return base.GetHashCode();
+			}
+			[MonoTODO]
+			public IEnumerator GetEnumerator() {
+				throw new NotImplementedException ();
+			}
+			[MonoTODO]
+			public int IndexOf(ListViewItem item) {
+				throw new NotImplementedException ();
+			}
+			/// <summary>
+			/// IList Interface implmentation.
+			/// </summary>
+			bool IList.IsReadOnly{
+				get{
+					// We allow addition, removeal, and editing of items after creation of the list.
+					return false;
+				}
+			}
+			bool IList.IsFixedSize{
+				get{
+					// We allow addition and removeal of items after creation of the list.
+					return false;
+				}
+			}
 
-			public class CheckedListViewItemCollection : IList, ICollection, IEnumerable {
-
-				//
-				//  --- Constructor
-				//
-				[MonoTODO]
-				public CheckedListViewItemCollection(ListView owner) 
-				{
+			//[MonoTODO]
+			object IList.this[int index]{
+				get{
 					throw new NotImplementedException ();
 				}
-
-				//
-				//  --- Public Properties
-				//
-				[MonoTODO]
-				public int Count {
-					get {
-						throw new NotImplementedException ();
-					}
-				}
-				[MonoTODO]
-				public bool IsReadOnly {
-					get {
-						throw new NotImplementedException ();
-					}
-				}
-				[MonoTODO]
-				public ListViewItem this[int index] {
-					get {
-						throw new NotImplementedException ();
-					}
-				}
-
-				//
-				//  --- Public Methods
-				//
-				[MonoTODO]
-				public bool Contains(ListViewItem item) 
-				{
-					throw new NotImplementedException ();
-				}
-				[MonoTODO]
-				public object CopyTo(Array dest, int index) 
-				{
-					throw new NotImplementedException ();
-				}
-				[MonoTODO]
-				public virtual bool Equals(object o) 
-				{
-					throw new NotImplementedException ();
-				}
-				[MonoTODO]
-				public static bool Equals(object o1, object o2) 
-				{
-					throw new NotImplementedException ();
-				}
-				[MonoTODO]
-				public IEnumerator GetEnumerator() 
-				{
-					throw new NotImplementedException ();
-				}
-				[MonoTODO]
-				public int IndexOf(ListViewItem item) 
-				{
+				set{
 					throw new NotImplementedException ();
 				}
 			}
-			//
-			// System.Windows.Forms.ListView.ColumnHeaderCollection.cs
-			//
-			// Author:
-			//   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
-			//
-			// (C) 2002 Ximian, Inc
-			//
-			// <summary>
-			//	This is only a template.  Nothing is implemented yet.
-			//
-			// </summary>
+		
+			[MonoTODO]
+			void IList.Clear(){
+				throw new NotImplementedException ();
+			}
+		
+			[MonoTODO]
+			int IList.Add( object value){
+				throw new NotImplementedException ();
+			}
 
-			public class ColumnHeaderCollection :  IList, ICollection, IEnumerable {
+			[MonoTODO]
+			bool IList.Contains( object value){
+				throw new NotImplementedException ();
+			}
 
-				//
-				//  --- Constructor
-				//
-				[MonoTODO]
-				public ColumnHeaderCollection(ListView owner) 
-				{
-					throw new NotImplementedException ();
-				}
+			[MonoTODO]
+			int IList.IndexOf( object value){
+				throw new NotImplementedException ();
+			}
 
-				//
-				//  --- Public Properties
-				//
-				[MonoTODO]
-				public int Count {
-					get {
-						throw new NotImplementedException ();
-					}
-				}
-				[MonoTODO]
-				public bool IsReadOnly {
-					get {
-						throw new NotImplementedException ();
-					}
-				}
-				[MonoTODO]
-				public virtual ColumnHeader this[int index] {
-					get {
-						throw new NotImplementedException ();
-					}
-				}
+			[MonoTODO]
+			void IList.Insert(int index, object value){
+				throw new NotImplementedException ();
+			}
 
-				//
-				//  --- Public Methods
-				//
-				[MonoTODO]
-				public virtual int Add(ColumnHeader value) 
-				{
-					throw new NotImplementedException ();
-				}
-				[MonoTODO]
-				public virtual ColumnHeader Add(string s, int b, HorizontalAlignment align) 
-				{
-					throw new NotImplementedException ();
-				}
-				[MonoTODO]
-				public virtual void AddRange(ColumnHeader[] values) 
-				{
-					throw new NotImplementedException ();
-				}
-				[MonoTODO]
-				public void Clear() 
-				{
-					throw new NotImplementedException ();
-				}
-				[MonoTODO]
-				public bool Contains(ColumnHeader value) 
-				{
-					throw new NotImplementedException ();
-				}
-				[MonoTODO]
-				public virtual bool Equals(object o) 
-				{
-					throw new NotImplementedException ();
-				}
-				[MonoTODO]
-				public static bool Equals(object o1, object o2) 
-				{
-					throw new NotImplementedException ();
-				}
-				[MonoTODO]
-				public IEnumerator GetEnumerator() 
-				{
-					throw new NotImplementedException ();
-				}
-				[MonoTODO]
-				public int IndexOf(ColumnHeader value) 
-				{
-					throw new NotImplementedException ();
-				}
-				[MonoTODO]
-				public void Insert(int b, ColumnHeader value) 
-				{
-					throw new NotImplementedException ();
-				}
-				[MonoTODO]
-				public void Insert(int val1, string str, int val2, HorizontalAlignment align) 
-				{
-					throw new NotImplementedException ();
-				}
-				[MonoTODO]
-				public virtual void Remove(ColumnHeader value) 
-				{
-					throw new NotImplementedException ();
-				}
-				[MonoTODO]
-				public virtual void RemoveAt(int index) 
-				{
+			[MonoTODO]
+			void IList.Remove( object value){
+				throw new NotImplementedException ();
+			}
+
+			[MonoTODO]
+			void IList.RemoveAt( int index){
+				throw new NotImplementedException ();
+			}
+			// End of IList interface
+			/// <summary>
+			/// ICollection Interface implmentation.
+			/// </summary>
+			int ICollection.Count{
+				get{
 					throw new NotImplementedException ();
 				}
 			}
+			bool ICollection.IsSynchronized{
+				get{
+					throw new NotImplementedException ();
+				}
+			}
+			object ICollection.SyncRoot{
+				get{
+					throw new NotImplementedException ();
+				}
+			}
+			void ICollection.CopyTo(Array array, int index){
+				throw new NotImplementedException ();
+			}
+			// End Of ICollection
+		}
+		//
+		// System.Windows.Forms.ListView.ColumnHeaderCollection.cs
+		//
+		// Author:
+		//   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
+		//
+		// (C) 2002 Ximian, Inc
+		//
+		// <summary>
+		//	This is only a template.  Nothing is implemented yet.
+		//
+		// </summary>
+
+		public class ColumnHeaderCollection :  IList, ICollection, IEnumerable {
+
+			//
+			//  --- Constructor
+			//
+			[MonoTODO]
+			public ColumnHeaderCollection(ListView owner) {
+				throw new NotImplementedException ();
+			}
+
+			//
+			//  --- Public Properties
+			//
+			[MonoTODO]
+			public int Count {
+				get {
+					throw new NotImplementedException ();
+				}
+			}
+			[MonoTODO]
+			public bool IsReadOnly {
+				get {
+					throw new NotImplementedException ();
+				}
+			}
+			[MonoTODO]
+			public virtual ColumnHeader this[int index] {
+				get {
+					throw new NotImplementedException ();
+				}
+			}
+
+			//
+			//  --- Public Methods
+			//
+			[MonoTODO]
+			public virtual int Add(ColumnHeader value) {
+				throw new NotImplementedException ();
+			}
+			[MonoTODO]
+			public virtual ColumnHeader Add(string s, int b, HorizontalAlignment align) {
+				throw new NotImplementedException ();
+			}
+			[MonoTODO]
+			public virtual void AddRange(ColumnHeader[] values) {
+				throw new NotImplementedException ();
+			}
+			[MonoTODO]
+			public void Clear() {
+				throw new NotImplementedException ();
+			}
+			[MonoTODO]
+			public bool Contains(ColumnHeader value) {
+				throw new NotImplementedException ();
+			}
+			[MonoTODO]
+			public override bool Equals(object o) {
+				throw new NotImplementedException ();
+			}
+			//				[MonoTODO]
+			//				public static bool Equals(object o1, object o2) {
+			//					throw new NotImplementedException ();
+			//				}
+			[MonoTODO]
+			public override int GetHashCode() {
+				//FIXME add our proprities
+				return base.GetHashCode();
+			}
+			[MonoTODO]
+			public IEnumerator GetEnumerator() {
+				throw new NotImplementedException ();
+			}
+			[MonoTODO]
+			public int IndexOf(ColumnHeader value) {
+				throw new NotImplementedException ();
+			}
+			[MonoTODO]
+			public void Insert(int b, ColumnHeader value) {
+				throw new NotImplementedException ();
+			}
+			[MonoTODO]
+			public void Insert(int val1, string str, int val2, HorizontalAlignment align) {
+				throw new NotImplementedException ();
+			}
+			[MonoTODO]
+			public virtual void Remove(ColumnHeader value) {
+				throw new NotImplementedException ();
+			}
+			[MonoTODO]
+			public virtual void RemoveAt(int index) {
+				throw new NotImplementedException ();
+			}
+			/// <summary>
+			/// IList Interface implmentation.
+			/// </summary>
+			bool IList.IsReadOnly{
+				get{
+					// We allow addition, removeal, and editing of items after creation of the list.
+					return false;
+				}
+			}
+			bool IList.IsFixedSize{
+				get{
+					// We allow addition and removeal of items after creation of the list.
+					return false;
+				}
+			}
+
+			//[MonoTODO]
+			object IList.this[int index]{
+				get{
+					throw new NotImplementedException ();
+				}
+				set{
+					throw new NotImplementedException ();
+				}
+			}
+		
+			[MonoTODO]
+			void IList.Clear(){
+				throw new NotImplementedException ();
+			}
+		
+			[MonoTODO]
+			int IList.Add( object value){
+				throw new NotImplementedException ();
+			}
+
+			[MonoTODO]
+			bool IList.Contains( object value){
+				throw new NotImplementedException ();
+			}
+
+			[MonoTODO]
+			int IList.IndexOf( object value){
+				throw new NotImplementedException ();
+			}
+
+			[MonoTODO]
+			void IList.Insert(int index, object value){
+				throw new NotImplementedException ();
+			}
+
+			[MonoTODO]
+			void IList.Remove( object value){
+				throw new NotImplementedException ();
+			}
+
+			[MonoTODO]
+			void IList.RemoveAt( int index){
+				throw new NotImplementedException ();
+			}
+			// End of IList interface
+			/// <summary>
+			/// ICollection Interface implmentation.
+			/// </summary>
+			int ICollection.Count{
+				get{
+					throw new NotImplementedException ();
+				}
+			}
+			bool ICollection.IsSynchronized{
+				get{
+					throw new NotImplementedException ();
+				}
+			}
+			object ICollection.SyncRoot{
+				get{
+					throw new NotImplementedException ();
+				}
+			}
+			void ICollection.CopyTo(Array array, int index){
+				throw new NotImplementedException ();
+			}
+			// End Of ICollection
 		}
 		//
 		// System.Windows.Forms.ListView.ListViewItemCollection.cs
@@ -851,8 +1023,7 @@ namespace System.Windows.Forms {
 			//  --- Constructor
 			//
 			[MonoTODO]
-			public ListViewItemCollection (ListView owner) 
-			{
+			public ListViewItemCollection (ListView owner) {
 				throw new NotImplementedException ();
 			}
 
@@ -885,70 +1056,145 @@ namespace System.Windows.Forms {
 			//  --- Public Methods
 			//
 			[MonoTODO]
-			public virtual ListViewItem Add (ListViewItem item) 
-			{
+			public virtual ListViewItem Add (ListViewItem item) {
 				throw new NotImplementedException ();
 			}
 			[MonoTODO]
-			public virtual ListViewItem Add (string str) 
-			{
+			public virtual ListViewItem Add (string str) {
 				throw new NotImplementedException ();
 			}
 			[MonoTODO]
-			public virtual ListViewItem Add (string str, int val) 
-			{
+			public virtual ListViewItem Add (string str, int val) {
 				throw new NotImplementedException ();
 			}
 			[MonoTODO]
-			public void AddRange(ListViewItem[] values) 
-			{
+			public void AddRange(ListViewItem[] values) {
 				throw new NotImplementedException ();
 			}
 			[MonoTODO]
-			public void Clear() 
-			{
+			public void Clear() {
 				throw new NotImplementedException ();
 			}
 			[MonoTODO]
-			public bool Contains(ListViewItem item) 
-			{
+			public bool Contains(ListViewItem item) {
 				throw new NotImplementedException ();
 			}
 			[MonoTODO]
-			public void CopyTo(Array dest, int index) 
-			{
+			public void CopyTo(Array dest, int index) {
 				throw new NotImplementedException ();
 			}
 			[MonoTODO]
-			public virtual bool Equals(object o) 
-			{
+			public override bool Equals(object o) {
+				throw new NotImplementedException ();
+			}
+
+			//public static bool Equals(object o1, object o2) {
+			//	throw new NotImplementedException ();
+			//}
+			[MonoTODO]
+			public override int GetHashCode() {
+				//FIXME add our proprities
+				return base.GetHashCode();
+			}
+			[MonoTODO]
+			public IEnumerator GetEnumerator() {
 				throw new NotImplementedException ();
 			}
 			[MonoTODO]
-			public static bool Equals(object o1, object o2) 
-			{
+			public int IndexOf(ListViewItem item) {
 				throw new NotImplementedException ();
 			}
 			[MonoTODO]
-			public IEnumerator GetEnumerator() 
-			{
+			public virtual void Remove(ListViewItem item) {
 				throw new NotImplementedException ();
 			}
 			[MonoTODO]
-			public int IndexOf(ListViewItem item) 
-			{
+			public virtual void RemoveAt(int index) {
 				throw new NotImplementedException ();
 			}
+			/// <summary>
+			/// IList Interface implmentation.
+			/// </summary>
+			bool IList.IsReadOnly{
+				get{
+					// We allow addition, removeal, and editing of items after creation of the list.
+					return false;
+				}
+			}
+			bool IList.IsFixedSize{
+				get{
+					// We allow addition and removeal of items after creation of the list.
+					return false;
+				}
+			}
+
+			//[MonoTODO]
+			object IList.this[int index]{
+				get{
+					throw new NotImplementedException ();
+				}
+				set{
+					throw new NotImplementedException ();
+				}
+			}
+		
 			[MonoTODO]
-			public virtual void Remove(ListViewItem item) 
-			{
+			void IList.Clear(){
 				throw new NotImplementedException ();
 			}
+		
 			[MonoTODO]
-			public virtual void RemoveAt(int index) 
-			{
+			int IList.Add( object value){
 				throw new NotImplementedException ();
 			}
+
+			[MonoTODO]
+			bool IList.Contains( object value){
+				throw new NotImplementedException ();
+			}
+
+			[MonoTODO]
+			int IList.IndexOf( object value){
+				throw new NotImplementedException ();
+			}
+
+			[MonoTODO]
+			void IList.Insert(int index, object value){
+				throw new NotImplementedException ();
+			}
+
+			[MonoTODO]
+			void IList.Remove( object value){
+				throw new NotImplementedException ();
+			}
+
+			[MonoTODO]
+			void IList.RemoveAt( int index){
+				throw new NotImplementedException ();
+			}
+			// End of IList interface
+			/// <summary>
+			/// ICollection Interface implmentation.
+			/// </summary>
+			int ICollection.Count{
+				get{
+					throw new NotImplementedException ();
+				}
+			}
+			bool ICollection.IsSynchronized{
+				get{
+					throw new NotImplementedException ();
+				}
+			}
+			object ICollection.SyncRoot{
+				get{
+					throw new NotImplementedException ();
+				}
+			}
+			void ICollection.CopyTo(Array array, int index){
+				throw new NotImplementedException ();
+			}
+			// End Of ICollection
 		}
 		//
 		// System.Windows.Forms.ListView.SelectedIndexCollection.cs
@@ -970,8 +1216,7 @@ namespace System.Windows.Forms {
 			//  --- Constructor
 			//
 			[MonoTODO]
-			public SelectedIndexCollection(ListView owner) 
-			{
+			public SelectedIndexCollection(ListView owner) {
 				throw new NotImplementedException ();
 			}
 
@@ -1001,35 +1246,117 @@ namespace System.Windows.Forms {
 			//  --- Public Methods
 			//
 			[MonoTODO]
-			public bool Contains(ListView item) 
-			{
+			public bool Contains(ListView item) {
 				throw new NotImplementedException ();
 			}
 			[MonoTODO]
-			public void CopyTo(Array dest, int index) 
-			{
+			public void CopyTo(Array dest, int index) {
 				throw new NotImplementedException ();
 			}
 			[MonoTODO]
-			public virtual bool Equals(object o) 
-			{
+			public override bool Equals(object o) {
+				throw new NotImplementedException ();
+			}
+			//			[MonoTODO]
+			//			public static bool Equals(object o1, object o2) {
+			//				throw new NotImplementedException ();
+			//			}
+			[MonoTODO]
+			public override int GetHashCode() {
+				//FIXME add our proprities
+				return base.GetHashCode();
+			}
+			[MonoTODO]
+			public IEnumerator GetEnumerator() {
 				throw new NotImplementedException ();
 			}
 			[MonoTODO]
-			public static bool Equals(object o1, object o2) 
-			{
+			public int IndexOf(int index) {
 				throw new NotImplementedException ();
 			}
+			/// <summary>
+			/// IList Interface implmentation.
+			/// </summary>
+			bool IList.IsReadOnly{
+				get{
+					// We allow addition, removeal, and editing of items after creation of the list.
+					return false;
+				}
+			}
+			bool IList.IsFixedSize{
+				get{
+					// We allow addition and removeal of items after creation of the list.
+					return false;
+				}
+			}
+
+			//[MonoTODO]
+			object IList.this[int index]{
+				get{
+					throw new NotImplementedException ();
+				}
+				set{
+					throw new NotImplementedException ();
+				}
+			}
+		
 			[MonoTODO]
-			public IEnumerator GetEnumerator() 
-			{
+			void IList.Clear(){
 				throw new NotImplementedException ();
 			}
+		
 			[MonoTODO]
-			public int IndexOf(int index) 
-			{
+			int IList.Add( object value){
 				throw new NotImplementedException ();
 			}
+
+			[MonoTODO]
+			bool IList.Contains( object value){
+				throw new NotImplementedException ();
+			}
+
+			[MonoTODO]
+			int IList.IndexOf( object value){
+				throw new NotImplementedException ();
+			}
+
+			[MonoTODO]
+			void IList.Insert(int index, object value){
+				throw new NotImplementedException ();
+			}
+
+			[MonoTODO]
+			void IList.Remove( object value){
+				throw new NotImplementedException ();
+			}
+
+			[MonoTODO]
+			void IList.RemoveAt( int index){
+				throw new NotImplementedException ();
+			}
+			// End of IList interface
+			/// <summary>
+			/// ICollection Interface implmentation.
+			/// </summary>
+			int ICollection.Count{
+				get{
+					throw new NotImplementedException ();
+				}
+			}
+			bool ICollection.IsSynchronized{
+				get{
+					throw new NotImplementedException ();
+				}
+			}
+			object ICollection.SyncRoot{
+				get{
+					throw new NotImplementedException ();
+				}
+			}
+			void ICollection.CopyTo(Array array, int index){
+				throw new NotImplementedException ();
+			}
+			// End Of ICollection
 		}
 		//
 		// System.Windows.Forms.ListView.CheckedIndexCollection.cs
@@ -1051,8 +1378,7 @@ namespace System.Windows.Forms {
 			//  --- Constructor
 			//
 			[MonoTODO]
-			public CheckedIndexCollection(ListView owner) 
-			{
+			public CheckedIndexCollection(ListView owner) {
 				throw new NotImplementedException ();
 			}
 
@@ -1085,30 +1411,131 @@ namespace System.Windows.Forms {
 			//  --- Public Methods
 			//
 			[MonoTODO]
-			public bool Contains(int checkedIndex) 
-			{
+			public bool Contains(int checkedIndex) {
 				throw new NotImplementedException ();
 			}
 			[MonoTODO]
-			public virtual bool Equals(object o) 
-			{
+			public override bool Equals(object o) {
+				throw new NotImplementedException ();
+			}
+			//			[MonoTODO]
+			//			public static bool Equals(object o1, object o2) {
+			//				throw new NotImplementedException ();
+			//			}
+			[MonoTODO]
+			public override int GetHashCode() {
+				//FIXME add our proprities
+				return base.GetHashCode();
+			}
+			[MonoTODO]
+			public IEnumerator GetEnumerator() {
 				throw new NotImplementedException ();
 			}
 			[MonoTODO]
-			public static bool Equals(object o1, object o2) 
-			{
+			public int IndexOf(int checkedIndex) {
 				throw new NotImplementedException ();
 			}
+			/// <summary>
+			/// IList Interface implmentation.
+			/// </summary>
+			bool IList.IsReadOnly{
+				get{
+					// We allow addition, removeal, and editing of items after creation of the list.
+					return false;
+				}
+			}
+			bool IList.IsFixedSize{
+				get{
+					// We allow addition and removeal of items after creation of the list.
+					return false;
+				}
+			}
+
+			//[MonoTODO]
+			object IList.this[int index]{
+				get{
+					throw new NotImplementedException ();
+				}
+				set{
+					throw new NotImplementedException ();
+				}
+			}
+		
 			[MonoTODO]
-			public IEnumerator GetEnumerator() 
-			{
+			void IList.Clear(){
 				throw new NotImplementedException ();
 			}
+		
 			[MonoTODO]
-			public int IndexOf(int checkedIndex) 
-			{
+			int IList.Add( object value){
 				throw new NotImplementedException ();
 			}
+
+			[MonoTODO]
+			bool IList.Contains( object value){
+				throw new NotImplementedException ();
+			}
+
+			[MonoTODO]
+			int IList.IndexOf( object value){
+				throw new NotImplementedException ();
+			}
+
+			[MonoTODO]
+			void IList.Insert(int index, object value){
+				throw new NotImplementedException ();
+			}
+
+			[MonoTODO]
+			void IList.Remove( object value){
+				throw new NotImplementedException ();
+			}
+
+			[MonoTODO]
+			void IList.RemoveAt( int index){
+				throw new NotImplementedException ();
+			}
+			// End of IList interface
+			/// <summary>
+			/// ICollection Interface implmentation.
+			/// </summary>
+			int ICollection.Count{
+				get{
+					throw new NotImplementedException ();
+				}
+			}
+			bool ICollection.IsSynchronized{
+				get{
+					throw new NotImplementedException ();
+				}
+			}
+			object ICollection.SyncRoot{
+				get{
+					throw new NotImplementedException ();
+				}
+			}
+			void ICollection.CopyTo(Array array, int index){
+				throw new NotImplementedException ();
+			}
+			// End Of ICollection
 		}
-	}
+		//***********************************
+		// Sub Class
+		//***********************************
+//		[MonoTODO]
+//			// FIXME this sub class has many members that have not been stubbed out.
+//			public class CheckedListViewItemCollection  {
+//			CheckedListViewItemCollection(ListView owner){
+//				throw new NotImplementedException ();
+//			}
+//		}
+//		[MonoTODO]
+//			// FIXME this sub class has many members that have not been stubbed out.
+//			public class ColumnHeaderCollection  {
+//			ColumnHeaderCollection(ListView owner){
+//				throw new NotImplementedException ();
+//			}
+//
+//		}
+	}	
 }

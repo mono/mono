@@ -3,6 +3,7 @@
 //
 // Author:
 //   stubbed out by Jaak Simm (jaaksimm@firm.ee)
+//	Dennis Hayes (dennish@raytek.com)
 //
 // (C) Ximian, Inc., 2002
 //
@@ -36,7 +37,10 @@ namespace System.Windows.Forms {
 		// --- public and protected Properties ---
 		//virtual 
 		int ICollection.Count {
-			get { return list.Count; }
+			get {
+				throw new NotImplementedException ();
+				//return list.Count; 
+			}
 		}
 		
 		public bool IsReadOnly {
@@ -50,7 +54,10 @@ namespace System.Windows.Forms {
 		}
 		
 		protected virtual ArrayList List {
-			get { return list; }
+			get { 
+				throw new NotImplementedException ();
+				//return list; 
+			}
 		}
 		
 		[MonoTODO]
@@ -64,12 +71,14 @@ namespace System.Windows.Forms {
 		// --- public Methods ---
 		public void CopyTo (Array ar, int index) 
 		{
-			list.CopyTo(ar, index);
+			throw new NotImplementedException ();
+			//list.CopyTo(ar, index);
 		}
 		
 		public IEnumerator GetEnumerator() 
 		{
-			return list.GetEnumerator();
+			throw new NotImplementedException ();
+			//return list.GetEnumerator();
 		}
 		
 	}

@@ -3,6 +3,7 @@
 //
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
+//	Dennis Hayes (dennish@raytek.com)
 //
 // (C) 2002 Ximian, Inc
 //
@@ -36,41 +37,54 @@ namespace System.Windows.Forms {
 		//
 		//  --- Public Methods
 		//
+
 		[MonoTODO]
 		public virtual int Add(DataGridTableStyle table)
 		{
 			throw new NotImplementedException ();
 		}
+
 		[MonoTODO]
 		public virtual void AddRange(DataGridTableStyle[] tables)
 		{
 			throw new NotImplementedException ();
 		}
+
 		[MonoTODO]
 		public virtual void Clear()
 		{
 			throw new NotImplementedException ();
 		}
+
 		[MonoTODO]
-		public virtual bool Equals(object o)
+		public override bool Equals(object o)
 		{
 			throw new NotImplementedException ();
 		}
+
+		//public static bool Equals(object o1, object o2)
+		//{
+		//	throw new NotImplementedException ();
+		//}
+
 		[MonoTODO]
-		public static bool Equals(object o1, object o2)
-		{
-			throw new NotImplementedException ();
+		public override int GetHashCode() {
+			//FIXME add our proprities
+			return base.GetHashCode();
 		}
+
 		[MonoTODO]
 		public bool Contains(DataGridTableStyle table)
 		{
 			throw new NotImplementedException ();
 		}
+
 		[MonoTODO]
 		public void Remove(DataGridTableStyle table)
 		{
 			throw new NotImplementedException ();
 		}
+
 		[MonoTODO]
 		public void RemoveAt(int index)
 		{
@@ -101,5 +115,67 @@ namespace System.Windows.Forms {
 		{
 			throw new NotImplementedException ();
 		}
+		/// <summary>
+		/// IList Interface implmentation.
+		/// </summary>
+		bool IList.IsReadOnly{
+			get{
+				// We allow addition, removeal, and editing of items after creation of the list.
+				return false;
+			}
+		}
+		bool IList.IsFixedSize{
+			get{
+				// We allow addition and removeal of items after creation of the list.
+				return false;
+			}
+		}
+
+		//[MonoTODO]
+		object IList.this[int index]{
+			get{
+				throw new NotImplementedException ();
+			}
+			set{
+				throw new NotImplementedException ();
+			}
+		}
+		
+		[MonoTODO]
+		void IList.Clear(){
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		int IList.Add( object value){
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		bool IList.Contains( object value){
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		int IList.IndexOf( object value){
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		void IList.Insert(int index, object value){
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		void IList.Remove( object value){
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		void IList.RemoveAt( int index){
+			throw new NotImplementedException ();
+		}
+		// End of IList interface
+
 	 }
 }

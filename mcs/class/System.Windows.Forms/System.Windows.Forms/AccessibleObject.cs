@@ -26,20 +26,20 @@ namespace System.Windows.Forms {
 	/// </summary>
 	[MonoTODO]
 	[ComVisible(true)]
-	public class AccessibleObject : MarshalByRefObject /*, [MonoTODO]: */ // IReflect/*, [MonoTODO]: */ //,IAccessible {
+	public class AccessibleObject : MarshalByRefObject{//   /*, [MonoTODO]: */ // IReflect/*, [MonoTODO]: */ //,IAccessible {
 
 		string name;
 		
 		// --- Constructor ---
 		[MonoTODO]
-		[ComVisible(true)]
+		//[ComVisible(true)]
 		public AccessibleObject() 
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		[Serializable]
+		//[Serializable]
 		//[ClassInterface(ClassInterfaceType.AutoDual)]
 		~AccessibleObject(){
 		}

@@ -13,13 +13,12 @@ namespace System.Windows.Forms {
 	// <summary>
 	// </summary>
 
-    public class LinkClickedEventArgs : EventArgs {
+	public class LinkClickedEventArgs : EventArgs {
 		private string linktext;
 		//
 		//  --- Constructor
 		//
-		public LinkClickedEventArgs(string linkText)
-		{
+		public LinkClickedEventArgs(string linkText) {
 			linktext = linkText;;
 		}
 
@@ -35,15 +34,18 @@ namespace System.Windows.Forms {
 		//
 		//  --- Public Methods
 		//
-		//[MonoTODO]
-		//public virtual bool Equals(object o);
-		//{
+		[MonoTODO]
+		public override bool Equals(object o) {
+			throw new NotImplementedException ();
+		}
+
+		//public static bool Equals(object o1, object o2) {
 		//	throw new NotImplementedException ();
 		//}
-		//[MonoTODO]
-		//public static bool Equals(object o1, object o2);
-		//{
-		//	throw new NotImplementedException ();
-		//}
-	 }
+		[MonoTODO]
+		public override int GetHashCode() {
+			//FIXME add our proprities
+			return base.GetHashCode();
+		}	 
+	}
 }

@@ -3,6 +3,7 @@
 //
 // Author:
 //   stubbed out by Jaak Simm (jaaksimm@firm.ee)
+//	Dennis Hayes (dennish@raytek.com)
 //
 // (C) Ximian, Inc., 2002
 //
@@ -394,7 +395,7 @@ namespace System.Windows.Forms {
 		}
 		
 		[MonoTODO]
-		 protected AccessibleObject CreateAccessibilityInstance() 
+		 protected override AccessibleObject CreateAccessibilityInstance() 
 		 {
 			throw new NotImplementedException ();
 		}

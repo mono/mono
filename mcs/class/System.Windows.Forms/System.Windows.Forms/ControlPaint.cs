@@ -3,6 +3,7 @@
 //
 // Author:
 //   stubbed out by Jaak Simm (jaaksimm@firm.ee)
+//	Dennis Hayes (dennish@raytek.com)
 //
 // (C) Ximian, Inc 2002
 //
@@ -30,8 +31,6 @@ namespace System.Windows.Forms {
 		}
 		#endregion
 		
-		
-		
 		#region Methods
 		/// following methods were not stubbed out, because they only support .NET framework:
 		/// - public static IntPtr CreateHBitmap16Bit(Bitmap bitmap,Color background)
@@ -57,10 +56,7 @@ namespace System.Windows.Forms {
 		
 		[MonoTODO]
 		public static void DrawBorder(
-			Graphics graphics, {
-
-
-
+			Graphics graphics) {
 			throw new NotImplementedException ();
 		}
 		
@@ -95,8 +91,39 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public static void DrawBorder3D(
 			Graphics graphics,
-			Rectangle rectangle, {
-
+			Rectangle rectangle,
+			Border3DStyle Style) {
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		public static void DrawBorder3D(
+			Graphics graphics,
+			Rectangle rectangle,
+			Border3DStyle Style,
+			Border3DSide Sides) {
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		public static void DrawBorder3D(
+			Graphics graphics, int x) {
+			throw new NotImplementedException ();
+		}
+		//is this part of spec? I do not think so.
+		//[MonoTODO]
+		//public static void DrawBorder3D(
+		//	Graphics graphics, int x) {
+		//	throw new NotImplementedException ();
+		//}
+		
+		[MonoTODO]
+		public static void DrawBorder3D(
+			Graphics graphics,
+			int x,
+			int y,
+			int width,
+			int height) {
 
 			throw new NotImplementedException ();
 		}
@@ -104,36 +131,15 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public static void DrawBorder3D(
 			Graphics graphics,
-			Rectangle rectangle, {
-
-
-
-			throw new NotImplementedException ();
-		}
-		
-		[MonoTODO]
-		public static void DrawBorder3D(
-			Graphics graphics,
-			int x, {
-
-
-
+			int x,
+			int y,
+			int width,
+			int height,
+			Border3DStyle style) {
 
 			throw new NotImplementedException ();
 		}
-		
-		[MonoTODO]
-		public static void DrawBorder3D(
-			Graphics graphics,
-			int x, {
 
-
-
-
-
-			throw new NotImplementedException ();
-		}
-		
 		[MonoTODO]
 		public static void DrawBorder3D(
 			Graphics graphics,
@@ -146,13 +152,11 @@ namespace System.Windows.Forms {
 
 			throw new NotImplementedException ();
 		}
-		
+
 		[MonoTODO]
 		public static void DrawButton(
 			Graphics graphics,
-			Rectangle rectangle, {
-
-
+			Rectangle rectangle) {
 			throw new NotImplementedException ();
 		}
 		
@@ -171,7 +175,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public static void DrawCaptionButton(
 			Graphics graphics,
-			Rectangle rectangle, {
+			Rectangle rectangle) {
 
 
 			throw new NotImplementedException ();
@@ -193,9 +197,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public static void DrawCheckBox(
 			Graphics graphics,
-			Rectangle rectangle, {
-
-
+			Rectangle rectangle) {
 			throw new NotImplementedException ();
 		}
 		
@@ -214,9 +216,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public static void DrawComboButton(
 			Graphics graphics,
-			Rectangle rectangle, {
-
-
+			Rectangle rectangle) {
 			throw new NotImplementedException ();
 		}
 		
@@ -249,9 +249,9 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public static void DrawFocusRectangle(
 			Graphics graphics,
-			Rectangle rectangle, {
-
-
+			Rectangle rectangle,
+			Color foreColor,
+			Color backColor) {
 			throw new NotImplementedException ();
 		}
 		
@@ -361,9 +361,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public static void DrawReversibleFrame(
 			Rectangle rectangle,
-			Color backColor, {
-
-
+			Color backColor) {
 			throw new NotImplementedException ();
 		}
 		
@@ -380,9 +378,7 @@ namespace System.Windows.Forms {
 		public static void DrawScrollButton(
 			Graphics graphics,
 			Rectangle rectangle,
-			ScrollButton button, {
-
-
+			ScrollButton button) {
 			throw new NotImplementedException ();
 		}
 		
@@ -413,9 +409,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public static void DrawSizeGrip(
 			Graphics graphics,
-			Color backColor, {
-
-
+			Color backColor) {
 			throw new NotImplementedException ();
 		}
 		

@@ -3,6 +3,7 @@
 //
 // Author:
 //   stubbed out by Jaak Simm (jaaksimm@firm.ee)
+//	Dennis Hayes (dennish@raytek.com)
 //
 // (C) Ximian, Inc., 2002
 //
@@ -363,11 +364,12 @@ namespace System.Windows.Forms {
 		}
 		
 		// for IList interface
-		[MonoTODO]
-		protected override void SetItemsCore(IList value) 
-		{
-			throw new NotImplementedException ();
-		}
+		// FIXME not sure how to handle this
+		//[MonoTODO]
+		//protected override void SetItemsCore(IList value) 
+		//{
+		//	throw new NotImplementedException ();
+		//}
 		
 		[MonoTODO]
 		public override string ToString() 
@@ -381,9 +383,7 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException ();
 		}
 		
-		
-		
-		
+	
 		/// --- Button events ---
 		/// commented out, cause it only supports the .NET Framework infrastructure
 		[MonoTODO]

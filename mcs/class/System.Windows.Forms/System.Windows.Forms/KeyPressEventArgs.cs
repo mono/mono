@@ -3,6 +3,7 @@
 //
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
+//	Dennis Hayes (dennish@raytek.com)
 //
 // (C) 2002 Ximian, Inc
 //
@@ -19,6 +20,7 @@ namespace System.Windows.Forms {
 		//
 		//  --- Constructor
 		//
+
 		[MonoTODO]
 		public KeyPressEventArgs (char keyChar)
 		{
@@ -28,6 +30,7 @@ namespace System.Windows.Forms {
 		//
 		//  --- Public Properties
 		//
+
 		[MonoTODO]
 		public bool Handled {
 			get {
@@ -37,6 +40,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 		}
+
 		[MonoTODO]
 		public char KeyChar {
 			get {
@@ -47,15 +51,22 @@ namespace System.Windows.Forms {
 		//
 		//  --- Public Methods
 		//
+
 		[MonoTODO]
-		public virtual bool Equals(object o)
+		public override bool Equals(object o)
 		{
 			throw new NotImplementedException ();
 		}
+
+		//public static bool Equals(object o1, object o2)
+		//{
+		//	throw new NotImplementedException ();
+		//}
+
 		[MonoTODO]
-		public static bool Equals(object o1, object o2)
-		{
-			throw new NotImplementedException ();
+		public override int GetHashCode() {
+			//FIXME add our proprities
+			return base.GetHashCode();
 		}
-	 }
+	}
 }

@@ -3,6 +3,7 @@
 //
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
+//	Dennis Hayes (dennish@raytek.com)
 //
 // (C) 2002 Ximian, Inc
 //
@@ -32,21 +33,19 @@ namespace System.Windows.Forms {
 		//
 		//
 		
-		[MonoTODO]
-		public bool CanConvertTo(Type t) 
-		{
-			throw new NotImplementedException ();
-		}
+		//public bool CanConvertTo(Type t) 
+		//{
+		//	throw new NotImplementedException ();
+		//}
 		[MonoTODO]
 		public override bool CanConvertTo(ITypeDescriptorContext context, Type t) 
 		{
 			throw new NotImplementedException ();
 		}
-		[MonoTODO]
-		public object ConvertTo(object o, Type t) 
-		{
-			throw new NotImplementedException ();
-		}
+		//public object ConvertTo(object o, Type t) 
+		//{
+		//	throw new NotImplementedException ();
+		//}
 		[MonoTODO]
 		public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object o, Type t) 
 		{
@@ -57,11 +56,10 @@ namespace System.Windows.Forms {
 		{
 			throw new NotImplementedException ();
 		}
-		[MonoTODO]
-		public bool GetCreateInstanceSupported() 
-		{
-			throw new NotImplementedException ();
-		}
+		//inheritedpublic bool GetCreateInstanceSupported() 
+		//{
+		//	throw new NotImplementedException ();
+		//}
 		[MonoTODO]
 		public override bool GetCreateInstanceSupported(ITypeDescriptorContext context) 
 		{
@@ -70,7 +68,20 @@ namespace System.Windows.Forms {
 		
 
 		
-
+		public override bool Equals(object o)
+		{
+			throw new NotImplementedException ();
+		}
+		//Inherited/not needed
+		//public static bool Equals(object o1, object o2)
+		//{
+		//	throw new NotImplementedException ();
+		//}
+		[MonoTODO]
+		public override int GetHashCode() {
+			//FIXME add our proprities
+			return base.GetHashCode();
+		}
 
 		
 		
@@ -145,20 +156,6 @@ namespace System.Windows.Forms {
 		//	throw new NotImplementedException ();
 		//}
 		////Inherited/not needed
-		//public virtual bool Equals(object o);
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		////Inherited/not needed
-		//public static bool Equals(object o1, object o2);
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		////Inherited/not needed
-		//public virtual int GetHashCode()
-		//{
-		//	throw new NotImplementedException ();
-		//}
 		////Inherited/not needed
 		//public PropertyDescriptorCollection GetProperties(object o)
 		//{

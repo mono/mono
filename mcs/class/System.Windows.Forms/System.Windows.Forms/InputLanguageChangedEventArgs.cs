@@ -12,16 +12,15 @@ namespace System.Windows.Forms {
 	// <summary>
 	// </summary>
 
-        public class InputLanguageChangedEventArgs : EventArgs {
-			private CultureInfo culture;
-			private byte b;
+	public class InputLanguageChangedEventArgs : EventArgs {
+		private CultureInfo culture;
+		private byte b;
 
 		//
 		//  --- Constructor
 		//
 		[MonoTODO]
-		public InputLanguageChangedEventArgs ( CultureInfo culture, byte b)
-		{
+		public InputLanguageChangedEventArgs ( CultureInfo culture, byte b) {
 			this.culture = culture;
 			this.b = b;
 		}
@@ -29,36 +28,39 @@ namespace System.Windows.Forms {
 		//
 		//  --- Public Properties
 		//
-		//[MonoTODO]
-		//public byte CharSet {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
+		[MonoTODO]
+		public byte CharSet {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
 		public CultureInfo Culture {
 			get {
 				return culture;
 			}
 		}
-		//[MonoTODO]
-		//public InputLanguage InputLanguage {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
+		[MonoTODO]
+		public InputLanguage InputLanguage {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
 
 		//
 		//  --- Public Methods
 		//
-		//[MonoTODO]
-		//public virtual bool Equals(object o);
-		//{
+		[MonoTODO]
+		public override bool Equals(object o) {
+			throw new NotImplementedException ();
+		}
+
+		//public static bool Equals(object o1, object o2) {
 		//	throw new NotImplementedException ();
 		//}
-		//[MonoTODO]
-		//public static bool Equals(object o1, object o2);
-		//{
-		//	throw new NotImplementedException ();
-		//}
-	 }
+		[MonoTODO]
+		public override int GetHashCode() {
+			//FIXME add our proprities
+			return base.GetHashCode();
+		}
+	}
 }

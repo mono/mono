@@ -3,6 +3,7 @@
 //
 // Author:
 //   stubbed out by Paul Osman (paul.osman@sympatico.ca)
+//	Dennis Hayes (dennish@raytek.com)
 //
 // (C) 2002 Ximian, Inc
 //
@@ -30,7 +31,7 @@ using System.ComponentModel;
 		//  --- Public Properties
 		//
 		[MonoTODO]
-		ISite Site {
+		public override ISite  Site {
 			set {
 				throw new NotImplementedException ();
 			}
@@ -53,12 +54,11 @@ using System.ComponentModel;
 				throw new NotImplementedException ();
 			}
 		}
-		[MonoTODO]
-		public IContainer Container {
-			get {
-				throw new NotImplementedException ();
-			}
-		}
+		//public IContainer Container {
+		//	get {
+		//		throw new NotImplementedException ();
+		//	}
+		//}
 		[MonoTODO]
 		public ContainerControl ContainerControl {
 			get {
@@ -110,32 +110,30 @@ using System.ComponentModel;
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		public virtual ObjRef CreateObjRef(Type requestedType)
+		public override ObjRef CreateObjRef(Type requestedType)
 		{
 			throw new NotImplementedException ();
 		}
+		//public void Dispose()
+		//{
+		//	throw new NotImplementedException ();
+		//}
 		[MonoTODO]
-		public void Dispose()
+		public override bool Equals(object o)
 		{
 			throw new NotImplementedException ();
 		}
-		[MonoTODO]
-		public virtual bool Equals(object o)
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public static bool Equals(object o1, object o2)
-		{
-			throw new NotImplementedException ();
-		}
+		//public static bool Equals(object o1, object o2)
+		//{
+		//	throw new NotImplementedException ();
+		//}
 		[MonoTODO]
 		public string GetError(Control control)
 		{
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		public virtual int GetHashCode()
+		public override int GetHashCode()
 		{
 			throw new NotImplementedException ();
 		}
@@ -149,18 +147,16 @@ using System.ComponentModel;
 		{
 			throw new NotImplementedException ();
 		}
+		//public object GetLifetimeService()
+		//{
+		//	throw new NotImplementedException ();
+		//}
+		//public Type GetType()
+		//{
+		//	throw new NotImplementedException ();
+		//}
 		[MonoTODO]
-		public object GetLifetimeService()
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public Type GetType()
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public virtual object InitializeLifetimeService()
+		public override object InitializeLifetimeService()
 		{
 			throw new NotImplementedException ();
 		}
@@ -180,7 +176,7 @@ using System.ComponentModel;
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		public virtual string ToString()
+		public override string ToString()
 		{
 			throw new NotImplementedException ();
 		}
@@ -193,43 +189,40 @@ using System.ComponentModel;
 		//
 		//  --- Public Events
 		//
-		[MonoTODO]
-		public event EventHandler Disposed;
+		//inherited
+		//public event EventHandler Disposed;
 
 		//
 		//  --- Protected Properties
 		//
-		[MonoTODO]
-		protected bool DesignMode {
-			get {
-				throw new NotImplementedException ();
-			}
-		}
-		[MonoTODO]
-		protected EventHandlerList Events {
-			get {
-				throw new NotImplementedException ();
-			}
-		}
+		//protected bool DesignMode {
+		//	get {
+		//		throw new NotImplementedException ();
+		//	}
+		//}
+		//protected EventHandlerList Events {
+		//	get {
+		//		throw new NotImplementedException ();
+		//	}
+		//}
 
 		//
 		//  --- Protected Methods
 		//
 		[MonoTODO]
-		protected virtual void Dispose(bool disposing)
+		protected override void Dispose(bool disposing)
 		{
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		protected virtual object GetService(Type service)
+		protected override object GetService(Type service)
 		{
 			throw new NotImplementedException ();
 		}
-		[MonoTODO]
-		protected object MemberwiseClone()
-		{
-			throw new NotImplementedException ();
-		}
+		//protected object MemberwiseClone()
+		//{
+		//	throw new NotImplementedException ();
+		//}
 
 		//
 		//  --- Destructor

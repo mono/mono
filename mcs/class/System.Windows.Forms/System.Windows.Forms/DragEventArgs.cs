@@ -4,6 +4,7 @@
 // Author:
 //   stubbed out by Richard Baumann (biochem333@nyc.rr.com)
 //   Implemented by Richard Baumann <biochem333@nyc.rr.com>
+//	Dennis Hayes (dennish@raytek.com)
 // (C) Ximian, Inc., 2002
 //
 
@@ -30,7 +31,7 @@ namespace System.Windows.Forms {
 		//
 		//  --- Constructors/Destructors
 		//
-		[ComVisible(true)]
+		//[ComVisible(true)]
 		public DragEventArgs(IDataObject data, int keyState, int x, int y, DragDropEffects allowedEffect, DragDropEffects effect) : base()
 		{
 			this.data = data;

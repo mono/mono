@@ -3,6 +3,7 @@
 //
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
+//	Dennis Hayes (dennish@raytek.com)
 //
 // (C) 2002 Ximian, Inc
 //
@@ -36,20 +37,50 @@ namespace System.Windows.Forms {
 		//
 		//  --- Public Methods
 		//
+
 		[MonoTODO]
-		public virtual bool Equals(object o)
+		public override bool Equals(object o)
 		{
 			throw new NotImplementedException ();
 		}
+
+		//public static bool Equals(object o1, object o2)
+		//{
+		//	throw new NotImplementedException ();
+		//}
+
 		[MonoTODO]
-		public static bool Equals(object o1, object o2)
-		{
-			throw new NotImplementedException ();
+		public override int GetHashCode() {
+			//FIXME add our proprities
+			return base.GetHashCode();
 		}
+
 		[MonoTODO]
 		public IEnumerator GetEnumerator()
 		{
 			throw new NotImplementedException ();
 		}
-	 }
+		/// <summary>
+		/// ICollection Interface implmentation.
+		/// </summary>
+		int ICollection.Count{
+			get{
+				throw new NotImplementedException ();
+			}
+		}
+		bool ICollection.IsSynchronized{
+			get{
+				throw new NotImplementedException ();
+			}
+		}
+		object ICollection.SyncRoot{
+			get{
+				throw new NotImplementedException ();
+			}
+		}
+		void ICollection.CopyTo(Array array, int index){
+			throw new NotImplementedException ();
+		}
+		// End Of ICollection
+	}
 }

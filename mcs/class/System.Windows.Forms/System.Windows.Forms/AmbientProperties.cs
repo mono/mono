@@ -26,7 +26,7 @@ namespace System.Windows.Forms {
 			//
 		}
 
-		[Serializable]
+		//[Serializable]
 		//[ClassInterface(ClassInterfaceType.AutoDual)]
 		~AmbientProperties(){
 		}

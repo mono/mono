@@ -3,6 +3,7 @@
 //
 // Author:
 //   stubbed out by Jaak Simm (jaaksimm@firm.ee)
+//	Dennis Hayes (dennish@raytek.com)
 //
 // (C) Ximian, Inc., 2002
 //
@@ -57,20 +58,21 @@ namespace System.Windows.Forms {
 			get { throw new NotImplementedException (); }
 		}
 		
+//		[MonoTODO]
+// FIXME
+//		public override DrawMode DrawMode {
+//			get { throw new NotImplementedException (); }
+//			set { throw new NotImplementedException (); }
+//		}
+//		
+//		[MonoTODO]
+//		public override int ItemHeight {
+//			get { throw new NotImplementedException (); }
+//			set { throw new NotImplementedException (); }
+//		}
+//		
 		[MonoTODO]
-		public override DrawMode DrawMode {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
-		}
-		
-		[MonoTODO]
-		public override int ItemHeight {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
-		}
-		
-		[MonoTODO]
-		public new CheckedListBox.ObjectCollection Items {
+		public CheckedListBox.ObjectCollection Items {
 			get { throw new NotImplementedException (); }
 		}
 		
@@ -94,11 +96,12 @@ namespace System.Windows.Forms {
 		// following methods were not stubbed out, because they only support .NET framework:
 		// - protected virtual void OnItemCheck(ItemCheckEventArgs ice)
 		// - protected override void WmReflectCommand(ref Message m)
-		[MonoTODO]
-		protected override AccessibleObject CreateAccessibilityInstance() 
-		{
-			throw new NotImplementedException ();
-		}
+
+		// I do not think this is part of the spec.
+		//protected override AccessibleObject CreateAccessibilityInstance() 
+		//{
+		//	throw new NotImplementedException ();
+		//}
 		
 		[MonoTODO]
 		protected override ObjectCollection CreateItemCollection() 
@@ -132,7 +135,7 @@ namespace System.Windows.Forms {
 		}
 		
 		[MonoTODO]
-		protected override void OnDrawItem(DrawItemEventArgs e) 
+		protected override void OnDrawItem(DrawItemEventArgs e)
 		{
 			throw new NotImplementedException ();
 		}

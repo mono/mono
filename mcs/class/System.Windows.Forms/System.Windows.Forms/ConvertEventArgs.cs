@@ -30,8 +30,12 @@ namespace System.Windows.Forms {
 		}
 		
 		public object Value {
-			get { return objectvalue; }
-			set { objectvalue = value; }
+			get { 
+				return objectValue; 
+			}
+			set {
+				objectValue = value; 
+			}
 		}
 	}
 }

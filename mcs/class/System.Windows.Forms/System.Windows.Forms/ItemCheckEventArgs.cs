@@ -15,15 +15,14 @@ namespace System.Windows.Forms {
 	//
 	// </summary>
 
-        public class ItemCheckEventArgs : EventArgs {
-			private int index;
-			private CheckState newcheckvalue;
-			private CheckState currentcheckvalue;
+	public class ItemCheckEventArgs : EventArgs {
+		private int index;
+		private CheckState newcheckvalue;
+		private CheckState currentcheckvalue;
 		//
 		//  --- Constructor
 		//
-		public ItemCheckEventArgs(int index,  CheckState newCheckValue, CheckState currentValue )
-		{
+		public ItemCheckEventArgs(int index,  CheckState newCheckValue, CheckState currentValue ) {
 			this.index = index;
 			newcheckvalue = newCheckValue;
 			currentcheckvalue = currentValue;
@@ -53,15 +52,17 @@ namespace System.Windows.Forms {
 		//
 		//  --- Public Methods
 		//
-		//[MonoTODO]
-		//public virtual bool Equals(object o);
-		//{
+		[MonoTODO]
+		public override bool Equals(object o) {
+			throw new NotImplementedException ();
+		}
+		//public static bool Equals(object o1, object o2) {
 		//	throw new NotImplementedException ();
 		//}
-		//[MonoTODO]
-		//public static bool Equals(object o1, object o2);
-		//{
-		//	throw new NotImplementedException ();
-		//}
-	 }
+		[MonoTODO]
+		public override int GetHashCode() {
+			//FIXME add our proprities
+			return base.GetHashCode();
+		}
+	}
 }

@@ -3,6 +3,7 @@
 //
 // Author:
 //   stubbed out by Jaak Simm (jaaksimm@firm.ee)
+//	Dennis Hayes (dennish@raytek.com)
 //
 // (C) 2002 Ximian, Inc
 //
@@ -116,8 +117,9 @@ namespace System.Windows.Forms {
 		
 		protected internal bool ShouldSerializeMyAll() 
 		{
-			if (this.Count>0) return true;
-			else return false;
+			throw new NotImplementedException ();
+			//if (this.Count>0) return true;
+			//else return false;
 		}
 		
 		// public events

@@ -13,15 +13,14 @@ namespace System.Windows.Forms {
 	///
 	/// </summary>
 
-    public class GiveFeedbackEventArgs : EventArgs {
+	public class GiveFeedbackEventArgs : EventArgs {
 
 		DragDropEffects effect;
 		bool useDefaultCursors;
 
 		//  --- Constructor
 		
-		public GiveFeedbackEventArgs(  DragDropEffects effect,  bool useDefaultCursors )
-		{
+		public GiveFeedbackEventArgs(  DragDropEffects effect,  bool useDefaultCursors ) {
 			this.effect = effect;
 			this.useDefaultCursors = useDefaultCursors;
 		}
@@ -44,16 +43,17 @@ namespace System.Windows.Forms {
 		
 		//	--- Public Methods
 		
-//		[MonoTODO]
-//		public virtual bool Equals(object o);
-//		{
-//			//throw new NotImplementedException ();
-//			return false;
-//		}
-//		[MonoTODO]
-//		public static bool Equals(object o1, object o2);
-//		{
-//			throw new NotImplementedException ();
-//		}
+		[MonoTODO]
+		public override bool Equals(object o) {
+			throw new NotImplementedException ();
+		}
+		//public static bool Equals(object o1, object o2) {
+		//	throw new NotImplementedException ();
+		//}
+		[MonoTODO]
+		public override int GetHashCode() {
+			//FIXME add our proprities
+			return base.GetHashCode();
+		}
 	}
 }

@@ -3,6 +3,7 @@
 //
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
+//	Dennis Hayes (dennish@raytek.com)
 //
 // (C) 2002 Ximian, Inc
 //
@@ -19,6 +20,7 @@ namespace System.Windows.Forms {
 		//
 		//  --- Public Properties
 		//
+
 		[MonoTODO]
 		public InputLanguage this[int index] {
 			get {
@@ -29,26 +31,36 @@ namespace System.Windows.Forms {
 		//
 		//  --- Public Methods
 		//
+
 		[MonoTODO]
 		public bool Contains(InputLanguage lang)
 		{
 			throw new NotImplementedException ();
 		}
+
 		[MonoTODO]
 		public void CopyTo(InputLanguage[] array, int index)
 		{
 			throw new NotImplementedException ();
 		}
+
 		[MonoTODO]
-		public virtual bool Equals(object o)
+		public override bool Equals(object o)
 		{
 			throw new NotImplementedException ();
 		}
+
+		//public static bool Equals(object o1, object o2)
+		//{
+		//	throw new NotImplementedException ();
+		//}
+
 		[MonoTODO]
-		public static bool Equals(object o1, object o2)
-		{
-			throw new NotImplementedException ();
+		public override int GetHashCode() {
+			//FIXME add our proprities
+			return base.GetHashCode();
 		}
+
 		[MonoTODO]
 		public int IndexOf(InputLanguage lang)
 		{

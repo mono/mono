@@ -3,6 +3,7 @@
 //
 // Author:
 //   stubbed out by Richard Baumann (biochem333@nyc.rr.com)
+//	Dennis Hayes (dennish@raytek.com)
 //
 // (C) Ximian, Inc., 2002
 //
@@ -51,15 +52,15 @@ namespace System.Windows.Forms {
 		{
 			throw new NotImplementedException ();
 		}
-		[MonoTODO]
-		protected override void OnChanged(object source, EventArgs e)
-		{
-			//This method is internal to the .NET framework.
-			if (Changed != null) {
-
-				Changed(this, e);
-			}
-		}
+		//[MonoTODO]
+		//protected override void OnChanged(object source, EventArgs e)
+		//{
+		//	//This method is internal to the .NET framework.
+		//	if (Changed != null) {
+		//
+		//		Changed(this, e);
+		//	}
+		//}
 		[MonoTODO]
 		protected void OnSelectedItemChanged(object source, EventArgs e)
 		{
@@ -71,10 +72,10 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override void OnTextBoxKeyDown(object source, KeyEventArgs e)
 		{
-			if (TextBoxKeyDown != null) {
-
-				TextBoxKeyDown(this, e);
-			}
+			throw new NotImplementedException ();
+			//if (TextBoxKeyDown != null) {
+			//	TextBoxKeyDown(this, e);
+			//}
 		}
 		[MonoTODO]
 		protected override void UpdateEditText()
@@ -101,25 +102,25 @@ namespace System.Windows.Forms {
 			get { throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public int SelectedIndex // default -1 {
+		public int SelectedIndex{// default -1 {
 
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public object SelectedItem // default null {
+		public object SelectedItem{ // default null {
 
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public bool Sorted // default false {
+		public bool Sorted{ // default false {
 
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public bool Wrap // default false {
+		public bool Wrap{ // default false {
 
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }

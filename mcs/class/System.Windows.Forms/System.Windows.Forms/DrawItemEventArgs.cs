@@ -4,6 +4,7 @@
 // Author:
 //   stubbed out by Richard Baumann (biochem333@nyc.rr.com)
 //   Implemented by Richard Baumann <biochem333@nyc.rr.com>
+//	Dennis Hayes (dennish@raytek.com)
 // (C) Ximian, Inc., 2002
 //
 
@@ -65,8 +66,8 @@ namespace System.Windows.Forms {
 		}
 		public virtual void DrawFocusRectangle()
 		{
-			if((DrawItemState.Focus == (DrawItemState.Focus & state)) && // check for focus
-			   (DrawItemState.NoFocusRect != (DrawItemState.NoFocusRect & state))) // check if this matters {
+			if( (DrawItemState.Focus == (DrawItemState.Focus & state)) && // check for focus
+			    (DrawItemState.NoFocusRect != (DrawItemState.NoFocusRect & state))){ // check if this matters {
 
 				ControlPaint.DrawFocusRectangle(graphics,bounds,foreColor,backColor);
 			}
@@ -77,7 +78,7 @@ namespace System.Windows.Forms {
 		//
 		public Color BackColor {
 
-			get { return (DrawItemState.Select == (state & DrawItemState.Select)) ? SystemColors.Highlight : backColor; }
+			get { return (DrawItemState.Selected == (state & DrawItemState.Selected)) ? SystemColors.Highlight : backColor; }
 		}
 		public Rectangle Bounds {
 
@@ -89,7 +90,7 @@ namespace System.Windows.Forms {
 		}
 		public Color ForeColor {
 
-			get { return (DrawItemState.Select == (state & DrawItemState.Select)) ? SystemColors.HighlightText : foreColor; }
+			get { return (DrawItemState.Selected == (state & DrawItemState.Selected)) ? SystemColors.HighlightText : foreColor; }
 		}
 		public Graphics Graphics {
 

@@ -72,7 +72,7 @@ namespace System.Windows.Forms {
 		// Public Instance Members
 		// -----------------------
 
-		public int IsEmpty {
+		public bool IsEmpty {
 			get{
 				// Start can be 0, so no way to know if it is empty.
 				// Docs seem to say Start must/should be set before

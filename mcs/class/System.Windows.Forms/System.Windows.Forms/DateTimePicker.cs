@@ -3,6 +3,7 @@
 //
 // Author:
 //   stubbed out by Richard Baumann (biochem333@nyc.rr.com)
+//	Dennis Hayes (dennish@raytek.com)
 //
 // (C) Ximian, Inc., 2002
 //
@@ -136,10 +137,9 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override void OnFontChanged(EventArgs e)
 		{
-			if (FontChanged != null) {
-
-				FontChanged(this, e);
-			}
+			//if (FontChanged != null) {
+			//	FontChanged(this, e);
+			//}
 		}
 		[MonoTODO]
 		protected virtual void OnFormatChanged(EventArgs e)
@@ -152,10 +152,9 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override void OnSystemColorsChanged(EventArgs e)
 		{
-			if (SystemColorsChanged != null) {
-
-				SystemColorsChanged(this, e);
-			}
+			//if (SystemColorsChanged != null) {
+			//	SystemColorsChanged(this, e);
+			//}
 		}
 		[MonoTODO]
 		protected virtual void OnValueChanged(EventArgs e)
@@ -182,7 +181,7 @@ namespace System.Windows.Forms {
 		public event EventHandler CloseUp;
 		public event EventHandler DropDown;
 		public event EventHandler FormatChanged;
-		public new event PaintEventHandler Paint; // This event is internal to the .NET framework.
+		//public new event PaintEventHandler Paint; // This event is internal to the .NET framework.
 		public event EventHandler ValueChanged;
 
 		

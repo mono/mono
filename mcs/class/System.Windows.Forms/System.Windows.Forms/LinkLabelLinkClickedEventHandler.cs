@@ -9,7 +9,7 @@
 
 namespace System.Windows.Forms {
 	[Serializable]
-	public delegate void LinkLabelLinkClickEventHandler (
+	public delegate void LinkLabelLinkClickedEventHandler (
 	object sender,
 	LinkLabelLinkClickedEventArgs e
 	);

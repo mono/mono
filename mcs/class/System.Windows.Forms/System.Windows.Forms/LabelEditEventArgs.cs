@@ -13,20 +13,18 @@ namespace System.Windows.Forms {
 	// <summary>
 	// </summary>
 
-    public class LabelEditEventArgs : EventArgs {
+	public class LabelEditEventArgs : EventArgs {
 		private int item;
 		private string label;
 		//
 		//  --- Constructor
 		//
-		public LabelEditEventArgs (int item)
-		{
+		public LabelEditEventArgs (int item) {
 			this.item = item;
 			// Fixme leave label uninitilized?
 		}
 
-		public LabelEditEventArgs (int item, string label)
-		{
+		public LabelEditEventArgs (int item, string label) {
 			this.item = item;
 			this.label = label;
 		}
@@ -57,15 +55,18 @@ namespace System.Windows.Forms {
 		//
 		//  --- Public Methods
 		//
-		//[MonoTODO]
-		//public virtual bool Equals(object o);
-		//{
+		[MonoTODO]
+		public override bool Equals(object o) {
+			throw new NotImplementedException ();
+		}
+
+		//public static bool Equals(object o1, object o2) {
 		//	throw new NotImplementedException ();
 		//}
-		//[MonoTODO]
-		//public static bool Equals(object o1, object o2);
-		//{
-		//	throw new NotImplementedException ();
-		//}
-	 }
+		[MonoTODO]
+		public override int GetHashCode() {
+			//FIXME add our proprities
+			return base.GetHashCode();
+		}	 
+	}
 }
