@@ -735,7 +735,7 @@ namespace System.Data {
 					else if ((complexType = element.SchemaType as XmlSchemaComplexType) != null)
 						ReadColumnsFromSchema (complexType, ComplexTypes, ref dt);
 
-					DataSet.Tables.Add (dt);
+					Tables.Add (dt);
 				}
 			}		
 		}
