@@ -1,3 +1,7 @@
+2001-07-01  Miguel de Icaza  <miguel@ximian.com>
+
+	* dis-cil.c: New file.  CIL opcode dissasembler.
+
 2001-06-27  Miguel de Icaza  <miguel@ximian.com>
 
 	* main.c: Split code.

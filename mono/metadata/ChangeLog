@@ -1,3 +1,8 @@
+2001-07-01  Miguel de Icaza  <miguel@ximian.com>
+
+	* metadata.c (mono_metadata_user_string): New function, provides
+	access to the UserString heap. 
+
 2001-06-27  Miguel de Icaza  <miguel@ximian.com>
 
 	* metadata.c: Add inline documentation.
