@@ -145,8 +145,8 @@ namespace Mono.Xml.Xsl {
 				if (version == String.Empty)
 					throw new XsltCompileException ("Mandatory attribute version is missing.", null, c.Input);
 
-				extensionElementPrefixes = c.ParseQNameListAttribute ("extension-element-prefixes");
-				excludeResultPrefixes = c.ParseQNameListAttribute ("exclude-result-prefixes");
+				extensionElementPrefixes = ParseMappedPrefixes (c.GetAttribute ("extension-element-prefixes"), c.Input);
+				excludeResultPrefixes = ParseMappedPrefixes (c.GetAttribute ("exclude-result-prefixes"), c.Input);
 				if (c.Input.MoveToFirstNamespace (XPathNamespaceScope.Local)) {
 					do {
 						if (c.Input.Value == XsltNamespace)
@@ -160,7 +160,26 @@ namespace Mono.Xml.Xsl {
 			
 			c.PopStylesheet ();
 		}
-		
+
+		private QName [] ParseMappedPrefixes (string list, XPathNavigator nav)
+		{
+			if (list == null)
+				return null;
+			ArrayList al = new ArrayList ();
+			foreach (string entry in list.Split (XmlChar.WhitespaceChars)) {
+				if (entry.Length == 0)
+					continue;
+				if (entry == "#default")
+					al.Add (new QName (String.Empty, String.Empty));
+				else {
+					string entryNS = nav.GetNamespace (entry);
+					if (entryNS != String.Empty)
+						al.Add (new QName (entry, entryNS));
+				}
+			}
+			return (QName []) al.ToArray (typeof (QName));
+		}
+
 		public XslKey FindKey (QName name)
 		{
 			XslKey key = Keys [name] as XslKey;

@@ -339,6 +339,19 @@ namespace Mono.Xml.Xsl {
 					XPathContext.ElementNamespace.Length == 0)
 					continue;
 
+				// exclude-result-prefixes, see the spec 7.1.1
+				bool skip = false;
+				if (style.ExcludeResultPrefixes != null) {
+					foreach (XmlQualifiedName exc in style.ExcludeResultPrefixes) {
+						if (exc.Namespace == value) {
+							skip = true;
+							continue;
+						}
+					}
+				}
+				if (skip)
+					continue;
+
 				if (style.NamespaceAliases [name] != null)
 					continue;
 
