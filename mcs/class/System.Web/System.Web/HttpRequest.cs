@@ -273,8 +273,12 @@ namespace System.Web {
 			MemoryStream ms = new MemoryStream (arrBuffer.Length);
 			ms.Write (_arrRawContent, 0, _arrRawContent.Length);
 			int read = 0;
+			int bufLength = arrBuffer.Length;
 			for (int loaded = _arrRawContent.Length; loaded < length; loaded += read) {
-				read = _WorkerRequest.ReadEntityBody (arrBuffer, arrBuffer.Length);
+				if (length - loaded < bufLength)
+					bufLength = length - loaded;
+
+				read = _WorkerRequest.ReadEntityBody (arrBuffer, bufLength);
 				if (read == 0)
 					break;
 
