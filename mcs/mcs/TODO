@@ -1,6 +1,9 @@
 Major tasks:
 ------------
 
+	Pinned and volatile require type modifiers that can not be encoded
+	with Reflection.Emit.
+
 	Properties and 17.6.3: Finish it.
 
 	Implement base indexer access.
@@ -30,7 +33,6 @@ AddressOf
 Unsafe code:
 	Pointer arithmetic operators (++ and -- are done)
 	Test for ++ and -- for non-builtin-types
-	sizeof
 	fixed
 
 readonly variables and ref/out

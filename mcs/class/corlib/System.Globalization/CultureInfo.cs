@@ -1,8 +1,10 @@
+//
 // System.Globalization.CultureInfo
 //
 // Miguel de Icaza (miguel@ximian.com)
 //
 // (C) Ximian, Inc. 2001 (http://www.ximian.com)
+//
 
 using System.Threading;
 

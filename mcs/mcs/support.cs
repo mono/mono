@@ -226,10 +226,5 @@ namespace Mono.CSharp {
 			First = f;
 			Second = s;
 		}
-
-		public void SetFirst (object n)
-		{
-			First = n;
-		}
 	}
 }

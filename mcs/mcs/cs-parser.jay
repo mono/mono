@@ -3305,11 +3305,13 @@ fixed_statement
 	  CLOSE_PARENS 
 	  {
 		Block assign_block = new Block (current_block, true);
-
+		ArrayList list = (ArrayList) $4;
 		string type = (string) $3;
 		Location l = lexer.Location;
+		int top = list.Count;
 
-		foreach (Pair p in (ArrayList) $4){
+		for (int i = 0; i < top; i++){
+			Pair p = (Pair) list [i];
 			VariableInfo v;
 
 			v = current_block.AddVariable (type, (string) p.First,current_local_parameters, l);
@@ -3319,17 +3321,21 @@ fixed_statement
 					"defined in this scope");
 			}
 			v.ReadOnly = true;
-			// Replace the name with the VariableInfo.
-			p.SetFirst (v);
+			p.First = v;
+			list [i] = p;
 		}
 		current_block.AddStatement (assign_block);
 		current_block = assign_block;
+		oob_stack.Push (assign_block);
 		oob_stack.Push (l);
 	  }
 	  embedded_statement 
 	  {
-		Block assign_block = (Block) oob_stack.Pop ();
 		Location l = (Location) oob_stack.Pop ();
+		Block assign_block = (Block) oob_stack.Pop ();
+
+		ArrayList list = (ArrayList) $4;
+		int top = list.Count;
 
 		$$ = new Fixed ((string) $3, (ArrayList) $4, (Statement) $6, l);
 	  }
@@ -3350,7 +3356,7 @@ fixed_pointer_declarators
 	;
 
 fixed_pointer_declarator
-	: IDENTIFIER EQUALS expression
+	: IDENTIFIER ASSIGN expression
 	  {	
 		$$ = new Pair ($1, $3);
 	  }

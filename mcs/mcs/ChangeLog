@@ -1,3 +1,17 @@
+2002-01-29  Miguel de Icaza  <miguel@ximian.com>
+
+	* support.cs (Pair): Remove un-needed method.  I figured why I was
+	getting the error in cs-parser.jay, the variable in a foreach loop
+	is readonly, and the compiler does not really treat this as a variable.
+
+	* cs-parser.jay (fixed_statement): Fix grammar.  Use ASSIGN
+	instead of EQUALS in grammar.  
+
+	* typemanager.cs (VerifyUnmanaged): Report correct error (208)
+
+	* expression.cs (Unary.DoResolve): Check whether the argument is
+	managed or not.
+
 2002-01-28  Miguel de Icaza  <miguel@ximian.com>
 
 	* support.cs: Api for Pair to set a value.  Despite the fact that

@@ -406,11 +406,19 @@ namespace Mono.CSharp {
 					return null;
 				}
 
+				if (!TypeManager.VerifyUnManaged (expr.Type, loc)){
+					return null;
+				}
+				
+				//
+				// This construct is needed because dynamic types
+				// are not known by Type.GetType, so we have to try then to use
+				// ModuleBuilder.GetType.
+				//
 				string ptr_type_name = expr.Type.FullName + "*";
 				type = Type.GetType (ptr_type_name);
-				if (type == null){
+				if (type == null)
 					type = RootContext.ModuleBuilder.GetType (ptr_type_name);
-				}
 				
 				return this;
 			}

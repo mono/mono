@@ -1738,12 +1738,25 @@ namespace Mono.CSharp {
 				// So we have to enforce these rules here
 				//
 				if (e is Unary && ((Unary) e).Oper == Unary.Operator.AddressOf){
+					Expression child = ((Unary) e).Expr;
+
+					if (child is ParameterReference || child is LocalVariableReference){
+						Report.Error (
+							213, loc, 
+							"No need to use fixed statement for parameters or " +
+							"local variable declarations (address is already " +
+							"fixed)");
+						continue;
+					}
+					
 					e = e.Resolve (ec);
 					if (e == null)
 						continue;
 
-					if (!TypeManager.VerifyUnManaged (e.Type))
+					if (!TypeManager.VerifyUnManaged (e.Type, loc))
 						continue;
+
+					
 				}
 				
 				e = e.Resolve (ec);

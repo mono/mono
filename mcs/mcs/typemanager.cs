@@ -885,11 +885,21 @@ public class TypeManager {
 	///   Utility function that can be used to probe whether a type
 	///   is managed or not.  
 	/// </summary>
-	public static bool VerifyUnManaged (Type t)
+	public static bool VerifyUnManaged (Type t, Location loc)
 	{
-		if (t.IsValueType)
+		if (t.IsValueType){
+			//
+			// FIXME: this is more complex, we actually need to
+			// make sure that the type does not contain any
+			// classes itself
+			//
 			return true;
-		Report.Error (10000, "Not a managed type");
+		}
+
+		Report.Error (
+			208, loc,
+			"Cannot take the address or size of a variable of a managed type ('" +
+			CSharpName (t) + "')");
 		return false;	
 	}
 	
