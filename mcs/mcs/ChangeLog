@@ -1,5 +1,8 @@
 2002-03-05  Miguel de Icaza  <miguel@ximian.com>
 
+	* expression.cs (MakeByteBlob): Replaced unsafe code with
+	BitConverter, as suggested by Paolo.
+
 	* cfold.cs (ConstantFold.Binary): Special case: perform constant
 	folding of string concatenation, but if either side is a string,
 	and the other is not, then return null, and let the runtime use

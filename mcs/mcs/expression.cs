@@ -4179,7 +4179,7 @@ namespace Mono.CSharp {
 		{
 			int factor;
 			byte [] data;
-
+			byte [] element;
 			int count = ArrayData.Count;
 
 			factor = GetTypeSize (underlying_type);
@@ -4221,29 +4221,20 @@ namespace Mono.CSharp {
 						}
 					}
 				} else if (underlying_type == TypeManager.float_type) {
-					unsafe {
-						if (!(v is Expression)){
-							float val = (float) v;
-
-							byte *ptr = (byte *) &val;
+					if (!(v is Expression)){
+						element = GetBytes ((float) v);
 							
-							for (int j = 0; j < factor; ++j)
-								data [idx + j] = (byte) ptr [j];
-						}
+						for (int j = 0; j < factor; ++j)
+							data [idx + j] = element [j];
 					}
 				} else if (underlying_type == TypeManager.double_type) {
-					unsafe {
-						if (!(v is Expression)){
-							double val = (double) v;
+					if (!(v is Expression)){
+						element = GetBytes ((double) v);
 
-							byte *ptr = (byte *) &val;
-						
-							for (int j = 0; j < factor; ++j)
-								data [idx + j] = (byte) ptr [j];
-						}
+						for (int j = 0; j < factor; ++j)
+							data [idx + j] = element [j];
 					}
 				} else if (underlying_type == TypeManager.char_type){
-
 					if (!(v is Expression)){
 						int val = (int) ((char) v);
 						
