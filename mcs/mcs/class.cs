@@ -816,7 +816,6 @@ namespace Mono.CSharp {
 				ModuleBuilder builder = CodeGen.Module.Builder;
 				TypeBuilder = builder.DefineType (
 					Name, type_attributes, ptype, null);
-				
 			} else {
 				TypeBuilder builder = Parent.DefineType ();
 				if (builder == null)

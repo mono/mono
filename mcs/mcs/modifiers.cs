@@ -197,7 +197,7 @@ namespace Mono.CSharp {
 				if ((mod & Modifiers.UNSAFE) != 0){
 					if (!RootContext.Unsafe){
 						Report.Error (227, l,
-							      "Unsafe code requires the --unsafe command " +
+							      "Unsafe code requires the -unsafe command " +
 							      "line option to be specified");
 					}
 				}

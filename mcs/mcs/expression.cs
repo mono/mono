@@ -1389,7 +1389,7 @@ namespace Mono.CSharp {
 			Expression real_expr = expr;
 			if (real_expr is EnumConstant)
 				real_expr = ((EnumConstant) real_expr).Child;
-				
+
 			if (real_expr is ByteConstant){
 				byte v = ((ByteConstant) real_expr).Value;
 	
