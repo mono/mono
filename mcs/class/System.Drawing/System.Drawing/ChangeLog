@@ -1,3 +1,7 @@
+2004-12-27  Zoltan Varga  <vargaz@freemail.hu>
+
+	* gdipFunctions.cs Image.cs: Fix marshalling of arrays on amd64.
+
 2004-12-16  Peter Bartok  <pbartok@novell.com>
 
 	* Graphics.cs (GetHdc): Removed Wine assumptions, the handle is now

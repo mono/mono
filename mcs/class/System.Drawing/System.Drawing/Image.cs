@@ -545,8 +545,8 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 	[Browsable (false)]
 	public PropertyItem[] PropertyItems {
 		get {
-			int propNums, propsSize, propPtr, propSize;
-			IntPtr properties;
+			int propNums, propsSize, propSize;
+			IntPtr properties, propPtr;
 			PropertyItem[] items;
 			GdipPropertyItem gdipProperty = new GdipPropertyItem ();
 			Status status;
@@ -566,12 +566,12 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 			GDIPlus.CheckStatus (status);
 
 			propSize = Marshal.SizeOf (gdipProperty);			
-			propPtr = properties.ToInt32();
+			propPtr = properties;
 			
-			for (int i = 0; i < propNums; i++, propPtr += propSize)
+			for (int i = 0; i < propNums; i++, propPtr = new IntPtr (propPtr.ToInt64 () + propSize))
 			{
 				gdipProperty = (GdipPropertyItem) Marshal.PtrToStructure 
-						((IntPtr)propPtr, typeof (GdipPropertyItem));						
+						(propPtr, typeof (GdipPropertyItem));						
 				items [i] = new PropertyItem ();
 				GdipPropertyItem.MarshalTo (gdipProperty, items [i]);								
 			}

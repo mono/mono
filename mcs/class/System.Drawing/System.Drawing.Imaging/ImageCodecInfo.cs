@@ -65,8 +65,8 @@ namespace System.Drawing.Imaging {
 		// methods		
 		public static ImageCodecInfo[] GetImageDecoders() 
 		{			
-			int decoderNums, arraySize, decoder_ptr, decoder_size;
-			IntPtr decoders;
+			int decoderNums, arraySize, decoder_size;
+			IntPtr decoders, decoder_ptr;
 			ImageCodecInfo[] result;
 			GdipImageCodecInfo gdipdecoder = new GdipImageCodecInfo();
 			Status status;
@@ -85,11 +85,11 @@ namespace System.Drawing.Imaging {
 			GDIPlus.CheckStatus (status);
 			
 			decoder_size = Marshal.SizeOf (gdipdecoder);			
-			decoder_ptr = decoders.ToInt32();
+			decoder_ptr = decoders;
 			
-			for (int i = 0; i < decoderNums; i++, decoder_ptr += decoder_size)
+			for (int i = 0; i < decoderNums; i++, decoder_ptr = new IntPtr (decoder_ptr.ToInt64 () + decoder_size))
 			{
-				gdipdecoder = (GdipImageCodecInfo) Marshal.PtrToStructure ((IntPtr)decoder_ptr, typeof (GdipImageCodecInfo));						
+				gdipdecoder = (GdipImageCodecInfo) Marshal.PtrToStructure (decoder_ptr, typeof (GdipImageCodecInfo));	
 				result[i] = new ImageCodecInfo ();
 				GdipImageCodecInfo.MarshalTo (gdipdecoder, result[i]);				
 			}
@@ -101,8 +101,8 @@ namespace System.Drawing.Imaging {
 		
 		public static ImageCodecInfo[] GetImageEncoders() 
 		{
-			int encoderNums, arraySize, encoder_ptr, encoder_size;
-			IntPtr encoders;
+			int encoderNums, arraySize, encoder_size;
+			IntPtr encoders, encoder_ptr;
 			ImageCodecInfo[] result;
 			GdipImageCodecInfo gdipencoder = new GdipImageCodecInfo();
 			Status status;
@@ -116,16 +116,17 @@ namespace System.Drawing.Imaging {
 				return result;			
 			
 			/* Get encoders list*/
-			encoders = Marshal.AllocHGlobal (arraySize);						
+			encoders = Marshal.AllocHGlobal (arraySize);
+			
 			status = GDIPlus.GdipGetImageEncoders (encoderNums,  arraySize, encoders);
 			GDIPlus.CheckStatus (status);
 			
 			encoder_size = Marshal.SizeOf (gdipencoder);			
-			encoder_ptr = encoders.ToInt32();
+			encoder_ptr = encoders;
 			
-			for (int i = 0; i < encoderNums; i++, encoder_ptr += encoder_size)
+			for (int i = 0; i < encoderNums; i++, encoder_ptr = new IntPtr (encoder_ptr.ToInt64 () + encoder_size))
 			{
-				gdipencoder = (GdipImageCodecInfo) Marshal.PtrToStructure ((IntPtr)encoder_ptr, typeof (GdipImageCodecInfo));						
+				gdipencoder = (GdipImageCodecInfo) Marshal.PtrToStructure (encoder_ptr, typeof (GdipImageCodecInfo));						
 				result[i] = new ImageCodecInfo ();
 				GdipImageCodecInfo.MarshalTo (gdipencoder, result[i]);				
 			}

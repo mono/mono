@@ -74,9 +74,9 @@ namespace System.Drawing
 		static public void FromUnManagedMemoryToPointI(IntPtr prt, Point [] pts)
 		{						
 			int nPointSize = Marshal.SizeOf(pts[0]);
-			int pos = prt.ToInt32();
-			for (int i=0; i<pts.Length; i++, pos+=nPointSize)
-				pts[i] = (Point) Marshal.PtrToStructure((IntPtr)pos, typeof(Point));
+			IntPtr pos = prt;
+			for (int i=0; i<pts.Length; i++, pos = new IntPtr (pos.ToInt64 () + nPointSize))
+				pts[i] = (Point) Marshal.PtrToStructure(pos, typeof(Point));
 			
 			Marshal.FreeHGlobal(prt);			
 		}
@@ -85,9 +85,9 @@ namespace System.Drawing
 		static public void FromUnManagedMemoryToPoint (IntPtr prt, PointF [] pts)
 		{						
 			int nPointSize = Marshal.SizeOf(pts[0]);
-			int pos = prt.ToInt32();
-			for (int i=0; i<pts.Length; i++, pos+=nPointSize)
-				pts[i] = (PointF) Marshal.PtrToStructure((IntPtr)pos, typeof(Point));
+			IntPtr pos = prt;
+			for (int i=0; i<pts.Length; i++, pos = new IntPtr (pos.ToInt64 () + nPointSize))
+				pts[i] = (PointF) Marshal.PtrToStructure(pos, typeof(Point));
 			
 			Marshal.FreeHGlobal(prt);			
 		}
@@ -96,11 +96,10 @@ namespace System.Drawing
 		static public IntPtr FromPointToUnManagedMemoryI(Point [] pts)
 		{
 			int nPointSize =  Marshal.SizeOf(pts[0]);
-			IntPtr dest = Marshal.AllocHGlobal(nPointSize* pts.Length);			
-			int pos = dest.ToInt32();
-						
-			for (int i=0; i<pts.Length; i++, pos+=nPointSize)
-				Marshal.StructureToPtr(pts[i], (IntPtr)pos, false);	
+			IntPtr dest = Marshal.AllocHGlobal(nPointSize* pts.Length);
+			IntPtr pos = dest;
+			for (int i=0; i<pts.Length; i++, pos = new IntPtr (pos.ToInt64 () + nPointSize))
+				Marshal.StructureToPtr(pts[i], pos, false);	
 			
 			return dest;			
 		}		
@@ -109,9 +108,9 @@ namespace System.Drawing
 		static public void FromUnManagedMemoryToRectangles (IntPtr prt, RectangleF [] pts)
 		{						
 			int nPointSize = Marshal.SizeOf (pts[0]);
-			int pos = prt.ToInt32 ();
-			for (int i = 0; i < pts.Length; i++, pos+=nPointSize)
-				pts[i] = (RectangleF) Marshal.PtrToStructure((IntPtr)pos, typeof(RectangleF));
+			IntPtr pos = prt;
+			for (int i = 0; i < pts.Length; i++, pos = new IntPtr (pos.ToInt64 () + nPointSize))
+				pts[i] = (RectangleF) Marshal.PtrToStructure(pos, typeof(RectangleF));
 			
 			Marshal.FreeHGlobal(prt);			
 		}
@@ -121,10 +120,9 @@ namespace System.Drawing
 		{
 			int nPointSize =  Marshal.SizeOf(pts[0]);
 			IntPtr dest = Marshal.AllocHGlobal(nPointSize* pts.Length);			
-			int pos = dest.ToInt32();
-						
-			for (int i=0; i<pts.Length; i++, pos+=nPointSize)
-				Marshal.StructureToPtr(pts[i], (IntPtr)pos, false);	
+			IntPtr pos = dest;
+			for (int i=0; i<pts.Length; i++, pos = new IntPtr (pos.ToInt64 () + nPointSize))
+				Marshal.StructureToPtr(pts[i], pos, false);	
 			
 			return dest;			
 		}
