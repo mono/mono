@@ -62,6 +62,7 @@
 				<excludes name="System/Enum.cs"/>
 				<excludes name="System/Delegate.cs"/>
 				<excludes name="System/MulticastDelegate.cs"/>
+				<excludes name="System.Runtime.CompilerServices/RuntimeHelpers.cs"/>
 				<!-- <excludes name="System/Exception.cs"/> -->
 
 				<!-- DecimalConstantAttribute presence causes security exceptions in corcompare -->
