@@ -2,6 +2,13 @@ using System;
 
 namespace Mine {
 
+	public class MyBoolean {
+		public static implicit operator bool (MyBoolean x)
+		{
+			return true;
+		}
+	}
+	
 	public class Blah {
 
 		public int i;
@@ -68,7 +75,13 @@ namespace Mine {
 
 			if (i != 0)
 				return 1;
-			
+
+			MyBoolean myb = new MyBoolean ();
+
+			if (!myb)
+				return 10;
+
+			Console.WriteLine ("Test passed");
 			return 0;
 		}
 	
