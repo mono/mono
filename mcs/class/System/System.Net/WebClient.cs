@@ -210,8 +210,8 @@ namespace System.Net
 			tmpStream.WriteByte ((byte) '\r');
 			tmpStream.WriteByte ((byte) '\n');
 
-			byte [] bytes = tmpStream.GetBuffer ();
-			rqStream.Write (bytes, 0, length + 2);
+			byte [] buf = tmpStream.GetBuffer ();
+			rqStream.Write (buf, 0, length + 2);
 			rqStream.Close ();
 			tmpStream.Close ();
 
