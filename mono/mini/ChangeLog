@@ -1,4 +1,9 @@
 
+Tue Dec 7 10:43:31 CET 2004 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c: OP_ARGLIST implementation from
+	Geoff Norton  <gnorton@customerdna.com>.
+
 Tue Dec 7 10:14:25 CET 2004 Paolo Molaro <lupus@ximian.com>
 
 	* inssel-x86.brg, inssel-ppc.brg: fix reference to register
