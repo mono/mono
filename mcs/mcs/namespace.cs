@@ -424,7 +424,7 @@ namespace Mono.CSharp {
 			return entry == null ? null : entry.Resolve ();
 		}
 
-		public FullNamedExpression LookupNamespaceOrType (DeclSpace ds, string name, Location loc)
+		public FullNamedExpression LookupNamespaceOrType (DeclSpace ds, string name, Location loc, bool ignore_cs0104)
 		{
 			FullNamedExpression resolved = null;
 			string rest = null;
@@ -437,7 +437,7 @@ namespace Mono.CSharp {
 			}
 
 			for (NamespaceEntry curr_ns = this; curr_ns != null; curr_ns = curr_ns.ImplicitParent) {
-				if ((resolved = curr_ns.Lookup (ds, name, loc)) != null)
+				if ((resolved = curr_ns.Lookup (ds, name, loc, ignore_cs0104)) != null)
 					break;
 			}
 
@@ -455,7 +455,7 @@ namespace Mono.CSharp {
 			return new TypeExpression (nested, Location.Null);
 		}
 
-		private FullNamedExpression Lookup (DeclSpace ds, string name, Location loc)
+		private FullNamedExpression Lookup (DeclSpace ds, string name, Location loc, bool ignore_cs0104)
 		{
 			// Precondition: Only simple names (no dots) will be looked up with this function.
 
@@ -484,7 +484,9 @@ namespace Mono.CSharp {
 				match = using_ns.Lookup (ds, name, loc);
 				if ((match != null) && (match is TypeExpr)) {
 					if (t != null) {
-						DeclSpace.Error_AmbiguousTypeReference (loc, name, t.FullName, match.FullName);
+						if (!ignore_cs0104)
+							DeclSpace.Error_AmbiguousTypeReference (loc, name, t.FullName, match.FullName);
+						
 						return null;
 					} else {
 						t = match;

@@ -1017,11 +1017,12 @@ namespace Mono.CSharp {
 		// Public function used to locate types, this can only
 		// be used after the ResolveTree function has been invoked.
 		//
+		// Set 'silent' to true if you want to suppress "type not found" errors.
+		// Set 'ignore_cs0104' to true if you want to ignore cs0104 errors.
+		//
 		// Returns: Type or null if they type can not be found.
 		//
-		// Come to think of it, this should be a DeclSpace
-		//
-		public FullNamedExpression LookupType (string name, bool silent, Location loc)
+		public FullNamedExpression LookupType (string name, Location loc, bool silent, bool ignore_cs0104)
 		{
 			FullNamedExpression e;
 
@@ -1070,7 +1071,7 @@ namespace Mono.CSharp {
 					containing_ds = containing_ds.Parent;
 				}
 				
-				e = NamespaceEntry.LookupNamespaceOrType (this, name, loc);
+				e = NamespaceEntry.LookupNamespaceOrType (this, name, loc, ignore_cs0104);
 				if (!silent || e != null)
 					Cache [name] = e;
 			}

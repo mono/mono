@@ -2039,7 +2039,7 @@ namespace Mono.CSharp {
 			int errors = Report.Errors;
 			dt = ec.ResolvingTypeTree 
 				? ds.FindType (loc, Name)
-				: ds.LookupType (Name, true, loc);
+				: ds.LookupType (Name, loc, /*silent=*/ true, /*ignore_cs0104=*/ false);
 			if (Report.Errors != errors)
 				return null;
 
@@ -2377,7 +2377,8 @@ namespace Mono.CSharp {
 		public override TypeExpr DoResolveAsTypeStep (EmitContext ec)
 		{
 			if (type == null) {
-				FullNamedExpression t = ec.DeclSpace.LookupType (name, false, Location.Null);
+				FullNamedExpression t = ec.DeclSpace.LookupType (
+					name, Location.Null, /*silent=*/ false, /*ignore_cs0104=*/ false);
 				if (t == null)
 					return null;
 				if (!(t is TypeExpr))
