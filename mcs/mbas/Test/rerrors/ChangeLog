@@ -1,4 +1,15 @@
 
+2004-12-20  Ritvik Mayank  <mritvik@novell.com>
+         
+        *Makefile :For running the tests under Test directory
+        *rerrors_btest.dll.sources  : Contains name of the test case
+        *rerrors.dll.sources : Contains dummy.cs
+        *dummy.cs : Required by rerrors.dll.sources
+ 
+2004-12-20  Ritvik Mayank  <mritvik@novell.com>
+         
+        *Test: Created Test Directory and moved all the rerrors tests to Test
+
 2004-12-14  Ritvik Mayank  <mritvik@novell.com>
 	
 	*AssignmentStatements5.vb: Removed, as it was not a proper runtime test 
