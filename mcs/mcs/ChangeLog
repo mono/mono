@@ -1,3 +1,11 @@
+2001-09-13  Ravi Pratap  <ravi@ximian.com>
+
+	* class.cs (TypeContainer::EmitField): Remove and move into 
+	(Field::Define): here and modify accordingly.
+	(Field.FieldBuilder): New member.
+	(TypeContainer::Populate): Update accordingly.
+	(TypeContainer::FindMembers): Implement.
+
 2001-09-13  Miguel de Icaza  <miguel@ximian.com>
 
 	* statement.cs: (VariableInfo::VariableType): New field to be

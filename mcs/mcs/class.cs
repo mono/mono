@@ -520,15 +520,7 @@ namespace CIR {
 			}
 		}
 
-		void EmitField (Field f)
-		{
-			Type t = LookupType (f.Type, false);
 
-			if (t == null)
-				return;
-			
-			TypeBuilder.DefineField (f.Name, t, Modifiers.FieldAttr (f.ModFlags));
-		}
 
 		//
 		// Emits the class field initializers
@@ -603,7 +595,7 @@ namespace CIR {
 
 			if (Fields != null){
 				foreach (Field f in Fields)
-					EmitField (f);
+					f.Define (this);
 			}
 
 			if (Constructors != null){
@@ -700,51 +692,68 @@ namespace CIR {
 		// </summary>
 		public MemberInfo [] FindMembers (MemberTypes mt, BindingFlags bf, MemberFilter filter, object criteria)
 		{
-			// FIXME : Need to actually take care of all the various
-			// arguments being passed in but for now, we only bother with
-			// the MemberTypes and criteria arguments.
 
-			switch (mt) {
+			// FIXME : Is this an accurate count for now ?
+			int c = 0;
 
-			case MemberTypes.All:
+			if (Fields != null)
+				c += Fields.Count;
 
-				break;
+			if (Methods != null)
+				c += Methods.Count;
 
-			case MemberTypes.Constructor:
+			if (Properties != null)
+				c += Properties.Count;
 
-				break;
-				
-			case MemberTypes.Custom:
+			if (Events != null)
+				c += Events.Count;
 
-				break;
+			if (Types != null)
+				c += Types.Count;
+			
+			int i = 0;
+			
+			MemberInfo [] mi = new MemberInfo [c];
 
-			case MemberTypes.Event:
-
-				break;
-
-			case MemberTypes.Field:
-
-				break;
-
-			case MemberTypes.Method:
-
-				break;
-				
-			case MemberTypes.NestedType:
-
-				break;
-				
-			case MemberTypes.Property:
-
-				break;
-				
-			case MemberTypes.TypeInfo:
-
-				break;
-
+			if ((mt & MemberTypes.Field) != 0 && Fields != null) {
+				foreach (Field f in Fields) {
+					if (filter (f.FieldBuilder, criteria) == true) 
+						mi [i++] = f.FieldBuilder;
+				}
+			}
+			
+			if ((mt & MemberTypes.Method) != 0 && Methods != null) {
+				foreach (Method m in Methods) {
+					if (filter (m.MethodBuilder, criteria) == true)
+						mi [i++] = m.MethodBuilder;
+				}
 			}
 
-			return null;
+			// FIXME : This ain't right because EventBuilder is not a
+			// MemberInfo. What do we do ?
+			
+			if ((mt & MemberTypes.Event) != 0 && Events != null) {
+				//foreach (Event e in Events) {
+				//	if (filter (e.EventBuilder, criteria) == true)
+				//		mi [i++] = e.EventBuilder;
+				//}
+			}
+
+			if ((mt & MemberTypes.Property) != 0 && Properties != null) {
+				foreach (Property p in Properties) {
+					if (filter (p.PropertyBuilder, criteria) == true)
+						mi [i++] = p.PropertyBuilder;
+				}
+			}
+			
+			if ((mt & MemberTypes.NestedType) != 0 && Types != null) {
+				foreach (TypeContainer t in Types) { 
+					if (filter (t.TypeBuilder, criteria) == true)
+						mi [i++] = t.TypeBuilder;
+				}
+			}
+			
+			return mi;
 			
 		}
 		
@@ -981,6 +990,8 @@ namespace CIR {
 		public readonly string Name;
 		public readonly int    ModFlags;
 		public readonly Attributes OptAttributes;
+		public FieldBuilder  FieldBuilder;
+		
 		
 		// <summary>
 		//   Modifiers allowed in a class declaration
@@ -1002,6 +1013,18 @@ namespace CIR {
 			Initializer = expr_or_array_init;
 			OptAttributes = attrs;
 		}
+
+		public void Define (TypeContainer parent)
+		{
+			Type t = parent.LookupType (Type, false);
+
+			if (t == null)
+				return;
+			
+			FieldBuilder = parent.TypeBuilder.DefineField (Name, t, Modifiers.FieldAttr (ModFlags));
+		}
+
+		
 	}
 
 	public abstract class ConstructorInitializer {
