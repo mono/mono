@@ -23,56 +23,56 @@ namespace System.Windows.Forms
 	public class ContextMenu : Menu
 	{
 		// private fields
-//		RightToLeft rightToLeft;
-//		
-//		// --- Constructor ---
-//		[MonoTODO]
-//		public ContextMenu() : base(null) {
-//			rightToLeft = RightToLeft.Inherit;
-//		}
-//
-//		[MonoTODO]
-//		public ContextMenu(MenuItem[] menuItems) : base(menuItems) {
-//		}
-//		
-//		
-//		
-//		
-//		// --- Properties ---
-//		public virtual RightToLeft RightToLeft {
-//			get { return rightToLeft; }
-//			set { rightToLeft=value; }
-//		}
-//		
-//		[MonoTODO]
-//		public Control SourceControl {
-//			get { throw new NotImplementedException (); }
-//		}
-//		
-//		
-//		
-//		
-//		/// --- Methods ---
-//		/// internal .NET framework supporting methods, not stubbed out:
-//		/// - protected internal virtual void OnPopup(EventArgs e);
-//		[MonoTODO]
-//		public void Show(Control control,Point pos) {
-//			throw new NotImplementedException ();
-//		}
-//		
-//		
-//		
-//		
-//		/// events
-//		[MonoTODO]
-//		public event EventHandler Popup {
-//			add {
-//				throw new NotImplementedException ();
-//			}
-//			remove {
-//				throw new NotImplementedException ();
-//			}
-//		}
-//
+		RightToLeft rightToLeft;
+		
+		// --- Constructor ---
+		[MonoTODO]
+		public ContextMenu() : base(null) {
+			rightToLeft = RightToLeft.Inherit;
+		}
+
+		[MonoTODO]
+		public ContextMenu(MenuItem[] menuItems) : base(menuItems) {
+		}
+		
+		
+		
+		
+		// --- Properties ---
+		public virtual RightToLeft RightToLeft {
+			get { return rightToLeft; }
+			set { rightToLeft=value; }
+		}
+		
+		[MonoTODO]
+		public Control SourceControl {
+			get { throw new NotImplementedException (); }
+		}
+		
+		
+		
+		
+		/// --- Methods ---
+		/// internal .NET framework supporting methods, not stubbed out:
+		/// - protected internal virtual void OnPopup(EventArgs e);
+		[MonoTODO]
+		public void Show(Control control,Point pos) {
+			throw new NotImplementedException ();
+		}
+		
+		
+		
+		
+		/// events
+		[MonoTODO]
+		public event EventHandler Popup {
+			add {
+				throw new NotImplementedException ();
+			}
+			remove {
+				throw new NotImplementedException ();
+			}
+		}
+
 	}
 }

@@ -24,51 +24,51 @@ namespace System.Windows.Forms
 		// private fields
 		
 		/// --- constructor ---
-//		[MonoTODO]
-//		public CommonDialog() : base () {
-//		}
-//		
-//		/// --- Methods ---
-//		[MonoTODO]
-//		protected virtual IntPtr HookProc(IntPtr hWnd,int msg,IntPtr wparam,IntPtr lparam) {
-//			throw new NotImplementedException ();
-//		}
-//		
-//		// event methods
-//		[MonoTODO]
-//		protected virtual void OnHelpRequest(EventArgs e) {
-//			throw new NotImplementedException ();
-//		}
-//		// end of event methods
-//		
-//		[MonoTODO]
-//		protected virtual IntPtr OwnerWndProc(IntPtr hWnd,int msg,IntPtr wparam,IntPtr lparam) {
-//			throw new NotImplementedException ();
-//		}
-//		
-//		public abstract void Reset();
-//		
-//		protected abstract bool RunDialog(IntPtr hwndOwner);
-//		
-//		[MonoTODO]
-//		public DialogResult ShowDialog() {
-//			throw new NotImplementedException ();
-//		}
-//		
-//		[MonoTODO]
-//		public DialogResult ShowDialog(IWin32Window owner) {
-//			throw new NotImplementedException ();
-//		}
-//		
-//		/// events
-//		[MonoTODO]
-//		public event EventHandler HelpRequest {
-//			add {
-//				throw new NotImplementedException ();
-//			}
-//			remove {
-//				throw new NotImplementedException ();
-//			}
-//		}
+		[MonoTODO]
+		public CommonDialog() : base () {
+		}
+		
+		/// --- Methods ---
+		[MonoTODO]
+		protected virtual IntPtr HookProc(IntPtr hWnd,int msg,IntPtr wparam,IntPtr lparam) {
+			throw new NotImplementedException ();
+		}
+		
+		// event methods
+		[MonoTODO]
+		protected virtual void OnHelpRequest(EventArgs e) {
+			throw new NotImplementedException ();
+		}
+		// end of event methods
+		
+		[MonoTODO]
+		protected virtual IntPtr OwnerWndProc(IntPtr hWnd,int msg,IntPtr wparam,IntPtr lparam) {
+			throw new NotImplementedException ();
+		}
+		
+		public abstract void Reset();
+		
+		protected abstract bool RunDialog(IntPtr hwndOwner);
+		
+		[MonoTODO]
+		public DialogResult ShowDialog() {
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		public DialogResult ShowDialog(IWin32Window owner) {
+			throw new NotImplementedException ();
+		}
+		
+		/// events
+		[MonoTODO]
+		public event EventHandler HelpRequest {
+			add {
+				throw new NotImplementedException ();
+			}
+			remove {
+				throw new NotImplementedException ();
+			}
+		}
 	}
 }

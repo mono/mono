@@ -35,9 +35,6 @@ namespace System.Windows.Forms
 		int width;
 		#endregion
 		
-		
-		
-		
 		#region Constructors
 		[MonoTODO]
 		public DataGridColumnStyle() {
@@ -53,9 +50,6 @@ namespace System.Windows.Forms
 			propertyDescriptor=prop;
 		}
 		#endregion
-		
-		
-		
 		
 		#region Properties
 		public virtual HorizontalAlignment Alignment {
@@ -105,9 +99,6 @@ namespace System.Windows.Forms
 			set { width=value; }
 		}
 		#endregion
-		
-		
-		
 		
 		#region Methods
 		protected internal abstract void Abort(int rowNum);
@@ -246,9 +237,6 @@ namespace System.Windows.Forms
 		}
 		#endregion
 		
-		
-		
-		
 		#region Events
 		[MonoTODO]
 		public event EventHandler AlignmentChanged {
@@ -324,9 +312,6 @@ namespace System.Windows.Forms
 			}
 		}
 		#endregion
-
-
-
 
 		/// sub-classes:
 		/// This type supports the .NET Framework infrastructure and is not intended to be used directly from your code.

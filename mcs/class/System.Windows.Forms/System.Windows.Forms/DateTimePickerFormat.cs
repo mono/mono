@@ -1,6 +1,21 @@
-monostyle -f file.cs -l <true|false> > output.cs
+//
+// System.Windows.Forms.DateTimePickerFormat.cs
+//
+// Author:
+//	Dennis Hayes (dennish@raytek.com)
+//
+// (C) Ximian, Inc., 2002
+//
 
-   -f || /-f || --file  file.cs        The csharp source file to parse.
+using System;
 
-   -l || /-l || --line  <true|false>   Specifies wether to use line spacing.
-
+namespace System.Windows.Forms
+{
+	/// <summary>
+	/// </summary>
+	[MonoTODO]
+	public class DateTimePickerFormat
+	{
+		/// --- Constructor ---
+	}
+}

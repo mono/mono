@@ -3,7 +3,6 @@
 //
 // Author:
 //   stubbed out by Jaak Simm (jaaksimm@firm.ee)
-//	Dennis Hayes (dennish@raytek.com)
 //
 // (C) 2002 Ximian, Inc
 //
@@ -30,11 +29,12 @@ namespace System.Windows.Forms
 		#endregion
 		
 		// --- public and protected Properties ---
-		[MonoTODO]
-		public override int Count {
-			// CHECKME:
-			get { return base.Count; }
-		}
+//		[MonoTODO]
+//		//FIXME
+//		public override int Count {
+//			// CHECKME:
+//			get { return base.Count; }
+//		}
 		
 		[MonoTODO]
 		public Binding this[int index] {

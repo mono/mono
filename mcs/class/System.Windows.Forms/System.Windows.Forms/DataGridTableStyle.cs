@@ -48,9 +48,6 @@ namespace System.Windows.Forms
 		Color selectionForeColor;
 		#endregion
 		
-		
-		
-		
 		#region Constructors
 		[MonoTODO]
 		public DataGridTableStyle() {
@@ -69,9 +66,6 @@ namespace System.Windows.Forms
 			throw new NotImplementedException ();
 		}
 		#endregion
-		
-		
-		
 		
 		#region Properties
 		public bool AllowSorting {
@@ -183,9 +177,6 @@ namespace System.Windows.Forms
 			set { selectionForeColor=value; }
 		}
 		#endregion
-		
-		
-		
 		
 		#region Methods
 		[MonoTODO]
@@ -419,9 +410,6 @@ namespace System.Windows.Forms
 			throw new NotImplementedException ();
 		}
 		#endregion
-		
-		
-		
 		
 		#region Events
 		[MonoTODO]

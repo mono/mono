@@ -3,7 +3,6 @@
 //
 // Author:
 //   stubbed out by Richard Baumann (biochem333@nyc.rr.com)
-//	Dennis Hayes (dennish@raytek.com)
 //
 // (C) Ximian, Inc., 2002
 //
@@ -73,12 +72,13 @@ namespace System.Windows.Forms
 			// This method is internal to the .NET framework.
 			throw new NotImplementedException ();
 		}
-		[MonoTODO]
-		protected internal virtual void Edit(CurrencyManager source, int rowNum, Rectangle bounds, bool readOnly)
-		{
-			// This method is internal to the .NET framework.
-			throw new NotImplementedException ();
-		}
+//		[MonoTODO]
+//		//FIXME
+//		protected internal virtual void Edit(CurrencyManager source, int rowNum, Rectangle bounds, bool readOnly)
+//		{
+//			// This method is internal to the .NET framework.
+//			throw new NotImplementedException ();
+//		}
 		[MonoTODO]
 		protected internal virtual void Edit(CurrencyManager source, int rowNum, Rectangle bounds, bool readOnly, string instantText)
 		{

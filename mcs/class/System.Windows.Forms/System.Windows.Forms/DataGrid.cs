@@ -52,7 +52,6 @@ namespace System.Windows.Forms
 		Color selectionForeColor;
 		#endregion
 		
-		
 		#region Constructors
 		[MonoTODO]
 		public DataGrid() {
@@ -83,7 +82,6 @@ namespace System.Windows.Forms
 			throw new NotImplementedException ();
 		}
 		#endregion
-		
 		
 		#region Properties
 		public bool AllowNavigation {
@@ -351,9 +349,6 @@ namespace System.Windows.Forms
 		}
 		#endregion
 		
-		
-		
-		
 		#region Methods
 		/* Following members support the .NET Framework infrastructure and are not intended to be used directly from your code.
 		 * Methods not stubbed out:
@@ -392,7 +387,7 @@ namespace System.Windows.Forms
 		}
 		
 		[MonoTODO]
-		protected override AccessibleObject CreateAccessibilityInstance() {
+		 protected AccessibleObject CreateAccessibilityInstance() {
 			throw new NotImplementedException ();
 		}
 		
@@ -801,9 +796,6 @@ namespace System.Windows.Forms
 		}
 		#endregion
 		
-		
-		
-		
 		#region Events
 		[MonoTODO]
 		public event EventHandler AllowNavigationChanged {
@@ -956,10 +948,6 @@ namespace System.Windows.Forms
 		}
 		#endregion
 		
-		
-		
-		
-		
 		/// sub-class: DataGrid.HitTestInfo
 		/// <summary>
 		/// Contains information about a part of the System.Windows.Forms.DataGrid at a specified coordinate. This class cannot be inherited.
@@ -970,8 +958,6 @@ namespace System.Windows.Forms
 			[MonoTODO]
 			public static readonly DataGrid.HitTestInfo Nowhere;
 			#endregion
-			
-			
 			
 			#region DataGrid.HitTestInfo: Properties
 			[MonoTODO]
@@ -989,8 +975,6 @@ namespace System.Windows.Forms
 				get { throw new NotImplementedException (); }
 			}
 			#endregion
-			
-			
 			
 			#region DataGrid.HitTestInfo: Methods
 			[MonoTODO]
@@ -1010,8 +994,6 @@ namespace System.Windows.Forms
 			#endregion
 		}
 		
-		
-		
 		/// sub-enumeration: DataGrid.HitTestType
 		/// <summary>
 		/// Specifies the part of the System.Windows.Forms.DataGrid control the user has clicked
@@ -1028,6 +1010,5 @@ namespace System.Windows.Forms
 			RowHeader = 4,
 			RowResize = 16
 		}
-
 	}
 }

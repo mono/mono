@@ -26,8 +26,9 @@ namespace System.Windows.Forms
 		}
 
 		[Serializable]
-		[ClassInterface(ClassInterfaceType.AutoDual)]
-		~AmbientProperties();
+		//[ClassInterface(ClassInterfaceType.AutoDual)]
+		~AmbientProperties(){
+		}
 
 		// --- (public) Properties ---
 		Color BackColor {

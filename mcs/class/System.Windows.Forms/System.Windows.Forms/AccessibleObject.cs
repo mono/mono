@@ -40,7 +40,8 @@ namespace System.Windows.Forms
 		[MonoTODO]
 		[Serializable]
 		//[ClassInterface(ClassInterfaceType.AutoDual)]
-		~AccessibleObject();		
+		~AccessibleObject(){
+		}
 		
 		/// <summary>
 		///	Equals Method

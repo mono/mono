@@ -29,7 +29,6 @@ namespace System.Windows.Forms
 		object trueValue;
 		#endregion
 		
-		
 		#region Constructor
 		[MonoTODO]
 		public DataGridBoolColumn() {
@@ -48,8 +47,6 @@ namespace System.Windows.Forms
 		}
 		*/
 		#endregion
-		
-		
 		
 		#region Properties
 		
@@ -74,26 +71,24 @@ namespace System.Windows.Forms
 		}
 		#endregion
 		
-		
-		
 		#region Methods
 		[MonoTODO]
-		protected /*internal */override void Abort(int rowNum) {
+		protected internal override void Abort(int rowNum) {
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		protected /*internal */override bool Commit(CurrencyManager dataSource,int rowNum) {
+		protected internal override bool Commit(CurrencyManager dataSource,int rowNum) {
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected /*internal */override void ConcedeFocus() {
+		protected internal override void ConcedeFocus() {
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected /*internal */override void Edit(
+		protected internal override void Edit(
 			CurrencyManager source,
 			int rowNum,
 			Rectangle bounds,
@@ -105,32 +100,32 @@ namespace System.Windows.Forms
 		}
 
 		[MonoTODO]
-		protected /*internal */override void EnterNullValue() {
+		protected internal override void EnterNullValue() {
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected /*internal */override object GetColumnValueAtRow(CurrencyManager lm,int row) {
+		protected internal override object GetColumnValueAtRow(CurrencyManager lm,int row) {
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected /*internal */override int GetMinimumHeight() {
+		protected internal override int GetMinimumHeight() {
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected /*internal */override int GetPreferredHeight(Graphics g,object value) {
+		protected internal override int GetPreferredHeight(Graphics g,object value) {
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected /*internal */override Size GetPreferredSize(Graphics g,object value) {
+		protected internal override Size GetPreferredSize(Graphics g,object value) {
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected /*internal */override void Paint(
+		protected internal override void Paint(
 			Graphics g,
 			Rectangle bounds,
 			CurrencyManager source,
@@ -140,7 +135,7 @@ namespace System.Windows.Forms
 		}
 		
 		[MonoTODO]
-		protected /*internal */override void Paint(
+		protected internal override void Paint(
 			Graphics g,
 			Rectangle bounds,
 			CurrencyManager source,
@@ -151,7 +146,7 @@ namespace System.Windows.Forms
 		}
 
 		[MonoTODO]
-		protected /*internal */override void Paint(
+		protected internal override void Paint(
 			Graphics g,
 			Rectangle bounds,
 			CurrencyManager source,
@@ -164,14 +159,10 @@ namespace System.Windows.Forms
 		}
 
 		[MonoTODO]
-		protected /*internal */override void SetColumnValueAtRow(CurrencyManager lm,int row,object value) {
+		protected internal override void SetColumnValueAtRow(CurrencyManager lm,int row,object value) {
 			throw new NotImplementedException ();
 		}
 		#endregion
-		
-		
-		
-		
 		
 		#region Events
 		[MonoTODO]

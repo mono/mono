@@ -1,12 +1,11 @@
-//
-// System.Windows.Forms.AxHost
-//
-// Author:
-//   stubbed out by Jaak Simm (jaaksimm@firm.ee)
-//	Dennis Hayes (dennish@raytek.com)
-//
-// (C) Ximian, Inc., 2002
-//
+////
+//// System.Windows.Forms.AxHost
+////
+//// Author:
+////   stubbed out by Jaak Simm (jaaksimm@firm.ee)
+////
+//// (C) Ximian, Inc., 2002
+////
 //
 using System;
 using System.ComponentModel;
@@ -107,16 +106,18 @@ namespace System.Windows.Forms
 			set { throw new NotImplementedException (); }
 		}
 		
-		[MonoTODO]
-		public virtual bool RightToLeft {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
-		}
+//		[MonoTODO]
+//		//FIXME
+//		public virtual bool RightToLeft {
+//			get { throw new NotImplementedException (); }
+//			set { throw new NotImplementedException (); }
+//		}
 		
-		[MonoTODO]
-		ISite Site {
-			set { throw new NotImplementedException (); }
-		}
+//		[MonoTODO]
+//		//FIXME
+//		ISite Site {
+//			set { throw new NotImplementedException (); }
+//		}
 		
 		[MonoTODO]
 		public override string Text {
@@ -323,65 +324,65 @@ namespace System.Windows.Forms
 		/// --- ICustomTypeDescriptor methods ---
 		/// Note: all of them are supporting .NET framework, but have to be stubbed out for the interface
 		
-//		[MonoTODO]
-//		AttributeCollection ICustomTypeDescriptor.GetAttributes() {
-//			throw new NotImplementedException ();
-//		}
-//		
-//		[MonoTODO]
-//		string ICustomTypeDescriptor.GetClassName() {
-//			throw new NotImplementedException ();
-//		}
-//		
-//		[MonoTODO]
-//		string ICustomTypeDescriptor.GetComponentName() {
-//			throw new NotImplementedException ();
-//		}
-//		
-//		[MonoTODO]
-//		TypeConverter ICustomTypeDescriptor.GetConverter() {
-//			throw new NotImplementedException ();
-//		}
-//		
-//		[MonoTODO]
-//		EventDescriptor ICustomTypeDescriptor.GetDefaultEvent() {
-//			throw new NotImplementedException ();
-//		}
-//		
-//		[MonoTODO]
-//		PropertyDescriptor ICustomTypeDescriptor.GetDefaultProperty() {
-//			throw new NotImplementedException ();
-//		}
-//		
-//		[MonoTODO]
-//		object ICustomTypeDescriptor.GetEditor(Type editorBaseType) {
-//			throw new NotImplementedException ();
-//		}
-//		
-//		[MonoTODO]
-//		EventDescriptorCollection ICustomTypeDescriptor.GetEvents() {
-//			throw new NotImplementedException ();
-//		}
-//		
-//		[MonoTODO]
-//		EventDescriptorCollection ICustomTypeDescriptor.GetEvents(Attribute[] attributes) {
-//			throw new NotImplementedException ();
-//		}
-//		
-//		[MonoTODO]
-//		PropertyDescriptorCollection ICustomTypeDescriptor.GetProperties() {
-//			throw new NotImplementedException ();
-//		}
-//		
-//		[MonoTODO]
-//		PropertyDescriptorCollection ICustomTypeDescriptor.GetProperties(Attribute[] attributes) {
-//			throw new NotImplementedException ();
-//		}
-//		
-//		[MonoTODO]
-//		object ICustomTypeDescriptor.GetPropertyOwner(PropertyDescriptor pd) {
-//			throw new NotImplementedException ();
-//		}
+		[MonoTODO]
+		AttributeCollection ICustomTypeDescriptor.GetAttributes() {
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		string ICustomTypeDescriptor.GetClassName() {
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		string ICustomTypeDescriptor.GetComponentName() {
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		TypeConverter ICustomTypeDescriptor.GetConverter() {
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		EventDescriptor ICustomTypeDescriptor.GetDefaultEvent() {
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		PropertyDescriptor ICustomTypeDescriptor.GetDefaultProperty() {
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		object ICustomTypeDescriptor.GetEditor(Type editorBaseType) {
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		EventDescriptorCollection ICustomTypeDescriptor.GetEvents() {
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		EventDescriptorCollection ICustomTypeDescriptor.GetEvents(Attribute[] attributes) {
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		PropertyDescriptorCollection ICustomTypeDescriptor.GetProperties() {
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		PropertyDescriptorCollection ICustomTypeDescriptor.GetProperties(Attribute[] attributes) {
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		object ICustomTypeDescriptor.GetPropertyOwner(PropertyDescriptor pd) {
+			throw new NotImplementedException ();
+		}
 		
 		
 		/// sub-class: AxHost.InvalidActiveXStateException
@@ -405,18 +406,18 @@ namespace System.Windows.Forms
 		///
 		/// Note: the class does not contain any documented methods, just only those supporting .NET framework
 		/// </summary>
-//		[MonoTODO]
-//		[Serializable]
-//		public class State : ISerializable {
-//			
-//			/// The classes only constructor is supporting .NET framework, and thus not stubbed out:
-//			/// - [Serializable] public AxHost.State(Stream ms,int storageType,bool manualUpdate,string licKey);
-//			
-//			/// --- Methods ---
-//			//[Serializable]
-//			void ISerializable.GetObjectData(SerializationInfo si,StreamingContext context) {
-//				throw new NotImplementedException ();
-//			}
-//		}
+		[MonoTODO]
+		[Serializable]
+		public class State : ISerializable {
+			
+			/// The classes only constructor is supporting .NET framework, and thus not stubbed out:
+			/// - [Serializable] public AxHost.State(Stream ms,int storageType,bool manualUpdate,string licKey);
+			
+			/// --- Methods ---
+			//[Serializable]
+			void ISerializable.GetObjectData(SerializationInfo si,StreamingContext context) {
+				throw new NotImplementedException ();
+			}
+		}
 	}
 }

@@ -3,7 +3,6 @@
 //
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
-//	Dennis Hayes (dennish@raytek.com)
 //
 // (C) 2002 Ximian, Inc
 //
@@ -208,15 +207,15 @@ namespace System.Windows.Forms {
 		//{
 		//	throw new NotImplementedException ();
 		//}
-		//[MonoTODO]
-		//protected override IntPtr HookProc( IntPtr hWnd,  int msg,  IntPtr wparam,  IntPtr lparam )
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//protected override bool RunDialog(IntPtr hWndOwner)
-		//{
-		//	throw new NotImplementedException ();
-		//}
+		[MonoTODO]
+		protected override IntPtr HookProc( IntPtr hWnd,  int msg,  IntPtr wparam,  IntPtr lparam )
+		{
+			throw new NotImplementedException ();
+		}
+		[MonoTODO]
+		protected override bool RunDialog(IntPtr hWndOwner)
+		{
+			throw new NotImplementedException ();
+		}
 	 }
 }

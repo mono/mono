@@ -31,10 +31,10 @@ namespace System.Windows.Forms
 			get { return control; }
 		}
 		#endregion
-		public string ToString() {
+		public override string ToString() {
 			return base.ToString + control.ToString();
 		}
-		public int GetHashCode() {
+		public override int  GetHashCode() {
 			return unchecked(base.GetHashCode() * control.ToString());
 		}
 

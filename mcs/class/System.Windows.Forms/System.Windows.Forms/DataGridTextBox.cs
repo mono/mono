@@ -62,7 +62,7 @@ namespace System.Windows.Forms
 		}
 		
 		[MonoTODO]
-		protected /*internal */override bool ProcessKeyMessage(ref Message m) {
+		protected internal override bool ProcessKeyMessage(ref Message m) {
 			throw new NotImplementedException ();
 		}
 		

@@ -3,7 +3,6 @@
 //
 // Author:
 //   stubbed out by Jaak Simm (jaaksimm@firm.ee)
-//	Dennis Hayes (dennish@raytek.com)
 //
 // (C) 2002 Ximian, Inc
 //
@@ -82,13 +81,13 @@ namespace System.Windows.Forms
 		}
 		
 		[MonoTODO]
-		protected /*internal*/ override string GetListName(ArrayList listAccessors) {
+		protected internal override string GetListName(ArrayList listAccessors) {
 			throw new NotImplementedException ();
 		}
 		
 		/// <methods for events>
 		[MonoTODO]
-		protected /*internal*/ override void OnCurrentChanged(EventArgs e) {
+		protected internal override void OnCurrentChanged(EventArgs e) {
 			throw new NotImplementedException ();
 		}
 		
