@@ -1,5 +1,9 @@
 2003-11-28  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
 
+	* XmlAttribute.cs : set_Prefix checks value when existing is "xmlns".
+
+2003-11-28  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
+
 	* XmlWriter.cs : patch by Gonzalo (I modified a bit). WriteNode()
 	  shouldn't expect non-empty element content. This will fix bug #48287.
 
