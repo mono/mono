@@ -29,6 +29,7 @@
 
 #if NET_2_0
 namespace System.Web.UI {
+	[FlagsAttribute, SerializableAttribute]
 	public enum UrlTypes {
 		Absolute = 1,
 		AppRelative = 2,
