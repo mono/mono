@@ -37,31 +37,26 @@ namespace System.Web.Services.Description {
 		[MonoTODO]
 		protected override void OnClear ()
 		{
-			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		protected override void OnInsertComplete (int index, object value)
 		{
-			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		protected override void OnRemove (int index, object value)
 		{
-			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		protected override void OnSet (int index, object oldValue, object newValue)
 		{
-			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		protected virtual void SetParent (object value, object parent)
 		{
-			throw new NotImplementedException ();
 		}
 			
 		#endregion // Methods
