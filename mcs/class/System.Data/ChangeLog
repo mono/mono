@@ -1,3 +1,8 @@
+2003-03-13  Tim Coleman <tim@timcoleman.com>
+	* System.Data.SqlClient/SqlCommandBuilder.cs:
+		Change "where" variable name to "whereClause" at the
+		request of Rhys Weatherley <rweather@zip.com.au>
+
 2003-03-10  Daniel Morgan <danmorg@sc.rr.com>
 
 	* System.Data.SqlClient/SqlDataReader.cs: when 

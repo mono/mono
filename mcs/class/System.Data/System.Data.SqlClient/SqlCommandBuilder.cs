@@ -156,7 +156,7 @@ namespace System.Data.SqlClient {
 
 			string command = String.Format ("DELETE FROM {0} ", QuotedTableName);
 			StringBuilder columns = new StringBuilder ();
-			StringBuilder where = new StringBuilder ();
+			StringBuilder whereClause = new StringBuilder ();
 			string dsColumnName = String.Empty;
 			bool keyFound = false;
 			int parmIndex = 1;
@@ -165,8 +165,8 @@ namespace System.Data.SqlClient {
 				if (!IncludedInWhereClause (schemaRow)) 
 					continue;
 
-				if (where.Length > 0) 
-					where.Append (" AND ");
+				if (whereClause.Length > 0) 
+					whereClause.Append (" AND ");
 
 				bool isKey = (bool) schemaRow ["IsKey"];
 				SqlParameter parameter = null;
@@ -177,9 +177,9 @@ namespace System.Data.SqlClient {
 					dsColumnName = tableMapping.ColumnMappings [parameter.SourceColumn].DataSetColumn;
 					if (row != null)
 						parameter.Value = row [dsColumnName, DataRowVersion.Current];
-					where.Append ("(");
-					where.Append (String.Format (clause1, GetQuotedString (parameter.SourceColumn), parameter.ParameterName));
-					where.Append (" OR ");
+					whereClause.Append ("(");
+					whereClause.Append (String.Format (clause1, GetQuotedString (parameter.SourceColumn), parameter.ParameterName));
+					whereClause.Append (" OR ");
 				}
 				else
 					keyFound = true;
@@ -190,16 +190,16 @@ namespace System.Data.SqlClient {
 				if (row != null)
 					parameter.Value = row [dsColumnName, DataRowVersion.Current];
 
-				where.Append (String.Format (clause2, GetQuotedString (parameter.SourceColumn), parameter.ParameterName));
+				whereClause.Append (String.Format (clause2, GetQuotedString (parameter.SourceColumn), parameter.ParameterName));
 
 				if (!isKey)
-					where.Append (")");
+					whereClause.Append (")");
 			}
 			if (!keyFound)
 				throw new InvalidOperationException ("Dynamic SQL generation for the DeleteCommand is not supported against a SelectCommand that does not return any key column information.");
 
 			// We're all done, so bring it on home
-			string sql = String.Format ("{0} WHERE ( {1} )", command, where.ToString ());
+			string sql = String.Format ("{0} WHERE ( {1} )", command, whereClause.ToString ());
 			deleteCommand.CommandText = sql;
 			return deleteCommand;
 		}
@@ -264,7 +264,7 @@ namespace System.Data.SqlClient {
 
 			string command = String.Format ("UPDATE {0} SET ", QuotedTableName);
 			StringBuilder columns = new StringBuilder ();
-			StringBuilder where = new StringBuilder ();
+			StringBuilder whereClause = new StringBuilder ();
 			int parmIndex = 1;
 			string dsColumnName = String.Empty;
 			bool keyFound = false;
@@ -289,8 +289,8 @@ namespace System.Data.SqlClient {
 				if (!IncludedInWhereClause (schemaRow)) 
 					continue;
 
-				if (where.Length > 0) 
-					where.Append (" AND ");
+				if (whereClause.Length > 0) 
+					whereClause.Append (" AND ");
 
 				bool isKey = (bool) schemaRow ["IsKey"];
 				SqlParameter parameter = null;
@@ -303,9 +303,9 @@ namespace System.Data.SqlClient {
 					if (row != null)
 						parameter.Value = row [dsColumnName];
 
-					where.Append ("(");
-					where.Append (String.Format (clause1, GetQuotedString (parameter.SourceColumn), parameter.ParameterName));
-					where.Append (" OR ");
+					whereClause.Append ("(");
+					whereClause.Append (String.Format (clause1, GetQuotedString (parameter.SourceColumn), parameter.ParameterName));
+					whereClause.Append (" OR ");
 				}
 				else
 					keyFound = true;
@@ -316,16 +316,16 @@ namespace System.Data.SqlClient {
 				if (row != null)
 					parameter.Value = row [dsColumnName];
 
-				where.Append (String.Format (clause2, GetQuotedString (parameter.SourceColumn), parameter.ParameterName));
+				whereClause.Append (String.Format (clause2, GetQuotedString (parameter.SourceColumn), parameter.ParameterName));
 
 				if (!isKey)
-					where.Append (")");
+					whereClause.Append (")");
 			}
 			if (!keyFound)
 				throw new InvalidOperationException ("Dynamic SQL generation for the UpdateCommand is not supported against a SelectCommand that does not return any key column information.");
 
 			// We're all done, so bring it on home
-			string sql = String.Format ("{0}{1} WHERE ( {2} )", command, columns.ToString (), where.ToString ());
+			string sql = String.Format ("{0}{1} WHERE ( {2} )", command, columns.ToString (), whereClause.ToString ());
 			updateCommand.CommandText = sql;
 			return updateCommand;
 		}
