@@ -41,17 +41,13 @@ using System.Runtime.InteropServices;
 	[assembly: AssemblyVersion ("1.0.5000.0")]
 #endif
 
-/* TODO COMPLETE INFORMATION
-
-[assembly: AssemblyTitle ("")]
-[assembly: AssemblyDescription ("")]
+//[assembly: AssemblyTitle ("")]
+[assembly: AssemblyDescription ("Commons.Xml.Relaxng.dll")]
 
 [assembly: CLSCompliant (true)]
 [assembly: AssemblyFileVersion ("0.0.0.1")]
 
 [assembly: ComVisible (false)]
-
-*/
 
 [assembly: AssemblyDelaySign (true)]
 [assembly: AssemblyKeyFile ("../mono.pub")]
