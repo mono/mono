@@ -957,9 +957,23 @@ namespace System
 
 		protected virtual bool IsBadFileSystemCharacter (char ch)
 		{
-			foreach (char c in System.IO.Path.InvalidPathChars)
-				if (c == ch)
-					return true;
+			// It does not always overlap with InvalidPathChars.
+			int chInt = (int) ch;
+			if (chInt < 32 || (chInt < 64 && chInt > 57))
+				return true;
+			switch (chInt) {
+			case 0:
+			case 34: // "
+			case 38: // &
+			case 42: // *
+			case 44: // ,
+			case 47: // /
+			case 92: // \
+			case 94: // ^
+			case 124: // |
+				return true;
+			}
+
 			return false;
 		}
 
