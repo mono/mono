@@ -46,6 +46,8 @@ namespace Mono.Data
 		{
 			DataSet ds=new DataSet();
 			IDbDataAdapter adapter=ProviderFactory.CreateDataAdapter(conn, SelectCommand);
+			if (conn.State!=ConnectionState.Open)
+				conn.Open();
 			adapter.Fill(ds);
 			return ds;
 		}
@@ -54,8 +56,30 @@ namespace Mono.Data
 		{
 			DataSet ds=new DataSet();
 			IDbDataAdapter adapter=ProviderFactory.CreateDataAdapter(SelectCommand);
+			if (adapter.SelectCommand.Connection.State!=ConnectionState.Open)
+				adapter.SelectCommand.Connection.Open();
 			adapter.Fill(ds);
 			return ds;
 		}
+
+		static public DataSet FillDataSet(string ConfigSetting, string SelectCommand)
+		{
+			IDbConnection conn=ProviderFactory.CreateConnectionFromConfig(ConfigSetting);
+			conn.Open();
+			DataSet ds=null;
+			try
+			{
+				ds=new DataSet();
+				IDbDataAdapter adapter=ProviderFactory.CreateDataAdapter(SelectCommand);
+				adapter.Fill(ds);
+			}
+			finally
+			{
+				conn.Close();
+			}
+			return ds;
+		}
+
+
 	}
 }

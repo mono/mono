@@ -13,7 +13,12 @@ namespace testclient
 
 		public static void TestProviderFactory()
 		{
-			Console.WriteLine("Get Connection");
+		  	Console.WriteLine("Configured Providers:");	
+			foreach (Provider p in ProviderFactory.Providers)
+				Console.WriteLine(p.Description);
+			Console.WriteLine();
+			Console.WriteLine("Connection Factory Test:");	
+			Console.WriteLine("Get Connection using PubsConnStr in app.config");
 			IDbConnection conn=ProviderFactory.CreateConnectionFromConfig("PubsConnStr");
 		 	Console.WriteLine("Open Connection");	
 			conn.Open();

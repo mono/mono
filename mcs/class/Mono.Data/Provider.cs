@@ -24,18 +24,22 @@ namespace Mono.Data
 		private Type adapterType;
 		private Type commandType;
 		private string assemblyName;
+		private string description;
       
 		public Provider(string _name, string _connection, 
-			string _dataadapter, string _command, string _assembly)
+			string _dataadapter, string _command, string _assembly,
+			string _description)
 		{
 			name = _name;
 			connectionTypeName = _connection;
 			adapterTypeName = _dataadapter;
 			assemblyName = _assembly;
 			commandTypeName = _command;
+			description = _description;
 		}
 
-		public Provider(string _name, Type _connection, Type _dataadapter, Type _command)
+		public Provider(string _name, Type _connection, Type _dataadapter, Type _command,
+			string _description)
 		{
 			name = _name;
 			connectionTypeName = _connection.FullName;
@@ -44,11 +48,17 @@ namespace Mono.Data
 			connectionType = _connection;
 			adapterType = _dataadapter;
 			commandType = _command;
+			description = _description;
 		}
 
 		public string Name
 		{
 			get {return name;}
+		}
+
+		public string Description
+		{
+			get {return description;}
 		}
 
 		public Type ConnectionType

@@ -26,7 +26,8 @@ namespace Mono.Data
 					GetStringValue(ProviderNode,"connection",true),
 					GetStringValue(ProviderNode,"adapter",true),
 					GetStringValue(ProviderNode,"command",true),
-					GetStringValue(ProviderNode,"assembly",true));
+					GetStringValue(ProviderNode,"assembly",true),
+					GetStringValue(ProviderNode,"description",false));
 				providers.Add(provider);
 			}
 			return providers;

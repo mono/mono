@@ -235,7 +235,7 @@ namespace Mono.Data
 			{
 				get 
 				{
-					return ((Provider)(baseEnumerator.Current));
+					return ((Provider) ((DictionaryEntry) (baseEnumerator.Current)).Value);
 				}
 			}
 			
