@@ -1,3 +1,8 @@
+
+Thu Apr 18 16:40:54 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* MonoMethod.c: cache the method name.
+
 2002-04-12  Duncan Mak  <duncan@ximian.com>
 
 	* AssemblyAlgorithmIdAttribute.cs: Fixed typo in AlgorithmId

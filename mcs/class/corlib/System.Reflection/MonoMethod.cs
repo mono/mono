@@ -17,7 +17,6 @@ namespace System.Reflection {
 	internal struct MonoMethodInfo {
 		internal Type parent;
 		internal Type ret;
-		internal string name;
 		internal MethodAttributes attrs;
 		internal MethodImplAttributes iattrs;
 
@@ -34,6 +33,7 @@ namespace System.Reflection {
 	 */
 	internal class MonoMethod : MethodInfo {
 		internal RuntimeMethodHandle mhandle;
+		string name;
 		
 		[MonoTODO]
 		public override MethodInfo GetBaseDefinition() {
@@ -98,9 +98,10 @@ namespace System.Reflection {
 				return info.parent;
 			}
 		}
-		public extern override string Name {
-			[MethodImplAttribute(MethodImplOptions.InternalCall)]
-			get;
+		public override string Name {
+			get {
+				return name;
+			}
 		}
 		
 		public override bool IsDefined (Type attributeType, bool inherit) {
@@ -128,6 +129,7 @@ namespace System.Reflection {
 	
 	internal class MonoCMethod : ConstructorInfo {
 		internal RuntimeMethodHandle mhandle;
+		string name;
 		
 		public override MethodImplAttributes GetMethodImplementationFlags() {
 			MonoMethodInfo info;
@@ -181,9 +183,7 @@ namespace System.Reflection {
 		}
 		public override string Name {
 			get {
-				MonoMethodInfo info;
-				MonoMethodInfo.get_method_info (mhandle, out info);
-				return info.name;
+				return name;
 			}
 		}
 
