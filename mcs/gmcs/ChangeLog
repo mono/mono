@@ -1,5 +1,12 @@
 2004-09-24  Martin Baulig  <martin@ximian.com>
 
+	* generic.cs (ReflectionConstraints): Moved here and made it an
+	abstract class.
+
+	* support.cs (ReflectionConstraints): Moved to generic.cs.
+
+2004-09-24  Martin Baulig  <martin@ximian.com>
+
 	* support.cs
 	(ReflectionConstraints): Un-nested this class and made it public.
 

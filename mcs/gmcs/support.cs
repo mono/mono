@@ -18,13 +18,6 @@ using System.Globalization;
 
 namespace Mono.CSharp {
 
-	public interface GenericConstraints {
-		GenericParameterAttributes Attributes { get; }
-		bool HasClassConstraint { get; }
-		Type ClassConstraint { get; }
-		Type[] InterfaceConstraints { get; }
-	}
-
 	public interface ParameterData {
 		Type ParameterType (int pos);
 		GenericConstraints GenericConstraints (int pos);
@@ -305,19 +298,15 @@ namespace Mono.CSharp {
 			attrs = t.GenericParameterAttributes;
 		}
 
-		public GenericParameterAttributes Attributes {
+		public override GenericParameterAttributes Attributes {
 			get { return attrs; }
 		}
 
-		public bool HasClassConstraint {
-			get { return class_constraint != null; }
-		}
-
-		public Type ClassConstraint {
+		public override Type ClassConstraint {
 			get { return class_constraint; }
 		}
 
-		public Type[] InterfaceConstraints {
+		public override Type[] InterfaceConstraints {
 			get { return iface_constraints; }
 		}
 	}

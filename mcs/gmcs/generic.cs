@@ -15,6 +15,36 @@ using System.Text;
 	
 namespace Mono.CSharp {
 
+	public abstract class GenericConstraints {
+		public abstract GenericParameterAttributes Attributes {
+			get;
+		}
+
+		public bool HasConstructorConstraint {
+			get { return (Attributes & GenericParameterAttributes.DefaultConstructorConstraint) != 0; }
+		}
+
+		public bool HasReferenceTypeConstraint {
+			get { return (Attributes & GenericParameterAttributes.ReferenceTypeConstraint) != 0; }
+		}
+
+		public bool HasValueTypeConstraint {
+			get { return (Attributes & GenericParameterAttributes.ValueTypeConstraint) != 0; }
+		}
+
+		public bool HasClassConstraint {
+			get { return ClassConstraint != null; }
+		}
+
+		public abstract Type ClassConstraint {
+			get;
+		}
+
+		public abstract Type[] InterfaceConstraints {
+			get;
+		}
+	}
+
 	public enum SpecialConstraint
 	{
 		Constructor,
@@ -299,31 +329,15 @@ namespace Mono.CSharp {
 			type.SetGenericParameterAttributes (attrs);
 		}
 
-		public GenericParameterAttributes Attributes {
+		public override GenericParameterAttributes Attributes {
 			get { return attrs; }
 		}
 
-		public bool HasConstructorConstraint {
-			get { return (attrs & GenericParameterAttributes.DefaultConstructorConstraint) != 0; }
-		}
-
-		public bool HasReferenceTypeConstraint {
-			get { return (attrs & GenericParameterAttributes.ReferenceTypeConstraint) != 0; }
-		}
-
-		public bool HasValueTypeConstraint {
-			get { return (attrs & GenericParameterAttributes.ValueTypeConstraint) != 0; }
-		}
-
-		public bool HasClassConstraint {
-			get { return class_constraint_type != null; }
-		}
-
-		public Type ClassConstraint {
+		public override Type ClassConstraint {
 			get { return class_constraint_type; }
 		}
 
-		public Type[] InterfaceConstraints {
+		public override Type[] InterfaceConstraints {
 			get { return iface_constraint_types; }
 		}
 
