@@ -136,6 +136,11 @@ Provides a search path to mono and mint where to look for library files.
 Directories are separated by the platform path separator (colons on unix). Example:
 .B /home/username/lib:/usr/local/mono/lib
 .PP
+.TP
+.I "MONO_DISABLE_SHM"
+If this variable is set, it disables the Windows I/O Emulation layer,
+and handles (files, events, mutexes, pipes) will not be shared across
+processes.  This option is only available on Unix.
 .SH FILES
 On Unix assemblies are loaded from the installation lib directory.  If you set
 `prefix' to /usr, the assemblies will be located in /usr/lib.  On
