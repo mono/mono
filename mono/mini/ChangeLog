@@ -1,3 +1,8 @@
+2004-10-08  Zoltan Varga  <vargaz@freemail.hu>
+
+	* inssel-long32.brg (OP_LCONV_TO_OVF_I2): Fix CONV_I1 -> CONV_I2.
+
+	* basic-long.cs: Add test for checked i8->i2 cast.
 
 Wed Oct 6 12:40:28 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
