@@ -1,5 +1,16 @@
 2004-05-02  Duncan Mak  <duncan@ximian.com>
 
+	* I18N/Assembly/AssemblyInfo.cs:
+	* Mono.CSharp.Debugger/Assembly/AssemblyInfo.cs:
+	* Mono.Cairo/Assembly/AssemblyInfo.cs:
+	* Mono.Data.SqliteClient/Assembly/AssemblyInfo.cs:
+	* Mono.Data.SybaseClient/Assembly/AssemblyInfo.cs:
+	* Mono.Data.Tds/Assembly/AssemblyInfo.cs:
+	* Mono.Data.TdsClient/Assembly/AssemblyInfo.cs: Fix the
+	AssemblyVersionAttribute ordering.
+
+2004-05-02  Duncan Mak  <duncan@ximian.com>
+
 	* ByteFX.Data/AssemblyInfo.cs:
 	* Mono.GetOptions/AssemblyInfo.cs:
 	* Microsoft.Vsa/Assembly/AssemblyInfo.cs: Add assembly-level
