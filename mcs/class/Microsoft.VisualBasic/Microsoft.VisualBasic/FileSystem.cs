@@ -894,7 +894,6 @@ namespace Microsoft.VisualBasic
 
 		public static bool EOF(int fileNumber)
 		{
-			bool  retVal = false;
 			VBFile vbFile = getVBFile(fileNumber);
 			return vbFile.isEndOfFile();
 		}

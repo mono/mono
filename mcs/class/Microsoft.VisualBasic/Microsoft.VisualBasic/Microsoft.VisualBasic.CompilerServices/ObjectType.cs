@@ -1862,12 +1862,6 @@ namespace Microsoft.VisualBasic.CompilerServices {
 			return 0;
 		}
 
-		private static int getObjTstStringObject(object s1, object s2,TypeCode tc1,TypeCode tc2) {
-			double d1 = convertObjectToDouble(s1,tc1);
-			double d2 = convertObjectToDouble(s2,tc2);
-			return ObjectType.getObjTstDouble(s1,s2,tc1, tc2);
-		}
-
 		public static object PlusObj(object obj) {
 			TypeCode tc = getTypeCode(obj);
 			if (tc == TypeCode.Empty)

@@ -1,3 +1,7 @@
+2005-02-14 Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* FileSystem.cs, CompilerServices/FlowControl.cs : killed unneeded local variables (warnings).
+	* CompilerServices/ObjectType.cs : killed unneeded private method (diagnosed from warnings on local vars)
+	
 2005-02-14  Duncan Mak  <duncan@ximian.com>
 
 	* Collection.cs:

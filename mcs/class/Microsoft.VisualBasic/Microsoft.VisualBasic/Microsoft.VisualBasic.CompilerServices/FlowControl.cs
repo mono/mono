@@ -119,8 +119,6 @@ namespace Microsoft.VisualBasic.CompilerServices
 			ref System.Object lfr,
 			ref System.Object cr) {
 
-			object CounterResult = cr;
-
 			if (Start == null) {
 				throw new ArgumentException("Argument_InvalidNullValue1 " + " Start");
 			}
@@ -165,7 +163,7 @@ namespace Microsoft.VisualBasic.CompilerServices
         
 			bool isStartAndStepTypeEqual = (startType == stepType);
 			bool isStartAndLimitTypeEqual = (startType == limitType);
-			bool isStepAndLimitTypeEqual = (stepType == limitType);
+			// bool isStepAndLimitTypeEqual = (stepType == limitType);
 
 			//the For loop has enum type in the following case
 			//1. step is enum and it's type code equal to commonTypeCode and start and 
