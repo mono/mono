@@ -3,6 +3,11 @@
 	* mini.c (optimize_branches): improved to handle all kinds of
 	conditional branches.
 
+Wed Jun 11 18:01:06 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c, mini.h, jit-icalls.c: speedup emulation of opcodes that
+	don't raise exceptions.
+
 Tue Jun 10 19:00:31 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* tramp-x86.c, tramp-ppc.c, debug-mini.c: move arch-specific code
