@@ -237,7 +237,7 @@ namespace Mono.Security {
 		public ASN1 this [int index] {
 			get { 		
 				try {
-					if (index >= elist.Count)
+					if ((elist == null) || (index >= elist.Count))
 						return null;
 					return (ASN1) elist [index];
 				}
@@ -250,7 +250,7 @@ namespace Mono.Security {
 		public ASN1 Element (int index, byte anTag) 
 		{
 			try {
-				if (index >= elist.Count)
+				if ((elist == null) || (index >= elist.Count))
 					return null;
 
 				ASN1 elm = (ASN1) elist [index];
