@@ -1,3 +1,13 @@
+2002-01-23  Miguel de Icaza  <miguel@ximian.com>
+
+	* icall.c (ves_icall_appdomain_get_default_assemblies): put this
+	code back.  This should return the assemblies that are loaded by
+	the runtime on behalf of an application domain. 
+
+	The current implementation is still broken, it just returns every
+	assembly loaded, but until we get real applications domain this
+	will do.
+
 2002-01-23  Dietmar Maurer  <dietmar@ximian.com>
 
 	* icall.c (ves_icall_appdomain_get_cur_domain): runtime_init the
