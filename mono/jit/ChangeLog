@@ -1,3 +1,7 @@
+2002-07-21  Miguel de Icaza  <miguel@ximian.com>
+
+	* exception.c (arch_handle_exception): Memory leak fix.
+
 2002-07-19  Dietmar Maurer  <dietmar@ximian.com>
 
 	* jit.c (mono_analyze_stack): avoid recursive inlining

@@ -1,3 +1,13 @@
+2002-07-21  Miguel de Icaza  <miguel@ximian.com>
+
+	* appdomain.c (ves_icall_System_Reflection_Assembly_LoadFrom): Use
+	mono_get_exception_file_not_found now.
+
+	* exception.c (mono_exception_from_name_two_strings): New version
+	that will call a constructor with two string arguments. 
+	(mono_get_exception_file_not_found): New helper routine, used to
+	report file-not-found errors.
+
 2002-07-20  Dick Porter  <dick@ximian.com>
 
 	* process.h:
