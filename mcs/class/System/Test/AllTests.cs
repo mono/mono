@@ -25,6 +25,7 @@ namespace MonoTests
 				suite.AddTest (System.Collections.Specialized.StringCollectionTest.Suite);
 				suite.AddTest (System.Text.RegularExpressions.AllTests.Suite);
 			        suite.AddTest (System.Diagnostics.AllTests.Suite);
+                                suite.AddTest (System.Net.AllTests.Suite);
 				return suite;
 			}
 		}
