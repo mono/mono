@@ -4196,7 +4196,7 @@ public override void parse ()
 void CheckToken (int error, int yyToken, string msg)
 {
 	if (yyToken >= Token.FIRST_KEYWORD && yyToken <= Token.LAST_KEYWORD){
-		Report.Error (error, lexer.Location, String.Format ("{0}: `{1}' is a keyword", msg, yyName [yyToken].ToLower ()));
+		Report.Error (error, lexer.Location, String.Format ("{0}: `{1}' is a keyword", msg, yyNames [yyToken].ToLower ()));
 		return;
 	}		
 	Report.Error (error, lexer.Location, msg);
