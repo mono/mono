@@ -112,15 +112,5 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 				_topObject = value;
 			}
 		}
-		
-	
-		//private methods
-		
-		// finish the work on the SoapMessage
-		// fill the SoapMessage.ParamName array
-		// fill the SoapMessage.ParamType array
-		// convert the SoapMessage.ParamValue array items
-		// to the right type if needed
-		
 	}
 }

@@ -64,7 +64,6 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 						object fieldValue = fieldInfo.GetValue(objCurrent);
 						Type fieldType;
 						fieldType = fieldInfo.FieldType;
-						//Console.WriteLine("name: {0} type: {1} value: {2}", fieldInfo.Name, fieldType, fieldValue);
 						_serializationInfo.AddValue(fieldInfo.Name, fieldValue, fieldType);
 					}
 				}

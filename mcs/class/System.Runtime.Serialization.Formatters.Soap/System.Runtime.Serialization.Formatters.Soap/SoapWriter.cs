@@ -341,10 +341,7 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 			_xmlWriter.WriteAttributeString("id", null, "ref-"+_currentObjectId);
 			SerializationInfo info = new SerializationInfo(soapMsg.GetType(), new FormatterConverter());
 			
-			string typeNamespace, assemblyName;
-			SoapServices.DecodeXmlNamespaceForClrTypeNamespace(soapMsg.XmlNameSpace, out typeNamespace, out assemblyName);
 			
-			Type objType = Type.GetType(typeNamespace);
 			if(soapMsg.ParamNames != null) {
 				for(int i=0; i<soapMsg.ParamNames.Length; i++){
 					string name = soapMsg.ParamNames[i];
