@@ -1,3 +1,7 @@
+2002-08-19  Rodrigo Moya <rodrigo@ximian.com>
+
+	* System.Data.OleDb/OleDbSchemaGuid.cs: initialize static members.
+	
 2002-08-19 Franklin Wise <gracenote@earthlink.net>
 	
 	* Tests: See System.Data\Test\ChangeLog
@@ -16,8 +20,6 @@
 	internal.
 
 	* System.Data/ConstraintCollection.cs: Commented out unused line.
-
-	
 
 2002-08-18  Rodrigo Moya <rodrigo@ximian.com>
 
