@@ -123,3 +123,6 @@ the Microsoft C# compiler:
 -217	Wrong number of type parameters
 
 -218	Invalid constraints clause
+
+-219	Type argument doesn't meet constraints.
+
