@@ -1,3 +1,9 @@
+
+Wed Feb 13 18:25:55 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c: the best way to speed-up the compiler is to avoid
+	infinite loops.
+
 2002-02-13  Dietmar Maurer  <dietmar@ximian.com>
 
 	* class.c (mono_class_vtable): changed the object layout
