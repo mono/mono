@@ -5,7 +5,6 @@ namespace Gdk {
 
         internal class Pixbuf
         {
-
                 static Pixbuf ()
                 {
                         Helpers.Init (0, new IntPtr (0));
@@ -23,9 +22,6 @@ namespace Gdk {
                         IntPtr data, Gdk.Colorspace colorspace, bool has_alpha, int bits_per_sample,
                         int width, int height, int rowstride,
                         IntPtr destroy_fn, IntPtr destroy_fn_data);
-
-// 		[DllImport (libgdk_pixbuf, EntryPoint = "gdk_pixbuf_finalize")]
-//                 internal static extern void Finalize (IntPtr pixbuf);
 
                 [DllImport (libgdk_pixbuf, EntryPoint = "gdk_pixbuf_get_pixels")]
                 internal static extern IntPtr GetPixels (IntPtr pixbuf);

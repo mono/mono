@@ -19,7 +19,7 @@ namespace Cairo {
         {
                 IntPtr surface;
 
-                Surface (IntPtr ptr)
+                internal Surface (IntPtr ptr)
                 {
                         surface = ptr;
                 }
@@ -73,9 +73,9 @@ namespace Cairo {
                         }
 
                         get {
-                                IntPtr p = IntPtr.Zero;
+                                IntPtr p;
                                 
-                                CairoAPI.cairo_surface_get_matrix (surface, ref p);
+                                CairoAPI.cairo_surface_get_matrix (surface, out p);
 
                                 return new Cairo.Matrix (p);
                         }

@@ -24,7 +24,7 @@ namespace Cairo {
                 {
                 }
                 
-                public Object (IntPtr ptr)
+                internal Object (IntPtr ptr)
                 {
                         state = ptr;
                 }
@@ -34,14 +34,16 @@ namespace Cairo {
                         return CairoAPI.cairo_create ();
                 }
 
-                public IntPtr Destroy ()
+                public void Destroy ()
                 {
-                        return CairoAPI.cairo_destroy (state);
+                        CairoAPI.cairo_destroy (state);
                 }
 
-                public IntPtr Copy ()
+                public Cairo.Object Copy ()
                 {
-                        return CairoAPI.cairo_copy (state);
+                        IntPtr dest;
+                        CairoAPI.cairo_copy (out dest, state);
+                        return new Cairo.Object (dest);
                 }
                 
                 public void Save ()
@@ -181,6 +183,17 @@ namespace Cairo {
                         }
                 }
 
+                public Cairo.Surface TargetSurface {
+                        set {
+                                CairoAPI.cairo_set_target_surface (state, value.Pointer);
+                        }
+
+                        get {
+                                return new Cairo.Surface (
+                                        CairoAPI.cairo_current_target_surface (state));
+                        }
+                }
+
 #region Path methods
                 
                 public void NewPath ()
@@ -223,6 +236,16 @@ namespace Cairo {
                         CairoAPI.cairo_rel_curve_to (state, dx1, dy1, dx2, dy2, dx3, dy3); 
                 }
 
+                public void Arc (double xc, double yc, double radius, double angel1, double angel2)
+                {
+                        CairoAPI.cairo_arc (state, xc, yc, radius, angel1, angel2);
+                }
+
+                public void ArcNegative (double xc, double yc, double radius, double angel1, double angel2)
+                {
+                        CairoAPI.cairo_arc_negative (state, xc, yc, radius, angel1, angel2);
+                }
+                
                 public void Rectangle (double x, double y, double width, double height)
                 {
                         CairoAPI.cairo_rectangle (state, x, y, width, height);
@@ -306,6 +329,12 @@ namespace Cairo {
                 public Cairo.Matrix Matrix {
                         set {
                                 CairoAPI.cairo_set_matrix (state, value.Pointer);
+                        }
+
+                        get {
+                                IntPtr p;
+                                CairoAPI.cairo_current_matrix (state, out p);
+                                return new Cairo.Matrix (p);
                         }
                 }
         }

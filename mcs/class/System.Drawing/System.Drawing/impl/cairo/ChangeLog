@@ -1,3 +1,10 @@
+2003-10-11  Duncan Mak  <duncan@ximian.com>
+
+	* cairo-api.cs: Marked as in internal class, instead of
+	public. Update to new Cairo API (see Mono.Cairo/Cairo.cs).
+
+	* gdk-helpers.cs (Gdk.Pixbuf.Finalize): Removed.	
+	
 2003-09-21  Miguel de Icaza  <miguel@ximian.com>
 
 	* Pen.cs: Add Clone method.

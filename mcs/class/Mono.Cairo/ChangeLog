@@ -1,3 +1,15 @@
+2003-10-11  Duncan Mak  <duncan@ximian.com>
+
+	* Mono.Cairo/Cairo.cs (cairo_set_target_drawable): Not available anymore, removed.
+	(cairo_reference, cairo_arc, cairo_arc_negative): New API, added.
+	(cairo_current_matrix): Signature changed, updated.
+	(cairo_surface_reference): New API.
+	(cairo_surface_get_matrix): Use 'out' instead of 'ref' param.
+
+	* Mono.Cairo/Surface.cs: 	
+	* Mono.Cairo/Object.cs: Added binding for new APIs listed in Cairo.cs.
+	(Destroy): It's supposed to return void, not IntPtr.
+
 2003-09-08  Duncan Mak  <duncan@ximian.com>
 
 	* Mono.Cairo/Surface.cs (PutImage): Removed.

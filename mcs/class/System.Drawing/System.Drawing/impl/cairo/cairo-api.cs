@@ -1,5 +1,5 @@
 //
-// Cairo.cs
+// cairo-api.cs
 //
 // Author: Duncan Mak (duncan@ximian.com)
 //
@@ -16,7 +16,7 @@ using System.Runtime.InteropServices;
 
 namespace System.Drawing.Cairo {
 
-	public class Cairo
+	internal class Cairo
         {
                 const string CairoImp = "cairo";
                 //
@@ -26,16 +26,19 @@ namespace System.Drawing.Cairo {
 		public static extern IntPtr cairo_create ();
 
 		[DllImport (CairoImp)]
-		public static extern IntPtr cairo_destroy (IntPtr cr);
+		public static extern void cairo_reference (IntPtr cr);
 
 		[DllImport (CairoImp)]
-		public static extern IntPtr cairo_copy (IntPtr cr_other);                
+		public static extern void cairo_destroy (IntPtr cr);
 
 		[DllImport (CairoImp)]
 		public static extern void cairo_save (IntPtr cr);                
 
 		[DllImport (CairoImp)]
 		public static extern void cairo_restore (IntPtr cr);
+
+                [DllImport (CairoImp)]
+		public static extern void cairo_copy (out IntPtr dest, IntPtr src);
 
                 //
                 // Modify state
@@ -47,10 +50,6 @@ namespace System.Drawing.Cairo {
                 public static extern void cairo_set_target_image (
                         IntPtr cr, IntPtr data, Format format, int width, int height, int stride);
 
-                [DllImport (CairoImp)]
-		[CLSCompliant(false)]
-                public static extern void cairo_set_target_drawable (IntPtr cr, IntPtr dpy, ulong drawable);
-                
 		[DllImport (CairoImp)]
 		public static extern void cairo_set_operator (IntPtr cr, Operator op);
 
@@ -132,6 +131,14 @@ namespace System.Drawing.Cairo {
 		[DllImport (CairoImp)]
 		public static extern void cairo_curve_to (
                         IntPtr cr, double x1, double y1, double x2, double y2, double x3, double y3);
+
+                [DllImport (CairoImp)]
+                public static extern void cairo_arc (
+                        IntPtr cr, double xc, double yc, double radius, double angel1, double angel2);
+
+                [DllImport (CairoImp)]
+                public static extern void cairo_arc_negative (
+                        IntPtr cr, double xc, double yc, double radius, double angel1, double angel2);
 
 		[DllImport (CairoImp)]
 		public static extern void cairo_rel_move_to (IntPtr cr, double dx, double dy);
@@ -226,14 +233,10 @@ namespace System.Drawing.Cairo {
 		public static extern double cairo_current_miter_limit (IntPtr cr);
 
                 [DllImport (CairoImp)]
-                public static extern void cairo_current_matrix (
-                        IntPtr cr,
-                        out double a, out double b,
-                        out double c, out double d,
-                        out double tx, out double ty);
+                public static extern void cairo_current_matrix (IntPtr cr, out IntPtr matrix);
 
                 [DllImport (CairoImp)]
-                public static extern void cairo_current_target_surface (IntPtr cr);
+                public static extern IntPtr cairo_current_target_surface (IntPtr cr);
 
                 //
                 // Error status queries
@@ -248,12 +251,6 @@ namespace System.Drawing.Cairo {
                 // Surface Manipulation
                 //
                 
-                [DllImport (CairoImp)]
-		[CLSCompliant (false)]
-                public static extern IntPtr cairo_surface_create_for_drawable (
-                        IntPtr display, ulong drawable, IntPtr visual,
-                        Format format, ulong colormap);
-
                 [DllImport (CairoImp)]                
                 public static extern IntPtr cairo_surface_create_for_image (
                         string data, Format format, int width, int height, int stride);
@@ -267,12 +264,11 @@ namespace System.Drawing.Cairo {
                         IntPtr surface, Format format,
                         int width, int height, double red, double green, double blue, double alpha);
 
+                [DllImport (CairoImp)]
+                public static extern void cairo_surface_reference (IntPtr surface);
+
                 [DllImport (CairoImp)]                
                 public static extern void cairo_surface_destroy (IntPtr surface);
-
-//                 [DllImport (CairoImp)]                
-//                 public static extern Status cairo_surface_put_image (
-//                         IntPtr surface, string data, int width, int height, int stride);
 
                 [DllImport (CairoImp)]                
                 public static extern Status cairo_surface_set_repeat (
@@ -284,7 +280,7 @@ namespace System.Drawing.Cairo {
 
                 [DllImport (CairoImp)]                
                 public static extern Status cairo_surface_get_matrix (
-                        IntPtr surface, ref IntPtr matrix);
+                        IntPtr surface, out IntPtr matrix);
 
                 [DllImport (CairoImp)]                
                 public static extern Status cairo_surface_set_filter (
@@ -315,7 +311,8 @@ namespace System.Drawing.Cairo {
                 [DllImport (CairoImp)]                                
                 public static extern Status cairo_matrix_get_affine (
                         IntPtr matrix,
-                        out double a, out double b, out double c, out double d, out double tx, out double ty);
+                        out double a, out double b, out double c, 
+                        out double d, out double tx, out double ty);
 
                 [DllImport (CairoImp)]                                
                 public static extern Status cairo_matrix_translate (
