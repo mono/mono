@@ -1,3 +1,7 @@
+2003-09-29    <cesar@ciencias.unam.mx>
+
+	* Added VsaItem.cs, implements IVsaItem.
+
 2003-09-28    <cesar@ciencias.unam.mx>
 
 	* VsaItems.cs: Check that no name is repeated (this was docs fault
