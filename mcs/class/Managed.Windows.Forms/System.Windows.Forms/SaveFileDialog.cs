@@ -85,7 +85,18 @@ namespace System.Windows.Forms
 			if ( FileName == null )
 				throw new ArgumentNullException( "OpenFile", "FileName is null" );
 			
-			return new FileStream( FileName, FileMode.Open, FileAccess.ReadWrite );
+			Stream retValue;
+			
+			try
+			{
+				retValue = new FileStream( FileName, FileMode.Create, FileAccess.ReadWrite );
+			}
+			catch (Exception ex)
+			{
+				retValue = null;
+			}
+			
+			return retValue;
 		}
 		#endregion	// Public Instance Methods
 		
