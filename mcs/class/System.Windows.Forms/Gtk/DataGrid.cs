@@ -972,10 +972,10 @@ namespace System.Windows.Forms {
 			// FIXME: does not belong in base method
 			// define the columns in the treeview store
 			// based on the schema of the result
-			uint[] theTypes = new uint[pdc.Count];
+			GLib.GType[] theTypes = new GLib.GType[pdc.Count];
 			
 			for (int col = 0; col < pdc.Count; col++) {
-				theTypes[col] = (int) TypeFundamentals.TypeString;
+				theTypes[col] = GType.String;
 			}
 			store.SetColumnTypes (theTypes);
 			
@@ -1049,7 +1049,7 @@ namespace System.Windows.Forms {
 		private TreeIter NewRow () 
 		{ 
 			TreeIter rowTreeIter = new TreeIter();
-			store.Append (out rowTreeIter);
+			rowTreeIter = store.Append ();
 			return rowTreeIter;
 		}
 		
@@ -1098,10 +1098,10 @@ namespace System.Windows.Forms {
 			if (store != null) {
 				store.Clear ();
 				store = null;
-				store = new ListStore ((int)TypeFundamentals.TypeString);
+				store = new ListStore (typeof (string));
 			}
 			else
-				store = new ListStore ((int)TypeFundamentals.TypeString);	
+				store = new ListStore (typeof (string));	
 
 			if (gridColumns != null) {
 				for (int c = 0; c < gridColumns.Length; c++) {

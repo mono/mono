@@ -41,7 +41,7 @@ namespace System.Windows.Forms {
 			public void Add(String items){
 			
 				Value value = new Value(items);
-				owner.store.Append (out iter);
+				iter = owner.store.Append ();
  				owner.store.SetValue (iter, 0, value);
 				owner.UpdateStore();
 			}

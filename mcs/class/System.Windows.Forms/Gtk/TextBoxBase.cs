@@ -285,8 +285,8 @@ namespace System.Windows.Forms {
 		public void Select(int start, int length) 
 		{
 			Gtk.TextIter iter_start, iter_end;
-			TextBuffer.GetIterAtOffset (out iter_start, start);
-			TextBuffer.GetIterAtOffset (out iter_end, length);
+			iter_start = TextBuffer.GetIterAtOffset (start);
+			iter_end = TextBuffer.GetIterAtOffset (length);
 
 			TextBuffer.MoveMark(TextBuffer.InsertMark , iter_end);
 			TextBuffer.MoveMark (TextBuffer.SelectionBound, iter_start);
