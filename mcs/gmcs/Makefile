@@ -72,6 +72,12 @@ gmcs.exe: $(all_sources)
 gmcs2.exe: $(all_sources)
 	MONO_PATH="../class/lib/net_2_0$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" mcs -2 /target:exe /debug /define:MCS_DEBUG /out:$@ $^
 
+gmcs3.exe: $(all_sources)
+	MONO_PATH="../class/lib/net_2_0$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) ./gmcs2.exe $(USE_MCS_FLAGS) -2 /target:exe /debug /define:MCS_DEBUG /out:$@ $^
+
+gmcs4.exe: $(all_sources)
+	MONO_PATH="../class/lib/net_2_0$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) ./gmcs3.exe $(USE_MCS_FLAGS) -2 /target:exe /debug /define:MCS_DEBUG /out:$@ $^
+
 cs-parser.cs: cs-parser.jay $(topdir)/jay/skeleton.cs
 	$(topdir)/jay/jay -ctv < $(topdir)/jay/skeleton.cs $< > jay-tmp.out && mv jay-tmp.out $@
 
@@ -82,20 +88,14 @@ TIME =
 # This used to be called test, but that conflicts with the global
 # recursive target.
 
-btest: mcs2.exe mcs3.exe
-	ls -l mcs2.exe mcs3.exe
-
-mcs2.exe: gmcs.exe
-	$(TIME) $(RUNTIME) ./gmcs.exe $(USE_MCS_FLAGS) /target:exe /out:$@ $(all_sources)
-
-mcs3.exe: mcs2.exe
-	$(TIME) $(RUNTIME) ./mcs2.exe $(USE_MCS_FLAGS) /target:exe /out:$@ $(all_sources)
+btest: gmcs2.exe gmcs3.exe gmcs4.exe
+	ls -l gmcs3.exe gmcs4.exe
 
 wc:
 	wc -l $(all_sources)
 
 ctest: 
-	rm -f mcs2.exe mcs3.exe
+	rm -f gmcs3.exe mcs4.exe
 	make btest USE_MCS_FLAGS= 
 
 # we need this because bash tries to use its own crappy timer

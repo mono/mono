@@ -241,11 +241,11 @@ namespace Mono.CSharp {
 
 		public class AliasEntry {
 			public readonly string Name;
-			public readonly TypeName Alias;
+			public readonly MemberName Alias;
 			public readonly NamespaceEntry NamespaceEntry;
 			public readonly Location Location;
 			
-			public AliasEntry (NamespaceEntry entry, string name, TypeName alias, Location loc)
+			public AliasEntry (NamespaceEntry entry, string name, MemberName alias, Location loc)
 			{
 				Name = name;
 				Alias = alias;
@@ -371,7 +371,7 @@ namespace Mono.CSharp {
 			using_clauses.Add (ue);
 		}
 
-		public void UsingAlias (string name, TypeName alias, Location loc)
+		public void UsingAlias (string name, MemberName alias, Location loc)
 		{
 			if (DeclarationFound){
 				Report.Error (1529, loc, "A using clause must precede all other namespace elements");

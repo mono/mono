@@ -882,7 +882,8 @@ namespace Mono.CSharp {
 				return false;
 
 			GenericTypeParameterBuilder[] gen_params;
-			gen_params = mb.DefineGenericParameters (MemberName.TypeParameters);
+			string[] names = MemberName.TypeArguments.GetDeclarations ();
+			gen_params = mb.DefineGenericParameters (names);
 			for (int i = 0; i < TypeParameters.Length; i++)
 				TypeParameters [i].Define (gen_params [i]);
 

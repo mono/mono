@@ -398,7 +398,7 @@ namespace Mono.CSharp {
 			if (indexers == null)
 				indexers = new ArrayList ();
 
-			if (i.MemberName.TypeName != null)
+			if (i.MemberName.Left != null)
 				indexers.Insert (0, i);
 			else
 				indexers.Add (i);
@@ -4655,12 +4655,12 @@ namespace Mono.CSharp {
 
 			if (MemberType.IsPointer && !UnsafeOK (container))
 				return false;
-			
+
 			//
 			// Check for explicit interface implementation
 			//
-			if (MemberName.TypeName != null) {
-				ExplicitInterfaceName = MemberName.TypeName.GetTypeExpression (Location);
+			if (MemberName.Left != null) {
+				ExplicitInterfaceName = MemberName.Left.GetTypeExpression (Location);
 				ShortName = MemberName.Name;
 			} else
 				ShortName = Name;

@@ -1,3 +1,14 @@
+2004-06-13  Martin Baulig  <martin@ximian.com>
+
+	* decl.cs (TypeName): Removed.
+	(MemberName): Removed TypeName and MemberNow; now we just have
+	MemberName.
+
+	* cs-parser.jay: Don't distinguish between type arguments and type
+	parameters in the grammar and simplified the rules a bit.  The
+	reduce/reduce conflicts are now gone (except the one we inherited
+	from mcs).
+
 2004-06-11  Martin Baulig  <martin@ximian.com>
 
 	* expression.cs (Invocation.IsParamsMethodApplicable): We need to

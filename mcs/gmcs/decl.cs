@@ -20,29 +20,34 @@ using System.Reflection;
 
 namespace Mono.CSharp {
 
-	public class TypeName {
+	public class MemberName : ICloneable {
 		public readonly string Name;
 		public readonly TypeArguments TypeArguments;
 
-		public readonly TypeName Left;
+		public readonly MemberName Left;
 
-		public static readonly TypeName Null = new TypeName ("");
+		public static readonly MemberName Null = new MemberName ("");
 
-		public TypeName (string name)
+		public MemberName (string name)
 		{
 			this.Name = name;
 		}
 
-		public TypeName (string name, TypeArguments args)
+		public MemberName (string name, TypeArguments args)
 			: this (name)
 		{
 			this.TypeArguments = args;
 		}
 
-		public TypeName (TypeName left, string name, TypeArguments args)
+		public MemberName (MemberName left, string name, TypeArguments args)
 			: this (name, args)
 		{
 			this.Left = left;
+		}
+
+		public MemberName (MemberName left, MemberName right)
+			: this (left, right.Name, right.TypeArguments)
+		{
 		}
 
 		public string GetName ()
@@ -51,6 +56,15 @@ namespace Mono.CSharp {
 				return Left.GetName () + "." + Name;
 			else
 				return Name;
+		}
+
+		public string GetName (bool is_generic)
+		{
+			string name = is_generic ? Basename : Name;
+			if (Left != null)
+				return Left.GetName (is_generic) + "." + name;
+			else
+				return name;
 		}
 
 		public int CountTypeArguments {
@@ -100,13 +114,26 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public MemberName GetMemberName ()
+		public string Basename {
+			get {
+				if (TypeArguments != null)
+					return Name + "!" + TypeArguments.Count;
+				else
+					return Name;
+			}
+		}
+
+		public MemberName Clone ()
 		{
-			if (TypeArguments != null) {
-				string[] type_params = TypeArguments.GetDeclarations ();
-				return new MemberName (Left, Name, type_params);
-			} else
-				return new MemberName (Left, Name);
+			if (Left != null)
+				return new MemberName (Left.Clone (), this);
+			else
+				return new MemberName (Name, TypeArguments);
+		}
+
+		object ICloneable.Clone ()
+		{
+			return Clone ();
 		}
 
 		public override string ToString ()
@@ -121,120 +148,6 @@ namespace Mono.CSharp {
 				return Left + "." + full_name;
 			else
 				return full_name;
-		}
-	}
-
-	public class MemberName {
-		public readonly TypeName TypeName;
-		public readonly string Name;
-		public readonly string[] TypeParameters;
-
-		public MemberName (string name)
-		{
-			this.Name = name;
-		}
-
-		public MemberName (TypeName type, string name)
-		{
-			this.TypeName = type;
-			this.Name = name;
-		}
-
-		public MemberName (TypeName type, MemberName name)
-		{
-			this.TypeName = type;
-			this.Name = name.Name;
-			this.TypeParameters = name.TypeParameters;
-		}
-
-		public MemberName (TypeName type, string name, ArrayList type_params)
-			: this (type, name)
-		{
-			if (type_params != null) {
-				TypeParameters = new string [type_params.Count];
-				type_params.CopyTo (TypeParameters, 0);
-			}
-		}
-
-		public MemberName (TypeName type, string name, string[] type_params)
-			: this (type, name)
-		{
-			this.TypeParameters = type_params;
-		}
-
-		public TypeName MakeTypeName (Location loc)
-		{
-			if (TypeParameters != null) {
-				TypeArguments args = new TypeArguments (loc);
-				foreach (string param in TypeParameters)
-					args.Add (new SimpleName (param, loc));
-				return new TypeName (TypeName, Name, args);
-			}
-
-			return new TypeName (TypeName, Name, null);
-		}
-
-		public static readonly MemberName Null = new MemberName ("");
-
-		public string Basename {
-			get {
-				if (TypeParameters != null)
-					return Name + "!" + TypeParameters.Length;
-				else
-					return Name;
-			}
-		}
-
-		public string GetName (bool is_generic)
-		{
-			string name = is_generic ? Basename : Name;
-			if (TypeName != null)
-				return TypeName.GetTypeName (is_generic) + "." + name;
-			else
-				return name;
-		}
-
-		public int CountTypeParameters {
-			get {
-				if (TypeParameters != null)
-					return 0;
-				else
-					return TypeParameters.Length;
-			}
-		}
-
-		protected string PrintTypeParams ()
-		{
-			if (TypeParameters != null) {
-				StringBuilder sb = new StringBuilder ();
-				sb.Append ("<");
-				for (int i = 0; i < TypeParameters.Length; i++) {
-					if (i > 0)
-						sb.Append (",");
-					sb.Append (TypeParameters [i]);
-				}
-				sb.Append (">");
-				return sb.ToString ();
-			}
-
-			return "";
-		}
-
-		public string FullName {
-			get {
-				string full_name = Name + PrintTypeParams ();
-
-				if (TypeName != null)
-					return TypeName + "." + full_name;
-				else
-					return full_name;
-			}
-		}
-
-		public override string ToString ()
-		{
-			return String.Format ("MemberName [{0}:{1}:{2}]",
-					      TypeName, Name, PrintTypeParams ());
 		}
 	}
 
@@ -606,9 +519,9 @@ namespace Mono.CSharp {
 			NamespaceEntry = ns;
 			Basename = name.Name;
 			defined_names = new Hashtable ();
-			if (name.TypeParameters != null) {
+			if (name.TypeArguments != null) {
 				is_generic = true;
-				count_type_params = name.TypeParameters.Length;
+				count_type_params = name.TypeArguments.Count;
 			}
 			if (parent != null)
 				count_type_params += parent.count_type_params;
@@ -1544,13 +1457,14 @@ namespace Mono.CSharp {
 				return AdditionResult.Success;
 			}
 
-			type_params = new TypeParameter [MemberName.TypeParameters.Length];
+			string[] names = MemberName.TypeArguments.GetDeclarations ();
+			type_params = new TypeParameter [names.Length];
 
 			//
 			// Register all the names
 			//
-			for (int i = 0; i < MemberName.TypeParameters.Length; i++) {
-				string name = MemberName.TypeParameters [i];
+			for (int i = 0; i < type_params.Length; i++) {
+				string name = names [i];
 
 				AdditionResult res = IsValid (name, name);
 
