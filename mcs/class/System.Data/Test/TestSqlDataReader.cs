@@ -53,33 +53,45 @@ namespace TestSystemDataSqlClient {
 					dt.Columns.Count);
 
 				// display the schema
-				for(c = 0; c < dt.Columns.Count; c++) {
-					Console.WriteLine("   Column Name: " + 
-						dt.Columns[c].ColumnName);
-					Console.WriteLine("          MaxLength: " +
-						dt.Columns[c].MaxLength);
-					Console.WriteLine("          Type: " +
-						dt.Columns[c].DataType);
+				foreach (DataRow schemaRow in dt.Rows) {
+					foreach (DataColumn schemaCol in dt.Columns)
+						Console.WriteLine(schemaCol.ColumnName + 
+							" = " + 
+							schemaRow[schemaCol]);
+					Console.WriteLine();
 				}
+
 				int nRows = 0;
-
+				string output, metadataValue, dataValue;
 				// Read and display the rows
-			while(rdr.Read()) {
-				Console.WriteLine("   Row " + nRows + ": ");
-
-				for(c = 0; c < rdr.FieldCount; c++) {
-					if(rdr.IsDBNull(c) == true)
-						Console.WriteLine("      " + 
-							rdr.GetName(c) + " is DBNull");
-					else
-						Console.WriteLine("      " + 
-							rdr.GetName(c) + ": " +
-							rdr[c].ToString());
+				Console.WriteLine("Gonna do a Read() now...");
+				while(rdr.Read()) {
+					Console.WriteLine("   Row " + nRows + ": ");
+					
+					for(c = 0; c < rdr.FieldCount; c++) {
+						// column meta data 
+						DataRow dr = dt.Rows[c];
+						metadataValue = 
+							"    Col " + 
+							c + ": " + 
+							dr["ColumnName"];
+						
+						// column data
+						if(rdr.IsDBNull(c) == true)
+							dataValue = " is NULL";
+						else
+							dataValue = 
+								": " + 
+								rdr.GetValue(c);
+					
+						// display column meta data and data
+						output = metadataValue + dataValue;					
+						Console.WriteLine(output);
+					}
+					nRows++;
 				}
-				nRows++;
-			}
 				Console.WriteLine("   Total Rows: " + 
-					nRows);
+						nRows);
 			} while(rdr.NextResult());
 			Console.WriteLine("Total Result sets: " + results);
 			

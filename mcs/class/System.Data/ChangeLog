@@ -1,5 +1,21 @@
 2002-05-22  Daniel Morgan <danmorg@sc.rr.com>
 
+	* System.Data/DataRow.cs: change suggested
+	by tim: in Item indexer, do an EndEdit()
+	
+	* System.Data.SqlClient/SqlCommand.cs: more
+	fixes to SqlResult.  After setting each item in
+	the DataRow, do an AcceptChanges() to commit
+	the changes in the DataRow.  For DataType, use a Type
+	of System.String since System.Type nor System.Object
+	seems to work.
+	
+	* Test/TestSqlDataReader.cs
+	* Test/PostgresTest.cs: updated to to be on
+	the way schema table is suppose to work
+
+2002-05-22  Daniel Morgan <danmorg@sc.rr.com>
+
 	* System.Data.SqlClient/SqlCommand.cs: more work on 
 	building the schema table
 

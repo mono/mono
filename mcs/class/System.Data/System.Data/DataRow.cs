@@ -100,6 +100,7 @@ namespace System.Data
 
 				BeginEdit ();  // implicitly called
 				proposed[columnIndex] = value;
+				EndEdit (); // is this the right thing to do?
 			}
 		}
 

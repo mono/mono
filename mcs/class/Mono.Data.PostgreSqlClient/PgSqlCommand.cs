@@ -717,7 +717,7 @@ namespace System.Data.SqlClient {
 			dataTableSchema.Columns.Add ("BaseColumnName", typeof (string));
 			dataTableSchema.Columns.Add ("BaseSchemaName", typeof (string));
 			dataTableSchema.Columns.Add ("BaseTableName", typeof (string));
-			dataTableSchema.Columns.Add ("DataType", typeof (string));
+			dataTableSchema.Columns.Add ("DataType", typeof(string));
 			dataTableSchema.Columns.Add ("AllowDBNull", typeof (bool));
 			dataTableSchema.Columns.Add ("ProviderType", typeof (string));
 			dataTableSchema.Columns.Add ("IsAliased", typeof (bool));
@@ -735,15 +735,11 @@ namespace System.Data.SqlClient {
 
 			DataRow schemaRow;
 			int oid;
-			string pgType;
 			DbType dbType;
 			Type typ;
-			DataColumn schemaCol;
-			
+						
 			for (int i = 0; i < fieldCount; i += 1 )
 			{
-				oid = PostgresLibrary.PQftype (pgResult, i);
-
 				schemaRow = dataTableSchema.NewRow ();
 
 				schemaRow["ColumnName"] = PostgresLibrary.PQfname (pgResult, i);
@@ -757,16 +753,14 @@ namespace System.Data.SqlClient {
 				schemaRow["BaseSchemaName"] = ""; // ? tim
 				schemaRow["BaseTableName"]  = ""; // ? tim
 				
-				Console.WriteLine("Calling OidToTypname...");
-				pgType = PostgresHelper.OidToTypname (oid, con.Types);
-				pgtypes[i] = pgType;
-
-				Console.WriteLine("Calling TypnameToSqlDbType...");
-				dbType = PostgresHelper.TypnameToSqlDbType (pgType);
+				// PostgreSQL type to .NET type stuff
+				oid = PostgresLibrary.PQftype (pgResult, i);
+				pgtypes[i] = PostgresHelper.OidToTypname (oid, con.Types);	
+				dbType = PostgresHelper.TypnameToSqlDbType (pgtypes[i]);
 				
-				Console.WriteLine("Calling DbTypeToSystemType...");
 				typ = PostgresHelper.DbTypeToSystemType (dbType);
-				schemaRow["DataType"] = typ.ToString();
+				string st = typ.ToString();
+				schemaRow["DataType"] = st;
 
 				schemaRow["AllowDBNull"] = false; // ? tim
 				schemaRow["ProviderType"] = ""; // ? tim
@@ -778,9 +772,21 @@ namespace System.Data.SqlClient {
 				schemaRow["IsHidden"] = false; // ? tim
 				schemaRow["IsLong"] = false; // ? tim
 				schemaRow["IsReadOnly"] = false; // ? tim
-
+				schemaRow.AcceptChanges();
 				dataTableSchema.Rows.Add (schemaRow);
+				
 			}
+
+#if DEBUG_SqlCommand
+			Console.WriteLine("********** DEBUG Table Schema BEGIN ************");
+			foreach (DataRow myRow in dataTableSchema.Rows) {
+				foreach (DataColumn myCol in dataTableSchema.Columns)
+					Console.WriteLine(myCol.ColumnName + " = " + myRow[myCol]);
+				Console.WriteLine();
+			}
+			Console.WriteLine("********** DEBUG Table Schema END ************");
+#endif // DEBUG_SqlCommand
+
 		}
 	}
 }

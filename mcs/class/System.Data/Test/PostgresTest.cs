@@ -287,18 +287,17 @@ namespace TestSystemDataSqlClient {
 				DataTable dt = reader.GetSchemaTable();
 			
 				// number of columns in the table
-				Console.WriteLine("dt.Columns.Count: " +
+				Console.WriteLine("Columns Count: " +
 					dt.Columns.Count);
 
 				int c;
 				// display the schema
-				for(c = 0; c < dt.Columns.Count; c++) {
-					Console.WriteLine("* Column Name: " + 
-						dt.Columns[c].ColumnName);
-					Console.WriteLine("         MaxLength: " +
-						dt.Columns[c].MaxLength);
-					Console.WriteLine("         Type: " +
-						dt.Columns[c].DataType);
+				foreach (DataRow schemaRow in dt.Rows) {
+					foreach (DataColumn schemaCol in dt.Columns)
+						Console.WriteLine(schemaCol.ColumnName + 
+							" = " + 
+							schemaRow[schemaCol]);
+					Console.WriteLine();
 				}
 
 				int nRows = 0;
@@ -311,10 +310,11 @@ namespace TestSystemDataSqlClient {
 					for(c = 0; c < reader.FieldCount; c++) {
 						
 						// column meta data 
+						DataRow dr = dt.Rows[c];
 						metadataValue = 
 							"    Col " + 
 							c + ": " + 
-							dt.Columns[c].ColumnName;
+							dr["ColumnName"];
 						
 						// column data
 						if(reader.IsDBNull(c) == true)
