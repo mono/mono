@@ -2,14 +2,13 @@
 // System.Console.cs
 //
 // Author:
-//   Dietmar Maurer (dietmar@ximian.com)
+// 	Dietmar Maurer (dietmar@ximian.com)
+//	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
+// (C) 2004,2005 Novell, Inc. (http://www.novell.com)
 //
 
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
-//
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
 // "Software"), to deal in the Software without restriction, including
@@ -399,7 +398,152 @@ namespace System
 
 		public static string ReadLine ()
 		{
+#if NET_2_0
+			bool prevEcho;
+			if (ConsoleDriver.Initialized) {
+				prevEcho = ConsoleDriver.Echo;
+				ConsoleDriver.Echo = true;
+			}
+#endif
 			return stdin.ReadLine ();
+#if NET_2_0
+			if (ConsoleDriver.Initialized)
+				ConsoleDriver.Echo = prevEcho;
+#endif
 		}
+
+#if NET_2_0
+		// On windows, for en-US the Default is Windows-1252, while input/output is IBM437
+		// We might want to initialize these fields in the ConsoleDriver instead.
+		static Encoding inputEncoding = Encoding.Default;
+		static Encoding outputEncoding = Encoding.Default;
+
+		public static Encoding InputEncoding {
+			get { return inputEncoding; }
+			set { inputEncoding = value; }
+		}
+
+		public static Encoding OutputEncoding {
+			get { return outputEncoding; }
+			set { outputEncoding = value; }
+		}
+
+		public static ConsoleColor BackgroundColor {
+			get { return ConsoleDriver.BackgroundColor; }
+			set { ConsoleDriver.BackgroundColor = value; }
+		}
+
+		public static int CursorLeft {
+			get { return ConsoleDriver.CursorLeft; }
+			set { ConsoleDriver.CursorLeft = value; }
+		}
+
+		public static int CursorTop {
+			get { return ConsoleDriver.CursorTop; }
+			set { ConsoleDriver.CursorTop = value; }
+		}
+
+		public static bool CursorVisible {
+			get { return ConsoleDriver.CursorVisible; }
+			set { ConsoleDriver.CursorVisible = value; }
+		}
+
+		public static ConsoleColor ForegroundColor {
+			get { return ConsoleDriver.ForegroundColor; }
+			set { ConsoleDriver.ForegroundColor = value; }
+		}
+
+		public static bool KeyAvailable {
+			get { return ConsoleDriver.KeyAvailable; }
+		}
+
+		public static string Title {
+			get { return ConsoleDriver.Title; }
+			set { ConsoleDriver.Title = value; }
+		}
+
+		public static bool TreatControlCAsInput {
+			get { return ConsoleDriver.TreatControlCAsInput; }
+			set { ConsoleDriver.TreatControlCAsInput = value; }
+		}
+
+		public static void Beep ()
+		{
+			Beep (1000, 500);
+		}
+
+		public static void Beep (int frequency, int duration)
+		{
+			if (frequency < 37 || frequency > 32767)
+				throw new ArgumentOutOfRangeException ("frequency");
+
+			if (duration <= 0)
+				throw new ArgumentOutOfRangeException ("duration");
+
+			ConsoleDriver.Beep (frequency, duration);
+		}
+
+		public static void Clear ()
+		{
+			ConsoleDriver.Clear ();
+		}
+
+		[MonoTODO]
+		public static void MoveBufferArea (int sourceLeft, int sourceTop, int sourceWidth, int sourceHeight,
+						int targetLeft, int targetTop)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static void MoveBufferArea (int sourceLeft, int sourceTop, int sourceWidth, int sourceHeight,
+						int targetLeft, int targetTop, Char sourceChar,
+						ConsoleColor sourceForeColor, ConsoleColor sourceBackColor)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public static ConsoleKeyInfo ReadKey ()
+		{
+			return ReadKey (false);
+		}
+
+		public static ConsoleKeyInfo ReadKey (bool intercept)
+		{
+			return ConsoleDriver.ReadKey (intercept);
+		}
+
+		public static void ResetColor ()
+		{
+			ConsoleDriver.ResetColor ();
+		}
+
+		[MonoTODO]
+		public static void SetBufferSize (int width, int height)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public static void SetCursorPosition (int left, int top)
+		{
+			ConsoleDriver.SetCursorPosition (left, top);
+		}
+
+		[MonoTODO]
+		public static void SetWindowPosition (int left, int top)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static void SetWindowSize (int width, int height)
+		{
+			throw new NotImplementedException ();
+		}
+
+		//FIXME
+		//public event ConsoleCancelEventHandler CancelKeyPress;
+#endif
 	}
 }
+

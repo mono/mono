@@ -86,6 +86,14 @@ System/Char.cs
 System/CharEnumerator.cs
 System/CLSCompliantAttribute.cs
 System/Console.cs
+System/ConsoleCancelEventArgs.cs
+System/ConsoleCancelEventHandler.cs
+System/ConsoleColor.cs
+System/ConsoleDriver.cs
+System/ConsoleKey.cs
+System/ConsoleKeyInfo.cs
+System/ConsoleModifiers.cs
+System/ConsoleSpecialKey.cs
 System/ContextBoundObject.cs
 System/ContextMarshalException.cs
 System/ContextStaticAttribute.cs
@@ -123,6 +131,7 @@ System/IApplicationDescription.cs
 System/IAsyncResult.cs
 System/ICloneable.cs
 System/IComparable.cs
+System/IConsoleDriver.cs
 System/IConvertible.cs
 System/ICustomFormatter.cs
 System/IDisposable.cs
@@ -139,6 +148,7 @@ System/InvalidCastException.cs
 System/InvalidOperationException.cs
 System/InvalidProgramException.cs
 System/IServiceProvider.cs
+System/KnownTerminals.cs
 System/LoaderOptimization.cs
 System/LoaderOptimizationAttribute.cs
 System/LocalDataStoreSlot.cs
@@ -190,6 +200,11 @@ System/StackOverflowException.cs
 System/STAThreadAttribute.cs
 System/String.cs
 System/SystemException.cs
+System/TermInfoBooleans.cs
+System/TermInfoDriver.cs
+System/TermInfoNumbers.cs
+System/TermInfoReader.cs
+System/TermInfoStrings.cs
 System/ThreadStaticAttribute.cs
 System/TimeSpan.cs
 System/TimeZone.cs

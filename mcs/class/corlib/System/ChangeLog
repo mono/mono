@@ -1,3 +1,31 @@
+2005-01-31 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ConsoleDriver.cs: static class that forwards the Console 2.0 class
+	calls to the proper driver.
+	* TermInfoDriver.cs: terminfo based console driver.
+	* IConsoleDriver.cs: interface implemented by console drivers.
+
+	* ConsoleCancelEventArgs.cs:
+	* ConsoleCancelEventHandler.cs:
+
+	* ConsoleModifiers.cs: 
+	* ConsoleSpecialKey.cs:
+	* ConsoleColor.cs:
+	* ConsoleKey.cs: new enumerations.
+
+	* ConsoleKeyInfo.cs: New file.
+
+	* TermInfoReader.cs: reader for terminfo capabilities files.
+
+	* TermInfoNumbers.cs:
+	* TermInfoBooleans.cs:
+	* TermInfoStrings.cs: enumations for terminfo property names.
+
+	* KnownTerminals.cs: byte arrays for selected terminals.
+
+	* Console.cs: added more 2.0 methods and implemented some of them.
+
+
 2005-01-30  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Int32.cs : (FindSign) IndexOf() is better than creating substring.
