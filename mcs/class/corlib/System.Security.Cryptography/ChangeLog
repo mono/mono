@@ -1,3 +1,9 @@
+2002-05-19  Martin Baulig  <martin@gnome.org>
+
+	* FromBase64Transform.cs (TransformFinalBlock): The return value of
+	`DoTransform' tells us the number of bytes actually written - if it's
+	smaller than `res', copy it to a smaller array.
+
 2002-02-21  Mark Crichton <crichton@gimp.org>
 
 	* RNGCryptoServiceProvider.cs: New file.

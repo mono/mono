@@ -244,9 +244,16 @@ namespace System.Security.Cryptography {
 			Array.Copy (accumulator, 0, tmpBuf, 0, accPtr);
 			Array.Copy (src, srcOff, tmpBuf, accPtr, n);
 
-			DoTransform (tmpBuf, 0, dataLen, res, 0);
+			int actLen = DoTransform (tmpBuf, 0, dataLen, res, 0);
 
 			accPtr = 0;
+
+			if (actLen < resLen) {
+				byte [] newres = new byte [actLen];
+
+				Array.Copy (res, newres, actLen);
+				return newres;
+			} else
 			return res;
 		}
 
