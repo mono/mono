@@ -1,3 +1,7 @@
+2004-05-17  Marek Safar  <marek.safar@seznam.cz>
+
+	* decl.cs: Fix bug #58478.
+
 2004-05-17  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* statement.cs: When checking for unreachable code on an EmptyStatement,
