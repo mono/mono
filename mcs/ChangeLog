@@ -1,3 +1,8 @@
+2004-09-27  Raja R Harinath  <rharinath@novell.com>
+
+	* nunit20/nunit-console/Makefile (PROGRAM): Put in
+	profile-specific directory.
+
 2004-09-21  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (DIST_ONLY_SUBDIRS): Add 'gmcs' since it is specially
