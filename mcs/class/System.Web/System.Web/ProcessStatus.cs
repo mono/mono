@@ -7,13 +7,11 @@
 // (C) Bob Smith
 //
 
-namespace System.Web
-{
-        public enum ProcessStatus
-        {
-                Alive,
-                ShutDown,
-                ShuttingDown,
-                Terminated
-        }
+namespace System.Web {
+	public enum ProcessStatus {
+		Alive = 0x1,
+		ShuttingDown,
+		ShutDown,
+		Terminated
+	}
 }

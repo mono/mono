@@ -8,15 +8,16 @@
 //
 
 namespace System.Web {
-   public enum ProcessShutdownReason {
-      DeadlockSuspected,
-      IdleTimeout,
-      MemoryLimitExceeded,
-      None,
-      PingFailed,
-      RequestQueueLimit,
-      RequestsLimit,
-      Timeout,
-      Unexpected
+	[Serializable]
+	public enum ProcessShutdownReason {
+		None,
+		Unexpected,
+		RequestsLimit,
+		RequestQueueLimit,
+		Timeout,
+		IdleTimeout,
+		MemoryLimitExceeded,
+		PingFailed,
+		DeadlockSuspected
    }
 }

@@ -1,3 +1,18 @@
+2002-07-24  Tim Coleman <tim@timcoleman.com>
+	* HttpCachePolicy.cs:
+		Added stubbs to this class.
+	* HttpCacheability.cs:
+	* HttpCacheRevalidation.cs:
+	* HttpValidationStatus.cs:
+	* ProcessShutdownReason.cs:
+	* ProcessStatus.cs:
+	* TraceMode.cs:
+		Reorder the enumerations (and in some cases make
+		one-based) in order to agree with the .NET 
+		implementation, based on the class status page.
+	* ProcessInfo.cs:
+		Implementation of this class.
+
 2002-07-23  Tim Coleman <tim@timcoleman.com>
 	* HttpCompileException.cs:
 	* HttpParseException.cs:

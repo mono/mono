@@ -8,10 +8,11 @@
 //
 
 namespace System.Web {
-   public enum HttpCacheability {
-      NoCache,
-      Private,
-      Public,
-      Server
-   }
+	[Serializable]
+	public enum HttpCacheability {
+		NoCache = 0x1,
+		Private,
+		Server,
+		Public,
+	}
 }

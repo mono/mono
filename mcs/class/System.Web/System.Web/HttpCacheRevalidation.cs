@@ -8,9 +8,10 @@
 //
 
 namespace System.Web {
-   public enum HttpCacheRevalidation {
-      AllCaches,
-      None,
-      ProxyCaches
-   }
+	[Serializable]
+	public enum HttpCacheRevalidation {
+		AllCaches = 0x1,
+		ProxyCaches,
+		None,
+	}
 }

@@ -7,12 +7,11 @@
 // (C) Bob Smith
 //
 
-namespace System.Web
-{
-        public enum HttpValidationStatus
-        {
+namespace System.Web {
+	[Serializable]
+        public enum HttpValidationStatus {
+                Invalid = 0x1,
                 IgnoreThisRequest,
-                Invalid,
                 Valid
         }
 }

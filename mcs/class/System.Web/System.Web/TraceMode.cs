@@ -8,9 +8,9 @@
 //
 
 namespace System.Web {
-   public enum TraceMode {
-      Default,               
-      SortByCategory,
-      SortByTime
-   }
+	public enum TraceMode {
+		SortByTime,
+		SortByCategory,
+		Default
+	}
 }
