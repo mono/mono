@@ -2310,15 +2310,18 @@ namespace Mono.CSharp {
 							//
 							if (b.method == TypeManager.string_concat_string_string ||
 							     b.method == TypeManager.string_concat_string_string_string){
-								ArrayList bargs = new ArrayList (b.Arguments.Count);
-								int count = bargs.Count;
+								int count = b.Arguments.Count;
 								
 								if (count == 2){
+									ArrayList bargs = new ArrayList (3);
+									bargs.AddRange (b.Arguments);
 									bargs.Add (new Argument (right, Argument.AType.Expression));
 									return new BinaryMethod (
 										TypeManager.string_type,
 										TypeManager.string_concat_string_string_string, bargs);
 								} else if (count == 3){
+									ArrayList bargs = new ArrayList (4);
+									bargs.AddRange (b.Arguments);
 									bargs.Add (new Argument (right, Argument.AType.Expression));
 									return new BinaryMethod (
 										TypeManager.string_type,

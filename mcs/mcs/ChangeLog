@@ -1,5 +1,8 @@
 2003-11-25  Miguel de Icaza  <miguel@ximian.com>
 
+	* expression.cs: Apply fix from l_m@pacbell.net (Laurent Morichetti),  
+	which fixes bug 51347.  This time test it.
+	
 	* expression.cs: Make TypeOfVoid derive from TypeOf, so code in
 	attributes for example can not tell the difference between these.
 	The difference was only a syntax feature of the language. 
