@@ -37,7 +37,7 @@ namespace Mono.CSharp {
 		ParameterInfo [] pi;
 		bool last_arg_is_params = false;
 		ParameterData gpd;
-		
+
 		public ReflectionParameters (MethodBase method)
 		{
 			object [] attrs;
@@ -50,19 +50,22 @@ namespace Mono.CSharp {
 
 			if (method.HasGenericParameters) {
 				MethodInfo generic = method.GetGenericMethodDefinition ();
-				gpd = Invocation.GetParameterData (generic);
+				if (generic != method) {
+					gpd = Invocation.GetParameterData (generic);
 
-				last_arg_is_params = gpd.HasArrayParameter;
-			} else {
-				attrs = pi [count].GetCustomAttributes (TypeManager.param_array_type, true);
-				if (attrs == null)
+					last_arg_is_params = gpd.HasArrayParameter;
 					return;
-				
-				if (attrs.Length == 0)
-					return;
-
-				last_arg_is_params = true;
+				}
 			}
+
+			attrs = pi [count].GetCustomAttributes (TypeManager.param_array_type, true);
+			if (attrs == null)
+				return;
+
+			if (attrs.Length == 0)
+				return;
+
+			last_arg_is_params = true;
 		}
 
 		public bool HasArrayParameter {

@@ -5006,7 +5006,7 @@ namespace Mono.CSharp {
 			if (pd_count == 1 && arg_count == 0)
 				return true;
 
-			Type[] method_args = method.GetGenericArguments ();
+			Type[] method_args = method.GetGenericParameters ();
 			Type[] infered_types = new Type [method_args.Length];
 
 			//
@@ -5078,7 +5078,7 @@ namespace Mono.CSharp {
 			if (arguments.Count != pd.Count)
 				return false;
 
-			Type[] method_args = method.GetGenericArguments ();
+			Type[] method_args = method.GetGenericParameters ();
 			Type[] infered_types = new Type [method_args.Length];
 
 			Type[] param_types = new Type [pd.Count];

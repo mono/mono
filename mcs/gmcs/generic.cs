@@ -742,7 +742,7 @@ namespace Mono.CSharp {
 				if (mi == null)
 					continue;
 
-				Type[] gen_params = mi.GetGenericArguments ();
+				Type[] gen_params = mi.GetGenericParameters ();
 			
 				if (atypes.Length != gen_params.Length) {
 					Report.Error (-217, loc, "Generic method `{0}' takes {1} " +

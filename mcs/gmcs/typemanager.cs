@@ -2517,6 +2517,9 @@ public class TypeManager {
 	{
 		MethodFlags flags = 0;
 
+		if (mb.HasGenericParameters)
+			mb = mb.GetGenericMethodDefinition ();
+
 		if (mb.DeclaringType is TypeBuilder){
 			MethodData method = (MethodData) builder_to_method [mb];
 			if (method == null) {
@@ -2526,12 +2529,6 @@ public class TypeManager {
 			}
 
 			return method.GetMethodFlags (loc);
-		}
-
-		if (mb.HasGenericParameters) {
-			MethodBase generic = mb.GetGenericMethodDefinition ();
-
-			return GetMethodFlags (generic, loc);
 		}
 
 		object [] attrs = mb.GetCustomAttributes (true);
