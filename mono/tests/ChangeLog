@@ -1,3 +1,9 @@
+2004-03-30  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* synchronized.cs: Monitor.Exit does not throw an exception anymore if the
+	lock is not owned by the current thread (see bug #56157). Modified test that
+	checked this.
+
 2004-03-16  Zoltan Varga  <vargaz@freemail.hu>
 
 	* libtest.c pinvoke2.cs: Add new test for implicit [Out] marshalling
