@@ -3490,6 +3490,7 @@ namespace Mono.CSharp {
 
 				if (fi.IsLiteral) {
 					Type t = fi.FieldType;
+					Type decl_type = fi.DeclaringType;
 					object o;
 
 					if (fi is FieldBuilder)
@@ -3497,16 +3498,22 @@ namespace Mono.CSharp {
 					else
 						o = fi.GetValue (fi);
 					
-					if (t.IsSubclassOf (TypeManager.enum_type)) {
-						Expression enum_member = MemberLookup (ec, t, "value__", false, loc); 
-						Type underlying_type = enum_member.Type;
-						
-						Expression e = Literalize (o, underlying_type);
-						e.Resolve (ec);
-					
-						return new EnumLiteral (e, t);
-					}
+					if (decl_type.IsSubclassOf (TypeManager.enum_type)) {
+						Expression enum_member = MemberLookup (ec, decl_type, "value__",
+										       false, loc); 
 
+						Enum en = TypeManager.LookupEnum (decl_type);
+
+						Expression e;
+						if (en != null)
+							e = Literalize (o, en.UnderlyingType);
+						else 
+							e = Literalize (o, enum_member.Type);
+						
+						e.Resolve (ec);
+						return new EnumLiteral (e, decl_type);
+					}
+					
 					Expression exp = Literalize (o, t);
 					exp.Resolve (ec);
 					

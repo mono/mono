@@ -221,6 +221,11 @@ public class TypeManager {
 		return (Delegate) builder_to_delegate [t];
 	}
 
+	public static Enum LookupEnum (Type t)
+	{
+		return (Enum) builder_to_enum [MakeKey (t)];
+	}
+	
 	public static TypeContainer LookupAttr (Type t)
 	{
 		return (TypeContainer) builder_to_attr [MakeKey (t)];

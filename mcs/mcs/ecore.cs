@@ -1161,18 +1161,18 @@ namespace Mono.CSharp {
 		///   ConvertImplicit.  If there is no implicit conversion, then
 		///   an error is signaled
 		/// </summary>
-		static public Expression ConvertImplicitRequired (EmitContext ec, Expression target,
-								  Type type, Location loc)
+		static public Expression ConvertImplicitRequired (EmitContext ec, Expression source,
+								  Type target_type, Location loc)
 		{
 			Expression e;
 			
-			e = ConvertImplicit (ec, target, type, loc);
+			e = ConvertImplicit (ec, source, target_type, loc);
 			if (e != null)
 				return e;
 			
-			string msg = "Can not convert implicitly from `"+
-				TypeManager.CSharpName (type) + "' to `" +
-				TypeManager.CSharpName (target.Type) + "'";
+			string msg = "Cannot convert implicitly from `"+
+				TypeManager.CSharpName (source.Type) + "' to `" +
+				TypeManager.CSharpName (target_type) + "'";
 
 			Error (29, loc, msg);
 
@@ -1588,6 +1588,7 @@ namespace Mono.CSharp {
 		static public Expression ConvertExplicit (EmitContext ec, Expression expr,
 							  Type target_type, Location loc)
 		{
+			Type expr_type = expr.Type;
 			Expression ne = ConvertImplicitStandard (ec, expr, target_type, loc);
 
 			if (ne != null)
@@ -1600,8 +1601,17 @@ namespace Mono.CSharp {
 			//
 			// Unboxing conversion.
 			//
-			if (expr.Type == TypeManager.object_type && target_type.IsValueType)
+			if (expr_type == TypeManager.object_type && target_type.IsValueType)
 				return new UnboxCast (expr, target_type);
+
+			//
+			// Enum types
+			//
+			if (expr is EnumLiteral) {
+				Expression e = ((EnumLiteral) expr).Child;
+				
+				return ConvertImplicit (ec, e, target_type, loc);
+			}
 			
 			ne = ConvertReferenceExplicit (expr, target_type);
 			if (ne != null)
@@ -1611,7 +1621,7 @@ namespace Mono.CSharp {
 			if (ne != null)
 				return ne;
 
-			error30 (loc, expr.Type, target_type);
+			error30 (loc, expr_type, target_type);
 			return null;
 		}
 
@@ -1749,12 +1759,12 @@ namespace Mono.CSharp {
 	///  This class is used to wrap literals which belong inside Enums
 	/// </summary>
 	public class EnumLiteral : Literal {
-		Expression child;
+		public Expression Child;
 
 		public EnumLiteral (Expression child, Type enum_type)
 		{
 			ExprClass = child.ExprClass;
-			this.child = child;
+			this.Child = child;
 			type = enum_type;
 		}
 		
@@ -1768,17 +1778,17 @@ namespace Mono.CSharp {
 
 		public override void Emit (EmitContext ec)
 		{
-			child.Emit (ec);
+			Child.Emit (ec);
 		}
 
 		public override object GetValue ()
 		{
-			return ((Literal) child).GetValue ();
+			return ((Literal) Child).GetValue ();
 		}
 
 		public override string AsString ()
 		{
-			return ((Literal) child).AsString ();
+			return ((Literal) Child).AsString ();
 		}
 	}
 

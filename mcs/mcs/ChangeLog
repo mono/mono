@@ -12,6 +12,14 @@
 	* cs-parser.jay (for_statement): Update for array initialization while
 	declaring variables.
 
+	* ecore.cs : The error message was correct, it's the variable's names that
+	were misleading ;-) Make the code more readable.
+
+	(MemberAccess::DoResolve): Fix the code which handles Enum literals to set
+	the correct type etc.
+
+	(ConvertExplicit): Handle Enum types by examining the underlying type.
+
 2001-11-21  Ravi Pratap  <ravi@ximian.com>
 
 	* parameter.cs (GetCallingConvention): Always return

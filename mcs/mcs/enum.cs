@@ -28,7 +28,7 @@ namespace Mono.CSharp {
 		public TypeBuilder EnumBuilder;
 		public Attributes  OptAttributes;
 		
-		Type UnderlyingType;
+		public Type UnderlyingType;
 
 		public readonly RootContext RootContext;
 
