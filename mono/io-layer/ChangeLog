@@ -1,3 +1,8 @@
+2003-03-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* processes.c: included Jerome Laban's patch and call SetLastError when
+	the executable is not found.
+
 2003-03-03  Dick Porter  <dick@ximian.com>
 
 	* io.c (CreateFile): Try opening directories readonly, so that
