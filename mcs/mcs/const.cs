@@ -158,6 +158,12 @@ namespace Mono.CSharp {
 
 			if (type != Expr.Type) {
 				bool fail;
+
+				// from the null type to any reference-type.
+				if (Expr is NullLiteral && !type.IsValueType &&
+				    !TypeManager.IsEnumType (type)){
+					return NullLiteral.Null;
+				}
 				
 				ConstantValue = TypeManager.ChangeType (ConstantValue, type, out fail);
 				if (fail){
