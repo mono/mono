@@ -10,6 +10,7 @@ bootstrap_dirs := \
 	System					\
 	$(MONO_CSHARP_DEBUGGER)
 
+basic_SUBDIRS := corlib System
 net_1_1_bootstrap_SUBDIRS := $(bootstrap_dirs)
 net_2_0_bootstrap_SUBDIRS := $(bootstrap_dirs)
 

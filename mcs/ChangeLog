@@ -1,3 +1,7 @@
+2004-11-09  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (basic_SUBDIRS): New.
+
 2004-11-04  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (net_1_1_bootstrap_SUBDIRS): New.

@@ -3,10 +3,10 @@ thisdir := .
 SUBDIRS := build jay mcs monoresgen class mbas nunit20 ilasm tools tests errors docs
 DIST_ONLY_SUBDIRS := gmcs
 
-bootstrap_dirs := class
-net_1_1_bootstrap_SUBDIRS := $(bootstrap_dirs)
-net_2_0_bootstrap_SUBDIRS := $(bootstrap_dirs)
-net_2_0_SUBDIRS := gmcs class tests errors tools
+basic_SUBDIRS := jay mcs class
+net_1_1_bootstrap_SUBDIRS := jay mcs class
+net_2_0_bootstrap_SUBDIRS := class
+net_2_0_SUBDIRS := jay gmcs class tests errors tools
 
 ifdef TEST_SUBDIRS
 $(PROFILE)_SUBDIRS := $(TEST_SUBDIRS)
