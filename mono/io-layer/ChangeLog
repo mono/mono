@@ -1,3 +1,9 @@
+2003-05-10  Dick Porter  <dick@ximian.com>
+
+	* io.c (CopyFile): Copy file mode as well as file data.  Based on
+	suggestion by Giuseppe Greco <giuseppe.greco@agamura.com>, bug
+	42706.
+
 2003-05-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* handles.c: don't call GC_gcollect when creating new handles.
