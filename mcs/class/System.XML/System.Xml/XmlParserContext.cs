@@ -217,15 +217,19 @@ namespace System.Xml
 		#region Methods
 		internal void PushScope ()
 		{
-			current = (Scope)scopeStack.Push ();
-			if (current == null) {
-				current = new Scope ();
+			Scope next = (Scope)scopeStack.Push ();
+			if (next == null) {
+				next = new Scope ();
 				scopeStack.AddToTop (current);
-			} else {
-				current.baseUri = String.Empty;
-				current.xmlLang = String.Empty;
-				current.xmlSpace = XmlSpace.None;
 			}
+			
+			if (current != null) {
+				next.baseUri = BaseURI;
+				next.xmlLang = XmlLang;
+				next.xmlSpace = XmlSpace;
+			}
+			
+			current = next;
 		}
 
 		internal void PopScope ()

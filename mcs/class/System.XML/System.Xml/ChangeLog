@@ -1,3 +1,7 @@
+2003-08-19 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* XmlParserContext.cs: Make each context inherit next.
+
 2003-08-18 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* XmlChar.cs (IsWhitespace): Spare enumerator allocation.
