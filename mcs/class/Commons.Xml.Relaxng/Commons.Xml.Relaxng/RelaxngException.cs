@@ -51,6 +51,11 @@ namespace Commons.Xml.Relaxng
 		{
 //			debugXml = RdpUtil.DebugRdpPattern (invalidatedPattern, new Hashtable ());
 		}
+
+		public RelaxngException (RelaxngElementBase source, string message)
+			: base (message + String.Format (" {0} ({1}, {2})", source.BaseUri, source.LineNumber, source.LinePosition))
+		{
+		}
 	}
 
 }

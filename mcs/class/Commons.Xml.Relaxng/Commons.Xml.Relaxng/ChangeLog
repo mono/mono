@@ -1,5 +1,10 @@
 2004-12-06  Atsushi Enomoto <atsushi@ximian.com>
 
+	* RelaxngException.cs : Added new .ctor() that takes RelaxngElementBase
+	  to provide target grammar component location.
+
+2004-12-06  Atsushi Enomoto <atsushi@ximian.com>
+
 	* RelaxngNameClass.cs,
 	  RelaxngPattern.cs,
 	  RelaxngGrammar.cs :
