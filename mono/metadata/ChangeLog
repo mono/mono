@@ -1,3 +1,9 @@
+
+Thu May 23 18:44:37 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* object.c: special case string ctros in invoke.
+	* gc.c: silly whitespace changes.
+
 2002-05-23  Dietmar Maurer  <dietmar@ximian.com>
 
 	* threadpool.[ch]: impl. a threadpool that can
