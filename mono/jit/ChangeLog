@@ -1,5 +1,7 @@
 2003-01-06  Martin Baulig  <martin@ximian.com>
 
+	* debug.c (debugger_finished_mutex): Use a recursive mutex here.
+
 	* debug.c: Correctly handle the `debugger_finished_mutex'; it is
 	only unlocked by the pthread_cond_wait() in mono_debugger_wait().
 
