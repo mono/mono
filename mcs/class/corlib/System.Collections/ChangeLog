@@ -1,3 +1,7 @@
+2004-12-16 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ArrayList.cs: don't initialize _items twice. Closes bug #70620.
+
 2004-12-16  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* Hashtable.cs: Add deserialized elements in OnDeserialization, since

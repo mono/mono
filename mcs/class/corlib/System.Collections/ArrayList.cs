@@ -2617,8 +2617,6 @@ namespace System.Collections
 		/// <param name="array"></param>
 		private ArrayList(object[] array, int index, int count) 
 		{
-			_items = new object[count];
-
 			if (count == 0) 
 			{
 				_items = new object[DefaultInitialCapacity];
