@@ -82,3 +82,5 @@ numbers, as they look nicer on the debugging output.
 	Sample:
 		using System;
 		class X {} 
+
+-25     Generic parse error
