@@ -40,22 +40,22 @@ namespace Novell.Directory.Ldap.Extensions
 	/// <summary>  Returns a count of the number of entries (objects) in the
 	/// specified partition.
 	/// 
-	/// <p>To obtain the count of entries, you must create an instance of this
+	/// To obtain the count of entries, you must create an instance of this
 	/// class and then call the extendedOperation method with this
-	/// object as the required LdapExtendedOperation parameter.</p>
+	/// object as the required LdapExtendedOperation parameter.
 	/// 
-	/// <p>The returned LdapExtendedResponse object can then be converted to
+	/// The returned LdapExtendedResponse object can then be converted to
 	/// a PartitionEntryCountResponse object. This class contains
-	/// methods for retrieving the returned count.</p>
+	/// methods for retrieving the returned count.
 	/// 
-	/// <p>The PartitionEntryCountRequest extension uses the following
-	/// OID:<br>
-	/// &nbsp;&nbsp;&nbsp;2.16.840.1.113719.1.27.100.13</p>
+	/// The PartitionEntryCountRequest extension uses the following
+	/// OID:
+	/// 2.16.840.1.113719.1.27.100.13
 	/// 
-	/// <p>The requestValue has the following format:<br>
+	/// The requestValue has the following format:
 	/// 
-	/// requestValue ::=<br><br>
-	/// &nbsp;&nbsp;&nbsp;&nbsp;    dn &nbsp;&nbsp;&nbsp;     LdapDN
+	/// requestValue ::=
+	///     dn      LdapDN
 	/// </summary>
 	public class PartitionEntryCountRequest:LdapExtendedOperation
 	{
@@ -67,7 +67,7 @@ namespace Novell.Directory.Ldap.Extensions
 		/// <param name="dn"> The distinguished name of the partition.
 		/// 
 		/// </param>
-		/// <exception cref=""> LdapException A general exception which includes an
+		/// <exception> LdapException A general exception which includes an
 		/// error message and an Ldap error code.
 		/// </exception>
 		

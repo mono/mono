@@ -40,20 +40,20 @@ namespace Novell.Directory.Ldap.Extensions
 	/// <summary> 
 	/// Adds a replica to the specified directory server.
 	/// 
-	/// <p>To add a replica to a particular server, you must create an instance of
+	/// To add a replica to a particular server, you must create an instance of
 	/// this class and then call the extendedOperation method with this
-	/// object as the required LdapExtendedOperation parameter.</p>
+	/// object as the required LdapExtendedOperation parameter.
 	/// 
-	/// <p>The addReplicaRequest extension uses the following OID:<br>
-	/// &nbsp;&nbsp;&nbsp;2.16.840.1.113719.1.27.100.7</p>
+	/// The addReplicaRequest extension uses the following OID:
+	/// 2.16.840.1.113719.1.27.100.7
 	/// 
-	/// <p>The requestValue has the following format:<br>
+	/// The requestValue has the following format:
 	/// 
-	/// requestValue ::=<br>
-	/// &nbsp;&nbsp;&nbsp;&nbsp; flags&nbsp;&nbsp;&nbsp;&nbsp;       INTEGER<br>
-	/// &nbsp;&nbsp;&nbsp;&nbsp; replicaType&nbsp;&nbsp;&nbsp;&nbsp; INTEGER<br>
-	/// &nbsp;&nbsp;&nbsp;&nbsp; serverName&nbsp;&nbsp;&nbsp;&nbsp;  LdapDN<br>
-	/// &nbsp;&nbsp;&nbsp;&nbsp; dn &nbsp;&nbsp;&nbsp;&nbsp;         LdapDN</p>
+	/// requestValue ::=
+	///  flags       INTEGER
+	///  replicaType INTEGER
+	///  serverName  LdapDN
+	///  dn          LdapDN
 	/// </summary>
 	public class AddReplicaRequest:LdapExtendedOperation
 	{
@@ -63,14 +63,14 @@ namespace Novell.Directory.Ldap.Extensions
 		/// specified server.
 		/// 
 		/// </summary>
-		/// <param name="dn">The distinguished name of the replica's partition root.<br><br>
+		/// <param name="dn">The distinguished name of the replica's partition root.
 		/// 
 		/// </param>
-		/// <param name="serverDN">The server on which the new replica will be added.<br><br>
+		/// <param name="serverDN">The server on which the new replica will be added.
 		/// 
 		/// </param>
 		/// <param name="replicaType">The type of replica to add. The replica
-		/// types are defined in the ReplicationConstants class.<br><br>
+		/// types are defined in the ReplicationConstants class.
 		/// 
 		/// </param>
 		/// <param name="flags">Specifies whether all servers in the replica ring must be up
@@ -79,21 +79,21 @@ namespace Novell.Directory.Ldap.Extensions
 		/// operation to proceed.
 		/// 
 		/// </param>
-		/// <exception cref=""> LdapException A general exception which includes an error message
+		/// <exception> LdapException A general exception which includes an error message
 		/// and an Ldap error code.
 		/// 
 		/// </exception>
-		/// <seealso cref="ReplicationConstants#Ldap_RT_MASTER">
+		/// <seealso cref="ReplicationConstants.Ldap_RT_MASTER">
 		/// </seealso>
-		/// <seealso cref="ReplicationConstants#Ldap_RT_SECONDARY">
+		/// <seealso cref="ReplicationConstants.Ldap_RT_SECONDARY">
 		/// </seealso>
-		/// <seealso cref="ReplicationConstants#Ldap_RT_READONLY">
+		/// <seealso cref="ReplicationConstants.Ldap_RT_READONLY">
 		/// </seealso>
-		/// <seealso cref="ReplicationConstants#Ldap_RT_SUBREF">
+		/// <seealso cref="ReplicationConstants.Ldap_RT_SUBREF">
 		/// </seealso>
-		/// <seealso cref="ReplicationConstants#Ldap_RT_SPARSE_WRITE">
+		/// <seealso cref="ReplicationConstants.Ldap_RT_SPARSE_WRITE">
 		/// </seealso>
-		/// <seealso cref="ReplicationConstants#Ldap_RT_SPARSE_READ">
+		/// <seealso cref="ReplicationConstants.Ldap_RT_SPARSE_READ">
 		/// </seealso>
 		public AddReplicaRequest(System.String dn, System.String serverDN, int replicaType, int flags):base(ReplicationConstants.ADD_REPLICA_REQ, null)
 		{

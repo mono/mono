@@ -41,20 +41,20 @@ namespace Novell.Directory.Ldap.Extensions
 	/// Changes the type of the replica that resides
 	/// on the specified directory server.
 	/// 
-	/// <p>To change a replica's type, you must create an instance of this class and
+	/// To change a replica's type, you must create an instance of this class and
 	/// then call the extendedOperation method with this object as the required
-	/// LdapExtendedOperation parameter.</p>
+	/// LdapExtendedOperation parameter.
 	/// 
-	/// <p>The changeReplicaTypeRequest extension uses the following OID:<br>
-	/// &nbsp;&nbsp;&nbsp;2.16.840.1.113719.1.27.100.15</p>
+	/// The changeReplicaTypeRequest extension uses the following OID:
+	/// 2.16.840.1.113719.1.27.100.15
 	/// 
-	/// <p>The requestValue has the following format:<br>
+	/// The requestValue has the following format:
 	/// 
-	/// requestValue ::=<br>
-	/// &nbsp;&nbsp;&nbsp;&nbsp; flags &nbsp;&nbsp;&nbsp;&nbsp;       INTEGER<br>
-	/// &nbsp;&nbsp;&nbsp;&nbsp; replicaType&nbsp;&nbsp;&nbsp;&nbsp;  INTEGER<br>
-	/// &nbsp;&nbsp;&nbsp;&nbsp; serverName&nbsp;&nbsp;&nbsp;&nbsp;   LdapDN<br>
-	/// &nbsp;&nbsp;&nbsp;&nbsp; dn&nbsp;&nbsp;&nbsp;&nbsp;           LdapDN</p>
+	/// requestValue ::=
+	///  flags        INTEGER
+	///  replicaType  INTEGER
+	///  serverName   LdapDN
+	///  dn           LdapDN
 	/// </summary>
 	public class ChangeReplicaTypeRequest:LdapExtendedOperation
 	{
@@ -65,15 +65,15 @@ namespace Novell.Directory.Ldap.Extensions
 		/// </summary>
 		/// <param name="dn">         The distinguished name of the replica's
 		/// partition root.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="serverDN">   The server on which the replica resides.
-		/// <br><br>
+		/// 
 		/// 
 		/// </param>
 		/// <param name="replicaType">   The new replica type. The replica types are defined
 		/// in the ReplicationConstants class.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="flags">  Specifies whether all servers in the replica ring must be up
 		/// before proceeding. When set to zero, the status of the servers is
@@ -81,21 +81,21 @@ namespace Novell.Directory.Ldap.Extensions
 		/// up for the operation to proceed.
 		/// 
 		/// </param>
-		/// <exception cref=""> LdapException A general exception which includes an error message
+		/// <exception> LdapException A general exception which includes an error message
 		/// and an Ldap error code.
 		/// 
 		/// </exception>
-		/// <seealso cref="ReplicationConstants#Ldap_RT_MASTER">
+		/// <seealso cref="ReplicationConstants.Ldap_RT_MASTER">
 		/// </seealso>
-		/// <seealso cref="ReplicationConstants#Ldap_RT_SECONDARY">
+		/// <seealso cref="ReplicationConstants.Ldap_RT_SECONDARY">
 		/// </seealso>
-		/// <seealso cref="ReplicationConstants#Ldap_RT_READONLY">
+		/// <seealso cref="ReplicationConstants.Ldap_RT_READONLY">
 		/// </seealso>
-		/// <seealso cref="ReplicationConstants#Ldap_RT_SUBREF">
+		/// <seealso cref="ReplicationConstants.Ldap_RT_SUBREF">
 		/// </seealso>
-		/// <seealso cref="ReplicationConstants#Ldap_RT_SPARSE_WRITE">
+		/// <seealso cref="ReplicationConstants.Ldap_RT_SPARSE_WRITE">
 		/// </seealso>
-		/// <seealso cref="ReplicationConstants#Ldap_RT_SPARSE_READ">
+		/// <seealso cref="ReplicationConstants.Ldap_RT_SPARSE_READ">
 		/// </seealso>
 		public ChangeReplicaTypeRequest(System.String dn, System.String serverDN, int replicaType, int flags):base(ReplicationConstants.CHANGE_REPLICA_TYPE_REQ, null)
 		{

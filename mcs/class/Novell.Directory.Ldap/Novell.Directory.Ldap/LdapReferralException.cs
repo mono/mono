@@ -80,7 +80,7 @@ namespace Novell.Directory.Ldap
 		/// <summary> Constructs a default exception with a specified string as additional
 		/// information.
 		/// 
-		/// <p>This form is used for lower-level errors.</p>
+		/// This form is used for lower-level errors.
 		/// 
 		/// </summary>
 		/// <param name="message">The additional error information.
@@ -93,9 +93,9 @@ namespace Novell.Directory.Ldap
 		/// <summary> Constructs a default exception with a specified string as additional
 		/// information.
 		/// 
-		/// <p>This form is used for lower-level errors.</p>
+		/// This form is used for lower-level errors.
 		/// 
-		/// <br><br>
+		/// 
 		/// </summary>
 		/// <param name="arguments">    The modifying arguments to be included in the
 		/// message string.
@@ -116,7 +116,7 @@ namespace Novell.Directory.Ldap
 		/// </summary>
 		/// <param name="message">The additional error information.
 		/// 
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="rootException">An exception which caused referral following to fail.
 		/// </param>
@@ -134,11 +134,11 @@ namespace Novell.Directory.Ldap
 		/// </summary>
 		/// <param name="message">The additional error information.
 		/// 
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="arguments">    The modifying arguments to be included in the
 		/// message string.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="rootException">An exception which caused referral following to fail.
 		/// </param>
@@ -152,10 +152,10 @@ namespace Novell.Directory.Ldap
 		/// 
 		/// </summary>
 		/// <param name="message">       The additional error information.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="resultCode">    The result code returned.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="serverMessage"> Error message specifying additional information
 		/// from the server.
@@ -170,14 +170,14 @@ namespace Novell.Directory.Ldap
 		/// 
 		/// </summary>
 		/// <param name="message">       The additional error information.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="arguments">     The modifying arguments to be included in the
 		/// message string.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="resultCode">    The result code returned.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="serverMessage"> Error message specifying additional information
 		/// from the server.
@@ -193,10 +193,10 @@ namespace Novell.Directory.Ldap
 		/// 
 		/// </summary>
 		/// <param name="message">       The additional error information.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="resultCode">    The result code returned.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="serverMessage"> Error message specifying additional information
 		/// from the server.
@@ -211,14 +211,14 @@ namespace Novell.Directory.Ldap
 		/// 
 		/// </summary>
 		/// <param name="message">       The additional error information.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="arguments">     The modifying arguments to be included in the
 		/// message string.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="resultCode">    The result code returned.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="serverMessage"> Error message specifying additional information
 		/// from the server.
@@ -232,7 +232,7 @@ namespace Novell.Directory.Ldap
 		/// the Ldap server.
 		/// 
 		/// The referral list may include URLs of a type other than ones for an Ldap
-		/// server (for example, a referral URL other than ldap://something).</p>
+		/// server (for example, a referral URL other than ldap://something).
 		/// 
 		/// </summary>
 		/// <returns> The list of URLs that comprise this referral

@@ -35,16 +35,16 @@ using Novell.Directory.Ldap.Utilclass;
 namespace Novell.Directory.Ldap
 {
 	
-	/// <summary> <p>Represents a schema entry that controls one or more entries held by a
-	/// Directory Server.</p>
+	/// <summary> Represents a schema entry that controls one or more entries held by a
+	/// Directory Server.
 	/// 
-	/// <p><code>LdapSchema</code> Contains methods to parse schema attributes into
+	/// <code>LdapSchema</code> Contains methods to parse schema attributes into
 	/// individual schema definitions, represented by subclasses of
 	/// {@link LdapSchemaElement}.  Schema may be retrieved from a Directory server
 	/// with the fetchSchema method of LdapConnection or by creating an LdapEntry
 	/// containing schema attributes.  The following sample code demonstrates how to
 	/// retrieve schema elements from LdapSchema
-	/// </p>
+	/// 
 	/// <pre><code>
 	/// .
 	/// .
@@ -66,14 +66,14 @@ namespace Novell.Directory.Ldap
 	/// .
 	/// .
 	/// </code></pre>
-	/// </p>
+	/// 
 	/// 
 	/// </summary>
 	/// <seealso cref="LdapSchemaElement">
 	/// </seealso>
-	/// <seealso cref="LdapConnection#fetchSchema">
+	/// <seealso cref="LdapConnection.FetchSchema">
 	/// </seealso>
-	/// <seealso cref="LdapConnection#getSchemaDN">
+	/// <seealso cref="LdapConnection.GetSchemaDN">
 	/// </seealso>
 	public class LdapSchema:LdapEntry
 	{
@@ -321,8 +321,8 @@ namespace Novell.Directory.Ldap
 		
 		
 		/// <summary> Constructs an LdapSchema object from attributes of an LdapEntry.
-		/// <p>The object is empty if the entry parameter contains no schema
-		/// attributes.  The recognized schema attributes are the following: <br>
+		/// The object is empty if the entry parameter contains no schema
+		/// attributes.  The recognized schema attributes are the following: 
 		/// <pre><code>
 		/// "attributeTypes", "objectClasses", "ldapSyntaxes",
 		/// "nameForms", "dITContentRules", "dITStructureRules",
@@ -483,13 +483,13 @@ namespace Novell.Directory.Ldap
 		/// copy of schema in this LdapSchema class.  This is used by
 		/// <code>getXXX(String name)</code> functions.
 		/// 
-		/// <p>Note that the nameTable has all keys cast to Upper-case.  This is so
+		/// Note that the nameTable has all keys cast to Upper-case.  This is so
 		/// we can have a case-insensitive HashMap.  The getXXX (String key)
-		/// methods will also cast to uppercase.</p>
+		/// methods will also cast to uppercase.
 		/// 
-		/// <p>The first character of a NAME string can only be an alpha character
+		/// The first character of a NAME string can only be an alpha character
 		/// (see section 4.1 of rfc2252) Thus if the first character is a digit we
-		/// can conclude it is an OID.  Note that this digit is ASCII only.</p>
+		/// can conclude it is an OID.  Note that this digit is ASCII only.
 		/// 
 		/// </summary>
 		/// <param name="schemaType">Specifies which list is to be used in schema

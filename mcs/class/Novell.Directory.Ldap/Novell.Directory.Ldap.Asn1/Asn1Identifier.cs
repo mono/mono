@@ -36,12 +36,12 @@ namespace Novell.Directory.Ldap.Asn1
 	
 	/// <summary> This class is used to encapsulate an ASN.1 Identifier.
 	/// 
-	/// <p>An Asn1Identifier is composed of three parts:
-	/// <li> a class type,
-	/// <li> a form, and
-	/// <li> a tag.</p>
+	/// An Asn1Identifier is composed of three parts:
+	/// <li> a class type,</li>
+	/// <li> a form, and</li>
+	/// <li> a tag.</li>
 	/// 
-	/// <p>The class type is defined as:</p>
+	/// The class type is defined as:
 	/// <pre>
 	/// bit 8 7 TAG CLASS
 	/// ------- -----------
@@ -50,7 +50,7 @@ namespace Novell.Directory.Ldap.Asn1
 	/// 1 0 CONTEXT
 	/// 1 1 PRIVATE
 	/// </pre>
-	/// <p> The form is defined as:</p>
+	///  The form is defined as:
 	/// <pre>
 	/// bit 6 FORM
 	/// ----- --------
@@ -58,10 +58,10 @@ namespace Novell.Directory.Ldap.Asn1
 	/// 1 CONSTRUCTED
 	/// </pre>
 	/// 
-	/// <p> Note: CONSTRUCTED types are made up of other CONSTRUCTED or PRIMITIVE
-	/// types.</p>
+	///  Note: CONSTRUCTED types are made up of other CONSTRUCTED or PRIMITIVE
+	/// types.
 	/// 
-	/// <p> The tag is defined as:</p>
+	///  The tag is defined as:
 	/// <pre>
 	/// bit 5 4 3 2 1 TAG
 	/// ------------- ---------------------------------------------
@@ -78,13 +78,13 @@ namespace Novell.Directory.Ldap.Asn1
 		/// <summary> Returns the CLASS of this Asn1Identifier as an int value.
 		/// 
 		/// </summary>
-		/// <seealso cref="#UNIVERSAL">
+		/// <seealso cref="UNIVERSAL">
 		/// </seealso>
-		/// <seealso cref="#APPLICATION">
+		/// <seealso cref="APPLICATION">
 		/// </seealso>
-		/// <seealso cref="#CONTEXT">
+		/// <seealso cref="CONTEXT">
 		/// </seealso>
-		/// <seealso cref="#PRIVATE">
+		/// <seealso cref="PRIVATE">
 		/// </seealso>
 		virtual public int Asn1Class
 		{
@@ -129,7 +129,7 @@ namespace Novell.Directory.Ldap.Asn1
 		/// has a TAG CLASS of UNIVERSAL.
 		/// 
 		/// </summary>
-		/// <seealso cref="#UNIVERSAL">
+		/// <seealso cref="UNIVERSAL">
 		/// </seealso>
 		[CLSCompliantAttribute(false)]
 		virtual public bool Universal
@@ -144,7 +144,7 @@ namespace Novell.Directory.Ldap.Asn1
 		/// has a TAG CLASS of APPLICATION.
 		/// 
 		/// </summary>
-		/// <seealso cref="#APPLICATION">
+		/// <seealso cref="APPLICATION">
 		/// </seealso>
 		[CLSCompliantAttribute(false)]
 		virtual public bool Application
@@ -159,7 +159,7 @@ namespace Novell.Directory.Ldap.Asn1
 		/// has a TAG CLASS of CONTEXT-SPECIFIC.
 		/// 
 		/// </summary>
-		/// <seealso cref="#CONTEXT">
+		/// <seealso cref="CONTEXT">
 		/// </seealso>
 		[CLSCompliantAttribute(false)]
 		virtual public bool Context
@@ -174,7 +174,7 @@ namespace Novell.Directory.Ldap.Asn1
 		/// has a TAG CLASS of PRIVATE.
 		/// 
 		/// </summary>
-		/// <seealso cref="#PRIVATE">
+		/// <seealso cref="PRIVATE"></seealso>
 		[CLSCompliantAttribute(false)]
 		virtual public bool Private
 		{
@@ -187,25 +187,25 @@ namespace Novell.Directory.Ldap.Asn1
 		
 		/// <summary> Universal tag class.
 		/// 
-		/// <p> UNIVERSAL = 0 </p>
+		///  UNIVERSAL = 0 
 		/// </summary>
 		public const int UNIVERSAL = 0;
 		
 		/// <summary> Application-wide tag class.
 		/// 
-		/// <p> APPLICATION = 1 </p>
+		///  APPLICATION = 1 
 		/// </summary>
 		public const int APPLICATION = 1;
 		
 		/// <summary> Context-specific tag class.
 		/// 
-		/// <p> CONTEXT = 2 </p>
+		///  CONTEXT = 2 
 		/// </summary>
 		public const int CONTEXT = 2;
 		
 		/// <summary> Private-use tag class.
 		/// 
-		/// <p> PRIVATE = 3 </p>
+		///  PRIVATE = 3 
 		/// </summary>
 		public const int PRIVATE = 3;
 		

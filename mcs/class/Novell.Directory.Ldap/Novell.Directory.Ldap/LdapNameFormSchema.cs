@@ -38,9 +38,9 @@ namespace Novell.Directory.Ldap
 	
 	/// <summary> A specific a name form in the directory schema.
 	/// 
-	/// <p>The LdapNameFormSchema class represents the definition of a Name Form.  It
+	/// The LdapNameFormSchema class represents the definition of a Name Form.  It
 	/// is used to discover or modify the allowed naming attributes for a particular
-	/// object class.</p>
+	/// object class.
 	/// 
 	/// </summary>
 	/// <seealso cref="LdapSchemaElement">
@@ -98,34 +98,34 @@ namespace Novell.Directory.Ldap
 		/// <summary> Constructs a name form for adding to or deleting from the schema.
 		/// 
 		/// </summary>
-		/// <param name="names">      The name(s) of the name form.</br></br>
+		/// <param name="names">      The name(s) of the name form.
 		/// 
 		/// </param>
 		/// <param name="oid">        The unique object identifier of the name form - in
-		/// dotted numerical format.</br></br>
+		/// dotted numerical format.
 		/// 
 		/// </param>
-		/// <param name="description">An optional description of the name form.</br></br>
+		/// <param name="description">An optional description of the name form.
 		/// 
 		/// </param>
-		/// <param name="obsolete">   True if the name form is obsolete.</br></br>
+		/// <param name="obsolete">   True if the name form is obsolete.
 		/// 
 		/// </param>
 		/// <param name="objectClass">The object to which this name form applies.
 		/// This may be specified by either name or
-		/// numeric oid.</br></br>
+		/// numeric oid.
 		/// 
 		/// </param>
 		/// <param name="required">   A list of the attributes that must be present
 		/// in the RDN of an entry that this name form
 		/// controls. These attributes may be specified by
-		/// either name or numeric oid.</br></br>
+		/// either name or numeric oid.
 		/// 
 		/// </param>
 		/// <param name="optional">   A list of the attributes that may be present
 		/// in the RDN of an entry that this name form
 		/// controls. These attributes may be specified by
-		/// either name or numeric oid.</br></br>
+		/// either name or numeric oid.
 		/// </param>
 		public LdapNameFormSchema(System.String[] names, System.String oid, System.String description, bool obsolete, System.String objectClass, System.String[] required, System.String[] optional):base(LdapSchema.schemaTypeNames[LdapSchema.NAME_FORM])
 		{

@@ -40,9 +40,6 @@ namespace Novell.Directory.Ldap.Controls
 	/// of the client in response to a persistent search request. It
 	/// contains additional information about a change such as what type of
 	/// change occurred.
-	/// 
-	/// <p>Sample Code: <a href="http://developer.novell.com/ndk/doc/samplecode/
-	/// jldap_sample/controls/SearchPersist.java.html">SearchPersist.java</p>
 	/// </summary>
 	public class LdapEntryChangeControl:LdapControl
 	{
@@ -120,27 +117,27 @@ namespace Novell.Directory.Ldap.Controls
 		/// <summary>  This constructor is called by the SDK to create an
 		/// LdapEntryChangeControl. This constructor should NOT be called by
 		/// application developers. It must be public since it resides in a
-		/// different package than the classes that call it.</P>
-		/// <p>The Entry Change Control is defined as follows:</p>
-		/// <p>EntryChangeNotification ::= SEQUENCE {
-		/// <p>changeType ENUMERATED {</p>
-		/// <p>add             (1),</p>
-		/// <p>delete          (2),</p>
-		/// <p>modify          (4),</p>
-		/// <p>modDN           (8)</p>
-		/// <p>},</p>
-		/// <p>previousDN   LdapDN OPTIONAL,     -- modifyDN ops. only</p>
-		/// <p>changeNumber INTEGER OPTIONAL     -- if supported</p>
-		/// <p>}</p>
+		/// different package than the classes that call it.
+		/// The Entry Change Control is defined as follows:
+		/// EntryChangeNotification ::= SEQUENCE {
+		/// changeType ENUMERATED {
+		/// add             (1),
+		/// delete          (2),
+		/// modify          (4),
+		/// modDN           (8)
+		/// },
+		/// previousDN   LdapDN OPTIONAL,     -- modifyDN ops. only
+		/// changeNumber INTEGER OPTIONAL     -- if supported
+		/// }
 		/// 
 		/// </summary>
 		/// <param name="oid">    The OID of the control, as a dotted string.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="critical">  True if the Ldap operation should be discarded if
 		/// the control is not supported. False if
 		/// the operation can be processed without the control.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="value">    The control-specific data.
 		/// </param>

@@ -38,9 +38,9 @@ namespace Novell.Directory.Ldap.Rfc2251
 	
 	/// <summary> Represents Ldap Contreols.
 	/// 
-	/// </pre>
-	/// Controls ::= SEQUENCE OF Control
 	/// <pre>
+	/// Controls ::= SEQUENCE OF Control
+	/// </pre>
 	/// </summary>
 	public class RfcControls:Asn1SequenceOf
 	{

@@ -36,12 +36,12 @@ namespace Novell.Directory.Ldap
 	
 	/// <summary> Defines options controlling Ldap operations on the directory.
 	/// 
-	/// <p>An LdapConstraints object is always associated with an LdapConnection
+	/// An LdapConstraints object is always associated with an LdapConnection
 	/// object; its values can be changed with LdapConnection.setConstraints, or
-	/// overridden by passing an LdapConstraints object to an operation.</p>
+	/// overridden by passing an LdapConstraints object to an operation.
 	/// 
 	/// </summary>
-	/// <seealso cref="LdapConnection#setConstraints(LdapConstraints)">
+	/// <seealso cref="LdapConnection.Constraints">
 	/// </seealso>
 	public class LdapConstraints : System.ICloneable
 	{
@@ -55,9 +55,9 @@ namespace Novell.Directory.Ldap
 		/// <returns> The maximum number of referrals to follow in sequence
 		/// 
 		/// </returns>
-		/// <seealso cref="#setHopLimit(int)">
+		/// <seealso cref="HopLimit">
 		/// </seealso>
-		/// <seealso cref="LdapException#REFERRAL_LIMIT_EXCEEDED">
+		/// <seealso cref="LdapException.REFERRAL_LIMIT_EXCEEDED">
 		/// </seealso>
 		/// <summary> Sets the maximum number of referrals to follow in sequence during
 		/// automatic referral following.
@@ -73,7 +73,7 @@ namespace Novell.Directory.Ldap
 		/// It is ignored for asynchronous operations.
 		/// 
 		/// </param>
-		/// <seealso cref="LdapException#REFERRAL_LIMIT_EXCEEDED">
+		/// <seealso cref="LdapException.REFERRAL_LIMIT_EXCEEDED">
 		/// </seealso>
 		virtual public int HopLimit
 		{
@@ -94,9 +94,9 @@ namespace Novell.Directory.Ldap
 		/// A value of <code>null</code> is returned if no properties are defined.
 		/// 
 		/// </summary>
-		/// <seealso cref="Object)">
+		/// <seealso cref="Object">
 		/// </seealso>
-		/// <seealso cref="LdapConnection#getProperty(String)">
+		/// <seealso cref="LdapConnection.getProperty">
 		/// </seealso>
 		/// <summary> Sets all the properties of the constraints object.
 		/// 
@@ -125,16 +125,16 @@ namespace Novell.Directory.Ldap
 		/// 
 		/// </summary>
 		/// <returns>  True if referrals are followed automatically, or
-		/// false if referrals throw an LdapReferralException.</p>
+		/// false if referrals throw an LdapReferralException.
 		/// </returns>
 		/// <summary> Specifies whether referrals are followed automatically or if
 		/// referrals throw an LdapReferralException.
 		/// 
-		/// <p>Referrals of any type other than to an Ldap server (for example, a
+		/// Referrals of any type other than to an Ldap server (for example, a
 		/// referral URL other than ldap://something) are ignored on automatic
-		/// referral following. </p>
+		/// referral following. 
 		/// 
-		/// <p> The default is false.</p>
+		///  The default is false.
 		/// 
 		/// </summary>
 		/// <param name="doReferrals">   True to follow referrals automatically.
@@ -158,35 +158,35 @@ namespace Novell.Directory.Ldap
 		/// <summary> Returns the maximum number of milliseconds to wait for any operation
 		/// under these constraints.
 		/// 
-		/// <p>If the value is 0, there is no maximum time limit on waiting
+		/// If the value is 0, there is no maximum time limit on waiting
 		/// for operation results. The actual granularity of the timeout depends
 		/// platform.  This limit is enforced the the API on an
 		/// operation, not by the server.
 		/// The operation will be abandoned and terminated by the
 		/// API with a result code of LdapException.Ldap_TIMEOUT if the
-		/// operation exceeds the time limit.</p>
+		/// operation exceeds the time limit.
 		/// 
 		/// </summary>
 		/// <returns> The maximum number of milliseconds to wait for the operation.
 		/// 
 		/// </returns>
-		/// <seealso cref="LdapException#Ldap_TIMEOUT">
+		/// <seealso cref="LdapException.Ldap_TIMEOUT">
 		/// </seealso>
 		/// <summary> Sets the maximum number of milliseconds the client waits for
 		/// any operation under these constraints to complete.
 		/// 
-		/// <p>If the value is 0, there is no maximum time limit enforced by the
+		/// If the value is 0, there is no maximum time limit enforced by the
 		/// API on waiting for the operation results. The actual granularity of
 		/// the timeout depends on the platform.
 		/// The operation will be abandoned and terminated by the
 		/// API with a result code of LdapException.Ldap_TIMEOUT if the
-		/// operation exceeds the time limit.</p>
+		/// operation exceeds the time limit.
 		/// 
 		/// </summary>
 		/// <param name="msLimit">     The maximum milliseconds to wait.
 		/// 
 		/// </param>
-		/// <seealso cref="LdapException#Ldap_TIMEOUT">
+		/// <seealso cref="LdapException.Ldap_TIMEOUT">
 		/// </seealso>
 		virtual public int TimeLimit
 		{
@@ -233,7 +233,7 @@ namespace Novell.Directory.Ldap
 		/// The operation will be abandoned and terminated by the
 		/// API with a result code of LdapException.Ldap_TIMEOUT
 		/// if the operation exceeds the time limit.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="doReferrals">Determines whether to automatically follow
 		/// referrals or not. Specify true to follow
@@ -243,7 +243,7 @@ namespace Novell.Directory.Ldap
 		/// The way referrals are followed automatically is
 		/// determined by the setting of the handler parameter.
 		/// It is ignored for asynchronous operations.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="handler">  The custom authentication handler called when
 		/// LdapConnection needs to authenticate, typically on
@@ -255,7 +255,7 @@ namespace Novell.Directory.Ldap
 		/// The implementation of these interfaces determines how
 		/// authentication is performed when following referrals.
 		/// It is ignored for asynchronous operations.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="hop_limit">The maximum number of referrals to follow in a
 		/// sequence during automatic referral following.
@@ -267,11 +267,11 @@ namespace Novell.Directory.Ldap
 		/// It is ignored for asynchronous operations.
 		/// 
 		/// </param>
-		/// <seealso cref="LdapException#Ldap_TIMEOUT">
+		/// <seealso cref="LdapException.Ldap_TIMEOUT">
 		/// </seealso>
-		/// <seealso cref="LdapException#REFERRAL_LIMIT_EXCEEDED">
+		/// <seealso cref="LdapException.REFERRAL_LIMIT_EXCEEDED">
 		/// </seealso>
-		/// <seealso cref="LdapException#REFERRAL">
+		/// <seealso cref="LdapException.REFERRAL">
 		/// </seealso>
 		/// <seealso cref="LdapReferralException">
 		/// </seealso>
@@ -295,9 +295,7 @@ namespace Novell.Directory.Ldap
 		/// <returns> The controls to be sent to the server, or null if none.
 		/// 
 		/// </returns>
-		/// <seealso cref="#setControls(LdapControl)">
-		/// </seealso>
-		/// <seealso cref="#setControls(LdapControl[])">
+		/// <seealso cref="Controls">
 		/// </seealso>
 		public virtual LdapControl[] getControls()
 		{
@@ -315,9 +313,9 @@ namespace Novell.Directory.Ldap
 		/// or <code>null</code> if the property is not set.
 		/// 
 		/// </returns>
-		/// <seealso cref="Object)">
+		/// <seealso cref="Object">
 		/// </seealso>
-		/// <seealso cref="LdapConnection#getProperty(String)">
+		/// <seealso cref="LdapConnection.getProperty(String)">
 		/// </seealso>
 		public virtual System.Object getProperty(System.String name)
 		{
@@ -331,7 +329,7 @@ namespace Novell.Directory.Ldap
 		/// <summary> Returns an object that can process authentication for automatic
 		/// referral handling.
 		/// 
-		/// <p>It may be null.</p>
+		/// It may be null.
 		/// 
 		/// </summary>
 		/// <returns> An LdapReferralHandler object that can process authentication.
@@ -383,13 +381,13 @@ namespace Novell.Directory.Ldap
 		
 		/// <summary> Sets a property of the constraints object.
 		/// 
-		/// <p>No property names have been defined at this time, but the
+		/// No property names have been defined at this time, but the
 		/// mechanism is in place in order to support revisional as well as
-		/// dynamic and proprietary extensions to operation modifiers.</p>
+		/// dynamic and proprietary extensions to operation modifiers.
 		/// 
 		/// </summary>
 		/// <param name="name">   Name of the property to set.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="value">  Value to assign to the property.
 		/// property is not supported.
@@ -397,9 +395,7 @@ namespace Novell.Directory.Ldap
 		/// @throws NullPointerException if name or value are null
 		/// 
 		/// </param>
-		/// <seealso cref=")">
-		/// </seealso>
-		/// <seealso cref="LdapConnection#getProperty(String)">
+		/// <seealso cref="LdapConnection.getProperty">
 		/// </seealso>
 		public virtual void  setProperty(System.String name, System.Object value_Renamed)
 		{
@@ -414,7 +410,7 @@ namespace Novell.Directory.Ldap
 		/// <summary> Specifies the object that will process authentication requests
 		/// during automatic referral following.
 		/// 
-		/// <p>The default is null.</p>
+		/// The default is null.
 		/// 
 		/// </summary>
 		/// <param name="handler">   An object that implements LdapBindHandler or

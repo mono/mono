@@ -41,7 +41,7 @@ namespace Novell.Directory.Ldap
 	/// in response to an asynchronous request.
 	/// 
 	/// </summary>
-	/// <seealso cref="LdapConnection#search">
+	/// <seealso cref="LdapConnection.Search">
 	/// </seealso>
 	
 	/*
@@ -155,7 +155,7 @@ namespace Novell.Directory.Ldap
 		}
 		/// <summary> Returns the result code in a server response.
 		/// 
-		/// <p> For a list of result codes, see the LdapException class. </p>
+		///  For a list of result codes, see the LdapException class. 
 		/// 
 		/// </summary>
 		/// <returns> The result code.
@@ -209,7 +209,7 @@ namespace Novell.Directory.Ldap
 		/// <summary> Returns any controls in the message.
 		/// 
 		/// </summary>
-		/// <seealso cref="com.novell.ldap.LdapMessage#getControls()">
+		/// <seealso cref="Novell.Directory.Ldap.LdapMessage.Controls">
 		/// </seealso>
 		override public LdapControl[] Controls
 		{
@@ -226,7 +226,7 @@ namespace Novell.Directory.Ldap
 		/// <summary> Returns the message ID.
 		/// 
 		/// </summary>
-		/// <seealso cref="com.novell.ldap.LdapMessage#getMessageID()">
+		/// <seealso cref="Novell.Directory.Ldap.LdapMessage.MessageID">
 		/// </seealso>
 		override public int MessageID
 		{
@@ -246,7 +246,7 @@ namespace Novell.Directory.Ldap
 		/// <returns> The operation type of the message.
 		/// 
 		/// </returns>
-		/// <seealso cref="com.novell.ldap.LdapMessage#getType()">
+		/// <seealso cref="Novell.Directory.Ldap.LdapMessage.Type">
 		/// </seealso>
 		override public int Type
 		{
@@ -298,13 +298,13 @@ namespace Novell.Directory.Ldap
 		/// Used to wake up the user following an abandon.
 		/// Note: The abandon doesn't have to be user initiated
 		/// but may be the result of error conditions.
-		/// <br>
+		/// 
 		/// Referral information is available if this connection created solely
 		/// to follow a referral.
 		/// 
 		/// </summary>
 		/// <param name="ex"> The exception
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="activeReferral"> The referral actually used to create the
 		/// connection
@@ -445,7 +445,7 @@ namespace Novell.Directory.Ldap
 		/// <summary> Checks the resultCode and throws the appropriate exception.
 		/// 
 		/// </summary>
-		/// <exception cref=""> LdapException A general exception which includes an error
+		/// <exception> LdapException A general exception which includes an error
 		/// message and an Ldap error code.
 		/// </exception>
 		/* package */

@@ -37,19 +37,19 @@ namespace Novell.Directory.Ldap
 	/// Used to provide credentials for authentication when processing a
 	/// referral.
 	/// 
-	/// <p>A programmer desiring to supply authentication credentials
+	/// A programmer desiring to supply authentication credentials
 	/// to the API when automatically following referrals MUST
 	/// implement this interface. If LdapAuthHandler or LdapBindHandler are not
 	/// implemented, automatically followed referrals will use anonymous
 	/// authentication. Referral URLs of any type other than Ldap (i.e. a
 	/// referral URL other than ldap://something) are not chased automatically
-	/// by the API on automatic following.</p>
+	/// by the API on automatic following.
 	/// 
 	/// 
 	/// </summary>
 	/// <seealso cref="LdapBindHandler">
 	/// </seealso>
-	/// <seealso cref="LdapConstraints#setReferralFollowing(boolean)">
+	/// <seealso cref="LdapConstraints.ReferralFollowing">
 	/// </seealso>
 	public interface LdapAuthHandler : LdapReferralHandler
 		{
@@ -60,7 +60,7 @@ namespace Novell.Directory.Ldap
 			/// </summary>
 			/// <param name="host">   Contains a host name or the IP address (in dotted string
 			/// format) of a host running an Ldap server.
-			/// <br><br>
+			/// 
 			/// </param>
 			/// <param name="port">   Contains the TCP or UDP port number of the host.
 			/// 

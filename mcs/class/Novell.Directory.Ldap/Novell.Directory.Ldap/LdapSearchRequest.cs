@@ -39,7 +39,7 @@ namespace Novell.Directory.Ldap
 	/// <summary> Represents an Ldap Search request.
 	/// 
 	/// </summary>
-	/// <seealso cref="LdapConnection#sendRequest">
+	/// <seealso cref="LdapConnection.SendRequest">
 	/// </seealso> 
    /*
 	*       SearchRequest ::= [APPLICATION 3] SEQUENCE {
@@ -78,11 +78,11 @@ namespace Novell.Directory.Ldap
 		/// <returns> scope of a search request
 		/// 
 		/// </returns>
-		/// <seealso cref="com.novell.ldap.LdapConnection#SCOPE_BASE">
+		/// <seealso cref="Novell.Directory.Ldap.LdapConnection.SCOPE_BASE">
 		/// </seealso>
-		/// <seealso cref="com.novell.ldap.LdapConnection#SCOPE_ONE">
+		/// <seealso cref="Novell.Directory.Ldap.LdapConnection.SCOPE_ONE">
 		/// </seealso>
-		/// <seealso cref="com.novell.ldap.LdapConnection#SCOPE_SUB">
+		/// <seealso cref="Novell.Directory.Ldap.LdapConnection.SCOPE_SUB">
 		/// </seealso>
 		virtual public int Scope
 		{
@@ -97,13 +97,13 @@ namespace Novell.Directory.Ldap
 		/// <returns> integer representing how to dereference aliases
 		/// 
 		/// </returns>
-		/// <seealso cref="com.novell.ldap.LdapSearchConstraints#DEREF_ALWAYS">
+		/// <seealso cref="Novell.Directory.Ldap.LdapSearchConstraints.DEREF_ALWAYS">
 		/// </seealso>
-		/// <seealso cref="com.novell.ldap.LdapSearchConstraints#DEREF_FINDING">
+		/// <seealso cref="Novell.Directory.Ldap.LdapSearchConstraints.DEREF_FINDING">
 		/// </seealso>
-		/// <seealso cref="com.novell.ldap.LdapSearchConstraints#DEREF_NEVER">
+		/// <seealso cref="Novell.Directory.Ldap.LdapSearchConstraints.DEREF_NEVER">
 		/// </seealso>
-		/// <seealso cref="com.novell.ldap.LdapSearchConstraints#DEREF_SEARCHING">
+		/// <seealso cref="Novell.Directory.Ldap.LdapSearchConstraints.DEREF_SEARCHING">
 		/// </seealso>
 		virtual public int Dereference
 		{
@@ -200,13 +200,13 @@ namespace Novell.Directory.Ldap
 		/// <summary> Retrieves an Iterator object representing the parsed filter for
 		/// this search request.
 		/// 
-		/// <p>The first object returned from the Iterator is an Integer indicating
+		/// The first object returned from the Iterator is an Integer indicating
 		/// the type of filter component. One or more values follow the component
 		/// type as subsequent items in the Iterator. The pattern of Integer 
 		/// component type followed by values continues until the end of the
-		/// filter.</p>
+		/// filter.
 		/// 
-		/// <p>Values returned as a byte array may represent UTF-8 characters or may
+		/// Values returned as a byte array may represent UTF-8 characters or may
 		/// be binary values. The possible Integer components of a search filter
 		/// and the associated values that follow are:
 		/// <ul>
@@ -225,11 +225,11 @@ namespace Novell.Directory.Ldap
 		/// <li>EXTENSIBLE_MATCH - followed by the name of the matching rule
 		/// represented as a String, by the attribute name represented
 		/// as a String, and by the attribute value represented as a 
-		/// byte array.
+		/// byte array.</li>
 		/// <li>SUBSTRINGS - followed by the attribute name represented as a
 		/// String, by one or more SUBSTRING components (INITIAL, ANY,
-		/// or FINAL) followed by the SUBSTRING value.
-		/// </ul></p>
+		/// or FINAL) followed by the SUBSTRING value.</li>
+		/// </ul>
 		/// 
 		/// </summary>
 		/// <returns> Iterator representing filter components
@@ -268,15 +268,15 @@ namespace Novell.Directory.Ldap
 		public const int EXTENSIBLE_MATCH = 9;
 		
 		/// <summary> Search Filter Identifier for an INITIAL component of a SUBSTRING.
-		/// Note: An initial SUBSTRING is represented as "<value>*".
+		/// Note: An initial SUBSTRING is represented as "value*".
 		/// </summary>
 		public const int INITIAL = 0;
 		/// <summary> Search Filter Identifier for an ANY component of a SUBSTRING.
-		/// Note: An ANY SUBSTRING is represented as "*<value>*".
+		/// Note: An ANY SUBSTRING is represented as "*value*".
 		/// </summary>
 		public const int ANY = 1;
 		/// <summary> Search Filter Identifier for a FINAL component of a SUBSTRING.
-		/// Note: A FINAL SUBSTRING is represented as "*<value>".
+		/// Note: A FINAL SUBSTRING is represented as "*value".
 		/// </summary>
 		public const int FINAL = 2;
 		
@@ -284,57 +284,57 @@ namespace Novell.Directory.Ldap
 		/// 
 		/// </summary>
 		/// <param name="base">          The base distinguished name to search from.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="scope">         The scope of the entries to search. The following
 		/// are the valid options:
 		/// <ul>
-		/// <li>SCOPE_BASE - searches only the base DN
+		/// <li>SCOPE_BASE - searches only the base DN</li>
 		/// 
-		/// <li>SCOPE_ONE - searches only entries under the base DN
+		/// <li>SCOPE_ONE - searches only entries under the base DN</li>
 		/// 
 		/// <li>SCOPE_SUB - searches the base DN and all entries
-		/// within its subtree
-		/// </ul><br><br>
+		/// within its subtree</li>
+		/// </ul>
 		/// </param>
 		/// <param name="filter">        The search filter specifying the search criteria.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="attrs">         The names of attributes to retrieve.
 		/// operation exceeds the time limit.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="dereference">Specifies when aliases should be dereferenced.
 		/// Must be one of the constants defined in
 		/// LdapConstraints, which are DEREF_NEVER,
 		/// DEREF_FINDING, DEREF_SEARCHING, or DEREF_ALWAYS.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="maxResults">The maximum number of search results to return
 		/// for a search request.
 		/// The search operation will be terminated by the server
 		/// with an LdapException.SIZE_LIMIT_EXCEEDED if the
 		/// number of results exceed the maximum.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="serverTimeLimit">The maximum time in seconds that the server
 		/// should spend returning search results. This is a
 		/// server-enforced limit.  A value of 0 means
 		/// no time limit.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="typesOnly">     If true, returns the names but not the values of
 		/// the attributes found.  If false, returns the
 		/// names and values for attributes found.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="cont">           Any controls that apply to the search request.
 		/// or null if none.
 		/// 
 		/// </param>
-		/// <seealso cref="com.novell.ldap.LdapConnection#search">
+		/// <seealso cref="Novell.Directory.Ldap.LdapConnection.Search">
 		/// </seealso>
-		/// <seealso cref="com.novell.ldap.LdapSearchConstraints">
+		/// <seealso cref="Novell.Directory.Ldap.LdapSearchConstraints">
 		/// </seealso>
 		public LdapSearchRequest(System.String base_Renamed, int scope, System.String filter, System.String[] attrs, int dereference, int maxResults, int serverTimeLimit, bool typesOnly, LdapControl[] cont):base(LdapMessage.SEARCH_REQUEST, new RfcSearchRequest(new RfcLdapDN(base_Renamed), new Asn1Enumerated(scope), new Asn1Enumerated(dereference), new Asn1Integer(maxResults), new Asn1Integer(serverTimeLimit), new Asn1Boolean(typesOnly), new RfcFilter(filter), new RfcAttributeDescriptionList(attrs)), cont)
 		{
@@ -345,57 +345,57 @@ namespace Novell.Directory.Ldap
 		/// 
 		/// </summary>
 		/// <param name="base">          The base distinguished name to search from.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="scope">         The scope of the entries to search. The following
 		/// are the valid options:
 		/// <ul>
-		/// <li>SCOPE_BASE - searches only the base DN
+		/// <li>SCOPE_BASE - searches only the base DN</li>
 		/// 
-		/// <li>SCOPE_ONE - searches only entries under the base DN
+		/// <li>SCOPE_ONE - searches only entries under the base DN</li>
 		/// 
 		/// <li>SCOPE_SUB - searches the base DN and all entries
-		/// within its subtree
-		/// </ul><br><br>
+		/// within its subtree</li>
+		/// </ul>
 		/// </param>
 		/// <param name="filter">        The search filter specifying the search criteria.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="attrs">         The names of attributes to retrieve.
 		/// operation exceeds the time limit.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="dereference">Specifies when aliases should be dereferenced.
 		/// Must be either one of the constants defined in
 		/// LdapConstraints, which are DEREF_NEVER,
 		/// DEREF_FINDING, DEREF_SEARCHING, or DEREF_ALWAYS.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="maxResults">The maximum number of search results to return
 		/// for a search request.
 		/// The search operation will be terminated by the server
 		/// with an LdapException.SIZE_LIMIT_EXCEEDED if the
 		/// number of results exceed the maximum.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="serverTimeLimit">The maximum time in seconds that the server
 		/// should spend returning search results. This is a
 		/// server-enforced limit.  A value of 0 means
 		/// no time limit.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="typesOnly">     If true, returns the names but not the values of
 		/// the attributes found.  If false, returns the
 		/// names and values for attributes found.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="cont">           Any controls that apply to the search request.
 		/// or null if none.
 		/// 
 		/// </param>
-		/// <seealso cref="com.novell.ldap.LdapConnection#search">
+		/// <seealso cref="Novell.Directory.Ldap.LdapConnection.Search">
 		/// </seealso>
-		/// <seealso cref="com.novell.ldap.LdapSearchConstraints">
+		/// <seealso cref="Novell.Directory.Ldap.LdapSearchConstraints">
 		/// </seealso>
 		public LdapSearchRequest(System.String base_Renamed, int scope, RfcFilter filter, System.String[] attrs, int dereference, int maxResults, int serverTimeLimit, bool typesOnly, LdapControl[] cont):base(LdapMessage.SEARCH_REQUEST, new RfcSearchRequest(new RfcLdapDN(base_Renamed), new Asn1Enumerated(scope), new Asn1Enumerated(dereference), new Asn1Integer(maxResults), new Asn1Integer(serverTimeLimit), new Asn1Boolean(typesOnly), filter, new RfcAttributeDescriptionList(attrs)), cont)
 		{

@@ -67,7 +67,7 @@ namespace Novell.Directory.Ldap.Utilclass
 		/// 
 		/// </summary>
 		/// <param name="messageOrKey">   Key string for the resource.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="">arguments
 		/// 
@@ -88,10 +88,10 @@ namespace Novell.Directory.Ldap.Utilclass
 		/// 
 		/// </summary>
 		/// <param name="messageOrKey">   Key string for the resource.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="">arguments
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="locale">         The Locale that should be used to pull message
 		/// strings out of ExceptionMessages.
@@ -153,7 +153,7 @@ namespace Novell.Directory.Ldap.Utilclass
 		/// 
 		/// </summary>
 		/// <param name="code">   the result code 
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <returns>        the String representing the result code.
 		/// </returns>
@@ -167,7 +167,7 @@ namespace Novell.Directory.Ldap.Utilclass
 		/// 
 		/// </summary>
 		/// <param name="code">   the result code 
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="locale">         The Locale that should be used to pull message
 		/// strings out of ResultMessages.

@@ -66,7 +66,7 @@ namespace Novell.Directory.Ldap.Rfc2251
 	/// controls       [0] Controls OPTIONAL }
 	/// </pre>
 	/// 
-	/// <br><br>
+	/// 
 	/// Note: The creation of a MessageID should be hidden within the creation of
 	/// an RfcLdapMessage. The MessageID needs to be in sequence, and has an
 	/// upper and lower limit. There is never a case when a user should be
@@ -318,10 +318,10 @@ namespace Novell.Directory.Ldap.Rfc2251
 		/// 
 		/// </summary>
 		/// <param name="dn">the base dn
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="filter">the filter
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="reference">true if a search reference
 		/// 

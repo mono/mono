@@ -76,8 +76,8 @@ namespace Novell.Directory.Ldap
 		/// for which a response has not been received from the server or which
 		/// still have messages to be retrieved with getResponse.
 		/// 
-		/// <p>The last ID in the array is the messageID of the last submitted
-		/// request.</p>
+		/// The last ID in the array is the messageID of the last submitted
+		/// request.
 		/// 
 		/// </summary>
 		/// <returns> The message IDs for all outstanding requests.
@@ -121,12 +121,12 @@ namespace Novell.Directory.Ldap
 		
 		/// <summary> Returns the response from an Ldap request.
 		/// 
-		/// <p>The getResponse method blocks until a response is available, or until
+		/// The getResponse method blocks until a response is available, or until
 		/// all operations associated with the object have completed or been
-		/// canceled, and then returns the response.</p>
+		/// canceled, and then returns the response.
 		/// 
-		/// <p>The application is responsible to determine the type of message
-		/// returned.</p>
+		/// The application is responsible to determine the type of message
+		/// returned.
 		/// 
 		/// </summary>
 		/// <returns> The response.
@@ -139,7 +139,7 @@ namespace Novell.Directory.Ldap
 		/// <seealso cref="LdapSearchResultReference">
 		/// 
 		/// </seealso>
-		/// <exception cref=""> LdapException A general exception which includes an error
+		/// <exception> LdapException A general exception which includes an error
 		/// message and an Ldap error code.
 		/// </exception>
 		public virtual LdapMessage getResponse()
@@ -149,15 +149,15 @@ namespace Novell.Directory.Ldap
 		
 		/// <summary> Returns the response from an Ldap request for a particular message ID.
 		/// 
-		/// <p>The getResponse method blocks until a response is available
+		/// The getResponse method blocks until a response is available
 		/// for a particular message ID, or until all operations associated
 		/// with the object have completed or been canceled, and
 		/// then returns the response.  If there is no outstanding operation for
 		/// the message ID (or if it is zero or a negative number),
 		/// IllegalArgumentException is thrown.
 		/// 
-		/// <p>The application is responsible to determine the type of message
-		/// returned.</p>
+		/// The application is responsible to determine the type of message
+		/// returned.
 		/// 
 		/// </summary>
 		/// <param name="msgid">query for responses for a specific message request
@@ -173,7 +173,7 @@ namespace Novell.Directory.Ldap
 		/// <seealso cref="LdapSearchResultReference">
 		/// 
 		/// </seealso>
-		/// <exception cref=""> LdapException A general exception which includes an error
+		/// <exception> LdapException A general exception which includes an error
 		/// message and an Ldap error code.
 		/// </exception>
 		public virtual LdapMessage getResponse(System.Int32 msgid)
@@ -237,8 +237,6 @@ namespace Novell.Directory.Ldap
 		/// otherwise false.
 		/// 
 		/// </returns>
-		/// <seealso cref="#getResponse()">
-		/// </seealso>
 		public virtual bool isResponseReceived()
 		{
 			return agent.isResponseReceived();
@@ -257,8 +255,6 @@ namespace Novell.Directory.Ldap
 		/// for the specified message ID, otherwise false.
 		/// 
 		/// </returns>
-		/// <seealso cref="#getResponse(int)">
-		/// </seealso>
 		public virtual bool isResponseReceived(int msgid)
 		{
 			return agent.isResponseReceived(msgid);
@@ -267,9 +263,9 @@ namespace Novell.Directory.Ldap
 		/// <summary> Reports true if all results have been received for a particular
 		/// message id.
 		/// 
-		/// <p>If the search result done has been received from the server for the
+		/// If the search result done has been received from the server for the
 		/// message id, it reports true.  There may still be messages waiting to be
-		/// retrieved by the applcation with getResponse.<p>
+		/// retrieved by the applcation with getResponse.
 		/// 
 		/// @throws IllegalArgumentException if there is no outstanding operation
 		/// for the message ID,

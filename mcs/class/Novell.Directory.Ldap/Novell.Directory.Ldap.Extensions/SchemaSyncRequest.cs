@@ -40,14 +40,14 @@ namespace Novell.Directory.Ldap.Extensions
 	/// <summary> 
 	/// Synchronizes the schema.
 	/// 
-	/// <p>The requestSchemaSyncRequest extension uses the following OID: <br>
-	/// &nbsp;&nbsp;&nbsp;2.16.840.1.113719.1.27.100.27</p>
+	/// The requestSchemaSyncRequest extension uses the following OID: 
+	/// 2.16.840.1.113719.1.27.100.27
 	/// 
-	/// <p>The requestValue has the following format:<br>
+	/// The requestValue has the following format:
 	/// 
-	/// requestValue ::=<br>
-	/// &nbsp;&nbsp;&nbsp;&nbsp;     serverName &nbsp;&nbsp;&nbsp;      LdapDN<br>
-	/// &nbsp;&nbsp;&nbsp;&nbsp;     delay &nbsp;&nbsp;&nbsp;           INTEGER</p>
+	/// requestValue ::=
+	///      serverName       LdapDN
+	///      delay            INTEGER
 	/// </summary>
 	public class SchemaSyncRequest:LdapExtendedOperation
 	{
@@ -57,13 +57,13 @@ namespace Novell.Directory.Ldap.Extensions
 		/// </summary>
 		/// <param name="serverName">    The distinguished name of the server which will start
 		/// the synchronization.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="delay">         The time, in seconds, to delay before the synchronization
 		/// should start.
 		/// 
 		/// </param>
-		/// <exception cref=""> LdapException A general exception which includes an error message
+		/// <exception> LdapException A general exception which includes an error message
 		/// and an Ldap error code.
 		/// </exception>
 		public SchemaSyncRequest(System.String serverName, int delay):base(ReplicationConstants.SCHEMA_SYNC_REQ, null)

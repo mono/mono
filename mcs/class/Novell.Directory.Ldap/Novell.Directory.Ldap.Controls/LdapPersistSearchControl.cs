@@ -42,9 +42,6 @@ namespace Novell.Directory.Ldap.Controls
 	/// the searches result set. The client can be notified when an entry is
 	/// added to the result set, when an entry is deleted from the result set,
 	/// when a DN has been changed or when and attribute value has been changed.
-	/// 
-	/// <p>Sample Code: <a href="http://developer.novell.com/ndk/doc/samplecode/
-	/// jldap_sample/controls/SearchPersist.java.html">SearchPersist.java</p>
 	/// </summary>
 	public class LdapPersistSearchControl:LdapControl
 	{
@@ -190,9 +187,9 @@ namespace Novell.Directory.Ldap.Controls
 			return ;
 		}
 		
-		/// <summary>  <p>Constructs an LdapPersistSearchControl object according to the
+		/// <summary>  Constructs an LdapPersistSearchControl object according to the
 		/// supplied parameters. The resulting control is used to specify a
-		/// persistent search.</p>
+		/// persistent search.
 		/// 
 		/// </summary>
 		/// <param name="changeTypes"> the change types to monitor. The bitwise OR of any
@@ -203,19 +200,19 @@ namespace Novell.Directory.Ldap.Controls
 		/// <li>                           LdapPersistSearchControl.MODDN</li>
 		/// To track all changes the value can be set to:
 		/// <li>                           LdapPersistSearchControl.ANY</li>
-		/// <br>
+		/// 
 		/// </param>
 		/// <param name="changesOnly"> true if you do not want the server to return
 		/// all existing entries in the directory that match the search
 		/// criteria. (Use this if you just want the changed entries to be
 		/// returned.)
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="returnControls"> true if you want the server to return entry
 		/// change controls with each entry in the search results. You need to
 		/// return entry change controls to discover what type of change
 		/// and other additional information about the change.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="isCritical"> true if this control is critical to the search
 		/// operation. If true and the server does not support this control,

@@ -37,16 +37,16 @@ namespace Novell.Directory.Ldap
 	/// <summary>  The LdapSchemaElement class is the base class representing schema
 	/// elements (definitions) in Ldap.
 	/// 
-	/// <p>An LdapSchemaElement is read-only, single-valued LdapAttribute.
+	/// An LdapSchemaElement is read-only, single-valued LdapAttribute.
 	/// Therefore, it does not support the addValue and removeValue methods from
 	/// LdapAttribute.  This class overrides those methods and throws
-	/// <code>UnsupportedOperationException<code> if either of those methods are
-	/// invoked by an application.<p>
+	/// <code>UnsupportedOperationException</code> if either of those methods are
+	/// invoked by an application.
 	/// 
 	/// </summary>
 	/// <seealso cref="LdapSchema">
 	/// </seealso>
-	/// <seealso cref="LdapConnection#fetchSchema">
+	/// <seealso cref="LdapConnection.FetchSchema">
 	/// </seealso>
 	public abstract class LdapSchemaElement:LdapAttribute
 	{
@@ -57,9 +57,9 @@ namespace Novell.Directory.Ldap
 		/// <summary> Returns an array of names for the element, or null if
 		/// none is found.
 		/// 
-		/// <p>The getNames method accesses the NAME qualifier (from the BNF
+		/// The getNames method accesses the NAME qualifier (from the BNF
 		/// descriptions of Ldap schema definitions). The array consists of all
-		/// values of the NAME qualifier. </p>
+		/// values of the NAME qualifier. 
 		/// 
 		/// </summary>
 		/// <returns> An array of names for the element, or null if none
@@ -79,8 +79,8 @@ namespace Novell.Directory.Ldap
 		}
 		/// <summary> Returns the description of the element.
 		/// 
-		/// <p>The getDescription method returns the value of the DESC qualifier
-		/// (from the BNF descriptions of Ldap schema definitions). </p>
+		/// The getDescription method returns the value of the DESC qualifier
+		/// (from the BNF descriptions of Ldap schema definitions). 
 		/// 
 		/// </summary>
 		/// <returns> The description of the element.
@@ -172,8 +172,8 @@ namespace Novell.Directory.Ldap
 		/// <summary> A string array of optional, or vendor-specific, qualifiers for the
 		/// schema element.
 		/// 
-		/// <p> These optional qualifiers begin with "X-"; the Novell eDirectory
-		/// specific qualifiers begin with "X-NDS". </p>
+		///  These optional qualifiers begin with "X-"; the Novell eDirectory
+		/// specific qualifiers begin with "X-NDS". 
 		/// </summary>
 		protected internal System.String[] qualifier = new System.String[]{""};
 		
@@ -185,8 +185,8 @@ namespace Novell.Directory.Ldap
 		/// <summary> Returns an array of all values of a specified optional or non-
 		/// standard qualifier of the element.
 		/// 
-		/// <p>The getQualifier method may be used to access the values of
-		/// vendor-specific qualifiers (which begin with "X-").</p>
+		/// The getQualifier method may be used to access the values of
+		/// vendor-specific qualifiers (which begin with "X-").
 		/// 
 		/// </summary>
 		/// <param name="name">     The name of the qualifier, case-sensitive.
@@ -226,12 +226,12 @@ namespace Novell.Directory.Ldap
 		/// <summary> Sets the values of a specified optional or non-standard qualifier of
 		/// the element.
 		/// 
-		/// <p>The setQualifier method is used to set the values of vendor-
+		/// The setQualifier method is used to set the values of vendor-
 		/// specific qualifiers (which begin with "X-").
 		/// 
 		/// </summary>
 		/// <param name="name">          The name of the qualifier, case-sensitive.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="values">        The values to set for the qualifier.
 		/// </param>

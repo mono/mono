@@ -37,7 +37,7 @@ namespace Novell.Directory.Ldap
 	/// <summary> 
 	/// An object that implements this interface can be notified when
 	/// unsolicited messages arrive from the server. A client registers the
-	/// object with LdapConnection.AddUnsolicitedNotificationListener. </p>
+	/// object with LdapConnection.AddUnsolicitedNotificationListener. 
 	/// 
 	/// </summary>
 	public interface LdapUnsolicitedNotificationListener
@@ -49,7 +49,7 @@ namespace Novell.Directory.Ldap
 			/// 
 			/// </summary>
 			/// <param name="msg">    An unsolicited message received from the server.
-			/// <br><br>
+			/// 
 			/// </param>
 			void  messageReceived(LdapExtendedResponse msg);
 		}

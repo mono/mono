@@ -40,20 +40,20 @@ namespace Novell.Directory.Ldap.Extensions
 	/// <summary> This API is used to trigger the specified background process on the
 	/// Novell eDirectory server.
 	/// 
-	/// <p>The TriggerBackgroundProcessRequest uses tone of the following OID's
-	/// depending on the process being triggered:<br>
-	/// &nbsp;&nbsp;&nbsp;2.16.840.1.113719.1.27.100.43</p>
-	/// &nbsp;&nbsp;&nbsp;2.16.840.1.113719.1.27.100.47</p>
-	/// &nbsp;&nbsp;&nbsp;2.16.840.1.113719.1.27.100.49</p>
-	/// &nbsp;&nbsp;&nbsp;2.16.840.1.113719.1.27.100.51</p>
-	/// &nbsp;&nbsp;&nbsp;2.16.840.1.113719.1.27.100.53</p>
-	/// &nbsp;&nbsp;&nbsp;2.16.840.1.113719.1.27.100.55</p>
+	/// The TriggerBackgroundProcessRequest uses tone of the following OID's
+	/// depending on the process being triggered:
+	/// 2.16.840.1.113719.1.27.100.43
+	/// 2.16.840.1.113719.1.27.100.47
+	/// 2.16.840.1.113719.1.27.100.49
+	/// 2.16.840.1.113719.1.27.100.51
+	/// 2.16.840.1.113719.1.27.100.53
+	/// 2.16.840.1.113719.1.27.100.55
 	/// 
-	/// <p>The requestValue has the following format:<br>
+	/// The requestValue has the following format:
 	/// 
-	/// requestValue ::=<br>
-	/// &nbsp;&nbsp;&nbsp;&nbsp;   NULL
-	/// </p>
+	/// requestValue ::=
+	///    NULL
+	/// 
 	/// </summary>
 	
 	public class TriggerBackgroundProcessRequest:LdapExtendedOperation
@@ -77,7 +77,7 @@ namespace Novell.Directory.Ldap.Extensions
 		/// <param name="processID">  This id identifies the background process to be triggerd.
 		/// 
 		/// </param>
-		/// <exception cref=""> LdapException A general exception which includes an error message
+		/// <exception> LdapException A general exception which includes an error message
 		/// and an Ldap error code.
 		/// </exception>
 		public TriggerBackgroundProcessRequest(int processID):base(null, null)

@@ -40,26 +40,26 @@ namespace Novell.Directory.Ldap.Extensions
 	/// <summary> 
 	/// Sets the Replication filter for all replicas on the server.
 	/// 
-	/// <p>The filter specified is a an array of classnames-attribute names pairs. </p>
+	/// The filter specified is a an array of classnames-attribute names pairs. 
 	/// 
-	/// <p>To set the filter for all replicas on the connected server, you must
+	/// To set the filter for all replicas on the connected server, you must
 	/// create an instance of this class and then call the
 	/// extendedOperation method with this object as the required
-	/// LdapExtendedOperation parameter.</p>
+	/// LdapExtendedOperation parameter.
 	/// 
-	/// <p>The SetReplicationFilterRequest extension uses the following OID:<br>
-	/// &nbsp;&nbsp;&nbsp;2.16.840.1.113719.1.27.100.35</p>
+	/// The SetReplicationFilterRequest extension uses the following OID:
+	/// 2.16.840.1.113719.1.27.100.35
 	/// 
-	/// <p>The requestValue has the following format:<br>
+	/// The requestValue has the following format:
 	/// 
-	/// requestValue ::=<br>
-	/// &nbsp;&nbsp;&nbsp;&nbsp; serverName&nbsp;&nbsp;&nbsp;  LdapDN</p>
-	/// &nbsp;&nbsp;&nbsp;&nbsp; SEQUENCE of SEQUENCE {</p>
-	/// &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; classname&nbsp;&nbsp;&nbsp;  OCTET STRING</p>
-	/// &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; SEQUENCE of ATTRIBUTES</p>
-	/// &nbsp;&nbsp;&nbsp;&nbsp;}</p>
-	/// &nbsp;&nbsp;&nbsp;&nbsp;where</p>
-	/// &nbsp;&nbsp;&nbsp;&nbsp;ATTRIBUTES:: OCTET STRING</p>
+	/// requestValue ::=
+	///  serverName  LdapDN
+	///  SEQUENCE of SEQUENCE {
+	///  classname  OCTET STRING
+	///  SEQUENCE of ATTRIBUTES
+	/// }
+	/// where
+	/// ATTRIBUTES:: OCTET STRING
 	/// </summary>
 	public class SetReplicationFilterRequest:LdapExtendedOperation
 	{
@@ -70,14 +70,14 @@ namespace Novell.Directory.Ldap.Extensions
 		/// 
 		/// </summary>
 		/// <param name="serverDN">The server on which the replication filter needs to be set
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="replicationFilter">An array of String Arrays. Each array starting with
 		/// a class name followed by the attribute names for that class that should comprise
 		/// the replication filter.
-		/// <br><br>
+		/// 
 		/// </param>
-		/// <exception cref=""> LdapException A general exception which includes an error
+		/// <exception> LdapException A general exception which includes an error
 		/// message and an Ldap error code.
 		/// </exception>
 		public SetReplicationFilterRequest(System.String serverDN, System.String[][] replicationFilter):base(ReplicationConstants.SET_REPLICATION_FILTER_REQ, null)

@@ -42,7 +42,7 @@ namespace Novell.Directory.Ldap
 	/// search results.
 	/// 
 	/// </summary>
-	/// <seealso cref="LdapConnection#search">
+	/// <seealso cref="LdapConnection.Search">
 	/// </seealso>
 	public class LdapUrl : System.ICloneable
 	{
@@ -184,7 +184,7 @@ namespace Novell.Directory.Ldap
 		/// sn?sub?(objectclass=inetOrgPerson)".
 		/// 
 		/// </param>
-		/// <exception cref=""> MalformedURLException The specified URL cannot be parsed.
+		/// <exception> MalformedURLException The specified URL cannot be parsed.
 		/// </exception>
 		public LdapUrl(System.String url)
 		{
@@ -196,17 +196,17 @@ namespace Novell.Directory.Ldap
 		
 		/// <summary> Constructs a URL object with the specified host, port, and DN.
 		/// 
-		/// <p>This form is used to create URL references to a particular object
-		/// in the directory.</p>
+		/// This form is used to create URL references to a particular object
+		/// in the directory.
 		/// 
 		/// </summary>
 		/// <param name="host">    Host identifier of Ldap server, or null for
 		/// "localhost".
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="port">    The port number for Ldap server (use
 		/// LdapConnection.DEFAULT_PORT for default port).
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="dn">      Distinguished name of the base object of the search.
 		/// 
@@ -226,31 +226,31 @@ namespace Novell.Directory.Ldap
 		/// </summary>
 		/// <param name="host">    Host identifier of Ldap server, or null for
 		/// "localhost".
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="port">    The port number for Ldap server (use
 		/// LdapConnection.DEFAULT_PORT for default port).
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="dn">      Distinguished name of the base object of the search.
 		/// 
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="attrNames">Names or OIDs of attributes to retrieve.  Passing a
 		/// null array signifies that all user attributes are to be
 		/// retrieved. Passing a value of "*" allows you to specify
 		/// that all user attributes as well as any specified
 		/// operational attributes are to be retrieved.
-		/// <br><br>
+		/// 
 		/// 
 		/// </param>
 		/// <param name="scope">   Depth of search (in DN namespace). Use one of
 		/// SCOPE_BASE, SCOPE_ONE, SCOPE_SUB from LdapConnection.
-		/// <br><br>
+		/// 
 		/// 
 		/// </param>
 		/// <param name="filter">  The search filter specifying the search criteria.
-		/// <br><br>
+		/// 
 		/// 
 		/// </param>
 		/// <param name="extensions"> Extensions provide a mechanism to extend the
@@ -282,16 +282,16 @@ namespace Novell.Directory.Ldap
 		/// </summary>
 		/// <param name="host">    Host identifier of Ldap server, or null for
 		/// "localhost".
-		/// <br><br>
+		/// 
 		/// 
 		/// </param>
 		/// <param name="port">    The port number for Ldap server (use
 		/// LdapConnection.DEFAULT_PORT for default port).
-		/// <br><br>
+		/// 
 		/// 
 		/// </param>
 		/// <param name="dn">      Distinguished name of the base object of the search.
-		/// <br><br>
+		/// 
 		/// 
 		/// </param>
 		/// <param name="attrNames">Names or OIDs of attributes to retrieve.  Passing a
@@ -299,17 +299,17 @@ namespace Novell.Directory.Ldap
 		/// retrieved. Passing a value of "*" allows you to specify
 		/// that all user attributes as well as any specified
 		/// operational attributes are to be retrieved.
-		/// <br><br>
+		/// 
 		/// 
 		/// </param>
 		/// <param name="scope">   Depth of search (in DN namespace). Use one of
 		/// SCOPE_BASE, SCOPE_ONE, SCOPE_SUB from LdapConnection.
-		/// <br><br>
+		/// 
 		/// 
 		/// </param>
 		/// <param name="filter">  The search filter specifying the search criteria.
 		/// from LdapConnection: SCOPE_BASE, SCOPE_ONE, SCOPE_SUB.
-		/// <br><br>
+		/// 
 		/// 
 		/// </param>
 		/// <param name="extensions"> Extensions provide a mechanism to extend the
@@ -319,7 +319,7 @@ namespace Novell.Directory.Ldap
 		/// be <code>null</code> or empty.  The =value part may be
 		/// omitted. The expression may be prefixed with '!' if it
 		/// is mandatory for the evaluation of the URL.
-		/// <br><br>
+		/// 
 		/// 
 		/// </param>
 		/// <param name="secure">  If true creates an Ldap URL of the ldaps type
@@ -358,7 +358,7 @@ namespace Novell.Directory.Ldap
 		
 		/// <summary> Decodes a URL-encoded string.
 		/// 
-		/// <p>Any occurences of %HH are decoded to the hex value represented.
+		/// Any occurences of %HH are decoded to the hex value represented.
 		/// However, this method does NOT decode "+" into " ".
 		/// 
 		/// </summary>
@@ -368,7 +368,7 @@ namespace Novell.Directory.Ldap
 		/// <returns> The decoded string.
 		/// 
 		/// </returns>
-		/// <exception cref=""> MalformedURLException The URL could not be parsed.
+		/// <exception> MalformedURLException The URL could not be parsed.
 		/// </exception>
 		public static System.String decode(System.String URLEncoded)
 		{
@@ -423,7 +423,7 @@ namespace Novell.Directory.Ldap
 		
 		/// <summary> Encodes an arbitrary string using the URL encoding rules.
 		/// 
-		/// <p> Any illegal characters are encoded as %HH. </p>
+		///  Any illegal characters are encoded as %HH. 
 		/// 
 		/// </summary>
 		/// <param name="toEncode">    The string to encode.

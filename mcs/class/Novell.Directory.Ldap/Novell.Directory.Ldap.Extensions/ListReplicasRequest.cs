@@ -40,17 +40,17 @@ namespace Novell.Directory.Ldap.Extensions
 	/// <summary> 
 	/// Lists all the replicas that reside on the the specified directory server.
 	/// 
-	/// <p>To list replicas, you must create an instance
+	/// To list replicas, you must create an instance
 	/// of this class and then call the extendedOperation method with this
-	/// object as the required LdapExtendedOperation parameter.</p>
+	/// object as the required LdapExtendedOperation parameter.
 	/// 
-	/// <p>The listReplicaRequest extension uses the following OID:<br>
-	/// &nbsp;&nbsp;&nbsp;2.16.840.1.113719.1.27.100.19</p>
+	/// The listReplicaRequest extension uses the following OID:
+	/// 2.16.840.1.113719.1.27.100.19
 	/// 
-	/// <p>The requestValue has the following format:<br>
+	/// The requestValue has the following format:
 	/// 
-	/// requestValue ::=<br>
-	/// &nbsp;&nbsp;&nbsp;&nbsp;  serverName &nbsp;&nbsp;&nbsp; LdapDN</p>
+	/// requestValue ::=
+	///   serverName  LdapDN
 	/// </summary>
 	public class ListReplicasRequest:LdapExtendedOperation
 	{
@@ -61,7 +61,7 @@ namespace Novell.Directory.Ldap.Extensions
 		/// <param name="serverName">The server which contains replicas.
 		/// 
 		/// </param>
-		/// <exception cref=""> LdapException A general exception which includes an error
+		/// <exception> LdapException A general exception which includes an error
 		/// message and an Ldap error code.
 		/// </exception>
 		public ListReplicasRequest(System.String serverName):base(ReplicationConstants.LIST_REPLICAS_REQ, null)

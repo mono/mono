@@ -34,9 +34,6 @@ namespace Novell.Directory.Ldap.Controls
 {
 	
 	/// <summary> Encapsulates parameters for sorting search results.
-	/// 
-	/// <p>Sample Code: <a href="http://developer.novell.com/ndk/doc/samplecode/
-	/// jldap_sample/controls/AsyncSortControl.java.html">AsyncSortControl.java</p>
 	/// </summary>
 	public class LdapSortKey
 	{
@@ -96,7 +93,7 @@ namespace Novell.Directory.Ldap.Controls
 		/// is done in reverse (descending) order. 
 		/// An OID for a matching rule may be appended
 		/// following a ":".
-		/// <br>
+		/// 
 		/// Examples:
 		/// <ul>
 		/// <li> "cn" (sorts in ascending order by the cn attribute)</li>
@@ -133,7 +130,7 @@ namespace Novell.Directory.Ldap.Controls
 		/// 
 		/// </summary>
 		/// <param name="key">    The single attribute to use for sorting.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="reverse">If true, sorting is done in descending order. If false,
 		/// sorting is done in ascending order.
@@ -148,11 +145,11 @@ namespace Novell.Directory.Ldap.Controls
 		/// 
 		/// </summary>
 		/// <param name="key">    The attribute name (for example, "cn") to use for sorting.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="reverse">  If true, sorting is done in descending order. If false,
 		/// sorting is done in ascending order.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="matchRule">  The object ID (OID) of a matching rule used for
 		/// collation. If the object will be used to request

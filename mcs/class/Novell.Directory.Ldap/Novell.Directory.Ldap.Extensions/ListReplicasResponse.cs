@@ -40,11 +40,11 @@ namespace Novell.Directory.Ldap.Extensions
 	
 	/// <summary> Retrieves the list of replicas from the specified server.
 	/// 
-	/// <p>An object in this class is generated from an ExtendedResponse object
-	/// using the ExtendedResponseFactory class.</p>
+	/// An object in this class is generated from an ExtendedResponse object
+	/// using the ExtendedResponseFactory class.
 	/// 
-	/// <p>The listReplicaResponse extension uses the following OID:<br>
-	/// &nbsp;&nbsp;&nbsp;2.16.840.1.113719.1.27.20</p>
+	/// The listReplicaResponse extension uses the following OID:
+	/// 2.16.840.1.113719.1.27.20
 	/// 
 	/// </summary>
 	public class ListReplicasResponse:LdapExtendedResponse
@@ -69,14 +69,14 @@ namespace Novell.Directory.Ldap.Extensions
 		/// <summary> Constructs an object from the responseValue which contains the list
 		/// of replicas.
 		/// 
-		/// <p>The constructor parses the responseValue which has the following
-		/// format:<br>
-		/// responseValue ::=<br>
-		/// &nbsp;&nbsp;&nbsp;&nbsp;  replicaList&nbsp;&nbsp;&nbsp;
+		/// The constructor parses the responseValue which has the following
+		/// format:
+		/// responseValue ::=
+		///   replicaList
 		/// SEQUENCE OF OCTET STRINGS
 		/// 
 		/// </summary>
-		/// <exception cref=""> IOException  The responseValue could not be decoded.
+		/// <exception> IOException  The responseValue could not be decoded.
 		/// </exception>
 		public ListReplicasResponse(RfcLdapMessage rfcMessage):base(rfcMessage)
 		{

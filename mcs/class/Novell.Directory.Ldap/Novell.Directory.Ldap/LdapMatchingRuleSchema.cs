@@ -37,12 +37,12 @@ namespace Novell.Directory.Ldap
 	/// <summary>  The schematic definition of a particular matching rule
 	/// in a particular Directory Server.
 	/// 
-	/// <p>The LdapMatchingRuleSchema class represents the definition of a mathcing
+	/// The LdapMatchingRuleSchema class represents the definition of a mathcing
 	/// rule.  It is used to query matching rule syntax, and to add or delete a
 	/// matching rule definition in a directory.
 	/// 
-	/// <p>Novell eDirectory does not currently allow matching rules to be added
-	/// or deleted from the schema.</p>
+	/// Novell eDirectory does not currently allow matching rules to be added
+	/// or deleted from the schema.
 	/// 
 	/// </summary>
 	/// <seealso cref="LdapAttributeSchema">
@@ -86,27 +86,27 @@ namespace Novell.Directory.Ldap
 		/// 
 		/// </summary>
 		/// <param name="names">      The names of the attribute.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="oid">        Object Identifier of the attribute - in
 		/// dotted-decimal format.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="description">  Optional description of the attribute.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="attributes">   The OIDs of attributes to which the rule applies.
 		/// This parameter may be null. All attributes added to
 		/// this array must use the same syntax.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="obsolete">     true if this matching rule is obsolete.
-		/// <br><br>
+		/// 
 		/// 
 		/// </param>
 		/// <param name="syntaxString">  The unique object identifer of the syntax of the
 		/// attribute, in dotted numerical format.
-		/// <br><br>
+		/// 
 		/// </param>
 		public LdapMatchingRuleSchema(System.String[] names, System.String oid, System.String description, System.String[] attributes, bool obsolete, System.String syntaxString):base(LdapSchema.schemaTypeNames[LdapSchema.MATCHING])
 		{
@@ -130,7 +130,7 @@ namespace Novell.Directory.Ldap
 		/// </summary>
 		/// <param name="rawMatchingRule">   The raw string value returned on a directory
 		/// query for "matchingRule".
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="rawMatchingRuleUse"> The raw string value returned on a directory
 		/// query for "matchingRuleUse".

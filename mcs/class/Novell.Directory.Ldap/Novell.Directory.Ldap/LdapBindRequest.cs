@@ -38,7 +38,7 @@ namespace Novell.Directory.Ldap
 	/// <summary> Represents a simple bind request.
 	/// 
 	/// </summary>
-	/// <seealso cref="LdapConnection#sendRequest">
+	/// <seealso cref="LdapConnection.SendRequest">
 	/// </seealso>
    /*
 	*       BindRequest ::= [APPLICATION 0] SEQUENCE {
@@ -66,13 +66,13 @@ namespace Novell.Directory.Ldap
 		/// </summary>
 		/// <param name="version"> The Ldap protocol version, use Ldap_V3.
 		/// Ldap_V2 is not supported.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="dn">     If non-null and non-empty, specifies that the
 		/// connection and all operations through it should
 		/// be authenticated with dn as the distinguished
 		/// name.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="passwd"> If non-null and non-empty, specifies that the
 		/// connection and all operations through it should

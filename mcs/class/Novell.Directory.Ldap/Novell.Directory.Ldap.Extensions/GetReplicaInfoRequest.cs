@@ -40,22 +40,22 @@ namespace Novell.Directory.Ldap.Extensions
 	/// <summary> 
 	/// Reads information about a replica.
 	/// 
-	/// <p>The information available includes such items as  replicas state, last
-	/// modification time, and replica type. </p>
+	/// The information available includes such items as  replicas state, last
+	/// modification time, and replica type. 
 	/// 
-	/// <p>To read other information about a replica, you must
+	/// To read other information about a replica, you must
 	/// create an instance of this class and then call the
 	/// extendedOperation method with this object as the required
-	/// LdapExtendedOperation parameter.</p>
+	/// LdapExtendedOperation parameter.
 	/// 
-	/// <p>The getReplicaInfoRequest extension uses the following OID:<br>
-	/// &nbsp;&nbsp;&nbsp;2.16.840.1.113719.1.27.100.17</p>
+	/// The getReplicaInfoRequest extension uses the following OID:
+	/// 2.16.840.1.113719.1.27.100.17
 	/// 
-	/// <p>The requestValue has the following format:<br>
+	/// The requestValue has the following format:
 	/// 
-	/// requestValue ::=<br>
-	/// &nbsp;&nbsp;&nbsp;&nbsp; serverDN&nbsp;&nbsp;&nbsp;     LdapDN<br>
-	/// &nbsp;&nbsp;&nbsp;&nbsp; partitionDN&nbsp;&nbsp;&nbsp;  LdapDN</p>
+	/// requestValue ::=
+	///  serverDN     LdapDN
+	///  partitionDN  LdapDN
 	/// </summary>
 	public class GetReplicaInfoRequest:LdapExtendedOperation
 	{
@@ -65,12 +65,12 @@ namespace Novell.Directory.Ldap.Extensions
 		/// 
 		/// </summary>
 		/// <param name="serverDN">The server on which the replica resides.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="partitionDN">The distinguished name of the replica to be read.
 		/// 
 		/// </param>
-		/// <exception cref=""> LdapException A general exception which includes an error
+		/// <exception> LdapException A general exception which includes an error
 		/// message and an Ldap error code.
 		/// </exception>
 		public GetReplicaInfoRequest(System.String serverDN, System.String partitionDN):base(ReplicationConstants.GET_REPLICA_INFO_REQ, null)

@@ -38,7 +38,7 @@ namespace Novell.Directory.Ldap
 	/// <summary> 
 	/// A set of {@link LdapAttribute} objects.
 	/// 
-	/// <p>An <code>LdapAttributeSet</code> is a collection of <code>LdapAttribute</code>
+	/// An <code>LdapAttributeSet</code> is a collection of <code>LdapAttribute</code>
 	/// classes as returned from an <code>LdapEntry</code> on a search or read
 	/// operation. <code>LdapAttributeSet</code> may be also used to contruct an entry
 	/// to be added to a directory.  If the <code>add()</code> or <code>addAll()</code>
@@ -69,10 +69,10 @@ namespace Novell.Directory.Ldap
 		}
 		
 		/// <summary> This is the underlying data structure for this set.
-		/// <p>HashSet is similar to the functionality of this set.  The difference
+		/// HashSet is similar to the functionality of this set.  The difference
 		/// is we use the name of an attribute as keys in the Map and LdapAttributes
 		/// as the values.  We also do not declare the map as transient, making the
-		/// map serializable.</p>
+		/// map serializable.
 		/// </summary>
 		private System.Collections.Hashtable map;
 		
@@ -109,17 +109,17 @@ namespace Novell.Directory.Ldap
 		
 		/// <summary> Returns the attribute matching the specified attrName.
 		/// 
-		/// <p>For example:</p>
+		/// For example:
 		/// <ul>
 		/// <li><code>getAttribute("cn")</code>      returns only the "cn" attribute</li>
 		/// <li><code>getAttribute("cn;lang-en")</code> returns only the "cn;lang-en"
 		/// attribute.</li>
 		/// </ul>
-		/// <p>In both cases, <code>null</code> is returned if there is no exact match to
-		/// the specified attrName.</p>
+		/// In both cases, <code>null</code> is returned if there is no exact match to
+		/// the specified attrName.
 		/// 
-		/// <p>Note: Novell eDirectory does not currently support language subtypes.
-		/// It does support the "binary" subtype.</p>
+		/// Note: Novell eDirectory does not currently support language subtypes.
+		/// It does support the "binary" subtype.
 		/// 
 		/// </summary>
 		/// <param name="attrName">  The name of an attribute to retrieve, with or without
@@ -138,26 +138,26 @@ namespace Novell.Directory.Ldap
 		/// <summary> Returns a single best-match attribute, or <code>null</code> if no match is
 		/// available in the entry.
 		/// 
-		/// <p>Ldap version 3 allows adding a subtype specification to an attribute
+		/// Ldap version 3 allows adding a subtype specification to an attribute
 		/// name. For example, "cn;lang-ja" indicates a Japanese language
 		/// subtype of the "cn" attribute and "cn;lang-ja-JP-kanji" may be a subtype
 		/// of "cn;lang-ja". This feature may be used to provide multiple
 		/// localizations in the same directory. For attributes which do not vary
 		/// among localizations, only the base attribute may be stored, whereas
-		/// for others there may be varying degrees of specialization.</p>
+		/// for others there may be varying degrees of specialization.
 		/// 
-		/// <p>For example, <code>getAttribute(attrName,lang)</code> returns the
+		/// For example, <code>getAttribute(attrName,lang)</code> returns the
 		/// <code>LdapAttribute</code> that exactly matches attrName and that
-		/// best matches lang.</p>
+		/// best matches lang.
 		/// 
-		/// <p>If there are subtypes other than "lang" subtypes included
+		/// If there are subtypes other than "lang" subtypes included
 		/// in attrName, for example, "cn;binary", only attributes with all of
 		/// those subtypes are returned. If lang is <code>null</code> or empty, the
 		/// method behaves as getAttribute(attrName). If there are no matching
-		/// attributes, <code>null</code> is returned. </p>
+		/// attributes, <code>null</code> is returned. 
 		/// 
 		/// 
-		/// <p>Assume the entry contains only the following attributes:</p>
+		/// Assume the entry contains only the following attributes:
 		/// 
 		/// <ul>
 		/// <li>cn;lang-en</li>
@@ -165,7 +165,7 @@ namespace Novell.Directory.Ldap
 		/// <li>sn</li>
 		/// </ul>
 		/// 
-		/// <p>Examples:</p>
+		/// Examples:
 		/// <ul>
 		/// <li><code>getAttribute( "cn" )</code>       returns <code>null</code>.</li>
 		/// <li><code>getAttribute( "sn" )</code>       returns the "sn" attribute.</li>
@@ -179,14 +179,14 @@ namespace Novell.Directory.Ldap
 		/// returns the "sn" attribute.</li>
 		/// </ul>
 		/// 
-		/// <p>Note: Novell eDirectory does not currently support language subtypes.
-		/// It does support the "binary" subtype.</p>
+		/// Note: Novell eDirectory does not currently support language subtypes.
+		/// It does support the "binary" subtype.
 		/// 
 		/// </summary>
 		/// <param name="attrName"> The name of an attribute to retrieve, with or without
 		/// subtype specifications. For example, "cn", "cn;phonetic", and
 		/// cn;binary" are valid attribute names.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="lang">  A language specification with optional subtypes
 		/// appended using "-" as separator. For example, "lang-en", "lang-en-us",
@@ -206,8 +206,8 @@ namespace Novell.Directory.Ldap
 		/// <summary> Creates a new attribute set containing only the attributes that have
 		/// the specified subtypes.
 		/// 
-		/// <p>For example, suppose an attribute set contains the following
-		/// attributes:</p>
+		/// For example, suppose an attribute set contains the following
+		/// attributes:
 		/// 
 		/// <ul>
 		/// <li>    cn</li>
@@ -216,9 +216,9 @@ namespace Novell.Directory.Ldap
 		/// <li>    sn;lang-us</li>
 		/// </ul>
 		/// 
-		/// <p>Calling the <code>getSubset</code> method and passing lang-ja as the
+		/// Calling the <code>getSubset</code> method and passing lang-ja as the
 		/// argument, the method returns an attribute set containing the following
-		/// attributes:</p>
+		/// attributes:
 		/// 
 		/// <ul>
 		/// <li>cn;lang-ja</li>
@@ -235,8 +235,8 @@ namespace Novell.Directory.Ldap
 		/// which also are binary</li>
 		/// </ul>
 		/// 
-		/// <p>Note: Novell eDirectory does not currently support language subtypes.
-		/// It does support the "binary" subtype.</p>
+		/// Note: Novell eDirectory does not currently support language subtypes.
+		/// It does support the "binary" subtype.
 		/// 
 		/// </param>
 		/// <returns> An attribute set containing the attributes that match the
@@ -304,8 +304,8 @@ namespace Novell.Directory.Ldap
 		}
 		
 		/// <summary> Adds the specified attribute to this set if it is not already present.
-		/// <p>If an attribute with the same name already exists in the set then the
-		/// specified attribute will not be added.</p>
+		/// If an attribute with the same name already exists in the set then the
+		/// specified attribute will not be added.
 		/// 
 		/// </summary>
 		/// <param name="attr">  Object of type <code>LdapAttribute</code>
@@ -332,10 +332,10 @@ namespace Novell.Directory.Ldap
 		
 		/// <summary> Removes the specified object from this set if it is present.
 		/// 
-		/// <p>If the specified object is of type <code>LdapAttribute</code>, the
+		/// If the specified object is of type <code>LdapAttribute</code>, the
 		/// specified attribute will be removed.  If the specified object is of type
 		/// <code>String</code>, the attribute with a name that matches the string will
-		/// be removed.</p>
+		/// be removed.
 		/// 
 		/// </summary>
 		/// <param name="object">LdapAttribute to be removed or <code>String</code> naming

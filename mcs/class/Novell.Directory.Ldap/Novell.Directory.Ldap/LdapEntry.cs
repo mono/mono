@@ -37,7 +37,7 @@ namespace Novell.Directory.Ldap
 	/// <summary> Represents a single entry in a directory, consisting of
 	/// a distinguished name (DN) and zero or more attributes.
 	/// 
-	/// <p>An instance of
+	/// An instance of
 	/// LdapEntry is created in order to add an entry to a directory, and
 	/// instances of LdapEntry are returned on a search by enumerating an
 	/// LdapSearchResults.
@@ -91,7 +91,7 @@ namespace Novell.Directory.Ldap
 		/// <param name="dn">      The distinguished name of the new entry. The
 		/// value is not validated. An invalid distinguished
 		/// name will cause operations using this entry to fail.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="attrs">   The initial set of attributes assigned to the
 		/// entry.
@@ -115,7 +115,7 @@ namespace Novell.Directory.Ldap
 		/// 
 		/// </summary>
 		/// <param name="attrName">The name of the attribute or attributes to return.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <returns> An array of LdapAttribute objects.
 		/// </returns>
@@ -126,9 +126,9 @@ namespace Novell.Directory.Ldap
 		
 		/// <summary> Returns the attribute set of the entry.
 		/// 
-		/// <p>All base and subtype variants of all attributes are
+		/// All base and subtype variants of all attributes are
 		/// returned. The LdapAttributeSet returned may be
-		/// empty if there are no attributes in the entry. </p>
+		/// empty if there are no attributes in the entry. 
 		/// 
 		/// </summary>
 		/// <returns> The attribute set of the entry.
@@ -142,13 +142,13 @@ namespace Novell.Directory.Ldap
 		/// <summary> Returns an attribute set from the entry, consisting of only those
 		/// attributes matching the specified subtypes.
 		/// 
-		/// <p>The getAttributeSet method can be used to extract only
+		/// The getAttributeSet method can be used to extract only
 		/// a particular language variant subtype of each attribute,
 		/// if it exists. The "subtype" may be, for example, "lang-ja", "binary",
 		/// or "lang-ja;phonetic". If more than one subtype is specified, separated
 		/// with a semicolon, only those attributes with all of the named
 		/// subtypes will be returned. The LdapAttributeSet returned may be
-		/// empty if there are no matching attributes in the entry. </p>
+		/// empty if there are no matching attributes in the entry. 
 		/// 
 		/// </summary>
 		/// <param name="subtype"> One or more subtype specification(s), separated
@@ -168,10 +168,10 @@ namespace Novell.Directory.Ldap
 		
 		/// <summary> Compares this object with the specified object for order.
 		/// 
-		/// <p>Ordering is determined by comparing normalized DN values
+		/// Ordering is determined by comparing normalized DN values
 		/// (see {@link LdapEntry#getDN() } and
 		/// {@link LdapDN#normalize(java.lang.String)}) using the
-		/// compareTo method of the String class.  </p>
+		/// compareTo method of the String class.  
 		/// 
 		/// </summary>
 		/// <param name="entry">    Entry to compare to

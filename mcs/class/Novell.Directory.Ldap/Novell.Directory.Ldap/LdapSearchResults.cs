@@ -35,23 +35,23 @@ using Novell.Directory.Ldap.Utilclass;
 namespace Novell.Directory.Ldap
 {
 	
-	/// <summary> <p>An LdapSearchResults object is returned from a synchronous search
+	/// <summary> An LdapSearchResults object is returned from a synchronous search
 	/// operation. It provides access to all results received during the
-	/// operation (entries and exceptions).</p>
+	/// operation (entries and exceptions).
 	/// 
 	/// </summary>
-	/// <seealso cref="LdapConnection#search">
+	/// <seealso cref="LdapConnection.Search">
 	/// </seealso>
 	public class LdapSearchResults
 	{
 		/// <summary> Returns a count of the items in the search result.
 		/// 
-		/// <p>Returns a count of the entries and exceptions remaining in the object.
+		/// Returns a count of the entries and exceptions remaining in the object.
 		/// If the search was submitted with a batch size greater than zero,
 		/// getCount reports the number of results received so far but not enumerated
 		/// with next().  If batch size equals zero, getCount reports the number of
 		/// items received, since the application thread blocks until all results are
-		/// received.</p>
+		/// received.
 		/// 
 		/// </summary>
 		/// <returns> The number of items received but not retrieved by the application
@@ -84,12 +84,12 @@ namespace Novell.Directory.Ldap
 		/// <summary> Collects batchSize elements from an LdapSearchQueue message
 		/// queue and places them in a Vector.
 		/// 
-		/// <p>If the last message from the server,
+		/// If the last message from the server,
 		/// the result message, contains an error, it will be stored in the Vector
 		/// for nextElement to process. (although it does not increment the search
 		/// result count) All search result entries will be placed in the Vector.
 		/// If a null is returned from getResponse(), it is likely that the search
-		/// was abandoned.</p>
+		/// was abandoned.
 		/// 
 		/// </summary>
 		/// <returns> true if all search results have been placed in the vector.
@@ -218,10 +218,10 @@ namespace Novell.Directory.Ldap
 		/// 
 		/// </summary>
 		/// <param name="conn">The LdapConnection which initiated the search
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="queue">The queue for the search results.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="cons">The LdapSearchConstraints associated with this search
 		/// </param>
@@ -303,18 +303,18 @@ namespace Novell.Directory.Ldap
 		}
 		/// <summary> Returns the next result as an LdapEntry.
 		/// 
-		/// <p>If automatic referral following is disabled or if a referral
+		/// If automatic referral following is disabled or if a referral
 		/// was not followed, next() will throw an LdapReferralException
-		/// when the referral is received.</p>
+		/// when the referral is received.
 		/// 
 		/// </summary>
 		/// <returns> The next search result as an LdapEntry.
 		/// 
 		/// </returns>
-		/// <exception cref=""> LdapException A general exception which includes an error
+		/// <exception> LdapException A general exception which includes an error
 		/// message and an Ldap error code.
 		/// </exception>
-		/// <exception cref=""> LdapReferralException A referral was received and not
+		/// <exception> LdapReferralException A referral was received and not
 		/// followed.
 		/// </exception>
 		public virtual LdapEntry next()

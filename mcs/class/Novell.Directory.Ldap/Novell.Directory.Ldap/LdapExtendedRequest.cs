@@ -41,7 +41,7 @@ namespace Novell.Directory.Ldap
 	/// <summary> Represents an Ldap Extended Request.
 	/// 
 	/// </summary>
-	/// <seealso cref="LdapConnection#sendRequest">
+	/// <seealso cref="LdapConnection.SendRequest">
 	/// </seealso> 
    /*
 	*       ExtendedRequest ::= [APPLICATION 23] SEQUENCE {
@@ -76,13 +76,13 @@ namespace Novell.Directory.Ldap
 			
 		}
 		/// <summary> Constructs an LdapExtendedRequest.
-		/// <br><br>
+		/// 
 		/// </summary>
 		/// <param name="op"> The object which contains (1) an identifier of an extended
 		/// operation which should be recognized by the particular Ldap
 		/// server this client is connected to, and (2) an operation-
 		/// specific sequence of octet strings or BER-encoded values.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="cont">Any controls that apply to the extended request
 		/// or null if none.

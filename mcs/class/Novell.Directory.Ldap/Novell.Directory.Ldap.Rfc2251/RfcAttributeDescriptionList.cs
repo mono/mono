@@ -35,7 +35,7 @@ using Novell.Directory.Ldap.Asn1;
 namespace Novell.Directory.Ldap.Rfc2251
 {
 	
-	/// <summary><pre>
+	/// <summary>
 	/// The AttributeDescriptionList is used to list attributes to be returned in
 	/// a search request.
 	/// 

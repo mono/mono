@@ -39,12 +39,12 @@ namespace Novell.Directory.Ldap.Extensions
 	
 	/// <summary> Returns the number of entries in the partition.
 	/// 
-	/// <p>An object in this class is generated from an ExtendedResponse object
-	/// using the ExtendedResponseFactory class.</p>
+	/// An object in this class is generated from an ExtendedResponse object
+	/// using the ExtendedResponseFactory class.
 	/// 
-	/// <p>The PartitionEntryCountResponse extension uses the following
-	/// OID:<br>
-	/// &nbsp;&nbsp;&nbsp;2.16.840.1.113719.1.27.100.14</p>
+	/// The PartitionEntryCountResponse extension uses the following
+	/// OID:
+	/// 2.16.840.1.113719.1.27.100.14
 	/// 
 	/// </summary>
 	public class PartitionEntryCountResponse:LdapExtendedResponse
@@ -69,13 +69,13 @@ namespace Novell.Directory.Ldap.Extensions
 		/// <summary> Constructs an object from the responseValue which contains the
 		/// entry count.
 		/// 
-		/// <p>The constructor parses the responseValue which has the following
-		/// format:<br>
-		/// responseValue ::=<br>
-		/// &nbsp;&nbsp;&nbsp;&nbsp;  count &nbsp;&nbsp;&nbsp INTEGER</p>
+		/// The constructor parses the responseValue which has the following
+		/// format:
+		/// responseValue ::=
+		///   count  INTEGER
 		/// 
 		/// </summary>
-		/// <exception cref=""> IOException  The response value could not be decoded.
+		/// <exception> IOException  The response value could not be decoded.
 		/// </exception>
 		public PartitionEntryCountResponse(RfcLdapMessage rfcMessage):base(rfcMessage)
 		{

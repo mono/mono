@@ -39,14 +39,14 @@ namespace Novell.Directory.Ldap.Asn1
 	/// Decoders which implement this interface may be used to decode any of the
 	/// Asn1Object data types.
 	/// 
-	/// <p>This package also provides the BERDecoder class that can be used to 
+	/// This package also provides the BERDecoder class that can be used to 
 	/// BER decode ASN.1 classes.  However an application might chose to use 
 	/// its own decoder class.
 	/// 
-	/// <p>This interface thus allows an application to use this package to
+	/// This interface thus allows an application to use this package to
 	/// decode ASN.1 objects using other decoding rules if needed.  
 	/// 
-	/// <p>Note that Ldap packets are required to be BER encoded. Since this package
+	/// Note that Ldap packets are required to be BER encoded. Since this package
 	/// includes a BER decoder no application provided decoder is needed for 
 	/// building Ldap packets.
 	/// </summary>
@@ -76,7 +76,7 @@ namespace Novell.Directory.Ldap.Asn1
 			/// <param name="length">The decoded components encoded length. This value is
 			/// handy when decoding structured types. It allows you to accumulate 
 			/// the number of bytes decoded, so you know when the structured 
-			/// type has decoded all of its components.<br>
+			/// type has decoded all of its components.
 			/// 
 			/// </param>
 			/// <param name="in">An input stream containig the encoded ASN.1 data.
@@ -90,7 +90,7 @@ namespace Novell.Directory.Ldap.Asn1
 			/// know that the next ASN.1 encoded element is a BOOLEAN
 			/// 
 			/// </summary>
-			/// <param name="in">An input stream containig the encoded ASN.1 data.<br>
+			/// <param name="in">An input stream containig the encoded ASN.1 data.
 			/// 
 			/// </param>
 			/// <param name="len">Length in bytes
@@ -100,10 +100,10 @@ namespace Novell.Directory.Ldap.Asn1
 			/// <summary> Decode a Numeric value directly from a stream.  Call this method when you
 			/// know that the next ASN.1 encoded element is a Numeric
 			/// 
-			/// <p>Can be used to decodes INTEGER and ENUMERATED types.
+			/// Can be used to decodes INTEGER and ENUMERATED types.
 			/// 
 			/// </summary>
-			/// <param name="in">An input stream containig the encoded ASN.1 data.<br>
+			/// <param name="in">An input stream containig the encoded ASN.1 data.
 			/// 
 			/// </param>
 			/// <param name="len">Length in bytes    
@@ -129,7 +129,7 @@ namespace Novell.Directory.Ldap.Asn1
 			/// know that the next ASN.1 encoded element is a OCTET_STRING.
 			/// 
 			/// </summary>
-			/// <param name="in">An input stream containig the encoded ASN.1 data.<br>
+			/// <param name="in">An input stream containig the encoded ASN.1 data.
 			/// 
 			/// </param>
 			/// <param name="len">Length in bytes    

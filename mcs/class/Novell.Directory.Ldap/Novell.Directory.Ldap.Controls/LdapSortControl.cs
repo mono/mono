@@ -43,9 +43,6 @@ namespace Novell.Directory.Ldap.Controls
 	/// sorted (or that sort controls are not supported). If the control was
 	/// marked "critical", the whole search operation will fail if the sort
 	/// control is not supported.
-	/// 
-	/// <p>Sample Code: <a href="http://developer.novell.com/ndk/doc/samplecode/
-	/// jldap_sample/controls/AsyncSortControl.java.html">AsyncSortControl.java</p>
 	/// </summary>
 	public class LdapSortControl:LdapControl
 	{

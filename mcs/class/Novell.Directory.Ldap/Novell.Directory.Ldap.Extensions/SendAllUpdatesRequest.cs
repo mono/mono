@@ -41,14 +41,14 @@ namespace Novell.Directory.Ldap.Extensions
 	/// Schedules an updated request to be sent to all directory servers in a
 	/// replica ring.
 	/// 
-	/// <p>The sendAllUpdatesRequest extension uses the following OID:<br>
-	/// &nbsp;&nbsp;&nbsp;2.16.840.1.113719.1.27.100.23</p>
+	/// The sendAllUpdatesRequest extension uses the following OID:
+	/// 2.16.840.1.113719.1.27.100.23
 	/// 
-	/// <p>The requestValue has the following format:<br>
+	/// The requestValue has the following format:
 	/// 
-	/// requestValue ::=<br>
-	/// &nbsp;&nbsp;&nbsp;&nbsp;    partitionRoot&nbsp;&nbsp;&nbsp;   LdapDN<br>
-	/// &nbsp;&nbsp;&nbsp;&nbsp;    origServerDN&nbsp;&nbsp;&nbsp;    LdapDN</p>
+	/// requestValue ::=
+	///     partitionRoot   LdapDN
+	///     origServerDN    LdapDN
 	/// </summary>
 	public class SendAllUpdatesRequest:LdapExtendedOperation
 	{
@@ -59,13 +59,13 @@ namespace Novell.Directory.Ldap.Extensions
 		/// </summary>
 		/// <param name="partitionRoot">The distinguished name of the replica
 		/// that will be updated.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="origServerDN"> The distinguished name of the server that sends the
 		/// updates to the replica ring.
 		/// 
 		/// </param>
-		/// <exception cref=""> LdapException A general exception which includes an error message
+		/// <exception> LdapException A general exception which includes an error message
 		/// and an Ldap error code.
 		/// </exception>
 		public SendAllUpdatesRequest(System.String partitionRoot, System.String origServerDN):base(ReplicationConstants.SEND_ALL_UPDATES_REQ, null)

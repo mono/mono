@@ -37,7 +37,7 @@ namespace Novell.Directory.Ldap.Asn1
 	/// <summary> This class provides LBER decoding routines for ASN.1 Types. LBER is a
 	/// subset of BER as described in the following taken from 5.1 of RFC 2251:
 	/// 
-	/// <p>5.1. Mapping Onto BER-based Transport Services
+	/// 5.1. Mapping Onto BER-based Transport Services
 	/// 
 	/// The protocol elements of Ldap are encoded for exchange using the
 	/// Basic Encoding Rules (BER) [11] of ASN.1 [3]. However, due to the
@@ -45,25 +45,25 @@ namespace Novell.Directory.Ldap.Asn1
 	/// following additional restrictions are placed on BER-encodings of Ldap
 	/// protocol elements:
 	/// 
-	/// <li>(1) Only the definite form of length encoding will be used.
+	/// <li>(1) Only the definite form of length encoding will be used.</li>
 	/// 
-	/// <li>(2) OCTET STRING values will be encoded in the primitive form only.
+	/// <li>(2) OCTET STRING values will be encoded in the primitive form only.</li>
 	/// 
 	/// <li>(3) If the value of a BOOLEAN type is true, the encoding MUST have
-	/// its contents octets set to hex "FF".
+	/// its contents octets set to hex "FF".</li>
 	/// 
 	/// <li>(4) If a value of a type is its default value, it MUST be absent.
 	/// Only some BOOLEAN and INTEGER types have default values in this
 	/// protocol definition.
 	/// 
-	/// <p>These restrictions do not apply to ASN.1 types encapsulated inside of
+	/// These restrictions do not apply to ASN.1 types encapsulated inside of
 	/// OCTET STRING values, such as attribute values, unless otherwise
-	/// noted.
+	/// noted.</li>
 	/// 
-	/// <p>[3] ITU-T Rec. X.680, "Abstract Syntax Notation One (ASN.1) -
+	/// [3] ITU-T Rec. X.680, "Abstract Syntax Notation One (ASN.1) -
 	/// Specification of Basic Notation", 1994.
 	/// 
-	/// <p>[11] ITU-T Rec. X.690, "Specification of ASN.1 encoding rules: Basic,
+	/// [11] ITU-T Rec. X.690, "Specification of ASN.1 encoding rules: Basic,
 	/// Canonical, and Distinguished Encoding Rules", 1994.
 	/// 
 	/// </summary>
@@ -118,7 +118,7 @@ namespace Novell.Directory.Ldap.Asn1
 		
 		/// <summary> Decode an LBER encoded value into an Asn1Object from an InputStream.
 		/// 
-		/// <p> This method also returns the total length of this encoded
+		///  This method also returns the total length of this encoded
 		/// Asn1Object (length of type + length of length + length of content)
 		/// in the parameter len. This information is helpful when decoding
 		/// structured types.

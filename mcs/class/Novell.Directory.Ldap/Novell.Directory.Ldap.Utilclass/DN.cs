@@ -34,12 +34,12 @@ using System;
 namespace Novell.Directory.Ldap.Utilclass
 {
 	
-	/// <summary> <P>A DN encapsulates a Distinguished Name (an ldap name with context). A DN
+	/// <summary> A DN encapsulates a Distinguished Name (an ldap name with context). A DN
 	/// does not need to be fully distinguished, or extend to the Root of a
 	/// directory.  It provides methods to get information about the DN and to
-	/// manipulate the DN.  </P>
+	/// manipulate the DN.  
 	/// 
-	/// <P> The following are examples of valid DN:
+	///  The following are examples of valid DN:
 	/// <ul>
 	/// <li>cn=admin,ou=marketing,o=corporation</li>
 	/// <li>cn=admin,ou=marketing</li>
@@ -47,9 +47,9 @@ namespace Novell.Directory.Ldap.Utilclass
 	/// <li>oid.2.5.4.3=admin,ou=marketing</li>
 	/// </ul>
 	/// 
-	/// <P>Note: Multivalued attributes are all considered to be one
+	/// Note: Multivalued attributes are all considered to be one
 	/// component and are represented in one RDN (see RDN)
-	/// </P>
+	/// 
 	/// 
 	/// </summary>
 	/// <seealso cref="RDN">
@@ -132,7 +132,7 @@ namespace Novell.Directory.Ldap.Utilclass
 		/// </summary>
 		/// <param name="dnString">a string representation of the distinguished name
 		/// </param>
-		/// <exception cref="">  IllegalArgumentException  if the the value of the dnString
+		/// <exception>  IllegalArgumentException  if the the value of the dnString
 		/// parameter does not adhere to the syntax described in
 		/// RFC 2253
 		/// </exception>

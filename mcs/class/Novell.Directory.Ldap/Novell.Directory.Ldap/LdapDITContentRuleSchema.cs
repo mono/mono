@@ -39,9 +39,9 @@ namespace Novell.Directory.Ldap
 	/// <summary>  Represents a DIT (Directory Information Tree) content rule
 	/// in a directory schema.
 	/// 
-	/// <p>The LdapDITContentRuleSchema class is used to discover or modify
+	/// The LdapDITContentRuleSchema class is used to discover or modify
 	/// additional auxiliary classes, mandatory and optional attributes, and
-	/// restricted attributes in effect for an object class.</p>
+	/// restricted attributes in effect for an object class.
 	/// </summary>
 	public class LdapDITContentRuleSchema:LdapSchemaElement
 	{
@@ -110,37 +110,37 @@ namespace Novell.Directory.Ldap
 		/// 
 		/// </summary>
 		/// <param name="names">       The names of the content rule.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="oid">        The unique object identifier of the content rule -
 		/// in dotted numerical format.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="description">The optional description of the content rule.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="obsolete">   True if the content rule is obsolete.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="auxiliary">  A list of auxiliary object classes allowed for
 		/// an entry to which this content rule applies.
 		/// These may either be specified by name or
 		/// numeric oid.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="required">   A list of attributes that an entry
 		/// to which this content rule applies must
 		/// contain in addition to its normal set of
 		/// mandatory attributes. These attributes may be
 		/// specified by either name or numeric oid.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="optional">   A list of attributes that an entry
 		/// to which this content rule applies may contain
 		/// in addition to its normal set of optional
 		/// attributes. These attributes may be specified by
 		/// either name or numeric oid.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="precluded">  A list, consisting of a subset of the optional
 		/// attributes of the structural and

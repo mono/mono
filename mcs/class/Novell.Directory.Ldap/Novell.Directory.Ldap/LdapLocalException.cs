@@ -45,7 +45,7 @@ namespace Novell.Directory.Ldap
 		
 		/// <summary> Constructs a local exception with a detailed message obtained from the
 		/// specified <code>MessageOrKey</code> String and the result code.
-		/// <br>
+		/// 
 		/// The String is used either as a message key to obtain a localized
 		/// messsage from ExceptionMessages, or if there is no key in the
 		/// resource matching the text, it is used as the detailed message itself.
@@ -54,7 +54,7 @@ namespace Novell.Directory.Ldap
 		/// <param name="messageOrKey"> Key to addition result information, a key into
 		/// ExceptionMessages, or the information
 		/// itself if the key doesn't exist.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="resultCode">   The result code returned.
 		/// </param>
@@ -66,11 +66,11 @@ namespace Novell.Directory.Ldap
 		/// <summary> Constructs a local exception with a detailed message obtained from the
 		/// specified <code>MessageOrKey</code> String and modifying arguments.
 		/// Additional parameters specify the result code.
-		/// <br>
+		/// 
 		/// The String is used either as a message key to obtain a localized
 		/// messsage from ExceptionMessages, or if there is no key in the
 		/// resource matching the text, it is used as the detailed message itself.
-		/// <br>
+		/// 
 		/// The message in the default locale is built with the supplied arguments,
 		/// which are saved to be used for building messages for other locales.
 		/// 
@@ -78,11 +78,11 @@ namespace Novell.Directory.Ldap
 		/// <param name="messageOrKey"> Key to addition result information, a key into
 		/// ExceptionMessages, or the information
 		/// itself if the key doesn't exist.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="arguments">   The modifying arguments to be included in the
 		/// message string.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="resultCode">   The result code returned.
 		/// </param>
@@ -95,7 +95,7 @@ namespace Novell.Directory.Ldap
 		/// specified <code>MessageOrKey</code> String.
 		/// Additional parameters specify the result code and a rootException which
 		/// is the underlying cause of an error on the client.
-		/// <br>
+		/// 
 		/// The String is used either as a message key to obtain a localized
 		/// messsage from ExceptionMessages, or if there is no key in the
 		/// resource matching the text, it is used as the detailed message itself.
@@ -104,10 +104,10 @@ namespace Novell.Directory.Ldap
 		/// <param name="messageOrKey"> Key to addition result information, a key into
 		/// ExceptionMessages, or the information
 		/// itself if the key doesn't exist.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="resultCode">   The result code returned.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="rootException"> A throwable which is the underlying cause
 		/// of the LdapException.
@@ -122,11 +122,11 @@ namespace Novell.Directory.Ldap
 		/// Additional parameters specify the result code
 		/// and a rootException which is the underlying cause of an error
 		/// on the client.
-		/// <br>
+		/// 
 		/// The String is used either as a message key to obtain a localized
 		/// messsage from ExceptionMessages, or if there is no key in the
 		/// resource matching the text, it is used as the detailed message itself.
-		/// <br>
+		/// 
 		/// The message in the default locale is built with the supplied arguments,
 		/// which are saved to be used for building messages for other locales.
 		/// 
@@ -134,14 +134,14 @@ namespace Novell.Directory.Ldap
 		/// <param name="messageOrKey"> Key to addition result information, a key into
 		/// ExceptionMessages, or the information
 		/// itself if the key doesn't exist.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="arguments">   The modifying arguments to be included in the
 		/// message string.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="resultCode">   The result code returned.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="rootException"> A throwable which is the underlying cause
 		/// of the LdapException.

@@ -39,19 +39,19 @@ namespace Novell.Directory.Ldap.Extensions
 	
 	/// <summary>  Returns the distingusihed name of the object your are logged in as.
 	/// 
-	/// <p>To use this class, you must create an instance of the
+	/// To use this class, you must create an instance of the
 	/// class and then call the extendedOperation method with this
-	/// object as the required LdapExtendedOperation parameter.</p>
+	/// object as the required LdapExtendedOperation parameter.
 	/// 
-	/// <p>The returned LdapExtendedResponse object can then be converted to
+	/// The returned LdapExtendedResponse object can then be converted to
 	/// a GetBindDNResponse object with the ExtendedREsponseFactory
 	/// class. This object contains  methods for retrieving the distinguished
-	/// name.</p>
+	/// name.
 	/// 
-	/// <p>The GetBindDNRequest extension uses the following OID:<br>
-	/// &nbsp;&nbsp;&nbsp;2.16.840.1.113719.1.27.100.31</p>
+	/// The GetBindDNRequest extension uses the following OID:
+	/// 2.16.840.1.113719.1.27.100.31
 	/// 
-	/// <p>The request value has a value of null.</p>
+	/// The request value has a value of null.
 	/// 
 	/// </summary>
 	public class GetBindDNRequest:LdapExtendedOperation
@@ -60,7 +60,7 @@ namespace Novell.Directory.Ldap.Extensions
 		/// <summary>   Constructs an extended operation object for retrieving the bind dn.
 		/// 
 		/// </summary>
-		/// <exception cref=""> LdapException A general exception which includes an error 
+		/// <exception> LdapException A general exception which includes an error 
 		/// message and an Ldap error code.    
 		/// </exception>
 		

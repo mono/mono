@@ -39,18 +39,18 @@ namespace Novell.Directory.Ldap.Extensions
 	
 	/// <summary> Splits a new orphan partitiont.
 	/// 
-	/// <p>To split a new orphan partition, you must create an instance of
+	/// To split a new orphan partition, you must create an instance of
 	/// this class and then call the extendedOperation method with this object
-	/// as the required LdapExtendedOperation parameter.</p>
+	/// as the required LdapExtendedOperation parameter.
 	/// 
-	/// <p>The SplitOrphanPartitionRequest extension uses the following OID:<br>
-	/// &nbsp;&nbsp;&nbsp;2.16.840.1.113719.1.27.100.39</p>
+	/// The SplitOrphanPartitionRequest extension uses the following OID:
+	/// 2.16.840.1.113719.1.27.100.39
 	/// 
-	/// <p>The requestValue has the following format:<br>
+	/// The requestValue has the following format:
 	/// 
-	/// requestValue ::=<br>
-	/// &nbsp;&nbsp;&nbsp;&nbsp;  serverDN&nbsp;&nbsp;&nbsp;&nbsp;     LdapDN<br>
-	/// &nbsp;&nbsp;&nbsp;&nbsp;  contextName&nbsp;&nbsp;&nbsp;&nbsp;  LdapDN</p>
+	/// requestValue ::=
+	///   serverDN     LdapDN
+	///   contextName  LdapDN
 	/// </summary>
 	public class SplitOrphanPartitionRequest:LdapExtendedOperation
 	{
@@ -62,13 +62,13 @@ namespace Novell.Directory.Ldap.Extensions
 		/// </summary>
 		/// <param name="serverDN">   The distinguished name of the server on which
 		/// the new orphan partition will reside.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="contextName">The distinguished name of the
 		/// new orphan partition.
 		/// 
 		/// </param>
-		/// <exception cref=""> LdapException A general exception which includes an error message
+		/// <exception> LdapException A general exception which includes an error message
 		/// and an Ldap error code.
 		/// </exception>
 		public SplitOrphanPartitionRequest(System.String serverDN, System.String contextName):base(ReplicationConstants.CREATE_ORPHAN_NAMING_CONTEXT_REQ, null)

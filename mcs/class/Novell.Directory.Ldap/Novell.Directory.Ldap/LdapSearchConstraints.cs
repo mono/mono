@@ -37,15 +37,15 @@ namespace Novell.Directory.Ldap
 	/// <summary> 
 	/// Defines the options controlling search operations.
 	/// 
-	/// <p>An LdapSearchConstraints object is always associated with an
+	/// An LdapSearchConstraints object is always associated with an
 	/// LdapConnection object; its values can be changed with the
 	/// LdapConnection.setConstraints method, or overridden by passing
-	/// an LdapSearchConstraints object to the search operation.</p>
+	/// an LdapSearchConstraints object to the search operation.
 	/// 
 	/// </summary>
 	/// <seealso cref="LdapConstraints">
 	/// </seealso>
-	/// <seealso cref="LdapConnection#setConstraints(LdapConstraints)">
+	/// <seealso cref="LdapConnection.Constraints">
 	/// </seealso>
 	public class LdapSearchConstraints:LdapConstraints
 	{
@@ -56,22 +56,22 @@ namespace Novell.Directory.Ldap
 		/// <summary> Returns the number of results to block on during receipt of search
 		/// results.
 		/// 
-		/// </p>This should be 0 if intermediate reults are not needed,
+		/// This should be 0 if intermediate reults are not needed,
 		/// and 1 if results are to be processed as they come in. A value of
-		/// indicates block until all results are received.  Default: </p>
+		/// indicates block until all results are received.  Default: 
 		/// 
 		/// </summary>
 		/// <returns> The the number of results to block on.
 		/// 
 		/// </returns>
-		/// <seealso cref="#setBatchSize(int)">
+		/// <seealso cref="BatchSize">
 		/// </seealso>
 		/// <summary>  Specifies the number of results to return in a batch.
-		/// <p>Specifying 0 means to block until all results are received.
+		/// Specifying 0 means to block until all results are received.
 		/// Specifying 1 means to return results one result at a time.  Default: 1
-		/// </p>
 		/// 
-		/// <p>This should be 0 if intermediate results are not needed,
+		/// 
+		/// This should be 0 if intermediate results are not needed,
 		/// and 1 if results are to be processed as they come in.  The
 		/// default is 1.
 		/// 
@@ -79,7 +79,7 @@ namespace Novell.Directory.Ldap
 		/// <param name="batchSize">     The number of results to block on.
 		/// 
 		/// </param>
-		/// <seealso cref="#getBatchSize()">
+		/// <seealso cref="BatchSize">
 		/// </seealso>
 		virtual public int BatchSize
 		{
@@ -97,7 +97,7 @@ namespace Novell.Directory.Ldap
 		}
 		/// <summary> Specifies when aliases should be dereferenced.
 		/// 
-		/// <p>Returns one of the following:
+		/// Returns one of the following:
 		/// <ul>
 		/// <li>DEREF_NEVER</li>
 		/// <li>DEREF_FINDING</li>
@@ -109,7 +109,7 @@ namespace Novell.Directory.Ldap
 		/// <returns> The setting for dereferencing aliases.
 		/// 
 		/// </returns>
-		/// <seealso cref="#setDereference(int)">
+		/// <seealso cref="Dereference">
 		/// </seealso>
 		/// <summary> Sets a preference indicating whether or not aliases should be
 		/// dereferenced, and if so, when.
@@ -130,7 +130,7 @@ namespace Novell.Directory.Ldap
 		/// </ul>
 		/// 
 		/// </param>
-		/// <seealso cref="#getDereference()">
+		/// <seealso cref="Dereference">
 		/// </seealso>
 		virtual public int Dereference
 		{
@@ -156,9 +156,9 @@ namespace Novell.Directory.Ldap
 		/// <returns> The value for the maximum number of results to return.
 		/// 
 		/// </returns>
-		/// <seealso cref="#setMaxResults(int)">
+		/// <seealso cref="MaxResults">
 		/// </seealso>
-		/// <seealso cref="LdapException#SIZE_LIMIT_EXCEEDED">
+		/// <seealso cref="LdapException.SIZE_LIMIT_EXCEEDED">
 		/// </seealso>
 		/// <summary> Sets the maximum number of search results to be returned from a
 		/// search operation. The value 0 means no limit.  The default is 1000.
@@ -170,9 +170,9 @@ namespace Novell.Directory.Ldap
 		/// <param name="maxResults">    Maximum number of search results to return.
 		/// 
 		/// </param>
-		/// <seealso cref="#getMaxResults()">
+		/// <seealso cref="MaxResults">
 		/// </seealso>
-		/// <seealso cref="LdapException#SIZE_LIMIT_EXCEEDED">
+		/// <seealso cref="LdapException.SIZE_LIMIT_EXCEEDED">
 		/// </seealso>
 		virtual public int MaxResults
 		{
@@ -199,9 +199,9 @@ namespace Novell.Directory.Ldap
 		/// results.
 		/// 
 		/// </returns>
-		/// <seealso cref="#setServerTimeLimit(int)">
+		/// <seealso cref="ServerTimeLimit">
 		/// </seealso>
-		/// <seealso cref="LdapException#TIME_LIMIT_EXCEEDED">
+		/// <seealso cref="LdapException.TIME_LIMIT_EXCEEDED">
 		/// </seealso>
 		/// <summary> Sets the maximum number of seconds that the server is to wait when
 		/// returning search results.
@@ -209,15 +209,15 @@ namespace Novell.Directory.Ldap
 		/// LdapException.TIME_LIMIT_EXCEEDED if the operation exceeds the time
 		/// limit.
 		/// 
-		/// <p>The parameter is only recognized on search operations. </p>
+		/// The parameter is only recognized on search operations. 
 		/// 
 		/// </summary>
 		/// <param name="seconds">The number of seconds to wait for search results.
 		/// 
 		/// </param>
-		/// <seealso cref="#getServerTimeLimit()">
+		/// <seealso cref="ServerTimeLimit">
 		/// </seealso>
-		/// <seealso cref="LdapException#TIME_LIMIT_EXCEEDED">
+		/// <seealso cref="LdapException.TIME_LIMIT_EXCEEDED">
 		/// </seealso>
 		virtual public int ServerTimeLimit
 		{
@@ -244,12 +244,12 @@ namespace Novell.Directory.Ldap
 		
 		/// <summary> Indicates that aliases are never dereferenced.
 		/// 
-		/// <p> DEREF_NEVER = 0 </p>
+		///  DEREF_NEVER = 0 
 		/// 
 		/// </summary>
-		/// <seealso cref="#getDereference()">
+		/// <seealso cref="Dereference">
 		/// </seealso>
-		/// <seealso cref="#setDereference(int)">
+		/// <seealso cref="Dereference">
 		/// </seealso>
 		public const int DEREF_NEVER = 0;
 		
@@ -257,12 +257,12 @@ namespace Novell.Directory.Ldap
 		/// searching the entries beneath the starting point of the search,
 		/// but not when finding the starting entry.
 		/// 
-		/// <p> DEREF_SEARCHING = 1 </p>
+		///  DEREF_SEARCHING = 1 
 		/// 
 		/// </summary>
-		/// <seealso cref="#getDereference()">
+		/// <seealso cref="Dereference">
 		/// </seealso>
-		/// <seealso cref="#setDereference(int)">
+		/// <seealso cref="Dereference">
 		/// </seealso>
 		public const int DEREF_SEARCHING = 1;
 		
@@ -270,12 +270,12 @@ namespace Novell.Directory.Ldap
 		/// finding the starting point for the search,
 		/// but not when searching under that starting entry.
 		/// 
-		/// <p> DEREF_FINDING = 2 </p>
+		///  DEREF_FINDING = 2 
 		/// 
 		/// </summary>
-		/// <seealso cref="#getDereference()">
+		/// <seealso cref="Dereference">
 		/// </seealso>
-		/// <seealso cref="#setDereference(int)">
+		/// <seealso cref="Dereference">
 		/// </seealso>
 		public const int DEREF_FINDING = 2;
 		
@@ -283,12 +283,12 @@ namespace Novell.Directory.Ldap
 		/// finding the starting point for the search, and also when
 		/// searching the entries beneath the starting entry.
 		/// 
-		/// <p> DEREF_ALWAYS = 3 </p>
+		///  DEREF_ALWAYS = 3 
 		/// 
 		/// </summary>
-		/// <seealso cref="#getDereference()">
+		/// <seealso cref="Dereference">
 		/// </seealso>
-		/// <seealso cref="#setDereference(int)">
+		/// <seealso cref="Dereference">
 		/// </seealso>
 		public const int DEREF_ALWAYS = 3;
 		
@@ -344,7 +344,7 @@ namespace Novell.Directory.Ldap
 		/// The operation will be abandoned and terminated by the
 		/// API with an LdapException.Ldap_TIMEOUT if the
 		/// operation exceeds the time limit.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="serverTimeLimit">The maximum time in seconds that the server
 		/// should spend returning search results. This is a
@@ -353,13 +353,13 @@ namespace Novell.Directory.Ldap
 		/// The operation will be terminated by the server with an
 		/// LdapException.TIME_LIMIT_EXCEEDED if the search
 		/// operation exceeds the time limit.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="dereference">Specifies when aliases should be dereferenced.
 		/// Must be either DEREF_NEVER, DEREF_FINDING,
 		/// DEREF_SEARCHING, or DEREF_ALWAYS from this class.
 		/// Default: DEREF_NEVER
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="maxResults">The maximum number of search results to return
 		/// for a search request.
@@ -367,7 +367,7 @@ namespace Novell.Directory.Ldap
 		/// with an LdapException.SIZE_LIMIT_EXCEEDED if the
 		/// number of results exceed the maximum.
 		/// Default: 1000
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="doReferrals">Determines whether to automatically follow
 		/// referrals or not. Specify true to follow
@@ -376,14 +376,14 @@ namespace Novell.Directory.Ldap
 		/// with a referral.
 		/// It is ignored for asynchronous operations.
 		/// Default: false
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="batchSize">The number of results to return in a batch. Specifying
 		/// 0 means to block until all results are received.
 		/// Specifying 1 means to return results one result at a
 		/// time.  Default: 1
 		/// 
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="handler">  The custom authentication handler called when
 		/// LdapConnection needs to authenticate, typically on
@@ -393,7 +393,7 @@ namespace Novell.Directory.Ldap
 		/// ThE object may be an implemention of either the
 		/// the LdapBindHandler or LdapAuthHandler interface.
 		/// It is ignored for asynchronous operations.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="hop_limit">The maximum number of referrals to follow in a
 		/// sequence during automatic referral following.
@@ -404,13 +404,13 @@ namespace Novell.Directory.Ldap
 		/// number of referrals in a sequence exceeds the limit.
 		/// 
 		/// </param>
-		/// <seealso cref="LdapException#Ldap_TIMEOUT">
+		/// <seealso cref="LdapException.Ldap_TIMEOUT">
 		/// </seealso>
-		/// <seealso cref="LdapException#REFERRAL">
+		/// <seealso cref="LdapException.REFERRAL">
 		/// </seealso>
-		/// <seealso cref="LdapException#SIZE_LIMIT_EXCEEDED">
+		/// <seealso cref="LdapException.SIZE_LIMIT_EXCEEDED">
 		/// </seealso>
-		/// <seealso cref="LdapException#TIME_LIMIT_EXCEEDED">
+		/// <seealso cref="LdapException.TIME_LIMIT_EXCEEDED">
 		/// </seealso>
 		public LdapSearchConstraints(int msLimit, int serverTimeLimit, int dereference, int maxResults, bool doReferrals, int batchSize, LdapReferralHandler handler, int hop_limit):base(msLimit, doReferrals, handler, hop_limit)
 		{

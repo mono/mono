@@ -96,7 +96,7 @@ namespace Novell.Directory.Ldap.Asn1
 		/// specified encoder object.
 		/// 
 		/// </summary>
-		/// <param name="enc">Encoder object to use when encoding self.<br>
+		/// <param name="enc">Encoder object to use when encoding self.
 		/// 
 		/// </param>
 		/// <param name="out">The output stream onto which the encoded byte 

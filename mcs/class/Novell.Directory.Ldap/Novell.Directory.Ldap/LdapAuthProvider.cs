@@ -43,8 +43,6 @@ namespace Novell.Directory.Ldap
 	/// </seealso>
 	/// <seealso cref="LdapBindHandler">
 	/// </seealso>
-	/// <seealso cref="LdapConstraints#setReferralFollowing(boolean)">
-	/// </seealso>
 	public class LdapAuthProvider
 	{
 		/// <summary> Returns the distinguished name to be used for authentication on
@@ -86,7 +84,7 @@ namespace Novell.Directory.Ldap
 		/// </summary>
 		/// <param name="dn">          The distinguished name to use when authenticating to
 		/// a server.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="password">    The password to use when authenticating to a server.
 		/// </param>

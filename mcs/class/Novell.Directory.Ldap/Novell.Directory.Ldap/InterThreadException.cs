@@ -130,10 +130,10 @@ namespace Novell.Directory.Ldap
 		/// 
 		/// </summary>
 		/// <param name="message">       The text providign additional error information.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="resultCode">    The error result code.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="request">       The Message class associated with this exception.
 		/// </param>

@@ -41,19 +41,19 @@ namespace Novell.Directory.Ldap.Rfc2251
 	
 	/// <summary> Represents an Ldap Filter.
 	/// 
-	/// <p>This filter object can be created from a String or can be built up
+	/// This filter object can be created from a String or can be built up
 	/// programatically by adding filter components one at a time.  Existing filter
-	/// components can be iterated though.</p>
+	/// components can be iterated though.
 	/// 
-	/// <p>Each filter component has an integer identifier defined in this class.
+	/// Each filter component has an integer identifier defined in this class.
 	/// The following are basic filter components: {@link #EQUALITY_MATCH},
 	/// {@link #GREATER_OR_EQUAL}, {@link #LESS_OR_EQUAL}, {@link #SUBSTRINGS},
-	/// {@link #PRESENT}, {@link #APPROX_MATCH}, {@link #EXTENSIBLE_MATCH}.</p>
+	/// {@link #PRESENT}, {@link #APPROX_MATCH}, {@link #EXTENSIBLE_MATCH}.
 	/// 
-	/// <p>More filters can be nested together into more complex filters with the
-	/// following filter components: {@link #AND}, {@link #OR}, {@link #NOT} </p>
+	/// More filters can be nested together into more complex filters with the
+	/// following filter components: {@link #AND}, {@link #OR}, {@link #NOT} 
 	/// 
-	/// <p>Substrings can have three components:
+	/// Substrings can have three components:
 	/// <pre>
 	/// Filter ::= CHOICE {
 	/// and             [0] SET OF Filter,
@@ -522,8 +522,8 @@ namespace Novell.Directory.Ldap.Rfc2251
 		/// <summary> Called by sequential filter building methods to add to a filter
 		/// component.
 		/// 
-		/// <p>Verifies that the specified Asn1Object can be added, then adds the
-		/// object to the filter.</p>
+		/// Verifies that the specified Asn1Object can be added, then adds the
+		/// object to the filter.
 		/// </summary>
 		/// <param name="current">  Filter component to be added to the filter
 		/// @throws LdapLocalException Occurs when an invalid component is added, or
@@ -576,9 +576,9 @@ namespace Novell.Directory.Ldap.Rfc2251
 		
 		/// <summary> Creates and addes a substrings filter component.
 		/// 
-		/// <p>startSubstrings must be immediatly followed by at least one
-		/// {@link #addSubstring} method and one {@link #endSubstrings} method</p>
-		/// @throws com.novell.ldap.LdapLocalException
+		/// startSubstrings must be immediatly followed by at least one
+		/// {@link #addSubstring} method and one {@link #endSubstrings} method
+		/// @throws Novell.Directory.Ldap.LdapLocalException
 		/// Occurs when this component is created out of sequence.
 		/// </summary>
 		public virtual void  startSubstrings(System.String attrName)
@@ -593,14 +593,14 @@ namespace Novell.Directory.Ldap.Rfc2251
 		
 		/// <summary> Adds a Substring component of initial, any or final substring matching.
 		/// 
-		/// <p>This method can be invoked only if startSubString was the last filter-
+		/// This method can be invoked only if startSubString was the last filter-
 		/// building method called.  A substring is not required to have an 'INITIAL'
 		/// substring.  However, when a filter contains an 'INITIAL' substring only
 		/// one can be added, and it must be the first substring added. Any number of
 		/// 'ANY' substrings can be added. A substring is not required to have a
 		/// 'FINAL' substrings either.  However, when a filter does contain a 'FINAL'
 		/// substring only one can be added, and it must be the last substring added.
-		/// </p>
+		/// 
 		/// </summary>
 		/// <param name="type">Substring type: INITIAL | ANY | FINAL]
 		/// </param>
@@ -732,13 +732,13 @@ namespace Novell.Directory.Ldap.Rfc2251
 		/// <summary> Creates and adds the Asn1Tagged value for a nestedFilter: AND, OR, or
 		/// NOT.
 		/// 
-		/// <p>Note that a Not nested filter can only have one filter, where AND
-		/// and OR do not</p>
+		/// Note that a Not nested filter can only have one filter, where AND
+		/// and OR do not
 		/// 
 		/// </summary>
 		/// <param name="rfcType">Filter type:
 		/// [AND | OR | NOT]
-		/// @throws com.novell.ldap.LdapLocalException
+		/// @throws Novell.Directory.Ldap.LdapLocalException
 		/// </param>
 		public virtual void  startNestedFilter(int rfcType)
 		{
@@ -761,7 +761,7 @@ namespace Novell.Directory.Ldap.Rfc2251
 		
 		/// <summary> Completes a nested filter and checks for the valid filter type.</summary>
 		/// <param name="rfcType"> Type of filter to complete.
-		/// @throws com.novell.ldap.LdapLocalException  Occurs when the specified
+		/// @throws Novell.Directory.Ldap.LdapLocalException  Occurs when the specified
 		/// type differs from the current filter component.
 		/// </param>
 		public virtual void  endNestedFilter(int rfcType)
@@ -782,10 +782,10 @@ namespace Novell.Directory.Ldap.Rfc2251
 		
 		/// <summary> Creates an iterator over the preparsed segments of a filter.
 		/// 
-		/// <p>The first object returned by an iterator is an integer indicating the
+		/// The first object returned by an iterator is an integer indicating the
 		/// type of filter components.  Subseqence values are returned.  If a
 		/// component is of type 'AND' or 'OR' or 'NOT' then the value
-		/// returned is another iterator.  This iterator is used by toString.</p>
+		/// returned is another iterator.  This iterator is used by toString.
 		/// 
 		/// </summary>
 		/// <returns> Iterator over filter segments
@@ -810,7 +810,7 @@ namespace Novell.Directory.Ldap.Rfc2251
 		/// </param>
 		/// <param name="filter">Buffer to place a string representation of the filter
 		/// </param>
-		/// <seealso cref="#getFilterIterator">
+		/// <seealso cref="FilterIterator">
 		/// </seealso>
 		private static void  stringFilter(System.Collections.IEnumerator itr, System.Text.StringBuilder filter)
 		{
@@ -1140,12 +1140,11 @@ namespace Novell.Directory.Ldap.Rfc2251
 			/// <summary> Reads either an operator, or an attribute, whichever is
 			/// next in the filter string.
 			/// 
-			/// <p>Operators are &, |, or !.<p>
 			/// 
-			/// <p>If the next component is an attribute, it is read and stored in the
+			/// If the next component is an attribute, it is read and stored in the
 			/// attr field of this class which may be retrieved with getAttr()
 			/// and a -1 is returned. Otherwise, the int value of the operator read is
-			/// returned.</p>
+			/// returned.
 			/// </summary>
 			virtual public int OpOrAttr
 			{

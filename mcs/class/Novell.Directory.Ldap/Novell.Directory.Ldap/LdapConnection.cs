@@ -43,16 +43,16 @@ namespace Novell.Directory.Ldap
 	/// LdapConnection objects are used to perform common Ldap
 	/// operations such as search, modify and add.
 	/// 
-	/// <p>In addition, LdapConnection objects allow you to bind to an
+	/// In addition, LdapConnection objects allow you to bind to an
 	/// Ldap server, set connection and search constraints, and perform
 	/// several other tasks.
 	/// 
-	/// <p>An LdapConnection object is not connected on
+	/// An LdapConnection object is not connected on
 	/// construction and can only be connected to one server at one
 	/// port. Multiple threads may share this single connection, typically
 	/// by cloning the connection object, one for each thread. An
 	/// application may have more than one LdapConnection object, connected
-	/// to the same or different directory servers.</p>
+	/// to the same or different directory servers.
 	/// 
 	/// 
 	/// </summary>
@@ -65,15 +65,13 @@ namespace Novell.Directory.Ldap
 		}
 		/// <summary> Returns the protocol version uses to authenticate.
 		/// 
-		/// <p> 0 is returned if no authentication has been performed.</p>
+		///  0 is returned if no authentication has been performed.
 		/// 
 		/// </summary>
 		/// <returns> The protol version used for authentication or 0
 		/// not authenticated.
 		/// 
 		/// </returns>
-		/// <seealso cref="int, String, String)">
-		/// </seealso>
 		virtual public int ProtocolVersion
 		{
 			get
@@ -96,10 +94,6 @@ namespace Novell.Directory.Ldap
 		/// <returns> The distinguished name if authenticated; otherwise, null.
 		/// 
 		/// </returns>
-		/// <seealso cref="String, String)">
-		/// </seealso>
-		/// <seealso cref="#isBound()">
-		/// </seealso>
 		virtual public System.String AuthenticationDN
 		{
 			get
@@ -149,16 +143,14 @@ namespace Novell.Directory.Ldap
 		/// <summary> Returns the properties if any specified on binding with a
 		/// SASL mechanism.
 		/// 
-		/// <p> Null is returned if no authentication has been performed
-		/// or no authentication Map is present.</p>
+		///  Null is returned if no authentication has been performed
+		/// or no authentication Map is present.
 		/// 
 		/// </summary>
 		/// <returns> The bind properties Map Object used for SASL bind or null if
 		/// the connection is not present or not authenticated.
 		/// 
 		/// </returns>
-		/// <seealso cref="String, String, String[], Map, Object )">
-		/// </seealso>
 		virtual public System.Collections.IDictionary SaslBindProperties
 		{
 			get
@@ -175,16 +167,14 @@ namespace Novell.Directory.Ldap
 		/// <summary> Returns the call back handler if any specified on binding with a
 		/// SASL mechanism.
 		/// 
-		/// <p> Null is returned if no authentication has been performed
-		/// or no authentication call back handler is present.</p>
+		///  Null is returned if no authentication has been performed
+		/// or no authentication call back handler is present.
 		/// 
 		/// </summary>
 		/// <returns> The call back handler used for SASL bind or null if the
 		/// object is not present or not authenticated.
 		/// 
 		/// </returns>
-		/// <seealso cref="String, String, String[], Map, Object )">
-		/// </seealso>
 		virtual public System.Object SaslBindCallbackHandler
 		{
 			get
@@ -207,8 +197,6 @@ namespace Novell.Directory.Ldap
 		/// <returns> The set of default contraints that apply to this connection.
 		/// 
 		/// </returns>
-		/// <seealso cref="#setConstraints(LdapConstraints)">
-		/// </seealso>
 		/// <summary> Sets the constraints that apply to all operations performed through
 		/// this connection (unless a different set of constraints is specified
 		/// when calling an operation method).  An LdapSearchConstraints object
@@ -220,9 +208,9 @@ namespace Novell.Directory.Ldap
 		/// containing the contstraint values to set.
 		/// 
 		/// </param>
-		/// <seealso cref="#getConstraints()">
+		/// <seealso cref="Constraints()">
 		/// </seealso>
-		/// <seealso cref="#getSearchConstraints()">
+		/// <seealso cref="SearchConstraints()">
 		/// </seealso>
 		virtual public LdapConstraints Constraints
 		{
@@ -270,8 +258,6 @@ namespace Novell.Directory.Ldap
 		/// connected or null if the object has never connected.
 		/// 
 		/// </returns>
-		/// <seealso cref="String, int)">
-		/// </seealso>
 		virtual public System.String Host
 		{
 			get
@@ -288,8 +274,6 @@ namespace Novell.Directory.Ldap
 		/// connected or -1 if the object has never connected.
 		/// 
 		/// </returns>
-		/// <seealso cref="String, int)">
-		/// </seealso>
 		virtual public int Port
 		{
 			get
@@ -308,9 +292,9 @@ namespace Novell.Directory.Ldap
 		/// this connection.
 		/// 
 		/// </returns>
-		/// <seealso cref="#setConstraints">
+		/// <seealso cref="Constraints">
 		/// </seealso>
-		/// <seealso cref="String, int, String, String[], boolean, LdapSearchConstraints)">
+		/// <seealso cref="LdapSearchConstraints">
 		/// </seealso>
 		virtual public LdapSearchConstraints SearchConstraints
 		{
@@ -328,8 +312,6 @@ namespace Novell.Directory.Ldap
 		/// authenticated.
 		/// 
 		/// </returns>
-		/// <seealso cref="String, String)">
-		/// </seealso>
 		virtual public bool Bound
 		{
 			get
@@ -364,7 +346,7 @@ namespace Novell.Directory.Ldap
 		/// controls.
 		/// 
 		/// </returns>
-		/// <seealso cref="LdapMessage#getControls()">
+		/// <seealso cref="LdapMessage.Controls">
 		/// </seealso>
 		virtual public LdapControl[] ResponseControls
 		{
@@ -445,104 +427,94 @@ namespace Novell.Directory.Ldap
 		/// <summary> Used with search to specify that the scope of entrys to search is to
 		/// search only the base obect.
 		/// 
-		/// <p>SCOPE_BASE = 0</p>
+		/// SCOPE_BASE = 0
 		/// </summary>
 		public const int SCOPE_BASE = 0;
 		
 		/// <summary> Used with search to specify that the scope of entrys to search is to
 		/// search only the immediate subordinates of the base obect.
 		/// 
-		/// <p>SCOPE_ONE = 1</p>
+		/// SCOPE_ONE = 1
 		/// </summary>
 		public const int SCOPE_ONE = 1;
 		
 		/// <summary> Used with search to specify that the scope of entrys to search is to
 		/// search the base object and all entries within its subtree.
 		/// 
-		/// <p>SCOPE_ONE = 2</p>
+		/// SCOPE_ONE = 2
 		/// </summary>
 		public const int SCOPE_SUB = 2;
 		
 		/// <summary> Used with search instead of an attribute list to indicate that no
 		/// attributes are to be returned.
 		/// 
-		/// <p>NO_ATTRS = "1.1"</p>
+		/// NO_ATTRS = "1.1"
 		/// </summary>
 		public const System.String NO_ATTRS = "1.1";
 		
 		/// <summary> Used with search instead of an attribute list to indicate that all
 		/// attributes are to be returned.
 		/// 
-		/// <p>ALL_USER_ATTRS = "*"</p>
+		/// ALL_USER_ATTRS = "*"
 		/// </summary>
 		public const System.String ALL_USER_ATTRS = "*";
 		
 		/// <summary> Specifies the Ldapv3 protocol version when performing a bind operation.
 		/// 
-		/// <p>Specifies Ldap version V3 of the protocol, and is specified
+		/// Specifies Ldap version V3 of the protocol, and is specified
 		/// when performing bind operations.
-		/// <p>You can use this identifier in the version parameter
+		/// You can use this identifier in the version parameter
 		/// of the bind method to specify an Ldapv3 bind.
-		/// Ldap_V3 is the default protocol version</p>
+		/// Ldap_V3 is the default protocol version
 		/// 
-		/// <p>Ldap_V3 = 3</p>
+		/// Ldap_V3 = 3
 		/// 
 		/// </summary>
-		/// <seealso cref="String, byte[])">
-		/// </seealso>
-		/// <seealso cref="String, byte[], LdapConstraints)">
-		/// </seealso>
-		/// <seealso cref="String, byte[], LdapResponseQueue)">
-		/// </seealso>
-		/// <seealso cref="String, byte[], LdapResponseQueue, LdapConstraints)">
-		/// </seealso>
 		public const int Ldap_V3 = 3;
 		
 		/// <summary> The default port number for Ldap servers.
 		/// 
-		/// <p>You can use this identifier to specify the port when establishing
-		/// a clear text connection to a server.  This the default port.</p>
+		/// You can use this identifier to specify the port when establishing
+		/// a clear text connection to a server.  This the default port.
 		/// 
-		/// <p>DEFAULT_PORT = 389</p>
+		/// DEFAULT_PORT = 389
 		/// 
 		/// </summary>
-		/// <seealso cref="int)">
-		/// </seealso>
 		public const int DEFAULT_PORT = 389;
 		
 		
 		/// <summary> The default SSL port number for Ldap servers.
 		/// 
-		/// <p>DEFAULT_SSL_PORT = 636</p>
+		/// DEFAULT_SSL_PORT = 636
 		/// 
-		/// <p>You can use this identifier to specify the port when establishing
-		/// a an SSL connection to a server.</p>.
+		/// You can use this identifier to specify the port when establishing
+		/// a an SSL connection to a server..
 		/// </summary>
 		public const int DEFAULT_SSL_PORT = 636;
 		
 		/// <summary> A string that can be passed in to the getProperty method.
 		/// 
-		/// <p>Ldap_PROPERTY_SDK = "version.sdk"</p>
+		/// Ldap_PROPERTY_SDK = "version.sdk"
 		/// 
-		/// <p>You can use this string to request the version of the SDK</p>.
+		/// You can use this string to request the version of the SDK.
 		/// </summary>
 		public const System.String Ldap_PROPERTY_SDK = "version.sdk";
 		
 		/// <summary> A string that can be passed in to the getProperty method.
 		/// 
-		/// <p>Ldap_PROPERTY_PROTOCOL = "version.protocol"</p>
+		/// Ldap_PROPERTY_PROTOCOL = "version.protocol"
 		/// 
-		/// <p>You can use this string to request the version of the
-		/// Ldap protocol</p>.
+		/// You can use this string to request the version of the
+		/// Ldap protocol.
 		/// </summary>
 		public const System.String Ldap_PROPERTY_PROTOCOL = "version.protocol";
 		
 		/// <summary> A string that can be passed in to the getProperty method.
 		/// 
-		/// <p>Ldap_PROPERTY_SECURITY = "version.security"</p>
+		/// Ldap_PROPERTY_SECURITY = "version.security"
 		/// 
-		/// <p>You can use this string to request the type of security
-		/// being used</p>.
+		/// You can use this string to request the type of security
+		/// being used.
 		/// </summary>
 		public const System.String Ldap_PROPERTY_SECURITY = "version.security";
 		
@@ -551,7 +523,7 @@ namespace Novell.Directory.Ldap
 		/// the server is about to close the connection due to an error
 		/// condition.
 		/// 
-		/// <p>SERVER_SHUTDOWN_OID = "1.3.6.1.4.1.1466.20036"
+		/// SERVER_SHUTDOWN_OID = "1.3.6.1.4.1.1466.20036"
 		/// </summary>
 		public const System.String SERVER_SHUTDOWN_OID = "1.3.6.1.4.1.1466.20036";
 		
@@ -571,12 +543,6 @@ namespace Novell.Directory.Ldap
 		/// <param name="factory">    An object capable of producing a Socket.
 		/// 
 		/// </param>
-		/// <seealso cref="int)">
-		/// </seealso>
-		/// <seealso cref="#getSocketFactory()">
-		/// </seealso>
-		/// <seealso cref="LdapSocketFactory)">
-		/// </seealso>
 		public LdapConnection()
 		{
 			InitBlock();
@@ -592,18 +558,18 @@ namespace Novell.Directory.Ldap
 		/// <summary> Returns a copy of the object with a private context, but sharing the
 		/// network connection if there is one.
 		/// 
-		/// <p>The network connection remains open until all clones have
+		/// The network connection remains open until all clones have
 		/// disconnected or gone out of scope. Any connection opened after
-		/// cloning is private to the object making the connection.</p>
+		/// cloning is private to the object making the connection.
 		/// 
-		/// <p>The clone can issue requests and freely modify options and search
+		/// The clone can issue requests and freely modify options and search
 		/// constraints, and , without affecting the source object or other clones.
 		/// If the clone disconnects or reconnects, it is completely dissociated
 		/// from the source object and other clones. Reauthenticating in a clone,
 		/// however, is a global operation which will affect the source object
 		/// and all associated clones, because it applies to the single shared
 		/// physical connection. Any request by an associated object after one
-		/// has reauthenticated will carry the new identity.</p>
+		/// has reauthenticated will carry the new identity.
 		/// 
 		/// </summary>
 		/// <returns> A of the object.
@@ -652,11 +618,11 @@ namespace Novell.Directory.Ldap
 		/// by the object.
 		/// 
 		/// </summary>
-		/// <exception cref=""> LdapException A general exception which includes an error
+		/// <exception> LdapException A general exception which includes an error
 		/// message and an Ldap error code.
 		/// 
 		/// </exception>
-		/// <seealso cref="#disconnect">
+		/// <seealso cref="Disconnect">
 		/// </seealso>
 		~LdapConnection()
 		{
@@ -670,8 +636,8 @@ namespace Novell.Directory.Ldap
 		/// </summary>
 		/// <param name="name">  Name of the property to be returned.
 		/// 
-		/// <p>The following read-only properties are available
-		/// for any given connection:</p>
+		/// The following read-only properties are available
+		/// for any given connection:
 		/// <ul>
 		/// <li>Ldap_PROPERTY_SDK returns the version of this SDK,
 		/// as a Float data type.</li>
@@ -681,20 +647,20 @@ namespace Novell.Directory.Ldap
 		/// 
 		/// <li>Ldap_PROPERTY_SECURITY returns a comma-separated list of the
 		/// types of authentication supported, as a
-		/// string.
+		/// string.</li>
 		/// </ul>
 		/// 
-		/// <p>A deep copy of the property is provided where applicable; a
-		/// client does not need to clone the object received.</p>
+		/// A deep copy of the property is provided where applicable; a
+		/// client does not need to clone the object received.
 		/// 
 		/// </param>
 		/// <returns> The object associated with the requested property,
 		/// or null if the property is not defined.
 		/// 
 		/// </returns>
-		/// <seealso cref="LdapConstraints#getProperty(String)">
+		/// <seealso cref="LdapConstraints.getProperty">
 		/// </seealso>
-		/// <seealso cref="Object)">
+		/// <seealso cref="Object">
 		/// </seealso>
 		public virtual System.Object getProperty(System.String name)
 		{
@@ -713,9 +679,9 @@ namespace Novell.Directory.Ldap
 		/// <summary> Registers an object to be notified on arrival of an unsolicited
 		/// message from a server.
 		/// 
-		/// <p>An unsolicited message has the ID 0. A new thread is created and
+		/// An unsolicited message has the ID 0. A new thread is created and
 		/// the method "messageReceived" in each registered object is called in
-		/// turn.</p>
+		/// turn.
 		/// 
 		/// </summary>
 		/// <param name="listener"> An object to be notified on arrival of an
@@ -752,22 +718,16 @@ namespace Novell.Directory.Ldap
 		/// <summary> Starts Transport Layer Security (TLS) protocol on this connection
 		/// to enable session privacy.
 		/// 
-		/// <p>This affects the LdapConnection object and all cloned objects. A
+		/// This affects the LdapConnection object and all cloned objects. A
 		/// socket factory that implements LdapTLSSocketFactory must be set on the
-		/// connection.</p>
+		/// connection.
 		/// 
 		/// </summary>
-		/// <exception cref=""> LdapException Thrown if TLS cannot be started.  If a
+		/// <exception> LdapException Thrown if TLS cannot be started.  If a
 		/// SocketFactory has been specified that does not implement
 		/// LdapTLSSocketFactory an LdapException is thrown.
 		/// 
 		/// </exception>
-		/// <seealso cref="#isTLS">
-		/// </seealso>
-		/// <seealso cref="#stopTLS">
-		/// </seealso>
-		/// <seealso cref="#setSocketFactory">
-		/// </seealso>
 		//*************************************************************************
 		// Below are all of the Ldap protocol operation methods
 		//*************************************************************************
@@ -786,7 +746,7 @@ namespace Novell.Directory.Ldap
 		/// <param name="results">  An object returned from a search.
 		/// 
 		/// </param>
-		/// <exception cref=""> LdapException A general exception which includes an error
+		/// <exception> LdapException A general exception which includes an error
 		/// message and an Ldap error code.
 		/// </exception>
 		public virtual void  Abandon(LdapSearchResults results)
@@ -803,12 +763,12 @@ namespace Novell.Directory.Ldap
 		/// 
 		/// </summary>
 		/// <param name="results">  An object returned from a search.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="cons">    The contraints specific to the operation.
 		/// 
 		/// </param>
-		/// <exception cref=""> LdapException A general exception which includes an error
+		/// <exception> LdapException A general exception which includes an error
 		/// message and an Ldap error code.
 		/// </exception>
 		public virtual void  Abandon(LdapSearchResults results, LdapConstraints cons)
@@ -826,7 +786,7 @@ namespace Novell.Directory.Ldap
 		/// operation.
 		/// 
 		/// </param>
-		/// <exception cref=""> LdapException A general exception which includes an error
+		/// <exception> LdapException A general exception which includes an error
 		/// message and an Ldap error code.
 		/// </exception>
 		public virtual void  Abandon(int id)
@@ -842,12 +802,12 @@ namespace Novell.Directory.Ldap
 		/// <param name="id">The ID of the asynchronous operation to abandon.
 		/// The ID can be obtained from the search
 		/// queue for the operation.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="cons">The contraints specific to the operation.
 		/// 
 		/// </param>
-		/// <exception cref=""> LdapException A general exception which includes an error
+		/// <exception> LdapException A general exception which includes an error
 		/// message and an Ldap error code.
 		/// </exception>
 		public virtual void  Abandon(int id, LdapConstraints cons)
@@ -868,8 +828,8 @@ namespace Novell.Directory.Ldap
 		
 		/// <summary> Abandons all outstanding operations managed by the queue.
 		/// 
-		/// <p>All operations in progress, which are managed by the specified queue,
-		/// are abandoned.</p>
+		/// All operations in progress, which are managed by the specified queue,
+		/// are abandoned.
 		/// 
 		/// </summary>
 		/// <param name="queue">    The queue returned from an asynchronous request.
@@ -877,7 +837,7 @@ namespace Novell.Directory.Ldap
 		/// are abandoned, and the queue is emptied.
 		/// 
 		/// </param>
-		/// <exception cref=""> LdapException A general exception which includes an error
+		/// <exception> LdapException A general exception which includes an error
 		/// message and an Ldap error code.
 		/// </exception>
 		public virtual void  Abandon(LdapMessageQueue queue)
@@ -888,19 +848,19 @@ namespace Novell.Directory.Ldap
 		
 		/// <summary> Abandons all outstanding operations managed by the queue.
 		/// 
-		/// <p>All operations in progress, which are managed by the specified
-		/// queue, are abandoned.</p>
+		/// All operations in progress, which are managed by the specified
+		/// queue, are abandoned.
 		/// 
 		/// </summary>
 		/// <param name="queue">    The queue returned from an asynchronous request.
 		/// All outstanding operations managed by the queue
 		/// are abandoned, and the queue is emptied.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="cons">    The contraints specific to the operation.
 		/// 
 		/// </param>
-		/// <exception cref=""> LdapException A general exception which includes an error
+		/// <exception> LdapException A general exception which includes an error
 		/// message and an Ldap error code.
 		/// </exception>
 		public virtual void  Abandon(LdapMessageQueue queue, LdapConstraints cons)
@@ -936,7 +896,7 @@ namespace Novell.Directory.Ldap
 		/// name and attributes of the new entry.
 		/// 
 		/// </param>
-		/// <exception cref=""> LdapException A general exception which includes an error
+		/// <exception> LdapException A general exception which includes an error
 		/// message and an Ldap error code.
 		/// </exception>
 		public virtual void  Add(LdapEntry entry)
@@ -952,12 +912,12 @@ namespace Novell.Directory.Ldap
 		/// </summary>
 		/// <param name="entry">  LdapEntry object specifying the distinguished
 		/// name and attributes of the new entry.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="cons">   Constraints specific to the operation.
 		/// 
 		/// </param>
-		/// <exception cref=""> LdapException A general exception which includes an error
+		/// <exception> LdapException A general exception which includes an error
 		/// message and an Ldap error code.
 		/// </exception>
 		
@@ -982,14 +942,14 @@ namespace Novell.Directory.Ldap
 		/// </summary>
 		/// <param name="entry">  LdapEntry object specifying the distinguished
 		/// name and attributes of the new entry.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="queue">  Handler for messages returned from a server in
 		/// response to this request. If it is null, a
 		/// queue object is created internally.
 		/// 
 		/// </param>
-		/// <exception cref=""> LdapException A general exception which includes an error
+		/// <exception> LdapException A general exception which includes an error
 		/// message and an Ldap error code.
 		/// </exception>
 		public virtual LdapResponseQueue Add(LdapEntry entry, LdapResponseQueue queue)
@@ -1003,17 +963,17 @@ namespace Novell.Directory.Ldap
 		/// </summary>
 		/// <param name="entry">  LdapEntry object specifying the distinguished
 		/// name and attributes of the new entry.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="queue"> Handler for messages returned from a server in
 		/// response to this request. If it is null, a
 		/// queue object is created internally.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="cons">  Constraints specific to the operation.
 		/// 
 		/// </param>
-		/// <exception cref=""> LdapException A general exception which includes an error
+		/// <exception> LdapException A general exception which includes an error
 		/// message and an Ldap error code.
 		/// </exception>
 		public virtual LdapResponseQueue Add(LdapEntry entry, LdapResponseQueue queue, LdapConstraints cons)
@@ -1044,22 +1004,22 @@ namespace Novell.Directory.Ldap
 		/// currently connected to) as an Ldapv3 bind, using the specified name and
 		/// password.
 		/// 
-		/// <p>If the object has been disconnected from an Ldap server,
+		/// If the object has been disconnected from an Ldap server,
 		/// this method attempts to reconnect to the server. If the object
-		/// has already authenticated, the old authentication is discarded.</p>
+		/// has already authenticated, the old authentication is discarded.
 		/// 
 		/// </summary>
 		/// <param name="dn">     If non-null and non-empty, specifies that the
 		/// connection and all operations through it should
 		/// be authenticated with dn as the distinguished
 		/// name.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="passwd"> If non-null and non-empty, specifies that the
 		/// connection and all operations through it should
 		/// be authenticated with dn as the distinguished
 		/// name and passwd as password.
-		/// <br><br>
+		/// 
 		/// Note: the application should use care in the use
 		/// of String password objects.  These are long lived
 		/// objects, and may expose a security risk, especially
@@ -1067,12 +1027,10 @@ namespace Novell.Directory.Ldap
 		/// keeps no long lived instances of these objects.
 		/// 
 		/// </param>
-		/// <exception cref=""> LdapException A general exception which includes an error
+		/// <exception> LdapException A general exception which includes an error
 		/// message and an Ldap error code.
 		/// 
 		/// </exception>
-		/// <deprecated> replaced by {@link #bind(int, String, byte[])}
-		/// </deprecated>
 		public virtual void  Bind(System.String dn, System.String passwd)
 		{
 			Bind(Ldap_V3, dn, passwd, defSearchCons);
@@ -1083,26 +1041,26 @@ namespace Novell.Directory.Ldap
 		/// currently connected to) using the specified name, password,
 		/// and Ldap version.
 		/// 
-		/// <p>If the object has been disconnected from an Ldap server,
+		/// If the object has been disconnected from an Ldap server,
 		/// this method attempts to reconnect to the server. If the object
-		/// has already authenticated, the old authentication is discarded.</p>
+		/// has already authenticated, the old authentication is discarded.
 		/// 
 		/// </summary>
 		/// <param name="version"> The Ldap protocol version, use Ldap_V3.
 		/// Ldap_V2 is not supported.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="dn">     If non-null and non-empty, specifies that the
 		/// connection and all operations through it should
 		/// be authenticated with dn as the distinguished
 		/// name.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="passwd"> If non-null and non-empty, specifies that the
 		/// connection and all operations through it should
 		/// be authenticated with dn as the distinguished
 		/// name and passwd as password.
-		/// <br><br>
+		/// 
 		/// Note: the application should use care in the use
 		/// of String password objects.  These are long lived
 		/// objects, and may expose a security risk, especially
@@ -1110,12 +1068,10 @@ namespace Novell.Directory.Ldap
 		/// keeps no long lived instances of these objects.
 		/// 
 		/// </param>
-		/// <exception cref=""> LdapException A general exception which includes an error
+		/// <exception> LdapException A general exception which includes an error
 		/// message and an Ldap error code.
 		/// 
 		/// </exception>
-		/// <deprecated> replaced by {@link #bind(int, String, byte[])}
-		/// </deprecated>
 		public virtual void  Bind(int version, System.String dn, System.String passwd)
 		{
 			Bind(version, dn, passwd, defSearchCons);
@@ -1126,16 +1082,16 @@ namespace Novell.Directory.Ldap
 		/// currently connected to) as an Ldapv3 bind, using the specified name,
 		/// password, and constraints.
 		/// 
-		/// <p>If the object has been disconnected from an Ldap server,
+		/// If the object has been disconnected from an Ldap server,
 		/// this method attempts to reconnect to the server. If the object
-		/// has already authenticated, the old authentication is discarded.</p>
+		/// has already authenticated, the old authentication is discarded.
 		/// 
 		/// </summary>
 		/// <param name="dn">     If non-null and non-empty, specifies that the
 		/// connection and all operations through it should
 		/// be authenticated with dn as the distinguished
 		/// name.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="passwd"> If non-null and non-empty, specifies that the
 		/// connection and all operations through it should
@@ -1146,17 +1102,15 @@ namespace Novell.Directory.Ldap
 		/// objects, and may expose a security risk, especially
 		/// in objects that are serialized.  The LdapConnection
 		/// keeps no long lived instances of these objects.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="cons">    Constraints specific to the operation.
 		/// 
 		/// </param>
-		/// <exception cref=""> LdapException A general exception which includes an error
+		/// <exception> LdapException A general exception which includes an error
 		/// message and an Ldap error code.
 		/// 
 		/// </exception>
-		/// <deprecated> replaced by {@link #bind(int, String, byte[], LdapConstraints)}
-		/// </deprecated>
 		public virtual void  Bind(System.String dn, System.String passwd, LdapConstraints cons)
 		{
 			Bind(Ldap_V3, dn, passwd, cons);
@@ -1167,43 +1121,40 @@ namespace Novell.Directory.Ldap
 		/// currently connected to) using the specified name, password, Ldap version,
 		/// and constraints.
 		/// 
-		/// <p>If the object has been disconnected from an Ldap server,
+		/// If the object has been disconnected from an Ldap server,
 		/// this method attempts to reconnect to the server. If the object
-		/// has already authenticated, the old authentication is discarded.</p>
+		/// has already authenticated, the old authentication is discarded.
 		/// 
 		/// </summary>
 		/// <param name="version"> The Ldap protocol version, use Ldap_V3.
 		/// Ldap_V2 is not supported.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="dn">      If non-null and non-empty, specifies that the
 		/// connection and all operations through it should
 		/// be authenticated with dn as the distinguished
 		/// name.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="passwd"> If non-null and non-empty, specifies that the
 		/// connection and all operations through it should
 		/// be authenticated with dn as the distinguished
 		/// name and passwd as password.
-		/// <br><br>
+		/// 
 		/// Note: the application should use care in the use
 		/// of String password objects.  These are long lived
 		/// objects, and may expose a security risk, especially
 		/// in objects that are serialized.  The LdapConnection
 		/// keeps no long lived instances of these objects.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="cons">   The constraints specific to the operation.
 		/// 
 		/// </param>
-		/// <exception cref=""> LdapException A general exception which includes an error
+		/// <exception> LdapException A general exception which includes an error
 		/// message and an Ldap error code.
 		/// 
 		/// </exception>
-		/// <deprecated> replaced by
-		/// {@link #bind(int, String, byte[], LdapConstraints)}
-		/// </deprecated>
 		public virtual void  Bind(int version, System.String dn, System.String passwd, LdapConstraints cons)
 		{
 			sbyte[] pw = null;
@@ -1232,20 +1183,20 @@ namespace Novell.Directory.Ldap
 		/// currently connected to) using the specified name, password,
 		/// and Ldap version.
 		/// 
-		/// <p>If the object has been disconnected from an Ldap server,
+		/// If the object has been disconnected from an Ldap server,
 		/// this method attempts to reconnect to the server. If the object
-		/// has already authenticated, the old authentication is discarded.</p>
+		/// has already authenticated, the old authentication is discarded.
 		/// 
 		/// </summary>
 		/// <param name="version"> The version of the Ldap protocol to use
 		/// in the bind, use Ldap_V3.  Ldap_V2 is not supported.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="dn">     If non-null and non-empty, specifies that the
 		/// connection and all operations through it should
 		/// be authenticated with dn as the distinguished
 		/// name.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="passwd"> If non-null and non-empty, specifies that the
 		/// connection and all operations through it should
@@ -1253,7 +1204,7 @@ namespace Novell.Directory.Ldap
 		/// name and passwd as password.
 		/// 
 		/// </param>
-		/// <exception cref=""> LdapException A general exception which includes an error
+		/// <exception> LdapException A general exception which includes an error
 		/// message and an Ldap error code.
 		/// </exception>
 		[CLSCompliantAttribute(false)]
@@ -1268,31 +1219,31 @@ namespace Novell.Directory.Ldap
 		/// currently connected to) using the specified name, password, Ldap version,
 		/// and constraints.
 		/// 
-		/// <p>If the object has been disconnected from an Ldap server,
+		/// If the object has been disconnected from an Ldap server,
 		/// this method attempts to reconnect to the server. If the object
-		/// has already authenticated, the old authentication is discarded.</p>
+		/// has already authenticated, the old authentication is discarded.
 		/// 
 		/// </summary>
 		/// <param name="version"> The Ldap protocol version, use Ldap_V3.
 		/// Ldap_V2 is not supported.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="dn">      If non-null and non-empty, specifies that the
 		/// connection and all operations through it should
 		/// be authenticated with dn as the distinguished
 		/// name.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="passwd"> If non-null and non-empty, specifies that the
 		/// connection and all operations through it should
 		/// be authenticated with dn as the distinguished
 		/// name and passwd as password.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="cons">   The constraints specific to the operation.
 		/// 
 		/// </param>
-		/// <exception cref=""> LdapException A general exception which includes an error
+		/// <exception> LdapException A general exception which includes an error
 		/// message and an Ldap error code.
 		/// </exception>
 		[CLSCompliantAttribute(false)]
@@ -1317,34 +1268,34 @@ namespace Novell.Directory.Ldap
 		/// currently connected to) using the specified name, password, Ldap
 		/// version, and queue.
 		/// 
-		/// <p>If the object has been disconnected from an Ldap server,
+		/// If the object has been disconnected from an Ldap server,
 		/// this method attempts to reconnect to the server. If the object
-		/// has already authenticated, the old authentication is discarded.</p>
+		/// has already authenticated, the old authentication is discarded.
 		/// 
 		/// 
 		/// </summary>
 		/// <param name="version"> The Ldap protocol version, use Ldap_V3.
 		/// Ldap_V2 is not supported.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="dn">     If non-null and non-empty, specifies that the
 		/// connection and all operations through it should
 		/// be authenticated with dn as the distinguished
 		/// name.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="passwd"> If non-null and non-empty, specifies that the
 		/// connection and all operations through it should
 		/// be authenticated with dn as the distinguished
 		/// name and passwd as password.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="queue">  Handler for messages returned from a server in
 		/// response to this request. If it is null, a
 		/// queue object is created internally.
 		/// 
 		/// </param>
-		/// <exception cref=""> LdapException A general exception which includes an error
+		/// <exception> LdapException A general exception which includes an error
 		/// message and an Ldap error code.
 		/// </exception>
 		[CLSCompliantAttribute(false)]
@@ -1357,36 +1308,36 @@ namespace Novell.Directory.Ldap
 		/// currently connected to) using the specified name, password, Ldap
 		/// version, queue, and constraints.
 		/// 
-		/// <p>If the object has been disconnected from an Ldap server,
+		/// If the object has been disconnected from an Ldap server,
 		/// this method attempts to reconnect to the server. If the object
-		/// had already authenticated, the old authentication is discarded.</p>
+		/// had already authenticated, the old authentication is discarded.
 		/// 
 		/// </summary>
 		/// <param name="version"> The Ldap protocol version, use Ldap_V3.
 		/// Ldap_V2 is not supported.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="dn">     If non-null and non-empty, specifies that the
 		/// connection and all operations through it should
 		/// be authenticated with dn as the distinguished
 		/// name.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="passwd"> If non-null and non-empty, specifies that the
 		/// connection and all operations through it should
 		/// be authenticated with dn as the distinguished
 		/// name and passwd as password.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="queue">  Handler for messages returned from a server in
 		/// response to this request. If it is null, a
 		/// queue object is created internally.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="cons">     Constraints specific to the operation.
 		/// 
 		/// </param>
-		/// <exception cref=""> LdapException A general exception which includes an error
+		/// <exception> LdapException A general exception which includes an error
 		/// message and an Ldap error code.
 		/// </exception>
 		[CLSCompliantAttribute(false)]
@@ -1451,7 +1402,7 @@ namespace Novell.Directory.Ldap
 		/// </summary>
 		/// <param name="dn">     The distinguished name of the entry to use in the
 		/// comparison.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="attr">   The attribute to compare against the entry. The
 		/// method checks to see if the entry has an
@@ -1464,7 +1415,7 @@ namespace Novell.Directory.Ldap
 		/// have the value or the attribute.
 		/// 
 		/// </returns>
-		/// <exception cref=""> LdapException A general exception which includes an error
+		/// <exception> LdapException A general exception which includes an error
 		/// message and an Ldap error code.
 		/// </exception>
 		public virtual bool Compare(System.String dn, LdapAttribute attr)
@@ -1479,13 +1430,13 @@ namespace Novell.Directory.Ldap
 		/// </summary>
 		/// <param name="dn">     The distinguished name of the entry to use in the
 		/// comparison.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="attr">   The attribute to compare against the entry. The
 		/// method checks to see if the entry has an
 		/// attribute with the same name and value as this
 		/// attribute.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="cons">   Constraints specific to the operation.
 		/// 
@@ -1495,7 +1446,7 @@ namespace Novell.Directory.Ldap
 		/// have the value or the attribute.
 		/// 
 		/// </returns>
-		/// <exception cref=""> LdapException A general exception which includes an error
+		/// <exception> LdapException A general exception which includes an error
 		/// message and an Ldap error code.
 		/// </exception>
 		public virtual bool Compare(System.String dn, LdapAttribute attr, LdapConstraints cons)
@@ -1529,32 +1480,32 @@ namespace Novell.Directory.Ldap
 		
 		/// <summary> Asynchronously compares an attribute value with one in the directory,
 		/// using the specified queue.
-		/// <p>
+		/// 
 		/// Please note that a successful completion of this command results in
 		/// one of two status codes: LdapException.COMPARE_TRUE if the entry
 		/// has the value, and LdapException.COMPARE_FALSE if the entry
 		/// does not have the value or the attribute.
-		/// <br><br>
+		/// 
 		/// </summary>
 		/// <param name="dn">     The distinguished name of the entry containing an
 		/// attribute to compare.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="attr">   An attribute to compare.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="queue">  The queue for messages returned from a server in
 		/// response to this request. If it is null, a
 		/// queue object is created internally.
 		/// 
 		/// </param>
-		/// <exception cref=""> LdapException A general exception which includes an error
+		/// <exception> LdapException A general exception which includes an error
 		/// message and an Ldap error code.
 		/// 
 		/// </exception>
-		/// <seealso cref="LdapException#COMPARE_TRUE">
+		/// <seealso cref="LdapException.COMPARE_TRUE">
 		/// </seealso>
-		/// <seealso cref="LdapException#COMPARE_FALSE">
+		/// <seealso cref="LdapException.COMPARE_FALSE">
 		/// </seealso>
 		public virtual LdapResponseQueue Compare(System.String dn, LdapAttribute attr, LdapResponseQueue queue)
 		{
@@ -1563,35 +1514,35 @@ namespace Novell.Directory.Ldap
 		
 		/// <summary> Asynchronously compares an attribute value with one in the directory,
 		/// using the specified queue and contraints.
-		/// <p>
+		/// 
 		/// Please note that a successful completion of this command results in
 		/// one of two status codes: LdapException.COMPARE_TRUE if the entry
 		/// has the value, and LdapException.COMPARE_FALSE if the entry
 		/// does not have the value or the attribute.
-		/// <br><br>
+		/// 
 		/// </summary>
 		/// <param name="dn">     The distinguished name of the entry containing an
 		/// attribute to compare.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="attr">   An attribute to compare.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="queue">    Handler for messages returned from a server in
 		/// response to this request. If it is null, a
 		/// queue object is created internally.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="cons">     Constraints specific to the operation.
 		/// 
 		/// </param>
-		/// <exception cref=""> LdapException A general exception which includes an error
+		/// <exception> LdapException A general exception which includes an error
 		/// message and an Ldap error code.
 		/// 
 		/// </exception>
-		/// <seealso cref="LdapException#COMPARE_TRUE">
+		/// <seealso cref="LdapException.COMPARE_TRUE">
 		/// </seealso>
-		/// <seealso cref="LdapException#COMPARE_FALSE">
+		/// <seealso cref="LdapException.COMPARE_FALSE">
 		/// </seealso>
 		public virtual LdapResponseQueue Compare(System.String dn, LdapAttribute attr, LdapResponseQueue queue, LdapConstraints cons)
 		{
@@ -1621,28 +1572,28 @@ namespace Novell.Directory.Ldap
 		/// <summary> 
 		/// Connects to the specified host and port.
 		/// 
-		/// <p>If this LdapConnection object represents an open connection, the
+		/// If this LdapConnection object represents an open connection, the
 		/// connection is closed first before the new connection is opened.
 		/// At this point, there is no authentication, and any operations are
-		/// conducted as an anonymous client.</p>
+		/// conducted as an anonymous client.
 		/// 
-		/// <p> When more than one host name is specified, each host is contacted
-		/// in turn until a connection can be established.</p>
+		///  When more than one host name is specified, each host is contacted
+		/// in turn until a connection can be established.
 		/// 
 		/// </summary>
 		/// <param name="host">A host name or a dotted string representing the IP address
 		/// of a host running an Ldap server. It may also
 		/// contain a list of host names, space-delimited. Each host
 		/// name can include a trailing colon and port number.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="port">The TCP or UDP port number to connect to or contact.
 		/// The default Ldap port is 389. The port parameter is
 		/// ignored for any host hame which includes a colon and
 		/// port number.
-		/// <br><br>
+		/// 
 		/// </param>
-		/// <exception cref=""> LdapException A general exception which includes an error
+		/// <exception> LdapException A general exception which includes an error
 		/// message and an Ldap error code.
 		/// 
 		/// </exception>
@@ -1699,14 +1650,14 @@ namespace Novell.Directory.Ldap
 		/// Synchronously deletes the entry with the specified distinguished name
 		/// from the directory.
 		/// 
-		/// <p>Note: A Delete operation will not remove an entry that contains
-		/// subordinate entries, nor will it dereference alias entries. </p>
+		/// Note: A Delete operation will not remove an entry that contains
+		/// subordinate entries, nor will it dereference alias entries. 
 		/// 
 		/// </summary>
 		/// <param name="dn">     The distinguished name of the entry to delete.
 		/// 
 		/// </param>
-		/// <exception cref=""> LdapException A general exception which includes an error
+		/// <exception> LdapException A general exception which includes an error
 		/// message and an Ldap error code.
 		/// </exception>
 		public virtual void  Delete(System.String dn)
@@ -1719,17 +1670,17 @@ namespace Novell.Directory.Ldap
 		/// <summary> Synchronously deletes the entry with the specified distinguished name
 		/// from the directory, using the specified constraints.
 		/// 
-		/// <p>Note: A Delete operation will not remove an entry that contains
-		/// subordinate entries, nor will it dereference alias entries. </p>
+		/// Note: A Delete operation will not remove an entry that contains
+		/// subordinate entries, nor will it dereference alias entries. 
 		/// 
 		/// </summary>
 		/// <param name="dn">     The distinguished name of the entry to delete.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="cons">   Constraints specific to the operation.
 		/// 
 		/// </param>
-		/// <exception cref=""> LdapException A general exception which includes an error
+		/// <exception> LdapException A general exception which includes an error
 		/// message and an Ldap error code.
 		/// </exception>
 		public virtual void  Delete(System.String dn, LdapConstraints cons)
@@ -1751,19 +1702,19 @@ namespace Novell.Directory.Ldap
 		/// <summary> Asynchronously deletes the entry with the specified distinguished name
 		/// from the directory and returns the results to the specified queue.
 		/// 
-		/// <p>Note: A Delete operation will not remove an entry that contains
-		/// subordinate entries, nor will it dereference alias entries. </p>
+		/// Note: A Delete operation will not remove an entry that contains
+		/// subordinate entries, nor will it dereference alias entries. 
 		/// 
 		/// </summary>
 		/// <param name="dn">     The distinguished name of the entry to modify.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="queue">    The queue for messages returned from a server in
 		/// response to this request. If it is null, a
 		/// queue object is created internally.
 		/// 
 		/// </param>
-		/// <exception cref=""> LdapException A general exception which includes an error
+		/// <exception> LdapException A general exception which includes an error
 		/// message and an Ldap error code.
 		/// 
 		/// </exception>
@@ -1775,22 +1726,22 @@ namespace Novell.Directory.Ldap
 		/// <summary> Asynchronously deletes the entry with the specified distinguished name
 		/// from the directory, using the specified contraints and queue.
 		/// 
-		/// <p>Note: A Delete operation will not remove an entry that contains
-		/// subordinate entries, nor will it dereference alias entries. </p>
+		/// Note: A Delete operation will not remove an entry that contains
+		/// subordinate entries, nor will it dereference alias entries. 
 		/// 
 		/// </summary>
 		/// <param name="dn">     The distinguished name of the entry to delete.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="queue">     The queue for messages returned from a server in
 		/// response to this request. If it is null, a
 		/// queue object is created internally.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="cons">   The constraints specific to the operation.
 		/// 
 		/// </param>
-		/// <exception cref=""> LdapException A general exception which includes an error
+		/// <exception> LdapException A general exception which includes an error
 		/// message and an Ldap error code.
 		/// 
 		/// </exception>
@@ -1817,14 +1768,14 @@ namespace Novell.Directory.Ldap
 		/// <summary> 
 		/// Synchronously disconnects from the Ldap server.
 		/// 
-		/// <p>Before the object can perform Ldap operations again, it must
-		/// reconnect to the server by calling connect.</p>
+		/// Before the object can perform Ldap operations again, it must
+		/// reconnect to the server by calling connect.
 		/// 
-		/// <p>The disconnect method abandons any outstanding requests, issues an
-		/// unbind request to the server, and then closes the socket.</p>
+		/// The disconnect method abandons any outstanding requests, issues an
+		/// unbind request to the server, and then closes the socket.
 		/// 
 		/// </summary>
-		/// <exception cref=""> LdapException A general exception which includes an error
+		/// <exception> LdapException A general exception which includes an error
 		/// message and an Ldap error code.
 		/// 
 		/// </exception>
@@ -1837,17 +1788,17 @@ namespace Novell.Directory.Ldap
 		
 		/// <summary> Synchronously disconnects from the Ldap server.
 		/// 
-		/// <p>Before the object can perform Ldap operations again, it must
-		/// reconnect to the server by calling connect.</p>
+		/// Before the object can perform Ldap operations again, it must
+		/// reconnect to the server by calling connect.
 		/// 
-		/// <p>The disconnect method abandons any outstanding requests, issues an
-		/// unbind request to the server, and then closes the socket.</p>
+		/// The disconnect method abandons any outstanding requests, issues an
+		/// unbind request to the server, and then closes the socket.
 		/// 
 		/// </summary>
 		/// <param name="cons">LDPConstraints to be set with the unbind request
 		/// 
 		/// </param>
-		/// <exception cref=""> LdapException A general exception which includes an error
+		/// <exception> LdapException A general exception which includes an error
 		/// message and an Ldap error code.
 		/// </exception>
 		public virtual void  Disconnect(LdapConstraints cons)
@@ -1889,7 +1840,7 @@ namespace Novell.Directory.Ldap
 		/// string or BER-encoded values.
 		/// 
 		/// </returns>
-		/// <exception cref=""> LdapException A general exception which includes an error
+		/// <exception> LdapException A general exception which includes an error
 		/// message and an Ldap error code.
 		/// </exception>
 		public virtual LdapExtendedResponse ExtendedOperation(LdapExtendedOperation op)
@@ -1911,7 +1862,7 @@ namespace Novell.Directory.Ldap
 		/// server this client is connected to and (2) an
 		/// operation-specific sequence of octet strings
 		/// or BER-encoded values.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="cons">The constraints specific to the operation.
 		/// 
@@ -1920,7 +1871,7 @@ namespace Novell.Directory.Ldap
 		/// octet string or BER-encoded values.
 		/// 
 		/// </returns>
-		/// <exception cref=""> LdapException A general exception which includes an error
+		/// <exception> LdapException A general exception which includes an error
 		/// message and an Ldap error code.
 		/// </exception>
 		
@@ -1955,7 +1906,7 @@ namespace Novell.Directory.Ldap
 		/// server this client is connected to and (2) an
 		/// operation-specific sequence of octet strings
 		/// or BER-encoded values.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="queue">    The queue for messages returned from a server in
 		/// response to this request. If it is null, a queue
@@ -1966,7 +1917,7 @@ namespace Novell.Directory.Ldap
 		/// string or BER-encoded values.
 		/// 
 		/// </returns>
-		/// <exception cref=""> LdapException A general exception which includes an error
+		/// <exception> LdapException A general exception which includes an error
 		/// message and an Ldap error code.
 		/// </exception>
 		
@@ -1989,12 +1940,12 @@ namespace Novell.Directory.Ldap
 		/// operation which should be recognized by the particular Ldap
 		/// server this client is connected to and (2) an operation-
 		/// specific sequence of octet strings or BER-encoded values.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="queue">    The queue for messages returned from a server in
 		/// response to this request. If it is null, a queue
 		/// object is created internally.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="cons">     The constraints specific to this operation.
 		/// 
@@ -2003,7 +1954,7 @@ namespace Novell.Directory.Ldap
 		/// octet string or BER-encoded values.
 		/// 
 		/// </returns>
-		/// <exception cref=""> LdapException A general exception which includes an error
+		/// <exception> LdapException A general exception which includes an error
 		/// message and an Ldap error code.
 		/// </exception>
 		
@@ -2048,23 +1999,23 @@ namespace Novell.Directory.Ldap
 		/// <summary> Synchronously makes a single change to an existing entry in the
 		/// directory.
 		/// 
-		/// <p>For example, this modify method changes the value of an attribute,
-		/// adds a new attribute value, or removes an existing attribute value. </p>
+		/// For example, this modify method changes the value of an attribute,
+		/// adds a new attribute value, or removes an existing attribute value. 
 		/// 
-		/// <p>The LdapModification object specifies both the change to be made and
-		/// the LdapAttribute value to be changed.</p>
+		/// The LdapModification object specifies both the change to be made and
+		/// the LdapAttribute value to be changed.
 		/// 
-		/// <p>If the request fails with {@link LdapException#CONNECT_ERROR},
-		/// it is indeterminate whether or not the server made the modification.</p>
+		/// If the request fails with {@link LdapException.CONNECT_ERROR},
+		/// it is indeterminate whether or not the server made the modification.
 		/// 
 		/// </summary>
 		/// <param name="dn">    The distinguished name of the entry to modify.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="mod">   A single change to be made to the entry.
 		/// 
 		/// </param>
-		/// <exception cref=""> LdapException A general exception which includes an error
+		/// <exception> LdapException A general exception which includes an error
 		/// message and an Ldap error code.
 		/// </exception>
 		public virtual void  Modify(System.String dn, LdapModification mod)
@@ -2077,26 +2028,26 @@ namespace Novell.Directory.Ldap
 		/// Synchronously makes a single change to an existing entry in the
 		/// directory, using the specified constraints.
 		/// 
-		/// <p>For example, this modify method changes the value of an attribute,
-		/// adds a new attribute value, or removes an existing attribute value.</p>
+		/// For example, this modify method changes the value of an attribute,
+		/// adds a new attribute value, or removes an existing attribute value.
 		/// 
-		/// <p>The LdapModification object specifies both the change to be
-		/// made and the LdapAttribute value to be changed.</p>
+		/// The LdapModification object specifies both the change to be
+		/// made and the LdapAttribute value to be changed.
 		/// 
-		/// <p>If the request fails with {@link LdapException#CONNECT_ERROR},
-		/// it is indeterminate whether or not the server made the modification.</p>
+		/// If the request fails with {@link LdapException.CONNECT_ERROR},
+		/// it is indeterminate whether or not the server made the modification.
 		/// 
 		/// </summary>
 		/// <param name="dn">      The distinguished name of the entry to modify.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="mod">     A single change to be made to the entry.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="cons">    The constraints specific to the operation.
 		/// 
 		/// </param>
-		/// <exception cref=""> LdapException A general exception which includes an error
+		/// <exception> LdapException A general exception which includes an error
 		/// message and an Ldap error code.
 		/// </exception>
 		public virtual void  Modify(System.String dn, LdapModification mod, LdapConstraints cons)
@@ -2111,23 +2062,23 @@ namespace Novell.Directory.Ldap
 		/// Synchronously makes a set of changes to an existing entry in the
 		/// directory.
 		/// 
-		/// <p>For example, this modify method changes attribute values, adds
-		/// new attribute values, or removes existing attribute values.</p>
+		/// For example, this modify method changes attribute values, adds
+		/// new attribute values, or removes existing attribute values.
 		/// 
-		/// <p>Because the server applies all changes in an LdapModification array
+		/// Because the server applies all changes in an LdapModification array
 		/// atomically, the application can expect that no changes
 		/// have been performed if an error is returned.
-		/// If the request fails with {@link LdapException#CONNECT_ERROR},
-		/// it is indeterminate whether or not the server made the modifications.</p>
+		/// If the request fails with {@link LdapException.CONNECT_ERROR},
+		/// it is indeterminate whether or not the server made the modifications.
 		/// 
 		/// </summary>
 		/// <param name="dn">    Distinguished name of the entry to modify.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="mods">  The changes to be made to the entry.
 		/// 
 		/// </param>
-		/// <exception cref=""> LdapException A general exception which includes an error
+		/// <exception> LdapException A general exception which includes an error
 		/// message and an Ldap error code.
 		/// </exception>
 		public virtual void  Modify(System.String dn, LdapModification[] mods)
@@ -2139,26 +2090,26 @@ namespace Novell.Directory.Ldap
 		/// <summary> Synchronously makes a set of changes to an existing entry in the
 		/// directory, using the specified constraints.
 		/// 
-		/// <p>For example, this modify method changes attribute values, adds new
-		/// attribute values, or removes existing attribute values.</p>
+		/// For example, this modify method changes attribute values, adds new
+		/// attribute values, or removes existing attribute values.
 		/// 
-		/// <p>Because the server applies all changes in an LdapModification array
+		/// Because the server applies all changes in an LdapModification array
 		/// atomically, the application can expect that no changes
 		/// have been performed if an error is returned.
-		/// If the request fails with {@link LdapException#CONNECT_ERROR},
-		/// it is indeterminate whether or not the server made the modifications.</p>
+		/// If the request fails with {@link LdapException.CONNECT_ERROR},
+		/// it is indeterminate whether or not the server made the modifications.
 		/// 
 		/// </summary>
 		/// <param name="dn">     The distinguished name of the entry to modify.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="mods">   The changes to be made to the entry.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="cons">   The constraints specific to the operation.
 		/// 
 		/// </param>
-		/// <exception cref=""> LdapException A general exception which includes an
+		/// <exception> LdapException A general exception which includes an
 		/// error message and an Ldap error code.
 		/// </exception>
 		public virtual void  Modify(System.String dn, LdapModification[] mods, LdapConstraints cons)
@@ -2182,28 +2133,28 @@ namespace Novell.Directory.Ldap
 		/// <summary> Asynchronously makes a single change to an existing entry in the
 		/// directory.
 		/// 
-		/// <p>For example, this modify method can change the value of an attribute,
-		/// add a new attribute value, or remove an existing attribute value.</p>
+		/// For example, this modify method can change the value of an attribute,
+		/// add a new attribute value, or remove an existing attribute value.
 		/// 
-		/// <p>The LdapModification object specifies both the change to be made and
-		/// the LdapAttribute value to be changed.</p>
+		/// The LdapModification object specifies both the change to be made and
+		/// the LdapAttribute value to be changed.
 		/// 
-		/// <p>If the request fails with {@link LdapException#CONNECT_ERROR},
-		/// it is indeterminate whether or not the server made the modification.</p>
+		/// If the request fails with {@link LdapException.CONNECT_ERROR},
+		/// it is indeterminate whether or not the server made the modification.
 		/// 
 		/// </summary>
 		/// <param name="dn">        Distinguished name of the entry to modify.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="mod">       A single change to be made to the entry.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="queue">     Handler for messages returned from a server in
 		/// response to this request. If it is null, a
 		/// queue object is created internally.
 		/// 
 		/// </param>
-		/// <exception cref=""> LdapException A general exception which includes an error
+		/// <exception> LdapException A general exception which includes an error
 		/// message and an Ldap error code.
 		/// </exception>
 		public virtual LdapResponseQueue Modify(System.String dn, LdapModification mod, LdapResponseQueue queue)
@@ -2214,31 +2165,31 @@ namespace Novell.Directory.Ldap
 		/// <summary> Asynchronously makes a single change to an existing entry in the
 		/// directory, using the specified constraints and queue.
 		/// 
-		/// <p>For example, this modify method can change the value of an attribute,
-		/// add a new attribute value, or remove an existing attribute value.</p>
+		/// For example, this modify method can change the value of an attribute,
+		/// add a new attribute value, or remove an existing attribute value.
 		/// 
-		/// <p>The LdapModification object specifies both the change to be made
-		/// and the LdapAttribute value to be changed.</p>
+		/// The LdapModification object specifies both the change to be made
+		/// and the LdapAttribute value to be changed.
 		/// 
-		/// <p>If the request fails with {@link LdapException#CONNECT_ERROR},
-		/// it is indeterminate whether or not the server made the modification.</p>
+		/// If the request fails with {@link LdapException.CONNECT_ERROR},
+		/// it is indeterminate whether or not the server made the modification.
 		/// 
 		/// </summary>
 		/// <param name="dn">         Distinguished name of the entry to modify.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="mod">        A single change to be made to the entry.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="queue">      Handler for messages returned from a server in
 		/// response to this request. If it is null, a
 		/// queue object is created internally.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="cons">       Constraints specific to the operation.
 		/// 
 		/// </param>
-		/// <exception cref=""> LdapException A general exception which includes an error
+		/// <exception> LdapException A general exception which includes an error
 		/// message and an Ldap error code.
 		/// </exception>
 		public virtual LdapResponseQueue Modify(System.String dn, LdapModification mod, LdapResponseQueue queue, LdapConstraints cons)
@@ -2251,28 +2202,28 @@ namespace Novell.Directory.Ldap
 		/// <summary> Asynchronously makes a set of changes to an existing entry in the
 		/// directory.
 		/// 
-		/// <p>For example, this modify method can change attribute values, add new
-		/// attribute values, or remove existing attribute values.</p>
+		/// For example, this modify method can change attribute values, add new
+		/// attribute values, or remove existing attribute values.
 		/// 
-		/// <p>Because the server applies all changes in an LdapModification array
+		/// Because the server applies all changes in an LdapModification array
 		/// atomically, the application can expect that no changes
 		/// have been performed if an error is returned.
-		/// If the request fails with {@link LdapException#CONNECT_ERROR},
-		/// it is indeterminate whether or not the server made the modifications.</p>
+		/// If the request fails with {@link LdapException.CONNECT_ERROR},
+		/// it is indeterminate whether or not the server made the modifications.
 		/// 
 		/// </summary>
 		/// <param name="dn">        The distinguished name of the entry to modify.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="mods">      The changes to be made to the entry.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="queue">     The queue for messages returned from a server in
 		/// response to this request. If it is null, a
 		/// queue object is created internally.
 		/// 
 		/// </param>
-		/// <exception cref=""> LdapException A general exception which includes an error
+		/// <exception> LdapException A general exception which includes an error
 		/// message and an Ldap error code.
 		/// </exception>
 		public virtual LdapResponseQueue Modify(System.String dn, LdapModification[] mods, LdapResponseQueue queue)
@@ -2283,31 +2234,31 @@ namespace Novell.Directory.Ldap
 		/// <summary> Asynchronously makes a set of changes to an existing entry in the
 		/// directory, using the specified constraints and queue.
 		/// 
-		/// <p>For example, this modify method can change attribute values, add new
-		/// attribute values, or remove existing attribute values.</p>
+		/// For example, this modify method can change attribute values, add new
+		/// attribute values, or remove existing attribute values.
 		/// 
-		/// <p>Because the server applies all changes in an LdapModification array
+		/// Because the server applies all changes in an LdapModification array
 		/// atomically, the application can expect that no changes
 		/// have been performed if an error is returned.
-		/// If the request fails with {@link LdapException#CONNECT_ERROR},
-		/// it is indeterminate whether or not the server made the modifications.</p>
+		/// If the request fails with {@link LdapException.CONNECT_ERROR},
+		/// it is indeterminate whether or not the server made the modifications.
 		/// 
 		/// </summary>
 		/// <param name="dn">        The distinguished name of the entry to modify.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="mods">      The changes to be made to the entry.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="queue">     The queue for messages returned from a server in
 		/// response to this request. If it is null, a
 		/// queue object is created internally.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="cons">      Constraints specific to the operation.
 		/// 
 		/// </param>
-		/// <exception cref=""> LdapException A general exception which includes an error
+		/// <exception> LdapException A general exception which includes an error
 		/// message and an Ldap error code.
 		/// </exception>
 		public virtual LdapResponseQueue Modify(System.String dn, LdapModification[] mods, LdapResponseQueue queue, LdapConstraints cons)
@@ -2340,7 +2291,7 @@ namespace Novell.Directory.Ldap
 		/// <returns> the LdapEntry read from the server.
 		/// 
 		/// </returns>
-		/// <exception cref=""> LdapException if the object was not found
+		/// <exception> LdapException if the object was not found
 		/// </exception>
 		public virtual LdapEntry Read(System.String dn)
 		{
@@ -2355,7 +2306,7 @@ namespace Novell.Directory.Ldap
 		/// 
 		/// </summary>
 		/// <param name="dn">        The distinguished name of the entry to retrieve.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="cons">      The constraints specific to the operation.
 		/// 
@@ -2363,7 +2314,7 @@ namespace Novell.Directory.Ldap
 		/// <returns> the LdapEntry read from the server
 		/// 
 		/// </returns>
-		/// <exception cref=""> LdapException if the object was not found
+		/// <exception> LdapException if the object was not found
 		/// </exception>
 		public virtual LdapEntry Read(System.String dn, LdapSearchConstraints cons)
 		{
@@ -2376,7 +2327,7 @@ namespace Novell.Directory.Ldap
 		/// 
 		/// </summary>
 		/// <param name="dn">        The distinguished name of the entry to retrieve.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="attrs">     The names of the attributes to retrieve.
 		/// 
@@ -2384,7 +2335,7 @@ namespace Novell.Directory.Ldap
 		/// <returns> the LdapEntry read from the server
 		/// 
 		/// </returns>
-		/// <exception cref=""> LdapException if the object was not found
+		/// <exception> LdapException if the object was not found
 		/// </exception>
 		public virtual LdapEntry Read(System.String dn, System.String[] attrs)
 		{
@@ -2397,10 +2348,10 @@ namespace Novell.Directory.Ldap
 		/// 
 		/// </summary>
 		/// <param name="dn">      The distinguished name of the entry to retrieve.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="attrs">   The names of the attributes to retrieve.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="cons">    The constraints specific to the operation.
 		/// 
@@ -2408,7 +2359,7 @@ namespace Novell.Directory.Ldap
 		/// <returns> the LdapEntry read from the server
 		/// 
 		/// </returns>
-		/// <exception cref=""> LdapException if the object was not found
+		/// <exception> LdapException if the object was not found
 		/// </exception>
 		public virtual LdapEntry Read(System.String dn, System.String[] attrs, LdapSearchConstraints cons)
 		{
@@ -2429,15 +2380,15 @@ namespace Novell.Directory.Ldap
 		
 		/// <summary> Synchronously reads the entry specified by the Ldap URL.
 		/// 
-		/// <p>When this read method is called, a new connection is created
+		/// When this read method is called, a new connection is created
 		/// automatically, using the host and port specified in the URL. After
 		/// finding the entry, the method closes the connection (in other words,
-		/// it disconnects from the Ldap server).</p>
+		/// it disconnects from the Ldap server).
 		/// 
-		/// <p>If the URL specifies a filter and scope, they are not used. Of the
+		/// If the URL specifies a filter and scope, they are not used. Of the
 		/// information specified in the URL, this method only uses the Ldap host
 		/// name and port number, the base distinguished name (DN), and the list
-		/// of attributes to return.</p>
+		/// of attributes to return.
 		/// 
 		/// </summary>
 		/// <param name="toGet">          Ldap URL specifying the entry to read.
@@ -2446,7 +2397,7 @@ namespace Novell.Directory.Ldap
 		/// <returns> The entry specified by the base DN.
 		/// 
 		/// </returns>
-		/// <exception cref=""> LdapException if the object was not found
+		/// <exception> LdapException if the object was not found
 		/// </exception>
 		public static LdapEntry Read(LdapUrl toGet)
 		{
@@ -2460,27 +2411,27 @@ namespace Novell.Directory.Ldap
 		/// <summary> Synchronously reads the entry specified by the Ldap URL, using the
 		/// specified constraints.
 		/// 
-		/// <p>When this method is called, a new connection is created
+		/// When this method is called, a new connection is created
 		/// automatically, using the host and port specified in the URL. After
 		/// finding the entry, the method closes the connection (in other words,
-		/// it disconnects from the Ldap server).</p>
+		/// it disconnects from the Ldap server).
 		/// 
-		/// <p>If the URL specifies a filter and scope, they are not used. Of the
+		/// If the URL specifies a filter and scope, they are not used. Of the
 		/// information specified in the URL, this method only uses the Ldap host
 		/// name and port number, the base distinguished name (DN), and the list
-		/// of attributes to return.</p>
+		/// of attributes to return.
 		/// 
 		/// </summary>
 		/// <returns> The entry specified by the base DN.
 		/// 
 		/// </returns>
 		/// <param name="toGet">      Ldap URL specifying the entry to read.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="cons">      Constraints specific to the operation.
 		/// 
 		/// </param>
-		/// <exception cref=""> LdapException if the object was not found
+		/// <exception> LdapException if the object was not found
 		/// </exception>
 		public static LdapEntry Read(LdapUrl toGet, LdapSearchConstraints cons)
 		{
@@ -2500,17 +2451,17 @@ namespace Novell.Directory.Ldap
 		/// 
 		/// </summary>
 		/// <param name="dn">      The current distinguished name of the entry.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="newRdn">  The new relative distinguished name for the entry.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="deleteOldRdn">  If true, the old name is not retained as an
 		/// attribute value. If false, the old name is
 		/// retained as an attribute value.
 		/// 
 		/// </param>
-		/// <exception cref=""> LdapException A general exception which includes an error
+		/// <exception> LdapException A general exception which includes an error
 		/// message and an Ldap error code.
 		/// </exception>
 		public virtual void  Rename(System.String dn, System.String newRdn, bool deleteOldRdn)
@@ -2525,20 +2476,20 @@ namespace Novell.Directory.Ldap
 		/// 
 		/// </summary>
 		/// <param name="dn">            The current distinguished name of the entry.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="newRdn">        The new relative distinguished name for the entry.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="deleteOldRdn">  If true, the old name is not retained as an
 		/// attribute value. If false, the old name is
 		/// retained as an attribute value.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="cons">          The constraints specific to the operation.
 		/// 
 		/// </param>
-		/// <exception cref=""> LdapException A general exception which includes an error
+		/// <exception> LdapException A general exception which includes an error
 		/// message and an Ldap error code.
 		/// </exception>
 		public virtual void  Rename(System.String dn, System.String newRdn, bool deleteOldRdn, LdapConstraints cons)
@@ -2553,21 +2504,21 @@ namespace Novell.Directory.Ldap
 		/// 
 		/// </summary>
 		/// <param name="dn">            The current distinguished name of the entry.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="newRdn">        The new relative distinguished name for the entry.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="newParentdn">   The distinguished name of an existing entry which
 		/// is to be the new parent of the entry.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="deleteOldRdn">  If true, the old name is not retained as an
 		/// attribute value. If false, the old name is
 		/// retained as an attribute value.
 		/// 
 		/// </param>
-		/// <exception cref=""> LdapException A general exception which includes an error
+		/// <exception> LdapException A general exception which includes an error
 		/// message and an Ldap error code.
 		/// </exception>
 		public virtual void  Rename(System.String dn, System.String newRdn, System.String newParentdn, bool deleteOldRdn)
@@ -2583,24 +2534,24 @@ namespace Novell.Directory.Ldap
 		/// 
 		/// </summary>
 		/// <param name="dn">            The current distinguished name of the entry.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="newRdn">        The new relative distinguished name for the entry.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="newParentdn">   The distinguished name of an existing entry which
 		/// is to be the new parent of the entry.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="deleteOldRdn">  If true, the old name is not retained as an
 		/// attribute value. If false, the old name is
 		/// retained as an attribute value.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="cons">          The constraints specific to the operation.
 		/// 
 		/// </param>
-		/// <exception cref=""> LdapException A general exception which includes an error
+		/// <exception> LdapException A general exception which includes an error
 		/// message and an Ldap error code.
 		/// </exception>
 		public virtual void  Rename(System.String dn, System.String newRdn, System.String newParentdn, bool deleteOldRdn, LdapConstraints cons)
@@ -2628,22 +2579,22 @@ namespace Novell.Directory.Ldap
 		/// 
 		/// </summary>
 		/// <param name="dn">            The current distinguished name of the entry.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="newRdn">        The new relative distinguished name for the entry.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="deleteOldRdn">  If true, the old name is not retained as an
 		/// attribute value. If false, the old name is
 		/// retained as an attribute value.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="queue">         The queue for messages returned from a server in
 		/// response to this request. If it is null, a
 		/// queue object is created internally.
 		/// 
 		/// </param>
-		/// <exception cref=""> LdapException A general exception which includes an error
+		/// <exception> LdapException A general exception which includes an error
 		/// message and an Ldap error code.
 		/// </exception>
 		public virtual LdapResponseQueue Rename(System.String dn, System.String newRdn, bool deleteOldRdn, LdapResponseQueue queue)
@@ -2656,25 +2607,25 @@ namespace Novell.Directory.Ldap
 		/// 
 		/// </summary>
 		/// <param name="dn">            The current distinguished name of the entry.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="newRdn">        The new relative distinguished name for the entry.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="deleteOldRdn">  If true, the old name is not retained as an
 		/// attribute value. If false, the old name is
 		/// retained as an attribute value.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="queue">         The queue for messages returned from a server in
 		/// response to this request. If it is null, a
 		/// queue object is created internally.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="cons">          The constraints specific to the operation.
 		/// 
 		/// </param>
-		/// <exception cref=""> LdapException A general exception which includes an error
+		/// <exception> LdapException A general exception which includes an error
 		/// message and an Ldap error code.
 		/// </exception>
 		public virtual LdapResponseQueue Rename(System.String dn, System.String newRdn, bool deleteOldRdn, LdapResponseQueue queue, LdapConstraints cons)
@@ -2687,26 +2638,26 @@ namespace Novell.Directory.Ldap
 		/// 
 		/// </summary>
 		/// <param name="dn">            The current distinguished name of the entry.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="newRdn">        The new relative distinguished name for the entry.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="newParentdn">   The distinguished name of an existing entry which
 		/// is to be the new parent of the entry.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="deleteOldRdn">  If true, the old name is not retained as an
 		/// attribute value. If false, the old name is
 		/// retained as an attribute value.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="queue">         The queue for messages returned from a server in
 		/// response to this request. If it is null, a
 		/// queue object is created internally.
 		/// 
 		/// </param>
-		/// <exception cref=""> LdapException A general exception which includes an error
+		/// <exception> LdapException A general exception which includes an error
 		/// message and an Ldap error code.
 		/// </exception>
 		public virtual LdapResponseQueue Rename(System.String dn, System.String newRdn, System.String newParentdn, bool deleteOldRdn, LdapResponseQueue queue)
@@ -2720,29 +2671,29 @@ namespace Novell.Directory.Ldap
 		/// 
 		/// </summary>
 		/// <param name="dn">            The current distinguished name of the entry.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="newRdn">        The new relative distinguished name for the entry.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="newParentdn">   The distinguished name of an existing entry which
 		/// is to be the new parent of the entry.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="deleteOldRdn">  If true, the old name is not retained as an
 		/// attribute value. If false, the old name is
 		/// retained as an attribute value.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="queue">         The queue for messages returned from a server in
 		/// response to this request. If it is null, a
 		/// queue object is created internally.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="cons">          The constraints specific to the operation.
 		/// 
 		/// </param>
-		/// <exception cref=""> LdapException A general exception which includes an error
+		/// <exception> LdapException A general exception which includes an error
 		/// message and an Ldap error code.
 		/// </exception>
 		public virtual LdapResponseQueue Rename(System.String dn, System.String newRdn, System.String newParentdn, bool deleteOldRdn, LdapResponseQueue queue, LdapConstraints cons)
@@ -2770,31 +2721,31 @@ namespace Novell.Directory.Ldap
 		/// 
 		/// </summary>
 		/// <param name="base">          The base distinguished name to search from.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="scope">         The scope of the entries to search. The following
 		/// are the valid options:
 		/// <ul>
-		/// <li>SCOPE_BASE - searches only the base DN
+		/// <li>SCOPE_BASE - searches only the base DN</li>
 		/// 
-		/// <li>SCOPE_ONE - searches only entries under the base DN
+		/// <li>SCOPE_ONE - searches only entries under the base DN</li>
 		/// 
 		/// <li>SCOPE_SUB - searches the base DN and all entries
-		/// within its subtree
-		/// </ul><br><br>
+		/// within its subtree</li>
+		/// </ul>
 		/// </param>
 		/// <param name="filter">        Search filter specifying the search criteria.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="attrs">         Names of attributes to retrieve.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="typesOnly">     If true, returns the names but not the values of
 		/// the attributes found. If false, returns the
 		/// names and values for attributes found.
 		/// 
 		/// </param>
-		/// <exception cref=""> LdapException A general exception which includes an error
+		/// <exception> LdapException A general exception which includes an error
 		/// message and an Ldap error code.
 		/// </exception>
 		public virtual LdapSearchResults Search(System.String base_Renamed, int scope, System.String filter, System.String[] attrs, bool typesOnly)
@@ -2808,42 +2759,42 @@ namespace Novell.Directory.Ldap
 		/// maximum number of entries to find or the maximum time to wait for
 		/// search results).
 		/// 
-		/// <p>As part of the search constraints, the method allows specifying
+		/// As part of the search constraints, the method allows specifying
 		/// whether or not the results are to be delivered all at once or in
 		/// smaller batches. If specified that the results are to be delivered in
 		/// smaller batches, each iteration blocks only until the next batch of
-		/// results is returned.</p>
+		/// results is returned.
 		/// 
 		/// </summary>
 		/// <param name="base">          The base distinguished name to search from.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="scope">         The scope of the entries to search. The following
 		/// are the valid options:
 		/// <ul>
-		/// <li>SCOPE_BASE - searches only the base DN
+		/// <li>SCOPE_BASE - searches only the base DN</li>
 		/// 
-		/// <li>SCOPE_ONE - searches only entries under the base DN
+		/// <li>SCOPE_ONE - searches only entries under the base DN</li>
 		/// 
 		/// <li>SCOPE_SUB - searches the base DN and all entries
-		/// within its subtree
-		/// </ul><br><br>
+		/// within its subtree</li>
+		/// </ul>
 		/// </param>
 		/// <param name="filter">        The search filter specifying the search criteria.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="attrs">         The names of attributes to retrieve.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="typesOnly">     If true, returns the names but not the values of
 		/// the attributes found.  If false, returns the
 		/// names and values for attributes found.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="cons">          The constraints specific to the search.
 		/// 
 		/// </param>
-		/// <exception cref=""> LdapException A general exception which includes an error
+		/// <exception> LdapException A general exception which includes an error
 		/// message and an Ldap error code.
 		/// </exception>
 		public virtual LdapSearchResults Search(System.String base_Renamed, int scope, System.String filter, System.String[] attrs, bool typesOnly, LdapSearchConstraints cons)
@@ -2859,36 +2810,36 @@ namespace Novell.Directory.Ldap
 		/// 
 		/// </summary>
 		/// <param name="base">          The base distinguished name to search from.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="scope">         The scope of the entries to search. The following
 		/// are the valid options:
 		/// <ul>
-		/// <li>SCOPE_BASE - searches only the base DN
+		/// <li>SCOPE_BASE - searches only the base DN</li>
 		/// 
-		/// <li>SCOPE_ONE - searches only entries under the base DN
+		/// <li>SCOPE_ONE - searches only entries under the base DN</li>
 		/// 
 		/// <li>SCOPE_SUB - searches the base DN and all entries
-		/// within its subtree
-		/// </ul><br><br>
+		/// within its subtree</li>
+		/// </ul>
 		/// </param>
 		/// <param name="filter">        Search filter specifying the search criteria.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="attrs">         Names of attributes to retrieve.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="typesOnly">     If true, returns the names but not the values of
 		/// the attributes found.  If false, returns the
 		/// names and values for attributes found.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="queue">         Handler for messages returned from a server in
 		/// response to this request. If it is null, a
 		/// queue object is created internally.
 		/// 
 		/// </param>
-		/// <exception cref=""> LdapException A general exception which includes an error
+		/// <exception> LdapException A general exception which includes an error
 		/// message and an Ldap error code.
 		/// </exception>
 		public virtual LdapSearchQueue Search(System.String base_Renamed, int scope, System.String filter, System.String[] attrs, bool typesOnly, LdapSearchQueue queue)
@@ -2903,39 +2854,39 @@ namespace Novell.Directory.Ldap
 		/// 
 		/// </summary>
 		/// <param name="base">          The base distinguished name to search from.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="scope">         The scope of the entries to search. The following
 		/// are the valid options:
 		/// <ul>
-		/// <li>SCOPE_BASE - searches only the base DN
+		/// <li>SCOPE_BASE - searches only the base DN</li>
 		/// 
-		/// <li>SCOPE_ONE - searches only entries under the base DN
+		/// <li>SCOPE_ONE - searches only entries under the base DN</li>
 		/// 
 		/// <li>SCOPE_SUB - searches the base DN and all entries
-		/// within its subtree
-		/// </ul><br><br>
+		/// within its subtree</li>
+		/// </ul>
 		/// </param>
 		/// <param name="filter">        The search filter specifying the search criteria.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="attrs">         The names of attributes to retrieve.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="typesOnly">     If true, returns the names but not the values of
 		/// the attributes found.  If false, returns the
 		/// names and values for attributes found.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="queue">         The queue for messages returned from a server in
 		/// response to this request. If it is null, a
 		/// queue object is created internally.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="cons">          The constraints specific to the search.
 		/// 
 		/// </param>
-		/// <exception cref=""> LdapException A general exception which includes an error
+		/// <exception> LdapException A general exception which includes an error
 		/// message and an Ldap error code.
 		/// </exception>
 		public virtual LdapSearchQueue Search(System.String base_Renamed, int scope, System.String filter, System.String[] attrs, bool typesOnly, LdapSearchQueue queue, LdapSearchConstraints cons)
@@ -2982,7 +2933,7 @@ namespace Novell.Directory.Ldap
 		/// <param name="toGet">The Ldap URL specifying the entry to read.
 		/// 
 		/// </param>
-		/// <exception cref=""> LdapException A general exception which includes an error
+		/// <exception> LdapException A general exception which includes an error
 		/// message and an Ldap error code.
 		/// </exception>
 		public static LdapSearchResults Search(LdapUrl toGet)
@@ -2999,26 +2950,26 @@ namespace Novell.Directory.Ldap
 		/// the specified search constraints (such as the maximum number of
 		/// entries to find or the maximum time to wait for search results).
 		/// 
-		/// <p>When this method is called, a new connection is created
+		/// When this method is called, a new connection is created
 		/// automatically, using the host and port specified in the URL. After
 		/// all search results have been received from the server, the method
 		/// closes the connection (in other words, it disconnects from the Ldap
-		/// server).</p>
+		/// server).
 		/// 
-		/// <p>As part of the search constraints, a choice can be made as to whether
+		/// As part of the search constraints, a choice can be made as to whether
 		/// to have the results delivered all at once or in smaller batches. If
 		/// the results are to be delivered in smaller batches, each iteration
-		/// blocks only until the next batch of results is returned.</p>
+		/// blocks only until the next batch of results is returned.
 		/// 
 		/// 
 		/// </summary>
 		/// <param name="toGet">         Ldap URL specifying the entry to read.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="cons">          The constraints specific to the search.
 		/// 
 		/// </param>
-		/// <exception cref=""> LdapException A general exception which includes an error
+		/// <exception> LdapException A general exception which includes an error
 		/// message and an Ldap error code.
 		/// </exception>
 		public static LdapSearchResults Search(LdapUrl toGet, LdapSearchConstraints cons)
@@ -3043,15 +2994,15 @@ namespace Novell.Directory.Ldap
 		
 		/// <summary> Sends an Ldap request to a directory server.
 		/// 
-		/// <p>The specified the Ldap request is sent to the directory server
+		/// The specified the Ldap request is sent to the directory server
 		/// associated with this connection using default constraints. An Ldap
 		/// request object is a subclass {@link LdapMessage} with the operation
 		/// type set to one of the request types. You can build a request by using
-		/// the request classes found in this package</p>
+		/// the request classes found in this package
 		/// 
-		/// <p>You should note that, since Ldap requests sent to the server
+		/// You should note that, since Ldap requests sent to the server
 		/// using sendRequest are asynchronous, automatic referral following
-		/// does not apply to these requests.</p>
+		/// does not apply to these requests.
 		/// 
 		/// </summary>
 		/// <param name="request">The Ldap request to send to the directory server.
@@ -3060,13 +3011,13 @@ namespace Novell.Directory.Ldap
 		/// response to this request. If it is null, a
 		/// queue object is created internally.
 		/// </param>
-		/// <exception cref="">     LdapException A general exception which includes an error
+		/// <exception>     LdapException A general exception which includes an error
 		/// message and an Ldap error code.
 		/// 
 		/// </exception>
-		/// <seealso cref="LdapMessage#getType()">
+		/// <seealso cref="LdapMessage.Type">
 		/// </seealso>
-		/// <seealso cref="LdapMessage#isRequest()">
+		/// <seealso cref="RfcLdapMessage.isRequest">
 		/// </seealso>
 		public virtual LdapMessageQueue SendRequest(LdapMessage request, LdapMessageQueue queue)
 		{
@@ -3075,15 +3026,15 @@ namespace Novell.Directory.Ldap
 		
 		/// <summary> Sends an Ldap request to a directory server.
 		/// 
-		/// <p>The specified the Ldap request is sent to the directory server
+		/// The specified the Ldap request is sent to the directory server
 		/// associated with this connection. An Ldap request object is an
 		/// {@link LdapMessage} with the operation type set to one of the request
 		/// types. You can build a request by using the request classes found in this
-		/// package</p>
+		/// package
 		/// 
-		/// <p>You should note that, since Ldap requests sent to the server
+		/// You should note that, since Ldap requests sent to the server
 		/// using sendRequest are asynchronous, automatic referral following
-		/// does not apply to these requests.</p>
+		/// does not apply to these requests.
 		/// 
 		/// </summary>
 		/// <param name="request">The Ldap request to send to the directory server.
@@ -3094,13 +3045,13 @@ namespace Novell.Directory.Ldap
 		/// </param>
 		/// <param name="cons">   The constraints that apply to this request
 		/// </param>
-		/// <exception cref="">     LdapException A general exception which includes an error
+		/// <exception>     LdapException A general exception which includes an error
 		/// message and an Ldap error code.
 		/// 
 		/// </exception>
-		/// <seealso cref="LdapMessage#getType()">
+		/// <seealso cref="LdapMessage.Type">
 		/// </seealso>
-		/// <seealso cref="LdapMessage#isRequest()">
+		/// <seealso cref="RfcLdapMessage.isRequest">
 		/// </seealso>
 		public virtual LdapMessageQueue SendRequest(LdapMessage request, LdapMessageQueue queue, LdapConstraints cons)
 		{
@@ -3163,10 +3114,10 @@ namespace Novell.Directory.Ldap
 		/// 
 		/// </summary>
 		/// <param name="msg">the message to send
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="timeout">the timeout value
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="queue">the response queue or null
 		/// 
@@ -3174,7 +3125,7 @@ namespace Novell.Directory.Ldap
 		/// <returns> the LdapResponseQueue for this request
 		/// 
 		/// </returns>
-		/// <exception cref=""> LdapException A general exception which includes an error
+		/// <exception> LdapException A general exception which includes an error
 		/// message and an Ldap error code.
 		/// </exception>
 		private LdapResponseQueue SendRequestToServer(LdapMessage msg, int timeout, LdapResponseQueue queue, BindProperties bindProps)
@@ -3200,13 +3151,13 @@ namespace Novell.Directory.Ldap
 		/// 
 		/// </summary>
 		/// <param name="referrals">the array of referral strings
-		/// <br><br>
+		/// 
 		/// 
 		/// </param>
 		/// <returns> The referralInfo object
 		/// 
 		/// </returns>
-		/// <exception cref=""> LdapReferralException A general exception which includes
+		/// <exception> LdapReferralException A general exception which includes
 		/// an error message and an Ldap error code.
 		/// </exception>
 		private ReferralInfo getReferralConnection(System.String[] referrals)
@@ -3338,8 +3289,8 @@ namespace Novell.Directory.Ldap
 		
 		/// <summary> Check the result code and throw an exception if needed.
 		/// 
-		/// <p>If referral following is enabled, checks if we need to
-		/// follow a referral</p>
+		/// If referral following is enabled, checks if we need to
+		/// follow a referral
 		/// 
 		/// </summary>
 		/// <param name="queue">- the message queue of the current response
@@ -3385,24 +3336,24 @@ namespace Novell.Directory.Ldap
 		/// 
 		/// </summary>
 		/// <param name="queue">The LdapResponseQueue for this request
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="cons">The constraints that apply to the request
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="msg">The referral or search reference response message
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="initialReferrals">The referral array returned from the
 		/// initial request.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="hopCount">the number of hops already used while
 		/// following this referral
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="searchReference">true if the message is a search reference
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="connectionList">An optional array list used to store
 		/// the LdapConnection objects used in following the referral.
@@ -3413,7 +3364,7 @@ namespace Novell.Directory.Ldap
 		/// if there were none.
 		/// 
 		/// </returns>
-		/// <exception cref=""> LdapException A general exception which includes an error
+		/// <exception> LdapException A general exception which includes an error
 		/// message and an Ldap error code.
 		/// </exception>
 		/* package */
@@ -3539,7 +3490,7 @@ namespace Novell.Directory.Ldap
 		/// 
 		/// </summary>
 		/// <param name="msg">the original LdapMessage to build the new request from
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="url">the referral url
 		/// 
@@ -3547,7 +3498,7 @@ namespace Novell.Directory.Ldap
 		/// <returns> a new LdapMessage with appropriate information replaced
 		/// 
 		/// </returns>
-		/// <exception cref=""> LdapException A general exception which includes an error
+		/// <exception> LdapException A general exception which includes an error
 		/// message and an Ldap error code.
 		/// </exception>
 		private LdapMessage rebuildRequest(LdapMessage msg, LdapUrl url, bool reference)
@@ -3627,8 +3578,8 @@ namespace Novell.Directory.Ldap
 		
 		/// <summary> Retrieves the schema associated with a particular schema DN in the
 		/// directory server.
-		/// <p>The schema DN for a particular entry is obtained by calling the
-		/// getSchemaDN method of LDAPConnection</p>
+		/// The schema DN for a particular entry is obtained by calling the
+		/// getSchemaDN method of LDAPConnection
 		/// 
 		/// </summary>
 		/// <param name="schemaDN">The schema DN used to fetch the schema.
@@ -3639,42 +3590,41 @@ namespace Novell.Directory.Ldap
 		/// will be empty.
 		/// 
 		/// </returns>
-		/// <exception cref=""> LDAPException     This exception occurs if the schema entry
+		/// <exception> LDAPException     This exception occurs if the schema entry
 		/// cannot be retrieved with this connection.
 		/// </exception>
-		/// <seealso cref="#getSchemaDN()">
+		/// <seealso cref="GetSchemaDN()">
 		/// </seealso>
-		/// <seealso cref="#getSchemaDN(String)">
+		/// <seealso cref="GetSchemaDN(String)">
 		/// </seealso>
 		public virtual LdapSchema FetchSchema(System.String schemaDN)
 		{
 			LdapEntry ent = Read(schemaDN, LdapSchema.schemaTypeNames);
 			return new LdapSchema(ent);
 		}
-
 		
 		/// <summary> Retrieves the Distiguished Name (DN) for the schema advertised in the
 		/// root DSE of the Directory Server.
 		/// 
-		/// <p>The DN can be used with the methods fetchSchema and modify to retreive
+		/// The DN can be used with the methods fetchSchema and modify to retreive
 		/// and extend schema definitions.  The schema entry is located by reading
 		/// subschemaSubentry attribute of the root DSE.  This is equivalent to
 		/// calling {@link #getSchemaDN(String) } with the DN parameter as an empty
 		/// string: <code>getSchemaDN("")</code>.
-		/// </p>
+		/// 
 		/// 
 		/// </summary>
 		/// <returns>     Distinguished Name of a schema entry in effect for the
 		/// Directory.
 		/// </returns>
-		/// <exception cref=""> LDAPException     This exception occurs if the schema DN
+		/// <exception> LDAPException     This exception occurs if the schema DN
 		/// cannot be retrieved, or if the subschemaSubentry attribute associated
 		/// with the root DSE contains multiple values.
 		/// 
 		/// </exception>
-		/// <seealso cref="#fetchSchema">
+		/// <seealso cref="FetchSchema">
 		/// </seealso>
-		/// <seealso cref="#modify">
+		/// <seealso cref="Modify">
 		/// </seealso>
 		public virtual System.String GetSchemaDN()
 		{
@@ -3684,9 +3634,9 @@ namespace Novell.Directory.Ldap
 		/// <summary> Retrieves the Distiguished Name (DN) of the schema associated with a
 		/// entry in the Directory.
 		/// 
-		/// <p>The DN can be used with the methods fetchSchema and modify to retreive
+		/// The DN can be used with the methods fetchSchema and modify to retreive
 		/// and extend schema definitions.  Reads the subschemaSubentry of the entry
-		/// specified.<p>
+		/// specified.
 		/// 
 		/// </summary>
 		/// <param name="dn">    Distinguished Name of any entry.  The subschemaSubentry
@@ -3697,14 +3647,14 @@ namespace Novell.Directory.Ldap
 		/// identified by <code>dn</code>.
 		/// 
 		/// </returns>
-		/// <exception cref=""> LDAPException     This exception occurs if a null or empty
+		/// <exception> LDAPException     This exception occurs if a null or empty
 		/// value is passed as dn, if the subschemasubentry attribute cannot
 		/// be retrieved, or the subschemasubentry contains multiple values.
 		/// 
 		/// </exception>
-		/// <seealso cref="#fetchSchema">
+		/// <seealso cref="FetchSchema">
 		/// </seealso>
-		/// <seealso cref="#modify">
+		/// <seealso cref="Modify">
 		/// </seealso>
 		public virtual System.String GetSchemaDN(System.String dn)
 		{

@@ -40,10 +40,10 @@ namespace Novell.Directory.Ldap.Extensions
 	/// <summary> 
 	/// Reloads the Ldap server.
 	/// 
-	/// <p>The refreshLdapServerRequest extension uses the following OID:<br>
-	/// &nbsp;&nbsp;&nbsp;2.16.840.1.113719.1.27.100.9</p>
+	/// The refreshLdapServerRequest extension uses the following OID:
+	/// 2.16.840.1.113719.1.27.100.9
 	/// 
-	/// <p>The requestValue is set to null.</p>
+	/// The requestValue is set to null.
 	/// </summary>
 	public class RefreshLdapServerRequest:LdapExtendedOperation
 	{
@@ -51,10 +51,10 @@ namespace Novell.Directory.Ldap.Extensions
 		/// <summary> 
 		/// Constructs an extended operation object for reloading the Ldap server.
 		/// 
-		/// <p>The constructor sets the OID.</p>
+		/// The constructor sets the OID.
 		/// 
 		/// </summary>
-		/// <exception cref=""> LdapException A general exception which includes an error
+		/// <exception> LdapException A general exception which includes an error
 		/// message and an Ldap error code.
 		/// </exception>
 		public RefreshLdapServerRequest():base(ReplicationConstants.REFRESH_SERVER_REQ, null)

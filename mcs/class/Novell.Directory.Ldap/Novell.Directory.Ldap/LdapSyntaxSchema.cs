@@ -38,14 +38,14 @@ namespace Novell.Directory.Ldap
 	
 	/// <summary> Represents a syntax definition in the directory schema.
 	/// 
-	/// <p>The LdapSyntaxSchema class represents the definition of a syntax.  It is
-	/// used to discover the known set of syntaxes in effect for the subschema. </p>
+	/// The LdapSyntaxSchema class represents the definition of a syntax.  It is
+	/// used to discover the known set of syntaxes in effect for the subschema. 
 	/// 
-	/// <p>Although this extends LdapSchemaElement, it does not use the name or
+	/// Although this extends LdapSchemaElement, it does not use the name or
 	/// obsolete members. Therefore, calls to the getName method always return
 	/// null and to the isObsolete method always returns false. There is also no
 	/// matching getSyntaxNames method in LdapSchema. Note also that adding and
-	/// removing syntaxes is not typically a supported feature of Ldap servers.</p>
+	/// removing syntaxes is not typically a supported feature of Ldap servers.
 	/// </summary>
 	
 	public class LdapSyntaxSchema:LdapSchemaElement
@@ -53,13 +53,13 @@ namespace Novell.Directory.Ldap
 		
 		/// <summary> Constructs a syntax for adding to or deleting from the schema.
 		/// 
-		/// <p>Adding and removing syntaxes is not typically a supported
+		/// Adding and removing syntaxes is not typically a supported
 		/// feature of Ldap servers. Novell eDirectory does not allow syntaxes to
-		/// be added or removed.</p>
+		/// be added or removed.
 		/// 
 		/// </summary>
 		/// <param name="oid">        The unique object identifier of the syntax - in
-		/// dotted numerical format.</br></br>
+		/// dotted numerical format.
 		/// 
 		/// </param>
 		/// <param name="description">An optional description of the syntax.

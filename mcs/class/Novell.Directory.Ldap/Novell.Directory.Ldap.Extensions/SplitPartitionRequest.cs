@@ -39,18 +39,18 @@ namespace Novell.Directory.Ldap.Extensions
 	
 	/// <summary>  Creates a new partition.
 	/// 
-	/// <p>To split a new partition, you must create an instance of this
+	/// To split a new partition, you must create an instance of this
 	/// class and then call the extendedOperation method with this
-	/// object as the required LdapExtendedOperation parameter.</p>
+	/// object as the required LdapExtendedOperation parameter.
 	/// 
-	/// <p>The SplitPartitionRequest extension uses the following OID:<br>
-	/// &nbsp;&nbsp;&nbsp;2.16.840.1.113719.1.27.100.3</p>
+	/// The SplitPartitionRequest extension uses the following OID:
+	/// 2.16.840.1.113719.1.27.100.3
 	/// 
-	/// <p>The requestValue has the following format:<br>
+	/// The requestValue has the following format:
 	/// 
-	/// requestValue ::=<br>
-	/// &nbsp;&nbsp;&nbsp;&nbsp; flags &nbsp;&nbsp;&nbsp;&nbsp; INTEGER<br>
-	/// &nbsp;&nbsp;&nbsp;&nbsp; dn    &nbsp;&nbsp;&nbsp;&nbsp; LdapDN</p>
+	/// requestValue ::=
+	///  flags  INTEGER
+	///  dn     LdapDN
 	/// </summary>
 	public class SplitPartitionRequest:LdapExtendedOperation
 	{
@@ -61,7 +61,7 @@ namespace Novell.Directory.Ldap.Extensions
 		/// </summary>
 		/// <param name="dn">     The distinguished name of the container where the new 
 		/// partition  root should be located.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="flags">Specifies whether all servers in the replica ring must be up before
 		/// proceeding. When set to zero, the status of the servers is not
@@ -69,7 +69,7 @@ namespace Novell.Directory.Ldap.Extensions
 		/// for the operation to proceed.
 		/// 
 		/// </param>
-		/// <exception cref=""> LdapException A general exception which includes an error message
+		/// <exception> LdapException A general exception which includes an error message
 		/// and an Ldap error code.
 		/// </exception>
 		public SplitPartitionRequest(System.String dn, int flags):base(ReplicationConstants.CREATE_NAMING_CONTEXT_REQ, null)

@@ -38,7 +38,7 @@ namespace Novell.Directory.Ldap
 	/// received from a server.
 	/// 
 	/// </summary>
-	/// <seealso cref="LdapConnection#search">
+	/// <seealso cref="LdapConnection.Search">
 	/// </seealso>
 	/// <seealso cref="LdapResponseQueue">
 	/// </seealso>
@@ -57,9 +57,9 @@ namespace Novell.Directory.Ldap
 		/// <summary> Merges two message queues.  It appends the current and
 		/// future contents from another queue to this one.
 		/// 
-		/// <p>After the operation, queue2.getMessageIDs()
+		/// After the operation, queue2.getMessageIDs()
 		/// returns an empty array, and its outstanding responses
-		/// have been removed and appended to this queue</p>.
+		/// have been removed and appended to this queue.
 		/// 
 		/// </summary>
 		/// <param name="queue2">   The queue that is merged from.  Following

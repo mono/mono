@@ -37,7 +37,7 @@ namespace Novell.Directory.Ldap.Controls
 {
 	
 	/// <summary>  LdapSortResponse - will be added in newer version of Ldap
-	/// Controls draft-- add descritption from draft here.
+	/// Controls draft
 	/// </summary>
 	public class LdapSortResponse:LdapControl
 	{
@@ -71,7 +71,7 @@ namespace Novell.Directory.Ldap.Controls
 		/// any reason to call the constructor.  This constructor besides
 		/// constructing a LdapControl object parses the contents of the response
 		/// control.
-		/// <br>
+		/// 
 		/// RFC 2891 defines this response control as follows:
 		/// 
 		/// The controlValue is an OCTET STRING, whose
@@ -103,12 +103,12 @@ namespace Novell.Directory.Ldap.Controls
 		/// 
 		/// </summary>
 		/// <param name="oid">    The OID of the control, as a dotted string.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="critical">  True if the Ldap operation should be discarded if
 		/// the control is not supported. False if
 		/// the operation can be processed without the control.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="values">    The control-specific data.
 		/// </param>

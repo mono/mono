@@ -41,14 +41,14 @@ namespace Novell.Directory.Ldap.Extensions
 	/// Aborts the last partition operation that was requested on the 
 	/// specified partition if the operation is still pending.
 	/// 
-	/// <p>The AbortPartitionRequest extension uses the following OID:<br>
-	/// &nbsp;&nbsp;&nbsp;2.16.840.1.113719.1.27.100.29</p>
+	/// The AbortPartitionRequest extension uses the following OID:
+	/// 2.16.840.1.113719.1.27.100.29
 	/// 
-	/// <p>The requestValue has the following format:<br>
+	/// The requestValue has the following format:
 	/// 
-	/// requestValue ::= <br>
-	/// &nbsp;&nbsp;&nbsp;&nbsp;  flags&nbsp;&nbsp;&nbsp;&nbsp;       INTEGER<br>
-	/// &nbsp;&nbsp;&nbsp;&nbsp;  partitionDN&nbsp;&nbsp;&nbsp;&nbsp; LdapDN </p>
+	/// requestValue ::= 
+	///   flags       INTEGER
+	///   partitionDN LdapDN 
 	/// </summary>
 	public class AbortPartitionOperationRequest:LdapExtendedOperation
 	{
@@ -57,7 +57,7 @@ namespace Novell.Directory.Ldap.Extensions
 		/// 
 		/// </summary>
 		/// <param name="partitionDN">The distinguished name of the replica's
-		/// partition root.<br><br>
+		/// partition root.
 		/// 
 		/// </param>
 		/// <param name="flags">Determines whether all servers in the replica ring must
@@ -66,7 +66,7 @@ namespace Novell.Directory.Ldap.Extensions
 		/// all servers must be up for the operation to proceed.
 		/// 
 		/// </param>
-		/// <exception cref=""> LdapException A general exception which includes an error message
+		/// <exception> LdapException A general exception which includes an error message
 		/// and an Ldap error code.
 		/// </exception>
 		public AbortPartitionOperationRequest(System.String partitionDN, int flags):base(ReplicationConstants.ABORT_NAMING_CONTEXT_OP_REQ, null)

@@ -34,17 +34,17 @@ using System;
 namespace Novell.Directory.Ldap.Utilclass
 {
 	
-	/// <summary> <P>A RDN encapsulates a single object's name of a Distinguished Name(DN).
+	/// <summary> A RDN encapsulates a single object's name of a Distinguished Name(DN).
 	/// The object name represented by this class contains no context.  Thus a
 	/// Relative Distinguished Name (RDN) could be relative to anywhere in the
-	/// Directories tree.</P>
+	/// Directories tree.
 	/// 
-	/// <P>For example, of following DN, 'cn=admin, ou=marketing, o=corporation', all
-	/// possible RDNs are 'cn=admin', 'ou=marketing', and 'o=corporation'.</P>
+	/// For example, of following DN, 'cn=admin, ou=marketing, o=corporation', all
+	/// possible RDNs are 'cn=admin', 'ou=marketing', and 'o=corporation'.
 	/// 
-	/// <P>Multivalued attributes are encapsulated in this class.  For example the
+	/// Multivalued attributes are encapsulated in this class.  For example the
 	/// following could be represented by an RDN: 'cn=john + l=US', or
-	/// 'cn=juan + l=ES' </P>
+	/// 'cn=juan + l=ES' 
 	/// 
 	/// </summary>
 	/// <seealso cref="DN">

@@ -218,7 +218,7 @@ namespace Novell.Directory.Ldap
 		/// 
 		/// </summary>
 		/// <param name="msgId">the message id to abandon
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="cons">constraints associated with this request
 		/// </param>
@@ -300,10 +300,10 @@ namespace Novell.Directory.Ldap
 		/// 
 		/// </summary>
 		/// <param name="conn">the connection that identifies the server.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="msg">the LdapMessage to send
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="timeOut">the interval to wait for the message to complete or
 		/// <code>null</code> if infinite.

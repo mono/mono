@@ -37,7 +37,7 @@ namespace Novell.Directory.Ldap
 	
 	/// <summary>  The schema definition of an object class in a directory server.
 	/// 
-	/// <p>The LdapObjectClassSchema class represents the definition of an object
+	/// The LdapObjectClassSchema class represents the definition of an object
 	/// class.  It is used to query the syntax of an object class.
 	/// 
 	/// </summary>
@@ -90,15 +90,15 @@ namespace Novell.Directory.Ldap
 		}
 		/// <summary> Returns the type of object class.
 		/// 
-		/// <p>The getType method returns one of the following constants defined in
+		/// The getType method returns one of the following constants defined in
 		/// LdapObjectClassSchema:
 		/// <ul>
 		/// <li>ABSTRACT</li>
 		/// <li>AUXILIARY</li>
 		/// <li>STRUCTURAL</li>
 		/// </ul>
-		/// <p>See the LdapSchemaElement.getQualifier method for information on
-		/// obtaining the X-NDS flags.</p>
+		/// See the LdapSchemaElement.getQualifier method for information on
+		/// obtaining the X-NDS flags.
 		/// 
 		/// </summary>
 		/// <returns> The type of object class.
@@ -118,15 +118,15 @@ namespace Novell.Directory.Ldap
 		
 		/// <summary> This class definition defines an abstract schema class.
 		/// 
-		/// <p>This is equivalent to setting the Novell eDirectory effective class
-		/// flag to true.</p>
+		/// This is equivalent to setting the Novell eDirectory effective class
+		/// flag to true.
 		/// </summary>
 		public const int ABSTRACT = 0;
 		
 		/// <summary> This class definition defines a structural schema class.
 		/// 
-		/// <p>This is equivalent to setting the Novell eDirectory effective class
-		/// flag to true.</p>
+		/// This is equivalent to setting the Novell eDirectory effective class
+		/// flag to true.
 		/// </summary>
 		public const int STRUCTURAL = 1;
 		
@@ -138,29 +138,29 @@ namespace Novell.Directory.Ldap
 		/// 
 		/// </summary>
 		/// <param name="names">    Name(s) of the object class.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="oid">      Object Identifer of the object class - in
 		/// dotted-decimal format.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="description">   Optional description of the object class.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="superiors">     The object classes from which this one derives.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="required">      A list of attributes required
 		/// for an entry with this object class.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="optional">      A list of attributes acceptable but not required
 		/// for an entry with this object class.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="type">          One of ABSTRACT, AUXILIARY, or STRUCTURAL. These
 		/// constants are defined in LdapObjectClassSchema.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="obsolete">      true if this object is obsolete
 		/// 

@@ -39,18 +39,18 @@ namespace Novell.Directory.Ldap.Extensions
 	
 	/// <summary>  Deletes an orphan partition.
 	/// 
-	/// <p>To delete an orphan partition, you must create an instance of this
+	/// To delete an orphan partition, you must create an instance of this
 	/// class and then call the extendedOperation method with this
-	/// object as the required LdapExtendedOperation parameter.</p>
+	/// object as the required LdapExtendedOperation parameter.
 	/// 
-	/// <p>The RemoveOrphanPartitionRequest extension uses the following OID:<br>
-	/// &nbsp;&nbsp;&nbsp;2.16.840.1.113719.1.27.100.41</p>
+	/// The RemoveOrphanPartitionRequest extension uses the following OID:
+	/// 2.16.840.1.113719.1.27.100.41
 	/// 
-	/// <p>The requestValue has the following format:<br>
+	/// The requestValue has the following format:
 	/// 
-	/// requestValue ::=<br>
-	/// &nbsp;&nbsp;&nbsp;&nbsp;      serverDN &nbsp;&nbsp;&nbsp;    LdapDN<br>
-	/// &nbsp;&nbsp;&nbsp;&nbsp;      contextName &nbsp;&nbsp;&nbsp; LdapDN</p>
+	/// requestValue ::=
+	///       serverDN     LdapDN
+	///       contextName  LdapDN
 	/// </summary>
 	public class RemoveOrphanPartitionRequest:LdapExtendedOperation
 	{
@@ -60,13 +60,13 @@ namespace Novell.Directory.Ldap.Extensions
 		/// </summary>
 		/// <param name="serverDN">  The distinguished name of the server
 		/// on which the orphan partition resides.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="contextName"> The distinguished name of the orphan
 		/// partition to delete.
 		/// 
 		/// </param>
-		/// <exception cref=""> LdapException A general exception which includes an error message
+		/// <exception> LdapException A general exception which includes an error message
 		/// and an Ldap error code.
 		/// </exception>
 		public RemoveOrphanPartitionRequest(System.String serverDN, System.String contextName):base(ReplicationConstants.REMOVE_ORPHAN_NAMING_CONTEXT_REQ, null)

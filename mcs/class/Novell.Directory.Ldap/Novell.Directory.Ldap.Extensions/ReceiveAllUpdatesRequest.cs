@@ -40,15 +40,15 @@ namespace Novell.Directory.Ldap.Extensions
 	/// <summary>  Schedules a specified directory server to receive updates from another
 	/// directory server for a specific replica.
 	/// 
-	/// <p>The receiveAllUpdatesRequest extension uses the following OID:<br>
-	/// &nbsp;&nbsp;&nbsp;2.16.840.1.113719.1.27.100.21</p>
+	/// The receiveAllUpdatesRequest extension uses the following OID:
+	/// 2.16.840.1.113719.1.27.100.21
 	/// 
-	/// <p>The requestValue has the following format:<br>
+	/// The requestValue has the following format:
 	/// 
-	/// requestValue ::=<br>
-	/// &nbsp;&nbsp;&nbsp;&nbsp;   partitionRoot &nbsp;&nbsp;&nbsp;   LdapDN<br>
-	/// &nbsp;&nbsp;&nbsp;&nbsp;   toServerDN &nbsp;&nbsp;&nbsp;      LdapDN<br>
-	/// &nbsp;&nbsp;&nbsp;&nbsp;   fromServerDN &nbsp;&nbsp;&nbsp;    LdapDN</p>
+	/// requestValue ::=
+	///    partitionRoot    LdapDN
+	///    toServerDN       LdapDN
+	///    fromServerDN     LdapDN
 	/// </summary>
 	public class ReceiveAllUpdatesRequest:LdapExtendedOperation
 	{
@@ -60,17 +60,17 @@ namespace Novell.Directory.Ldap.Extensions
 		/// </summary>
 		/// <param name="partitionRoot">  The distinguished name of the replica
 		/// that will be updated.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="toServerDN">     The distinguished name of the server holding the
 		/// replica to be updated.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="fromServerDN">   The distinguished name of the server from which
 		/// updates are sent.
 		/// 
 		/// </param>
-		/// <exception cref=""> LdapException A general exception which includes an error message
+		/// <exception> LdapException A general exception which includes an error message
 		/// and an Ldap error code.
 		/// </exception>
 		public ReceiveAllUpdatesRequest(System.String partitionRoot, System.String toServerDN, System.String fromServerDN):base(ReplicationConstants.RECEIVE_ALL_UPDATES_REQ, null)

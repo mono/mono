@@ -209,49 +209,49 @@ namespace Novell.Directory.Ldap.Extensions
 		
 		/// <summary> Identifies this replica as the master replica of the partition.
 		/// 
-		/// <p>On this type of replica, entries can be modified, and partition
-		/// operations can be performed.</p>
+		/// On this type of replica, entries can be modified, and partition
+		/// operations can be performed.
 		/// </summary>
 		public const int Ldap_RT_MASTER = 0;
 		
 		/// <summary> Identifies this replica as a secondary replica of the partition.
 		/// 
-		/// <p>On this type of replica, read and write operations can be performed,
-		/// and entries can be modified.</p>
+		/// On this type of replica, read and write operations can be performed,
+		/// and entries can be modified.
 		/// </summary>
 		public const int Ldap_RT_SECONDARY = 1;
 		
 		/// <summary> Identifies this replica as a read-only replica of the partition.
 		/// 
-		/// <p>Only Novell eDirectory synchronization processes can modified
-		/// entries on this replica.</p>
+		/// Only Novell eDirectory synchronization processes can modified
+		/// entries on this replica.
 		/// </summary>
 		public const int Ldap_RT_READONLY = 2;
 		
 		/// <summary> Identifies this replica as a subordinate reference replica of the
 		/// partition.
 		/// 
-		/// <p>NOvell eDirectory automatically adds these replicas to a server
+		/// NOvell eDirectory automatically adds these replicas to a server
 		/// when the server does not contain replicas of all child partitions.
-		/// Only eDirectory can modify information on these types of replicas.</p>
+		/// Only eDirectory can modify information on these types of replicas.
 		/// </summary>
 		public const int Ldap_RT_SUBREF = 3;
 		
 		/// <summary> Identifies this replica as a read/write replica of the partition,
 		/// but the replica contains sparse data.
 		/// 
-		/// <p>The replica has been configured to contain only specified object types
+		/// The replica has been configured to contain only specified object types
 		/// and attributes. On this type of replica, only the attributes and objects
-		/// contained in the sparse data can be modified.</p>
+		/// contained in the sparse data can be modified.
 		/// </summary>
 		public const int Ldap_RT_SPARSE_WRITE = 4;
 		
 		/// <summary> Identifies this replica as a read-only replica of the partition,
 		/// but the replica contains sparse data.
 		/// 
-		/// <p>The replica has been configured to contain only specified object types
+		/// The replica has been configured to contain only specified object types
 		/// and attributes. On this type of replica, only Novell eDirectory
-		/// synchronization processes can modify the sparse data.</p>
+		/// synchronization processes can modify the sparse data.
 		/// </summary>
 		public const int Ldap_RT_SPARSE_READ = 5;
 		
@@ -297,54 +297,54 @@ namespace Novell.Directory.Ldap.Extensions
 		
 		/// <summary> Indicates that a partition is receiving a new master replica.
 		/// 
-		/// <p>The replica that will be the new master replica is set to this state.</p>
+		/// The replica that will be the new master replica is set to this state.
 		/// </summary>
 		public const int Ldap_RS_MASTER_START = 11;
 		
 		/// <summary> Indicates that a partition has a new master replica.
 		/// 
-		/// <p>When the new master is set to this state, Novell eDirectory knows
+		/// When the new master is set to this state, Novell eDirectory knows
 		/// that the replica is now the master and changes its replica type to
-		/// master and the old master to read/write.</p>
+		/// master and the old master to read/write.
 		/// </summary>
 		public const int Ldap_RS_MASTER_DONE = 12;
 		
 		/// <summary> Indicates that the partition is going to split into two partitions.
 		/// 
-		/// <p>In this state, other replicas of the partition are informed of the
-		/// pending split.</p>
+		/// In this state, other replicas of the partition are informed of the
+		/// pending split.
 		/// </summary>
 		public const int Ldap_RS_SS_0 = 48; // Replica splitting 0
 		
 		/// <summary> Indicates that that the split partition operation has started.
 		/// 
-		/// <p>When the split is finished, the state will change to RS_ON.</p>
+		/// When the split is finished, the state will change to RS_ON.
 		/// </summary>
 		public const int Ldap_RS_SS_1 = 49; // Replica splitting 1
 		
 		/// <summary> Indicates that that two partitions are in the process of joining
 		/// into one partition.
 		/// 
-		/// <p>In this state, the replicas that are affected are informed of the join
+		/// In this state, the replicas that are affected are informed of the join
 		/// operation. The master replica of the parent and child partitions are
 		/// first set to this state and then all the replicas of the parent and child.
-		/// New replicas are added where needed.</p>
+		/// New replicas are added where needed.
 		/// </summary>
 		public const int Ldap_RS_JS_0 = 64; // Replica joining 0
 		
 		/// <summary> Indicates that that two partitions are in the process of joining
 		/// into one partition.
 		/// 
-		/// <p>This state indicates that the join operation is waiting for the new
-		/// replicas to synchronize and move to the RS_ON state.</p>
+		/// This state indicates that the join operation is waiting for the new
+		/// replicas to synchronize and move to the RS_ON state.
 		/// </summary>
 		public const int Ldap_RS_JS_1 = 65; // Replica joining 1
 		
 		/// <summary> Indicates that that two partitions are in the process of joining
 		/// into one partition.
 		/// 
-		/// <p>This state indicates that all the new replicas are in the RS_ON state
-		/// and that the rest of the work can be completed.</p>
+		/// This state indicates that all the new replicas are in the RS_ON state
+		/// and that the rest of the work can be completed.
 		/// </summary>
 		public const int Ldap_RS_JS_2 = 66; // Replica joining 2
 		

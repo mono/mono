@@ -36,7 +36,7 @@ using Novell.Directory.Ldap.Asn1;
 namespace Novell.Directory.Ldap.Controls
 {
 	
-	/* The following is the ASN.1 of the VLV Request packet:<br>
+	/* The following is the ASN.1 of the VLV Request packet:
 	*
 	* VirtualListViewRequest ::= SEQUENCE {
 	*      beforeCount    INTEGER (0..maxInt),
@@ -54,14 +54,12 @@ namespace Novell.Directory.Ldap.Controls
 	/// that results from a search are to be returned in pages - which are
 	/// subsets of the entire virtual result set.
 	/// 
-	/// <p>On success, an updated LdapVirtualListResponse object is
+	/// On success, an updated LdapVirtualListResponse object is
 	/// returned as a response Control, containing information on the virtual
 	/// list size and the actual first index. This object can then be used
 	/// by the client with a new requested position or length and sent to the
-	/// server to obtain a different segment of the virtual list.</p>
+	/// server to obtain a different segment of the virtual list.
 	/// 
-	/// <p>Sample Code: <a href="http://developer.novell.com/ndk/doc/samplecode/
-	/// jldap_sample/controls/VLVControl.java.html">VLVControl.java</p>
 	/// </summary>
 	public class LdapVirtualListControl:LdapControl
 	{
@@ -203,9 +201,9 @@ namespace Novell.Directory.Ldap.Controls
 		/// <summary> Constructs a virtual list control using the specified filter
 		/// expression.
 		/// 
-		/// <p>The expression specifies the first entry to be used for the
+		/// The expression specifies the first entry to be used for the
 		/// virtual search results. The other two paramers are the number of
-		/// entries before and after a located index to be returned.</p>
+		/// entries before and after a located index to be returned.
 		/// 
 		/// </summary>
 		/// <param name="jumpTo">           A search expression that defines the first
@@ -214,15 +212,15 @@ namespace Novell.Directory.Ldap.Controls
 		/// "objectclass=person" and the jumpTo expression in the virtual
 		/// list control may be "cn=m*", to retrieve a subset of entries
 		/// starting at or centered around those with a common name beginning
-		/// with the letter "M". <br><br>
+		/// with the letter "M". 
 		/// 
 		/// </param>
 		/// <param name="beforeCount">   The number of entries before startIndex (the
-		/// reference entry) to be returned. <br><br>
+		/// reference entry) to be returned. 
 		/// 
 		/// </param>
 		/// <param name="afterCount">       The number of entries after startIndex to be
-		/// returned. <br><br>
+		/// returned. 
 		/// </param>
 		public LdapVirtualListControl(System.String jumpTo, int beforeCount, int afterCount):this(jumpTo, beforeCount, afterCount, null)
 		{
@@ -234,9 +232,9 @@ namespace Novell.Directory.Ldap.Controls
 		/// <summary> Constructs a virtual list control using the specified filter
 		/// expression along with an optional server context.
 		/// 
-		/// <p>The expression specifies the first entry to be used for the
+		/// The expression specifies the first entry to be used for the
 		/// virtual search results. The other two paramers are the number of
-		/// entries before and after a located index to be returned.</p>
+		/// entries before and after a located index to be returned.
 		/// 
 		/// </summary>
 		/// <param name="jumpTo">   A search expression that defines the first
@@ -245,15 +243,15 @@ namespace Novell.Directory.Ldap.Controls
 		/// "objectclass=person" and the jumpTo expression in the virtual
 		/// list control may be "cn=m*", to retrieve a subset of entries
 		/// starting at or centered around those with a common name beginning
-		/// with the letter "M".<br><br>
+		/// with the letter "M".
 		/// 
 		/// </param>
 		/// <param name="beforeCount">The number of entries before startIndex (the
-		/// reference entry) to be returned. <br><br>
+		/// reference entry) to be returned. 
 		/// 
 		/// </param>
 		/// <param name="afterCount">The number of entries after startIndex to be
-		/// returned. <br><br>
+		/// returned. 
 		/// 
 		/// </param>
 		/// <param name="context">Used by some implementations to process requests
@@ -314,17 +312,17 @@ namespace Novell.Directory.Ldap.Controls
 		/// <summary> Use this constructor to fetch a subset when the size of the
 		/// virtual list is known,
 		/// 
-		/// <br><br>
+		/// 
 		/// </summary>
 		/// <param name="beforeCount">The number of entries before startIndex (the
-		/// reference entry) to be returned. <br><br>
+		/// reference entry) to be returned. 
 		/// 
 		/// </param>
 		/// <param name="afterCount">   The number of entries after startIndex to be
-		/// returned.<br><br>
+		/// returned.
 		/// 
 		/// </param>
-		/// <param name="startIndex">The index of the reference entry to be returned.<br><br>
+		/// <param name="startIndex">The index of the reference entry to be returned.
 		/// 
 		/// </param>
 		/// <param name="contentCount">The total number of entries assumed to be in the
@@ -342,24 +340,24 @@ namespace Novell.Directory.Ldap.Controls
 		/// <summary> Use this constructor to fetch a subset when the size of the
 		/// virtual list is known,
 		/// 
-		/// <br><br>
+		/// 
 		/// </summary>
 		/// <param name="beforeCount">   The number of entries before startIndex (the
-		/// reference entry) to be returned.<br><br>
+		/// reference entry) to be returned.
 		/// 
 		/// </param>
 		/// <param name="afterCount">       The number of entries after startIndex to be
-		/// returned.<br><br>
+		/// returned.
 		/// 
 		/// </param>
 		/// <param name="startIndex">    The index of the reference entry to be
-		/// returned.<br><br>
+		/// returned.
 		/// 
 		/// </param>
 		/// <param name="contentCount">   The total number of entries assumed to be in the
 		/// list. This is a number returned on a previous search, in the
 		/// LdapVirtualListResponse. The server may use this number to adjust
-		/// the returned subset offset.<br><br>
+		/// the returned subset offset.
 		/// 
 		/// </param>
 		/// <param name="context">       Used by some implementations to process requests
@@ -429,18 +427,18 @@ namespace Novell.Directory.Ldap.Controls
 		/// <summary> Sets the center or starting list index to return, and the number of
 		/// results before and after.
 		/// 
-		/// <br><br>
+		/// 
 		/// </summary>
 		/// <param name="listIndex">       The center or starting list index to be
-		/// returned. <br><br>
+		/// returned. 
 		/// 
 		/// </param>
 		/// <param name="beforeCount">       The number of entries before "listIndex" to be
-		/// returned. <br><br>
+		/// returned. 
 		/// 
 		/// </param>
 		/// <param name="afterCount">       The number of entries after "listIndex" to be
-		/// returned. <br><br>
+		/// returned. 
 		/// </param>
 		public virtual void  setRange(int listIndex, int beforeCount, int afterCount)
 		{
@@ -467,7 +465,7 @@ namespace Novell.Directory.Ldap.Controls
 		/// <summary> Sets the center or starting list index to return, and the number of
 		/// results before and after.
 		/// 
-		/// <br><br>
+		/// 
 		/// </summary>
 		/// <param name="jumpTo">A search expression that defines the first
 		/// element to be returned in the virtual search results. The filter
@@ -475,15 +473,15 @@ namespace Novell.Directory.Ldap.Controls
 		/// "objectclass=person" and the jumpTo expression in the virtual
 		/// list control may be "cn=m*", to retrieve a subset of entries
 		/// starting at or centered around those with a common name
-		/// beginning with the letter "M".<br><br>
+		/// beginning with the letter "M".
 		/// 
 		/// </param>
 		/// <param name="beforeCount">   The number of entries before "listIndex" to be
-		/// returned.<br><br>
+		/// returned.
 		/// 
 		/// </param>
 		/// <param name="afterCount">The number of entries after "listIndex" to be
-		/// returned.<br><br>
+		/// returned.
 		/// </param>
 		
 		public virtual void  setRange(System.String jumpTo, int beforeCount, int afterCount)

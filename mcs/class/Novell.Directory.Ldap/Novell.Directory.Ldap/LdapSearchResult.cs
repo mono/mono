@@ -39,7 +39,7 @@ namespace Novell.Directory.Ldap
 	/// <summary>  Encapsulates a single search result that is in response to an asynchronous
 	/// search operation.
 	/// </summary>
-	/// <seealso cref="LdapConnection#search">
+	/// <seealso cref="LdapConnection.Search">
 	/// </seealso>
 	public class LdapSearchResult:LdapMessage
 	{
@@ -97,7 +97,7 @@ namespace Novell.Directory.Ldap
 		/// 
 		/// </summary>
 		/// <param name="entry">the LdapEntry represented by this search result.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="cont">controls associated with the search result
 		/// </param>

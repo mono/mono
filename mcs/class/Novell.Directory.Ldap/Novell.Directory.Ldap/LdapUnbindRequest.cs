@@ -38,7 +38,7 @@ namespace Novell.Directory.Ldap
 	/// <summary> Represents an Ldap Unbind Request.
 	/// 
 	/// </summary>
-	/// <seealso cref="LdapConnection#sendRequest">
+	/// <seealso cref="LdapConnection.SendRequest">
 	/// </seealso> 
    /*
 	*       UnbindRequest ::= [APPLICATION 2] NULL

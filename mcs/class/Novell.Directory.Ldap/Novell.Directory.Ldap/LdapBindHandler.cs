@@ -36,12 +36,12 @@ namespace Novell.Directory.Ldap
 	/// <summary> 
 	/// Used to do explicit bind processing on a referral.
 	/// 
-	/// <p>This interface allows a programmer to override the default
+	/// This interface allows a programmer to override the default
 	/// authentication and reauthentication behavior when automatically
 	/// following referrals and search references. It is used to control the
-	/// authentication mechanism used on automatic referral following.</p>
+	/// authentication mechanism used on automatic referral following.
 	/// 
-	/// <p>A client can specify an instance of this class to be used
+	/// A client can specify an instance of this class to be used
 	/// on a single operation (through the LdapConstraints object)
 	/// or for all operations (through the LdapContraints object
 	/// associated with the connection).
@@ -50,14 +50,14 @@ namespace Novell.Directory.Ldap
 	/// </summary>
 	/// <seealso cref="LdapAuthHandler">
 	/// </seealso>
-	/// <seealso cref="LdapConstraints#setReferralFollowing(boolean)">
+	/// <seealso cref="LdapConstraints.ReferralFollowing">
 	/// </seealso>
 	public interface LdapBindHandler : LdapReferralHandler
 		{
 			
 			/// <summary> Called by LdapConnection when a referral is received.
 			/// 
-			/// <p>This method has the responsibility to bind to one of the
+			/// This method has the responsibility to bind to one of the
 			/// hosts in the list specified by the ldaprul parameter which corresponds
 			/// exactly to the list of hosts returned in a single referral response.
 			/// An implementation may access the host, port, credentials, and other
@@ -70,7 +70,7 @@ namespace Novell.Directory.Ldap
 			/// following code uses the new LdapConnection object when it resends the
 			/// search request, updated with the new search base and possible search
 			/// filter. An LdapException is thrown on failure, as in the
-			/// LdapConnection.bind method. </p>
+			/// LdapConnection.bind method. 
 			/// 
 			/// </summary>
 			/// <param name="ldapurl">The list of servers contained in a referral response.
@@ -82,7 +82,7 @@ namespace Novell.Directory.Ldap
 			/// in the referral list.
 			/// 
 			/// </returns>
-			/// <exception cref="">  LdapReferralException An LdapreferralException is thrown
+			/// <exception>  LdapReferralException An LdapreferralException is thrown
 			/// with appropriate fields set to give the reason for the failure.
 			/// </exception>
 			LdapConnection Bind(System.String[] ldapurl, LdapConnection conn);

@@ -40,11 +40,11 @@ namespace Novell.Directory.Ldap.Extensions
 	
 	/// <summary>  Retrieves the identity from an GetBindDNResponse object.
 	/// 
-	/// <p>An object in this class is generated from an LdapExtendedResponse object
-	/// using the ExtendedResponseFactory class.</p>
+	/// An object in this class is generated from an LdapExtendedResponse object
+	/// using the ExtendedResponseFactory class.
 	/// 
-	/// <p>The GetBindDNResponse extension uses the following OID:<br>
-	/// &nbsp;&nbsp;&nbsp;2.16.840.1.113719.1.27.100.32 </p>
+	/// The GetBindDNResponse extension uses the following OID:
+	/// 2.16.840.1.113719.1.27.100.32 
 	/// 
 	/// </summary>
 	public class GetBindDNResponse:LdapExtendedResponse
@@ -68,13 +68,13 @@ namespace Novell.Directory.Ldap.Extensions
 		
 		/// <summary> Constructs an object from the responseValue which contains the bind dn.
 		/// 
-		/// <p>The constructor parses the responseValue which has the following
-		/// format:<br>
-		/// responseValue ::=<br>
-		/// &nbsp;&nbsp;&nbsp;&nbsp;identity &nbsp;&nbsp;&nbsp;  OCTET STRING</p>
+		/// The constructor parses the responseValue which has the following
+		/// format:
+		/// responseValue ::=
+		/// identity   OCTET STRING
 		/// 
 		/// </summary>
-		/// <exception cref=""> IOException The return value could not be decoded.
+		/// <exception> IOException The return value could not be decoded.
 		/// </exception>
 		public GetBindDNResponse(RfcLdapMessage rfcMessage):base(rfcMessage)
 		{

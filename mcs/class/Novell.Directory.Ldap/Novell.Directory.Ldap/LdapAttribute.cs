@@ -37,7 +37,7 @@ namespace Novell.Directory.Ldap
 {
 	/// <summary> The name and values of one attribute of a directory entry.
 	/// 
-	/// <p>LdapAttribute objects are used when searching for, adding,
+	/// LdapAttribute objects are used when searching for, adding,
 	/// modifying, and deleting attributes from the directory.
 	/// LdapAttributes are often used in conjunction with an
 	/// {@link LdapAttributeSet} when retrieving or adding multiple
@@ -92,7 +92,7 @@ namespace Novell.Directory.Ldap
 		/// 
 		/// </summary>
 		/// <returns> The values of the attribute in byte format.
-		/// <P> Note: All string values will be UTF-8 encoded. To decode use the
+		///  Note: All string values will be UTF-8 encoded. To decode use the
 		/// String constructor. Example: new String( byteArray, "UTF-8" );
 		/// </returns>
 		virtual public System.Collections.IEnumerator ByteValues
@@ -183,13 +183,13 @@ namespace Novell.Directory.Ldap
 		/// to begin with the value of the returned <code>String</code> is
 		/// non deterministic.
 		/// 
-		/// <p>If <code>this</code> attribute has more than one value the
+		/// If <code>this</code> attribute has more than one value the
 		/// first value is converted to a UTF-8 encoded <code>String</code>
 		/// and returned. It should be noted, that the directory may
 		/// return attribute values in any order, so that the first
 		/// value may vary from one call to another.
 		/// 
-		/// <p>If the attribute has no values <code>null</code> is returned
+		/// If the attribute has no values <code>null</code> is returned
 		/// </returns>
 		virtual public System.String StringValue
 		{
@@ -220,7 +220,7 @@ namespace Novell.Directory.Ldap
 		/// <returns>  The binary value of <code>this</code> attribute or
 		/// <code>null</code> if <code>this</code> attribute doesn't have a value.
 		/// 
-		/// <p>If the attribute has no values <code>null</code> is returned
+		/// If the attribute has no values <code>null</code> is returned
 		/// </returns>
 		[CLSCompliantAttribute(false)]
 		virtual public sbyte[] ByteValue
@@ -240,8 +240,8 @@ namespace Novell.Directory.Ldap
 		}
 		/// <summary> Returns the language subtype of the attribute, if any.
 		/// 
-		/// <p>For example, if the attribute name is cn;lang-ja;phonetic,
-		/// this method returns the string, lang-ja.</p>
+		/// For example, if the attribute name is cn;lang-ja;phonetic,
+		/// this method returns the string, lang-ja.
 		/// 
 		/// </summary>
 		/// <returns> The language subtype of the attribute or null if the attribute
@@ -361,11 +361,11 @@ namespace Novell.Directory.Ldap
 		/// <summary> Constructs an attribute with a byte-formatted value.
 		/// 
 		/// </summary>
-		/// <param name="attrName">Name of the attribute.<br><br>
+		/// <param name="attrName">Name of the attribute.
 		/// </param>
 		/// <param name="attrBytes">Value of the attribute as raw bytes.
 		/// 
-		/// <P> Note: If attrBytes represents a string it should be UTF-8 encoded.
+		///  Note: If attrBytes represents a string it should be UTF-8 encoded.
 		/// 
 		/// @throws IllegalArgumentException if attrName or attrBytes is null
 		/// </param>
@@ -386,7 +386,7 @@ namespace Novell.Directory.Ldap
 		/// <summary> Constructs an attribute with a single string value.
 		/// 
 		/// </summary>
-		/// <param name="attrName">Name of the attribute.<br><br>
+		/// <param name="attrName">Name of the attribute.
 		/// </param>
 		/// <param name="attrString">Value of the attribute as a string.
 		/// 
@@ -416,7 +416,7 @@ namespace Novell.Directory.Ldap
 		/// <summary> Constructs an attribute with an array of string values.
 		/// 
 		/// </summary>
-		/// <param name="attrName">Name of the attribute.<br><br>
+		/// <param name="attrName">Name of the attribute.
 		/// </param>
 		/// <param name="attrStrings">Array of values as strings.
 		/// 
@@ -506,7 +506,7 @@ namespace Novell.Directory.Ldap
 		/// </summary>
 		/// <param name="attrBytes">Value of the attribute as raw bytes.
 		/// 
-		/// <P> Note: If attrBytes represents a string it should be UTF-8 encoded.
+		///  Note: If attrBytes represents a string it should be UTF-8 encoded.
 		/// 
 		/// @throws IllegalArgumentException if attrBytes is null
 		/// </param>
@@ -661,8 +661,8 @@ namespace Novell.Directory.Ldap
 		
 		/// <summary> Returns the base name of the attribute.
 		/// 
-		/// <p>For example, if the attribute name is cn;lang-ja;phonetic,
-		/// this method returns cn.</p>
+		/// For example, if the attribute name is cn;lang-ja;phonetic,
+		/// this method returns cn.
 		/// 
 		/// </summary>
 		/// <returns> The base name of the attribute.
@@ -674,8 +674,8 @@ namespace Novell.Directory.Ldap
 		
 		/// <summary> Returns the base name of the specified attribute name.
 		/// 
-		/// <p>For example, if the attribute name is cn;lang-ja;phonetic,
-		/// this method returns cn.</p>
+		/// For example, if the attribute name is cn;lang-ja;phonetic,
+		/// this method returns cn.
 		/// 
 		/// </summary>
 		/// <param name="attrName">Name of the attribute from which to extract the
@@ -702,7 +702,7 @@ namespace Novell.Directory.Ldap
 		
 		/// <summary> Extracts the subtypes from the attribute name.
 		/// 
-		/// <p>For example, if the attribute name is cn;lang-ja;phonetic,
+		/// For example, if the attribute name is cn;lang-ja;phonetic,
 		/// this method returns an array containing lang-ja and phonetic.
 		/// 
 		/// </summary>
@@ -715,8 +715,8 @@ namespace Novell.Directory.Ldap
 		
 		/// <summary> Extracts the subtypes from the specified attribute name.
 		/// 
-		/// <p>For example, if the attribute name is cn;lang-ja;phonetic,
-		/// this method returns an array containing lang-ja and phonetic.</p>
+		/// For example, if the attribute name is cn;lang-ja;phonetic,
+		/// this method returns an array containing lang-ja and phonetic.
 		/// 
 		/// </summary>
 		/// <param name="attrName">  Name of the attribute from which to extract
@@ -751,8 +751,8 @@ namespace Novell.Directory.Ldap
 		
 		/// <summary> Reports if the attribute name contains the specified subtype.
 		/// 
-		/// <p>For example, if you check for the subtype lang-en and the
-		/// attribute name is cn;lang-en, this method returns true.</p>
+		/// For example, if you check for the subtype lang-en and the
+		/// attribute name is cn;lang-en, this method returns true.
 		/// 
 		/// </summary>
 		/// <param name="subtype"> The single subtype to check for.
@@ -782,10 +782,10 @@ namespace Novell.Directory.Ldap
 		
 		/// <summary> Reports if the attribute name contains all the specified subtypes.
 		/// 
-		/// <p> For example, if you check for the subtypes lang-en and phonetic
+		///  For example, if you check for the subtypes lang-en and phonetic
 		/// and if the attribute name is cn;lang-en;phonetic, this method
 		/// returns true. If the attribute name is cn;phonetic or cn;lang-en,
-		/// this method returns false.</p>
+		/// this method returns false.
 		/// 
 		/// </summary>
 		/// <param name="subtypes">  An array of subtypes to check for.
@@ -827,8 +827,8 @@ gotSubType: ;
 		/// </summary>
 		/// <param name="attrString">  Value of the attribute as a string.
 		/// 
-		/// <p>Note: Removing a value which is not present in the attribute has
-		/// no effect.</p>
+		/// Note: Removing a value which is not present in the attribute has
+		/// no effect.
 		/// 
 		/// @throws IllegalArgumentException if attrString is null
 		/// </param>
@@ -858,11 +858,11 @@ gotSubType: ;
 		/// 
 		/// </summary>
 		/// <param name="attrBytes">   Value of the attribute as raw bytes.
-		/// <P> Note: If attrBytes represents a string it should be UTF-8 encoded.
-		/// Example: <code>String.getBytes("UTF-8");</code></P>
+		///  Note: If attrBytes represents a string it should be UTF-8 encoded.
+		/// Example: <code>String.getBytes("UTF-8");</code>
 		/// 
-		/// <p>Note: Removing a value which is not present in the attribute has
-		/// no effect.</p>
+		/// Note: Removing a value which is not present in the attribute has
+		/// no effect.
 		/// 
 		/// @throws IllegalArgumentException if attrBytes is null
 		/// </param>
@@ -920,9 +920,9 @@ gotSubType: ;
 		
 		/// <summary> Compares this object with the specified object for order.
 		/// 
-		/// <p> Ordering is determined by comparing attribute names (see
+		///  Ordering is determined by comparing attribute names (see
 		/// {@link #getName() }) using the method compareTo() of the String class.
-		/// </p>
+		/// 
 		/// 
 		/// </summary>
 		/// <param name="attribute">  The LdapAttribute to be compared to this object.
@@ -945,7 +945,7 @@ gotSubType: ;
 		/// as binary data so we simplify the process by requiring
 		/// that all data added to our list is in binary form.
 		/// 
-		/// <P> Note: If attrBytes represents a string it should be UTF-8 encoded.
+		///  Note: If attrBytes represents a string it should be UTF-8 encoded.
 		/// </param>
 		private void  add(sbyte[] bytes)
 		{

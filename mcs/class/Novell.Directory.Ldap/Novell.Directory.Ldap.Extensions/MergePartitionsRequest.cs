@@ -40,18 +40,18 @@ namespace Novell.Directory.Ldap.Extensions
 	/// <summary> 
 	/// Merges a child partition with its parent partition.
 	/// 
-	/// <p>To merge a child partition with its parent, you must create an
+	/// To merge a child partition with its parent, you must create an
 	/// instance of this class and then call the extendedOperation method
-	/// with this object as the required LdapExtendedOperation parameter.</p>
+	/// with this object as the required LdapExtendedOperation parameter.
 	/// 
-	/// <p>The mergePartitionsRequest extension uses the following OID:<br>
-	/// &nbsp;&nbsp;&nbsp;2.16.840.1.113719.1.27.100.5</p>
+	/// The mergePartitionsRequest extension uses the following OID:
+	/// 2.16.840.1.113719.1.27.100.5
 	/// 
-	/// <p>The requestValue has the following format:<br>
+	/// The requestValue has the following format:
 	/// 
-	/// requestValue ::=<br>
-	/// &nbsp;&nbsp;&nbsp;&nbsp;    flags &nbsp;&nbsp;&nbsp;  INTEGER<br>
-	/// &nbsp;&nbsp;&nbsp;&nbsp;    dn &nbsp;&nbsp;&nbsp;     LdapDN</p>
+	/// requestValue ::=
+	///     flags   INTEGER
+	///     dn      LdapDN
 	/// </summary>
 	public class MergePartitionsRequest:LdapExtendedOperation
 	{
@@ -60,7 +60,7 @@ namespace Novell.Directory.Ldap.Extensions
 		/// 
 		/// </summary>
 		/// <param name="dn">       The distinguished name of the child partition's root.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="flags">    Determines whether all servers in the replica ring must
 		/// be up before proceeding. When set to zero, the status of
@@ -69,7 +69,7 @@ namespace Novell.Directory.Ldap.Extensions
 		/// operation to proceed.
 		/// 
 		/// </param>
-		/// <exception cref=""> LdapException A general exception which includes an error
+		/// <exception> LdapException A general exception which includes an error
 		/// message and an Ldap error code.
 		/// </exception>
 		

@@ -36,7 +36,7 @@ namespace Novell.Directory.Ldap
 	
 	/// <summary> The definition of an attribute type in the schema.
 	/// 
-	/// <p>LdapAttributeSchema is used to discover an attribute's
+	/// LdapAttributeSchema is used to discover an attribute's
 	/// syntax, and add or delete an attribute definition.
 	/// RFC 2252, "Lightweight Directory Access Protocol (v3):
 	/// Attribute Syntax Definitions" contains a description
@@ -215,47 +215,47 @@ namespace Novell.Directory.Ldap
 		/// 
 		/// </summary>
 		/// <param name="names">Names of the attribute.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="oid">  Object identifer of the attribute, in
 		/// dotted numerical format.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="description">  Optional description of the attribute.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="syntaxString"> Object identifer of the syntax of the
 		/// attribute, in dotted numerical format.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="single">   True if the attribute is to be single-valued.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="superior"> Optional name of the attribute type which this
 		/// attribute type derives from; null if there is no
 		/// superior attribute type.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="obsolete"> True if the attribute is obsolete.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="equality"> Optional matching rule name; null if there is not
 		/// an equality matching rule for this attribute.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="ordering">Optional matching rule name; null if there is not
 		/// an ordering matching rule for this attribute.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="substring">   Optional matching rule name; null if there is not
 		/// a substring matching rule for this attribute.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="collective">   True of this attribute is a collective attribute
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="isUserModifiable"> False if this attribute is a read-only attribute
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="usage">       Describes what the attribute is used for. Must be
 		/// one of the following: USER_APPLICATIONS,

@@ -260,7 +260,7 @@ namespace Novell.Directory.Ldap.Utilclass
 			// the number of encoded bytes should be multiple of 4
 			if ((ecLen % 4) != 0)
 			{
-				throw new System.SystemException("com.novell.ldap.ldif_dsml." + "Base64Decoder: decode: mal-formatted encode value");
+				throw new System.SystemException("Novell.Directory.Ldap.ldif_dsml." + "Base64Decoder: decode: mal-formatted encode value");
 			}
 			
 			// every four-bytes in encodedString, except the last one if it in the
@@ -369,7 +369,7 @@ namespace Novell.Directory.Ldap.Utilclass
 			// the number of encoded bytes should be multiple of number 4
 			if ((esbLen % 4) != 0)
 			{
-				throw new System.SystemException("com.novell.ldap.ldif_dsml." + "Base64Decoder: decode error: mal-formatted encode value");
+				throw new System.SystemException("Novell.Directory.Ldap.ldif_dsml." + "Base64Decoder: decode error: mal-formatted encode value");
 			}
 			
 			// every four-bytes in ebs, except the last one if it in the form of
@@ -449,19 +449,19 @@ namespace Novell.Directory.Ldap.Utilclass
 		/// The rules for checking safety are based on the rules for LDIF
 		/// (Ldap Data Interchange Format) per RFC 2849.  The data does
 		/// not need to be encoded if all the following are true:
-		/// <br>
-		/// <p>The data cannot start with the following byte values:</p>
+		/// 
+		/// The data cannot start with the following byte values:
 		/// <pre>
 		/// 00 (NUL)
 		/// 10 (LF)
 		/// 13 (CR)
 		/// 32 (SPACE)
 		/// 58 (:)
-		/// 60 (<)
+		/// 60 (LESSTHAN)
 		/// Any character with value greater than 127
 		/// (Negative for a byte value)
 		/// </pre>
-		/// <p>The data cannot contain any of the following byte values:</p>
+		/// The data cannot contain any of the following byte values:
 		/// <pre>
 		/// 00 (NUL)
 		/// 10 (LF)
@@ -469,7 +469,7 @@ namespace Novell.Directory.Ldap.Utilclass
 		/// Any character with value greater than 127
 		/// (Negative for a byte value)
 		/// </pre>
-		/// <p>The data cannot end with a space.</p>
+		/// The data cannot end with a space.
 		/// 
 		/// </summary>
 		/// <param name="bytes">the bytes to be checked.
@@ -516,25 +516,25 @@ namespace Novell.Directory.Ldap.Utilclass
 		/// The rules for checking safety are based on the rules for LDIF
 		/// (Ldap Data Interchange Format) per RFC 2849.  The data does
 		/// not need to be encoded if all the following are true:
-		/// <br>
-		/// <p>The data cannot start with the following char values:</p>
+		/// 
+		/// The data cannot start with the following char values:
 		/// <pre>
 		/// 00 (NUL)
 		/// 10 (LF)
 		/// 13 (CR)
 		/// 32 (SPACE)
 		/// 58 (:)
-		/// 60 (<)
+		/// 60 (LESSTHAN)
 		/// Any character with value greater than 127
 		/// </pre>
-		/// <p>The data cannot contain any of the following char values:</p>
+		/// The data cannot contain any of the following char values:
 		/// <pre>
 		/// 00 (NUL)
 		/// 10 (LF)
 		/// 13 (CR)
 		/// Any character with value greater than 127
 		/// </pre>
-		/// <p>The data cannot end with a space.</p>
+		/// The data cannot end with a space.
 		/// 
 		/// </summary>
 		/// <param name="str">the String to be checked.
@@ -560,7 +560,7 @@ namespace Novell.Directory.Ldap.Utilclass
 		* The following text is taken from draft-yergeau-rfc2279bis-02 and explains
 		* UTF-8 encoding:
 		*
-		*<p>In UTF-8, characters are encoded using sequences of 1 to 6 octets.
+		*In UTF-8, characters are encoded using sequences of 1 to 6 octets.
 		* If the range of character numbers is restricted to U+0000..U+10FFFF
 		* (the UTF-16 accessible range), then only sequences of one to four
 		* octets will occur.  The only octet of a "sequence" of one has the
@@ -570,11 +570,11 @@ namespace Novell.Directory.Ldap.Utilclass
 		* 0.  The remaining bit(s) of that octet contain bits from the number
 		* of the character to be encoded.  The following octet(s) all have the
 		* higher-order bit set to 1 and the following bit set to 0, leaving 6
-		* bits in each to contain bits from the character to be encoded.</p>
+		* bits in each to contain bits from the character to be encoded.
 		*
-		* <p>The table below summarizes the format of these different octet types.
+		* The table below summarizes the format of these different octet types.
 		* The letter x indicates bits available for encoding bits of the
-		* character number.</p>
+		* character number.
 		*
 		* <pre>
 		* Char. number range  |        UTF-8 octet sequence
@@ -629,18 +629,12 @@ namespace Novell.Directory.Ldap.Utilclass
 		/// <summary> Bit masks used to determine if a the value of UTF-8 byte sequence
 		/// is less than the minimum value.
 		/// 
-		/// <p>If the value of a byte sequence is less than the minimum value then
+		/// If the value of a byte sequence is less than the minimum value then
 		/// the number should be encoded in fewer bytes and is invalid.  For example
 		/// If the first byte indicates that a sequence has three bytes in a
 		/// sequence. Then the top five bits cannot be zero.  Notice the index into
 		/// the array is one less than the number of bytes in a sequence.
 		/// A validity test for this could be:
-		/// <pre>
-		/// if ((lowerBoundMask[1][0] & byte[0] != 0) ||
-		/// (lowerBoundMask[1][1] & byte[1] != 0)) {
-		/// then the value is above the minimum and is valid.
-		/// }
-		/// </pre>
 		/// </summary>
 		private static readonly sbyte[][] lowerBoundMask = {new sbyte[]{0, 0}, new sbyte[]{(sbyte) (0x1E), (sbyte) (0x00)}, new sbyte[]{(sbyte) (0x0F), (sbyte) (0x20)}, new sbyte[]{(sbyte) (0x07), (sbyte) (0x30)}, new sbyte[]{(sbyte) (0x02), (sbyte) (0x38)}, new sbyte[]{(sbyte) (0x01), (sbyte) (0x3C)}};
 		
@@ -651,23 +645,23 @@ namespace Novell.Directory.Ldap.Utilclass
 		private static sbyte continuationResult = (sbyte) SupportClass.Identity(0x80);
 		
 		/// <summary> Determines if an array of bytes contains only valid UTF-8 characters.
-		/// <p>
+		/// 
 		/// UTF-8 is the standard encoding for Ldap strings.  If a value contains
 		/// data that is not valid UTF-8 then data is lost converting the
 		/// value to a Java String.
-		/// </p>
 		/// 
-		/// <p>In addition, Java Strings currently use UCS2 (Unicode Code Standard
+		/// 
+		/// In addition, Java Strings currently use UCS2 (Unicode Code Standard
 		/// 2-byte characters). UTF-8 can be encoded as USC2 and UCS4 (4-byte
 		/// characters).  Some valid UTF-8 characters cannot be represented as UCS2
 		/// characters. To determine if all UTF-8 sequences can be encoded into
 		/// UCS2 characters (a Java String), specify the <code>isUCS2Only</code>
-		/// parameter as <code>true</code>.<p>
+		/// parameter as <code>true</code>.
 		/// 
 		/// </summary>
 		/// <param name="array"> An array of bytes that are to be tested for valid UTF-8
 		/// encoding.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="isUCS2Only">true if the UTF-8 values must be restricted to fit
 		/// within UCS2 encoding (2 bytes)

@@ -36,10 +36,10 @@ namespace Novell.Directory.Ldap
 {
 	
 	/// <summary>  A utility class to facilitate composition and deomposition
-	/// of distinguished names (DNs).
+	/// of distinguished names DNs.
 	/// 
-	/// <p>Specifies methods for manipulating a distinguished name (DN)
-	/// and a relative distinguished name (RDN).</p>
+	/// Specifies methods for manipulating a distinguished name DN
+	/// and a relative distinguished name RDN.
 	/// </summary>
 	public class LdapDN
 	{
@@ -50,7 +50,7 @@ namespace Novell.Directory.Ldap
 		/// 
 		/// </summary>
 		/// <param name="dn1">           String form of the first DN to compare.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="dn2">           String form of the second DN to compare.
 		/// 
@@ -68,15 +68,15 @@ namespace Novell.Directory.Ldap
 		
 		/// <summary> Returns the RDN after escaping the characters requiring escaping.
 		/// 
-		/// <p>For example, for the rdn "cn=Acme, Inc", the escapeRDN method
-		/// returns "cn=Acme\, Inc".</p>
+		/// For example, for the rdn "cn=Acme, Inc", the escapeRDN method
+		/// returns "cn=Acme\, Inc".
 		/// 
-		/// <p>escapeRDN escapes the AttributeValue by inserting '\' before the
-		/// following chars: * ',' '+' '"' '\' '<' '>' ';' <BR>
-		/// '#' if it comes at the beginning of the string, and <BR>
+		/// escapeRDN escapes the AttributeValue by inserting '\' before the
+		/// following chars: * ',' '+' '"' '\' 'LESSTHAN' 'GREATERTHAN' ';' 
+		/// '#' if it comes at the beginning of the string, and 
 		/// ' ' (space) if it comes at the beginning or the end of a string.
 		/// Note that single-valued attributes can be used because of ambiguity. See
-		/// RFC 2253 </p>
+		/// RFC 2253 
 		/// 
 		/// </summary>
 		/// <param name="rdn">           The RDN to escape.
@@ -129,7 +129,7 @@ namespace Novell.Directory.Ldap
 		/// </summary>
 		/// <param name="dn">       The distinguished name, for example, "cn=Babs
 		/// Jensen,ou=Accounting,o=Acme,c=US"
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="noTypes">  If true, returns only the values of the
 		/// components and not the names.  For example, "Babs
@@ -153,7 +153,7 @@ namespace Novell.Directory.Ldap
 		/// </summary>
 		/// <param name="rdn">    The relative distinguished name, or in other words,
 		/// the left-most component of a distinguished name.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="noTypes">  If true, returns only the values of the
 		/// components, and not the names of the component, for
@@ -202,15 +202,15 @@ namespace Novell.Directory.Ldap
 		
 		/// <summary> Returns the RDN after unescaping the characters requiring escaping.
 		/// 
-		/// <p>For example, for the rdn "cn=Acme\, Inc", the unescapeRDN method
-		/// returns "cn=Acme, Inc".</p>
+		/// For example, for the rdn "cn=Acme\, Inc", the unescapeRDN method
+		/// returns "cn=Acme, Inc".
 		/// unescapeRDN unescapes the AttributeValue by
-		/// removing the '\' when the next character fits the following:<BR>
-		/// ',' '+' '"' '\' '<' '>' ';'<BR>
+		/// removing the '\' when the next character fits the following:
+		/// ',' '+' '"' '\' 'LESSTHAN' 'GREATERTHAN' ';'
 		/// '#' if it comes at the beginning of the Attribute Name
-		/// (without the '\').<BR>
+		/// (without the '\').
 		/// ' ' (space) if it comes at the beginning or the end of the Attribute Name
-		/// </p>
+		/// 
 		/// </summary>
 		/// <param name="rdn">           The RDN to unescape.
 		/// 

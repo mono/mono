@@ -37,11 +37,11 @@ namespace Novell.Directory.Ldap
 	/// <summary>Represents the definition of a specific matching rule use in the
 	/// directory schema.
 	/// 
-	/// <p>The LdapMatchingRuleUseSchema class represents the definition of a
+	/// The LdapMatchingRuleUseSchema class represents the definition of a
 	/// matching rule use.  It is used to discover or modify which attributes are
 	/// suitable for use with an extensible matching rule. It contains the name and
 	/// identifier of a matching rule, and a list of attributes which
-	/// it applies to.</p>
+	/// it applies to.
 	/// 
 	/// </summary>
 	/// <seealso cref="LdapAttributeSchema">
@@ -73,17 +73,17 @@ namespace Novell.Directory.Ldap
 		/// 
 		/// </summary>
 		/// <param name="names">      Name(s) of the matching rule.
-		/// </br></br>
+		/// 
 		/// </param>
 		/// <param name="oid">        Object Identifier of the the matching rule
 		/// in dotted-decimal format.
-		/// </br></br>
+		/// 
 		/// </param>
 		/// <param name="description">Optional description of the matching rule use.
-		/// </br></br>
+		/// 
 		/// </param>
 		/// <param name="obsolete">   True if the matching rule use is obsolete.
-		/// </br></br>
+		/// 
 		/// </param>
 		/// <param name="attributes"> List of attributes that this matching rule
 		/// applies to. These values may be either the

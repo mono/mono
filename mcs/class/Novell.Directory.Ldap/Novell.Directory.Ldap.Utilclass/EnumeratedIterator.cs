@@ -39,9 +39,9 @@ namespace Novell.Directory.Ldap.Utilclass
 	/// LdapSchema and LdapSchemaElement
 	/// 
 	/// </summary>
-	/// <seealso cref="com.novell.ldap.LdapSchema#getAttributeSchemas">
+	/// <seealso cref="Novell.Directory.Ldap.LdapSchema.AttributeSchemas">
 	/// </seealso>
-	/// <seealso cref="com.novell.ldap.LdapSchemaElement#getQualifierNames">
+	/// <seealso cref="Novell.Directory.Ldap.LdapSchemaElement.QualifierNames">
 	/// </seealso>
 	
 	public class EnumeratedIterator : System.Collections.IEnumerator

@@ -40,36 +40,24 @@ namespace Novell.Directory.Ldap.Extensions
 	
 	/// <summary>  Retrieves the effective rights from an GetEffectivePrivilegesResponse object.
 	/// 
-	/// <p>An object in this class is generated from an ExtendedResponse object
-	/// using the ExtendedResponseFactory class.</p>
+	/// An object in this class is generated from an ExtendedResponse object
+	/// using the ExtendedResponseFactory class.
 	/// 
-	/// <p>The getEffectivePrivilegesResponse extension uses the following OID:<br>
-	/// &nbsp;&nbsp;&nbsp;2.16.840.1.113719.1.27.100.34</p>
+	/// The getEffectivePrivilegesResponse extension uses the following OID:
+	/// 2.16.840.1.113719.1.27.100.34
 	/// 
 	/// </summary>
 	public class GetEffectivePrivilegesResponse:LdapExtendedResponse
 	{
 		/// <summary> Returns the effective privileges.
 		/// 
-		/// <p>See the ReplicationConstants class for the privilege flags.
+		/// See the ReplicationConstants class for the privilege flags.
 		/// 
 		/// </summary>
 		/// <returns> A flag which is a combination of zero or more privilege flags as
 		/// returned by the server.
 		/// 
 		/// </returns>
-		/// <seealso cref="LdapDSConstants#Ldap_DS_ATTR_COMPARE">
-		/// </seealso>
-		/// <seealso cref="LdapDSConstants#Ldap_DS_ATTR_READ">
-		/// </seealso>
-		/// <seealso cref="LdapDSConstants#Ldap_DS_ATTR_WRITE">
-		/// </seealso>
-		/// <seealso cref="LdapDSConstants#Ldap_DS_ATTR_SELF">
-		/// </seealso>
-		/// <seealso cref="LdapDSConstants#Ldap_DS_ATTR_SUPERVISOR">
-		/// </seealso>
-		/// <seealso cref="LdapDSConstants#Ldap_DS_ATTR_INHERIT_CTL">
-		/// </seealso>
 		virtual public int Privileges
 		{
 			get
@@ -85,13 +73,13 @@ namespace Novell.Directory.Ldap.Extensions
 		/// <summary> Constructs an object from the responseValue which contains the effective
 		/// privileges.
 		/// 
-		/// <p>The constructor parses the responseValue which has the following
-		/// format:<br>
-		/// responseValue ::=<br>
-		/// &nbsp;&nbsp;&nbsp;&nbsp;  privileges&nbsp;&nbsp;&nbsp;  INTEGER</p>
+		/// The constructor parses the responseValue which has the following
+		/// format:
+		/// responseValue ::=
+		///   privileges  INTEGER
 		/// 
 		/// </summary>
-		/// <exception cref=""> IOException The responseValue could not be decoded.
+		/// <exception> IOException The responseValue could not be decoded.
 		/// </exception>
 		public GetEffectivePrivilegesResponse(RfcLdapMessage rfcMessage):base(rfcMessage)
 		{

@@ -41,20 +41,20 @@ namespace Novell.Directory.Ldap
 	/// <summary> The class that creates a connection to the Ldap server. After the
 	/// connection is made, a thread is created that reads data from the
 	/// connection.
-	/// <p>
+	/// 
 	/// The application's thread sends a request to the MessageAgent class, which
 	/// creates a Message class.  The Message class calls the writeMessage method
 	/// of this class to send the request to the server. The application thread
 	/// will then query the MessageAgent class for a response.
-	/// <p>
+	/// 
 	/// The reader thread multiplexes response messages received from the
 	/// server to the appropriate Message class. Each Message class
 	/// has its own message queue.
-	/// <p>
+	/// 
 	/// Unsolicited messages are process separately, and if the application
 	/// has registered a handler, a separate thread is created for that
 	/// application's handler to process the message.
-	/// <p>
+	/// 
 	/// Note: the reader thread must not be a "selfish" thread, since some
 	/// operating systems do not time slice.
 	/// 
@@ -177,7 +177,7 @@ namespace Novell.Directory.Ldap
 		/// and set flag indicating successful bind.
 		/// 
 		/// 
-		/// <br><br>
+		/// 
 		/// </summary>
 		/// <returns>  The BindProperties object for this connection.
 		/// </returns>
@@ -186,7 +186,7 @@ namespace Novell.Directory.Ldap
 		/// and set flag indicating successful bind.
 		/// 
 		/// 
-		/// <br><br>
+		/// 
 		/// </summary>
 		/// <param name="bindProps">  The BindProperties object to set.
 		/// </param>
@@ -346,12 +346,12 @@ namespace Novell.Directory.Ldap
 		
 		/// <summary> Copy this Connection object.
 		/// 
-		/// <p>This is not a true clone, but creates a new object encapsulating
+		/// This is not a true clone, but creates a new object encapsulating
 		/// part of the connection information from the original object.
 		/// The new object will have the same default socket factory,
 		/// designated socket factory, host, port, and protocol version
 		/// as the original object.
-		/// The new object is NOT be connected to the host.</p>
+		/// The new object is NOT be connected to the host.
 		/// 
 		/// </summary>
 		/// <returns> a shallow copy of this object
@@ -565,7 +565,7 @@ namespace Novell.Directory.Ldap
 		/// 
 		/// </summary>
 		/// <param name="host">The host to connect to.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="port">The port on the host to connect to.
 		/// </param>
@@ -581,10 +581,10 @@ namespace Novell.Directory.Ldap
 		/// 
 		/// </summary>
 		/// <param name="host">The host to connect to.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="port">The port on the host to connect to.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="semaphoreId">The write semaphore ID to use for the connect
 		/// </param>
@@ -654,23 +654,23 @@ namespace Novell.Directory.Ldap
 		
 		/// <summary> Destroys a clone of <code>LdapConnection</code>.
 		/// 
-		/// <p>This method first determines if only one <code>LdapConnection</code>
-		/// object is associated with this connection, i.e. if no clone exists.</p>
+		/// This method first determines if only one <code>LdapConnection</code>
+		/// object is associated with this connection, i.e. if no clone exists.
 		/// 
-		/// <p>If no clone exists, the socket is closed, and the current
-		/// <code>Connection</code> object is returned.</p>
+		/// If no clone exists, the socket is closed, and the current
+		/// <code>Connection</code> object is returned.
 		/// 
-		/// <p>If multiple <code>LdapConnection</code> objects are associated
+		/// If multiple <code>LdapConnection</code> objects are associated
 		/// with this connection, i.e. clones exist, a {@link #copy} of the
 		/// this object is made, but is not connected to any host. This
 		/// disassociates that clone from the original connection.  The new
 		/// <code>Connection</code> object is returned.
 		/// 
-		/// <p>Only one destroyClone instance is allowed to run at any one time.</p>
+		/// Only one destroyClone instance is allowed to run at any one time.
 		/// 
-		/// <p>If the connection is closed, any threads waiting for operations
+		/// If the connection is closed, any threads waiting for operations
 		/// on that connection will wake with an LdapException indicating
-		/// the connection is closed.</p>
+		/// the connection is closed.
 		/// 
 		/// </summary>
 		/// <param name="apiCall"><code>true</code> indicates the application is closing the

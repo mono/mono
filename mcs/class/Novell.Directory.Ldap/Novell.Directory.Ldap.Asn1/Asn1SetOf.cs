@@ -47,8 +47,8 @@ namespace Novell.Directory.Ldap.Asn1
 		
 		/// <summary> ID is added for Optimization.
 		/// 
-		/// <p>Id needs only be one Value for every instance,
-		/// thus we create it only once.</p>
+		/// Id needs only be one Value for every instance,
+		/// thus we create it only once.
 		/// </summary>
 		public static readonly Asn1Identifier ID = new Asn1Identifier(Asn1Identifier.UNIVERSAL, true, TAG);
 		/* Constructors for Asn1SetOf
@@ -78,11 +78,11 @@ namespace Novell.Directory.Ldap.Asn1
 		
 		/// <summary> A copy constructor that creates an Asn1SetOf from an instance of Asn1Set.
 		/// 
-		/// <p>Since SET and SET_OF have the same identifier, the decoder
+		/// Since SET and SET_OF have the same identifier, the decoder
 		/// will always return a SET object when it detects that identifier.
 		/// In order to take advantage of the Asn1SetOf type, we need to be
 		/// able to construct this object when knowingly receiving an
-		/// Asn1Set.</p>
+		/// Asn1Set.
 		/// </summary>
 		public Asn1SetOf(Asn1Set set_Renamed):base(ID, set_Renamed.toArray(), set_Renamed.size())
 		{

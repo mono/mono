@@ -40,24 +40,24 @@ namespace Novell.Directory.Ldap.Extensions
 	/// <summary> 
 	/// Returns the effective rights of one object to an attribute of another object.
 	/// 
-	/// <p>To use this class, you must instantiate an object of this class and then
+	/// To use this class, you must instantiate an object of this class and then
 	/// call the extendedOperation method with this object as the required
-	/// LdapExtendedOperation parameter.</p>
+	/// LdapExtendedOperation parameter.
 	/// 
-	/// <p>The returned LdapExtendedResponse object can then be converted to
+	/// The returned LdapExtendedResponse object can then be converted to
 	/// a GetEffectivePrivilegesResponse object with the ExtendedResponseFactory class.
 	/// The GetEffectivePrivilegesResponse class  contains methods for
-	/// retrieving the effective rights.</p>
+	/// retrieving the effective rights.
 	/// 
-	/// <p>The getEffectivePrivilegesRequest extension uses the following OID:<br>
-	/// &nbsp;&nbsp;&nbsp;2.16.840.1.113719.1.27.100.33</p>
+	/// The getEffectivePrivilegesRequest extension uses the following OID:
+	/// 2.16.840.1.113719.1.27.100.33
 	/// 
-	/// <p>The requestValue has the following format:<br>
+	/// The requestValue has the following format:
 	/// 
-	/// requestValue ::=<br>
-	/// &nbsp;&nbsp;&nbsp;&nbsp;  dn &nbsp;&nbsp;&nbsp;        LdapDN<br>
-	/// &nbsp;&nbsp;&nbsp;&nbsp;  trusteeDN&nbsp;&nbsp;&nbsp;  LdapDN<br>
-	/// &nbsp;&nbsp;&nbsp;&nbsp;  attrName &nbsp;&nbsp;&nbsp;  LdapDN </p>
+	/// requestValue ::=
+	///   dn         LdapDN
+	///   trusteeDN  LdapDN
+	///   attrName   LdapDN 
 	/// </summary>
 	public class GetEffectivePrivilegesRequest:LdapExtendedOperation
 	{
@@ -67,16 +67,16 @@ namespace Novell.Directory.Ldap.Extensions
 		/// </summary>
 		/// <param name="dn">       The distinguished name of the entry whose attribute is
 		/// being checked.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="trusteeDN">The distinguished name of the entry whose trustee rights
 		/// are being returned
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="attrName"> The Ldap attribute name.
 		/// 
 		/// </param>
-		/// <exception cref=""> LdapException A general exception which includes an error
+		/// <exception> LdapException A general exception which includes an error
 		/// message and an Ldap error code.
 		/// </exception>
 		

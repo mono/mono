@@ -39,7 +39,7 @@ namespace Novell.Directory.Ldap
 	
 	/// <summary> The base class for Ldap request and response messages.
 	/// 
-	/// <p>Subclassed by response messages used in asynchronous operations.
+	/// Subclassed by response messages used in asynchronous operations.
 	/// 
 	/// 
 	/// </summary>
@@ -139,7 +139,7 @@ namespace Novell.Directory.Ldap
 		}
 		/// <summary> Returns the Ldap operation type of the message.
 		/// 
-		/// <p>The type is one of the following:</p>
+		/// The type is one of the following:
 		/// <ul>
 		/// <li>BIND_REQUEST            = 0;</li>
 		/// <li>BIND_RESPONSE           = 1;</li>
@@ -301,49 +301,41 @@ namespace Novell.Directory.Ldap
 		}
 		/// <summary> Retrieves the identifier tag for this message.
 		/// 
-		/// <p>An identifier can be associated with a message with the
+		/// An identifier can be associated with a message with the
 		/// <code>setTag</code> method.
 		/// Tags are set by the application and not by the API or the server.
 		/// If a server response <code>isRequest() == false</code> has no tag,
-		/// the tag associated with the corresponding server request is used.</p>
+		/// the tag associated with the corresponding server request is used.
 		/// 
 		/// </summary>
 		/// <returns> the identifier associated with this message or <code>null</code>
 		/// if none.
 		/// 
 		/// </returns>
-		/// <seealso cref="#setTag">
-		/// </seealso>
-		/// <seealso cref="#isRequest">
-		/// </seealso>
 		/// <summary> Sets a string identifier tag for this message.
 		/// 
-		/// <p>This method allows an API to set a tag and later identify messages
+		/// This method allows an API to set a tag and later identify messages
 		/// by retrieving the tag associated with the message.
 		/// Tags are set by the application and not by the API or the server.
 		/// Message tags are not included with any message sent to or received
-		/// from the server.</p>
+		/// from the server.
 		/// 
-		/// <p>Tags set on a request to the server
+		/// Tags set on a request to the server
 		/// are automatically associated with the response messages when they are
 		/// received by the API and transferred to the application.
 		/// The application can explicitly set a different value in a
-		/// response message.</p>
+		/// response message.
 		/// 
-		/// <p>To set a value in a server request, for example an
+		/// To set a value in a server request, for example an
 		/// {@link LdapSearchRequest}, you must create the object,
 		/// set the tag, and use the
-		/// {@link LdapConnection#sendRequest LdapConnection.sendRequest()}
-		/// method to send it to the server.</p>
+		/// {@link LdapConnection.SendRequest LdapConnection.sendRequest()}
+		/// method to send it to the server.
 		/// 
 		/// </summary>
 		/// <param name="stringTag"> the String assigned to identify this message.
 		/// 
 		/// </param>
-		/// <seealso cref="#getTag">
-		/// </seealso>
-		/// <seealso cref="#isRequest">
-		/// </seealso>
 		virtual public System.String Tag
 		{
 			get
@@ -374,122 +366,122 @@ namespace Novell.Directory.Ldap
 		
 		/// <summary> A bind request operation.
 		/// 
-		/// <p>BIND_REQUEST = 0</p>
+		/// BIND_REQUEST = 0
 		/// </summary>
 		public const int BIND_REQUEST = 0;
 		
 		/// <summary> A bind response operation.
 		/// 
-		/// <p>BIND_RESPONSE = 1</p>
+		/// BIND_RESPONSE = 1
 		/// </summary>
 		public const int BIND_RESPONSE = 1;
 		
 		/// <summary> An unbind request operation.
 		/// 
-		/// <p>UNBIND_REQUEST = 2</p>
+		/// UNBIND_REQUEST = 2
 		/// </summary>
 		public const int UNBIND_REQUEST = 2;
 		
 		/// <summary> A search request operation.
 		/// 
-		/// <p>SEARCH_REQUEST = 3</p>
+		/// SEARCH_REQUEST = 3
 		/// </summary>
 		public const int SEARCH_REQUEST = 3;
 		
 		/// <summary> A search response containing data.
 		/// 
-		/// <p>SEARCH_RESPONSE = 4</p>
+		/// SEARCH_RESPONSE = 4
 		/// </summary>
 		public const int SEARCH_RESPONSE = 4;
 		
 		/// <summary> A search result message - contains search status.
 		/// 
-		/// <p>SEARCH_RESULT = 5</p>
+		/// SEARCH_RESULT = 5
 		/// </summary>
 		public const int SEARCH_RESULT = 5;
 		
 		/// <summary> A modify request operation.
 		/// 
-		/// <p>MODIFY_REQUEST = 6</p>
+		/// MODIFY_REQUEST = 6
 		/// </summary>
 		public const int MODIFY_REQUEST = 6;
 		
 		/// <summary> A modify response operation.
 		/// 
-		/// <p>MODIFY_RESPONSE = 7</p>
+		/// MODIFY_RESPONSE = 7
 		/// </summary>
 		public const int MODIFY_RESPONSE = 7;
 		
 		/// <summary> An add request operation.
 		/// 
-		/// <p>ADD_REQUEST = 8</p>
+		/// ADD_REQUEST = 8
 		/// </summary>
 		public const int ADD_REQUEST = 8;
 		
 		/// <summary> An add response operation.
 		/// 
-		/// <p>ADD_RESONSE = 9</p>
+		/// ADD_RESONSE = 9
 		/// </summary>
 		public const int ADD_RESPONSE = 9;
 		
 		/// <summary> A delete request operation.
 		/// 
-		/// <p>DEL_REQUEST = 10</p>
+		/// DEL_REQUEST = 10
 		/// </summary>
 		public const int DEL_REQUEST = 10;
 		
 		/// <summary> A delete response operation.
 		/// 
-		/// <p>DEL_RESONSE = 11</p>
+		/// DEL_RESONSE = 11
 		/// </summary>
 		public const int DEL_RESPONSE = 11;
 		
 		/// <summary> A modify RDN request operation.
 		/// 
-		/// <p>MODIFY_RDN_REQUEST = 12</p>
+		/// MODIFY_RDN_REQUEST = 12
 		/// </summary>
 		public const int MODIFY_RDN_REQUEST = 12;
 		
 		/// <summary> A modify RDN response operation.
 		/// 
-		/// <p>MODIFY_RDN_RESPONSE = 13</p>
+		/// MODIFY_RDN_RESPONSE = 13
 		/// </summary>
 		public const int MODIFY_RDN_RESPONSE = 13;
 		
 		/// <summary> A compare result operation.
 		/// 
-		/// <p>COMPARE_REQUEST = 14</p>
+		/// COMPARE_REQUEST = 14
 		/// </summary>
 		public const int COMPARE_REQUEST = 14;
 		
 		/// <summary> A compare response operation.
 		/// 
-		/// <p>COMPARE_RESPONSE = 15</p>
+		/// COMPARE_RESPONSE = 15
 		/// </summary>
 		public const int COMPARE_RESPONSE = 15;
 		
 		/// <summary> An abandon request operation.
 		/// 
-		/// <p>ABANDON_REQUEST = 16</p>
+		/// ABANDON_REQUEST = 16
 		/// </summary>
 		public const int ABANDON_REQUEST = 16;
 		
 		
 		/// <summary> A search result reference operation.
 		/// 
-		/// <p>SEARCH_RESULT_REFERENCE = 19</p>
+		/// SEARCH_RESULT_REFERENCE = 19
 		/// </summary>
 		public const int SEARCH_RESULT_REFERENCE = 19;
 		
 		/// <summary> An extended request operation.
 		/// 
-		/// <p>EXTENDED_REQUEST = 23</p>
+		/// EXTENDED_REQUEST = 23
 		/// </summary>
 		public const int EXTENDED_REQUEST = 23;
 		
 		/// <summary> An extended response operation.
 		/// 
-		/// <p>EXTENDED_RESONSE = 24</p>
+		/// EXTENDED_RESONSE = 24
 		/// </summary>
 		public const int EXTENDED_RESPONSE = 24;
 		
@@ -526,12 +518,12 @@ namespace Novell.Directory.Ldap
 		/// 
 		/// </summary>
 		/// <param name="op">The operation type of message.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="controls">The controls to use with the operation.
 		/// 
 		/// </param>
-		/// <seealso cref="#getType">
+		/// <seealso cref="Type">
 		/// </seealso>
 		/*package*/
 		internal LdapMessage(int type, RfcRequest op, LdapControl[] controls)
@@ -574,10 +566,10 @@ namespace Novell.Directory.Ldap
 		/// 
 		/// </summary>
 		/// <param name="dn">the base dn
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="filter">the filter
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="reference">true if a search reference
 		/// 

@@ -43,8 +43,8 @@ namespace Novell.Directory.Ldap.Asn1
 		public const int TAG = 0x05;
 		
 		/// <summary> ID is added for Optimization.</summary>
-		/// <summary> <p>ID needs only be one Value for every instance,
-		/// thus we create it only once.</p>
+		/// <summary> ID needs only be one Value for every instance,
+		/// thus we create it only once.
 		/// </summary>
 		public static readonly Asn1Identifier ID = new Asn1Identifier(Asn1Identifier.UNIVERSAL, false, TAG);
 		/* Constructor for Asn1Null
@@ -65,7 +65,7 @@ namespace Novell.Directory.Ldap.Asn1
 		/// specified output stream using the specified encoder object.
 		/// 
 		/// </summary>
-		/// <param name="enc">Encoder object to use when encoding self.<br>
+		/// <param name="enc">Encoder object to use when encoding self.
 		/// 
 		/// </param>
 		/// <param name="out">The output stream onto which the encoded byte

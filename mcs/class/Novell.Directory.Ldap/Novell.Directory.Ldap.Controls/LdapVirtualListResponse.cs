@@ -40,16 +40,14 @@ namespace Novell.Directory.Ldap.Controls
 	/// LdapVirtualListResponse is a Server Control returned by the server in
 	/// response to a virtual list search request.
 	/// </summary>
-	/// <summary> <br><br>
-	/// <p>In response to a VLV Search request the server returns an error code
-	/// and if the search was successful returns the following information:<br>
-	/// <li> an index into the search results from where the returned list begins
-	/// <li> an estimate of the total number of elements in the search result
+	/// <summary> 
+	/// In response to a VLV Search request the server returns an error code
+	/// and if the search was successful returns the following information:
+	/// <li> an index into the search results from where the returned list begins</li>
+	/// <li> an estimate of the total number of elements in the search result</li>
 	/// <li> an optional context field to be returned to the server with
-	/// subsequent VLV request.
+	/// subsequent VLV request.</li>
 	/// 
-	/// <p>Sample Code: <a href="http://developer.novell.com/ndk/doc/samplecode/
-	/// jldap_sample/controls/VLVControl.java.html">VLVControl.java</p>
 	/// </summary>
 	public class LdapVirtualListResponse:LdapControl
 	{
@@ -113,10 +111,10 @@ namespace Novell.Directory.Ldap.Controls
 		/// constructing a LdapVirtualListResponse control object also
 		/// parses the contents of the response into local variables.
 		/// 
-		/// <p>RFC 2891 defines this response control as follows:
+		/// RFC 2891 defines this response control as follows:
 		/// 
 		/// The controlValue is an OCTET STRING, whose value is the BER
-		/// encoding of a value of the following ASN.1:<br><br>
+		/// encoding of a value of the following ASN.1:
 		/// 
 		/// VirtualListViewResponse ::= SEQUENCE {
 		/// targetPosition    INTEGER (0 .. maxInt),
@@ -137,12 +135,12 @@ namespace Novell.Directory.Ldap.Controls
 		/// 
 		/// </summary>
 		/// <param name="oid">    The OID of the control, as a dotted string.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="critical">  True if the Ldap operation should be discarded if
 		/// the control is not supported. False if
 		/// the operation can be processed without the control.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="values">    The control-specific data.
 		/// </param>

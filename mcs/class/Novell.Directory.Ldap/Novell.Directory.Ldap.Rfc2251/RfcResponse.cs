@@ -38,8 +38,8 @@ namespace Novell.Directory.Ldap.Rfc2251
 	/// <summary> This interface represents RfcLdapMessages that contain a response from a
 	/// server.
 	/// 
-	/// <p>If the protocol operation of the RfcLdapMessage is of this type,
-	/// it contains at least an RfcLdapResult.</p>
+	/// If the protocol operation of the RfcLdapMessage is of this type,
+	/// it contains at least an RfcLdapResult.
 	/// </summary>
 	public interface RfcResponse
 		{

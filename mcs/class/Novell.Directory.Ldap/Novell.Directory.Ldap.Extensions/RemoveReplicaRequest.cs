@@ -40,19 +40,19 @@ namespace Novell.Directory.Ldap.Extensions
 	/// <summary> 
 	/// Removes a replica from the specified directory server.
 	/// 
-	/// <p>To remove a replica from a particular server, you must create an instance
+	/// To remove a replica from a particular server, you must create an instance
 	/// of this class and then call the extendedOperation method with this
-	/// object as the required LdapExtendedOperation parameter.</p>
+	/// object as the required LdapExtendedOperation parameter.
 	/// 
-	/// <p>The removeReplicaRequest extension uses the following OID:<br>
-	/// &nbsp;&nbsp;&nbsp;2.16.840.1.113719.1.27.100.11</p>
+	/// The removeReplicaRequest extension uses the following OID:
+	/// 2.16.840.1.113719.1.27.100.11
 	/// 
-	/// <p>The requestValue has the following format:<br>
+	/// The requestValue has the following format:
 	/// 
-	/// requestValue ::=<br>
-	/// &nbsp;&nbsp;&nbsp;&nbsp;        flags &nbsp;&nbsp;&nbsp;       INTEGER<br>
-	/// &nbsp;&nbsp;&nbsp;&nbsp;        serverName &nbsp;&nbsp;&nbsp;  LdapDN<br>
-	/// &nbsp;&nbsp;&nbsp;&nbsp;        dn &nbsp;&nbsp;&nbsp;          LdapDN</p>
+	/// requestValue ::=
+	///         flags        INTEGER
+	///         serverName   LdapDN
+	///         dn           LdapDN
 	/// </summary>
 	public class RemoveReplicaRequest:LdapExtendedOperation
 	{
@@ -62,11 +62,11 @@ namespace Novell.Directory.Ldap.Extensions
 		/// </summary>
 		/// <param name="dn">         The distinguished name of the replica's
 		/// partition root.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="serverDN">   The distinguished name of server from which the replica
 		/// will be removed.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="flags">  Determines whether all servers in the replica ring must
 		/// be up before proceeding. When set to zero, the status of the
@@ -74,7 +74,7 @@ namespace Novell.Directory.Ldap.Extensions
 		/// all servers must be up for the operation to proceed.
 		/// 
 		/// </param>
-		/// <exception cref=""> LdapException A general exception which includes an error message
+		/// <exception> LdapException A general exception which includes an error message
 		/// and an Ldap error code.
 		/// </exception>
 		public RemoveReplicaRequest(System.String dn, System.String serverDN, int flags):base(ReplicationConstants.DELETE_REPLICA_REQ, null)

@@ -38,7 +38,7 @@ namespace Novell.Directory.Ldap
 	/// <summary> Represents an Ldap Compare Request.
 	/// 
 	/// </summary>
-	/// <seealso cref="LdapConnection#sendRequest">
+	/// <seealso cref="LdapConnection.SendRequest">
 	/// </seealso>
    /*
 	*       CompareRequest ::= [APPLICATION 14] SEQUENCE {
@@ -90,18 +90,18 @@ namespace Novell.Directory.Ldap
 			
 		}
 		/// <summary> Constructs an LdapCompareRequest Object.
-		/// <br><br>
+		/// 
 		/// </summary>
 		/// <param name="dn">     The distinguished name of the entry containing an
 		/// attribute to compare.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="name">   The name of the attribute to compare.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="value">   The value of the attribute to compare.
 		/// 
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="cont">Any controls that apply to the compare request,
 		/// or null if none.

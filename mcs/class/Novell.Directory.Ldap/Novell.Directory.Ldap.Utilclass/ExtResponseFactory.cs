@@ -41,7 +41,7 @@ namespace Novell.Directory.Ldap.Utilclass
 	/// (that implements the base class ParsedExtendedResponse)
 	/// based on the OID.
 	/// 
-	/// <p>You can then call methods defined in the child
+	/// You can then call methods defined in the child
 	/// class to parse the contents of the response.  The methods available
 	/// depend on the child class. All child classes inherit from the
 	/// ParsedExtendedResponse.
@@ -56,14 +56,14 @@ namespace Novell.Directory.Ldap.Utilclass
 		/// </summary>
 		/// <param name="inResponse">  The LdapExtendedReponse object as returned by the
 		/// extendedOperation method in the LdapConnection object.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <returns> An object of base class LdapExtendedResponse.  The actual child
 		/// class of this returned object depends on the operation being
 		/// performed.
 		/// 
 		/// </returns>
-		/// <exception cref=""> LdapException A general exception which includes an error message
+		/// <exception> LdapException A general exception which includes an error message
 		/// and an Ldap error code.
 		/// </exception>
 		

@@ -38,7 +38,7 @@ namespace Novell.Directory.Ldap
 	/// <summary> Represents an Ldap Add Request.
 	/// 
 	/// </summary>
-	/// <seealso cref="LdapConnection#sendRequest">
+	/// <seealso cref="LdapConnection.SendRequest">
 	/// </seealso>
    /*
 	*       AddRequest ::= [APPLICATION 8] SEQUENCE {

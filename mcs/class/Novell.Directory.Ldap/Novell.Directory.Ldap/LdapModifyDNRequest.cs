@@ -39,7 +39,7 @@ namespace Novell.Directory.Ldap
 	/// <summary> Represents an Ldap ModifyDN request
 	/// 
 	/// </summary>
-	/// <seealso cref="LdapConnection#sendRequest">
+	/// <seealso cref="LdapConnection.SendRequest">
 	/// </seealso> 
    /*
 	*       ModifyDNRequest ::= [APPLICATION 12] SEQUENCE {
@@ -122,19 +122,19 @@ namespace Novell.Directory.Ldap
 		/// 
 		/// </summary>
 		/// <param name="dn">            The current distinguished name of the entry.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="newRdn">        The new relative distinguished name for the entry.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="newParentdn">   The distinguished name of an existing entry which
 		/// is to be the new parent of the entry.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="deleteOldRdn">  If true, the old name is not retained as an
 		/// attribute value. If false, the old name is
 		/// retained as an attribute value.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="cont">           Any controls that apply to the modifyDN request,
 		/// or null if none.

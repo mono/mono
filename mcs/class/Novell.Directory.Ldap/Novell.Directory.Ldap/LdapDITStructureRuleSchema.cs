@@ -38,9 +38,9 @@ namespace Novell.Directory.Ldap
 	/// <summary> Represents the definition of a specific DIT (Directory Information Tree)
 	/// structure rule in the directory schema.
 	/// 
-	/// <p>The LdapDITStructureRuleSchema class represents the definition of a DIT
+	/// The LdapDITStructureRuleSchema class represents the definition of a DIT
 	/// Structure Rule.  It is used to discover or modify which
-	/// object classes a particular object class may be subordinate to in the DIT.</p>
+	/// object classes a particular object class may be subordinate to in the DIT.
 	/// 
 	/// </summary>
 	
@@ -48,9 +48,9 @@ namespace Novell.Directory.Ldap
 	{
 		/// <summary> Returns the rule ID for this structure rule.
 		/// 
-		/// <p>The getRuleID method returns an integer rather than a dotted
+		/// The getRuleID method returns an integer rather than a dotted
 		/// decimal OID. Objects of this class do not have an OID,
-		/// thus getID can return null. </p>
+		/// thus getID can return null. 
 		/// 
 		/// 
 		/// </summary>
@@ -68,8 +68,8 @@ namespace Novell.Directory.Ldap
 		}
 		/// <summary> Returns the NameForm that this structure rule controls.
 		/// 
-		/// <p>You can get the actual object class that this structure rule controls
-		/// by calling the getNameForm.getObjectClass method.</p>
+		/// You can get the actual object class that this structure rule controls
+		/// by calling the getNameForm.getObjectClass method.
 		/// 
 		/// </summary>
 		/// <returns> The NameForm that this structure rule controls.
@@ -85,9 +85,9 @@ namespace Novell.Directory.Ldap
 		/// <summary> Returns a list of all structure rules that are superior to this
 		/// structure rule.
 		/// 
-		/// <p>To resolve to an object class, you need to first
+		/// To resolve to an object class, you need to first
 		/// resolve the superior ID to another structure rule, then call
-		/// the getNameForm.getObjectClass method on that structure rule.</p>
+		/// the getNameForm.getObjectClass method on that structure rule.
 		/// 
 		/// </summary>
 		/// <returns> A list of all structure rules that are superior to this structure rule.
@@ -109,24 +109,24 @@ namespace Novell.Directory.Ldap
 		/// 
 		/// </summary>
 		/// <param name="names">      The names of the structure rule.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="ruleID">     The unique identifier of the structure rule. NOTE:
 		/// this is an integer, not a dotted numerical
 		/// identifier. Structure rules aren't identified
 		/// by OID.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="description">An optional description of the structure rule.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="obsolete">   True if the structure rule is obsolete.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="nameForm">   Either the identifier or name of a name form.
 		/// This is used to indirectly refer to the object
 		/// class that this structure rule applies to.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="superiorIDs">A list of superior structure rules - specified
 		/// by their integer ID. The object class

@@ -40,11 +40,11 @@ namespace Novell.Directory.Ldap.Extensions
 	
 	/// <summary> Retrieves the replica information from a GetReplicaInfoResponse object.
 	/// 
-	/// <p>An object in this class is generated from an ExtendedResponse using the
-	/// ExtendedResponseFactory class.</p>
+	/// An object in this class is generated from an ExtendedResponse using the
+	/// ExtendedResponseFactory class.
 	/// 
-	/// <p>The getReplicaInfoResponse extension uses the following OID:<br>
-	/// &nbsp;&nbsp;&nbsp;2.16.840.1.113719.1.27.100.18</p>
+	/// The getReplicaInfoResponse extension uses the following OID:
+	/// 2.16.840.1.113719.1.27.100.18
 	/// 
 	/// </summary>
 	public class GetReplicaInfoResponse:LdapExtendedResponse
@@ -63,20 +63,20 @@ namespace Novell.Directory.Ldap.Extensions
 		/// <summary> Constructs an object from the responseValue which contains the
 		/// replica information.
 		/// 
-		/// <p>The constructor parses the responseValue which has the following
-		/// format:<br>
-		/// responseValue ::=<br>
-		/// &nbsp;&nbsp;&nbsp;&nbsp; partitionID &nbsp;&nbsp;&nbsp;        INTEGER<br>
-		/// &nbsp;&nbsp;&nbsp;&nbsp; replicaState &nbsp;&nbsp;&nbsp;       INTEGER<br>
-		/// &nbsp;&nbsp;&nbsp;&nbsp; modificationTime &nbsp;&nbsp;&nbsp;   INTEGER<br>
-		/// &nbsp;&nbsp;&nbsp;&nbsp; purgeTime &nbsp;&nbsp;&nbsp;          INTEGER<br>
-		/// &nbsp;&nbsp;&nbsp;&nbsp; localPartitionID &nbsp;&nbsp;&nbsp;   INTEGER<br>
-		/// &nbsp;&nbsp;&nbsp;&nbsp; partitionDN &nbsp;&nbsp;&nbsp;      OCTET STRING<br>
-		/// &nbsp;&nbsp;&nbsp;&nbsp; replicaType  &nbsp;&nbsp;&nbsp;       INTEGER<br>
-		/// &nbsp;&nbsp;&nbsp;&nbsp; flags &nbsp;&nbsp;&nbsp;              INTEGER</p>
+		/// The constructor parses the responseValue which has the following
+		/// format:
+		/// responseValue ::=
+		///  partitionID         INTEGER
+		///  replicaState        INTEGER
+		///  modificationTime    INTEGER
+		///  purgeTime           INTEGER
+		///  localPartitionID    INTEGER
+		///  partitionDN       OCTET STRING
+		///  replicaType         INTEGER
+		///  flags               INTEGER
 		/// 
 		/// </summary>
-		/// <exception cref=""> IOException The response value could not be decoded.
+		/// <exception> IOException The response value could not be decoded.
 		/// </exception>
 		public GetReplicaInfoResponse(RfcLdapMessage rfcMessage):base(rfcMessage)
 		{
@@ -189,27 +189,27 @@ namespace Novell.Directory.Ldap.Extensions
 		/// ReplicationConstants class for possible values for this field.
 		/// 
 		/// </returns>
-		/// <seealso cref="ReplicationConstants#Ldap_RS_BEGIN_ADD">
+		/// <seealso cref="ReplicationConstants.Ldap_RS_BEGIN_ADD">
 		/// </seealso>
-		/// <seealso cref="ReplicationConstants#Ldap_RS_DEAD_REPLICA">
+		/// <seealso cref="ReplicationConstants.Ldap_RS_DEAD_REPLICA">
 		/// </seealso>
-		/// <seealso cref="ReplicationConstants#Ldap_RS_DYING_REPLICA">
+		/// <seealso cref="ReplicationConstants.Ldap_RS_DYING_REPLICA">
 		/// </seealso>
-		/// <seealso cref="ReplicationConstants#Ldap_RS_JS_0">
+		/// <seealso cref="ReplicationConstants.Ldap_RS_JS_0">
 		/// </seealso>
-		/// <seealso cref="ReplicationConstants#Ldap_RS_JS_1">
+		/// <seealso cref="ReplicationConstants.Ldap_RS_JS_1">
 		/// </seealso>
-		/// <seealso cref="ReplicationConstants#Ldap_RS_JS_2">
+		/// <seealso cref="ReplicationConstants.Ldap_RS_JS_2">
 		/// </seealso>
-		/// <seealso cref="ReplicationConstants#Ldap_RS_LOCKED">
+		/// <seealso cref="ReplicationConstants.Ldap_RS_LOCKED">
 		/// </seealso>
-		/// <seealso cref="ReplicationConstants#Ldap_RS_MASTER_DONE">
+		/// <seealso cref="ReplicationConstants.Ldap_RS_MASTER_DONE">
 		/// </seealso>
-		/// <seealso cref="ReplicationConstants#Ldap_RS_MASTER_START">
+		/// <seealso cref="ReplicationConstants.Ldap_RS_MASTER_START">
 		/// </seealso>
-		/// <seealso cref="ReplicationConstants#Ldap_RS_SS_0">
+		/// <seealso cref="ReplicationConstants.Ldap_RS_SS_0">
 		/// </seealso>
-		/// <seealso cref="ReplicationConstants#Ldap_RS_TRANSITION_ON">
+		/// <seealso cref="ReplicationConstants.Ldap_RS_TRANSITION_ON">
 		/// </seealso>
 		public virtual int getreplicaState()
 		{
@@ -261,24 +261,24 @@ namespace Novell.Directory.Ldap.Extensions
 		
 		/// <summary>  Returns the replica type.
 		/// 
-		/// <p>See the ReplicationConstants class for possible values for
-		/// this field.</p>
+		/// See the ReplicationConstants class for possible values for
+		/// this field.
 		/// 
 		/// </summary>
 		/// <returns> Integer identifying the type of the replica.
 		/// 
 		/// </returns>
-		/// <seealso cref="ReplicationConstants#Ldap_RT_MASTER">
+		/// <seealso cref="ReplicationConstants.Ldap_RT_MASTER">
 		/// </seealso>
-		/// <seealso cref="ReplicationConstants#Ldap_RT_SECONDARY">
+		/// <seealso cref="ReplicationConstants.Ldap_RT_SECONDARY">
 		/// </seealso>
-		/// <seealso cref="ReplicationConstants#Ldap_RT_READONLY">
+		/// <seealso cref="ReplicationConstants.Ldap_RT_READONLY">
 		/// </seealso>
-		/// <seealso cref="ReplicationConstants#Ldap_RT_SUBREF">
+		/// <seealso cref="ReplicationConstants.Ldap_RT_SUBREF">
 		/// </seealso>
-		/// <seealso cref="ReplicationConstants#Ldap_RT_SPARSE_WRITE">
+		/// <seealso cref="ReplicationConstants.Ldap_RT_SPARSE_WRITE">
 		/// </seealso>
-		/// <seealso cref="ReplicationConstants#Ldap_RT_SPARSE_READ">
+		/// <seealso cref="ReplicationConstants.Ldap_RT_SPARSE_READ">
 		/// </seealso>
 		public virtual int getreplicaType()
 		{
@@ -287,16 +287,16 @@ namespace Novell.Directory.Ldap.Extensions
 		
 		/// <summary> Returns flags that specify whether the replica is busy or is a boundary.
 		/// 
-		/// <p>See the ReplicationConstants class for possible values for
-		/// this field.</p>
+		/// See the ReplicationConstants class for possible values for
+		/// this field.
 		/// 
 		/// </summary>
 		/// <returns> Integer value specifying the flags for the replica.
 		/// 
 		/// </returns>
-		/// <seealso cref="ReplicationConstants#Ldap_DS_FLAG_BUSY">
+		/// <seealso cref="ReplicationConstants.Ldap_DS_FLAG_BUSY">
 		/// </seealso>
-		/// <seealso cref="ReplicationConstants#Ldap_DS_FLAG_BOUNDARY">
+		/// <seealso cref="ReplicationConstants.Ldap_DS_FLAG_BOUNDARY">
 		/// </seealso>
 		public virtual int getflags()
 		{

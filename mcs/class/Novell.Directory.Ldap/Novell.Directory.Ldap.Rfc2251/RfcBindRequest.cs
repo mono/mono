@@ -97,8 +97,8 @@ namespace Novell.Directory.Ldap.Rfc2251
 		
 		/// <summary> ID is added for Optimization.
 		/// 
-		/// <p>ID needs only be one Value for every instance,
-		/// thus we create it only once.<p>
+		/// ID needs only be one Value for every instance,
+		/// thus we create it only once.
 		/// </summary>
 		new private static readonly Asn1Identifier ID = new Asn1Identifier(Asn1Identifier.APPLICATION, true, LdapMessage.BIND_REQUEST);
 		

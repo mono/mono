@@ -40,15 +40,15 @@ namespace Novell.Directory.Ldap.Extensions
 	/// <summary> 
 	/// Synchronizes all replicas of a naming context.
 	/// 
-	/// <p>The PartitionSyncRequest extension uses the following OID:<br>
-	/// &nbsp;&nbsp;&nbsp;2.16.840.1.113719.1.27.100.25</p>
+	/// The PartitionSyncRequest extension uses the following OID:
+	/// 2.16.840.1.113719.1.27.100.25
 	/// 
-	/// <p>The requestValue has the following format:<br>
+	/// The requestValue has the following format:
 	/// 
-	/// requestValue ::=<br>
-	/// &nbsp;&nbsp;&nbsp;&nbsp; serverName&nbsp;&nbsp;&nbsp;      LdapDN<br>
-	/// &nbsp;&nbsp;&nbsp;&nbsp; partitionRoot&nbsp;&nbsp;&nbsp;   LdapDN<br>
-	/// &nbsp;&nbsp;&nbsp;&nbsp; delay&nbsp;&nbsp;&nbsp;           INTEGER</p>
+	/// requestValue ::=
+	///  serverName      LdapDN
+	///  partitionRoot   LdapDN
+	///  delay           INTEGER
 	/// </summary>
 	public class PartitionSyncRequest:LdapExtendedOperation
 	{
@@ -60,17 +60,17 @@ namespace Novell.Directory.Ldap.Extensions
 		/// </summary>
 		/// <param name="serverName">    The distinquished name of server containing the
 		/// naming context.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="partitionRoot"> The distinguished name of the naming context
 		/// to synchronize.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="delay">         The time, in seconds, to delay before the synchronization
 		/// should start.
 		/// 
 		/// </param>
-		/// <exception cref=""> LdapException A general exception which includes an error message
+		/// <exception> LdapException A general exception which includes an error message
 		/// and an Ldap error code.
 		/// </exception>
 		public PartitionSyncRequest(System.String serverName, System.String partitionRoot, int delay):base(ReplicationConstants.NAMING_CONTEXT_SYNC_REQ, null)

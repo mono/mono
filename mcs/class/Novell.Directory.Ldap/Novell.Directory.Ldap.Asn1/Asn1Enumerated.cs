@@ -44,8 +44,8 @@ namespace Novell.Directory.Ldap.Asn1
 		
 		/// <summary> ID is added for Optimization.
 		/// 
-		/// <p>ID needs only be one Value for every instance,
-		/// thus we create it only once.</p>
+		/// ID needs only be one Value for every instance,
+		/// thus we create it only once.
 		/// </summary>
 		public static readonly Asn1Identifier ID = new Asn1Identifier(Asn1Identifier.UNIVERSAL, false, TAG);
 		/* Constructors for Asn1Enumerated
@@ -81,7 +81,7 @@ namespace Novell.Directory.Ldap.Asn1
 		/// </summary>
 		/// <param name="dec">The decoder object to use when decoding the
 		/// input stream.  Sometimes a developer might want to pass
-		/// in his/her own decoder object<br>
+		/// in his/her own decoder object
 		/// 
 		/// </param>
 		/// <param name="in">A byte stream that contains the encoded ASN.1
@@ -98,7 +98,7 @@ namespace Novell.Directory.Ldap.Asn1
 		/// specified output stream using the specified encoder object.
 		/// 
 		/// </summary>
-		/// <param name="enc">Encoder object to use when encoding self.<br>
+		/// <param name="enc">Encoder object to use when encoding self.
 		/// 
 		/// </param>
 		/// <param name="out">The output stream onto which the encoded byte

@@ -39,7 +39,7 @@ namespace Novell.Directory.Ldap
 	/// <summary> Modification Request.
 	/// 
 	/// </summary>
-	/// <seealso cref="LdapConnection#sendRequest">
+	/// <seealso cref="LdapConnection.SendRequest">
 	/// </seealso>
    /*
 	*       ModifyRequest ::= [APPLICATION 6] SEQUENCE {
@@ -120,10 +120,10 @@ namespace Novell.Directory.Ldap
 		/// 
 		/// </summary>
 		/// <param name="dn">        The distinguished name of the entry to modify.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="mods">      The changes to be made to the entry.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="cont">       Any controls that apply to the modify request,
 		/// or null if none.

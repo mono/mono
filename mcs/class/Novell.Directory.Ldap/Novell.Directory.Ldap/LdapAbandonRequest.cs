@@ -38,7 +38,7 @@ namespace Novell.Directory.Ldap
 	/// <summary> Represents an Ldap Abandon Request
 	/// 
 	/// </summary>
-	/// <seealso cref="LdapConnection#sendRequest">
+	/// <seealso cref="LdapConnection.SendRequest">
 	/// </seealso> 
    /*
 	*       AbandonRequest ::= [APPLICATION 16] MessageID
@@ -46,10 +46,10 @@ namespace Novell.Directory.Ldap
 	public class LdapAbandonRequest:LdapMessage
 	{
 		/// <summary> Construct an Ldap Abandon Request.
-		/// <br><br>
+		/// 
 		/// </summary>
 		/// <param name="id">The ID of the operation to abandon.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="cont">Any controls that apply to the abandon request
 		/// or null if none.

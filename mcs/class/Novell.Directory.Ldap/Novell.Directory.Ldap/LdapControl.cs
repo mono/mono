@@ -40,16 +40,16 @@ namespace Novell.Directory.Ldap
 	/// <summary>  Encapsulates optional additional parameters or constraints to be applied to
 	/// an Ldap operation.
 	/// 
-	/// <p>When included with LdapConstraints or LdapSearchConstraints
+	/// When included with LdapConstraints or LdapSearchConstraints
 	/// on an LdapConnection or with a specific operation request, it is
-	/// sent to the server along with operation requests.</p>
+	/// sent to the server along with operation requests.
 	/// 
 	/// </summary>
-	/// <seealso cref="LdapConnection#getResponseControls">
+	/// <seealso cref="LdapConnection.ResponseControls">
 	/// </seealso>
-	/// <seealso cref="LdapSearchConstraints#getControls">
+	/// <seealso cref="LdapConstraints.getControls">
 	/// </seealso>
-	/// <seealso cref="LdapSearchConstraints#setControls">
+	/// <seealso cref="LdapConstraints.setControls">
 	/// </seealso>
 	public class LdapControl : System.ICloneable
 	{
@@ -115,12 +115,12 @@ namespace Novell.Directory.Ldap
 		/// 
 		/// </summary>
 		/// <param name="oid">    The OID of the control, as a dotted string.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="critical">  True if the Ldap operation should be discarded if
 		/// the control is not supported. False if
 		/// the operation can be processed without the control.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="values">    The control-specific data.
 		/// </param>
@@ -215,12 +215,12 @@ namespace Novell.Directory.Ldap
 		/// <summary> Registers a class to be instantiated on receipt of a control with the
 		/// given OID.
 		/// 
-		/// <p>Any previous registration for the OID is overridden. The
-		/// controlClass must be an extension of LdapControl.</p>
+		/// Any previous registration for the OID is overridden. The
+		/// controlClass must be an extension of LdapControl.
 		/// 
 		/// </summary>
 		/// <param name="oid">           The object identifier of the control.
-		/// <br><br>
+		/// 
 		/// </param>
 		/// <param name="controlClass">  A class which can instantiate an LdapControl.
 		/// </param>

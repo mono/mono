@@ -46,8 +46,8 @@ namespace Novell.Directory.Ldap.Asn1
 		public const int TAG = 0x11;
 		
 		/// <summary> ID is added for Optimization.</summary>
-		/// <summary> <p>ID needs only be one Value for every instance,
-		/// thus we create it only once.</p>
+		/// <summary> ID needs only be one Value for every instance,
+		/// thus we create it only once.
 		/// </summary>
 		public static readonly Asn1Identifier ID = new Asn1Identifier(Asn1Identifier.UNIVERSAL, true, TAG);
 		/* Constructors for Asn1Set
@@ -80,7 +80,7 @@ namespace Novell.Directory.Ldap.Asn1
 		/// </summary>
 		/// <param name="dec">The decoder object to use when decoding the
 		/// input stream.  Sometimes a developer might want to pass
-		/// in his/her own decoder object<br>
+		/// in his/her own decoder object
 		/// 
 		/// </param>
 		/// <param name="in">A byte stream that contains the encoded ASN.1

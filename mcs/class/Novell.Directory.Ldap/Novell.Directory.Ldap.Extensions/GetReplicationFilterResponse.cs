@@ -40,11 +40,11 @@ namespace Novell.Directory.Ldap.Extensions
 	
 	/// <summary>  This object represent the filter returned fom a GetReplicationFilterRequest.
 	/// 
-	/// <p>An object in this class is generated from an ExtendedResponse object
-	/// using the ExtendedResponseFactory class.</p>
+	/// An object in this class is generated from an ExtendedResponse object
+	/// using the ExtendedResponseFactory class.
 	/// 
-	/// <p>The GetReplicationFilterResponse extension uses the following OID:<br>
-	/// &nbsp;&nbsp;&nbsp;2.16.840.1.113719.1.27.100.38</p>
+	/// The GetReplicationFilterResponse extension uses the following OID:
+	/// 2.16.840.1.113719.1.27.100.38
 	/// 
 	/// </summary>
 	public class GetReplicationFilterResponse:LdapExtendedResponse
@@ -72,18 +72,18 @@ namespace Novell.Directory.Ldap.Extensions
 		/// <summary> Constructs an object from the responseValue which contains the replication
 		/// filter.
 		/// 
-		/// <p>The constructor parses the responseValue which has the following
-		/// format:<br>
-		/// responseValue ::=<br>
-		/// &nbsp;&nbsp;&nbsp;&nbsp; SEQUENCE of SEQUENCE {</p>
-		/// &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; classname&nbsp;&nbsp;&nbsp;  OCTET STRING</p>
-		/// &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; SEQUENCE of ATTRIBUTES</p>
-		/// &nbsp;&nbsp;&nbsp;&nbsp;}</p>
-		/// &nbsp;&nbsp;&nbsp;&nbsp;where</p>
-		/// &nbsp;&nbsp;&nbsp;&nbsp;ATTRIBUTES:: OCTET STRING</p>
+		/// The constructor parses the responseValue which has the following
+		/// format:
+		/// responseValue ::=
+		///  SEQUENCE of SEQUENCE {
+		///  classname  OCTET STRING
+		///  SEQUENCE of ATTRIBUTES
+		/// }
+		/// where
+		/// ATTRIBUTES:: OCTET STRING
 		/// 
 		/// </summary>
-		/// <exception cref=""> IOException The responseValue could not be decoded.
+		/// <exception> IOException The responseValue could not be decoded.
 		/// </exception>
 		public GetReplicationFilterResponse(RfcLdapMessage rfcMessage):base(rfcMessage)
 		{
