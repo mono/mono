@@ -512,33 +512,34 @@ namespace System.Net
 				throw new ProtocolViolationException ("Cannot send data when method is: " + method);
 
 			CommonChecks (send);
-			Monitor.Enter (this);
-			if (asyncWrite != null) {
-				Monitor.Exit (this);
-				throw new InvalidOperationException ("Cannot re-call start of asynchronous " +
-							"method while a previous call is still in progress.");
-			}
-
-			asyncWrite = new WebAsyncResult (this, callback, state);
-			initialMethod = method;
-			if (haveRequest) {
-				if (writeStream != null) {
-					Monitor.Exit (this);
-					asyncWrite.SetCompleted (true, writeStream);
-					asyncWrite.DoCallback ();
-					return asyncWrite;
-				}
-			}
 			
-			gotRequestStream = true;
-			WebAsyncResult result = asyncWrite;
-			if (!requestSent) {
-				requestSent = true;
-				servicePoint = GetServicePoint ();
-				abortHandler = servicePoint.SendRequest (this, connectionGroup);
+			lock (this)
+			{
+				if (asyncWrite != null) {
+					throw new InvalidOperationException ("Cannot re-call start of asynchronous " +
+								"method while a previous call is still in progress.");
+				}
+	
+				asyncWrite = new WebAsyncResult (this, callback, state);
+				initialMethod = method;
+				if (haveRequest) {
+					if (writeStream != null) {
+						Monitor.Exit (this);
+						asyncWrite.SetCompleted (true, writeStream);
+						asyncWrite.DoCallback ();
+						return asyncWrite;
+					}
+				}
+				
+				gotRequestStream = true;
+				WebAsyncResult result = asyncWrite;
+				if (!requestSent) {
+					requestSent = true;
+					servicePoint = GetServicePoint ();
+					abortHandler = servicePoint.SendRequest (this, connectionGroup);
+				}
+				return result;
 			}
-			Monitor.Exit (this);
-			return result;
 		}
 
 		public override Stream EndGetRequestStream (IAsyncResult asyncResult)

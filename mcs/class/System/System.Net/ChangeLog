@@ -1,3 +1,12 @@
+2004-03-29  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* HttpWebRequest.cs: Use a lock block instead of Monitor.Enter/Exit, so
+	the lock is released in case of exception (for example, a 
+	ThreadAbortException). This also "fixes" bug #52417.
+	Beware, this requires a runtime update (due to a bug in Monitor.Exit).
+	* ServicePoint.cs: Changed method from internal to private, since it is not
+	called from outside the class.
+
 2004-03-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpWebRequest.cs: added the exception status to the error message.

@@ -180,7 +180,7 @@ namespace System.Net
 			protocolVersion = version;
 		}
 		
-		internal WebConnectionGroup GetConnectionGroup (string name)
+		WebConnectionGroup GetConnectionGroup (string name)
 		{
 			if (name == null)
 				name = "";
