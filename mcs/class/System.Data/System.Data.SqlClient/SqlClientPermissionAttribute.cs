@@ -1,16 +1,14 @@
 //
 // System.Data.SqlClient.SqlClientPermissionAttribute.cs
 //
-// Author:
-//   Rodrigo Moya (rodrigo@ximian.com)
-//   Daniel Morgan (danmorg@sc.rr.com)
-//   Tim Coleman (tim@timcoleman.com)
+// Authors:
+//	Rodrigo Moya (rodrigo@ximian.com)
+//	Daniel Morgan (danmorg@sc.rr.com)
+//	Tim Coleman (tim@timcoleman.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) Ximian, Inc 2002
 // Copyright (C) Tim Coleman, 2002
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -33,20 +31,19 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-using System.Data;
 using System.Data.Common;
 using System.Security;
 using System.Security.Permissions;
 
 namespace System.Data.SqlClient {
+
 	[AttributeUsage (AttributeTargets.Assembly | AttributeTargets.Class | 
 			 AttributeTargets.Struct | AttributeTargets.Constructor | 
 			 AttributeTargets.Method, AllowMultiple=true,
 			 Inherited=false)]
 	[Serializable]
-	public sealed class SqlClientPermissionAttribute : DBDataPermissionAttribute 
-	{
+	public sealed class SqlClientPermissionAttribute : DBDataPermissionAttribute {
+
 		#region Constructors
 
 		public SqlClientPermissionAttribute (SecurityAction action) 
@@ -58,13 +55,15 @@ namespace System.Data.SqlClient {
 
 		#region Methods
 
-		public override IPermission CreatePermission() 
+		public override IPermission CreatePermission () 
 		{
 			if (base.Unrestricted) {
-				return new SqlClientPermission ( PermissionState.Unrestricted); 
+				return new SqlClientPermission (PermissionState.Unrestricted);
 			}
-			return new SqlClientPermission ( PermissionState.None); 
 
+			SqlClientPermission p = new SqlClientPermission (PermissionState.None, this.AllowBlankPassword);
+			p.Add (this.ConnectionString, this.KeyRestrictions, this.KeyRestrictionBehavior);
+			return p;
 		}
 
 		#endregion // Methods

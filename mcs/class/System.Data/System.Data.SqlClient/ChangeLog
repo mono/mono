@@ -1,3 +1,8 @@
+2004-09-13  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SqlClientPermission.cs: Mostly completed (needs tests).
+	* SqlClientPermissionAttribute.cs: Completed.
+
 2004-09-02 Umadevi S <sumadevi@novell.com>
 	* SqlCommand.cs - ExecuteNonQuery to return -1 incase of executing a storedprocedure
 

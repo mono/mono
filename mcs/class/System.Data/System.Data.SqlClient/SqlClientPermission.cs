@@ -1,16 +1,14 @@
 //
 // System.Data.SqlClient.SqlClientPermission.cs
 //
-// Author:
-//   Rodrigo Moya (rodrigo@ximian.com)
-//   Daniel Morgan (danmorg@sc.rr.com)
-//   Tim Coleman (tim@timcoleman.com)
+// Authors:
+//	Rodrigo Moya (rodrigo@ximian.com)
+//	Daniel Morgan (danmorg@sc.rr.com)
+//	Tim Coleman (tim@timcoleman.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) Ximian, Inc 2002
 // Copyright (C) Tim Coleman, 2002
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -33,20 +31,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-using System.Data;
 using System.Data.Common;
 using System.Security;
 using System.Security.Permissions;
 
 namespace System.Data.SqlClient {
+
 	[Serializable]
-	public sealed class SqlClientPermission : DBDataPermission 
-	{
+	public sealed class SqlClientPermission : DBDataPermission {
+
 		#region Fields
-
-		PermissionState state;
-
 		#endregion // Fields
 
 		#region Constructors
@@ -68,28 +62,39 @@ namespace System.Data.SqlClient {
 
 		[Obsolete ("Use SqlClientPermission(PermissionState.None)", true)]
 		public SqlClientPermission (PermissionState state, bool allowBlankPassword) 
-#if NET_2_0
-			: this (state)
-#endif
+			: base (state, allowBlankPassword)
 		{
-			AllowBlankPassword = allowBlankPassword;
+		}
+
+		// required for Copy method
+		internal SqlClientPermission (DBDataPermission permission)
+			: base (permission)
+		{
 		}
 
 		#endregion // Constructors
 
 		#region Methods
 
-		public override IPermission Copy()
+		public override IPermission Copy ()
 		{
-			return new SqlClientPermission ( state);			
+			return new SqlClientPermission (this);
 		}
 
-		[MonoTODO]
+#if NET_2_0
+		[MonoTODO ("overridden for what ? additional validations ???")]
+		protected virtual void AddConnectionString (string connectionString, string restrictions, 
+			KeyRestrictionBehavior behavior, Hashtable synonyms, bool useFirstKeyValue)
+		{
+			base.Add (connectionString, restrictions, behavior, synonyms, useFirstKeyValue);
+		}
+#else
+		[MonoTODO ("overridden for what ? additional validations ???")]
 		public override void Add (string connectionString, string restrictions, KeyRestrictionBehavior behavior)
 		{
-			throw new NotImplementedException ();
+			base.Add (connectionString, restrictions, behavior);
 		}
-
+#endif
 		#endregion // Methods
 	}
 }
