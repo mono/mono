@@ -127,12 +127,12 @@ namespace System.Data.Common
 
 		public DataColumnMapping this[int index] {
 			get {
-				if (value < size)
+				if (index < size)
 					return mappings[index];
 				return null;
 			}
 			set {
-				if (value < size)
+				if (index < size)
 					mappings[index] = value;
 			}
 		}
