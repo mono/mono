@@ -54,10 +54,10 @@ namespace System {
 
 		public override string Message {
 			get {
+				string basemsg = base.Message;
 				if (actual_value == null)
-					return Locale.GetText ("Argument is out of range.");
-				else
-					return Locale.GetText ("Argument is out of range.") + actual_value;
+					return basemsg;
+				return basemsg + '\n' + actual_value;
 			}
 		}
 

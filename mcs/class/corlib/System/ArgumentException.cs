@@ -65,7 +65,7 @@ namespace System {
 				if (param_name == null)
 					return base_message;
 				else
-					return base_message + "\nParameter name: " + ParamName;
+					return base_message + "\nParameter name: " + param_name;
 			}
 		}
 		

@@ -144,7 +144,8 @@ namespace System
 				hour < 0 || hour > 23 ||
 				minute < 0 || minute > 59 ||
 				second < 0 || second > 59 )
-				throw new ArgumentOutOfRangeException() ;
+				throw new ArgumentOutOfRangeException ("Parameters describe an " +
+									"unrepresentable DateTime.");
 
 			ticks = new TimeSpan (AbsoluteDays(year,month,day), hour, minute, second, millisecond);
 		}
@@ -517,8 +518,8 @@ namespace System
 
 			if (!leadingzero) {
 				int real_digits = 0;
-				for (i = 0; i < digits; i++) {
-					if ((i >= s.Length) || !Char.IsDigit (s[i]))
+				for (i = 0; i < s.Length; i++) {
+					if (!Char.IsDigit (s[i]))
 						break;
 
 					real_digits++;
@@ -705,8 +706,6 @@ namespace System
 						month = _ParseEnum (s, dfi.MonthNames, out num_parsed) + 1;
 						num = 3;
 					}
-					if ((month < 1) || (month > 12))
-						return false;
 					break;
 				case 'y':
 					if (year != -1)
@@ -721,6 +720,10 @@ namespace System
 						year = _ParseNumber (s, 4, false, sloppy_parsing, out num_parsed);
 						num = 3;
 					}
+					
+					if (year < 1 || year > 9999)
+						throw new ArgumentOutOfRangeException ("year", "Valid " + 
+								"values are between 1 and 9999 inclusive");
 					break;
 				case 'h':
 					if (hour != -1)
@@ -732,8 +735,10 @@ namespace System
 						hour = _ParseNumber (s, 2, true, sloppy_parsing, out num_parsed);
 						num = 1;
 					}
+
 					if (hour >= 12)
 						return false;
+
 					break;
 				case 'H':
 					if ((hour != -1) || (ampm >= 0))
@@ -747,6 +752,7 @@ namespace System
 					}
 					if (hour >= 24)
 						return false;
+
 					ampm = -2;
 					break;
 				case 'm':
@@ -761,6 +767,7 @@ namespace System
 					}
 					if (minute >= 60)
 						return false;
+
 					break;
 				case 's':
 					if (second != -1)
@@ -774,12 +781,15 @@ namespace System
 					}
 					if (second >= 60)
 						return false;
+
 					break;
 				case 'f':
 					if (millisecond != -1)
 						return false;
 					num = Math.Min (num, 6);
 					millisecond = _ParseNumber (s, num+1, true, sloppy_parsing, out num_parsed);
+					if (millisecond >= 1000)
+						return false;
 					break;
 				case 't':
 					if (ampm != -1)

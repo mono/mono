@@ -1,3 +1,14 @@
+2002-08-23  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ArgumentException.cs: use the field instead of the property for
+	param_name.
+
+	* ArgumentOutOfRangeException.cs: modified Message.
+
+	* DateTime.cs: 
+	(_DoParse): throw out of range exception for year. Removed check
+	for month (it's done in the constructor).
+
 2002-08-21  Miguel de Icaza  <miguel@ximian.com>
 
 	* Environment.cs: Implemented OSVersion property.
