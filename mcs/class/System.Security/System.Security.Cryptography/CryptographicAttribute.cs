@@ -1,5 +1,5 @@
 //
-// AsnEncodedData.cs - System.Security.Cryptography.AsnEncodedData
+// CryptographicAttribute.cs - System.Security.Cryptography.CryptographicAttribute
 //
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
@@ -30,85 +30,44 @@
 #if NET_2_0
 
 using System;
-using System.Text;
+using System.Collections;
 
 namespace System.Security.Cryptography {
 
-	public class AsnEncodedData {
+	public sealed class CryptographicAttribute {
 
 		private Oid _oid;
-		private byte[] _raw;
+		private AsnEncodedDataCollection _list;
 
 		// constructors
 
-		public AsnEncodedData ()
-		{
-		}
-	
-		public AsnEncodedData (string oid, byte[] rawData)
-			: this (new Oid (oid), rawData)
-		{
-		}
-
-		public AsnEncodedData (Oid oid, byte[] rawData)
+		public CryptographicAttribute (Oid oid) 
 		{
 // FIXME: compatibility with fx 1.2.3400.0
-			if (oid == null)
-				throw new NullReferenceException ();
+//			if (oid == null)
 //				throw new ArgumentNullException ("oid");
-			if (rawData == null)
-				throw new NullReferenceException ();
-//				throw new ArgumentNullException ("rawData");
 
 			_oid = oid;
-			_raw = rawData;
+			_list = new AsnEncodedDataCollection ();
 		}
 
-		public AsnEncodedData (AsnEncodedData asnEncodedData)
+		public CryptographicAttribute (Oid oid,	AsnEncodedDataCollection values) : this (oid) 
 		{
-			CopyFrom (asnEncodedData);
-		}
+			if (values == null)
+				throw new ArgumentNullException ("values");
 
-		[MonoTODO]
-		public AsnEncodedData (byte[] rawData)
-		{
+			foreach (AsnEncodedData aed in values)
+				_list.Add (aed);
 		}
 
 		// properties
 
-		[MonoTODO ("actual data or copy ?")]
-		public Oid Oid {
+		public Oid Oid { 
 			get { return _oid; }
-			set { _oid = value; }
 		}
 
-		[MonoTODO ("actual data or copy ?")]
-		public byte[] RawData { 
-			get { return _raw; }
-			set { _raw = value; }
-		}
-
-		// methods
-
-		[MonoTODO ("actual data or copy ?")]
-		public virtual void CopyFrom (AsnEncodedData asnEncodedData)
-		{
-			if (asnEncodedData == null)
-				throw new ArgumentNullException ("asnEncodedData");
-
-			_oid = new Oid (asnEncodedData._oid);
-			_raw = asnEncodedData._raw;
-		}
-
-		public virtual string Format (bool multiLine) 
-		{
-			StringBuilder sb = new StringBuilder ();
-			for (int i=0; i < _raw.Length; i++) {
-				sb.Append (_raw [i].ToString ("x2"));
-				if (i != _raw.Length - 1)
-					sb.Append (" ");
-			}
-			return sb.ToString ();
+		public AsnEncodedDataCollection Values { 
+			get { return _list; }
 		}
 	}
 }
