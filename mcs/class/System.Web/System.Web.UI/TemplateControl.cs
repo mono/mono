@@ -92,7 +92,7 @@ namespace System.Web.UI {
 		}
 
 		[MonoTODO]
-		protected void SetStringresourcePointer (object stringResourcePointer,
+		protected void SetStringResourcePointer (object stringResourcePointer,
 							 int maxResourceOffset)
 		{
 		}

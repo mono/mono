@@ -78,12 +78,7 @@ namespace System.Web.UI.WebControls
 				if(index < 0 || index >= Count)
 					return null;
 				return (ListItem)(items[index]);
-			}
-			set
-			{
-				if(index >= 0 && index < Count)
-					items[index] = value;
-			}
+			}		
 		}
 
 		public object SyncRoot
@@ -295,12 +290,12 @@ namespace System.Web.UI.WebControls
 			{
 				return this[index];
 			}
+			
 			set
 			{
-				if(value is ListItem)
-				{
-					this[index] = (ListItem)value;
-				}
+				if(index >= 0 && index < Count)
+					if(value is ListItem)
+						items[index] = (ListItem) value;
 			}
 		}
 

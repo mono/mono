@@ -1,5 +1,8 @@
 2002-05-24  Duncan Mak  <duncan@ximian.com>
 
+	* ListItemCollection.cs (this): Changes the visibility level of
+	the indexer.
+
 	* Repeater.cs (OnItemCommand):
 	(OnItemCreated):
 	(OnItemDataBound): Added necessary casts.
