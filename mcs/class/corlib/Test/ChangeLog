@@ -1,3 +1,8 @@
+2002-04-15  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* System.Net/: added directory.
+	* AllTests.cs: added System.Net suite.
+
 2002/04/04 Nick Drochak <ndrochak@gol.com>
 
  	* corlib_test.build: Again; disable running of NUnit tests against mono 
