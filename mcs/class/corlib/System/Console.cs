@@ -20,15 +20,23 @@ namespace System {
 
 		static Console ()
 		{
-			stderr = new StreamWriter (OpenStandardError (), Encoding.Default);
+			string codepage = Encoding.InternalCodePage ();
+			Encoding encoding;
+			
+			if (codepage.ToLower ().Replace ('-', '_') == "utf_8")
+				encoding = Encoding.UTF8Unmarked;
+			else
+				encoding = Encoding.Default;
+			
+			stderr = new StreamWriter (OpenStandardError (), encoding);
 			((StreamWriter)stderr).AutoFlush = true;
 			stderr = TextWriter.Synchronized (stderr);
 			
-			stdout = new StreamWriter (OpenStandardOutput (), Encoding.Default);
+			stdout = new StreamWriter (OpenStandardOutput (), encoding);
 			((StreamWriter)stdout).AutoFlush = true;
 			stdout = TextWriter.Synchronized (stdout);
 			
-			stdin  = new StreamReader (OpenStandardInput (), Encoding.Default);
+			stdin  = new StreamReader (OpenStandardInput (), encoding);
 			stdin = TextReader.Synchronized (stdin);
 		}
 

@@ -616,7 +616,7 @@ public abstract class Encoding
 	}
 
 	[MethodImpl (MethodImplOptions.InternalCall)]
-	extern private static string InternalCodePage ();
+	extern internal static string InternalCodePage ();
 	
 	// Get the default encoding object.
 	public static Encoding Default
