@@ -34,6 +34,11 @@ namespace System.Xml
 			string namespaceURI, 
 			XmlDocument doc) : base (doc)
 		{
+			if (prefix == null)
+				prefix = String.Empty;
+			if (namespaceURI == null)
+				namespaceURI = String.Empty;
+
 			// I think prefix "xml" should be checked as same, but
 			// MS.NET ignores such case.
 			if (prefix == "xmlns" || (prefix == "" && localName == "xmlns"))
