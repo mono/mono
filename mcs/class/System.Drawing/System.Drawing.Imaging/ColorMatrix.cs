@@ -19,6 +19,7 @@ namespace System.Drawing.Imaging {
 		}
 		
 		[MonoTODO]
+		[CLSCompliant(false)]
 		public ColorMatrix(float[][] newColorMatrix) {
 			throw new NotImplementedException ();
 		}

@@ -128,6 +128,7 @@ namespace System.Drawing.Imaging {
 		}
 
 		[MonoTODO]
+		[CLSCompliant(false)]
 		//[ComVisible(false)]
 		public byte[][] SignatureMasks {
 			get { return signatureMasks; }
@@ -135,6 +136,7 @@ namespace System.Drawing.Imaging {
 		}
 
 		[MonoTODO]
+		[CLSCompliant(false)]
 		//[ComVisible(false)]
 		public byte[][] SignaturePatterns {
 			get { return signaturePatterns; }
