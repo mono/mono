@@ -48,13 +48,9 @@ namespace System.Windows.Forms {
 		{
 			Widget contents = base.CreateWidget ();
 			win = new Window (WindowType.Toplevel);
-
 			win.DeleteEvent += new DeleteEventHandler (delete_cb);
 			win.Title = Text;
-			vbox = new Gtk.VBox(false, 0);
-			win.Add (vbox);
-			vbox.ShowAll ();
-			vbox.PackStart(contents, true, true, 0);
+			win.Add(contents);
 			return (Widget) win;
 		}
 

@@ -26,14 +26,21 @@ namespace demo2
 		private MenuItem menuItem4 = new MenuItem();
 		private MenuItem menuItem5 = new MenuItem();
 		private StatusBar statusBar1 = new StatusBar();
+		private StatusBar statusBar2 = new StatusBar();
 
 		private void InitializeWidgets()
 		{
-                        this.statusBar1.Location = new System.Drawing.Point(0, 251);
-                        this.statusBar1.Name = "statusBar1";
-                        this.statusBar1.Size = new System.Drawing.Size(292, 22);
-                        this.statusBar1.TabIndex = 0;
-                        this.statusBar1.Text = "statusBar1";
+			this.statusBar1.Location = new System.Drawing.Point(0, 251);
+			this.statusBar1.Name = "statusBar1";
+			this.statusBar1.Size = new System.Drawing.Size(292, 22);
+			this.statusBar1.TabIndex = 0;
+			this.statusBar1.Text = "statusBar1";
+
+			this.statusBar2.Location = new System.Drawing.Point(0, 240);
+			this.statusBar2.Name = "statusBar2";
+			this.statusBar2.Size = new System.Drawing.Size(292, 22);
+			this.statusBar2.TabIndex = 0;
+			this.statusBar2.Text = "statusBar2";
 
 			button1.Location = new Point(150, 28);
 			button1.Name = "button1";
@@ -76,7 +83,8 @@ namespace demo2
 									    this.button2,
 									    this.color1,
 									    this.combo1, 
-									    this.statusBar1});
+									    this.statusBar1,
+									    this.statusBar2});
 
 			this.Size = new Size(512, 250);
 			this.Menu = mainMenu1;

@@ -49,6 +49,7 @@ namespace System.Windows.Forms {
 			// ControlCollection
 			public virtual void Add (Control value)
 			{
+				// TODO: Throz
 				if (value.GetType() == typeof(System.Windows.Forms.StatusBar))
 				{
 					this.owner.vbox.PackEnd(value.widget, false, false, 0);
@@ -65,6 +66,7 @@ namespace System.Windows.Forms {
 					this.owner.vbox.ShowAll();
 					list.Add (value);
 				}
+				// TODO System.Windows.Forms.ToolBar
 				else {
 					list.Add (value);
 					owner.OnControlAdded (new ControlEventArgs (value));
@@ -165,7 +167,7 @@ namespace System.Windows.Forms {
 		}
 
 		public Control (string text, int left, int top, int width, int height)
-		{			
+		{
 		}
 
 		public Control (Control parent, string text, int left, int top, int width, int height)
@@ -183,9 +185,14 @@ namespace System.Windows.Forms {
 		
 		internal virtual Widget CreateWidget ()
 		{
+			vbox = new Gtk.VBox(false, 0);
+
 			layout = new Gtk.Layout (new Gtk.Adjustment (IntPtr.Zero), new Gtk.Adjustment (IntPtr.Zero));
 			layout.Show ();
-			return layout;
+
+			vbox.PackStart(layout, true, true, 0);
+			vbox.ShowAll ();
+			return vbox;
 		}
 
 		public virtual string Text {
