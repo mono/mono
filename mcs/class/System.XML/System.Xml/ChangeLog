@@ -1,5 +1,10 @@
 2004-10-29  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlValidatingReader.cs : fixed incorrect recursion between
+	  indexer and GetAttribute().
+
+2004-10-29  Atsushi Enomoto <atsushi@ximian.com>
+
 	* DTDReader.cs, DTDValidatingReader.cs, XmlTextReader.cs :
 	  When XmlTextReader is created with NodeType Element or Attribute,
 	  skip possible text declaration (that might be used for resolving

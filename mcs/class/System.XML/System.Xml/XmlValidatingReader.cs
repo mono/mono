@@ -149,19 +149,15 @@ namespace System.Xml
 #if NET_2_0
 #else
 		public override string this [int i] { 
-			get {
-				if (validatingReader == null)
-					throw new IndexOutOfRangeException ("Reader is not started.");
-				return validatingReader [i];
-			}
+			get { return GetAttribute (i); }
 		}
 
 		public override string this [string name] { 
-			get { return validatingReader == null ? null : validatingReader [name]; }
+			get { return GetAttribute (name); }
 		}
 
 		public override string this [string localName, string namespaceName] { 
-			get { return validatingReader == null ? null : validatingReader [localName, namespaceName]; }
+			get { return GetAttribute (localName, namespaceName); }
 		}
 #endif
 
@@ -360,17 +356,19 @@ namespace System.Xml
 
 		public override string GetAttribute (int i)
 		{
-			return this [i];
+			if (validatingReader == null)
+				throw new IndexOutOfRangeException ("Reader is not started.");
+			return validatingReader [i];
 		}
 
 		public override string GetAttribute (string name)
 		{
-			return this [name];
+			return validatingReader == null ? null : validatingReader [name];
 		}
 
 		public override string GetAttribute (string localName, string namespaceName)
 		{
-			return this [localName, namespaceName];
+			return validatingReader == null ? null : validatingReader [localName, namespaceName];
 		}
 
 		XmlParserContext IHasXmlParserContext.ParserContext {
