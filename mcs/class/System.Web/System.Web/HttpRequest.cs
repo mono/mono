@@ -729,9 +729,11 @@ namespace System.Web {
 					_oParams.Merge(QueryString);
 					_oParams.Merge(Form);
 					_oParams.Merge(ServerVariables);
-					string [] cookies = Cookies.AllKeys;
-					foreach (string k in cookies)
-						_oParams.Add (k, Cookies [k].ToString ());
+					int count = Cookies.Count;
+					for (int i = 0; i< count; i++) {
+						HttpCookie cookie = Cookies [i];
+						_oParams.Add (cookie.Name, cookie.Value);
+					}
 					_oParams.MakeReadOnly();
 				}
 
