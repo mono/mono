@@ -561,7 +561,7 @@ namespace Commons.Xml.Nvdl
 		{
 			XmlDocument doc = new XmlDocument ();
 			XmlElement el = doc.CreateElement ("virtualElement",
-				Nvdl.PlaceHolderNamespace);
+				Nvdl.InstanceNamespace);
 			for (int i = 0; i < reader.AttributeCount; i++) {
 				reader.MoveToAttribute (i);
 				if (reader.NamespaceURI != ns)

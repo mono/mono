@@ -1,5 +1,10 @@
 2005-03-07  Atsushi Enomoto <atsushi@ximian.com>
 
+	* NvdlFilteredXmlReader.cs, NvdlStructures.cs, NvdlSimplified.cs :
+	  "PlaceHolderNamespace" is not proper name (for "virtualElement").
+
+2005-03-07  Atsushi Enomoto <atsushi@ximian.com>
+
 	* NvdlBuiltInValidationProvider.cs :
 	  When it is "allow", it should not always return false.
 	* NvdlFilteredXmlReader.cs :

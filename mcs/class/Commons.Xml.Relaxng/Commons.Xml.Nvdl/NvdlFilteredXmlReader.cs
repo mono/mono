@@ -266,7 +266,7 @@ namespace Commons.Xml.Nvdl
 				switch (placeHolder) {
 				case XmlNodeType.Element:
 				case XmlNodeType.EndElement:
-					return Nvdl.PlaceHolderNamespace;
+					return Nvdl.InstanceNamespace;
 				case XmlNodeType.Attribute:
 					return placeHolderLocalNameAttr ?
 						"localName" : "ns";
@@ -402,7 +402,7 @@ namespace Commons.Xml.Nvdl
 			// empty prefix. So we have to handle empty prefix as if
 			// it was mapped to the namespace.
 			if (placeHolder != XmlNodeType.None && prefix == String.Empty)
-				return Nvdl.PlaceHolderNamespace;
+				return Nvdl.InstanceNamespace;
 			return reader.LookupNamespace (prefix);
 		}
 
