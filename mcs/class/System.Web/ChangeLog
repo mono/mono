@@ -1,3 +1,10 @@
+2005-02-10  Lluis Sanchez Gual <lluis@novell.com>
+
+	* System.Web.dll.sources: New files:
+		System.Web.UI/ICheckBoxControl.cs
+		System.Web.UI/IStaticTextControl.cs
+		System.Web.UI/ITextControl.cs
+
 2005-02-04  Lluis Sanchez Gual <lluis@novell.com>
 
 	* Makefile: Added resource file.

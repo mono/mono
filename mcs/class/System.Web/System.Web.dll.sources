@@ -638,6 +638,9 @@ System.Web.UI/HtmlTextWriterTag.cs
 System.Web.UI/IAttributeAccessor.cs
 System.Web.UI/IBindableTemplate.cs
 System.Web.UI/ICallbackEventHandler.cs
+System.Web.UI/ICheckBoxControl.cs
+System.Web.UI/IStaticTextControl.cs
+System.Web.UI/ITextControl.cs
 System.Web.UI/IControlBuilderAccessor.cs
 System.Web.UI/IControlDesignerAccessor.cs
 System.Web.UI/IControlTypeFilter.cs
