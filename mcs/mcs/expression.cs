@@ -862,7 +862,8 @@ namespace CIR {
 		//   User-defined conversions
 		// </summary>
 		static public Expression UserDefinedConversion (TypeContainer tc, Expression source,
-								Type target, Location l, bool look_for_explicit)
+								Type target, Location l,
+								bool look_for_explicit)
 		{
 			Expression mg1 = null, mg2 = null, mg3 = null, mg4 = null;
 			Expression mg5 = null, mg6 = null, mg7 = null, mg8 = null;
@@ -959,9 +960,17 @@ namespace CIR {
 				// if the best match was not the type that we were requested
 				// by target.
 				//
-				e =  new UserCast ((MethodInfo) method, source, most_specific_source,
-						   most_specific_target, look_for_explicit);
+				if (look_for_explicit)
+					source = ConvertExplicit (tc, source, most_specific_source, l);
+				else
+					source = ConvertImplicitStandard (tc, source, most_specific_source,
+									  l);
 
+				if (source == null)
+					return null;
+				
+				e =  new UserCast ((MethodInfo) method, source);
+				
 				if (e.Type != target){
 					e = ConvertImplicitStandard (tc, e, target, l);
 					return e;
@@ -4433,22 +4442,16 @@ namespace CIR {
 			// nothing, as we only exist to not do anything.
 		}
 	}
-	
+
 	public class UserCast : Expression {
 		MethodBase method;
 		Expression source;
-		Type       most_specific_source;
-		Type       most_specific_target;
 		bool       is_explicit;
 		
-		public UserCast (MethodInfo method, Expression source, Type most_specific_source,
-				 Type most_specific_target, bool is_explicit)
+		public UserCast (MethodInfo method, Expression source)
 		{
 			this.method = method;
 			this.source = source;
-			this.most_specific_source = most_specific_source;
-			this.most_specific_target = most_specific_target;
-			this.is_explicit = is_explicit;
 			type = method.ReturnType;
 			eclass = ExprClass.Value;
 		}
@@ -4456,7 +4459,7 @@ namespace CIR {
 		public override Expression DoResolve (TypeContainer tc)
 		{
 			//
-			// We are born in a fully resolved state
+			// We are born fully resolved
 			//
 			return this;
 		}
@@ -4464,18 +4467,8 @@ namespace CIR {
 		public override void Emit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
-			Location tmp = new Location (-1);
 
-			// Note that operators are static anyway
-
-			Expression e;
-			
-			if (!is_explicit)
-				e = ConvertImplicitStandard (ec.parent, source, most_specific_source, tmp);
-			else
-				e = ConvertExplicit (ec.parent, source, most_specific_source, tmp);
-			
-			e.Emit (ec);
+			source.Emit (ec);
 			
 			if (method is MethodInfo)
 				ig.Emit (OpCodes.Call, (MethodInfo) method);

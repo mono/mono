@@ -1,3 +1,11 @@
+2001-10-07  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (UserCast): This user cast was not really doing
+	what it was supposed to do.  Which is to be born in fully resolved
+	state.  Parts of the resolution were being performed at Emit time! 
+
+	Fixed this code.
+
 2001-10-05  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs: Implicity convert the result from UserCast.
