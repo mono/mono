@@ -1,3 +1,7 @@
+2004-11-10  Raja R Harinath  <rharinath@novell.com>
+
+	* SqlDataSourceView.cs (Select): Add 'override' to make it compile.
+
 2004-11-05 Sanjay Gupta <gsanjay@novell.com>
 	
 	* SqlDataSource.cs: Corrected method calls.

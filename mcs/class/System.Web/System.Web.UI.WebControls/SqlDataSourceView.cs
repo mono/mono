@@ -87,7 +87,7 @@ namespace System.Web.UI.WebControls {
 		}
 
 		[MonoTODO("Extra method to keep things compiling, need to remove later")]
-		public IEnumerable Select()
+		public override IEnumerable Select()
 		{
 			throw new NotImplementedException ("Not required");
 		}
