@@ -1,3 +1,8 @@
+2005-03-04  Zoltan Varga  <vargaz@freemail.hu>
+
+	* get.c (dis_stringify_marshal_spec): Fix this after recent runtime
+	changes.
+
 2005-03-01  Zoltan Varga  <vargaz@freemail.hu>
 
 	* get.c: Output marshal info for parameters.
