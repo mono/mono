@@ -64,13 +64,18 @@ namespace System.IO {
 
                 public static TextWriter Synchronized (TextWriter writer)
 		{
+			return Synchronized (writer, false);
+                }
+
+                internal static TextWriter Synchronized (TextWriter writer, bool neverClose)
+		{
 			if (writer == null)
 				throw new ArgumentNullException ("writer is null");
 
 			if (writer is SynchronizedWriter)
 				return writer;
 			
-			return new SynchronizedWriter (writer);
+			return new SynchronizedWriter (writer, neverClose);
                 }
 
                 public virtual void Write (bool value)
@@ -310,14 +315,23 @@ namespace System.IO {
 	[Serializable]
 	internal class SynchronizedWriter : TextWriter {
 		private TextWriter writer;
+		private bool neverClose;
 
 		public SynchronizedWriter (TextWriter writer)
+			: this (writer, false)
+		{
+		}
+
+		public SynchronizedWriter (TextWriter writer, bool neverClose)
 		{
 			this.writer = writer;
+			this.neverClose = neverClose;
 		}
 
 		public override void Close ()
 		{
+			if (neverClose)
+				return;
 			lock (this){
 				writer.Close ();
 			}
