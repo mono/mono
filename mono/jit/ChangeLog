@@ -1,3 +1,29 @@
+2002-09-03  Martin Baulig  <martin@gnome.org>
+
+	* debug.h (MonoDebugFormat): Killed MONO_DEBUG_FORMAT_DWARF2_PLUS.
+	* debug-dwarf2-plus.c: Removed.
+
+	* debug-private.h (DebugMethodInfo): Removed the `method_info' field.
+	(AssemblyDebugInfo): Removed the old `symfile' field and renamed
+	`mono_symfile' to `symfile'.
+
+	* debug.c (mono_debug_open): Replaced the assembly argument with a
+	file name argument; you can now call this before loading the assembly.
+	(debug_generate_method_lines): The MonoDebugILOffsetInfo struct is gone,
+	we now use MonoSymbolFileLineNumberEntry's and a separate address array
+	instead; splitted out all MonoSymbolFileLineNumberEntry code into
+	debug_generate_il_offsets() and debug_update_il_offsets().
+	(mono_debug_add_method): Don't create the MonoDebugMethodInfo here; it's
+	created when reading the symbol file or from debug_load_method_lines().
+	(debug_load_method_lines): Create the MonoDebugMethodInfo for all methods.
+
+	* exception.c (arch_handle_exception): Call mono_debug_make_symbols() before
+	looking up an address.
+
+	* debug.c: Don't create the .il files for MONO_DEBUG_FORMAT_MONO.
+
+	* mono.c (main): Initialize debugging before loading the first assembly.
+	
 2002-08-28  Dick Porter  <dick@ximian.com>
 
 	* mono.c: mono_set_rootdir() doesnt take any args now
