@@ -1,3 +1,11 @@
+2004-03-09  Joshua Tauberer <tauberer@for.net>
+
+	* expression.cs (ArrayCreation): Fix: More than 6 nulls in
+	a { ... }-style array creation invokes EmitStaticInitializers
+	which is not good for reference-type arrays.  String, decimal
+	and now null constants (NullCast) are not counted toward
+	static initializers.
+
 2004-03-05  Martin Baulig  <martin@ximian.com>
 
 	* location.cs (SourceFile.HasLineDirective): New public field;

@@ -5696,10 +5696,15 @@ namespace Mono.CSharp {
 					
 					if (conv == null) 
 						return false;
-
-					if (conv is StringConstant)
+					
+					if (conv is StringConstant || conv is DecimalConstant || conv is NullCast) {
+						// These are subclasses of Constant that can appear as elements of an
+						// array that cannot be statically initialized (with num_automatic_initializers
+						// > max_automatic_initializers), so num_automatic_initializers should be left as zero.
 						array_data.Add (conv);
-					else if (conv is Constant) {
+					} else if (conv is Constant) {
+						// These are the types of Constant that can appear in arrays that can be
+						// statically allocated.
 						array_data.Add (conv);
 						num_automatic_initializers++;
 					} else
@@ -6211,12 +6216,12 @@ namespace Mono.CSharp {
 
 						e.Emit (ec);
 
-                                                if (dims == 1)
-                                                        ArrayAccess.EmitStoreOpcode (ig, array_element_type);
-                                                else 
-                                                        ig.Emit (OpCodes.Call, set);
-                                                
-                                        }
+						if (dims == 1)
+							ArrayAccess.EmitStoreOpcode (ig, array_element_type);
+						else 
+							ig.Emit (OpCodes.Call, set);
+
+					}
 				}
 				
 				//
@@ -6269,12 +6274,11 @@ namespace Mono.CSharp {
 				// 
 				bool dynamic_initializers = true;
 
-				if (underlying_type != TypeManager.string_type &&
-				    underlying_type != TypeManager.decimal_type &&
-				    underlying_type != TypeManager.object_type) {
-					if (num_automatic_initializers > max_automatic_initializers)
-						EmitStaticInitializers (ec, dynamic_initializers || !is_statement);
-				}
+				// This will never be true for array types that cannot be statically
+				// initialized. num_automatic_initializers will always be zero.  See
+				// CheckIndices.
+				if (num_automatic_initializers > max_automatic_initializers)
+					EmitStaticInitializers (ec, dynamic_initializers || !is_statement);
 				
 				if (dynamic_initializers)
 					EmitDynamicInitializers (ec, !is_statement);
