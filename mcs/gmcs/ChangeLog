@@ -1,5 +1,9 @@
 2004-04-01  Martin Baulig  <martin@ximian.com>
 
+	* cs-tokenizer.cs (parse_less_than): Allow Token.DOT.
+
+2004-04-01  Martin Baulig  <martin@ximian.com>
+
 	* expression.cs (Invocation.EmitCall): If we're invoking a method
 	on a type parameter, use the new `Constrained' prefix opcode.
 

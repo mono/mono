@@ -426,7 +426,7 @@ namespace Mono.CSharp
 
 			if (the_token == Token.OP_GENERICS_GT)
 				return true;
-			else if (the_token == Token.COMMA)
+			else if ((the_token == Token.COMMA) || (the_token == Token.DOT))
 				goto start;
 			else if (the_token == Token.OP_GENERICS_LT) {
 				if (!parse_less_than ())
