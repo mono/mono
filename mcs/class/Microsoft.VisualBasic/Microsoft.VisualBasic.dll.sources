@@ -26,7 +26,6 @@ Microsoft.VisualBasic/MsgBoxResult.cs
 Microsoft.VisualBasic/MsgBoxStyle.cs
 Microsoft.VisualBasic/OpenAccess.cs
 Microsoft.VisualBasic/OpenMode.cs
-Microsoft.VisualBasic/OpenModeTypes.cs
 Microsoft.VisualBasic/OpenShare.cs
 Microsoft.VisualBasic/SpcInfo.cs
 Microsoft.VisualBasic/Strings.cs
