@@ -1,3 +1,9 @@
+2004-03-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DTMXPathDocumentBuilder2.cs : When there was an empty element and
+	  namespace declarations, the next element namespace index was
+	  incorrectly pointing to that of empty element.
+
 2004-02-21  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DTMXPathDocumentBuilder2.cs : whitespace node values were not added

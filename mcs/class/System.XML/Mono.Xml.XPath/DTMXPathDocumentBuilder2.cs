@@ -390,7 +390,8 @@ namespace Mono.Xml.XPath
 				nodes [nodeIndex].FirstAttribute = attrIndexAtStart + 1;
 			if (nsIndexAtStart != nsIndex) {
 				nodes [nodeIndex].FirstNamespace = nsIndex;
-				lastNsInScope = nsIndex;
+				if (!xmlReader.IsEmptyElement)
+					lastNsInScope = nsIndex;
 			}
 
 			if (!nodes [nodeIndex].IsEmptyElement)
