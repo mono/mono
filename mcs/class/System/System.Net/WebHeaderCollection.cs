@@ -233,6 +233,8 @@ namespace System.Net
 				value = value.Trim ();
 			if (!IsHeaderValue (value))
 				throw new ArgumentException ("invalid header value");
+
+			base.Remove (name);
 			base.Set (name, value);	
 		}
 		

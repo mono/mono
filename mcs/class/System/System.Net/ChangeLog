@@ -1,10 +1,14 @@
+2003-06-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* WebHeaderCollection.cs: prevent duplication headers used niternally.
+
 2003-06-14  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
-	* HttpWebRequest.cs: if CookieContainer has not been set, make HttpWebResponse ignore
-	Set-Cookie* headers.
+	* HttpWebRequest.cs: if CookieContainer has not been set, make
+	HttpWebResponse ignore Set-Cookie* headers.
 
-	* HttpWebResponse.cs: Set-Cookie and Set-Cookie headers removed if CookieContainer have
-	been provided to the request.
+	* HttpWebResponse.cs: Set-Cookie and Set-Cookie headers removed if
+	CookieContainer have been provided to the request.
 
 2003-06-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
