@@ -60,3 +60,4 @@ Microsoft.VisualBasic/Microsoft.VisualBasic.CompilerServices/StaticLocalInitFlag
 Microsoft.VisualBasic/Microsoft.VisualBasic.CompilerServices/StringType.cs
 Microsoft.VisualBasic/Microsoft.VisualBasic.CompilerServices/TODOAttribute.cs
 Microsoft.VisualBasic/Microsoft.VisualBasic.CompilerServices/Utils.cs
+Microsoft.VisualBasic/Microsoft.VisualBasic.CompilerServices/VBBinder.cs
