@@ -1,35 +1,41 @@
-// docstub.cs
+//	docstub.cs
 //
-// Adam Treat (manyoso@yahoo.com)
+//	Adam Treat (manyoso@yahoo.com)
+//	(C) 2002 Adam Treat
 //
-// (C) 2002 Adam Treat
+//	DocStub is based heavily upon the NDoc project
+//	ndoc.sourceforge.net
 //
-// Licensed under the terms of the GNU GPL
+//	This program is free software; you can redistribute it and/or modify
+//	it under the terms of the GNU General Public License as published by
+//	the Free Software Foundation; either version 2 of the License, or
+//	(at your option) any later version.
+
 
 using System;
-using System.Reflection;
 using System.Collections;
+using System.Collections.Specialized;
+using System.Diagnostics;
 using System.IO;
+using System.Reflection;
 using System.Xml;
+using System.Text;
 
 namespace Mono.Util
 {
-
 	class DocStub
 	{
-		Type currentType;
-		MemberInfo[] members;
-		XmlTextWriter writer;
-		//XmlDocument xmldoc;
-		string output_file, assembly_file, directory;
+		Assembly assembly;
+		bool nested;
+		string assembly_file, directory, language, classname, currentNamespace, docname;
 
 		void Usage()
 		{
 			Console.Write (
-				"docstub (-d <directory> || -o <file>) -a <assembly>\n\n" +
-				"   -d || --dir <directory>			The directory to write the xml files to.\n" +
-				"   -o || --output <file>			Specifies that docstub should write to one large output file.\n" +
-				"   -a || --assembly <assembly>		Specifies the target assembly to load and parse.\n\n");
+				"docstub -l <lang> -d <directory> -a <assembly>\n\n" +
+				"   -d || /-d || --dir       <directory>             The directory to write the xml files to.\n" +
+				"   -a || /-a || --assembly  <assembly>              Specifies the target assembly to load and parse.\n" +
+				"   -l || /-l || --language  <two-letter ISO code>   Specifies the language encoding.\n\n");
 		}
 
 		public static void Main(string[] args)
@@ -39,7 +45,6 @@ namespace Mono.Util
 
 		public DocStub(string [] args)
 		{
-			output_file = null;
 			assembly_file = null;
 			directory = null;
 			int argc = args.Length;
@@ -63,15 +68,6 @@ namespace Mono.Util
 						directory = args[++i];
 						continue;
 
-					case "-o": case "/-o": case "--output":
-						if((i + 1) >= argc)
-						{
-							Usage();
-							return;
-						}
-						output_file = args[++i];
-						continue;
-
 					case "-a": case "/-a": case "--assembly":
 						if((i + 1) >= argc)
 						{
@@ -79,6 +75,14 @@ namespace Mono.Util
 							return;
 						}
 						assembly_file = args[++i];
+						continue;
+					case "-l": case "/-l": case "--language":
+						if((i + 1) >= argc)
+						{
+							Usage();
+							return;
+						}
+						language = args[++i];
 						continue;
 
 					default:
@@ -92,18 +96,10 @@ namespace Mono.Util
 			{
 				Usage();
 				return;
-			} else if(directory == null && output_file == null)
+			} else if(directory == null)
 			{
 				Usage();
 				return;
-			}
-
-			if(directory != null)
-			{
-				// This specifies that writing to a directory is the default behavior
-				// If someone attempts to write to both a directory and an output file
-				// Only the directory will be written to...
-				output_file = null;
 			}
 
 			if (!Directory.Exists(directory) && directory != null)
@@ -112,523 +108,596 @@ namespace Mono.Util
             }
 
 			// Call the main driver to get some things done
-			MainDriver();
+			MakeXml();
 		}
 
-		//
-		// This method loads the assembly and generates a types list
-		// It also takes care of the end product, ie writing the xml
-		// to the given filename, or filenames...
-		//
-		void MainDriver()
-		{
-			Type[] assemblyTypes;
-			Assembly assembly = null;
-			ArrayList TypesList = new ArrayList();
-
-			assembly = LoadAssembly(Path.GetFullPath(assembly_file));
-
-			// GetTypes() doesn't seem to like loading some dll's, but then
-			// the exception holds all the types in the dll anyway, some
-			// are in Types and some are in the LoaderExceptions array.
-			try
-			{
-				assemblyTypes = assembly.GetTypes();
-			}
-			catch(ReflectionTypeLoadException e)
-			{
-				assemblyTypes = e.Types;
-				foreach(TypeLoadException loadException in e.LoaderExceptions)
-				{
-					TypesList.Add(loadException.TypeName);
-				}
-			}
-
-			// Create an xml document to check the output [debugging purposes]
-   			//xmldoc = new XmlDocument();
-			//xmldoc.PreserveWhitespace = true;
-
-
-			// GenerateXML will take care of converting all the Types info
-			// into XML and return a string for writing out to file, files
-
-			if(output_file != null)
-			{
-				writer = new XmlTextWriter (output_file, null);
-				writer.Formatting = Formatting.Indented;
-				writer.WriteStartDocument();
-				writer.WriteDocType("MonoDocStub", null, null, null);
-				writer.WriteStartElement("assembly");
-
-				foreach(Type name in assemblyTypes)
-				{
-					if (name != null)
-					{
-						GenerateXML(name);
-					}
-				}
-
-				writer.WriteEndElement();
-				writer.WriteEndDocument();
-				writer.Flush();
-				writer.Close();
-    	 		// Load the file and check it is wellformed [debugging purposes]
-     			//xmldoc.Load(output_file);
-
-			}
-			else if (directory != null)
-			{
-				foreach(Type name in assemblyTypes)
-				{
-					if (name != null)
-					{
-						string filename = directory+"/"+name+".xml";
-    					writer = new XmlTextWriter (filename, null);
-						writer.Formatting = Formatting.Indented;
-						writer.WriteStartDocument();
-						writer.WriteDocType("MonoDocStub", null, null, null);
-						writer.WriteStartElement("assembly");
-						GenerateXML(name);
-						writer.WriteEndElement();
-						writer.WriteEndDocument();
-						writer.Flush();
-						writer.Close();
-						// Load the file and check it is wellformed [debugging purposes]
-     					//xmldoc.Load(filename);
-					}
-				}
-			}
-			return;
-		}
-
-		// This method loads an assembly into memory. If you
-		// use Assembly.Load or Assembly.LoadFrom the assembly file locks.
-		// This method doesn't lock the assembly file.
-		Assembly LoadAssembly(string filename)
+		// Builds an XmlDocument with the reflected metadata
+		private void MakeXml()
 		{
 			try
 			{
-				FileStream fs = File.Open(filename, FileMode.Open, FileAccess.Read);
-				byte[] buffer = new byte[fs.Length];
-				fs.Read(buffer, 0, (int)fs.Length);
-				fs.Close();
-
-				return Assembly.Load(buffer);
+				assembly = LoadAssembly(Path.GetFullPath(assembly_file));
 			}
-			catch(FileNotFoundException)
+			catch (Exception e)
 			{
-				Console.WriteLine("Could not find assembly file: {0}", assembly_file);
-				return null;
+				Console.WriteLine(e.Message);
 			}
+			Write();
 		}
 
-		//
-		// The main xml generation method!
-		//
-		void GenerateXML(Type name)
+		private void Write()
 		{
-			try
+			foreach(Module module in assembly.GetModules())
 			{
-				currentType = name;
-				//This is what the try block is for
-				members = currentType.GetMembers();
-				// This is where we generate xml for the class/type
-				writer.WriteStartElement("class");
-				writer.WriteStartElement("name");
-				writer.WriteString(currentType.FullName);
-				writer.WriteEndElement();
-				getTypeInfoXml();
-
-				// Generate xml for members (constructors, fields, methods etc)
-				if(members.Length > 0)
-				{
-					foreach(MemberInfo m in members)
-					{
-						if (m is ConstructorInfo)
-						{
-							writer.WriteStartElement("member");
-							writer.WriteStartElement("name");
-    						writer.WriteString(currentType.Name);
-							writer.WriteEndElement();
-							writer.WriteStartElement("type");
-   							writer.WriteString("constructor");
-							writer.WriteEndElement();
-							getConstructorXml((ConstructorInfo)m);
-							writer.WriteEndElement();
-						}
-						else if (m is EventInfo)
-						{
-							writer.WriteStartElement("member");
-							writer.WriteStartElement("name");
-    						writer.WriteString(m.Name);
-							writer.WriteEndElement();
-							writer.WriteStartElement("type");
-    						writer.WriteString("event");
-							writer.WriteEndElement();
-							getEventXml((EventInfo)m);
-							writer.WriteEndElement();
-						}
-						else if (m is FieldInfo)
-						{
-							writer.WriteStartElement("member");
-							writer.WriteStartElement("name");
-    						writer.WriteString(m.Name);
-							writer.WriteEndElement();
-							writer.WriteStartElement("type");
-   							writer.WriteString("field");
-							writer.WriteEndElement();
-							getFieldXml((FieldInfo)m);
-							writer.WriteEndElement();
-						}
-						else if (m is PropertyInfo)
-						{
-							writer.WriteStartElement("member");
-							writer.WriteStartElement("name");
-    						writer.WriteString(m.Name);
-							writer.WriteEndElement();
-							writer.WriteStartElement("type");
-     						writer.WriteString("property");
-							writer.WriteEndElement();
-							getPropertyXml((PropertyInfo)m);
-							writer.WriteEndElement();
-						}
-						else if (m is MethodInfo)
-						{
-							writer.WriteStartElement("member");
-							writer.WriteStartElement("name");
-    						writer.WriteString(m.Name);
-							writer.WriteEndElement();
-							writer.WriteStartElement("type");
-    						writer.WriteString("method");
-							writer.WriteEndElement();
-							getMethodXml((MethodInfo)m);
-							writer.WriteEndElement();
-						}
-						else{}
-					}
-				}
-				// Don't forget to close the xml ;-)
-				writer.WriteEndElement();
+				WriteNamespaces(module);
 			}
-			catch(TypeLoadException e)
+		}
+
+		private void WriteNamespaces(Module module)
+		{
+			Type[] types = module.GetTypes();
+			StringCollection namespaceNames = GetNamespaceNames(types);
+			XmlTextWriter dummy = new XmlTextWriter(".temp.xml", null);
+			foreach (string namespaceName in namespaceNames)
 			{
-				// Todo Mono's corlib keeps failing here because System.Object
-				// Doesn't have any parents
-				Console.WriteLine("Class: "+e.TypeName+" has caused a TypeLoad Exception."
-								 +" No XML will be generated for this type.");
+				currentNamespace = namespaceName;
+				WriteClasses(dummy, types);
+				WriteInterfaces(dummy, types);
+				WriteStructures(dummy, types);
+				WriteDelegates(dummy, types);
+				WriteEnumerations(dummy, types);
 			}
+			File.Delete(".temp.xml");
 		}
 
-		//
-		// This just calls the methods for elements within a constructor
-		//
-		void getConstructorXml(ConstructorInfo construct)
+		private XmlTextWriter StartDocument()
 		{
-			getMethodBaseInfoXml(construct);
-			getParameterInfoXml(construct);
-			getInheritInfoXml(construct);
+			if (!Directory.Exists(directory+"/"+currentNamespace) && directory != null)
+			{
+                Directory.CreateDirectory(directory+"/"+currentNamespace);
+            }
+			string filename = directory+"/"+currentNamespace+"/"+docname+".xml";
+   			XmlTextWriter writer = new XmlTextWriter (filename, null);
+			writer.Formatting = Formatting.Indented;
+			writer.Indentation=4;
+			writer.WriteStartDocument();
+			writer.WriteStartElement("monodoc");
+			writer.WriteAttributeString("language",language);
+			writer.WriteElementString("summary","description");
+			writer.WriteElementString("remarks","description");
+			return writer;
 		}
 
-		//
-		// Calls the methods for elements within an event member
-		//
-		void getEventXml(EventInfo eve)
+		private void EndDocument(XmlTextWriter writer)
 		{
-			getEventInfoXml(eve);
-			getInheritInfoXml(eve);
-		}
-
-		//
-		// Calls the methods for xml elements within a field
-		//
-		void getFieldXml(FieldInfo field)
-		{
-			writer.WriteStartElement("field_type");
-  			writer.WriteString(field.FieldType.Name);
 			writer.WriteEndElement();
-			getFieldInfoXml(field);
-			getInheritInfoXml(field);
+			writer.WriteEndDocument();
+			nested = false;
+			writer.Close();
 		}
 
-		//
-		// Calls the methods for xml elements within a property
-		//
-		void getPropertyXml(PropertyInfo property)
+		private bool IsDelegate(Type type)
 		{
-			writer.WriteStartElement("property_type");
-  			writer.WriteString(property.PropertyType.Name);
-			writer.WriteEndElement();
-			getPropertyInfoXml(property);
-			getInheritInfoXml(property);
+			return type.BaseType.FullName == "System.Delegate" ||
+				type.BaseType.FullName == "System.MulticastDelegate";
 		}
 
-		//
-		// Calls the methods for xml elements within a method
-		//
-		void getMethodXml(MethodInfo method)
+		private string GetTypeName(Type type)
 		{
-			getMethodBaseInfoXml(method);
-			getParameterInfoXml(method);
-			getReturnInfoXml(method);
-			getInheritInfoXml(method);
+			return type.FullName.Replace('+', '.');
 		}
 
-		//
-		// Probably should just go in the getMethodXml, but here for asthetic reasons ;-)
-		//
-		void getReturnInfoXml(MethodInfo method)
+		private StringCollection GetNamespaceNames(Type[] types)
 		{
-			try
-			{
-				writer.WriteStartElement("return");
-  				writer.WriteString(method.ReturnType.Name);
-				writer.WriteEndElement();
-			}
-			catch(Exception)
-			{
-				// Mysteriously this is also causing some corlib types
-				// to spit out some Object doesn't have a parent errors
-				//Console.WriteLine(e.Message);
-				writer.WriteEndElement();
-			}
-		}
+			StringCollection namespaceNames = new StringCollection();
 
-		//
-		// Checks to see if a member is inherited and output xml
-		//
-		void getInheritInfoXml(MemberInfo member)
-		{
-			if(member.DeclaringType != currentType)
+			foreach (Type type in types)
 			{
-				writer.WriteStartElement("inherit");
-  				writer.WriteString(member.DeclaringType.Name);
-				writer.WriteEndElement();
-				writer.WriteStartElement("inheritfull");
-  				writer.WriteString(member.DeclaringType.FullName);
-				writer.WriteEndElement();
-			}
-		}
-
-		//
-		// Checks for get or set in properties
-		//
-		void getPropertyInfoXml(PropertyInfo property)
-		{
-			if(property.CanRead)
-			{
-				writer.WriteStartElement("attribute");
-  				writer.WriteString("get");
-				writer.WriteEndElement();
-			}
-			if(property.CanWrite)
-			{
-				writer.WriteStartElement("attribute");
-  				writer.WriteString("set");
-				writer.WriteEndElement();
-			}
-		}
-
-		//
-		// Self explanatory
-		//
-		void getParameterInfoXml(MethodBase method)
-		{
-			try
-			{
-				ParameterInfo[] parameters = method.GetParameters();
-				if(parameters.Length != 0)
+				if (namespaceNames.Contains(type.Namespace) == false)
 				{
-					foreach(ParameterInfo p in parameters)
+					namespaceNames.Add(type.Namespace);
+				}
+			}
+
+			return namespaceNames;
+		}
+
+		private bool IsAlsoAnEvent(Type type, string fullName)
+		{
+			bool isEvent = false;
+
+			BindingFlags bindingFlags =
+				BindingFlags.Instance |
+				BindingFlags.Static |
+				BindingFlags.Public |
+				BindingFlags.NonPublic |
+				BindingFlags.DeclaredOnly;
+
+			foreach (EventInfo eventInfo in type.GetEvents(bindingFlags))
+			{
+				if (eventInfo.EventHandlerType.FullName == fullName)
+				{
+					isEvent = true;
+					break;
+				}
+			}
+
+			return isEvent;
+		}
+
+		private bool IsAlsoAnEvent(FieldInfo field)
+		{
+			return IsAlsoAnEvent(field.DeclaringType, field.FieldType.FullName);
+		}
+
+		private bool IsAlsoAnEvent(PropertyInfo property)
+		{
+			return IsAlsoAnEvent(property.DeclaringType, property.PropertyType.FullName);
+		}
+
+		// Loads an assembly.
+		public static Assembly LoadAssembly(string filename)
+		{
+			if (!File.Exists(filename))
+			{
+				throw new ApplicationException("can't find assembly " + filename);
+			}
+
+			FileStream fs = File.Open(filename, FileMode.Open, FileAccess.Read);
+			byte[] buffer = new byte[fs.Length];
+			fs.Read(buffer, 0, (int)fs.Length);
+			fs.Close();
+
+			return Assembly.Load(buffer);
+		}
+
+		private string GetParameterTypes(ParameterInfo[] parameters)
+		{
+			if (parameters.Length != 0) {
+				StringBuilder sb = new StringBuilder();
+				sb.Append("(");
+				foreach (ParameterInfo parameter in parameters)
+				{
+					sb.Append(GetTypeName(parameter.ParameterType) + ", ");
+				}
+				sb.Remove(sb.Length-2, 2);
+				sb.Append(")");
+				return sb.ToString();
+			} else {
+				return "";
+			}
+		}
+
+		private void WriteClasses(XmlTextWriter writer, Type[] types)
+		{
+			foreach (Type type in types)
+			{
+				if (type.IsClass && !IsDelegate(type) && type.Namespace.Equals(currentNamespace))
+				{
+					classname = type.FullName;
+					docname = type.Name;
+					if (!nested)
 					{
-						writer.WriteStartElement("param");
-						writer.WriteStartElement("name");
-  						writer.WriteString(p.Name);
-						writer.WriteEndElement();
-						writer.WriteStartElement("type");
-  						writer.WriteString(p.ParameterType.Name);
-						writer.WriteEndElement();
-						if(p.DefaultValue != DBNull.Value)
-						{
-							writer.WriteStartElement("default");
-  							writer.WriteString(p.DefaultValue.ToString());
-							writer.WriteEndElement();
-						}
-						writer.WriteStartElement("position");
-  						writer.WriteString(p.Position.ToString());
-						writer.WriteEndElement();
-						writer.WriteEndElement();
+						writer = StartDocument();
+						WriteClass(writer, type);
+						EndDocument(writer);
+					} else {
+						WriteClass(writer, type);
 					}
 				}
 			}
-			catch(Exception)
+		}
+
+		private void WriteInterfaces(XmlTextWriter writer, Type[] types)
+		{
+  			foreach (Type type in types)
 			{
-				// Mysteriously this is also causing some corlib types
-				// to spit out some Object doesn't have a parent errors
-				//Console.WriteLine(e.Message);
+				if (type.IsInterface && type.Namespace.Equals(currentNamespace))
+				{
+					classname = type.FullName;
+					docname = type.Name;
+					if (!nested)
+					{
+						writer = StartDocument();
+						WriteInterface(writer, type);
+						EndDocument(writer);
+					} else {
+						WriteInterface(writer, type);
+					}
+				}
 			}
 		}
 
-		//
-		// Find Attributes for events
-		//
-		void getEventInfoXml(EventInfo _obj)
+		private void WriteStructures(XmlTextWriter writer, Type[] types)
 		{
-			if(_obj.IsMulticast)
+			foreach (Type type in types)
 			{
-				writer.WriteStartElement("attribute");
-  				writer.WriteString("multicast");
-				writer.WriteEndElement();
+				if (type.IsValueType && !type.IsEnum && type.Namespace.Equals(currentNamespace))
+				{
+					classname = type.FullName;
+					docname = type.Name;
+					if (!nested)
+					{
+						writer = StartDocument();
+						WriteClass(writer, type);
+						EndDocument(writer);
+					} else {
+						WriteClass(writer, type);
+					}
+				}
 			}
-			writer.WriteStartElement("eventhandler");
-  			writer.WriteString(_obj.EventHandlerType.Name);
+		}
+
+		private void WriteDelegates(XmlTextWriter writer, Type[] types)
+		{
+			foreach (Type type in types)
+			{
+				if (type.IsClass && IsDelegate(type) && type.Namespace.Equals(currentNamespace))
+				{
+					classname = type.FullName;
+					docname = type.Name;
+					if (!nested)
+					{
+						writer = StartDocument();
+						WriteDelegate(writer, type);
+						EndDocument(writer);
+					} else {
+						WriteDelegate(writer, type);
+					}
+				}
+			}
+		}
+
+		private void WriteEnumerations(XmlTextWriter writer, Type[] types)
+		{
+			foreach (Type type in types)
+			{
+				if (type.IsEnum && type.Namespace.Equals(currentNamespace))
+				{
+					classname = type.FullName;
+					docname = type.Name;
+					if (!nested)
+					{
+						writer = StartDocument();
+						WriteEnumeration(writer, type);
+						EndDocument(writer);
+					} else {
+						WriteEnumeration(writer, type);
+					}
+				}
+			}
+		}
+
+		// Writes XML documenting a class or struct.
+		private void WriteClass(XmlTextWriter writer, Type type)
+		{
+			Type[] types = type.GetNestedTypes();
+			AssemblyName assemblyName = assembly.GetName();
+			bool isStruct = type.IsValueType;
+			nested = true;
+
+			writer.WriteStartElement(isStruct ? "struct" : "class");
+			writer.WriteAttributeString("name", type.FullName);
+			writer.WriteAttributeString("assembly", assemblyName.Name);
+			writer.WriteElementString("summary","description");
+			writer.WriteElementString("remarks","description");
+			writer.WriteStartElement("seealso");
+			writer.WriteAttributeString("cref", "description");
+			writer.WriteEndElement();
+
+			WriteClasses(writer, types);
+			WriteInterfaces(writer, types);
+			WriteStructures(writer, types);
+			WriteDelegates(writer, types);
+			WriteEnumerations(writer, types);
+
+			WriteConstructors(writer, type);
+			WriteFields(writer, type);
+			WriteProperties(writer, type);
+			WriteMethods(writer, type);
+			WriteOperators(writer, type);
+			WriteEvents(writer, type);
+
 			writer.WriteEndElement();
 		}
 
-		//
-		// Find Attributes for fields
-		//
-		void getFieldInfoXml(FieldInfo _obj)
+		// Writes XML documenting an interface.
+		private void WriteInterface(XmlTextWriter writer, Type type)
 		{
-			if(_obj.IsPrivate)
+			Type[] types = type.GetNestedTypes();
+			AssemblyName assemblyName = assembly.GetName();
+
+			writer.WriteStartElement("interface");
+			writer.WriteAttributeString("name", type.FullName);
+			writer.WriteAttributeString("assembly", assemblyName.Name);
+			writer.WriteElementString("summary","description");
+			writer.WriteElementString("remarks","description");
+			writer.WriteStartElement("seealso");
+			writer.WriteAttributeString("cref", "description");
+			writer.WriteEndElement();
+			writer.WriteEndElement();
+		}
+
+		// Writes XML documenting a delegate.
+		private void WriteDelegate(XmlTextWriter writer, Type type)
+		{
+			Type[] types = type.GetNestedTypes();
+			AssemblyName assemblyName = assembly.GetName();
+
+			writer.WriteStartElement("delegate");
+			writer.WriteAttributeString("name", type.FullName);
+			writer.WriteAttributeString("assembly", assemblyName.Name);
+			writer.WriteElementString("summary","description");
+			writer.WriteElementString("remarks","description");
+			writer.WriteStartElement("seealso");
+			writer.WriteAttributeString("cref", "description");
+			writer.WriteEndElement();
+
+			//param
+
+			writer.WriteEndElement();
+		}
+
+		// Writes XML documenting an enumeration.
+		private void WriteEnumeration(XmlTextWriter writer, Type type)
+		{
+			Type[] types = type.GetNestedTypes();
+			AssemblyName assemblyName = assembly.GetName();
+
+			writer.WriteStartElement("enum");
+			writer.WriteAttributeString("name", type.FullName);
+			writer.WriteAttributeString("assembly", assemblyName.Name);
+			writer.WriteElementString("summary","description");
+			writer.WriteElementString("remarks","description");
+
+			writer.WriteStartElement("member");
+			writer.WriteAttributeString("name", "description");
+			writer.WriteEndElement();
+
+			writer.WriteEndElement();
+		}
+
+		private void WriteConstructors(XmlTextWriter writer, Type type)
+		{
+			BindingFlags bindingFlags =
+				BindingFlags.Instance |
+				BindingFlags.Public |
+				BindingFlags.NonPublic;
+
+			ConstructorInfo[] constructors = type.GetConstructors(bindingFlags);
+
+			foreach (ConstructorInfo constructor in constructors)
 			{
-				writer.WriteStartElement("attribute");
-  				writer.WriteString("private");
-				writer.WriteEndElement();
+				WriteConstructor(writer, constructor);
+			}
+		}
+
+		private void WriteFields(XmlTextWriter writer, Type type)
+		{
+			BindingFlags bindingFlags =
+				BindingFlags.Instance |
+				BindingFlags.Static |
+				BindingFlags.Public |
+				BindingFlags.NonPublic;
+
+			foreach (FieldInfo field in type.GetFields(bindingFlags))
+			{
+				if (!IsAlsoAnEvent(field))
+				{
+					WriteField(writer, field);
+				}
+			}
+		}
+
+		private void WriteProperties(XmlTextWriter writer, Type type)
+		{
+			BindingFlags bindingFlags =
+				BindingFlags.Instance |
+				BindingFlags.Static |
+				BindingFlags.Public |
+				BindingFlags.NonPublic;
+
+			PropertyInfo[] properties = type.GetProperties(bindingFlags);
+
+			foreach (PropertyInfo property in properties)
+			{
+				MethodInfo getMethod = property.GetGetMethod(true);
+				MethodInfo setMethod = property.GetSetMethod(true);
+
+				bool hasGetter = (getMethod != null);
+				bool hasSetter = (setMethod != null);
+
+				if ((hasGetter || hasSetter) && !IsAlsoAnEvent(property))
+				{
+					WriteProperty(writer, property, property.DeclaringType.FullName != type.FullName);
+				}
+			}
+		}
+
+		private void WriteMethods(XmlTextWriter writer, Type type)
+		{
+			BindingFlags bindingFlags =
+				BindingFlags.Instance |
+				BindingFlags.Static |
+				BindingFlags.Public |
+				BindingFlags.NonPublic;
+
+			MethodInfo[] methods = type.GetMethods(bindingFlags);
+
+			foreach (MethodInfo method in methods)
+			{
+				if (!(method.Name.StartsWith("get_")) &&
+					!(method.Name.StartsWith("set_")) &&
+					!(method.Name.StartsWith("add_")) &&
+					!(method.Name.StartsWith("remove_")) &&
+					!(method.Name.StartsWith("op_")))
+				{
+					WriteMethod(writer, method, method.DeclaringType.FullName != type.FullName);
+				}
+			}
+		}
+
+		private void WriteOperators(XmlTextWriter writer, Type type)
+		{
+			BindingFlags bindingFlags =
+				BindingFlags.Instance |
+				BindingFlags.Static |
+				BindingFlags.Public |
+				BindingFlags.NonPublic;
+
+			MethodInfo[] methods = type.GetMethods(bindingFlags);
+
+			foreach (MethodInfo method in methods)
+			{
+				if (method.Name.StartsWith("op_"))
+				{
+					WriteOperator(writer, method);
+				}
+			}
+		}
+
+		private void WriteEvents(XmlTextWriter writer, Type type)
+		{
+			BindingFlags bindingFlags =
+				BindingFlags.Instance |
+				BindingFlags.Static |
+				BindingFlags.Public |
+				BindingFlags.NonPublic |
+				BindingFlags.DeclaredOnly;
+
+			foreach (EventInfo eventInfo in type.GetEvents(bindingFlags))
+			{
+				MethodInfo addMethod = eventInfo.GetAddMethod(true);
+
+				if (addMethod != null)
+				{
+					WriteEvent(writer, eventInfo);
+				}
+			}
+		}
+
+		// Writes XML documenting a field.
+		private void WriteField(XmlTextWriter writer, FieldInfo field)
+		{
+			writer.WriteStartElement("field");
+			writer.WriteAttributeString("name", field.Name);
+			writer.WriteElementString("summary","description");
+			writer.WriteElementString("remarks","description");
+			writer.WriteStartElement("seealso");
+			writer.WriteAttributeString("cref", "description");
+			writer.WriteEndElement();
+
+			writer.WriteEndElement();
+		}
+
+		// Writes XML documenting an event.
+		private void WriteEvent(XmlTextWriter writer, EventInfo eventInfo)
+		{
+			writer.WriteStartElement("event");
+			writer.WriteAttributeString("name", eventInfo.Name);
+			writer.WriteElementString("summary","description");
+			writer.WriteElementString("remarks","description");
+			writer.WriteElementString("data","description");
+			writer.WriteStartElement("seealso");
+			writer.WriteAttributeString("cref", "description");
+			writer.WriteEndElement();
+
+			writer.WriteEndElement();
+		}
+
+		// Writes XML documenting a constructor.
+		private void WriteConstructor(XmlTextWriter writer, ConstructorInfo constructor)
+		{
+			writer.WriteStartElement("constructor");
+			writer.WriteAttributeString("name", classname + GetParameterTypes(constructor.GetParameters()));
+			writer.WriteElementString("summary","description");
+			writer.WriteElementString("remarks","description");
+
+			foreach (ParameterInfo parameter in constructor.GetParameters())
+			{
+				WriteParameter(writer, parameter);
 			}
 
-			if(_obj.IsPublic)
-			{
-				writer.WriteStartElement("attribute");
-  				writer.WriteString("public");
-				writer.WriteEndElement();
-			}
+			writer.WriteStartElement("seealso");
+			writer.WriteAttributeString("cref", "description");
+			writer.WriteEndElement();
 
-			if(_obj.IsStatic)
+			writer.WriteEndElement();
+		}
+
+		// Writes XML documenting a property.
+		private void WriteProperty(XmlTextWriter writer, PropertyInfo property, bool inherited )
+		{
+			if (!inherited)
 			{
-				writer.WriteStartElement("attribute");
-  				writer.WriteString("static");
+				writer.WriteStartElement("property");
+				writer.WriteAttributeString("name", property.Name);
+				writer.WriteElementString("summary","description");
+				writer.WriteElementString("remarks","description");
+				writer.WriteElementString("value","description");
+				writer.WriteStartElement("seealso");
+				writer.WriteAttributeString("cref", "description");
+				writer.WriteEndElement();
+
 				writer.WriteEndElement();
 			}
 		}
 
-		//
-		// Find Attributes for constructors and methods
-		//
-		void getMethodBaseInfoXml(MethodBase _obj)
+		// Writes XML documenting an operator.
+		private void WriteOperator(XmlTextWriter writer, MethodInfo method)
 		{
-
-			if(_obj.IsAbstract)
+			if (method != null)
 			{
-				writer.WriteStartElement("attribute");
-  				writer.WriteString("abstract");
+				writer.WriteStartElement("operator");
+				writer.WriteAttributeString("name", method.Name + GetParameterTypes(method.GetParameters()));
+				writer.WriteElementString("summary","description");
+				writer.WriteElementString("remarks","description");
+
+				foreach (ParameterInfo parameter in method.GetParameters())
+				{
+					WriteParameter(writer, parameter);
+				}
+
+				writer.WriteElementString("returnType", method.ReturnType.FullName);
+				writer.WriteStartElement("seealso");
+				writer.WriteAttributeString("cref", "description");
 				writer.WriteEndElement();
-			}
 
-			if(_obj.IsFinal)
-			{
-				writer.WriteStartElement("attribute");
-  				writer.WriteString("final");
-				writer.WriteEndElement();
-			}
-
-			if(_obj.IsPrivate)
-			{
-				writer.WriteStartElement("attribute");
-  				writer.WriteString("private");
-				writer.WriteEndElement();
-			}
-
-			if(_obj.IsPublic)
-			{
-				writer.WriteStartElement("attribute");
-  				writer.WriteString("public");
-				writer.WriteEndElement();
-			}
-
-			if(_obj.IsStatic)
-			{
-				writer.WriteStartElement("attribute");
-  				writer.WriteString("static");
-				writer.WriteEndElement();
-			}
-
-			if(_obj.IsVirtual)
-			{
-				writer.WriteStartElement("attribute");
-  				writer.WriteString("virtual");
 				writer.WriteEndElement();
 			}
 		}
 
-		//
-		// Put this at the end because it's ugly, but gets the job done
-		//
-		void getTypeInfoXml()
+		// Writes XML documenting a method.
+		private void WriteMethod(XmlTextWriter writer, MethodInfo method, bool inherited)
 		{
-			try
+			if (!inherited && method != null)
 			{
-				writer.WriteStartElement("inherit");
-				writer.WriteString(currentType.BaseType.Name);
+				writer.WriteStartElement("method");
+				writer.WriteAttributeString("name", method.Name + GetParameterTypes(method.GetParameters()));
+				writer.WriteElementString("summary","description");
+				writer.WriteElementString("remarks","description");
+
+				foreach (ParameterInfo parameter in method.GetParameters())
+				{
+					WriteParameter(writer, parameter);
+				}
+
+				writer.WriteElementString("returnType", method.ReturnType.FullName);
+				writer.WriteStartElement("seealso");
+				writer.WriteAttributeString("cref", "description");
 				writer.WriteEndElement();
-				writer.WriteStartElement("inheritfull");
-				writer.WriteString(currentType.BaseType.FullName);
-				writer.WriteEndElement();
 
-				if(currentType.IsAbstract)
-				{
-					writer.WriteStartElement("attribute");
-  					writer.WriteString("abstract");
-					writer.WriteEndElement();
-				}
-
-				if(currentType.IsEnum)
-				{
-					writer.WriteStartElement("attribute");
-  					writer.WriteString("enum");
-					writer.WriteEndElement();
-				}
-
-				if(currentType.IsInterface)
-				{
-					writer.WriteStartElement("attribute");
-  					writer.WriteString("interface");
-					writer.WriteEndElement();
-				}
-
-				if(currentType.IsPrimitive)
-				{
-					writer.WriteStartElement("attribute");
-  					writer.WriteString("primitive");
-					writer.WriteEndElement();
-				}
-
-				if(currentType.IsPublic)
-				{
-					writer.WriteStartElement("attribute");
-  					writer.WriteString("public");
-					writer.WriteEndElement();
-				}
-
-				if(currentType.IsSealed)
-				{
-					writer.WriteStartElement("attribute");
-  					writer.WriteString("sealed");
-					writer.WriteEndElement();
-				}
-
-				if(currentType.IsSerializable)
-				{
-					writer.WriteStartElement("attribute");
-  					writer.WriteString("serializable");
-					writer.WriteEndElement();
-				}
-
-			}
-			catch(Exception) {
-				Console.WriteLine("A Class has caused an Exception."
-								 +" This occurred whilst trying to retrieve said types inheritable information.");
 				writer.WriteEndElement();
 			}
+		}
+
+		private void WriteParameter(XmlTextWriter writer, ParameterInfo parameter)
+		{
+			writer.WriteStartElement("param");
+			writer.WriteAttributeString("name", parameter.Name);
+			writer.WriteString("description");
+			writer.WriteEndElement();
 		}
 	}
 }
+
