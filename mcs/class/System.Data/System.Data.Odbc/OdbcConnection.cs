@@ -1,9 +1,8 @@
-
 //
 // System.Data.Odbc.OdbcConnection
 //
 // Authors:
-//  Brian Ritchie (brianlritchie@hotmail.com)
+//  Brian Ritchie (brianlritchie@hotmail.com) 
 //
 // Copyright (C) Brian Ritchie, 2002
 //
@@ -21,25 +20,24 @@ namespace System.Data.Odbc
 		string connectionString;
 		int connectionTimeout;
 		OdbcDataReader dataReader;
-		int henv=0, hdbc=0;
-		private string _uid, _pwd, _dsn;
-
+		internal OdbcTransaction transaction;
+		IntPtr henv=IntPtr.Zero, hdbc=IntPtr.Zero;
+		
 		#endregion
 
 		#region Constructors
-
+		
 		public OdbcConnection ()
 		{
 			OdbcReturn ret;
-
-			// allocate Environment handle
-			ret=libodbc.SQLAllocHandle((ushort) OdbcHandleType.Env, 0, ref henv);
-			libodbc.DisplayError("SQLAllocHandle", ret);
-
-			ret=libodbc.SQLSetEnvAttr(henv, (ushort) OdbcEnv.OdbcVersion, (IntPtr) 3 
-, 0);
-			libodbc.DisplayError("SQLSetEnvAttr", ret);
-
+		
+			// allocate Environment handle	
+			ret=libodbc.SQLAllocHandle(OdbcHandleType.Env, IntPtr.Zero, ref henv);
+			libodbchelper.DisplayError("SQLAllocHandle", ret);
+		
+			ret=libodbc.SQLSetEnvAttr(henv, OdbcEnv.OdbcVersion, (IntPtr) 3 , 0); 
+			libodbchelper.DisplayError("SQLSetEnvAttr", ret);
+		
 			Console.WriteLine("ODBCInit Complete.");
 			connectionTimeout = 15;
 			connectionString = null;
@@ -55,18 +53,144 @@ namespace System.Data.Odbc
 
 		#region Properties
 
-		public int hDbc
+		internal IntPtr hDbc
 		{
 			get { return hdbc; }
 		}
-
+		
 		public string ConnectionString {
 			get {
 				return connectionString;
 			}
 			set {
 				connectionString = value;
+			}
+		}
 
+		public int ConnectionTimeout {
+			get {
+				return connectionTimeout;
+			}
+		}
+
+//		public string DataSource {
+//			get {
+//				if (State==ConnectionState.Open)
+//					return _dsn;
+//				else
+//					return null;
+//			}
+//		}
+
+		public string Database {
+			get {
+				return "";
+			}
+		}
+
+		public ConnectionState State
+		{
+			get {
+				if (hdbc!=IntPtr.Zero) {
+					return ConnectionState.Open;
+				}
+				else
+					return ConnectionState.Closed;
+			}
+		}
+
+		internal OdbcDataReader DataReader
+	        {
+			get {
+				return dataReader;
+			}
+			set {
+				dataReader = value;
+			}
+		}
+		
+		#endregion // Properties
+	
+		#region Methods
+	
+		public OdbcTransaction BeginTransaction ()
+		{
+			return BeginTransaction(IsolationLevel.Unspecified);
+        }
+              
+		IDbTransaction IDbConnection.BeginTransaction ()
+		{
+			return (IDbTransaction) BeginTransaction();
+		}
+		
+		public OdbcTransaction BeginTransaction (IsolationLevel level)
+		{
+			if (transaction==null)
+			{
+				transaction=new OdbcTransaction(this,level);
+				return transaction;
+			}
+			else
+				throw new InvalidOperationException();
+		}
+
+		IDbTransaction IDbConnection.BeginTransaction (IsolationLevel level)
+		{
+			return (IDbTransaction) BeginTransaction(level);
+		}
+
+		public void Close ()
+		{
+			if (State == ConnectionState.Open) {
+				// TODO: Free handles
+				dataReader = null;
+				hdbc = IntPtr.Zero;
+				transaction=null;
+			}
+			else
+				throw new InvalidOperationException();
+		}
+
+		public OdbcCommand CreateCommand ()
+		{
+			return new OdbcCommand("", this, transaction); 
+		}
+
+		[MonoTODO]
+		public void ChangeDatabase(string Database)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		protected override void Dispose (bool disposing)
+		{
+		}
+
+		[MonoTODO]
+		object ICloneable.Clone ()
+		{
+			throw new NotImplementedException();
+		}
+
+		IDbCommand IDbConnection.CreateCommand ()
+		{
+			return (IDbCommand) CreateCommand ();
+		}
+
+		public void Open ()
+		{
+			if (State == ConnectionState.Open)
+				throw new InvalidOperationException ();
+						
+			// allocate connection handle
+			OdbcReturn ret=libodbc.SQLAllocHandle(OdbcHandleType.Dbc, henv, ref hdbc);
+			libodbchelper.DisplayError("SQLAllocHandle(hdbc)", ret);
+			
+			// DSN connection
+			if (connectionString.ToLower().IndexOf("dsn=")>=0)
+			{
+				string _uid="", _pwd="", _dsn="";
 				string[] items=connectionString.Split(new char[1]{';'});
 				foreach (string item in items)
 				{
@@ -84,151 +208,18 @@ namespace System.Data.Odbc
 							break;
 					}
 				}
+				ret=libodbc.SQLConnect(hdbc, _dsn, -3, _uid, -3, _pwd, -3);
+				libodbchelper.DisplayError("SQLConnect",ret);
 			}
-		}
-
-		public int ConnectionTimeout {
-			get {
-				return connectionTimeout;
+			else 
+			{
+				// DSN-less Connection
+				string OutConnectionString=new String(' ',1024);
+				short OutLen=0;
+				ret=libodbc.SQLDriverConnect(hdbc, IntPtr.Zero, connectionString, -3, 
+					OutConnectionString, (short) OutConnectionString.Length, ref OutLen, 0);
+				libodbchelper.DisplayError("SQLConnect",ret);
 			}
-		}
-
-		public string DataSource {
-			get {
-				if (State==ConnectionState.Open)
-					return _dsn;
-				else
-					return null;
-			}
-		}
-
-		public string Database {
-			get {
-				return "";
-			}
-		}
-
-		public ConnectionState State
-		{
-			get {
-				if (hdbc!=0) {
-					return ConnectionState.Open;
-				}
-				else
-					return ConnectionState.Closed;
-			}
-		}
-
-		internal OdbcDataReader DataReader
-	        {
-			get {
-				return dataReader;
-			}
-			set {
-				dataReader = value;
-			}
-		}
-
-		#endregion // Properties
-
-		#region Methods
-
-		public void BeginTransaction()
-		{
-			OdbcReturn ret;
-			// Set Auto-commit to false
-			ret=libodbc.SQLSetConnectAttr(hdbc, 102, 0, 0);
-			libodbc.DisplayError("SQLSetConnectAttr(NoAutoCommit)", ret);
-		}
-
-		public void CommitTransaction()
-		{
-			OdbcReturn ret;
-			ret=libodbc.SQLEndTran((short) OdbcHandleType.Dbc, hdbc, 0);
-			libodbc.DisplayError("SQLEndTran(commit)", ret);
-		}
-
-		public void RollbackTransaction()
-		{
-			OdbcReturn ret;
-			ret=libodbc.SQLEndTran((short) OdbcHandleType.Dbc, hdbc, 1);
-			libodbc.DisplayError("SQLEndTran(rollback)", ret);
-		}
-
-//		public OdbcTransaction BeginTransaction ()
-//		{
-//              }
-
-		IDbTransaction IDbConnection.BeginTransaction ()
-		{
-			throw new NotImplementedException ();
-	//		return BeginTransaction ();
-		}
-
-//		public OdbcTransaction BeginTransaction (IsolationLevel level)
-//		{
-//
-//		}
-
-		IDbTransaction IDbConnection.BeginTransaction (IsolationLevel level)
-		{
-			throw new NotImplementedException ();
-		//	return BeginTransaction (level);
-		}
-
-		public void Close ()
-		{
-			if (State == ConnectionState.Open) {
-				hdbc = 0;
-			}
-
-			dataReader = null;
-		}
-
-		public OdbcCommand CreateCommand ()
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public void ChangeDatabase(string Database)
-		{
-			throw new NotImplementedException ();
-		}
-
-
-		[MonoTODO]
-		protected override void Dispose (bool disposing)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		object ICloneable.Clone ()
-		{
-			throw new NotImplementedException();
-		}
-
-		IDbCommand IDbConnection.CreateCommand ()
-		{
-			throw new NotImplementedException();
-	//		return CreateCommand ();
-		}
-
-		public void Open ()
-		{
-			if (State == ConnectionState.Open)
-				throw new InvalidOperationException ();
-
-			OdbcReturn ret;
-
-			// allocate connection handle
-			ret=libodbc.SQLAllocHandle((ushort) OdbcHandleType.Dbc, henv, ref hdbc);
-			libodbc.DisplayError("SQLAllocHandle(hdbc)", ret);
-
-			// Connect to data source
-			ret=libodbc.SQLConnect(hdbc, _dsn, -3, _uid, -3, _pwd, -3);
-			libodbc.DisplayError("SQLConnect",ret);
 
 		}
 
@@ -247,4 +238,3 @@ namespace System.Data.Odbc
 		#endregion
 	}
 }
-

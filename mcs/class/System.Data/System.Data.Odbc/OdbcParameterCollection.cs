@@ -3,7 +3,7 @@
 // System.Data.Odbc.OdbcParameterCollection
 //
 // Author:
-//   Brian Ritchie (brianlritchie@hotmail.com)
+//   Brian Ritchie (brianlritchie@hotmail.com) 
 //
 // Copyright (C) Brian Ritchie, 2002
 //
@@ -22,7 +22,7 @@ namespace System.Data.Odbc
 		ArrayList list = new ArrayList ();
 
 		#endregion // Fields
-
+		
 		#region Properties
 
 		public int Count {
@@ -48,11 +48,11 @@ namespace System.Data.Odbc
 		bool IList.IsFixedSize {
 			get { return false; }
 		}
-
+		
 		bool IList.IsReadOnly {
 			get { return false; }
 		}
-
+		
 		bool ICollection.IsSynchronized {
 			get { return list.IsSynchronized; }
 		}
@@ -60,7 +60,7 @@ namespace System.Data.Odbc
 		object ICollection.SyncRoot {
 			get { return list.SyncRoot; }
 		}
-
+		
 		object IList.this[int index] {
 			get { return list[index]; }
 			set { list[index] = value; }
@@ -119,12 +119,12 @@ namespace System.Data.Odbc
 		}
 
 
-		internal void Bind(int hstmt)
+		internal void Bind(IntPtr hstmt)
 		{
 			for (int i=0;i<Count;i++)
 			{
 				this[i].Bind(hstmt,i+1);
-
+				
 			}
 		}
 
@@ -170,7 +170,7 @@ namespace System.Data.Odbc
 		{
 			return list.GetEnumerator ();
 		}
-
+		
 		int IList.IndexOf (object value)
 		{
 			return list.IndexOf (value);
@@ -204,4 +204,3 @@ namespace System.Data.Odbc
 		#endregion // Methods
 	}
 }
-

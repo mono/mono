@@ -2,7 +2,7 @@
 // System.Data.Odbc.OdbcDataReader
 //
 // Author:
-//   Brian Ritchie (brianlritchie@hotmail.com)
+//   Brian Ritchie (brianlritchie@hotmail.com) 
 //
 // Copyright (C) Brian Ritchie, 2002
 //
@@ -15,29 +15,31 @@ using System.Runtime.InteropServices;
 
 namespace System.Data.Odbc
 {
-	public sealed class OdbcDataReader : MarshalByRefObject, IDataReader, 
-IDisposable, IDataRecord, IEnumerable
+	public sealed class OdbcDataReader : MarshalByRefObject, IDataReader, IDisposable, IDataRecord, IEnumerable
 	{
 		#region Fields
-
+		
 		private OdbcCommand command;
 		private bool open;
 		private int currentRow;
-		private DataColumn[] cols;
-		private int hstmt;
+		private OdbcColumn[] cols;
+		private IntPtr hstmt;
 
 		#endregion
 
 		#region Constructors
 
-		internal OdbcDataReader (OdbcCommand command)
+		internal OdbcDataReader (OdbcCommand command) 
 		{
 			this.command = command;
 			this.command.Connection.DataReader = this;
 			open = true;
 			currentRow = -1;
 			hstmt=command.hStmt;
-			LoadColumns();
+			// Init columns array;
+			short colcount=0;
+			libodbc.SQLNumResultCols(hstmt, ref colcount);
+			cols=new OdbcColumn[colcount];
 		}
 
 		#endregion
@@ -63,22 +65,15 @@ IDisposable, IDataRecord, IEnumerable
 			}
 		}
 
-		public DataColumn[] Columns
-		{
-			get {
-				return cols;
-			}
-		}
-
 		public object this[string name] {
 			get {
-				ushort pos;
+				int pos;
 
 				if (currentRow == -1)
 					throw new InvalidOperationException ();
 
 				pos = ColIndex(name);
-
+				
 				if (pos == -1)
 					throw new IndexOutOfRangeException ();
 
@@ -88,7 +83,7 @@ IDisposable, IDataRecord, IEnumerable
 
 		public object this[int index] {
 			get {
-				return (object) GetODBCData (index);
+				return (object) GetValue (index);
 			}
 		}
 
@@ -101,74 +96,11 @@ IDisposable, IDataRecord, IEnumerable
 		#endregion
 
 		#region Methods
-
-		private Type SQLTypeToCILType(short DataType)
+		
+		private int ColIndex(string colname)
 		{
-			switch (DataType)
-			{
-				case 12:
-				case 1:
-					return typeof(string);
-				case 4:
-					return typeof(int);
-				case 5:
-					return typeof(short);
-				case 2:
-				case 3:
-				case 6:
-				case 7:
-				case 8:
-					return typeof(float);
-				case 90:
-				case 91:
-				case 92:
-				case 9:
-					return typeof(DateTime);
-				default:
-					Console.WriteLine("WARNING: Unknown type {0}", DataType);
-					return typeof(string);
-			}
-		}
-
-		private short CILTypeToSQLType(Type type)
-		{
-			if (type==typeof(int))
-				return 4;
-			else if (type==typeof(string))
-				return 12;
-			else
-				return 12;
-		}
-
-		private void LoadColumns()
-		{
-			ArrayList colsArray=new ArrayList();
-			short colcount=0;
-			short bufsize=255;
-			byte[] colname_buffer=new byte[bufsize];
-			string colname;
-			short colname_size=0;
-			short DataType=0, ColSize=0, DecDigits=0, Nullable=0;
-
-			libodbc.SQLNumResultCols(hstmt, ref colcount);
-			for (ushort i=1;i<=colcount;i++)
-			{
-				libodbc.SQLDescribeCol(hstmt, i, colname_buffer, bufsize, ref 
-colname_size, ref DataType, ref ColSize, ref DecDigits, ref Nullable);
-				colname=System.Text.Encoding.Default.GetString(colname_buffer);
-				DataColumn c=new DataColumn(colname, SQLTypeToCILType(DataType));
-				c.AllowDBNull=(Nullable!=0);
-				if (c.DataType==typeof(string))
-					c.MaxLength=ColSize;
-				colsArray.Add(c);
-			}
-			cols=(DataColumn[]) colsArray.ToArray(typeof(DataColumn));
-		}
-
-		private ushort ColIndex(string colname)
-		{
-			ushort i=0;
-			foreach (DataColumn col in cols)
+			int i=0;
+			foreach (OdbcColumn col in cols)
 			{
 				if (col.ColumnName==colname)
 					return i;
@@ -177,55 +109,39 @@ colname_size, ref DataType, ref ColSize, ref DecDigits, ref Nullable);
 			return 0;
 		}
 
-		private object GetODBCData(int colindex)
+		// Dynamically load column descriptions as needed.
+		private OdbcColumn GetColumn(int ordinal)
 		{
-			return GetODBCData(Convert.ToUInt16(colindex));
+			if (cols[ordinal]==null)
+			{
+				short bufsize=255;
+				byte[] colname_buffer=new byte[bufsize];
+				string colname;
+				short colname_size=0;
+				OdbcType DataType=OdbcType.Int;
+				short ColSize=0, DecDigits=0, Nullable=0;
+				libodbc.SQLDescribeCol(hstmt, Convert.ToUInt16(ordinal+1), 
+					colname_buffer, bufsize, ref colname_size, ref DataType, ref ColSize, 
+					ref DecDigits, ref Nullable);
+				colname=System.Text.Encoding.Default.GetString(colname_buffer);
+				colname=colname.Replace((char) 0,' ').Trim();
+				OdbcColumn c=new OdbcColumn(colname, DataType);
+				c.AllowDBNull=(Nullable!=0);
+				c.Digits=DecDigits;
+				if (c.IsStringType)
+					c.MaxLength=ColSize;
+				cols[ordinal]=c;
+			}
+			return cols[ordinal];
 		}
-
-		private object GetODBCData(ushort colindex)
-		{
-			OdbcReturn ret;
-			int outsize=0;
-			DataColumn col=cols[colindex];
-			colindex+=1;
-			if (col.DataType==typeof(int))
-			{
-				int data=0;
-				ret=libodbc.SQLGetData(hstmt, colindex, 4, ref data, 0, ref outsize);
-				libodbc.DisplayError("SQLGetData(int)",ret);
-				return data;
-			}
-			else if (col.DataType==typeof(string))
-			{
-				byte[] strbuffer=new byte[255];
-				ret=libodbc.SQLGetData(hstmt, colindex, 1, strbuffer, 255, ref outsize);
-				libodbc.DisplayError("SQLGetData("+col.ColumnName+","+colindex.ToString()+")",ret);
-				return System.Text.Encoding.Default.GetString(strbuffer);
-			}
-			else if (col.DataType==typeof(float))
-			{
-				float data=0;
-				ret=libodbc.SQLGetData(hstmt, colindex, 7, ref data, 0, ref outsize);
-				return data;
-			}
-			else if (col.DataType==typeof(DateTime))
-			{
-				OdbcTimestamp data=new OdbcTimestamp();
-				ret=libodbc.SQLGetData(hstmt, colindex, 91, ref data, 0, ref outsize);
-				return new 
-DateTime(data.year,data.month,data.day,data.hour,data.minute,data.second,Convert.ToInt32(data.fraction));
-			}
-			else return "";
-		}
-
-
+	
 		public void Close ()
 		{
 			// libodbc.SQLFreeHandle((ushort) OdbcHandleType.Stmt, hstmt);
-
+		
 			OdbcReturn ret=libodbc.SQLCloseCursor(hstmt);
-			libodbc.DisplayError("SQLCancel",ret);
-
+			libodbchelper.DisplayError("SQLCancel",ret);
+	
 			open = false;
 			currentRow = -1;
 
@@ -240,29 +156,29 @@ DateTime(data.year,data.month,data.day,data.hour,data.minute,data.second,Convert
 
 		public bool GetBoolean (int ordinal)
 		{
-			throw new NotImplementedException ();
+			return (bool) GetValue(ordinal);
 		}
 
+		[MonoTODO]
 		public byte GetByte (int ordinal)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public long GetBytes (int ordinal, long dataIndex, byte[] buffer, int 
-bufferIndex, int length)
+		public long GetBytes (int ordinal, long dataIndex, byte[] buffer, int bufferIndex, int length)
 		{
 			throw new NotImplementedException ();
 		}
-
+		
+		[MonoTODO]
 		public char GetChar (int ordinal)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public long GetChars (int ordinal, long dataIndex, char[] buffer, int 
-bufferIndex, int length)
+		public long GetChars (int ordinal, long dataIndex, char[] buffer, int bufferIndex, int length)
 		{
 			throw new NotImplementedException ();
 		}
@@ -275,12 +191,12 @@ bufferIndex, int length)
 
 		public string GetDataTypeName (int index)
 		{
-			return "";
+			return GetColumn(index).OdbcType.ToString();
 		}
 
 		public DateTime GetDateTime (int ordinal)
 		{
-			throw new NotImplementedException ();
+			return (DateTime) GetValue(ordinal);
 		}
 
 		[MonoTODO]
@@ -291,18 +207,17 @@ bufferIndex, int length)
 
 		public double GetDouble (int ordinal)
 		{
-			throw new NotImplementedException ();
+			return (double) GetValue(ordinal);
 		}
 
-		[MonoTODO]
 		public Type GetFieldType (int index)
 		{
-			throw new NotImplementedException ();
+			return GetColumn(index).DataType;
 		}
 
 		public float GetFloat (int ordinal)
 		{
-			throw new NotImplementedException ();
+			return (float) GetValue(ordinal);
 		}
 
 		[MonoTODO]
@@ -313,24 +228,24 @@ bufferIndex, int length)
 
 		public short GetInt16 (int ordinal)
 		{
-			throw new NotImplementedException ();
+			return (short) GetValue(ordinal);
 		}
 
 		public int GetInt32 (int ordinal)
 		{
-			throw new NotImplementedException ();
+			return (int) GetValue(ordinal);
 		}
 
 		public long GetInt64 (int ordinal)
 		{
-			throw new NotImplementedException ();
+			return (long) GetValue(ordinal);
 		}
 
 		public string GetName (int index)
 		{
 			if (currentRow == -1)
 				return null;
-			return cols[index].ColumnName;
+			return GetColumn(index).ColumnName;
 		}
 
 		public int GetOrdinal (string name)
@@ -346,17 +261,94 @@ bufferIndex, int length)
 				return i;
 		}
 
-		public DataTable GetSchemaTable ()
-		{
-			DataTable table = new DataTable ();
+		[MonoTODO]
+		public DataTable GetSchemaTable() 
+		{	
 
-			// FIXME: implement
-			return table;
+			DataTable dataTableSchema = null;
+			// Only Results from SQL SELECT Queries 
+			// get a DataTable for schema of the result
+			// otherwise, DataTable is null reference
+			if(cols.Length > 0) 
+			{
+				
+				dataTableSchema = new DataTable ();
+				
+				dataTableSchema.Columns.Add ("ColumnName", typeof (string));
+				dataTableSchema.Columns.Add ("ColumnOrdinal", typeof (int));
+				dataTableSchema.Columns.Add ("ColumnSize", typeof (int));
+				dataTableSchema.Columns.Add ("NumericPrecision", typeof (int));
+				dataTableSchema.Columns.Add ("NumericScale", typeof (int));
+				dataTableSchema.Columns.Add ("IsUnique", typeof (bool));
+				dataTableSchema.Columns.Add ("IsKey", typeof (bool));
+				DataColumn dc = dataTableSchema.Columns["IsKey"];
+				dc.AllowDBNull = true; // IsKey can have a DBNull
+				dataTableSchema.Columns.Add ("BaseCatalogName", typeof (string));
+				dataTableSchema.Columns.Add ("BaseColumnName", typeof (string));
+				dataTableSchema.Columns.Add ("BaseSchemaName", typeof (string));
+				dataTableSchema.Columns.Add ("BaseTableName", typeof (string));
+				dataTableSchema.Columns.Add ("DataType", typeof(Type));
+				dataTableSchema.Columns.Add ("AllowDBNull", typeof (bool));
+				dataTableSchema.Columns.Add ("ProviderType", typeof (int));
+				dataTableSchema.Columns.Add ("IsAliased", typeof (bool));
+				dataTableSchema.Columns.Add ("IsExpression", typeof (bool));
+				dataTableSchema.Columns.Add ("IsIdentity", typeof (bool));
+				dataTableSchema.Columns.Add ("IsAutoIncrement", typeof (bool));
+				dataTableSchema.Columns.Add ("IsRowVersion", typeof (bool));
+				dataTableSchema.Columns.Add ("IsHidden", typeof (bool));
+				dataTableSchema.Columns.Add ("IsLong", typeof (bool));
+				dataTableSchema.Columns.Add ("IsReadOnly", typeof (bool));
+
+				DataRow schemaRow;
+								
+				for (int i = 0; i < cols.Length; i += 1 ) 
+				{
+					OdbcColumn col=GetColumn(i);
+
+					schemaRow = dataTableSchema.NewRow ();
+					dataTableSchema.Rows.Add (schemaRow);
+										
+					schemaRow["ColumnName"] = col.ColumnName;
+					schemaRow["ColumnOrdinal"] = i + 1;
+					
+					schemaRow["ColumnSize"] = col.MaxLength;
+					schemaRow["NumericPrecision"] = 0;
+					schemaRow["NumericScale"] = 0;
+					// TODO: need to get KeyInfo
+					schemaRow["IsUnique"] = false;
+					schemaRow["IsKey"] = DBNull.Value;					
+
+					schemaRow["BaseCatalogName"] = "";				
+					schemaRow["BaseColumnName"] = col.ColumnName;
+					schemaRow["BaseSchemaName"] = "";
+					schemaRow["BaseTableName"] = "";
+					schemaRow["DataType"] = col.DataType;
+
+					schemaRow["AllowDBNull"] = col.AllowDBNull;
+					
+					schemaRow["ProviderType"] = (int) col.OdbcType;
+					// TODO: all of these
+					schemaRow["IsAliased"] = false;
+					schemaRow["IsExpression"] = false;
+					schemaRow["IsIdentity"] = false;
+					schemaRow["IsAutoIncrement"] = false;
+					schemaRow["IsRowVersion"] = false;
+					schemaRow["IsHidden"] = false;
+					schemaRow["IsLong"] = false;
+					schemaRow["IsReadOnly"] = false;
+					
+					schemaRow.AcceptChanges();
+					
+				}
+
+			}
+			
+			return dataTableSchema;
 		}
 
 		public string GetString (int ordinal)
 		{
-			throw new NotImplementedException ();
+			return (string) GetValue(ordinal);
 		}
 
 		[MonoTODO]
@@ -373,7 +365,88 @@ bufferIndex, int length)
 			if (ordinal>cols.Length-1 || ordinal<0)
 				throw new IndexOutOfRangeException ();
 
-			return (object) GetODBCData(ordinal);
+			OdbcReturn ret;
+			int outsize=0, bufsize;
+			byte[] buffer;
+			OdbcColumn col=GetColumn(ordinal);
+			object DataValue=null;
+			ushort ColIndex=Convert.ToUInt16(ordinal+1);
+
+			// Check cached values
+			if (col.Value==null)
+			{
+
+				// odbc help file
+				// mk:@MSITStore:C:\program%20files\Microsoft%20Data%20Access%20SDK\Docs\odbc.chm::/htm/odbcc_data_types.htm
+				switch (col.OdbcType)
+				{
+					case OdbcType.Decimal:
+						bufsize=50;
+						buffer=new byte[bufsize];  // According to sqlext.h, use SQL_CHAR for decimal
+						ret=libodbc.SQLGetData(hstmt, ColIndex, OdbcType.Char, buffer, bufsize, ref outsize);
+						if (outsize!=-1)
+							DataValue=Decimal.Parse(System.Text.Encoding.Default.GetString(buffer));
+						break;
+					case OdbcType.TinyInt:
+						short short_data=0;
+						ret=libodbc.SQLGetData(hstmt, ColIndex, OdbcType.TinyInt, ref short_data, 0, ref outsize);
+						DataValue=short_data;
+						break;
+					case OdbcType.Int:
+						int int_data=0;
+						ret=libodbc.SQLGetData(hstmt, ColIndex, OdbcType.Int, ref int_data, 0, ref outsize);
+						DataValue=int_data;
+						break;
+					case OdbcType.BigInt:
+						long long_data=0;
+						ret=libodbc.SQLGetData(hstmt, ColIndex, OdbcType.BigInt, ref long_data, 0, ref outsize);
+						DataValue=long_data;
+						break;
+					case OdbcType.NVarChar:
+						bufsize=col.MaxLength*2+1; // Unicode is double byte
+						buffer=new byte[bufsize];
+						ret=libodbc.SQLGetData(hstmt, ColIndex, OdbcType.NVarChar, buffer, bufsize, ref outsize);
+						if (outsize!=-1)
+							DataValue=System.Text.Encoding.Unicode.GetString(buffer,0,outsize);
+						break;
+					case OdbcType.VarChar:
+						bufsize=col.MaxLength+1;
+						buffer=new byte[bufsize];  // According to sqlext.h, use SQL_CHAR for both char and varchar
+						ret=libodbc.SQLGetData(hstmt, ColIndex, OdbcType.Char, buffer, bufsize, ref outsize);
+						if (outsize!=-1)
+							DataValue=System.Text.Encoding.Default.GetString(buffer,0,outsize);
+						break;
+					case OdbcType.Real:
+						float float_data=0;
+						ret=libodbc.SQLGetData(hstmt, ColIndex, OdbcType.Real, ref float_data, 0, ref outsize);
+						DataValue=float_data;
+						break;
+					case OdbcType.Timestamp:
+					case OdbcType.DateTime:
+						OdbcTimestamp ts_data=new OdbcTimestamp();
+						ret=libodbc.SQLGetData(hstmt, ColIndex, OdbcType.DateTime, ref ts_data, 0, ref outsize);
+						if (outsize!=-1) // This means SQL_NULL_DATA 
+							DataValue=new DateTime(ts_data.year,ts_data.month,ts_data.day,ts_data.hour,
+								ts_data.minute,ts_data.second,Convert.ToInt32(ts_data.fraction));
+						break;
+					default:
+						//Console.WriteLine("Fetching unsupported data type as string: "+col.OdbcType.ToString());
+						bufsize=255;
+						buffer=new byte[bufsize];
+						ret=libodbc.SQLGetData(hstmt, ColIndex, OdbcType.Char, buffer, bufsize, ref outsize);
+						DataValue=System.Text.Encoding.Default.GetString(buffer);
+						break;
+				}
+
+				if (outsize==-1) // This means SQL_NULL_DATA 
+					col.Value=DBNull.Value;
+				else
+				{
+					libodbchelper.DisplayError("SQLGetData("+col.OdbcType.ToString()+")",ret);
+					col.Value=DataValue;	
+				}
+			}
+			return col.Value;
 		}
 
 		[MonoTODO]
@@ -391,7 +464,6 @@ bufferIndex, int length)
 		[MonoTODO]
 		void IDisposable.Dispose ()
 		{
-			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
@@ -402,12 +474,22 @@ bufferIndex, int length)
 
 		public bool IsDBNull (int ordinal)
 		{
-			throw new NotImplementedException ();
+			return (GetValue(ordinal) is DBNull);
 		}
 
 		public bool NextResult ()
 		{
 			OdbcReturn ret=libodbc.SQLFetch(hstmt);
+			if (ret!=OdbcReturn.Success)
+				currentRow=-1;
+			else
+				currentRow++;
+			// Clear cached values from last record
+			foreach (OdbcColumn col in cols)
+			{
+				if (col!=null)
+					col.Value=null;
+			}
 			return (ret==OdbcReturn.Success);
 		}
 
@@ -419,4 +501,3 @@ bufferIndex, int length)
 		#endregion
 	}
 }
-

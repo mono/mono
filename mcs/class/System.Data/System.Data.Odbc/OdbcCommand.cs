@@ -27,13 +27,13 @@ namespace System.Data.Odbc
 		CommandType commandType;
 		OdbcConnection connection;
 		OdbcParameterCollection parameters;
-		//OdbcTransaction transaction;
+		OdbcTransaction transaction;
 		bool designTimeVisible;
 		bool prepared=false;
 		OdbcDataReader dataReader;
 		CommandBehavior behavior;
-		public int hstmt;
-
+		internal IntPtr hstmt;
+		
 		#endregion // Fields
 
 		#region Constructors
@@ -41,11 +41,11 @@ namespace System.Data.Odbc
 		public OdbcCommand ()
 	        {
 			commandText = String.Empty;
-			timeout = 30; // default timeout
+			timeout = 30; // default timeout 
 			commandType = CommandType.Text;
 			connection = null;
 			parameters = new OdbcParameterCollection ();
-			//transaction = null;
+			transaction = null;
 			designTimeVisible = false;
 			dataReader = null;
 			behavior = CommandBehavior.Default;
@@ -62,28 +62,28 @@ namespace System.Data.Odbc
 			Connection = connection;
 		}
 
-//		public OdbcCommand (string cmdText,
-//				     OdbcConnection connection,
-//				     OdbcTransaction transaction) : this (cmdText, connection)
-//		{
-//			this.transaction = transaction;
-//		}
+		public OdbcCommand (string cmdText,
+				     OdbcConnection connection,
+				     OdbcTransaction transaction) : this (cmdText, connection)
+		{
+			this.transaction = transaction;
+		}
 
 		#endregion // Constructors
 
 		#region Properties
 
-		public int hStmt
+		internal IntPtr hStmt
 		{
 			get { return hstmt; }
 		}
 
-		public string CommandText
+		public string CommandText 
 		{
 			get {
 				return commandText;
 			}
-			set {
+			set { 
 				prepared=false;
 				commandText = value;
 			}
@@ -98,7 +98,7 @@ namespace System.Data.Odbc
 			}
 		}
 
-		public CommandType CommandType {
+		public CommandType CommandType { 
 			get {
 				return commandType;
 			}
@@ -107,7 +107,7 @@ namespace System.Data.Odbc
 			}
 		}
 
-		public OdbcConnection Connection {
+		public OdbcConnection Connection { 
 			get {
 				return connection;
 			}
@@ -116,7 +116,7 @@ namespace System.Data.Odbc
 			}
 		}
 
-		public bool DesignTimeVisible {
+		public bool DesignTimeVisible { 
 			get {
 				return designTimeVisible;
 			}
@@ -134,16 +134,16 @@ namespace System.Data.Odbc
 			}
 		}
 
-//		public OdbcTransaction Transaction {
-//			get {
-//				return transaction;
-//			}
-//			set {
-//				transaction = value;
-//			}
-//		}
+		public OdbcTransaction Transaction {
+			get {
+				return transaction;
+			}
+			set {
+				transaction = value;
+			}
+		}
 
-		public UpdateRowSource UpdatedRowSource {
+		public UpdateRowSource UpdatedRowSource { 
 			[MonoTODO]
 			get {
 				throw new NotImplementedException ();
@@ -165,15 +165,13 @@ namespace System.Data.Odbc
 
 		IDataParameterCollection IDbCommand.Parameters  {
 			get {
-				throw new NotImplementedException ();
-				//return Parameters;
+				return Parameters;
 			}
 		}
 
 		IDbTransaction IDbCommand.Transaction  {
 			get {
-				throw new NotImplementedException ();
-				//return Transaction;
+				return (IDbTransaction) Transaction;
 			}
 			set {
 				throw new NotImplementedException ();
@@ -184,10 +182,15 @@ namespace System.Data.Odbc
 
 		#region Methods
 
-		[MonoTODO]
-		public void Cancel ()
+		public void Cancel () 
 		{
-			throw new NotImplementedException ();
+			if (hstmt!=IntPtr.Zero)
+			{
+				OdbcReturn ret=libodbc.SQLCancel(hstmt);
+				libodbchelper.DisplayError("SQLCancel",ret);
+			}
+			else
+				throw new InvalidOperationException();
 		}
 
 		public OdbcParameter CreateParameter ()
@@ -199,36 +202,34 @@ namespace System.Data.Odbc
 		{
 			return CreateParameter ();
 		}
-
+		
 		[MonoTODO]
 		protected override void Dispose (bool disposing)
 		{
-			throw new NotImplementedException ();
 		}
-
-		protected void ExecSQL(string sql)
+		
+		private void ExecSQL(string sql)
 		{
 			OdbcReturn ret;
-
+	
 			if (!prepared)
 			{
 				Prepare();
 				if (Parameters.Count>0)
 					Parameters.Bind(hstmt);
 			}
-
+			
 			if (prepared)
 			{
 				ret=libodbc.SQLExecute(hstmt);
-				libodbc.DisplayError("SQLExecute",ret);
+				libodbchelper.DisplayError("SQLExecute",ret);
 			}
 			else
 			{
-				ret=libodbc.SQLAllocHandle((ushort) OdbcHandleType.Stmt, 
-Connection.hDbc, ref hstmt);
-				libodbc.DisplayError("SQLAllocHandle(hstmt)",ret);
+				ret=libodbc.SQLAllocHandle(OdbcHandleType.Stmt, Connection.hDbc, ref hstmt);
+				libodbchelper.DisplayError("SQLAllocHandle(hstmt)",ret);
 				ret=libodbc.SQLExecDirect(hstmt, sql, sql.Length);
-				libodbc.DisplayError("SQLExecDirect",ret);
+				libodbchelper.DisplayError("SQLExecDirect",ret);
 			}
 		}
 
@@ -251,12 +252,10 @@ Connection.hDbc, ref hstmt);
 
 		public void Prepare()
 		{
-			OdbcReturn ret;
-			ret=libodbc.SQLAllocHandle((ushort) OdbcHandleType.Stmt, Connection.hDbc, 
-ref hstmt);
-			libodbc.DisplayError("SQLAlloc(Prepare)",ret);
+			OdbcReturn ret=libodbc.SQLAllocHandle(OdbcHandleType.Stmt, Connection.hDbc, ref hstmt);
+			libodbchelper.DisplayError("SQLAlloc(Prepare)",ret);
 			ret=libodbc.SQLPrepare(hstmt, CommandText, CommandText.Length);
-			libodbc.DisplayError("SQLPrepare",ret);
+			libodbchelper.DisplayError("SQLPrepare",ret);
 			prepared=true;
 		}
 
@@ -281,19 +280,19 @@ ref hstmt);
 		{
 			return ExecuteReader (behavior);
 		}
-
+		
 		public object ExecuteScalar ()
 		{
 					throw new NotImplementedException ();
 //			if (connection.DataReader != null)
 //				throw new InvalidOperationException ();
-//
+//			
 		}
 
 		[MonoTODO]
 		object ICloneable.Clone ()
 		{
-			throw new NotImplementedException ();
+			throw new NotImplementedException ();	
 		}
 
 		public void ResetCommandTimeout ()
@@ -304,4 +303,3 @@ ref hstmt);
 		#endregion
 	}
 }
-
