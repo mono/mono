@@ -231,7 +231,7 @@ namespace Mono.CSharp {
 			resume_labels.Add (resume_point);
 		}
 
-		static string MakeName (string name)
+		private static string MakeProxyName (string name)
 		{
 			int pos = name.LastIndexOf ('.');
 			if (pos > 0)
@@ -246,7 +246,7 @@ namespace Mono.CSharp {
 		public Iterator (TypeContainer container, string name, Type return_type,
 				 Type [] param_types, InternalParameters parameters,
 				 int modifiers, Block block, Location loc)
-			: base (container.NamespaceEntry, container, MakeName (name),
+			: base (container.NamespaceEntry, container, MakeProxyName (name),
 				Modifiers.PRIVATE, null, loc)
 		{
 			this.container = container;
