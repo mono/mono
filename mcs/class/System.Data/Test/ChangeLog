@@ -1,5 +1,12 @@
 2002-10-16  Daniel Morgan <danmorg@sc.rr.com>
 
+	* SqlSharpCli.cs: remove file
+	from this directory because it has been 
+	moved to
+	mcs/tools/SqlSharp
+
+2002-10-16  Daniel Morgan <danmorg@sc.rr.com>
+
 	* PostresTest.cs: modified to
 	use the new namepace and assembly for PostgreSQL
 	provider which is Mono.Data.PostgreSqlClient
