@@ -1,6 +1,7 @@
 // System.MonoType
 //
 // Sean MacIsaac (macisaac@ximian.com)
+// Paolo Molaro (lupus@ximian.com)
 //
 // (C) 2001 Ximian, Inc.
 
@@ -203,17 +204,17 @@ namespace System
 
 		public override bool IsDefined (Type attributeType, bool inherit)
 		{
-			return false;
+			return MonoCustomAttrs.IsDefined (this, attributeType, inherit);
 		}
 
 		public override object[] GetCustomAttributes (bool inherit)
 		{
-			return null;
+			return MonoCustomAttrs.GetCustomAttributes (this, inherit);
 		}
 
 		public override object[] GetCustomAttributes (Type attributeType, bool inherit)
 		{
-			return null;
+			return MonoCustomAttrs.GetCustomAttributes (this, attributeType, inherit);
 		}
 
 		public override MemberTypes MemberType {

@@ -1,3 +1,10 @@
+
+Tue Feb 19 20:34:35 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* MonoCustomAttrs.cs: hooks to get the custom attributes from the
+	runtime.
+	* MonoType.cs: Implemented custom attributes methods.
+
 2002-02-19  Dietmar Maurer  <dietmar@ximian.com>
 
 	* Array.cs (CopyTo): use GetLength() instead of GetUpperBound() 
