@@ -1392,7 +1392,7 @@ interface_accessors
 interface_event_declaration
 	: opt_attributes opt_new EVENT type IDENTIFIER SEMICOLON
 	  {
-		$$ = new Event ((Expression) $4, (int) $2, true,
+		$$ = new Event (current_container, (Expression) $4, (int) $2, true,
 				 new MemberName ((string) $5), null,
 				(Attributes) $1, null, null, lexer.Location);
 	  }
@@ -1704,8 +1704,8 @@ event_declaration
 
 			MemberName name = new MemberName (var.identifier);
 
-			Event e = new Event ((Expression) $4, (int) $2, false, name,
-					     var.expression_or_array_initializer,
+			Event e = new Event (current_container, (Expression) $4, (int) $2,
+					     false, name, var.expression_or_array_initializer,
 					     (Attributes) $1, null, null, lexer.Location);
 
 			CheckDef (current_container.AddEvent (e), e.Name, e.Location);
@@ -1748,8 +1748,9 @@ event_declaration
 
 		MemberName name = type_name.GetMemberName ();
 
-		Event e = new Event ((Expression) $4, (int) $2, false, name, null,
-				     (Attributes) $1, add_accessor, rem_accessor, loc);
+		Event e = new Event (current_container, (Expression) $4, (int) $2, false,
+				     name, null, (Attributes) $1, add_accessor, rem_accessor,
+				     loc);
 		
 		CheckDef (current_container.AddEvent (e), e.Name, loc);
 		implicit_value_parameter_type = null;
