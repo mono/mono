@@ -13,6 +13,7 @@ SOURCES = 				\
 	codegen/Instructions.cs		\
 	codegen/Method.cs		\
 	codegen/Types.cs		\
+	codegen/TypeManager.cs		\
 	parser/ILParser.cs		\
 	parser/ScannerAdapter.cs	\
 	scanner/ILReader.cs		\
