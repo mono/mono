@@ -209,6 +209,8 @@ namespace Microsoft.VisualBasic
 					YearWeeks = (Date2.Year - Date1.Year) * 53;
 					DayRule = GetDayRule(StartOfWeek, DayRule);
 					WeekRule = GetWeekRule(StartOfYear, WeekRule);
+					if (CurCalendar == null)
+						throw new NotImplementedException("Looks like CultureInfo.CurrentCulture.Calendar is still returning null");
 					return CurCalendar.GetWeekOfYear(Date2,	WeekRule, DayRule) -
 						CurCalendar.GetWeekOfYear(Date1,WeekRule, DayRule) + 
 						YearWeeks;
@@ -396,12 +398,20 @@ namespace Microsoft.VisualBasic
 
 		public static System.DateTime DateValue (string StringDate) 
 		{ 
-			return DateTime.Parse(StringDate);
+			try {
+				return DateTime.Parse(StringDate).Date;
+			} catch (FormatException exception) {
+				throw new InvalidCastException(null, exception);
+			}
 		}
 
 		public static System.DateTime TimeValue (string StringTime) 
 		{ 
-			return DateTime.Parse(StringTime);
+			try {
+				return DateTime.MinValue + DateTime.Parse(StringTime).TimeOfDay;
+			} catch (FormatException exception) {
+				throw new InvalidCastException(null, exception);
+			}
 		}
 
 		public static int Year (System.DateTime DateValue) 

@@ -284,7 +284,8 @@ namespace MonoTests.Microsoft.VisualBasic
 			catch (Exception e) {
 				Fail ("Unexpected exception:" + e);
 			}
-			AssertEquals("#DV03", new DateTime(1969, 2, 12), DateAndTime.DateValue("February 12, 1969"));
+			AssertEquals("#DV03", new DateTime(1969, 2, 12), DateAndTime.DateValue("02/12/1969"));
+			AssertEquals("#DV04", new DateTime(1969, 2, 12), DateAndTime.DateValue("February 12, 1969"));
 		}
 
 		[Test]
@@ -299,7 +300,8 @@ namespace MonoTests.Microsoft.VisualBasic
 			catch (Exception e) {
 				Fail ("Unexpected exception:" + e);
 			}
-			AssertEquals("#TV03", new DateTime(1, 1, 1, 16, 35, 17), DateAndTime.TimeValue("4:35:17 PM"));
+			AssertEquals("#TV03", new DateTime(1, 1, 1, 16, 35, 17), DateAndTime.TimeValue("16:35:17")); // works in .NET?
+			AssertEquals("#TV04", new DateTime(1, 1, 1, 16, 35, 17), DateAndTime.TimeValue("4:35:17 PM"));
 		}
 
 		[Test]
