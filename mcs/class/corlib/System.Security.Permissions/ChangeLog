@@ -1,3 +1,11 @@
+2005-03-24  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* FileIOPermission.cs: Now use InsecureGetFullPath to add paths to 
+	it's lists (as GetFullPath is more restricted than the permission).
+	Removed unrequired use of GetFullPath in union and subset ops.
+	* IsolatedStoragePermission.cs: Added InheritanceDemand for 
+	ControlEvidence and ControlPolicy on class.
+
 2005-03-17  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* IsolatedStorageContainment.cs: Add missing BOOTSTRAP_NET_2_0 to new

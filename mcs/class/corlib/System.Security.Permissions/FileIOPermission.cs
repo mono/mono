@@ -147,7 +147,8 @@ namespace System.Security.Permissions {
 		// internal to avoid duplicate checks
 		internal void AddPathInternal (FileIOPermissionAccess access, string path)
 		{
-			path = Path.GetFullPath (path);
+			// call InsecureGetFullPath (and not GetFullPath) to avoid recursion
+			path = Path.InsecureGetFullPath (path);
 
 			if ((access & FileIOPermissionAccess.Read) == FileIOPermissionAccess.Read)
 				readList.Add (path);
@@ -464,13 +465,13 @@ namespace System.Security.Permissions {
 				pathList.Clear ();
 		}
 
+		// note: all path in IList are already "full paths"
 		internal bool KeyIsSubsetOf (IList local, IList target)
 		{
 			bool result = false;
 			foreach (string l in local) {
-				string c14nl = Path.GetFullPath (l);
 				foreach (string t in target) {
-					if (c14nl.StartsWith (Path.GetFullPath (t))) {
+					if (l.StartsWith (t)) {
 						result = true;
 						break;
 					}
@@ -483,17 +484,14 @@ namespace System.Security.Permissions {
 
 		internal void UnionKeys (IList list, string[] paths)
 		{
-			foreach (string p in paths) {
-				// c14n
-				string path = Path.GetFullPath (p);
+			foreach (string path in paths) {
 				int len = list.Count;
 				if (len == 0) {
 					list.Add (path);
 				}
 				else {
 					for (int i=0; i < len; i++) {
-						// c14n
-						string s = Path.GetFullPath ((string) list [i]);
+						string s = (string) list [i];
 						if (s.StartsWith (path)) {
 							// replace (with reduced version)
 							list [i] = path;
