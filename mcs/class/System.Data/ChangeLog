@@ -1,3 +1,7 @@
+2004-10-06  Umadevi S <sumadevi@novell.com>
+	* System.Data.dll.sources : Added ISqlNotificationReceiver, SqlNotifcationType,
+		SqlNotificationInfo, SqlNotificationSource
+
 2004-09-15  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* System.Data_test.dll.sources: Added OdbcPermission, OleDbPermission 

@@ -286,6 +286,10 @@ System.Data.Sql/SystemDataAccessKind.cs
 System.Data.Sql/SqlFacetAttribute.cs
 System.Data.Sql/IUdtSerializationContext.cs
 System.Data.Sql/TriggerAction.cs
+System.Data.SqlClient/SqlNotificationType.cs
+System.Data.SqlClient/SqlNotificationInfo.cs
+System.Data.SqlClient/SqlNotificationSource.cs
+System.Data.SqlClient/ISqlNotificationReceiver.cs
 System.Data.SqlClient/SqlClientPermission.cs
 System.Data.SqlClient/SqlClientPermissionAttribute.cs
 System.Data.SqlClient/SqlCommand.cs
