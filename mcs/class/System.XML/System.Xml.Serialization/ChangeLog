@@ -1,5 +1,9 @@
 2003-12-18 Eran Domb <erand@mainsoft.com>
 	
+	* TypeTranslator.cs : Change primtive types map.
+
+2003-12-18 Eran Domb <erand@mainsoft.com>
+	
 	* XmlReflectionImporter.cs (ImportListMapping): Adding the included types of the list as a derived
 	classes of object.
 
