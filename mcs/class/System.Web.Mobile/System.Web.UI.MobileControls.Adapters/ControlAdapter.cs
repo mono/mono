@@ -60,6 +60,14 @@ namespace System.Web.UI.MobileControls.Adapters
 			}
 		}
 
+		public System.Web.UI.MobileControls.Style Style
+		{
+			get
+			{
+				return Control.Style;
+			}
+		}
+
 		public MobileControl Control
 		{
 			get
@@ -108,9 +116,8 @@ namespace System.Web.UI.MobileControls.Adapters
 			return false;
 		}
 
-		public void LoadAdapterState(object state)
+		public virtual void LoadAdapterState(object state)
 		{
-			return;
 		}
 
 		public bool LoadPostData(string postKey,
@@ -146,7 +153,7 @@ namespace System.Web.UI.MobileControls.Adapters
 			RenderChildren(writer);
 		}
 
-		public object SaveAdapterState()
+		public virtual object SaveAdapterState()
 		{
 			return null;
 		}

@@ -23,5 +23,11 @@ namespace System.Web.UI.MobileControls.Adapters
 		{
 			throw new NotImplementedException();
 		}
+
+		[MonoTODO]
+		public void EnterStyle(System.Web.UI.MobileControls.Style style)
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

@@ -9,10 +9,23 @@
  */
 
 using System;
+using System.Web.Mobile;
 
 namespace System.Web.UI.MobileControls.Adapters
 {
 	public class HtmlPageAdapter : HtmlControlAdapter
 	{
+		[MonoTODO]
+		public bool PersistCookielessData
+		{
+			get
+			{
+				throw new NotImplementedException();
+			}
+			set
+			{
+				throw new NotImplementedException();
+			}
+		}
 	}
 }

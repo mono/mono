@@ -1,4 +1,12 @@
 
+2003-08-13	Gaurav Vaish <gvaish_mono AT lycos.com>
+
+	* ControlAdapter.cs     : Style { get; }           - Implemented.
+	* HtmlControlAdapter.cs : Towards finishing.
+	* HtmlPageAdapter.cs    : PersistCookielessData    - Mocked.
+	* HtmlMobileTextWriter.cs
+	                        : EnterStyle(Style)        - Mocked.
+
 2003-08-07	Gaurav Vaish <gvaish_mono AT lycos.com>
 
 	* ControlAdapter.cs     : Mark Render(...) virtual.

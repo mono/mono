@@ -111,7 +111,7 @@ namespace System.Web.UI.MobileControls.Adapters
 			this.SecondaryUIMode = NotSecondaryUI;
 		}
 
-		public virtual void LoadAdapterState(object state)
+		public override void LoadAdapterState(object state)
 		{
 			if(state != null && state is int)
 			{
@@ -130,6 +130,38 @@ namespace System.Web.UI.MobileControls.Adapters
 			{
 				Render((HtmlMobileTextWriter)writer);
 			}
+		}
+		
+		protected virtual void RenderAsHiddenInputField(HtmlMobileTextWriter writer)
+		{
+		}
+		
+		[MonoTODO]
+		protected void RenderBeginLink(HtmlMobileTextWriter writer,
+		                               string target)
+		{
+			bool isHTTP = false;
+			if(PageAdapter.PersistCookielessData)
+			{
+				if(target.StartsWith("http:") || target.StartsWith("https:"))
+				{
+					throw new NotImplementedException();
+				}
+			}
+		}
+
+		[MonoTODO]
+		protected void RenderEndLink(HtmlMobileTextWriter writer,
+		                              string target)
+		{
+			throw new NotImplementedException();
+		}
+		
+		[MonoTODO]
+		protected void RenderPostBackEventAsAnchor(HtmlMobileTextWriter writer,
+		                             string argument, string linkText)
+		{
+			throw new NotImplementedException();
 		}
 	}
 }
