@@ -1,3 +1,7 @@
+2003-05-28  Hector E. Gomez Morales  <hgomez_36@flashmail.com>
+
+	* makefile.gnu: Added anonymous.cs to the compiler sources.
+
 2003-05-28  Miguel de Icaza  <miguel@ximian.com>
 
 	* iterators.cs: Change the name of the proxy class to include two
