@@ -20,7 +20,6 @@ namespace System.Xml
 		string publicId;
 		string systemId;
 		string prefix;
-		XmlLinkedNode lastChild;
 		
 		#endregion
 		
@@ -49,13 +48,6 @@ namespace System.Xml
 			get { return true; } // Notation nodes are always read-only
 		}
 
-/*
-		internal override XmlLinkedNode LastLinkedChild {
-			get { return lastChild; }
-
-			set { lastChild = value; }
-		}
-*/
 		public override string LocalName {
 			get { return localName; }
 		}

@@ -563,9 +563,9 @@ namespace Mono.Xml
 	{
 		string name;
 		XmlSchemaDatatype datatype;
-		ArrayList enumeratedLiterals = new ArrayList ();
+		ArrayList enumeratedLiterals;
 		string unresolvedDefault;
-		ArrayList enumeratedNotations = new ArrayList ();
+		ArrayList enumeratedNotations;
 		DTDAttributeOccurenceType occurenceType = DTDAttributeOccurenceType.None;
 		string resolvedDefaultValue;
 		string resolvedNormalizedDefaultValue;
@@ -595,11 +595,19 @@ namespace Mono.Xml
 		// Then I decided to use string ArrayList for enumerated values,
 		// and unresolved string value for DefaultValue.
 		public ArrayList EnumeratedAttributeDeclaration {
-			get { return this.enumeratedLiterals; }
+			get {
+				if (enumeratedLiterals == null)
+					enumeratedLiterals = new ArrayList ();
+				return this.enumeratedLiterals;
+			}
 		}
 
 		public ArrayList EnumeratedNotations {
-			get { return this.enumeratedNotations; }
+			get {
+				if (enumeratedNotations == null)
+					enumeratedNotations = new ArrayList ();
+				return this.enumeratedNotations;
+			}
 		}
 
 		public string DefaultValue {

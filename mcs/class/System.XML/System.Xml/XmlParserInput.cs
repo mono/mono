@@ -77,9 +77,6 @@ namespace Mono.Xml.Native
 			if (peStored)
 				return peBuffer [0];
 
-//			if (can_seek)
-//				return reader.Peek ();
-
 			if (has_peek)
 				return peek_char;
 
@@ -88,8 +85,6 @@ namespace Mono.Xml.Native
 				int i = reader.Read ();
 				if (i >= 0xDC00 && i <= 0xDFFF)
 					peek_char += i;
-//				else
-//					peek_char = -1;
 			}
 			has_peek = true;
 			return peek_char;
@@ -116,8 +111,6 @@ namespace Mono.Xml.Native
 					int i = reader.Read ();
 					if (i > 0xDC00 && i <= 0xDFFF)
 						ch += i;
-//					else
-//						ch = -1;
 				}
 			}
 
@@ -127,18 +120,14 @@ namespace Mono.Xml.Native
 			} else {
 				column++;
 			}
-			currentMarkup.Append ((char) ch);
 			return ch;
 		}
+
 		#endregion
 
 		#region Public Properties
 		public string BaseURI {
 			get { return baseURI; }
-		}
-
-		public StringBuilder CurrentMarkup {
-			get { return this.currentMarkup; }
 		}
 
 		public bool HasPEBuffer {
@@ -151,7 +140,7 @@ namespace Mono.Xml.Native
 					return true;
 			}
 		}
-
+		
 		public int LineNumber {
 			get { return line; }
 		}
@@ -174,7 +163,6 @@ namespace Mono.Xml.Native
 		int peek_char;
 		int line;
 		int column;
-		StringBuilder currentMarkup = new StringBuilder ();
 		StringBuilder peBuffer = new StringBuilder ();
 		string baseURI;
 		bool peStored = false;

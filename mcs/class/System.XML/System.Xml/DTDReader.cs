@@ -10,6 +10,9 @@
 //	When a parameter entity contains cp section, it should be closed 
 //	within that declaration.
 //
+//	Resolution to external entities from different BaseURI fails (it is
+//	the same as MS.NET 1.1, but should be fixed in the future).
+//
 
 using System;
 using System.Collections;
@@ -77,13 +80,6 @@ namespace System.Xml
 			get { return normalization; }
 			set { normalization = value; }
 		}
-
-		// A buffer for ReadContent for ReadOuterXml
-//		private StringBuilder CurrentTag {
-//			get {
-//				return currentInput.CurrentMarkup;
-//			}
-//		}
 
 		public int LineNumber {
 			get { return currentInput.LineNumber; }
@@ -779,7 +775,6 @@ namespace System.Xml
 				return;	// do nothing
 			}
 			currentInput.InsertParameterEntityBuffer (" " + peDecl.ReplacementText + " ");
-
 		}
 
 		// The reader is positioned on the head of the name.
@@ -1312,63 +1307,6 @@ namespace System.Xml
 			return skipped;
 		}
 
-		/*
-		private string Dereference (string unresolved, bool expandPredefined)
-		{
-			StringBuilder resolved = new StringBuilder();
-			int pos = 0;
-			int next = unresolved.IndexOf ('&');
-			if(next < 0)
-				return unresolved;
-
-			while (next >= 0) {
-				if(pos < next)
-					resolved.Append (unresolved.Substring (pos, next - pos));// - 1);
-				int endPos = unresolved.IndexOf (';', next+1);
-				if (endPos < 0)
-					throw new XmlException (this as IXmlLineInfo, "Could not resolve entity reference since it did not end with character ';'.");
-				string entityName =
-					unresolved.Substring (next + 1, endPos - next - 1);
-				if(entityName [0] == '#') {
-					try {
-						int c;
-						// character entity
-						if(entityName [1] == 'x') {
-							// hexadecimal
-							c = int.Parse (entityName.Substring (2),
-								System.Globalization.NumberStyles.HexNumber);
-						} else {
-							// decimal
-							c = int.Parse (entityName.Substring (1));
-						}
-						if (c < Char.MaxValue)
-							resolved.Append ((char) c);
-						else
-							resolved.Append (ExpandSurrogateChar (c));
-					} catch (FormatException) {
-						throw new XmlException (this as IXmlLineInfo, "Invalid character entity reference was found.");
-					}
-				} else {
-					int predefined = XmlChar.GetPredefinedEntity (entityName);
-					if (expandPredefined && predefined >= 0)
-						resolved.Append (predefined);
-					else
-					// With respect to "Value", MS document is helpless
-					// and the implemention returns inconsistent value
-					// (e.g. XML: "&ent; &amp;ent;" ---> Value: "&ent; &ent;".)
-						resolved.Append ("&" + entityName + ";");
-				}
-				pos = endPos + 1;
-				if(pos > unresolved.Length)
-					break;
-				next = unresolved.IndexOf('&', pos);
-			}
-			resolved.Append (unresolved.Substring(pos));
-
-			return resolved.ToString();
-		}
-		*/
-
 		private int PeekChar ()
 		{
 			return currentInput.PeekChar ();
@@ -1435,8 +1373,6 @@ namespace System.Xml
 					throw new XmlException (this as IXmlLineInfo,
 						"Invalid processing instruction name was found.");
 
-//			ClearValueBuffer ();
-
 			while (PeekChar () != -1) {
 				int ch = ReadChar ();
 
@@ -1444,19 +1380,7 @@ namespace System.Xml
 					ReadChar ();
 					break;
 				}
-
-//				AppendValueChar ((char)ch);
 			}
-
-			/*
-			SetProperties (
-				XmlNodeType.ProcessingInstruction, // nodeType
-				target, // name
-				false, // isEmptyElement
-				true, // clearAttributes
-				valueBuffer // value
-			);
-			*/
 		}
 
 		// The reader is positioned after "<?xml "

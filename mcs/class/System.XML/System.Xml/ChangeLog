@@ -1,5 +1,18 @@
 2004-04-05  Atsushi Enomoto <atsushi@ximian.com>
 
+	* DTDObjectModel.cs : (DTDAttributeDefinition) create ArrayList 
+	  only when they are required.
+	* DTDReader.cs,
+	  XmlParserInput.cs : raw tag string now don't have to be kept, while
+	  it cost so much. Removed unused code. 20% to 30% memory got saved.
+	* XmlNotation.cs : removed unused code.
+	* XmlTextReader.cs : Removed unused code. ReadString() now uses 
+	  XmlReader's internal method. Fixed BaseURI to be conformant with
+	  W3C XML InfoSet and (subsequently) xml:base specification (i.e. 
+	  reflect xml:base attribute correctly).
+
+2004-04-05  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlAttribute.cs : get_Value should return all children's value.
 	* XmlCharacterData.cs : DOM's substring does not raise an error when
 	  startIndex + count exceeds the length of Data.

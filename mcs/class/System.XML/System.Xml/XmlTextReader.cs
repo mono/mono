@@ -11,8 +11,7 @@
 
 // FIXME:
 //
-//   Some thought needs to be given to performance. There's too many
-//   strings being allocated.
+//   Some thought needs to be given to performance.
 //
 //   If current node is on an Attribute, Prefix might be null, and
 //   in several fields which uses XmlReader, it should be considered.
@@ -20,7 +19,6 @@
 
 using System;
 using System.Collections;
-using System.Collections.Specialized;
 using System.IO;
 using System.Security.Policy;
 using System.Text;
@@ -627,7 +625,6 @@ namespace System.Xml
 		}
 
 #if NET_1_0
-#if true
 		public override string ReadInnerXml ()
 		{
 			return ReadInnerXmlInternal ();
@@ -637,82 +634,12 @@ namespace System.Xml
 		{
 			return ReadOuterXmlInternal ();
 		}
-#else
-		StringBuilder innerXmlBuilder;
-		public override string ReadInnerXml ()
-		{
-			if (readState != ReadState.Interactive)
-				return String.Empty;
-
-			switch (NodeType) {
-			case XmlNodeType.Attribute:
-				return Value;
-			case XmlNodeType.Element:
-				if (IsEmptyElement)
-					return String.Empty;
-
-				int startDepth = depth;
-
-				if (innerXmlBuilder == null)
-					innerXmlBuilder = new StringBuilder ();
-				innerXmlBuilder.Length = 0;
-				bool loop = true;
-				do {
-					Read ();
-					if (NodeType ==XmlNodeType.None)
-						throw new XmlException ("unexpected end of xml.");
-					else if (NodeType == XmlNodeType.EndElement && depth == startDepth) {
-						loop = false;
-						Read ();
-					}
-					else
-						innerXmlBuilder.Append (CreateCurrentTagString ());
-				} while (loop);
-				string xml = innerXmlBuilder.ToString ();
-				innerXmlBuilder.Length = 0;
-				return xml;
-			case XmlNodeType.None:
-				// MS document is incorrect. Seems not to progress.
-				return String.Empty;
-			default:
-				Read ();
-				return String.Empty;
-			}
-		}
-
-		public override string ReadOuterXml ()
-		{
-			if (readState != ReadState.Interactive)
-				return String.Empty;
-
-			switch (NodeType) {
-			case XmlNodeType.Attribute:
-				// strictly incompatible with MS... (it holds spaces attribute between name, value and "=" char (very trivial).
-				return String.Format ("{0}={1}{2}{1}", Name, QuoteChar, ReadInnerXml ());
-			case XmlNodeType.Element:
-				bool isEmpty = IsEmptyElement;
-				string startTag = CreateCurrentTagString ();
-				string name = Name;
-
-				if (NodeType == XmlNodeType.Element && !isEmpty)
-					return String.Format ("{0}{1}</{2}>", startTag, ReadInnerXml (), name);
-				else
-					return CreateCurrentTagString ();
-			case XmlNodeType.None:
-				// MS document is incorrect. Seems not to progress.
-				return String.Empty;
-			default:
-				Read ();
-				return String.Empty;
-			}
-		}
-#endif
-#endif
 
 		public override string ReadString ()
 		{
 			return ReadStringInternal ();
 		}
+#endif
 
 		public void ResetState ()
 		{
@@ -1166,7 +1093,6 @@ namespace System.Xml
 
 		private int PeekChar ()
 		{
-#if true
 			if (peekCharsLength == peekCharsIndex) {
 				if (!ReadTextReader ())
 					return -1;
@@ -1174,21 +1100,6 @@ namespace System.Xml
 			}
 			else
 				return peekChars [peekCharsIndex];
-#else
-			if (hasPeekChars)
-				return peekChars [peekCharsIndex];
-
-			if (has_peek)
-				return peek_char;
-			peek_char = reader.Read ();
-			if (peek_char >= 0xD800 && peek_char <= 0xDBFF) {
-				int i = reader.Read ();
-				if (i >= 0xDC00 && i <= 0xDFFF)
-					peek_char += i;
-			}
-			has_peek = true;
-			return peek_char;
-#endif
 		}
 
 		private int ReadChar ()
@@ -1369,8 +1280,12 @@ namespace System.Xml
 							"Attribute name and qualified name must be identical.");
 
 			string baseUri = GetAttribute ("xml:base");
-			if (baseUri != null)
-				parserContext.BaseURI = baseUri;
+			if (baseUri != null) {
+				if (this.resolver != null)
+					parserContext.BaseURI = resolver.ResolveUri (new Uri (BaseURI), baseUri).ToString ();
+				else
+					parserContext.BaseURI = baseUri;
+			}
 			string xmlLang = GetAttribute ("xml:lang");
 			if (xmlLang != null)
 				parserContext.XmlLang = xmlLang;
@@ -1395,7 +1310,6 @@ namespace System.Xml
 			}
 
 			Expect ('>');
-
 			SetProperties (
 				XmlNodeType.Element, // nodeType
 				name, // name
@@ -1768,6 +1682,7 @@ namespace System.Xml
 			currentAttributeValueToken.Clear ();
 		}
 
+		// FIXME: normalize here
 		private void ReadAttributeValueTokens (int dummyQuoteChar)
 		{
 			int quoteChar = (dummyQuoteChar < 0) ? ReadChar () : dummyQuoteChar;
