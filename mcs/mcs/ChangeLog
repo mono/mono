@@ -1,3 +1,6 @@
+2002-06-16  Rafael Teixeira  <rafaelteixeirabr@hotmail.com>
+	* changed namespace.cs to use "GenericParser.error(...)" instead of "CSharpParser.error(...)"
+
 2002-06-14  Rachel Hestilow  <hestilow@ximian.com>
 
 	* expression.cs (Unary.ResolveOperator): Use TypeManager

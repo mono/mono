@@ -8,6 +8,7 @@
 //
 using System;
 using System.Collections;
+using Mono.Languages;
 
 namespace Mono.CSharp {
 
@@ -72,7 +73,7 @@ namespace Mono.CSharp {
 		public void Using (string ns)
 		{
 			if (decl_found){
-				CSharpParser.error (1529, "A using clause must precede all other namespace elements");
+				GenericParser.error (1529, "A using clause must precede all other namespace elements");
 				return;
 			}
 
@@ -126,7 +127,7 @@ namespace Mono.CSharp {
 				if (de.Value == null){
 					string name = (string) de.Key;
 					
-					CSharpParser.error (234, "The type or namespace `" +
+					GenericParser.error (234, "The type or namespace `" +
 							    name + "' does not exist in the " +
 							    "class or namespace `" + name + "'");
 				}
