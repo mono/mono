@@ -65,6 +65,13 @@ namespace Mono.Languages
 			return base.DoAbout();
 		}
 
+		[Option(-1, "[Mono] References packages listed. {packagelist}=package,...", "pkg")]
+		public WhatToDoNext ReferenceSomePackage(string packageName)
+		{
+			ReferencePackage(packageName);
+			return WhatToDoNext.GoAhead;
+		}
+
 		[Option("[Mono] Don\'t assume the standard library", "nostdlib")]
 		public bool NoStandardLibraries { set { RootContext.StdLib = !value; } }
 
@@ -80,8 +87,7 @@ namespace Mono.Languages
 		[Option("[Mono] Debugger {arguments}", "debug-args")]
 		public WhatToDoNext SetDebugArgs(string args)
 		{
-			char[] sep = { ',' };
-			debug_arglist.AddRange (args.Split (sep));
+			debug_arglist.AddRange (args.Split(','));
 			return WhatToDoNext.GoAhead;
 		}
 
@@ -133,7 +139,7 @@ namespace Mono.Languages
 		//------------------------------------------------------------------
 		public ArrayList AddedModules = new ArrayList();
 
-		[Option("References metadata from specified {module}", "addmodule")]
+		[Option(-1, "References metadata from specified {module}", "addmodule")]
 		public string AddedModule { set { AddedModules.Add(value); } }
 
 		[Option("[NOT IMPLEMENTED YET]Include all files in the current directory and subdirectories according to the {wildcard}", "recurse")]
@@ -394,6 +400,11 @@ namespace Mono.Languages
 			Console.WriteLine ("Log: \n" + total_log);
 
 			return 0;
+		}
+
+		public void ReferencePackage(string packageName)
+		{
+			//TODO: do it (See what mcs does)
 		}
 
 		public void LoadModule (MethodInfo adder_method, string module)

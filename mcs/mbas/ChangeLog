@@ -1,3 +1,6 @@
+2004/07/15  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* driver.cs : started implementing -pkg support to match mcs (bug #58673), also corrected multiplicity for addmodule option
+
 2004-07-13 Anirban Bhattacharjee <banirban@novell.com>
 	* driver.cs: Added support for AddModule compiler option
 	* typemanager.cs: AddModule function will now store list of Modules instaed of ModuleBuilders. This change has been made to get LoadModule function working of driver.cs.
