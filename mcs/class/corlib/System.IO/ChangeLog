@@ -1,3 +1,8 @@
+2003-08-05  Martin Baulig  <martin@ximian.com>
+
+	* StreamReader.cs (DiscardBufferedData): This is only allowed on
+	seekable streams.
+
 2003-08-04  Martin Baulig  <martin@ximian.com>
 
 	* StreamReader.cs (DiscardBufferedData): Implemented.
