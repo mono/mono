@@ -1,3 +1,9 @@
+2003-10-15  Zoltan Varga  <vargaz@freemail.hu>
+
+	* vararg.il: New file.
+
+	* Makefile.am: Added vararg.il.
+
 2003-10-13  Bernie Solomon  <bernard@ugsolutions.com>
 
 	* Makefile.am: fix so it works if builddir != srcdir
