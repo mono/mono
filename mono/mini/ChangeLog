@@ -1,3 +1,7 @@
+2004-07-28  Zoltan Varga  <vargaz@freemail.hu>
+
+	* *-amd64.*: More AMD64 work.
+	
 2004-07-28  Ben Maurer  <bmaurer@ximian.com>
 
 	* cpu-pentium.md, inssel-x86.brg, mini-ops.h, mini-x86.c:
