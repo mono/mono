@@ -1,3 +1,9 @@
+
+Tue Mar 29 11:43:01 CEST 2005 Paolo Molaro <lupus@ximian.com>
+
+	* inssel.brg, arrays.cs: fix long stabding 64 bit issue in access to
+	klass->interface_offsets (will likely fix bug#74073).
+
 2005-03-29  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-amd64.c (mono_arch_is_int_overflow): Fix rex handling.
