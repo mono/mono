@@ -650,7 +650,39 @@ namespace System.Reflection.Emit {
 		}
 
 		public override FieldInfo GetField( string name, BindingFlags bindingAttr) {
-			throw not_supported ();
+			if (fields == null)
+				return null;
+
+			bool match;
+			FieldAttributes mattrs;
+			
+			foreach (FieldInfo c in fields) {
+				if (c.Name != name)
+					continue;
+				match = false;
+				mattrs = c.Attributes;
+				if ((mattrs & FieldAttributes.FieldAccessMask) == FieldAttributes.Public) {
+					if ((bindingAttr & BindingFlags.Public) != 0)
+						match = true;
+				} else {
+					if ((bindingAttr & BindingFlags.NonPublic) != 0)
+						match = true;
+				}
+				if (!match)
+					continue;
+				match = false;
+				if ((mattrs & FieldAttributes.Static) != 0) {
+					if ((bindingAttr & BindingFlags.Static) != 0)
+						match = true;
+				} else {
+					if ((bindingAttr & BindingFlags.Instance) != 0)
+						match = true;
+				}
+				if (!match)
+					continue;
+				return c;
+			}
+			return null;
 		}
 
 		public override FieldInfo[] GetFields (BindingFlags bindingAttr) {

@@ -1,3 +1,7 @@
+2003-11-25  Zoltan Varga  <vargaz@freemail.hu>
+
+	* TypeBuilder.cs: Implement GetField.
+
 2003-11-24  Zoltan Varga  <vargaz@freemail.hu>
 
 	* DynamicMethod.cs: New class.
