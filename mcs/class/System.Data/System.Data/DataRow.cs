@@ -190,35 +190,35 @@ namespace System.Data
 		}
 
 		[MonoTODO]
-		public object this[string] {
+		public object this[string s] {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
 
 		[MonoTODO]
-		public object this[DataColumn] {
+		public object this[DataColumn dc] {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
 
 		[MonoTODO]
-		public object this[int] {
+		public object this[int i] {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
 
 		[MonoTODO]
-		public object this[string, DataRowVersion] {
+		public object this[string s, DataRowVersion version] {
 			get { throw new NotImplementedException (); }
 		}
 
 		[MonoTODO]
-		public object this[DataColumn, DataRowVersion] {
+		public object this[DataColumn dc, DataRowVersion version] {
 			get { throw new NotImplementedException (); }
 		}
 
 		[MonoTODO]
-		public object this[int, DataRowVersion] {
+		public object this[int i, DataRowVersion version] {
 			get { throw new NotImplementedException (); }
 		}
 
