@@ -772,7 +772,7 @@ namespace Mono.CSharp {
 						if (expr_type.IsClass)
 							return new EmptyCast (expr, target_type);
 						else if (expr_type.IsValueType)
-							return new BoxedCast (expr);
+							return new BoxedCast (expr, target_type);
 					}
 				}
 
@@ -3149,6 +3149,11 @@ namespace Mono.CSharp {
 
 		public BoxedCast (Expression expr)
 			: base (expr, TypeManager.object_type) 
+		{
+		}
+
+		public BoxedCast (Expression expr, Type target_type)
+			: base (expr, target_type)
 		{
 		}
 		

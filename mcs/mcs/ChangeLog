@@ -1,3 +1,11 @@
+2003-05-09  Miguel de Icaza  <miguel@ximian.com>
+
+	* ecore.cs (ImplicitReferenceConversion): When boxing an interface
+	pass the type for the box operation, otherwise the resulting
+	object would have been of type object.
+
+	(BoxedCast): Add constructor to specify the type to box as.
+
 2003-05-07  Miguel de Icaza  <miguel@ximian.com>
 
 	* iterators.cs: I was reusing the `count' variable inadvertently,
