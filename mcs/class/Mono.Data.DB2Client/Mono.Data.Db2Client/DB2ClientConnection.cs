@@ -149,7 +149,11 @@ namespace DB2ClientCS
 		///
 		unsafe public void Close()
 		{
-			DB2ClientPrototypes.SQLDisconnect(dbHandle);
+			short sqlRet = 0;
+			DB2ClientUtils util = new DB2ClientUtils();
+
+			sqlRet = DB2ClientPrototypes.SQLDisconnect(dbHandle);
+			util.DB2CheckReturn(sqlRet, DB2ClientConstants.SQL_HANDLE_DBC, dbHandle, "Error in Connection->Close: ");
 			dbHandle = new IntPtr(DB2ClientConstants.SQL_NULL_HANDLE);
 		}
 		#endregion
