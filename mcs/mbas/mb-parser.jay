@@ -252,7 +252,11 @@ namespace Mono.MonoBASIC
 				stateStack.Push(state);
 			}
 
-			public void HandleToken(Token tok)
+			// The parameter here need not be qualified with IfElseStateMachine
+			// But it hits a bug in mcs. So temporarily scoping it so that builds
+			// are not broken.
+
+			public void HandleToken(IfElseStateMachine.Token tok)
 			{
 				err = (int) errTable[(int)state, (int)tok];
 
@@ -606,7 +610,7 @@ compilation_unit
 	: logical_end_of_line
 	  opt_option_directives
 	  opt_imports_directives 
-	  opt_attributes
+	  opt_global_attributes
 	  opt_declarations 
 	  EOF
 	  {
@@ -789,6 +793,86 @@ opt_params
 	| OPEN_PARENS CLOSE_PARENS	{ $$ = Parameters.EmptyReadOnlyParameters; }
 	| OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS	{ $$ = $2; }
 	;
+
+opt_global_attributes
+	: /* empty */
+	| global_attribute_sections 	{ $$ = $1; }
+	;
+
+global_attribute_sections
+	: global_attribute_section
+          { 
+		AttributeSection sect = (AttributeSection) $1;
+
+		if (sect.Target == "assembly") 
+			RootContext.AddGlobalAttributeSection (current_container, sect);
+		
+		$$ = new Attributes ((AttributeSection) $1, lexer.Location);
+		
+          }	
+          /* 
+             FIXME: we should check if extended syntax is enabled;
+                    otherwise an exception should be thrown since VB.NET 
+                    only allows one attribute section 
+          */  
+	| global_attribute_section global_attribute_sections
+	  {
+		Attributes attrs = null;
+		AttributeSection sect = (AttributeSection) $2;
+
+		if (sect.Target == "assembly")
+			RootContext.AddGlobalAttributeSection (current_container, sect);
+
+		if ($1 != null) {
+			attrs = (Attributes) $1;
+			attrs.AddAttributeSection (sect);
+		}
+		
+		$$ = attrs;
+	  }	
+	;
+
+attribute_begin
+	: OP_LT
+	;
+
+attribute_end
+	: OP_GT
+	;
+
+global_attribute_begin
+	: OP_LT attribute_target_specifier
+	  {
+		  $$ = $2;
+	  }
+
+global_attribute_section
+	: global_attribute_begin attribute_list attribute_end
+	  { 
+		string target = null;
+		
+		if ($1 != null)
+			target = (string) $1;
+		
+		$$ = new AttributeSection (target, (ArrayList) $3);
+ 	  }	
+	; 
+
+attribute_target_specifier
+	: attribute_target COLON
+	  {
+		$$ = $1;
+	  }
+	;
+
+attribute_target
+	: identifier
+	  {
+		CheckAttributeTarget ((string) $1);
+		$$ = $1;
+	  }
+	;
+
 	
 opt_attributes
 	: /* empty */
@@ -829,37 +913,12 @@ attribute_sections
 	;
 	
 attribute_section
-	: OP_LT attribute_target_specifier attribute_list OP_GT
-	  { 
-		string target = null;
-		
-		if ($2 != null)
-			target = (string) $2;
-		
-		$$ = new AttributeSection (target, (ArrayList) $3);
- 	  }	
-	| OP_LT attribute_list OP_GT
+	: attribute_begin attribute_list attribute_end
 	  {
 		$$ = new AttributeSection (null, (ArrayList) $2);
 	  }	
 	; 
 
-attribute_target_specifier
-	: attribute_target COLON
-	  {
-		$$ = $1;
-	  }
-	;
-
-attribute_target
-	: identifier
-	  {
-		CheckAttributeTarget ((string) $1);
-		$$ = $1;
-	  }
-        | EVENT  { $$ = "event"; }	  
-        | RETURN { $$ = "return"; }
-	;
 	
 attribute_list
 	: attribute 
@@ -4656,7 +4715,8 @@ void CheckAttributeTarget (string a)
 {
 	switch (a) {
 
-	case "assembly" : case "field" : case "method" : case "param" : case "property" : case "type" :
+	case "assembly" : 
+	case "module" :
 		return;
 		
 	default :

@@ -5,6 +5,11 @@
 	Conditonal directives currently accept only boolean literals
 	as conditonal expressions. 
 	
+	* mb-parser.jay: The original checkin hits a bug in mcs but
+	compiles fine with csc. This checkin is to workaround the mcs
+	bug so that cvs builds are not broken.
+	
+	
 2004/07/26  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* mb-parser.jay : First try at SyncLock Statement #53230
 
