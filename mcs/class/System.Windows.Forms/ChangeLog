@@ -1,3 +1,7 @@
+2004-03-15  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* System.Windows.Forms.dll.sources: Added files
+
 2004-01-22  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* System.Resources/ResXResourceReader.cs: read empty tags properly.

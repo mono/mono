@@ -1,3 +1,5 @@
+Assembly/AssemblyInfo.cs
+Assembly/Locale.cs
 System.Resources/ResXResourceReader.cs
 System.Resources/ResXResourceWriter.cs
 System.Windows.Forms/AccessibleEvents.cs
@@ -13,7 +15,6 @@ System.Windows.Forms/ApplicationContext.cs
 System.Windows.Forms/Application.cs
 System.Windows.Forms/ArrangeDirection.cs
 System.Windows.Forms/ArrangeStartingPosition.cs
-System.Windows.Forms/AssemblyInfo.cs
 System.Windows.Forms/AxHost.cs
 System.Windows.Forms/BaseCollection.cs
 System.Windows.Forms/BindingContext.cs
@@ -308,6 +309,7 @@ System.Windows.Forms/TreeViewImageIndexConverter.cs
 System.Windows.Forms/UICues.cs
 System.Windows.Forms/UICuesEventArgs.cs
 System.Windows.Forms/UICuesEventHandler.cs
+System.Windows.Forms/UnsafeNativeMethods.cs
 System.Windows.Forms/UpDownBase.cs
 System.Windows.Forms/UpDownEventArgs.cs
 System.Windows.Forms/UpDownEventHandler.cs
