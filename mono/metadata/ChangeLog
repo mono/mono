@@ -1,3 +1,10 @@
+2004-01-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* icall.c: renamed ves_icall_Type_GetProperties to GetPropertiesByName.
+	It takes 2 new parameters with an optional name for the property to look
+	for and case ignoring info.
+	Fixes bug #52753.
+
 2004-01-09  Zoltan Varga  <vargaz@freemail.hu>
 
 	* reflection.c: Applied patch from Benjamin Jemlich (pcgod@gmx.net).
