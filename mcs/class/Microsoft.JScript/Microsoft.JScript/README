@@ -30,6 +30,16 @@ If you wanna build mjs (the ECMAScript compiler), do:
  mcs -r:Microsoft.JScript.dll driver.cs
 
 
+Copy mjs.exe to $(PREFIX)/lib/mono/1.0/
+
+And copy a shell script named mjs to your PATH, containing:
+
+#!/bin/sh
+exec $(PREFIX)/bin/mono $(PREFIX)/lib/mono/1.0/mjs.exe "$@"
+
+Don't forget to give execution permission to it.
+
+
 - AST
 - ASTList
 - ArrayLiteral
