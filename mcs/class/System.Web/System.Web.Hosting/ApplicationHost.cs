@@ -60,7 +60,7 @@ namespace System.Web.Hosting
 			domain.SetData (".hostingVirtualPath", virtualDir);
 			//domain.SetData(".hostingInstallDir", ?????);
 			InitConfigInNewAppDomain (domain);
-			ObjectHandle o = domain.CreateInstance (hostType.Module.Assembly.FullName,
+			ObjectHandle o = domain.CreateInstance (hostType.Assembly.FullName,
 								hostType.FullName);
 			return o.Unwrap();
 		}
@@ -68,7 +68,7 @@ namespace System.Web.Hosting
 		private static void InitConfigInNewAppDomain (AppDomain appDomain)
 		{
 			Type t = typeof (ConfigInitHelper);
-			ObjectHandle o = appDomain.CreateInstance (t.Module.Assembly.FullName, t.FullName);
+			ObjectHandle o = appDomain.CreateInstance (t.Assembly.FullName, t.FullName);
 			ConfigInitHelper helper = (ConfigInitHelper) o.Unwrap();
 			helper.InitConfig ();
 		}

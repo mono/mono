@@ -1,3 +1,7 @@
+2002-08-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ApplicationHost.cs: use Assembly instead of Module.
+
 2002-08-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AppDomainFactory.cs: implemented.
