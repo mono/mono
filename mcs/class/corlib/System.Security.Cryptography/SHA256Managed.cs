@@ -5,11 +5,7 @@
 //   Matthew S. Ford (Matthew.S.Ford@Rose-Hulman.Edu)
 //
 // (C) 2001 
-// (C) 2004 Novell (http://www.novell.com)
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004, 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -42,11 +38,13 @@ namespace System.Security.Cryptography {
 		private uint count;
 		private byte[] _ProcessingBuffer;   // Used to start data when passed less than a block worth.
 		private int _ProcessingBufferCount; // Counts how much data we have stored that still needs processed.
+		private uint[] buff;
 	
 		public SHA256Managed () 
 		{
 			_H = new uint [8];
 			_ProcessingBuffer = new byte [BLOCK_SIZE_BYTES];
+			buff = new uint[64];
 			Initialize ();
 		}
 
@@ -156,11 +154,8 @@ namespace System.Security.Cryptography {
 			uint a, b, c, d, e, f, g, h;
 			uint t1, t2;
 			int i;
-			uint[] buff;
 		
 			count += BLOCK_SIZE_BYTES;
-		
-			buff = new uint[64];
 
 			for (i=0; i<16; i++) {
 				buff[i] = ((uint)(inputBuffer[inputOffset+4*i]) << 24)
