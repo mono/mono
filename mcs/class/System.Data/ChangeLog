@@ -1,3 +1,8 @@
+2004-04-15  Atsushi Enomoto <atsushi@ximian.com>
+
+	* System.Data_test.dll.sources :
+	  added DataSetReadXmlSchemaTest.cs and DataSetAssertion.cs.
+
 2004-04-14  Atsushi Enomoto <atsushi@ximian.com>
 
 	* System.Data_test.dll.sources : added DataSetReadXmlTest.cs.
