@@ -31,7 +31,7 @@ ilasm.exe: list
 
 install: all
 	mkdir -p $(prefix)/bin
-	$(INSTALL) -m 644 ilasm.exe $(prefix)/bin
+	$(INSTALL) -m 755 ilasm.exe $(prefix)/bin
 
 parser/ILParser.cs: parser/ILParser.jay ../jay/skeleton.cs
 	../jay/jay -ct < ../jay/skeleton.cs parser/ILParser.jay > parser/ILParser.cs
