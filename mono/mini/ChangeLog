@@ -1,5 +1,8 @@
 2003-11-12  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini.c (mono_method_to_ir): Use CEE_JMP only if the signature of
+	the caller and the callee matches.
+	
 	* mini.c (mono_method_to_ir): Add comment.
 
 	* mini-x86.c (mono_arch_output_basic_block): Use mono_signbit, since
