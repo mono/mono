@@ -1,5 +1,8 @@
 2004-02-11  Miguel de Icaza  <miguel@ximian.com>
 
+	* cs-parser.jay: Fix small regression: we were not testing V2
+	compiler features correctly.
+
 	* interface.cs: If the emit context is null, then create one
 
 2004-02-09  Marek Safar  <marek.safar@seznam.cz>
