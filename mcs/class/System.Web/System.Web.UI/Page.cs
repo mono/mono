@@ -192,7 +192,7 @@ public class Page : TemplateControl, IHttpHandler
 	public bool IsPostBack
 	{
 		get {
-			return (0 == String.Compare (Request.HttpMethod, "POST", true));
+			return _requestValueCollection != null;
 		}
 	}
 
@@ -367,7 +367,7 @@ public class Page : TemplateControl, IHttpHandler
 			return null;
 
 		NameValueCollection coll = null;
-		if (IsPostBack)
+		if (0 == String.Compare (Request.HttpMethod, "POST", true))
 			coll =	req.Form;
 		else 
 			coll = req.QueryString;

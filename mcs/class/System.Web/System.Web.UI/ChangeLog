@@ -1,5 +1,10 @@
 2004-06-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* Page.cs: IsPostBack also returns true when method is GET and we have
+	viewstate information in the query string. Fixes bug #58151.
+
+2004-06-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* Page.cs: removed obsolete TODO. Only check if Trace is enabled, not
 	HttpRutime.TraceManager.
 
