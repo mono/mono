@@ -1,3 +1,8 @@
+2003-04-10  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini.c (mono_type_blittable): MONO_TYPE_OBJECT is blittable.
+
+	* driver.c: Added --print-vtable option as in the old JIT.
 
 Thu Apr 10 17:43:49 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
