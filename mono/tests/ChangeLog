@@ -1,3 +1,7 @@
+2004-08-28  Zoltan Varga  <vargaz@freemail.hu>
+
+	* pinvoke2.cs libtest.c: New test for byref string arrays.
+
 2004-08-06  Zoltan Varga  <vargaz@freemail.hu>
 
 	* pinvoke2.cs libtest.c: Add AMD64 structs-by-value tests.
