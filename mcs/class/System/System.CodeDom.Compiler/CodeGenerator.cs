@@ -172,10 +172,12 @@ namespace System.CodeDom.Compiler {
 
 			CodeAttributeDeclarationCollection attributes = compileUnit.AssemblyCustomAttributes;
 			if (attributes.Count != 0) {
-				GenerateAttributeDeclarationsStart (attributes);
-				output.Write ("assembly: ");
-				OutputAttributeDeclarations (compileUnit.AssemblyCustomAttributes);
-				GenerateAttributeDeclarationsEnd (attributes);
+				foreach (CodeAttributeDeclaration att in attributes) {
+					GenerateAttributeDeclarationsStart (attributes);
+					output.Write ("assembly: ");
+					OutputAttributeDeclaration (att);
+					GenerateAttributeDeclarationsEnd (attributes);
+				}
 			}
 
 			foreach (CodeNamespace ns in compileUnit.Namespaces)

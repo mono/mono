@@ -103,7 +103,7 @@ namespace MonoTests.Microsoft.CSharp
 
 			codeUnit.AssemblyCustomAttributes.Add (attrDec);
 			Generate ();
-			Assertion.AssertEquals ("[assembly: A()]\n\n", Code);
+			Assertion.AssertEquals ("[assembly: A()]", Code.Trim ());
 		}
 
 		/* FIXME

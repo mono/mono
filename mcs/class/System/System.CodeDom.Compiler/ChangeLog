@@ -1,7 +1,11 @@
+2003-11-21  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* CodeGenerator.cs: fixed assembly level attribute generation.
+
 2003-08-08  Lluis Sanchez Gual  <lluis@ximian.com>
 
-	* CodeGenerator.cs: When sorting the members of a type, keep the relative
-	  order of the members of the same kind.
+	* CodeGenerator.cs: When sorting the members of a type, keep the
+	relative order of the members of the same kind.
 
 2003-08-05  Lluis Sanchez Gual  <lluis@ximian.com>
 
