@@ -1,7 +1,5 @@
 2005-03-07  Atsushi Enomoto <atsushi@ximian.com>
 
-	* README :
-	  more description.
 	* NvdlBuiltInValidationProvider.cs :
 	  When it is "allow", it should not always return false.
 	* NvdlFilteredXmlReader.cs :

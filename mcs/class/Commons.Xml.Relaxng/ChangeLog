@@ -1,3 +1,8 @@
+2005-03-07  Atsushi Enomoto <atsushi@ximian.com>
+
+	* README :
+	  more description.
+
 2005-03-06  Atsushi Enomoto <atsushi@ximian.com>
 
 	* Commons.Xml.Relaxng.dll.sources : added NvdlFilteredXmlReader.
