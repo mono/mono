@@ -25,10 +25,10 @@ namespace System.Net {
 		// changing socket-io.c in the runtime
 		private long address;
 
-		public static readonly IPAddress Any=new IPAddress(0);
-		public static readonly IPAddress Broadcast=new IPAddress(0xffffffff);
-		public static readonly IPAddress Loopback=new IPAddress(0x7f000001);
-		public static readonly IPAddress None=new IPAddress(0xffffffff);
+		public static readonly IPAddress Any = new IPAddress(0);
+		public static readonly IPAddress Broadcast = IPAddress.Parse ("255.255.255.255");
+		public static readonly IPAddress Loopback = IPAddress.Parse ("127.0.0.1");
+		public static readonly IPAddress None = IPAddress.Parse ("255.255.255.255");
 
 		private static short SwapShort (short number)
 		{
