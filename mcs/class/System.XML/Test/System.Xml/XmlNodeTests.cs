@@ -121,6 +121,33 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
+		public void GetNamespaceOfPrefix ()
+		{
+			document.LoadXml ("<root xmlns='urn:default' attr='value' "
+				+ "xml:lang='en' xmlns:foo='urn:foo' foo:att='fooatt'>text node</root>");
+			XmlNode n = document.DocumentElement;
+			AssertEquals ("urn:default", n.GetNamespaceOfPrefix (String.Empty));
+			AssertEquals ("urn:foo", n.GetNamespaceOfPrefix ("foo"));
+			AssertEquals (String.Empty, n.GetNamespaceOfPrefix ("bar"));
+			AssertEquals (String.Empty, n.GetNamespaceOfPrefix ("xml"));
+			AssertEquals (String.Empty, n.GetNamespaceOfPrefix ("xmlns"));
+
+			n = document.DocumentElement.FirstChild;
+			AssertEquals ("urn:default", n.GetNamespaceOfPrefix (String.Empty));
+			AssertEquals ("urn:foo", n.GetNamespaceOfPrefix ("foo"));
+			AssertEquals (String.Empty, n.GetNamespaceOfPrefix ("bar"));
+			AssertEquals (String.Empty, n.GetNamespaceOfPrefix ("xml"));
+			AssertEquals (String.Empty, n.GetNamespaceOfPrefix ("xmlns"));
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void GetNamespaceOfPrefixNullArg ()
+		{
+			new XmlDocument ().GetNamespaceOfPrefix (null);
+		}
+
+		[Test]
 		public void InsertBefore()
 		{
 			document = new XmlDocument();
@@ -172,6 +199,42 @@ namespace MonoTests.System.Xml
 			} catch (Exception) {}
 #endif
 }
+
+		[Test]
+		public void Normalize ()
+		{
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml ("<root>This is the <b>hardest</b> one.</root>");
+			doc.NodeInserted += new XmlNodeChangedEventHandler (EventNodeInserted);
+			doc.NodeChanged += new XmlNodeChangedEventHandler (EventNodeChanged);
+			doc.NodeRemoved += new XmlNodeChangedEventHandler (EventNodeRemoved);
+
+			AssertEquals (3, doc.DocumentElement.ChildNodes.Count);
+
+			doc.DocumentElement.Normalize ();
+			AssertEquals (3, doc.DocumentElement.ChildNodes.Count);
+			Assert (changed);
+			inserted = changed = removed = false;
+
+			doc.DocumentElement.AppendChild (doc.CreateTextNode ("Addendum."));
+			AssertEquals (4, doc.DocumentElement.ChildNodes.Count);
+			inserted = changed = removed = false;
+
+			doc.DocumentElement.Normalize ();
+			AssertEquals (3, doc.DocumentElement.ChildNodes.Count);
+			Assert (changed);
+			Assert (removed);
+			inserted = changed = removed = false;
+
+			doc.DocumentElement.SetAttribute ("attr", "");
+			XmlAttribute attr = doc.DocumentElement.Attributes [0] as XmlAttribute;
+			AssertEquals (1, attr.ChildNodes.Count);
+			inserted = changed = removed = false;
+			attr.Normalize ();
+			// Such behavior violates DOM Level 2 Node#normalize(),
+			// but MS DOM is designed as such.
+			AssertEquals (1, attr.ChildNodes.Count);
+		}
 
 		[Test]
 		public void PrependChild()

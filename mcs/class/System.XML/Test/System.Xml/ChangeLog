@@ -1,3 +1,11 @@
+2003-10-13  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlElementTests.cs : Added more tests on 
+	  RemoveDoesNotRemoveDefaultAttributes().
+	* XmlNodeTests.cs : Added Normalize(), GetNamespaceOfPrefix() and
+	  GetNamespaceOfPrefixNullArg().
+	* XmlWriterTests.cs : Added WriteNodeNone().
+
 2003-10-05  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XmlConvertTests.cs : patch by Jonathan Kessler. Added more test

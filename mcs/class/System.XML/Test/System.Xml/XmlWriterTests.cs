@@ -86,7 +86,15 @@ namespace MonoTests.System.Xml
 			AssertEquals (xml.Replace ("'", "\""),
 				writer.ToString ());
 		}
-		
+
+		[Test]
+		public void WriteNodeNone ()
+		{
+			setupWriter ();
+			XmlTextReader xtr = new XmlTextReader ("", XmlNodeType.Element, null);
+			xtr.Read ();
+			xtw.WriteNode (xtr, false); // does not report any errors
+		}
 
 		// MS.NET's not-overriden XmlWriter.WriteStartElement(name)
 		// invokes WriteStartElement(null, name, null). 

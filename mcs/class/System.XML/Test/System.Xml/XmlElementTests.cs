@@ -250,6 +250,7 @@ namespace MonoTests.System.Xml
 			string xml = dtd + "<root bar='baz' />";
 			XmlValidatingReader xvr = new XmlValidatingReader (xml, XmlNodeType.Document, null);
 			document.Load (xvr);
+			// RemoveAll
 			AssertNotNull (document.DocumentElement);
 			AssertEquals (2, document.DocumentElement.Attributes.Count);
 			AssertEquals ("baz", document.DocumentElement.GetAttribute ("bar"));
@@ -258,6 +259,42 @@ namespace MonoTests.System.Xml
 			AssertEquals (1, document.DocumentElement.Attributes.Count);
 			AssertEquals ("def", document.DocumentElement.GetAttribute ("foo"));
 			AssertEquals (String.Empty, document.DocumentElement.GetAttribute ("bar"));
+
+			// RemoveAllAttributes
+			xvr = new XmlValidatingReader (xml, XmlNodeType.Document, null);
+			document.Load (xvr);
+			document.DocumentElement.RemoveAllAttributes ();
+			AssertEquals (1, document.DocumentElement.Attributes.Count);
+
+			// RemoveAttribute(name)
+			xvr = new XmlValidatingReader (xml, XmlNodeType.Document, null);
+			document.Load (xvr);
+			document.DocumentElement.RemoveAttribute ("foo");
+			AssertEquals (2, document.DocumentElement.Attributes.Count);
+
+			// RemoveAttribute(name, ns)
+			xvr = new XmlValidatingReader (xml, XmlNodeType.Document, null);
+			document.Load (xvr);
+			document.DocumentElement.RemoveAttribute ("foo", String.Empty);
+			AssertEquals (2, document.DocumentElement.Attributes.Count);
+
+			// RemoveAttributeAt
+			xvr = new XmlValidatingReader (xml, XmlNodeType.Document, null);
+			document.Load (xvr);
+			document.DocumentElement.RemoveAttributeAt (1);
+			AssertEquals (2, document.DocumentElement.Attributes.Count);
+
+			// RemoveAttributeNode
+			xvr = new XmlValidatingReader (xml, XmlNodeType.Document, null);
+			document.Load (xvr);
+			document.DocumentElement.RemoveAttributeNode (document.DocumentElement.Attributes [1]);
+			AssertEquals (2, document.DocumentElement.Attributes.Count);
+
+			// RemoveAttributeNode(name, ns)
+			xvr = new XmlValidatingReader (xml, XmlNodeType.Document, null);
+			document.Load (xvr);
+			document.DocumentElement.RemoveAttributeNode ("foo", String.Empty);
+			AssertEquals (2, document.DocumentElement.Attributes.Count);
 		}
 
 		[Test]
