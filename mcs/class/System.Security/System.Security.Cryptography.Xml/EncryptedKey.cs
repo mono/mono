@@ -96,7 +96,7 @@ namespace System.Security.Cryptography.Xml {
 			if (CipherData == null)
 				throw new CryptographicException ("Cipher data is not specified.");
 
-			XmlElement xel = document.CreateElement (XmlEncryption.ElementNames.EncryptedData, EncryptedXml.XmlEncNamespaceUrl);
+			XmlElement xel = document.CreateElement (XmlEncryption.ElementNames.EncryptedKey, EncryptedXml.XmlEncNamespaceUrl);
 
 			if (EncryptionMethod != null)
 				xel.AppendChild (EncryptionMethod.GetXml (document));

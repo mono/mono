@@ -45,6 +45,7 @@ namespace System.Security.Cryptography.Xml {
 			public const string DigestMethod = "DigestMethod";
 			public const string DigestValue = "DigestValue";
 			public const string DSAKeyValue = "DSAKeyValue";
+			public const string EncryptedKey = "EncryptedKey";
 			public const string HMACOutputLength = "HMACOutputLength";
 			public const string KeyInfo = "KeyInfo";
 			public const string KeyName = "KeyName";

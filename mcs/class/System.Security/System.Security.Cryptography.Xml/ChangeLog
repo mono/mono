@@ -1,6 +1,12 @@
 2004-08-29  Tim Coleman <tim@timcoleman.com>
-	* EncryptedData.cs EncryptedXml.cs: 
-		Add .NET 2.0 method stubs.
+	* EncryptedKey.cs: Fix element name when generating XML.
+	* EncryptedXml.cs: Implement more of encryption/decryption routines for .NET 2.0
+	* KeyInfo.cs: Support for EncryptedKey KeyInfoClause.
+	* KeyInfoName.cs: Add missing constructor
+	* SymmetricKeyWrap.cs: Add untested TripleDES key wrap 
+	algorithms for encryption/decryption
+	* XmlSignature.cs: Add EncryptedKey constant.
+	* EncryptedData.cs: Add .NET 2.0 method stubs.
 
 2004-07-20  Atsushi Enomoto <atsushi@ximian.com>
 

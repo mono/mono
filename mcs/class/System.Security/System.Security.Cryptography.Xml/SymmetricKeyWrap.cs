@@ -126,13 +126,104 @@ namespace System.Security.Cryptography.Xml {
 		[MonoTODO]
 		public static byte[] TripleDESKeyWrapEncrypt (byte[] rgbKey, byte[] rgbWrappedKeyData)
 		{
-			throw new NotImplementedException ();
+			RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider ();
+			SymmetricAlgorithm symAlg = SymmetricAlgorithm.Create ("TripleDES");
+
+			// Algorithm from http://www.w3.org/TR/xmlenc-core/#sec-Alg-SymmetricKeyWrap
+			// The following algorithm wraps (encrypts) a key (the wrapped key, WK) under a TRIPLEDES
+			// key-encryption-key (KEK) as adopted from [CMS-Algorithms].
+
+			// 1. Represent the key being wrapped as an octet sequence. If it is a TRIPLEDES key, 
+			//    this is 24 octets (192 bits) with odd parity bit as the bottom bit of each octet.
+
+			// rgbWrappedKeyData is the key being wrapped.
+
+			// 2. Compute the CMS key checksum (Section 5.6.1) call this CKS.
+
+			byte[] cks = ComputeCMSKeyChecksum (rgbWrappedKeyData);
+
+			// 3. Let WKCKS = WK || CKS, where || is concatenation.
+
+			byte[] wkcks = Concatenate (rgbWrappedKeyData, cks);
+
+			// 4. Generate 8 random octets and call this IV.
+			byte[] iv = new Byte[8];
+			rng.GetBytes (iv);
+
+			// 5. Encrypt WKCKS in CBC mode using KEK as the key and IV as the initialization vector.
+			//    Call the results TEMP1.
+
+			byte[] temp1 = Transform (wkcks, symAlg.CreateEncryptor (rgbKey, iv), true);
+
+			// 6. Let TEMP2 = IV || TEMP1.
+
+			byte[] temp2 = Concatenate (iv, temp1);
+
+			// 7. Reverse the order of the octets in TEMP2 and call the result TEMP3.
+
+			Array.Reverse (temp2); // TEMP3 is TEMP2
+
+			// 8. Encrypt TEMP3 in CBC mode using the KEK and an initialization vector of 0x4adda22c79e82105. 
+			//    The resulting cipher text is the desired result.  It is 40 octets long if a 168 bit key
+			//    is being wrapped.
+
+			iv = new Byte[8] {0x4a, 0xdd, 0xa2, 0x2c, 0x79, 0xe8, 0x21, 0x05};
+
+			byte[] rtnval = Transform (temp2, symAlg.CreateEncryptor (rgbKey, iv), true);
+
+			return rtnval;
 		}
 
 		[MonoTODO]
 		public static byte[] TripleDESKeyWrapDecrypt (byte[] rgbKey, byte[] rgbEncryptedWrappedKeyData)
 		{
-			throw new NotImplementedException ();
+			SymmetricAlgorithm symAlg = SymmetricAlgorithm.Create ("TripleDES");
+
+			// Algorithm from http://www.w3.org/TR/xmlenc-core/#sec-Alg-SymmetricKeyWrap
+			// The following algorithm unwraps (decrypts) a key as adopted from [CMS-Algorithms].
+
+			// 1. Check the length of the cipher text is reasonable given the key type.  It must be
+			//    40 bytes for a 168 bit key and either 32, 40, or 48 bytes for a 128, 192, or 256 bit
+			//    key. If the length is not supported or inconsistent with the algorithm for which the
+			//    key is intended, return error.
+
+			// 2. Decrypt the cipher text with TRIPLEDES in CBC mode using the KEK and an initialization
+			//    vector (IV) of 0x4adda22c79e82105.  Call the output TEMP3.
+
+			byte[] iv = new Byte[8] {0x4a, 0xdd, 0xa2, 0x2c, 0x79, 0xe8, 0x21, 0x05};
+			byte[] temp3 = Transform (rgbEncryptedWrappedKeyData, symAlg.CreateDecryptor (rgbKey, iv), true);
+
+			// 3. Reverse the order of the octets in TEMP3 and call the result TEMP2.
+
+			Array.Reverse (temp3); // TEMP2 is TEMP3.
+
+			// 4. Decompose TEMP2 into IV, the first 8 octets, and TEMP1, the remaining octets.
+
+			byte[] temp1 = new Byte [temp3.Length - 8];
+
+			Buffer.BlockCopy (temp3, 0, iv, 0, 8);
+			Buffer.BlockCopy (temp3, 8, temp1, 0, temp1.Length);
+
+			// 5. Decrypt TEMP1 using TRIPLEDES in CBC mode using the KEK and the IV found in the previous step.
+			//    Call the result WKCKS.
+
+			byte[] wkcks = Transform (temp1, symAlg.CreateDecryptor (rgbKey, iv), true);
+
+			// 6. Decompose WKCKS.  CKS is the last 8 octets and WK, the wrapped key, are those octets before
+			//    the CKS.
+
+			byte[] cks = new byte [8];
+			byte[] wk = new byte [temp1.Length - 8];
+
+			Buffer.BlockCopy (temp1, 0, wk, 0, wk.Length);
+			Buffer.BlockCopy (temp1, wk.Length, cks, 0, 8);
+
+			// 7. Calculate the CMS key checksum over the WK and compare with the CKS extracted in the above
+			//    step. If they are not equal, return error.
+
+			// 8. WK is the wrapped key, now extracted for use in data decryption.
+
+			return wk;
 		}
 
 		private static byte[] Transform (byte[] data, ICryptoTransform t, bool flush)

@@ -3,8 +3,10 @@
 //
 // Author:
 //	Sebastien Pouliot (spouliot@motus.com)
+//      Tim Coleman (tim@timcoleman.com)
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
+// Copyright (C) Tim Coleman, 2004
 //
 
 //
@@ -36,7 +38,14 @@ namespace System.Security.Cryptography.Xml {
 
 		private string name;
 
-		public KeyInfoName() {}
+		public KeyInfoName () 
+		{
+		}
+
+		public KeyInfoName (string keyName)
+		{
+			name = keyName;
+		}
 
 		public string Value {
 			get { return name; }

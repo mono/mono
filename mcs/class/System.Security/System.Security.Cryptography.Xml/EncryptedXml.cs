@@ -67,6 +67,7 @@ namespace System.Security.Cryptography.Xml {
 		PaddingMode padding = PaddingMode.ISO10126;
 		string recipient;
 		XmlResolver resolver;
+		XmlDocument document;
 
 		#endregion // Fields
 	
@@ -80,11 +81,13 @@ namespace System.Security.Cryptography.Xml {
 		[MonoTODO]
 		public EncryptedXml (XmlDocument document)
 		{
+			this.document = document;
 		}
 
 		[MonoTODO]
 		public EncryptedXml (XmlDocument document, Evidence evidence)
 		{
+			this.document = document;
 			DocumentEvidence = evidence;
 		}
 	
@@ -141,10 +144,28 @@ namespace System.Security.Cryptography.Xml {
 			return Transform (encryptedData.CipherData.CipherValue, symAlg.CreateDecryptor ());
 		}
 
-		[MonoTODO]
 		public void DecryptDocument ()
 		{
-			throw new NotImplementedException ();
+			XmlNodeList nodes = document.GetElementsByTagName ("EncryptedData", XmlEncNamespaceUrl);
+			foreach (XmlNode node in nodes) {
+				EncryptedData data = new EncryptedData ();
+				data.LoadXml ((XmlElement) node);
+				SymmetricAlgorithm symAlg = GetAlgorithm (data.EncryptionMethod.KeyAlgorithm);
+
+				KeyInfo keyInfo = data.KeyInfo;
+
+				foreach (KeyInfoClause clause in keyInfo)
+				{
+					System.Console.WriteLine (clause.GetType ());
+					if (clause is KeyInfoEncryptedKey) {
+						EncryptedKey key = ((KeyInfoEncryptedKey) clause).EncryptedKey;
+						System.Console.WriteLine (key.EncryptionMethod.KeyAlgorithm);
+						symAlg.Key = DecryptKey (key.CipherData.CipherValue, GetAlgorithm (key.EncryptionMethod.KeyAlgorithm));
+					}
+				}
+
+				ReplaceData ((XmlElement) node, DecryptData (data, symAlg));
+			}
 		}
 
 		[MonoTODO]
@@ -159,7 +180,7 @@ namespace System.Security.Cryptography.Xml {
 			if (symAlg is TripleDES)
 				return SymmetricKeyWrap.TripleDESKeyWrapDecrypt (symAlg.Key, keyData);
 			if (symAlg is Rijndael)
-				return SymmetricKeyWrap.TripleDESKeyWrapDecrypt (symAlg.Key, keyData);
+				return SymmetricKeyWrap.AESKeyWrapDecrypt (symAlg.Key, keyData);
 
 			throw new CryptographicException ("The specified cryptographic transform is not supported.");
 		}
@@ -170,10 +191,26 @@ namespace System.Security.Cryptography.Xml {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public EncryptedData Encrypt (XmlElement inputElement, string keyName)
 		{
-			throw new NotImplementedException ();
+			SymmetricAlgorithm symAlg = (SymmetricAlgorithm) keyNameMapping [keyName];
+			EncryptedData encryptedData = new EncryptedData ();
+
+			EncryptionMethod encryptionMethod = new EncryptionMethod (GetAlgorithmUri (symAlg));
+
+			EncryptedKey encryptedKey = new EncryptedKey();
+			encryptedKey.EncryptionMethod = new EncryptionMethod (GetKeyWrapAlgorithmUri (symAlg));
+			encryptedKey.CipherData = new CipherData (EncryptKey (symAlg.Key, symAlg));
+			encryptedKey.KeyInfo = new KeyInfo();
+			encryptedKey.KeyInfo.AddClause (new KeyInfoName (keyName));
+
+			encryptedData.Type = String.Format( "{0}Element", XmlEncNamespaceUrl );
+			encryptedData.EncryptionMethod = new EncryptionMethod (GetAlgorithmUri (symAlg));
+			encryptedData.KeyInfo = new KeyInfo ();
+			encryptedData.KeyInfo.AddClause (new KeyInfoEncryptedKey (encryptedKey));
+			encryptedData.CipherData = new CipherData (EncryptData (inputElement, symAlg, false));
+
+			return encryptedData;
 		}
 		
 		[MonoTODO]
@@ -219,14 +256,17 @@ namespace System.Security.Cryptography.Xml {
 
 			switch (symAlgUri) {
 			case XmlEncAES128Url:
+			case XmlEncAES128KeyWrapUrl:
 				symAlg = SymmetricAlgorithm.Create ("Rijndael");
 				symAlg.KeySize = 128;
 				break;
 			case XmlEncAES192Url:
+			case XmlEncAES192KeyWrapUrl:
 				symAlg = SymmetricAlgorithm.Create ("Rijndael");
 				symAlg.KeySize = 192;
 				break;
 			case XmlEncAES256Url:
+			case XmlEncAES256KeyWrapUrl:
 				symAlg = SymmetricAlgorithm.Create ("Rijndael");
 				symAlg.KeySize = 256;
 				break;
@@ -234,6 +274,7 @@ namespace System.Security.Cryptography.Xml {
 				symAlg = SymmetricAlgorithm.Create ("DES");
 				break;
 			case XmlEncTripleDESUrl:
+			case XmlEncTripleDESKeyWrapUrl:
 				symAlg = SymmetricAlgorithm.Create ("TripleDES");
 				break;
 			default:
@@ -241,6 +282,46 @@ namespace System.Security.Cryptography.Xml {
 			}
 
 			return symAlg;
+		}
+
+		private static string GetAlgorithmUri (SymmetricAlgorithm symAlg)
+		{
+			if (symAlg is Rijndael)
+			{
+				switch (symAlg.KeySize) {
+				case 128:
+					return XmlEncAES128Url;
+				case 192:
+					return XmlEncAES192Url;
+				case 256:
+					return XmlEncAES192Url;
+				}
+			}
+			else if (symAlg is DES)
+				return XmlEncDESUrl;
+			else if (symAlg is TripleDES)
+				return XmlEncTripleDESUrl;
+
+			throw new ArgumentException ("symAlg");
+		}
+
+		private static string GetKeyWrapAlgorithmUri (SymmetricAlgorithm symAlg)
+		{
+			if (symAlg is Rijndael)
+			{
+				switch (symAlg.KeySize) {
+				case 128:
+					return XmlEncAES128KeyWrapUrl;
+				case 192:
+					return XmlEncAES192KeyWrapUrl;
+				case 256:
+					return XmlEncAES256KeyWrapUrl;
+				}
+			}
+			else if (symAlg is TripleDES)
+				return XmlEncTripleDESKeyWrapUrl;
+
+			throw new ArgumentException ("symAlg");
 		}
 
 		[MonoTODO]
@@ -273,13 +354,22 @@ namespace System.Security.Cryptography.Xml {
 		[MonoTODO]
 		public void ReplaceData (XmlElement inputElement, byte[] decryptedData)
 		{
-			throw new NotImplementedException ();
+			System.Console.WriteLine (new UTF8Encoding ().GetString (decryptedData, 0, decryptedData.Length));
+			XmlDocument temp = new XmlDocument ();
+			temp.LoadXml (new UTF8Encoding ().GetString (decryptedData, 0, decryptedData.Length));
+			XmlElement root = temp.DocumentElement;
+
+			XmlDocument owner = inputElement.OwnerDocument;
+			owner.DocumentElement.ReplaceChild (root, inputElement);
+			//throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		public static void ReplaceElement (XmlElement inputElement, EncryptedData encryptedData, bool content)
 		{
-			throw new NotImplementedException ();
+			XmlDocument owner = inputElement.OwnerDocument;
+			owner.DocumentElement.ReplaceChild (encryptedData.GetXml (owner), inputElement);
+			//throw new NotImplementedException ();
 		}
 
 		private byte[] Transform (byte[] data, ICryptoTransform transform)
