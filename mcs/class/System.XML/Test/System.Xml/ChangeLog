@@ -1,3 +1,11 @@
+2004-02-04  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlEntityReferenceTests.cs : renamed TestDescendantsRecursively to
+	  DescendantsRecursively and added more test lines.
+	  Added ChildNodes().
+	* XmlReaderCommonTests.cs : Added MoveToXmlDeclAttribute(). However
+	  it is ignored (since XmlNodeReader behaves differently, maybe bug).
+
 2004-02-03  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlReaderCommonTests.cs : Added SurrogatePairContent().

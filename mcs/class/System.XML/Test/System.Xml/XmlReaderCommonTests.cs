@@ -1208,6 +1208,73 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
+		[Ignore ("XmlNodeReader never moves to xml declaration.")]
+		public void MoveToXmlDeclAttributes ()
+		{
+			string xml = "<?xml version=\"1.0\" standalone=\"yes\"?><root/>";
+			RunTest (xml, new TestMethod (MoveToXmlDeclAttributes));
+		}
+
+		public void MoveToXmlDeclAttributes (XmlReader xmlReader)
+		{
+			xmlReader.Read ();
+			this.AssertNodeValues (xmlReader, 
+				XmlNodeType.XmlDeclaration,
+				0,
+				false,
+				"xml",
+				String.Empty,
+				"xml",
+				String.Empty,
+				"version=\"1.0\" standalone=\"yes\"",
+				2);
+			xmlReader.MoveToFirstAttribute ();
+			this.AssertNodeValues (xmlReader, 
+				XmlNodeType.Attribute,
+				1,
+				false,
+				"version",
+				String.Empty,
+				"version",
+				String.Empty,
+				"1.0",
+				2);
+			xmlReader.ReadAttributeValue ();
+			this.AssertNodeValues (xmlReader, 
+				XmlNodeType.Text,
+				2,
+				false,
+				String.Empty,
+				String.Empty,
+				String.Empty,
+				String.Empty,
+				"1.0",
+				2);
+			xmlReader.MoveToNextAttribute ();
+			this.AssertNodeValues (xmlReader, 
+				XmlNodeType.Attribute,
+				1,
+				false,
+				"standalone",
+				String.Empty,
+				"standalone",
+				String.Empty,
+				"yes",
+				2);
+			xmlReader.ReadAttributeValue ();
+			this.AssertNodeValues (xmlReader, 
+				XmlNodeType.Text,
+				2,
+				false,
+				String.Empty,
+				String.Empty,
+				String.Empty,
+				String.Empty,
+				"yes",
+				2);
+		}
+
+		[Test]
 		public void AttributeOrder ()
 		{
 			string xml = @"<foo _1='1' _2='2' _3='3' />";

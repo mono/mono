@@ -30,7 +30,7 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-		public void TestDescendantsRecursively ()
+		public void DescendantsRecursively ()
 		{
 			string dtd = "<!DOCTYPE root [<!ELEMENT root (#PCDATA)*>"
 				+ "<!ENTITY ent 'value'>"
@@ -42,8 +42,41 @@ namespace MonoTests.System.Xml
 			doc.Load (xtr);
 			XmlEntity ent = (XmlEntity) doc.DocumentType.Entities.GetNamedItem ("ent2");
 			AssertEquals ("ent2", ent.Name);
-			AssertEquals ("my", ent.FirstChild.Value);
+			AssertEquals ("my ", ent.FirstChild.Value);
+			AssertNotNull (ent.FirstChild.NextSibling.FirstChild);
 			AssertEquals ("value", ent.FirstChild.NextSibling.FirstChild.Value);
+		}
+
+		[Test]
+		public void ChildNodes ()
+		{
+			XmlTextReader xtr = new XmlTextReader ("<!DOCTYPE root [<!ENTITY ent 'ent-value'><!ENTITY el '<foo>hoge</foo><bar/>'>]><root/>",
+				XmlNodeType.Document, null);
+			XmlDocument doc = new XmlDocument ();
+
+			doc.Load (xtr);
+			XmlEntityReference ent = doc.CreateEntityReference ("ent");
+			// ChildNodes are not added yet.
+			AssertNull (ent.FirstChild);
+			doc.DocumentElement.AppendChild (ent);
+			// ChildNodes are added here.
+			AssertNotNull (ent.FirstChild);
+
+			ent = doc.CreateEntityReference ("foo");
+			AssertNull (ent.FirstChild);
+			// Entity value is empty when the matching DTD entity 
+			// node does not exist.
+			doc.DocumentElement.AppendChild (ent);
+			AssertNotNull (ent.FirstChild);
+
+			AssertEquals (String.Empty, ent.FirstChild.Value);
+
+			ent = doc.CreateEntityReference ("el");
+			AssertEquals ("", ent.InnerText);
+			doc.DocumentElement.AppendChild (ent);
+			AssertEquals ("<foo>hoge</foo><bar />", ent.InnerXml);
+			AssertEquals ("hoge", ent.InnerText);
+			AssertEquals (XmlNodeType.Element, ent.FirstChild.NodeType);
 		}
 	}
 }
