@@ -1,3 +1,10 @@
+2003-06-21  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* HttpChannel.cs, HttpClientChannel.cs, HttpHelper.cs, HttpServer.cs,
+	  HttpServerChannel.cs, HttpThread.cs: added new implementation of the HttpChannel
+	  by Ahmad Tantawy, Ahmad Kadry and Hussein Mehanna.
+	* unix.args: added HttpHelper.cs,HttpServer.cs,HttpThread.cs.
+
 2003-05-13  Lluis Sanchez Gual <lluis@ideary.com>
 
 	* BinaryServerFormatterSink.cs: The uri of the target object is now assigned
