@@ -50,7 +50,12 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 
 		#region PROTECTED_METHODS
 
-		protected override void Fill()
+		protected override void ProcessAsSsl3()
+		{
+			throw new NotSupportedException();
+		}
+
+		protected override void ProcessAsTls1()
 		{
 			#warning "Process message here"
 		}

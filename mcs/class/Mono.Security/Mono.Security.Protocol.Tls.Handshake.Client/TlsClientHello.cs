@@ -61,15 +61,20 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 
 		#region PROTECTED_METHODS
 
-		protected override void Fill()
+		protected override void ProcessAsSsl3()
+		{
+			throw new NotSupportedException();
+		}
+
+		protected override void ProcessAsTls1()
 		{
 			// Client Version
-			Write((short)Session.Context.Protocol);
+			Write((short)this.Session.Context.Protocol);
 								
 			// Random bytes - Unix time + Radom bytes [28]
 			TlsStream clientRandom = new TlsStream();
-			clientRandom.Write(Session.Context.GetUnixTime());
-			clientRandom.Write(Session.Context.GetSecureRandomBytes(28));
+			clientRandom.Write(this.Session.Context.GetUnixTime());
+			clientRandom.Write(this.Session.Context.GetSecureRandomBytes(28));
 			this.random = clientRandom.ToArray();
 			clientRandom.Reset();
 
@@ -77,12 +82,12 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 
 			// Session id
 			// Send the session ID empty
-			if (Session.SessionId != null)
+			if (this.Session.SessionId != null)
 			{
-				Write((byte)Session.SessionId.Length);
-				if (Session.SessionId.Length > 0)
+				Write((byte)this.Session.SessionId.Length);
+				if (this.Session.SessionId.Length > 0)
 				{
-					Write(Session.SessionId);
+					Write(this.Session.SessionId);
 				}
 			}
 			else
@@ -91,19 +96,19 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 			}
 			
 			// Write length of Cipher suites			
-			Write((short)(Session.SupportedCiphers.Count*2));
+			Write((short)(this.Session.SupportedCiphers.Count*2));
 
 			// Write Supported Cipher suites
-			for (int i = 0; i < Session.SupportedCiphers.Count; i++)
+			for (int i = 0; i < this.Session.SupportedCiphers.Count; i++)
 			{
-				Write((short)Session.SupportedCiphers[i].Code);
+				Write((short)this.Session.SupportedCiphers[i].Code);
 			}
 
 			// Compression methods length
 			Write((byte)1);
 			
 			// Compression methods ( 0 = none )
-			Write((byte)0);
+			Write((byte)TlsCompressionMethod.None);
 		}
 
 		#endregion

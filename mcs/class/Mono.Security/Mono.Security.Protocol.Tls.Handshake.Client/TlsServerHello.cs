@@ -30,12 +30,12 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 	{
 		#region FIELDS
 
-		private TlsProtocol			protocol;
-		private byte[]				random;
-		private byte[]				sessionId;
-		private TlsCipherSuite		cipherSuite;
-		private byte				compressionMethod;
-
+		private TlsProtocol				protocol;
+		private TlsCompressionMethod	compressionMethod;
+		private byte[]					random;
+		private byte[]					sessionId;
+		private TlsCipherSuite			cipherSuite;
+		
 		#endregion
 
 		#region CONSTRUCTORS
@@ -57,39 +57,44 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 			Session.Context.ServerRandom		= this.random;
 			Session.Context.Cipher				= this.cipherSuite;
 			Session.Context.CompressionMethod	= this.compressionMethod;
-			Session.Context.Cipher.SessionState	= Session.Context;
+			Session.Context.Cipher.Context		= this.Session.Context;
 		}
 
 		#endregion
 
 		#region PROTECTED_METHODS
 
-		protected override void Parse()
+		protected override void ProcessAsSsl3()
+		{
+			throw new NotSupportedException();
+		}
+
+		protected override void ProcessAsTls1()
 		{
 			// Read protocol version
-			this.protocol	= (TlsProtocol)ReadInt16();
+			this.protocol	= (TlsProtocol)this.ReadInt16();
 			
 			// Read random  - Unix time + Random bytes
-			this.random		= ReadBytes(32);
+			this.random		= this.ReadBytes(32);
 			
 			// Read Session id
 			int length = (int)ReadByte();
 			if (length > 0)
 			{
-				this.sessionId = ReadBytes(length);
+				this.sessionId = this.ReadBytes(length);
 			}
 
 			// Read cipher suite
-			short cipherCode = ReadInt16();
-			if (Session.SupportedCiphers.IndexOf(cipherCode) == -1)
+			short cipherCode = this.ReadInt16();
+			if (this.Session.SupportedCiphers.IndexOf(cipherCode) == -1)
 			{
 				// The server has sent an invalid ciphersuite
 				throw new TlsException("Invalid cipher suite received from server");
 			}
-			cipherSuite = Session.SupportedCiphers[cipherCode];
+			this.cipherSuite = this.Session.SupportedCiphers[cipherCode];
 			
 			// Read compression methods ( always 0 )
-			compressionMethod = ReadByte();
+			this.compressionMethod = (TlsCompressionMethod)this.ReadByte();
 		}
 
 		#endregion

@@ -27,7 +27,7 @@ using System;
 
 namespace Mono.Security.Protocol.Tls.Handshake
 {
-	internal class TlsHandshakeMessage : TlsStream
+	internal abstract class TlsHandshakeMessage : TlsStream
 	{
 		#region FIELDS
 
@@ -66,8 +66,8 @@ namespace Mono.Security.Protocol.Tls.Handshake
 			this.handshakeType	= handshakeType;
 			this.contentType	= contentType;
 
-			// Fill message contents
-			this.Fill();
+			// Process message
+			this.process();
 		}
 
 		public TlsHandshakeMessage(TlsSession session, 
@@ -76,13 +76,35 @@ namespace Mono.Security.Protocol.Tls.Handshake
 			this.session		= session;
 			this.handshakeType	= handshakeType;
 						
-			// Parse message
-			this.Parse();
+			// Process message
+			this.process();
 		}
 
 		#endregion
 
+		#region ABSTRACT_METHODS
+
+		protected abstract void ProcessAsTls1();
+
+		protected abstract void ProcessAsSsl3();
+
+		#endregion
+
 		#region METHODS
+
+		private void process()
+		{
+			switch (this.session.Context.Protocol)
+			{
+				case TlsProtocol.Tls1:
+					this.ProcessAsTls1();
+					break;
+
+				case TlsProtocol.Ssl3:
+					this.ProcessAsSsl3();
+					break;
+			}
+		}
 
 		public virtual void UpdateSession()
 		{			
@@ -91,14 +113,6 @@ namespace Mono.Security.Protocol.Tls.Handshake
 				this.session.Context.HandshakeHashes.Update(this.EncodeMessage());
 				this.Reset();
 			}
-		}
-
-		protected virtual void Parse()
-		{
-		}
-
-		protected virtual void Fill()
-		{
 		}
 
 		public virtual byte[] EncodeMessage()
@@ -116,7 +130,7 @@ namespace Mono.Security.Protocol.Tls.Handshake
 				result = c.ToArray();
 			}
 
-            return result;
+			return result;
 		}
 
 		#endregion

@@ -50,7 +50,12 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 
 		#region PROTECTED_METHODS
 
-		protected override void Fill()
+		protected override void ProcessAsSsl3()
+		{
+			throw new NotSupportedException();
+		}
+
+		protected override void ProcessAsTls1()
 		{
 			// Get hashes of handshake messages
 			TlsStream hashes = new TlsStream();
@@ -59,7 +64,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 			hashes.Write(Session.Context.HandshakeHashes.GetSHAHash());
 
 			// Write message contents
-			Write(Session.Context.PRF(Session.Context.MasterSecret, "client finished", hashes.ToArray(), 12));
+			Write(Session.Context.Cipher.PRF(Session.Context.MasterSecret, "client finished", hashes.ToArray(), 12));
 
 			// Reset data
 			hashes.Reset();

@@ -43,10 +43,15 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 
 		#region PROTECTED_METHODS
 
-		protected override void Fill()
+		protected override void ProcessAsSsl3()
+		{
+			throw new NotSupportedException();
+		}
+
+		protected override void ProcessAsTls1()
 		{
 			// Compute pre master secret
-			byte[] preMasterSecret = Session.Context.CreatePremasterSecret();
+			byte[] preMasterSecret = Session.Context.Cipher.CreatePremasterSecret();
 
 			// Create a new RSA key
 			RSACryptoServiceProvider rsa = null;
@@ -68,10 +73,10 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 			Write(buffer);
 
 			// Create master secret
-			Session.Context.CreateMasterSecret(preMasterSecret);
+			Session.Context.Cipher.CreateMasterSecret(preMasterSecret);
 
 			// Create keys
-			Session.Context.CreateKeys();
+			Session.Context.Cipher.CreateKeys();
 
 			// Clear resources
 			rsa.Clear();
