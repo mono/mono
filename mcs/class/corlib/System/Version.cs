@@ -349,6 +349,9 @@ namespace System
 			int state = 1;
 			int number = UNDEFINED; // string may not begin with a digit
 
+                        if (info == null)
+                                return new Version (0, 0, 0, 0);
+
 			for (int i=0; i < info.Length; i++) {
 				char c = info [i];
 				if (Char.IsDigit (c)) {
