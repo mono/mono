@@ -5,6 +5,7 @@ System.Data/ConnectionState.cs
 System.Data/Constraint.cs
 System.Data/ConstraintCollection.cs
 System.Data/ConstraintException.cs
+System.Data/DataCategoryAttribute.cs
 System.Data/DataColumn.cs
 System.Data/DataColumnChangeEventArgs.cs
 System.Data/DataColumnChangeEventHandler.cs
