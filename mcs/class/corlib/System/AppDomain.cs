@@ -7,8 +7,10 @@
 //   Miguel de Icaza (miguel@ximian.com)
 //   Gonzalo Paniagua (gonzalo@ximian.com)
 //   Patrik Torstensson
+//   Sebastien Pouliot (sebastien@ximian.com)
 //
 // (C) 2001, 2002 Ximian, Inc.  http://www.ximian.com
+// (C) 2004 Novell (http://www.novell.com)
 //
 
 using System;
@@ -24,9 +26,10 @@ using System.Runtime.Remoting;
 using System.Runtime.Remoting.Contexts;
 using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Messaging;
-using System.Security.Principal;
-using System.Security.Policy;
 using System.Security;
+using System.Security.Permissions;
+using System.Security.Policy;
+using System.Security.Principal;
 using System.Configuration.Assemblies;
 
 namespace System {
@@ -44,6 +47,12 @@ namespace System {
 		Hashtable assembly_resolve_in_progress;
 
 		// Evidence evidence;
+
+		[ThreadStatic]
+		private PrincipalPolicy _principalPolicy;
+
+		[ThreadStatic]
+		private IPrincipal _principal;
 
 		AppDomain () {}
 
@@ -101,6 +110,23 @@ namespace System {
 			get {
 				return null;
 				//return evidence;
+			}
+		}
+
+		internal IPrincipal DefaultPrincipal {
+			get { 
+				if (_principal == null) {
+					switch (_principalPolicy) {
+						case PrincipalPolicy.UnauthenticatedPrincipal:
+							_principal = new GenericPrincipal (
+								new GenericIdentity (String.Empty, String.Empty), null);
+							break;
+						case PrincipalPolicy.WindowsPrincipal:
+							_principal = new WindowsPrincipal (WindowsIdentity.GetCurrent ());
+							break;
+					}
+				}
+				return _principal; 
 			}
 		}
 		
@@ -517,10 +543,13 @@ namespace System {
 			SetupInformation.CachePath = s;
 		}
 		
-		[MonoTODO]
 		public void SetPrincipalPolicy (PrincipalPolicy policy)
 		{
-			throw new NotImplementedException ();
+			new SecurityPermission (SecurityPermissionFlag.ControlPrincipal).Demand ();
+			if (IsFinalizingForUnload ())
+				throw new AppDomainUnloadedException ();
+
+			_principalPolicy = policy;
 		}
 
 		public void SetShadowCopyFiles()
@@ -533,12 +562,19 @@ namespace System {
 			SetupInformation.ShadowCopyDirectories = s;
 		}
 		
-		[MonoTODO]
 		public void SetThreadPrincipal (IPrincipal principal)
 		{
-			throw new NotImplementedException ();
+			new SecurityPermission (SecurityPermissionFlag.ControlPrincipal).Demand ();
+			if (principal == null)
+				throw new ArgumentNullException ("principal");
+			if (_principal != null)
+				throw new PolicyException ("principal already present");
+			if (IsFinalizingForUnload ())
+				throw new AppDomainUnloadedException ();
+
+			_principal = principal;
 		}
-		
+
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private static extern AppDomain InternalSetDomainByID (int domain_id);
  
