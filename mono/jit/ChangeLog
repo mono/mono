@@ -1,5 +1,13 @@
 2002-05-21  Martin Baulig  <martin@gnome.org>
 
+	* debug-dwarf2-plus.c: This is now working again :-)
+
+	* debug.c (mono_debug_open_file): When using MONO_DEBUG_FORMAT_DWARF2_PLUS,
+	we create two MonoDebugHandles: one for MONO_DEBUG_FORMAT_DWARF2_PLUS and
+	one for the fallback MONO_DEBUG_FORMAT_DWARF2.
+
+2002-05-21  Martin Baulig  <martin@gnome.org>
+
 	* jit.c (mono_debug_handle): Removed this global variable.
 
 	* debug.c (mono_debug_close): Removed.
