@@ -44,6 +44,14 @@ namespace Microsoft.JScript.Tmp
 		}
 
 
+#if NET_1_2
+		public sealed override Type [] GetGenericArguments ()
+		{
+			throw new NotImplementedException ();
+		}
+#endif
+
+
 		public override MethodImplAttributes GetMethodImplementationFlags ()
 		{
 			throw new NotImplementedException ();

@@ -1,3 +1,7 @@
+2004-01-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* JSMethodInfo.cs : tiny fix for NET_1_2 build.
+
 2003-12-24  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
 	* jscript-lexer-parser.g: keep track of parent reference for
