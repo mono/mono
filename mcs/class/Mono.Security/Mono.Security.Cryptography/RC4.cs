@@ -53,6 +53,12 @@ public abstract class RC4 : SymmetricAlgorithm {
 		LegalKeySizesValue = s_legalKeySizes;
 	}
 
+	// required for compatibility with .NET 2.0
+	public override byte[] IV {
+		get { return new byte [0]; }
+		set { ; }
+	}
+
 	new static public RC4 Create() 
 	{
 		return Create ("RC4");
