@@ -94,6 +94,8 @@ namespace System.Runtime.Remoting.Channels.Tcp
 			ITransportHeaders requestHeaders;
 
 			requestStream = TcpMessageIO.ReceiveMessageStream (connection.Stream, out requestHeaders, connection.Buffer);
+			requestHeaders [CommonTransportKeys.IPAddress] = connection.ClientAddress;
+			requestHeaders [CommonTransportKeys.ConnectionId] = connection.Id;
 
 			// Pushes the connection object together with the sink. This information
 			// will be used for sending the response in an async call.

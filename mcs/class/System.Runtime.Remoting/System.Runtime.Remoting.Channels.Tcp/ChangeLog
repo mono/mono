@@ -1,3 +1,11 @@
+2005-01-25  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* TcpServerTransportSink.cs: Set IPAddress and ConnectionId
+	transport headers. This fixes bug #71423.
+	* TcpServerChannel.cs: Use Socket instead of TcpClient, so we can
+	easily get the IP address of the client. Added properties in
+	ClientConnection to get the IP address and the connection id.
+
 2005-01-21  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* TcpMessageIO.cs: Added a buffer parameter to ReceiveMessageStatus,

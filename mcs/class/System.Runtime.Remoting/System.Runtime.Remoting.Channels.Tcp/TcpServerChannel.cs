@@ -202,10 +202,12 @@ namespace System.Runtime.Remoting.Channels.Tcp
 			{
 				while (true) 
 				{
-					TcpClient client = listener.AcceptTcpClient ();
-					ClientConnection reader = new ClientConnection (this, client, sink);
-					if (!threadPool.RunThread (new ThreadStart (reader.ProcessMessages)))
-						client.Close ();
+					Socket socket = listener.AcceptSocket ();
+					ClientConnection reader = new ClientConnection (this, socket, sink);
+					try {
+						if (!threadPool.RunThread (new ThreadStart (reader.ProcessMessages)))
+							socket.Close ();
+					} catch {}
 				}
 			}
 			catch
@@ -247,18 +249,21 @@ namespace System.Runtime.Remoting.Channels.Tcp
 
 	class ClientConnection
 	{
-		TcpClient _client;
+		static int _count;
+		int _id;
+		Socket _socket;
 		TcpServerTransportSink _sink;
 		Stream _stream;
 		TcpServerChannel _serverChannel;
 
 		byte[] _buffer = new byte[TcpMessageIO.DefaultStreamBufferSize];
 
-		public ClientConnection (TcpServerChannel serverChannel, TcpClient client, TcpServerTransportSink sink)
+		public ClientConnection (TcpServerChannel serverChannel, Socket socket, TcpServerTransportSink sink)
 		{
 			_serverChannel = serverChannel;
-			_client = client;
+			_socket = socket;
 			_sink = sink;
+			_id = _count++;
 		}
 
 		public Stream Stream
@@ -274,7 +279,8 @@ namespace System.Runtime.Remoting.Channels.Tcp
 		public void ProcessMessages()
 		{
 			byte[] buffer = new byte[256];
-			_stream = new BufferedStream (_client.GetStream());
+			NetworkStream ns = new NetworkStream (_socket);
+			_stream = new BufferedStream (ns);
 
 			try
 			{
@@ -305,16 +311,23 @@ namespace System.Runtime.Remoting.Channels.Tcp
 			{
 				try {
 					_stream.Close();
+					_socket.Close ();
 				}
 				catch { }
 			}
 		}
 		
-		public bool IsLocal
+		public int Id
 		{
-			get
-			{
-				return true;
+			get { return _id; }
+		}
+		
+		public IPAddress ClientAddress
+		{
+			get {
+				IPEndPoint ep = _socket.RemoteEndPoint as IPEndPoint;
+				if (ep != null) return ep.Address;
+				else return null;
 			}
 		}
 	}
