@@ -117,11 +117,6 @@ namespace Mono.CSharp
 			ec = new EmitContext (null, this, Location.Null, null, null, 0, false);
 		}
 
-		public override void Register ()
-		{
-			throw new InvalidOperationException ();
-		}
-
 		public override PendingImplementation GetPendingImplementations ()
 		{
 			throw new InvalidOperationException ();

@@ -756,16 +756,17 @@ struct_declaration
 
 		if (partial) {
 			ClassPart part = PartialContainer.CreatePart (
-				current_namespace, current_container, name, (int) $2,
+				current_namespace, current_class, name, (int) $2,
 				(Attributes) $1, Kind.Struct, lexer.Location);
 
 			current_container = part.PartialContainer;
 			current_class = part;
 		} else {
 			current_class = new Struct (
-				current_namespace, current_container, name, (int) $2,
+				current_namespace, current_class, name, (int) $2,
 				(Attributes) $1, lexer.Location);
 
+			current_container.AddClassOrStruct (current_class);
 			current_container = current_class;
 			RootContext.Tree.RecordDecl (name.GetName (true), current_class);
 		}
@@ -777,8 +778,6 @@ struct_declaration
 
 		if (RootContext.Documentation != null)
 			current_class.DocComment = Lexer.consume_doc_comment ();
-
-		current_class.Register ();
 	  }
 	  struct_body
 	  {
@@ -787,10 +786,7 @@ struct_declaration
 	  }
 	  opt_semicolon
 	  {
-		$$ = current_class;
-
-		current_container = current_container.Parent;
-		current_class = current_container;
+		$$ = pop_current_class ();
 	  }
 	| opt_attributes opt_modifiers opt_partial STRUCT error {
 		CheckIdentifierToken (yyToken);
@@ -1441,16 +1437,17 @@ interface_declaration
 
 		if (partial) {
 			ClassPart part = PartialContainer.CreatePart (
-				current_namespace, current_container, name, (int) $2,
+				current_namespace, current_class, name, (int) $2,
 				(Attributes) $1, Kind.Interface, lexer.Location);
 
 			current_container = part.PartialContainer;
 			current_class = part;
 		} else {
 			current_class = new Interface (
-				current_namespace, current_container, name, (int) $2,
+				current_namespace, current_class, name, (int) $2,
 				(Attributes) $1, lexer.Location);
 
+			current_container.AddInterface (current_class);
 			current_container = current_class;
 			RootContext.Tree.RecordDecl (name.GetName (true), current_class);
 		}
@@ -1463,8 +1460,6 @@ interface_declaration
 			current_class.DocComment = Lexer.consume_doc_comment ();
 			Lexer.doc_state = XmlCommentState.Allowed;
 		}
-
-		current_class.Register ();
 	  }
 	  interface_body 
 	  {
@@ -1473,10 +1468,7 @@ interface_declaration
 	  }
 	  opt_semicolon 
 	  {
-		$$ = current_class;
-
-		current_container = current_container.Parent;
-		current_class = current_container;
+		$$ = pop_current_class ();
 	  }
 	| opt_attributes opt_modifiers opt_partial INTERFACE error {
 		CheckIdentifierToken (yyToken);
@@ -2308,7 +2300,7 @@ enum_declaration
 		Location enum_location = lexer.Location;
 
 		MemberName full_name = MakeName (new MemberName ((string) $4));
-		Enum e = new Enum (current_namespace, current_container, (Expression) $5, (int) $2,
+		Enum e = new Enum (current_namespace, current_class, (Expression) $5, (int) $2,
 				   full_name, (Attributes) $1, enum_location);
 		
 		if (RootContext.Documentation != null)
@@ -2414,7 +2406,7 @@ delegate_declaration
 	  {
 		Location l = lexer.Location;
 		MemberName name = MakeName ((MemberName) $5);
-		Delegate del = new Delegate (current_namespace, current_container, (Expression) $4,
+		Delegate del = new Delegate (current_namespace, current_class, (Expression) $4,
 					     (int) $2, name, (Parameters) $7, (Attributes) $1, l);
 
 		if (RootContext.Documentation != null) {
@@ -3415,7 +3407,7 @@ class_declaration
 
 		if (partial) {
 			ClassPart part = PartialContainer.CreatePart (
-				current_namespace, current_container, name, mod_flags,
+				current_namespace, current_class, name, mod_flags,
 				(Attributes) $1, Kind.Class, lexer.Location);
 
 			current_container = part.PartialContainer;
@@ -3423,14 +3415,15 @@ class_declaration
 		} else {
 			if ((mod_flags & Modifiers.STATIC) != 0) {
 				current_class = new StaticClass (
-					current_namespace, current_container, name,
+					current_namespace, current_class, name,
 					mod_flags, (Attributes) $1, lexer.Location);
 			} else {
 				current_class = new Class (
-					current_namespace, current_container, name,
+					current_namespace, current_class, name,
 					mod_flags, (Attributes) $1, lexer.Location);
 			}
 
+			current_container.AddClassOrStruct (current_class);
 			current_container = current_class;
 			RootContext.Tree.RecordDecl (name.GetName (true), current_class);
 		}
@@ -3450,8 +3443,6 @@ class_declaration
 			current_class.DocComment = Lexer.consume_doc_comment ();
 			Lexer.doc_state = XmlCommentState.Allowed;
 		}
-
-		current_class.Register ();
 	  }
 	  class_body
 	  {
@@ -3460,10 +3451,7 @@ class_declaration
 	  }
 	  opt_semicolon 
 	  {
-		$$ = current_class;
-
-		current_container = current_container.Parent;
-		current_class = current_container;
+		$$ = pop_current_class ();
 	  }
 	;	
 
@@ -4630,6 +4618,23 @@ void Error_ExpectingTypeName (Location l, Expression expr)
 	}
 }
 
+TypeContainer pop_current_class ()
+{
+	TypeContainer retval = current_class;
+
+	current_class = current_class.Parent;
+	current_container = current_container.Parent;
+	
+	if (current_class != current_container) {
+		if (!(current_class is ClassPart) ||
+		    ((ClassPart) current_class).PartialContainer != current_container)
+			throw new InternalErrorException ();
+	} else if (current_container is ClassPart)
+		current_container = ((ClassPart) current_class).PartialContainer;
+
+	return retval;
+}
+
 // <summary>
 //   Given the @class_name name, it creates a fully qualified name
 //   based on the containing declaration space
@@ -4826,6 +4831,8 @@ public CSharpParser (SeekableStreamReader reader, SourceFile file, ArrayList def
 	this.name = file.Name;
 	this.file = file;
 	current_container = RootContext.Tree.Types;
+	// TODO: Make RootContext.Tree.Types a PartialContainer.
+	current_class = current_container;
 	current_container.NamespaceEntry = current_namespace;
 	oob_stack = new Stack ();
 	switch_stack = new Stack ();

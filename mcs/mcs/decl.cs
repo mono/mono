@@ -181,6 +181,9 @@ namespace Mono.CSharp {
 				   Location loc)
 			: base (attrs)
 		{
+			if (parent is PartialContainer && !(this is PartialContainer))
+				throw new InternalErrorException ("A PartialContainer cannot be the direct parent of a member");
+
 			Parent = parent;
 			MemberName = name;
 			Location = loc;
@@ -590,6 +593,21 @@ namespace Mono.CSharp {
 		}
 
 		EmitContext type_resolve_ec;
+		protected EmitContext TypeResolveEmitContext {
+			get {
+				if (type_resolve_ec == null) {
+					// FIXME: I think this should really be one of:
+					//
+					// a. type_resolve_ec = Parent.EmitContext;
+					// b. type_resolve_ec = new EmitContext (Parent, Parent, loc, null, null, ModFlags, false);
+					//
+					// However, if Parent == RootContext.Tree.Types, its NamespaceEntry will be null.
+					//
+					type_resolve_ec = new EmitContext (Parent, this, Location.Null, null, null, ModFlags, false);
+				}
+				return type_resolve_ec;
+			}
+		}
 
 		// <summary>
 		//    Resolves the expression `e' for a type, and will recursively define
@@ -597,20 +615,10 @@ namespace Mono.CSharp {
 		// </summary>
 		public TypeExpr ResolveBaseTypeExpr (Expression e, bool silent, Location loc)
 		{
-			if (type_resolve_ec == null) {
-				// FIXME: I think this should really be one of:
-				//
-				// a. type_resolve_ec = Parent.EmitContext;
-				// b. type_resolve_ec = new EmitContext (Parent, Parent, loc, null, null, ModFlags, false);
-				//
-				// However, if Parent == RootContext.Tree.Types, its NamespaceEntry will be null.
-				//
-				type_resolve_ec = new EmitContext (Parent, this, loc, null, null, ModFlags, false);
-			}
-			type_resolve_ec.loc = loc;
-			type_resolve_ec.ContainerType = TypeBuilder;
+			TypeResolveEmitContext.loc = loc;
+			TypeResolveEmitContext.ContainerType = TypeBuilder;
 
-			return e.ResolveAsTypeTerminal (type_resolve_ec, silent);
+			return e.ResolveAsTypeTerminal (TypeResolveEmitContext, silent);
 		}
 		
 		public bool CheckAccessLevel (Type check_type)
@@ -814,6 +822,9 @@ namespace Mono.CSharp {
 		//
 		public FullNamedExpression LookupType (string name, Location loc, bool ignore_cs0104)
 		{
+			if (this is PartialContainer)
+				throw new InternalErrorException ("Should not get here");
+
 			FullNamedExpression e;
 
 			if (Cache.Contains (name)) {

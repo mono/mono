@@ -1,3 +1,7 @@
+2005-03-09  Raja R Harinath  <rharinath@novell.com>
+
+	* test-357.cs: New test for partial classes.
+
 2005-03-08  Marek Safar <marek.safar@seznam.cz>
 
 	* test-355.cs, test-356.cs: New tests.
