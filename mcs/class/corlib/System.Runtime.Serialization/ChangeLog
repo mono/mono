@@ -1,3 +1,7 @@
+2003-07-28  Duncan Mak  <duncan@ximian.com>
+
+	* Formatter.cs (WriteSByte): Added CLSCompliant attribute.
+
 2003-07-26  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* FormatterServices.cs:

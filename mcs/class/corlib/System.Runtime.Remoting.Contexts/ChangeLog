@@ -1,3 +1,7 @@
+2003-07-28  Duncan Mak  <duncan@ximian.com>
+
+	* ContextAttribute.cs: Removed constructor.
+
 2003-04-03 Lluis Sanchez Gual <lluis@ideary.com>
 
 	* CrossContextChannel.cs: Improved support for OneWay and Async messages.

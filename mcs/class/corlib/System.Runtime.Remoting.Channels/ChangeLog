@@ -1,3 +1,9 @@
+2003-07-28  Duncan Mak  <duncan@ximian.com>
+
+	* TransportHeaders.cs: Added Serializable attribute.
+
+	* ClientChannelSinkStack.cs: Added no-param constructor.
+
 2003-07-21  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* ChannelServices.cs: Implemented GetChannel() and GetUrlsForObject()

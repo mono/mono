@@ -19,6 +19,11 @@ namespace System.Runtime.Remoting.Channels
 
 		// The stack. It is a chain of ChanelSinkStackEntry.
 		ChanelSinkStackEntry _sinkStack = null;
+
+                [MonoTODO ("Initialize new instance with default values")]
+                public ClientChannelSinkStack ()
+                {
+                }
 		
 		public ClientChannelSinkStack (IMessageSink sink)
 		{

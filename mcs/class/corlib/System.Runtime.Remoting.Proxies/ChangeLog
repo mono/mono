@@ -1,3 +1,7 @@
+2003-07-28  Duncan Mak  <duncan@ximian.com>
+
+	* RealProxy.cs (GetProxiedType): Removed 'virtual' keyword.
+
 2003-07-25  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* RemotingProxy.cs: Check the return arguments types. (a wrong type

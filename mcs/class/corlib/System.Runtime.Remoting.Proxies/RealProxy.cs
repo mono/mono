@@ -58,7 +58,7 @@ namespace System.Runtime.Remoting.Proxies
 			_objTP = InternalGetTransparentProxy();
 		}
 
-		public virtual Type GetProxiedType() 
+		public Type GetProxiedType() 
 		{
 			if (class_to_proxy.IsInterface) return typeof (MarshalByRefObject);
 			else return class_to_proxy;

@@ -172,7 +172,7 @@ namespace System.Runtime.Serialization.Formatters.Binary {
 			writer.Flush();
 		}
 
-		public void WriteBinaryHeader (BinaryWriter writer, bool hasHeaders)
+		private void WriteBinaryHeader (BinaryWriter writer, bool hasHeaders)
 		{
 			writer.Write ((byte)BinaryElement.Header);
 			writer.Write ((int)1);

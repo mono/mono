@@ -1,3 +1,8 @@
+2003-07-28  Duncan Mak  <duncan@ximian.com>
+
+	* BinaryFormatter.cs (WriteBinaryHeader): changed from public to
+	private.
+
 2003-07-25  Lluis Sanchez Gual <lluis@ximian.com>
 
     * MessageFormatter.cs: WriteMethodCall(): It must write all parameters,
