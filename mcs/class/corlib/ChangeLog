@@ -1,3 +1,8 @@
+2003-11-09  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* corlib.dll.sources: Added new 1.2 classes for System.Security.Cryptography.
+	* corlib_test.dll.sources: Added unit tests for some HMAC (new in 1.2).
+
 2003-10-18  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* corlib.dll.sources: Added classes StrongName to support StrongNames.
