@@ -1,5 +1,11 @@
 2004-04-12  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* GenericOutputter.cs : Culture-independency fix. 
+	  Replaced StringCollection to ArrayList.
+	* XslOutput.cs : Culture-independency fix.
+
+2004-04-12  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Compiler.cs : When BaseURI is an empty string, it should not try to
 	  create Uri instance. This will fix bug #56832, but not sure.
 	* XslFunctions.cs : for XsltDocument.Resolve(), did the same.

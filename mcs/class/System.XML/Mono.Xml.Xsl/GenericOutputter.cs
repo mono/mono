@@ -10,7 +10,7 @@
 
 using System;
 using System.Collections;
-using System.Collections.Specialized;
+using System.Globalization;
 using System.Xml;
 using System.IO;
 using System.Text;
@@ -43,7 +43,7 @@ namespace Mono.Xml.Xsl
 		int pendingAttributesPos = 0;
 		//Namespace manager. Subject to optimization.
 		private XmlNamespaceManager _nsManager;
-		private StringCollection _currentNsPrefixes;
+		private ArrayList _currentNsPrefixes;
 		private Hashtable _currentNamespaceDecls;
 		//Name table
 		private NameTable _nt;
@@ -63,7 +63,7 @@ namespace Mono.Xml.Xsl
 			//TODO: Optimize using nametable
 			_nt = new NameTable ();
 			_nsManager = new XmlNamespaceManager (_nt);
-			_currentNsPrefixes = new StringCollection ();
+			_currentNsPrefixes = new ArrayList ();
 			_currentNamespaceDecls = new Hashtable ();
 		}
 
@@ -110,7 +110,7 @@ namespace Mono.Xml.Xsl
 			XslOutput xslOutput = (XslOutput)_outputs [String.Empty];
 			switch (xslOutput.Method) {
 				case OutputMethod.Unknown:
-					if (localName != null && localName.ToLower () == "html" && ns == String.Empty)
+					if (localName != null && String.Compare (localName, "html", true, CultureInfo.InvariantCulture) == 0 && ns == String.Empty)
 						goto case OutputMethod.HTML;
 					goto case OutputMethod.XML;
 				case OutputMethod.HTML:
@@ -154,7 +154,7 @@ namespace Mono.Xml.Xsl
 					Emitter.WriteAttributeString (prefix, attr.LocalName, attr.Namespace, attr.Value);
 				}
 				for (int i = 0; i < _currentNsPrefixes.Count; i++) {
-					string prefix = _currentNsPrefixes [i];
+					string prefix = (string) _currentNsPrefixes [i];
 					string uri = _currentNamespaceDecls [prefix] as string;
 					if (prefix != String.Empty)
 						Emitter.WriteAttributeString ("xmlns", prefix, XmlNamespaceManager.XmlnsXmlns, uri);
