@@ -223,5 +223,11 @@ namespace System.Net
 				Console.WriteLine ("-CurerntCnc: {0} {1}", Address, currentConnections);
 			}
 		}
+
+		internal void SetCertificates (X509Certificate client, X509Certificate server) 
+		{
+			certificate = server;
+			clientCertificate = client;
+		}
 	}
 }

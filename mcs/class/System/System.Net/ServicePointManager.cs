@@ -53,7 +53,13 @@ namespace System.Net
 		private static int defaultConnectionLimit = DefaultPersistentConnectionLimit;
 		private static int maxServicePointIdleTime = 900000; // 15 minutes
 		private static int maxServicePoints = 0;
-		
+		private static bool _checkCRL = false;
+#if (NET_1_0 || NET_1_1)
+		private static SecurityProtocolType _securityProtocol = SecurityProtocolType.Ssl3;
+#else
+		private static SecurityProtocolType _securityProtocol = SecurityProtocolType.Default;
+#endif
+
 		// Fields
 		
 		public const int DefaultNonPersistentConnectionLimit = 4;
@@ -76,6 +82,18 @@ namespace System.Net
 		public static ICertificatePolicy CertificatePolicy {
 			get { return policy; }
 			set { policy = value; }
+		}
+
+#if NET_1_0
+		// we need it for SslClientStream
+		internal
+#else
+		[MonoTODO("CRL checks not implemented")]
+		public
+#endif
+		static bool CheckCertificateRevocationList {
+			get { return _checkCRL; }
+			set { _checkCRL = false; }	// TODO - don't yet accept true
 		}
 		
 		public static int DefaultConnectionLimit {
@@ -110,6 +128,17 @@ namespace System.Net
 				maxServicePoints = value;
 				RecycleServicePoints ();
 			}
+		}
+
+#if NET_1_0
+		// we need it for SslClientStream
+		internal
+#else
+		public
+#endif
+		static SecurityProtocolType SecurityProtocol {
+			get { return _securityProtocol; }
+			set { _securityProtocol = value; }
 		}
 		
 		// Methods

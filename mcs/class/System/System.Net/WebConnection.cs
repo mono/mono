@@ -7,8 +7,11 @@
 // (C) 2003 Ximian, Inc (http://www.ximian.com)
 //
 
+using System.IO;
 using System.Collections;
 using System.Net.Sockets;
+using System.Reflection;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
 
@@ -25,7 +28,7 @@ namespace System.Net
 	class WebConnection
 	{
 		ServicePoint sPoint;
-		NetworkStream nstream;
+		Stream nstream;
 		Socket socket;
 		WebExceptionStatus status;
 		WebConnectionGroup group;
@@ -45,7 +48,15 @@ namespace System.Net
 		bool waitingForContinue;
 		Queue queue;
 		bool reused;
-		
+
+		bool ssl;
+		bool certsAvailable;
+		static bool sslCheck;
+		static Type sslStream;
+		static PropertyInfo piCRL;
+		static PropertyInfo piClient;
+		static PropertyInfo piServer;
+
 		public WebConnection (WebConnectionGroup group, ServicePoint sPoint)
 		{
 			this.group = group;
@@ -99,9 +110,41 @@ namespace System.Net
 
 		bool CreateStream (HttpWebRequest request)
 		{
-			//TODO: create stream for https
 			try {
-				nstream = new NetworkStream (socket, false);
+				NetworkStream serverStream = new NetworkStream (socket, false);
+				if (request.RequestUri.Scheme == Uri.UriSchemeHttps) {
+					ssl = true;
+					if (!sslCheck) {
+						lock (typeof (WebConnection)) {
+							sslCheck = true;
+							sslStream = Type.GetType ("Mono.Security.Protocol.Tls.SslClientStream, Mono.Security, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null", false);
+							if (sslStream != null) {
+								piCRL = sslStream.GetProperty ("CheckCertRevocationStatus");
+								piClient = sslStream.GetProperty ("SelectedClientCertificate");
+								piServer = sslStream.GetProperty ("ServerCertificate");
+							}
+						}
+					}
+					if (sslStream == null)
+						throw new NotSupportedException ("Missing Mono.Security.dll assembly. Support for SSL/TLS is unavailable.");
+					// FIXME: SecurityProtocolType is defined in System (1.1+) and Mono.Security (for 1.0)
+					// this results in MissingMethodException :(
+//					object[] args = new object [5] { serverStream, request.RequestUri.Host, false, ServicePointManager.SecurityProtocol, request.ClientCertificates };
+					// so we ends up using Default and not ServicePointManager.SecurityProtocol
+					object[] args = new object [3] { serverStream, request.RequestUri.Host, request.ClientCertificates };
+					nstream = (Stream) Activator.CreateInstance (sslStream, args);
+
+					if (ServicePointManager.CheckCertificateRevocationList) {
+						// note: default is false
+						piCRL.SetValue (nstream, true, null);
+					}
+					// we also need to set ServicePoint.Certificate 
+					// and ServicePoint.ClientCertificate but this can
+					// only be done later (after handshake - which is
+					// done only after a read operation).
+				}
+				else
+					nstream = serverStream;
 			} catch (Exception) {
 				status = WebExceptionStatus.ConnectFailure;
 				return false;
@@ -162,7 +205,7 @@ namespace System.Net
 		{
 			WebConnection cnc = (WebConnection) result.AsyncState;
 			WebConnectionData data = cnc.Data;
-			NetworkStream ns = cnc.nstream;
+			Stream ns = cnc.nstream;
 			if (ns == null) {
 				cnc.Close (true);
 				return;
@@ -188,7 +231,6 @@ namespace System.Net
 				return;
 			}
 
-			//Console.WriteLine (System.Text.Encoding.Default.GetString (cnc.buffer, 0, nread));
 			int pos = -1;
 			if (cnc.readState == ReadState.None) { 
 				Exception exc = null;
@@ -250,11 +292,20 @@ namespace System.Net
 			
 			data.request.SetResponseData (data);
 		}
+
+		internal void GetCertificates () 
+		{
+			// here the SSL negotiation have been done
+			X509Certificate client = (X509Certificate) piClient.GetValue (nstream, null);
+			X509Certificate server = (X509Certificate) piServer.GetValue (nstream, null);
+			sPoint.SetCertificates (client, server);
+			certsAvailable = (server != null);
+		}
 		
 		static void InitRead (object state)
 		{
 			WebConnection cnc = (WebConnection) state;
-			NetworkStream ns = cnc.nstream;
+			Stream ns = cnc.nstream;
 
 			try {
 				ns.BeginRead (cnc.buffer, 0, cnc.buffer.Length, readDoneDelegate, cnc);
@@ -576,6 +627,10 @@ namespace System.Net
 
 			try {
 				nstream.Write (buffer, offset, size);
+				// here SSL handshake should have been done
+				if (ssl && !certsAvailable) {
+					GetCertificates ();
+				}
 			} catch (Exception) {
 			}
 		}

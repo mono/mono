@@ -1,20 +1,27 @@
 //
 // System.Net.SecurityProtocolType.cs
 //
-// Author:
-//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+// Authors
+//	Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 
-#if NET_1_1
+namespace System.Net {
 
-namespace System.Net 
-{
 	[Flags]
-	public enum SecurityProtocolType
-	{
+	[Serializable]
+#if NET_1_0
+	internal
+#else
+	public
+#endif
+	enum SecurityProtocolType {
+
+#if NET_1_2
+		Default = -1073741824,
+		Ssl2 = 12,
+#endif
 		Ssl3 = 48,
 		Tls = 192
 	}
 }
-
-#endif

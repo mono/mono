@@ -1,3 +1,16 @@
+2004-02-18  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SecurityProtocolType.cs: Added missing [Serializable] to enum. Added 
+	Default and Ssl2 to NET_1_2 profile. Enum is now internal for NET_1_0
+	profile (as we need it for SslClientStream).
+	* ServicePoint.cs: Added internal SetCertificates(client,server).
+	* ServicePointManager.cs: Added CheckCertificateRevocationList and
+	CheckCertificateRevocationList static properties (public in 1.1, 
+	internal for 1.0).
+	* WebConnection.cs: Dynamically creates a SslClientStream (from 
+	Mono.Security assembly) in case of https. Changed NetworkStream to 
+	Stream everywhere.
+
 2004-02-18  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpWebRequest.cs: send the 'Connection: keep-alive' header when we
