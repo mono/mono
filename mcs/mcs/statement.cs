@@ -4477,6 +4477,8 @@ namespace Mono.CSharp {
 
 				if (!current.AlwaysReturns && !current.AlwaysBreaks)
 					vector.AndLocals (current);
+				else
+					vector.Or (current);
 			}
 
 			Report.Debug (1, "END OF CATCH BLOCKS", ec.CurrentBranching);
@@ -4497,6 +4499,8 @@ namespace Mono.CSharp {
 
 				if (!current.AlwaysReturns && !current.AlwaysBreaks)
 					vector.AndLocals (current);
+				else	
+					vector.Or (current);
 			}
 
 			Report.Debug (1, "END OF GENERAL CATCH BLOCKS", ec.CurrentBranching);
