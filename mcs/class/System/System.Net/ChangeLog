@@ -1,5 +1,11 @@
 2004-12-12 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* HttpWebRequest.cs: set webResponse back to null when redirecting.
+	Fix the previous patch so that it reads the whole response even if
+	auto-redirect is not enabled. Closes bug #70484.
+
+2004-12-12 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* HttpWebResponse.cs: added ReadAll method.
 
 	* WebConnection.cs: in HandleError, set the response error after
