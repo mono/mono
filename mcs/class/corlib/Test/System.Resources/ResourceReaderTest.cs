@@ -32,7 +32,7 @@ namespace MonoTests.System.Resources {
 				m_ResourceFile = base_path + "MyResources.resources";
 				m_BadResourceFile = base_path + "Empty.resources";
 			} else {
-				m_ResourceFile = "resources" + ds + "MyResources.resources";
+				m_ResourceFile = Path.Combine ("Test", Path.Combine ("resources","MyResources.resources"));
 				m_BadResourceFile = "resources" + ds + "Empty.resources";
 			}
 		}
@@ -62,7 +62,7 @@ namespace MonoTests.System.Resources {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
+		[ExpectedException (typeof (DirectoryNotFoundException))]
 		public void ConstructorString_Bad () 
 		{
 			ResourceReader r = new ResourceReader(m_BadResourceFile);
@@ -72,7 +72,7 @@ namespace MonoTests.System.Resources {
 		public void ConstructorString () 
 		{
 			if (!File.Exists(m_ResourceFile)) {
-				Fail ("Resource file is not where it should be:" + m_ResourceFile);
+				Fail ("Resource file is not where it should be:" + Path.Combine (Directory.GetCurrentDirectory(), m_ResourceFile));
 			}
 			ResourceReader r = new ResourceReader(m_ResourceFile);
 			AssertNotNull ("ResourceReader", r);

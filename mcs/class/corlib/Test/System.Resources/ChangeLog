@@ -1,3 +1,8 @@
+2004-08-29  Nick Drochak <ndrochak@ieee.org>
+
+	* ResourceReaderTest.cs: Make tests pass (correct path to resources)
+	on MS.NET 1.1.
+
 2004-06-14  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ResourceReaderTest.cs: Un-ignored an old test case (probably fixed a
