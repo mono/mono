@@ -1,3 +1,8 @@
+
+Sat Jun 19 17:56:50 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* *.c, *.h: more API cleanups.
+
 2004-06-18  Jackson Harper  <jackson@ximian.com>
 
 	* assembly.c: Trace loading assemblies.
