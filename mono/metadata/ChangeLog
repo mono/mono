@@ -1,4 +1,8 @@
 
+Thu Aug 8 13:04:18 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* icall.c: added icall to implement Assembly.GetFile*.
+
 Thu Aug 8 10:18:17 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* reflection.h, reflection.c: code to embed managed resources.
