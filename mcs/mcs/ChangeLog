@@ -1,5 +1,11 @@
 2002-08-08  Martin Baulig  <martin@gnome.org>
 
+	* statement.cs (UsageVector.MergeChildren): Distinguish between
+	`Breaks' and `Returns' everywhere, don't set `Breaks' anymore if
+	we return.  Added test17() and test18() to test-154.cs.
+
+2002-08-08  Martin Baulig  <martin@gnome.org>
+
 	* typemanager.cs (TypeManager.FilterWithClosure): If we have
 	Family access, make sure the invoking type isn't a subclass of the
 	queried type (that'd be a CS1540).

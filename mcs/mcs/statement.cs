@@ -576,8 +576,6 @@ namespace Mono.CSharp {
 				ec.CurrentBranching.AddFinallyVector (vector);
 
 			vector.Returns = FlowReturns.ALWAYS;
-			vector.Breaks = FlowReturns.ALWAYS;
-
 			return true;
 		}
 		
@@ -863,7 +861,6 @@ namespace Mono.CSharp {
 			}
 
 			ec.CurrentBranching.CurrentUsageVector.Returns = FlowReturns.EXCEPTION;
-			ec.CurrentBranching.CurrentUsageVector.Breaks = FlowReturns.EXCEPTION;
 			return true;
 		}
 			
@@ -1457,7 +1454,7 @@ namespace Mono.CSharp {
 				FlowReturns new_returns = FlowReturns.NEVER;
 				FlowReturns new_breaks = FlowReturns.NEVER;
 				bool new_returns_set = false, new_breaks_set = false;
-				FlowReturns breaks;
+				bool breaks;
 
 				Report.Debug (1, "MERGING CHILDREN", branching, this);
 
@@ -1484,11 +1481,16 @@ namespace Mono.CSharp {
 					if (child.Returns == FlowReturns.UNREACHABLE)
 						continue;
 
-					// If we're a switch section, `break' won't leave the current
-					// branching (NOTE: the type check here means that we're "a"
-					// switch section, not that we're "in" a switch section!).
-					breaks = (branching.Type == FlowBranchingType.SWITCH_SECTION) ?
-						child.Returns : child.Breaks;
+					// Check whether control may reach the end of this sibling.
+					// This happens unless we either always return or always break.
+					if ((child.Returns == FlowReturns.EXCEPTION) ||
+					    (child.Returns == FlowReturns.ALWAYS) ||
+					    ((branching.Type != FlowBranchingType.SWITCH_SECTION) &&
+					     (branching.Type != FlowBranchingType.LOOP_BLOCK) &&
+					     (child.Breaks == FlowReturns.ALWAYS)))
+						breaks = true;
+					else
+						breaks = false;
 
 					// A local variable is initialized after a flow branching if it
 					// has been initialized in all its branches which do neither
@@ -1525,8 +1527,7 @@ namespace Mono.CSharp {
 					// Here, `a' is initialized in line 3 and we must not look at
 					// line 5 since it always returns.
 					// 
-					if ((breaks != FlowReturns.EXCEPTION) &&
-					    (breaks != FlowReturns.ALWAYS)) {
+					if (!breaks) {
 						if (new_locals != null)
 							new_locals.And (child.locals);
 						else {
@@ -1572,11 +1573,14 @@ namespace Mono.CSharp {
 				// we need to look at (see above).
 				//
 
-				breaks = (branching.Type == FlowBranchingType.SWITCH_SECTION) ?
-					Returns : Breaks;
+				bool or_locals = (Returns == FlowReturns.NEVER) ||
+					(Returns == FlowReturns.SOMETIMES);
+				if ((branching.Type != FlowBranchingType.SWITCH_SECTION) &&
+				    (branching.Type != FlowBranchingType.LOOP_BLOCK))
+					or_locals &= ((Breaks == FlowReturns.NEVER) ||
+						      (Breaks == FlowReturns.SOMETIMES));
 
-				if ((new_locals != null) &&
-				    ((breaks == FlowReturns.NEVER) || (breaks == FlowReturns.SOMETIMES))) {
+				if ((new_locals != null) && or_locals) {
 					locals.Or (new_locals);
 				}
 
@@ -1589,17 +1593,13 @@ namespace Mono.CSharp {
 				// parent block before reaching the end of the block, so set `Breaks'.
 				//
 				if ((Returns != FlowReturns.NEVER) && (Returns != FlowReturns.SOMETIMES)) {
-					real_breaks = Returns;
-					breaks_set = true;
-				}
+					// real_breaks = Returns;
+					// breaks_set = true;
+				} else if (branching.Type == FlowBranchingType.BLOCK) {
+					//
+					// If this is not a loop or switch block, `break' actually breaks.
+					//
 
-				//
-				// If this is not a loop or switch block, `break' actually breaks.
-				// However, if we may have returned, then Breaks has already been set.
-				//
-
-				if ((branching.Type == FlowBranchingType.BLOCK) &&
-				    (Returns == FlowReturns.NEVER)) {
 					if (!breaks_set) {
 						Breaks = new_breaks;
 						breaks_set = true;
