@@ -1,3 +1,9 @@
+2005-01-10 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* StringBuilder.cs: throw if the new size is greater than the maximum
+	capacity for the StringBuilder. Patch by luke@octerbar.net. Fixes
+	bug #62422.
+
 2004-12-15  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* UTF7Encoding.cs:  Fixed warning for unused variable.

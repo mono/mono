@@ -421,6 +421,27 @@ namespace MonoTests.System.Text {
 		StringBuilder sb = new StringBuilder ("Mono");
 		sb.Insert (0, new char[2], 1, Int32.MaxValue);
 	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void MaxCapacity_Overflow1 ()
+	{
+		StringBuilder sb = new StringBuilder (2, 3);
+		sb.Append ("Mono");
+	}
+
+	[Test]
+	public void MaxCapacity_Overflow2 ()
+	{
+		StringBuilder sb = new StringBuilder (2, 3);
+		try {
+			sb.Append ("Mono");
+		} catch (ArgumentOutOfRangeException) {
+		}
+
+		AssertEquals (2, sb.Capacity);
+		AssertEquals (3, sb.MaxCapacity);
+	}
 }
 
 }

@@ -1,3 +1,7 @@
+2005-01-10 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* StringBuilderTest.cs: patch to test for capacity being exceeded.
+
 2004-06-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* UTF7EncodingTest.cs: Added 3 more test cases from RFC1642 to decode
