@@ -29,18 +29,23 @@ namespace System.Web.Services.Configuration
 		static WSConfig instance;
 		WSProtocol protocols;
 		string wsdlHelpPage;
+		string filePath;
 		ArrayList extensionTypes = new ArrayList();
 		ArrayList extensionImporterTypes = new ArrayList();
 		ArrayList extensionReflectorTypes = new ArrayList();
 		ArrayList formatExtensionTypes = new ArrayList();
 		
-		public WSConfig (WSConfig parent)
+		public WSConfig (WSConfig parent, object context)
 		{
 			if (parent == null)
 				return;
 			
 			protocols = parent.protocols;
 			wsdlHelpPage = parent.wsdlHelpPage;
+			if (wsdlHelpPage != null)
+				filePath = parent.filePath;
+			else
+				filePath = context as string;
 		}
 		
 		static WSProtocol ParseProtocol (string protoName, out string error)
@@ -103,6 +108,11 @@ namespace System.Web.Services.Configuration
 		public string WsdlHelpPage {
 			get { return wsdlHelpPage; }
 			set { wsdlHelpPage = value; }
+		}
+
+		public string ConfigFilePath {
+			get { return filePath; }
+			set { filePath = value; }
 		}
 
 		static public WSConfig Instance {
@@ -216,7 +226,7 @@ namespace System.Web.Services.Configuration
 		[MonoTODO("Some nodes not supported, see below")]
 		public object Create (object parent, object context, XmlNode section)
 		{
-			WSConfig config = new WSConfig (parent as WSConfig);	
+			WSConfig config = new WSConfig (parent as WSConfig, context);
 
 			if (section.Attributes != null && section.Attributes.Count != 0)
 				ThrowException ("Unrecognized attribute", section);
@@ -261,6 +271,7 @@ namespace System.Web.Services.Configuration
 					if (child.Attributes != null && child.Attributes.Count != 0)
 						HandlersUtil.ThrowException ("Unrecognized attribute", child);
 
+					config.ConfigFilePath = context as string;
 					config.WsdlHelpPage = href;
 					continue;
 				}

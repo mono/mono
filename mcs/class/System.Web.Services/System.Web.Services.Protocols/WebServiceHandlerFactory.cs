@@ -11,6 +11,7 @@
 // Copyright (c) 2003 Ximian, Inc. (http://www.ximian.com)
 //
 
+using System.IO;
 using System.Web.Services;
 using System.Web.Services.Configuration;
 using System.Web.UI;
@@ -50,24 +51,55 @@ namespace System.Web.Services.Protocols
 			WSProtocol protocol = GuessProtocol (context, verb);
 			IHttpHandler handler = null;
 
-			if (WSConfig.IsSupported (protocol)) {
-				switch (protocol) {
-				case WSProtocol.HttpSoap:
-					handler = new HttpSoapWebServiceHandler (type);
-					break;
-				case WSProtocol.HttpPost:
-					handler = new HttpPostWebServiceHandler (type);
-					break;
-				case WSProtocol.HttpGet:
-					handler = new HttpGetWebServiceHandler (type);
-					break;
-				case WSProtocol.Documentation:
-					handler = new SoapDocumentationHandler (type, context);
-					break;
-				}
+			if (!WSConfig.IsSupported (protocol))
+				return new DummyHttpHandler ();
+
+			switch (protocol) {
+			case WSProtocol.HttpSoap:
+				handler = new HttpSoapWebServiceHandler (type);
+				break;
+			case WSProtocol.HttpPost:
+				handler = new HttpPostWebServiceHandler (type);
+				break;
+			case WSProtocol.HttpGet:
+				handler = new HttpGetWebServiceHandler (type);
+				break;
+			case WSProtocol.Documentation:
+				HttpRequest req = context.Request;
+				string key = null;
+				if (req.QueryString.Count == 1)
+					key = req.QueryString.GetKey(0).ToLower();
+
+				SoapDocumentationHandler soapHandler;
+				soapHandler = new SoapDocumentationHandler (type, context);
+				handler = soapHandler;
 				
-			} else {
-				handler = new DummyHttpHandler ();
+				if (key != null && (key == "wsdl" || key == "schema" || key == "code"))
+					return handler;
+
+				context.Items["wsdls"] = soapHandler.GetDescriptions ();
+				context.Items["schemas"] = soapHandler.GetSchemas ();
+
+				string help = WSConfig.Instance.WsdlHelpPage;
+				string path = Path.GetDirectoryName (WSConfig.Instance.ConfigFilePath);
+				string file = Path.GetFileName (WSConfig.Instance.ConfigFilePath);
+				string appPath = AppDomain.CurrentDomain.GetData (".appPath").ToString ();
+				string vpath;
+				if (path.StartsWith (appPath)) {
+					vpath = path.Substring (appPath.Length);
+					vpath = vpath.Replace ("\\", "/");
+				} else {
+					vpath = "/";
+				}
+
+				if (vpath.EndsWith ("/"))
+					vpath += help;
+				else
+					vpath += "/" + help;
+
+				string physPath = Path.Combine (path, help);
+				handler = PageParser.GetCompiledPageInstance (vpath, physPath, context);
+				break;
 			}
 
 			return handler;

@@ -1,3 +1,13 @@
+2003-10-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* SoapDocumentationHandler.cs: it does not generate the documentation
+	page any more. GetDescription and GetSchemas are now internal.
+
+	* WebServiceHandlerFactory.cs: generate the documentation page without
+	doing a Transfer () but instead creating a Page instance from the wsdl
+	help file. This file is located from the configuration file that
+	contains the <wsdlHelpGenerator> tag.
+
 2003-10-01  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* HtmlFormParameterReader.cs, HtmlFormParameterWriter.cs, 

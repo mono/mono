@@ -43,23 +43,11 @@ namespace System.Web.Services.Protocols
 		public override void ProcessRequest (HttpContext context)
 		{
 			HttpRequest req = context.Request;
-			if (req.QueryString.Count == 1)
-			{
-				string key = req.QueryString.GetKey(0).ToLower();
-				if (key  == "wsdl") GenerateWsdlDocument (context, req.QueryString ["wsdl"]);
-				else if (key == "schema") GenerateSchema (context, req.QueryString ["schema"]);
-				else if (key == "code") GenerateCode (context, req.QueryString ["code"]);
-				else GenerateDocumentationPage (context);
-			}
-			else
-				GenerateDocumentationPage (context);
-		}
-
-		void GenerateDocumentationPage (HttpContext context)
-		{
-			context.Items["wsdls"] = GetDescriptions ();
-			context.Items["schemas"] = GetSchemas ();
-			context.Server.Transfer (WSConfig.Instance.WsdlHelpPage, true);
+			string key = req.QueryString.GetKey(0).ToLower();
+			if (key  == "wsdl") GenerateWsdlDocument (context, req.QueryString ["wsdl"]);
+			else if (key == "schema") GenerateSchema (context, req.QueryString ["schema"]);
+			else if (key == "code") GenerateCode (context, req.QueryString ["code"]);
+			else throw new Exception ("This should never happen");
 		}
 
 		void GenerateWsdlDocument (HttpContext context, string wsdlId)
@@ -130,7 +118,7 @@ namespace System.Web.Services.Protocols
 			return provider;
 		}
 		
-		ServiceDescriptionCollection GetDescriptions ()
+		internal ServiceDescriptionCollection GetDescriptions ()
 		{
 			if (_descriptions == null)
 			{
@@ -142,7 +130,7 @@ namespace System.Web.Services.Protocols
 			return _descriptions;
 		}
 		
-		XmlSchemas GetSchemas()
+		internal XmlSchemas GetSchemas()
 		{
 			GetDescriptions();
 			return _schemas;
