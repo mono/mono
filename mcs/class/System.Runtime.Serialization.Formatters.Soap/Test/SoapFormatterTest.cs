@@ -1,6 +1,7 @@
 // project created on 09/05/2003 at 18:07
 using System;
 using System.Collections;
+using System.Reflection;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Messaging;
 using System.Runtime.Serialization;
@@ -107,7 +108,59 @@ namespace MonoTests.System.Runtime.Serialization.Formatters.Soap {
 			return true;
 		}
 	}
+
+	[Serializable]
+	internal class Version1 {
+		public int _value;
+		
+		public Version1(int value) {
+			_value = value;
+		}
+	}
+
+	[Serializable]
+	internal class Version2: ISerializable {
+	   	public int _value;
+		public string _foo;
+
+		public Version2(int value, string foo) {
+		   	_value = value;
+		   	_foo = foo;
+		}
+
+		public void GetObjectData(SerializationInfo info, StreamingContext context) {
+		   	info.AddValue("_value", _value);
+			info.AddValue("_foo", _foo);
+		}
+
+		private Version2(SerializationInfo info, StreamingContext context) {
+		    	_value = info.GetInt32("_value");
+			try{
+				_foo = info.GetString("_foo");
+			}
+			catch(SerializationException) {
+			    _foo = "Default value";
+			}
+		}
+	}
 	
+	public class Version1ToVersion2Binder: SerializationBinder {
+		public override Type BindToType (string assemblyName, string typeName) {
+			Type returnType = null;
+			string typeVersion1 = "MonoTests.System.Runtime.Serialization.Formatters.Soap.Version1";
+			string assemName = Assembly.GetExecutingAssembly().FullName;
+
+			if(typeName == typeVersion1) {
+				typeName = "MonoTests.System.Runtime.Serialization.Formatters.Soap.Version2";
+			}
+
+			string typeFormat = String.Format("{0}, {1}", typeName, assemName);
+			returnType = Type.GetType( typeFormat);
+
+			return returnType;
+		}
+	}
+
 	[TestFixture]
 	public class SoapFormatterTest
 	{
@@ -122,9 +175,9 @@ namespace MonoTests.System.Runtime.Serialization.Formatters.Soap {
 			_soapFormatter.SurrogateSelector = _surrogate;
 			_soapFormatter.Serialize(stream, objGraph);
 			
-			stream.Position = 0;
-			StreamReader r = new StreamReader(stream);
-			Console.WriteLine(r.ReadToEnd());
+//			stream.Position = 0;
+//			StreamReader r = new StreamReader(stream);
+//			Console.WriteLine(r.ReadToEnd());
 			stream.Position = 0;
 			
 			object objReturn = _soapFormatterDeserializer.Deserialize(stream);
@@ -263,6 +316,24 @@ namespace MonoTests.System.Runtime.Serialization.Formatters.Soap {
 			Assertion.AssertEquals("#Equals", objTest, objReturn);
 			objReturn.OnTrucEvent("bidule");
 			Assertion.AssertEquals("#dlg", "bidule", objReturn.ObjString);
+		}
+
+		[Test]
+		public void TestSerializationbinder() {
+		    	Object objReturn;
+			MemoryStream stream = new MemoryStream();
+			Version1 objVer1 = new Version1(123);
+
+			_soapFormatter.SurrogateSelector = _surrogate;
+			_soapFormatter.Serialize(stream, objVer1);
+
+			stream.Position = 0;
+			_soapFormatterDeserializer.Binder = new Version1ToVersion2Binder();
+			objReturn = _soapFormatterDeserializer.Deserialize(stream);
+
+			Assertion.AssertEquals("#Version1 Version2", "Version2", objReturn.GetType().Name);
+			Assertion.AssertEquals("#_value", 123, ((Version2) objReturn)._value);
+			Assertion.AssertEquals("#_foo", "Default value", ((Version2) objReturn)._foo);
 		}
 	}
 }

@@ -1,3 +1,7 @@
+2003-12-22  Jean-Marc Andre <jeanmarc.andre@cpe.fr>
+	* SoapFormatterTest.cs:
+		Added unit test for the SerializationBinder property
+
 2003-11-21  Jean-Marc Andre <jeanmarc.andre@cpe.fr>
 	* SoapReader.cs: 
 		Bug fixed. SerializationBinder.BindToType wasn't called
