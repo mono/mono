@@ -387,7 +387,7 @@ namespace Microsoft.VisualBasic.CompilerServices {
 		/**
 		 * This method copy the information from one array to another.
 		 */
-		public static object CopyArray(Array source, Array destination) {
+		public static Array CopyArray(Array source, Array destination) {
 			if (source == null || destination == null)
 				return destination;
 

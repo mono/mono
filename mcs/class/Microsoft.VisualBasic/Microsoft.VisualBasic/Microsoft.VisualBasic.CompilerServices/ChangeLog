@@ -1,4 +1,7 @@
 2004-09-11  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* Utils.cs: Wrong return type in CopyArray Signature. Bug #65651
+
+2004-09-11  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* ObjectType.cs: Corrected some test ordering in ObjTst and using new getObjTstString to test two candidate strings. Bug #65653
 
 2004-09-05  Jambunathan K  <kjambunathan@novell.com>
