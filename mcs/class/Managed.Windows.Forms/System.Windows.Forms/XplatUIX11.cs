@@ -58,6 +58,18 @@ namespace System.Windows.Forms {
 		internal static	bool		is_visible;
 
 		private static Hashtable	handle_data;
+		private Queue message_queue;
+
+		private static readonly EventMask  SelectInputMask = EventMask.ButtonPressMask | 
+				EventMask.ButtonReleaseMask | 
+				EventMask.KeyPressMask | 
+				EventMask.KeyReleaseMask | 
+				EventMask.EnterWindowMask | 
+				EventMask.LeaveWindowMask |
+				EventMask.ExposureMask |
+				EventMask.PointerMotionMask | 
+				EventMask.VisibilityChangeMask |
+				EventMask.StructureNotifyMask;
 
 		#endregion	// Local Variables
 
@@ -97,6 +109,8 @@ namespace System.Windows.Forms {
 		private XplatUIX11() {
 			// Handle singleton stuff first
 			ref_count=0;
+
+			message_queue = new Queue ();
 
 			// Now regular initialization
 			SetDisplay(XOpenDisplay(IntPtr.Zero));
@@ -246,17 +260,7 @@ namespace System.Windows.Forms {
 				WindowHandle=XCreateSimpleWindow(DisplayHandle, ParentHandle, X, Y, Width, Height, BorderWidth, 0, 0);
 				XMapWindow(DisplayHandle, WindowHandle);
 
-				XSelectInput(DisplayHandle, WindowHandle, 
-						EventMask.ButtonPressMask | 
-						EventMask.ButtonReleaseMask | 
-						EventMask.KeyPressMask | 
-						EventMask.KeyReleaseMask | 
-						EventMask.EnterWindowMask | 
-						EventMask.LeaveWindowMask |
-						EventMask.ExposureMask |
-						EventMask.PointerMotionMask | 
-						EventMask.VisibilityChangeMask |
-						EventMask.StructureNotifyMask);
+				XSelectInput(DisplayHandle, WindowHandle, SelectInputMask);
 				is_visible=true;
 
 				protocols=wm_delete_window;
@@ -320,6 +324,7 @@ namespace System.Windows.Forms {
 
 				XSendEvent(DisplayHandle, handle, false, EventMask.ExposureMask, ref xevent);
 				XFlush(DisplayHandle);
+
 			}
 		}
 
@@ -547,11 +552,24 @@ namespace System.Windows.Forms {
 
 		internal override bool GetMessage(ref MSG msg, IntPtr hWnd, int wFilterMin, int wFilterMax) {
 			XEvent	xevent = new XEvent();
+			bool queued_message = false;
 
 		begin:
-			lock (this) {
-				XNextEvent(DisplayHandle, ref xevent);
+			lock (message_queue) {
+				if (message_queue.Count > 0) {
+					xevent = (XEvent) message_queue.Dequeue ();
+					queued_message = true;
+				}
 			}
+			if (!queued_message) {
+				lock (this) {
+					if (!XCheckMaskEvent (DisplayHandle, SelectInputMask, ref xevent)) {
+						msg.message = Msg.WM_ENTERIDLE;
+						return true;
+					}
+				}
+			}
+
 			msg.hwnd=xevent.AnyEvent.window;
 
 			switch(xevent.type) {
@@ -696,7 +714,7 @@ namespace System.Windows.Forms {
 								       EventMask.ExposureMask, ref xevent)) {
 							data.AddToInvalidArea (xevent.ExposeEvent.x, xevent.ExposeEvent.y,
 									xevent.ExposeEvent.width, xevent.ExposeEvent.height);
-						} 
+						}
 					}	
 
 					msg.message=Msg.WM_PAINT;
@@ -907,9 +925,8 @@ namespace System.Windows.Forms {
 			xevent.ClientMessageEvent.format = 32;
 			xevent.ClientMessageEvent.ptr1 = (IntPtr) GCHandle.Alloc (method);
 
-			lock (this) {
-				XSendEvent (DisplayHandle, IntPtr.Zero, false, EventMask.ExposureMask, ref xevent);
-				XFlush (DisplayHandle);
+			lock (message_queue) {
+                                message_queue.Enqueue (xevent);
 			}
 		}
 
@@ -982,6 +999,8 @@ namespace System.Windows.Forms {
 		internal extern static IntPtr XNextEvent(IntPtr display, ref XEvent xevent);
 		[DllImport ("libX11.so")]
 		internal extern static bool XCheckWindowEvent (IntPtr display, IntPtr window, EventMask mask, ref XEvent xevent);
+		[DllImport ("libX11.so")]
+		internal extern static bool XCheckMaskEvent (IntPtr display, EventMask mask, ref XEvent xevent);
 		[DllImport ("libX11.so", EntryPoint="XSelectInput")]
 		internal extern static IntPtr XSelectInput(IntPtr display, IntPtr window, EventMask mask);
 		[DllImport ("libX11.so", EntryPoint="XLookupString")]
