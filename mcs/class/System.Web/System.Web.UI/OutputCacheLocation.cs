@@ -17,7 +17,7 @@ namespace System.Web.UI
                 Any,
                 Client,
                 Downstream,
-                None,
-                Server
+                Server,
+                None
         }
 }

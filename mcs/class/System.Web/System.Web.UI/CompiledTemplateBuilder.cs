@@ -20,7 +20,7 @@ public class CompiledTemplateBuilder : ITemplate
 		this.templateMethod = templateMethod;
 	}
 
-	public void InstantiateIn (Control ctrl)
+	public virtual void InstantiateIn (Control ctrl)
 	{
 		templateMethod (ctrl);
 	}

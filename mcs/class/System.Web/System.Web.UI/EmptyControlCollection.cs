@@ -19,12 +19,12 @@ namespace System.Web.UI {
 		
 		public override void Add (Control child)
 		{
-			throw new HttpException ();
+			throw new NotSupportedException ("Control " + Owner.ID + " does not allow children");
 		}
 
 		public override void AddAt (int index, Control child)
 		{
-			throw new HttpException ();
+			throw new NotSupportedException ("Control " + Owner.ID + " does not allow children");
 		}
 	}
 }
