@@ -1,3 +1,9 @@
+2004-09-14  Martin Baulig  <martin@ximian.com>
+
+	Merged latest changes into gmcs.  Please keep this comment in
+	here, it makes it easier for me to see what changed in MCS since
+	the last time I merged.
+
 2004-09-14  Marek Safar  <marek.safar@seznam.cz>
 
 	Fixed bug #61902
@@ -258,12 +264,6 @@
 	table. It tests for duplications and enclosing name conflicts.
 
 	* enum.cs (EnumMember): Clean up to reuse the base structures
-
-2004-09-03  Martin Baulig  <martin@ximian.com>
-
-	Merged latest changes into gmcs.  Please keep this comment in
-	here, it makes it easier for me to see what changed in MCS since
-	the last time I merged.
 
 2004-09-03  Martin Baulig  <martin@ximian.com>
 
