@@ -1,3 +1,13 @@
+2004-12-08  Alp Toker  <alp@atoker.com>
+
+	* cilc.cs:
+	Produce genuine GObjects.
+	Start support for events/signals and enums.
+	Handle overloaded methods.
+	Report ignored types, warn on potentially incorrect code generation.
+	More conflict avoidance.
+	Cleaned up warnings.
+
 2004-12-06  Alp Toker  <alp@atoker.com>
 
 	* cilc.cs: Update to new embedding API: use mono_assembly_get_image()
