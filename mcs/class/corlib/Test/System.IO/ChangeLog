@@ -1,3 +1,7 @@
+2003-04-22  Ville Palo <vi64pa@kolumbus.fi>
+
+	* FileTest.cs: More tests.
+	
 2003-04-21  Ville Palo <vi64pa@kolumbus.fi>
 
 	* DirectoryTest.cs: lots of new tests. and some fixes and clean ups

@@ -1,7 +1,9 @@
 //
 // FileTest.cs: Test cases for System.IO.File
 //
-// Author: Duncan Mak (duncan@ximian.com)
+// Author: 
+//     Duncan Mak (duncan@ximian.com)
+//     Ville Palo (vi64pa@kolumbus.fi)
 //
 // (C) 2002 Ximian, Inc. http://www.ximian.com
 //
@@ -9,6 +11,8 @@
 using NUnit.Framework;
 using System;
 using System.IO;
+using System.Globalization;
+using System.Threading;
 
 namespace MonoTests.System.IO
 {
@@ -16,6 +20,11 @@ namespace MonoTests.System.IO
 	{
 		protected override void SetUp ()
 		{
+                	Thread.CurrentThread.CurrentCulture = new CultureInfo ("EN-us");
+			DeleteFile ("resources" + Path.DirectorySeparatorChar + "creationTime");                	
+                	DeleteFile ("resources" + Path.DirectorySeparatorChar + "lastAccessTime");
+                	DeleteFile ("resources" + Path.DirectorySeparatorChar + "lastWriteTime");                	
+
 		        File.Delete ("resources" + Path.DirectorySeparatorChar + "baz");
 		        File.Delete ("resources" + Path.DirectorySeparatorChar + "bar");
 		        File.Delete ("resources" + Path.DirectorySeparatorChar + "foo");
@@ -23,6 +32,10 @@ namespace MonoTests.System.IO
 
 		protected override void TearDown ()
 		{
+			DeleteFile ("resources" + Path.DirectorySeparatorChar + "creationTime");
+                	DeleteFile ("resources" + Path.DirectorySeparatorChar + "lastAccessTime");
+                	DeleteFile ("resources" + Path.DirectorySeparatorChar + "lastWriteTime");                        
+
 		        File.Delete ("resources" + Path.DirectorySeparatorChar + "baz");
 		        File.Delete ("resources" + Path.DirectorySeparatorChar + "bar");
 		        File.Delete ("resources" + Path.DirectorySeparatorChar + "foo");
@@ -439,6 +452,357 @@ namespace MonoTests.System.IO
 
 			// should throw an exception
 			File.GetCreationTime (path2);
+		}
+
+                [Test]
+                public void CreationTime ()
+                {
+                        string path = "resources" + Path.DirectorySeparatorChar + "creationTime";                	
+                        if (File.Exists (path))
+                        	File.Delete (path);
+                        	
+                       	FileStream stream = File.Create (path);
+                	stream.Close ();                	
+                	
+                	File.SetCreationTime (path, new DateTime (2002, 4, 6, 4, 6, 4));
+                	DateTime time = File.GetCreationTime (path);
+                	Assertion.AssertEquals ("test#01", 2002, time.Year);
+                	Assertion.AssertEquals ("test#02", 4, time.Month);
+                	Assertion.AssertEquals ("test#03", 6, time.Day);
+                	Assertion.AssertEquals ("test#04", 4, time.Hour);
+                	Assertion.AssertEquals ("test#05", 4, time.Second);
+                	
+                	time = File.GetCreationTimeUtc (path);
+                	Assertion.AssertEquals ("test#06", 2002, time.Year);
+                	Assertion.AssertEquals ("test#07", 4, time.Month);
+                	Assertion.AssertEquals ("test#08", 6, time.Day);
+                	Assertion.AssertEquals ("test#09", 1, time.Hour);
+                	Assertion.AssertEquals ("test#10", 4, time.Second);                	
+
+                	File.SetCreationTimeUtc (path, new DateTime (2002, 4, 6, 4, 6, 4));
+                	time = File.GetCreationTimeUtc (path);
+                	Assertion.AssertEquals ("test#11", 2002, time.Year);
+                	Assertion.AssertEquals ("test#12", 4, time.Month);
+                	Assertion.AssertEquals ("test#13", 6, time.Day);
+                	Assertion.AssertEquals ("test#14", 4, time.Hour);
+                	Assertion.AssertEquals ("test#15", 4, time.Second);
+                	
+                	time = File.GetCreationTime (path);
+                	Assertion.AssertEquals ("test#16", 2002, time.Year);
+                	Assertion.AssertEquals ("test#17", 4, time.Month);
+                	Assertion.AssertEquals ("test#18", 6, time.Day);
+                	Assertion.AssertEquals ("test#19", 7, time.Hour);
+                	Assertion.AssertEquals ("test#20", 4, time.Second);
+                }
+
+                [Test]
+                public void LastAccessTime ()
+                {
+                        string path = "resources" + Path.DirectorySeparatorChar + "lastAccessTime";                	
+                        if (File.Exists (path))
+                        	File.Delete (path);
+                        	
+                       	FileStream stream = File.Create (path);
+                	stream.Close ();                	
+                	
+                	File.SetLastAccessTime (path, new DateTime (2002, 4, 6, 4, 6, 4));
+                	DateTime time = File.GetLastAccessTime (path);
+                	Assertion.AssertEquals ("test#01", 2002, time.Year);
+                	Assertion.AssertEquals ("test#02", 4, time.Month);
+                	Assertion.AssertEquals ("test#03", 6, time.Day);
+                	Assertion.AssertEquals ("test#04", 4, time.Hour);
+                	Assertion.AssertEquals ("test#05", 4, time.Second);
+                	
+                	time = File.GetLastAccessTimeUtc (path);
+                	Assertion.AssertEquals ("test#06", 2002, time.Year);
+                	Assertion.AssertEquals ("test#07", 4, time.Month);
+                	Assertion.AssertEquals ("test#08", 6, time.Day);
+                	Assertion.AssertEquals ("test#09", 1, time.Hour);
+                	Assertion.AssertEquals ("test#10", 4, time.Second);                	
+
+                	File.SetLastAccessTimeUtc (path, new DateTime (2002, 4, 6, 4, 6, 4));
+                	time = File.GetLastAccessTimeUtc (path);
+                	Assertion.AssertEquals ("test#11", 2002, time.Year);
+                	Assertion.AssertEquals ("test#12", 4, time.Month);
+                	Assertion.AssertEquals ("test#13", 6, time.Day);
+                	Assertion.AssertEquals ("test#14", 4, time.Hour);
+                	Assertion.AssertEquals ("test#15", 4, time.Second);
+                	
+                	time = File.GetLastAccessTime (path);
+                	Assertion.AssertEquals ("test#16", 2002, time.Year);
+                	Assertion.AssertEquals ("test#17", 4, time.Month);
+                	Assertion.AssertEquals ("test#18", 6, time.Day);
+                	Assertion.AssertEquals ("test#19", 7, time.Hour);
+                	Assertion.AssertEquals ("test#20", 4, time.Second);
+                }
+
+                [Test]
+                public void LastWriteTime ()
+                {
+                        string path = "resources" + Path.DirectorySeparatorChar + "lastWriteTime";                	
+                        if (File.Exists (path))
+                        	File.Delete (path);
+                        	
+                       	FileStream stream = File.Create (path);
+                	stream.Close ();                	
+                	
+                	File.SetLastWriteTime (path, new DateTime (2002, 4, 6, 4, 6, 4));
+                	DateTime time = File.GetLastWriteTime (path);
+                	Assertion.AssertEquals ("test#01", 2002, time.Year);
+                	Assertion.AssertEquals ("test#02", 4, time.Month);
+                	Assertion.AssertEquals ("test#03", 6, time.Day);
+                	Assertion.AssertEquals ("test#04", 4, time.Hour);
+                	Assertion.AssertEquals ("test#05", 4, time.Second);
+                	
+                	time = File.GetLastWriteTimeUtc (path);
+                	Assertion.AssertEquals ("test#06", 2002, time.Year);
+                	Assertion.AssertEquals ("test#07", 4, time.Month);
+                	Assertion.AssertEquals ("test#08", 6, time.Day);
+                	Assertion.AssertEquals ("test#09", 1, time.Hour);
+                	Assertion.AssertEquals ("test#10", 4, time.Second);                	
+
+                	File.SetLastWriteTimeUtc (path, new DateTime (2002, 4, 6, 4, 6, 4));
+                	time = File.GetLastWriteTimeUtc (path);
+                	Assertion.AssertEquals ("test#11", 2002, time.Year);
+                	Assertion.AssertEquals ("test#12", 4, time.Month);
+                	Assertion.AssertEquals ("test#13", 6, time.Day);
+                	Assertion.AssertEquals ("test#14", 4, time.Hour);
+                	Assertion.AssertEquals ("test#15", 4, time.Second);
+                	
+                	time = File.GetLastWriteTime (path);
+                	Assertion.AssertEquals ("test#16", 2002, time.Year);
+                	Assertion.AssertEquals ("test#17", 4, time.Month);
+                	Assertion.AssertEquals ("test#18", 6, time.Day);
+                	Assertion.AssertEquals ("test#19", 7, time.Hour);
+                	Assertion.AssertEquals ("test#20", 4, time.Second);
+                }
+
+		[Test]
+		[ExpectedException(typeof(ArgumentNullException))]	
+		public void GetCreationTimeException1 ()
+		{
+			File.GetCreationTime (null as string);
+		}
+
+		[Test]
+		[ExpectedException(typeof(ArgumentException))]	
+		public void GetCreationTimeException2 ()
+		{
+			File.GetCreationTime ("");
+		}
+	
+		[Test]
+		[ExpectedException(typeof(IOException))]
+		public void GetCreationTimeException3 ()
+		{
+                        string path = "resources" + Path.DirectorySeparatorChar + "GetCreationTimeException3";                	
+			DeleteFile (path);		
+			File.GetCreationTime (path);
+		}
+
+		[Test]
+		[ExpectedException(typeof(ArgumentException))]	
+		public void GetCreationTimeException4 ()
+		{
+			File.GetCreationTime ("    ");
+		}
+
+		[Test]
+		[ExpectedException(typeof(ArgumentException))]	
+		public void GetCreationTimeException5 ()
+		{
+			File.GetCreationTime (Path.InvalidPathChars [0].ToString ());
+		}
+
+		[Test]
+		[ExpectedException(typeof(ArgumentNullException))]	
+		public void GetCreationTimeUtcException1 ()
+		{
+			File.GetCreationTimeUtc (null as string);
+		}
+
+		[Test]
+		[ExpectedException(typeof(ArgumentException))]	
+		public void GetCreationTimeUtcException2 ()
+		{
+			File.GetCreationTimeUtc ("");
+		}
+	
+		[Test]
+		[ExpectedException(typeof(IOException))]
+		public void GetCreationTimeUtcException3 ()
+		{
+                        string path = "resources" + Path.DirectorySeparatorChar + "GetCreationTimeUtcException3";                	
+			DeleteFile (path);		
+			File.GetCreationTimeUtc (path);
+		}
+
+		[Test]
+		[ExpectedException(typeof(ArgumentException))]	
+		public void GetCreationTimeUtcException4 ()
+		{
+			File.GetCreationTimeUtc ("    ");
+		}
+
+		[Test]
+		[ExpectedException(typeof(ArgumentException))]	
+		public void GetCreationTimeUtcException5 ()
+		{
+			File.GetCreationTime (Path.InvalidPathChars [0].ToString ());
+		}
+
+		[Test]
+		[ExpectedException(typeof(ArgumentNullException))]	
+		public void GetLastAccessTimeException1 ()
+		{
+			File.GetLastAccessTime (null as string);
+		}
+
+		[Test]
+		[ExpectedException(typeof(ArgumentException))]	
+		public void GetLastAccessTimeException2 ()
+		{
+			File.GetLastAccessTime ("");
+		}
+	
+		[Test]
+		[ExpectedException(typeof(IOException))]
+		public void GetLastAccessTimeException3 ()
+		{
+                        string path = "resources" + Path.DirectorySeparatorChar + "GetLastAccessTimeException3";                	
+			DeleteFile (path);		
+			File.GetLastAccessTime (path);
+		}
+
+		[Test]
+		[ExpectedException(typeof(ArgumentException))]	
+		public void GetLastAccessTimeException4 ()
+		{
+			File.GetLastAccessTime ("    ");
+		}
+
+		[Test]
+		[ExpectedException(typeof(ArgumentException))]	
+		public void GetLastAccessTimeException5 ()
+		{
+			File.GetLastAccessTime (Path.InvalidPathChars [0].ToString ());
+		}
+
+		[Test]
+		[ExpectedException(typeof(ArgumentNullException))]	
+		public void GetLastAccessTimeUtcException1 ()
+		{
+			File.GetLastAccessTimeUtc (null as string);
+		}
+
+		[Test]
+		[ExpectedException(typeof(ArgumentException))]	
+		public void GetLastAccessTimeUtcException2 ()
+		{
+			File.GetLastAccessTimeUtc ("");
+		}
+	
+		[Test]
+		[ExpectedException(typeof(IOException))]
+		public void GetLastAccessTimeUtcException3 ()
+		{
+                        string path = "resources" + Path.DirectorySeparatorChar + "GetLastAccessTimeUtcException3";                	
+			DeleteFile (path);			
+			File.GetLastAccessTimeUtc (path);
+		}
+
+		[Test]
+		[ExpectedException(typeof(ArgumentException))]	
+		public void GetLastAccessTimeUtcException4 ()
+		{
+			File.GetLastAccessTimeUtc ("    ");
+		}
+
+		[Test]
+		[ExpectedException(typeof(ArgumentException))]	
+		public void GetLastAccessTimeUtcException5 ()
+		{
+			File.GetLastAccessTimeUtc (Path.InvalidPathChars [0].ToString ());
+		}
+
+		[Test]
+		[ExpectedException(typeof(ArgumentNullException))]	
+		public void GetLastWriteTimeException1 ()
+		{
+			File.GetLastWriteTime (null as string);
+		}
+
+		[Test]
+		[ExpectedException(typeof(ArgumentException))]	
+		public void GetLastWriteTimeException2 ()
+		{
+			File.GetLastWriteTime ("");
+		}
+	
+		[Test]
+		[ExpectedException(typeof(IOException))]
+		public void GetLastWriteTimeException3 ()
+		{
+                        string path = "resources" + Path.DirectorySeparatorChar + "GetLastAccessTimeUtcException3";                	
+			DeleteFile (path);			
+			File.GetLastWriteTime (path);
+		}
+
+		[Test]
+		[ExpectedException(typeof(ArgumentException))]	
+		public void GetLastWriteTimeException4 ()
+		{
+			File.GetLastWriteTime ("    ");
+		}
+
+		[Test]
+		[ExpectedException(typeof(ArgumentException))]	
+		public void GetLastWriteTimeException5 ()
+		{
+			File.GetLastWriteTime (Path.InvalidPathChars [0].ToString ());
+		}
+
+		[Test]
+		[ExpectedException(typeof(ArgumentNullException))]	
+		public void GetLastWriteTimeUtcException1 ()
+		{
+			File.GetLastWriteTimeUtc (null as string);
+		}
+
+		[Test]
+		[ExpectedException(typeof(ArgumentException))]	
+		public void GetLastWriteTimeUtcException2 ()
+		{
+			File.GetLastAccessTimeUtc ("");
+		}
+	
+		[Test]
+		[ExpectedException(typeof(IOException))]
+		public void GetLastWriteTimeUtcException3 ()
+		{
+                        string path = "resources" + Path.DirectorySeparatorChar + "GetLastWriteTimeUtcException3";
+			DeleteFile (path);
+			File.GetLastAccessTimeUtc (path);
+		}
+
+		[Test]
+		[ExpectedException(typeof(ArgumentException))]	
+		public void GetLastWriteTimeUtcException4 ()
+		{
+			File.GetLastAccessTimeUtc ("    ");
+		}
+
+		[Test]
+		[ExpectedException(typeof(ArgumentException))]	
+		public void GetLastWriteTimeUtcException5 ()
+		{
+			File.GetLastAccessTimeUtc (Path.InvalidPathChars [0].ToString ());
+		}		
+
+		private void DeleteFile (string path)
+		{
+			if (File.Exists (path))
+				File.Delete (path);
 		}
 	}
 }
