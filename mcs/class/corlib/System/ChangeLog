@@ -1,3 +1,8 @@
+2003-08-04  Duncan Mak  <duncan@ximian.com>
+
+	* Convert.cs (ToUInt16): Throw an OverflowException correctly, as
+	noted by c5n4kh6u02@sneakemail.com in
+	http://bugzilla.ximian.com/show_bug.cgi?id=43098.
 
 Sat Aug  2 13:01:46 BST 2003 Malte Hildingson <malte@amy.udd.htu.se>
 

@@ -1932,7 +1932,7 @@ namespace System {
 		[CLSCompliant (false)]
 		public static ushort ToUInt16 (string value, int fromBase) 
 		{
-			return (ushort) ConvertFromBase (value, fromBase);
+			return ToUInt16 (ConvertFromBase (value, fromBase));
 		} 
 
 		[CLSCompliant (false)]

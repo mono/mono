@@ -1,3 +1,9 @@
+2003-08-04  Duncan Mak  <duncan@ximian.com>
+
+	* ConvertTest.cs (TestToUInt16): Add a new case noted by
+	c5n4kh6u02@sneakemail.com in
+	http://bugzilla.ximian.com/show_bug.cgi?id=43098.
+
 2003-07-23  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* EnumTest.cs: Test ToString() for unnamed flag enum values.

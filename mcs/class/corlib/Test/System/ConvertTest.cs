@@ -2141,6 +2141,14 @@ namespace MonoTests.System
 			catch (Exception e) {
 				AssertEquals("#P46", typeof(ArgumentException), e.GetType());
 			}
+
+			try {
+				Convert.ToUInt16 ("abcde", 16);
+				Fail ();
+			}
+			catch (Exception e) {
+				AssertEquals ("#P47", typeof (OverflowException), e.GetType ());
+			}
 		}
 
 		public void TestToUInt32() {
