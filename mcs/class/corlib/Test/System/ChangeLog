@@ -1,3 +1,8 @@
+2004-08-17  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* VersionTest.cs: Added tests when cloning a version with no build and
+	no revision numbers (-1).
+
 2004-06-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DoubleFormatterTest.cs: Added a new test for a negative roundtrip
