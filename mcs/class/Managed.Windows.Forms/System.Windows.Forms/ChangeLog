@@ -1,3 +1,7 @@
+2005-01-10  Jackson Harper  <jackson@ximian.com>
+
+	* TreeNodeCollection.cs: Refresh the tree when a new node is added.
+
 2005-01-10  Peter Bartok  <pbartok@novell.com>
 
 	* Application.cs: Added temporary hack to resolve all our resize

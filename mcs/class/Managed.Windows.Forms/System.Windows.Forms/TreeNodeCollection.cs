@@ -117,7 +117,7 @@ namespace System.Windows.Forms {
 			nodes [count++] = node;
 
 			if (owner.TreeView != null)
-				owner.TreeView.TotalNodeCount++;
+				owner.TreeView.Refresh ();
 			return count;
 		}
 
