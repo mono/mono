@@ -27,7 +27,8 @@ namespace System {
 
 		public static readonly String Empty = "";
 
-		public static bool Equals(String str1, String str2) {
+		public static unsafe bool Equals (string str1, string str2)
+		{
 			if ((str1 as object) == (str2 as object))
 				return true;
 	    
@@ -39,11 +40,29 @@ namespace System {
 			if (len != str2.length)
 				return false;
 
-			for (int i = 0; i < len; i++)
-				if (str1 [i] != str2 [i])
-					return false;
-
-			return true;
+			if (len == 0)
+				return true;
+			
+			fixed (char * s1 = &str1.start_char, s2 = &str2.start_char) {
+				// it must be one char, because 0 len is done above
+				if (len < 2)
+					return *s1 == *s2;
+				
+				// check by twos
+				int * sint1 = (int *) s1, sint2 = (int *) s2;
+				int n2 = len >> 1;
+				do {
+					if (*sint1++ != *sint2++)
+						return false;
+				} while (--n2 != 0);
+				
+				// nothing left
+				if ((len & 1) == 0)
+					return true;
+				
+				// check the last one
+				return *(char *) sint1 == *(char *) sint2;
+			}
 		}
 
 		public static bool operator == (String str1, String str2) {
