@@ -1,3 +1,11 @@
+2001-09-23  Dietmar Maurer  <dietmar@ximian.com>
+
+	* monoburg.c: add a macro MBALLOC_STATE to define the allocation 
+	function for MBState. Added an additional user data argument to
+	mono_burg_label - the data can be used in the cost functions. The
+	type can be defined with MBCOST_DATA macro.
+	(emit_cost_func): inline cost functions
+
 2001-09-22  Dietmar Maurer  <dietmar@ximian.com>
 
 	* monoburg.y (strndup): removed, use g_strndup instead

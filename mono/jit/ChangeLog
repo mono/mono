@@ -1,3 +1,11 @@
+2001-09-23  Dietmar Maurer  <dietmar@ximian.com>
+
+	* testjit.c: use the memory pool to avoid memory leaks
+
+2001-09-22  Dietmar Maurer  <dietmar@ximian.com>
+
+	* x86.brg: increment the stack pointer after function calls
+
 2001-09-21  Dick Porter  <dick@ximian.com>
 
 	* Makefile.am (testjit_LDADD): Added PTHREAD_LIBS to the link line
