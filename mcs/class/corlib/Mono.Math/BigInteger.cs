@@ -20,7 +20,6 @@ using Mono.Math.Prime;
 
 namespace Mono.Math {
 
-	[CLSCompliant(false)]
 #if INSIDE_CORLIB
 	internal
 #else
@@ -63,7 +62,7 @@ namespace Mono.Math {
 		///			</code>
 		///		</para>
 		/// </remarks>
-		public static readonly uint [] smallPrimes = {
+		internal static uint [] smallPrimes = {
 			2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71,
 			73, 79, 83, 89, 97, 101, 103, 107, 109, 113, 127, 131, 137, 139, 149, 151,
 			157, 163, 167, 173, 179, 181, 191, 193, 197, 199, 211, 223, 227, 229, 233,
@@ -151,6 +150,7 @@ namespace Mono.Math {
 			data = new uint [DEFAULT_LEN];
 		}
 
+		[CLSCompliant (false)]
 		public BigInteger (Sign sign, uint len) 
 		{
 			this.data = new uint [len];
@@ -163,6 +163,7 @@ namespace Mono.Math {
 			this.length = bi.length;
 		}
 
+		[CLSCompliant (false)]
 		public BigInteger (BigInteger bi, uint len)
 		{
 
@@ -206,6 +207,7 @@ namespace Mono.Math {
 			this.Normalize ();
 		}
 
+		[CLSCompliant (false)]
 		public BigInteger (uint [] inData)
 		{
 			length = (uint)inData.Length;
@@ -218,11 +220,13 @@ namespace Mono.Math {
 			this.Normalize ();
 		}
 
+		[CLSCompliant (false)]
 		public BigInteger (uint ui)
 		{
 			data = new uint [] {ui};
 		}
 
+		[CLSCompliant (false)]
 		public BigInteger (ulong ul)
 		{
 			data = new uint [2] { (uint)ul, (uint)(ul >> 32)};
@@ -231,6 +235,7 @@ namespace Mono.Math {
 			this.Normalize ();
 		}
 
+		[CLSCompliant (false)]
 		public static implicit operator BigInteger (uint value)
 		{
 			return (new BigInteger (value));
@@ -242,6 +247,7 @@ namespace Mono.Math {
 			return (new BigInteger ((uint)value));
 		}
 
+		[CLSCompliant (false)]
 		public static implicit operator BigInteger (ulong value)
 		{
 			return (new BigInteger (value));
@@ -337,6 +343,7 @@ namespace Mono.Math {
 				return -(int)Kernel.DwordMod (bi, (uint)-i);
 		}
 
+		[CLSCompliant (false)]
 		public static uint operator % (BigInteger bi, uint ui)
 		{
 			return Kernel.DwordMod (bi, (uint)ui);
@@ -399,6 +406,58 @@ namespace Mono.Math {
 
 		#endregion
 
+		#region Friendly names for operators
+
+		// with names suggested by FxCop 1.30
+
+		public static BigInteger Add (BigInteger bi1, BigInteger bi2) 
+		{
+			return (bi1 + bi2);
+		}
+
+		public static BigInteger Subtract (BigInteger bi1, BigInteger bi2) 
+		{
+			return (bi1 - bi2);
+		}
+
+		public static int Modulus (BigInteger bi, int i) 
+		{
+			return (bi % i);
+		}
+
+		[CLSCompliant (false)]
+		public static uint Modulus (BigInteger bi, uint ui) 
+		{
+			return (bi % ui);
+		}
+
+		public static BigInteger Modulus (BigInteger bi1, BigInteger bi2) 
+		{
+			return (bi1 % bi2);
+		}
+
+		public static BigInteger Divid (BigInteger bi, int i) 
+		{
+			return (bi / i);
+		}
+
+		public static BigInteger Divid (BigInteger bi1, BigInteger bi2) 
+		{
+			return (bi1 / bi2);
+		}
+
+		public static BigInteger Multiply (BigInteger bi1, BigInteger bi2) 
+		{
+			return (bi1 * bi2);
+		}
+
+		public static BigInteger Multiply (BigInteger bi, int i) 
+		{
+			return (bi * i);
+		}
+
+		#endregion
+
 		#region Random
 		private static RandomNumberGenerator rng;
 		private static RandomNumberGenerator Rng {
@@ -415,7 +474,7 @@ namespace Mono.Math {
 		/// <param name="bits">The number of bits for the new number.</param>
 		/// <param name="rng">A random number generator to use to obtain the bits.</param>
 		/// <returns>A random number of the specified length.</returns>
-		public static BigInteger genRandom (int bits, RandomNumberGenerator rng)
+		public static BigInteger GenerateRandom (int bits, RandomNumberGenerator rng)
 		{
 			int dwords = bits >> 5;
 			int remBits = bits & 0x1F;
@@ -448,18 +507,18 @@ namespace Mono.Math {
 		/// </summary>
 		/// <param name="bits">The number of bits for the new number.</param>
 		/// <returns>A random number of the specified length.</returns>
-		public static BigInteger genRandom (int bits)
+		public static BigInteger GenerateRandom (int bits)
 		{
-			return genRandom (bits, Rng);
+			return GenerateRandom (bits, Rng);
 		}
 
 		/// <summary>
 		/// Randomizes the bits in "this" from the specified RNG.
 		/// </summary>
 		/// <param name="rng">A RNG.</param>
-		public void randomize (RandomNumberGenerator rng)
+		public void Randomize (RandomNumberGenerator rng)
 		{
-			int bits = this.bitCount ();
+			int bits = this.BitCount ();
 			int dwords = bits >> 5;
 			int remBits = bits & 0x1F;
 
@@ -488,16 +547,16 @@ namespace Mono.Math {
 		/// <summary>
 		/// Randomizes the bits in "this" from the default RNG.
 		/// </summary>
-		public void randomize ()
+		public void Randomize ()
 		{
-			randomize (Rng);
+			Randomize (Rng);
 		}
 
 		#endregion
 
 		#region Bitwise
 
-		public int bitCount ()
+		public int BitCount ()
 		{
 			this.Normalize ();
 
@@ -519,7 +578,8 @@ namespace Mono.Math {
 		/// </summary>
 		/// <param name="bitNum">The bit to test. The least significant bit is 0.</param>
 		/// <returns>True if bitNum is set to 1, else false.</returns>
-		public bool testBit (uint bitNum)
+		[CLSCompliant (false)]
+		public bool TestBit (uint bitNum)
 		{
 			uint bytePos = bitNum >> 5;             // divide by 32
 			byte bitPos = (byte)(bitNum & 0x1F);    // get the lowest 5 bits
@@ -528,7 +588,7 @@ namespace Mono.Math {
 			return ((this.data [bytePos] & mask) != 0);
 		}
 
-		public bool testBit (int bitNum)
+		public bool TestBit (int bitNum)
 		{
 			if (bitNum < 0) throw new IndexOutOfRangeException ("bitNum out of range");
 
@@ -539,22 +599,26 @@ namespace Mono.Math {
 			return ((this.data [bytePos] | mask) == this.data [bytePos]);
 		}
 
-		public void setBit (uint bitNum)
+		[CLSCompliant (false)]
+		public void SetBit (uint bitNum)
 		{
-			setBit (bitNum, true);
-		}
-		public void clearBit (uint bitNum)
-		{
-			setBit (bitNum, false);
+			SetBit (bitNum, true);
 		}
 
-		public void setBit (uint bitNum, bool val)
+		[CLSCompliant (false)]
+		public void ClearBit (uint bitNum)
+		{
+			SetBit (bitNum, false);
+		}
+
+		[CLSCompliant (false)]
+		public void SetBit (uint bitNum, bool value)
 		{
 			uint bytePos = bitNum >> 5;             // divide by 32
 
 			if (bytePos < this.length) {
 				uint mask = (uint)1 << (int)(bitNum & 0x1F);
-				if (val)
+				if (value)
 					this.data [bytePos] |= mask;
 				else
 					this.data [bytePos] &= ~mask;
@@ -565,15 +629,15 @@ namespace Mono.Math {
 		{
 			if (this == 0) return -1;
 			int i = 0;
-			while (!testBit (i)) i++;
+			while (!TestBit (i)) i++;
 			return i;
 		}
 
-		public byte [] getBytes ()
+		public byte[] GetBytes ()
 		{
 			if (this == 0) return new byte [1];
 
-			int numBits = bitCount ();
+			int numBits = BitCount ();
 			int numBytes = numBits >> 3;
 			if ((numBits & 0x7) != 0)
 				numBytes++;
@@ -600,12 +664,14 @@ namespace Mono.Math {
 
 		#region Compare
 
+		[CLSCompliant (false)]
 		public static bool operator == (BigInteger bi1, uint ui)
 		{
 			if (bi1.length != 1) bi1.Normalize ();
 			return bi1.length == 1 && bi1.data [0] == ui;
 		}
 
+		[CLSCompliant (false)]
 		public static bool operator != (BigInteger bi1, uint ui)
 		{
 			if (bi1.length != 1) bi1.Normalize ();
@@ -661,15 +727,17 @@ namespace Mono.Math {
 
 		#region Formatting
 
+		[CLSCompliant (false)]
 		public string ToString (uint radix)
 		{
 			return ToString (radix, "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ");
 		}
 
-		public string ToString (uint radix, string charSet)
+		[CLSCompliant (false)]
+		public string ToString (uint radix, string characterSet)
 		{
-			if (charSet.Length < radix)
-				throw new ArgumentException ("charSet length less than radix", "charSet");
+			if (characterSet.Length < radix)
+				throw new ArgumentException ("charSet length less than radix", "characterSet");
 			if (radix == 1)
 				throw new ArgumentException ("There is no such thing as radix one notation", "radix");
 
@@ -682,7 +750,7 @@ namespace Mono.Math {
 
 			while (a != 0) {
 				uint rem = Kernel.SingleByteDivideInPlace (a, radix);
-				result = charSet [ (int)rem] + result;
+				result = characterSet [(int) rem] + result;
 			}
 
 			return result;
@@ -744,17 +812,17 @@ namespace Mono.Math {
 
 		#region Number Theory
 
-		public BigInteger gcd (BigInteger bi)
+		public BigInteger GCD (BigInteger bi)
 		{
 			return Kernel.gcd (this, bi);
 		}
 
-		public BigInteger modInverse (BigInteger mod)
+		public BigInteger ModInverse (BigInteger modulus)
 		{
-			return Kernel.modInverse (this, mod);
+			return Kernel.modInverse (this, modulus);
 		}
 
-		public BigInteger modPow (BigInteger exp, BigInteger n)
+		public BigInteger ModPow (BigInteger exp, BigInteger n)
 		{
 			ModulusRing mr = new ModulusRing (n);
 			return mr.Pow (this, exp);
@@ -764,7 +832,7 @@ namespace Mono.Math {
 
 		#region Prime Testing
 
-		public bool isProbablePrime ()
+		public bool IsProbablePrime ()
 		{
 			for (int p = 0; p < smallPrimes.Length; p++) {
 				if (this == smallPrimes [p])
@@ -784,13 +852,13 @@ namespace Mono.Math {
 		/// </summary>
 		/// <param name="bi">A BigInteger</param>
 		/// <returns>The smallest prime >= bi. More mathematically, if bi is prime: bi, else Prime [PrimePi [bi] + 1].</returns>
-		public static BigInteger NextHightestPrime (BigInteger bi)
+		public static BigInteger NextHighestPrime (BigInteger bi)
 		{
 			NextPrimeFinder npf = new NextPrimeFinder ();
 			return npf.GenerateNewPrime (0, bi);
 		}
 
-		public static BigInteger genPseudoPrime (int bits)
+		public static BigInteger GeneratePseudoPrime (int bits)
 		{
 			SequentialSearchPrimeGeneratorBase sspg = new SequentialSearchPrimeGeneratorBase ();
 			return sspg.GenerateNewPrime (bits);
@@ -832,9 +900,9 @@ namespace Mono.Math {
 
 			BigInteger mod, constant;
 
-			public ModulusRing (BigInteger mod)
+			public ModulusRing (BigInteger modulus)
 			{
-				this.mod = mod;
+				this.mod = modulus;
 
 				// calculate constant = b^ (2k) / m
 				uint i = mod.length << 1;
@@ -960,13 +1028,13 @@ namespace Mono.Math {
 				BigInteger resultNum = new BigInteger ((BigInteger)1, mod.length << 1);
 				BigInteger tempNum = new BigInteger (b % mod, mod.length << 1);  // ensures (tempNum * tempNum) < b^ (2k)
 
-				uint totalBits = (uint)exp.bitCount ();
+				uint totalBits = (uint)exp.BitCount ();
 
 				uint [] wkspace = new uint [mod.length << 1];
 
 				// perform squaring and multiply exponentiation
 				for (uint pos = 0; pos < totalBits; pos++) {
-					if (exp.testBit (pos)) {
+					if (exp.TestBit (pos)) {
 
 						Array.Clear (wkspace, 0, wkspace.Length);
 						Kernel.Multiply (resultNum.data, 0, resultNum.length, tempNum.data, 0, tempNum.length, wkspace, 0);
@@ -994,13 +1062,13 @@ namespace Mono.Math {
 				BigInteger resultNum = new BigInteger (Montgomery.ToMont (1, mod), mod.length << 1);
 				BigInteger tempNum = new BigInteger (Montgomery.ToMont (b, mod), mod.length << 1);  // ensures (tempNum * tempNum) < b^ (2k)
 				uint mPrime = Montgomery.Inverse (mod.data [0]);
-				uint totalBits = (uint)exp.bitCount ();
+				uint totalBits = (uint)exp.BitCount ();
 
 				uint [] wkspace = new uint [mod.length << 1];
 
 				// perform squaring and multiply exponentiation
 				for (uint pos = 0; pos < totalBits; pos++) {
-					if (exp.testBit (pos)) {
+					if (exp.TestBit (pos)) {
 
 						Array.Clear (wkspace, 0, wkspace.Length);
 						Kernel.Multiply (resultNum.data, 0, resultNum.length, tempNum.data, 0, tempNum.length, wkspace, 0);
@@ -1024,6 +1092,7 @@ namespace Mono.Math {
 
 			// TODO: Make tests for this, not really needed b/c prime stuff
 			// checks it, but still would be nice
+			[CLSCompliant (false)]
 			public BigInteger Pow (uint b, BigInteger exp)
 			{
 				if (b != 2) {
@@ -1035,6 +1104,7 @@ namespace Mono.Math {
 				}
 			}
 
+			[CLSCompliant (false)]
 			private unsafe BigInteger OddPow (uint b, BigInteger exp)
 			{
 				exp.Normalize ();
@@ -1045,7 +1115,7 @@ namespace Mono.Math {
 
 				uint mPrime = Montgomery.Inverse (mod.data [0]);
 
-				uint pos = (uint)exp.bitCount () - 2;
+				uint pos = (uint)exp.BitCount () - 2;
 
 				//
 				// We know that the first itr will make the val b
@@ -1058,7 +1128,7 @@ namespace Mono.Math {
 					Kernel.SquarePositive (resultNum, ref wkspace);
 					resultNum = Montgomery.Reduce (resultNum, mod, mPrime);
 
-					if (exp.testBit (pos)) {
+					if (exp.TestBit (pos)) {
 
 						//
 						// r = r * b % m
@@ -1145,7 +1215,7 @@ namespace Mono.Math {
 				uint [] wkspace = new uint [mod.length << 1 + 1];
 				BigInteger resultNum = new BigInteger ((BigInteger)b, mod.length << 1 + 1);
 
-				uint pos = (uint)exp.bitCount () - 2;
+				uint pos = (uint)exp.BitCount () - 2;
 
 				//
 				// We know that the first itr will make the val b
@@ -1159,7 +1229,7 @@ namespace Mono.Math {
 					if (!(resultNum.length < mod.length))
 						BarrettReduction (resultNum);
 
-					if (exp.testBit (pos)) {
+					if (exp.TestBit (pos)) {
 
 						//
 						// r = r * b % m
@@ -1323,13 +1393,13 @@ namespace Mono.Math {
 				//
 				// TODO: eat small bits, the ones we can do with no modular reduction
 				//
-				uint pos = (uint)exp.bitCount () - 2;
+				uint pos = (uint)exp.BitCount () - 2;
 
 				do {
 					Kernel.SquarePositive (resultNum, ref wkspace);
 					resultNum = Montgomery.Reduce (resultNum, mod, mPrime);
 
-					if (exp.testBit (pos)) {
+					if (exp.TestBit (pos)) {
 						//
 						// resultNum = (resultNum * 2) % mod
 						//
@@ -1374,7 +1444,13 @@ namespace Mono.Math {
 			#endregion
 		}
 
-		public sealed class Montgomery {
+		internal sealed class Montgomery {
+
+			private Montgomery () 
+			{
+			}
+
+			[CLSCompliant (false)]
 			public static uint Inverse (uint n)
 			{
 				uint y = n, z;
@@ -1394,6 +1470,7 @@ namespace Mono.Math {
 				return n;
 			}
 
+			[CLSCompliant (false)]
 			public static unsafe BigInteger Reduce (BigInteger n, BigInteger m, uint mPrime)
 			{
 				BigInteger A = n;
@@ -1447,11 +1524,12 @@ namespace Mono.Math {
 
 				return A;
 			}
-
+#if _NOT_USED_
 			public static BigInteger Reduce (BigInteger n, BigInteger m)
 			{
 				return Reduce (n, m, Inverse (m.data [0]));
 			}
+#endif
 		}
 
 		/// <summary>
@@ -2134,7 +2212,9 @@ namespace Mono.Math {
 				}
 			}
 
-			public static bool Double (uint [] u, int l)
+/* 
+ * Never called in BigInteger (and part of a private class)
+ * 			public static bool Double (uint [] u, int l)
 			{
 				uint x, carry = 0;
 				uint i = 0;
@@ -2146,7 +2226,7 @@ namespace Mono.Math {
 				}
 				if (carry != 0) u [l] = carry;
 				return carry != 0;
-			}
+			}*/
 
 			#endregion
 

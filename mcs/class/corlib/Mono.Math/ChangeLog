@@ -1,3 +1,7 @@
+2004-04-28  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* BigInteger.cs: In sync with Mono.Security.dll version.
+
 2004-02-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* BigInteger.cs: Corrected isProbablePrime by removing the redundant 
