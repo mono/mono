@@ -1,5 +1,9 @@
 2003-04-24  Martin Baulig  <martin@ximian.com>
 
+	* mono-debug-debugger.c (mono_debugger_io_layer): Put this back.
+
+2003-04-24  Martin Baulig  <martin@ximian.com>
+
 	* mono-debug-debugger.c: Moved all code which interacts with the
 	Mono Debugger here.
 
