@@ -18,19 +18,19 @@ using NUnit.Framework;
 namespace MonoTests.System.Security.Cryptography.Xml {
 
 	[TestFixture]
-	public class SignedXmlTest {
+	public class SignedXmlTest : Assertion {
 
 		[Test]
 		public void StaticValues () 
 		{
-			Assertion.AssertEquals ("XmlDsigCanonicalizationUrl", "http://www.w3.org/TR/2001/REC-xml-c14n-20010315", SignedXml.XmlDsigCanonicalizationUrl);
-			Assertion.AssertEquals ("XmlDsigCanonicalizationWithCommentsUrl", "http://www.w3.org/TR/2001/REC-xml-c14n-20010315#WithComments", SignedXml.XmlDsigCanonicalizationWithCommentsUrl);
-			Assertion.AssertEquals ("XmlDsigDSAUrl", "http://www.w3.org/2000/09/xmldsig#dsa-sha1", SignedXml.XmlDsigDSAUrl);
-			Assertion.AssertEquals ("XmlDsigHMACSHA1Url", "http://www.w3.org/2000/09/xmldsig#hmac-sha1", SignedXml.XmlDsigHMACSHA1Url);
-			Assertion.AssertEquals ("XmlDsigMinimalCanonicalizationUrl", "http://www.w3.org/2000/09/xmldsig#minimal", SignedXml.XmlDsigMinimalCanonicalizationUrl);
-			Assertion.AssertEquals ("XmlDsigNamespaceUrl", "http://www.w3.org/2000/09/xmldsig#", SignedXml.XmlDsigNamespaceUrl);
-			Assertion.AssertEquals ("XmlDsigRSASHA1Url", "http://www.w3.org/2000/09/xmldsig#rsa-sha1", SignedXml.XmlDsigRSASHA1Url);
-			Assertion.AssertEquals ("XmlDsigSHA1Url", "http://www.w3.org/2000/09/xmldsig#sha1", SignedXml.XmlDsigSHA1Url);
+			AssertEquals ("XmlDsigCanonicalizationUrl", "http://www.w3.org/TR/2001/REC-xml-c14n-20010315", SignedXml.XmlDsigCanonicalizationUrl);
+			AssertEquals ("XmlDsigCanonicalizationWithCommentsUrl", "http://www.w3.org/TR/2001/REC-xml-c14n-20010315#WithComments", SignedXml.XmlDsigCanonicalizationWithCommentsUrl);
+			AssertEquals ("XmlDsigDSAUrl", "http://www.w3.org/2000/09/xmldsig#dsa-sha1", SignedXml.XmlDsigDSAUrl);
+			AssertEquals ("XmlDsigHMACSHA1Url", "http://www.w3.org/2000/09/xmldsig#hmac-sha1", SignedXml.XmlDsigHMACSHA1Url);
+			AssertEquals ("XmlDsigMinimalCanonicalizationUrl", "http://www.w3.org/2000/09/xmldsig#minimal", SignedXml.XmlDsigMinimalCanonicalizationUrl);
+			AssertEquals ("XmlDsigNamespaceUrl", "http://www.w3.org/2000/09/xmldsig#", SignedXml.XmlDsigNamespaceUrl);
+			AssertEquals ("XmlDsigRSASHA1Url", "http://www.w3.org/2000/09/xmldsig#rsa-sha1", SignedXml.XmlDsigRSASHA1Url);
+			AssertEquals ("XmlDsigSHA1Url", "http://www.w3.org/2000/09/xmldsig#sha1", SignedXml.XmlDsigSHA1Url);
 		}
 
 		// sample from MSDN (url)
@@ -89,7 +89,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			vrfy.LoadXml (xmlSignature);
 
 			// assert that we can verify our own signature
-			Assertion.Assert ("RSA-Compute/Verify", vrfy.CheckSignature ());
+			Assert ("RSA-Compute/Verify", vrfy.CheckSignature ());
 		}
 
 		[Test]
@@ -117,7 +117,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			vrfy.LoadXml (xmlSignature);
 
 			// assert that we can verify our own signature
-			Assertion.Assert ("DSA-Compute/Verify", vrfy.CheckSignature ());
+			Assert ("DSA-Compute/Verify", vrfy.CheckSignature ());
 		}
 
 		[Test]
@@ -139,7 +139,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			vrfy.LoadXml (xmlSignature);
 
 			// assert that we can verify our own signature
-			Assertion.Assert ("HMACSHA1-Compute/Verify", vrfy.CheckSignature (hmac));
+			Assert ("HMACSHA1-Compute/Verify", vrfy.CheckSignature (hmac));
 		}
 
 		[Test]
@@ -164,17 +164,17 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 
 			SignedXml v1 = new SignedXml ();
 			v1.LoadXml (doc.DocumentElement);
-			Assertion.Assert ("RSA-CheckSignature()", v1.CheckSignature ());
+			Assert ("RSA-CheckSignature()", v1.CheckSignature ());
 
 			SignedXml v2 = new SignedXml ();
 			v2.LoadXml (doc.DocumentElement);
 			AsymmetricAlgorithm key = null;
 			bool vrfy = v2.CheckSignatureReturningKey (out key);
-			Assertion.Assert ("RSA-CheckSignatureReturningKey()", vrfy);
+			Assert ("RSA-CheckSignatureReturningKey()", vrfy);
 
 			SignedXml v3 = new SignedXml ();
 			v3.LoadXml (doc.DocumentElement);
-			Assertion.Assert ("RSA-CheckSignature(key)", v3.CheckSignature (key));
+			Assert ("RSA-CheckSignature(key)", v3.CheckSignature (key));
 		}
 
 		// Using empty constructor
@@ -188,17 +188,17 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 
 			SignedXml v1 = new SignedXml ();
 			v1.LoadXml (doc.DocumentElement);
-			Assertion.Assert ("DSA-CheckSignature()", v1.CheckSignature ());
+			Assert ("DSA-CheckSignature()", v1.CheckSignature ());
 
 			SignedXml v2 = new SignedXml ();
 			v2.LoadXml (doc.DocumentElement);
 			AsymmetricAlgorithm key = null;
 			bool vrfy = v2.CheckSignatureReturningKey (out key);
-			Assertion.Assert ("DSA-CheckSignatureReturningKey()", vrfy);
+			Assert ("DSA-CheckSignatureReturningKey()", vrfy);
 
 			SignedXml v3 = new SignedXml ();
 			v3.LoadXml (doc.DocumentElement);
-			Assertion.Assert ("DSA-CheckSignature(key)", v3.CheckSignature (key));
+			Assert ("DSA-CheckSignature(key)", v3.CheckSignature (key));
 		}
 
 		[Test]
@@ -214,7 +214,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			byte[] secretkey = Encoding.Default.GetBytes ("password");
 			HMACSHA1 hmac = new HMACSHA1 (secretkey);
 
-			Assertion.Assert ("HMACSHA1-CheckSignature(key)", v1.CheckSignature (hmac));
+			Assert ("HMACSHA1-CheckSignature(key)", v1.CheckSignature (hmac));
 		}
 	}
 }

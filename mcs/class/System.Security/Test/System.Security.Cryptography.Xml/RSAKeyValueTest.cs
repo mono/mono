@@ -17,24 +17,24 @@ using NUnit.Framework;
 namespace MonoTests.System.Security.Cryptography.Xml {
 
 	[TestFixture]
-	public class RSAKeyValueTest {
+	public class RSAKeyValueTest : Assertion {
 
 		[Test]
 		public void GeneratedKey () 
 		{
 			RSAKeyValue rsa1 = new RSAKeyValue ();
-			Assertion.AssertNotNull ("Key", rsa1.Key);
+			AssertNotNull ("Key", rsa1.Key);
 			XmlElement xmlkey = rsa1.GetXml ();
 
 			RSAKeyValue rsa2 = new RSAKeyValue ();
 			rsa2.LoadXml (xmlkey);
 
-			Assertion.Assert ("rsa1==rsa2", (rsa1.GetXml ().OuterXml) == (rsa2.GetXml ().OuterXml));
+			Assert ("rsa1==rsa2", (rsa1.GetXml ().OuterXml) == (rsa2.GetXml ().OuterXml));
 
 			RSA key = rsa1.Key;
 			RSAKeyValue rsa3 = new RSAKeyValue (key);
-			Assertion.Assert ("rsa3==rsa1", (rsa3.GetXml ().OuterXml) == (rsa1.GetXml ().OuterXml));
-			Assertion.Assert ("rsa3==rsa2", (rsa3.GetXml ().OuterXml) == (rsa2.GetXml ().OuterXml));
+			Assert ("rsa3==rsa1", (rsa3.GetXml ().OuterXml) == (rsa1.GetXml ().OuterXml));
+			Assert ("rsa3==rsa2", (rsa3.GetXml ().OuterXml) == (rsa2.GetXml ().OuterXml));
 		}
 
 		[Test]
@@ -48,7 +48,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			rsa1.LoadXml (doc.DocumentElement);
 
 			string s = (rsa1.GetXml ().OuterXml);
-			Assertion.AssertEquals ("RSA Key", rsaKey, s);
+			AssertEquals ("RSA Key", rsaKey, s);
 		}
 
 		[Test]

@@ -19,7 +19,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Security.Cryptography.Xml {
 
 	[TestFixture]
-	public class XmlDsigBase64TransformTest {
+	public class XmlDsigBase64TransformTest : Assertion {
 
 		protected XmlDsigBase64Transform transform;
 
@@ -33,10 +33,10 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		[Test]
 		public void Properties () 
 		{
-			Assertion.AssertEquals ("Algorithm", "http://www.w3.org/2000/09/xmldsig#base64", transform.Algorithm);
+			AssertEquals ("Algorithm", "http://www.w3.org/2000/09/xmldsig#base64", transform.Algorithm);
 
 			Type[] input = transform.InputTypes;
-			Assertion.Assert ("Input #", (input.Length == 3));
+			Assert ("Input #", (input.Length == 3));
 			// check presence of every supported input types
 			bool istream = false;
 			bool ixmldoc = false;
@@ -49,19 +49,19 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 				if (t.ToString () == "System.Xml.XmlNodeList")
 					ixmlnl = true;
 			}
-			Assertion.Assert ("Input Stream", istream);
-			Assertion.Assert ("Input XmlDocument", ixmldoc);
-			Assertion.Assert ("Input XmlNodeList", ixmlnl);
+			Assert ("Input Stream", istream);
+			Assert ("Input XmlDocument", ixmldoc);
+			Assert ("Input XmlNodeList", ixmlnl);
 
 			Type[] output = transform.OutputTypes;
-			Assertion.Assert ("Output #", (output.Length == 1));
+			Assert ("Output #", (output.Length == 1));
 			// check presence of every supported output types
 			bool ostream = false;
 			foreach (Type t in input) {
 				if (t.ToString () == "System.IO.Stream")
 					ostream = true;
 			}
-			Assertion.Assert ("Output Stream", ostream);
+			Assert ("Output Stream", ostream);
 		}
 
 		private string Stream2String (Stream s) 
@@ -104,7 +104,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			transform.LoadInput (doc);
 			Stream s = (Stream) transform.GetOutput ();
 			byte[] output = Stream2Array (s);
-			Assertion.AssertEquals("XmlDocument", base64, Encoding.UTF8.GetString (output));
+			AssertEquals("XmlDocument", base64, Encoding.UTF8.GetString (output));
 		}
 
 		[Test]
@@ -112,11 +112,11 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		{
 			XmlDocument doc = GetDoc ();
 			XmlNodeList xpath = doc.SelectNodes ("//.");
-			Assertion.AssertEquals("XPathNodeList.Count", 3, xpath.Count);
+			AssertEquals("XPathNodeList.Count", 3, xpath.Count);
 			transform.LoadInput (xpath);
 			Stream s = (Stream) transform.GetOutput ();
 			byte[] output = Stream2Array (s);
-			Assertion.AssertEquals("XPathNodeList", base64, Encoding.UTF8.GetString (output));
+			AssertEquals("XPathNodeList", base64, Encoding.UTF8.GetString (output));
 		}
 
 		[Test]
@@ -127,7 +127,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			transform.LoadInput (doc.ChildNodes);
 			Stream s = (Stream) transform.GetOutput ();
 			byte[] output = Stream2Array (s);
-			Assertion.AssertEquals("XmlChildNodes", null, Encoding.UTF8.GetString (output));
+			AssertEquals("XmlChildNodes", null, Encoding.UTF8.GetString (output));
 		}
 
 		[Test]
@@ -143,7 +143,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			transform.LoadInput (ms);
 			Stream s = (Stream) transform.GetOutput ();
 			byte[] output = Stream2Array (s);
-			Assertion.AssertEquals("MemoryStream", base64, Encoding.UTF8.GetString (output));
+			AssertEquals("MemoryStream", base64, Encoding.UTF8.GetString (output));
 		}
 
 		[Test]

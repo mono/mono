@@ -19,7 +19,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Security.Cryptography.Xml {
 
 	[TestFixture]
-	public class KeyInfoX509DataTest {
+	public class KeyInfoX509DataTest : Assertion {
 
 		static byte[] cert = { 0x30,0x82,0x09,0xB9,0x30,0x82,0x09,0x22,0xA0,0x03,0x02,0x01,0x02,0x02,0x10,0x20,0x0B,0x35,0x5E,0xCE,0xC4,0xB0,0x63,0xB7,0xDE,0xC6,0x34,0xB9,0x70,0x34,0x44,0x30,0x0D,0x06,0x09,0x2A,0x86,0x48,0x86,0xF7,0x0D,0x01,0x01,0x04,0x05,0x00,0x30,0x62,0x31,0x11,0x30,0x0F,0x06,0x03,0x55,0x04,0x07,0x13,0x08,0x49,0x6E,0x74,0x65,0x72,0x6E,0x65,0x74,0x31,0x17,0x30,0x15,0x06,0x03,0x55,0x04,0x0A,0x13,0x0E,0x56,0x65,0x72,0x69,0x53,0x69,0x67,0x6E,0x2C,0x20,0x49,0x6E,0x63,0x2E,0x31,0x34,0x30,0x32,0x06,0x03,0x55,0x04,0x0B,
 			0x13,0x2B,0x56,0x65,0x72,0x69,0x53,0x69,0x67,0x6E,0x20,0x43,0x6C,0x61,0x73,0x73,0x20,0x31,0x20,0x43,0x41,0x20,0x2D,0x20,0x49,0x6E,0x64,0x69,0x76,0x69,0x64,0x75,0x61,0x6C,0x20,0x53,0x75,0x62,0x73,0x63,0x72,0x69,0x62,0x65,0x72,0x30,0x1E,0x17,0x0D,0x39,0x36,0x30,0x38,0x32,0x31,0x30,0x30,0x30,0x30,0x30,0x30,0x5A,0x17,0x0D,0x39,0x37,0x30,0x38,0x32,0x30,0x32,0x33,0x35,0x39,0x35,0x39,0x5A,0x30,0x82,0x01,0x0A,0x31,0x11,0x30,0x0F,0x06,0x03,0x55,0x04,0x07,0x13,0x08,0x49,0x6E,0x74,0x65,0x72,0x6E,0x65,0x74,
@@ -82,14 +82,14 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			XmlElement xel = data2.GetXml ();
 			string s = "<X509Data xmlns=\"http://www.w3.org/2000/09/xmldsig#\"><X509Certificate>MIIJuTCCCSKgAwIBAgIQIAs1Xs7EsGO33sY0uXA0RDANBgkqhkiG9w0BAQQFADBiMREwDwYDVQQHEwhJbnRlcm5ldDEXMBUGA1UEChMOVmVyaVNpZ24sIEluYy4xNDAyBgNVBAsTK1ZlcmlTaWduIENsYXNzIDEgQ0EgLSBJbmRpdmlkdWFsIFN1YnNjcmliZXIwHhcNOTYwODIxMDAwMDAwWhcNOTcwODIwMjM1OTU5WjCCAQoxETAPBgNVBAcTCEludGVybmV0MRcwFQYDVQQKEw5WZXJpU2lnbiwgSW5jLjE0MDIGA1UECxMrVmVyaVNpZ24gQ2xhc3MgMSBDQSAtIEluZGl2aWR1YWwgU3Vic2NyaWJlcjFGMEQGA1UECxM9d3d3LnZlcmlzaWduLmNvbS9yZXBvc2l0b3J5L0NQUyBJbmNvcnAuIGJ5IFJlZi4sTElBQi5MVEQoYyk5NjEmMCQGA1UECxMdRGlnaXRhbCBJRCBDbGFzcyAxIC0gTmV0c2NhcGUxFjAUBgNVBAMTDURhdmlkIFQuIEdyYXkxHjAcBgkqhkiG9w0BCQEWD2RhdmlkQGZvcm1hbC5pZTBcMA0GCSqGSIb3DQEBAQUAA0sAMEgCQQDFgQei6w+4//j4HO4y/78SNWr5a8i+L/s+rwRRSqzdECmozUBbZh6Y7/JMd/qPhtEhZ5JESsSJyYPPiJ9v4jI1AgMBAAGjggcIMIIHBDAJBgNVHRMEAjAAMIICHwYDVR0DBIICFjCCAhIwggIOMIICCgYLYIZIAYb4RQEHAQEwggH5FoIBp1RoaXMgY2VydGlmaWNhdGUgaW5jb3Jwb3JhdGVzIGJ5IHJlZmVyZW5jZSwgYW5kIGl0cyB1c2UgaXMgc3RyaWN0bHkgc3ViamVjdCB0bywgdGhlIFZlcmlTaWduIENlcnRpZmljYXRpb24gUHJhY3RpY2UgU3RhdGVtZW50IChDUFMpLCBhdmFpbGFibGUgYXQ6IGh0dHBzOi8vd3d3LnZlcmlzaWduLmNvbS9DUFM7IGJ5IEUtbWFpbCBhdCBDUFMtcmVxdWVzdHNAdmVyaXNpZ24uY29tOyBvciBieSBtYWlsIGF0IFZlcmlTaWduLCBJbmMuLCAyNTkzIENvYXN0IEF2ZS4sIE1vdW50YWluIFZpZXcsIENBIDk0MDQzIFVTQSBUZWwuICsxICg0MTUpIDk2MS04ODMwIENvcHlyaWdodCAoYykgMTk5NiBWZXJpU2lnbiwgSW5jLiAgQWxsIFJpZ2h0cyBSZXNlcnZlZC4gQ0VSVEFJTiBXQVJSQU5USUVTIERJU0NMQUlNRUQgYW5kIExJQUJJTElUWSBMSU1JVEVELqAOBgxghkgBhvhFAQcBAQGhDgYMYIZIAYb4RQEHAQECMCwwKhYoaHR0cHM6Ly93d3cudmVyaXNpZ24uY29tL3JlcG9zaXRvcnkvQ1BTIDARBglghkgBhvhCAQEEBAMCB4AwNgYJYIZIAYb4QgEIBCkWJ2h0dHBzOi8vd3d3LnZlcmlzaWduLmNvbS9yZXBvc2l0b3J5L0NQUzCCBIcGCWCGSAGG+EIBDQSCBHgWggR0Q0FVVElPTjogV";
 			s += "GhlIENvbW1vbiBOYW1lIGluIHRoaXMgQ2xhc3MgMSBEaWdpdGFsIApJRCBpcyBub3QgYXV0aGVudGljYXRlZCBieSBWZXJpU2lnbi4gSXQgbWF5IGJlIHRoZQpob2xkZXIncyByZWFsIG5hbWUgb3IgYW4gYWxpYXMuIFZlcmlTaWduIGRvZXMgYXV0aC0KZW50aWNhdGUgdGhlIGUtbWFpbCBhZGRyZXNzIG9mIHRoZSBob2xkZXIuCgpUaGlzIGNlcnRpZmljYXRlIGluY29ycG9yYXRlcyBieSByZWZlcmVuY2UsIGFuZCAKaXRzIHVzZSBpcyBzdHJpY3RseSBzdWJqZWN0IHRvLCB0aGUgVmVyaVNpZ24gCkNlcnRpZmljYXRpb24gUHJhY3RpY2UgU3RhdGVtZW50IChDUFMpLCBhdmFpbGFibGUKaW4gdGhlIFZlcmlTaWduIHJlcG9zaXRvcnkgYXQ6IApodHRwczovL3d3dy52ZXJpc2lnbi5jb207IGJ5IEUtbWFpbCBhdApDUFMtcmVxdWVzdHNAdmVyaXNpZ24uY29tOyBvciBieSBtYWlsIGF0IFZlcmlTaWduLApJbmMuLCAyNTkzIENvYXN0IEF2ZS4sIE1vdW50YWluIFZpZXcsIENBIDk0MDQzIFVTQQoKQ29weXJpZ2h0IChjKTE5OTYgVmVyaVNpZ24sIEluYy4gIEFsbCBSaWdodHMgClJlc2VydmVkLiBDRVJUQUlOIFdBUlJBTlRJRVMgRElTQ0xBSU1FRCBBTkQgCkxJQUJJTElUWSBMSU1JVEVELgoKV0FSTklORzogVEhFIFVTRSBPRiBUSElTIENFUlRJRklDQVRFIElTIFNUUklDVExZClNVQkpFQ1QgVE8gVEhFIFZFUklTSUdOIENFUlRJRklDQVRJT04gUFJBQ1RJQ0UKU1RBVEVNRU5ULiAgVEhFIElTU1VJTkcgQVVUSE9SSVRZIERJU0NMQUlNUyBDRVJUQUlOCklNUExJRUQgQU5EIEVYUFJFU1MgV0FSUkFOVElFUywgSU5DTFVESU5HIFdBUlJBTlRJRVMKT0YgTUVSQ0hBTlRBQklMSVRZIE9SIEZJVE5FU1MgRk9SIEEgUEFSVElDVUxBUgpQVVJQT1NFLCBBTkQgV0lMTCBOT1QgQkUgTElBQkxFIEZPUiBDT05TRVFVRU5USUFMLApQVU5JVElWRSwgQU5EIENFUlRBSU4gT1RIRVIgREFNQUdFUy4gU0VFIFRIRSBDUFMKRk9SIERFVEFJTFMuCgpDb250ZW50cyBvZiB0aGUgVmVyaVNpZ24gcmVnaXN0ZXJlZApub252ZXJpZmllZFN1YmplY3RBdHRyaWJ1dGVzIGV4dGVuc2lvbiB2YWx1ZSBzaGFsbCAKbm90IGJlIGNvbnNpZGVyZWQgYXMgYWNjdXJhdGUgaW5mb3JtYXRpb24gdmFsaWRhdGVkIApieSB0aGUgSUEuMA0GCSqGSIb3DQEBBAUAA4GBACs9RMcyWa7xX48/h+M+64Ew+KmW2wFCCwTvNwI/1CBhWMRKOjmz+9n4pcReM1oO+pNWL2/WYaKvpQwd4kFl80B1ZoPSWrS3VguODaEzE31Jw7EAaIN/tWbUMjL+i5pa1gFyMV2FkbyTm2VgJcYfvN1pRGLCsm9Gqy8gpW/aSGyc</X509Certificate></X509Data>";
-			Assertion.AssertEquals ("1 cert", s, (data2.GetXml ().OuterXml));
+			AssertEquals ("1 cert", s, (data2.GetXml ().OuterXml));
 
 			data1.LoadXml (xel);
-			Assertion.AssertEquals ("data1==data2", (data1.GetXml ().OuterXml), (data2.GetXml ().OuterXml));
+			AssertEquals ("data1==data2", (data1.GetXml ().OuterXml), (data2.GetXml ().OuterXml));
 
 			X509Certificate x509 = new X509Certificate (cert);
 			KeyInfoX509Data data3 = new KeyInfoX509Data (x509);
-			Assertion.AssertEquals ("data2==data3", (data2.GetXml ().OuterXml), (data3.GetXml ().OuterXml));
+			AssertEquals ("data2==data3", (data2.GetXml ().OuterXml), (data3.GetXml ().OuterXml));
 		}
 
 		[Test]
@@ -101,7 +101,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			XmlElement xel = data1.GetXml ();
 			data2.LoadXml (xel);
 
-			Assertion.AssertEquals ("data1==data2", (data1.GetXml ().OuterXml), (data2.GetXml ().OuterXml));
+			AssertEquals ("data1==data2", (data1.GetXml ().OuterXml), (data2.GetXml ().OuterXml));
 			byte[] c = (data1.Certificates[0] as X509Certificate).GetRawCertData();
 			AssertCrypto.AssertEquals ("Certificate[0]", cert, c);
 
@@ -110,7 +110,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			data1.AddCertificate (x509);
 			xel = data1.GetXml ();
 			data2.LoadXml (xel);
-			Assertion.AssertEquals ("data1==data2", (data1.GetXml ().OuterXml), (data2.GetXml ().OuterXml));
+			AssertEquals ("data1==data2", (data1.GetXml ().OuterXml), (data2.GetXml ().OuterXml));
 			c = (data1.Certificates [1] as X509Certificate).GetRawCertData();
 			AssertCrypto.AssertEquals ("Certificate[1]", cert2, c);
 
@@ -119,7 +119,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			data1.AddIssuerSerial (x509.GetIssuerName (), x509.GetSerialNumberString ());
 			xel = data1.GetXml ();
 			data2.LoadXml (xel);
-			Assertion.AssertEquals ("data1==data2", (data1.GetXml ().OuterXml), (data2.GetXml ().OuterXml));
+			AssertEquals ("data1==data2", (data1.GetXml ().OuterXml), (data2.GetXml ().OuterXml));
 			// TODO: The type of IssuerSerial isn't documented
 
 			// X509Certificate doesn't export SubjectKeyId so we must improvise
@@ -127,15 +127,15 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			data1.AddSubjectKeyId (skid);
 			xel = data1.GetXml ();
 			data2.LoadXml (xel);
-			Assertion.AssertEquals ("data1==data2", (data1.GetXml ().OuterXml), (data2.GetXml ().OuterXml));
+			AssertEquals ("data1==data2", (data1.GetXml ().OuterXml), (data2.GetXml ().OuterXml));
 			AssertCrypto.AssertEquals ("SubjectKeyId", skid, (byte[]) data1.SubjectKeyIds[0]);
 
 			data1.AddSubjectName (x509.GetName ());
 			xel = data1.GetXml ();
 			data2.LoadXml (xel);
-			Assertion.AssertEquals ("data1==data2", (data1.GetXml ().OuterXml), (data2.GetXml ().OuterXml));
+			AssertEquals ("data1==data2", (data1.GetXml ().OuterXml), (data2.GetXml ().OuterXml));
 			string s = (string) data1.SubjectNames [0];
-			Assertion.AssertEquals ("SubjectName", x509.GetName (), s);
+			AssertEquals ("SubjectName", x509.GetName (), s);
 		}
 
 		// There's a bug in the framework 1.0 where a CRL entry cannot be included
@@ -151,7 +151,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			KeyInfoX509Data data2 = new KeyInfoX509Data ();
 			data2.LoadXml (xel);
 
-			Assertion.AssertEquals ("data1==data2", (data1.GetXml ().OuterXml), (data2.GetXml ().OuterXml));
+			AssertEquals ("data1==data2", (data1.GetXml ().OuterXml), (data2.GetXml ().OuterXml));
 			AssertCrypto.AssertEquals ("crl1==crl2", data1.CRL, data2.CRL);
 		}
 
@@ -168,7 +168,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 
 			// verify that proper XML is generated (equals to original)
 			string s = (data1.GetXml ().OuterXml);
-			Assertion.AssertEquals ("Xml-Simple", simple, s);
+			AssertEquals ("Xml-Simple", simple, s);
 
 			// verify that property is parsed correctly
 			byte[] c = (data1.Certificates[0] as X509Certificate).GetRawCertData();
@@ -181,14 +181,14 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			KeyInfoX509Data data2 = new KeyInfoX509Data ();
 			data2.LoadXml (doc.DocumentElement);
 			s = (data2.GetXml ().OuterXml);
-			Assertion.AssertEquals ("Xml-Complex", complex, s);
+			AssertEquals ("Xml-Complex", complex, s);
 
 			string crl = "<X509Data xmlns=\"http://www.w3.org/2000/09/xmldsig#\"><X509CRL>HoIBBTByAgEBMAsGCSqGSIb3DQEBBTBRMQswCQYDVQQGEwJVUzEYMBYGA1UEChMPVS5TLiBHb3Zlcm5tZW50MQwwCgYDVQQLEwNEb0QxGjAYBgNVBAMTEUFybWVkIEZvcmNlcyBSb290Fw0wMjEwMTExMzEyNTBaMAsGCSqGSIb3DQEBBQOBgQB9otEZbQ8Py+SjvuA2CvNMm6/mT/bjr89V88bbq0wWMqpzrczcMjNg34vMk7VPauxwU6/PBw+gzWasAFfGXF0hsb0wiY53jdRpfsA2ftLYIHEIgNLLdIvYQhcEmYCkUnAuwOOMC/95t0V33MXPQ5iRffEB91PXxlE18InMwf/iiQ==</X509CRL></X509Data>";
 			doc.LoadXml (crl);
 			KeyInfoX509Data data3 = new KeyInfoX509Data ();
 			data3.LoadXml (doc.DocumentElement);
 			s = (data3.GetXml ().OuterXml);
-			Assertion.AssertEquals ("Xml-Crl", crl, s);
+			AssertEquals ("Xml-Crl", crl, s);
 		}
 
 		[Test]

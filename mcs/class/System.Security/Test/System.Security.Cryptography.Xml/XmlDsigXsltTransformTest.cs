@@ -20,7 +20,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Security.Cryptography.Xml {
 
 	[TestFixture]
-	public class XmlDsigXsltTransformTest {
+	public class XmlDsigXsltTransformTest : Assertion {
 
 		protected XmlDsigXsltTransform transform;
 
@@ -33,10 +33,10 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		[Test]
 		public void Properties () 
 		{
-			Assertion.AssertEquals ("Algorithm", "http://www.w3.org/TR/1999/REC-xslt-19991116", transform.Algorithm);
+			AssertEquals ("Algorithm", "http://www.w3.org/TR/1999/REC-xslt-19991116", transform.Algorithm);
 
 			Type[] input = transform.InputTypes;
-			Assertion.Assert ("Input #", (input.Length == 3));
+			Assert ("Input #", (input.Length == 3));
 			// check presence of every supported input types
 			bool istream = false;
 			bool ixmldoc = false;
@@ -49,19 +49,19 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 				if (t.ToString () == "System.Xml.XmlNodeList")
 					ixmlnl = true;
 			}
-			Assertion.Assert ("Input Stream", istream);
-			Assertion.Assert ("Input XmlDocument", ixmldoc);
-			Assertion.Assert ("Input XmlNodeList", ixmlnl);
+			Assert ("Input Stream", istream);
+			Assert ("Input XmlDocument", ixmldoc);
+			Assert ("Input XmlNodeList", ixmlnl);
 
 			Type[] output = transform.OutputTypes;
-			Assertion.Assert ("Output #", (output.Length == 1));
+			Assert ("Output #", (output.Length == 1));
 			// check presence of every supported output types
 			bool ostream = false;
 			foreach (Type t in input) {
 				if (t.ToString () == "System.IO.Stream")
 					ostream = true;
 			}
-			Assertion.Assert ("Output Stream", ostream);
+			Assert ("Output Stream", ostream);
 		}
 
 		private string Stream2Array (Stream s) 
@@ -87,13 +87,13 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			transform.LoadInnerXml (doc.ChildNodes);
 			try {
 				Stream s = (Stream) transform.GetOutput ();
-				Assertion.Fail ("Expected XsltCompileException but got none");
+				Fail ("Expected XsltCompileException but got none");
 			}
 			catch (XsltCompileException) {
 				// expected
 			}
 			catch (Exception e) {
-				Assertion.Fail ("Expected XsltCompileException but got :" + e.ToString ());
+				Fail ("Expected XsltCompileException but got :" + e.ToString ());
 			}
 		}
 
@@ -166,7 +166,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		{
 			for (int i=0; i < expected.Count; i++) {
 				if (expected[i].OuterXml != actual[i].OuterXml)
-					Assertion.Fail (msg + " [" + i + "] expected " + expected[i].OuterXml + " bug got " + actual[i].OuterXml);
+					Fail (msg + " [" + i + "] expected " + expected[i].OuterXml + " bug got " + actual[i].OuterXml);
 			}
 		}
 

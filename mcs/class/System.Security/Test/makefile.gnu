@@ -7,7 +7,7 @@ LIB_FLAGS =	\
 		-r $(topdir)/class/lib/corlib.dll \
 		-r $(topdir)/class/lib/System.Xml.dll \
 		-r $(topdir)/class/lib/System.Security.dll \
-	    	-r $(topdir)/nunit20/NUnit.Framework.dll
+	    	-r $(topdir)/class/lib/NUnit.Framework.dll
 
 ifdef SUBDIR
 USE_SOURCE_RULES=1

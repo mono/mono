@@ -17,7 +17,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Security.Cryptography.Xml {
 
 	[TestFixture]
-	public class ReferenceTest {
+	public class ReferenceTest : Assertion {
 
 		protected Reference reference;
 
@@ -30,17 +30,17 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		[Test]
 		public void Properties () 
 		{
-			Assertion.AssertNull ("Uri (null)", reference.Uri);
-			Assertion.AssertNotNull ("TransformChain", reference.TransformChain);
-			Assertion.AssertEquals ("ToString()", "System.Security.Cryptography.Xml.Reference", reference.ToString ());
+			AssertNull ("Uri (null)", reference.Uri);
+			AssertNotNull ("TransformChain", reference.TransformChain);
+			AssertEquals ("ToString()", "System.Security.Cryptography.Xml.Reference", reference.ToString ());
 			// test uri constructor
 			string uri = "uri";
 			reference = new Reference (uri);
-			Assertion.AssertEquals ("DigestMethod", "http://www.w3.org/2000/09/xmldsig#sha1", reference.DigestMethod);
-			Assertion.AssertNull ("DigestValue", reference.DigestValue);
-			Assertion.AssertNull ("Id", reference.Id);
-			Assertion.AssertNull ("Type", reference.Type);
-			Assertion.AssertEquals ("Uri", uri, reference.Uri);
+			AssertEquals ("DigestMethod", "http://www.w3.org/2000/09/xmldsig#sha1", reference.DigestMethod);
+			AssertNull ("DigestValue", reference.DigestValue);
+			AssertNull ("Id", reference.Id);
+			AssertNull ("Type", reference.Type);
+			AssertEquals ("Uri", uri, reference.Uri);
 		}
 
 		[Test]
@@ -50,11 +50,11 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			XmlDocument doc = new XmlDocument ();
 			doc.LoadXml (test);
 			reference.LoadXml (doc.DocumentElement);
-			Assertion.AssertEquals ("Load-Xml", test, (reference.GetXml().OuterXml));
-			Assertion.AssertEquals ("Load-URI", "#MyObjectId", reference.Uri);
+			AssertEquals ("Load-Xml", test, (reference.GetXml().OuterXml));
+			AssertEquals ("Load-URI", "#MyObjectId", reference.Uri);
 			byte[] hash = { 0xFD, 0x5B, 0xEA, 0xEA, 0xC5, 0xC4, 0x55, 0xBB, 0x59, 0x0B, 0xC1, 0xB0, 0x36, 0xD2, 0xD0, 0x9C, 0x63, 0xB2, 0xFD, 0x52 };
 			AssertCrypto.AssertEquals("Load-Digest", hash, reference.DigestValue);
-			Assertion.AssertEquals ("Load-#Transform", 0, reference.TransformChain.Count);
+			AssertEquals ("Load-#Transform", 0, reference.TransformChain.Count);
 		}
 
 		[Test]
@@ -64,8 +64,8 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			XmlDocument doc = new XmlDocument ();
 			doc.LoadXml (test);
 			reference.LoadXml (doc.DocumentElement);
-			Assertion.AssertEquals ("Load-Base64", test, (reference.GetXml().OuterXml));
-			Assertion.AssertEquals ("Load-#Transform", 1, reference.TransformChain.Count);
+			AssertEquals ("Load-Base64", test, (reference.GetXml().OuterXml));
+			AssertEquals ("Load-#Transform", 1, reference.TransformChain.Count);
 		}
 
 		[Test]
@@ -75,8 +75,8 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			XmlDocument doc = new XmlDocument ();
 			doc.LoadXml (test);
 			reference.LoadXml (doc.DocumentElement);
-			Assertion.AssertEquals ("Load-C14N", test, (reference.GetXml().OuterXml));
-			Assertion.AssertEquals ("Load-#Transform", 1, reference.TransformChain.Count);
+			AssertEquals ("Load-C14N", test, (reference.GetXml().OuterXml));
+			AssertEquals ("Load-#Transform", 1, reference.TransformChain.Count);
 		}
 
 		[Test]
@@ -86,8 +86,8 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			XmlDocument doc = new XmlDocument ();
 			doc.LoadXml (test);
 			reference.LoadXml (doc.DocumentElement);
-			Assertion.AssertEquals ("Load-C14NWithComments", test, (reference.GetXml().OuterXml));
-			Assertion.AssertEquals ("Load-#Transform", 1, reference.TransformChain.Count);
+			AssertEquals ("Load-C14NWithComments", test, (reference.GetXml().OuterXml));
+			AssertEquals ("Load-#Transform", 1, reference.TransformChain.Count);
 		}
 
 		[Test]
@@ -97,8 +97,8 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			XmlDocument doc = new XmlDocument ();
 			doc.LoadXml (test);
 			reference.LoadXml (doc.DocumentElement);
-			Assertion.AssertEquals ("Load-Enveloped", test, (reference.GetXml().OuterXml));
-			Assertion.AssertEquals ("Load-#Transform", 1, reference.TransformChain.Count);
+			AssertEquals ("Load-Enveloped", test, (reference.GetXml().OuterXml));
+			AssertEquals ("Load-#Transform", 1, reference.TransformChain.Count);
 		}
 
 		[Test]
@@ -108,8 +108,8 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			XmlDocument doc = new XmlDocument ();
 			doc.LoadXml (test);
 			reference.LoadXml (doc.DocumentElement);
-			Assertion.AssertEquals ("Load-XPath", test, (reference.GetXml().OuterXml));
-			Assertion.AssertEquals ("Load-#Transform", 1, reference.TransformChain.Count);
+			AssertEquals ("Load-XPath", test, (reference.GetXml().OuterXml));
+			AssertEquals ("Load-#Transform", 1, reference.TransformChain.Count);
 		}
 
 		[Test]
@@ -127,8 +127,8 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			XmlDocument doc = new XmlDocument ();
 			doc.LoadXml (test);
 			reference.LoadXml (doc.DocumentElement);
-			Assertion.AssertEquals ("Load-Xslt", test, (reference.GetXml().OuterXml));
-			Assertion.AssertEquals ("Load-#Transform", 1, reference.TransformChain.Count);
+			AssertEquals ("Load-Xslt", test, (reference.GetXml().OuterXml));
+			AssertEquals ("Load-#Transform", 1, reference.TransformChain.Count);
 		}
 
 		[Test]
@@ -146,8 +146,8 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			XmlDocument doc = new XmlDocument ();
 			doc.LoadXml (test);
 			reference.LoadXml (doc.DocumentElement);
-			Assertion.AssertEquals ("Load-Xml", test, (reference.GetXml().OuterXml));
-			Assertion.AssertEquals ("Load-#Transform", 6, reference.TransformChain.Count);
+			AssertEquals ("Load-Xml", test, (reference.GetXml().OuterXml));
+			AssertEquals ("Load-#Transform", 6, reference.TransformChain.Count);
 		}
 
 		[Test]
@@ -158,7 +158,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			reference.DigestValue = hash;
 			XmlElement xel = reference.GetXml ();
 			// this is the minimal Reference (DisestValue)!
-			Assertion.AssertNotNull ("GetXml", xel);
+			AssertNotNull ("GetXml", xel);
 
 			reference.AddTransform (new XmlDsigBase64Transform ());
 			reference.AddTransform (new XmlDsigC14NTransform ());
@@ -168,7 +168,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			reference.AddTransform (new XmlDsigXsltTransform ());
 
 			string value = "<Reference xmlns=\"http://www.w3.org/2000/09/xmldsig#\"><Transforms><Transform Algorithm=\"http://www.w3.org/2000/09/xmldsig#base64\" /><Transform Algorithm=\"http://www.w3.org/TR/2001/REC-xml-c14n-20010315\" /><Transform Algorithm=\"http://www.w3.org/TR/2001/REC-xml-c14n-20010315#WithComments\" /><Transform Algorithm=\"http://www.w3.org/2000/09/xmldsig#enveloped-signature\" /><Transform Algorithm=\"http://www.w3.org/TR/1999/REC-xpath-19991116\"><XPath></XPath></Transform><Transform Algorithm=\"http://www.w3.org/TR/1999/REC-xslt-19991116\" /></Transforms><DigestMethod Algorithm=\"http://www.w3.org/2000/09/xmldsig#sha1\" /><DigestValue>AAAAAAAAAAAAAAAAAAAAAAAAAAA=</DigestValue></Reference>";
-			Assertion.AssertEquals("Get-Xml", value, (reference.GetXml().OuterXml));
+			AssertEquals("Get-Xml", value, (reference.GetXml().OuterXml));
 			// however this value cannot be loaded as it's missing some transform (xslt) parameters
 
 			// can we add them again ?
@@ -180,7 +180,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			reference.AddTransform (new XmlDsigXsltTransform ());
 
 			// seems so ;-)
-			Assertion.AssertEquals ("# Transforms", 12, reference.TransformChain.Count);
+			AssertEquals ("# Transforms", 12, reference.TransformChain.Count);
 		}
 
 		[Test]
@@ -188,7 +188,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		{
 			// null DigestMethod -> "" DigestMethod !!!
 			reference.DigestMethod = null;
-			Assertion.AssertNull ("DigestMethod null", reference.DigestMethod);
+			AssertNull ("DigestMethod null", reference.DigestMethod);
 		}
 
 		[Test]

@@ -19,7 +19,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Security.Cryptography.Xml {
 
 	[TestFixture]
-	public class XmlDsigC14NWithCommentsTransformTest {
+	public class XmlDsigC14NWithCommentsTransformTest : Assertion {
 
 		protected XmlDsigC14NWithCommentsTransform transform;
 
@@ -32,10 +32,10 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		[Test]
 		public void Properties () 
 		{
-			Assertion.AssertEquals ("Algorithm", "http://www.w3.org/TR/2001/REC-xml-c14n-20010315#WithComments", transform.Algorithm);
+			AssertEquals ("Algorithm", "http://www.w3.org/TR/2001/REC-xml-c14n-20010315#WithComments", transform.Algorithm);
 
 			Type[] input = transform.InputTypes;
-			Assertion.Assert ("Input #", (input.Length == 3));
+			Assert ("Input #", (input.Length == 3));
 			// check presence of every supported input types
 			bool istream = false;
 			bool ixmldoc = false;
@@ -48,19 +48,19 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 				if (t.ToString () == "System.Xml.XmlNodeList")
 					ixmlnl = true;
 			}
-			Assertion.Assert ("Input Stream", istream);
-			Assertion.Assert ("Input XmlDocument", ixmldoc);
-			Assertion.Assert ("Input XmlNodeList", ixmlnl);
+			Assert ("Input Stream", istream);
+			Assert ("Input XmlDocument", ixmldoc);
+			Assert ("Input XmlNodeList", ixmlnl);
 
 			Type[] output = transform.OutputTypes;
-			Assertion.Assert ("Output #", (output.Length == 1));
+			Assert ("Output #", (output.Length == 1));
 			// check presence of every supported output types
 			bool ostream = false;
 			foreach (Type t in input) {
 				if (t.ToString () == "System.IO.Stream")
 					ostream = true;
 			}
-			Assertion.Assert ("Output Stream", ostream);
+			Assert ("Output Stream", ostream);
 		}
 
 		[Test]

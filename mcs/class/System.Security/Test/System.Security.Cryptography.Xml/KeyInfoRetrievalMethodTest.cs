@@ -17,13 +17,13 @@ using NUnit.Framework;
 namespace MonoTests.System.Security.Cryptography.Xml {
 
 	[TestFixture]
-	public class KeyInfoRetrievalMethodTest {
+	public class KeyInfoRetrievalMethodTest : Assertion {
 
 		[Test]
 		public void TestNewEmptyKeyNode () 
 		{
 			KeyInfoRetrievalMethod uri1 = new KeyInfoRetrievalMethod ();
-			Assertion.AssertEquals ("Empty", "<RetrievalElement xmlns=\"http://www.w3.org/2000/09/xmldsig#\" />", (uri1.GetXml ().OuterXml));
+			AssertEquals ("Empty", "<RetrievalElement xmlns=\"http://www.w3.org/2000/09/xmldsig#\" />", (uri1.GetXml ().OuterXml));
 		}
 
 		[Test]
@@ -37,8 +37,8 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			KeyInfoRetrievalMethod uri2 = new KeyInfoRetrievalMethod (uri1.Uri);
 			uri2.LoadXml (xel);
 
-			Assertion.AssertEquals ("uri1==uri2", (uri1.GetXml ().OuterXml), (uri2.GetXml ().OuterXml));
-			Assertion.AssertEquals ("uri==Uri", uri, uri1.Uri);
+			AssertEquals ("uri1==uri2", (uri1.GetXml ().OuterXml), (uri2.GetXml ().OuterXml));
+			AssertEquals ("uri==Uri", uri, uri1.Uri);
 		}
 
 		[Test]
@@ -53,10 +53,10 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 
 			// verify that proper XML is generated (equals to original)
 			string s = (uri1.GetXml ().OuterXml);
-			Assertion.AssertEquals ("Xml", value, s);
+			AssertEquals ("Xml", value, s);
 
 			// verify that property is parsed correctly
-			Assertion.AssertEquals ("Uri", "http://www.go-mono.com/", uri1.Uri);
+			AssertEquals ("Uri", "http://www.go-mono.com/", uri1.Uri);
 		}
 
 		[Test]
@@ -78,7 +78,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			// no exception is thrown
 			uri1.LoadXml (doc.DocumentElement);
 			// note that URI="" is present (unlike a empty Uri)
-			Assertion.AssertEquals("invalid", "<RetrievalElement URI=\"\" xmlns=\"http://www.w3.org/2000/09/xmldsig#\" />", (uri1.GetXml ().OuterXml));
+			AssertEquals("invalid", "<RetrievalElement URI=\"\" xmlns=\"http://www.w3.org/2000/09/xmldsig#\" />", (uri1.GetXml ().OuterXml));
 		}
 	}
 }

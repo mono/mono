@@ -17,7 +17,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Security.Cryptography.Xml {
 
 	[TestFixture]
-	public class KeyInfoNodeTest {
+	public class KeyInfoNodeTest : Assertion {
 
 		[Test]
 		public void NewKeyNode () 
@@ -33,7 +33,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			KeyInfoNode node2 = new KeyInfoNode (node1.Value);
 			node2.LoadXml (xel);
 
-			Assertion.AssertEquals ("node1==node2", (node1.GetXml ().OuterXml), (node2.GetXml ().OuterXml));
+			AssertEquals ("node1==node2", (node1.GetXml ().OuterXml), (node2.GetXml ().OuterXml));
 		}
 
 		[Test]
@@ -48,7 +48,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			node1.LoadXml (doc.DocumentElement);
 
 			string s = (node1.GetXml ().OuterXml);
-			Assertion.AssertEquals ("Node", value, s);
+			AssertEquals ("Node", value, s);
 		}
 
 		// well there's no invalid value - unless you read the doc ;-)
@@ -62,7 +62,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			KeyInfoNode node1 = new KeyInfoNode ();
 			// LAMESPEC: No ArgumentNullException is thrown if value == null
 			node1.LoadXml (null);
-			Assertion.AssertNull ("Value==null", node1.Value);
+			AssertNull ("Value==null", node1.Value);
 		}
 	}
 }

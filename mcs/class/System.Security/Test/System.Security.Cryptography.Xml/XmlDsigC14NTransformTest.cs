@@ -18,7 +18,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Security.Cryptography.Xml {
 
 	[TestFixture]
-	public class XmlDsigC14NTransformTest {
+	public class XmlDsigC14NTransformTest : Assertion {
 
 		protected XmlDsigC14NTransform transform;
 
@@ -31,10 +31,10 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		[Test]
 		public void Properties () 
 		{
-			Assertion.AssertEquals ("Algorithm", "http://www.w3.org/TR/2001/REC-xml-c14n-20010315", transform.Algorithm);
+			AssertEquals ("Algorithm", "http://www.w3.org/TR/2001/REC-xml-c14n-20010315", transform.Algorithm);
 
 			Type[] input = transform.InputTypes;
-			Assertion.Assert ("Input #", (input.Length == 3));
+			Assert ("Input #", (input.Length == 3));
 			// check presence of every supported input types
 			bool istream = false;
 			bool ixmldoc = false;
@@ -47,19 +47,19 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 				if (t.ToString () == "System.Xml.XmlNodeList")
 					ixmlnl = true;
 			}
-			Assertion.Assert ("Input Stream", istream);
-			Assertion.Assert ("Input XmlDocument", ixmldoc);
-			Assertion.Assert ("Input XmlNodeList", ixmlnl);
+			Assert ("Input Stream", istream);
+			Assert ("Input XmlDocument", ixmldoc);
+			Assert ("Input XmlNodeList", ixmlnl);
 
 			Type[] output = transform.OutputTypes;
-			Assertion.Assert ("Output #", (output.Length == 1));
+			Assert ("Output #", (output.Length == 1));
 			// check presence of every supported output types
 			bool ostream = false;
 			foreach (Type t in input) {
 				if (t.ToString () == "System.IO.Stream")
 					ostream = true;
 			}
-			Assertion.Assert ("Output Stream", ostream);
+			Assert ("Output Stream", ostream);
 		}
 
 		private string Stream2String (Stream s) 
@@ -93,7 +93,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			Stream s = (Stream) transform.GetOutput ();
 			string output = Stream2String (s);
 			// ??? this keeps the \r\n (0x0D, 0x0A) ???
-			Assertion.AssertEquals("XmlDocument", c14xml1, output);
+			AssertEquals("XmlDocument", c14xml1, output);
 		}
 
 		[Test]
@@ -104,7 +104,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			transform.LoadInput (doc.ChildNodes);
 			Stream s = (Stream) transform.GetOutput ();
 			string output = Stream2String (s);
-			Assertion.AssertEquals("XmlChildNodes", c14xml2, output);
+			AssertEquals("XmlChildNodes", c14xml2, output);
 		}
 
 		[Test]
@@ -117,7 +117,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			transform.LoadInput (ms);
 			Stream s = (Stream) transform.GetOutput ();
 			string output = Stream2String (s);
-			Assertion.AssertEquals("MemoryStream", c14xml2, output);
+			AssertEquals("MemoryStream", c14xml2, output);
 		}
 
 		[Test]

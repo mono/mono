@@ -14,7 +14,7 @@ using NUnit.Framework;
 
 namespace MonoTests.System.Security.Cryptography.Xml {
 
-	public class AssertCrypto {
+	public class AssertCrypto : Assertion {
 
 		// because most crypto stuff works with byte[] buffers
 		static public void AssertEquals (string msg, byte[] array1, byte[] array2) 
@@ -22,9 +22,9 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			if ((array1 == null) && (array2 == null))
 				return;
 			if (array1 == null)
-				Assertion.Fail (msg + " -> First array is NULL");
+				Fail (msg + " -> First array is NULL");
 			if (array2 == null)
-				Assertion.Fail (msg + " -> Second array is NULL");
+				Fail (msg + " -> Second array is NULL");
 
 			bool a = (array1.Length == array2.Length);
 			if (a) {
@@ -37,7 +37,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			}
 			msg += " -> Expected " + BitConverter.ToString (array1, 0);
 			msg += " is different than " + BitConverter.ToString (array2, 0);
-			Assertion.Assert (msg, a);
+			Assert (msg, a);
 		}
 	}
 }

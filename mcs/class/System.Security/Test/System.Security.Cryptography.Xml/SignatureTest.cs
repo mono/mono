@@ -17,7 +17,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Security.Cryptography.Xml {
 
 	[TestFixture]
-	public class SignatureTest {
+	public class SignatureTest : Assertion {
 
 		protected Signature signature;
 
@@ -55,7 +55,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			doc.LoadXml (value);
 			signature.LoadXml (doc.DocumentElement);
 			string s = signature.GetXml ().OuterXml;
-			Assertion.AssertEquals ("Load", value, s);
+			AssertEquals ("Load", value, s);
 		}
 	}
 }
