@@ -1404,6 +1404,23 @@ namespace System
 			}
 		}
 
+		public unsafe override int GetHashCode ()
+		{
+			fixed (char * c = this) {
+				char * cc = c;
+				char * end = cc + length - 1;
+				int h = 0;
+				for (;cc < end; cc += 2) {
+					h = (h << 5) - h + *cc;
+					h = (h << 5) - h + cc [1];
+				}
+				++end;
+				if (cc < end)
+					h = (h << 5) - h + *cc;
+				return h;
+			}
+		}
+
 		[CLSCompliant (false), MethodImplAttribute (MethodImplOptions.InternalCall)]
 		unsafe public extern String (char *value);
 
@@ -1427,9 +1444,6 @@ namespace System
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern String (char c, int count);
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern override int GetHashCode ();
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern static string InternalJoin (string separator, string[] value, int sIndex, int count);
