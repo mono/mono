@@ -4683,11 +4683,6 @@ namespace Mono.CSharp {
 					conv = Convert.ImplicitConversion (ec, a_expr, parameter_type, loc);
 
 					if (conv == null) {
-                                                Console.WriteLine ("GAA: {0} {1} {2}",
-                                                                   pd.ParameterType (j),
-                                                                   pd.ParameterType (j).Assembly == CodeGen.AssemblyBuilder,
-                                                                   method.DeclaringType.Assembly == CodeGen.AssemblyBuilder);
-
 						if (!Location.IsNull (loc)) 
 							Error_InvalidArguments (
 								loc, j, method, delegate_type,
