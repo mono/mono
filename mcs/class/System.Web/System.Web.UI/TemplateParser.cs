@@ -333,6 +333,7 @@ namespace System.Web.UI
 		{
 			atts.Remove ("Description"); // ignored
 			atts.Remove ("CodeBehind");  // ignored
+			atts.Remove ("AspCompat"); // ignored
 
 			debug = GetBool (atts, "Debug", true);
 			compilerOptions = GetString (atts, "CompilerOptions", null);
