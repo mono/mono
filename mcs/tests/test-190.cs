@@ -1,15 +1,23 @@
-public class A {
-	private int var;
-}
+class A
+{
+	private int foo = 0;
 
-public class B: A {
-	public void foo() {
-		var = 1;
+	class B : A
+	{
+		void Test ()
+		{
+			foo = 3;
+		}
 	}
-}
 
-public class Cl {
-	public static void Main() {
-		// Nothing
+	class C
+	{
+		void Test (A a)
+		{
+			a.foo = 4;
+		}
 	}
+
+	static void Main ()
+	{ }
 }
