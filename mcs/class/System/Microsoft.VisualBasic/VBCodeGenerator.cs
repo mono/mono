@@ -555,7 +555,7 @@ namespace Microsoft.VisualBasic
 		[MonoTODO ("partially implemented")]
 		protected override void GenerateMethod (CodeMemberMethod method, CodeTypeDeclaration declaration)
 		{
-			bool isSub = method.ReturnType == null || method.ReturnType.ToString() == "System.Void";
+			bool isSub = method.ReturnType == null || method.ReturnType.BaseType == "System.Void";
 
 			TextWriter output = Output;
 
@@ -626,7 +626,7 @@ namespace Microsoft.VisualBasic
 			if (property.HasSet && (property.HasGet = false))
 				output.Write ("WriteOnly " );
 
-			output.Write ("Property" );
+			output.Write ("Property " );
 			
 			OutputTypeNamePair (property.Type, property.Name);
 			output.WriteLine ();
@@ -1030,7 +1030,8 @@ namespace Microsoft.VisualBasic
 					mySBuilder.Append (")");
 				}			
 			}
-			mySBuilder.Append ("\"");
+			if (inQuotes)
+				mySBuilder.Append ("\"");
 			return mySBuilder.ToString();
 		}
 

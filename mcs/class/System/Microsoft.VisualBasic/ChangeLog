@@ -1,7 +1,10 @@
 2003-11-27  Jackson Harper <jackson@ximian.com>
 
 	* VBCodeCompiler.cs: Put a space between Property and the
-	properties name.
+	properties name. Only add a closing quote to strings if we are
+	still in a quote. Use BaseType == "System.Void" to determine if a
+	method is void. This prevents getting As Nothing functions. Many
+	thanks to Anirban for helping me with VB Syntax.
 	
 2003-11-27  Jackson Harper <jackson@ximian.com>
 
