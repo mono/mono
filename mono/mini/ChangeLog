@@ -1,3 +1,9 @@
+2004-10-11  Martin Baulig  <martin@ximian.com>
+
+	* mini.c (mono_method_to_ir): If we're a generic method, get the
+	MonoGenericContainer from our MonoMethodNormal and create a
+	MonoGenericContext from it.
+
 2004-10-08  Zoltan Varga  <vargaz@freemail.hu>
 
 	* inssel-long32.brg (OP_LCONV_TO_OVF_I2): Fix CONV_I1 -> CONV_I2.
