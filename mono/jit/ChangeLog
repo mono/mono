@@ -1,5 +1,18 @@
 2002-03-28  Martin Baulig  <martin@gnome.org>
 
+	* jit.c (mono_debug_insert_breakpoint): New global variable.
+	(mono_debug_last_breakpoint_address): New global variable.
+
+	* emit-x86.c (arch_compile_method): If `mono_debug_insert_breakpoint' is
+	non-zero, insert a breakpoint; if it's positive, decrement it when done.
+	Set `mono_debug_last_breakpoint_address' to the address of the last inserted
+	breakpoint.
+
+	* debug.h: Provide external declaration of `mono_debug_insert_breakpoint' and
+	`mono_debug_last_breakpoint_address', also documented them here.
+
+2002-03-28  Martin Baulig  <martin@gnome.org>
+
 	* debug-private.h (MonoDebugHandle): Renamed `format' to `default_format'.
 	(AssemblyDebugInfo): Added `format'.
 
