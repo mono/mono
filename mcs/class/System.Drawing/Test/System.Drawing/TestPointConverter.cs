@@ -22,6 +22,8 @@ namespace MonoTests.System.Drawing
 		Point pt;
 		Point ptneg;
 		PointConverter ptconv;
+		String ptStr;
+		String ptnegStr;
 
 		[TearDown]
 		public void TearDown () {}
@@ -30,7 +32,11 @@ namespace MonoTests.System.Drawing
 		public void SetUp ()		
 		{
 			pt = new Point (1, 2);
+			ptStr = pt.X + ", " + pt.Y;
+
 			ptneg = new Point (-2, -3);
+			ptnegStr = ptneg.X + ", " + ptneg.Y;
+
 			ptconv = (PointConverter) TypeDescriptor.GetConverter (pt);
 		}
 
@@ -70,12 +76,9 @@ namespace MonoTests.System.Drawing
 			AssertEquals ("CF#1", pt, (Point) ptconv.ConvertFrom (null,
 								CultureInfo.InvariantCulture,
 								"1, 2"));
-			AssertEquals ("CF#1a", pt, (Point) ptconv.ConvertFrom ("1, 2"));
 			AssertEquals ("CF#2", ptneg, (Point) ptconv.ConvertFrom (null,
 								CultureInfo.InvariantCulture,
 								"-2, -3"));
-			AssertEquals ("CF#2a", ptneg, (Point) ptconv.ConvertFrom ("-2, -3"));
-
 			try {
 				ptconv.ConvertFrom (null, CultureInfo.InvariantCulture, "1");
 				Fail ("CF#3: must throw ArgumentException");
@@ -99,22 +102,9 @@ namespace MonoTests.System.Drawing
 			}
 
 			try {
-				ptconv.ConvertFrom ("1, 1, 1");
-				Fail ("CF#4a: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("CF#4a", e is ArgumentException);
-			}
-
-			try {
 				ptconv.ConvertFrom (null, CultureInfo.InvariantCulture,
 						    "*1, 1");
 				Fail ("CF#5: must throw Exception");
-			} catch {
-			}
-
-			try {
-				ptconv.ConvertFrom ("*1, 1");
-				Fail ("CF#5a: must throw Exception");
 			} catch {
 			}
 
@@ -161,17 +151,12 @@ namespace MonoTests.System.Drawing
 		[Test]
 		public void TestConvertTo ()
 		{
-			AssertEquals ("CT#1", pt.ToString (), (String) ptconv.ConvertTo (null,
+			AssertEquals ("CT#1", ptStr, (String) ptconv.ConvertTo (null,
 								CultureInfo.InvariantCulture,
 								pt, typeof (String)));
-			AssertEquals ("CT#1a", pt.ToString (), (String) ptconv.ConvertTo (pt,
-								typeof (String)));
-			AssertEquals ("CT#2", ptneg.ToString (), (String) ptconv.ConvertTo (
-							null, CultureInfo.InvariantCulture,
-							ptneg, typeof (String)));
-			AssertEquals ("CT#2a", ptneg.ToString (), (String) ptconv.ConvertTo (
+			AssertEquals ("CT#2", ptnegStr, (String) ptconv.ConvertTo (null,
+								CultureInfo.InvariantCulture,
 								ptneg, typeof (String)));
-
 			try {
 				ptconv.ConvertTo (null, CultureInfo.InvariantCulture, pt,
 						  typeof (Size));

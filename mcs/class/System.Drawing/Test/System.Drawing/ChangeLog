@@ -1,3 +1,13 @@
+2004-04-23  Ravindra <rkumar@novell.com>
+
+	* TestSystemPens.cs: Removed some unused exception variables.
+	* TestRectangleConverter.cs: Removed culture dependent tests.
+	* TestPointConverter.cs: Removed culture dependent tests.
+	* TestSizeConverter.cs: Removed culture dependent tests.
+	(These tests were not right because a constant culture specific string
+	was being parsed by using current culture of the thread. It resulted in
+	test failures when cultures do not match.)
+
 2004-04-22  Ravindra <rkumar@novell.com>
 
 	* TestPointConverter.cs: Added.

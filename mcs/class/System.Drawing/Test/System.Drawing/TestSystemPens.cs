@@ -1,6 +1,7 @@
 // Tests for System.Drawing.SystemPens.cs
 //
-// Author: Ravindra (rkumar@novell.com)
+// Author: 
+//     Ravindra (rkumar@novell.com)
 //
 // Copyright (c) 2004 Novell, Inc. http://www.novell.com
 //
@@ -323,37 +324,37 @@ namespace MonoTests.System.Drawing
 */
 			try {
 				pen.ResetTransform ();
-			} catch (Exception e) {
+			} catch {
 				Fail (tag + "#2: unexpected Exception");
 			}
 
 			try {
 				pen.RotateTransform (90);
-			} catch (Exception e) {
+			} catch {
 				Fail (tag + "#3: unexpected Exception");
 			}
 
 			try {
 				pen.ScaleTransform (2, 1);
-			} catch (Exception e) {
+			} catch {
 				Fail (tag + "#4: unexpected Exception");
 			}
 
 			try {
 				pen.TranslateTransform (10, 20);
-			} catch (Exception e) {
+			} catch {
 				Fail (tag + "#5: unexpected Exception");
 			}
 
 			try {
 				pen.MultiplyTransform (new Matrix ());
-			} catch (Exception e) {
+			} catch {
 				Fail (tag + "#6: unexpected Exception");
 			}
 
 			try {
 				pen.Clone ();
-			} catch (Exception e) {
+			} catch {
 				Fail (tag + "#7: unexpected Exception");
 			}
 

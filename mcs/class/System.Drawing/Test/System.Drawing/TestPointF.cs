@@ -1,8 +1,9 @@
 // Tests for System.Drawing.PointF.cs
 //
-// Author: Ravindra (rkumar@novell.com)
+// Author:
+//	Ravindra (rkumar@novell.com)
 //
-// Copyright (c) 2004 Novell, Inc.
+// Copyright (c) 2004 Novell, Inc. http://www.novell.com
 //
 
 using NUnit.Framework;

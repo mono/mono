@@ -22,6 +22,8 @@ namespace MonoTests.System.Drawing
 		Size sz;
 		Size szneg;
 		SizeConverter szconv;
+		String szStr;
+		String sznegStr;
 
 		[TearDown]
 		public void TearDown () {}
@@ -30,7 +32,11 @@ namespace MonoTests.System.Drawing
 		public void SetUp ()		
 		{
 			sz = new Size (10, 20);
+			szStr = sz.Width + ", " + sz.Height;
+
 			szneg = new Size (-20, -30);
+			sznegStr = szneg.Width + ", " + szneg.Height;
+
 			szconv = (SizeConverter) TypeDescriptor.GetConverter (sz);
 		}
 
@@ -70,15 +76,12 @@ namespace MonoTests.System.Drawing
 			AssertEquals ("CF#1", sz, (Size) szconv.ConvertFrom (null,
 								CultureInfo.InvariantCulture,
 								"10, 20"));
-			AssertEquals ("CF#1a", sz, (Size) szconv.ConvertFrom ("10, 20"));
 			AssertEquals ("CF#2", szneg, (Size) szconv.ConvertFrom (null,
 								CultureInfo.InvariantCulture,
 								"-20, -30"));
-			AssertEquals ("CF#2a", szneg, (Size) szconv.ConvertFrom ("-20, -30"));
 
 			try {
-				szconv.ConvertFrom (null, CultureInfo.InvariantCulture, 
-						    "10");
+				szconv.ConvertFrom (null, CultureInfo.InvariantCulture, "10");
 				Fail ("CF#3: must throw ArgumentException");
 			} catch (Exception e) {
 				Assert ("CF#3", e is ArgumentException);
@@ -100,22 +103,9 @@ namespace MonoTests.System.Drawing
 			}
 
 			try {
-				szconv.ConvertFrom ("1, 1, 1");
-				Fail ("CF#4a: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("CF#4a", e is ArgumentException);
-			}
-
-			try {
 				szconv.ConvertFrom (null, CultureInfo.InvariantCulture,
 						    "*1, 1");
 				Fail ("CF#5: must throw Exception");
-			} catch {
-			}
-
-			try {
-				szconv.ConvertFrom ("*1, 1");
-				Fail ("CF#5a: must throw Exception");
 			} catch {
 			}
 
@@ -162,16 +152,12 @@ namespace MonoTests.System.Drawing
 		[Test]
 		public void TestConvertTo ()
 		{
-			AssertEquals ("CT#1", sz.ToString (), (String) szconv.ConvertTo (null,
+			AssertEquals ("CT#1", szStr, (String) szconv.ConvertTo (null,
 								CultureInfo.InvariantCulture,
 								sz, typeof (String)));
-			AssertEquals ("CT#1a", sz.ToString (), (String) szconv.ConvertTo (sz,
-								typeof (String)));
-			AssertEquals ("CT#2", szneg.ToString (), (String) szconv.ConvertTo (
-							null, CultureInfo.InvariantCulture,
-							szneg, typeof (String)));
-			AssertEquals ("CT#2a", szneg.ToString (), (String) szconv.ConvertTo (
-								szneg, typeof (String)));
+			AssertEquals ("CT#2", sznegStr, (String) szconv.ConvertTo (null,
+							CultureInfo.InvariantCulture, szneg, 
+							typeof (String)));
 
 			try {
 				szconv.ConvertTo (null, CultureInfo.InvariantCulture, sz,

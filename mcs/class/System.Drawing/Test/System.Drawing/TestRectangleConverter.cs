@@ -22,6 +22,8 @@ namespace MonoTests.System.Drawing
 		Rectangle rect;
 		Rectangle rectneg;
 		RectangleConverter rconv;
+		String rectStr;
+		String rectnegStr;
 
 		[TearDown]
 		public void TearDown () {}
@@ -30,7 +32,11 @@ namespace MonoTests.System.Drawing
 		public void SetUp ()		
 		{
 			rect = new Rectangle (10, 10, 20, 30);
+			rectStr = rect.X + ", " + rect.Y + ", " + rect.Width + ", " + rect.Height;
+
 			rectneg = new Rectangle (-10, -10, 20, 30);
+			rectnegStr = rectneg.X + ", " + rectneg.Y + ", " + rectneg.Width + ", " + rectneg.Height;
+
 			rconv = (RectangleConverter) TypeDescriptor.GetConverter (rect);
 		}
 
@@ -70,11 +76,9 @@ namespace MonoTests.System.Drawing
 			AssertEquals ("CF#1", rect, (Rectangle) rconv.ConvertFrom (null,
 								CultureInfo.InvariantCulture,
 								"10, 10, 20, 30"));
-			AssertEquals ("CF#1a", rect, (Rectangle) rconv.ConvertFrom ("10, 10, 20, 30"));
 			AssertEquals ("CF#2", rectneg, (Rectangle) rconv.ConvertFrom (null,
 								CultureInfo.InvariantCulture,
 								"-10, -10, 20, 30"));
-			AssertEquals ("CF#2a", rectneg, (Rectangle) rconv.ConvertFrom ("-10, -10, 20, 30"));
 
 			try {
 				rconv.ConvertFrom (null, CultureInfo.InvariantCulture, 
@@ -85,7 +89,7 @@ namespace MonoTests.System.Drawing
 			}
 
 			try {
-				rconv.ConvertFrom ("10, 10");
+				rconv.ConvertFrom ("10");
 				Fail ("CF#3a: must throw ArgumentException");
 			} catch (Exception e) {
 				Assert ("CF#3a", e is ArgumentException);
@@ -100,22 +104,9 @@ namespace MonoTests.System.Drawing
 			}
 
 			try {
-				rconv.ConvertFrom ("1, 1, 1, 1, 1");
-				Fail ("CF#4a: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("CF#4a", e is ArgumentException);
-			}
-
-			try {
 				rconv.ConvertFrom (null, CultureInfo.InvariantCulture,
 						   "*1, 1, 1, 1");
 				Fail ("CF#5: must throw Exception");
-			} catch {
-			}
-
-			try {
-				rconv.ConvertFrom ("*1, 1, 1, 1");
-				Fail ("CF#5a: must throw Exception");
 			} catch {
 			}
 
@@ -176,8 +167,7 @@ namespace MonoTests.System.Drawing
 			}
 
 			try {
-				rconv.ConvertFrom (null, CultureInfo.InvariantCulture,
-						   1001);
+				rconv.ConvertFrom (null, CultureInfo.InvariantCulture, 1001);
 				Fail ("CF#13: must throw NotSupportedException");
 			} catch (Exception e) {
 				Assert ("CF#13", e is NotSupportedException);
@@ -187,15 +177,11 @@ namespace MonoTests.System.Drawing
 		[Test]
 		public void TestConvertTo ()
 		{
-			AssertEquals ("CT#1", rect.ToString (), (String) rconv.ConvertTo (null,
+			AssertEquals ("CT#1", rectStr, (String) rconv.ConvertTo (null,
 								CultureInfo.InvariantCulture,
 								rect, typeof (String)));
-			AssertEquals ("CT#1a", rect.ToString (), (String) rconv.ConvertTo (
-								rect, typeof (String)));
-			AssertEquals ("CT#2", rectneg.ToString (), (String) rconv.ConvertTo (
-							null, CultureInfo.InvariantCulture,
-							rectneg, typeof (String)));
-			AssertEquals ("CT#2a", rectneg.ToString (), (String) rconv.ConvertTo (
+			AssertEquals ("CT#2", rectnegStr, (String) rconv.ConvertTo (null, 
+								CultureInfo.InvariantCulture,
 								rectneg, typeof (String)));
 
 			try {
