@@ -550,6 +550,7 @@ public abstract class Encoding
 	private static Encoding utf8Encoding = null;
 	private static Encoding unicodeEncoding = null;
 	private static Encoding isoLatin1Encoding = null;
+	private static Encoding unixConsoleEncoding = null;
 
 	// Get the standard ASCII encoding object.
 	public static Encoding ASCII
@@ -637,7 +638,7 @@ public abstract class Encoding
 		get {
 			lock (typeof(Encoding)) {
 				if (utf8Encoding == null) {
-					utf8Encoding = new UTF8Encoding ();
+					utf8Encoding = new UTF8Encoding (true);
 				}
 				return utf8Encoding;
 			}
@@ -650,13 +651,27 @@ public abstract class Encoding
 		get {
 			lock (typeof(Encoding)) {
 				if (unicodeEncoding == null) {
-					unicodeEncoding = new UnicodeEncoding ();
+					unicodeEncoding = new UnicodeEncoding (false, true);
 				}
 				return unicodeEncoding;
 			}
 		}
 	}
 
+	//
+	// For now hardcode to Latin1, but we should use the Unix Local to pull the
+	// real charset, and then map to the code page.
+	//
+	internal static Encoding UnixConsoleEncoding {
+		get {
+			lock (typeof(Encoding)){
+				if (unixConsoleEncoding == null)
+					unixConsoleEncoding = GetEncoding (28591);
+				return unixConsoleEncoding;
+			}
+		}
+	}
+	
 	// Forwarding decoder implementation.
 	private sealed class ForwardingDecoder : Decoder
 	{

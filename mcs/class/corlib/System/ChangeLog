@@ -1,3 +1,7 @@
+2002-09-06  Miguel de Icaza  <miguel@ximian.com>
+
+	* Console.cs: Specify an encoder, otherwise we will get the UTF8
+	encoder that by default emits the byte markers.
 
 Fri Sep 6 20:14:04 CEST 2002 Paolo Molaro <lupus@ximian.com>
 

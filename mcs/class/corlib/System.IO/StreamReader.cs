@@ -3,12 +3,14 @@
 //
 // Author:
 //   Dietmar Maurer (dietmar@ximian.com)
+//   Miguel de Icaza (miguel@ximian.com) 
 //
 // (C) Ximian, Inc.  http://www.ximian.com
 //
 
 using System;
 using System.Text;
+
 
 namespace System.IO {
 	[Serializable]
@@ -18,19 +20,42 @@ namespace System.IO {
 		private const int DefaultFileBufferSize = 4096;
 		private const int MinimumBufferSize = 128;
 
-		// buffering members
-		private byte [] rgbEncoded;
-//		private int cbEncoded;
-		private char [] rgchDecoded;
-		private int cchDecoded;
+		//
+		// The input buffer
+		//
+		private byte [] input_buffer;
 
+		//
+		// The decoded buffer from the above input buffer
+		//
+		private char [] decoded_buffer;
+
+		//
+		// Decoded bytes in decoded_buffer.
+		//
+		private int decoded_count;
+
+		//
+		// Current position in the decoded_buffer
+		//
 		private int pos;
 
+		//
+		// The buffer size that we are using
+		//
+		private int buffer_size;
 
-		private Encoding internalEncoding;
+		//
+		// Index into `input_buffer' where we start decoding
+		//
+		private int parse_start;
+
+		int do_checks;
+		
+		private Encoding encoding;
 		private Decoder decoder;
 
-		private Stream internalStream;
+		private Stream base_stream;
 
 		private class NullStreamReader : StreamReader {
 			public override int Peek ()
@@ -69,40 +94,40 @@ namespace System.IO {
 			}
 		}
 
-		public new static readonly StreamReader Null = (StreamReader)(new NullStreamReader());
-
+		public new static readonly StreamReader Null =  (StreamReader)(new NullStreamReader());
+		
 		internal StreamReader() {}
 
 		public StreamReader(Stream stream)
-			: this (stream, null, false, DefaultBufferSize) { }
+			: this (stream, Encoding.UTF8, true, DefaultBufferSize) { }
 
-		public StreamReader(Stream stream, bool detectEncodingFromByteOrderMarks)
-			: this (stream, null, detectEncodingFromByteOrderMarks, DefaultBufferSize) { }
+		public StreamReader(Stream stream, bool detect_encoding_from_bytemarks)
+			: this (stream, Encoding.UTF8, detect_encoding_from_bytemarks, DefaultBufferSize) { }
 
 		public StreamReader(Stream stream, Encoding encoding)
-			: this (stream, encoding, false, DefaultBufferSize) { }
+			: this (stream, encoding, true, DefaultBufferSize) { }
 
-		public StreamReader(Stream stream, Encoding encoding, bool detectEncodingFromByteOrderMarks)
-			: this (stream, encoding, detectEncodingFromByteOrderMarks, DefaultBufferSize) { }
+		public StreamReader(Stream stream, Encoding encoding, bool detect_encoding_from_bytemarks)
+			: this (stream, encoding, detect_encoding_from_bytemarks, DefaultBufferSize) { }
 		
-		public StreamReader(Stream stream, Encoding encoding, bool detectEncodingFromByteOrderMarks, int bufferSize)
+		public StreamReader(Stream stream, Encoding encoding, bool detect_encoding_from_bytemarks, int buffer_size)
 		{
-			Initialize (stream, encoding, detectEncodingFromByteOrderMarks, bufferSize);
+			Initialize (stream, encoding, detect_encoding_from_bytemarks, buffer_size);
 		}
 
 		public StreamReader(string path)
-			: this (path, null, false, DefaultFileBufferSize) { }
+			: this (path, Encoding.UTF8, true, DefaultFileBufferSize) { }
 
-		public StreamReader(string path, bool detectEncodingFromByteOrderMarks)
-			: this (path, null, detectEncodingFromByteOrderMarks, DefaultFileBufferSize) { }
+		public StreamReader(string path, bool detect_encoding_from_bytemarks)
+			: this (path, Encoding.UTF8, detect_encoding_from_bytemarks, DefaultFileBufferSize) { }
 
 		public StreamReader(string path, Encoding encoding)
-			: this (path, encoding, false, DefaultFileBufferSize) { }
+			: this (path, encoding, true, DefaultFileBufferSize) { }
 
-		public StreamReader(string path, Encoding encoding, bool detectEncodingFromByteOrderMarks)
-			: this (path, encoding, detectEncodingFromByteOrderMarks, DefaultFileBufferSize) { }
+		public StreamReader(string path, Encoding encoding, bool detect_encoding_from_bytemarks)
+			: this (path, encoding, detect_encoding_from_bytemarks, DefaultFileBufferSize) { }
 		
-		public StreamReader(string path, Encoding encoding, bool detectEncodingFromByteOrderMarks, int bufferSize)
+		public StreamReader(string path, Encoding encoding, bool detect_encoding_from_bytemarks, int buffer_size)
 		{
 			if (null == path)
 				throw new ArgumentNullException();
@@ -118,47 +143,47 @@ namespace System.IO {
 				throw new FileNotFoundException(path);
 
 			Stream stream = (Stream) File.OpenRead (path);
-			Initialize (stream, encoding, detectEncodingFromByteOrderMarks, bufferSize);
+			Initialize (stream, encoding, detect_encoding_from_bytemarks, buffer_size);
 		}
 
-		protected void Initialize (Stream stream, Encoding encoding, bool detectEncodingFromByteOrderMarks, int bufferSize)
+		protected void Initialize (Stream stream, Encoding encoding, bool detect_encoding_from_bytemarks, int buffer_size)
 		{
 			if (null == stream)
 				throw new ArgumentNullException();
 			if (!stream.CanRead)
 				throw new ArgumentException("Cannot read stream");
 
-			internalStream = stream;
+			if (buffer_size < MinimumBufferSize)
+				buffer_size = MinimumBufferSize;
 
-			// use detect encoding flag
-			if (encoding == null) {
-				internalEncoding = Encoding.UTF8;
-				decoder = Encoding.UTF8.GetDecoder ();
-			} else {
-				internalEncoding = encoding;
-				decoder = encoding.GetDecoder ();
-			}
+			base_stream = stream;
+			input_buffer = new byte [buffer_size];
+			this.buffer_size = buffer_size;
+			this.encoding = encoding;
+			decoder = encoding.GetDecoder ();
 
-			if (bufferSize < MinimumBufferSize)
-				bufferSize = MinimumBufferSize;
-
-			rgbEncoded = new byte [bufferSize];
-			rgchDecoded = new char [internalEncoding.GetMaxCharCount (bufferSize)];
+			byte [] preamble = encoding.GetPreamble ();
+			do_checks = detect_encoding_from_bytemarks ? 1 : 0;
+			do_checks += (preamble.Length == 0) ? 0 : 2;
+			
+			decoded_buffer = new char [encoding.GetMaxCharCount (buffer_size)];
+			decoded_count = 0;
 			pos = 0;
-			cchDecoded = 0;
 		}
 
 		public virtual Stream BaseStream
 		{
 			get {
-				return internalStream;
+				return base_stream;
 			}
 		}
 
 		public virtual Encoding CurrentEncoding
 		{
 			get {
-				return internalEncoding;
+				if (encoding == null)
+					throw new Exception ();
+				return encoding;
 			}
 		}
 
@@ -169,74 +194,114 @@ namespace System.IO {
 
 		protected override void Dispose (bool disposing)
 		{
-			if (disposing && internalStream != null)
-				internalStream.Close ();
+			if (disposing && base_stream != null)
+				base_stream.Close ();
 			
-			rgbEncoded = null;
-			rgchDecoded = null;
-			internalEncoding = null;
+			input_buffer = null;
+			decoded_buffer = null;
+			encoding = null;
 			decoder = null;
-			internalStream = null;
+			base_stream = null;
 			base.Dispose (disposing);
 		}
 
-		public void DiscardBufferedData ()
+		//
+		// Provides auto-detection of the encoding, as well as skipping over
+		// byte marks at the beginning of a stream.
+		//
+		int DoChecks (int count)
 		{
-			pos = 0;
-			cchDecoded = 0;
+			if ((do_checks & 2) == 2){
+				byte [] preamble = encoding.GetPreamble ();
+				int c = preamble.Length;
+				if (count >= c){
+					int i;
+					
+					for (i = 0; i < c; i++)
+						if (input_buffer [i] != preamble [i])
+							break;
 
-/* I'm sure there's no need to do all this
-			if ((cchDecoded == null) || (pos == cchDecoded.Length))
-				return;
+					if (i == c)
+						return i;
+				}
+			}
 
-			if (!internalStream.CanSeek)
-				return;
+			if ((do_checks & 1) == 1){
+				if (count < 2)
+					return 0;
 
-			int seek_back = pos - cchDecoded.Length;
-			internalStream.Seek (seek_back, SeekOrigin.Current);
-*/
+				if (input_buffer [0] == 0xfe && input_buffer [1] == 0xff){
+					this.encoding = Encoding.BigEndianUnicode;
+					return 2;
+				}
+
+				if (input_buffer [0] == 0xff && input_buffer [1] == 0xfe){
+					this.encoding = Encoding.Unicode;
+					return 2;
+				}
+
+				if (count < 3)
+					return 0;
+
+				if (input_buffer [0] == 0xef && input_buffer [1] == 0xbb && input_buffer [2] == 0xbf){
+					this.encoding = Encoding.UTF8;
+					return 3;
+				}
+			}
+
+			return 0;
 		}
-
-
+		
 		// the buffer is empty, fill it again
-		[MonoTODO ("handle byte order marks here")]
 		private int ReadBuffer ()
 		{
 			pos = 0;
 			int cbEncoded = 0;
-			cchDecoded = 0;
-			do	// keep looping until the decoder gives us some chars
-			{
-				cbEncoded = internalStream.Read (rgbEncoded, 0, rgbEncoded.Length);
-				// TODO: remove this line when iconv is fixed
-				int bufcnt = decoder.GetCharCount (rgbEncoded, 0, cbEncoded);
 
+			// keep looping until the decoder gives us some chars
+			decoded_count = 0;
+			int parse_start = 0;
+			do	
+			{
+				cbEncoded = base_stream.Read (input_buffer, 0, buffer_size);
+				
 				if (cbEncoded == 0)
 					return 0;
-				// TODO: remove byte order marks here
-				cchDecoded += decoder.GetChars (rgbEncoded, 0, cbEncoded, rgchDecoded, 0);
-			} while (cchDecoded == 0);
 
-			return cchDecoded;
+				if (do_checks > 0){
+					Encoding old = encoding;
+					parse_start = DoChecks (cbEncoded);
+					if (old != encoding){
+						decoder = encoding.GetDecoder ();
+					}
+					do_checks = 0;
+					cbEncoded -= parse_start;
+				}
+				
+				decoded_count += decoder.GetChars (input_buffer, parse_start, cbEncoded, decoded_buffer, 0);
+				parse_start = 0;
+			} while (decoded_count == 0);
+			
+			return decoded_count;
 		}
 
 		public override int Peek ()
 		{
-			if (!internalStream.CanSeek)
+			if (!base_stream.CanSeek)
 				return -1;
 
-			if (pos >= cchDecoded && ReadBuffer () == 0)
+			if (pos >= decoded_count && ReadBuffer () == 0)
 				return -1;
 
-			return rgchDecoded [pos];
+			return decoded_buffer [pos];
 		}
 
 		public override int Read ()
 		{
-			if (pos >= cchDecoded && ReadBuffer () == 0)
+			if (pos >= decoded_count && ReadBuffer () == 0)
 				return -1;
 
-			return rgchDecoded [pos++];
+			return decoded_buffer [pos++];
 		}
 
 		public override int Read (char[] dest_buffer, int index, int count)
@@ -250,20 +315,20 @@ namespace System.IO {
 			if (index + count > dest_buffer.Length)
 				throw new ArgumentException ();
 
-			int cchRead = 0;
+			int chars_read = 0;
 			while (count > 0)
 			{
-				if (pos >= cchDecoded && ReadBuffer () == 0)
-					return cchRead > 0? cchRead: -1;
+				if (pos >= decoded_count && ReadBuffer () == 0)
+					return chars_read > 0 ? chars_read : 0;
 
-				int cch = Math.Min (cchDecoded - pos, count);
-				Array.Copy (rgchDecoded, pos, dest_buffer, index, cch);
+				int cch = Math.Min (decoded_count - pos, count);
+				Array.Copy (decoded_buffer, pos, dest_buffer, index, cch);
 				pos += cch;
 				index += cch;
 				count -= cch;
-				cchRead += cch;
+				chars_read += cch;
 			}
-			return cchRead;
+			return chars_read;
 		}
 
 		public override string ReadLine()
@@ -296,13 +361,13 @@ namespace System.IO {
 		{
 			StringBuilder text = new StringBuilder ();
 
-			int c;
-			while ((c = Read ()) != -1) {
-				text.Append ((char) c);
-			}
+			int size = decoded_buffer.Length;
+			char [] buffer = new char [size];
+			int len;
+			
+			while ((len = Read (buffer, 0, size)) != 0)
+				text.Append (buffer, 0, len);
 
-			if (text.Length == 0)
-				return String.Empty;
 			return text.ToString ();
 		}
 	}

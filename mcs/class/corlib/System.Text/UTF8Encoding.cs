@@ -51,7 +51,7 @@ public class UTF8Encoding : Encoding
 	// Internal version of "GetByteCount" which can handle a rolling
 	// state between multiple calls to this method.
 	private static int InternalGetByteCount (char[] chars, int index, int count, uint leftOver,
-							bool emitIdentifier, bool flush)
+						 bool emitIdentifier, bool flush)
 	{
 		// Validate the parameters.
 		if (chars == null) {

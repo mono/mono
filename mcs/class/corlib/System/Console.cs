@@ -8,6 +8,7 @@
 //
 
 using System.IO;
+using System.Text;
 
 namespace System {
 
@@ -19,11 +20,11 @@ namespace System {
 
 		static Console ()
 		{
-			stderr = new StreamWriter (OpenStandardError ());
+			stderr = new StreamWriter (OpenStandardError (), Encoding.UnixConsoleEncoding);
 			((StreamWriter)stderr).AutoFlush = true;
-			stdout = new StreamWriter (OpenStandardOutput ());
+			stdout = new StreamWriter (OpenStandardOutput (), Encoding.UnixConsoleEncoding);
 			((StreamWriter)stdout).AutoFlush = true;
-			stdin  = new StreamReader (OpenStandardInput ());
+			stdin  = new StreamReader (OpenStandardInput (), Encoding.UnixConsoleEncoding);
 		}
 
 		private Console () {}

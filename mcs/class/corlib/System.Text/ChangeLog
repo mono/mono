@@ -1,3 +1,11 @@
+2002-09-06  Miguel de Icaza  <miguel@ximian.com>
+
+	* Encoding.cs (UTF8, Unicode): Create with a preamble, that is
+	what the Microsoft version does.
+
+	(UnixConsoleEncoding): New internal method, used to get the
+	encoding, in the future, this should pull the locale, map to
+	charset and then code page. 
 
 Wed Sep 4 14:01:25 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
