@@ -1,3 +1,7 @@
+2003-11-26  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* EnterpriseServicesHelper.cs: Added to CVS.
+
 2003-02-03 Patrik Torstensson
 	
 	* TrackingServices.cs: Implemented
