@@ -3,11 +3,11 @@
 
 public class Blah {
 
-	public void Foo (int i, int j)
+	static public void Foo (int i, int j)
 	{
 	}
 
-	public void Foo (int i, int j)
+	static public void Foo (int i, int j)
 	{
 	}
 

@@ -3,6 +3,7 @@
 class X {
 	public static X operator < (X a, int b)
 	{
+		return null;
 	}
 }
 	

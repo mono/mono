@@ -6,10 +6,11 @@ class X {
 	static int m (out int v)
 	{
 		v = 1;
+		return 1;
 	}
 	
 	static void Main ()
 	{
-		m (P);
+		m (out P);
 	}
 }
