@@ -7,7 +7,6 @@ DIRS =	corlib				\
 	System.XML			\
 	System.Drawing			\
 	System.Data			\
-	System.Data.Odbc		\
 	System.EnterpriseServices	\
 	System.Web			\
 	System.Web.Services		\

@@ -1,7 +1,0 @@
-System.Data.Odbc/libodbc.cs
-System.Data.Odbc/OdbcCommand.cs
-System.Data.Odbc/OdbcConnection.cs
-System.Data.Odbc/OdbcDataReader.cs
-System.Data.Odbc/OdbcParameter.cs
-System.Data.Odbc/OdbcParameterCollection.cs
-System.Data.Odbc/OdbcType.cs
