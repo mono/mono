@@ -1,6 +1,8 @@
 2002-02-19  Miguel de Icaza  <miguel@ximian.com>
 
-	* cs-tokenizer.cs: Make tokenizer accept pre-processor directives
+	* cs-tokenizer.cs: Add support for @"litreal strings"
+
+	Make tokenizer accept pre-processor directives
 	on any column (remove the old C-like limitation). 
 
 	* rootcontext.cs (EmitCode): Emit any global attributes.

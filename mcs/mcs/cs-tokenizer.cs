@@ -1251,6 +1251,7 @@ namespace Mono.CSharp
 								645, Location,
 								"Identifier too long (limit is 512 chars)");
 						}
+						allow_keyword_as_ident = false;
 						return Token.IDENTIFIER;
 					}
 
@@ -1351,13 +1352,16 @@ namespace Mono.CSharp
 					
 					while ((c = getChar ()) != -1){
 						if (c == '"'){
+							allow_keyword_as_ident = false;
 							val = s.ToString ();
 							return Token.LITERAL_STRING;
 						}
 
-						c = escape (c);
-						if (c == -1)
-							return Token.ERROR;
+						if (!allow_keyword_as_ident){
+							c = escape (c);
+							if (c == -1)
+								return Token.ERROR;
+						}
 						s.Append ((char) c);
 					}
 				}
