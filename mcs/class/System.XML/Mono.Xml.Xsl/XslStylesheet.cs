@@ -127,6 +127,8 @@ namespace Mono.Xml.Xsl {
 					throw new XsltCompileException ("Stylesheet root element must be either \"stylesheet\" or \"transform\" or any literal element.", null, c.Input);
 
 			if (c.Input.NamespaceURI != XsltNamespace) {
+				if (c.Input.GetAttribute ("version", XsltNamespace) == null)
+					throw new XsltCompileException ("Mandatory global attribute version is missing.", null, c.Input);
 				// then it is simplified stylesheet.
 				Templates.Add (new XslTemplate (c));
 			} else {

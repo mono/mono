@@ -1,5 +1,10 @@
 2004-03-13 Atsushi Enomoto <atsushi@ximian.com>
 
+	* XslStylesheet.cs : "version" attribute is also required for embedded
+	  stylesheet.
+
+2004-03-13 Atsushi Enomoto <atsushi@ximian.com>
+
 	* Compiler.cs,
 	  XslStylesheet.cs : Reject xsl element other than stylesheet and
 	  transform. Check mandatory version attribute (only for existence).
