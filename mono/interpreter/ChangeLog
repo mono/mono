@@ -1,3 +1,8 @@
+
+Mon Jan 19 17:52:33 CET 2004 Paolo Molaro <lupus@ximian.com>
+
+	* interp.c: eliminate CSIZE macro.
+
 2004-01-15  Zoltan Varga  <vargaz@freemail.hu>
 
 	* interp.c (ves_array_set): Check for ArrayTypeMismatchException.
