@@ -4,4 +4,4 @@ CSC=mcs
 all: monoxsd
 
 monoxsd:
-	$(CSC) /r:System.Xml MonoXSD.cs
+	$(CSC) /debug /r:System.Xml MonoXSD.cs

@@ -1,3 +1,13 @@
+2003-03-24  Duncan Mak  <duncan@ximian.com>
+
+	* MonoXSD.cs: Add support for having enums as a field in the
+	class. I overlooked this bit last week.
+
+	Removed the special case for 'XmlNode' fields, turns out that
+	behave the same as all the other subclasses of 'XmlNode'.
+
+	* makefile: Make it build with debug enabled by default.
+
 2003-03-22  Duncan Mak  <duncan@ximian.com>
 
 	* MonoXSD.cs: Moved things around, now it's not only
