@@ -1,3 +1,9 @@
+2004-03-21  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ThreadAbortException.cs: use same HResult as MS.
+	* Timer.cs: abort the running thread when disposing the Timer. This
+	fixes NullRefs when finishing xsp.
+
 2004-03-15  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* NativeOverlapped.cs: added 2 new internal fields.

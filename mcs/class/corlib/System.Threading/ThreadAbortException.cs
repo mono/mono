@@ -14,7 +14,10 @@ namespace System.Threading
 	[Serializable]
 	public sealed class ThreadAbortException : SystemException
 	{
-		private ThreadAbortException () : base ("Thread was being aborted") {}
+		private ThreadAbortException () : base ("Thread was being aborted")
+		{
+			HResult = unchecked ((int) 0x80131530);
+		}
 
 		public object ExceptionState {
 			get {

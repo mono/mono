@@ -6,6 +6,7 @@
 // 	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // (C) 2001, 2002 Ximian, Inc.  http://www.ximian.com
+// (C) 2004 Novell, Inc. http://www.novell.com
 //
 
 
@@ -13,7 +14,7 @@ namespace System.Threading
 {
 	public sealed class Timer : MarshalByRefObject, IDisposable
 	{
-		sealed class Runner : MarshalByRefObject, IDisposable
+		sealed class Runner : MarshalByRefObject
 		{
 			ManualResetEvent wait;
 			AutoResetEvent start_event;
@@ -102,34 +103,11 @@ namespace System.Threading
 					}
 				}
 			}
-
-			public void Dispose ()
-			{
-				Dispose (true);
-			}
-
-			void Dispose (bool disposing)
-			{
-				disposed = true;
-				if (disposing) {
-					if (wait != null) {
-						wait.Set ();
-						Thread.Sleep (100);
-						((IDisposable) wait).Dispose ();
-						wait = null;
-					}
-					GC.SuppressFinalize (this);
-				}
-			}
-
-			~Runner ()
-			{
-				Dispose (false);
-			}
 		}
 
 		Runner runner;
 		AutoResetEvent start_event;
+		Thread t;
 
 		public Timer (TimerCallback callback, object state, int dueTime, int period)
 		{
@@ -169,7 +147,7 @@ namespace System.Threading
 			start_event = new AutoResetEvent (false);
 			runner = new Runner (callback, state, start_event);
 			Change (dueTime, period);
-			Thread t = new Thread (new ThreadStart (runner.Start));
+			t = new Thread (new ThreadStart (runner.Start));
 			t.IsBackground = true;
 			t.Start ();
 		}
@@ -220,7 +198,10 @@ namespace System.Threading
 
 		public void Dispose ()
 		{
-			runner.Dispose ();
+			if (t != null && t.IsAlive) {
+				t.Abort ();
+				t = null;
+			}
 			runner = null;
 			GC.SuppressFinalize (this);
 		}
@@ -234,6 +215,10 @@ namespace System.Threading
 
 		~Timer ()
 		{
+			if (t != null && t.IsAlive) {
+				t.Abort ();
+				t = null;
+			}
 			runner = null;
 		}
 	}
