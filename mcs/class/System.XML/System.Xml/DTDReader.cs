@@ -393,6 +393,12 @@ namespace System.Xml
 					TryExpandPERef ();
 					SkipWhitespace ();
 					while(PeekChar () != ')') {
+						SkipWhitespace ();
+						if (PeekChar () == '%') {
+							TryExpandPERef ();
+							SkipWhitespace ();
+							continue;
+						}
 						Expect('|');
 						SkipWhitespace ();
 						TryExpandPERef ();
@@ -417,8 +423,11 @@ namespace System.Xml
 					SkipWhitespace ();
 
 					do {	// copied from ReadCP() ...;-)
-						TryExpandPERef ();
-						SkipWhitespace ();
+						if (PeekChar () == '%') {
+							TryExpandPERef ();
+							SkipWhitespace ();
+							continue;
+						}
 						if(PeekChar ()=='|') {
 							// CPType=Or
 							if (model.OrderType == DTDContentOrderType.Seq)
@@ -485,8 +494,11 @@ namespace System.Xml
 				model.ChildModels.Add (ReadCP (elem));
 				SkipWhitespace ();
 				do {
-					TryExpandPERef ();
-					SkipWhitespace ();
+					if (PeekChar () == '%') {
+						TryExpandPERef ();
+						SkipWhitespace ();
+						continue;
+					}
 					if(PeekChar ()=='|') {
 						// CPType=Or
 						if (model.OrderType == DTDContentOrderType.Seq)

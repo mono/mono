@@ -1,3 +1,8 @@
+2004-03-27  Atsushi Enomoto <atsushi@ximian.com>
+
+	* DTDReader.cs : In some places sequential parameter entity was
+	  incorrectly skipped (and caused invalid result).
+
 2004-03-24  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlDocumentNavigator.cs : MoveTo*Namespace() should not iterate
