@@ -150,7 +150,7 @@ namespace Mono.Xml.Xsl
 					Attribute attr = pendingAttributes [i];
 					string prefix = attr.Prefix;
 					if (prefix == String.Empty)
-						prefix = _nsManager.LookupPrefix (attr.Namespace);
+						prefix = _nsManager.LookupPrefix (attr.Namespace, false);
 					Emitter.WriteAttributeString (prefix, attr.LocalName, attr.Namespace, attr.Value);
 				}
 				for (int i = 0; i < _currentNsPrefixes.Count; i++) {
@@ -275,14 +275,14 @@ namespace Mono.Xml.Xsl
 
 		public override void WriteNamespaceDecl (string prefix, string nsUri)
 		{
-			if (_nsManager.LookupNamespace (prefix) == nsUri)
+			if (_nsManager.LookupNamespace (prefix, false) == nsUri)
 				return;
 
 			if (prefix == String.Empty) {
 				//Default namespace
 				if (_nsManager.DefaultNamespace != nsUri)
 					_nsManager.AddNamespace (prefix, nsUri);
-			} else if (_nsManager.LookupPrefix (nsUri) == null)
+			} else if (_nsManager.LookupPrefix (nsUri, false) == null)
 				//That's new namespace - add it to the collection
 				_nsManager.AddNamespace (prefix, nsUri);
 

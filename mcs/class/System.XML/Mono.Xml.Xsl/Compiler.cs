@@ -496,7 +496,7 @@ namespace Mono.Xml.Xsl
 		
 		Expression IStaticXsltContext.TryGetFunction (QName name, FunctionArguments args)
 		{
-			string ns = GetNsm ().LookupNamespace (name.Namespace);
+			string ns = GetNsm ().LookupNamespace (name.Namespace, false);
 			if (ns == XslStylesheet.MSXsltNamespace && name.Name == "node-set")
 				return new MSXslNodeSet (args);
 			
@@ -776,7 +776,7 @@ namespace Mono.Xml.Xsl
 		{
 			int colon = name.IndexOf (':');
 			if (colon > 0)
-				return new QName (name.Substring (colon + 1), ctx.LookupNamespace (name.Substring (0, colon)));
+				return new QName (name.Substring (colon + 1), ctx.LookupNamespace (name.Substring (0, colon), false));
 			else if (colon < 0)
 				// Default namespace is not used for unprefixed names.
 				return new QName (name, "");
@@ -807,7 +807,11 @@ namespace Mono.Xml.Xsl
 		
 		public override string DefaultNamespace { get { return String.Empty; }}
 
-		public override string LookupNamespace (string prefix)
+#if NET_2_0
+		public override string LookupNamespace (string prefix, bool atomizedNames)
+#else
+		internal override string LookupNamespace (string prefix, bool atomizedNames)
+#endif
 		{
 			if (prefix == "" || prefix == null)
 				return "";
