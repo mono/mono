@@ -509,7 +509,7 @@ namespace System.Data.SqlClient {
                         if (null == parameters.Get ("POOLING"))
                                 parameters["POOLING"] = "true";
                         if (null == parameters.Get ("WORKSTATION ID"))
-                                parameters["WORKSTATION ID"] = Dns.GetHostByName ("localhost").HostName;
+                                parameters["WORKSTATION ID"] = Dns.GetHostName();
                 }
 
                 private void SetProperties (NameValueCollection parameters)

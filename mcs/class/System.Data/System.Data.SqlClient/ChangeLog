@@ -1,3 +1,9 @@
+2003-11-20  Joerg Rosenkranz  <JoergR@voelcker.com>
+
+	* SqlConnection (SetDefaultConnectionParameters):
+	Changed default value of WORKSTATION ID to reflect real
+	host name instead of "localhost".
+
 2003-11-16 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* SqlParameterCollection.cs (Clear): Clear needs to take
