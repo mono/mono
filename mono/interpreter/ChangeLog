@@ -1,3 +1,8 @@
+Tue Jul 31 20:13:59 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* interp.c: implement stind.*, ldind.*, ldloca.s opcodes.
+	Provide better tracing with DEBUG_INTERP.
+
 Tue Jul 31 17:52:53 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* interp.c: massive namespace cleanup.
