@@ -1,3 +1,10 @@
+2004-03-31  Dick Porter  <dick@ximian.com>
+
+	* I18N/CJK/gb2312.table:
+	* I18N/CJK/Gb2312Convert.cs: 
+	* I18N/CJK/CP936.cs: Rewrote the GB2312 conversion, using the iconv
+	algorithm as a base.  Fixes bug 53841.
+
 2004-03-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ecma.pub: New. ECMA key to be used for strongnaming assemblies.
