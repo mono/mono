@@ -234,9 +234,13 @@ public class StreamWriterTest : TestCase
 			Assert("invalid filename error not thrown", errorThrown);
 		}
 		{
-			StreamWriter r = new StreamWriter(_codeFileName, true);
-			AssertNotNull("no stream writer", r);
-			r.Close();
+			try {
+				StreamWriter r = new StreamWriter(_codeFileName, true);
+				AssertNotNull("no stream writer", r);
+				r.Close();
+			} catch (Exception e) {
+				Fail ("Unxpected exception e=" + e.ToString());
+			}
 		}
 	}
 
