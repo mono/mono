@@ -8485,6 +8485,12 @@ namespace Mono.CSharp {
 			loc = l;
 		}
 
+		public Expression Source {
+			get {
+				return source;
+			}
+		}
+			
 		public override Expression DoResolve (EmitContext ec)
 		{
 			//

@@ -1,5 +1,14 @@
 2004-11-26  Miguel de Icaza  <miguel@ximian.com>
 
+	* expression.cs (UserCast.Source): Expose the underlying cast.
+
+	* statement.cs (Switch.SwitchGoverningType): Sort the list of
+	allowed types to find a match to int32 first (most common).
+
+	In addition, it ignores any ImplicitUserConversions that did an
+	internal implicit conversion (as the switch statement allows only
+	one integral conversion to exist).
+
 	* class.cs (PartialContainer.Create): rename `name' to
 	`member_name' for clarity.  Then replace the string calls with a
 	call to MemberName.GetPartialName, as now using
