@@ -23,6 +23,10 @@
 //	Peter Bartok	pbartok@novell.com
 //
 // $Log: ButtonBase.cs,v $
+// Revision 1.2  2004/08/21 21:57:41  pbartok
+// - Added loads of debug output for development
+// - Fixed typo in method name
+//
 // Revision 1.1  2004/08/15 21:31:10  pbartok
 // - First (mostly) working version
 //
@@ -35,6 +39,7 @@ using System.ComponentModel;
 using System.Drawing;
 
 namespace System.Windows.Forms {
+	[MonoTODO("Need to register for SizeChanged and force regen of button")]
 	public abstract class ButtonBase : Control {
 		#region Local Variables
 		private FlatStyle		flat_style;
@@ -52,7 +57,6 @@ namespace System.Windows.Forms {
 		#endregion	// Local Variables
 
 		#region Private Properties and Methods
-
 		internal ButtonState ButtonState {
 			get {
 				ButtonState	ret = ButtonState.Normal;
@@ -83,6 +87,7 @@ namespace System.Windows.Forms {
 		}
 
 		internal bool CheckRedraw() {
+			// FIXME - check if something has actually changed
 			Redraw();
 			return true;
 		}
@@ -95,11 +100,16 @@ namespace System.Windows.Forms {
 			width = this.ClientSize.Width;
 			height = this.ClientSize.Height;
 
+Console.WriteLine("ButtonBase Redraw() called");
+
 			ThemeEngine.Current.DrawButton(this.DeviceContext, this.ClientRectangle, this.ButtonState);
 
+Console.WriteLine("ButtonBase Redraw() 2");
 			if (has_focus) {
+Console.WriteLine("ButtonBase Redraw() 3");
 				ThemeEngine.Current.DrawFocusRectangle(this.DeviceContext, this.ClientRectangle, ThemeEngine.Current.ColorButtonText, ThemeEngine.Current.ColorButtonFace);
 			}
+Console.WriteLine("ButtonBase Redraw() 4");
 
 			// First, draw the image
 			if ((image != null) || (image_list != null)) {
@@ -186,10 +196,13 @@ namespace System.Windows.Forms {
 					image_y+=2;
 				}
 
+Console.WriteLine("ButtonBase Redraw() 5");
 				if (is_enabled) {
 					this.DeviceContext.DrawImage(i, image_x, image_y); 
+Console.WriteLine("ButtonBase Redraw() 6");
 				} else {
 					ThemeEngine.Current.DrawImageDisabled(this.DeviceContext, i, image_x, image_y, ThemeEngine.Current.ColorButtonFace);
+Console.WriteLine("ButtonBase Redraw() 7");
 				}
 			}
 
@@ -204,11 +217,14 @@ namespace System.Windows.Forms {
 
 				if (is_enabled) {
 					SolidBrush	b = new SolidBrush(ThemeEngine.Current.ColorButtonText);
+Console.WriteLine("ButtonBase Redraw() 8, {0} {1} {2} {3} {4}", text, this.Font, b, text_rect, text_format);
 					this.DeviceContext.DrawString(text, this.Font, b, text_rect, text_format);
 				} else {
+Console.WriteLine("ButtonBase Redraw() 9");
 					ThemeEngine.Current.DrawStringDisabled(this.DeviceContext, text, this.Font, ThemeEngine.Current.ColorButtonText, text_rect, text_format);
 				}
 			}
+Console.WriteLine("ButtonBase Redraw() complete");
 		}
 
 		#endregion	// Private Properties and Methods
@@ -498,6 +514,7 @@ namespace System.Windows.Forms {
 		}
 
 		protected override void OnPaint(PaintEventArgs pevent) {
+Console.WriteLine("ButtonBase OnPaint() called");
 			pevent.Graphics.DrawImage(this.ImageBuffer, pevent.ClipRectangle, pevent.ClipRectangle, GraphicsUnit.Pixel);
 			base.OnPaint(pevent);
 		}
@@ -520,7 +537,7 @@ namespace System.Windows.Forms {
 			base.OnVisibleChanged(e);
 		}
 
-		protected void ResetFlagsAndPaint() {
+		protected void ResetFlagsandPaint() {
 		}
 
 		protected override void WndProc(ref Message m) {
