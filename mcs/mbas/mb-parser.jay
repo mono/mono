@@ -618,7 +618,7 @@ compilation_unit
 	: logical_end_of_line
 	  opt_option_directives
 	  opt_imports_directives 
-	  opt_attributes
+	  opt_global_attributes
 	  opt_declarations 
 	  EOF
 	  {
@@ -802,14 +802,6 @@ opt_params
 	| OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS	{ $$ = $2; }
 	;
 
-global_attribute_list
-	: global_attribute
-	| global_attribute_list COMMA global_attribute
-	;
-
-global_attribute
-	: attribute_modifier COLON attribute
-
 attribute_modifier
 	: ASSEMBLY 
 	| MODULE
@@ -817,6 +809,30 @@ attribute_modifier
 	   { 
 	   	Report.Error (658, lexer.Location, "`" + (string)$1 + "' is an invalid attribute target");
 	   }
+	;
+
+global_attribute_list
+	: global_attribute
+	| global_attribute_list COMMA global_attribute
+	;
+
+global_attribute
+	: attribute_modifier COLON attribute
+	;
+
+global_attributes_definition
+	: attr_begin global_attribute_list attr_end
+	;
+
+global_attributes
+	: global_attributes_definition
+	| global_attributes global_attributes_definition 
+	| global_attributes end_of_stmt global_attributes_definition
+	;
+
+opt_global_attributes
+	: /* empty */
+ 	| global_attributes end_of_stmt
 	;
 
 opt_attributes

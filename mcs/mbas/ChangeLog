@@ -1,3 +1,7 @@
+2004/08/19 Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* mb-parser.jay : some changes just not to stumble in global attributes definitions in multiple-lines 
+		like we have in VS.NET generated AssemblyInfo.vb files. still need to really process that definitions like mcs does
+
 2004-09-07 Bernie Solomon <bernard@ugsolutions.com>
 	* mb-parser.jay:
 	* mb-tokenizer.cs: first cut at implementing
