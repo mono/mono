@@ -1,5 +1,19 @@
 2003-12-15  Bernie Solomon  <bernard@ugsolutions.com>
 
+	* shared.c: (_wapi_shm_open) make scratch file
+	not have to immediately regrow to avoid remaps
+	(HPUX can't cope with these).
+	(_wapi_shm_attach) use actual size of file
+	to set scratch data_len for the creating process.
+
+	* handles.c: (_wapi_handle_new_internal) make
+	sure mutex & cond var are initialized even for
+	non process shared ones. 
+	(_wapi_handle_unref) always call destroy 
+	routines on mutex & cond var
+
+2003-12-15  Bernie Solomon  <bernard@ugsolutions.com>
+
 	* daemon.c: change channel data structure so
 	input sources are removed from glib event loop
 	properly. xsp works better on Solaris and 
