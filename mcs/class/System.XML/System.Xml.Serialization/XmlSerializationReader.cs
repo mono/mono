@@ -281,7 +281,7 @@ namespace System.Xml.Serialization {
 			string typeName = Reader.GetAttribute ("xsi:type");
 			if (typeName == string.Empty || typeName == null) return null;
 			int i = typeName.IndexOf (":");
-			if (i == -1) return new XmlQualifiedName (typeName, "");
+			if (i == -1) return new XmlQualifiedName (typeName, Reader.NamespaceURI);
 			else 
 			{
 				string prefix = typeName.Substring(0,i);

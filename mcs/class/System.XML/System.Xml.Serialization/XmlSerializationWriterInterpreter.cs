@@ -249,7 +249,11 @@ namespace System.Xml.Serialization
 					break;
 
 				case SchemaTypes.Array:
-					if (elem.MappedType.MultiReferenceType) 
+					if (memberValue == null) {
+						if (_format == SerializationFormat.Literal) WriteNullTagLiteral (elem.ElementName, elem.Namespace);
+						else WriteNullTagEncoded (elem.ElementName, elem.Namespace);
+					}
+					else if (elem.MappedType.MultiReferenceType) 
 						WriteReferencingElement (elem.ElementName, elem.Namespace, memberValue, elem.IsNullable);
 					else {
 						WriteStartElement(elem.ElementName, elem.Namespace, memberValue);

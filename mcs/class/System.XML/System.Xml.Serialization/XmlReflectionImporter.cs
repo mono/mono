@@ -19,8 +19,6 @@ namespace System.Xml.Serialization {
 		string initialDefaultNamespace;
 		XmlAttributeOverrides attributeOverrides;
 		ArrayList includedTypes;
-		Hashtable clrTypes = new Hashtable ();
-		Hashtable schemaTypes = new Hashtable ();
 		ReflectionHelper helper = new ReflectionHelper();
 		int arrayChoiceCount = 1;
 
@@ -54,6 +52,12 @@ namespace System.Xml.Serialization {
 				this.attributeOverrides = attributeOverrides;
 		}
 
+		void Reset ()
+		{
+			helper = new ReflectionHelper();
+			arrayChoiceCount = 1;
+		}
+
 		#endregion // Constructors
 
 		#region Methods
@@ -63,6 +67,7 @@ namespace System.Xml.Serialization {
 			XmlReflectionMember [] members,
 			bool hasWrapperElement)
 		{
+			Reset ();
 			XmlMemberMapping[] mapping = new XmlMemberMapping[members.Length];
 			for (int n=0; n<members.Length; n++)
 			{

@@ -435,10 +435,12 @@ nss.Add (Reader.LocalName, Reader.Value);
 			if (list == null) {
 				if (canCreateInstance) list = CreateList (listType);
 				else throw CreateReadOnlyCollectionException (typeMap.TypeFullName);
-			}	
+			}
 
 			if (Reader.IsEmptyElement) {
 				Reader.Skip();
+				if (listType.IsArray)
+					list = ShrinkArray ((Array)list, 0, listType.GetElementType(), isNullable);
 				return list;
 			}
 
@@ -453,7 +455,7 @@ nss.Add (Reader.LocalName, Reader.Value);
 					XmlTypeMapElementInfo elemInfo = listMap.FindElement (Reader.LocalName, Reader.NamespaceURI);
 					if (elemInfo != null)
 						AddListValue (listType, ref list, index++, ReadObjectElement (elemInfo), false);
-					else 
+					else
 						UnknownNode(null);
 				}
 				else 

@@ -1,3 +1,11 @@
+2003-06-17  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* XmlReflectionImporter.cs: Reset internal tables for each ImportMembersMapping call.
+	* XmlSerializationReader.cs: GetXsiType(): use current reader.namespaceUri if namespace
+	  is not specified in the xsi attribute.
+	* XmlSerializationReaderInterpreter.cs: Fixed bug when reading an empty array from an empty element.
+	* XmlSerializationWriterInterpreter.cs: Added null value check when writting an array.
+	
 2003-06-16  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XmlSerializationReader.cs : Synchronous fix with 
