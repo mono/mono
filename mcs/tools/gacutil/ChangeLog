@@ -1,3 +1,7 @@
+2004-04-30  Todd Berman  <tberman@sevenl.net>
+
+	* gacutil.cs: Add a missing .Trim ()
+
 2004-04-29  Jackson Harper  <jackson@ximian.com>
 
 	* gacutil.cs: Allow a prefix to be specified. This is only for

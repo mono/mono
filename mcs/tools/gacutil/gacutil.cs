@@ -149,7 +149,7 @@ namespace Mono.Tools
 				if(pieces.Length == 1)
 					paramInfo["assembly"] = pieces[0];
 				else
-					paramInfo[pieces[0].ToLower ()] = pieces[1];
+					paramInfo[pieces[0].Trim ().ToLower ()] = pieces[1];
 			}
 
 			if (!Directory.Exists (Path.Combine (gac_path, (string) paramInfo["assembly"]))) {
