@@ -1,3 +1,7 @@
+2003-03-27  Ville Palo <vi64pa@kolumbus.fi>
+
+	* UniqueConstraintTest.cs: some minor fixes.
+	
 2003-03-26  Ville Palo <vi64pa@kolumbus.fi>
 
 	* DataRowCollectionTest.cs: Tests for AutoIncrement

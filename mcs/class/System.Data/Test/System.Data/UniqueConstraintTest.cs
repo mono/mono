@@ -44,24 +44,21 @@ namespace MonoTests.System.Data
 				cst = new UniqueConstraint(new DataColumn(""));
 
 				Assertion.Fail("Failed to throw ArgumentException.");
-			}
-			catch (ArgumentException) {}
-			catch (AssertionException exc) {throw exc;}
-			catch {
-				Assertion.Fail("A1: Wrong Exception type.");
-			}	
+			} 
+			catch (Exception e) {
+				Assertion.AssertEquals ("test#02", typeof (ArgumentException), e.GetType ());
+                        	Assertion.AssertEquals ("test#03", "Column must belong to a table.", e.Message);
+                        }        
 
 			//Null exception
 			try {
 				//Should throw argument null exception
 				cst = new UniqueConstraint((DataColumn)null);
 			}
-			catch (ArgumentNullException) {}
-			catch (AssertionException exc) {throw exc;}
-			catch {
-				Assertion.Fail("A2: Wrong Exception type.");
-			}
-
+                        catch (Exception e) {
+                        	Assertion.AssertEquals ("test#05", typeof (NullReferenceException), e.GetType ());
+                                Assertion.AssertEquals ("test#06", "Object reference not set to an instance of an object.", e.Message);
+                        }
 			
 			try {
 				//Should throw exception
@@ -143,9 +140,17 @@ namespace MonoTests.System.Data
 			//Test ctor parm set for ConstraintName & IsPrimaryKey
 			Assertion.AssertEquals("ConstraintName not set in ctor.", 
 				"MyName", cst.ConstraintName);
-			Assertion.AssertEquals("IsPrimaryKey not set in ctor.",
-				true, cst.IsPrimaryKey);
-		
+                        Assertion.AssertEquals("IsPrimaryKey already set.",
+                                false, cst.IsPrimaryKey);
+                
+			_table.Constraints.Add (cst);
+
+                        Assertion.AssertEquals("IsPrimaryKey not set set.",
+                                true, cst.IsPrimaryKey);
+                	
+                	Assertion.AssertEquals("PrimaryKey not set.", 1, _table.PrimaryKey.Length);
+                	Assertion.AssertEquals("Not unigue.", true, _table.PrimaryKey [0].Unique);
+
 		}
 
 		[Test]
