@@ -1,3 +1,8 @@
+2004-12-13 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* File.cs: delegate to the runtime the task of checking for destination
+	file existence in Move.
+
 2004-12-06  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* TextWriter.cs : create CoreNewLine in another .ctor().
