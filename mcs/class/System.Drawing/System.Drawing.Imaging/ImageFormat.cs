@@ -17,7 +17,7 @@ namespace System.Drawing.Imaging {
 		// constructors
 		[MonoTODO]
 		public ImageFormat(Guid guid) {
-			guid = guid;
+			this.guid = guid;
 		}
 		
 		// methods
@@ -33,7 +33,7 @@ namespace System.Drawing.Imaging {
 		
 		[MonoTODO]
 		public override string ToString() {
-			throw new NotImplementedException ();
+			return String.Format("ImageFormat.Guid {0}", guid);
 		}
 
 		// properties
