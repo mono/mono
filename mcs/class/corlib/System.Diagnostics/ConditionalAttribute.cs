@@ -34,7 +34,11 @@ namespace System.Diagnostics
 {
 
 	[Serializable]
-	[AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
+	[AttributeUsage(
+#if NET_2_0
+		AttributeTargets.Class |
+#endif
+		AttributeTargets.Method, AllowMultiple = true)]
 	public sealed class ConditionalAttribute : System.Attribute 
 	{
 
