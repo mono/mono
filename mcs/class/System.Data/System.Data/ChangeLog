@@ -1,3 +1,10 @@
+2005-01-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ConstraintCollection.cs : Add() should throw ArgumentException when
+	  the argument constraint fails validation.
+	  DataTable.cs : set_PrimaryKey should throw ArgumentException when
+	  the argument contains constraints which fail validation.
+
 2005-01-19  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* DataRelationCollection.cs: 
