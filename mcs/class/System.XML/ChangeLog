@@ -1,3 +1,8 @@
+2004-03-24  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* System.Xml_test.dll.sources: Added 
+		System.Xml.Serialization/ComplexDataStructure.cs.
+
 2004-02-24  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* System.Xml.dll.sources: Added SerializationSource.cs.

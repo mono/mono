@@ -30,6 +30,7 @@ System.Xml/XsdParticleValidationTests.cs
 System.Xml/XsdValidatingReaderTests.cs
 System.Xml.Schema/XmlSchemaTests.cs
 System.Xml.Schema/XmlSchemaLengthFacetTests.cs
+System.Xml.Serialization/ComplexDataStructure.cs
 System.Xml.Serialization/DeserializeTests.cs
 System.Xml.Serialization/XmlAttributesTests.cs
 System.Xml.Serialization/XmlReflectionImporterTests.cs
