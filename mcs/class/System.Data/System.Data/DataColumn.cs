@@ -53,7 +53,7 @@ namespace System.Data {
 		private Type _dataType = null;
 		private object _defaultValue = null;
 		private string expression = null;
-		private PropertyCollection _extendedProperties = null;
+		private PropertyCollection _extendedProperties = new PropertyCollection ();
 		private int maxLength = -1; //-1 represents no length limit
 		private string nameSpace = null;
 		private int _ordinal = -1; //-1 represents not part of a collection

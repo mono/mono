@@ -1,5 +1,9 @@
 2003-01-04  Ville Palo <vi64pa@koti.soon.fi>
 
+	* DataColumn.cs: ExtendedProperties is by default !null-
+	
+2003-01-04  Ville Palo <vi64pa@koti.soon.fi>
+
 	* DataColumnCollection.cs: Add (DataColumn Column) -method didn't 
 	set column's ordinal.
 	
