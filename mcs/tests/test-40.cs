@@ -77,6 +77,19 @@ public class Blah {
 		if (e.ToString () != "d")
 			return 15;
 
+		//
+		// Test "U operator (E x, E x)"
+		//
+		// Notice that the Microsoft C# compiler wont compile the following
+		// code, that is a bug in their compiler, see section 14.7.5 of the
+		// spec.
+
+		if ((A.c - A.a) != 2)
+			return 16;
+
+		if ((A.c - 1) != A.b)
+			return 17;
+		
 		Console.WriteLine ("Value: " + e.ToString ());
 		Console.WriteLine ("Enum emission test okay");
 		return 0;
