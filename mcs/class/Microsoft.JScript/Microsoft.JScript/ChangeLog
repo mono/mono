@@ -1,3 +1,8 @@
+2004-08-25  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
+
+	* BinaryOp.cs: renamed current_op to simply op as with the new
+	parser we no longer need to keep track of the old_op.
+
 2004-08-24  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
 	* expression.cs: do not pass the operand as a parameter to the
