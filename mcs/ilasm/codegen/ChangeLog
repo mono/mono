@@ -1,3 +1,7 @@
+2004-08-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DebuggingInfo.cs : csc build fix (see bug #62230).
+
 2004-07-27  Martin Baulig  <martin@ximian.com>
 
 	* IInstr.cs (IInstr): Made this an abstract class and not an

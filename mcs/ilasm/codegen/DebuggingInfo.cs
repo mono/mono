@@ -18,7 +18,7 @@ namespace Mono.ILASM {
 	public class SymbolWriter : MonoSymbolWriter
 	{
 		ArrayList sources;
-		SourceMethod current_method;
+		Mono.ILASM.SourceMethod current_method;
 		SourceFile current_source;
 
 		public SymbolWriter (string filename)
@@ -27,9 +27,9 @@ namespace Mono.ILASM {
 			sources = new ArrayList ();
 		}
 
-		public SourceMethod BeginMethod (MethodDef method, Location location)
+		public Mono.ILASM.SourceMethod BeginMethod (MethodDef method, Location location)
 		{
-			current_method = new SourceMethod (method, location);
+			current_method = new Mono.ILASM.SourceMethod (method, location);
 			current_source.AddMethod (current_method);
 			return current_method;
 		}
