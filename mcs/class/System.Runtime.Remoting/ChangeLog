@@ -1,3 +1,19 @@
+2002-12-29  Lluis Sanchez Gual <lsg@ctv.es>
+
+	* CommonTransportKeys.cs: Implemented and added to CVS
+	* TcpChannel.cs: Added. It is a more ore less complete implementation
+	  of the tcp channel, although not yet compatible with MS TcpChannel.
+	* TcpClientChannel.cs: Added
+	* TcpClientTransportSink.cs: Added
+	* TcpClientTransportSinkProvider.cs: Added
+	* TcpConnectionPool.cs: Added
+	* TcpMessageIO.cs: Added
+	* TcpServerChannel.cs: Added
+	* TcpServerTransportSink.cs: Added
+	* SimpleWireFormat.cs: Corrected a bug in method SerializeObject
+	* SimpleServerFormatterSink.cs: Some small corrections
+	* SimpleClientFormatterSink.cs: Some small corrections
+
 2002-09-03  Dietmar Maurer  <dietmar@ximian.com>
 
 	* System.Runtime.Remoting.Channels.CORBA/CORBAChannel.cs:

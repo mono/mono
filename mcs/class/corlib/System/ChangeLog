@@ -1,3 +1,7 @@
+2002-12-20 Lluis Sanchez Gual <lsg@ctv.es>
+
+	* Activator.cs: implemented method GetObject.
+
 2002-12-28  Marcus Urban <mathpup@mylinuxisp.com>
 
 	* Activator.cs: Since the documentation indicates the method

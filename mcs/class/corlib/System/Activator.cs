@@ -198,16 +198,14 @@ namespace System
 			return ctor.Invoke (null);
 		}
 
-		[MonoTODO]
 		public static object GetObject (Type type, string url)
 		{
-			throw new NotImplementedException(); 
+			return RemotingServices.Connect (type, url);
 		}
 
-		[MonoTODO]
 		public static object GetObject (Type type, string url, object state)
 		{ 
-			throw new NotImplementedException(); 
+			return RemotingServices.Connect (type, url, state);
 		}
 	}
 }

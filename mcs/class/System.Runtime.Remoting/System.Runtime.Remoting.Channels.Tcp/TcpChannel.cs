@@ -2,6 +2,7 @@
 // System.Runtime.Remoting.Channels.Tcp.TcpChannel.cs
 //
 // Author: Rodrigo Moya (rodrigo@ximian.com)
+//         Lluis Sanchez Gual (lsg@ctv.es)
 //
 // 2002 (C) Copyright, Ximian, Inc.
 //
@@ -12,86 +13,98 @@ using System.Text.RegularExpressions;
 
 namespace System.Runtime.Remoting.Channels.Tcp
 {
-	public class TcpChannel : IChannelReceiver, IChannel,
-		IChannelSender
+	public class TcpChannel : IChannelReceiver, IChannel, IChannelSender
 	{
-		private int tcp_port;
-		
-		public TcpChannel ()
-	        {
-			tcp_port = 0;
+		private TcpClientChannel _clientChannel;
+		private TcpServerChannel _serverChannel = null;
+		private string _name;
+	
+		public TcpChannel (): this (0)
+        {
 		}
 
 		public TcpChannel (int port)
 		{
-			tcp_port = port;
+			Hashtable ht = new Hashtable();
+			ht["port"] = port.ToString();
+			Init(ht, null, null);
 		}
 
-		[MonoTODO]
+		public void Init(IDictionary properties, IClientChannelSinkProvider clientSink, IServerChannelSinkProvider serverSink)
+		{
+			_clientChannel = new TcpClientChannel(properties,clientSink);
+
+			string port = properties["port"] as string;
+			if (port != null && port != string.Empty)
+			{
+				_serverChannel = new TcpServerChannel(properties, serverSink);
+			}
+
+			_name = properties["name"] as string;
+		}
+
+
 		public TcpChannel (IDictionary properties,
 				   IClientChannelSinkProvider clientSinkProvider,
 				   IServerChannelSinkProvider serverSinkProvider)
 		{
-			throw new NotImplementedException ();
+			Init (properties, clientSinkProvider, serverSinkProvider);
 		}
 
-		public object ChannelData
+		public IMessageSink CreateMessageSink(string url, object remoteChannelData, out string objectURI)
 		{
-			[MonoTODO]
-			get {
-				throw new NotImplementedException ();
-			}
+			return _clientChannel.CreateMessageSink(url, remoteChannelData, out objectURI);
 		}
 
 		public string ChannelName
 		{
-			[MonoTODO]
-			get {
-				throw new NotImplementedException ();
-			}
+			get { return _name; }
 		}
 
 		public int ChannelPriority
 		{
-			[MonoTODO]
-			get {
-				throw new NotImplementedException ();
-			}
+			get { return 1; }
 		}
 
-		[MonoTODO]
-		public IMessageSink CreateMessageSink (string url,
-						       object remoteChannelData,
-						       out string objectURI)
-	        {
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public string[] GetUrlsForUri (string objectURI)
+		public void StartListening (object data)
 		{
-			throw new NotImplementedException ();
+			if (_serverChannel != null) _serverChannel.StartListening(data);
+		}
+		
+		public void StopListening (object data)
+		{
+			if (_serverChannel != null) _serverChannel.StopListening(data);
+		}
+
+		public string[] GetUrlsForUri (string uri)
+		{
+			if (_serverChannel != null) return _serverChannel.GetUrlsForUri(uri);
+			else return null;
+		}
+
+		public object ChannelData
+		{
+			get 
+			{
+				if (_serverChannel != null) return _serverChannel.ChannelData;
+				else return null;
+			}
 		}
 
 		public string Parse (string url, out string objectURI)
 		{
+			return TcpChannel.ParseChannelUrl (url, out objectURI);
+		}
+
+		internal static string ParseChannelUrl (string url, out string objectURI)
+		{
 			int port;
 			
 			string host = ParseTcpURL (url, out objectURI, out port);
-
-			return "tcp://" + host + ":" + port;
-		}
-
-		[MonoTODO]
-		public void StartListening (object data)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public void StopListening (object data)
-		{
-			throw new NotImplementedException ();
+			if (host != null)
+				return "tcp://" + host + ":" + port;
+			else
+				return null;
 		}
 
 		internal static string ParseTcpURL (string url, out string objectURI, out int port)
@@ -101,7 +114,7 @@ namespace System.Runtime.Remoting.Channels.Tcp
 			objectURI = null;
 			port = 0;
 			
-			Match m = Regex.Match (url, "tcp://([^:]+):([0-9]+)(/.*)");
+			Match m = Regex.Match (url, "tcp://([^:]+):([0-9]+)[/](.*)");
 
 			if (!m.Success)
 				return null;

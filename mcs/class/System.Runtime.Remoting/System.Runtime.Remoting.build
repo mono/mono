@@ -13,6 +13,7 @@
 			<arg value="/lib:../lib/"/>
 			<arg value="/r:corlib.dll"/>
 			<arg value="/r:System.dll"/>
+			<arg value="/r:System.Runtime.Serialization.Formatters.Soap.dll"/>
 			<sources>
 				<includes name="**/*.cs"/> 
 				<excludes name="Test/**"/> 
