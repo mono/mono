@@ -1,3 +1,7 @@
+2003-14-01  Ville Palo <vi64pa@koti.soon.fi>
+
+	* DataRelationTest.cs: Added more tests
+	
 2003-13-01  Ville Palo <vi64pa@koti.soon.fi>
 
 	* DataRelationTest.cs: Test class for DataRelation
