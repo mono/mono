@@ -502,11 +502,17 @@ namespace Mono.Tools.LocaleBuilder {
 
 			string [] part_one, part_two;
 			string [] pos_neg = format.Split (new char [1] {';'}, 2);
-			
+
+			// Most of the patterns are common in positive and negative
+			if (pos_neg.Length == 1)
+				pos_neg = new string [] {pos_neg [0], pos_neg [0]};
+
 			if (pos_neg.Length == 2) {
 				
 				part_one = pos_neg [0].Split (new char [1] {'.'}, 2);
-											
+				if (part_one.Length == 1)
+					part_one = new string [] {part_one [0], String.Empty};
+
 				if (part_one.Length == 2) {
 					// assumed same for both positive and negative
 					// decimal digit side
@@ -515,8 +521,10 @@ namespace Mono.Tools.LocaleBuilder {
 						if (part_one [1][i] == '#') {
 							ci.NumberFormatEntry.NumberDecimalDigits ++;
 						} else
-							break;						
-					}
+							break;								}
+					// FIXME: This should be actually done by modifying culture xml files, but too many files to be modified.
+					if (ci.NumberFormatEntry.NumberDecimalDigits > 0)
+						ci.NumberFormatEntry.NumberDecimalDigits --;
 
 					// decimal grouping side
 					part_two = part_one [0].Split (',');
@@ -563,19 +571,23 @@ namespace Mono.Tools.LocaleBuilder {
 			if (format.StartsWith ("%")) {
 				ci.NumberFormatEntry.PercentPositivePattern = 2;
 				ci.NumberFormatEntry.PercentNegativePattern = 2;
+				format = format.Substring (1);
 			} else if (format.EndsWith (" %")) {
 				ci.NumberFormatEntry.PercentPositivePattern = 0;
 				ci.NumberFormatEntry.PercentNegativePattern = 0;
+				format = format.Substring (0, format.Length - 2);
 			} else if (format.EndsWith ("%")) {
 				ci.NumberFormatEntry.PercentPositivePattern = 1;
 				ci.NumberFormatEntry.PercentNegativePattern = 1;
+				format = format.Substring (0, format.Length - 1);
 			} else {
 				ci.NumberFormatEntry.PercentPositivePattern = 0;
 				ci.NumberFormatEntry.PercentNegativePattern = 0;
 			}
 
 			part_one = format.Split (new char [1] {'.'}, 2);
-			
+			if (part_one.Length == 1)
+				part_one = new string [] {part_one [0], String.Empty};
 			if (part_one.Length == 2) {
 				// assumed same for both positive and negative
 				// decimal digit side
@@ -586,7 +598,6 @@ namespace Mono.Tools.LocaleBuilder {
 					else
 						break;
 				}
-
 				// percent grouping side
 				part_two = part_one [0].Split (',');
 				if (part_two.Length > 1) {
@@ -594,10 +605,13 @@ namespace Mono.Tools.LocaleBuilder {
 					ci.NumberFormatEntry.PercentGroupSizes = new int [len];
 					for (int i = 0; i < len; i++) {
 						string pat = part_two [i + 1];
+						if (pat [pat.Length -1] == '0')
+							ci.NumberFormatEntry.PercentDecimalDigits = pat.Length - 1;
 						ci.NumberFormatEntry.PercentGroupSizes [i] = pat.Length;
 					}
 				} else {
 					ci.NumberFormatEntry.PercentGroupSizes = new int [1] { 3 };
+					ci.NumberFormatEntry.PercentDecimalDigits = 2;
 				}
 			}
 		}
@@ -612,11 +626,15 @@ namespace Mono.Tools.LocaleBuilder {
 
 			string [] part_one, part_two;
 			string [] pos_neg = format.Split (new char [1] {';'}, 2);
-			
-			pos_neg = format.Split (new char [1] {';'}, 2);			
+	
+			// Most of the patterns are common in positive and negative
+			if (pos_neg.Length == 1)
+				pos_neg = new string [] {pos_neg [0], pos_neg [0]};
+
 			if (pos_neg.Length == 2) {
 				part_one = pos_neg [0].Split (new char [1] {'.'}, 2);
-				
+				if (part_one.Length == 1)
+					part_one = new string [] {part_one [0], String.Empty};
 				if (part_one.Length == 2) {
 					// assumed same for both positive and negative
 					// decimal digit side

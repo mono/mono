@@ -1,4 +1,22 @@
-2004-06-03  Atsushi Enomoto  <atsushi@ximian.com>
+2004-06-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Driver.cs :
+	  - NumberDecimalDigits are almost differently specified by locale
+	    xml files. Almost all of them have ".###", but we need ".##" in
+	    almost all the locale. So let's *assume* that the number of
+	    digit is always +1 extraneous by this Driver itself.
+	    This change accompanies with some existing supp/*.xml changes.
+
+	  - For decimal patterns and currency patterns, when numeric patterns
+	    does not have ';'-separated patterns, it ignored the whole pattern
+	    string. Fixed it by just copying the same patterns.
+
+	  - When parsing percent patterns, '%' characters were in the way.
+	  - When the decimal part of the percent pattern ends with ".##0",
+	    the value of PercentDecimalDigits is 2.
+	  - Assume PercentDecimalDigits as 2 by default.
+
+2004-06-05  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Driver.cs : Let's ignore DTD that takes most of the running time.
 
