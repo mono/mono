@@ -28,21 +28,25 @@ namespace Microsoft.Web.Services {
 			context = new SoapContext (null);
 		}
 
+		[MonoTODO]
 		public override IAsyncResult BeginGetRequestStream (AsyncCallback cb, object state) 
 		{
 			return Request.BeginGetRequestStream (cb, state);
 		}
 		
+		[MonoTODO]
 		public override IAsyncResult BeginGetResponse (AsyncCallback cb, object state) 
 		{
 			return Request.BeginGetResponse (cb, state);
 		}
 		
+		[MonoTODO]
 		public override Stream EndGetRequestStream (IAsyncResult asyncResult) 
 		{
 			return Request.EndGetRequestStream (asyncResult);
 		}
 		
+		[MonoTODO]
 		public override WebResponse EndGetResponse (IAsyncResult asyncResult) 
 		{
 			return Request.EndGetResponse (asyncResult);
@@ -57,7 +61,7 @@ namespace Microsoft.Web.Services {
 
 		public override WebResponse GetResponse () 
 		{
-			return Request.GetResponse ();
+			return new SoapWebResponse (this);
 		}
 
 		public override string ConnectionGroupName {

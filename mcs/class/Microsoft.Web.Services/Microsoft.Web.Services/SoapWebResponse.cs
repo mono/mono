@@ -17,23 +17,30 @@ namespace Microsoft.Web.Services {
 	public class SoapWebResponse : WebResponse {
 
 		private SoapWebRequest request;
-		private Stream stream;
+		private MemoryStream ms;
 		private WebResponse response;
 
 		internal SoapWebResponse (SoapWebRequest soapRequest) 
 		{
 			request = soapRequest;
-			response = soapRequest.GetResponse ();
-			stream = response.GetResponseStream ();
+			response = soapRequest.Request.GetResponse ();
 		}
 
 		public override Stream GetResponseStream () 
 		{
-			return stream;
+			SoapEnvelope envelope = new SoapEnvelope (request.SoapContext);
+			Stream s = response.GetResponseStream ();
+			envelope.Load (s);
+			request.Pipeline.ProcessInputMessage (envelope);
+
+			ms = new MemoryStream ();
+			envelope.Save (ms);
+			ms.Position = 0; // ready to be read
+			return ms;
 		}
 
 		public override long ContentLength { 
-			get { return stream.Length; }
+			get { return ((ms == null) ? 0 : ms.Length); }
 		}
 
 		public override string ContentType { 
@@ -45,7 +52,7 @@ namespace Microsoft.Web.Services {
 		}
 
 		public SoapContext SoapContext { 
-			get { return null; }
+			get { return request.SoapContext; }
 		}
 	} 
 }

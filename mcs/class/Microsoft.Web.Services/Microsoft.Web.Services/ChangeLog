@@ -1,3 +1,10 @@
+2003-10-05  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* SoapWebRequest.cs: Now returns a SoapWebResponse for GetResponse. Added 
+	[MonoTODO] to the async methods.
+	* SoapWebResponse.cs: Added Pipeline support for output.
+	* WebServicesExtension.cs: Added [MonoTODO] to reflect reality
+
 2003-10-04  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* SoapContext.cs: Oops - nuked tberman changes :( reapplied

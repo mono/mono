@@ -17,25 +17,30 @@ namespace Microsoft.Web.Services {
 
 		public WebServicesExtension () {}
 
+		[MonoTODO]
 		public override Stream ChainStream (Stream stream) 
 		{
 			return null;
 		}
 
+		[MonoTODO]
 		public override object GetInitializer (LogicalMethodInfo methodInfo, SoapExtensionAttribute attribute) 
 		{
 			return null;
 		}
 
+		[MonoTODO]
 		public override object GetInitializer (Type type) 
 		{
 			return null;
 		}
 
+		[MonoTODO]
 		public override void Initialize (object initializer) 
 		{
 		}
 
+		[MonoTODO]
 		public override void ProcessMessage (SoapMessage message) 
 		{
 			if (message == null)
