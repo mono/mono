@@ -1,5 +1,11 @@
 2002-05-10  Miguel de Icaza  <miguel@ximian.com>
 
+	* typemanager.cs (FindMembers): Now is a front-end to
+	RealFindMembers, and provides a two-level hashtable-based cache to
+	the request.  
+
+	15% performance improvement: from 22.5 to 19.2 seconds.
+
 	* expression.cs (IsParamsMethodApplicable): use foreach.
 	(Invocation.DoResolve): ditto.
 	(New.DoResolve): ditto.

@@ -210,6 +210,9 @@ namespace Mono.CSharp
 		
 		public static int Main (string[] args)
 		{
+			//args = new string [1];
+			//args [0] = "@list";
+			
 			MainDriver (args);
 			
 			return (error_count + Report.Errors) != 0 ? 1 : 0;

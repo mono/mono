@@ -620,8 +620,8 @@ public class TypeManager {
 	//
 	// FIXME: This can be optimized easily.  speedup by having a single builder mapping
 	//
-	public static MemberInfo [] FindMembers (Type t, MemberTypes mt, BindingFlags bf,
-						 MemberFilter filter, object criteria)
+	public static MemberInfo [] RealFindMembers (Type t, MemberTypes mt, BindingFlags bf,
+						     MemberFilter filter, object criteria)
 	{
 		//
 		// We have to take care of arrays specially, because GetType on
@@ -684,6 +684,49 @@ public class TypeManager {
 
 		return null;
 	}
+
+	struct CriteriaKey {
+		public MemberTypes mt;
+		public BindingFlags bf;
+	}
+	
+	static Hashtable criteria_cache = new Hashtable ();
+
+	//
+	// This is a wrapper for RealFindMembers, this provides a front-end cache
+	//
+	public static MemberInfo [] FindMembers (Type t, MemberTypes mt, BindingFlags bf,
+						 MemberFilter filter, object criteria)
+	{
+		Hashtable criteria_hash = (Hashtable) criteria_cache [criteria];
+		MemberInfo [] val;
+		Hashtable type_hash;
+		CriteriaKey ck;
+
+		ck.mt = mt;
+		ck.bf = bf;
+
+		if (criteria_hash != null){
+			type_hash = (Hashtable) criteria_hash [t];
+
+			if (type_hash != null){
+				if (type_hash.Contains (ck))
+					return (MemberInfo []) type_hash [ck];
+			} else {
+				type_hash = new Hashtable ();
+				criteria_hash [t] = type_hash;
+			}
+		} else {
+			criteria_hash = new Hashtable ();
+			type_hash = new Hashtable ();
+			criteria_cache [criteria] = criteria_hash;
+			criteria_hash [t] = type_hash;
+		}
+		val = RealFindMembers (t, mt, bf, filter, criteria);
+		type_hash [ck] = val;
+		return val;
+	}
+	
 
 	public static bool IsBuiltinType (Type t)
 	{
