@@ -1,3 +1,17 @@
+2004-12-13 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* CSharpCodeCompiler.cs: ignore the 'BETA SOFTWARE blah' from gmcs.
+	Use stderr to get the errors/warnings instead of stdout. Removed
+	obsolete lines from CreateErrorFromString.
+
+2004-10-02 Marek Safar <marek.safar@seznam.cz>
+
+	* CSharpCodeCompiler.cs: Fix #65722.
+
+2004-07-21  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* CSharpCodeCompiler.cs: Hack to make code generation work in 2.0.
+
 2004-07-13  Peter Williams  <peter@newton.cx>
 
 	* CSharpCodeCompiler.cs (CompileAssemblyFromDomBatch): Include

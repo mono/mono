@@ -139,15 +139,23 @@ namespace Mono.CSharp
 				mcs.StartInfo.Arguments = windowsMcsPath + ' ' + BuildArgs (options, fileNames);
 			}
 			else {
+#if NET_2_0
+				// FIXME: This is a temporary hack to make code genaration work in 2.0
+				mcs.StartInfo.FileName="gmcs";
+#else
 				mcs.StartInfo.FileName="mcs";
+#endif
 				mcs.StartInfo.Arguments=BuildArgs(options,fileNames);
 			}
 			mcs.StartInfo.CreateNoWindow=true;
 			mcs.StartInfo.UseShellExecute=false;
 			mcs.StartInfo.RedirectStandardOutput=true;
+			mcs.StartInfo.RedirectStandardError=true;
 			try {
 				mcs.Start();
-				mcs_output=mcs.StandardOutput.ReadToEnd();
+				// If there are a few kB in stdout, we might lock
+				mcs_output=mcs.StandardError.ReadToEnd();
+				mcs.StandardOutput.ReadToEnd ();
 				mcs.WaitForExit();
 			} finally {
 				results.NativeCompilerReturnValue = mcs.ExitCode;
@@ -193,29 +201,40 @@ namespace Mono.CSharp
 			}
 			return CompileAssemblyFromFileBatch (options, fileNames);
 		}
-		private static string BuildArgs(
-			CompilerParameters options,string[] fileNames)
+
+
+		private static string BuildArgs(CompilerParameters options,string[] fileNames)
 		{
 			StringBuilder args=new StringBuilder();
 			if (options.GenerateExecutable)
-				args.AppendFormat("/target:exe ");
+				args.Append("/target:exe ");
 			else
-				args.AppendFormat("/target:library ");
-			if (options.IncludeDebugInformation)
-				args.AppendFormat("/debug ");
-			if (options.TreatWarningsAsErrors)
-				args.AppendFormat("/warnaserror ");
+				args.Append("/target:library ");
 
-			if (options.WarningLevel != -1)
+			if (options.IncludeDebugInformation)
+				args.Append("/debug+ /optimize- ");
+			else
+				args.Append("/debug- /optimize+ ");
+
+			if (options.TreatWarningsAsErrors)
+				args.Append("/warnaserror ");
+
+			if (options.WarningLevel >= 0)
 				args.AppendFormat ("/warn:{0} ", options.WarningLevel);
 
 			if (options.OutputAssembly==null)
 				options.OutputAssembly = GetTempFileNameWithExtension (options.TempFiles, "dll");
 			args.AppendFormat("/out:\"{0}\" ",options.OutputAssembly);
+
 			if (null != options.ReferencedAssemblies)
 			{
 				foreach (string import in options.ReferencedAssemblies)
 					args.AppendFormat("/r:\"{0}\" ",import);
+			}
+
+			if (options.CompilerOptions != null) {
+				args.Append (options.CompilerOptions);
+				args.Append (" ");
 			}
 			
 			args.Append (" -- ");
@@ -225,9 +244,10 @@ namespace Mono.CSharp
 		}
 		private static CompilerError CreateErrorFromString(string error_string)
 		{
-			// When IncludeDebugInformation is true, prevents the debug symbols stats from braeking this.
-			if (error_string.StartsWith ("WROTE SYMFILE") || error_string.StartsWith ("OffsetTable"))
+#if NET_2_0
+			if (error_string.StartsWith ("BETA"))
 				return null;
+#endif
 
 			CompilerError error=new CompilerError();
 			Regex reg = new Regex (@"^(\s*(?<file>.*)\((?<line>\d*)(,(?<column>\d*))?\)\s+)*(?<level>\w+)\s*(?<number>.*):\s(?<message>.*)",
