@@ -355,6 +355,7 @@ namespace System.Windows.Forms
 					// thumb area depends on large change value,
 					// so we need to recalculate it.
 					CalcThumbArea ();
+					UpdatePos (Value, true);
 					Refresh ();
 				}
 			}
@@ -371,6 +372,7 @@ namespace System.Windows.Forms
 				// thumb area depends on maximum value,
 				// so we need to recalculate it.
 				CalcThumbArea ();
+				UpdatePos (Value, true);
 				Refresh ();
 			}
 		}
@@ -386,6 +388,7 @@ namespace System.Windows.Forms
 				// thumb area depends on minimum value,
 				// so we need to recalculate it.
 				CalcThumbArea ();
+				UpdatePos (Value, true);
 				Refresh ();
 			}
 		}
@@ -398,6 +401,7 @@ namespace System.Windows.Forms
 
 				if (small_change != value) {
 					small_change = value;
+					UpdatePos (Value, true);
 					Refresh ();
 				}
 			}
@@ -543,8 +547,8 @@ namespace System.Windows.Forms
 				thumb_area.Y = 0;
 				thumb_area.X = scrollbutton_width;
 				thumb_area.Height = Height;
-				thumb_area.Width = Width - scrollbutton_width -  scrollbutton_width;
-
+				thumb_area.Width = Width - scrollbutton_width -  scrollbutton_width;	
+				
 				if (Width < scrollbutton_width * 2)
 					thumb_size = 0;
 				else {
@@ -595,7 +599,7 @@ namespace System.Windows.Forms
 			if (Width <= 0 || Height <=  0 || Visible == false)
     				return;
 
-			/* Copies memory drawing buffer to screen*/
+			/* Copies memory drawing buffer to screen*/			
 			Draw ();
 
 			if (double_buffering)

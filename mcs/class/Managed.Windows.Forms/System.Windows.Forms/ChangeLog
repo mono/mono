@@ -1,3 +1,8 @@
+2004-11-19  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* ScrollBar.cs: updates thumb position when max, min or increment
+	is changed
+
 2004-11-21  Ravindra <rkumar@novell.com>
 
 	* ListView.cs: Implemented item selection, activation and
