@@ -1,0 +1,125 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--German (Luxembourg)-->
+<CultureInfo name="de-LU">
+  <Calendar>System.Globalization.GregorianCalendar</Calendar>
+  <CompareInfo LCID="4103" />
+  <DateTimeFormat>
+    <UniversalSortableDateTimePattern>yyyy'-'MM'-'dd HH':'mm':'ss'Z'</UniversalSortableDateTimePattern>
+    <SortableDateTimePattern>yyyy'-'MM'-'dd'T'HH':'mm':'ss</SortableDateTimePattern>
+    <RFC1123Pattern>ddd, dd MMM yyyy HH':'mm':'ss 'GMT'</RFC1123Pattern>
+    <CalendarWeekRule>FirstDay</CalendarWeekRule>
+    <Calendar>System.Globalization.GregorianCalendar</Calendar>
+    <FirstDayOfWeek>Sunday</FirstDayOfWeek>
+    <FullDateTimePattern>dddd, MMMM dd, yyyy h:mm:ss tt</FullDateTimePattern>
+    <YearMonthPattern>MMMM, yyyy</YearMonthPattern>
+    <MonthDayPattern>MMMM dd</MonthDayPattern>
+    <LongTimePattern>h:mm:ss tt</LongTimePattern>
+    <ShortTimePattern>h:mm tt</ShortTimePattern>
+    <ShortDatePattern>M/d/yyyy</ShortDatePattern>
+    <LongDatePattern>dddd, MMMM dd, yyyy</LongDatePattern>
+    <TimeSeparator>:</TimeSeparator>
+    <DateSeparator>/</DateSeparator>
+    <PMDesignator>PM</PMDesignator>
+    <AMDesignator>AM</AMDesignator>
+    <MonthNames>
+      <MonthName>January</MonthName>
+      <MonthName>February</MonthName>
+      <MonthName>March</MonthName>
+      <MonthName>April</MonthName>
+      <MonthName>May</MonthName>
+      <MonthName>June</MonthName>
+      <MonthName>July</MonthName>
+      <MonthName>August</MonthName>
+      <MonthName>September</MonthName>
+      <MonthName>October</MonthName>
+      <MonthName>November</MonthName>
+      <MonthName>December</MonthName>
+      <MonthName />
+    </MonthNames>
+    <DayNames>
+      <DayName>Sunday</DayName>
+      <DayName>Monday</DayName>
+      <DayName>Tuesday</DayName>
+      <DayName>Wednesday</DayName>
+      <DayName>Thursday</DayName>
+      <DayName>Friday</DayName>
+      <DayName>Saturday</DayName>
+    </DayNames>
+    <AbbreviatedMonthNames>
+      <AbbreviatedMonthName>Jan</AbbreviatedMonthName>
+      <AbbreviatedMonthName>Feb</AbbreviatedMonthName>
+      <AbbreviatedMonthName>Mar</AbbreviatedMonthName>
+      <AbbreviatedMonthName>Apr</AbbreviatedMonthName>
+      <AbbreviatedMonthName>May</AbbreviatedMonthName>
+      <AbbreviatedMonthName>Jun</AbbreviatedMonthName>
+      <AbbreviatedMonthName>Jul</AbbreviatedMonthName>
+      <AbbreviatedMonthName>Aug</AbbreviatedMonthName>
+      <AbbreviatedMonthName>Sep</AbbreviatedMonthName>
+      <AbbreviatedMonthName>Oct</AbbreviatedMonthName>
+      <AbbreviatedMonthName>Nov</AbbreviatedMonthName>
+      <AbbreviatedMonthName>Dec</AbbreviatedMonthName>
+      <AbbreviatedMonthName />
+    </AbbreviatedMonthNames>
+    <AbbreviatedDayNames>
+      <AbbreviatedDayName>Sun</AbbreviatedDayName>
+      <AbbreviatedDayName>Mon</AbbreviatedDayName>
+      <AbbreviatedDayName>Tue</AbbreviatedDayName>
+      <AbbreviatedDayName>Wed</AbbreviatedDayName>
+      <AbbreviatedDayName>Thu</AbbreviatedDayName>
+      <AbbreviatedDayName>Fri</AbbreviatedDayName>
+      <AbbreviatedDayName>Sat</AbbreviatedDayName>
+    </AbbreviatedDayNames>
+  </DateTimeFormat>
+  <DisplayName>de-LU (Need display name)</DisplayName>
+  <EnglishName>de-LU (Need English name)</EnglishName>
+  <LCID>4103</LCID>
+  <Name>de-LU</Name>
+  <NativeName>de-LU (Need native name)</NativeName>
+  <NumberFormat>
+    <PositiveSign>+</PositiveSign>
+    <PositiveInfinitySymbol>Infinity</PositiveInfinitySymbol>
+    <PerMilleSymbol>‰</PerMilleSymbol>
+    <PercentSymbol>%</PercentSymbol>
+    <PercentPositivePattern>0</PercentPositivePattern>
+    <PercentNegativePattern>0</PercentNegativePattern>
+    <PercentGroupSizes>
+      <PercentGroupSize>3</PercentGroupSize>
+    </PercentGroupSizes>
+    <PercentGroupSeparator>,</PercentGroupSeparator>
+    <PercentDecimalSeparator>.</PercentDecimalSeparator>
+    <PercentDecimalDigits>2</PercentDecimalDigits>
+    <NumberNegativePattern>1</NumberNegativePattern>
+    <NumberGroupSizes>
+      <NumberGroupSize>3</NumberGroupSize>
+    </NumberGroupSizes>
+    <NumberGroupSeparator>,</NumberGroupSeparator>
+    <NumberDecimalSeparator>.</NumberDecimalSeparator>
+    <NumberDecimalDigits>2</NumberDecimalDigits>
+    <NegativeSign>-</NegativeSign>
+    <NegativeInfinitySymbol>-Infinity</NegativeInfinitySymbol>
+    <NaNSymbol>NaN</NaNSymbol>
+    <CurrencySymbol>$</CurrencySymbol>
+    <CurrencyPositivePattern>0</CurrencyPositivePattern>
+    <CurrencyNegativePattern>0</CurrencyNegativePattern>
+    <CurrencyGroupSizes>
+      <CurrencyGroupSize>3</CurrencyGroupSize>
+    </CurrencyGroupSizes>
+    <CurrencyGroupSeparator>,</CurrencyGroupSeparator>
+    <CurrencyDecimalSeparator>.</CurrencyDecimalSeparator>
+    <CurrencyDecimalDigits>2</CurrencyDecimalDigits>
+  </NumberFormat>
+  <OptionalCalendars>
+    <Calendar>System.Globalization.GregorianCalendar</Calendar>
+    <Calendar>System.Globalization.GregorianCalendar</Calendar>
+  </OptionalCalendars>
+  <Parent>de</Parent>
+  <TextInfo>
+    <ANSICodePage>1252</ANSICodePage>
+    <EBCDICCodePage>20273</EBCDICCodePage>
+    <ListSeparator>;</ListSeparator>
+    <MacCodePage>10000</MacCodePage>
+    <OEMCodePage>850</OEMCodePage>
+  </TextInfo>
+  <ThreeLetterISOLanguageName>deu</ThreeLetterISOLanguageName>
+  <TwoLetterISOLanguageName>de</TwoLetterISOLanguageName>
+</CultureInfo>
