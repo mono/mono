@@ -1,3 +1,7 @@
+2002-05-13  Dan Lewis  <dihlewis@yahoo.co.uk>
+
+	* regex.cs: Fixed bug in split.
+
 2002-05-08  Dan Lewis  <dihlewis@yahoo.co.uk>
 
 	* interpreter.cs: Moved to an array-based stack representation

@@ -311,8 +311,11 @@ namespace System.Text.RegularExpressions {
 				count = Int32.MaxValue;
 
 			int ptr = startat;
-			Match m = Match (input, startat);
-			while (count -- > 0 && m.Success) {
+			while (count -- > 0) {
+				Match m = Match (input, ptr);
+				if (!m.Success)
+					break;
+			
 				splits.Add (input.Substring (ptr, m.Index - ptr));
 				ptr = m.Index + m.Length;
 			}
