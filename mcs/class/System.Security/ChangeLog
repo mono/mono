@@ -1,3 +1,7 @@
+2004-02-19  Tim Coleman <tim@timcoleman.com>
+	* System.Security.dll.sources: Add new
+		System.Security.Cryptography.Xml.SymmetricKeyWrap
+
 2004-02-11  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* System.Security_test.dll.sources: Added unit tests for 

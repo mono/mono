@@ -28,6 +28,7 @@ System.Security.Cryptography.Xml/RSAKeyValue.cs
 System.Security.Cryptography.Xml/Signature.cs
 System.Security.Cryptography.Xml/SignedInfo.cs
 System.Security.Cryptography.Xml/SignedXml.cs
+System.Security.Cryptography.Xml/SymmetricKeyWrap.cs
 System.Security.Cryptography.Xml/TransformChain.cs
 System.Security.Cryptography.Xml/Transform.cs
 System.Security.Cryptography.Xml/X509IssuerSerial.cs
