@@ -2,12 +2,14 @@
 // RSAPKCS1KeyExchangeDeformatter.cs - Handles PKCS#1 v.1.5 keyex decryption.
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot <sebastien@ximian.com>
 //
 // (C) 2002 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com)
 //
 
 using System;
+using System.Globalization;
 using Mono.Security.Cryptography;
 
 namespace System.Security.Cryptography { 
@@ -29,8 +31,8 @@ namespace System.Security.Cryptography {
 		}
 	
 		public override string Parameters {
-			get { return param; }
-			set { param = value; }
+			get { return null; }
+			set { ; }
 		}
 	
 		public RandomNumberGenerator RNG {
@@ -40,18 +42,16 @@ namespace System.Security.Cryptography {
 	
 		public override byte[] DecryptKeyExchange (byte[] rgbData) 
 		{
-			if (rsa == null)
-				throw new CryptographicException ();
+			if (rsa == null) {
+				throw new CryptographicUnexpectedOperationException (
+					Locale.GetText ("No key pair available."));
+			}
 			return PKCS1.Decrypt_v15 (rsa, rgbData);
 		}
 	
 		public override void SetKey (AsymmetricAlgorithm key) 
 		{
-			if (key is RSA) {
-				rsa = (RSA)key;
-			}
-			else
-				throw new CryptographicException ();
+			rsa = (RSA)key;
 		}
 	}
 }

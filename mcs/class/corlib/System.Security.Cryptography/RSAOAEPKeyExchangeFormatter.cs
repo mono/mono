@@ -2,9 +2,10 @@
 // RSAOAEPKeyExchangeFormatter.cs - Handles OAEP keyex encryption.
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot <sebastien@ximian.com>
 //
 // (C) 2002 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com)
 //
 
 using System;
@@ -16,6 +17,7 @@ namespace System.Security.Cryptography {
 	
 		private RSA rsa;
 		private RandomNumberGenerator random;
+		private byte[] param;
 	
 		public RSAOAEPKeyExchangeFormatter () 
 		{
@@ -28,8 +30,8 @@ namespace System.Security.Cryptography {
 		}
 	
 		public byte[] Parameter {
-			get { return null; }
-			set { ; }
+			get { return param; }
+			set { param = value; }
 		}
 	
 		public override string Parameters {
@@ -43,8 +45,6 @@ namespace System.Security.Cryptography {
 	
 		public override byte[] CreateKeyExchange (byte[] rgbData) 
 		{
-			if (rsa == null)
-				throw new CryptographicException ();
 			if (random == null)
 				random = RandomNumberGenerator.Create ();  // create default
 	
@@ -55,17 +55,12 @@ namespace System.Security.Cryptography {
 		public override byte[] CreateKeyExchange (byte[] rgbData, Type symAlgType) 
 		{
 			// documentation says that symAlgType is not used !?!
-			// FIXME: must be the same as previous method ?
 			return CreateKeyExchange (rgbData);
 		}
 	
 		public override void SetKey (AsymmetricAlgorithm key) 
 		{
-			if (key is RSA) {
-				rsa = (RSA) key;
-			}
-			else
-				throw new CryptographicException ();
+			rsa = (RSA) key;
 		}
 	}
 }

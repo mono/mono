@@ -2,9 +2,10 @@
 // RSAPKCS1SignatureFormatter.cs - Handles PKCS#1 v.1.5 signature encryption.
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot <sebastien@ximian.com>
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com)
 //
 
 using System;
@@ -17,7 +18,9 @@ namespace System.Security.Cryptography {
 		private RSA rsa;
 		private HashAlgorithm hash;
 	
-		public RSAPKCS1SignatureFormatter () {}
+		public RSAPKCS1SignatureFormatter ()
+		{
+		}
 	
 		public RSAPKCS1SignatureFormatter (AsymmetricAlgorithm key) 
 		{
@@ -26,10 +29,14 @@ namespace System.Security.Cryptography {
 	
 		public override byte[] CreateSignature (byte[] rgbHash) 
 		{
-			if (rsa == null)
-				throw new CryptographicUnexpectedOperationException ("missing key");
-			if (hash == null)
-				throw new CryptographicUnexpectedOperationException ("missing hash algorithm");
+			if (rsa == null) {
+				throw new CryptographicUnexpectedOperationException (
+					Locale.GetText ("No key pair available."));
+			}
+			if (hash == null) {
+				throw new CryptographicUnexpectedOperationException (
+					Locale.GetText ("Missing hash algorithm."));
+			}
 			if (rgbHash == null)
 				throw new ArgumentNullException ("rgbHash");
 
@@ -43,11 +50,7 @@ namespace System.Security.Cryptography {
 	
 		public override void SetKey (AsymmetricAlgorithm key) 
 		{
-			if (key != null) {
-				rsa = (RSA) key;
-//					throw new InvalidCastException ();
-			}
-			// here null is accepted!
+			rsa = (RSA) key;
 		}
 	}
 }

@@ -1,5 +1,17 @@
 2004-05-06  Sebastien Pouliot  <sebastien@ximian.com>
 
+	* RSAOAEPKeyExchangeDeformatter.cs: Fixed wrt completed unit tests.
+	* RSAOAEPKeyExchangeFormatter.cs: Fixed wrt completed unit tests.
+	* RSAPKCS1KeyExchangeDeformatter.cs: Fixed wrt completed unit tests.
+	Added globalization to exceptions.
+	* RSAPKCS1KeyExchangeFormatter.cs: Fixed wrt completed unit tests.
+	* RSAPKCS1SignatureDeformatter.cs: Fixed wrt completed unit tests.
+	Added globalization to exceptions.
+	* RSAPKCS1SignatureFormatter.cs: Fixed wrt completed unit tests.
+	Added globalization to exceptions.
+	
+2004-05-06  Sebastien Pouliot  <sebastien@ximian.com>
+
 	* RC2.cs: Fixed KeySize to change it's value and the EffectiveKeySize
 	when the key is changed.
 	* RC2CryptoServiceProvider.cs: Added globalization to exceptions. 

@@ -2,12 +2,14 @@
 // RSAOAEPKeyExchangeDeformatter.cs - Handles OAEP keyex decryption.
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot <sebastien@ximian.com>
 //
 // (C) 2002 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com)
 //
 
 using System;
+using System.Globalization;
 using Mono.Security.Cryptography;
 
 namespace System.Security.Cryptography { 
@@ -28,26 +30,19 @@ namespace System.Security.Cryptography {
 		}
 	
 		public override string Parameters {
-			get { return param; }
-			set { param = value; }
+			get { return null; }
+			set { ; }
 		}
 	
 		public override byte[] DecryptKeyExchange (byte[] rgbData) 
 		{
-			if (rsa == null)
-				throw new CryptographicException ();
-	
 			SHA1 sha1 = SHA1.Create ();
 			return PKCS1.Decrypt_OAEP (rsa, sha1, rgbData);
 		}
 	
 		public override void SetKey (AsymmetricAlgorithm key) 
 		{
-			if (key is RSA) {
-				rsa = (RSA)key;
-			}
-			else
-				throw new CryptographicException ();
+			rsa = (RSA)key;
 		}
 	}
 }

@@ -2,12 +2,14 @@
 // RSAPKCS1SignatureDeformatter.cs - Handles PKCS#1 v.1.5 signature decryption.
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot <sebastien@ximian.com>
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com)
 //
 
 using System;
+using System.Globalization;
 using Mono.Security.Cryptography;
 
 namespace System.Security.Cryptography { 
@@ -17,7 +19,9 @@ namespace System.Security.Cryptography {
 		private RSA rsa;
 		private string hashName;
 	
-		public RSAPKCS1SignatureDeformatter () {}
+		public RSAPKCS1SignatureDeformatter ()
+		{
+		}
 	
 		public RSAPKCS1SignatureDeformatter (AsymmetricAlgorithm key) 
 		{
@@ -33,17 +37,20 @@ namespace System.Security.Cryptography {
 	
 		public override void SetKey (AsymmetricAlgorithm key) 
 		{
-			if (key != null)
-				rsa = (RSA)key;
+			rsa = (RSA) key;
 			// here null is accepted without an ArgumentNullException!
 		}
 	
 		public override bool VerifySignature (byte[] rgbHash, byte[] rgbSignature) 
 		{
-			if (rsa == null)
-				throw new CryptographicUnexpectedOperationException ("missing key");
-			if (hashName == null)
-				throw new CryptographicUnexpectedOperationException ("missing hash algorithm");
+			if (rsa == null) {
+				throw new CryptographicUnexpectedOperationException (
+					Locale.GetText ("No public key available."));
+			}
+			if (hashName == null) {
+				throw new CryptographicUnexpectedOperationException (
+					Locale.GetText ("Missing hash algorithm."));
+			}
 			if (rgbHash == null)
 				throw new ArgumentNullException ("rgbHash");
 			if (rgbSignature == null)
