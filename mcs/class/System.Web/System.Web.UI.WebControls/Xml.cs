@@ -116,7 +116,7 @@ namespace System.Web.UI.WebControls
 		[WebSysDescription ("The XML content that is transformed for the XML Webcontrol.")]
 		public string DocumentContent {
 			get {
-				return String.Empty;
+				return documentContent;
 			}
 			set {
 				document = null;
@@ -192,7 +192,7 @@ namespace System.Web.UI.WebControls
 		private void LoadXpathDoc ()
 		{
 			if (documentContent != null && documentContent.Length > 0) {
-				xpathDoc = new XPathDocument (new StringReader (MapPathSecure (documentContent)));
+				xpathDoc = new XPathDocument (new StringReader (documentContent));
 				return;
 			}
 

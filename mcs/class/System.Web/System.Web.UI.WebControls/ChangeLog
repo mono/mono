@@ -1,73 +1,83 @@
+2004-09-01 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Xml.cs: fixed get_DocumentContent (it was returning "" always!) and
+	don't call MapPathSecure on the content itself.
+	
+	* XmlBuilder.cs: handle XML documents written inside asp:xml. The
+	document is checked at parse time and will be checked again at run time.
+
+	Fixes bug #63828.
+
 2004-08-31  Sanjay Gupta <gsanjay@novell.com>
 
 	* AuthenticateEventHandler.cs: 
 	* CreateUserErrorEventArgs.cs:
 	* CreateUserErrorEventHandler.cs:
-    	* DetailsViewCommandEventHandler.cs:
+	* DetailsViewCommandEventHandler.cs:
 	* DetailsViewDeleteEventArgs.cs:
 	* DetailsViewDeleteEventHandler.cs:
 	* DetailsViewDeletedEventArgs.cs:
-    	* DetailsViewDeletedEventHandler.cs:
+	* DetailsViewDeletedEventHandler.cs:
 	* DetailsViewInsertEventArgs.cs:
 	* DetailsViewInsertEventHandler.cs:
 	* DetailsViewInsertedEventArgs.cs:
 	* DetailsViewInsertedEventHandler.cs:
 	* DetailsViewModeEventArgs.cs:
-    	* DetailsViewModeEventHandler.cs:
+	* DetailsViewModeEventHandler.cs:
 	* DetailsViewPageEventHandler.cs:
 	* DetailsViewUpdateEventArgs.cs:
 	* DetailsViewUpdateEventHandler.cs:
 	* DetailsViewUpdatedEventArgs.cs:
-    	* DetailsViewUpdatedEventHandler.cs:
-    	* FormViewCommandEventHandler.cs:
+	* DetailsViewUpdatedEventHandler.cs:
+	* FormViewCommandEventHandler.cs:
 	* FormViewDeleteEventArgs.cs:
 	* FormViewDeleteEventHandler.cs:
 	* FormViewDeletedEventArgs.cs:
-    	* FormViewDeletedEventHandler.cs:
+	* FormViewDeletedEventHandler.cs:
 	* FormViewInsertEventArgs.cs:
-    	* FormViewInsertEventHandler.cs:
+	* FormViewInsertEventHandler.cs:
 	* FormViewInsertedEventArgs.cs:
-    	* FormViewInsertedEventHandler.cs:
+	* FormViewInsertedEventHandler.cs:
 	* FormViewModeEventHandler.cs:
-    	* FormViewPageEventHandler.cs:
+	* FormViewPageEventHandler.cs:
 	* FormViewUpdateEventArgs.cs:
-    	* FormViewUpdateEventHandler.cs:
+	* FormViewUpdateEventHandler.cs:
 	* FormViewUpdatedEventArgs.cs:
-    	* FormViewUpdatedEventHandler.cs:
+	* FormViewUpdatedEventHandler.cs:
 	* GridViewCancelEditEventArgs.cs:
 	* GridViewCancelEditEventHandler.cs:
-    	* GridViewCommandEventHandler.cs:
+	* GridViewCommandEventHandler.cs:
 	* GridViewDeleteEventArgs.cs:
-    	* GridViewDeleteEventHandler.cs:
+	* GridViewDeleteEventHandler.cs:
 	* GridViewDeletedEventArgs.cs:
-    	* GridViewDeletedEventHandler.cs:
+	* GridViewDeletedEventHandler.cs:
 	* GridViewEditEventHandler.cs:
-    	* GridViewPageEventHandler.cs:
+	* GridViewPageEventHandler.cs:
 	* GridViewRowEventHandler.cs:
-    	* GridViewSelectEventHandler.cs:
+	* GridViewSelectEventHandler.cs:
 	* GridViewSortEventArgs.cs:
-    	* GridViewSortEventHandler.cs:
+	* GridViewSortEventHandler.cs:
 	* GridViewUpdateEventArgs.cs:
-    	* GridViewUpdateEventHandler.cs:
+	* GridViewUpdateEventHandler.cs:
 	* GridViewUpdatedEventArgs.cs:
-    	* GridViewUpdatedEventHandler.cs:
+	* GridViewUpdatedEventHandler.cs:
 	* ImageMapEventHandler.cs:
-    	* MailMessageEventHandler.cs:
+	* MailMessageEventHandler.cs:
 	* MenuEventHandler.cs:
-    	* ObjectDataSourceDisposingEventHandler.cs:
-    	* ObjectDataSourceEventHandler.cs:
-    	* ObjectDataSourceMethodEventArgs.cs:
-    	* ObjectDataSourceMethodEventHandler.cs:
+	* ObjectDataSourceDisposingEventHandler.cs:
+	* ObjectDataSourceEventHandler.cs:
+	* ObjectDataSourceMethodEventArgs.cs:
+	* ObjectDataSourceMethodEventHandler.cs:
 	* ObjectDataSourceSelectingEventArgs.cs:
-    	* ObjectDataSourceSelectingEventHandler.cs:
-    	* ObjectDataSourceStatusEventArgs.cs:
-    	* ObjectDataSourceStatusEventHandler.cs:
-    	* SendMailErrorEventHandler.cs:
+	* ObjectDataSourceSelectingEventHandler.cs:
+	* ObjectDataSourceStatusEventArgs.cs:
+	* ObjectDataSourceStatusEventHandler.cs:
+	* SendMailErrorEventHandler.cs:
 	* SiteMapNodeItemEventHandler.cs:
-    	* SqlDataSourceSelectingEventArgs.cs:
-    	* SqlDataSourceSelectingEventHandler.cs:
+	* SqlDataSourceSelectingEventArgs.cs:
+	* SqlDataSourceSelectingEventHandler.cs:
 	* TreeNodeEventHandler.cs:
-    	* WizardNavigationEventArgs.cs:
+	* WizardNavigationEventArgs.cs:
 	* WizardNavigationEventHandler.cs: Minor modifications, compiler error
 	corrections and removing "sealed" access specifier from *EventHandler.cs
 
