@@ -4793,41 +4793,19 @@ private void RaiseEvent (string evt_name, ArrayList args)
 
 private void RemoveHandler (Block b, Expression evt_definition, Expression handler_exp)
 {
-   	Location loc = lexer.Location;
-   	if (handler_exp is MemberAccess) {
-		string evt_def = ((MemberAccess)handler_exp).ToString();
-		string evt_target = evt_definition.ToString();
-   		evt_target = evt_target.Substring (0, evt_target.LastIndexOf('.'));
+	Expression evt_target;
+	Location loc = lexer.Location;
+	
+	if (evt_definition is MemberAccess)
+		evt_target = ((MemberAccess)evt_definition).Expr;
+	else
+		evt_target = (new This (current_block, lexer.Location));
 		
-		Statement s = (Statement) new RemoveHandler (
-								evt_definition, 
-								DecomposeQI(evt_def, loc), 
-								DecomposeQI(evt_target, loc), loc);
-
-		b.AddStatement (s);
-		
-	} else if (handler_exp is SimpleName) {
-		string evt_def = ((SimpleName)handler_exp).ToString();
-		string evt_target = evt_definition.ToString();
-   		evt_target = evt_target.Substring (0, evt_target.LastIndexOf('.'));
-		
-		Statement s = (Statement) new RemoveHandler (
-								evt_definition, 
-								DecomposeQI(evt_def, loc), 
-								DecomposeQI(evt_target, loc), loc);
-								
-		b.AddStatement (s);
-
-	} else if (handler_exp is BaseAccess) {
-		string evt_def = ((BaseAccess) handler_exp).member;
-		
-		Statement s = (Statement) new RemoveHandler (
-								evt_definition, 
-								DecomposeQI(evt_def, loc), 
-								handler_exp , loc);
-									
-		b.AddStatement (s);
-	}
+	Statement rmhnd = (Statement) new RemoveHandler (evt_definition, 
+													handler_exp, 
+													evt_target, 
+													loc);
+	b.AddStatement (rmhnd);
 }
 
 // <summary>

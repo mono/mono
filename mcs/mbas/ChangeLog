@@ -1,4 +1,7 @@
 2004-09-30 Anirban Bhattacharjee <banirban@novell.com>
+	* mb-parser.jay: RemoveHandler function made cleaner
+
+2004-09-30 Anirban Bhattacharjee <banirban@novell.com>
 	* expression.cs:
 	* ecore.cs:
 		Fix for resolution of event expression 
