@@ -1,7 +1,12 @@
+2003-10-09 Jackson Harper <jackson@ximian.com>
+
+	* PEAPI.cs: Add generic method Mvar type. Add MethodSpec table,
+	and an Api method for adding methods to the methodspec table.
+	
 2003-10-08 Jackson Harper <jackson@ximian.com>
 
 	* PEAPI.cs: Remove some old hacks for adding methods to arrays,
-	typespecs are used for this now.
+	typespecs are used for this now. Add Generic call conv.
 	
 2003-10-08 Jackson Harper <jackson@ximian.com>
 

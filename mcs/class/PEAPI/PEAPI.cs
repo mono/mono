@@ -95,6 +95,21 @@ namespace PEAPI
     public TypeSignatureException(string msg) : base(msg) { }
   }
 
+  public class MVar : Type {
+
+            private int index;
+
+            public MVar (int index) : base (0x1E) {
+                    this.index = index;
+                    tabIx = MDTable.TypeSpec;
+            }
+
+            internal sealed override void TypeSig(MemoryStream str) {
+                    str.WriteByte(typeIndex);
+                    MetaData.CompressNum ((uint) index, str);
+            }
+    }
+
     public class GenericTypeSpec : Type {
 
             private int index;
@@ -108,7 +123,7 @@ namespace PEAPI
                     str.WriteByte(typeIndex);
                     MetaData.CompressNum ((uint) index, str);
             }
-            }
+    }
 
   public class GenericTypeInst : Type {
 
@@ -4029,6 +4044,36 @@ if (rsrc != null)
 
 
         }
+
+        internal class MethodSpec : MetaDataElement
+        {
+                Method meth;
+                GenericTypeInst type_inst;
+                uint meth_idx;
+
+                internal MethodSpec (Method meth, GenericTypeInst type_inst) {
+                        this.meth = meth;
+                        this.type_inst = type_inst;
+                        tabIx = MDTable.MethodSpec;
+                }
+
+                internal sealed override void BuildTables (MetaData md) {
+                        if (done) return;
+                        meth_idx = meth.GetSigIx (md);
+                        done = true;
+                }
+
+                internal sealed override uint Size (MetaData md) {
+                        return (uint) (md.CodedIndexSize(CIx.MethodDefOrRef) +
+                                       md.BlobIndexSize ());
+                }
+
+                internal sealed override void Write (FileImage output) {
+                    output.WriteCodedIndex(CIx.MethodDefOrRef, meth);
+                    output.BlobIndex (meth_idx);
+                }
+        }
+
   /**************************************************************************/
         /// <summary>
         /// Descriptor for interface implemented by a class
@@ -4623,6 +4668,7 @@ if (rsrc != null)
       BuildTable(metaDataTables[(int)MDTable.TypeDef]);
       BuildTable(metaDataTables[(int)MDTable.MemberRef]);
       BuildTable(metaDataTables[(int)MDTable.GenericParam]);
+      BuildTable(metaDataTables[(int)MDTable.MethodSpec]);
       BuildTable(metaDataTables[(int)MDTable.GenericParamConstraint]);
       BuildTable(metaDataTables[(int)MDTable.CustomAttribute]);
 /*      for (int i=0; i < metaDataTables.Length; i++) {
@@ -5985,6 +6031,12 @@ if (rsrc != null)
             FieldRef field = new FieldRef (item.GetTypeSpec (metaData), name,fType);
             metaData.AddToTable (MDTable.MemberRef,field);
             return field;
+    }
+
+    public void AddMethodSpec (Method m, GenericTypeInst type_inst)
+    {
+            MethodSpec ms = new MethodSpec (m, type_inst);
+            metaData.AddToTable (MDTable.MethodSpec, ms);
     }
 
     /// <summary>
