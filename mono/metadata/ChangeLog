@@ -1,5 +1,26 @@
 2004-11-26  Martin Baulig  <martin@ximian.com>
 
+	* metadata.c
+	(mono_metadata_generic_method_hash): New public function.
+	(mono_metadata_generic_method_equal): Likewise.
+
+	* class-internals.h
+	(MonoGenericContainer): Added `GHashTable *method_hash'.
+
+	* reflection.c (ReflectionMethodBuilder): Added
+	`MonoGenericContainer *generic_container'.
+	(reflection_methodbuilder_to_mono_method): Don't create a new
+	MonoGenericContainer each time we're called.
+	(mono_reflection_bind_generic_method_parameters): Use
+	`container->method_hash' to cache the results so we don't create a
+	different method if we're called several times with the same
+	arguments.
+
+	* loader.c (method_from_methodspec): Use the new
+	`container->method_hash' here, too.
+
+2004-11-26  Martin Baulig  <martin@ximian.com>
+
 	* class.c (inflate_generic_signature): Correctly compute
 	`res->has_type_parameters'.
 	(mono_class_vtable): Use the `has_type_parameters' flag to
