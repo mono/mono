@@ -7,7 +7,6 @@
 // 
 
 using System;
-using System.IDisposable;
 
 namespace System.ComponentModel.Design
 {
