@@ -4220,6 +4220,11 @@ namespace Mono.CSharp {
 
 		public override bool Resolve (EmitContext ec)
 		{
+			if (!ec.InUnsafe){
+				Expression.UnsafeError (loc);
+				return false;
+			}
+			
 			expr_type = ec.DeclSpace.ResolveType (type, false, loc);
 			if (expr_type == null)
 				return false;

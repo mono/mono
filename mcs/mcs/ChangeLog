@@ -1,3 +1,8 @@
+2003-05-02  Miguel de Icaza  <miguel@ximian.com>
+
+	* statement.cs (Fixed.Resolve): Report an error if we are not in
+	an unsafe context.
+
 2003-05-01  Miguel de Icaza  <miguel@ximian.com>
 
 	* typemanager.cs: reuse the code that handles type clashes for
