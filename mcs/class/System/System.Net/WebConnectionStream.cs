@@ -270,6 +270,11 @@ namespace System.Net
 			WebAsyncResult result = new WebAsyncResult (cb, state);
 			if (allowBuffering) {
 				writeBuffer.Write (buffer, offset, size);
+				if (!sendChunked) {
+					result.SetCompleted (true, 0);
+					result.DoCallback ();
+					return result;
+				}
 			}
 
 			AsyncCallback chunkcb = null;
@@ -342,8 +347,8 @@ namespace System.Net
 			if (headersSent)
 				return;
 
-			headersSent = true;
 			if (!allowBuffering || sendChunked) {
+				headersSent = true;
 				try {
 					cnc.Write (buffer, offset, size);
 				} catch (IOException) {
@@ -393,6 +398,7 @@ namespace System.Net
 
 					continue;
 				}
+				headersSent = true;
 
 				if (cnc.Data.StatusCode != 0 && cnc.Data.StatusCode != 100)
 					return;

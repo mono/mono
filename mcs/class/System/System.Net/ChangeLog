@@ -1,3 +1,11 @@
+2004-02-18  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* WebConnection.cs: if we get a 100 when we're not waiting for it, set
+	that information in the ServicePoint.
+
+	* WebConnectionStream.cs: send headers in the right order for
+	non-chunked POST.
+
 2004-02-17  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* WebConnectionStream.cs: fixed nullrefs in BeginWrite/EndWrite.

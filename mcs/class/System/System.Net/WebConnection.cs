@@ -329,6 +329,7 @@ namespace System.Net
 							Data.Headers.Add (s);
 
 						if (Data.StatusCode == (int) HttpStatusCode.Continue) {
+							sPoint.SendContinue = true;
 							if (pos >= max)
 								return pos;
 							if (Data.request.ExpectContinue)
