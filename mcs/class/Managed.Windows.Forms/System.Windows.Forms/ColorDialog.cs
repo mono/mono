@@ -26,9 +26,9 @@
 // NOT COMPLETE
 
 using System.ComponentModel;
-using System.ComponentModel.Design;
 using System.Drawing;
-using System.Drawing.Drawing2D;
+using System.Globalization;
+using System.Resources;
 
 namespace System.Windows.Forms
 {
@@ -228,6 +228,10 @@ namespace System.Windows.Forms
 			private ColorDialog colorDialog;
 			#endregion	// Local Variables
 			
+			/// <summary>
+			/// Constructor
+			/// </summary>
+			/// <param name="colorDialog">A  ColorDialog</param>
 			internal ColorDialogPanel( ColorDialog colorDialog )
 			{
 				this.colorDialog = colorDialog;
@@ -304,48 +308,48 @@ namespace System.Windows.Forms
 				redLabel.Location = new Point( 361, 206 );
 				redLabel.Size = new Size( 40, 16 );
 				redLabel.TabIndex = 25;
-				redLabel.Text = "Red:";
+				redLabel.Text = Locale.GetText( "Red" ) + ":";
 				redLabel.TextAlign = ContentAlignment.MiddleRight;
 				// blueLabel
 				blueLabel.FlatStyle = FlatStyle.System;
 				blueLabel.Location = new Point( 361, 250 );
 				blueLabel.Size = new Size( 40, 16 );
 				blueLabel.TabIndex = 26;
-				blueLabel.Text = "Blue:";
+				blueLabel.Text = Locale.GetText( "Blue" ) + ":";
 				blueLabel.TextAlign = ContentAlignment.MiddleRight;
 				// greenLabel
 				greenLabel.FlatStyle = FlatStyle.System;
 				greenLabel.Location = new Point( 361, 228 );
 				greenLabel.Size = new Size( 40, 16 );
 				greenLabel.TabIndex = 27;
-				greenLabel.Text = "Green:";
+				greenLabel.Text = Locale.GetText( "Green" ) + ":";
 				greenLabel.TextAlign = ContentAlignment.MiddleRight;
 				// colorBaseLabel
 				colorBaseLabel.Location = new Point( 228, 247 );
 				colorBaseLabel.Size = new Size( 60, 25 );
 				colorBaseLabel.TabIndex = 28;
-				colorBaseLabel.Text = "Color|Base";
+				colorBaseLabel.Text = Locale.GetText( "Color" );
 				colorBaseLabel.TextAlign = ContentAlignment.MiddleCenter;
 				// hueLabel
 				hueLabel.FlatStyle = FlatStyle.System;
-				hueLabel.Location = new Point( 293, 206 );
-				hueLabel.Size = new Size( 28, 16 );
+				hueLabel.Location = new Point( 287, 206 );
+				hueLabel.Size = new Size( 36, 16 );
 				hueLabel.TabIndex = 23;
-				hueLabel.Text = "Hue:";
+				hueLabel.Text = Locale.GetText( "Hue" ) + ":";
 				hueLabel.TextAlign = ContentAlignment.MiddleRight;
 				// satLabel
 				satLabel.FlatStyle = FlatStyle.System;
-				satLabel.Location = new Point( 293, 228 );
-				satLabel.Size = new Size( 28, 16 );
+				satLabel.Location = new Point( 287, 228 );
+				satLabel.Size = new Size( 36, 16 );
 				satLabel.TabIndex = 22;
-				satLabel.Text = "Sat:";
+				satLabel.Text = Locale.GetText( "Sat" ) + ":";
 				satLabel.TextAlign = ContentAlignment.MiddleRight;
 				// briLabel
 				briLabel.FlatStyle = FlatStyle.System;
-				briLabel.Location = new Point( 293, 250 );
-				briLabel.Size = new Size( 28, 16 );
+				briLabel.Location = new Point( 287, 250 );
+				briLabel.Size = new Size( 36, 16 );
 				briLabel.TabIndex = 24;
-				briLabel.Text = "Bri:";
+				briLabel.Text = Locale.GetText( "Bri" ) + ":";
 				briLabel.TextAlign = ContentAlignment.MiddleRight;
 				
 				// defineColoursButton
@@ -353,31 +357,31 @@ namespace System.Windows.Forms
 				defineColoursButton.Location = new Point( 5, 244 );
 				defineColoursButton.Size = new Size( 210, 22 );
 				defineColoursButton.TabIndex = 6;
-				defineColoursButton.Text = "Define Colours >>";
+				defineColoursButton.Text = Locale.GetText( "Define Colours >>" );
 				// okButton
 				okButton.FlatStyle = FlatStyle.System;
 				okButton.Location = new Point( 5, 271 );
 				okButton.Size = new Size( 66, 22 );
 				okButton.TabIndex = 0;
-				okButton.Text = "OK";
+				okButton.Text = Locale.GetText( "OK" );
 				// cancelButton
 				cancelButton.FlatStyle = FlatStyle.System;
 				cancelButton.Location = new Point( 78, 271 );
 				cancelButton.Size = new Size( 66, 22 );
 				cancelButton.TabIndex = 1;
-				cancelButton.Text = "Cancel";
+				cancelButton.Text = Locale.GetText( "Cancel" );
 				// helpButton
 				helpButton.FlatStyle = FlatStyle.System;
 				helpButton.Location = new Point( 149, 271 );
 				helpButton.Size = new Size( 66, 22 );
 				helpButton.TabIndex = 5;
-				helpButton.Text = "Help";
+				helpButton.Text = Locale.GetText( "Help" );
 				// addColoursButton
 				addColoursButton.FlatStyle = FlatStyle.System;
 				addColoursButton.Location = new Point( 227, 271 );
 				addColoursButton.Size = new Size( 213, 22 );
 				addColoursButton.TabIndex = 7;
-				addColoursButton.Text = "Add Colours";
+				addColoursButton.Text =  Locale.GetText( "Add Colours" );
 				
 				// baseColorControl
 				baseColorControl.Location = new Point( 3, 7 );
@@ -401,7 +405,7 @@ namespace System.Windows.Forms
 				selectedColorPanel.BackColor = SystemColors.Desktop;
 				selectedColorPanel.BorderStyle = BorderStyle.Fixed3D;
 				selectedColorPanel.Location = new Point( 227, 202 );
-				selectedColorPanel.Size = new Size( 60, 44 );
+				selectedColorPanel.Size = new Size( 60, 42 );
 				selectedColorPanel.TabIndex = 10;
 				
 				ClientSize = new Size( 448, 332 ); // 300
@@ -1520,15 +1524,15 @@ namespace System.Windows.Forms
 				
 				// baseColorLabel
 				baseColorLabel.Location = new Point( 2, 0 );
-				baseColorLabel.Size = new Size( 100, 12 );
+				baseColorLabel.Size = new Size( 200, 12 );
 				baseColorLabel.TabIndex = 5;
-				baseColorLabel.Text = "Base Colours:";
+				baseColorLabel.Text = Locale.GetText( "Base Colours" ) + ":";
 				// userColorLabel
 				userColorLabel.FlatStyle = FlatStyle.System;
 				userColorLabel.Location = new Point( 2, 164 );
-				userColorLabel.Size = new Size( 100, 14 );
+				userColorLabel.Size = new Size( 200, 14 );
 				userColorLabel.TabIndex = 104;
-				userColorLabel.Text = "User Colours:";
+				userColorLabel.Text = Locale.GetText( "User Colors" ) + ":";
 				
 				Controls.Add( userColorPanel[ 7 ] );
 				Controls.Add( userColorPanel[ 6 ] );
