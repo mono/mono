@@ -25,6 +25,9 @@
 using System;
 using System.Security.Cryptography.X509Certificates;
 
+using System.Security.Cryptography;
+using Mono.Security.Cryptography;
+
 namespace Mono.Security.Protocol.Tls.Handshake.Client
 {
 	internal class TlsClientCertificateVerify : TlsHandshakeMessage
@@ -57,7 +60,27 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 
 		protected override void ProcessAsTls1()
 		{
-			#warning "Process message here"
+			foreach (X509Certificate cert in Session.Settings.Certificates)
+			{
+				MD5SHA1CryptoServiceProvider hash = new MD5SHA1CryptoServiceProvider();
+				X509.X509Certificate	c	 = new X509.X509Certificate(cert.GetRawCertData());
+				RSA						rsa	 = c.RSA;
+				RSAParameters			p	 = rsa.ExportParameters(false);
+				TlsStream				data = new TlsStream();
+
+				data.Write(this.Session.Context.RandomCS);
+				data.Write((short)p.Modulus.Length);
+				data.Write(p.Modulus);
+				data.Write((short)p.Exponent.Length);
+				data.Write(p.Exponent);
+
+				hash.ComputeHash(data.ToArray(), 0, (int)data.Length);
+
+				data.Reset();
+
+				// Write the signature
+				Write(hash.CreateSignature(rsa));
+			}
 		}
 
 		#endregion

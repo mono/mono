@@ -24,9 +24,9 @@
 
 using System;
 using System.Security.Cryptography;
-using System.Security.Cryptography.X509Certificates;
 
 using Mono.Security.Protocol.Tls.Alerts;
+using Mono.Security.X509;
 
 namespace Mono.Security.Protocol.Tls.Handshake.Client
 {
@@ -110,17 +110,19 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 			#warning "Check validity of certificates"
 
 			// 1 step : Validate dates
-			DateTime effectiveDate	= DateTime.Parse(certificate.GetEffectiveDateString());
-			DateTime expirationDate = DateTime.Parse(certificate.GetExpirationDateString());
-			if (System.DateTime.Now < effectiveDate || 
-				System.DateTime.Now > expirationDate)
+			if (!certificate.IsCurrent)
 			{
-				throw Session.CreateException("Certificate received FromBase64Transform the server expired.");
+				throw Session.CreateException("Certificate received from the server expired.");
 			}
 
 			// 2 step: Validate CA
+			
 
 			// 3 step: Validate digital sign
+			if (!certificate.VerifySignature(certificate.RSA))
+			{
+				throw Session.CreateException("Certificate received from the server has invalid signature.");
+			}
 
 			// 4 step: Validate domain name
 		}

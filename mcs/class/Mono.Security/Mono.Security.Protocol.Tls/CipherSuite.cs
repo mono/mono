@@ -26,10 +26,10 @@ using System;
 using System.IO;
 using System.Text;
 using System.Security.Cryptography;
-using System.Security.Cryptography.X509Certificates;
 
 using Mono.Security;
 using Mono.Security.Cryptography;
+using Mono.Security.X509;
 
 namespace Mono.Security.Protocol.Tls
 {
@@ -185,28 +185,20 @@ namespace Mono.Security.Protocol.Tls
 			createDecryptionCipher();
 		}
 
-		public RSACryptoServiceProvider CreateRSA(X509Certificate certificate)
+		public RSA CreateRSA()
 		{
-			RSAParameters rsaParams = new RSAParameters();
-
-			// for RSA m_publickey contains 2 ASN.1 integers
-			// the modulus and the public exponent
-			ASN1 pubkey	= new ASN1(certificate.GetPublicKey());
-			ASN1 modulus = pubkey [0];
-			if ((modulus == null) || (modulus.Tag != 0x02))
+			RSA rsa;
+			if (this.Context.ServerSettings.ServerKeyExchange)
 			{
-				return null;
+				rsa = new RSACryptoServiceProvider();
+				rsa.ImportParameters(this.Context.ServerSettings.RsaParameters);
 			}
-			ASN1 exponent = pubkey [1];
-			if (exponent.Tag != 0x02)
+			else
 			{
-				return null;
+				rsa = this.Context.ServerSettings.ServerCertificates[0].RSA;
 			}
-
-			rsaParams.Modulus	= getUnsignedBigInteger(modulus.Value);
-			rsaParams.Exponent	= exponent.Value;
-			
-			return CreateRSA(rsaParams);
+	
+			return rsa;
 		}
 
 		public RSACryptoServiceProvider CreateRSA(RSAParameters rsaParams)
@@ -257,12 +249,19 @@ namespace Mono.Security.Protocol.Tls
 			{
 				// Calculate padding_length
 				int fragmentLength	= fragment.Length + mac.Length + 1;
-				int paddingLength	= (((fragmentLength/this.BlockSize)*this.BlockSize) + this.BlockSize) - fragmentLength;
+				int paddingLength	= this.blockSize - fragmentLength % this.blockSize;
+				if (paddingLength == this.blockSize)
+				{
+					paddingLength = 0;
+				}
 
 				// Write padding length byte
-				cs.WriteByte((byte)paddingLength);
+				for (int i = 0; i < (paddingLength + 1); i++)
+				{
+					cs.WriteByte((byte)paddingLength);
+				}
 			}
-			//cs.FlushFinalBlock();
+			// cs.FlushFinalBlock();
 			cs.Close();			
 
 			return ms.ToArray();
@@ -282,6 +281,8 @@ namespace Mono.Security.Protocol.Tls
 			{
 				// Calculate padding_length
 				paddingLength = buffer[buffer.Length - 1];
+
+				/* Review this that is valid way for TLS1 but not for SSL3
 				for (int i = (buffer.Length - 1); i > (buffer.Length - (paddingLength + 1)); i--)
 				{
 					if (buffer[i] != paddingLength)
@@ -290,6 +291,7 @@ namespace Mono.Security.Protocol.Tls
 						break;
 					}
 				}
+				*/
 
 				fragmentSize = (buffer.Length - (paddingLength + 1)) - HashSize;
 			}
@@ -453,7 +455,7 @@ namespace Mono.Security.Protocol.Tls
 			{
 				// Configure encrypt algorithm
 				encryptionAlgorithm.Mode		= this.cipherMode;
-				encryptionAlgorithm.Padding		= PaddingMode.PKCS7;
+				encryptionAlgorithm.Padding		= PaddingMode.None;
 				encryptionAlgorithm.KeySize		= this.keyMaterialSize * 8;
 				encryptionAlgorithm.BlockSize	= this.blockSize * 8;
 			}

@@ -71,11 +71,11 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 			// Read requested certificate types
 			int typesCount = this.ReadByte();
 						
-			certificateTypes = new TlsClientCertificateType[typesCount];
+			this.certificateTypes = new TlsClientCertificateType[typesCount];
 
 			for (int i = 0; i < typesCount; i++)
 			{
-				certificateTypes[i] = (TlsClientCertificateType)this.ReadByte();
+				this.certificateTypes[i] = (TlsClientCertificateType)this.ReadByte();
 			}
 
 			/*
@@ -89,19 +89,21 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 			 * attributeType OBJECT IDENTIFIER
 			 * attributeValue ANY }
 			 */
-			int		tmp = this.ReadInt16();
-			ASN1	rdn = new ASN1(this.ReadBytes(this.ReadInt16()));
-
-			distinguisedNames = new string[rdn.Count];
-
-			#warning "needs testing"
-			for (int i = 0; i < rdn.Count; i++)
+			if (this.ReadInt16() != 0)
 			{
-				// element[0] = attributeType
-				// element[1] = attributeValue
-				ASN1 element = new ASN1(rdn[i].Value);
+				ASN1	rdn = new ASN1(this.ReadBytes(this.ReadInt16()));
 
-				distinguisedNames[i] = Encoding.UTF8.GetString(element[1].Value);
+				distinguisedNames = new string[rdn.Count];
+
+				#warning "needs testing"
+				for (int i = 0; i < rdn.Count; i++)
+				{
+					// element[0] = attributeType
+					// element[1] = attributeValue
+					ASN1 element = new ASN1(rdn[i].Value);
+
+					distinguisedNames[i] = Encoding.UTF8.GetString(element[1].Value);
+				}
 			}
 		}
 

@@ -42,20 +42,6 @@ namespace Mono.Security.Protocol.Tls
 
 		#endregion
 
-		#region PROPERTIES
-
-		public byte[] Pad1
-		{
-			get { return pad1; }
-		}
-
-		public byte[] Pad2
-		{
-			get { return pad2; }
-		}
-
-		#endregion
-
 		#region CONSTRUCTORS
 		
 		public TlsSslCipherSuite(short code, string name, string algName, 
@@ -66,7 +52,18 @@ namespace Mono.Security.Protocol.Tls
 			keyMaterialSize, expandedKeyMaterialSize, effectiveKeyBytes,
 			ivSize, blockSize)
 		{
-			this.GeneratePad(hashName, ref this.pad1, ref this.pad2);
+			int padLength = (hashName == "MD5") ? 48 : 40;
+
+			// Fill pad arrays
+			this.pad1 = new byte[padLength];
+			this.pad2 = new byte[padLength];
+
+			/* Pad the key for inner and outer digest */
+			for (int i = 0; i < padLength; ++i) 
+			{
+				pad1[i] = 0x36;
+				pad2[i] = 0x5C;
+			}
 		}
 
 		#endregion
@@ -85,7 +82,9 @@ namespace Mono.Security.Protocol.Tls
 			block.Write((short)fragment.Length);
 			block.Write(fragment);
 			
-			byte[] blockHash = hash.ComputeHash(block.ToArray(), 0, (int)block.Length);
+			hash.ComputeHash(block.ToArray(), 0, (int)block.Length);
+
+			byte[] blockHash = hash.Hash;
 
 			block.Reset();
 
@@ -93,11 +92,11 @@ namespace Mono.Security.Protocol.Tls
 			block.Write(this.pad2);
 			block.Write(blockHash);
 
-			blockHash = hash.ComputeHash(block.ToArray(), 0, (int)block.Length);
+			hash.ComputeHash(block.ToArray(), 0, (int)block.Length);
 
 			block.Reset();
 
-			return blockHash;
+			return hash.Hash;
 		}
 
 		public override byte[] ComputeClientRecordMAC(TlsContentType contentType, byte[] fragment)
@@ -112,7 +111,9 @@ namespace Mono.Security.Protocol.Tls
 			block.Write((short)fragment.Length);
 			block.Write(fragment);
 			
-			byte[] blockHash = hash.ComputeHash(block.ToArray(), 0, (int)block.Length);
+			hash.ComputeHash(block.ToArray(), 0, (int)block.Length);
+
+			byte[] blockHash = hash.Hash;
 
 			block.Reset();
 
@@ -120,34 +121,11 @@ namespace Mono.Security.Protocol.Tls
 			block.Write(this.pad2);
 			block.Write(blockHash);
 
-			blockHash = hash.ComputeHash(block.ToArray(), 0, (int)block.Length);
+			hash.ComputeHash(block.ToArray(), 0, (int)block.Length);
 
 			block.Reset();
 
-			return blockHash;
-		}
-
-		public void GeneratePad(string hashName, ref byte[] pad1, ref byte[] pad2)
-		{
-			switch (hashName)
-			{
-				case "MD5":
-					pad1 = new byte[48];
-					pad2 = new byte[48];
-					break;
-
-				case "SHA":
-				case "SHA1":
-					pad1 = new byte[40];
-					pad2 = new byte[40];					
-					break;
-			}
-
-			for (int i = 0; i  < pad1.Length; i++)
-			{
-				pad1[i] = (byte)0x36;
-				pad2[i] = (byte)0x5C;
-			}
+			return hash.Hash;
 		}
 
 		#endregion
@@ -244,7 +222,7 @@ namespace Mono.Security.Protocol.Tls
 
 		private byte[] prf(byte[] secret, string label, byte[] random)
 		{
-			MD5CryptoServiceProvider md5 = new MD5CryptoServiceProvider();
+			HashAlgorithm md5 = new MD5CryptoServiceProvider();
 			SHA1CryptoServiceProvider sha = new SHA1CryptoServiceProvider();
 
 			// Compute SHA hash

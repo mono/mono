@@ -110,7 +110,7 @@ namespace Mono.Security.Protocol.Tls.Handshake
 		{			
 			if (CanWrite)
 			{
-				this.session.Context.HandshakeHashes.Update(this.EncodeMessage());
+				this.session.Context.HandshakeMessages.Write(this.EncodeMessage());
 				this.Reset();
 			}
 		}
@@ -124,8 +124,8 @@ namespace Mono.Security.Protocol.Tls.Handshake
 				TlsStream c = new TlsStream();
 
 				c.Write((byte)HandshakeType);
-				c.WriteInt24((int)Length);
-				c.Write(ToArray());
+				c.WriteInt24((int)this.Length);
+				c.Write(this.ToArray());
 
 				result = c.ToArray();
 			}

@@ -25,6 +25,8 @@
 using System;
 using System.Security.Cryptography;
 
+using Mono.Security.Cryptography;
+
 namespace Mono.Security.Protocol.Tls.Handshake.Client
 {
 	internal class TlsClientFinished : TlsHandshakeMessage
@@ -50,58 +52,33 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 
 		#region PROTECTED_METHODS
 
-		private byte[] computeSslHash(string hashName, byte[] hashes, int sender)
-		{
-			HashAlgorithm		hash	= HashAlgorithm.Create(hashName);
-			TlsStream			block	= new TlsStream();
-			TlsSslCipherSuite	cipher	= (TlsSslCipherSuite)this.Session.Context.Cipher;
-			byte[]				pad1	= null;
-			byte[]				pad2	= null;
-
-			cipher.GeneratePad(hashName, ref pad1, ref pad2);
-
-			block.Write(hashes);
-			block.Write(sender);
-			block.Write(this.Session.Context.MasterSecret);
-			block.Write(cipher.Pad1);
-
-			byte[] blockHash = hash.ComputeHash(block.ToArray(), 0, (int)block.Length);
-
-			block.Reset();
-
-			block.Write(this.Session.Context.MasterSecret);
-			block.Write(cipher.Pad2);
-			block.Write(blockHash);
-
-			blockHash = hash.ComputeHash(block.ToArray(), 0, (int)block.Length);
-
-			block.Reset();
-
-			return blockHash;
-		}
-
 		protected override void ProcessAsSsl3()
 		{
-			this.Write(computeSslHash("MD5", Session.Context.HandshakeHashes.Messages, 0x434C4E54));
-			this.Write(computeSslHash("SHA1", Session.Context.HandshakeHashes.Messages, 0x434C4E54));
+			// Compute handshake messages hashes
+			HashAlgorithm hash = new TlsSslHandshakeHash(this.Session.Context.MasterSecret);
+
+			TlsStream data = new TlsStream();
+			data.Write(this.Session.Context.HandshakeMessages.ToArray());
+			data.Write((int)0x434C4E54);
 			
-			Session.Context.HandshakeHashes.Reset();
+			hash.TransformFinalBlock(data.ToArray(), 0, (int)data.Length);
+
+			this.Write(hash.Hash);
+
+			data.Reset();
 		}
 
 		protected override void ProcessAsTls1()
 		{
-			// Get hashes of handshake messages
-			TlsStream hashes = new TlsStream();
+			// Compute handshake messages hash
+			HashAlgorithm hash = new MD5SHA1CryptoServiceProvider();
+			hash.ComputeHash(
+				Session.Context.HandshakeMessages.ToArray(),
+				0,
+				(int)Session.Context.HandshakeMessages.Length);
 
-			hashes.Write(Session.Context.HandshakeHashes.GetMD5Hash());
-			hashes.Write(Session.Context.HandshakeHashes.GetSHAHash());
-
-			// Write message contents
-			Write(Session.Context.Cipher.PRF(Session.Context.MasterSecret, "client finished", hashes.ToArray(), 12));
-
-			// Reset data
-			hashes.Reset();
-			Session.Context.HandshakeHashes.Reset();
+			// Write message
+			Write(Session.Context.Cipher.PRF(Session.Context.MasterSecret, "client finished", hash.Hash, 12));
 		}
 
 		#endregion

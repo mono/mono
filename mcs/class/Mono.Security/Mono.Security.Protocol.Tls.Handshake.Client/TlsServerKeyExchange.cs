@@ -25,6 +25,8 @@
 using System;
 using System.Security.Cryptography;
 
+using Mono.Security.Cryptography;
+using Mono.Security.X509;
 
 namespace Mono.Security.Protocol.Tls.Handshake.Client
 {
@@ -42,7 +44,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 		public TlsServerKeyExchange(TlsSession session, byte[] buffer)
 			: base(session, TlsHandshakeType.ServerKeyExchange, buffer)
 		{
-			verify();
+			this.verifySignature();
 		}
 
 		#endregion
@@ -53,7 +55,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 		{
 			base.UpdateSession();
 
-			this.Session.Context.ServerSettings.ServerKeyExchange = true;
+			this.Session.Context.ServerSettings.ServerKeyExchange	= true;
 			this.Session.Context.ServerSettings.RsaParameters		= this.rsaParams;
 			this.Session.Context.ServerSettings.SignedParams		= this.signedParams;
 		}
@@ -64,7 +66,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 
 		protected override void ProcessAsSsl3()
 		{
-			throw new NotSupportedException();
+			this.ProcessAsTls1();
 		}
 
 		protected override void ProcessAsTls1()
@@ -72,26 +74,22 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 			this.rsaParams = new RSAParameters();
 			
 			// Read modulus
-			short length		= this.ReadInt16();
-			rsaParams.Modulus	= this.ReadBytes(length);
+			rsaParams.Modulus	= this.ReadBytes(this.ReadInt16());
 
 			// Read exponent
-			length				= this.ReadInt16();
-			rsaParams.Exponent	= this.ReadBytes(length);
+			rsaParams.Exponent	= this.ReadBytes(this.ReadInt16());
 
 			// Read signed params
-			length				= this.ReadInt16();
-			signedParams		= this.ReadBytes(length);
+			signedParams		= this.ReadBytes(this.ReadInt16());
 		}
 
 		#endregion
 
 		#region PRIVATE_METHODS
 
-		private void verify()
+		private void verifySignature()
 		{
-			MD5CryptoServiceProvider	md5 = new MD5CryptoServiceProvider();
-			SHA1CryptoServiceProvider	sha = new SHA1CryptoServiceProvider();
+			MD5SHA1CryptoServiceProvider hash = new MD5SHA1CryptoServiceProvider();
 
 			// Create server params array
 			TlsStream stream = new TlsStream();
@@ -101,20 +99,19 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 			stream.Write(rsaParams.Modulus);
 			stream.Write(rsaParams.Exponent.Length);
 			stream.Write(rsaParams.Exponent);
-			byte[] serverParams = stream.ToArray();
+
+			hash.ComputeHash(stream.ToArray());
+
 			stream.Reset();
 
-			// Compute md5 and sha hashes
-			byte[] md5Hash = md5.ComputeHash(serverParams, 0, serverParams.Length);
-			byte[] shaHash = sha.ComputeHash(serverParams, 0, serverParams.Length);
+			// Verify Signature
+			X509Certificate certificate = this.Session.Context.ServerSettings.ServerCertificates[0];
 
-			// Calculate signature
 			RSACryptoServiceProvider rsa = new RSACryptoServiceProvider(rsaParams.Modulus.Length << 3);
 			rsa.ImportParameters(rsaParams);
 
-			#warning "Verify Signature here"
-
-			// RSAPKCS1SignatureDeformatter rsaDeformatter = new RSAPKCS1SignatureDeformatter(rsa);
+			byte[] sign = hash.CreateSignature(rsa);
+			hash.VerifySignature(rsa, this.signedParams);
 		}
 
 		#endregion

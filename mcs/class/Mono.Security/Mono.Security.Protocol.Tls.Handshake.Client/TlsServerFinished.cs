@@ -25,6 +25,8 @@
 using System;
 using System.Security.Cryptography;
 
+using Mono.Security.Cryptography;
+
 namespace Mono.Security.Protocol.Tls.Handshake.Client
 {
 	internal class TlsServerFinished : TlsHandshakeMessage
@@ -44,6 +46,10 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 		{
 			base.UpdateSession();
 
+			// Reset Hahdshake messages information
+			this.Session.Context.HandshakeMessages.Reset();
+
+			// Hahdshake is finished
 			this.Session.Context.HandshakeFinished = true;
 		}
 
@@ -53,35 +59,58 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 
 		protected override void ProcessAsSsl3()
 		{
-			throw new NotSupportedException();
+			// Compute handshake messages hashes
+			HashAlgorithm hash = new TlsSslHandshakeHash(this.Session.Context.MasterSecret);
+
+			TlsStream data = new TlsStream();
+			data.Write(this.Session.Context.HandshakeMessages.ToArray());
+			data.Write((int)0x53525652);
+			
+			hash.TransformFinalBlock(data.ToArray(), 0, (int)data.Length);
+
+			data.Reset();
+
+			byte[] serverHash	= this.ReadBytes((int)Length);			
+			byte[] clientHash	= hash.Hash;
+			
+			// Check server prf against client prf
+			if (clientHash.Length != serverHash.Length)
+			{
+				throw new TlsException("Invalid ServerFinished message received.");
+			}
+			for (int i = 0; i < serverHash.Length; i++)
+			{
+				if (clientHash[i] != serverHash[i])
+				{
+					throw new TlsException("Invalid ServerFinished message received.");
+				}
+			}
 		}
 
 		protected override void ProcessAsTls1()
 		{
-			byte[]		serverPRF	= this.ReadBytes((int)Length);
-			TlsStream	hashes		= new TlsStream();
+			byte[]			serverPRF	= this.ReadBytes((int)Length);
+			HashAlgorithm	hash		= new MD5SHA1CryptoServiceProvider();
 
-			hashes.Write(this.Session.Context.HandshakeHashes.GetMD5Hash());
-			hashes.Write(this.Session.Context.HandshakeHashes.GetSHAHash());
+			hash.ComputeHash(
+				Session.Context.HandshakeMessages.ToArray(), 
+				0,
+				(int)Session.Context.HandshakeMessages.Length);
 
-			byte[] clientPRF = this.Session.Context.Cipher.PRF(this.Session.Context.MasterSecret, "server finished", hashes.ToArray(), 12);
-
-			hashes.Reset();
+			byte[] clientPRF = this.Session.Context.Cipher.PRF(this.Session.Context.MasterSecret, "server finished", hash.Hash, 12);
 
 			// Check server prf against client prf
 			if (clientPRF.Length != serverPRF.Length)
 			{
-				throw new TlsException("Invalid finished message received from server.");
+				throw new TlsException("Invalid ServerFinished message received.");
 			}
 			for (int i = 0; i < serverPRF.Length; i++)
 			{
 				if (clientPRF[i] != serverPRF[i])
 				{
-					throw new TlsException("Invalid finished message received from server.");
+					throw new TlsException("Invalid ServerFinished message received.");
 				}
 			}
-
-			this.Session.Context.HandshakeHashes.Clear();
 		}
 
 		#endregion

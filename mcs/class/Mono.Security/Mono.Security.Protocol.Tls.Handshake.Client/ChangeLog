@@ -1,3 +1,70 @@
+2003-11-04 Carlos Guzmán Álvarez <carlosga@telefonica.net>
+
+	* Mono.Security.Protocol.Tls/CipherSuite.cs:
+
+		- Added custom padding for record encryption.
+
+
+2003-11-03 Carlos Guzmán Álvarez <carlosga@telefonica.net>
+
+	* Mono.Security.Protocol.Tls.Handshake/TlsHandshakeMessages.cs:
+	
+		- Removed file.
+
+	* Mono.Security.Protocol.Tls/TlsSslHandshakeHash.cs:
+	
+		- New class for handshake hashes calculation on SSL3 protocol.
+
+	* Mono.Security.Protocol.Tls/TlsSessionContext.cs:
+	
+		- Fixed mac keys clearing for SSL3 protocol.
+
+	* Mono.Security.Protocol.Tls/TlsSslCipherSuite.cs:
+	* Mono.Security.Protocol.Tls.Handshake.Client/TlsClientFinished.cs:
+	
+		- Added changes for make use of new TlsSslHandshakeHash class.
+	
+	* Mono.Security.Protocol.Tls.Handshake.Client/TlsServerFinished.cs:
+	
+		- Added initial implementation for SSL3 protocol.
+	
+	* Mono.Security.Cryptography/MD5SHA1CryptoServiceProvider.cs:
+	
+		- New class for md5-sha hash calculation.
+							
+	* Mono.Security.Protocol.Tls.Handshake.Client/TlsClientFinished.cs:
+	* Mono.Security.Protocol.Tls.Handshake.Client/TlsServerFinished.cs:
+	* Mono.Security.Protocol.Tls.Handshake.Client/TlsServerKeyExchange.cs:
+	* Mono.Security.Protocol.Tls.Handshake.Client/TlsHandshakeMessage.cs:
+	
+		- Make use of new MD5SHA1CryptoServiceProvider class.
+		
+	* Mono.Security.Protocol.Tls.Handshake.Client/TlsClientCertificateVerify.cs:
+	
+		- Added initial implementation (not finished).
+			
+	* Mono.Security.Protocol.Tls.Handshake.Client/TlsServerKeyExchange.cs:
+	
+		- Minor change to message processing.
+
+		- Changed verify method name to verifySignature.
+			
+	* Mono.Security.Protocol.Tls/TlsSessionContext.cs:
+	
+		- Changed handshakeHashes member to be an TlsStream.
+
+2003-10-28 Carlos Guzmán Álvarez <carlosga@telefonica.net>
+
+	* Mono.Security.Protocol.Tls/CipherSuite.cs:
+	* Mono.Security.Protocol.Tls/TlsSessionSettings.cs:
+	* Mono.Security.Protocol.Tls/TlsServerSettings.cs:
+	* Mono.Security.Protocol.Tls.Handshake.Client/TlsClientCertificateVerify.cs:
+	* Mono.Security.Protocol.Tls.Handshake.Client/TlsClientKeyExchange.cs:
+	* Mono.Security.Protocol.Tls.Handshake.Client/TlsServerCertificate.cs:
+	* Mono.Security.Protocol.Tls.Handshake.Client/TlsServerKeyExchange.cs:
+
+		- Added changes for make use of X509 classes from mono.
+
 2003-10-23 Carlos Guzmán Álvarez <carlosga@telefonica.net>
 
 	* Added partial implementation of SSL3 protocol ( not finished yet ).

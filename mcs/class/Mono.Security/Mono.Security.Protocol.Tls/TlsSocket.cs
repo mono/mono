@@ -251,7 +251,7 @@ namespace Mono.Security.Protocol.Tls
 						this.processHandshakeMessage(message);
 					}
 					// Update handshakes of current messages
-					this.session.Context.HandshakeHashes.Update(message.ToArray());
+					this.session.Context.HandshakeMessages.Write(message.ToArray());
 					break;
 
 				default:

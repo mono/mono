@@ -24,8 +24,8 @@
 
 using System;
 using System.Security.Cryptography;
-using System.Security.Cryptography.X509Certificates;
 
+using Mono.Security.X509;
 using Mono.Security.Protocol.Tls.Handshake;
 
 namespace Mono.Security.Protocol.Tls

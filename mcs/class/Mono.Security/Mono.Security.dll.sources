@@ -30,6 +30,7 @@
 ./Mono.Security.X509.Extensions/KeyUsageExtension.cs
 ./Mono.Security.X509.Extensions/SubjectAltNameExtension.cs
 ./Mono.Security.Cryptography/TlsHMAC.cs
+./Mono.Security.Cryptography/MD5SHA1CryptoServiceProvider.cs
 ./Mono.Security.Protocol.Tls/CipherSuite.cs
 ./Mono.Security.Protocol.Tls/TlsCipherSuite.cs
 ./Mono.Security.Protocol.Tls/TlsCipherSuiteCollection.cs
@@ -47,11 +48,11 @@
 ./Mono.Security.Protocol.Tls/TlsSocket.cs
 ./Mono.Security.Protocol.Tls/TlsStream.cs
 ./Mono.Security.Protocol.Tls/TlsSslCipherSuite.cs
+./Mono.Security.Protocol.Tls/TlsSslHandshakeHash.cs
 ./Mono.Security.Protocol.Tls.Alerts/TlsAlert.cs
 ./Mono.Security.Protocol.Tls.Alerts/TlsCloseNotifyAlert.cs
 ./Mono.Security.Protocol.Tls.Alerts/TlsWarningAlertEventArgs.cs
 ./Mono.Security.Protocol.Tls.Handshake/TlsClientCertificateType.cs
-./Mono.Security.Protocol.Tls.Handshake/TlsHandshakeHashes.cs
 ./Mono.Security.Protocol.Tls.Handshake/TlsHandshakeMessage.cs
 ./Mono.Security.Protocol.Tls.Handshake/TlsHandshakeType.cs
 ./Mono.Security.Protocol.Tls.Handshake.Client/TlsClientCertificate.cs

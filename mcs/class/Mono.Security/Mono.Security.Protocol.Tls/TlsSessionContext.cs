@@ -74,7 +74,7 @@ namespace Mono.Security.Protocol.Tls
 		private byte[]				serverWriteIV;
 		
 		// Handshake hashes
-		private TlsHandshakeHashes	handshakeHashes;
+		private TlsStream			handshakeMessages;
 		
 		#endregion
 
@@ -140,9 +140,9 @@ namespace Mono.Security.Protocol.Tls
 			set { supportedCiphers = value; }
 		}
 
-		public TlsHandshakeHashes HandshakeHashes
+		public TlsStream HandshakeMessages
 		{
-			get { return this.handshakeHashes; }
+			get { return this.handshakeMessages; }
 		}
 
 		public long WriteSequenceNumber
@@ -232,7 +232,7 @@ namespace Mono.Security.Protocol.Tls
 			this.protocol			= TlsProtocol.Tls1;
 			this.compressionMethod	= TlsCompressionMethod.None;
 			this.serverSettings		= new TlsServerSettings();
-			this.handshakeHashes	= new TlsHandshakeHashes();
+			this.handshakeMessages	= new TlsStream();
 		}
 
 		#endregion
@@ -271,12 +271,17 @@ namespace Mono.Security.Protocol.Tls
 			// Clear client keys
 			this.clientWriteKey	= null;
 			this.clientWriteIV	= null;
-			this.clientWriteMAC	= null;
-
+			
 			// Clear server keys
 			this.serverWriteKey	= null;
 			this.serverWriteIV	= null;
-			this.serverWriteMAC	= null;
+
+			// Clear MAC keys if protocol is different than Ssl3
+			if (this.protocol != TlsProtocol.Ssl3)
+			{
+				this.clientWriteMAC = null;
+				this.serverWriteMAC = null;
+			}
 		}
 
 		#endregion

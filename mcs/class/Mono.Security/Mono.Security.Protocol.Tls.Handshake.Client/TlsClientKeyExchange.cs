@@ -49,15 +49,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 			byte[] preMasterSecret = this.Session.Context.Cipher.CreatePremasterSecret();
 
 			// Create a new RSA key
-			RSACryptoServiceProvider rsa = null;
-			if (this.Session.Context.ServerSettings.ServerKeyExchange)
-			{
-				rsa = this.Session.Context.Cipher.CreateRSA(this.Session.Context.ServerSettings.RsaParameters);
-			}
-			else
-			{
-				rsa = this.Session.Context.Cipher.CreateRSA(this.Session.Context.ServerSettings.ServerCertificates[0]);
-			}			
+			RSA rsa = this.Session.Context.Cipher.CreateRSA();
 			
 			// Encrypt premaster_sercret
 			RSAPKCS1KeyExchangeFormatter formatter = new RSAPKCS1KeyExchangeFormatter(rsa);
@@ -82,15 +74,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 			byte[] preMasterSecret = this.Session.Context.Cipher.CreatePremasterSecret();
 
 			// Create a new RSA key
-			RSACryptoServiceProvider rsa = null;
-			if (this.Session.Context.ServerSettings.ServerKeyExchange)
-			{
-				rsa = this.Session.Context.Cipher.CreateRSA(this.Session.Context.ServerSettings.RsaParameters);
-			}
-			else
-			{
-				rsa = this.Session.Context.Cipher.CreateRSA(this.Session.Context.ServerSettings.ServerCertificates[0]);
-			}			
+			RSA rsa = this.Session.Context.Cipher.CreateRSA();
 			
 			// Encrypt premaster_sercret
 			RSAPKCS1KeyExchangeFormatter formatter = new RSAPKCS1KeyExchangeFormatter(rsa);

@@ -33,7 +33,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 		#region CONSTRUCTORS
 
 		public TlsClientCertificate(TlsSession session) 
-			: base(session, TlsHandshakeType.Finished, TlsContentType.Handshake)
+			: base(session, TlsHandshakeType.Certificate, TlsContentType.Handshake)
 		{
 		}
 
@@ -53,13 +53,17 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 
 		protected override void ProcessAsSsl3()
 		{
-			throw new NotSupportedException();
+			this.ProcessAsTls1();
 		}
 
 		protected override void ProcessAsTls1()
 		{
-			#warning "Check which type of certificates has been requested by the server"
-
+			if (Session.Settings.Certificates == null ||
+				Session.Settings.Certificates.Count == 0)
+			{
+				throw this.Session.CreateException("Client certificate requested by the server and no client certificate specified.");
+			}
+			
 			// Write client certificates information to a stream
 			TlsStream stream = new TlsStream();
 			foreach (X509Certificate cert in Session.Settings.Certificates)
