@@ -736,7 +736,9 @@ namespace System
 						year = _ParseNumber (s, 4, false, sloppy_parsing, out num_parsed);
 						num = 3;
 					}
-					
+					// if there is another digit next to the ones we just parsed, then the year value
+					// is too big for sure.
+					//if (num_parsed < s.Length && Char.IsDigit(s[num_parsed]) || (year != 0 && (year < 1 || year > 9999)))
 					if (year != 0 && (year < 1 || year > 9999))
 						throw new ArgumentOutOfRangeException ("year", "Valid " + 
 								"values are between 1 and 9999 inclusive");

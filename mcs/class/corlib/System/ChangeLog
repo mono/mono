@@ -1,3 +1,6 @@
+2003-06-05  Nick Drochak  <ndrochak@gol.com>
+
+	* UnitySerializataionHolder.cs: Cleanups according to class status page
 
 Wed Jun 4 16:59:39 CEST 2003 Paolo Molaro <lupus@ximian.com>
 

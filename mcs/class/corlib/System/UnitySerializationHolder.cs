@@ -54,13 +54,13 @@ namespace System
 			info.SetType (typeof (UnitySerializationHolder));
 		}
 
-		public void GetObjectData(SerializationInfo info, StreamingContext context)
+		public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
 		{
 			// Not needed.
 			throw new NotSupportedException();
 		}
 
-		public object GetRealObject(StreamingContext context)
+		public virtual object GetRealObject(StreamingContext context)
 		{
 			switch (_unityType)
 			{
