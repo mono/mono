@@ -343,6 +343,9 @@ namespace Mono.Xml.Xsl.Operations {
 			
 			class AlphaItem : FormatItem {
 				bool uc;
+				static readonly char [] ucl = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
+				static readonly char [] lcl = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'};
+				
 				public AlphaItem (string sep, bool uc) : base (sep)
 				{
 					this.uc = uc;
@@ -350,7 +353,13 @@ namespace Mono.Xml.Xsl.Operations {
 				
 				public override void Format (StringBuilder b, int num)
 				{
-					throw new NotImplementedException ();
+					alphaSeq (b, num, uc ? ucl : lcl);
+				}
+				
+				static void alphaSeq (StringBuilder b, int n, char [] alphabet) {
+					if (n > alphabet.Length)
+						alphaSeq (b, (n-1) / alphabet.Length, alphabet);
+					b.Append (alphabet [(n-1) % alphabet.Length]); 
 				}
 			}
 			
@@ -360,28 +369,46 @@ namespace Mono.Xml.Xsl.Operations {
 				{
 					this.uc = uc;
 				}
+				static readonly string [] ucrDigits =
+				{ "M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I" };
+				static readonly string [] lcrDigits =
+				{ "m", "cm", "d", "cd", "c", "xc", "l", "xl", "x", "ix", "v", "iv", "i" };
+				static readonly int [] decValues =
+				{1000, 900 , 500, 400 , 100, 90  , 50 , 40  , 10 , 9   , 5  , 4   , 1   };
 				
 				public override void Format (StringBuilder b, int num)
 				{
-					throw new NotImplementedException ();
+					if (num < 1 || num > 4999) b.Append (num);
+					
+					for (int i = 0; i < decValues.Length; i++) {
+						while (decValues [i] <= num) {
+							if (uc)
+								b.Append (ucrDigits [i]);
+							else
+								b.Append (lcrDigits [i]);
+							
+							num -= decValues [i];
+						}
+						if (num == 0) break;
+					}
 				}
 			}
 			
 			class DigitItem : FormatItem {
-				int len, gpSize;
-				char gpSep;
+				System.Globalization.NumberFormatInfo nfi;
 				
 				public DigitItem (string sep, int len, char gpSep, int gpSize) : base (sep)
 				{
-					this.len = len;
-					this.gpSep = gpSep;
-					this.gpSize = gpSize;
+					nfi = new System.Globalization.NumberFormatInfo  ();
+					nfi.NumberDecimalDigits = 0;
+					nfi.NumberGroupSizes = new int [] {gpSize};
+					nfi.NumberGroupSeparator = gpSep.ToString ();
+					// TODO use len to get min number of digits.
 				}
 				
 				public override void Format (StringBuilder b, int num)
 				{
-					// TODO Formatting
-					b.Append (num);
+					b.Append (num.ToString ("N", nfi));
 				}
 			}
 		}
