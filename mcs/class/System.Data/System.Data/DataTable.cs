@@ -74,7 +74,7 @@ namespace System.Data {
                  /// An enum variable indicating whether BeginInit() or EndInit() is called.
                 /// Delegate to call a function which performs cleanup after EndInit() is called
                 /// </summary>
-                public enum initStatus { NotInitialized, BeginInit, EndInit };
+                internal enum initStatus { NotInitialized, BeginInit, EndInit };
         
 	        private initStatus _initStatus;
         

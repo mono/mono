@@ -1,3 +1,6 @@
+2004-05-11  Gert Driesen (drieseng@users.sourceforge.net)
+	* DataTable: marked initStatus enum internal
+
 2004-05-09  Gert Driesen (drieseng@users.sourceforge.net)
 	* DataTable.cs: removed TypeConverterAttribute, marked RowsExist
 	methods internal
