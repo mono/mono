@@ -29,11 +29,13 @@
 //	Jaak Simm		jaaksimm@firm.ee
 //	John Sohn		jsohn@columbus.rr.com
 //
-// $Revision: 1.72 $
+// $Revision: 1.73 $
 // $Modtime: $
 // $Log: Control.cs,v $
-// Revision 1.72  2004/10/19 14:31:12  pbartok
-// - Added missing call to PreProcessMessage before calling OnXXXKey methods
+// Revision 1.73  2004/10/20 03:52:06  pbartok
+// - Removed unneeded locals
+// - Added code to all size and location properties to understand and
+//   deal with the parent container of Form
 //
 // Revision 1.71  2004/10/18 06:27:39  ravindra
 // Default value of visible property must be true.
@@ -380,9 +382,8 @@ namespace System.Windows.Forms
 		// Layout
 		internal AnchorStyles		anchor_style;		// anchoring requirements for our control
 		internal DockStyle		dock_style;		// docking requirements for our control (supercedes anchoring)
-		internal int			prev_width;		// previous width of the control; required for anchoring
-		internal int			prev_height;		// previous height of our control; required for anchoring
-		internal Size prev_size;
+		internal SizeF			size_ratio;		// size ratio of our control to it's parent; required for anchoring
+		internal Size			prev_size;		// previous size of the control; required for anchoring
 
 		// to be categorized...
 		static internal ArrayList	controls = new ArrayList();		// All of the applications controls, in a flat list
@@ -1120,6 +1121,10 @@ namespace System.Windows.Forms
 
 		public int Bottom {
 			get {
+				if ((this is Form) && (((Form)this).form_parent_window != null)) {
+					return ((Form)this).form_parent_window.Bottom;
+				}
+
 				return bounds.Y+bounds.Height;
 			}
 		}
@@ -1204,10 +1209,21 @@ namespace System.Windows.Forms
 
 		public Size ClientSize {
 			get {
+#if notneeded
+				if ((this is Form) && (((Form)this).form_parent_window != null)) {
+					return ((Form)this).form_parent_window.ClientSize;
+				}
+#endif
+
 				return client_size;
 			}
 
 			set {
+				if ((this is Form) && (((Form)this).form_parent_window != null)) {
+					((Form)this).form_parent_window.ClientSize = value;
+					return;
+				}
+
 				this.SetClientSizeCore(value.Width, value.Height);
 			}
 		}
@@ -1395,10 +1411,18 @@ namespace System.Windows.Forms
 
 		public int Height {
 			get {
+				if ((this is Form) && (((Form)this).form_parent_window != null)) {
+					return ((Form)this).form_parent_window.Height;
+				}
 				return this.bounds.Height;
 			}
 
 			set {
+				if ((this is Form) && (((Form)this).form_parent_window != null)) {
+					((Form)this).form_parent_window.Height = value;
+					return;
+				}
+
 				SetBoundsCore(bounds.X, bounds.Y, bounds.Width, value, BoundsSpecified.Height);
 			}
 		}
@@ -1450,20 +1474,37 @@ namespace System.Windows.Forms
 
 		public int Left {
 			get {
+				if ((this is Form) && (((Form)this).form_parent_window != null)) {
+					return ((Form)this).form_parent_window.Left;
+				}
+
 				return this.bounds.X;
 			}
 
 			set {
+				if ((this is Form) && (((Form)this).form_parent_window != null)) {
+					((Form)this).form_parent_window.Left = value;
+					return;
+				}
+
 				SetBoundsCore(value, bounds.Y, bounds.Width, bounds.Height, BoundsSpecified.X);
 			}
 		}
 
 		public Point Location {
 			get {
+				if ((this is Form) && (((Form)this).form_parent_window != null)) {
+					return ((Form)this).form_parent_window.Location;
+				}
 				return new Point(bounds.X, bounds.Y);
 			}
 
 			set {
+				if ((this is Form) && (((Form)this).form_parent_window != null)) {
+					((Form)this).form_parent_window.Location = value;
+					return;
+				}
+
 				SetBoundsCore(value.X, value.Y, bounds.Width, bounds.Height, BoundsSpecified.Location);
 			}
 		}
@@ -1540,6 +1581,10 @@ namespace System.Windows.Forms
 
 		public int Right {
 			get {
+				if ((this is Form) && (((Form)this).form_parent_window != null)) {
+					return ((Form)this).form_parent_window.Right;
+				}
+
 				return this.bounds.X+this.bounds.Width;
 			}
 		}
@@ -1569,10 +1614,17 @@ namespace System.Windows.Forms
 
 		public Size Size {
 			get {
+				if ((this is Form) && (((Form)this).form_parent_window != null)) {
+					return ((Form)this).form_parent_window.Size;
+				}
 				return new Size(Width, Height);
 			}
 
 			set {
+				if ((this is Form) && (((Form)this).form_parent_window != null)) {
+					((Form)this).form_parent_window.Size = value;
+					return;
+				}
 				SetBoundsCore(bounds.X, bounds.Y, value.Width, value.Height, BoundsSpecified.Size);
 			}
 		}
@@ -1628,10 +1680,18 @@ namespace System.Windows.Forms
 
 		public int Top {
 			get {
+				if ((this is Form) && (((Form)this).form_parent_window != null)) {
+					return ((Form)this).form_parent_window.Top;
+				}
 				return this.bounds.Y;
 			}
 
 			set {
+				if ((this is Form) && (((Form)this).form_parent_window != null)) {
+					((Form)this).form_parent_window.Top = value;
+					return;
+				}
+
 				SetBoundsCore(bounds.X, value, bounds.Width, bounds.Height, BoundsSpecified.Y);
 			}
 		}
@@ -1668,10 +1728,18 @@ namespace System.Windows.Forms
 
 		public int Width {
 			get {
+				if ((this is Form) && (((Form)this).form_parent_window != null)) {
+					return ((Form)this).form_parent_window.Width;
+				}
 				return this.bounds.Width;
 			}
 
 			set {
+				if ((this is Form) && (((Form)this).form_parent_window != null)) {
+					((Form)this).form_parent_window.Width = value;
+					return;
+				}
+
 				SetBoundsCore(bounds.X, bounds.Y, value, bounds.Height, BoundsSpecified.Width);
 			}
 		}
