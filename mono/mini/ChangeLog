@@ -1,3 +1,8 @@
+
+Wed Apr 30 11:44:36 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.h, tramp-pcc.c: type fixes from Max Horn <max@quendi.de>.
+
 2003-04-30  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* driver.c: fixed bug #42100.
