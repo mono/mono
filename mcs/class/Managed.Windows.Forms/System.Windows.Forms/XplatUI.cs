@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.2 $
+// $Revision: 1.3 $
 // $Modtime: $
 // $Log: XplatUI.cs,v $
+// Revision 1.3  2004/08/09 15:56:44  jackson
+// Remove defaults, these are handled by the theme now.
+//
 // Revision 1.2  2004/08/04 20:11:24  pbartok
 // - Added Invalidate handling
 //
@@ -66,25 +69,6 @@ namespace System.Windows.Forms {
 		#endregion	// Local Variables
 
 		#region Subclasses
-		public class Defaults {
-			static public Color BackColor {
-				get {
-					return driver.BackColor;
-				}
-			}
-
-			static public Color ForeColor {
-				get {
-					return driver.ForeColor;
-				}
-			}
-
-			static public Font Font {
-				get {
-					return driver.Font;
-				}
-			}
-		}
 
 		public class State {
 			static public Keys ModifierKeys {
