@@ -1,3 +1,7 @@
+2003-09-11  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* CryptoStream.cs: Added [In,Out] attributes to Read method.
+
 2003-08-24  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* SymmetricAlgorithm.cs: Fixed IV length exception for stream ciphers
@@ -641,4 +645,3 @@ Wed Nov 14 17:04:30 CET 2001 Paolo Molaro <lupus@ximian.com>
 	* SHA256Managed.cs: Initial version.
 	* SHA384.cs: Initial version.
 	* SHA512.cs: Initial version.
-

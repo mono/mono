@@ -10,6 +10,7 @@
 
 using System;
 using System.IO;
+using System.Runtime.InteropServices;
 
 namespace System.Security.Cryptography {
 
@@ -131,7 +132,7 @@ public class CryptoStream : Stream {
 		return result;
 	}
 
-	public override int Read (byte[] buffer, int offset, int count)
+	public override int Read ([In,Out] byte[] buffer, int offset, int count)
 	{
 		if (_mode != CryptoStreamMode.Read)
 			throw new NotSupportedException ("not in Read mode");
