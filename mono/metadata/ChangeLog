@@ -1,3 +1,9 @@
+
+Mon Feb 10 17:54:10 CET 2003 Paolo Molaro <lupus@ximian.com>
+
+	* class.c: handled TypedReference type code. Set the correct size for
+	class data. Setup interface_offsets for interface classes, too.
+
 2003-02-09  Martin Baulig  <martin@ximian.com>
 
 	* debug-mono-symfile.h: Reflect latest symbol writer changes.
