@@ -1,5 +1,7 @@
 2004-06-11  Raja R Harinath  <rharinath@novell.com>
 
+	* platforms/win32.make (PLATFORM_TWEAK_CORLIB_SOURCES): Remove.
+
 	Support enough features to build mscorlib.dll.
 	* library.make (core_sourcefile): New renamed from $(sourcefile).
 	(PLATFORM_excludes): Auto-detecting define that sees if
