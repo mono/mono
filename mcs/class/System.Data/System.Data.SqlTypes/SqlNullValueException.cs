@@ -23,5 +23,10 @@ namespace System.Data.SqlTypes {
 			: base (message)
 		{
 		}
+
+		public SqlNullValueException (string message, Exception inner)
+			: base (message, inner)
+		{
+		}
 	}
 }

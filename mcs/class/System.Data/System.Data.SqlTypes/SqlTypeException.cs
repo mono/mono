@@ -14,6 +14,12 @@ namespace System.Data.SqlTypes {
 	[Serializable]			
 	public class SqlTypeException : SystemException
 	{
+		
+		public SqlTypeException()
+			: base (Locale.GetText ("A sql exception has occured."))
+		{
+		}
+
 		public SqlTypeException (string message)
 			: base (message)
 		{
