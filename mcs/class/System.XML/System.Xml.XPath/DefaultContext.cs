@@ -85,11 +85,19 @@ namespace System.Xml.XPath
 				{
 					XPathResultType typeRequested = rgTypesRequested [iArg];
 					XPathResultType typeDefined = (iArg >= cTypes) ? rgTypes [cTypes - 1] : rgTypes [iArg];
-					if (typeRequested != XPathResultType.NodeSet &&
-						typeDefined != XPathResultType.Any &&
+
+					// if the arguments don't match...
+					if (typeDefined != XPathResultType.Any &&
 						typeDefined != typeRequested)
 					{
-						return null;
+						// if the function requires a nodeset
+						// then the arg should be .Any
+						// other conversions are illegal
+						if (typeDefined == XPathResultType.NodeSet &&
+							typeRequested != XPathResultType.Any)
+						{
+							return null;
+						}
 					}
 				}
 			}
