@@ -185,9 +185,11 @@ namespace System.Runtime.InteropServices {
 		/// </summary>
 		Error = 45,
 
+#if BOOTSTRAP_WITH_OLDLIB
 		/// <summary>
 		/// </summary>
-		//NativeTypeMax = 80,
+		__mono_bootstrap_NativeTypeMax = 80,
+#endif
 	} // UnmanagedType
 
 } // System.Runtime.InteropServices

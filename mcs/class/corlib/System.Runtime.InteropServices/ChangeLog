@@ -1,3 +1,9 @@
+2004-06-22  Raja R Harinath  <rharinath@novell.com>
+
+	Fix bootstrap with mcs 0.31.
+	* UnmanagedType.cs (UnmanagedType.__mono_bootstrap_NativeTypeMax): 
+	New bootstrap-only constant.
+
 2004-06-18  Raja R Harinath  <rharinath@novell.com>
 
 	Fix breaking build (see tests/test-272.cs).  Since corlib is a
