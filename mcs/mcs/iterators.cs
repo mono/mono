@@ -651,12 +651,12 @@ namespace Mono.CSharp {
 
 		static bool IsIEnumerable (Type t)
 		{
-			return t == TypeManager.ienumerable_type || TypeManager.ImplementsInterface (t, TypeManager.ienumerable_type);
+			return t == TypeManager.ienumerable_type;
 		}
 
 		static bool IsIEnumerator (Type t)
 		{
-			return t == TypeManager.ienumerator_type || TypeManager.ImplementsInterface (t, TypeManager.ienumerator_type);
+			return t == TypeManager.ienumerator_type;
 		}
 		
 		//
