@@ -1,3 +1,12 @@
+2004-03-10  Juraj Skripsky <juraj@hotfeet.ch>
+
+	* StringBuilder.cs
+	(Insert int, char[]): fix by using new string(char[]) instead of
+	char[].ToString() and simplify.
+	(Insert int, string, int): add LAMESPEC note.
+	(Insert int char[], int, int): handle value==null according to spec. 
+	Use a string instead of char array + Array.Copy (gonzalo)
+
 2004-03-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* StringBuilder.cs:

@@ -456,23 +456,7 @@ namespace System.Text {
 		
 		public StringBuilder Insert (int index, char[] value) 
 		{
-			if( index > _length || index < 0)
-				throw new ArgumentOutOfRangeException();
-
-			if (value == null || value.Length == 0)
-				return this;
-
-			InternalEnsureCapacity (_length + value.Length);
-
-			// Move everything to the right of the insert point across
-			String.InternalStrcpy (_str, index + value.Length, _str, index, _length - index);
-			
-			// Copy in stuff from the insert buffer
-			String.InternalStrcpy (_str, index, value.ToString());
-			
-			_length += value.Length;
-
-			return this;
+			return Insert (index, new string (value));
 		}
 				
 		public StringBuilder Insert (int index, string value) 
@@ -570,34 +554,31 @@ namespace System.Text {
 
 		public StringBuilder Insert (int index, string value, int count) 
 		{
+			// LAMESPEC: The spec says to throw an exception if 
+			// count < 0, while MS throws even for count < 1!
 			if ( count < 0 )
 				throw new ArgumentOutOfRangeException();
 
-			if( value != null ) {
-				if( value != String.Empty ) {
-					for( int insertCount = 0; insertCount < count; 
-						insertCount++ ) {
-						Insert( index, value );	   
-					}
-				}
-			}
+			if (value != null && value != String.Empty)
+				for (int insertCount = 0; insertCount < count; insertCount++)
+					Insert( index, value );
 
 			return this;
 		}
 
-		public StringBuilder Insert( int index, char[] value, int startIndex, int charCount ) {
-			if (value != null) 
-			{
-				if( charCount < 0 || startIndex < 0 || startIndex + charCount > value.Length )
-					throw new ArgumentOutOfRangeException();
+		public StringBuilder Insert (int index, char [] value, int startIndex, int charCount)
+		{
+			if (value == null) {
+				if (startIndex == 0 && charCount == 0)
+					return this;
 
-				char[] insertChars = new char[ charCount  ];
-				Array.Copy( value, startIndex, insertChars, 0, charCount );
-
-				return Insert( index, insertChars );
+				throw new ArgumentNullException ("value");
 			}
 
-			return this;
+			if (charCount < 0 || startIndex < 0 || startIndex + charCount > value.Length)
+				throw new ArgumentOutOfRangeException ();
+
+			return Insert (index, new String (value, startIndex, charCount));
 		}
 	
 		private void InternalEnsureCapacity (int size) 
