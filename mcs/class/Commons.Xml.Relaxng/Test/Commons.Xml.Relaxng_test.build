@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<!-- NAnt build file for Commons.Xml.Relaxng_test.dll -->
+<!-- Target build (default) builds tests -->
+<!-- Target test runs tests -->
+
+<project name="Commons.Xml.Relaxng_test" default="build">
+	<property name="debug" value="false"/>
+	<property name="nunit_home" value="..\..\..\nunit"/>
+
+	<target name="build">
+	</target>
+
+	<target name="assemblies">
+		<copy file="../../lib/Commons.Xml.Relaxng.dll" tofile="Commons.Xml.Relaxng.dll"/>
+		<csc target="library" output="Commons.Xml.Relaxng_test.dll" debug="${debug}">
+			<arg value="/nowarn:1595"/>
+			<sources>
+				<includes name="**/*.cs"/>
+			</sources>
+			<references basedir="..\..\..\nunit20">
+				<includes name="NUnit.Framework.dll"/>
+			</references>
+<!--
+			<arg value="/nostdlib" />
+			<references basedir="..\..\lib">
+				<includes name="corlib.dll"/>
+				<includes name="System.dll"/>
+				<includes name="System.Xml.dll"/>
+				<includes name="Commons.Xml.Relaxng.dll"/>
+			</references>
+			<arg value="/r:..\..\lib\corlib.dll" />
+			<arg value="/r:..\..\lib\System.dll" />
+			<arg value="/r:..\..\lib\System.Xml.dll" />
+-->
+			<references basedir="..\..\lib">
+				<includes name="Commons.Xml.Relaxng.dll"/>
+			</references>
+			<arg value="/r:Commons.Xml.Relaxng.dll" />
+		</csc>
+<!--
+		<copy file="../../lib/corlib.dll" tofile="corlib.dll"/>
+		<copy file="../../lib/System.dll" tofile="System.dll"/>
+		<copy file="../../lib/System.Xml.dll" tofile="System.XML.dll"/>
+-->
+	</target>
+
+	<target name="test" depends="assemblies">
+		<exec program="..\..\..\nunit20\nunit-console.exe" commandline="Commons.Xml.Relaxng_test.dll" failonerror="false"/>
+	</target>
+
+	<target name="clean">
+		<delete file="Commons.Xml.Relaxng_test.dll" failonerror="false"/>
+	</target>
+</project>

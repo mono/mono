@@ -1,0 +1,7 @@
+2003-04-29  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* Started.
+	* added ChangeLog, RdpPatternTests.cs, RelaxngReaderTests.cs,
+	  RelaxngValidatingReaderTests.cs, makefile.gnu,
+	  Commons.Xml.Relaxng_test.args and Commons.Xml.Relaxng_test.build.
+

@@ -1,0 +1,12 @@
+--target library
+-o Mono.Xml.Relaxng_test.dll
+--noconfig
+-r ../../lib/corlib.dll
+-r ../../lib/System.dll
+-r ../../lib/System.Xml.dll
+-r ../../lib/Mono.Xml.Relaxng.dll
+-r ../../lib/System.EnterpriseServices.dll
+-r ../../../nunit20/NUnit.Framework.dll
+Commons.Xml.Relaxng/RdpPatternTests.cs
+Commons.Xml.Relaxng/RelaxngReaderTests.cs
+Commons.Xml.Relaxng/RelaxngValidatingReaderTests.cs
