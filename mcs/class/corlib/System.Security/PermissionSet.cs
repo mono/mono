@@ -23,6 +23,8 @@ namespace System.Security {
 		private PermissionState state;
 		private ArrayList list;
 
+		// constructors
+
 		public PermissionSet (PermissionState state)
 		{
 			if (!Enum.IsDefined(typeof(System.Security.Permissions.PermissionState), state))
@@ -43,6 +45,15 @@ namespace System.Security {
 					list.Add (p);
 			}
 		}
+
+		// for PolicyLevel (to avoid validation duplication)
+		internal PermissionSet (SecurityElement e) 
+		{
+			list = new ArrayList ();
+			FromXml (e);
+		}
+
+		// methods
 
 		public virtual IPermission AddPermission (IPermission perm)
 		{
@@ -95,7 +106,7 @@ namespace System.Security {
 				throw new ArgumentNullException ("et");
 			if (et.Tag != "PermissionSet")
 				throw new ArgumentException ("not PermissionSet");
-			if (!(et.Attributes ["class"] as string).StartsWith (className))
+			if (!(et.Attributes ["class"] as string).EndsWith (className))
 				throw new ArgumentException ("not " + className);
 // version isn't checked
 //			if ((et.Attributes ["version"] as string) != "1")
@@ -110,7 +121,7 @@ namespace System.Security {
 		public virtual void FromXml (SecurityElement et)
 		{
 			list.Clear ();
-			FromXml (et, "System.Security.PermissionSet");
+			FromXml (et, "PermissionSet");
 			if (et.Children != null) {
 				foreach (SecurityElement se in et.Children) {
 					string className = (se.Attributes ["class"] as string);

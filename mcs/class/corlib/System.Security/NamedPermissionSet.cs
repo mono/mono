@@ -31,6 +31,11 @@ namespace System.Security {
 
 		public NamedPermissionSet (string name) : this (name, PermissionState.None) {}
 
+		// for PolicyLevel (to avoid validation duplication)
+		internal NamedPermissionSet (SecurityElement e) : base (e) {}
+
+		// properties
+
 		public string Description {
 			get { return description; }
 			set { description = value; }
@@ -59,7 +64,7 @@ namespace System.Security {
 
 		public override void FromXml (SecurityElement e) 
 		{
-			FromXml (e, "System.Security.NamedPermissionSet");
+			FromXml (e, "NamedPermissionSet");
 			Name = (e.Attributes ["Name"] as string);
 			description = (e.Attributes ["Description"] as string);
 			if (description == null)

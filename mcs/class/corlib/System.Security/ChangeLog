@@ -1,3 +1,12 @@
+2004-01-05  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* CodeAccessPermission.cs: Fixed Union to match 1.1/1.2 documentation. 
+	Simplified ToString to match MS implementation. Added LAMESPEC to 
+	Assert, Demand, Deny and PermitOnly as they aren't virtual.
+	* NamedPermissionSet.cs: Added internal constructor for PolicyLevel. 
+	* PermissionSet.cs: Added internal constructor for PolicyLevel. 
+	* SecurityManager.cs: Moved some stuff to PolicyLevel class (e.g. Load).
+
 2004-01-03  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* SecurityManager.cs: Added some basic stuff to make some security unit

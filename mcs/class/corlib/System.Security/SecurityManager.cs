@@ -10,17 +10,23 @@
 //
 
 using System.Collections;
+using System.Globalization;
 using System.IO;
 using System.Security.Permissions;
 using System.Security.Policy;
 
+using Mono.Xml;
+
 namespace System.Security {
+
+	// Note: Using [SecurityPermissionAttribute] would be cool but triggers an error
+	// as you can't reference a custom security attribute from it's own assembly (CS0647)
 
 	public sealed class SecurityManager {
 
 		private static bool checkExecutionRights;
 		private static bool securityEnabled;
-		static private object _lockObject;
+		private static object _lockObject;
 		private static ArrayList _hierarchy;
 
 		static SecurityManager () 
@@ -64,46 +70,51 @@ namespace System.Security {
 			return false;
 		}
 
-		[MonoTODO()]
 		public static PolicyLevel LoadPolicyLevelFromFile (string path, PolicyLevelType type)
 		{
+			// throw a SecurityException if we don't have ControlPolicy permission
+			new SecurityPermission (SecurityPermissionFlag.ControlPolicy).Demand ();
+
 			if (path == null)
 				throw new ArgumentNullException ("path");
-			if (!File.Exists (path))
-				throw new ArgumentException ("file do not exist");
-			// throw a SecurityException if we don't have ControlPolicy permission
-			new SecurityPermission (SecurityPermissionFlag.ControlPolicy).Demand ();
-			// throw a SecurityException if we don't have Read, Write and PathDiscovery permissions
-			FileIOPermissionAccess access = FileIOPermissionAccess.Read | FileIOPermissionAccess.Write | FileIOPermissionAccess.PathDiscovery;
-			new FileIOPermission (access, path).Demand ();
 
-			// TODO
-			return null;
+			PolicyLevel pl = null;
+			try {
+				pl = new PolicyLevel (type.ToString ());
+				pl.LoadFromFile (path);
+			}
+			catch (Exception e) {
+				throw new ArgumentException (Locale.GetText ("Invalid policy XML"), e);
+			}
+			return pl;
 		}
 
-		[MonoTODO()]
 		public static PolicyLevel LoadPolicyLevelFromString (string str, PolicyLevelType type)
 		{
-			if (null == str)
-				throw new ArgumentNullException("str");
 			// throw a SecurityException if we don't have ControlPolicy permission
 			new SecurityPermission (SecurityPermissionFlag.ControlPolicy).Demand ();
 
-			// TODO
-			return null;
+			if (null == str)
+				throw new ArgumentNullException ("str");
+
+			PolicyLevel pl = null;
+			try {
+				pl = new PolicyLevel (type.ToString ());
+				pl.LoadFromString (str);
+			}
+			catch (Exception e) {
+				throw new ArgumentException (Locale.GetText ("Invalid policy XML"), e);
+			}
+			return pl;
 		}
 
-		[MonoTODO("InitializePolicyHierarchy not implemented")]
+		[MonoTODO("InitializePolicyHierarchy isn't complete")]
 		public static IEnumerator PolicyHierarchy ()
 		{
 			// throw a SecurityException if we don't have ControlPolicy permission
 			new SecurityPermission (SecurityPermissionFlag.ControlPolicy).Demand ();
-			if (_hierarchy == null) {
-				lock (_lockObject) {
-					InitializePolicyHierarchy ();
-				}
-			}
-			return _hierarchy.GetEnumerator ();
+			
+			return Hierarchy;
 		}
 
 		[MonoTODO()]
@@ -129,8 +140,9 @@ namespace System.Security {
 		public static void SavePolicy () 
 		{
 			// throw a SecurityException if we don't have ControlPolicy permission
-			// done by using PolicyHierarchy (no need to duplicate)
-			IEnumerator e = PolicyHierarchy ();
+			new SecurityPermission (SecurityPermissionFlag.ControlPolicy).Demand ();
+
+			IEnumerator e = Hierarchy;
 			while (e.MoveNext ()) {
 				PolicyLevel level = (e.Current as PolicyLevel);
 				InternalSavePolicyLevel (level);
@@ -147,6 +159,17 @@ namespace System.Security {
 		}
 
 		// internal stuff
+
+		internal static IEnumerator Hierarchy {
+			get {
+				if (_hierarchy == null) {
+					lock (_lockObject) {
+						InitializePolicyHierarchy ();
+					}
+				}
+				return _hierarchy.GetEnumerator ();
+			}
+		}
 
 		internal static void InternalSavePolicyLevel (PolicyLevel level) 
 		{
