@@ -53,6 +53,7 @@ non_gac_assemblies = \
 	Microsoft.VisualBasic.dll				\
 	Microsoft.VisualC.dll					\
 	Microsoft.Vsa.dll					\
+	Microsoft.Web.Services.dll 				\
 	Mono.Cairo.dll						\
 	Mono.CSharp.Debugger.dll				\
 	Mono.Data.SqliteClient.dll				\
