@@ -1262,7 +1262,7 @@ public class HtmlSampleGenerator: SampleGenerator
 			}
 			else if (st.Content is XmlSchemaSimpleTypeUnion)
 			{
-				// Check if all types of the union are equal. If not, then will use anyType.
+				//Check if all types of the union are equal. If not, then will use anyType.
 				XmlSchemaSimpleTypeUnion uni = (XmlSchemaSimpleTypeUnion) st.Content;
 				string utype = null;
 
