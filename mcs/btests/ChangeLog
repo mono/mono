@@ -1,3 +1,10 @@
+2004-08-06 Bernie Solomon <bernard@Ugsolutions.com>
+
+	* Dll1.vb:
+	* Import1.vb: test importing a DLL with a byref arg
+	* Makefile: build support DLLs
+	* Test.Sources: add new test
+
 2004-08-06 Sachin Kumar <skumar1@novell.com>
 	* ArithmeticOperators.vb:
 	* ArithmeticOperators1.vb:

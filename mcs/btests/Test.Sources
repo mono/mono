@@ -1,4 +1,11 @@
 #
+# Support DLL source files go here
+#
+
+TEST_DLL_SOURCES = \
+Dll1
+
+#
 # All positive test cases goes here
 #
 
@@ -11,6 +18,7 @@ Test1 \
 Test2 \
 misc2 \
 Identifier \
+Import1 \
 IntegerTypeCharTest\
 IntegerTypeCharTestA \
 IntegerTypeCharTestB \

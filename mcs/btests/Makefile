@@ -3,6 +3,8 @@ SUBDIRS =
 TEST_RUNTIME = mono
 COMPILER_FLAGS = /libpath:../class/lib/default/ /imports:System
 INTERNAL_MBAS = $(TEST_RUNTIME) --debug ../mbas/mbas.exe --stacktrace $(COMPILER_FLAGS)
+LIBRARY_OPT = /target:library
+SUPPORT_DLLS = /r:./Dll1.dll
 #INTERNAL_MBAS = vbc $(COMPILER_FLAGS)
 all: test-compiler-jit 
 
@@ -39,18 +41,40 @@ test-compiler-jit-ngtive_run
 
 TEST_TAG = mbas-positive
 
-test-compiler-jit-real:
+test-dlls:
 	@logpath=./logs ; mkdir -p $$logpath ; \
 	logfile="$$logpath/$(TEST_TAG).results"; \
-	rm -f *.exe $$logpath/$(TEST_TAG).results $$logpath/$(TEST_TAG)-*.log ; \
-	echo "********** Positive Tests ************" > $$logfile ; \
+	rm -f *.dll $$logpath/$(TEST_TAG).results $$logpath/$(TEST_TAG)-*.log ; \
+	echo "********** Support DLLs ************" > $$logfile ; \
+	echo "********** Support DLLs ************" ; \
+	for i in $(TEST_DLL_SOURCES) ; do \
+	    echo -n -e "========================\n$$i: " >> $$logfile; \
+	    testlogfile="$$logpath/$(TEST_TAG)-$$i.log" ; \
+	    echo -n "$$i: "; \
+	    echo "*** $(INTERNAL_MBAS) $(LIBRARY_OPT) $$i.vb" > $$testlogfile ; \
+	    if $(INTERNAL_MBAS) $(LIBRARY_OPT)  $$i.vb >> $$testlogfile 2>&1 ; then \
+		echo -n "COMPILED OK : " ; \
+	    else \
+		echo "Exit code: $$?" >> $$testlogfile ; \
+		failed="$$failed $$i" ; \
+		echo "FAILED: $$i: COMPILATION" >> $$logfile; \
+		echo FAILED COMPILATION ; \
+		continue; \
+	    fi ; \
+	done ; 
+
+test-compiler-jit-real: test-dlls
+	@logpath=./logs ; mkdir -p $$logpath ; \
+	logfile="$$logpath/$(TEST_TAG).results"; \
+	rm -f *.exe ; \
+	echo "********** Positive Tests ************" >> $$logfile ; \
 	echo "********** Positive Tests ************" ; \
 	for i in $(TEST_SOURCES) ; do \
 	    echo -n -e "========================\n$$i: " >> $$logfile; \
 	    testlogfile="$$logpath/$(TEST_TAG)-$$i.log" ; \
 	    echo -n "$$i: "; \
-	    echo "*** $(INTERNAL_MBAS) $$i.vb" > $$testlogfile ; \
-	    if $(INTERNAL_MBAS) $$i.vb >> $$testlogfile 2>&1 ; then \
+	    echo "*** $(INTERNAL_MBAS) $(SUPPORT_DLLS) $$i.vb" > $$testlogfile ; \
+	    if $(INTERNAL_MBAS) $(SUPPORT_DLLS) $$i.vb >> $$testlogfile 2>&1 ; then \
 		echo -n "COMPILED OK : " ; \
 	    else \
 		echo "Exit code: $$?" >> $$testlogfile ; \
