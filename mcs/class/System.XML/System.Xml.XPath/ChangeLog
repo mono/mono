@@ -1,3 +1,7 @@
+2002-07-17  Piers Haken <piersh@friskit.com>
+
+	* Expression.cs: implement nodeset/nodeset comparisons (non-optimal)
+
 2002-07-15  Piers Haken <piersh@friskit.com>
 
 	* Iterator.cs:

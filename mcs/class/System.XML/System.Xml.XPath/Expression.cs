@@ -245,7 +245,17 @@ namespace System.Xml.XPath
 					}
 					else if (typeR == XPathResultType.NodeSet)
 					{
-						throw new NotImplementedException ();	// TODO:
+						BaseIterator iterR = right.EvaluateNodeSet (iter);
+						ArrayList rgNodesL = new ArrayList ();
+						while (iterL.MoveNext ())
+							rgNodesL.Add (XPathFunctions.ToString (iterL.Current.Value));
+						while (iterR.MoveNext ())
+						{
+							string strR = XPathFunctions.ToString (iterR.Current.Value);
+							foreach (string strL in rgNodesL)
+								if (Compare (strL, strR))
+									return true;
+						}
 					}
 					return false;
 				}
@@ -324,7 +334,17 @@ namespace System.Xml.XPath
 					}
 					else if (typeR == XPathResultType.NodeSet)
 					{
-						throw new NotImplementedException ();	// TODO:
+						BaseIterator iterR = right.EvaluateNodeSet (iter);
+						ArrayList rgNodesL = new ArrayList ();
+						while (iterL.MoveNext ())
+							rgNodesL.Add (XPathFunctions.ToNumber (iterL.Current.Value));
+						while (iterR.MoveNext ())
+						{
+							double numR = XPathFunctions.ToNumber (iterR.Current.Value);
+							foreach (double numL in rgNodesL)
+								if (Compare (numL, numR))
+									return true;
+						}
 					}
 					return false;
 				}
