@@ -6693,10 +6693,20 @@ namespace Mono.CSharp {
 			// ltype.Fullname is already fully qualified, so we can skip
 			// a lot of probes, and go directly to TypeManager.LookupType
 			//
-			type = TypeManager.LookupTypeDirect (ltype.FullName + dim);
+			string cname = ltype.FullName + dim;
+			type = TypeManager.LookupTypeDirect (cname);
 			if (type == null){
-				Report.Error (-99, loc, "This should not happen");
-				return null;
+				//
+				// For arrays of enumerations we are having a problem
+				// with the direct lookup.  Need to investigate.
+				//
+				// For now, fall back to the full lookup in that case.
+				//
+				type = RootContext.LookupType (
+					ec.DeclSpace, cname, false, loc);
+
+				if (type == null)
+					return null;
 			}
 
 			if (!ec.ResolvingTypeTree){

@@ -462,7 +462,7 @@ public class TypeManager {
 	static Type LookupTypeReflection (string name)
 	{
 		Type t;
-		
+
 		foreach (Assembly a in assemblies){
 			t = a.GetType (name);
 			if (t != null)

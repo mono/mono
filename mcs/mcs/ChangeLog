@@ -1,3 +1,8 @@
+2002-10-04  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (ComposedCast.DoResolveType): A quick workaround
+	to fix the test 165, will investigate deeper.
+
 2002-10-04  Martin Baulig  <martin@gnome.org>
 
 	* statement.cs (FlowBranching.UsageVector.MergeChildren): Make
