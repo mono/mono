@@ -1,3 +1,9 @@
+2003-05-26  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* X509CertificateTest.cs: Commented some tests in Certificate13 (the
+	DSA certificate without any key parameters) because MS implementation
+	cannot use the X509Certificate(X509Certificate) to instance it.
+
 2003-05-16  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* X509CertificateTest.cs: Added DSA certificate without any key 

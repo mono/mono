@@ -810,6 +810,7 @@ public void Certificate12 ()
 // - X.509v3 end-entity certificate
 // - sha1DSA, DSA 1024 bits
 // - has NO parameters (shared group is present in issuer certificate)
+// !!! MS bugs when using constructor X509Certificate(X509Certificate) !!!
 [Test]
 public void Certificate13 ()
 {
@@ -822,17 +823,17 @@ public void Certificate13 ()
 		0xEC,0x36,0x9B,0xEB,0x4B,0x61,0x0A,0xAF,0x44,0xED,0x72,0xBA,0x29,0x02,0x14,0x6D,0x22,0xE1,0xBD,0x4D,0x27,0xF6,0x2E,0x3B,0x1F,0xD7,0x9D,0xD6,0x59,0x5E,0xCB,0x25,0x86,0x22,0xD8 };
 
 	X509Certificate x509 = new X509Certificate (cert);
-	X509Certificate clone = new X509Certificate (x509);
+//	X509Certificate clone = new X509Certificate (x509);
 
-	Assertion.Assert ("Equals", x509.Equals (clone));
-	Assertion.Assert ("Equals", clone.Equals (x509));
+//	Assertion.Assert ("Equals", x509.Equals (clone));
+//	Assertion.Assert ("Equals", clone.Equals (x509));
 
 	FileStream fs = File.OpenWrite ("temp.cer");
 	fs.Write (cert, 0, cert.Length);
 	fs.Close ();
 
 	X509Certificate disk = X509Certificate.CreateFromCertFile ("temp.cer");
-	Assertion.Assert ("Equals", disk.Equals (clone));
+//	Assertion.Assert ("Equals", disk.Equals (clone));
 	Assertion.Assert ("Equals", disk.Equals (x509));
 	byte[] hash = { 0x0E,0x29,0xCD,0xDC,0xA5,0xE7,0x32,0xA2,0x0D,0xCE,0xD8,0x7B,0x3D,0x00,0x24,0x46,0x85,0x3E,0xBB,0xD1 };
 	AssertEquals ("GetCertHash", hash, x509.GetCertHash ());
