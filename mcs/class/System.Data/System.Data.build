@@ -44,6 +44,9 @@
 			</references>
 		</csc>
 	</target>
+	<target name="test">
+		<nant basedir="Test" target="test"/>
+	</target>
 	<target name="clean">
 		<delete file="../lib/System.Data.dll" failonerror="false"/>
 	</target>
