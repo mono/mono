@@ -1,3 +1,7 @@
+2004-10-26  Zoltan Varga  <vargaz@freemail.hu>
+
+	* driver.c (mono_main): Applied patch from Willibald Krenn <willibald.krenn@gmx.at>. Make --graph work for icalls and pinvoke methods.
+
 2004-10-25  Zoltan Varga  <vargaz@freemail.hu>
 
 	* aot.c (mono_aot_load_method): Align PATCH_INFO_R8 on an 8 byte 
