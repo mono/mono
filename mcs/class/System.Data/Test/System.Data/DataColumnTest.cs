@@ -26,5 +26,7 @@ namespace MonoTests.System.Data
 				return new TestSuite (typeof (DataColumnTest)); 
 			}
 		}
+
+		public void TestBlank()	{} //Remove me when we add some tests
 	}
 }

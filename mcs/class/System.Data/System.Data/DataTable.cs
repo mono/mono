@@ -60,7 +60,7 @@ namespace System.Data
 			dataSet = null;
 			// _defaultView = null; // FIXME: temporarily commented
 			_columnCollection = new DataColumnCollection(this);
-			//_constraintCollection = new ConstraintCollection(); TODO: uncomment after ConstraintCollection is built.
+			_constraintCollection = new ConstraintCollection(); 
 			_extendedProperties = null;
 			_tableName = "";
 			_nameSpace = null;

@@ -2,8 +2,10 @@
 // System.Data.ForeignKeyConstraint.cs
 //
 // Author:
+//   Franklin Wise <gracenote@earthlink.net>
 //   Daniel Morgan <danmorg@sc.rr.com>
 //
+// (C) 2002 Franklin Wise
 // (C) 2002 Daniel Morgan
 //
 

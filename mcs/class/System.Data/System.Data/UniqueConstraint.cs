@@ -2,10 +2,11 @@
 // System.Data.UniqueConstraint.cs
 //
 // Author:
+//   Franklin Wise <gracenote@earthlink.net>
 //   Daniel Morgan <danmorg@sc.rr.com>
-//
+//   
+// (C) 2002 Franklin Wise
 // (C) 2002 Daniel Morgan
-//
 
 using System;
 using System.Collections;
@@ -104,9 +105,25 @@ namespace System.Data
 
 		#region Methods
 
-		[MonoTODO]
 		public override bool Equals(object key2) {
-			throw new NotImplementedException ();
+			UniqueConstraint cst = key2 as UniqueConstraint;
+			if (null == cst) return false;
+
+			//according to spec if the cols are equal
+			//then two UniqueConstraints are equal
+			bool found = false;
+			foreach (DataColumn thisCol in this.Columns) {
+				found = false;
+				foreach (DataColumn col in cst.Columns) {
+					if (thisCol == col)
+						found = true;
+				}
+				if (false == found) return false;
+			}
+
+			//if we got here then all columns were found
+			return true;
+			
 		}
 
 		[MonoTODO]

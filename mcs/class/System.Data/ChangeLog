@@ -1,3 +1,22 @@
+2002-08-12  Franklin Wise <gracenote@earthlink.net>
+
+	* System.Data/Constraint.cs: Implemented
+
+	* System.Data/UniqueConstraint.cs: GetHashCode() &
+	special case Ctor. Still need to be implemented. LAMESPEC tags
+	added.
+
+	* System.Data/ConstraintCollection.cs: Clear() &
+	AddRange() need to be finished. Several LAMESPEC tags.
+
+	* Allow Constraint collection to be created in DataTable.
+
+	* System.Data/ForeignKeyConstraint: Added a couple of
+	helper functions.
+
+	* System.Data/DataColumnCollection New/Added DataColumns now have
+	Table property set.
+
 2002-08-11  Rodrigo Moya <rodrigo@ximian.com>
 
 	* System.Data.OleDb/libgda.cs: added some GdaValue functions.

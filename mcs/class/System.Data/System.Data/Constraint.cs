@@ -2,7 +2,9 @@
 // System.Data.Constraint.cs
 //
 // Author:
-//   Daniel Morgan
+//	Franklin Wise <gracenote@earthlink.net>
+//	Daniel Morgan
+//   
 //
 // (C) Ximian, Inc. 2002
 //
@@ -16,32 +18,44 @@ using System.Runtime.Serialization;
 namespace System.Data
 {
 	[Serializable]
-	public abstract class Constraint {
+	internal delegate void DelegateConstraintNameChange(object sender,
+			string newName);
+	
+	[Serializable]
+	public abstract class Constraint 
+	{
+		internal event DelegateConstraintNameChange 
+					BeforeConstraintNameChange;
 
-		protected string name = null;
-		protected PropertyCollection properties = null;
+		private string _name = null;
+		private PropertyCollection _properties = null;
 
-		[MonoTODO]
-		protected Constraint() {
-			properties = new PropertyCollection();
+		//Used for membership checking
+		private ConstraintCollection _constraintCollection;
+
+		protected Constraint() 
+		{
+			_properties = new PropertyCollection();
 		}
 
 		public virtual string ConstraintName {
-			[MonoTODO]	
 			get{
-				return name;
+				return "" + _name;
 			} 
 
-			[MonoTODO]
 			set{
-				name = value;
+				//This should only throw an exception when it
+				//is a member of a ConstraintCollection which
+				//means we should let the ConstraintCollection
+				//handle exceptions when this value changes
+				_onConstraintNameChange(value);
+				_name = value;
 			}
 		}
 
 		public PropertyCollection ExtendedProperties {
-			[MonoTODO]
 			get {
-				return properties;
+				return _properties;
 			}
 		}
 
@@ -49,14 +63,32 @@ namespace System.Data
 			get;
 		}
 
-		[MonoTODO]
-		public override string ToString() {
-			return name;
+		/// <summary>
+		/// Gets the ConstraintName, if there is one, as a string. 
+		/// </summary>
+		public override string ToString() 
+		{
+			return "" + _name;
 		}
 
-		//[MonoTODO]
-		//[ClassInterface(ClassInterfaceType.AutoDual)]
-		//~Constraint() {
-		//}
+		internal ConstraintCollection ConstraintCollection {
+			get{
+				return _constraintCollection;
+			}
+			set{
+				_constraintCollection = value;
+			}
+		}
+		
+
+
+		private void _onConstraintNameChange(string newName)
+		{
+			if (null != BeforeConstraintNameChange)
+			{
+				BeforeConstraintNameChange(this, newName);
+			}
+		}
+
 	}
 }

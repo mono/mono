@@ -84,6 +84,8 @@ namespace System.Data
 		{
 			DataColumn column = new DataColumn("Column" + defaultNameIndex.ToString());
 			CollectionChangeEventArgs e = new CollectionChangeEventArgs(CollectionChangeAction.Add, this);
+			
+			column.SetTable(parentTable);
 			base.List.Add(column);
 			OnCollectionChanged(e);
 			defaultNameIndex++;
@@ -103,6 +105,8 @@ namespace System.Data
 			else
 			{
 				CollectionChangeEventArgs e = new CollectionChangeEventArgs(CollectionChangeAction.Add, this);
+				
+				column.SetTable( parentTable);
 				base.List.Add(column);
 				OnCollectionChanged(e);
 				return;
@@ -132,6 +136,7 @@ namespace System.Data
 				DataColumn column = new DataColumn(columnName);
 				
 				CollectionChangeEventArgs e = new CollectionChangeEventArgs(CollectionChangeAction.Add, this);
+				column.SetTable(parentTable);
 				base.List.Add(column);
 				OnCollectionChanged(e);
 				return column;
@@ -160,6 +165,7 @@ namespace System.Data
 			{
 				DataColumn column = new DataColumn(columnName, type);
 				CollectionChangeEventArgs e = new CollectionChangeEventArgs(CollectionChangeAction.Add, this);
+				column.SetTable(parentTable);
 				base.List.Add(column);
 				OnCollectionChanged(e);
 				return column;
@@ -189,6 +195,7 @@ namespace System.Data
 			{
 				DataColumn column = new DataColumn(columnName, type, expression);
 				CollectionChangeEventArgs e = new CollectionChangeEventArgs(CollectionChangeAction.Add, this);
+				column.SetTable(parentTable);
 				base.List.Add(column);
 				OnCollectionChanged(e);
 				return column;

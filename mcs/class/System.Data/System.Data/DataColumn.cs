@@ -39,7 +39,7 @@ namespace System.Data
 		private int ordinal = -1;
 		private string prefix = null;
 		private bool readOnly = false;
-		private DataTable table = null;
+		private DataTable _table = null;
 		private bool unique = false;
 
 		#endregion // Fields
@@ -269,11 +269,11 @@ namespace System.Data
 				readOnly = value;
 			}
 		}
-
+	
 		public DataTable Table
 		{
 			get {
-				return table;
+				return _table;
 			}
 		}
 
@@ -324,8 +324,9 @@ namespace System.Data
 
 		[MonoTODO]
 		internal void SetTable(DataTable table) {
-			this.table = table; 
-			// FIXME: this will get called by DataTable
+			_table = table; 
+			// FIXME: this will get called by DataTable 
+			// and DataColumnCollection
 		}
 
 		#endregion // Methods

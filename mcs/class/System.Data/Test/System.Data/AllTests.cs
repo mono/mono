@@ -22,6 +22,9 @@ namespace MonoTests.System.Data
 			get {
 				TestSuite suite =  new TestSuite ();
 				suite.AddTest (new TestSuite (typeof (DataColumnTest)));
+				suite.AddTest (new TestSuite (typeof (UniqueConstraintTest)));
+				suite.AddTest (new TestSuite (typeof (ConstraintTest)));
+				suite.AddTest (new TestSuite (typeof (ConstraintCollectionTest)));
 				return suite;
 			}
 		}
