@@ -15,10 +15,21 @@ namespace Microsoft.Web.Services.Configuration {
 
 	public sealed class WebServicesConfiguration : ConfigurationBase, IConfigurationSectionHandler {
 
-		[MonoTODO("read from app.config")]
 		public static FilterConfiguration FilterConfiguration { 
+			get { return new FilterConfiguration (); }
+		}
+
+#if WSE2
+		[MonoTODO()]
+		public static MessagingConfiguration MessagingConfiguration {
 			get { return null; }
 		}
+
+		[MonoTODO()]
+		public static TokenIssuerConfiguration TokenIssuerConfiguration {
+			get { return null; }
+		}
+#endif
 
 		// from IConfigurationSectionHandler
 		[MonoTODO()]
