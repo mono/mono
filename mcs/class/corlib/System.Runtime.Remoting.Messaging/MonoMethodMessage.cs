@@ -34,6 +34,8 @@ namespace System.Runtime.Remoting.Messaging {
 
 		AsyncResult asyncResult;
 
+		CallType call_type;
+
 		string uri;
 
 		MethodCallDictionary properties;
@@ -76,9 +78,11 @@ namespace System.Runtime.Remoting.Messaging {
 
 		public int ArgCount {
 			get {
+				if (CallType == CallType.EndInvoke)
+					return -1;
+					
 				if (null == args)
 					return 0;
-//         Lluis Sanchez Gual (lluis@ximian.com)
 
 				return args.Length;
 			}
@@ -170,6 +174,9 @@ namespace System.Runtime.Remoting.Messaging {
 
 		public int InArgCount {
 			get {
+				if (CallType == CallType.EndInvoke)
+					return -1;
+
 				if (null == args)
 					return 0;
 
@@ -312,5 +319,25 @@ namespace System.Runtime.Remoting.Messaging {
 		{
 			get { return asyncResult; }
 		}
+
+		internal CallType CallType
+		{
+			get
+			{
+				// FIXME: ideally, the OneWay type would be set by the runtime
+				
+				if (call_type == CallType.Sync && RemotingServices.IsOneWay (method))
+					call_type = CallType.OneWay;
+				return call_type;
+			}
+		}
 	}
+}
+
+internal enum CallType: int
+{
+	Sync = 0,
+	BeginInvoke = 1,
+	EndInvoke = 2,
+	OneWay = 3
 }

@@ -57,7 +57,7 @@ namespace System.Runtime.Remoting.Messaging
 				if (pt.IsByRef) pt = pt.GetElementType ();
 				
 				if (pval != null && !pt.IsInstanceOfType (pval))
-					throw new RemotingException ("Cannot cast argument of type '" + pval.GetType().AssemblyQualifiedName +
+					throw new RemotingException ("Cannot cast argument " + pi.Position + " of type '" + pval.GetType().AssemblyQualifiedName +
 						"' to type '" + pt.AssemblyQualifiedName + "'");
 			}
 		}

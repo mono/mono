@@ -103,13 +103,15 @@ public class AsyncResult : IAsyncResult, IMessageSink {
 		sync_completed = completed;
 	}
 
+	internal IMessage EndInvoke ()
+	{
+		handle.WaitOne ();
+		return reply_message;
+	}
+
 	public virtual IMessage SyncProcessMessage (IMessage msg)
 	{
-		IMethodReturnMessage retMsg = (IMethodReturnMessage) msg;
 		reply_message = msg;
-		out_args = retMsg.OutArgs;
-		ret_val = retMsg.ReturnValue;
-		exception = retMsg.Exception;
 
 		completed = true;
 		NativeEventCalls.SetEvent_internal (handle.Handle);

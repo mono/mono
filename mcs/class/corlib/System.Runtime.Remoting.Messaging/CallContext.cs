@@ -67,6 +67,7 @@ namespace System.Runtime.Remoting.Messaging
 			Hashtable data = ctx.Datastore;
 			if (data == null) return;
 
+			data.Clear ();
 			foreach (DictionaryEntry entry in data)
 				SetData ((string)entry.Key, entry.Value);
 		}
