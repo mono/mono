@@ -60,7 +60,7 @@ namespace System.Web.Services.Description {
 
 		[XmlAttribute ("parts", DataType = "NMTOKENS")]
 		public string PartsString {
-			get { return String.Join (" ", Parts); }
+			get { return (Parts != null) ? String.Join (" ", Parts) : null; }
 			set { Parts = value.Split (' '); }
 		}
 

@@ -20,7 +20,7 @@ namespace System.Web.Services.Description {
 
 		#region Fields
 
-		public const string HttpTransport = "http://schemas.xmlsoap.org/soap/http/";
+		public const string HttpTransport = "http://schemas.xmlsoap.org/soap/http";
 		public const string Namespace = "http://schemas.xmlsoap.org/wsdl/soap/";
 
 		SoapBindingStyle style;

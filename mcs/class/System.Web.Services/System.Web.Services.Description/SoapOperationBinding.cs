@@ -12,7 +12,7 @@ using System.Web.Services.Configuration;
 using System.Xml.Serialization;
 
 namespace System.Web.Services.Description {
-	[XmlFormatExtension ("operation", "http://schema.xmlsoap.org/wsdl/soap/", typeof (OperationBinding))]
+	[XmlFormatExtension ("operation", "http://schemas.xmlsoap.org/wsdl/soap/", typeof (OperationBinding))]
 	public sealed class SoapOperationBinding : ServiceDescriptionFormatExtension {
 
 		#region Fields

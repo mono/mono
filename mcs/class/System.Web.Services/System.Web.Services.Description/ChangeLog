@@ -1,3 +1,19 @@
+2003-08-28  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* MessageBinding.cs: Added default value attribute for Name property.
+	* OperationMessage.cs: Added default value attribute for Name property.
+	* ServiceDescription.cs: Changed order of some properties, so they are
+	  serialized in the right order.
+	  Added GetNamespaceList(), which returns the namespaces to add when serializing
+	  the document.
+	  Implemented classes ServiceDescriptionSerializer and ServiceDescriptionWriter,
+	  that extends the XmlSerializer by adding suport for XmlFormatExtensions.
+	* ServiceDescriptionReflector.cs: Basic implementation (no support for 
+	  extensions yet).
+	* SoapBinding.cs: Fixed namespace name.
+	* SoapBodyBinding.cs: Added null check in PartsString property.
+	* SoapOperationBinding.cs: Fixed namespace name.
+	
 2003-07-22  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* Binding.cs, Import.cs, Message.cs, MessageBinding.cs, MessagePart.cs,

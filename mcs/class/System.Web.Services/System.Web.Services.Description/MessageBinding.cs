@@ -7,6 +7,7 @@
 // Copyright (C) Tim Coleman, 2002
 //
 
+using System.ComponentModel;
 using System.Xml.Serialization;
 
 namespace System.Web.Services.Description {
@@ -36,6 +37,7 @@ namespace System.Web.Services.Description {
 			get;
 		}
 
+		[DefaultValue ("")]
 		[XmlAttribute ("name", DataType = "NMTOKEN")]	
 		public string Name {
 			get { return name; }

@@ -10,6 +10,7 @@
 using System.Web.Services;
 using System.Xml;
 using System.Xml.Serialization;
+using System.ComponentModel;
 
 namespace System.Web.Services.Description {
 	public abstract class OperationMessage : DocumentableItem {
@@ -41,6 +42,7 @@ namespace System.Web.Services.Description {
 			set { message = value; }
 		}
 
+		[DefaultValue ("")]
 		[XmlAttribute ("name", DataType = "NMTOKEN")]
 		public string Name {
 			get { return name; }
