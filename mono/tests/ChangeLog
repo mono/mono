@@ -1,3 +1,8 @@
+2004-03-16  Zoltan Varga  <vargaz@freemail.hu>
+
+	* libtest.c pinvoke2.cs: Add new test for implicit [Out] marshalling
+	of char[].
+
 2004-03-15  Bernie Solomon  <bernard@ugsolutions.com>
 
 	* libtest.c (mono_test_marshal_time_t): fix
