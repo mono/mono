@@ -34,7 +34,7 @@ the restricted dll found in the same directory.
 	[MonoTODO]
 	int MyFunction ()
 	{
-		throw new Exception ("Unimplemented");
+		throw new NotImplementedException ();
 	}
 
 * Tagging buggy code
@@ -99,16 +99,17 @@ the restricted dll found in the same directory.
 	A few guidelines:
 
 		* Use a space before an opening parenthesis when calling
-		  functions, like this:
+		  functions, or indexing, like this:
 
 			method (a);
+			b [10];
 
 		* Do not put a space after the opening parenthesis and the 
 		  closing one, ie:
 
-			good: method (a);
+			good: method (a);	array [10];
 
-			bad:  method ( a );
+			bad:  method ( a );	array[ 10 ];
 
 		* Inside a code block, put the opening brace on the same line
 	  	  as the statement:
@@ -150,8 +151,9 @@ the restricted dll found in the same directory.
 				void Method () {
 				}
 
-		* Properties are an exception, keep the brace on the same line
-		  as the property declaration.   Rationale: this makes it visually
+		* Properties and indexers are an exception, keep the
+		  brace on the same line as the property declaration.
+		  Rationale: this makes it visually
 		  simple to distinguish them.
 
 			good:
@@ -196,6 +198,16 @@ the restricted dll found in the same directory.
 
 		* If you are modyfing someone else's code, and your contribution
 		  is significant, please add yourself to the Authors list.
+
+		* Switch statements have the case at the same indentation as the
+		  switch:
+
+			switch (x) {
+			case 'a':
+				...
+			case 'b':
+				...
+			}
 
 	Here are a couple of examples:
 
