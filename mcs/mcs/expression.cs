@@ -4463,6 +4463,12 @@ namespace Mono.CSharp {
                         // go down to find applicable methods
                         //
                         applicable_type = me.DeclaringType;
+                        
+                        if (me.Name == "Invoke" && TypeManager.IsDelegateType (applicable_type)) {
+                                Error_InvokeOnDelegate (loc);
+                                return null;
+                        }
+
 
                         bool found_applicable = false;
 			foreach (MethodBase candidate in me.Methods) {
@@ -4615,6 +4621,12 @@ namespace Mono.CSharp {
                                       arg_count + "' arguments");
                 }
 
+                static void Error_InvokeOnDelegate (Location loc)
+                {
+                        Report.Error (1533, loc,
+                                      "Invoke cannot be called directly on a delegate");
+                }
+                        
 		static void Error_InvalidArguments (Location loc, int idx, MethodBase method,
                                                     Type delegate_type, string arg_sig, string par_desc)
 		{

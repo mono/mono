@@ -11,6 +11,11 @@
 
 	* attribute.cs (Attribute.CheckAttribute): Break as soon as we
 	find an AttributeUsage attribute.
+
+	* expression.cs (Invocation.OverloadResolve): Perform the check
+	which disallows Invoke to be directly called on a Delegate.
+
+	(Error_InvokeOnDelegate): Report error cs1533.
 	
 2003-07-25  Martin Baulig  <martin@ximian.com>
 
