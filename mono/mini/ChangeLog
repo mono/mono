@@ -1,3 +1,7 @@
+2004-08-19 Bernie Solomon <bernard@ugsolutions.com>
+
+	* exceptions-sparc.c (throw_exception): fix typo
+
 2004-08-19 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* mini-x86.c, cpu-pentium.md, inssel-x86.brg:
