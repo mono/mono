@@ -125,7 +125,6 @@ namespace System.Web.UI.WebControls
 				}
 			} catch(Excetion e)
 			{
-				//TODO: Write error. Parsing error has occured
 				throw new HttpException("AdRotator: Unable to parse file" + file);
 			} finally
 			{
@@ -142,7 +141,9 @@ namespace System.Web.UI.WebControls
 		{
 			//TODO: Implement me
 			fileDirectory = UrlUtils.GetDirectory(TemplateSourceDirectory + MapPathSecure(file));
+			throw new NotImplementedException();
 			//TODO: Do I need to check caching?
+			return null;
 		}
 		
 		private IDictionary SelectAd()
@@ -156,6 +157,7 @@ namespace System.Web.UI.WebControls
 					//TODO: Implement Me
 				}
 			}
+			throw new NotImplementedException();
 			return null;
 		}
 		
@@ -174,6 +176,7 @@ namespace System.Web.UI.WebControls
 		
 		private string ResolveAdUrl(string relativeUrl)
 		{
+			throw new NotImplementedException();
 			//TODO: Implement me
 			//TODO: Get the full Url from the relativeUrl
 		}
@@ -268,8 +271,7 @@ namespace System.Web.UI.WebControls
 			AttributeCollection attributeColl = base.Attributes;
 			ICollection keys = attributeColl.Keys;
 			IEnumerator iterator = keys.GetEnumerator();
-			
-			
+			throw new NotImplementedException();
 		}
 	}
 }

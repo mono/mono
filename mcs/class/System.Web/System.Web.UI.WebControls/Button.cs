@@ -172,11 +172,12 @@ namespace System.Web.UI.WebControls
 					writer.AddAttribute("language","javascript");
 				}
 			}
+			throw new NotImplementedException();
 		}
 		
 		protected override void RenderContents(HtmlTextWriter writer)
 		{
-			// Preventing
+			// Preventing subclasses to do anything
 		}
 	}
 }

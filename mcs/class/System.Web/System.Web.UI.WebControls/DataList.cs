@@ -146,6 +146,7 @@ namespace System.Web.UI.WebControls
 		 
 		public void CreateControlHierarchy(bool create)
 		{
+			throw new NotImplementedException();
 			//TODO: THE LOST WORLD
 			// Put here to get compilation going
 		}

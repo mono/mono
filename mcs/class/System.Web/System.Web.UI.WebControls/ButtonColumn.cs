@@ -23,7 +23,6 @@ namespace System.Web.UI.WebControls
 		
 		public ButtonColumn()
 		{
-			//TODO: Initialization
 			Initialize();
 		}
 
@@ -37,6 +36,7 @@ namespace System.Web.UI.WebControls
 		{
 			base.InitializeCell(cell, columnIndex, itemType);
 			//TODO: I also have to do some column specific work
+			throw new NotImplementedException();
 		}
 		
 		public virtual ButtonColumnType ButtonType
@@ -51,7 +51,7 @@ namespace System.Web.UI.WebControls
 			set
 			{
 				if(!System.Enum.IsDefined(typeof(ButtonColumnType), value))
-					throw new ArgumentException(/*To supply the values*/"");
+					throw new ArgumentException();
 				ViewState["ButtonType"] = value;
 			}
 		}
@@ -119,6 +119,7 @@ namespace System.Web.UI.WebControls
 		protected virtual string FormatDataTextValue(object dataTextValue)
 		{
 			// TODO: The LOST WORLD! :))
+			throw new NotImplementedException();
 			return String.Empty;
 		}
 		

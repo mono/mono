@@ -84,6 +84,7 @@ namespace System.Web.UI.WebControls
 		{
 			get
 			{
+				throw new NotImplementedException("FIXME: \"Internal\" method calls");
 				if(attributes==null)
 				{
 					//TODO: From where to get StateBag and how? I think this method is OK!
@@ -110,6 +111,7 @@ namespace System.Web.UI.WebControls
 		{
 			get
 			{
+				throw new NotImplementedException("FIXME: \"Internal\" method calls");
 				if(controlStyle == null)
 				{
 					controlStyle = CreateControlStyle();
@@ -252,6 +254,7 @@ namespace System.Web.UI.WebControls
 			*/
 				ControlStyle.CopyFrom(s);
 			//}
+			throw new NotImplementedException("FIXME: \"Internal\" method calls");
 		}
 		
 		public void CopyBaseAttributes(WebControl controlSrc)
@@ -265,6 +268,7 @@ namespace System.Web.UI.WebControls
 			ToolTip    = controlSrc.ToolTip;
 			TabIndex   = controlSrc.TabIndex;
 			Attributes = controlSrc.Attributes;
+			throw new NotImplementedException();
 		}
 		
 		public void MergeStyle(Style s)
@@ -292,6 +296,7 @@ namespace System.Web.UI.WebControls
 			get
 			{
 				//FIXME: should I do new HtmlTextWriter()?
+				throw new NotImplementedException();
 				return tagKey;
 			}
 		}
@@ -305,6 +310,7 @@ namespace System.Web.UI.WebControls
 					if(tagKey == null)
 					{
 						//FIXME: If it is null, is this the right way? I don't think
+						throw new NotImplementedException();
 						tagKey = new HtmlTextWriter();
 					}
 					tagName = Enum.Format(typeof(tagKey), tagKey, "G").ToLower();
@@ -359,6 +365,7 @@ namespace System.Web.UI.WebControls
 		
 		protected override void LoadViewState(object savedState)
 		{
+			throw new NotImplementedException();
 			//TODO: Load viewStates
 			/*
 			 * May be will have to first look at Control::LoadViewState 
@@ -379,8 +386,8 @@ namespace System.Web.UI.WebControls
 		
 		protected override object SaveViewState()
 		{
+			throw new NotImplementedException();
 			//TODO: Implement me!
-			// THE LOST WORLD
 		}
 		
 		protected override void TrackViewState()
@@ -406,7 +413,7 @@ namespace System.Web.UI.WebControls
 		
 		public void SetAttribute(string key, string val)
 		{
-			Attributes.Item[key] = value;
+			Attributes[key] = value;
 		}
 
 	}

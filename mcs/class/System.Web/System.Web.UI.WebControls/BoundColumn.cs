@@ -11,6 +11,7 @@
  */
 
 using System;
+using System.ComponentModel;
 using System.Web;
 using System.Web.UI;
 
@@ -23,8 +24,10 @@ namespace System.Web.UI.WebControls
 		private string dataField;
 		private string dataFormatString;
 		private bool readOnly;
+		
+		private PropertyDescriptor desc;
 
-		public BoundColumn()
+		public BoundColumn(): base()
 		{
 			//TODO: The start work
 			Initialize();
@@ -32,14 +35,22 @@ namespace System.Web.UI.WebControls
 		
 		public override void Initialize()
 		{
+			base.Initialize();
 			dataField        = String.Empty;
 			dataFormatString = String.Empty;
 			readOnly         = false;
+			desc             = null;
 		}
 
 		public override void InitializeCell(TableCell cell, int columnIndex, ListItemType itemType)
 		{
 			//TODO: What to do?
+			base.InitializeCell(cell, columnIndex, itemType);
+			switch(itemType)
+			{
+				case 
+			}
+			throw new NotImplementedException();
 		}
 		
 		public virtual string DataField
@@ -86,6 +97,7 @@ namespace System.Web.UI.WebControls
 				return dataValue.toString();
 			if(dataValue is DateTime)
 				return ((DateTime)dataValue).toString(dataFormatString);
+			throw new NotImplementedException();
 			// and so on for int, String, double..
 			// something's wrong here. there must be some shorter method!
 			//string val = dataValue.toString(dataFormatString);
