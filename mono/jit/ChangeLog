@@ -1,3 +1,9 @@
+
+Sun Feb 10 11:47:30 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* jit.c: use opcode info from libmetadata to do flow analysis
+	and simplify code.
+
 2002-02-06  Dietmar Maurer  <dietmar@ximian.com>
 
 	* jit.c (MAKE_LDELEM, MAKE_STELEM): added bound checking 
