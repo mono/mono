@@ -504,19 +504,6 @@ namespace Mono.CSharp {
 
 			return true;
 		}
-
-		//
-		// This variant is used by Delegates, because they need to
-		// resolve/define names, instead of the plain LookupType
-		//
-		public bool ComputeAndDefineParameterTypes (EmitContext ec)
-		{
-			bool old_type_resolving = ec.ResolvingTypeTree;
-			ec.ResolvingTypeTree = true;
-			bool retval = ComputeParameterTypes (ec);
-			ec.ResolvingTypeTree = old_type_resolving;
-			return retval;
-		}
 		
 		/// <summary>
 		///   Returns the argument types as an array

@@ -1,3 +1,11 @@
+2005-03-03  Raja R Harinath  <rharinath@novell.com>
+
+	* codegen.cs (EmitContext): Remove ResolvingTypeTree.
+	* parameters.cs (ComputeAndDefineParameters): Remove.
+	* decl.cs (ResolveBaseTypeExpr): Don't set ResolvingTypeTree.
+	* delegate.cs (Define): Don't invoke ComputeAndDefineParameters.
+	Use GetParameterInfo.
+
 2005-03-02  Marek Safar  <marek.safar@seznam.cz>
 
 	* report.cs (StaticClass.DefineContainerMembers): Add warning 628.

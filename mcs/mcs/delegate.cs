@@ -167,9 +167,6 @@ namespace Mono.CSharp {
 			// First, call the `out of band' special method for
 			// defining recursively any types we need:
 			
-			if (!Parameters.ComputeAndDefineParameterTypes (ec))
-				return false;
-			
  			param_types = Parameters.GetParameterInfo (ec);
 			if (param_types == null)
 				return false;
@@ -318,10 +315,9 @@ namespace Mono.CSharp {
 								   Parameter.Modifier.NONE, null);
 
 			Parameters async_parameters = new Parameters (async_params, null, Location);
-			async_parameters.ComputeAndDefineParameterTypes (ec);
 
 			TypeManager.RegisterMethod (BeginInvokeBuilder,
-						    new InternalParameters (async_param_types, async_parameters),
+						    new InternalParameters (async_parameters.GetParameterInfo (ec), async_parameters),
 						    async_param_types);
 
 			//
@@ -362,11 +358,10 @@ namespace Mono.CSharp {
 			}
 
 			Parameters end_parameters = new Parameters (end_params, null, Location);
-			end_parameters.ComputeAndDefineParameterTypes (ec);
 
 			TypeManager.RegisterMethod (
 				EndInvokeBuilder,
-				new InternalParameters (end_param_types, end_parameters),
+				new InternalParameters (end_parameters.GetParameterInfo (ec), end_parameters),
 				end_param_types);
 
 			return true;
