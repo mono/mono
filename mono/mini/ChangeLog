@@ -1,4 +1,10 @@
 
+Mon May 26 12:11:53 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* mini.h, mini.c: ensure correct initialization order for types that
+	require it. Prepare for lazy compilation of jit icall wrappers.
+	Provide a name for opcode emulation to reduce unneeded mallocing.
+
 Fri May 23 16:08:54 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* mini-x86.c: better register restoring code and profiling
