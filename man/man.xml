@@ -9,5 +9,6 @@
 <manpage name="Sql#" page="sqlsharp.1" />
 <manpage name="SecUtil" page="secutil.1" />
 <manpage name="MonoStyle" page="monostyle.1" />
+<manpage name="genxs" page="genxs.1" />
 
 </manpages>
