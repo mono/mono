@@ -30,21 +30,20 @@ namespace System.Xml
 		{
 			this.name = (name == null) ? "" : name;
 			this.ns = (ns == null) ? "" : ns;
+			this.hash = name.GetHashCode () ^ ns.GetHashCode ();
 		}
 
 		// Fields
 		public static readonly XmlQualifiedName Empty = new XmlQualifiedName ();		
 		private readonly string name;
 		private readonly string ns;
+		private readonly int hash;
 		
 		// Properties
 		public bool IsEmpty
 		{
 			get {
-				if ((name == String.Empty) && (ns == String.Empty))
-					return true;
-				else
-					return false;
+				return name.Length == 0 && ns.Length == 0;
 			}
 		}
 
@@ -61,18 +60,12 @@ namespace System.Xml
 		// Methods
 		public override bool Equals (object other)
 		{
-			if(!(other is XmlQualifiedName))
-				return false;
-
-			if ((XmlQualifiedName) this == (XmlQualifiedName) other)
-				return true;
-			else
-				return false;
+			return this == (other as XmlQualifiedName);
 		}
 
 		public override int GetHashCode () 
 		{ 
-			return unchecked (name.GetHashCode () + ns.GetHashCode ());
+			return hash;
 		}
 
 		public override string ToString ()
@@ -100,10 +93,7 @@ namespace System.Xml
 			if((Object)a == null || (Object)b == null)
 				return false;
 
-			if ((a.Name == b.Name) && (a.Namespace == b.Namespace))
-				return true;
-			else
-				return false;
+			return (a.hash == b.hash) && (a.name == b.name) && (a.ns == b.ns);
 		}
 
 		public static bool operator != (XmlQualifiedName a, XmlQualifiedName b)

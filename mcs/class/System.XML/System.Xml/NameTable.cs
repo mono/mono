@@ -66,11 +66,14 @@ namespace System.Xml {
 		
 		public override string Add (string key)
 		{
-			if (key == String.Empty) return String.Empty;
+			if (key == null) throw new ArgumentNullException ("key");
+
+			int keyLen = key.Length;
+			if (keyLen == 0) return String.Empty;
 				
 			int h = 0;
 			// This is from the String.Gethash () icall
-			for (int i = 0; i < key.Length; i++)
+			for (int i = 0; i < keyLen; i++)
 				h = (h << 5) - h + key [i];
 			
 			// h must be be >= 0
@@ -108,11 +111,14 @@ namespace System.Xml {
 		}
 		
 		public override string Get (string value) {
-			if (value == String.Empty) return value;
-			
+			if (value == null) throw new ArgumentNullException ("value");
+
+			int valLen = value.Length;
+			if (valLen == 0) return String.Empty;
+				
 			int h = 0;
 			// This is from the String.Gethash () icall
-			for (int i = 0; i < value.Length; i++)
+			for (int i = 0; i < valLen; i++)
 				h = (h << 5) - h + value [i];
 			// h must be be >= 0
 			h &= 0x7FFFFFFF;
