@@ -33,7 +33,7 @@ gacutil = $(topdir)/tools/gacutil/gacutil.exe
 
 all-local: $(the_lib)
 
-install-local: $(the_lib) gacutil
+install-local: $(the_lib) $(gacutil)
 	@if test -f Assembly/AssemblyInfo.cs ; then \
 		$(RUNTIME)  $(gacutil) /i $(the_lib) /f || exit 1 ; \
 	else \
@@ -41,14 +41,14 @@ install-local: $(the_lib) gacutil
 		$(INSTALL_LIB) $(the_lib) $(DESTDIR)$(prefix)/lib ; \
 	fi
 
-uninstall-local: gacutil
+uninstall-local: $(gacutil)
 	@if test -f Assembly/AssemblyInfo.cs ; then \
 		$(RUNTIME)  $(gacutil) /u $(the_lib) /f ; \
 	else \
 		-rm -f $(DESTDIR)$(prefix)/lib/$(LIBRARY)
 	fi
 
-gacutil:
+$(gacutil):
 	cd $(topdir)/tools/gacutil && $(MAKE) || exit 1 ;
 
 clean-local:
