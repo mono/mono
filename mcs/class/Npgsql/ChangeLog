@@ -1,3 +1,9 @@
+2003-07-18  Peter Williams  <peter@newton.cx>
+
+	* Npgsql/AssemblyInfo.cs: Don't strongname the assembly, because
+	we can't unless corlib is strongnamed too. Not a wonderful solution,
+	but I don't think this ever worked anyway.
+
 2003-05-25  Francisco Figueiredo Jr. <fxjrlists@yahoo.com.br>
 	* Npgsql/NpgsqlDataReader.cs: Fixed an invalid index exception when
 	processing 0 rows queries.

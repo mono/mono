@@ -53,5 +53,12 @@ using System.Runtime.CompilerServices;
 // The following attributes specify the key for the sign of your assembly. See the
 // .NET Framework documentation for more information about signing.
 // This is not required, if you don't want signing let these attributes like they're.
-[assembly: AssemblyDelaySign(false)]
-[assembly: AssemblyKeyFile("Npgsql.snk")]
+//
+// FIXME: We don't strongname corlib.dll right now, so we can't strongname this dll.
+// This is only a problem on windows, where we have the option of linking against
+// mscorlib.dll. But there are other libraries that need to link against our corlib,
+// and in general always linking against the mono corlib seems like the right thing
+// to do.
+//
+//[assembly: AssemblyDelaySign(false)]
+//[assembly: AssemblyKeyFile("Npgsql.snk")]
