@@ -82,7 +82,7 @@ corlib_DATA = mscorlib.dll
 EXTRA_DIST = $(gac_assemblies) $(corlib_DATA) $(mdb_files)
 MAINTAINERCLEANFILES = $(EXTRA_DIST)
 
-mscorlib.dll $(gac_assemblies):
+mscorlib.dll $(gac_assemblies) $(mdb_files):
 	test -f $(top_srcdir)/../mcs/class/lib/default/$@
 	-rm -f $(srcdir)/$@
 	cd $(srcdir) && $(LN_S) ../../../mcs/class/lib/default/$@ $@
