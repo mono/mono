@@ -41,9 +41,8 @@ namespace Microsoft.Web.Services.Dime {
                         opened = false;
                 }
 
-                public bool CanRead ()
-                {
-                        return stream.CanRead ();
+                public bool CanRead {
+			get { return stream.CanRead; }
                 }
 
                 [MonoTODO]

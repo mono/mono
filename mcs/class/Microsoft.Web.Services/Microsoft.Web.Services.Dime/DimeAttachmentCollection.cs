@@ -39,50 +39,51 @@ namespace Microsoft.Web.Services.Dime {
 
 		public DimeAttachment this [int key] {
 			get {
-				return IndexOf (key);
+				return (DimeAttachment) InnerList [key];
 			}
 		}
 
 		public DimeAttachment this [string key] {
 			get {
-				return IndexOf (key);
+				// FIXME: must iterate in collection
+				return null;
 			}
 		}
 
 		public void Add (DimeAttachment attachment)
 		{
-			Add (attachment);
+			InnerList.Add (attachment);
 		}
 
 		public void AddRange (ICollection collection)
 		{
 			foreach (object o in collection)
-				Add (o);
+				InnerList.Add (o);
 		}
 		
 		public bool Contains (string id)
 		{
-			return Contains (id);
+			return InnerList.Contains (id);
 		}
 		
-		public void CopyTo (DimeAttachment[] attachements, int index)
+		public void CopyTo (DimeAttachment[] attachments, int index)
 		{
-			CopyTo (attachments, index);
+			InnerList.CopyTo (attachments, index);
 		}
 
 		public int IndexOf (DimeAttachment attachment)
 		{
-			return IndexOf(attachment);
+			return InnerList.IndexOf(attachment);
 		}
 
 		public int IndexOf (string id)
 		{
-			return IndexOf(id);
+			return InnerList.IndexOf(id);
 		}
 
 		public void Remove (DimeAttachment attachment)
 		{
-			Remove (attachement);
+			InnerList.Remove (attachment);
 		}
 	}
 }
