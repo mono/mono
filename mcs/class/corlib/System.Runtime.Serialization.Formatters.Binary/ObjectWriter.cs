@@ -359,26 +359,28 @@ namespace System.Runtime.Serialization.Formatters.Binary
 					return;
 				}
 				
-				metadata = null;
-				lock (_cachedTypes)
-				{
-					Hashtable typesTable = (Hashtable) _cachedTypes [_context.State];
-					if (typesTable != null)
-					{
-						metadata = (TypeMetadata) typesTable [instanceType];
-						if (metadata == null) 
-						{
-							metadata = CreateMemberTypeMetadata (instanceType);
-							typesTable [instanceType] = metadata;
-						}
-					}
-					else
-					{
-						metadata = CreateMemberTypeMetadata (instanceType);
+				Hashtable typesTable;
+				bool isNew = false;
+				lock (_cachedTypes) {
+					typesTable = (Hashtable) _cachedTypes [_context.State];
+					if (typesTable == null) {
 						typesTable = new Hashtable ();
-						typesTable [instanceType] = metadata;
 						_cachedTypes [_context.State] = typesTable;
+						isNew = true;
 					}
+				}
+
+				metadata = null;
+				lock (typesTable) {
+					if (!isNew) {
+						metadata = (TypeMetadata) typesTable [instanceType];
+					}
+
+					if (metadata == null) {
+						metadata = CreateMemberTypeMetadata (instanceType);
+					}
+
+					typesTable [instanceType] = metadata;
 				}
 			}
 		}

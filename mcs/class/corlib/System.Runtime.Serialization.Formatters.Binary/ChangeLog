@@ -1,3 +1,7 @@
+2004-05-29  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ObjectWriter.cs: reduce contention in GetObjectData.
+
 2004-05-14  Vladimir Vukicevic  <vladimir@pobox.com>
 
 	* binary_serialization_format.htm: renamed filename from having
