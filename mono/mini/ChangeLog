@@ -1,3 +1,9 @@
+
+Wed Jun 4 19:47:57 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* mini.h: some large basic blocks will overflow a 16-bit
+	integers for symbolic registers.
+
 2003-06-04  Dietmar Maurer  <dietmar@ximian.com>
 
 	* mini-x86.c (mono_arch_output_basic_block): revert previous fprem changes.
