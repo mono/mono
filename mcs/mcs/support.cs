@@ -36,7 +36,7 @@ namespace Mono.CSharp {
 			object [] attrs;
 
 			ParameterInfo [] pi = mb.GetParameters ();
-			is_varargs = mb.CallingConvention == CallingConventions.VarArgs;
+			is_varargs = (mb.CallingConvention & CallingConventions.VarArgs) != 0;
 			
 			this.pi = pi;
 			int count = pi.Length-1;

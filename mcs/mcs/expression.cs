@@ -5339,7 +5339,7 @@ namespace Mono.CSharp {
 
 			EmitArguments (ec, method, Arguments);
 
-			if (method.CallingConvention == CallingConventions.VarArgs) {
+			if ((method.CallingConvention & CallingConventions.VarArgs) != 0) {
 				Type[] varargs_types = GetVarargsTypes (ec, method, Arguments);
 				ig.EmitCall (OpCodes.Call, (MethodInfo) method, varargs_types);
 				return;

@@ -1,3 +1,9 @@
+2004-06-11  Martin Baulig  <martin@ximian.com>
+
+	* expression.cs (Invocation.EmitCall): Don't use
+	`method.CallingConvention == CallingConventions.VarArgs' since the
+	method could also have `CallingConventions.HasThis'.
+
 2004-06-11  Marek Safar  <marek.safar@seznam.cz>
 
 	* class.cs (Event.GetSignatureForError): Implemented.
