@@ -1,3 +1,9 @@
+
+Wed Sep 22 19:04:32 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* class-internals.h, icall.c, loader.c, loader.h: added a faster stack
+	walk which doesn't supply the IL offset.
+
 2004-09-22  Martin Baulig  <martin@ximian.com>
 
 	* reflection.c (mono_reflection_setup_internal_class): If we're
