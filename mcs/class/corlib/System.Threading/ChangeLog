@@ -1,3 +1,8 @@
+2002-08-14  Dick Porter  <dick@ximian.com>
+
+	* Thread.cs: Make CurrentUICulture act the same as CurrentCulture
+	for now.
+
 2002-08-12  Dietmar Maurer  <dietmar@ximian.com>
 
 	* ThreadAbortException.cs: impl. ExceptionState property.

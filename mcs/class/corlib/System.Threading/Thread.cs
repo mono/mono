@@ -226,10 +226,12 @@ namespace System.Threading
 		public CultureInfo CurrentUICulture {
 			get {
 				// FIXME
-				return(null);
+				return(CurrentCulture);
 			}
 			
 			set {
+				// FIXME
+				CurrentCulture=value;
 			}
 		}
 
