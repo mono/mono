@@ -190,12 +190,6 @@ namespace System.Data {
 				GetDataSet ().Relations.Remove (relation);
 			}
 
-			protected override void RemoveCore (DataRelation relation)
-			{
-				base.RemoveCore (relation);
-				GetDataSet ().Relations.Remove (relation);
-			}
-
 			protected override ArrayList List {
 				get {
 					return base.List;
