@@ -33,9 +33,12 @@
 // Copyright (C) Novell Inc., 2004
 //
 //
-// $Revision: 1.9 $
+// $Revision: 1.10 $
 // $Modtime: $
 // $Log: ToolBar.cs,v $
+// Revision 1.10  2004/09/09 11:25:03  ravindra
+// Make redraw accessible from ToolBarButton.
+//
 // Revision 1.9  2004/08/25 20:04:40  ravindra
 // Added the missing divider code and grip for ToolBar Control.
 //
@@ -644,7 +647,7 @@ namespace System.Windows.Forms
 				Paint (this, pe);
 		}
 
-		private void Redraw (bool recalculate)
+		internal void Redraw (bool recalculate)
 		{
 			if (recalculate) {
 				CalcToolBar ();
