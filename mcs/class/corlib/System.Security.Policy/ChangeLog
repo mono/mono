@@ -1,3 +1,8 @@
+2002-12-15  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* Publisher.cs: New. Implemented.
+	* PublisherMembershipCondition.cs: New. X509 related stuff implemented.
+
 2002-11-28 Jackson Harper <jackson@latitudegeo.com>
 
 	* NetCodeGroup.cs: Added file
