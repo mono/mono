@@ -36,5 +36,18 @@ generate bindings in a temporary directory, compile them using the bundle
 feature, and install the produced shared library in the lib/ subdirectory and
 the headers in include/.
 
+$ cilc Assembly.dll
+
+To tie-in with existing GOjbect hierarchies, pass pairs of pkg-config package
+and comma-separated namespaces. For example:
+
+If you want to use a Gtk# widget in a Gtk+ application:
+
+$ cilc Widget.dll gtk+-2.0 gtk
+
+To bind gtk-sharp, but tying it into the native hierarchy for gdk:
+
+$ cilc gtk-sharp.dll gtk+-2.0 gdk
+
 -- 
 Alp Toker <alp@atoker.com>

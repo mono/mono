@@ -1,3 +1,20 @@
+2004-12-11  Alp Toker  <alp@atoker.com>
+
+	* cilc.cs:
+	First stab at initialising delegates using method pointers.
+	Convert the type registry management and reporting methods to use strings,
+	making way for tie-in with native GObject hierarchies.
+	Recursive conflict avoidance for the GObject class struct etc.
+	Treat byref values properly.
+	Support tie-in with existing GObject hierarchy.
+	Use argc parity to decide the generation mode.
+	Update usage help string.
+	* res-Makefile:
+	Use passed CFLAGS.
+	Only rebuild modified targets if bundle is defined, not everything.
+	* README:
+	More usage examples.
+
 2004-12-10  Alp Toker  <alp@atoker.com>
 
   * cilc.cs:

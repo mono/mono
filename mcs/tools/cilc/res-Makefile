@@ -1,11 +1,10 @@
 include defs.mk
 
-#LIBNAME = $(basename $(SONAME))
 LIBNAME = $(shell echo $(basename $(SONAME)) | sed -e 's/^lib//')
 HTARGET = $(prefix)/include/$(LIBNAME)/
 LIBTARGET = $(prefix)/lib/
 
-CFLAGS = -static -fpic $(shell pkg-config --cflags glib-2.0 gobject-2.0 mono) -I.
+CFLAGS += -static -fpic $(shell pkg-config --cflags glib-2.0 gobject-2.0 mono) $(EXTRAINCLUDES) -I.
 
 ifdef bundle
 EXTRAOBJS = bundle.o
@@ -20,9 +19,9 @@ endif
 all: $(SONAME)
 
 $(SONAME): $(EXTRAOBJS) $(OBJS)
-	gcc -Wall -fpic -shared `pkg-config --libs glib-2.0 gobject-2.0 mono` -lpthread $(EXTRAOBJS) $(OBJS) -o $(SONAME)
+	gcc -Wall -fpic -shared `pkg-config --libs glib-2.0 gobject-2.0 mono` -lpthread $(EXTRAOBJS) $(OBJS) $(EXTRALIBS) -o $(SONAME)
 
-$(OBJS): $(EXTRATARGETS)
+$(LIBNAME).o: $(EXTRATARGETS)
 
 bundle.o bundle.h: $(ASSEMBLY)
 	mkbundle -c -o bundle.c.tmp -oo bundle.o $(ASSEMBLY)
