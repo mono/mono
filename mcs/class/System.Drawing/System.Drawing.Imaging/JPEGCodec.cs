@@ -674,6 +674,7 @@ namespace System.Drawing.Imaging
 			info.Size = new Size(cinfo.OutputWidth,cinfo.OutputHeight);
 			info.Stride = cinfo.Stride + pad_bytes;
 			info.Palette = new ColorPalette(1, cinfo.ColorMap);
+			info.Format = PixelFormat.Format24bppRgb;
 			info.RawImageBytes = new byte[(cinfo.OutputHeight) * (cinfo.Stride + pad_bytes)];
 
 			JSAMPARRAY outbuf = new JSAMPARRAY(cinfo.Stride);

@@ -1,4 +1,7 @@
 2003-06-23 Alexandre Pigolkine <pigolkine@gmx.de>
+	* JPEGCodec.cs 	set pixel format in InternalImageInfo
+	
+2003-06-23 Alexandre Pigolkine <pigolkine@gmx.de>
 	* BmpCodec.cs 	pixel format check added
 	* JPEGCodec.cs  encoder implemented
 
