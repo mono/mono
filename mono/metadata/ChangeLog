@@ -1,4 +1,8 @@
 
+Wed May 8 12:28:28 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c: support ContructorBuilders in attribute blob creation.
+
 Wed May 8 12:06:14 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* reflection.c: some changes to build a binary that can be run
