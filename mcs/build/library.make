@@ -251,3 +251,5 @@ $(btest_makefrag): $(btest_response)
 -include $(btest_makefrag)
 
 endif
+
+$(makefrag) $(test_makefrag) $(btest_makefrag): $(topdir)/build/library.make

@@ -69,3 +69,5 @@ $(response): $(sourcefile)
 endif
 
 -include $(makefrag)
+
+$(makefrag): $(topdir)/build/executable.make

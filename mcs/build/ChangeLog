@@ -1,3 +1,9 @@
+2004-06-16  Raja R Harinath  <rharinath@novell.com>
+
+	* library.make ($(makefrag),$(test_makefrag),$(btest_makefrag)): 
+	Depend on library.make.
+	* executable.make ($(makefrag)): Depend on executable.make.
+
 2004-06-16  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* library.make : Added GACDIR. Use cygpath -w on windows.
