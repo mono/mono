@@ -308,15 +308,11 @@ namespace System.Runtime.InteropServices
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static IntPtr OffsetOf (Type t, string fieldName);
 
-		[MonoTODO]
-		public static void Prelink (MethodInfo m) {
-			throw new NotImplementedException ();
-		}
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern static void Prelink (MethodInfo m);
 
-		[MonoTODO]
-		public static void PrelinkAll (Type c) {
-			throw new NotImplementedException ();
-		}
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern static void PrelinkAll (Type c);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static string PtrToStringAnsi (IntPtr ptr);
