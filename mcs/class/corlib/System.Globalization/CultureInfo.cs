@@ -198,7 +198,7 @@ namespace System.Globalization
 				if (textInfo == null) {
 					lock (this) {
 						if(textInfo == null) {
-							textInfo = new TextInfo (cultureID);
+							textInfo = new TextInfo (this, cultureID);
 						}
 					}
 				}

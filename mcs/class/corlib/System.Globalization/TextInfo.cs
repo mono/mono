@@ -7,7 +7,9 @@
 //
 // (C) 2002 Ximian, Inc.
 //
-
+// TODO:
+//   Missing the various code page mappings.
+//   Missing the OnDeserialization implementation.
 //
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
@@ -30,7 +32,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
+using System;
 using System.Globalization;
 using System.Runtime.Serialization;
 
@@ -39,24 +41,28 @@ namespace System.Globalization {
 	[Serializable]
 	public class TextInfo: IDeserializationCallback
 	{
-		private int m_win32LangID;
+		int m_win32LangID;
 		int m_nDataItem;
 		bool m_useUserOverride;
+
+		[NonSerialized]
+		CultureInfo ci;
 		
 		internal TextInfo ()
 		{
 		}
 
-		internal TextInfo (int lcid)
+		internal TextInfo (CultureInfo ci, int lcid)
 		{
-			this.m_win32LangID=lcid;
+			this.m_win32LangID = lcid;
+			this.ci = ci;
 		}
 
 		[MonoTODO]
 		public virtual int ANSICodePage
 		{
 			get {
-				return(0);
+				return 0;
 			}
 		}
 
@@ -64,7 +70,7 @@ namespace System.Globalization {
 		public virtual int EBCDICCodePage
 		{
 			get {
-				return(0);
+				return 0;
 			}
 		}
 		
@@ -72,7 +78,7 @@ namespace System.Globalization {
 		public virtual string ListSeparator 
 		{
 			get {
-				return(",");
+				return ",";
 			}
 		}
 
@@ -80,7 +86,7 @@ namespace System.Globalization {
 		public virtual int MacCodePage
 		{
 			get {
-				return(0);
+				return 0;
 			}
 		}
 		
@@ -88,19 +94,27 @@ namespace System.Globalization {
 		public virtual int OEMCodePage
 		{
 			get {
-				return(0);
+				return 0;
 			}
 		}
 
-		[MonoTODO]
-		public override bool Equals(object obj)
+		public override bool Equals (object obj)
 		{
-			throw new NotImplementedException();
+			if (obj == null)
+				return false;
+			TextInfo other = obj as TextInfo;
+			if (other == null)
+				return false;
+			if (other.m_win32LangID != m_win32LangID)
+				return false;
+			if (other.ci != ci)
+				return false;
+			return true;
 		}
 
 		public override int GetHashCode()
 		{
-			return(m_win32LangID);
+			return (m_win32LangID);
 		}
 
 		[MonoTODO]
@@ -112,23 +126,15 @@ namespace System.Globalization {
 		[MonoTODO]
 		public virtual string ToLower(string str)
 		{
-			if(str==null) {
+			if(str==null) 
 				throw new ArgumentNullException("string is null");
-			}
-			
-			Text.StringBuilder s = new Text.StringBuilder ();
 
-			foreach (char c in str) {
-				s.Append (Char.ToLower (c));
-			}
-
-			return s.ToString ();
+			return str.ToLower (ci);
 		}
 		
-		[MonoTODO]
 		public override string ToString()
 		{
-			return("TextInfo");
+			return "TextInfo - " + m_win32LangID;
 		}
 
 		public string ToTitleCase (string str)
@@ -143,9 +149,9 @@ namespace System.Globalization {
 				char c = str [i];
 				if (Char.IsLetter (c)){
 					if (space_seen)
-						s.Append (Char.ToUpper (c));
+						s.Append (Char.ToUpper (c, ci));
 					else
-						s.Append (Char.ToLower (c));
+						s.Append (Char.ToLower (c, ci));
 					space_seen = false;
 				} else {
 					s.Append (c);
@@ -157,20 +163,17 @@ namespace System.Globalization {
 			return s.ToString ();
 		}
 
-		[MonoTODO]
-		public virtual char ToUpper(char c)
+		public virtual char ToUpper (char c)
 		{
-			return('X');
+			return Char.ToUpper (c, ci);
 		}
 
-		[MonoTODO]
-		public virtual string ToUpper(string str)
+		public virtual string ToUpper (string str)
 		{
-			if(str==null) {
+			if(str==null)
 				throw new ArgumentNullException("string is null");
-			}
 			
-			return("");
+			return str.ToUpper (ci);
 		}
 
 		/* IDeserialization interface */
