@@ -220,9 +220,6 @@ namespace Mono.CSharp
 				RootContext.TypeManager.AddAssembly (a);
 				return 0;
 			} catch (FileNotFoundException){
-				if (soft)
-					return 0;
-				
 				foreach (string dir in link_paths){
 					string full_path = dir + "/" + assembly + ".dll";
 
@@ -235,6 +232,8 @@ namespace Mono.CSharp
 						continue;
 					}
 				}
+				if (soft)
+					return 0;
 			} catch (BadImageFormatException f) {
 				error ("// Bad file format while loading assembly");
 				error ("Log: " + f.FusionLog);

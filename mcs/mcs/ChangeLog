@@ -1,3 +1,17 @@
+2002-03-21  Miguel de Icaza  <miguel@ximian.com>
+
+	* driver.cs (LoadAssembly): Correctly return when all the paths
+	have been tried and not before.
+
+	* statement.cs (Switch.Emit): return the actual coverage for this
+	statement (returns/not-returns)
+
+	(Switch.SimpleSwitchEmit): Do not generate jumps to the end of the
+	switch of the statement if we are the last switch section.  That
+	kills two problems: try/catch problems (we used to emit an empty
+	nop at the end) and switch statements where all branches would
+	return. 
+
 2002-03-19  Miguel de Icaza  <miguel@ximian.com>
 
 	* driver.cs: Add default assemblies (the equivalent to the

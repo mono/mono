@@ -383,6 +383,16 @@ class X {
 		}
 		return 4;
 	}
+
+	static int test_coverage (int x)
+	{
+		switch (x){
+		case 0:
+			return 1;
+		default:
+			return 10;
+		}
+	}
 	
 	static int Main ()
 	{
@@ -460,6 +470,9 @@ class X {
 			return 28;
 		if (test_def (null) != 3)
 			return 29;
+
+		if (test_coverage (100) != 10)
+			return 30;
 		
 		Console.WriteLine ("All tests pass");
 		return 0;

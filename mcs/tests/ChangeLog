@@ -1,3 +1,7 @@
+2002-03-21  Miguel de Icaza  <miguel@ximian.com>
+
+	* test-49.cs: Improved test to excerise the coverage.
+
 2002-03-13  Ravi Pratap  <ravi@ximian.com>
 
 	* test-86.cs : Add. This is to check for correct overload resolution

@@ -1447,6 +1447,9 @@ namespace Mono.CSharp {
 				ig.Emit (OpCodes.Call, TypeManager.string_isinterneted_string);
 				ig.Emit (OpCodes.Stloc, val);
 			}
+
+			SwitchSection last_section;
+			last_section = (SwitchSection) Sections [Sections.Count-1];
 			
 			foreach (SwitchSection ss in Sections){
 				Label sec_begin = ig.DefineLabel ();
@@ -1499,7 +1502,7 @@ namespace Mono.CSharp {
 						}
 					}
 				}
-				if (label_count != 1)
+				if (label_count != 1 && ss != last_section)
 					ig.Emit (OpCodes.Br, next_test);
 				
 				if (null_found)
@@ -1513,8 +1516,10 @@ namespace Mono.CSharp {
 				}
 				first_test = false;
 			}
-			if (!default_found)
+			if (!default_found){
 				ig.MarkLabel (default_target);
+				all_return = false;
+			}
 			ig.MarkLabel (next_test);
 			ig.MarkLabel (end_of_switch);
 			
@@ -1564,22 +1569,12 @@ namespace Mono.CSharp {
 			ig.MarkLabel (ec.LoopEnd);
 
 			//
-			// FIXME: I am emitting a nop, because the switch performs
-			// no analysis on whether something ever reaches the end
-			//
-			// try: b (int a) { switch (a) { default: return 0; }  }
-			ig.Emit (OpCodes.Nop);
-
-			//
 			// Restore the previous context
 			//
 			ec.LoopEnd = old_end;
 			ec.Switch = old_switch;
 			
-			//
-			// Because we have a nop at the end
-			//
-			return false;
+			return all_return;
 		}
 	}
 
