@@ -1,3 +1,8 @@
+2002-07-20  Martin Baulig  <martin@gnome.org>
+
+	* expression.cs (Binary.EmitBranchable): Emit correct unsigned branch
+	instructions.  Fixes bug #27977, also added test-146.cs.
+
 2002-07-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* cs-tokenizer.cs: fixed getHex ().

@@ -1795,6 +1795,12 @@ namespace Mono.CSharp {
 			return (t == TypeManager.int32_type || t == TypeManager.uint32_type ||
 				t == TypeManager.int64_type || t == TypeManager.uint64_type);
 		}
+
+		static bool is_unsigned (Type t)
+		{
+			return (t == TypeManager.uint32_type || t == TypeManager.uint64_type ||
+				t == TypeManager.short_type || t == TypeManager.byte_type);
+		}
 					
 		Expression CheckShiftArguments (EmitContext ec)
 		{
@@ -2246,7 +2252,9 @@ namespace Mono.CSharp {
 			right.Emit (ec);
 
 			ILGenerator ig = ec.ig;
-			
+
+			bool isUnsigned = is_unsigned (left.Type);
+
 			switch (oper){
 			case Operator.Equality:
 				if (onTrue)
@@ -2264,31 +2272,55 @@ namespace Mono.CSharp {
 
 			case Operator.LessThan:
 				if (onTrue)
-					ig.Emit (OpCodes.Blt, target);
+					if (isUnsigned)
+						ig.Emit (OpCodes.Blt_Un, target);
+					else
+						ig.Emit (OpCodes.Blt, target);
 				else
-					ig.Emit (OpCodes.Bge, target);
+					if (isUnsigned)
+						ig.Emit (OpCodes.Bge_Un, target);
+					else
+						ig.Emit (OpCodes.Bge, target);
 				break;
 
 			case Operator.GreaterThan:
 				if (onTrue)
-					ig.Emit (OpCodes.Bgt, target);
+					if (isUnsigned)
+						ig.Emit (OpCodes.Bgt_Un, target);
+					else
+						ig.Emit (OpCodes.Bgt, target);
 				else
-					ig.Emit (OpCodes.Ble, target);
+					if (isUnsigned)
+						ig.Emit (OpCodes.Ble_Un, target);
+					else
+						ig.Emit (OpCodes.Ble, target);
 				break;
 
 			case Operator.LessThanOrEqual:
 				if (onTrue)
-					ig.Emit (OpCodes.Ble, target);
+					if (isUnsigned)
+						ig.Emit (OpCodes.Ble_Un, target);
+					else
+						ig.Emit (OpCodes.Ble, target);
 				else
-					ig.Emit (OpCodes.Bgt, target);
+					if (isUnsigned)
+						ig.Emit (OpCodes.Bgt_Un, target);
+					else
+						ig.Emit (OpCodes.Bgt, target);
 				break;
 
 
 			case Operator.GreaterThanOrEqual:
 				if (onTrue)
-					ig.Emit (OpCodes.Bge, target);
+					if (isUnsigned)
+						ig.Emit (OpCodes.Bge_Un, target);
+					else
+						ig.Emit (OpCodes.Bge, target);
 				else
-					ig.Emit (OpCodes.Blt, target);
+					if (isUnsigned)
+						ig.Emit (OpCodes.Blt_Un, target);
+					else
+						ig.Emit (OpCodes.Blt, target);
 				break;
 
 			default:
