@@ -1,3 +1,6 @@
+2003-03-24  Per Arneng <pt99par@student.bth.se>
+	* MailUtil: Added for some functions that didnt fit in other classes
+	
 2003-03-06  Per Arneng <pt99par@student.bth.se>
 	* MailMessageWrapper: Added to get at more advanced mail message
 	
