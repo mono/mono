@@ -1,0 +1,6 @@
+2004-09-10  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ResourcePermissionBaseEntryTest.cs: New. Unit tests for 
+	ResourcePermissionBaseEntry.
+	* ResourcePermissionBaseTest.cs: New. Unit tests for 
+	ResourcePermissionBase.
