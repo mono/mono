@@ -82,6 +82,11 @@
                     AssemblyName = "Accessibility"
                     HintPath = "..\..\..\..\..\..\..\WINNT\Microsoft.NET\Framework\v1.0.3705\Accessibility.dll"
                 />
+                <Reference
+                    Name = "System.Windows.Forms.Design"
+                    Project = "{EF89E643-02F5-4E97-9353-3C92F209EB47}"
+                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
+                />
             </References>
         </Build>
         <Files>
