@@ -88,10 +88,13 @@ namespace Mono.ILASM {
                                                 continue;
                                         } else if (next == '*') {
                                                 reader.Read ();
-                                                for (next = reader.Read ();
-                                                     next != -1 && next != '*' && reader.Peek () != '/';
-                                                     next = reader.Read ());
-                                                reader.Read ();
+                                                for (next = reader.Read (); next != -1; next = reader.Read ()) {
+                                                        if (next == '*' && reader.Peek () == '/') {
+                                                                reader.Read ();
+                                                                goto end;
+                                                        }
+                                                }
+                                        end:
                                                 continue;
                                         }
                                 }
