@@ -320,7 +320,7 @@ namespace System.Reflection
 				int idxlen = (indexes != null) ? indexes.Length : 0;
 				PropertyInfo result = null;
 				int i;
-				int best_score = Int32.MaxValue;
+				int best_score = Int32.MaxValue - 1;
 				int fail_score = Int32.MaxValue;
 				int level = 0;
 				
@@ -333,7 +333,7 @@ namespace System.Reflection
 					if (haveRet && !check_type (p.PropertyType, returnType))
 						continue;
 
-					int score = Int32.MaxValue;
+					int score = Int32.MaxValue - 1;
 					if (idxlen > 0) {
 						score = check_arguments_with_score (indexes, args);
 						if (score == -1)

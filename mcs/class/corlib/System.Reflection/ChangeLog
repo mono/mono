@@ -1,5 +1,10 @@
 2004-06-02  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* Binder.cs: default score must be lower than fail_score or we'll get
+	an ambiguous match when no indexers given and one single match is found.
+
+2004-06-02  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* Binder.cs: removed ^Ms. In case of several properties matching, try
 	to disambiguate based on the indexer types provider and the conversions
 	from those into the ones of the property.
