@@ -1,3 +1,10 @@
+
+Tue Jul 1 11:45:40 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* image.h, image.c: added support to load an assembly from a byte array.
+	* Makefile.am, assembly.c, make-bundle.pl, sample-bundle: added 
+	assembly bundle support.
+
 2003-06-27  Dietmar Maurer  <dietmar@ximian.com>
 
 	* threadpool.c (mono_thread_pool_add): keep a reference to the
