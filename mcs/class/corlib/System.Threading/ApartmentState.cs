@@ -11,8 +11,8 @@
 namespace System.Threading
 {
 	public enum ApartmentState {
-		MTA,
-		STA,
-		Unknown
+		STA = 0,
+		MTA = 1,
+		Unknown = 2
 	}
 }
