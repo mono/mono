@@ -80,7 +80,8 @@ namespace System.IO {
 				return internalEncoding;
 			}
 		}
-	
+
+		[MonoTODO]
 		public override int Peek ()
 		{
 			// FIXME: handle encoding....

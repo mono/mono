@@ -55,6 +55,7 @@ namespace System.IO
 			return extension;
 		}
 
+		[MonoTODO]
 		public static string Combine(string path1, string path2)
 		{
 			if(path1 == null || path2 == null)
@@ -186,6 +187,7 @@ namespace System.IO
 			return null;
 		}
 
+		[MonoTODO]
 		public static string GetTempFileName()
 		{
 			//TODO: Implement method
@@ -195,6 +197,7 @@ namespace System.IO
 		/// <summary>
 		/// Returns the path of the current systems temp directory
 		/// </summary>
+		[MonoTODO]
 		public static string GetTempPath()
 		{	// TODO: This might vary with distribution and there
 			//       might be an api to provide it. Research is needed

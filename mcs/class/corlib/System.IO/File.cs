@@ -22,6 +22,7 @@ namespace System.IO
 		/// <summary>
 		/// Creates a StreamWriter that appends text to a file creating the file if needed
 		/// </summary>
+		[MonoTODO]
 		public static StreamWriter AppendText(string path)
 		{	// TODO: Implement
 			return null;
@@ -38,6 +39,7 @@ namespace System.IO
 		/// <summary>
 		/// Copies a file overwriting existing if specified
 		/// </summary>
+		[MonoTODO]
 		public static void Copy(string sourceFilename, string destFilename, bool bOverwrite)
 		{	// TODO: Implement
 		}
@@ -45,6 +47,7 @@ namespace System.IO
 		/// <summary>
 		/// Creates a file given the fully qualified path
 		/// </summary>
+		[MonoTODO]
 		public static FileStream Create(string path)
 		{	// TODO: Research default buffersize
 			return Create(path, 1024);
@@ -53,6 +56,7 @@ namespace System.IO
 		/// <summary>
 		/// Creates a file given the fully qualified path using specified buffersize
 		/// </summary>
+		[MonoTODO]
 		public static FileStream Create(string path, int buffersize)
 		{	// TODO: Implement
 			return null;
@@ -61,6 +65,7 @@ namespace System.IO
 		/// <summary>
 		/// Delete a file
 		/// </summary>
+		[MonoTODO]
 		public static void Delete(string path)
 		{	// TODO: Implement
 		}
@@ -68,6 +73,7 @@ namespace System.IO
 		/// <summary>
 		/// Returns true if file exists on disk
 		/// </summary>
+		[MonoTODO]
 		public static bool Exists(string path)
 		{	// TODO: Implement
 			return false;
@@ -117,6 +123,7 @@ namespace System.IO
 		/// <summary>
 		/// Open a file for exclusive reading and writing
 		/// </summary>
+		[MonoTODO]
 		public static FileStream Open(string path, FileMode mode)
 		{	// TODO: research if exclusive is the correct default
 			return getInfo(path).Open(mode, FileAccess.ReadWrite);
@@ -125,6 +132,7 @@ namespace System.IO
 		/// <summary>
 		/// Open a file for exclusive access specified by mode
 		/// </summary>
+		[MonoTODO]
 		public static FileStream Open(string path, FileMode mode, FileAccess access)
 		{	// TODO: research if exclusive is the correct default
 			return getInfo(path).Open(mode, access, FileShare.None);
@@ -141,6 +149,7 @@ namespace System.IO
 		/// <summary>
 		/// Open a FileStream for reading and writing
 		/// </summary>
+		[MonoTODO]
 		public static FileStream OpenRead(string path)
 		{	// TODO: find out what default share should be
 			return getInfo(path).OpenRead();

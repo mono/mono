@@ -26,6 +26,7 @@ namespace System.IO
 		/// <summary>
 		/// Generates and exception if caller doesn't have flags access to filesystem item specified by path
 		/// </summary>
+		[MonoTODO]
 		public static void Demand(FileIOPermissionAccess flags, string path)
 		{
 			FileIOPermission ioPerm = new FileIOPermission(flags, path);
@@ -51,7 +52,8 @@ namespace System.IO
 				throw new ArgumentException("Invalid FileAccess parameter");
 			}
 		}
-		
+
+		[MonoTODO]
 		public static void ModeAccess(FileMode mode, FileAccess access, string path, bool exists)
 		{
 			return;

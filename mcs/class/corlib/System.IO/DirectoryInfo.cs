@@ -48,6 +48,7 @@ namespace System.IO
 			}
 		}
 
+		[MonoTODO]
 		public override string Name
 		{
 			get
@@ -56,6 +57,7 @@ namespace System.IO
 			}
 		}
 
+		[MonoTODO]
 		public DirectoryInfo Root
 		{
 			get
@@ -64,11 +66,13 @@ namespace System.IO
 			}
 		}
 
+		[MonoTODO]
 		public void Create()
 		{
 			//TODO: Implement
 		}
 
+		[MonoTODO]
 		DirectoryInfo CreateSubdirectory(string path)
 		{
 			return null;	//TODO: Implement
@@ -87,6 +91,7 @@ namespace System.IO
 		/// <summary>
 		/// Returns an array of DirectoryInfos for subdirectories
 		/// </summary>
+		[MonoTODO]
 		public DirectoryInfo[] GetDirectories()
 		{
 			return null;	//TODO: Implement
@@ -95,6 +100,7 @@ namespace System.IO
 		/// Returns an array of DirectoryInfos
 		/// matching the filter specified by mask
 		/// </summary>
+		[MonoTODO]
 		public static DirectoryInfo[] GetDirectories(string mask)
 		{
 			return null;	//TODO: Implement
@@ -110,6 +116,7 @@ namespace System.IO
 		/// Returns an array of FileInfo
 		/// matching the filter specified by mask
 		/// </summary>
+		[MonoTODO]
 		public static FileInfo[] GetFiles(string mask)
 		{
 			return null;	//TODO: Implement
@@ -117,6 +124,7 @@ namespace System.IO
 		/// <summary>
 		/// Returns an array of FileSystemInfo for subdirectories
 		/// </summary>
+		[MonoTODO]
 		public FileSystemInfo[] GetFileSystemInfos()
 		{
 			return null;	//TODO: Implement
@@ -125,6 +133,7 @@ namespace System.IO
 		/// Returns an array of FileSystemInfo
 		/// matching the filter specified by mask
 		/// </summary>
+		[MonoTODO]
 		public static FileSystemInfo[] GetFileSystemInfos(string mask)
 		{
 			return null;	//TODO: Implement

@@ -6,7 +6,9 @@
 // TODO: Implement the Thread Safe stuff
 
 namespace System.IO {
-        public abstract class TextWriter : MarshalByRefObject, IDisposable {
+
+	[MonoTODO]
+	public abstract class TextWriter : MarshalByRefObject, IDisposable {
                 
                 protected TextWriter() {
 			coreNewLine = "\n".ToCharArray ();
@@ -55,7 +57,8 @@ namespace System.IO {
 		{
 			// do nothing
 		}
-                
+
+		[MonoTODO]
                 public static TextWriter Synchronised (TextWriter writer)
 		{
                         // TODO: Implement.

@@ -1,5 +1,5 @@
 //
-// System.IO.TextWriter
+// System.IO.TextReader
 //
 // Author: Marcin Szczepanski (marcins@zipworld.com.au)
 //
@@ -10,6 +10,7 @@ using System;
 
 namespace System.IO {
 
+	[MonoTODO]
 	public abstract class TextReader : MarshalByRefObject, IDisposable {
 		
 		protected TextReader() { }
@@ -72,7 +73,8 @@ namespace System.IO {
 		{ 
 			return String.Empty;
 		}
-		
+
+		[MonoTODO]
 		public static TextReader Synchronised( TextReader reader )
 		{
                         // TODO: Implement

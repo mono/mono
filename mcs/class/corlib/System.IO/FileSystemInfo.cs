@@ -41,6 +41,7 @@ namespace System.IO
 			FullPath = OriginalPath = String.Empty;
 		}
 
+		[MonoTODO]
 		public FileAttributes Attributes
 		{ 
 			get
@@ -53,6 +54,7 @@ namespace System.IO
 			}
 		}
 
+		[MonoTODO]
 		public DateTime CreationTime
 		{
 			get
@@ -95,6 +97,7 @@ namespace System.IO
 			}
 		}
 
+		[MonoTODO]
 		public DateTime LastAccessTime
 		{
 			get
@@ -112,6 +115,7 @@ namespace System.IO
 			}
 		}
 
+		[MonoTODO]
 		public DateTime LastWriteTime
 		{	// TODO: Implement
 			get
@@ -132,11 +136,13 @@ namespace System.IO
 			return getPathName().GetHashCode();
 		}
 
+		[MonoTODO]
 		public override bool Equals(object obj)
 		{	// TODO: Implement
 			return false;
 		}
 
+		[MonoTODO]
 		new public static bool Equals(object obj1, object obj2)
 		{	// TODO: Implement
 			return false;
@@ -170,6 +176,7 @@ namespace System.IO
 			inited = true;
 		}
 
+		[MonoTODO]
 		private DateTime c2csharpTime(double seconds)
 		{	// TODO: determine if UTC time which the 
 			//       calculation below is in is correct
@@ -186,7 +193,8 @@ namespace System.IO
 			}
 			return FullPath;
 		} 
-		
+
+		[MonoTODO]
 		protected FileAttributes getAttributes()
 		{	
 			if(!inited)

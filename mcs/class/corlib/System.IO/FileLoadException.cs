@@ -26,6 +26,7 @@ namespace System.IO {
 		{
 		}
 
+		[MonoTODO]
 		public string FusionLog {
 			get {
 				// FIXME

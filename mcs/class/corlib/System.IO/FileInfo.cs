@@ -119,18 +119,21 @@ namespace System.IO
 				return _os.FileLength(getPathName());
 			}
 		}
-		
+
+		[MonoTODO]
    		public StreamWriter AppendText()
 		{	// TODO: verify using correct FileMode here might be Create & Append
 			return new StreamWriter(Open(FileMode.Append, FileAccess.Write));
 		}
-		
+
+		[MonoTODO]
 		public FileStream Create()
 		{
 			// TODO: verify using correct FileMode here
 			return Open(FileMode.OpenOrCreate, FileAccess.ReadWrite);
 		}
 
+		[MonoTODO]
 		public StreamWriter CreateText()
 		{	//TODO: According to doc even CreateText throws a file not found ex
 			//      sounds suspicious so i'll have to check it out later
@@ -156,11 +159,13 @@ namespace System.IO
 			return new FileStream(path, mode, access, share);
 		}
 
+		[MonoTODO]
 		public FileStream OpenRead()
 		{	// TODO: find out what default share should be
 			return Open(FileMode.Open, FileAccess.Read, FileShare.Read);
 		}
 
+		[MonoTODO]
 		public StreamReader OpenText()
 		{	// TODO: verify mode and access values
 			return new StreamReader(Open(FileMode.OpenOrCreate, FileAccess.ReadWrite));
@@ -176,6 +181,7 @@ namespace System.IO
 			return CopyTo(destFile, false);
 		}
 
+		[MonoTODO]
 		public FileInfo CopyTo(string destFile, bool bOverwrite)
 		{	// TODO: Implement
 			return null;
@@ -188,6 +194,7 @@ namespace System.IO
 			_os.DeleteFile(getPathName());
 		}
 
+		[MonoTODO]
 		public void MoveTo(string destName)
 		{	// TODO: Implement
 		}
