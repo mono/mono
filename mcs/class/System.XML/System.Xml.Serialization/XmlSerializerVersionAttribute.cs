@@ -1,11 +1,10 @@
-//
-// XmlMapping.cs: 
+// 
+// System.Xml.Serialization.XmlSerializerVersionAttribute.cs 
 //
 // Author:
-//   John Donagher (john@webmeta.com)
 //   Lluis Sanchez Gual (lluis@ximian.com)
 //
-// (C) 2002 John Donagher
+// Copyright (C) Novell, Inc., 2004
 //
 
 //
@@ -29,76 +28,52 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-using System.Collections;
-
-namespace System.Xml.Serialization
-{
-	public abstract class XmlMapping
-	{
-		ObjectMap map;
-		ArrayList relatedMaps;
-		SerializationFormat format;
-		SerializationSource source;
-		
-		internal string _elementName;
-		internal string _namespace;
-		
-		protected XmlMapping ()
-		{
-		}
-
-		internal XmlMapping (string elementName, string ns)
-		{
-			_elementName = elementName;
-			_namespace = ns;
-		}
-
 #if NET_2_0
-		public string ElementName
-		{
-			get { return _elementName; }
-		}
 
+using System;
+
+namespace System.Xml.Serialization 
+{
+	public sealed class XmlSerializerVersionAttribute : Attribute
+	{
+		string _namespace;
+		string _parentAssemblyId;
+		Type _type;
+		string _version;
+		
+		public XmlSerializerVersionAttribute ()
+		{
+		}
+		
+		public XmlSerializerVersionAttribute (Type type)
+		{
+			_type = type;
+		}
+		
 		public string Namespace
 		{
 			get { return _namespace; }
+			set { _namespace = value; }
 		}
 		
-		[MonoTODO]
-		public void SetKey (string key)
+		public string ParentAssemblyId
 		{
-		}
-#endif
-
-		internal ObjectMap ObjectMap
-		{
-			get { return map; }
-			set { map = value; }
-		}
-
-		internal ArrayList RelatedMaps
-		{
-			get { return relatedMaps; }
-			set { relatedMaps = value; }
-		}
-
-		internal SerializationFormat Format
-		{
-			get { return format; }
-			set { format = value; }
+			get { return _parentAssemblyId; }
+			set { _parentAssemblyId = value; }
 		}
 		
-		internal SerializationSource Source
+		public Type Type
 		{
-			get { return source; }
-			set { source = value; }
+			get { return _type; }
+			set { _type = value; }
+		}
+		
+		public string Version
+		{
+			get { return _version; }
+			set { _version = value; }
 		}
 	}
-
-	internal class ObjectMap
-	{
-	}
-
-	internal enum SerializationFormat { Encoded, Literal }
 }
+
+#endif

@@ -38,8 +38,6 @@ namespace System.Xml.Serialization
 {
 	public class XmlTypeMapping : XmlMapping
 	{
-		private string elementName;
-		private string ns;
 		private string xmlType;
 		private string xmlTypeNamespace;
 		TypeData type;
@@ -53,23 +51,24 @@ namespace System.Xml.Serialization
 		ArrayList _derivedTypes = new ArrayList();
 
 		internal XmlTypeMapping(string elementName, string ns, TypeData typeData, string xmlType, string xmlTypeNamespace)
+		: base (elementName, ns)
 		{
-			this.elementName = elementName;
-			this.ns = ns;
 			this.type = typeData;
 			this.xmlType = xmlType;
 			this.xmlTypeNamespace = xmlTypeNamespace;
 		}
 
+#if !NET_2_0
 		public string ElementName
 		{
-			get { return elementName; }
+			get { return _elementName; }
 		}
 
 		public string Namespace
 		{
-			get { return ns; }
+			get { return _namespace; }
 		}
+#endif
 
 		public string TypeFullName
 		{
@@ -164,8 +163,8 @@ namespace System.Xml.Serialization
 		internal void UpdateRoot (XmlQualifiedName qname)
 		{
 			if (qname != null) {
-				this.elementName = qname.Name;
-				this.ns = qname.Namespace;
+				this._elementName = qname.Name;
+				this._namespace = qname.Namespace;
 			}
 		}
 	}

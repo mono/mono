@@ -1,11 +1,10 @@
-//
-// XmlMapping.cs: 
+// 
+// System.Xml.Serialization.XmlDeserializationEvents.cs 
 //
 // Author:
-//   John Donagher (john@webmeta.com)
 //   Lluis Sanchez Gual (lluis@ximian.com)
 //
-// (C) 2002 John Donagher
+// Copyright (C) Novell, Inc., 2004
 //
 
 //
@@ -29,76 +28,43 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-using System.Collections;
-
-namespace System.Xml.Serialization
-{
-	public abstract class XmlMapping
-	{
-		ObjectMap map;
-		ArrayList relatedMaps;
-		SerializationFormat format;
-		SerializationSource source;
-		
-		internal string _elementName;
-		internal string _namespace;
-		
-		protected XmlMapping ()
-		{
-		}
-
-		internal XmlMapping (string elementName, string ns)
-		{
-			_elementName = elementName;
-			_namespace = ns;
-		}
-
 #if NET_2_0
-		public string ElementName
-		{
-			get { return _elementName; }
-		}
 
-		public string Namespace
-		{
-			get { return _namespace; }
-		}
-		
-		[MonoTODO]
-		public void SetKey (string key)
-		{
-		}
-#endif
+using System;
 
-		internal ObjectMap ObjectMap
-		{
-			get { return map; }
-			set { map = value; }
-		}
-
-		internal ArrayList RelatedMaps
-		{
-			get { return relatedMaps; }
-			set { relatedMaps = value; }
-		}
-
-		internal SerializationFormat Format
-		{
-			get { return format; }
-			set { format = value; }
-		}
-		
-		internal SerializationSource Source
-		{
-			get { return source; }
-			set { source = value; }
-		}
-	}
-
-	internal class ObjectMap
+namespace System.Xml.Serialization 
+{
+	public struct XmlDeserializationEvents
 	{
-	}
+		XmlAttributeEventHandler onUnknownAttribute;
+		XmlElementEventHandler onUnknownElement;
+		XmlNodeEventHandler onUnknownNode;
+		UnreferencedObjectEventHandler onUnreferencedObject;
 
-	internal enum SerializationFormat { Encoded, Literal }
+		public XmlAttributeEventHandler OnUnknownAttribute 
+		{
+			get { return onUnknownAttribute; }
+			set { onUnknownAttribute = value; }
+		}
+
+		public XmlElementEventHandler OnUnknownElement 
+		{
+			get { return onUnknownElement; }
+			set { onUnknownElement = value; }
+		}
+
+		public XmlNodeEventHandler OnUnknownNode 
+		{
+			get { return onUnknownNode; }
+			set { onUnknownNode = value; }
+		}
+
+		public UnreferencedObjectEventHandler OnUnreferencedObject 
+		{
+			get { return onUnreferencedObject; }
+			set { onUnreferencedObject = value; }
+		}
+	}
 }
+
+#endif

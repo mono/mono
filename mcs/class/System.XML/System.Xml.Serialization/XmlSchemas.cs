@@ -64,6 +64,26 @@ namespace System.Xml.Serialization {
 		public XmlSchema this [string ns] {
 			get { return (XmlSchema) table[ns!=null?ns:""]; }
 		}
+		
+#if NET_2_0
+		[MonoTODO]
+		public bool IsCompiled 
+		{
+			get { throw new NotImplementedException (); }
+		}
+		
+		[MonoTODO]
+		public ICollection Schemas 
+		{
+			get { throw new NotImplementedException (); }
+		}
+		
+		[MonoTODO]
+		public void Compile (ValidationEventHandler handler, bool fullCompile)
+		{
+		}
+#endif
+
 
 		#endregion // Properties
 

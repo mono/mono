@@ -30,15 +30,23 @@
 //
 
 using System.CodeDom;
+using System.CodeDom.Compiler;
+using System.Collections;
 
-namespace System.Xml.Serialization {
-	public class SoapCodeExporter {
-
+namespace System.Xml.Serialization 
+{
+	public class SoapCodeExporter
+#if NET_2_0
+		: CodeExporter
+#endif
+	{
 		#region Fields
 
 		CodeNamespace codeNamespace;
 		CodeCompileUnit codeCompileUnit;
+#if !NET_2_0
 		SoapMapCodeGenerator codeGenerator;
+#endif
 
 		#endregion
 
@@ -56,13 +64,45 @@ namespace System.Xml.Serialization {
 			codeGenerator = new SoapMapCodeGenerator (codeNamespace, codeCompileUnit);
 		}
 
-		#endregion // Constructors
+#if NET_2_0
+
+		[MonoTODO]
+		public SoapCodeExporter (CodeNamespace codeNamespace, 
+								CodeCompileUnit codeCompileUnit, 
+								CodeGenerationOptions options)
+		{
+		}
+		
+		[MonoTODO]
+		public SoapCodeExporter (CodeNamespace codeNamespace, 
+								CodeCompileUnit codeCompileUnit, 
+								CodeGenerationOptions options, 
+								Hashtable mappings)
+		{
+			
+		}
+		
+		[MonoTODO]
+		public SoapCodeExporter (CodeNamespace codeNamespace, 
+								CodeCompileUnit codeCompileUnit, 
+								ICodeGenerator codeGen, 
+								CodeGenerationOptions options, 
+								Hashtable mappings)
+		{
+		
+		}
+
+#endif
+
+#endregion // Constructors
 
 		#region Properties
 
+#if !NET_2_0
 		public CodeAttributeDeclarationCollection IncludeMetadata {
 			get { return codeGenerator.IncludeMetadata; }
 		}
+#endif
 		
 		#endregion // Properties
 

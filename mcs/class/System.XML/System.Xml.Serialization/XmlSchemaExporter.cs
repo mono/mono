@@ -73,8 +73,13 @@ namespace System.Xml.Serialization {
 		{
 			ExportMembersMapping (xmlMembersMapping, true);
 		}
-		
-		internal void ExportMembersMapping (XmlMembersMapping xmlMembersMapping, bool exportEnclosingType)
+
+#if NET_2_0
+		public
+#else
+		internal 
+#endif
+		void ExportMembersMapping (XmlMembersMapping xmlMembersMapping, bool exportEnclosingType)
 		{
 			ClassMap cmap = (ClassMap) xmlMembersMapping.ObjectMap;
 

@@ -120,6 +120,29 @@ namespace System.Xml.Serialization {
 			return mps;
 		}
 
+#if NET_2_0
+		[MonoTODO]
+		public XmlMembersMapping ImportMembersMapping (string elementName, 
+			string ns, 
+			XmlReflectionMember[] members, 
+			bool hasWrapperElement, 
+			bool rpc)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public XmlMembersMapping ImportMembersMapping (string elementName, 
+			string ns, 
+			XmlReflectionMember[] members, 
+			bool hasWrapperElement, 
+			bool rpc, 
+			bool openModel)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
+
 		public XmlTypeMapping ImportTypeMapping (Type type)
 		{
 			return ImportTypeMapping (type, null, null);

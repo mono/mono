@@ -255,6 +255,32 @@ namespace System.Xml.Serialization {
 			return new XmlMembersMapping (mapping);
 		}
 		
+#if NET_2_0
+		[MonoTODO]
+		public XmlMembersMapping ImportMembersMapping (string name, string ns, SoapSchemaMember[] members)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		public XmlTypeMapping ImportSchemaType (XmlQualifiedName typeName)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		public XmlTypeMapping ImportSchemaType (XmlQualifiedName typeName, Type baseType)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		public XmlTypeMapping ImportSchemaType (XmlQualifiedName typeName, Type baseType, bool baseTypeCanBeIndirect)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
+		
 		internal XmlMembersMapping ImportEncodedMembersMapping (string name, string ns, SoapSchemaMember[] members, bool hasWrapperElement)
 		{
 			XmlMemberMapping[] mapping = new XmlMemberMapping [members.Length];

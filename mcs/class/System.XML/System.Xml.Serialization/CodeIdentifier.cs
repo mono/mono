@@ -34,9 +34,11 @@ using System.Globalization;
 namespace System.Xml.Serialization {
 	public class CodeIdentifier {
 
+#if !NET_2_0
 		public CodeIdentifier ()
 		{
 		}
+#endif
 
 		public static string MakeCamel (string identifier)
 		{

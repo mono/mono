@@ -36,9 +36,15 @@ using System.Text;
 using System.Xml;
 using System.Xml.Schema;
 using System.Runtime.Serialization;
+using System.Reflection;
 
-namespace System.Xml.Serialization {
-	public abstract class XmlSerializationWriter {
+namespace System.Xml.Serialization 
+{
+	public abstract class XmlSerializationWriter 
+#if NET_2_0
+		: XmlSerializationGeneratedCode
+#endif
+	{
 
 		#region Fields
 
@@ -851,6 +857,51 @@ namespace System.Xml.Serialization {
 			else
 				WriteAttribute ("type", XmlSchema.InstanceNamespace, name);
 		}
+		
+#if NET_2_0
+
+		[MonoTODO]
+		protected Exception CreateInvalidAnyTypeException (object o)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		protected Exception CreateInvalidAnyTypeException (Type t)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		protected Exception CreateInvalidEnumValueException (object value, string typeName)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		protected static string FromEnum (long value, string[] values, long[] ids, string typeName)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		protected string FromXmlQualifiedName (XmlQualifiedName xmlQualifiedName, bool ignoreEmpty)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		protected static Assembly ResolveDynamicAssembly (string assemblyFullName)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		protected void WriteSerializable (IXmlSerializable serializable, string name, string ns, bool isNullable, bool any)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 		
 		#endregion
 

@@ -41,6 +41,7 @@ using System.CodeDom;
 using System.CodeDom.Compiler;
 using Microsoft.CSharp;
 using System.Configuration;
+using System.Security.Policy;
 
 namespace System.Xml.Serialization
 {
@@ -171,6 +172,19 @@ namespace System.Xml.Serialization
 			typeMapping = importer.ImportTypeMapping (type, root, defaultNamespace);
 		}
 
+#if NET_2_0
+
+		[MonoTODO]
+		public XmlSerializer (Type type,
+			XmlAttributeOverrides overrides,
+			Type [] extraTypes,
+			XmlRootAttribute root,
+			string defaultNamespace,
+			string location,
+			Evidence evidence)
+		{
+		}
+#endif
 
 #endregion // Constructors
 
@@ -380,6 +394,91 @@ namespace System.Xml.Serialization
 			Serialize (o, xsWriter);
 			writer.Flush ();
 		}
+		
+#if NET_2_0
+		
+		[MonoTODO]
+		public object Deserialize (XmlReader xmlReader, string encodingStyle, XmlDeserializationEvents events)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public object Deserialize (XmlReader xmlReader, string encodingStyle)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public object Deserialize (XmlReader xmlReader, XmlDeserializationEvents events)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		public static XmlSerializer[] FromMappings (XmlMapping[] mappings, Evidence evidence)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static XmlSerializer[] FromMappings (XmlMapping[] mappings, Type type)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static Assembly GenerateSerializer (Type[] types, XmlMapping[] mappings)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		public static Assembly GenerateSerializer (Type[] types, XmlMapping[] mappings, CompilerParameters parameters)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		public static Assembly GenerateSerializer (Type[] types, 
+			XmlMapping[] mappings, 
+			string codePath, 
+			bool debug, 
+			bool keepFiles)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		public static Assembly GenerateSerializer (Type[] types, 
+			XmlMapping[] mappings, 
+			string codePath, 
+			bool debug, 
+			bool keepFiles, 
+			string compilerOptions)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static string GetXmlSerializerAssemblyName (Type type)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static string GetXmlSerializerAssemblyName (Type type, string defaultNamespace)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		public void Serialize (XmlWriter xmlWriter, object o, XmlSerializerNamespaces namespaces, string encodingStyle)
+		{
+			throw new NotImplementedException ();
+		}
+
+#endif
 		
 		XmlSerializationWriter CreateWriter (XmlMapping typeMapping)
 		{

@@ -36,9 +36,15 @@ using System.Collections;
 using System.Globalization;
 using System.Xml;
 using System.Xml.Schema;
+using System.Reflection;
 
-namespace System.Xml.Serialization {
-	public abstract class XmlSerializationReader {
+namespace System.Xml.Serialization 
+{
+	public abstract class XmlSerializationReader 
+#if NET_2_0
+		: XmlSerializationGeneratedCode
+#endif
+	{
 
 		#region Fields
 
@@ -1027,6 +1033,69 @@ namespace System.Xml.Serialization {
 				get { return id; }
 			}
 		}
+		
+#if NET_2_0
+		[MonoTODO]
+		protected bool DecodeName
+		{
+			get { throw new NotImplementedException(); }
+		}
+
+		[MonoTODO]
+		protected string CollapseWhitespace (string value)
+		{
+			throw new NotImplementedException ();
+		}
+				
+		[MonoTODO]
+		protected Exception CreateBadDeriveationException (
+			string xsdDerived, 
+			string nsDerived, 
+			string xsdBase, 
+			string nsBase, 
+			string clrDerived, 
+			string clrBase)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		protected Exception CreateInvalidCastException (Type type, object value, string id)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		protected Exception CreateMissingIXmlSerializableType (string name, string ns, string clrType)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		protected IXmlSerializable ReadSerializable (IXmlSerializable serializable, bool wrapped)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		protected string ReadString (string value, bool trim)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		protected object ReadTypedNull (XmlQualifiedName type)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		protected static Assembly ResolveDynamicAssembly (string assemblyFullName)
+		{
+			throw new NotImplementedException ();
+		}
+
+#endif
 
 	}
 }

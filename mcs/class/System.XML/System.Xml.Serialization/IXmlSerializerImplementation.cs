@@ -1,11 +1,10 @@
-//
-// XmlMapping.cs: 
+// 
+// System.Xml.Serialization.IXmlSerializerImplementation.cs 
 //
 // Author:
-//   John Donagher (john@webmeta.com)
 //   Lluis Sanchez Gual (lluis@ximian.com)
 //
-// (C) 2002 John Donagher
+// Copyright (C) Novell, Inc., 2004
 //
 
 //
@@ -29,76 +28,23 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if NET_2_0
+
 using System;
 using System.Collections;
 
-namespace System.Xml.Serialization
+namespace System.Xml.Serialization 
 {
-	public abstract class XmlMapping
+	public interface IXmlSerializerImplementation
 	{
-		ObjectMap map;
-		ArrayList relatedMaps;
-		SerializationFormat format;
-		SerializationSource source;
+		XmlSerializationReader Reader {get;}
+		Hashtable ReadMethods {get;}
+		Hashtable TypedSerializers {get;}
+		Hashtable WriteMethods {get;}
+		XmlSerializationWriter Writer {get;}
 		
-		internal string _elementName;
-		internal string _namespace;
-		
-		protected XmlMapping ()
-		{
-		}
-
-		internal XmlMapping (string elementName, string ns)
-		{
-			_elementName = elementName;
-			_namespace = ns;
-		}
-
-#if NET_2_0
-		public string ElementName
-		{
-			get { return _elementName; }
-		}
-
-		public string Namespace
-		{
-			get { return _namespace; }
-		}
-		
-		[MonoTODO]
-		public void SetKey (string key)
-		{
-		}
-#endif
-
-		internal ObjectMap ObjectMap
-		{
-			get { return map; }
-			set { map = value; }
-		}
-
-		internal ArrayList RelatedMaps
-		{
-			get { return relatedMaps; }
-			set { relatedMaps = value; }
-		}
-
-		internal SerializationFormat Format
-		{
-			get { return format; }
-			set { format = value; }
-		}
-		
-		internal SerializationSource Source
-		{
-			get { return source; }
-			set { source = value; }
-		}
+		bool CanSerialize (Type type);
 	}
-
-	internal class ObjectMap
-	{
-	}
-
-	internal enum SerializationFormat { Encoded, Literal }
 }
+
+#endif

@@ -34,8 +34,6 @@ using System.Reflection;
 namespace System.Xml.Serialization {
 	public class XmlMembersMapping : XmlMapping {
 
-		string _elementName;
-		string _namespace;
 		bool _hasWrapperElement;
 		XmlMemberMapping[] _mapping;
 
@@ -52,9 +50,8 @@ namespace System.Xml.Serialization {
 		}
 
 		internal XmlMembersMapping (string elementName, string ns, bool hasWrapperElement, bool writeAccessors, XmlMemberMapping[] mapping)
+		: base (elementName, ns)
 		{
-			_elementName = elementName;
-			_namespace = ns;
 			_hasWrapperElement = hasWrapperElement;
 			_mapping = mapping;
 
@@ -71,16 +68,18 @@ namespace System.Xml.Serialization {
 			get { return _mapping.Length; }
 		}
 
+#if !NET_2_0
 		public string ElementName {	
 			get { return _elementName; }
 		}
 
-		public XmlMemberMapping this [int index] {	
-			get { return _mapping[index]; }
-		}
-
 		public string Namespace {
 			get { return _namespace; }
+		}
+#endif
+
+		public XmlMemberMapping this [int index] {	
+			get { return _mapping[index]; }
 		}
 
 		public string TypeName {

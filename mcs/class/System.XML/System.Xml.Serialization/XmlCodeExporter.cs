@@ -32,16 +32,27 @@
 using System.CodeDom;
 using System.Collections;
 using System.Xml.Schema;
+using System.CodeDom.Compiler;
 
-namespace System.Xml.Serialization {
-	public class XmlCodeExporter {
+namespace System.Xml.Serialization 
+{
 
+	public class XmlCodeExporter 
+#if NET_2_0
+		: CodeExporter
+#endif
+	{
 		#region Fields
 
 		CodeNamespace codeNamespace;
 		CodeCompileUnit codeCompileUnit;
 		bool encodedFormat;
+
+#if NET_2_0
+		CodeGenerationOptions options;
+#else
 		XmlMapCodeGenerator codeGenerator;
+#endif
 
 		Hashtable exportedMaps = new Hashtable ();
 
@@ -61,13 +72,45 @@ namespace System.Xml.Serialization {
 			codeGenerator = new XmlMapCodeGenerator (codeNamespace, codeCompileUnit);
 		}
 
+#if NET_2_0
+
+		[MonoTODO]
+		public XmlCodeExporter (CodeNamespace codeNamespace, 
+								CodeCompileUnit codeCompileUnit, 
+								CodeGenerationOptions options)
+		{
+		}
+		
+		[MonoTODO]
+		public XmlCodeExporter (CodeNamespace codeNamespace, 
+								CodeCompileUnit codeCompileUnit, 
+								CodeGenerationOptions options, 
+								Hashtable mappings)
+		{
+			
+		}
+		
+		[MonoTODO]
+		public XmlCodeExporter (CodeNamespace codeNamespace, 
+								CodeCompileUnit codeCompileUnit, 
+								ICodeGenerator codeGen, 
+								CodeGenerationOptions options, 
+								Hashtable mappings)
+		{
+		
+		}
+		
+#endif
+
 		#endregion // Constructors
 
 		#region Properties
 
+#if !NET_2_0
 		public CodeAttributeDeclarationCollection IncludeMetadata {
 			get { return codeGenerator.IncludeMetadata; }
 		}
+#endif
 
 		#endregion Properties
 

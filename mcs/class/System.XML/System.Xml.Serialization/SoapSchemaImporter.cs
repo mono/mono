@@ -3,6 +3,7 @@
 //
 // Author:
 //   Tim Coleman (tim@timcoleman.com)
+//   Lluis Sanchez Gual (lluis@novell.com)
 //
 // Copyright (C) Tim Coleman, 2002
 //
@@ -29,9 +30,15 @@
 //
 
 using System.Xml;
+using System.CodeDom.Compiler;
 
-namespace System.Xml.Serialization {
-	public class SoapSchemaImporter {
+namespace System.Xml.Serialization 
+{
+	public class SoapSchemaImporter 
+#if NET_2_0
+		: SchemaImporter
+#endif
+	{
 
 		#region Fields
 
@@ -52,6 +59,26 @@ namespace System.Xml.Serialization {
 			_importer = new XmlSchemaImporter (schemas, typeIdentifiers);
 			_importer.UseEncodedFormat = true;
 		}
+
+#if NET_2_0
+
+		[MonoTODO]
+		public SoapSchemaImporter (XmlSchemas schemas, CodeGenerationOptions options, ImportContext context)
+		{
+		}
+		
+		[MonoTODO]
+		public SoapSchemaImporter (XmlSchemas schemas, CodeIdentifiers typeIdentifiers, CodeGenerationOptions options)
+		{
+		}
+		
+		[MonoTODO]
+		public SoapSchemaImporter (XmlSchemas schemas,CodeGenerationOptions options, 
+									ICodeGenerator codeGenerator, ImportContext context)
+		{
+		}
+
+#endif
 
 		#endregion // Constructors
 

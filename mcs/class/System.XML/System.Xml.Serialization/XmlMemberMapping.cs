@@ -121,6 +121,14 @@ namespace System.Xml.Serialization
 		internal XmlSchemaForm Form {
 			get { return _form; }
 		}
+		
+#if NET_2_0
+		[MonoTODO]
+		public bool IsNullable
+		{
+			get { throw new NotImplementedException (); }
+		}
+#endif
 
 #if NET_1_1
 		public bool CheckSpecified
