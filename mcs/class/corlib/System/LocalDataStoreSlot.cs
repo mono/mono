@@ -7,6 +7,7 @@
 // (C) Ximian, Inc.  http://www.ximian.com
 //
 
+using System.Reflection;
 using System.Runtime.CompilerServices;
 
 namespace System 
