@@ -88,7 +88,7 @@ namespace Mono.MonoBASIC {
 		public void Using (string ns, Location loc)
 		{
 			if (DeclarationFound){
-				Report.Error (1529, loc, "A using clause must precede all other namespace elements");
+				Report.Error (1529, loc, "A Imports clause must precede all other namespace elements");
 				return;
 			}
 
@@ -111,7 +111,7 @@ namespace Mono.MonoBASIC {
 				aliases = new CaseInsensitiveHashtable ();
 			
 			if (aliases.Contains (alias)){
-				Report.Error (1537, loc, "The using alias `" + alias +
+				Report.Error (1537, loc, "The Imports clause with alias '" + alias +
 					      "' appeared previously in this namespace");
 				return;
 			}
@@ -159,12 +159,12 @@ namespace Mono.MonoBASIC {
 
 				foreach (UsingEntry ue in unused){
 					if (namespaces.Contains (ue.Name)){
-						Report.Warning (6024, ue.Location, "Unused namespace in `using' declaration");
+						Report.Warning (6024, ue.Location, "Unused namespace in 'using' declaration");
 						continue;
 					}
 
 					errors++;
-					Report.Error (246, ue.Location, "The namespace `" + ue.Name +
+					Report.Error (246, ue.Location, "The namespace '" + ue.Name +
 						      "' can not be found (missing assembly reference?)");
 				}
 			}
