@@ -1,3 +1,7 @@
+2005-01-24  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile : quick csc build fix (tested on mcs as well).
+
 2005-01-23  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com>
         * NpgsqlTypes/NpgsqlTypes.cs,
         Npgsql.dll.sources,
