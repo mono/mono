@@ -1,3 +1,7 @@
+2002-01-05  Ravi Pratap  <ravi@ximian.com>
+
+	* SecurityElement.cs : Insert MonoTODO attribute.
+
 2002-01-02  Nick Drochak  <ndrochak@gol.com>
 
 	* CodeAccessPermission.cs: Fix syntax error hidden by exclusion in .build file
