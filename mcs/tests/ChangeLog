@@ -1,3 +1,7 @@
+2004-02-17  Martin Baulig  <martin@ximian.com>
+
+	* gen-38.cs: New generics test.
+
 2004-02-17 Marek Safar <marek.safar@seznam.cz>
 
 	* cls-test-{2,5,6}.cs: Improved tests for CLS-compliant
