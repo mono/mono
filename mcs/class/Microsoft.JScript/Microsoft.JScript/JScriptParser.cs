@@ -165,7 +165,7 @@ namespace Microsoft.JScript
 			{
 				if ((tokenSet_0_.member(LA(1))))
 				{
-					source_element(elems);
+					source_element(elems, elems.parent);
 				}
 				else
 				{
@@ -178,7 +178,7 @@ _loop4_breakloop:			;
 	}
 	
 	public void source_element(
-		Block elems
+		Block elems, AST parent
 	) //throws RecognitionException, TokenStreamException
 {
 		
@@ -221,7 +221,7 @@ _loop4_breakloop:			;
 		case DECIMAL_LITERAL:
 		case HEX_INTEGER_LITERAL:
 		{
-			stm=statement();
+			stm=statement(parent);
 			if (0==inputState.guessing)
 			{
 				
@@ -236,7 +236,7 @@ _loop4_breakloop:			;
 		}
 		case LITERAL_function:
 		{
-			stm=function_decl_or_expr();
+			stm=function_decl_or_expr(parent);
 			if (0==inputState.guessing)
 			{
 				
@@ -254,7 +254,9 @@ _loop4_breakloop:			;
 		 }
 	}
 	
-	public AST  statement() //throws RecognitionException, TokenStreamException
+	public AST  statement(
+		AST parent
+	) //throws RecognitionException, TokenStreamException
 {
 		AST stm;
 		
@@ -290,7 +292,7 @@ _loop4_breakloop:			;
 		}
 		case LITERAL_var:
 		{
-			stm=var_stm();
+			stm=var_stm(parent);
 			break;
 		}
 		case SEMI_COLON:
@@ -353,7 +355,9 @@ _loop4_breakloop:			;
 		return stm;
 	}
 	
-	public AST  function_decl_or_expr() //throws RecognitionException, TokenStreamException
+	public AST  function_decl_or_expr(
+		AST parent
+	) //throws RecognitionException, TokenStreamException
 {
 		AST func;
 		
@@ -430,27 +434,30 @@ _loop4_breakloop:			;
 			}
 			 }
 		}
-		match(OPEN_BRACE);
-		body=function_body();
-		match(CLOSE_BRACE);
 		if (0==inputState.guessing)
 		{
 			
 					if (is_func_exp)
 						if (type_annot == null)
-							func = new FunctionExpression (String.Empty, p, null, body);
+							func = new FunctionExpression (parent, String.Empty, p,
+										       null, null);
 						else 
-							func = new FunctionExpression (String.Empty, p,
-										       type_annot.getText (), body);
+							func = new FunctionExpression (parent, String.Empty, p,
+										       type_annot.getText (), null);
 					else if (type_annot == null)
-						func = new FunctionDeclaration (id.getText (), p, null,
-										body);
+						func = new FunctionDeclaration (parent, id.getText (), p, null, null);
 					     else 
-						func = new FunctionDeclaration (id.getText (), p, 
-										type_annot.getText (),
-									        body);
+						func = new FunctionDeclaration (parent, id.getText (), p, 
+										type_annot.getText (), null);
 				
 		}
+		match(OPEN_BRACE);
+		body=function_body(func);
+		if (0==inputState.guessing)
+		{
+			((FunctionDeclaration) func).Function.body = body;
+		}
+		match(CLOSE_BRACE);
 		return func;
 	}
 	
@@ -546,12 +553,14 @@ _loop15_breakloop:			;
 		return p;
 	}
 	
-	public Block  function_body() //throws RecognitionException, TokenStreamException
+	public Block  function_body(
+		AST parent
+	) //throws RecognitionException, TokenStreamException
 {
 		Block elems;
 		
 		
-			elems = new Block ();
+			elems = new Block (parent);
 		
 		
 		source_elements(elems);
@@ -568,14 +577,16 @@ _loop15_breakloop:			;
 		return e;
 	}
 	
-	public VariableStatement  var_stm() //throws RecognitionException, TokenStreamException
+	public VariableStatement  var_stm(
+		AST parent
+	) //throws RecognitionException, TokenStreamException
 {
 		VariableStatement var_stm;
 		
 		var_stm = new VariableStatement ();
 		
 		match(LITERAL_var);
-		var_decl_list(var_stm);
+		var_decl_list(var_stm, parent);
 		match(SEMI_COLON);
 		return var_stm;
 	}
@@ -601,7 +612,7 @@ _loop15_breakloop:			;
 		match(OPEN_PARENS);
 		cond=expr();
 		match(CLOSE_PARENS);
-		true_stm=statement();
+		true_stm=statement(null);
 		{
 			bool synPredMatched53 = false;
 			if (((LA(1)==LITERAL_else)))
@@ -624,7 +635,7 @@ _loop15_breakloop:			;
 			if ( synPredMatched53 )
 			{
 				match(LITERAL_else);
-				false_stm=statement();
+				false_stm=statement(null);
 			}
 			else if ((tokenSet_1_.member(LA(1)))) {
 			}
@@ -652,7 +663,7 @@ _loop15_breakloop:			;
 		case LITERAL_do:
 		{
 			match(LITERAL_do);
-			statement();
+			statement(null);
 			match(LITERAL_while);
 			match(OPEN_PARENS);
 			expr();
@@ -666,7 +677,7 @@ _loop15_breakloop:			;
 			match(OPEN_PARENS);
 			expr();
 			match(CLOSE_PARENS);
-			statement();
+			statement(null);
 			break;
 		}
 		case LITERAL_for:
@@ -675,7 +686,7 @@ _loop15_breakloop:			;
 			match(OPEN_PARENS);
 			inside_for();
 			match(CLOSE_PARENS);
-			statement();
+			statement(null);
 			break;
 		}
 		default:
@@ -835,7 +846,7 @@ _loop15_breakloop:			;
 		match(OPEN_PARENS);
 		exp=expr();
 		match(CLOSE_PARENS);
-		stm=statement();
+		stm=statement(null);
 		if (0==inputState.guessing)
 		{
 			
@@ -1067,7 +1078,7 @@ _loop15_breakloop:			;
 			{
 				if ((tokenSet_2_.member(LA(1))))
 				{
-					statement();
+					statement(null);
 				}
 				else
 				{
@@ -1186,7 +1197,7 @@ _loop32_breakloop:			;
 			{
 				if ((tokenSet_2_.member(LA(1))))
 				{
-					statement();
+					statement(null);
 				}
 				else
 				{
@@ -1359,7 +1370,7 @@ _loop66_breakloop:			;
 		{
 			match(LITERAL_var);
 			{
-				var_decl_list(null);
+				var_decl_list(null, null);
 				{
 					switch ( LA(1) )
 					{
@@ -1468,13 +1479,13 @@ _loop66_breakloop:			;
 	}
 	
 	public void var_decl_list(
-		VariableStatement var_stm
+		VariableStatement var_stm, AST parent
 	) //throws RecognitionException, TokenStreamException
 {
 		
 		VariableDeclaration var_decln = null;
 		
-		var_decln=var_decl();
+		var_decln=var_decl(parent);
 		if (0==inputState.guessing)
 		{
 			
@@ -1488,7 +1499,7 @@ _loop66_breakloop:			;
 				if ((LA(1)==COMMA))
 				{
 					match(COMMA);
-					var_decln=var_decl();
+					var_decln=var_decl(parent);
 					if (0==inputState.guessing)
 					{
 						
@@ -1507,7 +1518,9 @@ _loop58_breakloop:			;
 		}    // ( ... )*
 	}
 	
-	public VariableDeclaration  var_decl() //throws RecognitionException, TokenStreamException
+	public VariableDeclaration  var_decl(
+		AST parent
+	) //throws RecognitionException, TokenStreamException
 {
 		VariableDeclaration var_decl;
 		
@@ -1553,9 +1566,9 @@ _loop58_breakloop:			;
 				{
 					
 							  if (type_annot == null)
-							  var_decl = new VariableDeclaration (id.getText (), null , init);
+							  	  var_decl = new VariableDeclaration (parent, id.getText (), null , init);
 							  else 
-								  var_decl = new VariableDeclaration (id.getText (), type_annot.getText () , init); 
+								  var_decl = new VariableDeclaration (parent, id.getText (), type_annot.getText () , init); 
 						
 				}
 				break;
@@ -1568,9 +1581,9 @@ _loop58_breakloop:			;
 				{
 					
 							  if (type_annot == null)
-								  var_decl = new VariableDeclaration (id.getText (), null, null);
+								  var_decl = new VariableDeclaration (parent, id.getText (), null, null);
 							  else
-								  var_decl = new VariableDeclaration (id.getText (), type_annot.getText (), null);
+								  var_decl = new VariableDeclaration (parent, id.getText (), type_annot.getText (), null);
 						
 				}
 				break;
@@ -3632,7 +3645,7 @@ _loop137_breakloop:				;
 					{
 						if ((tokenSet_2_.member(LA(1))))
 						{
-							statement();
+							statement(null);
 						}
 						else
 						{
