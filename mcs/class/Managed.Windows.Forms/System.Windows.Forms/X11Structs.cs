@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.8 $
+// $Revision: 1.9 $
 // $Modtime: $
 // $Log: X11Structs.cs,v $
+// Revision 1.9  2004/08/24 22:35:44  pbartok
+// - Refined definitions for CrossingEvent
+//
 // Revision 1.8  2004/08/20 19:11:56  jackson
 // Use IntPtrs for ClientMessage extra data (TODO: This will screw up on 64 bit systems)
 //
@@ -148,8 +151,8 @@ namespace System.Windows.Forms {
 		internal int		y;
 		internal int		x_root;
 		internal int		y_root;
-		internal int		mode;
-		internal int		detail;
+		internal NotifyMode	mode;
+		internal NotifyDetail	detail;
 		internal bool		same_screen;
 		internal bool		focus;
 		internal int		state;
@@ -856,13 +859,28 @@ namespace System.Windows.Forms {
 		EventMask		root_input_mask;
 	}
 
-	
-
 	[Flags]
 	internal enum ColorFlags {
 		DoRed			= 1<<0,
 		DoGreen			= 1<<1,
 		DoBlue			= 1<<2
+	}
+
+	internal enum NotifyMode {
+		NotifyNormal		= 0,
+		NotifyGrab		= 1,
+		NotifyUngrab		= 2
+	}
+
+	internal enum NotifyDetail {
+		NotifyAncestor		= 0,
+		NotifyVirtual		= 1,
+		NotifyInferior		= 2,
+		NotifyNonlinear		= 3,
+		NotifyNonlinearVirtual	= 4,
+		NotifyPointer		= 5,
+		NotifyPointerRoot	= 6,
+		NotifyDetailNone	= 7
 	}
 
 	#endregion
