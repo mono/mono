@@ -395,7 +395,8 @@ namespace System.Drawing {
 
 		void Dispose (bool disposing)
 		{
-			if (isModifiable)
+			// Let the GC collect it
+			if (isModifiable || disposing == false)
                         	GDIPlus.GdipDeletePen (nativeObject);
 			else
 				throw new ArgumentException ("You may not change this Pen because it does not belong to you.");

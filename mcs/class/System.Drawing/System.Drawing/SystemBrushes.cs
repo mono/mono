@@ -1,11 +1,14 @@
 //
 // System.Drawing.SystemBrushes.cs
 //
-// Author:
+// Authors:
 //   Dennis Hayes (dennish@Raytek.com)
+//   Ravindra (rkumar@novell.com)
 //
-// (C) 2002 Ximian, Inc
+// Copyright (C) 2002 Ximian, Inc. http://www.ximian.com
+// Copyright (C) 2004 Novell, Inc. http://www.novell.com
 //
+
 using System;
 
 namespace System.Drawing
@@ -37,9 +40,7 @@ namespace System.Drawing
 		static SolidBrush window;
 		static SolidBrush window_text;
 
-		private SystemBrushes()
-		{
-		}
+		private SystemBrushes() { }
 
 		public static Brush ActiveBorder
 		{	

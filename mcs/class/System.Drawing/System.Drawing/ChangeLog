@@ -1,3 +1,16 @@
+2004-04-16  Ravindra <rkumar@novell.com>
+
+	* Pen.cs: GC should be allowed to collect any pen including
+	system pens.
+	* SolidBrush.cs: GC should be allowed to collect any SolidBrush
+	including system brushes.
+	* Brushes.cs: Coding style.
+	* Pens.cs: Objects created by Pens are not modifiable on
+	MS.NET, so we are now. Also, coding style fixes.
+	* SystemPens.cs: Removed static constructor and changed file
+	format dos2unix.
+	* SystemBrushes.cs: Some cosmetic changes.
+
 2004-04-15  Sanjay Gupta <gsanjay@novell.com>
 	* Icon.cs: Implemented more missing bits and fixed the problem
 		of icon not getting saved in proper format

@@ -1,11 +1,13 @@
 //
 // System.Drawing.SystemPens.cs
 //
-// Author:
+// Authors:
 //   Miguel de Icaza (miguel@ximian.com)
+//   Ravindra (rkumar@novell.com)
 //
-// (C) 2003 Novell, Inc.
+// Copyright (C) 2003-2004 Novell, Inc. http://www.novell.com
 //
+
 using System;
 
 namespace System.Drawing
@@ -28,18 +30,7 @@ namespace System.Drawing
 		static Pen window_frame;
 		static Pen window_text;
 		
-		static SystemPens ()
-		{
-			Console.WriteLine ("SystemPens: Need to fetch values from Win32");
-
-			//
-			// These happen to match my current theme, not right
-			//
-		}
-
-		private SystemPens ()
-		{
-		}
+		private SystemPens () {	}
 		
 		public static Pen ActiveCaptionText {
 			get {

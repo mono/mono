@@ -63,7 +63,8 @@ namespace System.Drawing
 		
 		protected override void Dispose (bool disposing)
 		{
-			if (isModifiable) {
+			// Let the GC collect it
+			if (isModifiable || disposing == false) {
 				Status status = GDIPlus.GdipDeleteBrush (nativeObject);
 				GDIPlus.CheckStatus (status);
 			}
