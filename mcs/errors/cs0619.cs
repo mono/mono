@@ -1,11 +1,7 @@
-// cs0619.cs: 'MethodError()' is obsolete: 'Do not use it'
-// Line: 17
+// cs0619.cs: 'Obsolete.MethodError()' is obsolete: 'Do not use it'
+// Line: 12
 
 class Obsolete {
-        [System.Obsolete]
-        public static void MethodWarning() {
-        }
-    
         [System.Obsolete("Do not use it.", true)]
         public static void MethodError() {
         }
@@ -13,8 +9,6 @@ class Obsolete {
 
 class MainClass {
         public static void Main () {
-                Obsolete.MethodWarning();
                 Obsolete.MethodError();
         }
 }
-

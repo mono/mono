@@ -21,7 +21,7 @@ DISTFILES = \
 	$(wildcard *.cs)
 
 #all-local: run-test-local test-multi-local
-all-local: CS3005-16-lib.dll CS3013-module.dll
+all-local: CS0619-8-lib.dll CS0619-17-lib.dll CS3005-16-lib.dll CS3013-module.dll
 
 test-local:
 
@@ -58,6 +58,12 @@ clean-local:
 dist-local: dist-default
 
 install-local uninstall-local:
+
+CS0619-8-lib.dll:
+	$(BOOTSTRAP_MCS) /target:library /out:$@ CS0619-8-lib.cs
+
+CS0619-17-lib.dll:
+	$(BOOTSTRAP_MCS) /target:library /out:$@ CS0619-17-lib.cs
 
 CS3005-16-lib.dll: 
 	$(BOOTSTRAP_MCS) /target:library /out:$@ CS3005-16-lib.cs

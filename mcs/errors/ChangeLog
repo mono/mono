@@ -1,3 +1,9 @@
+2004-03-29 Marek Safar <marek.safar@seznam.cz>
+	* cs0029-3.cs,
+          cs0173-2.cs,
+          cs0619-{2-26}.cs,
+          cs0672.cs: 29 new error tests.
+
 2004-03-26 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* do-tests.pl: i think this fixes the problem with
