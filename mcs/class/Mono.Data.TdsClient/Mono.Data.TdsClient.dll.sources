@@ -1,4 +1,4 @@
-Mono.Data.TdsClient/Locale.cs
+Assembly/Locale.cs
 Mono.Data.TdsClient/TdsCommand.cs
 Mono.Data.TdsClient/TdsConnection.cs
 Mono.Data.TdsClient/TdsConnectionPool.cs

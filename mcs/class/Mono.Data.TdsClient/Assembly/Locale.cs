@@ -7,8 +7,6 @@
 // (C) 2001 Ximian, Inc (http://www.ximian.com)
 //
 
-namespace System.Globalization {
-
 	internal class Locale {
 
 		/// <summary>
@@ -19,4 +17,3 @@ namespace System.Globalization {
 			return msg;
 		}
 	}
-}
