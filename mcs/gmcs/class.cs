@@ -2487,6 +2487,7 @@ namespace Mono.CSharp {
 
 	public abstract class MethodCore : MemberBase {
 		public readonly Parameters Parameters;
+		public readonly GenericMethod GenericMethod;
 		protected Block block;
 		protected DeclSpace ds;
 		
@@ -2512,6 +2513,7 @@ namespace Mono.CSharp {
 			Parameters = parameters;
 			IsInterface = is_interface;
 			this.ds = ds;
+			this.GenericMethod = ds as GenericMethod;
 		}
 		
 		//
@@ -2622,6 +2624,17 @@ namespace Mono.CSharp {
 				return false;
 
 			if (param_types.Length != ParameterTypes.Length)
+				return false;
+
+			int type_params = 0;
+			if (GenericMethod != null)
+				type_params = GenericMethod.CountTypeParameters;
+
+			int m_type_params = 0;
+			if (method.GenericMethod != null)
+				m_type_params = method.GenericMethod.CountTypeParameters;
+
+			if (type_params != m_type_params)
 				return false;
 
 			bool equal = true;
@@ -2784,7 +2797,6 @@ namespace Mono.CSharp {
 	public class Method : MethodCore, IIteratorContainer {
 		public MethodBuilder MethodBuilder;
 		public MethodData MethodData;
-		public readonly GenericMethod GenericMethod;
 
 		/// <summary>
 		///   Modifiers allowed in a class declaration
@@ -2817,18 +2829,6 @@ namespace Mono.CSharp {
 				is_iface ? AllowedInterfaceModifiers : AllowedModifiers,
 				is_iface, name, attrs, parameters, l)
 		{
-		}
-
-		//
-		// return_type can be "null" for VOID values.
-		//
-		public Method (GenericMethod generic, Expression return_type, int mod,
-			       bool is_iface, MemberName name, Parameters parameters,
-			       Attributes attrs, Location l)
-			: this ((DeclSpace) generic, return_type, mod, is_iface, name,
-				parameters, attrs, l)
-		{
-			GenericMethod = generic;
 		}
 
 		//

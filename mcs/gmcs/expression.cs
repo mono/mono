@@ -5004,7 +5004,7 @@ namespace Mono.CSharp {
 			if (pd_count == 1 && arg_count == 0)
 				return true;
 
-			Type[] method_args = method.GetGenericParameters ();
+			Type[] method_args = method.GetGenericArguments ();
 			Type[] infered_types = new Type [method_args.Length];
 
 			//
@@ -5067,20 +5067,26 @@ namespace Mono.CSharp {
 		static bool InferTypeArguments (EmitContext ec, ArrayList arguments,
 						ref MethodBase method)
 		{
-			if ((arguments == null) || !TypeManager.IsGenericMethod (method))
+			if (!TypeManager.IsGenericMethod (method))
 				return true;
 
+			int arg_count;
+			if (arguments != null)
+				arg_count = arguments.Count;
+			else
+				arg_count = 0;
+
 			ParameterData pd = GetParameterData (method);
-			if (arguments.Count != pd.Count)
+			if (arg_count != pd.Count)
 				return false;
 
-			Type[] method_args = method.GetGenericParameters ();
+			Type[] method_args = method.GetGenericArguments ();
 			Type[] infered_types = new Type [method_args.Length];
 
 			Type[] param_types = new Type [pd.Count];
 			Type[] arg_types = new Type [pd.Count];
 
-			for (int i = 0; i < arguments.Count; i++) {
+			for (int i = 0; i < arg_count; i++) {
 				param_types [i] = pd.ParameterType (i);
 
 				Argument a = (Argument) arguments [i];
@@ -5107,7 +5113,7 @@ namespace Mono.CSharp {
 			if (apd.Count != pd.Count)
 				return false;
 
-			Type[] method_args = method.GetGenericParameters ();
+			Type[] method_args = method.GetGenericArguments ();
 			Type[] infered_types = new Type [method_args.Length];
 
 			Type[] param_types = new Type [pd.Count];
@@ -6930,12 +6936,20 @@ namespace Mono.CSharp {
 	public class MemberAccess : Expression {
 		public string Identifier;
 		protected Expression expr;
+		protected TypeArguments args;
 		
 		public MemberAccess (Expression expr, string id, Location l)
 		{
 			this.expr = expr;
 			Identifier = id;
 			loc = l;
+		}
+
+		public MemberAccess (Expression expr, string id, TypeArguments args,
+				     Location l)
+			: this (expr, id, l)
+		{
+			this.args = args;
 		}
 
 		public Expression Expr {
@@ -7218,11 +7232,21 @@ namespace Mono.CSharp {
 				return null;
 			}
 
+			int errors = Report.Errors;
+
 			Expression member_lookup;
-			member_lookup = MemberLookupFinal (
+			member_lookup = MemberLookup (
 				ec, expr_type, expr_type, Identifier, loc);
-			if (member_lookup == null)
+			if ((member_lookup == null) && (args != null)) {
+				string lookup_id = Identifier + "!" + args.Count;
+				member_lookup = MemberLookup (
+					ec, expr_type, expr_type, lookup_id, loc);
+			}
+			if (member_lookup == null) {
+				MemberLookupFailed (
+					ec, expr_type, expr_type, Identifier, null, loc);
 				return null;
+			}
 
 			if (member_lookup is TypeExpr) {
 				if (!(expr is TypeExpr) && !(expr is SimpleName)) {
@@ -7233,10 +7257,83 @@ namespace Mono.CSharp {
 
 				return member_lookup;
 			}
+
+			if (args != null) {
+				string full_name = expr_type + "." + Identifier;
+
+				if (member_lookup is FieldExpr) {
+					Report.Error (307, loc, "The field `{0}' cannot " +
+						      "be used with type arguments", full_name);
+					return null;
+				} else if (member_lookup is EventExpr) {
+					Report.Error (307, loc, "The event `{0}' cannot " +
+						      "be used with type arguments", full_name);
+					return null;
+				} else if (member_lookup is PropertyExpr) {
+					Report.Error (307, loc, "The property `{0}' cannot " +
+						      "be used with type arguments", full_name);
+					return null;
+				}
+			}
 			
 			member_lookup = ResolveMemberAccess (ec, member_lookup, expr, loc, original);
 			if (member_lookup == null)
 				return null;
+
+			if (args != null) {
+				MethodGroupExpr mg = member_lookup as MethodGroupExpr;
+				if (mg == null)
+					throw new InternalErrorException ();
+
+				if (args.Resolve (ec) == false)
+					return null;
+
+				Type[] atypes = args.Arguments;
+
+				int first_count = 0;
+				MethodInfo first = null;
+
+				ArrayList list = new ArrayList ();
+				foreach (MethodBase mb in mg.Methods) {
+					MethodInfo mi = mb as MethodInfo;
+					if ((mi == null) || !mi.HasGenericParameters)
+						continue;
+
+					Type[] gen_params = mi.GetGenericArguments ();
+
+					if (first == null) {
+						first = mi;
+						first_count = gen_params.Length;
+					}
+
+					if (gen_params.Length != atypes.Length)
+						continue;
+
+					list.Add (mi.BindGenericParameters (atypes));
+				}
+
+				if (list.Count > 0) {
+					MethodGroupExpr new_mg = new MethodGroupExpr (
+						list, mg.Location);
+					new_mg.InstanceExpression = mg.InstanceExpression;
+					new_mg.HasTypeArguments = true;
+					return new_mg;
+				}
+
+				string name = expr_type + "." + Identifier;
+
+				if (first != null)
+					Report.Error (
+						305, loc, "Using the generic method `{0}' " +
+						"requires {1} type arguments", name,
+						first_count);
+				else
+					Report.Error (
+						308, loc, "The non-generic method `{0}' " +
+						"cannot be used with type arguments", name);
+
+				return null;
+			}
 
 			// The following DoResolve/DoResolveLValue will do the definite assignment
 			// check.
@@ -7303,17 +7400,43 @@ namespace Mono.CSharp {
 			}
 
 			Expression member_lookup;
+			string lookup_id;
+			if (args != null)
+				lookup_id = Identifier + "!" + args.Count;
+			else
+				lookup_id = Identifier;
 			member_lookup = MemberLookupFinal (
-				ec, expr_type, expr_type, Identifier, loc);
+				ec, expr_type, expr_type, lookup_id, loc);
 			if (member_lookup == null)
 				return null;
 
-			if (member_lookup is TypeExpr){
-				member_lookup.Resolve (ec, ResolveFlags.Type);
-				return member_lookup;
-			} 
+			TypeExpr texpr = member_lookup as TypeExpr;
+			if (texpr == null)
+				return null;
 
-			return null;			
+			Type t = texpr.ResolveType (ec);
+			if (t == null)
+				return null;
+
+			if (TypeManager.HasGenericArguments (expr_type)) {
+				Type[] decl_args = TypeManager.GetTypeArguments (expr_type);
+
+				TypeArguments new_args = new TypeArguments (loc);
+				foreach (Type decl in decl_args)
+					new_args.Add (new TypeExpression (decl, loc));
+
+				if (args != null)
+					new_args.Add (args);
+
+				args = new_args;
+			}
+
+			if (args != null) {
+				ConstructedType ctype = new ConstructedType (t, args, loc);
+				return ctype.ResolveAsTypeStep (ec);
+			}
+
+			return texpr;
 		}
 
 		public override void Emit (EmitContext ec)
@@ -7323,7 +7446,10 @@ namespace Mono.CSharp {
 
 		public override string ToString ()
 		{
-			return expr + "." + Identifier;
+			if (args != null)
+				return expr + "." + Identifier + "!" + args.Count;
+			else
+				return expr + "." + Identifier;
 		}
 	}
 

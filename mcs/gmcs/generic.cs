@@ -664,7 +664,7 @@ namespace Mono.CSharp {
 			else
 				current = new TypeExpression (ec.ContainerType, loc);
 
-			return new GenericMemberAccess (current, Basename, args, loc);
+			return new MemberAccess (current, Basename, args, loc);
 		}
 
 		public override bool CheckAccessLevel (DeclSpace ds)
@@ -789,111 +789,6 @@ namespace Mono.CSharp {
 			get {
 				throw new Exception ();
 			}
-		}
-	}
-
-	public class GenericMemberAccess : MemberAccess
-	{
-		TypeArguments args;
-		bool has_outer_params;
-
-		public GenericMemberAccess (Expression expr, string id, TypeArguments args,
-					    Location loc)
-			: base (expr, id, loc)
-		{
-			this.args = args;
-		}
-
-		private bool DoResolveBase (EmitContext ec)
-		{
-			ConstructedType cexpr = expr as ConstructedType;
-			if (cexpr != null) {
-				TypeArguments new_args = new TypeArguments (loc);
-				new_args.Add (cexpr.TypeArguments);
-				new_args.Add (args);
-
-				args = new_args;
-				has_outer_params = true;
-			}
-
-			return true;
-		}
-
-		public override Expression DoResolve (EmitContext ec, Expression right_side,
-						      ResolveFlags flags)
-		{
-			if (!DoResolveBase (ec))
-				return null;
-
-			Expression expr = base.DoResolve (ec, right_side, flags);
-			if (expr == null)
-				return null;
-
-			MethodGroupExpr mg = expr as MethodGroupExpr;
-			if (mg == null)
-				return expr;
-
-			if (args.Resolve (ec) == false)
-				return null;
-
-			Type[] atypes = args.Arguments;
-
-			ArrayList list = new ArrayList ();
-
-			foreach (MethodBase method in mg.Methods) {
-				MethodInfo mi = method as MethodInfo;
-				if (mi == null)
-					continue;
-
-				Type[] gen_params = mi.GetGenericParameters ();
-			
-				if (atypes.Length != gen_params.Length) {
-					Report.Error (-217, loc, "Generic method `{0}' takes {1} " +
-						      "type parameters, but specified {2}.", mi.Name,
-						      gen_params.Length, atypes.Length);
-					continue;
-				}
-
-				list.Add (mi.BindGenericParameters (args.Arguments));
-			}
-
-			MethodInfo[] methods = new MethodInfo [list.Count];
-			list.CopyTo (methods, 0);
-
-			MethodGroupExpr new_mg = new MethodGroupExpr (methods, mg.Location);
-			new_mg.InstanceExpression = mg.InstanceExpression;
-			new_mg.HasTypeArguments = true;
-			return new_mg;
-		}
-
-		public override Expression ResolveAsTypeStep (EmitContext ec)
-		{
-			Identifier = Identifier + "!" + args.Count;
-
-			expr = base.ResolveAsTypeStep (ec);
-			if (expr == null)
-				return null;
-
-			Type t = ((TypeExpr) expr).ResolveType (ec);
-			if (t == null)
-				return null;
-
-			Type tdecl = t.DeclaringType;
-			if (!has_outer_params &&
-			    (tdecl != null) && TypeManager.HasGenericArguments (tdecl)) {
-				Type[] decl_args = TypeManager.GetTypeArguments (tdecl);
-
-				TypeArguments new_args = new TypeArguments (loc);
-				foreach (Type decl in decl_args)
-					new_args.Add (new TypeExpression (decl, loc));
-				new_args.Add (args);
-
-				args = new_args;
-				has_outer_params = true;
-			}
-
-			ConstructedType ctype = new ConstructedType (t, args, loc);
-			return ctype.ResolveAsTypeStep (ec);
 		}
 	}
 

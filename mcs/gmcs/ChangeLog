@@ -1,3 +1,18 @@
+2004-04-07  Martin Baulig  <martin@ximian.com>
+
+	* class.cs
+	(MethodCore.GenericMethod): Moved this field here from Method.
+	(MethodCore.IsDuplicateImplementation): Take the number of type
+	parameters into account if we're a generic method.
+
+	* expression.cs (Invocation.InferTypeArguments): Don't return true
+	if `arguments' is null; we still need to check whether we actually
+	don't need to infer anything in this case.
+	(MemberAccess): Merged the functionality from GenericMemberAccess
+	into this class.
+
+	* generic.cs (GenericMemberAccess): Removed.
+
 2004-04-05  Martin Baulig  <martin@ximian.com>
 
 	* decl.cs (MemberCore): For generic classes, interfaces and

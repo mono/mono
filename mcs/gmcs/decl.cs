@@ -89,10 +89,7 @@ namespace Mono.CSharp {
 			if (Left != null) {
 				Expression lexpr = Left.GetTypeExpression (loc);
 
-				if (TypeArguments != null)
-					return new GenericMemberAccess (lexpr, Name, TypeArguments, loc);
-				else
-					return new MemberAccess (lexpr, Name, loc);
+				return new MemberAccess (lexpr, Name, TypeArguments, loc);
 			} else {
 				if (TypeArguments != null)
 					return new ConstructedType (Name, TypeArguments, loc);
@@ -1168,7 +1165,7 @@ namespace Mono.CSharp {
 
 			DeclSpace the_parent = parent;
 			if (this is GenericMethod)
-				the_parent = the_parent.Parent;
+				the_parent = null;
 
 			int start = 0;
 			TypeParameter[] parent_params = null;
