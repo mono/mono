@@ -1,3 +1,12 @@
+2002-04-09  Nick Drochak  <ndrochak@gol.com>
+
+	* IntegerFormatter.cs: Don't use a format character to indicate a
+	custom format was passed in. It was using 'z' to indicate a custom
+	format, but really it should throw a format exception if the user
+	tries to use "z" as the format string. Now it does.
+
+	* Activator.cs: New File.
+
 2002-04-08  Nick Drochak  <ndrochak@gol.com>
 
 	* Enum.cs (ToString): Big ugly fix for the case where [Flags] is

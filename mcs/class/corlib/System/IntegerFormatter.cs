@@ -141,10 +141,11 @@ namespace System {
 			return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'); 
 		}
  
-		private static bool ParseFormat (string format, out char specifier,  out int precision)
+		private static bool ParseFormat (string format, out char specifier,  out int precision, out bool custom)
 		{		 		 
 			precision = -1;
 			specifier = '\0';
+			custom = false;
 			
 			int length = format.Length;
 			// TODO: Could an empty string be a custom format string?
@@ -177,7 +178,7 @@ namespace System {
 			}
 			
 			// We've got a custom format string.
-			specifier = 'z';
+			custom = true;
 			return true;
 		}	 
 
@@ -187,9 +188,14 @@ namespace System {
 		{
 			char specifier;
 			int precision;
-			
-			if (!ParseFormat (format, out specifier, out precision))
+			bool custom;
+
+			if (!ParseFormat (format, out specifier, out precision, out custom))
 				throw new FormatException (Locale.GetText ("The specified format '" + format + "' is invalid"));
+			
+			if (custom){
+				return FormatCustom (format, value, nfi);
+			}
 
 			switch(specifier) {
 			case 'c': return FormatCurrency (value, precision, nfi);
@@ -210,7 +216,6 @@ namespace System {
 			case 'R': throw new FormatException (Locale.GetText ("The specified format cannot be used in this instance"));
 			case 'x': return FormatHexadecimal (value, precision, false);
 			case 'X': return FormatHexadecimal (value, precision, true);
-			case 'z': return FormatCustom (format, value, nfi);
 			default: 
 				throw new FormatException (Locale.GetText ("The specified format '" + format + "' is invalid"));
 			}
@@ -220,9 +225,14 @@ namespace System {
 		{
 			char specifier;
 			int precision;
+			bool custom;
 			
-			if (!ParseFormat (format, out specifier, out precision))
+			if (!ParseFormat (format, out specifier, out precision, out custom))
 				throw new FormatException (Locale.GetText ("The specified format '" + format + "' is invalid"));
+			
+			if (custom){
+				return FormatCustom (format, value, nfi);
+			}
 
 			switch(specifier) {
 			case 'c': return FormatCurrency (value, precision, nfi);
@@ -243,7 +253,6 @@ namespace System {
 			case 'R': throw new FormatException (Locale.GetText ("The specified format cannot be used in this insance"));
 			case 'x': return FormatHexadecimal (value, precision, false);
 			case 'X': return FormatHexadecimal (value, precision, true);
-			case 'z': return FormatCustom (format, value, nfi);
 			default: 
 				throw new FormatException (Locale.GetText ("The specified format '" + format + "' is invalid"));
 			}
@@ -253,10 +262,15 @@ namespace System {
 		{
 			char specifier;
 			int precision;
+			bool custom;
 			
-			if (!ParseFormat (format, out specifier, out precision))
+			if (!ParseFormat (format, out specifier, out precision, out custom))
 				throw new FormatException (Locale.GetText ("The specified format '" + format + "' is invalid"));
 			
+			if (custom){
+				return FormatCustom (format, value, nfi);
+			}
+
 			switch(specifier) {
 			case 'c': return FormatCurrency (value, precision, nfi);	
 			case 'C': return FormatCurrency (value, precision, nfi);	
@@ -276,7 +290,6 @@ namespace System {
 			case 'R': throw new FormatException (Locale.GetText ("The specified format cannot be used in this instance"));
 			case 'x': return FormatHexadecimal (value, precision, false);
 			case 'X': return FormatHexadecimal (value, precision, true);
-			case 'z': return FormatCustom (format, value, nfi);
 			default: 
 				throw new FormatException (Locale.GetText ("The specified format '" + format + "' is invalid"));
 			}
@@ -286,10 +299,15 @@ namespace System {
 		{
 			char specifier;
 			int precision;
+			bool custom;
 			
-			if (!ParseFormat (format, out specifier, out precision))
+			if (!ParseFormat (format, out specifier, out precision, out custom))
 				throw new FormatException (Locale.GetText ("The specified format '" + format + "' is invalid"));
 			
+			if (custom){
+				return FormatCustom (format, value, nfi);
+			}
+
 			switch(specifier) {
 			case 'c': return FormatCurrency (value, precision, nfi);
 			case 'C': return FormatCurrency (value, precision, nfi);
@@ -309,7 +327,6 @@ namespace System {
 			case 'R': throw new FormatException (Locale.GetText ("The specified format cannot be used in this instance"));
 			case 'x': return FormatHexadecimal (value, precision, false);
 			case 'X': return FormatHexadecimal (value, precision, true);
-			case 'z': return FormatCustom (format, value, nfi);
 			default: 
 				throw new FormatException (Locale.GetText ("The specified format '" + format + "' is invalid"));
 			}			
@@ -320,9 +337,14 @@ namespace System {
 		{
 			char specifier;
 			int precision;
+			bool custom;
 			
-			if (!ParseFormat (format, out specifier, out precision))
+			if (!ParseFormat (format, out specifier, out precision, out custom))
 				throw new FormatException (Locale.GetText ("The specified format '" + format + "' is invalid"));
+			
+			if (custom){
+				return FormatCustom (format, value, nfi);
+			}
 			
 			switch(specifier) {
 			case 'c': return FormatCurrency (value, precision, nfi);
@@ -343,7 +365,6 @@ namespace System {
 			case 'R': throw new FormatException (Locale.GetText ("The specified format cannot be used in this instance"));
 			case 'x': return FormatHexadecimal (value, precision, false);
 			case 'X': return FormatHexadecimal (value, precision, true);
-			case 'z': return FormatCustom (format, value, nfi);
 			default: 
 				throw new FormatException (Locale.GetText ("The specified format '" + format + "' is invalid"));
 			}
@@ -354,9 +375,14 @@ namespace System {
 		{
 			char specifier;
 			int precision;
+			bool custom;
 			
-			if (!ParseFormat (format, out specifier, out precision))
+			if (!ParseFormat (format, out specifier, out precision, out custom))
 				throw new FormatException (Locale.GetText ("The specified format '" + format + "' is invalid"));
+			
+			if (custom){
+				return FormatCustom (format, value, nfi);
+			}
 			
 			switch(specifier) {
 			case 'c': return FormatCurrency (value, precision, nfi);
@@ -377,7 +403,6 @@ namespace System {
 			case 'R': throw new FormatException (Locale.GetText ("The specified format cannot be used in this instance"));
 			case 'x': return FormatHexadecimal (value, precision, false);
 			case 'X': return FormatHexadecimal (value, precision, true);
-			case 'z': return FormatCustom (format, value, nfi);
 			default: 
 				throw new FormatException (Locale.GetText ("The specified format '" + format + "' is invalid"));
 			}
@@ -388,9 +413,14 @@ namespace System {
 		{
 			char specifier;
 			int precision;
+			bool custom;
 			
-			if (!ParseFormat (format, out specifier, out precision))
+			if (!ParseFormat (format, out specifier, out precision, out custom))
 				throw new FormatException (Locale.GetText ("The specified format '" + format + "' is invalid"));
+			
+			if (custom){
+				return FormatCustom (format, value, nfi);
+			}
 			
 			switch(specifier) {
 			case 'c': return FormatCurrency (value, precision, nfi);
@@ -411,7 +441,6 @@ namespace System {
 			case 'R': throw new FormatException (Locale.GetText ("The specified format cannot be used in this instance"));
 			case 'x': return FormatHexadecimal (value, precision, false);
 			case 'X': return FormatHexadecimal (value, precision, true);
-			case 'z': return FormatCustom (format, value, nfi);
 			default: 
 				throw new FormatException (Locale.GetText ("The specified format '" + format + "' is invalid"));
 			}
@@ -422,9 +451,14 @@ namespace System {
 		{
 			char specifier;
 			int precision;
+			bool custom;
 			
-			if (!ParseFormat (format, out specifier, out precision))
+			if (!ParseFormat (format, out specifier, out precision, out custom))
 				throw new FormatException (Locale.GetText ("The specified format '" + format + "' is invalid"));
+			
+			if (custom){
+				return FormatCustom (format, value, nfi);
+			}
 			
 			switch(specifier) {
 			case 'c': return FormatCurrency (value, precision, nfi);
@@ -445,7 +479,6 @@ namespace System {
 			case 'R': throw new FormatException (Locale.GetText ("The specified format cannot be used in this instance"));
 			case 'x': return FormatHexadecimal (value, precision, false);
 			case 'X': return FormatHexadecimal (value, precision, true);
-			case 'z': return FormatCustom (format, value, nfi);
 			default: 
 				throw new FormatException (Locale.GetText ("The specified format '" + format + "' is invalid"));
 			}
