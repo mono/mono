@@ -195,6 +195,11 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override void OnDrawItem(DrawItemEventArgs e)
 		{
+			Bitmap bmp = new Bitmap( e.Bounds.Width, e.Bounds.Height,e.Graphics);
+			Graphics paintOn = Graphics.FromImage(bmp);
+			
+			e.Graphics.FillRectangle(SystemBrushes.Window, e.Bounds);
+			
 			Rectangle checkRect = new Rectangle( e.Bounds.Left, e.Bounds.Top, e.Bounds.Height, e.Bounds.Height);
 			checkRect.Inflate(-1,-1);
 			Rectangle textRect = new Rectangle( checkRect.Right, e.Bounds.Top, e.Bounds.Width - checkRect.Width - 1, e.Bounds.Height);
@@ -204,7 +209,6 @@ namespace System.Windows.Forms {
 				e.Graphics.DrawString(Items_[e.Index].ToString(), Font, SystemBrushes.HighlightText, textRect.X, textRect.Y);
 			}
 			else {
-				e.Graphics.FillRectangle(SystemBrushes.Window, textRect);
 				e.Graphics.DrawString(Items_[e.Index].ToString(), Font, SystemBrushes.ControlText, textRect.X, textRect.Y);
 			}
 		

@@ -36,6 +36,41 @@
 
 			// End of temperay varibles
 
+		internal class MdiClient : Control {
+			public MdiClient ( Control parent ) : base (parent, "") {
+			}
+			protected override CreateParams CreateParams {
+				get {
+					CreateParams pars = new CreateParams();
+
+					pars.ClassName = Win32.MDICLIENTCLASSNAME;
+					pars.Style = (int) (	WindowStyles.WS_CHILDWINDOW |
+								WindowStyles.WS_CLIPCHILDREN |
+								WindowStyles.WS_CLIPSIBLINGS |
+								WindowStyles.WS_OVERLAPPED |
+								WindowStyles.WS_VISIBLE |
+								WindowStyles.WS_VSCROLL |
+								WindowStyles.WS_HSCROLL );
+					pars.ExStyle = (int) (  WindowExStyles.WS_EX_CLIENTEDGE );
+
+					pars.Parent = Parent.Handle;
+					CLIENTCREATESTRUCT cs = new CLIENTCREATESTRUCT();
+					cs.hWindowMenu = IntPtr.Zero;
+					cs.idFirstChild = 100;
+
+					pars.Param = cs;
+					
+					return pars;
+				}
+			}
+			public void DestroyControl ( ) {
+				DestroyHandle ( );
+			}
+		}
+
+		MdiClient mdiClientWnd;
+		Form      mdiParent;
+
 			public Form () : base ()
     		{
 				opacity = 0;
@@ -128,7 +163,7 @@
     		[MonoTODO]
     		public new Size ClientSize {
     			get {
-    				throw new NotImplementedException ();
+    				return base.ClientSize;
     			}
     			set {
 					//bool MenuReady;
@@ -218,28 +253,12 @@
 					 //FIXME:
 				 }
     		}
-    
-    		[MonoTODO]
-    		public bool IsMidiChild {
-    			get {
-    				throw new NotImplementedException ();
-    			}
-    			set {
-					//FIXME:
-				}
+
+    		public bool IsMdiChild {
+    			get {	return mdiParent != null; }
     		}
-    
-    		[MonoTODO]
-    		public bool IsMidiContainer {
-    			get {
-    				throw new NotImplementedException ();
-    			}
-    			set {
-					//FIXME:
-				}
-    		}
-    
-    		[MonoTODO]
+
+       		[MonoTODO]
     		public bool KeyPreview {
     			get {
     				throw new NotImplementedException ();
@@ -273,21 +292,26 @@
     		[MonoTODO]
     		public Form[] MdiChildren {
     			get {
-    				throw new NotImplementedException ();
+				Form[] forms = new Form[0];
+				return forms;
     			}
-    			set {
-					//FIXME:
-				}
     		}
     
     		[MonoTODO]
     		public Form MdiParent {
     			get {
-    				throw new NotImplementedException ();
+    				return mdiParent;
     			}
     			set {
-					//FIXME:
-				}
+				if ( !value.IsMdiContainer || ( value.IsMdiContainer && value.IsMdiChild ) )
+					throw new Exception( );
+
+				mdiParent = value;
+				mdiParent.MdiClientControl.Controls.Add ( this );
+				
+				if ( mdiParent.IsHandleCreated )
+					CreateControl ( );
+			}
     		}
     
  			//Compact Framework
@@ -367,7 +391,18 @@
     				opacity = value;
     			}
     		}
-    
+
+		[MonoTODO]
+		public bool IsMdiContainer {
+			get {	return mdiClientWnd != null; }
+			set {
+				if ( value )
+					createMdiClient ( );
+				else
+					destroyMdiClient ( );
+			}
+		}
+
     		[MonoTODO]
     		public Form[] OwnedForms {
     			get {
@@ -498,11 +533,32 @@
     			Win32.DestroyWindow (Handle);
     		}
     
-   			[MonoTODO]
     		public void LayoutMdi (MdiLayout value)
     		{
-				//FIXME:
+			if ( IsMdiContainer && mdiClientWnd.IsHandleCreated ) {
+				int mes = 0;
+				int wp  = 0;
+
+				switch ( value ) {
+				case MdiLayout.Cascade:
+					mes = (int)Msg.WM_MDICASCADE;
+				break;
+				case MdiLayout.ArrangeIcons:
+					mes = (int)Msg.WM_MDIICONARRANGE;
+				break;
+				case MdiLayout.TileHorizontal:
+					mes = (int)Msg.WM_MDITILE;
+					wp = 1;
+				break;
+				case MdiLayout.TileVertical:
+					mes = (int)Msg.WM_MDITILE;
+				break;
+				}
+				
+				if ( mes != 0 )
+					Win32.SendMessage ( mdiClientWnd.Handle, mes, wp, 0 );
 			}
+		}
     
     		[MonoTODO]
     		public void RemoveOwnedForm (Form ownedForm)
@@ -540,6 +596,7 @@
     		public event EventHandler Activated;
     		
     		public event EventHandler Closed;
+		public event CancelEventHandler Closing;
     		 
   			//Compact Framework
     		// CancelEventHandler not yet implemented/stubbed
@@ -565,11 +622,18 @@
     		protected override CreateParams CreateParams {
     			get {
 				CreateParams pars = base.CreateParams;
-				pars.Style |= (int)( WindowStyles.WS_OVERLAPPEDWINDOW | 
+				
+				if ( IsMdiChild ) {
+					pars.Style |= (int)( WindowStyles.WS_CHILD | WindowStyles.WS_VISIBLE );
+					pars.ExStyle |= (int)WindowExStyles.WS_EX_MDICHILD;
+				}
+				else 
+					pars.Style |= (int)( WindowStyles.WS_OVERLAPPEDWINDOW | 
 							WindowStyles.WS_CLIPSIBLINGS /* |
 							WindowStyles.WS_CLIPCHILDREN */);
 				// should have WS_CLIPCHILDREN style but there are
 				// problems with GroupBox at the moment
+
 				return pars;
     			}
     		}
@@ -624,16 +688,16 @@
     		protected override void CreateHandle ()
     		{
     			base.CreateHandle ();
-/*
- *	This is called in base class    
-    			if (IsHandleCreated)
-    				OnHandleCreated (new EventArgs());
-*/					
     		}
     
     		protected override void DefWndProc (ref Message m)
     		{
-    			window.DefWndProc (ref m);
+			if ( IsMdiChild )
+				window.DefMDIChildProc ( ref m );
+			else if ( IsMdiContainer && mdiClientWnd.IsHandleCreated )
+				window.DefFrameProc ( ref m, mdiClientWnd );
+			else
+    				window.DefWndProc (ref m);
     		}
 
   			//Compact Framework
@@ -644,10 +708,10 @@
     		}
     
 	  		//Compact Framework
-    		[MonoTODO]
     		protected virtual void  OnClosing(CancelEventArgs e)
     		{
-    				throw new NotImplementedException ();
+			if ( Closing != null )
+    				Closing ( this, e);
     		}
     
     		protected override void OnCreateControl ()
@@ -664,9 +728,10 @@
     		protected override void OnHandleCreated (EventArgs e)
     		{
     			base.OnHandleCreated (e);
-				Console.WriteLine ("Form.OnHandleCreated");
-				assignMenu();
-			}
+			if ( IsMdiChild ) 
+				activateMdiChild ( );
+			assignMenu();
+		}
     
     		protected override void OnHandleDestroyed (EventArgs e)
     		{
@@ -738,8 +803,8 @@
  			//Compact Framework
     		protected override void  OnResize (EventArgs e)
     		{
-
     			base.OnResize (e);
+			resizeMdiClient ();
     		}
     
     		protected override void  OnStyleChanged (EventArgs e)
@@ -787,6 +852,12 @@
 					}
 				}
 				else {
+					if ( IsMdiContainer && m.LParam != IntPtr.Zero ) {
+						// we need to pass unhandled commands
+						// to DefFrameProc
+						m.Result = (IntPtr)1;
+						return;
+					}
 					base.OnWmCommand(ref m);
 				}
 			}
@@ -837,8 +908,12 @@
     		{
     			switch (m.Msg) {
     			case Msg.WM_CLOSE:
-    				EventArgs closeArgs = new EventArgs();
-    				OnClosed (closeArgs);
+				CancelEventArgs args = new CancelEventArgs( false );
+				OnClosing( args );
+				if ( !args.Cancel ) {
+    					OnClosed ( EventArgs.Empty );
+					base.WndProc ( ref m );
+				}
     				break;
     				//case ?:
     				//OnCreateControl()
@@ -880,6 +955,7 @@
     			case Msg.WM_MDIACTIVATE:
     				EventArgs mdiActivateArgs = new EventArgs();
     				OnMdiChildActivate (mdiActivateArgs);
+				base.WndProc ( ref m );
     				break;
     			case Msg.WM_EXITMENULOOP:
     				EventArgs menuCompleteArgs = new EventArgs();
@@ -947,6 +1023,39 @@
 			}
 			#endregion
 			
+		private void createMdiClient ( ) {
+			if(  mdiClientWnd == null ) {
+				mdiClientWnd = new MdiClient ( this );
+				Controls.Add ( mdiClientWnd );
+				mdiClientWnd.Dock = DockStyle.Fill;
+				if ( IsHandleCreated )
+					mdiClientWnd.CreateControl ( );
+			}
+		}
+
+		private void destroyMdiClient ( ) {
+			if ( mdiClientWnd != null ) {
+				Controls.Remove ( mdiClientWnd );
+				mdiClientWnd.DestroyControl ( );
+				mdiClientWnd = null;
+			}
+		}
+		private void resizeMdiClient ( ) {
+			if ( IsMdiContainer && mdiClientWnd.IsHandleCreated ) {
+				Win32.MoveWindow ( mdiClientWnd.Handle,
+					Location.X, Location.Y,
+					ClientSize.Width,
+					ClientSize.Height, true );
+			}
+		}
+
+		private void activateMdiChild ( ) {
+			Win32.SendMessage ( Parent.Handle, Msg.WM_MDIACTIVATE, Handle.ToInt32(), 0 );
+		}
+
+		internal Control MdiClientControl {
+			get { return this.mdiClientWnd; }
+		}
 
     		//sub class
     		//System.Windows.Forms.Form.ControlCollection.cs

@@ -52,6 +52,7 @@ namespace System.Windows.Forms{
 		internal const string PROGRESSBARCLASSNAME = "msctls_progress32";
 		internal const string SCROLLBAR = "SCROLLBAR";
 		internal const string TOOLTIPS_CLASS = "tooltips_class32";
+		internal const string MDICLIENTCLASSNAME = "MDICLIENT";
 		
 		#endregion
 
@@ -445,6 +446,12 @@ namespace System.Windows.Forms{
 		[DllImport("user32.dll", CharSet=CharSet.Auto,EntryPoint="DefWindowProcA")]
 		static internal extern int DefWindowProc(IntPtr hWnd, int message, int wParam, int lParam);
 
+		[DllImport("user32.dll", CharSet=CharSet.Unicode,EntryPoint="DefMDIChildProcA")]
+		static internal extern IntPtr DefMDIChildProc(IntPtr hWnd, Msg Msg, IntPtr wParam, IntPtr lParam);
+
+		[DllImport("user32.dll", CharSet=CharSet.Unicode,EntryPoint="DefFrameProcA")]
+		static internal extern IntPtr DefFrameProc(IntPtr hWnd, IntPtr hWndMDIClient, Msg Msg, IntPtr wParam, IntPtr lParam);
+		
 		[DllImport("user32.dll", CharSet=CharSet.Auto,EntryPoint="LoadCursorA")]
 		static internal extern IntPtr LoadCursor(IntPtr hInstance, LC_ standardCursor);
 

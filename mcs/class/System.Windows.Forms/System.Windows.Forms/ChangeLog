@@ -1,3 +1,20 @@
+2003-04-06 Alexandre Pigolkine <pigolkine@gmx.de>
+	* Control.cs
+	* Form.cs
+	* NativeWindow.cs
+	* Win32functions.cs
+	* Win32structs.cs : initial implementation of MDI interface.
+		Aleksey Ryabchuk <ryabchuk@yahoo.com>
+
+	* Button.cs
+	* CheckedListBox.cs
+	* Control.cs
+	* GroupBox.cs 
+	* ListBox.cs
+	* ScrollableControl.cs
+		Attempt to minimize fliker effect
+		Alexandre Pigolkine
+
 2003-03-30 Alexandre Pigolkine <pigolkine@gmx.de>
 	* DateTimePicker.cs
 	* StatusBar.cs

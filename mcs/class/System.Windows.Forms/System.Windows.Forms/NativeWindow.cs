@@ -72,7 +72,6 @@ namespace System.Windows.Forms {
 		{
 			if( cp != null ) {
 				IntPtr createdHWnd = (IntPtr) 0;
-				Object lpParam = new Object();
 
 				if (!registeredClass) {
 					WNDCLASS wndClass = new WNDCLASS();
@@ -98,12 +97,14 @@ namespace System.Windows.Forms {
 					}
 				}
 
+				System.Console.WriteLine("Creating window {0}", cp.ClassName);
+				object lParam = cp.Param;
 				windowHandle = Win32.CreateWindowEx (
 					(uint) cp.ExStyle, cp.ClassName,
 					cp.Caption,(uint) cp.Style,
 					cp.X, cp.Y, cp.Width, cp.Height,
 					(IntPtr) cp.Parent, (IntPtr) 0,
-					(IntPtr) 0, ref lpParam);
+					(IntPtr) 0, ref lParam);
 
 				if (windowHandle != (IntPtr) 0) {
 					windowCollection.Add (windowHandle, this);
@@ -122,6 +123,15 @@ namespace System.Windows.Forms {
 		{
 			m.Result = Win32.DefWindowProcA (m.HWnd, m.Msg, 
 							 m.WParam, m.LParam);
+		}
+
+		internal void DefMDIChildProc ( ref Message m ) {
+			m.Result = Win32.DefMDIChildProc(m.HWnd, m.Msg, m.WParam, m.LParam);
+		}
+
+		internal void DefFrameProc ( ref Message m , Control MdiClient) {
+			m.Result = Win32.DefFrameProc(m.HWnd, MdiClient != null ? MdiClient.Handle : IntPtr.Zero, 
+							m.Msg, m.WParam, m.LParam);
 		}
 
 		public virtual void DestroyHandle () 

@@ -140,7 +140,11 @@ namespace System.Windows.Forms {
 		}
 
 		internal void OnDrawItem(DrawItemEventArgs e) {
-			Graphics paintOn = e.Graphics;
+
+			Bitmap bmp = new Bitmap( e.Bounds.Width, e.Bounds.Height,e.Graphics);
+			Graphics paintOn = Graphics.FromImage(bmp);
+			
+			//Graphics paintOn = e.Graphics;
 			Rectangle rc = e.Bounds;
 			Rectangle rcImageClip = e.Bounds;
 			rcImageClip.Inflate(-2,-2);
@@ -271,6 +275,8 @@ namespace System.Windows.Forms {
 				// FIXME: Draw focus rectangle in different colors
 				ControlPaint.DrawFocusRectangle( paintOn, focusRC);
 			}
+			e.Graphics.DrawImage(bmp, e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height);
+			bmp.Dispose();
 		}
 
 		protected override void WndProc (ref Message m) {
@@ -285,6 +291,14 @@ namespace System.Windows.Forms {
 					//Marshal.StructureToPtr(dis, m.LParam, false);
 					m.Result = (IntPtr)1;
 				}
+					break;
+				case Msg.WM_ERASEBKGND:
+					if( FlatStyle != FlatStyle.System) {
+						m.Result = (IntPtr)1;
+					}
+					else {
+						base.WndProc (ref m);
+					}
 					break;
 				default:
 					base.WndProc (ref m);

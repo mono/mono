@@ -81,6 +81,8 @@
     		bool tabStop;
     		string text;
     		bool visible;
+		bool isDisposed;
+
 			object tag;
 			protected bool mouseIsInside_;
 			bool recreatingHandle;
@@ -191,6 +193,8 @@
     			text = "";
     			visible = true;
     			parent = null;
+			isDisposed = false;
+
 				mouseIsInside_ = false;
 				recreatingHandle = false;
 				// Do not create Handle here, only in CreateHandle
@@ -473,7 +477,7 @@
 				rc.right = value.Width;
 				rc.bottom = value.Height;
 				
-				if( Handle != IntPtr.Zero){
+				if( IsHandleCreated ){
 					int style = Win32.GetWindowLong( Handle, GetWindowLongFlag.GWL_STYLE).ToInt32();
 					int menuExists = 0;
 					if( (style & (int)WindowStyles.WS_CHILD) == 0 ){
@@ -783,18 +787,18 @@
     		}
     		
     		public bool IsDisposed {
-    			get {
-    				if (Handle == (IntPtr) 0)
-    					return true;
-    				return false;
-    			}
+    			get {	return isDisposed; }
+    				//if (Handle == (IntPtr) 0)
+    				//	return true;
+    				//return false;
     		}
     		
     		public bool IsHandleCreated {
     			get {
-    				if (Handle != (IntPtr) 0)
-    					return true;
-    				return false;
+				return window != null && window.Handle != IntPtr.Zero;
+    				//if (Handle != (IntPtr) 0)
+    				//	return true;
+    				//return false;
     			}
     		}
     		
@@ -1172,28 +1176,31 @@
     	
     		protected virtual void CreateHandle ()
     		{
-				if( !IsHandleCreated) {
-					if( window == null) {
-						window = new ControlNativeWindow (this);
-					}
-					if( window != null) {
-						CreateParams createParams = CreateParams;
-						if( !Enabled) {
-							createParams.Style |= (int)WindowStyles.WS_DISABLED;
-						}
-						window.CreateHandle (createParams);
-					}
-					if( Handle != IntPtr.Zero) {
-						if( controlsCollection[Handle] == null) {
-							controlsCollection.Add(Handle, this);
-						}
-						SubclassWindow();
+			if( IsDisposed )
+				throw new ObjectDisposedException ( Name );
 
-						CreatorThreadId_ = Win32.GetCurrentThreadId();
+			if( IsHandleCreated ) 
+				return;
 
-						OnHandleCreated (new EventArgs());
-					}
-				}
+			if( window == null)
+				window = new ControlNativeWindow (this);
+
+			CreateParams createParams = CreateParams;
+			if( !Enabled) {
+				createParams.Style |= (int)WindowStyles.WS_DISABLED;
+			}
+			window.CreateHandle (createParams);
+
+			if( window.Handle != IntPtr.Zero) {
+				if( !controlsCollection.Contains( window.Handle ) )
+					controlsCollection.Add( window.Handle, this );
+
+				SubclassWindow();
+
+				CreatorThreadId_ = Win32.GetCurrentThreadId();
+
+				OnHandleCreated ( EventArgs.Empty );
+			}
     		}
     	
     		protected virtual void DefWndProc (ref Message m)
@@ -1203,6 +1210,7 @@
     		
     		protected virtual void DestroyHandle ()
     		{
+			if ( IsHandleCreated ) {
 				if( Handle != IntPtr.Zero) {
 					controlsCollection.Remove(Handle);
 				}
@@ -1210,9 +1218,11 @@
 					window.DestroyHandle ();
 				}
 			}
+		}
     	
     		protected override void Dispose (bool disposing) 
     		{
+			isDisposed = true;
 				//FIXME: 
     			base.Dispose(disposing);
     		}
@@ -1459,6 +1469,15 @@
     		protected virtual void OnCreateControl ()
     		{
 				//FIXME:
+    			// create all child windows
+    			IEnumerator cw = childControls.GetEnumerator();
+    
+    			while (cw.MoveNext()) {
+    				Console.WriteLine ("Adding Control");
+    				Control control = (Control) cw.Current;
+    				control.CreateControl ();
+    				control.Show ();
+    			}
 			}
     		
     		protected virtual void OnCursorChanged (EventArgs e)
@@ -1554,15 +1573,6 @@
     			if (HandleCreated != null)
     				HandleCreated (this, e);
     
-    			// create all child windows
-    			IEnumerator cw = childControls.GetEnumerator();
-    
-    			while (cw.MoveNext()) {
-    				Console.WriteLine ("Adding Control");
-    				Control control = (Control) cw.Current;
-    				control.CreateControl ();
-    				control.Show ();
-    			}
     		}
     		
     		protected virtual void OnHandleDestroyed (EventArgs e) 
@@ -1737,17 +1747,40 @@
 			}
     		
  			//Compact Framework
-    		protected virtual void OnPaint (PaintEventArgs e) 
+    		protected virtual void OnPaint (PaintEventArgs e)
     		{
     			if (Paint != null)
     				Paint (this, e);
+    			else {
+#if SysDrawing
+					Brush br = new SolidBrush(BackColor);
+					e.Graphics.FillRectangle(br, e.ClipRectangle);
+					br.Dispose();
+#else
+					IntPtr hdc = e.Graphics.GetHdc();
+					IntPtr hbr = Win32.CreateSolidBrush(Win32.RGB(BackColor));
+					IntPtr prevHbr = Win32.SelectObject(hdc, hbr);
+					RECT rc = new RECT();
+					rc.left = e.ClipRectangle.Left;
+					rc.top = e.ClipRectangle.Top;
+					rc.right = e.ClipRectangle.Right;
+					rc.bottom = e.ClipRectangle.Bottom;
+					Win32.FillRect( hdc, ref rc, hbr);
+					Win32.SelectObject(hdc, prevHbr);
+					Win32.DeleteObject(hbr);
+					e.Graphics.ReleaseHdc(hdc);
+#endif
+    			}
     		}
     		
  			//Compact Framework
     		protected virtual void OnPaintBackground (PaintEventArgs e) 
     		{
-				//FIXME:
-			}
+                //FIXME:
+                Brush br = new SolidBrush(BackColor);
+                e.Graphics.FillRectangle(br, e.ClipRectangle);
+                br.Dispose();
+            }
     		
     		protected virtual void OnParentBackColorChanged (EventArgs e) 
     		{
@@ -2500,7 +2533,11 @@
 					// OnClick (eventArgs);
 					//OnNotifyMessage (eventArgs);
 					break;
-				case Msg.WM_PAINT: 
+    			case Msg.WM_ERASEBKGND:
+					//CallControlWndProc(ref m);
+    				m.Result = (IntPtr)1;
+    				break;
+				case Msg.WM_PAINT:
 					if( ControlRealWndProc != IntPtr.Zero) {
 						CallControlWndProc(ref m);
 					}
@@ -2523,6 +2560,10 @@
     				OnSizeChanged (eventArgs);
 					CallControlWndProc(ref m);
 					break;
+    			case Msg.WM_WINDOWPOSCHANGED:
+    				OnResize (eventArgs);
+    				CallControlWndProc(ref m);
+    			break;
     			case Msg.WM_STYLECHANGED:
     				OnStyleChanged (eventArgs);
 					CallControlWndProc(ref m);
@@ -2533,6 +2574,10 @@
 					break;
     			case Msg.WM_SETTEXT:
     				OnTextChanged (eventArgs);
+					CallControlWndProc(ref m);
+					break;
+    			case Msg.WM_SETFONT:
+    				//OnTextChanged (eventArgs);
 					CallControlWndProc(ref m);
 					break;
     			case Msg.WM_SHOWWINDOW:
@@ -2672,9 +2717,14 @@
     		/// --- IWin32Window properties
     		public IntPtr Handle {
     			get { 
-    				if (window != null) 
-    					return window.Handle; 
-    				return (IntPtr) 0;
+				// If the handle has not yet been created,
+				// referencing this property will force the
+				// handle to be created. ( MSDN )
+
+    				if ( !IsHandleCreated ) 
+					CreateHandle ( );
+
+    				return window.Handle;
     			}
     		}
     		

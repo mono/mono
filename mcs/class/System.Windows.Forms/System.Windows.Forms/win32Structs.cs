@@ -765,7 +765,13 @@ namespace System.Windows.Forms
 		internal int     iPos;
 		internal int     iDelta;
 	}
-	
+
+	[StructLayout(LayoutKind.Sequential)]
+	internal struct CLIENTCREATESTRUCT {
+		internal IntPtr hWindowMenu; 
+		internal uint   idFirstChild; 
+	}
+
 	//
 	//
 	//		[StructLayout(LayoutKind.Sequential)]

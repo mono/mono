@@ -119,7 +119,7 @@ namespace System.Windows.Forms {
 				createParams.ExStyle = 0;
 				createParams.Param = 0;
   				
-				createParams.Style = (int) (WindowStyles.WS_VISIBLE);
+				createParams.Style = (int) (WindowStyles.WS_VISIBLE | WindowStyles.WS_CLIPCHILDREN);
 				//test version with scroll bars.
 				//createParams.Style = (int) (WindowStyles.WS_OVERLAPPEDWINDOW | WindowStyles.WS_HSCROLL | WindowStyles.WS_VSCROLL);
 				
