@@ -2,6 +2,7 @@ namespace CIR {
 
 	using System;
 	using System.Reflection;
+	using System.Reflection.Emit;
 	
 	public class Constant : Expression {
 		string     name;
@@ -46,6 +47,44 @@ namespace CIR {
 			get {
 				return FieldAttributes.Literal | Modifiers.Map (mod_flags) ;
 			}
+		}
+
+		// <summary>
+		//   Defines the constant in the @parent
+		// </summary>
+		public void MakeConstant (RootContext rc, TypeContainer parent)
+		{
+			FieldBuilder fb;
+			TypeCode tc;
+			Type t;
+			
+			t = rc.LookupType (parent, type);
+			if (t == null)
+				return;
+
+			tc = System.Type.GetTypeCode (t);
+			
+			if ((tc == TypeCode.SByte)  || (tc == TypeCode.Byte)   ||
+			    (tc == TypeCode.Int16)  || (tc == TypeCode.UInt16) ||
+			    (tc == TypeCode.Int32)  || (tc == TypeCode.Int64)  ||
+			    (tc == TypeCode.UInt32) || (tc == TypeCode.UInt64)) {
+				
+			} else if ((tc == TypeCode.Double) || (tc == TypeCode.Single)) {
+
+			} else if (tc == TypeCode.Char) {
+			} else if (tc == TypeCode.Decimal) {
+
+			} else if (t.IsSubclassOf (typeof (System.String))) {
+
+			} else if (t.IsSubclassOf (typeof (System.Enum))) {
+
+			} else {
+				rc.Report.Error (-3, "Constant type is not valid (only system types are allowed");
+				return;
+			}
+
+			fb = parent.TypeBuilder.DefineField (name, t, FieldAttr);
+			
 		}
 	}
 }

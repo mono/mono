@@ -58,7 +58,7 @@ namespace CIR {
 		
 		public RootContext ()
 		{
-			tree = new Tree ();
+			tree = new Tree (null);
 			type_manager = new TypeManager ();
 			report = new Report ();
 
@@ -190,7 +190,7 @@ namespace CIR {
 		//
 		TypeBuilder CreateInterface (Interface iface)
 		{
-			TypeBuilder tb = iface.Definition;
+			TypeBuilder tb = iface.TypeBuilder;
 			Type [] ifaces;
 			string name;
 			bool error;
@@ -216,7 +216,7 @@ namespace CIR {
 					    TypeAttributes.Abstract,
 					    null,   // Parent Type
 					    ifaces);
-			iface.Definition = tb;
+			iface.TypeBuilder = tb;
 
 			type_manager.AddUserType (name, tb);
 
@@ -427,7 +427,7 @@ namespace CIR {
 		//
 		TypeBuilder CreateType (TypeContainer tc, bool is_class)
 		{
-			TypeBuilder tb = tc.Definition;
+			TypeBuilder tb = tc.TypeBuilder;
 			Type parent;
 			Type [] ifaces;
 			bool error;
@@ -452,7 +452,7 @@ namespace CIR {
 					    parent,
 					    ifaces);
 
-			tc.Definition = tb;
+			tc.TypeBuilder = tb;
 			type_manager.AddUserType (name, tb);
 			tc.InTransit = false;
 			
@@ -554,11 +554,6 @@ namespace CIR {
 			return LookupType (tc, name, true);
 		}
 		
-		public void PopulateInterface (Interface ifacex)
-		{
-			
-		}
-
 		// <summary>
 		//   Populates the structs and classes with fields and methods
 		// </summary>
@@ -569,9 +564,13 @@ namespace CIR {
 		{
 			Hashtable ifaces, classes;
 			
-			if ((ifaces = tree.Interfaces) != null)
-				foreach (DictionaryEntry de in ifaces)
-					PopulateInterface ((Interface) de.Value);
+			if ((ifaces = tree.Interfaces) != null){
+				foreach (DictionaryEntry de in ifaces){
+					Interface iface = (Interface) de.Value;
+
+					iface.Populate ();
+				}
+			}
 
 			if ((classes = tree.Classes) != null){
 				foreach (DictionaryEntry de in classes){
@@ -580,9 +579,8 @@ namespace CIR {
 					tc.Populate (this);
 				}
 			}
-				
 		}
-		
+
 		// <summary>
 		//   Compiling against Standard Libraries property.
 		// </summary>

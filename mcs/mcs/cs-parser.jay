@@ -70,7 +70,8 @@ namespace CIR
 		// <summary>
 		//   Used to record all types defined
 		// </summary>
-		CIR.Tree tree;
+		Tree tree;
+		RootContext rc;
 
 		// Name of the file we are parsing
 		public string name;
@@ -482,7 +483,7 @@ struct_declaration
 		Struct new_struct;
 		string full_struct_name = MakeName ((string) $4);
 
-		new_struct = new Struct (current_container, full_struct_name, (int) $2);
+		new_struct = new Struct (rc, current_container, full_struct_name, (int) $2);
 		current_container = new_struct;
 		current_container.Namespace = current_namespace;
 		tree.RecordStruct (full_struct_name, new_struct);
@@ -1923,7 +1924,7 @@ class_declaration
 		Class new_class;
 		string full_class_name = MakeName ((string) $4);
 
-		new_class = new Class (current_container, full_class_name, (int) $2);
+		new_class = new Class (rc, current_container, full_class_name, (int) $2);
 		current_container = new_class;
 		current_container.Namespace = current_namespace;
 		tree.RecordClass (full_class_name, new_class);
@@ -2722,10 +2723,11 @@ void note (string s)
 
 Tokenizer lexer;
 
-public CSharpParser(CIR.Tree tree, string name, System.IO.Stream input) 
+public CSharpParser(RootContext rc, string name, System.IO.Stream input) 
 {
 	current_namespace = new Namespace (null, "");
-	this.tree = tree;
+	this.rc   = rc;
+	this.tree = rc.Tree;
 	this.name = name;
 	this.input = input;
 	current_container = tree.Types;

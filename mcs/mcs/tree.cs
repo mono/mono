@@ -48,9 +48,12 @@ namespace CIR
 		// </summary>
 		Hashtable classes;
 
-		public Tree ()
+		RootContext rc;
+		
+		public Tree (RootContext rc)
 		{
-			root_types = new TypeContainer (null, "");
+			root_types = new TypeContainer (rc, null, "");
+			this.rc = rc;
 		}
 
 

@@ -26,6 +26,8 @@ namespace CIR {
 		Hashtable defined_events;
 		Hashtable defined_properties;
 
+		TypeContainer parent;
+		
 		// These will happen after the semantic analysis
 		
 		// Hashtable defined_indexers;
@@ -49,6 +51,7 @@ namespace CIR {
 			defined_properties = new Hashtable ();
 
 			this.mod_flags = Modifiers.Check (AllowedModifiers, mod, Modifiers.PUBLIC);
+			this.parent = parent;
 		}
 
 		public AdditionResult AddMethod (InterfaceMethod imethod)
@@ -141,6 +144,66 @@ namespace CIR {
 				bases = value;
 			}
 		}
+
+		void Error111 (InterfaceMethod im)
+		{
+			parent.RootContext.Report.Error (
+				111,
+				"Interface `" + Name + "' already contains a definition with the " +
+				"same return value and paramenter types for method `" + im.Name + "'");
+		}
+		
+		void PopulateMethods ()
+		{
+			foreach (InterfaceMethod im in defined_method_list){
+				Type ReturnType = parent.LookupType (im.ReturnType, true);
+			
+				TypeBuilder.DefineMethod (
+					im.Name, MethodAttributes.Public,
+					ReturnType, im.ParameterTypes (parent));
+			}
+		}
+
+		// <summary>
+		//   Performs the semantic analysis for all the interface members
+		//   that were declared
+		// </summary>
+		bool SemanticAnalysis ()
+		{
+			Hashtable methods = new Hashtable ();
+
+			//
+			// First check that all methods with the same name
+			// have a different signature.
+			//
+			foreach (InterfaceMethod im in defined_method_list){
+				string sig = im.GetSignature (parent);
+
+				//
+				// If there was an undefined Type on the signatures
+				// 
+				if (sig == null)
+					continue;
+
+				if (methods [sig] != null){
+					Error111 (im);
+					return false;
+				}
+			}
+
+			return true;
+		}
+
+		// <summary>
+		//   Performs semantic analysis, and then generates the IL interfaces
+		// </summary>
+		public void Populate ()
+		{
+			if (!SemanticAnalysis ())
+				return;
+			
+			PopulateMethods ();
+		}
 	}
 
 	public class InterfaceMemberBase {
@@ -222,35 +285,37 @@ namespace CIR {
 	}
 	
 	public class InterfaceMethod : InterfaceMemberBase {
-		string return_type;
-		bool is_new;
-		Parameters args;
+		public readonly string     ReturnType;
+		public readonly bool       IsNew;
+		public readonly Parameters Parameters;
 		
 		public InterfaceMethod (string return_type, string name, bool is_new, Parameters args)
 			: base (name)
 		{
-			this.return_type = return_type;
-			this.is_new = is_new;
-			this.args = args;
+			this.ReturnType = return_type;
+			this.IsNew = is_new;
+			this.Parameters = args;
 		}
 
-		public string ReturnType {
-			get {
-				return return_type;
-			}
+		// <summary>
+		//   Returns the signature for this interface method
+		// </summary>
+		public string GetSignature (TypeContainer tc)
+		{
+			Type ret = tc.LookupType (ReturnType, false);
+			string args = Parameters.GetSignature (tc);
+
+			if ((ret == null) || (args == null))
+				return null;
+			
+			return (IsNew ? "new-" : "") + ret.FullName + "(" + args + ")";
 		}
 
-		public bool IsNew {
-			get {
-				return is_new;
-			}
+		public Type [] ParameterTypes (TypeContainer tc)
+		{
+			return Parameters.GetTypes (tc);
 		}
 
-		public Parameters Parameters {
-			get {
-				return args;
-			}
-		}
 	}
 
 	public class InterfaceIndexer : InterfaceMemberBase {

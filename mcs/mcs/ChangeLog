@@ -1,3 +1,7 @@
+2001-08-13  Miguel de Icaza  <miguel@ximian.com>
+
+	* class.cs: Put back walking code for type containers.
+
 2001-08-11  Miguel de Icaza  <miguel@ximian.com>
 
 	* class.cs (MakeConstant): Code to define constants.

@@ -42,11 +42,17 @@ namespace CIR {
 		TypeContainer parent;
 		ArrayList type_bases;
 
-		public TypeContainer (TypeContainer parent, string name) : base (name)
+		//
+		// This behaves like a property ;-)
+		//
+		readonly public RootContext RootContext;
+
+		public TypeContainer (RootContext rc, TypeContainer parent, string name) : base (name)
 		{
 			types = new Hashtable ();
 			this.parent = parent;
-
+			RootContext = rc;
+			
 			string n;
 			if (parent == null)
 				n = "";
@@ -300,7 +306,7 @@ namespace CIR {
 				my_namespace = value;
 			}
 		}
-		
+
 		//
 		// The Toplevel is `root_types' which is a containerfor all
 		// types defined, hence the non-obviios parent.parent.
@@ -355,26 +361,44 @@ namespace CIR {
 			}
 		}
 
-		void MakeConstant (RootContext rc, Constant c)
-		{
-			FieldBuilder fb;
-
-			fb = Definition.DefineField (c.Name,
-						     rc.LookupType (this, c.ConstantType),
-						     c.FieldAttr);
-
-			
-		}
-		
 		//
 		// Populates our TypeBuilder with fields and methods
 		//
 		public void Populate (RootContext rc)
 		{
 			if (Constants != null){
-				foreach (DictionaryEntry cde in Constants)
-					MakeConstant (rc, (Constant) cde.Value);
+				foreach (DictionaryEntry cde in Constants){
+					Constant c = (Constant) cde.Value;
+
+					c.MakeConstant (rc, this);
+				}
 			}
+		}
+
+		public delegate void ExamineType (TypeContainer container, object cback_data);
+
+		void WalkTypesAt (TypeContainer root, ExamineType visit, object cback_data)
+		{
+			if (root == null)
+				return;
+
+			foreach (DictionaryEntry de in root.Types){
+				TypeContainer type = (TypeContainer) de.Value;
+
+				visit (type, cback_data);
+				WalkTypesAt (type, visit, cback_data);
+			}
+		}
+
+		public void WalkTypes (ExamineType visit, object cback)
+		{
+			WalkTypesAt (this, visit, cback);
+		}
+
+		public Type LookupType (string name, bool silent)
+		{
+			Console.WriteLine ("Is type container null? " + (this == null).ToString ());
+			return RootContext.LookupType (this, name, silent);
 		}
 	}
 
@@ -391,8 +415,8 @@ namespace CIR {
 			Modifiers.ABSTRACT |
 			Modifiers.SEALED;
 
-		public Class (TypeContainer parent, string name, int mod)
-			: base (parent, name)
+		public Class (RootContext rc, TypeContainer parent, string name, int mod)
+			: base (rc, parent, name)
 		{
 			int accmods;
 
@@ -426,8 +450,8 @@ namespace CIR {
 			Modifiers.INTERNAL |
 			Modifiers.PRIVATE;
 
-		public Struct (TypeContainer parent, string name, int mod)
-			: base (parent, name)
+		public Struct (RootContext rc, TypeContainer parent, string name, int mod)
+			: base (rc, parent, name)
 		{
 			int accmods;
 			

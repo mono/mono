@@ -129,7 +129,7 @@ namespace CIR {
 			}
 		}
 
-		public TypeBuilder Definition {
+		public TypeBuilder TypeBuilder {
 			get {
 				return definition;
 			}

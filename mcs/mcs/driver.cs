@@ -37,7 +37,7 @@ namespace CIR
 
 		int error_count = 0;
 
-		public int parse (Tree context, string input_file)
+		public int parse (string input_file)
 		{
 			CSharpParser parser;
 			System.IO.Stream input;
@@ -224,7 +224,7 @@ namespace CIR
 					continue;
 				}
 
-				errors += parse (context.Tree, arg);
+				errors += parse (arg);
 			}
 
 			//

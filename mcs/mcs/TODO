@@ -1,17 +1,29 @@
-* Namespaces.
+* Ordering
 
-	Currently the code can not resolve identifiers in other
-	namespaces.
+	First define methods and operator overloads.
 
-	namespace A {
-		class X : B {
-		}
-	}
+	Do enumerations and constants.
 
-	namespace A {
-		class B {
-		}
-	}
+	Process function bodies
+
+	Can a constant_expression invoke overloaded operators?
+	Explicit user-defined conversions?
+
+* Tokenizer
+
+	Propagate file/location to upper layers
+
+* Error handling
+
+	Normalize, and use Tokenizer location 
+
+* Enumerations
+
+	Currently I am not resolving enumerations.
+
+	Either I track them with `RecordEnum' as I do with classes,
+	structs and interfaces or I rewrite the code to visit type
+	containers and `walk' the enums with this process. 
 
 * Known problems:
 
@@ -33,3 +45,5 @@
 		Array r = (string []) object
 
 	Wont be parsed.
+
+  
