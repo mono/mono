@@ -1,3 +1,11 @@
+2004-04-02  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Makefile.am: Added security.c|h.
+	* security.c: New file for security related functions. Added function
+	GetUserName to fix #56144.
+	* security.h: New. Header file for security.c
+	* wapi.h: Added include for security.h
+
 2004-03-25  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* daemon-messages.h: added kill structs.
