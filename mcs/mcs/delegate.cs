@@ -63,7 +63,7 @@ namespace Mono.CSharp {
 
 		public override void ApplyAttributeBuilder(Attribute a, CustomAttributeBuilder cb)
 		{
-			if (a.Target == "return") {
+			if (a.Target == AttributeTargets.ReturnValue) {
 				if (return_attributes == null)
 					return_attributes = new ReturnParameter (InvokeBuilder, Location);
 
@@ -367,7 +367,7 @@ namespace Mono.CSharp {
 			base.Emit ();
 		}
 
-		protected override string[] ValidAttributeTargets {
+		public override string[] ValidAttributeTargets {
 			get {
 				return attribute_targets;
 			}
@@ -625,7 +625,7 @@ namespace Mono.CSharp {
 
 		public override AttributeTargets AttributeTargets {
 			get {
-				return AttributeTargets.Delegate | AttributeTargets.ReturnValue;
+				return AttributeTargets.Delegate;
 			}
 		}
 

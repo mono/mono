@@ -92,7 +92,7 @@ namespace Mono.CSharp {
 			return obsolete;
 		}
 
-		protected override string[] ValidAttributeTargets {
+		public override string[] ValidAttributeTargets {
 			get {
 				return attribute_targets;
 			}

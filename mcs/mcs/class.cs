@@ -3023,7 +3023,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		protected override string[] ValidAttributeTargets {
+		public override string[] ValidAttributeTargets {
 			get {
 				return attribute_targets;
 			}
@@ -3218,7 +3218,7 @@ namespace Mono.CSharp {
 
 		public override AttributeTargets AttributeTargets {
 			get {
-				return AttributeTargets.Method | AttributeTargets.ReturnValue;
+				return AttributeTargets.Method;
 			}
 		}
 		
@@ -3298,7 +3298,7 @@ namespace Mono.CSharp {
 
 		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
 		{
-			if (a.Target == "return") {
+			if (a.Target == AttributeTargets.ReturnValue) {
 				if (return_attributes == null)
 					return_attributes = new ReturnParameter (MethodBuilder, Location);
 
@@ -5009,7 +5009,7 @@ namespace Mono.CSharp {
 			return TypeManager.GetFullNameSignature (FieldBuilder);
 		}
 
-		protected override string[] ValidAttributeTargets {
+		public override string[] ValidAttributeTargets {
 			get {
 				return attribute_targets;
 			}
@@ -5246,12 +5246,12 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			if (a.Target == "method") {
+			if (a.Target == AttributeTargets.Method) {
 				method_data.MethodBuilder.SetCustomAttribute (cb);
 				return;
 			}
 
-			if (a.Target == "return") {
+			if (a.Target == AttributeTargets.ReturnValue) {
 				if (return_attributes == null)
 					return_attributes = new ReturnParameter (method_data.MethodBuilder, Location);
 
@@ -5317,7 +5317,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			protected override string[] ValidAttributeTargets {
+			public override string[] ValidAttributeTargets {
 				get {
 					return attribute_targets;
 				}
@@ -5336,7 +5336,7 @@ namespace Mono.CSharp {
 
 			protected override void ApplyToExtraTarget(Attribute a, CustomAttributeBuilder cb)
 			{
-				if (a.Target == "param") {
+				if (a.Target == AttributeTargets.Parameter) {
 					if (param_attr == null)
 						param_attr = new ImplicitParameter (method_data.MethodBuilder);
 
@@ -5388,7 +5388,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			protected override string[] ValidAttributeTargets {
+			public override string[] ValidAttributeTargets {
 				get {
 					return attribute_targets;
 				}
@@ -5409,7 +5409,7 @@ namespace Mono.CSharp {
 
 			public override AttributeTargets AttributeTargets {
 				get {
-					return AttributeTargets.Method | AttributeTargets.ReturnValue;
+					return AttributeTargets.Method;
 				}
 			}
 
@@ -5669,7 +5669,7 @@ namespace Mono.CSharp {
 			base.Emit ();
 		}
 
-		protected override string[] ValidAttributeTargets {
+		public override string[] ValidAttributeTargets {
 			get {
 				return attribute_targets;
 			}
@@ -5948,7 +5948,7 @@ namespace Mono.CSharp {
 			Remove = new RemoveDelegateMethod (this, remove);
 		}
 
-		protected override string[] ValidAttributeTargets {
+		public override string[] ValidAttributeTargets {
 			get {
 				return attribute_targets;
 			}
@@ -5973,12 +5973,12 @@ namespace Mono.CSharp {
 
 		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
 		{
-			if (a.Target == "field") {
+			if (a.Target == AttributeTargets.Field) {
 				FieldBuilder.SetCustomAttribute (cb);
 				return;
 			}
 
-			if (a.Target == "method") {
+			if (a.Target == AttributeTargets.Method) {
 				AddBuilder.SetCustomAttribute (cb);
 				RemoveBuilder.SetCustomAttribute (cb);
 				return;
@@ -5987,7 +5987,7 @@ namespace Mono.CSharp {
 			base.ApplyAttributeBuilder (a, cb);
 		}
 
-		protected override string[] ValidAttributeTargets {
+		public override string[] ValidAttributeTargets {
 			get {
 				return attribute_targets;
 			}
@@ -6068,7 +6068,7 @@ namespace Mono.CSharp {
 
 			protected override void ApplyToExtraTarget(Attribute a, CustomAttributeBuilder cb)
 			{
-				if (a.Target == "param") {
+				if (a.Target == AttributeTargets.Parameter) {
 					if (param_attr == null)
 						param_attr = new ImplicitParameter (method_data.MethodBuilder);
 
@@ -6172,7 +6172,7 @@ namespace Mono.CSharp {
 				return method.GetObsoleteAttribute (method.Parent);
 			}
 
-			protected override string[] ValidAttributeTargets {
+			public override string[] ValidAttributeTargets {
 				get {
 					return attribute_targets;
 				}
@@ -6932,7 +6932,7 @@ namespace Mono.CSharp {
 					param_types [0], param_types [1]);
 		}
 
-		protected override string[] ValidAttributeTargets {
+		public override string[] ValidAttributeTargets {
 			get {
 				return attribute_targets;
 			}

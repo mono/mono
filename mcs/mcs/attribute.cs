@@ -35,7 +35,7 @@ namespace Mono.CSharp {
 		{
 			attributes = attrs;
 			if (attributes != null)
-				attributes.CheckTargets (ValidAttributeTargets);
+				attributes.CheckTargets (this);
 		}
 
 		public Attributes OptAttributes 
@@ -46,7 +46,7 @@ namespace Mono.CSharp {
 			set {
 				attributes = value;
 				if (attributes != null)
-					attributes.CheckTargets (ValidAttributeTargets);
+					attributes.CheckTargets (this);
 			}
 		}
 
@@ -56,7 +56,7 @@ namespace Mono.CSharp {
 		public abstract void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb);
 
 		/// <summary>
-		/// Returns combination of enabled AttributeTargets
+		/// Returns one AttributeTarget for this element.
 		/// </summary>
 		public abstract AttributeTargets AttributeTargets { get; }
 
@@ -66,11 +66,13 @@ namespace Mono.CSharp {
 		/// Gets list of valid attribute targets for explicit target declaration.
 		/// The first array item is default target. Don't break this rule.
 		/// </summary>
-		protected abstract string[] ValidAttributeTargets { get; }
+		public abstract string[] ValidAttributeTargets { get; }
 	};
 
 	public class Attribute {
-		public string Target;
+		public readonly string ExplicitTarget;
+		public AttributeTargets Target;
+
 		public readonly string    Name;
 		public readonly ArrayList Arguments;
 
@@ -86,7 +88,8 @@ namespace Mono.CSharp {
 				return usage_attribute;
 			}
 		}
-		
+	
+
 		MethodImplOptions ImplOptions;
 		UnmanagedType     UnmanagedType;
 		CustomAttributeBuilder cb;
@@ -105,7 +108,7 @@ namespace Mono.CSharp {
 			Name = name;
 			Arguments = args;
 			Location = loc;
-			Target = target;
+			ExplicitTarget = target;
 		}
 
 		void Error_InvalidNamedArgument (string name)
@@ -802,7 +805,7 @@ namespace Mono.CSharp {
 				return;
 
 			AttributeUsageAttribute usage_attr = GetAttributeUsage ();
-			if ((usage_attr.ValidOn & ias.AttributeTargets) == 0) {
+			if ((usage_attr.ValidOn & Target) == 0) {
 				// "Attribute '{0}' is not valid on this declaration type. It is valid on {1} declarations only.";
 				Report.Error_T (592, Location, Name, GetValidTargets ());
 				return;
@@ -1074,19 +1077,29 @@ namespace Mono.CSharp {
 		/// <summary>
 		/// Checks whether attribute target is valid for the current element
 		/// </summary>
-		public void CheckTargets (string[] possible_targets)
+		public void CheckTargets (Attributable member)
 		{
+			string[] valid_targets = member.ValidAttributeTargets;
 			foreach (Attribute a in Attrs) {
-				if (a.Target == null) {
-					a.Target = possible_targets [0];
+				if (a.ExplicitTarget == null || a.ExplicitTarget == valid_targets [0]) {
+					a.Target = member.AttributeTargets;
 					continue;
 				}
 
-				if (((IList) possible_targets).Contains (a.Target))
-					continue;
+				// TODO: we can skip the first item
+				if (((IList) valid_targets).Contains (a.ExplicitTarget)) {
+					switch (a.ExplicitTarget) {
+						case "return": a.Target = AttributeTargets.ReturnValue; continue;
+						case "param": a.Target = AttributeTargets.Parameter; continue;
+						case "field": a.Target = AttributeTargets.Field; continue;
+						case "method": a.Target = AttributeTargets.Method; continue;
+						case "property": a.Target = AttributeTargets.Property; continue;
+					}
+					throw new InternalErrorException ("Unknown explicit target: " + a.ExplicitTarget);
+				}
 
 				StringBuilder sb = new StringBuilder ();
-				foreach (string s in possible_targets) {
+				foreach (string s in valid_targets) {
 					sb.Append (s);
 					sb.Append (", ");
 				}

@@ -1,3 +1,12 @@
+2004-08-03  Marek Safar  <marek.safar@seznam.cz>
+
+	Fix for cs0592-8.cs test
+	* attribute.cs
+	(Attributable.ValidAttributeTargets): Made public.
+	(Attribute.ExplicitTarget): New member for explicit target value.
+	(Attribute.CheckTargets): Now we translate explicit attribute
+	target to Target here.
+
 2004-08-03  Ben Maurer  <bmaurer@ximian.com>
 
 	* ecore.cs (MethodGroupExpr): new IsBase property.

@@ -82,7 +82,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		/// Is never called
 		/// </summary>
-		protected override string[] ValidAttributeTargets {
+		public override string[] ValidAttributeTargets {
 			get {
 				return null;
 			}
@@ -109,7 +109,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		/// Is never called
 		/// </summary>
-		protected override string[] ValidAttributeTargets {
+		public override string[] ValidAttributeTargets {
 			get {
 				return null;
 			}
@@ -257,7 +257,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		protected override string[] ValidAttributeTargets {
+		public override string[] ValidAttributeTargets {
 			get {
 				return attribute_targets;
 			}

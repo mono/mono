@@ -794,8 +794,6 @@ namespace Mono.CSharp {
 
 
 	public abstract class CommonAssemblyModulClass: Attributable {
-		static string[] attribute_targets = new string [] { "assembly", "module" };
-
 		protected CommonAssemblyModulClass ():
 			base (null)
 		{
@@ -808,7 +806,7 @@ namespace Mono.CSharp {
 				return;
 			}
 			OptAttributes.AddAttributes (attrs);
-			OptAttributes.CheckTargets (ValidAttributeTargets);
+			OptAttributes.CheckTargets (this);
 		}
 
 		public virtual void Emit (TypeContainer tc) 
@@ -832,19 +830,14 @@ namespace Mono.CSharp {
 			}
 			return a;
 		}
-
-		protected override string[] ValidAttributeTargets {
-			get {
-				return attribute_targets;
-			}
-		}
-
 	}
                 
 	public class AssemblyClass: CommonAssemblyModulClass {
 		// TODO: make it private and move all builder based methods here
 		public AssemblyBuilder Builder;
 		bool is_cls_compliant;
+
+		static string[] attribute_targets = new string [] { "assembly" };
 
 		public AssemblyClass (): base ()
 		{
@@ -881,7 +874,7 @@ namespace Mono.CSharp {
 		{
 			if (OptAttributes != null) {
 				foreach (Attribute a in OptAttributes.Attrs) {
-					if (a.Target != "assembly")
+					if (a.Target != AttributeTargets.Assembly)
 						continue;
 					// TODO: This code is buggy: comparing Attribute name without resolving it is wrong.
 					//       However, this is invoked by CodeGen.Init, at which time none of the namespaces
@@ -1011,12 +1004,20 @@ namespace Mono.CSharp {
 		{
 			Builder.SetCustomAttribute (customBuilder);
 		}
+
+		public override string[] ValidAttributeTargets {
+			get {
+				return attribute_targets;
+			}
+		}
 	}
 
 	public class ModuleClass: CommonAssemblyModulClass {
 		// TODO: make it private and move all builder based methods here
 		public ModuleBuilder Builder;
 		bool m_module_is_unsafe;
+
+		static string[] attribute_targets = new string [] { "module" };
 
 		public ModuleClass (bool is_unsafe)
 		{
@@ -1057,6 +1058,12 @@ namespace Mono.CSharp {
 			}
 
 			Builder.SetCustomAttribute (customBuilder);
+		}
+
+		public override string[] ValidAttributeTargets {
+			get {
+				return attribute_targets;
+			}
 		}
 	}
 }
