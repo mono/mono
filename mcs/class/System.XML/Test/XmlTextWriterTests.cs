@@ -9,6 +9,7 @@
 
 using System;
 using System.IO;
+using System.Text;
 using System.Xml;
 
 using NUnit.Framework;
@@ -125,6 +126,53 @@ namespace Ximian.Mono.Tests
 			catch (ArgumentException) { }
 		}
 
+		public void TestConstructors ()
+		{
+			MemoryStream ms;
+			StreamReader sr;
+			XmlTextWriter xtw;
+
+			ms = new MemoryStream ();
+			xtw = new XmlTextWriter (ms, new UnicodeEncoding ());
+			xtw.WriteStartDocument ();
+			xtw.Flush ();
+			ms.Seek (0, SeekOrigin.Begin);
+			sr = new StreamReader (ms);
+			AssertEquals ("<?xml version=\"1.0\" encoding=\"utf-16\"?>", sr.ReadToEnd ());
+
+			ms = new MemoryStream ();
+			xtw = new XmlTextWriter (ms, new UnicodeEncoding ());
+			xtw.WriteStartDocument (true);
+			xtw.Flush ();
+			ms.Seek (0, SeekOrigin.Begin);
+			sr = new StreamReader (ms);
+			AssertEquals ("<?xml version=\"1.0\" encoding=\"utf-16\" standalone=\"yes\"?>", sr.ReadToEnd ());
+
+			ms = new MemoryStream ();
+			xtw = new XmlTextWriter (ms, new UTF8Encoding ());
+			xtw.WriteStartDocument ();
+			xtw.Flush ();
+			ms.Seek (0, SeekOrigin.Begin);
+			sr = new StreamReader (ms);
+			AssertEquals ("<?xml version=\"1.0\" encoding=\"utf-8\"?>", sr.ReadToEnd ());
+
+			ms = new MemoryStream ();
+			xtw = new XmlTextWriter (ms, null);
+			xtw.WriteStartDocument ();
+			xtw.Flush ();
+			ms.Seek (0, SeekOrigin.Begin);
+			sr = new StreamReader (ms);
+			AssertEquals ("<?xml version=\"1.0\"?>", sr.ReadToEnd ());
+
+			ms = new MemoryStream ();
+			xtw = new XmlTextWriter (ms, null);
+			xtw.WriteStartDocument (true);
+			xtw.Flush ();
+			ms.Seek (0, SeekOrigin.Begin);
+			sr = new StreamReader (ms);
+			AssertEquals ("<?xml version=\"1.0\" standalone=\"yes\"?>", sr.ReadToEnd ());
+		}
+
 		public void TestDocumentStart ()
 		{
 			xtw.WriteStartDocument ();
@@ -140,6 +188,16 @@ namespace Ximian.Mono.Tests
 				AssertEquals ("Exception message is incorrect.",
 					"WriteStartDocument should be the first call.", e.Message);
 			}
+
+			xtw = new XmlTextWriter (sw = new StringWriter ());
+			xtw.WriteStartDocument (true);
+			AssertEquals ("<?xml version=\"1.0\" encoding=\"utf-16\" standalone=\"yes\"?>",
+				sw.GetStringBuilder ().ToString ());
+
+			xtw = new XmlTextWriter (sw = new StringWriter ());
+			xtw.WriteStartDocument (false);
+			AssertEquals ("<?xml version=\"1.0\" encoding=\"utf-16\" standalone=\"no\"?>",
+				sw.GetStringBuilder ().ToString ());
 		}
 
 		public void TestElementEmpty ()
@@ -153,6 +211,46 @@ namespace Ximian.Mono.Tests
 		{
 			xtw.WriteElementString ("foo", "bar");
 			AssertEquals ("WriteElementString has incorrect output.", "<foo>bar</foo>", sw.GetStringBuilder().ToString());
+		}
+
+		public void TestFormatting ()
+		{
+			xtw.Formatting = Formatting.Indented;
+			xtw.WriteStartDocument ();
+			xtw.WriteStartElement ("foo");
+			xtw.WriteElementString ("bar", "");
+			xtw.Close ();
+			AssertEquals ("<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n<foo>\r\n  <bar />\r\n</foo>",
+				sw.GetStringBuilder ().ToString ());
+		}
+
+		public void TestFormattingInvalidXmlForFun ()
+		{
+			xtw.Formatting = Formatting.Indented;
+			xtw.IndentChar = 'x';
+			xtw.WriteStartDocument ();
+			xtw.WriteStartElement ("foo");
+			xtw.WriteStartElement ("bar");
+			xtw.WriteElementString ("baz", "");
+			xtw.Close ();
+			AssertEquals ("<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n<foo>\r\nxx<bar>\r\nxxxx<baz />\r\nxx</bar>\r\n</foo>",
+				sw.GetStringBuilder ().ToString ());
+		}
+
+		public void TestFormattingFromRemarks ()
+		{
+			// Remarks section of on-line help for XmlTextWriter.Formatting suggests this test.
+			xtw.Formatting = Formatting.Indented; 
+			xtw.WriteStartElement ("ol"); 
+			xtw.WriteStartElement ("li"); 
+			xtw.WriteString ("The big "); // This means "li" now has a mixed content model. 
+			xtw.WriteElementString ("b", "E"); 
+			xtw.WriteElementString ("i", "lephant"); 
+			xtw.WriteString (" walks slowly."); 
+			xtw.WriteEndElement (); 
+			xtw.WriteEndElement ();
+			AssertEquals ("<ol>\r\n  <li>The big <b>E</b><i>lephant</i> walks slowly.</li>\r\n</ol>",
+				sw.GetStringBuilder ().ToString ());
 		}
 
 		public void TestProcessingInstructionValid ()
@@ -218,6 +316,14 @@ namespace Ximian.Mono.Tests
 				AssertEquals ("Exception message is incorrect.",
 					"Cannot use a prefix with an empty namespace.", e.Message);
 			}
+		}
+
+		public void TestQuoteCharInvalid ()
+		{
+			try {
+				xtw.QuoteChar = 'x';
+				Fail ("Should have thrown an ArgumentException.");
+			} catch (ArgumentException) {}
 		}
 
 		public void TestWriteEndElement ()

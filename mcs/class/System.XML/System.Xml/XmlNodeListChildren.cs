@@ -12,7 +12,7 @@ using System.Collections;
 
 namespace System.Xml
 {
-	public class XmlNodeListChildren : XmlNodeList
+	internal class XmlNodeListChildren : XmlNodeList
 	{
 		#region Enumerator
 

@@ -19,11 +19,19 @@ namespace System.Xml
 		#region Fields
 
 		protected TextWriter w;
+		protected bool nullEncoding = false;
 		protected bool openWriter = true;
 		protected bool openStartElement;
 		protected bool documentStarted = false;
 		protected Stack openElements = new Stack ();
 		protected XmlNamespaceManager namespaceManager = new XmlNamespaceManager (new NameTable ());
+		protected Formatting formatting = Formatting.None;
+		protected int indentation = 2;
+		protected char indentChar = ' ';
+		protected string indentChars = "  ";
+		protected char quoteChar = '\"';
+		protected int indentLevel = 0;
+		protected string indentFormatting;
 
 		#endregion
 
@@ -36,6 +44,11 @@ namespace System.Xml
 
 		public XmlTextWriter (Stream w,	Encoding encoding) : base ()
 		{
+			if (encoding == null) {
+				nullEncoding = true;
+				encoding = new UTF8Encoding ();
+			}
+
 			this.w = new StreamWriter(w, encoding);
 		}
 
@@ -54,22 +67,39 @@ namespace System.Xml
 		}
 
 
-		[MonoTODO]
 		public Formatting Formatting {
-			get { throw new NotImplementedException(); }
-			set { throw new NotImplementedException(); }
+			get { return formatting; }
+			set { formatting = value; }
 		}
 
-		[MonoTODO]
+		public bool IndentingOverriden 
+		{
+			get {
+				if (openElements.Count == 0)
+					return false;
+				else
+					return (((XmlTextWriterOpenElement)openElements.Peek()).IndentingOverriden);
+			}
+			set {
+				if (openElements.Count > 0)
+					((XmlTextWriterOpenElement)openElements.Peek()).IndentingOverriden = value;
+			}
+		}
+
 		public int Indentation {
-			get { throw new NotImplementedException(); }
-			set { throw new NotImplementedException(); }
+			get { return indentation; }
+			set {
+				indentation = value;
+				UpdateIndentChars ();
+			}
 		}
 
-		[MonoTODO]
 		public char IndentChar {
-			get { throw new NotImplementedException(); }
-			set { throw new NotImplementedException(); }
+			get { return indentChar; }
+			set {
+				indentChar = value;
+				UpdateIndentChars ();
+			}
 		}
 
 		[MonoTODO]
@@ -80,8 +110,13 @@ namespace System.Xml
 
 		[MonoTODO]
 		public char QuoteChar {
-			get { throw new NotImplementedException(); }
-			set { throw new NotImplementedException(); }
+			get { return quoteChar; }
+			set {
+				if ((value != '\'') && (value != '\"'))
+					throw new ArgumentException ("This is an invalid XML attribute quote character. Valid attribute quote characters are ' and \".");
+				
+				quoteChar = value;
+			}
 		}
 
 		[MonoTODO]
@@ -109,6 +144,16 @@ namespace System.Xml
 				throw new InvalidOperationException ("The Writer is closed.");
 			}
 
+			if ((documentStarted == true) && (formatting == Formatting.Indented) && (!IndentingOverriden)) {
+				indentFormatting = "\r\n";
+				if (indentLevel > 0) {
+					for (int i = 0; i < indentLevel; i++)
+						indentFormatting += indentChars;
+				}
+			}
+			else
+				indentFormatting = "";
+
 			documentStarted = true;
 		}
 
@@ -132,16 +177,22 @@ namespace System.Xml
 			}
 		}
 
-		[MonoTODO]
 		public override void Flush ()
 		{
-			throw new NotImplementedException ();
+			w.Flush ();
 		}
 
 		[MonoTODO]
 		public override string LookupPrefix (string ns)
 		{
 			throw new NotImplementedException ();
+		}
+
+		private void UpdateIndentChars ()
+		{
+			indentChars = "";
+			for (int i = 0; i < indentation; i++)
+				indentChars += indentChar;
 		}
 
 		[MonoTODO]
@@ -216,6 +267,8 @@ namespace System.Xml
 			if (openElements.Count == 0)
 				throw new InvalidOperationException("There was no XML start tag open.");
 
+			indentLevel--;
+
 			CheckState ();
 
 			if (openStartElement) {
@@ -224,7 +277,7 @@ namespace System.Xml
 				openStartElement = false;
 			}
 			else {
-				w.Write ("</{0}>", openElements.Pop ());
+				w.Write ("{0}</{1}>", indentFormatting, openElements.Pop ());
 				namespaceManager.PopScope();
 			}
 		}
@@ -262,7 +315,7 @@ namespace System.Xml
 			CheckState ();
 			CloseStartElement ();
 
-			w.Write ("<?{0} {1}?>", name, text);
+			w.Write ("{0}<?{1} {2}?>", indentFormatting, name, text);
 		}
 
 		[MonoTODO]
@@ -291,19 +344,34 @@ namespace System.Xml
 
 		public override void WriteStartDocument ()
 		{
-			if (documentStarted == true) {
+			WriteStartDocument ("");
+		}
+
+		public override void WriteStartDocument (bool standalone)
+		{
+			string standaloneFormatting;
+
+			if (standalone == true)
+				standaloneFormatting = " standalone=\"yes\"";
+			else
+				standaloneFormatting = " standalone=\"no\"";
+
+			WriteStartDocument (standaloneFormatting);
+		}
+
+		private void WriteStartDocument (string standaloneFormatting)
+		{
+			if (documentStarted == true)
 				throw new InvalidOperationException("WriteStartDocument should be the first call.");
-			}
 
 			CheckState ();
 
-			w.Write("<?xml version=\"1.0\" encoding=\"" + w.Encoding.HeaderName + "\"?>");
-		}
+			string encodingFormatting = "";
 
-		[MonoTODO]
-		public override void WriteStartDocument (bool standalone)
-		{
-			throw new NotImplementedException ();
+			if (!nullEncoding)
+				encodingFormatting = " encoding=\"" + w.Encoding.HeaderName + "\"";
+
+			w.Write("<?xml version=\"1.0\"{0}{1}?>", encodingFormatting, standaloneFormatting);
 		}
 
 		public override void WriteStartElement (string prefix, string localName, string ns)
@@ -337,13 +405,15 @@ namespace System.Xml
 				formatPrefix = prefix + ":";
 			}
 
-			w.Write ("<{0}{1}{2}", formatPrefix, localName, formatXmlns);
+			w.Write ("{0}<{1}{2}{3}", indentFormatting, formatPrefix, localName, formatXmlns);
 
-			openElements.Push (formatPrefix + localName);
+			openElements.Push (new XmlTextWriterOpenElement (formatPrefix + localName));
 			openStartElement = true;
 
 			namespaceManager.PushScope ();
 			namespaceManager.AddNamespace (prefix, ns);
+
+			indentLevel++;
 		}
 
 		[MonoTODO("Haven't done any entity replacements yet.")]
@@ -354,6 +424,8 @@ namespace System.Xml
 				CloseStartElement ();
 				w.Write (text);
 			}
+
+			IndentingOverriden = true;
 		}
 
 		[MonoTODO]

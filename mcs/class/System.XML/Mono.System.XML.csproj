@@ -316,6 +316,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Xml\XmlTextWriterOpenElement.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Xml\XmlTokenizedType.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

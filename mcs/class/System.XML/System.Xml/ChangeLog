@@ -1,3 +1,19 @@
+2002-03-23  Kral Ferch <kral_ferch@hotmail.com>
+
+	* XmlNodeListChildren.cs: made class internal
+	instead of public.  Shouldn't be visible outside
+	of System.Xml.
+	
+	* XmlTextWriter.cs: Implementations for Formatting,
+	IndentChar, Indenting, QuoteChar, WriteStartDocument(standalone).
+	Suppresses encoding on xml declaration if null stream passed in.
+	Formats output including suppressing indentation for elements in
+	mixed content mode.
+	
+	* XmlTextWriterOpenElement.cs: Initial checkin.
+	XmlTextWriter uses stack of these objects to track
+	state.
+	
 2002-03-22  Mike Kestner  <mkestner@speakeasy.net>
 
 	* XmlElement.cs: impl HasAttribute(string name).
