@@ -1,5 +1,9 @@
 2002-07-12  Dietmar Maurer  <dietmar@ximian.com>
 
+	* metadata.c (mono_signature_hash): a hash function for signatures
+
+	* marshal.c (mono_marshal_get_delegate_invoke): cache methods by signature
+
 	* debug-helpers.c (mono_method_full_name): this can now generate
 	method names with signatures
 
