@@ -2018,6 +2018,14 @@ namespace Mono.CSharp {
 					//
 					return this;
 				}
+
+				//
+				// One of them is a valuetype, but the other one is not.
+				//
+				if (!l.IsValueType || !r.IsValueType) {
+					Error_OperatorCannotBeApplied ();
+					return null;
+				}
 			}
 
 			// Only perform numeric promotions on:
