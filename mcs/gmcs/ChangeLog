@@ -1,3 +1,8 @@
+2004-05-20  Martin Baulig  <martin@ximian.com>
+
+	* attribute.cs: Convert this file to Unix mode - like the original
+	version in mcs is.
+
 2004-05-19  Marek Safar  <marek.safar@seznam.cz>
 
        Fix bug #58688 (MCS does not report error when the same attribute

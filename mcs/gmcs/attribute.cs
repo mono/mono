@@ -1,4 +1,3 @@
-// -*- coding: dos -*-
 //
 // attribute.cs: Attribute Handler
 //
