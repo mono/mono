@@ -39,6 +39,11 @@ namespace Mono.Data.SqlExpressions {
 	
 		override public object Eval (DataRow row)
 		{
+			return EvalBoolean (row);
+		}
+
+		public override bool EvalBoolean (DataRow row)
+		{
 			IComparable o1 = expr1.Eval (row) as IComparable;
 			IComparable o2 = expr2.Eval (row) as IComparable;
 
