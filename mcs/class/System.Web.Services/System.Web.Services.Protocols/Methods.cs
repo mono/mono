@@ -52,6 +52,8 @@ namespace System.Web.Services.Protocols {
 		{
 			MethodInfo = source;
 
+			XmlElementAttribute optional_ns = null;
+			
 			if (kind is SoapDocumentMethodAttribute){
 				SoapDocumentMethodAttribute dma = (SoapDocumentMethodAttribute) kind;
 				
@@ -82,6 +84,10 @@ namespace System.Web.Services.Protocols {
 				ResponseNamespace = rma.ResponseNamespace;
 				ResponseName = rma.ResponseElementName;
 				OneWay = rma.OneWay;
+
+				// For RPC calls, make all arguments be part of the empty namespace
+				optional_ns = new XmlElementAttribute ();
+				optional_ns.Namespace = "";
 			}
 			if (Binding == "")
 				Binding = parent.BindingName;
@@ -108,8 +114,8 @@ namespace System.Web.Services.Protocols {
 			if (ResponseName == "")
 				ResponseName = Name + "Response";
 			
-			MakeRequestSerializer (importer);
-			MakeResponseSerializer (importer);
+			MakeRequestSerializer (importer, optional_ns);
+			MakeResponseSerializer (importer, optional_ns);
 		}
 
 		static internal MethodStubInfo Create (TypeStubInfo parent, LogicalMethodInfo lmi, XmlReflectionImporter importer)
@@ -124,11 +130,11 @@ namespace System.Web.Services.Protocols {
 				return new MethodStubInfo (parent, lmi, o [0], importer);
 		}
 
-		void MakeRequestSerializer (XmlReflectionImporter importer)
+		void MakeRequestSerializer (XmlReflectionImporter importer, XmlElementAttribute optional_ns)
 		{
 			ParameterInfo [] input = MethodInfo.InParameters;
 			XmlReflectionMember [] in_members = new XmlReflectionMember [input.Length];
-			
+
 			for (int i = 0; i < input.Length; i++){
 				XmlReflectionMember m = new XmlReflectionMember ();
 				m.IsReturnValue = false;
@@ -137,12 +143,13 @@ namespace System.Web.Services.Protocols {
 				if (m.MemberType.IsByRef)
 					m.MemberType = m.MemberType.GetElementType ();
 
+				if (optional_ns != null)
+					m.XmlAttributes.XmlElements.Add (optional_ns);
 				in_members [i] = m;
 			}
 
 			XmlMembersMapping [] members = new XmlMembersMapping [1];
 			try {
-				Console.WriteLine ("XmLSerializer: {0} {1}", RequestName, RequestNamespace);
 				members [0] = importer.ImportMembersMapping (RequestName, RequestNamespace, in_members, true);
 				XmlSerializer [] s = null;
 				s = XmlSerializer.FromMappings (members);
@@ -158,7 +165,7 @@ namespace System.Web.Services.Protocols {
 			}
 		}
 
-		void MakeResponseSerializer (XmlReflectionImporter importer)
+		void MakeResponseSerializer (XmlReflectionImporter importer, XmlElementAttribute optional_ns)
 		{
 			ParameterInfo [] output = MethodInfo.OutParameters;
 			bool has_return_value = !(OneWay || MethodInfo.ReturnType == typeof (void));
@@ -171,6 +178,8 @@ namespace System.Web.Services.Protocols {
 				m.IsReturnValue = true;
 				m.MemberName = RequestName + "Result";
 				m.MemberType = MethodInfo.ReturnType;
+				if (optional_ns != null)
+					m.XmlAttributes.XmlElements.Add (optional_ns);
 				idx++;
 				out_members [0] = m;
 			}
@@ -183,6 +192,8 @@ namespace System.Web.Services.Protocols {
 
 				if (m.MemberType.IsByRef)
 					m.MemberType = m.MemberType.GetElementType ();
+				if (optional_ns != null)
+					m.XmlAttributes.XmlElements.Add (optional_ns);
 				out_members [i + idx] = m;
 			}
 
@@ -200,6 +211,16 @@ namespace System.Web.Services.Protocols {
 				}
 				throw;
 			}
+
+			ResponseSerializer.UnknownNode += new XmlNodeEventHandler (e);
+		}
+
+		static void e (object o, XmlNodeEventArgs a)
+		{
+			Console.WriteLine ("Unexpected Node: {5}:{6} {0}/{1}/{2}/{3}/{4}",
+					   a.LocalName, a.Name, a.NamespaceURI, a.NodeType, a.Text,
+					   a.LineNumber, a.LinePosition);
+			throw new Exception ();
 		}
 	}
 

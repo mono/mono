@@ -27,12 +27,12 @@ namespace System.Web.Services.Protocols {
 
 		public SoapRpcMethodAttribute ()
 		{
-			action = "http://tempuri.org/MethodName"; // FIXME
+			action = ""; // FIXME
 			binding = ""; // FIXME
 			oneWay = false;
 			requestElementName = ""; // FIXME
 			requestNamespace = "http://tempuri.org/";
-			responseElementName = "WebServiceNameResult"; // FIXME
+			responseElementName = ""; 
 			responseNamespace = "http://tempuri.org/";
 		}
 

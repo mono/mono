@@ -1,3 +1,15 @@
+2003-06-01  Miguel de Icaza  <miguel@ximian.com>
+
+	* Methods.cs (MethodStubInfo): If creating an RPC call, pass an
+	optional XmlElementAttribute with the namespace set to null;  Use
+	this on each element of the request and response serializers.
+
+	(MakeRequestSerializer, MakeResponseSerializer): Use the empty
+	element for the return values.
+
+	* SoapRpcMethodAttribute.cs: Drop the default name on the
+	SoapRpcMethodAttribute, it was incorrectly given a default name.
+
 2003-05-30  Miguel de Icaza  <miguel@ximian.com>
 
 	* Methods.cs (MethodStubInfo): Start support for RPC style as well
