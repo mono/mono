@@ -606,6 +606,8 @@ namespace System.Data.Odbc
 				currentRow=-1;
 			else
 				currentRow++;
+			GetSchemaTable();
+			
 			// Clear cached values from last record
 			foreach (OdbcColumn col in cols)
 			{
