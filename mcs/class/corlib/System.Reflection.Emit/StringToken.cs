@@ -14,12 +14,8 @@ namespace System.Reflection.Emit {
 
 		internal int tokValue;
 
-		public static readonly StringToken Empty;
-
-
 		static StringToken ()
 		{
-			Empty = new StringToken ();
 		}
 
 

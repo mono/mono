@@ -426,7 +426,7 @@ namespace System.Reflection {
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern Module[] GetModulesInternal ();
+		internal extern Module[] GetModulesInternal ();
 
 		public Module[] GetModules (bool getResourceModules) {
 			Module[] modules = GetModulesInternal ();
@@ -443,7 +443,7 @@ namespace System.Reflection {
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern string[] GetNamespaces ();
+		internal extern string[] GetNamespaces ();
 		
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern virtual String[] GetManifestResourceNames ();
@@ -476,6 +476,8 @@ namespace System.Reflection {
 
 		//
 		// The following functions are only for the Mono Debugger.
+		//
+		// They should be marked `internal', and extracted with GetMethod from the debugger.
 		//
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
