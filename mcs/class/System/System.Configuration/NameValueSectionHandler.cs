@@ -15,7 +15,7 @@ namespace System.Configuration
 	/// <summary>
 	/// Summary description for NameValueSectionHandler.
 	/// </summary>
-	public class NameValueSectionHandler
+	public class NameValueSectionHandler : IConfigurationSectionHandler
 	{
 		private static string keyName;
 		private static string valueName;

@@ -1,3 +1,12 @@
+2002-10-02  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AppSettingsReader.cs: New file.
+	* IConfigurationSystem.cs: New file.
+
+	* IgnoreSectionHandler.cs:
+	* NameValueSectionHandler.cs:
+	* SingleTagSectionHandler.cs: little fixes.
+
 2002-09-03  Martin Baulig  <martin@gnome.org>
 
 	* ConfigurationSettings.cs (ConfigurationSettings.GetConfig): Use the
