@@ -1,3 +1,8 @@
+2004-06-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DateTime.cs : Concatenating whitespace removal was not working fine.
+	  Modified FormatException message (1 cent kindness).
+
 2004-06-18  Ben Maurer  <bmaurer@ximian.com>
 	
 	* Action.cs, ArraySegment.cs, Comparison.cs, Converter.cs, Predicate.cs:

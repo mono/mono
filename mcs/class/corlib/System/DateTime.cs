@@ -696,7 +696,7 @@ namespace System
 			if (ParseExact (s, patterns, dfi, styles, out result, false))
 				return result;
 
-			throw new FormatException ();
+			throw new FormatException ("String was not recognized as a valid DateTime.");
 		}
 
 		public static DateTime ParseExact (string s, string format, IFormatProvider fp)
@@ -899,6 +899,14 @@ namespace System
 
 					if (exact && (style & DateTimeStyles.AllowInnerWhite) == 0)
 						return false;
+					int ws = 0;
+					while (ws < s.Length) {
+						if (Char.IsWhiteSpace (s [ws]))
+							ws++;
+						else
+							break;
+					}
+					s = s.Substring (ws);
 				}
 
 
