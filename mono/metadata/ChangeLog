@@ -1,3 +1,9 @@
+2003-01-25  Martin Baulig  <martin@ximian.com>
+
+	* threads.c (start_wrapper): Moved the initialization of
+	`start_func' above the mono_new_thread_init() call to which we
+	pass it as argument.
+
 2003-01-24  Martin Baulig  <martin@ximian.com>
 
 	* threads.h (MonoThreadCallbacks): Pass the thread ID instead of
