@@ -1,5 +1,11 @@
 2004-09-03  Martin Baulig  <martin@ximian.com>
 
+	Merged latest changes into gmcs.  Please keep this comment in
+	here, it makes it easier for me to see what changed in MCS since
+	the last time I merged.
+
+2004-09-03  Martin Baulig  <martin@ximian.com>
+
 	* rootcontext.cs (RootContext.V2): Removed.
 
 2004-03-23  Martin Baulig  <martin@ximian.com>

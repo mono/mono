@@ -4672,8 +4672,8 @@ namespace Mono.CSharp {
 
 					VerifyArgumentsCompat (ec, Arguments, arg_count,
 							       c, false, null, may_fail, loc);
-						break;
-					}
+					break;
+				}
 
                                 if (!may_fail) {
                                         string report_name = me.Name;
