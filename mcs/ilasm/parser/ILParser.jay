@@ -1768,6 +1768,13 @@ type_spec		: class_ref
                           }
 			| OPEN_BRACKET D_MODULE slashed_name CLOSE_BRACKET
                           {
+                                string module = (string) $3;
+
+                                if (codegen.IsThisModule (module)) {
+                                    // This is not handled yet.
+                                } else {
+                                    $$ = codegen.ExternTable.GetModuleTypeRef ((string) $3, "<Module>", false);
+                                }
 
                           }
 			| type
