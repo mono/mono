@@ -1,3 +1,8 @@
+2005-01-11  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlDataDocumentTest2.cs : Added re-Load()ing test.
+	  Added TypedDataDocument().
+
 2004-06-18  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlDataDocumentTest2.cs : When line ending is LF, CR is preserved.

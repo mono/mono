@@ -31,6 +31,7 @@
 
 using System;
 using System.Data;
+using System.IO;
 using System.Xml;
 using NUnit.Framework;
 
@@ -93,6 +94,9 @@ namespace MonoTests.System.Xml
 		{
 			XmlDataDocument doc = new XmlDataDocument ();
 			doc.LoadXml ("<NewDataSet><TestTable><TestRow><TestColumn>1</TestColumn></TestRow></TestTable></NewDataSet>");
+
+			doc = new XmlDataDocument ();
+			doc.LoadXml ("<test>value</test>");
 		}
 
 		[Test]
@@ -180,6 +184,46 @@ namespace MonoTests.System.Xml
 			AssertEquals (1, dt2.Rows.Count); // still not added
 			row = doc.GetRowFromElement (el);
 			AssertEquals (DataRowState.Detached, row.RowState); // still detached here
+		}
+
+		// bug #54505
+		public void TypedDataDocument ()
+		{
+			string xml = @"<top xmlns=""urn:test"">
+  <foo>
+    <s>first</s>
+    <d>2004-02-14T10:37:03</d>
+  </foo>
+  <foo>
+    <s>second</s>
+    <d>2004-02-17T12:41:49</d>
+  </foo>
+</top>";
+			string xmlschema = @"<xs:schema id=""webstore"" targetNamespace=""urn:test"" xmlns:xs=""http://www.w3.org/2001/XMLSchema"">
+  <xs:element name=""top"">
+    <xs:complexType>
+      <xs:sequence maxOccurs=""unbounded"">
+        <xs:element name=""foo"">
+          <xs:complexType>
+            <xs:sequence maxOccurs=""unbounded"">
+              <xs:element name=""s"" type=""xs:string""/>
+              <xs:element name=""d"" type=""xs:dateTime""/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>";
+			XmlDataDocument doc = new XmlDataDocument ();
+			doc.DataSet.ReadXmlSchema (new StringReader (xmlschema));
+			doc.LoadXml (xml);
+			DataTable foo = doc.DataSet.Tables ["foo"];
+			DataRow newRow = foo.NewRow ();
+			newRow ["s"] = "new";
+			newRow ["d"] = DateTime.Now;
+			foo.Rows.Add (newRow);
+			doc.Save (new StringWriter ());
 		}
 	}
 }
