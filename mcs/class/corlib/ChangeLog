@@ -1,3 +1,10 @@
+2003-06-22  Sebastien Pouliot <spouliot@videotron.ca>
+
+	* unix.args: Added FileDialogPermission.cs, IsolatedStorageFilePermission.cs,
+	PrincipalPermission.cs, PublisherIdentityPermissionAttribute.cs,
+	RegistryPermission.cs, SiteIdentityPermission.cs, UIPermission.cs and
+	UrlIdentityPermission.cs
+
 2003-06-22  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* unix.args: added System.Runtime.Remoting/SoapServices.cs
