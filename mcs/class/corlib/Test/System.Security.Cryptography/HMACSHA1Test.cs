@@ -4,7 +4,7 @@
 // Author:
 //	Sebastien Pouliot (spouliot@motus.com)
 //
-// (C) 2002 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 //
 
 using NUnit.Framework;
@@ -22,6 +22,7 @@ namespace MonoTests.System.Security.Cryptography {
 //	http://www.ietf.org/rfc/rfc2202.txt
 
 public class HMACSHA1Test : KeyedHashAlgorithmTest {
+
 	protected HMACSHA1 algo;
 
 	protected override void SetUp () 
@@ -30,6 +31,27 @@ public class HMACSHA1Test : KeyedHashAlgorithmTest {
 	}
 
 	protected override void TearDown () {}
+
+	public void TestConstructors () 
+	{
+		algo = new HMACSHA1 ();
+		AssertNotNull ("HMACSHA1 ()", algo);
+
+		byte[] key = new byte [8];
+		algo = new HMACSHA1 (key);
+		AssertNotNull ("HMACSHA1 (key)", algo);
+
+		try {
+			algo = new HMACSHA1 (null);
+			Fail ("HMACSHA1 (null) - Expected NullReferenceException but got none");
+		}
+		catch (NullReferenceException) {
+			// well ArgumentNullException would have been more appropriate
+		}
+		catch (Exception e) {
+			Fail ("HMACSHA1 (null) - Expected NullReferenceException but got: " + e.ToString ());
+		}
+	}
 
 	public void TestInvariants () 
 	{

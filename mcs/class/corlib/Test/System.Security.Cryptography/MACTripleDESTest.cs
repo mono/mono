@@ -4,7 +4,7 @@
 // Author:
 //	Sebastien Pouliot (spouliot@motus.com)
 //
-// (C) 2002 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 //
 
 using NUnit.Framework;
@@ -41,6 +41,58 @@ public class MACTripleDESTest : TestCase {
 		Array.Copy (key2, 0, key, k1l, k2l);
 		Array.Copy (key3, 0, key, k1l + k2l, k3l);
 		return key;
+	}
+
+	public void TestConstructors () 
+	{
+		algo = new MACTripleDES ();
+		AssertNotNull ("MACTripleDES ()", algo);
+
+		byte[] key = new byte [24];
+		key [0] = 1;  // so this isn't a weak key
+		key [23] = 1;
+		algo = new MACTripleDES (key);
+		AssertNotNull ("MACTripleDES (key)", algo);
+
+		try {
+			algo = new MACTripleDES (null);
+			Fail ("MACTripleDES (null) - Expected ArgumentNullException but got none");
+		}
+		catch (ArgumentNullException) {
+			// this is expected
+		}
+		catch (Exception e) {
+			Fail ("MACTripleDES (null) - Expected ArgumentNullException but got: " + e.ToString ());
+		}
+
+		algo = new MACTripleDES ("TripleDES", key);
+		AssertNotNull ("MACTripleDES ('TripleDES',key)", algo);
+
+		try {
+			algo = new MACTripleDES ("TripleDES", null);
+			Fail ("MACTripleDES ('TripleDES', null) - Expected ArgumentNullException but got none");
+		}
+		catch (ArgumentNullException) {
+			// this is expected
+		}
+		catch (Exception e) {
+			Fail ("MACTripleDES ('TripleDES', null) - Expected ArgumentNullException but got: " + e.ToString ());
+		}
+
+		// funny null is a valid name!
+		algo = new MACTripleDES (null, key);
+		AssertNotNull ("MACTripleDES (null,key)", algo);
+
+		try {
+			algo = new MACTripleDES (null, null);
+			Fail ("MACTripleDES (null, null) - Expected ArgumentNullException but got none");
+		}
+		catch (ArgumentNullException) {
+			// this is expected
+		}
+		catch (Exception e) {
+			Fail ("MACTripleDES (null, null) - Expected ArgumentNullException but got: " + e.ToString ());
+		}
 	}
 
 	public void TestInvariants () 
