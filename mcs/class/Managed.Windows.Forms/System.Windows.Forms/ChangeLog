@@ -1,5 +1,9 @@
 2005-01-04  Peter Bartok <pbartok@novell.com>
 
+	* TextBoxBase.cs: Using proper font variable now
+
+2005-01-04  Peter Bartok <pbartok@novell.com>
+
 	* Form.cs (ShowDialog): Set parent to owner, if provided
 	* GroupBox.cs: Removed unused vars
 	* TextControl.cs: 

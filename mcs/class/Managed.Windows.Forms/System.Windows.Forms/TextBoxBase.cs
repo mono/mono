@@ -243,7 +243,7 @@ namespace System.Windows.Forms {
 				brush = ThemeEngine.Current.ResPool.GetSolidBrush(this.BackColor);
 
 				for (i = 0; i < l; i++) {
-					document.Add(i+1, CaseAdjust(value[i]), alignment, font, brush);
+					document.Add(i+1, CaseAdjust(value[i]), alignment, Font, brush);
 				}
 				document.RecalculateDocument(CreateGraphics());
 			}
@@ -405,7 +405,7 @@ namespace System.Windows.Forms {
 					document.PositionCaret(line, line.text.Length);
 				} else {
 					document.Clear();
-					document.Add(1, CaseAdjust(value), alignment, font, ThemeEngine.Current.ResPool.GetSolidBrush(ForeColor));
+					document.Add(1, CaseAdjust(value), alignment, Font, ThemeEngine.Current.ResPool.GetSolidBrush(ForeColor));
 					document.RecalculateDocument(CreateGraphics());
 					line = document.GetLine(1);
 					document.SetSelectionStart(line, 0);
@@ -967,7 +967,7 @@ static int current;
 				// Font changes apply to the whole document
 				for (int i = 1; i <= document.Lines; i++) {
 					line = document.GetLine(i);
-					LineTag.FormatText(line, 1, line.text.Length, font, ThemeEngine.Current.ResPool.GetSolidBrush(ForeColor));
+					LineTag.FormatText(line, 1, line.text.Length, Font, ThemeEngine.Current.ResPool.GetSolidBrush(ForeColor));
 					document.UpdateView(line, 0);
 				}
 				// Make sure the caret height is matching the new font height
