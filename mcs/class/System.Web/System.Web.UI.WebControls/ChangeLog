@@ -1,5 +1,9 @@
 2003-05-09  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* DataGridColumnCollection.cs: added missing return in RemoveAt.
+
+2003-05-09  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* DataGridColumnCollection.cs: fixed LoadViewState for the columns.
 	Don't save ViewState is the number of columns is 0.
 

@@ -143,6 +143,7 @@ namespace System.Web.UI.WebControls
 			{
 				columns.RemoveAt(index);
 				OnColumnsChanged();
+				return;
 			}
 			//This exception is not documented, but thrown
 			throw new ArgumentOutOfRangeException("string");
