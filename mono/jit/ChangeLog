@@ -1,3 +1,6 @@
+2002-07-24  Dietmar Maurer  <dietmar@ximian.com>
+
+	* jit.c (mono_analyze_stack): added CEE_TAIL (but it is ignored)
 
 Wed Jul 24 13:02:50 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
