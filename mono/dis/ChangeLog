@@ -1,3 +1,8 @@
+2004-01-08  Jackson Harper  <jackson@ximian.com>
+
+	* main.c: Add switch to dump typespec table.
+	* dump.c/dump.h: Add function for dumping typespec table.
+	
 2003-12-19  Zoltan Varga  <vargaz@freemail.hu>
 
 	* dump.c (dump_table_exported): Fix output.
