@@ -586,6 +586,8 @@ public class Page : TemplateControl, IHttpHandler
 
 	internal string GetViewStateString ()
 	{
+		if (_savedViewState == null)
+			return null;
 		StringWriter sr = new StringWriter ();
 		LosFormatter fmt = new LosFormatter ();
 		fmt.Serialize (sr, _savedViewState);

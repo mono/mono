@@ -1,3 +1,9 @@
+2004-07-27 Alon Gazit <along@mainsoft.com>
+
+	* Page.cs: changed the implementation of GetViewStateString().
+	if the view state object is null there is no need to perform 
+	Serialization.
+	
 2004-07-16 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TemplateControl.cs: don't include private methods of base classes when
