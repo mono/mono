@@ -43,6 +43,7 @@ namespace System.Web.UI
 		bool oc_shared;
 		OutputCacheLocation oc_location;
 		Assembly srcAssembly;
+		int appAssemblyIndex = -1;
                 
 		internal TemplateParser ()
 		{
@@ -72,8 +73,9 @@ namespace System.Web.UI
 		internal void AddApplicationAssembly ()
 		{
 			string location = Context.ApplicationInstance.AssemblyLocation;
-			if (location != typeof (TemplateParser).Assembly.Location)
-				assemblies.Add (location);
+			if (location != typeof (TemplateParser).Assembly.Location) {
+				appAssemblyIndex = assemblies.Add (location);
+			}
 		}
 
 		protected abstract Type CompileIntoType ();
@@ -231,16 +233,37 @@ namespace System.Web.UI
 		internal Type LoadType (string typeName)
 		{
 			// First try loaded assemblies, then try assemblies in Bin directory.
-			// By now i do this 'by hand' but may be this is a runtime/gac task.
 			Type type = null;
+			bool seenBin = false;
 			Assembly [] assemblies = AppDomain.CurrentDomain.GetAssemblies ();
 			foreach (Assembly ass in assemblies) {
 				type = ass.GetType (typeName);
-				if (type != null) {
-					AddAssembly (ass, (Path.GetDirectoryName (ass.Location) == PrivateBinPath));
-					AddDependency (ass.Location);
-					return type;
+				if (type == null)
+					continue;
+
+				if (Path.GetDirectoryName (ass.Location) != PrivateBinPath) {
+					AddAssembly (ass, false);
+				} else {
+					seenBin = true;
 				}
+
+				AddDependency (ass.Location);
+				return type;
+			}
+
+			if (seenBin)
+				return null;
+
+			// Load from bin
+			string [] binDlls = Directory.GetFiles (PrivateBinPath, "*.dll");
+			foreach (string s in binDlls) {
+				Assembly binA = Assembly.LoadFrom (s);
+				type = binA.GetType (typeName);
+				if (type == null)
+					continue;
+
+				AddDependency (binA.Location);
+				return type;
 			}
 
 			return null;
@@ -252,30 +275,9 @@ namespace System.Web.UI
 				return;
 
 			string [] binDlls = Directory.GetFiles (PrivateBinPath, "*.dll");
-			foreach (string dll in binDlls) {
-				Assembly assembly = Assembly.LoadFrom (dll);
-				AddAssembly (assembly, true);
+			foreach (string s in binDlls) {
+				assemblies.Add (s);
 			}
-		}
-
-		Assembly LoadAssemblyFromBin (string name)
-		{
-			Assembly assembly;
-			if (!Directory.Exists (PrivateBinPath))
-				return null;
-
-			string [] binDlls = Directory.GetFiles (PrivateBinPath, "*.dll");
-			foreach (string dll in binDlls) {
-				string fn = Path.GetFileName (dll);
-				fn = Path.ChangeExtension (fn, null);
-				if (fn != name)
-					continue;
-
-				assembly = Assembly.LoadFrom (dll);
-				return assembly;
-			}
-
-			return null;
 		}
 
 		internal virtual void AddInterface (string iface)
@@ -341,13 +343,8 @@ namespace System.Web.UI
 				return (Assembly) o;
 			}
 
-			bool fullpath = true;
-			Assembly assembly = LoadAssemblyFromBin (name);
-			if (assembly != null) {
-				AddAssembly (assembly, fullpath);
-				return assembly;
-			}
-
+			bool fullpath = false;
+			Assembly assembly = null;
 			try {
 				assembly = Assembly.LoadWithPartialName (name);
 				string loc = assembly.Location;
@@ -367,7 +364,7 @@ namespace System.Web.UI
 			atts.Remove ("AspCompat"); // ignored
 
 			debug = GetBool (atts, "Debug", true);
-			compilerOptions = GetString (atts, "CompilerOptions", null);
+			compilerOptions = GetString (atts, "CompilerOptions", "");
 			language = GetString (atts, "Language", CompilationConfig.DefaultLanguage);
 			string src = GetString (atts, "Src", null);
 			if (src != null)
@@ -495,7 +492,16 @@ namespace System.Web.UI
 		}
 
 		internal ArrayList Assemblies {
-			get { return assemblies; }
+			get {
+				if (appAssemblyIndex != -1) {
+					object o = assemblies [appAssemblyIndex];
+					assemblies.RemoveAt (appAssemblyIndex);
+					assemblies.Add (o);
+					appAssemblyIndex = -1;
+				}
+
+				return assemblies;
+			}
 		}
 
 		internal ArrayList Interfaces {
@@ -558,7 +564,6 @@ namespace System.Web.UI
 		internal PagesConfiguration PagesConfig {
 			get { return PagesConfiguration.GetInstance (Context); }
 		}
-			
 	}
 }
 

@@ -1,3 +1,14 @@
+2004-06-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* SimpleWebHandlerParser.cs: if we have a global.asax, move its
+	reference to the end to help mcs loading the assemblies. Fixes bug
+	#58768.
+
+	* TemplateParser.cs: same as above. Removed some kludges to workaround
+	loading assemblies from bin path that are now in the runtime. Don't
+	load the assemblies in bin if not needed, but still reference them
+	when compiling.
+
 2004-06-07  Alon Gazit <along@mainsoft.com>
 	* Page.cs: Changed Page.ProcessPostData().
 	After the change ,the state of controls that aren't visible is saved 

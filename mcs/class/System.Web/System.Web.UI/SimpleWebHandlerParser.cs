@@ -38,6 +38,7 @@ namespace System.Web.UI
 		string baseDir;
 		string baseVDir;
 		CompilationConfiguration compilationConfig;
+		int appAssemblyIndex = -1;
 
 		protected SimpleWebHandlerParser (HttpContext context, string virtualPath, string physicalPath)
 		{
@@ -49,7 +50,7 @@ namespace System.Web.UI
 			assemblies = new ArrayList ();
 			string location = Context.ApplicationInstance.AssemblyLocation;
 			if (location != typeof (TemplateParser).Assembly.Location)
-				assemblies.Add (location);
+				appAssemblyIndex = assemblies.Add (location);
 
 			assemblies.AddRange (CompilationConfig.Assemblies);
 			if (CompilationConfig.AssembliesInBin)
@@ -365,7 +366,16 @@ namespace System.Web.UI
 		}
 
 		internal ArrayList Assemblies {
-			get { return assemblies; }
+			get {
+				if (appAssemblyIndex != -1) {
+					object o = assemblies [appAssemblyIndex];
+					assemblies.RemoveAt (appAssemblyIndex);
+					assemblies.Add (o);
+					appAssemblyIndex = -1;
+				}
+
+				return assemblies;
+			}
 		}
 
 		internal ArrayList Dependencies {
