@@ -1,3 +1,8 @@
+2005-01-10  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X509Certificate.cs: Fixed NullReferenceException when asking for
+	data that wasn't a proper X.509 certificate.
+
 2004-09-16  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X509Certificate.cs: Fixed warning (l4) for unused variable.

@@ -338,7 +338,11 @@ namespace Mono.Security.X509 {
 		}
 	        
 		public virtual byte[] RawData {
-			get { return (byte[]) m_encodedcert.Clone (); }
+			get {
+				if (m_encodedcert == null)
+					return null;
+				return (byte[]) m_encodedcert.Clone ();
+			}
 		}
 
 		public virtual byte[] SerialNumber {
