@@ -1,5 +1,8 @@
 2004-03-08  Zoltan Varga  <vargaz@freemail.hu>
 
+	* driver.c: Print --help output to stdout. Fixes #55261. Also fix
+	typed GC detection in --version.
+
 	* basic.cs exceptions.cs: New regression tests.
 
 	* mini.h mini-x86.h mini-ppc.h: Add MonoCompileArch structure where
