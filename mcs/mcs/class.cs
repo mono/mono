@@ -655,8 +655,7 @@ namespace Mono.CSharp {
 			count = bases.Count;
 
 			if (is_class){
-				Expression name = (Expression) bases [0];
-				name = ResolveTypeExpr (name, false, Location);
+				TypeExpr name = ResolveTypeExpr ((Expression) bases [0], false, Location);
 
 				if (name == null){
 					error = true;

@@ -327,7 +327,7 @@ namespace Mono.CSharp {
 			type_resolve_ec.ContainerType = TypeBuilder;
 
 			int errors = Report.Errors;
-			Expression d = e.ResolveAsTypeTerminal (type_resolve_ec);
+			TypeExpr d = e.ResolveAsTypeTerminal (type_resolve_ec);
 			
 			if (d == null || d.eclass != ExprClass.Type){
 				if (!silent && errors == Report.Errors){
@@ -336,7 +336,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			if (!CheckAccessLevel (d.Type)) {
+			if (!d.CheckAccessLevel (this)) {
 				Report.	Error (122, loc,  "`" + d.Type + "' " +
 				       "is inaccessible because of its protection level");
 				return null;
@@ -349,14 +349,14 @@ namespace Mono.CSharp {
 		//    Resolves the expression `e' for a type, and will recursively define
 		//    types. 
 		// </summary>
-		public Expression ResolveTypeExpr (Expression e, bool silent, Location loc)
+		public TypeExpr ResolveTypeExpr (Expression e, bool silent, Location loc)
 		{
 			if (type_resolve_ec == null)
 				type_resolve_ec = GetTypeResolveEmitContext (parent, loc);
 			type_resolve_ec.loc = loc;
 			type_resolve_ec.ContainerType = TypeBuilder;
 
-			Expression d = e.ResolveAsTypeTerminal (type_resolve_ec);
+			TypeExpr d = e.ResolveAsTypeTerminal (type_resolve_ec);
 			 
 			if (d == null || d.eclass != ExprClass.Type){
 				if (!silent){

@@ -1,5 +1,10 @@
 2003-11-08  Martin Baulig  <martin@ximian.com>
 
+	* decl.cs (DeclSpace.ResolveTypeExpr): Return a TypeExpr, not an
+	Expression.	
+
+2003-11-08  Martin Baulig  <martin@ximian.com>
+
 	* decl.cs (DeclSpace.GetTypeResolveEmitContext): Call
 	TypeManager.ResolveExpressionTypes().
 
