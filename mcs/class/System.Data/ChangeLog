@@ -1,3 +1,17 @@
+2002-05-03  Tim Coleman <tim@timcoleman.com>
+	* System.Data.SqlTypes/SqlByte.cs:
+	* System.Data.SqlTypes/SqlDateTime.cs:
+	* System.Data.SqlTypes/SqlDecimal.cs:
+	* System.Data.SqlTypes/SqlDouble.cs:
+	* System.Data.SqlTypes/SqlGuid.cs:
+	* System.Data.SqlTypes/SqlInt16.cs:
+	* System.Data.SqlTypes/SqlInt64.cs:
+	* System.Data.SqlTypes/SqlMoney.cs:
+	* System.Data.SqlTypes/SqlSingle.cs:
+		These files were mysteriously excluded from the last
+		patch I made and sent to Rodrigo
+	* System.Data.build: include the System.Data.SqlTypes in the build
+
 2002-05-03  Daniel Morgan <danmorg@sc.rr.com>
 
 	* System.Data.build: removed comments

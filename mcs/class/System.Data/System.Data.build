@@ -36,7 +36,6 @@
 				<excludes name="System.Data.SqlClient/SqlClientPermission.cs"/>
 				<excludes name="System.Data.SqlClient/SqlClientPermissionAttribute.cs"/>
 				<excludes name="System.Data.SqlClient/SqlCommandBuilder.cs"/>
-				<excludes name="System.Data.SqlTypes/*"/>
 			</sources>
 			<references>
 				<includes name="../lib/corlib.dll"/>
