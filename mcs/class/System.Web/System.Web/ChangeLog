@@ -1,3 +1,8 @@
+2003-02-04  Tim Haynes <thaynes@openlinksw.com>
+
+	* HttpApplicationFactory.cs: fixed HttpRuntime.Close() to decrement
+	instance counter.
+
 2003-01-29  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpRequest.cs: added BaseVirtualDir property and use it in MapPath.

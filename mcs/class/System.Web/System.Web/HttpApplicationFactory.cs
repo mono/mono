@@ -185,9 +185,10 @@ namespace System.Web {
 		private void Dispose() {
 			ArrayList torelease = new ArrayList();
 			lock (_appFreePublicList) {
-				do {
+				while (_appFreePublicList.Count > 0) {
 					torelease.Add(_appFreePublicList.Pop());
-				} while (_appFreePublicList.Count > 0);
+					_appFreePublicInstances--;
+				}
 			}
 
 			if (torelease.Count > 0) {
