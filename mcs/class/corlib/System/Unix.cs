@@ -78,38 +78,6 @@ namespace System
 			}
 		}
 
-		public static string getEnvironment()
-		{
-			// couldn't DllImport environ from libc because it was a 
-			// global variable not a method couldn't find another
-			// way to access unsafe globals
-			// definitely a candidate for "libmono" 
-
-			string strEnv = null;
-
-			try
-			{ 
-				int length = 0;
-				char[] arEnv = getPidFileContents("environ", ref length);
-				
-				for(int i = 0; i < length - 1; i++)
-				{
-					if(arEnv[i] == '\0')
-					{
-						arEnv[i] = '\t';  // safer delimeter
-					}
-				}
-				strEnv = new string(arEnv);
-				//Console.WriteLine(str);
-			}
-			catch(Exception e)
-			{	// TODO: Decide if this exception should be re-thrown
-				Debug.WriteLine(e.ToString());
-				strEnv = null;
-			}
-			return strEnv;
-		}
-
 		public static string getCommandLine()
 		{
 			int notused = 0;
