@@ -1,3 +1,9 @@
+
+Thu Jul 17 17:21:57 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* icall.c, reflection.h, reflection.c, verify.c: cleanups,
+	requires a matching corlib.
+
 2003-07-17  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* Changelog: My editor decided to add a CR to each line. Sorry about that.
