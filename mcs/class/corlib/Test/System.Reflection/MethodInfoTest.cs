@@ -31,6 +31,7 @@ using NUnit.Framework;
 using System;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
 
 namespace MonoTests.System.Reflection
 {
@@ -40,11 +41,21 @@ namespace MonoTests.System.Reflection
 		[DllImport ("libfoo", EntryPoint="foo", CharSet=CharSet.Unicode, ExactSpelling=false, PreserveSig=true, SetLastError=true, BestFitMapping=true, ThrowOnUnmappableChar=true)]
 		public static extern void dllImportMethod ();
 
+		[MethodImplAttribute(MethodImplOptions.PreserveSig)]
+		public void preserveSigMethod () {
+		}
+
+		[MethodImplAttribute(MethodImplOptions.Synchronized)]
+		public void synchronizedMethod () {
+		}
+
 #if NET_2_0
 		[Test]
 		public void PseudoCustomAttributes ()
 		{
-			DllImportAttribute attr = (DllImportAttribute)((typeof (MethodInfoTest).GetMethod ("dllImportMethod").GetCustomAttributes (typeof (DllImportAttribute), true)) [0]);
+			Type t = typeof (MethodInfoTest);
+
+			DllImportAttribute attr = (DllImportAttribute)((t.GetMethod ("dllImportMethod").GetCustomAttributes (typeof (DllImportAttribute), true)) [0]);
 
 			AssertEquals (CallingConvention.Winapi, attr.CallingConvention);
 			AssertEquals ("foo", attr.EntryPoint);
@@ -55,6 +66,13 @@ namespace MonoTests.System.Reflection
 			AssertEquals (true, attr.SetLastError);
 			AssertEquals (true, attr.BestFitMapping);
 			AssertEquals (true, attr.ThrowOnUnmappableChar);
+
+			PreserveSigAttribute attr2 = (PreserveSigAttribute)((t.GetMethod ("preserveSigMethod").GetCustomAttributes (true)) [0]);
+
+			// This doesn't work under MS.NET
+			/*
+			  MethodImplAttribute attr3 = (MethodImplAttribute)((t.GetMethod ("synchronizedMethod").GetCustomAttributes (true)) [0]);
+			*/
 		}
 #endif
 	}
