@@ -25,20 +25,12 @@ namespace System.Runtime.Serialization
 		// Properties
 		public SerializationEntry Current
 		{
-			get {				
-				SerializationEntry entry = (SerializationEntry) ide.Value;
-								
-				return new SerializationEntry (entry.Name, entry.ObjectType, entry.Value);
-			}
+		     get { return (SerializationEntry) ide.Value; }
 		}
 
 		object IEnumerator.Current
 		{			
-			get { 				
-				SerializationEntry entry = (SerializationEntry) ide.Value;
-				
-				return new SerializationEntry (entry.Name, entry.ObjectType, entry.Value);
-			}
+		     get { return ide.Value; }
 		}
 
 		public string Name

@@ -1,5 +1,8 @@
 2002-02-19  Duncan Mak  <duncan@ximian.com>
 
+	* SerializationInfoEnumerator.cs: oh, and simplified the Current
+	property too.
+	
 	* SerializationInfo.cs: Forgot to finish up GetEnumerator ().
 
 2002-02-18  Duncan Mak  <duncan@ximian.com>
