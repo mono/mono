@@ -668,7 +668,7 @@ namespace System.Drawing.Win32Impl {
 		internal NMHDR   hdr;
 		internal int     iItem;
 		internal int     iButton;
-		internal HDITEM  hItem;
+		internal IntPtr  pitem;
 	}
 	#endregion
 

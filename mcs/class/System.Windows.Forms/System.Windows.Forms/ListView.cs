@@ -46,7 +46,8 @@ namespace System.Windows.Forms {
 		private	SelectedIndexCollection	selItemIndexs = null;
 		private CheckedListViewItemCollection chkItemCol = null;
 		private CheckedIndexCollection chkIndexCol = null;
-		private	ItemActivation	activation = ItemActivation.Standard; // todo: check default
+		private	ItemActivation	activation = ItemActivation.Standard; 
+		private ColumnHeaderStyle headerStyle = ColumnHeaderStyle.Clickable;
 				
 		
 		//
@@ -187,14 +188,10 @@ namespace System.Windows.Forms {
 				bGridLines = value; 
 			}
 		}
-		[MonoTODO]
+		
 		public ColumnHeaderStyle HeaderStyle {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				//throw new NotImplementedException ();
-			}
+			get {return headerStyle; }
+			set {headerStyle = value;}			
 		}
 		[MonoTODO]
 		public bool HideSelection {
@@ -339,12 +336,8 @@ namespace System.Windows.Forms {
 			
 			if (!bInitialised) return;
 			
-			Win32.SendMessage(Handle, (int)ListViewMessages.LVM_DELETEALLITEMS, 0,0);
-						
-			// Delete all columns
-			int nRslt = 1;
-			for (int n=0;  nRslt!=0; n++)
-				nRslt = Win32.SendMessage(Handle, (int)ListViewMessages.LVM_DELETECOLUMN, 0,0);
+			Win32.SendMessage(Handle, (int)ListViewMessages.LVM_DELETEALLITEMS, 0,0);			
+			
 			
 		}
 		[MonoTODO]
@@ -402,6 +395,20 @@ namespace System.Windows.Forms {
 				if (AutoArrange) createParams.Style |= (int) ListViewFlags.LVS_AUTOARRANGE;
 				if (!bLabelWrap)  createParams.Style |= (int) ListViewFlags.LVS_NOLABELWRAP;
 				if (!bMultiSelect) createParams.Style |= (int) ListViewFlags.LVS_SINGLESEL;
+				
+				switch (headerStyle)
+				{
+					case ColumnHeaderStyle.Clickable:	// Default						
+						break;
+					case ColumnHeaderStyle.Nonclickable:
+						createParams.Style |= (int) ListViewFlags.LVS_NOSORTHEADER;
+						break;
+					case ColumnHeaderStyle.None:
+						createParams.Style |= (int) ListViewFlags.LVS_NOCOLUMNHEADER;
+						break;
+					default:	
+						break;				
+				}
 									
 				return createParams;
 			}		
@@ -544,7 +551,7 @@ namespace System.Windows.Forms {
 					throw new  InvalidEnumArgumentException();	// TODO: Is this ok?
 			}	
 			
-			Console.WriteLine("Sort value " + nRslt); 
+			//Console.WriteLine("Sort value " + nRslt); 
 			return nRslt;
 		}
 		
@@ -602,26 +609,27 @@ namespace System.Windows.Forms {
 		
 		// Inserts a column in the control
 		internal void InsertColumnInCtrl(ColumnHeader  column)
-		{			
-			if (!bInitialised) return;
+		{	
+			if (!bInitialised) return;	
 			
-			LVCOLUMN lvc = new LVCOLUMN();					
+			LVCOLUMN lvc = new LVCOLUMN();				
+			bool bAutoSizing = false;	
+			int iCol;
 			
-			Console.WriteLine("Insert columns " + column.Text + " pos: " + column.Index+ " serial: "+  column.Serial);    						
+			Console.WriteLine("Insert columns " + column.Text + " pos: " + column.Index+ " serial: "+  column.Serial+ " autosizing " + bAutoSizing);    						
 					
 			lvc.mask = (int)( ListViewColumnFlags.LVCF_FMT | ListViewColumnFlags.LVCF_WIDTH | ListViewColumnFlags.LVCF_TEXT | ListViewColumnFlags.LVCF_SUBITEM);
 			lvc.iSubItem = column.Serial;
 			lvc.pszText = column.Text;
 			lvc.cx = column.Width;
-			lvc.fmt = TextAlign(column.TextAlign);			
-		
+			lvc.fmt = TextAlign(column.TextAlign);									
+			
 			IntPtr lvcBuffer = Marshal.AllocHGlobal(Marshal.SizeOf(lvc));
   			Marshal.StructureToPtr(lvc, lvcBuffer, false);			
-  			Win32.SendMessage(Handle, (int)ListViewMessages.LVM_INSERTCOLUMNA, lvc.iSubItem, lvcBuffer);
-  			Marshal.FreeHGlobal(lvcBuffer);
+  			iCol = (int) Win32.SendMessage(Handle, (int)ListViewMessages.LVM_INSERTCOLUMNA, column.Index, lvcBuffer);
+  			Marshal.FreeHGlobal(lvcBuffer);			
   			
 		}	
-		
 		// Inserts an item in the control
 		internal void InsertItemInCtrl(ListViewItem listViewItem)
 		{			
@@ -672,12 +680,12 @@ namespace System.Windows.Forms {
 		}
 		
 		// Remove a column from the control
-		internal void RemoveColumnInCtrl(int nIndex){	
+		internal int DeleteColumnInCtrl(int nIndex){	
 			
-			if (!bInitialised) return;
+			if (!bInitialised) return 0;
 					
 			Console.WriteLine("Delete column " + nIndex);    											
-  			Win32.SendMessage(Handle, (int)ListViewMessages.LVM_DELETECOLUMN, nIndex, 0);  			
+  			return Win32.SendMessage(Handle, (int)ListViewMessages.LVM_DELETECOLUMN, nIndex, 0);  			
 		}				
 		
 		// Get the check status of an item						
@@ -726,8 +734,20 @@ namespace System.Windows.Forms {
 			
 			if (!bInitialised) return;					
 			Win32.SendMessage(Handle, (int)ListViewMessages.LVM_SETBKCOLOR, 0, 	(int) (backColor.R | backColor.G<<8 | backColor.B <<16));  			
-		}					
+		}				
 		
+		public void insertItemsInCtrl()	{
+			
+			Win32.SendMessage(Handle, (int)ListViewMessages.LVM_DELETEALLITEMS, 0,0);			
+		
+			for (int i=0; i<Items.Count; i++){	// Insert items		
+					
+				InsertItemInCtrl(Items[i]);							 						   								
+				
+				for (int s=0; s<Items[i].SubItems.Count; s++)	// Insert subitems		
+					SetItemInCtrl(Items[i].SubItems[s], s+1);
+			}						
+		}
 		
 		//						
 		protected override void WndProc(ref Message m) 	{			
@@ -747,14 +767,17 @@ namespace System.Windows.Forms {
 				for (int i=0; i<Columns.Count; i++)	// Insert columns
 					InsertColumnInCtrl(Columns[i]);							
 					
-				for (int i=0; i<Items.Count; i++){	// Insert items		
-						
-					InsertItemInCtrl(Items[i]);							 						   								
-					
-					for (int s=0; s<Items[i].SubItems.Count; s++)	// Insert subitems		
-						SetItemInCtrl(Items[i].SubItems[s], s+1);
-				}						
+				insertItemsInCtrl();					
 				
+				// We need to setup the column autoresizing flags after all the columns and items
+				// are inserted
+				for (int i=0; i<Columns.Count; i++)	{							
+					
+					if (Columns[i].Width!=-1 && Columns[i].Width!=-2) continue;																
+									
+					Win32.SendMessage(Handle, (int)ListViewMessages.LVM_SETCOLUMNWIDTH, Columns[i].Index, 	
+						Columns[i].Width);	
+				}
 			}
 			
 			
@@ -840,7 +863,7 @@ namespace System.Windows.Forms {
 					}
 					
 					case (int)ListViewNotifyMsg.LVN_ITEMCHANGED:					
-					{				
+					{			
 						
 						NMLISTVIEW NmLstView = (NMLISTVIEW)Marshal.PtrToStructure (m.LParam,	typeof (NMLISTVIEW));								
 						
@@ -867,12 +890,29 @@ namespace System.Windows.Forms {
 							{
 								chkItemCol.Add(i);
 								Console.WriteLine("Item checked " + i);    											
-							}
-						
+							}						
 						
 						break;
 					}
 					
+					
+					// Note: Under WinXP we get HDN_ITEMCHANGEDW
+					// seems that we change this using LVM_SETUNICODEFORMAT										
+					case (int)HeaderCtrlNOtify.HDN_ITEMCHANGEDA:
+					case (int)HeaderCtrlNOtify.HDN_ITEMCHANGEDW:
+					{							
+						
+						NMHEADER NmHeader = (NMHEADER)Marshal.PtrToStructure (m.LParam,	typeof (NMHEADER));																																		
+						HDITEM HDItem = (HDITEM)Marshal.PtrToStructure(NmHeader.pitem,	typeof (HDITEM));						
+						
+						if (((uint)HDItem.mask & (uint)HeaderItemFlags.HDI_HEIGHT)==(uint)HeaderItemFlags.HDI_HEIGHT)
+						{
+							Console.WriteLine("HDN_ITEMCHANGED item:" + NmHeader.iItem + " width: "  +HDItem.cxy); 							
+							Columns[NmHeader.iItem].Width = HDItem.cxy;
+						}
+												   																										
+						break;	
+					}
 											
 					default:
 						break;
@@ -1223,7 +1263,7 @@ namespace System.Windows.Forms {
 		{						
 			private ListView container = null;
 			private ArrayList collection = new ArrayList();	
-			private	int	nUniqueSerial = 5000; // TODO: Change to 0
+			private	int	nUniqueSerial = 5000;
 
 			//
 			//  --- Constructor
@@ -1247,26 +1287,47 @@ namespace System.Windows.Forms {
 				get { return (ColumnHeader) collection[index];}
 				set { collection[index] = value;}				
 			}
+						
+			//
+			//  --- Private methods used by the implementation
+			//			
+			public ColumnHeader FromSerial(int nSerial)
+			{
+				for (int i=0; i < collection.Count; i++){
+					ColumnHeader col = (ColumnHeader)collection[i];					
+					if (col.Serial==nSerial) return col;					
+				}
+				
+				return null;
+			}
+			
+			// The indexes have to be re-calculated
+			public void ReIndexCollection() {
+				for (int i=0; i < collection.Count; i++)
+				{
+					ColumnHeader col = (ColumnHeader)collection[i];
+					col.CtrlIndex=i;				
+				}
+				container.insertItemsInCtrl(); 
+			}
 
 			//
 			//  --- Public Methods
 			//
 			
-			public virtual int Add(ColumnHeader column) {
+			public virtual int Add(ColumnHeader column) {								
 				
-				if (column.Width==-1 ||column.Width==-2) column.Width=100; // TODO: Fix				
 				column.Serial = nUniqueSerial;
+				column.CtrlIndex = Count;
 				collection.Add(column);				
-				return Count-1;
+				nUniqueSerial++;
+				
+				container.InsertColumnInCtrl(column);
+				return Count-1;				
 			}
 			
 			public virtual ColumnHeader Add(string s, int witdh, HorizontalAlignment align) {				
-				// TODO: Witdh is Set to -1 to autosize the column header to the size of the largest subitem text 
-				//in the column or -2 to autosize the column header to the size of the text of the column header.				
-				//if (witdh==-1 ||witdh==-2) throw new NotImplementedException();		
-				if (witdh==-1 ||witdh==-2) witdh=100; // TODO: Fix
-								
-				Console.WriteLine("ColumnHeader.Add " +  s);															
+				
 				ColumnHeader column = new ColumnHeader();		
 				
 				/* The zero-based index of the column header within the ListView.ColumnHeaderCollection of the ListView control it is contained in.*/
@@ -1275,33 +1336,44 @@ namespace System.Windows.Forms {
 				column.TextAlign = align;
 				column.Width = witdh;						
 				column.Container = container;
-				column.Serial = nUniqueSerial;
-				collection.Add(column);				
-				nUniqueSerial++;
+				column.Serial = nUniqueSerial;			
+				collection.Add(column);								
+				nUniqueSerial++;				
+				container.InsertColumnInCtrl(column);				
 				
 				return column;				
 			}
 			
 			public virtual void AddRange(ColumnHeader[] values) {
-				for (int i=0; i<values.Length; i++)
-					collection.Add(values[i]);	
+				for (int i=0; i<values.Length; i++)	{
+					Add(values[i]);						
+				}
 			}
 			
 			public void Clear() {
+				
+				// Delete all columns
+				int nRslt = 1;
+				for (int n=0;  nRslt!=0; n++)
+					nRslt = container.DeleteColumnInCtrl(0);
+				
 				collection.Clear();
+			}			
+			
+			public bool Contains(ColumnHeader value) {
+				return 	collection.Contains(value);			
 			}
 			
-			[MonoTODO]
-			public bool Contains(ColumnHeader value) 
-			{
-				throw new NotImplementedException ();
+			public override bool Equals(object obj) {
+				
+				if(obj!= null && obj is ColumnHeaderCollection)	{
+					ColumnHeaderCollection that = (ColumnHeaderCollection)obj;
+					return (this.collection == that.collection);
+				}
+				
+				return false;
 			}
-			[MonoTODO]
-			public override bool Equals(object obj) 
-			{
-				//FIXME:
-				return base.Equals(obj);
-			}
+			
 			[MonoTODO]
 			public override int GetHashCode() 
 			{
@@ -1316,46 +1388,43 @@ namespace System.Windows.Forms {
 			public int IndexOf(ColumnHeader value) {
 				return collection.IndexOf(value);
 			}
-			[MonoTODO]
-			public void Insert(int witdh, ColumnHeader value) {
-				//FIXME:
-			}
-			[MonoTODO]
-			public void Insert(int val1, string str, int val2, HorizontalAlignment align) 
-			{
-				//FIXME:
+			
+			public void Insert(int index, ColumnHeader column) { 
+								
+				column.Serial = nUniqueSerial;								
+				column.CtrlIndex = index;
+				collection.Insert(index, column);				
+				nUniqueSerial++;
+				container.InsertColumnInCtrl(column);
+				ReIndexCollection();
 			}
 			
-			public virtual void Remove(ColumnHeader value) 
-			{
+			public void Insert(int index, string str, int witdh, HorizontalAlignment align) {
+				
+				ColumnHeader column = new ColumnHeader();									
+
+				column.Text = str;
+				column.TextAlign = align;
+				column.Width = witdh;						
+				column.Container = container;
+				Insert(index, column);								
 				
 			}
 			
-			public ColumnHeader FromSerial(int nSerial)
-			{
-				for (int i=0; i < collection.Count; i++)
-				{
-					ColumnHeader col = (ColumnHeader)collection[i];					
-					if (col.Serial==nSerial) return col;					
-				}
-				
-				return null;
+			public virtual void Remove(ColumnHeader value) 	{
+				RemoveAt(value.Index);
 			}
+					
 			
 			public virtual void RemoveAt(int index) 
 			{					
 				if (index>=Count) 				
 					throw new ArgumentOutOfRangeException("Invalid value for array index");											
 				
-				container.RemoveColumnInCtrl(index); 
+				container.DeleteColumnInCtrl(index); 
 				collection.Remove(collection[index]);				
 				
-				// The indexes have to be re-calculated
-				for (int i=0; i < collection.Count; i++)
-				{
-					ColumnHeader col = (ColumnHeader)collection[i];
-					col.CtrlIndex=i;				
-				}
+				ReIndexCollection();
 			}
 			
 			/// <summary>
@@ -1436,6 +1505,8 @@ namespace System.Windows.Forms {
 				//FIXME:
 			}
 			// End Of ICollection
+			
+			
 		}
 		//
 		// System.Windows.Forms.ListView.ListViewItemCollection.cs
@@ -1485,7 +1556,8 @@ namespace System.Windows.Forms {
 				Console.WriteLine("ListViewItem.Add " +  item.Text + " idx: " + item.Index);											
 				
 				item.CtrlIndex = Count;				
-				int nIdx = collection.Add(item);				
+				container.InsertItemInCtrl(item);		
+				int nIdx = collection.Add(item);						
 				return (ListViewItem)collection[nIdx];
 				
 			}
@@ -1501,7 +1573,10 @@ namespace System.Windows.Forms {
 			public void AddRange(ListViewItem[] values) {
 				
 				for (int i=0; i<values.Length; i++)
+				{
+					container.InsertItemInCtrl(values[i]);
 					Add(values[i]);	
+				}
 				
 			}
 			

@@ -33,7 +33,7 @@ namespace System.Windows.Forms {
 		{
 			text = null;
 			textAlign = HorizontalAlignment.Left;
-			width = -2;//default to autosize, not in spec
+			width = -2;
 			index = -1;//default to not in list
 		}
 		
@@ -55,8 +55,7 @@ namespace System.Windows.Forms {
 			get { return index; }
 		}		
 		
-		public ListView ListView 	//return parent control.
-		{	
+		public ListView ListView { 	//return parent control.		
 			get { return container; }			
 		}
 		
