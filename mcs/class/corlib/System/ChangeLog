@@ -1,3 +1,8 @@
+2003-02-17  Martin Baulig  <martin@ximian.com>
+
+	* Exception.cs (Exception.ToString): Print a newline between the
+	exception message and the stack trace.
+
 2003-02-17  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AppDomain.cs: implemented GetCurrentThreadId ().

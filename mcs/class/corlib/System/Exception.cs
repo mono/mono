@@ -184,7 +184,7 @@ namespace System {
 				result += "--- End of inner exception stack trace ---\n";
 			}
 
-			return result + " " + stack_trace;
+			return result + "\n" + stack_trace;
 		}
 
 		internal Exception FixRemotingException()
