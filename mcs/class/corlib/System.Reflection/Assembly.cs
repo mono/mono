@@ -195,6 +195,13 @@ namespace System.Reflection {
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
+		public Assembly GetSatelliteAssembly (CultureInfo culture, Version version)
+		{
+			throw new NotImplementedException ();
+		}
+		
+
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern static Assembly LoadFrom (String assemblyFile);
 
