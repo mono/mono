@@ -392,7 +392,7 @@ namespace Mono.Xml.Schema
 				if (defaultAttributeConsumed)
 					return String.Empty;
 				XmlQualifiedName qname = defaultAttributes [currentDefaultAttribute].QualifiedName;
-				string prefix = this.ParserContext.NamespaceManager.LookupPrefix (qname.Namespace);
+				string prefix = this.ParserContext.NamespaceManager.LookupPrefix (qname.Namespace, false);
 				if (prefix == null)
 					return String.Empty;
 				else

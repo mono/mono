@@ -1,3 +1,8 @@
+2004-06-03  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XsdValidatingReader.cs : XmlNamespaceManager.LookupPrefix() allows
+	  only atomized names.
+
 2004-02-16  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XsdIdentityPath.cs,
