@@ -1,3 +1,14 @@
+2004-08-24 Sachin Kumar <skumar1@novell.com>
+	* LoopStatementsC1.vb:
+	* LoopStatementsC2.vb:
+	* LoopStatementsC3.vb:
+	* LoopStatementsC4.vb:	
+	* LoopStatementsC5.vb:
+	* LoopStatementsC6.vb:
+	* LoopStatementsC7.vb:
+	* LoopStatementsC8.vb:
+	* Test.Sources: included new tests
+
 2004-08-23 Bernie Solomon <bernard@ugsolutions.com>
 	* DoubleTypeCharTest.vb: needs an Imports System
 

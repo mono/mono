@@ -395,13 +395,21 @@ ConditionalStatementsC4 \
 ConditionalStatementsC5 \
 ConditionalStatementsC6 \
 ConditionalStatementsC7 \
-ConditionalStatementsC8.vb \
-ConditionalStatementsC9.vb \
-ConditionalStatementsC10.vb \
-ConditionalStatementsC11.vb \
-ConditionalStatementsC12.vb \
-ConditionalStatementsC13.vb \
-ConditionalStatementsC14.vb
+ConditionalStatementsC8 \
+ConditionalStatementsC9 \
+ConditionalStatementsC10 \
+ConditionalStatementsC11 \
+ConditionalStatementsC12 \
+ConditionalStatementsC13 \
+ConditionalStatementsC14 \
+LoopStatementsC1 \
+LoopStatementsC2 \
+LoopStatementsC3 \
+LoopStatementsC4 \
+LoopStatementsC5 \
+LoopStatementsC6 \
+LoopStatementsC7 \
+LoopStatementsC8
 
 # All negetive test cases which should fail at
 # runtime goes here
