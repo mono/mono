@@ -270,7 +270,8 @@ namespace Mono.ILASM {
                                                         name_space, name);
                                         }
                                 }
-                                classdef.SpecialNoSuper ();
+                                if (FullName == "System.Object")
+                                        classdef.SpecialNoSuper ();
                         }
 
                         if (size != -1)

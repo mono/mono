@@ -1,3 +1,10 @@
+2003-09-08 Jackson Harper <jackson@latitudegeo.com>
+
+	* TypeDef.cs: By default types will have System.Object as their
+	parent type if no parent type is specified (this is what PEAPI
+	does) however if we are assembling corlib the System.Object type
+	will not have System.Object as its parent type.
+	
 2003-08-19 Jackson Harper <jackson@latitudegeo.com>
 
 	* DataDef.cs: Make name public so data names can be looked up
