@@ -480,6 +480,16 @@ namespace System.Collections {
 
 		[MonoTODO]
 		public virtual void InsertRange (int index, ICollection c) {
+
+			if (c == null)
+				throw new ArgumentNullException ();
+
+			if (index < 0 || index > this.Count)
+				throw new ArgumentOutOfRangeException ();
+
+			if (IsReadOnly || IsFixedSize)
+				throw new NotSupportedException ();
+			
 			version++;
 		}
 
