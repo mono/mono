@@ -41,6 +41,7 @@ namespace System.Windows.Forms
 		{
 			internal int item_height; 		/* Item's height */
 			internal int top_item;			/* First item that we show the in the current page */
+			internal int last_item;			/* Last visible item */
 			internal int page_size;			/* Number of listbox items per page. In MultiColumn listbox indicates items per column */
 			internal Rectangle textdrawing_rect;	/* Displayable Client Rectangle minus the scrollbars and with IntegralHeight calculated*/
 			internal bool show_verticalsb;		/* Is Vertical scrollbar show it? */
@@ -50,6 +51,7 @@ namespace System.Windows.Forms
 
 			public ListBoxInfo ()
 			{
+				last_item = 0;
 				item_height = 0;
 				top_item = 0;
 				page_size = 0;
@@ -62,19 +64,18 @@ namespace System.Windows.Forms
 		internal class ListBoxItem
 		{
 			internal object obj;
-			internal Rectangle rect;
 			internal bool Selected;
 
 			public ListBoxItem ()
 			{
 				obj = null;
-				Selected = true;
+				Selected = false;
 			}
 
 			public ListBoxItem (object obj)
 			{
 				this.obj = obj;
-				Selected = true;
+				Selected = false;
 			}
 		}
 
@@ -102,6 +103,8 @@ namespace System.Windows.Forms
 		private ListBoxInfo listbox_info;
 		private VScrollBar vscrollbar_ctrl;
 		private HScrollBar hscrollbar_ctrl;
+
+		private bool control_pressed = true;
 
 		public ListBox ()
 		{
@@ -146,6 +149,9 @@ namespace System.Windows.Forms
 			hscrollbar_ctrl.Maximum = 0;
 			hscrollbar_ctrl.Visible = false;
 			hscrollbar_ctrl.ValueChanged += new EventHandler (HorizontalScrollEvent);
+
+			/* Events */
+			MouseDown += new MouseEventHandler (OnMouseDownLB);
 		}
 
 		#region Events
@@ -347,8 +353,14 @@ namespace System.Windows.Forms
 				if (selected_index == value)
 					return;
 
+				if (value < -1 || value >= Items.Count)
+					throw new ArgumentOutOfRangeException ("Index of out range");
+
+				UnSelectItem (selected_index);
+    				SelectItem (value);
     				selected_index = value;
-				Refresh ();
+    				OnSelectedIndexChanged  (new EventArgs ());
+    				
 			}
 		}
 
@@ -400,7 +412,7 @@ namespace System.Windows.Forms
 		public override string Text {
 			get {
 				return "";
-				//throw new NotImplementedException ();
+				
 			}
 			set {
 				throw new NotImplementedException ();
@@ -453,7 +465,11 @@ namespace System.Windows.Forms
 
 		public void ClearSelected ()
 		{
-			throw new NotImplementedException ();
+			foreach (int i in selected_indices)
+				UnSelectItem (selected_indices[i]);
+
+			selected_indices.ClearIndices ();
+			selected_items.ClearObjects ();
 		}
 
 		protected virtual ObjectCollection CreateItemCollection ()
@@ -527,12 +543,18 @@ namespace System.Windows.Forms
 
 		public int IndexFromPoint (Point p)
 		{
-			throw new NotImplementedException ();
+			return IndexFromPoint (p.X, p.Y);
 		}
 
-		public int IndexFromPoint (int x,  int y)
+		// Only returns visible points
+		public int IndexFromPoint (int x, int y)
 		{
-			throw new NotImplementedException ();
+			for (int i = LBoxInfo.top_item; i < LBoxInfo.last_item; i++) {
+				if (GetItemRectangle (i).Contains (x,y) == true)
+					return i;
+			}
+
+			return -1;
 		}
 
 		protected override void OnChangeUICues(UICuesEventArgs e)
@@ -552,6 +574,28 @@ namespace System.Windows.Forms
 
 		protected virtual void OnDrawItem (DrawItemEventArgs e)
 		{
+			if (DrawItem != null && (DrawMode == DrawMode.OwnerDrawFixed || DrawMode == DrawMode.OwnerDrawVariable))
+				DrawItem (this, e);
+
+			if ((e.State & DrawItemState.Selected) == DrawItemState.Selected) {
+				e.Graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush
+					(ThemeEngine.Current.ColorHilight), e.Bounds);
+
+				e.Graphics.DrawString (Items[e.Index].ToString (), e.Font,
+					ThemeEngine.Current.ResPool.GetSolidBrush (ThemeEngine.Current.ColorHilightText),
+					e.Bounds, string_format);
+			}
+			else {
+				e.Graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush
+					(e.BackColor), e.Bounds);
+
+				e.Graphics.DrawString (Items[e.Index].ToString (), e.Font,
+					ThemeEngine.Current.ResPool.GetSolidBrush (e.ForeColor),
+					e.Bounds, string_format);
+			}
+
+
+
 
 		}
 
@@ -594,12 +638,12 @@ namespace System.Windows.Forms
 		{
 			base.OnResize (e);
 			UpdateInternalClientRect (ClientRectangle);
-		}
+		}		
 
 		protected override void OnSelectedIndexChanged (EventArgs e)
-		{
-			base.OnSelectedIndexChanged (e);
-
+		{				
+			if (SelectedIndexChanged != null)
+				SelectedIndexChanged (this, e);
 		}
 
 		protected override void OnSelectedValueChanged (EventArgs e)
@@ -633,7 +677,7 @@ namespace System.Windows.Forms
 			throw new NotImplementedException ();
 		}
 
-		public void SetSelected (int index,bool value)
+		public void SetSelected (int index, bool value)
 		{
 			throw new NotImplementedException ();
 		}
@@ -686,9 +730,7 @@ namespace System.Windows.Forms
 			listbox_info.textdrawing_rect.Y += ThemeEngine.Current.DrawListBoxDecorationTop (BorderStyle);
 			listbox_info.textdrawing_rect.X += ThemeEngine.Current.DrawListBoxDecorationLeft (BorderStyle);
 			listbox_info.textdrawing_rect.Height -= ThemeEngine.Current.DrawListBoxDecorationBottom (BorderStyle);
-			listbox_info.textdrawing_rect.Height -= ThemeEngine.Current.DrawListBoxDecorationTop (BorderStyle);
 			listbox_info.textdrawing_rect.Width -= ThemeEngine.Current.DrawListBoxDecorationRight (BorderStyle);
-			listbox_info.textdrawing_rect.Width -= ThemeEngine.Current.DrawListBoxDecorationLeft (BorderStyle);
 
 			if (listbox_info.show_verticalsb)
 				listbox_info.textdrawing_rect.Width -= vscrollbar_ctrl.Width;
@@ -719,75 +761,134 @@ namespace System.Windows.Forms
 				}
 			}
 
+			LBoxInfo.last_item = LastVisibleItem ();
 		}
 
-		internal void Draw ()
+		internal void Draw (Rectangle clip)
 		{
-			// IntegralHeight has effect, we also have to paint the unused area
-			if (ClientRectangle.Height > listbox_info.client_rect.Height) {
-				Region area = new Region (ClientRectangle);
-				area.Exclude (listbox_info.client_rect);
+			
+			if (LBoxInfo.textdrawing_rect.Contains (clip) == false) {
+				// IntegralHeight has effect, we also have to paint the unused area
+				if (ClientRectangle.Height > listbox_info.client_rect.Height) {
+					Region area = new Region (ClientRectangle);
+					area.Exclude (listbox_info.client_rect);
 
-				DeviceContext.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (Parent.BackColor),
-					area.GetBounds (DeviceContext));
+					DeviceContext.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (Parent.BackColor),
+						area.GetBounds (DeviceContext));
+				}
+
+				DeviceContext.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (BackColor), LBoxInfo.textdrawing_rect);
+				ThemeEngine.Current.DrawListBoxDecorations (DeviceContext, this);				
 			}
 
-			DeviceContext.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (BackColor), LBoxInfo.textdrawing_rect);
+			if (Items.Count > 0) {
+				Rectangle item_rect;
+				DrawItemState state = DrawItemState.None;
 
-			// Draw items
-			int y = LBoxInfo.textdrawing_rect.Y;
-			int top_y = LBoxInfo.textdrawing_rect.Y + LBoxInfo.textdrawing_rect.Height;
-			Rectangle item_rect = new Rectangle ();
-			item_rect.X = LBoxInfo.textdrawing_rect.X;
-			item_rect.Height = LBoxInfo.item_height;
+				for (int i = LBoxInfo.top_item; i < LBoxInfo.last_item; i++) {
+					item_rect = GetItemDisplayRectangle (i, LBoxInfo.top_item);
 
-			if (MultiColumn)
-				item_rect.Width = ColumnWidthInternal;
-			else
-				item_rect.Width = LBoxInfo.textdrawing_rect.Width;
+					if (clip.IntersectsWith (item_rect) == false)
+						continue;
 
-			for (int i = LBoxInfo.top_item; i < Items.Count; i++) {
-				item_rect.Y = y;
-				DrawListBoxItem (DeviceContext, i, item_rect);
-				y += LBoxInfo.item_height;
+					/* Draw item */
+					state = DrawItemState.None;
 
-				if (MultiColumn) {
-
-					if (y + LBoxInfo.item_height > top_y) {
-						if (item_rect.X + ColumnWidthInternal > LBoxInfo.textdrawing_rect.Width)
-							break;
-
-						item_rect.X += ColumnWidthInternal;
-						y = LBoxInfo.textdrawing_rect.Y;
+					if ((Items.GetListBoxItem (i)).Selected) {
+						state |= DrawItemState.Selected;
 					}
 
+					OnDrawItem (new DrawItemEventArgs (DeviceContext, Font, item_rect,
+						i, state, ForeColor, BackColor));
 				}
-				else
-					if (IntegralHeight)
-						if (y > top_y)
-							break;
-					else
-						if (y + LBoxInfo.item_height> top_y)
-							break;
-
 			}
-
-			ThemeEngine.Current.DrawListBoxDecorations (DeviceContext, this);
 		}
 
-		private void DrawListBoxItem (Graphics dc, int elem, Rectangle rect)
+		// Converts a GetItemRectangle to a one that we can display
+		private Rectangle GetItemDisplayRectangle (int index, int first_displayble)
 		{
-			dc.DrawString (Items[elem].ToString (), Font,
-					ThemeEngine.Current.ResPool.GetSolidBrush (ForeColor),
-					rect, string_format);
+			Rectangle item_rect;
+			Rectangle first_item_rect = GetItemRectangle (first_displayble);
+			item_rect = GetItemRectangle (index);
+			item_rect.X -= first_item_rect.X;
+			item_rect.Y -= first_item_rect.Y;
+
+			item_rect.Y += ThemeEngine.Current.DrawListBoxDecorationTop (BorderStyle);
+			item_rect.X += ThemeEngine.Current.DrawListBoxDecorationLeft (BorderStyle);
+			item_rect.Width -= ThemeEngine.Current.DrawListBoxDecorationRight (BorderStyle);
+
+			return item_rect;
 		}
 
 		// Value Changed
 		private void HorizontalScrollEvent (object sender, EventArgs e)
 		{
-			LBoxInfo.top_item = listbox_info.page_size * hscrollbar_ctrl.Value;				
+			LBoxInfo.top_item = listbox_info.page_size * hscrollbar_ctrl.Value;
+			LBoxInfo.last_item = LastVisibleItem ();
 			Refresh ();
 		}
+
+		private int LastVisibleItem ()
+		{
+			Rectangle item_rect;
+			int top_y = LBoxInfo.textdrawing_rect.Y + LBoxInfo.textdrawing_rect.Height;
+			int i = 0;
+
+			for (i = LBoxInfo.top_item; i < Items.Count; i++) {
+
+				item_rect = GetItemRectangle (i);
+
+				if (MultiColumn) {
+
+					if (item_rect.X > LBoxInfo.textdrawing_rect.Width)
+						return i - 1;
+				}
+				else {
+					if (IntegralHeight) {
+						if (item_rect.Y + item_rect.Height > top_y)
+							return i - 1;
+					}
+					else {
+						if (item_rect.Y > top_y)
+							return i - 1;
+					}
+				}
+			}
+
+			return i;
+		}
+
+		private void OnMouseDownLB (object sender, MouseEventArgs e)
+    		{
+    			int index = IndexFromPoint (e.X, e.Y);
+    			if (index == -1) return;   			
+
+    			switch (SelectionMode) {
+    				case SelectionMode.None: // Do nothing
+    					break;
+    				case SelectionMode.One: {
+    					SelectedIndex = index;
+    					break;
+    				}
+
+    				case SelectionMode.MultiSimple: {
+					if (selected_index == -1) {
+						SelectedIndex = index;
+					} else {
+
+						if ((Items.GetListBoxItem (index)).Selected)
+							UnSelectItem (index);
+						else {
+    							SelectItem (index);
+    							OnSelectedIndexChanged  (new EventArgs ());
+    						}
+    					}
+    					break;
+    				}
+    				default:
+    					break;
+    			}
+    		}
 
 		private void OnPaintLB (PaintEventArgs pevent)
 		{
@@ -795,13 +896,12 @@ namespace System.Windows.Forms
     				return;
 
 			/* Copies memory drawing buffer to screen*/
-			Draw ();
-			pevent.Graphics.DrawImage (ImageBuffer, 0, 0);
+			Draw (pevent.ClipRectangle);
+			pevent.Graphics.DrawImage (ImageBuffer, pevent.ClipRectangle, pevent.ClipRectangle, GraphicsUnit.Pixel);
 		}
 
 		internal void RellocateScrollBars ()
 		{
-
 			if (listbox_info.show_verticalsb) {
 
 				vscrollbar_ctrl.Size = new Size (vscrollbar_ctrl.Width,
@@ -833,6 +933,32 @@ namespace System.Windows.Forms
 			CalcClientArea ();
 		}
 
+		// Add an item in the Selection array and marks it visually as selected
+		void SelectItem (int index)
+		{
+			if (index == -1)
+				return;
+
+			Rectangle invalidate = GetItemDisplayRectangle (index, LBoxInfo.top_item);
+			(Items.GetListBoxItem (index)).Selected = true;
+    			selected_indices.AddIndex (index);
+    			selected_items.AddObject (Items[index]);
+    			Invalidate (invalidate);
+		}
+
+		// Removes an item in the Selection array and marks it visually as unselected
+		void UnSelectItem (int index)
+		{
+			if (index == -1)
+				return;
+
+			Rectangle invalidate = GetItemDisplayRectangle (index, LBoxInfo.top_item);
+			(Items.GetListBoxItem (index)).Selected = false;
+			selected_indices.RemoveIndex (index);
+			selected_items.RemoveObject (Items[index]);
+			Invalidate (invalidate);
+		}
+
 		// Updates the scrollbar's position with the new items and inside area
 		internal void UpdateItemInfo (bool adding, int first, int last)
 		{
@@ -854,13 +980,33 @@ namespace System.Windows.Forms
 				}
 			}
 
-			if (adding) {
+			if (MultiColumn == false) {
+				/* Calc the longest items for non multicolumn listboxes */
+				if ((first == -1 && last == -1) || (adding == false)) {
 
+					SizeF size;
+					for (int i = 0; i < Items.Count; i++) {
+						size = DeviceContext.MeasureString (Items[i].ToString(), Font);
+
+						if ((int) size.Width > listbox_info.max_itemwidth)
+							listbox_info.max_itemwidth = (int) size.Width;
+					}
+				}
+				else {
+					if (adding) {
+
+						SizeF size;
+						for (int i = first; i < last + 1; i++) {
+							size = DeviceContext.MeasureString (Items[i].ToString(), Font);
+
+							if ((int) size.Width > listbox_info.max_itemwidth)
+								listbox_info.max_itemwidth = (int) size.Width;
+						}
+					}
+				}
 			}
-			else { /* Removing */
 
-			}
-
+			UpdateShowHorizontalScrollBar ();
 			Refresh ();
 		}
 
@@ -878,7 +1024,6 @@ namespace System.Windows.Forms
 		{
 			bool show = false;
 			bool enabled = true;
-			bool large_item = false;
 
 			if (MultiColumn) {  /* Horizontal scrollbar is always shown in Multicolum mode */
 
@@ -899,10 +1044,10 @@ namespace System.Windows.Forms
 
 			} else { /* If large item*/
 
-				if (large_item && HorizontalScrollbar) {
-
+				if (listbox_info.max_itemwidth > listbox_info.client_rect.Width && HorizontalScrollbar) {
+					show = true;
+					hscrollbar_ctrl.Maximum = listbox_info.max_itemwidth;
 				}
-
 			}
 
 			if (hscrollbar_ctrl.Enabled != enabled)
@@ -937,7 +1082,7 @@ namespace System.Windows.Forms
 						enabled = false;
 					}
 			}
-			
+
 			if (vscrollbar_ctrl.Enabled != enabled)
 				vscrollbar_ctrl.Enabled = enabled;
 
@@ -959,13 +1104,13 @@ namespace System.Windows.Forms
 
 		// Value Changed
 		private void VerticalScrollEvent (object sender, EventArgs e)
-		{			
+		{
 			LBoxInfo.top_item = /*listbox_info.page_size + */ vscrollbar_ctrl.Value;
+			LBoxInfo.last_item = LastVisibleItem ();
 			Refresh ();
 		}
 
 		#endregion Private Methods
-
 
 		/*
 			ListBox.ObjectCollection
@@ -1122,7 +1267,7 @@ namespace System.Windows.Forms
 			private int AddItem (object item)
 			{
 				object_items.Add (item);
-				listbox_items.Add (null);
+				listbox_items.Add (new ListBox.ListBoxItem ());
 				return object_items.Count - 1;
 			}
 
@@ -1147,15 +1292,11 @@ namespace System.Windows.Forms
 
 		/*
 			ListBox.SelectedIndexCollection
-
-			The idea is to get all the data for this collection from
-			the ListBox SelectedObjectCollection object
-
 		*/
 		public class SelectedIndexCollection : IList, ICollection, IEnumerable
 		{
 			private ListBox owner;
-			private ArrayList items = new ArrayList ();
+			private ArrayList indices = new ArrayList ();
 
 			public SelectedIndexCollection (ListBox owner)
 			{
@@ -1164,7 +1305,7 @@ namespace System.Windows.Forms
 
 			#region Public Properties
 			public virtual int Count {
-				get { return owner.SelectedItems.Count; }
+				get { return indices.Count; }
 			}
 
 			public virtual bool IsReadOnly {
@@ -1172,7 +1313,12 @@ namespace System.Windows.Forms
 			}
 
 			public int this [int index] {
-				get { throw new NotImplementedException (); }
+				get {
+					if (index < 0 || index >= Count)
+						throw new ArgumentOutOfRangeException ("Index of out range");
+
+					return (int) indices[index];
+				}
 			}
 
 			bool ICollection.IsSynchronized {
@@ -1192,17 +1338,17 @@ namespace System.Windows.Forms
 			#region Public Methods
 			public bool Contains (int selectedIndex)
 			{
-				throw new NotImplementedException ();
+				return indices.Contains (selectedIndex);
 			}
 
 			public virtual void CopyTo (Array dest, int index)
 			{
-				throw new NotImplementedException ();
+				indices.CopyTo (dest, index);
 			}
 
 			public virtual IEnumerator GetEnumerator ()
 			{
-				throw new NotImplementedException ();
+				return indices.GetEnumerator ();
 			}
 
 			int IList.Add (object obj)
@@ -1222,7 +1368,7 @@ namespace System.Windows.Forms
 
 			int IList.IndexOf (object selectedIndex)
 			{
-				return IndexOf ((int)selectedIndex);
+				return IndexOf ((int) selectedIndex);
 			}
 
 			void IList.Insert (int index, object value)
@@ -1241,15 +1387,33 @@ namespace System.Windows.Forms
 			}
 
 			object IList.this[int index]{
-				get {throw new NotImplementedException (); }
+				get {return indices[index]; }
 				set {throw new NotImplementedException (); }
 			}
 
 			public int IndexOf (int selectedIndex)
 			{
-				throw new NotSupportedException ();
+				return indices.IndexOf (selectedIndex);
 			}
 			#endregion Public Methods
+
+			#region Private Methods
+			internal void AddIndex (int index)
+			{
+				indices.Add (indices);
+			}
+
+			internal void RemoveIndex (int index)
+			{
+				indices.Remove (indices);
+			}
+
+			internal void ClearIndices ()
+			{
+				indices.Clear ();
+			}
+
+			#endregion Private Methods
 
 		}
 
@@ -1259,7 +1423,7 @@ namespace System.Windows.Forms
 		public class SelectedObjectCollection : IList, ICollection, IEnumerable
 		{
 			private ListBox owner;
-			private ArrayList items = new ArrayList ();
+			private ArrayList object_items = new ArrayList ();
 
 			public SelectedObjectCollection (ListBox owner)
 			{
@@ -1268,7 +1432,7 @@ namespace System.Windows.Forms
 
 			#region Public Properties
 			public virtual int Count {
-				get { return items.Count; }
+				get { return object_items.Count; }
 			}
 
 			public virtual bool IsReadOnly {
@@ -1276,7 +1440,7 @@ namespace System.Windows.Forms
 			}
 
 			bool ICollection.IsSynchronized {
-				get { return false; }
+				get { return true; }
 			}
 
 			object ICollection.SyncRoot {
@@ -1288,8 +1452,8 @@ namespace System.Windows.Forms
 			}
 
 			object IList.this[int index] {
-				get { return items [index]; }
-				set { items [index] = value; }
+				get { return object_items[index]; }
+				set { throw new NotSupportedException (); }
 			}
 
 			#endregion Public Properties
@@ -1297,12 +1461,12 @@ namespace System.Windows.Forms
 			#region Public Methods
 			public virtual bool Contains (object selectedObject)
 			{
-				return items.Contains (selectedObject);
+				return object_items.Contains (selectedObject);
 			}
 
 			public virtual void CopyTo (Array dest, int index)
 			{
-				throw new NotImplementedException ();
+				object_items.CopyTo (dest, index);
 			}
 
 			int IList.Add (object value)
@@ -1322,7 +1486,7 @@ namespace System.Windows.Forms
 
 			int IList.IndexOf (object selectedIndex)
 			{
-				throw new NotImplementedException ();
+				return IndexOf ((int) selectedIndex);
 			}
 	
 			void IList.Insert (int index, object value)
@@ -1342,15 +1506,33 @@ namespace System.Windows.Forms
 	
 			public int IndexOf (int selectedIndex)
 			{
-				throw new NotImplementedException ();
+				return object_items.IndexOf (selectedIndex);
 			}
 
 			public virtual IEnumerator GetEnumerator ()
 			{
-				throw new NotImplementedException ();
+				return object_items.GetEnumerator ();
 			}
 
 			#endregion Public Methods
+
+			#region Private Methods
+			internal void AddObject (object obj)
+			{
+				object_items.Add (obj);
+			}
+
+			internal void RemoveObject (object obj)
+			{
+				object_items.Remove (obj);
+			}
+
+			internal void ClearObjects ()
+			{
+				object_items.Clear ();
+			}
+
+			#endregion Private Methods
 
 		}
 

@@ -1,3 +1,8 @@
+2004-12-03  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* ListBox.cs: implemented clipping, selection single and multiple,
+	bug fixing
+
 2004-12-03  Ravindra <rkumar@novell.com>
 
 	* ListView.cs (ListView_KeyDown):
