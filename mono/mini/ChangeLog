@@ -1,3 +1,12 @@
+2003-05-21  Dietmar Maurer  <dietmar@ximian.com>
+
+	* mini-x86.c (mono_arch_get_allocatable_int_vars): dont allocate
+	I1 to registers because there is no simply way to sign extend 8bit
+	quantities in caller saved registers on x86.
+
+	* inssel-float.brg: set costs of some rules to 2 so
+	that monobure always select the arch. specific ones if supplied,
+	regardless of the order we pass the files to monoburg.
 
 Tue May 20 17:19:14 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
