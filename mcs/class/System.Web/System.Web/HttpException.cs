@@ -11,8 +11,8 @@
 using System;
 using System.IO;
 using System.Text;
-//using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Web.Compilation;
 using System.Web.Util;
 
 namespace System.Web
@@ -102,7 +102,8 @@ namespace System.Web
 
 		static string HtmlEncode (string s)
 		{
-			return HttpUtility.HtmlEncode (s);
+			string res = HttpUtility.HtmlEncode (s);
+			return res.Replace ("\n", "<br />");
 		}
 		
 		string GetHtmlizedErrorMessage ()
@@ -119,6 +120,14 @@ namespace System.Web
 			builder.AppendFormat ("<b>Description: </b>{0}\n<p>\n", HtmlEncode (exc.Description));
 			builder.AppendFormat ("<b>Error message: </b>{0}\n<p>\n", HtmlEncode (exc.ErrorMessage));
 
+			if (exc is ParseException)
+				builder.Append ("<b>File name: </b>" + exc.FileName);
+			else if (exc is CompilationException) {
+				builder.Append ("<table summary=\"Source file\" width=\"100%\" bgcolor=\"#ffffc\">\n<tr><td>");
+				FormatReader (builder, ((CompilationException) exc).File, 0);
+				builder.Append ("</td></tr>\n</table>\n<p>\n");
+			}
+			/*
 			if (exc.HaveSourceError) {
 				builder.Append ("<b>Source Error: </b>\n<p>\n");
 				builder.Append ("<table summary=\"Source error\" width=\"100%\" bgcolor=\"#ffffc\">\n<tr><td>");
@@ -138,12 +147,17 @@ namespace System.Web
 				builder.Append ("</td></tr>\n</table>\n<p>\n");
 			}
 			
-			
+			*/
 			builder.Append ("<hr>\n</body>\n</html>\n");
 			builder.AppendFormat ("<!--\n{0}\n-->\n", HtmlEncode (exc.ToString ()));
 			return builder.ToString ();
 		}
 
+		static void FormatReader (StringBuilder builder, string text, int errorLine)
+		{
+			FormatReader (builder, new StringReader (text), errorLine, true);
+		}
+		
 		static void FormatReader (StringBuilder builder, TextReader reader, int errorLine)
 		{
 			FormatReader (builder, reader, errorLine, true);

@@ -1,3 +1,13 @@
+2003-04-30  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HtmlizedException.cs: simplified to cope with the new interface.
+
+	* HttpApplicationFactory.cs: use the application file parser to get the 
+	application Type.
+	
+	* HttpException.cs: small changes. Needs some more work on
+	ParseExceptions.
+	
 2003-03-25  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpRequest.cs: fixed Url property.

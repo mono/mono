@@ -11,7 +11,7 @@ using System;
 using System.Collections;
 using System.IO;
 using System.Reflection;
-using System.Web;
+using System.Web.UI;
 using System.Web.Compilation;
 using System.Web.SessionState;
 
@@ -75,7 +75,7 @@ namespace System.Web {
 			if (File.Exists(_appFilename)) {
 				// Setup filemonitor for all filedepend also. CacheDependency?
 
-				_appType = GlobalAsaxCompiler.CompileApplicationType (_appFilename, context);
+				_appType = ApplicationFileParser.GetCompiledApplicationType (_appFilename, context);
 				if (_appType == null) {
 					string msg = String.Format ("Error compiling application file ({0}).", _appFilename);
 					throw new ApplicationException (msg);
@@ -321,6 +321,10 @@ namespace System.Web {
 		public static void SetCustomApplication (IHttpHandler customApplication)
 		{
 			custApplication = customApplication;
+		}
+
+		internal Type AppType {
+			get { return _appType; }
 		}
 	}
 }
