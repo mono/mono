@@ -820,7 +820,7 @@ namespace Mono.CSharp {
 				foreach (AttributeSection attr_section in attrs.AttributeSections) {
 					foreach (Attribute a in attr_section.Attributes) {
 						TypeExpr attributeType = RootContext.LookupType (temp_ec.DeclSpace, Attributes.GetAttributeFullName (a.Name), true, Location.Null);
-						if (attributeType.Type == TypeManager.cls_compliant_attribute_type) {
+						if (attributeType != null && attributeType.Type == TypeManager.cls_compliant_attribute_type) {
 							a.Resolve (temp_ec);
 							return a;
 						}
