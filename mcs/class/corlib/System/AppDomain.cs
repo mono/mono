@@ -82,37 +82,40 @@ namespace System
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern AppDomainSetup getSetup ();
 
+		AppDomainSetup SetupInformationNoCopy {
+			get { return getSetup (); }
+		}
+
 		public AppDomainSetup SetupInformation {
 			get {
 				AppDomainSetup setup = getSetup ();
-				if (setup == null)
-					return null;
 				return new AppDomainSetup (setup);
 			}
 		}
 
 		public string BaseDirectory {
 			get {
-				return SetupInformation.ApplicationBase;
+				return SetupInformationNoCopy.ApplicationBase;
 			}
 		}
 
 		public string RelativeSearchPath {
 			get {
-				return SetupInformation.PrivateBinPath;
+				return SetupInformationNoCopy.PrivateBinPath;
 			}
 		}
 
 		public string DynamicDirectory {
 			get {
-				if (SetupInformation.DynamicBase == null) return null;
-				return Path.Combine (SetupInformation.DynamicBase, SetupInformation.ApplicationName);
+				AppDomainSetup setup = SetupInformationNoCopy;
+				if (setup.DynamicBase == null) return null;
+				return Path.Combine (setup.DynamicBase, setup.ApplicationName);
 			}
 		}
 
 		public bool ShadowCopyFiles {
 			get {
-				return (SetupInformation.ShadowCopyFiles == "true");
+				return (SetupInformationNoCopy.ShadowCopyFiles == "true");
 			}
 		}
 
@@ -188,7 +191,7 @@ namespace System
 			if (path == null || path.Length == 0)
 				return;
 
-			AppDomainSetup setup = SetupInformation;
+			AppDomainSetup setup = SetupInformationNoCopy;
 
 			string pp = setup.PrivateBinPath;
 			if (pp == null || pp.Length == 0) {
@@ -208,12 +211,12 @@ namespace System
 #endif
 		public void ClearPrivatePath ()
 		{
-			SetupInformation.PrivateBinPath = String.Empty;
+			SetupInformationNoCopy.PrivateBinPath = String.Empty;
 		}
 
 		public void ClearShadowCopyPath ()
 		{
-			SetupInformation.ShadowCopyDirectories = String.Empty;
+			SetupInformationNoCopy.ShadowCopyDirectories = String.Empty;
 		}
 
 		public ObjectHandle CreateComInstanceFrom (string assemblyName, string typeName)
@@ -517,7 +520,7 @@ namespace System
 
 		public void SetCachePath (string path)
 		{
-			SetupInformation.CachePath = path;
+			SetupInformationNoCopy.CachePath = path;
 		}
 
 		[SecurityPermission (SecurityAction.Demand, Flags=SecurityPermissionFlag.ControlPolicy)]
@@ -532,12 +535,12 @@ namespace System
 
 		public void SetShadowCopyFiles()
 		{
-			SetupInformation.ShadowCopyFiles = "true";
+			SetupInformationNoCopy.ShadowCopyFiles = "true";
 		}
 
 		public void SetShadowCopyPath (string path)
 		{
-			SetupInformation.ShadowCopyDirectories = path;
+			SetupInformationNoCopy.ShadowCopyDirectories = path;
 		}
 
 		[SecurityPermission (SecurityAction.Demand, Flags=SecurityPermissionFlag.ControlPolicy)]
@@ -727,7 +730,7 @@ namespace System
 
 		public void SetDynamicBase (string path)
 		{
-			SetupInformation.DynamicBase = path;
+			SetupInformationNoCopy.DynamicBase = path;
 		}
 
 #if NET_2_0

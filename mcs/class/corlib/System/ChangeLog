@@ -1,7 +1,12 @@
+2004-09-13 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AppDomain.cs: added SetupInformationNoCopy property, since
+	SetupInformation creates a copy now, all updates to it should use the
+	actual data. Fixes bug #61991 take 2.
+
 2004-09-09  Tim Coleman <tim@timcoleman.com>
 	* Base64FormattingOptions.cs: New enum
 	* Convert.cs: Add new ToBase64String methods for Fx 2.0
-
 
 2004-09-08  Marek Safar  <marek.safar@seznam.cz>
 
