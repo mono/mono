@@ -59,7 +59,7 @@ namespace System.EnterpriseServices.CompensatingResourceManager {
 		}
 
 		[MonoTODO]
-		public virtual void CommitRecord (LogRecord rec)
+		public virtual bool CommitRecord (LogRecord rec)
 		{
 			throw new NotImplementedException ();
 		}

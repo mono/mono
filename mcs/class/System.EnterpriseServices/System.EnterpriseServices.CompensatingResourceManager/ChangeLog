@@ -1,3 +1,7 @@
+2004-06-18  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* Compensator.cs: fixed return value of CommitRecord method
+
 2004-06-11  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* ApplicationCrmEnabledAttribute: added missing
