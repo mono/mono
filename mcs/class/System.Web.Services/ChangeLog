@@ -1,0 +1,8 @@
+2002-07-19  Tim Coleman <tim@timcoleman.com>
+	* System.Web.Services.build: added
+	* System.Web.Services:
+	* System.Web.Services.Configuration:
+	* System.Web.Services.Description:
+	* System.Web.Services.Discovery:
+	* System.Web.Services.Protocols:
+		New directories added
