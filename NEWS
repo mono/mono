@@ -1,3 +1,84 @@
+Hello!
+
+	Version 0.16 of Mono has been released!  This is mostly a bug
+	fix release, a lot of work has been going on to make existing
+	features more robust and less buggy.   Also, contributions are
+	too varied, so it is hard to classify them in groups.
+
+* Stats
+
+        795 commits to mono and mcs since August 23rd.
+
+* News
+
+        The changes that got in this releases are mostly
+        bugfixes.  Miguel, Martin and Ravi attacked lots of bugs in the
+        compiler, Dick fixed a bunch of bugs related to processes and
+        threads.  Mark Crichton resumed his work on the SPARC port and
+        made lots of progress there.  Juli Mallett has been working on
+        making sure Mono also builds on BSD systems.  As usual, Dietmar
+        and Paolo supplied their continuous stream of fixes to the
+        runtime.
+
+        Dietmar has completed the work on the runtime side for
+        remoting support and we ship now with a sample channel, the
+        System.Runtime.Remoting.Sample.  This can be used as a
+        reference implementation for anyone interested in implementing
+        other channels (like a CORBA channel).  
+
+	Duncan got preliminary XSLT support done by using
+        libxslt.  
+
+	Gonzalo (with some help from Patrik) has been working hard
+        making our ASP.NET implementation work on both Mono and MS by
+        migrating the existing xsp code to the class library.  Gaurav
+        started working on the classes in System.Design.dll and Chris
+        Toshok checked in Mono.Directory.LDAP, which will be the
+        foundation to implement the System.DirectoryServices assembly.
+
+        Various fixes from Kral, Jason, Piers and Gonzalo were
+	committed to System.Xml; Martin Algiers reports that the
+	upcoming NAnt release will be fully compatible with Mono.
+
+        Miguel imported Sergey Chaban's Mono.PEToolkit and ilasm code
+        to CVS.  Nick, as always, continues to refine our testing
+        framework by improving our tests.  Andrew Birkett continues to
+        improve the implementation of our security/cryptographic
+        classes.  Jonathan Pryor contributed type-reflector the our
+        list of tools.
+
+* Other News From Behind de Curtain.
+
+	While the above is pretty impressive on its own, various other
+	non-released portions of Mono have been undergoing: Adam Treat
+	has been leading the effort to document our class libraries
+	and produce the tools required for it.
+
+	Martin Baulig has been working on the Mono Debugger which is
+	not being released yet.  This debugger allows both native
+	Linux application as well as CIL applications to be debugged
+	at the same time (and in fact, you can use this to debug the
+	JIT engine).  The debugger is written in C# with some C glue
+
+	In the meant A new JIT engine is under development, focused on
+	adding more of the high-end optimizations which will be
+	integrated on an ahead-of-time-compiler.   Dietmar and Paolo
+	have been working on this.
+
+* Contributors to this release
+
+      * Non-Ximian developers: Adam Treat, Andrew Birkett, Dennis
+        Hayes, Diego Sevilla, Franklin Wise, Gaurav Vaish ,Jason
+        Diamond, Johannes Roith, John Sohn, Jonathan Pryor, Juli
+        Mallett, Kral Ferch, Mike Crichton, Nick Drochak, Nick
+        Zigarovich, Piers Haken, Rafael Teixeira, Ricardo Fernandez
+        Pascual, Sergey Chaban, Tim Coleman.
+
+      * Ximian developers: Dietmar, Paolo, Dick, Duncan, Ravi,
+        Miguel, Martin, Chris, Joe, Gonzalo, Rodrigo.
+
+
+---------------------------------------------------------------------------------
 	* Sergey Chaban added thread-safe support to
 	  System.Collections.SortedList.
 	
