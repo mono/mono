@@ -132,6 +132,7 @@ System.Xml/XmlSignificantWhitespace.cs
 System.Xml/XmlSpace.cs
 System.Xml/XmlText.cs
 System.Xml/XmlTextReader.cs
+System.Xml/XmlTextReader2.cs
 System.Xml/XmlTokenizedType.cs
 System.Xml/XmlUrlResolver.cs
 System.Xml/XmlValidatingReader.cs
@@ -143,14 +144,10 @@ System.Xml/XmlNodeArrayList.cs
 System.Xml/XmlInputStream.cs
 System.Xml/XmlParserInput.cs
 System.Xml.XPath/IXPathNavigable.cs
-System.Xml.XPath/IXPathEditable.cs
-System.Xml.XPath/NodeChangedEventArgs.cs
-System.Xml.XPath/NodeChangedEventHandler.cs
 System.Xml.XPath/XmlChangeFilters.cs
 System.Xml.XPath/XmlNodeChangeType.cs
 System.Xml.XPath/XPathAtomicValue.cs
 System.Xml.XPath/XPathDocumentNodeChangedAction.cs
-System.Xml.XPath/XPathEditableNavigator.cs
 System.Xml.XPath/XPathNavigator.cs
 System.Xml.XPath/XPathExpression.cs
 System.Xml.XPath/XPathItem.cs
