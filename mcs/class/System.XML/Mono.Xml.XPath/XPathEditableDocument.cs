@@ -304,9 +304,12 @@ namespace Mono.Xml.XPath
 
 		public override void WriteStartElement (string prefix, string name, string ns)
 		{
-			if (current.OwnerDocument == null)
+			XmlDocument doc = current.OwnerDocument;
+			if (doc == null)
+				doc = current as XmlDocument;
+			if (doc == null)
 				throw new Exception ("Should not happen.");
-			XmlElement el = current.OwnerDocument.CreateElement (prefix, name, ns);
+			XmlElement el = doc.CreateElement (prefix, name, ns);
 			current.AppendChild (el);
 			document.AppendChild (current, el);
 			nodeStack.Push (current);

@@ -1,3 +1,8 @@
+2004-11-14  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XPathEditableDocument.cs : WriteStartElement() should not expect
+	  that there is an OwnerDocument (current node might be document).
+
 2004-10-29  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XPathEditableDocument.cs : internalize classes.
