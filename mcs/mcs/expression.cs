@@ -59,7 +59,13 @@ namespace Mono.CSharp {
 			MethodBase method;
 			
 			args = new ArrayList (1);
-			args.Add (new Argument (e, Argument.AType.Expression));
+			Argument a = new Argument (e, Argument.AType.Expression);
+
+                        // We need to resolve the arguments before sending them in !
+                        if (!a.Resolve (ec, loc))
+                                return null;
+
+                        args.Add (a);
 			method = Invocation.OverloadResolve (ec, (MethodGroupExpr) mg, args, loc);
 
 			if (method == null)
@@ -1763,7 +1769,7 @@ namespace Mono.CSharp {
 				if (e != null)
 					return e;
 			}
-			
+
 			expr = Convert.ExplicitConversion (ec, expr, type, loc);
 			return expr;
 		}
@@ -4437,7 +4443,8 @@ namespace Mono.CSharp {
 			return method;
 		}
 
-		static void Error_InvalidArguments (Location loc, int idx, MethodBase method, Type delegate_type, string arg_sig, string par_desc)
+		static void Error_InvalidArguments (Location loc, int idx, MethodBase method,
+                                                    Type delegate_type, string arg_sig, string par_desc)
 		{
 			if (delegate_type == null) 
 				Report.Error (1502, loc,

@@ -76,7 +76,8 @@ namespace Mono.CSharp {
 				
 				// from the null type to any reference-type.
 				if (expr is NullLiteral && !target_type.IsValueType)
-					return new NullLiteralTyped (target_type);
+                                        return new NullCast (expr, target_type);
+
 
 				// from any class-type S to any interface-type T.
 				if (target_type.IsInterface) {
@@ -990,9 +991,6 @@ namespace Mono.CSharp {
 			Type expr_type = expr.Type;
 			Expression e;
 
-			if (expr_type == target_type)
-				return expr;
-
 			if (target_type == null)
 				throw new Exception ("Target type is null");
 
@@ -1024,7 +1022,7 @@ namespace Mono.CSharp {
 			Type expr_type = expr.Type;
 			Expression e;
 
-			if (expr_type == target_type)
+			if (expr_type == target_type && !(expr is NullLiteral))
 				return expr;
 
 			e = ImplicitNumericConversion (ec, expr, target_type, loc);
@@ -1614,7 +1612,8 @@ namespace Mono.CSharp {
 			//
 			if (expr_type == TypeManager.object_type && target_type.IsValueType){
 				if (expr is NullLiteral){
-					Report.Error (37, "Cannot convert null to value type `" + TypeManager.CSharpName (expr_type) + "'");
+					Report.Error (37, "Cannot convert null to value type `" +
+                                                      TypeManager.CSharpName (expr_type) + "'");
 					return null;
 				}
 				return new UnboxCast (expr, target_type);

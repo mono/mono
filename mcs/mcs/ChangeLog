@@ -1,3 +1,37 @@
+2003-05-14  Ravi Pratap  <ravi@ximian.com>
+
+	* enum.cs (ImplicitConversionExists) : Rename to
+	ImplicitEnumConversionExists to remove ambiguity. 
+
+	* ecore.cs (NullCast): New type of cast expression class which
+	basically is very similar to EmptyCast with the difference being
+	it still is a constant since it is used only to cast a null to
+	something else
+	(eg. (string) null)
+
+	* convert.cs (ImplicitReferenceConversion): When casting a null
+	literal, we return a NullCast.
+
+	* literal.cs (NullLiteralTyped): Remove - I don't see why this
+	should be around anymore.
+
+	The renaming (reported was slightly wrong). Corrections:
+
+	ConvertImplicitStandard -> ImplicitConversionStandard
+	ConvertExplicitStandard -> ExplicitConversionStandard
+
+	* expression.cs (StaticCallExpr.MakeSimpleCall): Resolve arguments
+	before passing them in !
+
+	* convert.cs (ImplicitConversionStandard): When comparing for
+	equal expr and target types, ensure that expr is not a
+	NullLiteral.
+
+	In general, we must not be checking (expr_type ==
+	target_type) in the top level conversion methods
+	(ImplicitConversion, ExplicitConversion etc). This checking is
+	done in the methods that they delegate to.
+
 2003-05-20  Miguel de Icaza  <miguel@ximian.com>
 
 	* convert.cs: Move Error_CannotConvertType,
@@ -105,7 +139,7 @@
 	* parameter.cs (Parameter.ExternalType): drop the two arguments,
 	they were unused.
 
-s2003-05-11  Miguel de Icaza  <miguel@ximian.com>
+2003-05-11  Miguel de Icaza  <miguel@ximian.com>
 
 	* class.cs (MethodData.Define): Do not set the `newslot' on
 	interface members, if they are also flagged as "override".

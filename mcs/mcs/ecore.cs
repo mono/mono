@@ -1306,6 +1306,45 @@ namespace Mono.CSharp {
 		}
 	}
 
+        //
+	// We need to special case this since an empty cast of
+	// a NullLiteral is still a Constant
+	//
+	public class NullCast : Constant {
+		protected Expression child;
+				
+		public NullCast (Expression child, Type return_type)
+		{
+			eclass = child.eclass;
+			type = return_type;
+			this.child = child;
+		}
+
+		override public string AsString ()
+		{
+			return "null";
+		}
+
+		public override object GetValue ()
+		{
+			return null;
+		}
+
+		public override Expression DoResolve (EmitContext ec)
+		{
+			// This should never be invoked, we are born in fully
+			// initialized state.
+
+			return this;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			child.Emit (ec);
+		}
+	}
+
+
 	/// <summary>
 	///  This class is used to wrap literals which belong inside Enums
 	/// </summary>
