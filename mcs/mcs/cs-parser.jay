@@ -2046,7 +2046,11 @@ invocation_expression
 		}
 		$$ = new Invocation ((Expression) $1, (ArrayList) $3, lexer.Location);
 	  }
-	; 
+	| OPEN_PARENS expression CLOSE_PARENS unary_expression
+	  {
+		  $$ = new InvocationOrCast ((Expression) $2, (Expression) $4, lexer.Location);
+	  }
+	;
 
 opt_argument_list
 	: /* empty */		{ $$ = null; }
@@ -2394,11 +2398,7 @@ unary_expression
 	;
 
 cast_expression
-        : OPEN_PARENS expression CLOSE_PARENS unary_expression
-	  {
-		  $$ = new Cast ((Expression) $2, (Expression) $4, lexer.Location);
-	  }
-        | OPEN_PARENS non_expression_type CLOSE_PARENS prefixed_unary_expression
+	: OPEN_PARENS non_expression_type CLOSE_PARENS prefixed_unary_expression
 	  {
 		  $$ = new Cast ((Expression) $2, (Expression) $4, lexer.Location);
 	  }

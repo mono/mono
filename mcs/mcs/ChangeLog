@@ -1,3 +1,20 @@
+2003-07-22  Martin Baulig  <martin@ximian.com>
+
+	* cs-parser.jay (invocation_expression): Moved
+	`OPEN_PARENS expression CLOSE_PARENS unary_expression' here from
+	`cast_expression', but create a InvocationOrCast which later
+	resolves to either an Invocation or a Cast.
+
+	* ecore.cs (ExpressionStatement.ResolveStatement): New virtual
+	method; call this before EmitStatement() to make sure that this
+	expression can be used as a statement.
+
+	* expression.cs (InvocationOrCast): New class; resolves to either
+	an Invocation or a Cast.
+
+	* statement.cs (StatementExpression): Call ResolveStatement() on
+	the ExpressionStatement before emitting it.
+
 2003-07-21  Martin Baulig  <martin@ximian.com>
 
 	* expression.cs (Invocation.VerifyArgumentsCompat): Check whether

@@ -1282,6 +1282,20 @@ namespace Mono.CSharp {
 	/// </summary>
 	public abstract class ExpressionStatement : Expression {
 
+		public virtual ExpressionStatement ResolveStatement (EmitContext ec)
+		{
+			Expression e = Resolve (ec);
+			if (e == null)
+				return null;
+
+			ExpressionStatement es = e as ExpressionStatement;
+			if (es == null)
+				Error (201, "Only assignment, call, increment, decrement and new object " +
+				       "expressions can be used as a statement");
+
+			return es;
+		}
+
 		/// <summary>
 		///   Requests the expression to be emitted in a `statement'
 		///   context.  This means that no new value is left on the

@@ -5013,6 +5013,111 @@ namespace Mono.CSharp {
 		}
 	}
 
+	public class InvocationOrCast : ExpressionStatement
+	{
+		Expression expr;
+		Expression argument;
+
+		public InvocationOrCast (Expression expr, Expression argument, Location loc)
+		{
+			this.expr = expr;
+			this.argument = argument;
+			this.loc = loc;
+		}
+
+		public override Expression DoResolve (EmitContext ec)
+		{
+			//
+			// First try to resolve it as a cast.
+			//
+			type = ec.DeclSpace.ResolveType (expr, true, loc);
+			if (type != null) {
+				Cast cast = new Cast (new TypeExpr (type, loc), argument, loc);
+				return cast.Resolve (ec);
+			}
+
+			//
+			// This can either be a type or a delegate invocation.
+			// Let's just resolve it and see what we'll get.
+			//
+			expr = expr.Resolve (ec, ResolveFlags.Type | ResolveFlags.VariableOrValue);
+			if (expr == null)
+				return null;
+
+			//
+			// Ok, so it's a Cast.
+			//
+			if (expr.eclass == ExprClass.Type) {
+				Cast cast = new Cast (new TypeExpr (expr.Type, loc), argument, loc);
+				return cast.Resolve (ec);
+			}
+
+			//
+			// It's a delegate invocation.
+			//
+			if (!TypeManager.IsDelegateType (expr.Type)) {
+				Error (149, "Method name expected");
+				return null;
+			}
+
+			ArrayList args = new ArrayList ();
+			args.Add (new Argument (argument, Argument.AType.Expression));
+			DelegateInvocation invocation = new DelegateInvocation (expr, args, loc);
+			return invocation.Resolve (ec);
+		}
+
+		void error201 ()
+		{
+			Error (201, "Only assignment, call, increment, decrement and new object " +
+			       "expressions can be used as a statement");
+		}
+
+		public override ExpressionStatement ResolveStatement (EmitContext ec)
+		{
+			//
+			// First try to resolve it as a cast.
+			//
+			type = ec.DeclSpace.ResolveType (expr, true, loc);
+			if (type != null) {
+				error201 ();
+				return null;
+			}
+
+			//
+			// This can either be a type or a delegate invocation.
+			// Let's just resolve it and see what we'll get.
+			//
+			expr = expr.Resolve (ec, ResolveFlags.Type | ResolveFlags.VariableOrValue);
+			if ((expr == null) || (expr.eclass == ExprClass.Type)) {
+				error201 ();
+				return null;
+			}
+
+			//
+			// It's a delegate invocation.
+			//
+			if (!TypeManager.IsDelegateType (expr.Type)) {
+				Error (149, "Method name expected");
+				return null;
+			}
+
+			ArrayList args = new ArrayList ();
+			args.Add (new Argument (argument, Argument.AType.Expression));
+			DelegateInvocation invocation = new DelegateInvocation (expr, args, loc);
+			return invocation.ResolveStatement (ec);
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			throw new Exception ("Cannot happen");
+		}
+
+		public override void EmitStatement (EmitContext ec)
+		{
+			throw new Exception ("Cannot happen");
+		}
+	}
+
 	//
 	// This class is used to "disable" the code generation for the
 	// temporary variable when initializing value types.

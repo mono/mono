@@ -544,7 +544,7 @@ namespace Mono.CSharp {
 	}
 	
 	public class StatementExpression : Statement {
-		Expression expr;
+		ExpressionStatement expr;
 		
 		public StatementExpression (ExpressionStatement expr, Location l)
 		{
@@ -554,7 +554,7 @@ namespace Mono.CSharp {
 
 		public override bool Resolve (EmitContext ec)
 		{
-			expr = (Expression) expr.Resolve (ec);
+			expr = expr.ResolveStatement (ec);
 			return expr != null;
 		}
 		
@@ -562,12 +562,7 @@ namespace Mono.CSharp {
 		{
 			ILGenerator ig = ec.ig;
 			
-			if (expr is ExpressionStatement)
-				((ExpressionStatement) expr).EmitStatement (ec);
-			else {
-				expr.Emit (ec);
-				ig.Emit (OpCodes.Pop);
-			}
+			expr.EmitStatement (ec);
 
 			return false;
 		}
