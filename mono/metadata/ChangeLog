@@ -1,4 +1,8 @@
 
+2002-12-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* threads.c: fixed the build under cygwin.
+
 Wed Dec 18 18:43:47 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* reflection.c: handle nullref constants. Allocate keys for
