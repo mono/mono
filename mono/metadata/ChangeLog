@@ -1,3 +1,11 @@
+2001-07-23  Miguel de Icaza  <miguel@ximian.com>
+
+	* metadata.c (mono_metadata_parse_field_type): Implement. 
+	(do_mono_metadata_parse_type): Split engine from
+	mono_metadata_parse_type, so that we can create smaller structures
+	for things that just have one pointer to the MonoType (look at
+	the MonoFieldType)
+
 2001-07-20  Miguel de Icaza  <miguel@ximian.com>
 
 	* metadata.c (mono_metadata_parse_mh): Correct the implementation,
