@@ -3,6 +3,10 @@
 	* ResourceManager.cs: After reading the tutorial from the SDK,
 	finished all the ResourceManager constructors and removed those
 	MonoTODO tags.
+	
+	Removed MonoTODO from GetNeutralResourcesLanguage (Assembly)
+	because Miguel just implemented the whole class, including the
+	constructor that I needed (CultureInfo (string)).
 
 	Updated fields after reading the new docs from the final SDK.
 

@@ -132,13 +132,7 @@ namespace System.Resources {
 			 protected static CultureInfo GetNeutralResourcesLanguage (Assembly a) {
 				    foreach (Attribute attribute in a.GetCustomAttributes (false)) {
 						  if (attribute is NeutralResourcesLanguageAttribute)
-								// ???
-								// return new CultureInfo (attribute.CultureName);
-								// TODO: Line containing "new CultureInfo" commented out
-								// because the CultureInfo(string) constructor has not
-								// yet been defined
-								// return new CultureInfo (attribute.ToString());
-								return null;
+								return new CultureInfo (attribute.CultureName);
 				    }
 				    return null;
 			 }
