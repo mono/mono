@@ -44,11 +44,6 @@ namespace System.Windows.Forms {
 			container.Add (this);
 		}
 
-		~Timer ()
-		{
-			Dispose (false);
-		}
-
 		public bool Enabled {
 			get { return timer.Enabled; }
 			set { timer.Enabled = value; }
