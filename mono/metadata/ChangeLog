@@ -1,3 +1,8 @@
+2002-03-26  Martin Baulig  <martin@gnome.org>
+
+	* debug-symfile.h (MonoDebugMethodInfo): Added `this_offset', don't
+	include the `this' offset in the `param_offsets'.
+
 2002-03-25  Martin Baulig  <martin@gnome.org>
 
 	* debug-symfile.c (mono_debug_update_symbol_file): Use a new
