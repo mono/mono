@@ -1,3 +1,8 @@
+2004-12-08  Martin Baulig  <martin@ximian.com>
+
+	* mini.c (mono_method_to_ir): In CEE_CALLVIRT, use `fsig->signature'
+	if we're a CEE_CONSTRAINED call.  Fixes gen-118.cs.
+
 2004-12-08  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-sparc.c (mono_arch_output_basic_block): Implement OP_FCONV_TO_<X>
