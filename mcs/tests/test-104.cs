@@ -5,7 +5,7 @@ using System;
 
 class Test {
         public static int Main(String[] args) {
-                long iTest = 1;
+                int iTest = 1;
 
                 System.Threading.Interlocked.Increment(ref iTest);
 

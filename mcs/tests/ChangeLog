@@ -1,3 +1,7 @@
+2002-05-02  Ravi Pratap  <ravi@ximian.com>
+
+	* test-113.cs : Another test for overload resolution ;-)
+
 2002-04-28  Miguel de Icaza  <miguel@ximian.com>
 
 	* test-108.cs: Improve test
