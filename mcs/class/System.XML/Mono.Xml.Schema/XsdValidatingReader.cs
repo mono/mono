@@ -442,8 +442,6 @@ namespace Mono.Xml.Schema
 			}
 		}
 
-		XmlQualifiedName qnameXmlLang = new XmlQualifiedName ("lang", XmlNamespaceManager.XmlnsXml);
-
 		public override string XmlLang {
 			get {
 				string xmlLang = reader.XmlLang;
@@ -1003,7 +1001,7 @@ namespace Mono.Xml.Schema
 				else {
 					XmlSchemaAttribute attdecl = attMatch as XmlSchemaAttribute;
 					if (attdecl == null) { // i.e. anyAttribute
-						XmlSchemaAnyAttribute anyAttrMatch = attMatch as XmlSchemaAnyAttribute;
+//						XmlSchemaAnyAttribute anyAttrMatch = attMatch as XmlSchemaAnyAttribute;
 					} else {
 						AssessAttributeLocallyValidUse (attdecl);
 						AssessAttributeLocallyValid (attdecl, true);
@@ -1266,7 +1264,6 @@ namespace Mono.Xml.Schema
 		{
 			XsdKeyTable seq = new XsdKeyTable (ident, this);
 			seq.StartDepth = reader.Depth;
-			XmlSchemaKeyref keyref = ident as XmlSchemaKeyref;
 			this.keyTables.Add (seq);
 			return seq;
 		}

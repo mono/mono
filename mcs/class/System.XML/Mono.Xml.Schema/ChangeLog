@@ -1,3 +1,7 @@
+2004-11-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XsdValidatingReader.cs : warning elimination
+
 2004-11-24  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XsdValidatingReader.cs : commented out some fields and depending
