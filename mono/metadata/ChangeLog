@@ -1,3 +1,13 @@
+2004-09-19  Zoltan Varga  <vargaz@freemail.hu>
+
+	* loader.h loader.c class.h class.c: Add helper functions for obtaining
+	tokens of metadata objects.
+
+	* reflection.h reflection.c (mono_reflection_get_token): New function
+	to obtain the token of a metadata object.
+
+	* icall.c: Add icalls for MetadataToken and ModuleHandle methods.
+
 2004-09-17  Zoltan Varga  <vargaz@freemail.hu>
 
 	* loader.c (mono_lookup_pinvoke_call): Try the underscore prefixed name as well.
