@@ -553,6 +553,7 @@ namespace System.Data.SqlClient {
                                         break;
                                 case "INTEGRATED SECURITY" :
                                 case "TRUSTED_CONNECTION" :
+					parms.DomainLogin = Boolean.Parse (value);
                                         break;
                                 case "MAX POOL SIZE" :
                                         maxPoolSize = Int32.Parse (value);
