@@ -6,6 +6,7 @@
 // 	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //	Ben Maurer (bmaurer@users.sf.net)
 //	Gilles Freart (gfr@skynet.be)
+//	Atsushi Enomoto (atsushi@ximian.com)
 //
 // (c) Marcin Szczepanski 
 // (c) 2002 Ximian, Inc. (http://www.ximian.com)
@@ -268,6 +269,27 @@ namespace MonoTests.System.IO
 			testExtn = Path.GetExtension (path1 + ".doc" + DSC + "a.txt");
 			AssertEquals ("GetExtension #07", ".txt", testExtn);
 
+			testExtn = Path.GetExtension (".");
+			AssertEquals ("GetExtension #08", String.Empty, testExtn);
+
+			testExtn = Path.GetExtension ("end.");
+			AssertEquals ("GetExtension #09", String.Empty, testExtn);
+
+			testExtn = Path.GetExtension (".start");
+			AssertEquals ("GetExtension #10", ".start", testExtn);
+
+			testExtn = Path.GetExtension (".a");
+			AssertEquals ("GetExtension #11", ".a", testExtn);
+
+			testExtn = Path.GetExtension ("a.");
+			AssertEquals ("GetExtension #12", String.Empty, testExtn);
+
+			testExtn = Path.GetExtension ("a");
+			AssertEquals ("GetExtension #13", String.Empty, testExtn);
+
+			testExtn = Path.GetExtension ("makefile");
+			AssertEquals ("GetExtension #14", String.Empty, testExtn);
+
 			if (Windows) {
 				try {
 					testExtn = Path.GetExtension ("hi<there.txt");
@@ -457,6 +479,15 @@ namespace MonoTests.System.IO
 			AssertEquals ("HasExtension #02",  false, Path.HasExtension ("foo"));
 			AssertEquals ("HasExtension #03",  true, Path.HasExtension (path1));
 			AssertEquals ("HasExtension #04",  false, Path.HasExtension (path2));
+			AssertEquals ("HasExtension #05",  false, Path.HasExtension (null));
+			AssertEquals ("HasExtension #06",  false, Path.HasExtension (String.Empty));
+			AssertEquals ("HasExtension #07",  false, Path.HasExtension (" "));
+			AssertEquals ("HasExtension #08",  false, Path.HasExtension ("."));
+			AssertEquals ("HasExtension #09",  false, Path.HasExtension ("end."));
+			AssertEquals ("HasExtension #10",  true, Path.HasExtension (".start"));
+			AssertEquals ("HasExtension #11",  true, Path.HasExtension (".a"));
+			AssertEquals ("HasExtension #12",  false, Path.HasExtension ("a."));
+			AssertEquals ("HasExtension #13",  false, Path.HasExtension ("Makefile"));
 		}
 
 		public void TestRooted ()
@@ -464,6 +495,18 @@ namespace MonoTests.System.IO
 			Assert ("IsPathRooted #01", Path.IsPathRooted (path2));
 			Assert ("IsPathRooted #02", !Path.IsPathRooted (path3));
 			Assert ("IsPathRooted #03", !Path.IsPathRooted (null));
+			Assert ("IsPathRooted #04", !Path.IsPathRooted (String.Empty));
+			Assert ("IsPathRooted #05", !Path.IsPathRooted (" "));
+			Assert ("IsPathRooted #06", Path.IsPathRooted ("/"));
+			Assert ("IsPathRooted #07", Path.IsPathRooted ("\\"));
+			Assert ("IsPathRooted #08", Path.IsPathRooted ("//"));
+			Assert ("IsPathRooted #09", Path.IsPathRooted ("\\\\"));
+			Assert ("IsPathRooted #10", !Path.IsPathRooted (":"));
+			Assert ("IsPathRooted #11", Path.IsPathRooted ("z:"));
+			Assert ("IsPathRooted #12", Path.IsPathRooted ("z:\\"));
+			Assert ("IsPathRooted #13", Path.IsPathRooted ("z:\\topdir"));
+			// This looks MS BUG. It is treated as absolute path
+			Assert ("IsPathRooted #14", Path.IsPathRooted ("z:curdir"));
 		}
 
 		public void TestCanonicalizeDots ()
