@@ -1,3 +1,8 @@
+2003-08-22  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* socket-io.c: fixed compilation for systems that define AF_INET6
+	and don't define SOL_IP/SOL_IPV6.
+
 2003-08-21  Zoltan Varga  <vargaz@freemail.hu>
 
 	* object.c (mono_object_isinst): Fix casts to TransparentProxy in
