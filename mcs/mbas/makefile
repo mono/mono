@@ -1,5 +1,5 @@
-CSC=mcs
-CSCFLAGS=/nologo /optimize /target:exe /r:System.dll /r:Mono.GetOptions.dll /out:mbas.exe 
+CSC=../mcs/mcs
+CSCFLAGS=/nologo /optimize /target:exe /r:System.dll /r:../class/lib/Mono.GetOptions.dll /out:mbas.exe 
 
 COMPILER_SOURCES = \
     AssemblyInfo.cs   \
