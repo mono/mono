@@ -1,5 +1,10 @@
 2005-03-07  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlDocumentTests.cs : Added ReadNodeEntityReferenceFillsChildren.
+	  Test case by Konstantin Triger.
+
+2005-03-07  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlValidatingReaderTests.cs : added ResolveEntityReadAttributeValue()
 
 2005-03-03  Atsushi Enomoto <atsushi@ximian.com>

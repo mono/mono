@@ -1132,5 +1132,28 @@ namespace MonoTests.System.Xml
 				+ "\n</element></root>",
 				sw.ToString ());
 		}
+
+		[Test]
+		public void ReadNodeEntityReferenceFillsChildren ()
+		{
+			string dtd = "<!DOCTYPE root [<!ELEMENT root (#PCDATA)*><!ENTITY ent 'val'>]>";
+			
+			string xml = dtd + "<root attr='a &ent; string'>&ent;</root>";
+			XmlValidatingReader reader = new XmlValidatingReader (
+				xml, XmlNodeType.Document, null);
+
+			reader.EntityHandling = EntityHandling.ExpandCharEntities;
+			reader.ValidationType = ValidationType.None;
+
+			//skip the doctype delcaration
+			reader.Read ();
+			reader.Read ();
+
+			XmlDocument doc = new XmlDocument ();
+			doc.Load (reader);
+
+			AssertEquals (1,
+				doc.DocumentElement.FirstChild.ChildNodes.Count);
+		}
 	}
 }
