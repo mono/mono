@@ -971,7 +971,10 @@ namespace Microsoft.JScript {
 				right_side.Emit (ec);
 			if (binding is FormalParam) {
 				FormalParam f = binding as FormalParam;
-				ig.Emit (OpCodes.Ldarg_S, f.pos);
+				if (assign)
+					ig.Emit (OpCodes.Starg, (short) f.pos);
+				else
+					ig.Emit (OpCodes.Ldarg_S, f.pos);
 			} else if (binding is VariableDeclaration || binding is Try) {
 				FieldInfo field_info = extract_field_info (binding);
 				LocalBuilder local_builder = extract_local_builder (binding);
