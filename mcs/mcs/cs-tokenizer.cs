@@ -208,6 +208,7 @@ namespace Mono.CSharp
 		{
 			keywords = new CharArrayHashtable [64];
 
+			AddKeyword ("__arglist", Token.ARGLIST);
 			AddKeyword ("abstract", Token.ABSTRACT);
 			AddKeyword ("as", Token.AS);
 			AddKeyword ("add", Token.ADD);
@@ -1702,7 +1703,7 @@ namespace Mono.CSharp
 			// Optimization: avoids doing the keyword lookup
 			// on uppercase letters and _
 			//
-			if (s >= 'a'){
+			if (s >= 'a' || s == '_'){
 				int keyword = GetKeyword (id_builder, pos);
 				if (keyword != -1 && !quoted)
 					return keyword;
@@ -1716,8 +1717,6 @@ namespace Mono.CSharp
 			if (identifiers [pos] != null) {
 				val = identifiers [pos][id_builder];
 				if (val != null) {
-					if (val.Equals ("__arglist"))
-						return Token.ARGLIST;
 					return Token.IDENTIFIER;
 				}
 			}
@@ -1725,8 +1724,6 @@ namespace Mono.CSharp
 				identifiers [pos] = new CharArrayHashtable (pos);
 
 			val = new String (id_builder, 0, pos);
-			if (val.Equals ("__arglist"))
-				return Token.ARGLIST;
 
 			char [] chars = new char [pos];
 			Array.Copy (id_builder, chars, pos);

@@ -1,3 +1,8 @@
+2004-06-10  Miguel de Icaza  <miguel@ximian.com>
+
+	* cs-tokenizer.cs: Change the way we track __arglist to be
+	consistent with the other keywords.
+
 2004-06-09  Miguel de Icaza  <miguel@ximian.com>
 
 	* codegen.cs: FAQ avoider: turn 1577 into a warning for now until
