@@ -64,7 +64,7 @@ namespace System.Runtime.InteropServices {
 			return array;
 		}				
 
-		public object GetOffset ()
+		public int GetOffset ()
 		{
 			return offset;
 		}				

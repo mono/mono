@@ -38,13 +38,13 @@ namespace System.Runtime.InteropServices
 	{
 		void EnumObjectParam (out UCOMIEnumString ppenum);
 		void GetBindOptions (ref BIND_OPTS pbindopts);
-		void GetObjectParam (string pszKey, out object ppunk);
+		void GetObjectParam ([MarshalAs (UnmanagedType.LPWStr)] string pszKey, [MarshalAs (UnmanagedType.Interface)] out object ppunk);
 		void GetRunningObjectTable (out UCOMIRunningObjectTable pprot);
-		void RegisterObjectBound (object punk);
-		void RegisterObjectParam (string pszKey, object punk);
+		void RegisterObjectBound ([MarshalAs(UnmanagedType.Interface)] object punk);
+		void RegisterObjectParam ([MarshalAs (UnmanagedType.LPWStr)] string pszKey, [MarshalAs (UnmanagedType.Interface)] object punk);
 		void ReleaseBoundObjects ();
-		void RevokeObjectBound (object punk);
-		void RevokeObjectParam (string pszKey);
+		void RevokeObjectBound ([MarshalAs(UnmanagedType.Interface)] object punk);
+		void RevokeObjectParam ([MarshalAs(UnmanagedType.LPWStr)] string pszKey);
 		void SetBindOptions ([In] ref BIND_OPTS pbindopts);
 	}
 }

@@ -37,10 +37,11 @@ namespace System.Runtime.InteropServices
 	public interface UCOMIPersistFile
 	{
 		void GetClassID (out Guid pClassID);
-		void GetCurFile (out string ppszFileName);
+		void GetCurFile ([MarshalAs(UnmanagedType.LPWStr)] out string ppszFileName);
+		[PreserveSig]
 		int IsDirty ();
-		void Load (string pszFileName, int dwMode);
-		void Save (string pszFileName, bool fRemember);
-		void SaveCompleted (string pszFileName);
+		void Load ([MarshalAs(UnmanagedType.LPWStr)] string pszFileName, int dwMode);
+		void Save ([MarshalAs (UnmanagedType.LPWStr)] string pszFileName, [MarshalAs (UnmanagedType.Bool)] bool fRemember);
+		void SaveCompleted ([MarshalAs (UnmanagedType.LPWStr)]string pszFileName);
 	}
 }
