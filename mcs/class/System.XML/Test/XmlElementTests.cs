@@ -92,6 +92,13 @@ namespace MonoTests.System.Xml
 			AssertElement (element, "prefix", "localName", "namespaceURI", 0);
 		}
 
+		public void TestCreateElement3WithNullNamespace ()
+		{
+			// bug #26855, NamespaceURI should NEVER be null.
+			XmlElement element = document.CreateElement (null, "localName", null);
+			AssertElement (element, String.Empty, "localName", String.Empty, 0);
+		}
+
 		public void TestInnerAndOuterXml ()
 		{
 			XmlElement element;
