@@ -1,0 +1,8 @@
+2003-11-12  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* TcpServerChannel.cs: Remove listener initialization and StartListening
+	  call from constructor. It is called now by the remoting framework.
+	* TcpConnectionPool.cs: Removed fixme.
+	
+	Older log entries can be found in the System.Runtime.Remoting ChangeLog.
+

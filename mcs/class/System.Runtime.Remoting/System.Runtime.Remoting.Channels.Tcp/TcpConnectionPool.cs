@@ -44,7 +44,6 @@ namespace System.Runtime.Remoting.Channels.Tcp
 
 		public static void Shutdown ()
 		{
-			// FIXME: this should not be needed when background threads work.
 			if (_poolThread != null)
 				_poolThread.Abort();
 		}

@@ -61,9 +61,6 @@ namespace System.Runtime.Remoting.Channels.Tcp
 
 			IServerChannelSink next_sink = ChannelServices.CreateServerChannelSinkChain (serverSinkProvider, this);
 			sink = new TcpServerTransportSink (next_sink);
-			
-			listener = new TcpListener(bindAddress, port);
-			StartListening (null);
 		}
 		
 		public TcpServerChannel (int port)
@@ -198,6 +195,7 @@ namespace System.Runtime.Remoting.Channels.Tcp
 		
 		public void StartListening (object data)
 		{
+			listener = new TcpListener (bindAddress, port);
 			if (server_thread == null) 
 			{
 				listener.Start ();
