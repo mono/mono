@@ -707,9 +707,9 @@ namespace System.Reflection.Emit {
 		static int InitializedDataCount = 0;
 		
 		public FieldBuilder DefineInitializedData( string name, byte[] data, FieldAttributes attributes) {
-			TypeBuilder datablobtype = pmodule.DefineType ("$ArrayType$"+InitializedDataCount.ToString(),
-				TypeAttributes.Public|TypeAttributes.ExplicitLayout|TypeAttributes.Sealed,
-				pmodule.assemblyb.corlib_value_type, PackingSize.Size1, data.Length);
+			TypeBuilder datablobtype = DefineNestedType ("$ArrayType$"+InitializedDataCount.ToString(),
+				TypeAttributes.NestedPrivate|TypeAttributes.ExplicitLayout|TypeAttributes.Sealed,
+				pmodule.assemblyb.corlib_value_type, null, PackingSize.Size1, data.Length);
 			datablobtype.packing_size = PackingSize.Size1;
 			datablobtype.class_size = data.Length;
 			datablobtype.CreateType ();
