@@ -22,10 +22,25 @@
 			<arg value="/r:corlib_res.dll"/>
 			<arg value="/nowarn:1595"/>
 		</csc>
+
+		<csc target="library" output="corlib_reference.dll" debug="${debug}">
+			<sources>
+				<includes name="**/*.cs"/>
+				<excludes name="System/IntegerFormatterTest.cs"/>
+				<excludes name="System/Int64Test.cs"/>
+				<excludes name="System/IntegerFormatterTest.cs"/>
+			</sources>
+			<references basedir="..\..\..\nunit">
+				<includes name="NUnitCore.dll"/>
+			</references>
+			<arg value="/nowarn:1595"/>
+		</csc>
 	</target>
+
 
 	<target name="test" depends="build">
 		<exec program="..\..\..\nunit\NUnitConsole" commandline="MonoTests.AllTests,corlib_test.dll" failonerror="false"/>
+		<exec program="..\..\..\nunit\NUnitConsole" commandline="MonoTests.AllTests,corlib_reference.dll" failonerror="false"/>
 	</target>
 
 	<target name="clean">
