@@ -31,7 +31,7 @@ Test cases listed by Category:
 
 * Member Access & Simple Names
 
-  test-151.cs test-159.cs
+  test-151.cs test-159.cs test-160.cs
 
 * Invocation
 
@@ -113,6 +113,10 @@ Attributes.
 test-159.cs
 -----------
 SimpleNameLookup: Cast to `A.Iface' type when there's a parameter called `A'.
+
+test-160.cs
+-----------
+ResolveMemberLookup: `B look; return look.s.a' must work in static context.
 
 verify-1.cs
 -----------
