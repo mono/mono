@@ -81,6 +81,9 @@ namespace System.Reflection
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		protected extern MonoGenericInst GetDeclaringType ();
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		protected extern MonoGenericInst GetParentType ();
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -94,7 +97,10 @@ namespace System.Reflection
 		}
 
 		public override Type DeclaringType {
-			get { return generic_type.DeclaringType; }
+			get {
+				MonoGenericInst decl = GetDeclaringType ();
+				return decl != null ? decl : generic_type.DeclaringType;
+			}
 		}
 
 		public override Type[] GetInterfaces ()
