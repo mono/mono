@@ -129,7 +129,7 @@ namespace System.Data {
 			{
 				if (object.ReferenceEquals(this [column.ColumnName], column))
 					throw new ArgumentException ("Column '" + column.ColumnName + "' already belongs to this DataTable.");
-				else
+				else if (CaseSensitiveContains (column.ColumnName))
 					throw new DuplicateNameException("A column named '" + column.ColumnName + "' already belongs to this DataTable.");
 			}
 
@@ -472,6 +472,22 @@ namespace System.Data {
 			DataColumn column = this[index];
 			Remove( column );
 		}
+
+
+		/// <summary>
+		///  Do the same as Constains -method but case sensitive
+		/// </summary>
+		private bool CaseSensitiveContains(string columnName)
+		{
+			
+			DataColumn column = this[columnName];
+			
+			if (column != null)
+				return string.Compare (column.ColumnName, columnName, false) == 0; 
+
+			return false;
+		}
+		
 
 		/// <summary>
 		/// Occurs when the columns collection changes, either by adding or removing a column.
