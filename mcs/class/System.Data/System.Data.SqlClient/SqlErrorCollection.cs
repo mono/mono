@@ -82,12 +82,6 @@ namespace System.Data.SqlClient {
 			return list.GetEnumerator ();
 		}
 
-		[MonoTODO]
-		public override string ToString()
-		{
-			throw new NotImplementedException ();
-		}
-
 		#endregion		
 	}
 }
