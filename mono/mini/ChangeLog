@@ -1,3 +1,9 @@
+
+Tue Dec 7 11:44:39 CET 2004 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c, objectc.cs: handle large structs passed by value
+	(fixes bug #69972).
+
 2004-11-29  Zoltan Varga  <vargaz@freemail.hu>
 
 	* cpu-sparc.md mini-sparc.c (long_conv_to_ovf_i): Fill missing delay slot.
