@@ -106,17 +106,34 @@ namespace System.Web.Util
 		
 		public static string Combine (string basePath, string relPath)
 		{
+			if (relPath == null)
+				throw new ArgumentNullException ("relPath");
+
+			int rlength = relPath.Length;
+			if (rlength == 0)
+				return "";
+
 			FailIfPhysicalPath (relPath);
 			if (IsRooted (relPath))
 				return Reduce (relPath);
 
-			if (relPath.Length < 3 || relPath [0] != '~' || relPath [0] == '/' || relPath [0] == '\\') {
+			char first = relPath [0];
+			if (rlength < 3 || first == '~' || first == '/' || first == '\\') {
 				if (basePath == null || (basePath.Length == 1 && basePath [0] == '/'))
 					basePath = String.Empty;
 
-				string slash = relPath [0] == '/' ? "" : "/";
+				if (first == '~') {
+					if (rlength == 1) {
+						relPath = "";
+					} else if (rlength > 1 && relPath [1] == '/') {
+						relPath = relPath.Substring (2);
+					}
+				}
+
+				string slash = (first == '/') ? "" : "/";
 				return Reduce (basePath + slash + relPath);
 			}
+
 
 			string vPath = HttpRuntime.AppDomainAppVirtualPath;
 			if (vPath.Length <= 1)
