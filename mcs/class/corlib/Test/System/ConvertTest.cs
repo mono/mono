@@ -3494,7 +3494,11 @@ namespace MonoTests.System {
 		// 2005/01/10: The docs say this should throw an InvalidCastException,
 		// however, MS.NET 1.1 throws a NullReferenceException. Assuming docs
 		// are wrong.
+#if NET_2_0
+		[ExpectedException (typeof (InvalidCastException))]
+#else
 		[ExpectedException (typeof (NullReferenceException))]
+#endif
 		public void ChangeTypeNullToValuetype ()
 		{
 			Convert.ChangeType (null, typeof (int));

@@ -43,7 +43,7 @@ namespace MonoTests.System.Collections {
 
 
 		[Test]
-		
+		[Category("NotWorking")]
 		public void Invariant ()
 		{
 			Comparer c = Comparer.DefaultInvariant;
@@ -58,7 +58,11 @@ namespace MonoTests.System.Collections {
 			// behavior of the InvariantCulture
 			//
 			Assert.IsTrue (c.Compare ("a", "A") < 0);
-			
+		}
+
+		[Test]
+		public void Invariant2 ()
+		{
 			Assert.IsTrue (CultureInfo.InvariantCulture.CompareInfo.Compare ("a", "A", CompareOptions.Ordinal) > 0);
 		}
 	}

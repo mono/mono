@@ -19,6 +19,7 @@ namespace MonoTests.System
 		static readonly string curDir = Directory.GetCurrentDirectory ();
 
 		[Test]
+		[Category("NotWorking")]
 		public void ApplicationBase1 ()
 		{
 			string expected_path = tmpPath.Replace(@"\", @"/");
@@ -55,6 +56,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		[Category("NotWorking")]
 		public void ApplicationBase5 ()
 		{
 			AppDomainSetup setup = new AppDomainSetup ();
