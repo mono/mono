@@ -147,3 +147,4 @@ System.Diagnostics\Switch.cs
 System.Diagnostics\TraceListener.cs
 System.Net\IPv6Address.cs
 Microsoft.CSharp\CSharpCodeProvider.cs
+Microsoft.CSharp\CSharpCodeGenerator.cs
