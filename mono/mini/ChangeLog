@@ -1,4 +1,9 @@
 
+Tue Jun 8 15:36:30 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* Makefile.am: remove the -static hack completely, it links in
+	statically glib as well.
+
 Sat Jun 5 16:32:33 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
 	* iltests.il, mini.c: fixed bug#59580 in branch optimization.
