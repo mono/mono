@@ -11,9 +11,9 @@ using System.Globalization;
 
 namespace System {
 	
-	public struct Int32 : IComparable, IFormattable {
-		public const int MinValue = -2147483648;
+	public struct Int32 : IComparable, IFormattable { //, IConvertible {
 		public const int MaxValue = 0x7fffffff;
+		public const int MinValue = -2147483648;
 		
 		public int value;
 
@@ -38,23 +38,21 @@ namespace System {
 			return value;
 		}
 
-		public TypeCode GetTypeCode ()
-		{
-			return TypeCode.Int32;
-		}
-
 		public static int Parse (string s)
 		{
-			// TODO: Implement me
-			return 0;
+			return Parse (s, NumberStyles.Integer, null);
 		}
 
 		public static int Parse (string s, IFormatProvider fp)
 		{
-			// TODO: Implement me
-			return 0;
+			return Parse (s, NumberStyles.Integer, fp);
 		}
 
+		public static int Parse (string s, NumberStyles style)
+		{
+			return Parse (s, style, null);
+		}
+		
 		public static int Parse (string s, NumberStyles style, IFormatProvider fp)
 		{
 			// TODO: Implement me
@@ -63,27 +61,30 @@ namespace System {
 
 		public override string ToString ()
 		{
-			// TODO: Implement me
-
-			return "";
+			return ToString ("G", null);
 		}
 
 		public string ToString (IFormatProvider fp)
 		{
-			// TODO: Implement me.
-			return "";
+			return ToString ("G", fp);
 		}
 
 		public string ToString (string format)
 		{
-			// TODO: Implement me.
-			return "";
+			return ToString (format, null);
 		}
 
 		public string ToString (string format, IFormatProvider fp)
 		{
 			// TODO: Implement me.
 			return "";
+		}
+
+		// =========== IConvertible Methods =========== //
+
+		public TypeCode GetTypeCode ()
+		{
+			return TypeCode.Int32;
 		}
 	}
 }

@@ -26,117 +26,152 @@
 
 namespace System {
 
-    /// <summary>
-    /// Represents the boolean values of logical true and false.
-    /// </summary>
-    /// The .NET Framework SDK lists this as implementing IConvertible,
-    /// though it's not done here or in the ECMA spec.
-    public struct Boolean : IComparable { //, IConvertible {
+	/// <summary>
+	/// Represents the boolean values of logical true and false.
+	/// </summary>
+	// The .NET Framework SDK lists this as implementing IConvertible,
+	// though it's not done in the ECMA spec.
+	public struct Boolean : IComparable { //, IConvertible {
+		
+		/// <value>
+		/// The String representation of Boolean False
+		/// </value>	
+		public static readonly string FalseString;
 
-	/// <value>
-	/// The String representation of Boolean False</value>	
-	public static readonly string FalseString;
-
-	/// <value>
-	/// The String representation of Boolean True</value>	
-	public static readonly string TrueString;
+		/// <value>
+		/// The String representation of Boolean True
+		/// </value>	
+		public static readonly string TrueString;
       
-	/// <value>
-	/// Internal bool value for for this instance</value>
-	//
-	// Hack: we tag it as public, so the source will compile.
-	public bool value;
+		/// <value>
+		/// Internal bool value for for this instance
+		/// </value>
+		//
+		// HACK: we tag it as public, so the source will compile.		
+		public bool value;
 	
-	static Boolean() {
-	    FalseString = "False";
-	    TrueString = "True";
-	}
+		static Boolean () 
+		{
+			FalseString = "False";
+			TrueString = "True";
+		}
 
-	/// <summary>
-	/// Compares the current Boolean instance against another 
-	/// object.</summary>
-	/// <remarks>
-	/// Throws an ArgumentException if <c>obj</c> isn't null or 
-	// a Boolean.</remarks>
-	/// <param name="obj">The object to compare against</param>
-	/// <returns>
-	/// An int reflecting the sort order of this instance as 
-	/// compared to <c>obj</c>
-	/// -1 if this instance is false and <c>obj</c> is true
-	///  0 if this instance is equal to <c>obj</c>
-	///  1 if this instance is true and <c>obj</c> is false, 
-	///    or <c>obj</c> is null</returns>
-	public int CompareTo(object obj) {
-	    if(obj != null && !(obj is System.Boolean))
-		throw new ArgumentException
-		    ("Object is not a Boolean and is not a null reference");
-
-	    // for case #3
-	    if(obj == null || (value == true && (bool)obj == false))
-		return 1;
+		/// <summary>
+		/// Compares the current Boolean instance against another object.
+		/// </summary>
+		/// <remarks>
+		/// Throws an ArgumentException if <c>obj</c> isn't null or 
+		/// a Boolean.
+		/// </remarks>
+		/// <param name="obj">
+		/// The object to compare against
+		/// </param>
+		/// <returns>
+		/// An int reflecting the sort order of this instance as 
+		/// compared to <c>obj</c>
+		/// -1 if this instance is false and <c>obj</c> is true
+		///  0 if this instance is equal to <c>obj</c>
+		///  1 if this instance is true and <c>obj</c> is false, 
+		///    or <c>obj</c> is null
+		/// </returns>
+		public int CompareTo (object obj) 
+		{
+			if(obj != null && !(obj is System.Boolean))
+				throw new ArgumentException
+				("Object is not a Boolean and is not a null reference");
+			
+			// for case #3
+			if (obj == null || (value == true && (bool)obj == false))
+				return 1;
 	    
-	    // for case #2, else it's #1
-	    return (value == (bool)obj) ? 0 : -1;
-	}
+			// for case #2, else it's #1
+			return (value == (bool)obj) ? 0 : -1;
+		}
 	
-	/// <summary>
-	/// Determines whether this instance and another object represent the
-	/// same type and value.</summary>
-	/// <param name="obj">The object to check against</param>
-	/// <returns>
-	/// true if this instnace and <c>obj</c> are same value, 
-	/// otherwise false if it is not or null</returns>
-	public override bool Equals(Object obj) {
-	    if(obj == null || !(obj is System.Boolean))
-		return false;
+		/// <summary>
+		/// Determines whether this instance and another object represent the
+		/// same type and value.
+		/// </summary>
+		/// <param name="obj">
+		/// The object to check against
+		/// </param>
+		/// <returns>
+		/// true if this instnace and <c>obj</c> are same value, 
+		/// otherwise false if it is not or null
+		/// </returns>
+		public override bool Equals (Object obj) 
+		{
+			if (obj == null || !(obj is System.Boolean))
+				return false;
 
-	    return ((bool)obj) == value;
-	}
+			return ((bool)obj) == value;
+		}
 	
-	/// <summary>
-	/// Generates a hashcode for this object.</summary>
-	/// <returns>
-	/// An Int32 value holding the hash code</returns>
-	public override int GetHashCode() {
-	    // TODO: Implement Boolean Hashcode
-	    return 0;
-	}
+		/// <summary>
+		/// Generates a hashcode for this object.
+		/// </summary>
+		/// <returns>
+		/// An Int32 value holding the hash code
+		/// </returns>
+		public override int GetHashCode () 
+		{
+			// Guess there's not too many ways to hash a Boolean
+			return value ? 1 : 0;
+		}
 
-	/// <summary>
-	/// Returns a given string as a boolean value. The string must be 
-	/// equivalent to either TrueString or FalseString, with leading and/or
-	/// trailing spaces, and is parsed case-insensitively.</summary>
-	/// <remarks>
-	/// Throws an ArgumentNullException if <c>val</c> is null, or a 
-	/// FormatException if <c>val</c> doesn't match <c>TrueString</c> 
-	/// or <c>FalseString</c></remarks>
-	/// <param name="val">The string value to parse</param>
-	/// <returns>
-	/// true if <c>val</c> is equivalent to TrueString, 
-	/// otherwise false</returns>
-	public static bool Parse(string val) {
-	    if(val == null)
-		throw new ArgumentNullException("Value is a null reference");
+		/// <summary>
+		/// Returns a given string as a boolean value. The string must be 
+		/// equivalent to either TrueString or FalseString, with leading and/or
+		/// trailing spaces, and is parsed case-insensitively.
+		/// </summary>
+		/// <remarks>
+		/// Throws an ArgumentNullException if <c>val</c> is null, or a 
+		/// FormatException if <c>val</c> doesn't match <c>TrueString</c> 
+		/// or <c>FalseString</c>
+		/// </remarks>
+		/// <param name="val">
+		/// The string value to parse
+		/// </param>
+		/// <returns>
+		/// true if <c>val</c> is equivalent to TrueString, 
+		/// otherwise false
+		/// </returns>
+		public static bool Parse (string val) 
+		{
+			if (val == null)
+				throw new ArgumentNullException ("Value is a null reference");
 	    
-	    val = val.Trim();
+			val = val.Trim ();
 	    
-	    if(String.Compare(val, TrueString, true) == 0)
-		return true;
+			if (String.Compare (val, TrueString, true) == 0)
+				return true;
 	    
-	    if(String.Compare(val, FalseString, true) == 0)
-		return false;
+			if (String.Compare (val, FalseString, true) == 0)
+				return false;
 	    
-	    throw new FormatException
-		("Value is not equivalent to either TrueString or FalseString");
-	}
+			throw new FormatException
+			("Value is not equivalent to either TrueString or FalseString");
+		}
 
-	/// <summary>
-	/// Returns a string representation of this Boolean object.</summary>
-	/// <returns>
-	/// <c>FalseString</c> if the instance value is false, otherwise 
-	/// <c>TrueString</c></returns>
-	public override string ToString() {
-	    return value ? TrueString : FalseString;
-	}
-    }
-}
+		/// <summary>
+		/// Returns a string representation of this Boolean object.
+		/// </summary>
+		/// <returns>
+		/// <c>FalseString</c> if the instance value is false, otherwise 
+		/// <c>TrueString</c>
+		/// </returns>
+		public override string ToString () 
+		{
+			return value ? TrueString : FalseString;
+		}
+		
+		// =========== IConvertible Methods =========== //
+
+		public TypeCode GetTypeCode () 
+		{ 
+			return TypeCode.Boolean;
+		}
+
+	} // System.Boolean
+
+} // Namespace System

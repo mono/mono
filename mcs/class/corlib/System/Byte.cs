@@ -11,7 +11,7 @@ using System.Globalization;
 
 namespace System {
 	
-	public struct Byte : IComparable, IFormattable {
+	public struct Byte : IComparable, IFormattable { //, IConvertible {
 		public const byte MinValue = 0;
 		public const byte MaxValue = 255;
 		
@@ -40,21 +40,19 @@ namespace System {
 			return value;
 		}
 
-		public TypeCode GetTypeCode ()
-		{
-			return TypeCode.Byte;
-		}
-
 		public static byte Parse (string s)
 		{
-			// TODO: Implement me
-			return 0;
+			return Parse (s, NumberStyles.Integer, null);
 		}
 
 		public static byte Parse (string s, IFormatProvider fp)
 		{
-			// TODO: Implement me
-			return 0;
+			return Parse (s, NumberStyles.Integer, fp);
+		}
+
+		public static byte Parse (string s, NumberStyles style)
+		{
+			return Parse (s, style, null);
 		}
 
 		public static byte Parse (string s, NumberStyles style, IFormatProvider fp)
@@ -65,27 +63,30 @@ namespace System {
 
 		public override string ToString ()
 		{
-			// TODO: Implement me
-
-			return "";
+			return ToString ("G", null);
 		}
 
 		public string ToString (IFormatProvider fp)
 		{
-			// TODO: Implement me.
-			return "";
+			return ToString ("G", fp);
 		}
 
 		public string ToString (string format)
 		{
-			// TODO: Implement me.
-			return "";
+			return ToString (format, null);
 		}
 
 		public string ToString (string format, IFormatProvider fp)
 		{
 			// TODO: Implement me.
 			return "";
+		}
+
+		// =========== IConvertible Methods =========== //
+		
+		public TypeCode GetTypeCode ()
+		{
+			return TypeCode.Byte;
 		}
 	}
 }

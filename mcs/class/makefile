@@ -1,5 +1,5 @@
 DIRS=corlib System System.XML
-CSC=//c/winnt/microsoft.net/framework/v1.0.2914/csc.exe
+CSC=$(SYSTEMROOT)/microsoft.net/framework/v1.0.2914/csc.exe
 
 all:
 	@echo "You must use 'make windows' or 'make unix'."

@@ -1,4 +1,3 @@
-// -*- Mode: C++; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
 //
 // System.Char.cs
 //
@@ -8,18 +7,25 @@
 // (C) Ximian, Inc.  http://www.ximian.com
 //
 
+// Note about the ToString()'s. ECMA says there's only a ToString() method, 
+// BUT it is just a wrapper for ToString(null). However there is no other ToString
+// in the docs. Turning to the NET framework sdk reveals that there is a 
+// ToString(formatprovider) method, as well as a 'static ToString (char c)' method, 
+// which appears to just be a Convert.ToString(char c) type method. ECMA also
+// doesn't list this class as implementing IFormattable.
+
 using System.Globalization;
 
 namespace System {
 	
-	public struct Char : IComparable, IFormattable {
-		public const char MinValue = (char) 0;
+	public struct Char : IComparable { //, IFormattable, IConvertible {
 		public const char MaxValue = (char) 0xffff;
+		public const char MinValue = (char) 0;
 		
 		// VES needs to know about value.  public is workaround
 		// so source will compile
 		public byte value;
-
+		
 		public int CompareTo (object v)
 		{
 			if (!(v is System.Byte))
@@ -48,49 +54,251 @@ namespace System {
 			return -1;
 		}
 
-		public static double GetNumericValue (string s, int index)
+		public static double GetNumericValue (string str, int index)
 		{
-			/* FIXME: implement me */
-			return -1;
+			if (str == null) 
+				throw new ArgumentNullException ("Str is a null reference");
+			
+			if (index < 0 || index >= str.Length)
+				throw new ArgumentOutOfRangeException
+				("The value of index is less than zero, or greater than or equal to the length of str");
+			
+			return GetNumericValue (str[index]);
+		}
+
+		public static UnicodeCategory GetUnicodeCategory (char c) 
+		{ 
+			// TODO: Implement me
+			return UnicodeCategory.OtherSymbol;
+		}
+
+		public static UnicodeCategory GetUnicodeCategory (string str, int index) {
+			if (str == null) 
+				throw new ArgumentNullException ("Str is a null reference");
+			
+			if (index < 0 || index >= str.Length)
+				throw new ArgumentOutOfRangeException
+				("The value of index is less than zero, or greater than or equal to the length of str");
+			
+			return GetUnicodeCategory (str[index]);
 		}
 
 		public static bool IsControl (char c)
 		{
+			// TODO: Make me Unicode aware
 			return ((c > 1) && (c < 32));
 		}
 
+		public static bool IsControl (string str, int index)
+		{
+			if (str == null) 
+				throw new ArgumentNullException ("Str is a null reference");
+			
+			if (index < 0 || index >= str.Length)
+				throw new ArgumentOutOfRangeException
+				("The value of index is less than zero, or greater than or equal to the length of str");
+			
+			return IsControl (str[index]);
+		}
+		
 		public static bool IsDigit (char c)
 		{
 			return ((c >= '0') && (c <= '9'));
 		}
 
+		public static bool IsDigit (string str, int index)
+		{
+			if (str == null) 
+				throw new ArgumentNullException ("Str is a null reference");
+			
+			if (index < 0 || index >= str.Length)
+				throw new ArgumentOutOfRangeException
+				("The value of index is less than zero, or greater than or equal to the length of str");
+			
+			return IsDigit (str[index]);
+		}
+
 		public static bool IsLetter (char c)
 		{
-			/*
-			 * FIXME: This is broken, it should support
-			 * the various categories in System.Globalization.UnicodeCategory
-			 */
+			// TODO: Make me Unicode aware
 			return ((c >= 65) && (c <= 126));
 		}
+
+		public static bool IsLetter (string str, int index)
+		{
+			if (str == null) 
+				throw new ArgumentNullException ("Str is a null reference");
+			
+			if (index < 0 || index >= str.Length)
+				throw new ArgumentOutOfRangeException
+				("The value of index is less than zero, or greater than or equal to the length of str");
+			
+			return IsLetter (str[index]);
+		}
+
+		public static bool IsLetterOrDigit (char c)
+		{
+			// TODO: Implement me
+			return false;
+		}
+
+		public static bool IsLetterOrDigit (string str, int index)
+		{
+			if (str == null) 
+				throw new ArgumentNullException ("Str is a null reference");
+			
+			if (index < 0 || index >= str.Length)
+				throw new ArgumentOutOfRangeException
+				("The value of index is less than zero, or greater than or equal to the length of str");
+			
+			return IsLetterOrDigit (str[index]);
+		}
 		
-		public TypeCode GetTypeCode ()
-		{
-			return TypeCode.Byte;
-		}
-
-		public static char Parse (string s)
+		public static bool IsLower (char c)
 		{
 			// TODO: Implement me
-			return (char) 0;
+			return false;
+		}
+		
+		public static bool IsLower (string str, int index)
+		{
+			if (str == null) 
+				throw new ArgumentNullException ("Str is a null reference");
+			
+			if (index < 0 || index >= str.Length)
+				throw new ArgumentOutOfRangeException
+				("The value of index is less than zero, or greater than or equal to the length of str");
+			
+			return IsLower (str[index]);
 		}
 
-		public static char Parse (string s, IFormatProvider fp)
+		public static bool IsNumber (char c)
 		{
 			// TODO: Implement me
-			return (char) 0;
+			return false;
+		}
+		
+		public static bool IsNumber (string str, int index)
+		{
+			if (str == null) 
+				throw new ArgumentNullException ("Str is a null reference");
+			
+			if (index < 0 || index >= str.Length)
+				throw new ArgumentOutOfRangeException
+				("The value of index is less than zero, or greater than or equal to the length of str");
+			
+			return IsNumber (str[index]);
 		}
 
-		public static char Parse (string s, NumberStyles style, IFormatProvider fp)
+		public static bool IsPunctuation (char c)
+		{
+			// TODO: Implement me
+			return false;
+		}
+		
+		public static bool IsPunctuation (string str, int index)
+		{
+			if (str == null) 
+				throw new ArgumentNullException ("Str is a null reference");
+			
+			if (index < 0 || index >= str.Length)
+				throw new ArgumentOutOfRangeException
+				("The value of index is less than zero, or greater than or equal to the length of str");
+			
+			return IsPunctuation (str[index]);
+		}
+
+		public static bool IsSeparator (char c)
+		{
+			// TODO: Implement me
+			return false;
+		}
+		
+		public static bool IsSeparator (string str, int index)
+		{
+			if (str == null) 
+				throw new ArgumentNullException ("Str is a null reference");
+			
+			if (index < 0 || index >= str.Length)
+				throw new ArgumentOutOfRangeException
+				("The value of index is less than zero, or greater than or equal to the length of str");
+			
+			return IsSeparator (str[index]);
+		}
+
+		public static bool IsSurrogate (char c)
+		{
+			// TODO: Implement me
+			return false;
+		}
+		
+		public static bool IsSurrogate (string str, int index)
+		{
+			if (str == null) 
+				throw new ArgumentNullException ("Str is a null reference");
+			
+			if (index < 0 || index >= str.Length)
+				throw new ArgumentOutOfRangeException
+				("The value of index is less than zero, or greater than or equal to the length of str");
+			
+			return IsSurrogate (str[index]);
+		}
+
+		public static bool IsSymbol (char c)
+		{
+			// TODO: Implement me
+			return false;
+		}
+		
+		public static bool IsSymbol (string str, int index)
+		{
+			if (str == null) 
+				throw new ArgumentNullException ("Str is a null reference");
+			
+			if (index < 0 || index >= str.Length)
+				throw new ArgumentOutOfRangeException
+				("The value of index is less than zero, or greater than or equal to the length of str");
+			
+			return IsSymbol (str[index]);
+		}
+
+		public static bool IsUpper (char c)
+		{
+			// TODO: Implement me
+			return false;
+		}
+		
+		public static bool IsUpper (string str, int index)
+		{
+			if (str == null) 
+				throw new ArgumentNullException ("Str is a null reference");
+			
+			if (index < 0 || index >= str.Length)
+				throw new ArgumentOutOfRangeException
+				("The value of index is less than zero, or greater than or equal to the length of str");
+			
+			return IsUpper (str[index]);
+		}
+
+		public static bool IsWhiteSpace (char c)
+		{
+			// TODO: Implement me
+			return false;
+		}
+		
+		public static bool IsWhiteSpace (string str, int index)
+		{
+			if (str == null) 
+				throw new ArgumentNullException ("Str is a null reference");
+			
+			if (index < 0 || index >= str.Length)
+				throw new ArgumentOutOfRangeException
+				("The value of index is less than zero, or greater than or equal to the length of str");
+			
+			return IsWhiteSpace (str[index]);
+		}
+
+		public static char Parse (string str)
 		{
 			// TODO: Implement me
 			return (char) 0;
@@ -98,39 +306,34 @@ namespace System {
 
 		public static char ToLower (char c)
 		{
-			// FIXME: make me unicode aware
+			// TODO: make me unicode aware
 			return (c >= 'A' && c <= 'Z') ? (char) (c + 33) : c;
 		}
 
 		public static char ToUpper (char c)
 		{
-			// FIXME: make me unicode aware
+			// TODO: make me unicode aware
 			return (char) ((c >= 'a' && c <= 'z') ? c - 33 : c);
 		}
 
 		public override string ToString ()
 		{
-			// TODO: Implement me
-
-			return "";
+			// LAMESPEC: ECMA draft lists this as returning ToString (null), 
+			// However it doesn't list another ToString() method.
+			return ToString (null);
 		}
 
 		public string ToString (IFormatProvider fp)
 		{
-			// TODO: Implement me.
+			// LAMESPEC: ECMA draft doesn't say Char implements IFormattable
 			return "";
 		}
 
-		public string ToString (string format)
+		// =========== IConvertible Methods =========== //
+		
+		public TypeCode GetTypeCode ()
 		{
-			// TODO: Implement me.
-			return "";
-		}
-
-		public string ToString (string format, IFormatProvider fp)
-		{
-			// TODO: Implement me.
-			return "";
-		}
+			return TypeCode.Byte;
+		}	  
 	}
 }

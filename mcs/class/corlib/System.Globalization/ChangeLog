@@ -1,3 +1,8 @@
+2001-07-24  Derek Holden  <dholden@draper.com>
+
+	* NumberStyles.cs: Added ECMA values for Allow types and default
+	styles.
+
 2001-07-18  Michael Lambert <michaellambert@email.com>
 
         * DateTimeStyles.cs, NumberStyles.cs: Add.

@@ -1,3 +1,49 @@
+2001-07-24  Derek Holden  <dholden@draper.com>
+
+	* Boolean.cs: Formatted to code style standard. Added GetTypeCode
+	which is really an IConvertible defined method.
+
+	* Byte.cs: Added a missing Parse method. Put in Parse and ToString
+	behavior, still need to do the main Parse and ToString.
+
+	* Char.cs: Added a bunch of missing ECMA methods. Commented a
+	specification discrepency. Still didn't any unicode stuff, though
+	every IsFoo(char c) method has an IsFoo(string, index)
+	counterpart, added wrappers for those.
+	
+	* Convert.cs: Fixed NaN/Inf checking and double/float
+	rounding. Added ToType for IConvertible classes
+
+	* Double.cs: Fixed ECMA min and max values. Added IsInfinity /
+	IsNaN methods. Changed Inf/NaN internals.
+
+	* IConvertible.cs: Added comments for using
+	Convert.ToType. Changed return values to draft base values.
+
+	* Int16.cs: Added a missing Parse statement. Put in behavior for
+	overloaded ToString and Parse methods.
+
+	* Int32.cs: Added a missing Parse statement. Put in behavior for
+	overloaded ToString and Parse methods.
+
+	* Int64.cs: Added a missing Parse statement. Put in behavior for
+	overloaded ToString and Parse methods.
+	
+	* Single.cs: Put in ECMA epsilon value. Added IsInfinity / IsNaN
+	methods. Changed Inf/NaN internals.
+
+	* SByte.cs: Added a missing Parse method. Put in Parse and
+	ToString behavior, still need to do the main Parse and ToString.
+
+	* UInt16.cs: Added a missing Parse statement. Put in behavior for
+	overloaded ToString and Parse methods.
+
+	* UInt32.cs: Added a missing Parse statement. Put in behavior for
+	overloaded ToString and Parse methods.
+
+	* UInt64.cs: Added a missing Parse statement. Put in behavior for
+	overloaded ToString and Parse methods.
+	
 2001-07-20  Miguel de Icaza  <miguel@ximian.com>
 
 	* MulticastDelegate.cs: New File.
