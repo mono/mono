@@ -1,3 +1,8 @@
+2005-02-05  Zoltan Varga  <vargaz@freemail.hu>
+
+	* loader.c (mono_lookup_pinvoke_call): Allow for combination of stdcall and charset name mangling.
+	Reorganize the code and add some tracing stuff.
+
 2005-02-05  Ben Maurer  <bmaurer@ximian.com>
 
 	* monodiet.c: More iters!
@@ -14,7 +19,7 @@
 
 	* loader.c (mono_lookup_pinvoke_call): Add brute-force checking for mangled function names
 	under win32.
-	
+
 2005-02-05  Ben Maurer  <bmaurer@ximian.com>
 
 	* mono-debug-debugger.c: use iters
