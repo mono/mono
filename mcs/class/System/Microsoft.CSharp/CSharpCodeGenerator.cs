@@ -306,11 +306,13 @@ namespace Mono.CSharp
 		{
 			TextWriter output = Output;
 
-			output.Write( "return " );
-
-			GenerateExpression( statement.Expression );
-
-			output.WriteLine ( ";" );
+			if (statement.Expression != null) {
+				output.Write ( "return " );
+				GenerateExpression (statement.Expression);
+				output.WriteLine ( ";" );
+			} else {
+				output.WriteLine ("return;");
+			}
 		}
 
 		protected override void GenerateConditionStatement( CodeConditionStatement statement )
