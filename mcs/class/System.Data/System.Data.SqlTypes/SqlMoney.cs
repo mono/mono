@@ -55,7 +55,6 @@ namespace System.Data.SqlTypes
 
 		#region Properties
 
-		[MonoTODO]
 		public bool IsNull { 
 			get { return !notNull; }
 		}
