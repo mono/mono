@@ -1,3 +1,7 @@
+2005-02-02  Lluis Sanchez Gual <lluis@novell.com>
+
+	* ProcessModelInfo.cs: Fixed warning.
+
 2005-02-01 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TraceContext.cs: writing a message without any other argument is not

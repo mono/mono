@@ -49,7 +49,6 @@ namespace System.Web {
 		[MonoTODO ("Retrieve appropriate variables from worker")]
 		public static ProcessInfo GetCurrentProcessInfo ()
 		{
-			HttpContext httpContext;
 			DateTime startTime = DateTime.Now;
 			TimeSpan age = TimeSpan.Zero;
 			int processID = 0;
@@ -58,7 +57,6 @@ namespace System.Web {
 			ProcessShutdownReason shutdownReason = ProcessShutdownReason.None;
 			int peakMemoryUsed = 0;
 
-			httpContext = HttpContext.Current;
 			return new ProcessInfo (startTime, age, processID, requestCount, status, shutdownReason, peakMemoryUsed);
 		}
 
