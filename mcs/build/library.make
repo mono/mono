@@ -43,9 +43,9 @@ install-local: $(the_lib) $(gacutil)
 
 uninstall-local: $(gacutil)
 	@if test -f Assembly/AssemblyInfo.cs ; then \
-		$(RUNTIME)  $(gacutil) /u $(the_lib) /f ; \
+		$(RUNTIME)  $(gacutil) /u $$(basename $(the_lib) .dll) ; \
 	else \
-		-rm -f $(DESTDIR)$(prefix)/lib/$(LIBRARY)
+		-rm -f $(DESTDIR)$(prefix)/lib/$(LIBRARY) ; \
 	fi
 
 $(gacutil):

@@ -1,3 +1,7 @@
+2004-04-29  Jackson Harper  <jackson@ximian.com>
+
+	* library.make: Fix uninstall
+	
 2004-04-29  Martin Baulig  <martin@ximian.com>
 
 	* rules.make: Added `INTERNAL_ILASM'.
