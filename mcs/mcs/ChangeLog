@@ -1,3 +1,11 @@
+2004-06-09  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* codegen.cs: Check that all referenced assemblies have a strongname
+	before strongnaming the compiled assembly. If not report error CS1577.
+	Fix bug #56563. Patch by Jackson Harper.
+	* typemanager.cs: Added a method to return all referenced assemblies.
+	Fix bug #56563. Patch by Jackson Harper.
+
 2004-06-08  Marek Safar  <marek.safar@seznam.cz>
 
 	* class:

@@ -536,6 +536,11 @@ public class TypeManager {
 		assemblies = n;
 	}
 
+        public static Assembly [] GetAssemblies ()
+        {
+                return assemblies;
+        }
+
 	/// <summary>
 	///  Registers a module builder to lookup types from
 	/// </summary>
