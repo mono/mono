@@ -360,6 +360,8 @@ System.Reflection/CustomAttributeFormatException.cs
 System.Reflection/DefaultMemberAttribute.cs
 System.Reflection/EventAttributes.cs
 System.Reflection/EventInfo.cs
+System.Reflection/ExceptionHandlingClause.cs
+System.Reflection/ExceptionHandlingClauseFlags.cs
 System.Reflection/FieldAttributes.cs
 System.Reflection/FieldInfo.cs
 System.Reflection/ICustomAttributeProvider.cs
@@ -367,12 +369,14 @@ System.Reflection/ImageFileMachine.cs
 System.Reflection/InterfaceMapping.cs
 System.Reflection/InvalidFilterCriteriaException.cs
 System.Reflection/IReflect.cs
+System.Reflection/LocalVariableInfo.cs
 System.Reflection/ManifestResourceInfo.cs
 System.Reflection/MemberFilter.cs
 System.Reflection/MemberInfo.cs
 System.Reflection/MemberTypes.cs
 System.Reflection/MethodAttributes.cs
 System.Reflection/MethodBase.cs
+System.Reflection/MethodBody.cs
 System.Reflection/MethodImplAttributes.cs
 System.Reflection/MethodInfo.cs
 System.Reflection/Missing.cs

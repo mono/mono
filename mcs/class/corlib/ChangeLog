@@ -1,3 +1,7 @@
+2004-09-27  Zoltan Varga  <vargaz@freemail.hu>
+
+	* corlib.dll.sources: Add some 2.0 System.Reflection classes.
+
 2004-09-26  Zoltan Varga  <vargaz@freemail.hu>
 
 	* corlib_test.dll.sources: Add System.Reflection/FieldInfoTest.
