@@ -1,3 +1,7 @@
+2004-09-02  Zoltan Varga  <vargaz@freemail.hu>
+
+	* inssel-long32.brg: Fix OP_LCONV_TO_OVF_I1 rule. Fixes #64578.
+
 2004-08-23  Zoltan Varga  <vargaz@freemail.hu>
 
 	* inssel-x86.brg inssel-amd64: Add yet another missing tree->dreg assignment.
