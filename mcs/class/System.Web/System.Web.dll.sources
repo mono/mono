@@ -269,8 +269,10 @@ System.Web.UI.WebControls/ControlIDConverter.cs
 System.Web.UI.WebControls/CommandEventArgs.cs
 System.Web.UI.WebControls/CommandEventHandler.cs
 System.Web.UI.WebControls/CompareValidator.cs
+System.Web.UI.WebControls/CompositeControl.cs
 System.Web.UI.WebControls/ContentDirection.cs
 System.Web.UI.WebControls/ControlParameter.cs
+System.Web.UI.WebControls/ControlPropertyNameConverter.cs
 System.Web.UI.WebControls/CookieParameter.cs
 System.Web.UI.WebControls/CreateUserErrorEventArgs.cs
 System.Web.UI.WebControls/CreateUserErrorEventHandler.cs
