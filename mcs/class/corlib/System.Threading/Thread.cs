@@ -495,5 +495,97 @@ namespace System.Threading
 				state &= ~clr;
 			}
 		}
+
+#if NET_1_1
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern public static byte VolatileRead (ref byte address);
+		
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern public static double VolatileRead (ref double address);
+		
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern public static short VolatileRead (ref short address);
+		
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern public static int VolatileRead (ref int address);
+		
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern public static long VolatileRead (ref long address);
+		
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern public static IntPtr VolatileRead (ref IntPtr address);
+		
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern public static object VolatileRead (ref object address);
+
+		[CLSCompliant(false)]
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern public static sbyte VolatileRead (ref sbyte address);
+		
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern public static float VolatileRead (ref float address);
+
+		[CLSCompliant (false)]
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern public static ushort VolatileRead (ref ushort address);
+
+		[CLSCompliant (false)]
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern public static uint VolatileRead (ref uint address);
+
+		[CLSCompliant (false)]
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern public static ulong VolatileRead (ref ulong address);
+
+		[CLSCompliant (false)]
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern public static byte VolatileRead (ref UIntPtr address);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern public static void VolatileWrite (ref byte address, byte value);
+		
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern public static void VolatileWrite (ref double address, double value);
+		
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern public static void VolatileWrite (ref short address, short value);
+		
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern public static void VolatileWrite (ref int address, int value);
+		
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern public static void VolatileWrite (ref long address, long value);
+		
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern public static void VolatileWrite (ref IntPtr address, IntPtr value);
+		
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern public static void VolatileWrite (ref object address, object value);
+
+		[CLSCompliant(false)]
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern public static void VolatileWrite (ref sbyte address, sbyte value);
+		
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern public static void VolatileWrite (ref float address, float value);
+
+		[CLSCompliant (false)]
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern public static void VolatileWrite (ref ushort address, ushort value);
+
+		[CLSCompliant (false)]
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern public static void VolatileWrite (ref uint address, uint value);
+
+		[CLSCompliant (false)]
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern public static void VolatileWrite (ref ulong address, ulong value);
+
+		[CLSCompliant (false)]
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern public static void VolatileWrite (ref UIntPtr address, UIntPtr value);
+		
+#endif
+		
 	}
 }
