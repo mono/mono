@@ -8,19 +8,18 @@
 //
 
 .assembly extern mscorlib { }
-.assembly extern System { }
 .assembly 'test-seh-b' { }
 
 
 .class public T {
 
-        .field private static int32 exc_caught
+        .field private static int32 exc_not_thrown
         .field private static int32 flt_caught
   
         .method public static specialname void .cctor ()
         {
                 ldc.i4.0
-                stsfld int32 T::exc_caught
+                stsfld int32 T::exc_not_thrown
 
                 ldc.i4.0
                 stsfld int32 T::flt_caught
@@ -33,8 +32,13 @@
                 .entrypoint
 
                 .try {
-                        ldstr "#jibba!!jabba"
-                        newobj void [System]System.Uri::.ctor (string)
+                        ldc.i4.0
+                        ldc.i4.0
+                        div
+
+                        ldc.i4.1
+                        stsfld int32 T::exc_not_thrown
+
                         leave outer
                 } filter {
                         pop
@@ -47,8 +51,8 @@
                 }
 
         outer:
-                ldsfld int32 T::exc_caught
-                brfalse fail
+                ldsfld int32 T::exc_not_thrown
+                brtrue fail
 
                 ldsfld int32 T::flt_caught
                 brfalse fail
