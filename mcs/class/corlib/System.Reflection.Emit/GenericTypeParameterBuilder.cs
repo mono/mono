@@ -211,9 +211,7 @@ namespace System.Reflection.Emit
 
 		protected override bool IsValueTypeImpl ()
 		{
-#warning "FIXME"
-			return false;
-			// return base_type != null ? base_type.IsValueType : false;
+			return base_type != null ? base_type.IsValueType : false;
 		}
 		
 		public override object InvokeMember (string name, BindingFlags invokeAttr,

@@ -1,3 +1,8 @@
+2004-12-09  Martin Baulig  <martin@ximian.com>
+
+	* GenericTypeParameterBuilder.cs
+	(GenericTypeParameterBuilder.IsValueType): Fixed the FIXME.
+
 2004-12-08  Zoltan Varga  <vargaz@freemail.hu>
 
 	* AssemblyBuilder.cs: Move corlib_internal field here from Assembly.
