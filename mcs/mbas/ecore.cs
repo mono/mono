@@ -512,7 +512,7 @@ namespace Mono.CSharp {
 			else if (mi is FieldInfo)
 				return new FieldExpr ((FieldInfo) mi, loc);
 			else if (mi is PropertyInfo)
-				return new PropertyExpr ((PropertyInfo) mi, loc);
+				return new PropertyExpr (ec, (PropertyInfo) mi, loc);
 		        else if (mi is Type){
 				return new TypeExpr ((System.Type) mi, loc);
 			}
@@ -4104,29 +4104,21 @@ namespace Mono.CSharp {
 	public class PropertyExpr : ExpressionStatement, IAssignMethod, IMemberExpr {
 		public readonly PropertyInfo PropertyInfo;
 		public bool IsBase;
-		MethodInfo [] Accessors;
+		MethodInfo getter, setter;
 		bool is_static;
 		
 		Expression instance_expr;
 
-		public PropertyExpr (PropertyInfo pi, Location l)
+		public PropertyExpr (EmitContext ec, PropertyInfo pi, Location l)
 		{
 			PropertyInfo = pi;
 			eclass = ExprClass.PropertyAccess;
 			is_static = false;
 			loc = l;
-			Accessors = TypeManager.GetAccessors (pi);
 
-			if (Accessors != null)
-				foreach (MethodInfo mi in Accessors){
-					if (mi != null)
-						if (mi.IsStatic)
-							is_static = true;
-				}
-			else
-				Accessors = new MethodInfo [2];
-			
 			type = TypeManager.TypeToCoreType (pi.PropertyType);
+
+			ResolveAccessors (ec);
 		}
 
 		public string Name {
@@ -4178,9 +4170,39 @@ namespace Mono.CSharp {
 			return true;
 		}
 
+		void ResolveAccessors (EmitContext ec)
+		{
+			BindingFlags flags = BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance;
+			MemberInfo [] group;
+			
+			group = TypeManager.MemberLookup (ec.ContainerType, PropertyInfo.DeclaringType,
+							      MemberTypes.Method, flags, "get_" + PropertyInfo.Name);
+
+			//
+			// The first method is the closest to us
+			//
+			if (group != null && group.Length > 0){
+				getter = (MethodInfo) group [0];
+
+				if (getter.IsStatic)
+					is_static = true;
+			} 			
+
+			//
+			// The first method is the closest to us
+			//
+			group = TypeManager.MemberLookup (ec.ContainerType, PropertyInfo.DeclaringType,
+							  MemberTypes.Method, flags, "set_" + PropertyInfo.Name);
+			if (group != null && group.Length > 0){
+				setter = (MethodInfo) group [0];
+				if (setter.IsStatic)
+					is_static = true;
+			}
+		}
+
 		override public Expression DoResolve (EmitContext ec)
 		{
-			if (!PropertyInfo.CanRead){
+			if (getter == null){
 				Report.Error (154, loc, 
 					      "The property `" + PropertyInfo.Name +
 					      "' can not be used in " +
@@ -4204,7 +4226,7 @@ namespace Mono.CSharp {
 
 		override public Expression DoResolveLValue (EmitContext ec, Expression right_side)
 		{
-			if (!PropertyInfo.CanWrite){
+			if (setter == null){
 				Report.Error (154, loc, 
 					      "The property `" + PropertyInfo.Name +
 					      "' can not be used in " +
@@ -4223,13 +4245,11 @@ namespace Mono.CSharp {
 
 		override public void Emit (EmitContext ec)
 		{
-			MethodInfo method = Accessors [0];
-
 			//
-			// Special case: length of single dimension array is turned into ldlen
+			// Special case: length of single dimension array property is turned into ldlen
 			//
-			if ((method == TypeManager.system_int_array_get_length) ||
-			    (method == TypeManager.int_array_get_length)){
+			if ((getter == TypeManager.system_int_array_get_length) ||
+			    (getter == TypeManager.int_array_get_length)){
 				Type iet = instance_expr.Type;
 
 				//
@@ -4243,7 +4263,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			Invocation.EmitCall (ec, IsBase, IsStatic, instance_expr, method, null, loc);
+			Invocation.EmitCall (ec, IsBase, IsStatic, instance_expr, getter, null, loc);
 			
 		}
 
@@ -4256,7 +4276,7 @@ namespace Mono.CSharp {
 			ArrayList args = new ArrayList ();
 
 			args.Add (arg);
-			Invocation.EmitCall (ec, IsBase, IsStatic, instance_expr, Accessors [1], args, loc);
+			Invocation.EmitCall (ec, IsBase, IsStatic, instance_expr, setter, args, loc);
 		}
 
 		override public void EmitStatement (EmitContext ec)

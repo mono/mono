@@ -1416,37 +1416,6 @@ public class TypeManager {
 		return true;
 	}
 
-	//
-	// FIXME: we need to return the accessors depending on whether
-	// they are visible or not.
-	//
-	static public MethodInfo [] GetAccessors (PropertyInfo pi)
-	{
-		MethodInfo [] ret;
-
-		if (pi is PropertyBuilder){
-			Pair pair = (Pair) properties [pi];
-
-			ret = new MethodInfo [2];
-			ret [0] = (MethodInfo) pair.First;
-			ret [1] = (MethodInfo) pair.Second;
-
-			return ret;
-		} else {
-			MethodInfo [] mi = new MethodInfo [2];
-
-			//
-			// Why this and not pi.GetAccessors?
-			// Because sometimes index 0 is the getter
-			// sometimes it is 1
-			//
-			mi [0] = pi.GetGetMethod (true);
-			mi [1] = pi.GetSetMethod (true);
-
-			return mi;
-		}
-	}
-
 	static public MethodInfo GetPropertyGetter (PropertyInfo pi)
 	{
 		if (pi is PropertyBuilder){
@@ -2003,12 +1972,6 @@ public class TypeManager {
 				if (!IsSubclassOrNestedChildOf (closure_invocation_type, mb.DeclaringType))
 					return false;
 
-				// Although a derived class can access protected members of its base class
-				// it cannot do so through an instance of the base class (CS1540).
-				if ((closure_invocation_type != closure_start_type) &&
-				    closure_invocation_type.IsSubclassOf (closure_start_type))
-					return false;
-
 				return true;
 			}
 
@@ -2147,7 +2110,10 @@ public class TypeManager {
 				} else
 					private_ok = always_ok_flag;
 
-				if (private_ok || invocation_type.IsSubclassOf (current_type))
+				if (invocation_type.IsSubclassOf (current_type))
+					private_ok = true;
+				
+				if (private_ok)
 					bf = original_bf | BindingFlags.NonPublic;
 			} else {
 				private_ok = false;

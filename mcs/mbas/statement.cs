@@ -1558,7 +1558,7 @@ namespace Mono.CSharp {
 
 				foreach (UsageVector child in children) {
 					Report.Debug (2, "  MERGING CHILD", child, child.is_finally);
-
+					
 					if (!child.is_finally) {
 						if (child.Breaks != FlowReturns.UNREACHABLE) {
 							// If Returns is already set, perform an
@@ -1670,6 +1670,10 @@ namespace Mono.CSharp {
 					Breaks = new_breaks;
 				else if (branching.Type == FlowBranchingType.SWITCH_SECTION)
 					Breaks = new_returns;
+				else if (branching.Type == FlowBranchingType.SWITCH){
+					if (new_breaks == FlowReturns.ALWAYS)
+						Breaks = FlowReturns.ALWAYS;
+				}
 
 				//
 				// We've now either reached the point after the branching or we will
