@@ -28,42 +28,42 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace Microsoft.JScript.Tmp
-{
-	using System;
-	using Microsoft.JScript.Vsa;
+using System;
+using Microsoft.JScript.Vsa;
 
-	public class VBArrayPrototype : JSObject
-	{
+namespace Microsoft.JScript {
+
+	public class VBArrayPrototype : JSObject {
+
 		public static VBArrayConstructor constructor {
 			get { throw new NotImplementedException (); }
 		}
 
-
+		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.VBArray_dimensions)]
 		public static int dimensions (object thisObj)
 		{
 			throw new NotImplementedException ();
 		}
 
-
+		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject|JSFunctionAttributeEnum.HasVarArgs, JSBuiltin.VBArray_getItem)]
 		public static object getItem (object thisObj, params object [] args)
 		{
 			throw new NotImplementedException ();
 		}
 
-
+		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.VBArray_lbound)]
 		public static int lbound (object thisObj, object dimension)
 		{
 			throw new NotImplementedException ();
 		}
 
-
+		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject|JSFunctionAttributeEnum.HasEngine, JSBuiltin.VBArray_toArray)]
 		public static ArrayObject toArray (object thisObj, VsaEngine engine)
 		{
 			throw new NotImplementedException ();
 		}
 
-
+		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.VBArray_ubound)]
 		public static int ubound (object thisObj, object dimension)
 		{
 			throw new NotImplementedException ();
