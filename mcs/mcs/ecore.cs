@@ -3628,6 +3628,11 @@ namespace Mono.CSharp {
 		{
 			throw new Exception ("Should never be called");
 		}
+
+		public override string ToString ()
+		{
+			return Type.ToString ();
+		}
 	}
 
 	/// <summary>
