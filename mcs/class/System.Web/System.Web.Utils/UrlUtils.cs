@@ -83,7 +83,6 @@ namespace System.Web.Utils
 			char c = protocol[0];
 			if(!Char.IsLetter(c))
 			{
-				System.Console.WriteLine("Character {0} is not a letter.", c);
 				return false;
 			}
 			for(int i=1; i < protocol.Length; i++)
@@ -91,7 +90,6 @@ namespace System.Web.Utils
 				c = protocol[i];
 				if(!Char.IsLetterOrDigit(c) && c!='.' && c!='+' && c!='-')
 				{
-					System.Console.WriteLine("Character \"{0}\" is not a letter or a digit or something.", c);
 					return false;
 				}
 			}
