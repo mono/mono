@@ -23,7 +23,7 @@ namespace Mono.Util {
                 static readonly string xs = "http://www.w3.org/2001/XMLSchema";
                 static Hashtable generatedSchemaTypes;
 
-                static void Main (string [] args) 
+		static void Main (string [] args) 
                 {
                         string assembly = args [0];
 
@@ -44,7 +44,7 @@ namespace Mono.Util {
                 /// <summary>
                 ///     Writes a schema for each type in the assembly
                 /// </summary>
-                static void WriteSchema (string assembly) 
+		static void WriteSchema (string assembly) 
                 {
                         Assembly a = Assembly.LoadFrom (assembly);
                         generatedSchemaTypes = new Hashtable ();
@@ -79,7 +79,7 @@ namespace Mono.Util {
                 ///     Given a Type and its associated schema type, add aa '<xs;element>' node 
                 ///     to the schema.
                 /// </summary>
-                static XmlSchemaElement WriteSchemaElement (Type type, XmlSchemaType schemaType) 
+		static XmlSchemaElement WriteSchemaElement (Type type, XmlSchemaType schemaType) 
                 {
                         XmlSchemaElement schemaElement = new XmlSchemaElement ();
                         schemaElement.Name = type.Name;
@@ -96,7 +96,7 @@ namespace Mono.Util {
                         return schemaElement;
                 }
 		
-                static void OnSchemaValidation (object sender, ValidationEventArgs args) 
+		static void OnSchemaValidation (object sender, ValidationEventArgs args) 
                 {
                         Console.WriteLine (args.Message);
                 }
@@ -106,7 +106,7 @@ namespace Mono.Util {
                 ///     From a Type, create a corresponding ComplexType node to
                 ///     represent this Type.
                 /// </summary>
-                static XmlSchemaType WriteSchemaType (Type type) 
+		static XmlSchemaType WriteSchemaType (Type type) 
                 {
                         if (generatedSchemaTypes.Contains (type.FullName)) // Caching
                                 return generatedSchemaTypes [type.FullName] as XmlSchemaType;
@@ -148,7 +148,7 @@ namespace Mono.Util {
                         return schemaType;
                 }
 
-                static XmlSchemaType WriteEnum (Type type) 
+		static XmlSchemaType WriteEnum (Type type) 
                 {
                         if (type.IsEnum == false)
                                 throw new Exception (String.Format ("{0} is not an enumeration.", type.Name));
@@ -174,7 +174,7 @@ namespace Mono.Util {
                         return simpleType;
                 }
 
-                static XmlSchemaType WriteArray (Type type) 
+		static XmlSchemaType WriteArray (Type type) 
                 {
                         XmlSchemaComplexType complexType = new XmlSchemaComplexType ();
                         string type_name = type.Name.Substring (0, type.Name.Length - 2);
@@ -186,9 +186,15 @@ namespace Mono.Util {
                         element.MinOccurs = 0;
                         element.MaxOccursString = "unbounded";
                         element.IsNillable = true;
-                        element.Name = type_name.ToLower ();                   
-                        element.SchemaTypeName = GetQualifiedName (
-                                type.FullName.Substring (0, type.FullName.Length - 2));
+
+			element.Name = type_name.ToLower ();
+			XmlQualifiedName qname = GetQualifiedName (
+				type.FullName.Substring (0, type.FullName.Length - 2));
+
+			if (qname == null)
+				return null;
+			
+                        element.SchemaTypeName = qname;
                         
                         sequence.Items.Add (element);
                         complexType.Particle = sequence;
@@ -203,7 +209,7 @@ namespace Mono.Util {
                 ///     If type is null, it'll create a new complexType 
                 ///     with an XmlAny node in its sequence child node.
                 /// </summary>
-                static XmlSchemaType WriteComplexType (Type type) 
+		static XmlSchemaType WriteComplexType (Type type) 
                 {
                         //
                         // Recursively generate schema for all parent types
@@ -247,7 +253,7 @@ namespace Mono.Util {
                         return complexType;
                 }       
 
-                static XmlSchemaSequence PopulateSequence (FieldInfo [] fields, PropertyInfo [] properties) 
+		static XmlSchemaSequence PopulateSequence (FieldInfo [] fields, PropertyInfo [] properties) 
                 {
                         if (fields == null && properties == null)
                                 return null;
@@ -256,7 +262,7 @@ namespace Mono.Util {
                         
                         try {
                                 foreach (FieldInfo field in fields)
-                                        AddElement (sequence, field, field.FieldType);
+				AddElement (sequence, field, field.FieldType);
 
                         } catch (Exception e) {
                                 throw e;
@@ -267,7 +273,7 @@ namespace Mono.Util {
 
                         try {
                                 foreach (PropertyInfo property in properties)
-                                        AddElement (sequence, property, property.PropertyType);
+				AddElement (sequence, property, property.PropertyType);
 
                         } catch (ArgumentException e) {
                                 throw e;
@@ -276,7 +282,7 @@ namespace Mono.Util {
                         return sequence;
                 }
 
-                static void AddElement (XmlSchemaSequence sequence, MemberInfo member, Type type) 
+		static void AddElement (XmlSchemaSequence sequence, MemberInfo member, Type type) 
                 {
                         //
                         // Only read/write properties are supported.
@@ -302,9 +308,16 @@ namespace Mono.Util {
                         if (!type.IsAbstract && typeof (System.Delegate).IsAssignableFrom (type))
                                 return;
 
+			//
+			// Handle arrays here
+			//
                         if (type.IsArray) {
                                 XmlSchemaType arrayType = WriteArray (type);
-                                schema.Items.Add (arrayType);
+
+				if (arrayType == null)
+					throw new ArgumentException (String.Format ("The type '{0}' cannot be represented in XML Schema.", type.FullName));
+				
+				schema.Items.Add (arrayType);
                         }
 
                         XmlSchemaElement element = new XmlSchemaElement ();
@@ -332,7 +345,7 @@ namespace Mono.Util {
                         sequence.Items.Add (element);
                 }
 
-                static XmlQualifiedName GetQualifiedName (Type type) 
+		static XmlQualifiedName GetQualifiedName (Type type) 
                 {
                         if (type.Equals (typeof (System.Xml.XmlNode)))
                                 return XmlQualifiedName.Empty;
@@ -340,9 +353,10 @@ namespace Mono.Util {
                         else if (type.IsSubclassOf (typeof (System.Xml.XmlNode)))
                                 return new XmlQualifiedName ("xml");
 
-                        else if (type.IsArray) {
+                        else if (type.IsArray && (GetQualifiedName (type.FullName) != XmlQualifiedName.Empty)) {
                                 string array_type = type.Name.Substring (0, type.Name.Length - 2);
                                 return new XmlQualifiedName ("ArrayOf" + array_type);
+
                         } else 
                                 return GetQualifiedName (type.FullName);
                 }
@@ -350,59 +364,59 @@ namespace Mono.Util {
                 ///<summary>
                 ///	Populates element nodes inside a '<xs:sequence>' node.
                 ///</summary>
-                static XmlQualifiedName GetQualifiedName (string type) 
+		static XmlQualifiedName GetQualifiedName (string type) 
                 {
                         string type_name;
 
                         switch (type) {
-                                case "System.Uri":
-                                        type_name =  "anyURI";
-                                        break;
-                                case "System.Boolean":
-                                        type_name = "Boolean";
-                                        break;
-                                case "System.SByte":
-                                        type_name = "Byte";
-                                        break;
-                                case "System.DateTime":
-                                        type_name = "dateTime";
-                                        break;
-                                case "System.Decimal":
-                                        type_name = "decimal";
-                                        break;
-                                case "System.Double":
-                                        type_name = "Double";
-                                        break;
-                                case "System.Int16":
-                                        type_name = "short";
-                                        break;
-                                case "System.Int32":
-                                        type_name =  "int";
-                                        break;
-                                case "System.Int64":
-                                        type_name = "long";
-                                        break;
-                                case "System.Xml.XmlQualifiedName":
-                                        type_name = "QName";
-                                        break;
-                                case "System.TimeSpan":
-                                        type_name = "duration";
-                                        break;
-                                case "System.String":
-                                        type_name = "string";
-                                        break;
-                                case "System.UInt16":
-                                        type_name = "unsignedShort";
-                                        break;
-                                case "System.UInt32":
-                                        type_name = "unsignedInt";
-                                        break;
-                                case "System.UInt64":
-                                        type_name = "unsignedLong";		
-                                        break;           
-                                default:
-                                        type_name = null;
-                                        break;
+			case "System.Uri":
+				type_name =  "anyURI";
+				break;
+			case "System.Boolean":
+				type_name = "Boolean";
+				break;
+			case "System.SByte":
+				type_name = "Byte";
+				break;
+			case "System.DateTime":
+				type_name = "dateTime";
+				break;
+			case "System.Decimal":
+				type_name = "decimal";
+				break;
+			case "System.Double":
+				type_name = "Double";
+				break;
+			case "System.Int16":
+				type_name = "short";
+				break;
+			case "System.Int32":
+				type_name =  "int";
+				break;
+			case "System.Int64":
+				type_name = "long";
+				break;
+			case "System.Xml.XmlQualifiedName":
+				type_name = "QName";
+				break;
+			case "System.TimeSpan":
+				type_name = "duration";
+				break;
+			case "System.String":
+				type_name = "string";
+				break;
+			case "System.UInt16":
+				type_name = "unsignedShort";
+				break;
+			case "System.UInt32":
+				type_name = "unsignedInt";
+				break;
+			case "System.UInt64":
+				type_name = "unsignedLong";		
+				break;           
+			default:
+				type_name = null;
+				break;
                         }       
                                 
                         if (type_name == null)
