@@ -1,3 +1,8 @@
+2002-03-13  Ravi Pratap  <ravi@ximian.com>
+
+	* test-86.cs : Add. This is to check for correct overload resolution
+	with a null literal.
+
 2002-03-07  Ravi Pratap  <ravi@ximian.com>
 
 	* test-82.cs : Add.
