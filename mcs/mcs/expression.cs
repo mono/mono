@@ -2118,14 +2118,21 @@ namespace Mono.CSharp {
 					temp = ConvertImplicit (ec, right, l, loc);
 					if (temp != null)
 						right = temp;
+					else {
+						Error_OperatorCannotBeApplied ();
+						return null;
+					}
 				} if (!lie){
 					temp = ConvertImplicit (ec, left, r, loc);
 					if (temp != null){
 						left = temp;
 						l = r;
+					} else {
+						Error_OperatorCannotBeApplied ();
+						return null;
 					}
 				}
-				 
+
 				if (oper == Operator.Equality || oper == Operator.Inequality ||
 				    oper == Operator.LessThanOrEqual || oper == Operator.LessThan ||
 				    oper == Operator.GreaterThanOrEqual || oper == Operator.GreaterThan){
