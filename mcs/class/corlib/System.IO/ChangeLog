@@ -1,3 +1,8 @@
+
+Sun Aug 26 11:47:56 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* IoException.cs: Implemented System.IO.Exception.
+
 2001-07-18  Michael Lambert <michaellambert@email.com>
 
         *SeekOrigin.cs.cs, FileShare.cs, FileMode.cs, FileAccess.cs: Add.
