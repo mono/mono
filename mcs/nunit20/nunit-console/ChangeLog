@@ -1,3 +1,9 @@
+2005-01-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ConsoleUI.cs : at least it should flush stream, even though it
+	  cannot close the stream (due to the behavioral difference between
+	  Console.Out and usual StreamWriter).
+
 2004-11-26  Martin Baulig  <martin@ximian.com>
 
 	* ConsoleUI.cs (ConsoleUI.Execute): Print a short summary (number

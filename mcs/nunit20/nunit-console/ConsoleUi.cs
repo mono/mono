@@ -251,6 +251,8 @@ namespace NUnit.Console
 			{
 				writer.Write(xmlOutput);
 			}
+			outStream.Flush();
+			errorStream.Flush();
 
 			if ( testDomain != null )
 				testDomain.Unload();

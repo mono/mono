@@ -44,7 +44,12 @@ namespace NUnit.Util
 		{
 			this.console = console;
 		}
-    			
+
+    		public override void Flush()
+		{
+			console.Flush();
+		}
+
 		public override void Write(char c)
 		{
 			console.Write(c);
