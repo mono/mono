@@ -1,3 +1,6 @@
+2004-07-01  Sureshkumar T (tsureshkumar@novell.com)
+	* OdbcCommand.cs   : fixed reader problem with ExecuteScalar
+
 2004-06-23  Sureshkumar T (tsureshkumar@novell.com)
         * OdbcConnection.cs: Fix: Moved env allocation to Open method. 
 			     Disconnection & freeing handles are done in Close 
