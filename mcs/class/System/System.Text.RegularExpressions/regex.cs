@@ -64,7 +64,11 @@ namespace System.Text.RegularExpressions {
 		}
 
 		public static bool IsMatch (string input, string pattern) {
-			Regex re = new Regex (pattern, RegexOptions.None);
+			return IsMatch (input, pattern, RegexOptions.None);
+		}
+
+		public static bool IsMatch (string input, string pattern, RegexOptions options) {
+			Regex re = new Regex (pattern, options);
 			return re.IsMatch (input);
 		}
 
@@ -75,6 +79,15 @@ namespace System.Text.RegularExpressions {
 		public static Match Match (string input, string pattern, RegexOptions options) {
 			Regex re = new Regex (pattern, options);
 			return re.Match (input);
+		}
+
+		public static MatchCollection Matches (string input, string pattern) {
+			return Matches (input, pattern, RegexOptions.None);
+		}
+
+		public static MatchCollection Matches (string input, string pattern, RegexOptions options) {
+			Regex re = new Regex (pattern, options);
+			return re.Matches (input);
 		}
 
 		public static string Replace
