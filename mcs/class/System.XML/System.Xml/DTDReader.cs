@@ -1584,6 +1584,8 @@ namespace System.Xml
 		{
 			ClearValueBuffer ();
 
+			TryExpandPERef ();
+
 			int quoteChar = ReadChar ();
 
 			if (quoteChar != '\'' && quoteChar != '\"')
