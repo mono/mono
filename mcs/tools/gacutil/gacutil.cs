@@ -19,7 +19,9 @@ namespace Mono.Tools
 	public class Driver
 	{
 
+		private string libdir = InternalLibdir ();
 		private string gac_path = GetGacPath ();
+		private string package_name = String.Empty;
 		
 		public static int Main (string[] args)
 		{
@@ -38,6 +40,8 @@ namespace Mono.Tools
 				//FIXME: Need to check machine.config to make sure this is legal (potential security hole)
 				gac_path = Path.Combine (Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.Personal), ".mono"), "gac");
 				gac_path += Path.DirectorySeparatorChar;
+				libdir = Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.Personal), ".mono");
+				libdir += Path.DirectorySeparatorChar;
 
 				string[] stripped = new string[args.Length - 1];
 				Array.Copy (args, 1, stripped, 0, args.Length - 1);
@@ -47,8 +51,17 @@ namespace Mono.Tools
 			if (args.Length >= 2 && (args[args.Length - 2] == "/root" || args[args.Length - 2] == "-root" || args[args.Length - 2] == "--root")) {
 				gac_path = Path.Combine (Path.Combine (args[args.Length - 1], "mono"), "gac");
 				gac_path += Path.DirectorySeparatorChar;
+				libdir = Path.Combine (args[args.Length - 1], "mono");
+				libdir += Path.DirectorySeparatorChar;
 
 				string[] stripped = new string[args.Length - 2];				Array.Copy (args, 0, stripped, 0, args.Length - 2);
+				args = stripped;
+			}
+
+			if (args.Length >= 2 && (args[args.Length - 2] == "/package" || args[args.Length - 2] == "--package" || args[args.Length - 2] == "-package")) {
+				package_name = args[args.Length - 1];
+				string[] stripped = new string[args.Length - 2];
+				Array.Copy (args, 0, stripped, 0, args.Length - 2);
 				args = stripped;
 			}
 	
@@ -304,6 +317,13 @@ namespace Mono.Tools
 			}
 
 			File.Copy (args[0], fullPath + an.Name + ".dll", force);
+			if (package_name != String.Empty) {
+				if (Path.DirectorySeparatorChar == '/') {
+					Mono.Posix.Syscall.symlink (fullPath + an.Name + ".dll", libdir + package_name + Path.DirectorySeparatorChar + Path.GetFileName (args[0]));
+				} else {
+					File.Copy (args[0], libdir + package_name + Path.DirectorySeparatorChar + Path.GetFileName (args[0]));
+				}
+			}
 			if (File.Exists (config_path))
 				File.Copy (config_path, fullPath + an.Name + ".dll" + ".config", force);
 
@@ -327,6 +347,10 @@ namespace Mono.Tools
 				d.CreateSubdirectory (name);
 				d = new DirectoryInfo (Path.Combine (gac_path, name));
 				d.CreateSubdirectory (tok);
+				if (package_name != String.Empty) {
+					d = new DirectoryInfo (libdir);
+					d.CreateSubdirectory (package_name);
+				}
 			} catch {
 				return false;
 			}
@@ -441,6 +465,15 @@ namespace Mono.Tools
 			}
 			MethodInfo getGac = gac.GetGetMethod (true);
 			return Path.Combine ((string) getGac.Invoke (null, null), "");
+		}
+
+		private static string InternalLibdir () {
+			MethodInfo libdir = typeof (System.Environment).GetMethod ("internalGetGacPath", BindingFlags.Static|BindingFlags.NonPublic);
+			if (libdir == null) {
+				Console.WriteLine ("ERROR: MS.Net runtime detected, please use the mono runtime for gacutil.exe");
+				Environment.Exit (1);
+			}
+			return Path.Combine (Path.Combine ((string)libdir.Invoke (null, null), "mono"), "");
 		}
 	}
 }
