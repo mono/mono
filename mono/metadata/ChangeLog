@@ -1,3 +1,13 @@
+2004-04-14  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug-debugger.h (MonoDebuggerEvent): Removed
+	MONO_DEBUGGER_EVENT_TYPE_ADDED and MONO_DEBUGGER_EVENT_METHOD_ADDED
+	and added MONO_DEBUGGER_EVENT_RELOAD_SYMTABS.
+
+	* mono-debugger-debugger.c: While the debugger is locked, remember
+	whether the symbol tables have changes and send one single
+	MONO_DEBUGGER_EVENT_RELOAD_SYMTABS when releasing the lock.
+
 2004-04-14  Zoltan Varga  <vargaz@freemail.hu>
 
 	* metadata.h: Add STRARRAY_STRWLPARRAY marshalling convention.
