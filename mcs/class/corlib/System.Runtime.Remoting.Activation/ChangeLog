@@ -1,3 +1,8 @@
+2003-02-18  Lluis Sanchez Gual <lluis@ideary.com>
+
+	* RemoteActivator.cs: Instance creation implemented.
+	* ActivationServices.cs: Added.
+
 2003-01-29  Lluis Sanchez Gual <lluis@ideary.com>
 
 	* RemoteActivator.cs: Added.

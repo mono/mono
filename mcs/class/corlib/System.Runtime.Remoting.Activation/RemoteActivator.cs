@@ -1,5 +1,5 @@
 //
-// System.Runtime.Remoting.Identity.cs
+// System.Runtime.Remoting.RemoteActivator.cs
 //
 // Author: Lluis Sanchez Gual (lsg@ctv.es)
 //
@@ -12,14 +12,20 @@ using System.Runtime.Remoting.Messaging;
 
 namespace System.Runtime.Remoting.Activation
 {
-	public class RemoteActivator: MarshalByRefObject
+	public class RemoteActivator: MarshalByRefObject, IActivator
 	{
 		public IConstructionReturnMessage Activate (IConstructionCallMessage msg)
 		{
 			if (!RemotingConfiguration.IsActivationAllowed (msg.ActivationType))
 				throw new RemotingException ("The type " + msg.ActivationTypeName + " is not allowed to be client activated");
 
-			return msg.Activator.Activate (msg);
+			MarshalByRefObject newObject = (MarshalByRefObject) Activator.CreateInstance (msg.ActivationType, msg.Args, msg.CallSiteActivationAttributes);
+
+			// The activator must return a ConstructionResponse with an ObjRef as return value.
+			// It avoids the automatic creation of a proxy in the client.
+
+			ObjRef objref = RemotingServices.Marshal (newObject);
+			return new ConstructionResponse (objref, null, msg);
 		}
 
 		public override Object InitializeLifetimeService()
@@ -32,6 +38,17 @@ namespace System.Runtime.Remoting.Activation
 				lease.RenewOnCallTime = TimeSpan.FromMinutes(10);
 			}
 			return lease;
+		}
+
+		public ActivatorLevel Level 
+		{
+			get { throw new NotSupportedException (); }
+		}
+
+		public IActivator NextActivator 
+		{
+			get { throw new NotSupportedException (); }
+			set { throw new NotSupportedException (); }
 		}
 	}
 }
