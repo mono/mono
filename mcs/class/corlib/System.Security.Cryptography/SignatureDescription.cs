@@ -60,11 +60,18 @@ public class SignatureDescription {
 		if (el == null)
 			throw new ArgumentNullException ("el");
 
-		// Parse the SecurityElement 
-		// Clearly it must contains Deformatter, Digest, 
-		// Formatter and KeyAlgorithm... 
-		// But what do the SecurityElement looks like ?
-		throw new NotImplementedException (Locale.GetText ("Undocumented feature."));
+		// thanksfully documented in VS.NET 2005
+		SecurityElement child = el.SearchForChildByTag ("Deformatter");
+		_DeformatterAlgorithm = ((child == null) ? null : child.Text);
+
+		child = el.SearchForChildByTag ("Digest");
+		_DigestAlgorithm = ((child == null) ? null : child.Text);
+
+		child = el.SearchForChildByTag ("Formatter");
+		_FormatterAlgorithm = ((child == null) ? null : child.Text);
+
+		child = el.SearchForChildByTag ("Key");
+		_KeyAlgorithm = ((child == null) ? null : child.Text);
 	}
 
 	// There are no validation of the property

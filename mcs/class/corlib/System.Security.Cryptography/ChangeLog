@@ -1,3 +1,8 @@
+2004-06-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SignatureDescription.cs: Implemented .ctor(SecurityElement) using
+	documentation from VS.NET 2005.
+
 2004-06-10  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* ToBase64Transform.cs: Uncomment finalizer to fix public API
