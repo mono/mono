@@ -1,4 +1,8 @@
 
+Fri Feb 8 12:31:40 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* monoburg.c: make generated arrays const, so that they are shared.
+
 Fri Feb 1 15:14:16 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* Makefile.am: support cross-compilation.
