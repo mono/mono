@@ -1,3 +1,8 @@
+2003-05-07 Jackson Harper <jackson@latitudegeo.com>
+
+	* TypeInstr.cs: New file - implementation of instructions that
+	take a single type instruction.
+		
 2003-05-06 Jackson Harper <jackson@latitudegeo.com>
 
 	* SwitchInstr.cs: New file - implementation of switch instructions
