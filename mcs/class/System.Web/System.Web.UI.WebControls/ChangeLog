@@ -1,3 +1,7 @@
+2001-12-02
+		Gaurav Vaish <gvaish@iitk.ac.in>
+	CheckBoxList.cs            - Partial Implementation. All except "Render"
+
 2001-12-01
 		Gaurav Vaish <gvaish@iitk.ac.in>
 	ListControl.cs             - Completed
