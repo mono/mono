@@ -1,3 +1,15 @@
+2004-06-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* appdomain.c: Removed the g_free on the public key token. Now copy 
+	the pk token string into the MonoAssemblyName buffer using g_strlcpy.
+	* assembly.c: Added public key token string value when loading 
+	assemblies. Fix bug #60439.
+	* icall.c: Added missing informations (like public key) in 
+	GetReferencedAssemblies. Fix #60519.
+	* image.h: Changed definition for public key token from const char*
+	public_tok_value to guchar public_key_token [17];
+	* reflection.c: Updated for changes to public key token.
+
 2004-06-22  Lluis Sanchez Gual
 
 	* icall.c: In ves_icall_InternalExecute, when setting a filed, also look 
