@@ -1,3 +1,7 @@
+2005-02-04  Zoltan Varga  <vargaz@freemail.hu>
+
+	* console-io.c: Include curses.h if needed correctly.
+
 2005-02-03  Zoltan Varga  <vargaz@freemail.hu>
 	
 	* icall.c (ves_icall_MonoMethod_get_base_definition): Initialize
