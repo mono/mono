@@ -1,6 +1,8 @@
 2004-06-06  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* String.cs: Fixed Join in case separator parameter is null.
+	* TimeSpan.cs: Cache format errors during parsing and throw 
+	FormatException only if there was no overflow.
 
 2004-06-06  Gert Driesen <drieseng@users.sourceforge.net>
 

@@ -396,6 +396,7 @@ namespace System
 			private string _src;
 			private int _cur = 0;
 			private int _length;
+			private bool formatError;
 
 			public Parser (string src)
 			{
@@ -407,11 +408,6 @@ namespace System
 				get {
 					return _cur >= _length;
 				}
-			}
-
-			private void ThrowFormatException ()
-			{
-				throw new FormatException (Locale.GetText ("Invalid format for TimeSpan.Parse."));
 			}
 
 			// All "Parse" functions throw a FormatException on syntax error.
@@ -464,7 +460,7 @@ namespace System
 				}
 
 				if (count == 0)
-					ThrowFormatException ();
+					formatError = true;
 
 				return res;
 			}
@@ -489,7 +485,7 @@ namespace System
 					if (_src[_cur] == ':')
 						_cur++;
 					else 
-						ThrowFormatException ();
+						formatError = true;
 				}
 			}
 
@@ -508,7 +504,7 @@ namespace System
 				}
 
 				if (!digitseen)
-					ThrowFormatException ();
+					formatError = true;
 
 				return res;
 			}
@@ -522,7 +518,10 @@ namespace System
 				int seconds;
 				long ticks;
 
+				// documented as...
 				// Parse [ws][-][dd.]hh:mm:ss[.ff][ws]
+				// ... but not entirely true as an lonely 
+				// integer will be parsed as a number of days
 				ParseWhiteSpace ();
 				sign = ParseSign ();
 				days = ParseInt (false);
@@ -546,11 +545,16 @@ namespace System
 				ParseWhiteSpace ();
 	
 				if (!AtEnd)
-					ThrowFormatException ();
+					formatError = true;
 
+				// Overflow has presceance over FormatException
 				if (hours > 23 || minutes > 59 || seconds > 59) {
-					throw new OverflowException (Locale.GetText (
-						"Invalid time data."));
+					throw new OverflowException (
+						Locale.GetText ("Invalid time data."));
+				}
+				else if (formatError) {
+					throw new FormatException (
+						Locale.GetText ("Invalid format for TimeSpan.Parse."));
 				}
 
 				long t = TimeSpan.CalculateTicks (days, hours, minutes, seconds, 0);
