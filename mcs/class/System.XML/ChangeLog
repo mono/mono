@@ -1,3 +1,7 @@
+2004-02-11  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Mono.System.XML.csproj : updated.
+
 2004-01-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System.Xml.dll.sources : added SchemaDataValueType.cs

@@ -1,8 +1,8 @@
 <VisualStudioProject>
     <CSHARP
         ProjectType = "Local"
-        ProductVersion = "7.0.9466"
-        SchemaVersion = "1.0"
+        ProductVersion = "7.10.3077"
+        SchemaVersion = "2.0"
         ProjectGuid = "{0CB7FB41-3C0F-40E8-ACD3-8C5B8BC35B2C}"
     >
         <Build>
@@ -16,6 +16,8 @@
                 DefaultTargetSchema = "IE50"
                 DelaySign = "false"
                 OutputType = "Library"
+                PreBuildEvent = ""
+                PostBuildEvent = ""
                 RootNamespace = "System.XML"
                 StartupObject = ""
             >
@@ -25,11 +27,13 @@
                     BaseAddress = "285212672"
                     CheckForOverflowUnderflow = "false"
                     ConfigurationOverrideFile = ""
-                    DefineConstants = "DEBUG;TRACE"
+                    DefineConstants = "DEBUG;TRACE;NET_1_1;NET_1_2"
                     DocumentationFile = ""
                     DebugSymbols = "true"
                     FileAlignment = "4096"
                     IncrementalBuild = "true"
+                    NoStdLib = "false"
+                    NoWarn = ""
                     Optimize = "false"
                     OutputPath = "bin\Debug\"
                     RegisterForComInterop = "false"
@@ -43,11 +47,13 @@
                     BaseAddress = "285212672"
                     CheckForOverflowUnderflow = "false"
                     ConfigurationOverrideFile = ""
-                    DefineConstants = "TRACE"
+                    DefineConstants = "TRACE;NET_1_1;NET_1_2"
                     DocumentationFile = ""
                     DebugSymbols = "false"
                     FileAlignment = "4096"
                     IncrementalBuild = "false"
+                    NoStdLib = "false"
+                    NoWarn = ""
                     Optimize = "true"
                     OutputPath = "bin\Release\"
                     RegisterForComInterop = "false"
@@ -60,17 +66,67 @@
                 <Reference
                     Name = "System"
                     AssemblyName = "System"
-                    HintPath = "..\..\..\..\..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.0.3705\System.dll"
-                />
-                <Reference
-                    Name = "System.Data"
-                    AssemblyName = "System.Data"
-                    HintPath = "..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.0.3705\System.Data.dll"
+                    HintPath = "C:\WINNT\Microsoft.NET\Framework\v1.1.4322\System.dll"
                 />
             </References>
         </Build>
         <Files>
             <Include>
+                <File
+                    RelPath = "Assembly\AssemblyInfo.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Assembly\Locale.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Xml\IHasXmlParserContext.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Xml\IHasXmlSchemaInfo.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Xml\XmlNodeWriter.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Xml.Schema\XsdIdentityPath.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Xml.Schema\XsdIdentityState.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Xml.Schema\XsdKeyTable.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Xml.Schema\XsdParticleValidationState.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Xml.Schema\XsdValidatingReader.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Xml.Schema\XsdWildcard.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
                 <File
                     RelPath = "Mono.Xml.XPath\DTMXPathDocument.cs"
                     SubType = "Code"
@@ -87,12 +143,267 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Mono.Xml.XPath\DTMXPathNode.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Xml.XPath\IdPattern.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Xml.XPath\KeyPattern.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Xml.XPath\LocationPathPattern.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Xml.XPath\Pattern.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Xml.XPath\UnionPattern.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Xml.Xsl\Attribute.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Xml.Xsl\Compiler.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Xml.Xsl\Debug.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Xml.Xsl\Emitter.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Xml.Xsl\GenericOutputter.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Xml.Xsl\HtmlEmitter.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Xml.Xsl\MSXslScriptManager.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Xml.Xsl\Outputter.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Xml.Xsl\ScriptCompilerInfo.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Xml.Xsl\TextEmitter.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Xml.Xsl\TextOutputter.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Xml.Xsl\XmlWriterEmitter.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Xml.Xsl\XslAttributeSet.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Xml.Xsl\XslDecimalFormat.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Xml.Xsl\XslKey.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Xml.Xsl\XslOutput.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Xml.Xsl\XslStylesheet.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Xml.Xsl\XsltCompiledContext.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Xml.Xsl\XslTemplate.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Xml.Xsl\XslTransformProcessor.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Xml.Xsl.Operations\XslApplyImports.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Xml.Xsl.Operations\XslApplyTemplates.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Xml.Xsl.Operations\XslAttribute.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Xml.Xsl.Operations\XslAvt.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Xml.Xsl.Operations\XslCallTemplate.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Xml.Xsl.Operations\XslChoose.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Xml.Xsl.Operations\XslComment.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Xml.Xsl.Operations\XslCompiledElement.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Xml.Xsl.Operations\XslCopy.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Xml.Xsl.Operations\XslCopyOf.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Xml.Xsl.Operations\XslElement.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Xml.Xsl.Operations\XslFallback.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Xml.Xsl.Operations\XslForEach.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Xml.Xsl.Operations\XslIf.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Xml.Xsl.Operations\XslLiteralElement.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Xml.Xsl.Operations\XslMessage.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Xml.Xsl.Operations\XslNumber.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Xml.Xsl.Operations\XslOperation.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Xml.Xsl.Operations\XslProcessingInstruction.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Xml.Xsl.Operations\XslTemplateContent.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Xml.Xsl.Operations\XslText.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Xml.Xsl.Operations\XslValueOf.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Xml.Xsl.Operations\XslVariable.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml\AsyncXmlTextWriter.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Xml\DTDAutomata.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "System.Xml\DTDObjectModel.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml\DTDReader.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -117,17 +428,37 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Xml\IXmlDataEvidence.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Xml\IXmlLineInfo.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "System.Xml\NameTable.cs"
+                    RelPath = "System.Xml\IXmlNamespaceResolver.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "System.Xml\Profile.cs"
+                    RelPath = "System.Xml\IXPathChangeNavigator.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml\IXPathEditor.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml\IXPathNavigator.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml\NameTable.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -168,6 +499,11 @@
                 />
                 <File
                     RelPath = "System.Xml\XmlCDataSection.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml\XmlChangeFilters.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -247,6 +583,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Xml\XmlInfoItemType.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Xml\XmlInputStream.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -263,6 +604,11 @@
                 />
                 <File
                     RelPath = "System.Xml\XmlNamespaceManager.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml\XmlNamespaceScope.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -293,6 +639,11 @@
                 />
                 <File
                     RelPath = "System.Xml\XmlNodeChangedEventHandler.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml\XmlNodeChangeType.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -343,6 +694,16 @@
                 />
                 <File
                     RelPath = "System.Xml\XmlQualifiedName.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml\XmlQualifiedNameTable.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml\XmlQueryDialect.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -417,7 +778,42 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Xml\XPathChangeNavigator.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml\XPathDocument2.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml\XPathDocument2ChangedEventAction.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml\XPathDocument2ChangedEventHandler.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml\XPathEditor.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml\XPathNavigator2.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Xml.Schema\BuiltInDatatype.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml.Schema\SchemaDataValueType.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -717,6 +1113,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Xml.Schema\XmlSchemaSet.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Xml.Schema\XmlSchemaSimpleContent.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -812,12 +1213,27 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Xml.Serialization\MapCodeGenerator.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Xml.Serialization\ReflectionHelper.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "System.Xml.Serialization\SchemaTypes.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml.Serialization\SerializationCodeGenerator.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml.Serialization\SerializationCodeGeneratorConfiguration.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -893,6 +1309,11 @@
                 />
                 <File
                     RelPath = "System.Xml.Serialization\TypeMember.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml.Serialization\TypeTableEntry.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -1216,6 +1637,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Xml.XPath\XPathComparer.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Xml.XPath\XPathDocument.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -1266,6 +1692,16 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Xml.Xsl\ManagedXslTransform.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml.Xsl\Multiplexer.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Xml.Xsl\XsltArgumentList.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -1287,6 +1723,11 @@
                 />
                 <File
                     RelPath = "System.Xml.Xsl\XslTransform.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml.Xsl\XslTransformImpl.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
