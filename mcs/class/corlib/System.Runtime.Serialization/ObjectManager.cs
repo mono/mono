@@ -520,19 +520,21 @@ namespace System.Runtime.Serialization
 		{
 			if (Info != null)
 			{
-				if (ObjectInstance is ISerializable)
-				{
+				ISurrogateSelector foundSelector = null;
+				ISerializationSurrogate surrogate = null;
+					
+				if (selector != null)
+					surrogate = selector.GetSurrogate (ObjectInstance.GetType(), context, out foundSelector);
+					
+				if (surrogate != null) {
+					surrogate.SetObjectData (ObjectInstance, Info, context, foundSelector);
+				} else if (ObjectInstance is ISerializable) {
 					object[] pars = new object[] {Info, context};
 					ConstructorInfo con = ObjectInstance.GetType().GetConstructor (BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, new Type[] { typeof (SerializationInfo), typeof (StreamingContext) }, null );
 					if (con == null) throw new SerializationException ("The constructor to deserialize an object of type " + ObjectInstance.GetType().FullName + " was not found.");
 					con.Invoke (ObjectInstance, pars);
-				}
-				else
-				{
-					ISurrogateSelector foundSelector;
-					ISerializationSurrogate surrogate = selector.GetSurrogate (ObjectInstance.GetType(), context, out foundSelector);
-					if (surrogate == null) throw new SerializationException ("No surrogate selector was found for type " + ObjectInstance.GetType().FullName);
-					surrogate.SetObjectData (ObjectInstance, Info, context, foundSelector);
+				} else {
+					throw new SerializationException ("No surrogate selector was found for type " + ObjectInstance.GetType().FullName);
 				}
 
 				Info = null;

@@ -1,3 +1,9 @@
+2004-12-09  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* ObjectManager.cs: When deserializing an object that implements
+	ISerializable, check if a surrogate	exists for that object, before
+	trying to deserialize it as ISerializable. This fixes bug #70104.
+
 2004-06-15  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* ObjectIDGenerator.cs: added TODO for serialization
