@@ -852,7 +852,9 @@ namespace Mono.CSharp {
 
 				Type t = expr.Type;
 				
-				if (t != TypeManager.exception_type && !t.IsSubclassOf (TypeManager.exception_type)) {
+				if ((t != TypeManager.exception_type) &&
+				    !t.IsSubclassOf (TypeManager.exception_type) &&
+				    !(expr is NullLiteral)) {
 					Report.Error (155, loc,
 						      "The type caught or thrown must be derived " +
 						      "from System.Exception");

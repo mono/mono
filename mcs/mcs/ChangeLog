@@ -1,5 +1,9 @@
 2002-08-23  Martin Baulig  <martin@gnome.org>
 
+	* statement.cs (Throw.Resolve): Allow `throw null'.
+
+2002-08-23  Martin Baulig  <martin@gnome.org>
+
 	* expression.cs (MemberAccess.ResolveMemberAccess): If this is an
 	EventExpr, don't do a DeclaredOnly MemberLookup, but check whether
 	`ee.EventInfo.DeclaringType == ec.ContainerType'.  The
