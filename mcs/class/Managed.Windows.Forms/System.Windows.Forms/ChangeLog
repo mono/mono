@@ -1,3 +1,20 @@
+2005-02-27  Peter Bartok  <pbartok@novell.com>
+
+	* XplatUI.cs, XplatUIDriver.cs: Added new GetMenuOrigin() method
+	* XplatUIOSX.cs: Added GetMenuOrigin() stub
+	* XplatUIWin32.cs: Implemented GetMenuOrigin()
+	* XplatUIX11.cs:
+	  - Implemented GetMenuDC()
+	  - Implemented GetMenuOrigin()
+	  - Implemented ReleaseMenuDC()
+	  - Implemented generation of WM_NCPAINT message
+	  - Implemented generation and handling of WM_NCCALCSIZE message
+	* Form.cs: Added debug helper message for Jordi's menu work
+	* Hwnd.cs:
+	  - Modified ClientRect property; added setter, fixed getter to handle
+	    setting of ClientRect
+	  - Added MenuOrigin property
+
 2005-02-26  Peter Bartok  <pbartok@novell.com>
 
 	* XplatUIX11.cs:

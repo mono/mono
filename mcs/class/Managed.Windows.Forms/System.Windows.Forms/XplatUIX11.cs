@@ -1812,8 +1812,23 @@ namespace System.Windows.Forms {
 			return GetFontMetrics(g.GetHdc(), font.ToHfont(), out ascent, out descent);
 		}
 
-		internal override Graphics GetMenuDC(IntPtr hwnd, IntPtr ncpaint_region) {
-			throw new NotImplementedException();
+		internal override Graphics GetMenuDC(IntPtr handle, IntPtr ncpaint_region) {
+			Hwnd		hwnd;
+
+			hwnd = Hwnd.ObjectFromHandle(handle);
+
+			return Graphics.FromHwnd(hwnd.whole_window);
+		}
+
+		internal override Point GetMenuOrigin(IntPtr handle) {
+			Hwnd	hwnd;
+
+			hwnd = Hwnd.ObjectFromHandle(handle);
+
+			if (hwnd != null) {
+				return hwnd.MenuOrigin;
+			}
+			return Point.Empty;
 		}
 
 		internal override bool GetMessage(ref MSG msg, IntPtr handle, int wFilterMin, int wFilterMax) {
@@ -2043,7 +2058,9 @@ namespace System.Windows.Forms {
 
 				case XEventName.ConfigureNotify: {
 					if (!client && (xevent.ConfigureEvent.xevent == xevent.ConfigureEvent.window)) {	// Ignore events for children (SubstructureNotify) and client areas
-						Rectangle rect;
+						XplatUIWin32.NCCALCSIZE_PARAMS	ncp;
+						IntPtr				ptr;
+						Rectangle			rect;
 
 						#if DriverDebugExtra
 							Console.WriteLine("GetMessage(): Window {0:X} ConfigureNotify x={1} y={2} width={3} height={4}", hwnd.client_window.ToInt32(), xevent.ConfigureEvent.x, xevent.ConfigureEvent.y, xevent.ConfigureEvent.width, xevent.ConfigureEvent.height);
@@ -2069,6 +2086,21 @@ namespace System.Windows.Forms {
 
 						// We need to adjust our client window to track the resize of whole_window
 						rect = hwnd.ClientRect;
+						ncp = new XplatUIWin32.NCCALCSIZE_PARAMS();
+						ptr = Marshal.AllocHGlobal(Marshal.SizeOf(ncp));
+
+						ncp.rgrc1.left = rect.Left;
+						ncp.rgrc1.top = rect.Top;
+						ncp.rgrc1.right = rect.Right;
+						ncp.rgrc1.bottom = rect.Bottom;
+
+						Marshal.StructureToPtr(ncp, ptr, true);
+						NativeWindow.WndProc(hwnd.client_window, Msg.WM_NCCALCSIZE, (IntPtr)1, ptr);
+						ncp = (XplatUIWin32.NCCALCSIZE_PARAMS)Marshal.PtrToStructure(ptr, typeof(XplatUIWin32.NCCALCSIZE_PARAMS));
+						Marshal.FreeHGlobal(ptr);
+
+						hwnd.ClientRect = new Rectangle(ncp.rgrc1.left, ncp.rgrc1.top, ncp.rgrc1.right - ncp.rgrc1.left, ncp.rgrc1.bottom - ncp.rgrc1.top);
+
 						XMoveResizeWindow(DisplayHandle, hwnd.client_window, rect.X, rect.Y, rect.Width, rect.Height);
 					} else {
 						goto ProcessNextMessage;
@@ -2091,6 +2123,14 @@ namespace System.Windows.Forms {
 				}
 
 				case XEventName.Expose: {
+					if (!client) {
+						#if DriverDebugExtra
+							Console.WriteLine("GetMessage(): Window {0:X} Exposed non-client area {1},{2} {3}x{4}", hwnd.client_window.ToInt32(), xevent.ExposeEvent.x, xevent.ExposeEvent.y, xevent.ExposeEvent.width, xevent.ExposeEvent.height);
+						#endif
+						msg.message = Msg.WM_NCPAINT;
+						hwnd.nc_expose_pending = false;
+						break;
+					}
 					#if DriverDebugExtra
 						Console.WriteLine("GetMessage(): Window {0:X} Exposed area {1},{2} {3}x{4}", hwnd.client_window.ToInt32(), xevent.ExposeEvent.x, xevent.ExposeEvent.y, xevent.ExposeEvent.width, xevent.ExposeEvent.height);
 					#endif
@@ -2105,7 +2145,6 @@ namespace System.Windows.Forms {
 						ShowCaret();
 						Caret.Paused = false;
 					}
-
 					msg.message = Msg.WM_PAINT;
 					break;
 				}
@@ -2431,8 +2470,8 @@ namespace System.Windows.Forms {
 			MessageQueue.Enqueue (xevent);
 		}
 
-		internal override void ReleaseMenuDC(IntPtr hwnd, Graphics dc) {
-			throw new NotImplementedException();
+		internal override void ReleaseMenuDC(IntPtr handle, Graphics dc) {
+			dc.Dispose();
 		}
 
 		internal override void ScreenToClient(IntPtr handle, ref int x, ref int y) {

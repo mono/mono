@@ -31,6 +31,10 @@ using System.Collections;
 using System.Drawing;
 using System.Runtime.InteropServices;
 
+// NOTE: Possible optimization:
+// Several properties calculate dimensions on the fly; instead; they can 
+// be stored in a field and only be recalculated when a style is changed
+
 namespace System.Windows.Forms {
 	internal class Hwnd : IDisposable {
 		#region Local Variables
@@ -57,6 +61,7 @@ namespace System.Windows.Forms {
 		internal bool		nc_expose_pending;
 		internal Graphics	client_dc;
 		internal object		user_data;
+		internal Rectangle	client_rectangle;
 		#endregion	// Local Variables
 
 		#region Constructors and destructors
@@ -76,11 +81,13 @@ namespace System.Windows.Forms {
 			expose_pending = false;
 			nc_expose_pending = false;
 			edge_style = Border3DStyle.Raised;
+			client_rectangle = Rectangle.Empty;
 		}
 
 		public void Dispose() {
 			windows[client_window] = null;
 			windows[whole_window] = null;
+Console.WriteLine("Disposing window {0:X} (whole: {1:X})", client_window.ToInt32(), whole_window.ToInt32());
 		}
 		#endregion
 
@@ -207,36 +214,44 @@ namespace System.Windows.Forms {
 
 		public Rectangle ClientRect {
 			get {
-				Rectangle rect;
+				if (client_rectangle == Rectangle.Empty) {
+					Rectangle rect;
 
-				rect = new Rectangle(0, 0, width, height);
+					rect = new Rectangle(0, 0, width, height);
 
-				if (menu_handle != IntPtr.Zero) {
-					rect.Y += menu_height;
-					rect.Height -= menu_height;
+					if (menu_handle != IntPtr.Zero) {
+						rect.Y += menu_height;
+						rect.Height -= menu_height;
+					}
+
+					if (border_style == BorderStyle.Fixed3D) {
+						rect.X += 2;
+						rect.Y += 2;
+						rect.Width -= 4;
+						rect.Height -= 4;
+					} else if (border_style == BorderStyle.FixedSingle) {
+						rect.X += 1;
+						rect.Y += 1;
+						rect.Width -= 2;
+						rect.Height -= 2;
+					}
+
+					if (this.title_style == TitleStyle.Normal)  {
+						rect.Y += caption_height;
+						rect.Height -= caption_height;
+					} else if (this.title_style == TitleStyle.Normal)  {
+						rect.Y += tool_caption_height;
+						rect.Height -= tool_caption_height;
+					}
+
+					return rect;
+				} else {
+					return client_rectangle;
 				}
+			}
 
-				if (border_style == BorderStyle.Fixed3D) {
-					rect.X += 2;
-					rect.Y += 2;
-					rect.Width -= 4;
-					rect.Height -= 4;
-				} else if (border_style == BorderStyle.FixedSingle) {
-					rect.X += 1;
-					rect.Y += 1;
-					rect.Width -= 2;
-					rect.Height -= 2;
-				}
-
-				if (this.title_style == TitleStyle.Normal)  {
-					rect.Y += caption_height;
-					rect.Height -= caption_height;
-				} else if (this.title_style == TitleStyle.Normal)  {
-					rect.Y += tool_caption_height;
-					rect.Height -= tool_caption_height;
-				}
-
-				return rect;
+			set {
+				client_rectangle = value;
 			}
 		}
 
@@ -304,6 +319,29 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		public Point MenuOrigin {
+			get {
+				Point	pt;
+
+				pt = new Point(0, 0);
+
+				if (border_style == BorderStyle.Fixed3D) {
+					pt.X += 2;
+					pt.Y += 2;
+				} else if (border_style == BorderStyle.FixedSingle) {
+					pt.X += 1;
+					pt.Y += 1;
+				}
+
+				if (this.title_style == TitleStyle.Normal)  {
+					pt.Y += caption_height;
+				} else if (this.title_style == TitleStyle.Normal)  {
+					pt.Y += tool_caption_height;
+				}
+
+				return pt;
+			}
+		}
 		public Rectangle Invalid {
 			get {
 				return invalid;

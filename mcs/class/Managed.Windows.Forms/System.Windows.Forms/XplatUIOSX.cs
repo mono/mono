@@ -1157,6 +1157,11 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException();
 		}
 		
+		[MonoTODO]
+		internal override Point GetMenuOrigin(IntPtr hwnd) {
+			throw new NotImplementedException();
+		}
+
 		internal override bool GetMessage(ref MSG msg, IntPtr hWnd, int wFilterMin, int wFilterMax) {
 			IntPtr evtRef = IntPtr.Zero;
 			IntPtr target = GetEventDispatcherTarget();

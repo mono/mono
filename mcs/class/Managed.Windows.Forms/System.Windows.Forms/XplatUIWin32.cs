@@ -1544,6 +1544,12 @@ namespace System.Windows.Forms {
 			return g;
 		}
 
+		internal override Point GetMenuOrigin(IntPtr handle) {
+			// FIXME - this does not yet consider different window styles
+			return new Point(SystemInformation.FrameBorderSize.Width, SystemInformation.FrameBorderSize.Height + ThemeEngine.Current.CaptionHeight);
+		}
+
+
 		internal override void ReleaseMenuDC(IntPtr hwnd, Graphics dc) {
 			
 			dc.Dispose();

@@ -189,6 +189,7 @@ namespace System.Windows.Forms {
 		internal abstract void SystrayRemove(IntPtr hwnd, ref ToolTip tt);
 
 		internal abstract Graphics GetMenuDC(IntPtr hwnd, IntPtr ncpaint_region);
+		internal abstract Point GetMenuOrigin(IntPtr hwnd);
 		internal abstract void ReleaseMenuDC(IntPtr hwnd, Graphics dc);
 
 		// System information

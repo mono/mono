@@ -375,6 +375,13 @@ namespace System.Windows.Forms {
 			return driver.GetMenuDC(handle, ncpaint_region);
 		}
 
+		internal static Point GetMenuOrigin(IntPtr handle) {
+			#if DriverDebug
+				Console.WriteLine("GetMenuOrigin({0:X}): Called", handle.ToInt32());
+			#endif
+			return driver.GetMenuOrigin(handle);
+		}
+
 		internal static bool GetMessage(ref MSG msg, IntPtr hWnd, int wFilterMin, int wFilterMax) {
 			return driver.GetMessage(ref msg, hWnd, wFilterMin, wFilterMax);
 		}
