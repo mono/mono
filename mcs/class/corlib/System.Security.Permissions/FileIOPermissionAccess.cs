@@ -12,6 +12,7 @@
 namespace System.Security.Permissions
 {
 
+[Flags]
 public enum FileIOPermissionAccess
 {
     AllAccess,

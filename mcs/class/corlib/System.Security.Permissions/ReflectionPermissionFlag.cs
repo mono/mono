@@ -11,7 +11,7 @@
 
 namespace System.Security.Permissions 
 {
-
+	[Flags]
 	public enum ReflectionPermissionFlag
 	{
 	    AllFlags,
