@@ -1,5 +1,9 @@
 2005-04-01  Jackson Harper  <jackson@ximian.com>
 
+	* Binding.cs: Implement IsBinding.
+
+2005-04-01  Jackson Harper  <jackson@ximian.com>
+
 	* Binding.cs: Had some IsAssignableFrom calls backwards.
 
 2005-04-01  Jackson Harper  <jackson@ximian.com>

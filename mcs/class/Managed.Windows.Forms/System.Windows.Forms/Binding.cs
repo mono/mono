@@ -85,10 +85,13 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		[MonoTODO]
 		public bool IsBinding {
 			get {
-				return false;
+				if (control == null || !control.Created)
+					return false;
+				if (manager == null || manager.IsSuspended)
+					return false;
+				return true;
 			}
 		}
 
