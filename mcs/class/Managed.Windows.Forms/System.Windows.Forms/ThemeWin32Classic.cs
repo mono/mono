@@ -25,9 +25,12 @@
 //
 //
 //
-// $Revision: 1.14 $
+// $Revision: 1.15 $
 // $Modtime: $
 // $Log: ThemeWin32Classic.cs,v $
+// Revision 1.15  2004/08/10 18:52:30  jackson
+// Implement DrawItem functionality
+//
 // Revision 1.14  2004/08/09 21:34:54  jackson
 // Add support for drawing status bar and get status bar item sizes
 //
@@ -1600,6 +1603,22 @@ namespace System.Windows.Forms
 			float y = ((area.Bottom - area.Top) / 2.0F) + border_size;
 
 			dc.DrawString (text, panel.Parent.Font, br_forecolor, x, y, string_format);
+		}
+
+		public void DrawOwnerDrawBackground (DrawItemEventArgs e)
+		{
+			if (e.State == DrawItemState.Selected) {
+				e.Graphics.FillRectangle (SystemBrushes.Highlight, e.Bounds);
+				return;
+			}
+
+			e.Graphics.FillRectangle (new SolidBrush (e.BackColor), e.Bounds);
+		}
+
+		public void DrawOwnerDrawFocusRectangle (DrawItemEventArgs e)
+		{
+			if (e.State == DrawItemState.Focus)
+				DrawFocusRectangle (e.Graphics, e.Bounds, e.ForeColor, e.BackColor);
 		}
 
 		/*

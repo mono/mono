@@ -24,9 +24,12 @@
 //
 //
 //
-// $Revision: 1.6 $
+// $Revision: 1.7 $
 // $Modtime: $
 // $Log: ITheme.cs,v $
+// Revision 1.7  2004/08/10 18:52:30  jackson
+// Implement DrawItem functionality
+//
 // Revision 1.6  2004/08/09 21:36:34  jackson
 // Add support for drawing status bar and getting status bar item sizes
 //
@@ -176,6 +179,10 @@ namespace System.Windows.Forms
 			int barpos_pixels, int block_width);		
 
 		void DrawStatusBar (Graphics dc, Rectangle area, StatusBar sb);
+
+		void DrawOwnerDrawBackground (DrawItemEventArgs e);
+
+		void DrawOwnerDrawFocusRectangle (DrawItemEventArgs e);
 
 	}
 }
