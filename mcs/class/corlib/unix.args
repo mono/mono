@@ -71,6 +71,7 @@ System/Exception.cs
 System/ExecutionEngineException.cs
 System/FieldAccessException.cs
 System/FlagsAttribute.cs
+System/FloatingPointFormatter.cs
 System/FormatException.cs
 System/GC.cs
 System/Guid.cs

@@ -339,18 +339,11 @@ namespace System {
 			return ToString (format, null);
 		}
 
-		[MonoTODO]
 		public string ToString (string format, IFormatProvider fp)
 		{
-			// FIXME: Need to pass format and provider info to this call too.
-			if (format == "X")
-				throw new FormatException();
-
-			return ToStringImpl(value);
+			return DoubleFormatter.NumberToString(format,
+				(NumberFormatInfo)fp, value);
 		}
-
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private static extern string ToStringImpl (double value);
 
 		// =========== IConvertible Methods =========== //
 

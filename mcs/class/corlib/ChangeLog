@@ -1,3 +1,7 @@
+2003-03-16  Pedro Martínez Juliá  <yoros@wanadoo.es>
+
+	* unix.args: Added "System.FloatingPointFormatter.cs".
+
 2003-03-15  Sebastien Pouliot <spouliot@videotron.ca>
 
 	* unix.args: Added Mono.Security.X509/*.cs and ASN1Convert.cs

@@ -1,3 +1,13 @@
+2003-03-16  Pedro Martínez Juliá  <yoros@wanadoo.es>
+
+	* Single.cs:
+	* Double.cs: Apply changes of .ToString methods.
+	* SingleFormatter.cs:
+	* DoubleFormatter.cs: Simple wrappers to FloatingPointFormatter.
+	* FloatingPointFormatter.cs: New class. Implementation of double and
+	single formatters. It is unified now and parametrized with precission
+	values.
+
 2003-03-15  Lluis Sanchez Gual <lluis@ideary.com>
 
 	* AppDomain.cs: fixes bugs #39380 and #39331.
