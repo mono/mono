@@ -1,5 +1,11 @@
 2004-04-27  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DataRow.cs : Null check for CheckReadOnlyStatus() and
+	  CheckNullConstraints(), with some coding guideline fixes.
+	  Type check should be done by Type instance comparison.
+
+2004-04-27  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DataColumnCollection.cs : When add a column to the collection, fill
 	  auto-increment column.
 

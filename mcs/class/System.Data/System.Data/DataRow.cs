@@ -286,7 +286,7 @@ namespace System.Data {
 
 			if (v == null)
 			{
-				if (col.DataType.ToString().Equals("System.Guid"))
+				if (col.DataType == typeof (Guid))
 	                                throw new ArgumentException("Cannot set column to be null, Please use DBNull instead");
 
 				if(col.DefaultValue != DBNull.Value) 
@@ -296,6 +296,7 @@ namespace System.Data {
 				else if(col.AutoIncrement == true) 
 				{
 					newval = this [index];
+//					newval = col.AutoIncrementValue ();
 				}
 				else 
 				{
@@ -1388,12 +1389,12 @@ namespace System.Data {
 
 		internal void CheckNullConstraints()
 		{
-			if (_nullConstraintViolation)
-			{
-				for (int i = 0; i < proposed.Length; i++)
-				{
-					if (this[i] == DBNull.Value && !_table.Columns[i].AllowDBNull)
-						throw new NoNullAllowedException(_nullConstraintMessage);
+			if (_nullConstraintViolation) {
+				if (proposed != null) {
+					for (int i = 0; i < proposed.Length; i++) {
+						if (this[i] == DBNull.Value && !_table.Columns[i].AllowDBNull)
+							throw new NoNullAllowedException(_nullConstraintMessage);
+					}
 				}
 				_nullConstraintViolation = false;
 			}
@@ -1401,8 +1402,10 @@ namespace System.Data {
 		
 		internal void CheckReadOnlyStatus()
                 {
-                        for (int i = 0; i < proposed.Length; i++)
-                        {
+			if (proposed == null)
+				return;
+
+			for (int i = 0; i < proposed.Length; i++) {
 	                        if (this[i] != proposed[i] && _table.Columns[i].ReadOnly)
         	                        throw new ReadOnlyException();
                         }
