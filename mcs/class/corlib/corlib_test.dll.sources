@@ -261,6 +261,7 @@ System.Threading/MutexTest.cs
 System.Threading/ThreadTest.cs
 System.Threading/ReaderWriterLockTest.cs
 System.Threading/TimerTest.cs
+System.Threading/InterlockedTest.cs
 System/TimeSpanTest.cs
 System/TimeZoneTest.cs
 System/TypeTest.cs

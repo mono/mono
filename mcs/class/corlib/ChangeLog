@@ -1,3 +1,7 @@
+2005-02-20  Zoltan Varga  <vargaz@freemail.hu>
+
+	* corlib_test.dll.sources: Add System.Threading.InterlockedTest.cs.
+
 2005-02-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* corlib.dll.sources: added WindowsConsoleDriver.cs
