@@ -1,5 +1,7 @@
 2004-05-23  Sebastien Pouliot  <sebastien@ximian.com>
 
+	* ArrayTest.cs: Added a new test to clear outside the bound of a
+	multidimentional array.
 	* BooleanTest.cs: Added new test to compare booleans using Equals
 	and == (case of True!=True). Converted to NUnit2 format.
 	* BitConverterTest.cs: Added new tests for negative integers and 

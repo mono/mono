@@ -2483,6 +2483,14 @@ public class ArrayTest : Assertion
 		AssertEquals ("1,0", 2, matrix [1,0]);
 		AssertEquals ("1,1", 2, matrix [1,1]);
 	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void ClearOutsideMultidimentionalArray () 
+	{
+		byte[,] matrix = new byte [2,2] { {1, 1}, {2, 2} };
+		Array.Clear (matrix, 0, 5);
+	}
 }
 
 }
