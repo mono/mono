@@ -2683,7 +2683,6 @@ namespace Mono.CSharp {
 		{
 			if (RootContext.Version == LanguageVersion.ISO_1) {
 				Report.FeatureIsNotStandardized (l, "static classes");
-				Environment.Exit (1);
 			}
 		}
 
@@ -5951,7 +5950,6 @@ namespace Mono.CSharp {
 
 				if (accessor.ModFlags != 0 && RootContext.Version == LanguageVersion.ISO_1) {
 					Report.FeatureIsNotStandardized (Location, "accessor modifiers");
-					Environment.Exit (1);
 				}
 			}
 

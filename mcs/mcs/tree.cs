@@ -112,7 +112,7 @@ namespace Mono.CSharp
 	{
 		public RootTypes ()
 			: base (null, null, MemberName.Null, null, Kind.Root,
-				new Location (-1))
+				Location.Null)
 		{
 			ec = new EmitContext (null, this, Location.Null, null, null, 0, false);
 		}

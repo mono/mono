@@ -35,6 +35,11 @@ namespace Mono.CSharp {
 
 		static CodeGen ()
 		{
+			Reset ();
+		}
+
+		public static void Reset ()
+		{
 			Assembly = new AssemblyClass ();
 			Module = new ModuleClass (RootContext.Unsafe);
 		}
@@ -96,10 +101,12 @@ namespace Mono.CSharp {
 		//
 		// Initializes the code generator variables
 		//
-		static public void Init (string name, string output, bool want_debugging_support)
+		static public bool Init (string name, string output, bool want_debugging_support)
 		{
 			FileName = output;
 			AssemblyName an = Assembly.GetAssemblyName (name, output);
+			if (an == null)
+				return false;
 
 			if (an.KeyPair != null) {
 				// If we are going to strong name our assembly make
@@ -130,14 +137,14 @@ namespace Mono.CSharp {
 						RootContext.StrongNameKeyContainer + "'.");
 					Environment.Exit (1);
 				}
-				throw;
+				return false;
 			}
 			catch (CryptographicException) {
 				if ((RootContext.StrongNameKeyContainer != null) || (RootContext.StrongNameKeyFile != null)) {
 					Report.Error (1548, "Could not use the specified key to strongname the assembly.");
 					Environment.Exit (1);
 				}
-				throw;
+				return false;
 			}
 
 			//
@@ -153,6 +160,8 @@ namespace Mono.CSharp {
 
 			if (want_debugging_support)
 				InitializeSymbolWriter (output);
+
+			return true;
 		}
 
 		static public void Save (string name)
@@ -677,9 +686,9 @@ namespace Mono.CSharp {
 				int errors = Report.Errors;
 
 				block.ResolveMeta (block, this, ip);
+				if (Report.Errors != errors)
+					return false;
 
-				
-				if (Report.Errors == errors){
 					bool old_do_flow_analysis = DoFlowAnalysis;
 					DoFlowAnalysis = true;
 
@@ -706,7 +715,6 @@ namespace Mono.CSharp {
 					    reachability.AlwaysThrows ||
 					    reachability.IsUnreachable)
 						unreachable = true;
-				}
 #if PRODUCTION
 			} catch (Exception e) {
 					Console.WriteLine ("Exception caught by the compiler while compiling:");
@@ -1255,7 +1263,7 @@ namespace Mono.CSharp {
 									RootContext.StrongNameKeyFile +
 									"' doesn't have a private key.");
 							}
-							Environment.Exit (1);
+							return null;
 						}
 					}
 				}
@@ -1263,7 +1271,7 @@ namespace Mono.CSharp {
 			else {
 				Report.Error (1548, "Could not strongname the assembly. File `" +
 					RootContext.StrongNameKeyFile + "' not found.");
-				Environment.Exit (1);
+				return null;
 			}
 			return an;
 		}

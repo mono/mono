@@ -66,14 +66,21 @@ namespace Mono.CSharp {
 		static int source_count;
 		static int current_source;
 
-		public readonly static Location Null;
+		public readonly static Location Null = new Location (-1);
 		
 		static Location ()
 		{
 			source_files = new Hashtable ();
 			source_list = new ArrayList ();
 			current_source = 0;
-			Null.token = 0;
+		}
+
+		public static void Reset ()
+		{
+			source_files = new Hashtable ();
+			source_list = new ArrayList ();
+			current_source = 0;
+			source_count = 0;
 		}
 
 		// <summary>

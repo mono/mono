@@ -1,3 +1,40 @@
+2005-03-10  Marek Safar  <marek.safar@seznam.cz>
+
+	* attributes.cs (Attributes.Emit): Continue after CheckTargets.
+	It caused exception in namespace resolving (again!).
+	
+	* class.cs (Class.ctor): Removed exit.
+	(PropertyMethod.ctor): ditto.
+	
+	* codegen.cs (Codegen.Reset): Reset static data.
+	(Codegen.ResolveTopBlock): Forward error status from ResolveMeta.
+	
+	* cs-tokenizer.cs (Cleanup): Removed.
+	
+	* driver.cs (GetSystemDir): Rewrote to one line command.
+	It caused problem with unloaded dynamic modules.
+	(UnixParseOption): Removed Exit.
+	(CompilerCallableEntryPoint.InvokeCompiler): Make static.
+	(CompilerCallableEntryPoint.Reset): Reset suitable static data.
+	Now can be mcs used as library.
+	
+	* ecore.cs (Expression.ResolveBoolean): Use Location.Null for
+	empty location.
+	
+	* location.cs (Reset): Reset static data.
+	
+	* namespace.cs (Reset): Reset static data.
+	
+	* report.cs (Report.Reset): Reset static data.
+	
+	* rootcontext.cs (RootContext.Reset): Reset static data.
+	
+	* tree.cs (RootTypes.ctor): Use Location.Null
+	
+	* typemanager.cs (TypeManager.Reset): Reset static data.
+	(CoreLookupType): Removed Exit.
+	(TypeHandle.Reset): Reset static data.
+	
 2005-03-10  Raja R Harinath  <rharinath@novell.com>
 
 	Fix #73516.

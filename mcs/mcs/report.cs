@@ -68,6 +68,14 @@ namespace Mono.CSharp {
 		/// </summary>
 		static StringCollection extra_information = new StringCollection ();
 
+		public static void Reset ()
+		{
+			Errors = Warnings = 0;
+			WarningsAreErrors = false;
+			warning_ignore_table = null;
+			warning_regions_table = null;
+		}
+
 		abstract class AbstractMessage {
 
 			static void Check (int code)

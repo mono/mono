@@ -1289,8 +1289,7 @@ namespace Mono.CSharp {
 
 		public void Emit (EmitContext ec, Attributable ias)
 		{
-			if (!CheckTargets (ias))
-				return;
+			CheckTargets (ias);
 
 			ListDictionary ld = new ListDictionary ();
 

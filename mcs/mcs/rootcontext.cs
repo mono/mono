@@ -41,7 +41,7 @@ namespace Mono.CSharp {
 		// This is only used to tell whether `System.Object' should
 		// have a base class or not.
 		//
-		public static bool StdLib = true;
+		public static bool StdLib;
 
 		//
 		// This keeps track of the order in which classes were defined
@@ -62,9 +62,9 @@ namespace Mono.CSharp {
 		
 		static TypeBuilder impl_details_class;
 
-		public static int WarningLevel = 3;
+		public static int WarningLevel;
 		
-		public static Target Target = Target.Exe;
+		public static Target Target;
 		public static string TargetExt = ".exe";
 
 		public static bool VerifyClsCompliance = true;
@@ -74,7 +74,7 @@ namespace Mono.CSharp {
 		/// </summary>
 		public static bool Optimize = true;
 
-		public static LanguageVersion Version = LanguageVersion.Default;
+		public static LanguageVersion Version;
 
 		//
 		// We keep strongname related info here because
@@ -82,20 +82,39 @@ namespace Mono.CSharp {
 		//
 		public static string StrongNameKeyFile;
 		public static string StrongNameKeyContainer;
-		public static bool StrongNameDelaySign = false;
+		public static bool StrongNameDelaySign;
 
 		//
 		// If set, enable XML documentation generation
 		//
 		public static Documentation Documentation;
 
+		static public string MainClass;
+
 		//
 		// Constructor
 		//
 		static RootContext ()
 		{
+			Reset ();
+		}
+
+		public static void Reset ()
+		{
 			tree = new Tree ();
 			type_container_resolve_order = new ArrayList ();
+			EntryPoint = null;
+			WarningLevel = 3;
+			Checked = false;
+			Unsafe = false;
+			StdLib = true;
+			StrongNameKeyFile = null;
+			StrongNameKeyContainer = null;
+			StrongNameDelaySign = false;
+			MainClass = null;
+			Target = Target.Exe;
+			Version = LanguageVersion.Default;
+			Documentation = null;
 		}
 		
 		public static bool NeedsEntryPoint {
@@ -110,8 +129,6 @@ namespace Mono.CSharp {
 			}
 		}
 
-		static public string MainClass;
-		
 		public static void RegisterOrder (TypeContainer tc)
 		{
 			type_container_resolve_order.Add (tc);
@@ -120,12 +137,12 @@ namespace Mono.CSharp {
 		// 
 		// The default compiler checked state
 		//
-		static public bool Checked = false;
+		static public bool Checked;
 
 		//
 		// Whether to allow Unsafe code
 		//
-		static public bool Unsafe = false;
+		static public bool Unsafe;
 		
 		static string MakeFQN (string nsn, string name)
 		{
@@ -264,7 +281,7 @@ namespace Mono.CSharp {
 			object o = root.GetDefinition (name);
 			if (o == null){
 				Report.Error (518, "The predefined type `" + name + "' is not defined");
-				Environment.Exit (1);
+				return;
 			}
 
 			if (!(o is Delegate)){
