@@ -1,3 +1,8 @@
+2003-3-5 DennisHayes <dennish@raytek.com>
+	* Added values for enums
+	* Stubbed and somewhat implmented Blend, ColorBlend, CustomLineCap
+
+
 2003-3-2  DennisHayes <dennish@raytek.com>
 
 	* Created changelog

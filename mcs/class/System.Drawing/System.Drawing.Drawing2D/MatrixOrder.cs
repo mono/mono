@@ -14,7 +14,7 @@ namespace System.Drawing.Drawing2D {
 	/// Summary description for MatrixOrder.
 	/// </summary>
 	public enum MatrixOrder {
-		Append,
-		Prepend
+		Append = 1,
+		Prepend = 0
 	}
 }

@@ -14,11 +14,11 @@ namespace System.Drawing.Drawing2D {
 	/// Summary description for CompostingQuality.
 	/// </summary>
 	public enum CompositingQuality {
-		AssumeLinear,
-		Default,
-		GammaCorrected,
-		HighQuality,
-		HighSpeed,
-		Invalid
+		AssumeLinear = 4,
+		Default = 0,
+		GammaCorrected = 3,
+		HighQuality = 2,
+		HighSpeed = 1,
+		Invalid = -1
 	}
 }

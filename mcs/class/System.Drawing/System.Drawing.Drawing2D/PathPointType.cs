@@ -14,13 +14,13 @@ namespace System.Drawing.Drawing2D {
 	/// Summary description for PathPointType.
 	/// </summary>
 	public enum PathPointType {
-		Bezier,
-		Bezier3,
-		CloseSubpath,
-		DashMode,
-		Line,
-		PathMarker,
-		PathTypeMask,
-		Start
+		Bezier = 3,
+		Bezier3 = 3,
+		CloseSubpath = 128,
+		DashMode = 16,
+		Line = 1,
+		PathMarker = 32,
+		PathTypeMask = 7,
+		Start = 0
 	}
 }

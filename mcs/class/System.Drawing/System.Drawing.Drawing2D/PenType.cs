@@ -1,5 +1,5 @@
 //
-// System.Drawing.Drawing2D.DashCap.cs
+// System.Drawing.Drawing2D.PenType.cs
 //
 // Author:
 //   Dennis Hayes (dennish@Raytek.com)
@@ -13,10 +13,10 @@ namespace System.Drawing.Drawing2D
 	/// Summary description for PenType.
 	/// </summary>
 	public enum PenType {
-		HatchFill,
-		LinearGradient,
-		PathGradient,
-		SolidColor,
-		TextureFill
+		HatchFill = 1,
+		LinearGradient = 4,
+		PathGradient = 3,
+		SolidColor = 0,
+		TextureFill = 2
 	}
 }

@@ -14,7 +14,7 @@ namespace System.Drawing.Drawing2D {
 	/// Summary description for CompostingMode.
 	/// </summary>
 	public enum CompositingMode {
-		SourceCopy,
-		SourceOver
+		SourceCopy = 1,
+		SourceOver = 0
 	}
 }

@@ -14,8 +14,8 @@ namespace System.Drawing.Drawing2D {
 	/// Summary description for CoordinateSpace.
 	/// </summary>
 	public enum CoordinateSpace {
-		Device,
-		Page,
-		World
+		Device = 2,
+		Page = 1,
+		World = 0
 	}
 }

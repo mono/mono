@@ -14,9 +14,9 @@ namespace System.Drawing.Drawing2D {
 	/// Summary description for QualityMode.
 	/// </summary>
 	public enum QualityMode {
-		Default,
-		Hight,
-		Invalid,
-		Low
+		Default = 0,
+		Hight = 2,
+		Invalid = -1,
+		Low = 1
 	}
 }

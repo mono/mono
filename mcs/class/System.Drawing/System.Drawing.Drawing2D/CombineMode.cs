@@ -15,11 +15,11 @@ namespace System.Drawing.Drawing2D {
 	/// </summary>
     public enum CombineMode
     {
-        Complement,
-        Exclude,
-        Intersect,
-        Replace,
-        Union,
-        Xor
+        Complement = 5,
+        Exclude = 4,
+        Intersect = 1,
+        Replace = 0,
+        Union = 2,
+        Xor = 3
     }
 }

@@ -8,15 +8,21 @@
 //
 using System;
 
-namespace System.Drawing.Drawing2D
-{
+namespace System.Drawing.Drawing2D {
 	/// <summary>
 	/// Summary description for CustomLineCap.
 	/// </summary>
-	public class CustomLineCap
-	{
-		public CustomLineCap()
-		{
+	public class CustomLineCap {// : MarshalByRefObject, ICloneable, IDisposable {
+		protected CustomLineCap() {
+		}
+		public CustomLineCap(GraphicsPath fillPAth, GraphicsPath strokePAth, LineCap baseCap, float baseInset) {
+
+		}
+		public CustomLineCap(GraphicsPath fillPAth, GraphicsPath strokePAth, LineCap baseCap) {
+
+		}
+		public CustomLineCap(GraphicsPath fillPAth, GraphicsPath strokePAth) {
+
 		}
 	}
 }

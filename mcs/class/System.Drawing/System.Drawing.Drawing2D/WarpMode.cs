@@ -14,7 +14,7 @@ namespace System.Drawing.Drawing2D {
 	/// Summary description for WarpMode.
 	/// </summary>
 	public enum WarpMode {
-		Bilinear,
-		Perspective
+		Bilinear = 1,
+		Perspective = 0
 	}
 }

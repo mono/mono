@@ -1,5 +1,5 @@
 //
-// System.Drawing.Drawing2D.DashCap.cs
+// System.Drawing.Drawing2D.DashStyle.cs
 //
 // Author:
 //   Dennis Hayes (dennish@Raytek.com)
@@ -14,11 +14,11 @@ namespace System.Drawing.Drawing2D
 	/// Summary description for DashStyle.
 	/// </summary>
 	public enum DashStyle {
-		Custom,
-		Dash,
-		DashDot,
-		DashDotDot,
-		Dot,
-		Solid
+		Custom = 5,
+		Dash = 1,
+		DashDot = 3,
+		DashDotDot = 4,
+		Dot = 2,
+		Solid = 0
 	}
 }

@@ -14,9 +14,9 @@ namespace System.Drawing.Drawing2D {
 	/// Summary description for LinearGradientMode.
 	/// </summary>
 	public enum LinearGradientMode {
-		BackwardDiagonal,
-		ForwardDiagonal,
-		Horizontal,
-		Vertical
+		BackwardDiagonal = 3,
+		ForwardDiagonal = 2,
+		Horizontal = 0,
+		Vertical = 1
 	}
 }

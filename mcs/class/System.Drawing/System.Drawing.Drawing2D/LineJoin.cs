@@ -14,9 +14,9 @@ namespace System.Drawing.Drawing2D {
 	/// Summary description for LineJoin.
 	/// </summary>
 	public enum LineJoin {
-		Bevel,
-		Miter,
-		MiterClipped,
-		Round
+		Bevel = 1,
+		Miter = 0,
+		MiterClipped = 3,
+		Round = 2
 	}
 }

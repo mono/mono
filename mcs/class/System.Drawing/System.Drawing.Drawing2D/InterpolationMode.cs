@@ -14,14 +14,14 @@ namespace System.Drawing.Drawing2D {
 	/// Summary description for InterpolationMode.
 	/// </summary>
 	public enum InterpolationMode {
-		Bicubic,
-		Bilinear,
-		Default,
-		High,
-		HighQualityBicubic,
-		HighQualityBilinear,
-		Invalid,
-		Low,
-		NearestNeighbour
+		Bicubic = 4,
+		Bilinear = 3,
+		Default = 0,
+		High = 2,
+		HighQualityBicubic = 7,
+		HighQualityBilinear = 6,
+		Invalid = -1,
+		Low = 1,
+		NearestNeighbour = 5
 	}
 }

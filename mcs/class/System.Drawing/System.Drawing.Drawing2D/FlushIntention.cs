@@ -14,7 +14,7 @@ namespace System.Drawing.Drawing2D {
 	/// Summary description for FlushIntention.
 	/// </summary>
 	public enum FlushIntention {
-		Flush,
-		Sync
+		Flush = 0,
+		Sync = 1
 	}
 }

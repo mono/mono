@@ -14,11 +14,11 @@ namespace System.Drawing.Drawing2D {
 	/// Summary description for SmoothingMode.
 	/// </summary>
 	public enum SmoothingMode {
-		AntiAlias,
-		Default,
-		HighQuality,
-		HighSpeed,
-		Invalid,
-		None
+		AntiAlias = 4,
+		Default = 0,
+		HighQuality = 2,
+		HighSpeed = 1,
+		Invalid = -1,
+		None = 3
 	}
 }
