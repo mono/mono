@@ -28,8 +28,12 @@
 
 #if NET_2_0
 
+using System.Runtime.ConstrainedExecution;
+using System.Runtime.InteropServices;
+
 namespace System.Threading {
 
+	[ComVisible (false)]
 	public class HostExecutionContextManager {
 
 		public HostExecutionContextManager ()
@@ -43,6 +47,7 @@ namespace System.Threading {
 		}
 
 		[MonoTODO]
+		[ReliabilityContract (Consistency.WillNotCorruptState, CER.MayFail)]
 		public virtual void Revert (HostExecutionContextSwitcher hostContextSwitcher)
 		{
 			throw new NotImplementedException ();

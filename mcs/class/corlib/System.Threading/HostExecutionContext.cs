@@ -28,8 +28,11 @@
 
 #if NET_2_0
 
+using System.Runtime.InteropServices;
+
 namespace System.Threading {
 
+	[ComVisible (false)]
 	public class HostExecutionContext {
 
 		protected internal object state;

@@ -1,3 +1,21 @@
+2004-08-12  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CompressedStackSwitcher.cs: Added missing [ComVisible] and 
+	[ReliabilityContract] attributes.
+	* ExecutionContext.cs: Added missing [ComVisible] and 
+	[Serializable] attributes.
+	* HostExecutionContext.cs: Added missing [ComVisible] attribute.
+	* HostExecutionContextManager.cs: Added missing [ComVisible] and 
+	[ReliabilityContract] attributes.
+	* HostExecutionContextSwitcher.cs: Added missing Equals and 
+	GetHashCode methods and [ComVisible] and [ReliabilityContract] attrs.
+	* ParameterizedThreadStart.cs: New delegate in NET_2_0.
+	* SendOrPostCallback.cs: Added missing [ComVisible] attribute.
+	* SynchronizationContext.cs: Added new (2.0 beta1) methods Copy and
+	WaitHelper. Added missing [ComVisible] and [ReliabilityContract] attrs.
+	* SynchronizationContextSwitcher.cs: Added missing [ComVisible] and 
+	[ReliabilityContract] attributes.
+
 2004-08-08  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* HostExecutionContext.cs: Fx 2.0 stub required for AppDomain.

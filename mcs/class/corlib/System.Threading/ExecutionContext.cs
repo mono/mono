@@ -30,10 +30,13 @@
 
 #if NET_2_0
 
+using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 
 namespace System.Threading 
 {
+	[ComVisible (false)]
+	[Serializable]
 	public sealed class ExecutionContext : ISerializable
 	{
 		internal ExecutionContext ()

@@ -28,8 +28,12 @@
 
 #if NET_2_0
 
+using System.Runtime.ConstrainedExecution;
+using System.Runtime.InteropServices;
+
 namespace System.Threading {
 
+	[ComVisible (false)]
 	public struct HostExecutionContextSwitcher : IDisposable {
 
 		[MonoTODO]
@@ -45,8 +49,24 @@ namespace System.Threading {
 		}
 
 		[MonoTODO]
+		[ReliabilityContract (Consistency.WillNotCorruptState, CER.MayFail)]
 		public void Undo ()
 		{
+		}
+
+		[MonoTODO]
+		public override bool Equals (object o)
+		{
+			if (o == null)
+				return false;
+			// TODO
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public override int GetHashCode ()
+		{
+			return 0;
 		}
 
 		void IDisposable.Dispose ()

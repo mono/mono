@@ -30,10 +30,12 @@
 
 #if NET_2_0
 
-using System;
+using System.Runtime.ConstrainedExecution;
+using System.Runtime.InteropServices;
 
 namespace System.Threading 
 {
+	[ComVisibleAttribute (false)]
 	public class SynchronizationContext
 	{
 		[ThreadStatic]
@@ -42,10 +44,20 @@ namespace System.Threading
 		public SynchronizationContext ()
 		{
 		}
+
+		internal SynchronizationContext (SynchronizationContext context)
+		{
+			currentContext = context;
+		}
 		
 		public static SynchronizationContext Current
 		{
 			get { return currentContext; }
+		}
+
+		public virtual SynchronizationContext CreateCopy ()
+		{
+			return new SynchronizationContext (this);
 		}
 		
 		public virtual void Post (SendOrPostCallback d, object state)
@@ -75,8 +87,16 @@ namespace System.Threading
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[CLSCompliant (false)]
 		public virtual int Wait (IntPtr[] waitHandles, bool waitAll, int millisecondsTimeout)
+		{
+			return WaitHelper (waitHandles, waitAll, millisecondsTimeout);
+		}
+
+		[MonoTODO]
+		[CLSCompliant (false)]
+		[ReliabilityContract (Consistency.WillNotCorruptState, CER.MayFail)]
+		protected static int WaitHelper (IntPtr[] waitHandles, bool waitAll, int millisecondsTimeout)
 		{
 			throw new NotImplementedException ();
 		}

@@ -1,12 +1,10 @@
-// 
-// System.Threading.SendOrPostCallback.cs
+//
+// System.Threading.ParameterizedThreadStart delegate
 //
 // Author:
-//   Lluis Sanchez (lluis@novell.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) Novell, Inc., 2004
-//
-
+// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -32,10 +30,11 @@
 
 using System.Runtime.InteropServices;
 
-namespace System.Threading 
-{
-	[ComVisible (false)]
-	public delegate void SendOrPostCallback (object state);
+namespace System.Threading {
+
+	[ComVisibleAttribute (false)]
+	public delegate void ParameterizedThreadStart (object obj);
+
 }
 
 #endif

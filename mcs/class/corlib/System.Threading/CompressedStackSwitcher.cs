@@ -30,26 +30,30 @@
 
 using System;
 using System.Globalization;
+using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
 
 namespace System.Threading {
 
-	[MonoTODO]
 	[ComVisibleAttribute (false)]
 	public struct CompressedStackSwitcher : IDisposable {
 
 		private bool _undo;
 
+		[MonoTODO]
 		public override bool Equals (object obj)
 		{
 			return false;
 		}
 
+		[MonoTODO]
 		public override int GetHashCode ()
 		{
 			return 0;
 		}
 
+		[MonoTODO]
+		[ReliabilityContract (Consistency.WillNotCorruptState, CER.MayFail)]
 		public void Undo ()
 		{
 			_undo = true;
@@ -57,11 +61,13 @@ namespace System.Threading {
 
 // LAMESPEC: documented but not implemented (not shown by corcompare)
 #if false
+		[MonoTODO]
 		public static bool op_Equality (CompressedStackSwitcher c1, CompressedStackSwitcher c2)
 		{
 			return false;
 		}
 
+		[MonoTODO]
 		public static bool op_Inequality (CompressedStackSwitcher c1, CompressedStackSwitcher c2)
 		{
 			return false;

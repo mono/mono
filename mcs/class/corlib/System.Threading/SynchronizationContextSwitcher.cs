@@ -30,8 +30,12 @@
 
 #if NET_2_0
 
+using System.Runtime.InteropServices;
+using System.Runtime.ConstrainedExecution;
+
 namespace System.Threading 
 {
+	[ComVisible (false)]
 	public struct SynchronizationContextSwitcher : IDisposable
 	{
 		[MonoTODO]
@@ -59,6 +63,7 @@ namespace System.Threading
 		}
 		
 		[MonoTODO]
+		[ReliabilityContract (Consistency.WillNotCorruptState, CER.MayFail)]
 		public void Undo ()
 		{
 			throw new NotImplementedException ();
