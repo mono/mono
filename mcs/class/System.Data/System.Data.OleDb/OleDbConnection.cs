@@ -95,9 +95,13 @@ namespace System.Data.OleDb
 		}
 
 		public string ServerVersion {
-			[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				if (gdaConnection != IntPtr.Zero
+				    && libgda.gda_connection_is_open (gdaConnection)) {
+					return libgda.gda_connection_get_server_version (gdaConnection);
+				}
+
+				return null;
 			}
 		}
 

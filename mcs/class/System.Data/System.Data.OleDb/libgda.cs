@@ -192,6 +192,9 @@ namespace System.Data.OleDb
 		public static extern bool gda_connection_close (IntPtr cnc);
 
 		[DllImport("gda-2")]
+		public static extern string gda_connection_get_server_version (IntPtr cnc);
+		
+		[DllImport("gda-2")]
 		public static extern string gda_connection_get_database (IntPtr cnc);
 
 		[DllImport("gda-2")]
