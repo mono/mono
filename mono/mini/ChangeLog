@@ -1,4 +1,8 @@
 
+Tue Apr 8 11:41:26 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* Makefile.am: add BUILT_SOURCES.
+
 Mon Apr 7 16:31:34 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* driver.c: give a better error message when the assembly to execute
