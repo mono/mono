@@ -1,3 +1,7 @@
+2004-12-16  Zoltan Varga  <vargaz@freemail.hu>
+
+	* aot.c (emit_method): Handle PATCH_INFO_NONE as well.
+
 2004-12-15  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini.c (mono_emit_method_call): Only allocate the got var when it is
