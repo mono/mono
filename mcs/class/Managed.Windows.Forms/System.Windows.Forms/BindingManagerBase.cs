@@ -134,13 +134,6 @@ namespace System.Windows.Forms {
 			Bindings.Add (binding);
 		}
 
-		internal void UpdateBindings ()
-		{
-			// TODO: Maybe I should do foreach (binding) pull; push
-			PullData ();
-			PushData ();
-		}
-		
 		#region Events
 		public event EventHandler CurrentChanged;
 		public event EventHandler PositionChanged;
