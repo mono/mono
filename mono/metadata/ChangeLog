@@ -1,5 +1,11 @@
 2004-09-28  Raja R Harinath  <rharinath@novell.com>
 
+	* icall.c (ves_icall_System_Reflection_Assembly_GetModulesInternal): 
+	Move null check before dereference.  Avoid indexing beyond the end
+	of the 'modules' array.
+
+2004-09-28  Raja R Harinath  <rharinath@novell.com>
+
 	* metadata-internals.h (MonoImage): Add module_count field.
 	* image.c (load_modules): Set image->module_count.
 	(mono_image_load_file_for_image): Use image->module_count.
