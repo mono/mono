@@ -10,9 +10,11 @@
 using System;
 using System.Data;
 using System.Data.Common;
+using System.ComponentModel;
 
 namespace System.Data.Odbc
 {
+	[TypeConverterAttribute (typeof (OdbcParameterConverter))]	
 	public sealed class OdbcParameter : MarshalByRefObject, IDbDataParameter, IDataParameter, ICloneable
 	{
 		#region Fields
@@ -98,7 +100,12 @@ namespace System.Data.Odbc
                         get { return container; }
                         set { container = value; }
                 }
-
+		
+		[BrowsableAttribute (false)]
+                [OdbcDescriptionAttribute ("The parameter generic type")]
+                [RefreshPropertiesAttribute (RefreshProperties.All)]
+                [DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
+		[OdbcCategory ("Data")]
 		public DbType DbType {
 			get { return dbType; }
 			set { 
@@ -106,16 +113,28 @@ namespace System.Data.Odbc
 			}
 		}
 		
+		[OdbcCategory ("Data")]
+		[OdbcDescriptionAttribute ("Input, output, or bidirectional parameter")]  
+		[DefaultValue (ParameterDirection.Input)]
 		public ParameterDirection Direction {
 			get { return direction; }
 			set { direction = value; }
 		}
 		
+		[BrowsableAttribute (false)]
+                [OdbcDescriptionAttribute ("A design-time property used for strongly typed code generation")]
+                [DesignOnlyAttribute (true)]
+                [EditorBrowsableAttribute (EditorBrowsableState.Advanced)]
+                [DefaultValue (false)]
 		public bool IsNullable {
 			get { return isNullable; }
 			set { isNullable = value; }
 		}
 
+		[DefaultValue (OdbcType.NChar)]
+                [OdbcDescriptionAttribute ("The parameter native type")]
+                [RefreshPropertiesAttribute (RefreshProperties.All)]
+		[OdbcCategory ("Data")]
 		public OdbcType OdbcType {
 			get { return odbcType; }
 			set {
