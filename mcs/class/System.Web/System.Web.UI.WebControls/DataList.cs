@@ -742,7 +742,7 @@ namespace System.Web.UI.WebControls
 		/// Undocumented
 		/// </summary>
 		[MonoTODO]
-		protected DataListItem CreateItem(int itemIndex, ListItemType itemType)
+		protected virtual DataListItem CreateItem(int itemIndex, ListItemType itemType)
 		{
 			throw new NotImplementedException();
 		}
@@ -766,7 +766,7 @@ namespace System.Web.UI.WebControls
 		/// Undocumented
 		/// </summary>
 		[MonoTODO]
-		protected void InitializeItem(DataListItem item)
+		protected virtual void InitializeItem(DataListItem item)
 		{
 			throw new NotImplementedException();
 		}

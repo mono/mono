@@ -362,5 +362,17 @@ namespace System.Web.UI.WebControls
 				}
 			}
 		}
+
+		[MonoTODO]
+		protected virtual RepeaterItem CreateItem (int itemIndex, ListItemType itemType)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		protected virtual void InitializeItem (RepeaterItem item)
+		{
+			throw new NotImplementedException ();
+		}
 	}
 }

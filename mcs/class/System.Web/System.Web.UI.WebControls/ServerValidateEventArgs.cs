@@ -30,18 +30,13 @@ namespace System.Web.UI.WebControls
 
 		public bool IsValid
 		{
-			get
-			{
-				return isValid;
-			}
+			get { return isValid; }
+			set { isValid = value; }
 		}
 
 		public string Value
 		{
-			get
-			{
-				return value;
-			}
+			get { return value; }
 		}
 	}
 }

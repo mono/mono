@@ -69,7 +69,7 @@ namespace System.Web.UI.WebControls
 			selectionBits = 0x00;
 		}
 
-		internal virtual StateBag ViewState
+		StateBag ViewState
 		{
 			get
 			{
@@ -225,7 +225,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		internal virtual bool IsEmpty
+		virtual bool IsEmpty
 		{
 			get { return (selectionBits == 0); }
 		}
@@ -480,7 +480,7 @@ namespace System.Web.UI.WebControls
 			Set(MARKED);
 		}
 
-		protected internal object SaveViewState()
+		virtual object SaveViewState()
 		{
 			if(viewState != null)
 			{

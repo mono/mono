@@ -25,7 +25,7 @@ namespace System.Web.UI.WebControls
 	//[Designer("??")]
 	//[DataBindingHandler("??")]
 	[ParseChildren(true, "Items")]
-	public class ListControl: WebControl
+	public abstract class ListControl: WebControl
 	{
 		private static readonly object SelectedIndexChangedEvent = new object();
 
@@ -290,6 +290,11 @@ namespace System.Web.UI.WebControls
 					if(eh!=null)
 						eh(this, e);
 				}
+		}
+
+		protected virtual void OnPreRender (EventArgs e)
+		{
+			base.OnPreRender(e);
 		}
 
 		protected override object SaveViewState()

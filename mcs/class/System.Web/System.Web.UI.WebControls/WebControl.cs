@@ -182,7 +182,7 @@ namespace System.Web.UI.WebControls
 		}
 
 		[MonoTODO("FIXME_Internal_method_calls")]
-		public virtual Style ControlStyle
+		public Style ControlStyle
 		{
 			get
 			{

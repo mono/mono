@@ -226,6 +226,20 @@ namespace System.Web.UI.WebControls
 			return null;
 		}
 
+		public override bool Equals (object o)
+		{
+			ListItem li = o as ListItem;
+			if (li == null)
+				return false;
+
+			return (Text == li.Text && Value == li.Value);
+		}
+
+		public override string ToString ()
+		{
+			return Text;
+		}
+
 		bool IStateManager.IsTrackingViewState
 		{
 			get

@@ -1,3 +1,21 @@
+2002-06-30  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* DataGridColumn.cs:
+	* DataGridPagerStyle.cs:
+	* DataList.cs:
+	* DataListItem.cs:
+	* Image.cs:
+	* LinkButton.cs:
+	* ListControl.cs:
+	* ListItem.cs:
+	* ListItemCollection.cs:
+	* Repeater.cs:
+	* ServerValidateEventArgs.cs:
+	* Style.cs:
+	* TableRow.cs:
+	* WebControl.cs:
+	* Xml.cs: more class status page based changes.
+
 2002-06-29  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Button.cs:

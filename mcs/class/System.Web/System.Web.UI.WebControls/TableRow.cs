@@ -66,9 +66,9 @@ namespace System.Web.UI.WebControls
 			return new CellControlCollection (this);
 		}
 
-		class CellControlCollection : ControlCollection
+		protected class CellControlCollection : ControlCollection
 		{
-			public CellControlCollection (Control owner) : base (owner)
+			CellControlCollection (Control owner) : base (owner)
 			{
 			}
 

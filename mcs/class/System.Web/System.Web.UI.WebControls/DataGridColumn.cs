@@ -294,7 +294,7 @@ namespace System.Web.UI.WebControls
 		/// <summary>
 		/// Undocumented
 		/// </summary>
-		protected void OnColumnChanged()
+		protected virtual void OnColumnChanged()
 		{
 			if(owner != null)
 			{
@@ -345,7 +345,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		protected virtual bool IsTrackingViewState
+		protected bool IsTrackingViewState
 		{
 			get
 			{

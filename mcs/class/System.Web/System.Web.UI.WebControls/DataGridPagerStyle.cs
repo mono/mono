@@ -17,7 +17,7 @@ using System.Web.UI;
 
 namespace System.Web.UI.WebControls
 {
-	public class DataGridPagerStyle : TableItemStyle
+	public sealed class DataGridPagerStyle : TableItemStyle
 	{
 		DataGrid owner;
 

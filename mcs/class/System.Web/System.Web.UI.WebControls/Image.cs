@@ -19,7 +19,6 @@ using System.ComponentModel;
 namespace System.Web.UI.WebControls
 {
 	[DefaultProperty("ImageUrl")]
-	[ParseChildrenAttribute(false)]
 	public class Image : WebControl
 	{
 		public Image(): base(HtmlTextWriterTag.Img)

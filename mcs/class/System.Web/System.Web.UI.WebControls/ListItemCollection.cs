@@ -22,7 +22,7 @@ namespace System.Web.UI.WebControls
 {
 	//[DefaultMember("Item")] I need the this[...] thing...
 	//[Editor("??", typeof(Design.WebControls.ListItemCollectionEditor))]
-	public class ListItemCollection : IList, ICollection, IEnumerable, IStateManager
+	public sealed class ListItemCollection : IList, ICollection, IEnumerable, IStateManager
 	{
 		private ArrayList items;
 		private bool      saveAll;

@@ -21,6 +21,7 @@ using System.Web.UI;
 
 namespace System.Web.UI.WebControls
 {
+	[PersistChildren(false)]
 	public class Xml : Control
 	{
 		private XmlDocument      document;
