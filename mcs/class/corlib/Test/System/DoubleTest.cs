@@ -123,7 +123,7 @@ public class DoubleTest : TestCase
 		}
 		
 		AssertEquals("Parse Failed NumberStyles.Float", 10.1111, Double.Parse(" 10.1111 ", NumberStyles.Float, Nfi));
-		AssertEquals("Parse Failed NumberStyles.AllowThousands", 1234.5678, Double.Parse("1,234.5678", NumberStyles.AllowThousands, Nfi));
+		AssertEquals("Parse Failed NumberStyles.AllowThousands", 1234.5678, Double.Parse("1,234.5678", NumberStyles.Float | NumberStyles.AllowThousands, Nfi));
 	
 		try {
 			Double.Parse(null);
@@ -142,19 +142,19 @@ public class DoubleTest : TestCase
 		}		
 
 		try {
-			Double.Parse("1.7976931348623158e308");
-			Fail("Parse should raise a OverflowException+");
+			Double.Parse("1.79769313486232e308");
+			Fail("Parse should have raised an OverflowException +");
 		}
 		catch (Exception e) {
-			Assert("Parse should be a OverflowException+ ", typeof(OverflowException) == e.GetType());
+			AssertEquals("Should be an OverflowException +", typeof(OverflowException), e.GetType());
 		}		
 
 		try {
-			Double.Parse("-1.7976931348623158e308");
-			Fail("Parse should raise a OverflowException-");
+			Double.Parse("-1.79769313486232e308");
+			Fail("Parse should have raised an OverflowException -");
 		}
 		catch (Exception e) {
-			Assert("Parse should be a OverflowException-", typeof(OverflowException) == e.GetType());
+			AssertEquals("Should be an OverflowException -", typeof(OverflowException), e.GetType());
 		}		
 
 

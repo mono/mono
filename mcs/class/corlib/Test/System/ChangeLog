@@ -4,6 +4,8 @@
 	The MSDN docs clearly say ArgumentOutOfRangeException, but that's
 	not what get's thrown.
 
+	* DoubleTest.cs: Get working against mscorlib reference.
+
 2002-02-27  Duco Fijma <duco@lorentz.xs4all.nl>
 	* GuidTest.cs: changed to reflect new meaning of Guid.ToString("")
 	and Guid.ToString(null)
