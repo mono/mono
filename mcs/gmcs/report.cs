@@ -132,12 +132,20 @@ namespace Mono.CSharp {
 
 		static public void SymbolRelatedToPreviousError (MemberInfo mi)
 		{
-			TypeContainer temp_ds = TypeManager.LookupTypeContainer (mi.DeclaringType);
+			Type decl = mi.DeclaringType;
+			if (decl.IsGenericInstance)
+				decl = decl.GetGenericTypeDefinition ();
+
+			TypeContainer temp_ds = TypeManager.LookupTypeContainer (decl);
 			if (temp_ds == null) {
-				SymbolRelatedToPreviousError (mi.DeclaringType.Assembly.Location, TypeManager.GetFullNameSignature (mi));
+				SymbolRelatedToPreviousError (decl.Assembly.Location, TypeManager.GetFullNameSignature (mi));
 			} else {
 				if (mi is MethodBase) {
-					IMethodData md = TypeManager.GetMethod ((MethodBase)mi);
+					MethodBase mb = (MethodBase) mi;
+					if (mb.Mono_IsInflatedMethod)
+						mb = mb.GetGenericMethodDefinition ();
+
+					IMethodData md = TypeManager.GetMethod (mb);
 					SymbolRelatedToPreviousError (md.Location, md.GetSignatureForError (temp_ds));
 					return;
 				}
