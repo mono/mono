@@ -29,7 +29,6 @@
 //	Jaak Simm		jaaksimm@firm.ee
 //	John Sohn		jsohn@columbus.rr.com
 //
-//
 // $Revision: 1.76 $
 // $Modtime: $
 // $Log: Control.cs,v $
@@ -2008,7 +2007,7 @@ namespace System.Windows.Forms
 		}
 
 		public void Invalidate(System.Drawing.Rectangle rc, bool invalidateChildren) {
-			if (!IsHandleCreated || !is_visible) {
+			if (!IsHandleCreated || !Visible) {
 				return;
 			}
 
@@ -2771,22 +2770,14 @@ namespace System.Windows.Forms
 				case Msg.WM_RBUTTONDOWN:	throw new NotImplementedException();	break;
 				case Msg.WM_RBUTTONUP:		throw new NotImplementedException();	break;
 				case Msg.WM_RBUTTONDBLCLK:	throw new NotImplementedException();	break;
-
-				case Msg.WM_MOUSEHOVER:		throw new NotImplementedException();	break;
-				case Msg.WM_MOUSELEAVE:		throw new NotImplementedException();	break;
-				
-
-				// Keyboard handling
-				case Msg.WM_CHAR:		throw new NotImplementedException();	break;
-				case Msg.WM_KEYDOWN:		throw new NotImplementedException();	break;
-				case Msg.WM_KEYUP:		throw new NotImplementedException();	break;
 #endif
-				// Window management
 			case Msg.WM_WINDOWPOSCHANGED: {
-				if (XplatUI.IsVisible(m.HWnd)) {
+				if (Visible) {
 					UpdateBounds();
+					if (GetStyle(ControlStyles.ResizeRedraw)) {
+						Invalidate();
+					}
 				}
-				DefWndProc(ref m);
 				break;
 			}
 
@@ -2807,14 +2798,7 @@ namespace System.Windows.Forms
 						OnPaintBackground (eraseEventArgs);
 					}
 					m.Result = (IntPtr)1;
-				}	
-				else {
-#if notdef
-						SolidBrush	sb = new SolidBrush(this.BackColor);
-						this.DeviceContext.FillRectangle(sb, this.ClientRectangle);
-						sb.Dispose();
-#endif
-
+				} else {
 					m.Result = IntPtr.Zero;
 					DefWndProc (ref m);	
 				}    					
@@ -2882,14 +2866,6 @@ namespace System.Windows.Forms
 				break;
 			}
 			
-			case Msg.WM_SIZE: {					
-				if (GetStyle(ControlStyles.ResizeRedraw)) {
-					Invalidate();
-				}
-				DefWndProc(ref m);	
-				break;				
-			}
-
 			case Msg.WM_KEYDOWN: {
 				if (!ProcessKeyMessage(ref m)) {
 					DefWndProc (ref m);
