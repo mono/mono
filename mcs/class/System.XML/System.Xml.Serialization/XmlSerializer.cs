@@ -256,10 +256,7 @@ namespace System.Xml.Serialization {
 				DeserializeArray(xmlReader, list, fieldType.GetElementType());
 				value = list.ToArray(fieldType.GetElementType());
 			}
-			else if (isEmptyField == false && 
-					 (IsInbuiltType(fieldType) || 
-                      fieldType.IsEnum || 
-                      fieldType.IsArray))
+			else if (isEmptyField == false && (IsInbuiltType(fieldType) || fieldType.IsEnum || fieldType.IsArray))
 			{
 				// Built in, set it.
 				while (xmlReader.Read())
@@ -282,8 +279,10 @@ namespace System.Xml.Serialization {
 							value = Enum.Parse(fieldType, xmlReader.Value);
 						else if (fieldType == typeof(System.Byte[]))
 							value = XmlCustomFormatter.ToByteArrayBase64(xmlReader.Value);
+						else if (fieldType == typeof (Int32))
+							value = XmlConvert.ToInt32 (xmlReader.Value);
 						else
-							Console.WriteLine("XmlSerializer.DeserializeField Error (type is '{0}')", fieldType);
+							Console.WriteLine("XmlSerializer.DeserializeField, improve routine: Error (type is '{0}')", fieldType);
 						
 						break;
 					}
