@@ -3105,6 +3105,10 @@ namespace Mono.CSharp {
 					MethodAttributes.Virtual |
 					MethodAttributes.HideBySig;
 
+				// Set Final unless we're virtual, abstract or already overriding a method.
+				if ((modifiers & (Modifiers.VIRTUAL | Modifiers.ABSTRACT | Modifiers.OVERRIDE)) == 0)
+					flags |= MethodAttributes.Final;
+
 				// Get the method name from the explicit interface.
 				if (member.InterfaceType != null) {
 					name = implementing.Name;

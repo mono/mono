@@ -89,9 +89,17 @@ namespace Mono.CSharp {
 				// Now we check that the overriden method is not final
 				
 				if (mb.IsFinal) {
-					Report.Error (239, Location, parent.MakeName (Name) + " : cannot " +
-						      "override inherited member `" + name +
-						      "' because it is sealed.");
+					// This happens when implementing interface methods.
+					if (mb.IsHideBySig && mb.IsVirtual) {
+						Report.Error (
+							506, Location, parent.MakeName (Name) +
+							": cannot override inherited member `" +
+							name + "' because it is not " +
+							"virtual, abstract or override");
+					} else
+						Report.Error (239, Location, parent.MakeName (Name) + " : cannot " +
+							      "override inherited member `" + name +
+							      "' because it is sealed.");
 					ok = false;
 				}
 				//

@@ -1,3 +1,11 @@
+2003-07-02  Martin Baulig  <martin@ximian.com>
+
+	* class.cs (MethodData.Define): When implementing interface
+	methods, set Final unless we're Virtual.
+
+	* decl.cs (MemberCore.CheckMethodAgainstBase): Make the CS0506
+	check work for interface methods.
+
 2003-07-01  Martin Baulig  <martin@ximian.com>
 
 	* ecore.cs (EmitContext.This): Replaced this property with a
