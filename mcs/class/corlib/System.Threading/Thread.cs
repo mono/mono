@@ -365,7 +365,12 @@ namespace System.Threading
 					lock (typeof (Thread)) {
 						in_currentculture=true;
 						culture = CultureInfo.ConstructCurrentCulture ();
-						CurrentCulture = culture;
+						//
+						// Don't serialize the culture in this case to avoid
+						// initializing the serialization infrastructure in the
+						// common case when the culture is not set explicitly.
+						//
+						SetCachedCurrentCulture (culture);
 						in_currentculture = false;
 						return culture;
 					}

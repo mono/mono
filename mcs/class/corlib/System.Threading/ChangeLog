@@ -1,3 +1,9 @@
+2004-12-14  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Thread.cs: Optimize CurrentCulture to avoid initializing the
+	serialization infrastructure in the common case when the culture is
+	not set explicitly.
+
 2004-12-06  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Thread.cs: Add new fields 'serialized_culture_info{_len}'.
