@@ -181,9 +181,17 @@ namespace System.Data.OracleClient {
 			object value = GetValue (i);
 			if (!(value is byte[]))
 				throw new InvalidCastException ();
-			Array.Copy ((byte[]) value, (int) fieldOffset, buffer2, bufferoffset, length);
-			return ((byte[]) value).Length - fieldOffset;
-		}
+
+                        if ( buffer2 == null )
+				return ((byte []) value).Length; // Return length of data
+
+                        // Copy data into buffer
+                        long lobLength = ((byte []) value).Length;
+                        if ( (lobLength - fieldOffset) < length)
+                                length = (int) (lobLength - fieldOffset);
+                        Array.Copy ( (byte[]) value, (int) fieldOffset, buffer2, bufferoffset, length);
+                        return length; // return actual read count
+                }
 
 		public char GetChar (int i)
 		{
