@@ -6,9 +6,9 @@
 //      Alexandre Pigolkine(pigolkine@gmx.de)
 //	Jordi Mas i Hernandez (jordi@ximian.com)
 //
-// Copyright (C) 2003 Ximian, Inc.  http://www.ximian.com
+// Copyright (C) 2003 Ximian, Inc. (http://www.ximian.com)
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004 Novell, Inc. (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -47,6 +47,8 @@ namespace System.Drawing
 		private static float defDpiX = 0;
 		private static float defDpiY = 0;
 		private static IntPtr display = IntPtr.Zero;
+
+		// We use X Drawable on Linux.
 		private static bool use_x_drawable = (Environment.OSVersion.Platform == (PlatformID) 128);
 
 		[ComVisible(false)]
@@ -57,42 +59,42 @@ namespace System.Drawing
 							    PlayRecordCallback callbackData);
 		
 		[ComVisible (false)]
-		public delegate bool DrawImageAbort (IntPtr callbackData);		
-		
+		public delegate bool DrawImageAbort (IntPtr callbackData);
+
 		private Graphics (IntPtr nativeGraphics)
 		{
 			nativeObject = nativeGraphics;
 		}
-		
+
 		~Graphics ()
 		{
 			Dispose ();			
 		}		
-		
+
 		static internal float systemDpiX {
-			get {					
-					if (defDpiX==0) {
-						Bitmap bmp = new Bitmap(1,1);
-						Graphics g = Graphics.FromImage(bmp);	
-       					defDpiX = g.DpiX;
-       				}
-       				return defDpiX;
+			get {
+				if (defDpiX == 0) {
+					Bitmap bmp = new Bitmap (1, 1);
+					Graphics g = Graphics.FromImage (bmp);
+					defDpiX = g.DpiX;
+				}
+				return defDpiX;
 			}
 		}
 
 		static internal float systemDpiY {
 			get {
-					if (defDpiY==0) {
-						Bitmap bmp = new Bitmap(1,1);
-						Graphics g = Graphics.FromImage(bmp);	
-       					defDpiY = g.DpiY;
-       				}
-       				return defDpiY;
+				if (defDpiY == 0) {
+					Bitmap bmp = new Bitmap (1, 1);
+					Graphics g = Graphics.FromImage (bmp);
+					defDpiY = g.DpiY;
+				}
+				return defDpiY;
 			}
 		}
-		
+
 		internal IntPtr NativeObject {
-			get{
+			get {
 				return nativeObject;
 			}
 
@@ -1257,19 +1259,19 @@ namespace System.Drawing
 		public static Graphics FromHwnd (IntPtr hwnd)
 		{
 			IntPtr graphics;
-			
+
 			if (use_x_drawable) {
-				if (display==IntPtr.Zero) {
+				if (display == IntPtr.Zero) {
 					display = GDIPlus.XOpenDisplay (IntPtr.Zero);
 				}
 
 				return FromXDrawable (hwnd, display);
 			}
-			
+
 			Status status = GDIPlus.GdipCreateFromHWND (hwnd, out graphics);
 			GDIPlus.CheckStatus (status);
 
-				return new Graphics (graphics);
+			return new Graphics (graphics);
 		}
 
 		[MonoTODO]
