@@ -6,6 +6,8 @@
 	(test_sourcefile, btest_sourcefile): Define in terms of
 	$(test_lib) or $(btest_lib) only if they're overriden.
 	(test_response, test_makefrag): Remove redundant $(PROFILE) in name.
+	(run-test-lib, run-btest-lib): Unify.  Give profile-specific name
+	for output XML file.
 	* rules.make (dist-default): Handle any of Makefile, makefile, or
 	GNUmakefile being present.
 	* profiles/net_2_0.make (TEST_RUNTIME): Don't define.

@@ -140,35 +140,26 @@ $(topdir)/build/deps/nunit.stamp:
 	echo "stamp" >$@
 endif
 
+test_assemblies :=
+
 ifdef HAVE_CS_TESTS
-
-test-local: $(test_lib)
-
-run-test-local: run-test-lib
-
-run-test-lib: test-local
-	$(TEST_RUNTIME) $(TEST_HARNESS) $(test_lib)
-
-run-test-ondotnet-local: run-test-ondotnet-lib
-
-run-test-ondotnet-lib: test-local
-	$(TEST_HARNESS) $(test_lib)
+test_assemblies += $(test_lib)
 endif
 
 ifdef HAVE_VB_TESTS
+test_assemblies += $(btest_lib)
+endif
 
-test-local: $(btest_lib)
+ifdef test_assemblies
+test-local: $(test_assemblies)
+run-test-local: run-test-lib
+run-test-ondotnet-local: run-test-ondotnet-lib
 
-run-test-local: run-btest-lib
+run-test-lib: test-local
+	$(TEST_RUNTIME) $(TEST_HARNESS) /xml:TestResult-$(PROFILE).xml $(test_assemblies)
 
-run-btest-lib: test-local
-	$(TEST_RUNTIME) $(TEST_HARNESS) $(btest_lib)
-
-run-test-ondotnet-local: run-btest-ondotnet-lib
-
-run-btest-ondotnet-lib: test-local
-	$(TEST_HARNESS) $(btest_lib)
-
+run-test-ondotnet-lib: test-local
+	$(TEST_HARNESS) /xml:TestResult-ondotnet-$(PROFILE).xml $(test_assemblies)
 endif
 
 DISTFILES = $(sourcefile) $(test_sourcefile) $(EXTRA_DISTFILES)
