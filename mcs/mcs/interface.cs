@@ -270,6 +270,12 @@ namespace Mono.CSharp {
 			return new MemberList (members);
 		}
 
+		public MemberCache MemberCache {
+			get {
+				return null;
+			}
+		}
+
 		//
 		// Populates the methods in the interface
 		//

@@ -476,7 +476,13 @@ namespace Mono.CSharp {
 
 			return new MemberList (members);
 		}
-		
+
+		public MemberCache MemberCache {
+			get {
+				return null;
+			}
+		}
+
 		public void CloseDelegate ()
 		{
 			TypeBuilder.CreateType ();

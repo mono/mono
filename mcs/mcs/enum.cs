@@ -438,10 +438,10 @@ namespace Mono.CSharp {
 		}
 		
 		//
-		// Hack around System.Reflection as found everywhere else
+		// IMemberFinder
 		//
-		public MemberList FindMembers (MemberTypes mt, BindingFlags bf,
-					       MemberFilter filter, object criteria)
+		MemberList IMemberFinder.FindMembers (MemberTypes mt, BindingFlags bf,
+						      MemberFilter filter, object criteria)
 		{
 			ArrayList members = new ArrayList ();
 
@@ -452,6 +452,12 @@ namespace Mono.CSharp {
 			}
 
 			return new MemberList (members);
+		}
+
+		MemberCache IMemberFinder.MemberCache {
+			get {
+				return null;
+			}
 		}
 
 		public ArrayList ValueNames {

@@ -249,17 +249,19 @@ namespace Mono.CSharp {
 
 	public enum TimerType {
 		FindMembers	= 0,
-		MemberLookup	= 1,
-		CachedLookup	= 2,
-		CacheInit	= 3,
-		MiscTimer	= 4,
-		CountTimers	= 5
+		TcFindMembers	= 1,
+		MemberLookup	= 2,
+		CachedLookup	= 3,
+		CacheInit	= 4,
+		MiscTimer	= 5,
+		CountTimers	= 6
 	}
 
 	public enum CounterType {
-		MemberCache	= 0,
-		MiscCounter	= 1,
-		CountCounters	= 2
+		FindMembers	= 0,
+		MemberCache	= 1,
+		MiscCounter	= 2,
+		CountCounters	= 3
 	}
 
 	public class Timer
@@ -305,11 +307,13 @@ namespace Mono.CSharp {
 		static public void ShowTimers ()
 		{
 			ShowTimer (TimerType.FindMembers, "- FindMembers timer");
+			ShowTimer (TimerType.TcFindMembers, "- TypeContainer.FindMembers timer");
 			ShowTimer (TimerType.MemberLookup, "- MemberLookup timer");
 			ShowTimer (TimerType.CachedLookup, "- CachedLookup timer");
 			ShowTimer (TimerType.CacheInit, "- Cache init");
 			ShowTimer (TimerType.MiscTimer, "- Misc timer");
 
+			ShowCounter (CounterType.FindMembers, "- Find members");
 			ShowCounter (CounterType.MemberCache, "- Member cache");
 			ShowCounter (CounterType.MiscCounter, "- Misc counter");
 		}
@@ -328,6 +332,16 @@ namespace Mono.CSharp {
 				timer_counters [(int) which]);
 		}
 	}
+
+	public class InternalErrorException : Exception {
+		public InternalErrorException ()
+			: base ("Internal error")
+		{
+		}
+
+		public InternalErrorException (string message)
+			: base (message)
+		{
+		}
+	}
 }
-
-

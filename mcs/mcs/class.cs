@@ -1687,6 +1687,15 @@ namespace Mono.CSharp {
 		{
 			Report.Error (539, loc, "Explicit implementation: `" + name + "' is not a member of the interface");
 		}
+
+		//
+		// IMemberContainer
+		//
+		public MemberCache MemberCache {
+			get {
+				return null;
+			}
+		}
 	}
 
 	public class Class : TypeContainer {

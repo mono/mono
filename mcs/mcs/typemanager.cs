@@ -9,8 +9,6 @@
 // (C) 2001 Ximian, Inc (http://www.ximian.com)
 //
 //
-#define BROKEN_RUNTIME
-
 using System;
 using System.Globalization;
 using System.Collections;
@@ -22,10 +20,16 @@ using System.Diagnostics;
 
 namespace Mono.CSharp {
 
+/// <summary>
+///   This is a readonly list of MemberInfo's.      
+/// </summary>
 public class MemberList : IList {
 	public readonly IList List;
 	int count;
 
+	/// <summary>
+	///   Create a new MemberList from the given IList.
+	/// </summary>
 	public MemberList (IList list)
 	{
 		if (list != null)
@@ -33,6 +37,18 @@ public class MemberList : IList {
 		else
 			this.List = new ArrayList ();
 		count = List.Count;
+	}
+
+	/// <summary>
+	///   Concatenate the ILists `first' and `second' to a new MemberList.
+	/// </summary>
+	public MemberList (IList first, IList second)
+	{
+		ArrayList list = new ArrayList ();
+		list.AddRange (first);
+		list.AddRange (second);
+		count = list.Count;
+		List = list;
 	}
 
 	public static readonly MemberList Empty = new MemberList (new ArrayList ());
@@ -102,6 +118,7 @@ public class MemberList : IList {
 		}
 	}
 
+	// FIXME: try to find out whether we can avoid the cast in this indexer.
 	public MemberInfo this [int index] {
 		get {
 			return (MemberInfo) List [index];
@@ -147,14 +164,13 @@ public class MemberList : IList {
 public interface IMemberFinder {
 	MemberList FindMembers (MemberTypes mt, BindingFlags bf,
 				MemberFilter filter, object criteria);
+
+	MemberCache MemberCache {
+		get;
+	}
 }
 
-public interface ICachingMemberFinder : IMemberFinder {
-	MemberList FindMembers (MemberTypes mt, BindingFlags bf, string name,
-				MemberFilter filter, object criteria);
-}
-
-public interface IMemberContainer : ICachingMemberFinder {
+public interface IMemberContainer : IMemberFinder {
 	string Name {
 		get;
 	}
@@ -549,6 +565,15 @@ public class TypeManager {
 	public static TypeContainer LookupTypeContainer (Type t)
 	{
 		return builder_to_member_finder [t] as TypeContainer;
+	}
+
+	public static IMemberContainer LookupMemberContainer (Type t)
+	{
+		IMemberContainer container = builder_to_member_finder [t] as IMemberContainer;
+		if (container != null)
+			return container;
+
+		return TypeHandle.GetTypeHandle (t);
 	}
 
 	public static Interface LookupInterface (Type t)
@@ -1000,18 +1025,13 @@ public class TypeManager {
 					      MemberFilter filter, object criteria)
 	{
 		IMemberFinder finder = (IMemberFinder) builder_to_member_finder [t];
-		ICachingMemberFinder caching_finder = finder as ICachingMemberFinder;
 
 		if (finder != null) {
-			if ((caching_finder == null) || (filter != FilterWithClosure_delegate)) {
-				MemberList list;
-				Timer.StartTimer (TimerType.FindMembers);
-				list = finder.FindMembers (mt, bf, filter, criteria);
-				Timer.StopTimer (TimerType.FindMembers);
-				return list;
-			}
-
-			return caching_finder.FindMembers (mt, bf, (string) criteria, filter, null);
+			MemberList list;
+			Timer.StartTimer (TimerType.FindMembers);
+			list = finder.FindMembers (mt, bf, filter, criteria);
+			Timer.StopTimer (TimerType.FindMembers);
+			return list;
 		}
 
 		//
@@ -1023,13 +1043,40 @@ public class TypeManager {
 		if (t.IsSubclassOf (TypeManager.array_type))
 			return new MemberList (TypeManager.array_type.FindMembers (mt, bf, filter, criteria));
 
-		if (filter != FilterWithClosure_delegate)
-			return new MemberList (RealFindMembers (t, mt, bf, filter, criteria));
+		//
+		// Since FindMembers will not lookup both static and instance
+		// members, we emulate this behaviour here.
+		//
+		if ((bf & instance_and_static) == instance_and_static){
+			MemberInfo [] i_members = t.FindMembers (
+				mt, bf & ~BindingFlags.Static, filter, criteria);
 
-		caching_finder = TypeHandle.GetTypeHandle (t);
-		builder_to_member_finder.Add (t, caching_finder);
+			int i_len = i_members.Length;
+			if (i_len == 1){
+				MemberInfo one = i_members [0];
 
-		return caching_finder.FindMembers (mt, bf, (string) criteria, filter, null);
+				//
+				// If any of these are present, we are done!
+				//
+				if ((one is Type) || (one is EventInfo) || (one is FieldInfo))
+					return new MemberList (i_members);
+			}
+				
+			MemberInfo [] s_members = t.FindMembers (
+				mt, bf & ~BindingFlags.Instance, filter, criteria);
+
+			int s_len = s_members.Length;
+			if (i_len > 0 || s_len > 0)
+				return new MemberList (i_members, s_members);
+			else {
+				if (i_len > 0)
+					return new MemberList (i_members);
+				else
+					return new MemberList (s_members);
+			}
+		}
+
+		return new MemberList (t.FindMembers (mt, bf, filter, criteria));
 	}
 
 
@@ -1049,22 +1096,21 @@ public class TypeManager {
 
 		if (t.IsSubclassOf (TypeManager.array_type)) {
 			searching = false;
-			return TypeHandle.ArrayType.FindMembers (
+			return TypeHandle.ArrayType.MemberCache.FindMembers (
 				mt, bf, name, FilterWithClosure_delegate, null);
-		// return new MemberList (TypeManager.array_type.FindMembers (
-		// 		mt, bf | BindingFlags.DeclaredOnly, FilterWithClosure_delegate, name));
 		}
 
 		IMemberFinder finder = (IMemberFinder) builder_to_member_finder [t];
-		ICachingMemberFinder caching_finder = finder as ICachingMemberFinder;
-
-		if (caching_finder != null) {
-			searching = false;
-			return caching_finder.FindMembers (
-				mt, bf, name, FilterWithClosure_delegate, null);
-		}
 
 		if (finder != null) {
+			MemberCache cache = finder.MemberCache;
+
+			if (cache != null) {
+				searching = false;
+				return cache.FindMembers (
+					mt, bf, name, FilterWithClosure_delegate, null);
+			}
+
 			MemberList list;
 			Timer.StartTimer (TimerType.FindMembers);
 			list = finder.FindMembers (mt, bf | BindingFlags.DeclaredOnly,
@@ -1073,60 +1119,11 @@ public class TypeManager {
 			return list;
 		}
 
-		caching_finder = TypeHandle.GetTypeHandle (t);
-		builder_to_member_finder.Add (t, caching_finder);
+		finder = TypeHandle.GetTypeHandle (t);
+		builder_to_member_finder.Add (t, finder);
 
 		searching = false;
-		return caching_finder.FindMembers (mt, bf, name, FilterWithClosure_delegate, null);
-	}
-
-	//
-	// FIXME: This can be optimized easily.  speedup by having a single builder mapping
-	//
-	static MemberInfo [] RealFindMembers (Type t, MemberTypes mt, BindingFlags bf,
-					      MemberFilter filter, object criteria)
-	{
-		if (t is TypeBuilder)
-			return null;
-
-		//
-		// Since FindMembers will not lookup both static and instance
-		// members, we emulate this behaviour here.
-		//
-		if ((bf & instance_and_static) == instance_and_static){
-			MemberInfo [] i_members = t.FindMembers (
-				mt, bf & ~BindingFlags.Static, filter, criteria);
-
-			int i_len = i_members.Length;
-			if (i_len == 1){
-				MemberInfo one = i_members [0];
-
-				//
-				// If any of these are present, we are done!
-				//
-				if ((one is Type) || (one is EventInfo) || (one is FieldInfo))
-					return i_members;
-			}
-				
-			MemberInfo [] s_members = t.FindMembers (
-				mt, bf & ~BindingFlags.Instance, filter, criteria);
-
-			int s_len = s_members.Length;
-			if (i_len > 0 || s_len > 0){
-				MemberInfo [] both = new MemberInfo [i_len + s_len];
-
-				i_members.CopyTo (both, 0);
-				s_members.CopyTo (both, i_len);
-
-				return both;
-			} else {
-				if (i_len > 0)
-					return i_members;
-				else
-					return s_members;
-			}
-		}
-		return t.FindMembers (mt, bf, filter, criteria);
+		return finder.MemberCache.FindMembers (mt, bf, name, FilterWithClosure_delegate, null);
 	}
 
 	public static bool IsBuiltinType (Type t)
@@ -1985,7 +1982,7 @@ public class TypeManager {
 			MethodAttributes ma = mb.Attributes & MethodAttributes.MemberAccessMask;
 
 			if (ma == MethodAttributes.Private)
-				return closure_private_ok;
+				return closure_private_ok || (closure_invocation_type == m.DeclaringType);
 
 			//
 			// FamAndAssem requires that we not only derivate, but we are on the
@@ -2032,7 +2029,7 @@ public class TypeManager {
 			FieldAttributes fa = fi.Attributes & FieldAttributes.FieldAccessMask;
 
 			if (fa == FieldAttributes.Private)
-				return closure_private_ok;
+				return closure_private_ok || (closure_invocation_type == m.DeclaringType);
 
 			//
 			// FamAndAssem requires that we not only derivate, but we are on the
@@ -2247,39 +2244,53 @@ public class TypeManager {
 
 public class MemberCache {
 	public readonly IMemberContainer Container;
-	protected Hashtable MemberHash;
+	protected Hashtable member_hash;
 
+	/// <summary>
+	///   Create a new MemberCache for the given IMemberContainer `container'.
+	/// </summary>
 	public MemberCache (IMemberContainer container)
 	{
 		this.Container = container;
-		this.MemberHash = new Hashtable ();
 
 		Timer.IncrementCounter (CounterType.MemberCache);
 		Timer.StartTimer (TimerType.CacheInit);
 
-#if BROKEN_RUNTIME
-		IMemberContainer current = Container;
-		do {
-			AddMembers (current);
-			current = current.Parent;
-		} while (current != null);
-#else
+		if (Container.Parent != null)
+			member_hash = SetupCache (Container.Parent.MemberCache);
+		else if (Container.IsInterface)
+			member_hash = SetupCache (TypeHandle.ObjectType.MemberCache);
+		else
+			member_hash = new Hashtable ();
+
 		AddMembers (Container);
-		if (Container.IsInterface)
-			AddMembers (TypeHandle.ObjectType);
-#endif
 
 		Timer.StopTimer (TimerType.CacheInit);
 	}
 
+	/// <summary>
+	///   Bootstrap this member cache by doing a deep-copy of our parent.
+	/// </summary>
+	Hashtable SetupCache (MemberCache parent)
+	{
+		Hashtable hash = new Hashtable ();
+
+		IDictionaryEnumerator it = parent.member_hash.GetEnumerator ();
+		while (it.MoveNext ()) {
+			hash [it.Key] = ((ArrayList) it.Value).Clone ();
+		}
+
+		return hash;
+	}
+
 	void AddMembers (IMemberContainer container)
 	{
-		AddMembers (MemberTypes.Constructor, container);
-		AddMembers (MemberTypes.Event, container);
-		AddMembers (MemberTypes.Field, container);
-		AddMembers (MemberTypes.Method, container);
-		AddMembers (MemberTypes.Property, container);
-		AddMembers (MemberTypes.NestedType, container);
+		AddMembers (MemberTypes.Constructor | MemberTypes.Field | MemberTypes.Method |
+			    MemberTypes.Property, container);
+		AddMembers (MemberTypes.NestedType | MemberTypes.Event,
+			    BindingFlags.Public, container);
+		AddMembers (MemberTypes.NestedType | MemberTypes.Event,
+			    BindingFlags.NonPublic, container);
 	}
 
 	void AddMembers (MemberTypes mt, IMemberContainer container)
@@ -2298,16 +2309,11 @@ public class MemberCache {
 		foreach (MemberInfo member in members) {
 			string name = member.Name;
 
-			ArrayList list = (ArrayList) MemberHash [name];
+			ArrayList list = (ArrayList) member_hash [name];
 			if (list == null) {
 				list = new ArrayList ();
-				MemberHash.Add (name, list);
+				member_hash.Add (name, list);
 			}
-
-#if !BROKEN_RUNTIME
-			new_bf = (member.DeclaringType == container.Type) ?
-				bf | BindingFlags.DeclaredOnly : bf;
-#endif
 
 			list.Add (new CacheEntry (container, member, mt, new_bf));
 		}
@@ -2334,6 +2340,8 @@ public class MemberCache {
 			type |= EntryType.Instance;
 		if ((bf & BindingFlags.Static) != 0)
 			type |= EntryType.Static;
+		if ((bf & (BindingFlags.Instance | BindingFlags.Static)) == 0)
+			type |= EntryType.Instance | EntryType.Static;
 		if ((bf & BindingFlags.Public) != 0)
 			type |= EntryType.Public;
 		if ((bf & BindingFlags.NonPublic) != 0)
@@ -2385,117 +2393,89 @@ public class MemberCache {
 	}
 
 	protected struct CacheEntry {
-#if BROKEN_RUNTIME
-		// FIXME: This field is a temporary hack until the Mono runtime is fixed
-		//        and distinguishes between ReflectedType and DeclaringType.
 		public readonly IMemberContainer Container;
-#endif
 		public readonly EntryType EntryType;
 		public readonly MemberInfo Member;
 
-		public CacheEntry (IMemberContainer container, MemberInfo member, MemberTypes mt,
-				   BindingFlags bf)
+		public CacheEntry (IMemberContainer container, MemberInfo member,
+				   MemberTypes mt, BindingFlags bf)
 		{
-#if BROKEN_RUNTIME
 			this.Container = container;
-#endif
 			this.Member = member;
 			this.EntryType = GetEntryType (mt, bf);
 		}
 	}
 
-	protected void SearchMembers (ArrayList list, MemberTypes mt, BindingFlags bf, IList applicable,
-				      MemberFilter filter, object criteria)
+	protected bool DoneSearching (ArrayList list)
 	{
-		bool declared_only = (bf & BindingFlags.DeclaredOnly) != 0;
-		EntryType type = GetEntryType (mt, bf);
+		//
+		// We've found exactly one member in the current class and it's not
+		// a method or constructor.
+		//
+		if (list.Count == 1 && !(list [0] is MethodBase))
+			return true;
 
-		IMemberContainer current = Container;
+		//
+		// Multiple properties: we query those just to find out the indexer
+		// name
+		//
+		if ((list.Count > 0) && (list [0] is PropertyInfo))
+			return true;
 
-		foreach (CacheEntry entry in applicable) {
-#if BROKEN_RUNTIME
-			if (entry.Container != current) {
-				current = entry.Container;
-
-				// We've reached a base class while doing a DeclaredOnly search.
-				if (declared_only)
-					break;
-
-				//
-				// Events and types are returned by both `static' and `instance'
-				// searches, which means that our above FindMembers will
-				// return two copies of the same.
-				//
-				if (list.Count == 1 && !(list [0] is MethodBase))
-					break;
-
-				//
-				// Multiple properties: we query those just to find out the indexer
-				// name
-				//
-				if ((list.Count > 0) && (list [0] is PropertyInfo))
-					break;
-			}
-#else
-			if (declared_only && (entry.Member.DeclaringType != Container.Type))
-				break;
-#endif
-
-			if ((entry.EntryType & type & EntryType.MaskType) == 0)
-				continue;
-
-			if ((entry.EntryType & type & EntryType.MaskStatic) == 0)
-				continue;
-
-			if (filter (entry.Member, criteria)) {
-				list.Add (entry.Member);
-#if !BROKEN_RUNTIME
-				//
-				// Events and types are returned by both `static' and `instance'
-				// searches, which means that our above FindMembers will
-				// return two copies of the same.
-				//
-				if (list.Count == 1 && !(list [0] is MethodBase))
-					break;
-
-				//
-				// Multiple properties: we query those just to find out the indexer
-				// name
-				//
-				if ((list.Count > 0) && (list [0] is PropertyInfo))
-					break;
-#endif
-			}
-		}
+		return false;
 	}
 
 	public MemberList FindMembers (MemberTypes mt, BindingFlags bf, string name,
 				       MemberFilter filter, object criteria)
 	{
-		IList applicable = (IList) MemberHash [name];
+		bool declared_only = (bf & BindingFlags.DeclaredOnly) != 0;
+
+		ArrayList applicable = (ArrayList) member_hash [name];
 		if (applicable == null)
 			return MemberList.Empty;
 
 		ArrayList list = new ArrayList ();
 
-		if ((bf & BindingFlags.Static) != 0) {
-			SearchMembers (list, mt, bf & ~BindingFlags.Instance, applicable,
-				       filter, criteria);
+		Timer.StartTimer (TimerType.CachedLookup);
 
-			if (list.Count == 1){
-				MemberInfo one = (MemberInfo) list [0];
+		IMemberContainer current = Container;
 
-				//
-				// If any of these are present, we are done!
-				//
-				if ((one is Type) || (one is EventInfo) || (one is FieldInfo))
-					return new MemberList (list);
+		// `applicable' is a list of all members with the given member name `name'
+		// in the current class and all its parent classes.  The list is sorted in
+		// reverse order due to the way how the cache is initialy created (to speed
+		// things up, we're doing a deep-copy of our parent).
+
+		for (int i = applicable.Count-1; i >= 0; i--) {
+			CacheEntry entry = (CacheEntry) applicable [i];
+
+			// This happens each time we're walking one level up in the class
+			// hierarchy.  If we're doing a DeclaredOnly search, we must abort
+			// the first time this happens (this may already happen in the first
+			// iteration of this loop if there are no members with the name we're
+			// looking for in the current class).
+			if (entry.Container != current) {
+				if (declared_only || DoneSearching (list))
+					break;
+
+				current = entry.Container;
 			}
-		}				
 
-		if ((bf & BindingFlags.Instance) != 0)
-			SearchMembers (list, mt, bf & ~BindingFlags.Static, applicable,
-				       filter, criteria);
+			EntryType type = GetEntryType (mt, bf);
+
+			// Is the member of the correct type ?
+			if ((entry.EntryType & type & EntryType.MaskType) == 0)
+				continue;
+
+			// Is the member static/non-static ?
+			if ((entry.EntryType & type & EntryType.MaskStatic) == 0)
+				continue;
+
+			// Apply the filter to it.
+			if (filter (entry.Member, criteria))
+				list.Add (entry.Member);
+		}
+
+		Timer.StopTimer (TimerType.CachedLookup);
 
 		return new MemberList (list);
 	}
@@ -2503,7 +2483,9 @@ public class MemberCache {
 
 public sealed class TypeHandle : IMemberContainer {
 	public readonly TypeHandle BaseType;
-	public readonly MemberCache MemberCache;
+
+	readonly int id = ++next_id;
+	static int next_id = 0;
 
 	/// <summary>
 	///   Lookup a TypeHandle instance for the given type.  If the type doesn't have
@@ -2529,7 +2511,7 @@ public sealed class TypeHandle : IMemberContainer {
 			if (object_type != null)
 				return object_type;
 
-			Initialize ();
+			object_type = GetTypeHandle (TypeManager.object_type);
 
 			return object_type;
 		}
@@ -2543,20 +2525,10 @@ public sealed class TypeHandle : IMemberContainer {
 			if (array_type != null)
 				return array_type;
 
-			Initialize ();
+			array_type = GetTypeHandle (TypeManager.array_type);
 
 			return array_type;
 		}
-	}
-
-	// This must be called after the core types have been created.
-	private static void Initialize ()
-	{
-		if (object_type == null)
-			object_type = GetTypeHandle (TypeManager.object_type);
-
-		if (array_type == null)
-			array_type = GetTypeHandle (TypeManager.array_type);
 	}
 
 	private static PtrHashtable type_hash = new PtrHashtable ();
@@ -2566,21 +2538,16 @@ public sealed class TypeHandle : IMemberContainer {
 
 	private Type type;
 	private bool is_interface;
+	private MemberCache member_cache;
 
 	private TypeHandle (Type type)
 	{
 		this.type = type;
 		if (type.BaseType != null)
 			BaseType = GetTypeHandle (type.BaseType);
-		else if (type != TypeManager.object_type) {
-			//
-			// This happens with interfaces, they have a null
-			// basetype.  Look members up in the Object class.
-			//
-			BaseType = object_type;
+		else if ((type != TypeManager.object_type) && (type != typeof (object)))
 			is_interface = true;
-		}
-		this.MemberCache = new MemberCache (this);
+		this.member_cache = new MemberCache (this);
 	}
 
 	// IMemberContainer methods
@@ -2611,12 +2578,7 @@ public sealed class TypeHandle : IMemberContainer {
 
 	public MemberList GetMembers (MemberTypes mt, BindingFlags bf)
 	{
-#if BROKEN_RUNTIME
-		return new MemberList (Type.FindMembers (
-			mt, bf | BindingFlags.DeclaredOnly, null, null));
-#else
-		return new MemberList (Type.FindMembers (mt, bf, null, null));
-#endif
+		return new MemberList (Type.FindMembers (mt, bf | BindingFlags.DeclaredOnly, null, null));
 	}
 
 	// IMemberFinder methods
@@ -2627,16 +2589,18 @@ public sealed class TypeHandle : IMemberContainer {
 		throw new NotSupportedException ();
 	}
 
-	public MemberList FindMembers (MemberTypes mt, BindingFlags bf, string name,
-				       MemberFilter filter, object criteria)
+	public MemberCache MemberCache {
+		get {
+			return member_cache;
+		}
+	}
+
+	public override string ToString ()
 	{
-		MemberList list;
-
-		Timer.StartTimer (TimerType.CachedLookup);
-		list = MemberCache.FindMembers (mt, bf, name, filter, criteria);
-		Timer.StopTimer (TimerType.CachedLookup);
-
-		return list;
+		if (BaseType != null)
+			return "TypeHandle (" + id + "," + Name + " : " + BaseType + ")";
+		else
+			return "TypeHandle (" + id + "," + Name + ")";
 	}
 }
 

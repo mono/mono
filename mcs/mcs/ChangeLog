@@ -1,3 +1,16 @@
+2002-08-16  Martin Baulig  <martin@gnome.org>
+
+	* typemanager.cs (ICachingMemberFinder): Removed.
+	(IMemberFinder.MemberCache): New property.
+	(TypeManager.FindMembers): Merged this with RealFindMembers().
+	This function will never be called from TypeManager.MemberLookup()
+	so we can't use the cache here, just the IMemberFinder.
+	(TypeManager.MemberLookup_FindMembers): Check whether the
+	IMemberFinder has a MemberCache and call the cache's FindMembers
+	function.
+	(MemberCache): Rewrote larger parts of this yet another time and
+	cleaned it up a bit.
+
 2002-08-15  Miguel de Icaza  <miguel@ximian.com>
 
 	* driver.cs (LoadArgs): Support quoting.
