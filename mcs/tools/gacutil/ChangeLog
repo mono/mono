@@ -1,3 +1,9 @@
+2004-05-04  Jackson Harper  <jackson@ximian.com>
+
+	* gacutil.cs: We need to overwrite existing libraries if they
+	already exist in the package directory on windows. Also made the
+	code somewhat readable with 80 cols.
+	
 2004-05-03  Todd Berman  <tberman@sevenl.net>
 
 	* gacutil.cs: potential fix for miguel.

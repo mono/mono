@@ -325,14 +325,17 @@ namespace Mono.Tools
 
 			File.Copy (args[0], fullPath + an.Name + ".dll", force);
 			if (package_name != String.Empty) {
+				string ref_file = libdir + package_name +
+						Path.DirectorySeparatorChar + Path.GetFileName (args[0]);
 				if (Path.DirectorySeparatorChar == '/') {
 					try {
 						Directory.CreateDirectory (libdir + package_name);
 					} catch {}
 					
-					symlink (linkPath + an.Name + ".dll", libdir + package_name + Path.DirectorySeparatorChar + Path.GetFileName (args[0]));
+					symlink (linkPath + an.Name + ".dll", ref_file);
 				} else {
-					File.Copy (args[0], libdir + package_name + Path.DirectorySeparatorChar + Path.GetFileName (args[0]));
+					
+					File.Copy (args[0], ref_file, true);
 				}
 				Console.WriteLine ("Package exported to: " + libdir + package_name);
 			}
