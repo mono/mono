@@ -4,7 +4,6 @@ include ../build/rules.make
 
 PROGRAM = mbas.exe
 BUILT_SOURCES = mb-parser.cs
-HAS_TEST = yes
 
 LOCAL_MCS_FLAGS = /r:System.dll /r:$(topdir)/class/lib/$(PROFILE)/Mono.GetOptions.dll
 
@@ -15,9 +14,9 @@ PROGRAM_INSTALL_DIR = $(prefix)/lib/mono/1.0
 
 include ../build/executable.make
 
-test-local: mbas.exe
+run-test-local: run-mbas-test
 
-run-test-local: testmbas/WriteOK.exe
+run-mbas-test: testmbas/WriteOK.exe
 	$(TEST_RUNTIME) --debug testmbas/WriteOK.exe
 
 mb-parser.cs: mb-parser.jay
