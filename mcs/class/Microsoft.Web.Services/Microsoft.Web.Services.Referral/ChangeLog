@@ -1,3 +1,8 @@
+2003-09-06  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* ReferralInputFilter.cs: Stubbed for compilation (configuration).
+	* ReferralOutputFilter.cs: Stubbed for compilation (configuration)
+
 2003-09-04  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* ReferralCollection.cs: Added missing ICollection properties.
