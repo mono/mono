@@ -840,7 +840,7 @@ namespace Microsoft.VisualBasic.CompilerServices {
 					if (sourceIndex < sourceLength)
 						currentSourceChar = source[sourceIndex];
 				}
-				if (currentPatternChar == '[') {
+				else if (currentPatternChar == '[') {
 					string sub = pattern.Substring(patternIndex);
 					startRangeSignAppears = true;
 					int indexOfEndBracket = sub.IndexOf(']');
