@@ -9,34 +9,68 @@
 
 using System;
 using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace System.Reflection {
+	internal struct MonoEventInfo {
+		public Type parent;
+		public String name;
+		public MethodInfo add_method;
+		public MethodInfo remove_method;
+		public MethodInfo raise_method;
+		public EventAttributes attrs;
+		
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal static extern void get_event_info (MonoEvent ev, out MonoEventInfo info);
+	}
+
 	internal sealed class MonoEvent: EventInfo {
 		IntPtr klass;
 		IntPtr handle;
 
 		public override EventAttributes Attributes {
-			get { return (EventAttributes)0;}
+			get {
+				MonoEventInfo info;
+				MonoEventInfo.get_event_info (this, out info);
+				
+				return info.attrs;
+			}
 		}
 
 		public override MethodInfo GetAddMethod(bool nonPublic) {
-			return null;
+			MonoEventInfo info;
+			MonoEventInfo.get_event_info (this, out info);
+				
+			return info.add_method;
 		}
 		public override MethodInfo GetRaiseMethod( bool nonPublic) {
-			return null;
+			MonoEventInfo info;
+			MonoEventInfo.get_event_info (this, out info);
+				
+			return info.raise_method;
 		}
 		public override MethodInfo GetRemoveMethod( bool nonPublic) {
-			return null;
+			MonoEventInfo info;
+			MonoEventInfo.get_event_info (this, out info);
+				
+			return info.remove_method;
 		}
 
 		public override Type DeclaringType {
 			get {
-				return null;
+				MonoEventInfo info;
+				MonoEventInfo.get_event_info (this, out info);
+				
+				return info.parent;
 			}
 		}
 		public override string Name {
 			get {
-				return null;
+				MonoEventInfo info;
+				MonoEventInfo.get_event_info (this, out info);
+				
+				return info.name;
 			}
 		}
 	}
