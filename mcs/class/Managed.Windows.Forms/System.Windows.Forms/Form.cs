@@ -23,9 +23,13 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.7 $
+// $Revision: 1.8 $
 // $Modtime: $
 // $Log: Form.cs,v $
+// Revision 1.8  2004/09/01 02:05:18  pbartok
+// - Added (partial) implementation of DialogResult; rest needs to be
+//   implemented when the modal loop code is done
+//
 // Revision 1.7  2004/08/23 22:10:02  pbartok
 // - Fixed handling of WM_CLOSE message
 // - Removed debug output
@@ -67,6 +71,7 @@ namespace System.Windows.Forms {
 		private static bool	autoscale;
 		private static Size	autoscale_base_size;
 		internal bool		closing;
+		private DialogResult	dialog_result;
 		
 		#endregion	// Local Variables
 
@@ -106,6 +111,19 @@ namespace System.Windows.Forms {
 
 			set {
 				autoscale_base_size=value;
+			}
+		}
+
+		[MonoTODO("Add code to terminate modal application loop")]
+		public DialogResult DialogResult {
+			get {
+				return dialog_result;
+			}
+
+			set {
+				dialog_result = value;
+
+				// Add termination code here
 			}
 		}
 		#endregion	// Public Instance Properties
