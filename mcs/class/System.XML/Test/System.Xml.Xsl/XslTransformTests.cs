@@ -38,5 +38,24 @@ namespace MonoTests.System.Xml.Xsl
 			result.Load ("Test/XmlFiles/xsl/result.xml");
 			AssertEquals ("count", 2, result.ChildNodes.Count);
 		}
+
+		[Test]
+		[ExpectedException (typeof (XsltCompileException))]
+		public void InvalidStylesheet ()
+		{
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml ("<xsl:element xmlns:xsl='http://www.w3.org/1999/XSL/Transform' />");
+			XslTransform t = new XslTransform ();
+			t.Load (doc);
+		}
+
+		[Test]
+		[ExpectedException (typeof (XsltCompileException))]
+		public void EmptyStylesheet ()
+		{
+			XmlDocument doc = new XmlDocument ();
+			XslTransform t = new XslTransform ();
+			t.Load (doc);
+		}
 	}
 }

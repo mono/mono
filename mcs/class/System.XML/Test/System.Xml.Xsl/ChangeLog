@@ -1,3 +1,7 @@
+2004-03-13  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XslTransformTests.cs : added some tests for invalid stylesheets.
+
 2004-01-03  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XslTransformTests.cs : fixed incorrect file path, and output childnode
