@@ -1,8 +1,0 @@
-28 March 2002 (jbarn)
-
-The NAnt buildfile for doctools uses tasks that exist in NAnt 0.7.x,
-and are not available in the version of NAnt (0.6) in our CVS tree.
-As I really don't want to go through the hell of getting the newer version
-of NAnt into our tree, the makefile and build files under doctools require
-NAnt 0.7.x or greater to be in the path somewhere.
-
