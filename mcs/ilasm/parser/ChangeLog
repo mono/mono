@@ -1,3 +1,7 @@
+2003-03-31 Jackson Harper <jackson@latitudegeo.com>
+
+	* ILParser.jay: Add bound arrays
+	
 2003-03-30 Jackson Harper <jackson@latitudegeo.com>
 
 	* ILParser.jay: Concat slashed names properly
