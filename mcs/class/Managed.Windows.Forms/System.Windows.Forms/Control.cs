@@ -29,9 +29,13 @@
 //	Jaak Simm		jaaksimm@firm.ee
 //	John Sohn		jsohn@columbus.rr.com
 //
-// $Revision: 1.33 $
+// $Revision: 1.34 $
 // $Modtime: $
 // $Log: Control.cs,v $
+// Revision 1.34  2004/08/19 23:09:22  pbartok
+// - Added Right property
+// - Added RightToLeft property
+//
 // Revision 1.33  2004/08/19 22:25:31  jordi
 // theme enhancaments
 //
@@ -1052,6 +1056,25 @@ namespace System.Windows.Forms
 			}
 		}
 
+		public int Right {
+			get {
+				return this.bounds.X+this.bounds.Width;
+			}
+		}
+
+		public RightToLeft RightToLeft {
+			get {
+				return right_to_left;
+			}
+
+			set {
+				if (value != right_to_left) {
+					right_to_left = value;
+					OnRightToLeftChanged(EventArgs.Empty);
+				}
+			}
+		}
+
 		public ImeMode ImeMode {
 			get { return ime_mode; }
 			set { ime_mode = value; }
@@ -1071,7 +1094,6 @@ namespace System.Windows.Forms
 				tab_index = value;
 			}
 		}
-
 		#endregion	// Public Instance Properties
 
 		internal Graphics DeviceContext {
