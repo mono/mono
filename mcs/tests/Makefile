@@ -85,9 +85,10 @@ test-local:
 run-test-local: test-compiler-jit test-unsafe-compiler-jit test-casts
 
 clean-local:
-	rm -f *.exe *.out casts.cs
+	rm -f *.exe *.out *.pdb casts.cs
 
 dist-local: dist-default
+	rm -f $(distdir)/casts.cs
 
 test-compiler-jit:
 	@rm -f *.exe ; \

@@ -14,6 +14,7 @@ response = $(sourcefile)
 endif
 stampfile = $(depsdir)/$(PROGRAM).stamp
 makefrag = $(depsdir)/$(PROGRAM).makefrag
+pdb = $(patsubst %.exe,%.pdb,$(PROGRAM))
 
 all-local: $(PROGRAM)
 
@@ -22,7 +23,7 @@ install-local:
 	$(INSTALL_BIN) $(PROGRAM) $(DESTDIR)$(prefix)/bin
 
 clean-local:
-	-rm -f *.exe $(BUILT_SOURCES) $(CLEAN_FILES) $(stampfile) $(makefrag)
+	-rm -f *.exe $(BUILT_SOURCES) $(CLEAN_FILES) $(pdb) $(stampfile) $(makefrag)
 ifdef PLATFORM_CHANGE_SEPARATOR_CMD
 	-rm -f $(response)
 endif

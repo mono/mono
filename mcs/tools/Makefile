@@ -39,7 +39,7 @@ install-local: all-local
 test-local run-test-local:
 
 clean-local:
-	rm -f *.exe *.dll cormissing.xml
+	rm -f *.exe *.dll *.pdb cormissing.xml
 
 dist-local: dist-default
 

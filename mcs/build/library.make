@@ -17,9 +17,11 @@ endif
 makefrag = $(depsdir)/$(LIBRARY).makefrag
 stampfile = $(depsdir)/$(LIBRARY).stamp
 the_lib = $(topdir)/class/lib/$(LIBRARY)
+the_pdb = $(patsubst %.dll,%.pdb,$(the_lib))
 
 ifndef NO_TEST
 test_lib = $(patsubst %.dll,%_test.dll,$(LIBRARY))
+test_pdb = $(patsubst %.dll,%.pdb,$(test_lib))
 test_sourcefile = $(test_lib).sources
 test_response = $(depsdir)/$(test_lib).response
 test_makefrag = $(depsdir)/$(test_lib).makefrag
@@ -37,6 +39,7 @@ clean-local:
 	-rm -f $(the_lib) $(makefrag) $(test_lib) \
 	       $(test_makefrag) $(test_response) \
 	       $(stampfile) $(test_stampfile) \
+	       $(the_pdb) $(test_pdb) \
 	       TestResult.xml
 ifdef PLATFORM_CHANGE_SEPARATOR_CMD
 	-rm -rf $(response)

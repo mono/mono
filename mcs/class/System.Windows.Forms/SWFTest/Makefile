@@ -5,7 +5,7 @@ include ../../../build/rules.make
 all-local:
 
 clean-local:
-	rm -f *.exe
+	rm -f *.exe *.pdb
 
 test-local: SWFTest.exe
 

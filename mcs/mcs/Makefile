@@ -59,7 +59,7 @@ install-local: mcs.exe
 test-local run-test-local:
 
 clean-local:
-	rm -f *.exe cs-parser.cs y.output
+	rm -f *.exe *.pdb cs-parser.cs y.output
 
 dist-local: dist-default
 

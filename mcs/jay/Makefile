@@ -25,7 +25,7 @@ install-local: jay
 	$(INSTALL_DATA) jay.1 $(DESTDIR)$(prefix)/man/man1
 
 clean-local:
-	rm -f jay *.o
+	rm -f jay *.o *.exe *.pdb
 
 dist-local: dist-default
 

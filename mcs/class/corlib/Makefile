@@ -13,6 +13,10 @@ corlib = $(topdir)/class/lib/corlib.dll
 testlib = corlib_test.dll
 cmplib = $(topdir)/class/lib/corlib_cmp.dll
 
+corpdb = $(patsubst %.dll,%.pdb,$(corlib))
+testpdb = $(patsubst %.dll,%.pdb,$(testlib))
+cmppdb = $(patsubst %.dll,%.pdb,$(cmplib))
+
 sourcefile = corlib.dll.sources
 response = $(depsdir)/corlib.dll.response
 makefrag = $(depsdir)/corlib.dll.makefrag
@@ -42,6 +46,7 @@ clean-local:
 	-rm -f $(corlib) $(cmplib) $(testlib) TestResult.xml \
 	       $(response) $(makefrag) $(stampfile) \
 	       $(test_response) $(test_makefrag) $(test_stampfile) \
+	       $(corpdb) $(cmppdb) $(testpdb) \
 	       $(cmp_response) $(cmp_makefrag) $(cmp_stampfile)
 
 

@@ -28,7 +28,7 @@ test-local:
 run-test-local:
 
 clean-local:
-	rm -f *.exe
+	rm -f *.exe *.pdb
 
 dist-local: dist-default
 
