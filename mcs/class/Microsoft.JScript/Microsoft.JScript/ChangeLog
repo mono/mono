@@ -1,8 +1,19 @@
+2003-04-08	Cesar Octavio Lopez Nataren <cesar@ciencias.unam.mx>
+
+	* jscript-lexer-parser.g:
+	- Syntatic rule for iteration_statement.
+	- "do" subrule for it.
+	- Added ((L_THAN | G_THAN | LE_THAN | GE_THAN | "instanceof" |
+	"in") relational_expression | )	rule to relational_expression.
+	-Added function_expression syntatic rule.
+	- Added STRING_LITERAL to literal rules.
+	- "Less/Greater or equal than" lexer rule.
+
 2003-04-03	Cesar Octavio Lopez Nataren <cesar@ciencias.unam.mx>
 
 	* jscript-lexer-parser.g: Added switch_statement rule, case_block, case_clauses, case_clause, default_clause, labelled_statement, try_statement, catch_exp, finally_exp.
 
-2003-04-01    Cesar Octavio Lopez Nataren
+2003-04-01    Cesar Octavio Lopez Nataren <cesar@ciencias.unam.mx>
 
 	* jscript-lexer-parser.g: Added the grammar rules for: with_statement, object_literal, ( expression ), property_name_and_value_list, property_name and expression.
 	

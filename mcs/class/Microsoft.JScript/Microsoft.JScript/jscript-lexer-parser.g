@@ -64,6 +64,8 @@ statement returns [Statement stm]
     |
 	empty_statement
     |
+	iteration_statement	    
+    |
 	with_statement
     |
 	switch_statement
@@ -82,6 +84,13 @@ block: LBRACE (statement_list | ) RBRACE
 
 empty_statement: SEMI_COLON ;
 
+
+// See, Ecma-262 3d. Edition, page 64.
+// FIXME: more options left to implement.
+iteration_statement
+    :
+	"do" statement "while" LPAREN expression RPAREN SEMI_COLON
+    ;
 
 // WithStatement, see Ecma-262 3d. Edition, section 12.8, page 67.
 with_statement
@@ -234,7 +243,7 @@ equality_expression
 // FIXME: more options left to implement
 relational_expression
     :
-        shift_expression
+        shift_expression ((L_THAN | G_THAN | LE_THAN | GE_THAN | "instanceof" | "in" ) relational_expression | )
     ;
 
 
@@ -301,17 +310,21 @@ new_expression
 // FIXME: more options left to implement
 call_expression
     :
-        member_expression arguments
+	member_expression arguments
     ;
 
 
+// See Ecma-262, section 11.2, page 43.
 // FIXME: more options left to implement
 member_expression
     :
         primary_expression
+    |
+	function_expression
 //    |
 //        "new" member_expression arguments
     ;
+
 
 
 arguments
@@ -348,6 +361,8 @@ literal
 	boolean_literal
     |
 	null_literal
+    |
+	STRING_LITERAL
     ;
 
 
@@ -397,6 +412,14 @@ function_declaration returns [FunctionDeclaration fd]
 }
     :
         "function" IDENTIFIER LPAREN (formal_parameter_list | ) RPAREN LBRACE function_body [fd.elems] RBRACE
+    ;
+
+
+// This elems are just for compiling purposes.
+function_expression
+{ SourceElements elems = new SourceElements (); }
+    :
+	"function" (IDENTIFIER | ) LPAREN (formal_parameter_list | ) RPAREN LBRACE function_body [elems] RBRACE
     ;
 
 
@@ -517,9 +540,9 @@ SEMI_COLON: ';' ;
 
 COMMA: ',' ;
 
-L_THAN: '<' ;
+L_THAN: '<' ('=' { $setType (LE_THAN); })? ;
 
-G_THAN: '>' ;
+G_THAN: '>' ('=' { $setType (GE_THAN); })? ;
 
 PLUS: '+' ('=' { $setType (COMPOUND_ASSIGNMENT); })? ;
 
