@@ -1,3 +1,9 @@
+2004-07-21  Jackson Harper  <jackson@ximian.com>
+
+	* ILParser.jay: Clones ExternTypeRefInsts as well as
+	ExternTypeRefs, wrap this check into a method so things are
+	somewhat clean.
+	
 2004-07-08  Jackson Harper  <jackson@ximian.com>
 
 	* ILParser.jay: Add custom attributes to assemblyrefs.

@@ -35,7 +35,21 @@ namespace Mono.ILASM {
 		public CodeGen CodeGen {
 			get { return codegen; }
 		}
-		
+
+                private ITypeRef GetTypeRef (ITypeRef b)
+                {
+                        ExternTypeRefInst etri = b as ExternTypeRefInst;
+                        ExternTypeRef etr;
+
+                        if (etri != null)
+                                return etri.Clone ();
+
+                        etr = b as ExternTypeRef;
+                        if (etr != null)
+                                return etr.Clone ();
+
+                        return b;
+                }
 %}
 
 %token EOF
@@ -714,50 +728,38 @@ type			: K_CLASS class_ref
                           }
 			| type OPEN_BRACKET CLOSE_BRACKET
                           {
-                                ITypeRef base_type = (ITypeRef) $1;
-                                if (base_type is ExternTypeRef)
-                                        base_type = ((ExternTypeRef) base_type).Clone ();
+                                ITypeRef base_type = GetTypeRef ((TypeRef) $1);
                                 base_type.MakeArray ();
                                 $$ = base_type;
                           }
 			| type OPEN_BRACKET bounds CLOSE_BRACKET
                           {
-                                ITypeRef base_type = (ITypeRef) $1;
-                                if (base_type is ExternTypeRef)
-                                        base_type = ((ExternTypeRef) base_type).Clone ();
+                                ITypeRef base_type = GetTypeRef ((ITypeRef) $1);
                                 ArrayList bound_list = (ArrayList) $3;
                                 base_type.MakeBoundArray (bound_list);
                                 $$ = base_type;
                           }
 			| type AMPERSAND
                           {
-                                ITypeRef base_type = (ITypeRef) $1;
-                                if (base_type is ExternTypeRef)
-                                        base_type = ((ExternTypeRef) base_type).Clone ();
+                                ITypeRef base_type = GetTypeRef ((ITypeRef) $1);
                                 base_type.MakeManagedPointer ();
                                 $$ = base_type;
                           }
 			| type STAR
                           {
-                                ITypeRef base_type = (ITypeRef) $1;
-                                if (base_type is ExternTypeRef)
-                                        base_type = ((ExternTypeRef) base_type).Clone ();
+                                ITypeRef base_type = GetTypeRef ((ITypeRef) $1);
                                 base_type.MakeUnmanagedPointer ();
                                 $$ = base_type;
                           }
 			| type K_PINNED
                           {
-                                ITypeRef base_type = (ITypeRef) $1;
-                                if (base_type is ExternTypeRef)
-                                        base_type = ((ExternTypeRef) base_type).Clone ();
+                                ITypeRef base_type = GetTypeRef ((ITypeRef) $1);
                                 base_type.MakePinned ();
                                 $$ = base_type;
                           }
 			| type K_MODREQ OPEN_PARENS class_ref CLOSE_PARENS
                           {
-                                ITypeRef base_type = (ITypeRef) $1;
-                                if (base_type is ExternTypeRef)
-                                        base_type = ((ExternTypeRef) base_type).Clone ();
+                                ITypeRef base_type = GetTypeRef ((ITypeRef) $1);
                                 IClassRef class_ref = (IClassRef) $4;
                                 base_type.MakeCustomModified (codegen,
                                         CustomModifier.modopt, class_ref);
@@ -765,9 +767,7 @@ type			: K_CLASS class_ref
                           }
 			| type K_MODOPT OPEN_PARENS class_ref CLOSE_PARENS
                           {
-                                ITypeRef base_type = (ITypeRef) $1;
-                                if (base_type is ExternTypeRef)
-                                        base_type = ((ExternTypeRef) base_type).Clone ();
+                                ITypeRef base_type = GetTypeRef ((ITypeRef) $1);
                                 IClassRef class_ref = (IClassRef) $4;
                                 base_type.MakeCustomModified (codegen,
                                         CustomModifier.modopt, class_ref);
