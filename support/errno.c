@@ -14,8 +14,15 @@
 
 G_BEGIN_DECLS
 
+/* DEPRECATED: Use the Stdlib version instead */
 void
 Mono_Posix_Syscall_SetLastError (int error_number)
+{
+	errno = error_number;
+}
+
+void
+Mono_Posix_Stdlib_SetLastError (int error_number)
 {
 	errno = error_number;
 }

@@ -1,3 +1,10 @@
+2005-02-03  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* errno.c: Mono_Posix_Syscall_SetLastError should be in Stdlib, not Syscall, 
+	  since it's part of ANSI C (and errno will be used from StdioFileStream).  
+	  Add Mono_Posix_Stdlib_SetLastError.  Don't remove the Syscall version, as 
+	  we don't want to break Mono 1.1.4/svn users the day after release. :-)
+
 2005-01-25  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* macros.c: Use gint64, not long, to match C# declaration.  Fixes 71152.
