@@ -14,7 +14,7 @@ using System.Data;
 
 namespace Mono.Data.SqlExpressions {
 
-	public class Parser {
+	internal class Parser {
 		bool cacheAggregationResults = false;
 		DataRow[] aggregationRows = null;
 		

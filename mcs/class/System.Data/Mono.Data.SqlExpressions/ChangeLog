@@ -1,4 +1,7 @@
 2004-05-12  Umadevi S <sumadevi@novell.com>
+        * Expression.cs, Functions.cs, In.cs, Like.cs, Parser.jay, StringFunctions.cs - made class/enum/interfaces internal
+
+2004-05-12  Umadevi S <sumadevi@novell.com>
         * BooleanExpression.cs,ColumnReference.cs, Comparision.cs - made class/enum internal
 
 2004-05-12  Umadevi S <sumadevi@novell.com>

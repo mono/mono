@@ -12,12 +12,12 @@ using System.Collections;
 using System.Data;
 
 namespace Mono.Data.SqlExpressions {
-	public interface IExpression {
+	internal interface IExpression {
 		object Eval (DataRow row);
 	}
 	
 	// abstract base classes
-	public abstract class UnaryExpression : IExpression {
+	internal abstract class UnaryExpression : IExpression {
 		protected IExpression expr;
 	
 		public UnaryExpression (IExpression e)
@@ -28,7 +28,7 @@ namespace Mono.Data.SqlExpressions {
 		abstract public object Eval (DataRow row);		
 	}
 	
-	public abstract class BinaryExpression : IExpression {
+	internal abstract class BinaryExpression : IExpression {
 		protected IExpression expr1, expr2;
 	
 		protected BinaryExpression (IExpression e1, IExpression e2)
@@ -40,13 +40,13 @@ namespace Mono.Data.SqlExpressions {
 		abstract public object Eval (DataRow row);
 	}
 	
-	public enum Operation {
+	internal enum Operation {
 		AND, OR,
 		EQ, NE, LT, LE, GT, GE,
 		ADD, SUB, MUL, DIV, MOD
 	}
 	
-	public abstract class BinaryOpExpression : BinaryExpression {
+	internal abstract class BinaryOpExpression : BinaryExpression {
 		protected Operation op;
 	
 		protected BinaryOpExpression (Operation op, IExpression e1, IExpression e2) : base (e1, e2)

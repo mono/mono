@@ -12,7 +12,7 @@ using System.Collections;
 using System.Data;
 
 namespace Mono.Data.SqlExpressions {
-	public abstract class StringFunction : UnaryExpression {
+	internal abstract class StringFunction : UnaryExpression {
 		protected StringFunction (IExpression e) : base (e) {}
 
 		override public object Eval (DataRow row)
@@ -32,7 +32,7 @@ namespace Mono.Data.SqlExpressions {
 		}
 	}
 	
-	public class SubstringFunction : StringFunction {
+	internal class SubstringFunction : StringFunction {
 		int start, len;
 		public SubstringFunction (IExpression e, int start, int len) : base (e)
 		{
@@ -53,7 +53,7 @@ namespace Mono.Data.SqlExpressions {
 		}
 	}
 	
-	public class LenFunction : StringFunction {
+	internal class LenFunction : StringFunction {
 		public LenFunction (IExpression e) : base (e) {}
 		
 		override public object Eval (DataRow row)
@@ -66,7 +66,7 @@ namespace Mono.Data.SqlExpressions {
 		}
 	}
 
-	public class TrimFunction : StringFunction {
+	internal class TrimFunction : StringFunction {
 		public TrimFunction (IExpression e) : base (e) {}
 		
 		override public object Eval (DataRow row)

@@ -12,7 +12,7 @@ using System.Collections;
 using System.Data;
 
 namespace Mono.Data.SqlExpressions {
-	public class Like : UnaryExpression {
+	internal class Like : UnaryExpression {
 		string pattern;
 		bool openStart, openEnd;
 		

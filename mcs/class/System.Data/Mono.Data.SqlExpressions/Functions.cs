@@ -12,7 +12,7 @@ using System.Collections;
 using System.Data;
 
 namespace Mono.Data.SqlExpressions {
-	public class IifFunction : UnaryExpression {
+	internal class IifFunction : UnaryExpression {
 		IExpression trueExpr, falseExpr;
 		public IifFunction (IExpression e, IExpression trueExpr, IExpression falseExpr) : base (e)
 		{
@@ -27,7 +27,7 @@ namespace Mono.Data.SqlExpressions {
 		}
 	}
 	
-	public class IsNullFunction : UnaryExpression {
+	internal class IsNullFunction : UnaryExpression {
 		IExpression defaultExpr;
 		public IsNullFunction (IExpression e, IExpression defaultExpr) : base (e)
 		{
@@ -41,7 +41,7 @@ namespace Mono.Data.SqlExpressions {
 		}
 	}
 	
-	public class ConvertFunction : UnaryExpression {
+	internal class ConvertFunction : UnaryExpression {
 		Type targetType;
 		public ConvertFunction (IExpression e, string targetType) : base (e)
 		{

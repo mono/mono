@@ -12,7 +12,7 @@ using System.Collections;
 using System.Data;
 
 namespace Mono.Data.SqlExpressions {
-	public class In : UnaryExpression {
+	internal class In : UnaryExpression {
 		IList set;
 	
 		public In(IExpression e, IList set) : base (e)
