@@ -1,3 +1,8 @@
+2003-12-08  Peter Williams  <peter@newton.cx>
+
+	* Makefile: Update Makefile to use embedded tabs instead
+	of ECHO_ESCAPE. Fixes build on OS X.
+
 2003-10-26  Todd Berman <tberman@gentoo.org>
 
 	* Microsoft.Web.Services.dll.2.sources: Added RoutingFault.cs

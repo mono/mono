@@ -1,3 +1,15 @@
+2003-12-08  Peter Williams  <peter@newton.cx>
+
+	* config-default.make: Don't check for / define
+	ECHO_ESCAPE: the check isn't smart enough and
+	apparently OS X's shell somehow doesn't support
+	escape characters.
+
+	* library.make: Use embedded tab instead of 
+	$(ECHO_ESCAPE). Fixes OS X build.
+	
+	* executable.make: Same.
+	
 2003-12-05  Martin Baulig  <martin@ximian.com>
 
 	* profiles/generics.make: Define `GENERICS'.

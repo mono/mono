@@ -134,13 +134,14 @@ else
 	@cat $< |$(PLATFORM_TWEAK_CORLIB_SOURCES) >$@
 endif
 
+# warning: embedded tab in the 'echo touch' line
 $(makefrag): $(response)
 	@echo Creating $@ ...
 	@echo "HAVE_MAKEFRAG = yes" >$@.new
 	@echo "$(stampfile): \\" >>$@.new
 	@cat $< |sed -e 's,\.cs[ \t]*$$,\.cs \\,' >>$@.new
 	@cat $@.new |sed -e '$$s, \\$$,,' >$@
-	@$(ECHO_ESCAPE) "\ttouch \$$@" >>$@
+	@echo "	touch \$$@" >>$@
 	@rm -rf $@.new
 
 -include $(makefrag)
@@ -163,13 +164,14 @@ else
 	@cat corlib_cmp.dll.excludes |cat - $< |sort |uniq -u >$@
 endif
 
+# warning: embedded tab in the 'echo touch' line
 $(cmp_makefrag): $(cmp_response)
 	@echo Creating $@ ...
 	@echo "HAVE_CMP_MAKEFRAG = yes" >$@.new
 	@echo "$(cmp_stampfile): \\" >>$@.new
 	@cat $< |sed -e 's,\.cs[ \t]*$$,\.cs \\,' >>$@.new
 	@cat $@.new |sed -e '$$s, \\$$,,' >$@
-	@$(ECHO_ESCAPE) "\ttouch \$$@" >>$@
+	@echo "	touch \$$@" >>$@
 	@rm -rf $@.new
 
 # Since we make corlib_cmp on demand, there isn't a real need
@@ -197,13 +199,14 @@ else
 	@cat corlib_res.dll.excludes $(sourcefile) |sort |uniq -u >$@
 endif
 
+# warning: embedded tab in the 'echo touch' line
 $(res_makefrag): $(res_response)
 	@echo Creating $@ ...
 	@echo "HAVE_RES_MAKEFRAG = yes" >$@.new
 	@echo "$(res_stampfile): \\" >>$@.new
 	@cat $< |sed -e 's,\.cs[ \t]*$$,\.cs \\,' >>$@.new
 	@cat $@.new |sed -e '$$s, \\$$,,' >$@
-	@$(ECHO_ESCAPE) "\ttouch \$$@" >>$@
+	@echo "	touch \$$@" >>$@
 	@rm -rf $@.new
 
 -include $(res_makefrag)
@@ -226,13 +229,14 @@ else
 	@cat $< |sed -e 's,^\(.\),Test/\1,' >$@
 endif
 
+# warning: embedded tab in the 'echo touch' line
 $(test_makefrag): $(test_response)
 	@echo Creating $@ ...
 	@echo "HAVE_TEST_MAKEFRAG = yes" >$@.new
 	@echo "$(test_stampfile): \\" >>$@.new
 	@cat $< |sed -e 's,\.cs[ \t]*$$,\.cs \\,' >>$@.new
 	@cat $@.new |sed -e '$$s, \\$$,,' >$@
-	@$(ECHO_ESCAPE) "\ttouch \$$@" >>$@
+	@echo "	touch \$$@" >>$@
 	@rm -rf $@.new
 
 -include $(test_makefrag)
@@ -263,13 +267,14 @@ else
 endif
 endif
 
+# warning: embedded tab in the 'echo touch' line
 $(plattest_makefrag): $(plattest_response)
 	@echo Creating $@ ...
 	@echo "HAVE_PLATTEST_MAKEFRAG = yes" >$@.new
 	@echo "$(plattest_stampfile): \\" >>$@.new
 	@cat $< |sed -e 's,\.cs[ \t]*$$,\.cs \\,' >>$@.new
 	@cat $@.new |sed -e '$$s, \\$$,,' >$@
-	@$(ECHO_ESCAPE) "\ttouch \$$@" >>$@
+	@echo "	touch \$$@" >>$@
 	@rm -rf $@.new
 
 -include $(plattest_makefrag)

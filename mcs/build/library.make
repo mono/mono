@@ -79,13 +79,14 @@ dist-local: dist-default
 $(the_lib): $(makefrag) $(stampfile) $(response)
 	$(CSCOMPILE) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS) /target:library /out:$@ @$(response)
 
+# warning: embedded tab in the 'echo touch' line
 $(makefrag): $(sourcefile)
 	@echo Creating $@ ...
 	@echo "HAVE_MAKEFRAG = yes" >$@.new
 	@echo "$(stampfile): \\" >>$@.new
 	@cat $< |sed -e 's,\.cs[ \t]*$$,\.cs \\,' >>$@.new
 	@cat $@.new |sed -e '$$s, \\$$,,' >$@
-	@$(ECHO_ESCAPE) "\ttouch \$$@" >>$@
+	@echo "	touch \$$@" >>$@
 	@rm -rf $@.new
 
 ifdef PLATFORM_CHANGE_SEPARATOR_CMD
@@ -116,13 +117,14 @@ else
 	@cat $< |sed -e 's,^\(.\),Test/\1,' >$@
 endif
 
+# warning: embedded tab in the 'echo touch' line
 $(test_makefrag): $(test_response)
 	@echo Creating $@ ...
 	@echo "HAVE_TEST_MAKEFRAG = yes" >$@.new
 	@echo "$(test_stampfile): \\" >>$@.new
 	@cat $< |sed -e 's,\.cs[ \t]*$$,\.cs \\,' >>$@.new
 	@cat $@.new |sed -e '$$s, \\$$,,' >$@
-	@$(ECHO_ESCAPE) "\ttouch \$$@" >>$@
+	@echo "	touch \$$@" >>$@
 	@rm -rf $@.new
 
 -include $(test_makefrag)

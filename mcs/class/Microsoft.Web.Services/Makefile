@@ -60,7 +60,6 @@ install-local: $(the_lib) $(the_lib2)
 	$(INSTALL_LIB) $(the_lib) $(DESTDIR)$(prefix)/lib
 	$(INSTALL_LIB) $(the_lib2) $(DESTDIR)$(prefix)/lib
 	$(INSTALL_LIB) $(def_lib) $(DESTDIR)$(prefix)/lib/Microsoft.Web.Services.dll
-	
 
 clean-local:
 	-rm -f $(the_lib) $(makefrag) $(test_lib) \
@@ -113,13 +112,14 @@ $(the_lib): $(makefrag) $(stampfile) $(response)
 	$(CSCOMPILE) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS) /target:library /out:$(topdir)/class/lib/Microsoft.Web.Services.dll @$(response)
 	mv $(topdir)/class/lib/Microsoft.Web.Services.dll $(topdir)/class/lib/Microsoft.Web.Services.1.dll
 
+# warning: embedded tab in the 'echo touch' line
 $(makefrag): $(sourcefile)
 	@echo Creating $@ ...
 	@echo "HAVE_MAKEFRAG = yes" >$@.new
 	@echo "$(stampfile): \\" >>$@.new
 	@cat $< |sed -e 's,\.cs[ \t]*$$,\.cs \\,' >>$@.new
 	@cat $@.new |sed -e '$$s, \\$$,,' >$@
-	@$(ECHO_ESCAPE) "\ttouch \$$@" >>$@
+	@echo "	touch \$$@" >>$@
 	@rm -rf $@.new
 
 ifdef PLATFORM_CHANGE_SEPARATOR_CMD
@@ -139,13 +139,14 @@ $(the_lib2): $(makefrag2) $(stampfile2) $(response2)
 	$(CSCOMPILE) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS2) /target:library /out:$(topdir)/class/lib/Microsoft.Web.Services.dll @$(response2)
 	mv $(topdir)/class/lib/Microsoft.Web.Services.dll $(topdir)/class/lib/Microsoft.Web.Services.2.dll
 
+# warning: embedded tab in the 'echo touch' line
 $(makefrag2): $(sourcefile2)
 	@echo Creating $@ ...
 	@echo "HAVE_MAKEFRAG = yes" >$@.new
 	@echo "$(stampfile2): \\" >>$@.new
 	@cat $< |sed -e 's,\.cs[ \t]*$$,\.cs \\,' >>$@.new
 	@cat $@.new |sed -e '$$s, \\$$,,' >$@
-	@$(ECHO_ESCAPE) "\ttouch \$$@" >>$@
+	@echo "	touch \$$@" >>$@
 	@rm -rf $@.new
 
 ifdef PLATFORM_CHANGE_SEPARATOR_CMD
@@ -178,13 +179,14 @@ else
 	@cat $< |sed -e 's,^\(.\),Test/\1,' >$@
 endif
 
+# warning: embedded tab in the 'echo touch' line
 $(test_makefrag): $(test_response)
 	@echo Creating $@ ...
 	@echo "HAVE_TEST_MAKEFRAG = yes" >$@.new
 	@echo "$(test_stampfile): \\" >>$@.new
 	@cat $< |sed -e 's,\.cs[ \t]*$$,\.cs \\,' >>$@.new
 	@cat $@.new |sed -e '$$s, \\$$,,' >$@
-	@$(ECHO_ESCAPE) "\ttouch \$$@" >>$@
+	@echo "	touch \$$@" >>$@
 	@rm -rf $@.new
 
 -include $(test_makefrag)
@@ -207,13 +209,15 @@ else
 	@cat $< |sed -e 's,^\(.\),Test/\1,' >$@
 endif
 
+
+# warning: embedded tab in the 'echo touch' line
 $(test_makefrag2): $(test_response2)
 	@echo Creating $@ ...
 	@echo "HAVE_TEST_MAKEFRAG = yes" >$@.new
 	@echo "$(test_stampfile2): \\" >>$@.new
 	@cat $< |sed -e 's,\.cs[ \t]*$$,\.cs \\,' >>$@.new
 	@cat $@.new |sed -e '$$s, \\$$,,' >$@
-	@$(ECHO_ESCAPE) "\ttouch \$$@" >>$@
+	@echo "	touch \$$@" >>$@
 	@rm -rf $@.new
 
 -include $(test_makefrag2)

@@ -52,13 +52,14 @@ dist-local: dist-default
 $(PROGRAM): $(makefrag) $(response) $(stampfile)
 	$(CSCOMPILE) /target:exe /out:$@ $(BUILT_SOURCES) @$(response)
 
+# warning: embedded tab in the 'echo touch' line
 $(makefrag): $(sourcefile)
 	@echo Creating $@ ...
 	@echo "HAVE_MAKEFRAG = yes" >$@.new
 	@echo "$(stampfile): $(BUILT_SOURCES) \\" >>$@.new
 	@cat $< |sed -e 's,\.cs[ \t]*$$,\.cs \\,' >>$@.new
 	@cat $@.new |sed -e '$$s, \\$$,,' >$@
-	@$(ECHO_ESCAPE) "\ttouch \$$@" >>$@
+	@echo "	touch \$$@" >>$@
 	@rm -rf $@.new
 
 ifdef PLATFORM_CHANGE_SEPARATOR_CMD
