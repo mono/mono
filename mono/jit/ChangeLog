@@ -1,3 +1,14 @@
+2003-04-21  Martin Baulig  <martin@ximian.com>
+
+	* debug.c (mono_debug_open): Splitted into mono_debug_init() and
+	mono_debug_init_2().
+	(mono_debug_open_image): Don't open referenced assemblies; this is
+	done automatically by the code in assembly.c.
+
+	* mono.c (main_thread_handler): Call mono_debug_init() before
+	opening the assembly because we need to install the assembly load
+	hook before doing so.
+
 2003-04-17  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* jit.c:
