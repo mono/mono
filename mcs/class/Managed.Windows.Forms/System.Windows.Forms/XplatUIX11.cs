@@ -1198,7 +1198,7 @@ namespace System.Windows.Forms {
 						msg.message = Msg.WM_MOUSEHOVER;
 						msg.wParam = GetMousewParam(0);
 						msg.lParam = (IntPtr) (xevent.ClientMessageEvent.ptr1);
-					} else if (xevent.ClientMessageEvent.message_type == (IntPtr) insert_message) {
+					} else if (xevent.ClientMessageEvent.message_type == (IntPtr) post_message) {
 						msg.message = (Msg) xevent.ClientMessageEvent.ptr1.ToInt32 ();
 						msg.wParam = xevent.ClientMessageEvent.ptr2;
 						msg.lParam = xevent.ClientMessageEvent.ptr3;
@@ -1484,7 +1484,7 @@ namespace System.Windows.Forms {
 			xevent.type = XEventName.ClientMessage;
 			xevent.ClientMessageEvent.display = DisplayHandle;
 			xevent.ClientMessageEvent.window = hwnd;
-			xevent.ClientMessageEvent.message_type = (IntPtr) XplatUIX11.insert_message;
+			xevent.ClientMessageEvent.message_type = (IntPtr) post_message;
 			xevent.ClientMessageEvent.format = 32;
 			xevent.ClientMessageEvent.ptr1 = (IntPtr) message;
 			xevent.ClientMessageEvent.ptr2 = wparam;

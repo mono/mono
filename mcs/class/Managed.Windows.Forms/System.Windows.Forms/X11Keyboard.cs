@@ -554,9 +554,6 @@ namespace System.Windows.Forms {
 				out int keysyms_per_keycode_return);
 
 		[DllImport ("libX11")]
-		private static extern XModifierKeymap XGetModifierMapping (IntPtr display);
-
-		[DllImport ("libX11")]
 		private static extern void XDisplayKeycodes (IntPtr display, out int min, out int max);
 
 		[DllImport ("libX11")]
