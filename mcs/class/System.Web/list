@@ -358,6 +358,7 @@ System.Web.Compilation/BaseCompiler.cs
 System.Web.Compilation/CachingCompiler.cs
 System.Web.Compilation/CompilationResult.cs
 System.Web.Compilation/CompilationException.cs
+System.Web.Compilation/GlobalAsaxCompiler.cs
 System.Web.Compilation/PageCompiler.cs
 System.Web.Compilation/UserControlCompiler.cs
 System.Web.Compilation/WebServiceCompiler.cs
