@@ -9,3 +9,8 @@ public class Test
 	}
 }
 
+class X
+{
+	static void Main ()
+	{ }
+}
