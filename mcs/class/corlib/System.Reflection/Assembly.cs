@@ -21,7 +21,10 @@ namespace System.Reflection {
 		System.Security.IEvidenceFactory, System.Runtime.Serialization.ISerializable {
 		private IntPtr _mono_assembly;
 
-		public virtual string CodeBase { get {return null;} }
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private extern string get_code_base ();
+		
+		public virtual string CodeBase { get { return get_code_base (); } }
 
 		public virtual string CopiedCodeBase { get {return null;} } 
 

@@ -1,3 +1,6 @@
+2002-01-23  Miguel de Icaza  <miguel@ximian.com>
+
+	* Assembly.cs (Assembly.CodeBase): Implement.
 
 Tue Jan 22 22:54:18 CET 2002 Paolo Molaro <lupus@ximian.com>
 

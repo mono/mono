@@ -23,6 +23,9 @@ namespace System {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern AppDomain getCurDomain ();
 		
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private static extern Assembly [] getAssemblies ();
+		
 		public static AppDomain CurrentDomain
 		{
 			get {
@@ -35,6 +38,11 @@ namespace System {
 		{
 			AssemblyBuilder ab = new AssemblyBuilder (name, access);
 			return ab;
+		}
+
+		public Assembly [] GetAssemblies ()
+		{
+			return getAssemblies ();
 		}
 	}
 }
