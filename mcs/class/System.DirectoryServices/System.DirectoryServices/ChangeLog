@@ -1,3 +1,11 @@
+2005-03-31  Boris Kirzner <borisk@mainsoft.com>
+
+	* DirectorySearcher.cs :
+		- Use common TimeSpan object to initialize properties default values.
+		- DoSearch uses SizeLimit and ServerTimeLimit. Do not throw if sie limit or time limit occurs on the server.
+		- Construct ADsPath property from resulting entry path.
+		- Implemented Dispose method.
+
 2005-03-28  Boris Kirzner <borisk@mainsoft.com>
 
 	* DirectoryEntries.cs : 
