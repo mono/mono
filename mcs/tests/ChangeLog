@@ -1,3 +1,11 @@
+2003-05-18  Martin Baulig  <martin@ximian.com>
+
+	* test-154.cs: Added the contents of test-189.cs as a new testcase
+	to this test.
+
+	* test-189.cs: Removed, let's keep the flow analysis tests in one
+	single test file.
+
 2003-05-11  Martin Baulig  <martin@ximian.com>
 
 	* test-193.cs: New test for bug #39828.

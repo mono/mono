@@ -401,4 +401,20 @@ public class X
 		for( int i=0; i<10; i=j ) 
 			j = i+1;
 	}
+
+	//
+	// Nested infinite loops.  Bug #40670.
+	//
+	static int test27 ()
+	{
+		while (true) {
+			break;
+
+			while (true)
+				Console.WriteLine ("Test");
+		}
+
+		return 0;
+	}
+
 }
