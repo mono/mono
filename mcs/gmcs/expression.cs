@@ -4220,8 +4220,11 @@ namespace Mono.CSharp {
 		/// </summary>
 		static int BetterConversion (EmitContext ec, Argument a, Type p, Type q, Location loc)
 		{
-			Type argument_type = a.Type;
+			Type argument_type = TypeManager.TypeToCoreType (a.Type);
 			Expression argument_expr = a.Expr;
+
+			// p = TypeManager.TypeToCoreType (p);
+			// q = TypeManager.TypeToCoreType (q);
 
 			if (argument_type == null)
 				throw new Exception ("Expression of type " + a.Expr +
@@ -4368,7 +4371,8 @@ namespace Mono.CSharp {
 				for (int j = 0; j < argument_count; ++j) {
 
 					Argument a = (Argument) args [j];
-					Type t = candidate_pd.ParameterType (j);
+					Type t = TypeManager.TypeToCoreType (
+						candidate_pd.ParameterType (j));
 
 					if (candidate_pd.ParameterModifier (j) == Parameter.Modifier.PARAMS)
 						if (candidate_params)
@@ -4390,27 +4394,15 @@ namespace Mono.CSharp {
 
 			int rating1 = 0, rating2 = 0;
 
-			if (!me.HasTypeArguments) {
-				//
-				// If no type arguments were given, a non-generic method
-				// is always better than a generic one whose type arguments
-				// we infered.  See gen-63.cs for an example.
-				//
-				if (best.Mono_IsInflatedMethod &&
-				    !candidate.Mono_IsInflatedMethod)
-					return 1;
-				else if (candidate.Mono_IsInflatedMethod &&
-					 !best.Mono_IsInflatedMethod)
-					return 0;
-			}
-
 			for (int j = 0; j < argument_count; ++j) {
 				int x, y;
 				
 				Argument a = (Argument) args [j];
 
-				Type ct = candidate_pd.ParameterType (j);
-				Type bt = best_pd.ParameterType (j);
+				Type ct = TypeManager.TypeToCoreType (
+					candidate_pd.ParameterType (j));
+				Type bt = TypeManager.TypeToCoreType (
+					best_pd.ParameterType (j));
 
 				if (candidate_pd.ParameterModifier (j) == Parameter.Modifier.PARAMS)
 					if (candidate_params)

@@ -1,8 +1,8 @@
 2004-07-18  Martin Baulig  <martin@ximian.com>
 
-	* expression.cs (Invocation.BetterMethod): If no type arguments
-	were giving explicitly, a non-generic method is better than a
-	method whose type arguments we infered.
+	* expression.cs (Invocation.BetterMethod): Call
+	TypeManager.TypeToCoreType() on all types and removed my previous
+	hack; we're already doig the right thing here.
 
 2004-07-17  Martin Baulig  <martin@ximian.com>
 
