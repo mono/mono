@@ -1,3 +1,9 @@
+2003-11-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* io.c: don't call g_free before testing errno as it may modify it.
+	If the path exists, return an error if it's not a directory. Fixes
+	bug #50753.
+
 2003-11-20  Dick Porter  <dick@ximian.com>
 
 	* io.c: Missed a little-endian UTF16 conversion.  Patch from
