@@ -23,7 +23,7 @@ TEST_SOURCES = \
 	test-71  test-72  test-73  test-74  test-75  test-76  test-77  test-78  test-79  test-80 \
 	test-81  test-82  test-83  test-84  test-85  test-86  test-87  test-88  test-89  test-90 \
 	test-91  test-92  test-93  test-94  test-95  test-96  test-97  test-98  test-99  test-100\
-	test-101 test-102 test-103 test-104 test-105 test-106 test-107 test-108 test-109 test-110\
+	test-101 test-102 test-103 test-104          test-106 test-107 test-108 test-109 test-110\
 	test-111 test-112 test-113 test-114 test-115 test-116 test-117 test-118 test-119 \
 	test-121 test-122 test-123          test-125 test-126 test-127 test-128 test-129 test-130 \
 	test-131                   test-134 test-135 test-136 test-137 test-138 test-139 test-140 \

@@ -1,5 +1,10 @@
 2004-01-03 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	* test-205.cs: remove from the build. This does
+	not compile under csc.
+
+2004-01-03 Ben Maurer  <bmaurer@users.sourceforge.net>
+
 	* test-223.cs: test for #52569.
 
 2004-01-02  Ravi Pratap  <ravi@ximian.com>
