@@ -1195,6 +1195,9 @@ public class TypeManager {
 	//
 	public static Type EnumToUnderlying (Type t)
 	{
+		if (t == TypeManager.enum_type)
+			return t;
+
 		t = t.UnderlyingSystemType;
 		if (!TypeManager.IsEnumType (t))
 			return t;
