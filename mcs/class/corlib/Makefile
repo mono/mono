@@ -54,7 +54,7 @@ plattest_excludes = corlib_plattest.dll.excludes
 plattest_response = $(depsdir)/$(plattestlib).response
 plattest_makefrag = $(depsdir)/$(plattestlib).makefrag
 plattest_stampfile = $(depsdir)/$(plattestlib).stamp
-plattest_flags = /nowarn:0618 /nowarn:0672 /r:$(PLATFORM_CORLIB) /r:$(topdir)/class/lib/NUnit.Framework.dll
+plattest_flags = /debug+ /debug:full /nowarn:0618 /nowarn:0672 /r:$(PLATFORM_CORLIB) /r:$(topdir)/class/lib/NUnit.Framework.dll
 
 # Here, we make all.
 

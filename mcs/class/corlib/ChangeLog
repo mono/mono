@@ -1,3 +1,7 @@
+2003-08-19 Nick Drochak <ndrochak@gol.com>
+
+	* Makefile: Turn on debug for the corlib tests on .NET.
+
 2003-08-06  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* corlib.dll.sources: added quite some files
