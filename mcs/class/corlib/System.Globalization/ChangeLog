@@ -1,3 +1,10 @@
+2003-12-06  Dick Porter  <dick@ximian.com>
+
+	* CompareInfo.cs: Don't build strings in Compare, IndexOf and
+	LastIndexOf methods.  Avoid the icall in IndexOf and LastIndexOf
+	if the search parameter is a char and the CompareOptions include
+	Ordinal.
+
 2003-12-04  Dick Porter  <dick@ximian.com>
 
 	* CompareInfo.cs: Implement the deserialization callback

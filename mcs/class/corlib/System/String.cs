@@ -261,8 +261,8 @@ namespace System {
 			
 			/* Need to cap the requested length to the
 			 * length of the string, because
-			 * CompareInfo.Compare will call
-			 * String.Substring on its arguments.
+			 * CompareInfo.Compare will insist that length
+			 * <= (string.Length - offset)
 			 */
 			int len1=length;
 			int len2=length;
@@ -336,8 +336,8 @@ namespace System {
 
 			/* Need to cap the requested length to the
 			 * length of the string, because
-			 * CompareInfo.Compare will call
-			 * String.Substring on its arguments.
+			 * CompareInfo.Compare will insist that length
+			 * <= (string.Length - offset)
 			 */
 			int len1=length;
 			int len2=length;
@@ -418,7 +418,13 @@ namespace System {
 				return(-1);
 			}
 			
-			return(CultureInfo.InvariantCulture.CompareInfo.IndexOf (this, value, sindex, count));
+			for(int pos=sindex; pos < sindex + count; pos++) {
+				if(this[pos]==value) {
+					return(pos);
+				}
+			}
+
+			return(-1);
 		}
 		
 		/* But this one is culture-sensitive */
@@ -521,11 +527,14 @@ namespace System {
 			if (sindex >= this.length || sindex - count + 1 < 0) {
 				throw new ArgumentOutOfRangeException ();
 			}
-			if (count == 0) {
-				return(-1);
-			}
 			
-			return(CultureInfo.InvariantCulture.CompareInfo.LastIndexOf (this, value, sindex, count));
+			for(int pos=sindex; pos > sindex - count; pos--) {
+				if(this[pos]==value) {
+					return(pos);
+				}
+			}
+
+			return(-1);
 		}
 
 		/* But this one is culture-sensitive */

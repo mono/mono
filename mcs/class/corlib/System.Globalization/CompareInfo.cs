@@ -42,33 +42,60 @@ namespace System.Globalization
 		
 		
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern int internal_compare (string str1, string str2,
+		private extern int internal_compare (string str1, int offset1,
+						     int length1, string str2,
+						     int offset2, int length2,
 						     CompareOptions options);
 
 		public virtual int Compare (string string1, string string2)
 		{
-			return Compare (string1, string2, CompareOptions.None);
+			return(internal_compare (string1, 0, string1.Length,
+						 string2, 0, string2.Length,
+						 CompareOptions.None));
 		}
 
 		public virtual int Compare (string string1, string string2,
 					    CompareOptions options)
 		{
-			return(internal_compare (string1, string2, options));
+			return(internal_compare (string1, 0, string1.Length,
+						 string2, 0, string2.Length,
+						 options));
 		}
 
 		public virtual int Compare (string string1, int offset1,
 					    string string2, int offset2)
 		{
-			return Compare (string1, offset1, string2, offset2,
-					CompareOptions.None);
+			if(offset1 >= string1.Length) {
+				throw new ArgumentOutOfRangeException ("Offset1 is greater than or equal to the length of string1");
+			}
+			
+			if(offset2 >= string2.Length) {
+				throw new ArgumentOutOfRangeException ("Offset2 is greater than or equal to the length of string2");
+			}
+			
+			return(internal_compare (string1, offset1,
+						 string1.Length-offset1,
+						 string2, offset2,
+						 string2.Length-offset2,
+						 CompareOptions.None));
 		}
 
 		public virtual int Compare (string string1, int offset1,
 					    string string2, int offset2,
 					    CompareOptions options)
 		{
-			return(internal_compare (string1.Substring (offset1),
-						 string2.Substring (offset2),
+			if(offset1 >= string1.Length) {
+				throw new ArgumentOutOfRangeException ("Offset1 is greater than or equal to the length of string1");
+			}
+			
+			if(offset2 >= string2.Length) {
+				throw new ArgumentOutOfRangeException ("Offset2 is greater than or equal to the length of string2");
+			}
+			
+			return(internal_compare (string1, offset1,
+						 string1.Length-offset1,
+						 string2, offset2,
+						 string2.Length-offset1,
 						 options));
 		}
 
@@ -76,8 +103,25 @@ namespace System.Globalization
 					    int length1, string string2,
 					    int offset2, int length2)
 		{
-			return Compare (string1, offset1, length1, string2,
-					offset2, length2, CompareOptions.None);
+			if(offset1 >= string1.Length) {
+				throw new ArgumentOutOfRangeException ("Offset1 is greater than or equal to the length of string1");
+			}
+			
+			if(offset2 >= string2.Length) {
+				throw new ArgumentOutOfRangeException ("Offset2 is greater than or equal to the length of string2");
+			}
+			
+			if(length1 > string1.Length-offset1) {
+				throw new ArgumentOutOfRangeException ("Length1 is greater than the number of characters from offset1 to the end of string1");
+			}
+			
+			if(length2 > string2.Length-offset2) {
+				throw new ArgumentOutOfRangeException ("Length2 is greater than the number of characters from offset2 to the end of string2");
+			}
+			
+			return(internal_compare (string1, offset1, length1,
+						 string2, offset2, length2,
+						 CompareOptions.None));
 		}
 
 		public virtual int Compare (string string1, int offset1,
@@ -85,7 +129,25 @@ namespace System.Globalization
 					    int offset2, int length2,
 					    CompareOptions options)
 		{
-			return(internal_compare (string1.Substring (offset1, length1), string2.Substring (offset2, length2), options));
+			if(offset1 >= string1.Length) {
+				throw new ArgumentOutOfRangeException ("Offset1 is greater than or equal to the length of string1");
+			}
+			
+			if(offset2 >= string2.Length) {
+				throw new ArgumentOutOfRangeException ("Offset2 is greater than or equal to the length of string2");
+			}
+			
+			if(length1 > string1.Length-offset1) {
+				throw new ArgumentOutOfRangeException ("Length1 is greater than the number of characters from offset1 to the end of string1");
+			}
+			
+			if(length2 > string2.Length-offset2) {
+				throw new ArgumentOutOfRangeException ("Length2 is greater than the number of characters from offset2 to the end of string2");
+			}
+			
+			return(internal_compare (string1, offset1, length1,
+						 string2, offset2, length2,
+						 options));
 		}
 
 		public override bool Equals(object value)
@@ -245,13 +307,48 @@ namespace System.Globalization
 			return(IndexOf (source, value, startIndex, count,
 					CompareOptions.None));
 		}
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private extern int internal_index (string source, int sindex,
+						   int count, char value,
+						   CompareOptions options,
+						   bool first);
 		
 		public virtual int IndexOf (string source, char value,
 					    int startIndex, int count,
 					    CompareOptions options)
 		{
-			return(IndexOf (source, new String (value, 1),
-					startIndex, count, options));
+			if(source==null) {
+				throw new ArgumentNullException ("source");
+			}
+			if(startIndex<0) {
+				throw new ArgumentOutOfRangeException ("startIndex");
+			}
+			if(count<0 || (source.Length - startIndex) < count) {
+				throw new ArgumentOutOfRangeException ("count");
+			}
+			if((options & CompareOptions.StringSort)!=0) {
+				throw new ArgumentException ("StringSort is not a valid CompareOption for this method");
+			}
+			
+			if(count==0) {
+				return(-1);
+			}
+
+			if((options & CompareOptions.Ordinal)!=0) {
+				for(int pos=startIndex;
+				    pos < startIndex + count;
+				    pos++) {
+					if(source[pos]==value) {
+						return(pos);
+					}
+				}
+				return(-1);
+			} else {
+				return (internal_index (source, startIndex,
+							count, value, options,
+							true));
+			}
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
@@ -411,8 +508,37 @@ namespace System.Globalization
 					       int startIndex, int count,
 					       CompareOptions options)
 		{
-			return(LastIndexOf (source, new String (value, 1),
-					    startIndex, count, options));
+			if(source == null) {
+				throw new ArgumentNullException("source");
+			}
+			if(startIndex < 0) {
+				throw new ArgumentOutOfRangeException ("startIndex");
+			}
+			if(count < 0 || (startIndex - count) < -1) {
+				throw new ArgumentOutOfRangeException("count");
+			}
+			if((options & CompareOptions.StringSort)!=0) {
+				throw new ArgumentException ("StringSort is not a valid CompareOption for this method");
+			}
+			
+			if(count==0) {
+				return(-1);
+			}
+
+			if((options & CompareOptions.Ordinal)!=0) {
+				for(int pos=startIndex;
+				    pos > startIndex - count;
+				    pos--) {
+					if(source[pos]==value) {
+						return(pos);
+					}
+				}
+				return(-1);
+			} else {
+				return (internal_index (source, startIndex,
+							count, value, options,
+							false));
+			}
 		}
 
 		public virtual int LastIndexOf(string source, string value,

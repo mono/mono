@@ -1,3 +1,8 @@
+2003-12-06  Dick Porter  <dick@ximian.com>
+
+	* String.cs: Don't use CompareInfo for non-culture-sensitive
+	IndexOf and LastIndexOf methods.
+
 2003-12-06  Ravindra  <rkumar@novell.com>
 
 	* DateTime.cs: Made Parse(string, IFormatProvider) method to
