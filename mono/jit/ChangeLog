@@ -1,5 +1,7 @@
 2002-04-23  Dietmar Maurer  <dietmar@ximian.com>
 
+	* x86.brg: code cleanup - use x86_patch ()
+
 	* jit.c (mono_analyze_stack): only use MB_TERM_CHECKTHIS when necessary
 	(mono_analyze_stack): don't store constants in temp. variables for CEE_DUP
 
