@@ -1,5 +1,9 @@
 2002-10-09  Miguel de Icaza  <miguel@ximian.com>
 
+	* typemanager.cs (IsUnmanagedtype): Do not recursively check
+	fields if the fields are static.  We only need to check instance
+	fields. 
+
 	* expression.cs (As.DoResolve): Test for reference type.
 
 	* statement.cs (Using.ResolveExpression): Use
