@@ -1,4 +1,8 @@
 
+Mon Nov 18 18:41:51 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* gc.c: don't start the finalizer thread if the env var GC_DONT_GC is set.
+
 Mon Nov 18 16:35:22 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* reflection.c: set a public key token on the core assemblies.
