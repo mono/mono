@@ -1,5 +1,9 @@
 2003-08-14 Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
+	* XslCallTemplates.cs : Forgot to commit ;-)
+
+2003-08-14 Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
 	* XslApplyTemplates.cs,
 	  XslCallTemplate.cs : Should accept other than element content such
 	  as comment and PI.
