@@ -1,3 +1,8 @@
+2005-03-21  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-amd64.c (mono_arch_output_basic_block): Add inline versions of
+	some fp functions in sse2 mode.
+
 2005-03-20  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-x86.c (emit_tls_get): Move tls handling into a separate helper function.
