@@ -1,5 +1,8 @@
 2002-07-17  Miguel de Icaza  <miguel@ximian.com>
 
+	* class.cs (Event.Define): Also remove the `remove' method from
+	the list of pending items.
+
 	* expression.cs (ParameterReference): Use ldarg.N (0..3) to
 	generate more compact code. 
 

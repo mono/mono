@@ -3220,6 +3220,8 @@ namespace Mono.CSharp {
 				remove_name, m_attr, null, parameters);
 			RemoveBuilder.DefineParameter (1, ParameterAttributes.None, "value");
 			EventBuilder.SetRemoveOnMethod (RemoveBuilder);
+			if (parent.Pending != null)
+				parent.Pending.ImplementMethod (null, remove_name, null, parameters, false);
 
 			//
 			// This looks like dead code
