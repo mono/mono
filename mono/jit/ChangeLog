@@ -1,3 +1,10 @@
+2001-12-16  Miguel de Icaza  <miguel@ximian.com>
+
+	* x86.brg, jit.c: Split up the nodes that we used to share on
+	CONV_OVF.  They were sharing the nodes because they are the same
+	on 32-bit machines, but on 64-bit machines you need different
+	code for them.
+
 2001-12-17  Dietmar Maurer  <dietmar@ximian.com>
 
 	* x86.brg: removed prerequisite that (tree->left->reg1 <
