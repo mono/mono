@@ -1,3 +1,8 @@
+2002-07-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* reflection.c: display image name and token when cannot find the
+	.ctor for an attribute.
+
 2002-07-05  Martin Baulig  <martin@gnome.org>
 
 	* debug-symfile.c: Reflect latest MonoDwarfFileWriter changes.
