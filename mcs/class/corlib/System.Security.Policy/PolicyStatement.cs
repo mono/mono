@@ -35,6 +35,11 @@ namespace System.Security.Policy {
 			get { return attrs.ToString ("F"); }
 		}
 
+		public PolicyStatement Copy ()
+		{
+			return new PolicyStatement (perms, attrs);
+		}
+
 		// ISecurityEncodable
 
 		[MonoTODO]

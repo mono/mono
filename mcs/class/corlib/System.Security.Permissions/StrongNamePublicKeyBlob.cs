@@ -25,6 +25,31 @@ public sealed class StrongNamePublicKeyBlob {
 		pubkey = publicKey;
 	}
 
+	internal static StrongNamePublicKeyBlob FromString (string s)
+	{
+		int length = s.Length / 2;
+	
+		byte [] array = new byte [length];
+
+		for (int i = 0, j = 0; i < s.Length; i += 2, j ++) {
+			byte left = CharToByte (s [i]);
+			byte right = CharToByte (s [i+1]);
+			array [j] = Convert.ToByte (left * 16 + right);
+		}
+		
+		return new StrongNamePublicKeyBlob (array);
+	}
+
+	static byte CharToByte (char c)
+	{
+		char ch = Char.ToLower (c);
+		
+		if (Char.IsDigit (ch))
+			return (byte) (ch - '0');
+		else 
+			return (byte) (ch - 'a' + 10);
+	}
+	
 	public override bool Equals (object obj) 
 	{
 		bool result = (obj is StrongNamePublicKeyBlob);

@@ -8,6 +8,7 @@
 //
 
 using System;
+using System.Globalization;
 
 namespace System.Security.Policy {
 
@@ -30,8 +31,9 @@ namespace System.Security.Policy {
                 }
 
                 [MonoTODO]
-                public virtual bool Check (Evidence evidence)
+                public bool Check (Evidence evidence)
                 {
+                        return false;
                 }
 
                 public IMembershipCondition Copy ()
@@ -41,17 +43,30 @@ namespace System.Security.Policy {
 
                 public override bool Equals (Object o)
                 {
-                        return (o is UrlMembershipCondition && ((UrlMembershipCondition) o).Url = url);
+                        if (o is UrlMembershipCondition == false)
+                                return false;
+
+                        else
+                                return ((UrlMembershipCondition) o).Url == url;
                 }
 
                 public void FromXml (SecurityElement element)
                 {
-                        return FromXml (element, null);
+                        FromXml (element, null);
                 }
 
                 public void FromXml (SecurityElement element, PolicyLevel level)
                 {
-                        url = element.Attributes ["Url"];
+			if (element == null)
+				throw new ArgumentNullException (
+                                        Locale.GetText ("The argument is null."));
+                        
+                        string value = element.Attribute ("Url") as String;
+
+                        if (value == null)
+                                return;
+
+                        else url = value;
                 }
 
                 public override int GetHashCode ()
@@ -61,15 +76,15 @@ namespace System.Security.Policy {
 
                 public override string ToString ()
                 {
-                        Console.WriteLine ("Url - " + url);
+                        return "Url - " + url;
                 }
 
-                public override SecurityElement ToXml ()
+                public SecurityElement ToXml ()
                 {
                         return ToXml (null);
                 }
 
-                public override SecurityElement ToXml (PolicyLevel level)
+                public SecurityElement ToXml (PolicyLevel level)
                 {
                         SecurityElement element = new SecurityElement ("IMembershipCondition");
                         element.AddAttribute ("version", "1");

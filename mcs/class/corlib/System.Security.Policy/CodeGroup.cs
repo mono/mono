@@ -23,10 +23,11 @@ namespace System.Security.Policy
 		PolicyLevel m_level;
 
 		public CodeGroup(IMembershipCondition membershipCondition,
-					PolicyStatement policy)
+				PolicyStatement policy)
 		{
 			if (null == membershipCondition)
 				throw new ArgumentNullException("Value cannot be null.");
+
 			m_policy = policy;
 			m_membershipCondition = membershipCondition;
 		}
@@ -36,38 +37,27 @@ namespace System.Security.Policy
 		public abstract PolicyStatement Resolve(	Evidence evidence);
 		public abstract CodeGroup ResolveMatchingCodeGroups(Evidence evidence);
 
-		public PolicyStatement PolicyStatement
-		{
-			get
-			{
-				return m_policy;
-			}
-			set
-			{
-				m_policy = value;
-			}
+		public PolicyStatement PolicyStatement {
+
+			get { return m_policy; }
+
+			set { m_policy = value; }
 		}
 
-		public string Description
-		{
-			get
-			{
-				return m_description;
-			}
-			set
-			{
-				m_description = value;
-			}
+		public string Description {
+
+			get { return m_description; }
+
+			set { m_description = value; }
 		}
 
-		public IMembershipCondition MembershipCondition 
-		{
-			get
-			{
+		public IMembershipCondition MembershipCondition	 {
+
+			get {
 				return m_membershipCondition;
 			}
-			set
-			{
+
+			set {
 				if (null == value)
 					throw new ArgumentException("Value cannot be null");
 				m_membershipCondition = value;
@@ -183,13 +173,13 @@ namespace System.Security.Policy
 			return 42;
 		}
 
-		public void FromXml(SecurityElement e)
+		public void FromXml (SecurityElement e)
 		{
 			FromXml(e, (PolicyLevel)null);
 		}
 
 		[MonoTODO]
-		public void FromXml(SecurityElement e, PolicyLevel level	)
+		public void FromXml (SecurityElement e, PolicyLevel level)
 		{
 			if (null == e)
 				throw new ArgumentNullException("e");
@@ -219,7 +209,7 @@ namespace System.Security.Policy
 		}
 
 		[MonoTODO("Not sure what to do with PolicyLevel parameter")]
-		 public SecurityElement ToXml(PolicyLevel level)
+		public SecurityElement ToXml(PolicyLevel level)
 		{
 			SecurityElement e = new SecurityElement("CodeGroup");
 			e.AddAttribute("class", this.GetType().AssemblyQualifiedName);

@@ -58,45 +58,45 @@ namespace System.Security.Policy {
                                         throw new ArgumentNullException (
                                                 Locale.GetText ("The argument is null."));
 
-                                blob = value;
-                        }
-                }
+				blob = value;
+			}
+		}
 
-                [MonoTODO ("How do you check for StrongName from an Evidence?")]
-                public bool Check (Evidence evidence)
-                {
-                        return false;
-                }
+		[MonoTODO ("How do you check for StrongName from an Evidence?")]
+		public bool Check (Evidence evidence)
+		{
+			return false;
+		}
 
-                public IMembershipCondition Copy ()
-                {
-                        return new StrongNameMembershipCondition (blob, name, version);
-                }
+		public IMembershipCondition Copy ()
+		{
+			return new StrongNameMembershipCondition (blob, name, version);
+		}
 
-                public override bool Equals (object o)
-                {        
-                        if (o is StrongName == false)
-                                return false;
+		public override bool Equals (object o)
+		{	 
+			if (o is StrongName == false)
+				return false;
 
-                        else {
-                                StrongName sn = (StrongName) o;
-                                return (sn.Name == Name && sn.Version == Version && sn.PublicKey == PublicKey);
-                        }
-                }
+			else {
+				StrongName sn = (StrongName) o;
+				return (sn.Name == Name && sn.Version == Version && sn.PublicKey == PublicKey);
+			}
+		}
 
-                public override int GetHashCode ()
-                {
-                        return blob.GetHashCode ();
-                }
+		public override int GetHashCode ()
+		{
+			return blob.GetHashCode ();
+		}
 
-                public void FromXml (SecurityElement e)
-                {
-                        FromXml (e, null);
-                }
+		public void FromXml (SecurityElement e)
+		{
+			FromXml (e, null);
+		}
 
-                [MonoTODO ("Check for parameter validity")]
-                public void FromXml (SecurityElement e, PolicyLevel level)
-                {
+		[MonoTODO ("Check for parameter validity")]
+		public void FromXml (SecurityElement e, PolicyLevel level)
+		{
                         if (e == null)
                                 throw new ArgumentNullException (
                                         Locale.GetText ("The argument is null."));

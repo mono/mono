@@ -11,7 +11,7 @@ namespace System.Security.Policy {
 
 	[MonoTODO("This class should use a URLString like class instead of just a string")]
 	[Serializable]
-	public sealed class ApplicationDirectory {
+	public sealed class ApplicationDirectory : IBuiltinEvidence {
 		
 		private string directory;
 
