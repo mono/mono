@@ -1,4 +1,3 @@
-
 Wed Jul 24 13:32:36 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* icall.c: Type.GetType () can now return also types from the
@@ -11,6 +10,12 @@ Wed Jul 24 13:04:05 CEST 2002 Paolo Molaro <lupus@ximian.com>
 	GetCallingAssembly.
 
 2002-07-24  Dietmar Maurer  <dietmar@ximian.com>
+
+	* marshal.c: added optimisations for blittable types 
+
+	* class.c (mono_array_class_get): do not set blittable attribute on arrays
+	(mono_class_setup_mono_type): set blittable attribute for single
+	and double.
 
 	* marshal.c (mono_string_utf8_to_builder): impl.
 	(mono_string_builder_to_utf8): impl.
