@@ -911,6 +911,11 @@ variable_initializer
 	  {
 		$$ = new StackAlloc ((Expression) $2, (Expression) $4, lexer.Location);
 	  }
+	| STACKALLOC type
+	  {
+		Report.Error (1575, lexer.Location, "A stackalloc expression requires [] after type");
+                $$ = null;
+	  }
 	;
 
 method_declaration
@@ -1137,6 +1142,11 @@ parameter_array
 	  { 
 		$$ = new Parameter ((Expression) $3, (string) $4, Parameter.Modifier.PARAMS, (Attributes) $1);
 		note ("type must be a single-dimension array type"); 
+	  }
+	| opt_attributes PARAMS parameter_modifier type IDENTIFIER 
+	  {
+		Report.Error (1611, lexer.Location, "The params parameter cannot be declared as ref or out");
+                $$ = null;
 	  }
 	| opt_attributes PARAMS type error {
 		CheckIdentifierToken (yyToken);

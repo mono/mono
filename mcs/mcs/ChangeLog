@@ -1,5 +1,9 @@
 2004-10-31  Marek Safar  <marek.safar@seznam.cz>
 
+	* cs-parser.jay: Add errors 1575,1611 report.
+
+2004-10-31  Marek Safar  <marek.safar@seznam.cz>
+
 	* cs-parser.jay: Add error 1001 report.
 
 2004-10-31  Marek Safar  <marek.safar@seznam.cz>
