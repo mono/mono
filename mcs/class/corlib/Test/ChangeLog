@@ -1,3 +1,7 @@
+2003-02-08  Zoltan Varga  <vargaz@freemail.hu>
+
+	* corlib_test.args: added beginnings of Reflection.Emit test suite.
+
 2003/01/30  Nick Drochak <ndrochak@gol.com>
 
 	* corlib_test.build: AllTests.cs do not exist anymore. No need to
