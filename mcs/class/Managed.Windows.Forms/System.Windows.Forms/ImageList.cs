@@ -24,6 +24,9 @@
 //
 //
 // $Log: ImageList.cs,v $
+// Revision 1.6  2004/08/21 01:50:52  ravindra
+// Changed draw method to use the arguments passed in to draw the image.
+//
 // Revision 1.5  2004/08/19 21:39:09  pbartok
 // - Added missing Draw() method
 // - Added missing RecreateHandle event
@@ -446,7 +449,7 @@ namespace System.Windows.Forms {
 				throw new ArgumentOutOfRangeException("index", index, "ImageList does not contain that many images");
 			}
 			i = this.Images[index];
-			g.DrawImage(i, 0, 0, i.Width, i.Height);
+			g.DrawImage(i, x, y, width, height);
 		}
 
 		public override string ToString() {
