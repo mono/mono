@@ -1,3 +1,13 @@
+2002-10-13  Daniel Morgan <danmorg@sc.rr.com>
+
+	* SqlSharpCli.cs: modified
+	- add support for the external Mono.Data.SqliteClient 
+	ADO.NET provider. All the user has to do is 
+	"/provider sqlite" 
+	to load it instead of the usual syntax for loading 
+	external providers
+	"/loadextprovider Mono.Data.SqliteClient Mono.Data.SqliteClient.SqliteConnection".
+
 2002-10-11  Daniel Morgan <danmorg@sc.rr.com>
 
 	* OdbcTest.cs: added

@@ -63,7 +63,7 @@ namespace Mono.Data.SqlSharp {
 		private IDbConnection conn = null;
                 		
 		private string provider = "POSTGRESQL"; // name of internal provider
-		// {OleDb,SqlClient,MySql,Odbc,Oracle,PostgreSql} however, it
+		// {OleDb,SqlClient,MySql,Odbc,Oracle,PostgreSql,SqlLite} however, it
 		// can be set to LOADEXTPROVIDER to load an external provider
 		private string providerAssembly = ""; // filename of assembly
 		// for example: "Mono.Data.MySql"
@@ -520,7 +520,7 @@ namespace Mono.Data.SqlSharp {
 			Console.WriteLine(@"       \ConnectionString to set the ConnectionString");
 			Console.WriteLine(@"       \Provider to set the Provider:");
 			Console.WriteLine(@"                 {OleDb,SqlClient,MySql,Odbc,");
-			Console.WriteLine(@"                  Oracle,PostgreSql)");
+			Console.WriteLine(@"                  Oracle,PostgreSql,Sqlite)");
 			Console.WriteLine(@"       \Open to open the connection");
 			Console.WriteLine(@"       \Close to close the connection");
 			Console.WriteLine(@"       \Execute to execute SQL command(s)/queries(s)");
@@ -536,7 +536,7 @@ namespace Mono.Data.SqlSharp {
 			Console.WriteLine(@"       \ConnectionString to set the ConnectionString");
 			Console.WriteLine(@"       \Provider to set the Provider:");
 			Console.WriteLine(@"                 {OleDb,SqlClient,MySql,Odbc,");
-			Console.WriteLine(@"                  Oracle,PostgreSql}");
+			Console.WriteLine(@"                  Oracle,PostgreSql, Sqlite}");
 			Console.WriteLine(@"       \Open to open the connection");
 			Console.WriteLine(@"       \Close to close the connection");
 			Console.WriteLine(@"       \Execute to execute SQL command(s)/queries(s)");
@@ -655,6 +655,8 @@ namespace Mono.Data.SqlSharp {
 		// ChangeProvider - change the provider string variable
 		public void ChangeProvider(string[] parms) {
 
+			string[] extp;
+
 			if(parms.Length == 2) {
 				string parm = parms[1].ToUpper();
 				switch(parm) {
@@ -664,10 +666,19 @@ namespace Mono.Data.SqlSharp {
 					Console.WriteLine("Error: Provider not currently supported.");
 					break;
 				case "MYSQL":
-					string[] extp = new string[3] {
+					extp = new string[3] {
 									      "\\loadextprovider",
 									      "Mono.Data.MySql",
 									      "Mono.Data.MySql.MySqlConnection"};
+					SetupExternalProvider(extp);
+					UseParameters = false;
+					UseSimpleReader = true;
+					break;
+				case "SQLITE":
+					extp = new string[3] {
+									      "\\loadextprovider",
+									      "Mono.Data.SqliteClient",
+									      "Mono.Data.SqliteClient.SqliteConnection"};
 					SetupExternalProvider(extp);
 					UseParameters = false;
 					UseSimpleReader = true;
