@@ -208,7 +208,7 @@ namespace System.IO {
                 
                 public virtual void WriteLine ()
 		{
-			Write (NewLine);
+			Write (CoreNewLine);
 		}
 		
                 public virtual void WriteLine (bool value)

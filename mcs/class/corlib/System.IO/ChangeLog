@@ -1,3 +1,10 @@
+2004-12-05  Ben Maurer  <bmaurer@ximian.com>
+
+	* TextWriter.cs (WriteLine): Use CoreNewLine so that this does
+	not make a string out of the array every time it is called.
+
+	Thanks to Atsushi for the idea.
+
 2004-12-04  Ben Maurer  <bmaurer@ximian.com>
 
 	* DirectoryInfo.cs (CreateSubDirectory): Check the input here.
