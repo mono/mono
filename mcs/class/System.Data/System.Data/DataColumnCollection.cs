@@ -117,7 +117,8 @@ namespace System.Data {
 				CollectionChangeEventArgs e = new CollectionChangeEventArgs(CollectionChangeAction.Add, this);
 				
 				column.SetTable( parentTable);
-				base.List.Add(column);
+				int ordinal = base.List.Add(column);
+				column.SetOrdinal (ordinal);
 				
 				//add constraints if neccesary
 
