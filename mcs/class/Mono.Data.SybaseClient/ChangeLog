@@ -1,3 +1,10 @@
+2005-01-10  Daniel Morgan <danielmorgan@verizon.net>
+
+	* Mono.Data.SybaseClient/SybaseConnection.cs: fix 
+	for packetSize not being set.  Fixes bug 70930
+	Thanks to sebastien.robitaille@croesus.com (Sebastien Robitaille)
+	for reporting this bug.
+
 2004-04-05  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* Mono.Data.SybaseClient.dll.sources: Removed SybaseConnectionPool.cs.
