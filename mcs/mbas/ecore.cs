@@ -1867,7 +1867,7 @@ namespace Mono.MonoBASIC {
 				    
 			} else if (target_type == TypeManager.char_type){
 				//
-				// To char from ushort, int, uint, long, ulong, float, double
+				// To char from ushort, int, uint, long, ulong, float, double, decimal,string
 				// 
 				if ((expr_type == TypeManager.ushort_type) ||
 				    (expr_type == TypeManager.int32_type) ||
@@ -1876,7 +1876,9 @@ namespace Mono.MonoBASIC {
 				    (expr_type == TypeManager.int64_type) ||
 				    (expr_type == TypeManager.float_type) ||
 				    (expr_type == TypeManager.double_type) ||
-				    (expr_type == TypeManager.decimal_type))
+				    (expr_type == TypeManager.decimal_type) ||
+				    (expr_type == TypeManager.string_type))
+
 					return true;
 
 			} else if (target_type == TypeManager.float_type){
@@ -2165,7 +2167,16 @@ namespace Mono.MonoBASIC {
 							e = RTConversionExpression(ec, "DateType.FromObject", expr, loc);
 							break;											
 					}
-					break;														
+					break;
+				case TypeCode.Char:
+ 					switch (src_type) {
+
+ 						case TypeCode.String:
+ 							e = RTConversionExpression(ec, "CharType.FromString", expr, loc);
+ 							break;			
+					
+ 				}	
+				break;														
 			}
 			
 			// We must examine separately some types that
