@@ -1,3 +1,7 @@
+2004-05-31  Zoltan Varga  <vargaz@freemail.hu>
+
+	* marshal.c (mono_marshal_get_runtime_invoke): Fix CR/LFs.
+
 2004-05-30  Jackson Harper  <jackson@ximian.com>
 
 	* reflection.c: Do not hardcode assembly versions or public key
