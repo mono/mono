@@ -153,7 +153,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			transform.LoadInput (doc.SelectNodes ("//*"));
 			Stream s = (Stream) transform.GetOutput ();
 			string output = Stream2String (s);
-			string expected = @"<Test><Toto></Toto></Test>";
+			string expected = @"<Test><Toto xmlns=""http://www.go-mono.com/""></Toto></Test>";
 			AssertEquals ("XmlChildNodes", expected, output);
 		}
 

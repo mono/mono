@@ -151,7 +151,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			XmlNodeList inner = InnerXml ("//*/title");
 			transform.LoadInnerXml (inner);
 			XmlNodeList xnl = (XmlNodeList) transform.GetOutput ();
-			AssertEquals (47, xnl.Count);
+			AssertEquals (1, xnl.Count);
 		}
 
 		[Test]

@@ -1,3 +1,8 @@
+2005-02-27  Nick Drochak  <ndrochak@ieee.org>
+
+	* XmlDsigXsltTransformTest.cs:
+	* XmlDsigC14NTransformTest.cs: Make tests pass on MS.NET 1.1.
+
 2004-06-06  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlDsigXsltTransformTest.cs : Fixed EmbeddedStylesheet() that missed
