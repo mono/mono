@@ -1,3 +1,8 @@
+2003-01-23  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* NetworkStream.cs: the check for disposed should not be done in the
+	finally clause.
+
 2003-01-04  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* UdpClient.cs: fixed bug #36226.

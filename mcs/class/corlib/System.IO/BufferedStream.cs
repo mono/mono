@@ -67,7 +67,7 @@ namespace System.IO {
 			if (m_buffer_reading) {
 				if (CanSeek)
 					m_stream.Position = Position;
-			} else {
+			} else if (m_buffer_pos > 0) {
 				m_stream.Write(m_buffer, 0, m_buffer_pos);
 			}
 

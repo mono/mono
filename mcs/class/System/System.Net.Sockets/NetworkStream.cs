@@ -73,11 +73,8 @@ namespace System.Net.Sockets
 
 		public virtual bool DataAvailable {
 			get {
-				try {
-					return socket.Available > 0;
-				} finally {
-					CheckDisposed ();
-				}
+				CheckDisposed ();
+				return socket.Available > 0;
 			}
 		}
 
@@ -129,58 +126,52 @@ namespace System.Net.Sockets
 		public override IAsyncResult BeginRead (byte [] buffer, int offset, int size,
 							AsyncCallback callback, object state)
 		{
-			try {
-				IAsyncResult retval;
+			CheckDisposed ();				
+			IAsyncResult retval;
 
-				if (buffer == null)
-					throw new ArgumentNullException ("buffer is null");
-				int len = buffer.Length;
-				if(offset<0 || offset>=len) {
-					throw new ArgumentOutOfRangeException("offset exceeds the size of buffer");
-				}
-				if(offset+size<0 || offset+size>len) {
-					throw new ArgumentOutOfRangeException("offset+size exceeds the size of buffer");
-				}
-
-				try {
-					retval = socket.BeginReceive (buffer, offset, size, 0, callback, state);
-				} catch {
-					throw new IOException ("BeginReceive failure");
-				}
-
-				return retval;
-			} finally {		
-				CheckDisposed ();				
+			if (buffer == null)
+				throw new ArgumentNullException ("buffer is null");
+			int len = buffer.Length;
+			if(offset<0 || offset>=len) {
+				throw new ArgumentOutOfRangeException("offset exceeds the size of buffer");
 			}
+			if(offset+size<0 || offset+size>len) {
+				throw new ArgumentOutOfRangeException("offset+size exceeds the size of buffer");
+			}
+
+			try {
+				retval = socket.BeginReceive (buffer, offset, size, 0, callback, state);
+			} catch {
+				throw new IOException ("BeginReceive failure");
+			}
+
+			return retval;
 		}
 
 		public override IAsyncResult BeginWrite (byte [] buffer, int offset, int size,
 							AsyncCallback callback, object state)
 		{
-			try {
-				IAsyncResult retval;
+			CheckDisposed ();
+			IAsyncResult retval;
 
-				if (buffer == null)
-					throw new ArgumentNullException ("buffer is null");
+			if (buffer == null)
+				throw new ArgumentNullException ("buffer is null");
 
-				int len = buffer.Length;
-				if(offset<0 || offset>=len) {
-					throw new ArgumentOutOfRangeException("offset exceeds the size of buffer");
-				}
-				if(offset+size<0 || offset+size>len) {
-					throw new ArgumentOutOfRangeException("offset+size exceeds the size of buffer");
-				}
-
-				try {
-					retval = socket.BeginSend (buffer, offset, size, 0, callback, state);
-				} catch {
-					throw new IOException ("BeginWrite failure");
-				}
-
-				return retval;
-			} finally {
-				CheckDisposed ();
+			int len = buffer.Length;
+			if(offset<0 || offset>=len) {
+				throw new ArgumentOutOfRangeException("offset exceeds the size of buffer");
 			}
+			if(offset+size<0 || offset+size>len) {
+				throw new ArgumentOutOfRangeException("offset+size exceeds the size of buffer");
+			}
+
+			try {
+				retval = socket.BeginSend (buffer, offset, size, 0, callback, state);
+			} catch {
+				throw new IOException ("BeginWrite failure");
+			}
+
+			return retval;
 		}
 
 		~NetworkStream ()
@@ -209,36 +200,30 @@ namespace System.Net.Sockets
 
 		public override int EndRead (IAsyncResult ar)
 		{
+			CheckDisposed ();
+			int res;
+
+			if (ar == null)
+				throw new ArgumentNullException ("async result is null");
+
 			try {
-				int res;
-
-				if (ar == null)
-					throw new ArgumentNullException ("async result is null");
-
-				try {
-					res = socket.EndReceive (ar);
-				} catch {
-					throw new IOException ("EndRead failure");
-				}
-				return res;
-			} finally {
-				CheckDisposed ();
+				res = socket.EndReceive (ar);
+			} catch (Exception e) {
+				throw new IOException ("EndRead failure", e);
 			}
+			return res;
 		}
 
 		public override void EndWrite (IAsyncResult ar)
 		{
-			try {			
-				if (ar == null)
-					throw new ArgumentNullException ("async result is null");
+			CheckDisposed ();
+			if (ar == null)
+				throw new ArgumentNullException ("async result is null");
 
-				try {
-					socket.EndSend (ar);
-				} catch {
-					throw new IOException ("EndWrite failure");
-				}
-			} finally {
-				CheckDisposed ();
+			try {
+				socket.EndSend (ar);
+			} catch (Exception e) {
+				throw new IOException ("EndWrite failure", e);
 			}
 		}
 
@@ -255,27 +240,25 @@ namespace System.Net.Sockets
 
 		public override int Read (byte [] buffer, int offset, int size)
 		{
-			try {
-				int res;
+			CheckDisposed ();
+			int res;
 
-				if (buffer == null)
-					throw new ArgumentNullException ("buffer is null");
-				if(offset<0 || offset>=buffer.Length) {
-					throw new ArgumentOutOfRangeException("offset exceeds the size of buffer");
-				}
-				if(offset+size < 0 || offset+size>buffer.Length) {
-					throw new ArgumentOutOfRangeException("offset+size exceeds the size of buffer");
-				}
-
-				try {
-					res = socket.Receive (buffer, offset, size, 0);
-				} catch {
-					throw new IOException ("Read failure");
-				}
-				return res;
-			} finally { 
-				CheckDisposed ();
+			if (buffer == null)
+				throw new ArgumentNullException ("buffer is null");
+			if(offset<0 || offset>=buffer.Length) {
+				throw new ArgumentOutOfRangeException("offset exceeds the size of buffer");
 			}
+			if(offset+size < 0 || offset+size>buffer.Length) {
+				throw new ArgumentOutOfRangeException("offset+size exceeds the size of buffer");
+			}
+
+			try {
+				res = socket.Receive (buffer, offset, size, 0);
+			} catch (Exception e) {
+				throw new IOException ("Read failure", e);
+			}
+
+			return res;
 		}
 
 		public override long Seek (long offset, SeekOrigin origin)
@@ -294,23 +277,20 @@ namespace System.Net.Sockets
 
 		public override void Write (byte [] buffer, int offset, int size)
 		{
-			try {
-				if (buffer == null)
-					throw new ArgumentNullException ("buffer is null");
-				if(offset<0 || offset>=buffer.Length) {
-					throw new ArgumentOutOfRangeException("offset exceeds the size of buffer");
-				}
-				if(offset+size<0 || offset+size>buffer.Length) {
-					throw new ArgumentOutOfRangeException("offset+size exceeds the size of buffer");
-				}
+			CheckDisposed ();
+			if (buffer == null)
+				throw new ArgumentNullException ("buffer is null");
+			if(offset<0 || offset>=buffer.Length) {
+				throw new ArgumentOutOfRangeException("offset exceeds the size of buffer");
+			}
+			if(offset+size<0 || offset+size>buffer.Length) {
+				throw new ArgumentOutOfRangeException("offset+size exceeds the size of buffer");
+			}
 
-				try {
-					socket.Send (buffer, offset, size, 0);
-				} catch {
-					throw new IOException ("Write failure"); 
-				}
-			} finally {
-				CheckDisposed ();
+			try {
+				socket.Send (buffer, offset, size, 0);
+			} catch (Exception e) {
+				throw new IOException ("Write failure", e); 
 			}
 		}
 		

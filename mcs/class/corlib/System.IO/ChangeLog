@@ -1,3 +1,10 @@
+2003-01-23  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* BufferedStream.cs: don't try to write a 0 sized array on when
+	flushing the stream.
+	
+	Fixes bug #37045.
+
 2003-01-18  Jonathan Pryor <jonpryor@vt.edu>
 
 	* FileStream.cs: Add IsAsync property.  (Documented in "C# In A Nutshell".)
