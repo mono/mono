@@ -144,7 +144,7 @@ namespace System.Runtime.Remoting {
 				throw new RemotingException ("Cannot create channel sink");
 
 			RemotingProxy real_proxy = new RemotingProxy (type, sink);
-
+			
 			return real_proxy.GetTransparentProxy ();
 		}
 

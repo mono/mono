@@ -21,6 +21,16 @@ namespace System.Runtime.Remoting
 {
 	public sealed class RemotingServices {
 
+		internal static string app_id;
+		
+		static RemotingServices ()
+		{
+			 app_id = "/" + Guid.NewGuid().ToString().Replace('-', '_') + "/";
+			 
+		}
+		
+		static int next_id = 1;
+		
 		private RemotingServices () {}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -88,6 +98,11 @@ namespace System.Runtime.Remoting
 			return svr.GetType ();
 		}
 
+		public static string GetObjectUri (MarshalByRefObject obj)
+		{
+			throw new NotImplementedException ();
+		}
+		
 		static Hashtable uri_hash = new Hashtable ();
 		
 		private static void RegisterServerForUri (MarshalByRefObject obj, string uri)
@@ -106,6 +121,12 @@ namespace System.Runtime.Remoting
 		}
 		
 		static Mutex mtx = new Mutex ();
+		
+		public static ObjRef Marshal (MarshalByRefObject obj)
+		{
+			string uri = app_id + Environment.TickCount + "_" + next_id++;
+			return Marshal (obj, uri, null);
+		}
 		
 		public static ObjRef Marshal (MarshalByRefObject obj, string uri)
 		{
@@ -136,7 +157,8 @@ namespace System.Runtime.Remoting
 					RegisterServerForUri (obj, uri);
 				}
 			
-				res = obj.CreateObjRef (type);
+				// res = obj.CreateObjRef (type);
+				res = new ObjRef (obj, type);
 				res.URI = uri;
 				
 			} finally {

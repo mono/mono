@@ -16,7 +16,7 @@ namespace System {
 
 		public virtual ObjRef CreateObjRef (Type type)
 		{
-			return new ObjRef (this, type);
+			throw new NotImplementedException ();
 		}
 
 		public object GetLifetimeService ()

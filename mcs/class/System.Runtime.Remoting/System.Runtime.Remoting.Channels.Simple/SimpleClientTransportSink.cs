@@ -22,6 +22,7 @@ namespace System.Runtime.Remoting.Channels.Simple
 		int port;
 		
 		TcpClient tcpclient;
+		Stream network_stream;
 		
 		public SimpleClientTransportSink (string url)
 		{
@@ -70,9 +71,11 @@ namespace System.Runtime.Remoting.Channels.Simple
 					    out Stream responseStream)
 		{
 			// get a network stream
-			tcpclient.Connect (host, port);
-			Stream network_stream = tcpclient.GetStream ();
-
+			if (network_stream == null) {
+				tcpclient.Connect (host, port);
+				network_stream = tcpclient.GetStream ();
+			}
+	
 			// send the message
 			SimpleMessageFormat.SendMessageStream (network_stream, (MemoryStream)requestStream,
 							       SimpleMessageFormat.MessageType.Request,
@@ -84,7 +87,7 @@ namespace System.Runtime.Remoting.Channels.Simple
 			MemoryStream mem_stream = SimpleMessageFormat.ReceiveMessageStream (network_stream, out msg_type, out uri);
 
 			// close the stream
-			tcpclient.Close ();
+			//tcpclient.Close ();
 
 			switch (msg_type) {
 			case SimpleMessageFormat.MessageType.Response:

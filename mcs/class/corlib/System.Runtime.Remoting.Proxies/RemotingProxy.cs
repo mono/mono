@@ -20,7 +20,6 @@ namespace System.Runtime.Remoting.Proxies
 
 		IMessageSink sink;
 		
-		
 		public RemotingProxy (Type type, IMessageSink sink) : base (type)
 		{
 			this.sink = sink;

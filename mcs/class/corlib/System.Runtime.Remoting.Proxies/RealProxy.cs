@@ -8,6 +8,7 @@
 //
 
 using System;
+using System.Runtime.Remoting;
 using System.Runtime.Remoting.Messaging;
 using System.Runtime.CompilerServices;
 
@@ -22,19 +23,27 @@ namespace System.Runtime.Remoting.Proxies
 	public abstract class RealProxy {
 
 		Type class_to_proxy;
-
-		protected RealProxy () {
+		
+		protected RealProxy ()
+		{
 			throw new NotImplementedException ();
 		}
 
-		protected RealProxy (Type classToProxy) {
+		protected RealProxy (Type classToProxy)
+		{
 			this.class_to_proxy = classToProxy;
 		}
 
-		protected RealProxy (Type classToProxy, IntPtr stub, object stubData) {
+		protected RealProxy (Type classToProxy, IntPtr stub, object stubData)
+		{
 			throw new NotImplementedException ();
 		}
 
+		public virtual ObjRef CreateObjRef (Type requestedType)
+		{
+			throw new NotImplementedException ();
+		}
+		
 		public abstract IMessage Invoke (IMessage msg);
 
 		/* this is called from unmanaged code */

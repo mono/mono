@@ -29,8 +29,8 @@ namespace System {
 
 		// Evidence evidence;
 
-		private AppDomain () {}
-		
+		AppDomain () {}
+
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern AppDomainSetup getSetup ();
 

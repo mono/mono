@@ -132,12 +132,13 @@ namespace System.Runtime.Remoting.Channels.Simple
 
 		void WaitForConnections ()
 		{
+			TcpClient client = listener.AcceptTcpClient ();
+			Stream network_stream = client.GetStream ();
+
 			while (true) {
-				TcpClient client = listener.AcceptTcpClient ();
 
-				sink.InternalProcessMessage (client.GetStream ());
+				sink.InternalProcessMessage (network_stream);
 
-				client.Close ();
 			}
 		}
 		
