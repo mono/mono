@@ -189,6 +189,27 @@ namespace MonoTests.System.Xml
 				this.Prefix = prefix;
 			}
 		}
+
+		[Test]
+		public void WriteAttributes ()
+		{
+			string xml = "<root><test a='b' c='d' /><b /></root>";
+			XmlTextReader xtr = new XmlTextReader (xml,
+				XmlNodeType.Document, null);
+			xtw.QuoteChar = '\'';
+			xtr.Read ();
+			xtw.WriteStartElement ("root"); // <root
+			xtr.Read ();
+			xtw.WriteStartElement ("test"); // ><test
+			xtw.WriteAttributes (xtr, false); // a='b' c='d'
+			AssertEquals (XmlNodeType.Element, xtr.NodeType);
+			xtw.WriteEndElement (); // />
+			xtw.WriteStartElement ("b"); // <b
+			xtw.WriteEndElement (); // />
+			xtw.WriteEndElement (); // </root>
+			xtw.Close ();
+			AssertEquals (xml, writer.ToString ());
+		}
 	}
 
 	internal class DefaultXmlWriter : XmlWriter
