@@ -2604,8 +2604,19 @@ namespace Mono.CSharp {
 					return false;
 				}
 
-				Type[] oct = ogc.Types;
-				Type[] ct = gc.Types;
+				if (ogc.HasClassConstraint != gc.HasClassConstraint) {
+					error_425 (ot, t, name);
+					return false;
+				}
+
+				if (ogc.HasClassConstraint &&
+				    !ogc.ClassConstraint.Equals (gc.ClassConstraint)) {
+					error_425 (ot, t, name);
+					return false;
+				}
+
+				Type[] oct = ogc.InterfaceConstraints;
+				Type[] ct = gc.InterfaceConstraints;
 
 				if (oct.Length != ct.Length) {
 					error_425 (ot, t, name);

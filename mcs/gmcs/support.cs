@@ -20,7 +20,9 @@ namespace Mono.CSharp {
 
 	public interface GenericConstraints {
 		bool HasConstructor { get; }
-		Type[] Types { get; }
+		bool HasClassConstraint { get; }
+		Type ClassConstraint { get; }
+		Type[] InterfaceConstraints { get; }
 	}
 
 	public interface ParameterData {
@@ -154,43 +156,44 @@ namespace Mono.CSharp {
 		protected class ReflectionConstraints : GenericConstraints
 		{
 			bool has_ctor;
-			Type[] types;
+			Type class_constraint;
+			Type[] iface_constraints;
 
-			protected ReflectionConstraints (bool has_ctor, Type[] types)
+			protected ReflectionConstraints (bool has_ctor, Type class_constr,
+							 Type[] iface_constrs)
 			{
 				this.has_ctor = has_ctor;
-				this.types = types;
+				this.class_constraint = class_constr;
+				this.iface_constraints = iface_constrs;
 			}
 
 			public static GenericConstraints Create (Type t)
 			{
-				Type[] types;
-				Type[] ifaces = t.GetInterfaces ();
-				if (t.BaseType != TypeManager.object_type) {
-					types = new Type [ifaces.Length + 1];
-					types [0] = t.BaseType;
-					ifaces.CopyTo (types, 1);
-				} else {
-					types = new Type [ifaces.Length];
-					ifaces.CopyTo (types, 0);
-				}
+				Type class_constr = null;
+				Type[] iface_constrs = t.GetInterfaces ();
+				if (iface_constrs ==  null)
+					iface_constrs = Type.EmptyTypes;
+				if (t.BaseType != TypeManager.object_type)
+					class_constr = t.BaseType;
 
-				if (types.Length == 0)
-					return null;
-
-				return new ReflectionConstraints (false, types);
+				return new ReflectionConstraints (
+					false, class_constr, iface_constrs);
 			}
 
 			public bool HasConstructor {
-				get {
-					return has_ctor;
-				}
+				get { return has_ctor; }
 			}
 
-			public Type[] Types {
-				get {
-					return types;
-				}
+			public bool HasClassConstraint {
+				get { return class_constraint != null; }
+			}
+
+			public Type ClassConstraint {
+				get { return class_constraint; }
+			}
+
+			public Type[] InterfaceConstraints {
+				get { return iface_constraints; }
 			}
 		}
 	}

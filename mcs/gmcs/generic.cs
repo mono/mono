@@ -44,9 +44,9 @@ namespace Mono.CSharp {
 		bool has_ctor_constraint;
 		TypeExpr class_constraint;
 		ArrayList iface_constraints;
-		TypeExpr[] constraint_types;
 		int num_constraints, first_constraint;
-		Type[] types;
+		Type class_constraint_type;
+		Type[] iface_constraint_types;
 
 		public bool HasConstructorConstraint {
 			get { return has_ctor_constraint; }
@@ -93,82 +93,82 @@ namespace Mono.CSharp {
 				num_constraints++;
 			}
 
-			constraint_types = new TypeExpr [num_constraints];
-			if (class_constraint != null)
-				constraint_types [first_constraint++] = class_constraint;
-			iface_constraints.CopyTo (constraint_types, first_constraint);
-
 			return true;
 		}
 
 		public TypeExpr[] InterfaceConstraints {
 			get {
-				if (iface_constraints == null)
-					return null;
-
 				TypeExpr[] ifaces = new TypeExpr [iface_constraints.Count];
 				iface_constraints.CopyTo (ifaces, 0);
 				return ifaces;
 			}
 		}
 
-		public Type[] ResolveTypes (EmitContext ec)
+		public bool ResolveTypes (EmitContext ec)
 		{
-			types = new Type [constraint_types.Length];
+			iface_constraint_types = new Type [iface_constraints.Count];
 
-			for (int i = 0; i < constraint_types.Length; i++) {
-				types [i] = constraint_types [i].ResolveType (ec);
-				if (types [i] == null)
-					return null;
+			for (int i = 0; i < iface_constraints.Count; i++) {
+				TypeExpr iface_constraint = (TypeExpr) iface_constraints [i];
+				Type resolved = iface_constraint.ResolveType (ec);
+				if (resolved == null)
+					return false;
 
-				for (int j = first_constraint; j < i; j++) {
-					if (!types [j].Equals (types [i]))
+				for (int j = 0; j < i; j++) {
+					if (!iface_constraint_types [j].Equals (resolved))
 						continue;
 
 					Report.Error (405, loc,
 						      "Duplicate constraint `{0}' for type " +
-						      "parameter `{1}'.", types [i], name);
-					return null;
+						      "parameter `{1}'.", resolved, name);
+					return false;
 				}
+
+				iface_constraint_types [i] = resolved;
 			}
 
 			if (class_constraint != null) {
-				if (types [0].IsSealed) {
+				class_constraint_type = class_constraint.ResolveType (ec);
+				if (class_constraint_type == null)
+					return false;
+
+				if (class_constraint_type.IsSealed) {
 					Report.Error (701, loc,
 						      "`{0}' is not a valid bound.  Bounds " +
 						      "must be interfaces or non sealed " +
-						      "classes", types [0]);
-					return null;
+						      "classes", class_constraint_type);
+					return false;
 				}
 
-				if ((types [0] == TypeManager.array_type) ||
-				    (types [0] == TypeManager.delegate_type) ||
-				    (types [0] == TypeManager.enum_type) ||
-				    (types [0] == TypeManager.value_type) ||
-				    (types [0] == TypeManager.object_type)) {
+				if ((class_constraint_type == TypeManager.array_type) ||
+				    (class_constraint_type == TypeManager.delegate_type) ||
+				    (class_constraint_type == TypeManager.enum_type) ||
+				    (class_constraint_type == TypeManager.value_type) ||
+				    (class_constraint_type == TypeManager.object_type)) {
 					Report.Error (702, loc,
 						      "Bound cannot be special class `{0}'",
-						      types [0]);
-					return null;
+						      class_constraint_type);
+					return false;
 				}
 			}
 
-			return types;
+			return true;
 		}
 
 		bool GenericConstraints.HasConstructor {
-			get {
-				return has_ctor_constraint;
-			}
+			get { return has_ctor_constraint; }
 		}
 
-		public Type[] Types {
-			get {
-				if (types == null)
-					throw new InvalidOperationException ();
+		bool GenericConstraints.HasClassConstraint {
+			get { return class_constraint_type != null; }
+		}
 
-				return types;
-			}
+		Type GenericConstraints.ClassConstraint {
+			get { return class_constraint_type; }
+		}
+
+		Type[] GenericConstraints.InterfaceConstraints {
+			get { return iface_constraint_types; }
 		}
 	}
 
@@ -241,20 +241,15 @@ namespace Mono.CSharp {
 		public bool DefineType (EmitContext ec)
 		{
 			if (constraints != null) {
-				Type[] types = constraints.ResolveTypes (ec);
-				if (types == null)
+				if (!constraints.ResolveTypes (ec))
 					return false;
 
-				int start = 0;
-				if ((types.Length > 0) && types [0].IsClass) {
-					type.SetBaseTypeConstraint (types [0]);
-					start++;
-				}
+				GenericConstraints gc = (GenericConstraints) constraints;
 
-				Type[] ifaces = new Type [types.Length - start];
-				Array.Copy (types, start, ifaces, 0, ifaces.Length);
+				if (gc.HasClassConstraint)
+					type.SetBaseTypeConstraint (gc.ClassConstraint);
 
-				type.SetInterfaceConstraints (ifaces);
+				type.SetInterfaceConstraints (gc.InterfaceConstraints);
 			}
 
 			return true;
@@ -289,7 +284,16 @@ namespace Mono.CSharp {
 
 			ArrayList members = new ArrayList ();
 
-			foreach (Type t in constraints.Types) {
+			GenericConstraints gc = (GenericConstraints) constraints;
+
+			if (gc.HasClassConstraint) {
+				MemberList list = TypeManager.FindMembers (
+					gc.ClassConstraint, mt, bf, filter, criteria);
+
+				members.AddRange (list);
+			}
+
+			foreach (Type t in gc.InterfaceConstraints) {
 				MemberList list = TypeManager.FindMembers (
 					t, mt, bf, filter, criteria);
 

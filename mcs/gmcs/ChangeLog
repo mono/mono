@@ -1,5 +1,11 @@
 2004-04-07  Martin Baulig  <martin@ximian.com>
 
+	* support.cs (GenericConstraints): Replaced `Types' by
+	`ClassConstraint' and `InterfaceConstraints'; added
+	`HasClassConstraint'.	
+
+2004-04-07  Martin Baulig  <martin@ximian.com>
+
 	* generic.cs
 	(Constraints.InterfaceConstraints): New public property.
 	(Constraints.Types): Make this property public
