@@ -31,7 +31,7 @@ namespace System.Web.UI.HtmlControls{
 				Attributes.Remove ("enctype");
 			}
 
-			Hashtable onSubmit = Page.submitStatements;
+			Hashtable onSubmit = Page.ClientScript.submitStatements;
  			if (onSubmit != null && onSubmit.Count > 0){
 				StringBuilder sb = new StringBuilder ();
 				string prev = Attributes ["onsubmit"];
