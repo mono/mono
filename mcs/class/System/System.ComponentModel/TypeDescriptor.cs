@@ -161,10 +161,10 @@ public sealed class TypeDescriptor
 		if (noCustomTypeDesc == false && component is ICustomTypeDescriptor) {
 		    return ((ICustomTypeDescriptor) component).GetComponentName ();
 		} else {
-		    if (((IComponent) component).Site == null)
-				return null;
-		    else
-				return ((IComponent) component).Site.Name;
+			IComponent c = component as IComponent;
+			if (c != null && c.Site != null)
+				return c.Site.Name;
+			return component.GetType().Name;
 		}
 	}
 

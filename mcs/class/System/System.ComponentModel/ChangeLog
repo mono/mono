@@ -1,3 +1,8 @@
+2005-01-19  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* TypeDescriptor.cs: Fix GetComponentName() so that it returns the type
+	  name if no Site is present.  This matches .NET 1.1 and fixes a test case.
+
 2005-01-12 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* BaseNumberConverter.cs: when the culture we get is null, set it to the
