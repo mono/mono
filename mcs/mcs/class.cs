@@ -2511,6 +2511,7 @@ namespace Mono.CSharp {
 		public void Emit (EmitContext ec)
 		{
 			if (parent_constructor != null){
+				ec.Mark (loc);
 				if (ec.IsStatic)
 					Invocation.EmitCall (ec, true, true, null, parent_constructor, argument_list, loc);
 				else
@@ -2663,7 +2664,7 @@ namespace Mono.CSharp {
 			if ((ModFlags & Modifiers.STATIC) == 0){
 				if (parent is Class && Initializer == null)
 					Initializer = new ConstructorBaseInitializer (
-						null, Parameters.EmptyReadOnlyParameters, parent.Location);
+						null, Parameters.EmptyReadOnlyParameters, Location.Null);
 
 
 				//
@@ -2678,6 +2679,28 @@ namespace Mono.CSharp {
 
 			LabelParameters (ec, ConstructorBuilder, OptAttributes);
 			
+			ISymbolWriter sw = CodeGen.SymbolWriter;
+			bool generate_debugging = false;
+
+			if ((sw != null) && (block != null) &&
+				!Location.IsNull (Location) &&
+				!Location.IsNull (block.EndLocation)) {
+
+				Location end = block.EndLocation;
+				MethodToken token = ConstructorBuilder.GetToken ();
+				sw.OpenMethod (new SymbolToken (token.Token));
+				// Avoid error if we don't support debugging for the platform
+				try {
+					sw.SetMethodSourceRange (Location.SymbolDocument,
+								 Location.Row, 0,
+								 end.SymbolDocument,
+								 end.Row, 0);
+				} catch {
+				}
+
+				generate_debugging = true;
+			}
+
 			//
 			// Classes can have base initializers and instance field initializers.
 			//
@@ -2699,29 +2722,10 @@ namespace Mono.CSharp {
 			    (Initializer == null))
 				Block.AddThisVariable (parent, Location);
 
-			ISymbolWriter sw = CodeGen.SymbolWriter;
+			ec.EmitTopBlock (block, ParameterInfo, Location);
 
-			if ((sw != null) && (block != null) &&
-				!Location.IsNull (Location) &&
-				!Location.IsNull (block.EndLocation)) {
-
-				Location end = block.EndLocation;
-				MethodToken token = ConstructorBuilder.GetToken ();
-				sw.OpenMethod (new SymbolToken (token.Token));
-				// Avoid error if we don't support debugging for the platform
-				try {
-					sw.SetMethodSourceRange (Location.SymbolDocument,
-											 Location.Row, 0,
-											 end.SymbolDocument,
-											 end.Row, 0);
-				} catch (Exception) {
-				}
-
-				ec.EmitTopBlock (block, ParameterInfo, Location);
-
+			if (generate_debugging)
 				sw.CloseMethod ();
-			} else
-				ec.EmitTopBlock (block, ParameterInfo, Location);
 		}
 	}
 
