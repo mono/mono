@@ -1,3 +1,7 @@
+2004-04-28  Zoltan Varga  <vargaz@freemail.hu>
+
+	* metadata.c (mono_type_stack_size): Fix size of TYPEDBYREF.
+
 2004-04-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* file-io.c:
