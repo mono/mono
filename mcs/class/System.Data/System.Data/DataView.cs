@@ -803,46 +803,50 @@ namespace System.Data
 			}
 		}
 
-		[MonoTODO]
 		int IList.Add (object value) 
 		{
-			throw new NotImplementedException ();
+			throw new ArgumentException ("Cannot add external objects to this list.");
 		}
 
-		[MonoTODO]
 		void IList.Clear () 
 		{
-			throw new NotImplementedException ();
+			throw new ArgumentException ("Cannot clear this list.");
 		}
 
-		[MonoTODO]
 		bool IList.Contains (object value) 
 		{
-			throw new NotImplementedException ();
+			DataRowView drv = value as DataRowView;
+			if (drv == null)
+				return false;
+			return IndexOf (drv) >= 0;
 		}
 
-		[MonoTODO]
 		int IList.IndexOf (object value) 
 		{
-			throw new NotImplementedException ();
+			DataRowView drv = value as DataRowView;
+			if (drv == null)
+				return -1;
+			return IndexOf (drv);
 		}
 			
-		[MonoTODO]
-		void IList.Insert(int index,object value) 
+		void IList.Insert (int index,object value) 
 		{
-			throw new NotImplementedException ();
+			throw new ArgumentException ("Cannot insert external objects to this list.");
 		}
 
-		[MonoTODO]
-		void IList.Remove(object value) 
+		void IList.Remove (object value) 
 		{
-			throw new NotImplementedException ();
+			// LAMESPEC: MS.NET's behavior is weird. It raises
+			// events and*then* raises this exception.
+			throw new ArgumentException ("Cannot remove from this list.");
 		}
 
-		[MonoTODO]
-		void IList.RemoveAt(int index) 
+		void IList.RemoveAt (int index) 
 		{
-			throw new NotImplementedException ();
+			DataRowView drv = rowCache [index]; // might raise OutOfRangeException here.
+			if (drv == null)
+				throw new ArgumentException ("Cannot remove from this list.");
+			drv.Delete ();
 		}
 
 		#region IBindingList implementation
@@ -853,7 +857,6 @@ namespace System.Data
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		object IBindingList.AddNew () 
 		{
 			return this.AddNew ();
@@ -949,6 +952,14 @@ namespace System.Data
 		}
 
 		#endregion // IBindingList implementation
+		private int IndexOf (DataRowView drv)
+		{
+			for (int i = 0; i < rowCache.Length; i++)
+				if (rowCache [i] == drv)
+					return i;
+			return -1;
+		}
+
 		private int IndexOf(DataRow dr)
 		{
 			for (int i=0; i < rowCache.Length; i++)
