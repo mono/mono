@@ -1,3 +1,14 @@
+2004-08-04  Martin Baulig  <martin@ximian.com>
+
+	* class.c
+	(mono_type_get_name_recurse): Added `gboolean include_arity'
+	argument specifying whether or not we should include the generic
+	arity in the type name.
+	(_mono_type_get_name): New static function.
+	(mono_class_setup_vtable): If we're a generic instance, don't
+	include the generic arity in the names of explicit method
+	implementations.	
+
 2004-08-03  Martin Baulig  <martin@ximian.com>
 
 	* class.c (mono_type_get_name_recurse): Enclose the generic type
