@@ -25,9 +25,12 @@
 //
 //
 //
-// $Revision: 1.20 $
+// $Revision: 1.21 $
 // $Modtime: $
 // $Log: ThemeWin32Classic.cs,v $
+// Revision 1.21  2004/08/15 23:20:54  ravindra
+// Changes to Theme for ToolBar control and also dos2unix format.
+//
 // Revision 1.20  2004/08/13 21:22:18  jordi
 // removes redundant code and fixes issues with tickposition
 //
@@ -117,6 +120,7 @@ namespace System.Windows.Forms
 		static private Pen pen_buttondkshadow;
 		static private Pen pen_buttonhilight;
 		static private Pen pen_buttonface;
+		static private Pen pen_buttontext;
 		static private Pen pen_windowframe;
 
 		static private Font default_font;
@@ -151,6 +155,7 @@ namespace System.Windows.Forms
 			pen_buttondkshadow = new Pen (ColorButtonDkShadow);
 			pen_buttonhilight = new Pen (ColorButtonHilight);
 			pen_buttonface = new Pen (ColorButtonFace);
+			pen_buttontext = new Pen (ColorButtonText);
 			pen_windowframe = new Pen (ColorWindowFrame);
 
 			default_font =	new Font (FontFamily.GenericSansSerif, 8.25f);
@@ -302,6 +307,34 @@ namespace System.Windows.Forms
 
 		public int ScrollBarButtonSize {
 			get { return 16; }
+		}
+
+		/*
+		 * ToolBar Control properties
+		 */
+		// Grip width for the Image on the ToolBarButton
+		public int ToolBarImageGripWidth {
+			get { return 2;}
+		}
+
+		// width of the separator
+		public int ToolBarSeparatorWidth {
+			get { return 4; }
+		}
+
+		// width of the dropdown arrow rect
+		public int ToolBarDropDownWidth {
+			get { return 13; }
+		}
+
+		// width for the dropdown arrow on the ToolBarButton
+		public int ToolBarDropDownArrowWidth {
+			get { return 5;}
+		}
+
+		// height for the dropdown arrow on the ToolBarButton
+		public int ToolBarDropDownArrowHeight {
+			get { return 3;}
 		}
 
 		private enum DrawFrameControlStates
@@ -1588,7 +1621,6 @@ namespace System.Windows.Forms
 		
 		}
 
-
 		public void DrawStatusBar (Graphics dc, Rectangle area, StatusBar sb)
 		{
 			int horz_border = 2;
@@ -1694,9 +1726,249 @@ namespace System.Windows.Forms
 				DrawFocusRectangle (e.Graphics, e.Bounds, e.ForeColor, e.BackColor);
 		}
 
+		public void DrawToolBar (Graphics dc, ToolBar control, StringFormat format)
+		{
+			Rectangle paint_area = control.ClientRectangle;
+			dc.FillRectangle (br_buttonface, paint_area);
+			DrawBorderStyle (dc, paint_area, control.BorderStyle);
+			bool flat = (control.Appearance == ToolBarAppearance.Flat);
+
+			foreach (ToolBarButton button in control.Buttons) {
+
+				Image image = null;
+				Rectangle buttonArea = button.Rectangle;
+				Rectangle imgRect = Rectangle.Empty;  // rect to draw the image
+				Rectangle txtRect = buttonArea;       // rect to draw the text
+				Rectangle ddRect = Rectangle.Empty;   // rect for the drop down arrow
+
+				// calculate different rects and draw the frame if its not separator button
+				if (button.Style != ToolBarButtonStyle.Separator) {
+					/* Adjustment for drop down arrow */
+					if (button.Style == ToolBarButtonStyle.DropDownButton && control.DropDownArrows) {
+						ddRect.X = buttonArea.X + buttonArea.Width - this.ToolBarDropDownWidth;
+						ddRect.Y = buttonArea.Y;
+						ddRect.Width = this.ToolBarDropDownWidth;
+						ddRect.Height = buttonArea.Height;
+					}
+
+					// calculate txtRect and imgRect, if imageIndex and imageList are present
+					if (button.ImageIndex > -1 && control.ImageList != null) {
+						if (button.ImageIndex < control.ImageList.Images.Count)
+							image = control.ImageList.Images [button.ImageIndex];
+						// draw the image at the centre if textalignment is underneath
+						if (control.TextAlign == ToolBarTextAlign.Underneath) {
+							imgRect.X = buttonArea.X + ((buttonArea.Width - ddRect.Width 
+										     - control.ImageSize.Width) / 2) 
+								                 + this.ToolBarImageGripWidth;
+							imgRect.Y = buttonArea.Y + this.ToolBarImageGripWidth;
+							imgRect.Width = control.ImageSize.Width;
+							imgRect.Height = control.ImageSize.Height;
+
+							txtRect.X = buttonArea.X;
+							txtRect.Y = buttonArea.Y + imgRect.Height + 2 * this.ToolBarImageGripWidth;
+							txtRect.Width = buttonArea.Width - ddRect.Width;
+							txtRect.Height = buttonArea.Height - imgRect.Height 
+								                           - 2 * this.ToolBarImageGripWidth;
+						}
+						else {
+							imgRect.X = buttonArea.X + this.ToolBarImageGripWidth;
+							imgRect.Y = buttonArea.Y + this.ToolBarImageGripWidth;
+							imgRect.Width = control.ImageSize.Width;
+							imgRect.Height = control.ImageSize.Height;
+
+							txtRect.X = buttonArea.X + imgRect.Width + 2 * this.ToolBarImageGripWidth;
+							txtRect.Y = buttonArea.Y;
+							txtRect.Width = buttonArea.Width - imgRect.Width 
+								                         - 2 * this.ToolBarImageGripWidth - ddRect.Width;
+							txtRect.Height = buttonArea.Height;
+						}
+					}
+					/* Draw the button frame, only if it is not a separator */
+					if (flat) { 
+						if (button.Pushed)
+							ControlPaint.DrawBorder3D (dc, buttonArea, Border3DStyle.SunkenOuter,
+										   Border3DSide.All);
+						else if (button.Hilight) {
+							dc.DrawRectangle (pen_buttonhilight, buttonArea);
+							if (! ddRect.IsEmpty) {
+								dc.DrawLine (pen_buttonhilight, ddRect.X, ddRect.Y, ddRect.X, 
+									     ddRect.Y + ddRect.Height);
+								buttonArea.Width -= this.ToolBarDropDownWidth;
+							}
+						}
+					}
+					else { // normal toolbar
+						if (button.Pushed) {
+							ControlPaint.DrawBorder3D (dc, buttonArea, Border3DStyle.SunkenInner,
+										   Border3DSide.All);
+							if (! ddRect.IsEmpty) {
+								ControlPaint.DrawBorder3D (dc, ddRect, Border3DStyle.SunkenInner,
+											   Border3DSide.Left);
+								buttonArea.Width -= this.ToolBarDropDownWidth;
+							}
+						}
+						else {
+							ControlPaint.DrawBorder3D (dc, buttonArea, Border3DStyle.RaisedInner,
+										   Border3DSide.All);
+							if (! ddRect.IsEmpty) {
+								ControlPaint.DrawBorder3D (dc, ddRect, Border3DStyle.RaisedInner,
+											   Border3DSide.Left);
+								buttonArea.Width -= this.ToolBarDropDownWidth;
+							}
+						}
+					}
+				}
+				DrawToolBarButton (dc, button, control.Font, format, paint_area, buttonArea,
+						   imgRect, image, txtRect, ddRect, flat);
+			}
+		}
+
 		/*
-			Private methods
-		*/
+		 * Private methods
+		 */
+
+		private void DrawToolBarButton (Graphics dc, ToolBarButton button, Font font, StringFormat format,
+						Rectangle controlArea, Rectangle buttonArea, Rectangle imgRect, 
+						Image image, Rectangle txtRect, Rectangle ddRect, bool flat)
+		{
+			if (! button.Visible)
+				return;
+
+			switch (button.Style) {
+
+			case ToolBarButtonStyle.Separator:
+				// separator is drawn only in the case of flat appearance
+				if (flat) {
+					dc.DrawLine (pen_buttonshadow, buttonArea.X + 1, buttonArea.Y, 
+						     buttonArea.X + 1, buttonArea.Height);
+					dc.DrawLine (pen_buttonhilight, buttonArea.X + 1 + (int) pen_buttonface.Width,
+						     buttonArea.Y, buttonArea.X + 1 + (int) pen_buttonface.Width, buttonArea.Height);
+					/* draw a horizontal separator */
+					if (button.Wrapper) {
+						int y = buttonArea.Height + this.ToolBarSeparatorWidth / 2;
+						dc.DrawLine (pen_buttonshadow, 0, y, controlArea.Width, y);
+						dc.DrawLine (pen_buttonhilight, 0, y + 1 + (int) pen_buttonface.Width, controlArea.Width,
+							     y + 1 + (int) pen_buttonface.Width);
+					}
+				}
+				break;
+
+			case ToolBarButtonStyle.ToggleButton:
+				Rectangle toggleArea = Rectangle.Empty;
+				toggleArea.X = buttonArea.X + this.ToolBarImageGripWidth;
+				toggleArea.Y = buttonArea.Y + this.ToolBarImageGripWidth;
+				toggleArea.Width = buttonArea.Width - 2 * this.ToolBarImageGripWidth;
+				toggleArea.Height = buttonArea.Height - 2 * this.ToolBarImageGripWidth;
+				if (button.PartialPush && button.Pushed) {
+					dc.FillRectangle (SystemBrushes.ControlLightLight, toggleArea);
+					if (! imgRect.IsEmpty) {
+						if (button.Enabled && image != null)
+							button.Parent.ImageList.Draw (dc, imgRect.X, imgRect.Y, imgRect.Width, 
+										      imgRect.Height, button.ImageIndex);
+						else {
+							dc.FillRectangle (new SolidBrush (ColorGrayText), imgRect);
+							ControlPaint.DrawBorder3D (dc, imgRect, Border3DStyle.SunkenOuter,
+										   Border3DSide.Right | Border3DSide.Bottom);
+						}
+					}
+					if (button.Enabled)
+						dc.DrawString (button.Text, font, SystemBrushes.ControlText, txtRect, format);
+					else
+						ControlPaint.DrawStringDisabled (dc, button.Text, font, SystemColors.ControlLightLight,
+										 txtRect, format);
+				}
+
+				else if (button.PartialPush) {
+					dc.FillRectangle (SystemBrushes.ControlLight, toggleArea);
+					if (! imgRect.IsEmpty) {
+						if (button.Enabled && image != null)
+							button.Parent.ImageList.Draw (dc, imgRect.X, imgRect.Y, imgRect.Width,
+										      imgRect.Height, button.ImageIndex);
+						else {
+							dc.FillRectangle (new SolidBrush (ColorGrayText), imgRect);
+							ControlPaint.DrawBorder3D (dc, imgRect, Border3DStyle.SunkenOuter,
+										   Border3DSide.Right | Border3DSide.Bottom);
+						}
+					}
+					if (button.Enabled)
+						dc.DrawString (button.Text, font, SystemBrushes.ControlText, txtRect, format);
+					else
+						ControlPaint.DrawStringDisabled (dc, button.Text, font, SystemColors.ControlLightLight,
+										 txtRect, format);
+				}
+
+				else if (button.Pushed) {
+					dc.FillRectangle (SystemBrushes.ControlLightLight, toggleArea);
+					if (! imgRect.IsEmpty) {
+						if (button.Enabled && image != null)
+							button.Parent.ImageList.Draw (dc, imgRect.X, imgRect.Y, imgRect.Width,
+										      imgRect.Height, button.ImageIndex);
+						else {
+							dc.FillRectangle (new SolidBrush (ColorGrayText), imgRect);
+							ControlPaint.DrawBorder3D (dc, imgRect, Border3DStyle.SunkenOuter,
+										   Border3DSide.Right | Border3DSide.Bottom);
+						}
+					}
+					if (button.Enabled)
+						dc.DrawString (button.Text, font, SystemBrushes.ControlText, txtRect, format);
+					else
+						ControlPaint.DrawStringDisabled (dc, button.Text, font, SystemColors.ControlLightLight,
+										 txtRect, format);
+				}
+
+				else {
+					if (! imgRect.IsEmpty) {
+						if (button.Enabled && image != null)
+							button.Parent.ImageList.Draw (dc, imgRect.X, imgRect.Y, imgRect.Width,
+										      imgRect.Height, button.ImageIndex);
+						else {
+							dc.FillRectangle (new SolidBrush (ColorGrayText), imgRect);
+							ControlPaint.DrawBorder3D (dc, imgRect, Border3DStyle.SunkenOuter,
+										   Border3DSide.Right | Border3DSide.Bottom);
+						}
+					}
+					if (button.Enabled)
+						dc.DrawString (button.Text, font, SystemBrushes.ControlText, txtRect, format);
+					else
+						ControlPaint.DrawStringDisabled (dc, button.Text, font, SystemColors.ControlLightLight,
+										 txtRect, format);
+				}
+				break;
+
+			case ToolBarButtonStyle.DropDownButton:
+				// draw the dropdown arrow
+				if (! ddRect.IsEmpty) {
+					PointF [] vertices = new PointF [3];
+					PointF ddCenter = new PointF (ddRect.X + (ddRect.Width/2.0f), ddRect.Y + (ddRect.Height/2.0f));
+					vertices [0].X = ddCenter.X - this.ToolBarDropDownArrowWidth / 2.0f + 0.5f;
+					vertices [0].Y = ddCenter.Y;
+					vertices [1].X = ddCenter.X + this.ToolBarDropDownArrowWidth / 2.0f + 0.5f;
+					vertices [1].Y = ddCenter.Y;
+					vertices [2].X = ddCenter.X + 0.5f; // 0.5 is added for adjustment
+					vertices [2].Y = ddCenter.Y + this.ToolBarDropDownArrowHeight;
+					dc.FillPolygon (SystemBrushes.ControlText, vertices);
+				}
+				goto case ToolBarButtonStyle.PushButton;
+
+			case ToolBarButtonStyle.PushButton:
+				if (! imgRect.IsEmpty){
+					if (button.Enabled && image != null)
+						button.Parent.ImageList.Draw (dc, imgRect.X, imgRect.Y, imgRect.Width, imgRect.Height,
+									      button.ImageIndex);
+					else {
+						dc.FillRectangle (new SolidBrush (ColorGrayText), imgRect);
+						ControlPaint.DrawBorder3D (dc, imgRect, Border3DStyle.SunkenOuter,
+									   Border3DSide.Right | Border3DSide.Bottom);
+					}
+				}
+				if (button.Enabled)
+					dc.DrawString (button.Text, font, SystemBrushes.ControlText, txtRect, format);
+				else
+					ControlPaint.DrawStringDisabled (dc, button.Text, font, SystemColors.ControlLightLight,
+									 txtRect, format);
+				break;
+			}
+		}
 
 		private static void DrawBorderInternal(Graphics graphics, int startX, int startY, int endX, int endY,
 			int width, Color color, ButtonBorderStyle style, Border3DSide side) {

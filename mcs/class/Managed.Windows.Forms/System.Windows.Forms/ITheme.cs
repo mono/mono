@@ -24,9 +24,12 @@
 //
 //
 //
-// $Revision: 1.9 $
+// $Revision: 1.10 $
 // $Modtime: $
 // $Log: ITheme.cs,v $
+// Revision 1.10  2004/08/15 23:20:54  ravindra
+// Changes to Theme for ToolBar control and also dos2unix format.
+//
 // Revision 1.9  2004/08/12 20:29:01  jordi
 // Trackbar enhancement, fix mouse problems, highli thumb, etc
 //
@@ -108,6 +111,15 @@ namespace System.Windows.Forms
 		int ScrollBarButtonSize {get;}
 
 		/*
+		  ToolBar Control properties
+		 */
+		int ToolBarImageGripWidth {get;}         // Grip width for the Image on the ToolBarButton
+		int ToolBarSeparatorWidth {get;}         // width of the separator
+		int ToolBarDropDownWidth { get; }        // width of the dropdown arrow rect
+		int ToolBarDropDownArrowWidth { get; }   // width for the dropdown arrow on the ToolBarButton
+		int ToolBarDropDownArrowHeight { get; }  // height for the dropdown arrow on the ToolBarButton
+
+		/*
 			Methods that mimic ControlPaint signature and draw basic objects
 		*/
 
@@ -175,7 +187,9 @@ namespace System.Windows.Forms
 				float ticks, int value_pos, bool mouse_value);
 
 		void DrawProgressBar (Graphics dc, Rectangle area,  Rectangle client_area,
-			int barpos_pixels, int block_width);		
+			int barpos_pixels, int block_width);
+
+		void DrawToolBar (Graphics dc, ToolBar control, StringFormat format);
 
 		void DrawStatusBar (Graphics dc, Rectangle area, StatusBar sb);
 
