@@ -119,16 +119,16 @@ namespace Mono.CSharp {
 				      "expression or array creation expression");
 		}
 
-		void Error_AttributeConstructorMismatch ()
-		{
-			Report.Error (-6, Location,
-                                      "Could not find a constructor for this argument list.");
-		}
-
 		static void Error_TypeParameterInAttribute (Location loc)
 		{
 			Report.Error (
 				-202, loc, "Can not use a type parameter in an attribute");
+		}
+
+		void Error_AttributeConstructorMismatch ()
+		{
+			Report.Error (-6, Location,
+                                      "Could not find a constructor for this argument list.");
 		}
 
 		/// <summary>
