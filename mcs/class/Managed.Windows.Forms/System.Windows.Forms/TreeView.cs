@@ -24,14 +24,19 @@
 //	Kazuki Oikawa (kazuki@panicode.com)
 
 using System;
+using System.Collections;
+using System.ComponentModel;
+using System.ComponentModel.Design;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.Collections;
+using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms {
-
+	[DefaultProperty("Nodes")]
+	[DefaultEvent("AfterSelect")]
+	[Designer("System.Windows.Forms.Design.TreeViewDesigner, " + Consts.AssemblySystem_Design)]
 	public class TreeView : Control {
-
+		#region Fields
 		private string path_separator = "\\";
 		private int item_height = -1;
 		private bool sorted;
@@ -88,7 +93,9 @@ namespace System.Windows.Forms {
 
 		private Pen dash;
 		private int open_node_count = -1;
-		
+		#endregion	// Fields
+
+		#region Public Constructors	
 		public TreeView ()
 		{
 			base.background_color = ThemeEngine.Current.ColorWindow;
@@ -110,11 +117,62 @@ namespace System.Windows.Forms {
 			dash = new Pen (SystemColors.ControlLight, 1);
 		}
 
-		public string PathSeparator {
-			get { return path_separator; }
-			set { path_separator = value; }
+		#endregion	// Public Constructors
+
+		#region Public Instance Properties
+		public override Color BackColor {
+			get { return base.BackColor;}
+			set { base.BackColor = value; }
 		}
 
+
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		public override Image BackgroundImage {
+			get { return base.BackgroundImage; }
+			set { base.BackgroundImage = value; }
+		}
+
+		[DefaultValue(BorderStyle.Fixed3D)]
+		[DispId(-504)]
+		public BorderStyle BorderStyle {
+			get { return InternalBorderStyle; }
+			set { InternalBorderStyle  = value; }
+		}
+
+		[DefaultValue(false)]
+		public bool CheckBoxes {
+			get { return checkboxes; }
+			set {
+				if (value == checkboxes)
+					return;
+				checkboxes = value;
+
+				// Match a "bug" in the MS implementation where disabling checkboxes
+				// collapses the entire tree, but enabling them does not affect the
+				// state of the tree.
+				if (!checkboxes)
+					root_node.CollapseAllUncheck ();
+
+				Refresh ();
+			}
+		}
+
+		public override Color ForeColor {
+			get { return base.ForeColor; }
+			set { base.ForeColor = value; }
+		}
+		[DefaultValue(false)]
+		public bool FullRowSelect {
+			get { return full_row_select; }
+			set {
+				if (value == full_row_select)
+					return;
+				full_row_select = value;
+				Refresh ();
+			}
+		}
+		[DefaultValue(true)]
 		public bool HideSelection {
 			get { return hide_selection; }
 			set {
@@ -125,26 +183,54 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		public bool Sorted {
-			get { return sorted; }
+		[DefaultValue(false)]
+		public bool HotTracking {
+			get { return hot_tracking; }
+			set { hot_tracking = value; }
+		}
+
+		[DefaultValue(0)]
+		[Editor("System.Windows.Forms.Design.ImageIndexEditor, " + Consts.AssemblySystem_Design, typeof(System.Drawing.Design.UITypeEditor))]
+		[Localizable(true)]
+		[TypeConverter(typeof(TreeViewImageIndexConverter))]
+		public int ImageIndex {
+			get { return image_index; }
 			set {
-				if (sorted != value)
-					sorted = value;
-				if (sorted) {
-					Nodes.Sort ();
-					Refresh ();
+				if (value < -1) {
+					throw new ArgumentException ("'" + value + "' is not a valid value for 'value'. " +
+						"'value' must be greater than or equal to 0.");
 				}
+				image_index = value;
 			}
 		}
 
-		public TreeNode TopNode {
-			get { return top_node; }
+		[MonoTODO ("Anything special need to be done here?")]
+		[DefaultValue(null)]
+		public ImageList ImageList {
+			get { return image_list; }
+			set { image_list = value; }
 		}
 
-		public TreeNodeCollection Nodes {
-			get { return nodes; }
+		[Localizable(true)]
+		public int Indent {
+			get { return indent; }
+			set {
+				if (indent == value)
+					return;
+				if (value > 32000) {
+					throw new ArgumentException ("'" + value + "' is not a valid value for 'Indent'. " +
+						"'Indent' must be less than or equal to 32000");
+				}	
+				if (value < 0) {
+					throw new ArgumentException ("'" + value + "' is not a valid value for 'Indent'. " +
+						"'Indent' must be greater than or equal to 0.");
+				}
+				indent = value;
+				Refresh ();
+			}
 		}
 
+		[Localizable(true)]
 		public int ItemHeight {
 			get {
 				if (item_height == -1)
@@ -159,29 +245,39 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		public int VisibleCount {
-			get {
-				return ClientRectangle.Height / ItemHeight;
-			}
+		[DefaultValue(false)]
+		public bool LabelEdit {
+			get { return label_edit; }
+			set { label_edit = value; }
 		}
 
-		[MonoTODO ("Anything special need to be done here?")]
-		public ImageList ImageList {
-			get { return image_list; }
-			set { image_list = value; }
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
+		[MergableProperty(false)]
+		[Localizable(true)]
+		public TreeNodeCollection Nodes {
+			get { return nodes; }
 		}
 
-		public int ImageIndex {
-			get { return image_index; }
+		[DefaultValue("\\")]
+		public string PathSeparator {
+			get { return path_separator; }
+			set { path_separator = value; }
+		}
+
+		[DefaultValue(true)]
+		public bool Scrollable {
+			get { return scrollable; }
 			set {
-				if (value < -1) {
-					throw new ArgumentException ("'" + value + "' is not a valid value for 'value'. " +
-						"'value' must be greater than or equal to 0.");
-				}
-				image_index = value;
+				if (scrollable == value)
+					return;
+				scrollable = value;
 			}
 		}
 
+		[Editor("System.Windows.Forms.Design.ImageIndexEditor, " + Consts.AssemblySystem_Design, typeof(System.Drawing.Design.UITypeEditor))]
+		[TypeConverter(typeof(TreeViewImageIndexConverter))]
+		[Localizable(true)]
+		[DefaultValue(0)]
 		public int SelectedImageIndex {
 			get { return selected_image_index; }
 			set {
@@ -192,6 +288,8 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public TreeNode SelectedNode {
 			get { return selected_node; }
 			set {
@@ -221,89 +319,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		public override Color BackColor {
-			get { return base.BackColor;}
-			set { base.BackColor = value; }
-		}
-
-		public override Image BackgroundImage {
-			get { return base.BackgroundImage; }
-			set { base.BackgroundImage = value; }
-		}
-
-		/*
-		   Commented out until this is implemented in Control
-		public override BorderStyle BorderStyle {
-			get { return base.BorderStyle; }
-			set { base.BorderStyle = value; }
-		}
-		*/
-
-		public override Color ForeColor {
-			get { return base.ForeColor; }
-			set { base.ForeColor = value; }
-		}
-
-		public override string Text {
-			get { return base.Text; }
-			set { base.Text = value; }
-		}
-
-		public bool FullRowSelect {
-			get { return full_row_select; }
-			set {
-				if (value == full_row_select)
-					return;
-				full_row_select = value;
-				Refresh ();
-			}
-		}
-
-		public bool HotTracking {
-			get { return hot_tracking; }
-			set { hot_tracking = value; }
-		}
-
-		public int Indent {
-			get { return indent; }
-			set {
-				if (indent == value)
-					return;
-				if (value > 32000) {
-					throw new ArgumentException ("'" + value + "' is not a valid value for 'Indent'. " +
-							"'Indent' must be less than or equal to 32000");
-				}	
-				if (value < 0) {
-					throw new ArgumentException ("'" + value + "' is not a valid value for 'Indent'. " +
-							"'Indent' must be greater than or equal to 0.");
-				}
-				indent = value;
-				Refresh ();
-			}
-		}
-
-		public bool LabelEdit {
-			get { return label_edit; }
-			set { label_edit = value; }
-		}
-
-		internal string LabelEditText {
-			get {
-				if (edit_text_box == null)
-					return String.Empty;
-				return edit_text_box.Text;
-			}
-		}
-
-		public bool Scrollable {
-			get { return scrollable; }
-			set {
-				if (scrollable == value)
-					return;
-				scrollable = value;
-			}
-		}
-
+		[DefaultValue(true)]
 		public bool ShowLines {
 			get { return show_lines; }
 			set {
@@ -314,33 +330,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		public bool ShowRootLines {
-			get { return show_root_lines; }
-			set {
-				if (show_root_lines == value)
-					return;
-				show_root_lines = value;
-				Refresh ();
-			}
-		}
-
-		public bool CheckBoxes {
-			get { return checkboxes; }
-			set {
-				if (value == checkboxes)
-					return;
-				checkboxes = value;
-
-				// Match a "bug" in the MS implementation where disabling checkboxes
-				// collapses the entire tree, but enabling them does not affect the
-				// state of the tree.
-				if (!checkboxes)
-					root_node.CollapseAllUncheck ();
-
-				Refresh ();
-			}
-		}
-
+		[DefaultValue(true)]
 		public bool ShowPlusMinus {
 			get { return show_plus_minus; }
 			set {
@@ -351,7 +341,56 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		[MonoTODO ("Anything extra needed here")]
+		[DefaultValue(true)]
+		public bool ShowRootLines {
+			get { return show_root_lines; }
+			set {
+				if (show_root_lines == value)
+					return;
+				show_root_lines = value;
+				Refresh ();
+			}
+		}
+
+		[DefaultValue(false)]
+		public bool Sorted {
+			get { return sorted; }
+			set {
+				if (sorted != value)
+					sorted = value;
+				if (sorted) {
+					Nodes.Sort ();
+					Refresh ();
+				}
+			}
+		}
+
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		[Bindable(false)]
+		public override string Text {
+			get { return base.Text; }
+			set { base.Text = value; }
+		}
+
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public TreeNode TopNode {
+			get { return top_node; }
+		}
+
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public int VisibleCount {
+			get {
+				return ClientRectangle.Height / ItemHeight;
+			}
+		}
+
+		#endregion	// Public Instance Properties
+
+		#region Protected Instance Properties
+		[MonoTODO ("Anything extra needed here?")]
 		protected override CreateParams CreateParams {
 			get {
 				CreateParams cp = base.CreateParams;
@@ -359,9 +398,187 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		
 		protected override Size DefaultSize {
 			get { return new Size (121, 97); }
+		}
+
+		#endregion	// Protected Instance Properties
+
+		#region Public Instance Methods
+		public void BeginUpdate () {
+			if (!IsHandleCreated)
+				return;
+			update_stack++;
+		}
+
+		public void CollapseAll () {
+			root_node.CollapseAll ();
+		}
+
+		public void EndUpdate () {
+			if (!IsHandleCreated)
+				return;
+
+			if (update_stack > 1) {
+				update_stack--;
+			} else {
+				update_stack = 0;
+				Refresh ();
+			}
+		}
+
+		public void ExpandAll () {
+			root_node.ExpandAll ();
+		}
+
+		public TreeNode GetNodeAt (Point pt) {
+			return GetNodeAt (pt.X, pt.Y);
+		}
+
+		public TreeNode GetNodeAt (int x, int y) {
+			TreeNode node = GetNodeAt (y);
+			if (node == null || !IsTextArea (node, x))
+				return null;
+			return node;
+					
+		}
+
+		public int GetNodeCount (bool include_subtrees) {
+			return root_node.GetNodeCount (include_subtrees);
+		}
+
+		public override string ToString () {
+			int count = Nodes.Count;
+			if (count < 0)
+				return String.Concat (base.ToString (), "Node Count: 0");
+			return String.Concat (base.ToString (), "Node Count: ", count, " Nodes[0]: ", Nodes [0]);
+						
+		}
+
+		#endregion	// Public Instance Methods
+
+		#region Protected Instance Methods
+		protected override void CreateHandle () {
+			base.CreateHandle ();
+		}
+
+		protected override void Dispose (bool disposing) {
+			if (disposing) {
+				if (image_list != null)
+					image_list.Dispose ();
+			}
+			base.Dispose (disposing);
+		}
+
+		[MonoTODO ("What does the state effect?")]
+		protected OwnerDrawPropertyBag GetItemRenderStyles (TreeNode node, int state) {
+			return node.prop_bag;
+		}
+
+		protected override bool IsInputKey (Keys key_data) {
+			if (label_edit && (key_data & Keys.Alt) == 0) {
+				switch (key_data & Keys.KeyCode) {
+					case Keys.Enter:
+					case Keys.Escape:
+					case Keys.Prior:
+					case Keys.Next:
+					case Keys.End:
+					case Keys.Home:
+					case Keys.Left:
+					case Keys.Up:
+					case Keys.Right:
+					case Keys.Down:
+						return true;
+				}
+			}
+			return base.IsInputKey (key_data);
+		}
+
+		protected virtual void OnAfterCheck (TreeViewEventArgs e) {
+			if (on_after_check != null)
+				on_after_check (this, e);
+		}
+
+		protected internal virtual void OnAfterCollapse (TreeViewEventArgs e) {
+			if (on_after_collapse != null)
+				on_after_collapse (this, e);
+		}
+
+		protected internal virtual void OnAfterExpand (TreeViewEventArgs e) {
+			if (on_after_expand != null)
+				on_after_expand (this, e);
+		}
+
+		protected virtual void OnAfterLabelEdit (NodeLabelEditEventArgs e) {
+			if (on_after_label_edit != null)
+				on_after_label_edit (this, e);
+		}
+
+		protected virtual void OnAfterSelect (TreeViewEventArgs e) {
+			if (on_after_select != null)
+				on_after_select (this, e);
+		}
+
+		protected virtual void OnBeforeCheck (TreeViewCancelEventArgs e) {
+			if (on_before_check != null)
+				on_before_check (this, e);
+		}
+
+		protected internal virtual void OnBeforeCollapse (TreeViewCancelEventArgs e) {
+			if (on_before_collapse != null)
+				on_before_collapse (this, e);
+		}
+
+		protected internal virtual void OnBeforeExpand (TreeViewCancelEventArgs e) {
+			if (on_before_expand != null)
+				on_before_expand (this, e);
+		}
+
+		protected virtual void OnBeforeLabelEdit (NodeLabelEditEventArgs e) {
+			if (on_before_label_edit != null)
+				on_before_label_edit (this, e);
+		}
+
+		protected virtual void OnBeforeSelect (TreeViewCancelEventArgs e) {
+			if (on_before_select != null)
+				on_before_select (this, e);
+		}
+
+		protected override void OnHandleCreated (EventArgs e) {
+			base.OnHandleCreated (e);
+		}
+
+		protected override void OnHandleDestroyed (EventArgs e) {
+			base.OnHandleDestroyed (e);
+		}
+
+		protected override void WndProc(ref Message m) {
+			switch ((Msg) m.Msg) {
+				case Msg.WM_PAINT: {				
+					PaintEventArgs	paint_event;
+
+					paint_event = XplatUI.PaintEventStart (Handle);
+					DoPaint (paint_event);
+					XplatUI.PaintEventEnd (Handle);
+					return;
+				}
+				case Msg.WM_LBUTTONDBLCLK:
+					int val = m.LParam.ToInt32();
+					DoubleClickHandler (null, new MouseEventArgs (MouseButtons.Left, 2, val & 0xffff, (val>>16) & 0xffff, 0));
+					break;
+			}
+			base.WndProc (ref m);
+		}
+
+		#endregion	// Protected Instance Methods
+
+		#region	Internal & Private Methods and Properties
+		internal string LabelEditText {
+			get {
+				if (edit_text_box == null)
+					return String.Empty;
+				return edit_text_box.Text;
+			}
 		}
 
 		internal int TotalNodeCount {
@@ -382,164 +599,8 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		protected override void CreateHandle ()
-		{
-			base.CreateHandle ();
-		}
-
-		protected override void Dispose (bool disposing)
-		{
-			if (disposing) {
-				if (image_list != null)
-					image_list.Dispose ();
-			}
-			base.Dispose (disposing);
-		}
-
-		[MonoTODO ("What does the state effect?")]
-		protected OwnerDrawPropertyBag GetItemRenderStyles (TreeNode node, int state)
-		{
-			return node.prop_bag;
-		}
-
 		[MonoTODO ("Need to know if we are editing, not if editing is enabled")]
-		protected override bool IsInputKey (Keys key_data)
-		{
-			if (label_edit && (key_data & Keys.Alt) == 0)
-			{
-				switch (key_data & Keys.KeyCode) {
-				case Keys.Enter:
-				case Keys.Escape:
-				case Keys.Prior:
-				case Keys.Next:
-				case Keys.End:
-				case Keys.Home:
-				case Keys.Left:
-				case Keys.Up:
-				case Keys.Right:
-				case Keys.Down:
-					return true;
-				}
-			}
-			return base.IsInputKey (key_data);
-		}
-
-		protected virtual void OnAfterCheck (TreeViewEventArgs e)
-		{
-			if (on_after_check != null)
-				on_after_check (this, e);
-		}
-
-		protected internal virtual void OnAfterCollapse (TreeViewEventArgs e)
-		{
-			if (on_after_collapse != null)
-				on_after_collapse (this, e);
-		}
-
-		protected internal virtual void OnAfterExpand (TreeViewEventArgs e)
-		{
-			if (on_after_expand != null)
-				on_after_expand (this, e);
-		}
-
-		protected virtual void OnAfterLabelEdit (NodeLabelEditEventArgs e)
-		{
-			if (on_after_label_edit != null)
-				on_after_label_edit (this, e);
-		}
-
-		protected virtual void OnAfterSelect (TreeViewEventArgs e)
-		{
-			if (on_after_select != null)
-				on_after_select (this, e);
-		}
-
-		protected virtual void OnBeforeCheck (TreeViewCancelEventArgs e)
-		{
-			if (on_before_check != null)
-				on_before_check (this, e);
-		}
-
-		protected internal virtual void OnBeforeCollapse (TreeViewCancelEventArgs e)
-		{
-			if (on_before_collapse != null)
-				on_before_collapse (this, e);
-		}
-
-		protected internal virtual void OnBeforeExpand (TreeViewCancelEventArgs e)
-		{
-			if (on_before_expand != null)
-				on_before_expand (this, e);
-		}
-
-		protected virtual void OnBeforeLabelEdit (NodeLabelEditEventArgs e)
-		{
-			if (on_before_label_edit != null)
-				on_before_label_edit (this, e);
-		}
-
-		protected virtual void OnBeforeSelect (TreeViewCancelEventArgs e)
-		{
-			if (on_before_select != null)
-				on_before_select (this, e);
-		}
-
-		protected override void OnHandleCreated (EventArgs e)
-		{
-			base.OnHandleCreated (e);
-		}
-
-		protected override void OnHandleDestroyed (EventArgs e)
-		{
-			base.OnHandleDestroyed (e);
-		}
-
-		public void BeginUpdate ()
-		{
-			if (!IsHandleCreated)
-				return;
-			update_stack++;
-		}
-
-		public void EndUpdate ()
-		{
-			if (!IsHandleCreated)
-				return;
-
-			if (update_stack > 1) {
-				update_stack--;
-			} else {
-				update_stack = 0;
-				Refresh ();
-			}
-		}
-
-		public void ExpandAll ()
-		{
-			root_node.ExpandAll ();
-		}
-
-		public void CollapseAll ()
-		{
-			root_node.CollapseAll ();
-		}
-
-		public TreeNode GetNodeAt (Point pt)
-		{
-			return GetNodeAt (pt.X, pt.Y);
-		}
-
-		public TreeNode GetNodeAt (int x, int y)
-		{
-			TreeNode node = GetNodeAt (y);
-			if (node == null || !IsTextArea (node, x))
-				return null;
-			return node;
-					
-		}
-
-		private TreeNode GetNodeAt (int y)
-		{
+		private TreeNode GetNodeAt (int y) {
 
 			if (top_node == null)
 				top_node = nodes [0];
@@ -555,43 +616,10 @@ namespace System.Windows.Forms {
 			return o.CurrentNode;
 		}
 
-		private bool IsTextArea (TreeNode node, int x) 
-		{
+		private bool IsTextArea (TreeNode node, int x) {
 			return node != null && node.Bounds.Left <= x && node.Bounds.Right >= x;
 		}
 
-		public int GetNodeCount (bool include_subtrees)
-		{
-			return root_node.GetNodeCount (include_subtrees);
-		}
-
-		public override string ToString ()
-		{
-			int count = Nodes.Count;
-			if (count < 0)
-				return String.Concat (base.ToString (), "Node Count: 0");
-			return String.Concat (base.ToString (), "Node Count: ", count, " Nodes[0]: ", Nodes [0]);
-						
-		}
-
-		protected override void WndProc(ref Message m)
-		{
-			switch ((Msg) m.Msg) {
-			case Msg.WM_PAINT: {				
-				PaintEventArgs	paint_event;
-
-				paint_event = XplatUI.PaintEventStart (Handle);
-				DoPaint (paint_event);
-				XplatUI.PaintEventEnd (Handle);
-				return;
-			}
-			case Msg.WM_LBUTTONDBLCLK:
-				int val = m.LParam.ToInt32();
-				DoubleClickHandler (null, new MouseEventArgs (MouseButtons.Left, 2, val & 0xffff, (val>>16) & 0xffff, 0));
-				break;
-			}
-			base.WndProc (ref m);
-		}
 
 		// TODO: Update from supplied node down
 		internal void UpdateBelow (TreeNode node)
@@ -1078,6 +1106,9 @@ namespace System.Windows.Forms {
 					(r.Top > top + height) || (r.Bottom < top));
 		}
 
+		#endregion	// Internal & Private Methods and Properties
+
+		#region Events
 		public event TreeViewEventHandler AfterCheck {
 			add { on_after_check += value; }
 			remove { on_after_check -= value; }
@@ -1128,15 +1159,20 @@ namespace System.Windows.Forms {
 			remove { on_before_select -= value; }
 		}
 
+		[EditorBrowsable (EditorBrowsableState.Never)]	
+		[Browsable (false)]
 		public new event PaintEventHandler Paint {
 			add { base.Paint += value; }
 			remove { base.Paint -= value; }
 		}
 
+		[EditorBrowsable (EditorBrowsableState.Never)]	
+		[Browsable (false)]
 		public new event EventHandler TextChanged {
 			add { base.TextChanged += value; }
 			remove { base.TextChanged -= value; }
 		}
+		#endregion	// Events
 	}
 }
 
