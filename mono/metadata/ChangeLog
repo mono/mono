@@ -1,4 +1,13 @@
 
+Fri Feb 4 20:27:58 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* appdomain.c, monitor.c, monitor.h, threads-types.h: made the
+	MonoThreadsSync struct private in monitor.c. Changed the way
+	MonoThreadsSync is allocated so it's faster and there is no
+	need to keep track of it with a finalizer and it uses less memory.
+	This also finally allows us to allocate mono objects as ptrfree when
+	there are no reference fields.
+
 Fri Feb 4 20:24:03 CET 2005 Paolo Molaro <lupus@ximian.com>
 
 	* gc.c, null-gc.c, boehm-gc.c, gc-internal.h: added functions to deal with
