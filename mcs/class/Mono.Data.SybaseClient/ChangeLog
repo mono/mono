@@ -1,3 +1,10 @@
+2003-02-16  Daniel Morgan <danmorg@sc.rr.com>
+
+	* SybaseConnection.cs: - parse data source for 2 possible uses:
+	"Server=hostname", 
+	"Server=hostname,port" and open the connection based on the
+	resulting server name and port.  
+
 2002-12-01  Tim Coleman <tim@timcoleman.com>
         * Mono.Data.SybaseClient/SybaseDataReader.cs:
                 Change to reflect TdsSchemaInfo -> TdsDataColumnCollection
