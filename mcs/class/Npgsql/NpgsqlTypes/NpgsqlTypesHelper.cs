@@ -183,6 +183,8 @@ namespace NpgsqlTypes
 
                 NativeTypeMapping.AddTypeAlias("int2", typeof(Int16));
                 
+                NativeTypeMapping.AddDbTypeAlias("int2", DbType.Byte);
+
                 NativeTypeMapping.AddType("int4", NpgsqlDbType.Integer, DbType.Int32, false,
                 null);
 

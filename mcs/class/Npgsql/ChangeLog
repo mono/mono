@@ -1,6 +1,12 @@
 2004-09-12  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
 
 	* NpgsqlTypes/NpgsqlTypesHelper:
+		VerifyDefaultTypesMap: Added DbType.Byte support. Thanks Martin ( martijn at boland dot org)
+		for heads up.
+		
+2004-09-12  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
+
+	* NpgsqlTypes/NpgsqlTypesHelper:
 		ConvertToBackend: Fixed code to handle null values properly when using extended query mode.
 		Fix bug 955 in gborg.
 
