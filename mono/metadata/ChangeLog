@@ -1,3 +1,17 @@
+2003-09-18  Martin Baulig  <martin@ximian.com>
+
+	* class.c (mono_class_init): Don't create `class->methods' if it's
+	already initialized.
+
+	* metadata.c (mono_metadata_load_generic_params): Make this
+	actually work.
+
+	* reflection.c (mono_reflection_define_generic_parameter): Set
+	parent class and interfaces from the constraints.
+
+	* reflection.h (MonoReflectionGenericParam): Added `guint32 flags'
+	to keep this struct in sync with the declaration in TypeBuilder.cs.
+
 2003-09-17  Martin Baulig  <martin@ximian.com>
 
 	* metadata.h (MonoType): Replaced the data's `int type_param'
