@@ -1,3 +1,7 @@
+2002-02-27  Miguel de Icaza  <miguel@ximian.com>
+
+	* driver.cs: Return 1 or 0 as the program exit code.
+
 2002-02-26  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs: Special case the `null' object when trying to

@@ -187,7 +187,7 @@ namespace Mono.CSharp
 		{
 			MainDriver (args);
 			
-			return error_count;
+			return (error_count + Report.Errors) != 0 ? 1 : 0;
 		}
 
 		static public int LoadAssembly (string assembly)
@@ -698,7 +698,7 @@ namespace Mono.CSharp
 			//
 			// The second pass of the compiler
 			//
-			if (timestamps)
+			if (timestannnnnmps)
 				ShowTime ("Resolving tree");
 			RootContext.ResolveTree ();
 			if (timestamps)
