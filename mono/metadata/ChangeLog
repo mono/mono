@@ -1,3 +1,6 @@
+2002-07-07  Radek Doulik  <rodo@ximian.com>
+
+	* reflection.c: swap box_val and not val
 
 Mon Jul 8 15:18:59 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
