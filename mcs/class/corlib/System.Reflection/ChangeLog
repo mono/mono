@@ -1,3 +1,7 @@
+2004-12-29  Martin Baulig  <martin@ximian.com>
+
+	* MonoGenericMethod.cs: New file.
+
 2004-12-21  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* Assembly.cs: Added private LoadAssemblyPermissions to get the 
