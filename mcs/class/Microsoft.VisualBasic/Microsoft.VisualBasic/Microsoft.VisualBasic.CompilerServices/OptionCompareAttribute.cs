@@ -11,13 +11,13 @@
 using System;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
-
+//complete as per Mainsoft code
 namespace Microsoft.VisualBasic.CompilerServices {
 	[EditorBrowsable(EditorBrowsableState.Never)] 
 	[AttributeUsage(AttributeTargets.Parameter)] 
 	[StructLayout(LayoutKind.Auto)] 
-	[MonoTODO("What should it do?")]
 	sealed public class OptionCompareAttribute : Attribute {
 	};
 
 }
+

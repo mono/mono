@@ -1,12 +1,12 @@
 //
 // BooleanType.cs
 //
-//	Author:
-//	Chris J Breisch (cjbreisch@altavista.net) 
-//	Dennis Hayes	(dennish@raytek.com)
+//      Author:
+//      Chris J Breisch (cjbreisch@altavista.net) 
+//      Dennis Hayes        (dennish@raytek.com)
 //
-//	(C) 2002 Chris J Breisch
-//	(C) 2004 Novell
+//      (C) 2002 Chris J Breisch
+//      (C) 2004 Novell
 //
  /*
   * Copyright (c) 2002-2003 Mainsoft Corporation.
@@ -32,38 +32,47 @@
 using System;
 using System.Globalization;
 
-namespace Microsoft.VisualBasic.CompilerServices {
+namespace Microsoft.VisualBasic.CompilerServices
+{
 	[System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Never)] 
 	[Microsoft.VisualBasic.CompilerServices.StandardModuleAttribute] 
 	sealed public class BooleanType {
 		/**
-		 * The method converts given object to boolean by the following logic:
-		 * 1. If input object is null - return null
-		 * 2. If input object is String - run FromString method
-		 * 3. Otherwise run .NET default conversion - Convert.ToBoolean
-		 * @param value - The object that going to be converted
-		 * @return boolean The boolean value that converted from the source object
-		 */
-		public static System.Boolean FromObject (System.Object Value) {
-			if ((object)Value == null) return false;
-			if (Value is string)return FromString((string)Value);
-			return System.Convert.ToBoolean(Value);
+				 * The method converts given object to boolean by the following logic:
+				 * 1. If input object is null - return null
+				 * 2. If input object is String - run FromString method
+				 * 3. Otherwise run .NET default conversion - Convert.ToBoolean
+				 * @param value - The object that going to be converted
+				 * @return boolean The boolean value that converted from the source object
+				 */
+		public static System.Boolean FromObject (object Value) {
+			if (Value == null)
+				return false;
+
+			if (Value is string)
+				return FromString((string)Value);
+
+			//This throws the correct execption, Mainsoft java code has to catch and rethrow to map java to .net
+			return Convert.ToBoolean(Value);
 		}
+
 		/**
-		 * The method try to convert given string to boolean in a following way:
-		 * 1. If input value is True or False string - return corresponding value
-		 * 2. If input string represents number: return true if this number is not 
-		 *    equals to zero, otherwise return false;
-		 * @exception InvalidCastException - in case if number translation failed 
-		 *  due to NumberFormatException.
-		 * @exception All other thrown exceptions from ClrDobule.Parse 
-		 * @param str - The string that converted to boolean
-		 * @return boolean The value that extracted from the input string. 
-		 */
-		public static System.Boolean FromString (System.String Value) {
+				 * The method try to convert given string to boolean in a following way:
+				 * 1. If input value is True or False string - return corresponding value
+				 * 2. If input string represents number: return true if this number is not 
+				 *    equals to zero, otherwise return false;
+				 * @exception InvalidCastException - in case if number translation failed 
+				 *  due to NumberFormatException.
+				 * @exception All other thrown exceptions from ClrDobule.Parse 
+				 * @param str - The string that converted to boolean
+				 * @return boolean The value that extracted from the input string. 
+				 */
+		public static Boolean FromString (string Value) {
+			if(Value == null)
+				return false;
+
 			if (string.Compare(Value, bool.TrueString, true) == 0)
 				return true;
-                        
 			if (string.Compare(Value, bool.FalseString, true) == 0)
 				return false;
                         
@@ -75,7 +84,6 @@ namespace Microsoft.VisualBasic.CompilerServices {
 				string.Format (
 				"Cast from string \"{0}\" to type 'Boolean' is not valid.",
 				Value));
-		}	
+		}        
 	}
 }
-

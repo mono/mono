@@ -9,10 +9,12 @@
 using System;
 using System.ComponentModel;
 
-namespace Microsoft.VisualBasic.CompilerServices {
+//complete. matches Mainsoft code.
+namespace Microsoft.VisualBasic.CompilerServices
+{
 	[AttributeUsage(AttributeTargets.Class)] 
 	[EditorBrowsable(EditorBrowsableState.Never)] 
-	[MonoTODO("What should it do?")]
 	sealed public class OptionTextAttribute : Attribute {
 	};
 }
+

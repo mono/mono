@@ -1,3 +1,25 @@
+2004-04-04	Dennis Hayes <dennish@raytek.com>
+	Complete. Includes code from both Mono and Mainsoft.
+	* BooleanType.cs
+	* CharArrayType.cs
+	* CharType.cs
+	* IncompleteInitialization.cs
+	* LongType.cs
+	* OptionCompareAttribute.cs
+	* OptionTextAttribute.cs
+	* ShortType.cs
+	* DateType.cs
+
+	Close. Unconverted java code from Mainsoft in comments included in the code.
+	* IntegerType.cs
+	* ByteType.cs
+	* DecmialType.cs
+	* SingleType.cs
+	* DoubleType.cs
+
+	Work in progress
+	* ExceptionUtils.cs
+
 2004-03-31  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* BooleanType.cs, ByteType.cs, CharArrayType.cs, CharType.cs, DateType.cs, IntegerType.cs, LongType.cs, ShortType.cs:
 		Translated Mainsoft code by Dennis Hayes with additional revisions by me - formatting still a problem

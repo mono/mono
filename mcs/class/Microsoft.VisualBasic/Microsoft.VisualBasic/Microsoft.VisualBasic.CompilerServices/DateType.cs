@@ -31,13 +31,10 @@
   * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   * DEALINGS IN THE SOFTWARE.
   */
-
-using System;
-using System.Globalization;
-
 /**
  * Class that converts objects to DateTime object
  */
+using System;
 namespace Microsoft.VisualBasic.CompilerServices {
 	[Microsoft.VisualBasic.CompilerServices.StandardModuleAttribute] 
 	[System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Never)] 
@@ -55,13 +52,13 @@ namespace Microsoft.VisualBasic.CompilerServices {
 		  * @return DateTime The DateTime value that converted from the source object
 		  * @see system.Convert#ToDateTime
 		  */
-		public static System.DateTime FromObject (System.Object Value) { 
-			if ((object)Value == null)
-				return new DateTime();	//Mainsoft code was wrong, struct are value types and can't be null
-			if (Value is string) 
-				return FromString((string)Value);
-			if(Value is DateTime)
-				return (DateTime)Value;
+		public static DateTime FromObject (object Value) { 
+			//if (Value == null)return null;//per Mainsoft code.
+			if (Value == null)return DateTime.MinValue; //Can't return null for datetime type
+
+			if (Value is string) return FromString((string)Value);
+
+			if(Value is DateTime)return (DateTime)Value;
 			throw new InvalidCastException("InvalidCast_From " + Value.GetType().Name + " ToDate");
 		}
 
@@ -70,7 +67,7 @@ namespace Microsoft.VisualBasic.CompilerServices {
 		 * @param value The value to convert.
 		 * @return DateTime The value that extracted from the input string.
 		 */
-		public static System.DateTime FromString (System.String Value) {
+		public static System.DateTime FromString (string Value) {
 			return FromString(Value, System.Globalization.CultureInfo.CurrentCulture);
 		}
 
@@ -82,11 +79,15 @@ namespace Microsoft.VisualBasic.CompilerServices {
 		 * @param value - The string that converted to DateTime
 		 * @return DateTime The value that extracted from the input string.
 		 */
-		public static System.DateTime FromString (System.String Value, System.Globalization.CultureInfo culture) { 
+		public static System.DateTime FromString (string Value, System.Globalization.CultureInfo culture) { 
 			string val = Value;
-			if (Value != null && Value.Length > 2 && Value.StartsWith("#") && Value.EndsWith("#"))
-			    val = Value.Substring(1, Value.Length - 2);
-			return DateTime.Parse(val, culture, DateTimeStyles.AllowWhiteSpaces | DateTimeStyles.NoCurrentDateDefault);
+			if (Value != null
+			    && Value.Length > 2
+			    && Value.StartsWith("#")
+			    && Value.EndsWith("#"))
+			    val = Value.Substring(1, Value.Length - 1);
+			// 15 = DateTymeStyles.AllowWhiteSpaces || DateTymeStyles.NoCurrentDateDefault
+			return DateTime.Parse(val, culture,(System.Globalization.DateTimeStyles)15);
 		}
 	};
 }

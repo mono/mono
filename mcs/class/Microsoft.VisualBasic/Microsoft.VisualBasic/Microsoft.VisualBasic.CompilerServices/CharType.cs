@@ -31,7 +31,8 @@
 
 using System;
 
-namespace Microsoft.VisualBasic.CompilerServices {
+namespace Microsoft.VisualBasic.CompilerServices
+{
 	[Microsoft.VisualBasic.CompilerServices.StandardModuleAttribute] 
 	[System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Never)] 
 	sealed public class CharType {
@@ -44,11 +45,13 @@ namespace Microsoft.VisualBasic.CompilerServices {
 		   * @return char The char value that converted from the source object
 		   * @see system.Convert#ToChar
 		   */
-		public static char FromObject(Object Value) {
+		public static char FromObject(object Value) {
 			if (Value == null)
 				return '\0';
+
 			if (Value is string)
 				return FromString((string)Value);
+
 			//Mainsoft code creates a new execption, but that is just to convert from java execption to .net execption
 			return Convert.ToChar(Value);
 		}
@@ -60,7 +63,9 @@ namespace Microsoft.VisualBasic.CompilerServices {
 		   * @return char The value that extracted from the input string.
 		   */
 		public static char FromString(string Value) {
-			if (Value == null || Value.Length == 0)return '\0';
+			if (Value == null || Value.Length == 0)
+				return '\0';
+
 			return Value.ToCharArray()[0];
 		}
 	}

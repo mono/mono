@@ -32,7 +32,8 @@
 
 using System;
 
-namespace Microsoft.VisualBasic.CompilerServices {
+namespace Microsoft.VisualBasic.CompilerServices
+{
 	[Microsoft.VisualBasic.CompilerServices.StandardModuleAttribute] 
 	[System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Never)] 
 	sealed public class ShortType {
@@ -46,9 +47,11 @@ namespace Microsoft.VisualBasic.CompilerServices {
 		 * @return long The long value that converted from the source object
 		 * @see system.Convert#ToInt64
 		 */
-		public static short FromObject(Object Value) {
+		public static short FromObject(object Value) {
 			if (Value == null)return 0;
-			if (Value is string)return FromString((String) Value);
+
+			if (Value is string)return FromString((string) Value);
+
 			return Convert.ToInt16(Value);
 		}
 		/**
@@ -60,8 +63,9 @@ namespace Microsoft.VisualBasic.CompilerServices {
 		 * @return long The value that extracted from the input string.
 		 * @see Microsoft.VisualBasic.VBUtils#isNumber
 		 */
-		public static short FromString(String Value) {
+		public static short FromString(string Value) {
 			if (Value == null)return 0;
+
 			return short.Parse(Value); 
 		}
 

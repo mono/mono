@@ -32,7 +32,8 @@
 
 using System;
 
-namespace Microsoft.VisualBasic.CompilerServices {
+namespace Microsoft.VisualBasic.CompilerServices
+{
 	[System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Never)] 
 	[Microsoft.VisualBasic.CompilerServices.StandardModuleAttribute] 
 	sealed public class LongType {
@@ -46,9 +47,11 @@ namespace Microsoft.VisualBasic.CompilerServices {
 		 * @return long The long value that converted from the source object
 		 * @see system.Convert#ToInt64
 		 */
-		public static long FromObject(Object Value) {
+		public static long FromObject(object Value) {
 			if (Value == null)return 0;
-			if (Value is string)return FromString((String) Value);
+
+			if (Value is string)return FromString((string) Value);
+
 			return Convert.ToInt64(Value);
 		}
 		/**
@@ -60,8 +63,9 @@ namespace Microsoft.VisualBasic.CompilerServices {
 		 * @return long The value that extracted from the input string.
 		 * @see Microsoft.VisualBasic.VBUtils#isNumber
 		 */
-		public static long FromString(String Value) {
+		public static long FromString(string Value) {
 			if (Value == null)return 0;
+
 			return long.Parse(Value); 
 		}
 

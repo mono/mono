@@ -33,7 +33,8 @@
   */
 using System;
 
-namespace Microsoft.VisualBasic.CompilerServices {
+namespace Microsoft.VisualBasic.CompilerServices
+{
 	[Microsoft.VisualBasic.CompilerServices.StandardModuleAttribute] 
 	[System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Never)] 
 	sealed public class IntegerType {
@@ -47,11 +48,11 @@ namespace Microsoft.VisualBasic.CompilerServices {
 		 * @return int The value that extracted from the input string.
 		 * @see Microsoft.VisualBasic.VBUtils#isNumber
 		 */ 
-		public static System.Int32 FromString (System.String Value) {
+		public static System.Int32 FromString (string Value) {
 			if(Value == null)return 0;
+
 			double[] lRes = new double[1];
-			
-			return System.Int32.Parse(Value);
+			return Int32.Parse(Value);
 			//TODO:
 			// converet the following, then remove the above line
 			//
@@ -63,12 +64,14 @@ namespace Microsoft.VisualBasic.CompilerServices {
 			//			Environment.GetResourceString("Overflow_Int32"));
 			//	return (int) val;
 			//}
-			return 0;
+			//return 0;
 		}
 
-		public static System.Int32 FromObject (System.Object Value) { 
+		public static System.Int32 FromObject (object Value) { 
 			if ((object)Value==null)return 0;
+
 			if(Value is string)return FromString((string) Value);
+
 			if(Value is int)return ((int)Value);
                         
 			return System.Convert.ToInt32(Value);
