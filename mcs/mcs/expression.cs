@@ -1317,7 +1317,7 @@ namespace Mono.CSharp {
 				return new StringLiteral (ls.Value + rs.Value);
 			}
 			
-			return this;
+			return null;
 		}
 		
 		public override Expression DoResolve (EmitContext ec)
@@ -1346,8 +1346,14 @@ namespace Mono.CSharp {
 			left = left.Reduce (ec);
 			right = right.Reduce (ec);
 
-			if (left is Constant && right is Constant)
-				return ConstantFold (ec);
+			if (left is Constant && right is Constant){
+				//
+				// This is temporary until we do the full folding
+				//
+				Expression e = ConstantFold (ec);
+				if (e != null)
+					return e;
+			}
 
 			return ResolveOperator (ec);
 		}
