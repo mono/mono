@@ -1,3 +1,8 @@
+
+Thu Jan 15 16:30:24 CET 2004 Paolo Molaro <lupus@ximian.com>
+
+	* exceptions-ppc.c: fix build on Linux/PPC.
+
 2004-01-14  Zoltan Varga  <vargaz@freemail.hu>
 
 	* tramp-x86.c (x86_magic_trampoline): Disable code patching when
