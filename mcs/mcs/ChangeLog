@@ -1,3 +1,8 @@
+2004-12-03  Martin Baulig  <martin@ximian.com>
+
+	* delegate.cs (NewDelegate.DoResolve): If we have an anonymous
+	method as our child, call AnonymousMethod.Compatible() on it.
+
 2004-12-03  Raja R Harinath  <rharinath@novell.com>
 
 	Disable XML documentation support in 'basic' profile.
