@@ -1,3 +1,10 @@
+2002-05-02  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Int32.cs:
+	* Int64.cs:
+	* UInt32.cs:
+	* UInt64.cs (Parse): don't use Char.IsNumber to test for hex digits.
+
 2002-05-01  Duncan Mak  <duncan@ximian.com>
 
 	* Convert.cs: 

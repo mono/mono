@@ -186,6 +186,11 @@ namespace System {
 			return false;
 		}
 
+		private static bool is_hex (char e)
+		{
+			return Char.IsDigit (e) || (e >= 'A' && e <= 'F') || (e >= 'a' && e <= 'f');
+		}
+		
 		[CLSCompliant(false)]
 		public static uint Parse (string s, NumberStyles style, IFormatProvider fp)
 		{
@@ -276,7 +281,7 @@ namespace System {
 			
 			IsAnything validDigit;
 			if (AllowHexSpecifier)
-				validDigit = new IsAnything (Char.IsNumber);
+				validDigit = new IsAnything (is_hex);
 			else
 				validDigit = new IsAnything (Char.IsDigit);
 			
