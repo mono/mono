@@ -1,3 +1,8 @@
+2003-06-30  Zoltan Varga  <vargaz@freemail.hu>
+
+	* run_test.sh: Added 'all' option to run all tests. Add class libraries
+	to MONO_PATH.
+
 2003-06-29  Sebastien Pouliot <spouliot@videotron.ca>
 
 	* corlib_test.args: Added ReflectionPermissionAttributeTest.cs and
