@@ -1486,22 +1486,28 @@ namespace System.Xml
 			while (ch != '<' && ch != -1) {
 				if (ch == '&') {
 					ReadChar ();
-					if (ReadReference (false))
+					ch = ReadReference (false);
+					if (returnEntityReference) // Returns -1 if char validation should not be done
 						break;
-				} else {
-					if (normalization && XmlConstructs.IsInvalid (ch))
-						throw new XmlException (this as IXmlLineInfo,
-							"Not allowed character was found.");
-					AppendValueChar (ReadChar ());
-					if (ch == ']') {
-						if (previousCloseBracketColumn == LinePosition - 1 &&
-							previousCloseBracketLine == LineNumber)
-							if (PeekChar () == '>')
-								throw new XmlException (this as IXmlLineInfo,
-									"Inside text content, character sequence ']]>' is not allowed.");
-						previousCloseBracketColumn = LinePosition;
-						previousCloseBracketLine = LineNumber;
-					}
+				}
+				else
+					ch = ReadChar ();
+
+				if (normalization && XmlConstructs.IsInvalid (ch))
+					throw new XmlException (this as IXmlLineInfo,
+						"Not allowed character was found.");
+				AppendValueChar (ch);
+
+				// Block "]]>"
+				if (ch == ']') {
+					if (previousCloseBracketColumn == LinePosition - 1 &&
+						previousCloseBracketLine == LineNumber)
+						if (PeekChar () == '>')
+							throw new XmlException (this as IXmlLineInfo,
+								"Inside text content, character sequence ']]>' is not allowed.");
+					// This tricky style is required to check "] ]]>"
+					previousCloseBracketColumn = LinePosition;
+					previousCloseBracketLine = LineNumber;
 				}
 				ch = PeekChar ();
 				notWhitespace = true;
@@ -1527,18 +1533,16 @@ namespace System.Xml
 		// character reference or one of the predefined entities.
 		// This allows the ReadText method to break so that the
 		// next call to Read will return the EntityReference node.
-		private bool ReadReference (bool ignoreEntityReferences)
+		private int ReadReference (bool ignoreEntityReferences)
 		{
 			if (PeekChar () == '#') {
 				ReadChar ();
-				ReadCharacterReference ();
+				return ReadCharacterReference ();
 			} else
-				ReadEntityReference (ignoreEntityReferences);
-
-			return returnEntityReference;
+				return ReadEntityReference (ignoreEntityReferences);
 		}
 
-		private void ReadCharacterReference ()
+		private int ReadCharacterReference ()
 		{
 			int value = 0;
 
@@ -1582,10 +1586,12 @@ namespace System.Xml
 			if (normalization && value < 0xffff && !XmlConstructs.IsValid (value))
 				throw new XmlException (this as IXmlLineInfo,
 					"Referenced character was not allowed in XML.");
-			AppendValueChar (value);
+			return value;
 		}
 
-		private void ReadEntityReference (bool ignoreEntityReferences)
+		// Returns -1 if it should not be validated.
+		// Real EOF must not be detected here.
+		private int ReadEntityReference (bool ignoreEntityReferences)
 		{
 			nameLength = 0;
 
@@ -1605,7 +1611,8 @@ namespace System.Xml
 
 			char predefined = XmlChar.GetPredefinedEntity (name);
 			if (predefined != 0)
-				AppendValueChar (predefined);
+//				AppendValueChar (predefined);
+				return predefined;
 			else {
 				if (ignoreEntityReferences) {
 					AppendValueChar ('&');
@@ -1620,6 +1627,7 @@ namespace System.Xml
 					entityReferenceName = name;
 				}
 			}
+			return -1;
 		}
 
 		// The reader is positioned on the first character of
@@ -1754,7 +1762,8 @@ namespace System.Xml
 					int startPosition = currentTag.Length - 1;
 					if (PeekChar () == '#') {
 						ReadChar ();
-						this.ReadCharacterReference ();
+						ch = ReadCharacterReference ();
+						AppendValueChar (ch);
 						break;
 					}
 					// Check XML 1.0 section 3.1 WFC.
@@ -2190,7 +2199,9 @@ namespace System.Xml
 			DTD.LineNumber = line;
 			DTD.LinePosition = column;
 
-			return new DTDReader (DTD, intSubsetStartLine, intSubsetStartColumn).GenerateDTDObjectModel ();
+			DTDReader dr = new DTDReader (DTD, intSubsetStartLine, intSubsetStartColumn);
+			dr.Normalization = this.normalization;
+			return dr.GenerateDTDObjectModel ();
 		}
 
 		private enum DtdInputState

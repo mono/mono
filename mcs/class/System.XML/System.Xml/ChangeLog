@@ -1,5 +1,17 @@
 2004-01-28  Atsushi Enomoto <atsushi@ximian.com>
 
+	* DTDReader.cs : Added Normalization.  Parameter Entity declaration
+	  should block invalid characters. (GEDecl should be fixed as well.)
+	* XmlConstruct.cs : Should allow surrogate chars.
+	* XmlNotation.cs : When prefix is empty (i.e. almost all cases) 
+	  Name should not add ':'. Patch by Boris Kirzner.
+	* XmlTextReader.cs : Modified private ReadCharacterReference() to
+	  return the character (or -1 when should not return anything).
+	  Now Text character reference are checked their character range.
+	  Set DTDReader.Normalization as well as the reader itself.
+
+2004-01-28  Atsushi Enomoto <atsushi@ximian.com>
+
 	* DTDReader.cs : Make sure that parameter entities are not allowed
 	  inside internal subset unless it appears as a markupdecl.
 	* DTDValidatingReader.cs : ENTITY or ENTITIES type attributes must have

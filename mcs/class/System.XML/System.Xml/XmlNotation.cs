@@ -60,7 +60,7 @@ namespace System.Xml
 		}
 
 		public override string Name {
-			get { return prefix + ":" + localName; }
+			get { return (prefix != String.Empty) ? (prefix + ":" + localName) : localName; }
 		}
 
 		public override XmlNodeType NodeType {

@@ -322,12 +322,12 @@ namespace System.Xml
 		/// <param name="c">The character to check.</param>
 		public static bool IsValid(char c) 
 		{
-			return (CHARS[c] & VALID) != 0;
+			return c > 0 && ((int) c > 0xffff || ((CHARS[c] & VALID) != 0));
 		}
 
 		public static bool IsValid(int c) 
 		{
-			return c > 0 && c < CHARS.Length && (CHARS[c] & VALID) != 0;
+			return c > 0 && ((int) c > 0xffff || (CHARS[c] & VALID) != 0);
 		}
 
 		/// <summary>

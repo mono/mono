@@ -40,6 +40,8 @@ namespace System.Xml
 		// Parameter entity placeholder
 		private int dtdIncludeSect;
 
+		private bool normalization;
+
 		private bool processingInternalSubset;
 
 		string cachedPublicId;
@@ -63,6 +65,11 @@ namespace System.Xml
 
 		public string BaseURI {
 			get { return currentInput.BaseURI; }
+		}
+
+		public bool Normalization {
+			get { return normalization; }
+			set { normalization = value; }
 		}
 
 		// A buffer for ReadContent for ReadOuterXml
@@ -124,7 +131,6 @@ namespace System.Xml
 			}
 			StringCollection sc = new StringCollection ();
 
-//			/*
 			// Entity recursion check.
 			foreach (DTDEntityDeclaration ent in DTD.EntityDecls.Values) {
 				if (ent.NotationName != null) {
@@ -132,7 +138,6 @@ namespace System.Xml
 					sc.Clear ();
 				}
 			}
-//			*/
 
 			return DTD;
 		}
@@ -553,41 +558,42 @@ namespace System.Xml
 				ClearValueBuffer ();
 				bool loop = true;
 				while (loop) {
-					int c = PeekChar ();
+					int c = ReadChar ();
 					switch (c) {
 					case -1:
 						throw new XmlException ("unexpected end of stream in entity value definition.");
 					case '"':
-						ReadChar ();
 						if (quoteChar == '"')
 							loop = false;
 						else
 							AppendValueChar ('"');
 						break;
 					case '\'':
-						ReadChar ();
 						if (quoteChar == '\'')
 							loop = false;
 						else
 							AppendValueChar ('\'');
 						break;
 					case '&':
-						ReadChar ();
 						if (PeekChar () == '#') {
 							ReadChar ();
-							ReadCharacterReference ();
+							c = ReadCharacterReference ();
+							if (XmlConstructs.IsInvalid (c))
+								throw new XmlException (this as IXmlLineInfo, "Invalid character was used to define parameter entity.");
+
 						}
 						else
 							AppendValueChar ('&');
 						break;
 					case '%':
-						ReadChar ();
 						string peName = ReadName ();
 						Expect (';');
 						valueBuffer.Append (GetPEValue (peName));
 						break;
 					default:
-						AppendValueChar (ReadChar ());
+						if (XmlConstructs.IsInvalid (c))
+							throw new XmlException (this as IXmlLineInfo, "Invalid character was used to define parameter entity.");
+						AppendValueChar (c);
 						break;
 					}
 				}
@@ -693,9 +699,14 @@ namespace System.Xml
 			ClearValueBuffer ();
 
 			while (PeekChar () != quoteChar) {
-				switch (PeekChar ()) {
+				int ch = ReadChar ();
+				/*
+				FIXME: Here, character reference range validity
+				should be checked, but also should consider
+				how to handle them e.g. &#38amp;
+				*/
+				switch (ch) {
 				case '%':
-					ReadChar ();
 					string name = ReadName ();
 					Expect (';');
 					if (decl.IsInternalSubset)
@@ -706,7 +717,9 @@ namespace System.Xml
 				case -1:
 					throw new XmlException ("unexpected end of stream.");
 				default:
-					AppendValueChar (ReadChar ());
+					if (this.normalization && XmlConstructs.IsInvalid (ch))
+						throw new XmlException (this as IXmlLineInfo, "Invalid character was found in the entity declaration.");
+					AppendValueChar (ch);
 					break;
 				}
 			}
@@ -1376,7 +1389,9 @@ namespace System.Xml
 			Expect ("?>");
 		}
 
-		private void ReadCharacterReference ()
+		// Note that now this method behaves differently from
+		// XmlTextReader's one. It calles AppendValueChar() internally.
+		private int ReadCharacterReference ()
 		{
 			int value = 0;
 
@@ -1421,6 +1436,7 @@ namespace System.Xml
 				throw new XmlException (this as IXmlLineInfo,
 					"Referenced character was not allowed in XML.");
 			AppendValueChar (value);
+			return value;
 		}
 
 		private void AppendNameChar (int ch)
