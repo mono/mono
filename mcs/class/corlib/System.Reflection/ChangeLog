@@ -1,3 +1,8 @@
+2004-05-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Binder.cs: check for ambiguous matches in SelectMethod and
+	SelectProperty. Fixes bug #58381.
+
 2004-05-06  Jackson Harper <jackson@ximian.com>
 
 	* Assembly.cs: remove TODO, this is done.

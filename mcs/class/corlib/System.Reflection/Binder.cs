@@ -272,8 +272,10 @@ namespace System.Reflection
 			{
 				MethodBase m;
 				int i, j;
+
 				if (match == null)
 					throw new ArgumentNullException ("match");
+
 				/* first look for an exact match... */
 				for (i = 0; i < match.Length; ++i) {
 					m = match [i];
@@ -287,6 +289,8 @@ namespace System.Reflection
 					if (j == types.Length)
 						return m;
 				}
+
+				MethodBase result = null;
 				for (i = 0; i < match.Length; ++i) {
 					m = match [i];
 					ParameterInfo[] args = m.GetParameters ();
@@ -294,30 +298,42 @@ namespace System.Reflection
 						continue;
 					if (!check_arguments (types, args))
 						continue;
-					return m;
+
+					if (result != null)
+						throw new AmbiguousMatchException ();
+
+					result = m;
 				}
-				return null;
+
+				return result;
 			}
 
 			public override PropertyInfo SelectProperty (BindingFlags bindingAttr, PropertyInfo[] match, Type returnType, Type[] indexes, ParameterModifier[] modifiers)
 			{
-				if (match == null)
-					throw new ArgumentNullException ("match");
+				if (match == null || match.Length == 0)
+					throw new ArgumentException ("No properties provided", "match");
 
 				bool haveRet = (returnType != null);
+				bool haveIndexes = (indexes != null && indexes.Length > 0);
+				PropertyInfo result = null;
 				foreach (PropertyInfo m in match) {
 					ParameterInfo[] args = m.GetIndexParameters ();
-					if (args.Length != indexes.Length)
+					if (haveIndexes && args.Length != indexes.Length)
 						continue;
 
 					if (haveRet && !check_type (m.PropertyType, returnType))
 						continue;
 
-					if (!check_arguments (indexes, args))
+					if (haveIndexes != !check_arguments (indexes, args))
 						continue;
-					return m;
+
+					if (result != null)
+						throw new AmbiguousMatchException ();
+
+					result = m;
 				}
-				return null;
+
+				return result;
 			}
 		}
 	}

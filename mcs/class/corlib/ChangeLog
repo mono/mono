@@ -1,3 +1,7 @@
+2004-05-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* corlib_test.dll.sources: added BinderTests.cs
+
 2004-05-12  Zoltan Varga  <vargaz@freemail.hu>
 
 	* corlib.dll.sources: Added System.Threading/CompressedStack.cs
