@@ -1,3 +1,7 @@
+2002-05-16  Piers Haken <piersh@friskit.com>
+
+	* Stream.cs: Implement synchronous {Begin|End}{Read|Write}() methods.
+
 2002-05-17  Nick Drochak  <ndrochak@gol.com>
 
 	* StreamWriter.cs: Implement buffering.  Also implemented dispose
