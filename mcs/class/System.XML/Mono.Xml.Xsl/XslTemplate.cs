@@ -256,7 +256,14 @@ namespace Mono.Xml.Xsl {
 			this.style = c.CurrentStylesheet;
 			
 			c.PushScope ();
-			
+
+			if (c.Input.MoveToAttribute ("mode", String.Empty)) {
+				c.Input.MoveToParent ();
+				if (!c.Input.MoveToAttribute ("match", String.Empty))
+					throw new XsltCompileException ("XSLT 'template' element must not have 'mode' attribute when it does not have 'match' attribute.", null, c.Input);
+				c.Input.MoveToParent ();
+			}
+
 			if (c.Input.NamespaceURI != Compiler.XsltNamespace) {
 				this.name = QName.Empty;
 				this.match = c.CompilePattern ("/", c.Input);
