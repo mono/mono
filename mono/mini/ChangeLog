@@ -1,3 +1,8 @@
+2004-03-28  Martin Baulig  <martin@ximian.com>
+
+	* mini.c (mmono_method_to_ir): In CEE_STELEM, do a handle_stobj()
+	if neccessary.	
+
 2004-03-28  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-x86.c (mono_arch_patch_code): Fix warnings.
