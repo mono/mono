@@ -1,3 +1,9 @@
+2004-02-17  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XPathNavigatorMatchesTest.cs : commonified some code blocks.
+	  Added MatchesAncestorsButNotCurrent(), MatchesParentAxis() and
+	  MatchesPredicatedParentAxis().
+
 2004-01-28  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XPathNavigatorCommonTests.cs : Added MoveToNamespace and IsDescendant.

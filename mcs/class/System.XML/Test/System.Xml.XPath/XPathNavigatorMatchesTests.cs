@@ -20,23 +20,24 @@ namespace MonoTests.System.Xml
 	[TestFixture]
 	public class XPathNavigatorMatchesTests : Assertion
 	{
+		private XPathNavigator CreateNavigator (string xml)
+		{
+			XmlDocument document = new XmlDocument ();
+			document.LoadXml (xml);
+			return document.CreateNavigator ();
+		}
+
 		[Test]
 		public void MatchRoot ()
 		{
-			XmlDocument document = new XmlDocument ();
-			document.LoadXml ("<foo />");
-			XPathNavigator navigator = document.CreateNavigator ();
-
+			XPathNavigator navigator = CreateNavigator ("<foo />");
 			Assert (navigator.Matches ("/"));
 		}
 
 		[Test]
 		public void FalseMatchRoot ()
 		{
-			XmlDocument document = new XmlDocument ();
-			document.LoadXml ("<foo />");
-			XPathNavigator navigator = document.CreateNavigator ();
-
+			XPathNavigator navigator = CreateNavigator ("<foo />");
 			Assert (!navigator.Matches ("foo"));
 		}
 
@@ -120,6 +121,34 @@ namespace MonoTests.System.Xml
 			XPathNavigator navigator = document.DocumentElement.CreateNavigator ();
 
 			Assert (!navigator.Matches ("foo[baz]"));
+		}
+
+		[Test]
+		public void MatchesAncestorsButNotCurrent ()
+		{
+			XPathNavigator nav = CreateNavigator ("<foo><bar><baz/></bar></foo>");
+			nav.MoveToFirstChild (); // foo
+			nav.MoveToFirstChild (); // bar
+			nav.MoveToFirstChild (); // baz
+			Assert (nav.Matches ("baz"));
+			Assert (nav.Matches ("bar/baz"));
+			Assert (!nav.Matches ("foo/bar"));
+		}
+
+		[Test]
+		[ExpectedException (typeof (XPathException))]
+		public void MatchesParentAxis ()
+		{
+			XPathNavigator nav = CreateNavigator ("<foo/>");
+			nav.Matches ("..");
+		}
+
+		[Test]
+		[ExpectedException (typeof (XPathException))]
+		public void MatchesPredicatedParentAxis ()
+		{
+			XPathNavigator nav = CreateNavigator ("<foo/>");
+			nav.Matches ("..[1]");
 		}
 	}
 }
