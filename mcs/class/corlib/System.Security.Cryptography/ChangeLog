@@ -1,3 +1,9 @@
+2002-11-01  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* bouncycastle.txt: Bouncy Castle JCE License.
+	* SHA384Managed.cs: Hash implementation based on BouncyCastle JCE.
+	* SHA512Managed.cs: Hash implementation based on BouncyCastle JCE.
+
 2002-10-30  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* DSASignatureDeformatter.cs: Fully implemented - however it 
