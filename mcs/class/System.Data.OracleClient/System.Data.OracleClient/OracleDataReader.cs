@@ -30,7 +30,6 @@ namespace System.Data.OracleClient {
 		OracleCommand command;
 		ArrayList dataTypeNames;
 		bool disposed = false;
-		int fieldCount;
 		bool isClosed;
 		bool isSelect;
 		bool hasRows;
@@ -44,8 +43,6 @@ namespace System.Data.OracleClient {
 			this.isClosed = false;
 			this.isSelect = (command.CommandText.Trim ().ToUpper ().StartsWith ("SELECT"));
 			this.schemaTable = ConstructSchemaTable ();
-			this.fieldCount = command.StatementHandle.ColumnCount;
-			Read ();
 		}
 
 		public int Depth {
@@ -53,7 +50,7 @@ namespace System.Data.OracleClient {
 		}
 
 		public int FieldCount {
-			get { return fieldCount; }
+			get { return command.StatementHandle.ColumnCount; }
 		}
 
 		public bool HasRows {
@@ -362,7 +359,6 @@ namespace System.Data.OracleClient {
 				break;
 			case OciDataType.Date:
 				tmp = Marshal.PtrToStringAnsi (defineHandle.Value, defineHandle.Size);
-				Console.WriteLine ((string) tmp);
 				if (tmp != null)
 					return DateTime.Parse ((string) tmp);
 				break;
@@ -371,10 +367,21 @@ namespace System.Data.OracleClient {
 			return DBNull.Value;
 		}
 
-		[MonoTODO]
 		public int GetValues (object[] values)
 		{
-			throw new NotImplementedException ();
+			int len = values.Length;
+			int count = command.StatementHandle.ColumnCount;
+			int retval = 0;
+
+			if (len > count)
+				retval = count;
+			else
+				retval = len;
+
+			for (int i = 0; i < retval; i += 1) 
+				values [i] = GetValue (i);
+
+			return retval;
 		}
 
 		IEnumerator IEnumerable.GetEnumerator ()
@@ -397,7 +404,9 @@ namespace System.Data.OracleClient {
 
 		public bool Read ()
 		{
-			return command.StatementHandle.Fetch ();
+			bool retval = command.StatementHandle.Fetch ();
+			return retval;
+			//return command.StatementHandle.Fetch ();
 		}
 	}
 }
