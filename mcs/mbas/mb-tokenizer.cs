@@ -30,10 +30,10 @@ namespace Mono.MonoBASIC
 		// TODO: public SourceFile file_name;
 		public string file_name;
 		public string ref_name;
-		public int ref_line = 1;
-		public int line = 1;
+		public int ref_line = 0;
+		public int line = 0;
 		public int col = 1;
-		public int current_token = Token.EOL;
+		public int current_token = Token.ERROR;
 		bool handle_get_set = false;
 		bool cant_have_a_type_character = false;
 
@@ -91,7 +91,7 @@ namespace Mono.MonoBASIC
 		// Values for the associated token returned
 		//
 		StringBuilder number;
-		int putback_char;
+		int putback_char = -1;
 		Object val;
 		
 		//
@@ -285,7 +285,7 @@ namespace Mono.MonoBASIC
 		{
 			this.ref_name = fname;
 			reader = input;
-			putback_char = -1;
+			putback('\n');
 			
 			Location.Push (fname);
 		}
@@ -387,14 +387,18 @@ namespace Mono.MonoBASIC
 					return Token.ERROR;
 				return Token.PERCENT;
 			case '#':
-				if (!tokens_seen)
+				if(tokens_seen)
 				{
-					workout_preprocessing_directive();
-					return Token.NONE;
+					if (cant_have_a_type_character) 
+						return ExtractDateTimeLiteral();
+					else
+						return Token.NUMBER_SIGN;
+				}
+				else 
+				{
+					tokens_seen = true;
+					return Token.HASH;
 				} 
-				if (cant_have_a_type_character)	
-					return ExtractDateTimeLiteral();
-				return Token.NUMBER_SIGN;
 			case '&':
 				if (!cant_have_a_type_character)
 					return Token.LONGTYPECHAR;
@@ -837,7 +841,7 @@ namespace Mono.MonoBASIC
 			
 			cant_have_a_type_character = false;
 			
-			return id.ToString ();
+			return id.ToString();
 		}
 
 		private bool is_doublequote(int currentChar)
@@ -1636,5 +1640,19 @@ namespace Mono.MonoBASIC
 			return true;
 		}
 
+		public void PositionCursorAtNextPreProcessorDirective()
+		{
+			int t;
+			
+			for(t = token(); t != Token.HASH && t != Token.EOF; t = token());
+
+			if(t == Token.EOF)
+				throw new ApplicationException("Unexpected EOF while looking for a pre-processor directive");
+			
+			if(t == Token.HASH) {
+				tokens_seen = false;
+				putback('#');
+			}
+		}
 	}
 }

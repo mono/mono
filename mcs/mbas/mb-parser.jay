@@ -21,6 +21,18 @@ namespace Mono.MonoBASIC
 	using Mono.Languages;
 	using Mono.MonoBASIC;
 
+	public class MBASException : ApplicationException
+	{
+		public int code;
+		public Location loc;
+
+		public MBASException(int code, Location loc, string text) : base(text)
+		{
+			this.code = code;
+			this.loc = loc;
+		}
+	}
+
 	/// <summary>
 	///    The MonoBASIC Parser
 	/// </summary>
@@ -128,7 +140,7 @@ namespace Mono.MonoBASIC
 		Stack expr_stack; 
 		
 		Stack tmp_blocks;
-	    Stack statement_stack;
+	    	Stack statement_stack;
 
 		// A stack for With expressions.
 		//
@@ -154,6 +166,199 @@ namespace Mono.MonoBASIC
 			return list;
 		}
 
+		bool in_external_source = false;
+		int in_marked_region = 0;
+
+		TokenizerController tokenizerController;
+		IfElseStateMachine ifElseStateMachine;
+
+		
+		public class IfElseStateMachine {
+			
+			[Flags]
+			public enum State {
+			START,
+			IF_SEEN,
+			ELSEIF_SEEN,
+			ELSE_SEEN,
+			ENDIF_SEEN,
+			MAX
+			}
+		
+			[Flags]
+			public enum Token {
+			START,
+			IF,
+			ELSEIF,
+			ELSE,
+			ENDIF,
+			EOF,
+			MAX
+			}
+
+			State state;
+			Stack stateStack;
+
+			public static Hashtable errStrings = new Hashtable();
+
+			int err=0;
+			static int[,] errTable = new int[(int)State.MAX, (int)Token.MAX];
+		
+			static IfElseStateMachine()
+			{
+				errStrings.Add(0, "");
+				errStrings.Add(30012, "#If must end with a matching #End If");
+				errStrings.Add(30013, "#ElseIf, #Else or #End If must be preceded by a matching #If");
+				errStrings.Add(30014, "#ElseIf must be preceded by a matching #If or #ElseIf");
+				errStrings.Add(30028, "#Else must be preceded by a matching #If or #ElseIf");
+				errStrings.Add(32030, "#ElseIf cannot follow #Else as part of #If block");
+
+				errTable[(int)State.START, (int)Token.IF] = 0;
+				errTable[(int)State.START, (int)Token.ELSEIF] = 30014;
+				errTable[(int)State.START, (int)Token.ELSE] = 30028;
+				errTable[(int)State.START, (int)Token.ENDIF] = 30013;
+				errTable[(int)State.START, (int)Token.EOF] = 0;
+
+				errTable[(int)State.IF_SEEN, (int)Token.IF] = 0;
+				errTable[(int)State.IF_SEEN, (int)Token.ELSEIF] = 0;
+				errTable[(int)State.IF_SEEN, (int)Token.ELSE] = 0;
+				errTable[(int)State.IF_SEEN, (int)Token.ENDIF] = 0;
+				errTable[(int)State.IF_SEEN, (int)Token.EOF] = 30012;
+
+				errTable[(int)State.ELSEIF_SEEN, (int)Token.IF] = 0;
+				errTable[(int)State.ELSEIF_SEEN, (int)Token.ELSEIF] = 0;
+				errTable[(int)State.ELSEIF_SEEN, (int)Token.ELSE] = 0;
+				errTable[(int)State.ELSEIF_SEEN, (int)Token.ENDIF] = 0;
+				errTable[(int)State.ELSEIF_SEEN, (int)Token.EOF] = 30012;
+
+				errTable[(int)State.ELSE_SEEN, (int)Token.IF] = 0;
+				errTable[(int)State.ELSE_SEEN, (int)Token.ELSEIF] = 32030;
+				errTable[(int)State.ELSE_SEEN, (int)Token.ELSE] = 30028;
+				errTable[(int)State.ELSE_SEEN, (int)Token.ENDIF] = 0;
+				errTable[(int)State.ELSE_SEEN, (int)Token.EOF] = 30012;
+
+				errTable[(int)State.ENDIF_SEEN, (int)Token.IF] = 0;
+				errTable[(int)State.ENDIF_SEEN, (int)Token.ELSEIF] = 30014;
+				errTable[(int)State.ENDIF_SEEN, (int)Token.ELSE] = 30028;
+				errTable[(int)State.ENDIF_SEEN, (int)Token.ENDIF] = 30013;
+				errTable[(int)State.ENDIF_SEEN, (int)Token.EOF] = 0;
+			}
+
+			public IfElseStateMachine()
+			{
+				state = State.START;
+
+				stateStack = new Stack();
+				stateStack.Push(state);
+			}
+
+			public void HandleToken(Token tok)
+			{
+				err = (int) errTable[(int)state, (int)tok];
+
+				if(err != 0)
+					throw new ApplicationException("Unexpected pre-processor directive #"+tok); 
+				
+				if(tok == Token.IF) {
+					stateStack.Push(state);
+					state = (State) tok;
+				}
+				else if(tok == Token.ENDIF) {
+					state = (State)stateStack.Pop();
+				}
+				else
+					state = (State)tok;
+			}
+
+			public int Error {
+				get {
+					return err;
+				}
+			}
+
+			public string ErrString {
+				get {
+					return (string) errStrings[err];
+				}
+			}
+		}
+
+		
+		public class TokenizerController {
+			
+			struct State
+			{
+				public bool CanAcceptTokens;
+				public bool CanSelectBlock;
+
+			}
+
+			State currentState;
+			Stack stateStack;
+			Tokenizer lexer;
+
+			public TokenizerController(Tokenizer lexer)
+			{
+				this.lexer = lexer;
+				stateStack = new Stack();
+
+				currentState.CanAcceptTokens = true;
+				currentState.CanSelectBlock = true;
+
+				stateStack.Push(currentState);
+			}
+
+			State parentState {
+				get {
+					return (State)stateStack.Peek();
+				}
+			}
+
+			public bool IsAcceptingTokens {
+				get {
+					return currentState.CanAcceptTokens;
+				}
+			}
+
+			public void PositionCursorAtNextPreProcessorDirective()
+			{
+				lexer.PositionCursorAtNextPreProcessorDirective();
+			}
+
+			public void PositionTokenizerCursor(IfElseStateMachine.Token tok, BoolLiteral expr)
+			{
+				if(tok == IfElseStateMachine.Token.ENDIF) {
+					currentState = (State)stateStack.Pop();
+
+					if(currentState.CanAcceptTokens)
+						return;
+					else {
+						PositionCursorAtNextPreProcessorDirective();
+						return;
+					}
+				}
+				
+				if(tok == IfElseStateMachine.Token.IF) {
+					stateStack.Push(currentState);
+					
+					currentState.CanAcceptTokens = parentState.CanAcceptTokens;
+					currentState.CanSelectBlock = true;
+				}
+			
+				if(parentState.CanAcceptTokens && 
+				    currentState.CanSelectBlock && (bool)(expr.GetValue()) ) {
+				    
+				    currentState.CanAcceptTokens = true;
+				    currentState.CanSelectBlock = false; 
+				    return;
+				}
+				else {
+					currentState.CanAcceptTokens = false;
+					PositionCursorAtNextPreProcessorDirective();
+					return;
+				}
+			}
+		}
 %}
 
 %token EOF
@@ -209,7 +414,7 @@ namespace Mono.MonoBASIC
 %token EACH	
 %token ELSE
 %token ELSEIF
-%token END	
+%token END
 %token ENUM	
 %token EOL
 %token ERASE
@@ -309,6 +514,8 @@ namespace Mono.MonoBASIC
 %token XOR
 %token YIELD // MonoBASIC extension
 
+%token HASH
+
 /* MonoBASIC single character operators/punctuation. */
 
 %token OPEN_BRACKET  "["
@@ -396,14 +603,16 @@ namespace Mono.MonoBASIC
 %%
 
 compilation_unit
-	: opt_option_directives
+	: logical_end_of_line
+	  opt_option_directives
 	  opt_imports_directives 
 	  opt_attributes
 	  opt_declarations 
 	  EOF
 	  {
-		$$ = $4;
+		$$=$5;
 	  }
+	
 	;
 	  
 opt_option_directives
@@ -449,7 +658,7 @@ text_or_binary
 	;
 	  
 option_explicit_directive
-	: OPTION EXPLICIT on_off EOL
+	: OPTION EXPLICIT on_off logical_end_of_line
 	  {
 		if (!UseExtendedSyntax)
 			OptionExplicit = (bool)$3;
@@ -462,7 +671,7 @@ option_explicit_directive
 	  
 			
 option_strict_directive
-	: OPTION STRICT on_off EOL
+	: OPTION STRICT on_off logical_end_of_line
 	  {
 		if (!UseExtendedSyntax)
 			OptionStrict = (bool)$3;
@@ -474,7 +683,7 @@ option_strict_directive
 	;
 	  
 option_compare_directive
-	: OPTION COMPARE text_or_binary EOL
+	: OPTION COMPARE text_or_binary logical_end_of_line
 	  {
 		OptionCompareBinary = (bool)$3;
 	  }
@@ -556,7 +765,7 @@ imports_directives
 	;
 
 imports_directive
-	: IMPORTS imports_terms EOL
+	: IMPORTS imports_terms logical_end_of_line
 	;
 
 imports_terms
@@ -773,7 +982,7 @@ named_argument
 	;
 				
 namespace_declaration
-	: opt_attributes NAMESPACE qualified_identifier EOL
+	: opt_attributes NAMESPACE qualified_identifier logical_end_of_line
 	  {
 		Attributes attrs = (Attributes) $1;
 
@@ -787,7 +996,7 @@ namespace_declaration
 	  } 
 	  opt_imports_directives
 	  opt_declarations
-	  END NAMESPACE EOL
+	  END NAMESPACE logical_end_of_line
 	  { 
 		current_namespace = current_namespace.Parent;
 	  }
@@ -813,7 +1022,7 @@ type_spec_declaration
 	;
 
 class_declaration
-	: CLASS identifier EOL opt_inherits opt_implements
+	: CLASS identifier logical_end_of_line opt_inherits opt_implements
 	  {
 		// Module members are static by default, but Class *can't* be declared static
 		// so we must fix it, if mbas was the one actually responsible for this
@@ -833,7 +1042,7 @@ class_declaration
 		RootContext.Tree.RecordDecl (name, new_class);
 	  }
 	  opt_class_member_declarations
-	  END CLASS EOL
+	  END CLASS logical_end_of_line
 	  {
 		Class new_class = (Class) current_container;
 		new_class.Bases = (ArrayList) $4;	
@@ -847,12 +1056,12 @@ class_declaration
 
 opt_inherits
 	: /* empty */				{ $$ = null; }
-	| INHERITS type_list EOL 	{ $$ = $2; }
+	| INHERITS type_list logical_end_of_line 	{ $$ = $2; }
 	;
 
 opt_implements
 	: /* empty */				{ $$ = null; }
-	| IMPLEMENTS type_list EOL 	{ $$ = $2; }
+	| IMPLEMENTS type_list logical_end_of_line 	{ $$ = $2; }
 	;
 
 opt_modifiers
@@ -894,7 +1103,7 @@ modifier
 	;
 
 module_declaration
-	: MODULE identifier EOL
+	: MODULE identifier logical_end_of_line
 	  { 
 		Module new_module;
 		string name;
@@ -909,7 +1118,7 @@ module_declaration
 		RootContext.Tree.RecordDecl(name, new_module);
 	  }
 	  opt_module_member_declarations
-	  END MODULE EOL
+	  END MODULE logical_end_of_line
 	  {
 		Module new_module = (Module)current_container;
 
@@ -964,7 +1173,7 @@ module_member_declarator
 	;
 	
 constant_declaration
-	: CONST constant_declarators EOL
+	: CONST constant_declarators logical_end_of_line
 	{
 		// Module members are static by default, but constants *can't* be declared static
 		// so we must fix it, if mbas was the one actually responsible for this
@@ -1047,7 +1256,7 @@ must_override_declaration
 	;
 	
 must_override_sub_declaration
-	: MUSTOVERRIDE SUB identifier opt_params EOL
+	: MUSTOVERRIDE SUB identifier opt_params logical_end_of_line
 	  {	
 	  	if (current_container is Module)
 	  		Report.Error (433, "Methods in a Module cannot be declared 'MustOverride'.");
@@ -1069,7 +1278,7 @@ must_override_sub_declaration
 
 	
 must_override_func_declaration
-	: MUSTOVERRIDE FUNCTION identifier opt_type_character opt_params opt_type_with_ranks EOL
+	: MUSTOVERRIDE FUNCTION identifier opt_type_character opt_params opt_type_with_ranks logical_end_of_line
 	  {	
 		Expression ftype = ($6 == null) ? (($4 == null) ? TypeManager.	
 			system_object_expr : (Expression) $4 ) : (Expression) $6;
@@ -1094,7 +1303,7 @@ must_override_func_declaration
 	;
 	
 sub_declaration
-	: SUB identifier opt_params opt_evt_handler opt_implement_clause EOL
+	: SUB identifier opt_params opt_evt_handler opt_implement_clause logical_end_of_line
 	  { 
 	  	current_local_parameters = (Parameters) $3;
 		start_block(); 
@@ -1106,7 +1315,7 @@ sub_declaration
 		member_location = lexer.Location;
 	  }
 	  opt_statement_list 
-	  END SUB EOL
+	  END SUB logical_end_of_line
 	  {
 		Method method = new Method (TypeManager.system_void_expr, (int) current_modifiers, (string) $2,
 					    (Parameters) current_local_parameters, (Attributes) current_attributes, 
@@ -1149,7 +1358,7 @@ sub_declaration
 	
 func_declaration
 	: FUNCTION identifier opt_type_character
-	  opt_params opt_type_with_ranks opt_implement_clause EOL
+	  opt_params opt_type_with_ranks opt_implement_clause logical_end_of_line
 	  { 
 	  	current_local_parameters = (Parameters) $4;
 	  	member_location = lexer.Location;
@@ -1167,7 +1376,7 @@ func_declaration
 		declare_local_variables ((Expression) ftype, retval, lexer.Location);
 	  }	  
 	  opt_statement_list
-	  END FUNCTION EOL
+	  END FUNCTION logical_end_of_line
 	  {
 		Expression ftype = ($5 == null) ? (($3 == null) ? TypeManager.system_object_expr : (Expression) $3 ) : (Expression) $5;
 
@@ -1180,7 +1389,7 @@ func_declaration
 	;		
 
 struct_declaration
-	: STRUCTURE identifier EOL
+	: STRUCTURE identifier logical_end_of_line
 	  opt_implement_clause
 	  {
 		Struct new_struct;
@@ -1210,7 +1419,7 @@ struct_declaration
 		CheckDef (current_container.AddStruct (new_struct), new_struct.Name, new_struct.Location);
 		$$ = new_struct;
 	  }
-	  END STRUCTURE EOL
+	  END STRUCTURE logical_end_of_line
 	;
 	
 opt_struct_member_declarations
@@ -1249,7 +1458,7 @@ struct_member_declarator
 	;
 	
 event_declaration
-	: EVENT identifier AS type EOL
+	: EVENT identifier AS type logical_end_of_line
 	  {
 	  	VariableDeclaration var = new VariableDeclaration ((string) $2, (Expression) $4, lexer.Location);
 
@@ -1260,7 +1469,7 @@ event_declaration
 		CheckDef (current_container.AddEvent (e), e.Name, e.Location);
 
 	  }
-	| EVENT identifier opt_params EOL
+	| EVENT identifier opt_params logical_end_of_line
 	  {
 		string delName = (string) $2;
 		delName = delName + "EventHandler";
@@ -1282,7 +1491,7 @@ event_declaration
 	;
 	
 enum_declaration
-	: ENUM identifier opt_type_spec EOL
+	: ENUM identifier opt_type_spec logical_end_of_line
 	  opt_enum_member_declarations
 	  { 
 		Location enum_location = lexer.Location;
@@ -1314,7 +1523,7 @@ enum_declaration
 		RootContext.Tree.RecordDecl (full_name, e);
 
 	  }
-	  END ENUM EOL
+	  END ENUM logical_end_of_line
 	;
 
 opt_enum_member_declarations
@@ -1341,7 +1550,7 @@ enum_member_declarations
 	;
 
 enum_member_declaration
-	: opt_attributes identifier EOL
+	: opt_attributes identifier logical_end_of_line
 	  {
 		$$ = new VariableDeclaration ((string) $2, null, lexer.Location, (Attributes) $1);
 	  }
@@ -1349,14 +1558,14 @@ enum_member_declaration
 	  {
 		  $$ = lexer.Location;
 	  }
-          ASSIGN expression EOL
+          ASSIGN expression logical_end_of_line
 	  { 
 		$$ = new VariableDeclaration ((string) $2, $5, lexer.Location, (Attributes) $1);
 	  }
 	;
 		
 interface_declaration
-	: INTERFACE identifier EOL
+	: INTERFACE identifier logical_end_of_line
 	  {
 		Interface new_interface;
 		string full_interface_name = MakeName ((string) $2);
@@ -1384,7 +1593,7 @@ interface_declaration
 			  new_interface.Name, new_interface.Location);
 
 	  }
-	  END INTERFACE EOL
+	  END INTERFACE logical_end_of_line
 	;
 
 opt_interface_base
@@ -1454,7 +1663,7 @@ opt_new
 	
 interface_method_declaration
 	: SUB identifier
-	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS EOL
+	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS logical_end_of_line
 	  {
 		$$ = new InterfaceMethod (TypeManager.system_void_expr, (string) $2, false,
 					  (Parameters) $4, current_attributes, lexer.Location);
@@ -1482,7 +1691,7 @@ interface_property_declaration
 	: opt_modifiers PROPERTY identifier
 	  OPEN_PARENS
 	  opt_formal_parameter_list
-	  CLOSE_PARENS opt_type_spec EOL
+	  CLOSE_PARENS opt_type_spec logical_end_of_line
 	  {
 		// FIXME we MUST pass property parameters
 		$$ = new InterfaceProperty ((Expression) $6, (string) $2, false,
@@ -1492,7 +1701,7 @@ interface_property_declaration
 	;
 	
 interface_event_declaration
-	: opt_attributes opt_new EVENT type identifier EOL
+	: opt_attributes opt_new EVENT type identifier logical_end_of_line
 	  {
 		$$ = new InterfaceEvent ((Expression) $4, (string) $5, (bool) $2, (Attributes) $1,
 					 lexer.Location);
@@ -1505,7 +1714,7 @@ interface_event_declaration
 	;
 	
 abstruct_propery_declaration
-	: MUSTOVERRIDE PROPERTY identifier opt_type_character opt_property_parameters AS type EOL
+	: MUSTOVERRIDE PROPERTY identifier opt_type_character opt_property_parameters AS type logical_end_of_line
 	  {	
 		Expression ftype = ($7 == null) ? (($4 == null) ? 
 				TypeManager.system_object_expr : (Expression) $4 ) : (Expression) $7;
@@ -1557,7 +1766,7 @@ abstruct_propery_declaration
 	
 	
  non_abstruct_propery_declaration
-	  : PROPERTY identifier opt_type_character opt_property_parameters AS type opt_implement_clause EOL
+	  : PROPERTY identifier opt_type_character opt_property_parameters AS type opt_implement_clause logical_end_of_line
 	  {
 		get_implicit_value_parameter_type  = 
 			($6 == null) ? (($3 == null) ? 
@@ -1579,7 +1788,7 @@ abstruct_propery_declaration
 		$$ = lexer.Location;
 	  }
 	  accessor_declarations 
-	  END PROPERTY EOL
+	  END PROPERTY logical_end_of_line
 	  {
 		lexer.PropertyParsing = false;
 
@@ -1661,7 +1870,7 @@ opt_set_accessor_declaration
 	;
 
 get_accessor_declaration
-	: opt_attributes GET EOL
+	: opt_attributes GET logical_end_of_line
 	  {
 		if ((current_modifiers & Modifiers.WRITEONLY) != 0)
 	  		Report.Error (30023, "'WriteOnly' properties cannot have a 'Get' accessor");
@@ -1678,7 +1887,7 @@ get_accessor_declaration
 		declare_local_variables (get_implicit_value_parameter_type, retval, lexer.Location);	
 	  }
 	  opt_statement_list
-	  END GET EOL
+	  END GET logical_end_of_line
 	  {
 		$$ = new Accessor ((Block) end_block(), (Attributes) $1);
 		current_local_parameters = null;
@@ -1687,7 +1896,7 @@ get_accessor_declaration
 	;
 
 set_accessor_declaration
-	: opt_attributes SET opt_set_parameter EOL
+	: opt_attributes SET opt_set_parameter logical_end_of_line
 	  {
         if ((current_modifiers & Modifiers.READONLY) != 0)
 	  		Report.Error (30022, "'ReadOnly' properties cannot have a 'Set' accessor");
@@ -1704,7 +1913,7 @@ set_accessor_declaration
 		lexer.PropertyParsing = false;
 	  }
 	  opt_statement_list
-	  END SET EOL
+	  END SET logical_end_of_line
 	  {
 		$$ = new Accessor ((Block) end_block(), (Attributes) $1);
 		current_local_parameters = null;
@@ -1747,7 +1956,7 @@ opt_set_parameter
 			
 field_declaration
 	: opt_dim_stmt 
-	  variable_declarators EOL
+	  variable_declarators logical_end_of_line
 	  {   		  
 		int mod = (int) current_modifiers;
 		
@@ -1777,7 +1986,7 @@ field_declaration
 	;
 	
 withevents_declaration
-	: opt_dim_stmt WITHEVENTS variable_declarators EOL
+	: opt_dim_stmt WITHEVENTS variable_declarators logical_end_of_line
 	  {
 		// Module members are static by default, but delegates *can't* be declared static
 		// so we must fix it, if mbas was the one actually responsible for this
@@ -1824,7 +2033,7 @@ delegate_declaration
 	  identifier OPEN_PARENS 
 	  opt_formal_parameter_list
 	  CLOSE_PARENS 
-	  EOL
+	  logical_end_of_line
 	  {
 		Location l = lexer.Location;
 		// Module members are static by default, but delegates *can't* be declared static
@@ -1845,7 +2054,7 @@ delegate_declaration
 	| DELEGATE FUNCTION	  
 	  identifier OPEN_PARENS 
 	  opt_formal_parameter_list
-	  CLOSE_PARENS opt_type_spec EOL
+	  CLOSE_PARENS opt_type_spec logical_end_of_line
 	  {
 		Location l = lexer.Location;
 		
@@ -1887,7 +2096,7 @@ opt_empty_parens
 	;	
 
 constructor_declaration
-	: SUB NEW opt_params EOL
+	: SUB NEW opt_params logical_end_of_line
 	  {
 	  	current_local_parameters = (Parameters) $3;
 	  	start_block();
@@ -1909,7 +2118,7 @@ constructor_declaration
 		CheckDef (current_container.AddConstructor(c), c.Name, c.Location);
 		current_local_parameters = null;
 	  }
-	  END SUB EOL
+	  END SUB logical_end_of_line
 	;
 	
 opt_formal_parameter_list
@@ -3924,9 +4133,147 @@ interface_type
 	;
 	
 end_of_stmt
-	: EOL
+	: logical_end_of_line
 	| COLON
 	;	
+
+logical_end_of_line
+	: EOL
+	| logical_end_of_line pp_directive 
+	;
+
+pp_directive
+	: HASH IDENTIFIER OPEN_PARENS LITERAL_STRING COMMA LITERAL_INTEGER CLOSE_PARENS EOL
+	  { 
+	  	if(tokenizerController.IsAcceptingTokens)
+	  	{
+	  		if(in_external_source) 
+				Report.Error (30205, lexer.Location, "#ExternalSource directives may not be nested");
+			else {
+	  			in_external_source = true;
+			
+				lexer.ref_name = (string) $4;
+				lexer.ref_line = (int) $6;
+				Mono.MonoBASIC.Location.Push(lexer.ref_name);
+			}
+	  	}
+	  }
+	| HASH IDENTIFIER LITERAL_STRING EOL
+	  {
+	  	if(tokenizerController.IsAcceptingTokens)
+	  	{
+	  		string id = ($2 as string);
+		
+		  	if(!($2 as string).ToLower().Equals("region"))
+				Report.Error (30205, lexer.Location, "Invalid Pre-processor directive");
+			else
+			{
+				++in_marked_region;
+				Console.WriteLine("Ref line = {0} Marked Region = {1}" , lexer.ref_line, in_marked_region);
+			}
+	  	}
+	  }
+	| HASH END IDENTIFIER EOL
+	  {
+	  	if(tokenizerController.IsAcceptingTokens)
+	  	{
+	  		if( ($3 as string).ToLower().Equals("externalsource"))
+	  		{
+				if(!in_external_source)
+					Report.Error (30205, lexer.Location, "No matching #ExternalSource directive found");
+				else
+				{
+					in_external_source = false;
+					lexer.ref_name = lexer.file_name;
+					lexer.ref_line = lexer.line;
+				}
+	  		}
+			else if(($3 as string).ToLower().Equals("region"))
+			{
+				if(in_marked_region > 0)
+					--in_marked_region;
+				else
+					Report.Error (30205, lexer.Location, "No matching #Region directive found");
+
+			
+				Console.WriteLine("Ref line = {0} Marked Region = {1}" , lexer.ref_line, in_marked_region);
+			}
+	  	}
+	  }
+	| HASH CONST IDENTIFIER ASSIGN boolean_literal EOL
+	  {
+	  	if(tokenizerController.IsAcceptingTokens)
+	  	{
+			//TODO;
+	  	}
+	  }
+	| HASH IF 
+	  {
+	      	IfElseStateMachine.Token tok = IfElseStateMachine.Token.IF;
+
+		try {
+			ifElseStateMachine.HandleToken(tok);
+		}
+		catch(ApplicationException) {
+			throw new MBASException(ifElseStateMachine.Error, lexer.Location, ifElseStateMachine.ErrString);
+		}
+	  }
+  	   boolean_literal opt_then  EOL 
+	  {
+	  	HandleConditionalDirective(IfElseStateMachine.Token.IF, (BoolLiteral)$4);
+	  }
+	| HASH ELSEIF 
+	  {
+		      IfElseStateMachine.Token tok = IfElseStateMachine.Token.ELSEIF;
+		      try {
+			      ifElseStateMachine.HandleToken(tok);
+		      }
+		      catch(ApplicationException) {
+			      throw new MBASException(ifElseStateMachine.Error, lexer.Location, ifElseStateMachine.ErrString);
+		      }
+  	  }
+	   boolean_literal opt_then  EOL 
+	  { 
+		  HandleConditionalDirective(IfElseStateMachine.Token.ELSEIF, (BoolLiteral)$4);
+	  }
+	| HASH ELSE  
+  	  {
+		    IfElseStateMachine.Token tok = IfElseStateMachine.Token.ELSE;
+		    try {
+			    ifElseStateMachine.HandleToken(tok);
+		    }
+		    catch(ApplicationException) {
+			    throw new MBASException(ifElseStateMachine.Error, lexer.Location, ifElseStateMachine.ErrString);
+		    }
+	  }
+	  EOL 
+	  { 
+	  	HandleConditionalDirective(IfElseStateMachine.Token.ELSE, new BoolLiteral(true));
+	  }
+	| HASH END IF  
+	  {
+		  IfElseStateMachine.Token tok = IfElseStateMachine.Token.ENDIF;
+		  try {
+			  ifElseStateMachine.HandleToken(tok);
+		  }
+		  catch(ApplicationException) {
+			  throw new MBASException(ifElseStateMachine.Error, lexer.Location, ifElseStateMachine.ErrString);
+		  }
+	  }
+	  EOL 
+	  { 
+		HandleConditionalDirective(IfElseStateMachine.Token.ENDIF, new BoolLiteral(false));
+	  }
+	| HASH error EOL	  
+	{
+		if(tokenizerController.IsAcceptingTokens)
+			Report.Error(2999, lexer.Location, "Unrecognized Pre-Processor statement");
+		else
+			Report.Warning (9999, lexer.Location, 	"Unrecognized Pre-Processor statement");
+	}
+	  
+	;		
+
 %%
 
 
@@ -4429,13 +4776,21 @@ protected override int parse ()
 	OptionCompareBinary = InitialOptionCompareBinary;
 
 	lexer = new Tokenizer (input, name, defines);
+	
+	ifElseStateMachine = new IfElseStateMachine();
+	tokenizerController = new TokenizerController(lexer);
+	
 	StringBuilder value = new StringBuilder ();
 	try {
 		if (yacc_verbose_flag)
 			yyparse (lexer, new yydebug.yyDebugSimple ());
 		else
 			yyparse (lexer);
-	} catch (Exception e) {
+	} 
+	catch(MBASException e) {
+		Report.Error(e.code, e.loc, e.Message);
+	}
+	catch (Exception e) {
 		Report.Error (29999, lexer.Location, lexer.location + "\nParsing error in " + lexer.ref_name + "\n" + e.ToString());
 	}
 
@@ -4444,5 +4799,20 @@ protected override int parse ()
 	return Report.Errors;
 }
 
+void HandleConditionalDirective(IfElseStateMachine.Token tok, BoolLiteral expr)
+{
+	try {
+		tokenizerController.PositionTokenizerCursor(tok, expr);
+	}
+	catch(ApplicationException) {
+		tok = IfElseStateMachine.Token.EOF;
+		try {
+			ifElseStateMachine.HandleToken(tok);
+		}
+		catch(ApplicationException) {
+			throw new MBASException(ifElseStateMachine.Error, lexer.Location, ifElseStateMachine.ErrString);
+		}
+	}
+}
 /* end end end */
 }

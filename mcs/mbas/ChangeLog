@@ -1,3 +1,10 @@
+2004-07-30  Jambunathan K  <kjambunathan@novell.com>
+	* mb-parser.jay: 
+	* mb-tokenizer.cs: Added support for #region, #externalsource
+	and conditional compilation pre-processor directives.
+	Conditonal directives currently accept only boolean literals
+	as conditonal expressions. 
+	
 2004/07/26  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* mb-parser.jay : First try at SyncLock Statement #53230
 
