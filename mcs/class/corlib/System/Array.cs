@@ -541,7 +541,7 @@ namespace System
 	
 		public virtual void CopyTo (Array array, int index)
 		{
-			Copy (this, this.GetLowerBound(0), array, index, this.GetUpperBound (0));
+			Copy (this, this.GetLowerBound(0), array, index, this.GetLength (0));
 		}
 	}
 }
