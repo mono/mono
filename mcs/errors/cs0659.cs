@@ -1,6 +1,6 @@
-// cs0659.cs: "'E' overrides Object.Equals(object o) but does not override Object.GetHashCode()
+// cs0659.cs: 'E' overrides Object.Equals(object) but does not override Object.GetHashCode()
 // Line: 13
-// Compiler options: -warnaserror -warn:4
+// Compiler options: -warnaserror -warn:3
 
 public class Base
 {
