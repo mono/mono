@@ -167,6 +167,8 @@ namespace NpgsqlTypes
                 NativeTypeMapping.AddDbTypeAlias("text", DbType.AnsiStringFixedLength);
                 NativeTypeMapping.AddTypeAlias("text", typeof(String));
 
+		NativeTypeMapping.AddType("varchar", NpgsqlDbType.Varchar, DbType.String, true, null);
+
                 NativeTypeMapping.AddType("bytea", NpgsqlDbType.Bytea, DbType.Binary, true,
                 new ConvertNativeToBackendHandler(BasicNativeToBackendTypeConverter.ToBinary));
 
@@ -220,13 +222,8 @@ namespace NpgsqlTypes
 
                 NativeTypeMapping.AddType("timestamp", NpgsqlDbType.Timestamp, DbType.DateTime, true,
                 new ConvertNativeToBackendHandler(BasicNativeToBackendTypeConverter.ToDateTime));
-                
-                NativeTypeMapping.AddTypeAlias("timestamp", typeof(DateTime));
-                
-                NativeTypeMapping.AddType("interval", NpgsqlDbType.Interval, DbType.DateTime, true,
-                new ConvertNativeToBackendHandler(BasicNativeToBackendTypeConverter.ToDateTime));
 
-                //NativeTypeMapping.AddTypeAlias("interval", typeof(DateTime));
+                NativeTypeMapping.AddTypeAlias("timestamp", typeof(DateTime));
 
                 NativeTypeMapping.AddType("point", NpgsqlDbType.Point, DbType.Object, true,
                 new ConvertNativeToBackendHandler(ExtendedNativeToBackendTypeConverter.ToPoint));
@@ -299,7 +296,7 @@ namespace NpgsqlTypes
                     new NpgsqlBackendTypeInfo(0, "bpchar", NpgsqlDbType.Text, DbType.String, typeof(String),
                         null),
 
-                    new NpgsqlBackendTypeInfo(0, "varchar", NpgsqlDbType.Text, DbType.String, typeof(String),
+                    new NpgsqlBackendTypeInfo(0, "varchar", NpgsqlDbType.Varchar, DbType.String, typeof(String),
                         null),
 
                     new NpgsqlBackendTypeInfo(0, "text", NpgsqlDbType.Text, DbType.String, typeof(String),
@@ -352,9 +349,6 @@ namespace NpgsqlTypes
                         new ConvertBackendToNativeHandler(BasicBackendToNativeTypeConverter.ToTime)),
 
                     new NpgsqlBackendTypeInfo(0, "timestamp", NpgsqlDbType.Timestamp, DbType.DateTime, typeof(DateTime),
-                        new ConvertBackendToNativeHandler(BasicBackendToNativeTypeConverter.ToDateTime)),
-                    
-                    new NpgsqlBackendTypeInfo(0, "interval", NpgsqlDbType.Interval, DbType.DateTime, typeof(DateTime),
                         new ConvertBackendToNativeHandler(BasicBackendToNativeTypeConverter.ToDateTime)),
 
                     new NpgsqlBackendTypeInfo(0, "timestamptz", NpgsqlDbType.Timestamp, DbType.DateTime, typeof(DateTime),

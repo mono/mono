@@ -100,5 +100,8 @@
 	<data name="Log_StringRead">
 		<value>String read: {0}.</value>
 	</data>
+    <data name="Log_StringWritten">
+        <value>String written: {0}.</value>
+    </data>
     
 </root>

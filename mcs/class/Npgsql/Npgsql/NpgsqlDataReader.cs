@@ -457,7 +457,7 @@ namespace Npgsql
         }
 
         /// <summary>
-        /// Gets the value of a column converted to a Boolean.
+        /// Gets the value of a column as Boolean.
         /// </summary>
         public Boolean GetBoolean(Int32 i)
         {
@@ -465,11 +465,11 @@ namespace Npgsql
             // and parsing from there?
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "GetBoolean");
 
-            return Convert.ToBoolean(GetValue(i));
+            return (Boolean) GetValue(i);
         }
 
         /// <summary>
-        /// Gets the value of a column converted to a Byte.  Not implemented.
+        /// Gets the value of a column as Byte.  Not implemented.
         /// </summary>
         public Byte GetByte(Int32 i)
         {
@@ -506,7 +506,7 @@ namespace Npgsql
         }
 
         /// <summary>
-        /// Gets the value of a column converted to a Char.  Not implemented.
+        /// Gets the value of a column as Char.  Not implemented.
         /// </summary>
         public Char GetChar(Int32 i)
         {
@@ -537,83 +537,83 @@ namespace Npgsql
         }
 
         /// <summary>
-        /// Gets the value of a column converted to Int16.
+        /// Gets the value of a column as Int16.
         /// </summary>
         public Int16 GetInt16(Int32 i)
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "GetInt16");
 
-            return Convert.ToInt16(GetValue(i));
+            return (Int16) GetValue(i);
         }
 
         /// <summary>
-        /// Gets the value of a column converted to Int32.
+        /// Gets the value of a column as Int32.
         /// </summary>
         public Int32 GetInt32(Int32 i)
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "GetInt32");
 
-            return Convert.ToInt32(GetValue(i));
+            return (Int32) GetValue(i);
         }
 
         /// <summary>
-        /// Gets the value of a column converted to Int64.
+        /// Gets the value of a column as Int64.
         /// </summary>
         public Int64 GetInt64(Int32 i)
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "GetInt64");
 
-            return Convert.ToInt64(GetValue(i));
+            return (Int64) GetValue(i);
         }
 
         /// <summary>
-        /// Gets the value of a column converted to Single.
+        /// Gets the value of a column as Single.
         /// </summary>
         public Single GetFloat(Int32 i)
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "GetFloat");
 
-            return Convert.ToSingle(GetValue(i));
+            return (Single) GetValue(i);
         }
 
         /// <summary>
-        /// Gets the value of a column converted to Double.
+        /// Gets the value of a column as Double.
         /// </summary>
         public Double GetDouble(Int32 i)
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "GetDouble");
 
-            return Convert.ToDouble(GetValue(i));
+            return (Double) GetValue(i);
         }
 
         /// <summary>
-        /// Gets the value of a column converted to a String.
+        /// Gets the value of a column as String.
         /// </summary>
         public String GetString(Int32 i)
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "GetString");
 
-            return Convert.ToString(GetValue(i));
+            return (String) GetValue(i);
         }
 
         /// <summary>
-        /// Gets the value of a column converted to Decimal.
+        /// Gets the value of a column as Decimal.
         /// </summary>
         public Decimal GetDecimal(Int32 i)
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "GetDecimal");
 
-            return Convert.ToDecimal(GetValue(i));
+            return (Decimal) GetValue(i);
         }
 
         /// <summary>
-        /// Gets the value of a column converted to a DateTime.
+        /// Gets the value of a column as DateTime.
         /// </summary>
         public DateTime GetDateTime(Int32 i)
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "GetDateTime");
 
-            return Convert.ToDateTime(GetValue(i));
+            return (DateTime) GetValue(i);
         }
 
         /// <summary>

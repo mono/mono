@@ -27,6 +27,7 @@
 
 using System;
 using System.Data;
+using System.Data.Common;
 using System.ComponentModel;
 
 namespace Npgsql
@@ -36,6 +37,7 @@ namespace Npgsql
     {
 
         bool disposed = false;
+
 
         private NpgsqlDataAdapter data_adapter;
         private NpgsqlCommand insert_command;
@@ -50,6 +52,7 @@ namespace Npgsql
         public NpgsqlCommandBuilder (NpgsqlDataAdapter adapter)
         {
             DataAdapter = adapter;
+            adapter.RowUpdating += new NpgsqlRowUpdatingEventHandler(OnRowUpdating);
         }
 
         public NpgsqlDataAdapter DataAdapter {
@@ -80,6 +83,44 @@ namespace Npgsql
                     }
                 }
             }
+        }
+
+        private void OnRowUpdating(Object sender, NpgsqlRowUpdatingEventArgs value) {
+            switch (value.StatementType)
+            {
+                case StatementType.Insert:
+                    value.Command = GetInsertCommand(value.Row);
+                    break;
+                case StatementType.Update:
+                    value.Command = GetUpdateCommand(value.Row);
+                    break;
+                case StatementType.Delete:
+                    value.Command = GetDeleteCommand(value.Row);
+                    break;
+            }
+
+            DataColumnMappingCollection columnMappings = value.TableMapping.ColumnMappings;
+            foreach (IDataParameter parameter in value.Command.Parameters)
+            {
+
+                string dsColumnName = parameter.SourceColumn;
+                if (columnMappings.Contains(parameter.SourceColumn))
+                {
+                    DataColumnMapping mapping = columnMappings[parameter.SourceColumn];
+                    if (mapping != null)
+                    {
+                        dsColumnName = mapping.DataSetColumn;
+                    }
+                }
+
+                DataRowVersion rowVersion = DataRowVersion.Default;
+                if (value.StatementType == StatementType.Update)
+                    rowVersion = parameter.SourceVersion;
+                if (value.StatementType == StatementType.Delete)
+                    rowVersion = DataRowVersion.Original;
+                parameter.Value = value.Row [dsColumnName, rowVersion];
+            }
+            value.Row.AcceptChanges ();
         }
 
         public string QuotePrefix {

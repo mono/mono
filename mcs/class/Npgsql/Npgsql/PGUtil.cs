@@ -304,6 +304,8 @@ namespace Npgsql
         public static void WriteString(String the_string, Stream network_stream, Encoding encoding)
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "WriteString");
+            
+            NpgsqlEventLog.LogMsg(resman, "Log_StringWritten", LogLevel.Debug, the_string);
 
             network_stream.Write(encoding.GetBytes(the_string + '\x00') , 0, encoding.GetByteCount(the_string) + 1);
         }

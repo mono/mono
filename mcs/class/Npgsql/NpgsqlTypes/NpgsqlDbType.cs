@@ -36,7 +36,6 @@ namespace NpgsqlTypes
         Date,
         Double,
         Integer,
-        Interval,
         Line,
         LSeg,
         Money,
@@ -48,7 +47,8 @@ namespace NpgsqlTypes
         Smallint,
         Text,
         Time,
-        Timestamp
+        Timestamp,
+	Varchar
 
     }
 

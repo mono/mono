@@ -3,11 +3,11 @@
 // Npgsql.NpgsqlDataAdapter.cs
 //
 // Author:
-//	Francisco Jr. (fxjrlists@yahoo.com.br)
+//  Francisco Jr. (fxjrlists@yahoo.com.br)
 //
-//	Copyright (C) 2002 The Npgsql Development Team
-//	npgsql-general@gborg.postgresql.org
-//	http://gborg.postgresql.org/project/npgsql/projdisplay.php
+//  Copyright (C) 2002 The Npgsql Development Team
+//  npgsql-general@gborg.postgresql.org
+//  http://gborg.postgresql.org/project/npgsql/projdisplay.php
 //
 //
 // This library is free software; you can redistribute it and/or
@@ -49,12 +49,10 @@ namespace Npgsql
     public sealed class NpgsqlDataAdapter : DbDataAdapter, IDbDataAdapter
     {
 
-        private NpgsqlCommand 	_selectCommand;
-        private NpgsqlCommand		_updateCommand;
-        private NpgsqlCommand		_deleteCommand;
-        private NpgsqlCommand		_insertCommand;
-
-        private NpgsqlCommandBuilder cmd_builder;
+        private NpgsqlCommand       _selectCommand;
+        private NpgsqlCommand       _updateCommand;
+        private NpgsqlCommand       _deleteCommand;
+        private NpgsqlCommand       _insertCommand;
 
         // Log support
         private static readonly String CLASSNAME = "NpgsqlDataAdapter";
@@ -70,7 +68,6 @@ namespace Npgsql
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, CLASSNAME);
             _selectCommand = selectCommand;
-            cmd_builder = new NpgsqlCommandBuilder(this);
         }
 
         public NpgsqlDataAdapter(String selectCommandText, NpgsqlConnection selectConnection) : this(new NpgsqlCommand(selectCommandText, selectConnection))
@@ -123,41 +120,6 @@ namespace Npgsql
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "OnRowUpdating");
             if ((RowUpdating != null) && (value is NpgsqlRowUpdatingEventArgs))
                 RowUpdating(this, (NpgsqlRowUpdatingEventArgs) value);
-
-            /*switch (value.StatementType)
-            {
-                case StatementType.Insert:
-                    value.Command = cmd_builder.GetInsertCommand(value.Row);
-                    break;
-                case StatementType.Update:
-                    value.Command = cmd_builder.GetUpdateCommand(value.Row);
-                    break;
-                case StatementType.Delete:
-                    value.Command = cmd_builder.GetDeleteCommand(value.Row);
-                    break;
-            }
-            DataColumnMappingCollection columnMappings = value.TableMapping.ColumnMappings;
-            foreach (IDataParameter parameter in value.Command.Parameters)
-            {
-
-                string dsColumnName = parameter.SourceColumn;
-                if (columnMappings.Contains(parameter.SourceColumn))
-                {
-                    DataColumnMapping mapping = columnMappings[parameter.SourceColumn];
-                    if (mapping != null)
-                    {
-                        dsColumnName = mapping.DataSetColumn;
-                    }
-                }
-                DataRowVersion rowVersion = DataRowVersion.Default;
-                if (value.StatementType == StatementType.Update)
-                    rowVersion = parameter.SourceVersion;
-                if (value.StatementType == StatementType.Delete)
-                    rowVersion = DataRowVersion.Original;
-                parameter.Value = value.Row [dsColumnName, rowVersion];
-            }
-            value.Row.AcceptChanges ();*/
-
         }
 
         ITableMappingCollection IDataAdapter.TableMappings
