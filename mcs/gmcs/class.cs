@@ -2580,7 +2580,7 @@ namespace Mono.CSharp {
 						260, ds.Location, "Missing partial modifier " +
 						"on declaration of type `{0}'; another " +
 						"partial implementation of this type exists",
-						member_name.GetPartialName());
+						member_name.GetTypeName());
 
 					Report.LocationOfPreviousError (loc);
 					return null;
@@ -2590,7 +2590,7 @@ namespace Mono.CSharp {
 					Report.Error (
 						261, loc, "Partial declarations of `{0}' " +
 						"must be all classes, all structs or " +
-						"all interfaces", member_name.GetPartialName ());
+						"all interfaces", member_name.GetTypeName ());
 					return null;
 				}
 
@@ -2598,7 +2598,7 @@ namespace Mono.CSharp {
 					Report.Error (
 						262, loc, "Partial declarations of `{0}' " +
 						"have conflicting accessibility modifiers",
-						member_name.GetPartialName ());
+						member_name.GetTypeName ());
 					return null;
 				}
 
