@@ -3,4 +3,5 @@
 	<dllmap dll="libc" target="@LIBC@" />
 	<dllmap dll="libxslt.dll" target="libxslt.so" />
 	<dllmap dll="libmySQL.dll" target="libmysqlclient.so" />
+	<dllmap dll="odbc32.dll" target="libodbc.so" />
 </configuration>
