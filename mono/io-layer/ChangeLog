@@ -1,3 +1,10 @@
+2002-03-27  Dan Lewis <dihlewis@yahoo.co.uk>
+
+	* unicode.h, unicode.c: changed to gunichar2
+	* io.h, io.c: changed strings to gunichar2*, added
+	SetFileAttributes(), GetCurrentDirectory(), SetCurrentDirectory(),
+	some fixes to FindFirstFile() and friends.
+
 2002-03-26  Dick Porter  <dick@ximian.com>
 
 	* types.h: Implement the large integer struct

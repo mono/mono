@@ -1,3 +1,8 @@
+2002-03-27  Dan Lewis <dihlewis@yahoo.co.uk>
+
+	* icall.c: removed last of PAL calls, added System.Environment
+	* file-io.h, file-io.c: MonoIO implementation
+	* object.h, object.c: mono_string_to_utf16() now returns gunichar2*
 
 Tue Mar 26 19:56:10 CET 2002 Paolo Molaro <lupus@ximian.com>
 
