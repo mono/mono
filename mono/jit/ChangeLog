@@ -1,5 +1,7 @@
 2002-05-17  Dietmar Maurer  <dietmar@ximian.com>
 
+	* x86.brg (reg): fixed array bound check
+
 	* emit-x86.c (enter_method): print method signature
 
 	* exception.c (arch_handle_exception): set trace info before we
