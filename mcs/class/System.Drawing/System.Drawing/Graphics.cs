@@ -369,22 +369,22 @@ namespace System.Drawing
 			GDIPlus.CheckStatus (status);
 		}
 
-		[MonoTODO]
 		public void DrawIcon (Icon icon, Rectangle targetRect)
 		{
-			throw new NotImplementedException ();
+			Image img = icon.ToBitmap ();
+			DrawImage (img, targetRect);
 		}
 
-		[MonoTODO]
 		public void DrawIcon (Icon icon, int x, int y)
 		{
-			throw new NotImplementedException ();
+			Image img = icon.ToBitmap ();
+			DrawImage (img, x, y);
 		}
 
-		[MonoTODO]
 		public void DrawIconUnstretched (Icon icon, Rectangle targetRect)
 		{
-			throw new NotImplementedException ();
+			Image img = icon.ToBitmap ();
+			DrawImageUnscaled (img, targetRect);
 		}
 		
 		public void DrawImage (Image image, RectangleF rect)
@@ -416,7 +416,7 @@ namespace System.Drawing
 		
 		public void DrawImage (Image image, Rectangle rect)
 		{
-			DrawImage(image, rect.X, rect.Y, rect.Width, rect.Height);
+			DrawImage (image, rect.X, rect.Y, rect.Width, rect.Height);
 		}
 
 		
@@ -650,22 +650,27 @@ namespace System.Drawing
 		
 		public void DrawImageUnscaled (Image image, Point point)
 		{
-			DrawImage(image, point.X, point.Y);
+			DrawImageUnscaled (image, point.X, point.Y);
 		}
 		
 		public void DrawImageUnscaled (Image image, Rectangle rect)
 		{
-			DrawImage(image, rect.X, rect.Y, rect.Width, rect.Height);
+			DrawImageUnscaled (image, rect.X, rect.Y, rect.Width, rect.Height);
 		}
 		
 		public void DrawImageUnscaled (Image image, int x, int y)
 		{
-			DrawImage(image, x, y);
+			DrawImage (image, x, y);
 		}
 
 		public void DrawImageUnscaled (Image image, int x, int y, int width, int height)
 		{
-			DrawImage(image, x, y, width, height);
+			Image tmpImg = new Bitmap (width, height);
+			Graphics g = FromImage (tmpImg);
+			g.DrawImage (image, 0, 0);
+			this.DrawImage (tmpImg, x, y, width, height);
+			tmpImg.Dispose ();
+			g.Dispose ();
 		}
 
 		public void DrawLine (Pen pen, PointF pt1, PointF pt2)
