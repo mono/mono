@@ -1,3 +1,10 @@
+2002-11-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* error.[ch]: added errno_to_WSA (). It displays a warning and return
+	WSASYSCALLFAILURE if there is no error mapping for the given errno,
+
+	* sockets.c: use errno_to_WSA and fixed display of warning for h_errno.
+
 2002-10-31  Dick Porter  <dick@ximian.com>
 
 	* io.h: 
