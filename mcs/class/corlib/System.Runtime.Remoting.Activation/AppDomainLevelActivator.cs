@@ -39,10 +39,17 @@ namespace System.Runtime.Remoting.Activation
 
 			// Create the object by calling the remote activation service
 
-			RemoteActivator remoteActivator = (RemoteActivator) RemotingServices.Connect (typeof (RemoteActivator), _activationUrl);
+			IActivator remoteActivator = (IActivator) RemotingServices.Connect (typeof (IActivator), _activationUrl);
 			ctorCall.Activator = ctorCall.Activator.NextActivator;
 
-			response = remoteActivator.Activate (ctorCall);
+			try
+			{
+				response = remoteActivator.Activate (ctorCall);
+			}
+			catch (Exception ex)
+			{
+				return new ConstructionResponse (ex, ctorCall);
+			}
 
 			// Create the client identity for the remote object
 

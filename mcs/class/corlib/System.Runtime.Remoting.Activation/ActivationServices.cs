@@ -32,7 +32,7 @@ namespace System.Runtime.Remoting.Activation
 			else
 				response = RemoteActivate (ctorCall);
 
-			if (response is IConstructionReturnMessage)
+			if (response is IConstructionReturnMessage && ((IConstructionReturnMessage)response).Exception == null)
 			{
 				Identity identity = RemotingServices.GetMessageTargetIdentity (ctorCall);
 				proxy.AttachIdentity (identity);

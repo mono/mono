@@ -15,11 +15,11 @@ namespace System.Runtime.Remoting.Activation
 	[Serializable]
 	internal class ContextLevelActivator: IActivator
 	{
-		IActivator _next;
+		IActivator m_NextActivator;
 
 		public ContextLevelActivator (IActivator next)
 		{
-			_next = next;
+			m_NextActivator = next;
 		}
 
 		public ActivatorLevel Level 
@@ -29,8 +29,8 @@ namespace System.Runtime.Remoting.Activation
 
 		public IActivator NextActivator 
 		{
-			get { return _next; }
-			set { _next = value; }
+			get { return m_NextActivator; }
+			set { m_NextActivator = value; }
 		}
 
 		public IConstructionReturnMessage Activate (IConstructionCallMessage ctorCall)
@@ -46,7 +46,7 @@ namespace System.Runtime.Remoting.Activation
 
 				try
 				{
-					return _next.Activate (ctorCall);
+					return m_NextActivator.Activate (ctorCall);
 				}
 				finally
 				{
@@ -54,7 +54,7 @@ namespace System.Runtime.Remoting.Activation
 				}
 			}
 			else
-				return _next.Activate (ctorCall);
+				return m_NextActivator.Activate (ctorCall);
 		}
 	}
 }

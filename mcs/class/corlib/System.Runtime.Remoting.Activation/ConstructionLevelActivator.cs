@@ -14,8 +14,6 @@ namespace System.Runtime.Remoting.Activation
 	[Serializable]
 	internal class ConstructionLevelActivator: IActivator
 	{
-		IActivator _next;
-
 		public ActivatorLevel Level 
 		{
 			get { return ActivatorLevel.Construction; }
@@ -23,8 +21,8 @@ namespace System.Runtime.Remoting.Activation
 
 		public IActivator NextActivator 
 		{
-			get { return _next; }
-			set { _next = value; }
+			get { return null; }
+			set { ; }
 		}
 
 		public IConstructionReturnMessage Activate (IConstructionCallMessage msg)

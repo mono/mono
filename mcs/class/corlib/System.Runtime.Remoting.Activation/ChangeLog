@@ -1,3 +1,14 @@
+2003-12-23  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* ActivationServices.cs: If remote activation returns an exception, do not
+	  try to attach the object identity to the return message.
+	* AppDomainLevelActivator.cs: Catch exceptions when execution remote 
+	  activation.
+	* ConstructionLevelActivator.cs: Do not store next activator. This is
+	  always the last one.
+	* ContextLevelActivator.cs: Renamed _next member to match MS.NET
+	  implementation.
+
 2003-10-18  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* ActivationServices.cs: make AllocateUninitializedClassInstance public,
