@@ -1,4 +1,7 @@
 2004-08-11 Bernie Solomon <bernard@ugsolutions.com>
+	* mb-parser.jay: first cut at TypeOf ... Is
+
+2004-08-11 Bernie Solomon <bernard@ugsolutions.com>
 	* expression.cs:
 	* ecore.cs: More enum changes to handle
 	implicit conversions better

@@ -4037,9 +4037,10 @@ relational_expression
 		$$ = new Binary (Binary.Operator.Equality,
 			         (Expression) $1, (Expression) $3, lexer.Location);
 	  }
-	| TYPEOF shift_expression IS namespace_or_type_name
+	| TYPEOF shift_expression IS type
 	  {
-		  //FIXME: Is this rule correctly defined ?
+		//FIXME: Is this rule correctly defined ?
+		$$ = new Is ((Expression) $2, (Expression) $4, lexer.Location);
 	  }
 	;
 
