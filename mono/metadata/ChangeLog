@@ -1,3 +1,12 @@
+2004-09-22  Zoltan Varga  <vargaz@freemail.hu>
+
+	* reflection.h (MonoResolveTokenError): New type.
+
+	* icall.c (ves_icall_System_Reflection_Module_ResolveMemberToken): New
+	icall.
+
+	* icall.c: Add an 'error' argument to the ResolveToken icalls.
+
 2004-09-22  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* icall.c: Support ContextBoundObject proxies in ves_icall_InternalExecute.
