@@ -30,16 +30,14 @@ namespace System.Drawing.Drawing2D
 		public HatchBrush(HatchStyle hatchStyle, Color foreColor, Color backColor)
 		{
 			Status status = GDIPlus.GdipCreateHatchBrush (hatchStyle, foreColor.ToArgb (), backColor.ToArgb (), out nativeObject);
-			if (status != Status.Ok)
-				throw GetException (status);
+			GDIPlus.CheckStatus (status);
 		}
 
 		public Color BackgroundColor {
 			get {
 				int argb;
 				Status status = GDIPlus.GdipGetHatchBackgroundColor (nativeObject, out argb);
-				if (status != Status.Ok)
-					throw GetException (status);
+				GDIPlus.CheckStatus (status);
 				return Color.FromArgb (argb);
 			}
 		}
@@ -48,8 +46,7 @@ namespace System.Drawing.Drawing2D
 			get {
 				int argb;
 				Status status = GDIPlus.GdipGetHatchForegroundColor (nativeObject, out argb);
-				if (status != Status.Ok)
-					throw GetException (status);
+				GDIPlus.CheckStatus (status);
 				return Color.FromArgb (argb);
 			}
 		}
@@ -58,10 +55,8 @@ namespace System.Drawing.Drawing2D
 			get {
 				HatchStyle hatchStyle;
 				Status status = GDIPlus.GdipGetHatchStyle (nativeObject, out hatchStyle);
-				if (status == Status.Ok)
-					return hatchStyle;
-				else
-					throw GetException (status);
+				GDIPlus.CheckStatus (status);
+				return hatchStyle;
 			}
 		}
 

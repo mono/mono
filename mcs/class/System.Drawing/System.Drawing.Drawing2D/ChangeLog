@@ -1,3 +1,8 @@
+2004-02-06  Ravindra <rkumar@novell.com>
+
+	* HatchBrush.cs: Using CheckStatus method instead of
+	GetException.
+
 2004-02-05  Ravindra <rkumar@novell.com>
 
 	* HatchBrush.cs: Implemented.
