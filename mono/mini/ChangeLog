@@ -1,4 +1,8 @@
 
+Fri May 23 15:30:53 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* mini.h, driver.c: prepare for leaf methods optimization.
+
 Fri May 23 15:28:32 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* mini.c: get targets of branches before converting a method.
