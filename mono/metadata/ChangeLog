@@ -1,5 +1,10 @@
 2004-02-02  Zoltan Varga  <vargaz@freemail.hu>
 
+	* gc.c threads.c: Make the finalizer thread a normal managed thread so
+	the finalizer code can use thread functionality.
+
+	* threads.c: Make some functions more robust.
+
 	* loader.c (mono_lookup_pinvoke_call): Another attempt at fixing #22532.
 
 	* metadata.h: Add new marshalling conventions.
