@@ -1,3 +1,7 @@
+2003-11-19  Jackson Harper <jackson@ximian.com>
+
+	* TemplateParser.cs: Fix typo in error message.
+		
 2003-11-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TemplateControlParser.cs: support @Reference. Fixes bug #49572. Thanks

@@ -158,7 +158,7 @@ namespace System.Web.UI
 					ThrowParseException ("The directive is missing a 'duration' attribute.");
 				if (atts ["VaryByParam"] == null)
 					ThrowParseException ("This directive is missing a 'VaryByParam' " +
-							"attribute, which should bne set to \"none\", \"*\", " +
+							"attribute, which should be set to \"none\", \"*\", " +
 							"or a list of name/value pairs.");
 
 				foreach (DictionaryEntry entry in atts) {
