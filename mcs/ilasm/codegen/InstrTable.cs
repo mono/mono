@@ -52,6 +52,7 @@ namespace Mono.ILASM {
                         inst_table["stloc.3"] = new ILToken (Token.INSTR_NONE, Op.stloc_3);
                         inst_table["ldnull"] = new ILToken (Token.INSTR_NONE, Op.ldnull);
                         inst_table["ldc.i4.m1"] = new ILToken (Token.INSTR_NONE, Op.ldc_i4_m1);
+                        inst_table["ldc.i4.M1"] = new ILToken (Token.INSTR_NONE, Op.ldc_i4_m1);
                         inst_table["ldc.i4.0"] = new ILToken (Token.INSTR_NONE, Op.ldc_i4_0);
                         inst_table["ldc.i4.1"] = new ILToken (Token.INSTR_NONE, Op.ldc_i4_1);
                         inst_table["ldc.i4.2"] = new ILToken (Token.INSTR_NONE, Op.ldc_i4_2);

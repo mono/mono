@@ -1,5 +1,9 @@
 2004-05-22  Jackson Harper  <jackson@ximian.com>
 
+	* InstrTable.cs: ldc.i4.M1 is aliased to ldc.i4.m1. Fixes bug #58524.
+	
+2004-05-22  Jackson Harper  <jackson@ximian.com>
+
 	* GlobalMethodRef.cs: Check for sentinel properly.
 	
 2004-04-03  Jackson Harper  <jackson@ximian.com>
