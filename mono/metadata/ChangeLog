@@ -1,4 +1,13 @@
 
+Mon Aug 5 19:30:04 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* assembly.c: fix mem corruption issue.
+	* image.h, image.c: added mono_image_get_resource () to access
+	managed resources.
+	* icall.c: implemented Assembly.EntryPoint property and some
+	Managed Resources related internalcalls.
+
+
 Mon Aug 5 18:18:03 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* image.c, image.h: impemented mono_image_get_entry_point ().
