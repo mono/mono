@@ -1,3 +1,10 @@
+2002-06-11  Nick Drochak  <ndrochak@gol.com>
+
+	* DoubleTest.cs: Add some more detail to failure message.
+	* Int64Test.cs: Add some details, and fix a copy-paste error.
+	* UInt32Test.cs: Fix currency symbol/culture issues
+	* UInt64Test.cs: Fix currency symbol/culture issues
+
 2002/06/11  Nick Drochak <ndrochak@gol.com>
 
 	* DateTimeTest.cs: Remove RunTest override and put culture manipulation

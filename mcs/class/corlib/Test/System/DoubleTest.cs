@@ -162,12 +162,13 @@ public class DoubleTest : TestCase
 			Assert("Parse should be a FormatException", typeof(FormatException) == e.GetType());
 		}		
 
+		double ovf_plus = 0;
 		try {
-			Double.Parse("1.79769313486232e308");
+			ovf_plus = Double.Parse("1.79769313486232e308");
 			Fail("Parse should have raised an OverflowException +");
 		}
 		catch (Exception e) {
-			AssertEquals("Should be an OverflowException +", typeof(OverflowException), e.GetType());
+			AssertEquals("Should be an OverflowException + for " + ovf_plus, typeof(OverflowException), e.GetType());
 		}		
 
 		try {

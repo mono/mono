@@ -8,6 +8,7 @@
 using NUnit.Framework;
 using System;
 using System.Globalization;
+using System.Threading;
 
 namespace MonoTests.System
 {
@@ -22,13 +23,13 @@ public class UInt64Test : TestCase
 	private const string MyString3 = "18446744073709551615";
 	private string[] Formats1 = {"c", "d", "e", "f", "g", "n", "p", "x" };
 	private string[] Formats2 = {"c5", "d5", "e5", "f5", "g5", "n5", "p5", "x5" };
-	private string[] Results1 = {NumberFormatInfo.InvariantInfo.CurrencySymbol+"0.00",
+	private string[] Results1 = {"",
 					"0", "0.000000e+000", "0.00",
 					"0", "0.00", "0.00 %", "0"};
 	private string[] ResultsNfi1 = {NumberFormatInfo.InvariantInfo.CurrencySymbol+"0.00",
 					"0", "0.000000e+000", "0.00",
 					"0", "0.00", "0.00 %", "0"};
-	private string[] Results2 = {NumberFormatInfo.InvariantInfo.CurrencySymbol+"18,446,744,073,709,551,615.00000",
+	private string[] Results2 = {"",
 					"18446744073709551615", "1.84467e+019", "18446744073709551615.00000",
 					"1.8447e+19", "18,446,744,073,709,551,615.00000",
 					"1,844,674,407,370,955,161,500.00000 %", "ffffffffffffffff"};
@@ -42,8 +43,23 @@ public class UInt64Test : TestCase
 	public UInt64Test() : base ("MonoTests.System.UInt64Test testcase") {}
 	public UInt64Test(string name) : base(name) {}
 
+	private CultureInfo old_culture;
+
 	protected override void SetUp() 
 	{
+		old_culture = Thread.CurrentThread.CurrentCulture;
+
+		// Set culture to en-US and don't let the user override.
+		Thread.CurrentThread.CurrentCulture = new CultureInfo ("en-US", false);
+
+		// We can't initialize this until we set the culture.
+		Results1 [0] = NumberFormatInfo.CurrentInfo.CurrencySymbol+"0.00";
+		Results2 [0] = NumberFormatInfo.CurrentInfo.CurrencySymbol+"18,446,744,073,709,551,615.00000";
+	}
+
+	protected override void TearDown()
+	{
+		Thread.CurrentThread.CurrentCulture = old_culture;
 	}
 
 	public static ITest Suite {

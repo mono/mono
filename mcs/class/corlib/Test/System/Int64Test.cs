@@ -319,7 +319,7 @@ public class Int64Test : TestCase
 
     public void TestUserCurrency()
     {
-        string s;
+        string s= "";
         long v;
 	int iTest = 1;
 	try {
@@ -331,14 +331,14 @@ public class Int64Test : TestCase
 		iTest++;
 		Assert(v == val1);
 	} catch (Exception e) {
-		Fail ("1 Unexpected exception at iTest = " + iTest + ":e = " + e);
+		Fail ("1 Unexpected exception at iTest = " + iTest + ", s = " + s + ":e = " + e);
 	}
    
 	iTest = 1;
 	try {
 		s = val2.ToString("c", NfiUser);
 		iTest++;
-		AssertEquals("Currency value type 1 is not what we want to try to parse", sval2UserCur1, s);
+		AssertEquals("Currency value type 2 is not what we want to try to parse", sval2UserCur1, s);
 		iTest++;
 		v = Int64.Parse(s, NumberStyles.Currency, NfiUser);
 		iTest++;
