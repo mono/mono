@@ -1,12 +1,23 @@
 // cs0075.cs: Casting a negative value needs to have the value in parentheses.
-// Line: 9
+// Line: 20
+class X
+{
+	public readonly int i;
 
-using System;
+	public X (int i)
+	{
+		this.i = i;
+	}
 
-class ErrorCS0075 {
-	static double x;
-	public static void Main () {
-		x = (double) -1;
+	public static implicit operator X (int value)
+	{
+		return new X (value);
+	}
+
+	public static void Main ()
+	{
+		int a = 4, b = 5;
+		X x = (X) -a;
+		System.Console.WriteLine (x.i);
 	}
 }
-
