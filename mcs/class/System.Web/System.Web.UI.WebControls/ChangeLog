@@ -1,3 +1,34 @@
+2004-08-03  Sanjay Gupta <gsanjay@novell.com>
+
+	* AdType.cs:
+	* AutoCompleteType.cs:
+	* ContentDirection.cs:
+	* DataControlCellType.cs:
+	* DataControlRowState.cs:
+	* DataControlRowType.cs:
+	* DetailsViewMode.cs:
+	* DynamicImageParameterMode.cs:
+	* FormViewMode.cs:
+	* HotSpotMode.cs:
+	* ImageFieldMode.cs:
+	* LiteralMode.cs:
+	* LogoutAction.cs:
+	* Orientation.cs:
+	* PagerButtons.cs:
+	* PathDirection.cs:
+	* ScrollBars.cs:
+	* SiteMapNodeItemType.cs:
+	* SiteMapNodeType.cs:
+	* SiteMapViewType.cs:
+	* SortDirection.cs:
+	* TableCaptionAlign.cs:
+	* TableHeaderScope.cs:
+	* TableViewMode.cs:
+	* TreeNodeSelectAction.cs:
+	* TreeNodeTypes.cs:
+	* TreeViewImageSet.cs:
+	* WizardStepType.cs: Added enumerations
+
 2004-08-02  Duncan Mak  <duncan@ximian.com>
 
 	* ButtonType.cs:
