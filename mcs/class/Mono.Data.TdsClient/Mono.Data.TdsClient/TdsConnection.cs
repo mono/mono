@@ -101,9 +101,6 @@ namespace Mono.Data.TdsClient {
 
 			int index = FindAnAvailableTds ();
 			if (index == -1) {
-				Console.WriteLine ("Making new tds");
-				if (parms == null)
-					Console.WriteLine ("fucked up again");
 				Tds tmpTds = new Tds (parms);
 				TdsInstance tmp = new TdsInstance (tmpTds);
 				tdsPool.Add (tmp);
@@ -274,11 +271,6 @@ namespace Mono.Data.TdsClient {
 					name = String.Empty;
 					value = String.Empty;
 				} 
-			}
-
-			foreach (string key in parameters)
-			{
-				Console.WriteLine ("{0}:{1}", key, parameters[key]);
 			}
 
 			if (this.ConnectionString == String.Empty)
