@@ -49,6 +49,26 @@ namespace Mono.Util.CorCompare {
 				{
 					Status.AddWarning ("Invalid type: is '"+strTypeMono+"', should be '"+strTypeMS+"'");
 				}
+
+				try
+				{
+					if (fiMono.IsStatic && fiMS.IsStatic &&
+						fiMono.IsLiteral && fiMS.IsLiteral)
+					{
+						object objMono = fiMono.GetValue (null);
+						object objMS = fiMS.GetValue (null);
+						long lMono = Convert.ToInt64 (objMono);
+						long lMS = Convert.ToInt64 (objMS);
+
+						if (lMono != lMS)
+						{
+							string strValMono = ((lMono < 0) ? "-0x" : "0x") + lMono.ToString ("x");
+							string strValMS   = ((lMS   < 0) ? "-0x" : "0x") +   lMS.ToString ("x");
+							Status.AddWarning ("Invalid value: is '"+strValMono+"', should be '"+strValMS+"'");
+						}
+					}
+				}
+				catch (Exception) {}
 			}
 			return m_nodeStatus;
 		}
