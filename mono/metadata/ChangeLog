@@ -1,3 +1,10 @@
+2004-02-18  Martin Baulig  <martin@ximian.com>
+
+	* icall.c: Put the klass->refclass changes back for methods and
+	fields, but not for properties and events.  We're currently not
+	distinguishing between DeclaringType and ReflectedType for
+	properties and events, that's what caused the regressions.
+
 2004-02-18  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* object.c:
