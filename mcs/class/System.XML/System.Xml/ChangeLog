@@ -1,5 +1,25 @@
 2003-07-24  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
+	* DTDObjectModel.cs : Added DTDEntityDeclarationCollection and
+	  DTDNotationDeclarationCollection and replaced Hashtables with them.
+	  Added NormalizedDefaultValue property for DTDAttributeDefinition.
+	* DTDValidatingReader.cs :
+	  - It now reads attribute values into value collection. 
+	  - Renamed consumedDefaultAttribute to consumedAttribute, and
+	    inContent to insideContent.
+	  - GetAttribute() should allow reader's other node state than element.
+	  - MoveToNextAttribute() should move when reader is placed other than
+	    the first attribute.
+	  - HandleError() now supports ValidationType.None (i.e. does nothing).
+	  - ValidateAttribute() now collects and resolves attribute value 
+	    entity references. (On the other hand, it doesn't support
+	    EntityHandling.ExpandCharEntity.)
+	  - NodeType shouldn't return Attribute after ReadAttributeValue().
+	    Now only Text is supported, but must also support EntityReference.
+	  - Add FilterNormalization() and partially support Normalization.
+
+2003-07-24  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
 	* XmlTextReader.cs :
 	  Read() now handles parser context stuff (BaseURI, XmlLang and 
 	  XmlSpace) correctly for an empty element.

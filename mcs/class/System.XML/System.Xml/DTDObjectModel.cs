@@ -17,15 +17,17 @@ namespace Mono.Xml
 {
 	public class DTDObjectModel
 	{
-		internal DTDElementDeclarationCollection elementDecls;
-		internal DTDAttListDeclarationCollection attListDecls;
-		internal Hashtable EntityDecls = new Hashtable ();
-		internal Hashtable NotationDecls = new Hashtable ();
+		DTDElementDeclarationCollection elementDecls;
+		DTDAttListDeclarationCollection attListDecls;
+		DTDEntityDeclarationCollection entityDecls;
+		DTDNotationDeclarationCollection notationDecls;
 
 		public DTDObjectModel ()
 		{
 			elementDecls = new DTDElementDeclarationCollection (this);
 			attListDecls = new DTDAttListDeclarationCollection (this);
+			entityDecls = new DTDEntityDeclarationCollection (this);
+			notationDecls = new DTDNotationDeclarationCollection (this);
 			factory = new DTDAutomataFactory (this);
 		}
 
@@ -59,6 +61,14 @@ namespace Mono.Xml
 
 		public DTDAttListDeclarationCollection AttListDecls {
 			get { return attListDecls; }
+		}
+
+		public DTDEntityDeclarationCollection EntityDecls {
+			get { return entityDecls; }
+		}
+
+		public DTDNotationDeclarationCollection NotationDecls {
+			get { return notationDecls; }
 		}
 
 		DTDElementAutomata rootAutomata;
@@ -151,9 +161,6 @@ namespace Mono.Xml
 			if (existing != null) {
 				// It should be valid and 
 				// has effect of additive declaration.
-//				throw new InvalidOperationException (String.Format (
-//					"AttList declaration for {0} was already added.",
-//					name));
 				foreach (DTDAttributeDefinition def in decl.Definitions)
 					if (decl.Get (def.Name) == null)
 						existing.Add (def);
@@ -169,6 +176,72 @@ namespace Mono.Xml
 
 		public ICollection Values {
 			get { return attListDecls.Values; }
+		}
+	}
+
+	public class DTDEntityDeclarationCollection
+	{
+		Hashtable entityDecls = new Hashtable ();
+		DTDObjectModel root;
+
+		public DTDEntityDeclarationCollection (DTDObjectModel root)
+		{
+			this.root = root;
+		}
+
+		public DTDEntityDeclaration this [string name] {
+			get { return entityDecls [name] as DTDEntityDeclaration; }
+		}
+
+		public void Add (string name, DTDEntityDeclaration decl)
+		{
+			if (entityDecls [name] != null)
+				throw new InvalidOperationException (String.Format (
+					"Entity declaration for {0} was already added.",
+					name));
+			decl.SetRoot (root);
+			entityDecls.Add (name, decl);
+		}
+
+		public ICollection Keys {
+			get { return entityDecls.Keys; }
+		}
+
+		public ICollection Values {
+			get { return entityDecls.Values; }
+		}
+	}
+
+	public class DTDNotationDeclarationCollection
+	{
+		Hashtable notationDecls = new Hashtable ();
+		DTDObjectModel root;
+
+		public DTDNotationDeclarationCollection (DTDObjectModel root)
+		{
+			this.root = root;
+		}
+
+		public DTDNotationDeclaration this [string name] {
+			get { return notationDecls [name] as DTDNotationDeclaration; }
+		}
+
+		public void Add (string name, DTDNotationDeclaration decl)
+		{
+			if (notationDecls [name] != null)
+				throw new InvalidOperationException (String.Format (
+					"Notation declaration for {0} was already added.",
+					name));
+			decl.SetRoot (root);
+			notationDecls.Add (name, decl);
+		}
+
+		public ICollection Keys {
+			get { return notationDecls.Keys; }
+		}
+
+		public ICollection Values {
+			get { return notationDecls.Values; }
 		}
 	}
 
@@ -360,6 +433,7 @@ namespace Mono.Xml
 		public ArrayList EnumeratedNotations = new ArrayList();
 		public DTDAttributeOccurenceType OccurenceType = DTDAttributeOccurenceType.None;
 		private string resolvedDefaultValue;
+		private string resolvedNormalizedDefaultValue;
 
 		internal DTDAttributeDefinition () {}
 
@@ -368,6 +442,19 @@ namespace Mono.Xml
 				if (resolvedDefaultValue == null)
 					resolvedDefaultValue = ComputeDefaultValue ();
 				return resolvedDefaultValue;
+			}
+		}
+
+		public string NormalizedDefaultValue {
+			get {
+				if (resolvedNormalizedDefaultValue == null) {
+					object o = (string) Datatype.ParseValue (ComputeDefaultValue (), null, null);
+					resolvedNormalizedDefaultValue = 
+						(o is string []) ? 
+						String.Join (" ", (string []) o) :
+						o.ToString ();
+				}
+				return resolvedNormalizedDefaultValue;
 			}
 		}
 
