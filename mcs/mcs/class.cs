@@ -809,9 +809,6 @@ namespace Mono.CSharp {
 				start = 0;
 			}
 
-			Report.Debug (64, "GET NORMAL BASES", this, Name, Kind,
-				      Bases, count, start, count-start);
-
 			TypeExpr [] ifaces = new TypeExpr [count-start];
 			
 			for (i = start, j = 0; i < count; i++, j++){
@@ -1134,7 +1131,7 @@ namespace Mono.CSharp {
 				} else if (mc is MethodCore)
 					((MethodCore) mc).OverridesSomething = true;
 
-				if (!mc.Define (this)){
+				if (!mc.Define (mc.Parent)){
 					remove_list.Add (mc);
 					continue;
 				}
@@ -2028,7 +2025,7 @@ namespace Mono.CSharp {
 			
 			if (methods != null)
 				foreach (Method m in methods)
-					m.Emit (m.ds);
+					m.Emit (m.Parent);
 
 			if (operators != null)
 				foreach (Operator o in operators)
@@ -2918,7 +2915,6 @@ namespace Mono.CSharp {
 	public abstract class MethodCore : MemberBase {
 		public readonly Parameters Parameters;
 		protected Block block;
-		public readonly TypeContainer ds;
 		
 		//
 		// Parameters, cached for semantic analysis.
@@ -2936,14 +2932,14 @@ namespace Mono.CSharp {
 
 		static string[] attribute_targets = new string [] { "method", "return" };
 
-		public MethodCore (TypeContainer ds, Expression type, int mod, int allowed_mod,
-				   bool is_interface, string name, Attributes attrs,
-				   Parameters parameters, Location loc)
-			: base (type, mod, allowed_mod, Modifiers.PRIVATE, name, attrs, loc)
+		public MethodCore (TypeContainer parent, Expression type, int mod,
+				   int allowed_mod, bool is_interface, string name,
+				   Attributes attrs, Parameters parameters, Location loc)
+			: base (parent, type, mod, allowed_mod, Modifiers.PRIVATE, name,
+				attrs, loc)
 		{
 			Parameters = parameters;
 			IsInterface = is_interface;
-			this.ds = ds;
 		}
 		
 		//
@@ -2975,11 +2971,12 @@ namespace Mono.CSharp {
 		protected virtual bool DoDefineParameters ()
 		{
 			// Check if arguments were correct
-			parameter_types = Parameters.GetParameterInfo (ds);
-			if ((parameter_types == null) || !CheckParameters (ds, parameter_types))
+			parameter_types = Parameters.GetParameterInfo (Parent);
+			if ((parameter_types == null) ||
+			    !CheckParameters (Parent, parameter_types))
 				return false;
 
-			parameter_info = new InternalParameters (ds, Parameters);
+			parameter_info = new InternalParameters (Parent, Parameters);
 
 			Parameter array_param = Parameters.ArrayParameter;
 			if ((array_param != null) &&
@@ -3463,12 +3460,13 @@ namespace Mono.CSharp {
 
 		public EmitContext CreateEmitContext (TypeContainer tc, ILGenerator ig)
 		{
-			return new EmitContext (tc, ds, Location, ig, ReturnType, ModFlags, false);
+			return new EmitContext (
+				tc, Parent, Location, ig, ReturnType, ModFlags, false);
 		}
 
 		public ObsoleteAttribute GetObsoleteAttribute ()
 		{
-			return GetObsoleteAttribute (ds);
+			return GetObsoleteAttribute (Parent);
 		}
 
 		/// <summary>
@@ -3491,7 +3489,8 @@ namespace Mono.CSharp {
 					return false;
 
 				foreach (Attribute a in attrs) {
-					string condition = a.GetConditionalAttributeValue (ds);
+					string condition = a.GetConditionalAttributeValue (
+						Parent);
 					if (RootContext.AllDefines.Contains (condition))
 						return false;
 				}
@@ -4465,9 +4464,10 @@ namespace Mono.CSharp {
 		//
 		// The constructor is only exposed to our children
 		//
-		protected MemberBase (Expression type, int mod, int allowed_mod, int def_mod, string name,
+		protected MemberBase (TypeContainer parent, Expression type, int mod,
+				      int allowed_mod, int def_mod, string name,
 				      Attributes attrs, Location loc)
-			: base (name, attrs, loc)
+			: base (parent, name, attrs, loc)
 		{
 			explicit_mod_flags = mod;
 			Type = type;
@@ -4745,7 +4745,7 @@ namespace Mono.CSharp {
 
 			if (MemberType.IsPointer && !UnsafeOK (container))
 				return false;
-			
+
 			//
 			// Check for explicit interface implementation
 			//
@@ -4758,8 +4758,19 @@ namespace Mono.CSharp {
 				ShortName = Name;
 
 			if (ExplicitInterfaceName != null) {
+				int errors = Report.Errors;
+
 				InterfaceType  = container.FindType (
 					Location, ExplicitInterfaceName);
+
+				if (Report.Errors != errors)
+					return false;
+				else if (InterfaceType == null) {
+					Report.Error (246, Location, "Can not find type `{0}'",
+						      ExplicitInterfaceName);
+					return false;
+				}
+
 				if (InterfaceType == null)
 					return false;
 
@@ -4830,9 +4841,11 @@ namespace Mono.CSharp {
 		//
 		// The constructor is only exposed to our children
 		//
-		protected FieldBase (Expression type, int mod, int allowed_mod, string name,
-				     object init, Attributes attrs, Location loc)
-			: base (type, mod, allowed_mod, Modifiers.PRIVATE, name, attrs, loc)
+		protected FieldBase (TypeContainer parent, Expression type, int mod,
+				     int allowed_mod, string name, object init,
+				     Attributes attrs, Location loc)
+			: base (parent, type, mod, allowed_mod, Modifiers.PRIVATE,
+				name, attrs, loc)
 		{
 			this.init = init;
 		}
@@ -4968,9 +4981,10 @@ namespace Mono.CSharp {
 		        Modifiers.UNSAFE |
 			Modifiers.READONLY;
 
-		public Field (Expression type, int mod, string name, Object expr_or_array_init,
-			      Attributes attrs, Location loc)
-			: base (type, mod, AllowedModifiers, name, expr_or_array_init, attrs, loc)
+		public Field (TypeContainer parent, Expression type, int mod, string name,
+			      Object expr_or_array_init, Attributes attrs, Location loc)
+			: base (parent, type, mod, AllowedModifiers, name, expr_or_array_init,
+				attrs, loc)
 		{
 		}
 
@@ -5349,14 +5363,17 @@ namespace Mono.CSharp {
 				}
 			}
 
-			public override EmitContext CreateEmitContext (TypeContainer tc, ILGenerator ig)
+			public override EmitContext CreateEmitContext (TypeContainer tc,
+								       ILGenerator ig)
 			{
-				return new EmitContext (tc, method.ds, method.Location, ig, ReturnType, method.ModFlags, false);
+				return new EmitContext (
+					tc, method.Parent, method.Location, ig, ReturnType,
+					method.ModFlags, false);
 			}
 
 			public override ObsoleteAttribute GetObsoleteAttribute ()
 			{
-				return method.GetObsoleteAttribute (method.ds);
+				return method.GetObsoleteAttribute (method.Parent);
 			}
 
 			public override string GetSignatureForError (TypeContainer tc)
@@ -5845,9 +5862,11 @@ namespace Mono.CSharp {
 
 		static string[] attribute_targets = new string [] { "event", "property" };
 
-		public EventProperty (DeclSpace ds, Expression type, int mod_flags, bool is_iface, string name,
-			Object init, Attributes attrs, Accessor add, Accessor remove, Location loc)
-			: base (ds, type, mod_flags, is_iface, name, init, attrs, loc)
+		public EventProperty (TypeContainer parent, Expression type, int mod_flags,
+				      bool is_iface, string name, Object init,
+				      Attributes attrs, Accessor add, Accessor remove,
+				      Location loc)
+			: base (parent, type, mod_flags, is_iface, name, init, attrs, loc)
 		{
 			Add = new AddDelegateMethod (this, add);
 			Remove = new RemoveDelegateMethod (this, remove);
@@ -5867,9 +5886,10 @@ namespace Mono.CSharp {
 
 		static string[] attribute_targets = new string [] { "event", "field", "method" };
 
-		public EventField (DeclSpace ds, Expression type, int mod_flags, bool is_iface, string name,
-			Object init, Attributes attrs, Location loc)
-			: base (ds, type, mod_flags, is_iface, name, init, attrs, loc)
+		public EventField (TypeContainer parent, Expression type, int mod_flags,
+				   bool is_iface, string name, Object init,
+				   Attributes attrs, Location loc)
+			: base (parent, type, mod_flags, is_iface, name, init, attrs, loc)
 		{
 			Add = new AddDelegateMethod (this);
 			Remove = new RemoveDelegateMethod (this);
@@ -6058,9 +6078,12 @@ namespace Mono.CSharp {
 				}
 			}
 
-			public override EmitContext CreateEmitContext (TypeContainer tc, ILGenerator ig)
+			public override EmitContext CreateEmitContext (TypeContainer tc,
+								       ILGenerator ig)
 			{
-				return new EmitContext (tc, method.ds, Location, ig, ReturnType, method.ModFlags, false);
+				return new EmitContext (
+					tc, method.Parent, Location, ig, ReturnType,
+					method.ModFlags, false);
 			}
 
 			public override string GetSignatureForError (TypeContainer tc)
@@ -6070,7 +6093,7 @@ namespace Mono.CSharp {
 
 			public override ObsoleteAttribute GetObsoleteAttribute ()
 			{
-				return method.GetObsoleteAttribute (method.ds);
+				return method.GetObsoleteAttribute (method.Parent);
 			}
 
 			protected override string[] ValidAttributeTargets {
@@ -6100,15 +6123,15 @@ namespace Mono.CSharp {
 		protected DelegateMethod Add, Remove;
 		public MyEventBuilder     EventBuilder;
 		public MethodBuilder AddBuilder, RemoveBuilder;
-		public DeclSpace ds;
 
-		public Event (DeclSpace ds, Expression type, int mod_flags, bool is_iface, string name,
-				Object init, Attributes attrs, Location loc)
-			: base (type, mod_flags, is_iface ? AllowedInterfaceModifiers : AllowedModifiers,
+		public Event (TypeContainer parent, Expression type, int mod_flags,
+			      bool is_iface, string name, Object init, Attributes attrs,
+			      Location loc)
+			: base (parent, type, mod_flags,
+				is_iface ? AllowedInterfaceModifiers : AllowedModifiers,
 				name, init, attrs, loc)
 		{
 			IsInterface = is_iface;
-			this.ds = ds;
 		}
 
 		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
@@ -6558,11 +6581,12 @@ namespace Mono.CSharp {
 
 		static string[] attribute_targets = new string [] { "method", "return" };
 
-		public Operator (OpType type, Expression ret_type, int mod_flags,
-				 Expression arg1type, string arg1name,
+		public Operator (TypeContainer parent, OpType type, Expression ret_type,
+				 int mod_flags, Expression arg1type, string arg1name,
 				 Expression arg2type, string arg2name,
 				 Block block, Attributes attrs, Location loc)
-			: base (ret_type, mod_flags, AllowedModifiers, Modifiers.PUBLIC, "", attrs, loc)
+			: base (parent, ret_type, mod_flags, AllowedModifiers,
+				Modifiers.PUBLIC, "", attrs, loc)
 		{
 			OperatorType = type;
 			Name = "op_" + OperatorType;

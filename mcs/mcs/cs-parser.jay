@@ -790,7 +790,7 @@ constant_declaration
 			Location l = constant.Location;
 
 			Const c = new Const (
-				(Expression) $4, (string) constant.identifier, 
+				current_class, (Expression) $4, (string) constant.identifier, 
 				(Expression) constant.expression_or_array_initializer, (int) $2, 
 				(Attributes) $1, l);
 
@@ -842,7 +842,7 @@ field_declaration
 		foreach (VariableDeclaration var in (ArrayList) $4){
 			Location l = var.Location;
 
-			Field field = new Field (type, mod, var.identifier, 
+			Field field = new Field (current_class, type, mod, var.identifier, 
 						 var.expression_or_array_initializer, 
 						 (Attributes) $1, l);
 
@@ -1417,8 +1417,10 @@ operator_declaration
 	  {
 		OperatorDeclaration decl = (OperatorDeclaration) $3;
 		
-		Operator op = new Operator (decl.optype, decl.ret_type, (int) $2, decl.arg1type, decl.arg1name,
-					    decl.arg2type, decl.arg2name, (Block) $5, (Attributes) $1, decl.location);
+		Operator op = new Operator (
+			current_class, decl.optype, decl.ret_type, (int) $2, decl.arg1type,
+			decl.arg1name, decl.arg2type, decl.arg2name, (Block) $5,
+			(Attributes) $1, decl.location);
 
 		if (SimpleIteratorContainer.Simple.Yields)
 			op.SetYields ();

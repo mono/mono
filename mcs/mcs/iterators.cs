@@ -460,17 +460,18 @@ namespace Mono.CSharp {
 			Location loc = Location.Null;
 
 			pc_field = new Field (
-				TypeManager.system_int32_expr, Modifiers.PRIVATE, "PC",
+				this, TypeManager.system_int32_expr, Modifiers.PRIVATE, "PC",
 				null, null, loc);
 			AddField (pc_field);
 
 			current_field = new Field (
-				iterator_type_expr, Modifiers.PRIVATE, "current",
+				this, iterator_type_expr, Modifiers.PRIVATE, "current",
 				null, null, loc);
 			AddField (current_field);
 
 			if (!is_static) {
 				this_field = new Field (
+					this,
 					new TypeExpression (container.TypeBuilder, Location),
 					Modifiers.PRIVATE, "this", null, null, loc);
 				AddField (this_field);
@@ -482,6 +483,7 @@ namespace Mono.CSharp {
 					"field{0}_{1}", i, parameters.ParameterName (i));
 
 				parameter_fields [i] = new Field (
+					this,
 					new TypeExpression (parameters.ParameterType (i), loc),
 					Modifiers.PRIVATE, fname, null, null, loc);
 				AddField (parameter_fields [i]);

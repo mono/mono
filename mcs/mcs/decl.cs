@@ -34,6 +34,8 @@ namespace Mono.CSharp {
 		/// </summary>
 		public int ModFlags;
 
+		public readonly TypeContainer Parent;
+
 		/// <summary>
 		///   Location where this declaration happens
 		/// </summary>
@@ -59,9 +61,11 @@ namespace Mono.CSharp {
 		/// </summary>
 		protected Flags caching_flags;
 
-		public MemberCore (string name, Attributes attrs, Location loc)
+		public MemberCore (TypeContainer parent, string name, Attributes attrs,
+				   Location loc)
 			: base (attrs)
 		{
+			Parent = parent;
 			Name = name;
 			Location = loc;
 			caching_flags = Flags.Obsolete_Undetected | Flags.ClsCompliance_Undetected | Flags.HasCompliantAttribute_Undetected | Flags.Excluded_Undetected;
@@ -349,22 +353,19 @@ namespace Mono.CSharp {
 		/// </summary>
 		protected Hashtable defined_names;
 
-		TypeContainer parent;		
-
 		static string[] attribute_targets = new string [] { "type" };
 
 		public DeclSpace (NamespaceEntry ns, TypeContainer parent, string name, Attributes attrs, Location l)
-			: base (name, attrs, l)
+			: base (parent, name, attrs, l)
 		{
 			NamespaceEntry = ns;
 			Basename = name.Substring (1 + name.LastIndexOf ('.'));
 			defined_names = new Hashtable ();
-			this.parent = parent;
 		}
 
 		public void RecordDecl ()
 		{
-			if ((NamespaceEntry != null) && (parent == RootContext.Tree.Types))
+			if ((NamespaceEntry != null) && (Parent == RootContext.Tree.Types))
 				NamespaceEntry.DefineName (Basename, this);
 		}
 
@@ -473,12 +474,6 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public TypeContainer Parent {
-			get {
-				return parent;
-			}
-		}
-
 		/// <summary>
 		///   Looks up the alias for the name
 		/// </summary>
@@ -497,8 +492,8 @@ namespace Mono.CSharp {
 		//
 		public bool IsTopLevel {
 			get {
-				if (parent != null){
-					if (parent.parent == null)
+				if (Parent != null){
+					if (Parent.Parent == null)
 						return true;
 				}
 				return false;
@@ -544,8 +539,8 @@ namespace Mono.CSharp {
 			get {
 				if ((ModFlags & Modifiers.UNSAFE) != 0)
 					return true;
-				if (parent != null)
-					return parent.UnsafeContext;
+				if (Parent != null)
+					return Parent.UnsafeContext;
 				return false;
 			}
 		}
@@ -572,7 +567,7 @@ namespace Mono.CSharp {
 		public Type ResolveType (Expression e, bool silent, Location loc)
 		{
 			if (type_resolve_ec == null)
-				type_resolve_ec = GetTypeResolveEmitContext (parent, loc);
+				type_resolve_ec = GetTypeResolveEmitContext (Parent, loc);
 			type_resolve_ec.loc = loc;
 			type_resolve_ec.ContainerType = TypeBuilder;
 
@@ -601,7 +596,7 @@ namespace Mono.CSharp {
 		public TypeExpr ResolveTypeExpr (Expression e, bool silent, Location loc)
 		{
 			if (type_resolve_ec == null)
-				type_resolve_ec = GetTypeResolveEmitContext (parent, loc);
+				type_resolve_ec = GetTypeResolveEmitContext (Parent, loc);
 			type_resolve_ec.loc = loc;
 			type_resolve_ec.ContainerType = TypeBuilder;
 
@@ -1056,7 +1051,7 @@ namespace Mono.CSharp {
 			caching_flags &= ~Flags.HasCompliantAttribute_Undetected;
 
 			if (OptAttributes != null) {
-				EmitContext ec = new EmitContext (parent, this, Location,
+				EmitContext ec = new EmitContext (Parent, this, Location,
 								  null, null, ModFlags, false);
 				Attribute cls_attribute = OptAttributes.GetClsCompliantAttribute (ec);
 				if (cls_attribute != null) {
@@ -1069,7 +1064,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			if (parent == null) {
+			if (Parent == null) {
 				if (CodeGen.Assembly.IsClsCompliant) {
 					caching_flags |= Flags.ClsCompliantAttributeTrue;
 					return true;
@@ -1077,7 +1072,7 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			if (parent.GetClsCompliantAttributeValue ()) {
+			if (Parent.GetClsCompliantAttributeValue ()) {
 				caching_flags |= Flags.ClsCompliantAttributeTrue;
 				return true;
 			}

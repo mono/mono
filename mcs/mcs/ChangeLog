@@ -1,3 +1,15 @@
+2004-07-24  Martin Baulig  <martin@ximian.com>
+
+	* decl.cs (MemberCore.Parent): New public field.
+	(DeclSpace.Parent): Moved to MemberCore.
+
+	* class.cs (MethodCore.ds): Removed; use `Parent' instead.
+	(MemberBase.ctor): Added TypeContainer argument, pass it to our
+	parent's .ctor.
+	(FieldBase, Field, Operator): Likewise.
+	(EventProperty.ctor): Take a TypeContainer instead of a DeclSpace.
+	(EventField, Event): Likewise.
+
 2004-07-23  Martin Baulig  <martin@ximian.com>
 
 	* class.cs (PartialContainer): New public class.
