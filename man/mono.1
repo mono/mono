@@ -1,46 +1,30 @@
 .\" 
-.\" mini manual page.
+.\" mono manual page.
 .\" (C) 2003 Ximian, Inc. 
 .\" Author:
 .\"   Miguel de Icaza (miguel@gnu.org)
 .\"
+.de Sp \" Vertical space (when we can't use .PP)
+.if t .sp .5v
+.if n .sp
+..
 .TH Mono "Mono 1.0"
 .SH NAME
-mini \- Mono new's code ECMA-CLI code generator (Just-in-Time and Ahead-of-Time)
+mono \- Mono's code ECMA-CLI code generator (Just-in-Time and Ahead-of-Time)
 .SH SYNOPSIS
 .PP
-.B mini
-[\-\-aot]
-[\-\-break METHOD] 
-[\-\-breakonex]
-[\-\-compile name] 
-[\-\-compileall] 
-[\-\-config filename]
-[\-\-coverage]
-[\-\-debug] 
-[\-\-graph[=TYPE] METHOD]
-[\-\-help] 
-[\-\-trace]
-[\-\-ncompile num]  
-[\-\-optimize=MODE]
-[\-O=mode]
-[\-\-profile]
-[\-\-regression]
-[\-\-statfile FILE]
-[\-v]
-[\-\-verbose]
-[\-V]
-[\-\-version]
-file [arguments...]
+.B mono [options] file [arguments...]
 .SH DESCRIPTION
-The \fImini\fP program is a runtime implementation of the ECMA Common
-Language Infrastructure.  The runtime contains a native code generator
-that transforms the Common Intermediate Language into native code.
+\fImono\fP is a runtime implementation of the ECMA Common Language
+Infrastructure.  This can be used to run ECMA and .NET applications.
+.PP
+The runtime contains a native code generator that transforms the
+Common Intermediate Language into native code.
 .PP
 The code generator can operate in two modes: just in time compilation
 (JIT) or ahead of time compilation (AOT).  Since code can be
 dynamically loaded, the runtime environment and the JIT are always
-present, even if code is compiled ahead of time.  
+present, even if code is compiled ahead of time.
 .PP
 The runtime loads ths specified
 .I file
@@ -55,19 +39,20 @@ The runtime provides a number of configuration options for running
 applications, for developping and debugging, and for testing and
 debugging the runtime itself.
 .SH RUNTIME OPTIONS
+The following options are available:
 .TP
 .I "--aot"
 This option is used to precompile the CIL code in the specified
 assembly to native code.  The generated code is stored in a file with
 the extension .so.  This file will be automatically picked up by the
 runtime when the assembly is executed.  
-.TP
+.Sp
 This pre-compiles the methods, but the original assembly is still
 required to execute as this one contains the metadata and exception
 information which is not availble on the generated file.  When
 precompiling code, you might want to compile with all optimizations
 (-O=all).  Pre-compiled code is position independent code.
-.TP
+.Sp
 Pre compilation is just a mechanism to reduce startup time, and avoid
 just-in-time compilation costs.  The original assembly must still be
 present, as the metadata is contained there.
@@ -85,9 +70,10 @@ Displays usage instructions.
 MODE is a comma separated list of optimizations.  They also allow
 optimizations to be turned off by prefixing the optimization name with
 a minus sign.
-.TP
+.Sp
 The following optimizations are implemented:
 .nf
+             all        Turn on all optimizations
              peephole   Peephole postpass
              branch     Branch optimizations
              inline     Inline method calls
@@ -103,14 +89,14 @@ The following optimizations are implemented:
              tailc      Tail recursion and tail calls
              loop       Loop related optimizations
 .fi
-.TP
+.Sp
 For example, to enable all the optimization but dead code
 elimination and inlining, you can use:
 .nf
 	-O=all,-deadce,-inline
 .fi
-
 .SH DEVELOPMENT OPTIONS
+.TP
 .I "--break method"
 Inserts a breakpoint before the method whose name is `method'
 (namespace.class:methodname).  Use `Main' as method name to insert a
@@ -170,6 +156,7 @@ The following graphs are available:
           ssa        CFG showing code after SSA translation
           optcode    CFG showing code after IR optimizations
 .fi
+.Sp
 Some graphs will only be available if certain optimizations are turned
 on.
 .TP
@@ -193,7 +180,7 @@ Turns off the garbage collection in Mono.  This should be only used
 for debugging purposes
 .TP
 .I "MONO_PATH"
-Provides a search path to mono and mint where to look for library files.
+Provides a search path to the runtime where to look for library files.
 Directories are separated by the platform path separator (colons on unix). Example:
 .B /home/username/lib:/usr/local/mono/lib
 .TP
@@ -217,7 +204,7 @@ Windows, the assemblies are loaded from the directory where mono and
 mint live.
 .PP
 /etc/mono/config, ~/.mono/config
-.IP
+.PP
 Mono runtime configuration file.  See the mono-config(5) manual page
 for more information.
 .SH MAILING LISTS
