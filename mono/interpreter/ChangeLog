@@ -1,5 +1,11 @@
 2003-07-13  Zoltan Varga  <vargaz@freemail.hu>
 
+	* interp.c: Keep alloca()-d data on a free list to prevent stack
+	overflow errors when valuetypes are allocated in a loop. Fixes
+	#27420. Is the new code still faster than using malloc/free ?
+
+	* interp.c: Fix warnings.
+	
 	* interp.c: Report unhandled exceptions correctly.
 
 	* interp.c: Implement CEE_ISINST and CEE_CASTCLASS using 
