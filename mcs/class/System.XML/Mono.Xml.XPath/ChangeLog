@@ -1,3 +1,16 @@
+2004-09-06  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XPathDocument2.cs, XPathDocument2Editable.cs:
+	  Redesigned API. Child node list should not be required (it also
+	  harms performance). Reduced extraneous methods for XPathNavigator
+	  / XPathEditableNavigator implementation support.
+	* XPathEditableDocument.cs : event registration was missing (due to
+	  XPathDocument changes, it might not be required anymore though).
+	* XPathNavigatorReader.cs :
+	  Namespace nodes were not handled correctly.
+	  EOF handling was incorrect.
+	  Reduced extraneous clone from MoveTo/GetAttribute(int) and
+
 2004-09-01  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XPathNavigatorReader.cs : on GetAttributeNavigator(int), namespace

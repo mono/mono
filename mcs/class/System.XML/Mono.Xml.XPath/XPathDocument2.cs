@@ -329,8 +329,6 @@ namespace Mono.Xml.XPath
 
 		public abstract XPathNodeType NodeType { get; }
 
-		public abstract XomNode GetChild (int position);
-
 		public abstract int ChildCount { get; }
 
 		public virtual XomNode FirstChild { get { return null; } }
@@ -352,8 +350,8 @@ namespace Mono.Xml.XPath
 			get {
 				StringWriter sw = new StringWriter ();
 				XmlTextWriter xtw = new XmlTextWriter (sw);
-				for (int i = 0; i < ChildCount; i++)
-					GetChild (i).WriteTo (xtw);
+				for (XomNode n = FirstChild; n != null; n = n.NextSibling)
+					n.WriteTo (xtw);
 				return sw.ToString ();
 			}
 		}
@@ -368,9 +366,9 @@ namespace Mono.Xml.XPath
 
 	public abstract class XomParentNode : XomNode
 	{
-		ArrayList children = new ArrayList ();
 		XomNode firstChild;
 		XomNode lastChild;
+		int childCount;
 
 		public void ReadNode (XmlReader reader, XmlSpace space)
 		{
@@ -437,22 +435,27 @@ namespace Mono.Xml.XPath
 
 		public void AppendChild (XomNode child)
 		{
-			child.SetParent (this);
-			children.Add (child);
-			if (firstChild == null)
-				firstChild = lastChild = child;
-			else {
-				child.SetPreviousSibling (lastChild);
-				lastChild = child;
-			}
+			InsertBefore (child, null);
 		}
 
 		public void InsertBefore (XomNode child, XomNode nextNode)
 		{
-			int pos = children.IndexOf (nextNode);
-			if (pos < 0)
-				throw new ArgumentException ("Argument nextNode is not a child of this node.");
-			InsertChild (child, pos);
+			if (child.Parent != null)
+				throw new InvalidOperationException ("The child already has a parent.");
+			if (nextNode == null) {
+				child.SetParent (this);
+				if (firstChild == null)
+					firstChild = lastChild = child;
+				else {
+					child.SetPreviousSibling (lastChild);
+					lastChild = child;
+				}
+			} else {
+				if (nextNode.Parent != this)
+					throw new ArgumentException ("Argument nextNode is not a child of this node.");
+				child.SetNextSibling (nextNode);
+			}
+			childCount++;
 		}
 
 		public abstract void Clear ();
@@ -465,47 +468,24 @@ namespace Mono.Xml.XPath
 			get { return lastChild; }
 		}
 
-		public override XomNode GetChild (int position)
-		{
-			if (position > children.Count)
-				return null;
-			return children [position] as XomNode;
-		}
-
 		public override int ChildCount {
-			get { return children.Count; }
+			get { return childCount; }
 		}
 
 		internal void ClearChildren ()
 		{
-			while (children.Count > 0)
-				RemoveChildAt (0);
-		}
-
-		public void InsertChild (XomNode child, int position)
-		{
-			XomNode n = children [position] as XomNode;
-			child.SetNextSibling (n);
-			children.Insert (position, position);
-		}
-
-		public void RemoveChildAt (int index)
-		{
-			RemoveChild (children [index] as XomNode);
-		}
-
-		public void ReplaceChildAt (int index,
-			XomNode newChild)
-		{
-			XomNode n = children [index] as XomNode;
-			newChild.SetNextSibling (n);
-			RemoveChild (n);
+			firstChild = lastChild = null;
+			childCount = 0;
 		}
 
 		public void RemoveChild (XomNode child)
 		{
-			children.Remove (child);
+			if (child == firstChild)
+				firstChild = child.NextSibling;
+			if (child == lastChild)
+				lastChild = child.PreviousSibling;
 			child.RemoveItself ();
+			childCount--;
 		}
 
 		public override string Value {
@@ -522,9 +502,8 @@ namespace Mono.Xml.XPath
 
 		internal override void BuildValue (StringBuilder sb)
 		{
-			int count = ChildCount;
-			for (int i = 0; i < count; i++)
-				GetChild (i).BuildValue (sb);
+			for (XomNode n = FirstChild; n != null; n = n.NextSibling)
+				n.BuildValue (sb);
 		}
 	}
 
@@ -583,9 +562,8 @@ namespace Mono.Xml.XPath
 
 		public override void WriteTo (XmlWriter writer)
 		{
-			int count = ChildCount;
-			for (int i = 0; i < count; i++)
-				GetChild (i).WriteTo (writer);
+			for (XomNode n = FirstChild; n != null; n = n.NextSibling)
+				n.WriteTo (writer);
 		}
 
 		public XomElement GetIdenticalNode (string id)
@@ -685,6 +663,7 @@ namespace Mono.Xml.XPath
 			attributes.Add (attr);
 		}
 
+/*
 		public void UpdateAttribute (XomAttribute attr)
 		{
 			if (attr.Parent != null)
@@ -697,6 +676,7 @@ namespace Mono.Xml.XPath
 			attr.SetParent (this);
 			attributes.Add (attr);
 		}
+*/
 
 		public XomAttribute GetAttribute (int index)
 		{
@@ -808,9 +788,8 @@ namespace Mono.Xml.XPath
 					a.WriteTo (writer);
 			}
 
-			int count = ChildCount;
-			for (int i = 0; i < count; i++)
-				GetChild (i).WriteTo (writer);
+			for (XomNode n = FirstChild; n != null; n = n.NextSibling)
+				n.WriteTo (writer);
 
 			writer.WriteEndElement ();
 		}
@@ -872,11 +851,6 @@ namespace Mono.Xml.XPath
 			get { return XPathNodeType.Attribute; }
 		}
 
-		public override XomNode GetChild (int index)
-		{
-			return null;
-		}
-
 		public override int ChildCount { get { return 0; } }
 
 		public override string Value {
@@ -920,11 +894,6 @@ namespace Mono.Xml.XPath
 
 		public override int ChildCount {
 			get { return 0; }
-		}
-
-		public override XomNode GetChild (int index)
-		{
-			return null;
 		}
 
 		public override string LocalName {
@@ -1004,11 +973,6 @@ namespace Mono.Xml.XPath
 			sb.Append (value);
 		}
 
-		public override XomNode GetChild (int index)
-		{
-			return null;
-		}
-
 		public override int ChildCount { get { return 0; } }
 
 		public override void WriteTo (XmlWriter writer)
@@ -1063,11 +1027,6 @@ namespace Mono.Xml.XPath
 			sb.Append (value);
 		}
 
-		public override XomNode GetChild (int index)
-		{
-			return null;
-		}
-
 		public override int ChildCount { get { return 0; } }
 
 		public override void WriteTo (XmlWriter writer)
@@ -1116,11 +1075,6 @@ namespace Mono.Xml.XPath
 		internal override void BuildValue (StringBuilder sb)
 		{
 			sb.Append (value);
-		}
-
-		public override XomNode GetChild (int index)
-		{
-			return null;
 		}
 
 		public override int ChildCount { get { return 0; } }
@@ -1173,11 +1127,6 @@ namespace Mono.Xml.XPath
 			sb.Append (value);
 		}
 
-		public override XomNode GetChild (int index)
-		{
-			return null;
-		}
-
 		public override int ChildCount { get { return 0; } }
 
 		public override void WriteTo (XmlWriter writer)
@@ -1226,11 +1175,6 @@ namespace Mono.Xml.XPath
 		internal override void BuildValue (StringBuilder sb)
 		{
 			sb.Append (value);
-		}
-
-		public override XomNode GetChild (int index)
-		{
-			return null;
 		}
 
 		public override int ChildCount { get { return 0; } }

@@ -65,16 +65,9 @@ namespace Mono.Xml.XPath
 					return XmlNodeType.None;
 				if (endElement)
 					return XmlNodeType.EndElement;
-				if (attributeValueConsumed) {
-					switch (current.NodeType) {
-					case XPathNodeType.Whitespace:
-						return XmlNodeType.Whitespace;
-					case XPathNodeType.SignificantWhitespace:
-						return XmlNodeType.SignificantWhitespace;
-					default:
-						return XmlNodeType.Text;
-					}
-				}
+				if (attributeValueConsumed)
+					// Is there any way to get other kind of nodes than Text?
+					return XmlNodeType.Text;
 
 				switch (current.NodeType) {
 				case XPathNodeType.Namespace:
@@ -102,19 +95,47 @@ namespace Mono.Xml.XPath
 		}
 
 		public override string Name {
-			get { return eof ? String.Empty : current.Name; }
+			get {
+				if (eof)
+					return String.Empty;
+				else if (current.NodeType == XPathNodeType.Namespace)
+					return current.Name == String.Empty ? "xmlns" : "xmlns:" + current.Name;
+				else
+					return current.Name;
+			}
 		}
 
 		public override string LocalName {
-			get { return eof ? String.Empty : current.LocalName; }
+			get {
+				if (eof)
+					return String.Empty;
+				else if (current.NodeType == XPathNodeType.Namespace && current.LocalName == String.Empty)
+					return "xmlns";
+				else
+					return current.LocalName;
+			}
 		}
 
 		public override string NamespaceURI {
-			get { return eof ? String.Empty : current.NamespaceURI; }
+			get {
+				if (eof)
+					return String.Empty;
+				else if (current.NodeType == XPathNodeType.Namespace)
+					return XmlNamespaceManager.XmlnsXmlns;
+				else
+					return current.NamespaceURI;
+			}
 		}
 
 		public override string Prefix {
-			get { return eof ? String.Empty : current.Prefix; }
+			get {
+				if (eof)
+					return String.Empty;
+				else if (current.NodeType == XPathNodeType.Namespace && current.LocalName != String.Empty)
+					return "xmlns";
+				else
+					return current.Prefix;
+			}
 		}
 
 		public override bool HasValue {
@@ -214,37 +235,39 @@ namespace Mono.Xml.XPath
 			return count;
 		}
 		
-		private XPathNavigator GetAttributeNavigator (int i)
+		private bool MoveToAttributeNavigator (int i)
 		{
-			XPathNavigator backup = current.Clone ();
-			try {
-				switch (current.NodeType) {
-				case XPathNodeType.Namespace:
-				case XPathNodeType.Attribute:
-					this.MoveToElement ();
-					goto case XPathNodeType.Element;
-				case XPathNodeType.Element:
-					if (MoveToFirstAttribute ())
-						if (i == 0)
-							return current.Clone ();
-					for (int count = 1; this.MoveToNextAttribute (); count++)
-						if (count == i)
-							return current.Clone ();
-					break;
+			switch (current.NodeType) {
+			case XPathNodeType.Namespace:
+			case XPathNodeType.Attribute:
+				this.MoveToElement ();
+				goto case XPathNodeType.Element;
+			case XPathNodeType.Element:
+				int count = 0;
+				if (MoveToFirstAttribute ()) {
+					if (i == 0)
+						return true;
 				}
-				return null;
-			} finally {
-				current = backup;
+				for (count++; this.MoveToNextAttribute (); count++) {
+					if (count == i)
+						return true;
+				}
+				break;
 			}
+			return false;
 		}
 
 		public override string this [int i] {
 			get {
-				XPathNavigator test = GetAttributeNavigator (i);
-				if (test != null)
-					return test.Value;
-				else
-					throw new ArgumentOutOfRangeException ();
+				XPathNavigator backup = current.Clone ();
+				try {
+					if (MoveToAttributeNavigator (i))
+						return Value;
+					else
+						throw new ArgumentOutOfRangeException ();
+				} finally {
+					current.MoveTo (backup);
+				}
 			}
 		}
 
@@ -279,19 +302,17 @@ namespace Mono.Xml.XPath
 		}
 
 		public override bool EOF {
-			get {
-				return eof || ReadState == ReadState.EndOfFile;
-			}
+			get { return ReadState == ReadState.EndOfFile; }
 		}
 
 		public override ReadState ReadState {
 			get {
+				if (eof)
+					return ReadState.EndOfFile;
 				if (closed)
 					return ReadState.Closed;
 				else if (!started)
 					return ReadState.Initial;
-				else if (eof)
-					return ReadState.EndOfFile;
 				return ReadState.Interactive;
 			}
 		}
@@ -359,13 +380,8 @@ namespace Mono.Xml.XPath
 
 		public override void MoveToAttribute (int i)
 		{
-			XPathNavigator test = GetAttributeNavigator (i);
-			if (test == null)
+			if (!MoveToAttributeNavigator (i))
 				throw new ArgumentOutOfRangeException ();
-			else {
-				attributeValueConsumed = false;
-				current = test;
-			}
 		}
 
 		public override bool MoveToFirstAttribute ()
@@ -378,8 +394,12 @@ namespace Mono.Xml.XPath
 
 		public override bool MoveToNextAttribute ()
 		{
-			if (current.NodeType != XPathNodeType.Attribute) {
+			if (current.NodeType == XPathNodeType.Namespace) {
 				bool b = CheckAttributeMove (current.MoveToNextNamespace (XPathNamespaceScope.Local));
+				if (b)
+					return true;
+				current.MoveToParent ();
+				b = CheckAttributeMove (current.MoveToFirstAttribute ());
 				if (b)
 					return true;
 			}

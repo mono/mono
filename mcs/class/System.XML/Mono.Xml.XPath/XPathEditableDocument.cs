@@ -388,8 +388,11 @@ namespace Mono.Xml.XPath
 		{
 			if (attribute != null)
 				attribute.Value += text;
-			else
-				current.AppendChild (current.OwnerDocument.CreateTextNode (text));
+			else {
+				XmlText t = current.OwnerDocument.CreateTextNode (text);
+				current.AppendChild (t);
+				document.AppendChild (current, t);
+			}
 		}
 
 		public override void WriteWhitespace (string text)

@@ -183,7 +183,7 @@ namespace Mono.Xml.XPath
 				if (rem != null) {
 					if (rem.RemovedNode.NodeType == XPathNodeType.Attribute) {
 						XomElement el = (XomElement) rem.OwnerNode;
-						el.UpdateAttribute ((XomAttribute) rem.RemovedNode);
+						el.AppendAttribute ((XomAttribute) rem.RemovedNode);
 					}
 					else
 						rem.OwnerNode.InsertBefore (rem.RemovedNode, rem.NextSibling);
@@ -191,10 +191,9 @@ namespace Mono.Xml.XPath
 				}
 				AttributeUpdate2 au = changes [i] as AttributeUpdate2;
 				if (au != null) {
+					au.Element.RemoveAttribute (au.NewAttribute);
 					if (au.OldAttribute != null)
-						au.Element.UpdateAttribute (au.OldAttribute);
-					else
-						au.Element.RemoveAttribute (au.NewAttribute);
+						au.Element.AppendAttribute (au.OldAttribute);
 					continue;
 				}
 			}
@@ -463,7 +462,7 @@ namespace Mono.Xml.XPath
 			if (state != WriteState.Attribute || element == null)
 				throw new InvalidOperationException ("Current state is not inside attribute. Cannot close attribute.");
 			XomAttribute old = element.GetAttribute (attribute.LocalName, attribute.Namespace);
-			element.UpdateAttribute (attribute);
+			element.AppendAttribute (attribute);
 			document.AttributeUpdate2 (element, old, attribute);
 			attribute = null;
 			state = WriteState.Content;
@@ -617,7 +616,7 @@ namespace Mono.Xml.XPath
 			if (state != WriteState.Attribute)
 				throw new InvalidOperationException ("Current state is not inside attribute. Cannot close attribute.");
 			XomAttribute old = element.GetAttribute (attribute.LocalName, attribute.Namespace);
-			element.UpdateAttribute (attribute);
+			element.AppendAttribute (attribute);
 			document.AttributeUpdate2 (element, old, attribute);
 			attribute = null;
 			state = WriteState.Content;
@@ -828,8 +827,8 @@ namespace Mono.Xml.XPath
 		{
 			XomNode n = ((IHasXomNode) navigator).GetNode ();
 			int count = n.ChildCount;
-			for (int i = 0; i < count; i++)
-				document.DeleteNode (n.GetChild (i));
+			while (n.FirstChild != null)
+				document.DeleteNode (n.FirstChild);
 			XmlWriter w = document.CreateInsertionWriter (n, null);
 			// FIXME: Hmm, it does not look like using it.
 			w.WriteFromObject (value);
