@@ -1,3 +1,14 @@
+2002-07-31  Martin Baulig  <martin@gnome.org>
+
+	* driver.cs: Added "--mcs-debug" argument if MCS_DEBUG is defined.
+	To get debugging messages, compile mcs with /define:MCS_DEBUG and
+	then use this argument.
+
+	* report.cs (Report.Debug): Renamed to conditional to "MCS_DEBUG".
+
+	* makefile.gnu (MCS_FLAGS): Include $(MCS_DEFINES), the user may
+	use this to specify /define options.
+
 2002-07-29  Martin Baulig  <martin@gnome.org>
 
 	* statement.cs (Fixed): Moved all code that does variable lookups

@@ -181,6 +181,9 @@ namespace Mono.CSharp
 				"   --wlevel LEVEL   Sets warning level (the highest is 4, the default)\n" +
 				"   -r               References an assembly\n" +
 				"   -v               Verbose parsing (for debugging the parser)\n" +
+#if MCS_DEBUG
+				"   --mcs-debug X    Sets MCS debugging level to X" +
+#endif
                                 "   @file            Read response file for more options");
 		}
 
@@ -655,6 +658,22 @@ namespace Mono.CSharp
 
 				SetWarningLevel (args [++i]);
 				return true;
+
+#if MCS_DEBUG
+			case "--mcs-debug":
+				if ((i + 1) >= args.Length){
+					Console.WriteLine ("--mcs-debug requires an argument");
+					Environment.Exit (1);
+				}
+
+				try {
+					Report.DebugFlags = Int32.Parse (args [++i]);
+				} catch {
+					Console.WriteLine ("Invalid argument to --mcs-debug");
+					Environment.Exit (1);
+				}
+				return true;
+#endif
 				
 			case "--about":
 				About ();

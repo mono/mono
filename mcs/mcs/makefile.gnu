@@ -1,5 +1,5 @@
 MCS = mcs
-MCS_FLAGS = /target:exe
+MCS_FLAGS = /target:exe $(MCS_DEFINES)
 INSTALL = /usr/bin/install
 prefix = /usr
 

@@ -1,4 +1,3 @@
-#define DEBUG
 //
 // report.cs: report errors and warnings.
 //
@@ -158,15 +157,15 @@ namespace Mono.CSharp {
                         }
                 }
 
-		public const int DebugFlags = 1;
+		public static int DebugFlags = 0;
 
-		[Conditional ("DEBUG")]
+		[Conditional ("MCS_DEBUG")]
 		static public void Debug (string message, params object[] args)
 		{
 			Debug (1, message, args);
 		}
 			
-		[Conditional ("DEBUG")]
+		[Conditional ("MCS_DEBUG")]
 		static public void Debug (int category, string message, params object[] args)
 		{
 			if ((category & DebugFlags) == 0)
@@ -183,7 +182,10 @@ namespace Mono.CSharp {
 						first = false;
 					else
 						sb.Append (",");
-					sb.Append (arg);
+					if (arg == null)
+						sb.Append ("null");
+					else
+						sb.Append (arg);
 				}
 			}
 
