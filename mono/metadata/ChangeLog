@@ -1,3 +1,17 @@
+2002-06-25  Dick Porter  <dick@ximian.com>
+
+	* assembly.h:
+	* assembly.c: 
+	(mono_assembly_foreach): Accessor functions to walk the list of
+	loaded assemblies
+	(mono_assembly_set_main):
+	(mono_assembly_get_main): Process methods need to know which
+	assembly is the "main" one
+
+	* object.c (mono_runtime_run_main): Record the main assembly
+
+	* debug-helpers.c: Fix typo
+
 2002-06-24  Dietmar Maurer  <dietmar@ximian.com>
 
 	* icall.c (ves_icall_System_Runtime_InteropServices_Marshal_copy_to_unmanaged): impl.

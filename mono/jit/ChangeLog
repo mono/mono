@@ -1,3 +1,7 @@
+2002-06-25  Dick Porter  <dick@ximian.com>
+
+	* jit.c (mono_jit_exec): Pass the assembly to mono_runtime_run_main
+
 2002-06-22  Martin Baulig  <martin@gnome.org>
 
 	* debug.c (mono_debug_source_location_from_address): Small fix, an

@@ -1,3 +1,6 @@
+2002-06-25  Dick Porter  <dick@ximian.com>
+
+	* interp.c (ves_exec): Pass the assembly to mono_runtime_run_main
 
 Wed Jun 19 17:01:37 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
