@@ -19,7 +19,8 @@ namespace System.Windows.Forms {
 
 		private int imageIndex;
 		private int selectedImageIndex;
-
+		private TreeNodeCollection nodes;
+		private int indent;
 		//
 		//  --- Public Constructors
 		//
@@ -28,6 +29,7 @@ namespace System.Windows.Forms {
 		{
 			imageIndex = 0;
 			selectedImageIndex = 0;
+			SubClassWndProc_ = true;
 		}
 		
 		// --- Public Properties
@@ -150,13 +152,9 @@ namespace System.Windows.Forms {
 		}
 		[MonoTODO]
 		public int Indent {
-			get
-			{
-				throw new NotImplementedException ();
-			}
-			set
-			{
-				//FIXME:
+			get { return indent; }
+			set {
+				indent = value;
 			}
 		}
 		[MonoTODO]
@@ -183,9 +181,10 @@ namespace System.Windows.Forms {
 		}
 		[MonoTODO]
 		public TreeNodeCollection Nodes {
-			get
-			{
-				throw new NotImplementedException ();
+			get {
+				if ( nodes == null )
+					nodes = new TreeNodeCollection ( null );
+				return nodes;
 			}
 		}
 		[MonoTODO]
@@ -369,19 +368,14 @@ namespace System.Windows.Forms {
 			get {
 				CreateParams createParams = base.CreateParams;
 
-				createParams.ClassName = "TREEVIEW";
-				createParams.Style = (int) (
-					WindowStyles.WS_CHILD | 
-					WindowStyles.WS_VISIBLE);
+				createParams.ClassName = Win32.TREEVIEW_CLASS;
+				createParams.Style |= (int) WindowStyles.WS_CHILD ;
 				return createParams;
 			}		
 		}
-		[MonoTODO]
+
 		protected override Size DefaultSize {
-			get
-			{
-				return new Size(121,97);//Correct size.
-			}
+			get { return new Size(121,97); }
 		}
 		
 		// --- Protected Methods
@@ -389,7 +383,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override void CreateHandle()
 		{
-			//FIXME: just to get it to run
+			initCommonControlsLibrary ( );
 			base.CreateHandle();
 		}
 
@@ -488,8 +482,15 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override void WndProc(ref Message m)
 		{
-			//FIXME:
-			base.WndProc(ref m);
+			CallControlWndProc( ref m );
 		}
+
+	    private void initCommonControlsLibrary ( ) {
+		    if ( !RecreatingHandle ) {
+			    INITCOMMONCONTROLSEX initEx = new INITCOMMONCONTROLSEX();
+			    initEx.dwICC = CommonControlInitFlags.ICC_TREEVIEW_CLASSES;
+			    Win32.InitCommonControlsEx(initEx);
+		    }
+	    }
 	}
 }

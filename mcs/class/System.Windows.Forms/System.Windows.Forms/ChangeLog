@@ -1,4 +1,10 @@
 2003-06-12 Aleksey Ryabchuk <ryabchuk@yahoo.com>
+	* TreeNode.cs
+	* TreeNodeCollection.cs
+	* TreeView.cs
+	* win32functions.cs : started impl. of TreeView control
+
+2003-06-12 Aleksey Ryabchuk <ryabchuk@yahoo.com>
 	* Control.cs : don't do anything if Anchor is set to default value
 	* SystemInformation.cs : return some system metrics
 	* UserControl.cs : default size impl.

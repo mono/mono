@@ -16,25 +16,35 @@ namespace System.Windows.Forms {
 
     public class TreeNode : MarshalByRefObject, ICloneable {
 
-		
-		//  --- Public Constructors
+		TreeNodeCollection children;
+		TreeNode           parent;
+		string             text;
 		
 		[MonoTODO]
 		public TreeNode()
 		{
-			
 		}
 		[MonoTODO]
-		public TreeNode(string text)
+		public TreeNode( string text )
 		{
-			
+			this.text = text;
 		}
 		[MonoTODO]
-		public TreeNode(string text, TreeNode[] children)
+		public TreeNode( string text, TreeNode[] children ) : this ( text )
 		{
-			
+			Nodes.AddRange ( children );
 		}
-		
+
+		[MonoTODO]
+		public TreeNode( string text, int imageIndex, int selectedImageIndex ) : this ( text )
+		{
+		}
+
+		[MonoTODO]
+		public TreeNode( string text, int imageIndex, int selectedImageIndex, TreeNode[] children ) : this ( text, children )
+		{
+		}
+
 		// --- Public Properties
 		
 		[MonoTODO]
@@ -182,17 +192,15 @@ namespace System.Windows.Forms {
 		}
 		[MonoTODO]
 		public TreeNodeCollection Nodes {
-			get
-			{
-				throw new NotImplementedException ();
+			get {
+				if ( children == null )
+					children = new TreeNodeCollection ( this );
+				return children;
 			}
 		}
-		[MonoTODO]
+
 		public TreeNode Parent {
-			get
-			{
-				throw new NotImplementedException ();
-			}
+			get { return parent; }
 		}
 		[MonoTODO]
 		public TreeNode PrevNode {
@@ -232,13 +240,9 @@ namespace System.Windows.Forms {
 		}
 		[MonoTODO]
 		public string Text {
-			get
-			{
-				throw new NotImplementedException ();
-			}
-			set
-			{
-				//FIXME:
+			get { return text; }
+			set {
+				text = value;
 			}
 		}
 		[MonoTODO]
@@ -311,6 +315,11 @@ namespace System.Windows.Forms {
 		{
 			//FIXME:
 			return base.ToString();
+		}
+
+		internal void setParent ( TreeNode parent )
+		{
+			this.parent = parent;
 		}
 	}
 }

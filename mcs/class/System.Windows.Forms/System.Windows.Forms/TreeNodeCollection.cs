@@ -17,87 +17,128 @@ namespace System.Windows.Forms {
 
     public class TreeNodeCollection : IList, ICollection, IEnumerable {
 
-		
-		//  --- Public Properties
-		
-		[MonoTODO]
-		public int Count {
-			get {
-				throw new NotImplementedException ();
-			}
+		private TreeNode  owner;
+		private ArrayList list;
+
+		internal TreeNodeCollection ( TreeNode owner )
+		{
+			list = new ArrayList();
+			this.owner = owner;
 		}
-		[MonoTODO]
+		
+		public int Count {
+			get { return list.Count; }
+		}
+
 		public bool IsReadOnly {
-			get {
-				throw new NotImplementedException ();
-			}
+			get { return list.IsReadOnly; }
 		}
 		[MonoTODO]
 		public virtual TreeNode this[int index] {
-			get	{
-				throw new NotImplementedException ();
+			get {
+				return (TreeNode) list[index];
 			}
 			set {
-				//FIXME:
+				list[index] = value;
 			}
 		}
 		
-		// --- Public Methods
-		
-		[MonoTODO]
-		public virtual TreeNode Add(string text) 
+		public virtual TreeNode Add( string text ) 
 		{
-			throw new NotImplementedException ();
+			TreeNode node =  new TreeNode ( text );
+			Add ( node );
+			return node;
 		}
+
 		[MonoTODO]
-		public virtual int Add(TreeNode node) 
+		public virtual int Add( TreeNode node ) 
 		{
-			throw new NotImplementedException ();
+			if ( node == null )
+				throw new ArgumentNullException("value");
+
+			if ( node.Parent != null )
+				throw new ArgumentException("Object already has a parent.", "node");
+
+			node.setParent( owner );
+
+			int index = list.Add( node );
+			return 	index;		
 		}
-		[MonoTODO]
-		public virtual void AddRange(TreeNode[] nodes) 
+
+		public virtual void AddRange( TreeNode[] nodes ) 
 		{
-			//FIXME:
+			if ( nodes == null )
+				throw new ArgumentNullException("nodes");
+
+			foreach ( TreeNode node in nodes ) {
+				// it will do a check for parent and set the parent
+				Add ( node );
+			}
 		}
+
 		[MonoTODO]
 		public virtual void Clear() 
 		{
-			//FIXME:
+			foreach ( object node in list )
+				( ( TreeNode )node ).setParent ( null );
+
+			list.Clear();
 		}
-		[MonoTODO]
-		public bool Contains(TreeNode node) 
+
+		public bool Contains( TreeNode node ) 
 		{
-			throw new NotImplementedException ();
+			return list.Contains( node );
 		}
 		[MonoTODO]
 		public void CopyTo(Array dest, int index) 
 		{
 			//FIXME:
 		}
-		[MonoTODO]
+
 		public IEnumerator GetEnumerator() 
 		{
-			throw new NotImplementedException ();
+			return list.GetEnumerator();
+		}
+
+		public int IndexOf( TreeNode node ) 
+		{
+			return list.IndexOf( node );
 		}
 		[MonoTODO]
-		public int IndexOf(TreeNode node) 
+		public virtual void Insert( int index, TreeNode node ) 
 		{
-			throw new NotImplementedException ();
+			if ( node == null )
+				throw new ArgumentNullException ( "node" );
+
+			if ( node.Parent != null)
+				throw new ArgumentException ( "Object already has a parent.", "node" );
+
+			if (index < 0 || index > Count )
+				throw new ArgumentOutOfRangeException( "index" );
+
+			list.Insert( index, node );
+			node.setParent ( owner ); 
 		}
+
 		[MonoTODO]
-		public virtual void Insert(int index, TreeNode node) 
+		public void Remove( TreeNode node ) 
 		{
-			//FIXME:
+			if ( node == null )
+				throw new ArgumentNullException( "node" );
+
+			list.Remove( node );
+			node.setParent ( null );
 		}
+
 		[MonoTODO]
-		public void Remove(TreeNode node) 
+		public virtual void RemoveAt( int index ) 
 		{
-			//FIXME:
-		}
-		[MonoTODO]
-		public virtual void RemoveAt(int index) 
-		{
-			//FIXME:
+			if (index < 0 || index > Count )
+				throw new ArgumentOutOfRangeException( "index" );
+
+			TreeNode node = (TreeNode) list[ index ];
+			list.RemoveAt( index );
+			node.setParent ( null );
 		}
 		/// <summary>
 		/// IList Interface implmentation.

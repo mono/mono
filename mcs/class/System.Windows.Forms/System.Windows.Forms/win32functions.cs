@@ -56,7 +56,7 @@ namespace System.Windows.Forms{
 		internal const string MDICLIENTCLASSNAME = "MDICLIENT";
 		internal const string TABCONTROL = "SysTabControl32";
 		internal const string DEFAULT_WINDOW_CLASS = "mono_scrollable_control";
-		
+		internal const string TREEVIEW_CLASS = "SysTreeView32";
 		#endregion
 
 		#region CallBacks
@@ -789,6 +789,9 @@ namespace System.Windows.Forms{
 			 CallingConvention = CallingConvention.StdCall, 
 			 CharSet = CharSet.Auto)]
 		internal static extern IntPtr CreateMenu ();
+
+		[DllImport ("user32.dll",  CallingConvention = CallingConvention.StdCall,  CharSet = CharSet.Auto)]
+		internal static extern IntPtr CreatePopupMenu ( );
 
 		[DllImport ("user32.dll", 
 			 CallingConvention = CallingConvention.StdCall, 
