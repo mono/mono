@@ -1,3 +1,7 @@
+2003-04-14  Miguel de Icaza  <miguel@ximian.com>
+
+	* icall.c (ves_icall_Type_GetNestedType): Add new internal call.
+
 2003-04-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Makefile.am: re-added -m option when running cygpath. This way,
