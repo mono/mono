@@ -1,3 +1,10 @@
+2004-03-25  Martin Baulig  <martin@ximian.com>
+
+	* interp.c (stackval_from_data): Added MONO_TYPE_GENERICINST.
+	(stackval_to_data): Added MONO_TYPE_GENERICINST.
+	(calc_offsets): Use mono_class_get_full() and mono_get_method_full().
+	(ves_exec_method_with_context): Likewise.
+
 2004-03-04  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* interp.c: Get the type of transparent proxies from its remote_class.
