@@ -1,3 +1,8 @@
+2004-07-14  Martin Baulig  <martin@ximian.com>
+
+	* cs1623.cs, cs1624.cs, cs1625.cs, cs1631.cs: New tests for
+	iterators.	
+
 2004-07-02  Raja R Harinath  <rharinath@novell.com>
 
 	* cs0038-3.cs: New testcase from #60730.
