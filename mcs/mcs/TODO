@@ -84,6 +84,13 @@ BUGS
 PENDING TASKS
 -------------
 
+* IMprove error handling here:
+
+	public static Process ()
+
+	THat assumes that it is a constructor, check if its the same name
+	as the class, if not report a different error than the one we use now.
+
 * Merge test 89 and test-34
 
 * Revisit
