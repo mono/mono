@@ -1,3 +1,9 @@
+2004-04-12 Anirban Bhattacharjee <banirban@novell.com>
+	* mb-parser.jay: Fixed bugs for calling ctor from another ctor in the same class by using statments like
+		Me.New 
+		or 
+		MyClass.New
+
 2004/04/07  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* mb-tokenizer.cs : Better error message when dealing with date literals
 

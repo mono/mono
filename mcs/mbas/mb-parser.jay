@@ -999,7 +999,7 @@ class_member_declaration
 	   opt_modifiers
 	   { 
 	   	current_attributes = (Attributes) $1;
-	   	current_modifiers = (int) $2; 
+	   	current_modifiers = (int) $2;
 	   }
 	   class_member_declarator
 	   {
@@ -3268,8 +3268,12 @@ parenthesized_expression
 member_access
 	: primary_expression DOT identifier
 	  {
-	  	if ($1 != null)
-			$$ = new MemberAccess ((Expression) $1, (string) $3, lexer.Location);
+	  	if ($1 != null) {
+	  		string id_name = (string)$3;
+	  		if (id_name.ToUpper() == "NEW")
+	  			id_name = ".ctor";
+			$$ = new MemberAccess ((Expression) $1, id_name, lexer.Location);
+		}
 		else
 		{
 			if (with_stack.Count > 0) {
@@ -3282,10 +3286,10 @@ member_access
 			}
 		}
 	  }
-	| primary_expression DOT NEW
+/*	| primary_expression DOT NEW
 	  {
 		$$ = new MemberAccess ((Expression) $1, (string) ".ctor", lexer.Location);
-	  }	  
+	  }	  */
 	| predefined_type DOT identifier
 	  {
 	  	if ($1 != null)
@@ -3323,12 +3327,15 @@ invocation_expression
 base_access
 	: MYBASE DOT IDENTIFIER
 	  {
-		$$ = new BaseAccess ((string) $3, lexer.Location);
+		string id_name = (string) $3;
+		if (id_name.ToUpper() == "NEW")
+			id_name = "New";
+		$$ = new BaseAccess (id_name, lexer.Location);
 	  }
-	| MYBASE DOT NEW
+/*	| MYBASE DOT NEW
 	  {
 		$$ = new BaseAccess ("New", lexer.Location);
-	  }
+	  }*/
 	;	
 
 opt_argument_list
