@@ -2914,11 +2914,11 @@ goto_statement
 	  }
 	| GOTO CASE constant_expression SEMICOLON
 	  {
-		// FIXME
+		$$ = new GotoCase ((Expression) $3, lexer.Location);
 	  }
 	| GOTO DEFAULT SEMICOLON 
 	  {
-		// FIXME
+		$$ = new GotoDefault (lexer.Location);
 	  }
 	; 
 

@@ -117,6 +117,20 @@ BUGS
 
 	Multi-dim arrays are declared as [,] instead of [0..,0..]
 
+* Break/Continue statements
+
+	A finally block should reset the InLoop/LoopBegin/LoopEnd, as
+	they are logically outside the scope of the loop.
+
+* Break/continue part 2.
+
+	They should transfer control to the finally block if inside a try/catch
+	block.
+
+* Conversions and overflow
+
+	I am not using the checked state while doing type casts,
+	they should result in conv.ovf.XXX
 
 PENDING TASKS
 -------------
@@ -181,6 +195,8 @@ PENDING TASKS
 
 	Required to warn about reachability of code and definite
 	assignemt as well as missing returns on functions.
+
+* Implement `goto case expr'
 
 
 OPTIMIZATIONS

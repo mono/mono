@@ -261,12 +261,7 @@ namespace Mono.CSharp {
 				}
 				
 			} else {
-
-				Console.WriteLine (" Before --- " + name + " -> " + val);
-			
 				val = val.Resolve (ec);
-
-				Console.WriteLine (" After --- " + name + " -> " + val);
 				
 				if (val == null) {
 					Report.Error (-12, loc, "Definition is circular.");

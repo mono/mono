@@ -1,3 +1,15 @@
+2001-12-03  Miguel de Icaza  <miguel@ximian.com>
+
+	* statement.cs 
+
+	* statement.cs (GotoDefault), cs-parser.jay: Implement `goto
+	default'.
+	
+	(Foreach.Emit): Foreach on arrays was not setting
+	up the loop variables (for break/continue).
+
+	(GotoCase): Semi-implented.
+	
 2001-12-03  Ravi Pratap  <ravi@ximian.com>
 
 	* attribute.cs (CheckAttribute): Handle system attributes by using

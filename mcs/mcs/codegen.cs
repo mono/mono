@@ -217,8 +217,26 @@ namespace Mono.CSharp {
 		public bool  InLoop;
 
 		/// <summary>
+		///   Default target in a switch statement.   Only valid if
+		///   InSwitch is true
+		/// </summary>
+		public Label DefaultTarget;
+
+		/// <summary>
 		///   Whether we are inside a switch and a break is possible
 		/// </summary>
 		public bool  InSwitch;
+
+		/// <summary>
+		///   Whether we have a `default' case on a switch
+		/// </summary>
+		public bool GotDefault;
+
+		/// <summary>
+		///   The hashtable of the various elements found on a switch
+		///   statement.  This is used by `goto case expression' to
+		///   verify the target
+		/// </summary>
+		public Hashtable SwitchElements;
 	}
 }

@@ -357,6 +357,69 @@ namespace Mono.CSharp {
 		}
 	}
 
+	/// <summary>
+	///   `goto default' statement
+	/// </summary>
+	public class GotoDefault : Statement {
+		Location loc;
+		
+		public GotoDefault (Location l)
+		{
+			loc = l;
+		}
+
+		public override bool Emit (EmitContext ec)
+		{
+			if (!ec.InSwitch){
+				Report.Error (153, loc, "goto default is only valid in a switch statement");
+				return false;
+			}
+
+			if (!ec.GotDefault){
+				Report.Error (159, loc, "No default target on switch statement");
+				return false;
+			}
+			ec.ig.Emit (OpCodes.Br, ec.DefaultTarget);
+			return false;
+		}
+	}
+
+	/// <summary>
+	///   `goto case' statement
+	/// </summary>
+	public class GotoCase : Statement {
+		Location loc;
+		Expression expr;
+		
+		public GotoCase (Expression e, Location l)
+		{
+			expr = e;
+			loc = l;
+		}
+
+		public override bool Emit (EmitContext ec)
+		{
+			if (!ec.InSwitch){
+				Report.Error (153, loc, "goto case is only valid in a switch statement");
+				return false;
+			}
+
+			expr = expr.Resolve (ec);
+			if (expr == null)
+				return false;
+
+			expr = Expression.Reduce (ec, expr);
+			if (!(expr is Literal)){
+				Report.Error (159, loc, "Target expression for goto case is not constant");
+				return false;
+			}
+			
+			// FIXME: implement me.
+
+			throw new Exception ("FIXME: IMPLEMENT ME");
+		}
+	}
+	
 	public class Throw : Statement {
 		public readonly Expression Expr;
 		
@@ -998,17 +1061,18 @@ namespace Mono.CSharp {
 		//
 		Hashtable CheckSwitch (EmitContext ec, Type switch_type)
 		{
-			bool error = false, got_default = false;
+			bool error = false;
 			Hashtable elements = new Hashtable ();
 				
+			ec.GotDefault = false;
 			foreach (SwitchSection ss in sections){
 				foreach (SwitchLabel sl in ss.Labels){
 					if (sl.Label == null){
-						if (got_default){
+						if (ec.GotDefault){
 							error152 ("default");
 							error = true;
 						}
-						got_default = true;
+						ec.GotDefault = true;
 						continue;
 					}
 					
@@ -1091,7 +1155,6 @@ namespace Mono.CSharp {
 		bool SimpleSwitchEmit (EmitContext ec, LocalBuilder val, Type switch_type, Hashtable el)
 		{
 			ILGenerator ig = ec.ig;
-			Label default_target = ig.DefineLabel ();
 			Label end_of_switch = ig.DefineLabel ();
 			Label next_test = ig.DefineLabel ();
 			Label null_target = ig.DefineLabel ();
@@ -1113,7 +1176,7 @@ namespace Mono.CSharp {
 				if (el.Contains (NullLiteral.Null)){
 					ig.Emit (OpCodes.Brfalse, null_target);
 				} else
-					ig.Emit (OpCodes.Brfalse, default_target);
+					ig.Emit (OpCodes.Brfalse, ec.DefaultTarget);
 
 				ig.Emit (OpCodes.Ldloc, val);
 				ig.Emit (OpCodes.Call, TypeManager.string_isinterneted_string);
@@ -1137,7 +1200,7 @@ namespace Mono.CSharp {
 					// If we are the default target
 					//
 					if (sl.Label == null){
-						ig.MarkLabel (default_target);
+						ig.MarkLabel (ec.DefaultTarget);
 						default_found = true;
 					} else {
 						Literal lit = sl.Converted;
@@ -1184,7 +1247,7 @@ namespace Mono.CSharp {
 				first_test = false;
 			}
 			if (!default_found)
-				ig.MarkLabel (default_target);
+				ig.MarkLabel (ec.DefaultTarget);
 			ig.MarkLabel (next_test);
 			ig.MarkLabel (end_of_switch);
 			
@@ -1207,20 +1270,31 @@ namespace Mono.CSharp {
 			
 			Type switch_type = new_expr.Type;
 			Hashtable elements = CheckSwitch (ec, switch_type);
-
+			
 			if (elements == null)
 				return false;
 
+			ec.SwitchElements = elements;
+			
 			// Store variable for comparission purposes
 			LocalBuilder value = ec.ig.DeclareLocal (switch_type);
 			new_expr.Emit (ec);
 			ec.ig.Emit (OpCodes.Stloc, value);
 
-			// Setup break is enabled. 
 			ILGenerator ig = ec.ig;
+
+			//
+			// Setup the codegen context
+			//
 			Label old_end = ec.LoopEnd;
-			ec.LoopEnd = ig.DefineLabel ();
+			Label old_default_target = ec.DefaultTarget;
 			bool old_in_switch = ec.InSwitch;
+			bool old_got_default = ec.GotDefault;
+			Hashtable old_elements = ec.SwitchElements;
+			
+			ec.LoopEnd = ig.DefineLabel ();
+			ec.DefaultTarget = ig.DefineLabel ();
+			ec.InSwitch = true;
 
 			// Emit Code.
 			bool all_return =  SimpleSwitchEmit (ec, value, switch_type, elements);
@@ -1234,10 +1308,16 @@ namespace Mono.CSharp {
 			//
 			// try: b (int a) { switch (a) { default: return 0; }  }
 			ig.Emit (OpCodes.Nop);
-			
+
+			//
+			// Restore the previous context
+			//
 			ec.InSwitch = old_in_switch;
 			ec.LoopEnd = old_end;
-
+			ec.DefaultTarget = old_default_target;
+			ec.GotDefault = old_got_default;
+			ec.SwitchElements = old_elements;
+			
 			//
 			// Because we have a nop at the end
 			//
@@ -1582,13 +1662,6 @@ namespace Mono.CSharp {
 			//
 			// Instantiate the enumerator
 
-			Label old_begin = ec.LoopBegin, old_end = ec.LoopEnd;
-			Label end_try = ig.DefineLabel ();
-			bool old_inloop = ec.InLoop;
-			ec.LoopBegin = ig.DefineLabel ();
-			ec.LoopEnd = ig.DefineLabel ();
-			ec.InLoop = true;
-			
 			if (expr.Type.IsValueType){
 				if (expr is IMemoryLocation){
 					IMemoryLocation ml = (IMemoryLocation) expr;
@@ -1609,6 +1682,8 @@ namespace Mono.CSharp {
 			// if the beast implement IDisposable, we get rid of it
 			//
 			Label l = ig.BeginExceptionBlock ();
+			Label end_try = ig.DefineLabel ();
+			
 			ig.MarkLabel (ec.LoopBegin);
 			ig.Emit (OpCodes.Ldloc, enumerator);
 			ig.Emit (OpCodes.Callvirt, TypeManager.bool_movenext_void);
@@ -1644,11 +1719,6 @@ namespace Mono.CSharp {
 			ig.EndExceptionBlock ();
 
 			ig.MarkLabel (ec.LoopEnd);
-			
-			ec.LoopBegin = old_begin;
-			ec.LoopEnd = old_end;
-			ec.InLoop = old_inloop;
-
 			return false;
 		}
 
@@ -1699,6 +1769,7 @@ namespace Mono.CSharp {
 
 				statement.Emit (ec);
 
+				ig.MarkLabel (ec.LoopBegin);
 				ig.Emit (OpCodes.Ldloc, counter);
 				ig.Emit (OpCodes.Ldc_I4_1);
 				ig.Emit (OpCodes.Add);
@@ -1759,6 +1830,7 @@ namespace Mono.CSharp {
 				ig.Emit (OpCodes.Call, get);
 				variable.EmitAssign (ec, conv);
 				statement.Emit (ec);
+				ig.MarkLabel (ec.LoopBegin);
 				for (dim = rank - 1; dim >= 0; dim--){
 					ig.Emit (OpCodes.Ldloc, dim_count [dim]);
 					ig.Emit (OpCodes.Ldc_I4_1);
@@ -1771,13 +1843,15 @@ namespace Mono.CSharp {
 					ig.Emit (OpCodes.Blt, loop [dim]);
 				}
 			}
-
+			ig.MarkLabel (ec.LoopEnd);
+			
 			return false;
 		}
 		
 		public override bool Emit (EmitContext ec)
 		{
 			Type var_type;
+			bool ret_val;
 			
 			expr = expr.Resolve (ec);
 			if (expr == null)
@@ -1799,16 +1873,30 @@ namespace Mono.CSharp {
 				return false;
 			}
 
+			ILGenerator ig = ec.ig;
+			
+			Label old_begin = ec.LoopBegin, old_end = ec.LoopEnd;
+			bool old_inloop = ec.InLoop;
+			ec.LoopBegin = ig.DefineLabel ();
+			ec.LoopEnd = ig.DefineLabel ();
+			ec.InLoop = true;
+			
 			if (expr.Type.IsArray)
-				return EmitArrayForeach (ec, var_type);
+				ret_val = EmitArrayForeach (ec, var_type);
 			else {
 				MethodInfo get_enum;
 				
 				if ((get_enum = ProbeCollectionType (expr.Type)) == null)
 					return false;
 
-				return EmitCollectionForeach (ec, var_type, get_enum);
+				ret_val = EmitCollectionForeach (ec, var_type, get_enum);
 			}
+			
+			ec.LoopBegin = old_begin;
+			ec.LoopEnd = old_end;
+			ec.InLoop = old_inloop;
+
+			return ret_val;
 		}
 	}
 }

@@ -848,7 +848,7 @@ namespace Mono.CSharp {
 			
 			if (parent_builder is ModuleBuilder) {
 				ModuleBuilder builder = (ModuleBuilder) parent_builder;
-				
+
 				//
 				// Structs with no fields need to have a ".size 1"
 				// appended
