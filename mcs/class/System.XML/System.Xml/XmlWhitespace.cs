@@ -32,10 +32,13 @@ namespace System.Xml
 			get { return XmlNodeType.Whitespace; }
 		}
 
-		[MonoTODO]
 		public override string Value {
 			get { return Data; }
-			set {}
+			[MonoTODO]
+			set {
+				if (IsValidWhitespaceChar (value) == false)
+					throw new ArgumentException ("Invalid whitespace characters.");
+			}
 		}
 
 		// Methods
@@ -50,6 +53,14 @@ namespace System.Xml
 		public override void WriteTo (XmlWriter w)
 		{
 			w.WriteWhitespace (Data);
+		}
+
+		private bool IsValidWhitespaceChar (string text)
+		{
+			foreach (char c in text)
+				if ((c != ' ') && (c != '\r') && (c != '\n') && (c != '\t'))
+					return false;
+			return true;
 		}
 	}
 }

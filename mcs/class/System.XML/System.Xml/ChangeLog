@@ -1,3 +1,10 @@
+2002-04-28  Duncan Mak  <duncan@ximian.com>
+
+	* XmlSignificantWhitespace.cs (Value):
+	* XmlWhitespace.cs (Value): Added MonoTODO to the 'set'
+	block. Added new private method, IsValidWhitespaceChar, for
+	checking.
+
 2002-04-16  Duncan Mak  <duncan@ximian.com>
 
 	* XmlParserContext.cs (NameTable): Fixed a typo in the set block.
