@@ -797,7 +797,7 @@ namespace Mono.Security.Protocol.Tls
 
 		#region Event Methods
 
-		internal bool RaiseServerCertificateValidation(
+		internal virtual bool RaiseServerCertificateValidation(
 			X509Certificate certificate, 
 			int[]			certificateErrors)
 		{
@@ -806,7 +806,7 @@ namespace Mono.Security.Protocol.Tls
 				return this.ServerCertValidation(certificate, certificateErrors);
 			}
 
-			return certificateErrors != null && certificateErrors.Length == 0 ? true : false;
+			return (certificateErrors != null && certificateErrors.Length == 0);
 		}
 
 		internal X509Certificate RaiseClientCertificateSelection(

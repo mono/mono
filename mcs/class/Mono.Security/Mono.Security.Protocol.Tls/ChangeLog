@@ -1,3 +1,10 @@
+2004-02-25  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HttpsClientStream.cs: New. Internal glue class between System.dll 
+	WebConnection and SslClientStream to reduce reflection.
+	* SslClientStream.cs: RaiseServerCertificateValidation is now virtual
+	to allow HttpsClientStream to override it.
+
 2004-02-24 Carlos Guzman Alvarez  <carlosga@telefonica.net>
 
 	* Mono.Security.Protocol.Tls/RecordProtocol.cs:
