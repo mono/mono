@@ -33,6 +33,9 @@
 using System;
 using System.IO;
 using System.Text;
+#if NET_2_0
+using MS.Internal.Xml;
+#endif
 
 namespace System.Xml
 {
@@ -373,6 +376,74 @@ namespace System.Xml
 		public abstract void WriteSurrogateCharEntity (char lowChar, char highChar);
 
 		public abstract void WriteWhitespace (string ws);
+
+#if NET_2_0
+		[MonoTODO]
+		public virtual void WriteValue (bool value)
+		{
+			WriteString (XQueryConvert.BooleanToString (value));
+		}
+
+		[MonoTODO]
+		public virtual void WriteValue (DateTime value)
+		{
+			WriteString (XmlConvert.ToString (value));
+		}
+
+		[MonoTODO]
+		public virtual void WriteValue (Decimal value)
+		{
+			WriteString (XQueryConvert.DecimalToString (value));
+		}
+
+		[MonoTODO]
+		public virtual void WriteValue (double value)
+		{
+			WriteString (XQueryConvert.DoubleToString (value));
+		}
+
+		[MonoTODO]
+		public virtual void WriteValue (int value)
+		{
+			WriteString (XQueryConvert.IntToString (value));
+		}
+
+		[MonoTODO]
+		public virtual void WriteValue (long value)
+		{
+			WriteString (XQueryConvert.IntegerToString (value));
+		}
+
+		[MonoTODO]
+		public virtual void WriteValue (Stream value)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public virtual void WriteValue (TextReader value)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public virtual void WriteValue (object value)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public virtual void WriteValue (float value)
+		{
+			WriteString (XQueryConvert.FloatToString (value));
+		}
+
+		[MonoTODO]
+		public virtual void WriteValue (string value)
+		{
+			WriteString (value);
+		}
+#endif
 
 		#endregion
 	}

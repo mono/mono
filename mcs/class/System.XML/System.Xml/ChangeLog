@@ -1,3 +1,11 @@
+2004-07-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlReader.cs : Implemented ReadValueAsXxx() except for
+	  ReadValueAsList().
+	* XmlTextReader.cs : implemented them as well, just invoking 
+	  base.ReadValueAsXxx ().
+	* XmlWriter.cs : implemented some WriteValue() methods.
+
 2004-07-21  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlConvert.cs : added internal ToBinHexString() (BTW according to

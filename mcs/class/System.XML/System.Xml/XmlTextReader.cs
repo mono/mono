@@ -46,6 +46,9 @@ using System.Security.Policy;
 using System.Text;
 using System.Xml.Schema;
 using Mono.Xml;
+#if NET_2_0
+using MS.Internal.Xml;
+#endif
 
 namespace System.Xml
 {
@@ -705,7 +708,12 @@ namespace System.Xml
 			return ReadCharsInternal (buffer, offset, length);
 		}
 
-#if NET_1_1
+#if NET_2_0
+		public override string ReadString ()
+		{
+			return ReadStringInternal ();
+		}
+#elif NET_1_1
 #else
 		public override string ReadInnerXml ()
 		{
@@ -727,6 +735,62 @@ namespace System.Xml
 		{
 			Init ();
 		}
+
+#if NET_2_0
+		[MonoTODO]
+		public override bool ReadValueAsBoolean ()
+		{
+			return base.ReadValueAsBoolean ();
+		}
+
+		[MonoTODO]
+		public override DateTime ReadValueAsDateTime ()
+		{
+			return base.ReadValueAsDateTime ();
+		}
+
+		[MonoTODO]
+		public override decimal ReadValueAsDecimal ()
+		{
+			return base.ReadValueAsDecimal ();
+		}
+
+		[MonoTODO]
+		public override double ReadValueAsDouble ()
+		{
+			return base.ReadValueAsDouble ();
+		}
+
+		[MonoTODO]
+		public override int ReadValueAsInt32 ()
+		{
+			return base.ReadValueAsInt32 ();
+		}
+
+		[MonoTODO]
+		public override long ReadValueAsInt64 ()
+		{
+			return base.ReadValueAsInt64 ();
+		}
+
+		[MonoTODO]
+		public override ICollection ReadValueAsList ()
+		{
+			return base.ReadValueAsList ();
+		}
+
+		[MonoTODO]
+		public override float ReadValueAsSingle ()
+		{
+			return base.ReadValueAsSingle ();
+		}
+
+		[MonoTODO]
+		public override string ReadValueAsString ()
+		{
+			return ReadString ();
+		}
+#endif
 
 		public override void ResolveEntity ()
 		{

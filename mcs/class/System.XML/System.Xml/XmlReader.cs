@@ -31,11 +31,15 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+using System.Collections;
 using System.IO;
 using System.Security.Policy;
 using System.Text;
 using System.Xml.Schema; // only required for NET_2_0 (SchemaInfo)
 using Mono.Xml; // only required for NET_2_0 (XmlFilterReader)
+#if NET_2_0
+using MS.Internal.Xml; // only required for NET_2_0
+#endif
 
 namespace System.Xml
 {
@@ -652,6 +656,110 @@ namespace System.Xml
 			readStringBuffer.Length = 0;
 			return ret;
 		}
+
+#if NET_2_0
+
+		[MonoTODO]
+		public virtual object ReadValueAs (Type type)
+		{
+			return ReadValueAs (type, null);
+		}
+
+		private XmlQualifiedName ParseQName (string qname, IXmlNamespaceResolver resolver)
+		{
+			int index = qname.IndexOf (':');
+			if (index < 0)
+				return new XmlQualifiedName (qname);
+			else
+				return new XmlQualifiedName (qname.Substring (index + 1), resolver.LookupNamespace (qname.Substring (0, index)));
+		}
+
+		[MonoTODO]
+		public virtual object ReadValueAs (Type type, IXmlNamespaceResolver resolver)
+		{
+			string text = ReadString ();
+			try {
+				if (type == typeof (XmlQualifiedName))
+					return ParseQName (text, resolver);
+
+				switch (Type.GetTypeCode (type)) {
+				case TypeCode.Boolean:
+					return ReadValueAsBoolean ();
+				case TypeCode.DateTime:
+					return ReadValueAsDateTime ();
+				case TypeCode.Decimal:
+					return ReadValueAsDecimal ();
+				case TypeCode.Double:
+					return ReadValueAsDouble ();
+				case TypeCode.Int32:
+					return ReadValueAsInt32 ();
+				case TypeCode.Int64:
+					return ReadValueAsInt64 ();
+				case TypeCode.Single:
+					return ReadValueAsSingle ();
+				case TypeCode.String:
+					return ReadValueAsString ();
+				}
+			} catch (Exception ex) {
+				return new FormatException (String.Format ("Current text value '{0}' is not acceptable for specified type '{1}'.", text, type));
+			}
+			throw new ArgumentException (String.Format ("Specified type '{0}' is not supported.", type));
+		}
+
+		[MonoTODO]
+		public virtual bool ReadValueAsBoolean ()
+		{
+			return XQueryConvert.StringToBoolean (ReadString ());
+		}
+
+		[MonoTODO]
+		public virtual DateTime ReadValueAsDateTime ()
+		{
+			return XQueryConvert.StringToDateTime (ReadString ());
+		}
+
+		[MonoTODO]
+		public virtual decimal ReadValueAsDecimal ()
+		{
+			return XQueryConvert.StringToDecimal (ReadString ());
+		}
+
+		[MonoTODO]
+		public virtual double ReadValueAsDouble ()
+		{
+			return XQueryConvert.StringToDouble (ReadString ());
+		}
+
+		[MonoTODO]
+		public virtual int ReadValueAsInt32 ()
+		{
+			return XQueryConvert.StringToInt (ReadString ());
+		}
+
+		[MonoTODO]
+		public virtual long ReadValueAsInt64 ()
+		{
+			return XQueryConvert.StringToInteger (ReadString ());
+		}
+
+		[MonoTODO]
+		public virtual ICollection ReadValueAsList ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public virtual float ReadValueAsSingle ()
+		{
+			return XQueryConvert.StringToFloat (ReadString ());
+		}
+
+		[MonoTODO]
+		public virtual string ReadValueAsString ()
+		{
+			return ReadString ();
+		}
+#endif
 
 		public abstract void ResolveEntity ();
 
