@@ -509,3 +509,23 @@ gen-15.cs:
 ----------
 
 Generic methods.
+
+2test-1.cs
+----------
+C# 2.0 Iterators: Enumerator and Enumerable with foreach
+
+2test-2.cs
+----------
+C# 2.0 Iterators: Obtaining the enumerator manually
+
+2test-3.cs
+----------
+C# 2.0 Iterators: Multi-dimensional arrays as arguments to iterator method
+
+2test-4.cs
+----------
+C# 2.0 Iterators: Use of a local variable in an enumerator.
+
+2test-5.cs
+----------
+Method group conversions for C# 2.0
