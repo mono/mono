@@ -632,27 +632,6 @@ namespace System
             return Parse(s, NumberStyles.Number, provider);
         }
 
-        private static NumberFormatInfo GetNumberFormatInfoFromIFormatProvider(IFormatProvider provider)
-        {
-            NumberFormatInfo nfi = null;
-
-            if (provider != null)
-            {
-                nfi = (NumberFormatInfo) provider.GetFormat(typeof(System.Decimal));
-                if (nfi == null && provider is NumberFormatInfo)
-                {
-                    nfi = (NumberFormatInfo) provider;
-                }
-            }
-
-            if (nfi == null)
-            {
-                nfi = NumberFormatInfo.CurrentInfo;
-            }
-
-            return nfi;
-        }
-
         private static string stripStyles(string s, NumberStyles style, NumberFormatInfo nfi, 
             out int decPos, out bool isNegative, out bool expFlag, out int exp)
         {
@@ -874,7 +853,7 @@ namespace System
 
         public static Decimal Parse(string s, NumberStyles style, IFormatProvider provider) 
         {
-            NumberFormatInfo nfi = GetNumberFormatInfoFromIFormatProvider(provider);
+            NumberFormatInfo nfi = NumberFormatInfo.GetInstance(provider);
 
             if (s == null) throw new ArgumentNullException (Locale.GetText ("string s"));
 
@@ -1050,7 +1029,7 @@ namespace System
 
         public string ToString(string format, IFormatProvider provider) 
         {
-            NumberFormatInfo nfi = GetNumberFormatInfoFromIFormatProvider(provider);
+            NumberFormatInfo nfi = NumberFormatInfo.GetInstance(provider);
             
             if (format == null) format = "G";	
 			
