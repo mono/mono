@@ -1,5 +1,11 @@
-Mono.Data.TdsClient/TdsConnection.cs
-Mono.Data.TdsClient/TdsTransaction.cs
 Mono.Data.TdsClient/TdsCommand.cs
+Mono.Data.TdsClient/TdsConnection.cs
 Mono.Data.TdsClient/TdsServerType.cs
-Mono.Data.TdsClient/IsolationLevel.cs
+Mono.Data.TdsClient/TdsTransaction.cs
+Mono.Data.TdsClient/TdsVersion.cs
+Mono.Data.TdsClient.Internal/TdsCommandInternal.cs
+Mono.Data.TdsClient.Internal/TdsConnectionInternal.cs
+Mono.Data.TdsClient.Internal/TdsPacketTypeInternal.cs
+Mono.Data.TdsClient.Internal/TdsServerTypeInternal.cs
+Mono.Data.TdsClient.Internal/TdsTransactionInternal.cs
+Mono.Data.TdsClient.Internal/TdsVersionInternal.cs

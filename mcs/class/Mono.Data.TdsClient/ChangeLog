@@ -1,3 +1,10 @@
+2002-10-17  Tim Coleman (tim@timcoleman.com)
+        * list:
+                Add files from Mono.Data.TdsClient.Internal
+	* makefile.gnu:
+		Add reference to System.Data.dll.  This is
+		fine, just not the reverse.
+
 2002-10-16  Daniel Morgan <danmorg@sc.rr.com>
 
 	* Mono.Data.TdsClient.build: added build for windows
