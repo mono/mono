@@ -88,8 +88,8 @@ $(monobins_DATA):
 	setreg.exe)              d=tools/security               ;; \
 	sn.exe)                  d=tools/security               ;; \
 	monop.exe)               d=tools/monop                  ;; \
-	mono-find-provides.exe)	 d=tools/mono-rpm-helpers	;; \
-	mono-find-requires.exe)	 d=tools/mono-rpm-helpers	;; \
+	mono-find-provides.exe)	 d=tools/mono-rpm-helpers/mono-find-provides	;; \
+	mono-find-requires.exe)	 d=tools/mono-rpm-helpers/mono-find-requires	;; \
 	browsercaps-updater.exe) d=tools/browsercaps-updater    ;; \
 	gacutil.exe)		 d=tools/gacutil		;; \
 	gmcs.exe)                d=gmcs				;; \
