@@ -3322,6 +3322,10 @@ namespace PEAPI
     }
 
     private void CalcOffsets() {
+if (sdata != null)
+        numSections++;
+if (rsrc != null)
+        numSections++;
       headerSize = fileHeaderSize + (numSections * sectionHeaderSize);
       headerPadding = NumToAlign(headerSize,fileAlign);
       headerSize += headerPadding;
@@ -3335,7 +3339,6 @@ namespace PEAPI
                         // Console.WriteLine("headerPadding = " + headerPadding);
                         // Console.WriteLine("textOffset = " + Hex.Int(text.Offset()));
                         if (sdata != null) { 
-                                numSections++;
                                 sdata.SetSize(NumToAlign(sdata.Tide(),fileAlign));
                                 sdata.SetOffset(offset);
         sdata.SetRVA(rva);
@@ -3344,7 +3347,6 @@ namespace PEAPI
                                 initDataSize += sdata.Size();
       }
       if (rsrc != null) { 
-                                numSections++;
                                 rsrc.SetSize(NumToAlign(rsrc.Tide(),fileAlign));
                                 rsrc.SetOffset(offset);
         rsrc.SetRVA(rva);

@@ -1,3 +1,9 @@
+2003-09-21 Jackson Harper <jackson@latitudegeo.com>
+
+	* PEAPI.cs: sigh, sometimes it is best to calculate variables
+	before using them. This fixes PEAPI creating broken images when
+	the sdata section is used.
+	
 2003-09-20 Jackson Harper <jackson@latitudegeo.com>
 
 	* PEAPI.cs: Rework to allow multiple constraints to be added to a
