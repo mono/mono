@@ -38,7 +38,7 @@ using System.Net.Sockets;
 
 // Only do the poll when building with mono for now
 #if __MonoCS__
-using Mono.Posix;
+using Mono.Unix;
 #endif
 
 /// X11 Version

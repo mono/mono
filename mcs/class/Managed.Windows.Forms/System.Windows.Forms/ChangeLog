@@ -1,3 +1,7 @@
+2004-11-17  Jackson Harper  <jackson@ximian.com>
+
+	* XplatUIX11.cs: Use the new Mono.Unix namespace.
+
 2004-11-17  Ravindra <rkumar@novell.com>
 
 	* ListView.cs: Added event handling for MouseMove/Up/Down.
