@@ -280,3 +280,13 @@ System.Data/XmlDataLoader.cs
 System.Data/XmlSchemaMapper.cs
 System.Xml/XmlDataDocument.cs
 System.Data.ProviderBase/DbCommandBase.cs
+System.Data.ProviderBase/DbConnectionBase.cs
+System.Data.ProviderBase/DbConnectionFactory.cs
+System.Data.ProviderBase/DbConnectionInternal.cs
+System.Data.ProviderBase/DbConnectionPoolCounters.cs
+System.Data.ProviderBase/DbConnectionPoolOptions.cs
+System.Data.ProviderBase/DbDataReaderBase.cs
+System.Data.ProviderBase/DbMetaDataFactory.cs
+System.Data.ProviderBase/DbParameterBase.cs
+System.Data.ProviderBase/DbParameterCollectionBase.cs
+System.Data.ProviderBase/DbReferenceCollection.cs
