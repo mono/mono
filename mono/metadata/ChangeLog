@@ -1,4 +1,9 @@
 
+Wed Dec 18 11:34:18 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* threads.c, threads.h: added mono_thread_get_abort_signal()
+	to get a suitable signal for thread abort.
+
 Wed Dec 18 11:26:18 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* metadata.c: fix handling of ExportedType table.
