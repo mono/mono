@@ -1,3 +1,9 @@
+2004-06-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* FloatingPointFormatter.cs: Implemented "R" format using Jon Skeet
+	source code (with permission). Fix (biggest) part of bug #60110.
+	http://www.yoda.arachsys.com/csharp/floatingpoint.html
+
 2004-06-15  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Decimal.cs: Fixed scale after Round (a different scale is correct 
