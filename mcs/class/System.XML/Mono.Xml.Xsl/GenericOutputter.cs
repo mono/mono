@@ -188,9 +188,16 @@ namespace Mono.Xml.Xsl
 				for (int i = 0; i < pendingAttributesPos; i++) 
 				{
 					Attribute attr = pendingAttributes [i];
-					string prefix = _nsManager.LookupPrefix (attr.Namespace, false);
+					string prefix = attr.Prefix;
+					string existing = _nsManager.LookupPrefix (attr.Namespace, false);
+					if (prefix.Length == 0 && attr.Namespace.Length > 0)
+						prefix = existing;
 					if (prefix == null) {
-						prefix = attr.Prefix;
+						prefix = "xp_" + _xpCount++;
+					}
+					if (existing != prefix && attr.Namespace.Length > 0) {
+						newNamespaces.Add (prefix);
+						_currentNamespaceDecls [prefix] = attr.Namespace;
 						_nsManager.AddNamespace (prefix, attr.Namespace);
 					}
 					
@@ -267,10 +274,6 @@ namespace Mono.Xml.Xsl
 
 		public override void WriteAttributeString (string prefix, string localName, string nsURI, string value)
 		{
-			if (prefix == String.Empty && nsURI != String.Empty ||
-				prefix == "xml" && nsURI != XmlNamespaceManager.XmlnsXml)
-				prefix = "xp_" + _xpCount++;
-
 			//Put attribute to pending attributes collection, replacing namesake one
 			for (int i = 0; i < pendingAttributesPos; i++) {
 				Attribute attr = pendingAttributes [i];

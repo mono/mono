@@ -1,5 +1,10 @@
 2005-03-07  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* GenericOutputter.cs : compute attribute prefix only when actual
+	  emission. Fixed some cases that namespace output was missing.
+
+2005-03-07  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* GenericOutputter.cs : no need to use two collections to store
 	  pending attributes. Just use ordered ListDictionary.
 	  newNamespace.Add(int) causes extraneous boxing.
