@@ -163,11 +163,13 @@ namespace MonoTests.System.Xml
 //			AssertEquals (631769076000000000L, XmlConvert.ToDateTime ("2003+13:00").Ticks);
 //			AssertEquals (631769544000000000L, XmlConvert.ToDateTime ("2003Z").Ticks);
 			//gMonthDay
-			AssertEquals (632001312000000000L, XmlConvert.ToDateTime ("--09-26").Ticks);//shouldn't have a hardcoded value
+// Don't try locale-dependent test
+//			AssertEquals (632001312000000000L, XmlConvert.ToDateTime ("--09-26").Ticks);//shouldn't have a hardcoded value
 //			AssertEquals (632000664000000000L, XmlConvert.ToDateTime ("--09-26+13:00").Ticks);//shouldn't have a hardcoded value
 //			AssertEquals (632001132000000000L, XmlConvert.ToDateTime ("--09-26Z").Ticks);//shouldn't have a hardcoded value
 			//gDay
-			AssertEquals (631791360000000000L, XmlConvert.ToDateTime ("---26").Ticks);//shouldn't have a hardcoded value
+// Don't try locale-dependent test
+//			AssertEquals (631791360000000000L, XmlConvert.ToDateTime ("---26").Ticks);//shouldn't have a hardcoded value
 //			AssertEquals (631790676000000000L, XmlConvert.ToDateTime ("---26+13:00").Ticks);//shouldn't have a hardcoded value
 //			AssertEquals (631791144000000000L, XmlConvert.ToDateTime ("---26Z").Ticks);//shouldn't have a hardcoded value
 			try

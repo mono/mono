@@ -1,5 +1,11 @@
 2004-04-24  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlConvertTests.cs : Commented out locale-dependent tests.
+	* XmlDocumentTests.cs : Uncommented now-testable lines.
+	  Commented out that should not be allowed, such as non-XML-name node.
+
+2004-04-24  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlDeclarationTests.cs : More InnerText tests.
 
 2004-04-20  Atsushi Enomoto <atsushi@ximian.com>

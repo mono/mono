@@ -179,8 +179,9 @@ namespace MonoTests.System.Xml
 //			node = document.CreateNode (XmlNodeType.EntityReference, "a", "b", "c");
 //			AssertNull (((XmlEntityReference)node).Value);
 
-			node = document.CreateNode (XmlNodeType.ProcessingInstruction, "a", "b", "c");
-			AssertEquals (String.Empty, ((XmlProcessingInstruction)node).Value);
+// TODO: add this back in to test when it's implemented.
+//			node = document.CreateNode (XmlNodeType.ProcessingInstruction, "a", "b", "c");
+//			AssertEquals (String.Empty, ((XmlProcessingInstruction)node).Value);
 
 			node = document.CreateNode (XmlNodeType.SignificantWhitespace, "a", "b", "c");
 			AssertEquals (String.Empty, ((XmlSignificantWhitespace)node).Value);
@@ -220,8 +221,8 @@ namespace MonoTests.System.Xml
 			// i.e. reuse underlying NameTable or not?
 
 // TODO: add this back in to test when it's implemented.
-//			node = document.CreateNode("documentfragment", null, null);
-//			AssertEquals (XmlNodeType.DocumentFragment, node.NodeType);
+			node = document.CreateNode("documentfragment", null, null);
+			AssertEquals (XmlNodeType.DocumentFragment, node.NodeType);
 
 			node = document.CreateNode("documenttype", null, null);
 			AssertEquals (XmlNodeType.DocumentType, node.NodeType);
@@ -230,11 +231,13 @@ namespace MonoTests.System.Xml
 			AssertEquals (XmlNodeType.Element, node.NodeType);
 
 // TODO: add this back in to test when it's implemented.
+// ---> It is implemented, but it is LAMESPEC that allows null entity reference name.
 //			node = document.CreateNode("entityreference", "foo", null);
 //			AssertEquals (XmlNodeType.EntityReference, node.NodeType);
 
-			node = document.CreateNode("processinginstruction", null, null);
-			AssertEquals (XmlNodeType.ProcessingInstruction, node.NodeType);
+// LAMESPEC: null PI name is silly.
+//			node = document.CreateNode("processinginstruction", null, null);
+//			AssertEquals (XmlNodeType.ProcessingInstruction, node.NodeType);
 
 			node = document.CreateNode("significantwhitespace", null, null);
 			AssertEquals (XmlNodeType.SignificantWhitespace, node.NodeType);
