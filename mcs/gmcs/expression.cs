@@ -9035,7 +9035,8 @@ namespace Mono.CSharp {
 					type = ((TypeExpr) e).ResolveType (ec);
 				if (type == null)
 					return null;
-			}
+			} else
+				type = ltype;
 
 			if (!ec.InUnsafe && type.IsPointer){
 				UnsafeError (loc);
