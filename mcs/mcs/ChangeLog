@@ -1,3 +1,9 @@
+2004-06-04  Martin Baulig  <martin@ximian.com>
+
+	Merged latest changes into gmcs.  Please keep this comment in
+	here, it makes it easier for me to see what changed in MCS since
+	the last time I merged.
+
 2004-06-03  Raja R Harinath  <rharinath@novell.com>
 
 	Bug #50820.
@@ -362,12 +368,6 @@
 	argument.
 	(MethodData.ApplyAttributes): Take an EmitContext instead of a
 	DeclSpace.
-
-2004-04-20  Martin Baulig  <martin@ximian.com>
-
-	Merged latest changes into gmcs.  Please keep this comment in
-	here, it makes it easier for me to see what changed in MCS since
-	the last time I merged.
 
 2004-05-19  Marek Safar  <marek.safar@seznam.cz>
 
