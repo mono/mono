@@ -9,6 +9,7 @@
 
 namespace System.ComponentModel {
 
+	[MonoTODO]
 	public class ComponentCollection { // FIXME: ReadOnlyCollectionBase
 
 		public void Dispose ()

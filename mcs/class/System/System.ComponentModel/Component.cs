@@ -72,6 +72,7 @@ namespace System.ComponentModel {
 			}
 		}
 
+		[MonoTODO]
 		~Component()
 		{
 			// FIXME: Not sure this is correct.
@@ -82,6 +83,7 @@ namespace System.ComponentModel {
 		// <summary>
 		//   Dispose resources used by this component
 		// </summary>
+		[MonoTODO]
 		public virtual void Dispose ()
 		{
 			// FIXME: Not sure this is correct.
@@ -107,6 +109,7 @@ namespace System.ComponentModel {
 		// <summary>
 		//   Implements the IServiceProvider interface
 		// </summary>
+		[MonoTODO]
 		protected virtual object GetService (Type service)
 		{
 			// FIXME: Not sure what this should do.
@@ -116,6 +119,7 @@ namespace System.ComponentModel {
 		// <summary>
 		//   FIXME: Figure out this one.
 	        // </summary>
+		[MonoTODO ("Figure this out")]
 		public event EventHandler Disposed;
 	}
 	

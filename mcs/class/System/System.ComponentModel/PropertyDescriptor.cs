@@ -31,6 +31,7 @@ namespace System.ComponentModel {
 
 		public abstract Type ComponentType { get; }
 
+		[MonoTODO]
 		public virtual TypeConverter Converter {
 			get {
 				// FIXME: Implement me.

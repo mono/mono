@@ -28,6 +28,7 @@ namespace System.ComponentModel {
 			this.category = "Misc";
 		}
 
+		[MonoTODO]
 		protected virtual string GetLocalizedString (string value)
 		{
 			// FIXME: IMPLEMENT

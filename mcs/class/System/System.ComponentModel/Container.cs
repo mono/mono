@@ -54,6 +54,7 @@ namespace System.ComponentModel {
 				}
 			}
 
+			[MonoTODO]
 			public bool DesignMode {
 				get {
 					// FIXME: should we provide a way to set
@@ -72,6 +73,7 @@ namespace System.ComponentModel {
 				}
 			}
 
+			[MonoTODO]
 			public virtual object GetService (Type t)
 			{
 				// FIXME: do not know what this is supposed to do.
@@ -95,6 +97,7 @@ namespace System.ComponentModel {
 		// <summary>
 		//   Adds an IComponent to the Container
 		// </summary>
+		[MonoTODO]
 		public virtual void Add (IComponent component)
 		{
 			// FIXME: Add this component to the ComponentCollection.cc
@@ -103,6 +106,7 @@ namespace System.ComponentModel {
 		// <summary>
 		//   Adds an IComponent to the Container.  With a name binding.
 		// </summary>
+		[MonoTODO]
 		public virtual void Add (IComponent component, string name)
 		{
 			// FIXME: Add this component to the ComponentCollection.cc
@@ -137,6 +141,7 @@ namespace System.ComponentModel {
 			disposed = true;
 		}
 
+		[MonoTODO]
 		protected virtual object GetService (Type service)
 		{
 			// FIXME: Not clear what GetService does.
@@ -144,6 +149,7 @@ namespace System.ComponentModel {
 			return null;
 		}
 
+		[MonoTODO]
 		public virtual void Remove (IComponent component)
 		{
 			// FIXME: Add this component to the ComponentCollection.cc

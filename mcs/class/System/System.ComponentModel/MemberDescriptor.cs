@@ -47,7 +47,7 @@ namespace System.ComponentModel {
 		}
 
 		// FIXME: Implement Attributes property
-
+		[MonoTODO ("Implement Attributes property too")]
 		public virtual string Category {
 			get {
 				foreach (Attribute attr in attrs){
@@ -87,6 +87,7 @@ namespace System.ComponentModel {
 		//
 		// FIXME: Is there any difference between DisplayName and Name?
 		//
+		[MonoTODO ("Does this diff from Name ?")]
 		public virtual string DisplayName {
 			get {
 				return name;
