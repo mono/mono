@@ -1,3 +1,7 @@
+2003-07-22  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
+
+	* mcs/class/Makefile: Added Microsoft.Vsa.dll to the build.
+
 2003-04-04  Miguel de Icaza  <miguel@ximian.com>
 
 	*

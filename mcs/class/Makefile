@@ -43,7 +43,7 @@ SUBDIRS = \
 	System.DirectoryServices	\
 	System.Messaging	\
 	System.ServiceProcess \
-#	Microsoft.Vsa			\
+	Microsoft.Vsa			
 #	Microsoft.JScript		\
 
 # Starting with Microsoft.Vsa, the libraries above weren't in the
