@@ -19,21 +19,10 @@ namespace System.Web.Services.Protocols
 		HttpSimpleTypeStubInfo _typeInfo;
 		HttpSimpleMethodStubInfo method;
 		
-		public HttpSimpleWebServiceHandler (HttpSimpleTypeStubInfo typeInfo,
-						    HttpSimpleMethodStubInfo method,
-						    string protocolName) : base (typeInfo.Type)
+		public HttpSimpleWebServiceHandler (Type type, string protocolName)
+		: base (type)
 		{
-			this._typeInfo = typeInfo;
-			this.method = method;
-		}
-		
-		public override bool EnableSession {
-			get {
-				if (method == null)
-					return false;
-
-				return method.MethodInfo.EnableSession;
-			}
+			_typeInfo = (HttpSimpleTypeStubInfo) TypeStubManager.GetTypeStub (type, protocolName);
 		}
 		
 		protected HttpSimpleTypeStubInfo TypeStub
@@ -41,17 +30,29 @@ namespace System.Web.Services.Protocols
 			get { return _typeInfo; }
 		}
 		
+		internal override MethodStubInfo GetRequestMethod (HttpContext context)
+		{
+			string name = context.Request.PathInfo;
+			if (name.StartsWith ("/"))
+				name = name.Substring (1);
+
+			method = (HttpSimpleMethodStubInfo) _typeInfo.GetMethod (name);
+			if (method == null) 
+				WriteError (context, "Method " + name + " not defined in service " + ServiceType.Name);
+			
+			return method;
+		}
+		
 		public override void ProcessRequest (HttpContext context)
 		{
 			Context = context;
-			string name = context.Request.PathInfo;
-			if (name.StartsWith ("/")) name = name.Substring (1);
-			
 			Stream respStream = null;
 			Exception error = null;
+			
 			try
 			{
-				if (method == null) throw new InvalidOperationException ("Method " + name + " not defined in service " + ServiceType.Name);
+				if (method == null) 
+					method = (HttpSimpleMethodStubInfo) GetRequestMethod (context);
 
 				if (method.MethodInfo.EnableSession)
 					Session = context.Session;
@@ -70,18 +71,22 @@ namespace System.Web.Services.Protocols
 			}
 			
 			if (error != null)
-			{
-				try
-				{
-					context.Response.ContentType = "text/plain";
-					context.Response.StatusCode = 500;
-					context.Response.Write (error.Message);
-				}
-				catch {}
-			}
+				WriteError (context, error.Message);
 			
 			if (respStream != null)
 				respStream.Close ();
+		}
+		
+		void WriteError (HttpContext context, string msg)
+		{
+			try
+			{
+				context.Response.ContentType = "text/plain";
+				context.Response.StatusCode = 500;
+				context.Response.Write (msg);
+				context.Response.End ();
+			}
+			catch {}
 		}
 		
 		object Invoke (LogicalMethodInfo method, object[] parameters)

@@ -32,24 +32,6 @@ namespace System.Web.Services.Protocols
 		}
 	}
 	
-	class SimpleSyncSessionHandler : HttpSimpleWebServiceHandler, IHttpHandler, IRequiresSessionState
-	{
-		public SimpleSyncSessionHandler (HttpSimpleTypeStubInfo typeInfo,
-						 HttpSimpleMethodStubInfo method, string protocolName)
-						 : base (typeInfo, method, protocolName)
-		{
-		}
-
-		public override bool IsReusable {
-			get { return base.IsReusable; }
-		}
-
-		public override void ProcessRequest (HttpContext context)
-		{
-			base.ProcessRequest (context);
-		}
-	}
-
 	class SessionWrapperHandler : IHttpHandler, IRequiresSessionState
 	{
 		IHttpHandler handler;
@@ -112,25 +94,11 @@ namespace System.Web.Services.Protocols
 
 			switch (protocol) {
 			case WSProtocol.HttpSoap:
-				handler = new HttpSoapWebServiceHandler (type);
+				handler = GetTypeHandler (context, new HttpSoapWebServiceHandler (type));
 				break;
 			case WSProtocol.HttpPost:
 			case WSProtocol.HttpGet:
-				string proto = protocol.ToString ();
-				TypeStubInfo tinfo = TypeStubManager.GetTypeStub (type, proto);
-				HttpSimpleTypeStubInfo typeInfo = (HttpSimpleTypeStubInfo) tinfo;
-
-				string name = context.Request.PathInfo;
-				if (name.StartsWith ("/"))
-					name = name.Substring (1);
-
-				HttpSimpleMethodStubInfo method = null;
-				method = (HttpSimpleMethodStubInfo) typeInfo.GetMethod (name);
-				if (method != null && method.MethodInfo.EnableSession)
-					handler = new SimpleSyncSessionHandler (typeInfo, method, proto);
-				else
-					handler = new HttpSimpleWebServiceHandler (typeInfo, method, proto);
-
+				handler = GetTypeHandler (context, new HttpSimpleWebServiceHandler (type, protocol.ToString ()));
 				break;
 			case WSProtocol.Documentation:
 				SoapDocumentationHandler soapHandler;
@@ -147,6 +115,17 @@ namespace System.Web.Services.Protocols
 			}
 
 			return handler;
+		}
+		
+		IHttpHandler GetTypeHandler (HttpContext context, WebServiceHandler handler)
+		{
+			MethodStubInfo method = handler.GetRequestMethod (context);
+			if (method == null) return null;
+			
+			if (method.MethodInfo.EnableSession)
+				return new SessionWrapperHandler (handler);
+			else
+				return handler;
 		}
 
 		static WSProtocol GuessProtocol (HttpContext context, string verb)

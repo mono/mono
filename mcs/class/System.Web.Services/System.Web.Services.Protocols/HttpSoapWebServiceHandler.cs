@@ -26,6 +26,8 @@ namespace System.Web.Services.Protocols
 		SoapExtension[] _extensionChainMedPrio;
 		SoapExtension[] _extensionChainLowPrio;
 		SoapMethodStubInfo methodInfo;
+		SoapServerMessage requestMessage = null;
+		object server;
 
 		public HttpSoapWebServiceHandler (Type type): base (type)
 		{
@@ -37,19 +39,31 @@ namespace System.Web.Services.Protocols
 			get { return false; }
 		}
 
+		internal override MethodStubInfo GetRequestMethod (HttpContext context)
+		{
+			try
+			{
+				requestMessage = DeserializeRequest (context.Request);
+				return methodInfo;
+			}
+			catch (Exception ex)
+			{
+				SerializeFault (context, requestMessage, ex);
+				return null;
+			}
+		}
+
 		public override void ProcessRequest (HttpContext context)
 		{
 			Context = context;
-			SoapServerMessage requestMessage = null;
 			SoapServerMessage responseMessage = null;
 
 			try
 			{
-				requestMessage = DeserializeRequest (context.Request);
-				if (methodInfo != null && methodInfo.MethodAttribute.EnableSession)
-					Session = context.Session;
+				if (requestMessage == null)
+					requestMessage = DeserializeRequest (context.Request);
 					
-				responseMessage = Invoke (requestMessage);
+				responseMessage = Invoke (context, requestMessage);
 				SerializeResponse (context.Response, responseMessage);
 			}
 			catch (Exception ex)
@@ -71,7 +85,7 @@ namespace System.Web.Services.Protocols
 				if (ctype != "text/xml")
 					throw new WebException ("Content is not XML: " + ctype);
 					
-				object server = CreateServerInstance ();
+				server = CreateServerInstance ();
 
 				SoapServerMessage message = new SoapServerMessage (request, server, stream);
 				message.SetStage (SoapMessageStage.BeforeDeserialize);
@@ -242,8 +256,7 @@ namespace System.Web.Services.Protocols
 					SoapExtension.ExecuteProcessMessage (_extensionChainHighPrio, message, true);
 				}
 				
-				// What a waste of UTF8encoders, but it has to be thread safe.
-				XmlTextWriter xtw = new XmlTextWriter (outStream, new UTF8Encoding (false));
+				XmlTextWriter xtw = WebServiceHelper.CreateXmlWriter (outStream);
 				
 				if (message.Exception == null)
 					WebServiceHelper.WriteSoapMessage (xtw, _typeStubInfo, methodInfo.Use, methodInfo.ResponseSerializer, message.OutParameters, message.Headers);
@@ -303,8 +316,13 @@ namespace System.Web.Services.Protocols
 			return;
 		}
 		
-		private SoapServerMessage Invoke (SoapServerMessage requestMessage)
+		private SoapServerMessage Invoke (HttpContext ctx, SoapServerMessage requestMessage)
 		{
+			WebService wsi = requestMessage.Server as WebService;
+			if (wsi != null) {
+				wsi.SetContext (ctx);
+			}
+			
 			SoapMethodStubInfo methodInfo = requestMessage.MethodStubInfo;
 
 			// Assign header values to web service members

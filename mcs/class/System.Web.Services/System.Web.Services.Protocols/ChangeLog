@@ -1,3 +1,17 @@
+2004-05-12  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* HttpSimpleWebServiceHandler.cs: Added GetRequestMethod(), which is used
+	  by the handler factory to check if the target method needs session or not.
+	  Also factorized error handling in WriteError().
+	* HttpSoapWebServiceHandler.cs: Added GetRequestMethod(), for the same 
+	  reason. Assign the context to the WebService just before invoking the
+	  method.
+	* SoapHttpClientProtocol.cs: Use helper method to create the xml writer.
+	* WebServiceHandler.cs: Added virtual GetRequestMethod().
+	* WebServiceHandlerFactory.cs: Use an http handler wrapper when the target
+	  method requires session support.
+	* WebServiceHelper.cs: Added some helper methods.
+
 2004-05-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* SoapDocumentationHandler.cs: added internal property to get the page

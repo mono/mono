@@ -21,7 +21,25 @@ namespace System.Web.Services.Protocols
 	internal class WebServiceHelper
 	{
 		public const string SoapEnvelopeNamespace = "http://schemas.xmlsoap.org/soap/envelope/";
-		static char [] trimChars = { '"', '\'' };
+		static readonly char [] trimChars = { '"', '\'' };
+		static readonly bool prettyXml;
+		
+		static WebServiceHelper ()
+		{
+			string pxml = Environment.GetEnvironmentVariable ("MONO_WEBSERVICES_PRETTYXML");
+			prettyXml = (pxml != null && pxml != "no");
+		}
+		
+		public static XmlTextWriter CreateXmlWriter (Stream s)
+		{
+			// What a waste of UTF8encoders, but it has to be thread safe.
+			XmlTextWriter xtw = new XmlTextWriter (s, new UTF8Encoding (false));
+				
+			if (prettyXml)
+				xtw.Formatting = Formatting.Indented;
+				
+			return xtw;
+		}
 		
 		public static Encoding GetContentEncoding (string cts, out string content_type)
 		{

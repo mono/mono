@@ -46,8 +46,9 @@ namespace System.Web.Services.Protocols
 			set { this.session = value; }
 		}
 
-		public virtual bool EnableSession {
-			get { return false; }
+		internal virtual MethodStubInfo GetRequestMethod (HttpContext context)
+		{
+			return null;
 		}
 		
 		public virtual void ProcessRequest (HttpContext context)
@@ -60,12 +61,11 @@ namespace System.Web.Services.Protocols
 			WebService wsi = ws as WebService;
 			if (wsi != null) {
 				wsi.SetContext (_context);
-				wsi.SetSession (session);
 			}
 
 			return ws;
 		}
-
+		
 		[MonoTODO]
 		protected IAsyncResult BeginCoreProcessRequest (AsyncCallback callback, object o)
 		{

@@ -184,9 +184,8 @@ namespace System.Web.Services.Protocols {
 					SoapExtension.ExecuteProcessMessage (extensions, message, true);
 				}
 
-				// What a waste of UTF8encoders, but it has to be thread safe.
-				XmlTextWriter xtw = new XmlTextWriter (s, new UTF8Encoding (false));
-
+				XmlTextWriter xtw = WebServiceHelper.CreateXmlWriter (s);
+				
 				WebServiceHelper.WriteSoapMessage (xtw, type_info, message.MethodStubInfo.Use, message.MethodStubInfo.RequestSerializer, message.Parameters, message.Headers);
 
 				if (extensions != null) {
