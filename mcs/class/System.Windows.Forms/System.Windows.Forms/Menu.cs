@@ -100,7 +100,7 @@ namespace System.Windows.Forms  {
 
 		~Menu() {
 			// TODO: Check whats happening if Menu was already destroyed by Win32 Window
-			if( Win32.IsMenu( menuHandle_) != 0)
+			if (Win32.IsMenu( menuHandle_))
 				Win32.DestroyMenu( menuHandle_);
 		}
 
@@ -197,6 +197,10 @@ namespace System.Windows.Forms  {
 			return null;
 		}
 
+		//
+		// Btw, this function is funky, it is being used by routines that are supposed
+		// to be passing an IntPtr to the AppendMenu function
+		//
 		internal virtual uint GetIDByMenuItem( MenuItem mi)
 		{
 			// FIXME: Pay attention, do not assign an id to a "stranger"
@@ -275,7 +279,7 @@ namespace System.Windows.Forms  {
 						}
 						else {
 							Win32.AppendMenuA( parentMenu_.Handle, Win32.MF_ENABLED | Win32.MF_STRING,
-																parentMenu_.GetIDByMenuItem(mi), mi.Text);
+									   (IntPtr) parentMenu_.GetIDByMenuItem(mi), mi.Text);
 						}
 					}
 				}

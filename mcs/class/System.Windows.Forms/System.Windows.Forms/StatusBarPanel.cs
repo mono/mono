@@ -91,8 +91,9 @@ namespace System.Windows.Forms {
 			{
 				if  (value != StatusBarPanelAutoSize.None && value != StatusBarPanelAutoSize.Contents && value != StatusBarPanelAutoSize.Spring) {
 
-					throw new InvalidEnumArgumentException("System.Windows.Forms.StatusBarPanel::set_AutoSize(StatusBarPanelAutoSize) " +
-					                                       "value is not a valid StatusBarPanelAutoSize value");
+					throw new InvalidEnumArgumentException(
+						"System.Windows.Forms.StatusBarPanel::set_AutoSize(StatusBarPanelAutoSize) " +
+						"value is not a valid StatusBarPanelAutoSize value");
 				}
 				autoSize = value;
 			}

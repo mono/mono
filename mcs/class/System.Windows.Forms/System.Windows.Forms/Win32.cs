@@ -104,6 +104,20 @@ namespace System.Windows.Forms {
 			IntPtr hWndParent, IntPtr hMenu, IntPtr hInstance,
 			ref object lpParam);
 
+		[DllImport ("user32.dll", 
+			    CallingConvention = CallingConvention.StdCall, 
+			    CharSet = CharSet.Auto)]
+		public static extern IntPtr CreateMenu ();
+
+		[DllImport ("user32.dll", 
+			    CallingConvention = CallingConvention.StdCall, 
+			    CharSet = CharSet.Ansi)]
+		public static extern bool AppendMenuA(IntPtr hMenu, uint uflags, IntPtr NewItem, string item);
+
+		[DllImport ("user32.dll", 
+			    CallingConvention = CallingConvention.StdCall)]
+		public static extern bool DestroyMenu (IntPtr hMenu);
+		
 		[DllImport ("user32.dll", CallingConvention = 
 			    CallingConvention.StdCall, CharSet = CharSet.Auto)]
 		public extern static IntPtr DefWindowProcA (
@@ -222,6 +236,12 @@ namespace System.Windows.Forms {
 			    CharSet = CharSet.Auto)]
 		public static extern bool IsWindowEnabled (IntPtr hWnd);
 
+		[DllImport ("user32.dll", 
+			    CallingConvention = CallingConvention.StdCall, 
+			    CharSet = CharSet.Auto)]
+		public static extern bool IsMenu (IntPtr hWnd);
+
+		
 		[DllImport ("user32.dll", 
 			    CallingConvention = CallingConvention.StdCall, 
 			    CharSet = CharSet.Auto)]
@@ -703,6 +723,10 @@ namespace System.Windows.Forms {
 		public const int SS_RIGHTJUST        = 0x00000400;
 		public const int SS_REALSIZEIMAGE    = 0x00000800;
 		public const int SS_SUNKEN           = 0x00001000;
+
+		public const int MF_ENABLED          = 0;
+		public const int MF_STRING           = 0;
+		public const int MF_POPUP            = 0x10;
 	}
 
 }

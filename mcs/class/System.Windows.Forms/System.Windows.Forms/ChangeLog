@@ -1,3 +1,8 @@
+2002-11-02  Miguel de Icaza  <miguel@ximian.com>
+
+	* Win32.cs: Added IsMenu, CreateMenu, AppendMenuA, DestroyMenu entry points.
+	
+
   2002-10-29  DennisHayes <dennish@raytek.com>	
 	* checkin for Alexandre Pigolkine (pigolkine@gmx.de)
 	* Menu classes start on implmentation
