@@ -1,3 +1,8 @@
+2003-01-28  Zoltan Varga  <vargaz@freemail.hu>
+
+	* x86.brg (mono_ldintftn): use <= instead of <, since the 
+	interface_offsets array is max_interface_id + 1 long.
+
 2003-01-28  Dietmar Maurer  <dietmar@ximian.com>
 
 	* x86.brg (mono_ldintftn): fix from Zoltan: use max_interface_id
