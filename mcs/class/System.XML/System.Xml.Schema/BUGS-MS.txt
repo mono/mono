@@ -146,7 +146,7 @@ Microsoft development team (as of 2004/07).
 
 	Related msxsdtests are elemT015.xsd and elemT022.xsd.
 
-[This is still on discussion between MS team and me.]
+(MS: This will be fixed in the next version of .NET 2.0)
 
 
 010. derived union incorrectly allowed
@@ -159,15 +159,16 @@ Microsoft development team (as of 2004/07).
 [ditto]
 
 
-011. schema finalDefault with list and/or union
+<del>011. schema finalDefault with list and/or union</del>
+
+	[Update] This is not MS bug. We have to fix this problem. XML Schema
+	errata corrected this part of the spec by allowing 'list'.
 
 	In xs:schema, finalDefault = (#all | List of (extension | restriction)),
 	but MS.NET failed to handle blockDefault='list' as an error.
 	(union as well.)
 
 	Related msxsdtest is stF034.xsd and stF036.xsd.
-
-[This is still on discussion between MS team and me.]
 
 
 012. derived types cannot duplicate fixed facet
@@ -211,3 +212,18 @@ elementOnly</del>
 
 	Related msxsdtest: ctF008.xsd
 
+
+015. Included schema ignores incorrect element name which belongs to 
+XmlSchema.Namespace
+
+	MS Schema compiler fails to catch an error when an incorrect schema
+	(such as below) is included by any other schemas:
+
+	<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>
+	  <xs:foo />
+	</xs:schema>
+
+	This does not apply to general compilation error such as missing 
+	sub components that should result in an error.
+
+	This seems fixed in Whidbey.
