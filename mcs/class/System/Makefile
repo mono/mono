@@ -11,22 +11,17 @@ LIBRARY = System.dll
 LIB_MCS_FLAGS = /r:$(corlib)
 TEST_MCS_FLAGS = /nowarn:1595 /nowarn:0618
 
-CYCLIC_DEP = System.Xml.dll
+CYCLIC_DEP := System.Xml.dll
+CYCLIC_DEP_FILE := ../lib/$(PROFILE)/$(CYCLIC_DEP)
+HAVE_CYCLIC_DEP_FILE := $(wildcard $(CYCLIC_DEP_FILE))
 
 EXTRA_DISTFILES = \
 	System.Text.RegularExpressions/notes.txt	\
 	System.ComponentModel.Design/Changelog		\
 	Test/test-config-file
 
-ifdef SECOND_PASS
-	include ../../build/library.make
-
-ifdef HAVE_SYSTEM_XML
-
+ifdef HAVE_CYCLIC_DEP_FILE
 LIB_MCS_FLAGS += /define:XML_DEP /r:$(CYCLIC_DEP)
-
-$(the_lib): ../lib/$(PROFILE)/$(CYCLIC_DEP)
-
 else
 
 # First pass:
@@ -36,18 +31,13 @@ LIBRARY_COMPILE = $(BOOT_COMPILE)
 
 endif
 
+include ../../build/library.make
+
+ifdef HAVE_CYCLIC_DEP_FILE
+$(the_lib): $(CYCLIC_DEP_FILE)
 else
-
-test-local: all-local
-
-all-local install-local test-local run-test-local run-test-ondotnet-local clean-local: 
-	@set -e; \
-	if test ! -f ../lib/$(PROFILE)/$(CYCLIC_DEP) ; then \
-	    echo "Creating temporary $(LIBRARY) without $(CYCLIC_DEP) reference." ; \
-	    $(MAKE) SECOND_PASS=yes $@ ; \
-	    rm -f '$(depsdir)/$(PROFILE)_$(LIBRARY).stamp'; \
-	else \
-	    $(MAKE) SECOND_PASS=yes HAVE_SYSTEM_XML=yes $@ ; \
-	fi
-
+$(the_lib): echo-warning
+.PHONY: echo-warning
+echo-warning:
+	@echo "** Building temporary System.dll without parts that depend on System.Xml"
 endif
