@@ -1,3 +1,11 @@
+
+Wed Apr 9 15:19:41 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* appdomain.h, domain.c: added mono_domain_foreach() to
+	be able to access the currently loaded appdomains.
+	* object.c: make string interning work across sppdomains.
+	Mark some functions for use as icalls.
+
 2003-04-09  Zoltan Varga  <vargaz@freemail.hu>
 
 	* class.c reflection.c: Fix memory leaks reported by ccmalloc.
