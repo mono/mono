@@ -1231,7 +1231,35 @@ namespace System.Drawing
                 internal static extern Status GdipIsOutlineVisiblePathPoint (IntPtr path, float x, float y, IntPtr graphics, out bool result);
                 [DllImport ("gdiplus.dll")]                
                 internal static extern Status GdipIsOutlineVisiblePathPointI (IntPtr path, int x, int y, IntPtr graphics, out bool result); 
-                
+
+		// GraphicsPathIterator
+		[DllImport("gdiplus.dll")]
+		internal static extern Status GdipCreatePathIter (out IntPtr iterator, IntPtr path);
+		[DllImport("gdiplus.dll")]
+		internal static extern Status GdipPathIterGetCount (IntPtr iterator, out int count);
+		[DllImport("gdiplus.dll")]
+		internal static extern Status GdipPathIterGetSubpathCount (IntPtr iterator, out int count);
+		[DllImport("gdiplus.dll")]
+		internal static extern Status GdipDeletePathIter (IntPtr iterator);
+		[DllImport("gdiplus.dll")]
+		internal static extern Status GdipPathIterCopyData (IntPtr iterator, out int resultCount, ref PointF [] points, ref byte [] types, int startIndex, int endIndex);
+		[DllImport("gdiplus.dll")]
+		internal static extern Status GdipPathIterEnumerate (IntPtr iterator, out int resultCount, ref PointF [] points, ref byte [] types, int count);
+		[DllImport("gdiplus.dll")]
+		internal static extern Status GdipPathIterHasCurve (IntPtr iterator, out bool curve);
+		[DllImport("gdiplus.dll")]
+		internal static extern Status GdipPathIterNextMarkerPath (IntPtr iterator, out int resultCount, IntPtr path);
+		[DllImport("gdiplus.dll")]
+		internal static extern Status GdipPathIterNextMarker (IntPtr iterator, out int resultCount, out int startIndex, out int endIndex);
+		[DllImport("gdiplus.dll")]
+		internal static extern Status GdipPathIterNextPathType (IntPtr iterator, out int resultCount, out byte pathType, out int startIndex, out int endIndex);
+		[DllImport("gdiplus.dll")]
+		internal static extern Status GdipPathIterNextSubpathPath (IntPtr iterator, out int resultCount, IntPtr path, out bool isClosed);
+		[DllImport("gdiplus.dll")]
+		internal static extern Status GdipPathIterNextSubpath (IntPtr iterator, out int resultCount, out int startIndex, out int endIndex, out bool isClosed);
+		[DllImport("gdiplus.dll")]
+		internal static extern Status GdipPathIterRewind (IntPtr iterator);
+
 		// ImageAttributes
 		[DllImport ("gdiplus.dll")]     
 		internal static extern Status GdipCreateImageAttributes (out IntPtr imageattr);

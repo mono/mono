@@ -1,3 +1,7 @@
+2004-07-16  Ravindra <rkumar@novell.com>
+
+	* gdipFunctions.cs: Added P/Invokes for GraphicsPathIterator.
+
 2004-07-15  Ravindra <rkumar@novell.com>
 
 	* gdipFunctions.cs: Removed GdipGetPathData P/Invoke. It is redundant.
