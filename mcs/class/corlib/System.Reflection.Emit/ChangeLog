@@ -1,3 +1,8 @@
+2004-10-04  Zoltan Varga  <vargaz@freemail.hu>
+
+	* ModuleBuilder.cs (DefineType): Check for duplicate type names. Fixes
+	#65988.	
+
 2004-09-17  Zoltan Varga  <vargaz@freemail.hu>
 
 	* CustomAttributeBuilder.cs: Applied patch from Marcus Urban (mathpup@mylinuxisp.com). Add support for defining custom marshallers by calling SetCustomAttribute.
