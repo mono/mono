@@ -1092,7 +1092,6 @@ namespace Mono.CSharp {
 				       Location loc)
 			: base (type, name, mod_flags, attrs, loc)
 		{
-			ModFlags = mod_flags;
 		}
 
 		public override string GetSignatureForError () {
@@ -1117,7 +1116,6 @@ namespace Mono.CSharp {
 			: base (return_type, name, mod_flags, attrs, l)
 		{
 			this.Parameters = args;
-			ModFlags = mod_flags;
 		}
 
 		public override EmitContext Emit(TypeContainer tc, DeclSpace ds) {
@@ -1174,7 +1172,6 @@ namespace Mono.CSharp {
 			Attributes set_attrs, Location loc)
 			: base (type, name, mod_flags, has_get, has_set, prop_attrs, get_attrs, set_attrs, loc)
 		{
-			ModFlags = mod_flags;
 		}
 
 		public override string GetSignatureForError () {
@@ -1191,7 +1188,6 @@ namespace Mono.CSharp {
 			: base (type, "Item", mod_flags, do_get, do_set, attrs, get_attrs, set_attrs, loc)
 		{
 			Parameters = args;
-			ModFlags = mod_flags;
 		}
 
 		public override string GetSignatureForError() {
