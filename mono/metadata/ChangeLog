@@ -1,4 +1,10 @@
 
+Wed Aug 20 12:57:42 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* object.h: add needed fields to MonoThread.
+	* threads.c, threads.h: allow registering a function to cleanup data
+	allocated per thread by the JIT.
+
 Tue Aug 19 18:22:08 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* loader.h: portability fix by Bernie Solomon
