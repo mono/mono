@@ -1,3 +1,12 @@
+2002-10-13  Daniel Morgan <danmorg@sc.rr.com>
+
+	* Mono.Data.SqliteClient: add file
+	to build on Windows
+	
+	* Mono.Data.SqliteClient/SqliteCommand.cs: modified
+	added unsafe { } around call to sqlite_exec() which calls
+	an unsafe method SqliteCallbackFunction
+
 2002-10-12  Vladimir Vukicevic  <vladimir@pobox.com>
 
 	* Mono.Data.SqlClient/SqliteCobmmand.cs, SqliteDataReader.cs,

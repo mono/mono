@@ -196,11 +196,13 @@ namespace Mono.Data.SqliteClient {
                         try {
                                 if (want_results) {
                                         reader = new SqliteDataReader (this);
-                                        err = sqlite_exec (parent_conn.Handle,
-                                                           sql,
-                                                           new SqliteCallbackFunction (reader.SqliteCallback),
-                                                           IntPtr.Zero,
-                                                           IntPtr.Zero);
+					unsafe {
+						err = sqlite_exec (parent_conn.Handle,
+							sql,
+							new SqliteCallbackFunction (reader.SqliteCallback),
+							IntPtr.Zero,
+							IntPtr.Zero);
+					}
                                         reader.ReadingDone ();
                                 } else {
                                         err = sqlite_exec (parent_conn.Handle,
