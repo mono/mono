@@ -1,5 +1,12 @@
 2004-07-17  Miguel de Icaza  <miguel@ximian.com>
 
+	* cs-tokenizer.cs (handle_preprocessing_directive): Do not return
+	`true' for preprocessing directives that we parse.  The return
+	value indicates whether we should return to regular tokenizing or
+	not, not whether it was parsed successfully.
+
+	In the past if we were in: #if false ... #line #endif, we would
+	resume parsing after `#line'.  See bug 61604.
 	* typemanager.cs: Removed an old hack from Gonzalo to get corlib
 	building: IsEnumType should return true only for enums, not for
 	enums or System.Enum itself.  This fixes #61593.
