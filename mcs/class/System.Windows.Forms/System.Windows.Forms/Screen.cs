@@ -9,6 +9,8 @@
 //
 using System.Runtime.InteropServices;
 using System.Drawing;
+using System.Collections;
+
 namespace System.Windows.Forms {
 
 	// <summary>
@@ -19,17 +21,31 @@ namespace System.Windows.Forms {
 		//
 		//  --- Public Properties
 		//
-
+		
+		internal static ArrayList allScreens = new ArrayList();
+		
+		private Rectangle bounds;
+		
+		static Screen() {
+			allScreens.Add (new Screen());
+		}
+		
+		internal Screen() {
+			bounds = new Rectangle(0, 0, 1024, 768);
+		}
+		
 		[MonoTODO]
 		public static Screen[] AllScreens {
 			get {
-				throw new NotImplementedException ();
+				Screen[] result = new Screen[allScreens.Count];
+				allScreens.CopyTo (result, 0);
+				return result;
 			}
 		}
 		[MonoTODO]
 		public Rectangle Bounds {
 			get {
-				throw new NotImplementedException ();
+				return bounds;
 			}
 		}
 		[MonoTODO]
@@ -53,7 +69,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public Rectangle WorkingArea {
 			get {
-				throw new NotImplementedException ();
+				return bounds;
 			}
 		}
 
@@ -66,22 +82,22 @@ namespace System.Windows.Forms {
 			return base.Equals(obj);
 		}
 		[MonoTODO]
-		public static Screen FormControl(Control ctl)
+		public static Screen FromControl(Control ctl)
 		{
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		public static Screen FormHandle(IntPtr hwnd)
+		public static Screen FromHandle(IntPtr hwnd)
 		{
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		public static Screen FormPoint(Point point)
+		public static Screen FromPoint(Point point)
 		{
-			throw new NotImplementedException ();
+			return allScreens[0] as Screen;
 		}
 		[MonoTODO]
-		public static Screen FormRectangle(Rectangle rect)
+		public static Screen FromRectangle(Rectangle rect)
 		{
 			throw new NotImplementedException ();
 		}

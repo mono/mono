@@ -1,3 +1,6 @@
+2003-08-30  Alexandre Pigolkine <pigolkine@gmx.de>
+	* Screen.cs 		small fixes and few methods implemented
+
 2003-08-26  Alexandre Pigolkine <pigolkine@gmx.de>
 	* RadioButton.cs		painting code and click logic updated 
 
