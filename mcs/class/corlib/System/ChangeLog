@@ -1,3 +1,10 @@
+2001-07-19  Jeffrey Stedfast  <fejj@ximian.com>
+
+	* Char.cs: Made ToUpper and ToLower public methods.
+
+	* String.cs: Lots and lots of compile fixes - just need to write
+	DateTime.cs and this should build completely now.
+
 2001-07-19  Bob Smith (bob@thestuff.net)
 
 	* Math.cs: Implemented. 
@@ -15,7 +22,7 @@
 
 	* TimeSpan.cs: New implementation.
 
-2001-07-18  Scott Sanders scott@stonecobra.com
+2001-07-18  Scott Sanders <scott@stonecobra.com>
 
          * UriFormatExcpetion.cs: Add - 85% complete
 

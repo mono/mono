@@ -196,7 +196,7 @@ namespace System {
 			else
 				return false;
 		}
-
+#if XXX
 		unsafe private static int BoyerMoore (char[] haystack, char[] needle, int startIndex, int count)
 		{
 			/* (hopefully) Unicode-safe Boyer-Moore implementation */
@@ -258,7 +258,7 @@ namespace System {
 
 			return -1;
 		}
-
+#endif
 		// Methods
 		public object Clone ()
 		{
@@ -468,13 +468,13 @@ namespace System {
 
 		public static string Concat (object arg)
 		{
-			return Concat (this, arg ? arg.ToString () : String.Empty);
+			return arg != null ? arg.ToString () : String.Empty;
 		}
 
 		public static string Concat (params object[] args)
 		{
 			string[] strings;
-			string str;
+			char[] str;
 			int len, i;
 
 			if (args == null)
@@ -482,6 +482,7 @@ namespace System {
 
 			strings = new string [args.Length];
 			len = 0;
+			i = 0;
 			foreach (object arg in args) {
 				/* use Empty for each null argument */
 				if (arg == null)
@@ -489,37 +490,38 @@ namespace System {
 				else
 					strings[i] = arg.ToString ();
 				len += strings[i].Length;
+				i++;
 			}
 
 			if (len == 0)
 				return String.Empty;
 
-			str = new string [len + 1];
+			str = new char [len + 1];
 			i = 0;
 			for (int j = 0; j < strings.Length; j++)
 				for (int k = 0; k < strings[j].Length; k++)
 					str[i++] = strings[j][k];
 			str[i] = '\0';
 
-			return str;
+			return new String (str);
 		}
 
 		public static string Concat (params string[] values)
 		{
 			int len, i;
-			string str;
+			char[] str;
 
 			if (values == null)
 				throw new ArgumentNullException ();
 
 			len = 0;
 			foreach (string value in values)
-				len += value ? value.Length : 0;
+				len += value != null ? value.Length : 0;
 
 			if (len == 0)
 				return String.Empty;
 
-			str = new string [len + 1];
+			str = new char [len + 1];
 			i = 0;
 			foreach (string value in values) {
 				if (value == null)
@@ -530,53 +532,53 @@ namespace System {
 			}
 			str[i] = '\0';
 
-			return str;
+			return new String (str);
 		}
 
 		public static string Concat (object arg0, object arg1)
 		{
-			string str0 = arg0 ? arg0.ToString () : String.Empty;
-			string str1 = arg1 ? arg1.ToString () : String.Empty;
+			string str0 = arg0 != null ? arg0.ToString () : String.Empty;
+			string str1 = arg1 != null ? arg1.ToString () : String.Empty;
 
 			return Concat (str0, str1);
 		}
 
 		public static string Concat (string str0, string str1)
 		{
-			string concat;
+			char[] concat;
 			int i, j, len;
 
 			if (str0 == null)
 				str0 = String.Empty;
 			if (str1 == null)
-				str1 == String.Empty;
+				str1 = String.Empty;
 
 			len = str0.Length + str1.Length;
 			if (len == 0)
 				return String.Empty;
 
-			concat = new string [len + 1];
+			concat = new char [len + 1];
 			for (i = 0; i < str0.Length; i++)
 				concat[i] = str0[i];
 			for (j = 0 ; j < str1.Length; j++)
 				concat[i + j] = str1[j];
 			concat[len] = '\0';
 
-			return concat;
+			return new String (concat);
 		}
 
 		public static string Concat (object arg0, object arg1, object arg2)
 		{
-			string str0 = arg0 ? arg0.ToString () : String.Empty;
-			string str1 = arg1 ? arg1.ToString () : String.Empty;
-			string str2 = arg2 ? arg2.ToString () : String.Empty;
+			string str0 = arg0 != null ? arg0.ToString () : String.Empty;
+			string str1 = arg1 != null ? arg1.ToString () : String.Empty;
+			string str2 = arg2 != null ? arg2.ToString () : String.Empty;
 
 			return Concat (str0, str1, str2);
 		}
 
 		public static string Concat (string str0, string str1, string str2)
 		{
-			string concat;
+			char[] concat;
 			int i, j, k, len;
 
 			if (str0 == null)
@@ -590,7 +592,7 @@ namespace System {
 			if (len == 0)
 				return String.Empty;
 
-			concat = new string [len + 1];
+			concat = new char [len + 1];
 			for (i = 0; i < str0.Length; i++)
 				concat[i] = str0[i];
 			for (j = 0; j < str1.Length; j++)
@@ -599,12 +601,12 @@ namespace System {
 				concat[i + j + k] = str2[k];
 			concat[len] = '\0';
 
-			return concat;
+			return new String (concat);
 		}
 
 		public static string Concat (string str0, string str1, string str2, string str3)
 		{
-			string concat;
+			char[] concat;
 			int i, j, k, l, len;
 
 			if (str0 == null)
@@ -620,7 +622,7 @@ namespace System {
 			if (len == 0)
 				return String.Empty;
 
-			concat = new string [len + 1];
+			concat = new char [len + 1];
 			for (i = 0; i < str0.Length; i++)
 				concat[i] = str0[i];
 			for (j = 0; j < str1.Length; j++)
@@ -631,15 +633,16 @@ namespace System {
 				concat[i + j + k + l] = str3[l];
 			concat[len] = '\0';
 
-			return concat;
+			return new String (concat);
 		}
 
 		public static string Copy (string str)
 		{
+			// FIXME: how do I *copy* a string if I can only have 1 of each?
 			if (str == null)
 				throw new ArgumentNullException ();
 
-			return new String (str);
+			return str;
 		}
 
 		public void CopyTo (int sourceIndex, char[] destination, int destinationIndex, int count)
@@ -751,7 +754,7 @@ namespace System {
 		public TypeCode GetTypeCode ()
 		{
 			// FIXME: implement me
-			return null;
+			return 0;
 		}
 
 		public int IndexOf (char value)
@@ -854,7 +857,7 @@ namespace System {
 
 		public string Insert (int startIndex, string value)
 		{
-			string str;
+			char[] str;
 			int i, j;
 
 			if (value == null)
@@ -863,7 +866,7 @@ namespace System {
 			if (startIndex < 0 || startIndex > this.length)
 				throw new ArgumentOutOfRangeException ();
 
-			str = new string [value.Length + this.length + 1];
+			str = new char [value.Length + this.length + 1];
 			for (i = 0; i < startIndex; i++)
 				str[i] = this.c_str[i];
 			for (j = 0; j < value.Length; j++)
@@ -872,7 +875,7 @@ namespace System {
 				str[i + j] = this.c_str[i];
 			str[i + j] = '\0';
 
-			return str;
+			return new String (str);
 		}
 
 		public static string Intern (string str)
@@ -900,7 +903,7 @@ namespace System {
 		{
 			// LAMESPEC: msdn doesn't specify what happens when separator is null
 			int len, i, j, used;
-			string str;
+			char[] str;
 
 			if (separator == null || value == null)
 				throw new ArgumentNullException ();
@@ -920,7 +923,7 @@ namespace System {
 			if (i == startIndex)
 				return String.Empty;
 
-			str = new string [len + 1];
+			str = new char [len + 1];
 			for (i = 0; i < value[startIndex].Length; i++)
 				str[i] = value[startIndex][i];
 
@@ -935,7 +938,7 @@ namespace System {
 			}
 			str[i] = '\0';
 
-			return str;
+			return new String (str);
 		}
 
 		public int LastIndexOf (char value)
@@ -1070,13 +1073,13 @@ namespace System {
 
 		public string PadLeft (int totalWidth, char padChar)
 		{
-			string str;
+			char[] str;
 			int i, j;
 
 			if (totalWidth < 0)
 				throw new ArgumentException ();
 
-			str = new string [totalWidth > this.length ? totalWidth : this.length + 1];
+			str = new char [totalWidth > this.length ? totalWidth : this.length + 1];
 			for (i = 0; i < totalWidth - this.length; i++)
 				str[i] = padChar;
 
@@ -1085,7 +1088,7 @@ namespace System {
 
 			str[i] = '\0';
 
-			return str;
+			return new String (str);
 		}
 
 		public string PadRight (int totalWidth)
@@ -1095,27 +1098,27 @@ namespace System {
 
 		public string PadRight (int totalWidth, char padChar)
 		{
-			string str;
+			char[] str;
 			int i;
 
 			if (totalWidth < 0)
 				throw new ArgumentException ();
 
-			str = new string [totalWidth > this.length ? totalWidth : this.length + 1];
+			str = new char [totalWidth > this.length ? totalWidth : this.length + 1];
 			for (i = 0; i < this.length; i++)
 				str[i] = this.c_str[i];
 
-			for ( ; j < str.Length; i++)
+			for ( ; i < str.Length; i++)
 				str[i] = padChar;
 
 			str[i] = '\0';
 
-			return str;
+			return new String (str);
 		}
 
 		public string Remove (int startIndex, int count)
 		{
-			string str;
+			char[] str;
 			int i, j, len;
 
 			if (startIndex < 0 || count < 0 || startIndex + count > this.length)
@@ -1125,22 +1128,22 @@ namespace System {
 			if (len == 0)
 				return String.Empty;
 
-			str = new string [len + 1];
+			str = new char [len + 1];
 			for (i = 0; i < startIndex; i++)
 				str[i] = this.c_str[i];
 			for (j = i + count; j < this.length; j++)
 				str[i++] = this.c_str[j];
 			str[i] = '\0';
 
-			return str;
+			return new String (str);
 		}
 
 		public string Replace (char oldChar, char newChar)
 		{
-			string str;
+			char[] str;
 			int i;
 
-			str = new string [this.length + 1];
+			str = new char [this.length + 1];
 			for (i = 0; i < this.length; i++) {
 				if (this.c_str[i] == oldChar)
 					str[i] = newChar;
@@ -1149,14 +1152,14 @@ namespace System {
 			}
 			str[i] = '\0';
 
-			return str;
+			return new String (str);
 		}
 
 		public string Replace (string oldValue, string newValue)
 		{
 			// LAMESPEC: msdn doesn't specify what to do if either args is null
 			int index, len, i, j;
-			string str;
+			char[] str;
 
 			if (oldValue == null || newValue == null)
 				throw new ArgumentNullException ();
@@ -1172,7 +1175,7 @@ namespace System {
 			if (len == 0)
 				return String.Empty;
 
-			str = new string [len + 1];
+			str = new char [len + 1];
 			for (i = 0; i < index; i++)
 				str[i] = this.c_str[i];
 			for (j = 0; j < newValue.Length; j++)
@@ -1181,7 +1184,7 @@ namespace System {
 				str[i++] = this.c_str[j];
 			str[i] = '\0';
 
-			return str;
+			return new String (str);
 		}
 
 		private int splitme (char[] separators, int startIndex)
@@ -1229,15 +1232,15 @@ namespace System {
 				if (len == 0) {
 					list.Add (String.Empty);
 				} else {
-					string str;
+					char[] str;
 					int i;
 
-					str = new string [len + 1];
+					str = new char [len + 1];
 					for (i = 0; i < len; i++)
 						str[i] = this.c_str[index + i];
 					str[i] = '\0';
 
-					list.Add (str);
+					list.Add (new String (str));
 				}
 			}
 
@@ -1269,30 +1272,30 @@ namespace System {
 				if (len == 0) {
 					list.Add (String.Empty);
 				} else {
-					string str;
+					char[] str;
 					int i;
 
-					str = new string [len + 1];
+					str = new char [len + 1];
 					for (i = 0; i < len; i++)
 						str[i] = this.c_str[index + i];
 					str[i] = '\0';
 
-					list.Add (str);
+					list.Add (new String (str));
 				}
 				used++;
 			}
 
 			/* fit the remaining chunk of the @this into it's own element */
 			if (index != this.length) {
-				string str;
+				char[] str;
 				int i;
 
-				str = new string [this.length - index + 1];
+				str = new char [this.length - index + 1];
 				for (i = index; i < this.length; i++)
 					str[i - index] = this.c_str[i];
 				str[i - index] = '\0';
 
-				list.Add (str);
+				list.Add (new String (str));
 			}
 
 			strings = new string [list.Count];
@@ -1326,7 +1329,7 @@ namespace System {
 
 		public string Substring (int startIndex)
 		{
-			string str;
+			char[] str;
 			int i, len;
 
 			if (startIndex < 0 || startIndex > this.length)
@@ -1336,17 +1339,17 @@ namespace System {
 			if (len == 0)
 				return String.Empty;
 
-			str = new string [len + 1];
+			str = new char [len + 1];
 			for (i = startIndex; i < this.length; i++)
 				str[i - startIndex] = this.c_str[i];
 			str[i] = '\0';
 
-			return str;
+			return new String (str);
 		}
 
 		public string Substring (int startIndex, int length)
 		{
-			string str;
+			char[] str;
 			int i;
 
 			if (startIndex < 0 || length < 0 || startIndex + length > this.length)
@@ -1355,12 +1358,12 @@ namespace System {
 			if (length == 0)
 				return String.Empty;
 
-			str = new string [length + 1];
+			str = new char [length + 1];
 			for (i = startIndex; i < startIndex + length; i++)
 				str[i - startIndex] = this.c_str[i];
 			str[i] = '\0';
 
-			return str;
+			return new String (str);
 		}
 
 		public bool ToBoolean (IFormatProvider provider)
@@ -1372,7 +1375,7 @@ namespace System {
 		public byte ToByte (IFormatProvider provider)
 		{
 			// FIXME: implement me
-			return '\0';
+			return (byte) '\0';
 		}
 
 		public char ToChar (IFormatProvider provider)
@@ -1389,13 +1392,13 @@ namespace System {
 		public char[] ToCharArray (int startIndex, int length)
 		{
 			char[] chars;
-			int i, j;
+			int i;
 
 			if (startIndex < 0 || length < 0 || startIndex + length > this.length)
 				throw new ArgumentOutOfRangeException ();
 
 			chars = new char [length + 1];
-			for (i = startIndex, i < length; i++)
+			for (i = startIndex; i < length; i++)
 				chars[i - startIndex] = this.c_str[i];
 
 			chars[length] = '\0';
@@ -1406,13 +1409,13 @@ namespace System {
 		public DateTime ToDateTime (IFormatProvider provider)
 		{
 			// FIXME: implement me
-			return null;
+			return 0;
 		}
 
 		public decimal ToDecimal (IFormatProvider provider)
 		{
 			// FIXME: implement me
-			return 0.0D;
+			return 0.0M;
 		}
 
 		public double ToDouble (IFormatProvider provider)
@@ -1441,15 +1444,15 @@ namespace System {
 
 		public string ToLower ()
 		{
-			string str;
+			char[] str;
 			int i;
 
-			str = new string [this.length + 1];
+			str = new char [this.length + 1];
 			for (i = 0; i < this.length; i++)
-				str[i] = tolower (this.c_str[i]);
+				str[i] = Char.ToLower (this.c_str[i]);
 			str[i] = '\0';
 
-			return str;
+			return new String (str);
 		}
 
 		public string ToLower (CultureInfo culture)
@@ -1507,15 +1510,15 @@ namespace System {
 
 		public string ToUpper ()
 		{
-			string str;
+			char[] str;
 			int i;
 
-			str = new string [this.length + 1];
+			str = new char [this.length + 1];
 			for (i = 0; i < this.length; i++)
-				str[i] = toupper (this.c_str[i]);
+				str[i] = Char.ToUpper (this.c_str[i]);
 			str[i] = '\0';
 
-			return str;
+			return new String (str);
 		}
 
 		public string ToUpper (CultureInfo culture)
@@ -1615,5 +1618,4 @@ namespace System {
 			return a != b;
 		}
 	}
-
 }

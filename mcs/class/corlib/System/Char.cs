@@ -1,3 +1,4 @@
+// -*- Mode: C++; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
 //
 // System.Char.cs
 //
@@ -95,13 +96,13 @@ namespace System {
 			return (char) 0;
 		}
 
-		private static char ToLower (char c)
+		public static char ToLower (char c)
 		{
 			// FIXME: make me unicode aware
 			return (c >= 'A' && c <= 'Z') ? (char) (c + 33) : c;
 		}
 
-		private static char ToUpper (char c)
+		public static char ToUpper (char c)
 		{
 			// FIXME: make me unicode aware
 			return (char) ((c >= 'a' && c <= 'z') ? c - 33 : c);
