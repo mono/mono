@@ -1,3 +1,21 @@
+2002-02-13  Jeffrey Stedfast  <fejj@ximian.com>
+
+	* mono-mutex.[c,h]: New source files that thinly wrap all pthread
+	functions that take pthread_mutex_t and/or pthread_mutexattr_t
+	arguments for the sake of portability. Implements recursive
+	mutexes and pthread_mutex_timedlock.
+
+	* critical-sections.c:
+	* events.c:
+	* handles.c:
+	* mutexes.c:
+	* semaphores.c:
+	* threads.c:
+	* timed-thread.c:
+	* wait.c: Use the mono-mutex wrapper portability functions/macros.
+
+	* pthread-compat.[c,h]: Replaced by mono-mutex.[c,h]
+
 2002-01-23  Dick Porter  <dick@ximian.com>
 
 	* sockets.c: Networking support, mostly wrapping BSD socket APIs
