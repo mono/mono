@@ -81,13 +81,13 @@ namespace Microsoft.JScript {
 			return func_obj.ToString ();
 		}
 
-		internal override void Emit (EmitContext ec)
+		internal void create_closure (EmitContext ec)
 		{
 			string name = func_obj.name;
 			string full_name;
 			TypeBuilder type = ec.type_builder;
 			ILGenerator ig = ec.ig;			
-			
+		
 			if (prefix == String.Empty) 
 				full_name = name;
 			else 
@@ -98,12 +98,12 @@ namespace Microsoft.JScript {
 			MethodBuilder tmp = TypeManager.GetMethod (name);
 			if (tmp == null)
 				TypeManager.AddMethod (name, method_builder);
-			else
+			else 
 				TypeManager.SetMethod (name, method_builder);
 
 			set_custom_attr (method_builder);
-			EmitContext new_ec = new EmitContext (ec.type_builder, ec.mod_builder,
-							      method_builder.GetILGenerator ());
+			this.ig = method_builder.GetILGenerator ();
+
 			if (parent == null || parent.GetType () == typeof (ScriptBlock))
 				type.DefineField (name, typeof (Microsoft.JScript.ScriptFunction),
 						  FieldAttributes.Public | FieldAttributes.Static);
@@ -112,10 +112,18 @@ namespace Microsoft.JScript {
 				TypeManager.AddLocal (name, local_func);
 			}
 			build_closure (ec, full_name);
-			func_obj.body.Emit (new_ec);
-			new_ec.ig.Emit (OpCodes.Ret);
+		}
+
+		internal override void Emit (EmitContext ec)
+		{
+			ILGenerator old_ig = ec.ig;
+			ec.ig = this.ig;
+			func_obj.body.Emit (ec);
+			this.ig.Emit (OpCodes.Ret);
+			ec.ig = old_ig;
 		}
 		
+
 		internal void build_closure (EmitContext ec, string full_name)
 		{
 			ILGenerator ig = ec.ig;

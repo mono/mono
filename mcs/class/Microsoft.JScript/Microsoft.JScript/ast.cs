@@ -108,9 +108,11 @@ namespace Microsoft.JScript {
 
 		internal AST [] locals;
 		internal LocalBuilder local_func;
-
+		
 		protected bool not_void_return = false;
 		
+		protected ILGenerator ig;
+
 		internal bool CheckThis {
 			get { return check_this; }
 			set { check_this = value; }

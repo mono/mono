@@ -1,3 +1,14 @@
+2005-02-27  Cesar Lopez Nataren  <cnataren@novell.com>
+
+	* ast.cs: Added protected field ig to class Function.
+	* Block.cs: Emit function's body in a later phase since free
+	ocurrences of functions - at the same level of it - can be handled
+	properly, since they must be defined and inited to the correct values.
+	* FunctionDeclaration.cs: Renamed Emit to create_closure. And make
+	Emit only generate the code of the body.
+
+	Fixes #73078.
+
 2005-02-22  Cesar Lopez Nataren  <cnataren@novell.com>
 
 	* Block.cs: Report error JS5040. Reopened #72674, see last comment of it.

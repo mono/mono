@@ -88,17 +88,17 @@ namespace Microsoft.JScript {
 				if (e is VariableStatement)
 					((VariableStatement) e).EmitVariableDecls (ec);
 			}
-			
+
 			//
-			// Emit the function declarations before any
+			// Emit the function closure before any
 			// expression because the ScriptFunction and
 			// field created must be set properly before
-			// any use.
+			// any use. The body gets emitted later.
 			//			
 			for (i = 0; i < n; i++) {
 				e = elems [i];
 				if (e is FunctionDeclaration)
-					((FunctionDeclaration) e).Emit (ec);
+					((FunctionDeclaration) e).create_closure (ec);
 			}
 			
 			//
@@ -106,8 +106,7 @@ namespace Microsoft.JScript {
 			//
 			for (i = 0; i < n; i++) {
 				e = elems [i];
-				if (!(e is FunctionDeclaration))
-					((AST) e).Emit (ec);
+				((AST) e).Emit (ec);
 			}
 		}
 
