@@ -1,3 +1,15 @@
+2005-02-19  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini.h (MonoCompile): Add 'ret_var_is_local' field.
+
+	* mini.h mini.c (mono_arch_create_vars): Add new arch specific hook.
+
+	* mini.c (NEW_RETLOADA): If the ret variable is a local, use its 
+	address instead of loading the address from it.
+
+	* mini-x86.c: Add support for returning small structs in registers
+	on Win32. Fixes part of #70864.
+	
 2005-02-18  Zoltan Varga  <vargaz@freemail.hu>
 
 	* trace.c (get_token): Improve error checking.
