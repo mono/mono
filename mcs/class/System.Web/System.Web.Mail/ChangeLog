@@ -1,3 +1,8 @@
+2004-08-18  Sanjay Gupta <gsanjay@novell.com>
+
+	* MailMessage.cs: Added new property RelatedBodyParts.
+	* RelatedBodyPart.cs: Added new file.
+
 2004-08-10 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* SmtpClient.cs: multipart mails default body format is now the same as

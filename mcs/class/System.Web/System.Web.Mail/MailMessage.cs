@@ -4,6 +4,9 @@
 // Author:
 //    Lawrence Pit (loz@cable.a2000.nl)
 //    Per Arneng (pt99par@student.bth.se)
+//	Sanjay Gupta (gsanjay@novell.com)
+//
+//     (c)2004 Novell, Inc. (http://www.novell.com)
 //
 
 //
@@ -51,7 +54,6 @@ namespace System.Web.Mail
 		private string to;
 		private string urlContentBase;
 		private string urlContentLocation;
-		private Hashtable fields;
 		
 		// Constructor		
 		public MailMessage ()
@@ -59,7 +61,12 @@ namespace System.Web.Mail
 			attachments = new ArrayList (8);
 			headers = new ListDictionary ();
 			bodyEncoding = Encoding.Default;
+#if NET_1_1
 			fields = new Hashtable ();
+#endif
+#if NET_2_0
+			bodyParts = new ArrayList (2);
+#endif
 		}		
 	
 		// Properties
@@ -127,12 +134,23 @@ namespace System.Web.Mail
 		}
 
 #if NET_1_1
+		private Hashtable fields;
+		
 		public IDictionary Fields {
 			get {
 				return (IDictionary) fields;
 			}
 		}
 #endif
+
+#if NET_2_0
+		private ArrayList bodyParts;
+		
+		public IList RelatedBodyParts {
+			get { return (IList) bodyParts; }
+		}
+#endif
+
 	}
 	
 } //namespace System.Web.Mail
