@@ -951,6 +951,9 @@ namespace Mono.CSharp {
 			if (!TypeManager.HasConstructorConstraint (ptype))
 				return true;
 
+			if (TypeManager.IsBuiltinType (atype))
+				return true;
+
 			MethodGroupExpr mg = Expression.MemberLookup (
 				ec, atype, ".ctor", MemberTypes.Constructor,
 				BindingFlags.Public | BindingFlags.Instance |

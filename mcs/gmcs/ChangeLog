@@ -1,3 +1,8 @@
+2004-09-06  Martin Baulig  <martin@ximian.com>
+
+	* generic.cs (ConstructedType.CheckConstraints): Allow builtin
+	types for the constructor constraint.
+
 2004-09-03  Martin Baulig  <martin@ximian.com>
 
 	* class.cs (TypeContainer.DefineDefaultConstructor): Put this back
