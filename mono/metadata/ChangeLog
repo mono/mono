@@ -1,3 +1,13 @@
+2002-03-01  Martin Baulig  <martin@gnome.org>
+
+	* icall.c (ves_icall_System_Array_GetValue): Raise an exception when
+	called with invalid arguments rather than just dying with g_assert().
+	(ves_icall_System_Array_SetValue): Likewise.
+	(ves_icall_System_Array_CreateInstanceImpl): Don't g_assert_not_reached(),
+	raise a NotImplementedException instead.
+	(ves_icall_System_Array_GetLength): Added argument checking.
+	(ves_icall_System_Array_GetLowerBound): Added argument checking.
+
 2002-03-01  Dietmar Maurer  <dietmar@ximian.com>
 
 	* object.h (mono_assert): new macros mono_assert and
