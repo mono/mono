@@ -1,4 +1,11 @@
-2002-09-28  Vladimir Vukicevic  <vladimir@pobox.com>
+2002-10-01  Luis Fernandez <luifer@onetel.net.uk>
+
+	* System.Data/DataColumn.cs:
+	* System.Data/DataRow.cs:
+	* System.Data/DataRowCollection.cs:
+	* System.Data/DataTable.cs: some fixes and implementation.
+
+2002-09-28  Vladimir Vukicevic <vladimir@pobox.com>
 
 	* System.Data.OleDb/OleDbConnection.cs: Close
 	reader properly in call to ExecuteScalar().

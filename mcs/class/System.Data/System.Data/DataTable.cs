@@ -381,6 +381,15 @@ namespace System.Data
 		
 		public void AcceptChanges()
 		{
+
+			//FIXME: Do we need to validate anything here or
+			//try to catch any errors to deal with them?
+
+			foreach(DataRow myRow in _rows)
+			{
+				myRow.AcceptChanges();
+			}
+
 		}
 
 		/// <summary>

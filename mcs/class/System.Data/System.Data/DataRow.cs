@@ -52,7 +52,10 @@ namespace System.Data
 			columnErrors = new string[_table.Columns.Count];
 			rowError = String.Empty;
 
-			rowState = DataRowState.Unchanged;
+			//rowState = DataRowState.Unchanged;
+
+			//on first creating a DataRow it is always detached.
+			rowState = DataRowState.Detached;
 		}
 
 		#endregion
@@ -108,12 +111,32 @@ namespace System.Data
 				if (rowState == DataRowState.Deleted)
 					throw new DeletedRowInaccessibleException ();
 
+				//MS Implementation doesn't seem to create the proposed or original
+				//set of values when a datarow has just been created or added to the
+				//DataTable and AcceptChanges() has not been called yet.
+				if(rowState == DataRowState.Detached || rowState == DataRowState.Added)
+				{
+					if(objIsDBNull)
+						current[columnIndex] = DBNull.Value;
+					else
+						current[columnIndex] = value;
+
+				}
+				else
+				{
 				BeginEdit ();  // implicitly called
 				if(objIsDBNull)
 					proposed[columnIndex] = DBNull.Value;
 				else
 					proposed[columnIndex] = value;
-				EndEdit (); // is this the right thing to do?
+				}
+
+				//Don't know if this is the rigth thing to do,
+				//but it fixes my test. I believe the MS docs only say this
+				//method is implicitly called when calling AcceptChanges()
+
+				//EndEdit (); // is this the right thing to do?
+
 			}
 		}
 
@@ -245,6 +268,13 @@ namespace System.Data
 			get { return rowState; }
 		}
 
+		//FIXME?: Couldn't find a way to set the RowState when adding the DataRow
+		//to a Datatable so I added this method. Delete if there is a better way.
+		internal DataRowState RowStateInternal
+		{
+			set { rowState = value;}
+		}
+
 		/// <summary>
 		/// Gets the DataTable for which this row has a schema.
 		/// </summary>
@@ -263,6 +293,14 @@ namespace System.Data
 		[MonoTODO]
 		public void AcceptChanges () 
 		{
+			
+			if(rowState == DataRowState.Added)
+			{
+				//Instantiate original and proposed values so that we can call
+				//EndEdit()
+				this.BeginEdit();
+			}
+
 			this.EndEdit ();
 
 			switch (rowState)
@@ -278,7 +316,10 @@ namespace System.Data
 					break;
 			}
 
-			original = null;
+			//MS implementation assigns the Proposed values
+			//to both current and original and keeps original after calling AcceptChanges
+			//Copy proposed to original in this.EndEdit()
+			//original = null;
 		}
 
 		/// <summary>
@@ -355,6 +396,12 @@ namespace System.Data
 				rowState = DataRowState.Modified;
 				//TODO: Validate Constraints, Events
 				Array.Copy (proposed, current, _table.Columns.Count);
+				
+				//FIXME: MS implementation assigns the proposed values to
+				//the original values. Should this be done here or on the
+				//AcceptChanges() method?
+				Array.Copy (proposed, original, _table.Columns.Count);
+
 				proposed = null;
 			}
 		}

@@ -365,7 +365,33 @@ namespace System.Data
 				//TODO: create UniqueConstraint
 				//if Table == null then the constraint is 
 				//created on addition to the collection
+				
+				//FIXME?: need to check if value is the same
+				//because when calling "new UniqueConstraint"
+				//the new object tries to set "column.Unique = True"
+				//which creates an infinite loop.
+				if(unique != value)
+				{
 				unique = value;
+
+					if( value )
+					{
+						if( _table != null )
+						{
+							UniqueConstraint uc = new UniqueConstraint(this);
+							_table.Constraints.Add(uc);
+						}
+					}
+					else
+					{
+						if( _table != null )
+						{
+							//FIXME: Add code to remove constraint from DataTable
+							throw new NotImplementedException ();
+						}
+					}
+
+				}
 			}
 		}
 

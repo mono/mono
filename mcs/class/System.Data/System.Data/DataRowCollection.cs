@@ -55,6 +55,7 @@ namespace System.Data
 			//TODO: AutoIncrement
 			//TODO: validation
 			list.Add (row);
+			row.RowStateInternal = DataRowState.Added;
 		}
 
 		/// <summary>
