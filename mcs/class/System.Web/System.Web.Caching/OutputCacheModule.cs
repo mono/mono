@@ -36,16 +36,23 @@ namespace System.Web.Caching {
 		{
 			HttpApplication app = (HttpApplication) o;
 			HttpContext context = app.Context;
-			HttpAsyncResult result;
-			
-			string key = context.Request.FilePath;
-			CachedRawResponse c = context.Cache [key] as CachedRawResponse;
 
-			if (c != null && context.Timestamp < c.Policy.Expires &&
-					c.ParamsVary (context.Request)) {
-				
+                       
+			string vary_key = context.Request.FilePath;
+                        CachedVaryBy varyby = context.Cache [vary_key] as CachedVaryBy;
+                        string key;
+			CachedRawResponse c;
+                        
+                        if (varyby == null)
+                                goto leave;
+                        
+                        key = varyby.CreateKey (vary_key, context.Request);
+                        c = context.Cache [key] as CachedRawResponse;
+                        
+                        if (c != null && context.Timestamp < c.Policy.Expires) {
+
 				context.Response.ClearContent ();
-				context.Response.BinaryWrite (c.GetData ());
+				context.Response.BinaryWrite (c.GetData (), 0, c.ContentLength);
 
 				context.Response.ClearHeaders ();
 				context.Response.SetCachedHeaders (c.Headers);
@@ -56,8 +63,9 @@ namespace System.Web.Caching {
 			} else if (c != null) {
 				context.Cache.Remove (key);
 			}
-			
-			result = new HttpAsyncResult (cb,this);
+
+                leave:
+                        HttpAsyncResult result = new HttpAsyncResult (cb,this);
 			result.Complete (true, o, null);
 			
 			return result;
@@ -71,27 +79,50 @@ namespace System.Web.Caching {
 		{
 			HttpApplication app = (HttpApplication) o;
 			HttpContext context = app.Context;
-			string key = context.Request.FilePath;
-			CachedRawResponse prev = context.Cache [key] as CachedRawResponse;
-			
-			if (context.Response.IsCached && IsExpired (context, prev)) {
-				CachedRawResponse c = context.Response.GetCachedResponse ();
-				
-				context.Cache.InsertPrivate (key, c, null,
-						context.Response.Cache.Expires,
-						Cache.NoSlidingExpiration,
-						CacheItemPriority.Normal, null);
-			}
-			
-			HttpAsyncResult result = new HttpAsyncResult (cb, this);
-			result.Complete (true, o, null);
-			
-			return result;
-		}
+                        HttpAsyncResult result;
+                        
+                        if (context.Response.IsCached)
+                                DoCacheInsert (context);
+
+                        result = new HttpAsyncResult (cb, this);
+                        result.Complete (true, o, null);
+                        return result;
+                }
 
 		void OnEndUpdateCache (IAsyncResult result)
 		{
 		}
+
+                private void DoCacheInsert (HttpContext context)
+                {
+                        string vary_key = context.Request.FilePath;
+                        string key;
+                        CachedVaryBy varyby = context.Cache [vary_key] as CachedVaryBy;
+                        CachedRawResponse prev = null;
+                        bool lookup = true;
+                        
+                        if (varyby == null) {
+                                varyby = new CachedVaryBy (context.Response.Cache);
+                                context.Cache.InsertPrivate (vary_key, varyby, null,
+                                                Cache.NoAbsoluteExpiration, Cache.NoSlidingExpiration,
+                                                CacheItemPriority.Normal, null);
+                                lookup = false;
+                        } 
+                        
+                        key = varyby.CreateKey (vary_key, context.Request);
+                        
+                        if (lookup)
+                                prev = context.Cache [key] as CachedRawResponse;
+                        
+			if (IsExpired (context, prev)) {
+				CachedRawResponse c = context.Response.GetCachedResponse ();
+                                
+				context.Cache.InsertPrivate (key, c, null,
+						context.Response.Cache.Expires,
+						Cache.NoSlidingExpiration,
+						CacheItemPriority.Normal, null);
+			} 
+                }
 
 		private bool IsExpired (HttpContext context, CachedRawResponse crr)
 		{

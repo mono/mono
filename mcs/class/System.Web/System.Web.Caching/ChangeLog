@@ -1,3 +1,16 @@
+2003-11-21  Jackson Harper <jackson@ximian.com>
+
+	* OutputCacheModule.cs: Store a CachedVaryBy object for each
+	cached page. Then store a CachedRawResponse for each combination
+	of varried parameters for a page.
+	* CachedRawResponse.cs: Do not need to store param values anymore
+	those are stored in the CachedVaryBy now. Get the content length
+	so we dont send back the entire buffer.
+	* CachedVaryBy.cs: New file - holds the varyby data for a page,
+	and a method to generate a key based on params. Right now this
+	only works with VaryByParams. TODO: support VaryByHeaders and
+	VaryByCustom.
+	
 2003-11-20  Jackson Harper <jackson@ximian.com>
 
 	* Cache.cs: New method so non public cache items can be added.

@@ -20,20 +20,21 @@ namespace System.Web.Caching {
 		private Hashtable vparams;
 		private int status_code;
 		private string status_desc;
+		private int content_length;
 		private ArrayList headers;
 		private byte[] buffer;
 		
-		internal CachedRawResponse (HttpCachePolicy policy, HttpRequest request)
+		internal CachedRawResponse (HttpCachePolicy policy)
 		{
 			this.policy = policy;
 			this.buffer = new byte [HttpWriter.MaxBufferSize];
-			SetVariedParams (request);
 		}
 
 		internal HttpCachePolicy Policy {
 			get { return policy; }
 			set { policy = value; }
 		}
+	      
 		internal int StatusCode {
 			get { return status_code; }
 			set { status_code = value; }
@@ -44,6 +45,11 @@ namespace System.Web.Caching {
 			set { status_desc = value; }
 		}
 
+		internal int ContentLength {
+			get { return content_length; }
+			set { content_length = value; }
+		}
+		
 		internal ArrayList Headers {
 			get { return headers; }
 		}
@@ -54,8 +60,9 @@ namespace System.Web.Caching {
 
 		internal void SetData (byte[] buffer)
 		{
-			buffer.CopyTo (this.buffer, 0);
+			this.buffer = buffer;
 		}
+
 		
 		internal void SetResponseHeaders (HttpResponse response)
 		{
@@ -66,33 +73,6 @@ namespace System.Web.Caching {
 		internal byte[] GetData ()
 		{
 			return buffer;
-		}
-
-		internal void SetVariedParams (HttpRequest request)
-		{
-			if (policy.VaryByParams.IgnoreParams)
-				return;
-
-			vparams = new Hashtable ();
-			foreach (string key in request.Params.Keys) {
-				if (!policy.VaryByParams [key])
-					continue;
-				vparams [key] = request.Params [key];
-			}
-		}
-		
-		internal bool ParamsVary (HttpRequest request)
-		{
-			if (policy.VaryByParams.IgnoreParams)
-				return false;
-
-			foreach (string key in vparams) {
-				string val = request.Params [key];
-				if (val == null || val != vparams [key])
-					return true;
-			}
-
-			return false;
 		}
 	}
 }
