@@ -58,7 +58,11 @@ namespace Microsoft.JScript {
 		{			
 			((SymbolTable) stack.Peek ()).Add (id , decl);
 		}
-		
+
+		internal void Remove (string id)
+		{
+			((SymbolTable) stack.Peek ()).Remove (id);
+		}
 		//
 		// It'll return the object asociated with the 'id', if found.
 		//
