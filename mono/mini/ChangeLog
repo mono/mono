@@ -1,3 +1,7 @@
+2005-03-07  Zoltan Varga  <vargaz@freemail.hu>
+
+	* cpu-amd64.md (load_membase): Fix more max lengths.
+
 2005-03-06  Zoltan Varga  <vargaz@freemail.hu>
 
 	* cpu-amd64.md (load_membase): Fix max length.
