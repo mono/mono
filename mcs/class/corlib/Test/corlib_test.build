@@ -12,6 +12,21 @@
 	</target>
 
 	<target name="assemblies">
+		<csc target="library" output="corlib_linux_test.dll" debug="${debug}">
+			<sources>
+				<includes name="**/*.cs"/>
+				<excludes name="System.Security.Policy/*.cs"/>
+			</sources>
+			<references basedir="..\..\..\nunit">
+				<includes name="NUnitCore_mono.dll"/>
+			</references>
+			<arg value="/r:..\..\lib\corlib.dll"/>
+			<arg value="/r:..\..\lib\System.dll"/>
+			<arg value="/nowarn:1595"/>
+			<arg value="/nostdlib"/> 	<!-- don't reference mscorlib -->
+			<arg value="/noconfig"/>	<!-- don't reference ms assemblies -->
+		</csc>
+
 		<csc target="library" output="corlib_test.dll" debug="${debug}">
 			<sources>
 				<includes name="**/*.cs"/>
@@ -31,21 +46,6 @@
 				<includes name="NUnitCore.dll"/>
 			</references>
 			<arg value="/nowarn:1595"/>
-		</csc>
-
-		<csc target="library" output="corlib_linux_test.dll" debug="${debug}">
-			<sources>
-				<includes name="**/*.cs"/>
-				<excludes name="System.Security.Policy/*.cs"/>
-			</sources>
-			<references basedir="..\..\..\nunit">
-				<includes name="NUnitCore_mono.dll"/>
-			</references>
-			<arg value="/r:..\..\lib\corlib.dll"/>
-			<arg value="/r:..\..\lib\System.dll"/>
-			<arg value="/nowarn:1595"/>
-			<arg value="/nostdlib"/> 	<!-- don't reference mscorlib -->
-			<arg value="/noconfig"/>	<!-- don't reference ms assemblies -->
 		</csc>
 </target>
 
