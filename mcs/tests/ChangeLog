@@ -1,5 +1,9 @@
 2002-07-27  Martin Baulig  <martin@gnome.org>
 
+	* test-153.cs.cs: New test.
+
+2002-07-27  Martin Baulig  <martin@gnome.org>
+
 	* test-113.cs: Made this test actually work.
 
 2002-07-26  Martin Baulig  <martin@gnome.org>

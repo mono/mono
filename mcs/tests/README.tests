@@ -33,6 +33,10 @@ Test cases listed by Category:
 
   test-151.cs
 
+* Invocation
+
+  test-153.cs
+
 Test cases listed by Number:
 ============================
 
@@ -69,6 +73,10 @@ test-151.cs
 test-152.cs
 -----------
 Scope of variables declared inside a switch case.
+
+test-153.cs
+-----------
+Testing invocation of varargs function.
 
 verify-1.cs
 -----------
