@@ -2275,6 +2275,7 @@ indexer_declarator
 enum_declaration
 	: opt_attributes
 	  opt_modifiers
+	  opt_partial
 	  ENUM IDENTIFIER 
 	  opt_enum_base {
 		if (RootContext.Documentation != null)
@@ -2282,17 +2283,24 @@ enum_declaration
 	  }
 	  enum_body
 	  opt_semicolon
-	  { 
+	  {
+		bool partial = (bool) $3;
+
+		if (partial) {
+			Report.Error (267, lexer.Location, "The partial modifier can only appear before a 'class', 'struct', or 'interface'");
+			break;	// assumes that the parser put us in a switch
+		}
+
 		Location enum_location = lexer.Location;
 
-		MemberName name = MakeName (new MemberName ((string) $4));
-		Enum e = new Enum (current_namespace, current_class, (Expression) $5, (int) $2,
+		MemberName name = MakeName (new MemberName ((string) $5));
+		Enum e = new Enum (current_namespace, current_class, (Expression) $6, (int) $2,
 				   name, (Attributes) $1, enum_location);
 		
 		if (RootContext.Documentation != null)
 			e.DocComment = enumTypeComment;
 
-		foreach (VariableDeclaration ev in (ArrayList) $7) {
+		foreach (VariableDeclaration ev in (ArrayList) $8) {
 			e.AddEnumMember (ev.identifier, 
 					 (Expression) ev.expression_or_array_initializer,
 					 ev.Location, ev.OptAttributes,

@@ -1,5 +1,15 @@
 2005-04-01  Raja R Harinath  <rharinath@novell.com>
 
+	* cs-tokenizer.cs (consume_identifier): Treat 'partial' as a
+	keyword in 'partial enum' too.
+	* cs-parser.jay (enum_declaration): Add CS0267 check ('partial enum'
+	is not allowed).
+	Report from Kamil Skalski <nazgul@omega.pl>.
+
+	Fix #74309.
+	* rootcontext.cs (ResolveTree): The 'root.Interfaces' list can
+	have partial containers too.
+
 	* ecore.cs (SimpleName.SimpleNameResolve): Move 'invariant meaning
 	in block' checks to Block.CheckInvariantMeaningInBlock.
 	* statement.cs (Block.GetKnownVariableInfo): Make private.

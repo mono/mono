@@ -1811,7 +1811,8 @@ namespace Mono.CSharp
 				int next_token = token ();
 				bool ok = (next_token == Token.CLASS) ||
 					(next_token == Token.STRUCT) ||
-					(next_token == Token.INTERFACE);
+					(next_token == Token.INTERFACE) ||
+					(next_token == Token.ENUM); // "partial" is a keyword in 'partial enum', even though it's not valid
 
 				reader.Position = old;
 				putback_char = old_putback;

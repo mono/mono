@@ -1,6 +1,10 @@
+2005-04-01  Kamil Skalski  <nazgul@omega.pl>
+
+	* test-359.cs: New test from #74309.
+
 2005-03-30  Marek Safar <marek.safar@seznam.cz>
 
-	* cond-attr.cs.cs: Conditional attribute class test.
+	* cond-attr.cs: Conditional attribute class test.
 
 2005-03-16  Raja R Harinath  <rharinath@novell.com>
 
