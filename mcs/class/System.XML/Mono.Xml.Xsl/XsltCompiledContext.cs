@@ -172,8 +172,7 @@ namespace Mono.Xml.Xsl {
 			public bool PreserveWhitespace;
 		}
 		
-		// TODO: set 40 or so. It is set to 2 only for test.
-		XsltContextInfo [] scopes = new XsltContextInfo [2];
+		XsltContextInfo [] scopes = new XsltContextInfo [40];
 		int scopeAt = 0;
 		
 		// precondition scopeAt == scopes.Length

@@ -1,3 +1,7 @@
+2004-02-13 Atsushi Enomoto <atsushi@ximian.com>
+
+	* XsltCompiledContext.cs : fixed the length of context info array.
+
 2004-02-10 Atsushi Enomoto <atsushi@ximian.com>
 
 	* XsltCompiledContext.cs :
