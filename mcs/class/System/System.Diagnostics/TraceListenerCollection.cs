@@ -54,9 +54,14 @@ namespace System.Diagnostics {
 			}
 		}
 
-		public object this [int index] {
-			get {return listeners[index];}
+		public TraceListener this [int index] {
+			get {return (TraceListener) listeners[index];}
 			set {listeners[index] = value;}
+		}
+
+		object IList.this [int index] {
+			get {return listeners[index];}
+			set {((IList)this).Insert (index, value);}
 		}
 
 		bool ICollection.IsSynchronized {
