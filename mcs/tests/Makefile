@@ -53,7 +53,7 @@ TEST_SOURCES = \
 #
 TEST2_SOURCES = \
 	2test-1 2test-2 2test-3 2test-4 2test-5 2test-6 2test-7 2test-8 2test-9 2test-10 \
-	2test-11 2test-12 2test-13
+	2test-11 2test-12 2test-13 2test-14
 
 UNSAFE_SOURCES = \
 	unsafe-1 unsafe-2 unsafe-3 test-58 test-171 unsafe-5 unsafe-6 unsafe-7 unsafe-8
