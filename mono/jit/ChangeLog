@@ -1,3 +1,8 @@
+2003-01-26  Martin Baulig  <martin@ximian.com>
+
+	* debug.c (mono_debug_init): Take a boolean argument which
+	specifies whether we're running in the Mono Debugger.
+
 2003-01-24  Martin Baulig  <martin@ximian.com>
 
 	* debug.c (mono_debug_io_layer): Disable this on Windows.
