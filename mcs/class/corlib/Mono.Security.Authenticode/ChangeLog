@@ -1,3 +1,12 @@
+2004-09-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AuthenticodeBase.cs: Merge from Mono.Security.dll. This version is 
+	less memory consuming (it works by 4kb blocks instead of loading the
+	entire assembly).
+	* AuthenticodeDeformatter.cs: Merge from Mono.Security.dll. Hash will
+	only be created if the assembly is signed. Benefits from Authenticode
+	Base changes.
+
 2004-04-28  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AuthenticodeBase.cs: In sync with Mono.Security.dll version.
