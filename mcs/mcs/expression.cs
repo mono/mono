@@ -6212,18 +6212,23 @@ namespace Mono.CSharp {
 			int errors = Report.Errors;
 			
 			Type expr_type = expr.Type;
-			if ((expr is TypeExpr) &&
-			    (expr_type == TypeManager.enum_type ||
-			     expr_type.IsSubclassOf (TypeManager.enum_type))){
-				
-				Enum en = TypeManager.LookupEnum (expr_type);
-				
-				if (en != null) {
-					object value = en.LookupEnumValue (ec, Identifier, loc);
-
-					if (value != null){
-						Constant c = Constantify (value, en.UnderlyingType);
-						return new EnumConstant (c, expr_type);
+			if (expr is TypeExpr){
+				if (!ec.DeclSpace.CheckAccessLevel (expr_type)){
+					Error (122, "`" + expr_type + "' " +
+					       "is inaccessible because of its protection level");
+					return null;
+				}
+				    
+				if (expr_type == TypeManager.enum_type || expr_type.IsSubclassOf (TypeManager.enum_type)){
+					Enum en = TypeManager.LookupEnum (expr_type);
+					
+					if (en != null) {
+						object value = en.LookupEnumValue (ec, Identifier, loc);
+						
+						if (value != null){
+							Constant c = Constantify (value, en.UnderlyingType);
+							return new EnumConstant (c, expr_type);
+						}
 					}
 				}
 			}
