@@ -751,28 +751,45 @@ namespace System.Data {
 			// FIXME: somekinda exception?
 			if (!r.Read ())
 				return XmlReadMode.Auto; // FIXME
+			
+			// Check if the curent element is the process instruction (PI).
+			// if it is move to next element.
+			if (r.LocalName == "xml")
+				r.MoveToContent();
 
 			/*\
 			 *  If document is diffgram we will use diffgram
 			\*/
 			if (r.LocalName == "diffgram")
 				return ReadXml (r, XmlReadMode.DiffGram);
-
-			/*\
-			 *  If we already have a schema, or the document 
-			 *  contains an in-line schema, sets XmlReadMode to ReadSchema.
-			\*/
-
-			// FIXME: is this always true: "if we have tables we have to have schema also"
-			if (Tables.Count > 0)				
-				return ReadXml (r, XmlReadMode.ReadSchema);
-
-			/*\
-			 *  If we dont have a schema yet and document 
-			 *  contains no inline-schema  mode is XmlReadMode.InferSchema
-			\*/
-
-			return ReadXml (r, XmlReadMode.InferSchema);
+			
+			// Get the DataSet name.
+			string dataSetName = XmlConvert.DecodeName (r.LocalName);
+			DataSetName = dataSetName;
+			
+			r.ReadStartElement ();
+			r.MoveToContent();
+			
+			bool schemaRead = false;
+			// Check if the current element is the schema
+			if (r.LocalName == "schema") {
+				ReadXmlSchema (r);
+				r.MoveToContent();
+				schemaRead = true;
+			}
+			
+			if (r.LocalName == "diffgram") {
+				return ReadXml (r, XmlReadMode.DiffGram);
+			}
+			
+			// If the schema has been read we should read the rest of the document
+			if (schemaRead) {
+				ReadXml (r, XmlReadMode.IgnoreSchema, false);
+				return XmlReadMode.ReadSchema;
+			}
+			
+			// Read with inferschema.
+			return ReadXml (r, XmlReadMode.InferSchema, false);
 
 		}
 
@@ -794,6 +811,15 @@ namespace System.Data {
 		[MonoTODO]
 		public XmlReadMode ReadXml (XmlReader reader, XmlReadMode mode)
 		{
+			// we have to initiate the reader.
+			if (reader.ReadState == ReadState.Initial)
+				reader.Read();
+			
+			// Check if the curent element is the process instruction (PI).
+			// if it is move to next element.
+			if (reader.LocalName == "xml")
+				reader.MoveToContent();
+
 			XmlReadMode Result = XmlReadMode.Auto;
 
 			if (mode == XmlReadMode.DiffGram) {
@@ -802,7 +828,8 @@ namespace System.Data {
 					reader.ReadStartElement ();	// <DataSet>
 
 					reader.MoveToContent ();
-					ReadXmlSchema (reader);
+					if (reader.LocalName == "schema")
+						ReadXmlSchema (reader);
 
 					reader.MoveToContent ();
 				}
@@ -810,12 +837,28 @@ namespace System.Data {
 				DiffLoader.Load (reader);
 				Result =  XmlReadMode.DiffGram;
 			}
-			else {
-				XmlDataLoader Loader = new XmlDataLoader (this);
-				Result = Loader.LoadData (reader, mode);
-			}
+			else 
+				Result = ReadXml(reader, mode, true);
 
 			return Result;
+		}
+
+		private XmlReadMode ReadXml (XmlReader r, XmlReadMode mode, bool readDataSet) {
+			
+			if (readDataSet) {
+				string dataSetName = XmlConvert.DecodeName (r.LocalName);
+				DataSetName = dataSetName;
+				// get the Namespace of the DataSet.
+				string tmp = r.GetAttribute("xmlns");
+				if (tmp != null)
+					Namespace = tmp;
+				
+				r.ReadStartElement ();
+				r.MoveToContent();
+			}
+
+			XmlDataLoader Loader = new XmlDataLoader (this);
+			return Loader.LoadData (r, mode);
 		}
 
 		#endregion // Public Methods
@@ -887,7 +930,7 @@ namespace System.Data {
 		void IXmlSerializable.ReadXml (XmlReader reader)
 		{
 
-			ReadXml (reader, XmlReadMode.DiffGram);
+			ReadXmlSerializable(reader);
 			
 			// the XmlSerializationReader does this lines!!!
 			//reader.MoveToContent ();

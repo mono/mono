@@ -46,7 +46,7 @@ namespace System.Data {
 		public void Load (XmlReader Reader) 
 		{
 
-			XmlDocument Document = XmlDataLoader.buildXmlDocument(Reader);
+			XmlDocument Document = BuildXmlDocument(Reader);
 			
 			XPathNavigator Navigator = Document.CreateNavigator ();
 			bool origEnforceConstraint = DSet.EnforceConstraints;
@@ -258,6 +258,23 @@ namespace System.Data {
 			if (HasErrors) // If row had errors add row to hashtable for later use
 				ErrorRows.Add (id, Row);
 		
+		}
+
+		private static XmlDocument BuildXmlDocument(XmlReader reader)
+		{
+			string endinglocalName = reader.LocalName;
+
+			XmlDocument doc = new XmlDocument();
+
+			// create all contents with use of ReadNode()
+			do 
+			{
+				XmlNode n = doc.ReadNode (reader);
+				if(n == null) break;
+				doc.AppendChild (n);
+			} while (reader.LocalName == endinglocalName);
+
+			return doc;
 		}
 
 
