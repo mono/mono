@@ -4,7 +4,7 @@
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -37,10 +37,16 @@ namespace System {
 
 		public ApplicationIdentity (string applicationIdentityFullName)
 		{
-			_fullName = applicationIdentityFullName;
+			if (applicationIdentityFullName == null)
+				throw new ArgumentNullException ("applicationIdentityFullName");
+
+			if (applicationIdentityFullName.IndexOf (", Culture=") == -1)
+				_fullName = applicationIdentityFullName + ", Culture=neutral";
+			else
+				_fullName = applicationIdentityFullName;
 		}
 
-		[MonoTODO ("URL but where does it comes from?")]
+		[MonoTODO ("URL but where does it comes from? manifest ?")]
 		public string CodeBase {
 			get { return _codeBase; }
 		}
@@ -49,7 +55,6 @@ namespace System {
 			get { return _fullName; }
 		}
 
-		[MonoTODO]
 		public override string ToString ()
 		{
 			return _fullName;

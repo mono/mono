@@ -973,7 +973,7 @@ namespace System
 
 		public bool IsDefaultAppDomain ()
 		{
-			return (Id == DefaultDomain.Id);
+			return Object.ReferenceEquals (this, DefaultDomain);
 		}
 
 		[MonoTODO ("see Assembly.ReflectionOnlyLoad")]
