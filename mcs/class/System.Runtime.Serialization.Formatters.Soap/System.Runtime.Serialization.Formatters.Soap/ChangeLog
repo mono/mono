@@ -1,5 +1,10 @@
 2003-11-21  Lluis Sanchez Gual <lluis@ximian.com>
 
+	* SoapReader.cs: Little fix.
+	* SoapWriter.cs: Use ObjectIDGenerator instead of a couple of Hashtable.
+
+2003-11-21  Lluis Sanchez Gual <lluis@ximian.com>
+
 	* SoapFormatter.cs: Added FilterLevel property.
 
 2003-11-16  Lluis Sanchez Gual <lluis@ximian.com>

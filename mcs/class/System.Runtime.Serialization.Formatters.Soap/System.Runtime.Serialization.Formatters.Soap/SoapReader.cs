@@ -105,7 +105,7 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 			Type elementType = SoapTypeMapper.GetType(mapping);
 
 			if(elementType != null && _binder != null) {
-				elementType = _binder.BindToType(elementType.Assembly.FullName, elementType.Name);
+				elementType = _binder.BindToType(elementType.Assembly.FullName, elementType.FullName);
 				if(elementType == null) throw new SerializationException();
 			}
 			

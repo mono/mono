@@ -36,15 +36,10 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 		private ObjectWriter _objWriter;
 		private Queue _objectQueue = new Queue();
 		private long _objectCounter = 0;
-		private long _refCounter = 0;
 		private Hashtable _prefixTable = new Hashtable();
 		private Stack _currentArrayType = new Stack();
 		
-		// id -> object
-		private Hashtable _objectRefs = new Hashtable();
-		
-		// object -> id
-		private Hashtable _objectIds = new Hashtable();
+		ObjectIDGenerator _idGenerator = new ObjectIDGenerator ();
 		
 		private long _currentObjectId;
 		
@@ -69,7 +64,6 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 			SoapTypeMapping mapping = GetTagInfo((objValue != null && defaultObjectType == typeof(object))?objValue.GetType():defaultObjectType);
 			
 			SoapSerializationEntry soapEntry = new SoapSerializationEntry();
-			long id;
 			
 			GetPrefix(mapping.TypeNamespace, out soapEntry.prefix);
 			soapEntry.elementName = mapping.TypeName;
@@ -85,35 +79,37 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 				soapEntry.elementType = ElementType.Null;
 				mapping.IsNull = true;
 			} 
-			else if(mapping.IsValueType) return soapEntry;
-			else if(_objectIds[objValue] != null) {
-				soapEntry.elementType = ElementType.Href;
-				soapEntry.i = (long) _objectIds[objValue];
-				soapEntry.WriteFullEndElement = false;
-				soapEntry.SpecifyEncoding = false;
+			else 
+			{
+				if(mapping.IsValueType)
+					return soapEntry;
+			
+				bool firstTime;
+				long id = _idGenerator.GetId (objValue, out firstTime);
+				
+				if(!firstTime) {
+					soapEntry.elementType = ElementType.Href;
+					soapEntry.i = id;
+					soapEntry.WriteFullEndElement = false;
+					soapEntry.SpecifyEncoding = false;
+				}
+				else if(!mapping.CanBeValue){
+					soapEntry.i = id;
+					soapEntry.elementType = ElementType.Href;
+					soapEntry.WriteFullEndElement = false;
+					_objectQueue.Enqueue(new EnqueuedObject(objValue, id));
+					soapEntry.SpecifyEncoding = false;
+				} 
+				else if(mapping.NeedId){ 
+					soapEntry.i = id;
+					soapEntry.elementType = ElementType.Id;
+				}
 			}
-			else if(!mapping.CanBeValue){
-				id = GetNextId();
-				soapEntry.i = id;
-				soapEntry.elementType = ElementType.Href;
-				soapEntry.WriteFullEndElement = false;
-				_objectQueue.Enqueue(new EnqueuedObject(objValue, id));
-				_objectRefs[id] = objValue;
-				_objectIds[objValue] = id;
-				soapEntry.SpecifyEncoding = false;
-			} 
-			else if(mapping.NeedId){ 
-				id = GetNextId();
-				soapEntry.i = id;
-				soapEntry.elementType = ElementType.Id;
-				_objectIds[objValue] = id;
-			}
-
 			
 			return soapEntry;
 		}
 		
-		private ICollection FormatteAttributes(SoapSerializationEntry entry) {
+		private ICollection FormatteAttributes (object value, SoapSerializationEntry entry) {
 			
 			string prefix;
 			bool needNamespace;
@@ -142,7 +138,7 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 			
 			// Add attributes about the type of the array items
 			if(entry.IsArray) {
-				Array array = (Array) _objectRefs[entry.i];
+				Array array = (Array) value;
 				Type elementType = array.GetType().GetElementType();
 				SoapTypeMapping elementMapping = GetTagInfo(elementType);
 				string rank = "[";
@@ -161,10 +157,6 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 		
 		private string GetNextObjectPrefix() {
 			return "a"+(++_objectCounter);
-		}
-		
-		private long GetNextId() {
-			return ++_refCounter;
 		}
 		
 		private bool GetPrefix(string xmlNamespace, out string prefix) {
@@ -192,12 +184,11 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 		}
 		
 		public void WriteArrayItem(Type itemType, object itemValue) {
-			Array currentArray = (Array) _objectRefs[_currentObjectId];
 			SoapSerializationEntry soapEntry;
 			
 			soapEntry = FillEntry(itemType, itemValue);
 			
-			soapEntry.elementAttributes = FormatteAttributes(soapEntry);
+			soapEntry.elementAttributes = FormatteAttributes (itemValue, soapEntry);
 			
 			soapEntry.elementName = "item";
 			soapEntry.prefix = null;
@@ -221,8 +212,7 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 			foreach(SerializationEntry entry in info){
 				soapEntry = FillEntry(entry.ObjectType, entry.Value);
 				
-				
-				attributeList = FormatteAttributes(soapEntry);
+				attributeList = FormatteAttributes (entry.Value, soapEntry);
 				soapEntry.elementValue = (soapEntry.elementType != ElementType.Href && soapEntry.CanBeValue)?entry.Value:null;
 				
 				soapEntry.elementAttributes = attributeList;
@@ -267,7 +257,7 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 			
 			entry.i = _currentObjectId;
 			entry.elementType = ElementType.Id;
-			ICollection attributeList = FormatteAttributes(entry);
+			ICollection attributeList = FormatteAttributes (rootValue, entry);
 			entry.elementAttributes = attributeList;
 			
 			entry.elementValue = rootValue;
@@ -294,13 +284,9 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 		
 		public object TopObject {
 			set {
-				_objectQueue.Enqueue(new EnqueuedObject(value, _currentObjectId = GetNextId()));
-				_objectRefs[_currentObjectId] = value;
-				_objectIds[value] = _currentObjectId;
-				// There isn't object with id="ref-2" in MS Soap messages
-				// Wonder why
-				// So I skip id=2
-				GetNextId();
+				bool ft;
+				_currentObjectId = _idGenerator.GetId (value, out ft);
+				_objectQueue.Enqueue(new EnqueuedObject(value, _currentObjectId));
 			}
 		}
 		
