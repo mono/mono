@@ -168,8 +168,12 @@ namespace System.Security.Cryptography.Xml {
 		{
 			// These transformer modify input document, which should
 			// not affect to the input itself.
-			if (t is XmlDsigXPathTransform ||
-				t is XmlDsigEnvelopedSignatureTransform)
+			if (t is XmlDsigXPathTransform 
+				|| t is XmlDsigEnvelopedSignatureTransform
+#if NET_2_0
+				|| t is XmlDecryptionTransform
+#endif
+			)
 				input = (XmlDocument) input.Clone ();
 
 			t.LoadInput (input);
@@ -185,6 +189,11 @@ namespace System.Security.Cryptography.Xml {
 				MemoryStream ms = new MemoryStream ();
 				XmlTextWriter xtw = new XmlTextWriter (ms, Encoding.UTF8);
 				((XmlDocument) obj).WriteTo (xtw);
+
+				xtw.Flush ();
+
+				// Rewind to the start of the stream
+				ms.Position = 0;
 				return ms;
 			}
 			else if (obj == null) {
@@ -676,7 +685,7 @@ namespace System.Security.Cryptography.Xml {
 
 		public XmlElement GetXml () 
 		{
-			return m_signature.GetXml ();
+			return m_signature.GetXml (envdoc);
 		}
 
 		public void LoadXml (XmlElement value) 

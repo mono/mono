@@ -114,6 +114,11 @@ namespace System.Security.Cryptography.Xml {
 							case XmlSignature.AlgorithmNamespaces.XmlDsigXsltTransform:
 								t = new XmlDsigXsltTransform ();
 								break;
+#if NET_2_0
+							case XmlSignature.AlgorithmNamespaces.XmlDecryptionTransform:
+								t = new XmlDecryptionTransform ();
+								break;
+#endif
 							default:
 								continue;
 							}

@@ -62,7 +62,7 @@ namespace System.Security.Cryptography.Xml {
 
 		Evidence documentEvidence;
 		Encoding encoding = Encoding.UTF8;
-		Hashtable keyNameMapping = new Hashtable ();
+		internal Hashtable keyNameMapping = new Hashtable ();
 		CipherMode mode = CipherMode.CBC;
 		PaddingMode padding = PaddingMode.ISO10126;
 		string recipient;
@@ -157,14 +157,20 @@ namespace System.Security.Cryptography.Xml {
 
 		public virtual byte[] DecryptEncryptedKey (EncryptedKey encryptedKey)
 		{
-			SymmetricAlgorithm keyAlg = null;
+			object keyAlg = null;
 			foreach (KeyInfoClause innerClause in encryptedKey.KeyInfo) {
 				if (innerClause is KeyInfoName) {
-					keyAlg = (SymmetricAlgorithm) keyNameMapping [((KeyInfoName) innerClause).Value];
+					keyAlg = keyNameMapping [((KeyInfoName) innerClause).Value];
 					break;
 				}
 			}
-			return DecryptKey (encryptedKey.CipherData.CipherValue, keyAlg);
+			switch (encryptedKey.EncryptionMethod.KeyAlgorithm) {
+			case XmlEncRSA1_5Url:
+				return DecryptKey (encryptedKey.CipherData.CipherValue, (RSA) keyAlg, false);
+			case XmlEncRSAOAEPUrl:
+				return DecryptKey (encryptedKey.CipherData.CipherValue, (RSA) keyAlg, true);
+			}
+			return DecryptKey (encryptedKey.CipherData.CipherValue, (SymmetricAlgorithm) keyAlg);
 		}
 
 		public static byte[] DecryptKey (byte[] keyData, SymmetricAlgorithm symAlg)

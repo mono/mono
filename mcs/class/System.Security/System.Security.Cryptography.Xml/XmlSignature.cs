@@ -101,6 +101,9 @@ namespace System.Security.Cryptography.Xml {
 			public const string XmlDsigEnvelopedSignatureTransform = "http://www.w3.org/2000/09/xmldsig#enveloped-signature";
 			public const string XmlDsigXPathTransform = "http://www.w3.org/TR/1999/REC-xpath-19991116";
 			public const string XmlDsigXsltTransform =  "http://www.w3.org/TR/1999/REC-xslt-19991116";
+#if NET_2_0
+			public const string XmlDecryptionTransform = "http://www.w3.org/TR/2002/07/decrypt#XML";
+#endif
 		}
 
 		public class Uri {

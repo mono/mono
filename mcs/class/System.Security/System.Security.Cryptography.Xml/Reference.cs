@@ -90,6 +90,7 @@ namespace System.Security.Cryptography.Xml {
 
 		public TransformChain TransformChain {
 			get { return chain; }
+			set { chain = value; }
 		}
 
 		public string Type {

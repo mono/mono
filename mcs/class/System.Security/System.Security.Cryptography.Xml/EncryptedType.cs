@@ -52,12 +52,12 @@ namespace System.Security.Cryptography.Xml {
 
 		protected EncryptedType ()
 		{
-			cipherData = null;
+			cipherData = new CipherData ();
 			encoding = null;
 			encryptionMethod = null;
 			encryptionProperties = new EncryptionProperties ();
 			id = null;
-			keyInfo = null;
+			keyInfo = new KeyInfo ();
 			mimeType = null;
 			type = null;
 		}

@@ -5,9 +5,11 @@
 // Authors:
 //	Sebastien Pouliot <sebastien@ximian.com>
 //	Aleksey Sanin (aleksey@aleksey.com)
+//      Tim Coleman (tim@timcoleman.com)
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 // (C) 2003 Aleksey Sanin (aleksey@aleksey.com)
+// Copyright (C) Tim Coleman, 2004
 // (C) 2004 Novell (http://www.novell.com)
 //
 
@@ -90,6 +92,14 @@ namespace System.Security.Cryptography.Xml {
 		{
 			return null; // THIS IS DOCUMENTED AS SUCH
 		}
+
+#if NET_2_0
+		[MonoTODO]
+		public override byte[] GetDigestedOutput (HashAlgorithm hash)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 
 		public override object GetOutput () 
 		{

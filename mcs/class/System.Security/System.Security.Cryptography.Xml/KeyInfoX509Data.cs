@@ -4,8 +4,10 @@
 // Authors:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //	Atsushi Enomoto (atsushi@ximian.com)
+//      Tim Coleman (tim@timcoleman.com)
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
+// Copyright (C) Tim Coleman, 2004
 // (C) 2004 Novell Inc.
 //
 
@@ -62,6 +64,13 @@ namespace System.Security.Cryptography.Xml {
 			AddCertificate (cert);
 		}
 
+#if NET_2_0
+		public KeyInfoX509Data (X509Certificate cert, X509IncludeOption includeOption)
+		{
+			
+		}
+#endif
+
 		public ArrayList Certificates {
 			get { return X509CertificateList.Count != 0 ? X509CertificateList : null; }
 		}
@@ -98,6 +107,14 @@ namespace System.Security.Cryptography.Xml {
 		{
 			SubjectKeyIdList.Add (subjectKeyId);
 		}
+
+#if NET_2_0
+		[MonoTODO]
+		public void AddSubjectKeyId (string subjectKeyId)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 
 		public void AddSubjectName (string subjectName) 
 		{

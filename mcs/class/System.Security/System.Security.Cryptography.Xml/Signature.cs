@@ -3,8 +3,10 @@
 //
 // Author:
 //	Sebastien Pouliot (spouliot@motus.com)
+//      Tim Coleman (tim@timcoleman.com)
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
+// Copyright (C) Tim Coleman, 2004
 //
 
 //
@@ -99,6 +101,11 @@ namespace System.Security.Cryptography.Xml {
 
 		public XmlElement GetXml () 
 		{
+			return GetXml (new XmlDocument ());
+		}
+
+		internal XmlElement GetXml (XmlDocument document)
+		{
 			if (element != null)
 				return element;
 
@@ -107,7 +114,6 @@ namespace System.Security.Cryptography.Xml {
 			if (signature == null)
 				throw new CryptographicException ("SignatureValue");
 
-			XmlDocument document = new XmlDocument ();
 			XmlElement xel = document.CreateElement (XmlSignature.ElementNames.Signature, XmlSignature.NamespaceURI);
 			if (id != null)
 				xel.SetAttribute (XmlSignature.AttributeNames.Id, id);

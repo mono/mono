@@ -3,8 +3,10 @@
 //
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
+//      Tim Coleman (tim@timcoleman.com)
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
+// Copyright (C) Tim Coleman, 2004
 // (C) 2004 Novell (http://www.novell.com)
 //
 
@@ -43,10 +45,17 @@ namespace System.Security.Cryptography.Xml {
 		private string signatureLength;
 		private XmlElement element;
 
+#if NET_2_0
+		XmlDsigC14NTransform canonicalizationMethodObject;
+#endif
+
 		public SignedInfo() 
 		{
 			references = new ArrayList ();
 			c14nMethod = "http://www.w3.org/TR/2001/REC-xml-c14n-20010315";
+#if NET_2_0	
+			canonicalizationMethodObject = new XmlDsigC14NTransform ();
+#endif
 		}
 
 		public string CanonicalizationMethod {
@@ -56,6 +65,12 @@ namespace System.Security.Cryptography.Xml {
 				element = null;
 			}
 		}
+
+#if NET_2_0
+		public Transform CanonicalizationMethodObject {
+			get { return canonicalizationMethodObject; }
+		}
+#endif
 
 		// documented as not supported (and throwing exception)
 		public int Count {

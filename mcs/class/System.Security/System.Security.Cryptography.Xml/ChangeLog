@@ -1,3 +1,16 @@
+2004-09-02  Tim Coleman <tim@timcoleman.com>
+	* CipherReference.cs: Add XmlDecryptionTransform for 2.0
+	* EncryptedType.cs: Fix type initialization to conform to .NET
+	* EncryptedXml.cs:
+		Add support for RSA key decryption and "cloning" for Transform
+	* KeyInfoX509Data Reference.cs SignedInfo.cs XmlDsigC14NTransform.cs: 
+		Add 2.0 stubs
+	* Signature.cs:
+		Create internal GetXml function if we already have a doc
+	* SignedXml.cs: Fix the transformation when we get an XmlDocument out
+	* XmlDecryptionTransform.cs: Implemented Xml Decryption
+	* XmlSignature.cs: Add namespace for Xml Decryption
+
 2004-08-31  Tim Coleman <tim@timcoleman.com>
 	* XmlDsigExcC14NTransform.cs XmlDsigExcC14NWithCommentsTransform.cs:
 		Add new stub classes

@@ -29,6 +29,8 @@
 
 #if NET_2_0
 
+using System.Collections;
+using System.IO;
 using System.Xml;
 
 namespace System.Security.Cryptography.Xml {
@@ -39,6 +41,10 @@ namespace System.Security.Cryptography.Xml {
 		EncryptedXml encryptedXml;
 		Type[] inputTypes;
 		Type[] outputTypes;
+		object inputObj;
+		ArrayList exceptUris;
+		XmlNodeList innerXml;
+		const string NamespaceUri = "http://www.w3.org/2002/07/decrypt#";
 
 		#endregion // Fields
 
@@ -47,6 +53,8 @@ namespace System.Security.Cryptography.Xml {
 		public XmlDecryptionTransform ()
 			: base ()
 		{
+			Algorithm = XmlSignature.AlgorithmNamespaces.XmlDecryptionTransform;
+			exceptUris = new ArrayList ();
 		}
 	
 		#endregion // Constructors
@@ -62,7 +70,7 @@ namespace System.Security.Cryptography.Xml {
 			get { 
 				if (inputTypes == null) {
 					lock (this) {
-						inputTypes = new Type [3] {typeof (System.IO.Stream), typeof (System.Xml.XmlNodeList), typeof (System.Xml.XmlDocument)}; 
+						inputTypes = new Type [2] {typeof (System.IO.Stream), typeof (System.Xml.XmlDocument)}; 
 					}
 				}
 				return inputTypes;
@@ -73,7 +81,7 @@ namespace System.Security.Cryptography.Xml {
 			get { 
 				if (outputTypes == null) {
 					lock (this) {
-						outputTypes = new Type [2] {typeof (System.Xml.XmlDocument), typeof (System.Xml.XmlNodeList)};
+						outputTypes = new Type [1] {typeof (System.Xml.XmlDocument)};
 					}
 				}
 				return outputTypes;
@@ -84,22 +92,61 @@ namespace System.Security.Cryptography.Xml {
 
 		#region Methods
 
-		[MonoTODO]
+		public void AddExceptUri (string uri)
+		{
+			exceptUris.Add (uri);
+		}
+
+		private void ClearExceptUris ()
+		{
+			exceptUris.Clear ();
+		}
+
+		[MonoTODO ("Verify")]
 		protected override XmlNodeList GetInnerXml ()
 		{
-			throw new NotImplementedException ();
+			XmlDocument doc = new XmlDocument ();
+			foreach (object o in exceptUris) {
+				XmlElement element = doc.CreateElement ("Except", NamespaceUri);
+				element.Attributes.Append (doc.CreateAttribute ("URI", NamespaceUri));
+				element.Attributes ["URI", NamespaceUri].Value = (string) o;
+				doc.DocumentElement.AppendChild (element);
+			}
+			return doc.GetElementsByTagName ("Except", NamespaceUri);
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Include processing of ExceptURIs")]
 		public override object GetOutput ()
 		{
-			throw new NotImplementedException ();
+			XmlDocument doc;
+			if (inputObj is Stream) {
+				doc = new XmlDocument ();
+				doc.PreserveWhitespace = true;
+#if NET_1_1
+				doc.XmlResolver = GetResolver ();
+#endif
+				doc.Load (inputObj as Stream);
+			}
+			else if (inputObj is XmlDocument) {
+				doc = inputObj as XmlDocument;
+			}
+			else
+				throw new NullReferenceException ();
+
+			EncryptedXml exml = new EncryptedXml (doc);
+
+			// Need to copy this from the other EncryptedXml so that we can get the keys.
+			exml.keyNameMapping = encryptedXml.keyNameMapping;
+			exml.DecryptDocument ();
+
+			return doc;
 		}
 
-		[MonoTODO]
 		public override object GetOutput (Type type)
-		{
-			throw new NotImplementedException ();
+		{	
+			if (type == Type.GetType ("Stream"))
+				return GetOutput ();
+			throw new ArgumentException ("type");
 		}
 
 		[MonoTODO]
@@ -108,16 +155,23 @@ namespace System.Security.Cryptography.Xml {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO ("This doesn't seem to work in .NET")]
 		public override void LoadInnerXml (XmlNodeList nodeList)
 		{
-			throw new NotImplementedException ();
+			if (nodeList == null)
+				throw new NullReferenceException ();
+
+			ClearExceptUris ();
+			foreach (XmlNode node in nodeList) {
+				XmlElement element = node as XmlElement;
+				if (element.NamespaceURI.Equals (NamespaceUri) && element.LocalName.Equals ("Except"))
+					AddExceptUri (element.Attributes ["URI", NamespaceUri].Value);
+			}
 		}
 
-		[MonoTODO]
 		public override void LoadInput (object obj)
 		{
-			throw new NotImplementedException ();
+			inputObj = obj;
 		}
 
 		#endregion // Methods
