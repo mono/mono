@@ -1,3 +1,8 @@
+2002-05-21  Nick Drochak  <ndrochak@gol.com>
+
+	* Math.cs (Pow): Change icall method name and insert parameter
+	checks in for infinities and NaN.
+
 2002-05-13  Miguel de Icaza  <miguel@ximian.com>
 
 	* Double.cs (Parse): Reimplement by cleaning up the string first,
