@@ -90,6 +90,38 @@ namespace Mono.MonoBASIC {
 				return false;
 			}
 
+			// if no type is declared expicitely 
+			// set the expression type as the type of constant
+			if (type == TypeManager.object_type){
+				if (Expr is IntLiteral)
+					type = TypeManager.int32_type;
+				else if (Expr is UIntLiteral)
+					type = TypeManager.uint32_type;
+				else if (Expr is LongLiteral)
+					type = TypeManager.int64_type;
+				else if (Expr is ULongLiteral)
+					type = TypeManager.uint64_type;
+				else if (Expr is FloatLiteral)
+					type = TypeManager.float_type;
+				else if (Expr is DoubleLiteral)
+					type = TypeManager.double_type;
+				else if (Expr is StringLiteral)
+					type = TypeManager.string_type;
+				else if (Expr is ShortLiteral)
+					type = TypeManager.short_type;
+				else if (Expr is UShortConstant)
+					type = TypeManager.ushort_type;
+				else if (Expr is SByteConstant)
+					type = TypeManager.sbyte_type;
+				else if (Expr is ByteConstant)
+					type = TypeManager.byte_type;
+				else if (Expr is CharConstant)
+					type = TypeManager.char_type;
+				else if (Expr is BoolConstant)
+					type = TypeManager.bool_type;
+				else if (Expr is DateConstant)
+					type = TypeManager.date_type;
+			}
 			Type ptype = parent.TypeBuilder.BaseType;
 
 			if (ptype != null) {

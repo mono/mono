@@ -1,4 +1,7 @@
 2004-03-22 Anirban Bhattacharjee <banirban@novell.com>
+	* const.cs: Change type of constant to the type of its value if no explicit type declaration found
+
+2004-03-22 Anirban Bhattacharjee <banirban@novell.com>
 	* mb-parser.jay: Grammar for declaring constant inside block is changed
 
 2004-03-22 Anirban Bhattacharjee <banirban@novell.com>
