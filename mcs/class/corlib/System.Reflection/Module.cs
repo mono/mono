@@ -248,9 +248,9 @@ namespace System.Reflection {
 #if NET_2_0
 		private Exception resolve_token_exception (int metadataToken, ResolveTokenError error, string tokenType) {
 			if (error == ResolveTokenError.OutOfRange)
-				return new ArgumentOutOfRangeException (String.Format ("Token 0x{0:x} is not valid in the scope of module {1}", metadataToken, name), "metadataToken");
+				return new ArgumentOutOfRangeException ("metadataToken", String.Format ("Token 0x{0:x} is not valid in the scope of module {1}", metadataToken, name));
 			else
-				return new ArgumentOutOfRangeException (String.Format ("Token 0x{0:x} is not a valid {1} token in the scope of module {2}", metadataToken, tokenType, name), "metadataToken");
+				return new ArgumentException (String.Format ("Token 0x{0:x} is not a valid {1} token in the scope of module {2}", metadataToken, tokenType, name), "metadataToken");
 		}
 
 		public FieldInfo ResolveField (int metadataToken) {
