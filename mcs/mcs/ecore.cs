@@ -4099,6 +4099,19 @@ namespace Mono.CSharp {
 			return this;
 		}
 
+		override public Expression DoResolveLValue (EmitContext ec, Expression right_side)
+		{
+			if (!PropertyInfo.CanWrite){
+				Report.Error (154, loc, 
+					      "The property `" + PropertyInfo.Name +
+					      "' can not be used in " +
+					      "this context because it lacks a set accessor");
+				return null;
+			}
+
+			return this;
+		}
+
 		override public void Emit (EmitContext ec)
 		{
 			MethodInfo method = Accessors [0];

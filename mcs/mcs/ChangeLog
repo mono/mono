@@ -1,5 +1,10 @@
 2002-08-11  Martin Baulig  <martin@gnome.org>
 
+	* ecore.cs (PropertyExpr.DoResolveLValue): Implemented, check
+	whether the property has a set accessor.
+
+2002-08-11  Martin Baulig  <martin@gnome.org>
+
 	Added control flow analysis support for structs.
 
 	* ecore.cs (ResolveFlags): Added `DisableFlowAnalysis' to resolve
