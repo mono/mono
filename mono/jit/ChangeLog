@@ -1,5 +1,8 @@
 2001-09-10  Miguel de Icaza  <miguel@ximian.com>
 
+	* testjit.c: Use GPtrArrays instead of GLists, as those are very
+	inefficient at appends.
+
 	* Renamed `create_new_leave' to `create_new_leaf'
 
 	
