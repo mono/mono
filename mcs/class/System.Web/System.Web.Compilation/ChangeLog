@@ -1,3 +1,7 @@
+2005-02-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AspGenerator.cs: don't fail on <tbody runat=server>. Fixes bug #71856.
+
 2005-01-28  Lluis Sanchez Gual <lluis@novell.com>
 
 	* TemplateControlCompiler.cs: When generating a property value,
