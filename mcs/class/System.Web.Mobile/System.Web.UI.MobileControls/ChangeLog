@@ -1,4 +1,9 @@
 
+2003-01-23	Gaurav Vaish <gvaish_mono AT lycos.com>
+
+	* Command.cs             : Completed.
+	* Form.cs                : CurrentPage { get; set; } - Stubbed.
+
 2003-01-19	Gaurav Vaish <gvaish_mono AT lycos.com>
 
 	* Command.cs             : Initial implementation.

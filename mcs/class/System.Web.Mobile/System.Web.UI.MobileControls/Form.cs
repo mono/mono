@@ -36,5 +36,17 @@ namespace System.Web.UI.MobileControls
 		{
 			throw new NotImplementedException();
 		}
+
+		public int CurrentPage
+		{
+			get
+			{
+				throw new NotImplementedException();
+			}
+			set
+			{
+				throw new NotImplementedException();
+			}
+		}
 	}
 }
