@@ -1,4 +1,8 @@
 
+Tue Feb 26 11:56:03 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* x86.brg: optimize cmp reg,0 -> test reg.
+
 Sun Feb 24 13:58:34 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* jit.h, jit.c, emit-x86.c: Added a few statistics counters
