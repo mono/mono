@@ -1,3 +1,9 @@
+2005-01-19  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AspNetHostingPermission.cs: Fixed Intersect(null) which has a 
+	different behaviour in NET_1_1 (return copy of self) than in NET_2_0
+	(return null).
+
 2004-09-10  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AspNetHostingPermission.cs: Completed TODO.

@@ -115,8 +115,13 @@ namespace System.Web {
 		public override IPermission Intersect (IPermission target)
 		{
 			AspNetHostingPermission anhp = Cast (target);
-			if (anhp == null)
+			if (anhp == null) {
+#if NET_2_0
 				return null;
+#else
+				return new AspNetHostingPermission (_level);
+#endif
+			}
 
 			return new AspNetHostingPermission ((_level <= anhp.Level) ? _level : anhp.Level);
 		}
