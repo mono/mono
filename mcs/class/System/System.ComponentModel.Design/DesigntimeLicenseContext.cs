@@ -18,11 +18,6 @@ namespace System.ComponentModel.Design
 		{
 		}
 
-		public override LicenseUsageMode UsageMode {
-			[MonoTODO]
-			get { throw new NotImplementedException(); }
-		}
-
 		[MonoTODO]
 		public override string GetSavedLicenseKey (Type type,
 							   Assembly resourceAssembly)

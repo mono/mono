@@ -18,11 +18,6 @@ namespace System.ComponentModel
 		{
 		}
 
-		public virtual LicenseUsageMode UsageMode {
-			[MonoTODO]
-			get { throw new NotImplementedException(); }
-		}
-
 		[MonoTODO]
 		public virtual string GetSavedLicenseKey (Type type,
 							  Assembly resourceAssembly)
