@@ -638,9 +638,11 @@ namespace System
 			if (index > array.Length - length)
 				throw new IndexOutOfRangeException ("index + length > size");
 
-			for (int i = 0; i < length; i++) 
-				array.SetValueImpl (null, index + i);
+			ClearInternal (array, index, length);
 		}
+		
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		static extern void ClearInternal (Array a, int index, int count);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public virtual extern object Clone ();

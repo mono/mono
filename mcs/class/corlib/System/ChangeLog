@@ -1,3 +1,7 @@
+2004-09-06 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* Array.cs (Clear): make this an icall.
+
 2004-09-05 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* MonoCustomAttribute.cs: Avoid the call to GetBase when possible.
