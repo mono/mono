@@ -3,25 +3,32 @@
 // namespace:	System.Text.RegularExpressions
 // file:	quicksearch.cs
 //
-// author:	Dan Lewis (dlewis@gmx.co.uk)
-// 		(c) 2002
+// Authors:	Dan Lewis (dlewis@gmx.co.uk)
+//		Juraj Skripsky (juraj@hotfeet.ch)
+//
+// (c) 2002 Dan Lewis
+// (c) 2003 Juraj Skripsky
+//
 
 using System;
 using System.Collections;
 
 namespace System.Text.RegularExpressions {
-
-	// TODO use simple test for single character strings
-
 	class QuickSearch {
 		// simplified boyer-moore for fast substring matching
+		// (for short strings, we use simple scans)
 	
 		public QuickSearch (string str, bool ignore) {
 			this.str = str;
 			this.len = str.Length;
 			this.ignore = ignore;
-		
-			Setup ();
+
+			if (ignore)
+				str = str.ToLower ();
+
+			// create the shift table only for "long" search strings
+			if(len > THRESHOLD)
+				SetupShiftTable ();
 		}
 		
 		public string String {
@@ -37,40 +44,33 @@ namespace System.Text.RegularExpressions {
 		}
 
 		public int Search (string text, int start, int end) {
+			int ptr = start;
+
+			// use simple scan for a single-character search string
+			if (len == 1) {
+				while (ptr <= end) {
+					if(str[0] == GetChar(text[ptr]))
+						return ptr;
+					else
+						ptr++;
+				}
+				return -1;
+			}
+
 			if (end > text.Length - len)
 				end = text.Length - len;
-		
-			int ptr = start;
-			if (!ignore) {
-				while (ptr <= end) {
-					int i = len - 1;
-					while (str[i] == text[ptr + i]) {
-						if (-- i < 0)
-							return ptr;
-					}
 
-					if (ptr < end)
-						ptr += GetShiftDistance (text[ptr + len]);
-					else
-						break;
+			while (ptr <= end) {
+				int i = len - 1;
+				while (str[i] == GetChar(text[ptr + i])) {
+					if (-- i < 0)
+						return ptr;
 				}
-			}
-			else {
-				// ignore case: same as above, but we convert text
-				// to lower case before doing the string compare
-			
-				while (ptr <= end) {
-					int i = len - 1;
-					while (str[i] == Char.ToLower (text[ptr + i])) {
-						if (-- i < 0)
-							return ptr;
-					}
 
-					if (ptr < end)
-						ptr += GetShiftDistance (text[ptr + len]);
-					else
-						break;
-				}
+				if (ptr < end)
+					ptr += GetShiftDistance (text[ptr + len]);
+				else
+					break;
 			}
 
 			return -1;
@@ -78,30 +78,32 @@ namespace System.Text.RegularExpressions {
 
 		// private
 
-		private void Setup () {
-			if (ignore)
-				str = str.ToLower ();
-
+		private void SetupShiftTable () {
 			shift = new Hashtable ();
 			for (int i = 0; i < len; ++ i) {
 				char c = str[i];
-
-				shift[c] = len - i;
-				if (ignore)
-					shift[Char.ToUpper (c)] = len - i;
+				shift[GetChar(c)] = len - i;
 			}
 		}
 	    
-		int GetShiftDistance (char c){
+		private int GetShiftDistance (char c) {
+			if(shift == null)
+				return 1;
+
 			object s = shift[c];
 			return (s != null ? (int)s : len + 1);
+		}
+
+		private char GetChar(char c) {
+			return (!ignore ? c : Char.ToLower(c));
 		}
 		
 		private string str;
 		private int len;
 		private bool ignore;
 
-		Hashtable shift;
+		private Hashtable shift;
+		private readonly static int THRESHOLD = 5;
 	}
 
 }

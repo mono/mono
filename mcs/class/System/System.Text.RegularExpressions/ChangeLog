@@ -1,3 +1,12 @@
+2003-11-21  Juraj Skripsky <js@hotfeet.ch>
+
+	* quicksearch.cs: Create and use hashtable only for "long" search 
+	strings. 
+
+	(Search): Use simple scan for a single-character search strings.
+	
+	(GetChar): Simplify case sensitivity handling.
+
 2003-11-27  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* interpreter.cs: when evaluating a degenerate match, restore the
