@@ -1,6 +1,13 @@
+2004-06-01  Marek Safar  <marek.safar@seznam.cz>
+ 
+	Fixed bug #59071 & cs0160.cs
+ 
+	* statement.cs (Try.Resolve): Check here whether order of catch
+	clauses matches their dependencies.
+
 2004-05-31  Miguel de Icaza  <miguel@ximian.com>
 
-	* Reverted patch to namespace.cs (Use lookuptypedirect).  This
+ 	* Reverted patch to namespace.cs (Use lookuptypedirect).  This
 	caused a regression: #59343.  Referencing nested classes from an
 	assembly stopped working.
 
