@@ -1,3 +1,9 @@
+2005-04-05  Jackson Harper  <jackson@ximian.com>
+
+	* ListControl.cs: Basic implementation of complex databinding.
+	* ComboBox.cs:
+	* ListBox.cs: Add calls to ListControl databinding methods.
+
 2005-04-05  Alexander Olk  <xenomorph2@onlinehome.de>
 
 	* FileDialog.cs:

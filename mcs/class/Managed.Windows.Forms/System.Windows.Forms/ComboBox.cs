@@ -666,11 +666,22 @@ namespace System.Windows.Forms
 		protected override void OnDataSourceChanged (EventArgs e)
 		{
 			base.OnDataSourceChanged (e);
+
+			if (DataSource != null)
+				SelectedIndex = -1;
+
+			BindDataItems (items);
 		}
 
 		protected override void OnDisplayMemberChanged (EventArgs e)
 		{
 			base.OnDisplayMemberChanged (e);
+
+			if (DataManager == null || !IsHandleCreated)
+			       return;
+
+			BindDataItems (items);
+			SelectedIndex = DataManager.Position;
 		}
 
 		protected virtual void OnDrawItem (DrawItemEventArgs e)

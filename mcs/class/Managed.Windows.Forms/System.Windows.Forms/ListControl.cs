@@ -36,11 +36,12 @@ namespace System.Windows.Forms
 {
 	public abstract class ListControl : Control
 	{
-		string display_member;
+		private object data_source;
+		private string display_member = String.Empty;
+		private CurrencyManager data_manager;
 		
 		protected ListControl ()
 		{
-			display_member = string.Empty;
 		}
 
 		#region Events		
@@ -51,16 +52,25 @@ namespace System.Windows.Forms
 		#endregion // Events
 
 		#region Public Properties
-		//protected CurrencyManager DataManager {
-		//get {throw new NotImplementedException (); };
-		//}
 
 		[DefaultValue(null)]
 		[RefreshProperties(RefreshProperties.Repaint)]
 		[TypeConverter("System.Windows.Forms.Design.DataSourceConverter, System.Design, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
 		public object DataSource {
-			get {throw new NotImplementedException (); }
-			set {throw new NotImplementedException (); }
+			get { return data_source; }
+			set {
+				if (!(value is IList || value is IListSource)) {
+					throw new Exception ("Complex DataBinding accepts as a data source " +
+							"either an IList or an IListSource");
+				}
+
+				data_source = value;
+
+				CurrencyManager manager = (CurrencyManager) BindingContext [data_source, display_member];
+				data_manager = manager;
+
+				OnDataSourceChanged (EventArgs.Empty);
+			}
 		}
 		
 		[DefaultValue("")]
@@ -81,15 +91,15 @@ namespace System.Windows.Forms
 		[DefaultValue(null)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public object SelectedValue {
-			get {throw new NotImplementedException (); }                     
+			get {throw new NotImplementedException (); }			 
 			set {throw new NotImplementedException (); }
 		}
 
 		[DefaultValue("")]
 		[Editor("System.Windows.Forms.Design.DataMemberFieldEditor, " + Consts.AssemblySystem_Design, typeof(System.Drawing.Design.UITypeEditor))]
 		public string ValueMember  {
-			get {throw new NotImplementedException (); }
-			set {throw new NotImplementedException (); }
+			get { return null; }
+			set { }
 		}
 		
 		#endregion Public Properties
@@ -109,6 +119,10 @@ namespace System.Windows.Forms
 		public string GetItemText (object item)
 		{
 			 throw new NotImplementedException ();
+		}
+
+		protected CurrencyManager DataManager {
+			get { return data_manager; }
 		}
 
 		// Used only by ListBox to avoid to break Listbox's member signature
@@ -135,46 +149,58 @@ namespace System.Windows.Forms
 
 		protected override void OnBindingContextChanged (EventArgs e)
 		{
-			
+			base.OnBindingContextChanged (e);
 		}
 
 		protected virtual void OnDataSourceChanged (EventArgs e)
 		{
-
+			if (DataSourceChanged != null)
+				DataSourceChanged (this,e);
 		}
 
 		protected virtual void OnDisplayMemberChanged (EventArgs e)
 		{
-
+			if (DisplayMemberChanged != null)
+				DisplayMemberChanged (this, e);
 		}
 
 		protected virtual void OnSelectedIndexChanged (EventArgs e)
 		{
-		
+			if (data_manager == null)
+				return;
+			if (data_manager.Position == SelectedIndex)
+				return;
+			data_manager.Position = SelectedIndex;
 		}
 
 		protected virtual void OnSelectedValueChanged (EventArgs e)
 		{
-
+			if (SelectedValueChanged != null)
+				SelectedValueChanged (this, e);
 		}
 
 		protected virtual void OnValueMemberChanged (EventArgs e)
 		{
-
+			if (ValueMemberChanged != null)
+				ValueMemberChanged (this, e);
 		}
 
 		protected abstract void RefreshItem (int index);
 
-		protected virtual void SetItemCore (int index,  object value)
+		protected virtual void SetItemCore (int index,	object value)
 		{
 
 		}
 
 		protected abstract void SetItemsCore (IList items);
 
+		internal void BindDataItems (IList items)
+		{
+			items.Clear ();
+			SetItemsCore (data_manager.List);
+		}
 		
 		#endregion Public Methods
-		
 	}	
 
 }

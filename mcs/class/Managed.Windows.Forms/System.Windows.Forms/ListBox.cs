@@ -772,11 +772,22 @@ namespace System.Windows.Forms
 		protected override void OnDataSourceChanged (EventArgs e)
 		{
 			base.OnDataSourceChanged (e);
+
+			if (DataSource != null)
+				SelectedIndex = -1;
+
+			BindDataItems (items);
 		}
 
 		protected override void OnDisplayMemberChanged (EventArgs e)
 		{
 			base.OnDisplayMemberChanged (e);
+
+			if (DataManager == null || !IsHandleCreated)
+				return;
+
+			BindDataItems (items);
+			SelectedIndex = DataManager.Position;
 		}
 
 		protected virtual void OnDrawItem (DrawItemEventArgs e)
@@ -884,7 +895,13 @@ namespace System.Windows.Forms
 
 		protected override void SetItemsCore (IList value)
 		{
-
+			BeginUpdate ();
+			try {
+				Items.Clear ();
+				Items.AddRange (value);
+			} finally {
+				EndUpdate ();
+			}
 		}
 
 		public void SetSelected (int index, bool value)
@@ -1905,6 +1922,16 @@ namespace System.Windows.Forms
 				int cnt = Count;
 
 				foreach (object mi in col)
+					AddItem (mi);
+
+				owner.UpdateItemInfo (UpdateOperation.AddItems, cnt, Count - 1);
+			}
+
+			internal void AddRange (IList list)
+			{
+				int cnt = Count;
+
+				foreach (object mi in list)
 					AddItem (mi);
 
 				owner.UpdateItemInfo (UpdateOperation.AddItems, cnt, Count - 1);
