@@ -1,5 +1,8 @@
 2002-02-26  Martin Baulig  <martin@gnome.org>
 
+	* MartinTests.cs: New file. This contains all the test which already
+	work on Linux.
+
 	* String.cs: Added two testcases to TestTrim(), TestTrimStart() and
 	TestTrimEnd().
 
