@@ -36,8 +36,8 @@ namespace System.Data.OracleClient {
 		OracleParameterCollection parameters;
 		OracleTransaction transaction;
 		UpdateRowSource updatedRowSource;
-		
-		OciStatementHandle statement;
+	
+		OciStatementHandle statement = null;
 		OciStatementType statementType;
 
 		#endregion // Fields
@@ -61,12 +61,15 @@ namespace System.Data.OracleClient {
 
 		public OracleCommand (string commandText, OracleConnection connection, OracleTransaction tx)
 		{
-			this.commandText = commandText;
-			this.connection = connection;
-			this.transaction = tx;
-			this.commandType = CommandType.Text;
-			this.updatedRowSource = UpdateRowSource.Both;
-			this.designTimeVisible = false;
+			statement = null;
+
+			CommandText = commandText;
+			Connection = connection;
+			Transaction = tx;
+			CommandType = CommandType.Text;
+			UpdatedRowSource = UpdateRowSource.Both;
+			DesignTimeVisible = false;
+
                         parameters = new OracleParameterCollection (this);
 		}
 
@@ -125,10 +128,6 @@ namespace System.Data.OracleClient {
 			get { return parameters; }
 		}
 
-		internal OciStatementHandle StatementHandle {
-			get { return statement; }
-		}
-
 		public OracleTransaction Transaction {
 			get { return transaction; }
 			set { transaction = value; }
@@ -143,7 +142,7 @@ namespace System.Data.OracleClient {
 
 		#region Methods
 
-		public void BindParameters ()
+		void BindParameters (OciStatementHandle statement)
 		{
 			foreach (OracleParameter p in Parameters) 
 				p.Bind (statement);
@@ -161,25 +160,6 @@ namespace System.Data.OracleClient {
 			throw new NotImplementedException ();
 		}
 
-		/*
-		[MonoTODO("Still need to Dispose correctly")]
-		public new void Dispose () 
-		{	
-			if (!disposed) {
-				if (statementHandle != IntPtr.Zero) {
-					OciGlue.OCIHandleFree (statementHandle, OciHandleType.Statement);
-					statementHandle = IntPtr.Zero;
-				}
-				//base.Dispose ();
-			}
-		}
-		
-		[MonoTODO("still need to Finalize correctly")]
-		~OracleCommand() {
-			Dispose();
-		}
-		*/
-
 		internal void CloseDataReader ()
 		{
 			Connection.DataReader = null;
@@ -196,16 +176,12 @@ namespace System.Data.OracleClient {
 		{
 			int rowsAffected = -1;
 
-			statement = Connection.Oci.CreateStatement ();
 			ValidateCommand ("ExecuteNonQuery");
-			if (Transaction != null) 
+
+			if (Transaction != null)
 				Transaction.AttachToServiceContext ();
 
-			statement.Prepare (CommandText);
-			BindParameters ();
-
 			statement.ExecuteNonQuery ();
-
 			return rowsAffected;
 		}
 
@@ -216,7 +192,7 @@ namespace System.Data.OracleClient {
 		}
 
 		[MonoTODO]
-		public object ExecuteOracleScalar ()
+		public object ExecuteOracleScalar (out OracleString rowid)
 		{
 			throw new NotImplementedException ();
 		}
@@ -228,30 +204,29 @@ namespace System.Data.OracleClient {
 
 		public OracleDataReader ExecuteReader (CommandBehavior behavior)
 		{
-			statement = Connection.Oci.CreateStatement ();
 			ValidateCommand ("ExecuteNonQuery");
-			if (Transaction != null) 
+			if (Transaction != null)
 				Transaction.AttachToServiceContext ();
-			statement.Prepare (CommandText);
-			BindParameters ();
-
 			statement.ExecuteQuery ();
-			return new OracleDataReader (this);
+
+			return new OracleDataReader (this, statement);
 		}
 
 		public object ExecuteScalar ()
 		{
-			statement = Connection.Oci.CreateStatement ();
-			ValidateCommand ("ExecuteNonQuery");
-			if (Transaction != null) 
-				Transaction.AttachToServiceContext ();
-			statement.Prepare (CommandText);
-			BindParameters ();
+			object output;
 
+			ValidateCommand ("ExecuteNonQuery");
+			if (Transaction != null)
+				Transaction.AttachToServiceContext ();
 			statement.ExecuteQuery ();
+
 			if (statement.Fetch ()) 
-				return ((OciDefineHandle) StatementHandle.Values [0]).GetValue ();
-			return DBNull.Value;
+				output = ((OciDefineHandle) statement.Values [0]).GetValue ();
+			else
+				output = DBNull.Value;
+
+			return output;
 		}
 
 		IDbDataParameter IDbCommand.CreateParameter ()
@@ -269,10 +244,10 @@ namespace System.Data.OracleClient {
 			return ExecuteReader (behavior);
 		}
 
-		[MonoTODO]
 		public void Prepare ()
 		{
-			throw new NotImplementedException ();
+			ValidateCommand ("Prepare");
+			BindParameters (statement);
 		}
 
 		private void ValidateCommand (string method)
@@ -287,6 +262,9 @@ namespace System.Data.OracleClient {
 				throw new InvalidOperationException ("The command text for this Command has not been set.");
 			if (Connection.DataReader != null)
 				throw new InvalidOperationException ("There is already an open DataReader associated with this Connection which must be closed first.");
+			if (statement == null)
+				statement = Connection.Oci.CreateStatement ();
+			statement.Prepare (CommandText);
 		}
 
 		#endregion // Methods

@@ -27,6 +27,8 @@ using System.Runtime.InteropServices;
 namespace System.Data.OracleClient {
 	public sealed class OracleDataReader : MarshalByRefObject, IDataReader, IDisposable, IDataRecord, IEnumerable
 	{
+		#region Fields
+
 		OracleCommand command;
 		ArrayList dataTypeNames;
 		bool disposed = false;
@@ -36,21 +38,37 @@ namespace System.Data.OracleClient {
 		bool moreResults;
 		DataTable schemaTable;
 
-		internal OracleDataReader (OracleCommand command)
+		OciStatementHandle statement;
+
+		#endregion // Fields
+
+		#region Constructors
+
+		internal OracleDataReader (OracleCommand command, OciStatementHandle statement)
 		{
 			this.command = command;
 			this.hasRows = false;
 			this.isClosed = false;
 			this.isSelect = (command.CommandText.Trim ().ToUpper ().StartsWith ("SELECT"));
 			this.schemaTable = ConstructSchemaTable ();
+			this.statement = statement;
 		}
+
+		~OracleDataReader ()
+		{
+			Dispose ();
+		}
+
+		#endregion // Constructors
+
+		#region Properties
 
 		public int Depth {
 			get { return 0; }
 		}
 
 		public int FieldCount {
-			get { return command.StatementHandle.ColumnCount; }
+			get { return statement.ColumnCount; }
 		}
 
 		public bool HasRows {
@@ -79,6 +97,10 @@ namespace System.Data.OracleClient {
 				//	throw new NotImplementedException ();
 			}
 		}
+
+		#endregion // Properties
+
+		#region Methods
 
 		public void Close ()
 		{
@@ -133,18 +155,12 @@ namespace System.Data.OracleClient {
 
 		public bool GetBoolean (int i)
 		{
-			object value = GetValue (i);
-			if (!(value is bool))
-				throw new InvalidCastException ();
-			return (bool) value;
+			throw new NotSupportedException ();
 		}
 
 		public byte GetByte (int i)
 		{
-			object value = GetValue (i);
-			if (!(value is byte))
-				throw new InvalidCastException ();
-			return (byte) value;
+			throw new NotSupportedException ();
 		}
 
 		public long GetBytes (int i, long fieldOffset, byte[] buffer2, int bufferoffset, int length)
@@ -158,10 +174,7 @@ namespace System.Data.OracleClient {
 
 		public char GetChar (int i)
 		{
-			object value = GetValue (i);
-			if (!(value is char))
-				throw new InvalidCastException ();
-			return (char) value;
+			throw new NotSupportedException ();
 		}
 
 		public long GetChars (int i, long fieldOffset, char[] buffer2, int bufferoffset, int length)
@@ -227,18 +240,12 @@ namespace System.Data.OracleClient {
 
 		public Guid GetGuid (int i)
 		{
-			object value = GetValue (i);
-			if (!(value is Guid))
-				throw new InvalidCastException ();
-			return (Guid) value;
+			throw new NotSupportedException ();
 		}
 
 		public short GetInt16 (int i)
 		{
-			object value = GetValue (i);
-			if (!(value is short))
-				throw new InvalidCastException ();
-			return (short) value;
+			throw new NotSupportedException ();
 		}
 
 		public int GetInt32 (int i)
@@ -259,8 +266,31 @@ namespace System.Data.OracleClient {
 
 		public string GetName (int i)
 		{
-			OciColumnInfo columnInfo = command.StatementHandle.DescribeColumn (i);
+			OciColumnInfo columnInfo = statement.DescribeColumn (i);
 			return columnInfo.ColumnName;
+		}
+
+		[MonoTODO]
+		public OracleBFile GetOracleBFile (int i)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public OracleBinary GetOracleBinary (int i)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public OracleLob GetOracleLob (int i)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public OracleNumber GetOracleNumber (int i)
+		{
+			return new OracleNumber ((decimal) GetValue (i));
 		}
 
 		public int GetOrdinal (string name)
@@ -281,9 +311,9 @@ namespace System.Data.OracleClient {
 			
 			dataTypeNames = new ArrayList ();
 
-			for (int i = 0; i < command.StatementHandle.ColumnCount; i += 1) {
+			for (int i = 0; i < statement.ColumnCount; i += 1) {
 				DataRow row = schemaTable.NewRow ();
-				OciColumnInfo columnInfo = command.StatementHandle.DescribeColumn (i);
+				OciColumnInfo columnInfo = statement.DescribeColumn (i);
 
 				row ["ColumnName"] = columnInfo.ColumnName;
 				row ["ColumnOrdinal"] = i + 1;
@@ -320,7 +350,7 @@ namespace System.Data.OracleClient {
 
 		public object GetValue (int i)
 		{
-			OciDefineHandle defineHandle = (OciDefineHandle) command.StatementHandle.Values [i];
+			OciDefineHandle defineHandle = (OciDefineHandle) statement.Values [i];
 
 			if (IsDBNull (i))
 				return DBNull.Value;
@@ -331,7 +361,7 @@ namespace System.Data.OracleClient {
 		public int GetValues (object[] values)
 		{
 			int len = values.Length;
-			int count = command.StatementHandle.ColumnCount;
+			int count = statement.ColumnCount;
 			int retval = 0;
 
 			if (len > count)
@@ -352,7 +382,7 @@ namespace System.Data.OracleClient {
 
 		public bool IsDBNull (int i)
 		{
-			return ((OciDefineHandle) command.StatementHandle.Values [i]).IsNull;
+			return ((OciDefineHandle) statement.Values [i]).IsNull;
 		}
 
 		[MonoTODO]
@@ -365,9 +395,11 @@ namespace System.Data.OracleClient {
 
 		public bool Read ()
 		{
-			bool retval = command.StatementHandle.Fetch ();
+			bool retval = statement.Fetch ();
 			return retval;
 			//return command.StatementHandle.Fetch ();
 		}
+
+		#endregion // Methods
 	}
 }

@@ -234,6 +234,7 @@ namespace Test.OracleClient
 
 			Console.WriteLine ("INSERTING DATA WITH PARAMETERS...");
 			Console.WriteLine (insert.CommandText);
+			insert.Prepare ();
 			insert.ExecuteNonQuery ();
 
 			OracleCommand select = connection.CreateCommand ();

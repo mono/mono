@@ -1,3 +1,18 @@
+2003-02-20  Tim Coleman <tim@timcoleman.com>
+	* System.Data.OracleClient/OracleBFile.cs:
+	* System.Data.OracleClient/OracleBinary.cs:
+	* System.Data.OracleClient/OracleBoolean.cs:
+	* System.Data.OracleClient/OracleLob.cs:
+	* System.Data.OracleClient/OracleLobOpenMode.cs:
+	* System.Data.OracleClient/OracleNumber.cs:
+	* list:
+		New class stubs added
+	* System.Data.OracleClient/OracleCommand.cs:
+	* System.Data.OracleClient/OracleDataReader.cs:
+		Minor touch-ups
+	* Test/TestOracleClient.cs:
+		Add required Prepare () call in parameter test.
+
 2003-02-18  Tim Coleman <tim@timcoleman.com>
 	* System.Data.OracleClient/OciBindHandle.cs:
 	* list:
