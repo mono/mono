@@ -849,7 +849,7 @@ namespace Mono.CSharp {
 					ps = new PermissionSet (PermissionState.None);
 
 				permissions.Add (action, ps);
-			} else if (!ps.IsUnrestricted () && sa.Unrestricted) {
+			} else if (!ps.IsUnrestricted () && (sa is PermissionSetAttribute) && sa.Unrestricted) {
 				ps = ps.Union (new PermissionSet (PermissionState.Unrestricted));
 				permissions [action] = ps;
 			}
