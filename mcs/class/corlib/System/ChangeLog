@@ -1,3 +1,7 @@
+2003-01-23  Dick Porter  <dick@ximian.com>
+
+	* Environment.cs (System): Implemented ExitCode
+
 2003-01-23  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Type.cs (IsInstanceOfType): fixed regression caused by the change

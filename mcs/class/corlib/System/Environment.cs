@@ -95,17 +95,12 @@ namespace System
 		/// <summary>
 		/// Gets or sets the exit code of this process
 		/// </summary>
-		[MonoTODO]
-		public static int ExitCode
+		public extern static int ExitCode
 		{	
-			get
-			{
-				throw new NotImplementedException ();
-			}
-			set
-			{
-				throw new NotImplementedException ();
-			}
+			[MethodImplAttribute (MethodImplOptions.InternalCall)]
+			get;
+			[MethodImplAttribute (MethodImplOptions.InternalCall)]
+			set;
 		}
 
 		[MonoTODO]
