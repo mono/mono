@@ -1,3 +1,8 @@
+2004-09-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X509Chain.cs: Fixed a bug when constructing a certificate chain from
+	a collection (endless loop). Fixed bug when Reset-ing an empty chain.
+
 2004-08-10  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X509Store.cs: Now returns empty collection/list for certificates/
