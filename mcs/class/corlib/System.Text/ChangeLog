@@ -1,3 +1,8 @@
+2005-03-03 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* UTF7Encoding.cs: fix for characters encoded as a shifted sequence
+	whose length is greater than 3. Patch by Svetlana Zhokolsky.
+
 2005-01-31  Ben Maurer  <bmaurer@ximian.com>
 
 	* StringBuilder.cs (Remove): We need to do the check that the

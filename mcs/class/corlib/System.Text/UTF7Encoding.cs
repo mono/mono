@@ -109,7 +109,7 @@ class UTF7Encoding : Encoding
 	// a rolling state between calls.
 	private static int InternalGetByteCount
 				(char[] chars, int index, int count, bool flush,
-				 int leftOver, bool allowOptionals)
+				 int leftOver, bool isInShifted, bool allowOptionals)
 	{
 		// Validate the parameters.
 		if (chars == null) {
@@ -138,8 +138,10 @@ class UTF7Encoding : Encoding
 			switch (rule) {
 			case 0:
 				// Handle characters that must be fully encoded.
-				if (leftOverSize == 0) {
+				if ( !isInShifted ) {
 					++length;
+				    leftOverSize = 0;
+					isInShifted = true;
 				}
 				leftOverSize += 16;
 				while (leftOverSize >= 6) {
@@ -149,10 +151,15 @@ class UTF7Encoding : Encoding
 				break;
 			case 1:
 				// The character is encoded as itself.
-				if (leftOverSize != 0) {
-					// Flush the previous encoded sequence.
-					length += 2;
-					leftOverSize = 0;
+				if (isInShifted) {
+					if (leftOverSize != 0) {
+						// Flush the previous encoded sequence.
+						++length;
+						leftOverSize = 0;
+					}
+					// Count the "-" (sequence terminator)
+					++length;
+					isInShifted = false;
 				}
 				++length;
 				break;
@@ -166,17 +173,28 @@ class UTF7Encoding : Encoding
 			// Not reached.
 			case 3:
 				// Encode the plus sign as "+-".
-				if (leftOverSize != 0) {
-					// Flush the previous encoded sequence.
-					length += 2;
-					leftOverSize = 0;
+				if (isInShifted) {
+					if (leftOverSize != 0) {
+						// Flush the previous encoded sequence.
+						++length;
+						leftOverSize = 0;
+					}
+					// Count the "-" (sequence terminator)
+					++length;
+					isInShifted = false;
 				}
 				length += 2;
 				break;
 			}
 		}
-		if (leftOverSize != 0 && flush) {
-			length += 2;
+		if (isInShifted && flush) {
+			if (leftOverSize != 0) 
+			{
+				// Flush the previous encoded sequence.
+				++length;
+			}
+			// Count the "-" (sequence terminator)
+			++length;
 		}
 
 		// Return the length to the caller.
@@ -186,7 +204,7 @@ class UTF7Encoding : Encoding
 	// Get the number of bytes needed to encode a character buffer.
 	public override int GetByteCount (char[] chars, int index, int count)
 	{
-		return InternalGetByteCount (chars, index, count, true, 0, allowOptionals);
+		return InternalGetByteCount (chars, index, count, true, 0, false, allowOptionals);
 	}
 
 	// Internal version of "GetBytes" that can handle a
@@ -194,7 +212,7 @@ class UTF7Encoding : Encoding
 	private static int InternalGetBytes
 				(char[] chars, int charIndex, int charCount,
 				 byte[] bytes, int byteIndex, bool flush,
-				 ref int leftOver, bool allowOptionals)
+				 ref int leftOver, ref bool isInShifted, bool allowOptionals)
 	{
 		// Validate the parameters.
 		if (chars == null) {
@@ -232,11 +250,14 @@ class UTF7Encoding : Encoding
 			switch (rule) {
 			case 0:
 				// Handle characters that must be fully encoded.
-				if (leftOverSize == 0) {
+				if (!isInShifted) {
 					if (posn >= byteLength) {
 						throw new ArgumentException (_("Arg_InsufficientSpace"), "bytes");
 					}
+					// Start the sequence
 					bytes[posn++] = (byte)'+';
+					isInShifted = true;
+					leftOverSize = 0;
 				}
 				leftOverBits = ((leftOverBits << 16) | ch);
 				leftOverSize += 16;
@@ -251,13 +272,20 @@ class UTF7Encoding : Encoding
 				break;
 			case 1:
 				// The character is encoded as itself.
-				if (leftOverSize != 0) {
-					// Flush the previous encoded sequence.
-					if ((posn + 2) > byteLength) {
+				if (isInShifted) {
+					if (leftOverSize != 0) {
+						// Flush the previous encoded sequence.
+						if ((posn + 1) > byteLength) {
+							throw new ArgumentException (_("Arg_InsufficientSpace"), "bytes");
+						}
+						bytes[posn++] = (byte)(base64 [leftOverBits << (6 - leftOverSize)]);
+					}
+					if ((posn + 1) > byteLength) {
 						throw new ArgumentException (_("Arg_InsufficientSpace"), "bytes");
 					}
-					bytes[posn++] = (byte)(base64 [leftOverBits << (6 - leftOverSize)]);
+					// Terminate the sequence
 					bytes[posn++] = (byte)'-';
+					isInShifted = false;
 					leftOverSize = 0;
 					leftOverBits = 0;
 				}
@@ -276,13 +304,20 @@ class UTF7Encoding : Encoding
 				// Not reached.
 			case 3:
 				// Encode the plus sign as "+-".
-				if (leftOverSize != 0) {
-					// Flush the previous encoded sequence.
-					if ((posn + 2) > byteLength) {
+				if (isInShifted) {
+					if (leftOverSize != 0) {
+						// Flush the previous encoded sequence.
+						if ((posn + 1) > byteLength) {
+							throw new ArgumentException (_("Arg_InsufficientSpace"), "bytes");
+						}
+						bytes[posn++] = (byte)(base64 [leftOverBits << (6 - leftOverSize)]);
+					}
+					if ((posn + 1) > byteLength) {
 						throw new ArgumentException (_("Arg_InsufficientSpace"), "bytes");
 					}
-					bytes[posn++] = (byte)(base64 [leftOverBits << (6 - leftOverSize)]);
+					// Terminate the sequence
 					bytes[posn++] = (byte)'-';
+					isInShifted = false;
 					leftOverSize = 0;
 					leftOverBits = 0;
 				}
@@ -294,14 +329,19 @@ class UTF7Encoding : Encoding
 				break;
 			}
 		}
-		if (leftOverSize != 0 && flush) {
-			if ((posn + 2) > byteLength) {
-				throw new ArgumentException (_("Arg_InsufficientSpace"), "bytes");
+		if (isInShifted && flush) {
+			// Flush the previous encoded sequence.
+			if (leftOverSize != 0) {
+				if ((posn + 1) > byteLength) {
+					throw new ArgumentException (_("Arg_InsufficientSpace"), "bytes");
+				}
+				bytes[posn++] = (byte)(base64 [leftOverBits << (6 - leftOverSize)]);
 			}
-			bytes[posn++] = (byte)(base64 [leftOverBits << (6 - leftOverSize)]);
+			// Terminate the sequence
 			bytes[posn++] = (byte)'-';
 			leftOverSize = 0;
 			leftOverBits = 0;
+			isInShifted = false;
 		}
 		leftOver = ((leftOverSize << 8) | leftOverBits);
 
@@ -314,8 +354,9 @@ class UTF7Encoding : Encoding
 								 byte[] bytes, int byteIndex)
 	{
 		int leftOver = 0;
+		bool isInShifted = false;
 		return InternalGetBytes (chars, charIndex, charCount, bytes, byteIndex, true,
-								ref leftOver, allowOptionals);
+								ref leftOver, ref isInShifted, allowOptionals);
 	}
 
 	// Internal version of "GetCharCount" that can handle
@@ -370,13 +411,9 @@ class UTF7Encoding : Encoding
 						leftOverSize -= 16;
 					}
 				} else {
-					// Normal character terminating a base64 sequence.
-					if (leftOverSize > 0) {
-						++length;
-						leftOverSize = 0;
-					}
 					++length;
 					normal = true;
+					leftOverSize = 0;
 				}
 				prevIsPlus = false;
 			}
@@ -452,10 +489,12 @@ class UTF7Encoding : Encoding
 					// When decoding, any bits at the end of the Modified Base64 sequence that 
 					// do not constitute a complete 16-bit Unicode character are discarded. 
 					// If such discarded bits are non-zero the sequence is ill-formed.
-					if (leftOverBits != 0)
-						throw new FormatException ("unused bits not zero");
 					normal = true;
-				} else if ((b64value = base64[byteval]) != -1) {
+					leftOverSize = 0;
+					leftOverBits = 0;
+				} 
+				else if ((b64value = base64[byteval]) != -1) 
+				{
 					// Extra character in a base64 sequence.
 					leftOverBits = (leftOverBits << 6) | b64value;
 					leftOverSize += 6;
@@ -468,20 +507,13 @@ class UTF7Encoding : Encoding
 						leftOverBits &= ((1 << leftOverSize) - 1);
 					}
 				} else {
-					// Normal character terminating a base64 sequence.
-					if (leftOverSize > 0) {
-						if (posn >= charLength) {
-							throw new ArgumentException (_("Arg_InsufficientSpace"), "chars");
-						}
-						chars[posn++] = (char)(leftOverBits << (16 - leftOverSize));
-						leftOverSize = 0;
-						leftOverBits = 0;
-					}
 					if (posn >= charLength) {
 						throw new ArgumentException (_("Arg_InsufficientSpace"), "chars");
 					}
 					chars[posn++] = (char)byteval;
 					normal = true;
+					leftOverSize = 0;
+					leftOverBits = 0;
 				}
 				prevIsPlus = false;
 			}
@@ -566,13 +598,13 @@ class UTF7Encoding : Encoding
 	private sealed class UTF7Encoder : Encoder
 	{
 		private bool allowOptionals;
-		private int leftOver;
+		private int leftOver = 0;
+		private bool isInShifted = false;
 
 		// Constructor.
 		public UTF7Encoder (bool allowOptionals)
 		{
 			this.allowOptionals = allowOptionals;
-			this.leftOver = 0;
 		}
 
 		// Override inherited methods.
@@ -580,7 +612,7 @@ class UTF7Encoding : Encoding
 										 int count, bool flush)
 		{
 			return InternalGetByteCount
-				(chars, index, count, flush, leftOver, allowOptionals);
+				(chars, index, count, flush, leftOver, isInShifted, allowOptionals);
 		}
 		public override int GetBytes (char[] chars, int charIndex,
 									 int charCount, byte[] bytes,
@@ -588,7 +620,7 @@ class UTF7Encoding : Encoding
 		{
 			return InternalGetBytes (chars, charIndex, charCount,
 									bytes, byteIndex, flush,
-									ref leftOver, allowOptionals);
+									ref leftOver, ref isInShifted, allowOptionals);
 		}
 
 	} // class UTF7Encoder
