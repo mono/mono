@@ -419,7 +419,6 @@ System.Runtime.InteropServices/Marshal.cs
 System.Runtime.InteropServices/MarshalAsAttribute.cs
 System.Runtime.InteropServices/OptionalAttribute.cs
 System.Runtime.InteropServices/OutAttribute.cs
-System.Runtime.InteropServices/PInvokeMap.cs
 System.Runtime.InteropServices/PreserveSigAttribute.cs
 System.Runtime.InteropServices/PrimaryInteropAssemblyAttribute.cs
 System.Runtime.InteropServices/ProgIdAttribute.cs
