@@ -241,6 +241,10 @@ namespace Mono.CSharp
 %token LITERAL_STRING            "string literal"
 
 %token IDENTIFIER
+%token CLOSE_PARENS_CAST
+%token CLOSE_PARENS_NO_CAST
+%token CLOSE_PARENS_OPEN_PARENS
+%token CLOSE_PARENS_MINUS
 
 /* Add precedence rules to solve dangling else s/r conflict */
 %nonassoc LOWPREC
@@ -2023,10 +2027,30 @@ boolean_literal
 	| FALSE			{ $$ = new BoolLiteral (false); }
 	;
 
-parenthesized_expression
+parenthesized_expression_0
 	: OPEN_PARENS expression CLOSE_PARENS
-	  { $$ = $2; }
+	  {
+		$$ = $2;
+		lexer.Deambiguate_CloseParens ();
+		// After this, the next token returned is one of
+		// CLOSE_PARENS_CAST, CLOSE_PARENS_NO_CAST, CLOSE_PARENS_OPEN_PARENS
+		// or CLOSE_PARENS_MINUS.
+	  }
 	;
+
+parenthesized_expression
+	: parenthesized_expression_0 CLOSE_PARENS_NO_CAST
+	  {
+		$$ = $1;
+	  }
+	| parenthesized_expression_0 CLOSE_PARENS_MINUS
+	  {
+		// If a parenthesized expression is followed by a minus, we need to wrap
+		// the expression inside a ParenthesizedExpression for the CS0075 check
+		// in Binary.DoResolve().
+		$$ = new ParenthesizedExpression ((Expression) $1, lexer.Location);
+	  }
+	;;
 
 member_access
 	: primary_expression DOT IDENTIFIER
@@ -2052,9 +2076,13 @@ invocation_expression
 		}
 		$$ = new Invocation ((Expression) $1, (ArrayList) $3, lexer.Location);
 	  }
-	| OPEN_PARENS expression CLOSE_PARENS unary_expression
+	| parenthesized_expression_0 CLOSE_PARENS_OPEN_PARENS OPEN_PARENS CLOSE_PARENS
 	  {
-		  $$ = new InvocationOrCast ((Expression) $2, (Expression) $4, lexer.Location);
+		$$ = new Invocation ((Expression) $1, new ArrayList (), lexer.Location);
+	  }
+	| parenthesized_expression_0 CLOSE_PARENS_OPEN_PARENS primary_expression
+	  {
+		$$ = new InvocationOrCast ((Expression) $1, (Expression) $3, lexer.Location);
 	  }
 	;
 
@@ -2403,10 +2431,22 @@ unary_expression
 	| cast_expression
 	;
 
-cast_expression
-	: OPEN_PARENS non_expression_type CLOSE_PARENS prefixed_unary_expression
+cast_list
+	: parenthesized_expression_0 CLOSE_PARENS_CAST unary_expression
 	  {
-		  $$ = new Cast ((Expression) $2, (Expression) $4, lexer.Location);
+		$$ = new Cast ((Expression) $1, (Expression) $3, lexer.Location);
+	  }
+	| parenthesized_expression_0 CLOSE_PARENS_OPEN_PARENS cast_expression
+	  {
+		$$ = new Cast ((Expression) $1, (Expression) $3, lexer.Location);
+	  }	
+	;
+
+cast_expression
+	: cast_list
+	| OPEN_PARENS non_expression_type CLOSE_PARENS prefixed_unary_expression
+	  {
+		$$ = new Cast ((Expression) $2, (Expression) $4, lexer.Location);
 	  }
 	;
 

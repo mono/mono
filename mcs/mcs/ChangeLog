@@ -1,3 +1,19 @@
+2003-08-04  Martin Baulig  <martin@ximian.com>
+
+	* cs-parser.jay (CLOSE_PARENS_CAST, CLOSE_PARENS_NO_CAST,
+	CLOSE_PARENS_OPEN_PARENS, CLOSE_PARENS_MINUS): New tokens to
+	deambiguate casts and delegate invocations.
+	(parenthesized_expression): Use the new tokens to ensure this is
+	not a cast of method invocation.
+
+	* cs-tokenizer.cs (is_punct): Return one of the new special tokens
+	when reading a `)' and Deambiguate_CloseParens () was previously
+	called.
+
+	* expression.cs (ParenthesizedExpression): New class.  This is
+	just used for the CS0075 test.
+	(Binary.DoResolve): Check for CS0075.	
+
 2003-07-29  Ravi Pratap  <ravi@ximian.com>
 
 	* expression.cs (Invocation.MakeUnionSet): Patch from Lluis
