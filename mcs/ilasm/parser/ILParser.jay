@@ -1589,7 +1589,19 @@ assemblyref_all		: assemblyref_head OPEN_BRACE assemblyref_decls CLOSE_BRACE
 			;
 
 assemblyref_head	: D_ASSEMBLY K_EXTERN comp_name
+                          {
+                                System.Reflection.AssemblyName asmb_name = 
+					new System.Reflection.AssemblyName ();
+				asmb_name.Name = (string) $3;
+				codegen.ExternTable.AddAssembly ((string) $3, asmb_name);
+                          }
 			| D_ASSEMBLY K_EXTERN comp_name K_AS comp_name
+                          {
+                                System.Reflection.AssemblyName asmb_name = 
+					new System.Reflection.AssemblyName ();
+				asmb_name.Name = (string) $3;
+				codegen.ExternTable.AddAssembly ((string) $5, asmb_name);
+                          }
 			;
 
 assemblyref_decls	: /* EMPTY */

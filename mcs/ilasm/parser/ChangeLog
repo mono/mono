@@ -1,5 +1,9 @@
 2003-04-17 Jackson Harper <jackson@latitudegeo.com>
 
+	* ILParser.jay: Add external types to the extern type table.
+		
+2003-04-17 Jackson Harper <jackson@latitudegeo.com>
+
 	* ILParser.jay: Use new types and methods to build a tree.
 		
 2003-04-07 Jackson Harper <jackson@latitudegeo.com>
