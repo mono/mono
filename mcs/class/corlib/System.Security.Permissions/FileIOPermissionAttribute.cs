@@ -18,42 +18,44 @@ namespace System.Security.Permissions
 	[Serializable]
 	public sealed class FileIOPermissionAttribute : CodeAccessSecurityAttribute
 	{
+		// Fields
+		private string all;
+		private string append;
+		private string path;
+		private string read;
+		private string write;
+		
 		// Constructor
 		public FileIOPermissionAttribute (SecurityAction action) : base (action) {}
 		
 		// Properties
-		[MonoTODO]
 		public string All
 		{
-			 set {}
+			 set { all = value; }
 		}
 
-		[MonoTODO]
 		public string Append
 		{
-			get { return null; }
-			set {}
+			get { return append; }
+			set { append = value; }
 		}
 
-		[MonoTODO]
 		public string PathDiscovery
 		{
-			get { return null; }
-			set {}
+			get { return path; }
+			set { path = value; }
 		}
 
-		[MonoTODO]
 		public string Read
 		{
-			get { return null; }
-			set {}
+			get { return read; }
+			set { read = value; }
 		}				    
 		
-		[MonoTODO]
 		public string Write
 		{
-			get { return null; }
-			set {}
+			get { return write; }
+			set { write = value; }
 		}
 			 
 		// Methods

@@ -1,6 +1,8 @@
 2002-01-20  Duncan Mak  <duncan@ximian.com>
 
-	* All those files I commited last time: Fixed indentation.
+	* *Attribute.cs: Implemented all the MonoTODOs in the attributes.
+
+	* *Attribute.cs: Fixed indentation.
 
 2002-01-18  Duncan Mak  <duncan@ximian.com>
 

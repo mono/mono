@@ -17,15 +17,17 @@ namespace System.Security.Permissions
 	[Serializable]
 	public sealed class UrlIdentityPermissionAttribute : CodeAccessSecurityAttribute
 	{
+		// Fields
+		private string url;
+		
 		// Constructor
 		public UrlIdentityPermissionAttribute (SecurityAction action) : base (action) {}
 		
 		// Properties
-		[MonoTODO]
 		public string Url
 		{
-			get { return null; }
-			set {}
+			get { return url; }
+			set { url = value; }
 		}
 		
 		// Methods

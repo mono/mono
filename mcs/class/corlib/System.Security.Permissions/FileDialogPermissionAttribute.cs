@@ -17,22 +17,24 @@ namespace System.Security.Permissions
 	[Serializable]
 	public sealed class FileDialogPermissionAttribute : CodeAccessSecurityAttribute
 	{
+		// Fields
+		private bool canOpen;
+		private bool canSave;
+		
 		// Constructor
 		public FileDialogPermissionAttribute (SecurityAction action) : base (action) {}
 
 		// Properties
-		[MonoTODO]
 		public bool Open
 		{
-				get { return false; }
-				set {}
+				get { return canOpen; }
+				set { canOpen = value; }
 		} 
 
-		[MonoTODO]
 		public bool Save
 		{
-				get { return false; }
-				set {}
+				get { return canSave; }
+				set { canSave = value; }
 		}
 
 		// Methods

@@ -17,35 +17,37 @@ namespace System.Security.Permissions
 	[Serializable]
 	public sealed class RegistryPermissionAttribute : CodeAccessSecurityAttribute
 	{
+		// Fields
+		private string all;
+		private string create;
+		private string read;
+		private string write;
+		       
 		// Constructor
 		public RegistryPermissionAttribute (SecurityAction action) : base (action) {}
 		
 		// Properties
-		[MonoTODO]
 		string All
 		{
-			set {}
+			set { all = value; }
 		}
 		
-		[MonoTODO]
 		public string Create
 		{
-			get { return null; }
-			set {}
+			get { return create; }
+			set { create = value; }
 		}
 
-		[MonoTODO]
 		public string Read
 		{ 
-			get { return null; }
-			set {}
+			get { return read; }
+			set { read = value; }
 		}
 
-		[MonoTODO]
 		public string Write
 		{
-			get { return null; }
-			set {}
+			get { return write; }
+			set { write = value;
 		}
 
 		// Methods

@@ -17,15 +17,17 @@ namespace System.Security.Permissions
 	[Serializable]
 	public sealed class ZoneIdentityPermissionAttribute : CodeAccessSecurityAttribute
 	{
+		// Fields
+		private SecurityZone zone;
+		
 		// Constructor
 		public ZoneIdentityPermissionAttribute (SecurityAction action) : base (action) {}
 		
 		// Properties
-		[MonoTODO]
 		public SecurityZone Zone
 		{
-			get { return 0; }
-			set {}
+			get { return zone; }
+			set { zone = value; }
 		}
 		
 		// Methods

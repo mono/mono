@@ -17,36 +17,38 @@ namespace System.Security.Permissions
 	[Serializable]
 	public sealed class ReflectionPermissionAttribute : CodeAccessSecurityAttribute
 	{
+		// Fields
+		private ReflectionPermissionFlag flags;
+		privat bool memberAccess;
+		private bool reflectionEmit;
+		
+		
 		//Constructor
 		public ReflectionPermissionAttribute (SecurityAction action) : base (action) {}
 		
 		// Properties
-		[MonoTODO]
 		public ReflectionPermissionFlag Flags
 		{
-			get { return 0; }
-			set {}
+			get { return flags; }
+			set { flags = value; }
 		}
 		
-		[MonoTODO]
 		public bool MemberAccess
 		{
-			get { return false; }
-			set {}
+			get { return memberAccess; }
+			set { memberAccess = value; }
 		}
 		
-		[MonoTODO]				    
 		public bool ReflectionEmit
 		{
-			get { return false; }
-			set {}
+			get { return reflectionEmit; }
+			set {  reflectionEmit = value; }
 		}  
 
-		[MonoTODO]
 		public bool TypeInformation
 		{
-			get { return false; }
-			set {}
+			get { return typeInfo; }
+			set { typeInfo = value; }
 		}
 			 
 		// Methods

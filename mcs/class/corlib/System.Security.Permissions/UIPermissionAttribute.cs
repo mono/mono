@@ -17,22 +17,25 @@ namespace System.Security.Permissions
 	[Serializable]
 	public sealed class UIPermissionAttribute : IsolatedStoragePermissionAttribute
 	{
+
+		// Fields
+		private UIPermissionClipboard clipboard;
+		private UIPermissionWindow window;
+		
 		// Constructor
 		public UIPermissionAttribute (SecurityAction action) : base (action) {}
 		
 		// Properties
-		[MonoTODO]
 		public UIPermissionClipboard Clipboard
 		{
-			get { return 0; }
-			set {}
+			get { return clipboard; }
+			set { clipboard = value; }
 		}
 
-		[MonoTODO]
 		public UIPermissionWindow Window
 		{
-			get { return 0; }
-			set {}
+			get { return window; }
+			set { window = value; }
 		}
 
 		// Methods

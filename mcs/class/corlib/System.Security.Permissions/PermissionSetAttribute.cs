@@ -17,36 +17,41 @@ namespace System.Security.Permissions
 	[Serializable]
 	public sealed class PermissionSetAttribute : CodeAccessSecurityAttribute
 	{
+		// Fields
+		private string file;
+		private string name;
+		private bool isUnicodeEncoded;
+		private string xml;
+		
 		// Constructor
-		public PermissionSetAttribute (SecurityAction action) : base (action) {}
+		public PermissionSetAttribute (SecurityAction action)
+			: base (action)
+		{
+		}
 		
 		// Properties
-		[MonoTODO]
 		public string File
 		{
-			get { return null; }
-			set {}
+			get { return file; }
+			set { file = value; }
 		}
 
-		[MonoTODO]
 		public string Name
 		{
-			get { return null; }
-			set {}
+			get { return name; }
+			set { name = value; }
 		}
 
-		[MonoTODO]
 		public bool UnicodeEncoded
 		{
-			get { return false; }
-			set {}
+			get { return isUnicodeEncoded; }
+			set { isUnicodeEncoded = value; }
 		}
 
-		[MonoTODO]
 		public string XML
 		{
-			get { return null; }
-			set {}
+			get { return xml; }
+			set { xml = value; }
 		 }
 		
 		// Methods

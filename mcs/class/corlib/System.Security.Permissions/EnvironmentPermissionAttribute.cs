@@ -17,28 +17,30 @@ namespace System.Security.Permissions
 	[Serializable]
 	public sealed class EnvironmentPermissionAttribute : CodeAccessSecurityAttribute
 	{
+		// Fields
+		private string all;
+		private string read;
+		private string write;
+		
 		// Constructor
 		public EnvironmentPermissionAttribute (SecurityAction action) : base (action) {}
 		
 		// Properties
-		[MonoTODO]
 		public string All
 		{
-				set {}
+			set { all = value; }
 		}
 
-		[MonoTODO]
 		public string Read
 		{
-			get { return null; }
-			set {}
+			get { return read; }
+			set { read = value; }
 		}
 
-		[MonoTODO]
 		public string Write
 		{
-			get { return null; }
-			set {}
+			get { return write; }
+			set { write = value; }
 		}
 
 		// Methods

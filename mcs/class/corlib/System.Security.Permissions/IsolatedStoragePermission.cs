@@ -17,23 +17,27 @@ namespace System.Security.Permissions
         [Serializable]
 	public abstract class IsolatedStoragePermission : CodeAccessSecurityAttribute
 	{
-
+		// Fields
+		private IsolatedStorageContainment containment;
+		private long quota;
+		
 		// Constructor
-		public IsolatedStoragePermission (SecurityAction action) : base (action) {}
-
-		// Properties
-		[MonoTODO]
-		public IsolatedStorageContainment UsageAllowed
+		public IsolatedStoragePermission (SecurityAction action)
+			: base (action)
 		{
-			get { return 0; }
-			set {}
 		}
 
-		[MonoTODO]
+		// Properties
+		public IsolatedStorageContainment UsageAllowed
+		{
+			get { return containment; }
+			set { containment = value; }
+		}
+
 		public long UserQuota
 		{
-			get { return 0; }
-			set {}
+			get { return quota; }
+			set { quota = value; }
 		}
 	}
 }

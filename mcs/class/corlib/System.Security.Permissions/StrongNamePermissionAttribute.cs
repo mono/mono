@@ -18,29 +18,31 @@ namespace System.Security.Permissions
 	[Serializable]
 	public sealed class StrongNameIdentityPermissionAttribute : CodeAccessSecurityAttribute
 	{
+		// Fields
+		private string name;
+		private string key;
+		private string version;
+		
 		// Constructor
 		public StrongNameIdentityPermissionAttribute (SecurityAction action) : base (action) {}
 		
 		// Properties
-		[MonoTODO]
 		public string Name
 		{
-			get { return null; }
-			set {}
+			get { return name; }
+			set { name = value; }
 		}
 
-		[MonoTODO]
 		public string PublicKey
 		{
-			get { return null; }
-			set {}
+			get { return key; }
+			set { key = value; }
 		}
 
-		[MonoTODO]
 		public string Version
 		{
-			get { return null; }
-			set {}
+			get { return version; }
+			set { version = value; }
 		}
 			 
 		// Methods

@@ -17,29 +17,37 @@ namespace System.Security.Permissions
 	[Serializable]
 	public sealed class PrinciplePermissionAttribute : CodeAccessSecurityAttribute
 	{
+		// Fields
+		private bool authenticated;
+		private string name;
+		private string role;
+		
 		// Constructor
-		public PrinciplePermissionAttribute (SecurityAction action) : base (action) {}
+		public PrinciplePermissionAttribute (SecurityAction action)
+			: base (action)
+		{
+		}
 
 		// Properties
 		[MonoTODO]
 		public bool Authenticated
 		{
-			get { return false; }
-			set {}
+			get { return authenticated; }
+			set { authenticated = value; }
 		}
 			 			 
 		[MonoTODO]
 		public string Name
 		{
-			get { return null; }
-			set {}
+			get { return name; }
+			set { name = value; }
 		}
 			 
 		[MonoTODO]
 		public string Role
 		{
-			get { return null; }
-			set {}
+			get { return role; }
+			set { role = value; }
 		}
 
 		// Method

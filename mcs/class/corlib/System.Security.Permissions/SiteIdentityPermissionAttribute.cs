@@ -17,15 +17,17 @@ namespace System.Security.Permissions
 	[Serializable]
 	public sealed class SiteIdentityPermissionAttribute : IsolatedStoragePermissionAttribute
 	{
+		// Fields
+		private string site;
+		
 		// Constructor
 		public SiteIdentityPermissionAttribute (SecurityAction action) : base (action) {}
 		
 		// Properties
-		[MonoTODO]
 		public string Site
 		{
-			get { return null; }
-			set {}
+			get { return site; }
+			set { site = value; }
 		}
 		
 		// Methods
