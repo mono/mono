@@ -5888,7 +5888,7 @@ namespace Mono.MonoBASIC {
 					BindingFlags.NonPublic, Identifier);
 					
 				if (lookup == null)
-					Error (117, "'" + expr_type + "' does not contain a definition for '" + Identifier + "'");
+					Error (30456, "'" + expr_type + "' does not contain a definition for '" + Identifier + "'");
 				else
 				{
 					if ((expr_type != ec.ContainerType) &&
@@ -5912,10 +5912,10 @@ namespace Mono.MonoBASIC {
 						       "qualifier must be of type '" + TypeManager.MonoBASIC_Name (ec.ContainerType) + "' " +
 						       "(or derived from it)");
 						else
-							Error (122, "'" + expr_type + "." + Identifier + "' " +
+							Error (30390, "'" + expr_type + "." + Identifier + "' " +
 						       "is inaccessible because of its protection level");
 					} else
-						Error (122, "'" + expr_type + "." + Identifier + "' " +
+						Error (30390, "'" + expr_type + "." + Identifier + "' " +
 					       "is inaccessible because of its protection level");
 				}  
 				return null;
@@ -6762,7 +6762,7 @@ namespace Mono.MonoBASIC {
 						      AllMemberTypes, AllBindingFlags, loc);
 
 			if (member_lookup == null) {
-				Error (117,
+				Error (30456,
 					      TypeManager.MonoBASIC_Name (base_type) + " does not " +
 					      "contain a definition for '" + member + "'");
 				return null;

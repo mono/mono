@@ -140,7 +140,6 @@ namespace Mono.MonoBASIC {
 				fa |= FieldAttributes.Static;
 			if ((mod_flags & READONLY) != 0)
 				fa |= FieldAttributes.InitOnly;
-
 			return fa;
 		}
 
@@ -230,11 +229,11 @@ namespace Mono.MonoBASIC {
 				a = ((a & 2) >> 1) + (a & 5);
 				a = ((a & 4) >> 2) + (a & 3);
 				if (a > 1)
-					Report.Error (107, l, "More than one protection modifier specified");
+					Report.Error (30176, l, "More than one protection modifier specified");
 				
 				return mod;
 			}
-			
+
 			for (i = 1; i < TOP; i <<= 1){
 				if ((i & invalid_flags) == 0)
 					continue;

@@ -325,10 +325,10 @@ namespace Mono.MonoBASIC {
 						ec.ContainerType, ec.ContainerType, AllMemberTypes,
 						AllBindingFlags | BindingFlags.NonPublic, s.Name);
 					if (lookup != null)
-						Error (122, "'" + s.Name + "' " +
+						Error (30390, "'" + s.Name + "' " +
 						       "is inaccessible because of its protection level");
 					else
-						Error (103, "The name '" + s.Name + "' could not be " +
+						Error (30451, "The name '" + s.Name + "' could not be " +
 						       "found in '" + ec.DeclSpace.Name + "'");
 					return null;
 				}
@@ -414,7 +414,7 @@ namespace Mono.MonoBASIC {
 					SimpleName s = (SimpleName) e;
 
 					Report.Error (
-						103, loc,
+						30451, loc,
 						"The name '" + s.Name + "' could not be found in '" +
 						ec.DeclSpace.Name + "'");
 					return null;
@@ -650,11 +650,11 @@ namespace Mono.MonoBASIC {
 					  AllBindingFlags | BindingFlags.NonPublic, loc);
 			if (e == null){
 				Report.Error (
-					117, loc, "'" + t + "' does not contain a definition " +
+					30456, loc, "'" + t + "' does not contain a definition " +
 					"for '" + name + "'");
 			} else {
 					Report.Error (
-						122, loc, "'" + t + "." + name +
+						30390, loc, "'" + t + "." + name +
 						"' is inaccessible due to its protection level");
 			}
 			
@@ -3788,7 +3788,7 @@ namespace Mono.MonoBASIC {
 			// find the name as a namespace
 			//
 
-			Error (103, "The name '" + Name +
+			Error (30451, "The name '" + Name +
 			       "' does not exist in the class '" +
 			       ec.DeclSpace.Name + "'");
 		}

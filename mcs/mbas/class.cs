@@ -691,7 +691,7 @@ namespace Mono.MonoBASIC {
 								"'NotInheritable' class " + TypeManager.MonoBASIC_Name (parent));
 					
 				if (!AsAccessible (parent, ModFlags))
-					Report.Error (60, Location,
+					Report.Error (30389, Location,
 						      "Inconsistent accessibility: base class `" +
 						      TypeManager.MonoBASIC_Name (parent) + "' is less " +
 						      "accessible than class `" +
@@ -722,14 +722,13 @@ namespace Mono.MonoBASIC {
 				}
 			
 				if (t.IsSealed) {
-					string detail = "";
-					
 					if (t.IsValueType)
-						detail = " (a class can not inherit from a struct/enum)";
+						Report.Error (30258, "class `"+ Name +
+							"': a class can not inherit from a struct/enum");
 							
-					Report.Error (509, "class `"+ Name +
+					/*Report.Error (509, "class `"+ Name +
 						      "': Cannot inherit from sealed class `"+
-						      bases [i]+"'"+detail);
+						      bases [i]);*/
 					error = true;
 					return null;
 				}
@@ -786,7 +785,7 @@ namespace Mono.MonoBASIC {
 				Report.Error (31408, Location,
 					"Class declared as 'MustInherit' cannot be declared as 'NotInheritable'");
 			}
-
+			
 			ifaces = GetClassBases (is_class, out parent, out error); 
 			
 			if (error)
@@ -807,6 +806,18 @@ namespace Mono.MonoBASIC {
 			if (!is_class && TypeManager.value_type == null)
 				throw new Exception ();
 
+			if (is_class  && Parent.Parent == null) 
+			{
+				if ((ModFlags & Modifiers.PRIVATE) != 0)
+					Report.Error (31089, Location,
+						"Only internal classes can be declared as 'Private'");
+
+				if ((ModFlags & Modifiers.PROTECTED) != 0)
+					Report.Error (31047, Location,
+						"Only internal classes can be declared as 'Protected'");
+			}
+
+			
 			TypeAttributes type_attributes = TypeAttr;
 
 			// if (parent_builder is ModuleBuilder) {

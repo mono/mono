@@ -1,3 +1,10 @@
+2004-04-06 Anirban Bhattacharjee <banirban@novell.com>
+	* class.cs:
+	* ecore.cs:
+	* expression.cs:
+	* modifiers.cs:
+	Changed/added serveral Accessibility related expections 
+
 2004-04-05 Anirban Bhattacharjee <banirban@novell.com>
 	* class.cs:
 	* decl.cs:
