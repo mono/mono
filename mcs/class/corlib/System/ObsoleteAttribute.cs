@@ -13,7 +13,8 @@ namespace System
 		AttributeTargets.Enum | AttributeTargets.Constructor |
 		AttributeTargets.Method | AttributeTargets.Property |
 		AttributeTargets.Field | AttributeTargets.Event |
-		AttributeTargets.Interface | AttributeTargets.Delegate)]
+		AttributeTargets.Interface | AttributeTargets.Delegate,
+		Inherited=false)]
 	[Serializable]
 	public sealed class ObsoleteAttribute : Attribute
 	{

@@ -1,5 +1,15 @@
 2004-05-19  Gert Driesen (drieseng@users.sourceforge.net)
 
+        * ThreadStaticAttribute.cs
+        * ContextStaticAttribute.cs
+        * FlagsAttribute.cs
+        * ObsoleteAttribute.cs : now that Inherited is false by
+        default on AttributeUsageAttribute (as it should be) we
+        need to explicitly set Inherited to false for those
+        attributes should it be be false.
+
+2004-05-19  Gert Driesen (drieseng@users.sourceforge.net)
+
         * AttributeUsageAttribute.cs: Inherited property should be
         true by defaultrs.cs: respect Inherited property, and
 

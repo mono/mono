@@ -9,7 +9,7 @@
 
 namespace System
 {
-	[AttributeUsage (AttributeTargets.Field)]
+	[AttributeUsage (AttributeTargets.Field, Inherited=false)]
 	[Serializable]
 	public class ThreadStaticAttribute : Attribute
 	{

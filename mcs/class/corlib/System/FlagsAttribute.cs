@@ -19,7 +19,7 @@ namespace System {
 	///   to treat the bits in an enumeration as a set of flags.
 	/// </remarks>
 
-	[AttributeUsage (AttributeTargets.Enum)]
+	[AttributeUsage (AttributeTargets.Enum, Inherited=false)]
 	[Serializable]
 	public class FlagsAttribute : Attribute {
 

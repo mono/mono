@@ -12,7 +12,7 @@ namespace System
 	/// <summary>
 	///   The ContextStatic attribute is used to flag fields as being unique
 	/// </summary>
-	[AttributeUsage (AttributeTargets.Field)]
+	[AttributeUsage (AttributeTargets.Field, Inherited=false)]
 	[Serializable]
 	public class ContextStaticAttribute : Attribute
 	{
