@@ -1,3 +1,8 @@
+2002-10-09  Ville Palo (vi64pa@koti.soon.fi)
+
+	* System.Data.SqlTypes/SqlInt16Test.cs:
+	* System.Data.SqlTypes/SqlInt64Test.cs: new test suites.
+
 2002-10-04  Daniel Morgan <danmorg@sc.rr.com>
 
 	* SqlSharpCli.cs: modified 
