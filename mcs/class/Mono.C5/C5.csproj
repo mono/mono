@@ -1,0 +1,124 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <ProductVersion>8.0.40607</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{D70489CD-ABDA-48FF-BD1E-BE3F7495BE71}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <StartupObject>
+    </StartupObject>
+    <RootNamespace>C5</RootNamespace>
+    <NoStandardLibraries>false</NoStandardLibraries>
+    <AssemblyName>C5</AssemblyName>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DebugSymbols>true</DebugSymbols>
+    <Optimize>false</Optimize>
+    <OutputPath>.\bin\Debug\</OutputPath>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <WarningLevel>4</WarningLevel>
+    <IncrementalBuild>false</IncrementalBuild>
+    <DocumentationFile>c5.xml</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DebugSymbols>false</DebugSymbols>
+    <Optimize>true</Optimize>
+    <OutputPath>.\bin\Release\</OutputPath>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+    <DefineConstants>TRACE</DefineConstants>
+    <WarningLevel>4</WarningLevel>
+    <IncrementalBuild>false</IncrementalBuild>
+    <DocumentationFile>
+    </DocumentationFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System">
+      <HintPath>..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.2.30703\System.dll</HintPath>
+      <Name>System</Name>
+    </Reference>
+    <Reference Include="System.Data">
+      <HintPath>..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.2.30703\System.Data.dll</HintPath>
+      <Name>System.Data</Name>
+    </Reference>
+    <Reference Include="System.Xml">
+      <HintPath>..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.2.30703\System.XML.dll</HintPath>
+      <Name>System.XML</Name>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Builder.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Collections.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Dictionaries.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Interfaces.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Wrappers.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="arrays\ArrayList.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="arrays\HashedArray.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="arrays\SortedArray.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="hashing\HashBag.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="hashing\HashDictionary.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="hashing\HashTable.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="heaps\IntervalHeap.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="linkedlists\HashedLinkedList.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="linkedlists\LinkedList.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="trees\RedBlackTree.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="trees\RedBlackTreeBag.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="trees\TreeDictionary.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <AppDesigner Include="Project\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Project\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSHARP.Targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+  <ProjectExtensions>
+    <VisualStudio>
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>
