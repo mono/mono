@@ -3687,7 +3687,7 @@ SimpleLookup (string name, Location loc)
 		int idx;
 		Parameter par = current_local_parameters.GetParameterByName (name, out idx);
 		if (par != null)
-			return new ParameterReference (current_local_parameters, idx, name);
+			return new ParameterReference (current_local_parameters, idx, name, lexer.Location);
 	}
 
 	return null;

@@ -2837,12 +2837,14 @@ namespace Mono.CSharp {
 		String name;
 		int idx;
 		public bool is_ref;
+		Location loc;
 		
-		public ParameterReference (Parameters pars, int idx, string name)
+		public ParameterReference (Parameters pars, int idx, string name, Location loc)
 		{
 			this.pars = pars;
 			this.idx  = idx;
 			this.name = name;
+			this.loc = loc;
 			eclass = ExprClass.Variable;
 		}
 
