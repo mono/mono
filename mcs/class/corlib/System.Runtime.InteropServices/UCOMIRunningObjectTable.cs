@@ -9,6 +9,7 @@ using System;
 
 namespace System.Runtime.InteropServices
 {
+	[Guid ("00000010-0000-0000-c000-000000000046")]
 	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 	public interface UCOMIRunningObjectTable
 	{

@@ -9,11 +9,12 @@ using System;
 
 namespace System.Runtime.InteropServices
 {
+	[Guid ("0000000f-0000-0000-c000-000000000046")]
 	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 	public interface UCOMIMoniker
 	{
-		void BindToObject (UCOMIBindCtx pbc, UCOMIMoniker pmkToLeft, ref Guid riidResult, ref object ppvResult);
-		void BindToStorage (UCOMIBindCtx pbc, UCOMIMoniker pmkToLeft, ref Guid riid, ref object ppvObj);
+		void BindToObject (UCOMIBindCtx pbc, UCOMIMoniker pmkToLeft, [In] ref Guid riidResult, ref object ppvResult);
+		void BindToStorage (UCOMIBindCtx pbc, UCOMIMoniker pmkToLeft, [In] ref Guid riid, ref object ppvObj);
 		void CommonPrefixWith (UCOMIMoniker pmkOther, ref UCOMIMoniker ppmkPrefix);
 		void ComposeWith (UCOMIMoniker pmkRight, bool fOnlyIfNotGeneric, ref UCOMIMoniker ppmkComposite);
 		void Enum (bool fForward, ref UCOMIEnumMoniker ppenumMoniker);

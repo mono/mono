@@ -9,6 +9,7 @@ using System;
 
 namespace System.Runtime.InteropServices
 {
+	[Guid ("0000000c-0000-0000-c000-000000000046")]
 	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 	public interface UCOMIStream
 	{
@@ -16,7 +17,7 @@ namespace System.Runtime.InteropServices
 		void Commit (int grfCommitFlags);
 		void CopyTo (UCOMIStream pstm, long cb, IntPtr pcbRead, IntPtr pcbWritten);
 		void LockRegion (long libOffset, long cb, int dwLockType);
-		void Read (byte[] pv, int cb, IntPtr pcbRead);
+		void Read (out byte[] pv, int cb, IntPtr pcbRead);
 		void Revert ();
 		void Seek (long dlibMove, int dwOrigin, IntPtr plibNewPosition);
 		void SetSize (long libNewSize);

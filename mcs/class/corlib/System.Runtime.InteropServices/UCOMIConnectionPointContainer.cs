@@ -9,6 +9,7 @@ using System;
 
 namespace System.Runtime.InteropServices
 {
+	[Guid ("b196b284-bab4-101a-b69c-00aa00341d07")]
 	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 	public interface UCOMIConnectionPointContainer
 	{

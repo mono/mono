@@ -1,3 +1,26 @@
+2003-11-13  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* IRegistrationServices.cs:
+	* ITypeLibConverter.cs:
+	* ITypeLibExporterNameProvider.cs:
+	* ITypeLibExporterNotifySink.cs:
+	* ITypeLibImporterNotifySink.cs: Added missing attribute
+	* UCOMIBindCtx.cs: Added missing attribute, fixed in attribute
+	* UCOMIConnectionPoint.cs:
+	* UCOMIConnectionPointContainer.cs:
+	* UCOMIEnumConnectionPoints.cs:
+	* UCOMIEnumConnections.cs:
+	* UCOMIEnumMoniker.cs:
+	* UCOMIEnumString.cs:
+	* UCOMIEnumVARIANT.cs:
+	* UCOMIMoniker.cs:
+	* UCOMIPersistFile.cs:
+	* UCOMIRunningObjectTable.cs:
+	* UCOMIStream.cs:
+	* UCOMITypeComp.cs:
+	* UCOMITypeInfo.cs:
+	* UCOMITypeLib.cs: Added missing attribute
+
 2003-08-06  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* UCOMIBindCtx.cs: Added and implemented

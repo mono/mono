@@ -11,7 +11,7 @@ using System.Reflection;
 
 namespace System.Runtime.InteropServices {
 
-	//[Guid("")]
+	[Guid("CCBD682C-73A5-4568-B8B0-C7007E11ABA2")]
 	public interface IRegistrationServices {
 		Guid GetManagedCategoryGuid ();
 		string GetProgIdForType (Type type);

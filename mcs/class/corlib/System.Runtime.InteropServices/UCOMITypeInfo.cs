@@ -1,5 +1,5 @@
 
-// System.Runtime.InteropServices/UCOMITypeInfo.cs
+// System.Runtime.InteropServices.UCOMITypeInfo.cs
 //
 // Paolo Molaro (lupus@ximian.com)
 //
@@ -10,7 +10,7 @@ using System;
 namespace System.Runtime.InteropServices
 {
 
-	//[Guid("")]
+	[Guid("00020401-0000-0000-c000-000000000046")]
 	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	public interface UCOMITypeInfo {
 		void AddressOfMember (int memid, INVOKEKIND invKind, out IntPtr ppv); 
@@ -19,10 +19,10 @@ namespace System.Runtime.InteropServices
 		void GetDllEntry (int memid, INVOKEKIND invKind, out string pBstrDllName, out string pBstrName, out short pwOrdinal);
 		void GetDocumentation (int index, out string strName, out string strDocString, out int dwHelpContext, out string strHelpFile);
 		void GetFuncDesc (int index, out IntPtr ppFuncDesc);
-		void GetIDsOfNames (string[] rgszNames, int cNames, int[] pMemId);
+		void GetIDsOfNames ([In] string[] rgszNames, int cNames, out int[] pMemId);
 		void GetImplTypeFlags (int index, out int pImplTypeFlags);
 		void GetMops (int memid, out string pBstrMops);
-		void GetNames (int memid, string[] rgBstrNames, int cMaxNames, out int pcNames);
+		void GetNames (int memid, out string[] rgBstrNames, int cMaxNames, out int pcNames);
 		void GetRefTypeInfo (int hRef, out UCOMITypeInfo ppTI);
 		void GetRefTypeOfImplType (int index, out int href);
 		void GetTypeAttr (out IntPtr ppTypeAttr);

@@ -9,6 +9,7 @@ using System;
 
 namespace System.Runtime.InteropServices
 {
+	[Guid ("0000000e-0000-0000-c000-000000000046")]
 	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 	public interface UCOMIBindCtx
 	{
@@ -21,6 +22,6 @@ namespace System.Runtime.InteropServices
 		void ReleaseBoundObjects ();
 		void RevokeObjectBound (object punk);
 		void RevokeObjectParam (string pszKey);
-		void SetBindOptions (ref BIND_OPTS pbindopts);
+		void SetBindOptions ([In] ref BIND_OPTS pbindopts);
 	}
 }

@@ -1,5 +1,5 @@
 
-// System.Runtime.InteropServices/UCOMITypeLib.cs
+// System.Runtime.InteropServices.UCOMITypeLib.cs
 //
 // Paolo Molaro (lupus@ximian.com)
 //
@@ -10,10 +10,10 @@ using System;
 namespace System.Runtime.InteropServices
 {
 
-	//[Guid("")]
+	[Guid("00020402-0000-0000-c000-000000000046")]
 	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	public interface UCOMITypeLib { 
-		void FindName( string szNameBuf, int lHashVal, UCOMITypeInfo[] ppTInfo, int[] rgMemId, ref short pcFound);
+		void FindName( string szNameBuf, int lHashVal, out UCOMITypeInfo[] ppTInfo, out int[] rgMemId, ref short pcFound);
 		void GetDocumentation( int index, out string strName, out string strDocString, out int dwHelpContext, out string strHelpFile);
 		void GetLibAttr( out IntPtr ppTLibAttr);
 		void GetTypeComp( out UCOMITypeComp ppTComp); 
