@@ -1,3 +1,34 @@
+2002-05-13  Miguel de Icaza  <miguel@ximian.com>
+
+	* class.cs: (MethodSignature.InheritableMemberSignatureCompare):
+	We have to compare the assembly property here when dealing with
+	FamANDAssem and Assembly access modifiers, because we might be
+	creating an assembly from *modules* (that means that we are not
+	getting TypeBuilders for types defined in other modules that are
+	part of this assembly).
+
+	(TypeContainer.DefineMembers): If both the defined member and the
+	parent name match are methods, then do not emit any warnings: let
+	the Method.Define routine take care of flagging warnings.  But if
+	there is a mismatch (method overrides something else, or method is
+	overriwritten by something, then emit warning).
+
+	(MethodSignature.MemberSignatureCompare): If the sig.ret_type is
+	set to null, this means `do not check for the return type on the
+	signature'. 
+
+	(Method.Define): set the return type for the method signature to
+	null, so that we get methods with the same name and parameters and
+	different return types.  This is used to flag warning 114 (you are
+	hiding a method, and you probably want to use the new/override
+	keywords instead).
+
+	* typemanager.cs (MemberLookup): Implemented proper access
+	control, closing a long standing set of bug reports.  The problem
+	was that the Framework only has two bits: Public and NonPublic,
+	and NonPublic includes private and protected methods, but we need
+	to enforce the FamANDAssem, FamOrAssem and Family. 
+
 2002-05-11  Miguel de Icaza  <miguel@ximian.com>
 
 	* statement.cs (GotoCase): Return true: Ammounts to giving up

@@ -987,38 +987,29 @@ namespace Mono.CSharp {
 						
 				if (defined_names == null)
 					continue;
-				
+
 				idx = Array.BinarySearch (defined_names, mc.Name, mif_compare);
-				
 				if (idx < 0){
 					if (RootContext.WarningLevel >= 4){
 						if ((mc.ModFlags & Modifiers.NEW) != 0)
-							Report109 (mc.Location, mc);
+							Warning_KewywordNewNotRequired (mc.Location, mc);
 					}
 					continue;
 				}
 
-				if (defined_names [idx] is PropertyInfo &&
-				    ((mc.ModFlags & Modifiers.OVERRIDE) != 0)){
-					continue;
-				}
-				    
-#if WANT_TO_VERIFY_SIGNATURES_HERE
-				if (defined_names [idx] is MethodBase && mc is MethodCore){
-					MethodBase mb = (MethodBase) defined_names [idx];
-					MethodCore met = (MethodCore) mc;
-					
-					if ((mb.IsVirtual || mb.IsAbstract) &&
-					    (mc.ModFlags & Modifiers.OVERRIDE) != 0)
-						continue;
+				MemberInfo match = defined_names [idx];
 
-					//
-					// FIXME: Compare the signatures here.  If they differ,
-					// then: `continue;' 
-				}
-#endif
+				if (match is PropertyInfo && ((mc.ModFlags & Modifiers.OVERRIDE) != 0))
+					continue;
+
+				//
+				// If we are both methods, let the method resolution emit warnings
+				//
+				if (match is MethodBase && mc is MethodCore)
+					continue; 
+				
 				if ((mc.ModFlags & Modifiers.NEW) == 0)
-					Report108 (mc.Location, defined_names [idx]);
+					Warning_KeywordNewRequired (mc.Location, defined_names [idx]);
 			}
 			
 			foreach (object o in remove_list)
@@ -1094,7 +1085,7 @@ namespace Mono.CSharp {
 				default_static_constructor.Define (this);
 			
 			if (methods != null)
-				DefineMembers (methods, null);
+				DefineMembers (methods, defined_names);
 
 			if (properties != null)
 				DefineMembers (properties, defined_names);
@@ -1195,7 +1186,6 @@ namespace Mono.CSharp {
 			ArrayList members = new ArrayList ();
 			bool priv = (bf & BindingFlags.NonPublic) != 0;
 
-			priv = true;
 			if (filter == null)
 				filter = accepting_filter; 
 			
@@ -1744,7 +1734,7 @@ namespace Mono.CSharp {
 			return "`" + Name + "." + n + "'";
 		}
 
-		public void Report108 (Location l, MemberInfo mi)
+		public void Warning_KeywordNewRequired (Location l, MemberInfo mi)
 		{
 			Report.Warning (
 				108, l, "The keyword new is required on " + 
@@ -1752,7 +1742,7 @@ namespace Mono.CSharp {
 				mi.ReflectedType.Name + "." + mi.Name + "'");
 		}
 
-		public void Report109 (Location l, MemberCore mc)
+		public void Warning_KewywordNewNotRequired (Location l, MemberCore mc)
 		{
 			Report.Warning (
 				109, l, "The member " + MakeName (mc.Name) + " does not hide an " +
@@ -2208,7 +2198,7 @@ namespace Mono.CSharp {
 
 			// ptype is only null for System.Object while compiling corlib.
 			if (ptype != null){
-				MethodSignature ms = new MethodSignature (Name, ret_type, parameters);
+				MethodSignature ms = new MethodSignature (Name, null, parameters);
 				MemberInfo [] mi, mi_static, mi_instance;
 
 				mi_static = TypeContainer.FindMembers (
@@ -2228,7 +2218,7 @@ namespace Mono.CSharp {
 					mi = mi_static;
 				else
 					mi = null;
-				
+
 				if (mi != null && mi.Length > 0){
 					if (!CheckMethodAgainstBase (parent, flags, (MethodInfo) mi [0])){
 						return false;
@@ -4129,8 +4119,13 @@ namespace Mono.CSharp {
 			
 			mi = (MethodInfo) m;
 
-			if (mi.ReturnType != sig.RetType)
-				return false;
+			//
+			// we use sig.RetType == null to mean `do not check the
+			// method return value.  
+			//
+			if (sig.RetType != null)
+				if (mi.ReturnType != sig.RetType)
+					return false;
 
 			Type [] args = TypeManager.GetArgumentTypes (mi);
 			Type [] sigp = sig.Parameters;
@@ -4148,7 +4143,13 @@ namespace Mono.CSharp {
 
 		//
 		// This filter should be used when we are requesting methods that
-		// we want to override.  
+		// we want to override.
+		//
+		// This makes a number of assumptions, for example
+		// that the methods being extracted are of a parent
+		// class (this means we know implicitly that we are
+		// being called to find out about members by a derived
+		// class).
 		// 
 		static bool InheritableMemberSignatureCompare (MemberInfo m, object filter_criteria)
 		{
@@ -4163,7 +4164,7 @@ namespace Mono.CSharp {
 				// If only accessible to the defining assembly or 
 				if (prot == MethodAttributes.FamANDAssem ||
 				    prot == MethodAttributes.Assembly){
-					if (m is MethodBuilder)
+					if (m.DeclaringType.Assembly == CodeGen.AssemblyBuilder)
 						return true;
 					else
 						return false;

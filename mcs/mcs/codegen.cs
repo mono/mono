@@ -20,8 +20,8 @@ namespace Mono.CSharp {
 	/// </summary>
 	public class CodeGen {
 		static AppDomain current_domain;
-		static AssemblyBuilder assembly_builder;
-		static ModuleBuilder   module_builder;
+		public static AssemblyBuilder AssemblyBuilder;
+		public static ModuleBuilder   ModuleBuilder;
 
 		static public ISymbolWriter SymbolWriter;
 
@@ -81,7 +81,7 @@ namespace Mono.CSharp {
 		//
 		static void InitializeSymbolWriter (string basename)
 		{
-			SymbolWriter = module_builder.GetSymWriter ();
+			SymbolWriter = ModuleBuilder.GetSymWriter ();
 
 			//
 			// If we got an ISymbolWriter instance, initialize it.
@@ -124,7 +124,7 @@ namespace Mono.CSharp {
 			an = new AssemblyName ();
 			an.Name = TrimExt (Basename (name));
 			current_domain = AppDomain.CurrentDomain;
-			assembly_builder = current_domain.DefineDynamicAssembly (
+			AssemblyBuilder = current_domain.DefineDynamicAssembly (
 				an, AssemblyBuilderAccess.RunAndSave, Dirname (name));
 
 			//
@@ -135,29 +135,17 @@ namespace Mono.CSharp {
 			// If the third argument is true, the ModuleBuilder will dynamically
 			// load the default symbol writer.
 			//
-			module_builder = assembly_builder.DefineDynamicModule (
+			ModuleBuilder = AssemblyBuilder.DefineDynamicModule (
 				Basename (name), Basename (output), want_debugging_support);
 
 			if (want_debugging_support)
 				InitializeSymbolWriter (an.Name);
 		}
 
-		static public AssemblyBuilder AssemblyBuilder {
-			get {
-				return assembly_builder;
-			}
-		}
-		
-		static public ModuleBuilder ModuleBuilder {
-			get {
-				return module_builder;
-			}
-		}
-
 		static public void Save (string name)
 		{
 			try {
-				assembly_builder.Save (Basename (name));
+				AssemblyBuilder.Save (Basename (name));
 			} catch (System.IO.IOException io){
 				Report.Error (16, "Coult not write to file `"+name+"', cause: " + io.Message);
 			}

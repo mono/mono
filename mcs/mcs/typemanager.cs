@@ -1203,6 +1203,95 @@ public class TypeManager {
 		return target_list;
 	}
 
+#region MemberLookup implementation
+	
+	//
+	// Name of the member
+	//
+	static string   closure_name;
+
+	//
+	// Whether we allow private members in the result (since FindMembers
+	// uses NonPublic for both protected and private), we need to distinguish.
+	//
+	static bool     closure_private_ok;
+
+	//
+	// Who is invoking us and which type is being queried currently.
+	//
+	static Type     closure_invocation_type;
+	static Type     closure_queried_type;
+
+	//
+	// The assembly that defines the type is that is calling us
+	//
+	static Assembly closure_invocation_assembly;
+
+	//
+	// This filter filters by name + whether it is ok to include private
+	// members in the search
+	//
+	static internal bool FilterWithClosure (MemberInfo m, object filter_criteria)
+	{
+		//
+		// Hack: we know that the filter criteria will always be in the `closure'
+		// fields. 
+		//
+
+		if (m.Name != closure_name)
+			return false;
+
+		//
+		// Ugly: we need to find out the type of `m', and depending
+		// on this, tell whether we accept or not
+		//
+		if (m is MethodBase){
+			MethodBase mb = (MethodBase) m;
+			MethodAttributes ma = mb.Attributes & MethodAttributes.MemberAccessMask;
+
+			if (ma == MethodAttributes.Private)
+				return closure_private_ok;
+
+			//
+			// FamAndAssem requires that we not only derivate, but we are on the
+			// same assembly.  
+			//
+			if (ma == MethodAttributes.FamANDAssem){
+				if (closure_invocation_assembly != mb.DeclaringType.Assembly)
+					return false;
+			}
+
+			// FamORAssem, Family and Public:
+			return true;
+		}
+
+		if (m is FieldInfo){
+			FieldInfo fi = (FieldInfo) m;
+			FieldAttributes fa = fi.Attributes & FieldAttributes.FieldAccessMask;
+
+			if (fa == FieldAttributes.Private)
+				return closure_private_ok;
+
+			//
+			// FamAndAssem requires that we not only derivate, but we are on the
+			// same assembly.  
+			//
+			if (fa == FieldAttributes.FamANDAssem){
+				if (closure_invocation_assembly != fi.DeclaringType.Assembly)
+					return false;
+			}
+			// FamORAssem, Family and Public:
+			return true;
+		}
+
+		//
+		// EventInfos and PropertyInfos, return true
+		//
+		return true;
+	}
+
+	static MemberFilter FilterWithClosure_delegate = new MemberFilter (FilterWithClosure);
+	
 	//
 	// Looks up a member called `name' in the `queried_type'.  This lookup
 	// is done by code that is contained in the definition for `invocation_type'.
@@ -1213,39 +1302,55 @@ public class TypeManager {
 	// that might return multiple matches.
 	//
 	public static MemberInfo [] MemberLookup (Type invocation_type, Type queried_type, 
-						  MemberTypes mt, BindingFlags bf, string name)
+						  MemberTypes mt, BindingFlags original_bf, string name)
 	{
-		if (invocation_type != null){
-			if (invocation_type == queried_type || invocation_type.IsSubclassOf (queried_type))
-				bf |= BindingFlags.NonPublic;
-		}
-
+		BindingFlags bf = original_bf;
+		
 		ArrayList method_list = null;
 		Type current_type = queried_type;
-		bool searching = (bf & BindingFlags.DeclaredOnly) == 0;
+		bool searching = (original_bf & BindingFlags.DeclaredOnly) == 0;
+		bool private_ok;
+		
+		closure_name = name;
+		closure_invocation_type = invocation_type;
+		closure_invocation_assembly = invocation_type != null ? invocation_type.Assembly : null;
+		
 		do {
 			MemberInfo [] mi;
+
+			//
+			// `NonPublic' is lame, because it includes both protected and
+			// private methods, so we need to control this behavior by
+			// explicitly tracking if a private method is ok or not.
+			//
+			// The possible cases are:
+			//    public, private and protected (internal does not come into the
+			//    equation)
+			//
+			if (invocation_type != null){
+				if (invocation_type == current_type)
+					private_ok = true;
+				else
+					private_ok = false;
+				
+				if (private_ok || invocation_type.IsSubclassOf (current_type))
+					bf = original_bf | BindingFlags.NonPublic;
+			} else {
+				private_ok = false;
+				bf = original_bf & ~BindingFlags.NonPublic;
+			}
+
+			closure_private_ok = private_ok;
+			closure_queried_type = current_type;
 			
 			mi = TypeManager.FindMembers (
 				current_type, mt, bf | BindingFlags.DeclaredOnly,
-				System.Type.FilterName, name);
+				FilterWithClosure_delegate, name);
 			
 			if (current_type == TypeManager.object_type)
 				searching = false;
 			else {
 				current_type = current_type.BaseType;
-				
-				//
-				// Only do private searches on the current type,
-				// never in our parents.
-				//
-				// FIXME: we should really be checking the actual
-				// permissions on the members returned, rather than 
-				// depend on NonPublic/Public in the BindingFlags,
-				// as the BindingFlags is basically useless (does not
-				// give us the granularity we need)
-				//
-				// bf &= ~BindingFlags.NonPublic;
 				
 				//
 				// This happens with interfaces, they have a null
@@ -1268,8 +1373,10 @@ public class TypeManager {
 			// searches, which means that our above FindMembers will
 			// return two copies of the same.
 			//
-			if (count == 1 && !(mi [0] is MethodBase))
+			if (count == 1 && !(mi [0] is MethodBase)){
 				return mi;
+			}
+			
 			if (count == 2 && (mi [0] is EventInfo))
 				return mi;
 			
@@ -1304,6 +1411,8 @@ public class TypeManager {
 					
 		return null;
 	}
+#endregion
+	
 }
 
 }
