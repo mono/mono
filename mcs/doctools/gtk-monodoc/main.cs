@@ -65,6 +65,8 @@ class DocumentationEditor {
 		Gtk.Container tc = (Gtk.Container) gxml ["tree-container"];
 		store = new TreeStore ((int)TypeFundamentals.TypeString);
 		tv = new TreeView (store);
+		tv.Selection.Mode = SelectionMode.Single;
+		tv.Selection.Changed += new EventHandler (TreeSelectionChanged);
 		tc.Add (tv);
 		tv.Show ();
 		
@@ -88,6 +90,13 @@ class DocumentationEditor {
 		tree_label_constructors = new GLib.Value ("Constructors");
 	}
 
+	void TreeSelectionChanged (object sender, EventArgs a)
+	{
+		Gtk.TreeIter iter;
+		
+		Console.WriteLine (tv.Selection.GetSelected (tv, out iter));
+	}
+	
 	void OnOpenActivate (object sender, EventArgs a)
 	{
 		if (fsel_window == null){
