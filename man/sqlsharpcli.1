@@ -1,0 +1,456 @@
+.TH sqlsharpcli 1 "30 November 2002"
+.SH NAME 
+sqlsharpcli \- Mono SQL# Command Line SQL Query tool
+.SH SYNOPSIS
+.B sqlsharpcli 
+[option] [source-files]
+.SH DESCRIPTION
+sqlsharpcli is the Mono SQL# tool used for entering SQL queries
+to a database using Mono ADO.NET providers.
+.PP
+The SQL# tool accepts commands via its command line interface.  Commands
+begin with a backslash followed by the command name.
+.PP
+Example:
+.nf
+	\\open
+
+.fi
+.PP
+Basically, there are five commands a user should know:
+	\\provider, \\connectionstring, \\open, \\quit, and \\help
+.PP	
+To connect to a database, you need to do the following:
+.PP
+1. set your data provider via \\provider
+.PP
+.nf
+	Example:
+		SQL# \\provider mysql
+		
+.fi
+.PP
+2. set your connection string via \\connectionstring
+.PP
+.nf
+	Example:
+		SQL# \\connectionstring Database=test
+		
+.fi
+.PP		
+3. open a connection to the database via \\open
+.PP
+.nf
+	Example:
+		SQL# \\open
+		
+.fi
+.PP
+.SH COMMANDS
+The following commands are supported:
+.PP
+.TP
+.I "Open"
+Opens connection to database.
+.nf
+
+Example:
+	SQL# \\open
+	
+.fi
+.TP
+.I "ConnectionString"
+Sets the Connection String.
+.nf
+
+Example:
+	SQL# \\connectionstring Database=test
+.fi
+.TP
+.I "Provider"
+Sets the data provider.
+.nf
+
+Example:
+	SQL# \\provider mysql
+	
+.fi
+.SH CONNECTION AND PROVIDER COMMANDS
+These commands are used to setup the provider, 
+connection string, and open/close the database connnection
+.TP
+.I "ConnectionString"
+Sets the Connection String
+.nf
+
+Example:
+	SQL# \\ConnectionString Database=testdb
+
+For more examples, see section CONNECTION STRING EXAMPLES.
+
+.fi
+.TP
+.I "Provider"
+Sets the Provider of the Data Source.  For list of Providers, see section PROVIDERS.
+.nf
+	
+Example: to set the provider for MySQL:
+	SQL# \\provider mysql
+		
+Note: if you need to load an external provider in SQL#, 
+      see the SQL# command \\loadextprovider 
+      
+.fi
+.TP
+.I "LoadExtProvider"
+ASSEMBLY CLASS to load an external provider.  Use the complete name 
+of its assembly and its Connection class.
+.nf
+
+Example: to load the MySQL provider Mono.Data.MySql
+	SQL# \\loadextprovider Mono.Data.MySql Mono.Data.MySql.MySqlConnection
+
+.fi
+.TP
+.I "Open"
+Opens a connection to the database
+.nf
+
+Example:
+	SQL# \\open
+
+.fi
+.TP
+.I "Close"
+Closes the connection to the database
+.nf
+
+Example:
+	SQL# \\close
+
+.fi
+.TP
+.I "Default"
+show default variables, such as, Provider and ConnectionString.
+.nf
+
+Example:
+	SQL# \\defaults
+
+.fi
+.TP
+.I "Q"
+Quit
+.nf
+
+Example:
+	SQL# \\q
+
+.fi
+.SH SQL EXECUTION COMMANDS
+Commands to execute SQL statements
+.PP
+.TR
+.I "e"
+execute SQL query (SELECT)
+.nf
+
+Example: to execute a query
+	
+	SQL# SELECT * FROM EMPLOYEE
+	SQL# \\e
+
+Note: to get \\e to automatically work after entering a query, put a
+      semicolon ; at the end of the query.
+	      
+Example: to enter and exectue query at the same time
+
+	SQL# SELECT * FROM EMPLOYEE;
+
+.fi
+.TP
+.I "exenonquery"
+execute a SQL non query (not a SELECT)
+.nf
+
+Example: to insert a row into a table:
+	
+	SQL# INSERT INTO SOMETABLE (COL1, COL2) VALUES('ABC','DEF')
+	SQL# \\exenonquery
+		
+Note: this can be used for those providers that are new and do not have
+      the ability to execute queries yet.      
+
+.fi
+.TP
+.I "exescalar" 
+execute SQL to get a single row and single column.
+.nf
+
+Example: to execute a Maxium aggregate
+		SQL# SELECT MAX(grade) FROM class
+		SQL# \\exescalar	
+
+.fi
+.TP
+.I "exexml"
+FILENAME to execute SQL and save output to XML file
+.nf
+
+Example: 
+	SQL# SELECT fname, lname, hire_date FROM employee
+	SQL# \\exexml employee.xml
+		
+Note: this depends on DataAdapter, DataTable, and DataSet
+      to be working properly
+
+.fi
+.TP
+.SH FILE COMMANDS
+Commands for importing commands from file to SQL# and vice versa
+.TP
+.I "f"
+FILENAME to read a batch of SQL# commands from file
+.nf
+
+Example:
+	SQL# \\f batch.sql#
+		
+Note: the SQL# commands are interpreted as they are read.  If there is
+      any SQL statements, the are executed.
+
+.fi
+.TP
+.I "o"
+FILENAME to write result of commands executed to file.
+.nf
+
+Example:
+	SQL# \\o result.txt
+
+.fi
+.TP
+.I "load"
+FILENAME to load from file SQL commands into SQL buffer.
+.nf
+
+Example:
+	SQL# \\load commands.sql
+
+.fi
+.TP
+.I "save"
+FILENAME to save SQL commands from SQL buffer to file.
+
+.nf
+Example:
+	SQL# \\save commands.sql
+
+.fi
+.SH GENERAL PURPOSE COMMANDS
+General commands to use.
+.TP
+.I "h"
+show help (all commands).
+.nf
+
+Example:
+	SQL# \\h
+
+.fi
+.TP
+.I "s"
+TRUE, FALSE to silent messages.
+.nf
+
+Example 1:
+	SQL# \\s true
+		
+Example 2:
+	SQL# \\s false
+
+.fi
+.TP
+.I "r"
+reset or clear the query buffer.
+.nf
+
+Example:
+	SQL# \\r
+
+.fi
+.TP
+.I "print"
+show what's in the SQL buffer now.
+.nf
+
+Example:
+	SQL# \\print
+
+.fi
+SH VARIABLES WHICH CAN BE USED AS PARAMETERS
+Commands to set variables which can be used as Parameters in an SQL statement.  If the
+SQL contains any parameters, the parameter does not have a variable set, the 
+user will be prompted for the value for each missing parameter.
+.TP
+.I "set"
+NAME VALUE to set an internal variable.
+.nf
+
+Example:
+	SQL# \\set sFirstName John
+
+.fi
+.TP
+.I "unset"
+NAME to remove an internal variable.
+.nf
+
+Example:
+	SQL# \\unset sFirstName
+
+.fi
+.TP
+.I "variable"
+NAME to display the value of an internal variable.
+.nf
+
+Example:
+	SQL# \\variable sFirstName
+
+.fi
+.SH PROVIDER SUPPORT OPTIONS
+Enable or Disble support for a particular provider option
+.TP
+.I "UseParameters"
+TRUE,FALSE to use parameters when executing SQL which
+use the variables that were set.
+.PP                 
+If this option is true, the SQL
+contains parameters, and for each parameter
+which does not have a SQL# variable set, the
+user will be prompted to enter the value
+For that parameter.
+.nf
+
+Example:
+	SQL# \\useparameter true
+
+.fi
+.PP		
+Default: false
+.TP
+.I "UseSimpleReader"
+TRUE,FALSE to use simple reader when displaying results.
+.nf
+
+Example:
+	SQL# \\usesimplereader true
+
+.fi
+.PP		
+Default: false.  Mostly, this is dependent on the provider.  If the provider
+does not have enough of IDataReader implemented to have
+the normal reader working, then the simple reader can be used.
+Providers like SqlClient, MySQL, and PostgreSQL have this
+ption defaulting to true.
+.PP
+.SH PROVIDERS
+.nf
+
+PROVIDER    NAME          NAMESPACE                  ASSEMBLY
+
+OleDb       OLE DB        System.Data.OleDb          System.Data 
+SqlClient   MS SQL 7/2000 System.Data.SqlClient      System.Data
+Odbc        ODBC          System.Data.Odbc           System.Data
+MySql       MySQL         Mono.Data.MySql            Mono.Data.MySql
+Sqlite      SQL Lite      Mono.Data.SqliteClient     Mono.Data.SqliteClient
+Sybase      Sybase        Mono.Data.SybaseClient     Mono.Data.SybaseClient
+Tds         TDS Generic   Mono.Data.TdsClient        Mono.Data.TdsClient
+PostgreSql  PostgreSQL    Mono.Data.PostgreSqlClient Mono.Data.PostgreSqlClient
+
+.fi
+.SH CONNECTION STRING SAMPLES
+Example connection strings for various providers to be used via the
+command \\ConnectionString
+.nf
+
+Example of usage:
+	\\connectionstring Database=testdb
+
+
+Connection String examples:
+
+
+Microsoft SQL Server via System.Data.SqlClient 
+or Mono.Data.TdsClient provider:
+
+	Server=DANPC;Database=pubs;User ID=saPassword=
+
+		
+PostgreSQL via Mono.Data.PostgreSqlClient provider:
+
+	host=localhost;dbname=test;user=postgres;pass=fun2db
+
+		          or
+
+	Server=localhost;Database=test;User ID=postgres;Password=fun2db
+
+		
+MySQL via Mono.Data.MySql provider:
+
+	Server=localhost;Database=test;User ID=mysql;Password=
+
+	
+ODBC via System.Data.Odbc provider using 
+a DSN named "MSSQLDSN"	I set up 
+in the Windows control panel's ODBC Data Sources 
+which connects to Microsoft SQL Server 2000:
+
+	DSN=MSSQLDSN;UID=danmorg;PWD=freetds
+
+
+SQL Lite via Mono.Data.SqliteClient 
+provider which connects to the
+database file SqliteTest.db; if not found, 
+the file is created:
+
+	URI=file:SqliteTest.db
+
+
+OLE DB via System.Data.OleDb provider 
+which connects to a PostgreSQL database:
+
+	Provider=PostgreSQL;Addr=127.0.0.1;Database=rodrigo
+
+
+.fi
+.SH DEBUGGING SUPPORT
+No debugging support.
+.SH NOTES
+No notes.
+.SH AUTHORS
+The Mono SQL# Tool was written 
+by Daniel Morgan <danmorg@sc.rr.com>
+.PP
+.SH LICENSE
+The Mono SQL# Tool is released under the terms of the GNU GPL.
+Please read the accompanying `COPYING' file for details.  Alternative
+licenses are available from Ximian or Daniel Morgan.
+.PP
+.SH SEE ALSO
+mono(1), mint(1), mcs(1)
+.PP
+.SH BUGS
+To report bugs in the compiler, you can use `bug-buddy', or you can
+file bug reports in our bug tracking system:
+http://bugzilla.ximian.com.
+.SH MAILING LIST
+The Mono Mailing List is available at: mono-list-request@ximian.com
+.SH MORE INFORMATION
+The Mono C# compiler is developed by Ximian, Inc
+(http://www.ximian.com) (http://www.ximian.com) and is based on the
+ECMA C# language standard available here:
+http://www.ecma.ch/ecma1/STAND/ecma-334.htm
+
+
