@@ -82,9 +82,18 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "ArgumentProcessorAttribute.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "AuthorAttribute.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ChangeLog"
+                    BuildAction = "None"
                 />
                 <File
                     RelPath = "OptionAttribute.cs"
@@ -105,6 +114,10 @@
                     RelPath = "Options.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ToDo"
+                    BuildAction = "Content"
                 />
                 <File
                     RelPath = "UsageComplementAttribute.cs"

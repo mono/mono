@@ -47,6 +47,7 @@ namespace Mono.GetOptions
 		private ArrayList list = new ArrayList();
 		private ArrayList arguments = new ArrayList();
 		private ArrayList argumentsTail = new ArrayList();
+		private MethodInfo argumentProcessor = null;
 
 		public string Usage
 		{
@@ -109,6 +110,26 @@ namespace Mono.GetOptions
 
 		#region Constructors
 
+		private void AddArgumentProcessor(MemberInfo memberInfo)
+		{
+			if (argumentProcessor != null)
+				throw new NotSupportedException("More than one argument processor method found");
+
+			if ((memberInfo.MemberType == MemberTypes.Method && memberInfo is MethodInfo))
+			{
+				if (((MethodInfo)memberInfo).ReturnType.FullName != typeof(void).FullName)
+					throw new NotSupportedException("Argument processor method must return 'void'");
+
+				ParameterInfo[] parameters = ((MethodInfo)memberInfo).GetParameters();
+				if ((parameters == null) || (parameters.Length != 1) || (parameters[0].ParameterType.FullName != typeof(string).FullName))
+					throw new NotSupportedException("Argument processor method must have a string parameter");
+				
+				argumentProcessor = (MethodInfo)memberInfo; 
+			}
+			else
+				throw new NotSupportedException("Argument processor marked member isn't a method");
+		}
+
 		private void Initialize(Options optionBundle)
 		{
 			if (optionBundle == null)
@@ -139,6 +160,12 @@ namespace Mono.GetOptions
 				object[] attribs = mi.GetCustomAttributes(typeof(OptionAttribute), true);
 				if (attribs != null && attribs.Length > 0)
 					list.Add(new OptionDetails(mi, (OptionAttribute)attribs[0], optionBundle));
+				else
+				{
+					attribs = mi.GetCustomAttributes(typeof(ArgumentProcessorAttribute), true);
+					if (attribs != null && attribs.Length > 0)
+						AddArgumentProcessor(mi);
+				}
 			}
 		}
 
@@ -318,6 +345,12 @@ namespace Mono.GetOptions
 
 				foreach(string argument in argumentsTail)
 					arguments.Add(argument);
+
+				if (argumentProcessor == null)
+					return (string[])arguments.ToArray(typeof(string));
+			
+				foreach(string argument in arguments)
+					argumentProcessor.Invoke(optionBundle, new object[] { argument });  
 			}
 			catch (Exception ex)
 			{
@@ -325,7 +358,7 @@ namespace Mono.GetOptions
 				System.Environment.Exit(1);
 			}
 
-			return (string[])arguments.ToArray(typeof(string));
+			return null;
 		}
 		
 		#endregion
