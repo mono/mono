@@ -25,4 +25,12 @@
 			</sources>
 		</csc>
 	</target>
+
+	<target name="clean">
+		<delete failonerror="false">
+			<fileset bardir="../lib">
+				<includes name="System.Design.dll"/>
+			</fileset>
+		</delete>
+	</target>
 </project>
