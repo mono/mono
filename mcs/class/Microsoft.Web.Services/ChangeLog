@@ -1,3 +1,7 @@
+2003-10-04  Todd Berman <tberman@gentoo.org>
+
+	* Microsoft.Web.Services.Addressing/Action.cs: implemented
+
 2003-09-30  Todd Berman <tberman@gentoo.org>
 
 	* Microsoft.Web.Services.Addressing/AttributedUriString.cs: implemented

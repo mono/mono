@@ -17,28 +17,59 @@ namespace Microsoft.Web.Services.Addressing
 	{
 
 
-		[MonoTODO]
+		public Action (string uri) : base (uri)
+		{
+		}
+
+		public Action (XmlElement element) : base ()
+		{
+			LoadXml (element);
+		}
+
 		public static implicit operator Action(string obj)
 		{
-			throw new NotImplementedException ();
+
+			return new Action (obj);
+		
 		}
 
-		[MonoTODO]
 		public static implicit operator string(Action obj)
 		{
-			throw new NotImplementedException ();
+
+			if(obj == null) {
+				return null;
+			}
+			return obj.Value;
+		
 		}
 
-		[MonoTODO]
 		public XmlElement GetXml (XmlDocument document)
 		{
-			throw new NotImplementedException ();
+			if(document == null) {
+				throw new ArgumentNullException ("document");
+			}
+
+			XmlElement element = document.CreateElement ("wsa",
+			                                             "Action",
+					                             "http://schemas.xmlsoap.org/ws/2003/03/addressing");
+			
+			GetXmlUri (document, element);
+			
+			return element;
+			
 		}
 
-		[MonoTODO]
 		public void LoadXml (XmlElement element)
 		{
-			throw new NotImplementedException ();
+			if(element == null) {
+				throw new ArgumentNullException ("element");
+			}
+
+			if(element.LocalName != "Action" || element.NamespaceURI != "http://schemas.xmlsoap.org/ws/2003/03/addressing") {
+				throw new ArgumentException ("Invalid Element Supplied");
+			}
+
+			LoadXmlUri (element);
 		}		
 
 	}
