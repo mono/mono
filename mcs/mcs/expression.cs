@@ -6740,6 +6740,9 @@ namespace Mono.CSharp {
 			if ((block != null) && (block.ThisVariable != null))
 				variable_info = block.ThisVariable.VariableInfo;
 
+			if (ec.CurrentAnonymousMethod != null)
+				ec.CaptureThis ();
+			
 			return true;
 		}
 
