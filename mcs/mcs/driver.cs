@@ -196,7 +196,7 @@ namespace Mono.CSharp
 				"For more information on Mono, visit the project Web site\n" +
 				"   http://www.go-mono.com\n\n" +
 
-				"The compiler was written by Miguel de Icaza and Ravi Pratap");
+				"The compiler was written by Miguel de Icaza, Ravi Pratap and Martin Baulig");
 		}
 		
 		public static int Main (string[] args)
