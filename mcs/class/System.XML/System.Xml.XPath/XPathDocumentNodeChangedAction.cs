@@ -29,16 +29,17 @@
 
 namespace System.Xml.XPath
 {
+	[Serializable]
 	public enum XPathDocumentNodeChangedAction
 	{
-		Deleteed,
-		Deleteing,
 		Inserted,
-		Inserting,
-		Rejected,
-		Rejecting,
+		Deleted,
 		Updated,
+		Inserting,
+		Deleting,
 		Updating,
+		Rejecting,
+		Rejected,
 	}
 }
 #endif

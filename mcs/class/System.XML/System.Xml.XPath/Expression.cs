@@ -75,6 +75,14 @@ namespace System.Xml.XPath
 		{
 			_nsm = nsManager;
 		}
+
+#if NET_2_0
+		public override void SetContext (IXmlNamespaceResolver nsResolver)
+		{
+			_nsm = nsResolver;
+		}
+#endif
+
 		internal NSResolver NamespaceManager { get { return _nsm; } }
 		public override String Expression { get { return _expr.ToString (); }}
 		public override XPathResultType ReturnType { get { return _expr.ReturnType; }}

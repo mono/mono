@@ -538,10 +538,18 @@ namespace System.Xml.XPath
 			return LookupNamespace (prefix, false);
 		}
 
-		[MonoTODO]
 		public virtual string LookupNamespace (string prefix, bool atomizedNames)
 		{
-			throw new NotImplementedException ();
+			XPathNavigator nav = Clone ();
+			if (nav.NodeType != XPathNodeType.Element)
+				nav.MoveToParent ();
+			if (nav.MoveToNamespace (prefix)) {
+				if (atomizedNames)
+					return nav.NameTable.Add (nav.Value);
+				else
+					return nav.Value;
+			}
+			return null;
 		}
 
 		public virtual string LookupPrefix (string namespaceUri)
@@ -555,8 +563,89 @@ namespace System.Xml.XPath
 			throw new NotImplementedException ();
 		}
 
+		public virtual bool MoveToAttribute (string localName, string namespaceURI, bool atomizedNames)
+		{
+			return MoveToAttribute (localName, namespaceURI);
+		}
+
+		private bool MoveTo (XPathNodeIterator iter)
+		{
+			if (iter.MoveNext ()) {
+				MoveTo (iter.Current);
+				return true;
+			}
+			else
+				return false;
+		}
+
+		public virtual bool MoveToChild (XPathNodeType type)
+		{
+			return MoveTo (SelectChildren (type));
+		}
+
+		public virtual bool MoveToChild (string localName, string namespaceURI)
+		{
+			return MoveTo (SelectChildren (localName, namespaceURI));
+		}
+
+		public virtual bool MoveToChild (string localName, string namespaceURI, bool atomizedNames)
+		{
+			return MoveToChild (localName, namespaceURI);
+		}
+
+		public virtual bool MoveToDescendant (XPathNodeType type)
+		{
+			return MoveTo (SelectDescendants (type, false));
+		}
+
+		public virtual bool MoveToDescendant (string localName, string namespaceURI)
+		{
+			return MoveTo (SelectDescendants (localName, namespaceURI, false));
+		}
+
+		public virtual bool MoveToDescendant (string localName, string namespaceURI, bool atomizedNames)
+		{
+			return MoveToDescendant (localName, namespaceURI);
+		}
+
+		public virtual bool MoveToNext (string localName, string namespaceURI)
+		{
+			XPathNavigator nav = Clone ();
+			while (nav.MoveToNext ()) {
+				if (nav.LocalName == localName &&
+					nav.NamespaceURI == namespaceURI) {
+					MoveTo (nav);
+					return true;
+				}
+			}
+			return false;
+		}
+
+		public virtual bool MoveToNext (string localName, string namespaceURI, bool atomizedNames)
+		{
+			return MoveToNext (localName, namespaceURI);
+		}
+
+		public virtual bool MoveToNext (XPathNodeType type)
+		{
+			XPathNavigator nav = Clone ();
+			while (nav.MoveToNext ()) {
+				if (nav.NodeType == type) {
+					MoveTo (nav);
+					return true;
+				}
+			}
+			return false;
+		}
+
 		[MonoTODO]
 		public virtual XmlReader ReadSubtree ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public virtual XPathNodeIterator Select (string xpath, IXmlNamespaceResolver nsResolver)
 		{
 			throw new NotImplementedException ();
 		}
@@ -572,9 +661,10 @@ namespace System.Xml.XPath
 			throw new NotImplementedException ();
 		}
 
-		public override object ValueAs (Type type)
+		[MonoTODO]
+		public XPathNavigator SelectSingleNode (XPathExpression expression)
 		{
-			return ValueAs (type, this);
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
@@ -584,7 +674,7 @@ namespace System.Xml.XPath
 		}
 
 		[MonoTODO]
-		public virtual XmlWriter WriteSubtree ()
+		public virtual void WriteSubtree (XmlWriter writer)
 		{
 			throw new NotImplementedException ();
 		}
@@ -615,7 +705,7 @@ namespace System.Xml.XPath
 		}
 
 		[MonoTODO]
-		public virtual object TypedValue {
+		public override object TypedValue {
 			get { throw new NotImplementedException (); }
 		}
 
@@ -665,17 +755,17 @@ namespace System.Xml.XPath
 		}
 
 		[MonoTODO]
-		public virtual Type ValueType {
+		public override Type ValueType {
 			get { throw new NotImplementedException (); }
 		}
 
 		[MonoTODO]
-		public virtual XmlSchemaType XmlType {
+		public override XmlSchemaType XmlType {
 			get { throw new NotImplementedException (); }
 		}
 
 		[MonoTODO]
-		protected XmlReader GetValidatingReader (XmlSchemaSet schemas, ValidationEventHandler handler)
+		protected XmlReader GetValidatingReader (XmlSchemaSet schemas, ValidationEventHandler handler, XmlSchemaType schemaType)
 		{
 			throw new NotImplementedException ();
 		}

@@ -36,6 +36,11 @@ namespace System.Xml.XPath
 {
 	public class NodeChangedEventArgs : EventArgs
 	{
+		// FIXME: implement
+		private NodeChangedEventArgs ()
+		{
+		}
+
 		XPathDocumentNodeChangedAction action;
 		XPathEditableNavigator item;
 
@@ -43,30 +48,37 @@ namespace System.Xml.XPath
 			get { return action; }
 		} 
 
+		[MonoTODO]
 		public XPathEditableNavigator Item {
 			get { throw new NotImplementedException (); }
 		}
 
+		[MonoTODO]
 		public XPathEditableNavigator NewParent {
 			get { throw new NotImplementedException (); }
 		}
 
+		[MonoTODO]
 		public XPathEditableNavigator NewPreviousItem {
 			get { throw new NotImplementedException (); }
 		}
 
+		[MonoTODO]
 		public object NewValue {
 			get { throw new NotImplementedException (); }
 		}
 
+		[MonoTODO]
 		public XPathEditableNavigator OldParent {
 			get { throw new NotImplementedException (); }
 		}
 
+		[MonoTODO]
 		public XPathEditableNavigator OldPreviousItem {
 			get { throw new NotImplementedException (); }
 		}
 
+		[MonoTODO]
 		public object OldValue {
 			get { throw new NotImplementedException (); }
 		}

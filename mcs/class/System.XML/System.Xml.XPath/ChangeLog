@@ -1,3 +1,15 @@
+2004-07-21  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XPathExpression.cs, Expression.cs :
+	  Added SetContext(IXmlNamespaceResolver).
+	* NodeChangedEventArgs.cs : Added missing [MonoTODO].
+	* XPathAtomicValue.cs : Halfly implemented.
+	* XPathDocument.cs : Added 2.0 members.
+	* XPathDocumentNodeChangedAction.cs : updated member names.
+	* XPathEditableNavigator.cs : Added missing 2.0 members and MonoTODO.
+	* XPathNavigator.cs : Added missing 2.0 members.
+	  Fixed some members as virtual->override.
+
 2004-07-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlNodeChageType.cs, XmlChangeFilters.cs : fixed enum values.

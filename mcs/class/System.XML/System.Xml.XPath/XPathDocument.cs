@@ -31,21 +31,115 @@
 //
 using System;
 using System.Collections;
+using System.ComponentModel;
 using System.IO;
+using System.Text;
 using System.Xml;
 using System.Xml.Schema;
-using System.Text;
+using System.Xml.Serialization;
 using Mono.Xml.XPath;
 
 namespace System.Xml.XPath
 {
-
+#if NET_2_0
+	public class XPathDocument : IXPathNavigable, IXPathEditable,
+		IChangeTracking, IRevertibleChangeTracking, IXmlSerializable
+#else
 	public class XPathDocument : IXPathNavigable
+#endif
 	{
 		DTMXPathDocument document;
 
 #region Constructors
 
+#if NET_2_0
+		[MonoTODO]
+		public XPathDocument ()
+			: this (new NameTable ())
+		{
+		}
+
+		[MonoTODO]
+		public XPathDocument (XmlNameTable nameTable)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public XPathDocument (Stream stream)
+			: this (stream, true)
+		{
+		}
+
+		public XPathDocument (string uri) 
+			: this (uri, XmlSpace.None, true)
+		{
+		}
+
+		public XPathDocument (TextReader reader)
+			: this (reader, true)
+		{
+		}
+
+		[MonoTODO]
+		public XPathDocument (XmlReader reader)
+			: this (reader, XmlSpace.None, true)
+		{
+		}
+
+		[MonoTODO]
+		public XPathDocument (XmlReader reader, bool acceptChangesOnLoad)
+			: this (reader, XmlSpace.None, acceptChangesOnLoad)
+		{
+		}
+
+		[MonoTODO]
+		public XPathDocument (string uri, XmlSpace space)
+			: this (uri, space, true)
+		{
+		}
+
+		[MonoTODO]
+		public XPathDocument (XmlReader reader, XmlSpace space)
+			: this (reader, space, true)
+		{
+		}
+
+		[MonoTODO]
+		public XPathDocument (string uri, XmlSpace space, bool acceptChangesOnLoad)
+		{
+			XmlValidatingReader vr = null;
+			try {
+				vr = new XmlValidatingReader (new XmlTextReader (uri));
+				vr.ValidationType = ValidationType.None;
+				Initialize (vr, space, acceptChangesOnLoad);
+			} finally {
+				if (vr != null)
+					vr.Close ();
+			}
+		}
+
+		[MonoTODO]
+		public XPathDocument (Stream stream, bool acceptChangesOnLoad)
+		{
+			XmlValidatingReader vr = new XmlValidatingReader (new XmlTextReader (stream));
+			vr.ValidationType = ValidationType.None;
+			Initialize (vr, XmlSpace.None, acceptChangesOnLoad);
+		}
+
+		[MonoTODO]
+		public XPathDocument (TextReader reader, bool acceptChangesOnLoad)
+		{
+			XmlValidatingReader vr = new XmlValidatingReader (new XmlTextReader (reader));
+			vr.ValidationType = ValidationType.None;
+			Initialize (vr, XmlSpace.None, acceptChangesOnLoad);
+		}
+
+		[MonoTODO]
+		public XPathDocument (XmlReader reader, XmlSpace space, bool acceptChangesOnLoad)
+		{
+			Initialize (reader, space, acceptChangesOnLoad);
+		}
+#else
 		public XPathDocument (Stream stream)
 		{
 			XmlValidatingReader vr = new XmlValidatingReader (new XmlTextReader (stream));
@@ -87,8 +181,14 @@ namespace System.Xml.XPath
 		{
 			Initialize (reader, space);
 		}
+#endif
 
 		private void Initialize (XmlReader reader, XmlSpace space)
+		{
+			document = new DTMXPathDocumentBuilder (reader, space).CreateDocument ();
+		}
+
+		private void Initialize (XmlReader reader, XmlSpace space, bool acceptChangesOnLoad)
 		{
 			document = new DTMXPathDocumentBuilder (reader, space).CreateDocument ();
 		}
@@ -101,17 +201,17 @@ namespace System.Xml.XPath
 
 		public event NodeChangedEventHandler ChangeRejected;
 
-		public event NodeChangedEventHandler ItemChanged;
+		public event NodeChangedEventHandler ItemUpdated;
 
-		public event NodeChangedEventHandler ItemChanging;
+		public event NodeChangedEventHandler ItemUpdating;
 
 		public event NodeChangedEventHandler ItemInserted;
 
 		public event NodeChangedEventHandler ItemInserting;
 
-		public event NodeChangedEventHandler ItemRemoved;
+		public event NodeChangedEventHandler ItemDeleted;
 
-		public event NodeChangedEventHandler ItemRemoving;
+		public event NodeChangedEventHandler ItemDeleting;
 
 		public event NodeChangedEventHandler RejectingChange;
 
@@ -122,11 +222,6 @@ namespace System.Xml.XPath
 #region Properties
 
 #if NET_2_0
-
-		[MonoTODO]
-		public virtual bool ContainsListCollection {
-			get { throw new NotImplementedException (); }
-		}
 
 		[MonoTODO]
 		public bool EnableChangeTracking {
@@ -141,12 +236,17 @@ namespace System.Xml.XPath
 		}
 
 		[MonoTODO]
+		bool IChangeTracking.IsChanged {
+			get { throw new NotImplementedException (); }
+		}
+
+		[MonoTODO]
 		public XmlNameTable NameTable {
 			get { throw new NotImplementedException (); }
 		}
 
 		[MonoTODO]
-		public bool PreserveWhitespace {
+		public bool PreserveWhiteSpace {
 			get { throw new NotImplementedException (); }
 		}
 
@@ -164,12 +264,19 @@ namespace System.Xml.XPath
 #region Methods
 
 #if NET_2_0
+		[MonoTODO]
+		public void AcceptChanges ()
+		{
+			throw new NotImplementedException ();
+		}
 
+		/* It will disappear in 2.0 RTM
 		[MonoTODO]
 		public XPathChangeNavigator CreateChangeNavigator ()
 		{
 			throw new NotImplementedException ();
 		}
+		*/
 
 		[MonoTODO]
 		public XPathEditableNavigator CreateEditor ()
@@ -183,14 +290,13 @@ namespace System.Xml.XPath
 			return document.CreateNavigator ();
 		}
 
-		[MonoTODO]
 		public XmlWriter CreateWriter ()
 		{
-			throw new NotImplementedException ();
+			return CreateEditor ().AppendChild ();
 		}
 
 		[MonoTODO]
-		public virtual IList GetList ()
+		public virtual XmlSchema GetSchema ()
 		{
 			throw new NotImplementedException ();
 		}
@@ -201,19 +307,20 @@ namespace System.Xml.XPath
 			throw new NotImplementedException ();
 		}
 
+		[Obsolete]
 		[MonoTODO]
-		public bool HasChanges (XmlChangeFilters changeFilter)  
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public void Load (string xml)  
+		public void LoadXml (string xml)  
 		{
 			throw new NotImplementedException ();
 //			tree = new XPathDocumentTree (xmlReader);
 //			if (acceptChangesOnLoad)
 //				AcceptChanges ();
+		}
+
+		[MonoTODO]
+		public void ReadXml (XmlReader reader)
+		{
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
@@ -280,6 +387,12 @@ namespace System.Xml.XPath
 
 		[MonoTODO]
 		public XPathEditableNavigator SelectSingleNode (string xpath ,IXmlNamespaceResolver nsResolver)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public void WriteXml (XmlWriter writer)
 		{
 			throw new NotImplementedException ();
 		}

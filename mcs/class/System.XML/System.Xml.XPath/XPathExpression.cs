@@ -65,7 +65,10 @@ namespace System.Xml.XPath
 		public abstract XPathExpression Clone ();
 
 		public abstract void SetContext (XmlNamespaceManager nsManager);
-		
+
+#if NET_2_0
+		public abstract void SetContext (IXmlNamespaceResolver nsResolver);
+#endif
 		#endregion
 	}
 }

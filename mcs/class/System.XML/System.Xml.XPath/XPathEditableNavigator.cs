@@ -50,8 +50,10 @@ namespace System.Xml.XPath
 		{
 		}
 
+		[MonoTODO ("No implementation as yet")]
 		public abstract XmlWriter AppendChild ();
 
+		[MonoTODO]
 		public virtual XPathEditableNavigator AppendChild (
 			string xmlFragments)
 		{
@@ -92,6 +94,7 @@ namespace System.Xml.XPath
 			}
 		}
 
+		[MonoTODO ("No implementation as yet")]
 		public abstract XmlWriter CreateAttributes ();
 
 		public virtual XPathEditableNavigator CreateEditor ()
@@ -101,10 +104,16 @@ namespace System.Xml.XPath
 
 		// LAMESPEC: documented as public abstract, but it conflicts
 		// with XPathNavigator.CreateNavigator ().
-//		public abstract XPathNavigator CreateNavigator ();
+		[MonoTODO]
+		public override XPathNavigator CreateNavigator ()
+		{
+			throw new NotImplementedException ();
+		}
 
+		[MonoTODO ("No implementation as yet")]
 		public abstract bool DeleteCurrent ();
 
+		[MonoTODO ("No implementation as yet")]
 		public abstract XmlWriter InsertAfter ();
 
 		public virtual XPathEditableNavigator InsertAfter (string xmlFragments)
@@ -128,6 +137,7 @@ namespace System.Xml.XPath
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO ("No implementation as yet")]
 		public abstract XmlWriter InsertBefore ();
 
 		public virtual XPathEditableNavigator InsertBefore (string xmlFragments)
@@ -167,6 +177,7 @@ namespace System.Xml.XPath
 			}
 		}
 
+		[MonoTODO ("No implementation as yet")]
 		public abstract XmlWriter PrependChild ();
 
 		public virtual XPathEditableNavigator PrependChild (string xmlFragments)
@@ -205,6 +216,7 @@ namespace System.Xml.XPath
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO ("No implementation as yet")]
 		public abstract void SetValue (object value);
 
 		[MonoTODO]
@@ -214,31 +226,15 @@ namespace System.Xml.XPath
 		}
 
 		[MonoTODO]
-		public virtual void Validate (XmlSchemaSet schemas, ValidationEventHandler handler, XmlSchemaAttribute attribute)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public virtual void Validate (XmlSchemaSet schemas, ValidationEventHandler handler, XmlSchemaElement element)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public virtual void Validate (XmlSchemaSet schemas, ValidationEventHandler handler, XmlSchemaType schemaType)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
 		public override string InnerXml {
 			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
 		}
 
 		[MonoTODO]
 		public override string OuterXml {
 			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
 		}
 	}
 }
