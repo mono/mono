@@ -705,8 +705,6 @@ namespace Mono.CSharp {
 				if (type_param.Name != name)
 					continue;
 
-				Report.Debug (64, "LOOKUP GENERIC", this, name, loc, type_param, type_param.Type);
-
 				return new TypeParameterExpr (type_param, loc);
 			}
 
