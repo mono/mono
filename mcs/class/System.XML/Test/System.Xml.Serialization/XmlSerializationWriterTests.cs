@@ -293,28 +293,28 @@ namespace MonoTests.System.Xml.Serialization
 			WriteStartElement("x");
 			WriteNamespaceDeclarations(ns);
 			WriteEndElement();
-			Assertion.AssertEquals("<x xmlns:mypref='some:urn' />", Content);
+			Assertion.AssertEquals(XmlSerializerTests.Infoset("<x xmlns:mypref='some:urn' />"), XmlSerializerTests.Infoset(Content));
 
 			Reset();
 			ns.Add("ns2", "another:urn");
 			WriteStartElement("x");
 			WriteNamespaceDeclarations(ns);
 			WriteEndElement();
-			Assertion.AssertEquals("<x xmlns:ns2='another:urn' xmlns:mypref='some:urn' />", Content);
+			Assertion.AssertEquals(XmlSerializerTests.Infoset("<x xmlns:ns2='another:urn' xmlns:mypref='some:urn' />"), XmlSerializerTests.Infoset(Content));
 
 			Reset();
 			ns.Add("ns3", "ya:urn");
 			WriteStartElement("x");
 			WriteNamespaceDeclarations(ns);
 			WriteEndElement();
-			Assertion.AssertEquals("<x xmlns:ns3='ya:urn' xmlns:ns2='another:urn' xmlns:mypref='some:urn' />", Content);
+			Assertion.AssertEquals(XmlSerializerTests.Infoset("<x xmlns:ns3='ya:urn' xmlns:ns2='another:urn' xmlns:mypref='some:urn' />"), XmlSerializerTests.Infoset(Content));
 		}
 
 		[Test]
 		public void TestWriteNullableStringLiteral()
 		{
 			WriteNullableStringLiteral("x", null, null);
-			Assertion.AssertEquals("<x d1p1:nil='true' xmlns:d1p1='http://www.w3.org/2001/XMLSchema-instance' />", Content);
+			Assertion.AssertEquals(XmlSerializerTests.Infoset("<x d1p1:nil='true' xmlns:d1p1='http://www.w3.org/2001/XMLSchema-instance' />"), XmlSerializerTests.Infoset(Content));
 
 			Reset();
 			WriteNullableStringLiteral("x", null, "");
@@ -340,14 +340,14 @@ namespace MonoTests.System.Xml.Serialization
 		public void TestWriteNullTagEncoded()
 		{
 			WriteNullTagEncoded("x");
-			Assertion.AssertEquals("<x d1p1:nil='true' xmlns:d1p1='http://www.w3.org/2001/XMLSchema-instance' />", Content);
+			Assertion.AssertEquals(XmlSerializerTests.Infoset("<x d1p1:nil='true' xmlns:d1p1='http://www.w3.org/2001/XMLSchema-instance' />"), XmlSerializerTests.Infoset(Content));
 		}
 
 		[Test]
 		public void TestWriteNullTagLiteral()
 		{
 			WriteNullTagLiteral("x");
-			Assertion.AssertEquals("<x d1p1:nil='true' xmlns:d1p1='http://www.w3.org/2001/XMLSchema-instance' />", Content);
+			Assertion.AssertEquals(XmlSerializerTests.Infoset("<x d1p1:nil='true' xmlns:d1p1='http://www.w3.org/2001/XMLSchema-instance' />"), XmlSerializerTests.Infoset(Content));
 		}
 
 		[Test]
@@ -443,7 +443,7 @@ namespace MonoTests.System.Xml.Serialization
 			WriteStartElement("x");
 			WriteXsiType("pref", null);
 			WriteEndElement();
-			Assertion.AssertEquals("<x d1p1:type='pref' xmlns:d1p1='http://www.w3.org/2001/XMLSchema-instance' />", Content);
+			Assertion.AssertEquals(XmlSerializerTests.Infoset("<x d1p1:type='pref' xmlns:d1p1='http://www.w3.org/2001/XMLSchema-instance' />"), XmlSerializerTests.Infoset(Content));
 		}
 	}
 }

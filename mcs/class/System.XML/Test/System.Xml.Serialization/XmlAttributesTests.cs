@@ -16,7 +16,7 @@ using System.Xml.Serialization;
 
 using NUnit.Framework;
 
-namespace MonoTests.System.Xml
+namespace MonoTests.System.Xml.Serialization
 {
 	[TestFixture]
 	public class XmlAttributesTests : Assertion

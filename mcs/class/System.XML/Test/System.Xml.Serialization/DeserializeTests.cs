@@ -13,7 +13,7 @@ using System.Xml;
 using System.Xml.Serialization;
 using NUnit.Framework;
 
-namespace MonoTests.System.Xml
+namespace MonoTests.System.Xml.Serialization
 {
 	public class Sample
 	{
