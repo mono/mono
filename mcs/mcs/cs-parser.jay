@@ -1995,10 +1995,7 @@ primary_expression
 		// 7.5.1: Literals
 	  }
  
-	| qualified_identifier
-	  {
-		$$ = DecomposeQI ((QualifiedIdentifier) $1, lexer.Location);
-	  }
+	| IDENTIFIER { $$ = new SimpleName ((string) $1, lexer.Location); }
 	| parenthesized_expression
 	| member_access
 	| invocation_expression

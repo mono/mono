@@ -1,5 +1,14 @@
 2004-01-03 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	* cs-parser.jay: Make primary_expression not take a QI.
+	we dont need this because the member_access rule covers
+	us here. So we replace the rule with just IDENTIFIER.
+
+	This has two good effects. First, we remove a s/r conflict.
+	Second, we allocate many fewer QualifiedIdentifier objects.
+
+2004-01-03 Ben Maurer  <bmaurer@users.sourceforge.net>
+
 	* attribute.cs: Handle MarshalAs attributes as pseudo, and
 	set the correct information via SRE. This prevents
 	hanging on the MS runtime. Fixes #29374.
