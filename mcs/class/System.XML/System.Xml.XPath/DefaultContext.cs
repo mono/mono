@@ -81,6 +81,15 @@ namespace System.Xml.XPath
 				return Convert.ToDouble ((bool) arg);
 			throw new ArgumentException ();
 		}
+		
+		public static double ToNumber (string arg)
+		{
+			try {
+				return XmlConvert.ToDouble ((string) arg);	// TODO: spec? convert string to number
+			} catch (System.FormatException) {
+				return double.NaN;
+			}
+		}
 	}
 
 	internal abstract class XPathFunction : Expression
@@ -571,10 +580,23 @@ namespace System.Xml.XPath
 		
 		public override XPathResultType ReturnType { get { return XPathResultType.String; }}
 		
-		[MonoTODO]
 		public override object Evaluate (BaseIterator iter)
 		{
-			throw new NotImplementedException ();
+			string s0 = arg0.EvaluateString (iter);
+			string s1 = arg1.EvaluateString (iter);
+			string s2 = arg2.EvaluateString (iter);
+			
+			StringBuilder ret = new StringBuilder (s0.Length);
+				
+			int pos = 0, len = s0.Length, s2Len = s2.Length;
+			
+			while (pos < len) {
+				int idx = s1.IndexOf (s0 [pos], 0, s2Len);
+				ret.Append (idx != -1 ? s2 [idx] : s0 [pos]);
+				pos++;
+			}
+			
+			return ret.ToString ();
 		}
 	}
 
@@ -716,10 +738,15 @@ namespace System.Xml.XPath
 		
 		public override XPathResultType ReturnType { get { return XPathResultType.Number; }}
 
-		[MonoTODO]
 		public override object Evaluate (BaseIterator iter)
 		{
-			throw new NotImplementedException ();
+			XPathNodeIterator itr = arg0.EvaluateNodeSet (iter);
+			
+			double sum = 0;
+			while (itr.MoveNext ())
+				sum += XPathFunctions.ToNumber (itr.Current.Value);
+			
+			return sum;
 		}
 	}
 
