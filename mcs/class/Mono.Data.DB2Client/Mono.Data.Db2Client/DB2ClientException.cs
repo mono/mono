@@ -38,7 +38,7 @@ namespace DB2ClientCS
 			sqlReturn = DB2ClientPrototypes.SQLGetDiagRec(sqlHandleType, sqlHandle, recNum, sqlState, ref nativeErrorPtr, errorMessage, bufLength, ref textLengthPtr);
 			this.message = Message + "\n" + sqlState.ToString() + " " + errorMessage.ToString()+"\n";
 			//See if there are more errors to retrieve and get them.
-			while (sqlReturn == DB2ClientConstants.SQL_SUCCESS_WITH_INFO)
+			while (sqlReturn != DB2ClientConstants.SQL_NO_DATA  && sqlReturn > 0)
 			{
 				recNum++;
 				sqlReturn = DB2ClientPrototypes.SQLGetDiagRec(sqlHandleType, sqlHandle, recNum, sqlState, ref nativeErrorPtr, errorMessage, bufLength, ref textLengthPtr);
