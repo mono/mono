@@ -125,5 +125,19 @@ namespace System.Reflection {
 		{
 			return internal_from_handle (handle.Value);
 		}
+
+		[CLSCompliant(false)]
+		[MonoTODO]
+		public virtual object GetValueDirect (TypedReference obj)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[CLSCompliant(false)]
+		[MonoTODO]
+		public virtual void SetValueDirect (TypedReference obj, object value)
+		{
+			throw new NotImplementedException ();
+		}
 	}
 }

@@ -1,3 +1,7 @@
+2004-05-13  Zoltan Varga  <vargaz@freemail.hu>
+
+	* FieldInfo.cs: Add stubs for {Get,Set}ValueDirect.
+
 2004-05-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Binder.cs: check for ambiguous matches in SelectMethod and
