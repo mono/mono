@@ -1,4 +1,9 @@
 
+Tue May 14 13:31:17 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* FieldBuilder.cs, ParameterBuilder.cs: more special-casing of
+	attributes.
+
 Fri May 10 20:57:27 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* CustomAttributeBuilder.cs: expose internal data for use in

@@ -61,6 +61,17 @@ namespace System.Reflection.Emit {
 		}
 		
 		public void SetCustomAttribute( CustomAttributeBuilder customBuilder) {
+			string attrname = customBuilder.Ctor.ReflectedType.FullName;
+			if (attrname == "System.Runtime.InteropServices.InAttribute") {
+				attrs |= ParameterAttributes.In;
+				return;
+			} else if (attrname == "System.Runtime.InteropServices.OutAttribute") {
+				attrs |= ParameterAttributes.Out;
+				return;
+			} else if (attrname == "System.Runtime.InteropServices.OptionalAttribute") {
+				attrs |= ParameterAttributes.Optional;
+				return;
+			}
 			if (cattrs != null) {
 				CustomAttributeBuilder[] new_array = new CustomAttributeBuilder [cattrs.Length + 1];
 				cattrs.CopyTo (new_array, 0);

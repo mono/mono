@@ -87,6 +87,9 @@ namespace System.Reflection.Emit {
 				offset |= ((int)data [4]) << 16;
 				offset |= ((int)data [5]) << 24;
 				return;
+			} else if (attrname == "System.NonSerializedAttribute") {
+				attrs |= FieldAttributes.NotSerialized;
+				return;
 			}
 			if (cattrs != null) {
 				CustomAttributeBuilder[] new_array = new CustomAttributeBuilder [cattrs.Length + 1];
