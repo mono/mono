@@ -3,6 +3,7 @@
 //
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
+//	Partially completed by Dennis Hayes (dennish@raytek.com)
 //
 // (C) 2002 Ximian, Inc
 //
@@ -10,30 +11,26 @@
 namespace System.Windows.Forms {
 
 	// <summary>
-	//	This is only a template.  Nothing is implemented yet.
-	//
 	// </summary>
 
-        //public class LinkLabelLinkClickedEventArgs : EventArgs {
-
+    public class LinkLabelLinkClickedEventArgs : EventArgs {
+		private Link link;
 		//
 		//  --- Constructor
 		//
-		//[MonoTODO]
-		//public LinkLabelLinkClickedEventArgs(LinkLabel.Link link)
-		//{
-		//	throw new NotImplementedException ();
-		//}
+		public LinkLabelLinkClickedEventArgs(Link link)
+		{
+			this.link = link;
+		}
 
 		//
 		//  --- Public Properties
 		//
-		//[MonoTODO]
-		//public LinkLabel.Link Link {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
+		public Link Link {
+			get {
+				return link;
+			}
+		}
 
 		//
 		//  --- Public Methods
@@ -48,5 +45,5 @@ namespace System.Windows.Forms {
 		//{
 		//	throw new NotImplementedException ();
 		//}
-	// }
+	 }
 }

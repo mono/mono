@@ -3,10 +3,11 @@
 //
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
+//	Partially completed by Dennis Hayes (dennish@raytek.com)
 //
 // (C) 2002 Ximian, Inc
 //
-
+using System.Drawing;
 namespace System.Windows.Forms {
 
 	// <summary>
@@ -14,26 +15,24 @@ namespace System.Windows.Forms {
 	//
 	// </summary>
 
-        //public class InvalidateEventArgs : EventArgs {
-
+        public class InvalidateEventArgs : EventArgs {
+		private Rectangle InvalidRectangle;
 		//
 		//  --- Constructor
 		//
-		//[MonoTODO]
-		//public InvalidateEventArgs(Rectangle invalidRect)
-		//{
-		//	throw new NotImplementedException ();
-		//}
+		public InvalidateEventArgs(Rectangle invalidRect)
+		{
+			InvalidRectangle = invalidRect;
+		}
 
 		//
 		//  --- Public Properties
 		//
-		//[MonoTODO]
-		//public Rectangle InvalidRect {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
+		public Rectangle InvalidRect {
+			get {
+				return InvalidRectangle;
+			}
+		}
 
 		//
 		//  --- Public Methods
@@ -48,5 +47,5 @@ namespace System.Windows.Forms {
 		//{
 		//	throw new NotImplementedException ();
 		//}
-	// }
+	 }
 }

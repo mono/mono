@@ -14,7 +14,7 @@ namespace System.Windows.Forms {
 	//
 	// </summary>
 
-        //public class ListBox : ListControl {
+    public class ListBox : ListControl {
 
 		//
 		//  --- Constructor
@@ -443,14 +443,14 @@ namespace System.Windows.Forms {
 		//{
 		//	throw new NotImplementedException ();
 		//}
-//////////////////////
+		
 		//
 		// <summary>
 		//	This is only a template.  Nothing is implemented yet.
 		// This is a subclass
 		// </summary>
 
-			//public class ListBox.SelectedObjectCollection :  IList, ICollection, IEnumerable {
+			public class SelectedObjectCollection :  IList, ICollection, IEnumerable {
 
 			//
 			//  --- Constructor
@@ -519,16 +519,14 @@ namespace System.Windows.Forms {
 			//{
 			//	throw new NotImplementedException ();
 			//}
-		// }End of subclass
-	/////
-	///
+		 }//End of subclass
 
 			// <summary>
 			//	This is only a template.  Nothing is implemented yet.
 			//
 			// </summary>
 
-			//public class ListBox.ObjectCollection : IList, ICollection {
+			public class ObjectCollection : IList, ICollection {
 
 			//
 			//  --- Constructor
@@ -637,14 +635,14 @@ namespace System.Windows.Forms {
 			//{
 			//	throw new NotImplementedException ();
 			//}
-		// }//end of SubClass
+		 }//end of SubClass
 
 			// <summary>
 			//	This is only a template.  Nothing is implemented yet.
 			//
 			// </summary>
 
-			//public class ListBox.SelectedIndexCollection :  IList, ICollection, IEnumerable {
+			public class SelectedIndexCollection :  IList, ICollection, IEnumerable {
 
 			//
 			//  --- Constructor
@@ -705,9 +703,6 @@ namespace System.Windows.Forms {
 			//{
 			//	throw new NotImplementedException ();
 			//}
-		// }//End of subclass
-
-//////////////////////
-
-	// }
+		 }//End of subclass
+	 }
 }

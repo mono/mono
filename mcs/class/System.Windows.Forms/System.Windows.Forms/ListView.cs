@@ -14,7 +14,7 @@ namespace System.Windows.Forms {
 	//
 	// </summary>
 
-        //public class ListView : Control {
+    public class ListView : Control {
 
 		//
 		//  --- Constructor
@@ -1099,7 +1099,7 @@ namespace System.Windows.Forms {
 	//
 	// </summary>
 
-	//public class ListView.CheckedIndexCollection :  IList, ICollection, IEnumerable {
+	public class CheckedIndexCollection :  IList, ICollection, IEnumerable {
 
 	//
 	//  --- Constructor
@@ -1163,6 +1163,6 @@ namespace System.Windows.Forms {
 	//{
 	//	throw new NotImplementedException ();
 	//}
-	// }
-	// }
+	 }
+   }
 }

@@ -3,6 +3,7 @@
 //
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
+//	Partially completed by Dennis Hayes (dennish@raytek.com)
 //
 // (C) 2002 Ximian, Inc
 //
@@ -14,32 +15,31 @@ namespace System.Windows.Forms {
 	//
 	// </summary>
 
-        //public sealed class LayoutEventArgs : EventArgs {
-
+    public sealed class LayoutEventArgs : EventArgs {
+		private Control affectedcontrol;
+		private string affectedproperty;
 		//
 		//  --- Constructor
 		//
-		//[MonoTODO]
-		//public LayoutEventArgs (Control affectedControl, string affectedProperty)
-		//{
-		//	throw new NotImplementedException ();
-		//}
+		public LayoutEventArgs (Control affectedControl, string affectedProperty)
+		{
+			affectedproperty = affectedProperty;
+			affectedcontrol = affectedControl;
+		}
 
-		//
+		
 		//  --- Public Properties
-		//
-		//[MonoTODO]
-		//public Control AffectedControl {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		//[MonoTODO]
-		//public string AffectedProperty {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
+		
+		public Control AffectedControl {
+			get {
+				return affectedcontrol;
+			}
+		}
+		public string AffectedProperty {
+			get {
+				return affectedproperty;
+			}
+		}
 
 		//
 		//  --- Public Methods
@@ -54,5 +54,5 @@ namespace System.Windows.Forms {
 		//{
 		//	throw new NotImplementedException ();
 		//}
-	// }
+	 }
 }

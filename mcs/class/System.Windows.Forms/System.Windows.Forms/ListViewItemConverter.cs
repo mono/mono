@@ -14,7 +14,7 @@ namespace System.Windows.Forms {
 	//
 	// </summary>
 
-        //public class ListViewItemConverter : ExpandableObjectConverter {
+    public class ListViewItemConverter : ExpandableObjectConverter {
 
 		//
 		//  --- Constructor
@@ -214,5 +214,5 @@ namespace System.Windows.Forms {
 		//{
 		//	throw new NotImplementedException ();
 		//}
-	// }
+	 }
 }

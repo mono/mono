@@ -14,7 +14,7 @@ namespace System.Windows.Forms {
 	//
 	// </summary>
 
-        //public class LinkLabel : Label, IButtonControl {
+    public class LinkLabel : Label, IButtonControl {
 
 		//
 		//  --- Constructor
@@ -399,7 +399,7 @@ namespace System.Windows.Forms {
 			//
 			// </summary>
 
-			//public class LinkLabel.LinkCollection :  IList, ICollection, IEnumerable {
+			public class LinkCollection :  IList, ICollection, IEnumerable {
 
 			//
 			//  --- Constructor
@@ -488,6 +488,6 @@ namespace System.Windows.Forms {
 			//{
 			//	throw new NotImplementedException ();
 			//}
-		//}End of subclass
-	//} End of Class
+		}//End of subclass
+	}// End of Class
 }

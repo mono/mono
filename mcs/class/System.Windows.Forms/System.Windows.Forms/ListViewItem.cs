@@ -14,7 +14,7 @@ namespace System.Windows.Forms {
 	//
 	// </summary>
 
-        //public class ListViewItem :  ICloneable, ISerializable {
+    public class ListViewItem :  ICloneable, ISerializable {
 
 		//
 		//  --- Constructor
@@ -386,7 +386,7 @@ namespace System.Windows.Forms {
 	//
 	// </summary>
 
-	//public class ListViewItem.ListViewSubItem {
+	public class ListViewSubItem {
 
 	//
 	//  --- Constructor
@@ -470,9 +470,6 @@ namespace System.Windows.Forms {
 	//{
 	//	throw new NotImplementedException ();
 	//}
-	// }
-
-
-
-	// }
+	 }
+   }
 }

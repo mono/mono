@@ -3,6 +3,7 @@
 //
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
+//	Partially completed by Dennis Hayes (dennish@raytek.com)
 //
 // (C) 2002 Ximian, Inc
 //
@@ -10,20 +11,17 @@
 namespace System.Windows.Forms {
 
 	// <summary>
-	//	This is only a template.  Nothing is implemented yet.
-	//
 	// </summary>
 
-        //public class KeyEventArgs : EventArgs {
-
+    public class KeyEventArgs : EventArgs {
+		private Keys keydata;
 		//
 		//  --- Constructor
 		//
-		//[MonoTODO]
-		//public KeyEventArgs ( Keys keyData)
-		//{
-		//	throw new NotImplementedException ();
-		//}
+		public KeyEventArgs ( Keys keyData)
+		{
+			keydata = keyData;
+		}
 
 		//
 		//  --- Public Properties
@@ -93,5 +91,5 @@ namespace System.Windows.Forms {
 		//{
 		//	throw new NotImplementedException ();
 		//}
-	// }
+	 }
 }

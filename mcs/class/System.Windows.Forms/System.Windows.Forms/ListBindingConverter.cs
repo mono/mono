@@ -14,7 +14,7 @@ namespace System.Windows.Forms {
 	//
 	// </summary>
 
-        //public class ListBindingConverter : TypeConverter {
+    public class ListBindingConverter : TypeConverter {
 
 		//
 		//  --- Constructor
@@ -208,5 +208,5 @@ namespace System.Windows.Forms {
 		//{
 		//	throw new NotImplementedException ();
 		//}
-	// }
+	 }
 }

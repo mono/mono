@@ -11,8 +11,8 @@
 namespace System.Windows.Forms
 {
 	[ComVisible(true)]
-	[Guid("")]
-	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+	// FixMe [Guid("")]
+	// FixMe [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	public interface IWin32Window
 	{
 		IntPtr Handle {get;}

@@ -14,7 +14,7 @@ namespace System.Windows.Forms {
 	//
 	// </summary>
 
-        //public class KeysConverter : TypeConverter, IComparer {
+    public class KeysConverter : TypeConverter, IComparer {
 
 		//
 		//  --- Constructor
@@ -208,5 +208,5 @@ namespace System.Windows.Forms {
 		//{
 		//	throw new NotImplementedException ();
 		//}
-	// }
+	 }
 }

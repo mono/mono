@@ -14,7 +14,7 @@ namespace System.Windows.Forms {
 	//
 	// </summary>
 
-        //public abstract class ListControl : Control {
+    public abstract class ListControl : Control {
 
 		//
 		//  --- Public Properties
@@ -280,5 +280,5 @@ namespace System.Windows.Forms {
 		//{
 		//	throw new NotImplementedException ();
 		//}
-	// }
+	 }
 }

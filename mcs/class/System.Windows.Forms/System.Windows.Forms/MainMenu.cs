@@ -1,32 +1,32 @@
-////
-//// System.Windows.Forms.MainMenu.cs
-////
-//// Author:
-////   stubbed out by Paul Osman (paul.osman@sympatico.ca)
-////
-//// (C) 2002 Ximian, Inc
-////
 //
+// System.Windows.Forms.MainMenu.cs
 //
-//using System;
-//using System.Reflection;
-//using System.Globalization;
-////using System.Windows.Forms.AccessibleObject.IAccessible;
-//using System.Drawing;
+// Author:
+//   stubbed out by Paul Osman (paul.osman@sympatico.ca)
 //
-//namespace System.Windows.Forms {
+// (C) 2002 Ximian, Inc
 //
-//	/// <summary>
-//	/// ToDo note:
-//	///  - Nothing is implemented
-//	/// </summary>
-//
-//	public class MainMenu : Menu  {
-//
-//		//
-//		//  --- Constructors
-//		//
-//
+
+
+using System;
+using System.Reflection;
+using System.Globalization;
+//using System.Windows.Forms.AccessibleObject.IAccessible;
+using System.Drawing;
+
+namespace System.Windows.Forms {
+
+	/// <summary>
+	/// ToDo note:
+	///  - Nothing is implemented
+	/// </summary>
+
+	public class MainMenu : Menu  {
+
+		//
+		//  --- Constructors
+		//
+
 //		public MainMenu() 
 //		{
 //			throw new NotImplementedException ();
@@ -252,6 +252,5 @@
 //				throw new NotImplementedException();
 //			}
 //		}
-//	}
-//}
-//
+	}
+}

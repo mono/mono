@@ -3,6 +3,7 @@
 //
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
+//	Partially completed by Dennis Hayes (dennish@raytek.com)
 //
 // (C) 2002 Ximian, Inc
 //
@@ -10,25 +11,25 @@
 namespace System.Windows.Forms {
 
 	// <summary>
-	//	This is only a template.  Nothing is implemented yet.
-	//
 	// </summary>
 
-        //public class LabelEditEventArgs : EventArgs {
-
+    public class LabelEditEventArgs : EventArgs {
+		private int item;
+		private string label;
 		//
 		//  --- Constructor
 		//
-		//[MonoTODO]
-		//public LabelEditEventArgs (int val)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//public LabelEditEventArgs (int val, string str)
-		//{
-		//	throw new NotImplementedException ();
-		//}
+		public LabelEditEventArgs (int item)
+		{
+			this.item = item;
+			// Fixme leave label uninitilized?
+		}
+
+		public LabelEditEventArgs (int item, string label)
+		{
+			this.item = item;
+			this.label = label;
+		}
 
 		//
 		//  --- Public Properties
@@ -42,18 +43,16 @@ namespace System.Windows.Forms {
 		//		throw new NotImplementedException ();
 		//	}
 		//}
-		//[MonoTODO]
-		//public int Item {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		//[MonoTODO]
-		//public string Label {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
+		public int Item {
+			get {
+				return item;
+			}
+		}
+		public string Label {
+			get {
+				return label;
+			}
+		}
 
 		//
 		//  --- Public Methods
@@ -68,5 +67,5 @@ namespace System.Windows.Forms {
 		//{
 		//	throw new NotImplementedException ();
 		//}
-	// }
+	 }
 }

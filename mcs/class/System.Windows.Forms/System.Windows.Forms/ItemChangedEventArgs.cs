@@ -14,7 +14,7 @@ namespace System.Windows.Forms {
 	//
 	// </summary>
 
-        //public class ItemChangedEventArgs : EventArgs {
+        public class ItemChangedEventArgs : EventArgs {
 
 		//
 		//  --- Public Properties
@@ -39,5 +39,5 @@ namespace System.Windows.Forms {
 		//{
 		//	throw new NotImplementedException ();
 		//}
-	// }
+	 }
 }

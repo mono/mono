@@ -11,6 +11,6 @@ namespace System.Windows.Forms {
 	[Serializable]
 	public delegate void LabelEditEventHandler (
 	object sender,
-	LabelEditEventAgs e
+	LabelEditEventArgs e
 	);
 }

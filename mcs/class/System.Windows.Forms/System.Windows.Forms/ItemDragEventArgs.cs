@@ -3,6 +3,7 @@
 //
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
+//	Partially completed by Dennis Hayes (dennish@raytek.com)
 //
 // (C) 2002 Ximian, Inc
 //
@@ -14,37 +15,34 @@ namespace System.Windows.Forms {
 	//
 	// </summary>
 
-        //public class ItemDragEventArgs : EventArgs {
-
+    public class ItemDragEventArgs : EventArgs {
+		private MouseButtons buttons;
+		private object itemdrageobject;
 		//
 		//  --- Constructor
 		//
-		//[MonoTODO]
-		//public ItemDragEventArgs(MouseButtons bttns)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//public ItemDragEventArgs(MouseButtons bttns, object o)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-
-		//
+		public ItemDragEventArgs(MouseButtons bttns)
+		{
+			buttons = bttns;
+		}
+		public ItemDragEventArgs(MouseButtons bttns, object o)
+		{
+			buttons = bttns;
+			itemdrageobject = o;
+		}
+		
 		//  --- Public Properties
-		//
-		//[MonoTODO]
-		//public MouseButtons Button {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		//[MonoTODO]
-		//public object Item {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
+		
+		public MouseButtons Button {
+			get {
+				return buttons;
+			}
+		}
+		public object Item {
+			get {
+				return itemdrageobject;
+			}
+		}
 
 		//
 		//  --- Public Methods
@@ -59,5 +57,5 @@ namespace System.Windows.Forms {
 		//{
 		//	throw new NotImplementedException ();
 		//}
-	// }
+	 }
 }

@@ -3,6 +3,7 @@
 //
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
+//	Partially completed by Dennis Hayes (dennish@raytek.com)
 //
 // (C) 2002 Ximian, Inc
 //
@@ -14,41 +15,40 @@ namespace System.Windows.Forms {
 	//
 	// </summary>
 
-        //public class ItemCheckEventArgs : EventArgs {
-
+        public class ItemCheckEventArgs : EventArgs {
+			private int index;
+			private CheckState newcheckvalue;
+			private CheckState currentcheckvalue;
 		//
 		//  --- Constructor
 		//
-		//[MonoTODO]
-		//public ItemCheckEventArgs(int index,  CheckState newCheckValue CheckState currentValue )
-		//{
-		//	throw new NotImplementedException ();
-		//}
-
-		//
+		public ItemCheckEventArgs(int index,  CheckState newCheckValue, CheckState currentValue )
+		{
+			this.index = index;
+			newcheckvalue = newCheckValue;
+			currentcheckvalue = currentValue;
+		}
+		
 		//  --- Public Properties
-		//
-		//[MonoTODO]
-		//public CheckState CurrentValue {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		//[MonoTODO]
-		//public int Index {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		//[MonoTODO]
-		//public CheckState NewValue {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//	set {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
+		
+		public CheckState CurrentValue {
+			get {
+				return currentcheckvalue;
+			}
+		}
+		public int Index {
+			get {
+				return index;
+			}
+		}
+		public CheckState NewValue {
+			get {
+				return newcheckvalue;
+			}
+			set {
+				newcheckvalue = value;
+			}
+		}
 
 		//
 		//  --- Public Methods
@@ -63,5 +63,5 @@ namespace System.Windows.Forms {
 		//{
 		//	throw new NotImplementedException ();
 		//}
-	// }
+	 }
 }
