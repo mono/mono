@@ -112,7 +112,7 @@ namespace Mono.MonoBASIC
 		// An out-of-band stack.
 		//
 		Stack oob_stack;
-		
+
 		DoOptions do_type;
 		//
 		// Switch stack.
@@ -478,12 +478,11 @@ type_spec_declaration
 	;
 	
 class_declaration
-	: 
-	  CLASS IDENTIFIER /* opt_class_interfaces */ EOL opt_class_base EOL
+	: CLASS IDENTIFIER EOL opt_class_base 
 	  {
 		Class new_class;
 		string name;
-
+		
 		name = MakeName ((string) $2);
 
 		new_class = new Class (current_container, name, current_modifiers, 
@@ -497,10 +496,8 @@ class_declaration
 	  END CLASS EOL
 	  {
 		Class new_class = (Class) current_container;
-
-		if ($4 != null)
-			new_class.Bases = (ArrayList) $4;
-
+		new_class.Bases = (ArrayList) $4;	
+	
 		current_container = current_container.Parent;
 		CheckDef (current_container.AddClass (new_class), new_class.Name, new_class.Location);
 
@@ -510,11 +507,11 @@ class_declaration
 
 opt_class_base
 	: /* empty */		{ $$ = null; }
-	| class_base		{ $$ = $1;   }
+	| class_base		{ $$ = $1; }
 	;
 
 class_base
-	: INHERITS type_list { $$ = $2; }
+	: INHERITS type_list EOL { $$ = $2; }
 	;
 	
 opt_modifiers
@@ -856,15 +853,20 @@ opt_set_parameter
 			
 field_declaration
 	: opt_dim_stmt 
-	  variable_declarators opt_type_spec EOL
-	  { 
-		Expression type = (Expression) $3;
+	  variable_declarators EOL
+	  {   		  
 		int mod = (int) current_modifiers;
 		
+
+		VariableDeclaration.FixupTypes ((ArrayList) $2);
+		
+		if (current_container is Module)
+			mod = mod | Modifiers.STATIC;
+					
 		foreach (VariableDeclaration var in (ArrayList) $2){
 			Location l = var.Location;
 
-			Field field = new Field (type, mod, var.identifier, 
+			Field field = new Field (var.type, mod, var.identifier, 
 						 var.expression_or_array_initializer, 
 						 (Attributes) null, l);
 
@@ -874,21 +876,21 @@ field_declaration
 	;
 	
 withevents_declaration
-	: WITHEVENTS variable_declarators AS type EOL
+	: WITHEVENTS variable_declarators EOL
 	  {
 	  	/* WithEvents Fields must be resolved into properties
 	  	   with a bit of magic behind the scenes */
 	  	  
-	  	 
+	  	VariableDeclaration.FixupTypes ((ArrayList) $2);
+	  	
 		foreach (VariableDeclaration var in (ArrayList) $2) {
 			// 1 - We create a private field
 			Location l = var.Location;
 			Property prop;
-			Expression type = (Expression) $4;
 			if ((current_modifiers & Modifiers.STATIC) > 0) 
 				Report.Error (30234, l, "'Static' is not valid on a WithEvents declaration.");
 			
-			Field field = new Field (type, Modifiers.PRIVATE, "_" + var.identifier, 
+			Field field = new Field (var.type, Modifiers.PRIVATE, "_" + var.identifier, 
 						 var.expression_or_array_initializer, 
 						 (Attributes) null, l);
 
@@ -896,7 +898,7 @@ withevents_declaration
 			
 			// 2 - Public property
 				
-			prop = BuildSimpleProperty (type, (string) var.identifier, 
+			prop = BuildSimpleProperty (var.type, (string) var.identifier, 
 						field, (int) current_modifiers, 
 					     	(Attributes) current_attributes, l);
 			
@@ -1001,7 +1003,7 @@ formal_parameter_list
 		pars_list.CopyTo (pars);
 	  	$$ = new Parameters (pars, null, lexer.Location); 
 	  } 
-	/*| fixed_parameters COMMA parameter_array
+	| fixed_parameters COMMA parameter_array
 	  {
 		ArrayList pars_list = (ArrayList) $1;
 
@@ -1013,7 +1015,7 @@ formal_parameter_list
 	| parameter_array 
 	  {
 		$$ = new Parameters (null, (Parameter) $1, lexer.Location);
-	  }*/
+	  }
 	;
 
 fixed_parameters
@@ -1042,6 +1044,19 @@ fixed_parameter
 	  }
 	;
 	
+parameter_array
+	: PARAM_ARRAY IDENTIFIER opt_parens AS type 
+	  { 
+		$$ = new Parameter ((Expression) $5, (string) $2, Parameter.Modifier.PARAMS, null);
+		// note  ("type must be a single-dimension array type"); 
+	  }
+	;
+		
+opt_parens
+	: /* empty */
+	| OPEN_PARENS CLOSE_PARENS
+	;
+			
 opt_type_spec
 	: /* empty */	{ $$ = (Expression) TypeManager.system_object_expr; }
 	| AS type 	{ $$ = (Expression) $2; };
@@ -1054,6 +1069,8 @@ opt_parameter_modifier
 
 parameter_modifier
 	: BYREF			{ $$ = Parameter.Modifier.REF | Parameter.Modifier.ISBYREF; }
+	| BYVAL			{ $$ = Parameter.Modifier.NONE; } /* FIXME */
+	| OPTIONAL		{ $$ = Parameter.Modifier.NONE; } /* FIXME */
 	;	
 
 opt_actual_parameters 
@@ -1677,16 +1694,64 @@ variable_declarators
 	;
 
 variable_declarator
-	: IDENTIFIER ASSIGN variable_initializer
+	: variable_identifier opt_type_decl opt_variable_initializer
 	  {
-		$$ = new VariableDeclaration ((string) $1, $3, lexer.Location);
-	  }
-	| IDENTIFIER
-	  {
-		$$ = new VariableDeclaration ((string) $1, null, lexer.Location);
+	  	VariableDeclaration v = new VariableDeclaration ((string) $1, (Expression) $2, (Expression) $3, lexer.Location, null);
+	  	$$ = v;
 	  }
 	;
+
+variable_identifier
+	: IDENTIFIER opt_array_name_modifier 
+	  {
+	  	$$ = $1;
+	  }
+	;		
 	
+opt_type_decl
+	: /* empty */	
+	  {
+	  	$$ =  null;
+	  }
+	| AS type opt_argument_list /* FIXME must handle argument list*/
+	  {
+	  	$$ = $2;
+	  }
+	| AS NEW type opt_argument_list /* FIXME must handle NEW clause + argument list */
+	  {
+	  	$$ = $3;
+	  }
+	;
+		
+opt_array_name_modifier
+	: /* empty */
+	| array_type_modifier
+	| array_initialization_modifier	
+	;
+	
+array_type_modifier
+	: OPEN_PARENS opt_rank_list CLOSE_PARENS
+	;
+	
+opt_rank_list
+	: /* empty */
+	| rank_list
+	;
+	
+rank_list
+	: integer_literal
+	/*| rank_list COMMA rank_list		*/
+	;
+		
+opt_variable_initializer
+	: /* empty */ { $$ = null; }
+	| ASSIGN variable_initializer  { $$ = null; }
+	;
+	
+array_initialization_modifier
+	: /* empty */
+	;	
+		
 variable_initializer
 	: expression
 	  {
@@ -1696,12 +1761,9 @@ variable_initializer
 	  {
 		$$ = $1;
 	  }
-	| STACKALLOC type OPEN_BRACKET expression CLOSE_BRACKET
-	  {
-		$$ = new StackAlloc ((Expression) $2, (Expression) $4, lexer.Location);
-	  } */
+	*/
 	;	
-	
+		
 /* 
  * The following is from Rhys' grammar:
  * > Types in local variable declarations must be recognized as 
@@ -2184,8 +2246,8 @@ type
 	         */
 		$$ = DecomposeQI ((string) $1, lexer.Location); 
 	  }
-	| builtin_types /*
-	| array_type
+	| builtin_types 
+	/*| array_type
 	| pointer_type */
 	;
 
@@ -2214,6 +2276,48 @@ namespace_or_type_name
 	: qualified_identifier
 	;
 
+array_type
+	: type rank_specifiers
+	  {
+		$$ = new ComposedCast ((Expression) $1, (string) $2, lexer.Location);
+	  }
+	;
+	
+rank_specifiers
+	: rank_specifier opt_rank_specifier
+	  {
+		  $$ = (string) $2 + (string) $1;
+	  }
+        ;
+
+rank_specifier
+	: OPEN_BRACKET opt_dim_separators CLOSE_BRACKET
+	  {
+		$$ = "(" + (string) $2 + ")";
+	  }
+	;
+
+opt_dim_separators
+	: /* empty */
+	  {
+		$$ = "";
+	  }
+	| dim_separators
+	  {
+		  $$ = $1;
+	  }		  
+	;
+
+dim_separators
+	: COMMA
+	  {
+		$$ = ",";
+	  }
+	| dim_separators COMMA
+	  {
+		$$ = (string) $1 + ",";
+	  }
+	;	
 /* Built-in / Integral types */
 builtin_types
 	: OBJECT	{ $$ = TypeManager.system_object_expr; }
@@ -2355,18 +2459,45 @@ public class VariableDeclaration {
 	public object expression_or_array_initializer;
 	public Location Location;
 	public Attributes OptAttributes;
-
-	public VariableDeclaration (string id, object eoai, Location l, Attributes opt_attrs)
+	public Expression type;
+	
+	public VariableDeclaration (string id, object eoai, Location l, Attributes opt_attrs) :	this 
+					(id, TypeManager.system_object_expr, eoai, l, opt_attrs)
+	{
+	}
+	
+	public VariableDeclaration (string id, Expression t, object eoai, Location l, Attributes opt_attrs)
 	{
 		this.identifier = id;
 		this.expression_or_array_initializer = eoai;
 		this.Location = l;
 		this.OptAttributes = opt_attrs;
-	}
+		this.type = t;
+	}	
 
 	public VariableDeclaration (string id, object eoai, Location l) : this (id, eoai, l, null)
 	{
 	}
+	
+	public static void FixupTypes (ArrayList vars)
+	{
+		int varcount = 	vars.Count;
+		VariableDeclaration lf = (VariableDeclaration) vars[varcount - 1];
+			
+		if (lf.type == null)
+			lf.type = TypeManager.system_object_expr;
+			
+		Expression cur_type = lf.type;
+		int n = varcount - 1;
+		
+		while (n >= 0) {
+			VariableDeclaration var = (VariableDeclaration) vars[n--];
+			if (var.type == null)
+				var.type = cur_type;
+			else
+				cur_type = var.type;
+		}
+	}			
 }
 
 public Property BuildSimpleProperty (Expression p_type, string name, 
@@ -2493,7 +2624,7 @@ public override int parse ()
 
 	lexer = new Tokenizer (input, name, defines);
 	StringBuilder value = new StringBuilder ();
-//yacc_verbose_flag=true;
+	//yacc_verbose_flag=true;
 	try 
 	{
 		if (yacc_verbose_flag)
@@ -2503,9 +2634,9 @@ public override int parse ()
 	} 
 	catch (Exception e)
 	{
-		//Console.WriteLine (lexer.location + "  : Parsing error in " + lexer.ref_name);
+		Console.WriteLine (lexer.location + "  : Parsing error in " + lexer.ref_name);
 		Report.Error (9999, lexer.Location, "");
-		//Console.WriteLine (e);
+		Console.WriteLine (e);
 	}
 	
 	return Report.Errors;
@@ -2514,3 +2645,16 @@ public override int parse ()
 /* end end end */
 }
 
+/*
+variable_declarator
+	: IDENTIFIER ASSIGN variable_initializer
+	  {
+		$$ = new VariableDeclaration ((string) $1, $3, lexer.Location);
+	  }
+	| IDENTIFIER
+	  {
+		$$ = new VariableDeclaration ((string) $1, null, lexer.Location);
+	  }
+	;
+
+*/	
