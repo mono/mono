@@ -1,3 +1,8 @@
+2002/05/01  Nick Drochak <ndrochak@gol.com>
+
+	* ArrayListTest.cs (TestCopyTo) : Make assert messages unique and
+	avoid possible MS.NET bug when test is run on .NET.
+
 2002/04/30  Nick Drochak <ndrochak@gol.com>
 
 	* ArrayListTest.cs (TestInsertRange) : Make assert messages unique.

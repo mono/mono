@@ -59,7 +59,16 @@ public class ArrayListTest : TestCase {
 					     coll[i], al1[i]);
 			}
 		}
-		// TODO - multi-dim ICollection ctor?
+		{
+			try {
+				Char[,] c1 = new Char[2,2];
+				ArrayList al1 = new ArrayList(c1);
+			} catch (Exception e) {
+				Fail ("Should not fail with multi-dimensional array in constructor. e=" 
+					+ e.ToString());
+			}
+		}
+
 		{
 			bool errorThrown = false;
 			try {
@@ -418,7 +427,7 @@ public class ArrayListTest : TestCase {
 			} catch (Exception e) {
 				Fail ("Incorrect exception thrown at 1: " + e.ToString());
 			}
-			Assert("error not thrown", errorThrown);
+			Assert("error not thrown 1", errorThrown);
 		}
 		{
 			bool errorThrown = false;
@@ -432,21 +441,28 @@ public class ArrayListTest : TestCase {
 			} catch (Exception e) {
 				Fail ("Incorrect exception thrown at 2: " + e.ToString());
 			}
-			Assert("error not thrown", errorThrown);
+			Assert("error not thrown 2", errorThrown);
 		}
 		{
 			bool errorThrown = false;
 			try {
-				Char[,] c1 = new Char[2,2];
+				// This appears to be a bug in the ArrayList Constructor.
+				// It throws a RankException if a multidimensional Array
+				// is passed. The docs imply that an IEnumerator is used
+				// to retrieve the items from the collection, so this should
+				// work.  In anycase this test is for CopyTo, so use what
+				// works on both platforms.
+				//Char[,] c1 = new Char[2,2];
+				Char[] c1 = new Char[2];
 				ArrayList al1 = new ArrayList(c1);
 				Char[] c2 = new Char[2];
 				al1.CopyTo(c2, 2);
-			} catch (RankException) {
+			} catch (ArgumentException) {
 				errorThrown = true;
 			} catch (Exception e) {
 				Fail ("Incorrect exception thrown at 3: " + e.ToString());
 			}
-			Assert("error not thrown", errorThrown);
+			Assert("error not thrown 3", errorThrown);
 		}
 		{
 			bool errorThrown = false;
@@ -460,7 +476,7 @@ public class ArrayListTest : TestCase {
 			} catch (Exception e) {
 				Fail ("Incorrect exception thrown at 4: " + e.ToString());
 			}
-			Assert("error not thrown", errorThrown);
+			Assert("error not thrown 4", errorThrown);
 		}
 		{
 			bool errorThrown = false;
@@ -474,7 +490,7 @@ public class ArrayListTest : TestCase {
 			} catch (Exception e) {
 				Fail ("Incorrect exception thrown at 5: " + e.ToString());
 			}
-			Assert("error not thrown", errorThrown);
+			Assert("error not thrown 5", errorThrown);
 		}
 		{
 			bool errorThrown = false;
@@ -488,12 +504,12 @@ public class ArrayListTest : TestCase {
 			} catch (Exception e) {
 				Fail ("Incorrect exception thrown at 6: " + e.ToString());
 			}
-			Assert("error not thrown", errorThrown);
+			Assert("error not thrown 6", errorThrown);
 		}
 		{
 			bool errorThrown = false;
 			try {
-				String[] c1 = new String[2];
+				String[] c1 = {"String", "array"};
 				ArrayList al1 = new ArrayList(c1);
 				Char[] c2 = new Char[2];
 				al1.CopyTo(c2, 0);
@@ -502,7 +518,7 @@ public class ArrayListTest : TestCase {
 			} catch (Exception e) {
 				Fail ("Incorrect exception thrown at 7: " + e.ToString());
 			}
-			Assert("error not thrown", errorThrown);
+			Assert("error not thrown 7", errorThrown);
 		}
 
 		Char[] orig = {'a', 'b', 'c', 'd'};
