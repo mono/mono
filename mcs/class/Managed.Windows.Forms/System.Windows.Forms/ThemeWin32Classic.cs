@@ -25,9 +25,14 @@
 //
 //
 //
-// $Revision: 1.39 $
+// $Revision: 1.40 $
 // $Modtime: $
 // $Log: ThemeWin32Classic.cs,v $
+// Revision 1.40  2004/10/05 09:04:31  ravindra
+// 	- Added DrawListView method and ListViewDefaultSize property.
+// 	- Changed ControlPaint method calls to CPDrawXXX wherever possible.
+// 	- Changed DOS style CRLF to Unix format (dos2unix).
+//
 // Revision 1.39  2004/10/04 07:09:37  jordi
 // fixes right button position causing right button not showing on horizontal scrollbars
 //
@@ -396,7 +401,7 @@ namespace System.Windows.Forms
 
 		public override Size ButtonBaseDefaultSize {
 			get {
-				return new Size(75, 23);
+				return new Size (75, 23);
 			}
 		}
 		#endregion	// ButtonBase
@@ -681,6 +686,21 @@ namespace System.Windows.Forms
 		}
 		#endregion	// Label
 
+		#region ListView
+		// Drawing
+		public override void DrawListView (Graphics dc, Rectangle clip_rectangle, ListView control)
+		{
+			// FIXME: TODO
+		}
+
+		// Sizing
+		public override Size ListViewDefaultSize {
+			get {
+				return new Size (121, 97);
+			}
+		}
+		#endregion	// ListView
+
 		#region Panel
 		public override Size PanelDefaultSize {
 			get {
@@ -756,7 +776,7 @@ namespace System.Windows.Forms
 		
 		public override Size ProgressBarDefaultSize {
 			get {
-				return new Size(100, 23);
+				return new Size (100, 23);
 			}
 		}
 
@@ -943,7 +963,7 @@ namespace System.Windows.Forms
 
 		public override Size RadioButtonDefaultSize {
 			get {
-				return new Size(104,24);
+				return new Size (104,24);
 			}
 		}
 		#endregion	// RadioButton
@@ -1069,7 +1089,7 @@ namespace System.Windows.Forms
 
 			/* Thumb */
 			if (bar.Enabled)
-				DrawScrollButtonPrimitive (dc, thumb_pos, ButtonState.Normal);			
+				DrawScrollButtonPrimitive (dc, thumb_pos, ButtonState.Normal);
 		}
 
 		public override int ScrollBarButtonSize {
@@ -1182,8 +1202,8 @@ namespace System.Windows.Forms
 		#endregion	// StatusBar
 
 		#region ToolBar
-		public  override void DrawToolBar (Graphics dc, Rectangle clip_area, ToolBar control) {
-			StringFormat	format = new StringFormat();
+		public  override void DrawToolBar (Graphics dc, Rectangle clip_rectangle, ToolBar control) {
+			StringFormat	format = new StringFormat ();
 
 			if (control.textAlignment == ToolBarTextAlign.Underneath) {
 				format.LineAlignment = StringAlignment.Center;
@@ -1192,7 +1212,6 @@ namespace System.Windows.Forms
 				format.LineAlignment = StringAlignment.Center;
 				format.Alignment = StringAlignment.Near;
 			}
-
 			
 			// Exclude the area for divider
 			Rectangle paint_area = new Rectangle (0, ToolBarGripWidth / 2, 
@@ -1257,7 +1276,7 @@ namespace System.Windows.Forms
 					/* Draw the button frame, only if it is not a separator */
 					if (flat) { 
 						if (button.Pushed || button.Pressed)
-							ControlPaint.DrawBorder3D (dc, buttonArea, Border3DStyle.SunkenOuter,
+							CPDrawBorder3D (dc, buttonArea, Border3DStyle.SunkenOuter,
 								Border3DSide.All);
 						else if (button.Hilight) {
 							dc.DrawRectangle (ResPool.GetPen (ColorButtonText), buttonArea);
@@ -1270,19 +1289,19 @@ namespace System.Windows.Forms
 					}
 					else { // normal toolbar
 						if (button.Pushed || button.Pressed) {
-							ControlPaint.DrawBorder3D (dc, buttonArea, Border3DStyle.SunkenInner,
+							CPDrawBorder3D (dc, buttonArea, Border3DStyle.SunkenInner,
 								Border3DSide.All);
 							if (! ddRect.IsEmpty) {
-								ControlPaint.DrawBorder3D (dc, ddRect, Border3DStyle.SunkenInner,
+								CPDrawBorder3D (dc, ddRect, Border3DStyle.SunkenInner,
 									Border3DSide.Left);
 								buttonArea.Width -= this.ToolBarDropDownWidth;
 							}
 						}
 						else {
-							ControlPaint.DrawBorder3D (dc, buttonArea, Border3DStyle.RaisedInner,
+							CPDrawBorder3D (dc, buttonArea, Border3DStyle.RaisedInner,
 								Border3DSide.All);
 							if (! ddRect.IsEmpty) {
-								ControlPaint.DrawBorder3D (dc, ddRect, Border3DStyle.RaisedInner,
+								CPDrawBorder3D (dc, ddRect, Border3DStyle.RaisedInner,
 									Border3DSide.Left);
 								buttonArea.Width -= this.ToolBarDropDownWidth;
 							}
@@ -1340,7 +1359,7 @@ namespace System.Windows.Forms
 					if (button.Enabled)
 						dc.DrawString (button.Text, font, SystemBrushes.ControlText, txtRect, format);
 					else
-						ControlPaint.DrawStringDisabled (dc, button.Text, font, SystemColors.ControlLightLight,
+						CPDrawStringDisabled (dc, button.Text, font, SystemColors.ControlLightLight,
 							txtRect, format);
 				}
 
@@ -1359,7 +1378,7 @@ namespace System.Windows.Forms
 					if (button.Enabled)
 						dc.DrawString (button.Text, font, SystemBrushes.ControlText, txtRect, format);
 					else
-						ControlPaint.DrawStringDisabled (dc, button.Text, font, SystemColors.ControlLightLight,
+						CPDrawStringDisabled (dc, button.Text, font, SystemColors.ControlLightLight,
 							txtRect, format);
 				}
 
@@ -1371,34 +1390,33 @@ namespace System.Windows.Forms
 								imgRect.Height, button.ImageIndex);
 						else {
 							dc.FillRectangle (new SolidBrush (ColorGrayText), imgRect);
-							ControlPaint.DrawBorder3D (dc, imgRect, Border3DStyle.SunkenOuter,
+							CPDrawBorder3D (dc, imgRect, Border3DStyle.SunkenOuter,
 								Border3DSide.Right | Border3DSide.Bottom);
 						}
 					}
 					if (button.Enabled)
 						dc.DrawString (button.Text, font, SystemBrushes.ControlText, txtRect, format);
 					else
-						ControlPaint.DrawStringDisabled (dc, button.Text, font, SystemColors.ControlLightLight,
+						CPDrawStringDisabled (dc, button.Text, font, SystemColors.ControlLightLight,
 							txtRect, format);
 				}
 
 				else {
 					dc.FillRectangle (SystemBrushes.Control, toggleArea);
-					//dc.FillRectangle (new SolidBrush (Color.FromArgb(255, 180, 190, 214)), toggleArea);
 					if (! imgRect.IsEmpty) {
 						if (button.Enabled && image != null)
 							button.Parent.ImageList.Draw (dc, imgRect.X, imgRect.Y, imgRect.Width,
 								imgRect.Height, button.ImageIndex);
 						else {
 							dc.FillRectangle (new SolidBrush (ColorGrayText), imgRect);
-							ControlPaint.DrawBorder3D (dc, imgRect, Border3DStyle.SunkenOuter,
+							CPDrawBorder3D (dc, imgRect, Border3DStyle.SunkenOuter,
 								Border3DSide.Right | Border3DSide.Bottom);
 						}
 					}
 					if (button.Enabled)
 						dc.DrawString (button.Text, font, SystemBrushes.ControlText, txtRect, format);
 					else
-						ControlPaint.DrawStringDisabled (dc, button.Text, font, SystemColors.ControlLightLight,
+						CPDrawStringDisabled (dc, button.Text, font, SystemColors.ControlLightLight,
 							txtRect, format);
 				}
 				break;
@@ -1425,14 +1443,14 @@ namespace System.Windows.Forms
 							button.ImageIndex);
 					else {
 						dc.FillRectangle (new SolidBrush (ColorGrayText), imgRect);
-						ControlPaint.DrawBorder3D (dc, imgRect, Border3DStyle.SunkenOuter,
+						CPDrawBorder3D (dc, imgRect, Border3DStyle.SunkenOuter,
 							Border3DSide.Right | Border3DSide.Bottom);
 					}
 				}
 				if (button.Enabled)
 					dc.DrawString (button.Text, font, SystemBrushes.ControlText, txtRect, format);
 				else
-					ControlPaint.DrawStringDisabled (dc, button.Text, font, SystemColors.ControlLightLight,
+					CPDrawStringDisabled (dc, button.Text, font, SystemColors.ControlLightLight,
 						txtRect, format);
 				break;
 			}
@@ -1898,7 +1916,7 @@ namespace System.Windows.Forms
 		#region	VScrollBar
 		public override Size VScrollBarDefaultSize {
 			get {
-				return new Size(13,80);
+				return new Size (13,80);
 			}
 		}
 		#endregion	// VScrollBar
