@@ -1,3 +1,11 @@
+2005-02-25  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CRLDistributionPointsExtension.cs: Added more decoding code (but 
+	it's still incomplete).
+	* GeneralNames.cs: New. Share code between multiple extensions when
+	dealing with names.
+	* SubjectAltNameExtension.cs: Reworked to use GeneralNames.
+
 2004-07-15  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* KeyUsageExtension.cs: Added Encode to extension so it can be used 

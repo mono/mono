@@ -84,10 +84,32 @@ namespace Mono.Security.X509.Extensions {
 				Reasons = reasons;
 				CRLIssuer = issuer;
 			}
+
+			public DP (ASN1 dp)
+			{
+				for (int i = 0; i < dp.Count; i++) {
+					ASN1 el = dp[i];
+					switch (el.Tag) {
+					case 0xA0: // DistributionPointName OPTIONAL
+						for (int j = 0; j < el.Count; j++) {
+							ASN1 dpn = el [j];
+							if (dpn.Tag == 0xA0) {
+								DistributionPoint = new GeneralNames (dpn).ToString ();
+							}
+						}
+						break;
+					case 0xA1: // ReasonFlags OPTIONAL
+						break;
+					case 0xA2: // RelativeDistinguishedName
+						break;
+					}
+				}
+			}
 		}
 
 		[Flags]
-		public enum ReasonFlags {
+		public enum ReasonFlags
+		{
 			Unused = 0,
 			KeyCompromise = 1,
 			CACompromise = 2,
@@ -107,9 +129,15 @@ namespace Mono.Security.X509.Extensions {
 			dps = new ArrayList ();
 		}
 
-		public CRLDistributionPointsExtension (ASN1 asn1) : base (asn1) {}
+		public CRLDistributionPointsExtension (ASN1 asn1) 
+			: base (asn1)
+		{
+		}
 
-		public CRLDistributionPointsExtension (X509Extension extension) : base (extension) {}
+		public CRLDistributionPointsExtension (X509Extension extension) 
+			: base (extension)
+		{
+		}
 
 		protected override void Decode () 
 		{
@@ -119,7 +147,7 @@ namespace Mono.Security.X509.Extensions {
 				throw new ArgumentException ("Invalid CRLDistributionPoints extension");
 			// for every distribution point
 			for (int i=0; i < sequence.Count; i++) {
-				dps.Add (null);
+				dps.Add (new DP (sequence [i]));
 			}
 		}
 
@@ -130,18 +158,17 @@ namespace Mono.Security.X509.Extensions {
 		public override string ToString () 
 		{
 			StringBuilder sb = new StringBuilder ();
+			int i = 1;
 			foreach (DP dp in dps) {
 				sb.Append ("[");
-				sb.Append (dp.Reasons);
+				sb.Append (i++);
 				sb.Append ("]CRL Distribution Point");
 				sb.Append (Environment.NewLine);
 				sb.Append ("\tDistribution Point Name:");
-				sb.Append (dp.DistributionPoint);
-				sb.Append (Environment.NewLine);
 				sb.Append ("\t\tFull Name:");
 				sb.Append (Environment.NewLine);
-				sb.Append ("\t\t\tDirectory Address:");
-				sb.Append (dp.CRLIssuer);
+				sb.Append ("\t\t\t");
+				sb.Append (dp.DistributionPoint);
 				sb.Append (Environment.NewLine);
 			}
 			return sb.ToString ();

@@ -5,9 +5,7 @@
 //	Sebastien Pouliot <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-// (C) 2004 Novell (http://www.novell.com)
-//
-
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -72,45 +70,30 @@ namespace Mono.Security.X509.Extensions {
 	// TODO - incomplete (only rfc822Name, dNSName are supported)
 	public class SubjectAltNameExtension : X509Extension {
 		
-		private ArrayList rfc822Name;
-		private ArrayList dnsName;
-		private ArrayList ipAddr;
+		private GeneralNames _names;
 
-		public SubjectAltNameExtension () : base () 
+		public SubjectAltNameExtension ()
 		{
 			extnOid = "2.5.29.17";
+			_names = new GeneralNames ();
 		}
 
-		public SubjectAltNameExtension (ASN1 asn1) : base (asn1) {}
+		public SubjectAltNameExtension (ASN1 asn1)
+			: base (asn1)
+		{
+		}
 
-		public SubjectAltNameExtension (X509Extension extension) : base (extension) {}
+		public SubjectAltNameExtension (X509Extension extension) 
+			: base (extension) 
+		{
+		}
 
 		protected override void Decode () 
 		{
 			ASN1 sequence = new ASN1 (extnValue.Value);
 			if (sequence.Tag != 0x30)
 				throw new ArgumentException ("Invalid SubjectAltName extension");
-			for (int i=0; i < sequence.Count; i++) {
-				switch (sequence [i].Tag) {
-					case 0x81: // rfc822Name	[1]	IA5String
-						if (rfc822Name == null)
-							rfc822Name = new ArrayList ();
-						rfc822Name.Add (Encoding.ASCII.GetString (sequence [i].Value));
-						break;
-					case 0x82: // dNSName           [2]     IA5String
-						if (dnsName == null)
-							dnsName = new ArrayList ();
-						dnsName.Add (Encoding.ASCII.GetString (sequence [i].Value));
-						break;
-					case 0x87: // iPAddress         [7]     OCTET STRING
-						if (ipAddr == null)
-							ipAddr = new ArrayList ();
-						// TODO - Must find sample certificates
-						break;
-					default:
-						break;
-				}
-			}
+			_names = new GeneralNames (sequence);
 		}
 
 		public override string Name {
@@ -118,55 +101,21 @@ namespace Mono.Security.X509.Extensions {
 		}
 
 		public string[] RFC822 {
-			get {
-				if (rfc822Name == null)
-					return new string [0];
-				return (string[]) rfc822Name.ToArray (typeof(string));
-			}
+			get { return _names.RFC822; }
 		}
 
 		public string[] DNSNames {
-			get {
-				if (dnsName == null)
-					return new string [0];
-				return (string[]) dnsName.ToArray (typeof(string));
-			}
+			get { return _names.DNSNames; }
 		}
 
 		// Incomplete support
 		public string[] IPAddresses {
-			get {
-				if (ipAddr == null)
-					return new string [0];
-				return (string[]) ipAddr.ToArray (typeof(string));
-			}
+			get { return _names.IPAddresses; }
 		}
 
 		public override string ToString () 
 		{
-			StringBuilder sb = new StringBuilder ();
-			if (rfc822Name != null) {
-				foreach (string s in rfc822Name) {
-					sb.Append ("RFC822 Name=");
-					sb.Append (s);
-					sb.Append (Environment.NewLine);
-				}
-			}
-			if (dnsName != null) {
-				foreach (string s in dnsName) {
-					sb.Append ("DNS Name=");
-					sb.Append (s);
-					sb.Append (Environment.NewLine);
-				}
-			}
-			if (ipAddr != null) {
-				foreach (string s in ipAddr) {
-					sb.Append ("IP Address=");
-					sb.Append (s);
-					sb.Append (Environment.NewLine);
-				}
-			}
-			return sb.ToString ();
+			return _names.ToString ();
 		}
 	}
 }
