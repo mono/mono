@@ -1,3 +1,7 @@
+2002-01-15  Duncan Mak  <duncan@ximian.com>
+
+	* CultureInfo.cs: Convert it to unix text.
+
 2002-01-04  Ravi Pratap  <ravi@ximian.com>
 
 	* GreogrianCalendar.cs : The same old MonoTODO attribute.
