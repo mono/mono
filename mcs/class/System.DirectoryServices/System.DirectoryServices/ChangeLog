@@ -1,5 +1,17 @@
 2005-03-22  Boris Kirzner <borisk@mainsoft.com>
 
+	* DirectorySearcher.cs : 
+		- ClientTimeout and ServerPageTimeLimit initialized to 1 second.
+		- SizeLimit initialized to 0.
+		- Setting SizeLimit to negative value throws an exception.
+		- Added private variable for ServerTime Limit.
+		- Avoid infinite loop in CacheResults.
+		- Removed emptycol, search result lazy evaluated intead of this.
+		- If the search did not return results, FindOne() should returns null.
+		- ADsPath property always loaded, or created from DN.
+
+2005-03-22  Boris Kirzner <borisk@mainsoft.com>
+
 	* DirectoryEntries.cs : When adding new entry, do not set "objectclass" 
 	property to include schemaClassName value.
 
