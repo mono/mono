@@ -71,10 +71,30 @@ namespace System.Web.Compilation
 			string contentType = pageParser.ContentType;
 			if (contentType != null)
 				method.Statements.Add (CreatePropertyAssign ("ContentType", contentType));
+
+			if (pageParser.OutputCache) {
+				CodeMethodReferenceExpression init = new CodeMethodReferenceExpression (null,
+						"InitOutputCache");
+				CodeMethodInvokeExpression invoke = new CodeMethodInvokeExpression (init,
+						OutputCacheParams ());
+				method.Statements.Add (invoke);
+			}
 			
 			base.AddStatementsToFrameworkInitialize (method);
 		}
 
+		private CodeExpression[] OutputCacheParams ()
+		{
+			return new CodeExpression [] {
+				new CodePrimitiveExpression (pageParser.OutputCacheDuration),
+				new CodePrimitiveExpression (pageParser.OutputCacheVaryByHeader),
+				new CodePrimitiveExpression (pageParser.OutputCacheVaryByCustom),
+				new CodeSnippetExpression (typeof (OutputCacheLocation).ToString () +
+						"." + pageParser.OutputCacheLocation.ToString ()),
+				new CodePrimitiveExpression (pageParser.OutputCacheVaryByParam)
+				};
+		}
+                
 		protected override void CreateMethods ()
 		{
 			base.CreateMethods ();

@@ -1,3 +1,8 @@
+2003-11-13  Jackson Harper <jackson@ximian.com>
+
+	* PageCompiler.cs: Call InitOutputCache when the OutputCache
+	directive is set.
+	
 2003-11-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AspGenerator.cs: use fileEncoding from configuration files.
