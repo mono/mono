@@ -1,3 +1,12 @@
+2005-02-10  Zoltan Varga  <vargaz@freemail.hu>
+
+	* inssel.brg (mini_emit_virtual_call): Disable the virtual->nonvirtual
+	optimization if it would need a GOT var.
+
+	* basic.cs: Add tests for constant propagation and switch statements.
+
+	* ssa.c: Fix out-of-range constant propagation and switch statements.
+
 2005-02-09    <vargaz@freemail.hu>
 
 	* inssel-x86.brg (reg): Align the allocation size in the localloc(imm) case too.
