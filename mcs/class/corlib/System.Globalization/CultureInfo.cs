@@ -160,6 +160,8 @@ namespace System.Globalization
 		public virtual CultureInfo Parent
 		{
 			get {
+				if (cultureID == 0x7f)
+					return new CultureInfo (cultureID);
 				if (!constructed) Construct ();
 				if (parent_lcid == cultureID)
 					return null;
