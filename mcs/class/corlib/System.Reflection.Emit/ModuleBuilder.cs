@@ -103,29 +103,24 @@ namespace System.Reflection.Emit {
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private static extern Type create_modified_type (TypeBuilder tb, int arrayrank, bool isbyref);
+		private static extern Type create_modified_type (TypeBuilder tb, string modifiers);
+
+		static char[] type_modifiers = {'&', '[', '*'};
 		
 		public override Type GetType( string className, bool throwOnError, bool ignoreCase) {
 			int subt;
-			bool isbyref;
-			int arrayrank = 0;
+			string modifiers;
 			TypeBuilder result = null;
 
 			if (types == null && throwOnError)
 				throw new TypeLoadException (className);
 
-			subt = className.IndexOf ('&');
+			subt = className.IndexOfAny (type_modifiers);
 			if (subt >= 0) {
-				isbyref = true;
+				modifiers = className.Substring (subt);
 				className = className.Substring (0, subt);
 			} else
-				isbyref = false;
-			subt = className.IndexOf ('[');
-			if (subt >= 0) {
-				arrayrank = 1;
-				// FIXME: support different ranks..
-				className = className.Substring (0, subt);
-			}
+				modifiers = null;
 			
 			subt = className.IndexOf ('+');
 			if (subt < 0) {
@@ -143,8 +138,8 @@ namespace System.Reflection.Emit {
 			}
 			if ((result == null) && throwOnError)
 				throw new TypeLoadException (className);
-			if (result != null && (isbyref || arrayrank > 0))
-				return create_modified_type (result, arrayrank, isbyref);
+			if (result != null && (modifiers != null))
+				return create_modified_type (result, modifiers);
 			return result;
 		}
 

@@ -1,4 +1,8 @@
 
+Sat Mar 16 19:11:47 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* ModuleBuilder.cs: handle modified types correctly.
+
 Thu Mar 7 17:10:42 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* AssemblyBuilder.cs: allow saving bigger assemblies.
