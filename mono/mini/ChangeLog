@@ -1,5 +1,7 @@
 2003-08-28  Zoltan Varga  <vargaz@freemail.hu>
 
+	* inssel.brg (OP_UNBOXCAST): Add support for the AOT case.
+
 	* cpu-pentium.md: Fix the length of call opcodes so they include the
 	ESP restoring instruction. Fixes #47968.
 
