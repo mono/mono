@@ -46,7 +46,6 @@ System.Windows.Forms/ColumnHeaderStyle.cs
 System.Windows.Forms/ComboBox.cs
 System.Windows.Forms/ComboBoxStyle.cs
 System.Windows.Forms/CommonDialog.cs
-System.Windows.Forms/ComVisible.cs
 System.Windows.Forms/ContainerControl.cs
 System.Windows.Forms/ContentsResizedEventArgs.cs
 System.Windows.Forms/ContentsResizedEventHandler.cs
