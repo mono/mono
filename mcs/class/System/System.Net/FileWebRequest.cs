@@ -22,14 +22,14 @@ namespace System.Net
 		
 		private ICredentials credentials;
 		private string connectionGroup;
-		private string method;
-		private int timeout;
+		private string method = "GET";
+		private int timeout = 100000;
 		
-		private Stream requestStream = null;
-		private FileWebResponse webResponse = null;
-		private AutoResetEvent requestEndEvent = null;
-		private bool requesting = false;
-		private bool asyncResponding = false;
+		private Stream requestStream;
+		private FileWebResponse webResponse;
+		private AutoResetEvent requestEndEvent;
+		private bool requesting;
+		private bool asyncResponding;
 		
 		// Constructors
 		
@@ -37,14 +37,17 @@ namespace System.Net
 		{ 
 			this.uri = uri;
 			this.webHeaders = new WebHeaderCollection ();
-			this.method = "GET";
-			this.timeout = System.Threading.Timeout.Infinite; 
 		}		
 		
-		[MonoTODO]
 		protected FileWebRequest (SerializationInfo serializationInfo, StreamingContext streamingContext) 
 		{
-			throw new NotImplementedException ();
+			SerializationInfo info = serializationInfo;
+
+			method = info.GetString ("method");
+			uri = (Uri) info.GetValue ("uri", typeof (Uri));
+			timeout = info.GetInt32 ("timeout");
+			connectionGroup = info.GetString ("connectionGroup");
+			webHeaders = (WebHeaderCollection) info.GetValue ("webHeaders", typeof (WebHeaderCollection));
 		}
 		
 		// Properties
@@ -224,7 +227,7 @@ namespace System.Net
 			return EndGetResponse (asyncResult);
 		}
 			
-		public WebResponse GetResponseInternal ()
+		WebResponse GetResponseInternal ()
 		{
 			if (webResponse != null)
 				return webResponse;			
@@ -245,11 +248,15 @@ namespace System.Net
  			return (WebResponse) this.webResponse;
 		}
 		
-		[MonoTODO]
-		void ISerializable.GetObjectData (SerializationInfo serializationInfo,
-		   				  StreamingContext streamingContext)
+		void ISerializable.GetObjectData (SerializationInfo serializationInfo, StreamingContext streamingContext)
 		{
-			throw new NotImplementedException ();
+			SerializationInfo info = serializationInfo;
+
+			info.AddValue ("method", method);
+			info.AddValue ("uri", uri, typeof (Uri));
+			info.AddValue ("timeout", timeout);
+			info.AddValue ("connectionGroup", connectionGroup);
+			info.AddValue ("webHeaders", webHeaders, typeof (WebHeaderCollection));
 		}
 		
 		internal void Close ()

@@ -17,6 +17,10 @@ namespace System.Net
 	{
 		static ArrayList modules;
 
+		private AuthenticationManager ()
+		{
+		}
+
 		static void EnsureModules ()
 		{
 			if (modules != null)

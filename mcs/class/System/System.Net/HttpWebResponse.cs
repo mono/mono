@@ -27,7 +27,6 @@ namespace System.Net
 		Version version;
 		HttpStatusCode statusCode;
 		string statusDescription;
-		bool chunked;
 		long contentLength = -1;
 		string contentType;
 
@@ -53,19 +52,18 @@ namespace System.Net
 			}
 		}
 
-		[MonoTODO("Check this out and update if needed")] //Gon
 		protected HttpWebResponse (SerializationInfo serializationInfo, StreamingContext streamingContext)
 		{
-			uri = (Uri) serializationInfo.GetValue ("uri", typeof (Uri));
-			webHeaders = (WebHeaderCollection) serializationInfo.GetValue ("webHeaders",
-											typeof (WebHeaderCollection));
-			cookieCollection = (CookieCollection) serializationInfo.GetValue ("cookieCollection",
-											   typeof (CookieCollection));
-			method = serializationInfo.GetString ("method");
-			version = (Version) serializationInfo.GetValue ("version", typeof (Version));
-			statusCode = (HttpStatusCode) serializationInfo.GetValue ("statusCode", typeof (HttpStatusCode));
-			statusDescription = serializationInfo.GetString ("statusDescription");
-			chunked = serializationInfo.GetBoolean ("chunked");
+			SerializationInfo info = serializationInfo;
+
+			uri = (Uri) info.GetValue ("uri", typeof (Uri));
+			contentLength = info.GetInt64 ("contentLength");
+			contentType = info.GetString ("contentType");
+			method = info.GetString ("method");
+			statusDescription = info.GetString ("statusDescription");
+			cookieCollection = (CookieCollection) info.GetValue ("cookieCollection", typeof (CookieCollection));
+			version = (Version) info.GetValue ("version", typeof (Version));
+			statusCode = (HttpStatusCode) info.GetValue ("statusCode", typeof (HttpStatusCode));
 		}
 		
 		// Properties
@@ -227,15 +225,16 @@ namespace System.Net
 		void ISerializable.GetObjectData (SerializationInfo serializationInfo,
 		   				  StreamingContext streamingContext)
 		{
-			CheckDisposed ();
-			serializationInfo.AddValue ("uri", uri);
-			serializationInfo.AddValue ("webHeaders", webHeaders);
-			serializationInfo.AddValue ("cookieCollection", cookieCollection);
-			serializationInfo.AddValue ("method", method);
-			serializationInfo.AddValue ("version", version);
-			serializationInfo.AddValue ("statusCode", statusCode);
-			serializationInfo.AddValue ("statusDescription", statusDescription);
-			serializationInfo.AddValue ("chunked", chunked);
+			SerializationInfo info = serializationInfo;
+
+			info.AddValue ("uri", uri);
+			info.AddValue ("contentLength", contentLength);
+			info.AddValue ("contentType", contentType);
+			info.AddValue ("method", method);
+			info.AddValue ("statusDescription", statusDescription);
+			info.AddValue ("cookieCollection", cookieCollection);
+			info.AddValue ("version", version);
+			info.AddValue ("statusCode", statusCode);
 		}		
 
 

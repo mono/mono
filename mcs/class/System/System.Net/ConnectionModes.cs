@@ -15,7 +15,7 @@ namespace System.Net {
 
 	/// <summary>
 	/// </summary>
-	public enum ConnectionModes {
+	enum ConnectionModes {
 
 		/// <summary>
 		/// </summary>

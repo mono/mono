@@ -22,8 +22,6 @@ namespace System.Net
 		
 		// Constructors
 		
-		protected FileWebResponse () { }
-		
 		internal FileWebResponse (Uri responseUri, FileStream fileStream)
 		{
 			try {
@@ -38,57 +36,60 @@ namespace System.Net
 			}
 		}
 		
-		[MonoTODO]
 		protected FileWebResponse (SerializationInfo serializationInfo, StreamingContext streamingContext)
 		{
-			throw new NotImplementedException ();
+			SerializationInfo info = serializationInfo;
+
+			responseUri = (Uri) info.GetValue ("responseUri", typeof (Uri));
+			contentLength = info.GetInt64 ("contentLength");
+			webHeaders = (WebHeaderCollection) info.GetValue ("webHeaders", typeof (WebHeaderCollection));
 		}
 		
 		// Properties
 		
 		public override long ContentLength {		
 			get {
-				try { return this.contentLength; }
-				finally { CheckDisposed (); }
+				CheckDisposed ();
+				return this.contentLength;
 			}
 		}
 		
 		public override string ContentType {		
 			get {
-				try { return "binary/octet-stream"; }
-				finally { CheckDisposed (); }
+				CheckDisposed ();
+				return "binary/octet-stream";
 			}
 		}
 		
 		public override WebHeaderCollection Headers {		
 			get {
-				try { return this.webHeaders; }
-				finally { CheckDisposed (); }
+				CheckDisposed ();
+				return this.webHeaders;
 			}
 		}
 		
 		public override Uri ResponseUri {		
 			get {
-				try { return this.responseUri; }
-				finally { CheckDisposed (); }
+				CheckDisposed ();
+				return this.responseUri;
 			}
 		}		
 
 		// Methods
 
-		[MonoTODO]
-		void ISerializable.GetObjectData (SerializationInfo serializationInfo,
-		   				  StreamingContext streamingContext)
+		void ISerializable.GetObjectData (SerializationInfo serializationInfo, StreamingContext streamingContext)
 		{
-			try {
-				throw new NotImplementedException ();
-			} finally { CheckDisposed (); }
+			SerializationInfo info = serializationInfo;
+
+			info.AddValue ("responseUri", responseUri, typeof (Uri));
+			info.AddValue ("contentLength", contentLength);
+			info.AddValue ("webHeaders", webHeaders, typeof (WebHeaderCollection));
 		}		
 
 		public override Stream GetResponseStream()
 		{
-			try { return this.fileStream; }
-			finally { CheckDisposed (); }
+			CheckDisposed ();
+			return this.fileStream;
 		}
 				
 		// Cleaning up stuff

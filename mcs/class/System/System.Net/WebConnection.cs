@@ -94,7 +94,7 @@ namespace System.Net
 		{
 			status = st;
 			Close ();
-			if (e == null) { // At least we noe where it comes from
+			if (e == null) { // At least we now where it comes from
 				try {
 					throw new Exception ();
 				} catch (Exception e2) {
@@ -540,6 +540,11 @@ namespace System.Net
 		void Abort (object sender, EventArgs args)
 		{
 			HandleError (WebExceptionStatus.RequestCanceled, null);
+		}
+
+		~WebConnection ()
+		{
+			Close ();
 		}
 	}
 }

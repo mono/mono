@@ -77,7 +77,6 @@ namespace System.Net
 		
 		public virtual Uri RequestUri { 
 			get { throw new NotSupportedException (); }
-			set { throw new NotSupportedException (); }
 		}
 		
 		public virtual int Timeout { 
@@ -207,7 +206,7 @@ namespace System.Net
 			if (type == null)
 				throw new ConfigurationException (String.Format ("Type {0} not found", typeName));
 
-			object o = Activator.CreateInstance (type);
+			object o = Activator.CreateInstance (type, true);
 			prefixes [prefix] = o;
 		}
 	}
