@@ -1,3 +1,7 @@
+2003-09-26  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XPathNavigatorTests.cs : added SelectFromOrphan().
+
 2003-06-30  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* Added XPathNavigatorCommonTests.cs.

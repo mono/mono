@@ -204,5 +204,32 @@ namespace MonoTests.System.Xml
 			XPathNodeIterator iter = navigator.SelectChildren (XPathNodeType.Element);
 			AssertEquals (0, iter.Count);
 		}
+
+		[Test]
+		public void SelectFromOrphan ()
+		{
+			// SelectSingleNode () from node without parent.
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml ("<foo><include id='original' /></foo>");
+
+			XmlNode node = doc.CreateElement ("child");
+			node.InnerXml = "<include id='new' />";
+
+			XmlNode new_include = node.SelectSingleNode ("//include");
+			AssertEquals ("<include id=\"new\" />", new_include.OuterXml);
+
+			// In this case 'node2' has parent 'node'
+			doc = new XmlDocument ();
+			doc.LoadXml ("<foo><include id='original' /></foo>");
+
+			node = doc.CreateElement ("child");
+			XmlNode node2 = doc.CreateElement ("grandchild");
+			node.AppendChild (node2);
+			node2.InnerXml = "<include id='new' />";
+
+			new_include = node2.SelectSingleNode ("/");
+			AssertEquals ("<child><grandchild><include id=\"new\" /></grandchild></child>",
+				new_include.OuterXml);
+		}
 	}
 }
