@@ -64,4 +64,21 @@
 	Currently I use brfalse/brtrue in the code for statements, instead of
 	using the EmitBranchable function that lives in Binary
 
-* 
+* Create an UnimplementedExpcetion
+
+  	And use that instead of plain Exceptions.
+
+* Bug
+
+	Currently I cant cope with a = b = 1;
+	Because the stack is empty after b = 1
+
+	The current mechanism uses the return value of Emit to figure if there
+	is something in the stack after we return. 
+
+	But MAYBE we need to pass an extra argument: `Do I expect
+	something in the stack' to Emit, that way we can optimize whether
+	it is worth duping stuff on the stack or not.
+
+	And we can also make sure that we dont generate extra pops.
+

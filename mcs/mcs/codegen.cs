@@ -246,8 +246,10 @@ namespace CIR {
 			Expression e = s.Expr;
 
 			e = e.Resolve (parent);
-			if (e != null)
-				e.Emit (this);
+			if (e != null){
+				if (e.Emit (this))
+					ig.Emit (OpCodes.Pop);
+			}
 		}
 
 		//

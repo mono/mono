@@ -6,7 +6,7 @@
 //
 // (C) 2001 Ximian, Inc.
 //
-
+using System;
 using System.Reflection;
 using System.Reflection.Emit;
 
@@ -47,62 +47,14 @@ namespace CIR {
 
 			if (target == null || source == null)
 				return null;
-			
+
+			if (!(target is LValue)){
+				tc.RootContext.Report.Error (131, "Left hand of an assignment must be a variable, a property or an indexer");
+			}
 			return this;
 		}
 
-		void EmitLocalAssign (LocalVariableReference lv, ILGenerator ig)
-		{
-			VariableInfo vi = lv.VariableInfo;
-			int idx = vi.Idx;
-					
-			switch (idx){
-			case 0:
-				ig.Emit (OpCodes.Stloc_0);
-				break;
-				
-			case 1:
-				ig.Emit (OpCodes.Stloc_1);
-				break;
-				
-			case 2:
-				ig.Emit (OpCodes.Stloc_2);
-				break;
-				
-			case 3:
-				ig.Emit (OpCodes.Stloc_3);
-				break;
-				
-			default:
-				if (idx < 255)
-					ig.Emit (OpCodes.Stloc_S, idx);
-				else
-					ig.Emit (OpCodes.Stloc, idx);
-				break;
-			}
-		}
-
-		public void EmitParameterAssign (ParameterReference pr, ILGenerator ig)
-		{
-			int idx = pr.Idx;
-			
-			if (idx < 255)
-				ig.Emit (OpCodes.Starg_S, idx);
-			else
-				ig.Emit (OpCodes.Starg, idx);
-		}
-
-		public void EmitFieldAssign (FieldExpr field, ILGenerator ig)
-		{
-			FieldInfo fi = field.FieldInfo;
-			
-			if (fi.IsStatic)
-				ig.Emit (OpCodes.Stsfld, fi);
-			else
-				ig.Emit (OpCodes.Stfld, fi);
-		}
-		
-		public override void Emit (EmitContext ec)
+		public override bool Emit (EmitContext ec)
 		{
 			if (target.ExprClass == ExprClass.Variable){
 
@@ -118,14 +70,16 @@ namespace CIR {
 						    
 				source.Emit (ec);
 
-				if (target is LocalVariableReference){
-					EmitLocalAssign ((LocalVariableReference) target, ec.ig);
-				} else if (target is ParameterReference){
-					EmitParameterAssign ((ParameterReference) target, ec.ig);
-				} else if (target is FieldExpr){
-					EmitFieldAssign ((FieldExpr) target, ec.ig);
-				}
-			} 
+				((LValue) target).Store (ec.ig);
+			} else if (target.ExprClass == ExprClass.PropertyAccess){
+				// FIXME
+				throw new Exception ("Can not assign to properties yet");
+			} else if (target.ExprClass == ExprClass.IndexerAccess){
+				// FIXME
+				throw new Exception ("Can not assign to indexers yet");
+			}
+
+			return false;
 		}
 	}
 }

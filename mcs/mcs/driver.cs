@@ -126,7 +126,6 @@ namespace CIR
 				string full_path = dir + "/" + assembly;
 
 				try {
-					Console.WriteLine ("Loading: " + assembly);
 					a = Assembly.Load (assembly);
 				} catch (FileNotFoundException f) {
 					error ("// File not found: " + full_path);

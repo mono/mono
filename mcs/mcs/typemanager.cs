@@ -32,6 +32,9 @@ public class TypeManager {
 	static public Type sbyte_type;
 	static public Type byte_type;
 	static public Type ushort_type;
+	static public Type enum_type;
+	static public Type delegate_type;
+	static public Type void_type;
 	
 	// <remarks>
 	//   Holds the Array of Assemblies that have been loaded
@@ -165,21 +168,24 @@ public class TypeManager {
 	// </remarks>
 	public void InitCoreTypes ()
 	{
-		object_type  = CoreLookupType ("System.Object");
-		string_type  = CoreLookupType ("System.String");
-		int32_type   = CoreLookupType ("System.Int32");
-		int64_type   = CoreLookupType ("System.Int64");
-		uint32_type  = CoreLookupType ("System.UInt32"); 
-		uint64_type  = CoreLookupType ("System.UInt64"); 
-		float_type   = CoreLookupType ("System.Single");
-		double_type  = CoreLookupType ("System.Double");
-		byte_type    = CoreLookupType ("System.Byte");
-		sbyte_type   = CoreLookupType ("System.SByte");
-		char_type    = CoreLookupType ("System.Char");
-		short_type   = CoreLookupType ("System.Int16");
-		ushort_type  = CoreLookupType ("System.UInt16");
-		decimal_type = CoreLookupType ("System.Decimal");
-		bool_type    = CoreLookupType ("System.Boolean");
+		object_type   = CoreLookupType ("System.Object");
+		string_type   = CoreLookupType ("System.String");
+		int32_type    = CoreLookupType ("System.Int32");
+		int64_type    = CoreLookupType ("System.Int64");
+		uint32_type   = CoreLookupType ("System.UInt32"); 
+		uint64_type   = CoreLookupType ("System.UInt64"); 
+		float_type    = CoreLookupType ("System.Single");
+		double_type   = CoreLookupType ("System.Double");
+		byte_type     = CoreLookupType ("System.Byte");
+		sbyte_type    = CoreLookupType ("System.SByte");
+		char_type     = CoreLookupType ("System.Char");
+		short_type    = CoreLookupType ("System.Int16");
+		ushort_type   = CoreLookupType ("System.UInt16");
+		decimal_type  = CoreLookupType ("System.Decimal");
+		bool_type     = CoreLookupType ("System.Boolean");
+		enum_type     = CoreLookupType ("System.Enum");
+		delegate_type = CoreLookupType ("System.Delegate");
+		void_type     = CoreLookupType ("System.Void");
 	}
 	
 	public MemberInfo [] FindMembers (Type t, MemberTypes mt, BindingFlags bf, MemberFilter filter, object criteria)

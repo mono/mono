@@ -10,9 +10,9 @@ test-compiler:
 			if ./$$i.exe; then \
 				echo $$i: ok; \
 			else \
-				echo failed; \
+				echo failed; exit; \
 			fi; \
 		else \
-			echo compiler failed on $$i;   \
+			echo compiler failed on $$i;   exit; \
 		fi \
 	done

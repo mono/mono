@@ -22,9 +22,15 @@ namespace CIR {
 	public enum ExprClass {
 		Invalid,
 		
-		Value, Variable, Namespace, Type,
-		MethodGroup, PropertyAccess,
-		EventAccess, IndexerAccess, Nothing, 
+		Value,
+		Variable,   // Every Variable should implement LValue
+		Namespace,
+		Type,
+		MethodGroup,
+		PropertyAccess,
+		EventAccess,
+		IndexerAccess,
+		Nothing, 
 	}
 
 	// <remarks>
@@ -55,7 +61,11 @@ namespace CIR {
 		}
 
 		public abstract Expression Resolve (TypeContainer tc);
-		public abstract void Emit (EmitContext ec);
+
+		//
+		// Return value indicates whether a value is left on the stack or not
+		//
+		public abstract bool Emit (EmitContext ec);
 		
 		// <summary>
 		//   Protected constructor.  Only derivate types should
@@ -167,7 +177,8 @@ namespace CIR {
 		// <summary>
 		//   Resolves the E in `E.I' side for a member_access
 		//
-		// This is suboptimal and should be merged with ResolveMemberAccess
+		//   This is suboptimal and should be merged with ResolveMemberAccess
+		// </summary>
 		static Expression ResolvePrimary (TypeContainer tc, string name)
 		{
 			int dot_pos = name.LastIndexOf (".");
@@ -400,7 +411,47 @@ namespace CIR {
 		{
 			return expr;
 		}
+
+		void report (TypeContainer tc, int error, string s)
+		{
+			tc.RootContext.Report.Error (error, s);
+		}
+
+		static string ExprClassName (ExprClass c)
+		{
+			switch (c){
+			case ExprClass.Invalid:
+				return "Invalid";
+			case ExprClass.Value:
+				return "value";
+			case ExprClass.Variable:
+				return "variable";
+			case ExprClass.Namespace:
+				return "namespace";
+			case ExprClass.Type:
+				return "type";
+			case ExprClass.MethodGroup:
+				return "method group";
+			case ExprClass.PropertyAccess:
+				return "property access";
+			case ExprClass.EventAccess:
+				return "event access";
+			case ExprClass.IndexerAccess:
+				return "indexer access";
+			case ExprClass.Nothing:
+				return "null";
+			}
+			throw new Exception ("Should not happen");
+		}
 		
+		// <summary>
+		//   Reports that we were expecting `expr' to be of class `expected'
+		// </summary>
+		protected void report118 (TypeContainer tc, Expression expr, string expected)
+		{
+			report (tc, 118, "Expression denotes a '" + ExprClassName (expr.ExprClass) +
+				"' where an " + expected + " was expected");
+		}
 	}
 
 	// <summary>
@@ -434,12 +485,18 @@ namespace CIR {
 			return this;
 		}
 
-		public override void Emit (EmitContext ec)
+		public override bool Emit (EmitContext ec)
 		{
-			child.Emit (ec);
+			return child.Emit (ec);
 		}			
 	}
 
+	// <summary>
+	//   This kind of cast is used to encapsulate Value Types in objects.
+	//
+	//   The effect of it is to box the value type emitted by the previous
+	//   operation.
+	// </summary>
 	public class BoxedCast : EmptyCast {
 
 		public BoxedCast (Expression expr, Type target_type)
@@ -455,10 +512,11 @@ namespace CIR {
 			return this;
 		}
 
-		public override void Emit (EmitContext ec)
+		public override bool Emit (EmitContext ec)
 		{
 			base.Emit (ec);
 			ec.ig.Emit (OpCodes.Box, child.Type);
+			return true;
 		}
 	}
 	
@@ -497,13 +555,15 @@ namespace CIR {
 			return this;
 		}
 
-		public override void Emit (EmitContext ec)
+		public override bool Emit (EmitContext ec)
 		{
 			base.Emit (ec);
 			ec.ig.Emit (op);
 
 			if (second_valid)
 				ec.ig.Emit (op2);
+
+			return true;
 		}			
 		
 	}
@@ -580,7 +640,35 @@ namespace CIR {
 
 			return ConvertImplicit (expr, target_type);
 		}
-		
+
+		void report23 (Report r, Type t)
+		{
+			r.Error (23, "Operator " + OperName () + " cannot be applied to operand of type `" +
+				 TypeManager.CSharpName (t) + "'");
+		}
+
+		// <summary>
+		//   Returns whether an object of type `t' can be incremented
+		//   or decremented with add/sub (ie, basically whether we can
+		//   use pre-post incr-decr operations on it, but it is not a
+		//   System.Decimal, which we test elsewhere)
+		// </summary>
+		static bool IsIncrementableNumber (Type t)
+		{
+			return (t == TypeManager.sbyte_type) ||
+				(t == TypeManager.byte_type) ||
+				(t == TypeManager.short_type) ||
+				(t == TypeManager.ushort_type) ||
+				(t == TypeManager.int32_type) ||
+				(t == TypeManager.uint32_type) ||
+				(t == TypeManager.int64_type) ||
+				(t == TypeManager.uint64_type) ||
+				(t == TypeManager.char_type) ||
+				(t.IsSubclassOf (TypeManager.enum_type)) ||
+				(t == TypeManager.float_type) ||
+				(t == TypeManager.double_type);
+		}
+			
 		Expression ResolveOperator (TypeContainer tc)
 		{
 			Type expr_type = expr.Type;
@@ -620,10 +708,7 @@ namespace CIR {
 				return null;
 			
 			if (oper == Operator.Negate && expr_type != TypeManager.bool_type) {
-				tc.RootContext.Report.Error (
-				       19,
-				       "Operator " + OperName () + " cannot be applied to operands of type `" +
-				       TypeManager.CSharpName (expr.Type) + "'");
+				report23 (tc.RootContext.Report, expr.Type);
 				return null;
 			} else {
 				expr = ForceConversion (expr, TypeManager.int32_type);
@@ -634,25 +719,27 @@ namespace CIR {
 				if (!((expr_type == TypeManager.int32_type) ||
 				      (expr_type == TypeManager.uint32_type) ||
 				      (expr_type == TypeManager.int64_type) ||
-				      (expr_type == TypeManager.uint64_type))){
-					tc.RootContext.Report.Error (
-					       19,
-					       "Operator " + OperName () + " cannot be applied to operands of type `" +
-					       TypeManager.CSharpName (expr.Type) + "'");
+				      (expr_type == TypeManager.uint64_type) ||
+				      (expr_type.IsSubclassOf (TypeManager.enum_type)))){
+					report23 (tc.RootContext.Report, expr.Type);
 					return null;
 				}
+				
+				return this;
 			}
 
-			//
-			// A plus in front of something is just a no-op
-			//
-			if (oper == Operator.Add)
+			if (oper == Operator.Add) {
+				//
+				// A plus in front of something is just a no-op, so return the child.
+				//
 				return expr;
+			}
 
-			//
-			// Fold -Constant into a negative constant
-			//make
 			if (oper == Operator.Subtract){
+				//
+				// Fold -Constant into a negative constant
+				
+			
 				Expression e = null;
 				
 				if (expr is IntLiteral)
@@ -666,12 +753,41 @@ namespace CIR {
 					e = e.Resolve (tc);
 					return e;
 				}
+
+				report23 (tc.RootContext.Report, expr.Type);
+				return null;
 			}
 
-			// FIXME : Are we supposed to check that we have an object type
-			// for & and * operators ?
+			//
+			// The operand of the prefix/postfix increment decrement operators
+			// should be an expression that is classified as a variable,
+			// a property access or an indexer access
+			//
+			if (oper == Operator.PreDecrement || oper == Operator.PreIncrement ||
+			    oper == Operator.PostDecrement || oper == Operator.PostIncrement){
+				if (expr.ExprClass == ExprClass.Variable){
+					if (IsIncrementableNumber (expr_type) ||
+					    expr_type == TypeManager.decimal_type)
+						return this;
+				} else if (expr.ExprClass == ExprClass.IndexerAccess){
+					//
+					// FIXME: Verify that we have both get and set methods
+					//
+					throw new Exception ("Implement me");
+				} else if (expr.ExprClass == ExprClass.PropertyAccess){
+					//
+					// FIXME: Verify that we have both get and set methods
+					//
+					throw new Exception ("Implement me");
+				} else {
+					report118 (tc, expr, "variable, indexer or property access");
+				}
+			}
 
-			return this;
+			tc.RootContext.Report.Error (187, "No such operator '" + OperName () +
+						     "' defined for type '" +
+						     TypeManager.CSharpName (expr_type) + "'");
+			return null;
 
 		}
 
@@ -685,9 +801,8 @@ namespace CIR {
 			return ResolveOperator (tc);
 		}
 
-		public override void Emit (EmitContext ec)
+		public override bool Emit (EmitContext ec)
 		{
-
 			ILGenerator ig = ec.ig;
 			Type expr_type = expr.Type;
 
@@ -703,43 +818,79 @@ namespace CIR {
 				else
 					ig.Emit (OpCodes.Call, (ConstructorInfo) method);
 				
-				return;
+				return true;
 			}
-
-			// FIXME : This is commented out for now
-			// expr.Emit (ec);
-
+			
 			switch (oper){
 			case Operator.Add:
 				throw new Exception ("This should be caught by Resolve");
 
 			case Operator.Subtract:
-				// Which one ?
-				break;
-
+				throw new Exception ("THis should have been caught by Resolve");
 				
 			case Operator.Negate:
-				// Which one ?
+				expr.Emit (ec);
+				ig.Emit (OpCodes.Ldc_I4_0);
+				ig.Emit (OpCodes.Ceq);
 				break;
 
 			case Operator.BitComplement:
-				// Which one ?
+				expr.Emit (ec);
+				ig.Emit (OpCodes.Not);
 				break;
 
-			case Operator.AddressOf :
-				// Which one ?
-				break;
+			case Operator.AddressOf:
+				throw new Exception ("Not implemented yet");
 
-			case Operator.Indirection :
-				// Which one ?
-				break;
+			case Operator.Indirection:
+				throw new Exception ("Not implemented yet");
 
-			case Operator.PreIncrement : case Operator.PostIncrement :
-				// Which one ?
-				break;
+			case Operator.PreIncrement:
+			case Operator.PreDecrement:
+				if (expr.ExprClass == ExprClass.Variable){
+					if (expr_type == TypeManager.decimal_type){
+						throw new Exception ("FIXME: Add pre inc/dec for decimals");
+					} else {
+						//
+						// Resolve already verified that it is an "incrementable"
+						// 
+						expr.Emit (ec);
+						ig.Emit (OpCodes.Ldc_I4_1);
 
-			case Operator.PreDecrement : case Operator.PostDecrement :
-				// Which one ?
+						if (oper == Operator.PreDecrement)
+							ig.Emit (OpCodes.Sub);
+						else
+							ig.Emit (OpCodes.Add);
+						((LValue) expr).Store (ig);
+						ig.Emit (OpCodes.Dup);
+					} 
+				} else {
+					throw new Exception ("Handle Indexers and Properties here");
+				}
+				break;
+				
+			case Operator.PostIncrement:
+			case Operator.PostDecrement:
+				if (expr.ExprClass == ExprClass.Variable){
+					if (expr_type == TypeManager.decimal_type){
+						throw new Exception ("FIXME: Add pre inc/dec for decimals");
+					} else {
+						//
+						// Resolve already verified that it is an "incrementable"
+						// 
+						expr.Emit (ec);
+						ig.Emit (OpCodes.Dup);
+						ig.Emit (OpCodes.Ldc_I4_1);
+
+						if (oper == Operator.PostDecrement)
+							ig.Emit (OpCodes.Sub);
+						else
+							ig.Emit (OpCodes.Add);
+						((LValue) expr).Store (ig);
+					} 
+				} else {
+					throw new Exception ("Handle Indexers and Properties here");
+				}
 				break;
 				
 			default:
@@ -747,8 +898,10 @@ namespace CIR {
 						     + oper.ToString ());
 			}
 
-			// FIXME : Commented out for now. 
-			// ig.Emit (opcode);
+			//
+			// yes, we leave a value on the stack
+			//
+			return true;
 		}
 		
 	}
@@ -794,8 +947,9 @@ namespace CIR {
 			// return this;
 		}
 
-		public override void Emit (EmitContext ec)
+		public override bool Emit (EmitContext ec)
 		{
+			return true;
 		}
 	}
 	
@@ -805,7 +959,7 @@ namespace CIR {
 		
 		public Cast (string cast_type, Expression expr)
 		{
-			this.target_type = target_type;
+			this.target_type = cast_type;
 			this.expr = expr;
 		}
 
@@ -832,12 +986,15 @@ namespace CIR {
 			if (type == null)
 				return null;
 
-			// FIXME: Finish this.
-			return this;
+			//
+			// FIXME: Unimplemented
+			//
+			throw new Exception ("FINISH ME");
 		}
 
-		public override void Emit (EmitContext ec)
+		public override bool Emit (EmitContext ec)
 		{
+			return true;
 		}
 	}
 
@@ -1276,7 +1433,7 @@ namespace CIR {
 			ec.ig.Emit (opcode, target);
 		}
 		
-		public override void Emit (EmitContext ec)
+		public override bool Emit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
 			Type l = left.Type;
@@ -1295,7 +1452,7 @@ namespace CIR {
 				else
 					ig.Emit (OpCodes.Call, (ConstructorInfo) method);
 				
-				return;
+				return true;
 			}
 			
 			left.Emit (ec);
@@ -1414,6 +1571,8 @@ namespace CIR {
 			}
 
 			ig.Emit (opcode);
+
+			return true;
 		}
 	}
 
@@ -1452,8 +1611,9 @@ namespace CIR {
 			// return this;
 		}
 
-		public override void Emit (EmitContext ec)
+		public override bool Emit (EmitContext ec)
 		{
+			return true;
 		}
 	}
 
@@ -1555,12 +1715,20 @@ namespace CIR {
 				return ResolveSimpleName (tc);
 		}
 
-		public override void Emit (EmitContext ec)
+		public override bool Emit (EmitContext ec)
 		{
+			throw new Exception ("SimpleNames should be gone from the tree");
 		}
 	}
+
+	// <summary>
+	//   A simple interface that should be implemeneted by LValues
+	// </summary>
+	public interface LValue {
+		void Store (ILGenerator ig);
+	}
 	
-	public class LocalVariableReference : Expression {
+	public class LocalVariableReference : Expression, LValue {
 		public readonly string Name;
 		public readonly Block Block;
 		
@@ -1585,13 +1753,12 @@ namespace CIR {
 			return this;
 		}
 
-		public override void Emit (EmitContext ec)
+		public override bool Emit (EmitContext ec)
 		{
 			VariableInfo vi = VariableInfo;
 			ILGenerator ig = ec.ig;
 			int idx = vi.Idx;
 
-			Console.WriteLine ("Variable: " + vi);
 			switch (idx){
 			case 0:
 				ig.Emit (OpCodes.Ldloc_0);
@@ -1616,10 +1783,43 @@ namespace CIR {
 					ig.Emit (OpCodes.Ldloc, idx);
 				break;
 			}
+
+			return true;
+		}
+
+		public void Store (ILGenerator ig)
+		{
+			VariableInfo vi = VariableInfo;
+			int idx = vi.Idx;
+					
+			switch (idx){
+			case 0:
+				ig.Emit (OpCodes.Stloc_0);
+				break;
+				
+			case 1:
+				ig.Emit (OpCodes.Stloc_1);
+				break;
+				
+			case 2:
+				ig.Emit (OpCodes.Stloc_2);
+				break;
+				
+			case 3:
+				ig.Emit (OpCodes.Stloc_3);
+				break;
+				
+			default:
+				if (idx < 255)
+					ig.Emit (OpCodes.Stloc_S, idx);
+				else
+					ig.Emit (OpCodes.Stloc, idx);
+				break;
+			}
 		}
 	}
 
-	public class ParameterReference : Expression {
+	public class ParameterReference : Expression, LValue {
 		public readonly Parameters Pars;
 		public readonly String Name;
 		public readonly int Idx;
@@ -1629,6 +1829,7 @@ namespace CIR {
 			Pars = pars;
 			Idx  = idx;
 			Name = name;
+			eclass = ExprClass.Variable;
 		}
 
 		public override Expression Resolve (TypeContainer tc)
@@ -1636,16 +1837,27 @@ namespace CIR {
 			Type [] types = Pars.GetParameterInfo (tc);
 
 			type = types [Idx];
-			
+
 			return this;
 		}
 
-		public override void Emit (EmitContext ec)
+		public override bool Emit (EmitContext ec)
 		{
 			if (Idx < 255)
 				ec.ig.Emit (OpCodes.Ldarg_S, Idx);
 			else
 				ec.ig.Emit (OpCodes.Ldarg, Idx);
+
+			return true;
+		}
+
+		public void Store (ILGenerator ig)
+		{
+			if (Idx < 255)
+				ig.Emit (OpCodes.Starg_S, Idx);
+			else
+				ig.Emit (OpCodes.Starg, Idx);
+			
 		}
 	}
 	
@@ -1681,9 +1893,9 @@ namespace CIR {
 			return expr != null;
 		}
 
-		public void Emit (EmitContext ec)
+		public bool Emit (EmitContext ec)
 		{
-			expr.Emit (ec);
+			return expr.Emit (ec);
 		}
 	}
 
@@ -1921,8 +2133,7 @@ namespace CIR {
 				return null;
 
 			if (!(this.expr is MethodGroupExpr)){
-				tc.RootContext.Report.Error (118,
-				       "Denotes a non-method (Detail: ExprClass=" + this.expr.ExprClass+")");
+				report118 (tc, this.expr, "method group");
 				return null;
 			}
 
@@ -1971,7 +2182,7 @@ namespace CIR {
 			}
 		}
 		
-		public override void Emit (EmitContext ec)
+		public override bool Emit (EmitContext ec)
 		{
 			bool is_static = method.IsStatic;
 
@@ -1979,7 +2190,7 @@ namespace CIR {
 				MethodGroupExpr mg = (MethodGroupExpr) this.expr;
 
 				if (mg.InstanceExpression == null){
-					Console.WriteLine ("Internal compiler error.  Should check in the method groups for static/instance");
+					throw new Exception ("Internal compiler error.  Should check in the method groups for static/instance");
 				}
 
 				mg.InstanceExpression.Emit (ec);
@@ -1998,8 +2209,16 @@ namespace CIR {
 					ec.ig.Emit (OpCodes.Callvirt, (MethodInfo) method);
 				else
 					ec.ig.Emit (OpCodes.Callvirt, (ConstructorInfo) method);
-			} 
+			}
 
+			if (method is MethodInfo){
+				return ((MethodInfo)method).ReturnType != TypeManager.void_type;
+			} else {
+				//
+				// Constructors do not leave any values on the stack
+				//
+				return false;
+			}
 		}
 	}
 
@@ -2052,7 +2271,7 @@ namespace CIR {
 				//
 				// FIXME: Find proper error
 				//
-				tc.RootContext.Report.Error (118, "Did find something that is not a method");
+				report118 (tc, ml, "method group");
 				return null;
 			}
 			
@@ -2077,28 +2296,41 @@ namespace CIR {
 			return this;
 		}
 
-		public override void Emit (EmitContext ec)
+		public override bool Emit (EmitContext ec)
 		{
 			Invocation.EmitArguments (ec, method, Arguments);
 			ec.ig.Emit (OpCodes.Newobj, (ConstructorInfo) method);
+			return true;
 		}
 	}
 
 	//
 	// Represents the `this' construct
 	//
-	public class This : Expression {
+	public class This : Expression, LValue {
 		public override Expression Resolve (TypeContainer tc)
 		{
 			eclass = ExprClass.Variable;
 			type = tc.TypeBuilder;
-			
+
+			//
+			// FIXME: Verify that this is only used in instance contexts.
+			//
 			return this;
 		}
 
-		public override void Emit (EmitContext ec)
+		public override bool Emit (EmitContext ec)
 		{
 			ec.ig.Emit (OpCodes.Ldarg_0);
+			return true;
+		}
+
+		public void Store (ILGenerator ig)
+		{
+			//
+			// Assignment to the "this" variable
+			//
+			ig.Emit (OpCodes.Starg, 0);
 		}
 	}
 
@@ -2121,8 +2353,9 @@ namespace CIR {
 			return this;
 		}
 
-		public override void Emit (EmitContext ec)
+		public override bool Emit (EmitContext ec)
 		{
+			throw new Exception ("Implement me");
 			// FIXME: Implement.
 		}
 	}
@@ -2142,8 +2375,9 @@ namespace CIR {
 			// return this;
 		}
 
-		public override void Emit (EmitContext ec)
+		public override bool Emit (EmitContext ec)
 		{
+			throw new Exception ("Implement me");
 		}
 	}
 
@@ -2170,8 +2404,6 @@ namespace CIR {
 
 			if (new_expression == null)
 				return null;
-
-			Console.WriteLine ("This is what I figured: " + expr.Type + "/" + expr.ExprClass);
 
 			member_lookup = MemberLookup (tc.RootContext, expr.Type, Identifier, false);
 
@@ -2206,8 +2438,9 @@ namespace CIR {
 				return member_lookup;
 		}
 
-		public override void Emit (EmitContext ec)
+		public override bool Emit (EmitContext ec)
 		{
+			throw new Exception ("Implement me");
 		}
 
 	}
@@ -2233,8 +2466,9 @@ namespace CIR {
 			return this;
 		}
 
-		public override void Emit (EmitContext ec)
+		public override bool Emit (EmitContext ec)
 		{
+			throw new Exception ("Namespace expressions should never be emitted");
 		}
 	}
 
@@ -2253,9 +2487,9 @@ namespace CIR {
 			return this;
 		}
 
-		override public void Emit (EmitContext ec)
+		override public bool Emit (EmitContext ec)
 		{
-			
+			throw new Exception ("Implement me");
 		}
 	}
 
@@ -2293,9 +2527,9 @@ namespace CIR {
 			return this;
 		}
 
-		override public void Emit (EmitContext ec)
+		override public bool Emit (EmitContext ec)
 		{
-			
+			throw new Exception ("This should never be reached");
 		}
 	}
 	
@@ -2317,15 +2551,16 @@ namespace CIR {
 			// return this;
 		}
 
-		public override void Emit (EmitContext ec)
+		public override bool Emit (EmitContext ec)
 		{
+			throw new Exception ("Unimplemented");
 		}
 	}
 
 
 	//   Fully resolved expression that evaluates to a Field
 	// </summary>
-	public class FieldExpr : Expression {
+	public class FieldExpr : Expression, LValue {
 		public readonly FieldInfo FieldInfo;
 		public Expression Instance;
 			
@@ -2353,7 +2588,7 @@ namespace CIR {
 			return this;
 		}
 
-		override public void Emit (EmitContext ec)
+		override public bool Emit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
 
@@ -2364,6 +2599,16 @@ namespace CIR {
 				
 				ig.Emit (OpCodes.Ldfld, FieldInfo);
 			}
+
+			return true;
+		}
+
+		public void Store (ILGenerator ig)
+		{
+			if (FieldInfo.IsStatic)
+				ig.Emit (OpCodes.Stsfld, FieldInfo);
+			else
+				ig.Emit (OpCodes.Stfld, FieldInfo);
 		}
 	}
 	
@@ -2395,7 +2640,7 @@ namespace CIR {
 			return this;
 		}
 
-		override public void Emit (EmitContext ec)
+		override public bool Emit (EmitContext ec)
 		{
 			// FIXME: Implement;
 			throw new Exception ("Unimplemented");
@@ -2420,8 +2665,9 @@ namespace CIR {
 			return this;
 		}
 
-		override public void Emit (EmitContext ec)
+		override public bool Emit (EmitContext ec)
 		{
+			throw new Exception ("Implement me");
 			// FIXME: Implement.
 		}
 	}
@@ -2447,15 +2693,18 @@ namespace CIR {
 			return this;
 		}
 
-		public override void Emit (EmitContext ec)
+		public override bool Emit (EmitContext ec)
 		{
 			bool last_check = ec.CheckState;
-
+			bool v;
+			
 			ec.CheckState = true;
 			
-			Expr.Emit (ec);
+			v = Expr.Emit (ec);
 
 			ec.CheckState = last_check;
+
+			return v;
 		}
 		
 	}
@@ -2481,15 +2730,18 @@ namespace CIR {
 			return this;
 		}
 
-		public override void Emit (EmitContext ec)
+		public override bool Emit (EmitContext ec)
 		{
 			bool last_check = ec.CheckState;
-
+			bool v;
+			
 			ec.CheckState = false;
 			
-			Expr.Emit (ec);
+			v = Expr.Emit (ec);
 
 			ec.CheckState = last_check;
+
+			return v;
 		}
 		
 	}
@@ -2512,9 +2764,10 @@ namespace CIR {
 			// return this;
 		}
 		
-		public override void Emit (EmitContext ec)
+		public override bool Emit (EmitContext ec)
 		{
 			// FIXME : Implement !
+			throw new Exception ("Unimplemented");
 		}
 		
 	}
@@ -2545,8 +2798,9 @@ namespace CIR {
 			// return this;
 		}
 
-		public override void Emit (EmitContext ec)
+		public override bool Emit (EmitContext ec)
 		{
+			throw new Exception ("Unimplemented");
 		}
 	}
 }

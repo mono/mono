@@ -58,8 +58,9 @@ namespace CIR {
 			return this;
 		}
 
-		public override void Emit (EmitContext ec)
+		public override bool Emit (EmitContext ec)
 		{
+			throw new Exception ("Unimplemented");
 		}
 		       
 		// <summary>

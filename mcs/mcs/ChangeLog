@@ -1,3 +1,42 @@
+2001-09-21  Miguel de Icaza  <miguel@ximian.com>
+
+	* typemanager.cs: declare and load enum_type, delegate_type and
+	void_type. 
+
+	* expression.cs (Expression::Emit): Now emit returns a value that
+	tells whether a value is left on the stack or not.  This strategy
+	might be reveted tomorrow with a mechanism that would address
+	multiple assignments.
+	(Expression::report118): Utility routine to report mismatches on
+	the ExprClass.
+
+	(Unary::Report23): Report impossible type/operator combination
+	utility function.
+
+	(Unary::IsIncrementableNumber): Whether the type can be
+	incremented or decremented with add.
+	(Unary::ResolveOperator): Also allow enumerations to be bitwise
+	complemented. 
+	(Unary::ResolveOperator): Implement ++, !, ~, ++ and --.
+
+	(Unvocation::Emit): Deal with new Emit convetion.
+	
+	* All Expression derivatives: Updated their Emit method to return
+	whether they leave values on the stack or not.
+	
+	* codegen.cs (CodeGen::EmitStatement): Pop values left on the
+	stack for expressions that are statements. 
+
+2001-09-20  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (LValue): New interface.  Must be implemented by
+	LValue objects.
+	(LocalVariableReference, ParameterReference, FieldExpr): Implement
+	LValue interface.
+	
+	* assign.cs (Assign::Emit, Assign::Resolve): Use new LValue
+	interface for generating code, simplifies the code.
+
 2001-09-20  Ravi Pratap  <ravi@ximian.com>
 
 	* expression.cs (everywhere): Comment out return statements in ::Resolve
