@@ -1,3 +1,7 @@
+2005-01-19  Peter Bartok  <pbartok@novell.com>
+
+	* Cursors.cs (ctor): Added ctor to fix signature
+
 2005-01-18  Peter Bartok  <pbartok@novell.com>
 
 	* Button.cs: Implemented DoubleClick event

@@ -59,6 +59,11 @@ namespace System.Windows.Forms {
 		internal static Cursor	wait_cursor;
 		#endregion	// Local Variables
 
+		#region Constructors
+		private Cursors() {
+		}
+		#endregion	// Constructors
+
 		#region Public Static Properties
 		public static Cursor AppStarting {
 			get {
