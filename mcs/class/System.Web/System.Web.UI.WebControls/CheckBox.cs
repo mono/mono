@@ -5,7 +5,7 @@
  * Author:  Gaurav Vaish
  * Maintainer: gvaish@iitk.ac.in
  * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
- * Status:  60%
+ * Status:  100%
  * 
  * (C) Gaurav Vaish (2001)
  * Thanks to Leen Toelen (toelen@hotmail.com)'s classes that helped me
@@ -149,7 +149,6 @@ namespace System.Web.UI.WebControls
 				writer.RenderBeginTag(HtmlTextWriterTag.Span);
 			if(Text.Length > 0)
 			{
-				// Looks wierd, ain't? But found out interestingly.
 				if(TextAlign == TextAlign.Right)
 				{
 					writer.AddAttribute(HtmlTextWriterAttribute.For, ClientID);
