@@ -1,3 +1,17 @@
+2004-08-14  Martin Baulig  <martin@ximian.com>
+
+	* typemanager.cs
+	(TypeManager.IsEqualGenericInstance): New static method.
+	(TypeManager.IsSubclassOrNestedChildOf, IsSubclassOf): This is
+	just used to check accessibility, so follow the rules of 26.1.6.	
+
+	* expression.cs (MemberAccess.ResolveAsTypeStep): Return a
+	ConstructedType instead of a TypeExpression if we have type arguments.
+
+	* cs-parser.jay (typeof_expression): Support unbound generic types.
+
+	* ecore.cs (UnboundTypeExpression): New public class.
+
 2004-08-12  Martin Baulig  <martin@ximian.com>
 
 	* typemanager.cs (TypeManager.IsNestedChildOf): Use

@@ -2262,7 +2262,7 @@ namespace Mono.CSharp {
 				if (!me.IsStatic &&
 				    TypeManager.IsSubclassOrNestedChildOf (me.InstanceExpression.Type, me.DeclaringType) &&
 				    me.InstanceExpression.Type != me.DeclaringType &&
-				    !me.InstanceExpression.Type.IsSubclassOf (me.DeclaringType) &&
+				    !TypeManager.IsSubclassOf (me.InstanceExpression.Type, me.DeclaringType) &&
 				    (!intermediate || !MemberAccess.IdenticalNameAndTypeName (ec, this, e, loc))) {
 					Error (38, "Cannot access nonstatic member `" + me.Name + "' of " +
 					       "outer type `" + me.DeclaringType + "' via nested type `" +
@@ -2476,6 +2476,16 @@ namespace Mono.CSharp {
 				return name;
 			}
 		}
+	}
+
+	/// <summary>
+	///   Represents an "unbound generic type", ie. typeof (Foo<>).
+	///   See 14.5.11.
+	/// </summary>
+	public class UnboundTypeExpression : TypeLookupExpression {
+		public UnboundTypeExpression (string name, int num_type_args)
+			: base (MemberName.MakeName (name, num_type_args))
+		{ }
 	}
 
 	public class TypeAliasExpression : TypeExpr, IAlias {

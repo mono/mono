@@ -2683,6 +2683,41 @@ typeof_expression
 	  {
 		$$ = new TypeOf ((Expression) $3, lexer.Location);
 	  }
+	| TYPEOF OPEN_PARENS unbound_type_name CLOSE_PARENS
+	  {
+		$$ = new TypeOf ((Expression) $3, lexer.Location);
+	  }
+	;
+
+unbound_type_name
+	: IDENTIFIER generic_dimension_specifier
+	  {
+		$$ = new UnboundTypeExpression ((string) $1, (int) $2);
+	  }
+	;
+
+generic_dimension_specifier
+	: OP_LT opt_commas OP_GT
+	  {
+		$$ = $2;
+	  }
+	;
+
+opt_commas
+	: /* empty */
+	  {
+		$$ = 1;
+	  }
+	| commas
+	;
+
+commas
+	: COMMA {
+		$$ = 2;
+  	  }
+	| commas COMMA {
+		$$ = ((int) $1) + 1;
+	  }
 	;
 
 sizeof_expression

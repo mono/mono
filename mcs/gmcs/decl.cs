@@ -760,6 +760,9 @@ namespace Mono.CSharp {
 			if (t == null)
 				return null;
 
+			if (d is UnboundTypeExpression)
+				return t;
+
 			TypeContainer tc = TypeManager.LookupTypeContainer (t);
 			if ((tc != null) && tc.IsGeneric) {
 				if (!IsGeneric) {
