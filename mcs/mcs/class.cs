@@ -5737,11 +5737,7 @@ namespace Mono.CSharp {
 		public override bool Define (TypeContainer container)
 		{
 			EventAttributes e_attr;
-			if (IsInterface)
-				e_attr = EventAttributes.None;
-			else
-				e_attr = EventAttributes.RTSpecialName |
-					EventAttributes.SpecialName;
+			e_attr = EventAttributes.None;
 
 			if (!DoDefine (container))
 				return false;

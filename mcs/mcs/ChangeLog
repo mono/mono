@@ -1,3 +1,8 @@
+2004-06-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* class.cs : EventAttributes is now set to None by default.
+	  This fixes bug #60459.
+
 2004-06-18  Marek Safar  <marek.safar@seznam.cz>
 
 	Fix bug #60219
