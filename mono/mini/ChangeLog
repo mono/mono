@@ -1,3 +1,10 @@
+2004-01-16  Zoltan Varga  <vargaz@freemail.hu>
+
+	* inssel.brg: Add vectors<->one dimensional array checking to CASTCLASS
+	and ISINST. Fixes #52093.
+
+	* objects.cs (test_0_vector_array_cast): New tests.
+	
 2004-01-15  Zoltan Varga  <vargaz@freemail.hu>
 
 	* jit-icalls.c (helper_stelem_ref_check): New jit icall for array type
