@@ -22,13 +22,30 @@ using System.IO;
 
 namespace MonoTests.System.Microsoft.VisualBasic
 {
+
+	enum OsType {
+		Windows,
+		Unix,
+		Mac
+	}
+
 	[TestFixture]
 	public class VBCodeProviderTest : Assertion {
 	
 		CodeDomProvider MyVBCodeProvider;
+		static OsType OS;
+		static char DSC = Path.DirectorySeparatorChar;
 
 		[SetUp]
 		public void GetReady() { 
+			if ('/' == DSC) {
+				OS = OsType.Unix;
+			} else if ('\\' == DSC) {
+				OS = OsType.Windows;
+			} else {
+				OS = OsType.Mac;
+			}
+
 			MyVBCodeProvider = new VBCodeProvider(); 
 		}
 
@@ -87,8 +104,13 @@ namespace MonoTests.System.Microsoft.VisualBasic
 
 			// Execute the test app
 			ProcessStartInfo NewProcInfo = new ProcessStartInfo();
-			NewProcInfo.FileName = "mono";
-			NewProcInfo.Arguments = MyVBCodeCompilerResults.CompiledAssembly.Location;
+			if (Windows) {
+				NewProcInfo.FileName = MyVBCodeCompilerResults.CompiledAssembly.Location;
+			}
+			else {
+				NewProcInfo.FileName = "mono";
+				NewProcInfo.Arguments = MyVBCodeCompilerResults.CompiledAssembly.Location;
+			}
 			NewProcInfo.RedirectStandardOutput = true;
 			NewProcInfo.UseShellExecute = false;
 			NewProcInfo.CreateNoWindow = true;
@@ -103,7 +125,7 @@ namespace MonoTests.System.Microsoft.VisualBasic
 			}
 			catch (Exception ex)
 			{
-				Assert("#JW34 - " + ex.Message + Environment.NewLine + ex.StackTrace, false);
+				Fail("#JW34 - " + ex.Message + Environment.NewLine + ex.StackTrace);
 			}
 			AssertEquals("#JW33 - Application output", "Hello world!", TestAppOutput);
 
@@ -135,6 +157,27 @@ namespace MonoTests.System.Microsoft.VisualBasic
 		public void	CreateObjRef()
 		{
 			//System.Runtime.Remoting.ObjRef CreateObjRef(System.Type requestedType)
+		}
+
+		bool Windows
+		{
+			get {
+				return OS == OsType.Windows;
+			}
+		}
+
+		bool Unix
+		{
+			get {
+				return OS == OsType.Unix;
+			}
+		}
+
+		bool Mac
+		{
+			get {
+				return OS == OsType.Mac;
+			}
 		}
 
 	}
