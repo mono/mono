@@ -64,7 +64,6 @@ namespace System.Web.Hosting
 				domain.SetData (key, (string) hTable [key]);
 
 			domain.SetData (".hostingVirtualPath", virtualDir);
-			Console.WriteLine ("ICalls: {0}", ICalls.GetMachineInstallDirectory ());
 			string mid = new StringBuilder (ICalls.GetMachineInstallDirectory ()).ToString ();
 			domain.SetData (".hostingInstallDir", mid);
 			InitConfigInNewAppDomain (domain);
