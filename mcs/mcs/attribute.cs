@@ -314,16 +314,19 @@ namespace Mono.CSharp {
 
 			// Now we extract the positional and named arguments
 			
-			ArrayList pos_args = new ArrayList ();
-			ArrayList named_args = new ArrayList ();
+			ArrayList pos_args = null;
+			ArrayList named_args = null;
 			int pos_arg_count = 0;
+			int named_arg_count = 0;
 			
 			if (Arguments != null) {
 				pos_args = (ArrayList) Arguments [0];
 				if (pos_args != null)
 					pos_arg_count = pos_args.Count;
-				if (Arguments.Count > 1)
+				if (Arguments.Count > 1) {
 					named_args = (ArrayList) Arguments [1];
+					named_arg_count = named_args.Count;
+				}
 			}
 
 			pos_values = new object [pos_arg_count];
@@ -362,17 +365,18 @@ namespace Mono.CSharp {
 			ArrayList prop_infos  = null;
 			ArrayList field_values = null;
 			ArrayList prop_values = null;
+			Hashtable seen_names = null;
 
-			if (named_args.Count > 0) {
+			if (named_arg_count > 0) {
 				field_infos = new ArrayList ();
 				prop_infos  = new ArrayList ();
 				field_values = new ArrayList ();
 				prop_values = new ArrayList ();
-			}
 
-			Hashtable seen_names = new Hashtable();
+				seen_names = new Hashtable();
+			}
 			
-			for (i = 0; i < named_args.Count; i++) {
+			for (i = 0; i < named_arg_count; i++) {
 				DictionaryEntry de = (DictionaryEntry) named_args [i];
 				string member_name = (string) de.Key;
 				Argument a  = (Argument) de.Value;
@@ -528,7 +532,7 @@ namespace Mono.CSharp {
 			}
 
 			try {
-				if (named_args.Count > 0) {
+				if (named_arg_count > 0) {
 					prop_info_arr = new PropertyInfo [prop_infos.Count];
 					field_info_arr = new FieldInfo [field_infos.Count];
 					field_values_arr = new object [field_values.Count];

@@ -4798,8 +4798,8 @@ namespace Mono.CSharp {
 			bool method_params = false;
 			Type applicable_type = null;
 			int arg_count = 0;
-			ArrayList candidates = new ArrayList ();
-			ArrayList candidate_overrides = new ArrayList ();
+			ArrayList candidates = new ArrayList (2);
+			ArrayList candidate_overrides = null;
 
                         //
                         // Used to keep a map between the candidate
@@ -4846,6 +4846,8 @@ namespace Mono.CSharp {
 				if (!me.IsBase &&
 				    methods [i].IsVirtual &&
 				    (methods [i].Attributes & MethodAttributes.NewSlot) == 0) {
+					if (candidate_overrides == null)
+						candidate_overrides = new ArrayList ();
 					candidate_overrides.Add (methods [i]);
 					continue;
 				}
@@ -5022,10 +5024,11 @@ namespace Mono.CSharp {
 					throw new InternalErrorException (
 						"Should not happen.  An 'override' method took part in overload resolution: " + method);
 								    
-				foreach (MethodBase candidate in candidate_overrides) {
-					if (IsOverride (candidate, method))
-						method = candidate;
-				}
+				if (candidate_overrides != null)
+					foreach (MethodBase candidate in candidate_overrides) {
+						if (IsOverride (candidate, method))
+							method = candidate;
+					}
 			}
 
 			//
