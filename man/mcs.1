@@ -120,6 +120,10 @@ compiler to look for libraries in that specified path.
 Directs the compiler to look for libraries in the specified path.
 Multiple paths can be provided by using the option multiple times.
 .TP
+.I \-main:CLASS
+Tells the compiler which CLASS contains the entry point. Useful when
+you are compiling several classes with a Main method.
+.TP
 .I \-nostdlib, -nostdlib+
 Use this flag if you want to compile the core library.  This makes the
 compiler load its internal types from the assembly being compiled.
