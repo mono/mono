@@ -1,5 +1,11 @@
 2004-08-21  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini-amd64.c (read_tls_offset_from_method): Add another code
+	sequence.
+
+	* tramp-amd64.c (amd64_class_init_trampoline): Use a more efficient
+	instruction sequence for nullifying class init trampolines.
+
 	* objects.cs: Add new regalloc test.
 
 	* mini-amd64.c inssel-amd64.brg: Optimize parameter passing.
