@@ -73,11 +73,20 @@ plattest_flags = /debug+ /debug:full /nowarn:0618 /nowarn:0672 /r:$(PLATFORM_COR
 all-local: $(corlib)
 
 install-local: $(corlib) $(makefrag)
-	$(MKINSTALLDIRS) $(DESTDIR)$(prefix)/lib
-	$(INSTALL_LIB) $(corlib) $(DESTDIR)$(prefix)/lib
+	@if test $(PROFILE) = "net_2_0" ; then \
+		$(MKINSTALLDIRS) $(DESTDIR)$(prefix)/lib/net_2_0 ; \
+		$(INSTALL_LIB) $(corlib) $(DESTDIR)$(prefix)/lib/net_2_0 ; \
+	else \
+		$(MKINSTALLDIRS) $(DESTDIR)$(prefix)/lib ; \
+		$(INSTALL_LIB) $(corlib) $(DESTDIR)$(prefix)/lib ; \
+	fi
 
 uninstall-local:
-	-rm -f $(DESTDIR)$(prefix)/lib/corlib.dll
+	@if test $(PROFILE) = "net_2_0" ; then \
+		-rm -f $(DESTDIR)$(prefix)/lib/net_2_0/corlib.dll
+	else \
+		-rm -f $(DESTDIR)$(prefix)/lib/corlib.dll
+	fi
 
 clean-local:
 	-rm -f $(corlib) $(cmplib) $(testlib) $(reslib) $(plattestlib) TestResult.xml \

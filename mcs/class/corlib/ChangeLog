@@ -1,3 +1,7 @@
+2004-04-29  Jackson Harper  <jackson@ximian.com>
+
+	* Makefile: net_2_0 corlib goes to a special place.
+	
 2004-04-28  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* corlib.dll.sources: Added X509ChainStatusFlags, X509CRL, X509Store, 
