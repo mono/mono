@@ -1,5 +1,8 @@
 2004-07-30  Zoltan Varga  <vargaz@freemail.hu>
 
+	* exceptions-amd64.c (mono_arch_find_jit_info): Fix restoring of
+	caller saved regs.
+
 	* basic.cs: Add a test for add.ovf.un.
 
 2004-07-30  Bernie Solomon  <bernard@ugsolutions.com>
