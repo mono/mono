@@ -1,8 +1,13 @@
+2003-07-26  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Makefile: added install-local target.
+
 2003-07-26  Martin Baulig  <martin@ximian.com>
 
 	* error-6.cs: New test for bug #46907.
 
-	* Makefile.am (test-multi-local): Run the multi-test tests.
+	* Makefile:
+	(test-multi-local): Run the multi-test tests.
 	(all-local): Run run-test-local and test-multi-local.
 
 2003-07-21  Martin Baulig  <martin@ximian.com>

@@ -70,3 +70,6 @@ clean-local:
 	rm -f *.exe
 
 dist-local: dist-default
+
+install-local:
+
