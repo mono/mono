@@ -1,3 +1,11 @@
+2001-10-26  Miguel de Icaza  <miguel@ximian.com>
+
+	* NumberFormatInfo.cs: Provide an internal constructor that takes
+	as an argument a CultureInfo ID (LCID) so that we can construct
+	different ones here.
+
+	* CultureInfo.cs: Begun implementation.
+
 2001-10-09  Derek Holden  <dholden@draper.com>
 
 	* NumberFormatInfo.cs: Small typo in PercentPositivePattern

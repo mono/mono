@@ -56,42 +56,52 @@ namespace System.Globalization {
 		private string positiveInfinitySymbol;
 		private string positiveSign;
 
-		public NumberFormatInfo ()
+		internal NumberFormatInfo (int lcid)
 		{
-			readOnly = false;
+			switch (lcid){
 
-			// Currency Related Format Info
-			currencyDecimalDigits =       2;
-			currencyDecimalSeparator =    ".";
-			currencyGroupSeparator =      ",";
-			currencyGroupSizes =          new int[1] { 3 };
-			currencyNegativePattern =     0;
-			currencyPositivePattern =     0;
-			currencySymbol =              "$";
-
-			naNSymbol =                   "NaN";
-			negativeInfinitySymbol =      "-Infinity";
-			negativeSign =                "-";
-
-			// Number Related Format Info
-			numberDecimalDigits =         2;
-			numberDecimalSeparator =      ".";
-			numberGroupSeparator =        ",";
-			numberGroupSizes =            new int[1] { 3 };
-			numberNegativePattern =       0;
-
-			// Percent Related Format Info
-			percentDecimalDigits =        2;
-			percentDecimalSeparator =     ".";
-			percentGroupSeparator =       ",";
-			percentGroupSizes =           new int[1] { 3 };
-			percentNegativePattern =      0;
-			percentPositivePattern =      0;
-			percentSymbol=                "%";
-			
-			perMilleSymbol =              "\u2030";
-			positiveInfinitySymbol =      "Infinity";
-			positiveSign =                "+";
+				// The Invariant Culture Info ID.
+			case 0x007f:
+				readOnly = false;
+				
+				// Currency Related Format Info
+				currencyDecimalDigits =       2;
+				currencyDecimalSeparator =    ".";
+				currencyGroupSeparator =      ",";
+				currencyGroupSizes =          new int[1] { 3 };
+				currencyNegativePattern =     0;
+				currencyPositivePattern =     0;
+				currencySymbol =              "$";
+				
+				naNSymbol =                   "NaN";
+				negativeInfinitySymbol =      "-Infinity";
+				negativeSign =                "-";
+				
+				// Number Related Format Info
+				numberDecimalDigits =         2;
+				numberDecimalSeparator =      ".";
+				numberGroupSeparator =        ",";
+				numberGroupSizes =            new int[1] { 3 };
+				numberNegativePattern =       0;
+				
+				// Percent Related Format Info
+				percentDecimalDigits =        2;
+				percentDecimalSeparator =     ".";
+				percentGroupSeparator =       ",";
+				percentGroupSizes =           new int[1] { 3 };
+				percentNegativePattern =      0;
+				percentPositivePattern =      0;
+				percentSymbol=                "%";
+				
+				perMilleSymbol =              "\u2030";
+				positiveInfinitySymbol =      "Infinity";
+				positiveSign =                "+";
+				break;
+			}
+		}
+		
+		public NumberFormatInfo () : this (0x007f)
+		{
 		}
 				
 		// =========== Currency Format Properties =========== //

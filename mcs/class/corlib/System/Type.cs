@@ -154,7 +154,7 @@ namespace System {
 		public virtual bool IsAssignableFrom (Type c)
 		{
 			// FIXME
-			return false;
+			return true;
 		}
 
 		public virtual int GetArrayRank ()
@@ -176,6 +176,12 @@ namespace System {
 			get {
 				// FIXME
 				return false;
+			}
+		}
+
+		public bool IsContextful {
+			get {
+				return typeof (ContextBoundObject).IsAssignableFrom (this);
 			}
 		}
 	}
