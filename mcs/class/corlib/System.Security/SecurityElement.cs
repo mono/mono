@@ -28,7 +28,6 @@ namespace System.Security {
 			this.tag = tag;
 			this.text = text;
 		}
-
 		public SecurityElement (string tag)
 		{
 			if (tag.IndexOfAny (invalid_chars) != -1)
@@ -55,6 +54,12 @@ namespace System.Security {
 			}
 
 			set {
+				if (value != null){
+					foreach (object o in children){
+						if (o == null)
+							throw new ArgumentNullException ();
+					}
+				}
 				children = value;
 			}
 		}
@@ -64,6 +69,10 @@ namespace System.Security {
 				return tag;
 			}
 			set {
+				if (value == null)
+					throw new ArgumentNullException ();
+				if (tag.IndexOfAny (invalid_chars) != -1)
+					throw new ArgumentException (Locale.GetText ("Invalid XML string"));
 				tag = value;
 			}
 		}
@@ -74,6 +83,9 @@ namespace System.Security {
 			}
 
 			set {
+				if (value != null && (value.IndexOfAny (invalid_chars) != -1))
+					throw new ArgumentException (Locale.GetText ("Invalid XML string"));
+				
 				text = value;
 			}
 		}
