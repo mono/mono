@@ -1,3 +1,16 @@
+2004-11-29  Peter Bartok  <pbartok@novell.com>
+
+	* TreeNode.cs, TreeNodeCollection.cs, TreeView.cs,
+	  TreeViewAction.cs, TreeViewEventArgs.cs: Removed new files.
+          I am removing these files as they conflict with already completed 
+          work. While it is fantastic to get contributions to MWF, I 
+          respectfully ask that everyone please coordinate their contributions 
+          through mono-winforms-list or #mono-winforms at this time. We're 
+          explicitly avoiding stubbing and don't want controls that don't have 
+          their basic functionality implemented in svn. Please also see 
+          http://www.mono-project.com/contributing/winforms.html
+
+
 2004-11-29  Marek Safar  <marek.safar@seznam.cz>
 
 	* Application.cs (ModalRun): Don't hang after exit.
