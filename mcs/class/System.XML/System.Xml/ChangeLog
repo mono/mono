@@ -1,3 +1,7 @@
+2003-06-20  Ben Maurer <bmaurer@users.sourceforge.net>
+	* XmlTextReader.cs: Reduces memory allocation when the reader is
+	not queried for some values.
+
 2003-06-20  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XmlUrlResolver.cs : several ResolveUri() fix. e.g. for external URIs.

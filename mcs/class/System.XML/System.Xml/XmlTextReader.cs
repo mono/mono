@@ -154,7 +154,12 @@ namespace System.Xml
 
 		public override bool HasValue
 		{
-			get { return value != String.Empty;	}
+			get { 
+				if (this.useSbForVal)
+					return valSb.Length != 0;
+				else
+					return value != String.Empty;
+			}
 		}
 
 		public override bool IsDefault
@@ -262,10 +267,14 @@ namespace System.Xml
 		public override string Value
 		{
 			get {
+				
+				string v = value;
+				if (this.useSbForVal)
+					v = valSb.ToString ();
 				if(NodeType == XmlNodeType.Attribute)
-					return UnescapeAttributeValue(value);
+					return UnescapeAttributeValue(v);
 				else
-					return value;
+					return v;
 			}
 		}
 
@@ -712,6 +721,8 @@ namespace System.Xml
 		private string namespaceURI;
 		private bool isEmptyElement;
 		private string value;
+		private StringBuilder valSb;
+		private bool useSbForVal = false;
 
 		private bool isPropertySaved;
 		private XmlNodeType saveNodeType;
@@ -733,10 +744,7 @@ namespace System.Xml
 		private int nameCapacity;
 		private const int initialNameCapacity = 256;
 
-		private char [] valueBuffer;
-		private int valueLength;
-		private int valueCapacity;
-		private const int initialValueCapacity = 8192;
+		StringBuilder valueBuffer;
 
 		// A buffer for ReadContent for ReadOuterXml
 		private StringBuilder currentTag {
@@ -791,10 +799,8 @@ namespace System.Xml
 			nameBuffer = new char [initialNameCapacity];
 			nameLength = 0;
 			nameCapacity = initialNameCapacity;
-
-			valueBuffer = new char [initialValueCapacity];
-			valueLength = 0;
-			valueCapacity = initialValueCapacity;
+			
+			valueBuffer = new StringBuilder (8192);
 		}
 
 		private void InitializeContext (string url, XmlParserContext context, TextReader fragment, XmlNodeType fragType)
@@ -853,6 +859,7 @@ namespace System.Xml
 			this.isEmptyElement = isEmptyElement;
 			this.value = value;
 			this.elementDepth = depth;
+			this.useSbForVal = false;
 
 			if (clearAttributes)
 				ClearAttributes ();
@@ -888,6 +895,17 @@ namespace System.Xml
 				namespaceURI = "";
 				break;
 			}
+		}
+		
+		private void SetProperties (
+			XmlNodeType nodeType,
+			string name,
+			bool isEmptyElement,
+			StringBuilder value,
+			bool clearAttributes) {
+			SetProperties (nodeType, name, isEmptyElement, (string)null, clearAttributes);
+			this.useSbForVal = true;
+			this.valSb = value;
 		}
 
 		private void SaveProperties ()
@@ -1137,23 +1155,17 @@ namespace System.Xml
 
 		private void AppendValueChar (int ch)
 		{
-			CheckValueCapacity ();
-			valueBuffer [valueLength++] = (char)ch;
-		}
-
-		private void CheckValueCapacity ()
-		{
-			if (valueLength == valueCapacity) {
-				valueCapacity = valueCapacity * 2;
-				char [] oldValueBuffer = valueBuffer;
-				valueBuffer = new char [valueCapacity];
-				Array.Copy (oldValueBuffer, valueBuffer, valueLength);
-			}
+			valueBuffer.Append ((char)ch);
 		}
 
 		private string CreateValueString ()
 		{
-			return new String (valueBuffer, 0, valueLength);
+			return valueBuffer.ToString ();
+		}
+		
+		private void ClearValueBuffer ()
+		{
+			valueBuffer.Length = 0;
 		}
 
 		// The reader is positioned on the first character
@@ -1161,7 +1173,7 @@ namespace System.Xml
 		private void ReadText (bool cleanValue)
 		{
 			if (cleanValue)
-				valueLength = 0;
+				ClearValueBuffer ();
 
 			int ch = PeekChar ();
 
@@ -1176,14 +1188,14 @@ namespace System.Xml
 				ch = PeekChar ();
 			}
 
-			if (returnEntityReference && valueLength == 0) {
+			if (returnEntityReference && valueBuffer.Length == 0) {
 				SetEntityReferenceProperties ();
 			} else {
 				SetProperties (
 					XmlNodeType.Text, // nodeType
 					String.Empty, // name
 					false, // isEmptyElement
-					CreateValueString (), // value
+					valueBuffer, // value
 					true // clearAttributes
 				);
 			}
@@ -1333,7 +1345,7 @@ namespace System.Xml
 		// *Keeps quote char* to value to get_QuoteChar() correctly.
 		private string ReadAttribute ()
 		{
-			valueLength = 0;
+			ClearValueBuffer ();
 
 			int quoteChar = ReadChar ();
 
@@ -1376,7 +1388,7 @@ namespace System.Xml
 			}
 			SkipWhitespace ();
 
-			valueLength = 0;
+			ClearValueBuffer ();
 
 			while (PeekChar () != -1) {
 				int ch = ReadChar ();
@@ -1393,7 +1405,7 @@ namespace System.Xml
 				XmlNodeType.ProcessingInstruction, // nodeType
 				target, // name
 				false, // isEmptyElement
-				CreateValueString (), // value
+				valueBuffer, // value
 				true // clearAttributes
 			);
 		}
@@ -1443,7 +1455,7 @@ namespace System.Xml
 		// the leading '<!--'.
 		private void ReadComment ()
 		{
-			valueLength = 0;
+			ClearValueBuffer ();
 
 			while (PeekChar () != -1) {
 				int ch = ReadChar ();
@@ -1465,7 +1477,7 @@ namespace System.Xml
 				XmlNodeType.Comment, // nodeType
 				String.Empty, // name
 				false, // isEmptyElement
-				CreateValueString (), // value
+				valueBuffer, // value
 				true // clearAttributes
 			);
 		}
@@ -1474,7 +1486,7 @@ namespace System.Xml
 		// the leading '<![CDATA['.
 		private void ReadCDATA ()
 		{
-			valueLength = 0;
+			ClearValueBuffer ();
 
 			bool skip = false;
 			int ch = 0;
@@ -1504,7 +1516,7 @@ namespace System.Xml
 				XmlNodeType.CDATA, // nodeType
 				String.Empty, // name
 				false, // isEmptyElement
-				CreateValueString (), // value
+				valueBuffer, // value
 				true // clearAttributes
 			);
 		}
@@ -2618,7 +2630,7 @@ namespace System.Xml
 
 		private bool ReadWhitespace ()
 		{
-			valueLength = 0;
+			ClearValueBuffer ();
 			int ch = PeekChar ();
 			do {
 				AppendValueChar (ReadChar ());
@@ -2630,7 +2642,7 @@ namespace System.Xml
 				SetProperties (XmlNodeType.Whitespace,
 					       String.Empty,
 					       false,
-					       CreateValueString (),
+					       valueBuffer,
 					       true);
 
 			return (PeekChar () != -1);
