@@ -16,13 +16,18 @@ namespace System.Security.Principal {
 		
 		public GenericIdentity (string user_name, string authentication_type)
 		{
+			if (user_name == null)
+				throw new ArgumentNullException ("user_name");
+
+			if (authentication_type == null)
+				throw new ArgumentNullException ("authentication_type");
+
 			this.user_name = user_name;
 			this.authentication_type = authentication_type;
 		}
 
-		public GenericIdentity (string name)
+		public GenericIdentity (string name) : this (name, "")
 		{
-			this.user_name = user_name;
 		}
 
 		public virtual string AuthenticationType {
@@ -39,7 +44,7 @@ namespace System.Security.Principal {
 
 		public virtual bool IsAuthenticated {
 			get {
-				return true;
+				return (user_name != "");
 			}
 		}
 	}
