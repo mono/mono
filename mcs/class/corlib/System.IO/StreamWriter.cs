@@ -262,6 +262,7 @@ namespace System.IO {
 
 		public override void Close()
 		{
+                        closed = true;
 			Dispose (true);
 		}
 

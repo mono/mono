@@ -1,5 +1,7 @@
 2004-05-24  Duncan Mak  <duncan@ximian.com>
 
+	* StreamWriter.cs (Close): Remember to set the 'closed' flag.
+
 	* DirectoryInfo.cs: 
 	* FileInfo.cs: Reformat the whole file to use DOS line endings.
 	(MoveTo): Return if the destination of Move is the
