@@ -1,3 +1,9 @@
+2005-02-18  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlNamespaceManager.cs : Prefix "xml" is bound to the fixed
+	  namespace "http://www.w3.org/XML/1998/namespace", but it is not
+	  vice versa (i.e. we can use other prefixes for this namespace URI).
+
 2005-02-17  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlNode.cs : It does not have to iterate children to find argument
