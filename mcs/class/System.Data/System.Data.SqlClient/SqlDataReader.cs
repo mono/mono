@@ -34,6 +34,7 @@ namespace System.Data.SqlClient {
 		int resultsRead;
 		int rowsRead;
 		DataTable schemaTable;
+		bool hasRows;
 
 		#endregion // Fields
 
@@ -83,7 +84,7 @@ namespace System.Data.SqlClient {
 					return command.Tds.RecordsAffected; 
 			}
 		}
-
+	
 		#endregion // Properties
 
 		#region Methods
@@ -175,7 +176,8 @@ namespace System.Data.SqlClient {
 				return ((byte []) value).Length - dataIndex;
 			}
 		}
-
+                                                                                                    
+		[EditorBrowsableAttribute (EditorBrowsableState.Never)]
 		public char GetChar (int i)
 		{
 			object value = GetValue (i);
@@ -206,11 +208,11 @@ namespace System.Data.SqlClient {
 				return valueBuffer.Length - dataIndex;
 			}
 		}
-
-		[MonoTODO ("Implement GetData")]
+		
+		[EditorBrowsableAttribute (EditorBrowsableState.Never)] 
 		public IDataReader GetData (int i)
 		{
-			throw new NotImplementedException ();
+			return ( (IDataReader) this [i]);
 		}
 
 		public string GetDataTypeName (int i)
@@ -616,7 +618,6 @@ namespace System.Data.SqlClient {
 			return (SqlString) value;
 		}
 
-		[MonoTODO ("Implement TdsBigDecimal conversion.  SqlDbType.Real fails tests?")]
 		public object GetSqlValue (int i)
 		{
 			SqlDbType type = (SqlDbType) (schemaTable.Rows [i]["ProviderType"]);
