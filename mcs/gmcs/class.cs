@@ -1075,13 +1075,14 @@ namespace Mono.CSharp {
 			// explicit one actually implements the interface while the other one is just
 			// a normal indexer.  See bug #37714.
 			//
+
 			ArrayList list = new ArrayList ();
 			foreach (Indexer i in Indexers){
-				if (i.ExplicitInterfaceName != null)
+				if (i.MemberName.Left != null)
 					list.Add (i);
 			}
 			foreach (Indexer i in Indexers){
-				if (i.ExplicitInterfaceName == null)
+				if (i.MemberName.Left == null)
 					list.Add (i);
 			}
 
@@ -2494,7 +2495,7 @@ namespace Mono.CSharp {
 		public bool IsOperator;
 
 		public MethodCore (DeclSpace ds, Expression type, int mod, int allowed_mod,
-				   bool is_interface, string name, Attributes attrs,
+				   bool is_interface, MemberName name, Attributes attrs,
 				   Parameters parameters, Location loc)
 			: base (type, mod, allowed_mod, Modifiers.PRIVATE, name, attrs, loc)
 		{
@@ -2740,19 +2741,22 @@ namespace Mono.CSharp {
 		// return_type can be "null" for VOID values.
 		//
 		public Method (DeclSpace ds, Expression return_type, int mod, bool is_iface,
-			       string name, Parameters parameters, Attributes attrs, Location l)
+			       MemberName name, Parameters parameters, Attributes attrs,
+			       Location l)
 			: base (ds, return_type, mod,
 				is_iface ? AllowedInterfaceModifiers : AllowedModifiers,
 				is_iface, name, attrs, parameters, l)
 		{
 		}
 
+		//
+		// return_type can be "null" for VOID values.
+		//
 		public Method (GenericMethod generic, Expression return_type, int mod,
-			       bool is_iface, string name, Parameters parameters,
+			       bool is_iface, MemberName name, Parameters parameters,
 			       Attributes attrs, Location l)
-			: base (generic, return_type, mod,
-				is_iface ? AllowedInterfaceModifiers : AllowedModifiers,
-				is_iface, name, attrs, parameters, l)
+			: this ((DeclSpace) generic, return_type, mod, is_iface, name,
+				parameters, attrs, l)
 		{
 			GenericMethod = generic;
 		}
@@ -3107,7 +3111,8 @@ namespace Mono.CSharp {
 		//
 		public Constructor (DeclSpace ds, string name, int mod, Parameters args,
 				    ConstructorInitializer init, Location l)
-			: base (ds, null, mod, AllowedModifiers, false, name, null, args, l)
+			: base (ds, null, mod, AllowedModifiers, false,
+				new MemberName (name), null, args, l)
 		{
 			Initializer = init;
 		}
@@ -3871,7 +3876,8 @@ namespace Mono.CSharp {
 
 		public Destructor (DeclSpace ds, Expression return_type, int mod, string name,
 				   Parameters parameters, Attributes attrs, Location l)
-			: base (ds, return_type, mod, false, name, parameters, attrs, l)
+			: base (ds, return_type, mod, false, new MemberName (name),
+				parameters, attrs, l)
 		{ }
 
 	}
@@ -3882,6 +3888,8 @@ namespace Mono.CSharp {
 		protected MethodAttributes flags;
 
 		protected readonly int explicit_mod_flags;
+
+		public readonly MemberName MemberName;
 
 		//
 		// The "short" name of this property / indexer / event.  This is the
@@ -3902,7 +3910,7 @@ namespace Mono.CSharp {
 		//
 		// The name of the interface we are explicitly implementing
 		//
-		public string ExplicitInterfaceName = null;
+		public Expression ExplicitInterfaceName = null;
 
 		//
 		// Whether this is an interface member.
@@ -3927,12 +3935,13 @@ namespace Mono.CSharp {
 		//
 		// The constructor is only exposed to our children
 		//
-		protected MemberBase (Expression type, int mod, int allowed_mod, int def_mod, string name,
-				      Attributes attrs, Location loc)
-			: base (name, attrs, loc)
+		protected MemberBase (Expression type, int mod, int allowed_mod, int def_mod,
+				      MemberName name, Attributes attrs, Location loc)
+			: base (name.GetMemberName (), attrs, loc)
 		{
 			explicit_mod_flags = mod;
 			Type = type;
+			MemberName = name;
 			ModFlags = Modifiers.Check (allowed_mod, mod, def_mod, loc);
 		}
 
@@ -4204,17 +4213,15 @@ namespace Mono.CSharp {
 			//
 			// Check for explicit interface implementation
 			//
-			if ((ExplicitInterfaceName == null) && (Name.IndexOf ('.') != -1)){
-				int pos = Name.LastIndexOf ('.');
-
-				ExplicitInterfaceName = Name.Substring (0, pos);
-				ShortName = Name.Substring (pos + 1);
+			if (MemberName.Left != null) {
+				ExplicitInterfaceName = MemberName.Left.GetTypeExpression (Location);
+				ShortName = MemberName.Name;
 			} else
 				ShortName = Name;
 
 			if (ExplicitInterfaceName != null) {
-				InterfaceType  = RootContext.LookupType (
-					container, ExplicitInterfaceName, false, Location);
+				InterfaceType = container.ResolveType (
+					ExplicitInterfaceName, false, Location);
 				if (InterfaceType == null)
 					return false;
 
@@ -4253,7 +4260,7 @@ namespace Mono.CSharp {
 		//
 		// The constructor is only exposed to our children
 		//
-		protected FieldBase (Expression type, int mod, int allowed_mod, string name,
+		protected FieldBase (Expression type, int mod, int allowed_mod, MemberName name,
 				     object init, Attributes attrs, Location loc)
 			: base (type, mod, allowed_mod, Modifiers.PRIVATE, name, attrs, loc)
 		{
@@ -4324,7 +4331,8 @@ namespace Mono.CSharp {
 
 		public Field (Expression type, int mod, string name, Object expr_or_array_init,
 			      Attributes attrs, Location loc)
-			: base (type, mod, AllowedModifiers, name, expr_or_array_init, attrs, loc)
+			: base (type, mod, AllowedModifiers, new MemberName (name),
+				expr_or_array_init, attrs, loc)
 		{
 		}
 
@@ -4457,7 +4465,7 @@ namespace Mono.CSharp {
 		protected EmitContext ec;
 
 		public PropertyBase (DeclSpace ds, Expression type, int mod_flags,
-				     int allowed_mod, bool is_iface, string name,
+				     int allowed_mod, bool is_iface, MemberName name,
 				     Parameters parameters, Attributes attrs,
 				     Accessor get_block, Accessor set_block,
 				     Location loc)
@@ -4641,7 +4649,7 @@ namespace Mono.CSharp {
 			Modifiers.NEW;
 
 		public Property (DeclSpace ds, Expression type, int mod_flags, bool is_iface,
-				 string name, Attributes attrs, Accessor get_block,
+				 MemberName name, Attributes attrs, Accessor get_block,
 				 Accessor set_block, Location loc)
 			: base (ds, type, mod_flags,
 				is_iface ? AllowedInterfaceModifiers : AllowedModifiers,
@@ -4916,7 +4924,7 @@ namespace Mono.CSharp {
 		public MethodBuilder AddBuilder, RemoveBuilder;
 		MethodData AddData, RemoveData;
 		
-		public Event (Expression type, int mod_flags, bool is_iface, string name,
+		public Event (Expression type, int mod_flags, bool is_iface, MemberName name,
 			      Object init, Attributes attrs, Accessor add, Accessor remove,
 			      Location loc)
 			: base (type, mod_flags,
@@ -5102,14 +5110,13 @@ namespace Mono.CSharp {
 		//
 		// Are we implementing an interface ?
 		//
-		public Indexer (DeclSpace ds, Expression type, string int_type, int mod_flags,
-				bool is_iface, Parameters parameters, Attributes attrs,
+		public Indexer (DeclSpace ds, Expression type, int mod_flags, bool is_iface,
+				MemberName name, Parameters parameters, Attributes attrs,
 				Accessor get_block, Accessor set_block, Location loc)
 			: base (ds, type, mod_flags,
 				is_iface ? AllowedInterfaceModifiers : AllowedModifiers,
-				is_iface, "", parameters, attrs, get_block, set_block, loc)
+				is_iface, name, parameters, attrs, get_block, set_block, loc)
 		{
-			ExplicitInterfaceName = int_type;
 		}
 
 		public override bool Define (TypeContainer container)
@@ -5364,7 +5371,8 @@ namespace Mono.CSharp {
 				 Expression arg1type, string arg1name,
 				 Expression arg2type, string arg2name,
 				 Block block, Attributes attrs, Location loc)
-			: base (ret_type, mod_flags, AllowedModifiers, Modifiers.PUBLIC, "", attrs, loc)
+			: base (ret_type, mod_flags, AllowedModifiers, Modifiers.PUBLIC,
+				MemberName.Null, attrs, loc)
 		{
 			OperatorType = type;
 			Name = "op_" + OperatorType;
@@ -5408,9 +5416,10 @@ namespace Mono.CSharp {
 							       Parameter.Modifier.NONE, null);
 			
 			OperatorMethod = new Method (
-				container, ReturnType, ModFlags, false, MethodName,
-						     new Parameters (param_list, null, Location),
-						     OptAttributes, Location);
+				container, ReturnType, ModFlags, false,
+				new MemberName (MethodName),
+				new Parameters (param_list, null, Location),
+				OptAttributes, Location);
 
 			OperatorMethod.Block = Block;
 			OperatorMethod.IsOperator = true;			

@@ -260,6 +260,23 @@ namespace Mono.CSharp {
 			args.AddRange (new_args.args);
 		}
 
+		public string[] GetDeclarations ()
+		{
+			string[] ret = new string [args.Count];
+			for (int i = 0; i < args.Count; i++) {
+				SimpleName sn = args [i] as SimpleName;
+				if (sn != null) {
+					ret [i] = sn.Name;
+					continue;
+				}
+
+				Report.Error (81, Location, "Type parameter declaration " +
+					      "must be an identifier not a type");
+				return null;
+			}
+			return ret;
+		}
+
 		public Type[] Arguments {
 			get {
 				return atypes;
@@ -289,7 +306,7 @@ namespace Mono.CSharp {
 				//
 				s.Append (args [i].ToString ());
 				if (i+1 < count)
-					s.Append (", ");
+					s.Append (",");
 			}
 			return s.ToString ();
 		}

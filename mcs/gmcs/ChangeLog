@@ -1,5 +1,29 @@
 2004-03-19  Martin Baulig  <martin@ximian.com>
 
+	* decl.cs (MemberName): New class.  We use this to "construct"
+	namespace_or_type_name's.
+
+	* generics.cs (TypeArguments.GetDeclarations): New public method;
+	returns the type arguments as a string[] and reports a CS0081 if
+	one of them is not an identifier.
+
+	* class.cs (MemberBase): The .ctor now takes the name as a
+	MemberName instead of a string.
+	(MemberBase.ExplicitInterfaceName): Changed type from string to
+	Expression.
+	(MemberBase.DoDefine): If we're an explicit implementation, the
+	InterfaceType may be a generic instance.
+
+	* cs-parser.jay (namespace_or_type_name): Return a MemberName.
+	(namespace_name): Call MemberName.GetName () to transform the
+	MemberName into a string and ensure we don't have any type
+	arguments.
+	(type_name): Call MemberName.GetTypeExpression() to transfrom the
+	MemberName into an expression.
+	(method_header): Use namespace_or_type_name instead of member_name.	
+
+2004-03-19  Martin Baulig  <martin@ximian.com>
+
 	* class.cs (MemberCore.IsDuplicateImplementation): Check whether
 	two overloads may unify for some type parameter substitutions and
 	report a CS0408 if appropriate.

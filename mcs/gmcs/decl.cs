@@ -18,6 +18,93 @@ using System.Reflection;
 
 namespace Mono.CSharp {
 
+	public class MemberName {
+		public readonly string Name;
+		public readonly TypeArguments TypeArguments;
+
+		public readonly MemberName Left;
+
+		public static readonly MemberName Null = new MemberName ("");
+
+		public MemberName (string name)
+		{
+			this.Name = name;
+		}
+
+		public MemberName (string name, TypeArguments args)
+			: this (name)
+		{
+			this.TypeArguments = args;
+		}
+
+		public MemberName (MemberName left, string name, TypeArguments args)
+			: this (name, args)
+		{
+			this.Left = left;
+		}
+
+		public string GetName ()
+		{
+			if (Left != null)
+				return Left.GetName () + "." + Name;
+			else
+				return Name;
+		}
+
+		public string GetFullName ()
+		{
+			string full_name;
+			if (TypeArguments != null)
+				full_name = Name + "<" + TypeArguments + ">";
+			else
+				full_name = Name;
+			if (Left != null)
+				return Left.GetFullName () + "." + full_name;
+			else
+				return full_name;
+		}
+
+		public string GetMemberName ()
+		{
+			string full_name;
+			if (Left != null)
+				return Left.GetFullName () + "." + Name;
+			else
+				return Name;
+		}
+
+		public Expression GetTypeExpression (Location loc)
+		{
+			if (Left != null) {
+				Expression lexpr = Left.GetTypeExpression (loc);
+
+				if (TypeArguments != null)
+					return new GenericMemberAccess (lexpr, Name, TypeArguments, loc);
+				else
+					return new MemberAccess (lexpr, Name, loc);
+			} else {
+				if (TypeArguments != null)
+					return new ConstructedType (Name, TypeArguments, loc);
+				else
+					return new SimpleName (Name, loc);
+			}
+		}
+
+		public override string ToString ()
+		{
+			string full_name;
+			if (TypeArguments != null)
+				full_name = Name + "<" + TypeArguments + ">";
+			else
+				full_name = Name;
+
+			if (Left != null)
+				return Left + "." + full_name;
+			else
+				return full_name;
+		}
+	}
+
 	/// <summary>
 	///   Base representation for members.  This is only used to keep track
 	///   of Name, Location and Modifier flags.
@@ -953,7 +1040,18 @@ namespace Mono.CSharp {
 		/// Called by the parser to configure the type_parameter_list for this
 		/// declaration space
 		///
-		public AdditionResult SetParameterInfo (ArrayList type_parameter_list, ArrayList constraints_list)
+		public AdditionResult SetParameterInfo (TypeArguments args,
+							ArrayList constraints_list)
+		{
+			string[] type_parameter_list = args.GetDeclarations ();
+			if (type_parameter_list == null)
+				return AdditionResult.Error;
+
+			return SetParameterInfo (type_parameter_list, constraints_list);
+		}
+
+		public AdditionResult SetParameterInfo (IList type_parameter_list,
+							ArrayList constraints_list)
 		{
 			type_params = new TypeParameter [type_parameter_list.Count];
 

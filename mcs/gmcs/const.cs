@@ -40,9 +40,10 @@ namespace Mono.CSharp {
 			Modifiers.INTERNAL |
 			Modifiers.PRIVATE;
 
-		public Const (Expression constant_type, string name, Expression expr, int mod_flags,
-			      Attributes attrs, Location loc)
-			: base (constant_type, mod_flags, AllowedModifiers, name, null, attrs, loc)
+		public Const (Expression constant_type, string name, Expression expr,
+			      int mod_flags, Attributes attrs, Location loc)
+			: base (constant_type, mod_flags, AllowedModifiers,
+				new MemberName (name), null, attrs, loc)
 		{
 			Expr = expr;
 		}

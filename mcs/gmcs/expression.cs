@@ -8077,6 +8077,7 @@ namespace Mono.CSharp {
 			int pos = 0;
 			while ((pos < dim.Length) && (dim [pos] == '[')) {
 				pos++;
+
 				if (dim [pos] == ']') {
 					ltype = ltype.MakeArrayType ();
 					pos++;
@@ -8090,8 +8091,9 @@ namespace Mono.CSharp {
 				}
 
 				int rank = 0;
-				while (dim [pos++] == ',')
-					rank++;
+				while (dim [pos] == ',') {
+					pos++; rank++;
+				}
 
 				if ((dim [pos] != ']') || (pos != dim.Length-1))
 					return null;
