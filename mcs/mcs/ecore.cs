@@ -3226,21 +3226,40 @@ namespace Mono.CSharp {
 					      PropertyInfo.DeclaringType + "." +PropertyInfo.Name);
 				return null;
 			}
+
+			//
+			// Check that we are not making changes to a temporary memory location
+			//
+			if (instance_expr != null && instance_expr.Type.IsValueType && !(instance_expr is IMemoryLocation)) {
+				// FIXME: Provide better error reporting.
+				Error (1612, "Cannot modify expression because it is not a variable.");
+				return null;
+			}
+
 			return this;
 		}
 
 		public override void CacheTemporaries (EmitContext ec)
 		{
-			if (!is_static)
-				temporary = new LocalTemporary (ec, instance_expr.Type);
+			if (!is_static){
+				// we need to do indirection on the pointer
+				bool need_address = instance_expr.Type.IsValueType;
+				temporary = new LocalTemporary (ec, instance_expr.Type, need_address);
+			}
 		}
 
 		Expression EmitInstance (EmitContext ec)
 		{
 			if (temporary != null){
 				if (!have_temporary){
-					instance_expr.Emit (ec);
+					if (temporary.PointsToAddress){
+						// must store the managed pointer
+						IMemoryLocation loc = instance_expr as IMemoryLocation;
+						loc.AddressOf (ec, AddressOp.LoadStore);
+					} else 
+						instance_expr.Emit (ec);
 					temporary.Store (ec);
+						
 					have_temporary = true;
 				}
 				return temporary;
