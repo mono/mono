@@ -1,3 +1,7 @@
+2003-09-09  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Array.cs: Added argument checking to some NET_1_1 methods.
+
 2003-09-04  Martin Baulig  <martin@ximian.com>
 
 	* Type.cs (GetGenericTypeDefinition): Make this method virtual.

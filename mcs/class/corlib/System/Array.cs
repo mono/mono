@@ -443,16 +443,22 @@ namespace System
 
 		public static Array CreateInstance (Type elementType, params long [] lengths)
 		{
+			if (lengths == null)
+				throw new ArgumentNullException ("lengths");
 			return CreateInstance (elementType, GetIntArray (lengths));
 		}
 
 		public object GetValue (long [] indices)
 		{
+			if (indices == null)
+				throw new ArgumentNullException ("indices");
 			return GetValue (GetIntArray (indices));
 		}
 
 		public void SetValue (object value, long [] indices)
 		{
+			if (indices == null)
+				throw new ArgumentNullException ("indices");
 			SetValue (value, GetIntArray (indices));
 		}
 #endif
