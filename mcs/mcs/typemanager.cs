@@ -1416,7 +1416,7 @@ public class TypeManager {
 		return true;
 	}
 
-	static public MethodInfo GetPropertyGetter (PropertyInfo pi)
+	static public MethodInfo GetPropertySetter (PropertyInfo pi)
 	{
 		if (pi is PropertyBuilder){
 			Pair de = (Pair) properties [pi];
@@ -1426,7 +1426,7 @@ public class TypeManager {
 			return pi.GetSetMethod ();
 	}
 
-	static public MethodInfo GetPropertySetter (PropertyInfo pi)
+	static public MethodInfo GetPropertyGetter (PropertyInfo pi)
 	{
 		if (pi is PropertyBuilder){
 			Pair de = (Pair) properties [pi];

@@ -1,5 +1,8 @@
 2002-10-24  Miguel de Icaza  <miguel@ximian.com>
 
+	* typemanager.cs (GetPropertyGetter, GetPropertySetter): swap the
+	names, they were incorrectly named.
+
 	* cs-tokenizer.cs: Return are more gentle token on failure. 
 
 	* pending.cs (PendingImplementation.InterfaceMethod): This routine
