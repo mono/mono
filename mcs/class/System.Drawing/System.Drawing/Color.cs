@@ -415,7 +415,7 @@ namespace System.Drawing
 
 			return String.Format ("Color [A={0}, R={1}, G={2}, B={3}]", a, r, g, b);
 		}
-  
+ 
 		private static void CheckRGBValues (int red,int green,int blue)
 		{
 			if( (red > 255) || (red < 0))
