@@ -27,7 +27,7 @@ public class HttpBrowserCapabilities : HttpCapabilitiesBase
 	}
 
 	[MonoTODO()]
-	public bool BackGroundSounds
+	public bool BackgroundSounds
 	{
 		get { return false; }
 	}

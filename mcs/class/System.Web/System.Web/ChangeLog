@@ -1,3 +1,7 @@
+2002-06-10  Duncan Mak  <duncan@ximian.com>
+
+	* HttpBrowserCapabilities.cs (BackgroundSounds): Fixed typo.
+
 2002-06-04  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpRequest.cs: implemented Browser property.
