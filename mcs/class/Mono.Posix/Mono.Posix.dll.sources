@@ -5,6 +5,7 @@
 ./Mono.Unix/IncludeAttribute.cs
 ./Mono.Unix/MapAttribute.cs
 ./Mono.Unix/PeerCred.cs
+./Mono.Unix/StdioFileStream.cs
 ./Mono.Unix/Stdlib.cs
 ./Mono.Unix/Syscall.cs
 ./Mono.Unix/UnixConvert.cs
