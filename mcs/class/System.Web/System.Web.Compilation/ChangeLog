@@ -1,3 +1,7 @@
+2003-07-16  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* TemplateControlCompiler.cs: support string []. Fixes bug #46415.
+
 2003-07-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* BaseCompiler.cs: first look for cached items, then generate the tree.

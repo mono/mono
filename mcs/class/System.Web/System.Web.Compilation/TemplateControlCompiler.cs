@@ -856,6 +856,17 @@ namespace System.Web.Compilation
 				return expr;
 			}
 
+			if (type == typeof (string [])) {
+				string [] subs = str.Split (',');
+				CodeArrayCreateExpression expr = new CodeArrayCreateExpression ();
+				expr.CreateType = new CodeTypeReference (type);
+				foreach (string v in subs) {
+					expr.Initializers.Add (new CodePrimitiveExpression (v.Trim ()));
+				}
+
+				return expr;
+			}
+
 			if (type == typeof (Color)){
 				if (colorConverter == null)
 					colorConverter = TypeDescriptor.GetConverter (typeof (Color));
