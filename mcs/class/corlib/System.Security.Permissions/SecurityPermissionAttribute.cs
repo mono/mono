@@ -67,7 +67,21 @@ namespace System.Security.Permissions {
 				}
 			}
 		}
-
+#if NET_2_0
+		public bool BindingRedirects {
+			get {
+				return ((m_Flags & SecurityPermissionFlag.BindingRedirects) != 0);
+			}
+			set {
+				if (value) {
+					m_Flags |= SecurityPermissionFlag.BindingRedirects;
+				}
+				else{
+					m_Flags &= SecurityPermissionFlag.BindingRedirects;
+				}
+			}
+		}
+#endif
 		public bool ControlAppDomain {
 			get {
 				return ((m_Flags & SecurityPermissionFlag.ControlAppDomain) != 0);

@@ -1,3 +1,9 @@
+2004-08-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PrincipalPermission.cs: Added Equals/GetHashCode for NET_2_0.
+	* SecurityPermissionAttribute.cs: Added new BindingRedirects property
+	for NET_2_0.
+
 2004-08-04  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* GacIdentityPermission.cs: New. for NET_2_0

@@ -2,12 +2,9 @@
 // System.Security.Permissions.PrincipalPermission.cs
 //
 // Author
-//	Sebastien Pouliot  <spouliot@motus.com>
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // Copyright (C) 2003 Motus Technologies. http://www.motus.com
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -47,7 +44,8 @@ namespace System.Security.Permissions {
 			private string _role;
 			private bool _isAuthenticated;
 			
-			public PrincipalInfo (string name, string role, bool isAuthenticated) {
+			public PrincipalInfo (string name, string role, bool isAuthenticated)
+			{
 				_name = name;
 				_role = role;
 				_isAuthenticated = isAuthenticated;
@@ -277,6 +275,44 @@ namespace System.Security.Permissions {
 
 			return union;
 		}
+
+#if NET_2_0
+		public override bool Equals (object obj)
+		{
+			if (obj == null)
+				return false;
+			PrincipalPermission pp = (obj as PrincipalPermission);
+			if (pp == null)
+				return false;
+
+			// same number of principals ?
+			if (principals.Count != pp.principals.Count)
+				return false;
+
+			// then all principals in "this" should be in "pp"
+			foreach (PrincipalInfo pi in principals) {
+				bool thisItem = false;
+				foreach (PrincipalInfo opi in pp.principals) {
+					if (((pi.Name == opi.Name) || (opi.Name == null)) && 
+						((pi.Role == opi.Role) || (opi.Role == null)) && 
+						(pi.IsAuthenticated == opi.IsAuthenticated)) {
+						thisItem = true;
+						break;
+					}
+				}
+				if (!thisItem)
+					return false;
+			}
+			return true;
+		}
+
+		// according to documentation (fx 2.0 beta 1) we can have 
+		// different hash code even if both a Equals
+		public override int GetHashCode ()
+		{
+			return base.GetHashCode ();
+		}
+#endif
 
 		// IBuiltInPermission
 		int IBuiltInPermission.GetTokenIndex ()
