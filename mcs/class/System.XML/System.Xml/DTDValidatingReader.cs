@@ -112,7 +112,7 @@ namespace Mono.Xml
 		bool isSignificantWhitespace;
 		bool isWhitespace;
 		bool isText;
-		bool nextMaybeSignificantWhitespace;
+		bool dontResetTextType;
 
 		// This field is used to get properties and to raise events.
 		XmlValidatingReader validatingReader;
@@ -370,7 +370,7 @@ namespace Mono.Xml
 			isWhitespace = false;
 			isSignificantWhitespace = false;
 			isText = false;
-			nextMaybeSignificantWhitespace = false;
+			dontResetTextType = false;
 
 			bool b = ReadContent () || currentTextValue != null;
 			if (!b && this.missingIDReferences.Count > 0) {
@@ -431,7 +431,6 @@ namespace Mono.Xml
 				return false;
 			}
 
-			bool dontResetTextType = false;
 			DTDElementDeclaration elem = null;
 
 			switch (reader.NodeType) {
@@ -569,7 +568,7 @@ namespace Mono.Xml
 					constructingTextValue = null;
 					return true;
 				}
-				goto case XmlNodeType.Text;
+				break;
 			case XmlNodeType.SignificantWhitespace:
 				if (!isText)
 					isSignificantWhitespace = true;
@@ -599,19 +598,9 @@ namespace Mono.Xml
 				}
 				break;
 			case XmlNodeType.Whitespace:
-				if (nextMaybeSignificantWhitespace) {
-					currentTextValue = reader.Value;
-					nextMaybeSignificantWhitespace = false;
-					goto case XmlNodeType.SignificantWhitespace;
-				}
 				if (!isText && !isSignificantWhitespace)
 					isWhitespace = true;
-				if (entityReaderStack.Count > 0 && validatingReader.EntityHandling == EntityHandling.ExpandEntities) {
-					constructingTextValue += reader.Value;
-					return ReadContent ();
-				}
-				ValidateWhitespaceNode ();
-				break;
+				goto case XmlNodeType.Text;
 			case XmlNodeType.EntityReference:
 				if (validatingReader.EntityHandling == EntityHandling.ExpandEntities) {
 					ResolveEntity ();
@@ -619,6 +608,9 @@ namespace Mono.Xml
 				}
 				break;
 			}
+			if (isWhitespace)
+				ValidateWhitespaceNode ();
+			currentTextValue = constructingTextValue;
 			constructingTextValue = null;
 			MoveToElement ();
 			return true;

@@ -2569,7 +2569,7 @@ namespace System.Xml
 						"expected '{0}' ({1:X}) but found '{2}' ({3:X})",
 						(char) expected,
 						expected,
-						(char) ch,
+						ch < 0 ? (object) "EOF" : (char) ch,
 						ch));
 			}
 		}
@@ -2588,7 +2588,7 @@ namespace System.Xml
 				if (i < 0x21 && XmlChar.IsWhitespace (i))
 					continue;
 				if (c != i)
-					throw NotWFError (String.Format (CultureInfo.InvariantCulture, "Expected {0}, but found {1} [{2}]", c, (char) i, i));
+					throw NotWFError (String.Format (CultureInfo.InvariantCulture, "Expected {0}, but found {1} [{2}]", c, i < 0 ? (object) "EOF" : (char) i, i));
 				break;
 			}
 		}

@@ -1,3 +1,9 @@
+2005-03-15  Atsushi Enomoto <atsushi@ximian.com>
+
+	* DTDValidatingReader.cs : When expanding entities and there is a
+	  sequence of text nodes, its value was not returned.
+	* XmlTextReader.cs : better invalid char error report for EOF.
+
 2005-03-09  Andrew Skiba <andrews@mainsoft.com>
 
 	* XmlTextReader.cs, XmlParserInput.cs, DTDReader.cs: fix UCM-4
