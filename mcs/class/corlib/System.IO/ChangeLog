@@ -1,3 +1,8 @@
+2003-03-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* MemoryStream.cs: undo my bogus fix in ToArray. Allow GetBuffer and
+	ToArray even after closing the stream.
+
 2003-03-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Directory.cs:

@@ -193,13 +193,10 @@ namespace System.IO {
                         }
                 }
                 
-                public override void Close() {
-                        if( streamClosed ) {
-                                return;
-                        }
-
+                public override void Close ()
+		{
 			streamClosed = true;
-			internalBuffer = null;
+			expandable = false;
                 }
 
                 public override void Flush() { }
@@ -332,9 +329,9 @@ namespace System.IO {
                 
                 
                 public virtual byte[] ToArray() { 
-                        byte[] outBuffer = new byte[(int)position];
+                        byte[] outBuffer = new byte[capacity];
 			
-			Buffer.BlockCopyInternal (internalBuffer, 0, outBuffer, 0, (int)position);
+			Buffer.BlockCopyInternal (internalBuffer, 0, outBuffer, 0, capacity);
                         return outBuffer; 
                 }
 
@@ -385,6 +382,9 @@ namespace System.IO {
                 
 
                 public virtual void WriteTo( Stream stream ) { 
+			if (streamClosed)
+				throw new ObjectDisposedException ("MemoryStream");
+
                         if( stream == null ) {
                                 throw new ArgumentNullException();
                         }
