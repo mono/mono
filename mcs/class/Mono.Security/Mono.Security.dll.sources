@@ -41,8 +41,12 @@
 ./Mono.Security.X509/X509CertificateBuilder.cs
 ./Mono.Security.X509/X509Chain.cs
 ./Mono.Security.X509/X509ChainStatusFlags.cs
+./Mono.Security.X509/X509CRL.cs
 ./Mono.Security.X509/X509Extension.cs
 ./Mono.Security.X509/X509Extensions.cs
+./Mono.Security.X509/X509Store.cs
+./Mono.Security.X509/X509StoreManager.cs
+./Mono.Security.X509/X509Stores.cs
 ./Mono.Security.X509/X520Attributes.cs
 ./Mono.Security.X509.Extensions/AuthorityKeyIdentifierExtension.cs
 ./Mono.Security.X509.Extensions/BasicConstraintsExtension.cs
@@ -55,8 +59,6 @@
 ./Mono.Security.X509.Extensions/PrivateKeyUsagePeriodExtension.cs
 ./Mono.Security.X509.Extensions/SubjectAltNameExtension.cs
 ./Mono.Security.X509.Extensions/SubjectKeyIdentifierExtension.cs
-./Mono.Security.X509.Stores/FileCertificateStore.cs
-./Mono.Security.X509.Stores/ICertificateStore.cs
 ./Mono.Security.Cryptography/TlsHMAC.cs
 ./Mono.Security.Cryptography/MD5SHA1.cs
 ./Mono.Security.Protocol.Ntlm/ChallengeResponse.cs
