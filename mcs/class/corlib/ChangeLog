@@ -1,3 +1,8 @@
+2003-07-12  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* list.args: Added Runtime.InteropServices.ComCompatibleVersionAttribute.cs,
+	Runtime.InteropServices.TypeLibVersionAttribute.cs
+
 2003-07-05  Sebastien Pouliot <spouliot@videotron.ca>
 
 	* unix.args: Added SecurityParser.cs to Mono.Xml
