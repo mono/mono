@@ -1,4 +1,10 @@
 2003-05-16  Aleksey Ryabchuk <ryabchuk@yahoo.com>
+	* CommonDialog.cs
+	* FileDialog.cs
+	* win32Enums.cs
+	* win32functions.cs : started impl. of OpenFile dialog
+
+2003-05-16  Aleksey Ryabchuk <ryabchuk@yahoo.com>
 	* DomainUpDown.cs : changes to OnTextBoxKeyDown
 	* UpDownBase.cs : added impl. to BackColor and BackgroundImage
 

@@ -55,13 +55,15 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public DialogResult ShowDialog() 
 		{
-			throw new NotImplementedException ();
+			bool res = RunDialog ( Control.getOwnerWindow ( null ).Handle );
+			return res ? DialogResult.OK : DialogResult.Cancel;
 		}
 		
 		[MonoTODO]
 		public DialogResult ShowDialog(IWin32Window owner) 
 		{
-			throw new NotImplementedException ();
+			bool res = RunDialog ( owner.Handle );
+			return res ? DialogResult.OK : DialogResult.Cancel;
 		}
 		
 		/// events

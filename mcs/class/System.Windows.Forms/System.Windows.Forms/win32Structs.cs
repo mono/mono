@@ -784,21 +784,28 @@ namespace System.Windows.Forms
 		internal int lParam;   
 	}
 
-	//
-	//
-	//		[StructLayout(LayoutKind.Sequential)]
-	//		internal struct WNDCLASSA {
-	//			uint style;
-	//			WNDPROC lpfnWndProc;
-	//			INT cbClsExtra;
-	//			INT cbWndExtra;
-	//			HINSTANCE hInstance;
-	//			HICON hIcon;
-	//			HCURSOR hCursor;
-	//			HBRUSH hbrBackground;
-	//			LPCSTR lpszMenuName;
-	//			LPCSTR lpszClassName;
-	//		}
-	
+	[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Ansi)]
+	internal struct OPENFILENAME {
+		internal uint          lStructSize; 
+		internal IntPtr        hwndOwner; 
+		internal IntPtr        hInstance; 
+		internal string        lpstrFilter; 
+		internal string	       lpstrCustomFilter; 
+		internal uint          nMaxCustFilter; 
+		internal uint          nFilterIndex; 
+		internal string	       lpstrFile; 
+		internal uint          nMaxFile; 
+		internal string	       lpstrFileTitle; 
+		internal uint          nMaxFileTitle; 
+		internal string        lpstrInitialDir; 
+		internal string        lpstrTitle; 
+		internal uint          Flags; 
+		internal short         nFileOffset; 
+		internal short         nFileExtension; 
+		internal string        lpstrDefExt; 
+		internal int           lCustData; 
+		internal Win32.FnHookProc lpfnHook; 
+		internal string        lpTemplateName; 
+	}	
 }
 

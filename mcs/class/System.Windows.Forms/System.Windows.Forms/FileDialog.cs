@@ -7,6 +7,8 @@
 // (C) 2002 Ximian, Inc
 //
 using System.ComponentModel;
+using System.Runtime.InteropServices;
+
 namespace System.Windows.Forms {
 
 	// <summary>
@@ -15,6 +17,7 @@ namespace System.Windows.Forms {
 
     public abstract class FileDialog : CommonDialog {
 		internal string fileName = "";
+		internal const  int MAX_PATH = 512;
 		//
 		//  --- Public Properties
 		//
@@ -180,9 +183,22 @@ namespace System.Windows.Forms {
 			//FIXME:
 		}
 		[MonoTODO]
-		protected  override bool RunDialog( IntPtr hWndOwner)
+		protected  override bool RunDialog( IntPtr hWndOwner )
 		{
-			throw new NotImplementedException ();
+			OPENFILENAME opf = new OPENFILENAME (  );
+			char[] FileNameBuffer = new char[MAX_PATH];
+
+			opf.lStructSize  = (uint)Marshal.SizeOf( opf );
+			opf.lpstrFile = new string( FileNameBuffer );
+			opf.nMaxFile = (uint) opf.lpstrFile.Length;
+			opf.hwndOwner = hWndOwner;
+			opf.lpfnHook  = new Win32.FnHookProc ( base.HookProc );
+
+			bool res = Win32.GetOpenFileName ( ref opf );
+			if ( res ) {
+				FileName = opf.lpstrFile;
+			}
+			return res;
 		}
 	 }
 }

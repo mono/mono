@@ -60,6 +60,7 @@ namespace System.Windows.Forms{
 		#endregion
 
 		#region CallBacks
+		internal delegate IntPtr FnHookProc(IntPtr hWnd, int msg, IntPtr wparam, IntPtr lparam);
 		internal delegate IntPtr HookProc(int nCode, IntPtr wParam, IntPtr lParam);
 		internal delegate int CompareFunc(IntPtr param1, IntPtr param2, IntPtr sortParam);
 		internal delegate int WinProc(IntPtr hWnd, int message, int wParam, int lParam);
@@ -713,6 +714,7 @@ namespace System.Windows.Forms{
 		#region Mono win32 Fuinctions
 
 		internal delegate IntPtr WndProc (IntPtr hwnd, Msg msg, IntPtr wParam, IntPtr lParam);
+
 		
 		[DllImport ("user32.dll", 
 			 CallingConvention = CallingConvention.StdCall,
@@ -941,6 +943,11 @@ namespace System.Windows.Forms{
 			 CallingConvention = CallingConvention.StdCall, 
 			 CharSet = CharSet.Auto)]
 		internal static extern bool GetCursorPos (ref POINT lpPoint);
+
+		[DllImport ("Comdlg32.dll",
+			 CallingConvention = CallingConvention.StdCall, 
+			 CharSet = CharSet.Ansi)]
+		internal static extern bool GetOpenFileName ( ref OPENFILENAME lpofn );
 
 		#endregion
 
