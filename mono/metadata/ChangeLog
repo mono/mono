@@ -1,3 +1,32 @@
+2001-10-04  Dick Porter  <dick@ximian.com>
+
+	* object.h: Add a synchronisation mutex struct to MonoObject
+
+	* object.c (mono_new_object): Initialise the object
+	synchronisation mutexes
+
+	* icall.c: System.Threading.Monitor internal calls
+	
+	* threads-pthread.h:
+	* threads-pthread.c: System.Threading.Monitor internal calls
+
+	* threads-types.h: New file, includes the system-specific thread
+	structures
+	
+	* threads-pthread-types.h:
+	* threads-pthread-types.c: New files, handle pthread-specific
+	synchronisation types
+
+	* threads-dummy-types.h: 
+	* threads-dummy-types.c: New files of dummy support for
+	thread-specific types
+
+	* metadata.c:
+	* image.c:
+	* pedump.c: include mono-endian.h not endian.h
+	
+	* Makefile.am: More threads files.
+	Name mono-endian.h not endian.h
 
 Tue Oct 2 20:33:48 CEST 2001 Paolo Molaro <lupus@ximian.com>
 

@@ -1,3 +1,8 @@
+2001-10-04  Dick Porter  <dick@ximian.com>
+
+	* testjit.c:
+	* emit-x86.c: include mono-endian.h not endian.h
+
 2001-10-02  Dietmar Maurer  <dietmar@ximian.com>
 
 	* testjit.c (ctree_create_dup): really duplicate the tree.

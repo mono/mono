@@ -1,3 +1,8 @@
+2001-10-04  Dick Porter  <dick@ximian.com>
+
+	* interp.c (ves_runtime_method): init_class() the
+	mono_defaults.delegate_class
+	Include mono-endian.h not endian.h
 
 Tue Oct 2 18:51:25 CEST 2001 Paolo Molaro <lupus@ximian.com>
 

@@ -1,3 +1,7 @@
+2001-10-04  Dick Porter  <dick@ximian.com>
+
+	* meta.h: include mono-endian.h not endian.h
+
 2001-10-02  Dietmar Maurer  <dietmar@ximian.com>
 
 	* get.c (get_method): always write namespace and class name.
