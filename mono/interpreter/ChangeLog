@@ -1,3 +1,11 @@
+
+Sat Mar 16 19:15:18 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* interp.c: restore frame on return from unmanaged calls.
+	Add support for continuing execution up to x IL insn.
+	Fix exception handling when an exception is raised in the catch
+	handler of the same method that issued the first one.
+
 2002-03-11  Dietmar Maurer  <dietmar@ximian.com>
 
 	* interp.c (ves_runtime_method): set method_info field
