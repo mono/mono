@@ -1,3 +1,8 @@
+2004-11-10  Martin Baulig  <martin@localhost>
+
+	* mini.c (mono_method_to_ir): Use `generic_container->context'
+	rather than creating a new one.
+
 2004-11-09  Zoltan Varga  <vargaz@freemail.hu>
 
 	* aot.c (mono_aot_init): Add MONO_AOT_CACHE env variable to turn on
