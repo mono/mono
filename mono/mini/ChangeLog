@@ -1,5 +1,9 @@
 2004-12-31  Zoltan Varga  <vargaz@freemail.hu>
 
+	* debug-mini.c (encode_value): Fix off-by-one.
+
+	* aot.c (encode_value): Likewise.
+
 	* mini.c (mono_method_to_ir): Disable AOT for methods containing LDPTR.
 
 2004-12-30  Zoltan Varga  <vargaz@freemail.hu>
