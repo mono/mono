@@ -152,6 +152,7 @@ System.Windows.Forms/ItemDragEventArgs.cs
 System.Windows.Forms/ItemDragEventHandler.cs
 System.Windows.Forms/IWin32Window.cs
 System.Windows.Forms/IWindowTarget.cs
+System.Windows.Forms/IWindowsFormsEditorService.cs
 System.Windows.Forms/KeyEventArgs.cs
 System.Windows.Forms/KeyEventHandler.cs
 System.Windows.Forms/KeyPressEventArgs.cs
