@@ -707,6 +707,7 @@ namespace System.Windows.Forms {
 									msg.hwnd = rView;
 								else 
 									msg.hwnd = grabWindow;
+								NativeWindow.WndProc(msg.hwnd, Msg.WM_SETCURSOR, msg.hwnd, (IntPtr)HitTest.HTCLIENT);
 								msg.message = Msg.WM_MOUSEMOVE;
 								msg.lParam = (IntPtr) ((ushort)hiPoint.y << 16 | (ushort)hiPoint.x);
 								msg.wParam = GetMousewParam (0);
@@ -755,6 +756,7 @@ namespace System.Windows.Forms {
 									msg.hwnd = rView;
 								else 
 									msg.hwnd = grabWindow;
+								NativeWindow.WndProc(msg.hwnd, Msg.WM_SETCURSOR, msg.hwnd, (IntPtr)HitTest.HTCLIENT);
 								msg.message = Msg.WM_MOUSEMOVE;
 								msg.lParam = (IntPtr) ((ushort)hiPoint.y << 16 | (ushort)hiPoint.x);
 								msg.wParam = GetMousewParam (0);
@@ -1021,14 +1023,15 @@ DEBUG THIS:
 			return true;
 		}
 
-		[MonoTODO]
 		internal override void SetCursor(IntPtr window, IntPtr cursor) {
-			throw new NotImplementedException ();
+			SetThemeCursor ((uint) cursor);
 		}
 
-		[MonoTODO]
 		internal override void ShowCursor(bool show) {
-			throw new NotImplementedException ();
+			if (show)
+				CGDisplayShowCursor (CGMainDisplayID ());
+			else
+				CGDisplayHideCursor (CGMainDisplayID ());
 		}
 
 		[MonoTODO]
@@ -1043,7 +1046,66 @@ DEBUG THIS:
 
 		[MonoTODO]
 		internal override IntPtr DefineStdCursor(StdCursor id) {
-			throw new NotImplementedException ();
+			switch (id) {
+				case StdCursor.AppStarting:
+					return (IntPtr)ThemeCursor.kThemeSpinningCursor;
+				case StdCursor.Arrow:
+					return (IntPtr)ThemeCursor.kThemeArrowCursor;
+				case StdCursor.Cross:
+					return (IntPtr)ThemeCursor.kThemeCrossCursor;
+				case StdCursor.Default:
+					return (IntPtr)ThemeCursor.kThemeArrowCursor;
+				case StdCursor.Hand:
+					return (IntPtr)ThemeCursor.kThemeOpenHandCursor;
+				case StdCursor.Help:
+					return (IntPtr)ThemeCursor.kThemeArrowCursor;
+				case StdCursor.HSplit:
+					return (IntPtr)ThemeCursor.kThemeResizeLeftRightCursor;
+				case StdCursor.IBeam:
+					return (IntPtr)ThemeCursor.kThemeIBeamCursor;
+				case StdCursor.No:
+					return (IntPtr)ThemeCursor.kThemeNotAllowedCursor;
+				case StdCursor.NoMove2D:
+					return (IntPtr)ThemeCursor.kThemeNotAllowedCursor;
+				case StdCursor.NoMoveHoriz:
+					return (IntPtr)ThemeCursor.kThemeNotAllowedCursor;
+				case StdCursor.NoMoveVert:
+					return (IntPtr)ThemeCursor.kThemeNotAllowedCursor;
+				case StdCursor.PanEast:
+					return (IntPtr)ThemeCursor.kThemeResizeRightCursor;
+				case StdCursor.PanNE:
+					return (IntPtr)ThemeCursor.kThemeArrowCursor;
+				case StdCursor.PanNorth:
+					return (IntPtr)ThemeCursor.kThemeArrowCursor;
+				case StdCursor.PanNW:
+					return (IntPtr)ThemeCursor.kThemeArrowCursor;
+				case StdCursor.PanSE:
+					return (IntPtr)ThemeCursor.kThemeArrowCursor;
+				case StdCursor.PanSouth:
+					return (IntPtr)ThemeCursor.kThemeArrowCursor;
+				case StdCursor.PanSW:
+					return (IntPtr)ThemeCursor.kThemeArrowCursor;
+				case StdCursor.PanWest:
+					return (IntPtr)ThemeCursor.kThemeResizeLeftCursor;
+				case StdCursor.SizeAll:
+					return (IntPtr)ThemeCursor.kThemeResizeLeftRightCursor;
+				case StdCursor.SizeNESW:
+					return (IntPtr)ThemeCursor.kThemeArrowCursor;
+				case StdCursor.SizeNS:
+					return (IntPtr)ThemeCursor.kThemeArrowCursor;
+				case StdCursor.SizeNWSE:
+					return (IntPtr)ThemeCursor.kThemeArrowCursor;
+				case StdCursor.SizeWE:
+					return (IntPtr)ThemeCursor.kThemeArrowCursor;
+                                case StdCursor.UpArrow:
+					return (IntPtr)ThemeCursor.kThemeArrowCursor;
+				case StdCursor.VSplit:
+					return (IntPtr)ThemeCursor.kThemeArrowCursor;
+				case StdCursor.WaitCursor:
+					return (IntPtr)ThemeCursor.kThemeSpinningCursor;
+                                default:
+					return (IntPtr)ThemeCursor.kThemeArrowCursor;
+			}
 		}
 
 		[MonoTODO]
@@ -1056,9 +1118,8 @@ DEBUG THIS:
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		internal override void SetCursorPos(IntPtr handle, int x, int y) {
-			throw new NotImplementedException ();
+			CGDisplayMoveCursorToPoint (CGMainDisplayID (), new CGPoint (x, y));
 		}
 
 		internal override void GetCursorPos(IntPtr handle, out int x, out int y) {
@@ -1505,127 +1566,22 @@ DEBUG THIS:
 		internal extern static void SetRectRgn (IntPtr rgn, short left, short top, short right, short bottom);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal extern static void DisposeRgn (IntPtr rgn);
+		
+		#region Cursor imports
+		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		internal extern static IntPtr CGMainDisplayID ();
+		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		internal extern static void CGDisplayShowCursor (IntPtr display);
+		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		internal extern static void CGDisplayHideCursor (IntPtr display);
+		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		internal extern static void CGDisplayMoveCursorToPoint (IntPtr display, CGPoint point);
+		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		internal extern static void SetThemeCursor (uint inCursor);
+		#endregion
 
 		[DllImport ("gdiplus", EntryPoint="GetFontMetrics")]
 		internal extern static bool GetFontMetrics(IntPtr graphicsObject, IntPtr nativeObject, out int ascent, out int descent);
 	}
 
-	internal struct CGSize {
-		public float width;
-		public float height;
-
-		public CGSize (int w, int h) {
-			this.width = (float)w;
-			this.height = (float)h;
-		}
-	}
-
-	internal struct QDPoint {
-		public short y;
-		public short x;
-
-		public QDPoint (short x, short y) {
-			this.x = x;
-			this.y = y;
-		}
-	}
-	internal struct CGPoint {
-		public float x;
-		public float y;
-
-		public CGPoint (int x, int y) {
-			this.x = (float)x;
-			this.y = (float)y;
-		}
-	}
-
-	internal struct HIRect {
-		public CGPoint origin;
-		public CGSize size;
-
-		public HIRect (int x, int y, int w, int h) {
-			this.origin = new CGPoint (x, y);
-			this.size = new CGSize (w, h);
-		}
-	}
-
-	internal struct HIViewID {
-		public uint type;
-		public uint id;
-
-		public HIViewID (uint type, uint id) {
-			this.type = type;
-			this.id = id;
-		}
-	}
-	
-	internal struct EventTypeSpec
-        {
-		public UInt32 eventClass;
-		public UInt32 eventKind;
-
-		public EventTypeSpec (UInt32 eventClass, UInt32 eventKind)
-		{
-			this.eventClass = eventClass;
-			this.eventKind = eventKind;
-		}
-	}
-	
-	internal struct CarbonEvent
-        {
-		public IntPtr hWnd;
-		public IntPtr evt;
-
-		public CarbonEvent (IntPtr hWnd, IntPtr evt)
-		{
-			this.hWnd = hWnd;
-			this.evt = evt;
-		}
-	}
-	
-	internal struct RGBColor
-	{
-		public short red;
-		public short green;
-		public short blue;
-	}
-
-	internal struct Rect
-	{
-		public short top;
-		public short left;
-		public short bottom;
-		public short right;
-	}
-
-	internal struct OSXCaret
-	{
-		internal Timer timer;
-		internal IntPtr hwnd;
-		internal int x;
-		internal int y;
-		internal int width;
-		internal int height;
-		internal int visible;
-		internal bool on;
-		internal bool paused;
-	}
-
-	internal struct OSXHover {
-		internal Timer timer;
-		internal IntPtr hwnd;
-		internal int x;
-		internal int y;
-		internal int interval;
-	}
-
-	internal struct CGAffineTransform
-	{
-		internal float a;
-		internal float b;
-		internal float c;
-		internal float d;
-		internal float tx;
-		internal float ty;
-	}
-}	
+}

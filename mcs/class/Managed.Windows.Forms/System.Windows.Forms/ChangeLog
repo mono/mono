@@ -1,3 +1,8 @@
+2005-01-19  Geoff Norton  <gnorton@customerdna.com>
+
+	* XplatUIOSX.cs: Initial support for Standard Cursors.
+	* OSXStructs.cs: Move our structs here; added ThemeCursor enum
+
 2005-01-19  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* ComboBox.cs: ability to change style when the ctrl is already
