@@ -49,6 +49,7 @@ namespace MonoTests.System {
                                 suite.AddTest (UInt64Test.Suite);
 				suite.AddTest (VersionTest.Suite);
 				suite.AddTest (MulticastDelegateTest.Suite);
+				suite.AddTest (ExceptionTest.Suite);
 				return suite;
                         }
                 }

@@ -1,3 +1,7 @@
+2002-05-07  Nick Drochak  <ndrochak@gol.com>
+
+	* ExceptionTest.cs: New File. Provided by Linus Upson.
+
 2002-05-05  Lawrence Pit  <loz@cable.a2000.nl>
 
 	* StringTest.cs: Added test for replace function
