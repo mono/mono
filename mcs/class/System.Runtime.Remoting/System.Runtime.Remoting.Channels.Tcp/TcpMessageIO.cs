@@ -54,8 +54,8 @@ namespace System.Runtime.Remoting.Channels.Tcp
 
 			try {
 				StreamRead (networkStream, buffer, 6);
-			} catch {
-				return MessageStatus.Unknown;
+			} catch (Exception ex) {
+				throw new RemotingException ("Tcp transport error.", ex);
 			}
 
 			try
@@ -80,10 +80,8 @@ namespace System.Runtime.Remoting.Channels.Tcp
 				}
 				return MessageStatus.Unknown;
 			}
-			catch (IOException)
-			{
-				// Stream closed
-				return MessageStatus.CancelSignal;
+			catch (Exception ex) {
+				throw new RemotingException ("Tcp transport error.", ex);
 			}
 		}
 		

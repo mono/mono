@@ -35,6 +35,7 @@ using System.Net.Sockets;
 using System.Net;
 using System.Threading;
 using System.IO;
+using System.Runtime.Remoting.Channels;
 
 namespace System.Runtime.Remoting.Channels.Tcp
 {
@@ -52,9 +53,8 @@ namespace System.Runtime.Remoting.Channels.Tcp
 		TcpListener listener;
 		TcpServerTransportSink sink;
 		ChannelDataStore channel_data;
-		int _maxConcurrentConnections = 100;
-		ArrayList _activeConnections = new ArrayList();
 		
+		RemotingThreadPool threadPool;
 		
 		void Init (IServerChannelSinkProvider serverSinkProvider) 
 		{
@@ -203,44 +203,21 @@ namespace System.Runtime.Remoting.Channels.Tcp
 				while (true) 
 				{
 					TcpClient client = listener.AcceptTcpClient ();
-					CreateListenerConnection (client);
+					ClientConnection reader = new ClientConnection (this, client, sink);
+					if (!threadPool.RunThread (new ThreadStart (reader.ProcessMessages)))
+						client.Close ();
 				}
 			}
 			catch
 			{}
 		}
 
-		internal void CreateListenerConnection (TcpClient client)
-		{
-			lock (_activeConnections)
-			{
-				if (_activeConnections.Count >= _maxConcurrentConnections)
-					Monitor.Wait (_activeConnections);
-
-				if (server_thread == null) return;	// Server was stopped while waiting
-
-				ClientConnection reader = new ClientConnection (this, client, sink);
-				Thread thread = new Thread (new ThreadStart (reader.ProcessMessages));
-				thread.Start();
-				thread.IsBackground = true;
-				_activeConnections.Add (thread);
-			}
-		}
-
-		internal void ReleaseConnection (Thread thread)
-		{
-			lock (_activeConnections)
-			{
-				_activeConnections.Remove (thread);
-				Monitor.Pulse (_activeConnections);
-			}
-		}
-		
 		public void StartListening (object data)
 		{
 			listener = new TcpListener (bindAddress, port);
 			if (server_thread == null) 
 			{
+				threadPool = RemotingThreadPool.GetSharedPool ();
 				listener.Start ();
 				
 				if (port == 0)
@@ -260,19 +237,11 @@ namespace System.Runtime.Remoting.Channels.Tcp
 		public void StopListening (object data)
 		{
 			if (server_thread == null) return;
-
-			lock (_activeConnections)
-			{
-				server_thread.Abort ();
-				server_thread = null;
-				listener.Stop ();
-
-				foreach (Thread thread in _activeConnections)
-					thread.Abort();
-
-				_activeConnections.Clear();
-				Monitor.PulseAll (_activeConnections);
-			}
+			
+			server_thread.Abort ();
+			server_thread = null;
+			listener.Stop ();
+			threadPool.Free ();
 		}
 	}
 
@@ -337,7 +306,6 @@ namespace System.Runtime.Remoting.Channels.Tcp
 					_stream.Close();
 				}
 				catch { }
-				_serverChannel.ReleaseConnection (Thread.CurrentThread);
 			}
 		}
 		

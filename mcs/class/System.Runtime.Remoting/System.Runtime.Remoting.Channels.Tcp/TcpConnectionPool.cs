@@ -50,7 +50,7 @@ namespace System.Runtime.Remoting.Channels.Tcp
 		// instance for each host
 		static Hashtable _pools = new Hashtable();
 
-		static int _maxOpenConnections = 50;
+		static int _maxOpenConnections = int.MaxValue;
 		static int _keepAliveSeconds = 15;
 
 		static Thread _poolThread;
@@ -209,10 +209,9 @@ namespace System.Runtime.Remoting.Channels.Tcp
 
 		public TcpConnection GetConnection ()
 		{
+			TcpConnection connection = null;
 			lock (_pool)
 			{
-				TcpConnection connection = null;
-
 				do
 				{
 					if (_pool.Count > 0) 
@@ -232,7 +231,8 @@ namespace System.Runtime.Remoting.Channels.Tcp
 					{
 						// No connections available, but the max connections
 						// has not been reached yet, so a new one can be created
-						connection = CreateConnection();
+						// Create the connection outside the lock
+						break;
 					}
 
 					// No available connections in the pool
@@ -244,9 +244,12 @@ namespace System.Runtime.Remoting.Channels.Tcp
 					}
 				} 
 				while (connection == null);
-
-				return connection;
 			}
+
+			if (connection == null)
+				return CreateConnection ();
+			else
+				return connection;
 		}
 
 		private TcpConnection CreateConnection()

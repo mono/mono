@@ -1,3 +1,11 @@
+2005-01-14  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* TcpConnectionPool.cs: Don't limit client connections.
+	This fixes bug #70700. Create connections from outside the pool lock.
+	* TcpMessageIO.cs: Throw real exceptions when errors occur.
+	* TcpServerChannel.cs: Use the new RemotingThreadPool to manage threads.
+	This also fixes bug #70700.
+
 2004-12-17  Lluis Sanchez Gual <lluis@novell.com>
 
 	* TcpMessageIO.cs: Removed some more WriteByte calls.
