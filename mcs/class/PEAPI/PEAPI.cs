@@ -1750,15 +1750,6 @@ namespace PEAPI
     }
 
     /// <summary>
-    ///   Add a generic type parameter.
-    /// </summary>
-    public GenericParameter AddGenericParameter (short index) {
-            GenericParameter gp = new GenericParameter (this, metaData, index);
-            metaData.AddToTable (MDTable.GenericParam, gp);
-            return gp;
-    }
-
-    /// <summary>
     ///  Add a named generic type parameter
     /// </summary>
     public GenericParameter AddGenericParameter (short index, string name) {
@@ -4007,21 +3998,29 @@ if (rsrc != null)
 
         public class GenericParameter : MetaDataElement
         {
-                ClassDef owner; /* FIXME: can also be a MethodDef */
+                MetaDataElement owner;
                 MetaData metadata;
                 string name;
                 uint nameIx;
                 short index;
 
-                public GenericParameter (ClassDef owner, MetaData metadata, short index) {
+                internal GenericParameter (ClassDef owner, MetaData metadata,
+                                short index, string name) : this (owner, metadata, index, name, true)
+                {
+                }
+
+                internal GenericParameter (MethodDef owner, MetaData metadata,
+                                short index, string name) : this (owner, metadata, index, name, true)
+                {
+                }
+
+                private GenericParameter (MetaDataElement owner, MetaData metadata,
+                                short index, string name, bool nadda)
+                {
                         this.owner = owner;
                         this.metadata = metadata;
                         this.index = index;
                         tabIx = MDTable.GenericParam;
-                }
-
-                public GenericParameter (ClassDef owner, MetaData metadata, short index,
-                        string name) : this (owner, metadata, index) {
                         this.name = name;
                 }
 
@@ -4039,10 +4038,7 @@ if (rsrc != null)
 
                 internal sealed override void BuildTables(MetaData md) {
                         if (done) return;
-                        if (name == null)
-                                nameIx = 0;
-                        else
-                                nameIx = md.AddToStringsHeap(name);
+                        nameIx = md.AddToStringsHeap(name);
                         done = true;
                 }
 
@@ -5143,6 +5139,15 @@ if (rsrc != null)
                                PInvokeAttr callAttr) {
       pinvokeImpl = new ImplMap((ushort)callAttr,this,methName,scope);
       methFlags |= PInvokeImpl;
+    }
+
+    /// <summary>
+    ///  Add a named generic type parameter
+    /// </summary>
+    public GenericParameter AddGenericParameter (short index, string name) {
+            GenericParameter gp = new GenericParameter (this, metaData, index, name);
+            metaData.AddToTable (MDTable.GenericParam, gp);
+            return gp;
     }
 
     /// <summary>

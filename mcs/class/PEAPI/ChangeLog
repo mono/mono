@@ -1,3 +1,11 @@
+2003-10-08 Jackson Harper <jackson@ximian.com>
+
+	* PEAPI.cs: Remove methods for creating generic parameters without
+	a name, names are mandatory. Add method to add type parameters to
+	methods. Allow GenericParameters to have either a type or a
+	method as its owner. Also fix visibility of GenericParameters, a
+	GenericParameter should not be created outside of PEAPI.
+	
 2003-10-07 Jackson Harper <jackson@ximian.com>
 
 	* PEAPI.cs: Add unbox.any instruction.
