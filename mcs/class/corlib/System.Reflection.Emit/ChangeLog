@@ -1,3 +1,7 @@
+2005-02-11  Zoltan Varga  <vargaz@freemail.hu>
+
+	* TypeBuilder.cs (IsAssignableTo): New helper method. Fixes #70838.
+
 2004-11-22  Zoltan Varga  <vargaz@freemail.hu>
 
 	* ModuleBuilder.cs: Check that all types inside the module are created.
