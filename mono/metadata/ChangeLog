@@ -1,3 +1,7 @@
+2002-09-16  Martin Baulig  <martin@gnome.org>
+
+	* debug-mono-symfile.c: Added string table with all method names.
+
 2002-09-14  Martin Baulig  <martin@gnome.org>
 
 	* debug-mono-symfile.h (MonoSymbolFile): Added method range table for
