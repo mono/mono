@@ -1,5 +1,11 @@
 2005-02-15  Peter Bartok  <pbartok@novell.com>
 
+	* Makefile: Altered, following Harinath's suggestion of trying to
+	  build and handling the failure by copying prebuilt resources in
+	  place
+
+2005-02-15  Peter Bartok  <pbartok@novell.com>
+
 	* Makefile: Removed resources as automatic target; to build
 	  .resource files 'make resources' must be invoked. This removes
 	  the libgdiplus installed requirement. Instead, the compiled files
