@@ -1,3 +1,6 @@
+2005-02-14  Zoltan Varga  <vargaz@freemail.hu>
+
+	* icall.c: Handle byref types in Type icalls. Fixes #72544.
 
 Mon Feb 14 15:39:56 CET 2005 Paolo Molaro <lupus@ximian.com>
 
