@@ -2,7 +2,7 @@ ROOT=/cygdrive/$(subst \,/,$(subst :\,/,$(SYSTEMROOT)))
 CSC=$(ROOT)/microsoft.net/framework/v1.0.2914/csc.exe
 CSCFLAGS=/nologo /debug+ /debug:full 
 
-windows: verifier.exe CorCompare.exe EnumCheck.exe
+windows: verifier.exe CorCompare.exe EnumCheck.exe IFaceDisco.exe
 
 linux: verifier.exe CorCompare.exe EnumCheck.exe
 
@@ -15,6 +15,9 @@ CorCompare.exe: CorCompare.cs
 
 EnumCheck.exe:
 	$(CSC) $(CSCFLAGS) /out:EnumCheck.exe EnumCheck.cs
+
+IFaceDisco.exe: IFaceDisco.cs XMLUtil.cs
+	$(CSC) $(CSCFLAGS) /out:IFaceDisco.exe IFaceDisco.cs XMLUtil.cs
 
 clean:
 	rm -f *.exe *.pdb

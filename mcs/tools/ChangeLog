@@ -1,12 +1,24 @@
+2002-01-17  Nick Drochak  <ndrochak@gol.com>
+
+	* IFaceDisco.cs, XMLUtil.cs: Added new files for interface discovery tool.
+	* makefile: added target for IFaceDisco.exe and added to clean target for same
+
 2002-01-08  John Barnette <jbarn@httcb.net>
 
 	* Removed todo.cs and related makefile data.
 
+
+
 2002-01-07  John Barnette <jbarn@httcb.net>
+
+	
 
 	* makefile: added todo target, fixed EnumCheck target, simplified clean
 
+	
 	* todo.cs: new file.  generates todo list XML and compares assemblies
+
+
 
 2002-01-07  Gaurav Vaish <gvaish@iitk.ac.in>
 
