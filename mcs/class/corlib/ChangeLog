@@ -4,7 +4,7 @@
 	Remoting.Metadata.
 
 	* ChangeLog: Moved entries from System.Runtime.Remoting.Activation
-	and System.Runtime.Remoting.Proxy to their own ChangeLog.
+	and System.Runtime.Remoting.Proxies to their own ChangeLog.
 
 2002-07-23  Duncan Mak  <duncan@ximian.com>
 

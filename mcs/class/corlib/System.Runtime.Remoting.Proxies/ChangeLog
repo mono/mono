@@ -1,5 +1,7 @@
 2002-07-24  Duncan Mak  <duncan@ximian.com>
-	
+
+	* ProxyAttribute.cs: Revert the last commit.
+
 	* System.Runtime.Remoting.Proxies/ProxyAttribute.cs: This
 	implements IContextAttribute.
 

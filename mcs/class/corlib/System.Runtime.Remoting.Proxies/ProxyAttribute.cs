@@ -14,7 +14,7 @@ using System.Runtime.Remoting.Contexts;
 namespace System.Runtime.Remoting.Proxies {
 
 	[AttributeUsage (AttributeTargets.Class)]
-	public class ProxyAttribute : IContextAttribute
+	public class ProxyAttribute : Attribute
 	{
 		public ProxyAttribute ()
 		{
