@@ -12,7 +12,7 @@ using System.Security.Permissions;
 
 namespace System.Web
 {
-	[AttributeUsage (AttributeTargets.All, AllowMultiple = true, Inherited = true)]
+	[AttributeUsage (AttributeTargets.All, AllowMultiple = true, Inherited = false)]
 	public sealed class AspNetHostingPermissionAttribute : CodeAccessSecurityAttribute
 	{
 		AspNetHostingPermissionLevel level;
