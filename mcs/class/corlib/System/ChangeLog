@@ -1,3 +1,6 @@
+2002-06-03  Duncan Mak  <duncan@ximian.com>
+
+	* Convert.cs (ToDouble): Fixed ToDouble (byte value).
 
 Mon Jun 3 12:18:18 CEST 2002 Paolo Molaro <lupus@ximian.com>
 

@@ -779,7 +779,7 @@ namespace System {
 	
 		public static double ToDouble (byte value) 
 		{ 
-			throw new InvalidCastException ("This conversion is not supported.");
+			return (double) value;
 		}
 
 		public static double ToDouble (char value)
