@@ -603,6 +603,27 @@ namespace Mono.CSharp {
 			}
 		}
 
+		protected bool CheckConstraint (EmitContext ec, Type ptype, Expression expr,
+						Type ctype)
+		{
+			if (TypeManager.HasGenericArguments (ctype)) {
+				Type[] types = TypeManager.GetTypeArguments (ctype);
+
+				TypeArguments args = new TypeArguments (loc);
+
+				for (int i = 0; i < types.Length; i++) {
+					Type t = types [i] == ptype ? expr.Type : types [i];
+					args.Add (new TypeExpression (t, loc));
+				}
+
+				ctype = new ConstructedType (ctype, args, loc).ResolveType (ec);
+				if (ctype == null)
+					return false;
+			}
+
+			return Convert.ImplicitStandardConversionExists (expr, ctype);
+		}
+
 		protected bool CheckConstraints (EmitContext ec, int index)
 		{
 			Type atype = atypes [index];
@@ -642,7 +663,7 @@ namespace Mono.CSharp {
 			// The class constraint comes next.
 			//
 			if ((parent != null) && (parent != TypeManager.object_type)) {
-				if (!Convert.ImplicitStandardConversionExists (aexpr, parent)) {
+				if (!CheckConstraint (ec, ptype, aexpr, parent)) {
 					Report.Error (309, loc, "The type `{0}' must be " +
 						      "convertible to `{1}' in order to " +
 						      "use it as parameter `{2}' in the " +
@@ -660,7 +681,7 @@ namespace Mono.CSharp {
 				if (itype == null)
 					return false;
 
-				if (!Convert.ImplicitStandardConversionExists (aexpr, itype)) {
+				if (!CheckConstraint (ec, ptype, aexpr, itype)) {
 					Report.Error (309, loc, "The type `{0}' must be " +
 						      "convertible to `{1}' in order to " +
 						      "use it as parameter `{2}' in the " +

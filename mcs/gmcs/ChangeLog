@@ -1,5 +1,10 @@
 2004-07-18  Martin Baulig  <martin@ximian.com>
 
+	* generic.cs (ConstructedType.CheckConstraints): Improved
+	constraints checking.
+
+2004-07-18  Martin Baulig  <martin@ximian.com>
+
 	* expression.cs (Invocation.BetterMethod): Call
 	TypeManager.TypeToCoreType() on all types and removed my previous
 	hack; we're already doig the right thing here.
