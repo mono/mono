@@ -1,3 +1,51 @@
+2004-11-10  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* appdomain.c: Removed look_for_method_by_name(). Use the new method
+	mono_class_get_method_from_name() instead.
+	
+	* class-internals.h: Added two new types of wrappers. 
+	Added MonoRemotingTarget enum. Added new trampoline function type, which
+	takes an additional MonoRemotingTarget value as parameter, so it is
+	possible to request a trampoline for a specific target.
+	
+	* class.c: Added new mono_class_get_method_from_name() method.
+	
+	* class.h: In MonoRemoteClass, we can have now to vtables, one for
+	general remoting sinks and one specific for cross domain calls.
+	
+	* debug-helpers.c: Added new wrapper names.
+	
+	* icall.c: Use the new method mono_remote_class_vtable() to get the vtable
+	of a remote class.
+	
+	* image.c: Porperly delete value objects form the remoting invoke hashtable.
+	
+	* marshal.c: Added mono_marshal_get_xappdomain_invoke(), which together
+	with several other methods (mono_marshal_get_xappdomain_dispatch,
+	mono_marshal_get_xappdomain_target, mono_marshal_get_serialize_exception,
+	and others) can generate a fast remoting wrapper for cross domain calls.
+	More information can be found in docs/remoting.
+	Other changes: Removed mono_find_method_by_name, and used
+	mono_class_get_method_from_name instead.
+	Remoting wrappers are now stored in a MonoRemotingMethods struct, which
+	is stored in the remoting invoke hashtable.
+	
+	* marshal.h: published the new method for getting the xdomain wrapper,
+	and also added a method for getting the adequate wrapper for a given
+	method and target.
+	
+	* object-internals.h, object.c: Added a couple of methods for capying and
+	cloning arrays.
+	Modified mono_install_remoting_trampoline, which takes the new remoting
+	trampoline that has a remoting target as parameter.
+	mono_class_proxy_vtable now also takes a remoting target as parameter, and
+	will return the most suitable vtable for the target.
+	Added mono_remote_class_vtable, which returns the vtable of a remote class
+	(which can be the normal remoting vtable or the xdomain vtable).
+	
+	* threads.c: the xdomain invoke and dispatch wrappers must also be
+	protected against interruptions.
+
 2004-11-09 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* icall.c: use memmove in BlockCopyInternal when the source and
