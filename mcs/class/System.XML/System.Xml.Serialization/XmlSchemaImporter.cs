@@ -288,6 +288,10 @@ namespace System.Xml.Serialization {
 				if (type == null) throw new InvalidOperationException ("Schema type '" + elem.SchemaTypeName + "' not found");
 				stype = (XmlSchemaType) type;
 				qname = stype.QualifiedName;
+				
+				XmlSchemaType btype = stype.BaseSchemaType as XmlSchemaType;
+				if (btype != null && btype.QualifiedName == elem.SchemaTypeName)
+					throw new InvalidOperationException ("Cannot import schema for type '" + elem.SchemaTypeName.Name + "' from namespace '" + elem.SchemaTypeName.Namespace + "'. Redefine not supported");
 			}
 
 			if (stype is XmlSchemaSimpleType) return false;

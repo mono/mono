@@ -1,5 +1,10 @@
 2004-01-27  Lluis Sanchez Gual  <lluis@ximian.com>
 
+	* XmlSchemaImporter.cs: Redefinition of types are not supported. Added a
+	  check.
+
+2004-01-27  Lluis Sanchez Gual  <lluis@ximian.com>
+
 	* MapCodeGenerator.cs: Added helper method for generating an attribute
 	  parameter of type enum.
 	* XmlAttributeAttribute.cs: little fix.
