@@ -217,10 +217,11 @@ namespace Mono.CSharp {
 			async_params [params_num + 1] = new Parameter ("System.IAsyncResult", "object",
 								   Parameter.Modifier.NONE, null);
 
+			Parameters async_parameters = new Parameters (async_params, null, Location);
+			
+			async_parameters.ComputeAndDefineParameterTypes (this);
 			TypeManager.RegisterMethod (BeginInvokeBuilder,
-						    new InternalParameters (
-							    parent,
-							    new Parameters (async_params, null, Location)),
+						    new InternalParameters (parent, async_parameters),
 						    async_param_types);
 
 			//

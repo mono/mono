@@ -175,7 +175,7 @@ namespace Mono.CSharp {
 
 
 				Expression ml = MemberLookup (
-					ec, ec.TypeContainer.TypeBuilder, ei.Name,
+					ec, ec.ContainerType, ei.Name,
 					MemberTypes.Event, AllBindingFlags, l);
 
 				if (ml == null) {

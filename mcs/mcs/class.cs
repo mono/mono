@@ -466,15 +466,19 @@ namespace Mono.CSharp {
 		//
 		// Emits the instance field initializers
 		//
-		public bool EmitFieldInitializers (EmitContext ec, bool is_static)
+		public bool EmitFieldInitializers (EmitContext ec)
 		{
 			ArrayList fields;
 			ILGenerator ig = ec.ig;
-
-			if (is_static)
+			Expression instance_expr;
+			
+			if (ec.IsStatic){
 				fields = initialized_static_fields;
-			else
+				instance_expr = null;
+			} else {
 				fields = initialized_fields;
+				instance_expr = new This (Location.Null).Resolve (ec);
+			}
 
 			if (fields == null)
 				return true;
@@ -488,23 +492,19 @@ namespace Mono.CSharp {
 				else {
 					string base_type = f.Type.Substring (0, f.Type.IndexOf ("["));
 					string rank = f.Type.Substring (f.Type.IndexOf ("["));
-					e = new ArrayCreation (base_type, rank, (ArrayList) init, f.Location); 
+					e = new ArrayCreation (base_type, rank, (ArrayList)init, f.Location);
 				}
+
+				Location l = f.Location;
+				FieldExpr fe = new FieldExpr (f.FieldBuilder, l);
+				fe.InstanceExpression = instance_expr;
+				Assign a = new Assign (fe, e, l);
 				
-				e = e.Resolve (ec);
-				if (e == null)
+				a = (Assign) a.Resolve (ec);
+				if (a == null)
 					return false;
-				
-				if (!is_static)
-					ig.Emit (OpCodes.Ldarg_0);
-				
-				e.Emit (ec);
-				
-				if (is_static)
-					ig.Emit (OpCodes.Stsfld, f.FieldBuilder);
-				else
-					ig.Emit (OpCodes.Stfld, f.FieldBuilder);
-				
+
+				a.EmitStatement (ec);
 			}
 			
 			return true;
@@ -2389,7 +2389,7 @@ namespace Mono.CSharp {
 			ig.BeginFinallyBlock ();
 			
 			member_lookup = Expression.MemberLookup (
-				ec, ec.TypeContainer.TypeBuilder.BaseType, "Finalize",
+				ec, ec.ContainerType.BaseType, "Finalize",
 				MemberTypes.Method, Expression.AllBindingFlags, Location);
 
 			if (member_lookup != null){
@@ -2439,9 +2439,9 @@ namespace Mono.CSharp {
 			}
 
 			if (this is ConstructorBaseInitializer)
-				t = ec.TypeContainer.TypeBuilder.BaseType;
+				t = ec.ContainerType.BaseType;
 			else
-				t = ec.TypeContainer.TypeBuilder;
+				t = ec.ContainerType;
 			
 			parent_constructor_group = Expression.MemberLookup (
 				ec, t, ".ctor", 
@@ -2598,13 +2598,13 @@ namespace Mono.CSharp {
 			//
 			if (parent is Class){
 				if ((ModFlags & Modifiers.STATIC) == 0){
-					parent.EmitFieldInitializers (ec, false);
+					parent.EmitFieldInitializers (ec);
 					Initializer.Emit (ec);
 				}
 			}
 			
 			if ((ModFlags & Modifiers.STATIC) != 0)
-				parent.EmitFieldInitializers (ec, true);
+				parent.EmitFieldInitializers (ec);
 
 			Attribute.ApplyAttributes (ec, ConstructorBuilder, this, OptAttributes, Location);
 

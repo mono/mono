@@ -917,14 +917,14 @@ namespace Mono.CSharp {
 				return null;
 
 			if (RootContext.WarningLevel >= 1){
-				if (expr.Type == probe_type || expr.Type.IsSubclassOf (probe_type)){
+				Type etype = expr.Type;
+				
+				if (etype == probe_type || etype.IsSubclassOf (probe_type)){
 					Report.Warning (
 						183, loc,
 						"The expression is always of type `" +
 						TypeManager.CSharpName (probe_type) + "'");
-				}
-
-				if (expr.Type != probe_type && !probe_type.IsSubclassOf (expr.Type)){
+				} else if (etype != probe_type && !probe_type.IsSubclassOf (etype)){
 					if (!(probe_type.IsInterface || expr.Type.IsInterface))
 						Report.Warning (
 							184, loc,
@@ -953,7 +953,12 @@ namespace Mono.CSharp {
 		{
 			ILGenerator ig = ec.ig;
 
+			Type etype = expr.Type;
+
 			expr.Emit (ec);
+			if (etype == probe_type || etype.IsSubclassOf (probe_type))
+				return;
+			
 			ig.Emit (OpCodes.Isinst, probe_type);
 		}
 
@@ -1636,7 +1641,7 @@ namespace Mono.CSharp {
 			if (r != l){
 				right_expr = MemberLookup (
 					ec, r, op, MemberTypes.Method, AllBindingFlags, loc);
-				union = Invocation.MakeUnionSet (left_expr, right_expr);
+				union = Invocation.MakeUnionSet (left_expr, right_expr, loc);
 			} else
 				union = (MethodGroupExpr) left_expr;
 			
@@ -3068,69 +3073,51 @@ namespace Mono.CSharp {
 			return sb.ToString ();
 		}
 
-		public static MethodGroupExpr MakeUnionSet (Expression mg1, Expression mg2)
+		public static MethodGroupExpr MakeUnionSet (Expression mg1, Expression mg2, Location loc)
 		{
 			MemberInfo [] miset;
 			MethodGroupExpr union;
-			
-			if (mg1 != null && mg2 != null) {
-				
-				MethodGroupExpr left_set = null, right_set = null;
-				int length1 = 0, length2 = 0;
-				
-				left_set = (MethodGroupExpr) mg1;
-				length1 = left_set.Methods.Length;
-				
-				right_set = (MethodGroupExpr) mg2;
-				length2 = right_set.Methods.Length;
 
-				ArrayList common = new ArrayList ();
-				
-				for (int i = 0; i < left_set.Methods.Length; i++) {
-					for (int j = 0; j < right_set.Methods.Length; j++) {
-						if (left_set.Methods [i] == right_set.Methods [j]) 
-							common.Add (left_set.Methods [i]);
-					}
-				}
-				
-				miset = new MemberInfo [length1 + length2 - common.Count];
-
-				left_set.Methods.CopyTo (miset, 0);
-
-				int k = 0;
-				
-				for (int j = 0; j < right_set.Methods.Length; j++)
-					if (!common.Contains (right_set.Methods [j]))
-						miset [length1 + k++] = right_set.Methods [j];
-				
-				union = new MethodGroupExpr (miset);
-
-				return union;
-
-			} else if (mg1 == null && mg2 != null) {
-				
-				MethodGroupExpr me = (MethodGroupExpr) mg2; 
-				
-				miset = new MemberInfo [me.Methods.Length];
-				me.Methods.CopyTo (miset, 0);
-
-				union = new MethodGroupExpr (miset);
-				
-				return union;
-
-			} else if (mg2 == null && mg1 != null) {
-				
-				MethodGroupExpr me = (MethodGroupExpr) mg1; 
-				
-				miset = new MemberInfo [me.Methods.Length];
-				me.Methods.CopyTo (miset, 0);
-
-				union = new MethodGroupExpr (miset);
-				
-				return union;
+			if (mg1 == null){
+				if (mg2 == null)
+					return null;
+				return (MethodGroupExpr) mg2;
+			} else {
+				if (mg2 == null)
+					return (MethodGroupExpr) mg1;
 			}
 			
-			return null;
+			MethodGroupExpr left_set = null, right_set = null;
+			int length1 = 0, length2 = 0;
+			
+			left_set = (MethodGroupExpr) mg1;
+			length1 = left_set.Methods.Length;
+			
+			right_set = (MethodGroupExpr) mg2;
+			length2 = right_set.Methods.Length;
+			
+			ArrayList common = new ArrayList ();
+			
+			for (int i = 0; i < left_set.Methods.Length; i++) {
+				for (int j = 0; j < right_set.Methods.Length; j++) {
+					if (left_set.Methods [i] == right_set.Methods [j]) 
+						common.Add (left_set.Methods [i]);
+				}
+			}
+			
+			miset = new MemberInfo [length1 + length2 - common.Count];
+			
+			left_set.Methods.CopyTo (miset, 0);
+			
+			int k = 0;
+			
+			for (int j = 0; j < right_set.Methods.Length; j++)
+				if (!common.Contains (right_set.Methods [j]))
+					miset [length1 + k++] = right_set.Methods [j];
+			
+			union = new MethodGroupExpr (miset, loc);
+			
+			return union;
 		}
 
 		/// <summary>
@@ -4555,7 +4542,7 @@ namespace Mono.CSharp {
 		public override Expression DoResolve (EmitContext ec)
 		{
 			eclass = ExprClass.Variable;
-			type = ec.TypeContainer.TypeBuilder;
+			type = ec.ContainerType;
 
 			if (ec.IsStatic){
 				Report.Error (26, loc,
@@ -4888,7 +4875,7 @@ namespace Mono.CSharp {
 				//
 
 				Expression ml = MemberLookup (
-					ec, ec.TypeContainer.TypeBuilder,
+					ec, ec.ContainerType,
 					ee.EventInfo.Name, MemberTypes.Event, AllBindingFlags, loc);
 
 				if (ml != null) {
@@ -5548,9 +5535,12 @@ namespace Mono.CSharp {
 			//
 			// Step 2: find the proper match
 			//
-			if (ilist != null && ilist.getters != null && ilist.getters.Count > 0)
+			if (ilist != null && ilist.getters != null && ilist.getters.Count > 0){
+				Location loc = ea.loc;
+				
 				get = (MethodInfo) Invocation.OverloadResolve (
-					ec, new MethodGroupExpr (ilist.getters), ea.Arguments, ea.loc);
+					ec, new MethodGroupExpr (ilist.getters, loc), ea.Arguments, loc);
+			}
 
 			if (get == null){
 				Report.Error (154, ea.loc,
@@ -5579,11 +5569,13 @@ namespace Mono.CSharp {
 					indexer_type, ea.loc);
 
 			if (ilist != null && ilist.setters != null && ilist.setters.Count > 0){
+				Location loc = ea.loc;
+				
 				set_arguments = (ArrayList) ea.Arguments.Clone ();
 				set_arguments.Add (new Argument (right_side, Argument.AType.Expression));
 
 				set = (MethodInfo) Invocation.OverloadResolve (
-					ec, new MethodGroupExpr (ilist.setters), set_arguments, ea.loc);
+					ec, new MethodGroupExpr (ilist.setters, loc), set_arguments, loc);
 			}
 			
 			if (set == null){
@@ -5630,7 +5622,7 @@ namespace Mono.CSharp {
 		public override Expression DoResolve (EmitContext ec)
 		{
 			Expression member_lookup;
-			Type current_type = ec.TypeContainer.TypeBuilder;
+			Type current_type = ec.ContainerType;
 			Type base_type = current_type.BaseType;
 			Expression e;
 
@@ -5682,7 +5674,7 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			Type current_type = ec.TypeContainer.TypeBuilder;
+			Type current_type = ec.ContainerType;
 			Type base_type = current_type.BaseType;
 			Expression member_lookup;
 

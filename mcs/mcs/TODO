@@ -172,6 +172,8 @@ PENDING TASKS
 OPTIMIZATIONS
 -------------
 
+* User Defined Conversions is doing way too many calls to do union sets that are not needed
+
 * Implement loop inversion for our loops
 
 * Add test case for destructors

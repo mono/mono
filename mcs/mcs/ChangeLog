@@ -1,3 +1,38 @@
+2002-04-01  Miguel de Icaza  <miguel@ximian.com>
+
+	* statement.cs, makefile: Drop Statementcollection and just use ArrayLists
+
+	* ecore.cs: Optimize UserDefinedConversion by minimizing the calls
+	to MakeUnionSet.
+
+	* cs-tokenizer.cs: Reuse a single StringBuilder for assembling
+	tokens, numbers and strings.
+
+	* ecore.cs (MethodGroupExpr): Make Emit warn about missing
+	parenthesis.
+
+	* delegate.cs: Use ComputeAndDefineParameterTypes for both the
+	asyncronous parameters and the regular parameters.  
+
+	* codegen.cs (CodeGen.Init): Use the constructor that allows us to
+	specify the target directory.
+
+	* expression.cs: (This.DoResolve): Simplify
+	(As.Emit): Optimize, do not generate IsInst if the expression is
+	always of the given type.
+
+	(Is.DoResolve): Bug fix, we were reporting both always/never for
+	the is expression.
+
+	* (Invocation.MakeUnionSet): Simplify vastly and optimize, we were
+	creating too many unnecessary arrays.
+
+2002-03-31  Miguel de Icaza  <miguel@ximian.com>
+
+	* class.cs (EmitFieldInitializer): Use Assign expression to assign
+	fields instead of rolling our own initializer.   Takes care of all
+	implicit conversions, and drops unnecessary static checks/argument.
+
 2002-03-31  Dick Porter  <dick@ximian.com>
 
 	* driver.cs: use the GetDirectories() return values properly, and

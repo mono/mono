@@ -39,6 +39,20 @@ namespace Mono.CSharp {
 			return name;
 		}
 
+		public static string Dirname (string name)
+		{
+			int pos = name.LastIndexOf ("/");
+
+			if (pos != -1)
+				return name.Substring (0, pos);
+
+			pos = name.LastIndexOf ("\\");
+			if (pos != -1)
+				return name.Substring (0, pos);
+
+			return ".";
+		}
+
 		static string TrimExt (string name)
 		{
 			int pos = name.LastIndexOf (".");
@@ -111,7 +125,7 @@ namespace Mono.CSharp {
 			an.Name = TrimExt (Basename (name));
 			current_domain = AppDomain.CurrentDomain;
 			assembly_builder = current_domain.DefineDynamicAssembly (
-				an, AssemblyBuilderAccess.RunAndSave);
+				an, AssemblyBuilderAccess.RunAndSave, Dirname (name));
 
 			//
 			// Pass a path-less name to DefineDynamicModule.  Wonder how

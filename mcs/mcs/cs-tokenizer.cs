@@ -111,7 +111,6 @@ namespace Mono.CSharp
 		//
 		// Values for the associated token returned
 		//
-		System.Text.StringBuilder number;
 		int putback_char;
 		Object val;
 
@@ -129,6 +128,10 @@ namespace Mono.CSharp
 		// pre-processor if stack state:
 		//
 		Stack ifstack;
+
+		static System.Text.StringBuilder id_builder;
+		static System.Text.StringBuilder string_builder;
+		static System.Text.StringBuilder number_builder;
 		
 		//
 		// Details about the error encoutered by the tokenizer
@@ -250,6 +253,9 @@ namespace Mono.CSharp
 			csharp_format_info = new NumberFormatInfo ();
 			csharp_format_info.CurrencyDecimalSeparator = ".";
 			styles = NumberStyles.AllowExponent | NumberStyles.AllowDecimalPoint;
+			id_builder = new System.Text.StringBuilder ();
+			string_builder = new System.Text.StringBuilder ();
+			number_builder = new System.Text.StringBuilder ();
 		}
 
 		bool is_keyword (string name)
@@ -475,11 +481,11 @@ namespace Mono.CSharp
 			bool seen_digits = false;
 			
 			if (c != -1)
-				number.Append ((char) c);
+				number_builder.Append ((char) c);
 			
 			while ((d = peekChar ()) != -1){
 				if (Char.IsDigit ((char)d)){
-					number.Append ((char) d);
+					number_builder.Append ((char) d);
 					getChar ();
 					seen_digits = true;
 				} else
@@ -499,12 +505,12 @@ namespace Mono.CSharp
 			int d;
 
 			if (c != -1)
-				number.Append ((char) c);
+				number_builder.Append ((char) c);
 			while ((d = peekChar ()) != -1){
 				char e = Char.ToUpper ((char) d);
 				
 				if (is_hex (e)){
-					number.Append ((char) e);
+					number_builder.Append ((char) e);
 					getChar ();
 				} else
 					break;
@@ -617,13 +623,13 @@ namespace Mono.CSharp
 		//
 		int adjust_int (int c)
 		{
-			ulong ul = System.UInt64.Parse (number.ToString ());
+			ulong ul = System.UInt64.Parse (number_builder.ToString ());
 			return integer_type_suffix (ul, c);
 		}
 
 		int adjust_real (int t)
 		{
-			string s = number.ToString ();
+			string s = number_builder.ToString ();
 
 			switch (t){
 			case Token.LITERAL_DECIMAL:
@@ -658,10 +664,9 @@ namespace Mono.CSharp
 		int is_number (int c)
 		{
 			bool is_real = false;
-			number = new System.Text.StringBuilder ();
 			int type;
 
-			number.Length = 0;
+			number_builder.Length = 0;
 
 			if (Char.IsDigit ((char)c)){
 				if (c == '0' && peekChar () == 'x' || peekChar () == 'X'){
@@ -669,7 +674,7 @@ namespace Mono.CSharp
 					getChar ();
 					hex_digits (-1);
 
-					string s = number.ToString ();
+					string s = number_builder.ToString ();
 
 					ul = System.UInt64.Parse (s, NumberStyles.HexNumber);
 					return integer_type_suffix (ul, peekChar ());
@@ -688,21 +693,21 @@ namespace Mono.CSharp
 					c = getChar ();
 				} else {
 					putback ('.');
-					number.Length -= 1;
+					number_builder.Length -= 1;
 					return adjust_int (-1);
 				}
 			}
 			
 			if (c == 'e' || c == 'E'){
 				is_real = true;
-				number.Append ("e");
+				number_builder.Append ("e");
 				c = getChar ();
 				
 				if (c == '+'){
-					number.Append ((char) c);
+					number_builder.Append ((char) c);
 					c = getChar ();
 				} else if (c == '-'){
-					number.Append ((char) c);
+					number_builder.Append ((char) c);
 					c = getChar ();
 				}
 				decimal_digits (-1);
@@ -1321,21 +1326,21 @@ namespace Mono.CSharp
 			// optimization: eliminate col and implement #directive semantic correctly.
 			for (;(c = getChar ()) != -1; col++) {
 				if (Char.IsLetter ((char)c) || c == '_'){
-					System.Text.StringBuilder id = new System.Text.StringBuilder ();
 					string ids;
 
+					id_builder.Length = 0;
 					tokens_seen = true;
-					id.Append ((char) c);
+					id_builder.Append ((char) c);
 					
 					while ((c = peekChar ()) != -1) {
 						if (is_identifier_part_character ((char) c)){
-							id.Append ((char)getChar ());
+							id_builder.Append ((char)getChar ());
 							col++;
 						} else 
 							break;
 					}
 					
-					ids = id.ToString ();
+					ids = id_builder.ToString ();
 
 					if (!is_keyword (ids) || allow_keyword_as_ident) {
 						val = ids;
@@ -1447,18 +1452,19 @@ namespace Mono.CSharp
 				}
 				
 				if (c == '"'){
-					System.Text.StringBuilder s = new System.Text.StringBuilder ();
+					string_builder.Length = 0;
+					
 					tokens_seen = true;
 					
 					while ((c = getChar ()) != -1){
 						if (c == '"'){
 							if (allow_keyword_as_ident && peekChar () == '"'){
-								s.Append ((char) c);
+								string_builder.Append ((char) c);
 								getChar ();
 								continue;
 							} 
 							allow_keyword_as_ident = false;
-							val = s.ToString ();
+							val = string_builder.ToString ();
 							return Token.LITERAL_STRING;
 						}
 
@@ -1467,7 +1473,7 @@ namespace Mono.CSharp
 							if (c == -1)
 								return Token.ERROR;
 						}
-						s.Append ((char) c);
+						string_builder.Append ((char) c);
 					}
 				}
 

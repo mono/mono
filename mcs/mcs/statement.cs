@@ -4,7 +4,7 @@
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
 //
-// (C) 2001 Ximian, Inc.
+// (C) 2001, 2002 Ximian, Inc.
 //
 
 using System;
@@ -674,7 +674,7 @@ namespace Mono.CSharp {
 		//
 		// The statements in this block
 		//
-		StatementCollection statements;
+		ArrayList statements;
 
 		//
 		// An array of Blocks.  We keep track of children just
@@ -733,6 +733,7 @@ namespace Mono.CSharp {
 			this.EndLocation = end;
 			this.loc = start;
 			this_id = id++;
+			statements = new ArrayList ();
 		}
 
 		public int ID {
@@ -919,20 +920,8 @@ namespace Mono.CSharp {
 			return null;
 		}
 
-		public StatementCollection Statements {
-			get {
-				if (statements == null)
-					statements = new StatementCollection ();
-
-				return statements;
-			}
-		}
-
 		public void AddStatement (Statement s)
 		{
-			if (statements == null)
-				statements = new StatementCollection ();
-
 			statements.Add (s);
 			used = true;
 		}
@@ -1056,7 +1045,7 @@ namespace Mono.CSharp {
 			if (CodeGen.SymbolWriter != null) {
 				ec.Mark (StartLocation);
 
-				foreach (Statement s in Statements) {
+				foreach (Statement s in statements) {
 					ec.Mark (s.loc);
 
 					is_ret = s.Emit (ec);
@@ -1064,7 +1053,7 @@ namespace Mono.CSharp {
 
 				ec.Mark (EndLocation); 
 			} else {
-				foreach (Statement s in Statements)
+				foreach (Statement s in statements)
 					is_ret = s.Emit (ec);
 			}
 			

@@ -28,7 +28,6 @@ COMPILER_SOURCES = \
 	report.cs			\
 	rootcontext.cs			\
 	statement.cs			\
-	statementCollection.cs		\
 	support.cs			\
 	typemanager.cs
 

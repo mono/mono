@@ -499,7 +499,7 @@ namespace Mono.CSharp {
 			} while (searching);
 
 			if (method_list != null && method_list.Count > 0)
-				return new MethodGroupExpr (method_list);
+				return new MethodGroupExpr (method_list, loc);
 
 			//
 			// Interfaces do not list members they inherit, so we have to
@@ -574,6 +574,12 @@ namespace Mono.CSharp {
 		{
 			Type expr_type = expr.Type;
 
+			if (expr_type == null && expr.eclass == ExprClass.MethodGroup){
+				// if we are a method group, emit a warning
+
+				expr.Emit (null);
+			}
+			
 			if (target_type == TypeManager.object_type) {
 				//
 				// A pointer type cannot be converted to object
@@ -1146,7 +1152,7 @@ namespace Mono.CSharp {
 								Type target, Location loc,
 								bool look_for_explicit)
 		{
-			Expression mg1 = null, mg2 = null, mg3 = null, mg4 = null;
+			Expression mg1 = null, mg2 = null;
 			Expression mg5 = null, mg6 = null, mg7 = null, mg8 = null;
 			Expression e;
 			MethodBase method = null;
@@ -1162,7 +1168,12 @@ namespace Mono.CSharp {
 				op_name = "op_True";
 			else
 				op_name = "op_Implicit";
-			
+
+#if old
+			//
+			// FIXME: This whole process can be optimized to check if the
+			// return is non-null and make the union as we go.
+			//
 			mg1 = MemberLookup (ec, source_type, op_name, loc);
 
 			if (source_type.BaseType != null)
@@ -1173,11 +1184,41 @@ namespace Mono.CSharp {
 			if (target.BaseType != null)
 				mg4 = MemberLookup (ec, target.BaseType, op_name, loc);
 
-			MethodGroupExpr union1 = Invocation.MakeUnionSet (mg1, mg2);
-			MethodGroupExpr union2 = Invocation.MakeUnionSet (mg3, mg4);
+			MethodGroupExpr union1 = Invocation.MakeUnionSet (mg1, mg2, loc);
+			MethodGroupExpr union2 = Invocation.MakeUnionSet (mg3, mg4, loc);
 
-			MethodGroupExpr union3 = Invocation.MakeUnionSet (union1, union2);
+			MethodGroupExpr union3 = Invocation.MakeUnionSet (union1, union2, loc);
+#else
+			MethodGroupExpr union3;
+			
+			mg1 = MemberLookup (ec, source_type, op_name, loc);
+			if (source_type.BaseType != null)
+				mg2 = MemberLookup (ec, source_type.BaseType, op_name, MemberTypes.Method, AllBindingFlags, loc);
 
+			if (mg1 == null)
+				union3 = (MethodGroupExpr) mg2;
+			else if (mg2 == null)
+				union3 = (MethodGroupExpr) mg1;
+			else
+				union3 = Invocation.MakeUnionSet (mg1, mg2, loc);
+
+			mg1 = MemberLookup (ec, target, op_name, MemberTypes.Method, AllBindingFlags, loc);
+			if (mg1 != null){
+				if (union3 != null)
+					union3 = Invocation.MakeUnionSet (union3, mg1, loc);
+				else
+					union3 = (MethodGroupExpr) mg1;
+			}
+			if (target.BaseType != null)
+				mg1 = MemberLookup (ec, target.BaseType, op_name, MemberTypes.Method, AllBindingFlags, loc);
+			
+			if (mg1 != null){
+				if (union3 != null)
+					union3 = Invocation.MakeUnionSet (union3, mg1, loc);
+				else
+					union3 = (MethodGroupExpr) mg1;
+			}
+#endif
 			MethodGroupExpr union4 = null;
 
 			if (look_for_explicit) {
@@ -1194,13 +1235,13 @@ namespace Mono.CSharp {
 				if (target.BaseType != null)
 					mg8 = MemberLookup (ec, target.BaseType, op_name, loc);
 				
-				MethodGroupExpr union5 = Invocation.MakeUnionSet (mg5, mg6);
-				MethodGroupExpr union6 = Invocation.MakeUnionSet (mg7, mg8);
+				MethodGroupExpr union5 = Invocation.MakeUnionSet (mg5, mg6, loc);
+				MethodGroupExpr union6 = Invocation.MakeUnionSet (mg7, mg8, loc);
 
-				union4 = Invocation.MakeUnionSet (union5, union6);
+				union4 = Invocation.MakeUnionSet (union5, union6, loc);
 			}
 			
-			MethodGroupExpr union = Invocation.MakeUnionSet (union3, union4);
+			MethodGroupExpr union = Invocation.MakeUnionSet (union3, union4, loc);
 
 			if (union != null) {
 
@@ -3035,8 +3076,8 @@ namespace Mono.CSharp {
 				//
 				e = MemberLookup (ec, ec.DeclSpace.TypeBuilder, Name, Location);
 				
-				if (e == null && ec.TypeContainer.TypeBuilder != null)
-					e = MemberLookup (ec, ec.TypeContainer.TypeBuilder, Name, Location);
+				if (e == null && ec.ContainerType != null)
+					e = MemberLookup (ec, ec.ContainerType, Name, Location);
 			}
 
 			// Continuation of stage 2
@@ -3218,23 +3259,26 @@ namespace Mono.CSharp {
 	/// </summary>
 	public class MethodGroupExpr : Expression {
 		public MethodBase [] Methods;
+		Location loc;
 		Expression instance_expression = null;
 		
-		public MethodGroupExpr (MemberInfo [] mi)
+		public MethodGroupExpr (MemberInfo [] mi, Location l)
 		{
 			Methods = new MethodBase [mi.Length];
 			mi.CopyTo (Methods, 0);
 			eclass = ExprClass.MethodGroup;
+			type = TypeManager.object_type;
+			loc = l;
 		}
 
-		public MethodGroupExpr (ArrayList l)
+		public MethodGroupExpr (ArrayList list, Location l)
 		{
-			Methods = new MethodBase [l.Count];
+			Methods = new MethodBase [list.Count];
 
 			try {
-				l.CopyTo (Methods, 0);
+				list.CopyTo (Methods, 0);
 			} catch {
-				foreach (MemberInfo m in l){
+				foreach (MemberInfo m in list){
 					if (!(m is MethodBase)){
 						Console.WriteLine ("Name " + m.Name);
 						Console.WriteLine ("Found a: " + m.GetType ().FullName);
@@ -3242,7 +3286,9 @@ namespace Mono.CSharp {
 				}
 				throw;
 			}
+			loc = l;
 			eclass = ExprClass.MethodGroup;
+			type = TypeManager.object_type;
 		}
 		
 		//
@@ -3265,7 +3311,8 @@ namespace Mono.CSharp {
 
 		override public void Emit (EmitContext ec)
 		{
-			throw new Exception ("This should never be reached");
+			Report.Error (654, loc, "Method `" + Methods [0].DeclaringType + "." +
+				      Methods [0].Name + "()' is referenced without parentheses");
 		}
 
 		bool RemoveMethods (bool keep_static)

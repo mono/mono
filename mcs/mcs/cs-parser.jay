@@ -3939,8 +3939,6 @@ public CSharpParser (string name, System.IO.Stream input, ArrayList defines)
 
 public override int parse ()
 {
-	StringBuilder value = new StringBuilder ();
-
 	global_errors = 0;
 	try {
 		if (yacc_verbose_flag)
