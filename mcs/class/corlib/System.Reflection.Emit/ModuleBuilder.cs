@@ -65,7 +65,7 @@ namespace System.Reflection.Emit {
 		{
 			Assembly assembly;
 			try {
-				assembly = Assembly.Load ("Mono.CSharp.Debugger, Version=1.0.5000.0, PublicKeyToken=0738eb9f132ed756");
+				assembly = Assembly.Load (Consts.AssemblyMono_CSharp_Debugger);
 			} catch (FileNotFoundException) {
 				return;
 			}

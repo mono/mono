@@ -1,3 +1,7 @@
+2004-05-03 Lluis Sanches Gual  <lluis@ximian.com>
+
+	* ModuleBuilder.cs: Use name const to load the debugger assembly.
+
 2004-05-01  Todd Berman  <tberman@sevenl.net>
 
 	* ModuleBuilder.cs: Load the proper assembly for a gac-only install.
