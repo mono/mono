@@ -40,7 +40,9 @@ namespace Mono.Xml.Xsl {
 		Hashtable namespaceAliases = new Hashtable ();
 		// [QName]=>XmlSpace
 		Hashtable parameters = new Hashtable ();
-		
+		// [QName]=>XslKey
+		Hashtable keys = new Hashtable();
+
 		MSXslScriptManager msScripts = new MSXslScriptManager ();
 		XslTemplateTable templates;
 
@@ -102,6 +104,9 @@ namespace Mono.Xml.Xsl {
 			get { return templates; }
 		}
 
+		public Hashtable Keys {
+			get { return keys; }
+		}
 
 		public XslStylesheet (Compiler c)
 		{
@@ -130,6 +135,19 @@ namespace Mono.Xml.Xsl {
 			c.PopStylesheet ();
 		}
 		
+		public XslKey FindKey (QName name)
+		{
+			XslKey key = Keys [name] as XslKey;
+			if (key != null)
+				return key;
+			for (int i = Imports.Count - 1; i >= 0; i--) {
+				key = ((XslStylesheet) Imports [i]).FindKey (name);
+				if (key != null)
+					return key;
+			}
+			return null;
+		}
+
 		private XslStylesheet (Compiler c, XslStylesheet importer) : this (c)
 		{
 			this.importer = importer;
@@ -181,7 +199,7 @@ namespace Mono.Xml.Xsl {
 					break;
 
 				case "key":
-					c.AddKeyPattern (new XslKey (c));
+					keys.Add (c.ParseQNameAttribute ("name"), new XslKey (c));
 					break;
 					
 				case "output":

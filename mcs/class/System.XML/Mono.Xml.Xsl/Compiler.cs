@@ -33,11 +33,11 @@ namespace Mono.Xml.Xsl {
 		Hashtable attrSets;
 		ExpressionStore exprStore;
 		XmlNamespaceManager nsMgr;
-		ArrayList keys;
+		Hashtable keys;
 		Hashtable outputs;
 		Hashtable decimalFormats;
 		
-		public CompiledStylesheet (XslStylesheet style, Hashtable globalVariables, Hashtable attrSets, ExpressionStore exprStore, XmlNamespaceManager nsMgr, ArrayList keys, Hashtable outputs, Hashtable decimalFormats)
+		public CompiledStylesheet (XslStylesheet style, Hashtable globalVariables, Hashtable attrSets, ExpressionStore exprStore, XmlNamespaceManager nsMgr, Hashtable keys, Hashtable outputs, Hashtable decimalFormats)
 		{
 			this.style = style;
 			this.globalVariables = globalVariables;
@@ -52,7 +52,7 @@ namespace Mono.Xml.Xsl {
 		public XslStylesheet Style { get { return style; }}
 		public ExpressionStore ExpressionStore {get{return exprStore;}}
 		public XmlNamespaceManager NamespaceManager {get{return nsMgr;}}
-		public ArrayList Keys {get { return keys;}}
+		public Hashtable Keys {get { return keys;}}
 		public Hashtable Outputs { get { return outputs; }}
 		
 		public XslDecimalFormat LookupDecimalFormat (QName name)
@@ -117,7 +117,7 @@ namespace Mono.Xml.Xsl {
 			}
 			this.rootStyle = new XslStylesheet (this);
 			
-			return new CompiledStylesheet (rootStyle, globalVariables, attrSets, exprStore, nsMgr, keys, outputs, decimalFormats);
+			return new CompiledStylesheet (rootStyle, globalVariables, attrSets, exprStore, nsMgr, rootStyle.Keys, outputs, decimalFormats);
 		}
 		
 #region Input
@@ -395,15 +395,6 @@ namespace Mono.Xml.Xsl {
 			} while (nav.MoveToParent ());
 			
 			return ret;
-		}
-#endregion
-		
-#region Key
-		ArrayList keys = new ArrayList ();
-		
-		public void AddKeyPattern (XslKey key)
-		{
-			keys.Add (key);
 		}
 #endregion
 		

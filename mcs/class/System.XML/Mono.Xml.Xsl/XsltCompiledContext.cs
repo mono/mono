@@ -342,7 +342,7 @@ namespace Mono.Xml.Xsl.Functions {
 			} else
 				n = xsltContext.Processor.GetDocument (uri);
 			
-			return new SelfIterator (n, null);
+			return new SelfIterator (n, xsltContext);
 		}
 	}
 	
@@ -552,11 +552,13 @@ namespace Mono.Xml.Xsl.Functions {
 		{
 			if (args == null || args.Tail == null)
 				throw new XPathException ("key takes 2 args");
-			
 			arg0 = args.Arg;
 			arg1 = args.Tail.Arg;
 			nsm = ctx.GetNsm ();
 		}
+		public Expression KeyName { get { return arg0; } }
+		public Expression Field { get { return arg1; } }
+		public XmlNamespaceManager NamespaceManager { get { return nsm; } }
 		public override XPathResultType ReturnType { get { return XPathResultType.NodeSet; }}
 		
 		public override object Evaluate (BaseIterator iter)
@@ -580,22 +582,21 @@ namespace Mono.Xml.Xsl.Functions {
 		{
 			XPathNavigator searchDoc = context.Clone ();
 			searchDoc.MoveToRoot ();
-			foreach (XslKey key in xsltContext.Processor.CompiledStyle.Keys) {
-				if (key.Name == name) {
-					XPathNodeIterator desc = searchDoc.SelectDescendants (XPathNodeType.All, true);
+			XslKey key = xsltContext.Processor.CompiledStyle.Style.FindKey (name);
+			if (key != null) {
+				XPathNodeIterator desc = searchDoc.SelectDescendants (XPathNodeType.All, true);
 
-					while (desc.MoveNext ()) {
-						if (key.Matches (desc.Current, value))
-							AddResult (result, desc.Current);
+				while (desc.MoveNext ()) {
+					if (key.Matches (desc.Current, value))
+						AddResult (result, desc.Current);
+					
+					if (desc.Current.MoveToFirstAttribute ()) {
+						do {
+							if (key.Matches (desc.Current, value))
+								AddResult (result, desc.Current);	
+						} while (desc.Current.MoveToNext ());
 						
-						if (desc.Current.MoveToFirstAttribute ()) {
-							do {
-								if (key.Matches (desc.Current, value))
-									AddResult (result, desc.Current);	
-							} while (desc.Current.MoveToNext ());
-							
-							desc.Current.MoveToParent ();
-						}
+						desc.Current.MoveToParent ();
 					}
 				}
 			}

@@ -1,3 +1,13 @@
+2003-11-19 Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* Compiler.cs : Changed Keys from ArrayList to Hashtable.
+	  XslStylesheet.cs : Added Keys support here.
+	* XslTransformProcessor.cs : Should call SetContext() to expressions
+	  before evaluating current nodes.
+	* XsltCompiledContext.cs : 1) XsltDocument.GetDocument() should use
+	  xsltContext. 2) XsltKey exposes KeyName, Field and NamespaceManager
+	  for KeyPattern. It now uses CompiledStyle.FindKeys().
+
 2003-11-13 Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* GenericOutputter.cs : Added HTML output support. Closer xmlns handling
