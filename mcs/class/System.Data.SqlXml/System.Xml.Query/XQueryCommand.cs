@@ -120,7 +120,7 @@ namespace System.Xml.Query
 			XmlResolver dataSources, 
 			TextWriter results)
 		{
-			XmlTextWriter w = new XmlTextWriter (results);
+			XmlWriter w = XmlWriter.Create (results);
 			Execute (dataSources, null, w);
 		}
 
