@@ -1,3 +1,12 @@
+2005-02-16 Ritvik Mayank <mritvik@novell.com>
+	*  DefaultAttrC1.vb
+	*  DefaultAttrC2.vb
+	*  DefaultAttrC3.vb
+	*  DefaultAttrC4.vb
+	*  DefaultAttrC5.vb
+	*  DefaultAttrC6.vb
+		removed the above test cases (replica of DefaultPropC*.vb)  
+
 2005-02-11 Manjula GHM <mmanjula@novell.com>
 	* Added tests for Statements - by Sudharsan V <vsudharsan@novell.com>
 
