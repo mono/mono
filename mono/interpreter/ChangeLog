@@ -1,3 +1,13 @@
+2004-04-19  Bernie Solomon  <bernard@ugsolutions.com>
+
+	* Makefile.am:
+	* interp.h:
+	* interp.c: now interprets different VM code
+	* mintops.h:
+	* mintops.def:
+	* mintops.c: definition of new VM code
+	* transform.c: convert CIL to new VM code
+
 2004-04-14  Zoltan Varga  <vargaz@freemail.hu>
 
 	* interp.c (ves_exec_method_with_context): Add support for STRWLPARRAY 
