@@ -1,3 +1,17 @@
+2003-11-17  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* WebConnection.cs: turns out that socket.Connected is not useful until
+	we actually try to send/receive data, even if the other end has already
+	closed the socket. Added TryReconnect() and Connected.
+
+	* WebConnectionData.cs: default value for StatusCode is 0 now.
+
+	* WebConnectionGroup.cs: reuse the connection since the beginning,
+	instead of opening up to ConnectionLimit and then reusing.
+
+	* WebConnectionStream.cs: reopen the socket if we're trying to reuse
+	one which fails on first write.
+
 2003-11-14  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* WebConnectionStream.cs: when a callback is passed to BeginRead/Write,

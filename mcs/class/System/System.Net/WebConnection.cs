@@ -45,6 +45,7 @@ namespace System.Net
 		AutoResetEvent goAhead;
 		bool waitingForContinue;
 		Queue queue;
+		bool reused;
 		
 		public WebConnection (WebConnectionGroup group, ServicePoint sPoint)
 		{
@@ -61,41 +62,39 @@ namespace System.Net
 
 		public void Connect ()
 		{
-			if (socket != null && socket.Connected && status == WebExceptionStatus.Success)
-				return;
-
 			lock (this) {
-				if (socket != null && socket.Connected && status == WebExceptionStatus.Success)
+				if (socket != null && socket.Connected && status == WebExceptionStatus.Success) {
+					reused = true;
 					return;
+				}
 
+				reused = false;
 				if (socket != null) {
 					socket.Close();
 					socket = null;
 				}
 				
+				chunkStream = null;
 				IPHostEntry hostEntry = sPoint.HostEntry;
 
-				if(hostEntry == null) {
+				if (hostEntry == null) {
 					status = sPoint.UsesProxy ? WebExceptionStatus.ProxyNameResolutionFailure :
 								    WebExceptionStatus.NameResolutionFailure;
-					socket.Close();
-					socket = null;
-				} else {
-					foreach(IPAddress address in hostEntry.AddressList) {
-						socket = new Socket (address.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-						try {
-							socket.Connect (new IPEndPoint(address, sPoint.Address.Port));
-							status = WebExceptionStatus.Success;
-							break;
-						} catch (SocketException) {
-							socket.Close();
-							socket = null;
-							status = WebExceptionStatus.ConnectFailure;
-						}
-					}
+					return;
 				}
 
-				chunkStream = null;
+				foreach (IPAddress address in hostEntry.AddressList) {
+					socket = new Socket (address.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+					try {
+						socket.Connect (new IPEndPoint(address, sPoint.Address.Port));
+						status = WebExceptionStatus.Success;
+						break;
+					} catch (SocketException) {
+						socket.Close();
+						socket = null;
+						status = WebExceptionStatus.ConnectFailure;
+					}
+				}
 			}
 		}
 
@@ -125,7 +124,7 @@ namespace System.Net
 
 			if (e == null) { // At least we now where it comes from
 				try {
-					throw new Exception ();
+					throw new Exception (new System.Diagnostics.StackTrace ().ToString ());
 				} catch (Exception e2) {
 					e = e2;
 				}
@@ -139,7 +138,6 @@ namespace System.Net
 		
 		internal bool WaitForContinue (byte [] headers, int offset, int size)
 		{
-			Data.StatusCode = 0;
 			waitingForContinue = sPoint.SendContinue;
 			if (waitingForContinue && waitForContinue == null)
 				waitForContinue = new AutoResetEvent (false);
@@ -259,7 +257,7 @@ namespace System.Net
 		{
 			WebConnection cnc = (WebConnection) state;
 			NetworkStream ns = cnc.nstream;
-			
+
 			try {
 				ns.BeginRead (cnc.buffer, 0, cnc.buffer.Length, readDoneDelegate, cnc);
 			} catch (Exception e) {
@@ -571,10 +569,32 @@ namespace System.Net
 
 			try {
 				nstream.Write (buffer, offset, size);
-			} catch (Exception e) {
-				status = WebExceptionStatus.SendFailure;
-				HandleError (status, e);
+			} catch (Exception) {
 			}
+		}
+
+		internal bool TryReconnect ()
+		{
+			lock (this) {
+				if (!reused) {
+					HandleError (WebExceptionStatus.SendFailure, null);
+					return false;
+				}
+
+				Close (false);
+				reused = false;
+				Connect ();
+				if (status != WebExceptionStatus.Success) {
+					HandleError (WebExceptionStatus.SendFailure, null);
+					return false;
+				}
+			
+				if (!CreateStream (Data.request)) {
+					HandleError (WebExceptionStatus.SendFailure, null);
+					return false;
+				}
+			}
+			return true;
 		}
 
 		void Close (bool sendNext)
@@ -609,6 +629,14 @@ namespace System.Net
 
 		internal bool Busy {
 			get { lock (this) return busy; }
+		}
+		
+		internal bool Connected {
+			get {
+				lock (this) {
+					return (socket != null && socket.Connected);
+				}
+			}
 		}
 		
 		~WebConnection ()

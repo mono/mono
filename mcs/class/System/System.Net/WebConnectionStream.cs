@@ -289,7 +289,17 @@ namespace System.Net
 		internal void SetHeaders (byte [] buffer, int offset, int size)
 		{
 			if (!allowBuffering) {
-				Write (buffer, offset, size);
+				try {
+					Write (buffer, offset, size);
+				} catch (IOException e) {
+					if (cnc.Connected)
+						throw;
+					
+					if (!cnc.TryReconnect ())
+						throw;
+
+					Write (buffer, offset, size);
+				}
 			} else {
 				headers = new byte [size];
 				Buffer.BlockCopy (buffer, offset, headers, 0, size);
@@ -311,11 +321,24 @@ namespace System.Net
 			request.InternalContentLength = length;
 			request.SendRequestHeaders ();
 			requestWritten = true;
-			cnc.WaitForContinue (headers, 0, headers.Length);
-			if (cnc.Data.StatusCode != 0 && cnc.Data.StatusCode != 100)
-				return;
+			while (true) {
+				cnc.WaitForContinue (headers, 0, headers.Length);
+				if (!cnc.Connected) {
+					if (!cnc.TryReconnect ())
+						return;
 
-			cnc.Write (bytes, 0, length);
+					continue;
+				}
+
+				if (cnc.Data.StatusCode != 0 && cnc.Data.StatusCode != 100)
+					return;
+
+				cnc.Write (bytes, 0, length);
+				if (!cnc.Connected && cnc.TryReconnect ())
+					continue;
+
+				break;
+			}
 		}
 
 		internal void InternalClose ()

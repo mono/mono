@@ -67,6 +67,21 @@ namespace System.Net
 			WeakReference cncRef;
 
 			int count = connections.Count;
+			for (int i = 0; i < count; i++) {
+				WeakReference wr = connections [i] as WeakReference;
+				cnc = wr.Target as WebConnection;
+				if (cnc == null || !cnc.Connected) {
+					connections.RemoveAt (i);
+					count--;
+					continue;
+				}
+
+				if (cnc.Busy)
+					continue;
+
+				return cnc;
+			}
+			
 			if (sPoint.ConnectionLimit > count) {
 				cnc = new WebConnection (this, sPoint);
 				connections.Add (new WeakReference (cnc));
@@ -75,14 +90,6 @@ namespace System.Net
 
 			if (rnd == null)
 				rnd = new Random ();
-
-			foreach (WeakReference wr in connections) {
-				cnc = wr.Target as WebConnection;
-				if (cnc.Busy)
-					continue;
-
-				return cnc;
-			}
 
 			int idx = (count > 1) ? rnd.Next (0, count - 1) : 0;
 			cncRef = (WeakReference) connections [idx];

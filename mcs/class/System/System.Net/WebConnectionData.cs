@@ -26,7 +26,7 @@ namespace System.Net
 		public void Init ()
 		{
 			request = null;
-			StatusCode = -1;
+			StatusCode = 0;
 			StatusDescription = null;
 			Headers = null;
 			stream = null;
