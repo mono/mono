@@ -1,3 +1,9 @@
+2004-02-12  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CryptoStream.cs: Remove the _blockSize assumptions because some 
+	Transforms could be different on Input/Output. Added a special case
+	for cascading CryptoStreams in FlushFinalBlock.
+
 2004-02-09  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DSACryptoServiceProvider.cs: Fixed support for key pair persistence.
