@@ -1,3 +1,14 @@
+2004-02-13  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DHKeyGeneration.cs: New. Enumuration of possible key generation for
+	Diffie-Hellman. Contributed by Pieter Philippaerts (mentalis.org).
+	* DHParameters.cs: New. Structure to hold the different elements of a
+	Diffie-Hellman key. Contributed by Pieter Philippaerts (mentalis.org).
+	* DiffieHellman.cs: New. Astract class as base for all Diffie-Hellman
+	implementations. Contributed by Pieter Philippaerts (mentalis.org).
+	* DiffieHellmanManaged.cs: New. Managed implementation of the Diffie-
+	Hellman key agreement algorithm. Contributed by Pieter Philippaerts.
+
 2004-02-09  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PKCS1.cs: New. Copied from corlib. Required for RSAManaged.
