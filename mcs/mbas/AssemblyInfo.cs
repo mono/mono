@@ -24,7 +24,7 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("")]
-[assembly: AssemblyCopyright("(c)2002, 2003, 2004 Rafael Teixeira")]
+[assembly: AssemblyCopyright("(c)2002, 2003, 2004, 2005 Rafael Teixeira")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]		
 
@@ -35,7 +35,7 @@ using System.Runtime.CompilerServices;
 [assembly: Mono.Author("Miguel de Icaza")]
 [assembly: Mono.Author("Ravi Pratap")]
 
-[assembly: Mono.About("Distributed under the GPL")]
+[assembly: Mono.About("Distributed under the GPL 2.0")]
 
 [assembly: Mono.UsageComplement("SOURCE-FILES")]
 
@@ -43,7 +43,7 @@ using System.Runtime.CompilerServices;
 //[assembly: Mono.ForMoreInformation("http://www.go-mono.com")]
 //[assembly: Mono.UsageClause("mbas [options] source-files")]
 
-[assembly: AssemblyVersion("0.92.0.0")]
+[assembly: AssemblyVersion("0.95.0.0")]
 
 [assembly: AssemblyDelaySign(false)]
 [assembly: AssemblyKeyFile("")]

@@ -36,16 +36,16 @@ namespace Mono.Languages {
 	public class Driver : Options {
 		// Temporary options
 		//------------------------------------------------------------------
-		[Option("[Mono] Only parses the source file (for debugging the tokenizer)", "parse")]
+		[Option("[Mono] Only parses the source file (for debugging the tokenizer)", "parse", SecondLevelHelp = true)]
 		public bool parse_only = false;
 
-		[Option("[Mono] Only tokenizes source files")]
+		[Option("[Mono] Only tokenizes source files", SecondLevelHelp = true)]
 		public bool tokenize = false;
 
-		[Option("[Mono] Shows stack trace at Error location")]
+		[Option("[Mono] Shows stack trace at Error location", SecondLevelHelp = true)]
 		public bool stacktrace { set { Report.Stacktrace = value; } }
 
-		[Option("[Mono] Displays time stamps of various compiler events")]
+		[Option("[Mono] Displays time stamps of various compiler events", SecondLevelHelp = true)]
 		public bool timestamp {
 			set
 			{
@@ -54,6 +54,10 @@ namespace Mono.Languages {
 				debug_arglist.Add("timestamp");
 			}
 		}
+		
+		[Option("[Mono] Makes errors fatal", "fatal", SecondLevelHelp = true)]
+		public bool Fatal { set { Report.Fatal = value; } }
+
 
 		// Mono-specific options
 		//------------------------------------------------------------------
@@ -63,40 +67,43 @@ namespace Mono.Languages {
 			return base.DoAbout();
 		}
 
+		[Option("Show usage syntax and exit", "usage", SecondLevelHelp = true)]
+		public override WhatToDoNext DoUsage()
+		{
+			return base.DoUsage();
+		}
+
 		[Option(-1, "[Mono] References packages listed. {packagelist}=package,...", "pkg")]
 		public WhatToDoNext ReferenceSomePackage(string packageName)
 		{
 			return ReferencePackage(packageName)?WhatToDoNext.GoAhead:WhatToDoNext.AbandonProgram;
 		}
 
-		[Option("[Mono] Don\'t assume the standard library", "nostdlib")]
+		[Option("[Mono] Don\'t assume the standard library", "nostdlib", SecondLevelHelp = true)]
 		public bool NoStandardLibraries { set { RootContext.StdLib = !value; } }
 
-		[Option("[Mono] Disables implicit references to assemblies", "noconfig")]
+		[Option("[Mono] Disables implicit references to assemblies", "noconfig", SecondLevelHelp = true)]
 		public bool NoConfig { set { load_default_config = !value; } }
 
-		[Option("[Mono] Allows unsafe code", "unsafe")]
+		[Option("[Mono] Allows unsafe code", "unsafe", SecondLevelHelp = true)]
 		public bool AllowUnsafeCode { set { RootContext.Unsafe = value; } }
 
-		[Option("[Mono] Debugger {arguments}", "debug-args")]
+		[Option("[Mono] Debugger {arguments}", "debug-args", SecondLevelHelp = true)]
 		public WhatToDoNext SetDebugArgs(string args)
 		{
-			debug_arglist.AddRange (args.Split(','));
+			debug_arglist.AddRange(args.Split(','));
 			return WhatToDoNext.GoAhead;
 		}
 
-		[Option("[Mono] Ignores warning number {XXXX}", "ignorewarn")]
+		[Option("[Mono] Ignores warning number {XXXX}", "ignorewarn", SecondLevelHelp = true)]
 		public WhatToDoNext SetIgnoreWarning(int warn)
 		{
 			Report.SetIgnoreWarning(warn);
 			return WhatToDoNext.GoAhead;
 		}	
 
-		[Option("[Mono] Sets warning {level} (the highest is 4, the default)", "wlevel")]
+		[Option("[Mono] Sets warning {level} (the highest is 4, the default)", "wlevel", SecondLevelHelp = true)]
 		public int WarningLevel { set { RootContext.WarningLevel = value; } }
-
-		[Option("[Mono] Makes errors fatal", "fatal")]
-		public bool Fatal { set { Report.Fatal = value; } }
 
 		// Output file options
 		//------------------------------------------------------------------
@@ -130,12 +137,18 @@ namespace Mono.Languages {
 			return WhatToDoNext.GoAhead;
 		}
 
+		[Option("Specifies the {name} of the Class or Module that contains Sub Main or inherits from System.Windows.Forms.Form.\tNeeded to select among many entry-points for a program (target=exe|winexe)",
+			'm', "main")]
+		public string main { set { RootContext.MainClass = value; } }
+
+		// TODO: force option to accept number in hex format
+//		[Option("[NOT IMPLEMENTED YET]The base {address} for a library or module (hex)", SecondLevelHelp = true)]
+		public int baseaddress;
+
 		// input file options
 		//------------------------------------------------------------------
-		public ArrayList AddedModules = new ArrayList();
-
-		[Option(-1, "References metadata from specified {module}", "addmodule")]
-		public string AddedModule { set { AddedModules.Add(value); } }
+		[Option(-1, "Imports all type information from files in the {module-list}. {module-list}:module,...", "addmodule")]
+		public string AddedModule { set { foreach(string module in value.Split(',')) addedNetModules.Add(module); } }
 
 //		[Option("[NOT IMPLEMENTED YET]Include all files in the current directory and subdirectories according to the {wildcard}", "recurse")]
 		public WhatToDoNext Recurse(string wildcard)
@@ -147,9 +160,12 @@ namespace Mono.Languages {
 		[Option(-1, "References metadata from the specified {assembly}", 'r', "reference")]
 		public string AddedReference { set { references.Add(value); } }
 		
+		[Option("List of directories to search for metadata references. {path-list}:path,...", "libpath", "lib")]
+		public string AddedLibPath { set { foreach(string path in value.Split(',')) libpath.Add(path); } }
+
 		// support for the Compact Framework
 		//------------------------------------------------------------------
-//		[Option("[NOT IMPLEMENTED YET]Sets the compiler to target the Compact Framework","netcf")]
+//		[Option("[NOT IMPLEMENTED YET]Sets the compiler to target the Compact Framework", "netcf")]
 		public bool CompileForCompactFramework = false;
 		
 //		[Option("[NOT IMPLEMENTED YET]Specifies the {path} to the location of mscorlib.dll and microsoft.visualbasic.dll", "sdkpath")]
@@ -179,40 +195,39 @@ namespace Mono.Languages {
 
 		// code generation options
 		//------------------------------------------------------------------
-//		[Option("[NOT IMPLEMENTED YET]Enable optimizations", "optimize")]
+
+//		[Option("[NOT IMPLEMENTED YET]Enable optimizations", "optimize", VBCStyleBoolean = true)]
 		public bool optimize = false;
 
-		// TODO: handle VB.NET [+|-] boolean syntax
-		[Option("Remove integer checks. Default off.")]
+		[Option("Remove integer checks. Default off.", SecondLevelHelp = true, VBCStyleBoolean = true)]
 		public bool removeintchecks { set { RootContext.Checked = !value; } }
 
-		// TODO: handle VB.NET [+|-] boolean syntax
-		[Option("Emit debugging information", 'g', "debug")]
+		[Option("Emit debugging information", 'g', "debug", VBCStyleBoolean = true)]
 		public bool want_debugging_support = false;
 
-		[Option("Emit full debugging information (default)", "debug:full")]
+		[Option("Emit full debugging information (default)", "debug:full", SecondLevelHelp = true)]
 		public bool fullDebugging = false;
 
-		[Option("[IGNORED] Emit PDB file only", "debug:pdbonly")]
+		[Option("[IGNORED] Emit PDB file only", "debug:pdbonly", SecondLevelHelp = true)]
 		public bool pdbOnly = false;
 
 		// errors and warnings options
 		//------------------------------------------------------------------
-		[Option("Treat warnings as errors", "warnaserror")]
+
+		[Option("Treat warnings as errors", "warnaserror", SecondLevelHelp = true)]
 		public bool WarningsAreErrors { set { Report.WarningsAreErrors = value; } }
 
-		[Option("Disable warnings", "nowarn")]
+		[Option("Disable warnings", "nowarn", SecondLevelHelp = true)]
 		public bool NoWarnings { set { if (value) RootContext.WarningLevel = 0; } }
 
 
-		// language options
+		// defines
 		//------------------------------------------------------------------
 		public Hashtable Defines = new Hashtable();
 		
 		[Option(-1, "Declares global conditional compilation symbol(s). {symbol-list}:name=value,...", 'd', "define")]
 		public string define { 
-			set 
-			{
+			set {
 				foreach(string item in value.Split(','))  {
 					string[] dados = item.Split('=');
 					try {
@@ -228,19 +243,13 @@ namespace Mono.Languages {
 			} 
 		}
 		
-		[Option(-1, "Declare global Imports for namespaces in referenced metadata files. {import-list}:namespace,...", "imports")]
-		public WhatToDoNext imports(string import)
-		{
-			Mono.MonoBASIC.Parser.ImportsList.Add(import);
-			return WhatToDoNext.GoAhead;
-		}
+		// language options
+		//------------------------------------------------------------------
 
-		// TODO: handle VB.NET [+|-] boolean syntax
-//		[Option("[NOT IMPLEMENTED YET]Require explicit declaration of variables")]
+//		[Option("[NOT IMPLEMENTED YET]Require explicit declaration of variables", VBCStyleBoolean = true)]
 		public bool optionexplicit { set { Mono.MonoBASIC.Parser.InitialOptionExplicit = value; } }
 
-		// TODO: handle VB.NET [+|-] boolean syntax
-//		[Option("[NOT IMPLEMENTED YET]Enforce strict language semantics")]
+//		[Option("[NOT IMPLEMENTED YET]Enforce strict language semantics", VBCStyleBoolean = true)]
 		public bool optionstrict { set { Mono.MonoBASIC.Parser.InitialOptionStrict = value; } }
 		
 //		[Option("[NOT IMPLEMENTED YET]Specifies binary-style string comparisons. This is the default", "optioncompare:binary")]
@@ -249,33 +258,21 @@ namespace Mono.Languages {
 //		[Option("[NOT IMPLEMENTED YET]Specifies text-style string comparisons.", "optioncompare:text")]
 		public bool optioncomparetext { set { Mono.MonoBASIC.Parser.InitialOptionCompareBinary = false; } }
 
-		[Option("Specifies de root {namespace} for all type declarations")]
+		[Option(-1, "Declare global Imports for listed namespaces. {import-list}:namespace,...", "imports")]
+		public string imports
+		{
+			set {
+				foreach(string importedNamespace in value.Split(','))
+					Mono.MonoBASIC.Parser.ImportsList.Add(importedNamespace);
+			}
+		}
+
+		[Option("Specifies the root {namespace} for all type declarations", SecondLevelHelp = true)]
 		public string rootnamespace { set { RootContext.RootNamespace = value; } }
 		
-		// Miscellaneous options	
+		// Signing options	
 		//------------------------------------------------------------------
-		
-		[Option("[IGNORED] Do not display compiler copyright banner")]
-		public bool nologo = false;
-		
-		[Option("[Mono] Quiet output mode", 'q')]
-		public bool quiet = false;
-		
-		// TODO: semantics are different and should be adjusted
-		[Option("Display verbose messages", 'v')] 
-		public bool verbose	{ set { GenericParser.yacc_verbose_flag = value ? 1 : 0; } }
-
-		// Advanced options	
-		//------------------------------------------------------------------
-		// TODO: force option to accept number in hex format
-//		[Option("[NOT IMPLEMENTED YET]The base {address} for a library or module (hex)")]
-		public int baseaddress;
-		
-//		[Option("[NOT IMPLEMENTED YET]Create bug report {file}")]
-		public string bugreport;
-		
-		// TODO: handle VB.NET [+|-] boolean syntax
-//		[Option("[NOT IMPLEMENTED YET]Delay-sign the assembly using only the public portion of the strong name key")]
+//		[Option("[NOT IMPLEMENTED YET]Delay-sign the assembly using only the public portion of the strong name key", VBCStyleBoolean = true)]
 		public bool delaysign;
 		
 //		[Option("[NOT IMPLEMENTED YET]Specifies a strong name key {container}")]
@@ -284,26 +281,32 @@ namespace Mono.Languages {
 //		[Option("[NOT IMPLEMENTED YET]Specifies a strong name key {file}")]
 		public string keyfile;
 
-		public string[] libpath = null;
+		// Compiler output options	
+		//------------------------------------------------------------------
 		
-		[Option("List of directories to search for metadata references {path-list}:path;...", "libpath")]
-		public WhatToDoNext setlibpath(string pathlist)
-		{
-			libpath = pathlist.Split(';');
-			return WhatToDoNext.GoAhead;
-		}
+		[Option("Do not display compiler copyright banner")]
+		public bool nologo = false;
+		
+		//TODO: Correct semantics
+		[Option("Commands the compiler to show only error messages for syntax-related errors and warnings", 'q', "quiet", SecondLevelHelp = true)]
+		public bool SuccintErrorDisplay = false;
+		
+		// TODO: semantics are different and should be adjusted
+		[Option("Display verbose messages", 'v', SecondLevelHelp = true)] 
+		public bool verbose	{ set { GenericParser.yacc_verbose_flag = value ? 1 : 0; } }
 
-		[Option("Specifies the {name} of the Class or Module that contains Sub Main or inherits from System.Windows.Forms.Form.",
-			'm', "main")]
-		public string main { set { RootContext.MainClass = value; } }
-
-		// TODO: handle VB.NET [+|-] boolean syntax
-		[Option("[IGNORED] Emit compiler output in UTF8 character encoding")]
+		[Option("[IGNORED] Emit compiler output in UTF8 character encoding", SecondLevelHelp = true, VBCStyleBoolean = true)]
 		public bool utf8output;
+
+//		[Option("[NOT IMPLEMENTED YET]Create bug report {file}")]
+		public string bugreport;
+
 
 		ArrayList defines = new ArrayList();
 		ArrayList references = new ArrayList();
 		ArrayList soft_references = new ArrayList();
+		ArrayList addedNetModules = new ArrayList();
+		ArrayList libpath = new ArrayList();
 		
 		string firstSourceFile = null;
 		Target target = Target.Exe;
@@ -740,14 +743,14 @@ namespace Mono.Languages {
 				TypeManager.AddModule (CodeGen.ModuleBuilder);
 			}
 
-			if (AddedModules.Count > 0) {
+			if (addedNetModules.Count > 0) {
 				MethodInfo adder_method = typeof (AssemblyBuilder).GetMethod ("AddModule", BindingFlags.Instance|BindingFlags.NonPublic);
 				if (adder_method == null) {
 					Report.Error (0, new Location (-1, -1), "Cannot use /addmodule on this runtime: Try the Mono runtime instead.");
 					Environment.Exit (1);
 				}
 
-				foreach (string module in AddedModules)
+				foreach (string module in addedNetModules)
 					LoadModule (adder_method, module);
 			}
 
@@ -956,11 +959,15 @@ namespace Mono.Languages {
 			}
 		}
 		
-		private void ThisIsAlphaAlert()
+		private bool quiet { get { return nologo || SuccintErrorDisplay; } } 
+		
+		private void Banner()
 		{
 			if (!quiet) {
+				ShowBanner();
+				// TODO: remove next lines when the compiler has matured enough
 				Console.WriteLine ("--------");
-				Console.WriteLine ("MonoBASIC: THIS IS AN ALPHA SOFTWARE.");
+				Console.WriteLine ("THIS IS AN ALPHA SOFTWARE.");
 				Console.WriteLine ("--------");
 			}		
 		}
@@ -981,14 +988,13 @@ namespace Mono.Languages {
 			SetupDefaults();
 			ProcessArgs(args);
 			
-			ThisIsAlphaAlert(); // remove this call when the compiler has matured enough
-			
 			if (firstSourceFile == null) {
 				if (!quiet) 
 					DoHelp();
 				return 2;
 			}
 
+			Banner();			
 			CompileAll();
 			return Report.ProcessResults(quiet);
 		}

@@ -1,3 +1,7 @@
+2004-12-01 Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* driver.cs: correcting the handling of many options. 
+	* Upgraded to latest Mono.GetOptions that supports vbc style boolean arguments /debug+ /debug-, and /help2 to hide less used options
+
 2005-02-25 Satya Sudha K <ksathyasudha@novell.com>
 	* ecore.cs 
 	* expression.cs: 
