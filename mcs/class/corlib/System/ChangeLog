@@ -1,3 +1,7 @@
+2002-06-02  Nick Drochak  <ndrochak@gol.com>
+
+	* Convert.cs (ConvertFromBase): Detect bad digits correctly.
+
 2002-06-02  Duncan Mak  <duncan@ximian.com>
 
 	* Char.cs (Parse): Simplify the Exception handling.

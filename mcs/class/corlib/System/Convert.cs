@@ -2252,23 +2252,24 @@ namespace System {
 			if (NotValidBase (fromBase))
 				throw new ArgumentException ("fromBase is not valid.");
 
-			
 			int chars = 0;
 			int result = 0;
+			int digitValue;
 
 			foreach (char c in value) {
-				if (Char.IsLetter (c)) {
-					result = (fromBase) * result + c - 'a' + 10;
-					chars ++;
-				} else if (Char.IsNumber (c)) {
-					result = (fromBase) * result + c - '0';
-					chars ++;
-				} else
+				if (Char.IsNumber (c))
+					digitValue = c - '0';
+				else if (Char.IsLetter (c))
+					digitValue = c - 'a' + 10;
+				else
 					throw new FormatException ("This is an invalid string: " + value);
-			}
 
-			if (result >= fromBase)
-				throw new FormatException ("the digits are invalid.");
+				if (digitValue >= fromBase)
+					throw new FormatException ("the digits are invalid.");
+
+				result = (fromBase) * result + digitValue;
+				chars ++;
+			}
 
 			if (chars == 0)
 				throw new FormatException ("Could not find any digits.");
