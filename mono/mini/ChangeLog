@@ -1,3 +1,11 @@
+2004-11-26  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-amd64.c (mono_arch_emit_this_vret_args): Handle this and vret
+	the same way as the other arguments so they won't get clobbered.
+
+	* mini-amd64.c (mono_arch_output_basic_block): Avoid doing virtual 
+	calls through R11 since it is clobbered by the trampoline code.
+
 2004-11-26  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile.am: Consistently use $(RUNTIME) rather than ./mono to
