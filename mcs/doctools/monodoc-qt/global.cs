@@ -33,6 +33,14 @@ namespace Mono.Document.Editor {
 			get { return init; }
 			set { init = value; }
 		}
+		
+		static string lastopened;
+
+		public static string LastOpened
+		{
+			get { return lastopened; }
+			set { lastopened = value; }
+		}
 
 		static string doc;
 

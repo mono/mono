@@ -23,6 +23,7 @@ namespace Mono.Document.Editor {
 		private QPopupMenu filemenu;
 		private QPopupMenu settingsmenu;
 		private QPopupMenu aboutmenu;
+		private Options options;
 
 		public static int Main (String[] args)
 		{
@@ -40,8 +41,7 @@ namespace Mono.Document.Editor {
 			filemenu.InsertItem ("&Quit", qApp, SLOT ("Quit ()"));
 
 			settingsmenu = new QPopupMenu (null, "settingsmenu");
-			settingsmenu.InsertItem ("&Configure MonoDoc...", this,
-						 SLOT ("ConfigureMonoDoc ()"));
+			settingsmenu.InsertItem ("&Configure MonoDoc...", this, SLOT ("Options ()"));
 
 			aboutmenu = new QPopupMenu (null, "helpmenu");
 			aboutmenu.InsertItem ("&About MonoDoc", this, SLOT ("AboutMonoDoc ()"));
@@ -62,6 +62,9 @@ namespace Mono.Document.Editor {
 			Connect (	listview, SIGNAL ("selectionChanged (QListViewItem)"),
 						docedit, SLOT ("ListViewChanged (QListViewItem)"));
 
+			options = new Options (this);
+			Connect (options, SIGNAL ("OkClicked ()"), this, SLOT ("WriteInit ()"));
+
 			SetCentralWidget (split);
 			Configure ();
 		}
@@ -71,7 +74,9 @@ namespace Mono.Document.Editor {
 			string filename = QFileDialog.GetOpenFileName (Global.InitDir, "*.xml", this, "open", "Open Master File", "*.xml", true);
 
 			if (filename != null) {
-				WriteInit (filename);
+				Global.LastOpened = filename;
+				Global.InitDir = GetDir (filename);
+				WriteInit ();
 				Emit ("Load (String)", filename);
 			}
 		}
@@ -83,36 +88,46 @@ namespace Mono.Document.Editor {
 
 		private void Configure ()
 		{
+			SetGeometry (50, 500, 800, 600);
+			SetCaption ("MonoDoc -  The Mono Documentation Editor");
+			SetIcon (Global.IMono);
+
 			if (!Directory.Exists (Global.MonoDocDir))
 				Directory.CreateDirectory (Global.MonoDocDir);
 
 			if (File.Exists (Global.MonoDocDir+"/monodoc")) {
 				StreamReader st = File.OpenText (Global.MonoDocDir+"/monodoc");
 				Global.InitDir = st.ReadLine ();
+				Global.LastOpened = st.ReadLine ();
+				if (Global.LastOpened != null) {
+					options.IsChecked (true);
+					Emit ("Load (String)", Global.LastOpened);
+				}
 			}
-
-			SetGeometry (50, 500, 800, 600);
-			SetCaption ("MonoDoc -  The Mono Documentation Editor");
-			SetIcon (Global.IMono);
 		}
 
-		public void WriteInit (string filename)
+		public void WriteInit ()
+		{
+			StreamWriter st = File.CreateText (Global.MonoDocDir+"/monodoc");
+			st.WriteLine (Global.InitDir);
+			if (options.OpenPrevious)
+				st.WriteLine (Global.LastOpened);
+			st.Flush ();
+		}
+		
+		public string GetDir (string filename)
 		{
 			StringBuilder builder = new StringBuilder ();
 			string [] s = filename.Split ('/');
 			for (int i = 0; i < s.Length - 1; i++) {
 				builder.Append (s[i]+"/");
 			}
-			Global.InitDir = builder.ToString ().TrimEnd ('/');
-			StreamWriter st = File.CreateText (Global.MonoDocDir+"/monodoc");
-			st.WriteLine (Global.InitDir);
-			st.Flush ();
+			return builder.ToString ().TrimEnd ('/');
 		}
 
-		public void ConfigureMonoDoc ()
+		public void Options ()
 		{
-			OptionsDialog options = new OptionsDialog ();
-			options.Exec ();
+			options.Show ();
 		}
 
 		private class ListView : QListView {
@@ -376,53 +391,52 @@ namespace Mono.Document.Editor {
 			}
 		}
 
-		private class OptionsDialog : QDialog {
-			QVBoxLayout dialogLayout;
-			QHBoxLayout mainLayout;
-			QHBoxLayout actionLayout;
-			QCheckBox openPrevMasterXml;
-			QPushButton ok;
-			QPushButton cancel;
+		[DeclareQtSignal ("OkClicked ()")]
+		private class Options : QDialog {
 
-			OptionsDialog () : base ()
+			QCheckBox openPrev;
+
+			public Options (QWidget parent) : base (parent, "options", true)
 			{
 				SetCaption ("Configure MonoDoc");
+				SetIcon (Global.IMono);
+				openPrev = new QCheckBox (this);
+				openPrev.SetText ("Open previous Master.xml file upon startup");
+				QPushButton ok = new QPushButton ("OK", this);
+				QPushButton cancel = new QPushButton ("Cancel", this);
 
-				openPrevMasterXml = new QCheckBox (this);
-				openPrevMasterXml.SetText (
-					"Open previous Master.xml file upon startup");
-				ok = new QPushButton ("OK", this);
-				cancel = new QPushButton ("Cancel", this);
+				Connect (ok, QtSupport.SIGNAL("clicked()"), this, QtSupport.SLOT("OkClicked()"));
+				Connect (cancel, QtSupport.SIGNAL("clicked()"), this, SLOT("CancelClicked()"));
 
-				Connect (ok, QtSupport.SIGNAL("clicked()"), 
-					 this, QtSupport.SLOT("okClicked()"));
-				Connect (cancel, QtSupport.SIGNAL("clicked()"),
-					 this, SLOT("cancelClicked()"));
+				QVBoxLayout dialogLayout = new QVBoxLayout (this);
+
+				QHBoxLayout mainLayout = new QHBoxLayout (dialogLayout);
+				mainLayout.AddWidget (openPrev);
 			
-				dialogLayout = new QVBoxLayout (this);
-			
-				mainLayout = new QHBoxLayout (dialogLayout);
-				mainLayout.AddWidget (openPrevMasterXml);
-			
-				actionLayout = new QHBoxLayout (dialogLayout);
+				QHBoxLayout actionLayout = new QHBoxLayout (dialogLayout);
 				actionLayout.AddWidget (ok);
 				actionLayout.AddWidget (cancel);
 			}
 
-			public void cancelClicked ()
+			public void CancelClicked ()
 			{
 				Reject ();
 			}
 
-			public void okClicked () 
+			public void OkClicked ()
 			{
+				Emit ("OkClicked ()", null);
 				Accept ();
 			}
 		
-			public bool openPreviousMasterXmlOnStartup {
-				get {
-					return openPrevMasterXml.IsOn ();
-				}
+			public bool OpenPrevious
+			{
+				get { return openPrev.IsOn (); }
+			}
+			
+			public void IsChecked (bool value)
+			{
+				openPrev.SetChecked (value);
 			}
 		}
 	}
