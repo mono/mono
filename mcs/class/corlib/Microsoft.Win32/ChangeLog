@@ -1,3 +1,9 @@
+2005-01-31  mei (mei@work.email.ne.jp)
+
+	* RegistryKey.cs: Fixes bug 70451: When the key doesn't exist, and
+	the default value is not specified, it is necessary to return
+	null. and DecodeString function's bug is fixed.
+
 2004-04-10  Gert Driesen (driesen@users.sourceforge.net)
 
 	* RegistryKey.cs: explicit implementation of IDisposable to match 

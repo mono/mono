@@ -686,11 +686,14 @@ namespace Microsoft.Win32
 			
 			int result = RegistryApi.RegQueryValueEx (Handle, name, IntPtr.Zero,
 					ref type, IntPtr.Zero, ref size);
-		
-			if (returnDefaultValue && result == Win32ResultCode.FileNotFound)
+
+			if (result == Win32ResultCode.FileNotFound)
 			{
-				RegTrace (" -GetValueImpl");
-				return defaultValue;
+				if (returnDefaultValue) {
+					RegTrace (" -GetValueImpl");
+					return defaultValue;
+				}
+				return null;
 			}
 			
 			if (result != Win32ResultCode.MoreData && result != Win32ResultCode.Success )
@@ -766,7 +769,10 @@ namespace Microsoft.Win32
 		private string DecodeString (byte[] data)
 		{
 			string stringRep = Decoder.GetString (data);
-			return stringRep.TrimEnd (NullChar);
+			int idx = stringRep.IndexOf (NullChar);
+			if (idx >= 0)
+					stringRep = stringRep.Substring (0, idx);
+			return stringRep;
 		}
 		
 		
