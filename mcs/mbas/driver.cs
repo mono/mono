@@ -235,8 +235,8 @@ namespace Mono.Languages
 		[Option("[NOT IMPLEMENTED YET]Enforce strict language semantics")]
 		public bool optionstrict = false;
 		
-		[Option("[NOT IMPLEMENTED YET]Specifies de root namespace for all type declarations")]
-		public string rootnamespace;
+		[Option("Specifies de root namespace for all type declarations")]
+		public string rootnamespace { set { RootContext.RootNamespace = value; } }
 		
 		private OptionCompare optioncompare = OptionCompare.Binary;
 		
@@ -326,24 +326,7 @@ namespace Mono.Languages
 		{
 			Driver Exec = new Driver();
 
-			Exec.MainDriver(args);
-
-			if (Report.Errors == 0) 
-			{
-				Console.Write("Compilation succeeded");
-				if (Report.Warnings > 0) 
-				{
-					Console.Write(" - {0} warning(s)", Report.Warnings);
-				} 
-				Console.WriteLine();
-				return 0;
-			} 
-			else 
-			{
-				Console.WriteLine("Compilation failed: {0} Error(s), {1} warnings",
-					Report.Errors, Report.Warnings);
-				return 1;
-			}
+			return Exec.MainDriver(args);
 		}
 
 		public int LoadAssembly (string assembly, bool soft)
@@ -606,10 +589,30 @@ namespace Mono.Languages
 		/// <summary>
 		///    Parses the arguments, and calls the compilation process.
 		/// </summary>
-		void MainDriver(string [] args)
+		int MainDriver(string [] args)
 		{
 			ProcessArgs(args);
+			if (first_source == null)
+			{
+				DoHelp();
+				return 2;
+			}
+
 			CompileAll();
+
+			if (Report.Errors == 0) 
+			{
+				Console.Write("Compilation succeeded");
+				if (Report.Warnings > 0) 
+				{
+					Console.Write(" - {0} warning(s)", Report.Warnings);
+				} 
+				Console.WriteLine();
+				return 0;
+			} 
+			Console.WriteLine("Compilation failed: {0} Error(s), {1} warnings",
+				Report.Errors, Report.Warnings);
+			return 1;
 		}
 
 		public Driver()
@@ -785,6 +788,13 @@ namespace Mono.Languages
 
 		public void CompileAll()
 		{
+		
+		    if (RootContext.RootNamespace == "")
+		    {
+		      RootContext.RootNamespace =
+		          System.IO.Path.GetFileNameWithoutExtension(outputFileName);
+		    }
+		
 			if (!ParseAll()) // Phase 1
 				return;
 

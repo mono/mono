@@ -50,7 +50,7 @@ namespace Mono.Languages
 
 		// Current typecontainer definition
 		protected TypeContainer current_container;
-
+		
 		// ---------------------------------------------------
 		// What the descendants MUST reimplement
 

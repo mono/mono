@@ -1,5 +1,11 @@
-2003/01/22  Nick Drochak <ndrochak@gol.com>
+2003/02/03  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* rootcontext.cs : added RootNamespace member
+	* mb-parser.jay : use RootContext.RootNamespace to initialize outermost namespace
+	* driver.cs : 
+		- implement rootnamespace parameter, and defaults it to the output file name
+		- like vbc if no source file name is provided just show help
 
+2003/01/22  Nick Drochak <ndrochak@gol.com>
 	* makefile: Use csc compiler in here. makefile.gnu assumes mono/mcs
 
 2003-01-13  Rafael Teixeira <rafaelteixeirabr@hotmail.com>

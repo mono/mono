@@ -108,6 +108,9 @@ namespace Mono.CSharp {
 		//
 		static public bool Unsafe = false;
 		
+		// Root namespace name (implicit namespace)
+		static public string RootNamespace = "";
+		
 		static string MakeFQN (string nsn, string name)
 		{
 			string prefix = (nsn == "" ? "" : nsn + ".");

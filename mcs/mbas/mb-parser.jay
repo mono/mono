@@ -3277,7 +3277,7 @@ static bool AlwaysAccept (MemberInfo m, object filterCriteria) {
 
 public override int parse ()
 {
-	current_namespace = new Namespace (null, "");
+	current_namespace = new Namespace (null, RootContext.RootNamespace);
 	current_container = RootContext.Tree.Types;
 	current_container.Namespace = current_namespace;
 	oob_stack = new Stack ();
