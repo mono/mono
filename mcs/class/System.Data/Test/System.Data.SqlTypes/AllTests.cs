@@ -30,6 +30,8 @@ namespace MonoTests.System.Data.SqlTypes
 				suite.AddTest (new TestSuite (typeof (SqlMoneyTest)));
 				suite.AddTest (new TestSuite (typeof (SqlDateTimeTest)));
 				suite.AddTest (new TestSuite (typeof (SqlGuidTest)));
+				suite.AddTest (new TestSuite (typeof (SqlDecimalTest)));
+				suite.AddTest (new TestSuite (typeof (SqlStringTest)));
 				return suite;
 			}
 		}

@@ -1,3 +1,10 @@
+2002-10-24  Ville Palo <vi64pa@koti.soon.fi>
+
+	* System.Data.SqlTypes/AllTests.cs:
+	* System.Data.SqlTypes/SqlStringTest.cs:
+	* System.Data.SqlTypes/SqlDecimalTest.cs: new test suites for 
+	SqlDecimal and SqlString
+		
 2002-10-19  Ville Palo <vi64pa@koti.soon.fi>
 
 	* System.Data.SqlTypes/AllTests.cs:
