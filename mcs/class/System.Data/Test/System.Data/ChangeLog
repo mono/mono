@@ -1,3 +1,7 @@
+2003-13-01  Ville Palo <vi64pa@koti.soon.fi>
+
+	* DataRelationTest.cs: Test class for DataRelation
+	
 2002-12-26  Ville Palo <vi64pa@koti.soon.fi>
 
 	* own_schema.xsd: XmlSchema for testing ReadXmlSchema() -method
