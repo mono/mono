@@ -1,3 +1,9 @@
+2003-03-08  Alan Tam <Tam@SiuLung.com>
+
+	* DataRelationCollection.cs: Removed the mis-overridden methods
+	* DataRow.cs: Fixed an attribute
+	* DataSet.cs: Fixed the modifiers
+
 2003-03-06  Aleksey Demakov <avd@openlinksw.com>
 
 	* DataTableCollection.cs: The Contains (string name),
@@ -14,7 +20,6 @@
 	* ExpressionElement.cs: More implementation. 
 	
 2003-02-28  Alan Tam <Tam@SiuLung.com>
-
 	* DataSet.cs: Changed WriteTable so that it now calls the newly written
 	WriteObjectXml to direct the call to the respective XmlConvert method.
 	This fixes the wrong format written to XML files of bool, float,

@@ -151,7 +151,6 @@ namespace System.Data {
 			Merge (table, false, MissingSchemaAction.Add);
 		}
 		
-		[MonoTODO]
 		public void Merge (DataSet dataSet, bool preserveChanges)
 		{
 			Merge (dataSet, preserveChanges, MissingSchemaAction.Add);
@@ -663,7 +662,7 @@ namespace System.Data {
 		}
 
 		[MonoTODO]
-		protected virtual void OnPropertyChanging (PropertyChangedEventArgs pcevent)
+		protected internal virtual void OnPropertyChanging (PropertyChangedEventArgs pcevent)
 		{
 		}
 
@@ -678,7 +677,7 @@ namespace System.Data {
 		}
 
 		[MonoTODO]
-		protected void RaisePropertyChanging (string name)
+		protected internal void RaisePropertyChanging (string name)
 		{
 		}
 		#endregion

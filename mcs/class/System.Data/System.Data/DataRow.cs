@@ -669,7 +669,6 @@ namespace System.Data {
 		/// Gets the parent row of a DataRow using the specified DataRelation, and
 		/// DataRowVersion.
 		/// </summary>
-		[MonoTODO]
 		public DataRow GetParentRow (DataRelation relation, DataRowVersion version) 
 		{
 			DataRow[] rows = GetParentRows(relation, version);
