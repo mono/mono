@@ -1,3 +1,7 @@
+2004-12-21 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpRequest.cs: honor the maxRequestSize limit from machine.config.
+
 2004-12-15 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpApplication.cs: reread application CultureInfo as web.config

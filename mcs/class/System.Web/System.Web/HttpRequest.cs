@@ -226,6 +226,11 @@ namespace System.Web {
 				_arrRawContent = new byte [0];
 
 			int length = ContentLength;
+			HttpRuntimeConfig cfg = (HttpRuntimeConfig) _oContext.GetConfig ("system.web/httpRuntime");
+			int maxRequestLength = cfg.MaxRequestLength * 1024;
+			if (ContentLength > maxRequestLength)
+				throw new HttpException (400, "Maximum request length exceeded.");
+				
 			if (_WorkerRequest.IsEntireEntityBodyIsPreloaded () || length <= _arrRawContent.Length)
 				return _arrRawContent;
 
@@ -241,6 +246,9 @@ namespace System.Web {
 				read = _WorkerRequest.ReadEntityBody (arrBuffer, bufLength);
 				if (read == 0 ||read == -1 )
 					break;
+
+				if (ContentLength > maxRequestLength || ms.Length + read > maxRequestLength)
+					throw new HttpException (400, "Maximum request length exceeded.");
 
 				ms.Write (arrBuffer, 0, read);
 			}
