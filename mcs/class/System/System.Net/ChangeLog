@@ -1,3 +1,9 @@
+2003-06-09  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpWebRequest.cs: added ExpectContinue property.
+	* WebConnection.cs: allow 100 Continue to be delayed after waiting for
+	it.
+
 2003-06-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpWebRequest.cs: don't send "Expect: 100-continue" is the server

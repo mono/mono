@@ -60,6 +60,7 @@ namespace System.Net
 		bool aborted;
 		bool gotRequestStream;
 		int redirects;
+		bool expectContinue;
 		
 		// Constructors
 		
@@ -377,6 +378,12 @@ namespace System.Net
 		internal bool GotRequestStream {
 			get { return gotRequestStream; }
 		}
+
+		internal bool ExpectContinue {
+			get { return expectContinue; }
+			set { expectContinue = value; }
+		}
+		
 		// Methods
 		
 		internal ServicePoint GetServicePoint ()
@@ -691,8 +698,12 @@ namespace System.Net
 				webHeaders.SetInternal ("Transfer-Encoding", "chunked");
 			}
 
-			if (continue100 && servicePoint.SendContinue) // RFC2616 8.2.3
+			if (continue100 && servicePoint.SendContinue) { // RFC2616 8.2.3
 				webHeaders.SetInternal ("Expect" , "100-continue");
+				expectContinue = true;
+			} else {
+				expectContinue = false;
+			}
 
 			if (keepAlive && version == HttpVersion.Version10)
 				webHeaders.SetInternal ("Connection", "keep-alive");

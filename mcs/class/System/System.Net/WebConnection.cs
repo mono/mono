@@ -109,7 +109,7 @@ namespace System.Net
 		internal bool WaitForContinue (byte [] headers, int offset, int size)
 		{
 			Data.StatusCode = 0;
-			if (sPoint.SendContinue == false)
+			if (!sPoint.SendContinue)
 				return false;
 
 			if (waitForContinue == null)
@@ -120,11 +120,11 @@ namespace System.Net
 			bool result = waitForContinue.WaitOne (2000, false);
 			waitingForContinue = false;
 			if (result) {
-				Data.request.DoContinueDelegate (Data.StatusCode, Data.Headers);
 				sPoint.SendContinue = true;
+				if (Data.request.ExpectContinue)
+					Data.request.DoContinueDelegate (Data.StatusCode, Data.Headers);
 			} else {
 				sPoint.SendContinue = false;
-				waitForContinue = null;
 			}
 
 			return result;
@@ -133,6 +133,7 @@ namespace System.Net
 		static void ReadDone (IAsyncResult result)
 		{
 			WebConnection cnc = (WebConnection) result.AsyncState;
+			WebConnectionData data = cnc.Data;
 			NetworkStream ns = cnc.nstream;
 			if (ns == null)
 				return;
@@ -165,6 +166,18 @@ namespace System.Net
 				Exception exc = null;
 				try {
 					pos = cnc.GetResponse (cnc.buffer, nread);
+					if (data.StatusCode == 100) {
+						cnc.readState = ReadState.None;
+						InitRead (cnc);
+						cnc.sPoint.SendContinue = true;
+						if (cnc.waitingForContinue) {
+							cnc.waitForContinue.Set ();
+						} else if (data.request.ExpectContinue) { // We get a 100 after waiting for it.
+							data.request.DoContinueDelegate (data.StatusCode, data.Headers);
+						}
+
+						return;
+					}
 				} catch (Exception e) {
 					exc = e;
 				}
@@ -182,18 +195,9 @@ namespace System.Net
 				return;
 			}
 
-			if (cnc.waitingForContinue) {
-				cnc.waitForContinue.Set ();
-				if (cnc.Data.StatusCode == 100) {
-					cnc.readState = ReadState.None;
-					InitRead (cnc);
-					return;
-				}
-			}
-			
 			WebConnectionStream stream = new WebConnectionStream (cnc);
 
-			string contentType = cnc.Data.Headers ["Transfer-Encoding"];
+			string contentType = data.Headers ["Transfer-Encoding"];
 			cnc.chunkedRead = (contentType != null && contentType.ToLower ().IndexOf ("chunked") != -1);
 			if (!cnc.chunkedRead) {
 				stream.ReadBuffer = cnc.buffer;
@@ -201,15 +205,15 @@ namespace System.Net
 				stream.ReadBufferSize = nread;
 				stream.CheckComplete ();
 			} else if (cnc.chunkStream == null) {
-				cnc.chunkStream = new ChunkStream (cnc.buffer, pos, nread, cnc.Data.Headers);
+				cnc.chunkStream = new ChunkStream (cnc.buffer, pos, nread, data.Headers);
 			} else {
 				cnc.chunkStream.ResetBuffer ();
 				cnc.chunkStream.Write (cnc.buffer, pos, nread);
 			}
 
 			cnc.prevStream = stream;
-			cnc.Data.stream = stream;
-			cnc.Data.request.SetResponseData (cnc.Data);
+			data.stream = stream;
+			data.request.SetResponseData (data);
 		}
 		
 		static void InitRead (object state)
