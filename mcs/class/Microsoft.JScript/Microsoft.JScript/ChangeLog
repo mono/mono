@@ -1,3 +1,11 @@
+2004-04-02  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
+
+	* Equality.cs: Moved the Emit and Resolve code here.
+	* jscript-lexer-parser.g: Build a Equality object instead of a
+	Binary object for equality_expr.
+	* expression.cs: moved equality oeprators (resolve and IL gen) to
+	Equality.Emit and Equality.Resolve.
+
 2004-03-31  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
 	* expression.cs: Added shift operators IL emit.
