@@ -4456,7 +4456,10 @@ namespace Mono.CSharp {
 				}
 			}
 			if (Initializer != null) {
-				Initializer.CheckObsoleteAttribute (Parent, Location);
+				if (GetObsoleteAttribute (Parent) == null && Parent.GetObsoleteAttribute (Parent.Parent) == null)
+					Initializer.CheckObsoleteAttribute (Parent, Location);
+				else
+					ec.TestObsoleteMethodUsage = false;
 				Initializer.Emit (ec);
 			}
 			
@@ -4874,6 +4877,9 @@ namespace Mono.CSharp {
 				ec = method.CreateEmitContext (container, builder.GetILGenerator ());
 			else
 				ec = method.CreateEmitContext (container, null);
+
+			if (method.GetObsoleteAttribute () != null || container.GetObsoleteAttribute (container.Parent) != null)
+				ec.TestObsoleteMethodUsage = false;
 
 			Location loc = method.Location;
 			Attributes OptAttributes = method.OptAttributes;

@@ -393,6 +393,12 @@ namespace Mono.CSharp {
 		/// </summary>
 		public bool InEnumContext;
 
+		/// <summary>
+		/// Trace when method is called and is obsolete then this member suppress message
+		/// when call is inside next [Obsolete] method or type.
+		/// </summary>
+		public bool TestObsoleteMethodUsage = true;
+
 		public Iterator CurrentIterator;
 
 		FlowBranching current_flow_branching;
