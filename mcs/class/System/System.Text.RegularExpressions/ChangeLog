@@ -1,3 +1,8 @@
+2004-01-07  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* regex.cs: In Split(), if the last match is at the end of the string, 
+	an empty string must be added to the array of results.
+
 2003-12-15  Sanjay Gupta <gsanjay@novell.com>
 	* match.cs: Check for null value before Substring method call.  
 	Fixes bug #52034.

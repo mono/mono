@@ -337,7 +337,7 @@ namespace System.Text.RegularExpressions {
 				ptr = m.Index + m.Length;
 			}
 
-			if (ptr < input.Length) {
+			if (ptr <= input.Length) {
 				splits.Add (input.Substring (ptr));
 			}
 
