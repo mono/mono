@@ -40,7 +40,7 @@ else
 
 test-local: all-local
 
-all-local install-local test-local run-test-local clean-local: 
+all-local install-local test-local run-test-local run-test-ondotnet-local clean-local: 
 	@set -e; \
 	if test ! -f ../lib/$(PROFILE)/$(CYCLIC_DEP) ; then \
 	    echo "Creating temporary $(LIBRARY) without $(CYCLIC_DEP) reference." ; \
