@@ -33,7 +33,7 @@ namespace Mono.CSharp {
 		public readonly string   Name;
 		public readonly Modifier ModFlags;
 		public Attributes OptAttributes;
-		public Type ParameterType;
+		public Type parameter_type;
 		
 		public Parameter (string type, string name, Modifier mod, Attributes attrs)
 		{
@@ -48,8 +48,8 @@ namespace Mono.CSharp {
 		// </summary>
 		public bool Resolve (DeclSpace ds, Location l)
 		{
-			ParameterType = RootContext.LookupType (ds, TypeName, false, l);
-			return ParameterType != null;
+			parameter_type = RootContext.LookupType (ds, TypeName, false, l);
+			return parameter_type != null;
 		}
 
 		// <summary>
@@ -58,21 +58,27 @@ namespace Mono.CSharp {
 		// </summary>
 		public bool ResolveAndDefine (DeclSpace ds)
 		{
-			ParameterType = ds.FindType (TypeName);
-			return ParameterType != null;
+			parameter_type = ds.FindType (TypeName);
+			return parameter_type != null;
 		}
 		
 		public Type ExternalType (DeclSpace ds, Location l)
 		{
 			if ((ModFlags & (Parameter.Modifier.REF | Parameter.Modifier.OUT)) != 0){
-				string n = ParameterType.FullName + "&";
+				string n = parameter_type.FullName + "&";
 
 				Type t = RootContext.LookupType (ds, n, false, l);
 
 				return t;
 			}
 			
-			return ParameterType;
+			return parameter_type;
+		}
+
+		public Type ParameterType {
+			get {
+				return parameter_type;
+			}
 		}
 		
 		public ParameterAttributes Attributes {
@@ -98,7 +104,7 @@ namespace Mono.CSharp {
 		/// </summary>
 		public string GetSignature (DeclSpace ds, Location loc)
 		{
-			if (ParameterType == null){
+			if (parameter_type == null){
 				if (!Resolve (ds, loc))
 					return null;
 			}
@@ -246,7 +252,7 @@ namespace Mono.CSharp {
 				pc = extra;
 			else
 				pc = extra + FixedParameters.Length;
-			
+
 			types = new Type [pc];
 			
 			if (!VerifyArgs ()){
@@ -268,6 +274,7 @@ namespace Mono.CSharp {
 					i++;
 				}
 			}
+			
 			if (failed)
 				types = null;
 			
@@ -353,7 +360,7 @@ namespace Mono.CSharp {
 				types = null;
 				return null;
 			}
-			
+
 			return types;
 		}
 

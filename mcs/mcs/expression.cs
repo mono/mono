@@ -3271,7 +3271,7 @@ namespace Mono.CSharp {
 			//
 			// If we have come this far, the case which remains is when the number of parameters
 			// is less than or equal to the argument count.
-
+			//
 			for (int i = 0; i < pd_count - 1; ++i) {
 
 				Argument a = (Argument) arguments [i];
@@ -3280,19 +3280,17 @@ namespace Mono.CSharp {
 				Parameter.Modifier p_mod = pd.ParameterModifier (i);
 
 				if (a_mod == p_mod) {
-					
+
 					if (a_mod == Parameter.Modifier.NONE)
 						if (!StandardConversionExists (a.Expr, pd.ParameterType (i)))
 							return false;
 										
 					if (a_mod == Parameter.Modifier.REF ||
 					    a_mod == Parameter.Modifier.OUT) {
-						//
-						// Note that the ParameterType () does not return the appropriate
-						// modifier in the case of ref/out parameters so we take care
-						// of it ourselves
-						//
-						Type pt = TypeManager.LookupType (pd.ParameterType (i).ToString () + "&"); 
+						Type pt = pd.ParameterType (i);
+
+						if (!pt.IsByRef)
+							pt = TypeManager.LookupType (pt.FullName + "&");
 						
 						if (pt != a.Type)
 							return false;
@@ -3342,19 +3340,18 @@ namespace Mono.CSharp {
 				Parameter.Modifier a_mod = a.GetParameterModifier ();
 				Parameter.Modifier p_mod = pd.ParameterModifier (i);
 
-				if (a_mod == p_mod) {
+				if (a_mod == p_mod ||
+				    (a_mod == Parameter.Modifier.NONE && p_mod == Parameter.Modifier.PARAMS)) {
 					if (a_mod == Parameter.Modifier.NONE)
 						if (!StandardConversionExists (a.Expr, pd.ParameterType (i)))
 							return false;
 					
 					if (a_mod == Parameter.Modifier.REF ||
 					    a_mod == Parameter.Modifier.OUT) {
-						//
-						// Note that the ParameterType () does not return the appropriate
-						// modifier in the case of ref/out parameters so we take care
-						// of it ourselves
-						//
-						Type pt = TypeManager.LookupType (pd.ParameterType (i).ToString () + "&"); 
+						Type pt = pd.ParameterType (i);
+
+						if (!pt.IsByRef)
+							pt = TypeManager.LookupType (pt.FullName + "&");
 
 						if (pt != a.Type)
 							return false;
@@ -3426,7 +3423,6 @@ namespace Mono.CSharp {
 			bool chose_params_expanded = false;
 			
 			if (best_match_idx == -1) {
-
 				candidates = new ArrayList ();
 				for (int i = me.Methods.Length; i > 0; ) {
 					i--;
@@ -3446,26 +3442,6 @@ namespace Mono.CSharp {
 						method = me.Methods [best_match_idx];
 						chose_params_expanded = true;
 					}
-				}
-			}
-
-			//
-			// Now we see if we can at least find a method with the same number of arguments
-			//
-			ParameterData pd;
-
-			if (best_match_idx == -1) {
-
-				for (int i = me.Methods.Length; i > 0;) {
-					i--;
-					MethodBase mb = me.Methods [i];
-					pd = GetParameterData (mb);
-					
-					if (pd.Count == argument_count) {
-						best_match_idx = i;
-						method = me.Methods [best_match_idx];
-					} else
-						continue;
 				}
 			}
 

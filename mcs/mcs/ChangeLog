@@ -12,6 +12,16 @@
 	(ConvertReferenceExplicit): When converting from Iface type S to Class
 	T make sure the rules are implemented as an OR.
 
+	* parameter.cs (ParameterType): Make it a property for now although the
+	purpose really isn't anything immediate.
+	
+	* expression.cs (Is*Applicable): Do better checking on the parameter type
+	of a ref/out parameter. The ones from the system assemblies are already 
+	marked with the correct type so we don't need to do any correction.
+
+	* ecore.cs (StandardConversionExists): Conversion from Interface types to 
+	the object type is standard too so include that.
+
 2002-05-06  Miguel de Icaza  <miguel@ximian.com>
 
 	* ecore.cs (StandardConversionExists): Augment with missing code:

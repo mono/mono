@@ -855,7 +855,8 @@ namespace Mono.CSharp {
 
 			if (target_type == TypeManager.object_type) {
 				if ((expr_type.IsClass) ||
-				    (expr_type.IsValueType))
+				    (expr_type.IsValueType) ||
+				    (expr_type.IsInterface))
 					return true;
 				
 			} else if (expr_type.IsSubclassOf (target_type)) {
@@ -1749,11 +1750,10 @@ namespace Mono.CSharp {
 			// sealed, or provided T implements S.
 			//
 			if (source_type.IsInterface &&
-			    (!target_type.IsSealed || TypeManager.ImplementsInterface (target_type, source_type))) {
-				Console.WriteLine ("fooo came here !");
+			    (!target_type.IsSealed || TypeManager.ImplementsInterface (target_type, source_type)))
 				return true;
-			}
-
+			
+			
 			// From an array type S with an element type Se to an array type T with an 
 			// element type Te provided all the following are true:
 			//     * S and T differe only in element type, in other words, S and T
