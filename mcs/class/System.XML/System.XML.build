@@ -7,14 +7,14 @@
 
 	<target name="build">
 		<mkdir dir="../lib"/>
-		<csc target="library" output="../lib/System.XML.dll" debug="${debug}">
+		<csc target="library" output="../lib/System.Xml.dll" debug="${debug}">
 			<arg value="/nowarn:1595"/>
 			<sources>
 				<includes name="**/*.cs"/> 
 				<excludes name="Test/**"/>
 			</sources>
 		</csc>
-		<copy file="../lib/System.XML.dll" tofile="Test/System.XML.dll"/>
+		<copy file="../lib/System.Xml.dll" tofile="Test/System.XML.dll"/>
 		<nant basedir="Test" target="build"/>
 	</target>
 
@@ -25,6 +25,9 @@
 	<target name="clean">
 		<nant basedir="Test" target="clean"/>
 		<delete file="../lib/System.XML.dll" failonerror="false"/>
+		<delete file="../lib/System.Xml.dll" failonerror="false"/>
+		<delete file="Test/System.XML.dll" failonerror="false"/>
+		<delete file="Test/System.Xml.dll" failonerror="false"/>
 		<delete file="../lib/System.XML.pdb" failonerror="false"/>
 	</target>
 </project>

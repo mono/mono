@@ -1,31 +1,11 @@
-2002-02-10  Jason Diamond  <jason@injektilo.org>
+2002-02-23  Nick Drochak  <ndrochak@gol.com>
 
-	* System.XML.build: Renamed the System.Xml.dll assembly to 
-	System.XML.dll to match Microsoft.
-
-	* System.XML.build, Test/System.XML_test.build: Added tasks to 
-	clean .dll and .pdb files.
-
-	* System.XML.build, Test/System.XML_test.build: Copy System.XML.dll 
-	to Test directory and reference that. This makes it so our tests 
-	test our code and not Microsoft's.
-
-	* System.Xml/XmlTextReader.cs: Added support for parsing prefixes 
-	and local names.
-
-	* Test/Test.cs: Updated all tests to test the prefix and local name 
-	properties.
-
-2002-01-23  Dick Porter  <dick@ximian.com>
-
-	* System.Xml/XmlNode.cs: Fixed IndexerName attribute so it
-	compiles under .net 1.0
+	* System.XML.build: Change dll name to System.Xml.dll from 
+	System.XML.dll (not easy to notice, btw)
 
 2001-12-07  Nick Drochak <ndrochak@gol.com>
 
 	* ChangeLog: Add the change log to this directory
 
-	* System.XML.build: Add dependancy on linux target to test target. 
-	Need to have the dll before we can test it, right?  Plus it encourages 
-	others to try 'make test'.
+	* System.XML.build: Add dependancy on linux target to test target. Need to have the dll before we can test it, right?  Plus is encourages other to try 'make test'.
 
