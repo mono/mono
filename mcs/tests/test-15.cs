@@ -28,7 +28,7 @@ class Run {
 
 		StructImplementor s = new StructImplementor ();
 		Iface xiface = (Iface) s;
-		if (iface.A () != 2)
+		if (xiface.A () != 2)
 			return 2;
 		
 		return 0;
