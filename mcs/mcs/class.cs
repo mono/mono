@@ -2292,8 +2292,6 @@ namespace Mono.CSharp {
 			if (!DoDefineParameters (parent))
 				return false;
 
-			return true;
-			
 			MethodSignature ms = new MethodSignature (Name, null, ParameterTypes);
 			if (!IsOperator) {
 				MemberList mi_this;
