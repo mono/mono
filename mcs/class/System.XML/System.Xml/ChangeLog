@@ -1,3 +1,7 @@
+2004-07-28  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* XmlTextReader.cs: Stop parsing when a null character is found.
+
 2004-07-20  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlNode.cs : When the argument node being inserted is the existing

@@ -1146,8 +1146,11 @@ namespace System.Xml
 					return -1;
 				return PeekChar ();
 			}
-			else
-				return peekChars [peekCharsIndex];
+			else {
+				char c = peekChars [peekCharsIndex];
+				if (c != 0) return c;
+				else return -1;
+			}
 		}
 
 		private int ReadChar ()
@@ -1164,6 +1167,8 @@ namespace System.Xml
 			if (ch == '\n') {
 				line++;
 				column = 1;
+			} else if (ch == 0) {
+				return -1;
 			} else {
 				column++;
 			}
