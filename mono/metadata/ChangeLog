@@ -1,5 +1,8 @@
 2005-04-04  Zoltan Varga  <vargaz@freemail.hu>
 
+	* object.c (mono_runtime_invoke_array): Fix return value when 
+	passing pre-created valuetype objects to ctors.
+
 	* gc.c (mono_gchandle_is_in_domain): Applied patch from Jon Larimer 
 	(jlarimer@gmail.com). Avoid crashes when the wrapper object is null.
 	Fixes #74338.
