@@ -1,3 +1,15 @@
+2002-07-03  Dick Porter  <dick@ximian.com>
+
+	* threads.c: Store thread IDs instead of handles, because
+	GetCurrentThread() returns a pseudohandle and therefore stores
+	useless values.  mono_thread_cleanup() continues checking the
+	array of threads until it is empty, to cope with subthreads
+	spawning new threads after the main thread has finished.
+
+	* profiler.h:
+	* profiler.c:
+	* profiler-private.h: Pass the thread ID to thread profiler
+	functions, instead of a handle
 
 Wed Jul 3 17:43:52 CEST 2002 Paolo Molaro <lupus@ximian.com>
 

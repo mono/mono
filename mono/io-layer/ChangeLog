@@ -1,3 +1,15 @@
+2002-07-03  Dick Porter  <dick@ximian.com>
+
+	* threads.h:
+	* threads.c: Implement OpenThread().  Define access-control values
+	for thread handles.
+
+	* wapi.h:
+	* processes.h:
+	* access.h:
+	* Makefile.am: Added access.h, to hold shared access-control
+	definitions
+
 2002-07-02  Dick Porter  <dick@ximian.com>
 
 	* wapi-private.h (_WAPI_HANDLE_VERSION): New protocol version
