@@ -1,5 +1,10 @@
 2004-09-03  Zoltan Varga  <vargaz@freemail.hu>
 
+	* marshal.c (mono_delegate_to_ftnptr): Fix memory leaks.
+
+	* metadata.c (mono_metadata_free_marshal_spec): New function to free
+	marshal specs.
+
 	* marshal.c: More refactoring.
 	
 	* marshal.c: Refactor the mono_marshal_get_native_wrapper function into
