@@ -1,3 +1,10 @@
+2003-02-07 Alexandre Pigolkine <pigolkine@gmx.de>
+	* Font.cs Added
+	* Graphics.cs
+	* StringFormat.cs 
+	* SystemBrushes.cs
+		stubs added
+
 2002-11-21 Dennis Hayes (dennish@raytek.com)
 	* checkin for Matt Stump (mstump@swfo.arizona.edu)
 	* Pens.cs

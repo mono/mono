@@ -21,5 +21,12 @@ namespace System.Drawing
 			// TODO: Add constructor logic here
 			//
 		}
+
+		public static Brush ControlText {
+			get {
+				throw new NotImplementedException();
+			}
+		}
+
 	}
 }

@@ -39,6 +39,54 @@ namespace System.Drawing {
 		{
 			throw new NotImplementedException ();
 		}
+
+		[MonoTODO]
+		public IntPtr GetHdc ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public void ReleaseHdc (IntPtr hdc)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public void DrawString(string str, Font fnt, Brush br, PointF pt)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public void DrawString(string str, Font fnt, Brush br, RectangleF rc)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public void DrawString(string str, Font fnt, Brush br, PointF pt, StringFormat sf)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public void DrawString(string str, Font fnt, Brush br, RectangleF rc, StringFormat sf)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public void DrawString(string str, Font fnt, Brush br, float X, float Y)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public void DrawString(string str, Font fnt, Brush br, float X, float Y, StringFormat sf)
+		{
+			throw new NotImplementedException ();
+		}
 	}
 }
 
