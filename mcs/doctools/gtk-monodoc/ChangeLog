@@ -1,6 +1,0 @@
-2002-10-04  Duncan Mak  <duncan@ximian.com>
-
-	* main.cs (FileSelectionOk): Fix filename handling.
-	(OnQuitActivate): Added, so now we can properly quit from the
-	Quit menuitem.
-

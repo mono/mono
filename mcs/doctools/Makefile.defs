@@ -1,5 +1,0 @@
-PREFIX = /usr/local
-LIBDIR = lib
-BINDIR = bin
-MCS    = ../../mcs/mcs.exe
-MONO   = mono
