@@ -1,3 +1,12 @@
+2005-01-10  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HostSecurityManager.cs: Fix signature as DetermineApplicationTrust
+	doesn't return a boolean anymore.
+	* SecurityElement.cs: The attributes and children elements are not
+	indented in 2.0. This fix many unit tests that do string compares.
+	* PermissionSetCollection.cs: We can't trust all IList implementations
+	to throw the ArgumentOutOfRangeException - so we better do it here.
+
 2005-01-09  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CodeAccessPermission.cs: CheckAssert, CheckDemand, CheckDeny and

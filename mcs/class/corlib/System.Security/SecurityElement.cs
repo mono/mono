@@ -311,6 +311,8 @@ namespace System.Security
 		{
 			if (xml == null)
 				throw new ArgumentNullException ("xml");
+			if (xml.Length == 0)
+				throw new XmlSyntaxException (Locale.GetText ("Empty string."));
 
 			try {
 				SecurityParser sp = new SecurityParser ();
@@ -390,17 +392,24 @@ namespace System.Security
 		
 		private void ToXml (ref StringBuilder s, int level)
 		{
+#if ! NET_2_0
 			s.Append (' ', level * 3);
+#endif
 			s.Append ("<");
 			s.Append (tag);
 			
 			if (attributes != null) {
+#if NET_2_0
+				s.Append (" ");
+#endif
 				for (int i=0; i < attributes.Count; i++) {
 					SecurityAttribute sa = (SecurityAttribute) attributes [i];
+#if ! NET_2_0
 					s.Append (" ");
 					// all other attributes must align with the first one
 					if (i != 0)
 						s.Append (' ', (level * 3) + tag.Length + 1);
+#endif
 					s.Append (sa.Name)
 					 .Append ("=\"")
 					 .Append (sa.Value)
@@ -420,7 +429,9 @@ namespace System.Security
 					foreach (SecurityElement child in children) {
 						child.ToXml (ref s, level + 1);
 					}
+#if ! NET_2_0
 					s.Append (' ', level * 3);
+#endif
 				}
 				s.Append ("</")
 				 .Append (tag)

@@ -50,13 +50,14 @@ namespace System.Security {
 		}
 
 		[MonoTODO ("incomplete - docs talks about a System.Runtime.Hosting in corlib but it's not there (yet?)")]
-		public virtual bool DetermineApplicationTrust (Evidence applicationEvidence, Evidence activatorEvidence, TrustManagerContext context)
+		public virtual ApplicationTrust DetermineApplicationTrust (Evidence applicationEvidence, Evidence activatorEvidence, TrustManagerContext context)
 		{
 			if (applicationEvidence == null)
 				throw new ArgumentNullException ("applicationEvidence");
 			// TODO extract the ActivationContext from the ActivationArguments (inside the applicationEvidence)
 			ActivationContext ac = null;
-			return ApplicationSecurityManager.DetermineApplicationTrust (ac, context);
+			ApplicationSecurityManager.DetermineApplicationTrust (ac, context);
+			return null;
 		}
 
 		public virtual Evidence ProvideAppDomainEvidence (Evidence inputEvidence)

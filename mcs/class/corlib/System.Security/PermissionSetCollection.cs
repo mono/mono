@@ -131,12 +131,18 @@ namespace System.Security {
 
 		public PermissionSet GetSet (int index) 
 		{
+			if ((index < 0) || (index >= _list.Count))
+				throw new ArgumentOutOfRangeException ("index");
+
 			return (PermissionSet) _list [index];
 		}
 
 		public void RemoveSet (int index) 
 		{
-			_list.Remove (index);
+			if ((index < 0) || (index >= _list.Count))
+				throw new ArgumentOutOfRangeException ("index");
+
+			_list.RemoveAt (index);
 		}
 
 		public override string ToString ()
