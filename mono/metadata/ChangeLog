@@ -1,3 +1,8 @@
+2004-04-29  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+ 
+ 	* string-icalls.c: added low overhead function for copying chars
+ 	* icall.c: added needed icall for the above function
+ 
 2004-04-29  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* icall.c: fix return value of get_global_assembly_cache.  Implemented
