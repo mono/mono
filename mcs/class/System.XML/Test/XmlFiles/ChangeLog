@@ -1,3 +1,7 @@
+2003-06-16  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* added nested-dtd-test.xml, nested-dtd-test.dtd, nested-included.dtd.
+
 2003-04-12  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* added this file along with this new directory.

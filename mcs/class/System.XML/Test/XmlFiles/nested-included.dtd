@@ -1,0 +1,2 @@
+<!ELEMENT foo EMPTY>
+<!ELEMENT bar EMPTY>
