@@ -1,5 +1,6 @@
 2004-06-17  Jackson Harper  <jackson@ximian.com>
 
+	* CompilerError.cs:
 	* CodeGenerator.cs: Make sure we are using invariant for non
 	culture sensitive operations.
 	
