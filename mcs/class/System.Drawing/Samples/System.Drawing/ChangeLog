@@ -1,3 +1,6 @@
+2004-03-22  Jordi <jordi@ximian.com>
+	* Added pie.cs example	
+
 2004-03-17  Ravindra  <rkumar@novell.com>
 	* Created this repository for samples for System.Drawing namespace.
 	* ChangeLog: Added.
