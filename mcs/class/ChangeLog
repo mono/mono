@@ -1,3 +1,7 @@
+2004-06-23 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Makefile: enabled Mono.CSharp.Debugger on windows.
+
 2004-06-11  Duncan Mak  <duncan@ximian.com>
 
 	* IBM.Data.DB2/IBM.Data.DB2.dll.sources: 
