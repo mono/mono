@@ -8,7 +8,7 @@
 using System;
 using System.Text;
 
-namespace System.web.Mail {
+namespace System.Web.Mail {
     
     // This class contains some utillity functions
     // that doesnt fit in other classes and to keep
@@ -30,6 +30,7 @@ namespace System.web.Mail {
 	    return needEnc;
 	}
 
+	// Encodes a string to base4
 	public static string Base64Encode( string str ) {
 	    return Convert.ToBase64String( Encoding.Default.GetBytes( str ) );
 	}

@@ -6,6 +6,7 @@
 //
 //
 using System;
+using System.Text;
 
 namespace System.Web.Mail {
 
@@ -91,7 +92,15 @@ namespace System.Web.Mail {
 	    
 	    } else {
 		
-		retString = String.Format( "\"{0}\" <{1}>" , this.Name , this.Address);
+		string personName = this.Name;
+
+		if( MailUtil.NeedEncoding( personName ) ) {
+		    personName = String.Format( "=?{0}?B?{1}?=",
+					        Encoding.Default , 
+						MailUtil.Base64Encode( personName ) ) ;
+		}
+
+		retString = String.Format( "\"{0}\" <{1}>" , personName , this.Address);
 	    
 	    }
 	    
