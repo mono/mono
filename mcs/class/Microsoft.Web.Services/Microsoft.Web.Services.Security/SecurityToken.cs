@@ -9,13 +9,19 @@
 
 using System;
 using System.Security.Cryptography.Xml;
+using System.Security.Principal;
 using System.Xml;
+using Microsoft.Web.Services;
+#if !WSE1
+using Microsoft.Web.Services.Xml;
+#endif
 
 namespace Microsoft.Web.Services.Security {
 
 	public abstract class SecurityToken : IXmlElement {
 
 		private string id;
+		private IPrincipal principal;
 
 		public SecurityToken () 
 		{
@@ -57,9 +63,12 @@ namespace Microsoft.Web.Services.Security {
 
 		public abstract bool IsCurrent {get;}
 
-		public virtual IPrincipal Principal {get; set;}
+		public virtual IPrincipal Principal {
+			get { return principal; }
+			set { principal = value; }
+		}
 
-		public virtual TokenType TokenType {get;}
+//		public virtual TokenType TokenType {get;}
 #endif
 	}
 }

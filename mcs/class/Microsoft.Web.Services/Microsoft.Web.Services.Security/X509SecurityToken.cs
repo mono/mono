@@ -116,6 +116,7 @@ namespace Microsoft.Web.Services.Security {
 			}
 		}
 
+#if WSE1
 		public override void Verify ()
 		{
 			if (x509 == null)
@@ -125,5 +126,22 @@ namespace Microsoft.Web.Services.Security {
 			// more ???
 			// it's assumed valid if no exception is thrown
 		}
+#else
+		[MonoTODO ("need to compare results with WSE2")]
+		public override int GetHashCode () 
+                {
+                    return x509.GetHashCode();
+                }
+
+		[MonoTODO ("need to compare results with WSE2")]
+		public override bool Equals (SecurityToken token) 
+		{
+                    return false;
+		}
+
+		public override bool IsCurrent {
+			get { return false; }
+		}
+#endif
 	}
 }

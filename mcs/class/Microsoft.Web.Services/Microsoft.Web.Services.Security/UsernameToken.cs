@@ -271,7 +271,7 @@ namespace Microsoft.Web.Services.Security {
 			}
 		}
 
-#if WSE1 || WSE2 //The || is only here for a quick compilation fix
+#if WSE1 //The || is only here for a quick compilation fix
 		public override void Verify () {}
 #else
 		public IList AnyElements {
@@ -284,7 +284,13 @@ namespace Microsoft.Web.Services.Security {
 		}
 
 		[MonoTODO ("need to compare results with WSE2")]
-		public bool Equals (SecurityToken token) 
+		public override int GetHashCode () 
+                {
+                    return username.GetHashCode();
+                }
+
+		[MonoTODO ("need to compare results with WSE2")]
+		public override bool Equals (SecurityToken token) 
 		{
 			if (token is UsernameToken) {
 				UsernameToken t = token as UsernameToken;
@@ -303,7 +309,7 @@ namespace Microsoft.Web.Services.Security {
 			return false;
 		}
 
-		public virtual bool IsCurrent {
+		public override bool IsCurrent {
 			get { return false; }
 		}
 #endif
