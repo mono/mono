@@ -1,0 +1,6 @@
+2003-06-30  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* Initial checkin.
+	* Added ChangeLog, DTMXPathDocument.cs, DTMXPathDocumentBuilder.cs
+	  and DTMXPathNavigator.cs.
+
