@@ -1,3 +1,7 @@
+2003-03-10 Alexandre Pigolkine <pigolkine@gmx.de>
+	* Button.cs
+		check in for Steven Stewart <stevenstewart@mindspring.com>
+
 2003-03-09 Alexandre Pigolkine <pigolkine@gmx.de>
 	* Application.cs			fixed line terminators
 

@@ -78,16 +78,27 @@ namespace System.Windows.Forms {
 		}
 
 		// --- IButtonControl method ---
-		[MonoTODO]
 		public virtual void NotifyDefault(bool value) 
 		{
-			//FIXME:
+			//Sanity check...bail out if this ain't a window.
+			if (!Win32.IsWindow(this.Handle)) return;
+		
+			//Figure what the caller wants, and set the value accordingly
+			uint nDefPushButton;//this will hold the value of either BS_DEFPUSHBUTTON or it's logial opposite
+			if (value)
+				nDefPushButton = (uint)ButtonStyles.BS_DEFPUSHBUTTON;
+			else   //Ok, so we gotta find the bitwise opposite of BS_DEFPUSHBUTTON;
+				nDefPushButton = 0xFFFFFFFF ^ (uint)ButtonStyles.BS_DEFPUSHBUTTON; // a number's opposite is determined by xor-ing it with a full house of 1's, and since uint is 4Bytes that's FFFFFFFF
+			
+			uint nOldStyle = (uint)Win32.GetWindowLong(this.Handle, GetWindowLongFlag.GWL_STYLE);
+			uint nNewStyle = nDefPushButton & nOldStyle; //Our chosen value, BitAnd-ed with the existing style
+			Win32.SendMessage(this.Handle, (Msg)ButtonMessages.BM_SETSTYLE, (int)nNewStyle, (int)1);
 		}
 		
-		[MonoTODO]
 		public void PerformClick() 
 		{
-			//FIXME:
+			EventArgs e = new EventArgs();
+ 			OnClick(e);
 		}
 		
 		// --- Button methods for events ---
@@ -295,3 +306,4 @@ namespace System.Windows.Forms {
 		*/
 	}
 }
+
