@@ -104,6 +104,12 @@ namespace System.Xml
 
 		// ============= Internal calls =============================================
 
+		// Constructors
+		// ==========================================================================
+		internal XmlElement( XmlDocument aOwnerDoc ) : base(aOwnerDoc)
+		{
+		}
+
 
 		} // class
 	}  //namespace
