@@ -1,3 +1,10 @@
+2003-01-04  Martin Baulig  <martin@ximian.com>
+
+	* debug.c (release_symbol_file_table): Only call this if we're
+	actually modifying the symbol tables.
+	(mono_debug_open): Always set the `mono_debugger_class_init_func'
+	for MONO_DEBUG_FORMAT_MONO; this stuff should also go into core dumps.
+
 2003-01-03  Martin Baulig  <martin@ximian.com>
 
 	* debug.c: Disable the mono debugger stuff on Windows.
