@@ -3,20 +3,83 @@
 use strict;
 use Carp;
 
-my @alltests;
-my @allsuites;
+my @allfiles;
 
-my @badtests = qw[System.Collections.HastableTest System.Collections.StackTest System.IO.PathTest];
+my @badsuites = qw[System\.Collections/HashtableTest System\.Collections/StackTest System\.Collections\.Specialized\.BasicOperationsTest];
+my @badtests = qw[PathTest:TestGetTempFileName XmlTextReaderTests:TestIsNameChar XmlTextReaderTests:TestIsFirstNameChar];
+my @mapfiles = ('s,^MonoTests\.(.*)/,$1/,',
+		's,^Ximian\.Mono\.Tests(.*)/,,',
+		's,^System\.Net/,,',
+		's,^Collections\.Specialized\.,,',
+		's,^Text\.RegularExpressions\.,,'
+		);
+my @maptests = ();
+my @mapnamespace = ();
 
 die "Usage: $0 input output" unless $#ARGV == 1;
 
-open INPUT, $ARGV[0] or croak "open ($ARGV[0]): $!";
-while (defined ($_ = <INPUT>)) {
-    next unless /^\s*suite\.AddTest\s*\((.*)\.(.*?)\.Suite\)/;
+my $namespace = 'MonoTests';
 
-    push @alltests, [$1,$2];
+sub parse_test {
+    my ($filename, $namespace, $testname, $suite) = @_;
+
+    foreach (@badsuites) {
+	return if $filename =~ /$_/;
+    }
+
+    my $map;
+    foreach $map (@mapfiles) {
+	eval "\$filename =~ $map";
+    }
+
+    foreach (@allfiles) {
+	return if $filename eq $_->[0];
+    }
+
+    # print STDERR "PARSE: |$filename|\n";
+
+    push @allfiles, [$filename,$namespace,$testname,$suite,[]];
+
+    my $INPUT;
+    open $INPUT, $filename or croak "open ($filename): $!";
+    while (defined ($_ = <$INPUT>)) {
+	if (/^\s*namespace\s*([\w\.]+?)\s*$/) {
+	    $namespace = $1;
+	    next;
+	}
+	if (/^\s*suite\.AddTest\s*\((.*)\.(.*?)\.Suite\)/) {
+	    my $filename = (defined $namespace) ? qq[$namespace.$1/$2.cs] : qq[$1/$2.cs];
+	    my $nsprefix = (defined $namespace) ? qq[$namespace.$1] : qq[MonoTests.$1];
+	    parse_test ($filename, $nsprefix, $1, $2);
+	    next;
+	}
+	if (/^\s*suite\.AddTest\s*\((.*?)\.Suite\)/) {
+	    my $filename = (defined $namespace) ? qq[$namespace/$1.cs] : qq[$1.cs];
+	    parse_test ($filename, $namespace, '', $1);
+	    next;
+	}
+	if (/^\s*suite\.AddTest\s*\(\s*new\s+TestSuite\s*\(\s*typeof\(\s*(.*)\s*\)\s*\)\s*\);/) {
+	    my $filename = (defined $namespace) ? qq[$namespace/$1.cs] : qq[$1.cs];
+	    parse_test ($filename, $namespace, '', $1);
+	    next;
+	}
+    }
+    close $INPUT;
 }
-close INPUT;
+
+parse_test ($ARGV[0], undef, '', '');
+
+my $file;
+foreach $file (@allfiles) {
+    my ($filename,$namespace,$testname,$suite) = @$file;
+
+    open SUITE, $filename or croak "open ($filename): $!";
+    while (defined ($_ = <SUITE>)) {
+	next unless /^\s*public\s+void\s+(Test.*?)\s*\(\s*\)/;
+	push @{$file->[4]}, $1;
+    }
+    close SUITE;
+}
 
 open OUTPUT, "> $ARGV[1]" or croak "open (> $ARGV[1]): $!";
 select OUTPUT;
@@ -28,58 +91,52 @@ print qq[using System.Globalization;\n\n];
 
 
 my $alltest;
-foreach $alltest (@alltests) {
+foreach $alltest (@allfiles) {
 
-    my @suites;
+    my ($filename,$namespace,$testname,$suite,$tests) = @$alltest;
+    my @tests = @$tests;
 
-    my $testname = $alltest->[0];
-    my $filename = $alltest->[0]."/".$alltest->[1].".cs";
+    next unless defined $namespace;
+    next unless $#tests >= 0;
 
-    open ALLTEST, $filename or croak "open ($filename): $!";
-    while (defined ($_ = <ALLTEST>)) {
-	next unless /^\s*suite\.AddTest\s*\((.*)\.Suite\)/;
-	my $name = $1;
+    # print STDERR "DOING TEST: |$testname|$filename|\n";
 
-	next if grep $name, @badtests;
+    $namespace .= ".$testname" unless $testname eq '';
 
-	push @suites, $name;
-	push @allsuites, qq[$testname.Run$name];
-    }
-    close ALLTEST;
-
-    print qq[namespace MonoTests.$testname\n\{\n];
-
-    my $suite;
-    foreach $suite (@suites) {
-
-	my @tests;
-
-	open SUITE, qq[$testname/$suite.cs] or
-	    croak "open ($testname/$suite.cs): $!";
-	while (defined ($_ = <SUITE>)) {
-	    next unless /^\s*public\s+void\s+(Test.*?)\s*\(\s*\)/;
-	    push @tests, $1;
+    print qq[namespace $namespace\n\{\n];
+    print qq[\tpublic class Run$suite : $suite\n\t\{\n];
+    print qq[\t\tprotected override void RunTest ()\n\t\t\{\n];
+    my $test;
+  testloop:
+    foreach $test (@tests) {
+	my $badtest;
+	$filename =~ s/\.cs$//;
+	my $fullname = qq[$filename:$test];
+	# print STDERR "TEST: |$fullname|\n";
+	foreach $badtest (@badtests) {
+	    next testloop if $fullname =~ /$badtest/;
 	}
-	close SUITE;
-
-	print qq[\tpublic class Run$suite : $suite\n\t\{\n];
-	print qq[\t\tprotected override void RunTest ()\n\t\t\{\n];
-	foreach (@tests) {
-	    print qq[\t\t\t$_ ();\n];
-	}
-	print qq[\t\t\}\n\t\}\n];
+	print qq[\t\t\t$test ();\n];
     }
+    print qq[\t\t\}\n\t\}\n];
     print qq[\}\n\n];
 }
 
-print qq[namespace MonoTests\n\{\n];
+print qq[namespace $namespace\n\{\n];
 print qq[\tpublic class RunAllTests\n\t\{\n];
 print qq[\t\tpublic static void AddAllTests (TestSuite suite)\n];
 print qq[\t\t\{\n];
 
-my $suite;
-foreach $suite (@allsuites) {
-    print qq[\t\t\tsuite.AddTest (new MonoTests.$suite ());\n];
+foreach $alltest (@allfiles) {
+    my ($filename,$namespace,$testname,$suite,$tests) = @$alltest;
+    my @tests = @$tests;
+
+    next unless defined $namespace;
+    next unless $#tests >= 0;
+
+    $namespace .= ".$testname" unless $testname eq '';
+
+    print qq[\t\t\tsuite.AddTest (new $namespace.Run$suite ());\n];
 }
 
 print qq[\t\t\}\n\t\}\n\}\n\n];
@@ -89,7 +146,7 @@ print qq[\tpublic static void Main()\n\t\{\n];
 print qq[\t\tThread.CurrentThread.CurrentCulture = new CultureInfo ("en-US");\n\n];
 print qq[\t\tTestResult result = new TestResult ();\n];
 print qq[\t\tTestSuite suite = new TestSuite ();\n];
-print qq[\t\tMonoTests.RunAllTests.AddAllTests (suite);\n];
+print qq[\t\t$namespace.RunAllTests.AddAllTests (suite);\n];
 print qq[\t\tsuite.Run (result);\n];
 print qq[\t\tMonoTests.MyTestRunner.Print (result);\n];
 print qq[\t\}\n\}\n\n];
