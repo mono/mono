@@ -1,8 +1,5 @@
-AuthenticationManager.cs
 Authorization.cs
 EndPoint.cs
-IAuthenticationModule.cs
-ICredentialLookup.cs
 IPAdress.cs
 IPEndPoint.cs
 SocketAddress.cs
