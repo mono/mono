@@ -78,11 +78,6 @@ namespace System.Xml.Serialization
 		}
 
 		[MonoTODO]
-		protected virtual object Deserialize (XmlSerializationReader reader) 
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
 		public object Deserialize (Stream stream)
 		{
 			throw new NotImplementedException ();
@@ -98,11 +93,6 @@ namespace System.Xml.Serialization
 			throw new NotImplementedException ();
 		}
 		
-		[MonoTODO]
-		protected virtual void Serialize (object o, XmlSerializationWriter writer) 
-		{
-			throw new NotImplementedException ();
-		}
 		[MonoTODO]
 		public void Serialize (Stream stream, object o)
 		{

@@ -16,7 +16,7 @@ namespace System.Xml.Serialization
 	/// Summary description for XmlElementAttribute.
 	/// </summary
 	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field
-		 | AttributeTargets.Parameter | AttributeTargets.ReturnValue)]
+		 | AttributeTargets.Parameter | AttributeTargets.ReturnValue, AllowMultiple=true)]
 	public class XmlElementAttribute : Attribute
 	{
 		private string dataType;
