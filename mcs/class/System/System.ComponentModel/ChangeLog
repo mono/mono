@@ -1,3 +1,7 @@
+2002-11-04  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ListBindableAttribute.cs: implemented.
+
 2002-11-02  Duncan Mak  <duncan@ximian.com>
 
 	* InvalidEnumArgumentException.cs: Added.
