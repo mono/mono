@@ -18,7 +18,7 @@
 
 			<arg value="/nostdlib"/> 	<!-- don't reference mscorlib -->
 			<arg value="/noconfig"/>	<!-- don't reference ms assemblies -->
-			
+
 			<sources>
 				<includes name="**/*.cs"/>
 				<excludes name="Test/**"/>
@@ -34,15 +34,23 @@
 			<arg value="/nowarn:0649"/> <!-- field never assigned to -->
 			<arg value="/nowarn:0169"/> <!-- field never used -->
 			<arg value="/unsafe"/>
+
+			<arg value="/nostdlib"/>
+			<arg value="/noconfig"/>
+			<arg value="/r:mscorlib.dll"/>
+			
 			<sources>
 				<includes name="**/*.cs"/>
 				<excludes name="Test/**"/>
 				<excludes name="Windows/**"/>
 				<excludes name="System.Security.Permissions/SecurityPermissionAttribute.cs"/>
 				<excludes name="System.PAL/IOperatingSystem.cs"/>
-				<excludes name="System/Object.cs" />
-				<excludes name="System/ValueType.cs" />
-				<excludes name="System/Delegate.cs" />
+
+				<excludes name="System/Object.cs"/>
+				<excludes name="System/ValueType.cs"/>
+				<excludes name="System/Enum.cs"/>
+				<excludes name="System/Delegate.cs"/>
+				<excludes name="System/MulticastDelegate.cs" />
 			</sources>
 		</csc>
 		<!-- NUnit can only run under windows right now, so build for windows
@@ -58,6 +66,7 @@
 				<excludes name="Linux/**"/>
 				<excludes name="System/Object.cs"/>
 				<excludes name="System/ValueType.cs"/>
+				<excludes name="System/Enum.cs"/>
 				<excludes name="System/Type.cs"/>
 				<excludes name="System/MonoType.cs"/>
 				<excludes name="System/Array.cs"/>
