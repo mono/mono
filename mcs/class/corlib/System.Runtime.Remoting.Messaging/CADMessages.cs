@@ -82,6 +82,12 @@ namespace System.Runtime.Remoting.Messaging {
 			if (objType.IsPrimitive || objType == typeof(void))
 				return true;
 			
+			if (objType.IsArray && objType.GetElementType().IsPrimitive && ((Array)obj).Rank == 1)
+				return true;
+				
+			if (obj is string || obj is DateTime || obj is TimeSpan)
+				return true;
+				
 			return false;
 		}
 
@@ -120,6 +126,8 @@ namespace System.Runtime.Remoting.Messaging {
 		}
 
 		protected static object UnmarshalArgument (object arg, ArrayList args) {
+			if (arg == null) return null;
+			
 			// Check if argument is an holder (then we know that it's a serialized argument)
 			CADArgHolder holder = arg as CADArgHolder;
 			if (null != holder) {
@@ -130,9 +138,60 @@ namespace System.Runtime.Remoting.Messaging {
 			if (null != objref) {
 				return objref.objref.GetRealObject (new StreamingContext (StreamingContextStates.Other));
 			}
+			
+			if (arg.GetType().IsArray)
+			{
+				Array argb = (Array)arg;
+				Array argn;
+				
+				// We can't use Array.CreateInstance (arg.GetType().GetElementType()) because
+				// GetElementType() returns a type from the source domain.
+				
+				switch (Type.GetTypeCode (arg.GetType().GetElementType()))
+				{
+					case TypeCode.Boolean: argn = new bool [argb.Length]; break;
+					case TypeCode.Byte: argn = new Byte [argb.Length]; break;
+					case TypeCode.Char: argn = new Char [argb.Length]; break;
+					case TypeCode.Decimal: argn = new Decimal [argb.Length]; break;
+					case TypeCode.Double: argn = new Double [argb.Length]; break;
+					case TypeCode.Int16: argn = new Int16 [argb.Length]; break;
+					case TypeCode.Int32: argn = new Int32 [argb.Length]; break;
+					case TypeCode.Int64: argn = new Int64 [argb.Length]; break;
+					case TypeCode.SByte: argn = new SByte [argb.Length]; break;
+					case TypeCode.Single: argn = new Single [argb.Length]; break;
+					case TypeCode.UInt16: argn = new UInt16 [argb.Length]; break;
+					case TypeCode.UInt32: argn = new UInt32 [argb.Length]; break;
+					case TypeCode.UInt64: argn = new UInt64 [argb.Length]; break;
+					default: throw new NotSupportedException ();
+				}
+				
+				argb.CopyTo (argn, 0);
+				return argn;
+			}
 
-			// otherwise the argument is ok just to return
-			return arg;
+			switch (Type.GetTypeCode (arg.GetType()))
+			{
+				case TypeCode.Boolean: return (bool)arg;
+				case TypeCode.Byte: return (byte)arg;
+				case TypeCode.Char: return (char)arg;
+				case TypeCode.Decimal: return (decimal)arg;
+				case TypeCode.Double: return (double)arg;
+				case TypeCode.Int16: return (Int16)arg;
+				case TypeCode.Int32: return (Int32)arg;
+				case TypeCode.Int64: return (Int64)arg;
+				case TypeCode.SByte: return (SByte)arg;
+				case TypeCode.Single: return (Single)arg;
+				case TypeCode.UInt16: return (UInt16)arg;
+				case TypeCode.UInt32: return (UInt32)arg;
+				case TypeCode.UInt64: return (UInt64)arg;
+				case TypeCode.String: return new String (((string)arg).ToCharArray());
+				case TypeCode.DateTime: return new DateTime (((DateTime)arg).Ticks);
+				default:
+					if (arg is TimeSpan) return new TimeSpan (((TimeSpan)arg).Ticks);
+					break;
+			}	
+
+			throw new NotSupportedException ("Parameter of type " + arg.GetType () + " cannot be unmarshalled");
 		}
 
 		internal static object [] MarshalArguments (object [] arguments, ref ArrayList args) {

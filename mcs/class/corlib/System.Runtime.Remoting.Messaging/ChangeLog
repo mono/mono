@@ -1,3 +1,9 @@
+2003-10-07  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* CADMessages.cs: improved argument smuggeling. Now it supports strings,
+	  datetime and arrays of primitive types. This makes CAD much faster.
+	* AsyncResult.cs: Added property to store the call message.
+
 2003-09-11  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* ArgInfo.cs: Include parameters with the Out flag in the out parameters list.

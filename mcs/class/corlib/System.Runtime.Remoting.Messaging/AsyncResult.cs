@@ -25,12 +25,10 @@ public class AsyncResult : IAsyncResult, IMessageSink {
 	bool sync_completed;
 	bool completed;
 	bool endinvoke_called;
-	object[] out_args;
-	object ret_val;
-	Exception exception;
+	MonoMethodMessage call_message;
 	IMessageCtrl message_ctrl;
 	IMessage reply_message;
-		
+	
 	public virtual object AsyncState
 	{
 		get {
@@ -118,6 +116,12 @@ public class AsyncResult : IAsyncResult, IMessageSink {
 		// TODO: invoke callback
 
 		return null;
+	}
+	
+	internal MonoMethodMessage CallMessage
+	{
+		get { return call_message; }
+		set { call_message = value; }
 	}
 }
 }
