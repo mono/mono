@@ -1,4 +1,10 @@
 
+Thu Jul 3 17:22:20 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* object.c, file-io.c, metadata.c, mono-endian.h, reflection.c,
+	rawbuffer.c: more 64 bit and picky (or old) compiler fixes from
+	Bernie Solomon <bernard@ugsolutions.com>.
+
 Thu Jul 3 17:17:39 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* object.c, object.h: provide mono_object_new_fast() for faster
