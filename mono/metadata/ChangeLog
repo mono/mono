@@ -1,9 +1,21 @@
+2002-08-27  Martin Baulig  <martin@gnome.org>
+
+	* debug-mono-symfile.c: Changed the file format in a way that allows us
+	open it read-only and to use a specially malloced area for all the
+	dynamic data.  We can now also generate a symbol file on-the-fly if we're
+	debugging IL code and there is no MCS generated symbol file for it.
 
 Mon Aug 26 16:47:37 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* object.c: added a define for a good string and array
 	creation speedup (not enabled by default because we need to deal with
 	the synch stuff).
+
+2002-08-26  Martin Baulig  <martin@gnome.org>
+
+	* debug-mono-symfile.c (mono_debug_create_mono_symbol_file): New
+	function to create a dynamic symbol file.  This is used by the
+	debugger to create a symbol file for IL code on-the-fly.
 
 2002-08-26  Martin Baulig  <martin@gnome.org>
 
