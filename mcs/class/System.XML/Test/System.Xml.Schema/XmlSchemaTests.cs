@@ -73,8 +73,18 @@ namespace MonoTests.System.Xml
 				AssertNull (cType.ContentModel);
 			else
 				AssertEquals (contentModelType, cType.ContentModel.GetType ());
-			AssertEquals (contentType, cType.ContentType);
 			AssertEquals (hasContentTypeParticle, cType.ContentTypeParticle != null);
+			AssertEquals (contentType, cType.ContentType);
+		}
+
+		private void AssertCompiledComplexContentExtension (XmlSchemaComplexContentExtension xccx,
+			int attributeCount, bool hasAnyAttribute, XmlQualifiedName baseTypeName)
+		{
+			AssertNotNull (xccx);
+			AssertEquals (attributeCount, xccx.Attributes.Count);
+			AssertEquals (hasAnyAttribute, xccx.AnyAttribute != null);
+			AssertEquals (baseTypeName, xccx.BaseTypeName);
+			AssertNotNull (xccx.Particle);
 		}
 
 		private void AssertCompiledElement (XmlSchemaElement element,
@@ -118,17 +128,30 @@ namespace MonoTests.System.Xml
 		[Test]
 		public void TestCompile ()
 		{
+			XmlQualifiedName qname;
+			XmlSchemaComplexContentExtension xccx;
+			XmlSchemaComplexType cType;
+
 			XmlSchema schema = GetSchema ("XmlFiles/xsd/1.xsd");
 			schema.Compile (null);
 			string ns = "urn:bar";
 
-			XmlQualifiedName qname = QName ("HogeType", ns);
-			XmlSchemaComplexType cType = schema.SchemaTypes [qname] as XmlSchemaComplexType;
+			// HogeType
+			qname = QName ("HogeType", ns);
+			cType = schema.SchemaTypes [qname] as XmlSchemaComplexType;
+			AssertNotNull (cType);
+			AssertNull (cType.ContentModel);
 			AssertCompiledComplexType (cType, qname, 0, 0,
 				false, null, true, XmlSchemaContentType.ElementOnly);
 
+			// FugaType
 			qname = QName ("FugaType", ns);
 			cType = schema.SchemaTypes [qname] as XmlSchemaComplexType;
+			AssertNotNull (cType);
+			xccx = cType.ContentModel.Content as XmlSchemaComplexContentExtension;
+			AssertCompiledComplexContentExtension (
+				xccx, 0, false, QName ("HogeType", ns));
+			AssertEquals (typeof (XmlSchemaSequence), xccx.Particle.GetType ());
 			AssertCompiledComplexType (cType, qname, 0, 0,
 				false, typeof (XmlSchemaComplexContent),
 				true, XmlSchemaContentType.ElementOnly);

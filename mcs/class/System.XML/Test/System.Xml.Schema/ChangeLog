@@ -1,3 +1,8 @@
+2003-07-20  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlSchemaTests.cs : added AssertComplexTypeContentExtension() and
+	  added related tests in TestCompile().
+
 2003-07-19  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XmlSchemaTests.cs : rewrote TestRead() and added TestCompile().
