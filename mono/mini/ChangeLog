@@ -1,3 +1,10 @@
+2004-09-01  Martin Baulig  <martin@ximian.com>
+
+	* mini-x86.c (is_regsize_var): Added support for generic
+	instances.
+	(mono_arch_emit_prolog): Make this compile again, use
+	`x86_push_imm_template (code)'.
+
 2004-08-30 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* mini-x86.c: make all push_imm instructions that get
