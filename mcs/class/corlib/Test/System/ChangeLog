@@ -1,3 +1,7 @@
+2003-05-29  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ArrayTest.cs: added more tests for bug 43783.
+
 2003-05-22  Nick Drochak  <ndrochak@gol.com>
 
 	* ArrayTest.cs: Add conditional compile for 1.1

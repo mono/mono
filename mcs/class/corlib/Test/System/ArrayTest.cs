@@ -35,17 +35,11 @@ namespace MonoTests.System
 	//End Auxiliary Things
 
 [TestFixture]
-public class ArrayTest : TestCase
+public class ArrayTest : Assertion
 {
+	char [] arrsort = {'d', 'b', 'f', 'e', 'a', 'c'};
+
 	public ArrayTest() {}
-
-	protected override void SetUp() 
-	{
-	}
-
-	protected override void TearDown() 
-	{
-	}
 
 	[Test]
 	public void TestIsFixedSize() {
@@ -576,7 +570,7 @@ public class ArrayTest : TestCase
 		{
 			bool errorThrown = false;
 			try {
-				Array.CreateInstance(Type.GetType("System.Char"), (long [])null);
+				Array.CreateInstance(Type.GetType("System.Char"), (int [])null);
 			} catch (ArgumentNullException) {
 				errorThrown = true;
 			}
@@ -1116,7 +1110,7 @@ public class ArrayTest : TestCase
 			bool errorThrown = false;
 			try {
 				char[] c = new Char[2];
-				c.GetValue((long [])null);
+				c.GetValue((int [])null);
 			} catch (ArgumentNullException) {
 				errorThrown = true;
 			}
@@ -1689,7 +1683,7 @@ public class ArrayTest : TestCase
 			bool errorThrown = false;
 			try {
 				char[] c = new Char[2];
-				c.SetValue("buh", (long [])null);
+				c.SetValue("buh", (int [])null);
 			} catch (ArgumentNullException) {
 				errorThrown = true;
 			}
@@ -2289,10 +2283,68 @@ public class ArrayTest : TestCase
 		}
 	}
 	
+	[Test]
+	[ExpectedException (typeof (ArgumentNullException))]
+	public void MoreSort1 ()
+	{
+		Array.Sort (null, 0, 1);
+	}
 
-	// TODO - TestSort passed-in IComparable versions
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void MoreSort2 ()
+	{
+		Array.Sort (arrsort, -1, 3);
+	}
 
-	
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void MoreSort3 ()
+	{
+		Array.Sort (arrsort, 1, -3);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void MoreSort4 ()
+	{
+		Array.Sort (arrsort, arrsort.Length, arrsort.Length + 2);
+	}
+
+	[Test]
+	[ExpectedException (typeof (RankException))]
+	public void MoreSort5 ()
+	{
+		char [,] arr = new char [,] {{'a'}, {'b'}};
+		Array.Sort (arr, 0, 1);
+	}
+
+	[Test]
+	public void MoreSort6 ()
+	{
+		Array.Sort (arrsort, 0, 0);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void MoreSort7 ()
+	{
+		Array.Sort (arrsort, arrsort.Length - 1, 2);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void MoreSort8 ()
+	{
+		Array.Sort (arrsort, 0, arrsort.Length + 1);
+	}
+
+	[Test]
+	public void MoreSort9 ()
+	{
+		char [] a2 = arrsort.Clone ();
+		Array.Sort (arrsort, null, 0, arrsort.Length, null);
+	}
 }
 
 }
