@@ -1,0 +1,3 @@
+2002-07-22 Tim Coleman  <tim@timcoleman.com>
+	* TransactionOption.cs: New enum added as
+		required by System.Web.Services
