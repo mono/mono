@@ -10,9 +10,28 @@
 using System;
 using System.IO;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace System.Diagnostics {
 	public class Process : Component {
+		[StructLayout(LayoutKind.Sequential)]
+		private struct ProcInfo {
+			public IntPtr process_handle;
+			public IntPtr thread_handle;
+			public int pid;
+			public int tid;
+		};
+		
+		IntPtr process_handle;
+		int pid;
+		
+		/* Private constructor called from other methods */
+		private Process(IntPtr handle, int id) {
+			process_handle=handle;
+			pid=id;
+		}
+		
 		[MonoTODO]
 		public Process() {
 		}
@@ -33,24 +52,30 @@ namespace System.Diagnostics {
 			}
 		}
 
-		[MonoTODO]
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private extern static int ExitCode_internal(IntPtr handle);
+
 		public int ExitCode {
 			get {
-				return(0);
+				return(ExitCode_internal(process_handle));
 			}
 		}
 
-		[MonoTODO]
+		/* Returns the process start time in Windows file
+		 * times (ticks from DateTime(1/1/1601 00:00 GMT))
+		 */
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private extern static long ExitTime_internal(IntPtr handle);
+		
 		public DateTime ExitTime {
 			get {
-				return(new DateTime(0));
+				return(DateTime.FromFileTime(ExitTime_internal(process_handle)));
 			}
 		}
 
-		[MonoTODO]
 		public IntPtr Handle {
 			get {
-				return((IntPtr)0);
+				return(process_handle);
 			}
 		}
 
@@ -68,10 +93,9 @@ namespace System.Diagnostics {
 			}
 		}
 
-		[MonoTODO]
 		public int Id {
 			get {
-				return(0);
+				return(pid);
 			}
 		}
 
@@ -82,10 +106,9 @@ namespace System.Diagnostics {
 			}
 		}
 
-		[MonoTODO]
 		public ProcessModule MainModule {
 			get {
-				return(null);
+				return(this.Modules[0]);
 			}
 		}
 
@@ -121,10 +144,21 @@ namespace System.Diagnostics {
 			}
 		}
 
-		[MonoTODO]
+		/* Returns the list of process modules.  The main module is
+		 * element 0.
+		 */
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private extern ProcessModule[] GetModules_internal();
+
+		private ProcessModuleCollection module_collection;
+		
 		public ProcessModuleCollection Modules {
 			get {
-				return(null);
+				if(module_collection==null) {
+					module_collection=new ProcessModuleCollection(GetModules_internal());
+				}
+
+				return(module_collection);
 			}
 		}
 
@@ -246,19 +280,34 @@ namespace System.Diagnostics {
 			}
 		}
 
-		[MonoTODO]
+		private ProcessStartInfo start_info=null;
+		
 		public ProcessStartInfo StartInfo {
 			get {
-				return(null);
+				if(start_info==null) {
+					start_info=new ProcessStartInfo();
+				}
+				
+				return(start_info);
 			}
 			set {
+				if(value==null) {
+					throw new ArgumentException("value is null");
+				}
+				
+				start_info=value;
 			}
 		}
 
-		[MonoTODO]
+		/* Returns the process start time in Windows file
+		 * times (ticks from DateTime(1/1/1601 00:00 GMT))
+		 */
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private extern static long StartTime_internal(IntPtr handle);
+		
 		public DateTime StartTime {
 			get {
-				return(new DateTime(0));
+				return(DateTime.FromFileTime(StartTime_internal(process_handle)));
 			}
 		}
 
@@ -319,9 +368,15 @@ namespace System.Diagnostics {
 		public static void EnterDebugMode() {
 		}
 
-		[MonoTODO]
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private extern static IntPtr GetCurrentProcess_internal();
+		
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private extern static int GetPid_internal();
+
 		public static Process GetCurrentProcess() {
-			return(null);
+			return(new Process(GetCurrentProcess_internal(),
+					   GetPid_internal()));
 		}
 
 		[MonoTODO]
@@ -366,14 +421,42 @@ namespace System.Diagnostics {
 		public void Refresh() {
 		}
 
-		[MonoTODO]
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private extern static bool Start_internal(string file,
+							  string args,
+							  ref ProcInfo proc_info);
+
+		[MonoTODO("file descriptors and the rest of ProcessStartInfo")]
 		public bool Start() {
-			return(false);
+			bool ret;
+			ProcInfo proc_info=new ProcInfo();
+			
+			ret=Start_internal(start_info.FileName,
+					   start_info.Arguments,
+					   ref proc_info);
+
+			if(ret==true) {
+				process_handle=proc_info.process_handle;
+				pid=proc_info.pid;
+			}
+			
+			return(ret);
 		}
 
-		[MonoTODO]
+		[MonoTODO("file descriptors and the rest of ProcessStartInfo")]
 		public static Process Start(ProcessStartInfo startInfo) {
-			return(null);
+			bool ret;
+			ProcInfo proc_info=new ProcInfo();
+			
+			ret=Start_internal(startInfo.FileName,
+					   startInfo.Arguments, ref proc_info);
+			
+			if(ret==true) {
+				return(new Process(proc_info.process_handle,
+						   proc_info.pid));
+			} else {
+				return(null);
+			}
 		}
 
 		[MonoTODO]
@@ -391,13 +474,20 @@ namespace System.Diagnostics {
 			return("process name");
 		}
 
-		[MonoTODO]
+		/* Waits up to ms milliseconds for process 'handle' to
+		 * exit.  ms can be <0 to mean wait forever.
+		 */
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private extern bool WaitForExit_internal(IntPtr handle,
+							 int ms);
+
 		public void WaitForExit() {
+			WaitForExit_internal(process_handle, -1);
 		}
 
-		[MonoTODO]
 		public bool WaitForExit(int milliseconds) {
-			return(false);
+			return(WaitForExit_internal(process_handle,
+						    milliseconds));
 		}
 
 		[MonoTODO]
@@ -413,12 +503,38 @@ namespace System.Diagnostics {
 		[MonoTODO]
 		public event EventHandler Exited;
 
-		[MonoTODO]
+		// Closes the system process handle
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private extern void Process_free_internal(IntPtr handle);
+		
+		private bool disposed = false;
+		
 		protected override void Dispose(bool disposing) {
+			// Check to see if Dispose has already been called.
+			if(this.disposed) {
+				// If this is a call to Dispose,
+				// dispose all managed resources.
+				if(disposing) {
+					// Do stuff here
+				}
+				
+				// Release unmanaged resources
+				this.disposed=true;
+
+				lock(this) {
+					if(process_handle!=IntPtr.Zero) {
+						
+						Process_free_internal(process_handle);
+						process_handle=IntPtr.Zero;
+					}
+				}
+			}
 		}
 
-		[MonoTODO]
 		public override void Dispose() {
+			Dispose(true);
+			// Take yourself off the Finalization queue
+			GC.SuppressFinalize(this);
 		}
 
 		[MonoTODO]

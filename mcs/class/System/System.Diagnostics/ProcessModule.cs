@@ -12,45 +12,58 @@ using System.ComponentModel;
 
 namespace System.Diagnostics {
 	public class ProcessModule : Component {
-		[MonoTODO]
+		private IntPtr baseaddr;
+		private IntPtr entryaddr;
+		private string filename;
+		private FileVersionInfo version_info;
+		private int memory_size;
+		private string modulename;
+		
+		internal ProcessModule(IntPtr baseaddr, IntPtr entryaddr,
+				       string filename,
+				       FileVersionInfo version_info,
+				       int memory_size, string modulename) {
+			this.baseaddr=baseaddr;
+			this.entryaddr=entryaddr;
+			this.filename=filename;
+			this.version_info=version_info;
+			this.memory_size=memory_size;
+			this.modulename=modulename;
+	}
+		
 		public IntPtr BaseAddress {
 			get {
-				return((IntPtr)0);
+				return(baseaddr);
 			}
 		}
 
-		[MonoTODO]
 		public IntPtr EntryPointAddress {
 			get {
-				return((IntPtr)0);
+				return(entryaddr);
 			}
 		}
 
-		[MonoTODO]
 		public string FileName {
 			get {
-				return("filename");
+				return(filename);
 			}
 		}
 
-		[MonoTODO]
 		public FileVersionInfo FileVersionInfo {
 			get {
-				return(null);
+				return(version_info);
 			}
 		}
 
-		[MonoTODO]
 		public int ModuleMemorySize {
 			get {
-				return(0);
+				return(memory_size);
 			}
 		}
 
-		[MonoTODO]
 		public string ModuleName {
 			get {
-				return("module name");
+				return(modulename);
 			}
 		}
 

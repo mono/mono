@@ -1,3 +1,16 @@
+2002-06-25  Dick Porter  <dick@ximian.com>
+
+	* Process.cs: Process forking and waiting, and some support functions
+
+	* ProcessStartInfo.cs: Implemented the bits needed for basic
+	Process forking
+
+	* ProcessModule.cs: Implemented
+
+	* ProcessModuleCollection.cs: Mostly implemented
+
+	* FileVersionInfo.cs: Implemented
+
 2002-06-16  Jonathan Pryor <jonpryor@vt.edu>
 	* ICollectData.cs: Implemented
 	* TraceImpl.cs: Setting IndentLevel, IndentSize should change the

@@ -8,207 +8,266 @@
 //
 
 using System;
+using System.Runtime.CompilerServices;
 
 namespace System.Diagnostics {
 	public sealed class FileVersionInfo {
-		[MonoTODO]
+		/* There is no public constructor for this class, it
+		 * is initialised by the runtime.  All the private
+		 * variables here are looked up by name, so dont
+		 * change them without also changing the runtime
+		 */
+		private string comments;
+		private string companyname;
+		private string filedescription;
+		private string filename;
+		private string fileversion;
+		private string internalname;
+		private string language;
+		private string legalcopyright;
+		private string legaltrademarks;
+		private string originalfilename;
+		private string privatebuild;
+		private string productname;
+		private string productversion;
+		private string specialbuild;
+		private bool isdebug;
+		private bool ispatched;
+		private bool isprerelease;
+		private bool isprivatebuild;
+		private bool isspecialbuild;
+		private int filemajorpart;
+		private int fileminorpart;
+		private int filebuildpart;
+		private int fileprivatepart;
+		private int productmajorpart;
+		private int productminorpart;
+		private int productbuildpart;
+		private int productprivatepart;
+
+		private FileVersionInfo() {
+			/* This is here just to shut the compiler up */
+			comments=null;
+			companyname=null;
+			filedescription=null;
+			filename=null;
+			fileversion=null;
+			internalname=null;
+			language=null;
+			legalcopyright=null;
+			legaltrademarks=null;
+			originalfilename=null;
+			privatebuild=null;
+			productname=null;
+			productversion=null;
+			specialbuild=null;
+			isdebug=false;
+			ispatched=false;
+			isprerelease=false;
+			isprivatebuild=false;
+			isspecialbuild=false;
+			filemajorpart=0;
+			fileminorpart=0;
+			filebuildpart=0;
+			fileprivatepart=0;
+			productmajorpart=0;
+			productminorpart=0;
+			productbuildpart=0;
+			productprivatepart=0;
+		}
+		
+		
 		public string Comments {
 			get {
-				return("No comment");
+				return(comments);
 			}
 		}
 
-		[MonoTODO]
 		public string CompanyName {
 			get {
-				return("The Evil Empire, Inc");
+				return(companyname);
 			}
 		}
 
-		[MonoTODO]
 		public int FileBuildPart {
 			get {
-				return(0);
+				return(filebuildpart);
 			}
 		}
 
-		[MonoTODO]
 		public string FileDescription {
 			get {
-				return("crap");
+				return(filedescription);
 			}
 		}
 
-		[MonoTODO]
 		public int FileMajorPart {
 			get {
-				return(0);
+				return(filemajorpart);
 			}
 		}
 		
-		[MonoTODO]
 		public int FileMinorPart {
 			get {
-				return(0);
+				return(fileminorpart);
 			}
 		}
 
-		[MonoTODO]
 		public string FileName {
 			get {
-				return("filename");
+				return(filename);
 			}
 		}
 
-		[MonoTODO]
 		public int FilePrivatePart {
 			get {
-				return(0);
+				return(fileprivatepart);
 			}
 		}
 
-		[MonoTODO]
 		public string FileVersion {
 			get {
-				return("0.0.0.0");
+				return(fileversion);
 			}
 		}
 
-		[MonoTODO]
 		public string InternalName {
 			get {
-				return("internal name");
+				return(internalname);
 			}
 		}
 
-		[MonoTODO]
 		public bool IsDebug {
 			get {
-				return(false);
+				return(isdebug);
 			}
 		}
 
-		[MonoTODO]
 		public bool IsPatched {
 			get {
-				return(false);
+				return(ispatched);
 			}
 		}
 
-		[MonoTODO]
 		public bool IsPreRelease {
 			get {
-				return(false);
+				return(isprerelease);
 			}
 		}
 		
-		[MonoTODO]
 		public bool IsPrivateBuild {
 			get {
-				return(false);
+				return(isprivatebuild);
 			}
 		}
 
-		[MonoTODO]
 		public bool IsSpecialBuild {
 			get {
-				return(false);
+				return(isspecialbuild);
 			}
 		}
 
-		[MonoTODO]
 		public string Language {
 			get {
-				return("English");
+				return(language);
 			}
 		}
 
-		[MonoTODO]
 		public string LegalCopyright {
 			get {
-				return("legalese bollocks");
+				return(legalcopyright);
 			}
 		}
 
-		[MonoTODO]
 		public string LegalTrademarks {
 			get {
-				return("more legalese bollocks");
+				return(legaltrademarks);
 			}
 		}
 
-		[MonoTODO]
 		public string OriginalFilename {
 			get {
-				return("original file name");
+				return(originalfilename);
 			}
 		}
 
-		[MonoTODO]
 		public string PrivateBuild {
 			get {
-				return("private build");
+				return(privatebuild);
 			}
 		}
 
-		[MonoTODO]
 		public int ProductBuildPart {
 			get {
-				return(0);
+				return(productbuildpart);
 			}
 		}
 
-		[MonoTODO]
 		public int ProductMajorPart {
 			get {
-				return(0);
+				return(productmajorpart);
 			}
 		}
 
-		[MonoTODO]
 		public int ProductMinorPart {
 			get {
-				return(0);
+				return(productminorpart);
 			}
 		}
 
-		[MonoTODO]
 		public string ProductName {
 			get {
-				return("product name");
+				return(productname);
 			}
 		}
 
-
-		[MonoTODO]
 		public int ProductPrivatePart {
 			get {
-				return(0);
+				return(productprivatepart);
 			}
 		}
 
-		[MonoTODO]
 		public string ProductVersion {
 			get {
-				return("0.0.0.0");
+				return(productversion);
 			}
 		}
 
-		[MonoTODO]
 		public string SpecialBuild {
 			get {
-				return("special build");
+				return(specialbuild);
 			}
 		}
 
-		[MonoTODO]
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private extern void GetVersionInfo_internal(string fileName);
+		
 		public static FileVersionInfo GetVersionInfo(string fileName) {
-			return(null);
-		}
+			FileVersionInfo fvi=new FileVersionInfo();
 
-		[MonoTODO]
+			fvi.GetVersionInfo_internal(fileName);
+			
+			return(fvi);
+		}
+		
 		public override string ToString() {
-			return("string");
+			string str;
+
+			str="File:             " + filename + "\n";
+			str+="InternalName:     " + internalname + "\n";
+			str+="OriginalFilename: " + originalfilename + "\n";
+			str+="FileVersion:      " + fileversion + "\n";
+			str+="FileDescription:  " + filedescription + "\n";
+			str+="Product:          " + productname + "\n";
+			str+="ProductVersion:   " + productversion + "\n";
+			str+="Debug:            " + isdebug + "\n";
+			str+="Patched:          " + ispatched + "\n";
+			str+="PreRelease:       " + isprerelease + "\n";
+			str+="PrivateBuild:     " + isprivatebuild + "\n";
+			str+="SpecialBuild:     " + isspecialbuild + "\n";
+			str+="Language          " + language + "\n";
+			
+			return(str);
 		}
 	}
 }

@@ -23,100 +23,119 @@ namespace System.Diagnostics {
 		public ProcessStartInfo(string filename, string arguments) {
 		}
 
-		[MonoTODO]
+		private string arguments="";
+		
 		public string Arguments {
 			get {
-				return("");
+				return(arguments);
 			}
 			set {
+				arguments=value;
 			}
 		}
 
-		[MonoTODO]
+		private bool create_no_window=false;
+		
 		public bool CreateNoWindow {
 			get {
-				return(false);
+				return(create_no_window);
 			}
 			set {
+				create_no_window=value;
 			}
 		}
 
-		[MonoTODO]
+		[MonoTODO("Need to read the env block somehow")]
 		public StringDictionary EnvironmentVariables {
 			get {
 				return(null);
 			}
 		}
-
-		[MonoTODO]
+		private bool error_dialog=false;
+		
 		public bool ErrorDialog {
 			get {
-				return(false);
+				return(error_dialog);
 			}
 			set {
+				error_dialog=value;
 			}
 		}
 
-		[MonoTODO]
+		private IntPtr error_dialog_parent_handle=(IntPtr)0;
+		
 		public IntPtr ErrorDialogParentHandle {
 			get {
-				return((IntPtr)0);
+				return(error_dialog_parent_handle);
 			}
 			set {
+				error_dialog_parent_handle=value;
 			}
 		}
 
-		[MonoTODO]
+		private string filename="";
+		
 		public string FileName {
 			get {
-				return("file name");
+				return(filename);
 			}
 			set {
+				filename=value;
 			}
 		}
 
-		[MonoTODO]
+		private bool redirect_standard_error=false;
+		
 		public bool RedirectStandardError {
 			get {
-				return(false);
+				return(redirect_standard_error);
 			}
 			set {
+				redirect_standard_error=value;
 			}
 		}
 
-		[MonoTODO]
+		private bool redirect_standard_input=false;
+		
 		public bool RedirectStandardInput {
 			get {
-				return(false);
+				return(redirect_standard_input);
 			}
 			set {
+				redirect_standard_input=value;
 			}
 		}
 
-		[MonoTODO]
+		private bool redirect_standard_output=false;
+		
 		public bool RedirectStandardOutput {
 			get {
-				return(false);
+				return(redirect_standard_output);
 			}
 			set {
+				redirect_standard_output=value;
 			}
 		}
 
-		[MonoTODO]
+		private bool use_shell_execute=true;
+		
 		public bool UseShellExecute {
 			get {
-				return(false);
+				return(use_shell_execute);
 			}
 			set {
+				use_shell_execute=value;
 			}
 		}
 
-		[MonoTODO]
+		private string verb="";
+		
 		public string Verb {
 			get {
-				return("verb");
+				return(verb);
 			}
 			set {
+				verb=value;
 			}
 		}
 
@@ -127,21 +146,25 @@ namespace System.Diagnostics {
 			}
 		}
 
-		[MonoTODO]
+		private ProcessWindowStyle window_style=ProcessWindowStyle.Normal;
+		
 		public ProcessWindowStyle WindowStyle {
 			get {
-				return(ProcessWindowStyle.Normal);
+				return(window_style);
 			}
 			set {
+				window_style=value;
 			}
 		}
 
-		[MonoTODO]
+		private string working_directory="";
+		
 		public string WorkingDirectory {
 			get {
-				return(".");
+				return(working_directory);
 			}
 			set {
+				working_directory=value;
 			}
 		}
 	}

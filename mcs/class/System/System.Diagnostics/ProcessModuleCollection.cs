@@ -11,23 +11,29 @@ using System.Collections;
 
 namespace System.Diagnostics {
 	public class ProcessModuleCollection : ReadOnlyCollectionBase {
+		private ProcessModule[] modules;
+		
 		[MonoTODO]
 		protected ProcessModuleCollection() {
 		}
 
-		[MonoTODO]
 		public ProcessModuleCollection(ProcessModule[] processModules) {
+			modules=processModules;
 		}
 		
-		[MonoTODO]
 		public ProcessModule this[int index] {
 			get {
-				return(null);
+				return(modules[index]);
 			}
 		}
 
-		[MonoTODO]
 		public bool Contains(ProcessModule module) {
+			foreach(ProcessModule test in modules) {
+				if(module==test) {
+					return(true);
+				}
+			}
+			
 			return(false);
 		}
 
@@ -35,8 +41,16 @@ namespace System.Diagnostics {
 		public void CopyTo(ProcessModule[] array, int index) {
 		}
 
-		[MonoTODO]
 		public int IndexOf(ProcessModule module) {
+			int i;
+
+			for(i=0; i<modules.Length; i++) {
+				if(modules[i]==module) {
+					return(i);
+				}
+			}
+			
+			// FIXME!
 			return(0);
 		}
 	}
