@@ -1,5 +1,12 @@
 2004-02-20  Martin Baulig  <martin@ximian.com>
 
+	* reflection.c (mono_type_get_object): Also use the cache for
+	generic instances.
+	(mono_reflection_bind_generic_parameters): Always compute
+	`ginst->ifaces'.	
+
+2004-02-20  Martin Baulig  <martin@ximian.com>
+
 	* class.h (MonoGenericMethod): Removed `klass'.
 
 	* class.c (mono_class_inflate_generic_method): Added `MonoClass
