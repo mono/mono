@@ -499,6 +499,8 @@ namespace System.Windows.Forms
 			mouse_clicks = 1;
 			tab_index = -1;
 
+			control_style = ControlStyles.Selectable | ControlStyles.StandardClick | ControlStyles.StandardDoubleClick;
+
 			parent = null;
 			background_image = null;
 			text = string.Empty;
@@ -645,6 +647,7 @@ namespace System.Windows.Forms
 
 		private bool Select(Control control) {
 			Control	parent;
+			IContainerControl container;
 
 			if (control == null) {
 				return false;
@@ -657,11 +660,17 @@ namespace System.Windows.Forms
 					if (!parent.is_visible || !parent.is_enabled) {
 						return false;
 					}
+					parent = parent.parent;
 				}
 			}
 
 			control.is_selected = true;
 
+			XplatUI.SetFocus(control.window.Handle);
+			container = GetContainerControl();
+			if (container != null) {
+				container.ActiveControl = control;
+			}
 			return true;
 		}
 
@@ -1105,7 +1114,7 @@ namespace System.Windows.Forms
 				}
 
 				for (int i=0; i < child_controls.Count; i++) {
-					if (child_controls[i].Focused) {
+					if (child_controls[i].ContainsFocus) {
 						return true;
 					}
 				}
@@ -1838,6 +1847,12 @@ namespace System.Windows.Forms
 			return result.EndInvoke ();
 		}
 
+		public bool Focus() {
+			if (IsHandleCreated) {
+				XplatUI.SetFocus(window.Handle);
+			}
+			return true;
+		}
 
 		public Control GetChildAtPoint(Point pt) {
 			// Microsoft's version of this function doesn't seem to work, so I can't check
@@ -1855,7 +1870,7 @@ namespace System.Windows.Forms
 			Control	current = this;
 
 			while (current!=null) {
-				if ((current.control_style & ControlStyles.ContainerControl)!=0) {
+				if ((current is IContainerControl) && ((current.control_style & ControlStyles.ContainerControl)!=0)) {
 					return (IContainerControl)current;
 				}
 				current = current.parent;
@@ -1968,8 +1983,8 @@ namespace System.Windows.Forms
 					diff_height = 0;
 				}
 
-				// Deal with docking
-				for (int i=0; i < child_controls.Count; i++) {
+				// Deal with docking; go through in reverse, MS docs say that lowest Z-order is closest to edge
+				for (int i = child_controls.Count - 1; i >= 0; i--) {
 					child=child_controls[i];
 					switch (child.Dock) {
 					case DockStyle.None: {
@@ -2150,8 +2165,25 @@ namespace System.Windows.Forms
 			Select(false, false);
 		}
 
-		[MonoTODO("Finish")]
 		public bool SelectNextControl(Control ctl, bool forward, bool tabStopOnly, bool nested, bool wrap) {
+			Control c;
+
+			c = ctl;
+			do {
+				c = GetNextControl(c, forward);
+				if (c == null) {
+					if (wrap) {
+						continue;
+					}
+					break;
+				}
+
+				if (c.CanSelect && ((c.parent == this) || nested) && (c.tab_stop || !tabStopOnly)) {
+					c.Select(false, forward);
+					return true;
+				}
+			} while (c != ctl);	// If we wrap back to ourselves we stop
+
 			return false;
 		}
 
@@ -2489,8 +2521,6 @@ namespace System.Windows.Forms
 
 			index = parent.child_controls.IndexOf(this);
 			result = false;
-
-			
 
 			do {
 				if (forward) {
@@ -2903,10 +2933,32 @@ namespace System.Windows.Forms
 			}
 
 			case Msg.WM_KILLFOCUS: {
+Console.WriteLine("Window {0} lost focus", this.Text);
+				OnLeave(EventArgs.Empty);
+				if (CausesValidation) {
+					CancelEventArgs e;
+					e = new CancelEventArgs(false);
+
+					OnValidating(e);
+
+					if (e.Cancel) {
+						Focus();
+						break;
+					}
+
+					OnValidated(EventArgs.Empty);
+				}
+
+				this.has_focus = false;
+				OnLostFocus(EventArgs.Empty);
 				break;
 			}
 
 			case Msg.WM_SETFOCUS: {
+Console.WriteLine("Window {0} got focus", this.Text);
+				OnEnter(EventArgs.Empty);
+				this.has_focus = true;
+				OnGotFocus(EventArgs.Empty);
 				break;
 			}
 				

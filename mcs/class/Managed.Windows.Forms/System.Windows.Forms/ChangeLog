@@ -1,4 +1,12 @@
-2005-01-112  Jordi Mas i Hernandez <jordi@ximian.com>
+2005-01-12  Peter Bartok  <pbartok@novell.com>
+
+	* Control.cs:
+	  - Implemented SelectNextControl() method
+	  - Several focus related bug fixes
+	  - Fixed Docking calculations to match MS documentation and
+	    behaviour
+
+2005-01-12  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* ContainerControl.cs, ListControl.cs, ListBox.cs: keyboard navigation and
 	bug fixes
