@@ -1,3 +1,7 @@
+2002-12-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* icall.c: assign minor, build and revision in FillName.
+
 2002-12-11  Zoltan Varga  <vargaz@freemail.hu>
 
 	* image.h reflection.h reflection.c class.h class.c loader.c object.c:
