@@ -28,6 +28,7 @@ namespace MonoTests.System {
 				suite.AddTest (CharEnumeratorTest.Suite);
                                 suite.AddTest (CharTest.Suite);
                                 suite.AddTest (ConsoleTest.Suite);
+				suite.AddTest (ConvertTest.Suite);
 				suite.AddTest (DateTimeTest.Suite);
 				suite.AddTest (DoubleTest.Suite);
 				suite.AddTest (EnumTest.Suite);
