@@ -1,3 +1,11 @@
+2005-02-02  Raja R Harinath  <rharinath@novell.com>
+
+	Fix a crasher in a variant of #31984.
+	* const.cs (Constant.CheckBase): New override that defers the
+	new-or-override check in case the base type hasn't been populated
+	yet.
+	(Constant.Define): Ensure the new-or-override check is performed.
+
 2005-02-01  Duncan Mak  <duncan@ximian.com>
 
 	* const.cs (LookupConstantValue): Check that `ce' is not null
