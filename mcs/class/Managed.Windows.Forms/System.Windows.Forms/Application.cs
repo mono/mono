@@ -328,6 +328,7 @@ namespace System.Windows.Forms {
 			app_context=context;
 			if (app_context.MainForm!=null) {
 				app_context.MainForm.Show();
+				app_context.MainForm.SetBounds(app_context.MainForm.Location.X, app_context.MainForm.Location.Y, app_context.MainForm.Size.Width, app_context.MainForm.Size.Height);
 				app_context.ThreadExit += new EventHandler(InternalExit);
 			}
 			Run();

@@ -1,3 +1,9 @@
+2005-01-10  Peter Bartok  <pbartok@novell.com>
+
+	* Application.cs: Added temporary hack to resolve all our resize
+	  required issues on startup. This will get fixed properly at
+	  some point in the future
+
 2005-01-10  Jackson Harper  <jackson@ximian.com>
 
 	* SizeGrip.cs: New internal class that is used as a sizing
