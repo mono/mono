@@ -111,7 +111,7 @@ namespace System.Web.UI.HtmlControls{
 				return (disableAttr != null);
                         }
 			set {
-                                if (value)
+                                if (!value)
                                         Attributes.Remove ("disabled");
                                 else
                                         Attributes["disabled"] = "disabled";

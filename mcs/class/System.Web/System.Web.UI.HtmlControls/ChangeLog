@@ -1,3 +1,8 @@
+2003-12-01  Jackson Harper <jackson@ximian.com>
+
+	* HtmlControl.cs: Fix disabled property. Patch by Alon Gazit
+	<along@mainsoft.com>.
+	
 2003-11-25  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HtmlSelect.cs: don't add items without data. Patch by Alon Gazit
