@@ -66,7 +66,7 @@ statement returns [AST stm]
 	: stm = expr_stm SEMI_COLON
 	| stm = var_stm
 	| empty_stm
-	| if_stm
+	| stm = if_stm
 	| iteration_stm
 	| continue_stm
 	| break_stm
@@ -151,8 +151,17 @@ inside_for
 	// FIXME: left_hand_side_expr in exp rule, missing
 	;
 
-if_stm
-	: "if" OPEN_PARENS expr CLOSE_PARENS "else" statement
+if_stm returns [If ifStm]
+{
+	ifStm = null;
+	AST cond, true_stm, false_stm;
+	cond = true_stm = false_stm = null;
+}
+	: "if" OPEN_PARENS cond = expr CLOSE_PARENS true_stm = statement 
+	  (("else")=> "else" false_stm = statement | )
+	  {
+		  ifStm = new If (cond, true_stm, false_stm);
+	  }
 	;
 
 empty_stm
@@ -896,8 +905,6 @@ OPEN_BRACKET: '[';
 CLOSE_BRACKET: ']';
 OPEN_BRACE: '{';
 CLOSE_BRACE: '}';
-
-
 
 //
 // Punctuators

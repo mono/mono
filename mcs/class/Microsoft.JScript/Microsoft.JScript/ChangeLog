@@ -1,3 +1,9 @@
+2003-10-22  cesar lopez nataren <cesar@ciencias.unam.mx>
+
+	* jscript-lexer-parser.g: added building tree for if_stm.
+	* Statement.cs: Added if class for 'if' statement.
+	
+
 2003-10-21  cesar lopez nataren  <cesar@ciencias.unam.mx>
 
 	* VariableDeclaration.cs: added the initializer to ToString.
