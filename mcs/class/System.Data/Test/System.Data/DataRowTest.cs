@@ -3,10 +3,12 @@
 // Authors:
 //   Franklin Wise (gracenote@earthlink.net)
 //   Daniel Morgan <danmorg@sc.rr.com>
+//   Roopa Wilson (rowilson@novell.com)
 //
 // (C) Copyright 2002 Franklin Wise
 // (C) Copyright 2003 Daniel Morgan
 // (C) Copyright 2003 Martin Willemoes Hansen
+// (C) Copyright 2004 Novell Inc.
 // 
 
 using NUnit.Framework;
@@ -19,11 +21,298 @@ namespace MonoTests.System.Data
 	public class DataRowTest : Assertion {
 	
 		private DataTable _tbl;	
+	        private DataTable table;                                                
+                private DataRow row;    
 
 		[SetUp]
 		public void GetReady() {
 			_tbl = new DataTable();
+			table = MakeTable ();                                           
+                        row = table.NewRow ();                                          
+                        row ["FName"] = "Hello";                                        
+                        row ["LName"] = "World";                                        
+                        table.Rows.Add (row);  
 		}
+		
+		private DataTable MakeTable ()
+                {
+                        DataTable namesTable = new DataTable ("Names");
+                        DataColumn idColumn = new  DataColumn ();
+                                                                                                    
+                                                                                                    
+                        idColumn.DataType = System.Type.GetType ("System.Int32");
+                        idColumn.ColumnName = "Id";
+                        idColumn.AutoIncrement = true;
+                        namesTable.Columns.Add (idColumn);
+                                                                                                    
+                                                                                                    
+                        DataColumn fNameColumn = new DataColumn ();
+                        fNameColumn.DataType = System.Type.GetType ("System.String");
+                        fNameColumn.ColumnName = "Fname";
+                        fNameColumn.DefaultValue = "Fname";
+                        namesTable.Columns.Add (fNameColumn);
+                                                                                                    
+                        DataColumn lNameColumn = new DataColumn ();
+                        lNameColumn.DataType = System.Type.GetType ("System.String");
+                        lNameColumn.ColumnName = "LName";
+                        lNameColumn.DefaultValue="LName";
+                        namesTable.Columns.Add (lNameColumn);
+                                                                                                    
+                                                                                                    
+                        // Set the primary key for the table
+                        DataColumn [] keys = new DataColumn [1];
+                        keys [0] = idColumn;
+                        namesTable.PrimaryKey = keys;
+                        // Return the new DataTable.
+                        return namesTable;
+                }
+
+		[Test]
+                public void SetColumnErrorTest ()
+                {
+                        string errorString;
+                        errorString = "Some error!";
+                        // Set the error for the specified column of the row.
+                        row.SetColumnError (1, errorString);
+                        GetColumnErrorTest ();
+                        GetAllErrorsTest ();
+                }
+
+                private  void GetColumnErrorTest ()
+                {
+                        // Print the error of a specified column.
+                        AssertEquals ("#A01", "Some error!", row.GetColumnError (1));
+                }
+
+                private void GetAllErrorsTest ()
+                {
+                        DataColumn [] colArr;
+                                                                                                    
+                        if (row.HasErrors) {
+                                colArr = row.GetColumnsInError ();
+                                                                                                    
+                                for (int i = 0; i < colArr.Length; i++) {
+                                        AssertEquals ("#A02", table.Columns [1], colArr [i]);
+                                }
+                                row.ClearErrors ();
+                        }
+                }
+
+		[Test]
+                public void RowEditTest()
+                {
+                        DeleteRowTest ();
+                        EditModeTest ();
+                        ParentRowTest ();
+                }
+                                                                                                    
+                private void DeleteRowTest ()
+                {
+                        DataRow newRow;
+                                                                                                    
+                                                                                                    
+                        for (int i = 1; i <= 2; i++) {
+                                newRow = table.NewRow ();
+                                newRow ["FName"] = "Name " + i;
+                                newRow ["LName"] = " Last Name" + i;
+                                table.Rows.Add (newRow);
+                        }
+                        table.AcceptChanges ();
+                                                                                                    
+                        int cnt = 1;
+                        for (int i = 1; i < table.Rows.Count; i++) {
+                                DataRow r = table.Rows [i];
+                                AssertEquals ("#A03", "Name " + cnt, r ["fName"]);
+                                cnt++;
+                        }
+                                                                                                    
+                                                                                                    
+                        // Create a DataView with the table.
+                        DataRowCollection rc = table.Rows;
+                        rc [0].Delete ();
+		        rc [2].Delete ();
+                                                                                                    
+                                                                                                    
+                        AssertEquals ("#A04", "Deleted", rc [0].RowState.ToString ());
+                        AssertEquals ("#A05", "Deleted", rc [2].RowState.ToString ());
+                                                                                                    
+                                                                                                    
+                        // Accept changes
+                        table.AcceptChanges ();
+                        AssertEquals ("#A06", "Name 1", (table.Rows [0]) [1]);
+                        try  {
+                                Console.WriteLine (rc [2]);
+                                Fail ("#A07");
+                        }
+                        catch (Exception e) {
+                                AssertEquals ("#A08", "There is no row at position 2.", e.Message);
+                        }
+                }
+
+                private void EditModeTest ()
+                {
+                        try {
+                                //Clear all existing values from table
+                                for (int i = 0; i < table.Rows.Count; i++) {
+                                        table.Rows[i].Delete ();
+                                }
+                                table.AcceptChanges ();
+                                row = table.NewRow ();
+                                row["FName"] = "My FName";
+				table.Rows.Add (row);
+                                                                                                    
+                                                                                                    
+                                // Stage 1
+                                //Initially: After Add (Row) But Before Accept Changes");
+                                AssertEquals ("#A09", "My FName", row [1, DataRowVersion.Default]);
+                                AssertEquals ("#A10", "LName", row [2, DataRowVersion.Default]);
+                                                                                                    
+                                AssertEquals ("#A11", "My FName", row [1, DataRowVersion.Current]);
+                                AssertEquals ("#A12", "LName", row [2, DataRowVersion.Current]);
+                                                                                                    
+                                try {
+                                        Console.WriteLine (row [1, DataRowVersion.Original]);
+                                        Console.WriteLine (row [1, DataRowVersion.Proposed]);
+                                        Fail ("#A13");
+                                }
+                                catch (Exception e) {
+                                        if (e.GetType () != typeof (AssertionException)) {
+                                                AssertEquals ("#A14", typeof (VersionNotFoundException), e.GetType ());
+                                        }
+                                }
+                                                                                                    
+                                // Stage 2
+                                //After Accept Changes
+                                table.AcceptChanges ();
+                                AssertEquals ("#A15", "My FName", row [1, DataRowVersion.Default]);
+                                AssertEquals ("#A16", "LName", row [2, DataRowVersion.Default]);
+                                                                                                    
+                                                                                                    
+                                AssertEquals ("#A17", "My FName", row [1, DataRowVersion.Current]);
+                                AssertEquals ("#A18", "LName", row [2, DataRowVersion.Current]);
+                                
+				try {
+                                        Console.WriteLine (row [1, DataRowVersion.Proposed]);
+                                        Fail ("#A19");
+                                }
+                                catch (Exception e) {
+                                        if (e.GetType () != typeof (AssertionException)) {
+                                                AssertEquals ("#A20", typeof (VersionNotFoundException), e.GetType ());
+                                        }
+                                }
+                                                                                                    
+                                                                                                                                                                                                         
+                                // Stage 3                                 // Edit Mode
+                                table.Rows [0].BeginEdit ();
+                                table.Rows [0] ["LName"] = "My LName";
+                                                                                                    
+                                AssertEquals ("#A21", "My FName", row [1, DataRowVersion.Default]);
+                                AssertEquals ("#A22", "My LName", row [2, DataRowVersion.Default]);
+                                                                                                                                                                                                         
+                                AssertEquals ("#A23", "My FName", row [1, DataRowVersion.Current]);
+                                AssertEquals ("#A24", "LName", row [2, DataRowVersion.Current]);
+                                                                                                    
+                                                                                                    
+                                AssertEquals ("#A25", "My FName", row [1, DataRowVersion.Original]);                                AssertEquals ("#A26", "LName", row [2, DataRowVersion.Original]);
+                                                                                                    
+                                AssertEquals ("#A26", "My FName", row [1, DataRowVersion.Proposed]);
+	                        AssertEquals ("#A27", "My LName", row [2, DataRowVersion.Proposed]);                                                                                                    
+                                                                                                    
+                                                                                                    
+                                // Stage 4
+                                //After Edit sessions
+                                for (int i=0; i < table.Rows.Count;i++)
+                                        table.Rows [i].EndEdit ();
+                                AssertEquals ("#A28", "My FName", row [1, DataRowVersion.Default]);
+                                AssertEquals ("#A29", "My LName", row [2, DataRowVersion.Default]);
+                                                                                                                                                                                                         
+                                AssertEquals ("#A30", "My FName", row [1, DataRowVersion.Original]);                                AssertEquals ("#A31", "LName", row [2, DataRowVersion.Original]);
+                                                                                                    
+                                                                                                    
+                                AssertEquals ("#A32", "My FName", row [1, DataRowVersion.Current]);
+                                AssertEquals ("#A33", "My LName", row [2, DataRowVersion.Current]);
+                                                                                                    
+                                try {
+                                        Console.WriteLine (row [1, DataRowVersion.Proposed]);
+                                        Fail ("#A34");
+                                }
+                                catch (Exception e) {
+                                        if (e.GetType ()!=typeof (AssertionException)) {
+                                                AssertEquals ("#A35", typeof (VersionNotFoundException), e.GetType ());
+                                        }
+                                }
+                                                                                                    
+                                //Stage 5
+                                //After Accept Changes
+	                        AssertEquals ("#A36", "My FName", row [1, DataRowVersion.Default]);
+                                AssertEquals ("#A37", "My LName", row [2, DataRowVersion.Default]);
+                                                                                                    
+                                                                                                    
+                                AssertEquals ("#A38", "My FName", row [1, DataRowVersion.Original]);                                AssertEquals ("#A39", "My LName", row [2, DataRowVersion.Original]);                                                                                                    
+                                                                                                    
+                                AssertEquals ("#A40", "My FName", row [1, DataRowVersion.Current]);
+                                AssertEquals ("#A41", "My LName", row [2, DataRowVersion.Current]);
+                                                                                                    
+                                                                                                    
+                                try {
+                                        Console.WriteLine (row [1, DataRowVersion.Proposed]);
+                                        Fail ("#A42");
+                                }
+                                catch (Exception e) {
+                                                if (e.GetType () != typeof (AssertionException)) {
+                                                        AssertEquals ("#A43", typeof (VersionNotFoundException),
+                                                                e.GetType ());
+                                                }
+                                        }
+                                                                                                    
+                                                                                                    
+                        }
+                        catch (Exception e){
+                                Console.WriteLine (e + "" + e.StackTrace);
+                        }
+                }                                                                                                     
+		private void ParentRowTest (){
+
+                        //Clear all existing values from table
+                        for (int i = 0; i < table.Rows.Count; i++) {
+                                        table.Rows[i].Delete ();
+                        }
+                        table.AcceptChanges ();
+                        row = table.NewRow ();
+                        row["FName"] = "My FName";
+                        row["Id"] = 0;
+                        table.Rows.Add (row);
+                                                                                                    
+                        DataTable tableC = new DataTable ("Child");
+                        DataColumn colC;
+                        DataRow rowC;
+                                                                                                    
+                        colC = new DataColumn ();
+                        colC.DataType = System.Type.GetType ("System.Int32");
+                        colC.ColumnName = "Id";
+                        colC.AutoIncrement=true;
+                        tableC.Columns.Add (colC);
+                                                                                                    
+                                                                                                    
+                        colC = new DataColumn ();
+                        colC.DataType = System.Type.GetType ("System.String");
+                        colC.ColumnName = "Name";
+                        tableC.Columns.Add (colC);
+                                                                                                    
+                        rowC = tableC.NewRow ();
+                        rowC["Name"] = "My FName";
+                        tableC.Rows.Add (rowC);
+                        DataSet ds = new DataSet ();
+                        ds.Tables.Add (table);
+                        ds.Tables.Add (tableC);
+                        DataRelation dr = new DataRelation ("PO", table.Columns ["Id"], tableC.Columns ["Id"]);
+                        ds.Relations.Add (dr);
+                                                                                                    
+                        rowC.SetParentRow (table.Rows [0], dr);
+                                                                                                    
+                        AssertEquals ("#A44", table.Rows [0], (tableC.Rows [0]).GetParentRow (dr));
+                } 
+
 
 		// tests item at row, column in table to be DBNull.Value
 		private void DBNullTest (string message, DataTable dt, int row, int column) 
