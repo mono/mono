@@ -19,6 +19,8 @@ namespace MonoTests.System.Collections.Specialized  {
 		public static ITest Suite {
 			get {
 				TestSuite suite = new TestSuite ();
+				suite.AddTest (BitVector32Test.Suite);
+				suite.AddTest (HybridDictionaryTest.Suite);				
 				suite.AddTest (NameValueCollectionTest.Suite);
 				suite.AddTest (StringCollectionTest.Suite);
 				return suite;

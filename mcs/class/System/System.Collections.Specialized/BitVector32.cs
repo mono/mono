@@ -3,9 +3,13 @@
 //
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
+//   Lawrence Pit (loz@cable.a2000.nl)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
 //
+
+using System;
+using System.Text;
 
 namespace System.Collections.Specialized {
 	
@@ -13,28 +17,46 @@ namespace System.Collections.Specialized {
 		int value;
 
 		public struct Section {
-			public short maxval;
-		}
-
-		[MonoTODO]
-		public static Section CreateSection (short maxval)
-		{
-			Section s = new Section();
-
-			// FIXME: Imeplemtn me
-
-			return s;
+			private short mask;
+			private short offset;
+			
+			internal Section (short mask, short offset) {
+				this.mask = mask;
+				this.offset = offset;
+			}
+			
+			public short Mask {
+				get { return mask; }
+			}
+			
+			public short Offset {
+				get { return offset; }
+			}
+			
+			public override bool Equals (object o) 
+			{
+				if (! (o is Section))
+					return false;
+					
+				Section section = (Section) o;
+				return this.mask == section.mask &&
+				       this.offset == section.offset;
+			}			
+			
+			public override int GetHashCode ()
+			{
+				return (((Int16) mask).GetHashCode () << 16) + 
+				       ((Int16) offset).GetHashCode ();
+			}
+			
+			public override string ToString ()
+			{
+				return "Section{0x" + Convert.ToString(mask, 16) + 
+				       ", 0x" + Convert.ToString(offset, 16) + "}";
+			}
 		}
 		
-		public static int CreateMask ()
-		{
-			return 1;
-		}
-
-		public static int CreateMask (int prev)
-		{
-			return prev << 1;
-		}
+		// Constructors
 		
 		public BitVector32 (BitVector32 source)
 		{
@@ -45,7 +67,78 @@ namespace System.Collections.Specialized {
 		{
 			value = init;
 		}
+		
+		// Properties
+		
+		public int Data {
+			get { return value; }
+		}
+		
+		[MonoTODO]
+		public int this [BitVector32.Section section] {
+			get { return ((this.value >> section.Offset) & section.Mask); }
+			set { 
+				throw new NotImplementedException ();	
+			}
+		}
+		
+		public bool this [int bit] {
+			get { return (value & bit) == bit; }
+			set { 
+				if (value)
+					this.value |= bit;
+				else
+					this.value &= ~bit;
+			}
+		}
+		
+		// Methods
+		
+		public static int CreateMask ()
+		{
+			return 1;
+		}
 
+		public static int CreateMask (int prev)
+		{
+			if (prev == 0)
+				return 1;
+			if (prev == Int32.MinValue) 
+				throw new InvalidOperationException ("all bits set");
+			return prev << 1;
+		}
+
+		public static Section CreateSection (short maxValue)
+		{
+			return CreateSection (maxValue, new Section (0, 0));
+		}
+		
+		public static Section CreateSection (short maxValue, BitVector32.Section previous)
+		{
+			if (maxValue < 1)
+				throw new ArgumentException ("maxValue");
+			
+			int newmask = (int) maxValue;
+			int mask = 0x8000;
+			while ((newmask & mask) == 0)
+				mask >>= 1;
+			while (mask > 0) {
+				newmask |= mask;
+				mask >>= 1;
+			}
+
+			short count = 0;
+			int prev = previous.Mask;
+			mask = 0x8000;
+			while (mask > 0) {
+				if ((prev & mask) != 0)
+					count++;
+				mask >>= 1;
+			}
+
+			return new Section ((short) newmask, (short) (previous.Offset + count));
+		}
+		
 		public override bool Equals (object o)
 		{
 			if (!(o is BitVector32))
@@ -56,13 +149,26 @@ namespace System.Collections.Specialized {
 
 		public override int GetHashCode ()
 		{
-			return 0;
+			return value.GetHashCode ();
 		}
 		
-		public int Data {
-			get {
-				return value;
+		public override string ToString () 
+		{
+			return ToString (this);
+		}
+		
+		public static string ToString (BitVector32 value)
+		{
+			long val = (long) value.value;
+			StringBuilder b = new StringBuilder ();
+			b.Append ("BitVector32{");
+			long mask = (long) 0x80000000;
+			while (mask > 0) {
+				b.Append (((val & mask) == 0) ? '0' : '1');
+				mask >>= 1;
 			}
+			b.Append ('}');
+			return b.ToString ();
 		}
 	}
 }
