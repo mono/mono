@@ -367,10 +367,11 @@ public abstract class Encoding
 
 	// Table of builtin web encoding names and the corresponding code pages.
 	private static readonly String[] encodingNames =
-		{"us-ascii", "utf-7", "utf-8", "utf-16",
+		{"ascii", "us-ascii", "utf-7", "utf-8", "utf-16",
 		 "unicodeFFFE", "iso-8859-1"};
 	private static readonly int[] encodingCodePages =
 		{ASCIIEncoding.ASCII_CODE_PAGE,
+		 ASCIIEncoding.ASCII_CODE_PAGE,
 		 UTF7Encoding.UTF7_CODE_PAGE,
 		 UTF8Encoding.UTF8_CODE_PAGE,
 		 UnicodeEncoding.UNICODE_CODE_PAGE,
@@ -602,7 +603,7 @@ public abstract class Encoding
 						try {
 							defaultEncoding = GetEncoding (codePage);
 						} catch (NotSupportedException) {
-							defaultEncoding = UTF8;
+							defaultEncoding = UTF8Unmarked;
 						}
 					}
 				}
@@ -698,10 +699,6 @@ public abstract class Encoding
 		}
 	}
 
-	//
-	// For now hardcode to Latin1, but we should use the Unix Local to pull the
-	// real charset, and then map to the code page.
-	//
 	internal static Encoding UnixConsoleEncoding {
 		get {
 			if (unixConsoleEncoding == null) {

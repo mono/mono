@@ -1,3 +1,10 @@
+2002-12-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Encoding.cs: g_get_encoding () returns "ASCII". In Default, when the
+	encoding is not found, default to UTF8Unmarked. Removed comment in
+	UnixConsoleEncoding, because it's now Default, which gets the 
+	encoding internally using g_get_encoding ().
+
 2002-12-01  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* StringBuilder.cs: fixed constructor. Thanks to marcusU for reporting.
