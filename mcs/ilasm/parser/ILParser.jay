@@ -589,7 +589,7 @@ slashed_name		: comp_name
                           }
 			;
 
-class_ref		: OPEN_BRACKET file_name CLOSE_BRACKET slashed_name
+class_ref		: OPEN_BRACKET slashed_name CLOSE_BRACKET slashed_name
                           {
                                 if (codegen.IsThisAssembly ((string) $2)) {
                                         $$ = new TypeRef ((string) $4, false, null);
@@ -597,7 +597,7 @@ class_ref		: OPEN_BRACKET file_name CLOSE_BRACKET slashed_name
                                         $$ = new ExternTypeRef ((string) $2, (string) $4, false);
                                 }
                           }
-			| OPEN_BRACKET D_MODULE file_name CLOSE_BRACKET slashed_name
+			| OPEN_BRACKET D_MODULE slashed_name CLOSE_BRACKET slashed_name
 			| slashed_name
                           {
                                 PrimitiveTypeRef prim = PrimitiveTypeRef.GetPrimitiveType ((string) $1);
@@ -681,7 +681,7 @@ type			: K_CLASS class_ref
 				class_ref.MakeValueClass ();
                                 $$ = class_ref;
                           }
-			| K_VALUETYPE OPEN_BRACKET file_name CLOSE_BRACKET slashed_name
+			| K_VALUETYPE OPEN_BRACKET slashed_name CLOSE_BRACKET slashed_name
                           {
                                 $$ = new ExternTypeRef ((string) $3, (string) $5, true);
                           }
@@ -1173,8 +1173,8 @@ field_attr		: /* EMPTY */
 at_opt			: /* EMPTY */
 			| K_AT id
                           {
-                                // DataDef def = new DataDef ((string) $2, false);
-                                // def.PeapiConstant = new DataConstant (DataTable.GetOffset ((string) $2));
+                          //      DataDef def = new DataDef ((string) $2, false);
+                          //      def.PeapiConstant = new DataConstant (DataTable.GetOffset ((string) $2));
                           }
 			;
 
@@ -1454,6 +1454,7 @@ meth_attr		: /* EMPTY */                   { $$ = new MethAttr (); }
 			| meth_attr K_REQSECOBJ         { $$ = (MethAttr) $1 | MethAttr.RequireSecObject; }
 			| meth_attr K_SPECIALNAME       { $$ = (MethAttr) $1 | MethAttr.SpecialName; }
 			| meth_attr K_RTSPECIALNAME     { $$ = (MethAttr) $1 | MethAttr.RTSpecialName; }
+                        | meth_attr K_COMPILERCONTROLLED { /* Do nothing */ }
 			| meth_attr K_UNMANAGEDEXP      
 			| meth_attr K_PINVOKEIMPL OPEN_PARENS comp_qstring K_AS
 				comp_qstring pinv_attr CLOSE_PARENS
@@ -1665,12 +1666,12 @@ slot_num                : OPEN_BRACKET int32 CLOSE_BRACKET
                         ;
 
 type_spec		: class_ref
-			| OPEN_BRACKET file_name CLOSE_BRACKET
+			| OPEN_BRACKET slashed_name CLOSE_BRACKET
                           {
                                 // This is a reference to a global method in another
                                 // assembly. This is not supported in the MS version of ilasm
                           }
-			| OPEN_BRACKET D_MODULE file_name CLOSE_BRACKET
+			| OPEN_BRACKET D_MODULE slashed_name CLOSE_BRACKET
 			| type
 			;
 
@@ -2240,7 +2241,7 @@ file_entry		: /* EMPTY */
 assembly_all		: assembly_head OPEN_BRACE assembly_decls CLOSE_BRACE
 			;
 
-assembly_head		: D_ASSEMBLY asm_attr file_name
+assembly_head		: D_ASSEMBLY asm_attr slashed_name
                           {
                                 codegen.SetAssemblyName ((string) $3);
                           }
@@ -2271,14 +2272,14 @@ asm_or_ref_decl		: D_PUBLICKEY ASSIGN OPEN_PARENS bytes CLOSE_PARENS
 assemblyref_all		: assemblyref_head OPEN_BRACE assemblyref_decls CLOSE_BRACE
 			;
 
-assemblyref_head	: D_ASSEMBLY K_EXTERN file_name
+assemblyref_head	: D_ASSEMBLY K_EXTERN slashed_name
                           {
                                 System.Reflection.AssemblyName asmb_name = 
 					new System.Reflection.AssemblyName ();
 				asmb_name.Name = (string) $3;
 				codegen.ExternTable.AddAssembly ((string) $3, asmb_name);
                           }
-			| D_ASSEMBLY K_EXTERN file_name K_AS file_name
+			| D_ASSEMBLY K_EXTERN slashed_name K_AS slashed_name
                           {
                                 System.Reflection.AssemblyName asmb_name = 
 					new System.Reflection.AssemblyName ();
@@ -2339,7 +2340,7 @@ manifestres_decls	: /* EMPTY */
 			;
 
 manifestres_decl	: D_FILE comp_name K_AT int32
-			| D_ASSEMBLY K_EXTERN file_name
+			| D_ASSEMBLY K_EXTERN slashed_name
 			| customattr_decl
 			;
 
@@ -2426,14 +2427,6 @@ comp_name		: id
                                 $$ = (string) $1 + '.' + (string) $3;
                           }
 			;
-
-file_name               : comp_name
-                        | file_name DASH comp_name
-                          {
-                                $$ = (string) $1 + '-' + (string) $3;
-                          }
-                        ;
-
 
 %%
 
