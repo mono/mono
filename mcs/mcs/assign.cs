@@ -469,7 +469,7 @@ namespace Mono.CSharp {
 		public override Expression DoResolve (EmitContext ec)
 		{
 			original_source = original_source.Resolve (ec);
-			if (source == null)
+			if (original_source == null)
 				return null;
 
 			target = target.Resolve (ec);
