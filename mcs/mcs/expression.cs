@@ -1434,20 +1434,13 @@ namespace Mono.CSharp {
 
 			int errors = Report.Errors;
 
-			target_type = target_type.Resolve (ec, ResolveFlags.Type);
-			
-			if (target_type == null){
-				if (errors == Report.Errors)
-					Error (-10, "Can not resolve type");
-				return null;
-			}
-
-			type = target_type.Type;
-			eclass = ExprClass.Value;
+			type = ec.DeclSpace.ResolveType (target_type, false, Location);
 			
 			if (type == null)
 				return null;
 
+			eclass = ExprClass.Value;
+			
 			if (expr is Constant){
 				Expression e = TryReduce (ec, type);
 

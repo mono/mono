@@ -4172,11 +4172,12 @@ namespace Mono.CSharp {
 		public readonly Block  Block;
 		public readonly Location Location;
 
-		Expression type;
+		Expression type_expr;
+		Type type;
 		
 		public Catch (Expression type, string name, Block block, Location l)
 		{
-			this.type = type;
+			type_expr = type;
 			Name = name;
 			Block = block;
 			Location = l;
@@ -4184,10 +4185,7 @@ namespace Mono.CSharp {
 
 		public Type CatchType {
 			get {
-				if (type == null)
-					throw new InvalidOperationException ();
-
-				return type.Type;
+				return type;
 			}
 		}
 
@@ -4199,19 +4197,19 @@ namespace Mono.CSharp {
 
 		public bool Resolve (EmitContext ec)
 		{
-			if (type != null) {
-				type = type.DoResolve (ec);
+			if (type_expr != null) {
+				type = ec.DeclSpace.ResolveType (type_expr, false, Location);
 				if (type == null)
 					return false;
 
-				Type t = type.Type;
-				if (t != TypeManager.exception_type && !t.IsSubclassOf (TypeManager.exception_type)){
+				if (type != TypeManager.exception_type && !type.IsSubclassOf (TypeManager.exception_type)){
 					Report.Error (155, Location,
 						      "The type caught or thrown must be derived " +
 						      "from System.Exception");
 					return false;
 				}
-			}
+			} else
+				type = null;
 
 			if (!Block.Resolve (ec))
 				return false;

@@ -1,3 +1,10 @@
+2002-09-06  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (Cast): Simplified by using ResolveType instead of
+	manually resolving.
+
+	* statement.cs (Catch): Fix bug by using ResolveType.
+
 2002-09-06  Ravi Pratap  <ravi@ximian.com>
 
 	* expression.cs (BetterConversion): Special case for when we have
