@@ -8,6 +8,8 @@
 
 #if NET_1_2
 
+using System;
+
 namespace System.Data.ObjectSpaces.Query
 {
 	[MonoTODO()]
@@ -17,6 +19,27 @@ namespace System.Data.ObjectSpaces.Query
 		public OrderByItem(string item,bool ascendent)
 		{
 			throw new NotImplementedException();
+		}
+
+		[MonoTODO()]
+		public bool Ascendent
+		{
+			get { throw new NotImplementedException(); }
+			set { throw new NotImplementedException(); }
+		}
+		
+		[MonoTODO()]
+		public string Item
+		{
+			get { throw new NotImplementedException(); }
+			set { throw new NotImplementedException(); }
+		}
+
+		[MonoTODO()]
+		public object PhysicalInfo
+		{
+			get { throw new NotImplementedException(); }
+			set { throw new NotImplementedException(); }
 		}
 	}
 }

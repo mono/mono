@@ -8,6 +8,7 @@
 
 #if NET_1_2
 
+using System;
 using System.Xml;
 
 namespace System.Data.ObjectSpaces.Query
@@ -35,6 +36,12 @@ namespace System.Data.ObjectSpaces.Query
 
 		[MonoTODO()]
 		public static object EvaluateConstant(Literal left,BinaryOperator op,Literal right)
+		{
+			throw new NotImplementedException();
+		}
+
+		[MonoTODO()]
+		public static Type GetResultType(Expression leftExpr,Expression rightExpr,BinaryOperator op)
 		{
 			throw new NotImplementedException();
 		}
@@ -75,12 +82,24 @@ namespace System.Data.ObjectSpaces.Query
 			throw new NotImplementedException();
 		}
 
+		[MonoTODO()]
+		public override bool IsConst
+		{
+			get { throw new NotImplementedException(); }
+		}
+
 		// Gets/sets the left operand of this binary expression
 		[MonoTODO()]
 		public Expression Left
 		{
 			get { throw new NotImplementedException(); }
 			set { throw new NotImplementedException(); }
+		}
+
+		[MonoTODO()]
+		public override NodeType NodeType
+		{
+			get { throw new NotImplementedException(); }
 		}
 
 		// Gets/sets the operator used by this binary expression
@@ -97,6 +116,12 @@ namespace System.Data.ObjectSpaces.Query
 		{
 			get { throw new NotImplementedException(); }
 			set { throw new NotImplementedException(); }
+		}
+
+		[MonoTODO()]
+		public override Type ValueType
+		{
+			get { throw new NotImplementedException(); }
 		}
 	}
 }

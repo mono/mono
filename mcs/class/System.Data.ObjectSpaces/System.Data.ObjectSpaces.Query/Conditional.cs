@@ -8,6 +8,7 @@
 
 #if NET_1_2
 
+using System;
 using System.Xml;
 
 namespace System.Data.ObjectSpaces.Query
@@ -28,6 +29,24 @@ namespace System.Data.ObjectSpaces.Query
 		}
 
 		[MonoTODO()]
+		public override bool IsArithmetic()
+		{
+			throw new NotImplementedException();
+		}
+
+		[MonoTODO()]
+		public override bool IsBoolean()
+		{
+			throw new NotImplementedException();
+		}
+
+		[MonoTODO()]
+		public override bool IsFilter()
+		{
+			throw new NotImplementedException();
+		}
+
+		[MonoTODO()]
 		public override void WriteXml(XmlWriter xmlw)
 		{
 			throw new NotImplementedException();
@@ -41,6 +60,26 @@ namespace System.Data.ObjectSpaces.Query
 			set { throw new NotImplementedException(); }
 		}
 
+		// Gets/sets the false branch expression
+		[MonoTODO()]
+		public Expression FBranch
+		{
+			get { throw new NotImplementedException(); }
+			set { throw new NotImplementedException(); }
+		}
+
+		[MonoTODO()]
+		public override bool IsConst
+		{
+			get { throw new NotImplementedException(); }
+		}
+
+		[MonoTODO()]
+		public override NodeType NodeType
+		{
+			get { throw new NotImplementedException(); }
+		}
+
 		// Gets/sets the true branch expression
 		[MonoTODO()]
 		public Expression TBranch
@@ -49,12 +88,10 @@ namespace System.Data.ObjectSpaces.Query
 			set { throw new NotImplementedException(); }
 		}
 
-		// Gets/sets the false branch expression
 		[MonoTODO()]
-		public Expression FBranch
+		public override Type ValueType
 		{
 			get { throw new NotImplementedException(); }
-			set { throw new NotImplementedException(); }
 		}
 	}
 }

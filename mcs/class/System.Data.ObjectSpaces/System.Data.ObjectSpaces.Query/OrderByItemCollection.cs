@@ -8,6 +8,7 @@
 
 #if NET_1_2
 
+using System;
 using System.Collections;
 
 namespace System.Data.ObjectSpaces.Query
@@ -19,6 +20,26 @@ namespace System.Data.ObjectSpaces.Query
 		public OrderByItemCollection() : base()
 		{
 			throw new NotImplementedException();
+		}
+
+		[MonoTODO()]
+		public void Add(OrderByItem orderByItem)
+		{
+			throw new NotImplementedException();
+		}
+
+		[MonoTODO()]
+		public OrderByItemCollection Clone()
+		{
+			throw new NotImplementedException();
+		}
+
+		// FIXME: This ain't right...
+		[MonoTODO()]
+		public OrderByItem Item
+		{
+			get { throw new NotImplementedException(); }
+			set { throw new NotImplementedException(); }
 		}
 	}
 }

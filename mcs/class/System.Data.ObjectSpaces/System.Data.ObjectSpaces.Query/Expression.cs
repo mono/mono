@@ -8,6 +8,7 @@
 
 #if NET_1_2
 
+using System;
 using System.Xml;
 
 namespace System.Data.ObjectSpaces.Query

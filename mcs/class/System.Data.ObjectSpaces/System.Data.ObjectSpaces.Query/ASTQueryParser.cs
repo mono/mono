@@ -8,6 +8,8 @@
 
 #if NET_1_2
 
+using System;
+
 namespace System.Data.ObjectSpaces.Query
 {
 	[MonoTODO()]

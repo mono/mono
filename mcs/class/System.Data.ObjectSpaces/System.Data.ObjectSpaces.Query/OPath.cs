@@ -8,6 +8,7 @@
 
 #if NET_1_2
 
+using System;
 using System.Data.ObjectSpaces.Schema;
 
 namespace System.Data.ObjectSpaces.Query
@@ -15,6 +16,7 @@ namespace System.Data.ObjectSpaces.Query
 	[MonoTODO()]
 	public class OPath
 	{
+		[MonoTODO()]
 		public static ObjectExpression Parse(ObjectQuery oq,ObjectSchema objectSchema)
 		{
 			throw new NotImplementedException();
