@@ -202,8 +202,8 @@ namespace System.Xml.Xsl
 
 		static void Cleanup ()
 		{
-			xsltCleanupGlobals ();
-			xmlCleanupParser ();
+			//xsltCleanupGlobals ();
+			//xmlCleanupParser ();
 		}
 
 		static string GetStringFromDocument (IntPtr doc, IntPtr stylesheet)

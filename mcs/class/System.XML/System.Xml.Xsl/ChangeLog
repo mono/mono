@@ -1,5 +1,9 @@
 2003-08-21  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* XslTransform.cs: commented out Cleanup () because of bug #47776.
+
+2003-08-21  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* Multiplexer.cs: fixed infinite recursion bug.
 
 2003-08-20 Ben Maurer  <bmaurer@users.sourceforge.net>
