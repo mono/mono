@@ -222,7 +222,7 @@ namespace Mono.Tools {
 				return false;
 			}
 
-			string conf_name = name + ".config";
+			string [] siblings = { ".config", ".mdb" };
 			string version_token = an.Version + "_" +
 					       an.CultureInfo.Name.ToLower (CultureInfo.InvariantCulture) + "_" +
 					       GetStringToken (pub_tok);
@@ -244,8 +244,12 @@ namespace Mono.Tools {
 			}
 
 			File.Copy (name, asmb_path, true);
-			if (File.Exists (conf_name))
-				File.Copy (conf_name, asmb_path + ".config", true);
+
+			foreach (string ext in siblings) {
+				string sibling = String.Concat (name, ext);
+				if (File.Exists (sibling))
+					File.Copy (sibling, String.Concat (asmb_path, ext), true);
+			}
 
 			if (package != null) {
 				string link_path = Path.Combine (Path.Combine (link_gacdir, an.Name), version_token);
