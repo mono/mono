@@ -1,5 +1,8 @@
 2004-09-24  Zoltan Varga  <vargaz@freemail.hu>
 
+	* reflection.h reflection.c (mono_reflection_get_custom_attrs): Revert
+	previous change.
+
 	* tabledefs.h: Add constants for pinvoke attributes BestFit and
 	ThrowOnUnmappableChar.
 
