@@ -385,4 +385,5 @@ System.Xml.Query/XQueryASTCompiler.cs
 System.Xml.Query/XQueryCommandImpl.cs
 System.Xml.Query/XQueryFunctionCliImpl.cs
 System.Xml.Query/XQueryArithmeticOperator.cs
+System.Xml.Query/XQueryComparisonOperator.cs
 
