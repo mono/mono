@@ -1,3 +1,18 @@
+2004-05-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlDataInferenceReader.cs : Added. It does InferXmlSchema() (it is
+	  also expected to do ReadXml(), but I will remove that feature and
+	  support column reordering).
+	* XmlSchemaDataImporter.cs : Always initialize dataset name.
+	  Always set Nested and primary key for parent table.
+	* XmlDataReader.cs : Now it is used.
+	  Top level element might not match to dataset name nor any table 
+	  name, but still possible to read content tables.
+	  Handle empty element correctly in some places.
+	  Handle Fragment mode (read up XmlReader to the end).
+	* DataSet.cs : Modified InferXmlSchema() and ReadXml() to use
+	  XmlDataInferenceLoader and XmlDataReader.
+
 2004-05-06  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataSet.cs :

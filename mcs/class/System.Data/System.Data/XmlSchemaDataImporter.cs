@@ -7,6 +7,7 @@
 // (C)2004 Novell Inc.
 //
 //
+// ***** The design note became somewhat obsolete. Should be rewritten. *****
 //
 // * Design Notes
 //
@@ -195,36 +196,12 @@ namespace System.Data
 		public XmlSchemaDataImporter (DataSet dataset, XmlReader reader)
 		{
 			this.dataset = dataset;
+			dataset.DataSetName = "NewDataSet"; // Initialize always
 			schema = XmlSchema.Read (reader, null);
 			// FIXME: Just XmlSchema.Namespace should work (mcs bug)
 			if (reader.NodeType == XmlNodeType.EndElement && reader.LocalName == "schema" && reader.NamespaceURI == System.Xml.Schema.XmlSchema.Namespace)
 				reader.ReadEndElement ();
 			schema.Compile (null);
-		}
-
-		// types
-		struct RelationMapping
-		{
-			public RelationMapping (XmlSchemaElement el, DataTable table, DataColumn col)
-			{
-				Element = el;
-				Table = table;
-				Column = col;
-			}
-
-			public XmlSchemaElement Element;
-			public DataTable Table;
-			public DataColumn Column;
-		}
-
-		// properties
-
-		public DataSet DataSet {
-			get { return dataset; }
-		}
-
-		public XmlSchema XmlSchema {
-			get { return schema; }
 		}
 
 		// methods
@@ -297,6 +274,10 @@ el.ElementType != schemaAnyType)
 				}
 			}
 
+			// If type is not complex, just skip this element
+			if (! (el.ElementType is XmlSchemaComplexType && el.ElementType != schemaAnyType))
+				return;
+
 			// FIXME: It should be more simple. It is likely to occur when the type was not resulted in a DataTable
 
 			// Read the design notes for detail... it is very complicated.
@@ -312,11 +293,6 @@ el.ElementType != schemaAnyType)
 					return;
 				}
 			}
-
-
-			// If type is not complex, just skip this element
-			if (! (el.ElementType is XmlSchemaComplexType && el.ElementType != schemaAnyType))
-				return;
 
 			// Register as a top-level element
 			topLevelElements.Add (el);
@@ -445,8 +421,12 @@ el.ElementType != schemaAnyType)
 				table.Columns.Add (child);
 
 				DataRelation rel = new DataRelation (col.Table.TableName + '_' + child.Table.TableName, col, child);
-				if (nestedRelationColumns.ContainsValue (col))
-					rel.Nested = true;
+				rel.Nested = true;
+//				UniqueConstraint uc = new UniqueConstraint (col);
+//				rel.SetParentKeyConstraint (uc);
+				rel.ParentTable.PrimaryKey = rel.ParentColumns;
+//				ForeignKeyConstraint fkc = new ForeignKeyConstraint (col, child);
+//				rel.SetChildKeyConstraint (fkc);
 				dataset.Relations.Add (rel);
 			}
 		}

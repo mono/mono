@@ -528,9 +528,12 @@ namespace System.Data {
 		{
 			if (reader == null)
 				return;
-
+#if true
+			XmlDataInferenceLoader.Infer (this, reader, XmlReadMode.InferSchema, false);
+#else
 			XmlDataLoader Loader = new XmlDataLoader (this);
 			Loader.LoadData (reader, XmlReadMode.InferSchema);
+#endif
 		}
 
 		public void InferXmlSchema (Stream stream, string[] nsArray)
@@ -883,9 +886,27 @@ namespace System.Data {
 				}
 			}
 			// Otherwise, read as dataset... but only when required.
+			bool inferedSchema = false;
 			switch (mode) {
 			case XmlReadMode.Auto:
+				if (Tables.Count > 0)
+					goto case XmlReadMode.IgnoreSchema;
+				else
+					goto case XmlReadMode.InferSchema;
 			case XmlReadMode.InferSchema:
+#if true // sync with the switch immediately below
+				XmlDocument doc = new XmlDocument ();
+				do {
+					doc.AppendChild (doc.ReadNode (reader));
+					reader.MoveToContent ();
+					if (doc.DocumentElement != null)
+						break;
+				} while (!reader.EOF);
+				InferXmlSchema (new XmlNodeReader (doc), null);
+				reader = new XmlNodeReader (doc);
+#endif
+				inferedSchema = true;
+				break;
 			case XmlReadMode.IgnoreSchema:
 			case XmlReadMode.Fragment:
 				break;
@@ -893,8 +914,15 @@ namespace System.Data {
 				reader.Skip ();
 				return mode;
 			}
+#if true // sync with the switch immediately above
+			XmlDataReader.ReadXml (this, reader, mode);
+			if (inferedSchema)
+				return XmlReadMode.InferSchema;
+			return mode == XmlReadMode.Auto ? XmlReadMode.IgnoreSchema : mode;
+#else
 			XmlDataLoader Loader = new XmlDataLoader (this);
 			return Loader.LoadData (reader, mode);
+#endif
 		}
 		#endregion // Public Methods
 
@@ -995,6 +1023,11 @@ namespace System.Data {
 		{
 			DoWriteXmlSchema (writer);
 			WriteXml (writer, XmlWriteMode.DiffGram);
+		}
+
+		XmlSchema IXmlSerializable.GetSchema ()
+		{
+			return BuildSchema ();
 		}
 
 		protected virtual bool ShouldSerializeRelations ()
@@ -1268,11 +1301,6 @@ namespace System.Data {
 				}
 			}
 		}
-
-		XmlSchema IXmlSerializable.GetSchema ()
-		{
-			return BuildSchema ();
-		}
 		
 		XmlSchema BuildSchema ()
 		{
@@ -1369,7 +1397,6 @@ namespace System.Data {
 			}
 			return schema;
 		}
-		
 		
 		// Add all constraints in all tables to the schema.
 		private void AddConstraintsToSchema (XmlSchemaElement elem, string constraintPrefix, DataTableCollection tables, DataRelationCollection relations) 

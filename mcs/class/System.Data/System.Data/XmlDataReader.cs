@@ -61,18 +61,21 @@ namespace System.Data
 	{
 		const string xmlnsNS = "http://www.w3.org/2000/xmlns/";
 
-		public static void ReadXml (DataSet dataset, XmlReader reader)
+		public static void ReadXml (
+			DataSet dataset, XmlReader reader, XmlReadMode mode)
 		{
-			new XmlDataReader (dataset, reader).Process ();
+			new XmlDataReader (dataset, reader, mode).Process ();
 		}
 
 		DataSet dataset;
 		XmlReader reader;
+		XmlReadMode mode;
 
-		public XmlDataReader (DataSet ds, XmlReader xr)
+		public XmlDataReader (DataSet ds, XmlReader xr, XmlReadMode m)
 		{
 			dataset = ds;
 			reader =xr;
+			mode = m;
 		}
 
 		private void Process ()
@@ -84,18 +87,41 @@ namespace System.Data
 
 			reader.MoveToContent ();
 
-			if (reader.LocalName == dataset.DataSetName) {
-				int depth = reader.Depth;
-				reader.Read ();
-				reader.MoveToContent ();
+			if (mode == XmlReadMode.Fragment) {
 				do {
+					if (reader.LocalName == dataset.DataSetName)
+						ReadTopLevelElement ();
+					else
+						reader.Skip ();
+				} while (!reader.EOF);
+			} else {
+				// Top level element can be ignored, being regarded 
+				// just as a wrapper (even it is not dataset element).
+				DataTable tab = dataset.Tables [reader.LocalName];
+				if (tab != null)
 					ReadDataSetContent ();
-				} while (reader.Depth > depth && !reader.EOF);
+				else
+					ReadTopLevelElement ();
+				reader.MoveToContent ();
 			}
-			else
-				ReadDataSetContent ();
 
 			dataset.EnforceConstraints = savedEnforceConstraints;
+		}
+
+		private void ReadTopLevelElement ()
+		{
+			int depth = reader.Depth;
+			reader.Read ();
+			reader.MoveToContent ();
+			do {
+				ReadDataSetContent ();
+			} while (reader.Depth > depth && !reader.EOF);
+
+			if (reader.IsEmptyElement)
+				reader.Read ();
+			if (reader.NodeType == XmlNodeType.EndElement)
+				reader.ReadEndElement ();
+			reader.MoveToContent ();
 		}
 
 		private void ReadDataSetContent ()
@@ -141,7 +167,10 @@ namespace System.Data
 				do {
 					ReadElementContent (row);
 				} while (reader.Depth > depth && !reader.EOF);
-				reader.ReadEndElement ();
+				if (reader.IsEmptyElement)
+					reader.Read ();
+				if (reader.NodeType == XmlNodeType.EndElement)
+					reader.ReadEndElement ();
 				reader.MoveToContent ();
 			}
 		}
