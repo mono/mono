@@ -47,6 +47,7 @@ namespace System.Windows.Forms {
 		private Rectangle plus_minus_bounds = Rectangle.Empty;
 		private Rectangle checkbox_bounds = Rectangle.Empty;
 		private bool check;
+		private bool is_editing;
 		internal OwnerDrawPropertyBag prop_bag;
 
 		private object tag;
@@ -319,6 +320,48 @@ namespace System.Windows.Forms {
 			set { tag = value; }
 		}
 
+		public bool IsSelected {
+			get {
+				if (TreeView == null)
+					return false;
+				return TreeView.SelectedNode == this;
+			}
+		}
+
+		public bool IsEditing {
+			get { return is_editing; }
+		}
+
+		public bool IsVisible {
+			get {
+				if (TreeView == null)
+					return false;
+
+				if (bounds.Y < 0 && bounds.Y > TreeView.ClientRectangle.Height)
+					return false;
+
+				TreeNode parent = Parent;
+				while (parent != null) {
+					if (!parent.IsExpanded)
+						return false;
+					parent = parent.Parent;
+				}
+				return true;
+			}
+		}
+
+		public void BeginEdit ()
+		{
+			is_editing = true;
+		}
+
+		public void EndEdit (bool cancel)
+		{
+			is_editing = false;
+			if (!cancel && TreeView != null)
+				text = TreeView.LabelEditText;
+		}
+
 		public void Expand ()
 		{
 			Expand(false);
@@ -339,7 +382,7 @@ namespace System.Windows.Forms {
 				is_expanded = true;
 				if (TreeView != null)
 					TreeView.OnAfterCollapse (new TreeViewEventArgs (this));
-				if (IsNodeVisible () && TreeView != null)
+				if (IsVisible && TreeView != null)
 					TreeView.UpdateBelow (this);
 			}
 		}
@@ -368,7 +411,7 @@ namespace System.Windows.Forms {
 				is_expanded = false;
 				if (TreeView != null)
 					TreeView.OnAfterCollapse (new TreeViewEventArgs (this));
-				if (IsNodeVisible () && TreeView != null)
+				if (IsVisible && TreeView != null)
 					TreeView.UpdateBelow (this);
 				if(!byInternal && TreeView != null && HasFocusInChildren ())
 					TreeView.SelectedNode = this;
@@ -517,23 +560,6 @@ namespace System.Windows.Forms {
 					return false;
 				return true;
 			}
-		}
-
-		private bool IsNodeVisible ()
-		{
-			if (TreeView == null)
-				return false;
-
-			if (bounds.Y < 0 && bounds.Y > TreeView.ClientRectangle.Height)
-				return false;
-
-			TreeNode parent = Parent;
-			while (parent != null) {
-				if (!parent.IsExpanded)
-					return false;
-				parent = parent.Parent;
-			}
-			return true;
 		}
 	}
 }

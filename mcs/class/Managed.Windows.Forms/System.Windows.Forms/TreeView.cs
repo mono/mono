@@ -52,6 +52,9 @@ namespace System.Windows.Forms {
 		private bool hot_tracking;
 		private int indent = 19;
 
+		private TextBox edit_text_box;
+		private TreeNode edit_node;
+		
 		private bool checkboxes;
 		private bool label_edit;
 		private bool scrollable;
@@ -201,9 +204,18 @@ namespace System.Windows.Forms {
 				if (e.Cancel)
 					return;
 
+				Rectangle invalid = Rectangle.Empty;
+
+				if (selected_node != null)
+					invalid = selected_node.Bounds;
+				if (focused_node != null)
+					invalid = Rectangle.Union (focused_node.Bounds, invalid);
+				invalid = Rectangle.Union (invalid, value.Bounds);
+
 				selected_node = value;
 				focused_node = value;
-				Refresh ();
+
+				Invalidate (invalid);
 				
 				OnAfterSelect (new TreeViewEventArgs (value, TreeViewAction.Unknown));
 			}
@@ -273,6 +285,14 @@ namespace System.Windows.Forms {
 		public bool LabelEdit {
 			get { return label_edit; }
 			set { label_edit = value; }
+		}
+
+		internal string LabelEditText {
+			get {
+				if (edit_text_box == null)
+					return String.Empty;
+				return edit_text_box.Text;
+			}
 		}
 
 		public bool Scrollable {
@@ -739,6 +759,37 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		private void DrawEditNode (TreeNode node)
+		{
+			SuspendLayout ();
+
+			if (edit_text_box == null) {
+				edit_text_box = new TextBox ();
+				edit_text_box.BorderStyle = BorderStyle.FixedSingle;
+				edit_text_box.KeyUp += new KeyEventHandler (EditTextBoxKeyDown);
+				Controls.Add (edit_text_box);
+			}
+
+			edit_text_box.Bounds = node.Bounds;
+			edit_text_box.Width += 4;
+
+			edit_text_box.Text = node.Text;
+			edit_text_box.Visible = true;
+			edit_text_box.Focus ();
+			edit_text_box.SelectAll ();
+
+			ResumeLayout ();
+		}
+
+		private void EditTextBoxKeyDown (object sender, KeyEventArgs e)
+		{
+			if (e.KeyCode == Keys.Return) {
+				edit_text_box.Visible = false;
+				edit_node.EndEdit (false);
+				Invalidate (edit_node.Bounds);
+			}
+		}
+
 		private void UpdateNodeBounds (TreeNode node, int x, int y, int item_height)
 		{
 			int width = (int) (node.Text.Length * Font.Size);
@@ -759,13 +810,12 @@ namespace System.Windows.Forms {
 			int x = (!show_root_lines && node.Parent != null ? depth  - 1 : depth) * indent - hbar_offset;
 			int y = item_height * (open_node_count - skipped_nodes - 1);
 			bool visible = (y >= 0 && y < max_height);
-			
+			int _n_count = node.nodes.Count;
+			int middle = y + (item_height / 2);
+
 			// The thing is totally out of the clipping rectangle
 			if (clip.Top > y + ItemHeight || clip.Bottom < y)
 				visible = false;
-
-			int _n_count = node.nodes.Count;
-			int middle = y + (item_height / 2);
 
 			if (show_root_lines || node.Parent != null) {
 				x += 5;
@@ -797,7 +847,8 @@ namespace System.Windows.Forms {
 
 			UpdateNodeBounds (node, x, y, item_height);
 
-			if (visible && clip.IntersectsWith (node.Bounds)) {
+			bool bounds_in_clip = clip.IntersectsWith (node.Bounds);
+			if (visible &&	bounds_in_clip && !node.IsEditing) {
 				Rectangle r = node.Bounds;
 				StringFormat format = new StringFormat ();
 				format.LineAlignment = StringAlignment.Center;
@@ -821,6 +872,8 @@ namespace System.Windows.Forms {
 				}
 				DeviceContext.DrawString (node.Text, font, new SolidBrush (text_color), r, format);
 				y += item_height + 1;
+			} else if (visible && bounds_in_clip) {
+				DrawEditNode (node);
 			}
 
 			if (node.Bounds.Right > max_node_width) {
@@ -938,7 +991,6 @@ namespace System.Windows.Forms {
 			return count;
 		}
 
-		// TODO: Handle all sorts o stuff here
 		private void MouseDownHandler (object sender, MouseEventArgs e)
 		{
 			if (!show_plus_minus)
@@ -950,7 +1002,16 @@ namespace System.Windows.Forms {
 			if (IsTextArea (node, e.X)) {
 				TreeNode old_selected = selected_node;
 				selected_node = node;
-				if (selected_node != focused_node) {
+				if (label_edit && e.Clicks == 1 && selected_node == old_selected) {
+					Rectangle invalid = node.Bounds;
+					node.BeginEdit ();
+					if (edit_node != null) {
+						invalid = Rectangle.Union (invalid, edit_node.Bounds);
+						edit_node.EndEdit (false);
+					}
+					edit_node = node;
+					Invalidate (selected_node.Bounds);
+				} else if (selected_node != focused_node) {
 					select_mmove = true;
 					Rectangle invalid = (old_selected == null ? Rectangle.Empty : old_selected.Bounds);
 					invalid = Rectangle.Union (invalid, selected_node.Bounds);
@@ -973,14 +1034,21 @@ namespace System.Windows.Forms {
 
 			TreeViewCancelEventArgs ce = new TreeViewCancelEventArgs (selected_node, false, TreeViewAction.ByMouse);
 			OnBeforeSelect (ce);
+
+			Rectangle invalid;
 			if (!ce.Cancel) {
+				if (focused_node != null)
+					invalid = Rectangle.Union (focused_node.Bounds, selected_node.Bounds);
+				else
+					invalid = selected_node.Bounds;
 				focused_node = selected_node;
 				OnAfterSelect (new TreeViewEventArgs (selected_node, TreeViewAction.ByMouse));
+				Invalidate (invalid);
 			} else {
 				selected_node = focused_node;
 			}
 
-			Refresh();
+			
 		}
 
 		private void MouseMoveHandler (object sender, MouseEventArgs e) {

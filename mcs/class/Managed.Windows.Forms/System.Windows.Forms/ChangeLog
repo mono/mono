@@ -1,3 +1,10 @@
+2005-01-17  Jackson Harper  <jackson@ximian.com>
+
+	* TreeNode.cs: Implement editing. Add missing properties selected
+	and visible.
+	* TreeView.cs: Implement node editing. Also some fixes to use
+	Invalidate (invalid area) instead of Refresh when selecting.
+
 2005-01-17  Peter Bartok  <pbartok@novell.com>
 
 	* Control.cs: 
