@@ -1,3 +1,7 @@
+2001-12-09  Radek Doulik  <rodo@ximian.com>
+
+	* makefile (TEST_SOURCES): added test-55 for using alias directive
+
 2001-12-06  Dietmar Maurer  <dietmar@ximian.com>
 
 	* makefile: added new target test-jit
