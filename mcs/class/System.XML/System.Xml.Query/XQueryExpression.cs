@@ -61,8 +61,9 @@ namespace Mono.Xml.XQuery
 
 		public void SerializeContent (XPathSequence iter)
 		{
-			foreach (ExprSingle expr in Content)
-				expr.Serialize (iter);
+			if (Content != null)
+				foreach (ExprSingle expr in Content)
+					expr.Serialize (iter);
 		}
 
 		internal IXmlNamespaceResolver GetNSResolver (XPathSequence iter)
@@ -395,11 +396,18 @@ namespace Mono.Xml.XQuery
 		public XmlTextConstructor (string text)
 			: base (null)
 		{
+			this.text = text;
 		}
 
 		public XmlTextConstructor (ExprSequence content)
 			: base (content)
 		{
+		}
+
+		string text;
+
+		public string LiteralText {
+			get { return text; }
 		}
 
 		internal override void CheckReference (XQueryASTCompiler compiler)
@@ -417,14 +425,16 @@ namespace Mono.Xml.XQuery
 			return this;
 		}
 
-		// FIXME: can be optimized by checking all items in Expr
 		public override SequenceType StaticType {
 			get { return SequenceType.Text; }
 		}
 
 		public override void Serialize (XPathSequence iter)
 		{
-			iter.Context.Writer.WriteString (Atomize (new ExprSequenceIterator (iter, Content)).Value);
+			if (Content != null)
+				iter.Context.Writer.WriteString (Atomize (new ExprSequenceIterator (iter, Content)).Value);
+			else
+				iter.Context.Writer.WriteString (LiteralText);
 		}
 
 		public override XPathSequence Evaluate (XPathSequence iter)

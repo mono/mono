@@ -1,5 +1,12 @@
 2004-08-20  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XQueryExpression.cs : Content for XmlTextConstructor might be null,
+	  and use literal text for constructor argument if supplied.
+	* XQueryParser.jay, XQueryTokenizer.cs : Element content literal
+	  string was not parsed and kept correctly. Parse CDATA section.
+
+2004-08-20  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XPath2Expression.cs, XQueryConvert.cs, XQueryExpression.cs,
 	  XQueryModuleProlog.cs, XQueryParser.jay, XQueryTokenizer.cs :
 	  several changes for XQueryCommand.Execute() implementation.

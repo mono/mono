@@ -373,6 +373,7 @@ namespace Mono.Xml.XQuery.Parser
 %token END_TAG_START // "</". Its appearance depends on the context
 %token ATT_VALUE_LITERAL
 %token ELEM_CONTENT_LITERAL
+%token EXT_CONTENT
 %token APOS			"'"
 //%token APOS2			"''"
 %token QUOT			//""""
@@ -2236,8 +2237,7 @@ DirElemConstructor // returns XmlElemConstructor
 			tokenizer.PushState (ParseState.Operator);
 		tokenizer.State = ParseState.StartTag;
 		// FIXME: tokenizer.Space = WhitespaceHandling.Significant;
-	  } QName AttributeList {
-	  } FollowDirElemConstructor {
+	  } QName AttributeList FollowDirElemConstructor {
 		tokenizer.PopState ();
 	  }
 	{
@@ -2357,6 +2357,9 @@ EnclosedExpr // returns EnclosedExpr
 
 ElementContent // returns ExprSingle 
 	: ELEM_CONTENT_LITERAL // including "{{", "}}" and char/predefined entities
+	{
+		$$ = new XmlTextConstructor ((string) $1);
+	}
 	| DirElemConstructor
 	| EnclosedExpr
 	| XmlCData
