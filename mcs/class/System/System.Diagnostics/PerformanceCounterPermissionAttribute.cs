@@ -23,7 +23,8 @@ namespace System.Diagnostics
 		AttributeTargets.Struct |
 		AttributeTargets.Constructor |
 		AttributeTargets.Method |
-		AttributeTargets.Event )]
+		AttributeTargets.Event, AllowMultiple=true,
+		Inherited=false)]
 	[Serializable]
 	public class PerformanceCounterPermissionAttribute : CodeAccessSecurityAttribute 
 	{

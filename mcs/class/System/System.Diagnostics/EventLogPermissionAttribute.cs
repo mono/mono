@@ -20,7 +20,8 @@ namespace System.Diagnostics
 	[AttributeUsage(
 		AttributeTargets.Assembly | AttributeTargets.Class |
 		AttributeTargets.Struct | AttributeTargets.Constructor |
-		AttributeTargets.Method | AttributeTargets.Event)]
+		AttributeTargets.Method | AttributeTargets.Event,
+		AllowMultiple=true, Inherited=false)]
 	[Serializable]
 	public class EventLogPermissionAttribute : CodeAccessSecurityAttribute 
 	{
