@@ -1,3 +1,20 @@
+2004-01-02  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* AllowPartiallyTrustedCallersAttribute.cs: Fixed AttributeUsage using
+	1.2 documentation (AllowMultiple=false, Inherited=false)
+	* NamedPermissionSet.cs: Changes to match unit tests.
+	* PermissionSet.cs: Implemented Copy, Intersect, IsSubsetOf and Union 
+	methods. Corrected FromXml.
+	* PolicyLevelType.cs: Added missing [Serializable].
+	* SecurityElement.cs: Fixed constructor to match unit tests.
+	* SecurityException.cs: Added support for GrantedSet and RefusedSet 
+	properties (since 1.1). Set HResult to 0x8013150A.
+	* SecurityZone.cs: Added missing [Serializable].
+	* SuppressUnmanagedCodeSecurityAttribute.cs: Fixed AttributeUsage using
+	1.2 documentation (AllowMultiple=true, Inherited=false)
+	* UnverifiableCodeAttribute.cs: Fixed AttributeUsage using 1.2 
+	documentation (AllowMultiple=true, Inherited=false)
+
 2003-06-29  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* PermissionSet.cs: Added missing "virtual" to Count, IsSynchronized 

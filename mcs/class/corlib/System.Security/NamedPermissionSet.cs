@@ -6,7 +6,7 @@
 //	Sebastien Pouliot (spouliot@motus.com)
 //
 // (C) 2002
-// Portions (C) 2003 Motus Technologies Inc. (http://www.motus.com)
+// Portions (C) 2003, 2004 Motus Technologies Inc. (http://www.motus.com)
 //
 
 using System;
@@ -61,7 +61,9 @@ namespace System.Security {
 		{
 			FromXml (e, "System.Security.NamedPermissionSet");
 			Name = (e.Attributes ["Name"] as string);
-			Description = (e.Attributes ["Description"] as string);
+			description = (e.Attributes ["Description"] as string);
+			if (description == null)
+				description = String.Empty;
 		}
 
 		public override SecurityElement ToXml () 

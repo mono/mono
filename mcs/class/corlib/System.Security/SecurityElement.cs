@@ -42,7 +42,7 @@ namespace System.Security
 		public SecurityElement (string tag, string text)
 		{
 			this.Tag = tag;
-			this.Text = (text == null) ? String.Empty : text;
+			this.Text = text;
 		}
 		
 		public Hashtable Attributes {
@@ -255,7 +255,9 @@ namespace System.Security
 
 		public static bool IsValidText (string value)
 		{
-			return value != null && value.IndexOfAny (invalid_text_chars) == -1;
+			if (value == null)
+				return true;
+			return value.IndexOfAny (invalid_text_chars) == -1;
 		}
 
 		public SecurityElement SearchForChildByTag (string tag) 

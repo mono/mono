@@ -10,6 +10,6 @@
 namespace System.Security {
 
 	[AttributeUsage (AttributeTargets.Class | AttributeTargets.Method |
-			 AttributeTargets.Interface)]
+			 AttributeTargets.Interface, AllowMultiple=true, Inherited=false)]
 	public sealed class SuppressUnmanagedCodeSecurityAttribute : Attribute {}
 }

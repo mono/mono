@@ -9,6 +9,7 @@
 
 namespace System.Security {
 
+	[Serializable]
 	public enum SecurityZone {
 		MyComputer = 0x0,
 		Intranet,

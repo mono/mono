@@ -6,7 +6,7 @@
 //	Sebastien Pouliot (spouliot@motus.com)
 //
 // (C) Nick Drochak
-// Portions (C) 2003 Motus Technologies Inc. (http://www.motus.com)
+// Portions (C) 2003, 2004 Motus Technologies Inc. (http://www.motus.com)
 //
 
 using System;
@@ -31,12 +31,14 @@ namespace System.Security {
 			list = new ArrayList ();
 		}
 
-		public PermissionSet (PermissionSet permSet) : this (PermissionState.Unrestricted)
+		public PermissionSet (PermissionSet permSet) : this (PermissionState.None)
 		{
 			// LAMESPEC: This would be handled by the compiler.  No way permSet is not a PermissionSet.
 			//if (!(permSet is PermissionSet))
 			//	throw new System.ArgumentException(); // permSet is not an instance of System.Security.PermissionSet.
-			if (permSet != null) {
+			if (permSet == null)
+				state = PermissionState.Unrestricted;
+			else {
 				foreach (IPermission p in permSet.list)
 					list.Add (p);
 			}
@@ -60,10 +62,9 @@ namespace System.Security {
 		{
 		}
 
-		[MonoTODO()]
 		public virtual PermissionSet Copy ()
 		{
-			return null;
+			return new PermissionSet (this);
 		}
 
 		public virtual void CopyTo (Array array, int index)
@@ -96,8 +97,9 @@ namespace System.Security {
 				throw new ArgumentException ("not PermissionSet");
 			if (!(et.Attributes ["class"] as string).StartsWith (className))
 				throw new ArgumentException ("not " + className);
-			if ((et.Attributes ["version"] as string) != "1")
-				throw new ArgumentException ("wrong version");
+// version isn't checked
+//			if ((et.Attributes ["version"] as string) != "1")
+//				throw new ArgumentException ("wrong version");
 
 			if ((et.Attributes ["Unrestricted"] as string) == "true")
 				state = PermissionState.Unrestricted;
@@ -107,13 +109,17 @@ namespace System.Security {
 
 		public virtual void FromXml (SecurityElement et)
 		{
+			list.Clear ();
 			FromXml (et, "System.Security.PermissionSet");
-			foreach (SecurityElement se in et.Children) {
-				string className = (se.Attributes ["class"] as string);
-				Type classType = Type.GetType (className);
-				IPermission p = (IPermission) Activator.CreateInstance (classType);
-				p.FromXml (se);
-				list.Add (p);
+			if (et.Children != null) {
+				foreach (SecurityElement se in et.Children) {
+					string className = (se.Attributes ["class"] as string);
+					Type classType = Type.GetType (className);
+					object [] psNone = new object [1] { PermissionState.None };
+					IPermission p = (IPermission) Activator.CreateInstance (classType, psNone);
+					p.FromXml (se);
+					list.Add (p);
+				}
 			}
 		}
 
@@ -122,10 +128,25 @@ namespace System.Security {
 			return list.GetEnumerator ();
 		}
 
-		[MonoTODO()]
 		public virtual bool IsSubsetOf (PermissionSet target)
 		{
-			return false;
+			// if target is empty we must be empty too
+			if ((target == null) || (target.IsEmpty ()))
+				return this.IsEmpty ();
+			// if we're unrestricted then target must also be unrestricted
+			if (this.IsUnrestricted () && target.IsUnrestricted ())
+				return true;
+
+			// if each of our permission is (a) present and (b) a subset of target
+			foreach (IPermission p in list) {
+				// for every type in both list
+				IPermission i = target.GetPermission (p.GetType ());
+				if (i == null)
+					return false; // not present (condition a)
+				if (!p.IsSubsetOf (i))
+					return false; // not a subset (condition b)
+			}
+			return true;
 		}
 
 		[MonoTODO()]
@@ -158,10 +179,28 @@ namespace System.Security {
 			return null;
 		}
 
-		[MonoTODO()]
 		public virtual PermissionSet Intersect (PermissionSet other) 
 		{
-			return null;
+			// no intersection possible
+			if ((other == null) || (other.IsEmpty ()) || (this.IsEmpty ()))
+				return new PermissionSet (PermissionState.None);
+			// intersections with unrestricted
+			if (this.IsUnrestricted ())
+				return other.Copy ();
+			if (other.IsUnrestricted ())
+				return this.Copy ();
+
+			PermissionSet interSet = new PermissionSet (PermissionState.None);
+			foreach (IPermission p in other.list) {
+				// for every type in both list
+				IPermission i = interSet.GetPermission (p.GetType ());
+				if (i != null) {
+					// add intersection for this type
+					interSet.AddPermission (p.Intersect (i));
+				}
+				// or reject!
+			}
+			return interSet;
 		}
 
 		public virtual bool IsEmpty () 
@@ -214,10 +253,18 @@ namespace System.Security {
 			return se;
 		}
 
-		[MonoTODO()]
 		public virtual PermissionSet Union (PermissionSet other)
 		{
-			return null;
+			if (other == null)
+				return this.Copy ();
+			if (this.IsUnrestricted () || other.IsUnrestricted ())
+				return new PermissionSet (PermissionState.Unrestricted);
+			
+			PermissionSet copy = this.Copy ();
+			foreach (IPermission p in other.list) {
+				copy.AddPermission (p);
+			}
+			return copy;
 		}
 
 		public virtual int Count {

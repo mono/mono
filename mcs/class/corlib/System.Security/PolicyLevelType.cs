@@ -9,6 +9,7 @@
 
 namespace System.Security {
 
+	[Serializable]
 	public enum PolicyLevelType {
 		User = 0x0,
 		Machine,
