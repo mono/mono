@@ -188,9 +188,6 @@ namespace Mono.CSharp
 %token WHERE
 %token WHILE	
 
-/* v2 tokens */
-%token YIELD
-
 /* C# keywords which are not really keywords */
 %token GET           "get"
 %token SET           "set"
@@ -348,7 +345,7 @@ namespace_declaration
 		if (attrs != null) {
 			foreach (AttributeSection asec in attrs.AttributeSections)
 				if (asec.Target == "assembly")
-					RootContext.AddGlobalAttributeSection (current_container, asec);
+					CodeGen.Assembly.AddAttribute (current_container, asec);
 				else
 					Report.Error(1518, Lexer.Location,
 					"Attributes cannot be applied to namespaces."
@@ -468,7 +465,11 @@ attribute_sections
 		AttributeSection sect = (AttributeSection) $1;
 
 		if (sect.Target == "assembly") {
-			RootContext.AddGlobalAttributeSection (current_container, sect);
+			CodeGen.Assembly.AddAttribute (current_container, sect);
+			$$ = null;
+		}
+		else if (sect.Target == "module") {
+			CodeGen.Module.AddAttribute (current_container, sect);
 			$$ = null;
 		}
 		else
@@ -480,8 +481,12 @@ attribute_sections
 		AttributeSection sect = (AttributeSection) $2;
 
 		if (sect.Target == "assembly") {
-			RootContext.AddGlobalAttributeSection (current_container, sect);
-		} else {
+			CodeGen.Assembly.AddAttribute (current_container, sect);
+		}
+		else if (sect.Target == "module") {
+			CodeGen.Module.AddAttribute (current_container, sect);
+		}
+		else {
 			if (attrs == null)
 				attrs = new Attributes (sect);
 			else
@@ -1116,6 +1121,8 @@ property_declaration
 		lexer.PropertyParsing = true;
 
 		$$ = lexer.Location;
+
+		iterator_container = SimpleIteratorContainer.GetSimple ();
 	  }
 	  accessor_declarations 
 	  {
@@ -1131,9 +1138,12 @@ property_declaration
 		Location loc = (Location) $6;
 		prop = new Property (current_container, (Expression) $3, (string) $4, (int) $2,
 				     get_block, set_block, (Attributes) $1, loc);
+		if (SimpleIteratorContainer.Simple.Yields)
+			prop.SetYields ();
 		
 		CheckDef (current_container.AddProperty (prop), prop.Name, loc);
 		implicit_value_parameter_type = null;
+		iterator_container = null;
 	  }
 	;
 
@@ -1368,14 +1378,15 @@ interface_property_declaration
 	  type IDENTIFIER 
 	  OPEN_BRACE 
 	  { lexer.PropertyParsing = true; }
-	  interface_accesors 
+	  interface_accessors 
 	  { lexer.PropertyParsing = false; }
 	  CLOSE_BRACE
 	  {
-	        int gs = (int) $7;
+                InterfaceAccessorInfo pinfo = (InterfaceAccessorInfo) $7;
 
 		$$ = new InterfaceProperty ((Expression) $3, (string) $4, (bool) $2, 
-					    (gs & 1) == 1, (gs & 2) == 2, (Attributes) $1,
+					    pinfo.has_get, pinfo.has_set, (Attributes) $1,
+                                            pinfo.get_attrs, pinfo.set_attrs,
 					    lexer.Location);
 	  }
 	| opt_attributes
@@ -1386,13 +1397,13 @@ interface_property_declaration
 	  }
 	;
 
-interface_accesors
-	: opt_attributes GET SEMICOLON		{ $$ = 1; }
-	| opt_attributes SET SEMICOLON		{ $$ = 2; }
+interface_accessors
+	: opt_attributes GET SEMICOLON		{ $$ = new InterfaceAccessorInfo (true, false, (Attributes) $1, null); }
+	| opt_attributes SET SEMICOLON		{ $$ = new InterfaceAccessorInfo (false, true, null, (Attributes) $1); }
 	| opt_attributes GET SEMICOLON opt_attributes SET SEMICOLON 
-	  { $$ = 3; }
+	  { $$ = new InterfaceAccessorInfo (true, true, (Attributes) $1, (Attributes) $3); }
 	| opt_attributes SET SEMICOLON opt_attributes GET SEMICOLON
-	  { $$ = 3; }
+	  { $$ = new InterfaceAccessorInfo (true, true, (Attributes) $3, (Attributes) $1); }
 	;
 
 interface_event_declaration
@@ -1420,32 +1431,41 @@ interface_indexer_declaration
 	  OPEN_BRACKET formal_parameter_list CLOSE_BRACKET
 	  OPEN_BRACE 
 	  { lexer.PropertyParsing = true; }
-	  interface_accesors 
+	  interface_accessors 
 	  { lexer.PropertyParsing = false; }
 	  CLOSE_BRACE
 	  {
-		int a_flags = (int) $10;
+		InterfaceAccessorInfo info = (InterfaceAccessorInfo) $10;
 
-	  	bool do_get = (a_flags & 1) == 1;
-		bool do_set = (a_flags & 2) == 2;
+	  	bool do_get = info.has_get;
+		bool do_set = info.has_set;
 
 		$$ = new InterfaceIndexer ((Expression) $3, (Parameters) $6, do_get, do_set,
-					   (bool) $2, (Attributes) $1, lexer.Location);
+					   (bool) $2, (Attributes) $1, (Attributes) info.get_attrs,
+                                           (Attributes) info.set_attrs, lexer.Location);
 	  }
 	;
 
 operator_declaration
-	: opt_attributes opt_modifiers operator_declarator operator_body
+	: opt_attributes opt_modifiers operator_declarator 
+	  {
+		iterator_container = SimpleIteratorContainer.GetSimple ();
+	  }
+	  operator_body
 	  {
 		OperatorDeclaration decl = (OperatorDeclaration) $3;
 		
 		Operator op = new Operator (decl.optype, decl.ret_type, (int) $2, decl.arg1type, decl.arg1name,
-					    decl.arg2type, decl.arg2name, (Block) $4, (Attributes) $1, decl.location);
+					    decl.arg2type, decl.arg2name, (Block) $5, (Attributes) $1, decl.location);
+
+		if (SimpleIteratorContainer.Simple.Yields)
+			op.SetYields ();
 
 		// Note again, checking is done in semantic analysis
 		current_container.AddOperator (op);
 
 		current_local_parameters = null;
+		iterator_container = null;
 	  }
 	;
 
@@ -1616,7 +1636,7 @@ constructor_declarator
 	  opt_constructor_initializer
 	  {
 		Location l = (Location) oob_stack.Pop ();
-		$$ = new Constructor (current_container, (string) $1, (Parameters) $3,
+		$$ = new Constructor (current_container, (string) $1, 0, (Parameters) $3,
 				      (ConstructorInitializer) $6, l);
 	  }
 	;
@@ -3772,8 +3792,17 @@ throw_statement
 	;
 
 yield_statement 
-	: YIELD RETURN expression SEMICOLON
+	: IDENTIFIER RETURN expression SEMICOLON
 	  {
+		string s = (string) $1;
+		if (s != "yield"){
+			Report.Error (1003, lexer.Location, "; expected");
+			$$ = null;
+		}
+		if (!RootContext.V2){
+			Report.Error (-222, lexer.Location, "yield statement only available in C# 2.0 mode");
+			$$ = null;
+		}
 		if (iterator_container == null){
 			Report.Error (204, lexer.Location, "yield statement can only be used within a method, operator or property");
 			$$ = null;
@@ -3782,18 +3811,17 @@ yield_statement
 			$$ = new Yield ((Expression) $3, lexer.Location); 
 		}
 	  }
-	| YIELD expression SEMICOLON 
+	| IDENTIFIER BREAK SEMICOLON
 	  {
-		if (iterator_container == null){
-			Report.Error (204, lexer.Location, "yield statement can only be used within a method, operator or property");
+		string s = (string) $1;
+		if (s != "yield"){
+			Report.Error (1003, lexer.Location, "; expected");
 			$$ = null;
-		} else {
-			iterator_container.SetYields ();
-			$$ = new Yield ((Expression) $2, lexer.Location);
 		}
-	  }
-	| YIELD BREAK SEMICOLON
-	  {
+		if (!RootContext.V2){
+			Report.Error (-222, lexer.Location, "yield statement only available in C# 2.0 mode");
+			$$ = null;
+		}
 		if (iterator_container == null){
 			Report.Error (204, lexer.Location, "yield statement can only be used within a method, operator or property");
 			$$ = null;
@@ -4120,6 +4148,27 @@ public class VariableDeclaration {
 	}
 }
 
+/// <summary>
+///  Used to pass around interface property information
+/// </summary>
+public class InterfaceAccessorInfo {
+
+        public bool has_get;
+        public bool has_set;
+        public Attributes get_attrs;
+        public Attributes set_attrs;
+
+        public InterfaceAccessorInfo (bool has_get, bool has_set,
+                                      Attributes get_attrs, Attributes set_attrs)
+        {
+                this.has_get = has_get;
+                this.has_set = has_set;
+                this.get_attrs = get_attrs;
+                this.set_attrs = set_attrs;
+        }
+}
+
+
 // <summary>
 //   A class used to hold info about an indexer declarator
 // </summary>
@@ -4134,6 +4183,25 @@ public class IndexerDeclaration {
 		this.interface_type = interface_type;
 		this.param_list = param_list;
 	}
+}
+
+//
+// We use this when we do not have an object in advance that is an IIteratorContainer
+//
+public class SimpleIteratorContainer : IIteratorContainer {
+	public bool Yields;
+
+	public static SimpleIteratorContainer Simple = new SimpleIteratorContainer ();
+
+	//
+	// Reset and return
+	//
+	public static SimpleIteratorContainer GetSimple () { 
+		Simple.Yields = false;
+		return Simple;
+	}
+
+	public void SetYields () { Yields = true; } 
 }
 
 // <summary>
@@ -4324,7 +4392,7 @@ void CheckAttributeTarget (string a)
 {
 	switch (a) {
 
-	case "assembly" : case "field" : case "method" : case "param" : case "property" : case "type" :
+	case "assembly" : case "module" : case "field" : case "method" : case "param" : case "property" : case "type" :
 		return;
 		
 	default :

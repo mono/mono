@@ -52,6 +52,13 @@ namespace Mono.CSharp {
 
 		public abstract bool Define (TypeContainer parent);
 
+		// 
+		// Returns full member name for error message
+		//
+		public virtual string GetSignatureForError () {
+			return Name;
+		}
+
 		public Attributes OptAttributes 
 		{
 			get {
@@ -224,7 +231,7 @@ namespace Mono.CSharp {
 		///   associates it with the object @o.  Note that for
 		///   methods this will just point to the first method. o
 		/// </summary>
-		protected void DefineName (string name, object o)
+		public void DefineName (string name, object o)
 		{
 			defined_names.Add (name, o);
 

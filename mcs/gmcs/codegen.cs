@@ -20,10 +20,16 @@ namespace Mono.CSharp {
 	/// </summary>
 	public class CodeGen {
 		static AppDomain current_domain;
-		public static AssemblyBuilder AssemblyBuilder;
-		public static ModuleBuilder   ModuleBuilder;
-
 		static public SymbolWriter SymbolWriter;
+
+		public static AssemblyClass Assembly;
+		public static ModuleClass Module;
+
+		static CodeGen ()
+		{
+			Assembly = new AssemblyClass ();
+			Module = new ModuleClass (RootContext.Unsafe);
+		}
 
 		public static string Basename (string name)
 		{
@@ -67,7 +73,7 @@ namespace Mono.CSharp {
 		//
 		static void InitializeSymbolWriter ()
 		{
-			SymbolWriter = SymbolWriter.GetSymbolWriter (ModuleBuilder);
+			SymbolWriter = SymbolWriter.GetSymbolWriter (Module.Builder);
 
 			//
 			// If we got an ISymbolWriter instance, initialize it.
@@ -91,7 +97,7 @@ namespace Mono.CSharp {
 			an.Name = Path.GetFileNameWithoutExtension (name);
 			
 			current_domain = AppDomain.CurrentDomain;
-			AssemblyBuilder = current_domain.DefineDynamicAssembly (
+			Assembly.Builder = current_domain.DefineDynamicAssembly (
 				an, AssemblyBuilderAccess.Save, Dirname (name));
 
 			//
@@ -102,7 +108,7 @@ namespace Mono.CSharp {
 			// If the third argument is true, the ModuleBuilder will dynamically
 			// load the default symbol writer.
 			//
-			ModuleBuilder = AssemblyBuilder.DefineDynamicModule (
+			Module.Builder = Assembly.Builder.DefineDynamicModule (
 				Basename (name), Basename (output), want_debugging_support);
 
 			if (want_debugging_support)
@@ -112,7 +118,7 @@ namespace Mono.CSharp {
 		static public void Save (string name)
 		{
 			try {
-				AssemblyBuilder.Save (Basename (name));
+				Assembly.Builder.Save (Basename (name));
 			} catch (System.IO.IOException io){
 				Report.Error (16, "Could not write to file `"+name+"', cause: " + io.Message);
 			}
@@ -162,6 +168,33 @@ namespace Mono.CSharp {
 				ig.Emit (OpCodes.Ldloc, local);
 			else 
 				ig.Emit (OpCodes.Ldfld, fb);
+		}
+		
+		public void EmitCall (MethodInfo mi)
+		{
+			// FIXME : we should handle a call like tostring
+			// here, where boxing is needed. However, we will
+			// never encounter that with the current usage.
+			
+			bool value_type_call;
+			EmitThis ();
+			if (fb == null) {
+				value_type_call = local.LocalType.IsValueType;
+				
+				if (value_type_call)
+					ig.Emit (OpCodes.Ldloca, local);
+				else
+					ig.Emit (OpCodes.Ldloc, local);
+			} else {
+				value_type_call = fb.FieldType.IsValueType;
+				
+				if (value_type_call)
+					ig.Emit (OpCodes.Ldflda, fb);
+				else
+					ig.Emit (OpCodes.Ldfld, fb);
+			}
+			
+			ig.Emit (value_type_call ? OpCodes.Call : OpCodes.Callvirt, mi);
 		}
 	}
 	
@@ -692,4 +725,111 @@ namespace Mono.CSharp {
 			return my_this;
 		}
 	}
+
+
+	public abstract class CommonAssemblyModulClass: IAttributeSupport {
+		Hashtable m_attributes;
+
+		protected CommonAssemblyModulClass () 
+		{
+			m_attributes = new Hashtable ();
+		}
+
+		//
+		// Adds a global attribute that was declared in `container', 
+		// the attribute is in `attr', and it was defined at `loc'
+		//                
+		public void AddAttribute (TypeContainer container, AttributeSection attr)
+		{
+			NamespaceEntry ns = container.NamespaceEntry;
+			Attributes a = (Attributes) m_attributes [ns];
+
+			if (a == null) {
+				m_attributes [ns] = new Attributes (attr);
+				return;
+			}
+
+			a.AddAttributeSection (attr);
+		}
+
+		public virtual void Emit () 
+		{
+			if (m_attributes.Count < 1)
+				return;
+
+			TypeContainer dummy = new TypeContainer ();
+			EmitContext temp_ec = new EmitContext (dummy, Mono.CSharp.Location.Null, null, null, 0, false);
+			
+			foreach (DictionaryEntry de in m_attributes)
+			{
+				NamespaceEntry ns = (NamespaceEntry) de.Key;
+				Attributes attrs = (Attributes) de.Value;
+				
+				dummy.NamespaceEntry = ns;
+				Attribute.ApplyAttributes (temp_ec, null, this, attrs);
+			}
+		}
+                
+		#region IAttributeSupport Members
+		public abstract void SetCustomAttribute(CustomAttributeBuilder customBuilder);
+		#endregion
+
+	}
+	
+
+	public class AssemblyClass: CommonAssemblyModulClass {
+		// TODO: make it private and move all builder based methods here
+		public AssemblyBuilder Builder;
+                    
+		bool m_is_cls_compliant;
+
+		public AssemblyClass (): base ()
+		{
+			m_is_cls_compliant = false;
+		}
+
+		public bool IsClsCompliant {
+			get {
+				return m_is_cls_compliant;
+			}
+		}
+
+		public override void SetCustomAttribute(CustomAttributeBuilder customBuilder)
+		{
+			Builder.SetCustomAttribute (customBuilder);
+		}
+	}
+
+	public class ModuleClass: CommonAssemblyModulClass {
+		// TODO: make it private and move all builder based methods here
+		public ModuleBuilder Builder;
+            
+		bool m_module_is_unsafe;
+
+		public ModuleClass (bool is_unsafe)
+		{
+			m_module_is_unsafe = is_unsafe;
+		}
+
+		public override void Emit () 
+		{
+			base.Emit ();
+
+			if (!m_module_is_unsafe)
+				return;
+
+			if (TypeManager.unverifiable_code_ctor == null) {
+				Console.WriteLine ("Internal error ! Cannot set unverifiable code attribute.");
+				return;
+			}
+				
+			SetCustomAttribute (new CustomAttributeBuilder (TypeManager.unverifiable_code_ctor, new object [0]));
+		}
+                
+		public override void SetCustomAttribute(CustomAttributeBuilder customBuilder)
+		{
+			Builder.SetCustomAttribute (customBuilder);
+		}
+	}
+
 }

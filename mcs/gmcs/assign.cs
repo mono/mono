@@ -295,9 +295,17 @@ namespace Mono.CSharp {
 				
 					//
 					// 2. and the original right side is implicitly convertible to
-					// the type of target_type.
+					// the type of target
 					//
 					if (Convert.ImplicitStandardConversionExists (a.original_source, target_type))
+						return this;
+
+					//
+					// In the spec 2.4 they added: or if type of the target is int
+					// and the operator is a shift operator...
+					//
+					if (source_type == TypeManager.int32_type &&
+					    (b.Oper == Binary.Operator.LeftShift || b.Oper == Binary.Operator.RightShift))
 						return this;
 
 					Convert.Error_CannotImplicitConversion (loc, a.original_source.Type, target_type);

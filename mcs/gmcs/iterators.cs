@@ -66,6 +66,7 @@ namespace Mono.CSharp {
 				return false;
 			if (!CheckContext (ec, loc))
 				return false;
+
 			
 			Type iterator_type = IteratorHandler.Current.IteratorType;
 			if (expr.Type != iterator_type){
@@ -563,7 +564,7 @@ namespace Mono.CSharp {
 			Create_Current ();
 			Create_Dispose ();
 
-			if (return_type == TypeManager.ienumerable_type){
+			if (IsIEnumerable (return_type)){
 				Create_GetEnumerator ();
 				RootContext.RegisterHelperClass (enumerable_proxy_class);
 			}
@@ -617,7 +618,7 @@ namespace Mono.CSharp {
 				// Create the proxy class type.
 				handler.MakeEnumeratorProxy ();
 
-				if (handler.return_type == TypeManager.ienumerable_type)
+				if (IsIEnumerable (handler.return_type))
 					handler.MakeEnumerableProxy ();
 
 				type = handler.return_type;
@@ -633,7 +634,7 @@ namespace Mono.CSharp {
 			{
 				handler.LoadArgs (ec.ig);
 				
-				if (handler.return_type == TypeManager.ienumerable_type)
+				if (IsIEnumerable (handler.return_type))
 					ec.ig.Emit (OpCodes.Newobj, (ConstructorInfo) handler.enumerable_proxy_constructor);
 				else 
 					ec.ig.Emit (OpCodes.Newobj, (ConstructorInfo) handler.enumerator_proxy_constructor);
@@ -658,18 +659,27 @@ namespace Mono.CSharp {
 				return ret_val;
 			}
 		}
+
+		static bool IsIEnumerable (Type t)
+		{
+			return t == TypeManager.ienumerable_type || TypeManager.ImplementsInterface (t, TypeManager.ienumerable_type);
+		}
+
+		static bool IsIEnumerator (Type t)
+		{
+			return t == TypeManager.ienumerator_type || TypeManager.ImplementsInterface (t, TypeManager.ienumerator_type);
+		}
 		
 		//
 		// Returns the new block for the method, or null on failure
 		//
 		public Block Setup (Block block)
 		{
-			if (return_type != TypeManager.ienumerator_type &&
-			    return_type != TypeManager.ienumerable_type){
+			if (!(IsIEnumerator (return_type) || IsIEnumerable (return_type))){
 				Report.Error (
 					-205, loc, String.Format (
-						"The method `{0}' contains a yield statement, but has an invalid return type for an iterator",
-						name));
+						"The method `{0}' contains a yield statement, but has an invalid return type for an iterator `{1}'",
+						name, TypeManager.CSharpName (return_type)));
 				return null;
 			}
 

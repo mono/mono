@@ -301,11 +301,6 @@ namespace Mono.CSharp
 			AddKeyword ("volatile", Token.VOLATILE);
 			AddKeyword ("where", Token.WHERE);
 			AddKeyword ("while", Token.WHILE);
-
-			if (RootContext.V2){
-				AddKeyword ("__yield", Token.YIELD);
-				AddKeyword ("yield", Token.YIELD);
-			}
 		}
 
 		//
@@ -1191,9 +1186,14 @@ namespace Mono.CSharp
 			tokens_seen = false;
 			arg = "";
 			static_cmd_arg.Length = 0;
+
+			// skip over white space
+			while ((c = getChar ()) != -1 && (c != '\n') && ((c == '\r') || (c == ' ') || (c == '\t')))
+				;
 				
-			while ((c = getChar ()) != -1 && (c != '\n') && (c != ' ') && (c != '\t') && (c != '\r')){
+			while ((c != -1) && (c != '\n') && (c != ' ') && (c != '\t') && (c != '\r')){
 				static_cmd_arg.Append ((char) c);
+                                c = getChar ();
 			}
 
 			cmd = static_cmd_arg.ToString ();
@@ -1245,6 +1245,11 @@ namespace Mono.CSharp
 				ref_line = line;
 				ref_name = file_name;
 				Location.Push (ref_name);
+				return true;
+			} else if (arg == "hidden"){
+				//
+				// We ignore #line hidden
+				//
 				return true;
 			}
 			
@@ -1793,10 +1798,26 @@ namespace Mono.CSharp
 			val = null;
 			// optimization: eliminate col and implement #directive semantic correctly.
 			for (;(c = getChar ()) != -1; col++) {
-				if (c == ' ' || c == '\t' || c == '\f' || c == '\v' || c == '\r' || c == 0xa0){
-					
-					if (c == '\t')
-						col = (((col + 8) / 8) * 8) - 1;
+				if (c == ' ')
+					continue;
+				
+				if (c == '\t') {
+					col = (((col + 8) / 8) * 8) - 1;
+					continue;
+				}
+				
+				if (c == ' ' || c == '\f' || c == '\v' || c == 0xa0)
+					continue;
+
+				if (c == '\r') {
+					if (peekChar () == '\n')
+						getChar ();
+
+					line++;
+					ref_line++;
+					col = 0;
+					any_token_seen |= tokens_seen;
+					tokens_seen = false;
 					continue;
 				}
 

@@ -1,3 +1,180 @@
+2004-02-26  Miguel de Icaza  <miguel@ximian.com>
+
+	* iterators.cs (IteratorHandler.IsIEnumerator, IsIEnumerable): New
+	routines to check if a type is an enumerable/enumerator allow
+	classes that implement the IEnumerable or IEnumerator interfaces.
+
+	* class.cs (Property, Operator): Implement IIteratorContainer, and
+	implement SetYields.
+
+	(Property.Define): Do the block swapping for get_methods in the
+	context of iterators.   We need to check if Properties also
+	include indexers or not.
+
+	(Operator): Assign the Block before invoking the
+	OperatorMethod.Define, so we can trigger the Iterator code
+	replacement. 
+
+	* cs-parser.jay (SimpleIteratorContainer): new helper class.  Both
+	Property and Operator classes are not created when we parse the
+	declarator but until we have the block completed, so we use a
+	singleton SimpleIteratorContainer.Simple to flag whether the
+	SetYields has been invoked.
+
+	We propagate this setting then to the Property or the Operator to
+	allow the `yield' to function.
+
+2004-02-25  Marek Safar  <marek.safar@seznam.cz>
+
+	* codegen.cs: Implemented attribute support for modules.
+        New AssemblyClass, ModuleClass and CommonAssemblyModulClass for
+        Assembly/Module functionality.
+        
+        * attribute.cs, class.cs, cs-parser.jay, delegate.cs, driver.cs, enum.cs
+        interface.cs, rootcontext.cs, statement.cs, typemanager.cs:
+        Updated dependencies on CodeGen.ModuleBuilder and CodeGen.AssemblyBuilder.
+
+2004-02-16  Marek Safar  <marek.safar@seznam.cz>
+
+	* interface.cs (FindMembers): The operation is performed on all base
+	interfaces and not only on the first. It is required for future CLS Compliance patch.
+
+2004-02-12 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* statement.cs, codegen.cs:
+	This patch deals with patterns such as:
+
+	public class List : IEnumerable {
+
+		public MyEnumerator GetEnumerator () {
+			return new MyEnumerator(this);
+		}
+	
+		IEnumerator IEnumerable.GetEnumerator () {
+			...
+		}
+		
+		public struct MyEnumerator : IEnumerator {
+			...
+		}
+	}
+
+	Before, there were a few things we did wrong:
+	1) we would emit callvirt on a struct, which is illegal
+	2) we emited ldarg when we needed to emit ldarga
+	3) we would mistakenly call the interface methods on an enumerator
+	type that derived from IEnumerator and was in another assembly. For example:
+
+	public class MyEnumerator : IEnumerator
+
+	Would have the interface methods called, even if there were public impls of the
+	method. In a struct, this lead to invalid IL code.
+	
+2004-02-11  Marek Safar  <marek.safar@seznam.cz>
+
+        * const.cs: Const is now derived from FieldBase. Method EmitConstant name
+	  renamed to Emit.
+
+        * delegate.cs (Define): Fixed crash when delegate type is undefined.
+        
+2004-02-11  Miguel de Icaza  <miguel@ximian.com>
+
+	* cs-parser.jay: Fix small regression: we were not testing V2
+	compiler features correctly.
+
+	* interface.cs: If the emit context is null, then create one
+
+2004-02-09  Marek Safar  <marek.safar@seznam.cz>
+
+        * decl.cs (GetSignatureForError): New virtual method to get full name
+	  for error messages.
+        
+	* attribute.cs (IAttributeSupport): New interface for attribute setting.
+	  Now it is possible to rewrite ApplyAttributes method to be less if/else.
+
+        * interface.cs : All InterfaceXXX classes are now derived from MemberCore.
+	  Duplicated members and code in these classes has been removed.
+	  Better encapsulation in these classes.
+
+2004-02-07  Miguel de Icaza  <miguel@ximian.com>
+
+	* assign.cs (Assign.DoResolve): When dealing with compound
+	assignments, there is a new rule in ECMA C# 2.4 (might have been
+	there before, but it is documented here) that states that in:
+
+	a op= b;
+
+	If b is of type int, and the `op' is a shift-operator, then the
+	above is evaluated as:
+
+	a = (int) a op b 
+
+	* expression.cs (Binary.ResolveOperator): Instead of testing for
+	int/uint/long/ulong, try to implicitly convert to any of those
+	types and use that in pointer arithmetic.
+
+	* delegate.cs (Error_NoMatchingMethodForDelegate): Compute the
+	method to print information for from the type, not from the
+	null-method we were given.
+
+2004-02-01  Duncan Mak  <duncan@ximian.com>
+
+	* cs-tokenizer.cs (get_cmd_arg): Skip over whitespace before
+	parsing for cmd, fixes bug #53694.
+
+2004-02-04  Marek Safar  <marek.safar@seznam.cz>
+
+	* class.cs, decl.cs: Fixed problem where IndexerName attribute was ignored
+        in the member name duplication tests. Property and operator name duplication
+        was missing too (error tests cs0102-{2,3,4,5}.cs, cs0111-{3,4}.cs).
+
+2004-02-03  Marek Safar  <marek.safar@seznam.cz>
+
+	* interface.cs (PopulateMethod): Fixed crash when interface method
+	returns not existing type (error test cs0246-3.cs).
+
+2004-02-02  Ravi Pratap M <ravi@ximian.com>
+
+	* cs-parser.jay (interface_accessors): Re-write actions to also
+	store attributes attached to get and set methods. Fix spelling
+	while at it.
+
+	(inteface_property_declaration): Modify accordingly.
+
+	(InterfaceAccessorInfo): New helper class to store information to pass
+	around between rules that use interface_accessors.
+
+	* interface.cs (Emit): Apply attributes on the get and set
+	accessors of properties and indexers too.
+	
+	* attribute.cs (ApplyAttributes): Modify accordingly to use the
+	right MethodBuilder when applying attributes to the get and set accessors.
+
+2004-01-31  Miguel de Icaza  <miguel@ximian.com>
+
+	* cs-tokenizer.cs: Applied patch from Marek Safar to fix bug 53386
+
+2004-01-26  Miguel de Icaza  <miguel@ximian.com>
+
+	* cs-tokenizer.cs: Handle #line hidden from PDC bits.
+
+2004-01-25  Miguel de Icaza  <miguel@ximian.com>
+
+	* cs-parser.jay: Remove YIELD token, instead use the new grammar
+	changes that treat `yield' specially when present before `break'
+	or `return' tokens.
+
+	* cs-tokenizer.cs: yield is no longer a keyword.
+
+2004-01-23  Marek Safar  <marek.safar@seznam.cz>
+
+	* cs-parser.jay, class.cs (DefineDefaultConstructor): Fixed ModFlags
+        setting for default constructors.
+	For default constructors are almost every time set wrong Modifier. The
+	generated IL code has been alright. But inside mcs this values was
+	wrong and this was reason why several of my CLS Compliance tests
+	failed.
+
 2004-02-27  Martin Baulig  <martin@ximian.com>
 
 	* generics.cs (ConstructedType.ResolveType): Make the nested type

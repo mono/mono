@@ -24,10 +24,8 @@ namespace Mono.CSharp {
 	using System.Reflection.Emit;
 	using System.Collections;
 
-	public class Const : MemberBase {
-		public Expression ConstantType;
+	public class Const : FieldBase {
 		public Expression Expr;
-		public FieldBuilder FieldBuilder;
 		EmitContext const_ec;
 
 		object ConstantValue = null;
@@ -44,10 +42,8 @@ namespace Mono.CSharp {
 
 		public Const (Expression constant_type, string name, Expression expr, int mod_flags,
 			      Attributes attrs, Location loc)
-			: base (constant_type, mod_flags, AllowedModifiers, Modifiers.PRIVATE, name, attrs, loc)
+			: base (constant_type, mod_flags, AllowedModifiers, name, null, attrs, loc)
 		{
-			ConstantType = constant_type;
-			Name = name;
 			Expr = expr;
 		}
 
@@ -75,7 +71,7 @@ namespace Mono.CSharp {
 		/// </summary>
 		public override bool Define (TypeContainer parent)
 		{
-			type = parent.ResolveType (ConstantType, false, Location);
+			type = parent.ResolveType (Type, false, Location);
 
 			if (type == null)
 				return false;
@@ -259,7 +255,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		///  Emits the field value by evaluating the expression
 		/// </summary>
-		public void EmitConstant (TypeContainer parent)
+		public void Emit (TypeContainer parent)
 		{
 			LookupConstantValue ();
 			

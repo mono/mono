@@ -343,11 +343,19 @@ namespace Mono.CSharp {
 		public AdditionResult AddProperty (Property prop)
 		{
 			AdditionResult res;
-			string basename = prop.Name;
-			string fullname = Name + "." + basename;
 
-			if ((res = IsValid (basename, fullname)) != AdditionResult.Success)
+			if ((res = AddProperty (prop, prop.Name)) != AdditionResult.Success)
 				return res;
+
+			if (prop.Get != null) {
+				if ((res = AddProperty (prop, "get_" + prop.Name)) != AdditionResult.Success)
+					return res;
+			}
+
+			if (prop.Set != null) {
+				if ((res = AddProperty (prop, "set_" + prop.Name)) != AdditionResult.Success)
+				return res;
+			}
 
 			if (properties == null)
 				properties = new ArrayList ();
@@ -356,6 +364,18 @@ namespace Mono.CSharp {
 				properties.Insert (0, prop);
 			else
 				properties.Add (prop);
+
+			return AdditionResult.Success;
+		}
+
+		AdditionResult AddProperty (Property prop, string basename)
+		{
+			AdditionResult res;
+			string fullname = Name + "." + basename;
+
+			if ((res = IsValid (basename, fullname)) != AdditionResult.Success)
+				return res;
+
 			DefineName (fullname, prop);
 
 			return AdditionResult.Success;
@@ -379,7 +399,7 @@ namespace Mono.CSharp {
 			return AdditionResult.Success;
 		}
 
-		public AdditionResult AddIndexer (Indexer i)
+		public void AddIndexer (Indexer i)
 		{
 			if (indexers == null)
 				indexers = new ArrayList ();
@@ -388,8 +408,6 @@ namespace Mono.CSharp {
 				indexers.Insert (0, i);
 			else
 				indexers.Add (i);
-
-			return AdditionResult.Success;
 		}
 
 		public AdditionResult AddOperator (Operator op)
@@ -399,6 +417,12 @@ namespace Mono.CSharp {
 
 			operators.Add (op);
 
+			string basename = op.Name;
+			string fullname = Name + "." + basename;
+			if (!defined_names.Contains (fullname))
+			{
+				DefineName (fullname, op);
+			}
 			return AdditionResult.Success;
 		}
 
@@ -559,25 +583,23 @@ namespace Mono.CSharp {
 		void DefineDefaultConstructor (bool is_static)
 		{
 			Constructor c;
-			int mods = 0;
 
-			c = new Constructor (this, Basename, Parameters.EmptyReadOnlyParameters,
+			// The default constructor is public
+			// If the class is abstract, the default constructor is protected
+			// The default static constructor is private
+
+			int mods = Modifiers.PUBLIC;
+			if (is_static)
+				mods = Modifiers.STATIC | Modifiers.PRIVATE;
+			else if ((ModFlags & Modifiers.ABSTRACT) != 0)
+				mods = Modifiers.PROTECTED;
+
+			c = new Constructor (this, Basename, mods, Parameters.EmptyReadOnlyParameters,
 					     new ConstructorBaseInitializer (
 						     null, Parameters.EmptyReadOnlyParameters,
 						     Location),
 					     Location);
 			
-			if (is_static)
-				mods = Modifiers.STATIC;
-
-			//
-			// If the class is abstract, the default constructor is protected
-			//
-			if ((ModFlags & Modifiers.ABSTRACT) != 0)
-				mods |= Modifiers.PROTECTED;
-			
-			c.ModFlags = mods;
-
 			AddConstructor (c);
 			
 			c.Block = new ToplevelBlock (null, Location);
@@ -812,7 +834,7 @@ namespace Mono.CSharp {
 					return null;
 				}
 
-				ModuleBuilder builder = CodeGen.ModuleBuilder;
+				ModuleBuilder builder = CodeGen.Module.Builder;
 				TypeBuilder = builder.DefineType (
 					Name, type_attributes, ptype, null);
 				
@@ -1641,7 +1663,7 @@ namespace Mono.CSharp {
 		{
 			if (constants != null)
 				foreach (Const con in constants)
-					con.EmitConstant (this);
+					con.Emit (this);
 			return;
 		}
 
@@ -2464,6 +2486,7 @@ namespace Mono.CSharp {
 			Modifiers.OVERRIDE |
 			Modifiers.ABSTRACT |
 		        Modifiers.UNSAFE |
+			Modifiers.METHOD_YIELDS | 
 			Modifiers.EXTERN;
 
 		//
@@ -2472,7 +2495,8 @@ namespace Mono.CSharp {
 		public Method (DeclSpace ds, Expression return_type, int mod, string name,
 			       Parameters parameters, Attributes attrs, Location l)
 			: base (ds, return_type, mod, AllowedModifiers, name, attrs, parameters, l)
-		{ }
+		{
+		}
 
 		public Method (GenericMethod generic, Expression return_type, int mod, string name,
 			       Parameters parameters, Attributes attrs, Location l)
@@ -2839,9 +2863,9 @@ namespace Mono.CSharp {
 		// The spec claims that static is not permitted, but
 		// my very own code has static constructors.
 		//
-		public Constructor (DeclSpace ds, string name, Parameters args,
+		public Constructor (DeclSpace ds, string name, int mod, Parameters args,
 				    ConstructorInitializer init, Location l)
-			: base (ds, null, 0, AllowedModifiers, name, null, args, l)
+			: base (ds, null, mod, AllowedModifiers, name, null, args, l)
 		{
 			Initializer = init;
 		}
@@ -4300,7 +4324,7 @@ namespace Mono.CSharp {
 		}
 	}
 			
-	public class Property : PropertyBase {
+	public class Property : PropertyBase, IIteratorContainer {
 		const int AllowedModifiers =
 			Modifiers.NEW |
 			Modifiers.PUBLIC |
@@ -4313,6 +4337,7 @@ namespace Mono.CSharp {
 			Modifiers.ABSTRACT |
 		        Modifiers.UNSAFE |
 			Modifiers.EXTERN |
+			Modifiers.METHOD_YIELDS |
 			Modifiers.VIRTUAL;
 
 		public Property (DeclSpace ds, Expression type, string name, int mod_flags,
@@ -4344,6 +4369,20 @@ namespace Mono.CSharp {
 							  parameters, ip, CallingConventions.Standard,
 							  Get.OptAttributes, ModFlags, flags, false);
 
+				//
+				// Setup iterator if we are one
+				//
+				if ((ModFlags & Modifiers.METHOD_YIELDS) != 0){
+					IteratorHandler ih = new  IteratorHandler (
+										   "get", container, MemberType,
+										   parameters, ip, ModFlags, Location);
+					
+					Block new_block = ih.Setup (block);
+					if (new_block == null)
+						return false;
+					block = new_block;
+				}
+				
 				if (!GetData.Define (container))
 					return false;
 
@@ -4399,6 +4438,11 @@ namespace Mono.CSharp {
 				}
 			}
 			return true;
+		}
+
+		public void SetYields ()
+		{
+			ModFlags |= Modifiers.METHOD_YIELDS;
 		}
 	}
 
@@ -4781,6 +4825,9 @@ namespace Mono.CSharp {
 				Name = ShortName;
 			}
 
+			if (!CheckNameCollision (container))
+				return false;
+
 			if (!CheckBase (container))
 				return false;
 
@@ -4894,9 +4941,53 @@ namespace Mono.CSharp {
 
 			return true;
 		}
+
+		bool CheckNameCollision (TypeContainer container) {
+			switch (VerifyName (container)){
+				case DeclSpace.AdditionResult.NameExists:
+					Report.Error (102, Location, "The container '{0}' already contains a definition for '{1}'", container.GetSignatureForError (), Name);
+					return false;
+
+				case DeclSpace.AdditionResult.Success:
+					return true;
+			}
+			throw new NotImplementedException ();
+		}
+
+		DeclSpace.AdditionResult VerifyName (TypeContainer container) {
+			if (!AddIndexer (container, container.Name + "." + Name))
+				return DeclSpace.AdditionResult.NameExists;
+
+			if (Get != null) {
+				if (!AddIndexer (container, container.Name + ".get_" + Name))
+					return DeclSpace.AdditionResult.NameExists;
+			}
+
+			if (Set != null) {
+				if (!AddIndexer (container, container.Name + ".set_" + Name))
+					return DeclSpace.AdditionResult.NameExists;
+			}
+			return DeclSpace.AdditionResult.Success;
+		}
+
+		bool AddIndexer (TypeContainer container, string fullname)
+		{
+			object value = container.GetDefinition (fullname);
+
+			if (value != null) {
+				return value.GetType () != GetType () ? false : true;
+			}
+
+			container.DefineName (fullname, this);
+			return true;
+		}
+
+		public override string GetSignatureForError () {
+			return TypeManager.CSharpSignature (PropertyBuilder, true);
+		}
 	}
 
-	public class Operator : MemberBase {
+	public class Operator : MemberBase, IIteratorContainer {
 
 		const int AllowedModifiers =
 			Modifiers.PUBLIC |
@@ -4963,6 +5054,7 @@ namespace Mono.CSharp {
 			: base (ret_type, mod_flags, AllowedModifiers, Modifiers.PUBLIC, "", attrs, loc)
 		{
 			OperatorType = type;
+			Name = "op_" + OperatorType;
 			ReturnType = ret_type;
 			FirstArgType = arg1type;
 			FirstArgName = arg1name;
@@ -5006,6 +5098,7 @@ namespace Mono.CSharp {
 						     new Parameters (param_list, null, Location),
 						     OptAttributes, Location);
 
+			OperatorMethod.Block = Block;
 			OperatorMethod.IsOperator = true;			
 			OperatorMethod.Define (container);
 
@@ -5120,7 +5213,6 @@ namespace Mono.CSharp {
 			if ((ModFlags & (Modifiers.ABSTRACT | Modifiers.EXTERN)) != 0)
 				return;
 			
-			OperatorMethod.Block = Block;
 			OperatorMethod.Emit (container);
 			Block = null;
 		}
@@ -5201,6 +5293,11 @@ namespace Mono.CSharp {
 					TypeManager.CSharpName (return_type),
 					GetName (OperatorType),
 					param_types [0], param_types [1]);
+		}
+
+		public void SetYields ()
+		{
+			ModFlags |= Modifiers.METHOD_YIELDS;
 		}
 	}
 
@@ -5377,10 +5474,7 @@ namespace Mono.CSharp {
 			// If only accessible to the defining assembly or 
 			if (prot == MethodAttributes.FamANDAssem ||
 			    prot == MethodAttributes.Assembly){
-				if (m.DeclaringType.Assembly == CodeGen.AssemblyBuilder)
-					return true;
-				else
-					return false;
+				return m.DeclaringType.Assembly == CodeGen.Assembly.Builder;
 			}
 
 			// Anything else (FamOrAssembly and Public) is fine

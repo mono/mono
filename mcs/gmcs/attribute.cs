@@ -631,13 +631,18 @@ namespace Mono.CSharp {
 				else
 					return false;
 			} else if (element is Property || element is Indexer ||
-				   element is InterfaceProperty || element is InterfaceIndexer) {
+				   element is InterfaceProperty || element is InterfaceIndexer || element is InterfaceProperty.PropertyAccessor) {
 				if ((targets & AttributeTargets.Property) != 0)
 					return true;
 				else
 					return false;
-			} else if (element is AssemblyBuilder){
+			} else if (element is AssemblyClass){
 				if ((targets & AttributeTargets.Assembly) != 0)
+					return true;
+				else
+					return false;
+			} else if (element is ModuleClass){
+				if ((targets & AttributeTargets.Module) != 0)
 					return true;
 				else
 					return false;
@@ -839,9 +844,6 @@ namespace Mono.CSharp {
 				if (asec.Attributes == null)
 					continue;
 
-				if (attr_target == "assembly" && !(builder is AssemblyBuilder))
-					continue;
-
 				if (attr_target == "return" && !(builder is ParameterBuilder))
 					continue;
 				
@@ -869,7 +871,17 @@ namespace Mono.CSharp {
 						return;
 					}
 
-					if (kind is Method || kind is Operator || kind is InterfaceMethod ||
+					if (kind is IAttributeSupport) {
+						if (attr_type == TypeManager.methodimpl_attr_type && a.ImplOptions == MethodImplOptions.InternalCall) {
+							((MethodBuilder) builder).SetImplementationFlags (MethodImplAttributes.InternalCall | MethodImplAttributes.Runtime);
+						} 
+						else {
+							IAttributeSupport attributeSupport = kind as IAttributeSupport;
+							attributeSupport.SetCustomAttribute (cb);
+						}
+					}
+					else if (kind is Method || kind is Operator || kind is InterfaceMethod ||
+
 					    kind is Accessor) {
 						if (attr_type == TypeManager.methodimpl_attr_type) {
 							if (a.ImplOptions == MethodImplOptions.InternalCall)
@@ -899,7 +911,15 @@ namespace Mono.CSharp {
 						}
 					} else if (kind is Property || kind is Indexer ||
 						   kind is InterfaceProperty || kind is InterfaceIndexer) {
+
+                                                if (builder is PropertyBuilder) 
 						((PropertyBuilder) builder).SetCustomAttribute (cb);
+                                                //
+                                                // This is for the case we are setting attributes on
+                                                // the get and set accessors
+                                                //
+                                                else if (builder is MethodBuilder)
+                                                        ((MethodBuilder) builder).SetCustomAttribute (cb);
 					} else if (kind is Event || kind is InterfaceEvent) {
 						((MyEventBuilder) builder).SetCustomAttribute (cb);
 					} else if (kind is ParameterBuilder) {
@@ -1201,5 +1221,9 @@ namespace Mono.CSharp {
                         
 			return false;
 		}
+	}
+
+	public interface IAttributeSupport {
+		void SetCustomAttribute (CustomAttributeBuilder customBuilder);
 	}
 }

@@ -35,7 +35,7 @@ namespace Mono.CSharp {
 		public readonly Modifier ModFlags;
 		public Attributes OptAttributes;
 		public readonly string Name;
-		public Type parameter_type;
+		Type parameter_type;
 		
 		public Parameter (Expression type, string name, Modifier mod, Attributes attrs)
 		{
