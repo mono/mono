@@ -390,4 +390,15 @@ public class X
 
 		return b + c;
 	}
+
+	//
+	// Tests that the flow analysis is preformed first in the for statement
+	// and later on the `increment' part of the for
+	//
+	static void test26 ()
+	{
+		int j;
+		for( int i=0; i<10; i=j ) 
+			j = i+1;
+	}
 }
