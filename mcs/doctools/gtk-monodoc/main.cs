@@ -92,9 +92,12 @@ class DocumentationEditor {
 
 	void TreeSelectionChanged (object sender, EventArgs a)
 	{
-		Gtk.TreeIter iter;
-		
-		Console.WriteLine (tv.Selection.GetSelected (tv, out iter));
+		Gtk.TreeIter iter = new Gtk.TreeIter ();
+		Gtk.TreeModel model;
+
+		if (tv.Selection.GetSelected (out model, ref iter)){
+			Console.WriteLine ("YAY");
+		}
 	}
 	
 	void OnOpenActivate (object sender, EventArgs a)
