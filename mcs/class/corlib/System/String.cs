@@ -18,6 +18,7 @@ using System.Runtime.CompilerServices;
 namespace System {
 	[Serializable]
 	public sealed class String : IConvertible, IComparable, ICloneable, IEnumerable {
+		[NonSerialized]
 		private int length;
 
 		private const int COMPARE_CASE = 0;

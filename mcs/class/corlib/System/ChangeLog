@@ -1,3 +1,8 @@
+2003-05-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* String.cs: patch by Jean Marc <jean-marc.andre@polymtl.ca> that fixes
+	bug #42695.
+
 2003-05-09  Zoltan Varga  <vargaz@freemail.hu>
 
 	* MulticastDelegate.cs (GetInvocationList): Avoid ArrayList 
