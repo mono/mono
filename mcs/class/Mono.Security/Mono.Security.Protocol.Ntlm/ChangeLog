@@ -1,3 +1,9 @@
+2003-12-15  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* ChallengeResponse.cs: Pre-calculated second part of the LM hash for 
+	small password. Otherwise we get a  DES weak key - which isn't 
+	supported (exception) by the framework.
+
 2003-12-02  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* ChallengeResponse.cs: Fixed compilation error with mcs (System.Math.Min)

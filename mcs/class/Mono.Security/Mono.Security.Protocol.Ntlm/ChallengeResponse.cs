@@ -66,9 +66,24 @@ namespace Mono.Security.Protocol.Ntlm {
 				des.Key = PasswordToKey (value, 0);
 				ICryptoTransform ct = des.CreateEncryptor ();
 				ct.TransformBlock (magic, 0, 8, _lmpwd, 0);
-				des.Key = PasswordToKey (value, 7);
-				ct = des.CreateEncryptor ();
-				ct.TransformBlock (magic, 0, 8, _lmpwd, 8);
+				if (value.Length < 8) {
+					// In .NET DES cannot accept a weak key (as would result a password <= 7 chars)
+					// but we (or better someone else) can pre-calculate this case 0xAAD3B435B51404EE
+					// http://packetstormsecurity.nl/Crackers/NT/l0phtcrack/l0phtcrack2.5-readme.html
+					_lmpwd  [8] = 0xAA;
+					_lmpwd  [9] = 0xD3;
+					_lmpwd [10] = 0xB4;
+					_lmpwd [11] = 0x35;
+					_lmpwd [12] = 0xB5;
+					_lmpwd [13] = 0x14;
+					_lmpwd [14] = 0x04;
+					_lmpwd [15] = 0xEE;
+				}
+				else {
+					des.Key = PasswordToKey (value, 7);
+					ct = des.CreateEncryptor ();
+					ct.TransformBlock (magic, 0, 8, _lmpwd, 8);
+				}
 				// create NT password
 				MD4 md4 = MD4.Create ();
 				byte[] hash = md4.ComputeHash (Encoding.Unicode.GetBytes (value));
