@@ -1,3 +1,8 @@
+2003-04-17  Zoltan Varga  <vargaz@freemail.hu>
+
+	* TypeBuilder.cs (CreateType): Avoid creating a default constructor
+	for the global type.
+
 2003-04-15  Miguel de Icaza  <miguel@ximian.com>
 
 	* TypeBuilder.cs (DefineDefaultConstructor): Make it generate code

@@ -463,7 +463,7 @@ namespace System.Reflection.Emit {
 			//
 			// On classes, define a default constructor if not provided
 			//
-			if (!(IsInterface || IsValueType) && ctors == null)
+			if (!(IsInterface || IsValueType) && (ctors == null) && (tname != "<Module>"))
 				DefineDefaultConstructor (MethodAttributes.Public);
 
 			if (ctors != null){
