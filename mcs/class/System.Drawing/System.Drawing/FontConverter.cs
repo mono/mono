@@ -31,9 +31,11 @@
 //
 
 using System;
+using System.Text;
 using System.Collections;
 using System.ComponentModel;
 using System.Globalization;
+using System.Drawing.Text;
 
 namespace System.Drawing
 {
@@ -64,25 +66,141 @@ namespace System.Drawing
 						  object value,
 						  Type destinationType)
 		{
-			if ((destinationType == typeof (string)) && (value is Font))
-				return value.ToString ();
+			if ((destinationType == typeof (string)) && (value is Font)) {
+				Font font = (Font) value;
+				StringBuilder sb = new StringBuilder ();
+				sb.Append (font.Name).Append (", ");
+				sb.Append (font.Size);
+
+				switch (font.Unit) {
+				// MS throws ArgumentException, if unit is set 
+				// to GraphicsUnit.Display
+				// Don't know what to append for GraphicsUnit.Display
+				case GraphicsUnit.Display:
+					sb.Append ("display"); break;
+
+				case GraphicsUnit.Document:
+					sb.Append ("doc"); break;
+
+				case GraphicsUnit.Point:
+					sb.Append ("pt"); break;
+
+				case GraphicsUnit.Inch:
+					sb.Append ("in"); break;
+
+				case GraphicsUnit.Millimeter:
+					sb.Append ("mm"); break;
+
+				case GraphicsUnit.Pixel:
+					sb.Append ("px"); break;
+
+				case GraphicsUnit.World:
+					sb.Append ("world"); break;
+				}
+
+				if (font.Style != FontStyle.Regular)
+					sb.Append (", style=").Append (font.Style);
+
+				return sb.ToString ();
+			}
 
 			return base.ConvertTo (context, culture, value, destinationType);
 		}
 
-		[MonoTODO]
 		public override object ConvertFrom (ITypeDescriptorContext context,
 						    CultureInfo culture,
 						    object value)
 		{
-			throw new NotImplementedException ();
+			string fontFamily = value as string;
+			if (fontFamily == null)
+				return base.ConvertFrom (context, culture, value);
+
+			// MS creates a font from the given family with
+			// emSize = 8.
+			return new Font (fontFamily, 8);
 		}
 
-		[MonoTODO]
 		public override object CreateInstance (ITypeDescriptorContext context,
 						       IDictionary propertyValues)
 		{
-			throw new NotImplementedException ();
+			Object value;
+			byte charSet = 1;
+			float size = 8;
+			String name = null;
+			bool vertical = false;
+			FontStyle style = FontStyle.Regular;
+			FontFamily fontFamily = null;
+			GraphicsUnit unit = GraphicsUnit.Point;
+
+			if ((value = propertyValues ["GdiCharSet"]) != null)
+				charSet = (byte) value;
+
+			if ((value = propertyValues ["Size"]) != null)
+				size = (float) value;
+
+			if ((value = propertyValues ["Unit"]) != null)
+				unit = (GraphicsUnit) value;
+
+			if ((value = propertyValues ["Name"]) != null)
+				name = (String) value;
+
+			if ((value = propertyValues ["GdiVerticalFont"]) != null)
+				vertical = (bool) value;
+
+			if ((value = propertyValues ["Bold"]) != null) {
+				bool bold = (bool) value;
+				if (bold == true)
+					style |= FontStyle.Bold;
+			}
+
+			if ((value = propertyValues ["Italic"]) != null) {
+				bool italic = (bool) value;
+				if (italic == true)
+					style |= FontStyle.Italic;
+			}
+
+			if ((value = propertyValues ["Strikeout"]) != null) {
+				bool strike = (bool) value;
+				if (strike == true)
+					style |= FontStyle.Strikeout;
+			}
+
+			if ((value = propertyValues ["Underline"]) != null) {
+				bool underline = (bool) value;
+				if (underline == true)
+					style |= FontStyle.Underline;
+			}
+
+			/* ?? Should default font be culture dependent ?? */
+			if (name == null)
+				fontFamily = new FontFamily ("Tahoma");
+			else {
+				FontCollection collection = new InstalledFontCollection ();
+				FontFamily [] installedFontList = collection.Families;
+				foreach (FontFamily font in installedFontList) {
+					if (name == font.Name) {
+						fontFamily = font;
+						break;
+					}
+				}
+
+				// font family not found in installed fonts
+				if (fontFamily == null) {
+					collection = new PrivateFontCollection ();
+					FontFamily [] privateFontList = collection.Families;
+					foreach (FontFamily font in privateFontList) {
+						if (name == font.Name) {
+							fontFamily = font;
+							break;
+						}
+					}
+				}
+
+				// font family not found in private fonts also
+				fontFamily = FontFamily.GenericSansSerif;
+			}
+
+			return new Font (fontFamily, size, style, unit, charSet, vertical);
 		}
 
 		public override bool GetCreateInstanceSupported (ITypeDescriptorContext context)
@@ -90,9 +208,9 @@ namespace System.Drawing
 			return true;
 		}
 
-		public override PropertyDescriptorCollection GetProperties (ITypeDescriptorContext context,
-									    object value,
-									    Attribute [] attributes)
+		public override PropertyDescriptorCollection GetProperties
+						(ITypeDescriptorContext context,
+						object value, Attribute [] attributes)
 		{
 			if (value is Font)
 				return TypeDescriptor.GetProperties (value, attributes);

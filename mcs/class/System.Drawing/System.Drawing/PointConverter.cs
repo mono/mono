@@ -6,9 +6,6 @@
 //   Ravindra (rkumar@novell.com)
 //
 // Copyright (C) 2002 Ximian, Inc. http://www.ximian.com
-// Copyright (C) 2004 Novell, Inc. http://www.novell.com
-//
-
 //
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
@@ -91,8 +88,7 @@ namespace System.Drawing
 			// LAMESPEC: "The default implementation calls the object's
 			// ToString method if the object is valid and if the destination
 			// type is string." MS does not behave as per the specs.
-			// Oh well, it is just a string and there is no harm in behaving
-			// like MS.
+			// Oh well, we have to be compatible with MS.
 			if ((destinationType == typeof (string)) && (value is Point))
 				return ((Point) value).X + ", " + ((Point) value).Y;
 			

@@ -126,10 +126,12 @@ namespace System.Drawing
 		}
 
 		internal void setProperties (FontFamily family, float emSize, FontStyle style, GraphicsUnit unit, byte charSet, bool isVertical)
-		{			
-			_name=family.Name;
+		{
+			_name = family.Name;
 			_fontFamily = family;
-			_size = emSize;			
+			_size = emSize;
+
+			// MS throws ArgumentException, if unit is set to GraphicsUnit.Display
 			_unit = unit;
 			_style = style;
 			_gdiCharSet = charSet;
@@ -331,11 +333,14 @@ namespace System.Drawing
 		{
 			lock (this)
 			{
+				// NOTE: If family name is empty or invalid, MS
+				// creates Microsoft Sans Serif font. MS does not
+				// accept null values for familyName.
 				Status status;
 				FontFamily family = new FontFamily (familyName);
 				setProperties (family, emSize, style, unit, charSet, isVertical);
 				
-				status = GDIPlus.GdipCreateFont (family.NativeObject, emSize,  style,   unit,  out fontObject);
+				status = GDIPlus.GdipCreateFont (family.NativeObject, emSize,  style, unit, out fontObject);
 				GDIPlus.CheckStatus (status);
 			}
 		}

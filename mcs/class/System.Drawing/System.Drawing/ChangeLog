@@ -1,3 +1,8 @@
+2004-06-18  Ravindra <rkumar@novell.com>
+
+	* FontConverter.cs: Implemented the missing functions.
+	* Font.cs: Added some notes.
+
 2004-06-16  Sanjay Gupta <gsanjay@novell.com>
 	
 	* gdipFunctions.cs: Modified Function signature for 

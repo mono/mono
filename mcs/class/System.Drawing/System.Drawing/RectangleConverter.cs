@@ -97,8 +97,7 @@ namespace System.Drawing
 			// LAMESPEC: "The default implementation calls the object's
 			// ToString method if the object is valid and if the destination
 			// type is string." MS does not behave as per the specs.
-			// Oh well, it is just a string and there is no harm in behaving
-			// like MS.
+			// Oh well, we have to be compatible with MS.
 			if ((destinationType == typeof (string)) && (value is Rectangle)) {
 				Rectangle rect = (Rectangle) value;
 				StringBuilder sb = new StringBuilder ();
