@@ -2032,12 +2032,16 @@ namespace System.Windows.Forms
 
 		public void CreateControl() {
 
-			if (!IsHandleCreated)
+			if (!IsHandleCreated) {
 				CreateHandle();
+			}
 
 			for (int i=0; i<child_controls.Count; i++) {
-				child_controls[i].CreateControl();
+				if (!child_controls[i].IsHandleCreated) {
+					child_controls[i].CreateHandle();
+				}
 			}
+
 			OnCreateControl();
 		}
 
@@ -2551,6 +2555,11 @@ namespace System.Windows.Forms
 			if (window==null) {
 				window = new ControlNativeWindow(this);
 				window.CreateHandle(CreateParams);
+
+				// window is only null if the handle is created for the first time; make sure OnCreateControl is triggered
+				// This also causes our children to be created ona CreateHandle call, which shouldn't really be a problem 
+				// but may not match MS
+				CreateControl();
 
 				// Find out where the window manager placed us
 				UpdateBounds();

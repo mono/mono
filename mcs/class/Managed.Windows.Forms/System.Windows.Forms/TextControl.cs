@@ -2041,7 +2041,7 @@ if (end != null) {
 
 				start++;
 				if (start < end) {
-					for (i = end - 1; i >= start; i++) {
+					for (i = end - 1; i >= start; i--) {
 						Delete(i);
 					}
 				}

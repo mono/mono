@@ -1,6 +1,14 @@
+2005-03-08  Peter Bartok  <pbartok@novell.com>
+
+	* Control.cs: Fixed bug #73190; now invokes CreateControl (which
+	  in turn triggers OnCreateContro) when creating a handle for the
+	  first time.
+	* TextControl.cs: Fixed endless loop in certain cases when 
+	  replacing the current selection
+
 2005-03-08  Jordi Mas i Hernandez <jordi@ximian.com>
 
-	* ScrollBar.cs
+	* ScrollBar.cs:
 	  - Honors NewValue changes in Scroll events allowing apps to change it
 	  - Adds First and Last Scroll events
 	  - Fixes Thumb events
