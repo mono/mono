@@ -106,7 +106,10 @@ namespace System.Runtime.Remoting.Channels.Tcp
 						       object remoteChannelData,
 						       out string objectURI)
 	    {
-			if (url == null && remoteChannelData != null) {
+			if (url != null && Parse (url, out objectURI) != null)
+				return (IMessageSink) _sinkProvider.CreateSink (this, url, remoteChannelData);
+			
+			if (remoteChannelData != null) {
 				IChannelDataStore ds = remoteChannelData as IChannelDataStore;
 				if (ds != null && ds.ChannelUris.Length > 0)
 					url = ds.ChannelUris [0];
