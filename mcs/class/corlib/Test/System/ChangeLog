@@ -1,3 +1,9 @@
+2003-10-31  Pedro Martínez Juliá  <yoros@wanadoo.es>
+
+	* DateTimeTest.cs: Removed Universal Time in ToString because in
+	each computer that could be different. We need more control over
+	that to know what the result should be.
+
 2003-09-09  Zoltan Varga  <vargaz@freemail.hu>
 
 	* ArrayTest.cs: Fix the expected exception on some methods.
