@@ -33,7 +33,7 @@ namespace System.Runtime.CompilerServices {
 
 	[AttributeUsage (AttributeTargets.All)] 
 	[Serializable]
-	public class CompilerGeneratedAttribute : Attribute
+	public sealed class CompilerGeneratedAttribute : Attribute
 	{
 		public CompilerGeneratedAttribute ()
 		{

@@ -32,7 +32,6 @@ using System;
 namespace System.Runtime.CompilerServices {
 
 	[AttributeUsage (AttributeTargets.Assembly)] 
-	[Serializable]
 	public sealed class InternalsVisibleToAttribute : Attribute
 	{
 		string assemblyName;

@@ -1,5 +1,5 @@
 //
-// System.Runtime.CompilerServices.NGenHint
+// System.Runtime.CompilerServices.UnsafeValueTypeAttribute
 //
 // Author: Zoltan Varga (vargaz@gmail.com)
 //
@@ -31,15 +31,13 @@ using System;
 
 namespace System.Runtime.CompilerServices {
 
-	public enum NGenHint {
-
-		Default = 0,
-
-		Eager = 1,
-
-		Lazy = 2,
-
-		Never = 3
+	[AttributeUsage (AttributeTargets.Struct)] 
+	[Serializable]
+	public sealed class UnsafeValueTypeAttribute : Attribute
+	{
+		public UnsafeValueTypeAttribute ()
+		{
+		}
 	}
 }
 

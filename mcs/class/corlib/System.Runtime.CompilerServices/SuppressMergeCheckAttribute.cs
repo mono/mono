@@ -1,5 +1,5 @@
 //
-// System.Runtime.CompilerServices.NGenHint
+// System.Runtime.CompilerServices.SuppressMergeCheckAttribute
 //
 // Author: Zoltan Varga (vargaz@gmail.com)
 //
@@ -31,15 +31,13 @@ using System;
 
 namespace System.Runtime.CompilerServices {
 
-	public enum NGenHint {
-
-		Default = 0,
-
-		Eager = 1,
-
-		Lazy = 2,
-
-		Never = 3
+	[AttributeUsage (AttributeTargets.Class|AttributeTargets.Constructor|AttributeTargets.Method|AttributeTargets.Property|AttributeTargets.Field|AttributeTargets.Event)] 
+	[Serializable]
+	public sealed class SuppressMergeCheckAttribute : Attribute
+	{
+		public SuppressMergeCheckAttribute ()
+		{
+		}
 	}
 }
 
