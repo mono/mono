@@ -1,5 +1,10 @@
 2002-05-21  Martin Baulig  <martin@gnome.org>
 
+	* debug.c (mono_debug_source_location_from_address): Added support for the
+	dwarf2-plus format.
+
+2002-05-21  Martin Baulig  <martin@gnome.org>
+
 	* debug.c (mono_debug_source_location_from_address): New function.
 	(mono_debug_il_offset_from_address): New function.
 
