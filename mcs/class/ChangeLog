@@ -1,3 +1,7 @@
+2004-12-06  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (SUBDIRS): Move I18N after second-pass of System.
+
 2004-12-03  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (basic_SUBDIRS): Add second-pass System, too.

@@ -21,9 +21,9 @@ include ../build/rules.make
 SUBDIRS = \
 	corlib				\
 	System				\
-	I18N				\
 	System.XML			\
 	System				\
+	I18N				\
 	System.Drawing			\
 	System.EnterpriseServices	\
 	Mono.C5				\
