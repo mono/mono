@@ -1,5 +1,7 @@
 2002-04-03  Dietmar Maurer  <dietmar@ximian.com>
 
+	* appdomain.c (mono_jit_info_table_find): use char* instead of gpointer
+
 	* icall.c (ves_icall_InternalExecute): impl. FielSetter
 	(ves_icall_System_Array_SetValueImpl): removed strange MonoArray cast
 
