@@ -7,6 +7,7 @@ unsafe class X {
 	static int Main ()
 	{
 		char *ptr = stackalloc char [10];
+	        char *cptr = ptr;
 		int i;
 		long l = 0;
 		ulong ul = 0;
@@ -23,11 +24,12 @@ unsafe class X {
 
 
 		// Now test index access with longs
-		if (ptr [l] != 10)
+		if (cptr [l] != 10){
 			return 1;
-		if (ptr [ul] != 10)
+		}
+		if (cptr [ul] != 10)
 			return 2;
-		if (ptr [b] != 10)
+		if (cptr [b] != 10)
 			return 3;
 		
 		Console.WriteLine ("Ok");
