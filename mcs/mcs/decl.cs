@@ -10,6 +10,7 @@
 // TODO: Move the method verification stuff from the class.cs and interface.cs here
 //
 
+using System;
 using System.Collections;
 
 namespace CIR {
@@ -20,7 +21,7 @@ namespace CIR {
 	//   for managing those name spaces
 	// </summary>
 	
-	public class DeclSpace {
+	public abstract class DeclSpace {
 		string name, basename;
 		
 		// <summary>
@@ -104,5 +105,23 @@ namespace CIR {
 		{
 			defined_names.Add (name, o);
 		}
+
+		bool in_transit = false;
+		
+		// <summary>
+		//   This function is used to catch recursive definitions
+		//   in declarations.
+		// </summary>
+		public bool InTransit {
+			get {
+				return in_transit;
+			}
+
+			set {
+				in_transit = value;
+			}
+		}
+
+		abstract public Type Define (Tree tree);
 	}
 }

@@ -1,3 +1,21 @@
+2001-06-13  Miguel de Icaza  <miguel@ximian.com>
+
+	* decl.cs: Added `Define' abstract method.
+	(InTransit): new property, used to catch recursive definitions. 
+
+	* interface.cs: Implement `Define'. 
+
+	* modifiers.cs: Map Modifiers.constants to
+	System.Reflection.TypeAttribute flags.
+
+	* class.cs: Keep track of types and user-defined types.
+	(BuilderInit): New method for creating an assembly
+	(ResolveType): New function to launch the resolution process, only
+	used by interfaces for now.
+
+	* cs-parser.jay: Keep track of Classes, Structs and Interfaces
+	that are inserted into the name space. 
+
 2001-06-08  Miguel de Icaza  <miguel@ximian.com>
 
 	* ARGH.  I have screwed up my tree so many times due to the use of

@@ -12,6 +12,7 @@ namespace CSC
 {
 	using System;
 	using System.Reflection;
+	using System.Reflection.Emit;
 	using System.Collections;
 	using System.IO;
 	using CIR;
@@ -37,7 +38,7 @@ namespace CSC
 		bool yacc_verbose = false;
 
 		int error_count = 0;
-		
+
 		public int parse (Tree context, string input_file)
 		{
 			CSharpParser parser;
@@ -133,6 +134,7 @@ namespace CSC
 
 			return errors;
 		}
+
 		
 		public Driver (string [] args)
 		{
@@ -217,7 +219,10 @@ namespace CSC
 				error ("// Could not load one or more assemblies");
 			else
 				notice ("// Assemblies loaded");
-			
+
+
+			errors += context.BuilderInit ("Module", "Module.exe");
+
 			//
 			// Name resolution on the tree.
 			//
@@ -245,3 +250,4 @@ namespace CSC
 
 	}
 }
+

@@ -2,6 +2,7 @@
 // modifiers.cs: Modifier handling.
 // 
 using System;
+using System.Reflection;
 
 namespace CIR {
 	public class Modifiers {
@@ -59,6 +60,18 @@ namespace CIR {
 			}
 
 			return s;
+		}
+
+		public static TypeAttributes TypeAttr (int mod_flags)
+		{
+			TypeAttributes t = 0;
+			
+			if ((mod_flags & PUBLIC) != 0)
+				t |= TypeAttributes.Public;
+
+			// FIXME: implement all flags
+
+			return t;
 		}
 		
 		// <summary>

@@ -74,6 +74,11 @@ namespace CSC
 		//   Here we keep track of type references. 
 		// </summary>
 		TypeRefManager type_references;
+
+		// <summary>
+		//   Used to record all types defined
+		// </summary>
+		CIR.Tree tree;
 %}
 
 %token EOF
@@ -475,6 +480,7 @@ struct_declaration
 		new_struct = new Struct (current_container, full_struct_name, (int) $2);
 		current_container = new_struct;
 		current_container.Namespace = current_namespace;
+		tree.RecordType (full_class_name, new_struct);
 	  }
 	  opt_struct_interfaces
 	  struct_body
@@ -826,6 +832,7 @@ interface_declaration
 		if (current_interface != null)
 			error (-2, "Internal compiler error: interface inside interface");
 		current_interface = new_interface;
+		tree.RecordType (full_class_name, new_interface);
 	  }
 	  opt_interface_base
 	  interface_body
@@ -1893,6 +1900,7 @@ class_declaration
 		new_class = new Class (current_container, full_class_name, (int) $2);
 		current_container = new_class;
 		current_container.Namespace = current_namespace;
+		tree.RecordType (full_class_name, new_class);
 	  }
 	  opt_class_base
 	  class_body 
@@ -2702,6 +2710,7 @@ public CSharpParser(CIR.Tree tree, string name, System.IO.Stream input)
 	: base (tree, name, input)
 {
 	current_namespace = new Namespace (null, "");
+	this.tree = tree;
 	current_container = tree.Types;
 	current_container.Namespace = current_namespace;
 

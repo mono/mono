@@ -290,11 +290,6 @@ namespace CIR {
 			}
 		}
 
-		public Type ResolveName (string name)
-		{
-			return null;
-		}
-
 		public CSC.Namespace Namespace {
 			get {
 				return my_namespace;
@@ -307,22 +302,24 @@ namespace CIR {
 		
 		public int ResolveParents (Tree root)
 		{
-			if (Bases != null){
-				if (type_bases.Count == 0){
-					base_class_name = "System.Object";
-					return 0;
-				}
-			} else
+			if (Bases == null){
+				base_class_name = "System.Object";
 				return 0;
-			
-			foreach (Type t in Bases){
-				Type resolved = ResolveName (t.Name);
-
-				
 			}
+			
+			if (type_bases.Count == 0){
+				base_class_name = "System.Object";
+				return 0;
+			}
+			
 			return 0;
 		}
 
+		override public Type Define (Tree tree)
+		{
+			return null;
+		}
+		
 		public delegate void VisitContainer (TypeContainer container, object cback_data);
 
 		void VisitTypesAt (TypeContainer root, VisitContainer visit, object cback)

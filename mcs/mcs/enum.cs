@@ -74,5 +74,10 @@ namespace CIR {
 				return (Expression) defined_names [name];
 			}
 		}
+
+		public override Type Define (Tree tree)
+		{
+			return null;
+		}
 	}
 }
