@@ -1,3 +1,19 @@
+2002-05-06  Lawrence Pit <loz@cable.a2000.nl>
+
+	* WebRequest.cs: added
+	* WebResponse.cs: implemented
+	* WebException.cs: implemented
+	* WebHeaderCollection.cs: added
+	* HttpVersion.cs: implemented
+	* HttpContinueDelegate.cs: added
+	* IWebProxy.cs: added
+	* IWebRequestCreate.cs: added
+	* ICertificatePolicy.cs: added
+	* ServicePoint.cs: stubbed
+	* ServicePointManager.cs: stubbed
+	* CookieContainer.cs: added
+	* Authorization.cs: implemented
+
 2002-05-05  Lawrence Pit <loz@cable.a2000.nl>
 
 	* CredentialCache.cs: implemented
