@@ -139,8 +139,13 @@ namespace System.Reflection.Emit {
 
 		public Type CreateType ()
 		{
-			return _tb.CreateType ();
+			Type res = _tb.CreateType ();
+			setup_enum_type (res);
+			return res;
 		}
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private extern void setup_enum_type (Type t);
 
 		public FieldBuilder DefineLiteral (string literalName, object literalValue)
 		{
