@@ -1,0 +1,123 @@
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+// 
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+//
+// Copyright (c) 2004 Novell, Inc.
+//
+// Authors:
+//	Peter Bartok	pbartok@novell.com
+//
+//
+// $Revision: 1.1 $
+// $Modtime: $
+// $Log: XplatUIDriver.cs,v $
+// Revision 1.1  2004/07/09 05:21:25  pbartok
+// - Initial check-in
+//
+//
+
+// COMPLETE
+
+using System.Drawing;
+
+namespace System.Windows.Forms {
+	public abstract class XplatUIDriver {
+		internal abstract IntPtr	InitializeDriver();
+		internal abstract void		ShutdownDriver(IntPtr token);
+		internal delegate IntPtr	WndProc(IntPtr hwnd, Msg msg, IntPtr wParam, IntPtr lParam);
+
+
+		#region XplatUI Driver Properties
+		internal virtual Color ForeColor {
+			get {
+				return Color.Empty;
+			}
+		}
+
+		internal virtual  Color BackColor { 
+			get {
+				return Color.Empty;
+			}
+		}
+
+		internal virtual Font Font {
+			get {
+				return new Font("Arual", 12);
+			}
+		}
+
+		internal virtual Keys ModifierKeys {
+			get {
+				return Keys.None;
+			}
+		}
+
+		internal virtual MouseButtons MouseButtons {
+			get {
+				return MouseButtons.None;
+			}
+		}
+
+		internal virtual Point MousePosition {
+			get {
+				return Point.Empty;
+			}
+		}
+
+		internal virtual bool DropTarget {
+			get {
+				return false;
+			}
+
+			set {
+			}
+		}
+		#endregion	// XplatUI Driver Properties
+
+		#region XplatUI Driver Methods
+		internal abstract void Exit();
+		internal abstract IntPtr CreateWindow(CreateParams cp);
+		internal abstract IntPtr CreateWindow(IntPtr Parent, int X, int Y, int Width, int Height);
+		internal abstract void DestroyWindow(IntPtr handle);
+
+		internal abstract bool Text(IntPtr handle, string text);
+		internal abstract bool SetVisible(IntPtr handle, bool visible);
+		internal abstract bool IsVisible(IntPtr handle);
+		internal abstract IntPtr SetParent(IntPtr handle, IntPtr parent);
+		internal abstract IntPtr GetParent(IntPtr handle);
+
+		internal abstract void RefreshWindow(IntPtr handle);
+		internal abstract PaintEventArgs PaintEventStart(IntPtr handle);
+		internal abstract void PaintEventEnd(IntPtr handle);
+
+		internal abstract void SetWindowPos(IntPtr handle, Rectangle rc);
+		internal abstract void SetWindowPos(IntPtr handle, int x, int y, int width, int height);
+		internal abstract void Activate(IntPtr handle);
+		internal abstract void Invalidate(IntPtr handle, Rectangle rc);
+		internal abstract IntPtr DefWndProc(ref Message msg);
+		internal abstract void HandleException(Exception e);
+		internal abstract void DoEvents();
+		internal abstract bool PeekMessage(ref MSG msg, IntPtr hWnd, int wFilterMin, int wFilterMax, uint flags);
+		internal abstract bool GetMessage(ref MSG msg, IntPtr hWnd, int wFilterMin, int wFilterMax);
+		internal abstract bool TranslateMessage(ref MSG msg);
+		internal abstract bool MoveWindow(IntPtr hWnd, int x, int y, int width, int height);
+		internal abstract bool DispatchMessage(ref MSG msg);
+		internal abstract void Run();
+		#endregion	// XplatUI Driver Methods
+	}
+}
