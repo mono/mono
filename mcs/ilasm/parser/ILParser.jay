@@ -1084,7 +1084,7 @@ instr                   : INSTR_NONE
 			  }
 			| INSTR_STRING compQstring 
 				{
-				/*	currentInstr = new InstrString ((OpCode) $1, $2 as string); */
+					codegen.CodeBuffer.ldstr ((string) $2);
 				}
 			| INSTR_STRING bytearrayhead bytes CLOSE_PARENS 
 			| INSTR_SIG callConv type OPEN_PARENS sigArgs0 CLOSE_PARENS 

@@ -1,5 +1,9 @@
 2003-03-15 Jackson Harper <jackson@latitudegeo.com>
 
+	* ILParser.jay: Emit ldstr instruction
+
+2003-03-15 Jackson Harper <jackson@latitudegeo.com>
+
 	* ILParser.jay: Create external method references
 
 2003-03-14 Jackson Harper <jackson@latitudegeo.com>
