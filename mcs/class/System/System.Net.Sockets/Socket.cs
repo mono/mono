@@ -1384,10 +1384,17 @@ namespace System.Net.Sockets
 			}
 
 			connected = true;
+
+			// If sockaddr is null then we're a connection
+			// oriented protocol and should ignore the
+			// remote_end parameter (see MSDN
+			// documentation for Socket.ReceiveFrom(...) )
 			
-			// Stupidly, EndPoint.Create() is an
-			// instance method
-			remote_end = remote_end.Create (sockaddr);
+			if ( sockaddr != null ) {
+				// Stupidly, EndPoint.Create() is an
+				// instance method
+				remote_end = remote_end.Create (sockaddr);
+			}
 
 			return cnt;
 		}
