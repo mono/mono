@@ -1,3 +1,9 @@
+2004-04-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlDataLoader.cs : Don't overwrite existing DataSetName. When read
+	  mode is Auto, just ignore the schema if there is already schema info.
+	* DataSet.cs : Similarly ignore schema info for XmlReadMode = Auto.
+
 2004-04-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataSet.cs :

@@ -44,6 +44,9 @@ namespace System.Data
 
 			switch (mode) {
 			case XmlReadMode.Auto:
+				Result = DSet.Tables.Count == 0 ? XmlReadMode.InferSchema : XmlReadMode.IgnoreSchema;
+				ReadModeSchema (reader, Result);
+				break;
 			case XmlReadMode.InferSchema:
 				Result = XmlReadMode.InferSchema;
 				ReadModeSchema (reader, XmlReadMode.InferSchema);
@@ -87,22 +90,23 @@ namespace System.Data
 			int rootNodeDepth = XmlNodeElementsDepth(doc.DocumentElement);
 			switch (rootNodeDepth) {
 			case 1:
+				DSet.DataSetName = doc.DocumentElement.LocalName;
 				return;
 			case 2:
-				// new dataset name
-				String newDataSetName = "NewDataSet";
+				bool schemaExists = (DSet.Tables.Count == 0);
 				// create new document
 				XmlDocument newDoc = new XmlDocument();
 				// create element for dataset
-				XmlElement datasetElement = newDoc.CreateElement(newDataSetName);
+				XmlElement datasetElement = newDoc.CreateElement("dummy");
 				// make the new created element to be the new doc root
 				newDoc.AppendChild(datasetElement);
 				// import all the elements from doc and insert them into new doc
 				XmlNode root = newDoc.ImportNode(doc.DocumentElement,true);
 				datasetElement.AppendChild(root);
 				doc = newDoc;
-				// update dataset name
-				DSet.DataSetName = newDataSetName;
+				// set dataset name only when no schema exists now.
+				if (!schemaExists)
+					DSet.DataSetName = "NewDataSet";
 				break;
 			default:
 				DSet.DataSetName = doc.DocumentElement.LocalName;

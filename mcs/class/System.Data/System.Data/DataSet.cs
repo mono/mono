@@ -846,6 +846,12 @@ namespace System.Data {
 					SchemaMapper.Read (reader);
 					// (and continue to read)
 					break;
+				case XmlReadMode.Auto:
+					if (Tables.Count == 0)
+						goto default;
+					// otherwise just ignore and return IgnoreSchema
+					reader.Skip ();
+					return XmlReadMode.IgnoreSchema;
 				default:
 					SchemaMapper = new XmlSchemaMapper (this);
 					SchemaMapper.Read (reader);
