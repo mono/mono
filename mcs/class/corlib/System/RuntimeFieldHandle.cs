@@ -3,43 +3,45 @@
 //
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
 //
 
+using System.Reflection;
 using System.Runtime.Serialization;
 
 namespace System
 {
-	[MonoTODO]
+	[MonoTODO ("Serialization needs tests")]
 	[Serializable]
 	public struct RuntimeFieldHandle : ISerializable
 	{
 		IntPtr value;
-		
-		public IntPtr Value {
-			get {
-				return (IntPtr) value;
-			}
-		}
 
 		RuntimeFieldHandle (SerializationInfo info, StreamingContext context)
 		{
-			Type t;
-			
 			if (info == null)
 				throw new ArgumentNullException ("info");
 
-			t = (Type) info.GetValue ("TypeObj", typeof (Type));
-
-			value = t.TypeHandle.Value;
+			MonoField mf = ((MonoField) info.GetValue ("FieldObj", typeof (MonoField)));
+			value = mf.FieldHandle.Value;
 			if (value == IntPtr.Zero)
 				throw new SerializationException (Locale.GetText ("Insufficient state."));
 		}
 
+		public IntPtr Value {
+			get {
+				return value;
+			}
+		}
+
 		public void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
-			info.AddValue ("TypeObj", value, value.GetType ());
+			if (info == null)
+				throw new ArgumentNullException ("info");
+
+			info.AddValue ("FieldObj", (MonoField) FieldInfo.GetFieldFromHandle (this), typeof (MonoField));
 		}
 	}
 }

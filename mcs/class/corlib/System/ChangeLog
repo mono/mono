@@ -1,5 +1,11 @@
 2004-03-09  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
+	* RuntimeTypeHandle.cs
+	* RuntimeMethodHandle.cs
+	* RuntimeFieldHandle.cs: Implemented serialization (partially untested)
+
+2004-03-09  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
 	* EventArgs.cs
 	* Exception.cs
 	* ExecutionEngineException.cs
