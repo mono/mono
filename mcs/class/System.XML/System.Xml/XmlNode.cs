@@ -428,8 +428,6 @@ namespace System.Xml
 			}
 			else {
 				XmlLinkedNode newLinkedChild = (XmlLinkedNode) newChild;
-				XmlLinkedNode lastLinkedChild = LastLinkedChild;
-
 				newLinkedChild.parentNode = this;
 
 				if (refChild == null) {

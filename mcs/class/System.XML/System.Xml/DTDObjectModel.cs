@@ -814,7 +814,7 @@ namespace Mono.Xml
 		string literalValue;
 		string replacementText;
 		bool isInvalid;
-		Exception loadException;
+//		Exception loadException;
 		bool loadFailed;
 
 		protected DTDEntityBase (DTDObjectModel root)
@@ -889,7 +889,7 @@ namespace Mono.Xml
 					throw new InvalidOperationException ("The total amount of external entities exceeded the allowed number.");
 
 			} catch (Exception ex) {
-				loadException = ex;
+//				loadException = ex;
 				LiteralEntityValue = String.Empty;
 				LoadFailed = true;
 //				throw NotWFError ("Cannot resolve external entity. URI is " + absPath + " .");

@@ -298,7 +298,6 @@ openElements [openElementCount - 1]).IndentingOverriden;
 			// LAMESPEC: If prefix was already assigned another nsuri, then this element's nsuri goes away!
 
 			if (this.shouldCheckElementXmlns) {
-				string formatXmlns = String.Empty;
 				if (userWrittenNamespaces [prefix] == null) {
 					if (prefix != string.Empty) {
 						w.Write (" xmlns:");

@@ -138,7 +138,6 @@ namespace System.Xml
 				while (FirstChild != null)
 					this.RemoveChild (FirstChild);
 
-				XmlNameTable nt = this.OwnerDocument.NameTable;
 				XmlNamespaceManager nsmgr = this.ConstructNamespaceManager ();
 				XmlParserContext ctx = new XmlParserContext (OwnerDocument.NameTable, nsmgr,
 					OwnerDocument.DocumentType != null ? OwnerDocument.DocumentType.DTD : null,

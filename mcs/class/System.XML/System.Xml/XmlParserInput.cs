@@ -46,11 +46,6 @@ namespace System.Xml
 		public XmlParserInput (TextReader reader, string baseURI, int line, int column)
 		{
 			this.reader = reader;
-
-			StreamReader sr = reader as StreamReader;
-			if (sr != null)
-				can_seek = sr.BaseStream.CanSeek;
-
 			this.line = line;
 			this.column = column;
 			this.baseURI = baseURI;
@@ -178,7 +173,6 @@ namespace System.Xml
 
 		#region Privates
 		TextReader reader;
-		bool can_seek;
 		bool has_peek;
 		int peek_char;
 		int line;

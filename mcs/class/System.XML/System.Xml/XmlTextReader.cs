@@ -754,14 +754,12 @@ namespace System.Xml
 		#region Privates
 		internal class XmlTokenInfo
 		{
-			public XmlTokenInfo (XmlTextReader xtr, bool isPrimaryToken)
+			public XmlTokenInfo (XmlTextReader xtr)
 			{
-				this.isPrimaryToken = isPrimaryToken;
 				Reader = xtr;
 				Clear ();
 			}
 
-			bool isPrimaryToken;
 			string valueCache;
 
 			protected XmlTextReader Reader;
@@ -818,7 +816,7 @@ namespace System.Xml
 		internal class XmlAttributeTokenInfo : XmlTokenInfo
 		{
 			public XmlAttributeTokenInfo (XmlTextReader reader)
-				: base (reader, false)
+				: base (reader)
 			{
 				NodeType = XmlNodeType.Attribute;
 			}
@@ -981,7 +979,7 @@ namespace System.Xml
 
 		private void Init ()
 		{
-			currentToken = new XmlTokenInfo (this, true);
+			currentToken = new XmlTokenInfo (this);
 			cursorToken = currentToken;
 			currentAttribute = -1;
 			currentAttributeValue = -1;
@@ -1808,7 +1806,7 @@ namespace System.Xml
 				attributeValueTokens = newArray;
 			}
 			if (attributeValueTokens [currentAttributeValue] == null)
-				attributeValueTokens [currentAttributeValue] = new XmlTokenInfo (this, false);
+				attributeValueTokens [currentAttributeValue] = new XmlTokenInfo (this);
 			currentAttributeValueToken = attributeValueTokens [currentAttributeValue];
 			currentAttributeValueToken.Clear ();
 		}
@@ -1871,7 +1869,6 @@ namespace System.Xml
 					ch = ' ';
 					goto default;
 				case '&':
-					int startPosition = currentTagLength - 1;
 					if (PeekChar () == '#') {
 						ReadChar ();
 						ch = ReadCharacterReference ();
@@ -2532,7 +2529,6 @@ namespace System.Xml
 			else
 				SkipWhitespace ();
 			int quoteChar = ReadChar ();	// apos or quot
-			int startPos = currentTagLength;
 			int c = 0;
 			ClearValueBuffer ();
 			while (c != quoteChar) {
@@ -2551,7 +2547,6 @@ namespace System.Xml
 			if (!SkipWhitespace ())
 				throw NotWFError ("Whitespace is required after 'PUBLIC'.");
 			int quoteChar = ReadChar ();
-			int startPos = currentTagLength;
 			int c = 0;
 			ClearValueBuffer ();
 			while(c != quoteChar)

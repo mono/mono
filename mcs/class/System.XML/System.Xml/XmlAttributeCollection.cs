@@ -104,9 +104,9 @@ namespace System.Xml
 		public virtual XmlAttribute Append (XmlAttribute node) 
 #endif
 		{
-			XmlNode xmlNode = this.SetNamedItem (node);
+			SetNamedItem (node);
 			return node;
-		}	
+		}
 
 		public void CopyTo (XmlAttribute[] array, int index)
 		{

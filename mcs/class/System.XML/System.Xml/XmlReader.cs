@@ -901,7 +901,8 @@ namespace System.Xml
 			}
 				
 			int depth = Depth;
-			while (Read() && depth < Depth);
+			while (Read () && depth < Depth)
+				;
 			if (NodeType == XmlNodeType.EndElement)
 				Read ();
 		}

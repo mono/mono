@@ -727,12 +727,11 @@ namespace System.Xml
 			XmlAttribute attribute = CreateAttribute (reader.Prefix, reader.LocalName, reader.NamespaceURI, false, false); // different NameTable
 			ReadAttributeNodeValue (reader, attribute);
 
-			// Keep the current reader position
-			bool res;
-			if (attribute.NamespaceURI == string.Empty || attribute.NamespaceURI == null)
-				res = reader.MoveToAttribute (attribute.Name);
+			// Keep the current reader position on attribute.
+			if (attribute.NamespaceURI == null)
+				reader.MoveToAttribute (attribute.Name);
 			else 
-				res = reader.MoveToAttribute (attribute.LocalName, attribute.NamespaceURI);
+				reader.MoveToAttribute (attribute.LocalName, attribute.NamespaceURI);
 			if (reader.IsDefault)
 				attribute.SetDefault ();
 			return attribute;

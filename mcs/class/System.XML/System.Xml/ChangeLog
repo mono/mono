@@ -1,3 +1,17 @@
+2004-11-26  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlReader.cs : not fixage, just explicitly formatted code a bit.
+	* XmlTextReader.cs,
+	  XmlEntity.cs,
+	  XmlAttributeCollection.cs,
+	  XmlTextWriter.cs,
+	  XmlElement.cs,
+	  XmlNode.cs,
+	  DTDObjectModel.cs,
+	  XmlParserInput.cs,
+	  DTDReader.cs,
+	  XmlDocument.cs : warning removal.
+
 2004-11-25  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlQualifiedNameTable.cs : oops, it was not implemented.

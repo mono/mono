@@ -51,8 +51,6 @@ namespace System.Xml
 		private XmlParserInput currentInput;
 		private Stack parserInputStack;
 
-		private string entityReferenceName;
-
 		private char [] nameBuffer;
 		private int nameLength;
 		private int nameCapacity;
@@ -125,8 +123,6 @@ namespace System.Xml
 		private void Init ()
 		{
 			parserInputStack = new Stack ();
-
-			entityReferenceName = String.Empty;
 
 			nameBuffer = new char [initialNameCapacity];
 			nameLength = 0;

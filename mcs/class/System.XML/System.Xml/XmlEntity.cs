@@ -155,7 +155,6 @@ namespace System.Xml
 			if (decl == null)
 				return;
 
-			XmlNameTable nt = this.OwnerDocument.NameTable;
 			XmlNamespaceManager nsmgr = this.ConstructNamespaceManager ();
 			XmlParserContext ctx = new XmlParserContext (OwnerDocument.NameTable, nsmgr,
 				doctype != null ? doctype.DTD : null,
