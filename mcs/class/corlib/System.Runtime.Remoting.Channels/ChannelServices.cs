@@ -9,6 +9,7 @@
 //
 
 using System.Collections;
+using System.Reflection;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Messaging;
@@ -49,6 +50,8 @@ namespace System.Runtime.Remoting.Channels
 	public sealed class ChannelServices
 	{
 		private static ArrayList registeredChannels = new ArrayList ();
+		private static ArrayList delayedClientChannels = new ArrayList ();
+		
 		private static CrossContextChannel _crossContextSink = new CrossContextChannel();
 		
 		internal static string CrossContextUrl = "__CrossContext";
@@ -69,35 +72,61 @@ namespace System.Runtime.Remoting.Channels
 
 			object[] channelDataArray = (object[])remoteChannelData;
 
-			foreach (IChannel c in registeredChannels) 
+			lock (registeredChannels.SyncRoot)
 			{
-				IChannelSender sender = c as IChannelSender;
-				if (c == null) continue;
-
-				if (channelDataArray == null) {
-					IMessageSink sink = sender.CreateMessageSink (url, null, out objectUri);
-					if (sink != null) return sink;		// URL is ok, this is the channel and the sink
+				// First of all, try registered channels
+				foreach (IChannel c in registeredChannels) 
+				{
+					IChannelSender sender = c as IChannelSender;
+					if (sender == null) continue;
+	
+					IMessageSink sink = CreateClientChannelSinkChain (sender, url, channelDataArray, out objectUri);
+					if (sink != null) return sink;
 				}
-				else {
-					foreach (object data in channelDataArray) {
-						IMessageSink sink = sender.CreateMessageSink (url, data, out objectUri);
-						if (sink != null) return sink;		
+				
+				// Not found. Try now creation delayed channels
+				foreach (IChannelSender sender in delayedClientChannels) 
+				{
+					IMessageSink sink = CreateClientChannelSinkChain (sender, url, channelDataArray, out objectUri);
+					if (sink != null) {
+						delayedClientChannels.Remove (sender);
+						RegisterChannel (sender);
+						return sink;
 					}
 				}
 			}
+			
 			objectUri = null;
+			return null;
+		}
+		
+		internal static IMessageSink CreateClientChannelSinkChain (IChannelSender sender, string url, object[] channelDataArray, out string objectUri)
+		{
+			objectUri = null;
+			if (channelDataArray == null) {
+				return sender.CreateMessageSink (url, null, out objectUri);
+			}
+			else {
+				foreach (object data in channelDataArray) {
+					IMessageSink sink = sender.CreateMessageSink (url, data, out objectUri);
+					if (sink != null) return sink;		
+				}
+			}
 			return null;
 		}
 		
 		public static IChannel[] RegisteredChannels
 		{
 			get {
-				IChannel[] channels = new IChannel[registeredChannels.Count];
-
-				for (int i = 0; i < registeredChannels.Count; i++)
-					channels[i] = (IChannel) registeredChannels[i];
-
-				return channels;
+				lock (registeredChannels.SyncRoot)
+				{
+					IChannel[] channels = new IChannel[registeredChannels.Count];
+	
+					for (int i = 0; i < registeredChannels.Count; i++)
+						channels[i] = (IChannel) registeredChannels[i];
+	
+					return channels;
+				}
 			}
 		}
 
@@ -137,10 +166,13 @@ namespace System.Runtime.Remoting.Channels
 
 		public static IChannel GetChannel (string name)
 		{
-			foreach (IChannel chnl in registeredChannels) {
-				if (chnl.ChannelName == name && !(chnl is CrossAppDomainChannel)) return chnl;
+			lock (registeredChannels.SyncRoot)
+			{
+				foreach (IChannel chnl in registeredChannels) {
+					if (chnl.ChannelName == name && !(chnl is CrossAppDomainChannel)) return chnl;
+				}
+				return null;
 			}
-			return null;
 		}
 
 		[MonoTODO]
@@ -156,15 +188,18 @@ namespace System.Runtime.Remoting.Channels
 
 			ArrayList list = new ArrayList ();
 
-			foreach (object chnl_obj in registeredChannels) {
-				if (chnl_obj is CrossAppDomainChannel) continue;
-				
-				IChannelReceiver chnl = chnl_obj as IChannelReceiver;
-
-				if (chnl != null)
-					list.AddRange (chnl.GetUrlsForUri (uri));
+			lock (registeredChannels.SyncRoot)
+			{
+				foreach (object chnl_obj in registeredChannels) {
+					if (chnl_obj is CrossAppDomainChannel) continue;
+					
+					IChannelReceiver chnl = chnl_obj as IChannelReceiver;
+	
+					if (chnl != null)
+						list.AddRange (chnl.GetUrlsForUri (uri));
+				}
 			}
-
+			
 			return  (string[]) list.ToArray (typeof(string));
 		}
 
@@ -173,14 +208,106 @@ namespace System.Runtime.Remoting.Channels
 			// Put the channel in the correct place according to its priority.
 			// Since there are not many channels, a linear search is ok.
 
-			for (int n = 0; n < registeredChannels.Count; n++) {
-				if ( ((IChannel)registeredChannels[n]).ChannelPriority < chnl.ChannelPriority)
+			lock (registeredChannels.SyncRoot)
+			{
+				int pos = -1;
+				for (int n = 0; n < registeredChannels.Count; n++) 
 				{
-					registeredChannels.Insert (n, chnl);
-					return;
+					IChannel regc = (IChannel) registeredChannels[n];
+					
+					if (regc.ChannelName == chnl.ChannelName)
+						throw new RemotingException ("Channel " + regc.ChannelName + " already registered");
+						
+					if (regc.ChannelPriority < chnl.ChannelPriority && pos==-1)
+						pos = n;
 				}
+				
+				if (pos != -1) registeredChannels.Insert (pos, chnl);
+				else registeredChannels.Add (chnl);
+				
+				IChannelReceiver receiver = chnl as IChannelReceiver;
+				if (receiver != null) receiver.StartListening (null);
 			}
-			registeredChannels.Add (chnl);
+		}
+
+		internal static void RegisterChannelConfig (ChannelData channel)
+		{
+			IServerChannelSinkProvider serverSinks = null;
+			IClientChannelSinkProvider clientSinks = null;
+			
+			// Create server providers
+			for (int n=channel.ServerProviders.Count-1; n>=0; n--)
+			{
+				ProviderData prov = channel.ServerProviders[n] as ProviderData;
+				IServerChannelSinkProvider sinkp = (IServerChannelSinkProvider) CreateProvider (prov);
+				sinkp.Next = serverSinks;
+				serverSinks = sinkp;
+			}
+			
+			// Create client providers
+			for (int n=channel.ClientProviders.Count-1; n>=0; n--)
+			{
+				ProviderData prov = channel.ClientProviders[n] as ProviderData;
+				IClientChannelSinkProvider sinkp = (IClientChannelSinkProvider) CreateProvider (prov);
+				sinkp.Next = clientSinks;
+				clientSinks = sinkp;
+			}
+
+			// Create the channel
+			
+			Type type = Type.GetType (channel.Type);
+			if (type == null) throw new RemotingException ("Type '" + channel.Type + "' not found");
+			
+			Object[] parms;			
+			Type[] signature;			
+			bool clienc = typeof (IChannelSender).IsAssignableFrom (type);
+			bool serverc = typeof (IChannelReceiver).IsAssignableFrom (type);
+			
+			if (clienc && serverc) {
+				signature = new Type [] {typeof(IDictionary), typeof(IClientChannelSinkProvider), typeof(IServerChannelSinkProvider)};
+				parms = new Object[] {channel.CustomProperties, clientSinks, serverSinks};
+			}
+			else if (clienc) {
+				signature = new Type [] {typeof(IDictionary), typeof(IClientChannelSinkProvider)};
+				parms = new Object[] {channel.CustomProperties, clientSinks};
+			}
+			else if (serverc) {
+				signature = new Type [] {typeof(IDictionary), typeof(IServerChannelSinkProvider)};
+				parms = new Object[] {channel.CustomProperties, serverSinks};
+			}
+			else
+				throw new RemotingException (type + " is not a valid channel type");
+				
+			ConstructorInfo ctor = type.GetConstructor (signature);
+			if (ctor == null)
+				throw new RemotingException (type + " does not have a valid constructor");
+
+			IChannel ch = (IChannel) ctor.Invoke (parms);
+			
+			lock (registeredChannels.SyncRoot)
+			{
+				if (channel.DelayLoadAsClientChannel == "true" && !(ch is IChannelReceiver))
+					delayedClientChannels.Add (ch);
+				else
+					RegisterChannel (ch);
+			}
+		}
+		
+		static object CreateProvider (ProviderData prov)
+		{
+			Type pvtype = Type.GetType (prov.Type);
+			if (pvtype == null) throw new RemotingException ("Type '" + prov.Type + "' not found");
+			Object[] pvparms = new Object[] {prov.CustomProperties, prov.CustomData};
+			
+			try
+			{
+				return Activator.CreateInstance (pvtype, pvparms);
+			}
+			catch (Exception ex)
+			{
+				if (ex is TargetInvocationException) ex = ((TargetInvocationException)ex).InnerException;
+				throw new RemotingException ("An instance of provider '" + pvtype + "' could not be created: " + ex.Message);
+			}
 		}
 
 		public static IMessage SyncDispatchMessage (IMessage msg)
@@ -197,30 +324,37 @@ namespace System.Runtime.Remoting.Channels
 		{
 			if (chnl == null)
 				throw new ArgumentNullException ();
-			if (!registeredChannels.Contains ((object) chnl))
-				throw new RemotingException ();
-
-			registeredChannels.Remove ((object) chnl);
-
-			IChannelReceiver chnlReceiver = chnl as IChannelReceiver;
-			if(chnlReceiver != null)
-				chnlReceiver.StopListening(null);
-}
+				
+			lock (registeredChannels.SyncRoot)
+			{
+				if (!registeredChannels.Contains ((object) chnl))
+					throw new RemotingException ();
+	
+				registeredChannels.Remove ((object) chnl);
+	
+				IChannelReceiver chnlReceiver = chnl as IChannelReceiver;
+				if(chnlReceiver != null)
+					chnlReceiver.StopListening(null);
+			}
+		}
 
 		internal static object [] GetCurrentChannelInfo ()
 		{
 			ArrayList list = new ArrayList ();
 			
-			foreach (object chnl_obj in registeredChannels) {
-				IChannelReceiver chnl = chnl_obj as IChannelReceiver;
-			
-				if (chnl != null) {
-					object chnl_data = chnl.ChannelData;
-					if (chnl_data != null)
-						list.Add (chnl_data);
+			lock (registeredChannels.SyncRoot)
+			{
+				foreach (object chnl_obj in registeredChannels) {
+					IChannelReceiver chnl = chnl_obj as IChannelReceiver;
+				
+					if (chnl != null) {
+						object chnl_data = chnl.ChannelData;
+						if (chnl_data != null)
+							list.Add (chnl_data);
+					}
 				}
 			}
-
+			
 			return  list.ToArray ();
 		}
 	}

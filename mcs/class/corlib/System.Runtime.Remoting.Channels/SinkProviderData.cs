@@ -2,6 +2,7 @@
 // System.Runtime.Remoting.Channels.SinkProviderData.cs
 //
 // Author: Rodrigo Moya (rodrigo@ximian.com)
+//         Lluis Sanchez Gual (lluis@ximian.com)
 //
 // 2002 (C) Copyright, Ximian, Inc.
 //
@@ -12,18 +13,21 @@ namespace System.Runtime.Remoting.Channels
 {
 	public class SinkProviderData
 	{
-		private string sinkName;
+		string sinkName;
+		ArrayList children;
+		Hashtable properties;
 		
 		public SinkProviderData (string name)
 		{
 			sinkName = name;
+			children = new ArrayList ();
+			properties = new Hashtable ();
 		}
 
 		public IList Children
 		{
-			[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				return children;
 			}
 		}
 
@@ -36,9 +40,8 @@ namespace System.Runtime.Remoting.Channels
 
 		public IDictionary Properties
 		{
-			[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				return properties;
 			}
 		}
 	}
