@@ -5,7 +5,7 @@
  * Author:  Gaurav Vaish
  * Maintainer: gvaish@iitk.ac.in
  * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
- * Status:  10%
+ * Status:  100%
  *
  * (C) Gaurav Vaish (2001)
  */
@@ -41,59 +41,6 @@ namespace System.Web.UI.WebControls
 			remove
 			{
 				Events.RemoveHandler(SelectedIndexChangedEvent, value);
-			}
-		}
-		
-		protected virtual void OnSelectedIndexChanged(EventArgs e)
-		{
-			if(Events!=null)
-				{
-					EventHandler eh = (EventHandler)(Events[SelectedIndexChangedEvent]);
-					if(eh!=null)
-						eh(this, e);
-				}
-		}
-		
-		protected override void OnDataBinding(EventArgs e)
-		{
-			base.OnDataBinding(e);
-			IEnumerable resolvedData = DataSourceHelper.GetResolvedDataSource(DataSource, DataMember);
-			if(resolvedData != null)
-			{
-				string dataTextField = DataTextField;
-				string dataValueField = DataValueField;
-				Items.Clear();
-				ICollection rdsCollection = resolvedDataSource as ICollection;
-				if(rdsCollection != null)
-				{
-					Items.Capacity = rdsCollection.Count;
-				}
-				bool valid = ( (dataTextField.Length >= 0) && (dataValueField.Length >=0) );
-				foreach(IEnumerable current in resolvedDataSource.GetEnumerator())
-				{
-					ListItem li = new ListItem();
-					if(valid)
-					{
-						if(dataTextField.Length >= 0)
-						{
-							li.Text = DataBinder.GetPropertyValue(current, dataTextField, null);
-						}
-						if(dataValueField.Length >= 0)
-						{
-							li.Value = DataBinder.GetPropertyValue(current, dataValueField, null);
-						}
-					} else
-					{
-						li.Text  = dataTextField.ToString();
-						li.Value = dataValueField.ToString();
-					}
-					Items.Add(li);
-				}
-			}
-			if(cachedSelectedIndex != -1)
-			{
-				SelectedIndex = cachedSelectedIndex;
-				cachedSelectedIndex = -1;
 			}
 		}
 		
@@ -219,21 +166,9 @@ namespace System.Web.UI.WebControls
 			}
 			set
 			{
+				if(value < -1 || value > Items.Count)
+					throw new ArgumentOutOfRangeException();
 				ViewState["SelectedIndex"] = value;
-			}
-		}
-		
-		internal virtual int[] SelectedIndices
-		{
-			get
-			{
-				ArrayList si = new ArrayList();
-				for(int i=0; i < Items.Count; i++)
-				{
-					if(Items[i].Selected)
-						ArrayList.Add(i);
-				}
-				int[] indices = (int[])si.ToArray();
 			}
 		}
 		
@@ -248,22 +183,22 @@ namespace System.Web.UI.WebControls
 				return null;
 			}
 		}
-		
-		internal virtual ArrayList SelectedIndexes
+
+		internal virtual ArrayList SelectedIndices
 		{
 			get
 			{
-				ArrayList retVal = new ArrayList();
-				int index = 0;
-				while(index < Items.Count)
+				ArrayList si = new ArrayList();
+				for(int i=0; i < Items.Count; i++)
 				{
-					retVal.Add(Items[index++]);
+					if(Items[i].Selected)
+						ArrayList.Add(i);
 				}
-				return retVal;
+				return si;
 			}
 		}
 		
-		internal void Select(int[] indices)
+		internal void Select(ArrayList indices)
 		{
 			ClearSelection();
 			foreach(int index in indices)
@@ -283,17 +218,108 @@ namespace System.Web.UI.WebControls
 		
 		protected override void LoadViewState(object savedState)
 		{
-			//TODO: Implement me
-			throw new NotImplementedException();
+			//Order: BaseClass, Items (Collection), Indices
+			if(savedState != null)
+			{
+				Triplet state = (Triplet)savedState;
+				base.LoadViewState(state.First);
+				Items.LoadViewState(state.Second);
+				object indices = state.Third;
+				if(indices != null)
+				{
+					Select((ArrayList)indices);
+				}
+			}
+		}
+		
+		protected override void OnDataBinding(EventArgs e)
+		{
+			base.OnDataBinding(e);
+			IEnumerable resolvedData = DataSourceHelper.GetResolvedDataSource(DataSource, DataMember);
+			if(resolvedData != null)
+			{
+				string dataTextField = DataTextField;
+				string dataValueField = DataValueField;
+				Items.Clear();
+				ICollection rdsCollection = resolvedDataSource as ICollection;
+				if(rdsCollection != null)
+				{
+					Items.Capacity = rdsCollection.Count;
+				}
+				bool valid = ( (dataTextField.Length >= 0) && (dataValueField.Length >=0) );
+				foreach(IEnumerable current in resolvedDataSource.GetEnumerator())
+				{
+					ListItem li = new ListItem();
+					if(valid)
+					{
+						if(dataTextField.Length >= 0)
+						{
+							li.Text = DataBinder.GetPropertyValue(current, dataTextField, null);
+						}
+						if(dataValueField.Length >= 0)
+						{
+							li.Value = DataBinder.GetPropertyValue(current, dataValueField, null);
+						}
+					} else
+					{
+						li.Text  = dataTextField.ToString();
+						li.Value = dataValueField.ToString();
+					}
+					Items.Add(li);
+				}
+			}
+			if(cachedSelectedIndex != -1)
+			{
+				SelectedIndex = cachedSelectedIndex;
+				cachedSelectedIndex = -1;
+			}
+		}
+		
+		protected virtual void OnSelectedIndexChanged(EventArgs e)
+		{
+			if(Events!=null)
+				{
+					EventHandler eh = (EventHandler)(Events[SelectedIndexChangedEvent]);
+					if(eh!=null)
+						eh(this, e);
+				}
 		}
 		
 		protected override object SaveViewState()
 		{
+			//Order: BaseClass, Items (Collection), Indices
 			object vs = base.SaveViewState();
+			object itemSvs = Items.SaveViewState();
 			object indices = null;
-			if( Events[SelectedIndexChangedEvent] != null && Enabled && Visible)
+			if(SaveSelectedIndicesViewState)
 				indices = SelectedIndices;
-			if(indices != null)
+			if(vs!= null && itemSvs != null && indices != null)
+			{
+				return new Triplet(vs, itemSvs, indices);
+			}
+			return null;
+		}
+		
+		protected ovrride void TrackViewState()
+		{
+			base.TrackViewState();
+			Items.TrackViewState();
+		}
+		
+		private bool SaveSelectedIndicesViewState
+		{
+			get
+			{
+				if( Events[SelectedIndexChangedEvent] != null && Enabled && Visible)
+				{
+					Type t = GetType();
+					// If I am a derivative, let it take of storing the selected indices.
+					// Why should I bother.
+					if(t == typeof(DropDownList) || t == typeof(ListBox) || t == typeof(CheckBoxList) || t == typeof(RadioButtonList))
+						return false;
+				}
+				return true;
+			}
 		}
 	}
 }
