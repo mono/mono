@@ -1,4 +1,8 @@
 
+Thu Sep 5 18:50:54 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* icall.c: target may be null in create_delegate.
+
 Thu Sep 5 17:42:13 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* marshal.c: handle a boolean return type.
