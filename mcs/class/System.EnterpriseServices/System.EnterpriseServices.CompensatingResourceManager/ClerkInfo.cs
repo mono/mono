@@ -9,13 +9,25 @@ using System;
 
 namespace System.EnterpriseServices.CompensatingResourceManager {
 
-	public sealed class ClerkInfo {
-
+	public sealed class ClerkInfo
+	{
 		[MonoTODO]
 		~ClerkInfo ()
 		{
 			throw new NotImplementedException ();
 		}
+
+		#region Constructors
+
+		// FIXME we should actually have this constructor 
+		// internal ClerkInfo(System.EnterpriseServices.CompensatingResourceManager.CrmMonitor monitor,
+		//		System.EnterpriseServices.CompensatingResourceManager._IMonitorClerks clerks)
+		// but we currently don't have these types
+		internal ClerkInfo ()
+		{
+		}
+
+		#endregion Constructors
 
 		#region Properties
 
