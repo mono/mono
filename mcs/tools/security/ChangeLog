@@ -1,3 +1,9 @@
+2003-07-30  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* AssemblyInfo.cs: Updated version to 0.25.99 (all tools).
+	* MakeCert.cs: Added support for Extended Key Usage (-eku).
+	It's now possible to create SSL certificate with the tool.
+
 2003-06-19  Nick Drochak <ndrochak@gol.com>
 
 	* MakeCert.cs: Work around for mcs? bug 45127.

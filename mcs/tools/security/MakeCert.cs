@@ -55,7 +55,17 @@ namespace Mono.Tools {
 		static private void ExtendedHelp () 
 		{
 			Console.WriteLine ("Usage: makecert [options] certificate{0}", Environment.NewLine);
-			Console.WriteLine ("*** To be documented ***");
+			Console.WriteLine (" -a hash\tSelect hash algorithm. Only MD5 and SHA1 are supported.");
+			Console.WriteLine (" -b date\tThe date since when the certificate is valid (notBefore).");
+			Console.WriteLine (" -cy [authority|end]\tBasic constraints. Select Authority or End-Entity certificate.");
+			Console.WriteLine (" -e date\tThe date until when the certificate is valid (notAfter).");
+			Console.WriteLine (" -eku oid[,oid]\tAdd some extended key usage OID to the certificate.");
+			Console.WriteLine (" -h number\tAdd a path length restriction to the certificate chain.");
+			Console.WriteLine (" -ic cert\tTake the issuer's name from the specified certificate.");
+			Console.WriteLine (" -in name\tTake the issuer's name from the specified parameter.");
+			Console.WriteLine (" -iv pvkfile\tSign the certificate using the private key inside the PVK file.");
+			Console.WriteLine (" -m number\tCertificate validity period (in months).");
+			Console.WriteLine (" -sv pvkfile\tCreate a new PVK file if non-existant, otherwise use the PVK file as the subject public key.");
 			Console.WriteLine (" -?\thelp (display basic message)");
 		}
 
@@ -77,6 +87,9 @@ namespace Mono.Tools {
 
 		static string MonoTestRootAgency = "<RSAKeyValue><Modulus>v/4nALBxCE+9JgEC0LnDUvKh6e96PwTpN4Rj+vWnqKT7IAp1iK/JjuqvAg6DQ2vTfv0dTlqffmHH51OyioprcT5nzxcSTsZb/9jcHScG0s3/FRIWnXeLk/fgm7mSYhjUaHNI0m1/NTTktipicjKxo71hGIg9qucCWnDum+Krh/k=</Modulus><Exponent>AQAB</Exponent><P>9jbKxMXEruW2CfZrzhxtull4O8P47+mNsEL+9gf9QsRO1jJ77C+jmzfU6zbzjf8+ViK+q62tCMdC1ZzulwdpXQ==</P><Q>x5+p198l1PkK0Ga2mRh0SIYSykENpY2aLXoyZD/iUpKYAvATm0/wvKNrE4dKJyPCA+y3hfTdgVag+SP9avvDTQ==</Q><DP>ISSjCvXsUfbOGG05eddN1gXxL2pj+jegQRfjpk7RAsnWKvNExzhqd5x+ZuNQyc6QH5wxun54inP4RTUI0P/IaQ==</DP><DQ>R815VQmR3RIbPqzDXzv5j6CSH6fYlcTiQRtkBsUnzhWmkd/y3XmamO+a8zJFjOCCx9CcjpVuGziivBqi65lVPQ==</DQ><InverseQ>iYiu0KwMWI/dyqN3RJYUzuuLj02/oTD1pYpwo2rvNCXU1Q5VscOeu2DpNg1gWqI+1RrRCsEoaTNzXB1xtKNlSw==</InverseQ><D>nIfh1LYF8fjRBgMdAH/zt9UKHWiaCnc+jXzq5tkR8HVSKTVdzitD8bl1JgAfFQD8VjSXiCJqluexy/B5SGrCXQ49c78NIQj0hD+J13Y8/E0fUbW1QYbhj6Ff7oHyhaYe1WOQfkp2t/h+llHOdt1HRf7bt7dUknYp7m8bQKGxoYE=</D></RSAKeyValue>";
 
+		static string defaultIssuer = "CN=Mono Test Root Agency";
+		static string defaultSubject = "CN=Poupou's-Software-Factory";
+
 		[STAThread]
 		static int Main (string[] args)
 		{
@@ -92,8 +105,8 @@ namespace Mono.Tools {
 
 			// default values
 			byte[] sn = Guid.NewGuid ().ToByteArray ();
-			string subject = "CN=Poupou's-Software-Factory";
-			string issuer = "CN=Mono Test Root Agency";
+			string subject = defaultSubject;
+			string issuer = defaultIssuer;
 			DateTime notBefore = DateTime.Now;
 			DateTime notAfter =  DateTime.Parse ("12/31/2039 23:59:59Z", format);
 
@@ -107,6 +120,7 @@ namespace Mono.Tools {
 			CspParameters subjectParams = new CspParameters ();
 			CspParameters issuerParams = new CspParameters ();
 			BasicConstraintsExtension bce = null;
+			ExtendedKeyUsageExtension eku = null;
 
 			Header();
 			try {
@@ -187,7 +201,13 @@ namespace Mono.Tools {
 							break;
 						case "-eku":
 							// extendedKeyUsage extension
-							Console.WriteLine ("Unsupported option");
+							char[] sep = { ',' };
+							string[] purposes = args [i++].Split (sep);
+							if (eku == null)
+								eku = new ExtendedKeyUsageExtension ();
+							foreach (string purpose in purposes) {
+								eku.KeyPurpose.Add (purpose);
+							}
 							break;
 						case "-h":
 							// pathLength (basicConstraints)
@@ -335,9 +355,12 @@ namespace Mono.Tools {
 							ExtendedHelp ();
 							return 0;
 						default:
-							Console.WriteLine ("ERROR: Unknown parameter");
-							Help ();
-							return -1;
+							if (i != args.Length) {
+								Console.WriteLine ("ERROR: Unknown parameter");
+								Help ();
+								return -1;
+							}
+							break;
 					}
 				}
 
@@ -346,10 +369,14 @@ namespace Mono.Tools {
 					sn [0] -= 0x80;
 
 				if (selfSigned) {
-					// issuer = subject;
-					// issuerKey = subjectKey;
-					subject = issuer;
-					subjectKey = issuerKey;
+					if (subject != defaultSubject) {
+						issuer = subject;
+						issuerKey = subjectKey;
+					}
+					else {
+						subject = issuer;
+						subjectKey = issuerKey;
+					}
 				}
 
 				if (subject == null)
@@ -365,6 +392,8 @@ namespace Mono.Tools {
 				// extensions
 				if (bce != null)
 					cb.Extensions.Add (bce);
+				if (eku != null)
+					cb.Extensions.Add (eku);
 				// signature
 				cb.Hash = hashName;
 				byte[] rawcert = cb.Sign (issuerKey);
