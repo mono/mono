@@ -3,6 +3,7 @@
 	* emit-x86.c (arch_create_native_wrapper): new code to generate
 	wrappers for calling native functions.
 	(arch_create_native_wrapper): free allocated strings
+	(arch_handle_exception): made mono_jit_info_table domain dependent
 
 2002-03-14  Martin Baulig  <martin@gnome.org>
 
