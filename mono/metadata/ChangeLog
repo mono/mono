@@ -1,5 +1,9 @@
 2004-09-24  Zoltan Varga  <vargaz@freemail.hu>
 
+	* object-internals.h (MonoReflectionDllImportAttribute): New structure.
+
+	* icall.c: Add new icalls for GetDllImportAttribute and GetFieldOffset.
+
 	* reflection.h reflection.c (mono_reflection_get_custom_attrs): Revert
 	previous change.
 
