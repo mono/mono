@@ -4,7 +4,7 @@
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 
 using System;
@@ -27,8 +27,8 @@ namespace Mono.Tools {
 	// Notes:
 	// * Oct CTP started to return declarative security attributes with 
 	//   GetCustomAttributes, so this wont work with beta1 or previous 2.0 CTP
-	// * Nov CTP (and probably Oct CTP too) is bugged and always report 
-	//   LinkDemand as the SecurityAction
+	// * Dec/Nov CTP (and probably Oct CTP too) are bugged and always report 
+	//   LinkDemand as the SecurityAction (reported as FDBK19290)
 
 	class PermView {
 
@@ -36,9 +36,9 @@ namespace Mono.Tools {
 		{
 			Console.WriteLine ("Usage: permview [options] assembly{0}", Environment.NewLine);
 			Console.WriteLine ("where options are:");
-			Console.WriteLine (" /OUTPUT filename  Output information into specified file.");
-			Console.WriteLine (" /DECL             Show declarative security attributes on classes and methods.");
-			Console.WriteLine (" /HELP             Show help informations (this text)");
+			Console.WriteLine (" -output filename  Output information into specified file.");
+			Console.WriteLine (" -decl             Show declarative security attributes on classes and methods.");
+			Console.WriteLine (" -help             Show help informations (this text)");
 			Console.WriteLine ();
 		}
 
@@ -49,7 +49,7 @@ namespace Mono.Tools {
 			if (header != null)
 				tw.WriteLine (header);
 
-			if ((ps == null) || (ps.Count == 0)) {
+			if ((ps == null) || ((ps.Count == 0) || !ps.IsUnrestricted ())) {
 				tw.WriteLine ("\tNone");
 			} else {
 				tw.WriteLine (ps.ToString ());
@@ -237,7 +237,7 @@ namespace Mono.Tools {
 			if (ps != null)
 				ShowPermissionSet (tw, "Assembly RequestRefuse Permission Set:", ps);*/
 #endif
-			Type [] types = a.GetTypes ();
+/*			Type [] types = a.GetTypes ();
 			foreach (Type type in types) {
 				ProcessType (tw, type);
 				foreach (MethodInfo mi in type.GetMethods (flags)) {
@@ -245,7 +245,7 @@ namespace Mono.Tools {
 				}
 			}
 
-			return true;
+			return true;*/
 		}
 
 		static TextWriter ProcessOptions (string[] args)

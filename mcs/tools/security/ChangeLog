@@ -1,3 +1,9 @@
+2005-01-19  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* permview.cs: Fixed case for empty, but unrestricted, permission 
+	sets. Help now displays a more unix-like command options. Commented
+	some currently unused code.
+
 2004-12-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* permview.cs: Now "works" (including /DECL) with .NET 2.0 when 
