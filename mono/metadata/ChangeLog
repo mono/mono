@@ -1,3 +1,7 @@
+2005-01-18  Zoltan Varga  <vargaz@freemail.hu>
+
+	* reflection.c (mono_method_body_get_object): Handle abstract and
+	runtime methods.
 
 Mon Jan 17 19:22:39 CET 2005 Paolo Molaro <lupus@ximian.com>
 
