@@ -1,3 +1,7 @@
+2003-06-10  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* Methods.cs: removed handler for UnknownNode event
+
 2003-06-05  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* Methods.cs: added support for encoded format

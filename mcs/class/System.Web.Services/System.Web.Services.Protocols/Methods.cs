@@ -145,7 +145,7 @@ namespace System.Web.Services.Protocols {
 				}
 				throw;
 			}
-			ResponseSerializer.UnknownNode += new XmlNodeEventHandler (e);
+//			ResponseSerializer.UnknownNode += new XmlNodeEventHandler (e);
 		}
 
 		static internal MethodStubInfo Create (TypeStubInfo parent, LogicalMethodInfo lmi, XmlReflectionImporter xmlImporter, SoapReflectionImporter soapImporter)
