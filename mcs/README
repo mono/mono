@@ -21,6 +21,21 @@ Layout:
 	tests/
 		Sample tests 
 
+	docs/
+		Some notes on the compiler and the class libraries.
+
+	nant/
+		A copy of nant source code, used during the build process
+		on Windows.
+
+	tools/
+		Various small development tools: CorCompare used to compare
+	 	two assemblies for differences in the API;   TypeReflector is 
+		a tool used to introspect types from assemblies from the 
+		command line;  MonoStyle helps you keep your code indendented
+		with the Mono programming style.
+
+
 Thanks a lot to Sergey Chaban for his help during the development of
 the C# compiler.
 
