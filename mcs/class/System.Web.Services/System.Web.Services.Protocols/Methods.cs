@@ -126,10 +126,15 @@ namespace System.Web.Services.Protocols {
 
 				Action = rma.Action;
 				Binding = rma.Binding;
-				RequestName = rma.RequestElementName;
+				
+				// When using RPC, MS.NET seems to ignore RequestElementName and
+				// MessageName, and it always uses the method name
+				RequestName = source.Name;
+				ResponseName = source.Name + "Response";
+//				RequestName = rma.RequestElementName;
+//				ResponseName = rma.ResponseElementName;
 				RequestNamespace = rma.RequestNamespace;
 				ResponseNamespace = rma.ResponseNamespace;
-				ResponseName = rma.ResponseElementName;
 				ParameterStyle = SoapParameterStyle.Wrapped;
 				OneWay = rma.OneWay;
 				SoapBindingStyle = SoapBindingStyle.Rpc;
