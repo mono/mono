@@ -1822,6 +1822,11 @@ namespace PEAPI
       return field;
     }
 
+    public void SetFieldOrder (ArrayList fields)
+    {
+            this.fields = fields;
+    }
+
     /// <summary>
     /// Add a method to this class
     /// </summary>
@@ -2646,7 +2651,7 @@ namespace PEAPI
 
     internal sealed override void BuildTables(MetaData md) {
       BinaryWriter bw = new BinaryWriter(new MemoryStream());
-      bw.Write((ushort)1);
+      bw.Write(byteVal);
       md.AddToTable(MDTable.CustomAttribute, this);
       MemoryStream str = (MemoryStream)bw.BaseStream;
       valIx = md.AddToBlobHeap(str.ToArray());
@@ -3482,9 +3487,13 @@ if (rsrc != null)
      }
 
     private void WriteSDataSection() {
+      long size = sdata.Size ();
+      long start = BaseStream.Position;
       for (int i=0; i < data.Count; i++) {
         ((DataConstant)data[i]).Write(this);
       }
+      while (BaseStream.Position < (start + size))
+              Write ((byte) 0);
     }
 
                 private void WriteRsrcSection() {

@@ -1,3 +1,12 @@
+2004-06-26  Jackson Harper  <jackson@ximian.com>
+
+	* PEAPI.cs: Add a method to set the fields list. This is needed so
+	that sequentially laid out fields are laid out in the right
+	order. When building custom attribute tables actually emit the
+	custom attribute data. When writing the .sdata section make sure
+	to pad to its size. The constants itself will not make up the
+	entire section because it is aligned on 512 byte blocks.
+	
 2004-06-19  Jackson Harper  <jackson@ximian.com>
 
 	* PEAPI.cs: Make sure the sentinel is placed properly for vararg
