@@ -583,7 +583,6 @@ namespace MonoTests.System.IO
                 	try {
 				File.Create (path).Close();
                 		DateTime time = File.GetCreationTime (path);
-                		time = time.ToLocalTime ();
                         	Assert ("GetCreationTime incorrect", (DateTime.Now - time).TotalSeconds < 10);
                 	} finally {
                 		DeleteFile (path);
