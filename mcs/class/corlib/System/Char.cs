@@ -28,7 +28,7 @@ namespace System {
 		
 		public int CompareTo (object v)
 		{
-			if (!(v is System.Char))
+			if (v == null || !(v is System.Char))
 				throw new ArgumentException ("Value is not a System.Char");
 
 			return value - ((char) v);

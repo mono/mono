@@ -23,7 +23,7 @@ namespace System {
 
 		public int CompareTo (object v)
 		{
-			if (!(v is System.Int16))
+			if (v == null || !(v is System.Int16))
 				throw new ArgumentException ("Value is not a System.Int16");
 
 			return value - ((short) v);

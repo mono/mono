@@ -21,7 +21,7 @@ namespace System {
 
 		public int CompareTo (object v)
 		{
-			if (!(v is System.Int32))
+			if (v == null || !(v is System.Int32))
 				throw new ArgumentException ("Value is not a System.Int32");
 
 			return value - (int) v;

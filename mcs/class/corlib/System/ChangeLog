@@ -1,3 +1,14 @@
+2001-11-14  Miguel de Icaza  <miguel@ximian.com>
+
+	* Decimal.cs, Double.cs, Byte.cs, Char.cs, Int16, UInt16, Int32,
+	UInt32, Int64, UInt64, SByte, Single (CompareTo): Throw the
+	exception if the value is null too.
+
+	* Char.cs (CompareTo): ditto.
+
+	* ApplicationException.cs: Added constructor that does serialization.
+
+	* ParamArrayAttribute.cs: Define attribute correctly.
 
 Wed Nov 14 16:31:19 CET 2001 Paolo Molaro <lupus@ximian.com>
 

@@ -588,7 +588,7 @@ namespace System
 
         public int CompareTo(object val)
         {
-            if (!(val is Decimal))
+            if (val == null || !(val is Decimal))
                 throw new ArgumentException ("Value is not a System.Decimal");
 
             Decimal d2 = (Decimal)val;

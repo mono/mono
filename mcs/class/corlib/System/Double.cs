@@ -25,7 +25,7 @@ namespace System {
 
 		public int CompareTo (object v)
 		{
-			if (!(v is System.Double))
+			if (v == null || !(v is System.Double))
 				throw new ArgumentException ("Value is not a System.Double");
 
 			return (int) (value - ((double) v));

@@ -9,7 +9,12 @@
 
 namespace System {
 
-	public abstract class ParamArrayAttribute {
+	/// <summary>
+	///   Used to flag that the method will take a variable number
+	///   of arguments
+	/// </summary>
+	[AttributeUsage(AttributeTargets.Parameter)]
+	public sealed class ParamArrayAttribute : Attribute {
 
 		public ParamArrayAttribute ()
 		{

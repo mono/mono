@@ -1,11 +1,15 @@
 //
 // System.ApplicationException.cs
 //
-// Author:
+// Authors:
 //   Joe Shaw (joe@ximian.com)
+//   Miguel de Icaza (miguel@ximian.com) 
 //
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
+
+using System.Runtime.Serialization;
+using System.Reflection;
 
 namespace System {
 
@@ -23,6 +27,11 @@ namespace System {
 
 		public ApplicationException (string message, Exception inner)
 			: base (message, inner)
+		{
+		}
+
+		protected ApplicationException (SerializationInfo info, StreamingContext context)
+			: base (info, context)
 		{
 		}
 	}

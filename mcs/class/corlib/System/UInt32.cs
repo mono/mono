@@ -22,7 +22,7 @@ namespace System {
 
 		public int CompareTo (object v)
 		{
-			if (!(v is System.UInt32))
+			if (v == null || !(v is System.UInt32))
 				throw new ArgumentException ("Value is not a System.UInt32");
 
 			if (value == (uint) v)

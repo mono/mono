@@ -24,7 +24,7 @@ namespace System {
 
 		public int CompareTo (object v)
 		{
-			if (!(v is System.SByte))
+			if (v == null || !(v is System.SByte))
 				throw new ArgumentException ("Value is not a System.SByte");
 
 			return value - ((sbyte) v);

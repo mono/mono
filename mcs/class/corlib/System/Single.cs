@@ -25,7 +25,7 @@ namespace System {
 	       		
 		public int CompareTo (object v)
 		{
-			if (!(v is System.Single))
+			if (v == null || !(v is System.Single))
 				throw new ArgumentException ("Value is not a System.Single");
 
 			return (int) (value - ((float) v));
