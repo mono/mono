@@ -1,3 +1,37 @@
+2003-11-30 Eran Domb <erand@mainsoft.com>
+	* DataColumnCollection.cs (this[string name]) : Use IndexOf to find the column.
+	(Add) : Find if the new column name is the same as the one found in IndexOf.
+	(IndexOf) : New method.
+	(Contains) : Use new IndexOf.
+	(IndexOf) : Use new IndexOf.
+	
+	* DataRelationCollection.cs (DataRelationCollection.AddCore) : Add The Relation to the collection.
+	(DataSetRelationCollection.AddCore) : First add the UniqueConstraint.
+	
+	* DataRow.cs (this[int columnIndex, DataRowVersion version]) : Change exceptions.
+	(Delete) : Detach row if the RowState was Added.
+	(GetChildRows) : Get the array form the ChildTable.
+	(GetParentRows) : Get the array from the ParenTable.
+	
+	* DataRowCollection.cs (Remove) : Check if row state is Detached to avoid exception.
+	
+	* DataSet.cs (IXmlSerializable.ReadXml) : Do not call MoveToContent and ReadEndElement - the XmlSerializationReader does it.
+	
+	* DataTable.cs (PrimaryKey) : Fix bugs.
+	(Compute) : First call Select. Then create ExpressionAggregate to aggregate the Select result.
+	
+	* DataTableCollection.cs (Add) : Fix a bug.
+	
+	* ExpressionElement.cs (ValidateExpression) : Turning ValidateExpression to static.
+	(Result) : Added new interface to AggregateExpression that get DataRow[] as a param.
+	Some code style changes (tab instead of whit spaces, alignment, etc...).
+	
+	* ForeignKeyConstraint.cs (_validateColumns) : Throw correct exception.
+	
+	* MergeManager.cs (AdjustSchema) : Fix a bug.
+	
+	
+
 2003-11-26  Miguel de Icaza  <miguel@ximian.com>
 
 	* DataSet.cs: Add a few more missing methods, code style updated
