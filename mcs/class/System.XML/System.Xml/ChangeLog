@@ -1,3 +1,9 @@
+2004-07-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlNode.cs : When the argument node being inserted is the existing
+	  document element, it should not result in an error (since it should
+	  be first removed from document, thus no error should happen).
+
 2004-07-16  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlTextReader.cs : Fixed several problems on ReadBase64();
