@@ -1,5 +1,8 @@
 2004-08-16  Zoltan Varga  <vargaz@freemail.hu>
 
+	* Makefile.am: Link the static versions of the convenience libraries
+	into the mono executable.
+
 	* mini-x86.h mini-x86.c: Throw the correct exception on integer overflow.
 
 2004-08-15  Zoltan Varga  <vargaz@freemail.hu>
