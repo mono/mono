@@ -115,12 +115,6 @@ namespace System.Data
 			//zeroColumns[]
 			//primaryIndex[]
 			//delayedSetPrimaryKey = null; //??
-
-
-
-
-
-
 		}
 
 		/// <summary>

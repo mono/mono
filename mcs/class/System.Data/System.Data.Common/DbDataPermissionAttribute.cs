@@ -7,6 +7,8 @@
 // (C) Ximian, Inc
 //
 
+using System.Security.Permissions;
+
 namespace System.Data.Common
 {
 	/// <summary>

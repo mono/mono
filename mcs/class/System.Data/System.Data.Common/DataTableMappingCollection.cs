@@ -7,6 +7,9 @@
 // (C) Ximian, Inc
 //
 
+using System;
+using System.Collections;
+
 namespace System.Data.Common
 {
 	/// <summary>
@@ -42,12 +45,12 @@ namespace System.Data.Common
 		}
 
 		[MonoTODO]
-		public bool Contains(object) {
+		public bool Contains (object obj) {
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public bool Contains(string) {
+		public bool Contains (string str) {
 			throw new NotImplementedException ();
 		}
 
@@ -71,37 +74,37 @@ namespace System.Data.Common
 		}
 
 		[MonoTODO]
-		public int IndexOf(object) {
+		public int IndexOf (object obj) {
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public int IndexOf(string) {
+		public int IndexOf (string str) {
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public int IndexOfDataSetTable(string dataSetTable) {
+		public int IndexOfDataSetTable (string dataSetTable) {
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public void Insert(int index, object value) {
+		public void Insert (int index, object value) {
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public void Remove(object value) {
+		public void Remove (object value) {
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public void RemoveAt(int index) {
+		public void RemoveAt (int index) {
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public void RemoveAt(string index) {
+		public void RemoveAt (string index) {
 			throw new NotImplementedException ();
 		}
 		
@@ -111,13 +114,13 @@ namespace System.Data.Common
 		}
 
 		[MonoTODO]
-		public DataTableMapping this[int] {
+		public DataTableMapping this[int i] {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
 
 		[MonoTODO]
-		public DataTableMapping this[string] {
+		public DataTableMapping this[string s] {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}

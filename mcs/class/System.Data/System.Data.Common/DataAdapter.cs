@@ -7,6 +7,7 @@
 // (C) Ximian, Inc
 //
 
+using System.ComponentModel;
 using System.Data;
 
 namespace System.Data.Common

@@ -8,6 +8,7 @@
 //
 
 using System;
+using System.Collections;
 using System.Data;
 
 namespace System.Data.Common
