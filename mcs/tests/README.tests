@@ -407,3 +407,43 @@ unsafe-6.cs:
 Tests the correct computation of compound operators in the context of a pointer 
 dereference on the left side.
 
+gen-1.cs:
+---------
+
+Simple constructed type.
+
+gen-2.cs:
+---------
+
+Type parameter as field.
+
+gen-3.cs:
+---------
+
+Field of constructed type.
+
+gen-4.cs:
+---------
+
+Method argument of constructed type.
+
+gen-5.cs:
+---------
+
+Local variable of constructed type.
+
+gen-6.cs:
+---------
+
+More complex example.
+
+gen-7.cs:
+---------
+
+Constructed type deriving from a class type.
+
+gen-8.cs:
+---------
+
+`where' clauses.
+

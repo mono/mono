@@ -1,3 +1,8 @@
+2003-09-16  Martin Baulig  <martin@ximian.com>
+
+	* gen-3.cs, gen-4.cs, gen-5.cs, gen-6.cs, gen-7.cs, gen-8.cs: New
+	generics tests.
+
 2003-09-02  Ravi Pratap  <ravi@ximian.com>
 
 	* test-102.cs: Improve test.
