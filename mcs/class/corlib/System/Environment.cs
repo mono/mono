@@ -24,6 +24,7 @@ namespace System
 	{
 		private static OpSys _os = Platform.OS;
 
+		[TODO]
 		public enum SpecialFolder
 		{	// TODO: Determine if these windoze style folder identifiers 
 			//       have unix/linux counterparts
@@ -52,6 +53,7 @@ namespace System
 		/// <summary>
 		/// Gets the command line for this process
 		/// </summary>
+		[TODO]
 		public static string CommandLine
 		{	// TODO: Coordinate with implementor of EnvironmentPermissionAttribute
 			[EnvironmentPermissionAttribute(SecurityAction.Demand, Read = "COMMANDLINE")]
@@ -87,6 +89,7 @@ namespace System
 		/// <summary>
 		/// Gets or sets the exit code of this process
 		/// </summary>
+		[TODO]
 		public static int ExitCode
 		{	// TODO: find a way to implement this property
 			get
@@ -191,6 +194,7 @@ namespace System
 		/// <summary>
 		/// Get the user name of current process is running under
 		/// </summary>
+		[TODO]
 		public static string UserName
 		{
 			get

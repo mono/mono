@@ -82,7 +82,8 @@ namespace System {
 				throw new ArgumentNullException (Locale.GetText ("str is a null reference"));
 			
 			if (index < 0 || index >= str.Length)
-				throw new ArgumentOutOfRangeException (Locale.GetText ("The value of index is less than zero, or greater than or equal to the length of str"));
+				throw new ArgumentOutOfRangeException (Locale.GetText ("The value of index is less "+
+					                  "than zero, or greater than or equal to the length of str"));
 			
 			return GetUnicodeCategory (str[index]);
 		}
@@ -112,7 +113,7 @@ namespace System {
 			
 			if (index < 0 || index >= str.Length)
 				throw new ArgumentOutOfRangeException (Locale.GetText (
-					"The value of index is less than zero, or greater than or equal to the length of str"));
+				 "The value of index is less than zero, or greater than or equal to the length of str"));
 			
 			return IsDigit (str[index]);
 		}
@@ -127,7 +128,7 @@ namespace System {
 			
 			if (index < 0 || index >= str.Length)
 				throw new ArgumentOutOfRangeException (Locale.GetText (
-					"The value of index is less than zero, or greater than or equal to the length of str"));
+			         "The value of index is less than zero, or greater than or equal to the length of str"));
 			
 			return IsLetter (str[index]);
 		}
@@ -147,11 +148,11 @@ namespace System {
 			
 			if (index < 0 || index >= str.Length)
 				throw new ArgumentOutOfRangeException (Locale.GetText (
-					"The value of index is less than zero, or greater than or equal to the length of str"));
+				 "The value of index is less than zero, or greater than or equal to the length of str"));
 			
 			return IsLetterOrDigit (str[index]);
 		}
-		
+
 		[MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.InternalCall)]
 		public static extern bool IsLower (char c);
 		
@@ -162,7 +163,7 @@ namespace System {
 			
 			if (index < 0 || index >= str.Length)
 				throw new ArgumentOutOfRangeException (Locale.GetText (
-					"The value of index is less than zero, or greater than or equal to the length of str"));
+				 "The value of index is less than zero, or greater than or equal to the length of str"));
 			
 			return IsLower (str[index]);
 		}
@@ -177,7 +178,7 @@ namespace System {
 			
 			if (index < 0 || index >= str.Length)
 				throw new ArgumentOutOfRangeException (Locale.GetText (
-					"The value of index is less than zero, or greater than or equal to the length of str"));
+				"The value of index is less than zero, or greater than or equal to the length of str"));
 			
 			return IsNumber (str[index]);
 		}
@@ -192,7 +193,7 @@ namespace System {
 			
 			if (index < 0 || index >= str.Length)
 				throw new ArgumentOutOfRangeException (Locale.GetText (
-					"The value of index is less than zero, or greater than or equal to the length of str"));
+				 "The value of index is less than zero, or greater than or equal to the length of str"));
 			
 			return IsPunctuation (str[index]);
 		}
@@ -207,7 +208,7 @@ namespace System {
 			
 			if (index < 0 || index >= str.Length)
 				throw new ArgumentOutOfRangeException (Locale.GetText (
-					"The value of index is less than zero, or greater than or equal to the length of str"));
+				 "The value of index is less than zero, or greater than or equal to the length of str"));
 			
 			return IsSeparator (str[index]);
 		}
@@ -222,7 +223,7 @@ namespace System {
 			
 			if (index < 0 || index >= str.Length)
 				throw new ArgumentOutOfRangeException (Locale.GetText (
-					"The value of index is less than zero, or greater than or equal to the length of str"));
+			         "The value of index is less than zero, or greater than or equal to the length of str"));
 			
 			return IsSurrogate (str[index]);
 		}
@@ -252,7 +253,7 @@ namespace System {
 			
 			if (index < 0 || index >= str.Length)
 				throw new ArgumentOutOfRangeException (Locale.GetText (
-					"The value of index is less than zero, or greater than or equal to the length of str"));
+				 "The value of index is less than zero, or greater than or equal to the length of str"));
 			
 			return IsUpper (str[index]);
 		}

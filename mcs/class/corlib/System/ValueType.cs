@@ -22,6 +22,7 @@ namespace System {
 		//   True if this instance and o represent the same type
 		//   and have the same value.
 		// </summary>
+		[TODO]
 		public override bool Equals (object o)
 		{
 			if (o == null)
@@ -41,6 +42,7 @@ namespace System {
 		//   Gets a hashcode for this value type using the
 		//   bits in the structure
 		// </summary>
+		[TODO]
 		public override int GetHashCode ()
 		{
 			if (this == null)

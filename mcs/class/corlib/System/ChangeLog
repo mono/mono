@@ -15,6 +15,11 @@
 	* String.cs : Ditto.
 
 	* Type.cs : Ditto.
+
+	* Byte.cs, Char.cs, ContextBoundObject.cs, DateTime.cs, Delegate.cs : Ditto.
+
+	* Enum.cs, Environment.cs, Exception.cs, Int64.cs, SByte.cs, Single.cs, 
+	UInt16.cs, UInt32.cs, ValueType.cs: Ditto.
 	
 Thu Jan 3 23:24:04 CET 2002 Paolo Molaro <lupus@ximian.com>
 
