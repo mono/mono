@@ -1,3 +1,10 @@
+2004-08-09 Sanjay Gupta <gsanjay@novell.com>
+
+	* ControlSkinProc.cs:
+	* DataSourceViewOperationCallback.cs:
+	* DataSourceViewSelectCallback.cs:
+	* ExtractTemplateValuesMethod.cs: Added new delegates.
+
 2004-08-06 Sanjay Gupta <gsanjay@novell.com>
 
 	* IBindableTemplate.cs:
