@@ -111,6 +111,7 @@ namespace System.Web.Configuration
 			temp_directory = parent.temp_directory;
 			compilers = new CompilerCollection (parent.compilers);
 			ArrayList p = parent.assemblies;
+			assembliesInBin = parent.assembliesInBin;
 			ICollection coll = (p == null) ? (ICollection) new object [0] : p;
 			assemblies = new ArrayList (coll);
 		}

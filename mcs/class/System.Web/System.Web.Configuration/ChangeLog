@@ -1,3 +1,8 @@
+2003-10-17 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* CompilationConfiguration.cs (Init): you have to inherit copying
+	files from the bin folders too.
+
 2003-10-15  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CompilationConfiguration.cs: use the context passed in. If not, try
