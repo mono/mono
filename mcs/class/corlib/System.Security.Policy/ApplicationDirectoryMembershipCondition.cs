@@ -8,8 +8,7 @@
 
 using System.Security;
 
-namespace System.Security.Policy
-{
+namespace System.Security.Policy {
 
 	[Serializable]
 	public sealed class ApplicationDirectoryMembershipCondition :
@@ -23,26 +22,41 @@ namespace System.Security.Policy
 
 		// Methods
 		[MonoTODO]
-		public bool Check(Evidence evidence) { 
-			throw new NotImplementedException (); 
+		public bool Check (Evidence evidence)
+		{
+			if (evidence == null)
+				return false;
+			
+			foreach (object o in evidence) {
+				if (o is ApplicationDirectory) {
+					ApplicationDirectory ad = (o as ApplicationDirectory);
+					// TODO
+					throw new NotImplementedException (); 
+				}
+			}
+			return false;
 		}
 
-		public IMembershipCondition Copy() { 
+		public IMembershipCondition Copy () 
+		{ 
 			return new ApplicationDirectoryMembershipCondition ();
 		}
 		
-		public override bool Equals(object o) { 
+		public override bool Equals (object o) 
+		{ 
 			return o is ApplicationDirectoryMembershipCondition; 
 		}
 		
-		public void FromXml(SecurityElement e) { 
+		public void FromXml (SecurityElement e)
+		{
 			FromXml (e, null);
 		}
 		
-		public void FromXml(SecurityElement e, PolicyLevel level) { 
-			
+		public void FromXml (SecurityElement e, PolicyLevel level)
+		{
 			if (null == e)
-				throw new ArgumentNullException ();
+				throw new ArgumentNullException ("e");
+
 			if (XmlTag != e.Tag)
 				throw new ArgumentException("e","The Tag of SecurityElement must be "
 					+ ApplicationDirectoryMembershipCondition.XmlTag);
@@ -52,22 +66,22 @@ namespace System.Security.Policy
 		///   All instances of ApplicationDirectoryMembershipCondition are equal so they should
 		///   have the same hashcode
 		/// </summary>
-		public override int GetHashCode() 
+		public override int GetHashCode () 
 		{ 
 			return typeof (ApplicationDirectoryMembershipCondition).GetHashCode ();
 		}
 		
-		public override string ToString() 
+		public override string ToString () 
 		{ 
 			return "ApplicationDirectory";
 		}
 		
-		public SecurityElement ToXml() 
+		public SecurityElement ToXml () 
 		{ 
 			return ToXml (null);
 		}
 		
-		public SecurityElement ToXml(PolicyLevel level) 
+		public SecurityElement ToXml (PolicyLevel level) 
 		{
 			SecurityElement element = new SecurityElement (XmlTag);
 			Type type = GetType ();

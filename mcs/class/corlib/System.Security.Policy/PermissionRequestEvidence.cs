@@ -7,12 +7,13 @@
 // (C) 2003 Nick Drochak
 //
 
+using System.Security;
 using System.Text;
 
 namespace System.Security.Policy
 {
 	[Serializable]
-	public sealed class PermissionRequestEvidence {
+	public sealed class PermissionRequestEvidence : IBuiltInEvidence {
 		PermissionSet requested, optional, denied;
 
 		public PermissionRequestEvidence(PermissionSet requested, 
@@ -34,39 +35,52 @@ namespace System.Security.Policy
 			get {return requested;}
 		}
 
-		public PermissionRequestEvidence Copy() {
+		public PermissionRequestEvidence Copy ()
+		{
 			return new PermissionRequestEvidence (requested, optional, denied);
 		}
 
-		public override string ToString() {
-			// Cannot use XML classes in corlib, so do it by hand
-			StringBuilder sb = new StringBuilder ();
+		public override string ToString () 
+		{
+			SecurityElement se = new SecurityElement ("System.Security.Policy.PermissionRequestEvidence");
+			se.AddAttribute ("version", "1");
 
-			sb.Append ("<System.Security.Policy.PermissionRequestEvidence version=\"1\">");
-			sb.Append ("<Request>");
-			sb.Append ("<PermissionSet class=\"System.Security.PermissionSet\" version=\"1\"");
-			if (requested.IsUnrestricted ())
-				sb.Append (" Unrestricted=\"true\"");
-			sb.Append (@"/>");  
-			sb.Append (@"</Request>");
+			if (requested != null) {
+				SecurityElement requestElement = new SecurityElement ("Request");
+				requestElement.AddChild (requested.ToXml ());
+				se.AddChild (requestElement);
+			}
+			if (optional != null) {
+				SecurityElement optionalElement = new SecurityElement ("Optional");
+				optionalElement.AddChild (optional.ToXml ());
+				se.AddChild (optionalElement);
+			}
+			if (denied != null) {
+				SecurityElement deniedElement = new SecurityElement ("Denied");
+				deniedElement.AddChild (denied.ToXml ());
+				se.AddChild (deniedElement);
+			}
+			return se.ToString ();
+		}
 
-			sb.Append ("<Optional>");
-			sb.Append ("<PermissionSet class=\"System.Security.PermissionSet\" version=\"1\"");
-			if (optional.IsUnrestricted ())
-				sb.Append (" Unrestricted=\"true\"");
-			sb.Append (@"/>");  
-			sb.Append (@"</Optional>");
+		// interface IBuiltInEvidence
 
-			sb.Append ("<Denied>");
-			sb.Append ("<PermissionSet class=\"System.Security.PermissionSet\" version=\"1\"");
-			if (denied.IsUnrestricted ())
-				sb.Append (" Unrestricted=\"true\"");
-			sb.Append (@"/>");  
-			sb.Append (@"</Denied>");
+		[MonoTODO]
+		int IBuiltInEvidence.GetRequiredSize (bool verbose) 
+		{
+			return 0;
+		}
 
-			sb.Append ("</System.Security.Policy.PermissionRequestEvidence>");
+		[MonoTODO]
+		int IBuiltInEvidence.InitFromBuffer (char [] buffer, int position) 
+		{
+			return 0;
+		}
 
-			return sb.ToString ();
+		[MonoTODO]
+		int IBuiltInEvidence.OutputToBuffer (char [] buffer, int position, bool verbose) 
+		{
+			return 0;
 		}
 
 	}
