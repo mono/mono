@@ -993,7 +993,12 @@ namespace Mono.CSharp
 				return true;
 			}
 
+			case "/noconfig-":
+				load_default_config = true;
+				return true;
+				
 			case "/noconfig":
+			case "/noconfig+":
 				load_default_config = false;
 				return true;
 
