@@ -284,37 +284,39 @@ namespace System.Web.Compilation
 
 			if (0 == String.Compare (member.Name, id, true)){
 				AddCodeForPropertyOrField (builder, type, member.Name, attValue, isDataBound);
-				is_processed = true;
-			} else if (hyphen != -1 && (type == fontinfoType || type == styleType || type.IsSubclassOf (styleType))){
-				//FIXME: x-y should not be limited to style and font
-				string prop_field = id.Replace ("-", ".");
-				string [] parts = prop_field.Split (new char [] {'.'});
-				if (parts.Length != 2 || 0 != String.Compare (member.Name, parts [0], true))
+				return true;
+			}
+			
+			if (hyphen == -1)
+				return false;
+
+			string prop_field = id.Replace ("-", ".");
+			string [] parts = prop_field.Split (new char [] {'.'});
+			if (parts.Length != 2 || 0 != String.Compare (member.Name, parts [0], true))
+				return false;
+
+			PropertyInfo [] subprops = type.GetProperties ();
+			foreach (PropertyInfo subprop in subprops) {
+				if (0 != String.Compare (subprop.Name, parts [1], true))
+					continue;
+
+				if (subprop.CanWrite == false)
 					return false;
 
-				PropertyInfo [] subprops = type.GetProperties ();
-				foreach (PropertyInfo subprop in subprops) {
-					if (0 != String.Compare (subprop.Name, parts [1], true))
-						continue;
+				bool is_bool = subprop.PropertyType == typeof (bool);
+				if (!is_bool && attValue == null)
+					return false; // Font-Size -> Font-Size="" as html
 
-					if (subprop.CanWrite == false)
-						return false;
+				string value;
+				if (attValue == null && is_bool)
+					value = "true"; // Font-Bold <=> Font-Bold="true"
+				else
+					value = attValue;
 
-					bool is_bool = subprop.PropertyType == typeof (bool);
-					if (!is_bool && attValue == null)
-						return false; // Font-Size -> Font-Size="" as html
-
-					string value;
-					if (attValue == null && is_bool)
-						value = "true"; // Font-Bold <=> Font-Bold="true"
-					else
-						value = attValue;
-
-					AddCodeForPropertyOrField (builder, subprop.PropertyType,
-							 member.Name + "." + subprop.Name,
-							 value, isDataBound);
-					is_processed = true;
-				}
+				AddCodeForPropertyOrField (builder, subprop.PropertyType,
+						 member.Name + "." + subprop.Name,
+						 value, isDataBound);
+				is_processed = true;
 			}
 
 			return is_processed;
