@@ -1,3 +1,8 @@
+2002-02-18  Duncan Mak  <duncan@ximian.com>
+
+        * Convert.cs: Changed from using Type.GetType (string) to just
+        typeof (). Probably will speed things up a bit?		
+
 2002-02-18  Ajay Kumar Dwivedi <AjayKumar.Dwivedi@dresdner-bank.com>
 
 	* Array.cs:         
