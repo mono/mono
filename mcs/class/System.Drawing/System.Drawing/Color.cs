@@ -48,6 +48,8 @@ namespace System.Drawing
 
 		public string Name {
 			get{
+				if (myname == null || myname == String.Empty)
+					return String.Format ("{0:x}", ToArgb ());
 				return myname;
 			}
 		}

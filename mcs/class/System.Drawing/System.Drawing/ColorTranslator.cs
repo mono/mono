@@ -1,102 +1,72 @@
 //
 // System.Drawing.ColorTranslator.cs
 //
-// (C) 2001 Ximian, Inc.  http://www.ximian.com
+// Copyright (C) 2001 Ximian, Inc.  http://www.ximian.com
+// Copyright (C) 2004 Novell, Inc.  http://www.novell.com
 //
-// Dennis Hayes (dennish@raytek.com)
-// Inital Implimentation 3/25/2002
-// All conversions based on best guess, will improve over time
-// 
+// Authors:
+//	Dennis Hayes (dennish@raytek.com)
+//	Ravindra (rkumar@novell.com)
+//
+//
+ 
 using System;
-namespace System.Drawing {
-	public sealed class ColorTranslator{
+using System.ComponentModel;
 
-		private ColorTranslator ()
+namespace System.Drawing
+{
+	public sealed class ColorTranslator
+	{
+		private ColorTranslator () { }
+
+		public static Color FromHtml (string HtmlFromColor)
 		{
+			TypeConverter converter = TypeDescriptor.GetConverter (typeof (Color));
+			return (Color) converter.ConvertFromString (HtmlFromColor);
 		}
 
-		// From converisons
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="HtmlFromColor"></param>
-		/// <returns></returns>
-		public static Color FromHtml(string HtmlFromColor){
-			// If first char is "#"
-				//convert "#RRGGBB" to int and use Color.FromARGB(int) to create color
-			// else //it is a color name
-			//If there is a single digit at the end of the name, remove it.
-			// Call Color.FromKnownColor(HtmlFromColor)  
+		public static Color FromOle (int OleFromColor)
+		{
+			// OleColor format is BGR
+			int R = OleFromColor & 0xFF;
+			int G = (OleFromColor >> 8) & 0xFF;
+			int B = (OleFromColor >> 16) & 0xFF;
 
-			//At least some Html strings match .NET Colors,
-			// so this should work for those colors.
-			// .NET colors, XWindows colors, and WWWC web colors 
-			// are (according to Charles Pretziod) base the same
-			//colors, so many shouold work if any do.
-			if (HtmlFromColor[0] != '#')
-			{
-				int length = HtmlFromColor.Length;
-				for (int i = length - 1; i >= 0; i--)
-				{
-					if (!Char.IsDigit (HtmlFromColor[i]))
-						break;
-					length--;
-				}
-				
-				return Color.FromName(HtmlFromColor.Substring (0, length));
-			}
-			
-			int pos = 0, index = 0;
-			int[] rgb = new int[] {0, 0, 0};
-			
-			string specifier = HtmlFromColor.Substring (1).ToLower ();
-			if (specifier.Length != 6)
-				return Color.Empty;
-				
-			foreach (char c in specifier)
-			{
-				rgb[index] *= 16;
-
-				if (Char.IsDigit (c))
-					rgb[index] += Int32.Parse (c.ToString ());
-				else if (c <= 'f' && c >= 'a')
-					rgb[index] += 10 + (c - 'a');
-				else
-					return Color.Empty;
-				
-				pos++;
-				if ((pos % 2) == 0)
-					index++;
+			Color retcolor = Color.FromArgb (255, R, G, B);
+			foreach (Color c in Color.NamedColors.Values) {
+				if (c == retcolor)
+					return c;
 			}
 
-			return Color.FromArgb (rgb[0], rgb[1], rgb[2]);
-		}
-		
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="OLEFromColor"></param>
-		/// <returns></returns>
-		public static Color FromOle(int OLEFromColor){
-			//int newcolor;
-			//TODO: swap RB bytes i.e. AARRGGBB to AABBGGRR
-			//return Color.FromArgb(newcolor);
-			return Color.Empty;
-		}
-		
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="Win32FromColor"></param>
-		/// <returns></returns>
-		public static Color FromWin32(int Win32FromColor){
-			//int newcolor;
-			//TODO: swap RB bytes i.e. AARRGGBB to AABBGGRR
-			//return Color.FromArgb(newcolor);
-			return Color.Empty;
+			foreach (Color c in Color.SystemColors.Values) {
+				if (c == retcolor)
+					return c;
+			}
+
+			return retcolor;
 		}
 
-		// To conversions
+		public static Color FromWin32 (int Win32FromColor)
+		{
+			// Win32Color format is BGR
+			int R = Win32FromColor & 0xFF;
+			int G = (Win32FromColor >> 8) & 0xFF;
+			int B = (Win32FromColor >> 16) & 0xFF;
+
+			Color retcolor = Color.FromArgb (255, R, G, B);
+			foreach (Color c in Color.NamedColors.Values) {
+				if (c == retcolor)
+					return c;
+			}
+
+			foreach (Color c in Color.SystemColors.Values) {
+				if (c == retcolor)
+					return c;
+			}
+
+			return retcolor;
+		}
+
 		public static string ToHtml (Color c)
 		{
 			if (c.IsEmpty)
@@ -111,30 +81,19 @@ namespace System.Drawing {
 
 			return result;
 		}
-		/// <summary>
-		/// converts from BGR to RGB
-		/// </summary>
-		/// <param name="OleToColor"></param>
-		/// <returns></returns>
-		public static int ToOle(Color FromColor){
-			// TODO: Swap red and blue(from argb), convert to int(toargb)
-			// Same as ToWin32
-			return (Color.FromArgb(FromColor.B,FromColor.G,FromColor.R)).ToArgb();
+
+		public static int ToOle (Color color)
+		{
+			// OleColor format is BGR, same as Win32
+
+			return  ((color.B << 16) | (color.G << 8) | color.R);
 		}
 
-		/// <summary>
-		/// converts from RGB to BGR
-		/// </summary>
-		/// <param name="Win32ToColor"></param>
-		/// <returns></returns>
-		public static int ToWin32(Color FromColor){
-			// TODO: Swap red and blue(from argb), convert to int(toargb)
-			// Same as ToOle
-			return (Color.FromArgb(FromColor.B,FromColor.G,FromColor.R)).ToArgb();
+		public static int ToWin32 (Color color)
+		{
+			// Win32Color format is BGR, Same as OleColor
+
+			return  ((color.B << 16) | (color.G << 8) | color.R);
 		}
 	}
 }
-
-
-
-
