@@ -1,3 +1,12 @@
+2003-09-30  Zoltan Varga  <vargaz@freemail.hu>
+
+	* inssel.brg (OP_UNBOXCAST): Fix #46027.
+
+	* inssel.brg (OP_UNBOX): Remove unused rule.
+
+	* mini.h mini.c inssel-x86.brg: Allocate one SP variable for each
+	region instead of one for each method. Fixes #47813.
+
 2003-09-29  Zoltan Varga  <vargaz@freemail.hu>
 
 	* exceptions.cs (test_0_nested_finally): New regression test for
