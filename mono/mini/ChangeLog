@@ -1,5 +1,12 @@
 2004-07-01  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini.c: 64 bit fixes. Use LCOMPARE for comparing longs.
+
+	* inssel.brg: 64 bit fixes.
+
+	* inssel.brg inssel-long32.brg: Move 32 bit arithmetic rules to 
+	inssel-long32.brg.
+
 	* Makefile.am: Add SPARC64 support.
 
 2004-07-02  Zoltan Varga  <vargaz@freemail.hu>
