@@ -342,28 +342,28 @@ namespace System.Web.UI.WebControls
 				return;
 
 			Font.CopyFrom (source.Font);
-			if (source.IsSet (HEIGHT))
+			if (source.IsSet (HEIGHT)&& (source.Height != Unit.Empty))
 				Height = source.Height;
 
-			if (source.IsSet (WIDTH))
+			if (source.IsSet (WIDTH)&& (source.Width != Unit.Empty))
 				Width = source.Width;
 
-			if (source.IsSet (BORDERCOLOR))
+			if (source.IsSet (BORDERCOLOR)&& (source.BorderColor != Color.Empty))
 				BorderColor = source.BorderColor;
 
-			if (source.IsSet (BORDERWIDTH))
+			if (source.IsSet (BORDERWIDTH)&& (source.BorderWidth != Unit.Empty))
 				BorderWidth = source.BorderWidth;
 
 			if (source.IsSet (BORDERSTYLE))
 				BorderStyle = source.BorderStyle;
 
-			if (source.IsSet (BACKCOLOR))
+			if (source.IsSet (BACKCOLOR)&& (source.BackColor != Color.Empty))
 				BackColor = source.BackColor;
 
 			if (source.IsSet (CSSCLASS))
 				CssClass = source.CssClass;
 
-			if (source.IsSet (FORECOLOR))
+			if (source.IsSet (FORECOLOR)&& (source.ForeColor != Color.Empty))
 				ForeColor = source.ForeColor;
 
 		}

@@ -234,15 +234,15 @@ namespace System.Web.UI.WebControls
 			{
 				if(source.Owner.IsSet(Style.FONT_NAMES))
 					Names = source.Names;
-				if(source.Owner.IsSet(Style.FONT_BOLD))
+				if(source.Owner.IsSet(Style.FONT_BOLD)&& source.Bold)
 					Bold = source.Bold;
-				if(source.Owner.IsSet(Style.FONT_ITALIC))
+				if(source.Owner.IsSet(Style.FONT_ITALIC)&& source.Italic)
 					Italic = source.Italic;
-				if(source.Owner.IsSet(Style.FONT_STRIKE))
+				if(source.Owner.IsSet(Style.FONT_STRIKE)&& source.Strikeout)
 					Strikeout = source.Strikeout;
-				if(source.Owner.IsSet(Style.FONT_OLINE))
+				if(source.Owner.IsSet(Style.FONT_OLINE)&& source.Overline)
 					Overline = source.Overline;
-				if(source.Owner.IsSet(Style.FONT_ULINE))
+				if(source.Owner.IsSet(Style.FONT_ULINE)&& source.Underline)
 					Underline = source.Underline;
 				if(source.Owner.IsSet(Style.FONT_SIZE) && source.Size != FontUnit.Empty)
 					Size = source.Size;

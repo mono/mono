@@ -1,3 +1,7 @@
+2004-01-18 Alon Gazit <along@mainsoft.com>
+	* Style.cs: CopyFrom method shouldn't copy a value that is equal to Property default value.
+	* FontInfo.cs : CopyFrom method shouldn't copy a value that is equal to Property default value.	
+
 2004-01-15 Alon Gazit <along@mainsoft.com>
 	* RadioButtonList.cs: RepeatLayout property should affect the rendered html.	
 
