@@ -11,6 +11,7 @@ using System.Collections;
 
 namespace System.Runtime.Remoting.Messaging
 {
+	[Serializable]
 	internal class MethodDictionary : IDictionary
 	{
 		IDictionary _internalProperties = null;
@@ -21,6 +22,24 @@ namespace System.Runtime.Remoting.Messaging
 		public MethodDictionary (IMethodMessage message)
 		{
 			_message = message;
+		}
+
+		internal bool HasInternalProperties 
+		{
+			get 
+			{
+				if (null != _internalProperties)
+					return true;
+				return false;
+			}
+		}
+
+		internal IDictionary InternalProperties
+		{
+			get 
+			{
+				return _internalProperties;
+			}
 		}
 
 		public string[] MethodKeys

@@ -1,3 +1,17 @@
+2003-02-03 Patrik Torstensson
+
+	* MethodResponse.cs: Implemented
+	* MethodCall.cs: added support for Cross appdomain messages, implemented some
+	missing methods.
+	* MethodDictionary.cs: made serializible and added methods to get internal properties.
+	* MonoMethodMessage.cs: internal dictionary is now serializible
+	* ReturnMessage.cs: made serializible
+	* ErrorMessage.cs: typo fix
+	
+	* CADMessage.cs: new file, implements cross appdomain messages, both call and return. 
+	Princip of this classes is to move unmutable objects and primitivs between appdomains
+	without marshalling. This increase performance a lot of the cross appdomain channel.
+	
 2003-01-29  Lluis Sanchez Gual <lluis@ideary.com>
 	
 	* ServerContextTerminatorSink.cs: now it forwards messages to the target identity,

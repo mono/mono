@@ -1,5 +1,5 @@
 //
-// System.Runtime.Remoting.Messaging.ReturnMessage.cs
+// System.Runtime.Remoting.Messaging.ErrorMessage.cs
 //
 // Author:
 //   Patrik Torstensson

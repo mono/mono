@@ -287,6 +287,7 @@ namespace System.Runtime.Remoting.Messaging {
 			return null;
 		}
 
+		[Serializable]
 		class InternalDictionary : MethodDictionary
 		{
 			static string[] _keys = new string[] {"__Uri", "__MethodName", "__TypeName", "__MethodSignature", "__Args", "__OutArgs", "__Return", "__CallContext"};

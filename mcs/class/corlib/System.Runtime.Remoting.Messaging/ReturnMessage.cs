@@ -13,8 +13,9 @@ using System.Reflection;
 
 namespace System.Runtime.Remoting.Messaging {
 
-	public class ReturnMessage : IMethodReturnMessage, IMethodMessage {
-
+	[Serializable]
+	public class ReturnMessage : IMethodReturnMessage, IMethodMessage 
+	{
 		MonoMethodMessage msg;
 		IMethodCallMessage request;
 		
@@ -24,7 +25,7 @@ namespace System.Runtime.Remoting.Messaging {
 		{
 			// fixme: request can be null
 			// fixme: why do we need outArgCount?
-			msg = new MonoMethodMessage ((MonoMethod)request.MethodBase, outArgs);
+			msg = new MonoMethodMessage (request.MethodBase as MonoMethod, outArgs);
 			this.request = request;
 			msg.rval = returnValue;
 			msg.ctx = callCtx;
@@ -33,10 +34,15 @@ namespace System.Runtime.Remoting.Messaging {
 
 		public ReturnMessage (Exception exc, IMethodCallMessage request)
 		{
-			msg = new MonoMethodMessage ((MonoMethod)request.MethodBase, null);
+			if (null != request) {
+				msg = new MonoMethodMessage (request.MethodBase as MonoMethod, null);
+				msg.ctx = request.LogicalCallContext;
+			}
+			else
+				msg = new MonoMethodMessage (null, null);
+
 			this.request = request;
 			msg.exc = exc;
-			msg.ctx = request.LogicalCallContext;
 		}
 		
 		public int ArgCount {
@@ -59,6 +65,8 @@ namespace System.Runtime.Remoting.Messaging {
 
 		public LogicalCallContext LogicalCallContext {
 			get {
+				if (null == msg)
+					return null;
 				return msg.ctx;
 			}
 		}
