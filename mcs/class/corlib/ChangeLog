@@ -1,4 +1,4 @@
-2002-04-27  Daniel Stodden  <stodden@in.tum.de>
+2002-04-30  Daniel Stodden  <stodden@in.tum.de>
 
 	* System/Delegate.cs: Implemented Remove()
 	* System/MulticastDelegate.cs: Implementation of RemoveImpl()

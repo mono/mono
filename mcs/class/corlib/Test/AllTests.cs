@@ -24,14 +24,14 @@ namespace MonoTests {
                                 TestSuite suite =  new TestSuite();
                                 suite.AddTest(System.AllTests.Suite);
                                 suite.AddTest(System.Collections.AllTests.Suite);
-                                // suite.AddTest(System.Security.AllTests.Suite);
+                                suite.AddTest(System.Security.AllTests.Suite);
                                 suite.AddTest(System.Security.Cryptography.AllTests.Suite);
                                 suite.AddTest(System.IO.AllTests.Suite);
                                 suite.AddTest(System.Net.AllTests.Suite);
                                 suite.AddTest(System.Text.AllTests.Suite);
                                 suite.AddTest(System.Security.Permissions.AllTests.Suite);
                                 suite.AddTest(System.Resources.AllTests.Suite);
-				// suite.AddTest(System.Security.Policy.AllTests.Suite);
+//                                suite.AddTest(System.Security.Policy.AllTests.Suite);
                                 return suite;
                         }
                 }
