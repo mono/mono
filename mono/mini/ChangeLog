@@ -1,5 +1,7 @@
 2004-08-08  Zoltan Varga  <vargaz@freemail.hu>
 
+	* iltests.il: Add some localloc tests.
+
 	* mini.c (mono_method_to_ir): Set stack type of LOCALLOC correctly.
 
 	* inssel-amd64.brg inssel-x86.brg: Set dreg of LOCALLOC correctly. 
