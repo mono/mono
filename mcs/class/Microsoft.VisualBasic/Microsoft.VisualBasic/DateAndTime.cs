@@ -238,6 +238,18 @@ namespace Microsoft.VisualBasic
 
 		private static int ConvertWeekDay(DayOfWeek Day, int Offset) 
 		{
+			if (Offset == 0)
+				return (int)Day+1;
+
+			int Weekday = (int)Day + 1 - Offset;
+			if (Weekday < 0)
+				Weekday += 7;
+
+			return Weekday + 1;
+
+			/*if(Offset >= 7)
+				Offset  -= 7;
+
 			int Weekday = (int)Day + Offset;
 
 			if (Weekday > 7) {
@@ -261,7 +273,7 @@ namespace Microsoft.VisualBasic
 					return (int)FirstDayOfWeek.Saturday;
 				default:
 					throw new ArgumentException();
-			}
+			}*/
 
 		}
 
@@ -290,7 +302,7 @@ namespace Microsoft.VisualBasic
 					WeekRule = GetWeekRule(StartOfYear, WeekRule);
 					return CurCalendar.GetWeekOfYear(DateValue, WeekRule, DayRule);
 				case DateInterval.Weekday:
-					return ConvertWeekDay(DateValue.DayOfWeek, (int)DayRule);
+					return ConvertWeekDay(DateValue.DayOfWeek, (int)StartOfWeek);
 				case DateInterval.DayOfYear:
 					return DateValue.DayOfYear;
 				case DateInterval.Day:
@@ -393,19 +405,80 @@ namespace Microsoft.VisualBasic
 
 		public static System.DateTime DateSerial (int Year, int Month, int Day) 
 		{
-			return new DateTime(Year, Month, Day); 
+			DateTime date;
+
+			if (Year < 0)
+				Year = Year + DateTime.Now.Year;
+			else if (Year >= 0 && Year <= 29)
+				Year += 2000;
+			else if(Year >= 30 && Year <= 99)
+				Year += 1900;
+
+			date = new DateTime(Year, 1, 1); 
+
+			date = date.AddMonths(Month - 1);
+
+			date = date.AddDays(Day - 1);
+
+			return date;
 		}
 
 		public static System.DateTime TimeSerial (int Hour, int Minute, int Second) 
 		{
-			return new DateTime(1, 1, 1, Hour, Minute, Second);
+			int day = 1;
+
+			if (Second < 0)	{
+				if (Minute == 0 && Hour == 0)
+					Second += 60;
+				else if (Minute == 0){
+					Second += 60;
+					Minute = 59;
+					Hour--;     
+				}
+				else {
+					Second += 60;
+					Minute--;                    
+				}                
+			}
+			else if(Second > 59){
+				Minute += Second/60;
+				Second = Second%60;
+			}
+
+			if (Minute < 0)	{
+				if (Hour == 0)
+					Minute += 60;
+				else {    
+					Minute += 60;
+					Hour--;
+				}        
+			}
+			else if (Minute > 59){
+				Hour += Minute/60;
+				Minute = Minute%60;
+			}
+
+			if (Hour < 0)
+				Hour += 24;
+			else if (Hour > 23)	{
+				day += Hour/24;
+				Hour = Hour%24;
+			}
+
+			return new DateTime(1, 1, day, Hour, Minute, Second);
 		}
 
 		public static System.DateTime DateValue (string StringDate) 
 		{ 
+			string[] expectedFormats = {"D", "d", "G", "g", "f" ,"F", "m", "M", "r", "R",
+							"s", "T", "t", "U", "u", "Y", "y"};
+			
 			try {
-				return DateTime.Parse(StringDate).Date;
-			} catch (FormatException exception) {
+				return DateTime.ParseExact(StringDate, expectedFormats,
+							System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat,
+							System.Globalization.DateTimeStyles.NoCurrentDateDefault);
+			} 
+			catch (FormatException exception) {
 				throw new InvalidCastException(null, exception);
 			}
 		}

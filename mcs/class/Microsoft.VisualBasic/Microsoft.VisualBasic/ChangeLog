@@ -1,3 +1,6 @@
+2004-06-23 Anirban Bhattacharjee <banirban@novell.com>
+	* DateAndTime.cs: bug fixes
+
 2004-06-23  Jambunathan K <kjambunathan@novell.com>
 	* BaseVBFile.cs: Fixed a trivial bug
 	* VBUtils.cs: Added Exception VBException(Exception, int)
