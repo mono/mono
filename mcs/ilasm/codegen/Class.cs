@@ -118,11 +118,18 @@ namespace Mono.ILASM {
 		public void Emit (CodeGen cg)
 		{
 			codgen = cg;
-			foreach (Method m in methods) {
-				m.Emit (this);
+			
+			if (methods != null) {
+				foreach (Method m in methods) {
+					m.Emit (this);
+					if (m.IsEntryPoint)
+						cg.SetEntryPoint (m.Info);
+				}
 			}
+			
 			TypeBuilder.CreateType();
 		}
 
 	}
 }
+

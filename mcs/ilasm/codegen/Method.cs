@@ -14,7 +14,7 @@ namespace Mono.ILASM {
 
 		private bool isCtor;
 		private string name;
-
+		
 		/// <summary>
 		/// </summary>
 		public MethodName () : this ("M_" + (methodCount++))
@@ -74,6 +74,8 @@ namespace Mono.ILASM {
 		private MethodAttributes attrs;
 		private CallingConventions callConv;
 		private string retType;
+		private MethodBuilder method_builder;
+		private bool entry_point = false;
 
 		private ArrayList instructions;
 
@@ -156,6 +158,16 @@ namespace Mono.ILASM {
 		}
 
 
+		/// <summary>
+		/// </summary>
+		public bool IsEntryPoint {
+			get {
+				return entry_point;
+			}
+			set {
+				entry_point = value;
+			}
+		}		
 
 		/// <summary>
 		/// </summary>
@@ -193,6 +205,11 @@ namespace Mono.ILASM {
 			                      Name, Attrs, CallConv, RetType, InstrCount);
 		}
 
+		public MethodInfo Info {
+			get {
+				return method_builder;
+			}
+		}
 
 		/// <summary>
 		/// </summary>
@@ -204,10 +221,12 @@ namespace Mono.ILASM {
 			if (IsCtor) {
 			} else {
 				Type rt = host.CodeGen.RefTypes.Lookup (RetType);
-				MethodBuilder mb = tb.DefineMethod (Name, Attrs, CallConv, rt, null);
-				ILGenerator ilgen = mb.GetILGenerator ();
-				foreach (InstrBase instr in instructions) {
-					instr.Emit (ilgen);
+				method_builder = tb.DefineMethod (Name, Attrs, CallConv, rt, null);
+				ILGenerator ilgen = method_builder.GetILGenerator ();
+				if (instructions != null) {
+					foreach (InstrBase instr in instructions) {
+						instr.Emit (ilgen);
+					}
 				}
 			}
 		}

@@ -11,9 +11,10 @@ namespace Mono.ILASM {
 	public class CodeGen {
 
 		private string name;
+		private string output_file;
 		private AssemblyBuilder asmbld;
 		private ModuleBuilder modbld;
-
+		
 		private Types refTypes = new Types (); // FIXME: postpone init
 
 		private ArrayList classes;
@@ -21,10 +22,10 @@ namespace Mono.ILASM {
 
 		/// <summary>
 		/// </summary>
-		/// <param name="name"></param>
-		public CodeGen (string name)
+		/// <param name="output_file">The path of the output file</param>
+		public CodeGen (string output_file)
 		{
-			SetName (name);
+			this.output_file = output_file;
 		}
 
 
@@ -44,10 +45,18 @@ namespace Mono.ILASM {
 			AppDomain appDomain = AppDomain.CurrentDomain;
 			AssemblyName asmName = new AssemblyName();
 			asmName.Name = name + "_asmname";
-			asmbld = appDomain.DefineDynamicAssembly(asmName, AssemblyBuilderAccess.RunAndSave);
+			asmbld = appDomain.DefineDynamicAssembly (asmName, AssemblyBuilderAccess.RunAndSave);
 
 			// FIXME: exe/lib
-			modbld = asmbld.DefineDynamicModule(name, name + ".exe");
+			modbld = asmbld.DefineDynamicModule (name, name + ".exe");
+		}
+
+		public void SetEntryPoint (MethodInfo entry_point)
+		{
+			if (asmbld.EntryPoint != null)
+				Console.WriteLine ("Multiple entry points defined.");
+
+			asmbld.SetEntryPoint (entry_point);
 		}
 
 
@@ -98,7 +107,7 @@ namespace Mono.ILASM {
 				}
 			}
 
-			asmbld.Save ("TestIL.exe");
+			asmbld.Save (output_file);
 		}
 
 	}
