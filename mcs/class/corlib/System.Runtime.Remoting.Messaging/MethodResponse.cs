@@ -31,7 +31,6 @@ namespace System.Runtime.Remoting.Messaging {
 		[MonoTODO]
 		public object[] Args {
 			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
 		}
 
 		[MonoTODO]
@@ -72,7 +71,6 @@ namespace System.Runtime.Remoting.Messaging {
 		[MonoTODO]
 		public object[] OutArgs {
 			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
 		}
 
 		[MonoTODO]

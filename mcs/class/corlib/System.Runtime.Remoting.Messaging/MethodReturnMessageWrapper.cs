@@ -35,8 +35,9 @@ namespace System.Runtime.Remoting.Messaging {
 		}
 
 		[MonoTODO]
-		public Exception Exception {
+		public virtual Exception Exception {
 			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
 		}
 		
 		[MonoTODO]

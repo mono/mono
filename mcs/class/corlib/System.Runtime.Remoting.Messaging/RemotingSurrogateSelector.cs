@@ -49,8 +49,11 @@ namespace System.Runtime.Remoting.Messaging {
 		}
 
 		[MonoTODO]
-		public object SetRootObject ()
+		public object SetRootObject (object obj)
 		{
+			if (obj == null)
+				throw new ArgumentNullException ();
+			
 			throw new NotImplementedException ();
 		}
 		
