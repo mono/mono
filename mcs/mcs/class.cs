@@ -2739,8 +2739,8 @@ namespace Mono.CSharp {
 			//
 			if (parent is Class){
 				if ((ModFlags & Modifiers.STATIC) == 0){
-					Initializer.Emit (ec);
 					parent.EmitFieldInitializers (ec, false);
+					Initializer.Emit (ec);
 				}
 			}
 			

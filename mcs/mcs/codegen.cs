@@ -234,7 +234,7 @@ namespace Mono.CSharp {
 			if (block != null){
 				int errors = Report.Errors;
 				
-				block.EmitMeta (this, block, 0);
+				block.EmitMeta (this, block);
 				
 				if (Report.Errors == errors){
 					has_ret = block.Emit (this);

@@ -645,7 +645,6 @@ namespace Mono.CSharp {
 		public Type VariableType;
 		public readonly Location Location;
 		
-		int  idx;
 		public bool Used;
 		public bool Assigned;
 		public bool ReadOnly;
@@ -654,21 +653,7 @@ namespace Mono.CSharp {
 		{
 			Type = type;
 			LocalBuilder = null;
-			idx = -1;
 			Location = l;
-		}
-
-		public int Idx {
-			get {
-				if (idx == -1)
-					throw new Exception ("Unassigned idx for variable");
-				
-				return idx;
-			}
-
-			set {
-				idx = value;
-			}
 		}
 
 		public void MakePinned ()
@@ -969,7 +954,7 @@ namespace Mono.CSharp {
 		///   toplevel: the toplevel block.  This is used for checking 
 		///   		that no two labels with the same name are used.
 		/// </remarks>
-		public int EmitMeta (EmitContext ec, Block toplevel, int count)
+		public void EmitMeta (EmitContext ec, Block toplevel)
 		{
 			DeclSpace ds = ec.DeclSpace;
 			ILGenerator ig = ec.ig;
@@ -991,7 +976,6 @@ namespace Mono.CSharp {
 
 					vi.VariableType = t;
 					vi.LocalBuilder = ig.DeclareLocal (t);
-					vi.Idx = count++;
 
 					if (constants == null)
 						continue;
@@ -1021,10 +1005,8 @@ namespace Mono.CSharp {
 			//
 			if (children != null){
 				foreach (Block b in children)
-					count = b.EmitMeta (ec, toplevel, count);
+					b.EmitMeta (ec, toplevel);
 			}
-
-			return count;
 		}
 
 		public void UsageWarning ()

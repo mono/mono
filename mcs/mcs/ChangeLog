@@ -1,5 +1,20 @@
 2002-03-15  Miguel de Icaza  <miguel@ximian.com>
 
+	* statement.cs (Block.EmitMeta): Drop tracking of indexes.
+
+	* codegen.cs: ditto.
+
+	* expression.cs (LocalVariableReference): Drop the use of the
+	Store function that depended on the variable index.
+
+	* statement.cs (VariableInfo): Drop the `Idx' property from this
+	class, as this is not taking into account the indexes for
+	temporaries tat we generate during the execution, getting the
+	indexes wrong.
+
+	* class.cs: First emit class initializers, then call the parent
+	constructor. 
+
 	* expression.cs (Binary): Fix opcode emision.
 	(UnaryMutator.EmitCode): Support checked code generation
 

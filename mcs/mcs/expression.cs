@@ -2488,64 +2488,11 @@ namespace Mono.CSharp {
 		{
 			VariableInfo vi = VariableInfo;
 			ILGenerator ig = ec.ig;
-			int idx = vi.Idx;
 
+			ig.Emit (OpCodes.Ldloc, vi.LocalBuilder);
 			vi.Used = true;
-
-			switch (idx){
-			case 0:
-				ig.Emit (OpCodes.Ldloc_0);
-				break;
-				
-			case 1:
-				ig.Emit (OpCodes.Ldloc_1);
-				break;
-				
-			case 2:
-				ig.Emit (OpCodes.Ldloc_2);
-				break;
-				
-			case 3:
-				ig.Emit (OpCodes.Ldloc_3);
-				break;
-				
-			default:
-				if (idx <= 255)
-					ig.Emit (OpCodes.Ldloc_S, (byte) idx);
-				else
-					ig.Emit (OpCodes.Ldloc, idx);
-				break;
-			}
 		}
 		
-		public static void Store (ILGenerator ig, int idx)
-		{
-			switch (idx){
-			case 0:
-				ig.Emit (OpCodes.Stloc_0);
-				break;
-				
-			case 1:
-				ig.Emit (OpCodes.Stloc_1);
-				break;
-				
-			case 2:
-				ig.Emit (OpCodes.Stloc_2);
-				break;
-				
-			case 3:
-				ig.Emit (OpCodes.Stloc_3);
-				break;
-				
-			default:
-				if (idx <= 255)
-					ig.Emit (OpCodes.Stloc_S, (byte) idx);
-				else
-					ig.Emit (OpCodes.Stloc, idx);
-				break;
-			}
-		}
-
 		public void EmitAssign (EmitContext ec, Expression source)
 		{
 			ILGenerator ig = ec.ig;
@@ -2555,27 +2502,19 @@ namespace Mono.CSharp {
 
 			source.Emit (ec);
 			
-			// Funny seems the code below generates optimal code for us, but
-			// seems to take too long to generate what we need.
-			// ig.Emit (OpCodes.Stloc, vi.LocalBuilder);
-
-			Store (ig, vi.Idx);
+			ig.Emit (OpCodes.Stloc, vi.LocalBuilder);
 		}
 		
 		public void AddressOf (EmitContext ec, AddressOp mode)
 		{
 			VariableInfo vi = VariableInfo;
-			int idx = vi.Idx;
 
 			if ((mode & AddressOp.Load) != 0)
 				vi.Used = true;
 			if ((mode & AddressOp.Store) != 0)
 				vi.Assigned = true;
-			
-			if (idx <= 255)
-				ec.ig.Emit (OpCodes.Ldloca_S, (byte) idx);
-			else
-				ec.ig.Emit (OpCodes.Ldloca, idx);
+
+			ec.ig.Emit (OpCodes.Ldloca, vi.LocalBuilder);
 		}
 	}
 
