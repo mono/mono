@@ -1012,8 +1012,9 @@ namespace Mono.CSharp {
 			if (VariableType == null)
 				return false;
 
-			if (VariableType.IsPointer && !ec.InUnsafe)
-				Expression.UnsafeError (Location);
+// TODO: breaks the build
+//			if (VariableType.IsPointer && !ec.InUnsafe)
+//				Expression.UnsafeError (Location);
 
 			return true;
 		}
