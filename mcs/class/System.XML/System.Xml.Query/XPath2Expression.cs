@@ -2206,7 +2206,7 @@ namespace Mono.Xml.XPath2
 
 #region CompileAndEvaluate
 		/*
-		internal static FunctionCallExpr Create (
+		internal static DefaultFunctionCall Create (
 			XmlQualifiedName name,
 			ExprSingle [] args,
 			XQueryStaticContext ctx)
@@ -2276,7 +2276,6 @@ namespace Mono.Xml.XPath2
 #endregion
 	}
 
-	// This class is used only in AST
 	internal class FunctionCallExpr : FunctionCallExprBase
 	{
 		public FunctionCallExpr (XmlQualifiedName name, ExprSequence args)
@@ -2284,33 +2283,45 @@ namespace Mono.Xml.XPath2
 		{
 		}
 
+		XQueryFunction function;
+
+		public XQueryFunction Function {
+			get { return function; }
+		}
+
 #region CompileAndEvaluate
 		internal override ExprSingle CompileCore (XQueryASTCompiler compiler)
 		{
 			// resolve function
-			return new CustomFunctionCallExpr (Args, compiler.ResolveFunction (Name)).Compile (compiler);
+			function = compiler.ResolveFunction (Name);
+			CheckArguments (compiler);
+			for (int i = 0; i < Args.Count; i++)
+				Args [i] = Args [i].Compile (compiler);
+			return this;
+		}
+
+		public override int MinArgs {
+			get { return function.MinArgs; }
+		}
+
+		public override int MaxArgs {
+			get { return function.MaxArgs; }
+		}
+
+		public override SequenceType StaticType {
+			get { return function.ReturnType; }
 		}
 
 		public override XPathSequence Evaluate (XPathSequence iter)
 		{
-			throw new InvalidOperationException ("XQuery internal error. Should not happen.");
+			return Function.Evaluate (iter, Args);
 		}
 
-		public override SequenceType StaticType {
-			get { throw new InvalidOperationException ("XQuery internal error. Should not happen."); }
-		}
-
-		public override int MinArgs {
-			get { throw new InvalidOperationException ("XQuery internal error. Should not happen."); }
-		}
-
-		public override int MaxArgs {
-			get { throw new InvalidOperationException ("XQuery internal error. Should not happen."); }
-		}
-
+		// FIXME: add all overrides that delegates to XQueryFunction
 #endregion
 	}
 
+/*
 #region CompileAndEvaluate
 
 	// It is instantiated per function call expression.
@@ -2358,6 +2369,7 @@ namespace Mono.Xml.XPath2
 		// FIXME: add all overrides that delegates to XQueryFunction
 	}
 #endregion
+*/
 
 	// Ordered / Unordered
 	internal class OrderSpecifiedExpr : ExprSingle

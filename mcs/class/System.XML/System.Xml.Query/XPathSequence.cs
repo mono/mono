@@ -281,7 +281,11 @@ namespace Mono.Xml.XPath2
 					if (nodeStore.Count == 0) {
 						finished = true;
 						return false;
-					}
+					} else
+						// Initially it must not go to
+						// the while loop below
+						// (.Position -1 is -1).
+						return true;
 				}
 				if (nodeStore.Count == Position) {
 					finished = true;
@@ -1239,49 +1243,43 @@ namespace Mono.Xml.XPath2
 
 		public override IEnumerator GetEnumerator ()
 		{
-			IEnumerator forLetEnum = expr.ForLetClauses.GetEnumerator ();
-			// FIXME: this invokation seems to result in an Invalid IL error.
-			return EvaluateRemainingForLet (forLetEnum);
+			return EvaluateRemainingForLet (0);
 		}
 		
-		private IEnumerator EvaluateRemainingForLet (IEnumerator forLetEnum)
+		private IEnumerator EvaluateRemainingForLet (int flcPosition)
 		{
 			// Prepare iteration stack
-			if (forLetEnum.MoveNext ()) {
-				ForLetClause flc = (ForLetClause) forLetEnum.Current;
-				IEnumerator flsb = flc.GetEnumerator ();
-				IEnumerator items = EvaluateRemainingSingleItem (forLetEnum, flsb);
+			if (flcPosition < expr.ForLetClauses.Count) {
+				IEnumerator items = EvaluateRemainingSingleItem (flcPosition, 0);
 				while (items.MoveNext ())
 					yield return items.Current;
-				yield break;
-			}
-
-			bool passedFilter = expr.WhereClause == null;
-			if (!passedFilter)
-				passedFilter = expr.WhereClause.EvaluateAsBoolean (contextSequence);
-			if (passedFilter) {
-				IEnumerator ie = expr.ReturnExpr.Evaluate (contextSequence).GetEnumerator ();
-				while (ie.MoveNext ())
-					yield return (XPathItem) ie.Current;
+			} else {
+				bool passedFilter = expr.WhereClause == null;
+				if (!passedFilter)
+					passedFilter = expr.WhereClause.EvaluateAsBoolean (contextSequence);
+				if (passedFilter) {
+					IEnumerator ie = expr.ReturnExpr.Evaluate (contextSequence).GetEnumerator ();
+					while (ie.MoveNext ())
+						yield return (XPathItem) ie.Current;
+				}
 			}
 		}
 
-		private IEnumerator EvaluateRemainingSingleItem (IEnumerator forLetClauses, IEnumerator singleBodies)
+		private IEnumerator EvaluateRemainingSingleItem (int flcPosition, int singlePosition)
 		{
-			if (singleBodies.MoveNext ()) {
-				ForLetSingleBody sb = singleBodies.Current as ForLetSingleBody;
+			if (singlePosition < expr.ForLetClauses [flcPosition].Count) {
+				ForLetSingleBody sb = expr.ForLetClauses [flcPosition] [singlePosition];
 				ForSingleBody fsb = sb as ForSingleBody;
 				if (fsb != null) {
 					XPathSequence backup = contextSequence;
-					contextSequence = sb.Expression.Evaluate (Context.CurrentSequence);
+					contextSequence = fsb.Expression.Evaluate (Context.CurrentSequence);
 					Context.ContextManager.PushCurrentSequence (contextSequence);
 					while (contextSequence.MoveNext ()) {
 						XPathItem forItem = (XPathItem) contextSequence.Current;
 						Context.PushVariable (fsb.PositionalVar, contextSequence.Position);
 						Context.PushVariable (sb.VarName, forItem);
 						// recurse here (including following bindings)
-						IEnumerator items = 
-EvaluateRemainingSingleItem (forLetClauses, singleBodies);
+						IEnumerator items = EvaluateRemainingSingleItem (flcPosition, singlePosition + 1);
 						while (items.MoveNext ())
 							yield return (XPathItem) items.Current;
 						Context.PopVariable ();
@@ -1292,14 +1290,14 @@ EvaluateRemainingSingleItem (forLetClauses, singleBodies);
 				} else {
 					Context.PushVariable (sb.VarName, sb.Expression.Evaluate (contextSequence));
 					// recurse here (including following bindings)
-					IEnumerator items = EvaluateRemainingSingleItem (forLetClauses, singleBodies);
+					IEnumerator items = EvaluateRemainingSingleItem (flcPosition, singlePosition + 1);
 					while (items.MoveNext ())
 						yield return (XPathItem) items.Current;
 					Context.PopVariable ();
 				}
 			} else {
-				// examine next binding
-				IEnumerator items = EvaluateRemainingForLet (forLetClauses);
+				// evaluate next binding
+				IEnumerator items = EvaluateRemainingForLet (flcPosition + 1);
 				while (items.MoveNext ())
 					yield return (XPathItem) items.Current;
 			}

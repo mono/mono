@@ -1,3 +1,11 @@
+2004-09-22  Atsushi Enomoto <atsushi@ximian.com>
+
+	* SequenceType.cs : return TypedValue instead of null in case of
+	  XPathNavigator.
+	* XPath2Expression.cs : now FunctionCallExpr also handles evaluation.
+	* XPathSequence.cs : rewrote FLWORIterator to iterate forlet
+	  expressions based on index.
+
 2004-09-13  Atsushi Enomoto <atsushi@ximian.com>
 
 	* SequenceType.cs, XPath2Expression.cs :

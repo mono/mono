@@ -297,8 +297,12 @@ namespace Mono.Xml.XPath2
 			switch (occurence) {
 			case Occurence.One:
 			case Occurence.Optional:
-				XPathAtomicValue av = ExprSingle.Atomize (seq);
-				return av != null ? av.TypedValue : null;
+				if (!seq.MoveNext ())
+					return null;
+				XPathItem item = seq.Current;
+				// FIXME: should check and reject two or 
+				// more items??
+				return item.TypedValue;
 			}
 			ArrayList al = new ArrayList ();
 			while (seq.MoveNext ())
