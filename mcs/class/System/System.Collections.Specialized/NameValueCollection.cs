@@ -139,24 +139,21 @@ namespace System.Collections.Specialized{
 		/// to the current NameValueCollection.</summary>
 		/// LAMESPEC: see description that comes this Add(string, string)
 		
-		public void Add(  NameValueCollection c ){
-			
+		public void Add (NameValueCollection c)
+		{
 			if (this.IsReadOnly)
-				throw new NotSupportedException("Collection is read-only");
-			if (c==null)
-				throw new ArgumentNullException();
+				throw new NotSupportedException ("Collection is read-only");
+			if (c == null)
+				throw new ArgumentNullException ();
 			
-			InvalidateCachedArrays();
-			ArrayList values = null;
-			
+			InvalidateCachedArrays ();
 			int max = c.Count;
-			for(int i=0; i<max; i++){
-				values=(ArrayList)BaseGet(c.GetKey(i));
-				if (values==null)
-					values = new ArrayList();
-				values.AddRange((ArrayList)c.BaseGet(i));
+			for (int i=0; i < max; i++){
+				string key = c.GetKey (i);
+				string [] values = c.GetValues (i);
+				foreach (string value in values)
+					Add (key, value);
 			}
-
 		}
 
 		
