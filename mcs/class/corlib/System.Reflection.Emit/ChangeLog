@@ -1,3 +1,7 @@
+2004-03-29 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* LocalBuilder.cs: pinned support.
+
 2004-03-29  Martin Baulig  <martin@ximian.com>
 
 	* TypeBuilder.cs (TypeBuilder.ContainsGenericParameters): Implemented.

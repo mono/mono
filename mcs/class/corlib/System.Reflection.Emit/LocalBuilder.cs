@@ -64,5 +64,8 @@ namespace System.Reflection.Emit {
 				return type;
 			}
 		}
+		
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		internal extern void MakePinned ();
 	}
 }
