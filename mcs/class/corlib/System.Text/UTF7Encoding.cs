@@ -509,7 +509,9 @@ class UTF7Encoding : Encoding
 		if (charCount < 0) {
 			throw new ArgumentOutOfRangeException ("charCount", _("ArgRange_NonNegative"));
 		}
-		return charCount * 5;
+		if (charCount == 0)
+			return 0;
+		return 8 * (int) (charCount / 3) + (charCount % 3) * 3 + 2;
 	}
 
 	// Get the maximum number of characters needed to decode a
