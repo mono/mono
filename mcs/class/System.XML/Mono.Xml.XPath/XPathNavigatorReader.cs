@@ -30,6 +30,7 @@
 using System;
 using System.Text;
 using System.Xml;
+using System.Xml.Schema;
 using System.Xml.XPath;
 
 namespace Mono.Xml.XPath
@@ -201,9 +202,11 @@ namespace Mono.Xml.XPath
 			get { return current.IsEmptyElement; }
 		}
 
-		// It makes no sense.
 		public override bool IsDefault {
-			get { return false; }
+			get {
+				IXmlSchemaInfo si = current as IXmlSchemaInfo;
+				return si != null && si.IsDefault;
+			}
 		}
 
 		// It makes no sense.
