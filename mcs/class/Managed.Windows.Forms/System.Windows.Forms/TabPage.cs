@@ -32,9 +32,11 @@ namespace System.Windows.Forms {
 
 		private int image_index = -1;
 		private string tooltip_text = String.Empty;
-
+		private Rectangle tab_bounds;
+		
 		public TabPage ()
 		{
+			Visible = true;
 		}
 
 		public TabPage (string text) : base ()
@@ -145,6 +147,11 @@ namespace System.Windows.Forms {
 			return "TabPage: {" + Text + "}";
 		}
 
+		internal Rectangle TabBounds {
+			get { return tab_bounds; }
+			set { tab_bounds = value; }
+		}
+
 		private void UpdateOwner ()
 		{
 			if (Owner != null) {
@@ -163,13 +170,13 @@ namespace System.Windows.Forms {
 
 		protected override void SetBoundsCore (int x, int y, int width, int height, BoundsSpecified specified) 
 		{
-			if (Owner != null) {
+			if (Owner != null && Owner.IsHandleCreated) {
 				Rectangle display = Owner.DisplayRectangle;
 				base.SetBoundsCore (Owner.DisplayRectangle.X, Owner.DisplayRectangle.Y,
 							Owner.DisplayRectangle.Width, Owner.DisplayRectangle.Height,
 							BoundsSpecified.All);
 			} else {
-				base.SetBoundsCore(x, y, width, height, specified);
+				base.SetBoundsCore (x, y, width, height, specified);
 			}
 		}
 
