@@ -1,5 +1,8 @@
 2001-09-27  Miguel de Icaza  <miguel@ximian.com>
 
+	* typemanager.cs (InitCoreTypes): Init also value_type
+	(System.ValueType). 
+
 	* expression.cs (Cast::Resolve): First resolve the child expression.
 
 	(LValue): Add new method AddressOf to be used by

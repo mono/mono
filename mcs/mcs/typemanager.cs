@@ -18,6 +18,7 @@ namespace CIR {
 
 public class TypeManager {
 	static public Type object_type;
+	static public Type value_type;
 	static public Type string_type;
 	static public Type int32_type;
 	static public Type uint32_type;
@@ -173,6 +174,7 @@ public class TypeManager {
 	public void InitCoreTypes ()
 	{
 		object_type   = CoreLookupType ("System.Object");
+		value_type    = CoreLookupType ("System.ValueType");
 		string_type   = CoreLookupType ("System.String");
 		int32_type    = CoreLookupType ("System.Int32");
 		int64_type    = CoreLookupType ("System.Int64");
