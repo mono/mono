@@ -564,8 +564,8 @@ namespace System.Data {
 
 		public void WriteXml (Stream stream)
 		{
-			XmlWriter writer = new XmlTextWriter (stream, null);
-			
+			XmlTextWriter writer = new XmlTextWriter (stream, null);
+			writer.Formatting = Formatting.Indented;
 			WriteXml (writer);
 		}
 
@@ -575,8 +575,8 @@ namespace System.Data {
 		/// <param name="filename">Fully qualified filename to write to</param>
 		public void WriteXml (string fileName)
 		{
-			XmlWriter writer = new XmlTextWriter (fileName, null);
-			
+			XmlTextWriter writer = new XmlTextWriter (fileName, null);
+			writer.Formatting = Formatting.Indented;
 			WriteXml (writer);
 			
 			writer.Close ();
@@ -584,8 +584,8 @@ namespace System.Data {
 
 		public void WriteXml (TextWriter writer)
 		{
-			XmlWriter xwriter = new XmlTextWriter (writer);
-			
+			XmlTextWriter xwriter = new XmlTextWriter (writer);
+			xwriter.Formatting = Formatting.Indented;
 			WriteXml (xwriter);
 		}
 
@@ -596,20 +596,22 @@ namespace System.Data {
 
 		public void WriteXml (string filename, XmlWriteMode mode)
 		{
-			XmlWriter writer = new XmlTextWriter (filename, null);
+			XmlTextWriter writer = new XmlTextWriter (filename, null);
+			writer.Formatting = Formatting.Indented;
 			WriteXml (writer, mode, true);
 		}
 
 		public void WriteXml (Stream stream, XmlWriteMode mode)
 		{
-			XmlWriter writer = new XmlTextWriter (stream, null);
-
+			XmlTextWriter writer = new XmlTextWriter (stream, null);
+			writer.Formatting = Formatting.Indented;
 			WriteXml (writer, mode, true);
 		}
 
 		public void WriteXml (TextWriter writer, XmlWriteMode mode)
 		{
-			XmlWriter xwriter = new XmlTextWriter (writer);
+			XmlTextWriter xwriter = new XmlTextWriter (writer);
+			xwriter.Formatting = Formatting.Indented;
 			WriteXml (xwriter, mode, true);
 		}
 
@@ -620,15 +622,15 @@ namespace System.Data {
 		
 		internal void WriteXml (Stream stream, XmlWriteMode mode, bool writePI)
 		{
-			XmlWriter writer = new XmlTextWriter (stream, null);
-			
+			XmlTextWriter writer = new XmlTextWriter (stream, null);
+			writer.Formatting = Formatting.Indented;
 			WriteXml (writer, mode, writePI);
 		}
 
 		internal void WriteXml (string fileName, XmlWriteMode mode, bool writePI)
 		{
-			XmlWriter writer = new XmlTextWriter (fileName, null);
-			
+			XmlTextWriter writer = new XmlTextWriter (fileName, null);
+			writer.Formatting = Formatting.Indented;
 			WriteXml (writer, mode, writePI);
 			
 			writer.Close ();
@@ -636,8 +638,8 @@ namespace System.Data {
 
 		internal void WriteXml (TextWriter writer, XmlWriteMode mode, bool writePI)
 		{
-			XmlWriter xwriter = new XmlTextWriter (writer);
-			
+			XmlTextWriter xwriter = new XmlTextWriter (writer);
+			xwriter.Formatting = Formatting.Indented;
 			WriteXml (xwriter, mode, writePI);
 		}
 
@@ -646,14 +648,22 @@ namespace System.Data {
 			if (writePI && (writer.WriteState == WriteState.Start))
 				writer.WriteStartDocument (true);
 
-			((XmlTextWriter)writer).Formatting = Formatting.Indented;
-
 			if (mode == XmlWriteMode.DiffGram) {
 				SetRowsID();
 				WriteDiffGramElement(writer);
 			}
 			
 			WriteStartElement (writer, mode, Namespace, Prefix, XmlConvert.EncodeName (DataSetName));
+			
+			/*********************************************************
+			 * This is a patch for interoperability with ms.net.     *
+			 * Because in web services the .net client expects this  *
+			 * atrribute even if namespace is an empty string        *
+			 ********************************************************/
+			if (Namespace == null || Namespace.Length == 0)
+				WriteAttributeString (writer, mode, null, null, "xmlns", Namespace);
+			
+			
 			if (mode == XmlWriteMode.WriteSchema) {
 				DoWriteXmlSchema (writer);
 			}
@@ -674,32 +684,30 @@ namespace System.Data {
 
 		public void WriteXmlSchema (Stream stream)
 		{
-			XmlWriter writer = new XmlTextWriter (stream, null );
-			
+			XmlTextWriter writer = new XmlTextWriter (stream, null );
+			writer.Formatting = Formatting.Indented;
 			WriteXmlSchema (writer);	
 		}
 
 		public void WriteXmlSchema (string fileName)
 		{
-			XmlWriter writer = new XmlTextWriter (fileName, null);
-	    	
+			XmlTextWriter writer = new XmlTextWriter (fileName, null);
+			writer.Formatting = Formatting.Indented;
 			WriteXmlSchema (writer);
 		}
 
 		public void WriteXmlSchema (TextWriter writer)
 		{
-			XmlWriter xwriter = new XmlTextWriter (writer);
-			
+			XmlTextWriter xwriter = new XmlTextWriter (writer);
+			xwriter.Formatting = Formatting.Indented;
 			WriteXmlSchema (xwriter);
 		}
 
 		public void WriteXmlSchema (XmlWriter writer)
 		{
-			((XmlTextWriter)writer).Formatting = Formatting.Indented;
 			//Create a skeleton doc and then write the schema 
 			//proper which is common to the WriteXml method in schema mode
 			writer.WriteStartDocument ();
-			
 			DoWriteXmlSchema (writer);
 			
 			writer.WriteEndDocument ();
@@ -1149,34 +1157,16 @@ namespace System.Data {
 		}
 		    
 		private void WriteStartElement (XmlWriter writer, XmlWriteMode mode, string nspc, string prefix, string name)
-		{			
-			switch ( mode) {
-				case XmlWriteMode.WriteSchema:
-					if (nspc == null || nspc == "") {
-						writer.WriteStartElement (name);
-					}
-					else if (prefix != null) {							
-						writer.WriteStartElement (prefix, name, nspc);
-					}						
-					else {					
-						writer.WriteStartElement (writer.LookupPrefix (nspc), name, nspc);
-					}
-					break;
-				case XmlWriteMode.DiffGram:
-					if (nspc == null || nspc == "") {
-						writer.WriteStartElement (name);
-					}
-					else if (prefix != null) {							
-						writer.WriteStartElement (prefix, name, nspc);
-					}						
-					else {					
-						writer.WriteStartElement (writer.LookupPrefix (nspc), name, nspc);
-					}
-					break;	
-				default:					       
-					writer.WriteStartElement (name);
-					break;					
-			};
+		{
+			if (nspc == null || nspc == "") {
+				writer.WriteStartElement (name);
+			}
+			else if (prefix != null) {
+				writer.WriteStartElement (prefix, name, nspc);
+			}
+			else {
+				writer.WriteStartElement (writer.LookupPrefix (nspc), name, nspc);
+			}
 		}
 		
 		private void WriteAttributeString (XmlWriter writer, XmlWriteMode mode, string nspc, string prefix, string name, string stringValue)
