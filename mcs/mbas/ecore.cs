@@ -788,14 +788,32 @@ namespace Mono.MonoBASIC {
 			//
 			// Attempt to do the implicit constant expression conversions
 
-			if (expr is IntConstant){
+			if (expr is IntConstant || expr is LongConstant || expr is DoubleConstant || expr is FloatConstant){
 				Expression e;
 				
-				e = TryImplicitIntConversion (target_type, (IntConstant) expr);
+				e = TryImplicitNumericConversion (target_type, (Constant) expr);
 
 				if (e != null)
 					return e;
-			} else if (expr is LongConstant && target_type == TypeManager.uint64_type){
+				if (target_type == TypeManager.byte_type || 
+				    target_type == TypeManager.short_type ||
+				    target_type == TypeManager.int32_type ||
+				    target_type == TypeManager.int64_type ||
+				    target_type == TypeManager.float_type) {
+					
+					string val = null;
+					if (expr is IntConstant)
+						val = ((IntConstant) expr).Value.ToString();
+					if (expr is LongConstant)
+						val = ((LongConstant) expr).Value.ToString();
+					if (expr is FloatConstant)
+						val = ((FloatConstant) expr).Value.ToString();
+					if (expr is DoubleConstant)
+						val = ((DoubleConstant) expr).Value.ToString();
+					Error_ConstantValueCannotBeConverted(loc, val, target_type);
+					return null;
+				}
+			} else if (expr is LongConstant && target_type == TypeManager.uint64_type) {
 				//
 				// Try the implicit constant expression conversion
 				// from long to ulong, instead of a nice routine,
@@ -2252,13 +2270,26 @@ namespace Mono.MonoBASIC {
 		}
 
 		/// <summary>
-		///   Attemps to perform an implict constant conversion of the IntConstant
+		///   Attemps to perform an implict constant conversion of the any Numeric Constant
 		///   into a different data type using casts (See Implicit Constant
 		///   Expression Conversions)
 		/// </summary>
-		static protected Expression TryImplicitIntConversion (Type target_type, IntConstant ic)
+		static protected Expression TryImplicitNumericConversion (Type target_type, Constant ic)
 		{
-			int value = ic.Value;
+			double value = 0;
+			if (ic is IntConstant) 
+				value = (double)((IntConstant)ic).Value;
+			
+			if (ic is LongConstant) 
+				value = (double) ((LongConstant)ic).Value;
+
+			if (ic is FloatConstant) {
+				value = (double) ((FloatConstant)ic).Value;
+			}
+
+			if (ic is DoubleConstant) {
+				value = ((DoubleConstant)ic).Value;
+			}
 
 			//
 			// FIXME: This could return constants instead of EmptyCasts
@@ -2267,7 +2298,7 @@ namespace Mono.MonoBASIC {
 				if (value >= SByte.MinValue && value <= SByte.MaxValue)
 					return new SByteConstant ((sbyte) value);
 			} else if (target_type == TypeManager.byte_type){
-				if (Byte.MinValue >= 0 && value <= Byte.MaxValue)
+				if (value >= Byte.MinValue && value <= Byte.MaxValue)
 					return new ByteConstant ((byte) value);
 			} else if (target_type == TypeManager.short_type){
 				if (value >= Int16.MinValue && value <= Int16.MaxValue)
@@ -2275,9 +2306,14 @@ namespace Mono.MonoBASIC {
 			} else if (target_type == TypeManager.ushort_type){
 				if (value >= UInt16.MinValue && value <= UInt16.MaxValue)
 					return new UShortConstant ((ushort) value);
+			} else if (target_type == TypeManager.int32_type){
+				if (value >= Int32.MinValue && value <= Int32.MaxValue)
+					return new IntConstant ((int) value);
 			} else if (target_type == TypeManager.uint32_type){
 				if (value >= 0)
 					return new UIntConstant ((uint) value);
+			} else if (target_type == TypeManager.int64_type){
+					return new LongConstant ((long) value);
 			} else if (target_type == TypeManager.uint64_type){
 				//
 				// we can optimize this case: a positive int32
@@ -2286,6 +2322,10 @@ namespace Mono.MonoBASIC {
 				//
 				if (value >= 0)
 					return new ULongConstant ((ulong) value);
+			} else if (target_type == TypeManager.float_type){
+					return new FloatConstant ((float) value);
+			} else if (target_type == TypeManager.double_type){
+					return new DoubleConstant ((double) value);
 			}
 			
 			if (value == 0 && ic is IntLiteral && TypeManager.IsEnumType (target_type)){

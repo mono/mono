@@ -1499,7 +1499,7 @@ namespace Mono.MonoBASIC {
 
         public class Exponentiation : Expression {
 
-		Expression left, right, e;
+		Expression left, right;
 		ArrayList Arguments; 
 		protected MethodBase method;
 	
@@ -1527,6 +1527,22 @@ namespace Mono.MonoBASIC {
 					right + ") at Line: "+ loc.Row);
 
 			eclass = ExprClass.Value;
+			Expression e = null;
+
+			if (left is EnumConstant) {
+				left = ((EnumConstant) left).WidenToCompilerConstant();
+			}
+
+			if (right is EnumConstant) {
+				right = ((EnumConstant) right).WidenToCompilerConstant();
+			}
+
+ 			if (left is Constant && right is Constant){
+ 				e = ConstantFold.BinaryFold (
+ 				ec, Binary.Operator.Exponentiation, (Constant) left, (Constant) right, loc);
+ 				if (e != null)
+ 					return e;
+ 			}
 			
 			Type l = left.Type;
 			Type r = right.Type;
@@ -1892,7 +1908,7 @@ namespace Mono.MonoBASIC {
 						if (right is IntConstant){
 							IntConstant ic = (IntConstant) right;
 							
-							e = TryImplicitIntConversion (l, ic);
+							e = TryImplicitNumericConversion (l, ic);
 							if (e != null)
 								right = e;
 						} else if (right is LongConstant){
@@ -1909,7 +1925,7 @@ namespace Mono.MonoBASIC {
 					other = right.Type;
 				} else {
 					if (left is IntConstant){
-						e = TryImplicitIntConversion (r, (IntConstant) left);
+						e = TryImplicitNumericConversion (r, (IntConstant) left);
 						if (e != null)
 							left = e;
 					} else if (left is LongConstant){
@@ -2175,21 +2191,21 @@ namespace Mono.MonoBASIC {
 
 
 			if (oper == Operator.Equality || oper == Operator.Inequality){
-                                if (l == TypeManager.bool_type && r != TypeManager.bool_type){
-                                    left = ConvertImplicit(ec, left, r, loc);
-                                    if (left == null) {
-                                            Error_OperatorCannotBeApplied (loc, OperName(oper), l, r);
-                                            return null;
-                                    }
-                                    return ResolveOperator(ec);
-                                } else if (r == TypeManager.bool_type && l != TypeManager.bool_type) {
-                                        right = ConvertImplicit(ec, right, l, loc);
-                                        if (right == null) {
-                                            Error_OperatorCannotBeApplied (loc, OperName(oper), l, r);
-                                            return null;
-                                    }
-                                    return ResolveOperator(ec);
-                            }
+				if (l == TypeManager.bool_type && r != TypeManager.bool_type){
+					left = ConvertImplicit(ec, left, r, loc);
+					if (left == null) {
+						Error_OperatorCannotBeApplied (loc, OperName(oper), l, r);
+						return null;
+					}
+					return ResolveOperator(ec);
+				} else if (r == TypeManager.bool_type && l != TypeManager.bool_type) {
+					right = ConvertImplicit(ec, right, l, loc);
+					if (right == null) {
+						Error_OperatorCannotBeApplied (loc, OperName(oper), l, r);
+						return null;
+					}
+					return ResolveOperator(ec);
+				}
 
 				//
 				// operator != (object a, object b)
@@ -2536,6 +2552,12 @@ namespace Mono.MonoBASIC {
 
 			eclass = ExprClass.Value;
 
+			if (left is EnumConstant) {
+				left = ((EnumConstant) left).WidenToCompilerConstant();
+			}
+			if (right is EnumConstant) {
+				right = ((EnumConstant) right).WidenToCompilerConstant();
+			}
 			if (left is Constant && right is Constant){
 				Expression e = ConstantFold.BinaryFold (
 					ec, oper, (Constant) left, (Constant) right, loc);

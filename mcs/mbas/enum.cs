@@ -287,7 +287,8 @@ namespace Mono.MonoBASIC {
 
 			if (e is IntConstant || e is UIntConstant || e is LongConstant ||
 			    e is ByteConstant || e is SByteConstant || e is ShortConstant ||
-			    e is UShortConstant || e is ULongConstant || e is EnumConstant)
+			    e is UShortConstant || e is ULongConstant || e is EnumConstant ||
+			    e is DoubleConstant)
 				return true;
 			else
 				return false;

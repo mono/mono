@@ -31,7 +31,7 @@ namespace Mono.MonoBASIC {
 							 ref Constant left, ref Constant right,
 							 Location loc)
 		{
-			if (left is DoubleConstant || right is DoubleConstant){
+			if (left is DoubleConstant || right is DoubleConstant || oper == Binary.Operator.Exponentiation){
 				//
 				// If either side is a double, convert the other to a double
 				//
@@ -806,6 +806,16 @@ namespace Mono.MonoBASIC {
 					Error_CompileTimeOverflow (loc);
 				}
 				break;
+
+			case Binary.Operator.Exponentiation:
+				DoConstantNumericPromotions (ec, oper, ref left, ref right, loc);
+				if (left == null || right == null)
+					return null;
+
+				double powVal = System.Math.Pow(((DoubleConstant) left).Value, 
+								((DoubleConstant) right).Value);
+
+				return new DoubleConstant(powVal);
 
 				//
 				// There is no overflow checking on left shift

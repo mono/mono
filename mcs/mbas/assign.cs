@@ -195,6 +195,9 @@ namespace Mono.MonoBASIC {
 			real_source = source = source.Resolve (ec);
 			if (source == null)
 				return null;
+			
+			if (source is EnumConstant) 
+				source = ((EnumConstant)source).WidenToCompilerConstant();
 
 			//
 			// This is used in an embedded assignment.
