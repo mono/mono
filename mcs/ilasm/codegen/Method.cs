@@ -236,7 +236,7 @@ namespace Mono.ILASM {
 					foreach (DictionaryEntry local in local_list) {
 						Type local_type = host.CodeGen.TypeManager[(string)local.Key];
 						if (local_type == null) {
-							Console.WriteLine ("Could not find type: {0}", local);
+							Console.WriteLine ("Could not find type: {0}", local.Key);
 							return;
 						}
 						ilgen.DeclareLocal (local_type);

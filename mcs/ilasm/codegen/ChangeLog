@@ -1,5 +1,10 @@
 2003-02-08 Jackson Harper <jackson@latitudegeo.com>
 
+	* TypeManager.cs: Fix error parsing type names
+	* Method.cs: Display the name of types that can't be found
+
+2003-02-08 Jackson Harper <jackson@latitudegeo.com>
+
 	* TypeManager.cs: Add file
 	* CodeGen.cs: Add TypeManager attribute
 	* InstrBase.cs: Take a CodeGen in Emit method

@@ -57,23 +57,21 @@ namespace Mono.ILASM {
 		/// TODO: Use AssemblyStore, and load types in the same assembly
 		private Type LoadType (string type_name) {
 			string assembly_name;
+			string real_name;
 			Assembly assembly;
 			int bracket_start, bracket_end;
 
 			bracket_start = type_name.IndexOf ('[');
 			bracket_end = type_name.IndexOf (']');
 			
-			Console.WriteLine ("Loading Type: {0}", type_name);
-			Console.WriteLine ("bracket pos: {0} {1}", bracket_start, bracket_end);
-
 			if ((bracket_start == -1) || (bracket_end == -1))
 				return null;
 
-			assembly_name = type_name.Substring (bracket_start, bracket_end);
+			assembly_name = type_name.Substring (bracket_start+1, bracket_end-1);
+			real_name = type_name.Substring (bracket_end+1);
 
 			assembly = Assembly.LoadWithPartialName (assembly_name);
-			
-			return assembly.GetType (type_name);
+			return assembly.GetType (real_name);
 		
 		}
 
