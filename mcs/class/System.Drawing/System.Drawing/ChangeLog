@@ -1,3 +1,11 @@
+2004-12-16  Peter Bartok  <pbartok@novell.com>
+
+	* Graphics.cs (GetHdc): Removed Wine assumptions, the handle is now
+	  equivalent to the gdi+ native object
+
+	* Font.cs (GetHfont): Removed Wine assumptions, the handle is now
+	  equivalent to the gdi+ native object
+
 2004-12-09  Geoff Norton  <gnorton@customerdna.com>
 
 	* carbonFunctions.cs: New carbon functions/structures

@@ -1325,11 +1325,7 @@ namespace System.Drawing
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public IntPtr GetHdc ()
 		{
-			int hdc;
-			Status status = GDIPlus.GdipGetDC (nativeObject, out hdc);
-			GDIPlus.CheckStatus (status);
-
-			return (IntPtr) hdc;
+			return nativeObject;
 		}
 
 		

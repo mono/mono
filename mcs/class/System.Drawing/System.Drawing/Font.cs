@@ -224,8 +224,7 @@ namespace System.Drawing
 			}
 
 			if ((int) osInfo.Platform == 128) {
-				// If we're on Unix we use our private gdiplus API
-				GDIPlus.CheckStatus (GDIPlus.GdipGetHfont (fontObject, out Hfont));
+				return fontObject;
 			} else {
 				LOGFONTA lf = new LOGFONTA ();
 				ToLogFont(lf);
