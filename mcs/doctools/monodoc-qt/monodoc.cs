@@ -122,7 +122,7 @@ namespace Mono.Document.Editor {
 			for (int i = 0; i < s.Length - 1; i++) {
 				builder.Append (s[i]+"/");
 			}
-			return builder.ToString ().TrimEnd ('/');
+			builder.Length--; return builder.ToString ();
 		}
 
 		public void Options ()
