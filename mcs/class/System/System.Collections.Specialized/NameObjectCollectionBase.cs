@@ -134,6 +134,12 @@ namespace System.Collections.Specialized
 					//throw new Exception("Not implemented yet");
 				}
 			}
+
+			[MonoTODO]
+			public string this [int index] {
+				get { throw new NotImplementedException (); }
+			}
+
 			// IEnumerable methods --------------------------------
 			/// <summary>
 			/// SDK: Returns an enumerator that can iterate through the NameObjectCollectionBase.KeysCollection.
