@@ -1,5 +1,14 @@
 2003-08-26  Zoltan Varga  <vargaz@freemail.hu>
 
+	* appdomain.c (mono_runtime_init): Call the new initializer function
+	of the marshal module.
+
+	* marshal.c (mono_marshal_load_type_info): Ignore the dummy field
+	inserted into empty structures by mono. Fixes pinvoke7.cs.
+
+	* marshal.h marshal.c: Added locks around the wrapper caches to make
+	this module thread safe.
+
 	* icall.c (ves_icall_InternalInvoke): Method wrappers doesn't require a
 	this argument. Fixes pinvoke1.exe.
 
