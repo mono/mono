@@ -5,16 +5,44 @@
   RelaxngValidatingReader is an implementation to validate XML with RELAX NG
   grammar. You can use full standard grammar components with it.
 
-  Currently it supports only grammar xml syntax (in the future it will 
-  support compact syntax).
+  Currently it supports both xml syntax and compact syntax.
 
   It supports RELAX NG predefined datatypes and XML Schema datatypes (its
   DatatypeLibrary is http://www.w3.org/2001/XMLSchema-datatypes ).
 
-  All classes which is expected to use are in namespace Commons.Xml.Relaxng.
+  All classes which is expected to use are in namespace Commons.Xml.Relaxng,
+  except for Commons.Xml.Relaxng.Rnc.RncParser class (which is used to parse
+  compact syntax).
   There is another namespace Commons.Xml.Relaxng.Derivative which is not
   expected to be used in users custom classes, though the classes are public
   as yet.
+
+
+** Grammar Object Model
+
+  RELAX NG grammar structure is represented in abstract RelaxngPattern class
+  and its derivations. The easiest way to get this instance is to use
+  static Read() method of RelaxngPattern class:
+
+	RelaxngPattern pattern = RelaxngPattern.Read (
+		new XmlTextReader ("relaxng.rng");
+
+  You can also use RelaxngPattern class to reuse grammar instance, as
+  already described (see Grammar Object Model).
+
+  And also, RelaxngGrammar and its contents can be created with managed code
+  like System.Xml.Schema.XmlSchema.
+
+
+** Compact Syntax Support
+
+  Commons.Xml.Relaxng.dll also supports RELAX NG Compact Syntax. To parse
+  compact syntax file, use Commons.Xml.Relaxng.Rnc.RncParser class:
+
+	RncParser parser = new RncParser (new NameTable ());
+	TextReader source = new StreamReader ("relaxng.rnc");
+	RelaxngGrammar grammar = parser.Parse (source);
+
 
 ** Validating Reader usage
 
@@ -26,16 +54,8 @@
 	RelaxngValidatingReader reader = 
 		new RelaxngValidatingReader (instance, grammar);
 
-  You can also use RelaxngPattern class to reuse grammar instance:
-
-	RelaxngPattern pattern = RelaxngPattern.Read (
-		new XmlTextReader ("relaxng.rng");
-
-  And also, RelaxngGrammar and its contents can be created with managed code
-  like System.Xml.Schema.XmlSchema.
-
   Then Read() method (and other reading methods such as ReadElementString())
-  reads the instance, validating with the grammar.
+  reads the instance, validating with the supplied grammar.
 
 
 ** Datatype support
@@ -79,5 +99,5 @@
 	  not handle the same name define components properly.
 	- Name class analysis and constraint check is not implemented (part
 	  of spec 7).
-	- Empty string won't be validated properly.
+	- Empty string might not be validated properly.
 

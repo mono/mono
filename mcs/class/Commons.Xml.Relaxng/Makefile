@@ -17,3 +17,9 @@ EXTRA_DISTFILES = \
 
 
 include ../../build/library.make
+
+Commons.Xml.Relaxng.Rnc/RncParser.cs : Commons.Xml.Relaxng.Rnc/RncParser.jay
+	cd Commons.Xml.Relaxng.Rnc; \
+	jay -ctv < ../../../jay/skeleton.cs RncParser.jay > RncParser.cs; \
+	cd ..
+
