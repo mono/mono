@@ -618,14 +618,14 @@ namespace System.Data {
 			WriteXml (writer, mode, false);
 		}
 		
-		public void WriteXml (Stream stream, XmlWriteMode mode, bool writePI)
+		internal void WriteXml (Stream stream, XmlWriteMode mode, bool writePI)
 		{
 			XmlWriter writer = new XmlTextWriter (stream, null);
 			
 			WriteXml (writer, mode, writePI);
 		}
 
-		public void WriteXml (string fileName, XmlWriteMode mode, bool writePI)
+		internal void WriteXml (string fileName, XmlWriteMode mode, bool writePI)
 		{
 			XmlWriter writer = new XmlTextWriter (fileName, null);
 			
@@ -634,14 +634,14 @@ namespace System.Data {
 			writer.Close ();
 		}
 
-		public void WriteXml (TextWriter writer, XmlWriteMode mode, bool writePI)
+		internal void WriteXml (TextWriter writer, XmlWriteMode mode, bool writePI)
 		{
 			XmlWriter xwriter = new XmlTextWriter (writer);
 			
 			WriteXml (xwriter, mode, writePI);
 		}
 
-		public void WriteXml (XmlWriter writer, XmlWriteMode mode, bool writePI)
+		internal void WriteXml (XmlWriter writer, XmlWriteMode mode, bool writePI)
 		{
 			if (writePI && (writer.WriteState == WriteState.Start))
 				writer.WriteStartDocument (true);

@@ -1,3 +1,7 @@
+2003-12-27  Atsushi Enomoto <atsushi@ximian.com>
+
+	* DataSet.cs : Fixed incorrect WriteXml() signature.
+
 2003-12-18  Jackson Harper <jackson@ximian.com>
 
 	* DataView.cs: Implement AddNew, Delete, and OnListChanged.
