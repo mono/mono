@@ -1,3 +1,35 @@
+
+2004-12-14  Ritvik Mayank  <mritvik@novell.com>
+	
+	*AssignmentStatements5.vb: Removed, as it was not a proper runtime test 
+	*BoolLiteralTest1.vb: Likewise
+	*CharacterLiterals1.vb: Likewise
+	*IntegerLiteralTest4.vb: Likewise
+	
+
+2004-12-14  Ritvik Mayank  <mritvik@novell.com>
+
+	*AssignmentStatements3.vb: Convert to nunit
+	*AssignmentStatements4.vb: Likewise
+	*Inheritance1.vb: Likewise
+	*IntegerLiteral1.vb: Likewise
+	*IntegerLiteralTest1.vb: Likewise
+	*IntegerLiteralTest2.vb: Likewise
+	*IntegerLiteralTest3.vb: Likewise
+	*LiteralNothing1.vb: Likewise
+	*ShiftOperators1.vb: Likewise
+	*StringLiterals1.vb: Likewise
+	*ConditionalStatements1.vb: Likewise
+	*DecimalLiteral1.vb: Likewise
+	*DoubleLiteral1.vb: Likewise
+	*LikeOperator1.vb: Likewise
+	*LocalVariables1.vb: Likewise
+	*LogicalOperators1.vb: Likewise
+	*LongLiteral1.vb: Likewise
+	*LoopStatements1.vb: Likewise
+	*RelationalOperators1.vb: Likewise
+	*SyncLock1.vb: Likewise
+
 2004-12-09  Ritvik Mayank  <mritvik@novell.com>
 
 	* ArithmeticOperators2.vb: Convert to nunit.
@@ -8,3 +40,4 @@
 	* Array1.vb: Likewise.
 	* Array3.vb: Likewise.
 	* AssignmentStatements2.vb: Likewise.
+

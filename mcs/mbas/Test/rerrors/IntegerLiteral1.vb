@@ -1,11 +1,13 @@
+'Expected Exception:: InvalidCastException
 Imports System
-Module IntegerLiteral
-	Sub Main()
-		Try
+Imports Nunit.Framework
+
+<TestFixture> _
+Public Class InvCast
+
+                <Test, ExpectedException (GetType (System.InvalidCastException))> _
+                Public Sub TestForException ()
 			Dim a As Integer
 			a="Hello"
-		Catch e As Exception
-			Console.WriteLine(e.Message)
-		End Try
-	End Sub
-End Module
+                End Sub
+End Class

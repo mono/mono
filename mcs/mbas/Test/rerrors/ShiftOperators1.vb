@@ -2,18 +2,19 @@
 ' to type 'Long' is not valid. ---> System.FormatException: Input string was not in a
 ' correct format.
 ' Strict On disallows implicit conversions from double to long
-
 'Option Strict On
+
+
 Imports System
+Imports Nunit.Framework
 
-Module ShiftOperators1
+<TestFixture> _
+Public Class ShiftOperator
 
-    Sub Main()
 
-        Dim b1 As String = "xyz"
-        b1 = b1 << 109
-        Console.WriteLine(b1)
-
-    End Sub
-
-End Module
+                <Test, ExpectedException (GetType (System.InvalidCastException))> _
+                Public Sub TestForException ()
+	        Dim b1 As String = "xyz"
+        	b1 = b1 << 109
+    		End Sub
+End Class

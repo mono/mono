@@ -1,12 +1,16 @@
+' Unhandled Exception: System.NullReferenceException: Object reference not set to
+'an instance of an object.
+
 Imports System
-Module LiteralNothing
-	Sub Main()
-		Try
+Imports Nunit.Framework
+
+<TestFixture> _
+Public Class NullRef
+
+                <Test, ExpectedException (GetType (System.NullReferenceException))> _
+                Public Sub TestForException ()
 			Dim a As String="Hello"
 			a=Nothing
 			Dim b As String=a.Substring(2)
-		Catch e As Exception
-			Console.WriteLine(e.Message)
-		End Try
-	End Sub
-End Module
+                End Sub
+End Class

@@ -1,16 +1,18 @@
 ' ErrorMessage: System.InvalidCastException: Cast from string "Hello " to type 'Double' 
 ' is not valid.
 
+
 Imports System
+Imports Nunit.Framework
 
-Module AssignmentStatements4
+<TestFixture> _
+Public Class InvcastEx
 
-    Sub main()
-        Dim i As Integer = 0
-        Dim str As String = "Hello "
-        str += i
-        Console.WriteLine(str)
-    End Sub
+                <Test, ExpectedException (GetType (System.InvalidCastException))> _
+                Public Sub TestInvCastEx ()
+		        Dim i As Integer = 0
+		        Dim str As String = "Hello "
+		        str += i
 
-
-End Module
+               End Sub
+End Class

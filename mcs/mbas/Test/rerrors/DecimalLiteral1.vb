@@ -1,12 +1,19 @@
+'Expected Exception: OverflowException
 Imports System
-Module DecimalLiteral
-	Sub Main()
+Imports Nunit.Framework
+
+<TestFixture> _
+Public Class Flowover
+
+                <Test, ExpectedException (GetType (System.OverflowException))> _
+                Public Sub TestOverFlow ()
 		Try
 			Dim a As Decimal
 			a="Hello"
-			     		                                                                                   	     
 		Catch e As Exception
 			Console.WriteLine(e.Message)
 		End Try
-	End Sub
-End Module
+                End Sub
+End Class
+
+

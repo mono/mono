@@ -1,18 +1,15 @@
-' ErrorMessage:  System.OverflowException: Arithmetic operation resulted in an overflow.
+' System.OverflowException: Arithmetic operation resulted in an overflow.
 
 Imports System
+Imports Nunit.Framework
 
-Module AssignmentStatements3
+<TestFixture> _
+Public Class FlowOver
 
-    Sub main()
+                <Test, ExpectedException (GetType (System.OverflowException))> _
+                Public Sub TestOverFlow ()
+	        	Dim b As Integer = 0
+       		 	b += 1000
+            	End Sub
+End Class
 
-        Dim b As Byte = 0
-        b += 1000
-        If b <> 1000 Then
-            Throw New Exception("#AS3-Assignment Statement Failed")
-        End If
-
-    End Sub
-
-
-End Module

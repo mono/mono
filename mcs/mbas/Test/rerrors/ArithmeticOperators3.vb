@@ -1,4 +1,4 @@
-'System.OverflowException: '
+'System.OverflowException '
                                                                                 
 Imports System
 Imports Nunit.Framework

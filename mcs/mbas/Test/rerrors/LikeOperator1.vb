@@ -1,16 +1,18 @@
+' System.Exception
 
-Option Strict On
-
+'Option Strict On
 Imports System
+Imports Nunit.Framework
 
-Module LikeOperator1
-    Sub Main()
+<TestFixture> _
+Public Class SomeClass
 
-        Dim a As Boolean
-        a = "HELLO" Like "H[A- Z][!M-P][!A-K]O"
-        If a <> True Then
-            Console.WriteLine("#A1-LikeOperator:Unexpected behaviour")
+                <Test, ExpectedException (GetType (System.Exception))> _
+                Public Sub TestForException ()
+	        Dim a As Boolean
+	        a = "HELLO" Like "H[A- Z][!M-P][!A-K]O"
+	        If a <> True Then
+	        Console.WriteLine("#A1-LikeOperator:Unexpected behaviour")
         End If
-
-    End Sub
-End Module
+        End Sub
+End Class
