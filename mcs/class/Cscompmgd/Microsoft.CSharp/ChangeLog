@@ -1,6 +1,7 @@
 2004-12-14  Jackson Harper  <jackson@ximian.com>
 
-	* Compiler.cs: mcs writes to stderr now.
+	* Compiler.cs: mcs writes to stderr now. Also read stdout so we do
+	not block if mcs writes a lot of data to is.
 
 2004-07-02  Jackson Harper  <jackson@ximian.com>
 

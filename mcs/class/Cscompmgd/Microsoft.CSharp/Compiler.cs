@@ -103,7 +103,8 @@ namespace Microsoft.CSharp {
 
 			try {
 				mcs.Start ();
-				mcs_output = mcs.StandardError.ReadToEnd();
+				mcs_output = mcs.StandardError.ReadToEnd ();
+				mcs.StandardOutput.ReadToEnd ();
 				mcs.WaitForExit ();
 			} finally {
 				mcs.Close ();
