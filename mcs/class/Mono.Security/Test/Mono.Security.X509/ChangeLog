@@ -1,3 +1,7 @@
+2004-05-11  Jesper Pedersen <jep@itplus.dk>
+
+	* PKCS12Test.cs: Added unit tests for the new methods.
+
 2003-12-07  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* PKCS12Test.cs: New. Unit test for PKCS#12 files (with/without 
