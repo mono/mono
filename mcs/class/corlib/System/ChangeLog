@@ -1,3 +1,7 @@
+2002-10-15  Nick Drochak  <ndrochak@gol.com>
+
+	* Enum.cs (Parse): Use unsigned casts to avoid compiler warnings.
+
 2002-10-12  Nick Drochak  <ndrochak@gol.com>
 
 	* IntegerFormatter.cs: Fix compiler warnings.
