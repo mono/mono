@@ -7,8 +7,10 @@
 //
 // (c) 2001,2002 Marcin Szczepanski, Patrik Torstensson
 // (c) 2003 Ximian, Inc. (http://www.ximian.com)
+// Copyright (C) 2004 Novell (http://www.novell.com)
 //
 
+using System.Globalization;
 using System.Runtime.InteropServices;
 
 namespace System.IO
@@ -159,7 +161,7 @@ namespace System.IO
 				// "methods were called after the stream was closed".  What
 				// is the difference?
 
-				CheckIfClosedThrowIO ();
+				CheckIfClosedThrowDisposed ();
 
 				// This is ok for MemoryStreamTest.ConstructorFive
 				return length - initialIndex;
@@ -168,12 +170,12 @@ namespace System.IO
 
 		public override long Position {
 			get {
-				CheckIfClosedThrowIO ();
+				CheckIfClosedThrowDisposed ();
 				return position - initialIndex;
 			}
 
 			set {
-				CheckIfClosedThrowIO ();
+				CheckIfClosedThrowDisposed ();
 				if (value < 0)
 					throw new ArgumentOutOfRangeException ("value",
 								"Position cannot be negative" );
@@ -297,8 +299,10 @@ namespace System.IO
 
 			CheckIfClosedThrowDisposed ();
 
-			if (!canWrite)
-				throw new IOException ("Cannot write to this MemoryStream");
+			if (!canWrite) {
+				throw new NotSupportedException (Locale.GetText 
+					("Cannot write to this MemoryStream"));
+			}
 
 			// LAMESPEC: AGAIN! It says to throw this exception if value is
 			// greater than "the maximum length of the MemoryStream".  I haven't
@@ -310,7 +314,10 @@ namespace System.IO
 			int newSize = (int) value + initialIndex;
 			if (newSize > capacity) {
 				Capacity = CalculateNewCapacity (newSize);
-			} else if (newSize > length) {
+			}
+			else if (newSize < length) {
+				// zeroize present data (so we don't get it 
+				// back if we expand the stream using Seek)
 				for (int i = newSize; i < length; i++)
 					Buffer.SetByte (internalBuffer, i, 0);
 			}

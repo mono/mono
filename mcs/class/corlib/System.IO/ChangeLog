@@ -1,3 +1,9 @@
+2004-05-24  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* MemoryStream.cs: Fixed exception reporting to match MS Fx. Fixed the
+	condition to allow zeroization of existing data when we shrink the 
+	stream.
+
 2004-05-22  Duncan Mak  <duncan@ximian.com>
 
 	* Directory.cs: Reformat the whole file to use Unix line endings
