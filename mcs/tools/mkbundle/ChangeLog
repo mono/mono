@@ -1,3 +1,8 @@
+2004-12-06  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (OTHER_RES): New.  Add template.c.
+	(EXTRA_DISTFILES): New.  Distribute resource files too.
+
 2004-11-28  Miguel de Icaza  <miguel@ximian.com>
 
 	* Actually delete the files at the end, now that the debugging
