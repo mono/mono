@@ -32,9 +32,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-using System.Security;
-
 namespace System.Security.Permissions {
 	[System.AttributeUsage(
 		System.AttributeTargets.Assembly 
@@ -73,11 +70,8 @@ namespace System.Security.Permissions {
 				return m_Action;
 			}
 			set {
-				if (!SecurityAction.IsDefined(typeof(SecurityAction), value)) {
-					throw new System.ArgumentException();
-				}
 				m_Action = value;
 			}
 		}
-	} // public abstract class SecurityAttribute
-}  // namespace System.Security.Permissions
+	}
+}

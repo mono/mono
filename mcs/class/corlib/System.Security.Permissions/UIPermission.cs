@@ -2,12 +2,9 @@
 // System.Security.Permissions.UIPermission.cs
 //
 // Author
-//	Sebastien Pouliot  <spouliot@motus.com>
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // Copyright (C) 2003 Motus Technologies. http://www.motus.com
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -30,7 +27,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Globalization;
 
 namespace System.Security.Permissions {
@@ -38,14 +34,16 @@ namespace System.Security.Permissions {
 	[Serializable]
 	public sealed class UIPermission : CodeAccessPermission, IUnrestrictedPermission, IBuiltInPermission {
 
-		private UIPermissionWindow _window;
-		private UIPermissionClipboard _clipboard;
+		private UIPermissionWindow _window;		// Note: this (looks like) but isn't a [Flags]
+		private UIPermissionClipboard _clipboard;	// Note: this (looks like) but isn't a [Flags]
+
+		private const int version = 1;
 
 		// Constructors
 
 		public UIPermission (PermissionState state) 
 		{
-			if (state == PermissionState.Unrestricted) {
+			if (CheckPermissionState (state, true) == PermissionState.Unrestricted) {
 				_clipboard = UIPermissionClipboard.AllClipboard;
 				_window = UIPermissionWindow.AllWindows;
 			}
@@ -53,30 +51,45 @@ namespace System.Security.Permissions {
 
 		public UIPermission (UIPermissionClipboard clipboardFlag) 
 		{
-			_clipboard = clipboardFlag;
+			// reuse validation by the Clipboard property
+			Clipboard = clipboardFlag;
 		}
 
 		public UIPermission (UIPermissionWindow windowFlag) 
 		{
-			_window = windowFlag;
+			// reuse validation by the Window property
+			Window = windowFlag;
 		}
 
 		public UIPermission (UIPermissionWindow windowFlag, UIPermissionClipboard clipboardFlag) 
 		{
-			_clipboard = clipboardFlag;
-			_window = windowFlag;
+			// reuse validation by the Clipboard and Window properties
+			Clipboard = clipboardFlag;
+			Window = windowFlag;
 		}
 
 		// Properties
 
 		public UIPermissionClipboard Clipboard {
 			get { return _clipboard; }
-			set { _clipboard = value; }
+			set {
+				if (!Enum.IsDefined (typeof (UIPermissionClipboard), value)) {
+					string msg = String.Format (Locale.GetText ("Invalid enum {0}"), value);
+					throw new ArgumentException (msg, "UIPermissionClipboard");
+				}
+				_clipboard = value;
+			}
 		}
 
 		public UIPermissionWindow Window { 
 			get { return _window; }
-			set { _window = value; }
+			set {
+				if (!Enum.IsDefined (typeof (UIPermissionWindow), value)) {
+					string msg = String.Format (Locale.GetText ("Invalid enum {0}"), value);
+					throw new ArgumentException (msg, "UIPermissionWindow");
+				}
+				_window = value;
+			}
 		}
 
 		// Methods
@@ -88,46 +101,56 @@ namespace System.Security.Permissions {
 
 		public override void FromXml (SecurityElement esd) 
 		{
-			if (esd == null)
-				throw new ArgumentNullException (
-					Locale.GetText ("The argument is null."));
-			
-			if (esd.Attribute ("class") != GetType ().AssemblyQualifiedName)
-				throw new ArgumentException (
-					Locale.GetText ("The argument is not valid"));
+			// General validation in CodeAccessPermission
+			CheckSecurityElement (esd, "esd", version, version);
+			// Note: we do not (yet) care about the return value 
+			// as we only accept version 1 (min/max values)
 
-			if (esd.Attribute ("version") != "1")
-				throw new ArgumentException (
-					Locale.GetText ("The argument is not valid"));
-			
-			if (esd.Attribute ("Unrestricted") == "true") {
+			if (IsUnrestricted (esd)) {
 				_window = UIPermissionWindow.AllWindows;
 				_clipboard = UIPermissionClipboard.AllClipboard;
+			}
+			else {
+				string w = esd.Attribute ("Window");
+				if (w == null)
+					_window = UIPermissionWindow.NoWindows;
+				else
+					_window = (UIPermissionWindow) Enum.Parse (typeof (UIPermissionWindow), w);
 
-			// only 2 attributes: class and version
-			} else if (esd.Attributes.Count == 2) {
-				_window = UIPermissionWindow.NoWindows;
-				_clipboard = UIPermissionClipboard.NoClipboard;
-
-			} else {
-				_window = (UIPermissionWindow) Enum.Parse (
-					typeof (UIPermissionWindow), esd.Attribute ("Window"));
-
-				_clipboard = (UIPermissionClipboard) Enum.Parse (
-					typeof (UIPermissionClipboard), esd.Attribute ("Clipboard"));
+				string c = esd.Attribute ("Clipboard");
+				if (c == null)
+					_clipboard = UIPermissionClipboard.NoClipboard;
+				else
+					_clipboard = (UIPermissionClipboard) Enum.Parse (typeof (UIPermissionClipboard), c);
 			}
 		}
 
-		[MonoTODO]
 		public override IPermission Intersect (IPermission target) 
 		{
-			return null;
+			UIPermission uip = Cast (target);
+			if (uip == null)
+				return null;
+
+			// there are not [Flags] so we can't use boolean operators
+			UIPermissionWindow w = ((_window < uip._window) ? _window : uip._window);
+			UIPermissionClipboard c = ((_clipboard < uip._clipboard) ? _clipboard : uip._clipboard);
+
+			if (IsEmpty (w, c))
+				return null;
+
+			return new UIPermission (w, c);
 		}
 
-		[MonoTODO]
 		public override bool IsSubsetOf (IPermission target) 
 		{
-			return false;
+			UIPermission uip = Cast (target);
+			if (uip == null)
+				return IsEmpty (_window, _clipboard);
+			if (uip.IsUnrestricted ())
+				return true;
+
+			// there are not [Flags] so we can't use boolean operators
+			return ((_window <= uip._window) && (_clipboard <= uip._clipboard));
 		}
 
 		public bool IsUnrestricted () 
@@ -138,37 +161,61 @@ namespace System.Security.Permissions {
 
 		public override SecurityElement ToXml () 
 		{
-			SecurityElement e = new SecurityElement ("IPermission");
-			e.AddAttribute ("class", GetType ().AssemblyQualifiedName);
-			e.AddAttribute ("version", "1");
-
-			if (_window == UIPermissionWindow.NoWindows && _clipboard == UIPermissionClipboard.NoClipboard)
-				return e;
+			SecurityElement e = Element (version);
 
 			if (_window == UIPermissionWindow.AllWindows && _clipboard == UIPermissionClipboard.AllClipboard) {
 				e.AddAttribute ("Unrestricted", "true");
-				return e;
 			}
+			else {
+				if (_window != UIPermissionWindow.NoWindows)
+					e.AddAttribute ("Window", _window.ToString ());
 
-			if (_window != UIPermissionWindow.NoWindows)
-				e.AddAttribute ("Window", _window.ToString ());
-
-			if (_clipboard != UIPermissionClipboard.NoClipboard)
-				e.AddAttribute ("Clipboard", _clipboard.ToString ());
-
+				if (_clipboard != UIPermissionClipboard.NoClipboard)
+					e.AddAttribute ("Clipboard", _clipboard.ToString ());
+			}
 			return e;
 		}
 
-		[MonoTODO]
 		public override IPermission Union (IPermission target)
 		{
-			return null;
+			UIPermission uip = Cast (target);
+			if (uip == null)
+				return Copy ();
+
+			// there are not [Flags] so we can't use boolean operators
+			UIPermissionWindow w = ((_window > uip._window) ? _window : uip._window);
+			UIPermissionClipboard c = ((_clipboard > uip._clipboard) ? _clipboard : uip._clipboard);
+
+			if (IsEmpty (w, c))
+				return null;
+
+			return new UIPermission (w, c);
 		}
 
 		// IBuiltInPermission
 		int IBuiltInPermission.GetTokenIndex ()
 		{
-			return 7;
+			return (int) BuiltInToken.UI;
+		}
+
+		// helpers
+
+		private bool IsEmpty (UIPermissionWindow w, UIPermissionClipboard c)
+		{
+			return ((w == UIPermissionWindow.NoWindows) && (c == UIPermissionClipboard.NoClipboard));
+		}
+
+		private UIPermission Cast (IPermission target)
+		{
+			if (target == null)
+				return null;
+
+			UIPermission uip = (target as UIPermission);
+			if (uip == null) {
+				ThrowInvalidPermission (target, typeof (UIPermission));
+			}
+
+			return uip;
 		}
 	}
 }

@@ -1,3 +1,13 @@
+2004-08-17  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* IBuiltInPermission.cs: Added a new internal enum to store the index
+	of all corlib's permissions (as the index can changes in newer 
+	versions of the framework, e.g. 2.0).
+	* SecurityAttribute.cs: Removed the validation when setting the Action
+	property to match MS implementation.
+	* UIPermission.cs: Update to use the common template. Completed TODOs
+	and now pass all unit tests.
+
 2004-08-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PrincipalPermission.cs: Added Equals/GetHashCode for NET_2_0.
