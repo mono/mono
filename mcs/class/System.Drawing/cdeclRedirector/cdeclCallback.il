@@ -136,5 +136,69 @@
       } // end of method MethodIntIntPtrInt::EndInvoke
 
     } // end of class MethodIntIntPtrInt
+
+    .class auto ansi sealed nested public MethodVoidIntPtrIntPtr
+           extends [mscorlib]System.MulticastDelegate
+    {
+      .method public hidebysig specialname rtspecialname 
+              instance void  .ctor(object 'object',
+                                   native int 'method') runtime managed
+      {
+      } // end of method MethodVoidIntPtrIntPtr::.ctor
+
+      .method public hidebysig virtual instance void modopt([mscorlib]System.Runtime.CompilerServices.CallConvCdecl) 
+              Invoke(native int param,
+                     native int param1) runtime managed
+      {
+      } // end of method MethodVoidIntPtrIntPtr::Invoke
+
+      .method public hidebysig newslot virtual 
+              instance class [mscorlib]System.IAsyncResult 
+              BeginInvoke(native int param,
+                          native int param1,
+                          class [mscorlib]System.AsyncCallback callback,
+                          object 'object') runtime managed
+      {
+      } // end of method MethodVoidIntPtrIntPtr::BeginInvoke
+
+      .method public hidebysig newslot virtual 
+              instance int32  EndInvoke(class [mscorlib]System.IAsyncResult result) runtime managed
+      {
+      } // end of method MethodVoidIntPtrIntPtr::EndInvoke
+    } // end of class MethodVoidIntPtrIntPtr
+
+    .class auto ansi sealed nested public MethodVoidIntPtrIntPtrInt
+           extends [mscorlib]System.MulticastDelegate
+    {
+      .method public hidebysig specialname rtspecialname 
+              instance void  .ctor(object 'object',
+                                   native int 'method') runtime managed
+      {
+      } // end of method MethodVoidIntPtrIntPtrInt::.ctor
+
+      .method public hidebysig virtual instance void modopt([mscorlib]System.Runtime.CompilerServices.CallConvCdecl) 
+              Invoke(native int param,
+		     native int param1,
+                     int32 param2) runtime managed
+      {
+      } // end of method MethodVoidIntPtrIntPtrInt::Invoke
+
+      .method public hidebysig newslot virtual 
+              instance class [mscorlib]System.IAsyncResult 
+              BeginInvoke(native int param,
+			  native int param1,
+                          int32 param2,
+                          class [mscorlib]System.AsyncCallback callback,
+                          object 'object') runtime managed
+      {
+      } // end of method MethodVoidIntPtrIntPtrInt::BeginInvoke
+
+      .method public hidebysig newslot virtual 
+              instance int32  EndInvoke(class [mscorlib]System.IAsyncResult result) runtime managed
+      {
+      } // end of method MethodVoidIntPtrIntPtrInt::EndInvoke
+
+
+    } // end of class MethodVoidIntPtrIntPtrInt
   } // end of class cdeclRedirector
 }
