@@ -1,5 +1,13 @@
 2003-12-26 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	* typemanager.cs (LookupType):
+	  - Use a static char [], because split takes
+	    a param array for args, so it was allocating
+	    every time.
+	  - Do not store true in a hashtable, it boxes.
+
+2003-12-26 Ben Maurer  <bmaurer@users.sourceforge.net>
+
 	* flowanalysis.cs: bytify common enums.
 
 2003-12-25 Ben Maurer  <bmaurer@users.sourceforge.net>

@@ -624,6 +624,8 @@ public class TypeManager {
 		types [name] = t;
 		return t;
 	}
+	
+	static readonly char [] dot_array = { '.' };
 
 	/// <summary>
 	///   Returns the Type associated with @name, takes care of the fact that
@@ -646,7 +648,8 @@ public class TypeManager {
 		if (negative_hits.Contains (name))
 			return null;
 
-		string [] elements = name.Split ('.');
+		// Sadly, split takes a param array, so this ends up allocating *EVERY TIME*
+		string [] elements = name.Split (dot_array);
 		int count = elements.Length;
 
 		for (int n = 1; n <= count; n++){
@@ -660,7 +663,7 @@ public class TypeManager {
 			if (t == null){
 				t = LookupTypeReflection (top_level_type);
 				if (t == null){
-					negative_hits [top_level_type] = true;
+					negative_hits [top_level_type] = null;
 					continue;
 				}
 			}
@@ -681,12 +684,12 @@ public class TypeManager {
 			//Console.WriteLine ("Looking up: " + newt + " " + name);
 			t = LookupTypeReflection (newt);
 			if (t == null)
-				negative_hits [name] = true;
+				negative_hits [name] = null;
 			else
 				types [name] = t;
 			return t;
 		}
-		negative_hits [name] = true;
+		negative_hits [name] = null;
 		return null;
 	}
 
