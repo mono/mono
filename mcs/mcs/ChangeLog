@@ -1,5 +1,12 @@
 2004-05-25  Martin Baulig  <martin@ximian.com>
 
+	* expression.cs
+	(MethodGroupExpr.IdenticalTypeName): New public property.
+	(Invocation.DoResolve): Don't report a CS0176 if the "instance"
+	expression actually refers to a type.
+
+2004-05-25  Martin Baulig  <martin@ximian.com>
+
 	* expression.cs (Invocation.DoResolve): Applied Ben Maurer's patch
 	for #56176 and made it actually work.
 

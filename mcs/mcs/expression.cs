@@ -5035,11 +5035,15 @@ namespace Mono.CSharp {
 					SimpleName.Error_ObjectRefRequired (ec, loc, mi.Name);
 					return null;
 				}
-				
-				if (mi.IsStatic && (mg.InstanceExpression != null) &&
-				    !(mg.InstanceExpression is This)) {
-					MemberAccess.error176 (loc, mi.Name);
-					return null;
+
+				Expression iexpr = mg.InstanceExpression;
+				if (mi.IsStatic && (iexpr != null) && !(iexpr is This)) {
+					if (mg.IdenticalTypeName)
+						mg.InstanceExpression = null;
+					else {
+						MemberAccess.error176 (loc, mi.Name);
+						return null;
+					}
 				}
 			}
 
@@ -6894,9 +6898,9 @@ namespace Mono.CSharp {
 
 			if (member_lookup is IMemberExpr) {
 				IMemberExpr me = (IMemberExpr) member_lookup;
+				MethodGroupExpr mg = me as MethodGroupExpr;
 
 				if (left_is_type){
-					MethodGroupExpr mg = me as MethodGroupExpr;
 					if ((mg != null) && left_is_explicit && left.Type.IsInterface)
 						mg.IsExplicitImpl = left_is_explicit;
 
@@ -6918,7 +6922,7 @@ namespace Mono.CSharp {
 							error176 (loc, me.Name);
 							return null;
 						}
-					}
+					}						
 
 					//
 					// Since we can not check for instance objects in SimpleName,
@@ -6940,6 +6944,9 @@ namespace Mono.CSharp {
 							return null;
 						}
 					}
+
+					if ((mg != null) && IdenticalNameAndTypeName (ec, left_original, loc))
+						mg.IdenticalTypeName = true;
 
 					me.InstanceExpression = left;
 				}
