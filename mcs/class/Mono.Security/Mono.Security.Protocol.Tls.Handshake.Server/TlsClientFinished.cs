@@ -109,6 +109,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Server
 					if (clientPRF[i] != serverPRF[i])
 					{
 						decryptError = true;
+						break;
 					}
 				}
 			}
