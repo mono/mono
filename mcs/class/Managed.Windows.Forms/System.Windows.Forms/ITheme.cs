@@ -24,9 +24,12 @@
 //
 //
 //
-// $Revision: 1.1 $
+// $Revision: 1.2 $
 // $Modtime: $
 // $Log: ITheme.cs,v $
+// Revision 1.2  2004/08/07 19:05:44  jordi
+// Theme colour support and GetSysColor defines
+//
 // Revision 1.1  2004/07/26 17:42:03  jordi
 // Theme support
 //
@@ -40,6 +43,46 @@ namespace System.Windows.Forms
 {
 	internal interface ITheme
 	{
+		/* Internal colors to paint controls */
+		Color ColorLight {get;}
+		Color ColorDisabled {get;}
+		Color ColorDark {get;}
+		Color ColorMain {get;}
+		Color ColorFocus {get;}		
+		Color ColorShadow {get;}	
+		Color ColorLightTop {get;}
+
+		/* Windows System Colors. Based on Wine */
+		Color ColorScrollbar {get;} 		//COLOR_SCROLLBAR
+		Color ColorBackground {get;} 		//COLOR_BACKGROUND
+		Color ColorActiveTitle {get;} 		//COLOR_ACTIVECAPTION
+		Color ColorInactiveTitle {get;}		//COLOR_INACTIVECAPTION
+		Color ColorMenu {get;} 			//COLOR_MENU
+		Color ColorWindow {get;} 		//COLOR_WINDOW
+		Color WindowFrame {get;} 		//COLOR_WINDOWFRAME
+		Color ColorMenuText {get;} 		//COLOR_MENUTEXT 
+		Color ColorWindowText {get;} 		//COLOR_WINDOWTEXT
+		Color ColorTitleText {get;} 		//COLOR_CAPTIONTEXT 
+		Color ColorActiveBorder {get;} 		//COLOR_ACTIVEBORDER
+		Color ColorInactiveBorder {get;} 	//COLOR_INACTIVEBORDER 
+		Color ColorAppWorkSpace {get;} 		//COLOR_APPWORKSPACE
+		Color ColorHilight {get;} 		//COLOR_HIGHLIGHT
+		Color ColorHilightText {get;} 		//COLOR_HIGHLIGHTTEXT			
+		Color ColorButtonFace {get;} 		//COLOR_BTNFACE
+		Color ColorButtonShadow {get;} 		//COLOR_BTNSHADOW
+		Color ColorGrayText {get;} 		//COLOR_GRAYTEXT
+		Color ColorButtonText {get;} 		//COLOR_BTNTEXT
+		Color ColorInactiveTitleText {get;} 	//COLOR_INACTIVECAPTIONTEXT
+		Color ColorButtonHilight {get;} 	//COLOR_BTNHIGHLIGHT
+		Color ColorButtonDkShadow {get;} 	//COLOR_3DDKSHADOW
+		Color ColorButtonLight {get;} 		//COLOR_3DLIGHT
+		Color ColorInfoText {get;} 		//COLOR_INFOTEXT
+		Color ColorInfoWindow {get;} 		//COLOR_INFOBK
+		Color ColorButtonAlternateFace {get;} 	//COLOR_ALTERNATEBTNFACE
+		Color ColorHotTrackingColor {get;} 	//COLOR_HOTLIGHT
+		Color ColorGradientActiveTitle {get;} 	//COLOR_GRADIENTACTIVECAPTION
+		Color ColorGradientInactiveTitle {get;} //COLOR_GRADIENTINACTIVECAPTION
+
 		/*
 			Methods that mimic ControlPaint signature and draw basic objects
 		*/
@@ -92,6 +135,9 @@ namespace System.Windows.Forms
 		/*
 			Methods that draw complex controls
 		*/
+
+		void DrawLabel (Graphics dc, Rectangle area, BorderStyle border_style, string text, 
+			Color fore_color, Color back_color, Font font, StringFormat string_format, bool Enabled);
 
 		void DrawScrollBar (Graphics dc, Rectangle area, Rectangle thumb_pos,
 			ref Rectangle first_arrow_area, ref Rectangle second_arrow_area,

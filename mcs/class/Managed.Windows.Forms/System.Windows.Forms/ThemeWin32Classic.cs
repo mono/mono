@@ -25,9 +25,12 @@
 //
 //
 //
-// $Revision: 1.2 $
+// $Revision: 1.3 $
 // $Modtime: $
 // $Log: ThemeWin32Classic.cs,v $
+// Revision 1.3  2004/08/07 19:05:44  jordi
+// Theme colour support and GetSysColor defines
+//
 // Revision 1.2  2004/08/07 00:01:39  pbartok
 // - Fixed some rounding issues with float/int
 //
@@ -44,33 +47,191 @@ namespace System.Windows.Forms
 {
 	internal class ThemeWin32Classic : ITheme
 	{
-		// TODO: Use System.Colors instead when possible
-		static private Color light = Color.FromArgb (255, 255, 255, 255);
-		static private Color disabled = Color.FromArgb (255, 172, 168, 153);
-		static private Color dark = Color.FromArgb (255, 113, 111, 100);
-		static private Color main = Color.FromArgb (255, 236, 233, 216);
-		static private Color focus = Color.Black;
-		static private SolidBrush br_light = new SolidBrush (light);
-		static private SolidBrush br_main = new SolidBrush (main);
-		static private SolidBrush br_dark = new SolidBrush (dark);
-		static private Pen pen_light = new Pen (light);
-		static private Pen pen_dark = new Pen (dark);
-		static private Pen pen_ticks = new Pen (Color.Black);
-		static private Pen pen_disabled = new Pen (disabled);
-		static private SolidBrush br_arrow = new SolidBrush (Color.Black);
-		static private SolidBrush br_disabled = new SolidBrush (disabled);
-		static private HatchBrush br_focus = new HatchBrush (HatchStyle.Percent50, main, focus);
-		static private Color shadow = Color.FromArgb (255, 172, 168, 153);
+		static private SolidBrush br_light;
+		static private SolidBrush br_main;
+		static private SolidBrush br_dark;
+		static private Pen pen_light;
+		static private Pen pen_dark;
+		static private Pen pen_ticks;
+		static private Pen pen_disabled;
+		static private SolidBrush br_arrow;
+		static private SolidBrush br_disabled;
+		static private HatchBrush br_focus;
+		static private SolidBrush br_shadow;
+		static private SolidBrush br_bar;
+		static private Pen pen_shadow;
+		static private HatchBrush br_backgr;
+		static private SolidBrush br_lighttop;
+		static private Pen pen_arrow;
+	
+		/* Cache */
+		static private SolidBrush label_br_fore_color;
+		static private SolidBrush label_br_back_color;		
 
-		/* ScrollBar control */
-		static private Color lighttop = Color.FromArgb (255, 241, 239, 226);
-		static private SolidBrush br_shadow = new SolidBrush (shadow);
-		static private SolidBrush br_bar = new SolidBrush (Color.FromArgb (255, 49, 106, 197));
-		static private Pen pen_shadow = new Pen (shadow);
-		static private HatchBrush br_backgr = new HatchBrush (HatchStyle.Percent50, light, main);
-		static private SolidBrush br_lighttop = new SolidBrush (lighttop);
-		static private Pen pen_arrow = new Pen (Color.Black);
+		public ThemeWin32Classic ()
+		{
+			br_light = new SolidBrush (ColorLight);
+			br_main = new SolidBrush (ColorMain);
+			br_dark = new SolidBrush (ColorDark);
+			pen_light = new Pen (ColorLight);
+			pen_dark = new Pen (ColorDark);
+			pen_ticks = new Pen (Color.Black);
+			pen_disabled = new Pen (ColorDisabled);
+			br_arrow = new SolidBrush (Color.Black);
+			br_disabled = new SolidBrush (ColorDisabled);
+			br_focus = new HatchBrush (HatchStyle.Percent50, ColorMain, ColorFocus);
+			br_shadow = new SolidBrush (ColorShadow);			
+			br_backgr = new HatchBrush (HatchStyle.Percent50, ColorLight, ColorMain);
+			pen_shadow = new Pen (ColorShadow);
+			br_lighttop = new SolidBrush (ColorLightTop);
+			pen_arrow = new Pen (Color.Black);
+		}	
 
+		/* Internal colors to paint controls */
+		public Color ColorLight {
+			get {return Color.FromArgb (255, 255, 255, 255);}
+		}
+
+		public Color ColorDisabled {
+			get {return Color.FromArgb (255, 172, 168, 153);}
+		}
+
+		public Color ColorDark {
+			get {return Color.FromArgb (255, 113, 111, 100);}
+		}
+
+		public Color ColorMain {
+			get {return Color.FromArgb (255, 236, 233, 216);}
+		}
+
+		public Color ColorFocus {
+			get {return Color.Black;}
+		}
+
+		public Color ColorShadow {
+			get {return Color.FromArgb (255, 172, 168, 153);}
+		}
+
+		public Color ColorLightTop {
+			get {return Color.FromArgb (255, 241, 239, 226);}
+		}
+
+		/* Windows System Colors. Based on Wine */
+		public Color ColorScrollbar {
+			get {return Color.FromArgb (255, 192, 192, 192);}
+		}
+
+		public Color ColorBackground{
+			get {return Color.FromArgb (255, 0, 128, 128);}
+		}
+
+		public Color ColorActiveTitle{
+			get {return Color.FromArgb (255, 0, 0, 128);}
+		}
+
+		public Color ColorInactiveTitle{
+			get {return Color.FromArgb (255, 128, 128, 128);}
+		}
+
+		public Color ColorMenu{
+			get {return Color.FromArgb (255, 192, 192, 192);}
+		}
+
+		public Color ColorWindow{
+			get {return Color.FromArgb (255, 255, 255, 255);}
+		}
+
+		public Color WindowFrame{
+			get {return Color.FromArgb (255, 0, 0, 0);}
+		}
+
+		public Color ColorMenuText{
+			get {return Color.FromArgb (255, 0, 0, 0);}
+		}
+
+		public Color ColorWindowText{
+			get {return Color.FromArgb (255, 0, 0, 0);}
+		}
+
+		public Color ColorTitleText{
+			get {return Color.FromArgb (255, 255, 255, 255);}
+		}
+
+		public Color ColorActiveBorder{
+			get {return Color.FromArgb (255, 192, 192, 192);}
+		}
+
+		public Color ColorInactiveBorder{
+			get {return Color.FromArgb (255, 192, 192, 192);}
+		}
+
+		public Color ColorAppWorkSpace{
+			get {return Color.FromArgb (255, 128, 128, 128);}
+		}
+
+		public Color ColorHilight{
+			get {return Color.FromArgb (255, 0, 0, 128);}
+		}
+
+		public Color ColorHilightText{
+			get {return Color.FromArgb (255, 255, 255, 255);}
+		}
+
+		public Color ColorButtonFace{
+			get {return Color.FromArgb (255, 192, 192, 192);}
+		}
+
+		public Color ColorButtonShadow{
+			get {return Color.FromArgb (255, 128, 128, 128);}
+		}
+
+		public Color ColorGrayText{
+			get {return Color.FromArgb (255, 128, 128, 128);}
+		}
+
+		public Color ColorButtonText{
+			get {return Color.FromArgb (255, 0, 0, 0);}
+		}
+
+		public Color ColorInactiveTitleText{
+			get {return Color.FromArgb (255, 192, 192, 192);}
+		}
+
+		public Color ColorButtonHilight{
+			get {return Color.FromArgb (255, 255, 255, 255);}
+		}
+
+		public Color ColorButtonDkShadow{
+			get {return Color.FromArgb (255, 0, 0, 0);}
+		}
+
+		public Color ColorButtonLight{
+			get {return Color.FromArgb (255, 224, 224, 224);}
+		}
+
+		public Color ColorInfoText{
+			get {return Color.FromArgb (255, 0, 0, 0);}
+		}
+
+		public Color ColorInfoWindow{
+			get {return Color.FromArgb (255, 255, 255, 225);}
+		}
+
+		public Color ColorButtonAlternateFace{
+			get {return Color.FromArgb (255, 180, 180, 180);}
+		}
+
+		public Color ColorHotTrackingColor{
+			get {return Color.FromArgb (255, 0, 0, 255);}
+		}
+
+		public Color ColorGradientActiveTitle{
+			get {return Color.FromArgb (255, 16, 132, 208);}
+		}
+
+		public Color ColorGradientInactiveTitle {
+			get {return Color.FromArgb (255, 181, 181, 181);}
+		}
 
 		private enum DrawFrameControlStates
 		{
@@ -940,7 +1101,6 @@ namespace System.Windows.Forms
 			thumb_area.Width = 4;
 
 			/* Draw channel */
-
 			dc.FillRectangle (br_disabled, x, y,
 				1, area.Height - (y - area.Y) - space_from_bottom);
 
@@ -1238,6 +1398,25 @@ namespace System.Windows.Forms
 			dc.FillRectangle (br_light, area.X, area.Y + area.Height - 1, area.Width, 1);
 			dc.FillRectangle (br_light, area.X + area.Width - 1, area.Y, 1, area.Height);
 
+		}
+
+		public void DrawLabel (Graphics dc, Rectangle area, BorderStyle border_style, string text, 
+			Color fore_color, Color back_color, Font font, StringFormat string_format, bool Enabled)
+
+		{	
+			if (label_br_fore_color.Color != fore_color) 
+				label_br_fore_color = new SolidBrush (fore_color);
+
+			if (label_br_back_color.Color != back_color) 
+				label_br_back_color = new SolidBrush (back_color);
+
+			dc.FillRectangle (label_br_back_color, area);						
+
+			if (Enabled)
+				dc.DrawString (text, font, label_br_fore_color, area, string_format);
+			else
+				ControlPaint.DrawStringDisabled (dc, text, font, fore_color, area, string_format);
+		
 		}
 
 
