@@ -76,10 +76,22 @@ namespace System.Data.Common {
 			return (byte) GetValue (i);
 		}
 
-		[MonoTODO]	
 		public long GetBytes (int i, long dataIndex, byte[] buffer, int bufferIndex, int length)
 		{
-			throw new NotImplementedException ();
+			 object value = GetValue (i);
+                         if (!(value is byte []))
+                                throw new InvalidCastException ("Type is " + value.GetType ().ToString ());
+                                                                                                   
+                        if ( buffer == null ) {
+                                // Return length of data
+                                return ((byte []) value).Length;
+                        }
+                        else {
+                                // Copy data into buffer
+                                Array.Copy ((byte []) value, (int) dataIndex, buffer, bufferIndex, length);
+                                return ((byte []) value).Length - dataIndex;
+                        }
+
 		}
 
 		public char GetChar (int i)
@@ -87,16 +99,32 @@ namespace System.Data.Common {
 			return (char) GetValue (i);
 		}
 
-		[MonoTODO]
 		public long GetChars (int i, long dataIndex, char[] buffer, int bufferIndex, int length)
 		{
-			throw new NotImplementedException ();
+	                object value = GetValue (i);
+                        char [] valueBuffer;
+                                                                                                    
+                        if (value is char[])
+                                valueBuffer = (char[])value;
+                        else if (value is string)
+                                valueBuffer = ((string)value).ToCharArray();
+                        else
+                                throw new InvalidCastException ("Type is " + value.GetType ().ToString ());
+                                                                                                                             if ( buffer == null ) {
+                                // Return length of data
+                                return valueBuffer.Length;
+                        }
+                        else {
+                                // Copy data into buffer
+                                Array.Copy (valueBuffer, (int) dataIndex, buffer, bufferIndex, length);
+                                return valueBuffer.Length - dataIndex;
+                        }
+
 		}
 
-		[MonoTODO]
 		public IDataReader GetData (int i)
 		{
-			throw new NotImplementedException ();
+			return (IDataReader) GetValue (i);
 		}
 
 		public string GetDataTypeName (int i)
@@ -174,13 +202,15 @@ namespace System.Data.Common {
 
 		public object GetValue (int i)
 		{
+                       if ((i < 0) || (i > fieldCount))
+                                throw new IndexOutOfRangeException();
+
 			object value = values [i];
 			if (value == null)
 				value = DBNull.Value;
 			return value;
 		}
 
-		[MonoTODO]
 		public int GetValues (object[] values)
 		{
 			if(values == null)
