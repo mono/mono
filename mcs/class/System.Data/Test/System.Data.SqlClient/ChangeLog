@@ -1,3 +1,6 @@
+2004-11-01 Gert Driesen <drieseng@users.sourceforge.net>
+	* SqlCommandTest.cs: Added testcase for bug #66630.
+
 2004-10-30 Umadevi S <sumadevi@novell.com>
 	* SqlDataAdapterTest.cs - Added testcase for nullguid
 
