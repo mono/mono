@@ -4,3 +4,6 @@ Mono.Security.Authenticode/SoftwarePublisherCertificateTest.cs
 Mono.Security.Cryptography/ARC4ManagedTest.cs
 Mono.Security.Cryptography/MD2ManagedTest.cs
 Mono.Security.Cryptography/MD2Test.cs
+Mono.Security.Cryptography/MD4ManagedTest.cs
+Mono.Security.Cryptography/MD4Test.cs
+Mono.Security.Cryptography/PKCS8Test.cs

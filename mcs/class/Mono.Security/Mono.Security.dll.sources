@@ -11,6 +11,9 @@
 ./Mono.Security.Cryptography/CryptoConvert.cs
 ./Mono.Security.Cryptography/MD2.cs
 ./Mono.Security.Cryptography/MD2Managed.cs
+./Mono.Security.Cryptography/MD4.cs
+./Mono.Security.Cryptography/MD4Managed.cs
+./Mono.Security.Cryptography/PKCS8.cs
 ./Mono.Security.Cryptography/RC4.cs
 ./Mono.Security.X509/ITrustAnchors.cs
 ./Mono.Security.X509/TestAnchors.cs
