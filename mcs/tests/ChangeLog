@@ -1,3 +1,7 @@
+2004-10-24  Marek Safar <marek.safar@seznam.cz>
+
+	* test-310.cs: New test for bug #67130
+
 2004-10-21  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (test-harness, test-harness-run): Rename from

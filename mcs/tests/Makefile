@@ -27,7 +27,7 @@ USE_MCS_FLAGS :=
 #
 NEW_TEST_SOURCES_common = \
 	test-297 test-287 test-294 test-299 test-300 \
-	test-301 test-302 test-303 test-304 test-305 test-306 test-307 test-259 test-309
+	test-301 test-302 test-303 test-304 test-305 test-306 test-307 test-259 test-309 test-310
 
 #
 # Please do _not_ add any tests here - all new tests should go into NEW_TEST_SOURCES_common
