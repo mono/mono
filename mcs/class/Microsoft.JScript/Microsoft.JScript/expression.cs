@@ -4,7 +4,7 @@
 // Author:
 //	Cesar Lopez Nataren (cesar@ciencias.unam.mx)
 //
-// (C) 2003, Cesar Lopez Nataren
+// (C) 2003, 2004 Cesar Lopez Nataren
 //
 
 //
@@ -124,7 +124,10 @@ namespace Microsoft.JScript {
 			if (left != null)
 				r &= left.Resolve (context);
 			if (right != null)
-				r &= right.Resolve (context);
+				if (right is IAccesible)
+					r &= ((IAccesible) right).ResolveFieldAccess (left);
+				else
+					r &= right.Resolve (context);
 			return r;
 		}
 
@@ -159,6 +162,60 @@ namespace Microsoft.JScript {
 				if (left != null)
 					left.Emit (ec);
 				emit_access (ec);				
+			} else if (op == JSToken.AccessField) {
+				if (left is Identifier) {
+					Identifier parent = left as Identifier;
+					switch (parent.name) {
+					case "Math":
+						MathObject math_obj = new MathObject ();
+						Type math_obj_type = math_obj.GetType ();
+						Identifier property = right as Identifier;
+						double v = 0;
+						switch (property.name) {
+						/* value properties of the math object */
+						case "E":
+							v = math_obj.E;
+							break;
+						case "LN10":
+							v = math_obj.LN10;
+							break;
+						case "LN2":
+							v = math_obj.LN2;
+							break;
+						case "LOG2E":
+							v = math_obj.LOG2E;
+							break;
+						case "LOG10E":
+							v = math_obj.LOG10E;
+							break;
+						case "PI":
+							v = math_obj.PI;
+							break;
+						case "SQRT1_2":
+							v = math_obj.SQRT1_2;
+							break;
+						case "SQRT2":
+							v = math_obj.SQRT2;
+							break;
+						
+						/* function properties of the math object */
+						case "abs":
+						case "acos":
+						case "asin":
+						case "atan":
+						case "atan2":
+						case "sin":
+						case "cos":
+							ig.Emit (OpCodes.Call, typeof (Convert).GetMethod ("ToNumber", new Type [] { typeof (object) }));
+							ig.Emit (OpCodes.Call, math_obj_type.GetMethod (property.name));
+							ig.Emit (OpCodes.Box, typeof (double));
+							return;
+						}
+						ig.Emit (OpCodes.Ldc_R8, v);
+						ig.Emit (OpCodes.Box, typeof (Double));
+						break;
+					}
+				}
 			} else {
 				emit_operator (ig);
 				if (left != null)
@@ -376,7 +433,7 @@ namespace Microsoft.JScript {
 		void AddArg (AST arg);
 	}
 	
-	public class Call : AST, ICallable {
+	public class Call : Exp, ICallable {
 		
 		internal AST member_exp;		
 		internal Args args;
@@ -387,11 +444,10 @@ namespace Microsoft.JScript {
 			this.member_exp = exp;
 			this.args = new Args ();
 		}
-
+		
 		public override string ToString ()
 		{
 			StringBuilder sb = new StringBuilder ();
-
 			if (member_exp != null)
 				sb.Append (member_exp.ToString () + " ");
 			if (args != null)
@@ -407,12 +463,30 @@ namespace Microsoft.JScript {
 		internal override bool Resolve (IdentificationTable context)
 		{
 			bool r = true;
-
-			if (member_exp != null)
+			int n = -1;
+			if (member_exp != null) {
+				BuiltIn binding = (BuiltIn) SemanticAnalyser.ObjectSystemContains (member_exp.ToString ());
+				if (binding != null) {
+					if (!binding.IsFunction)
+						throw new Exception ("error JS5002: function expected.");
+					if (!binding.IsConstructor)
+						n = binding.NumOfArgs;
+				}
 				r &= member_exp.Resolve (context);
-			if (args != null)
+			}
+			if (args != null) {
+				args.DesiredNumOfArgs = n;
+				if (member_exp.ToString () == "print")
+					args.IsPrint = true;
 				r &= args.Resolve (context);
+			}
 			return r;
+		}
+
+		internal override bool Resolve (IdentificationTable context, bool no_effect)
+		{
+			this.no_effect = no_effect;
+			return Resolve (context);
 		}
 
 		internal override void Emit (EmitContext ec)
@@ -427,7 +501,7 @@ namespace Microsoft.JScript {
 				MethodInfo to_string = typeof (Convert).GetMethod ("ToString",
 										   new Type [] { typeof (object), typeof (bool) });
 				for (int i = 0; i <= n; i++) {
-					ast = args.get_element (i);
+					ast = args.get_element (i);				
 					ast.Emit (ec);
 
 					if (ast is StringLiteral)
@@ -442,16 +516,123 @@ namespace Microsoft.JScript {
 					else
 						ig.Emit (OpCodes.Call, write);
 				}
-			}			
+			} else {
+				BuiltIn binding = (BuiltIn) SemanticAnalyser.ObjectSystemContains (member_exp.ToString ());
+				if (binding == null || IsGlobalObjectMethod (binding)) {
+					args.Emit (ec);
+					member_exp.Emit (ec);
+				} else {
+					member_exp.Emit (ec);
+					EmitBuiltInArgs (ec);
+					EmitInvoke (ec);
+				}
+				if (no_effect)
+					ec.ig.Emit (OpCodes.Pop);
+			}
+		}
+
+		void EmitBuiltInArgs (EmitContext ec)
+		{
+			ILGenerator ig = ec.ig;
+			int n = args.Size;
+
+			if (n >= 1 && (member_exp.ToString () == "String" || member_exp.ToString () == "Boolean" || member_exp.ToString () == "Number")) {
+				args.get_element (0).Emit (ec);
+				return;
+			}
+
+			ig.Emit (OpCodes.Ldc_I4, n);
+			ig.Emit (OpCodes.Newarr, typeof (object));
+			for (int i = 0; i < n; i++) {
+				ig.Emit (OpCodes.Dup);
+				ig.Emit (OpCodes.Ldc_I4, i);
+				args.get_element (i).Emit (ec);
+				ig.Emit (OpCodes.Stelem_Ref);
+			}
+		}
+
+		void EmitInvoke (EmitContext ec)
+		{
+			ILGenerator ig = ec.ig;
+			string name = member_exp.ToString ();
+			Type type = null;
+			bool boolean = false;
+			bool number = false;
+
+			switch (name) {
+			case "Object":
+				type = typeof (ObjectConstructor);
+				break;
+			case "Function":
+				type = typeof (FunctionConstructor);
+				break;
+			case "Array":
+				type = typeof (ArrayConstructor);
+				break;
+			case "String":
+				type = typeof (StringConstructor);
+				break;
+			case "Boolean":
+				type = typeof (BooleanConstructor);
+				boolean = true;
+				break;
+			case "Number":
+				type = typeof (NumberConstructor);
+				number = true;
+				break;
+			case "Date":
+				type = typeof (DateConstructor);
+				break;
+			case "RegExp":
+				type = typeof (RegExpConstructor);
+				break;
+			case "Error":
+			case "EvalError":
+			case "RangeError":
+			case "ReferenceError":
+			case "SyntaxError":
+			case "TypeError":
+			case "URIError":
+				type = typeof (ErrorConstructor);
+				break;
+			}
+			ig.Emit (OpCodes.Call, type.GetMethod ("Invoke"));
+			if (boolean)
+				ig.Emit (OpCodes.Box, typeof (Boolean));
+			if (number)
+				ig.Emit (OpCodes.Box, typeof (Double));
+		}
+
+		bool IsGlobalObjectMethod (BuiltIn binding)
+		{
+			switch (binding.Name) {
+			case "eval":
+			case "parseInt":
+			case "parseFloat":
+			case "isNaN":
+			case "isFinite":
+			case "decodeURI":
+			case "decodeURIComponent":
+			case "encodeURI":
+			case "encodeURIComponent":				
+				return true;
+			default:
+				return false;
+			}
 		}
 	}
 
-	internal class Identifier : Exp, IAssignable {
+	interface IAccesible {
+		bool ResolveFieldAccess (AST parent);
+	}
+
+	internal class Identifier : Exp, IAssignable, IAccesible {
 
 		internal string name;
 		internal AST binding;
 		internal bool assign;
 		AST right_side;
+		MemberInfo [] members = null;
 
 		internal Identifier (AST parent, string id)
 		{
@@ -467,13 +648,13 @@ namespace Microsoft.JScript {
 		internal override bool Resolve (IdentificationTable context)
 		{
 			if (name == "print")
-				return SemanticAnalyser.print;			
-			object bind = context.Contains (name);
+				return SemanticAnalyser.print;
+			object bind = context.Contains (name);			
+			if (bind == null) 
+				bind = SemanticAnalyser.ObjectSystemContains (name);
 			if (bind == null)
 				throw new Exception ("variable not found: " +  name);
-			else
-				binding = bind as AST;
-
+			binding = bind as AST;
 			return true;
 		}
 
@@ -483,7 +664,7 @@ namespace Microsoft.JScript {
 			return Resolve (context);
 		}
 
-		public bool ResolveAssign (IdentificationTable context, AST right_side)			
+		public bool ResolveAssign (IdentificationTable context, AST right_side)
 		{
 			this.assign = true;
 			this.no_effect = false;
@@ -493,10 +674,43 @@ namespace Microsoft.JScript {
 			return true;
 		}
 
+		public bool ResolveFieldAccess (AST parent)
+		{
+			if (parent is Identifier) {
+				Identifier p = parent as Identifier;
+
+				Console.WriteLine ("ResolveFieldAccess: p.name = {0}", p.name);
+				Console.WriteLine ("ResolveFieldAccess: name = {0}", name);
+
+				AST binding = (AST) SemanticAnalyser.ObjectSystemContains (p.name);
+				if (binding != null && binding is BuiltIn)
+					return IsBuiltInObjectProperty (p.name, name);
+			}
+			return false;
+		}
+
+		bool IsBuiltInObjectProperty (string obj_name, string prop_name)
+		{
+			Type type;
+			if (obj_name == "Math") {
+				type = typeof (MathObject);
+				//FieldInfo prop = type.GetField (prop_name);
+				members = type.FindMembers (MemberTypes.Field | MemberTypes.Method,
+									  BindingFlags.Public | BindingFlags.Static,
+									  Type.FilterName, prop_name);
+				if (members != null && members.Length > 0) {
+					Console.WriteLine ("found property {0}", prop_name);
+					return true;
+				} else
+					throw new Exception ("error: JS0438: Object doesn't support this property or method");
+			}
+			return false;
+		}
+
 		internal override void Emit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
-			if (right_side != null)
+			if (assign && right_side != null)
 				right_side.Emit (ec);
 			if (binding is FormalParam) {
 				FormalParam f = binding as FormalParam;
@@ -516,7 +730,11 @@ namespace Microsoft.JScript {
 					else
 						ig.Emit (OpCodes.Ldloc, local_builder);
 				}
-			}
+			} else if (binding is BuiltIn)
+				binding.Emit (ec);
+			else
+				Console.WriteLine ("Identifier.Emit, DID NOT EMIT ANYTHING, binding is {0}", binding);
+
 			if (!assign && no_effect)
 				ig.Emit (OpCodes.Pop);				
 		}
@@ -545,6 +763,8 @@ namespace Microsoft.JScript {
 	public class Args : AST {
 
 		internal ArrayList elems;
+		int num_of_args = -1;
+		internal bool is_print;
 
 		internal Args ()
 		{
@@ -555,6 +775,17 @@ namespace Microsoft.JScript {
 		{
 			elems.Add (e);
 		}
+		
+		internal int DesiredNumOfArgs {
+			set { 
+				if (!(value < 0))
+					num_of_args = value; 
+			}
+		}
+		
+		internal bool IsPrint {
+			set { is_print = value; }
+		}
 
 		internal override bool Resolve (IdentificationTable context)
 		{
@@ -562,6 +793,8 @@ namespace Microsoft.JScript {
 			AST tmp;
 			bool r = true;
 
+			if (!is_print && num_of_args >= 0 && n > num_of_args)
+				Console.WriteLine ("warning JS1148: There are too many arguments. The extra arguments will be ignored");
 			for (i = 0; i < n; i++) {
 				tmp = (AST) elems [i];
 				r &= tmp.Resolve (context);
@@ -574,7 +807,7 @@ namespace Microsoft.JScript {
 			if (i >= 0 && i < elems.Count)
 				return (AST) elems [i];
 			else
-				throw new IndexOutOfRangeException ();
+				return null;
 		}
 
 		internal int Size {
@@ -583,7 +816,23 @@ namespace Microsoft.JScript {
 
 		internal override void Emit (EmitContext ec)
 		{
-			throw new NotImplementedException ();
+			int i = 0, n = elems.Count;
+			//Console.WriteLine ("n = {0}", n);
+			//Console.WriteLine ("num_of_args = {0}", num_of_args);
+			AST ast;
+			do {
+				//Console.WriteLine ("Args.Emit, i = {0}", i);
+				ast = get_element (i);
+				if (ast != null)
+					ast.Emit (ec);
+				i++;
+			} while (i < n || i < num_of_args);
+
+			if (num_of_args > n) {
+				ILGenerator ig = ec.ig;
+				for (int j = 0; j < num_of_args - 1; j++)
+					ig.Emit (OpCodes.Ldsfld, typeof (Missing).GetField ("Value"));;
+			}
 		}
 	}
 
@@ -736,7 +985,12 @@ namespace Microsoft.JScript {
 		
 		internal override bool Resolve (IdentificationTable context)
 		{
-			throw new NotImplementedException ();
+			bool r = true;
+			if (exp != null)
+				r &= exp.Resolve (context);
+			if (args != null)
+				r &= args.Resolve (context);
+			return r;
 		}
 
 		internal override void Emit (EmitContext ec)
@@ -748,5 +1002,154 @@ namespace Microsoft.JScript {
 	
 	internal interface IAssignable {
 		bool ResolveAssign (IdentificationTable context, AST right_side);
+	}
+
+	internal class BuiltIn : AST {
+		string name;
+		bool allowed_as_const;
+		bool allowed_as_func;
+
+		internal BuiltIn (string name, bool allowed_as_const, bool allowed_as_func)
+		{
+			this.name = name;
+			this.allowed_as_const = allowed_as_const;
+			this.allowed_as_func = allowed_as_func;
+		}
+
+ 		internal override bool Resolve (IdentificationTable context)
+		{
+			return true;
+		}
+		
+		internal string Name {
+			get { return name; }
+		}
+		
+		internal bool IsConstructor {
+			get { return allowed_as_const; }
+		}
+
+		internal bool IsFunction {
+			get { return allowed_as_func; }
+		}
+		
+		internal int NumOfArgs {
+			get {
+				Type global_object = typeof (GlobalObject);
+				MethodInfo method = global_object.GetMethod (name);
+				return method.GetParameters ().Length;
+			}
+		}
+
+ 		internal override void Emit (EmitContext ec)
+		{
+			ILGenerator ig = ec.ig;
+ 			Type go = typeof (GlobalObject);
+			switch (name) {
+			/* value properties of the Global Object */
+			case "NaN":
+				ig.Emit (OpCodes.Ldc_R8, Double.NaN);
+				ig.Emit (OpCodes.Box, typeof (Double));
+				break;				
+			case "Infinity":
+				ig.Emit (OpCodes.Ldc_R8, Double.PositiveInfinity);
+				// FIXME: research when not to generate the Boxing
+				ig.Emit (OpCodes.Box, typeof (Double));
+				break;
+			case "undefined":
+				ig.Emit (OpCodes.Ldnull);
+				break;
+			/* function properties of the Global Object */
+			case "eval":
+				throw new NotImplementedException ();
+			case "parseInt":
+				
+				ig.Emit (OpCodes.Call, go.GetMethod ("parseInt"));
+				ig.Emit (OpCodes.Box, typeof (Double));
+				break;
+			case "parseFloat":
+				ig.Emit (OpCodes.Call, go.GetMethod ("parseFloat"));
+				ig.Emit (OpCodes.Box, typeof (Double));
+				break;
+			case "isNaN":
+				ig.Emit (OpCodes.Call, go.GetMethod ("isNaN"));
+				ig.Emit (OpCodes.Box, typeof (bool));
+				break;
+			case "isFinite":
+				ig.Emit (OpCodes.Call, go.GetMethod ("isFinite"));
+				ig.Emit (OpCodes.Box, typeof (bool));
+				break;
+			case "decodeURI":
+				ig.Emit (OpCodes.Call, go.GetMethod ("decodeURI"));
+				break;
+			case "decodeURIComponent":
+				ig.Emit (OpCodes.Call, go.GetMethod ("decodeURIComponent"));
+				break;
+			case "encodeURI":
+				ig.Emit (OpCodes.Call, go.GetMethod ("encodeURI"));
+				break;
+			case "encodeURIComponent":
+				ig.Emit (OpCodes.Call, go.GetMethod ("encodeURIComponent"));
+				break;				
+			/* constructor properties of the Global object */
+			case "Object":
+				ig.Emit (OpCodes.Call, go.GetProperty ("Object").GetGetMethod ());
+				break;
+			case "Function":
+				ig.Emit (OpCodes.Call, go.GetProperty ("Function").GetGetMethod ());
+				break;
+			case "Array":
+				ig.Emit (OpCodes.Call, go.GetProperty ("Array").GetGetMethod ());
+				break;
+			case "String":
+				ig.Emit (OpCodes.Call, go.GetProperty ("String").GetGetMethod ());
+				break;
+			case "Boolean":
+				ig.Emit (OpCodes.Call, go.GetProperty ("Boolean").GetGetMethod ());
+				break;
+			case "Number":
+				ig.Emit (OpCodes.Call, go.GetProperty ("Number").GetGetMethod ());
+				break;
+			case "Date":
+				ig.Emit (OpCodes.Call, go.GetProperty ("Date").GetGetMethod ());
+				throw new NotImplementedException ();
+				break;
+			case "RegExp":
+				ig.Emit (OpCodes.Call, go.GetProperty ("RegExp").GetGetMethod ());
+				break;
+			case "Error":
+				ig.Emit (OpCodes.Call, go.GetProperty ("Error").GetGetMethod ());
+				break;
+			case "EvalError":
+				ig.Emit (OpCodes.Call, go.GetProperty ("EvalError").GetGetMethod ());
+				break;
+			case "RangeError":
+				ig.Emit (OpCodes.Call, go.GetProperty ("RangeError").GetGetMethod ());
+				break;
+
+			case "ReferenceError":
+				ig.Emit (OpCodes.Call, go.GetProperty ("ReferenceError").GetGetMethod ());
+				break;
+
+			case "SyntaxError":
+				ig.Emit (OpCodes.Call, go.GetProperty ("SyntaxError").GetGetMethod ());
+				break;
+
+			case "TypeError":
+				ig.Emit (OpCodes.Call, go.GetProperty ("TypeError").GetGetMethod ());
+				break;
+
+			case "URIError":
+				ig.Emit (OpCodes.Call, go.GetProperty ("URIError").GetGetMethod ());
+				break;
+
+			/* other properties of the Global object */
+			case "Math":
+				ig.Emit (OpCodes.Call, go.GetProperty ("Math").GetGetMethod ());
+				break;
+			default:
+				throw new Exception ("This is BuiltIn " + name);
+			}
+		}
 	}
 }
