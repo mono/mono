@@ -1,3 +1,11 @@
+
+Sun Feb 9 18:37:01 CET 2003 Paolo Molaro <lupus@ximian.com>
+
+	* loader.c: implemented MEMBERREF_PARENT_TYPEDEF.
+	* metadata.c, reflection.c: missing MONO_TYPE_TYPEDBYREF handling.
+	* object.c: fixed mono_object_get_virtual_method () for interfaces.
+	* verify.c: check for code that runs after the end of the method.
+
 2003-02-08  Pedro Martínez Juliá  <yoros@wanadoo.es>
 
 	* icall.c: Added "System.Math::Floor", "System.Math::Round" and
@@ -4722,5 +4730,6 @@ Tue Jul  3 18:33:32 CEST 2001 Paolo Molaro <lupus@ximian.com>
 	Beta2. 
 
 	* mono/metadata/assembly.c (load_metadata_ptrs): Fix for Beta2
+
 
 
