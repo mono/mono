@@ -644,7 +644,12 @@ namespace System.Windows.Forms {
 					return collection_.IsReadOnly;
 				}
 			}
-			
+
+			object IList.this[int index] {
+				get { return collection_[index]; }
+				set { collection_[index] = value; }
+			}
+						
 			[MonoTODO]
 			public object this[int index] {
 				get { return collection_[index]; }
@@ -652,15 +657,12 @@ namespace System.Windows.Forms {
 			}
 
 			/// --- ICollection properties ---
+
 			bool IList.IsFixedSize {
 				[MonoTODO] get { return collection_.IsFixedSize; }
 			}
-			
-			//object IList.this[int index] {
-			//	get { return collection_[index]; }
-		//		set { collection_[index] = value; }
-		//	}
-	
+
+
 			object ICollection.SyncRoot {
 				get { return collection_.SyncRoot; }
 			}

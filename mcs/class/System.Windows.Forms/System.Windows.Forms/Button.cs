@@ -104,9 +104,9 @@ namespace System.Windows.Forms {
 		{
 			return base.ProcessMnemonic (charCode);
 		}
-		
+
 		[MonoTODO]
-		public override string ToString () 
+		public override string ToString ()
 		{
 			return base.ToString();
 		}
@@ -129,15 +129,15 @@ namespace System.Windows.Forms {
 			ControlPaint.DrawButton(e.Graphics, rc, btnState);
 
 			StringFormat format = new StringFormat();
-		//			format.Alignment = horizontalAlign;
-		//	format.LineAlignment = verticalAlign;
+			format.Alignment = horizontalAlign;
+			format.LineAlignment = verticalAlign;
 
 			if( (e.State & DrawItemState.Selected) != 0) {
 				// FIXME: FlatStyle.Flat uses color and not dext offset to show state
 				// FIXME: use SysMetrics to determine offset values ?
 				rc.Offset(2,2);
 			}
-			//e.Graphics.DrawString(Text, Font, SystemBrushes.ControlText, rc, format);
+			e.Graphics.DrawString(Text, Font, SystemBrushes.ControlText, rc, format);
 		}
 
 		protected override void WndProc (ref Message m) {

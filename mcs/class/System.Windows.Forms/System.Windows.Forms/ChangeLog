@@ -1,3 +1,10 @@
+ 2003-02-07  Alexandre Pigolkine <pigolkine@gmx.de>
+	* Font.cs 				removed
+	* Button.cs
+	* ControlPaint.cs
+	* ComboBox.cs
+						modified
+
  2003-02-06  Alexandre Pigolkine <pigolkine@gmx.de>
 
    * Button.cs             Painting code is implemented

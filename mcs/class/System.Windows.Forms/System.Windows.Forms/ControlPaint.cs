@@ -94,11 +94,11 @@ namespace System.Windows.Forms {
 			rc.top = rectangle.Top;
 			rc.right = rectangle.Right;
 			rc.bottom = rectangle.Bottom;
-			//IntPtr hdc = graphics.GetHdc();
-			//int res = Win32.DrawEdge( hdc, ref rc, Style, Sides);
-			//graphics.ReleaseHdc(hdc);
+			IntPtr hdc = graphics.GetHdc();
+			int res = Win32.DrawEdge( hdc, ref rc, Style, Sides);
+			graphics.ReleaseHdc(hdc);
 		}
-		
+
 		[MonoTODO]
 		public static void DrawBorder3D(
 			Graphics graphics, int x) {
@@ -110,12 +110,12 @@ namespace System.Windows.Forms {
 		//	Graphics graphics, int x) {
 		//	throw new NotImplementedException ();
 		//}
-		
+
 		[MonoTODO]
 		public static void DrawBorder3D( Graphics graphics, int x, int y, int width, int height) {
 			DrawBorder3D( graphics, new Rectangle(x, y, width, height));
 		}
-		
+
 		[MonoTODO]
 		public static void DrawBorder3D(Graphics graphics, int x, int y, int width, int height, Border3DStyle style) {
 			DrawBorder3D( graphics, new Rectangle(x, y, width, height), style);
@@ -134,17 +134,17 @@ namespace System.Windows.Forms {
 			rc.top = rectangle.Top;
 			rc.right = rectangle.Right;
 			rc.bottom = rectangle.Bottom;
-			//IntPtr hdc = graphics.GetHdc();
-			//int res = Win32.DrawFrameControl( hdc, ref rc, (uint)DrawFrameControl.DFC_BUTTON, 
-			//	(uint)state | (uint)DrawFrameControl.DFCS_BUTTONPUSH);
-			//graphics.ReleaseHdc(hdc);
+			IntPtr hdc = graphics.GetHdc();
+			int res = Win32.DrawFrameControl( hdc, ref rc, (uint)DrawFrameControl.DFC_BUTTON,
+				(uint)state | (uint)DrawFrameControl.DFCS_BUTTONPUSH);
+			graphics.ReleaseHdc(hdc);
 		}
-		
+
 		[MonoTODO]
 		public static void DrawButton( Graphics graphics, int x, int y, int width, int height, ButtonState state) {
 			DrawButton( graphics, new Rectangle(x, y, width, height), state);
 		}
-		
+
 		[MonoTODO]
 		public static void DrawCaptionButton(
 			Graphics graphics,
