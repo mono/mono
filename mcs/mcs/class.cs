@@ -5154,19 +5154,6 @@ namespace Mono.CSharp {
  			return true;
  		}
 
-		protected override bool DoDefine ()
-		{
-			if (!base.DoDefine ())
-				return false;
-
-			if (MemberType == TypeManager.void_type) {
-				Report.Error (1547, Location,
-					      "Keyword 'void' cannot be used in this context");
-				return false;
-			}
-			return true;
-		}
-
 		public override string GetSignatureForError ()
 		{
 			if (FieldBuilder == null) {
@@ -5246,6 +5233,12 @@ namespace Mono.CSharp {
 				return false;
 
 			MemberType = texpr.ResolveType (ec);
+
+			if (MemberType == TypeManager.void_type) {
+				Report.Error (1547, Location, "Keyword 'void' cannot be used in this context");
+				return false;
+			}
+
 			ec.InUnsafe = old_unsafe;
 
 			if (!CheckBase ())
@@ -6833,6 +6826,11 @@ namespace Mono.CSharp {
 			if (!base.Define ())
 				return false;
 
+			if (MemberType == TypeManager.void_type) {
+				Report.Error (620, Location, "Indexers cannot have void type");
+				return false;
+			}
+
 			if (OptAttributes != null) {
 				Attribute indexer_attr = OptAttributes.Search (TypeManager.indexer_name_type, ec);
 				if (indexer_attr != null) {
@@ -7065,6 +7063,11 @@ namespace Mono.CSharp {
 
 			if (!DoDefine ())
 				return false;
+
+			if (MemberType == TypeManager.void_type) {
+				Report.Error (590, Location, "User-defined operators cannot return void");
+				return false;
+			}
 
 			OperatorMethod = new Method (
 				Parent, Type, ModFlags, false, MemberName,

@@ -3557,7 +3557,7 @@ namespace Mono.CSharp {
 		public override void Emit (EmitContext ec)
 		{
 			if (instance_expr is This)
-				Report.Error (79, loc, "The event `{0}' can only appear on the left hand side of += or -=, try calling the actual delegate");
+				Report.Error (79, loc, "The event `{0}' can only appear on the left hand side of += or -=, try calling the actual delegate", Name);
 			else
 				Report.Error (70, loc, "The event `{0}' can only appear on the left hand side of += or -= "+
 					      "(except on the defining type)", Name);

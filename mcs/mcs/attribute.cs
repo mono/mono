@@ -345,6 +345,10 @@ namespace Mono.CSharp {
 
 				if (DoCompares){
 					if (usage_attr) {
+						if ((int)val == 0) {
+							Report.Error (591, Location, "Invalid value for argument to 'System.AttributeUsage' attribute");
+							return null;
+						}
 						usage_attribute = new AttributeUsageAttribute ((AttributeTargets)val);
 					} else if (MethodImplAttr) {
 						this.ImplOptions = (MethodImplOptions) val;

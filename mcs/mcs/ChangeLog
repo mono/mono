@@ -1,3 +1,16 @@
+2004-12-08  Marek Safar  <marek.safar@seznam.cz>
+
+	* attribute.cs (Resolve): Add error 591 detection.
+
+	* class.cs (FieldMember.Define): Add error 1547 detection.
+	(Indexer.Define): Add error 620 detection.
+	(Operator.Define): Add error 590 detection.
+
+	* ecore.cs: Missing argument for error 79.
+
+	* expression.cs (ComposedCast.DoResolveAsTypeStep): Add error 611
+	detection.
+
 2004-12-07  Marek Safar  <marek.safar@seznam.cz>
 
 	Fix #70106

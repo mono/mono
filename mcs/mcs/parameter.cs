@@ -177,7 +177,7 @@ namespace Mono.CSharp {
 			}
 
 			if (parameter_type == TypeManager.void_type){
-				Report.Error (1536, l, "`void' parameter is not permitted");
+				Report.Error (1536, l, "Invalid parameter type 'void'");
 				return false;
 			}
 

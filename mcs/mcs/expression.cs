@@ -8585,6 +8585,12 @@ namespace Mono.CSharp {
 				UnsafeError (loc);
 				return null;
 			}
+
+			if (type.IsArray && (type.GetElementType () == TypeManager.arg_iterator_type ||
+				type.GetElementType () == TypeManager.typed_reference_type)) {
+				Report.Error (611, loc, "Array elements cannot be of type '{0}'", TypeManager.CSharpName (type.GetElementType ()));
+				return null;
+			}
 			
 			eclass = ExprClass.Type;
 			return this;
