@@ -1,5 +1,7 @@
 2004-02-12  Zoltan Varga  <vargaz@freemail.hu>
 
+	* marshal10.cs: Oops, wrong test.
+
 	* libtest.c: Add valuetype marshaling test.
 
 	* marshal9.cs: Fix after marshaling changes.
