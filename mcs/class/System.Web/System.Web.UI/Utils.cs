@@ -31,7 +31,7 @@ namespace System.Web.UI
 			return retVal;
 		}
 		
-		internal static string GetClientValidatedEvent(/*Page page*/)
+		internal static string GetClientValidatedEvent(Page page)
 		{
 			return "if (typeof(Page_ClientValidate) == 'function') Page_ClientValidate();";
 		}
