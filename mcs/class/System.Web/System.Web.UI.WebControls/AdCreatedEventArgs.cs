@@ -20,13 +20,28 @@ namespace System.Web.UI.WebControls
 	{
 
 		private IDictionary adProperties;
-		private string      alternateText = string.Empty;
-		private string      imageUrl      = string.Empty;
-		private string      navigateUrl   = string.Empty;
+		private string      alternateText;
+		private string      imageUrl;
+		private string      navigateUrl;
 
 		public AdCreatedEventArgs(IDictionary adProperties)
 		{
+			super();
+			Initialize();
 			this.adProperties = adProperties;
+			if(adProperties!=null)
+			{
+				imageUrl = (string)adProperties.Item["ImageUrl"];
+				navigateUrl = (string)adProperties.Item["NavigateUrl"];
+				alternateText = (string)adProperties.Item["AlternateText"];
+			}
+		}
+		
+		private void Initialize()
+		{
+			alternateText = string.Empty;
+			imageUrl      = string.Empty;
+			navigateUrl   = string.Empty;
 		}
 		
 		public IDictionary AdProperties

@@ -21,33 +21,47 @@ namespace System.Web.UI.WebControls
 	{
 		//TODO: A list of private members may be incomplete
 
-		private HtmlTextWriterTag    writerTag;
-		private string               stringTag;
-		private AttributesCollection attributes;
-		private StateBag             attributeState;
-		private Style                controlStyle;
+		private HtmlTextWriterTag   writerTag;
+		private string              stringTag;
+		private AttributeCollection attributes;
+		private StateBag            attributeState;
+		private Style               controlStyle;
+		private bool                enabled;
+		private HtmlTextWriterTag   tagKey;
+		private string              tagName;
 
 		// TODO: The constructors definitions
 		protected WebControl()
 		{
-			//todo: what now?
-			controlStyle = null;
+			//todo: what now? To be rendered as SPAN tag!
+			base();
+			Initialize();
 		}
 		
 		public WebControl(HtmlTextWriterTag tag)
 		{
-			//TODO: am i right?
+			//FIXME: am i right?
+			base();
 			writerTag = tag;
-			stringTag = null;
-			controlStyle = null;
+			//stringTag = null;
+			Initialize();
 		}
 
 		protected WebControl(string tag)
 		{
-			//TODO: am i right?
+			//FIXME: am i right?
+			base();
 			stringTag = tag;
-			writerTag = null;
-			controlStyle = null;
+			//writerTag = null;
+			Initialize();
+		}
+		
+		private void Initialize()
+		{
+			controlStyle   = null;
+			enabled        = true;
+			tagName        = null;
+			attributeState = null;
 		}
 		
 		public virtual string AccessKey
@@ -67,20 +81,28 @@ namespace System.Web.UI.WebControls
 		
 		public AttributeCollection Attributes
 		{
-			if(attributes==null)
+			get
 			{
-				//TODO: From where to get StateBag and how? I think this method is OK!
-				if(attributeState == null)
+				if(attributes==null)
 				{
-					attributeState = new StateBag(true);
-					if(attributeState.IsTrackingViewState)
+					//TODO: From where to get StateBag and how? I think this method is OK!
+					if(attributeState == null)
 					{
-						attributeState.TrackViewState();
+						attributeState = new StateBag(true);
+						//FIXME: Uncomment the following in the final release
+						// commented because of the assembly problem.
+						//The function TrackViewState() is internal
+						/*
+						if(IsTrackingViewState)
+						{
+							attributeState.TrackViewState();
+						}
+						*/
 					}
+					attributes = new AttributeCollection(attributeState);
 				}
-				attributes = new AttributeCollection(attributes);
+				return attributes;
 			}
-			return attributes;
 		}
 		
 		public Style ControlStyle		
@@ -90,11 +112,16 @@ namespace System.Web.UI.WebControls
 				if(controlStyle == null)
 				{
 					controlStyle = CreateControlStyle();
+					//FIXME: Uncomment the following in the final release
+					// commented because of the assembly problem.
+					//The functions TrackViewState() and LoadViewState() are internal
+					/*
 					if(IsTrackingViewState)
 					{
 						controlStyle.TrackViewState();
 					}
 					controlStyle.LoadViewState(null);
+					*/
 				}
 				return controlStyle;
 			}
@@ -112,27 +139,273 @@ namespace System.Web.UI.WebControls
 		{
 			get
 			{
-				if(ControlStyleCreated)
-					return controlStyle.CssClass;
-				return String.Empty;
+				return ControlStyle.CssClass;
+			}
+			set
+			{
+				ControlStyle.CssClass = value;
 			}
 		}
 		
-		public 
+		public virtual bool Enabled
+		{
+			get
+			{
+				return enabled;
+			}
+			set
+			{
+				enabled = value;
+			}
+		}
+
+		public virtual FontInfo Font
+		{
+			get
+			{
+				return ControlStyle.Font;
+			}
+		}
+		
+		public virtual Color ForeColor
+		{
+			get
+			{
+				return ControlStyle.ForeColor;
+			}
+			set
+			{
+				ControlStyle.ForeColor = value;
+			}
+		}
+		
+		public virtual Unit Height
+		{
+			get
+			{
+				return ControlStyle.Height;
+			}
+			set
+			{
+				ControlStyle.Height = value;
+			}
+		}
+		
+		public CssStyleCollection Style
+		{
+			get
+			{
+				return Attributes.CssStyle;
+			}
+		}
+		
+		public virtual short TabIndex
+		{
+			get
+			{
+				object o = ViewState["TabIndex"];
+				if(o!=null)
+					return (short)o;
+				return 0;
+			}
+			set
+			{
+				if(value < -32768 || value > 32767)
+					throw new ArgumentException();
+				ViewState["TabIndex"] = value;
+			}
+		}
+		
+		public virtual string ToolTip
+		{
+			get
+			{
+				object o = ViewState["ToolTip"];
+				if(o!=null)
+					return (string)o;
+				return String.Empty;
+			}
+			set
+			{
+				ViewState["ToolTip"] = value;
+			}
+		}
+		
+		public virtual Unit Width
+		{
+			get
+			{
+				return ControlStyle.Width;
+			}
+			set
+			{
+				ControlStyle.Width = value;
+			}
+		}
+		
+		public void ApplyStyle(Style s)
+		{
+			/* FIXME: Again internal problem
+			if(!ControlStyle.IsEmpty)
+			{
+			*/
+				ControlStyle.CopyFrom(s);
+			//}
+		}
+		
+		public void CopyBaseAttributes(WebControl controlSrc)
+		{
+			//TODO: tocopy
+			/*
+			 * AccessKey, Enabled, ToolTip, TabIndex, Attributes
+			*/
+			AccessKey  = controlSrc.AccessKey;
+			Enabled    = controlSrc.Enabled;
+			ToolTip    = controlSrc.ToolTip;
+			TabIndex   = controlSrc.TabIndex;
+			Attributes = controlSrc.Attributes;
+		}
+		
+		public void MergeStyle(Style s)
+		{
+			ControlStyle.MergeWith(s);
+		}
+		
+		public virtual void RenderBeginTag(HtmlTextWriter writer)
+		{
+			AddAttributesToRender(writer);
+			if(TagKey!=null)
+			{
+				writer.RenderBeginTag(TagKey);
+			}
+			writer.RenderBeginTag(tagName);
+		}
+		
+		public virtual void RenderEndTag(HtmlTextWriter writer)
+		{
+			writer.RenderEndTag();
+		}
+		
+		protected virtual HtmlTextWriterTag TagKey
+		{
+			get
+			{
+				//FIXME: should I do new HtmlTextWriter()?
+				return tagKey;
+			}
+		}
+		
+		protected virtual string TagName
+		{
+			get
+			{
+				if(tagName==null)
+				{
+					if(tagKey == null)
+					{
+						//FIXME: If it is null, is this the right way? I don't think
+						tagKey = new HtmlTextWriter();
+					}
+					tagName = Enum.Format(typeof(tagKey), tagKey, "G").ToLower();
+				}
+				return tagName;
+			}
+		}
+		
+		protected virtual void AddAttributesToRender(HtmlTextWriter writer)
+		{
+			if(ID!=null)
+			{
+				writer.AddAttribute(HtmlTextWriterAttribute.Id, ClientID);
+			}
+			if(AccessKey.Length>0)
+			{
+				writer.AddAttribute(HtmlTextWriterAttribute.AccessKey, AccessKey);
+			}
+			if(!Enabled)
+			{
+				writer.AddAttribute(HtmlTextWriterAttribute.Disabled, "disabled");
+			}
+			if(ToolTip.Length>0)
+			{
+				writer.AddAttribute(HtmlTextWriterAttribute.Title, ToolTip);
+			}
+			if(TabIndex != 0)
+			{
+				writer.AddAttribute(HtmlTextWriterAttribute.TabIndex, TabIndex.ToString());
+			}
+			if(ControlStyleCreated)
+			{
+				if(!ControlStyle.IsEmpty)
+				{
+					ControlStyle.AddAttributesToRender(writer, this);
+				}
+			}
+			if(attributeState!=null)
+			{
+				IEnumerator ie = Attributes.Keys.GetEnumerator();
+				do
+				{
+					writer.AddAttribute((string)ie.Current, Attributes.Item[(string)ie.Current]);
+				} while(ie.MoveNext());
+			}
+		}
 		
 		protected virtual Style CreateControlStyle()
 		{
-			return new Style(ViewState); // from parent class Control
+			return new Style(ViewState);
+		}
+		
+		protected override void LoadViewState(object savedState)
+		{
+			//TODO: Load viewStates
+			/*
+			 * May be will have to first look at Control::LoadViewState 
+			*/
+		}
+		
+		protected override void Render(HtmlTextWriter writer)
+		{
+			RenderBeginTag(writer);
+			RenderContents(writer);
+			RenderEngTags(writer);
+		}
+		
+		protected override void RenderContents(HtmlTextWriter writer)
+		{
+			base.RenderContents(writer);
+		}
+		
+		protected override object SaveViewState()
+		{
+			//TODO: Implement me!
+			// THE LOST WORLD
+		}
+		
+		protected override void TrackViewState()
+		{
+			base.TrackViewState();
+			if(ControlStyleCreated)
+			{
+				ControlStyle.TrackViewState();
+			}
+			if(attributeState!=null)
+			{
+				attributeState.TrackViewState();
+			}
 		}
 		
 		// Implemented procedures
+		//TODO: The scope of the functions - is public valid. Test thru Reflection
 		public string GetAttribute(string key)
 		{
-			return "";
+			if(Attributes!=null)
+				return (string)Attributes[key];
 		}
 		
 		public void SetAttribute(string key, string val)
-		{			
+		{
+			Attributes.Item[key] = value;
 		}
 
 	}
