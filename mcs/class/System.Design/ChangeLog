@@ -1,5 +1,11 @@
 2004-06-11  Gert Driesen <drieseng@users.sourceforge.net>
 
+	* System.Design.dll.sources: added more stubs for classes
+	in System.Diagnostics.Design, System.Messaging.Design and
+	System.ServiceProcess.Design
+
+2004-06-11  Gert Driesen <drieseng@users.sourceforge.net>
+
 	* Makefile: added reference to System.Data assembly
 	* System.Design.dll.sources: added new stubbed classes
 
