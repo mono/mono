@@ -1,3 +1,7 @@
+2003-12-04  Martin Baulig  <martin@ximian.com>
+
+	* locales.c: also change it in the !HAVE_ICU case.
+
 2003-12-04  Dick Porter  <dick@ximian.com>
 
 	* icall.c:
