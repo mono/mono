@@ -1,3 +1,9 @@
+2004-07-28  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* Makefile: Install mcs.exe.config file together with mcs.exe.
+	* mcs.exe.config: Added supportedRuntime entry to make sure it runs in the
+	correct runtime version.
+	
 2004-07-25  Martin Baulig  <martin@ximian.com>
 
 	Merged latest changes into gmcs.  Please keep this comment in

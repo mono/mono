@@ -17,6 +17,11 @@ PROGRAM = mcs.exe
 PROGRAM_COMPILE = $(BOOT_COMPILE)
 PROGRAM_INSTALL_DIR = $(prefix)/lib/mono/1.0
 
+install-local: mcs.exe
+	$(MKINSTALLDIRS) $(DESTDIR)$(prefix)/lib/mono/1.0
+	$(INSTALL_BIN) mcs.exe $(DESTDIR)$(prefix)/lib/mono/1.0
+	$(INSTALL_DATA) mcs.exe.config $(DESTDIR)$(prefix)/lib/mono/1.0
+
 CLEAN_FILES = y.output
 
 cs-parser.cs: cs-parser.jay $(topdir)/jay/skeleton.cs
