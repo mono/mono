@@ -1,3 +1,9 @@
+2004-06-22  Raja R Harinath  <rharinath@novell.com>
+
+	Refine previous change to work with mcs 0.31.
+	* Consts.cs (UnmanagedType_80): While bootstrapping, refer to new
+	internal bootstrap-only define in UnmanagedType.
+
 2004-06-18  Raja R Harinath  <rharinath@novell.com>
 
 	* Consts.cs (UnmanagedType_80): New constant.  Used to workaround

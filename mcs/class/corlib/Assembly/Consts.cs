@@ -76,5 +76,9 @@ internal sealed class Consts
 
 #endif
 
+#if BOOTSTRAP_WITH_OLDLIB
+	public const UnmanagedType UnmanagedType_80 = UnmanagedType.__mono_bootstrap_NativeTypeMax;
+#else
 	public const UnmanagedType UnmanagedType_80 = (UnmanagedType) 80;
+#endif
 }
