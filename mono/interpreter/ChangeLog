@@ -1,3 +1,9 @@
+
+Fri Sep 12 10:42:08 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* interp.c, interp.h: patch from Bernie Solomon <bernard@ugsolutions.com>:
+	64 bit/opcodes/exception handling fixes.
+
 2003-08-30  Zoltan Varga  <vargaz@freemail.hu>
 
 	* interp.c: Use mono_field_from_token () in the appropriate places.
