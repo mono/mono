@@ -1,3 +1,13 @@
+2003-03-07  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpWebRequest.cs: implemented IDisposable, make the request stream
+	read only. Changed the way of disposing the socket.
+
+	* HttpWebResponse.cs: wrapped the socket in a write-only NetworkStream,
+	handle chunked transfer encoding (no more hangs), added serialization
+	stuff, call CheckDisposed at the beginning of methods/properties (not
+	in a finally clause).
+
 2003-02-17  Nick Drochak <ndrochak@gol.com>
 
 	* WebClient.cs : Implemented Credentials property.

@@ -1,8 +1,12 @@
 //
 // System.Net.HttpWebRequest
 //
-// Author:
-//   Lawrence Pit (loz@cable.a2000.nl)
+// Authors:
+// 	Lawrence Pit (loz@cable.a2000.nl)
+// 	Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//
+// (c) 2002 Lawrence Pit
+// (c) 2003 Ximian, Inc. (http://www.ximian.com)
 //
 
 using System;
@@ -12,12 +16,13 @@ using System.Net.Sockets;
 using System.Runtime.Remoting.Messaging;
 using System.Runtime.Serialization;
 using System.Security.Cryptography.X509Certificates;
+using System.Text;
 using System.Threading;
 
 namespace System.Net 
 {
 	[Serializable]
-	public class HttpWebRequest : WebRequest, ISerializable
+	public class HttpWebRequest : WebRequest, ISerializable, IDisposable
 	{
 		private Uri requestUri;
 		private Uri actualUri = null;
@@ -43,11 +48,15 @@ namespace System.Net
 		private ServicePoint servicePoint = null;
 		private int timeout = System.Threading.Timeout.Infinite;
 		
-		private Stream requestStream = null;
+		private HttpWebRequestStream requestStream = null;
 		private HttpWebResponse webResponse = null;
 		private AutoResetEvent requestEndEvent = null;
 		private bool requesting = false;
 		private bool asyncResponding = false;
+		private Socket socket;
+		private bool requestClosed = false;
+		private bool responseClosed = false;
+		private bool disposed;
 		
 		// Constructors
 		
@@ -457,8 +466,12 @@ namespace System.Net
 		
 		internal Stream GetRequestStreamInternal ()
 		{
-		        if (this.requestStream == null)
-				this.requestStream = new HttpWebStream (this);
+		        if (this.requestStream == null) {
+				this.requestStream = new HttpWebRequestStream (this,
+										GetSocket (),
+										new EventHandler (OnClose));
+			}
+
 			return this.requestStream;
 		}
 		
@@ -507,17 +520,19 @@ namespace System.Net
 			return EndGetResponse (asyncResult);
 		}
 		
-		public WebResponse GetResponseInternal ()
+		WebResponse GetResponseInternal ()
 		{
 			if (webResponse != null)
 				return webResponse;			
 
-			Stream responseStream = this.requestStream == null ? 
-				new HttpWebStream (this) : this.requestStream;
-			do {
- 				this.webResponse = new HttpWebResponse (this.actualUri, method, responseStream);
-			} while (this.webResponse.StatusCode == HttpStatusCode.Continue);
- 			return (WebResponse) this.webResponse;
+			GetRequestStreamInternal (); // Make sure we do the request
+
+			webResponse = new HttpWebResponse (this.actualUri,
+							   method,
+							   GetSocket (),
+							   timeout,
+							   new EventHandler (OnClose));
+ 			return webResponse;
 		}
 
 		[MonoTODO]		
@@ -534,6 +549,32 @@ namespace System.Net
 			throw new NotImplementedException ();
 		}
 		
+		~HttpWebRequest ()
+		{
+			Dispose (false);
+		}		
+		
+		void IDisposable.Dispose ()
+		{
+			Dispose (true);
+			GC.SuppressFinalize (this);
+		}
+		
+		protected virtual void Dispose (bool disposing)
+		{
+			if (disposed)
+				return;
+
+			disposed = true;
+			if (disposing) {
+				Close ();
+			}
+
+			requestStream = null;
+			webResponse = null;
+			socket = null;
+		}
+		
 		// Private Methods
 		
 		private void CheckRequestStarted () 
@@ -544,10 +585,11 @@ namespace System.Net
 		
 		internal void Close ()
 		{
-			// already done in class below
-			// if (requestStream != null) {
-			// 	requestStream.Close ();
-			// }
+			if (requestStream != null)
+			 	requestStream.Close ();
+
+			if (webResponse != null)
+			 	webResponse.Close ();
 
 			lock (this) {			
 				requesting = false;
@@ -557,50 +599,94 @@ namespace System.Net
 			}
 		}
 		
+		void OnClose (object sender, EventArgs args)
+		{
+			if (sender == requestStream)
+				requestClosed = true;
+			else if (sender == webResponse)
+				responseClosed = true;
+
+			// TODO: if both have been used, wait until both are Closed. That's what MS does.
+			if (requestClosed && responseClosed && socket != null && socket.Connected)
+				socket.Close ();
+		}
+		
+		Socket GetSocket ()
+		{
+			if (socket != null)
+				return socket;
+
+			IPAddress hostAddr = Dns.Resolve (actualUri.Host).AddressList[0];
+			IPEndPoint endPoint = new IPEndPoint (hostAddr, actualUri.Port);
+			socket = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+
+			socket.Connect (endPoint);
+			if (!socket.Poll (timeout, SelectMode.SelectWrite))
+				throw new WebException("Connection timed out.", WebExceptionStatus.Timeout);
+
+			return socket;
+		}
+		
 		// Private Classes
 		
 		// to catch the Close called on the NetworkStream
-		internal class HttpWebStream : NetworkStream
+		internal class HttpWebRequestStream : NetworkStream
 		{
-			HttpWebRequest webRequest;
+			bool disposed;
+			EventHandler onClose;
 			
-			internal HttpWebStream (HttpWebRequest webRequest) 
-				: base (HttpWebStream.CreateSocket (webRequest), true)
+			internal HttpWebRequestStream (HttpWebRequest webRequest,
+							Socket socket,
+							EventHandler onClose)
+				: base (socket, FileAccess.Write, false)
 			{
-				StreamWriter webWriter = null;
+				this.onClose = onClose;
+				StringBuilder sb = new StringBuilder ();
+				sb.Append (webRequest.Method + " " + 
+					   webRequest.actualUri.PathAndQuery +
+					   " HTTP/" +
+					   webRequest.version.ToString (2) +
+					   "\r\n");
 
-				webWriter = new StreamWriter (this);
-	
-				webWriter.Write (webRequest.Method + " " + 
-					webRequest.actualUri.PathAndQuery + " HTTP/" + webRequest.version.ToString(2) + "\r\n");
-
-				foreach (string header in webRequest.webHeaders)
-					webWriter.Write (header + ": " + webRequest.webHeaders[header] + "\r\n");
+				foreach (string header in webRequest.webHeaders) {
+					sb.Append (header + ": " + webRequest.webHeaders[header] + "\r\n");
+				}
 
 				// FIXME: write cookie headers (CookieContainer not yet implemented)
 
-				webWriter.Write ("\r\n");
-				webWriter.Flush();
-
-				this.webRequest = webRequest;
+				sb.Append ("\r\n");
+				byte [] bytes = Encoding.ASCII.GetBytes (sb.ToString ());
+				if (!socket.Poll (webRequest.Timeout, SelectMode.SelectWrite))
+					throw new WebException("The request timed out", WebExceptionStatus.Timeout);
+				
+				this.Write (bytes, 0, bytes.Length);
 			}
-		
-			private static Socket CreateSocket (HttpWebRequest webRequest)
+
+			protected override void Dispose (bool disposing)
 			{
-				IPAddress hostAddr = Dns.Resolve (webRequest.actualUri.Host).AddressList[0];
-				IPEndPoint endPoint = new IPEndPoint (hostAddr, webRequest.actualUri.Port);
-				Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream,
-					ProtocolType.Tcp);
+				if (disposed)
+					return;
 
-				socket.Connect (endPoint);
-				return socket;
+				disposed = true;
+				if (disposing) {
+					/* This does not work !??
+					if (socket.Connected)
+						socket.Shutdown (SocketShutdown.Send);
+					*/
+					if (onClose != null)
+						onClose (this, EventArgs.Empty);
+				}
+
+				onClose = null;
+				base.Dispose (disposing);
 			}
-					   	
+			
 			public override void Close() 
 			{
-				base.Close ();
-				webRequest.Close ();
+				GC.SuppressFinalize (this);
+				Dispose (true);
 			}
 		}		
 	}
 }
+
