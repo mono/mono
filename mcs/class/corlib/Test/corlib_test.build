@@ -61,9 +61,7 @@
 				<excludes name="**/MartinTests.cs"/>
 				<excludes name="TheTests.cs"/>
 				<excludes name="System/IntegerFormatterTest.cs"/>
-				<excludes name="System/EnumTest.cs"/>
 				<excludes name="System.Security.Policy/*.cs"/>
-				<excludes name="System.Collections/ArrayListTest.cs"/>
 			</sources>
 			<references basedir="..\..\..\nunit">
 				<includes name="NUnitCore_mono.dll"/>
