@@ -1,3 +1,7 @@
+2003-09-28    <cesar@ciencias.unam.mx>
+
+	* Add VsaItems.cs, implements IVsaItems.
+
 2003-09-22    <cesar@ciencias.unam.mx>
 
 	* DocumentContext.cs: changed constructor from internal to public,
