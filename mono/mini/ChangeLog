@@ -1,5 +1,16 @@
 2004-03-08  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini.c (mini_get_ldelema_ins): Instead of allways calling the same
+	function, register a separate icall for each arity, so the icalls can
+	get a wrapper.
+	
+	* mini.c (mono_print_tree): Print negative offsets in a more readable
+	form.
+	
+	* mini.c: Make signal handling work on sparc.
+	
+	* mini.c (mini_init): Add emulation for lconv_to_r8_un.
+
 	* inssel-long32.brg: Fix OP_LSUB_OVF_UN rule.
 
 	* jit-icalls.c: Emulate truncl by aintl on solaris.
