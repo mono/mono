@@ -1,3 +1,43 @@
+2001-12-19  Miguel de Icaza  <miguel@ximian.com>
+
+	* tree.cs: Keep track of namespaces in a per-file basis.
+
+	* parameter.cs (Parameter.ComputeSignature): Update to use
+	DeclSpace. 
+
+	(Parameters.GetSignature): ditto.
+
+	* interface.cs (InterfaceMethod.GetSignature): Take a DeclSpace
+	instead of a TypeContainer.
+
+	(Interface.SemanticAnalysis): Use `this' instead of our parent to
+	resolve names.  Because we need to be resolve in our context, not
+	our parents.
+	
+	* driver.cs: Implement response files.
+
+	* class.cs (TypeContainer.DefineType): If we are defined, do not
+	redefine ourselves.
+	
+	(Event.Emit): Emit the code for add/remove handlers.
+	(Event.Define): Save the MethodBuilders for add/remove.
+
+	* typemanager.cs: Use pair here too.
+
+	* cs-parser.jay: Replaced use of DictionaryEntry for Pair because
+	DictionaryEntry requires the first argument to be non-null.  
+	
+	(enum_declaration): Compute full name for registering the
+	enumeration.
+	
+	(delegate_declaration): Instead of using
+	formal_parameter_list, use opt_formal_parameter_list as the list
+	can be empty.
+
+	* cs-tokenizer.cs (PropertyParsing): renamed from `properties'
+	(EventParsing): New property that controls whether `add' and
+	`remove' are returned as tokens or identifiers (for events);
+
 2001-12-19  Ravi Pratap  <ravi@ximian.com>
 
 	* class.cs (Event.Define): Revamp use of EventBuilder completely. We now

@@ -83,17 +83,26 @@ namespace Mono.CSharp
 			classes.Add (name, c);
 		}
 
-		public Namespace RecordNamespace (Namespace parent, string name)
+		public Namespace RecordNamespace (Namespace parent, string file, string name)
 		{
 			if (namespaces == null)
 				namespaces = new Hashtable ();
 												     
 			Namespace ns = new Namespace (parent, name);
 
-			if (namespaces.Contains (ns.Name))
-				return (Namespace) namespaces [ns.Name];
-			
-			namespaces.Add (ns.Name, ns);
+			if (namespaces.Contains (file)){
+				Hashtable ns_ns = (Hashtable) namespaces [file];
+
+				if (ns_ns.Contains (ns.Name))
+					return (Namespace) ns_ns [ns.Name];
+				ns_ns.Add (ns.Name, ns);
+			} else {
+				Hashtable new_table = new Hashtable ();
+				namespaces [file] = new_table;
+
+				new_table.Add (ns.Name, ns);
+			}
+
 			return ns;
 		}
 		

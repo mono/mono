@@ -57,7 +57,7 @@ namespace Mono.CSharp {
 		//
 		static ArrayList type_container_resolve_order;
 		static ArrayList interface_resolve_order;
-		
+
 		//
 		// Holds a reference to the Private Implementation Details
 		// class.
@@ -99,6 +99,16 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public static void RegisterOrder (Interface iface)
+		{
+			interface_resolve_order.Add (iface);
+		}
+		
+		public static void RegisterOrder (TypeContainer tc)
+		{
+			type_container_resolve_order.Add (tc);
+		}
+		
 		// 
 		// The default compiler checked state
 		//
@@ -138,20 +148,14 @@ namespace Mono.CSharp {
 			if (ifaces != null){
 				interface_resolve_order = new ArrayList ();
 				
-				foreach (Interface i in ifaces) {
-					Type t = i.DefineInterface (mb);
-					if (t != null)
-						interface_resolve_order.Add (i);
-				}
+				foreach (Interface i in ifaces) 
+					i.DefineInterface (mb);
 			}
 						
 			type_container_resolve_order = new ArrayList ();
 			
-			foreach (TypeContainer tc in root.Types) {
-				Type t = tc.DefineType (mb);
-				if (t != null)
-					type_container_resolve_order.Add (tc);
-			}
+			foreach (TypeContainer tc in root.Types) 
+				tc.DefineType (mb);
 
 			if (root.Delegates != null)
 				foreach (Delegate d in root.Delegates) 
@@ -212,7 +216,7 @@ namespace Mono.CSharp {
 		static public Type LookupType (DeclSpace ds, string name, bool silent)
 		{
 			Type t;
-
+			
 			t = TypeManager.LookupType (MakeFQN (ds.Namespace.Name, name));
 			if (t != null)
 				return t;

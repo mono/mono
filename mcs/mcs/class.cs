@@ -610,6 +610,7 @@ namespace Mono.CSharp {
 					int j = 0;
 					foreach (MethodInfo m in mi){
 						Type [] types = TypeManager.GetArgumentTypes (m);
+
 						pending_implementations [i].args [j] = types;
 						j++;
 					}
@@ -626,11 +627,23 @@ namespace Mono.CSharp {
 					abstract_method_filter, null);
 
 				if (abstract_methods != null){
-					pending_implementations [i].methods = new
-						MethodInfo [abstract_methods.Length];
+					int count = abstract_methods.Length;
+					pending_implementations [i].methods = new MethodInfo [count];
 					
 					abstract_methods.CopyTo (pending_implementations [i].methods, 0);
+					pending_implementations [i].found = new bool [count];
+					pending_implementations [i].args = new Type [count][];
 					pending_implementations [i].type = TypeBuilder;
+
+					int j = 0;
+					foreach (MemberInfo m in abstract_methods){
+						MethodInfo mi = (MethodInfo) m;
+						
+						Type [] types = TypeManager.GetArgumentTypes (mi);
+
+						pending_implementations [i].args [j] = types;
+						j++;
+					}
 				}
 			}
 			
@@ -851,6 +864,9 @@ namespace Mono.CSharp {
 			Type [] ifaces;
 			bool error;
 			bool is_class;
+
+			if (TypeBuilder != null)
+				return TypeBuilder;
 			
 			if (InTransit)
 				return null;
@@ -869,7 +885,6 @@ namespace Mono.CSharp {
 			
 			if (parent_builder is ModuleBuilder) {
 				ModuleBuilder builder = (ModuleBuilder) parent_builder;
-
 				//
 				// Structs with no fields need to have a ".size 1"
 				// appended
@@ -887,6 +902,7 @@ namespace Mono.CSharp {
 									  TypeAttr,
 									  parent,
 									  ifaces);
+
 			} else {
 				TypeBuilder builder = (TypeBuilder) parent_builder;
 				
@@ -910,7 +926,8 @@ namespace Mono.CSharp {
 			}
 
 			RootContext.TypeManager.AddUserType (Name, TypeBuilder, this);
-
+			RootContext.RegisterOrder (this);
+			
 			if (Types != null) {
 				foreach (TypeContainer tc in Types)
 					tc.DefineType (TypeBuilder);
@@ -945,22 +962,39 @@ namespace Mono.CSharp {
 			remove_list.Clear ();
 
 			foreach (MemberCore mc in list){
-				if (defined_names != null){
-					idx = Array.BinarySearch (defined_names, mc.Name, mif_compare);
-					
-					if ((mc.ModFlags & Modifiers.NEW) == 0){
-						if (idx >= 0)
-							Report108 (mc.Location, defined_names [idx]);
-					} else {
-						if (RootContext.WarningLevel >= 4){
-							if (idx < 0)
-								Report109 (mc.Location, mc);
-						}
-					}
-				}
-				
-				if (!mc.Define (this))
+				if (!mc.Define (this)){
 					remove_list.Add (mc);
+					continue;
+				}
+						
+				if (defined_names == null)
+					continue;
+				
+				idx = Array.BinarySearch (defined_names, mc.Name, mif_compare);
+				
+				if (idx < 0){
+					if (RootContext.WarningLevel >= 4){
+						if ((mc.ModFlags & Modifiers.NEW) != 0)
+							Report109 (mc.Location, mc);
+					}
+					continue;
+				}
+
+#if WANT_TO_VERIFY_SIGNATURES_HERE
+				if (defined_names [idx] is MethodBase && mc is MethodCore){
+					MethodBase mb = (MethodBase) defined_names [idx];
+					MethodCore met = (MethodCore) mc;
+					
+					if ((mb.IsVirtual || mb.IsAbstract) &&
+					    (mc.ModFlags & Modifiers.OVERRIDE) != 0)
+						continue;
+
+					//
+					// FIXME: Compare the signatures here.  If they differ,
+					// then: `continue;' 
+				}
+#endif
+				Report108 (mc.Location, defined_names [idx]);
 			}
 			
 			foreach (object o in remove_list)
@@ -975,10 +1009,14 @@ namespace Mono.CSharp {
 		public override bool Define (TypeContainer parent)
 		{
 			MemberInfo [] defined_names = null;
-			
+
 			if (RootContext.WarningLevel > 1){
 				Type ptype;
-				
+
+				//
+				// This code throws an exception in the comparer
+				// I guess the string is not an object?
+				//
 				ptype = TypeBuilder.BaseType;
 				if (ptype != null){
 					defined_names = FindMembers (
@@ -989,7 +1027,7 @@ namespace Mono.CSharp {
 					Array.Sort (defined_names, mif_compare);
 				}
 			}
-
+			
 			if (constants != null)
 				DefineMembers (constants, defined_names);
 
@@ -1027,7 +1065,7 @@ namespace Mono.CSharp {
 				DefineMembers (constructors, null);
 
 			if (methods != null)
-				DefineMembers (methods, defined_names);
+				DefineMembers (methods, null);
 
 			if (properties != null)
 				DefineMembers (properties, defined_names);
@@ -1056,10 +1094,6 @@ namespace Mono.CSharp {
 			if (delegates != null)
 				DefineMembers (delegates, defined_names);
 
-			//
-			// FIXME: As above, typecontainers should be MemberCores,
-			// so DeclSpaces should be MemberCores for 108 and 109
-			//
 			if (types != null)
 				DefineMembers (types, defined_names);
 
@@ -1308,6 +1342,11 @@ namespace Mono.CSharp {
 						i++;
 						continue;
 					}
+
+					if (tm.args == null){
+						Console.WriteLine ("Type:    " + tm.type);
+						Console.WriteLine ("method:  " + tm.methods [i]);
+					}
 					
 					if (tm.args [i] == null){
 						i++;
@@ -1420,10 +1459,11 @@ namespace Mono.CSharp {
 				foreach (Field f in fields)
 					f.Emit (this);
 
-			if (events != null)
+			if (events != null){
 				foreach (Event e in Events)
 					e.Emit (this);
-			
+			}
+
 			if (pending_implementations != null)
 				if (!VerifyPendingMethods ())
 					return;
@@ -2965,7 +3005,9 @@ namespace Mono.CSharp {
 		public readonly Block     Remove;
 		public MyEventBuilder     EventBuilder;
 		public Attributes         OptAttributes;
+
 		Type EventType;
+		MethodBuilder AddBuilder, RemoveBuilder;
 
 		public Event (string type, string name, Object init, int flags, Block add_block,
 			      Block rem_block, Attributes attrs, Location loc)
@@ -2986,7 +3028,6 @@ namespace Mono.CSharp {
 			
 			MethodAttributes m_attr = Modifiers.MethodAttr (ModFlags);
 			EventAttributes e_attr = EventAttributes.RTSpecialName | EventAttributes.SpecialName;
-			MethodBuilder mb;
 
 			EventType = parent.LookupType (Type, false);
 			if (EventType == null)
@@ -3008,10 +3049,10 @@ namespace Mono.CSharp {
 			EventBuilder = new MyEventBuilder (parent.TypeBuilder, Name, e_attr, EventType);
 			
 			if (Add != null) {
-				mb = parent.TypeBuilder.DefineMethod ("add_" + Name, m_attr, null,
-								      parameters);
-				mb.DefineParameter (1, ParameterAttributes.None, "value");
-				EventBuilder.SetAddOnMethod (mb);
+				AddBuilder = parent.TypeBuilder.DefineMethod (
+					"add_" + Name, m_attr, null, parameters);
+				AddBuilder.DefineParameter (1, ParameterAttributes.None, "value");
+				EventBuilder.SetAddOnMethod (AddBuilder);
 				//
 				// HACK because System.Reflection.Emit is lame
 				//
@@ -3020,7 +3061,7 @@ namespace Mono.CSharp {
 				InternalParameters ip = new InternalParameters (
 					parent, new Parameters (parms, null)); 
 				
-				if (!TypeManager.RegisterMethod (mb, ip, parameters)) {
+				if (!TypeManager.RegisterMethod (AddBuilder, ip, parameters)) {
 					Report.Error (111, Location,
 					       "Class `" + parent.Name + "' already contains a definition with the " +
 					       "same return value and parameter types for the " +
@@ -3030,10 +3071,10 @@ namespace Mono.CSharp {
 			}
 
 			if (Remove != null) {
-				mb = parent.TypeBuilder.DefineMethod ("remove_" + Name, m_attr, null,
-								      parameters);
-				mb.DefineParameter (1, ParameterAttributes.None, "value");
-				EventBuilder.SetRemoveOnMethod (mb);
+				RemoveBuilder = parent.TypeBuilder.DefineMethod (
+					"remove_" + Name, m_attr, null, parameters);
+				RemoveBuilder.DefineParameter (1, ParameterAttributes.None, "value");
+				EventBuilder.SetRemoveOnMethod (RemoveBuilder);
 
 				//
 				// HACK because System.Reflection.Emit is lame
@@ -3043,7 +3084,7 @@ namespace Mono.CSharp {
 				InternalParameters ip = new InternalParameters (
 					parent, new Parameters (parms, null));
 				
-				if (!TypeManager.RegisterMethod (mb, ip, parameters)) {
+				if (!TypeManager.RegisterMethod (RemoveBuilder, ip, parameters)) {
 					Report.Error (111, Location,	
 				       "Class `" + parent.Name + "' already contains a definition with the " +
 					       "same return value and parameter types for the " +
@@ -3057,6 +3098,22 @@ namespace Mono.CSharp {
 		public void Emit (TypeContainer tc)
 		{
 			EmitContext ec = new EmitContext (tc, Location, null, EventType, ModFlags);
+
+			ILGenerator ig;
+			
+			if (Add != null){
+				ig = AddBuilder.GetILGenerator ();
+				ec = new EmitContext (tc, Location, ig, TypeManager.void_type, ModFlags);
+				
+				ec.EmitTopBlock (Add);
+			}
+
+			if (Remove != null){
+				ig = RemoveBuilder.GetILGenerator ();
+				ec = new EmitContext (tc, Location, ig, TypeManager.void_type, ModFlags);
+				
+				ec.EmitTopBlock (Remove);
+			}
 
 			if (OptAttributes == null)
 				return;

@@ -3526,7 +3526,8 @@ namespace Mono.CSharp {
 					}
 					
 				} else if (underlying_type == TypeManager.float_type) {
-
+#if __MonoCS__
+#else
 					unsafe {
 						float val = 0;
 
@@ -3538,9 +3539,10 @@ namespace Mono.CSharp {
 						for (int j = 0; j < factor; ++j)
 							data [(i * factor) + j] = (byte) ptr [j];
 					}
-					
+#endif
 				} else if (underlying_type == TypeManager.double_type) {
-
+#if __MonoCS__
+#else
 					unsafe {
 						double val = 0;
 
@@ -3552,7 +3554,7 @@ namespace Mono.CSharp {
 						for (int j = 0; j < factor; ++j)
 							data [(i * factor) + j] = (byte) ptr [j];
 					}
-				  
+#endif
 				} else {
 
 					int val = 0;

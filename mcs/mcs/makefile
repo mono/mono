@@ -37,6 +37,12 @@ TEST_TOKENIZER_SOURCES = test-token.cs $(COMMON_SOURCES)
 all: cs-parser.cs
 	$(CSC) $(CSCFLAGS) /target:exe /r:System.dll /out:mcs.exe $(COMPILER_SOURCES)
 
+res:
+	echo --target exe -o mcs2.exe $(COMPILER_SOURCES) > response
+
+dum: cs-parser.cs
+	./mcs --fatal --target exe -o mcs2.exe $(COMPILER_SOURCES)
+
 docs: cs-parser.cs
 	$(CSC) $(CSCFLAGS) /doc:docs.xml /nowarn:1591 /target:exe /r:System.dll /out:mcs.exe $(COMPILER_SOURCES)
 

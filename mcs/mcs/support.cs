@@ -192,13 +192,29 @@ namespace Mono.CSharp {
 
 		public int Compare (object a, object b)
 		{
+			if (a == null || b == null){
+				Console.WriteLine ("Invalid information passed");
+				throw new Exception ();
+			}
+			
 			if (a is string)
 				return String.Compare ((string) a, ((MemberInfo)b).Name);
 
 			if (b is string)
 				return String.Compare (((MemberInfo)a).Name, (string) b);
+
 			return String.Compare (((MemberInfo)a).Name, ((MemberInfo)b).Name);
 		}
 	}
 
+	struct Pair {
+		public object First;
+		public object Second;
+		
+		public Pair (object f, object s)
+			{
+				First = f;
+				Second = s;
+			}
+	}
 }

@@ -10,6 +10,10 @@ Major tasks:
 BUGS
 ----
 
+* Currently the code path for 108/109 reporting is not being ran for methods
+  as we need to compare method signatures.  But since we retrieve the expensive
+  method arguments in the method, we probably should do 108/109 processing there.
+
 * Emit warning on hiding members without NEW not only in members.
 
 * Implement visibility.

@@ -139,14 +139,14 @@ namespace Mono.CSharp {
 			}
 		}
 		
-		public void ComputeSignature (TypeContainer tc)
+		public void ComputeSignature (DeclSpace ds)
 		{
 			signature = "";
 			if (FixedParameters != null){
 				for (int i = 0; i < FixedParameters.Length; i++){
 					Parameter par = FixedParameters [i];
 					
-					signature += par.GetSignature (tc);
+					signature += par.GetSignature (ds);
 				}
 			}
 			//
@@ -155,7 +155,7 @@ namespace Mono.CSharp {
 			//
 		}
 
-		public bool VerifyArgs (TypeContainer tc)
+		public bool VerifyArgs ()
 		{
 			int count;
 			int i, j;
@@ -181,11 +181,11 @@ namespace Mono.CSharp {
 		///    Returns the signature of the Parameters evaluated in
 		///    the @tc environment
 		/// </summary>
-		public string GetSignature (TypeContainer tc)
+		public string GetSignature (DeclSpace ds)
 		{
 			if (signature == null){
-				VerifyArgs (tc);
-				ComputeSignature (tc);
+				VerifyArgs ();
+				ComputeSignature (ds);
 			}
 			
 			return signature;
@@ -219,7 +219,7 @@ namespace Mono.CSharp {
 			return null;
 		}
 
-		bool ComputeParameterTypes (TypeContainer tc)
+		bool ComputeParameterTypes (DeclSpace ds)
 		{
 			int extra = (ArrayParameter != null) ? 1 : 0;
 			int i = 0;
@@ -227,7 +227,7 @@ namespace Mono.CSharp {
 			
 			types = new Type [pc];
 			
-			if (!VerifyArgs (tc)){
+			if (!VerifyArgs ()){
 				FixedParameters = null;
 				return false;
 			}
@@ -235,7 +235,7 @@ namespace Mono.CSharp {
 			foreach (Parameter p in FixedParameters){
 				Type t = null;
 				
-				if (p.Resolve (tc))
+				if (p.Resolve (ds))
 					t = p.ExternalType ();
 				
 				types [i] = t;
@@ -243,7 +243,7 @@ namespace Mono.CSharp {
 			}
 
 			if (extra > 0){
-				if (ArrayParameter.Resolve (tc))
+				if (ArrayParameter.Resolve (ds))
 					types [i] = ArrayParameter.ExternalType ();
 			}
 
@@ -255,7 +255,7 @@ namespace Mono.CSharp {
 		/// </summary>
 		static Type [] no_types = new Type [0];
 		
-		public Type [] GetParameterInfo (TypeContainer tc)
+		public Type [] GetParameterInfo (DeclSpace ds)
 		{
 			if (types != null)
 				return types;
@@ -263,7 +263,7 @@ namespace Mono.CSharp {
 			if (FixedParameters == null)
 				return no_types;
 
-			if (ComputeParameterTypes (tc) == false)
+			if (ComputeParameterTypes (ds) == false)
 				return null;
 			
 			return types;
@@ -276,11 +276,11 @@ namespace Mono.CSharp {
 		///   Note that the returned type will not contain any dereference in this
 		///   case (ie, you get "int" for a ref int instead of "int&"
 		/// </summary>
-		public Type GetParameterInfo (TypeContainer tc, int idx, out bool is_out)
+		public Type GetParameterInfo (DeclSpace ds, int idx, out bool is_out)
 		{
 			is_out = false;
 			
-			if (!VerifyArgs (tc)){
+			if (!VerifyArgs ()){
 				FixedParameters = null;
 				return null;
 			}
@@ -289,7 +289,7 @@ namespace Mono.CSharp {
 				return null;
 			
 			if (types == null)
-				if (ComputeParameterTypes (tc) == false){
+				if (ComputeParameterTypes (ds) == false){
 					is_out = false;
 					return null;
 				}

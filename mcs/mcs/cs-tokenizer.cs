@@ -34,7 +34,8 @@ namespace Mono.CSharp
 		public int col = 1;
 		public int current_token;
 		bool handle_get_set = false;
-
+		bool handle_remove_add = false;
+		
 		//
 		// Returns a verbose representation of the current location
 		//
@@ -55,7 +56,7 @@ namespace Mono.CSharp
 			}
 		}
 
-		public bool properties {
+		public bool PropertyParsing {
 			get {
 				return handle_get_set;
 			}
@@ -64,6 +65,16 @@ namespace Mono.CSharp
 				handle_get_set = value;
 			}
                 }
+
+		public bool EventParsing {
+			get {
+				return handle_remove_add;
+			}
+
+			set {
+				handle_remove_add = value;
+			}
+		}
 		
 		//
 		// Class variables
@@ -218,7 +229,9 @@ namespace Mono.CSharp
 			bool res;
 			
 			res = keywords.Contains (name);
-			if ((name == "get" || name == "set") && handle_get_set == false)
+			if (handle_get_set == false && (name == "get" || name == "set"))
+				return false;
+			if (handle_remove_add == false && (name == "remove" || name == "add"))
 				return false;
 			return res;
 		}
@@ -234,15 +247,17 @@ namespace Mono.CSharp
 			}
 		}
 		
-		public Tokenizer (System.IO.Stream input, string fname, ArrayList defines)
+		public Tokenizer (System.IO.Stream input, string fname, ArrayList defs)
 		{
 			this.ref_name = fname;
 			reader = new System.IO.StreamReader (input);
 			putback_char = -1;
 
-			if (defines != null)
-				foreach (string def in defines)
-					this.defines [def] = true;
+			if (defs != null){
+				defines = new Hashtable ();
+				foreach (string def in defs)
+					defines [def] = true;
+			}
 			
 			Location.Push (fname);
 		}

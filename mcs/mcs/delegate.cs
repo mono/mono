@@ -192,7 +192,8 @@ namespace Mono.CSharp {
 			BeginInvokeBuilder.SetImplementationFlags (MethodImplAttributes.Runtime);
 
 			Parameter [] async_params = new Parameter [params_num + 2];
-			Parameters.FixedParameters.CopyTo (async_params, 0);
+			if (params_num > 0)
+				Parameters.FixedParameters.CopyTo (async_params, 0);
 
 			async_params [params_num] = new Parameter ("System.AsyncCallback", "callback",
 								   Parameter.Modifier.NONE, null);

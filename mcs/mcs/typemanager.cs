@@ -677,7 +677,7 @@ public class TypeManager {
 		if (properties.Contains (pb))
 			return false;
 
-		properties.Add (pb, new DictionaryEntry (get, set));
+		properties.Add (pb, new Pair (get, set));
 
 		return true;
 	}
@@ -687,11 +687,11 @@ public class TypeManager {
 		MethodInfo [] ret;
 
 		if (pi is PropertyBuilder){
-			DictionaryEntry de = (DictionaryEntry) properties [pi];
+			Pair pair = (Pair) properties [pi];
 
 			ret = new MethodInfo [2];
-			ret [0] = (MethodInfo) de.Key;
-			ret [1] = (MethodInfo) de.Value;
+			ret [0] = (MethodInfo) pair.First;
+			ret [1] = (MethodInfo) pair.Second;
 
 			return ret;
 		} else
@@ -701,9 +701,9 @@ public class TypeManager {
 	static public MethodInfo GetPropertyGetter (PropertyInfo pi)
 	{
 		if (pi is PropertyBuilder){
-			DictionaryEntry de = (DictionaryEntry) properties [pi];
+			Pair de = (Pair) properties [pi];
 
-			return (MethodInfo) de.Value;
+			return (MethodInfo) de.Second;
 		} else
 			return pi.GetSetMethod ();
 	}
@@ -711,9 +711,9 @@ public class TypeManager {
 	static public MethodInfo GetPropertySetter (PropertyInfo pi)
 	{
 		if (pi is PropertyBuilder){
-			DictionaryEntry de = (DictionaryEntry) properties [pi];
+			Pair de = (Pair) properties [pi];
 
-			return (MethodInfo) de.Key;
+			return (MethodInfo) de.First;
 		} else
 			return pi.GetGetMethod ();
 	}

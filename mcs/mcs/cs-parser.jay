@@ -279,6 +279,7 @@ using_alias_directive
 using_namespace_directive
 	: USING namespace_name SEMICOLON 
 	  {
+		Console.WriteLine (name + " using: " + current_namespace.Name + " => " + (string) $2);
 		current_namespace.Using ((string) $2);
           }
 	;
@@ -290,7 +291,7 @@ using_namespace_directive
 namespace_declaration
 	: NAMESPACE qualified_identifier 
 	  {
-		current_namespace = RootContext.Tree.RecordNamespace (current_namespace, (string) $2);
+		current_namespace = RootContext.Tree.RecordNamespace (current_namespace, name, (string) $2);
 	  } 
 	  namespace_body opt_semicolon
 	  { 
@@ -883,25 +884,25 @@ property_declaration
 	  {
 		implicit_value_parameter_type = (string) $3;
 
-		lexer.properties = true;
+		lexer.PropertyParsing = true;
 
 		$$ = lexer.Location;
 	  }
 	  accessor_declarations 
 	  {
-		lexer.properties = false;
+		lexer.PropertyParsing = false;
 	  }
 	  CLOSE_BRACE
 	  { 
 		Property prop;
-		DictionaryEntry pair = (DictionaryEntry) $7;
+		Pair pair = (Pair) $7;
 		Block get_block = null;
 		Block set_block = null;
 
-		if (pair.Key != null)
-			get_block = (Block) pair.Key;
-		if (pair.Value != null)
-			set_block = (Block) pair.Value;
+		if (pair.First != null)
+			get_block = (Block) pair.First;
+		if (pair.Second != null)
+			set_block = (Block) pair.Second;
 
 		prop = new Property ((string) $3, (string) $4, (int) $2, get_block, set_block,
 				     (Attributes) $1, (Location) $6);
@@ -914,11 +915,11 @@ property_declaration
 accessor_declarations
 	: get_accessor_declaration opt_set_accessor_declaration
 	  { 
-		$$ = new DictionaryEntry ($1, $2);
+		$$ = new Pair ($1, $2);
 	  }
 	| set_accessor_declaration opt_get_accessor_declaration
 	  {
-		$$ = new DictionaryEntry ($2, $1);
+		$$ = new Pair ($2, $1);
 	  }
 	;
 
@@ -941,13 +942,13 @@ get_accessor_declaration
 			current_local_parameters = null;
 		else 
 			current_local_parameters = indexer_parameters;
-
-		
+		lexer.PropertyParsing = false;
 	  }
           accessor_body
 	  {
 		$$ = $4;
 		current_local_parameters = null;
+		lexer.PropertyParsing = true;
 	  }
 	;
 
@@ -972,11 +973,13 @@ set_accessor_declaration
 			args [count] = implicit_value_parameter;
 		}
 		current_local_parameters = new Parameters (args, null);
+		lexer.PropertyParsing = false;
 	  }
 	  accessor_body
 	  {
 		$$ = $4;
 		current_local_parameters = null;
+		lexer.PropertyParsing = true;
 	  }
 	;
 
@@ -1109,9 +1112,9 @@ interface_property_declaration
 	  opt_new
 	  type IDENTIFIER 
 	  OPEN_BRACE 
-	  { lexer.properties = true; }
+	  { lexer.PropertyParsing = true; }
 	  interface_accesors 
-	  { lexer.properties = false; }
+	  { lexer.PropertyParsing = false; }
 	  CLOSE_BRACE
 	  {
 	        int gs = (int) $7;
@@ -1141,9 +1144,9 @@ interface_indexer_declaration
 	: opt_attributes opt_new type THIS 
 	  OPEN_BRACKET formal_parameter_list CLOSE_BRACKET
 	  OPEN_BRACE 
-	  { lexer.properties = true; }
+	  { lexer.PropertyParsing = true; }
 	  interface_accesors 
-	  { lexer.properties = false; }
+	  { lexer.PropertyParsing = false; }
 	  CLOSE_BRACE
 	  {
 		int a_flags = (int) $10;
@@ -1372,17 +1375,17 @@ event_declaration
 	  }
 	| opt_attributes
 	  opt_modifiers
-	  EVENT type member_name 
+	  EVENT type member_name { lexer.EventParsing = true; }
 	  OPEN_BRACE event_accessor_declarations CLOSE_BRACE
 	{
-		DictionaryEntry pair = (DictionaryEntry) $7;
+		Pair pair = (Pair) $8;
 		Block add_block = null;
 		Block rem_block = null;
 
-		if (pair.Key != null)
-			add_block = (Block) pair.Key;
-		if (pair.Value != null)
-			rem_block = (Block) pair.Value;
+		if (pair.First != null)
+			add_block = (Block) pair.First;
+		if (pair.Second != null)
+			rem_block = (Block) pair.Second;
 		
 		Event e = new Event ((string) $4, (string) $5, null, (int) $2, add_block, rem_block,
 				     (Attributes) $1, lexer.Location);
@@ -1394,25 +1397,27 @@ event_declaration
 event_accessor_declarations
 	: add_accessor_declaration remove_accessor_declaration
 	{
-		$$ = new DictionaryEntry ($1, $2);
+		$$ = new Pair ($1, $2);
 	}
 	| remove_accessor_declaration add_accessor_declaration
 	{
-		$$ = new DictionaryEntry ($2, $1);
+		$$ = new Pair ($2, $1);
 	}	
 	;
 
 add_accessor_declaration
-	: opt_attributes ADD block
+	: opt_attributes ADD { lexer.EventParsing = false; } block
 	  {
-		$$ = $3;
+		$$ = $4;
+		lexer.EventParsing = true;
 	  }
 	;
 
 remove_accessor_declaration
-	: opt_attributes REMOVE block
+	: opt_attributes REMOVE { lexer.EventParsing = false; } block
 	{
-		$$ = $3;
+		$$ = $4;
+		lexer.EventParsing = true;
 	}
 	;
 
@@ -1424,7 +1429,7 @@ indexer_declaration
 
 		implicit_value_parameter_type = decl.type;
 		
-		lexer.properties = true;
+		lexer.PropertyParsing = true;
 		parsing_indexer  = true;
 		
 		indexer_parameters = decl.param_list;
@@ -1432,7 +1437,7 @@ indexer_declaration
 	  }
           accessor_declarations 
 	  {
-		  lexer.properties = false;
+		  lexer.PropertyParsing = false;
 		  parsing_indexer  = false;
 	  }
 	  CLOSE_BRACE
@@ -1442,14 +1447,14 @@ indexer_declaration
 
 		Indexer indexer;
 		IndexerDeclaration decl = (IndexerDeclaration) $3;
-		DictionaryEntry pair = (DictionaryEntry) $6;
+		Pair pair = (Pair) $6;
 		Block get_block = null;
 		Block set_block = null;
 
-		if (pair.Key != null)
-			get_block = (Block) pair.Key;
-		if (pair.Value != null)
-			set_block = (Block) pair.Value;
+		if (pair.First != null)
+			get_block = (Block) pair.First;
+		if (pair.Second != null)
+			set_block = (Block) pair.Second;
 
 		indexer = new Indexer (decl.type, decl.interface_type, (int) $2, decl.param_list,
 				       get_block, set_block, (Attributes) $1, (Location) $5);
@@ -1484,8 +1489,8 @@ enum_declaration
 	  enum_body
 	  opt_semicolon
 	  { 
-		string name = (string) $4;
-		Enum e = new Enum ((string) $5, (int) $2, name, (Attributes) $1, lexer.Location);
+		string full_name = MakeName ((string) $4);
+		Enum e = new Enum ((string) $5, (int) $2, full_name, (Attributes) $1, lexer.Location);
 
 		foreach (VariableDeclaration ev in (ArrayList) $6){
 			CheckDef (e.AddEnumMember (ev.identifier, 
@@ -1553,7 +1558,7 @@ delegate_declaration
 	  opt_modifiers
 	  DELEGATE type	  
 	  IDENTIFIER OPEN_PARENS 
-	  formal_parameter_list
+	  opt_formal_parameter_list
 	  CLOSE_PARENS 
 	  SEMICOLON
 	  {
@@ -1567,7 +1572,7 @@ delegate_declaration
 	  opt_modifiers
 	  DELEGATE VOID	  
 	  IDENTIFIER OPEN_PARENS 
-	  formal_parameter_list
+	  opt_formal_parameter_list
 	  CLOSE_PARENS 
 	  SEMICOLON
 	  {
@@ -3576,7 +3581,6 @@ public override int parse ()
 	
 	return global_errors;
 }
-
 
 /* end end end */
 }

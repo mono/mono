@@ -278,7 +278,7 @@ namespace Mono.CSharp {
 		void PopulateMethod (InterfaceMethod im)
 		{
 			Type return_type = LookupType (im.ReturnType, false);
-			Type [] arg_types = im.ParameterTypes (parent);
+			Type [] arg_types = im.ParameterTypes (this);
 			MethodBuilder mb;
 			Parameter [] p;
 			int i;
@@ -403,7 +403,7 @@ namespace Mono.CSharp {
 		{
 			PropertyBuilder pb;
 			Type prop_type = LookupType (ii.Type, false);
-			Type [] arg_types = ii.ParameterTypes (parent);
+			Type [] arg_types = ii.ParameterTypes (this);
 			Type [] value_arg_types;
 
 			if (prop_type == null)
@@ -493,7 +493,7 @@ namespace Mono.CSharp {
 			
 			if (defined_method != null){
 				foreach (InterfaceMethod im in defined_method){
-					string sig = im.GetSignature (parent);
+					string sig = im.GetSignature (this);
 					
 					//
 					// If there was an undefined Type on the signatures
@@ -645,6 +645,7 @@ namespace Mono.CSharp {
 			}
 			
 			RootContext.TypeManager.AddUserInterface (Name, TypeBuilder, this);
+			RootContext.RegisterOrder (this);
 			
 			InTransit = false;
 			
@@ -740,10 +741,10 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Returns the signature for this interface method
 		/// </summary>
-		public string GetSignature (TypeContainer tc)
+		public string GetSignature (DeclSpace ds)
 		{
-			Type ret = tc.LookupType (ReturnType, false);
-			string args = Parameters.GetSignature (tc);
+			Type ret = ds.LookupType (ReturnType, false);
+			string args = Parameters.GetSignature (ds);
 
 			if ((ret == null) || (args == null))
 				return null;
@@ -751,9 +752,9 @@ namespace Mono.CSharp {
 			return (IsNew ? "new-" : "") + ret.FullName + "(" + args + ")";
 		}
 
-		public Type [] ParameterTypes (TypeContainer tc)
+		public Type [] ParameterTypes (DeclSpace ds)
 		{
-			return Parameters.GetParameterInfo (tc);
+			return Parameters.GetParameterInfo (ds);
 		}
 	}
 
@@ -772,9 +773,9 @@ namespace Mono.CSharp {
 			HasSet = do_set;
 		}
 
-		public Type [] ParameterTypes (TypeContainer tc)
+		public Type [] ParameterTypes (DeclSpace ds)
 		{
-			return Parameters.GetParameterInfo (tc);
+			return Parameters.GetParameterInfo (ds);
 		}
 	}
 }

@@ -50,11 +50,11 @@ namespace Mono.CSharp
 		static int parse (string input_file)
 		{
 			CSharpParser parser;
-			System.IO.Stream input;
+			Stream input;
 			int errors;
 
 			try {
-				input = System.IO.File.OpenRead (input_file);
+				input = File.OpenRead (input_file);
 			} catch {
 				Report.Error (2001, "Source file '" + input_file + "' could not be opened");
 				return 1;
@@ -184,6 +184,36 @@ namespace Mono.CSharp
 			return errors;
 		}
 
+		static void SetupDefaultDefines ()
+		{
+			defines = new ArrayList ();
+			defines.Add ("__MonoCS__");
+		}
+
+		static string [] LoadArgs (string file)
+		{
+			StreamReader f;
+			ArrayList args = new ArrayList ();
+			string line;
+			try {
+				f = new StreamReader (file);
+			} catch {
+				return null;
+			}
+
+			while ((line = f.ReadLine ()) != null){
+				string [] line_args = line.Split (new char [] { ' ' });
+
+				foreach (string arg in line_args)
+					args.Add (arg);
+			}
+
+			string [] ret_value = new string [args.Count];
+			args.CopyTo (ret_value, 0);
+
+			return ret_value;
+		}
+		
 		/// <summary>
 		///    Parses the arguments, and drives the compilation
 		///    process.
@@ -201,6 +231,8 @@ namespace Mono.CSharp
 			references = new ArrayList ();
 			link_paths = new ArrayList ();
 
+			SetupDefaultDefines ();
+			
 			//
 			// Setup defaults
 			//
@@ -213,6 +245,23 @@ namespace Mono.CSharp
 			for (i = 0; i < argc; i++){
 				string arg = args [i];
 
+				if (arg.StartsWith ("@")){
+					string [] new_args, extra_args;
+
+					extra_args = LoadArgs (arg.Substring (1));
+					if (extra_args == null){
+						Usage (true);
+						return;
+					}
+
+					new_args = new string [extra_args.Length + argc];
+					args.CopyTo (new_args, 0);
+					extra_args.CopyTo (new_args, argc);
+					args = new_args;
+					argc = new_args.Length;
+					continue;
+				}
+				
 				if (arg.StartsWith ("-")){
 					switch (arg){
 					case "-v":
@@ -248,8 +297,6 @@ namespace Mono.CSharp
 							Usage (true);
 							return;
 						}
-						if (defines == null)
-							defines = new ArrayList ();
 						defines.Add (args [++i]);
 						continue;
 						
