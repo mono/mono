@@ -16,6 +16,11 @@ System.Web.UI.Design/DataBindingCollection.cs
 System.Web.UI.Design/ControlDesigner.cs
 System.Web.UI.Design/ReadWriteControlDesigner.cs
 System.Web.UI.Design/WebControlToolboxItem.cs
+System.Web.UI.Design/UrlEditor.cs
+System.Web.UI.Design/ImageUrlEditor.cs
+System.Web.UI.Design/XmlUrlEditor.cs
+System.Web.UI.Design/XslUrlEditor.cs
+System.Web.UI.Design/UrlBuilderOptions.cs
 System.Windows.Forms.Design/AnchorEditor.cs
 System.Windows.Forms.Design/AxImporter.cs
 System.Windows.Forms.Design/ComponentDocumentDesigner.cs

@@ -1,3 +1,7 @@
+2003-12-15  Jackson Harper <jackson@ximian.com>
+
+	* System.Design.dll.sources: Add *UrlEditor files to build
+	
 2003-10-20 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* .sources: lots-o-files
