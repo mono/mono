@@ -52,12 +52,12 @@ mcs3.exe: mcs2.exe
 	$(TIME) $(RUNTIME) ./mcs2.exe --target exe -o mcs3.exe $(COMPILER_SOURCES)
 
 mcs-mono.exe: cs-parser.cs $(COMPILER_SOURCES) 
-	mono --precompile @mcs.exe mcs.exe --timestamp -o mcs-mono.exe $(COMPILER_SOURCES) 
+	mono --precompile @mcs.exe mcs.exe $(MCSFLAGS) --fatal --timestamp -o mcs-mono.exe $(COMPILER_SOURCES) 
 mm:
 	mint $(MINTFLAGS) ./mcs.exe $(MCSFLAGS) --target exe -o mcs4.exe $(COMPILER_SOURCES)
 
 mcs-mono2.exe: cs-parser.cs $(COMPILER_SOURCES)
-	mono mcs.exe --timestamp -o mcs-mono2.exe -g $(COMPILER_SOURCES)
+	mono mcs.exe --timestamp $(MCSFLAGS) -o mcs-mono2.exe -g $(COMPILER_SOURCES)
 
 mcs-mono3.exe: cs-parser.cs $(COMPILER_SOURCES)
 	mono --debug mcs-mono2.exe -o mcs-mono3.exe -g $(COMPILER_SOURCES)

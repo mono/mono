@@ -1,5 +1,10 @@
 2002-09-17  Martin Baulig  <martin@gnome.org>
 
+	* class.cs (PropertyBase.CheckBase): Don't check the base class if
+	this is an explicit interface implementation.
+
+2002-09-17  Martin Baulig  <martin@gnome.org>
+
 	* class.cs (PropertyBase.CheckBase): Make this work for indexers with
 	different `IndexerName' attributes.
 

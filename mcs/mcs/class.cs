@@ -3370,6 +3370,9 @@ namespace Mono.CSharp {
 			if (!DoDefineParameters (parent))
 				return false;
 
+			if (IsExplicitImpl)
+				return true;
+
 			string report_name;
 			MethodSignature ms, base_ms;
 			if (this is Indexer) {
