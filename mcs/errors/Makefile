@@ -26,7 +26,7 @@ DISTFILES = \
 	generics-expect-no-error generics-expect-wrong-error
 
 #all-local: run-test-local test-multi-local
-all-local: CS0571-3-lib.dll CS0612-2-lib.dll CS0618-2-lib.dll \
+all-local: CS0118-2-lib.dll CS0571-3-lib.dll CS0612-2-lib.dll CS0618-2-lib.dll \
 	CS0619-8-lib.dll CS0619-17-lib.dll CS0619-32-lib.dll CS0619-33-lib.dll CS0619-36-lib.dll \
 	CS3005-16-lib.dll CS3013-module.dll
 
@@ -52,11 +52,12 @@ test-everything:
 
 run-mcs-tests:
 	-rm -f $(TEST_PROFILE).log
-	@./do-tests.pl $(TEST_PROFILE) "$(CSCOMPILE)" "cs*.cs" 2>&1 | tee $(TEST_PROFILE).log
+	@./do-tests.pl $(TEST_PROFILE) "$(CSCOMPILE)" "cs*.cs"
 
 run-generics-tests:
 	-rm -f generics.log
-	@./do-tests.pl generics "$(GENERICS_COMPILE)" "gcs*.cs" 2>&1 | tee generics.log
+	@./do-tests.pl generics "$(GENERICS_COMPILE)" "gcs*.cs"
+	@test -z "`grep UNEXPECTED generics.log`"
 
 test-multi-local:
 	@ failed=false; \

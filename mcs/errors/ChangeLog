@@ -1,3 +1,14 @@
+2005-01-10  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (all-local): Add CS0118-2-lib.dll.
+	(run-mcs-tests, runt-generics-tests): Don't pipe through tee.  It
+	loses exit code of do-tests.pl.
+	* do-tests.pl (PROFILELOG): New.  Copy all output to this file too.
+	* cs0234-2.cs: Bug #52697.
+	* cs0234-3.cs: Bug #57200.
+	* cs0118-2.cs, CS0118-2-lib.cs: Bug #67520.
+	* cs0538-2.cs: Remove bogus test.
+
 2005-01-10 Marek Safar <marek.safar@seznam.cz>
 
 	* cs0612-2.cs, CS0612-2-lib.cs: Bug #70722.

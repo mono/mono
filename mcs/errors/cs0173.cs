@@ -26,6 +26,6 @@ public class MainClass {
                 ClassA a = new ClassA();
                 ClassB b = new ClassB();
             
-                Console.WriteLine(true ? a : b);
+                System.Console.WriteLine(true ? a : b);
    }
 }

@@ -88,12 +88,14 @@ my @status_items = (
 my %results_map = ();
 my $total = 0;
 
+open (PROFILELOG, ">$profile.log") or die "Cannot open log file $profile.log";
+
 foreach (glob ($files)) {
-        print "$_";
+        print PROFILELOG "$_"; print "$_";
 	my ($error_number) = (/[a-z]*(\d+)(-\d+)?\.cs/);
 	my $options = `sed -n 's,^// Compiler options:,,p' $_`;
 	chomp $options;
-	print "...";
+	print PROFILELOG "..."; print "...";
 
 	if (exists $ignore_map {$_}) {
 	    print "IGNORED\n";
@@ -126,31 +128,41 @@ foreach (glob ($files)) {
         }
 
 	push @{$status_items [$status]}, $_;
-	print "$statuses[$status]\n";
+	print PROFILELOG "$statuses[$status]\n"; print "$statuses[$status]\n";
 	$results_map{$_} = $status;
 }
 print "\n";
 my $correct = scalar @{$status_items [$RESULT_CORRECT_ERROR]};
-print $correct, " correctly detected errors (", sprintf("%.2f",($correct / $total) * 100), " %) \n\n";
+my $pct = sprintf("%.2f",($correct / $total) * 100);
+print PROFILELOG $correct, " correctly detected errors ($pct %) \n\n";
+print $correct, " correctly detected errors ($pct %) \n\n";
 
 if (scalar @{$status_items [$RESULT_UNEXPECTED_CRASH]} > 0) {
+    print PROFILELOG scalar @{$status_items [$RESULT_UNEXPECTED_CRASH]}, " compiler crashes\n";
     print scalar @{$status_items [$RESULT_UNEXPECTED_CRASH]}, " compiler crashes\n";
-    print, print "\n" foreach @{$status_items [$RESULT_UNEXPECTED_CRASH]};
+    print PROFILELOG "$_\n" foreach @{$status_items [$RESULT_UNEXPECTED_CRASH]};
+    print "$_\n" foreach @{$status_items [$RESULT_UNEXPECTED_CRASH]};
 }
 
 if (scalar @{$status_items [$RESULT_UNEXPECTED_CORRECT_ERROR]} > 0) {
+    print PROFILELOG scalar @{$status_items [$RESULT_UNEXPECTED_CORRECT_ERROR]}, " fixed error report(s), remove it from expect-wrong-error or expect-no-error !\n";
     print scalar @{$status_items [$RESULT_UNEXPECTED_CORRECT_ERROR]}, " fixed error report(s), remove it from expect-wrong-error or expect-no-error !\n";
-    print, print "\n" foreach @{$status_items [$RESULT_UNEXPECTED_CORRECT_ERROR]};
+    print PROFILELOG "$_\n" foreach @{$status_items [$RESULT_UNEXPECTED_CORRECT_ERROR]};
+    print "$_\n" foreach @{$status_items [$RESULT_UNEXPECTED_CORRECT_ERROR]};
 }
 
 if (scalar @{$status_items [$RESULT_UNEXPECTED_INCORRECT_ERROR]} > 0) {
+    print PROFILELOG scalar @{$status_items [$RESULT_UNEXPECTED_INCORRECT_ERROR]}, " new incorrect error report(s) !\n";
     print scalar @{$status_items [$RESULT_UNEXPECTED_INCORRECT_ERROR]}, " new incorrect error report(s) !\n";
-    print, print "\n" foreach @{$status_items [$RESULT_UNEXPECTED_INCORRECT_ERROR]};
+    print PROFILELOG "$_\n" foreach @{$status_items [$RESULT_UNEXPECTED_INCORRECT_ERROR]};
+    print "$_\n" foreach @{$status_items [$RESULT_UNEXPECTED_INCORRECT_ERROR]};
 }
 
 if (scalar @{$status_items [$RESULT_UNEXPECTED_NO_ERROR]} > 0) {
+    print PROFILELOG scalar @{$status_items [$RESULT_UNEXPECTED_NO_ERROR]}, " new missing error report(s) !\n";
     print scalar @{$status_items [$RESULT_UNEXPECTED_NO_ERROR]}, " new missing error report(s) !\n";
-    print, print "\n" foreach @{$status_items [$RESULT_UNEXPECTED_NO_ERROR]};
+    print PROFILELOG "$_\n" foreach @{$status_items [$RESULT_UNEXPECTED_NO_ERROR]};
+    print "$_\n" foreach @{$status_items [$RESULT_UNEXPECTED_NO_ERROR]};
 }
 
 exit ((
