@@ -1,0 +1,4 @@
+2003-10-20  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* disco.cs, Makefile, disco.exe.sources: New files. Initial implementation
+	  of the Disco tool.
