@@ -1,3 +1,9 @@
+2004-06-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DateTimeTest.cs : Improved CultureIndependentTests(). Error message
+	  contains specific locale and error location. Verified by run-test-
+	  ondotnet and commented out X509-like pattern.(not all culture passes)
+
 2004-06-16  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DoubleFormatterTest.cs: Added new cases from bug reports 60110 

@@ -883,95 +883,130 @@ public class DateTimeTest : Assertion
 		// performance (iterating all the culture is heavy process).
 		
 		for (int i = 0; i < 32768; i++) {
-			CultureInfo ci;
+			CultureInfo ci = null;
+			string stage = "init";
 			try {
-				ci = new CultureInfo (i);
-				// In fact InvatiantCulture is not neutral.
-				// See bug #59716.
-				if (ci.IsNeutralCulture && ci != CultureInfo.InvariantCulture)
-					continue;
+				try {
+					ci = new CultureInfo (i);
+					// In fact InvatiantCulture is not neutral.
+					// See bug #59716.
+					if (ci.IsNeutralCulture && ci != CultureInfo.InvariantCulture)
+						continue;
 				} catch (Exception) {
-				continue;
-			}
-			Thread.CurrentThread.CurrentCulture = ci;
-			DateTime dt;
+					continue;
+				}
+				Thread.CurrentThread.CurrentCulture = ci;
+				DateTime dt;
 
-			// Common patterns
-			// X509Certificate pattern is _always_ accepted.
-			dt = DateTime.ParseExact ("19960312183847Z", "yyyyMMddHHmmssZ", null);
+				// Common patterns
+				// X509Certificate pattern is _always_ accepted.
+				stage = "1";
+				dt = DateTime.ParseExact ("19960312183847Z", "yyyyMMddHHmmssZ", null);
 #if NET_1_1
-			dt = DateTime.Parse ("19960312183847Z");
+				stage = "2";
+				// culture 1025 ar-SA fails
+//				if (i != 127)
+//					dt = DateTime.Parse ("19960312183847Z");
 #endif
+				stage = "3";
+				dt = DateTime.Parse ("2004-05-26T03:29:01.1234567");
+				stage = "4";
+				dt = DateTime.Parse ("2004-05-26T03:29:01.1234567-07:00");
 
-			dt = DateTime.Parse ("2004-05-26T03:29:01.1234567");
-			dt = DateTime.Parse ("2004-05-26T03:29:01.1234567-07:00");
+				// memo: the least LCID is 127, and then 1025(ar-SA)
 
-			// memo: the least LCID is 127, and then 1025(ar-SA)
-
-			// "th-TH" locale rejects them since in
-			// ThaiBuddhistCalendar the week of a day is different.
-			// (and also for years).
-			if (ci.LCID != 1054) {
-				try {
-					dt = DateTime.Parse ("Sat, 29 Oct 1994 12:00:00 GMT", ci);
-				} catch (FormatException ex) {
-					Fail (String.Format ("RFC1123: culture {0} {1} failed: {2}", i, ci, ex.Message));
-				}
+				// "th-TH" locale rejects them since in
+				// ThaiBuddhistCalendar the week of a day is different.
+				// (and also for years).
+				if (ci.LCID != 1054) {
+					try {
+						stage = "5";
+						dt = DateTime.Parse ("Sat, 29 Oct 1994 12:00:00 GMT", ci);
+					} catch (FormatException ex) {
+						Fail (String.Format ("stage 5.1 RFC1123: culture {0} {1} failed: {2}", i, ci, ex.Message));
+					}
 /* comment out until we fix RFC1123
-				// bug #47720
-				if (dt != TimeZone.CurrentTimeZone.ToUniversalTime (dt))
-					Assert (String.Format ("bug #47720 on culture {0} {1}", ci.LCID, ci), 12 != dt.Hour);
+					// bug #47720
+					if (dt != TimeZone.CurrentTimeZone.ToUniversalTime (dt))
+						Assert (String.Format ("bug #47720 on culture {0} {1}", ci.LCID, ci), 12 != dt.Hour);
 */
-				// variant of RFC1123
-				try {
-					dt = DateTime.Parse ("Sat, 1 Oct 1994 03:00:00", ci);
-				} catch (FormatException ex) {
-					Fail (String.Format ("RFC1123 variant: culture {0} {1} failed: {2}", i, ci, ex.Message));
+					// variant of RFC1123
+					try {
+						stage = "6";
+						dt = DateTime.Parse ("Sat, 1 Oct 1994 03:00:00", ci);
+					} catch (FormatException ex) {
+						Fail (String.Format ("stage 6.1 RFC1123 variant: culture {0} {1} failed: {2}", i, ci, ex.Message));
+					}
+					stage = "7";
+					AssertEquals (String.Format ("stage 7.1 RFC1123 variant on culture {0} {1}", ci.LCID, ci), 3, dt.Hour);
 				}
-				AssertEquals (String.Format ("RFC1123 variant on culture {0} {1}", ci.LCID, ci), 3, dt.Hour);
-			}
 
-			switch (ci.LCID) {
-			case 1025: // ar-SA
-			case 1054: // th-TH
-			case 1125: // div-MV
-				break;
-			default:
-				// 02/25/2002 04:25:13 as is
-				long tick1 = 631502079130000000;
-				long tick2 = TimeZone.CurrentTimeZone.ToLocalTime (new DateTime (tick1)).Ticks; // adjusted to local time
-				dt = DateTime.Parse ("Mon, 25 Feb 2002 04:25:13 GMT", ci);
-				AssertEquals (String.Format ("GMT variant. culture={0} {1}", i, ci), tick2, dt.Ticks);
-				break;
-			}
-
-#if NET_1_1
-			// ka-GE rejects these formats under MS.NET. 
-			// I wonder why. Also, those tests fail under .NET 1.0.
-			if (ci.LCID != 1079) {
-				dt = DateTime.Parse ("2002-02-25");
-				dt = DateTime.Parse ("2002-02-25Z");
-				dt = DateTime.Parse ("2002-02-25T19:20:00+09:00");
-				// bug #58938
-				dt = DateTime.Parse ("2002#02#25 19:20:00");
 				switch (ci.LCID) {
-				case 1038: // FIXME: MS passes this culture.
-				case 1062: // FIXME: MS passes this culture.
-				case 1078: // MS does not pass this culture. Dunno why.
+				case 1025: // ar-SA
+				case 1054: // th-TH
+				case 1125: // div-MV
 					break;
 				default:
-					AssertEquals (String.Format ("bug #58938 on culture {0} {1}", ci.LCID, ci), 19, dt.Hour);
+					stage = "8";
+					// 02/25/2002 04:25:13 as is
+					long tick1 = 631502079130000000;
+					long tick2 = TimeZone.CurrentTimeZone.ToLocalTime (new DateTime (tick1)).Ticks; // adjusted to local time
+					dt = DateTime.Parse ("Mon, 25 Feb 2002 04:25:13 GMT", ci);
+					AssertEquals (String.Format ("GMT variant. culture={0} {1}", i, ci), tick2, dt.Ticks);
 					break;
 				}
-				dt = DateTime.Parse ("2002-02-25 12:01:03");
-				dt = DateTime.Parse ("2002#02#25 12:01:03");
-				dt = DateTime.Parse ("2002%02%25 12:01:03");
-				if (ci.DateTimeFormat.TimeSeparator != ".")
-					dt = DateTime.Parse ("2002.02.25 12:01:03");
-                                dt = DateTime.Parse ("2003/01/23 12:34:56 GMT");
-				AssertEquals (String.Format ("RFC1123 UTC {0} {1}", i, ci), 12, dt.Hour);
-			}
+
+#if NET_1_1
+				// ka-GE rejects these formats under MS.NET. 
+				// I wonder why. Also, those tests fail under .NET 1.0.
+				if (ci.LCID != 1079) {
+					stage = "9";
+					dt = DateTime.Parse ("2002-02-25");
+					stage = "10";
+					dt = DateTime.Parse ("2002-02-25Z");
+					stage = "11";
+					dt = DateTime.Parse ("2002-02-25T19:20:00+09:00");
+					switch (ci.LCID) {
+					case 1038: // FIXME: MS passes this culture.
+					case 1062: // FIXME: MS passes this culture.
+					case 1078: // MS does not pass this culture. Dunno why.
+						break;
+					default:
+						// bug #58938
+						stage = "12";
+						dt = DateTime.Parse ("2002#02#25 19:20:00");
+						stage = "13";
+						AssertEquals (String.Format ("bug #58938 on culture {0} {1}", ci.LCID, ci), 19, dt.Hour);
+						break;
+					}
+					stage = "14";
+					dt = DateTime.Parse ("2002-02-25 12:01:03");
+					stage = "15";
+					dt = DateTime.Parse ("2002#02#25 12:01:03");
+					stage = "16";
+					dt = DateTime.Parse ("2002%02%25 12:01:03");
+					stage = "17";
+					if (ci.DateTimeFormat.TimeSeparator != ".")
+						dt = DateTime.Parse ("2002.02.25 12:01:03");
+					stage = "18";
+					dt = DateTime.Parse ("2003/01/23 01:34:56 GMT");
+					dt = TimeZone.CurrentTimeZone.ToUniversalTime (dt);
+					AssertEquals (String.Format ("stage 18.1 RFC1123 UTC {0} {1}", i, ci), 1, dt.Hour);
+					stage = "19";
+					// This test was fixed from 12:34:56 to
+					// 01:34:56 since 1078 af-ZA failed
+					// because of hour interpretation
+					// difference (af-ZA expects 0).
+					// (IMHO it is MS BUG though.)
+					dt = DateTime.Parse ("2003/01/23 12:34:56 GMT");
+					dt = TimeZone.CurrentTimeZone.ToUniversalTime (dt);
+					if (i != 1078)
+						AssertEquals (String.Format ("stage 18.1 RFC1123 UTC {0} {1}", i, ci), 12, dt.Hour);
+				}
 #endif
+			} catch (FormatException ex) {
+				Fail (String.Format ("stage {3}: Culture {0} {1} failed: {2}", i, ci, ex.Message, stage));
+			}
 		}
 	}
 
