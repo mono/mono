@@ -405,16 +405,19 @@ namespace Mono.Data.TdsClient.Internal {
 				break;
 			case TdsColumnType.Numeric :
 			case TdsColumnType.Decimal :
+				byte precision;
 				byte scale;
 				if (outParam) {
 					comm.GetByte (); // column size
-					comm.GetByte (); // precision
+					precision = comm.GetByte ();
 					scale = comm.GetByte ();
 				}
-				else 
+				else {
+					precision = columnInfo[ordinal].NumericPrecision;
 					scale = columnInfo[ordinal].NumericScale;
+				}
 
-				element = GetDecimalValue (scale);
+				element = GetDecimalValue (precision, scale);
 				break;
 			case TdsColumnType.DateTimeN :
 				if (outParam) 
@@ -511,9 +514,9 @@ namespace Mono.Data.TdsClient.Internal {
 			return result;
 		}
 
-		private object GetDecimalValue (byte scale)
+		private object GetDecimalValue (byte precision, byte scale)
 		{
-			int[] bits = new int[3] {0,0,0};
+			int[] bits = new int[4] {0,0,0,0};
 
 			int len = (comm.GetByte() & 0xff) - 1;
 			bool positive = (comm.GetByte () == 1);
@@ -521,10 +524,10 @@ namespace Mono.Data.TdsClient.Internal {
 			if (len > 16)
 				throw new OverflowException ();
 
-			for (int i = 0, index = 0; i < len && i < 12; i += 4, index += 1) 
+			for (int i = 0, index = 0; i < len && i < 16; i += 4, index += 1) 
 				bits[index] = comm.GetTdsInt ();
 
-			return new Decimal (bits[0], bits[1], bits[2], !positive, scale);
+			return new TdsBigDecimal (precision, scale, !positive, bits);
 		}
 
 		private object GetImageValue ()
