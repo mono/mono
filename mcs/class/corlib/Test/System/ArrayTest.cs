@@ -1483,7 +1483,25 @@ public class ArrayTest : Assertion
                 }
                 Assert (!error);
         }
-                           
+
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void LastIndexOf_StartIndexOverflow ()
+	{
+		// legal - no exception
+		byte[] array = new byte [16];
+		Array.LastIndexOf (array, this, Int32.MaxValue, 1);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void LastIndexOf_CountOverflow ()
+	{
+		// legal - no exception
+		byte[] array = new byte [16];
+		Array.LastIndexOf (array, this, 1, Int32.MaxValue);
+	}
+
 	[Test]
 	public void TestReverse() {
 		{
