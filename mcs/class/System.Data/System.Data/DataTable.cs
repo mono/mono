@@ -30,7 +30,9 @@ namespace System.Data
 		private DataColumnCollection _columnCollection;
 		private ConstraintCollection _constraintCollection;
 		// FIXME: temporarily commented
-		// private DataSet _dataSet;   
+
+		internal DataSet dataSet;   
+
 		// private DataView _defaultView;
 		private string _displayExpression;
 		private PropertyCollection _extendedProperties;
@@ -55,7 +57,7 @@ namespace System.Data
 		
 		public DataTable()
 		{
-			// _dataSet = null;     // FIXME: temporarily commented
+			dataSet = null;
 			// _defaultView = null; // FIXME: temporarily commented
 			_columnCollection = new DataColumnCollection(this);
 			//_constraintCollection = new ConstraintCollection(); TODO: uncomment after ConstraintCollection is built.
@@ -162,17 +164,11 @@ namespace System.Data
 		/// <summary>
 		/// Gets the DataSet that this table belongs to.
 		/// </summary>
-		
-		/*
-		 * FIXME: temporarily commented, so we could get a
-		 *        simple forward read only result set to read
-		public DataSet DataSet
-		{
-			get
-			{
-				return _dataSet;
-			}
+		public DataSet DataSet {
+			get { return dataSet; }
 		}
+
+		/*
 
 		/// <summary>
 		/// Gets a customized view of the table which may 

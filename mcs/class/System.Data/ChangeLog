@@ -1,3 +1,27 @@
+2002-05-17  Tim Coleman <tim@timcoleman.com>
+	* System.Data.Common/DbDataAdapter.cs:
+		- More implementation of Fill methods
+		- Get rid of isDirty flag, because we can just check
+			if the table exists
+		- Do *not* remove DataTables before Filling them
+		- Implicitly open the connection before doing a Fill
+			if it does not exist.
+	* System.Data.SqlClient/SqlDataAdapter.cs:
+		- Minor fixup
+	* System.Data/DataTableCollection.cs:
+		- Add DataSet to internal, undocumented constructor
+		- When a table is created, set its DataSet property
+		- Default table name for creation is "Table1" (see .NET)
+		- Inherit the ArrayList list from InternalDataCollecitonBase
+			and maintain a hashtable between table names and
+			DataTables
+	* System.Data/DataTable.cs:
+		- Add internal dataSet field.  This is used by 
+			DataTableCollection when the DataTable is constructed.
+	* System.Data/DataSet.cs:
+		- Pass a reference to the DataSet when constructing the
+			DataTableCollection.
+
 2002-05-16  Tim Coleman <tim@timcoleman.com>
         * System.Data.Common/DbDataAdapter.cs:
                 Use table.Rows.Add (itemArray) instead of

@@ -31,13 +31,12 @@ namespace System.Data.SqlClient
 		{
 		}
 
-		public SqlDataAdapter (SqlCommand selectCommand) 
+		public SqlDataAdapter (SqlCommand selectCommand) : base ()
 		{
 			this.deleteCommand = new SqlCommand ();
 			this.insertCommand = new SqlCommand ();
 			this.selectCommand = selectCommand;
 			this.updateCommand = new SqlCommand ();
-			this.isDirty = true;
 		}
 
 		public SqlDataAdapter (string selectCommandText, SqlConnection selectConnection) 
@@ -66,10 +65,7 @@ namespace System.Data.SqlClient
 
 		public new SqlCommand SelectCommand {
 			get { return (SqlCommand)selectCommand; }
-			set { 
-				this.isDirty = true;
-				selectCommand = value; 
-			}
+			set { selectCommand = value; }
 		}
 
 		public new SqlCommand UpdateCommand {

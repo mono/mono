@@ -35,7 +35,7 @@ namespace System.Data
 
 		[MonoTODO]
 		public DataSet() {
-			tableCollection = new DataTableCollection ();
+			tableCollection = new DataTableCollection (this);
 		}
 
 		[MonoTODO]

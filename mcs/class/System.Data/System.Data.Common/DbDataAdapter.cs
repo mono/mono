@@ -9,7 +9,7 @@
 // Copyright (C) 2002 Tim Coleman
 //
 
-using System.Data.SqlClient;
+using System.Data;
 
 namespace System.Data.Common
 {
@@ -26,7 +26,6 @@ namespace System.Data.Common
 		protected IDbCommand insertCommand;
 		protected IDbCommand deleteCommand;
 		protected IDbCommand updateCommand;
-		protected bool isDirty;
 
 		#endregion
 
@@ -34,7 +33,6 @@ namespace System.Data.Common
 
 		protected DbDataAdapter() 
 		{
-			isDirty = true;
 		}
 
 		#endregion
@@ -43,10 +41,7 @@ namespace System.Data.Common
 
 		public IDbCommand SelectCommand {
 			get { return selectCommand; }
-			set { 
-				isDirty = true;
-				selectCommand = value; 
-			}
+			set { selectCommand = value; }
 		}
 
 		public IDbCommand InsertCommand {
@@ -70,37 +65,32 @@ namespace System.Data.Common
 
                 public override int Fill (DataSet dataSet)
                 {
-			return Fill (dataSet, DefaultSourceTableName, selectCommand.ExecuteReader (), 0, 0);
+			return Fill (dataSet, DefaultSourceTableName);
                 }
 
 		public int Fill (DataTable dataTable) 
 		{
-			return Fill (dataTable, selectCommand.ExecuteReader ());
+			return Fill (dataTable.DataSet, dataTable.TableName);
 		}
 
 		public int Fill (DataSet dataSet, string srcTable) 
 		{
-			return Fill (dataSet, srcTable, selectCommand.ExecuteReader (), 0, 0);
+			return Fill (dataSet, 0, 0, srcTable);
 		}
 
-		[MonoTODO]
 		protected virtual int Fill (DataTable dataTable, IDataReader dataReader) 
 		{
-			throw new NotImplementedException ();
+			return Fill (dataTable.DataSet, dataTable.TableName, dataReader, 0, 0);
 		}
 
 		protected virtual int Fill (DataTable dataTable, IDbCommand command, CommandBehavior behavior) 
 		{
-			return Fill (dataTable, command.ExecuteReader (behavior));
+			return Fill (dataTable.DataSet, 0, 0, dataTable.TableName, command, behavior);
 		}
 
 		public int Fill (DataSet dataSet, int startRecord, int maxRecords, string srcTable) 
 		{
-			if (startRecord < 0)
-				throw new ArgumentException ("The startRecord parameter was less than 0.");
-			if (maxRecords < 0)
-				throw new ArgumentException ("The maxRecords parameter was less than 0.");
-			return this.Fill (dataSet, srcTable, selectCommand.ExecuteReader (), startRecord, maxRecords);
+			return this.Fill (dataSet, startRecord, maxRecords, srcTable, selectCommand, CommandBehavior.Default);
 		}
 
 		protected virtual int Fill (DataSet dataSet, string srcTable, IDataReader dataReader, int startRecord, int maxRecords) 
@@ -110,12 +100,14 @@ namespace System.Data.Common
 			string tableName = srcTable;
                         int i = 0;
 
-                        if (this.isDirty)
-                                dataSet.Tables.Clear ();
+			if (startRecord < 0)
+				throw new ArgumentException ("The startRecord parameter was less than 0.");
+			if (maxRecords < 0)
+				throw new ArgumentException ("The maxRecords parameter was less than 0.");
 
                         do
                         {
-                                if (!this.isDirty)  // table already exists
+				if (dataSet.Tables.Contains (tableName))
                                 {
                                         table = dataSet.Tables[tableName];
                                 }
@@ -163,13 +155,18 @@ namespace System.Data.Common
                         } while (dataReader.NextResult ());
 
                         dataReader.Close ();
-                        this.isDirty = false;
                         return changeCount;
 		}
 
 		protected virtual int Fill (DataSet dataSet, int startRecord, int maxRecords, string srcTable, IDbCommand command, CommandBehavior behavior) 
 		{
-			return Fill (dataSet, srcTable, command.ExecuteReader (behavior), startRecord, maxRecords);
+			if (command.Connection.State == ConnectionState.Closed)
+			{
+				command.Connection.Open ();
+				behavior |= CommandBehavior.CloseConnection;
+			}
+		
+			return this.Fill (dataSet, srcTable, command.ExecuteReader (behavior), startRecord, maxRecords);
 		}
 
 		[MonoTODO]
