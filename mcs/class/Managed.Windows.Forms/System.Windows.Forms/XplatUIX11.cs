@@ -55,6 +55,11 @@ namespace System.Windows.Forms {
 		private static IntPtr		FosterParent;		// Container to hold child windows until their parent exists
 		private static int		wm_protocols;		// X Atom
 		private static int		wm_delete_window;	// X Atom
+		private static int		mwm_hints;		// X Atom
+		private static int		wm_no_taskbar;		// X Atom
+		private static int		wm_state_above;		// X Atom
+		private static int		atom;			// X Atom
+		private static int		net_wm_state;		// X Atom
 		private static IntPtr		async_method;
 		private static uint		default_colormap;	// X Colormap ID
 		internal static Keys		key_state;
@@ -63,10 +68,9 @@ namespace System.Windows.Forms {
 		internal static bool		grab_confined;		// Is the current grab (if any) confined to grab_area?
 		internal static IntPtr		grab_hwnd;		// The window that is grabbed
 		internal static Rectangle	grab_area;		// The area the current grab is confined to
-		internal static	bool		is_visible;
 
 		private static Hashtable	handle_data;
-		private XEventQueue message_queue;
+		private XEventQueue		message_queue;
 
 		private ArrayList timer_list;
 		private Thread timer_thread;
@@ -230,9 +234,17 @@ namespace System.Windows.Forms {
 				if (FosterParent==IntPtr.Zero) {
 					Console.WriteLine("XplatUIX11 Constructor failed to create FosterParent");
 				}
+
 				// Prepare for shutdown
 				wm_protocols=XInternAtom(display_handle, "WM_PROTOCOLS", false);
 				wm_delete_window=XInternAtom(display_handle, "WM_DELETE_WINDOW", false);
+
+				// handling decorations and such
+				mwm_hints=XInternAtom(display_handle, "_MOTIF_WM_HINTS", false);
+				net_wm_state=XInternAtom(display_handle, "_NET_WM_STATE", false);
+				wm_no_taskbar=XInternAtom(display_handle, "_NET_WM_STATE_NO_TASKBAR", false);
+				wm_state_above=XInternAtom(display_handle, "_NET_WM_STATE_ABOVE", false);
+				atom=XInternAtom(display_handle, "ATOM", false);
 
 				handle_data = new Hashtable ();
 			} else {
@@ -279,8 +291,12 @@ namespace System.Windows.Forms {
 			int			Y;
 			int			Width;
 			int			Height;
+			MotifWmHints		mwmHints;
+			uint[]			atoms;
+			int			atom_count;
 			int			BorderWidth;
 			int			protocols;
+			XSetWindowAttributes	attr;
 
 			ParentHandle=cp.Parent;
 
@@ -296,10 +312,13 @@ namespace System.Windows.Forms {
 
 			lock (xlib_lock) {
 				if (ParentHandle==IntPtr.Zero) {
-					if ((cp.Style & (int)WindowStyles.WS_CHILD)!=0) {
+					if ((cp.Style & (int)(WindowStyles.WS_CHILD))!=0) {
 						// We need to use our foster parent window until
 						// this poor child gets it's parent assigned
 						ParentHandle=FosterParent;
+					} else if ((cp.Style & (int)(WindowStyles.WS_POPUP))!=0) {
+						BorderWidth=0;
+						ParentHandle=XRootWindow(DisplayHandle, 0);
 					} else {
 						if (X<1) X=50;
 						if (Y<1) Y=50;
@@ -308,11 +327,89 @@ namespace System.Windows.Forms {
 					}
 				}
 
-				WindowHandle=XCreateSimpleWindow(DisplayHandle, ParentHandle, X, Y, Width, Height, BorderWidth, 0, 0);
+				attr = new XSetWindowAttributes();
+
+				if ((cp.ExStyle & ((int)WindowStyles.WS_EX_TOOLWINDOW)) != 0) {
+					attr.save_under = true;
+				}
+
+				attr.override_redirect = false;
+
+				if ((cp.Style & ((int)WindowStyles.WS_POPUP)) != 0) {
+					attr.override_redirect = true;
+				}
+
+				attr.bit_gravity = Gravity.NorthWestGravity;
+				attr.win_gravity = Gravity.NorthWestGravity;
+
+				WindowHandle=XCreateWindow(DisplayHandle, ParentHandle, X, Y, Width, Height, BorderWidth, (int)CreateWindowArgs.CopyFromParent, (int)CreateWindowArgs.InputOutput, IntPtr.Zero, SetWindowValuemask.BitGravity | SetWindowValuemask.WinGravity | SetWindowValuemask.SaveUnder | SetWindowValuemask.OverrideRedirect, ref attr);
+
+				// Set the appropriate window manager hints
+				if (((cp.Style & ((int)WindowStyles.WS_POPUP)) != 0)  && (ParentHandle != IntPtr.Zero)) {
+					XSetTransientForHint(DisplayHandle, WindowHandle, ParentHandle);
+				}
+
+				mwmHints = new MotifWmHints();
+				mwmHints.flags = MotifFlags.Functions | MotifFlags.Decorations;
+				mwmHints.functions = 0;
+				mwmHints.decorations = 0;
+				
+				if ((cp.Style & ((int)WindowStyles.WS_CAPTION)) != 0) {
+					mwmHints.functions |= MotifFunctions.Move;
+					mwmHints.decorations |= MotifDecorations.Title | MotifDecorations.Menu;
+				}
+
+				if ((cp.Style & ((int)WindowStyles.WS_THICKFRAME)) != 0) {
+					mwmHints.functions |= MotifFunctions.Move | MotifFunctions.Resize;
+					mwmHints.decorations |= MotifDecorations.Border | MotifDecorations.ResizeH;
+				}
+
+				if ((cp.Style & ((int)WindowStyles.WS_MINIMIZEBOX)) != 0) {
+					mwmHints.functions |= MotifFunctions.Minimize;
+					mwmHints.decorations |= MotifDecorations.Minimize;
+				}
+
+				if ((cp.Style & ((int)WindowStyles.WS_MAXIMIZEBOX)) != 0) {
+					mwmHints.functions |= MotifFunctions.Maximize;
+					mwmHints.decorations |= MotifDecorations.Maximize;
+				}
+
+				if ((cp.Style & ((int)WindowStyles.WS_SYSMENU)) != 0) {
+					mwmHints.functions |= MotifFunctions.Close;
+				}
+
+				if ((cp.ExStyle & ((int)WindowStyles.WS_EX_DLGMODALFRAME)) != 0) {
+					mwmHints.decorations |= MotifDecorations.Border;
+				}
+
+				if ((cp.Style & ((int)WindowStyles.WS_DLGFRAME)) != 0) {
+					mwmHints.decorations |= MotifDecorations.Border;
+				}
+
+				if ((cp.Style & ((int)WindowStyles.WS_BORDER)) != 0) {
+					mwmHints.decorations |= MotifDecorations.Border;
+				}
+
+
+				if ((cp.ExStyle & ((int)WindowStyles.WS_EX_TOOLWINDOW)) != 0) {
+					mwmHints.functions = 0;
+					mwmHints.decorations = 0;
+				}
+
+				XChangeProperty(DisplayHandle, WindowHandle, mwm_hints, mwm_hints, 32, PropertyMode.Replace, ref mwmHints, 5);
+
+				atoms = new uint[8];
+				atom_count = 0;
+
+				if ((cp.ExStyle & ((int)WindowStyles.WS_EX_TOOLWINDOW)) != 0) {
+					atoms[atom_count++] = (uint)wm_state_above;
+					atoms[atom_count++] = (uint)wm_no_taskbar;
+				}
+				XChangeProperty(DisplayHandle, WindowHandle, net_wm_state, atom, 32, PropertyMode.Replace, ref atoms, atom_count);
+
 				XMapWindow(DisplayHandle, WindowHandle);
 
 				XSelectInput(DisplayHandle, WindowHandle, SelectInputMask);
-				is_visible=true;
 
 				protocols=wm_delete_window;
 				XSetWMProtocols(DisplayHandle, WindowHandle, ref protocols, 1);
@@ -344,6 +441,7 @@ namespace System.Windows.Forms {
 				if (data != null) {
 					data.Dispose ();
 					handle_data [handle] = null;
+					XDestroyWindow(DisplayHandle, handle);
 				}
 			}
 		}
@@ -428,6 +526,7 @@ namespace System.Windows.Forms {
 			if (height < 1) {
 				height = 1;
 			}
+
 			lock (xlib_lock) {
 				XMoveResizeWindow(DisplayHandle, handle, x, y, width, height);
 			}
@@ -956,8 +1055,19 @@ namespace System.Windows.Forms {
 			return false;
 		}
 
-		internal override bool SetTopmost(IntPtr hWnd, bool Enabled) {
-			return false;
+		internal override bool SetTopmost(IntPtr hWnd, IntPtr hWndOwner, bool Enabled) {
+			if (Enabled) {
+				if (hWndOwner == IntPtr.Zero) {
+					hWndOwner = FosterParent;
+				}
+				XSetTransientForHint(DisplayHandle, hWnd, hWndOwner);
+			} else {
+				int	trans_prop;
+
+				trans_prop = XInternAtom(DisplayHandle, "WM_TRANSIENT_FOR", false);
+				XDeleteProperty(DisplayHandle, hWnd, trans_prop);
+			}
+			return true;
 		}
 
 		internal override bool Text(IntPtr handle, string text) {
@@ -996,17 +1106,15 @@ namespace System.Windows.Forms {
 			lock (xlib_lock) {
 				if (visible) {
 					XMapWindow(DisplayHandle, handle);
-					is_visible=true;
 				} else {
 					XUnmapWindow(DisplayHandle, handle);
-					is_visible=false;
 				}
 			}
 			return true;
 		}
 
 		internal override bool IsVisible(IntPtr handle) {
-			return is_visible;
+			return true;
 		}
 
 		internal override IntPtr SetParent(IntPtr handle, IntPtr parent) {
@@ -1234,7 +1342,7 @@ namespace System.Windows.Forms {
 		internal extern static void XCloseDisplay(IntPtr display);						    
 
 		[DllImport ("libX11", EntryPoint="XCreateWindow")]
-		internal extern static IntPtr XCreateWindow(IntPtr display, IntPtr parent, int x, int y, int width, int height, int border_width, int depth, int xclass, IntPtr visual, IntPtr attributes);
+		internal extern static IntPtr XCreateWindow(IntPtr display, IntPtr parent, int x, int y, int width, int height, int border_width, int depth, int xclass, IntPtr visual, SetWindowValuemask valuemask, ref XSetWindowAttributes attributes);
 		[DllImport ("libX11", EntryPoint="XCreateSimpleWindow")]
 		internal extern static IntPtr XCreateSimpleWindow(IntPtr display, IntPtr parent, int x, int y, int width, int height, int border_width, int border, int background);
 		[DllImport ("libX11", EntryPoint="XMapWindow")]
@@ -1354,6 +1462,20 @@ namespace System.Windows.Forms {
 		[DllImport ("libX11", EntryPoint="XAllocColor")]
 		internal extern static int XAllocColor(IntPtr display, uint Colormap, ref XColor colorcell_def);
 
+		[DllImport ("libX11.so", EntryPoint="XSetTransientForHint")]
+		internal extern static int XSetTransientForHint(IntPtr display, IntPtr window, IntPtr prop_window);
+
+		[DllImport ("libX11.so", EntryPoint="XChangeProperty")]
+		internal extern static int XChangeProperty(IntPtr display, IntPtr window, int property, int type, int format, PropertyMode  mode, ref MotifWmHints data, int nelements);
+
+		[DllImport ("libX11.so", EntryPoint="XChangeProperty")]
+		internal extern static int XChangeProperty(IntPtr display, IntPtr window, int property, int format, int type, PropertyMode  mode, ref uint[] atoms, int nelements);
+
+		[DllImport ("libX11.so", EntryPoint="XChangeProperty")]
+		internal extern static int XChangeProperty(IntPtr display, IntPtr window, int property, int format, int type, PropertyMode  mode, IntPtr data, int nelements);
+
+		[DllImport ("libX11.so", EntryPoint="XDeleteProperty")]
+		internal extern static int XDeleteProperty(IntPtr display, IntPtr window, int property);
 
 		// Drawing
 		[DllImport ("libX11", EntryPoint="XCreateGC")]
