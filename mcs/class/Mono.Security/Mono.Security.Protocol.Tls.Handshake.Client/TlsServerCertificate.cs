@@ -92,35 +92,6 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 					X509Certificate certificate = new X509Certificate(buffer);
 					certificates.Add(certificate);
 
-					/*
-					System.Text.StringBuilder b = new System.Text.StringBuilder();
-
-					b.AppendFormat(
-							"\r\nCertificate {0} | Issuer name {1} | Self signed {2} ({3} bytes) \r\n",
-							certificates.Count,
-							certificate.IssuerName,
-							certificate.IsSelfSigned,
-							buffer.Length);
-
-					b.Append("Contents: \r\n");
-
-					int byteCount = 0;
-					for (int i = 0; i < buffer.Length; i++)
-					{
-						if (byteCount == 25)
-						{
-							byteCount = 0;
-							b.Append("\r\n");
-						}
-                        
-						b.AppendFormat("{0} ", buffer[i].ToString("x2"));
-
-						byteCount++;
-					}
-
-					System.Diagnostics.Trace.Write(b.ToString());
-					*/
-
 					readed += certLength;
 				}
 			}

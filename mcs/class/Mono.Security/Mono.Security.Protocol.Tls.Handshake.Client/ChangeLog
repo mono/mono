@@ -1,3 +1,10 @@
+
+2004-02-14 Carlos Guzmán Álvarez  <carlosga@telefonica.net>
+
+    * Mono.Security.Protocol.Tls.Handshake.Client/TlsServerCertificate.cs:
+
+        - Removed test code.
+
 2003-11-17 Carlos Guzmán Álvarez  <carlosga@telefonica.net>
 
 	* Mono.Security.Protocol.Tls/SslClientStream.cs:
