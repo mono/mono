@@ -1,5 +1,11 @@
 2004-05-01  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
+	* CaseInsensitiveHashCodeProvider.cs
+	* CaseInsensitiveComparer.cs: Change lineendings
+	* CaseInsensitiveComparer.cs: Restyle
+
+2004-05-01  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
 	* BitArray.cs: Fix parameter names
 	* CaseInsensitiveHashCodeProvider.cs: Fix signature
 	* DictionaryEntry.cs: Fix parameter names
