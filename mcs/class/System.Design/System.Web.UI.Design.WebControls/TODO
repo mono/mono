@@ -14,25 +14,25 @@ Documented + Undocumented.
 BaseDataListComponentEditor
 BaseDataListDesigner
 BaseValidatorDesigner
-ButtonDesigner
-CalendarAutoFormatDialog
-CalendarDesigner
-CheckBoxDesigner
+* ButtonDesigner
+& CalendarAutoFormatDialog
+& CalendarDesigner
+* CheckBoxDesigner
 DataGridColumnCollectionEditor
 DataGridComponentEditor
 DataGridDesigner
 DataListComponentEditor
 DataListDesigner
-HyperLinkDesigner
-LabelDesigner
-LinkButtonDesigner
+* HyperLinkDesigner
+* LabelDesigner
+* LinkButtonDesigner
 ListControlDataBindingHandler
 ListControlDesigner
 ListItemsCollectionEditor
 PanelDesigner
 RegexTypeEditor
-TableCellsCollectionEditor
-TableDesigner
+* TableCellsCollectionEditor
+& TableDesigner
 TableRowsCollectionEditor
 
 ------------------------------------------------------

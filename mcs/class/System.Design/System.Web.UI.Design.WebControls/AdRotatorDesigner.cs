@@ -3,7 +3,7 @@
  * Class:       AdRotatorDesigner
  *
  * Author:      Gaurav Vaish
- * Maintainer:  mastergaurav AT users DOT sf DOT net
+ * Maintainer:  gvaish_mono@lycos.com
  *
  * (C) Gaurav Vaish (2002)
  */
@@ -21,7 +21,6 @@ namespace System.Web.UI.Design.WebControls
 		{
 		}
 
-		[MonoTODO]
 		public override string GetDesignTimeHtml()
 		{
 			if(Component != null && Component is AdRotator)
