@@ -3,6 +3,7 @@ SUBDIRS =
 include ../build/rules.make
 
 PROGRAM = ilasm.exe
+PROGRAM_INSTALL_DIR = $(prefix)/lib/mono/1.0
 BUILT_SOURCES = ILParser.cs
 LOCAL_MCS_FLAGS = /lib:../class/lib/default /r:PEAPI.dll /r:Mono.CompilerServices.SymbolWriter.dll
 
