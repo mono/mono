@@ -20,12 +20,6 @@ TODO:
 
 * Octal/backreference parsing needs a big fix. The rules are ridiculously complex.
 
-* Add a check in QuickSearch for single character substrings. This is likely to
-  be a common case. There's no need to go through a shift table. Also, have a
-  look at just computing a relevant subset of the shift table and using an
-  (offset, size) pair to help test inclusion. Characters not in the table get
-  the default len + 1 shift.
-
 * Improve the perl test suite. Run under MS runtime to generate checksums for
   each trial. Checksums should incorporate: all captures (index, length) for all
   groups; names of explicit capturing groups, and the numbers they map to. Any
