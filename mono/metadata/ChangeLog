@@ -1,5 +1,11 @@
 2003-12-04  Martin Baulig  <martin@ximian.com>
 
+	* icall.c
+	(ves_icall_type_GetTypeCode): Added MONO_TYPE_VAR and MONO_TYPE_MVAR.
+	(ves_icall_Type_make_array_type): New interncall.	
+
+2003-12-04  Martin Baulig  <martin@ximian.com>
+
 	* locales.c: also change it in the !HAVE_ICU case.
 
 2003-12-04  Dick Porter  <dick@ximian.com>
