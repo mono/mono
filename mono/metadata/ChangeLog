@@ -1,3 +1,9 @@
+2004-05-30  Jackson Harper  <jackson@ximian.com>
+
+	* reflection.c: Do not hardcode assembly versions or public key
+	tokens anymore. All of this except the corlib section was dead
+	code anyways.
+	
 2004-05-29  Zoltan Varga  <vargaz@freemail.hu>
 
 	* object.c (mono_runtime_invoke_array): Automatically create boxed
