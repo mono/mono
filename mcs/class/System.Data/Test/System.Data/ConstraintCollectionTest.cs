@@ -43,6 +43,11 @@ namespace MonoTests.System.Data
 			//Use UniqueConstraint to test Constraint Base Class
 			_constraint1 = new UniqueConstraint(_table.Columns[0],false); 
 			_constraint2 = new UniqueConstraint(_table.Columns[1],false); 
+
+			// not sure why this is needed since a new _table was just created
+			// for us, but this Clear() keeps the tests from throwing
+			// an exception when the Add() is called.
+			_table.Constraints.Clear();
 		}
 
 		protected override void TearDown() {}

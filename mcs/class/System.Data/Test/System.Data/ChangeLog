@@ -1,3 +1,11 @@
+2002-10-23  Nick Drochak  <ndrochak@gol.com>
+
+	* ConstraintCollectionTest.cs (SetUp): Clear the constraints before 
+	each test.
+	* ConstraintTest.cs: same
+	* DataColumnTest.cs: Get exceptions straight.  Some are thrown and some
+	aren't
+
 2002-10-22  Nick Drochak  <ndrochak@gol.com>
 
 	* DataColumnTest.cs: Remove compiler warnings and use caught exception

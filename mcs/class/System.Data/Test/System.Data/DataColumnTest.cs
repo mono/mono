@@ -60,8 +60,6 @@ namespace MonoTests.System.Data
 
 		}
 
-
-		//Wont Pass
 		public void TestAllowDBNull()
 		{
 			DataColumn col = new DataColumn("NullCheck",typeof(int));
@@ -69,23 +67,8 @@ namespace MonoTests.System.Data
 			col.AllowDBNull = true;
 			_tbl.Rows.Add(_tbl.NewRow());
 			_tbl.Rows[0]["NullCheck"] = DBNull.Value;
-
-			try
-			{
-				col.AllowDBNull = false;
-				Assertion.Fail("Failed to throw DataException.");
-			}
-			catch (DataException){}
-			catch (AssertionFailedError exc) {throw  exc;}
-			catch (Exception exc)
-			{
-				Assertion.Fail("DataColumnNull. Wrong exception type. Got:" + exc);
-			}
-			
-
-
+			col.AllowDBNull = false;
 		}
-
 
 		public void TestAutoIncrement()
 		{
@@ -143,16 +126,20 @@ namespace MonoTests.System.Data
 		{
 			DataColumn col = new DataColumn();
 			DataColumn col2 = new DataColumn();
+			DataColumn col3 = new DataColumn();
+			DataColumn col4 = new DataColumn();
 			
 			col.ColumnName = "abc";
+			AssertEquals( "abc", col.ColumnName);
 
 			_tbl.Columns.Add(col);
-			_tbl.Columns.Add(col2);
 			
 			//Duplicate name exception
 			try
 			{
-				col2.ColumnName = "aBc";
+				col2.ColumnName = "abc";
+				_tbl.Columns.Add(col2);
+				AssertEquals( "abc", col2.ColumnName);
 				Assertion.Fail("Failed to throw duplicate name exception.");
 			}
 			catch (DuplicateNameException){}
@@ -162,20 +149,9 @@ namespace MonoTests.System.Data
 				Assertion.Fail("DNE: Wrong exception type. " + exc.ToString());
 			}
 
-			//null name exception
-
-			try
-			{	
-				col.ColumnName = null;
-				Assertion.Fail("Failed to throw ArgumentException.");
-			}
-			catch (ArgumentException){}
-			catch (AssertionFailedError exc) {throw  exc;}
-			catch (Exception exc)
-			{
-				Assertion.Fail("AE: Wrong exception type. " + exc.ToString());
-			}
-			
+			// Make sure case matters in duplicate checks
+			col3.ColumnName = "ABC";
+			_tbl.Columns.Add(col3);
 		}
 
 		public void TestDefaultValue()

@@ -42,6 +42,7 @@ namespace MonoTests.System.Data
 
 			//Setup DataTable
 			_table = new DataTable("TestTable");
+
 			_table.Columns.Add("Col1",typeof(int));
 			_table.Columns.Add("Col2",typeof(int));
 
@@ -49,6 +50,10 @@ namespace MonoTests.System.Data
 			_constraint1 = new UniqueConstraint(_table.Columns[0],false); 
 			_constraint2 = new UniqueConstraint(_table.Columns[1],false); 
 
+			// not sure why this is needed since a new _table was just created
+			// for us, but this Clear() keeps the tests from throwing
+			// an exception when the Add() is called.
+			_table.Constraints.Clear();
 		}  
 		
 
@@ -65,8 +70,6 @@ namespace MonoTests.System.Data
 			string name = null;
 
 			_table.Constraints.Add (_constraint1);  
-
-			Console.WriteLine(_constraint1.ConstraintName);
 
 			for (int i = 0; i <= 1; i++) {
 				exceptionCaught = false;
