@@ -26,4 +26,4 @@ clean:
 	fi; \
 
 runtests: windows
-	"$(NUNIT_HOME)\bin\NUnitConsole.exe" Ximian.Mono.Tests.AllTests,Test.dll
+	"$(NUNIT_HOME)\NUnitConsole.exe" Ximian.Mono.Tests.AllTests,Test.dll
