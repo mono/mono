@@ -1,3 +1,7 @@
+2003-05-30  Miguel de Icaza  <miguel@ximian.com>
+
+	* XmlReader.cs (ReadStartElement): Improve error message.  
+
 2003-05-28  Lluis Sanchez Gual <lluis@ideary.com>
 
 	* XmlTextReader.cs : MoveToAttribute methods must set the enumerator to the right

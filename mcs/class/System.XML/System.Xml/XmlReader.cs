@@ -345,7 +345,8 @@ namespace System.Xml
 			}
 
 			if (localName != LocalName || NamespaceURI != namespaceName) {
-				string error = String.Format ("The {0} tag from namespace {1} is expected.",
+				string error = String.Format ("Expecting {0} tag from namespace {1}, got {2} and {3} instead",
+							      localName, namespaceName,
 							      LocalName, NamespaceURI);
 				throw new XmlException (this as IXmlLineInfo, error);
 			}
