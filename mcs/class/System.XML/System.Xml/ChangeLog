@@ -1,5 +1,15 @@
 2004-11-03  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlTextReader.cs :
+	  Reduces LookupNamespace() call in FillNames(). This improves 6-7%
+	  speedup in some scenario.
+	  Code refactory; Removed unused code. AddAttribute() is used only for
+	  DTD, so renamed to AddDtdAttribute(). For PUBLIC and SYSTEM ids,
+	  FillNames() is not required. Two SetProperties() are ambiguous, so
+	  renamed one (that takes TokenInfo) as SetTokenProperties().
+
+2004-11-03  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlParserContext.cs : rewrote; especially to avoid XmlSpace boxing.
 
 2004-11-03  Atsushi Enomoto <atsushi@ximian.com>

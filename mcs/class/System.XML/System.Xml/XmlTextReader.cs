@@ -826,10 +826,6 @@ namespace System.Xml
 
 		#region Internals
 		// Parsed DTD Objects
-#if DTD_HANDLE_EVENTS
-		internal event ValidationEventHandler ValidationEventHandler;
-#endif
-
 		internal DTDObjectModel DTD {
 			get { return parserContext.Dtd; }
 		}
@@ -938,7 +934,10 @@ namespace System.Xml
 
 					case XmlNodeType.Element:
 					case XmlNodeType.EndElement:
-						NamespaceURI = Reader.LookupNamespace (Prefix, true);
+						if (Prefix.Length == 0)
+							NamespaceURI = Reader.parserContext.NamespaceManager.DefaultNamespace;
+						else
+							NamespaceURI = Reader.LookupNamespace (Prefix, true);
 						break;
 					default:
 						NamespaceURI = "";
@@ -1167,7 +1166,6 @@ namespace System.Xml
 
 			line = 1;
 			column = 1;
-			currentTagLength = 0;
 
 			currentLinkedNodeLineNumber = currentLinkedNodeLinePosition = 0;
 			useProceedingLineInfo = false;
@@ -1266,12 +1264,12 @@ namespace System.Xml
 			string value,
 			bool clearAttributes)
 		{
-			SetProperties (currentToken, nodeType, name, isEmptyElement, value, clearAttributes);
+			SetTokenProperties (currentToken, nodeType, name, isEmptyElement, value, clearAttributes);
 			currentToken.LineNumber = this.currentLinkedNodeLineNumber;
 			currentToken.LinePosition = this.currentLinkedNodeLinePosition;
 		}
 
-		private void SetProperties (
+		private void SetTokenProperties (
 			XmlTokenInfo token,
 			XmlNodeType nodeType,
 			string name,
@@ -1358,9 +1356,6 @@ namespace System.Xml
 			}
 		}
 
-		// This should really keep track of some state so
-		// that it's not possible to have more than one document
-		// element or text outside of the document element.
 		private bool ReadContent ()
 		{
 			currentTagLength = 0;
@@ -1680,16 +1675,6 @@ namespace System.Xml
 			Array.Copy (oldCurrentTagBuffer, currentTagBuffer, currentTagLength);
 		}
 
-		private string CreateCurrentTagString ()
-		{
-			return new string (currentTagBuffer, 0, currentTagLength);
-		}
-
-		private void ClearCurrentTagBuffer ()
-		{
-			currentTagLength = 0;
-		}
-
 		// The reader is positioned on the first character
 		// of the text.
 		private void ReadText (bool notWhitespace)
@@ -1891,16 +1876,17 @@ namespace System.Xml
 			currentAttributeValue = -1;
 		}
 
-		private void AddAttribute (string name, string value)
+		private void AddDtdAttribute (string name, string value)
 		{
 			IncrementAttributeToken ();
 			XmlAttributeTokenInfo ati = attributeTokens [currentAttribute];
-			ati.Name = "SYSTEM";
-			ati.FillNames ();
+			ati.Name = name;
+			ati.Prefix = String.Empty;
+			ati.NamespaceURI = String.Empty;
 			IncrementAttributeValueToken ();
 			XmlTokenInfo vti = attributeValueTokens [currentAttributeValue];
 			vti.Value = value;
-			SetProperties (vti, XmlNodeType.Text, String.Empty, false, value, false);
+			SetTokenProperties (vti, XmlNodeType.Text, String.Empty, false, value, false);
 			attributeCount++;
 		}
 
@@ -2409,9 +2395,9 @@ namespace System.Xml
 				);
 
 			if (publicId != null)
-				AddAttribute ("PUBLIC", publicId);
+				AddDtdAttribute ("PUBLIC", publicId);
 			if (systemId != null)
-				AddAttribute ("SYSTEM", systemId);
+				AddDtdAttribute ("SYSTEM", systemId);
 			currentAttribute = currentAttributeValue = -1;
 		}
 
@@ -2438,19 +2424,7 @@ namespace System.Xml
 
 			DTDReader dr = new DTDReader (DTD, intSubsetStartLine, intSubsetStartColumn);
 			dr.Normalization = this.normalization;
-#if DTD_HANDLE_EVENTS
-			dr.ValidationEventHandler += new ValidationEventHandler (OnValidationEvent);
-#endif
 			return dr.GenerateDTDObjectModel ();
-		}
-
-		private void OnValidationEvent (object o, ValidationEventArgs e)
-		{
-#if DTD_HANDLE_EVENTS
-			if (ValidationEventHandler != null)
-				// Override object as this.
-				ValidationEventHandler (this, e);
-#endif
 		}
 
 		private enum DtdInputState
@@ -2555,7 +2529,7 @@ namespace System.Xml
 							stateStack.Push (DtdInputState.NotationDecl);
 							break;
 						case '-':
-							Expect ("-");
+							Expect ('-');
 							stateStack.Push (DtdInputState.Comment);
 							break;
 						}
