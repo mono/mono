@@ -1,3 +1,7 @@
+2003-03-27  Martin Willemoes Hansen
+
+	* Added unix build environment
+
 2002-12-11  Jeroen Janssen <japj@darius.demon.nl>
 	
 	* removed set for RootDesignerSerializerAttribute.TypeId
