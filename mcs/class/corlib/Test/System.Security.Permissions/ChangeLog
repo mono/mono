@@ -1,5 +1,21 @@
 2004-09-01  Sebastien Pouliot  <sebastien@ximian.com>
 
+	* EnvironmentPermissionTest.cs: Fixed tests so they execute without 
+	errors on both Fx 1.1 and Fx 2.0 (beta 1).
+	* PublisherIdentityPermissionTest.cs: Fixed tests so they execute 
+	without errors on both Fx 1.1 and Fx 2.0 (beta 1).
+	* SiteIdentityPermissionTest.cs: Fixed tests so they execute without
+	errors on both Fx 1.1 and Fx 2.0 (beta 1). Fixed line endings.
+	* StrongNameIdentityPermissionTest.cs: Fixed tests so they execute 
+	without errors on both Fx 1.1 and Fx 2.0 (beta 1).
+	* StrongNamePublicKeyBlobTest.cs: Fixed tests so they execute without
+	errors on both Fx 1.1 and Fx 2.0 (beta 1). Converted tests to NUnit 
+	2.2 format.
+	* UrlIdentityPermissionTest.cs: Fixed tests so they execute without 
+	errors on both Fx 1.1 and Fx 2.0 (beta 1).
+
+2004-09-01  Sebastien Pouliot  <sebastien@ximian.com>
+
 	* ZoneIdentityPermissionTest.cs: Ensure we aren't encoding NoZone in
 	the permission XML (ToXml).
 

@@ -304,7 +304,9 @@ namespace MonoTests.System.Security.Permissions {
 		}
 
 		[Test]
+#if NET_2_0
 		[ExpectedException (typeof (ArgumentException))]
+#endif
 		public void Union_Different ()
 		{
 			SiteIdentityPermission sip1 = new SiteIdentityPermission (GoodSites [0]);

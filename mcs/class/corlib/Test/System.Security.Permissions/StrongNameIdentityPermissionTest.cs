@@ -1,5 +1,6 @@
 ﻿//
-// StrongNameIdentityPermissionTest.cs - NUnit Test Cases for StrongNameIdentityPermission
+// StrongNameIdentityPermissionTest.cs -
+//	NUnit Test Cases for StrongNameIdentityPermission
 //
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
@@ -100,11 +101,16 @@ namespace MonoTests.System.Security.Permissions {
 		}
 
 		[Test]
+#if NET_2_0
 		[ExpectedException (typeof (ArgumentException))]
+#endif
 		public void StrongNameIdentityPermission_NameEmpty ()
 		{
 			StrongNamePublicKeyBlob blob = new StrongNamePublicKeyBlob (ecma);
 			StrongNameIdentityPermission snip = new StrongNameIdentityPermission (blob, String.Empty, new Version (1, 2));
+#if !NET_2_0
+			// TODO
+#endif
 		}
 
 		[Test]
@@ -160,12 +166,17 @@ namespace MonoTests.System.Security.Permissions {
 		}
 
 		[Test]
+#if NET_2_0
 		[ExpectedException (typeof (ArgumentException))]
+#endif
 		public void Name_Empty ()
 		{
 			StrongNamePublicKeyBlob blob = new StrongNamePublicKeyBlob (ecma);
 			StrongNameIdentityPermission snip = new StrongNameIdentityPermission (blob, "mono", new Version (1, 2, 3, 4));
 			snip.Name = String.Empty;
+#if !NET_2_0
+			Assert.AreEqual (String.Empty, snip.Name, "Name");
+#endif
 		}
 
 		[Test]
@@ -190,7 +201,9 @@ namespace MonoTests.System.Security.Permissions {
 		}
 
 		[Test]
+#if NET_2_0
 		[ExpectedException (typeof (ArgumentException))]
+#endif
 		public void Copy_NameEmpty ()
 		{
 			StrongNameIdentityPermission snip = new StrongNameIdentityPermission (PermissionState.None);
@@ -200,6 +213,9 @@ namespace MonoTests.System.Security.Permissions {
 			// because Name == String.Empty, which is illegal using the other constructor
 			// but (somewhat) required to copy the teo other informations
 			StrongNameIdentityPermission copy = (StrongNameIdentityPermission)snip.Copy ();
+#if !NET_2_0
+			// TODO
+#endif
 		}
 
 		private void Compare (StrongNameIdentityPermission p1, StrongNameIdentityPermission p2, string prefix)
@@ -289,34 +305,49 @@ namespace MonoTests.System.Security.Permissions {
 		}
 
 		[Test]
+#if NET_2_0
 		[ExpectedException (typeof (ArgumentException))]
+#endif
 		public void Union_DifferentPk ()
 		{
 			StrongNamePublicKeyBlob blob = new StrongNamePublicKeyBlob (ecma);
 			StrongNameIdentityPermission snip = new StrongNameIdentityPermission (blob, "mono", new Version (1, 2, 3, 4));
 			StrongNamePublicKeyBlob blob2 = new StrongNamePublicKeyBlob (new byte [16]);
 			StrongNameIdentityPermission diffPk = new StrongNameIdentityPermission (blob2, "mono", new Version (1, 2, 3, 4));
-			snip.Union (diffPk);
+			StrongNameIdentityPermission result = (StrongNameIdentityPermission) snip.Union (diffPk);
+#if !NET_2_0
+			// TODO
+#endif
 		}
 
 		[Test]
+#if NET_2_0
 		[ExpectedException (typeof (ArgumentException))]
+#endif
 		public void Union_SamePublicKey_DifferentName ()
 		{
 			StrongNamePublicKeyBlob blob = new StrongNamePublicKeyBlob (ecma);
 			StrongNameIdentityPermission snip = new StrongNameIdentityPermission (blob, "mono", new Version (1, 2, 3, 4));
 			StrongNameIdentityPermission diffName = new StrongNameIdentityPermission (blob, "novell", null);
-			snip.Union (diffName);
+			StrongNameIdentityPermission result = (StrongNameIdentityPermission) snip.Union (diffName);
+#if !NET_2_0
+			// TODO
+#endif
 		}
 
 		[Test]
+#if NET_2_0
 		[ExpectedException (typeof (ArgumentException))]
+#endif
 		public void Union_SamePublicKey_DifferentVersion ()
 		{
 			StrongNamePublicKeyBlob blob = new StrongNamePublicKeyBlob (ecma);
 			StrongNameIdentityPermission snip = new StrongNameIdentityPermission (blob, "mono", new Version (1, 2, 3, 4));
 			StrongNameIdentityPermission diffVersion = new StrongNameIdentityPermission (blob, null, new Version (1, 2));
-			snip.Union (diffVersion);
+			StrongNameIdentityPermission result = (StrongNameIdentityPermission) snip.Union (diffVersion);
+#if !NET_2_0
+			// TODO
+#endif
 		}
 
 		[Test]

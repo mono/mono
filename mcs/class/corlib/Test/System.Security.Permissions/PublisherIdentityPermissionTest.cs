@@ -1,10 +1,31 @@
 //
-// PublisherIdentityPermissionTest.cs - NUnit Test Cases for PublisherIdentityPermission
+// PublisherIdentityPermissionTest.cs - 
+//	NUnit Test Cases for PublisherIdentityPermission
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
+// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+//
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+// 
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
 using NUnit.Framework;
@@ -183,17 +204,31 @@ namespace MonoTests.System.Security.Permissions {
 			p2 = new PublisherIdentityPermission (PermissionState.None);
 			p3 = (PublisherIdentityPermission) p1.Union (p2);
 			AssertEquals ("cert U None == cert", p3.ToXml ().ToString (), p1.ToXml ().ToString ());
-			// 2 different certificates
 			X509Certificate x2 = new X509Certificate (cert2);
+#if !NET_2_0
+			// 2 different certificates
 			p2 = new PublisherIdentityPermission (x2);
 			p3 = (PublisherIdentityPermission) p1.Union (p2);
 			AssertNull ("cert1 U cert2 == null", p3);
+#endif
 			// 2 certificates (same)
 			x2 = new X509Certificate (cert);
 			p2 = new PublisherIdentityPermission (x2);
 			p3 = (PublisherIdentityPermission) p1.Union (p2);
 			AssertEquals ("cert1 U cert1 == cert1", p3.ToString (), p1.ToString ());
 		}
+
+#if NET_2_0
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void Union_DifferentCertificates ()
+		{
+			PublisherIdentityPermission p1 = new PublisherIdentityPermission (x509);
+			X509Certificate x2 = new X509Certificate (cert2);
+			PublisherIdentityPermission p2 = new PublisherIdentityPermission (x2);
+			p1.Union (p2);
+		}
+#endif
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]

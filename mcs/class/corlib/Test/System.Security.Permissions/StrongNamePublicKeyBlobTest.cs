@@ -2,9 +2,29 @@
 // StrongNamePublicKeyBlobTest.cs - NUnit Test Cases for StrongNamePublicKeyBlob
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
+// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+//
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+// 
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
 using NUnit.Framework;
@@ -15,7 +35,7 @@ using System.Security.Permissions;
 namespace MonoTests.System.Security.Permissions {
 
 [TestFixture]
-public class StrongNamePublicKeyBlobTest : Assertion {
+public class StrongNamePublicKeyBlobTest {
 
 	static byte[] bad = { 0xB, 0xAD };
 	// should be a valid one (see StrongNameKeyPairTest.cs)
@@ -33,27 +53,36 @@ public class StrongNamePublicKeyBlobTest : Assertion {
 	{
 		StrongNamePublicKeyBlob snpkb = new StrongNamePublicKeyBlob (bad);
 		// Proof that there's no validation on public key
-		AssertEquals ("ToString(BAD)", "0BAD", snpkb.ToString ());
+		Assert.AreEqual ("0BAD", snpkb.ToString (), "ToString(BAD)");
 	}
 
 	[Test]
 	public void PublicKey () 
 	{
 		StrongNamePublicKeyBlob snpkb = new StrongNamePublicKeyBlob (pk);
-		Assert ("Equals(Self)", snpkb.Equals (snpkb));
-		AssertEquals ("ToString(pk)", "00240000048000009400000006020000002400005253413100040000010001003DBD7208C62B0EA8C1C058072B635F7C9ABDCB22DB20B2A9DADAEFE800642F5D8DEB7802F7A5367728D7558D1468DBEB2409D02B131B926E2E59544AAC18CFC909023F4FA83E94001FC2F11A27477D1084F514B861621A0C66ABD24C4B9FC90F3CD8920FF5FFCED76E5C6FB1F57DD356F96727A4A5485B079344004AF8FFA4CB", snpkb.ToString ());
+		Assert.IsTrue (snpkb.Equals (snpkb), "Equals(Self)");
+		Assert.IsFalse (snpkb.Equals (null), "Equals(null)");
+		Assert.AreEqual ("00240000048000009400000006020000002400005253413100040000010001003DBD7208C62B0EA8C1C058072B635F7C9ABDCB22DB20B2A9DADAEFE800642F5D8DEB7802F7A5367728D7558D1468DBEB2409D02B131B926E2E59544AAC18CFC909023F4FA83E94001FC2F11A27477D1084F514B861621A0C66ABD24C4B9FC90F3CD8920FF5FFCED76E5C6FB1F57DD356F96727A4A5485B079344004AF8FFA4CB", snpkb.ToString (), "ToString(pk)");
 
 		StrongNamePublicKeyBlob snpkb2 = new StrongNamePublicKeyBlob (pk);
-		Assert ("Equals()-true", snpkb.Equals (snpkb2));
+		Assert.IsTrue (snpkb.Equals (snpkb2), "Equals()-true");
 		StrongNamePublicKeyBlob snpkb3 = new StrongNamePublicKeyBlob (bad);
-		Assert ("Equals()-false", !snpkb.Equals (snpkb3));
+		Assert.IsFalse (snpkb.Equals (snpkb3), "Equals()-false");
 
 		// non standard get hash code - why ???
+		Assert.AreEqual (snpkb2.GetHashCode (), snpkb.GetHashCode (), "GetHashCode-0");
+#if NET_2_0
+		// the first 4 bytes has code has been fixed in 2.0 beta 1
+#elif NET_1_1
 		// It seems to be the first four bytes of the public key data
 		// which seems like non sense as all valid public key will have the same header ?
-		AssertEquals ("GetHashCode-1", 2359296, snpkb.GetHashCode ());
-		AssertEquals ("GetHashCode-2", 2359296, snpkb2.GetHashCode ());
-		AssertEquals ("GetHashCode-3", 2989, snpkb3.GetHashCode ());
+		Assert.AreEqual (2359296, snpkb.GetHashCode (), "GetHashCode-1");
+		Assert.AreEqual (2359296, snpkb2.GetHashCode (), "GetHashCode-2");
+		Assert.AreEqual (2989, snpkb3.GetHashCode (), "GetHashCode-3");
+		byte[] header = { 0x00, 0x24, 0x00, 0x00 };
+		StrongNamePublicKeyBlob snpkb4 = new StrongNamePublicKeyBlob (header);
+		Assert.AreEqual (2359296, snpkb4.GetHashCode (), "GetHashCode-4");
+#endif
 	}
 }
 
