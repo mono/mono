@@ -318,11 +318,18 @@ namespace System {
 			min = strA.length < strB.length ? strA.length : strB.length;
 
 			for (i = 0; i < min; i++) {
-				if (Char.ToLower (strA.c_str[i]) != Char.ToLower (strB.c_str[i]))
-					break;
+				if (Char.ToLower (strA.c_str[i]) != Char.ToLower (strB.c_str[i])) {
+					return (int)strA.c_str[i] - (int)strB.c_str[i];
+				}
 			}
-
-			return ((int) (strA.c_str[i] - strB.c_str[i]));
+			if (strA.length == strB.length) {
+				return 0;
+			}
+			if (strA.length > min) {
+				return 1;
+			} else {
+				return -1;
+			}
 		}
 
 		[MonoTODO]
