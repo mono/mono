@@ -1,3 +1,7 @@
+2004-04-25	Dennis Hayes <dennish@raytek.com>
+
+	* VBUtils.cs added for compatablity with Mainsoft code.
+
 2004-04-17	Dennis Hayes <dennish@raytek.com>
 	Removed extra parameter from StrCmp
 	added check for null to Len(string)
