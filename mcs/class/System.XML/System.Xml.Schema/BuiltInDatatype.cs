@@ -16,21 +16,21 @@ using System.Security.Cryptography;
 
 namespace Mono.Xml.Schema
 {
-	public enum XsdWhitespaceFacet
+	internal enum XsdWhitespaceFacet
 	{
 		Preserve,
 		Replace,
 		Collapse
 	}
 
-	public enum XsdOrderedFacet
+	internal enum XsdOrderedFacet
 	{
 		False,
 		Partial,
 		Total
 	}
 
-	public enum XsdOrdering 
+	internal enum XsdOrdering 
 	{
 		LessThan = -1,
 		Equal = 0,
@@ -38,7 +38,7 @@ namespace Mono.Xml.Schema
 		Indeterminate = 2
 	}
 	
-	public class XsdAnySimpleType : XmlSchemaDatatype
+	internal class XsdAnySimpleType : XmlSchemaDatatype
 	{
 		static XsdAnySimpleType instance;
 		static XsdAnySimpleType ()
@@ -162,7 +162,7 @@ namespace Mono.Xml.Schema
 	}
 
 	// xs:string
-	public class XsdString : XsdAnySimpleType
+	internal class XsdString : XsdAnySimpleType
 	{
 		internal XsdString ()
 		{
@@ -197,7 +197,7 @@ namespace Mono.Xml.Schema
 	}
 
 	// xs:normalizedString
-	public class XsdNormalizedString : XsdString
+	internal class XsdNormalizedString : XsdString
 	{
 		internal XsdNormalizedString ()
 		{
@@ -217,7 +217,7 @@ namespace Mono.Xml.Schema
 	}
 
 	// xs:token
-	public class XsdToken : XsdNormalizedString
+	internal class XsdToken : XsdNormalizedString
 	{
 		internal XsdToken ()
 		{
@@ -236,7 +236,7 @@ namespace Mono.Xml.Schema
 	}
 
 	// xs:language
-	public class XsdLanguage : XsdToken
+	internal class XsdLanguage : XsdToken
 	{
 		internal XsdLanguage ()
 		{
@@ -254,7 +254,7 @@ namespace Mono.Xml.Schema
 	}
 
 	// xs;NMTOKEN
-	public class XsdNMToken : XsdToken
+	internal class XsdNMToken : XsdToken
 	{
 		internal XsdNMToken ()
 		{
@@ -283,7 +283,7 @@ namespace Mono.Xml.Schema
 	}
 
 	// xs:NMTOKENS
-	public class XsdNMTokens : XsdNMToken
+	internal class XsdNMTokens : XsdNMToken
 	{
 		internal XsdNMTokens ()
 		{
@@ -318,7 +318,7 @@ namespace Mono.Xml.Schema
 	}
 
 	// xs:Name
-	public class XsdName : XsdToken
+	internal class XsdName : XsdToken
 	{
 		internal XsdName ()
 		{
@@ -347,7 +347,7 @@ namespace Mono.Xml.Schema
 	}
 
 	// xs:NCName
-	public class XsdNCName : XsdName
+	internal class XsdNCName : XsdName
 	{
 		internal XsdNCName ()
 		{
@@ -376,7 +376,7 @@ namespace Mono.Xml.Schema
 	}
 
 	// xs:ID
-	public class XsdID : XsdName
+	internal class XsdID : XsdName
 	{
 		internal XsdID ()
 		{
@@ -399,7 +399,7 @@ namespace Mono.Xml.Schema
 	}
 
 	// xs:IDREF
-	public class XsdIDRef : XsdName
+	internal class XsdIDRef : XsdName
 	{
 		internal XsdIDRef ()
 		{
@@ -422,7 +422,7 @@ namespace Mono.Xml.Schema
 	}
 
 	// xs:IDREFS
-	public class XsdIDRefs : XsdName
+	internal class XsdIDRefs : XsdName
 	{
 		internal XsdIDRefs ()
 		{
@@ -456,7 +456,7 @@ namespace Mono.Xml.Schema
 	}
 
 	// xs:ENTITY
-	public class XsdEntity : XsdName
+	internal class XsdEntity : XsdName
 	{
 		internal XsdEntity ()
 		{
@@ -475,7 +475,7 @@ namespace Mono.Xml.Schema
 
 
 	// xs:ENTITIES
-	public class XsdEntities : XsdName
+	internal class XsdEntities : XsdName
 	{
 		internal XsdEntities ()
 		{
@@ -510,7 +510,7 @@ namespace Mono.Xml.Schema
 	}
 
 	// xs:NOTATION
-	public class XsdNotation : XsdAnySimpleType
+	internal class XsdNotation : XsdAnySimpleType
 	{
 		internal XsdNotation ()
 		{
@@ -551,7 +551,7 @@ namespace Mono.Xml.Schema
 	}
 
 	// xs:decimal
-	public class XsdDecimal : XsdAnySimpleType
+	internal class XsdDecimal : XsdAnySimpleType
 	{
 		internal XsdDecimal ()
 		{
@@ -614,7 +614,7 @@ namespace Mono.Xml.Schema
 	}
 
 	// xs:integer
-	public class XsdInteger : XsdDecimal
+	internal class XsdInteger : XsdDecimal
 	{
 		public XsdInteger ()
 		{
@@ -644,7 +644,7 @@ namespace Mono.Xml.Schema
 	}
 
 	// xs:Long
-	public class XsdLong : XsdInteger
+	internal class XsdLong : XsdInteger
 	{
 		public override Type ValueType {
 			get { return typeof (long); }
@@ -678,7 +678,7 @@ namespace Mono.Xml.Schema
 	}
 
 	// xs:Int
-	public class XsdInt : XsdLong
+	internal class XsdInt : XsdLong
 	{
 		public override Type ValueType {
 			get { return typeof (int); }
@@ -713,7 +713,7 @@ namespace Mono.Xml.Schema
 
 
 	// xs:Short
-	public class XsdShort : XsdInt
+	internal class XsdShort : XsdInt
 	{
 		public override Type ValueType {
 			get { return typeof (short); }
@@ -747,7 +747,7 @@ namespace Mono.Xml.Schema
 	}
 
 	// xs:Byte
-	public class XsdByte : XsdShort
+	internal class XsdByte : XsdShort
 	{
 		public override Type ValueType {
 			get { return typeof (sbyte); }
@@ -782,7 +782,7 @@ namespace Mono.Xml.Schema
 
 	// xs:nonNegativeInteger
 	[CLSCompliant (false)]
-	public class XsdNonNegativeInteger : XsdInteger
+	internal class XsdNonNegativeInteger : XsdInteger
 	{
 		public override Type ValueType {
 			get { return typeof (decimal); }
@@ -803,7 +803,7 @@ namespace Mono.Xml.Schema
 
 	// xs:unsignedLong
 	[CLSCompliant (false)]
-	public class XsdUnsignedLong : XsdNonNegativeInteger
+	internal class XsdUnsignedLong : XsdNonNegativeInteger
 	{
 		public override Type ValueType {
 			get { return typeof (ulong); }
@@ -838,7 +838,7 @@ namespace Mono.Xml.Schema
 
 	// xs:unsignedInt
 	[CLSCompliant (false)]
-	public class XsdUnsignedInt : XsdUnsignedLong
+	internal class XsdUnsignedInt : XsdUnsignedLong
 	{
 		public override Type ValueType {
 			get { return typeof (uint); }
@@ -874,7 +874,7 @@ namespace Mono.Xml.Schema
 
 	// xs:unsignedShort
 	[CLSCompliant (false)]
-	public class XsdUnsignedShort : XsdUnsignedInt
+	internal class XsdUnsignedShort : XsdUnsignedInt
 	{
 		public override Type ValueType {
 			get { return typeof (ushort); }
@@ -909,7 +909,7 @@ namespace Mono.Xml.Schema
 
 	// xs:unsignedByte
 	[CLSCompliant (false)]
-	public class XsdUnsignedByte : XsdUnsignedShort
+	internal class XsdUnsignedByte : XsdUnsignedShort
 	{
 		public override Type ValueType {
 			get { return typeof (byte); }
@@ -945,7 +945,7 @@ namespace Mono.Xml.Schema
 
 	// xs:positiveInteger
 	[CLSCompliant (false)]
-	public class XsdPositiveInteger : XsdNonNegativeInteger
+	internal class XsdPositiveInteger : XsdNonNegativeInteger
 	{
 		// It returns decimal, instead of int or long.
 		// Maybe MS developers thought about big integer...
@@ -966,7 +966,7 @@ namespace Mono.Xml.Schema
 	}
 
 	// xs:nonPositiveInteger
-	public class XsdNonPositiveInteger : XsdInteger
+	internal class XsdNonPositiveInteger : XsdInteger
 	{
 		public override Type ValueType {
 			get { return typeof (decimal); }
@@ -985,7 +985,7 @@ namespace Mono.Xml.Schema
 	}
 
 	// xs:negativeInteger
-	public class XsdNegativeInteger : XsdNonPositiveInteger
+	internal class XsdNegativeInteger : XsdNonPositiveInteger
 	{
 		public override Type ValueType {
 
@@ -1005,7 +1005,7 @@ namespace Mono.Xml.Schema
 	}
 
 	// xs:float
-	public class XsdFloat : XsdAnySimpleType
+	internal class XsdFloat : XsdAnySimpleType
 	{
 		internal XsdFloat ()
 		{
@@ -1063,7 +1063,7 @@ namespace Mono.Xml.Schema
 	}
 
 	// xs:double
-	public class XsdDouble : XsdAnySimpleType
+	internal class XsdDouble : XsdAnySimpleType
 	{
 		internal XsdDouble ()
 		{
@@ -1121,7 +1121,7 @@ namespace Mono.Xml.Schema
 	}
 
 	// xs:base64Binary
-	public class XsdBase64Binary : XsdString
+	internal class XsdBase64Binary : XsdString
 	{
 		internal XsdBase64Binary ()
 		{
@@ -1206,7 +1206,7 @@ namespace Mono.Xml.Schema
 
 	
 	// xs:hexBinary
-	public class XsdHexBinary : XsdAnySimpleType
+	internal class XsdHexBinary : XsdAnySimpleType
 	{
 		internal XsdHexBinary ()
 		{
@@ -1244,7 +1244,7 @@ namespace Mono.Xml.Schema
 	}
 
 	// xs:QName
-	public class XsdQName : XsdName
+	internal class XsdQName : XsdName
 	{
 		internal XsdQName ()
 		{
@@ -1282,7 +1282,7 @@ namespace Mono.Xml.Schema
 	}
 
 	// xs:boolean
-	public class XsdBoolean : XsdAnySimpleType
+	internal class XsdBoolean : XsdAnySimpleType
 	{
 		internal XsdBoolean ()
 		{
@@ -1334,7 +1334,7 @@ namespace Mono.Xml.Schema
 	}
 
 	// xs:anyURI
-	public class XsdAnyURI : XsdString
+	internal class XsdAnyURI : XsdString
 	{
 		public override XmlTokenizedType TokenizedType {
 
@@ -1358,7 +1358,7 @@ namespace Mono.Xml.Schema
 	}
 	
 	// xs:duration
-	public class XsdDuration : XsdAnySimpleType
+	internal class XsdDuration : XsdAnySimpleType
 	{
 		internal XsdDuration ()
 		{
@@ -1428,7 +1428,7 @@ namespace Mono.Xml.Schema
 	}
 
 	// xs:dateTime
-	public class XsdDateTime : XsdAnySimpleType
+	internal class XsdDateTime : XsdAnySimpleType
 	{
 		internal XsdDateTime ()
 		{
@@ -1492,7 +1492,7 @@ namespace Mono.Xml.Schema
 	}
 
 	// xs:date
-	public class XsdDate : XsdAnySimpleType
+	internal class XsdDate : XsdAnySimpleType
 	{
 		internal XsdDate ()
 		{
@@ -1546,7 +1546,7 @@ namespace Mono.Xml.Schema
 	}
 
 	// xs:time
-	public class XsdTime : XsdAnySimpleType
+	internal class XsdTime : XsdAnySimpleType
 	{
 		static string [] timeFormats = new string [] {
 			  // copied from XmlConvert.
@@ -1627,7 +1627,7 @@ namespace Mono.Xml.Schema
 	}
 
 	// xs:gYearMonth
-	public class XsdGYearMonth : XsdAnySimpleType
+	internal class XsdGYearMonth : XsdAnySimpleType
 	{
 		internal XsdGYearMonth ()
 		{
@@ -1672,7 +1672,7 @@ namespace Mono.Xml.Schema
 	}
 
 	// xs:gMonthDay
-	public class XsdGMonthDay : XsdAnySimpleType
+	internal class XsdGMonthDay : XsdAnySimpleType
 	{
 		internal XsdGMonthDay ()
 		{
@@ -1717,7 +1717,7 @@ namespace Mono.Xml.Schema
 	}
 
 	// xs:gYear
-	public class XsdGYear : XsdAnySimpleType
+	internal class XsdGYear : XsdAnySimpleType
 	{
 		internal XsdGYear ()
 		{
@@ -1764,7 +1764,7 @@ namespace Mono.Xml.Schema
 	}
 
 	// xs:gMonth
-	public class XsdGMonth : XsdAnySimpleType
+	internal class XsdGMonth : XsdAnySimpleType
 	{
 		internal XsdGMonth ()
 		{
@@ -1809,7 +1809,7 @@ namespace Mono.Xml.Schema
 	}
 
 	// xs:gDay
-	public class XsdGDay : XsdAnySimpleType
+	internal class XsdGDay : XsdAnySimpleType
 	{
 		internal XsdGDay ()
 		{
