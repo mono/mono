@@ -606,9 +606,14 @@ type			: K_CLASS class_ref
                           {
                                 $$ = $3;
                           }
-			| K_VALUETYPE class_ref
+			| K_VALUETYPE OPEN_BRACKET comp_name CLOSE_BRACKET slashed_name
                           {
-                                $$ = $2;
+                                ClassRef klass = codegen.ExternTable.GetValueClass ((string) $3, (string)$5);
+                                $$ = new ExternTypeRef (klass, (string) $5);
+                          }
+                        | K_VALUETYPE slashed_name
+                          {
+                                $$ = new TypeRef ((string) $2, null);
                           }
 			| type OPEN_BRACKET CLOSE_BRACKET
                           {
@@ -1512,13 +1517,19 @@ local                   : type
                           {
                                 $$ = new Local (-1, (string) $2, (ITypeRef) $1);
                           }
-                        | OPEN_BRACKET int32 CLOSE_BRACKET type
+                        | slot_num type
                           {
-                                $$ = new Local ((int) $2, (ITypeRef) $4);
+                                $$ = new Local ((int) $1, (ITypeRef) $2);
                           }
-                        | OPEN_BRACKET int32 CLOSE_BRACKET type id
+                        | slot_num type id
                           {
-                                $$ = new Local ((int) $2, (string) $5, (ITypeRef) $4);
+                                $$ = new Local ((int) $1, (string) $5, (ITypeRef) $2);
+                          }
+                        ;
+
+slot_num                : OPEN_BRACKET int32 CLOSE_BRACKET
+                          {
+                                $$ = $2;
                           }
                         ;
 
@@ -1636,8 +1647,9 @@ instr			: INSTR_NONE
                           }
 			| INSTR_FIELD type type_spec DOUBLE_COLON id
                           {
-                                IClassRef owner = (IClassRef) $3;
-                                IFieldRef fieldref = owner.GetFieldRef ((ITypeRef) $2, (string) $5);
+                                ITypeRef owner = (ITypeRef) $3;
+                                IFieldRef fieldref = owner.AsClassRef (codegen).GetFieldRef (
+                                        (ITypeRef) $2, (string) $5);
 
                                 codegen.CurrentMethodDef.AddInstr (new FieldInstr ((FieldOp) $1, fieldref));
                           }
@@ -1671,24 +1683,24 @@ instr			: INSTR_NONE
 method_ref		: call_conv type type_spec DOUBLE_COLON method_name 
 			  OPEN_PARENS type_list CLOSE_PARENS
                           {
-                                IClassRef owner = (IClassRef) $3;
+                                ITypeRef owner = (ITypeRef) $3;
                                 ArrayList arg_list = (ArrayList) $7;
                                 ITypeRef[] param_list;
-
+  
                                 if (arg_list != null)
                                         param_list = (ITypeRef[]) arg_list.ToArray (typeof (ITypeRef));
                                 else
                                         param_list = new ITypeRef[0];
 
-                                
-                                $$ = owner.GetMethodRef ((ITypeRef) $2, (string) $5, param_list);
+                                $$ = owner.AsClassRef (codegen).GetMethodRef ((ITypeRef) $2,
+                                        (CallConv) $1, (string) $5, param_list);
                           }
 			| call_conv type method_name 
 			  OPEN_PARENS type_list CLOSE_PARENS
                           {
                                 ArrayList arg_list = (ArrayList) $5;
                                 ITypeRef[] param_list;
-                        
+  
                                 if (arg_list != null)
                                         param_list = (ITypeRef[]) arg_list.ToArray (typeof (ITypeRef));
                                 else
@@ -1973,16 +1985,16 @@ int64		        : INT64
                         | INT32
 			;
 
-float64                 : FLOAT64
-                        | K_FLOAT32 OPEN_PARENS int32 CLOSE_PARENS
+float64			: FLOAT64
+			| K_FLOAT32 OPEN_PARENS int32 CLOSE_PARENS
                           {
                                 $$ = Convert.ToDouble ($3);
                           }
-                        | K_FLOAT64 OPEN_PARENS int64 CLOSE_PARENS
-                           {
+			| K_FLOAT64 OPEN_PARENS int64 CLOSE_PARENS
+                          {
                                 $$ = Convert.ToDouble ($3);
-                           }
-                        ;
+                          }
+			;
 
 hexbyte			: HEXBYTE
                         | INT32         { $$ = Convert.ToByte ($1); }

@@ -1,5 +1,11 @@
 2003-05-18 Jackson Harper <jackson@latitudegeo.com>
 
+	* ILParser.jay: Use new methods for converting types to
+	classrefs. Expand grammar for locals.
+
+		
+2003-05-18 Jackson Harper <jackson@latitudegeo.com>
+
 	* ILParser.jay: Convert cast integers to floats.
 		
 2003-05-11 Jackson Harper <jackson@latitudegeo.com>
