@@ -1,5 +1,9 @@
 2005-01-05  Jonathan Pryor  <jonpryor@vt.edu>
 
+	* fstab.c: Add support for HPUX, which uses <checklist.h>.
+
+2005-01-05  Jonathan Pryor  <jonpryor@vt.edu>
+
 	* map.c: Continuing my ineptitude...  <sys/wait.h> isn't on Win32.
 	* mph.h: Win32 doesn't define EOVERFLOW, either.  Define it.
 

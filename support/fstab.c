@@ -23,6 +23,10 @@
 #include <sys/vfstab.h>
 #endif /* def HAVE_SYS_VFSTAB_H */
 
+#ifdef HAVE_CHECKLIST_H
+#include <checklist.h>
+#endif /* def HAVE_CHECKLIST_H */
+
 G_BEGIN_DECLS
 
 struct Mono_Posix_Syscall__Fstab {
@@ -59,6 +63,30 @@ mph_fstab_offsets[] = {
 	offsetof (struct Mono_Posix_Syscall__Fstab, fs_type)
 };
 
+#endif /* def HAVE_FSTAB_H */
+
+#ifdef HAVE_CHECKLIST_H
+
+typedef struct checklist mph_fstab;
+
+static const size_t
+fstab_offsets[] = {
+	offsetof (struct checklist, fs_spec),
+	offsetof (struct checklist, fs_dir),
+	offsetof (struct checklist, fs_type)
+};
+
+static const size_t
+mph_fstab_offsets[] = {
+	offsetof (struct Mono_Posix_Syscall__Fstab, fs_spec),
+	offsetof (struct Mono_Posix_Syscall__Fstab, fs_file),
+	offsetof (struct Mono_Posix_Syscall__Fstab, fs_type)
+};
+
+#endif /* def HAVE_CHECKLIST_H */
+
+#if defined (HAVE_CHECKLIST_H) || defined (HAVE_FSTAB_H)
+
 /*
  * Copy the native `fstab' structure to it's managed representation.
  *
@@ -66,9 +94,12 @@ mph_fstab_offsets[] = {
  * memory block (stored in _fs_buf_).
  */
 static int
-copy_fstab (struct Mono_Posix_Syscall__Fstab *to, struct fstab *from)
+copy_fstab (struct Mono_Posix_Syscall__Fstab *to, mph_fstab *from)
 {
 	char *buf;
+
+	memset (to, 0, sizeof(*to));
+
 	buf = _mph_copy_structure_strings (to, mph_fstab_offsets,
 			from, fstab_offsets, sizeof(fstab_offsets)/sizeof(fstab_offsets[0]));
 
@@ -83,7 +114,7 @@ copy_fstab (struct Mono_Posix_Syscall__Fstab *to, struct fstab *from)
 	return 0;
 }
 
-#endif /* def HAVE_FSTAB_H */
+#endif /* def HAVE_CHECKLIST_H || def HAVE_FSTAB_H */
 
 #ifdef HAVE_SYS_VFSTAB_H
 
@@ -120,6 +151,9 @@ static int
 copy_fstab (struct Mono_Posix_Syscall__Fstab *to, struct vfstab *from)
 {
 	char *buf;
+
+	memset (to, 0, sizeof(*to));
+
 	buf = _mph_copy_structure_strings (to, mph_fstab_offsets,
 			from, vfstab_offsets, sizeof(vfstab_offsets)/sizeof(vfstab_offsets[0]));
 
