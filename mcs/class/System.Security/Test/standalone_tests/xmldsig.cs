@@ -149,6 +149,7 @@ DumpSignedXml (s);
 
 			// special cases
 			// 1- Merlin's certificate resolution (manual)
+			// 2- Phaos (because Fx doesn't support RetrievalMethod
 			switch (shortName) {
 				case "signature-keyname.xml":
 					mx = LoadCertificate (GetPath (filename, "lugh.crt"));
@@ -164,6 +165,13 @@ DumpSignedXml (s);
 					break;
 				case "signature-x509-sn.xml":
 					mx = LoadCertificate (GetPath (filename, "badb.crt"));
+					break;
+				// Phaos
+				case "signature-big.xml":
+					mx = LoadCertificate (GetPath (filename, "rsa-cert.der"));
+					break;
+				case "signature-rsa-detached-xslt-transform-bad-retrieval-method.xml":
+					mx = LoadCertificate (GetPath (filename, "dsa-ca-cert.der"));
 					break;
 				default:
 					break;
@@ -229,7 +237,13 @@ DumpSignedXml (s);
 				skip++;
 				continue;
 			}
-			if (fi.Name.IndexOf ("manifest") >= 0) {
+			// <Manifest> isn't supported by the Fx
+			if ((fi.Name.IndexOf ("manifest") >= 0) ||
+			    (fi.Name == "signature-big.xml") ||
+			    (fi.Name == "signature-rsa-detached-b64-transform.xml") ||
+			    (fi.Name == "signature-rsa-detached-xpath-transform.xml") ||
+			    (fi.Name == "signature-rsa-detached-xslt-transform.xml") ||
+			    (fi.Name == "signature-rsa-detached-xslt-transform-retrieval-method.xml")) {
 				Console.WriteLine ("NOT RUN: " + fi.Name + " : System.Security.dll doesn't support <Manifest>.");
 				skip++;
 				continue;

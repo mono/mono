@@ -1,5 +1,11 @@
 2004-03-25  Sebastien Pouliot  <sebastien@ximian.com>
 
+	* xmldsig.cs: Some of the Phaos test files uses <Manifest> with having
+	*manifest* in their name. Manually load certificates for Phaos tests
+	that requires it (as RetrievalMethod isn't support automatically).
+
+2004-03-25  Sebastien Pouliot  <sebastien@ximian.com>
+
 	* xmldsig.cs: Added code to automagically ajust for presence of 
 	HMAC-MD5 and ExC14N in the framework and to manualy skip signatures
 	containing <Manifest> (not supported).
