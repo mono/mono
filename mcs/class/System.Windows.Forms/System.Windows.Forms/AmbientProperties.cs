@@ -18,12 +18,16 @@ namespace System.Windows.Forms {
 	/// </summary>
 	
 	public sealed class AmbientProperties {
-
-		
+		Cursor cursor;
+		Font font;
+		Color backColor;
+		Color foreColor;
 		// --- Constructor ---
-		public AmbientProperties() 
-		{
-			//
+		public AmbientProperties() {
+			cursor = null;
+			font = null;
+			backColor = Color.Empty;
+			foreColor = Color.Empty;
 		}
 
 		//[Serializable]
@@ -41,8 +45,7 @@ namespace System.Windows.Forms {
 		///	Checks equivalence of this AmbientProperties and another object.
 		/// </remarks>
 		
-		public override bool Equals (object obj) 
-		{
+		public override bool Equals (object obj) {
 			if (!(obj is AmbientProperties))
 				return false;
 
@@ -57,8 +60,7 @@ namespace System.Windows.Forms {
 		///	Calculates a hashing value.
 		/// </remarks>
 		
-		public override int GetHashCode () 
-		{
+		public override int GetHashCode () {
 			unchecked{//FIXME Add out proprities to the hash
 				return base.GetHashCode();
 			}
@@ -72,44 +74,71 @@ namespace System.Windows.Forms {
 		///	Formats the AmbientProperties as a string.
 		/// </remarks>
 		
-		public override string ToString () 
-		{
-			//FIXME add our proprities to ToString
-			return base.ToString();// String.Format ("[{0},{1},{2}]", bindingpath, bindingfield, bindingmember);
-		}
+		//inherited
+		//public override string ToString () 
+		//{
+		//	//FIXME add our proprities to ToString
+		//	return base.ToString();// String.Format ("[{0},{1},{2}]", bindingpath, bindingfield, bindingmember);
+		//}
 
 		public Cursor Cursor {
 			get {
-				throw new NotImplementedException ();
+				//if set, use our value, if not, search site for it.
+				if(cursor != null){
+					//This is correct
+					return cursor;
+				}
+				else{
+					//This needs to find cursor from the system
+					//If it cannot, return default
+					return cursor;//FIXME: get value from system
+				}
 			}
 			set {
-				throw new NotImplementedException ();
+				cursor = value;
 			}
 		}
 	
 		public Font Font {
 			get {
-				throw new NotImplementedException (); 
+				if(font != null){
+					return  font;
+				}
+				else{//try to get font from system
+					return font;//FIXME: get value from system
+				}
 			}
 			set {
-				throw new NotImplementedException (); 
+				font = value; 
 			}
 		}
 	
 		public Color ForeColor {
 			get { 
-				throw new NotImplementedException (); 
+				if(foreColor != Color.Empty){
+					return foreColor;
+				}
+				else{
+					//FIXME: return system color if possible
+					return foreColor;
+				}
 			}
 			set {
-				throw new NotImplementedException (); 
+				foreColor = value;
 			}
 		}
 		public Color BackColor {
 			get { 
-				throw new NotImplementedException (); 
+				if(backColor != Color.Empty){
+					return backColor;
+				}
+				else{
+					//FIXME: return system color if possible
+					return backColor;
+				}
 			}
 			set {
-				throw new NotImplementedException (); 
+				backColor = value; 
 			}
 		}
 	}

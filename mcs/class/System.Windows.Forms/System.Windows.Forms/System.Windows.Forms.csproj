@@ -258,7 +258,7 @@
                 />
                 <File
                     RelPath = "CheckedListBox.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -295,6 +295,11 @@
                     RelPath = "ColumnHeader.cs"
                     SubType = "Component"
                     BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ColumnHeader.resx"
+                    DependentUpon = "ColumnHeader.cs"
+                    BuildAction = "EmbeddedResource"
                 />
                 <File
                     RelPath = "ColumnHeaderStyle.cs"
@@ -1649,6 +1654,11 @@
                 <File
                     RelPath = "VScrollBar.cs"
                     SubType = "Component"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Win32.cs"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
             </Include>

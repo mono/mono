@@ -240,7 +240,7 @@ namespace System.Windows.Forms {
 			set { helpButton=value; }
 		}
 		
-		public new Icon Icon {
+		public Icon Icon {
 			get { return icon; }
 			set { icon=value; }
 		}
@@ -275,7 +275,7 @@ namespace System.Windows.Forms {
 			set { maximumSize=value; }
 		}
 		
-		public new MainMenu Menu {
+		public MainMenu Menu {
 			get { return menu; }
 			set { menu=value; }
 		}

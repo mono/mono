@@ -18,6 +18,7 @@ namespace System.Windows.Forms {
 
     public abstract class ListControl : Control {
 
+		//ControlStyles controlStyles;
 		//
 		//  --- Public Properties
 		//

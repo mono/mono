@@ -28,13 +28,24 @@ namespace System.Windows.Forms {
 	[MonoTODO]
 	[ComVisible(true)]
 	public class AccessibleObject : MarshalByRefObject, IReflect, IAccessible {
-
-		string name;
-		string value;
+		private string defaultAction;
+		private string description;
+		private string help;
+		private string keyboardShortcut;
+		private AccessibleObject parent;
+		private AccessibleRole role;
+		private AccessibleStates state;
+		private string name;
+		private string value;
 		// --- Constructor ---
 		[MonoTODO]
 		public AccessibleObject() {
-			throw new NotImplementedException ();
+			name = null;
+			parent = null;
+			role = AccessibleRole.None;
+			state = AccessibleStates.None;
+			value = null;
+
 		}
 
 		[MonoTODO]
@@ -78,133 +89,123 @@ namespace System.Windows.Forms {
 		///	Formats the AccessibleObject as a string.
 		/// </remarks>
 		
-		public override string ToString () {
-			//FIXME add our proprities to ToString
-			return base.ToString();// String.Format ("[{0},{1},{2}]", bindingpath, bindingfield, bindingmember);
-		}
+		//spec says inherited
+		//public override string ToString () {
+		//	return "AccessibleObject".GetType();//per spec as I read it?
+		//}
 
 		// --- Properties ---
-		[MonoTODO]
+
 		[ComVisible(true)]
 		public virtual Rectangle Bounds {
 
-			get { throw new NotImplementedException (); }
+			get { return Rectangle.Empty; } // As per spec for default. Expect override.
 		}
 
-		[MonoTODO]
 		[ComVisible(true)]
 		public virtual string DefaultAction {
 
-			get { throw new NotImplementedException (); }
+			get {return null; }// As per spec for default. Expect override.
 		}
     
-		[MonoTODO]
 		[ComVisible(true)]
 		public virtual string Description {
 
-			get { throw new NotImplementedException (); }
+			get {return null; }// As per spec for default. Expect override.
 		}
-		[MonoTODO]
+
 		[ComVisible(true)]
 		public virtual string Help {
 
-			get { throw new NotImplementedException (); }
+			get {return null; }// As per spec for default. Expect override.
 		}
-		[MonoTODO]
+
 		[ComVisible(true)]
 		public virtual string KeyboardShortcut {
 
-			get { throw new NotImplementedException (); }
+			get {return null; }// As per spec for default. Expect override.
 		}
 
-		[MonoTODO]
 		[ComVisible(true)]
 		public virtual string Name {
 			get { return name; }
 			set { name = value; }
 		}
 
-		[MonoTODO]
 		[ComVisible(true)]
 		public virtual string Value {
 			get { return this.value; }
 			set { this.value = value; }
 		}
 
-		[MonoTODO]
 		[ComVisible(true)]
 		public virtual AccessibleObject Parent {
-
-			get { throw new NotImplementedException (); }
+			get { return parent; }
+			set { parent = value; }
 		}
 		
-		[MonoTODO]
 		[ComVisible(true)]
 		public virtual AccessibleRole Role {
-
-			get { throw new NotImplementedException (); }
+			get { return role; }
+			set { role = value; }
 		}
 		
-		[MonoTODO]
 		[ComVisible(true)]
 		public virtual AccessibleStates State {
-
-			get { throw new NotImplementedException (); }
+			get { return state; }
+			set { state = value; }
 		}
 
 		// --- Methods ---
-		[MonoTODO]
 		[ComVisible(true)]
 		public virtual void DoDefaultAction() {
-			throw new NotImplementedException ();
+			return; //default action is "" and cannot be changed, must be overridden.
 		}
 		
-		[MonoTODO]
 		[ComVisible(true)]
 		public virtual AccessibleObject GetChild(int index) {
-			throw new NotImplementedException ();
+			return null;
 		}
 		
-		[MonoTODO]
 		[ComVisible(true)]
 		public virtual int GetChildCount() {
-			throw new NotImplementedException ();
+			return -1; //as per spec
 		}
 		
 		[MonoTODO]
 		[ComVisible(true)]
 		public virtual AccessibleObject GetFocused() {
-			throw new NotImplementedException ();
+			return null;//FIXME: not quite to spec.
 		}
 
-		[MonoTODO]
 		[ComVisible(true)]
 		public virtual int GetHelpTopic(out string fileName) {
-			throw new NotImplementedException ();
+			fileName = "";
+			return -1;//no help
 		}
 		
-		[MonoTODO]
 		[ComVisible(true)]
 		public virtual AccessibleObject GetSelected() {
-			throw new NotImplementedException ();
+			return null;
 		}
 		
 		[MonoTODO]
 		[ComVisible(true)]
 		public virtual AccessibleObject HitTest(int x,int y) {
-			throw new NotImplementedException ();
-		}
+			return null;		}
 		
 		[MonoTODO]
 		[ComVisible(true)]
 		public virtual AccessibleObject Navigate(AccessibleNavigation navdir) {
-			throw new NotImplementedException ();
+			//by default, navagate back to here. Does this work? 
+			//not to spec, but better than execption FIXME:
+			return this;
 		}
 
 		[MonoTODO]
 		[ComVisible(true)]
 		public virtual void Select(AccessibleSelection flags) {
-			throw new NotImplementedException ();
+			return;//FIXME: Not to spec. should be over ridden anyway.
 		}
 
 		//Not part of spec?

@@ -29,148 +29,250 @@ namespace System.Windows.Forms {
 		bool droppedDown;
 		bool integralHeight;
 		bool sorted;
-		
-		
+		Image backgroundImage;
+		ControlStyles controlStyles;
+		string text;
+		int selectedLength;
+		string selectedText;
+		int selectedIndex;
+		object selectedItem;
+		int selecedStart;
+
+		bool updateing; // true when begin update has been called. do not paint when true;
 		// --- Constructor ---
 		public ComboBox() : base() 
 		{
+			selectedLength = 0;
+			selectedText = "";
+			selectedIndex = 0;
+			selectedItem = null;
+			selecedStart = 0;
+			updateing = false;
+			//controlStyles = null;
 			drawMode = DrawMode.Normal;
 			dropDownStyle = ComboBoxStyle.DropDown;
 			droppedDown = false;
 			integralHeight = true;
 			sorted = false;
+			backgroundImage = null;
+			text = "";
+			Region
 		}
-		
-		
-		
 		
 		// --- Properties ---
 		[MonoTODO]
 		public override Color BackColor {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { 
+				return base.BackColor;
+			}
+			set { 
+				if(BackColor.A != 255){
+					if(
+						(controlStyles & ControlStyles.SupportsTransparentBackColor) != 
+						ControlStyles.SupportsTransparentBackColor 
+						){
+						throw new 
+							ArgumentOutOfRangeException("BackColor", BackColor, "Transparant background color not allowed.");
+					}
+				}
+				base.BackColor = value;
+			}
 		}
 		
-		[MonoTODO]
 		public override Image BackgroundImage {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get {
+				return backgroundImage; 
+			}
+			set { 
+				backgroundImage = value;
+			}
 		}
 		
 		[MonoTODO]
 		protected override CreateParams CreateParams {
-			get { throw new NotImplementedException (); }
+			get {
+				throw new NotImplementedException ();
+			}
 		}
 		
-		[MonoTODO]
 		protected override Size DefaultSize {
-			get { throw new NotImplementedException (); }
+			get {
+				return new Size(100,20);
+			}
 		}
 		
 		public DrawMode DrawMode {
-			get { return drawMode; }
-			set { drawMode=value; }
+			get {
+				return drawMode;
+			}
+			set {
+				drawMode = value;
+			}
 		}
 		
 		public ComboBoxStyle DropDownStyle {
-			get { return dropDownStyle; }
-			set { dropDownStyle=value; }
+			get {
+				return dropDownStyle;
+			}
+			set {
+				dropDownStyle = value;
+			}
 		}
 		
 		[MonoTODO]
 		public int DropDownWidth {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
 		}
 		
 		public bool DroppedDown {
-			get { return droppedDown; }
-			set { droppedDown=value; }
+			get { 
+				return droppedDown;
+			}
+			set {
+				droppedDown = value; 
+			}
 		}
 		
 		[MonoTODO]
 		public override bool Focused {
-			get { throw new NotImplementedException (); }
+			get {
+				throw new NotImplementedException ();
+			}
 		}
 		
 		[MonoTODO]
 		public override Color ForeColor {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
 		}
 		
 		public bool IntegralHeight {
-			get { return integralHeight; }
-			set { integralHeight=value; }
+			get {
+				return integralHeight;
+			}
+			set {
+				integralHeight=value;
+			}
 		}
 		
 		[MonoTODO]
 		public int ItemHeight {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get {
+				throw new NotImplementedException (); 
+			}
+			set {
+				throw new NotImplementedException ();
+			}
 		}
 		
 		[MonoTODO]
 		public ComboBox.ObjectCollection Items {
-			get { throw new NotImplementedException (); }
+			get { 
+				throw new NotImplementedException (); 
+			}
 		}
 		
 		[MonoTODO]
 		public int MaxDropDownItems {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { throw new NotImplementedException ();
+			}
+			set { throw new NotImplementedException ();
+			}
 		}
 		
 		[MonoTODO]
 		public int MaxLength {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
 		}
 		
 		[MonoTODO]
 		public int PreferredHeight {
-			get { throw new NotImplementedException (); }
+			get {
+				return 20; //FIXME: this is the default, good as any?
+			}
 		}
-		
+	
 		[MonoTODO]
 		public override int SelectedIndex {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
 		}
 		
 		[MonoTODO]
 		public object SelectedItem {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get {
+				throw new NotImplementedException ();
+			}
+			set { 
+				throw new NotImplementedException ();
+			}
 		}
 		
 		[MonoTODO]
 		public string SelectedText {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { 
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException (); 
+			}
 		}
 		
 		[MonoTODO]
 		public int SelectionLength {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
 		}
 		
 		[MonoTODO]
 		public int SelectionStart {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
 		}
 		
 		public bool Sorted {
-			get { return sorted; }
-			set { sorted=value; }
+			get {
+				return sorted;
+			}
+			set {
+				sorted = value;
+			}
 		}
 		
 		[MonoTODO]
 		public override string Text {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get {
+				return text;
+			}
+			set {
+				text = value;
+			}
 		}
 		
 		
@@ -189,7 +291,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public void BeginUpdate() 
 		{
-			throw new NotImplementedException ();
+			updateing = true;
 		}
 		
 		[MonoTODO]
@@ -201,7 +303,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public void EndUpdate() 
 		{
-			throw new NotImplementedException ();
+			updateing = false;
 		}
 		
 		[MonoTODO]

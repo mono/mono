@@ -25,13 +25,16 @@ namespace System.Windows.Forms {
 		// private fields
 		string text;
 		HorizontalAlignment textAlign;
-		
+		int width;
+		int index;
 		/// --- constructor ---
 		[MonoTODO]
 		public ColumnHeader() : base () 
 		{
 			text = null;
 			textAlign = HorizontalAlignment.Left;
+			width = -2;//default to autosize, not in spec
+			index = -1;//default to not in list
 		}
 		
 		
@@ -39,11 +42,12 @@ namespace System.Windows.Forms {
 		// --- Properties ---
 		[MonoTODO]
 		public int Index {
-			get { throw new NotImplementedException (); }
+			get { return index; }
 		}
 		
 		[MonoTODO]
 		public ListView ListView {
+			//return parent control.
 			get { throw new NotImplementedException (); }
 		}
 		
@@ -59,8 +63,8 @@ namespace System.Windows.Forms {
 		
 		[MonoTODO]
 		public int Width {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return width; }
+			set { width = value; }
 		}
 		
 		/// --- Methods ---
@@ -79,7 +83,7 @@ namespace System.Windows.Forms {
 		public override string ToString() 
 		{
 			//FIXME: add class specific info to the string
-			return base.ToString();
+			return "Column header " + text;
 		}
 	}
 }

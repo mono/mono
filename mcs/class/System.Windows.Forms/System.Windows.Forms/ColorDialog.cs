@@ -23,24 +23,24 @@ namespace System.Windows.Forms {
 	public class ColorDialog : CommonDialog {
 
 		// private fields
-		//private bool allowFullOpen;
-		//private bool anyColor;
-		//private Color color;
-		//private int[] customColors;
-		//private bool fullOpen;
-		//private bool showHelp;
-		//private bool solidColorOnly;
+		private bool allowFullOpen;
+		private bool anyColor;
+		private Color color;
+		private int[] customColors;
+		private bool fullOpen;
+		private bool showHelp;
+		private bool solidColorOnly;
 
 		/// --- Constructor ---
 		protected ColorDialog() : base() 
 		{
-			//allowFullOpen = true;
-			//anyColor = false;
-			//color = Color.Black;
-			//customColors = null;
-			//fullOpen = false;
-			//showHelp = false;
-			//solidColorOnly = false;
+			allowFullOpen = true;
+			anyColor = false;
+			color = Color.Black;
+			customColors = null;
+			fullOpen = false;
+			showHelp = false;
+			solidColorOnly = false;
 		}
 		
 		
@@ -52,78 +52,64 @@ namespace System.Windows.Forms {
 		/// - protected virtual int Options {get;}
 		public virtual bool AllowFullOpen {
 			get {
-				throw new NotImplementedException ();
-				//return allowFullOpen;
+				return allowFullOpen;
 			}
 			set {
-				throw new NotImplementedException ();
-				//allowFullOpen=value;
+				allowFullOpen = value;
 			}
 		}
 		
 		public virtual bool AnyColor {
 			get {
-				throw new NotImplementedException ();
-				//return anyColor;
+				return anyColor;
 			}
 			set {
-				throw new NotImplementedException ();
-				//anyColor=value;
+				anyColor=value;
 			}
 		}
 		
 		public Color Color {
 			get {
-				throw new NotImplementedException ();
-				//return color;
+				return color;
 			}
 			set {
-				throw new NotImplementedException ();
-				//color=value;
+				color=value;
 			}
 		}
 		
 		public int[] CustomColors {
 			get {
-				throw new NotImplementedException ();
-				//return customColors;
+				return customColors;
 			}
 			set {
-				throw new NotImplementedException ();
-				//customColors=value;
+				customColors=value;
 			}
 		}
 		
 		public virtual bool FullOpen {
 			get {
-				throw new NotImplementedException ();
-				//return fullOpen;
+				return fullOpen;
 			}
 			set {
-				throw new NotImplementedException ();
-				//fullOpen=value;
+				fullOpen=value;
 			}
 		}
 		
 		public virtual bool ShowHelp {
 			get {
-				throw new NotImplementedException ();
-				//return showHelp;
+				return showHelp;
 			}
 			set {
-				throw new NotImplementedException ();
-				//showHelp=value;
+				showHelp=value;
 			}
 		}
 		
 		public virtual bool SolidColorOnly {
 			get {
-				throw new NotImplementedException ();
-				//return solidColorOnly;
+				return solidColorOnly;
 			}
 			set {
-				throw new NotImplementedException ();
-				//solidColorOnly=value;
+				solidColorOnly=value;
 			}
 		}
 
@@ -131,7 +117,13 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public override void Reset() 
 		{
-			throw new NotImplementedException ();
+			allowFullOpen = true;
+			anyColor = false;
+			color = Color.Black;
+			customColors = null;
+			fullOpen = false;
+			showHelp = false;
+			solidColorOnly = false;
 		}
 		
 		[MonoTODO]
@@ -141,9 +133,10 @@ namespace System.Windows.Forms {
 		}
 		
 		[MonoTODO]
+		//FIXME: do a better tostring
 		public override string ToString() 
 		{
-			throw new NotImplementedException ();
+			return "Color Dialog " + color.ToString();
 		}
 		
 	}

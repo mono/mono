@@ -28,7 +28,7 @@ namespace System.Windows.Forms {
 		bool _checked;
 		CheckState checkState;
 		bool threeState;
-		
+		ContentAlignment textAlign;
 		
 		// --- Constructor ---
 		public CheckBox() : base() 
@@ -39,6 +39,7 @@ namespace System.Windows.Forms {
 			_checked = false;
 			checkState = CheckState.Unchecked;
 			threeState = false;
+			textAlign = ContentAlignment.MiddleCenter;
 		}
 		
 		
@@ -67,7 +68,7 @@ namespace System.Windows.Forms {
 		
 		public CheckState CheckState {
 			get { return checkState; }
-			set { checkState=value; }
+			set { checkState = value; }
 		}
 		
 		[MonoTODO]
@@ -77,13 +78,17 @@ namespace System.Windows.Forms {
 		
 		[MonoTODO]
 		protected override Size DefaultSize {
-			get { throw new NotImplementedException (); }
+			get { return new Size(100,20); }
 		}
 		
 		[MonoTODO]
 		public override ContentAlignment TextAlign {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get {
+				return textAlign;
+			}
+			set {
+				textAlign = value;
+			}
 		}
 		
 		public bool ThreeState {
@@ -149,9 +154,15 @@ namespace System.Windows.Forms {
 		}
 		
 		[MonoTODO]
+		//FIXME: do a better tostring
 		public override string ToString() 
 		{
-			throw new NotImplementedException ();
+			if(Checked){
+				return "CheckBox" + " Checked";
+			}
+			else{
+				return "CheckBox" +  " Unchecked";
+			}
 		}
 		
 		
