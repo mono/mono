@@ -92,15 +92,20 @@ namespace System {
 		}
 #endif
 
-		public static short Parse (string s)
+		internal static bool Parse (string s, bool tryParse, out short result)
 		{
 			short val = 0;
 			int len;
 			int i, sign = 1;
 			bool digits_seen = false;
 
+			result = 0;
+
 			if (s == null)
-				throw new ArgumentNullException ("s");
+				if (tryParse)
+					return false;
+				else
+					throw new ArgumentNullException ("s");
 
 			len = s.Length;
 
@@ -112,7 +117,10 @@ namespace System {
 			}
 			
 			if (i == len)
-				throw new FormatException ();
+				if (tryParse)
+					return false;
+				else
+					throw new FormatException ();
 
 			c = s [i];
 			if (c == '+')
@@ -132,17 +140,27 @@ namespace System {
 					if (Char.IsWhiteSpace (c)){
 						for (i++; i < len; i++){
 							if (!Char.IsWhiteSpace (s [i]))
-								throw new FormatException ();
+								if (tryParse)
+									return false;
+								else
+									throw new FormatException ();
 						}
 						break;
 					} else
-						throw new FormatException ();
+						if (tryParse)
+							return false;
+						else
+							throw new FormatException ();
 				}
 			}
 			if (!digits_seen)
-				throw new FormatException ();
+				if (tryParse)
+					return false;
+				else
+					throw new FormatException ();
 			
-			return val;
+			result = val;
+			return true;
 		}
 
 		public static short Parse (string s, IFormatProvider fp)
@@ -163,6 +181,43 @@ namespace System {
 
 			return (short) tmpResult;
 		}
+
+		public static short Parse (string s) {
+			short res;
+
+			Parse (s, false, out res);
+
+			return res;
+		}
+
+#if NET_2_0
+		public static bool TryParse (string s, out short result) {
+			try {
+				return Parse (s, true, out result);
+			}
+			catch (Exception) {
+				result = 0;
+				return false;
+			}
+		}
+
+		public static bool TryParse (string s, NumberStyles style, IFormatProvider provider, out short result) {
+			try {
+				int tmpResult;
+
+				if (!Int32.TryParse (s, style, provider, out tmpResult))
+					return false;
+				if (tmpResult > Int16.MaxValue || tmpResult < Int16.MinValue)
+					return false;
+				result = (short)tmpResult;
+				return true;
+			}
+			catch (Exception) {
+				result = 0;
+				return false;
+			}
+		}
+#endif
 
 		public override string ToString ()
 		{

@@ -86,8 +86,7 @@ namespace System
 		}
 #endif
 
-		[CLSCompliant(false)]
-		public static ushort Parse (string s)
+		internal static bool Parse (string s, bool tryParse, out ushort result)
 		{
 			ushort val = 0;
 			int len;
@@ -95,8 +94,13 @@ namespace System
 			bool digits_seen = false;
 			bool has_negative_sign = false;
 
+			result = 0;
+
 			if (s == null)
-				throw new ArgumentNullException ("s");
+				if (tryParse)
+					return false;
+				else
+					throw new ArgumentNullException ("s");
 
 			len = s.Length;
 
@@ -108,7 +112,10 @@ namespace System
 			}
 
 			if (i == len)
-				throw new FormatException ();
+				if (tryParse)
+					return false;
+				else
+					throw new FormatException ();
 
 			if (s [i] == '+')
 				i++;
@@ -131,24 +138,37 @@ namespace System
 					if (Char.IsWhiteSpace (c)) {
 						for (i++; i < len; i++) {
 							if (!Char.IsWhiteSpace (s [i]))
-								throw new FormatException ();
+								if (tryParse)
+									return false;
+								else
+									throw new FormatException ();
 						}
 						break;
 					}
 					else
-						throw new FormatException ();
+						if (tryParse)
+							return false;
+						else
+							throw new FormatException ();
 				}
 			}
 			if (!digits_seen)
-				throw new FormatException ();
+				if (tryParse)
+					return false;
+				else
+					throw new FormatException ();
 
 			// -0 is legal but other negative values are not
 			if (has_negative_sign && (val > 0)) {
-				throw new OverflowException (
-					Locale.GetText ("Negative number"));
+				if (tryParse)
+					return false;
+				else
+					throw new OverflowException (
+					    Locale.GetText ("Negative number"));
 			}
 
-			return val;
+			result = val;
+			return true;
 		}
 
 		[CLSCompliant (false)]
@@ -172,6 +192,46 @@ namespace System
 
 			return (ushort) tmpResult;
 		}
+
+		[CLSCompliant(false)]
+		public static ushort Parse (string s) {
+			ushort res;
+
+			Parse (s, false, out res);
+
+			return res;
+		}
+
+#if NET_2_0
+		[CLSCompliant(false)]
+		public static bool TryParse (string s, out ushort result) {
+			try {
+				return Parse (s, true, out result);
+			}
+			catch (Exception) {
+				result = 0;
+				return false;
+			}
+		}
+
+		[CLSCompliant(false)]
+		public static bool TryParse (string s, NumberStyles style, IFormatProvider provider, out ushort result) {
+			try {
+				uint tmpResult;
+
+				if (!UInt32.TryParse (s, style, provider, out tmpResult))
+					return false;
+				if (tmpResult > UInt16.MaxValue || tmpResult < UInt16.MinValue)
+					return false;
+				result = (ushort)tmpResult;
+				return true;
+			}
+			catch (Exception) {
+				result = 0;
+				return false;
+			}
+		}
+#endif
 
 		public override string ToString ()
 		{

@@ -94,15 +94,20 @@ namespace System {
 		}
 #endif
 
-		public static int Parse (string s)
+		internal static bool Parse (string s, bool tryParse, out int result)
 		{
 			int val = 0;
 			int len;
 			int i, sign = 1;
 			bool digits_seen = false;
-			
+
+			result = 0;
+
 			if (s == null)
-				throw new ArgumentNullException ("s");
+				if (tryParse)
+					return false;
+				else
+					throw new ArgumentNullException ("s");
 
 			len = s.Length;
 
@@ -114,7 +119,10 @@ namespace System {
 			}
 			
 			if (i == len)
-				throw new FormatException ();
+				if (tryParse)
+					return false;
+				else
+					throw new FormatException ();
 
 			c = s [i];
 			if (c == '+')
@@ -139,17 +147,28 @@ namespace System {
 					if (Char.IsWhiteSpace (c)){
 						for (i++; i < len; i++){
 							if (!Char.IsWhiteSpace (s [i]))
-								throw new FormatException ();
+								if (tryParse)
+									return false;
+								else
+									throw new FormatException ();
 						}
 						break;
 					} else
-						throw new FormatException ();
+						if (tryParse)
+							return false;
+						else
+							throw new FormatException ();
 				}
 			}
 			if (!digits_seen)
-				throw new FormatException ();
-			
-			return val;
+				if (tryParse)
+					return false;
+				else
+					throw new FormatException ();
+
+			result = val;
+
+			return true;
 		}
 
 		public static int Parse (string s, IFormatProvider fp)
@@ -239,14 +258,22 @@ namespace System {
 			return Char.IsDigit (e);
 		}
 		
-		public static int Parse (string s, NumberStyles style, IFormatProvider fp)
+		internal static bool Parse (string s, NumberStyles style, IFormatProvider fp, bool tryParse, out int result)
 		{
+			result = 0;
+
 			if (s == null)
-				throw new ArgumentNullException ();
+				if (tryParse)
+					return false;
+				else
+					throw new ArgumentNullException ();
 
 			if (s.Length == 0)
-				throw new FormatException ("Input string was not " + 
-							   "in the correct format.");
+				if (tryParse)
+					return false;
+				else
+					throw new FormatException ("Input string was not " + 
+											   "in the correct format.");
 
 			NumberFormatInfo nfi;
 			if (fp != null) {
@@ -289,11 +316,17 @@ namespace System {
 					pos = JumpOverWhite (pos, s, true);
 
 				if (s.Substring (pos, nfi.NegativeSign.Length) == nfi.NegativeSign)
-					throw new FormatException ("Input string was not in the correct " +
-								   "format.");
+					if (tryParse)
+						return false;
+					else
+						throw new FormatException ("Input string was not in the correct " +
+												   "format.");
 				if (s.Substring (pos, nfi.PositiveSign.Length) == nfi.PositiveSign)
-					throw new FormatException ("Input string was not in the correct " +
-								   "format.");
+					if (tryParse)
+						return false;
+					else
+						throw new FormatException ("Input string was not in the correct " +
+												   "format.");
 			}
 
 			if (AllowLeadingSign && !foundSign) {
@@ -368,8 +401,11 @@ namespace System {
 					// Allows decimal point as long as it's only 
 					// followed by zeroes.
 					if (s [pos++] != '0')
-						throw new OverflowException ("Value too large or too " +
-									     "small.");
+						if (tryParse)
+							return false;
+						else
+							throw new OverflowException ("Value too large or too " +
+														 "small.");
 				}
 				else {
 					nDigits++;
@@ -382,15 +418,21 @@ namespace System {
 							(int) (s [pos++] - '0')
 							);
 					} catch (OverflowException) {
-						throw new OverflowException ("Value too large or too " +
-									     "small.");
+						if (tryParse)
+							return false;
+						else
+							throw new OverflowException ("Value too large or too " +
+														 "small.");
 					}
 				}
 			} while (pos < s.Length);
 
 			// Post number stuff
 			if (nDigits == 0)
-				throw new FormatException ("Input string was not in the correct format.");
+				if (tryParse)
+					return false;
+				else
+					throw new FormatException ("Input string was not in the correct format.");
 
 			if (AllowTrailingSign && !foundSign) {
 				// Sign + Currency
@@ -421,21 +463,67 @@ namespace System {
 
 			if (foundOpenParentheses) {
 				if (pos >= s.Length || s [pos++] != ')')
-					throw new FormatException ("Input string was not in the correct " +
-								   "format.");
+					if (tryParse)
+						return false;
+					else
+						throw new FormatException ("Input string was not in the correct " +
+												   "format.");
 				if (AllowTrailingWhite && pos < s.Length)
 					pos = JumpOverWhite (pos, s, false);
 			}
 
 			if (pos < s.Length && s [pos] != '\u0000')
-				throw new FormatException ("Input string was not in the correct format.");
+				if (tryParse)
+					return false;
+				else
+					throw new FormatException ("Input string was not in the correct format.");
 
 			
 			if (!negative && !AllowHexSpecifier)
 				number = -number;
 
-			return number;
+			result = number;
+
+			return true;
 		}
+
+		public static int Parse (string s) {
+			int res;
+
+			Parse (s, false, out res);
+
+			return res;
+		}
+
+		public static int Parse (string s, NumberStyles style, IFormatProvider fp) {
+			int res;
+
+			Parse (s, style, fp, false, out res);
+
+			return res;
+		}
+
+#if NET_2_0
+		public static bool TryParse (string s, out int result) {
+			try {
+				return Parse (s, true, out result);
+			}
+			catch (Exception) {
+				result = 0;
+				return false;
+			}
+		}
+
+		public static bool TryParse (string s, NumberStyles style, IFormatProvider provider, out int result) {
+			try {
+				return Parse (s, style, provider, true, out result);
+			}
+			catch (Exception) {
+				result = 0;
+				return false;
+			}
+		}
+#endif
 
 		public override string ToString ()
 		{

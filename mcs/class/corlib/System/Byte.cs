@@ -95,7 +95,7 @@ namespace System
 		}
 #endif
 
-		public static byte Parse (string s)
+		internal static bool Parse (string s, bool tryParse, out byte result)
 		{
 			byte val = 0;
 			int len;
@@ -103,8 +103,13 @@ namespace System
 			bool digits_seen = false;
 			bool negative = false;
 
+			result = 0;
+
 			if (s == null)
-				throw new ArgumentNullException ("s");
+				if (tryParse)
+					return false;
+				else
+					throw new ArgumentNullException ("s");
 
 			len = s.Length;
 
@@ -118,7 +123,10 @@ namespace System
 
 			// if it's all whitespace, then throw exception
 			if (i == len)
-				throw new FormatException ();
+				if (tryParse)
+					return false;
+				else
+					throw new FormatException ();
 
 			// look for the optional '+' sign
 			if (s [i] == '+')
@@ -143,25 +151,38 @@ namespace System
 					if (Char.IsWhiteSpace (c)){
 						for (i++; i < len; i++){
 							if (!Char.IsWhiteSpace (s [i]))
-								throw new FormatException ();
+								if (tryParse)
+									return false;
+								else
+									throw new FormatException ();
 						}
 						break;
 					} else
-						throw new FormatException ();
+						if (tryParse)
+							return false;
+						else
+							throw new FormatException ();
 				}
 			}
 
 			// -0 is legal but other negative values are not
 			if (negative && (val > 0)) {
-				throw new OverflowException (
-					Locale.GetText ("Negative number"));
+				if (tryParse)
+					return false;
+				else
+					throw new OverflowException (
+					    Locale.GetText ("Negative number"));
 			}
 
 			// if all we had was a '+' sign, then throw exception
 			if (!digits_seen)
-				throw new FormatException ();
+				if (tryParse)
+					return false;
+				else
+					throw new FormatException ();
 
-			return val;
+		    result = val;
+			return true;
 		}
 
 		public static byte Parse (string s, IFormatProvider provider)
@@ -182,6 +203,43 @@ namespace System
 
 			return (byte) tmpResult;
 		}
+
+		public static byte Parse (string s) {
+			byte res;
+
+			Parse (s, false, out res);
+
+			return res;
+		}
+
+#if NET_2_0
+		public static bool TryParse (string s, out byte result) {
+			try {
+				return Parse (s, true, out result);
+			}
+			catch (Exception) {
+				result = 0;
+				return false;
+			}
+		}
+
+		public static bool TryParse (string s, NumberStyles style, IFormatProvider provider, out byte result) {
+			try {
+				uint tmpResult;
+
+				if (!UInt32.TryParse (s, style, provider, out tmpResult))
+					return false;
+				if (tmpResult > Byte.MaxValue || tmpResult < Byte.MinValue)
+					return false;
+				result = (byte)tmpResult;
+				return true;
+			}
+			catch (Exception) {
+				result = 0;
+				return false;
+			}
+		}
+#endif
 
 		public override string ToString ()
 		{

@@ -92,8 +92,7 @@ namespace System
 		}
 #endif
 
-		[CLSCompliant(false)]
-		public static sbyte Parse (string s)
+		internal static bool Parse (string s, bool tryParse, out sbyte result)
 		{
 			int ival = 0;
 			int len;
@@ -101,8 +100,13 @@ namespace System
 			bool neg = false;
 			bool digits_seen = false;
 
+			result = 0;
+
 			if (s == null)
-				throw new ArgumentNullException ("s");
+				if (tryParse)
+					return false;
+				else
+					throw new ArgumentNullException ("s");
 
 			len = s.Length;
 
@@ -114,7 +118,10 @@ namespace System
 			}
 
 			if (i == len)
-				throw new FormatException ();
+				if (tryParse)
+					return false;
+				else
+					throw new FormatException ();
 
 			c = s [i];
 			if (c == '+')
@@ -134,21 +141,34 @@ namespace System
 					if (Char.IsWhiteSpace (c)) {
 						for (i++; i < len; i++) {
 							if (!Char.IsWhiteSpace (s [i]))
-								throw new FormatException ();
+								if (tryParse)
+									return false;
+								else
+									throw new FormatException ();
 						}
 						break;
 					} else
-						throw new FormatException ();
+						if (tryParse)
+							return false;
+						else
+							throw new FormatException ();
 				}
 			}
 			if (!digits_seen)
-				throw new FormatException ();
+				if (tryParse)
+					return false;
+				else
+					throw new FormatException ();
 
 			ival = neg ? ival : -ival;
 			if (ival < SByte.MinValue || ival > SByte.MaxValue)
-				throw new OverflowException ();
+				if (tryParse)
+					return false;
+				else
+					throw new OverflowException ();
 
-			return (sbyte) ival;
+			result = (sbyte)ival;
+			return true;
 		}
 
 		[CLSCompliant(false)]
@@ -172,6 +192,46 @@ namespace System
 
 			return (sbyte) tmpResult;
 		}
+
+		[CLSCompliant(false)]
+		public static sbyte Parse (string s) {
+			sbyte res;
+
+			Parse (s, false, out res);
+
+			return res;
+		}
+
+#if NET_2_0
+		[CLSCompliant(false)]
+		public static bool TryParse (string s, out sbyte result) {
+			try {
+				return Parse (s, true, out result);
+			}
+			catch (Exception) {
+				result = 0;
+				return false;
+			}
+		}
+
+		[CLSCompliant(false)]
+		public static bool TryParse (string s, NumberStyles style, IFormatProvider provider, out sbyte result) {
+			try {
+				int tmpResult;
+
+				if (!Int32.TryParse (s, style, provider, out tmpResult))
+					return false;
+				if (tmpResult > SByte.MaxValue || tmpResult < SByte.MinValue)
+					return false;
+				result = (sbyte)tmpResult;
+				return true;
+			}
+			catch (Exception) {
+				result = 0;
+				return false;
+			}
+		}
+#endif
 
 		public override string ToString ()
 		{

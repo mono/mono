@@ -93,8 +93,7 @@ namespace System
 		}
 #endif
 
-		[CLSCompliant (false)]
-		public static uint Parse (string s)
+		internal static bool Parse (string s, bool tryParse, out uint result)
 		{
 			uint val = 0;
 			int len;
@@ -102,8 +101,13 @@ namespace System
 			bool digits_seen = false;
 			bool has_negative_sign = false;
 
+			result = 0;
+
 			if (s == null)
-				throw new ArgumentNullException ("s");
+				if (tryParse)
+					return false;
+				else
+					throw new ArgumentNullException ("s");
 
 			len = s.Length;
 
@@ -115,7 +119,10 @@ namespace System
 			}
 
 			if (i == len)
-				throw new FormatException ();
+				if (tryParse)
+					return false;
+				else
+					throw new FormatException ();
 
 			if (s [i] == '+')
 				i++;
@@ -138,45 +145,53 @@ namespace System
 					if (Char.IsWhiteSpace (c)) {
 						for (i++; i < len; i++) {
 							if (!Char.IsWhiteSpace (s [i]))
-								throw new FormatException ();
+								if (tryParse)
+									return false;
+								else
+									throw new FormatException ();
 						}
 						break;
 					} else
-						throw new FormatException ();
+						if (tryParse)
+							return false;
+						else
+							throw new FormatException ();
 				}
 			}
 			if (!digits_seen)
-				throw new FormatException ();
+				if (tryParse)
+					return false;
+				else
+					throw new FormatException ();
 
 			// -0 is legal but other negative values are not
 			if (has_negative_sign && (val > 0)) {
-				throw new OverflowException (
-					Locale.GetText ("Negative number"));
+				if (tryParse)
+					return false;
+				else
+					throw new OverflowException (
+					    Locale.GetText ("Negative number"));
 			}
 
-			return val;
+			result = val;
+			return true;
 		}
 
-		[CLSCompliant (false)]
-		public static uint Parse (string s, IFormatProvider provider)
+		internal static bool Parse (string s, NumberStyles style, IFormatProvider provider, bool tryParse, out uint result)
 		{
-			return Parse (s, NumberStyles.Integer, provider);
-		}
+			result = 0;
 
-		[CLSCompliant (false)]
-		public static uint Parse (string s, NumberStyles style)
-		{
-			return Parse (s, style, null);
-		}
-
-		[CLSCompliant (false)]
-		public static uint Parse (string s, NumberStyles style, IFormatProvider provider)
-		{
 			if (s == null)
-				throw new ArgumentNullException ("s");
+				if (tryParse)
+					return false;
+				else
+					throw new ArgumentNullException ("s");
 
 			if (s.Length == 0)
-				throw new FormatException (Locale.GetText ("Input string was not in the correct format."));
+				if (tryParse)
+					return false;
+				else
+					throw new FormatException (Locale.GetText ("Input string was not in the correct format."));
 
 			NumberFormatInfo nfi;
 			if (provider != null) {
@@ -219,9 +234,15 @@ namespace System
 					pos = Int32.JumpOverWhite (pos, s, true);
 
 				if (s.Substring (pos, nfi.NegativeSign.Length) == nfi.NegativeSign)
-					throw new FormatException (Locale.GetText ("Input string was not in the correct format."));
+					if (tryParse)
+						return false;
+					else
+						throw new FormatException (Locale.GetText ("Input string was not in the correct format."));
 				if (s.Substring (pos, nfi.PositiveSign.Length) == nfi.PositiveSign)
-					throw new FormatException (Locale.GetText ("Input string was not in the correct format."));
+					if (tryParse)
+						return false;
+					else
+						throw new FormatException (Locale.GetText ("Input string was not in the correct format."));
 			}
 
 			if (AllowLeadingSign && !foundSign) {
@@ -292,7 +313,10 @@ namespace System
 					// Allows decimal point as long as it's only 
 					// followed by zeroes.
 					if (s [pos++] != '0')
-						throw new OverflowException (Locale.GetText ("Value too large or too small."));
+						if (tryParse)
+							return false;
+						else
+							throw new OverflowException (Locale.GetText ("Value too large or too small."));
 				}
 				else {
 					nDigits++;
@@ -301,14 +325,20 @@ namespace System
 						number = checked (number * 10 + (uint) (s [pos++] - '0'));
 					}
 					catch (OverflowException) {
-						throw new OverflowException (Locale.GetText ("Value too large or too small."));
+						if (tryParse)
+							return false;
+						else
+							throw new OverflowException (Locale.GetText ("Value too large or too small."));
 					}
 				}
 			} while (pos < s.Length);
 
 			// Post number stuff
 			if (nDigits == 0)
-				throw new FormatException (Locale.GetText ("Input string was not in the correct format."));
+				if (tryParse)
+					return false;
+				else
+					throw new FormatException (Locale.GetText ("Input string was not in the correct format."));
 
 			if (AllowTrailingSign && !foundSign) {
 				// Sign + Currency
@@ -337,23 +367,88 @@ namespace System
 
 			if (foundOpenParentheses) {
 				if (pos >= s.Length || s [pos++] != ')')
-					throw new FormatException (Locale.GetText
-						("Input string was not in the correct format."));
+					if (tryParse)
+						return false;
+					else
+						throw new FormatException (Locale.GetText
+												   ("Input string was not in the correct format."));
 				if (AllowTrailingWhite && pos < s.Length)
 					pos = Int32.JumpOverWhite (pos, s, false);
 			}
 
 			if (pos < s.Length && s [pos] != '\u0000')
-				throw new FormatException (Locale.GetText ("Input string was not in the correct format."));
+				if (tryParse)
+					return false;
+				else
+					throw new FormatException (Locale.GetText ("Input string was not in the correct format."));
 
 			// -0 is legal but other negative values are not
 			if (negative && (number > 0)) {
-				throw new OverflowException (
-					Locale.GetText ("Negative number"));
+				if (tryParse)
+					return false;
+				else
+					throw new OverflowException (
+					    Locale.GetText ("Negative number"));
 			}
 
-			return number;
+			result = number;
+
+			return true;
 		}
+
+		[CLSCompliant (false)]
+		public static uint Parse (string s) {
+			uint res;
+
+			Parse (s, false, out res);
+
+			return res;
+		}
+
+		[CLSCompliant (false)]
+		public static uint Parse (string s, NumberStyles style, IFormatProvider fp) {
+			uint res;
+
+			Parse (s, style, fp, false, out res);
+
+			return res;
+		}
+
+		[CLSCompliant (false)]
+		public static uint Parse (string s, IFormatProvider provider)
+		{
+			return Parse (s, NumberStyles.Integer, provider);
+		}
+
+		[CLSCompliant (false)]
+		public static uint Parse (string s, NumberStyles style)
+		{
+			return Parse (s, style, null);
+		}
+
+#if NET_2_0
+		[CLSCompliant (false)]
+		public static bool TryParse (string s, out uint result) {
+			try {
+				return Parse (s, true, out result);
+			}
+			catch (Exception) {
+				result = 0;
+				return false;
+			}
+		}
+
+		[CLSCompliant (false)]
+		public static bool TryParse (string s, NumberStyles style, IFormatProvider provider, out uint result) {
+			try {
+				return Parse (s, style, provider, true, out result);
+			}
+			catch (Exception) {
+				result = 0;
+				return false;
+			}
+		}
+#endif
 
 		public override string ToString ()
 		{
