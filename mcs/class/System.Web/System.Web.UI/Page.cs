@@ -649,22 +649,33 @@ public class Page : TemplateControl, IHttpHandler
 				secondPostData.Add (real_id, data [id]);
 			}
 		}
-
+		ArrayList list1 = null;
 		if (_requiresPostBackCopy != null && _requiresPostBackCopy.Count > 0) {
 			string [] handlers = (string []) _requiresPostBackCopy.ToArray (typeof (string));
 			foreach (string id in handlers) {
 				IPostBackDataHandler pbdh = FindControl (id) as IPostBackDataHandler;
-				if (pbdh == null)
-					continue;
-			
-				_requiresPostBackCopy.Remove (id);
-				if (pbdh.LoadPostData (id, data)) {
-					if (requiresPostDataChanged == null)
-						requiresPostDataChanged = new ArrayList ();
-
-					requiresPostDataChanged.Add (pbdh);
+				if (pbdh != null)
+				{			
+					_requiresPostBackCopy.Remove (id);
+					if (pbdh.LoadPostData (id, data)) 
+					{
+						if (requiresPostDataChanged == null)
+							requiresPostDataChanged = new ArrayList ();
+	
+						requiresPostDataChanged.Add (pbdh);
+					}
+				}
+				else
+				{
+					if (second)
+					{
+						if (list1 == null)						
+							list1 = new ArrayList();						
+						list1.Add(id);
+					}
 				}
 			}
+			_requiresPostBack = list1;
 		}
 	}
 

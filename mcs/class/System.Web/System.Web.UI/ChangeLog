@@ -1,3 +1,8 @@
+2004-06-07  Alon Gazit <along@mainsoft.com>
+	* Page.cs: Changed Page.ProcessPostData().
+	After the change ,the state of controls that aren't visible is saved 
+	during a postback.
+	
 2004-06-07  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Page.cs: removed obsolete MonoTODO from RegisterOnSubmitStatement.
