@@ -164,7 +164,7 @@ namespace System.Web.Services.Description {
 			this.classNames = new CodeIdentifiers();;
 			this.codeNamespace = codeNamespace;
 			this.codeCompileUnit = codeCompileUnit;
-			
+
 			warnings = (ServiceDescriptionImportWarnings) 0;
 			
 			bool found = false;
@@ -200,6 +200,7 @@ namespace System.Web.Services.Description {
 
 			EndNamespace ();
 			
+			if (!found) warnings = ServiceDescriptionImportWarnings.NoCodeGenerated;
 			return true;
 		}
 
