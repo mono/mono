@@ -1,3 +1,8 @@
+2004-06-14  Jackson Harper  <jackson@ximian.com>
+
+	* PEAPI.cs: Add new constructor so we can explicitly set the
+	module name.
+	
 2004-06-03  Jackson Harper  <jackson@ximian.com>
 
 	* PEAPI.cs: Do not null terminate byte arrays when writing to the

@@ -6026,6 +6026,11 @@ if (rsrc != null)
       InitPEFile(name, MakeFileName(null,name,isDLL), hasAssembly);
     }
 
+    public PEFile(string name, string module_name, bool isDLL, bool hasAssembly, Stream outStream) {
+      fileImage = new FileImage(isDLL,outStream);
+      InitPEFile(name, (module_name == null ? MakeFileName(null,name,isDLL) : module_name), hasAssembly);
+    }
+
     private void InitPEFile(string name, string fName, bool hasAssembly) {
       metaData = fileImage.GetMetaData();
       thisMod = new Module(fName,metaData);
