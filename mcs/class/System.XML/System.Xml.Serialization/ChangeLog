@@ -1,3 +1,9 @@
+2003-11-24  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* XmlSerializationWriterInterpreter.cs: Applied patch by Eran Domb: 
+	  If type is Enum the code use type.GetElememtType() instead of 
+	  Enum.GetUnderlyingType().
+
 2003-11-12  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* XmlSerializationReader.cs, XmlSerializationWriter.cs, XmlSerializer.cs:

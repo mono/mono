@@ -262,7 +262,8 @@ namespace System.Xml.Serialization
 				if (val != null && val.GetType().IsEnum)
 				{
 					if (val.Equals (member.DefaultValue)) return false;
-					val = Convert.ChangeType (val, val.GetType().GetElementType ());
+					Type t = Enum.GetUnderlyingType(val.GetType());
+					val = Convert.ChangeType (val, t);
 				}
 				if (val != null && val.Equals (member.DefaultValue)) return false;
 			}
