@@ -682,7 +682,7 @@ namespace Mono.MonoBASIC
 					is_real = true;
 					c = peekChar ();
 				} else {
-			//		putback ('.');
+					putback ('.');
 					number.Length -= 1;
 					val = System.Int64.Parse(number.ToString());
 					return integer_type_suffix('.');
