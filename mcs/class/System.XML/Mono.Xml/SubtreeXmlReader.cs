@@ -206,7 +206,8 @@ namespace Mono.Xml
 				return !Reader.IsEmptyElement && Reader.Read ();
 			}
 			if (Reader.Depth > startDepth)
-				return Reader.Read ();
+				if (Reader.Read ())
+					return true;
 			eof = true;
 			return false;
 		}
