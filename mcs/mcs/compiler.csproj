@@ -205,19 +205,19 @@
                 />
                 <File
                     RelPath = "MonoSymbolFile.cs"
-                    Link = "..\class\Mono.CSharp.Debugger\MonoSymbolFile.cs"
+                    Link = "..\class\Mono.CompilerServices.SymbolWriter\MonoSymbolFile.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "MonoSymbolTable.cs"
-                    Link = "..\class\Mono.CSharp.Debugger\MonoSymbolTable.cs"
+                    Link = "..\class\Mono.CompilerServices.SymbolWriter\MonoSymbolTable.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "MonoSymbolWriter.cs"
-                    Link = "..\class\Mono.CSharp.Debugger\MonoSymbolWriter.cs"
+                    Link = "..\class\Mono.CompilerServices.SymbolWriter\MonoSymbolWriter.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
