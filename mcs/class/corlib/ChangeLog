@@ -1,3 +1,7 @@
+2004-09-09  Tim Coleman <tim@timcoleman.com>
+	* corlib.dll.sources: Added System/Base64FormattingOptions.cs to the
+	build
+
 2004-09-05  Marek Safar  <marek.safar@seznam.cz>
 
 	* corlib.dll.sources: 

@@ -74,6 +74,7 @@ System/Attribute.cs
 System/AttributeTargets.cs
 System/AttributeUsageAttribute.cs
 System/BadImageFormatException.cs
+System/Base64FormattingOptions.cs
 System/BitConverter.cs
 System/Boolean.cs
 System/Buffer.cs
