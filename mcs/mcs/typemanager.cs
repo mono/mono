@@ -76,6 +76,14 @@ public class TypeManager {
 	// </remarks>
 	Hashtable builder_to_container;
 
+	// <remarks>
+	//   Maps MethodBase.RuntimeTypeHandle to a Type array that contains
+	//   the arguments to the method
+	// </remarks>
+	static Hashtable method_arguments;
+
+	static Hashtable builder_to_interface;
+	
 	public TypeManager ()
 	{
 		assemblies = new ArrayList ();
@@ -83,21 +91,33 @@ public class TypeManager {
 		types = new Hashtable ();
 		typecontainers = new Hashtable ();
 		builder_to_container = new Hashtable ();
+		builder_to_interface = new Hashtable ();
+	}
+
+	static TypeManager ()
+	{
+		method_arguments = new Hashtable ();
+	}
+	
+	public void AddUserType (string name, TypeBuilder t)
+	{
+		types.Add (t.FullName, t);
+		user_types.Add (t);
 	}
 
 	public void AddUserType (string name, TypeBuilder t, TypeContainer tc)
 	{
-		types.Add (t.FullName, t);
-		user_types.Add (t);
+		AddUserType (name, t);
 		builder_to_container.Add (t, tc);
 		typecontainers.Add (t.FullName, tc);
 	}
 
-	public void AddUserType (string name, TypeBuilder t)
+	public void AddUserInterface (string name, TypeBuilder t, Interface i)
 	{
-		this.AddUserType (name, t, null);
+		AddUserType (name, t);
+		builder_to_interface.Add (t, i);
 	}
-
+		
 	// <summary>
 	//   Returns the TypeContainer whose Type is `t' or null if there is no
 	//   TypeContainer for `t' (ie, the Type comes from a library)
@@ -105,6 +125,11 @@ public class TypeManager {
 	public TypeContainer LookupTypeContainer (Type t)
 	{
 		return (TypeContainer) builder_to_container [t];
+	}
+
+	public Interface LookupInterface (Type t)
+	{
+		return (Interface) builder_to_interface [t];
 	}
 	
 	// <summary>
@@ -278,6 +303,59 @@ public class TypeManager {
 		}
 	}
 
+	static string GetSig (MethodBase mb)
+	{
+		string sig;
+		
+		if (mb is MethodBuilder)
+			return mb.ReflectedType.FullName + ":" + mb;
+		else if (mb is ConstructorBuilder)
+			return mb.ReflectedType.FullName + ":" + mb;
+		else
+			return mb.MethodHandle.ToString ();
+	}
+	
+	//
+	// Gigantic work around for stupidity in System.Reflection.Emit follows
+	//
+	// Since System.Reflection.Emit can not return MethodBase.GetParameters
+	// for anything which is dynamic, and we need this in a number of places,
+	// we register this information here, and use it afterwards.
+	//
+	static public void RegisterMethod (MethodBase mb, Type [] args)
+	{
+		string s;
+		
+		s = GetSig (mb);
+		method_arguments.Add (s, args);
+	}
+
+	// <summary>
+	//    Returns the argument types for a method based on its methodbase
+	//
+	//    For dynamic methods, we use the compiler provided types, for
+	//    methods from existing assemblies we load them from GetParameters,
+	//    and insert them into the cache
+	// </summary>
+	static public Type [] GetArgumentTypes (MethodBase mb)
+	{
+		string sig = GetSig (mb);
+		object o = method_arguments [sig];
+
+		if (method_arguments.Contains (sig))
+			return (Type []) method_arguments [sig];
+		else {
+			ParameterInfo [] pi = mb.GetParameters ();
+			int c = pi.Length;
+			Type [] types = new Type [c];
+			
+			for (int i = 0; i < c; i++)
+				types [i] = pi [i].ParameterType;
+
+			method_arguments.Add (sig, types);
+			return types;
+		}
+	}
 }
 
 }

@@ -580,7 +580,7 @@ namespace CIR {
 					MethodInfo [] mi = new MethodInfo [abstract_methods.Length];
 
 					abstract_methods.CopyTo (mi, 0);
-					RequireMethods (mi);
+					//RequireMethods (mi);
 				}
 			}
 			
@@ -857,58 +857,6 @@ namespace CIR {
 				return t.FindMembers (mt, bf, filter, criteria);
 		}
 		
-		struct PendingMethod {
-			public string Name;
-			public Type RetType;
-			public Type [] Parameters;
-
-			public PendingMethod (string name, Type ret_type, Type [] parameters)
-			{
-				Name = name;
-				RetType = ret_type;
-				Parameters = parameters;
-			}
-
-			public override int GetHashCode ()
-			{
-				return Name.GetHashCode ();
-			}
-
-			//
-			// We cheat to avoid a null compare and a Type compare.
-			//
-			// we know that we will be used in a Hashtable
-			// that only contains `PendingMethods'
-			// 
-			public override bool Equals (Object o)
-			{
-				PendingMethod other = (PendingMethod) o;
-
-				if (other.Name != Name)
-					return false;
-				if (other.RetType != RetType)
-					return false;
-
-				if (Parameters == null){
-					if (other.Parameters == null)
-						return true;
-					return false;
-				}
-				if (other.Parameters == null)
-					return false;
-
-				int c = Parameters.Length;
-				if (other.Parameters.Length != c)
-					return false;
-
-				for (int i = 0; i < c; i++)
-					if (other.Parameters [i] != Parameters [i])
-						return false;
-
-				return true;
-			}
-			
-		}
 
 		Hashtable pending_implementations;
 
@@ -922,14 +870,9 @@ namespace CIR {
 				pending_implementations = new Hashtable ();
 
 			foreach (MethodInfo m in mi){
-				ParameterInfo [] pi = m.GetParameters ();
-				int c = pi.Length;
-				Type [] types = new Type [c];
+				Type [] types = TypeManager.GetArgumentTypes (m);
 				
-				for (int i = 0; i < c; i++)
-					types [i] = pi [i].ParameterType;
-				
-				pending_implementations.Add (new PendingMethod
+				pending_implementations.Add (new MethodSignature 
 					(m.Name, m.ReturnType, types), null);
 			}
 		}
@@ -940,18 +883,23 @@ namespace CIR {
 		// </summary>
 		//
 		// <remarks>
-		//   For each element exposed by the type, we create a PendingMethod
+		//   For each element exposed by the type, we create a MethodSignature
 		//   struct that we will label as `implemented' as we define the various
 		//   methods.
 		// </remarks>
 		public void SetRequiredInterfaces (Type [] ifaces)
 		{
-			//foreach (Type t in ifaces){
-			// MethodInfo [] mi;
+			foreach (Type t in ifaces){
+				MethodInfo [] mi;
 
-			//				mi = t.GetMethods ();
-				// RequireMethods (mi);
-			//}
+				if (t is TypeBuilder){
+					Interface iface = RootContext.TypeManager.LookupInterface (t);
+
+					mi = iface.GetMethods ();
+				} else
+					mi = t.GetMethods ();
+				RequireMethods (mi);
+			}
 		}
 
 		// <summary>
@@ -965,15 +913,14 @@ namespace CIR {
 		// </summary>
 		public bool IsInterfaceMethod (string Name, Type ret_type, Type [] args)
 		{
-			PendingMethod query;
+			MethodSignature query;
 
 			if (pending_implementations == null)
 				return false;
 			
-			query = new PendingMethod (Name, ret_type, args);
+			query = new MethodSignature (Name, ret_type, args);
 
 			if (pending_implementations.Contains (query)){
-				//x = (PendingMethod) o;
 				return true;
 			} 
 
@@ -993,7 +940,7 @@ namespace CIR {
 				
 				pending++;
 
-				PendingMethod method = (PendingMethod) de.Key;
+				MethodSignature method = (MethodSignature) de.Key;
 				
 				Console.WriteLine ("Missing implementations: " + method.Name);
 				Report.Error (1, "Blah");
@@ -1213,6 +1160,31 @@ namespace CIR {
 			OptAttributes = attrs;
 		}
 
+		static bool MemberSignatureCompare (MemberInfo m, object filter_criteria)
+		{
+			MethodBase mb;
+			
+			if (! (m is MethodBase))
+				return false;
+
+			mb = (MethodBase) m;
+			
+			MethodSignature sig = (MethodSignature) filter_criteria;
+
+			return true;
+		}
+		
+		// <summary>
+		//    This delegate is used to extract methods which have the
+		//    same signature as the argument
+		// </summary>
+		static MemberFilter method_signature_filter;
+		
+		static Method ()
+		{
+			method_signature_filter = new MemberFilter (MemberSignatureCompare);
+		}
+		
 		//
 		// Returns the `System.Type' for the ReturnType of this
 		// function.  Provides a nice cache.  (used between semantic analysis
@@ -1236,8 +1208,6 @@ namespace CIR {
 							   
 		}
 
-		static Type [] empty_types = new Type [0];
-		
 		//
 		// Creates the type
 		// 
@@ -1248,43 +1218,50 @@ namespace CIR {
 			MethodAttributes flags;
 
 			//
-			// Create the method
+			// Verify if the parent has a type with the same name, and then
+			// check whether we have to create a new slot for it or not.
 			//
 			Type ptype = parent.TypeBuilder.BaseType;
-			if (false){
-				if (ptype != null){
-					MethodInfo m;
-					
-					if (parameters == null)
-						parameters = empty_types;
 
-					//
-					// FIXME: Replace GetMethod with FindMembers
-					// because it has the same problem that FindMembers does:
-					// it does not work with partial types.
-					//
-					m = ptype.GetMethod (Name, parameters);
-					if (m != null){
-						if ((ModFlags & Modifiers.NEW) == 0){
-							Report.Error (
-								108, Location, "The keyword new is required on `" +
-								parent.Name + "." + Name + "' because it hides `" +
-								m.DeclaringType + "." + m.Name + "'");
-						} 
-					} else if ((ModFlags & Modifiers.NEW) != 0)
-						WarningNotHiding (parent);
+			// BROKEN test: just so I can fix other stuff in the meantime.
+			if (ptype == null){
+				MethodSignature ms = new MethodSignature (Name, ret_type, parameters);
+				MemberInfo [] mi;
+				
+				mi = parent.FindMembers (ptype, MemberTypes.Method,
+							 BindingFlags.Public, method_signature_filter,
+							 ms);
+				
+				//
+				// FIXME: Replace GetMethod with FindMembers
+				// because it has the same problem that FindMembers does:
+				// it does not work with partial types.
+				//
+				
+				if (mi != null){
+					if ((ModFlags & Modifiers.NEW) == 0){
+						Report.Error (
+							      108, Location, "The keyword new is required on `" +
+							      parent.Name + "." + Name + "' because it hides `" +
+							      "." + "'");
+					} 
 				} else if ((ModFlags & Modifiers.NEW) != 0)
 					WarningNotHiding (parent);
-			} 
+			} else if ((ModFlags & Modifiers.NEW) != 0)
+				WarningNotHiding (parent);
 
+			
+			//
+			// If we implement an interface, then set the proper flags.
+			//
 			flags = Modifiers.MethodAttr (ModFlags);
 
-			//
-			// Catch invalid attributes for methods
-			//
 			if (parent.IsInterfaceMethod (Name, ret_type, parameters))
 				flags |= MethodAttributes.Virtual | MethodAttributes.Abstract;
 
+			//
+			// Catch invalid uses of virtual and abtract modifiers
+			//
 			int av = ModFlags & (Modifiers.VIRTUAL | Modifiers.ABSTRACT);
 			if (av != 0){
 				bool error = false;
@@ -1316,11 +1293,19 @@ namespace CIR {
 					return null;
 			}
 
+			//
+			// Finally, define the method
+			//
 			MethodBuilder = parent.TypeBuilder.DefineMethod (
 				Name, flags,
 				GetCallingConvention (parent is Class),
 				ret_type, parameters);
 
+			//
+			// HACK because System.Reflection.Emit is lame
+			//
+			TypeManager.RegisterMethod (MethodBuilder, parameters);
+			
 			ParameterInfo = new InternalParameters (parameters);
 
 			//
@@ -1494,6 +1479,10 @@ namespace CIR {
 			ConstructorBuilder = parent.TypeBuilder.DefineConstructor (
 				ca, GetCallingConvention (parent is Class),
 				parameters);
+			//
+			// HACK because System.Reflection.Emit is lame
+			//
+			TypeManager.RegisterMethod (ConstructorBuilder, parameters);
 
 			ParameterInfo = new InternalParameters (parameters);
 
@@ -1618,8 +1607,8 @@ namespace CIR {
 		
 		
 			Type tp = parent.LookupType (Type, false);
-			Type [] prop_type = new Type [1];
-			prop_type [0] = tp;
+			Type [] parameters = new Type [1];
+			parameters [0] = tp;
 
 			PropertyBuilder = parent.TypeBuilder.DefineProperty(Name, prop_attr, tp, null);
 					
@@ -1628,16 +1617,24 @@ namespace CIR {
 				GetBuilder = parent.TypeBuilder.DefineMethod (
 					"get_" + Name, method_attr, tp, null);
 				PropertyBuilder.SetGetMethod (GetBuilder);
+				//
+				// HACK because System.Reflection.Emit is lame
+				//
+				TypeManager.RegisterMethod (GetBuilder, null);
 			}
 			
 			if (Set != null)
 			{
 				SetBuilder = parent.TypeBuilder.DefineMethod (
-					"set_" + Name, method_attr, null, prop_type);
+					"set_" + Name, method_attr, null, parameters);
 				SetBuilder.DefineParameter (1, ParameterAttributes.None, "value"); 
 				PropertyBuilder.SetSetMethod (SetBuilder);
+				//
+				// HACK because System.Reflection.Emit is lame
+				//
+				TypeManager.RegisterMethod (SetBuilder, parameters);
 			}
-
+			
 		}
 
 		public void Emit (TypeContainer tc)
@@ -1705,21 +1702,32 @@ namespace CIR {
 			MethodBuilder mb;
 
 			Type t = parent.LookupType (Type, false);
-			Type [] p_type = new Type [1];
-			p_type [0] = t;
+			Type [] parameters = new Type [1];
+			parameters [0] = t;
 			
 			EventBuilder = parent.TypeBuilder.DefineEvent (Name, e_attr, t);
 			
 			if (Add != null) {
-				mb = parent.TypeBuilder.DefineMethod ("add_" + Name, m_attr, null, p_type);
+				mb = parent.TypeBuilder.DefineMethod ("add_" + Name, m_attr, null,
+								      parameters);
 				mb.DefineParameter (1, ParameterAttributes.None, "value");
 				EventBuilder.SetAddOnMethod (mb);
+				//
+				// HACK because System.Reflection.Emit is lame
+				//
+				TypeManager.RegisterMethod (mb, parameters);
 			}
 
 			if (Remove != null) {
-				mb = parent.TypeBuilder.DefineMethod ("remove_" + Name, m_attr, null, p_type);
+				mb = parent.TypeBuilder.DefineMethod ("remove_" + Name, m_attr, null,
+								      parameters);
 				mb.DefineParameter (1, ParameterAttributes.None, "value");
 				EventBuilder.SetRemoveOnMethod (mb);
+
+				//
+				// HACK because System.Reflection.Emit is lame
+				//
+				TypeManager.RegisterMethod (mb, parameters);
 			}
 		}
 		
@@ -1767,10 +1775,18 @@ namespace CIR {
 			MethodAttributes attr = Modifiers.MethodAttr (ModFlags);
 			
 			Type ret_type = parent.LookupType (Type, false);
-			Type [] param_types = FormalParameters.GetParameterInfo (parent);
+			Type [] parameters = FormalParameters.GetParameterInfo (parent);
 
-			GetMethodBuilder = parent.TypeBuilder.DefineMethod ("get_Item", attr, ret_type, param_types);
-			SetMethodBuilder = parent.TypeBuilder.DefineMethod ("set_Item", attr, ret_type, param_types);
+			GetMethodBuilder = parent.TypeBuilder.DefineMethod (
+				"get_Item", attr, ret_type, parameters);
+			SetMethodBuilder = parent.TypeBuilder.DefineMethod (
+				"set_Item", attr, ret_type, parameters);
+
+			//
+			// HACK because System.Reflection.Emit is lame
+			//
+			TypeManager.RegisterMethod (GetMethodBuilder, parameters);
+			TypeManager.RegisterMethod (SetMethodBuilder, parameters);
 
 			Parameter [] p = FormalParameters.FixedParameters;
 
@@ -1782,7 +1798,7 @@ namespace CIR {
 					SetMethodBuilder.DefineParameter (i + 1, p [i].Attributes, p [i].Name);
 				}
 				
-				if (i != param_types.Length)
+				if (i != parameters.Length)
 					Console.WriteLine ("Implement type definition for params");
 			}
 
@@ -1978,4 +1994,52 @@ namespace CIR {
 
 	}
 
+	//
+	// This is used to compare method signatures
+	//
+	struct MethodSignature {
+		public string Name;
+		public Type RetType;
+		public Type [] Parameters;
+		
+		public MethodSignature (string name, Type ret_type, Type [] parameters)
+		{
+			Name = name;
+			RetType = ret_type;
+			Parameters = parameters;
+		}
+		
+		public override int GetHashCode ()
+		{
+			return Name.GetHashCode ();
+		}
+
+		public override bool Equals (Object o)
+		{
+			MethodSignature other = (MethodSignature) o;
+			
+			if (other.Name != Name)
+				return false;
+			if (other.RetType != RetType)
+				return false;
+			
+			if (Parameters == null){
+				if (other.Parameters == null)
+					return true;
+				return false;
+			}
+			if (other.Parameters == null)
+				return false;
+			
+			int c = Parameters.Length;
+			if (other.Parameters.Length != c)
+				return false;
+			
+			for (int i = 0; i < c; i++)
+				if (other.Parameters [i] != Parameters [i])
+					return false;
+			
+			return true;
+		}
+	}		
 }

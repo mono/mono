@@ -39,7 +39,8 @@ namespace CIR {
 		ArrayList defined_indexer;
 		ArrayList defined_events;
 		ArrayList defined_properties;
-
+		ArrayList method_builders;
+		
 		TypeContainer parent;
 
 		Attributes OptAttributes;
@@ -65,6 +66,8 @@ namespace CIR {
 			this.mod_flags = Modifiers.Check (AllowedModifiers, mod, Modifiers.PUBLIC);
 			this.parent = parent;
 			OptAttributes = attrs;
+
+			method_builders = new ArrayList ();
 		}
 
 		public AdditionResult AddMethod (InterfaceMethod imethod)
@@ -221,6 +224,22 @@ namespace CIR {
 				"same return value and paramenter types for method `" + im.Name + "'");
 		}
 
+		void RegisterMethod (MethodBase mb, Type [] types)
+		{
+			TypeManager.RegisterMethod (mb, types);
+			method_builders.Add (mb);
+		}
+
+		public MethodInfo [] GetMethods ()
+		{
+			int n = method_builders.Count;
+			MethodInfo [] mi = new MethodInfo [n];
+			
+			method_builders.CopyTo (mi, 0);
+
+			return mi;
+		}
+		
 		//
 		// Populates the methods in the interface
 		//
@@ -238,6 +257,8 @@ namespace CIR {
 			mb = TypeBuilder.DefineMethod (
 				im.Name, interface_method_attributes,
 				return_type, arg_types);
+			
+			RegisterMethod (mb, arg_types);
 			
 			//
 			// Define each type attribute (in/out/ref) and
@@ -278,6 +299,11 @@ namespace CIR {
 					"get_" + ip.Name, property_attributes ,
 					prop_type, null);
 
+				//
+				// HACK because System.Reflection.Emit is lame
+				//
+				RegisterMethod (mb, null);
+				
 				pb.SetGetMethod (mb);
 			}
 
@@ -290,6 +316,11 @@ namespace CIR {
 
 				mb.DefineParameter (1, ParameterAttributes.None, "value");
 				pb.SetSetMethod (mb);
+
+				//
+				// HACK because System.Reflection.Emit is lame
+				//
+				RegisterMethod (mb, setter_args);
 			}
 		}
 
@@ -340,6 +371,10 @@ namespace CIR {
 				get_item = TypeBuilder.DefineMethod (
 					"get_Item", property_attributes, prop_type, arg_types);
 				pb.SetGetMethod (get_item);
+				//
+				// HACK because System.Reflection.Emit is lame
+				//
+				RegisterMethod (get_item, arg_types);
 
 				if (p != null){
 					for (int i = 0; i < p.Length; i++)
@@ -357,6 +392,10 @@ namespace CIR {
 				set_item = TypeBuilder.DefineMethod (
 					"set_Item", property_attributes, null, value_arg_types);
 				pb.SetSetMethod (set_item);
+				//
+				// HACK because System.Reflection.Emit is lame
+				//
+				RegisterMethod (set_item, value_arg_types);
 
 				if (p != null){
 					for (; i < p.Length; i++)

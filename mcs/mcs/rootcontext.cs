@@ -210,9 +210,10 @@ namespace CIR {
 
 			interface_resolve_order.Add (iface);
 			
-			TypeManager.AddUserType (name, tb);
+			TypeManager.AddUserInterface (name, tb, iface);
 
 			iface.InTransit = false;
+
 			return tb;
 		}
 
