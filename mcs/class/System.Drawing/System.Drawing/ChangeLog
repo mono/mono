@@ -1,3 +1,8 @@
+2004-04-28  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* Image.cs: fixes Save method. It now retrieves the proper encoder and uses
+	its ClsID instead of the formatID (as GDI+ expects)
+
 2004-04-29  Ravindra <rkumar@novell.com>
 
 	* Font.cs: Added checks for status.

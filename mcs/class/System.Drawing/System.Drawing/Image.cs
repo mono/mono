@@ -273,14 +273,24 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 
 	public void Save(string filename, ImageFormat format) 
 	{
-		Status st;
-		Guid guid = format.Guid;
-                if (Environment.OSVersion.Platform == (PlatformID) 128) {
-			byte[] g = guid.ToByteArray();
-			st = GDIPlus.GdipSaveImageToFile (nativeObject, filename, g, IntPtr.Zero);
-		} else {
-			st = GDIPlus.GdipSaveImageToFile (nativeObject, filename, guid, IntPtr.Zero);
-		}		
+		Status st;		
+		ImageCodecInfo[] encoders =  ImageCodecInfo.GetImageEncoders();			
+		ImageCodecInfo encoder = null;
+		Guid guid;
+	
+		/* Look for the right encoder for our format*/
+		for (int i = 0; i < encoders.Length; i++) {
+			if (encoders[i].FormatID.Equals (format.Guid)) {
+				encoder = encoders[i];
+				break;
+			}			
+		}
+		
+		if (encoder == null)
+			throw new ArgumentException ("No coded available for format:" + format.Guid);		
+		
+		guid = encoder.Clsid;
+		st = GDIPlus.GdipSaveImageToFile (nativeObject, filename, ref guid, IntPtr.Zero);				
 		GDIPlus.CheckStatus (st);
 	}
 	
