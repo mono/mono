@@ -12,29 +12,42 @@ using System.Globalization;
 
 namespace System.Drawing {
 
-[MonoTODO]
 public class ColorConverter : TypeConverter
 {
 	public ColorConverter ()
 	{
 	}
 
-	[MonoTODO("Only some basic conversion needed by xsp")]
+	public override bool CanConvertFrom (ITypeDescriptorContext context, Type sourceType)
+	{
+		if (sourceType == typeof (string))
+			return true;
+
+		return base.CanConvertFrom(context, sourceType);
+	}
+
+	[MonoTODO]
+	public override bool CanConvertTo (ITypeDescriptorContext context, Type destinationType)
+	{
+		throw new NotImplementedException ();
+	}
+
 	public override object ConvertFrom (ITypeDescriptorContext context,
 					    CultureInfo culture,
 					    object value)
 	{
 		string s = value as string;
 		if (s == null)
-			throw new NotImplementedException ();
+			return base.ConvertFrom (context, culture, value);
 
-		if (s == "")
-			return Color.Empty;
+		object named = Color.NamedColors [s];
+		if (named != null)
+			return (Color) named;
 
-		Color c = Color.FromName (s);
-		if (!(c.A == c.R && c.R == c.G && c.G == c.B && c.B == 0))
-			return c;
-		
+		named = Color.SystemColors [s];
+		if (named != null)
+			return (Color) named;
+			
 		int i;
 		if (s [0] == '#')
 			i = Int32.Parse (s.Substring (1), NumberStyles.HexNumber);
@@ -45,6 +58,29 @@ public class ColorConverter : TypeConverter
 		if (A == 0)
 			A = 255;
 		return Color.FromArgb (A, (i & 0x00FF0000) >> 16, (i & 0x00FF00) >> 8, (i & 0x0FF));
+	}
+
+	[MonoTODO]
+	public override object ConvertTo (ITypeDescriptorContext context,
+					  CultureInfo culture,
+					  object value,
+					  Type destinationType)
+	{
+		throw new NotImplementedException ();
+	}
+/*
+ *  StandardValuesCollection is TypeDescriptor.StandardValuesCollection
+ *  TODO: check if the compiler already supports that.
+	public override StandardValuesCollection GetStandardValues (ITypeDescriptorContext context)
+	{
+	}
+*/
+
+	[MonoTODO]
+	public override bool GetStandardValuesSupported (ITypeDescriptorContext context)
+	{
+		// This should return true once GetStandardValues is implemented
+		throw new NotImplementedException ();
 	}
 }
 }

@@ -22,12 +22,14 @@ namespace System.Drawing
 	[Serializable]
 	public struct Color
 	{
-		private static Hashtable colorNames;
+		private static Hashtable namedColors;
+		private static Hashtable systemColors;
 		// Private transparancy (A) and R,G,B fields.
 		byte a;
 		byte r;
 		byte g;
 		byte b;
+		private static string creatingColorNames = "creatingColorNames";
 
 		// The specs also indicate that all three of these propities are true
 		// if created with FromKnownColor or FromNamedColor, false otherwise (FromARGB).
@@ -35,6 +37,7 @@ namespace System.Drawing
 		bool isknowncolor;
 		bool isnamedcolor;
 		bool issystemcolor;
+		KnownColor knownColor;
 
 		string myname;
 
@@ -67,49 +70,36 @@ namespace System.Drawing
 
 		public static Color FromArgb (int red, int green, int blue)
 		{
-			//TODO: convert rgb to name format "12345678"
-			CheckRGBValues(red, green, blue);
-			Color color;
-			color.myname = "";
-			color.isknowncolor = false;
-			color.isnamedcolor = false;
-			color.issystemcolor = false;
-			color.a = 255;
-			color.r = (byte)red;
-			color.g = (byte)green;
-			color.b = (byte)blue;
-			return color;
+			return FromArgb (255, red, green, blue);
 		}
 		
 		public static Color FromArgb (int alpha, int red, int green, int blue)
 		{
-			//TODO: convert rgb to name format "12345678"
-			CheckARGBValues(alpha, red, green, blue);
-			Color color;
-			color.isknowncolor = false;
-			color.isnamedcolor = false;
-			color.issystemcolor = false;
-			color.myname = "";
-			color.a = (byte)alpha;
-			color.r = (byte)red;
-			color.g = (byte)green;
-			color.b = (byte)blue;
+			CheckARGBValues (alpha, red, green, blue);
+			Color color = new Color ();
+			color.a = (byte) alpha;
+			color.r = (byte) red;
+			color.g = (byte) green;
+			color.b = (byte) blue;
+			color.myname = String.Empty;
 			return color;
 		}
 
 		private static Color FromArgbNamed (int alpha, int red, int green, int blue, string name)
 		{
-			//TODO: convert rgb to name format "12345678"
-			CheckARGBValues(alpha, red, green, blue);
-			Color color;
+			Color color = FromArgb (alpha, red, green, blue);
 			color.isknowncolor = true;
 			color.isnamedcolor = true;
-			color.issystemcolor = false; //???
+			//color.issystemcolor = false; //???
 			color.myname = name;
-			color.a = (byte)alpha;
-			color.r = (byte)red;
-			color.g = (byte)green;
-			color.b = (byte)blue;
+			color.knownColor = (KnownColor) Enum.Parse (typeof (KnownColor), name, false);
+			return color;
+		}
+
+		internal static Color FromArgbSystem (int alpha, int red, int green, int blue, string name)
+		{
+			Color color = FromArgbNamed (alpha, red, green, blue, name);
+			color.issystemcolor = true;
 			return color;
 		}
 
@@ -120,60 +110,26 @@ namespace System.Drawing
 
 		public static Color FromArgb (int alpha, Color baseColor)
 		{
-			//TODO: convert basecolor rgb to name
-			//check alpha, use valid dummy values for rgb.
-			CheckARGBValues(alpha, 0, 0, 0);
-			Color color;
-			color.isknowncolor = false;
-			color.isnamedcolor = false;
-			color.issystemcolor = false;
-			color.myname = "";
-			color.a = (byte)alpha;
-			color.r = baseColor.r;
-			color.g = baseColor.g;
-			color.b = baseColor.b;
-			return color;
+			return FromArgb (alpha, baseColor.r, baseColor.g, baseColor.b);
 		}
 
 		public static Color FromArgb (int argb)
 		{
-			//TODO: convert irgb to name
-			Color color;
-			color.isknowncolor = false;
-			color.isnamedcolor = false;
-			color.issystemcolor = false;
-			color.myname = "";
-			color.a = (byte) (argb >> 24);
-			color.r = (byte) (argb >> 16);
-			color.g = (byte) (argb >> 8);
-			color.b = (byte)argb;
-			return color;
+			return FromArgb (argb >> 24, (argb >> 16) & 0x0FF, (argb >> 8) & 0x0FF, argb & 0x0FF);
 		}
 
-		public static Color FromKnownColor (KnownColor KnownColorToConvert)
+		public static Color FromKnownColor (KnownColor knownColorToConvert)
 		{
-			Color c = FromName (KnownColorToConvert.ToString ());
-			c.isknowncolor = true;
+			Color c = FromName (knownColorToConvert.ToString ());
+			c.knownColor = knownColorToConvert;
 			return c;
 		}
 
-		public KnownColor ToKnownColor () {
-			if(isknowncolor){
-				// TODO: return correct enumeration of knowncolor. note the return 0 in the else block is correct.
-				return (KnownColor)0;
-			}
-			else{
-				return (KnownColor)0;
-			}
-			//return KnownColor.FromName(KnownColorToConvert.ToString());
-		}
-
-		private static void FillColorNames ()
+		private static Hashtable GetColorHashtableFromType (Type type)
 		{
-			colorNames = new Hashtable (CaseInsensitiveHashCodeProvider.Default,
-						    CaseInsensitiveComparer.Default);
+			Hashtable colorHash = new Hashtable (CaseInsensitiveHashCodeProvider.Default,
+							     CaseInsensitiveComparer.Default);
 
-			Type type = typeof (Color);
 			PropertyInfo [] props = type.GetProperties ();
 			foreach (PropertyInfo prop in props){
 				if (prop.PropertyType != typeof (Color))
@@ -182,28 +138,62 @@ namespace System.Drawing
 				MethodInfo getget = prop.GetGetMethod ();
 				if (getget == null || getget.IsStatic == false)
 					continue;
-				object retval = prop.GetValue (null, null);
-				Color c = (Color) retval;
-				colorNames.Add (prop.Name, retval);
+
+				colorHash.Add (prop.Name, prop.GetValue (null, null));
+			}
+			return colorHash;
+		}
+
+		private static void FillColorNames ()
+		{
+			if (systemColors != null)
+				return;
+
+			lock (creatingColorNames) {
+				if (systemColors != null)
+					return;
+				
+				Hashtable colorHash = GetColorHashtableFromType (typeof (Color));
+				namedColors = colorHash;
+
+				colorHash = GetColorHashtableFromType (typeof (SystemColors));
+				systemColors = colorHash;
 			}
 		}
 		
-		public static Color FromName( string ColorName ) 
+		public static Color FromName (string colorName)
 		{
-//			isknowncolor = true;
-//			isnamedcolor = true;
-//			issystemcolor = true;
-			
-			if (colorNames == null)
-				FillColorNames ();
-			
-			object c = colorNames [ColorName];
-			if (c == null)
-				throw new System.ArgumentException (ColorName + " is not a named color", "name");
+			object c = NamedColors [colorName];
+			if (c == null) {
+				c = SystemColors [colorName];
+				if (c == null) {
+					// This is what it returns!
+					Color d = FromArgb (0, 0, 0, 0);
+					d.myname = colorName;
+					d.isnamedcolor = true;
+					c = d;
+				}
+			}
 
 			return (Color) c;
 		}
 
+		internal static Hashtable NamedColors
+		{
+			get {
+				FillColorNames ();
+				return namedColors;
+			}
+		}
+
+		internal static Hashtable SystemColors
+		{
+			get {
+				FillColorNames ();
+				return systemColors;
+			}
+		}
+			
 		// -----------------------
 		// Public Shared Members
 		// -----------------------
@@ -268,24 +258,20 @@ namespace System.Drawing
 		}
 		
 		// -----------------------
-		// Public Constructors
-		// -----------------------
-		public Color(int alpha, int red, int green, int blue)
-		{
-			CheckARGBValues(alpha, red, green, blue);
-			a = (byte)alpha;
-			r = (byte)red;
-			g = (byte)green;
-			b = (byte)blue;
-			isknowncolor = false;
-			isnamedcolor = false;
-			issystemcolor = false;
-			myname = "";
-		}
-
-		// -----------------------
 		// Public Instance Members
 		// -----------------------
+
+		/// <summary>
+		///	ToKnownColor method
+		/// </summary>
+		///
+		/// <remarks>
+		///	Returns the KnownColor enum value for this color, 0 if is not known.
+		/// </remarks>
+		public KnownColor ToKnownColor ()
+		{
+			return knownColor;
+		}
 
 		/// <summary>
 		///	IsEmpty Property

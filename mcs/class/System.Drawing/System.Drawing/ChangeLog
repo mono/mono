@@ -1,3 +1,15 @@
+2002-07-18  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Color.cs: implemented SystemColors and NamedColors properties that
+	are used by ColorConverter, removed public constructor, use
+	SystemColors, and misc. fixes to make it behave as MS (ToString,
+	parsing names, FromKnownColor,...).
+
+	* ColorConverter.cs: use NamedColors and SystemColors from Color when
+	trying to get the color from its name.
+
+	* SystemColors.cs: new file.
+
 2002-07-16  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Color.cs: changed static properties to use FromArgbNamed. Also
