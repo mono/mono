@@ -51,11 +51,10 @@ namespace System.Windows.Forms {
 		{
 			if (xindex == 0) {
 				lock (lxevents) {
-					return DequeueArray (ref lxevents, ref lxindex);
+					if (lxindex == 0)
+						throw new Exception ("No more items in XQueue");
+					return lxevents [lxindex--];
 				}
-				if (lxindex == 0)
-					throw new Exception ("No more items in XQueue");
-				return lxevents [lxindex--];
 			}
 			return xevents [xindex--];
 		}
@@ -87,11 +86,6 @@ namespace System.Windows.Forms {
 			}
 
 			array [index] = xevent;
-		}
-
-		private XEvent DequeueArray (ref XEvent [] array, ref int index)
-		{
-			return array [index--];
 		}
 	}
 }
