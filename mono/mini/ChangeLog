@@ -1,3 +1,8 @@
+2005-03-04  Neale Ferguson <NealeFerguson@earthlink.net>
+
+	* inssel-s390.brg, mini-s390.c: Add support for passing/returning small
+        structures in registers for pinvoke wrappers.
+
 2005-03-04  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-exceptions.c (ves_icall_get_trace): Return wrapper info as well.
