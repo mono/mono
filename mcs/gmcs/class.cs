@@ -1056,11 +1056,10 @@ namespace Mono.CSharp {
 
 			if (IsGeneric) {
 				foreach (TypeParameter type_param in TypeParameters)
-					if (!type_param.DefineType (ec))
+					if (!type_param.DefineType (ec)) {
 						error = true;
-
-				if (error)
-					return null;
+						return null;
+					}
 			}
 
 			if ((Kind == Kind.Struct) && TypeManager.value_type == null)
@@ -1136,6 +1135,14 @@ namespace Mono.CSharp {
 				}
 
 				TypeManager.RegisterBuilder (TypeBuilder, ifaces);
+			}
+
+			if (IsGeneric) {
+				foreach (TypeParameter type_param in TypeParameters)
+					if (!type_param.CheckDependencies (ec)) {
+						error = true;
+						return null;
+					}
 			}
 
 			//

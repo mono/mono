@@ -53,6 +53,7 @@ namespace Mono.CSharp {
 		bool has_value_type;
 		TypeExpr class_constraint;
 		ArrayList iface_constraints;
+		ArrayList type_param_constraints;
 		int num_constraints, first_constraint;
 		Type class_constraint_type;
 		Type[] iface_constraint_types;
@@ -64,6 +65,7 @@ namespace Mono.CSharp {
 		public bool Resolve (DeclSpace ds)
 		{
 			iface_constraints = new ArrayList ();
+			type_param_constraints = new ArrayList ();
 
 			foreach (object obj in constraints) {
 				if (has_ctor_constraint) {
@@ -107,14 +109,10 @@ namespace Mono.CSharp {
 				if (expr == null)
 					return false;
 
-				if (expr is TypeParameterExpr) {
-					Report.Error (700, loc,
-						      "`{0}': naked type parameters cannot " +
-						      "be used as bounds", expr.Name);
-					return false;
-				}
-
-				if (expr.IsInterface)
+				TypeParameterExpr texpr = expr as TypeParameterExpr;
+				if (texpr != null)
+					type_param_constraints.Add (expr);
+				else if (expr.IsInterface)
 					iface_constraints.Add (expr);
 				else if (class_constraint != null) {
 					Report.Error (406, loc,
@@ -136,18 +134,57 @@ namespace Mono.CSharp {
 			return true;
 		}
 
+		bool CheckTypeParameterConstraints (TypeParameter tparam, Hashtable seen)
+		{
+			seen.Add (tparam, true);
+
+			Constraints constraints = tparam.Constraints;
+			if (constraints == null)
+				return true;
+
+			if (constraints.IsValueType) {
+				Report.Error (456, loc, "Type parameter `{0}' has " +
+					      "the `struct' constraint, so it cannot " +
+					      "be used as a constraint for `{1}'",
+					      tparam.Name, name);
+				return false;
+			}
+
+			if (constraints.type_param_constraints == null)
+				return true;
+
+			foreach (TypeParameterExpr expr in constraints.type_param_constraints) {
+				if (seen.Contains (expr.TypeParameter)) {
+					Report.Error (454, loc, "Circular constraint " +
+						      "dependency involving `{0}' and `{1}'",
+						      tparam.Name, expr.Name);
+					return false;
+				}
+
+				if (!CheckTypeParameterConstraints (expr.TypeParameter, seen))
+					return false;
+			}
+
+			return true;
+		}
+
 		public bool ResolveTypes (EmitContext ec)
 		{
-			iface_constraint_types = new Type [iface_constraints.Count];
+			foreach (TypeParameterExpr expr in type_param_constraints) {
+				Hashtable seen = new Hashtable ();
+				if (!CheckTypeParameterConstraints (expr.TypeParameter, seen))
+					return false;
+			}
 
-			for (int i = 0; i < iface_constraints.Count; i++) {
-				TypeExpr iface_constraint = (TypeExpr) iface_constraints [i];
+			ArrayList list = new ArrayList ();
+
+			foreach (TypeExpr iface_constraint in iface_constraints) {
 				Type resolved = iface_constraint.ResolveType (ec);
 				if (resolved == null)
 					return false;
 
-				for (int j = 0; j < i; j++) {
-					if (!iface_constraint_types [j].Equals (resolved))
+				foreach (TypeExpr texpr in list) {
+					if (!texpr.Equals (resolved))
 						continue;
 
 					Report.Error (405, loc,
@@ -156,8 +193,29 @@ namespace Mono.CSharp {
 					return false;
 				}
 
-				iface_constraint_types [i] = resolved;
+				list.Add (resolved);
 			}
+
+			foreach (TypeParameterExpr expr in type_param_constraints) {
+				Type resolved = expr.ResolveType (ec);
+				if (resolved == null)
+					return false;
+
+				foreach (TypeExpr texpr in list) {
+					if (!texpr.Equals (resolved))
+						continue;
+
+					Report.Error (405, loc,
+						      "Duplicate constraint `{0}' for type " +
+						      "parameter `{1}'.", resolved, name);
+					return false;
+				}
+
+				list.Add (resolved);
+			}
+
+			iface_constraint_types = new Type [list.Count];
+			list.CopyTo (iface_constraint_types, 0);
 
 			if (class_constraint != null) {
 				class_constraint_type = class_constraint.ResolveType (ec);
@@ -192,6 +250,57 @@ namespace Mono.CSharp {
 			return true;
 		}
 
+		public bool CheckDependencies (EmitContext ec)
+		{
+			foreach (TypeParameterExpr expr in type_param_constraints) {
+				if (!CheckDependencies (expr.TypeParameter, ec))
+					return false;
+			}
+
+			return true;
+		}
+
+		bool CheckDependencies (TypeParameter tparam, EmitContext ec)
+		{
+			Constraints constraints = tparam.Constraints;
+			if (constraints == null)
+				return true;
+
+			if (IsValueType && constraints.HasClassConstraint) {
+				Report.Error (455, loc, "Type parameter `{0}' inherits " +
+					      "conflicting constraints `{1}' and `{2}'",
+					      name, constraints.ClassConstraint,
+					      "System.ValueType");
+				return false;
+			}
+
+			if (HasClassConstraint && constraints.HasClassConstraint) {
+				Type t1 = ClassConstraint;
+				TypeExpr e1 = class_constraint;
+				Type t2 = constraints.ClassConstraint;
+				TypeExpr e2 = constraints.class_constraint;
+
+				if (!Convert.ImplicitReferenceConversionExists (e1, t2) &&
+				    !Convert.ImplicitReferenceConversionExists (e2, t1)) {
+					Report.Error (455, loc,
+						      "Type parameter `{0}' inherits " +
+						      "conflicting constraints `{1}' and `{2}'",
+						      name, t1, t2);
+					return false;
+				}
+			}
+
+			if (constraints.type_param_constraints == null)
+				return true;
+
+			foreach (TypeParameterExpr expr in constraints.type_param_constraints) {
+				if (!CheckDependencies (expr.TypeParameter, ec))
+					return false;
+			}
+
+			return true;
+		}
+
 		public void Define (GenericTypeParameterBuilder type)
 		{
 			if (has_ctor_constraint)
@@ -210,15 +319,15 @@ namespace Mono.CSharp {
 			get { return has_reference_type; }
 		}
 
-		bool GenericConstraints.IsValueType {
+		public bool IsValueType {
 			get { return has_value_type; }
 		}
 
-		bool GenericConstraints.HasClassConstraint {
+		public bool HasClassConstraint {
 			get { return class_constraint_type != null; }
 		}
 
-		Type GenericConstraints.ClassConstraint {
+		public Type ClassConstraint {
 			get { return class_constraint_type; }
 		}
 
@@ -311,6 +420,14 @@ namespace Mono.CSharp {
 			return true;
 		}
 
+		public bool CheckDependencies (EmitContext ec)
+		{
+			if (constraints != null)
+				return constraints.CheckDependencies (ec);
+
+			return true;
+		}
+
 		//
 		// IMemberContainer
 		//
@@ -396,6 +513,10 @@ namespace Mono.CSharp {
 			type = type_parameter.Type;
 
 			return this;
+		}
+
+		public override bool IsInterface {
+			get { return false; }
 		}
 
 		public void Error_CannotUseAsUnmanagedType (Location loc)
