@@ -1,6 +1,6 @@
 /**
  * Namespace: System.Web.UI
- * Class:     HttpRuntime
+ * Class:     DesignTimeParseData
  * 
  * Author:  Gaurav Vaish
  * Contact: <gvaish@iitk.ac.in>

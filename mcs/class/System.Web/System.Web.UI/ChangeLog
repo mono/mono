@@ -1,3 +1,7 @@
+2002-01-02  Nick Drochak  <ndrochak@gol.com>
+
+	* DesignTimeParseData.cs: fix header to show correct class name
+
 2001-12-21   Gaurav Vaish <gvaish@iitk.ac.in>
 
         * StateBag.cs             - Completed
