@@ -91,7 +91,6 @@ namespace Mono.Xml.Schema
 			if (!(this.entry.KeySequence.SourceSchemaIdentity is XmlSchemaKeyref)) {
 				for (int i = 0; i < entry.KeySequence.FinishedEntries.Count; i++) {
 					XsdKeyEntry other = (XsdKeyEntry) entry.KeySequence.FinishedEntries [i];
-					XsdKeyEntryField of = other.KeyFields [field.Index];
 					if (this.entry.CompareIdentity (other))
 						return false;
 				}
@@ -300,9 +299,8 @@ namespace Mono.Xml.Schema
 	internal class XsdKeyEntry
 	{
 		public int StartDepth;
-		public int CurrentStep;
 
-		public bool ConsumptionTargetIsKey;
+//		public bool ConsumptionTargetIsKey;
 
 		public int SelectorLineNumber;
 		public int SelectorLinePosition;
@@ -311,9 +309,9 @@ namespace Mono.Xml.Schema
 		public XsdKeyEntryFieldCollection KeyFields;
 
 		public bool KeyRefFound;
-		public int KeyRefSelectorLineNumber;
-		public int KeyRefSelectorLinePosition;
-		public bool KeyRefSelectorHasLineInfo;
+//		public int KeyRefSelectorLineNumber;
+//		public int KeyRefSelectorLinePosition;
+//		public bool KeyRefSelectorHasLineInfo;
 
 		public XsdKeyTable KeySequence;
 		private bool keyFound = false;
@@ -375,7 +373,6 @@ namespace Mono.Xml.Schema
 		{
 			for (int i = 0; i < KeyFields.Count; i++) {
 				XsdKeyEntryField keyField = KeyFields [i];
-				XsdIdentityField fieldDef = keyField.Field;
 				XsdIdentityPath path = keyField.FieldMatches (qnameStack, reader);
 				if (path != null) {
 					if (keyField.FieldFound) {

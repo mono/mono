@@ -1,3 +1,11 @@
+2004-11-24  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XsdValidatingReader.cs : commented out some fields and depending
+	  code that are currently not used.
+	  Fixed "one incorrect missing component handling" in the last commit
+	  (it was correct).
+	* XsdIdentityState.cs : removed unused fields and local variables.
+
 2004-11-20  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XsdValidatingReader.cs : quick fix for bug #69620. In some cases

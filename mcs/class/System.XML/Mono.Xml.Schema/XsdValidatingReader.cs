@@ -51,7 +51,7 @@ namespace Mono.Xml.Schema
 		XmlResolver resolver;
 		IHasXmlSchemaInfo sourceReaderSchemaInfo;
 		IXmlLineInfo readerLineInfo;
-		bool laxElementValidation = true;
+//		bool laxElementValidation = true;
 		bool reportNoValidationError;
 		XmlSchemaSet schemas = new XmlSchemaSet ();
 		bool namespaces = true;
@@ -275,7 +275,7 @@ namespace Mono.Xml.Schema
 			return null;
 		}
 
-		public ValidationEventHandler ValidationEventHandler;
+//		public ValidationEventHandler ValidationEventHandler;
 
 		// Public Overrided Properties
 
@@ -514,9 +514,9 @@ namespace Mono.Xml.Schema
 			ValidationEventArgs e = new ValidationEventArgs (schemaException,
 				schemaException.Message, isWarning ? XmlSeverityType.Warning : XmlSeverityType.Error);
 
-			if (this.ValidationEventHandler != null)
+			/*if (this.ValidationEventHandler != null)
 				this.ValidationEventHandler (this, e);
-			else if (xvReader != null)
+			else */if (xvReader != null)
 				xvReader.OnValidationEvent (this, e);
 			else if (e.Severity == XmlSeverityType.Error)
 #if NON_MONO_ENV
@@ -862,7 +862,6 @@ namespace Mono.Xml.Schema
 					AssessElementLocallyValidElement (context.Element, xsiNilValue);	// 1.1.2
 				}
 			} else {
-				XmlSchema schema;
 				switch (stateManager.ProcessContents) {
 				case XmlSchemaContentProcessing.Skip:
 					break;
@@ -875,7 +874,7 @@ namespace Mono.Xml.Schema
 					break;
 				default:
 					if (xsiTypeName == null &&
-						(schemas.Contains (reader.NamespaceURI) &&
+						(schemas.Contains (reader.NamespaceURI) ||
 						!schemas.MissedSubComponents (reader.NamespaceURI)))
 						HandleError ("Element declaration for " + reader.LocalName + " is missing.");
 					break;
