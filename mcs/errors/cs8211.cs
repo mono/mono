@@ -1,11 +1,11 @@
-// cs8211.cs: Array expression passed to attribute is not unidimensional
+// CS0182: An attribute argument must be a constant expression, typeof expression or array creation expression
 // Line: 14
 using System;
 using System.Reflection;
 
 [AttributeUsage (AttributeTargets.All)]
 public class MineAttribute : Attribute {
-	public MineAttribute (Type [] t)
+	public MineAttribute (object t)
 	{
 	}
 }
@@ -18,9 +18,3 @@ public class Foo {
 		return 0;
 	}
 }
-
-
-
-
-
-
