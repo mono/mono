@@ -1,3 +1,9 @@
+2004-11-02  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* MonoWSDL.cs, MonoWSDL2.cs: Added support for custom CodeDom providers.
+	Patch by Rogerio Pereira.
+	* SampleGenerator.cs: Fix warnings.
+
 2004-12-06  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (EXTRA_DISTFILES): Distribute files referenced by

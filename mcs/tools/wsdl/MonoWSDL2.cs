@@ -32,7 +32,9 @@ namespace Mono.WebServices
 			"wsdl [options] {path | URL} {path | URL} ...\n\n"
 			+ "   -d, -domain:domain           Domain of username for server authentication.\n"
 			+ "   -l, -language:language       Language of generated code. Allowed CS (default)\n"
-			+ "                                and VB.\n"
+			+ "                                and VB. You can also specify the fully qualified\n"
+			+ "                                name of a class that implements the\n"
+			+ "                                System.CodeDom.Compiler.CodeDomProvider Class.\n"
 			+ "   -n, -namespace:ns            The namespace of the generated code, default\n"
 			+ "                                namespace if none.\n"
 			+ "   -nologo                      Surpress the startup logo.\n"
@@ -297,23 +299,22 @@ namespace Mono.WebServices
 		///
 		private CodeDomProvider GetProvider()
 		{
-			// FIXME these should be loaded dynamically using reflection
 			CodeDomProvider provider;
-			
-			switch (language.ToUpper())
-			{
-			    case "CS":
-				    provider = new CSharpCodeProvider();
-				    break;
-			    
-				case "VB":
-					provider = new Microsoft.VisualBasic.VBCodeProvider();
-					break;
-					
-			    default:
-				    throw new Exception("Unknow language");
+				    
+			switch (language.ToUpper ()) {
+			case "CS":
+				provider = new CSharpCodeProvider ();
+				break;
+			case "VB":
+				provider = new Microsoft.VisualBasic.VBCodeProvider ();
+				break;
+			default:
+				Type type = Type.GetType(language);
+				if (type != null) {
+					return (CodeDomProvider) Activator.CreateInstance (type);
+				}	
+				throw new Exception ("Unknown language");
 			}
-
 			return provider;
 		}
 		

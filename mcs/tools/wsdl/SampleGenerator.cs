@@ -403,7 +403,6 @@ namespace Mono.WebServices
 		
 		void WriteElementSample (XmlTextWriter xtw, string ns, XmlSchemaElement elem)
 		{
-			bool sharedAnnType = false;
 			XmlQualifiedName root;
 			
 			if (!elem.RefName.IsEmpty) {
@@ -411,7 +410,6 @@ namespace Mono.WebServices
 				if (refElem == null) throw new InvalidOperationException ("Global element not found: " + elem.RefName);
 				root = elem.RefName;
 				elem = refElem;
-				sharedAnnType = true;
 			}
 			else
 				root = new XmlQualifiedName (elem.Name, ns);
@@ -514,7 +512,6 @@ namespace Mono.WebServices
 			{
 				if (at is XmlSchemaAttribute)
 				{
-					string ns;
 					XmlSchemaAttribute attr = (XmlSchemaAttribute)at;
 					XmlSchemaAttribute refAttr = attr;
 					
