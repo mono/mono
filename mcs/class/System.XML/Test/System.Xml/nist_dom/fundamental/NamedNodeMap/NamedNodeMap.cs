@@ -676,7 +676,8 @@ namespace nist_dom.fundamental
         {
             //string testName = "core-0012M";
             string computedValue = "";
-            string expectedValue = "domestic or street";
+//            string expectedValue = "domestic or street";
+            string expectedValue = "domestic";
             System.Xml.XmlNode returnedNode = null;
             System.Xml.XmlNode testNode = null;
 
@@ -729,7 +730,8 @@ namespace nist_dom.fundamental
 	public void core0013M()
         {
             string computedValue = "";
-            string expectedValue = "domestic or street";
+//            string expectedValue = "domestic or street";
+            string expectedValue = "street";
             System.Xml.XmlNode returnedNode = null;
             System.Xml.XmlNode testNode = null;
 
