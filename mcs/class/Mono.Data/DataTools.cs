@@ -70,7 +70,7 @@ namespace Mono.Data
 			try
 			{
 				ds=new DataSet();
-				IDbDataAdapter adapter=ProviderFactory.CreateDataAdapter(SelectCommand);
+				IDbDataAdapter adapter=ProviderFactory.CreateDataAdapter(conn, SelectCommand);
 				adapter.Fill(ds);
 			}
 			finally
