@@ -1,3 +1,9 @@
+2004-05-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* io.c: g_dir_open return ENOENT for directories on which we don't have
+	read/execute permission, while returning EPERM for anything below those.
+	So, change ENOENT by EPERM if the directory exists.
+
 2004-05-07  Dick Porter  <dick@ximian.com>
 
 	* io.c (SetFileAttributes): Don't have failed chmod()s cause a
