@@ -1,5 +1,11 @@
 2003-11-02  Martin Baulig  <martin@ximian.com>
 
+	* expression.cs (Invocation.EmitCall): Use
+	`TypeManager.IsValueType()' to check whether it's a value type.
+	Don't set `struct_call' when calling a method on a type parameter.
+
+2003-11-02  Martin Baulig  <martin@ximian.com>
+
 	* generics.cs (ConstructedType.Resolve): Renamed to ResolveType()
 	and removed the TypeBuilder argument.
 

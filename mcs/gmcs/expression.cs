@@ -5047,7 +5047,7 @@ namespace Mono.CSharp {
 				return;
 			
 			if (!is_static){
-				if (decl_type.IsValueType)
+				if (TypeManager.IsValueType (decl_type))
 					struct_call = true;
 				//
 				// If this is ourselves, push "this"
@@ -5058,14 +5058,15 @@ namespace Mono.CSharp {
 					//
 					// Push the instance expression
 					//
-					if (instance_expr.Type.IsValueType){
+					if (TypeManager.IsValueType (instance_expr.Type)){
 						//
 						// Special case: calls to a function declared in a 
 						// reference-type with a value-type argument need
 						// to have their value boxed.  
 
-						struct_call = true;
-						if (decl_type.IsValueType){
+						if (!instance_expr.Type.IsGenericParameter)
+							struct_call = true;
+						if (TypeManager.IsValueType (decl_type)){
 							//
 							// If the expression implements IMemoryLocation, then
 							// we can optimize and use AddressOf on the
