@@ -1,3 +1,18 @@
+2001-10-14  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (Expression::ConvertReferenceExplicit): Implement
+	a few more explicit conversions. 
+
+	* modifiers.cs: `NEW' modifier maps to HideBySig.
+
+	* expression.cs (PropertyExpr): Make this into an
+	ExpressionStatement, and support the EmitStatement code path. 
+
+	Perform get/set error checking, clean up the interface.
+
+	* assign.cs: recognize PropertyExprs as targets, and if so, turn
+	them into toplevel access objects.
+
 2001-10-12  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs: PropertyExpr::PropertyExpr: use work around the

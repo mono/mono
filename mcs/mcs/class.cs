@@ -1712,7 +1712,7 @@ namespace CIR {
 
 			if (error)
 				return null;
-			
+
 			//
 			// Finally, define the method
 			//
@@ -1888,15 +1888,17 @@ namespace CIR {
 
 			Type [] parameters = ParameterTypes (parent);
 
-			if (parent is Struct && parameters == null){
-				Report.Error (
-					568, Location, 
-					"Structs can not contain explicit parameterless constructors");
-				return null;
-			}
-
 			if ((ModFlags & Modifiers.STATIC) != 0)
 				ca |= MethodAttributes.Static;
+			else {
+				if (parent is Struct && parameters == null){
+					Report.Error (
+						568, Location, 
+						"Structs can not contain explicit parameterless " +
+						"constructors");
+					return null;
+				}
+			}
 
 			ConstructorBuilder = parent.TypeBuilder.DefineConstructor (
 				ca, GetCallingConvention (parent is Class),

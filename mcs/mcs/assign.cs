@@ -50,6 +50,27 @@ namespace CIR {
 			if (target == null || source == null)
 				return null;
 
+			//
+			// If we are doing a property assignment, then
+			// set the `value' field on the property, and Resolve
+			// it.
+			//
+			if (target is PropertyExpr){
+				PropertyExpr property_assign = (PropertyExpr) target;
+				
+				property_assign.Value = source;
+				
+				return property_assign.Resolve (ec);
+			}
+
+			if (source is New && target.Type.IsSubclassOf (TypeManager.value_type)){
+				New n = (New) source;
+
+				n.ValueTypeVariable = target;
+
+				return source;
+			}
+
 			Type target_type = target.Type;
 			
 			Type source_type = source.Type;

@@ -1,3 +1,14 @@
+* Assignment
+
+	string a, b;
+	property string c;
+
+	a = c = b = "hello"
+
+	Problem is that setter properties do not return a value, so we must
+	create a temporary on the situation above to store the value of "b"
+	and then pass that on to "a".
+
 * Optimizations
 
 	Handle if (!x) converting to remove the `!' and instead of using
@@ -8,11 +19,6 @@
 	Maybe we should only call Resolve on RValues and LValueRsolve
 	on LValues so that DoREsolve can flag errors on properties
 	missing `get' and indexers without a get indexer.
-
-* MemberLookup
-
-	Should take a Location, and pass this information down, so we
-	can report better errors.
 
 * Emitcontext
 
@@ -27,24 +33,6 @@
 	that is part of the `compiler instance' and just use globals
 	everywhere.
 
-* Reorganization: calling structure methods
-
-	Structure methods do not expect a `this' pointer, they expect
-	an address on the stack.  We can probably use all the LValue members
-	to do this.
-
-	Now, for cases like:
-
-		struct A { void M ();}
-		class B { A Func () {}}
-
-	When we do:
-		b.Func ().M ()
-
-	A temporary is created by the compiler to store the result from 
-	b.Func, we could then use this LocalVariable to invoke the
-	AddressOf on it.
-
 * FindMembers
 
 	Move our utility FindMembers from TypeContainer to Decl, because interfaces
@@ -58,10 +46,6 @@
 * Visibility
 
 	I am not reporting errors on visibility yet.
-
-* Error handling
-
-	Normalize, and use Tokenizer location 
 
 * Enumerations
 
@@ -106,6 +90,9 @@
 	I have not figured out why the Microsoft version puts an
 	`instance' attribute, and I am not generating this `instance' attribute.
 
+	Explanation: The reason for the `instance' attribute on
+	indexers is that indexers only apply to instances
+
 * Constructors
 
 	Currently it calls the parent constructor before initializing fields.
@@ -118,7 +105,7 @@
 
 * Create an UnimplementedExpcetion
 
-  	And use that instead of plain Exceptions.
+  	And use that instead of plain Exceptions to flag compiler errors.
 
 * ConvertImplicit
 
@@ -185,3 +172,8 @@
 
 	The driver advances the Alias for each file compiled, so that each file
 	has its own alias set.
+
+* Tests
+
+	Write tests for the various reference conversions.  We have
+	test for all the numeric conversions.

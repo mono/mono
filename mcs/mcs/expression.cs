@@ -1335,17 +1335,81 @@ namespace CIR {
 		// <summary>
 		//   Implements Explicit Reference conversions
 		// </summary>
-		static Expression ConvertReferenceExplicit (Expression expr, Type target_type)
+		static Expression ConvertReferenceExplicit (Expression source, Type target_type)
 		{
-			Type expr_type = expr.Type;
+			Type source_type = source.Type;
 			bool target_is_value_type = target_type.IsValueType;
 			
 			//
 			// From object to any reference type
 			//
-			if (expr_type == TypeManager.object_type && !target_is_value_type)
-				return new ClassCast (expr, target_type);
+			if (source_type == TypeManager.object_type && !target_is_value_type)
+				return new ClassCast (source, target_type);
 
+
+			//
+			// From any class S to any class-type T, provided S is a base class of T
+			//
+			if (target_type.IsSubclassOf (source_type))
+				return new ClassCast (source, target_type);
+
+			//
+			// From any interface type S to any interface T provided S is not derived from T
+			//
+			if (source_type.IsInterface && target_type.IsInterface){
+				if (!target_type.IsSubclassOf (source_type))
+					return new ClassCast (source, target_type);
+			}
+			    
+			//
+			// From any class type S to any interface T, provides S is not sealed
+			// and provided S does not implement T.
+			//
+			if (target_type.IsInterface && !source_type.IsSealed &&
+			    !target_type.IsAssignableFrom (source_type))
+				return new ClassCast (source, target_type);
+
+			//
+			// From any interface-type S to to any class type T, provided T is not
+			// sealed, or provided T implements S.
+			//
+			if (source_type.IsInterface &&
+			    (!target_type.IsSealed || source_type.IsAssignableFrom (target_type)))
+				return new ClassCast (source, target_type);
+
+			//
+			// FIXME: Implemet
+			//
+
+			// From an array typ eS with an element type Se to an array type T with an 
+			// element type Te provided all the following are true:
+			//     * S and T differe only in element type, in other words, S and T
+			//       have the same number of dimensions.
+			//     * Both Se and Te are reference types
+			//     * An explicit referenc conversions exist from Se to Te
+			//
+
+			// From System.Array to any array-type
+			if (source_type == TypeManager.array_type &&
+			    target_type.IsSubclassOf (TypeManager.array_type)){
+				return new ClassCast (source, target_type);
+			}
+
+			//
+			// From System delegate to any delegate-type
+			//
+			if (source_type == TypeManager.delegate_type &&
+			    target_type.IsSubclassOf (TypeManager.delegate_type))
+				return new ClassCast (source, target_type);
+
+			//
+			// From ICloneable to Array or Delegate types
+			//
+			if (source_type == TypeManager.icloneable_type &&
+			    (target_type == TypeManager.array_type ||
+			     target_type == TypeManager.delegate_type))
+				return new ClassCast (source, target_type);
+			
 			return null;
 		}
 		
@@ -3899,28 +3963,25 @@ namespace CIR {
 				a.Emit (ec);
 			}
 		}
-		
-		public override void Emit (EmitContext ec)
+
+		public static void EmitCall (EmitContext ec,
+					     bool is_static, Expression instance_expr,
+					     MethodBase method, ArrayList Arguments)
 		{
-			bool is_static = method.IsStatic;
 			ILGenerator ig = ec.ig;
 			bool struct_call = false;
 				
 			if (!is_static){
-				MethodGroupExpr mg = (MethodGroupExpr) this.expr;
-
 				//
 				// If this is ourselves, push "this"
 				//
-				if (mg.InstanceExpression == null){
+				if (instance_expr == null){
 					ig.Emit (OpCodes.Ldarg_0);
 				} else {
-					Expression ie = mg.InstanceExpression;
-					
 					//
 					// Push the instance expression
 					//
-					if (ie.Type.IsSubclassOf (TypeManager.value_type)){
+					if (instance_expr.Type.IsSubclassOf (TypeManager.value_type)){
 
 						struct_call = true;
 
@@ -3931,16 +3992,18 @@ namespace CIR {
 						//
 						// If not we have to use some temporary storage for
 						// it.
-						if (ie is MemoryLocation)
-							((MemoryLocation) ie).AddressOf (ec);
+						if (instance_expr is MemoryLocation)
+							((MemoryLocation) instance_expr).AddressOf (ec);
 						else {
-							ie.Emit (ec);
-							LocalBuilder temp = ec.GetTemporaryStorage (ie.Type);
+							Type t = instance_expr.Type;
+							
+							instance_expr.Emit (ec);
+							LocalBuilder temp = ec.GetTemporaryStorage (t);
 							ig.Emit (OpCodes.Stloc, temp);
 							ig.Emit (OpCodes.Ldloca, temp);
 						}
 					} else 
-						ie.Emit (ec);
+						instance_expr.Emit (ec);
 				}
 			}
 
@@ -3958,6 +4021,13 @@ namespace CIR {
 				else
 					ig.Emit (OpCodes.Callvirt, (ConstructorInfo) method);
 			}
+		}
+		
+		public override void Emit (EmitContext ec)
+		{
+			MethodGroupExpr mg = (MethodGroupExpr) this.expr;
+			
+			EmitCall (ec, method.IsStatic, mg.InstanceExpression, method, Arguments);
 		}
 
 		public override void EmitStatement (EmitContext ec)
@@ -3992,6 +4062,13 @@ namespace CIR {
 		Location Location;
 		MethodBase method = null;
 
+
+		//
+		// If set, the new expression is for a value_target, and
+		// we will not leave anything on the stack.
+		//
+		Expression value_target;
+		
 		public New (string requested_type, ArrayList arguments, Location loc)
 		{
 			RequestedType = requested_type;
@@ -4029,11 +4106,19 @@ namespace CIR {
 			return sb.ToString ();
 		}
 		
+		public Expression ValueTypeVariable {
+			get {
+				return value_target;
+			}
 
+			set {
+				value_target = value;
+			}
+		}
+		
 		public override Expression DoResolve (EmitContext ec)
 		{
 			if (NewType == NType.Object) {
-				
 				type = ec.TypeContainer.LookupType (RequestedType, false);
 				
 				if (type == null)
@@ -4043,33 +4128,39 @@ namespace CIR {
 
 				ml = MemberLookup (ec, type, ".ctor", false,
 						   MemberTypes.Constructor, AllBindingsFlags, Location);
-				
+
+				bool is_struct;
+				is_struct = type.IsSubclassOf (TypeManager.value_type);
+
 				if (! (ml is MethodGroupExpr)){
-				        //
-				        // FIXME: Find proper error
-				        //
-					report118 (Location, ml, "method group");
-					return null;
-				}
-				
-				if (Arguments != null){
-					for (int i = Arguments.Count; i > 0;){
-						--i;
-						Argument a = (Argument) Arguments [i];
-						
-						if (!a.Resolve (ec))
-							return null;
+					if (!is_struct){
+						report118 (Location, ml, "method group");
+						return null;
 					}
 				}
+
+				if (ml != null){
+					if (Arguments != null){
+						for (int i = Arguments.Count; i > 0;){
+							--i;
+							Argument a = (Argument) Arguments [i];
+							
+							if (!a.Resolve (ec))
+								return null;
+						}
+					}
+					
+					method = Invocation.OverloadResolve (
+						ec, (MethodGroupExpr) ml,
+						Arguments, Location);
 				
-				method = Invocation.OverloadResolve (ec, (MethodGroupExpr) ml, Arguments,
-								     Location);
-				
-				if (method == null) {
-					Error (-6, Location,
-					       "New invocation: Can not find a constructor for this argument list");
-					return null;
-				}
+					if (method == null && !is_struct) {
+						Error (-6, Location,
+						       "New invocation: Can not find a constructor for " +
+						       "this argument list");
+						return null;
+					}
+				} 
 				
 				eclass = ExprClass.Value;
 				return this;
@@ -4082,16 +4173,54 @@ namespace CIR {
 			return null;
 		}
 
-		public override void Emit (EmitContext ec)
+		//
+		// This DoEmit can be invoked in two contexts:
+		//    * As a mechanism that will leave a value on the stack (new object)
+		//    * As one that wont (init struct)
+		//
+		// You can control whether a value is required on the stack by passing
+		// need_value_on_stack.  The code *might* leave a value on the stack
+		// so it must be popped manually
+		//
+		// Returns whether a value is left on the stack
+		//
+		bool DoEmit (EmitContext ec, bool need_value_on_stack)
 		{
-			Invocation.EmitArguments (ec, method, Arguments);
-			ec.ig.Emit (OpCodes.Newobj, (ConstructorInfo) method);
+			if (method == null){
+				MemoryLocation ml = (MemoryLocation) value_target;
+
+				ml.AddressOf (ec);
+			} else {
+				Invocation.EmitArguments (ec, method, Arguments);
+				ec.ig.Emit (OpCodes.Newobj, (ConstructorInfo) method);
+				return true;
+			}
+
+			//
+			// It must be a value type, sanity check
+			//
+			if (value_target != null){
+				ec.ig.Emit (OpCodes.Initobj, type);
+
+				if (need_value_on_stack){
+					value_target.Emit (ec);
+					return true;
+				}
+				return false;
+			}
+
+			throw new Exception ("No method and no value type");
 		}
 
+		public override void Emit (EmitContext ec)
+		{
+			DoEmit (ec, true);
+		}
+		
 		public override void EmitStatement (EmitContext ec)
 		{
-			Emit (ec);
-			ec.ig.Emit (OpCodes.Pop);
+			if (DoEmit (ec, false))
+				ec.ig.Emit (OpCodes.Pop);
 		}
 	}
 
@@ -4296,12 +4425,12 @@ namespace CIR {
 			if (member_lookup is PropertyExpr){
 				PropertyExpr pe = (PropertyExpr) member_lookup;
 
-				
 				if (expr is TypeExpr){
 					if (!pe.IsStatic){
 						SimpleName.Error120 (loc, pe.PropertyInfo.Name);
 						return null;
 					}
+					return pe;
 				} else {
 					if (pe.IsStatic){
 						error176 (loc, pe.PropertyInfo.Name);
@@ -4505,34 +4634,58 @@ namespace CIR {
 	}
 	
 	// <summary>
-	//   Fully resolved expression that evaluates to a Property
+	//   Expression that evaluates to a Property.  The Assign class
+	//   might set the `Value' expression if we are in an assignment. 
 	// </summary>
-	public class PropertyExpr : Expression, LValue {
+	public class PropertyExpr : ExpressionStatement {
 		public readonly PropertyInfo PropertyInfo;
 		public readonly bool IsStatic;
 		MethodInfo [] Accessors;
 		Location loc;
 		
 		Expression instance_expr;
+		Expression value;
 		
-		public PropertyExpr (PropertyInfo pi, Location loc)
+		public PropertyExpr (PropertyInfo pi, Location l)
 		{
 			PropertyInfo = pi;
 			eclass = ExprClass.PropertyAccess;
 			IsStatic = false;
-
+			loc = l;
 			Accessors = TypeManager.GetAccessors (pi);
 
 			if (Accessors != null)
-				for (int i = 0; i < Accessors.Length; i++)
-					if (Accessors [i].IsStatic)
-						IsStatic = true;
+				for (int i = 0; i < Accessors.Length; i++){
+					if (Accessors [i] != null)
+						if (Accessors [i].IsStatic)
+							IsStatic = true;
+				}
 			else
 				Accessors = new MethodInfo [2];
 			
 			type = pi.PropertyType;
 		}
 
+		//
+		// Controls the Value of the PropertyExpr.  If the value
+		// is null, then the property is being used in a `read' mode.
+		// otherwise the property is used in assignment mode.
+		//
+		// The value is set to a fully resolved type by assign.
+		//
+		public Expression Value {
+			get {
+				return value;
+			}
+
+			set {
+				this.value = value;
+			}
+		}
+
+		//
+		// The instance expression associated with this expression
+		//
 		public Expression InstanceExpression {
 			set {
 				instance_expr = value;
@@ -4545,43 +4698,45 @@ namespace CIR {
 		
 		override public Expression DoResolve (EmitContext ec)
 		{
-			// We are born in resolved state. 
-			return this;
-		}
-
-		public Expression LValueResolve (EmitContext ec)
-		{
-			if (!PropertyInfo.CanWrite){
-				Report.Error (200, loc, 
-					      "The property `" + PropertyInfo.Name +
-					      "' can not be assigned to, as it has not set accessor");
-				return null;
+			if (value == null){
+				if (!PropertyInfo.CanRead){
+					Report.Error (154, loc, 
+						      "The property `" + PropertyInfo.Name +
+						      "' can not be used in " +
+						      "this context because it lacks a get accessor");
+					return null;
+				}
+			} else {
+				if (!PropertyInfo.CanWrite){
+					Report.Error (200, loc, 
+						      "The property `" + PropertyInfo.Name +
+						      "' can not be assigned to, as it has not set accessor");
+					return null;
+				}
 			}
 			
 			return this;
 		}
-		
-		public void Store (EmitContext ec)
-		{
-		}
-		
+
 		override public void Emit (EmitContext ec)
 		{
-			//
-			// This really should be done in Resolve, but
-			// at that point we might be used as an LValue
-			// and it is valid to only have a setter and no getter.
-			//
+			if (value == null)
+				Invocation.EmitCall (ec, IsStatic, instance_expr, Accessors [0], null);
+			else {
+				Argument arg = new Argument (value, Argument.AType.Expression);
+				ArrayList args = new ArrayList ();
 
-			if (!PropertyInfo.CanRead){
-				Report.Error (154, loc, 
-					      "The property `" + PropertyInfo.Name +
-					      "' can not be used in " +
-					      "this context because it lacks a get accessor");
-				return;
+				args.Add (arg);
+				Invocation.EmitCall (ec, IsStatic, instance_expr, Accessors [1], args);
 			}
-			
-			throw new Exception ("Unimplemented");
+		}
+
+		override public void EmitStatement (EmitContext ec)
+		{
+			Emit (ec);
+			if (value == null){
+				ec.ig.Emit (OpCodes.Pop);
+			}
 		}
 	}
 

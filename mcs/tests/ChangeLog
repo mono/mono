@@ -1,3 +1,7 @@
+2001-10-14  Miguel de Icaza  <miguel@ximian.com>
+
+	* test-23.cs: Added new test for properties. 
+
 2001-10-12  Ravi Pratap  <ravi@ximian.com>
 
 	* test-21.cs : Update to actually do some checking and return

@@ -152,7 +152,7 @@ namespace CIR {
 				ma |= MethodAttributes.Virtual;
 			
 			if ((mod_flags & NEW) != 0)
-				ma |= MethodAttributes.NewSlot;
+				ma |= MethodAttributes.HideBySig;
 			
 			return ma;
 		}
