@@ -67,10 +67,8 @@ namespace Mono.CSharp {
 
 		static bool IsVirtualFilter (MemberInfo m, object filterCriteria)
 		{
-			if (!(m is MethodInfo))
-				return false;
-
-			return ((MethodInfo) m).IsVirtual;
+			MethodInfo mi = m as MethodInfo;
+			return (mi == null) ? false : mi.IsVirtual;
 		}
 
 		/// <summary>
