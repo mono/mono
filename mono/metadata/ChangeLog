@@ -1,3 +1,8 @@
+2003-06-04  Dietmar Maurer  <dietmar@ximian.com>
+
+	* loader.c (mono_lookup_pinvoke_call): look for modules in the
+	current directory (fix bug 44008)
+
 2003-06-03  Dietmar Maurer  <dietmar@ximian.com>
 
 	* marshal.c (mono_marshal_get_native_wrapper): started support for
