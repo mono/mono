@@ -243,7 +243,6 @@ namespace Mono.CSharp {
 			// Attempt to do the implicit constant expression conversions
 
 			if (expr is Constant){
-				
 				if (expr is IntConstant){
 					Expression e;
 					
@@ -258,7 +257,7 @@ namespace Mono.CSharp {
 					// we just inline it
 					//
 					long v = ((LongConstant) expr).Value;
-					if (v > 0)
+					if (v >= 0)
 						return new ULongConstant ((ulong) v);
 				} 
 			}

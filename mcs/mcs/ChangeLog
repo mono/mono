@@ -1,3 +1,8 @@
+2004-04-23  Miguel de Icaza  <miguel@ximian.com>
+
+	* convert.cs (ImplicitNumericConversion): 0 is also positive when
+	converting from 0L to ulong.  Fixes 57522.
+
 2004-04-22  Marek Safar  <marek.safar@seznam.cz>
 
 	* decl.cs (FindMemberToOverride): Fix wrong warning for case when
