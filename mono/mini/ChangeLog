@@ -1,3 +1,8 @@
+Wed Jul 30 14:10:12 EDT 2003 Mark Crichton <crichton@gimp.org>
+
+	* mini-sparc.c: Renamed registers.  Also some macro cleanups.
+	* exceptions-sparc.c, tramp-sparc.c: Various compile fixes.
+	They compile, but do not work.
 
 Wed Jul 30 17:52:41 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
