@@ -1,3 +1,8 @@
+2004-06-17  Jackson Harper  <jackson@ximian.com>
+
+	* CodeGenerator.cs: Make sure we are using invariant for non
+	culture sensitive operations.
+	
 2004-06-13  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* IndentedTextWriter.cs: have DefaultTabString correspond with

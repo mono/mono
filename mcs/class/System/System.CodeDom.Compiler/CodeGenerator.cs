@@ -199,7 +199,7 @@ namespace System.CodeDom.Compiler {
 
 		protected virtual void GenerateDecimalValue (Decimal d)
 		{
-			Output.Write (d.ToString ());
+			Output.Write (d.ToString (CultureInfo.InvariantCulture));
 		}
 
 		protected abstract void GenerateDelegateCreateExpression (CodeDelegateCreateExpression e);
@@ -214,7 +214,7 @@ namespace System.CodeDom.Compiler {
 
 		protected virtual void GenerateDoubleValue (Double d)
 		{
-			Output.Write (d.ToString ());
+			Output.Write (d.ToString (CultureInfo.InvariantCulture));
 		}
 
 		protected abstract void GenerateEntryPointMethod (CodeEntryPointMethod m, CodeTypeDeclaration d);
@@ -420,7 +420,7 @@ namespace System.CodeDom.Compiler {
 
 			Type type = e.Value.GetType ();
 			if (type == typeof (bool)) {
-				output.Write (e.Value.ToString ().ToLower ());
+				output.Write (e.Value.ToString ().ToLower (CultureInfo.InvariantCulture));
 			} else if (type == typeof (char)) {
 				output.Write ("'" + e.Value.ToString () + "'");
 			} else if (type == typeof (string)) {
@@ -428,7 +428,12 @@ namespace System.CodeDom.Compiler {
 			} else if (type == typeof (byte) || type == typeof (sbyte) || type == typeof (short) ||
 				   type == typeof (int) || type == typeof (long) || type == typeof (float) ||
 				   type == typeof (double) || type == typeof (decimal)) {
-				output.Write (e.Value.ToString ());
+				// All of these should be IFormatable, I am just being safe/slow 
+				IFormattable formattable = e.Value as IFormattable;
+				if (formattable != null)
+					output.Write (formattable.ToString (null, CultureInfo.InvariantCulture));
+				else
+					output.Write (e.Value.ToString ());
 			} else {
 				throw new ArgumentException ("Value type (" + type + ") is not a primitive type");
 			}
@@ -441,7 +446,7 @@ namespace System.CodeDom.Compiler {
 
 		protected virtual void GenerateSingleFloatValue (Single s)
 		{
-			output.Write (s.ToString());
+			output.Write (s.ToString(CultureInfo.InvariantCulture));
 		}
 
 		protected virtual void GenerateSnippetCompileUnit (CodeSnippetCompileUnit e)
