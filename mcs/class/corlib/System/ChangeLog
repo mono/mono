@@ -1,3 +1,7 @@
+2002-02-08  Dan Lewis <dihlewis@yahoo.co.uk>
+	
+	* String.cs (Format): implemented
+
 2002-02-07  Duncan Mak  <duncan@ximian.com>
 	
 	* DuplicateWaitObjectException:

@@ -726,49 +726,83 @@ namespace System {
 			return a == b;
 		}
 
-		[MonoTODO]
-		public static string Format (string format, object arg0)
-		{
-			// FIXME: implement me
-			return format+arg0.ToString();
+		public static string Format (string format, object arg0) {
+			return Format (null, format, new object[] { arg0 });
 		}
 
-		[MonoTODO]
-		public static string Format (string format, params object[] args)
-		{
-			// FIXME: implement me
-			Console.WriteLine (args[0].ToString());
-			if (args.Length == 1)
-				return format+args[0].ToString();
-			if (args.Length == 2)
-				return format+args[0].ToString()+args[1].ToString();
-			if (args.Length == 3)
-				return format+args[0].ToString()+args[1].ToString()+args[2].ToString();
-			if (args.Length == 4)
-				return format+args[0].ToString()+args[1].ToString()+args[2].ToString()+args[3].ToString();
-			Console.WriteLine ("String.Format with args: "+args.Length.ToString());
-			return format;
-		}
-		
-		[MonoTODO]
-		public static string Format (IFormatProvider provider, string format, params object[] args)
-		{
-			// FIXME: implement me
-			return null;
-		}
-		
-		[MonoTODO]
-		public static string Format (string format, object arg0, object arg1)
-		{
-			// FIXME: implement me
-			return format+arg0.ToString()+arg1.ToString();
+		public static string Format (string format, object arg0, object arg1) {
+			return Format (null, format, new object[] { arg0, arg1 });
 		}
 
-		[MonoTODO]
-		public static string Format (string format, object arg0, object arg1, object arg2)
-		{
-			// FIXME: implement me
-			return format+arg0.ToString()+arg1.ToString()+arg2.ToString();
+		public static string Format (string format, object arg0, object arg1, object arg2) {
+			return Format (null, format, new object[] { arg0, arg1, arg2 });
+		}
+
+		public static string Format (string format, params object[] args) {
+			return Format (null, format, args);
+		}
+
+		public static string Format (IFormatProvider provider, string format, params object[] args) {
+			if (format == null || args == null)
+				throw new ArgumentNullException ();
+		
+			StringBuilder result = new StringBuilder ();
+
+			int ptr = 0;
+			int start = ptr;
+			while (ptr < format.Length) {
+				char c = format[ptr ++];
+					
+				if (c == '{') {
+					result.Append (format, start, ptr - start - 1);
+
+					// parse specifier
+				
+					int n, width;
+					bool left_align;
+					string arg_format;
+
+					ParseFormatSpecifier (format, ref ptr, out n, out width, out left_align, out arg_format);
+					if (n >= args.Length)
+						throw new FormatException ("Index (zero based) must be greater than or equal to zero and less than the size of the argument list.");
+
+					// format argument
+
+					object arg = args[n];
+
+					string str;
+					if (arg == null)
+						str = "";
+					else if (arg is IFormattable)
+						str = ((IFormattable)arg).ToString (arg_format, provider);
+					else
+						str = arg.ToString ();
+
+					// pad formatted string and append to result
+
+					if (width > str.Length) {
+						string pad = new String (' ', width - str.Length);
+
+						if (left_align) {
+							result.Append (str);
+							result.Append (pad);
+						}
+						else {
+							result.Append (pad);
+							result.Append (str);
+						}
+					}
+					else
+						result.Append (str);
+
+					start = ptr;
+				}
+			}
+
+			if (start < format.Length)
+				result.Append (format.Substring (start));
+
+			return result.ToString ();
 		}
 
 		public CharEnumerator GetEnumerator ()
@@ -1689,6 +1723,76 @@ namespace System {
 		public static bool operator !=(string a, string b)
 		{
 			return !(a == b);
+		}
+
+		// private
+
+		private static void ParseFormatSpecifier (string str, ref int ptr, out int n, out int width, out bool left_align, out string format) {
+			// parses format specifier of form:
+			//   N,[[-]M][:F]}
+			//
+			// where:
+
+			try {
+				// N = argument number (non-negative integer)
+			
+				n = ParseDecimal (str, ref ptr);
+				if (n < 0)
+					throw new FormatException ("Input string was not in correct format.");
+				
+				// M = width (non-negative integer)
+
+				if (str[ptr] == ',') {
+					left_align = (str[++ ptr] == '-');
+					if (left_align)
+						++ ptr;
+
+					width = ParseDecimal (str, ref ptr);
+					if (width < 0)
+						throw new FormatException ("Input string was not in correct format.");
+				}
+				else {
+					width = 0;
+					left_align = false;
+				}
+
+				// F = argument format (string)
+
+				if (str[ptr] == ':') {
+					int start = ++ ptr;
+					while (str[ptr] != '}')
+						++ ptr;
+
+					format = str.Substring (start, ptr - start);
+				}
+				else
+					format = null;
+
+				if (str[ptr ++] != '}')
+					throw new FormatException ("Input string was not in correct format.");
+			}
+			catch (IndexOutOfRangeException) {
+				throw new FormatException ("Input string was not in correct format.");
+			}
+		}
+
+		private static int ParseDecimal (string str, ref int ptr) {
+			int p = ptr;
+			int n = 0;
+			while (true) {
+				char c = str[p];
+				if (c < '0' || '9' < c)
+					break;
+
+				n = n * 10 + c - '0';
+				++ p;
+			}
+
+			if (p == ptr)
+				return -1;
+			
+			ptr = p;
+			return n;
 		}
 	}
 }
