@@ -209,10 +209,9 @@ namespace Mono.Data.SybaseClient {
 					declare.Append (" output");
 				declare.Append ('\n');
 				assign.Append (String.Format ("select {0}={1}\n", parameter.ParameterName, FormatParameter (parameter)));
-				sql = sql.Replace (parameter.ParameterName, String.Format ("' + {0} + '", parameter.ParameterName));
 			}
 
-			return String.Format ("{0}{1}execute ({2})", declare.ToString (), assign.ToString (), sql);
+			return String.Format ("{0}{1}{2}", declare.ToString (), assign.ToString (), sql);
 		}
 
 		private string BuildPrepare ()
