@@ -19,7 +19,16 @@ namespace Mono.ILASM {
                 private string sig_mod;
 
                 public GenericTypeRef (PEAPI.GenericTypeSpec gen_type,
-                                string full_name)
+                                string full_name) : this (gen_type, full_name, true)
+                {
+                }
+
+                public GenericTypeRef (PEAPI.MVar gen_type,
+                                string full_name) : this (gen_type, full_name, true)
+                {
+                }
+
+                private GenericTypeRef (PEAPI.Type gen_type, string full_name, bool nadda)
                 {
                         this.type = gen_type;
                         this.full_name = full_name;

@@ -1,3 +1,10 @@
+2003-10-11 Jackson Harper <jackson@ximian.com>
+
+	* GenericTypeRef.cs: Allow Mvars to be a base type.
+	* GenericMethodRef.cs: Basically just a wrapper around an existing
+	method making it into a generic method. 
+	* GenericMethodSig.cs: Signature for a generic method.
+	
 2003-10-08 Jackson Harper <jackson@ximian.com>
 
 	* PeapiTypeRef.cs: Remove old hackery for adding methods to
