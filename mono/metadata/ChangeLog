@@ -1,5 +1,8 @@
 2004-05-22  Zoltan Varga  <vargaz@freemail.hu>
 
+	* marshal.c (mono_marshal_get_proxy_cancast): Move thread interrupt
+	check after MONO_VTADDR. Fixes pinvoke2.exe.
+
 	* marshal.h marshal.c metadata.h: Add beginnings of support for
 	ftnptr -> delegate marshalling.
 
