@@ -42,6 +42,11 @@ namespace System
 	{
 		IntPtr value;
 
+		internal RuntimeFieldHandle (IntPtr v)
+		{
+			value = v;
+		}
+
 		RuntimeFieldHandle (SerializationInfo info, StreamingContext context)
 		{
 			if (info == null)

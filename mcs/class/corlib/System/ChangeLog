@@ -1,3 +1,9 @@
+2004-09-19  Zoltan Varga  <vargaz@freemail.hu>
+
+	* ModuleHandle.cs: New file.
+
+	* RuntimeFieldHandle.cs: Add an internal ctor.
+
 2004-09-19  Dick Porter  <dick@ximian.com>
 
 	* Console.cs: Use the internal wrappers for StreamReader and
