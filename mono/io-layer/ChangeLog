@@ -1,3 +1,8 @@
+2004-03-03  Dave Camp  <dave@ximian.com>
+
+	* daemon.c: (add_fd), (fd_activity), (_wapi_daemon_main):
+	Use a new main context.
+
 2004-03-04  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* io.c:
