@@ -331,11 +331,6 @@ namespace System.IO {
                 
                 
                 public virtual byte[] ToArray() { 
-                
-                        if( streamClosed ) {
-                                throw new ArgumentException( "The MemoryStream has been closed" );
-                        }
-                              
                         byte[] outBuffer = new byte[capacity];
                         Array.Copy( internalBuffer, 0, outBuffer, 0, capacity);
                         return outBuffer; 
