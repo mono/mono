@@ -1,3 +1,6 @@
+2004-11-04  Jambunathan K  <kjambunathan@novell.com>
+	* mb-parser.jay: Syntactic error handling for attribute grammar.
+
 2004-10-25 Anirban Bhattacharjee <banirban@novell.com>
 	* statement.cs: VB .Net specific exception number
 

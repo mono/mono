@@ -365,8 +365,12 @@ namespace Mono.MonoBASIC
 			}
 		}
 
-		bool global_attrs_enabled = true;
-		bool expecting_global_attributes = false;
+		bool allow_global_attribs = true;
+
+		bool expecting_global_attribs = false;
+		bool expecting_local_attribs = false;
+
+		bool local_attrib_section_added = false;
 %}
 
 %token EOF
@@ -725,13 +729,13 @@ declaration
 	  {
 	  	// FIXME: Need to check declaration qualifiers for multi-file compilation
 	  	// FIXME: Qualifiers cannot be applied to namespaces
-	  	global_attrs_enabled = false;
+	  	allow_global_attribs = false;
 	  }
 	  namespace_declaration
 	|declaration_qualifiers
 	  {
 		  // FIXME: Need to check declaration qualifiers for multi-file compilation
-		  global_attrs_enabled = false;
+		  allow_global_attribs = false;
 	  }
 	  type_spec_declaration
 	  {
@@ -824,12 +828,59 @@ opt_params
 
 opt_attributes
  	: /* empty */
- 	| attribute_sections 	{ $$ = $1; }
+ 	| attribute_sections 	
+	  { 
+	  	$$ = $1; 
+		local_attrib_section_added = false;
+	  }
  	;
 
 attribute_sections
-	:  attribute_section
-	| attribute_sections attribute_section	{ $$ = $1; }
+	:  attribute_section	
+	  { 
+	  	$$ = $1;
+		if ($1 == null) {
+			expecting_local_attribs = false;
+			expecting_global_attribs = false;
+			break;
+		}
+		
+		if (expecting_local_attribs) {
+			local_attrib_section_added = true;
+			allow_global_attribs = false;
+		}			
+
+		expecting_local_attribs = false;
+		expecting_global_attribs = false;
+	  }
+	| attribute_sections  
+	   {
+	   	$$ = lexer.Location;
+	   }
+	   attribute_section	
+	  {
+	  	$$ = null;
+	  	if ($3 != null) {
+
+			if (expecting_local_attribs) {
+				if (local_attrib_section_added) {
+					expecting_local_attribs = false;
+					expecting_global_attribs = false;
+					Report.Error (30205, (Location) $2, "Multiple attribute sections may not be used; Coalesce multiple attribute sections in to a single attribute section");
+					break;
+				}
+
+				local_attrib_section_added = true;
+				allow_global_attribs = false;
+			}
+  		}	
+
+		expecting_local_attribs = false;
+		expecting_global_attribs = false;
+		
+	  	$$ = $1; 
+
+	  }
 	;
 
 attribute_section
@@ -837,15 +888,21 @@ attribute_section
  	  {
  	  	$$ = null;
 		if ($2 != null) {
-	 	  	if (expecting_global_attributes ^ (bool) $4) {
-					Report.Error (32035, lexer.Location, "Use a line continuation after the attribute specifier to apply it to the following statement.");
-			} else {
-		 		AttributeSection sect = new AttributeSection (null, (ArrayList) $2);
-				$$ = new Attributes (sect, lexer.Location);
+			if (expecting_global_attribs && !(bool) $4) {
+				Report.Error (30205, lexer.Location, "End of statement expected");
+				break;
 			}
-		}
+			
+			if (expecting_local_attribs)  {
+				if ((bool) $4) {
+					Report.Error (32035, lexer.Location, "Use a line continuation after the attribute specifier to apply it to the following statement.");
+					break;
+				}
+			}
 
-		expecting_global_attributes = false;
+	 		AttributeSection sect = new AttributeSection (null, (ArrayList) $2);
+			$$ = new Attributes (sect, lexer.Location);
+		}
  	  }
  	; 
 
@@ -873,7 +930,7 @@ attribute_list
  			attrs.Add ($3);
   		}
 
- 		$$ = attrs;
+ 		$$ = $1;
  	  }	
  	;
 
@@ -886,10 +943,12 @@ attribute
  	   {
  	   	$$ = null;
 		
- 	   	if (expecting_global_attributes)
+ 	   	if (expecting_global_attribs)
 			Report.Error (32015, (Location) $2, "Expecting Assembly or Module attribute specifiers");
-		else
+		else {
+			expecting_local_attribs = true;
 	 		$$ = new Mono.MonoBASIC.Attribute ((string) $1, (ArrayList) $3, (Location) $2);
+		}
  	   }
 	  | attribute_target_specifier 
 	    {
@@ -902,14 +961,25 @@ attribute
 	   }
 	   opt_attribute_arguments
 	   {
-	   	if (!global_attrs_enabled) {
-			$$ = null;
-			Report.Error (30637, (Location) $2, "Global attribute statements must precede any declarations in a file");
+	   	$$ = null;
+
+	   	string attribute_target = (string) $1;
+	   	if (attribute_target != "assembly" && attribute_target != "module") {
+			Report.Error (29999, lexer.Location, "`" + (string)$1 + "' is an invalid attribute modifier");
+			break;
    		}
-  		else {
-			expecting_global_attributes = true;
-			$$ = new Mono.MonoBASIC.Attribute ((string) $4, (ArrayList) $6, (Location) $5);
-  		}
+   		if (!allow_global_attribs) {
+			Report.Error (30637, (Location) $2, "Global attribute statements must precede any declarations in a file");
+			break;
+		}
+
+		if (expecting_local_attribs) {
+			Report.Error (30183, (Location) $2, "Global attributes cannot be combined with local attributes");
+			break;
+		}			
+
+		expecting_global_attribs = true;
+		$$ = new Mono.MonoBASIC.Attribute ((string) $4, (ArrayList) $6, (Location) $5);
 	    }	
  	;
 
@@ -917,9 +987,6 @@ attribute_target_specifier
 	:  ASSEMBLY	{ $$ = "assembly"; }
 	| MODULE	{ $$ = "module"; }
 	| namespace_or_type_name
-	  { 
-		Report.Error (29999, lexer.Location, "`" + (string)$1 + "' is an invalid attribute modifier");
-	  }
 	;
 	
 			
