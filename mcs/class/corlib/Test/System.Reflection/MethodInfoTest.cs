@@ -75,6 +75,21 @@ namespace MonoTests.System.Reflection
 			*/
 		}
 #endif
+
+		[Test]
+		public void ByRefInvoke ()
+		{
+			MethodInfo met = typeof(MethodInfoTest).GetMethod ("ByRefTest");
+			object[] parms = new object[] {1};
+			met.Invoke (null, parms);
+			AssertEquals (2, parms [0]);
+		}
+
+		public static void ByRefTest (ref int a1)
+		{
+			if (a1 == 1)
+				a1 = 2;
+		}
 	}
 }
 

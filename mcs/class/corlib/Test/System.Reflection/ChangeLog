@@ -1,3 +1,7 @@
+2004-11-05  Zoltan Varga  <vargaz@freemail.hu>
+
+	* MethodInfoTest.cs: Add test for byref parameters to Invoke ().
+
 2004-09-26  Zoltan Varga  <vargaz@freemail.hu>
 
 	* FieldInfoTest.cs: Add tests for MarshalAsAttribute.
