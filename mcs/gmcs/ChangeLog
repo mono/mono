@@ -1,5 +1,83 @@
 2004-05-30 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	* convert.cs: add a trivial cache for overload operator resolution.
+
+2004-05-31  Marek Safar  <marek.safar@seznam.cz>
+
+	* attribute.cs
+	(AttributeTester.GetObsoleteAttribute): Returns instance of
+	ObsoleteAttribute when type is obsolete.
+
+	* class.cs
+	(TypeContainer.VerifyObsoleteAttribute): Override.
+	(Method.GetSignatureForError): New method for usage when MethodBuilder is null.
+	(MethodCode.VerifyObsoleteAttribute): Override.
+	(MemberBase.VerifyObsoleteAttribute): Override.
+
+	* decl.cs
+	(MemberCore.CheckUsageOfObsoleteAttribute): Tests presence of ObsoleteAttribute
+	and report proper error.
+
+	*delegate.cs
+	(Delegate.VerifyObsoleteAttribute): Override.
+
+	* ecore.cs
+	(Expression.CheckObsoleteAttribute): Tests presence of ObsoleteAttribute
+	and report proper error.
+	(FieldExpr.DoResolve): Added tests for ObsoleteAttribute.
+
+	* enum.cs
+	(Enum.GetObsoleteAttribute): Returns ObsoleteAttribute for both enum type
+	and enum member.
+
+	* expression.cs
+	(Probe.DoResolve, Cast.DoResolve, LocalVariableReference.DoResolve,
+	New.DoResolve, SizeOf.DoResolve, TypeOf.DoResolce, MemberAccess.DoResolve):
+	Added test for ObsoleteAttribute.
+
+	* statement.cs
+	(Catch): Derived from Statement.
+
+2004-05-30 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* decl.cs: If possible, use lookuptypedirect here. We can only do
+	this if there is no `.' after the namespace. Avoids using
+	LookupType, which does lots of slow processing.
+	(FindNestedType) New method, does what it says :-).
+	* namespace.cs: use LookupTypeDirect.
+	* rootcontext.cs: use membercache, if possible.
+	* typemanager.cs (LookupTypeDirect): Cache negative hits too.
+
+2004-05-30 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* expression.cs:
+	According to the spec, 
+
+	In a member access of the form E.I, if E is a single identifier,
+	and if the meaning of E as a simple-name (§7.5.2) is a constant,
+	field, property, localvariable, or parameter with the same type as
+	the meaning of E as a type-name (§3.8), then both possible
+	meanings of E are permitted.
+
+	We did not check that E as a simple-name had the same type as E as
+	a type name.
+
+	This trivial check gives us 5-7% on bootstrap time.
+
+2004-05-30  Marek Safar  <marek.safar@seznam.cz>
+
+	Fixed bug #59071 & cs0160.cs
+	* statement.cs (Try.Resolve): Check here whether order of catch
+	clauses matches their dependencies.
+
+2004-05-30  Marek Safar  <marek.safar@seznam.cz>
+
+	Fixed bug #58624
+	* ecore.cs (SimpleName.SimpleNameResolve): Added test for
+	unsafe type.
+
+2004-05-30 Ben Maurer  <bmaurer@users.sourceforge.net>
+
 	* expression.cs (Invocation.OverloadResolve): Avoid the
 	use of hashtables and boxing here by allocating on demand.
 

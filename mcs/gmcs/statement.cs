@@ -57,6 +57,15 @@ namespace Mono.CSharp {
 			return true;
 		}
 		
+		protected void CheckObsolete (Type type)
+		{
+			ObsoleteAttribute obsolete_attr = AttributeTester.GetObsoleteAttribute (type);
+			if (obsolete_attr == null)
+				return;
+
+			AttributeTester.Report_ObsoleteMessage (obsolete_attr, type.FullName, loc);
+		}
+		
 		/// <summary>
 		///   Return value indicates whether all code paths emitted return.
 		/// </summary>
@@ -2884,6 +2893,8 @@ namespace Mono.CSharp {
 			if (expr_type == null)
 				return false;
 
+			CheckObsolete (expr_type);
+
 			if (ec.RemapToProxy){
 				Report.Error (-210, loc, "Fixed statement not allowed in iterators");
 				return false;
@@ -3114,10 +3125,9 @@ namespace Mono.CSharp {
 		}
 	}
 	
-	public class Catch {
+	public class Catch: Statement {
 		public readonly string Name;
 		public readonly Block  Block;
-		public readonly Location Location;
 
 		Expression type_expr;
 		Type type;
@@ -3127,7 +3137,7 @@ namespace Mono.CSharp {
 			type_expr = type;
 			Name = name;
 			Block = block;
-			Location = l;
+			loc = l;
 		}
 
 		public Type CatchType {
@@ -3142,26 +3152,27 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public bool Resolve (EmitContext ec)
+		protected override void DoEmit(EmitContext ec)
+		{
+		}
+
+		public override bool Resolve (EmitContext ec)
 		{
 			if (type_expr != null) {
-				type = ec.DeclSpace.ResolveType (type_expr, false, Location);
+				type = ec.DeclSpace.ResolveType (type_expr, false, loc);
 				if (type == null)
 					return false;
 
+				CheckObsolete (type);
+
 				if (type != TypeManager.exception_type && !type.IsSubclassOf (TypeManager.exception_type)){
-					Report.Error (155, Location,
-						      "The type caught or thrown must be derived " +
-						      "from System.Exception");
+					Error (155, "The type caught or thrown must be derived from System.Exception");
 					return false;
 				}
 			} else
 				type = null;
 
-			if (!Block.Resolve (ec))
-				return false;
-
-			return true;
+			return Block.Resolve (ec);
 		}
 	}
 
@@ -3201,6 +3212,8 @@ namespace Mono.CSharp {
 
 			Report.Debug (1, "START OF CATCH BLOCKS", vector);
 
+			Type[] prevCatches = new Type [Specific.Count];
+			int last_index = 0;
 			foreach (Catch c in Specific){
 				ec.CurrentBranching.CreateSibling (
 					c.Block, FlowBranching.SiblingType.Catch);
@@ -3216,7 +3229,17 @@ namespace Mono.CSharp {
 				}
 
 				if (!c.Resolve (ec))
-					ok = false;
+					return false;
+
+				Type resolvedType = c.CatchType;
+				for (int ii = 0; ii < last_index; ++ii) {
+					if (resolvedType.IsSubclassOf (prevCatches [ii])) {
+						Report.Error_T (160, c.loc, prevCatches [ii].FullName);
+						return false;
+					}
+				}
+
+				prevCatches [last_index++] = resolvedType;
 			}
 
 			Report.Debug (1, "END OF CATCH BLOCKS", ec.CurrentBranching);

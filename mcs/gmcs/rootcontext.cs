@@ -535,6 +535,22 @@ namespace Mono.CSharp {
 				//
 				DeclSpace containing_ds = ds;
 				while (containing_ds != null){
+					
+					// if the member cache has been created, lets use it.
+					// the member cache is MUCH faster.
+					if (containing_ds.MemberCache != null) {
+						Type type = containing_ds.MemberCache.FindNestedType (name);
+						if (type == null) {
+							containing_ds = containing_ds.Parent;
+							continue;
+						}
+
+						t = new TypeExpression (type, loc);
+						ds.Cache [name] = t;
+						return t;
+					}
+					
+					// no member cache. Do it the hard way -- reflection
 					Type current_type = containing_ds.TypeBuilder;
 					
 					while (current_type != null &&

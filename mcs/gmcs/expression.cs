@@ -1119,6 +1119,8 @@ namespace Mono.CSharp {
 			if (probe_type == null)
 				return null;
 
+			CheckObsoleteAttribute (probe_type);
+
 			expr = expr.Resolve (ec);
 			if (expr == null)
 				return null;
@@ -1854,6 +1856,8 @@ namespace Mono.CSharp {
 			
 			if (type == null)
 				return null;
+
+			CheckObsoleteAttribute (type);
 
 			eclass = ExprClass.Value;
 
@@ -3732,6 +3736,8 @@ namespace Mono.CSharp {
 				return null;
 			}
 
+			CheckObsoleteAttribute (e.Type);
+
 			if (local_info.LocalBuilder == null)
 				return ec.RemapLocalLValue (local_info, right_side);
 			
@@ -5537,6 +5543,11 @@ namespace Mono.CSharp {
 			if (oa != null)
 				AttributeTester.Report_ObsoleteMessage (oa, TypeManager.CSharpSignature (method), loc);
 
+			oa = AttributeTester.GetObsoleteAttribute (method.DeclaringType);
+			if (oa != null) {
+				AttributeTester.Report_ObsoleteMessage (oa, method.DeclaringType.FullName, loc);
+			}
+
 
 			//
 			// This checks the `ConditionalAttribute' on the method
@@ -5843,6 +5854,8 @@ namespace Mono.CSharp {
 			if (type == null)
 				return null;
 			
+			CheckObsoleteAttribute (type);
+
 			bool IsDelegate = TypeManager.IsDelegateType (type);
 			
 			if (IsDelegate){
@@ -7016,6 +7029,8 @@ namespace Mono.CSharp {
 				return null;
 			}
 
+			CheckObsoleteAttribute (typearg);
+
 			type = TypeManager.type_type;
 			eclass = ExprClass.Type;
 			return this;
@@ -7082,6 +7097,11 @@ namespace Mono.CSharp {
 			}
 
 			type_queried = QueriedType.Type;
+			if (type_queried == null)
+				return null;
+
+			CheckObsoleteAttribute (type_queried);
+
 			if (!TypeManager.IsUnmanagedType (type_queried)){
 				Report.Error (208, loc, "Cannot take the size of an unmanaged type (" + TypeManager.CSharpName (type_queried) + ")");
 				return null;
@@ -7139,23 +7159,15 @@ namespace Mono.CSharp {
 				      "type name instead");
 		}
 
-		static bool IdenticalNameAndTypeName (EmitContext ec, Expression left_original, Location loc)
+		static bool IdenticalNameAndTypeName (EmitContext ec, Expression left_original, Expression left, Location loc)
 		{
-			if (left_original == null)
+			SimpleName sn = left_original as SimpleName;
+			if (sn == null || left == null || left.Type.Name != sn.Name)
 				return false;
 
-			if (!(left_original is SimpleName))
-				return false;
-
-			SimpleName sn = (SimpleName) left_original;
-
-			TypeExpr t = RootContext.LookupType (ec.DeclSpace, sn.Name, true, loc);
-			if (t != null)
-				return true;
-
-			return false;
+			return RootContext.LookupType (ec.DeclSpace, sn.Name, true, loc) != null;
 		}
-		
+
 		public static Expression ResolveMemberAccess (EmitContext ec, Expression member_lookup,
 							      Expression left, Location loc,
 							      Expression left_original)
@@ -7207,7 +7219,7 @@ namespace Mono.CSharp {
 					
 					if (decl_type.IsSubclassOf (TypeManager.enum_type)) {
 						if (left_is_explicit && !left_is_type &&
-						    !IdenticalNameAndTypeName (ec, left_original, loc)) {
+						    !IdenticalNameAndTypeName (ec, left_original, member_lookup, loc)) {
 							error176 (loc, fe.FieldInfo.Name);
 							return null;
 						}					
@@ -7291,7 +7303,7 @@ namespace Mono.CSharp {
 
 					if (!me.IsStatic){
 						if ((ec.IsFieldInitializer || ec.IsStatic) &&
-						    IdenticalNameAndTypeName (ec, left_original, loc))
+						    IdenticalNameAndTypeName (ec, left_original, member_lookup, loc))
 							return member_lookup;
 
 						SimpleName.Error_ObjectRefRequired (ec, loc, me.Name);
@@ -7300,7 +7312,7 @@ namespace Mono.CSharp {
 
 				} else {
 					if (!me.IsInstance){
-						if (IdenticalNameAndTypeName (ec, left_original, loc))
+						if (IdenticalNameAndTypeName (ec, left_original, left, loc))
 							return member_lookup;
 
 						if (left_is_explicit) {
@@ -7330,7 +7342,7 @@ namespace Mono.CSharp {
 						}
 					}
 
-					if ((mg != null) && IdenticalNameAndTypeName (ec, left_original, loc))
+					if ((mg != null) && IdenticalNameAndTypeName (ec, left_original, left, loc))
 						mg.IdenticalTypeName = true;
 
 					me.InstanceExpression = left;
@@ -7396,8 +7408,22 @@ namespace Mono.CSharp {
 						object value = en.LookupEnumValue (ec, Identifier, loc);
 						
 						if (value != null){
+							ObsoleteAttribute oa = en.GetObsoleteAttribute (ec, Identifier);
+							if (oa != null) {
+								AttributeTester.Report_ObsoleteMessage (oa, en.GetSignatureForError (), Location);
+							}
+
 							Constant c = Constantify (value, en.UnderlyingType);
 							return new EnumConstant (c, expr_type);
+						}
+					} else {
+						CheckObsoleteAttribute (expr_type);
+
+						FieldInfo fi = expr_type.GetField (Identifier);
+						if (fi != null) {
+							ObsoleteAttribute oa = AttributeTester.GetMemberObsoleteAttribute (fi);
+							if (oa != null)
+								AttributeTester.Report_ObsoleteMessage (oa, TypeManager.GetFullNameSignature (fi), Location);
 						}
 					}
 				}

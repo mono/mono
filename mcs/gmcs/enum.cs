@@ -17,6 +17,7 @@ using System.Globalization;
 
 namespace Mono.CSharp {
 
+	// Maybe can be usefull to derive from MemberCore
 	class EnumMember: Attributable {
 		string name;
 		Enum parent;
@@ -72,6 +73,23 @@ namespace Mono.CSharp {
 		{
 			if (OptAttributes != null)
 				OptAttributes.Emit (ec, this); 
+		}
+
+		// TODO: caching would be usefull
+		public ObsoleteAttribute GetObsoleteAttribute (EmitContext ec)
+		{
+			if (OptAttributes == null)
+				return null;
+
+			Attribute obsolete_attr = OptAttributes.Search (TypeManager.obsolete_attribute_type, ec);
+			if (obsolete_attr == null)
+				return null;
+
+			ObsoleteAttribute obsolete = obsolete_attr.GetObsoleteAttribute (ec.DeclSpace);
+			if (obsolete == null)
+				return null;
+
+			return obsolete;
 		}
 
 		protected override string[] ValidAttributeTargets {
@@ -775,5 +793,32 @@ namespace Mono.CSharp {
 			}
 		}
 
+		protected override void VerifyObsoleteAttribute()
+		{
+			// UnderlyingType is never obsolete
+		}
+
+		/// <summary>
+		/// Returns ObsoleteAttribute for both enum type and enum member
+		/// </summary>
+		public ObsoleteAttribute GetObsoleteAttribute (EmitContext ec, string identifier)
+		{
+			if ((caching_flags & Flags.Obsolete_Undetected) == 0 && (caching_flags & Flags.Obsolete) == 0) {
+				return null;
+			}
+
+			ObsoleteAttribute oa = GetObsoleteAttribute (ec.DeclSpace);
+			if (oa != null)
+				return oa;
+
+			EnumMember em = (EnumMember)name_to_member [identifier];
+			oa = em.GetObsoleteAttribute (ec);
+
+			if (oa == null)
+				return null;
+
+			caching_flags |= Flags.Obsolete;
+			return oa;
+		}
 	}
 }
