@@ -1,3 +1,7 @@
+2004-04-25  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* Encoding.cs: Call shortcut String.ToLowerInvariant
+
 2004-04-13  Miguel de Icaza  <miguel@ximian.com>
 
 	* Encoding.cs: Use new internal codepage setup.

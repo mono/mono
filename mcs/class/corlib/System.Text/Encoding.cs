@@ -401,7 +401,7 @@ public abstract class Encoding
 			throw new ArgumentNullException ("name");
 		}
 
-		string converted = name.ToLower (CultureInfo.InvariantCulture).Replace ('-', '_');
+		string converted = name.ToLowerInvariant ().Replace ('-', '_');
 		
 		// Search the table for a name match.
 		int code = 0;
