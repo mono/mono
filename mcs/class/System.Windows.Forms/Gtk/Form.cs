@@ -15,11 +15,11 @@ using GtkSharp;
 
 namespace System.Windows.Forms {
 
-        public class Form : ContainerControl {
+	public class Form : ContainerControl {
 		Window win;
 		string caption;
 
-		public Form ()
+		public Form () : base ()
 		{
 		}
 
@@ -43,25 +43,15 @@ namespace System.Windows.Forms {
 		
 		internal override Widget CreateWidget ()
 		{
+			Widget contents = base.CreateWidget ();
 			win = new Window (WindowType.Toplevel);
 
 			win.DeleteEvent += new EventHandler (delete_cb);
 			win.Title = Text;
+			win.Add (contents);
 			return (Widget) win;
 		}
 
-		public override string Text {
-			get {
-				return base.Text;
-			}
-
-			set {
-				base.Text = value;
-				if (win != null)
-					win.Title = value;
-			}
-		}
-		
 		//  --- Public Properties
 		//
 		// [MonoTODO]
@@ -759,11 +749,13 @@ namespace System.Windows.Forms {
 		// {
 		//		throw new NotImplementedException ();
 		// }
-		// [MonoTODO]
-		// protected override void  OnTextChanged(EventArgs e)
-		// {
-		//		throw new NotImplementedException ();
-		// }
+		
+		protected override void  OnTextChanged(EventArgs e)
+		{
+			if (win != null)
+				win.Title = Text;
+		}
+
 		// [MonoTODO]
 		// protected override void  OnVisibleChanged(EventArgs e)
 		// {
