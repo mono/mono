@@ -381,9 +381,14 @@ namespace Mono.CSharp {
 					"this", Parameter.Modifier.NONE, null);
 
 				Parameter[] old_fixed = parameters.Parameters.FixedParameters;
-				Parameter[] fixed_params = new Parameter [old_fixed.Length + 1];
+				Parameter[] fixed_params;
+				if (old_fixed != null) {
+					fixed_params = new Parameter [old_fixed.Length + 1];
+					old_fixed.CopyTo (fixed_params, 1);
+				} else {
+					fixed_params = new Parameter [1];
+				}
 				fixed_params [0] = this_param;
-				old_fixed.CopyTo (fixed_params, 1);
 
 				ctor_params = new Parameters (
 					fixed_params, parameters.Parameters.ArrayParameter,
