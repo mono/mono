@@ -23,9 +23,15 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.2 $
+// $Revision: 1.3 $
 // $Modtime: $
 // $Log: Application.cs,v $
+// Revision 1.3  2004/08/23 22:09:29  pbartok
+// - Added handling of Idle event
+// - Added handling of form closing
+// - Fixed reporting of MessageLoop property
+// - Removed some unneeded code, should provide a bit of a speedup
+//
 // Revision 1.2  2004/08/11 22:16:50  pbartok
 // - Fixed Signature
 // - Added .Net 1.1 method
@@ -58,6 +64,7 @@ namespace System.Windows.Forms {
 		private static string			safe_caption_format;
 		private static ArrayList		message_filters;
 		private static ApplicationContext	app_context;
+		private static Form			main_form;
 
 		private Application () {
 			input_language	= InputLanguage.CurrentInputLanguage;
@@ -252,20 +259,27 @@ namespace System.Windows.Forms {
 		}
 
 		public static void Run() {
-			MSG msg = new MSG();
+			MSG	msg = new MSG();
+
+			messageloop_started = true;
 
 			while (!exiting && XplatUI.GetMessage(ref msg, IntPtr.Zero, 0, 0)) {
-				Message message;
+				if (msg.message != Msg.WM_ENTERIDLE) {
+					XplatUI.TranslateMessage(ref msg);
+					XplatUI.DispatchMessage(ref msg);
 
-				message = new Message();
-				message.HWnd=msg.hwnd;
-				message.Msg=(int)msg.message;
-				message.LParam=msg.lParam;
-				message.WParam=msg.wParam;
-
-				XplatUI.TranslateMessage(ref msg);
-				XplatUI.DispatchMessage(ref msg);
+					// Handle exit, Form might have received WM_CLOSE and set 'closing' in response
+					if ((app_context != null) && app_context.MainForm.closing) {
+						exiting = true;
+					}
+					continue;
+				} else if (Idle != null) {
+					Idle(null, EventArgs.Empty);
+					continue;
+				}
 			}
+
+			messageloop_started = false;
 
 			if (ApplicationExit != null) {
 				ApplicationExit(null, EventArgs.Empty);
