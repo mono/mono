@@ -75,6 +75,9 @@ Used for benchmarking.  The compiler will only parse its input files.
 .I \-\-probe X L
 Probes for the code to generate an error named `X' in line `L'.  This
 is only used by the test suite.
+.TP 
+.I /linkres:RESOURCE
+Links to the given resources
 .TP
 .I \-\-recurse PATTERN
 Does recursive compilation using the specified pattern.  In Unix the
@@ -84,8 +87,8 @@ shell will perform globbing, so you migth want to use it like this:
 		bash$ mcs --recurse '*.cs' 
 .fi
 .TP
-.I \-\-resource FILE
-Adds FILE as a resource of the resulting assembly.
+.I \-\-linkres FILE
+Links FILE as a resource of the resulting assembly.
 .TP
 .I \-\-target KIND
 Used to specify the desired target.  The possible values are: exe,
