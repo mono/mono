@@ -664,19 +664,23 @@ namespace System.Web
 							handler = _handlers [_currentStateIdx];
 							_countSteps++;
 							timeoutPossible = handler.PossibleToTimeout;
-							if (timeoutPossible)
-								HttpRuntime.TimeoutManager.Add (_app.Context);
-
-							lasterror = ExecuteState (handler, ref ready_sync);
-							if (ready_sync) 
-								_countSyncSteps++;
+							try {
+								if (timeoutPossible)
+									HttpRuntime.TimeoutManager.Add (_app.Context);
+	
+								lasterror = ExecuteState (handler, ref ready_sync);
+								if (ready_sync) 
+									_countSyncSteps++;
+							} finally {
+								if (timeoutPossible)
+									HttpRuntime.TimeoutManager.Remove (_app.Context);
+							}
 						} while (ready_sync && _currentStateIdx < _endStateIdx);
 
 						if (null != lasterror)
 							_app.HandleError (lasterror);
 					} finally {
-						if (timeoutPossible)
-							HttpRuntime.TimeoutManager.Remove (_app.Context);
+
 
 						_app.OnStateExecuteLeave ();
 					}
