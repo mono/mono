@@ -1,10 +1,64 @@
+2005-01-05 Marek Safar <marek.safar@seznam.cz>
+
+	* cs3001.cs,
+	  cs3001-1.cs,
+	  cs3001-2.cs,
+	  cs3001-3.cs,
+	  cs3001-4.cs,
+	  cs3001-5.cs,
+	  cs3001-6.cs,
+	  cs3001-7.cs,
+	  cs3002.cs,
+	  cs3002-1.cs,
+	  cs3002-10.cs,
+	  cs3002-2.cs,
+	  cs3002-3.cs,
+	  cs3002-4.cs,
+	  cs3002-5.cs,
+	  cs3002-6.cs,
+	  cs3002-7.cs,
+	  cs3002-8.cs,
+	  cs3002-9.cs,
+	  cs3003.cs,
+	  cs3003-1.cs,
+	  cs3008.cs,
+	  cs3008-1.cs,
+	  cs3008-2.cs,
+	  cs3008-3.cs,
+	  cs3008-4.cs,
+	  cs3008-5.cs,
+	  cs3008-6.cs,
+	  cs3010.cs,
+	  cs3011.cs,
+	  cs3011-1.cs,
+	  cs3014.cs,
+	  cs3014-1.cs,
+	  cs3014-2.cs,
+	  cs3014-3.cs,
+	  cs3014-4.cs,
+	  cs3014-5.cs,
+	  cs3014-6.cs,
+	  cs3014-7.cs,
+	  cs3015.cs,
+	  cs3015-1.cs,
+	  cs3016.cs,
+	  cs3016-1.cs,
+	  cs3016-2.cs,
+	  cs3016-3.cs: New tests for CLS-compliance.
+          
+        * cs108-2.cs,
+          cs116-2.cs,
+          cs592-4.cs,
+          cs592-5.cs,
+          cs592-6.cs: New tests.
+        
 2004-01-04 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* cs157-{2,3,4}: test cases we fail.
 
 2003-11-01  Marek Safar <marek.safar@seznam.cz>
 
-        * makefile: Added "// Compiler options:" handling
+        * makefile: Added "// Compiler options:" handling.
         
 2003-09-22  Martin Baulig  <martin@ximian.com>
 
