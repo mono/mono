@@ -570,7 +570,8 @@ namespace System.Xml
 		{
 			if ((name == null) || (name == string.Empty))
 				throw new ArgumentException ();
-			XmlConvert.VerifyName (name);
+			if (!XmlChar.IsName (name))
+				throw new ArgumentException ("Invalid processing instruction name.");
 			if ((text.IndexOf("?>") > 0))
 				throw new ArgumentException ("Processing instruction cannot contain \"?>\" as its value.");
 

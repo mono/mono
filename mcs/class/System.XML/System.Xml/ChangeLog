@@ -1,5 +1,10 @@
 2003-11-24  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
 
+	* XmlTextWriter.cs : 
+	  On WriteProcessingInstruction(), ArgumentException() is expected ;-)
+
+2003-11-24  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
+
 	* XmlTextWriter.cs :
 	  WriteProcessingInstruction() should check name validity.
 	  AddMissingElementXmlns() should allow namespace emission even if it
