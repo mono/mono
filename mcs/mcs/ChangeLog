@@ -7,6 +7,10 @@
 
 	* interface.cs (PopulateMethod): Return if there are no argument
 	types. Fixes a NullReferenceException bug.
+
+	* attribute.cs (Attribute.Resolve): Ensure we allow TypeOf
+	expressions too. Previously we were checking only in one place for
+	positional arguments leaving out named arguments.
 	
 2002-09-04  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 

@@ -160,6 +160,7 @@ namespace Mono.CSharp {
 				} else if (e is TypeOf) {
 					pos_values [i] = ((TypeOf) e).TypeArg;
 				} else {
+					Console.WriteLine ("Foo " + e);
 					Error_AttributeArgumentNotValid ();
 					return null;
 				}
@@ -225,7 +226,9 @@ namespace Mono.CSharp {
 								this.Inherited = (bool) o;
 						}
 						
-					} else { 
+					} else if (e is TypeOf) {
+						prop_values.Add (((TypeOf) e).TypeArg);
+					} else {
 						Error_AttributeArgumentNotValid ();
 						return null;
 					}
@@ -248,7 +251,9 @@ namespace Mono.CSharp {
 						object value = ((Constant) e).GetValue ();
 						
 						field_values.Add (value);
-					} else { 
+					} else if (e is TypeOf) {
+						field_values.Add (((TypeOf) e).TypeArg);
+					} else {
 						Error_AttributeArgumentNotValid ();
 						return null;
 					}
