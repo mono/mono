@@ -34,6 +34,7 @@ namespace System.Web
 		bool _bBuffering;
 		bool _bHeadersSent;
 		bool _bFlushing;
+		bool filtered;
 		long _lContentLength;
 		int _iStatusCode;
 
@@ -126,6 +127,8 @@ namespace System.Web
 		{
 			if (null != _Writer) 
 				_Writer.FilterData (true);
+
+			filtered = true;
 		}
 
 		[MonoTODO("We need to add cache headers also")]
@@ -672,10 +675,12 @@ namespace System.Web
 			}
 
 			try {
-				long length;
-				if (!_bHeadersSent && !_bSuppressHeaders && !_bClientDisconnected) {
+				if (_bClientDisconnected)
+					return;
+
+				long length = _Writer.BufferSize;
+				if (!_bHeadersSent && !_bSuppressHeaders) {
 					if (bFinish) {
-						length = _Writer.BufferSize;
 						if (length == 0 && _lContentLength == 0)
 							_sContentType = null;
 
@@ -704,9 +709,18 @@ namespace System.Web
 							}
 						}
 
+						length = _Writer.BufferSize;
 						SendHeaders ();
 					}
 				}
+
+				if (!filtered) {
+					_Writer.FilterData (false);
+					length = _Writer.BufferSize;
+				}
+
+				if (length == 0)
+					return;
 
 				if (!_bSuppressContent && Request.HttpMethod == "HEAD")
 					_bSuppressContent = true;

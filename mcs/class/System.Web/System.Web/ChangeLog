@@ -1,3 +1,9 @@
+2003-08-14  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpResponse.cs: another patch from totte and me. This one prevents
+	writing output if the client have disconnected and filters the data
+	when there's a non-final Flush in the middle of the process.
+
 2003-08-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpApplication.cs: fixed typos. Closes bug #44197.
