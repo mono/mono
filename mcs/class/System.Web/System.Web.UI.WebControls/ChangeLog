@@ -1,3 +1,6 @@
+2004-01-15 Alon Gazit <along@mainsoft.com>
+	* FontInfo.cs: Add validation check to Size property.	
+
 2004-01-07 Alon Gazit <along@mainsoft.com>
 	* DataGrid.cs: Fixed PrepareControlHierarchyForItem().
 	merge the column's style to the cell's style and not to

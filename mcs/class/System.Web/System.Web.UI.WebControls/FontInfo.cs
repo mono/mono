@@ -145,6 +145,8 @@ namespace System.Web.UI.WebControls
 			}
 			set
 			{
+				if ((value.Type == FontSize.AsUnit) && (value.Unit.Value < 0))
+					throw new ArgumentOutOfRangeException("value");
 				infoOwner.ViewState["FontInfoSize"] = value;
 				infoOwner.Set(Style.FONT_SIZE);
 			}
