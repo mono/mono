@@ -1,3 +1,8 @@
+2005-02-02  Jackson Harper  <jackson@ximian.com>
+
+	* Region.cs: The default region constructor creates and infinite
+	region, not an empty one.
+
 2005-01-27  Peter Bartok  <pbartok@novell.com>
 
 	* Color.cs (GetBrightness, GetSaturation, GetHue): Fixed calculations
