@@ -1,3 +1,8 @@
+2004-04-15  Atsushi Enomoto <atsushi@ximian.com>
+
+	* DataSetReadXmlTest.cs : Tests were incorrect. They should be done
+	  against new dataset. So just added another sequential read tests.
+
 2004-04-14  Atsushi Enomoto <atsushi@ximian.com>
 
 	* Added DataSetReadXmlTest.cs. (specific to ReadXml() in DataSet).
