@@ -121,7 +121,7 @@ namespace System.IO
 				throw new UnauthorizedAccessException("path is a directory");
 
 			string DirName = Path.GetDirectoryName(path);
-			if (!Directory.Exists (DirName))
+			if (DirName.Length > 0 && !Directory.Exists (DirName))
 				throw new DirectoryNotFoundException("Destination directory not found: " + DirName);
 
 			if (!MonoIO.DeleteFile (path)){

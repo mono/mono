@@ -1,3 +1,7 @@
+2002-06-17  Dietmar Maurer  <dietmar@ximian.com>
+
+	* File.cs (Delete): only call Directory.Exists() if DirName != ""
+
 2002-06-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Directory.cs: fixed bug #26133 and also test if the directory exist

@@ -77,14 +77,10 @@ namespace System
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern override EventInfo[] GetEvents (BindingFlags bindingAttr);
 
-		public override FieldInfo GetField (string name, BindingFlags bindingAttr)
-		{
-			// FIXME
-			throw new NotImplementedException ();
-		}
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern override FieldInfo GetField (string name, BindingFlags bindingAttr);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		[MonoTODO]
 		public extern override FieldInfo[] GetFields (BindingFlags bindingAttr);
 
 		public override Type GetInterface (string name, bool ignoreCase)
