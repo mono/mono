@@ -1,5 +1,11 @@
 2004-09-09  Martin Baulig  <martin@ximian.com>
 
+	* mini-amd64.c: Don't access `type->data.klass' directly, call
+	mono_class_from_mono_type() instead since the type may be a
+	generic instance.
+
+2004-09-09  Martin Baulig  <martin@ximian.com>
+
 	* mini-amd64.c (get_call_info): Fix support for generic instances.
 	(add_valuetype): Use mono_class_from_mono_type() to get the class
 	since we can be a generic instance.
