@@ -20,6 +20,7 @@ namespace Mono.Data.TdsClient.Internal {
 		NetworkStream stream;
 		int packetSize;
 		TdsPacketType packetType = TdsPacketType.None;
+		Encoding encoder;
 
 		byte[] outBuffer;
 		int outBufferLength;
@@ -43,9 +44,12 @@ namespace Mono.Data.TdsClient.Internal {
 		
 		#region Constructors
 		
-		public TdsComm (Socket socket, int packetSize, TdsVersion tdsVersion)
+		public TdsComm (Encoding encoder, Socket socket, int packetSize, TdsVersion tdsVersion)
 		{
+			this.encoder = encoder;
 			this.packetSize = packetSize;
+			this.tdsVersion = tdsVersion;
+
 			outBuffer = new byte[packetSize];
 			inBuffer = new byte[packetSize];
 
@@ -100,7 +104,7 @@ namespace Mono.Data.TdsClient.Internal {
 			return packetType != TdsPacketType.None;
 		}
 
-		public void AppendByte (byte b)
+		public void Append (byte b)
 		{
 			if (nextOutBufferIndex == outBufferLength) {
 				SendPhysicalPacket (false);
@@ -110,87 +114,81 @@ namespace Mono.Data.TdsClient.Internal {
 			nextOutBufferIndex++;
 		}	
 		
-		public void AppendBytes (byte[] b)
+		public void Append (byte[] b)
 		{
-			AppendBytes (b, b.Length, (byte) 0);
+			Append (b, b.Length, (byte) 0);
 		}		
 
-		public void AppendBytes (byte[] b, int len, byte pad)
+		public void Append (byte[] b, int len, byte pad)
 		{
 			int i = 0;
 			for ( ; i < b.Length && i < len; i++)
-			    AppendByte (b[i]);
+			    Append (b[i]);
 
 			for ( ; i < len; i++)
-			    AppendByte (pad);
+			    Append (pad);
 		}	
 
-
-		public void AppendShort (short s)
+		public void Append (short s)
 		{
-			AppendByte ((byte) ((s >> 8) & 0xff));
-			AppendByte ((byte) ((s >> 0) & 0xff));
-		}
-
-		public void AppendTdsShort (short s)
-		{
-			AppendByte ((byte ) ((s >> 0) & 0xff));
-			AppendByte ((byte ) ((s >> 8) & 0xff));
-		}
-
-		public void AppendFlt8 (double value)
-		{
-			long l = BitConverter.DoubleToInt64Bits (value);
-
-			AppendByte ((byte) ((l >> 0) & 0xff));
-			AppendByte ((byte) ((l >> 8) & 0xff));
-			AppendByte ((byte) ((l >> 16) & 0xff));
-			AppendByte ((byte) ((l >> 24) & 0xff));
-			AppendByte ((byte) ((l >> 32) & 0xff));
-			AppendByte ((byte) ((l >> 40) & 0xff));
-			AppendByte ((byte) ((l >> 48) & 0xff));
-			AppendByte ((byte) ((l >> 56) & 0xff));
-		}
-
-		public void AppendInt (int i)
-		{
-			AppendByte ((byte) ((i >> 24) & 0xff));
-			AppendByte ((byte) ((i >> 16) & 0xff));
-			AppendByte ((byte) ((i >> 8) & 0xff));
-			AppendByte ((byte) ((i >> 0) & 0xff));
-		}
-
-		public void AppendTdsInt (int i)
-		{
-			AppendByte ((byte) ((i >> 0) & 0xff));
-			AppendByte ((byte) ((i >> 8) & 0xff));
-			AppendByte ((byte) ((i >> 16) & 0xff));
-			AppendByte ((byte) ((i >> 24) & 0xff));
-		}
-
-
-		public void AppendInt64 (long i)
-		{
-			AppendByte ((byte) ((i >> 56) & 0xff));
-			AppendByte ((byte) ((i >> 48) & 0xff));
-			AppendByte ((byte) ((i >> 40) & 0xff));
-			AppendByte ((byte) ((i >> 32) & 0xff));
-			AppendByte ((byte) ((i >> 24) & 0xff));
-			AppendByte ((byte) ((i >> 16) & 0xff));
-			AppendByte ((byte) ((i >> 8) & 0xff));
-			AppendByte ((byte) ((i >> 0) & 0xff));
-		}
-
-		public void AppendChars (string s)
-		{
-			foreach (char c in s)
-			{
-				byte b1 = (byte) (c & 0xFF);
-				byte b2 = (byte) ((c >> 8) & 0xFF);
-				AppendByte (b1);
-				AppendByte (b2);
+			if (tdsVersion < TdsVersion.tds70) {
+				Append ((byte) (((byte) (s >> 8)) & 0xff));
+				Append ((byte) (((byte) (s >> 0)) & 0xff));
 			}
+			else
+				Append (BitConverter.GetBytes (s));
+		}
+
+		public void Append (int i)
+		{
+			if (tdsVersion < TdsVersion.tds70) {
+				Append ((byte) (((byte) (i >> 24)) & 0xff));
+				Append ((byte) (((byte) (i >> 16)) & 0xff));
+				Append ((byte) (((byte) (i >> 8)) & 0xff));
+				Append ((byte) (((byte) (i >> 0)) & 0xff));
+			} 
+			else
+				Append (BitConverter.GetBytes (i));
+		}
+
+		public void Append (string s)
+		{
+			if (tdsVersion < TdsVersion.tds70) 
+				Append (encoder.GetBytes (s));
+			else 
+				foreach (char c in s)
+					Append (BitConverter.GetBytes (c));
 		}	
+
+		// Appends with padding
+		public byte[] Append (string s, int len, byte pad)
+		{
+			byte[] result = encoder.GetBytes (s);
+			Append (result, len, pad);
+			return result;
+		}
+
+		public void Append (double value)
+		{
+			Append (BitConverter.DoubleToInt64Bits (value));
+		}
+
+		public void Append (long l)
+		{
+			if (tdsVersion < TdsVersion.tds70) {
+				Append ((byte) (((byte) (l >> 56)) & 0xff));
+				Append ((byte) (((byte) (l >> 48)) & 0xff));
+				Append ((byte) (((byte) (l >> 40)) & 0xff));
+				Append ((byte) (((byte) (l >> 32)) & 0xff));
+				Append ((byte) (((byte) (l >> 24)) & 0xff));
+				Append ((byte) (((byte) (l >> 16)) & 0xff));
+				Append ((byte) (((byte) (l >> 8)) & 0xff));
+				Append ((byte) (((byte) (l >> 0)) & 0xff));
+			}
+			else {
+				Append (BitConverter.GetBytes (l));
+			}
+		}
 
 		public void SendPacket ()
 		{
@@ -206,23 +204,24 @@ namespace Mono.Data.TdsClient.Internal {
 
 		private void StoreShort (int index, short s)
 		{
-			outBuffer[index] = (byte) ((s >> 8) & 0xff);
-			outBuffer[index + 1] = (byte) ((s >> 0) & 0xff);
+			outBuffer[index] = (byte) (((byte) (s >> 8)) & 0xff);
+			outBuffer[index + 1] = (byte) (((byte) (s >> 0)) & 0xff);
 		}
 
 		private void SendPhysicalPacket (bool isLastSegment)
 		{
 			if (nextOutBufferIndex > headerLength || packetType == TdsPacketType.Cancel) {
 				// packet type
-				StoreByte (0, (byte) ((byte) packetType & 0xff));
-				StoreByte (1, isLastSegment ? (byte) 1 : (byte) 0);
+				StoreByte (0, (byte) packetType);
+				StoreByte (1, (byte) (isLastSegment ? 1 : 0));
 				StoreShort (2, (short) nextOutBufferIndex );
 				StoreByte (4, (byte) 0);
 				StoreByte (5, (byte) 0);
-				StoreByte (6, (byte) (tdsVersion == TdsVersion.tds70 ? 1 : 0));
+				StoreByte (6, (byte) (tdsVersion == TdsVersion.tds70 ? 0x1 : 0x0));
 				StoreByte (7, (byte) 0);
 
 				stream.Write (outBuffer, 0, nextOutBufferIndex);
+				stream.Flush ();
 				packetsSent++;
 			}
 		}
@@ -287,18 +286,17 @@ namespace Mono.Data.TdsClient.Internal {
 			if (tdsVersion == TdsVersion.tds70) {
 				char[] chars = new char[len];
 				for (int i = 0; i < len; ++i) {
-					int lo = GetByte () & 0xFF;
-					int hi = GetByte () & 0xFF;
+					int lo = ((byte) GetByte ()) & 0xFF;
+					int hi = ((byte) GetByte ()) & 0xFF;
 					chars[i] = (char) (lo | ( hi << 8));
 				}
 				return new String (chars);
 			}
 			else {
-				byte[] result = GetBytes (len, false);
-				StringBuilder sb = new StringBuilder ();
-				foreach (byte b in result)
-					sb.Append (b);
-				return sb.ToString ();
+				byte[] result = new byte[len + 1];
+				Array.Copy (GetBytes (len, false), result, len);
+				result[len] = (byte) 0;
+				return (encoder.GetString (result));
 			}
 		}
 
@@ -318,45 +316,39 @@ namespace Mono.Data.TdsClient.Internal {
 			return Ntohs (tmp, 0);
 		}
 
-		public int GetTdsShort ()
+		public short GetTdsShort ()
 		{
-			int lo = ((int) GetByte () & 0xff);
-			int hi = ((int) GetByte () & 0xff) << 8;
-			return lo | hi;
+			byte[] input = new byte[2];
+
+			for (int i = 0; i < 2; i += 1)
+				input[i] = GetByte ();
+
+			return (BitConverter.ToInt16 (input, 0));
 		}
 
 
 		public int GetTdsInt ()
 		{
-			int result;
-
-			int b1 = ((int) GetByte () & 0xff);
-			int b2 = ((int) GetByte () & 0xff) << 8;
-			int b3 = ((int) GetByte () & 0xff) << 16;
-			int b4 = ((int) GetByte () & 0xff) << 24;
-
-			result = b4 | b3 | b2 | b1;
-
-			return result;
+			byte[] input = new byte[4];
+			for (int i = 0; i < 4; i += 1)
+				input[i] = GetByte ();
+			return (BitConverter.ToInt32 (input, 0));
 		}
 
 		public long GetTdsInt64 ()
 		{
-			long b1 = ((long) GetByte () & 0xff);
-			long b2 = ((long) GetByte () & 0xff) << 8;
-			long b3 = ((long) GetByte () & 0xff) << 16;
-			long b4 = ((long) GetByte () & 0xff) << 24;
-			long b5 = ((long) GetByte () & 0xff) << 32;
-			long b6 = ((long) GetByte () & 0xff) << 40;
-			long b7 = ((long) GetByte () & 0xff) << 48;
-			long b8 = ((long) GetByte () & 0xff) << 56;
-			return b1 | b2 | b3 | b4 | b5 | b6 | b7 | b8;
+			byte[] input = new byte[8];
+			for (int i = 0; i < 8; i += 1)
+				input[i] = GetByte ();
+			return (BitConverter.ToInt64 (input, 0));
 		}
 
 		private void GetPhysicalPacket ()
 		{
+			int nread = 0;
+
 			// read the header
-			for (int nread = 0; nread < 8; ) 
+			while (nread < 8)
 				nread += stream.Read (tmpBuf, nread, 8 - nread);
 
 			TdsPacketType packetType = (TdsPacketType) tmpBuf[0];
@@ -375,8 +367,10 @@ namespace Mono.Data.TdsClient.Internal {
 			}
 
 			// now get the data
-			for (int nread = 0; nread < len; )
+			nread = 0;
+			while (nread < len) {
 				nread += stream.Read (inBuffer, nread, len - nread);
+			}
 
 			packetsReceived++;
 

@@ -21,9 +21,11 @@ namespace Mono.Data.TdsClient.Internal {
 		TdsVersion tdsVersion;
 
 		string applicationName;
-		string database;
+		string database = String.Empty;
+		string connectDB;
 		string charset;
-		string host;
+		string hostname = "tux";
+		string server;
 		string language;
 		string libraryName;
 		int packetSize;
@@ -40,7 +42,9 @@ namespace Mono.Data.TdsClient.Internal {
 		bool moreResults;
 		bool moreResults2;
 
-		Encoding encoding;
+		TdsMessage lastServerMessage;
+
+		Encoding encoder;
 		TdsServerType serverType;
 		TdsComm comm;
 		TdsConnectionParameters parms;
@@ -73,33 +77,33 @@ namespace Mono.Data.TdsClient.Internal {
 
 		public Tds (TdsConnectionParameters parms)
 		{
-			this.applicationName = parms.ApplicationName;
-			this.database = parms.Database;
-			this.encoding = Encoding.GetEncoding (parms.Encoding);
-			this.charset = parms.Encoding;
-			this.host = parms.Host;
-			this.language = parms.Language;
-			this.libraryName = parms.LibraryName;
-			this.packetSize = parms.PacketSize;
-			this.password = parms.Password;
-			this.progName = parms.ProgName;
-			this.tdsVersion = parms.TdsVersion;
-			this.user = parms.User;
+			applicationName = parms.ApplicationName;
+			connectDB = parms.Database;
+			encoder = Encoding.GetEncoding (parms.Encoding);
+			charset = parms.Encoding;
+			server = parms.Host;
+			language = parms.Language;
+			libraryName = parms.LibraryName;
+			packetSize = parms.PacketSize;
+			password = parms.Password;
+			progName = parms.ProgName;
+			tdsVersion = parms.TdsVersion;
+			user = parms.User;
 
-                        IPHostEntry hostEntry = Dns.GetHostByName (parms.Host);
-                        IPAddress[] addresses = hostEntry.AddressList;
+			IPHostEntry hostEntry = Dns.GetHostByName (parms.Host);
+			IPAddress[] addresses = hostEntry.AddressList;
 
-                        IPEndPoint endPoint;
+			IPEndPoint endPoint;
 
-                        foreach (IPAddress address in addresses) {
-                                endPoint = new IPEndPoint (address, parms.Port);
-                                socket.Connect (endPoint);
+			foreach (IPAddress address in addresses) {
+				endPoint = new IPEndPoint (address, parms.Port);
+				socket.Connect (endPoint);
 
-                                if (socket.Connected)
-                                        break;
-                        }
+				if (socket.Connected)
+					break;
+			}
 	
-			comm = new TdsComm (socket, parms.PacketSize, tdsVersion);
+			comm = new TdsComm (encoder, socket, packetSize, tdsVersion);
 		}	
 
 		#endregion // Constructors
@@ -108,39 +112,40 @@ namespace Mono.Data.TdsClient.Internal {
 
 		public void ChangeDatabase (string databaseName)
 		{
-                        string query = String.Format ("use {0}", databaseName);
-                        comm.StartPacket (TdsPacketType.Query);
-                        if (tdsVersion == TdsVersion.tds70)
-                                comm.AppendChars (query);
-                        else {
-                                byte[] queryBytes = encoding.GetBytes (query);
-                                comm.AppendBytes (queryBytes, queryBytes.Length, (byte) 0);
-                        }
-                        comm.SendPacket ();
+			string query = String.Format ("use {0}", databaseName);
+			comm.StartPacket (TdsPacketType.Query);
+			comm.Append (query);
+			comm.SendPacket ();
 		}
 
 		public void ChangeSettings (bool autoCommit, IsolationLevel isolationLevel)
 		{
-			string query = SqlStatementForSettings (autoCommit, isolationLevel);
+			/*string query = SqlStatementForSettings (autoCommit, isolationLevel);
 			if (query != null)
 				ChangeSettings (query);
+				*/
 		}
 
 		private bool ChangeSettings (string query)
 		{
+			TdsPacketResult result;
 			bool isOkay = true;
 			if (query.Length == 0)
 				return true;
 
 			comm.StartPacket (TdsPacketType.Query);
-			if (tdsVersion == TdsVersion.tds70) {
-				comm.AppendChars (query);
-			}
-			else {
-				byte[] queryBytes = encoding.GetBytes (query);
-				comm.AppendBytes (queryBytes, queryBytes.Length, (byte) 0);
-			}
+			comm.Append (query);
 			comm.SendPacket ();
+
+			bool done = false;
+			while (!done) {
+				result = ProcessSubPacket ();
+				done = (result is TdsPacketEndTokenResult) && !((TdsPacketEndTokenResult) result).MoreResults;
+				if (result is TdsPacketErrorResult) {
+					done = true;
+					isOkay = false;
+				}
+			}
 
 			return isOkay;
 		}
@@ -151,13 +156,13 @@ namespace Mono.Data.TdsClient.Internal {
 			bool shortLen = (tdsVersion == TdsVersion.tds70) && (wideChars || !outputParam);
 			int len = shortLen ? comm.GetTdsShort () : (comm.GetByte () & 0xff);
 
-			if (((byte) tdsVersion < (byte) TdsVersion.tds70 && len == 0) || (tdsVersion == TdsVersion.tds70 && len == 0xffff))
+			if ((tdsVersion < TdsVersion.tds70 && len == 0) || (tdsVersion == TdsVersion.tds70 && len == 0xffff))
 				result = null;
 			else if (len >= 0) {
 				if (wideChars)
 					result = comm.GetString (len / 2);
 				else
-					result = encoding.GetString (comm.GetBytes (len, false), 0, len);
+					result = encoder.GetString (comm.GetBytes (len, false), 0, len);
 
 				if ((byte) tdsVersion < (byte) TdsVersion.tds70 && result == " ")
 					result = "";
@@ -287,7 +292,7 @@ namespace Mono.Data.TdsClient.Internal {
 				if (wideChars)
 					result = comm.GetString (len / 2);
 				else
-					result = encoding.GetString (comm.GetBytes (len, false), 0, len);
+					result = encoder.GetString (comm.GetBytes (len, false), 0, len);
 
 				if ((byte) tdsVersion < (byte) TdsVersion.tds70 && result == " ")
 					result = "";
@@ -403,7 +408,7 @@ namespace Mono.Data.TdsClient.Internal {
 
 			while (bytesRead < totalLength) {
 				int columnNameLength = comm.GetByte ();
-				string columnName = encoding.GetString (comm.GetBytes (columnNameLength, false), 0, columnNameLength);
+				string columnName = encoder.GetString (comm.GetBytes (columnNameLength, false), 0, columnNameLength);
 				bytesRead = bytesRead + 1 + columnNameLength;
 				if (newTable)
 					table.Columns.Add (columnName);
@@ -450,7 +455,7 @@ namespace Mono.Data.TdsClient.Internal {
 
 					int tableNameLength = comm.GetTdsShort ();
 					bytesRead += 2;
-					tableName = encoding.GetString (comm.GetBytes (tableNameLength, false), 0, tableNameLength);
+					tableName = encoder.GetString (comm.GetBytes (tableNameLength, false), 0, tableNameLength);
 					bytesRead += tableNameLength;
 					bufLength = 2 << 31 - 1;
 				}
@@ -527,32 +532,31 @@ namespace Mono.Data.TdsClient.Internal {
 					comm.Skip (len - 2 - cLen * 2);
 				}
 				else {
-					blockSize = encoding.GetString (comm.GetBytes (cLen, false), 0, cLen);
+					blockSize = encoder.GetString (comm.GetBytes (cLen, false), 0, cLen);
 					comm.Skip (len - 2 - cLen);
 				}
 
 				comm.ResizeOutBuf (Int32.Parse (blockSize));
 				break;
 			case TdsEnvPacketSubType.CharSet :
-				string charset;
 				cLen = comm.GetByte () & 0xff;
 				if (tdsVersion == TdsVersion.tds70) {
-					charset = comm.GetString (cLen);
+					this.language = comm.GetString (cLen);
 					comm.Skip (len - 2 - cLen * 2);
 				}
 				else {
-					charset = encoding.GetString (comm.GetBytes (cLen, false), 0, cLen);
+					this.charset = encoder.GetString (comm.GetBytes (cLen, false), 0, cLen);
 					comm.Skip (len - 2 - cLen);
+					SetCharset (charset);
 				}
 
-				SetCharset (charset);
 				break;
 			case TdsEnvPacketSubType.Database :
 				cLen = comm.GetByte () & 0xff;
-				string newDB = tdsVersion == TdsVersion.tds70 ? comm.GetString (cLen) : encoding.GetString (comm.GetBytes (cLen, false), 0, cLen);
+				string newDB = tdsVersion == TdsVersion.tds70 ? comm.GetString (cLen) : encoder.GetString (comm.GetBytes (cLen, false), 0, cLen);
 				cLen = comm.GetByte () & 0xff;
-				string oldDB = tdsVersion == TdsVersion.tds70 ? comm.GetString (cLen) : encoding.GetString (comm.GetBytes (cLen, false), 0, cLen);
-				if (database != null && database != oldDB)
+				string oldDB = tdsVersion == TdsVersion.tds70 ? comm.GetString (cLen) : encoder.GetString (comm.GetBytes (cLen, false), 0, cLen);
+				if (database != String.Empty && database != oldDB)
 					throw new TdsException ("Database mismatch.");
 				database = newDB;
 				break;
@@ -584,6 +588,7 @@ namespace Mono.Data.TdsClient.Internal {
 				databaseProductVersion = String.Format ("{0}.{1}", databaseMajorVersion, comm.GetByte ());
 				comm.Skip (1);
 			}
+			Console.WriteLine ("Connected to {0} {1}", databaseProductName, databaseProductVersion);
 
 			if (databaseProductName.Length > 1 && -1 != databaseProductName.IndexOf ('\0')) {
 				int last = databaseProductName.IndexOf ('\0');
@@ -593,10 +598,40 @@ namespace Mono.Data.TdsClient.Internal {
 			return new TdsPacketResult (TdsPacketSubType.LoginAck);
 		}
 
-		[System.MonoTODO()]
 		private TdsPacketMessageResult ProcessMessage (TdsPacketSubType subType)
 		{
-			return null;
+			TdsMessage message = new TdsMessage ();
+			GetSubPacketLength ();
+			int len;
+
+			message.Number = comm.GetTdsInt ();
+			message.State = comm.GetByte ();
+			message.Severity = comm.GetByte ();
+			
+			len = comm.GetTdsShort ();
+
+			message.Message = comm.GetString (len);
+
+			len = comm.GetByte ();
+
+			message.Server = comm.GetString (len);
+
+			if (subType == TdsPacketSubType.Error | subType == TdsPacketSubType.Info) {
+				len = comm.GetByte ();
+				message.ProcName = comm.GetString (len);
+			}
+			else 
+				throw new TdsException ("Invalid subtype");
+			message.Line = comm.GetByte ();
+			comm.GetByte ();
+
+			Console.WriteLine (message.ToString ());
+
+			lastServerMessage = message;
+			if (subType == TdsPacketSubType.Error)
+				return new TdsPacketErrorResult (subType, message);
+			else
+				return new TdsPacketMessageResult (subType, message);
 		}
 
 		private TdsPacketOutputParam ProcessOutputParam ()
@@ -834,7 +869,7 @@ namespace Mono.Data.TdsClient.Internal {
 			if (charset == null || charset.Length > 30)
 				charset = "iso-8859-1";
 			if (this.charset != charset) {
-				encoding = Encoding.GetEncoding (charset);
+				encoder = Encoding.GetEncoding (charset);
 				this.charset = charset;
 			}
 		}
@@ -851,149 +886,138 @@ namespace Mono.Data.TdsClient.Internal {
 				comm.StartPacket (TdsPacketType.Logon);
 
 				// hostname (offset 0)
-				byte[] tmp = encoding.GetBytes (host);
-				comm.AppendBytes (tmp, 30, pad);
-				comm.AppendByte ((byte) (tmp.Length < 30 ? tmp.Length : 30));
+				byte[] tmp = comm.Append (hostname, 30, pad);
+				comm.Append ((byte) (tmp.Length < 30 ? tmp.Length : 30));
 
 				// username (offset 31 0x1f)
-				tmp = encoding.GetBytes (user);
-				comm.AppendBytes (tmp, 30, pad);
-				comm.AppendByte ((byte) (tmp.Length < 30 ? tmp.Length : 30));
+				tmp = comm.Append (user, 30, pad);
+				comm.Append ((byte) (tmp.Length < 30 ? tmp.Length : 30));
 
 				// password (offset 62 0x3e)
-				tmp = encoding.GetBytes (password);
-				comm.AppendBytes (tmp, 30, pad);
-				comm.AppendByte ((byte) (tmp.Length < 30 ? tmp.Length : 30));
+				tmp = comm.Append (password, 30, pad);
+				comm.Append ((byte) (tmp.Length < 30 ? tmp.Length : 30));
 
 				// hostproc (offset 93 0x5d)
-				tmp = encoding.GetBytes ("00000116");
-				comm.AppendBytes (tmp, 8, pad);
+				comm.Append ("00000116", 8, pad);
 
 				// unused (offset 109 0x6d)
-				comm.AppendBytes (empty, (30-14), pad);
+				comm.Append (empty, (30-14), pad);
 
 				// apptype 
-				comm.AppendByte ((byte) 0x0);
-				comm.AppendByte ((byte) 0xa0);
-				comm.AppendByte ((byte) 0x24);
-				comm.AppendByte ((byte) 0xcc);
-				comm.AppendByte ((byte) 0x50);
-				comm.AppendByte ((byte) 0x12);
+				comm.Append ((byte) 0x0);
+				comm.Append ((byte) 0xa0);
+				comm.Append ((byte) 0x24);
+				comm.Append ((byte) 0xcc);
+				comm.Append ((byte) 0x50);
+				comm.Append ((byte) 0x12);
 
 				// hostproc length 
-				comm.AppendByte ((byte) 8);
+				comm.Append ((byte) 8);
 
 				// type of int2
-				comm.AppendByte ((byte) 3);
+				comm.Append ((byte) 3);
 
 				// type of int4
-				comm.AppendByte ((byte) 1);
+				comm.Append ((byte) 1);
 
 				// type of char
-				comm.AppendByte ((byte) 6);
+				comm.Append ((byte) 6);
 
 				// type of flt
-				comm.AppendByte ((byte) 10);
+				comm.Append ((byte) 10);
 
 				// type of date
-				comm.AppendByte ((byte) 9);
+				comm.Append ((byte) 9);
 				
 				// notify of use db
-				comm.AppendByte ((byte) 1);
+				comm.Append ((byte) 1);
 
 				// disallow dump/load and bulk insert
-				comm.AppendByte ((byte) 1);
+				comm.Append ((byte) 1);
 
 				// sql interface type
-				comm.AppendByte ((byte) 0);
+				comm.Append ((byte) 0);
 
 				// type of network connection
-				comm.AppendByte ((byte) 0);
+				comm.Append ((byte) 0);
 
 
 				// spare [7]
-				comm.AppendBytes (empty, 7, pad);
+				comm.Append (empty, 7, pad);
 				// appname
-				tmp = encoding.GetBytes (applicationName);
-				comm.AppendBytes (tmp, 30, pad);
-				comm.AppendByte ((byte) (tmp.Length < 30 ? tmp.Length : 30));
+				tmp = comm.Append (applicationName, 30, pad);
+				comm.Append ((byte) (tmp.Length < 30 ? tmp.Length : 30));
 
 				// server name
-				tmp = encoding.GetBytes (host);
-				comm.AppendBytes (tmp, 30, pad);
-				comm.AppendByte ((byte) (tmp.Length < 30 ? tmp.Length : 30));
+				tmp = comm.Append (server, 30, pad);
+				comm.Append ((byte) (tmp.Length < 30 ? tmp.Length : 30));
 
 				// remote passwords
-				comm.AppendBytes (empty, 2, pad);
-				tmp = encoding.GetBytes (password);
-				comm.AppendBytes (tmp, 253, pad);
-				comm.AppendByte ((byte) (tmp.Length < 253 ? tmp.Length + 2 : 253 + 2));
+				comm.Append (empty, 2, pad);
+				tmp = comm.Append (password, 253, pad);
+				comm.Append ((byte) (tmp.Length < 253 ? tmp.Length + 2 : 253 + 2));
 
 				// tds version
-				comm.AppendByte ((byte) (((byte) tdsVersion) / 10));
-				comm.AppendByte ((byte) (((byte) tdsVersion) % 10));
-				comm.AppendByte ((byte) 0);
-				comm.AppendByte ((byte) 0);
+				comm.Append ((byte) (((byte) tdsVersion) / 10));
+				comm.Append ((byte) (((byte) tdsVersion) % 10));
+				comm.Append ((byte) 0);
+				comm.Append ((byte) 0);
 
 				// prog name
-				tmp = encoding.GetBytes (progName);
-				comm.AppendBytes (tmp, 10, pad);
-				comm.AppendByte ((byte) (tmp.Length < 30 ? tmp.Length : 30));
+				tmp = comm.Append (progName, 10, pad);
+				comm.Append ((byte) (tmp.Length < 10 ? tmp.Length : 10));
 
 				// prog version
-				comm.AppendByte ((byte) 6);
+				comm.Append ((byte) 6);
 
 				// Tell the server we can handle SQLServer version 6
-				comm.AppendByte ((byte) 0);
+				comm.Append ((byte) 0);
 
 				// Send zero to tell the server we can't handle any other version
-				comm.AppendByte ((byte) 0);
-				comm.AppendByte ((byte) 0);
+				comm.Append ((byte) 0);
+				comm.Append ((byte) 0);
 
 				// auto convert short
-				comm.AppendByte ((byte) 0);
+				comm.Append ((byte) 0);
 
 				// type of flt4
-				comm.AppendByte ((byte) 0x0d);
+				comm.Append ((byte) 0x0d);
 
 				// type of date4
-				comm.AppendByte ((byte) 0x11);
+				comm.Append ((byte) 0x11);
 
 				// language
-				tmp = encoding.GetBytes (language);
-				comm.AppendBytes (tmp, 30, pad);
-				comm.AppendByte ((byte) (tmp.Length < 30 ? tmp.Length : 30));
+				tmp = comm.Append (language, 30, pad);
+				comm.Append ((byte) (tmp.Length < 30 ? tmp.Length : 30));
 
 				// notify on lang change
-				comm.AppendByte ((byte) 1);
+				comm.Append ((byte) 1);
 
 				// security label hierarchy
-				comm.AppendShort ((short) 0);
+				comm.Append ((short) 0);
 
 				// security components
-				comm.AppendBytes (empty, 8, pad);
+				comm.Append (empty, 8, pad);
 
 				// security spare
-				comm.AppendShort ((short) 0);
+				comm.Append ((short) 0);
 
 				// security login role
-				comm.AppendByte ((byte) 0);
+				comm.Append ((byte) 0);
 
 				// charset
-				tmp = encoding.GetBytes (charset);
-				comm.AppendBytes (tmp, 30, pad);
-				comm.AppendByte ((byte) (tmp.Length < 30 ? tmp.Length : 30));
+				tmp = comm.Append (charset, 30, pad);
+				comm.Append ((byte) (tmp.Length < 30 ? tmp.Length : 30));
 
 				// notify on charset change
-				comm.AppendByte ((byte) 1);
+				comm.Append ((byte) 1);
 
 				// length of tds packets
-				tmp = encoding.GetBytes (packetSize.ToString ());
-				comm.AppendBytes (tmp, 6, pad);
-				comm.AppendByte ((byte) 3);
+				tmp = comm.Append (packetSize.ToString (), 6, pad);
+				comm.Append ((byte) 3);
 
 				// pad out to a longword
-				comm.AppendBytes (empty, 8, pad);
+				comm.Append (empty, 8, pad);
 			}
 
 			comm.SendPacket ();
@@ -1018,85 +1042,112 @@ namespace Mono.Data.TdsClient.Internal {
 			
 		}
 
+		// This packet is documented at 
+		// http://www.freetds.org/tds.htm#login7
 		public void Send70Logon (TdsConnectionParameters parms)
 		{
-			short packSize = (short) (86 + 2 * (parms.User.Length + parms.Password.Length + parms.ApplicationName.Length + parms.Host.Length + parms.LibraryName.Length + parms.Database.Length));
 			byte[] empty = new byte[0];
 			byte pad = (byte) 0;
 
+			byte[] magic1 = {0x06, 0x83, 0xf2, 0xf8, 0xff, 0x00, 0x00, 0x00, 0x00, 0xe0, 0x03, 0x00, 0x00, 0x88, 0xff, 0xff, 0xff, 0x36, 0x04, 0x00, 0x00};
+			byte[] magic2 = {0x00, 0x40, 0x33, 0x9a, 0x6b, 0x50};
+			byte[] magic3 = {0x4e, 0x54, 0x4c, 0x4d, 0x53, 0x53, 0x50}; // NTLMSSP
+			short partialPacketSize = (short) (86 + 2 * (
+					hostname.Length + 
+					user.Length + 
+					applicationName.Length + 
+					password.Length + 
+					server.Length +
+					libraryName.Length +
+					language.Length +
+					connectDB.Length)); 
+			short totalPacketSize = (short) (partialPacketSize + 48);
 			comm.StartPacket (TdsPacketType.Logon70);
-			comm.AppendTdsInt (packSize);
+			comm.Append (totalPacketSize);
+			comm.Append (empty, 5, pad);
 
-			// TDS Version
-			comm.AppendTdsInt (0x70000000);
+			if (tdsVersion == TdsVersion.tds80)
+				comm.Append ((byte) 0x80);
+			else
+				comm.Append ((byte) 0x70);
 
-			comm.AppendBytes (empty, 16, pad);
+			comm.Append (empty, 7, pad);
+			comm.Append (magic1);
 
-			// Magic!
-			comm.AppendByte ((byte) 0xe0);
-			comm.AppendByte ((byte) 0x03);
-			comm.AppendBytes (empty, 10, pad);
-
-			// Pack up value lengths, positions
 			short curPos = 86;
 
-			// Hostname
-			comm.AppendTdsShort (curPos);
-			comm.AppendTdsShort ((short) 0);
+			// Hostname 
+			comm.Append (curPos);
+			comm.Append ((short) hostname.Length);
+			curPos += (short) (hostname.Length * 2);
 
 			// Username
-			comm.AppendTdsShort (curPos);
-			comm.AppendTdsShort ((short) user.Length);
+			comm.Append (curPos);
+			comm.Append ((short) user.Length);
 			curPos += (short) (user.Length * 2);
 
 			// Password
-			comm.AppendTdsShort (curPos);
-			comm.AppendTdsShort ((short) password.Length);
+			comm.Append (curPos);
+			comm.Append ((short) password.Length);
 			curPos += (short) (password.Length * 2);
 
 			// AppName
-			comm.AppendTdsShort (curPos);
-			comm.AppendTdsShort ((short) applicationName.Length);
+			comm.Append (curPos);
+			comm.Append ((short) applicationName.Length);
 			curPos += (short) (applicationName.Length * 2);
 
 			// Server Name
-			comm.AppendTdsShort (curPos);
-			comm.AppendTdsShort ((short) host.Length);
-			curPos += (short) (host.Length * 2);
+			comm.Append (curPos);
+			comm.Append ((short) server.Length);
+			curPos += (short) (server.Length * 2);
 
 			// Unknown
-			comm.AppendTdsShort ((short) 0);
-			comm.AppendTdsShort ((short) 0);
+			comm.Append ((short) 0);
+			comm.Append ((short) 0);
 
 			// Library Name
-			comm.AppendTdsShort (curPos);
-			comm.AppendTdsShort ((short) libraryName.Length);
+			comm.Append (curPos);
+			comm.Append ((short) libraryName.Length);
 			curPos += (short) (libraryName.Length * 2);
 
-			// Unknown
-			comm.AppendTdsShort (curPos);
-			comm.AppendTdsShort ((short) 0);
+			// Character Set
+			comm.Append (curPos);
+			comm.Append ((short) language.Length);
+			curPos += (short) (language.Length * 2);
 
 			// Database
-			comm.AppendTdsShort (curPos);
-			comm.AppendTdsShort ((short) database.Length);
-			curPos += (short) (database.Length * 2);
+			comm.Append (curPos);
+			comm.Append ((short) connectDB.Length);
+			curPos += (short) (connectDB.Length * 2);
 
-			// MAC Address
-			comm.AppendBytes (empty, 6, pad);
-			comm.AppendTdsShort (curPos);
-
-			// Some sort of appended magic
-			comm.AppendTdsShort ((short) 0);
-			comm.AppendTdsInt (packSize);
+			comm.Append (magic2);
+			comm.Append (partialPacketSize);
+			comm.Append ((short) 48);
+			comm.Append (totalPacketSize);
+			comm.Append ((short) 0);
 
 			string scrambledPwd = Tds7CryptPass (password);
-			comm.AppendChars (user);
-			comm.AppendChars (scrambledPwd);
-			comm.AppendChars (applicationName);
-			comm.AppendChars (host);
-			comm.AppendChars (libraryName);
-			comm.AppendChars (database);
+
+			comm.Append (hostname);
+			comm.Append (user);
+			comm.Append (scrambledPwd);
+			comm.Append (applicationName);
+			comm.Append (server);
+			comm.Append (libraryName);
+			comm.Append (language);
+			comm.Append (connectDB);
+			comm.Append (magic3);
+
+			comm.Append ((byte) 0x0);
+			comm.Append ((byte) 0x1);
+			comm.Append (empty, 3, pad);
+			comm.Append ((byte) 0x6);
+			comm.Append ((byte) 0x82);
+			comm.Append (empty, 22, pad);
+			comm.Append ((byte) 0x30);
+			comm.Append (empty, 7, pad);
+			comm.Append ((byte) 0x30);
+			comm.Append (empty, 3, pad);
 		}
 
 		private string SqlStatementForSettings (bool autoCommit, IsolationLevel isolationLevel)
@@ -1146,19 +1197,16 @@ namespace Mono.Data.TdsClient.Internal {
 		{
 			int xormask = 0x5a5a;
 			int len = pass.Length;
-			StringBuilder sb = new StringBuilder ();
-			int i;
-			int m1;
-			int m2;
+			char[] chars = new char[len];
 
-			foreach (char c in pass)
-			{
-				i = (int) (c ^ xormask);
-				m1 = (i >> 4) & 0x0f0f;
-				m2 = (i << 4) & 0xf0f0;
-				sb.Append ((char) (m1 | m2));
+			for (int i = 0; i < len; ++i) {
+				int c = ((int) (pass[i])) ^ xormask;
+				int m1 = (c >> 4) & 0x0f0f;
+				int m2 = (c << 4) & 0xf0f0;
+				chars[i] = (char) (m1 | m2);
 			}
-			return sb.ToString ();
+
+			return new String (chars);
 		}
 
 		#endregion // Methods

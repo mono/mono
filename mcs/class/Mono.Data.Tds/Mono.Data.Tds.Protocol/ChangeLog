@@ -1,3 +1,18 @@
+2002-10-21  Tim Coleman (tim@timcoleman.com)
+	* Tds.cs
+	* TdsComm.cs:
+		A whole slew of changes to get logon
+		to work (it now works in both TDS 7.0
+		and TDS 4.2) ... danmorg can test with
+		8.0 if he likes.
+		TdsComm has some simplifications too,
+		because C# has some features not present
+		in the Java implementation.
+	* TdsConnectionParameters.cs:
+		Change a few default values.
+	* TdsMessage.cs:
+		Implement this class.
+
 2002-10-20  Tim Coleman (tim@timcoleman.com)
 	* TdsColumnType.cs:
 	* TdsContext.cs:
