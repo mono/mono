@@ -430,11 +430,9 @@ namespace System
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern override Type GetElementType ();
 
-		public override Type UnderlyingSystemType {
-			get {
-				// This has _nothing_ to do with getting the base type of an enum etc.
-				return this;
-			}
+		public extern override Type UnderlyingSystemType {
+			[MethodImplAttribute(MethodImplOptions.InternalCall)]
+			get;
 		}
 
 		public extern override Assembly Assembly {

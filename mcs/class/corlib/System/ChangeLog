@@ -1,3 +1,7 @@
+2004-11-20  Zoltan Varga  <vargaz@freemail.hu>
+
+	* MonoType.cs: Revert last change since it breaks remoting.
+
 2004-11-18  Zoltan Varga  <vargaz@freemail.hu>
 
 	* MonoType.cs (UnderlyingSystemType): Make this return this as in
