@@ -1,10 +1,12 @@
 //
 // Mono.Data.TdsClient.TdsConnection.cs
 //
-// Author:
+// Authors:
 //   Tim Coleman (tim@timcoleman.com)
+//   Daniel Morgan (danmorg@sc.rr.com)
 //
-// Copyright (C) Tim Coleman, 2002
+// Copyright (C) Tim Coleman, 2002, 2003
+// Copyright (C) Daniel Morgan, 2003
 //
 
 using Mono.Data.Tds.Protocol;
@@ -16,6 +18,7 @@ using System.Data;
 using System.Data.Common;
 using System.EnterpriseServices;
 using System.Net;
+using System.Net.Sockets;
 using System.Text;
 
 namespace Mono.Data.TdsClient {
@@ -282,16 +285,20 @@ namespace Mono.Data.TdsClient {
 		[MonoTODO ("Figure out the Tds way to reset the connection.")]
 		public void Open () 
 		{
+			string serverName = "";
 			if (connectionString == null)
 				throw new InvalidOperationException ("Connection string has not been initialized.");
 
 			try {
-				if (!pooling)
-					tds = new Tds42 (DataSource, port, PacketSize, ConnectionTimeout);
+				if (!pooling) {
+					ParseDataSource (dataSource, out port, out serverName);
+					tds = new Tds42 (serverName, port, PacketSize, ConnectionTimeout);
+				}
 				else {
 					pool = (TdsConnectionPool) TdsConnectionPools [connectionString];
 					if (pool == null) {
-						pool = new TdsConnectionPool (dataSource, port, packetSize, ConnectionTimeout, minPoolSize, maxPoolSize);
+						ParseDataSource (dataSource, out port, out serverName);
+						pool = new TdsConnectionPool (serverName, port, packetSize, ConnectionTimeout, minPoolSize, maxPoolSize);
 						TdsConnectionPools [connectionString] = pool;
 					}
 					tds = pool.AllocateConnection ();
@@ -312,6 +319,22 @@ namespace Mono.Data.TdsClient {
 			else if (connectionReset) {
 				// tds.ExecuteNonQuery ("EXEC sp_reset_connection"); FIXME
 				ChangeState (ConnectionState.Open);
+			}
+		}
+
+		private void ParseDataSource (string theDataSource, out int thePort, out string theServerName) 
+		{
+			theServerName = "";
+			thePort = 1433; // default TCP port for SQL Server
+                        			
+			int idx = 0;
+			if ((idx = theDataSource.IndexOf (",")) > -1) {
+				theServerName = theDataSource.Substring (0, idx);
+				string p = theDataSource.Substring (idx + 1);
+				thePort = Int32.Parse (p);
+			}
+			else {
+				theServerName = theDataSource;
 			}
 		}
 
