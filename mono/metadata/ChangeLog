@@ -1,3 +1,15 @@
+2001-11-26  Dick Porter  <dick@ximian.com>
+
+	* icall.c:
+	* threads-types.h:
+	* threads.c: New file that handles System.Threading on all platforms
+
+	* object.c: 
+	* object.h: Remove the synchronisation struct from MonoObject,
+	replace it with a pointer that gets initialised on demand
+
+	* Makefile.am: Replace all the system-specific threading code with
+	a single file that uses the new wrapper library
 
 Mon Nov 19 11:37:14 CET 2001 Paolo Molaro <lupus@ximian.com>
 

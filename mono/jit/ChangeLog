@@ -1,3 +1,7 @@
+2001-11-26  Dick Porter  <dick@ximian.com>
+
+	* Makefile.am (mono_LDADD): Add io-layer library
+
 2001-11-19  Dietmar Maurer  <dietmar@ximian.com>
 
 	* jit.c (mono_analyze_stack): impl. LDFTN

@@ -1,3 +1,15 @@
+2001-11-26  Dick Porter  <dick@ximian.com>
+
+	* critical-sections.c:
+	* events.c:
+	* handles.c:
+	* io.c:
+	* mutexes.c:
+	* semaphores.c:
+	* threads.c:
+	* timed-thread.c:
+	* wait.c: turn off DEBUG messages
+
 2001-11-22  Dick Porter  <dick@ximian.com>
 
 	* handles.c (SignalObjectAndWait): Implement
