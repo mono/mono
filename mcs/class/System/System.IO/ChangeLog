@@ -1,5 +1,9 @@
 2004-01-26  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* DefaultWatcher.cs: fixed condition for removal from the watches list.
+
+2004-01-26  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* DefaultWatcher.cs: check if the FileSystemWatcher is in WaitForChange
 	and call Monitor.PulseAll in that case.
 

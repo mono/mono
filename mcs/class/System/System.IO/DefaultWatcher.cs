@@ -142,9 +142,9 @@ namespace System.IO {
 		
 		bool UpdateDataAndDispatch (DefaultWatcherData data, bool dispatch)
 		{
-			if (!data.Enabled && data.DisabledTime != DateTime.MaxValue &&
-			    (DateTime.Now - data.DisabledTime).TotalSeconds > 5) {
-				return true; // Will be removed
+			if (!data.Enabled) {
+				return (data.DisabledTime != DateTime.MaxValue &&
+					(DateTime.Now - data.DisabledTime).TotalSeconds > 5);
 			}
 
 			DoFiles (data, data.Directory, data.FileMask, dispatch);
