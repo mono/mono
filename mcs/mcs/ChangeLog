@@ -1,3 +1,7 @@
+2004-09-08  Marek Safar  <marek.safar@seznam.cz>
+
+	* ecore.cs (FieldExpr.DoResolveLValue): Fixed CS0198 report.
+
 2004-09-07  Miguel de Icaza  <miguel@ximian.com>
 
 	* literal.cs: The type of the null-literal is the null type;  So

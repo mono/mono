@@ -2701,7 +2701,7 @@ namespace Mono.CSharp {
 					return this;
 			}
 
-			Report_AssignToReadonly (true);
+			Report_AssignToReadonly (!IsStatic);
 			
 			return null;
 		}
