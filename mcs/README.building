@@ -19,15 +19,22 @@ up to date:
 1. In mcs directory,
 
 	cvs -z3 update -Pd
-	make -f makefile.gnu
 
-2. Use the mono-build.sh script to update, rebuild and install mono from CVS.
+2. In mcs/class/corlib,
+
+	make
+
+3. Backup the dlls in your $PREFIX/lib directory
+
+4. Use the mono-build.sh script to update, rebuild and install mono from CVS.
 Doing a cvs update of mono/doc/mono-build.sh file is also a good idea.
 
-3. In mcs directory:
+5. Restore the back of the dlls
 
-	make -f makefile.gnu install prefix=/prefix/of/your/installation/path
+6. In mcs directory:
 
-4. In case of troubles (ie, unable to compile mcs/* sources) go to [1].
+	make install prefix=/prefix/of/your/installation/path
+
+NOTE: In case of troubles (ie, unable to compile mcs/* sources) go to [1].
 
 -Gonzalo
