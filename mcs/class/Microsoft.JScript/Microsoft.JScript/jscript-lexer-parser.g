@@ -395,7 +395,7 @@ left_hand_side_expr [AST parent] returns [AST lhe]
 	| lhe = new_expr [parent]
 	;
 
-postfix_expr [AST parent] returns [Unary post_expr]
+postfix_expr [AST parent] returns [AST post_expr]
 {
 	post_expr = null;
 	JSToken op = JSToken.None;
@@ -405,11 +405,14 @@ postfix_expr [AST parent] returns [Unary post_expr]
 					      | DECREMENT { op = JSToken.Decrement; } 
 					      | )
 	  {
-		  post_expr = new Unary (parent, left, op);
+		  if (op == JSToken.None)
+			  post_expr = left;
+		  else
+			  post_expr = new PostOrPrefixOperator (parent, left, op);
 	  }
 	;
 
-unary_expr [AST parent] returns [Unary unary_exprn]
+unary_expr [AST parent] returns [AST unary_exprn]
 {
 	unary_exprn = null;
 	JSToken op = JSToken.None;
@@ -438,7 +441,7 @@ unary_op returns [JSToken unary_op]
 multiplicative_expr [AST parent] returns [AST mult_expr]
 {
 	mult_expr = null;
-	Unary left = null;
+	AST left = null;
 	AST right = null;
 }
 	: left = unary_expr [parent] right = multiplicative_aux [parent]
@@ -454,7 +457,7 @@ multiplicative_aux [AST parent] returns [AST mult_aux]
 {
 	mult_aux = null;
 	JSToken mult_op = JSToken.None;
-	Unary left = null;
+	AST left = null;
 	AST right = null;
 }
 	: (( MULT { mult_op = JSToken.Multiply; }
@@ -941,7 +944,7 @@ HEX_INTEGER_LITERAL: '0' ('x' | 'X') ('0'..'9' | 'a'..'f' | 'A'..'F')+
     ;
 
 STRING_LITERAL
-	: '"' (~('"' | '\\' | '\u000A' | '\u000D' | '\u2028' | '\u2029'))* '"' | 
+	: '"'! (~('"' | '\\' | '\u000A' | '\u000D' | '\u2028' | '\u2029'))* '"'! | 
 	  '\''! (~('\'' | '\\' | '\u000A' | '\u000D' | '\u2028' | '\u2029'))*'\''!
 	;
 
