@@ -1,3 +1,8 @@
+2005-02-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataRowCollection.cs : on adding a row, should raise
+	  ChangingDataRow() as well as ChangedDataRow().
+
 2005-01-31  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* DataRow.cs: SetParentRow (): use relation.ParentColumns &

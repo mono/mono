@@ -97,6 +97,7 @@ namespace System.Data
 				// we have to check that the new row doesn't colide with existing row
 				ValidateDataRowInternal(row);
 			
+			row.Table.ChangingDataRow (row, DataRowAction.Add);
 			row.HasParentCollection = true;
 			List.Add (row);
 			// Set the row id.
@@ -295,6 +296,8 @@ namespace System.Data
 				// we have to check that the new row doesn't colide with existing row
 				ValidateDataRowInternal(row);
 				
+			row.Table.ChangingDataRow (row, DataRowAction.Add);
+
 			if (pos >= List.Count) {
 				row.RowID = List.Count;
 				List.Add (row);
