@@ -68,7 +68,10 @@ namespace Mono.ILASM {
 		/// <returns></returns>
 		public int Read ()
 		{
-			return DoRead ();
+			int read = DoRead ();
+			if (read == '\n')
+				location.NewLine ();
+			return read;
 		}
 
 		/// <summary>

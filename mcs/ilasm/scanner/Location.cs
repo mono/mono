@@ -75,11 +75,13 @@ namespace Mono.ILASM {
 		/// </summary>
 		public void PreviousColumn ()
 		{
+			/*
 			if (column == 1) {
 				PreviousLine ();
 			} else {
 				--column;
 			}
+			*/
 		}
 
 		/// <summary>
@@ -99,5 +101,9 @@ namespace Mono.ILASM {
 			return new Location (this);
 		}
 
+		public override string ToString ()
+		{
+			return "line (" + line + ")";
+		}
 	}
 }

@@ -1,3 +1,9 @@
+2003-07-29 Jackson Harper <jackson@latitudegeo.com>
+
+	* ILReader.cs: Incriment line numbers
+	* Location.cs: Do not reset line number when moving to a previous
+	column. Add ToString method.
+	
 2003-07-15 Jackson Harper <jackson@latitudegeo.com>
 
 	* ILTables.cs: Add tokens for generic constraints.
