@@ -1,12 +1,12 @@
 /**
  * Namespace: System.Web.UI.WebControls
  * Class:     BaseDataList
- * 
+ *
  * Author:  Gaurav Vaish
  * Maintainer: gvaish@iitk.ac.in
  * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
  * Status:  20%
- * 
+ *
  * (C) Gaurav Vaish (2001)
  */
 
@@ -28,9 +28,7 @@ namespace System.Web.UI.WebControls
 		private string dataMember;
 		private GridLines gridLines;
 		private HorizontalAlign hAlign;
-		
-//		private EventArgs dataBindEventArgs;
-		
+
 		public BaseDataList()
 		{
 			// TODO Something
@@ -39,7 +37,7 @@ namespace System.Web.UI.WebControls
 			gridLines = GridLines.Both;
 			hAlign = HorizontalAlign.NotSet;
 		}
-		
+
 		public static bool IsBindableType(Type type)
 		{
 			//TODO: To see what has to be here
@@ -49,7 +47,7 @@ namespace System.Web.UI.WebControls
 			}
 			return false; //for the time being, to be able to make it compile
 		}
-		
+
 		public virtual int CellPadding
 		{
 			get
@@ -61,7 +59,7 @@ namespace System.Web.UI.WebControls
 				cellPadding = value;
 			}
 		}
-		
+
 		public virtual int CellSpacing
 		{
 			get
@@ -73,7 +71,7 @@ namespace System.Web.UI.WebControls
 				cellSpacing = value;
 			}
 		}
-		
+
 		public virtual string DataKeyField
 		{
 			get
@@ -85,7 +83,7 @@ namespace System.Web.UI.WebControls
 				dataKeyField = value;
 			}
 		}
-		
+
 		public DataKeyCollection DataKeys
 		{
 			get
@@ -93,7 +91,7 @@ namespace System.Web.UI.WebControls
 				return dataKeys;
 			}
 		}
-		
+
 		public string DataMember
 		{
 			get
@@ -105,7 +103,7 @@ namespace System.Web.UI.WebControls
 				dataMember = value;
 			}
 		}
-		
+
 		public virtual object DataSource
 		{
 			get
@@ -117,7 +115,7 @@ namespace System.Web.UI.WebControls
 				dataSource = value;
 			}
 		}
-		
+
 		public virtual GridLines GridLines
 		{
 			get
@@ -129,7 +127,7 @@ namespace System.Web.UI.WebControls
 				gridLines = value;
 			}
 		}
-		
+
 		public virtual HorizontalAlign HorizontalAlign
 		{
 			get
@@ -145,10 +143,11 @@ namespace System.Web.UI.WebControls
 		public override void DataBind()
 		{
 			// TODO: have to write the implementation
-			// I am not sure of whether it will be of any use here since 
+			// I am not sure of whether it will be of any use here since
 			// I am an abstract class, and have no identity of myself.
 			//dataBindEventArgs = EventArgs.Empty;
 			OnDataBinding(EventArgs.Empty);
+			throw new NotImplementedException();
 		}
 
 		//TODO: Check - where are the following abstract methods?
@@ -156,12 +155,12 @@ namespace System.Web.UI.WebControls
 		 * CreateControlHierarchy(bool)
 		 * PrepareControlHierarchy()
 		*/
-		
+
 		protected override void AddParsedSubObject(object o)
 		{
 			// Preventing literal controls from being added as children: Do nothing here.
 		}
-		
+
 		protected override void CreateChildControls()
 		{
 			Controls.Clear();
@@ -171,8 +170,6 @@ namespace System.Web.UI.WebControls
 				ClearChildViewState();
 			}
 		}
-
-		//protected override void 
 
 		protected abstract void CreateControlHierarchy(bool useDataSource);
 	}

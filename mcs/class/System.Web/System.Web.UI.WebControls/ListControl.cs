@@ -1,20 +1,21 @@
 /**
-* Namespace: System.Web.UI.WebControls
-* Class:     ListControl
-*
-* Author:  Gaurav Vaish
-* Maintainer: gvaish@iitk.ac.in
-* Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
-* Status:  10%
-*
-* (C) Gaurav Vaish (2001)
-*/
+ * Namespace: System.Web.UI.WebControls
+ * Class:     ListControl
+ *
+ * Author:  Gaurav Vaish
+ * Maintainer: gvaish@iitk.ac.in
+ * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
+ * Status:  10%
+ *
+ * (C) Gaurav Vaish (2001)
+ */
 
 using System;
 using System.Collections;
 using System.ComponentModel;
 using System.Web;
 using System.Web.UI;
+using System.Web.Utils;
 
 namespace System.Web.UI.WebControls
 {
@@ -22,8 +23,10 @@ namespace System.Web.UI.WebControls
 	{
 		private static readonly object SelectedIndexChangedEvent = new object();
 
-		private object dataSource;
+		private object             dataSource;
 		private ListItemCollection items;
+
+		private int cachedSelectedIndex = -1;
 		
 		public ListControl(): base(HtmlTextWriterTag.Select)
 		{
@@ -49,6 +52,49 @@ namespace System.Web.UI.WebControls
 					if(eh!=null)
 						eh(this, e);
 				}
+		}
+		
+		protected override void OnDataBinding(EventArgs e)
+		{
+			base.OnDataBinding(e);
+			IEnumerable resolvedData = DataSourceHelper.GetResolvedDataSource(DataSource, DataMember);
+			if(resolvedData != null)
+			{
+				string dataTextField = DataTextField;
+				string dataValueField = DataValueField;
+				Items.Clear();
+				ICollection rdsCollection = resolvedDataSource as ICollection;
+				if(rdsCollection != null)
+				{
+					Items.Capacity = rdsCollection.Count;
+				}
+				bool valid = ( (dataTextField.Length >= 0) && (dataValueField.Length >=0) );
+				foreach(IEnumerable current in resolvedDataSource.GetEnumerator())
+				{
+					ListItem li = new ListItem();
+					if(valid)
+					{
+						if(dataTextField.Length >= 0)
+						{
+							li.Text = DataBinder.GetPropertyValue(current, dataTextField, null);
+						}
+						if(dataValueField.Length >= 0)
+						{
+							li.Value = DataBinder.GetPropertyValue(current, dataValueField, null);
+						}
+					} else
+					{
+						li.Text  = dataTextField.ToString();
+						li.Value = dataValueField.ToString();
+					}
+					Items.Add(li);
+				}
+			}
+			if(cachedSelectedIndex != -1)
+			{
+				SelectedIndex = cachedSelectedIndex;
+				cachedSelectedIndex = -1;
+			}
 		}
 		
 		public virtual bool AutoPostBack
@@ -177,6 +223,20 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
+		internal virtual int[] SelectedIndices
+		{
+			get
+			{
+				ArrayList si = new ArrayList();
+				for(int i=0; i < Items.Count; i++)
+				{
+					if(Items[i].Selected)
+						ArrayList.Add(i);
+				}
+				int[] indices = (int[])si.ToArray();
+			}
+		}
+		
 		public virtual ListItem SelectedItem
 		{
 			get
@@ -203,29 +263,37 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
-		internal void Select(ArrayList whatToSelect)
+		internal void Select(int[] indices)
 		{
 			ClearSelection();
-			int i = 0;
-			while(i < whatToSelect.Count)
+			foreach(int index in indices)
 			{
-				int index = (int)whatToSelect[i++];				
-				if(index > 0)
-				{
+				if(index >= 0 && index < Items.Count)
 					Items[index].Selected = true;
-				}
 			}
 		}
-		
+
 		public virtual void ClearSelection()
 		{
-			//TODO: Found it - an undocumented method
+			for(int i=0; i < Items.Count; i++)
+			{
+				Items[i].Selected = false;
+			}
 		}
 		
 		protected override void LoadViewState(object savedState)
 		{
 			//TODO: Implement me
 			throw new NotImplementedException();
+		}
+		
+		protected override object SaveViewState()
+		{
+			object vs = base.SaveViewState();
+			object indices = null;
+			if( Events[SelectedIndexChangedEvent] != null && Enabled && Visible)
+				indices = SelectedIndices;
+			if(indices != null)
 		}
 	}
 }

@@ -1,16 +1,16 @@
 /**
-* Namespace: System.Web.UI.WebControls
-* Class:     CheckBox
-*
-* Author:  Gaurav Vaish
-* Maintainer: gvaish@iitk.ac.in
-* Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
-* Status:  100%
-*
-* (C) Gaurav Vaish (2001)
-* Thanks to Leen Toelen (toelen@hotmail.com)'s classes that helped me
-* to write the contents of the function LoadPostData(...)
-*/
+ * Namespace: System.Web.UI.WebControls
+ * Class:     CheckBox
+ *
+ * Author:  Gaurav Vaish
+ * Maintainer: gvaish@iitk.ac.in
+ * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
+ * Status:  100%
+ *
+ * (C) Gaurav Vaish (2001)
+ * Thanks to Leen Toelen (toelen@hotmail.com)'s classes that helped me
+ * to write the contents of the function LoadPostData(...)
+ */
 
 using System;
 using System.Collections;

@@ -17,8 +17,7 @@ using System.Collections.Specialized;
 using System.Web;
 using System.Web.UI;
 using System.Xml;
-// Namespace with internal classes, in System.Web assembly
-using System.Web.WebUtils;
+using System.Web.Utils;
 
 namespace System.Web.UI.WebControls
 {
