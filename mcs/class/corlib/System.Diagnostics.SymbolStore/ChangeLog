@@ -1,3 +1,7 @@
+2003-07-06  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* SymbolToken.cs: Implemented missing members, style changes
+
 2002-03-20  Martin Baulig  <martin@gnome.org>
 
 	* SymbolToken.cs (GetToken): Implemented.
