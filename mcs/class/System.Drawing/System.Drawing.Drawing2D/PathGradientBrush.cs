@@ -6,10 +6,7 @@
 //   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //   Ravindra (rkumar@novell.com)
 //
-// (C) 2002/3 Ximian, Inc. http://www.ximian.com
-// (C) 2004, Novell, Inc. http://www.novell.com
-//
-
+// Copyright (C) 2002/3 Ximian, Inc. http://www.ximian.com
 //
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
@@ -249,6 +246,9 @@ namespace System.Drawing.Drawing2D
 
 		public void SetBlendTriangularShape (float focus, float scale)
 		{
+			if (focus < 0 || focus > 1 || scale < 0 || scale > 1)
+				throw new ArgumentException ("Invalid parameter passed.");
+
 			Status status = GDIPlus.GdipSetPathGradientLinearBlend (nativeObject, focus, scale);
 			GDIPlus.CheckStatus (status);
 		}
@@ -260,6 +260,9 @@ namespace System.Drawing.Drawing2D
 
 		public void SetSigmaBellShape (float focus, float scale)
 		{
+			if (focus < 0 || focus > 1 || scale < 0 || scale > 1)
+				throw new ArgumentException ("Invalid parameter passed.");
+
 			Status status = GDIPlus.GdipSetPathGradientSigmaBlend (nativeObject, focus, scale);
 			GDIPlus.CheckStatus (status);
 		}
