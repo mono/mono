@@ -41,14 +41,22 @@ public sealed class Publisher : IIdentityPermissionFactory, IBuiltInEvidence {
 	{
 		if (cert == null)
 			throw new ArgumentNullException ("cert");
+#if NET_2_0
+		if (cert.GetHashCode () == 0)
+			throw new ArgumentException ("cert");
+#endif
 		m_cert = cert;
 	}
 
 	public X509Certificate Certificate { 
-		get { 
-			// needed to match MS implementation
-			if (m_cert.GetRawCertData () == null)
+		get {
+			if (m_cert.GetHashCode () == 0) {
+#if NET_2_0
+				throw new ArgumentException ("m_cert");
+#else
 				throw new NullReferenceException ("m_cert");
+#endif
+			}
 			return m_cert; 
 		}
 	}

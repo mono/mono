@@ -153,6 +153,12 @@ public sealed class Hash : ISerializable, IBuiltInEvidence {
 
 	private byte[] GetData () 
 	{
+#if NET_2_0
+		if (assembly == null) {
+			string msg = Locale.GetText ("No assembly data.");
+			throw new SecurityException (msg);
+		}
+#endif
 		if (null == data) {
 			// TODO (Pre-Fx-2.0) we mustn't hash the complete assembly!
 			// ---- Look at ToString (MS version) for what to hash (and what not to)

@@ -52,8 +52,13 @@ namespace System.Security.Policy {
 			if (certificate == null)
 				throw new ArgumentNullException ("certificate");
 			// needed to match MS implementation
-			if (certificate.GetRawCertData () == null)
+			if (certificate.GetHashCode () == 0) {
+#if NET_2_0
+				throw new ArgumentException ("certificate");
+#else
 				throw new NullReferenceException ("certificate");
+#endif
+			}
 			x509 = certificate;
 		}
 	
