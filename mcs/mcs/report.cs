@@ -262,7 +262,6 @@ namespace Mono.CSharp {
 		CountCounters	= 2
 	}
 
-	[Conditional("TIMER")]
 	public class Timer
 	{
 		static DateTime[] timer_start;
