@@ -15,8 +15,7 @@ namespace System.Windows.Forms{
 		public MenuItemCollection MenuItems;
 		internal Gtk.MenuItem file_item;
 		String text, text2;
-		int check1;
-		bool blChecked;
+		bool check1, blChecked;
 		private Shortcut shortcut;
 
 		public class MenuItemCollection{
@@ -66,7 +65,7 @@ namespace System.Windows.Forms{
 		}	
 		
 		private void CreateMenuItem (){
-			if (check1 != 1) {
+			if (!check1) {
 				file_item = new Gtk.MenuItem(text);	
 				ConnectToClick();
 				file_item.Show();
@@ -93,11 +92,11 @@ namespace System.Windows.Forms{
 				return blChecked;
 			}
 			set{
-				if (check1 != 1){  
+				if (!check1){  
 					file_item = new Gtk.CheckMenuItem(text);
 					ConnectToClick();
 					file_item.Show();
-					check1 = 1;
+					check1 = true;
 				}
 				((Gtk.CheckMenuItem)file_item).Active = value;
 				blChecked = value;
@@ -109,7 +108,7 @@ namespace System.Windows.Forms{
 			
 			file_item.Show();
 			((Gtk.CheckMenuItem)file_item).Active = blChecked;
-			check1 = 1;
+			check1 = true;
 		}
 		
 		public new event EventHandler Click;
