@@ -1,3 +1,46 @@
+2004-10-10  Martin Baulig  <martin@ximian.com>
+
+	* class-internals.h
+	(MonoGenericInst): Added `MonoGenericContainer *container'.
+	(MonoGenericMethod): Likewise.
+	(MonoGenericContext): Likewise.
+	(MonoGenericParam): Added `MonoGenericContainer *owner'.
+
+	* metadata.c
+	(do_mono_metadata_parse_type): Added a `MonoGenericContainer *' argument.
+	(do_mono_metadata_parse_generic_inst): Likewise.
+	(mono_metadata_parse_type_full): New public method.  This is the actual
+	mono_metadata_parse_type() implementation - with an additional
+	`MonoGenericContainer *' argument.
+	(mono_metadata_parse_array_full): Likewise.
+	(mono_metadata_parse_signature_full): Likewise.
+	(mono_metadata_parse_method_signature_full): Likewise.
+	(mono_metadata_parse_mh_full): Likewise.
+	(mono_type_create_from_typespec): Likewise.
+	(mono_metadata_interfaces_from_typedef_full): New public method;
+	this is similar to the other _full() methods, but we take a
+	`MonoGenericContext *' since we have to pass it to mono_class_get_full().
+	(mono_metadata_parse_generic_param): Take an additional
+	`MonoGenericContainer *' argument and lookup the MonoGenericParam
+	from that container.
+	(mono_metadata_generic_param_equal): New static method to compare
+	two type parameters.
+	(_mono_metadata_type_equal): New static method; takes an
+	additional `gboolean signature_only' argument - if true, we don't
+	compare the owners of generic parameters.
+	(mono_metadata_signature_equal): Call _mono_metadata_type_equal()
+	with a TRUE argument - do a signature-only comparision.
+
+	* loader.c: Use the new _full() methods and pass the
+	MonoGenericContainer to them.
+
+	* object-internals.h (MonoReflectionTypeBuilder): Added
+	`MonoGenericContainer *generic_container' field.
+	(MonoReflectionMethodBuilder): Likewise.
+
+	* icall.c (ves_icall_type_Equals): Use _mono_metadata_type_equal()
+	and do a signature-only comparision.
+
 2004-10-08  Zoltan Varga  <vargaz@freemail.hu>
 
 	* icall.c (ves_icall_System_Reflection_Module_GetGlobalType): Special
