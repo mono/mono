@@ -2,11 +2,12 @@ MCS = csc
 MCS_FLAGS = /target:exe $(MCS_DEFINES)
 INSTALL = /usr/bin/install
 prefix = /usr
-RUNTIME=mono
+RUNTIME=
 
 SOURCES=monoresgen.cs
 
-all: monoresgen.exe
+all:
+	if test x$(OS) = xWindows_NT; then make linux; else make -f makefile.gnu; fi
 
 linux: monoresgen.exe
 
