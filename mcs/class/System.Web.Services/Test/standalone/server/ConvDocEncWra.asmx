@@ -35,7 +35,7 @@ namespace WebServiceTests
 		public int Dada;
 	}
 
-	[WebServiceAttribute (Description="Web service that can make currency conversions")]
+	[WebServiceAttribute (Namespace="urn:mono-ws-tests", Description="Web service that can make currency conversions")]
 	[SoapDocumentServiceAttribute (Use=SoapBindingUse.Encoded, ParameterStyle=SoapParameterStyle.Wrapped)]
 	public class ConverterService : System.Web.Services.WebService
 	{
