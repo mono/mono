@@ -1,5 +1,9 @@
 2003-04-05  Nick Drochak  <ndrochak@gol.com>
 
+	* makefile.gnu: revert. debugger support not installed by default in mcs
+
+2003-04-05  Nick Drochak  <ndrochak@gol.com>
+
 	* makefile.gnu: compile with debug.
 
 2003-02-13  Zoltan Varga  <vargaz@freemail.hu>

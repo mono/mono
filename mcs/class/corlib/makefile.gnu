@@ -4,7 +4,7 @@ TEST_DIR= Test
 LIBRARY = $(topdir)/class/lib/corlib.dll
 
 LIB_LIST = unix.args
-LIB_FLAGS = --unsafe --nostdlib /debug+ /debug:full
+LIB_FLAGS = --unsafe --nostdlib
 
 SOURCES_INCLUDE=*.cs
 SOURCES_EXCLUDE=\

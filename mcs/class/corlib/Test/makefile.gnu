@@ -4,7 +4,6 @@ LIBRARY = corlib_test.dll
 
 LIB_LIST = corlib_test.args
 LIB_FLAGS =	\
-		/debug+ /debug:full \
 		-r $(topdir)/class/lib/corlib.dll \
 		-r $(topdir)/class/lib/System.dll \
 	    -r $(topdir)/class/lib/NUnit.Framework.dll
