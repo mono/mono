@@ -1609,6 +1609,12 @@ namespace Mono.CSharp {
 				// If any of the arguments is a string, cast to string
 				//
 				if (l == TypeManager.string_type){
+					
+					if (r == TypeManager.void_type) {
+						error19 ();
+						return null;
+					}
+					
 					if (r == TypeManager.string_type){
 						if (left is Constant && right is Constant){
 							StringConstant ls = (StringConstant) left;
@@ -1636,6 +1642,12 @@ namespace Mono.CSharp {
 					
 				} else if (r == TypeManager.string_type){
 					// object + string
+
+					if (l == TypeManager.void_type) {
+						error19 ();
+						return null;
+					}
+					
 					method = TypeManager.string_concat_object_object;
 					Arguments = new ArrayList ();
 					Arguments.Add (new Argument (left, Argument.AType.Expression));

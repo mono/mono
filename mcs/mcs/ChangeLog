@@ -1,3 +1,8 @@
+2002-02-20  Ravi Pratap  <ravi@ximian.com>
+
+	* expression.cs (Binary.ResolveOperator): Ensure that we are
+	not trying to operate on a void type - this fixes Dan's bug.
+
 2002-02-19  Miguel de Icaza  <miguel@ximian.com>
 
 	* cs-tokenizer.cs: Add support for @"litreal strings"
