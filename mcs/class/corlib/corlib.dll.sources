@@ -458,6 +458,7 @@ System.Runtime.InteropServices/ComVisible.cs
 System.Runtime.InteropServices/CONNECTDATA.cs
 System.Runtime.InteropServices/CurrencyWrapper.cs
 System.Runtime.InteropServices/DESCKIND.cs
+System.Runtime.InteropServices/DispatchWrapper.cs
 System.Runtime.InteropServices/DISPPARAMS.cs
 System.Runtime.InteropServices/DispIdAttribute.cs
 System.Runtime.InteropServices/DllImportAttribute.cs

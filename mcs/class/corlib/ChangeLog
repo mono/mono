@@ -1,3 +1,8 @@
+2003-11-26  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* corlib.dll.sources: Added file:
+		System.Runtime.InteropServices.DispatchWrapper.cs
+
 2003-11-26  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* corlib.dll.sources: Added 
