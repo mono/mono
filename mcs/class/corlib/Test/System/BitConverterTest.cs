@@ -64,7 +64,10 @@ public class BitConverterTest : TestCase {
 			v2 = BitConverter.ToChar (larger, 3);
 			exception = false;
 		}
-		catch (ArgumentOutOfRangeException) {
+		// LAMESPEC:
+		// the docs say it should be ArgumentOutOfRangeException, but
+		// the mscorlib throws an ArgumentException.
+		catch (ArgumentException) {
 			exception = true;
 		} 
 		AssertEquals ("A4", true, exception);
