@@ -1,3 +1,8 @@
+2005-01-26  Martin Baulig  <martin@ximian.com>
+
+	* mini.c (mono_method_to_ir): In CEE_UNBOX_ANY, don't increase
+	`ip' twice.
+
 2005-01-25  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-amd64.c (mono_arch_call_opcode): Add missing MONO_SSA_LOAD/STORE
