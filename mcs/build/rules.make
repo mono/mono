@@ -91,8 +91,10 @@ include $(topdir)/build/profiles/$(PROFILE).make
 # Simple rules
 
 %-recursive:
-	@list='$(SUBDIRS)'; for d in $$list ; do \
-	    (cd $$d && $(MAKE) $*) || exit 1 ; \
+	@set . $$MAKEFLAGS; \
+	case $$2 in *=*) dk="exit 1" ;; *k*) dk=: ;; *) dk="exit 1" ;; esac; \
+	list='$(SUBDIRS)'; for d in $$list ; do \
+	    (cd $$d && $(MAKE) $*) || $$dk ; \
 	done
 
 # note: dist-local dep, extra subdirs, $* has become $@
