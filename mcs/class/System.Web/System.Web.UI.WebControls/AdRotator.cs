@@ -16,6 +16,8 @@ using System.Collections.Specialized;
 using System.Web;
 using System.Web.UI;
 using System.Xml;
+// Namespace with internal classes, in System.Web assembly
+using System.Web.WebUtils;
 
 namespace System.Web.UI.WebControls
 {
@@ -63,7 +65,6 @@ namespace System.Web.UI.WebControls
 
 		private AdRecord[] LoadAdFile(string file)
 		{
-			//TODO: Implement me
 			Stream      fSream;
 			ArrayList   list;
 			XmlReader   reader;
@@ -139,23 +140,41 @@ namespace System.Web.UI.WebControls
 		private AdRecord[] GetData(string file)
 		{
 			//TODO: Implement me
-			fileDirectory = TemplateSourceDirectory + MapPathSecure(file);
+			fileDirectory = UrlUtils.GetDirectory(TemplateSourceDirectory + MapPathSecure(file));
 			//TODO: Do I need to check caching?
 		}
 		
 		private IDictionary SelectAd()
 		{
-			//TODO: Implement Me
+			//TODO: I have to select a Random Ad from the file
+			AdRecord[] records = GetFileData(AdvertisementFile);
+			if(records!=null)
+			{
+				if(records.Length > 0)
+				{
+					//TODO: Implement Me
+				}
+			}
+			return null;
 		}
 		
 		private bool IsAdMatching(AdRecord currAd)
 		{
-			//TODO: Implement me
+			if(KeywordFilter!=String.Empty)
+			{
+				/* Perform a case-insensitive keyword filtering
+				 * From the documentation, it looks like there's only one keyword attached.
+				*/
+				if(currAd.keyword.ToLower() == KeywordFilter.ToLower())
+					return false;
+			}
+			return true;
 		}
 		
-		private string ResolveAdUrl(string)
+		private string ResolveAdUrl(string relativeUrl)
 		{
 			//TODO: Implement me
+			//TODO: Get the full Url from the relativeUrl
 		}
 		
 		public event AdCreatedEventHandler AdCreated
