@@ -1,3 +1,8 @@
+2005-01-28  Zoltan Varga  <vargaz@freemail.hu>
+
+	* domain-internals.h: Put MonoJitInfo on a diet.
+
+	* domain.c: Fix a warning.
 
 Wed Jan 26 22:20:46 CET 2005 Paolo Molaro <lupus@ximian.com>
 
