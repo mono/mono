@@ -119,6 +119,52 @@ namespace Mono.CSharp {
 		}
 	}
 
+	//
+	// Provides "local" store across code that can yield: locals
+	// or fields, notice that this should not be used by anonymous
+	// methods to create local storage, those only require
+	// variable mapping.
+	//
+	public class VariableStorage {
+		ILGenerator ig;
+		FieldBuilder fb;
+		LocalBuilder local;
+		
+		static int count;
+		
+		public VariableStorage (EmitContext ec, Type t)
+		{
+			count++;
+			if (ec.InIterator)
+				fb = IteratorHandler.Current.MapVariable ("s_", count.ToString (), t);
+			else
+				local = ec.ig.DeclareLocal (t);
+			ig = ec.ig;
+		}
+
+		public void EmitThis ()
+		{
+			if (fb != null)
+				ig.Emit (OpCodes.Ldarg_0);
+		}
+
+		public void EmitStore ()
+		{
+			if (fb == null)
+				ig.Emit (OpCodes.Stloc, local);
+			else
+				ig.Emit (OpCodes.Stfld, fb);
+		}
+
+		public void EmitLoad ()
+		{
+			if (fb == null)
+				ig.Emit (OpCodes.Ldloc, local);
+			else 
+				ig.Emit (OpCodes.Ldfld, fb);
+		}
+	}
+	
 	/// <summary>
 	///   An Emit Context is created for each body of code (from methods,
 	///   properties bodies, indexer bodies or constructor bodies)
@@ -608,7 +654,7 @@ namespace Mono.CSharp {
 		public FieldBuilder MapVariable (string name, Type t)
 		{
 			if (InIterator){
-				return IteratorHandler.Current.MapVariable (name, t);
+				return IteratorHandler.Current.MapVariable ("v_", name, t);
 			}
 
 			throw new Exception ("MapVariable for an unknown state");

@@ -2608,7 +2608,7 @@ namespace Mono.CSharp {
 				Report_AssignToReadonly (!is_static);
 				return;
 			}
-			
+
 			if (!is_static){
 				Expression instance = instance_expr;
 

@@ -5542,14 +5542,15 @@ namespace Mono.CSharp {
 		bool EmitCollectionForeach (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
-			LocalBuilder enumerator, disposable;
+			VariableStorage enumerator, disposable;
 
-			enumerator = ig.DeclareLocal (hm.enumerator_type);
+			enumerator = new VariableStorage (ec, hm.enumerator_type);
 			if (hm.is_disposable)
-				disposable = ig.DeclareLocal (TypeManager.idisposable_type);
+				disposable = new VariableStorage (ec, TypeManager.idisposable_type);
 			else
 				disposable = null;
-			
+
+			enumerator.EmitThis ();
 			//
 			// Instantiate the enumerator
 			//
@@ -5566,7 +5567,7 @@ namespace Mono.CSharp {
 				expr.Emit (ec);
 				ig.Emit (OpCodes.Callvirt, hm.get_enumerator);
 			}
-			ig.Emit (OpCodes.Stloc, enumerator);
+			enumerator.EmitStore ();
 
 			//
 			// Protect the code in a try/finalize block, so that
@@ -5583,13 +5584,21 @@ namespace Mono.CSharp {
 			Label end_try = ig.DefineLabel ();
 			
 			ig.MarkLabel (ec.LoopBegin);
-			ig.Emit (OpCodes.Ldloc, enumerator);
+			enumerator.EmitLoad ();
 			ig.Emit (OpCodes.Callvirt, hm.move_next);
 			ig.Emit (OpCodes.Brfalse, end_try);
-			ig.Emit (OpCodes.Ldloc, enumerator);
+			if (ec.InIterator)
+				ec.EmitThis ();
+			
+			enumerator.EmitLoad ();
 			ig.Emit (OpCodes.Callvirt, hm.get_current);
 
-			((IAssignMethod)variable).EmitAssign (ec, conv);
+			if (ec.InIterator){
+				conv.Emit (ec);
+				ig.Emit (OpCodes.Stfld, ((FieldExpr) variable).FieldInfo);
+			} else 
+				((IAssignMethod)variable).EmitAssign (ec, conv);
+				
 			statement.Emit (ec);
 			ig.Emit (OpCodes.Br, ec.LoopBegin);
 			ig.MarkLabel (end_try);
@@ -5606,13 +5615,16 @@ namespace Mono.CSharp {
 				bool old_in_finally = ec.InFinally;
 				ec.InFinally = true;
 				ig.BeginFinallyBlock ();
-			
-				ig.Emit (OpCodes.Ldloc, enumerator);
+
+				disposable.EmitThis ();
+				enumerator.EmitThis ();
+				enumerator.EmitLoad ();
 				ig.Emit (OpCodes.Isinst, TypeManager.idisposable_type);
-				ig.Emit (OpCodes.Stloc, disposable);
-				ig.Emit (OpCodes.Ldloc, disposable);
+				disposable.EmitStore ();
+				disposable.EmitLoad ();
 				ig.Emit (OpCodes.Brfalse, end_finally);
-				ig.Emit (OpCodes.Ldloc, disposable);
+				disposable.EmitThis ();
+				disposable.EmitLoad ();
 				ig.Emit (OpCodes.Callvirt, TypeManager.void_dispose_void);
 				ig.MarkLabel (end_finally);
 				ec.InFinally = old_in_finally;
@@ -5636,82 +5648,106 @@ namespace Mono.CSharp {
 			int rank = array_type.GetArrayRank ();
 			ILGenerator ig = ec.ig;
 
-			LocalBuilder copy = ig.DeclareLocal (array_type);
+			VariableStorage copy = new VariableStorage (ec, array_type);
 			
 			//
 			// Make our copy of the array
 			//
+			copy.EmitThis ();
 			expr.Emit (ec);
-			ig.Emit (OpCodes.Stloc, copy);
+			copy.EmitStore ();
 			
 			if (rank == 1){
-				LocalBuilder counter = ig.DeclareLocal (TypeManager.int32_type);
+				VariableStorage counter = new VariableStorage (ec,TypeManager.int32_type);
 
 				Label loop, test;
-				
+
+				counter.EmitThis ();
 				ig.Emit (OpCodes.Ldc_I4_0);
-				ig.Emit (OpCodes.Stloc, counter);
+				counter.EmitStore ();
 				test = ig.DefineLabel ();
 				ig.Emit (OpCodes.Br, test);
 
 				loop = ig.DefineLabel ();
 				ig.MarkLabel (loop);
 
-				ig.Emit (OpCodes.Ldloc, copy);
-				ig.Emit (OpCodes.Ldloc, counter);
+				if (ec.InIterator)
+					ec.EmitThis ();
+				
+				copy.EmitThis ();
+				copy.EmitLoad ();
+				counter.EmitThis ();
+				counter.EmitLoad ();
 
 				//
 				// Load the value, we load the value using the underlying type,
 				// then we use the variable.EmitAssign to load using the proper cast.
 				//
 				ArrayAccess.EmitLoadOpcode (ig, element_type);
-				((IAssignMethod)variable).EmitAssign (ec, conv);
+				if (ec.InIterator){
+					conv.Emit (ec);
+					ig.Emit (OpCodes.Stfld, ((FieldExpr) variable).FieldInfo);
+				} else 
+					((IAssignMethod)variable).EmitAssign (ec, conv);
 
 				statement.Emit (ec);
 
 				ig.MarkLabel (ec.LoopBegin);
-				ig.Emit (OpCodes.Ldloc, counter);
+				counter.EmitThis ();
+				counter.EmitThis ();
+				counter.EmitLoad ();
 				ig.Emit (OpCodes.Ldc_I4_1);
 				ig.Emit (OpCodes.Add);
-				ig.Emit (OpCodes.Stloc, counter);
+				counter.EmitStore ();
 
 				ig.MarkLabel (test);
-				ig.Emit (OpCodes.Ldloc, counter);
-				ig.Emit (OpCodes.Ldloc, copy);
+				counter.EmitThis ();
+				counter.EmitLoad ();
+				copy.EmitThis ();
+				copy.EmitLoad ();
 				ig.Emit (OpCodes.Ldlen);
 				ig.Emit (OpCodes.Conv_I4);
 				ig.Emit (OpCodes.Blt, loop);
 			} else {
-				LocalBuilder [] dim_len   = new LocalBuilder [rank];
-				LocalBuilder [] dim_count = new LocalBuilder [rank];
+				VariableStorage [] dim_len   = new VariableStorage [rank];
+				VariableStorage [] dim_count = new VariableStorage [rank];
 				Label [] loop = new Label [rank];
 				Label [] test = new Label [rank];
 				int dim;
 				
 				for (dim = 0; dim < rank; dim++){
-					dim_len [dim] = ig.DeclareLocal (TypeManager.int32_type);
-					dim_count [dim] = ig.DeclareLocal (TypeManager.int32_type);
+					dim_len [dim] = new VariableStorage (ec, TypeManager.int32_type);
+					dim_count [dim] = new VariableStorage (ec, TypeManager.int32_type);
 					test [dim] = ig.DefineLabel ();
 					loop [dim] = ig.DefineLabel ();
 				}
 					
 				for (dim = 0; dim < rank; dim++){
-					ig.Emit (OpCodes.Ldloc, copy);
+					dim_len [dim].EmitThis ();
+					copy.EmitThis ();
+					copy.EmitLoad ();
 					IntLiteral.EmitInt (ig, dim);
 					ig.Emit (OpCodes.Callvirt, TypeManager.int_getlength_int);
-					ig.Emit (OpCodes.Stloc, dim_len [dim]);
+					dim_len [dim].EmitStore ();
+					
 				}
 
 				for (dim = 0; dim < rank; dim++){
+					dim_count [dim].EmitThis ();
 					ig.Emit (OpCodes.Ldc_I4_0);
-					ig.Emit (OpCodes.Stloc, dim_count [dim]);
+					dim_count [dim].EmitStore ();
 					ig.Emit (OpCodes.Br, test [dim]);
 					ig.MarkLabel (loop [dim]);
 				}
 
-				ig.Emit (OpCodes.Ldloc, copy);
-				for (dim = 0; dim < rank; dim++)
-					ig.Emit (OpCodes.Ldloc, dim_count [dim]);
+				if (ec.InIterator)
+					ec.EmitThis ();
+				copy.EmitThis ();
+				copy.EmitLoad ();
+				for (dim = 0; dim < rank; dim++){
+					dim_count [dim].EmitThis ();
+					dim_count [dim].EmitLoad ();
+				}
 
 				//
 				// FIXME: Maybe we can cache the computation of `get'?
@@ -5728,18 +5764,26 @@ namespace Mono.CSharp {
 					CallingConventions.HasThis| CallingConventions.Standard,
 					var_type, args);
 				ig.Emit (OpCodes.Call, get);
-				((IAssignMethod)variable).EmitAssign (ec, conv);
+				if (ec.InIterator){
+					conv.Emit (ec);
+					ig.Emit (OpCodes.Stfld, ((FieldExpr) variable).FieldInfo);
+				} else 
+					((IAssignMethod)variable).EmitAssign (ec, conv);
 				statement.Emit (ec);
 				ig.MarkLabel (ec.LoopBegin);
 				for (dim = rank - 1; dim >= 0; dim--){
-					ig.Emit (OpCodes.Ldloc, dim_count [dim]);
+					dim_count [dim].EmitThis ();
+					dim_count [dim].EmitThis ();
+					dim_count [dim].EmitLoad ();
 					ig.Emit (OpCodes.Ldc_I4_1);
 					ig.Emit (OpCodes.Add);
-					ig.Emit (OpCodes.Stloc, dim_count [dim]);
+					dim_count [dim].EmitStore ();
 
 					ig.MarkLabel (test [dim]);
-					ig.Emit (OpCodes.Ldloc, dim_count [dim]);
-					ig.Emit (OpCodes.Ldloc, dim_len [dim]);
+					dim_count [dim].EmitThis ();
+					dim_count [dim].EmitLoad ();
+					dim_len [dim].EmitThis ();
+					dim_len [dim].EmitLoad ();
 					ig.Emit (OpCodes.Blt, loop [dim]);
 				}
 			}

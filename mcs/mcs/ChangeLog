@@ -1,6 +1,17 @@
 2003-08-06  Miguel de Icaza  <miguel@ximian.com>
 
-	* codegen.cs (GetTemporaryLocal, FreeTemporaryLocal): Recycle
+	* iterators.cs (Mapvariable): provide a mechanism to use prefixes.
+
+	* statement.cs (Foreach): Use VariableStorage instead of
+	LocalBuilders.   
+
+	* codegen.cs (VariableStorage): New class used by clients that
+	require a variable stored: locals or fields for variables that
+	need to live across yield.
+
+	Maybe provide a convenience api for EmitThis+EmitLoad?
+
+	(GetTemporaryLocal, FreeTemporaryLocal): Recycle
 	these bad boys.
 
 2003-08-05  Miguel de Icaza  <miguel@ximian.com>

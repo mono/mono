@@ -84,3 +84,6 @@ mcs2.exe: mcs.exe
 
 mcs3.exe: mcs2.exe
 	$(TIME) $(RUNTIME) ./mcs2.exe $(USE_MCS_FLAGS) /target:exe /out:$@ $(all_sources)
+
+response:
+	echo $(all_sources) > res
