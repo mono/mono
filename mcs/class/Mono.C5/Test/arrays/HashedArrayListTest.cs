@@ -1097,7 +1097,6 @@ namespace nunit.arrays.hashed
 		}
 #endif
 
-#if FIXME
 		[TestFixture]
 		public class Sorting
 		{
@@ -1122,7 +1121,6 @@ namespace nunit.arrays.hashed
 				Assert.IsTrue(IC.eq(lst, 3, 5, 6, 7, 55));
 			}
 		}
-#endif
 	}
 
 

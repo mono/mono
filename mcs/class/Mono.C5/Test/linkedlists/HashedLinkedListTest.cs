@@ -360,7 +360,6 @@ namespace nunit.linkedlists.hashed
 
 	namespace EditableCollection
 	{
-#if FIXME
 		[TestFixture]
 		public class Searching
 		{
@@ -533,7 +532,6 @@ namespace nunit.linkedlists.hashed
 			[TearDown]
 			public void Dispose() { list = null; }
 		}
-#endif
 	}
 
 

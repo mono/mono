@@ -1189,7 +1189,6 @@ namespace nunit.arrays.list
 		}
 
 
-#if FIXME
 		[TestFixture]
 		public class Sorting
 		{
@@ -1255,7 +1254,6 @@ namespace nunit.arrays.list
 				Assert.IsTrue(lst2.IsEmpty);
 			}
 		}
-#endif
 	}
 
 
