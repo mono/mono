@@ -1,3 +1,7 @@
+2004-02-22  Jackson Harper  <jackson@ximian.com>
+
+	* BindingsCollection.cs: Remove some debug code.
+
 2005-02-22  Jackson Harper  <jackson@ximian.com>
 
 	* BindingContext.cs:

@@ -34,8 +34,6 @@ namespace System.Windows.Forms {
 	[DefaultEvent("CollectionChanged")]
 	public class BindingsCollection : BaseCollection {
 
-		private static int count = 0;
-		private int id = count++;
 #region Public Constructors
 		internal BindingsCollection ()
 		{
