@@ -1,3 +1,7 @@
+2005-02-21  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Hashtable.cs: Add net 2.0 ReliabilityContractAttributes.
+
 2005-02-19  Kazuki Oikawa  <kazuki@panicode.com>
 
 	* SortedList.cs, Stack.cs: Reverse the order in the Equals calls.

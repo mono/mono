@@ -32,6 +32,10 @@ using System;
 using System.Collections;
 using System.Runtime.Serialization;
 
+#if NET_2_0
+using System.Runtime.ConstrainedExecution;
+#endif
+
 namespace System.Collections {
 
 	[Serializable]
@@ -370,6 +374,9 @@ namespace System.Collections {
 			PutImpl (key, value, false);
 		}
 
+#if NET_2_0
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, CER.Success)]
+#endif
 		public virtual void Clear ()
 		{
 			for (int i = 0;i<table.Length;i++) {
@@ -392,6 +399,9 @@ namespace System.Collections {
 			return new Enumerator (this, EnumeratorMode.ENTRY_MODE);
 		}
 
+#if NET_2_0
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, CER.Success)]
+#endif
 		public virtual void Remove (Object key)
 		{
 			int i = Find (key);
