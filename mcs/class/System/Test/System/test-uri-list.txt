@@ -63,9 +63,11 @@ mailto:user:pwd@contoso.com?subject=uri
 http://www.contoso.com
 http://www.contoso.com/foo/bar/index.html?x=0
 c:\tmp\hello.txt
-file:////////cygwin/tmp/hello.txt
+# This AbsoluteUri should be ///cygwin/tmp/hello.txt
+# file:////////cygwin/tmp/hello.txt
 file://mymachine/cygwin/tmp/hello.txt
-file://///c:/cygwin/tmp/hello.txt
+# This AbsoluteUri should be ///cygwin/tmp/hello.txt
+# file://///c:/cygwin/tmp/hello.txt
 file://one_file.txt
 file://cygwin/tmp/hello.txt
 file://server/filename.ext
@@ -88,8 +90,6 @@ file:///c:/name%20with%20space.txt
 # Below should be allowed
 http://localhost/c#
 http://localhost/c#bookmark
-file://localhost/c#
-file://test.domain.com/c#
 //localhost/c#
 # below should not be allowed ...
 file://c:/c#

@@ -9,7 +9,7 @@ namespace MonoTests.System
 	public class UriTest2 : Assertion
 	{
 		// Segments cannot be validated here...
-		public void AssertUri (Uri uri,
+		public void AssertUri (string relsrc, Uri uri,
 			string toString,
 			string absoluteUri,
 			string scheme,
@@ -28,23 +28,23 @@ namespace MonoTests.System
 			string fragment,
 			string userInfo)
 		{
-			AssertEquals ("AbsoluteUri", absoluteUri, uri.AbsoluteUri);
-			AssertEquals ("Scheme", scheme, uri.Scheme);
-			AssertEquals ("Host", host, uri.Host);
-			AssertEquals ("Port", port, uri.Port);
-			AssertEquals ("LocalPath", localPath, uri.LocalPath);
-			AssertEquals ("query", query, uri.Query);
-			AssertEquals ("Fragment", fragment, uri.Fragment);
-			AssertEquals ("IsFile", isFile, uri.IsFile);
-			AssertEquals ("IsUnc", isUnc, uri.IsUnc);
-			AssertEquals ("IsLoopback", isLoopback, uri.IsLoopback);
-			AssertEquals ("authority", authority, uri.Authority);
-			AssertEquals ("UserEscaped", userEscaped, uri.UserEscaped);
-			AssertEquals ("UserInfo", userInfo, uri.UserInfo);
-			AssertEquals ("HostNameType", hostNameType, uri.HostNameType);
-			AssertEquals ("AbsolutePath", absolutePath, uri.AbsolutePath);
-			AssertEquals ("PathAndQuery", pathAndQuery, uri.PathAndQuery);
-			AssertEquals ("ToString()", toString, uri.ToString ());
+			AssertEquals (relsrc + " AbsoluteUri", absoluteUri, uri.AbsoluteUri);
+			AssertEquals (relsrc + " Scheme", scheme, uri.Scheme);
+			AssertEquals (relsrc + " Host", host, uri.Host);
+			AssertEquals (relsrc + " Port", port, uri.Port);
+			AssertEquals (relsrc + " LocalPath", localPath, uri.LocalPath);
+			AssertEquals (relsrc + " Query", query, uri.Query);
+			AssertEquals (relsrc + " Fragment", fragment, uri.Fragment);
+			AssertEquals (relsrc + " IsFile", isFile, uri.IsFile);
+			AssertEquals (relsrc + " IsUnc", isUnc, uri.IsUnc);
+			AssertEquals (relsrc + " IsLoopback", isLoopback, uri.IsLoopback);
+			AssertEquals (relsrc + " Authority", authority, uri.Authority);
+			AssertEquals (relsrc + " UserEscaped", userEscaped, uri.UserEscaped);
+			AssertEquals (relsrc + " UserInfo", userInfo, uri.UserInfo);
+			AssertEquals (relsrc + " HostNameType", hostNameType, uri.HostNameType);
+			AssertEquals (relsrc + " AbsolutePath", absolutePath, uri.AbsolutePath);
+			AssertEquals (relsrc + " PathAndQuery", pathAndQuery, uri.PathAndQuery);
+			AssertEquals (relsrc + " ToString()", toString, uri.ToString ());
 		}
 
 		[Test]
@@ -79,7 +79,8 @@ TextWriter sw = Console.Out;
 				if (uriString == null || uriString.Length == 0)
 					break;
 
-				Uri uri = baseUri == null ? new Uri (uriString) : new Uri (baseUri, uriString);
+				try {
+					Uri uri = baseUri == null ? new Uri (uriString) : new Uri (baseUri, uriString);
 /*
 				sw.WriteLine ("ToString(): " + uri.ToString ());
 				sw.WriteLine (uri.AbsoluteUri);
@@ -99,25 +100,28 @@ TextWriter sw = Console.Out;
 				sw.WriteLine (uri.Fragment);
 				sw.WriteLine (uri.UserInfo);
 */
-				AssertUri (uri,
-					sr.ReadLine (),
-					sr.ReadLine (),
-					sr.ReadLine (),
-					sr.ReadLine (),
-					sr.ReadLine (),
-					sr.ReadLine (),
-					int.Parse (sr.ReadLine ()),
-					bool.Parse (sr.ReadLine ()),
-					bool.Parse (sr.ReadLine ()),
-					bool.Parse (sr.ReadLine ()),
-					bool.Parse (sr.ReadLine ()),
-					(UriHostNameType) Enum.Parse (typeof (UriHostNameType), sr.ReadLine (), false),
-					sr.ReadLine (),
-					sr.ReadLine (),
-					sr.ReadLine (),
-					sr.ReadLine (),
-					sr.ReadLine ());
+					AssertUri (uriString, uri,
+						sr.ReadLine (),
+						sr.ReadLine (),
+						sr.ReadLine (),
+						sr.ReadLine (),
+						sr.ReadLine (),
+						sr.ReadLine (),
+						int.Parse (sr.ReadLine ()),
+						bool.Parse (sr.ReadLine ()),
+						bool.Parse (sr.ReadLine ()),
+						bool.Parse (sr.ReadLine ()),
+						bool.Parse (sr.ReadLine ()),
+						(UriHostNameType) Enum.Parse (typeof (UriHostNameType), sr.ReadLine (), false),
+						sr.ReadLine (),
+						sr.ReadLine (),
+						sr.ReadLine (),
+						sr.ReadLine (),
+						sr.ReadLine ());
 //				Console.WriteLine ("Passed: " + uriString);
+				} catch (Exception ex) {
+					Fail (String.Format ("Construction failed: [{0}] {1}", uriString, ex.Message));
+				}
 			}
 		}
 

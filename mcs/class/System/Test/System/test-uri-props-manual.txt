@@ -1,4 +1,42 @@
-﻿-------------------------
+﻿------------------------- localhost should not be \\localhost\c. No fragment.
+file://localhost/c#
+file://localhost/c#
+file://localhost/c#
+file
+localhost
+\\localhost\c#
+
+-1
+True
+True
+True
+False
+Dns
+/c#
+/c#
+localhost
+
+
+------------------------- localhost should not be \\test.domain.com\c. No fragment.
+file://test.domain.com/c#
+file://test.domain.com/c#
+file://test.domain.com/c#
+file
+test.domain.com
+\\test.domain.com\c#
+
+-1
+True
+True
+False
+False
+Dns
+/c#
+/c#
+test.domain.com
+
+
+------------------------- MS.NET totally rejects Unix Path
 /foo.txt
 file:///foo.txt
 file:///foo.txt
@@ -17,7 +55,7 @@ Basic
 
 
 
--------------------------
+------------------------- MS.NET totally rejects Unix Path
 /tmp/hello.txt
 file:///tmp/hello.txt
 file:///tmp/hello.txt
