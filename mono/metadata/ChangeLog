@@ -1,3 +1,11 @@
+2005-03-03  Zoltan Varga  <vargaz@freemail.hu>
+
+	* gc-internal.h boehm-gc.c null-gc.c: Add mono_gc_is_gc_thread () API
+	function.
+
+	* threads.c (mono_thread_attach): Detect threads which are not started
+	by the GC pthread wrappers.
+
 2005-03-03  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* icall.c: Added new icall for RNG.
