@@ -1386,7 +1386,7 @@ public class TypeManager {
 		if (t.IsSubclassOf (TypeManager.value_type) && (t != TypeManager.enum_type))
 			return true;
 		else
-			return false;
+			return t.IsGenericParameter;
 	}
 	
 	public static bool IsInterfaceType (Type t)

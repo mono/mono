@@ -1,3 +1,16 @@
+2003-10-21  Martin Baulig  <martin@ximian.com>
+
+	* convert.cs: Use `TypeManager.IsValueType' instead of
+	'type.IsValueType' everywhere.
+
+	* typemanager.cs (TypeManager.IsValueType): Return true for type
+	parameters.  The reason for this is that we need to box a type
+	parameter when converting it to a reference type.
+
+	* cs-parser.jay: Added support for default value expressions.
+
+	* generics.cs (DefaultValueExpression): New public class.	
+
 2003-10-17  Martin Baulig  <martin@ximian.com>
 
 	* generic.cs (Constraints.Resolve): Take a DecpSpace instead of a

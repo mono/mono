@@ -512,4 +512,39 @@ namespace Mono.CSharp {
 			return new_mg;
 		}
 	}
+
+	public class DefaultValueExpression : Expression
+	{
+		Expression expr;
+		LocalTemporary temp_storage;
+
+		public DefaultValueExpression (Expression expr, Location loc)
+		{
+			this.expr = expr;
+			this.loc = loc;
+		}
+
+		public override Expression DoResolve (EmitContext ec)
+		{
+			type = ec.DeclSpace.ResolveType (expr, false, loc);
+			if (type == null)
+				return null;
+
+			if (type.IsGenericParameter || TypeManager.IsValueType (type))
+				temp_storage = new LocalTemporary (ec, type);
+
+			eclass = ExprClass.Variable;
+			return this;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			if (temp_storage != null) {
+				temp_storage.AddressOf (ec, AddressOp.LoadStore);
+				ec.ig.Emit (OpCodes.Initobj, type);
+				temp_storage.Emit (ec);
+			} else
+				ec.ig.Emit (OpCodes.Ldnull);
+		}
+	}
 }

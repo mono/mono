@@ -48,12 +48,12 @@ namespace Mono.CSharp {
 				if (expr_type.IsPointer)
 					return null;
 
-				if (expr_type.IsValueType)
+				if (TypeManager.IsValueType (expr_type))
 					return new BoxedCast (expr);
 				if (expr_type.IsClass || expr_type.IsInterface || expr_type == TypeManager.enum_type)
 					return new EmptyCast (expr, target_type);
 			} else if (target_type == TypeManager.value_type) {
-				if (expr_type.IsValueType)
+				if (TypeManager.IsValueType (expr_type))
 					return new BoxedCast (expr);
 				if (expr is NullLiteral)
 					return new BoxedCast (expr);
@@ -88,7 +88,7 @@ namespace Mono.CSharp {
 					if (TypeManager.ImplementsInterface (expr_type, target_type)){
 						if (expr_type.IsClass)
 							return new EmptyCast (expr, target_type);
-						else if (expr_type.IsValueType)
+						else if (TypeManager.IsValueType (expr_type))
 							return new BoxedCast (expr, target_type);
 					}
 				}
@@ -157,7 +157,7 @@ namespace Mono.CSharp {
 			// This is the boxed case.
 			//
 			if (target_type == TypeManager.object_type) {
-				if (expr_type.IsClass || expr_type.IsValueType ||
+				if (expr_type.IsClass || TypeManager.IsValueType (expr_type) ||
 				    expr_type.IsInterface || expr_type == TypeManager.enum_type)
 					return true;
 			} else if (expr_type.IsSubclassOf (target_type)) {
@@ -985,7 +985,7 @@ namespace Mono.CSharp {
 		///   in a context that expects a `target_type'. 
 		/// </summary>
 		static public Expression ImplicitConversion (EmitContext ec, Expression expr,
-							  Type target_type, Location loc)
+							     Type target_type, Location loc)
 		{
 			Type expr_type = expr.Type;
 			Expression e;
