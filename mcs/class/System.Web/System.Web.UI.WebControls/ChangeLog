@@ -1,5 +1,10 @@
 2002-06-18  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* WebControl.cs:
+	(CopyBaseAttributes): copy Attributes and don't throw exception.
+
+2002-06-18  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* ListBox.cs: mono-stylized.
 	(AddAttributesToRender): call parent class method.
 

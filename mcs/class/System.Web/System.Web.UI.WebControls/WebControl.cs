@@ -331,10 +331,8 @@ namespace System.Web.UI.WebControls
 			//}
 		}
 
-		[MonoTODO]
 		public void CopyBaseAttributes(WebControl controlSrc)
 		{
-			//TODO: tocopy
 			/*
 			 * AccessKey, Enabled, ToolTip, TabIndex, Attributes
 			*/
@@ -343,7 +341,9 @@ namespace System.Web.UI.WebControls
 			ToolTip    = controlSrc.ToolTip;
 			TabIndex   = controlSrc.TabIndex;
 			attributes = controlSrc.Attributes;
-			throw new NotImplementedException();
+			AttributeCollection otherAtt = controlSrc.Attributes;
+			foreach (string key in controlSrc.Attributes.Keys)
+				Attributes [key] = otherAtt [key];
 		}
 
 		public void MergeStyle(Style s)
