@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.23 $
+// $Revision: 1.24 $
 // $Modtime: $
 // $Log: XplatUIDriver.cs,v $
+// Revision 1.24  2004/10/02 19:07:36  pbartok
+// - Added ClientToScreen coordinate translation method
+//
 // Revision 1.23  2004/09/21 00:54:15  jackson
 // New message loop that uses poll so we don't get a busy loop
 //
@@ -204,6 +207,7 @@ namespace System.Windows.Forms {
 		internal abstract void GetCursorPos(IntPtr handle, out int x, out int y);
 		internal abstract void SetCursorPos(IntPtr handle, int x, int y);
 		internal abstract void ScreenToClient(IntPtr handle, ref int x, ref int y);
+		internal abstract void ClientToScreen(IntPtr handle, ref int x, ref int y);
 
 		internal abstract void GrabWindow(IntPtr hWnd, IntPtr ConfineToHwnd);
 		internal abstract void GrabInfo(out IntPtr hWnd, out bool GrabConfined, out Rectangle GrabArea);

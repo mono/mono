@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.23 $
+// $Revision: 1.24 $
 // $Modtime: $
 // $Log: XplatUI.cs,v $
+// Revision 1.24  2004/10/02 19:07:36  pbartok
+// - Added ClientToScreen coordinate translation method
+//
 // Revision 1.23  2004/09/21 00:54:15  jackson
 // New message loop that uses poll so we don't get a busy loop
 //
@@ -349,6 +352,10 @@ namespace System.Windows.Forms {
 
 		internal static void ScreenToClient(IntPtr handle, ref int x, ref int y) {
 			driver.ScreenToClient (handle, ref x, ref y);
+		}
+
+		internal static void ClientToScreen(IntPtr handle, ref int x, ref int y) {
+			driver.ClientToScreen(handle, ref x, ref y);
 		}
 
 		internal static void SendAsyncMethod (AsyncMethodData data) {
