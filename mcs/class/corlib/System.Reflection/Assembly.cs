@@ -335,6 +335,9 @@ namespace System.Reflection {
 		public extern MethodBase MonoDebugger_GetMethod (int token);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		public extern int MonoDebugger_GetMethodToken (MethodBase method);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern Type MonoDebugger_GetLocalTypeFromSignature (byte[] signature);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]

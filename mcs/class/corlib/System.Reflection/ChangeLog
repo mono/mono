@@ -1,3 +1,8 @@
+2003-02-18  Martin Baulig  <martin@ximian.com>
+
+	* Assembly.cs (MonoDebugger_GetMethodToken): New method to get a
+	method's metadata token.
+
 2003-02-04  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* Module.cs: Corrected indentation for class.
