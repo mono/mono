@@ -2516,6 +2516,9 @@ assemblyref_decl	: D_VER int32 COLON int32 COLON int32 COLON int32
                                 codegen.CurrentAssemblyRef.SetHash ((byte []) $3);
                           }
                         | customattr_decl
+                          {
+                                codegen.CurrentAssemblyRef.AddCustomAttribute ((CustomAttr) $1);
+                          }
 			;
 
 exptype_all		: exptype_head OPEN_BRACE exptype_decls CLOSE_BRACE

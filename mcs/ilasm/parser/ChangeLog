@@ -1,3 +1,7 @@
+2004-07-08  Jackson Harper  <jackson@ximian.com>
+
+	* ILParser.jay: Add custom attributes to assemblyrefs.
+	
 2004-06-26  Jackson Harper  <jackson@ximian.com>
 
 	* ILParser.jay: vtable fixups use the int32 or int64 keyword, not
