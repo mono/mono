@@ -691,6 +691,27 @@ method_ref		: internal_method_ref
 			| external_method_ref
 			;
 
+external_method_ref	: type_ref external_type_ref DOUBLE_COLON name1 OPEN_PARENS arg_list CLOSE_PARENS
+			  {
+				TypeRef parent = (TypeRef) $1;
+				TypeRef extern_type = (TypeRef) $2;
+				ClassRef class_ref = (ClassRef) extern_type.Type;
+				PEAPI.Type[] type_array;
+				if ($6 != null) {
+					ArrayList param_list = $6 as ArrayList;
+					int index = 0;
+					type_array = new PEAPI.Type[param_list.Count];
+					foreach (DictionaryEntry entry in param_list) {
+						type_array[index] = ((TypeRef)entry.Value).Type;
+						index++;
+					}
+				} else {
+					type_array = new PEAPI.Type[0];
+				}	
+				$$ = class_ref.AddMethod ((string) $4, parent.Type, type_array);
+			  }
+			;  
+
 internal_method_ref	: type_ref internal_type_ref DOUBLE_COLON name1 OPEN_PARENS arg_list CLOSE_PARENS
 			  {	
 				TypeRef parent, return_type;
