@@ -1,5 +1,12 @@
 2005-02-22  Martin Baulig  <martin@ximian.com>
 
+	* generic.cs (TypeParameter.Resolve): If resolving the constraints
+	returned an error, set `constraints' to null to avoid a crash
+	later on.
+	(TypeParameter.ResolveType): Likewise.
+
+2005-02-22  Martin Baulig  <martin@ximian.com>
+
 	* generic.cs
 	(Constraints.ResolveTypes): Protect against being called twice.
 	(Constraints.CheckInterfaceMethod): Don't call ResolveTypes().

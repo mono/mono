@@ -535,8 +535,12 @@ namespace Mono.CSharp {
 
 		public bool Resolve (DeclSpace ds)
 		{
-			if (constraints != null)
-				return constraints.Resolve (ds.EmitContext);
+			if (constraints != null) {
+				if (!constraints.Resolve (ds.EmitContext)) {
+					constraints = null;
+					return false;
+				}
+			}
 
 			return true;
 		}
@@ -559,8 +563,10 @@ namespace Mono.CSharp {
 		public bool ResolveType (EmitContext ec)
 		{
 			if (constraints != null) {
-				if (!constraints.ResolveTypes (ec))
+				if (!constraints.ResolveTypes (ec)) {
+					constraints = null;
 					return false;
+				}
 			}
 
 			return true;
