@@ -1,6 +1,7 @@
 2004-01-14  Jackson Harper <jackson@ximian.com>
 
-	* TraceData.cs: Fix some typos in the output text.
+	* TraceData.cs: Fix some typos in the output text. Fix control
+	position when adding controls recursively.
 	
 2004-01-14  Jackson Harper <jackson@ximian.com>
 

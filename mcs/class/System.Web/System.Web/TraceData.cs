@@ -137,7 +137,7 @@ namespace System.Web {
 			control_data.Rows.Add (r);
 			
 			foreach (Control child in c.Controls)
-				AddControl (child, control_pos++);
+				AddControl (child, control_pos + 1);
 		}
 
 		public void AddCookie (string name, string value)
