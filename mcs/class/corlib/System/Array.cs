@@ -1,8 +1,10 @@
 //
 // System.Array.cs
 //
-// Author:
+// Authors:
 //   Joe Shaw (joe@ximian.com)
+//   Martin Baulig (martin@gnome.org)
+//   Dietmar Maurer (dietmar@ximian.com)
 //
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
