@@ -1,3 +1,7 @@
+2004-06-02  Peter Bartok <pbartok@novell.com>
+	* gdipFunctions.cs: Fixed reference to wrong DLLs for GetDC/ReleaseDC
+	  (This fixes bug #59479)
+
 2004-06-01  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* Font.cs: Added missing Browsable attribute on SizeInPoints.

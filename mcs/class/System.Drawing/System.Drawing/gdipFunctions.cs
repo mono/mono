@@ -1262,9 +1262,9 @@ namespace System.Drawing
 		// This is win32/gdi, not gdiplus, but it's easier to keep in here, also see above comment
 		[DllImport("gdi32.dll", EntryPoint="CreateFontIndirectA", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Ansi)]
 		internal static extern IntPtr CreateFontIndirectA (ref LOGFONTA logfontA);	
-		[DllImport("gdi32.dll", EntryPoint="GetDC", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Ansi)]
+		[DllImport("user32.dll", EntryPoint="GetDC", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Ansi)]
 		internal static extern IntPtr GetDC(IntPtr hwnd);	
-		[DllImport("gdi32.dll", EntryPoint="ReleaseDC", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Ansi)]
+		[DllImport("user32.dll", EntryPoint="ReleaseDC", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Ansi)]
 		internal static extern int ReleaseDC(IntPtr hdc);
 		[DllImport("gdi32.dll", EntryPoint="SelectObject", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Ansi)]
 		internal static extern IntPtr SelectObject(IntPtr hdc, IntPtr obj);	
