@@ -279,13 +279,9 @@ namespace System {
 			if (str == null)
 				throw new ArgumentNullException (Locale.GetText ("str is a null reference"));
 
-			int len = str.Length;
-			if (len != 1){
-				if (len < 1)
-					throw new ArgumentNullException ();
-				else
-					throw new FormatException ();
-			}
+			if (str.Length != 1)
+				throw new FormatException ("string contains more than one character.");
+			
 			return str [0];
 		}
 

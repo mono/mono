@@ -1,3 +1,10 @@
+2002-06-02  Duncan Mak  <duncan@ximian.com>
+
+	* Char.cs (Parse): Simplify the Exception handling.
+
+	* Convert.cs (ToDecimal): Remove call to Math.Round () when
+	converting from a float.
+
 2002-05-30  Martin Baulig  <martin@gnome.org>
 
 	* MonoType.cs (GetInterface): Implemented.

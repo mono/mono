@@ -707,7 +707,7 @@ namespace System {
 
 		public static decimal ToDecimal (float value) 
 		{
-			return (decimal) Math.Round (value);	  			
+			return (decimal) value;
 		}
 
 		public static decimal ToDecimal (int value) 
