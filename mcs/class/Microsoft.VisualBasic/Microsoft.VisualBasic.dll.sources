@@ -1,3 +1,5 @@
+Assembly/AssemblyInfo.cs
+Assembly/Locale.cs
 Microsoft.VisualBasic/AppWinStyle.cs
 Microsoft.VisualBasic/CallType.cs
 Microsoft.VisualBasic/Collection.cs
