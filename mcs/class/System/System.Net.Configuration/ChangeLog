@@ -1,3 +1,18 @@
+2004-09-10  Tim Coleman <tim@timcoleman.com>
+	* AuthenticationModuleElement.cs AuthenticationModuleElementCollection.cs
+	* AuthenticationModulesSection.cs BypassElement.cs BypassElementCollection.cs
+	* ConnectionManagementElement.cs ConnectionManagementElementCollection.cs
+	* ConnectionManagementSection.cs DefaultProxySection.cs
+	* HttpCachePolicyElement.cs HttpWebRequestElement.cs
+	* Ipv6Element.cs MailSettingsSection.cs ModuleElement.cs
+	* NetSectionGroup.cs ProxyElement.cs RequestCachingSection.cs
+	* ServicePointManagerElement.cs SettingsSection.cs SmtpElement.cs
+	* SocketElement.cs UriParserElement.cs UriParserElementCollection.cs
+	* UriParserSection.cs WebRequestModuleElement.cs 
+	* WebRequestModuleElementCollection.cs WebRequestModulesSection.cs:
+		New classes for Fx 2.0
+
+
 2004-06-15 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* DefaultProxyHandler.cs: removed Console.WriteLine's.
