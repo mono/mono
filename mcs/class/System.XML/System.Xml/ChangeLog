@@ -1,3 +1,8 @@
+2004-09-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlWriter.cs : on reader.NodeType is None, WriteNode() still tries
+	  to read more (and might result in an error).
+
 2004-09-03  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlTextReader.cs : When Normalization is true, CRLF and CR should
