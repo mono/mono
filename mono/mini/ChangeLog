@@ -1,3 +1,8 @@
+2004-12-24  Ben Maurer  <bmaurer@ximian.com>
+
+	* aot.c: Remove the use of MonoGHashTable and other GC stuff. The
+	standard not GC'd stuff is fine.
+
 2004-12-24  Zoltan Varga  <vargaz@freemail.hu>
 
 	* aot.c: Rework the AOT file format to get rid of most of the global
