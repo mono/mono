@@ -295,7 +295,7 @@ namespace System.Net
 				try {
 					return new Uri (path);
 				}
-				catch (System.UriFormatException ufe) {
+				catch (System.UriFormatException) {
 					if ((path[0] == Path.DirectorySeparatorChar) || (path[1] == ':' && Char.ToLower(path[0]) > 'a' && Char.ToLower(path[0]) < 'z')) {
 						return new Uri ("file://" + path);
 					}

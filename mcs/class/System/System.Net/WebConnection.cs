@@ -32,7 +32,6 @@ namespace System.Net
 		bool busy;
 		WaitOrTimerCallback initConn;
 		bool keepAlive;
-		bool aborted;
 		byte [] buffer;
 		static AsyncCallback readDoneDelegate = new AsyncCallback (ReadDone);
 		EventHandler abortHandler;
@@ -356,7 +355,6 @@ namespace System.Net
 				busy = false;
 				Data = new WebConnectionData ();
 				goAhead.Set ();
-				aborted = false;
 				SendNext ();
 				return;
 			}

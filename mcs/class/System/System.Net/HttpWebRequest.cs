@@ -48,14 +48,12 @@ namespace System.Net
 		bool preAuthenticate;
 		Version version = HttpVersion.Version11;
 		IWebProxy proxy;
-		bool manualProxy;
 		bool sendChunked;
 		ServicePoint servicePoint;
 		int timeout = 100000;
 		
 		WebConnectionStream writeStream;
 		HttpWebResponse webResponse;
-		AutoResetEvent requestEndEvent;
 		WebAsyncResult asyncWrite;
 		WebAsyncResult asyncRead;
 		EventHandler abortHandler;

@@ -291,7 +291,7 @@ namespace System.Net
 			if (!allowBuffering) {
 				try {
 					Write (buffer, offset, size);
-				} catch (IOException e) {
+				} catch (IOException) {
 					if (cnc.Connected)
 						throw;
 

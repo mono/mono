@@ -39,7 +39,6 @@ namespace System.Net
 		string header;
 		int length;
 		int pos;
-		string realm, opaque, nonce, algorithm;
 		static string [] keywords = { "realm", "opaque", "nonce", "algorithm", "qop" };
 		string [] values = new string [keywords.Length];
 

@@ -250,7 +250,6 @@ namespace System.Net {
 		/// </summary>
 		public override string ToString ()
 		{
-			bool bZeroUsed = false;
 			StringBuilder s = new StringBuilder ();
 
 
