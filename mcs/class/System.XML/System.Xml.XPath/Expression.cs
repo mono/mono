@@ -925,6 +925,11 @@ namespace System.Xml.XPath
 		}
 		public override String ToString () { return "- " + _expr.ToString (); }
 		public override XPathResultType ReturnType { get { return XPathResultType.Number; }}
+
+		internal override bool Peer {
+			get { return _expr.Peer; }
+		}
+
 		public override object Evaluate (BaseIterator iter)
 		{
 			return - _expr.EvaluateNumber (iter);
@@ -1483,6 +1488,11 @@ namespace System.Xml.XPath
 		}
 		public override String ToString () { return _value.ToString (); }
 		public override XPathResultType ReturnType { get { return XPathResultType.Number; }}
+
+		internal override bool Peer {
+			get { return true; }
+		}
+
 		public override object Evaluate (BaseIterator iter)
 		{
 			return _value;
@@ -1508,6 +1518,11 @@ namespace System.Xml.XPath
 		public string Value { get { return _value; } }
 		public override String ToString () { return "'" + _value + "'"; }
 		public override XPathResultType ReturnType { get { return XPathResultType.String; }}
+
+		internal override bool Peer {
+			get { return true; }
+		}
+
 		public override object Evaluate (BaseIterator iter)
 		{
 			return _value;

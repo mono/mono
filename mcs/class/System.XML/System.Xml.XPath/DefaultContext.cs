@@ -158,6 +158,10 @@ namespace System.Xml.XPath
 		
 		public override XPathResultType ReturnType { get { return XPathResultType.Number; }}
 
+		internal override bool Peer {
+			get { return true; }
+		}
+
 		public override object Evaluate (BaseIterator iter)
 		{
 			return (double) iter.Count;
@@ -183,6 +187,10 @@ namespace System.Xml.XPath
 		}
 		
 		public override XPathResultType ReturnType { get { return XPathResultType.Number; }}
+
+		internal override bool Peer {
+			get { return true; }
+		}
 
 		public override object Evaluate (BaseIterator iter)
 		{
@@ -907,6 +915,10 @@ namespace System.Xml.XPath
 		
 		public override XPathResultType ReturnType { get { return XPathResultType.Boolean; }}
 
+		internal override bool Peer {
+			get { return true; }
+		}
+
 		public override object Evaluate (BaseIterator iter)
 		{
 			return true;
@@ -927,6 +939,10 @@ namespace System.Xml.XPath
 				throw new XPathException ("false takes 0 args");
 		}
 		public override XPathResultType ReturnType { get { return XPathResultType.Boolean; }}
+
+		internal override bool Peer {
+			get { return true; }
+		}
 
 		public override object Evaluate (BaseIterator iter)
 		{
