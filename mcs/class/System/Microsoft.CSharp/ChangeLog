@@ -1,3 +1,8 @@
+2004-06-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CSharpCodeCompiler.cs : (only for windows) First check mcs.bat, then
+	  check mcs.exe. It enables xsp working with mono windows installer.
+
 2004-06-24  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CSharpCodeCompiler.cs : On windows we use fixed mono.exe and mcs.exe
