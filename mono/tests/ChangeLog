@@ -1,5 +1,7 @@
 2005-01-25  Zoltan Varga  <vargaz@freemail.hu>
 
+	* Makefile.am (PLATFORM_DISABLED_TESTS): Disable some tests on x86 as well.
+	
 	* Makefile.am (PLATFORM_DISABLED_TESTS): Disable appdomain-unload.exe
 	on amd64 to make the test green again.
 
