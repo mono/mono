@@ -1,3 +1,9 @@
+
+Fri Nov 8 14:53:03 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* ILGenerator.cs: account for the exception object being passed to the
+	catch handler to calc max_stack.
+
 2002-09-21  Martin Baulig  <martin@gnome.org>
 
 	* ModuleBuilder.cs (ModuleBuilder.symbol_writer): Make this

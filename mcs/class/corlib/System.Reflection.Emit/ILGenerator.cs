@@ -271,7 +271,10 @@ namespace System.Reflection.Emit {
 				throw new NotSupportedException ("Not in an exception block");
 			InternalEndClause ();
 			ex_handlers [cur_block].AddCatch (exceptionType, code_len);
-			//System.Console.WriteLine ("Begin catch Block: "+exceptionType.ToString());
+			cur_stack = 1; // the exception object is on the stack by default
+			if (max_stack < cur_stack)
+				max_stack = cur_stack;
+			//System.Console.WriteLine ("Begin catch Block: {0} {1}",exceptionType.ToString(), max_stack);
 			//throw new NotImplementedException ();
 		}
 		public virtual void BeginExceptFilterBlock () {
