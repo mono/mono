@@ -2133,11 +2133,11 @@ opt_set_parameter
 				
 		set_implicit_value_parameter_type = (Expression) $4;
 		
-		if (set_implicit_value_parameter_type != get_implicit_value_parameter_type)
+		if (set_implicit_value_parameter_type.ToString () != get_implicit_value_parameter_type.ToString ())
 			Report.Error (31064, 
 				lexer.Location, 
 				"Set value parameter type can not be different from property type");
-		
+				
 		if ($2 != null)
 			set_implicit_value_parameter_name = (string) $3;
 		else
