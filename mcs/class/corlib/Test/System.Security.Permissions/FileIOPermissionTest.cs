@@ -10,15 +10,33 @@
 // search for the "FIXME" notes below and adjust accordingly.
 
 using System;
+using System.IO;
+using System.Runtime.InteropServices;
 using System.Security;
 using System.Security.Permissions;
-using System.IO;
+using System.Text;
 
 using NUnit.Framework;
 
 namespace MonoTests.System.Security.Permissions {
 
-	public class FileIOPermissionTest : TestCase {
+	public class FilePathUtil {
+		[DllImport("kernel32.dll")]
+		private static extern uint GetLongPathName (string shortPath, 
+			StringBuilder buffer, uint bufLength);
+
+		static public string GetLongPathName (string somePath) 
+		{
+			StringBuilder buffer = new StringBuilder(260);
+			if (0 != GetLongPathName (somePath, buffer, (uint) buffer.Capacity))
+				return buffer.ToString ();
+			else
+				return null;
+		}
+	}
+
+	[TestFixture]
+	public class FileIOPermissionTest : Assertion {
 		
 		string[] pathArrayGood;
 		string[] pathArrayBad;
@@ -28,7 +46,14 @@ namespace MonoTests.System.Security.Permissions {
 		string[] pathArrayGood2;
 		FileIOPermission unrestricted;
 
-		protected override void SetUp() {
+		private string filename;
+
+		[SetUp]
+		public void SetUp () 
+		{
+			Environment.CurrentDirectory = Path.GetTempPath();
+			filename = Path.GetTempFileName ();
+
 			p = null;
 			pathsInPermission = null;
 			pathArrayGood = new string[2];
@@ -55,10 +80,16 @@ namespace MonoTests.System.Security.Permissions {
 			}
 		}
 
-		private void SetDefaultData() {
+		[TearDown]
+		public void TearDown () 
+		{
+			if (File.Exists (filename))
+				File.Delete (filename);
 		}
-		
-		public void TestConstructorPermissionState() {
+
+		[Test]
+		public void ConstructorPermissionState ()
+		{
 			p = new FileIOPermission(PermissionState.None);
 			AssertEquals("Should be Restricted", false, p.IsUnrestricted());
 			p = new FileIOPermission(PermissionState.Unrestricted);
@@ -72,31 +103,44 @@ namespace MonoTests.System.Security.Permissions {
 			}
 		}
 
-		public void TestConstructorString() {
-			try{
-				p = new FileIOPermission(FileIOPermissionAccess.Append, "this path is not rooted");
-				Fail("Should have thrown an exception on path not rooted");
-			}
-			catch{}
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void ConstructorString_Null () 
+		{
+			p = new FileIOPermission(FileIOPermissionAccess.Append, (string)null);
+		}
 
-			try{
-				p = new FileIOPermission(FileIOPermissionAccess.Append, "<this is not a valid path>");
-				Fail("Should have thrown an exception on invalid characters in path");
-			}
-			catch{}
-			
-			try{
-				p = new FileIOPermission(FileIOPermissionAccess.Append, "\\\\mycomputer\\test*");
-				Fail("Should have thrown an exception on wildcards not allowed in path");
-			}
-			catch{}
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ConstructorString_NotRooted ()
+		{
+			p = new FileIOPermission(FileIOPermissionAccess.Append, "this path is not rooted");
+		}
 
-			try{
-				p = new FileIOPermission((FileIOPermissionAccess)77, "c:\\temp");
-				Fail("Should have thrown an exception on invalid access value");
-			}
-			catch{}
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ConstructorString_InvalidPath () 
+		{
+			p = new FileIOPermission(FileIOPermissionAccess.Append, "<this is not a valid path>");
+		}
 
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ConstructorString_Wildcard () 
+		{
+			p = new FileIOPermission(FileIOPermissionAccess.Append, "\\\\mycomputer\\test*");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ConstructorString_InvalidAccess () 
+		{
+			p = new FileIOPermission((FileIOPermissionAccess)77, "c:\\temp");
+		}
+
+		[Test]
+		public void ConstructorString ()
+		{
 			string pathToAdd;
 			// FIXME: Adjust to run on Mac OS's
 			if (Path.VolumeSeparatorChar == ':')
@@ -110,29 +154,41 @@ namespace MonoTests.System.Security.Permissions {
 			Assert("Does not contain expected path from constructor: "+pathToAdd, pathsInPermission[0] == pathToAdd);
 		}
 
-		public void TestConstructorStringArray() {
-			try{
-				p = new FileIOPermission(FileIOPermissionAccess.Append, pathArrayBad);
-				Fail("Should have thrown an exception on wildcards not allowed in path");
-			}
-			catch{}
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void ConstructorStringArray_Null () 
+		{
+			p = new FileIOPermission(FileIOPermissionAccess.Append, (string[])null);
+		}
 
-			try{
-				p = new FileIOPermission((FileIOPermissionAccess)77, pathArrayGood);
-				Fail("Should have thrown an exception on invalid access value");
-			}
-			catch{}
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ConstructorStringArray_Wildcard () 
+		{
+			p = new FileIOPermission(FileIOPermissionAccess.Append, pathArrayBad);
+		}
 
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ConstructorStringArray_InvalidAccess () 
+		{
+			p = new FileIOPermission((FileIOPermissionAccess)77, pathArrayGood);
+		}
+
+		[Test]
+		public void ConstructorStringArray () 
+		{
 			p = new FileIOPermission(FileIOPermissionAccess.Read, pathArrayGood);
 			pathsInPermission = p.GetPathList(FileIOPermissionAccess.Read);
 			Assert("Does not contain correct number of paths. Expected 2 but got: "+pathsInPermission.Length, pathsInPermission.Length == 2);
 			foreach (string s in pathsInPermission){
 				Assert("Unexpected path in the Permission: " + s, Array.IndexOf(pathsInPermission, s) >=0);
 			}
-
 		}
 
-		public void TestAddPathListStringArray() {
+		[Test]
+		public void AddPathListStringArray ()
+		{
 			p = new FileIOPermission(FileIOPermissionAccess.Read, pathArrayGood);
 			pathsInPermission = p.GetPathList(FileIOPermissionAccess.Read);
 			Assert("Does not contain correct number of paths. Expected 2 but got: "+pathsInPermission.Length, pathsInPermission.Length == 2);
@@ -153,16 +209,16 @@ namespace MonoTests.System.Security.Permissions {
 			}
 		}
 
-		public void TestIntersect() {
-			FileIOPermission intersection;
-
+		[Test]
+		public void Intersect ()
+		{
 			p = new FileIOPermission(FileIOPermissionAccess.Read, pathArrayGood);
 			p.AllFiles = FileIOPermissionAccess.Append;
 			p.AllLocalFiles = FileIOPermissionAccess.Write;
 			
 			unrestricted = new FileIOPermission(PermissionState.Unrestricted);
 			
-			intersection = (FileIOPermission)p.Intersect(unrestricted);
+			FileIOPermission intersection = (FileIOPermission)p.Intersect(unrestricted);
 			pathsInPermission = intersection.GetPathList(FileIOPermissionAccess.Read);
 			Assert("Should contain correct number of Read paths. Expected 2 but got: "+pathsInPermission.Length, pathsInPermission.Length == 2);
 			Assert("Should have Append bit in AllFiles.", (intersection.AllFiles & FileIOPermissionAccess.Append) != 0);
@@ -191,7 +247,9 @@ namespace MonoTests.System.Security.Permissions {
 			Assert("Should have only Write bit in AllLocalFiles.", intersection.AllLocalFiles == FileIOPermissionAccess.Write);
 		}
 
-		public void TestIsSubsetOf() {
+		[Test]
+		public void IsSubsetOf ()
+		{
 			unrestricted = new FileIOPermission(PermissionState.Unrestricted);
 			Assert("IsSubsetOf reflective test failed", unrestricted.IsSubsetOf(unrestricted));
 
@@ -210,12 +268,13 @@ namespace MonoTests.System.Security.Permissions {
 			Assert("#2 IsSubsetOf false test failed", !p2.IsSubsetOf(p));
 		}
 
-		public void TestUnion() {
-			FileIOPermission union;
-
+		[Test]
+		public void Union ()
+		{
 			unrestricted = new FileIOPermission(PermissionState.Unrestricted);
 			p = new FileIOPermission(FileIOPermissionAccess.Read, pathArrayGood);
-			union = (FileIOPermission)unrestricted.Union(p);
+
+			FileIOPermission union = (FileIOPermission)unrestricted.Union(p);
 			pathsInPermission = union.GetPathList(FileIOPermissionAccess.Read);
 			Assert("Should get an unrestricted permission", union.IsUnrestricted());
 			Assert("Path list should be empty", pathsInPermission == null);
@@ -240,11 +299,11 @@ namespace MonoTests.System.Security.Permissions {
 			Assert("Path list should have 3 for Append", pathsInPermission.Length == pathArrayGood2.Length);
 		}
 
-		public void TestFromXML() {
+		[Test]
+		public void FromXML ()
+		{
 			p = new FileIOPermission(PermissionState.None);
-			SecurityElement esd;
-
-			esd = new SecurityElement("IPermission");
+			SecurityElement esd = new SecurityElement("IPermission");
 			esd.AddAttribute("class", "FileIOPermission");
 			esd.AddAttribute("version", "1");
 			esd.AddAttribute("Unrestricted", "true");
@@ -271,17 +330,31 @@ namespace MonoTests.System.Security.Permissions {
 			Assert("Path list should have 2 for Write", pathsInPermission.Length == 3);
 		}
 
-		public void TestToXML() {
-			SecurityElement esd;
-			string read;
+		[Test]
+		public void ToXML ()
+		{
 			p = new FileIOPermission(FileIOPermissionAccess.Read, pathArrayGood);
-			esd = p.ToXml();
+			SecurityElement esd = p.ToXml();
 			Assert("Esd tag incorrect", esd.Tag == "IPermission");
 			Assert("Esd version incorrect", (String)esd.Attributes["version"] == "1");
-			read = (String)esd.Attributes["Read"];
+			string read = (String)esd.Attributes["Read"];
 			pathsInPermission = read.Split(';');
 			Assert("Path list should have 2 for Read", pathsInPermission.Length == 2);
 		}
+
+		[Test]
+		[Ignore("should compatibility go that far ?")]
+		public void ShortToLong () 
+		{
+			// on windows this returns a "short" (8.3) path and filename
+			string filename = Path.GetTempFileName ();
+			p = new FileIOPermission(FileIOPermissionAccess.Read, filename);
+			string[] files = p.GetPathList (FileIOPermissionAccess.Read);
+			AssertEquals ("GetPathList.Count", 1, files.Length);
+			// FIXME: here GetTempFileName != GetPathList[0] for MS but == for Mono
+			AssertEquals ("Path.GetFileName(GetTempFileName)==Path.GetFileName(GetPathList[0])", Path.GetFileName (filename), Path.GetFileName (files [0]));
+			// note: this will fail on Linux as kernel32.dll isn't available
+			AssertEquals ("GetLongPathName(GetTempFileName)==GetPathList[0]", FilePathUtil.GetLongPathName (filename), files [0]);
+		}
 	}
 }
-

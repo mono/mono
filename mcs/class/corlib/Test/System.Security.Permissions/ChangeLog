@@ -1,5 +1,7 @@
 2004-01-27  Sebastien Pouliot  <spouliot@videotron.ca>
 
+	* FileIOPermissionTest.cs: Converted to NUnit2. Added a test to show a
+	strange behaviour (short/long path) - ignored for now.
 	* FileIOPermissionAttributeTest.cs: Removed GetTempPath from the tests
 	as the introduced failures weren't related to the class (test moved to
 	FileIOPermissionTest.cs).
