@@ -125,6 +125,17 @@ namespace System.Windows.Forms {
 				//FIXME:
 			}
 		}
+
+		[MonoTODO]
+		public bool HorizontalScrollbar {
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				// FIXME
+			}
+		}
+		
 		[MonoTODO]
 		public override int SelectedIndex {
 			get {
