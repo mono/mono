@@ -1,3 +1,8 @@
+2003-10-30 Jackson Harper <jackson@ximian.com>
+
+	* DataGridPagerStyle.cs: Do not allow page button counts to be set
+	to less then 1. Patch by Yaron Shkop. This fixes bug #50236.
+	
 2003-10-29 Jackson Harper <jackson@ximian.com>
 
 	* ButtonColumn.cs: Format string and text to format were

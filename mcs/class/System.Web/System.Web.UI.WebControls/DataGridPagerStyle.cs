@@ -127,6 +127,9 @@ namespace System.Web.UI.WebControls
 			}
 			set
 			{
+				if (value < 1)
+					throw new ArgumentOutOfRangeException("value");
+                                
 				ViewState["PageButtonCount"] = value;
 				Set(PG_BTN_COUNT);
 			}
