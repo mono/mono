@@ -35,55 +35,10 @@
 using System.Drawing;
 using System.Drawing.Text;
 using System.Drawing.Imaging;
+using System.ComponentModel;
 
 namespace System.Windows.Forms
 {
-	#region ThemePainter support
-
-	/* TrackBar Theme painter class*/
-
-	internal class ThemePainter_Label
-	{
-		static private Color last_fore_color;
-		static private Color last_back_color;
-		static private SolidBrush br_fore_color;
-		static private SolidBrush br_back_color;
-		static private Pen pen_3D = new Pen (Color.Yellow);
-		static private Pen pen_single = new Pen (Color.Pink);
-
-		static public void DefaultColors (Label label)
-		{
-			label.BackColor = Color.FromArgb (255, 236, 233, 216);
-			label.ForeColor = Color.Black;
-		}				
-		
-		static public void DrawLabel (Graphics dc, Rectangle area, BorderStyle border_style, string text, 
-			Color fore_color, Color back_color, Font font, StringFormat string_format, bool Enabled)
-
-		{			
-
-			if (last_fore_color != fore_color) {
-				last_fore_color = fore_color;
-				br_fore_color = new SolidBrush (last_fore_color);
-			}
-
-			if (last_back_color != back_color) {
-				last_back_color = back_color;
-				br_back_color = new SolidBrush (last_back_color);
-			}
-
-			dc.FillRectangle (br_back_color, area);						
-
-			if (Enabled)
-				dc.DrawString (text, font, br_fore_color, area, string_format);
-			else
-				ControlPaint.DrawStringDisabled (dc, text, font, fore_color, area, string_format);
-
-		}
-	}
-
-	#endregion // ThemePainter support
-
     	public class Label : Control
     	{
     		private Image background_image;
@@ -106,19 +61,8 @@ namespace System.Windows.Forms
     		protected ContentAlignment text_align;
 
     		#region Events
-    		public event EventHandler autosizechanged_event;
-    		public event EventHandler textalignchanged_event;
-
-    		public void add_AutoSizeChanged (System.EventHandler value)
-		{
-			autosizechanged_event = value;
-		}
-
-		public void add_TextAlignChanged (System.EventHandler value)
-		{
-			textalignchanged_event = value;
-		}
-
+    		public event EventHandler AutoSizeChanged;
+    		public event EventHandler TextAlignChanged;
 		#endregion
 
     		public Label () : base ()
@@ -137,10 +81,14 @@ namespace System.Windows.Forms
 			image_align = ContentAlignment.MiddleCenter;
 			set_usemnemonic (UseMnemonic);
 
-			ThemePainter_Label.DefaultColors (this);
+			BackColor = Color.FromArgb (255, 236, 233, 216);
+			ForeColor = Color.Black;
 
-			autosizechanged_event = null;
-    			textalignchanged_event = null;
+			CalcPreferredHeight ();
+			CalcPreferredWidth ();
+
+			AutoSizeChanged = null;
+    			TextAlignChanged = null;
     		}
 
 		#region Public Properties
@@ -153,9 +101,10 @@ namespace System.Windows.Forms
     					
     				autoSize = value;    				
     				CalcAutoSize ();
+				Refresh ();
 
-    				if (autosizechanged_event != null)
-    					autosizechanged_event (this, new EventArgs ());
+    				if (AutoSizeChanged != null)
+    					AutoSizeChanged (this, new EventArgs ());
     			}
     		}
 
@@ -174,11 +123,14 @@ namespace System.Windows.Forms
     				return border_style;
     			}
     			set {
+				if (!Enum.IsDefined (typeof (BorderStyle), value))
+					throw new InvalidEnumArgumentException (string.Format("Enum argument value '{0}' is not valid for BorderStyle", value));
+
 				if (border_style == value)
 					return;
 
     				border_style = value;
-				RecreateHandle ();
+				Refresh ();
     			}
     		}
 
@@ -187,7 +139,10 @@ namespace System.Windows.Forms
     			get {
     				return flat_style;
     			}
-    			set {
+    			set {	
+				if (!Enum.IsDefined (typeof (FlatStyle), value))
+					throw new InvalidEnumArgumentException (string.Format("Enum argument value '{0}' is not valid for FlatStyle", value));
+
     				if (flat_style == value)
 					return;
 					
@@ -214,6 +169,9 @@ namespace System.Windows.Forms
     				return image_align;
     			}
     			set {
+				if (!Enum.IsDefined (typeof (ContentAlignment), value))
+					throw new InvalidEnumArgumentException (string.Format("Enum argument value '{0}' is not valid for ContentAlignment", value));
+
     				if (image_align == value)
     					return;
     				
@@ -225,10 +183,17 @@ namespace System.Windows.Forms
     		public int ImageIndex {
     			get { return image_index;}
     			set {
+
+				if (value < 0 || value>= image_list.Images.Count) 
+					throw new ArgumentException();	
+
     				if (image_index == value)
 					return;	
 					
 				image_index = value;
+
+				if (ImageList != null && image_index !=-1)
+					Image = null;
     					
     				Refresh ();
 			}
@@ -240,15 +205,44 @@ namespace System.Windows.Forms
     			set {
     				if (image_list == value)
 					return;	
+
+				if (ImageList != null && image_index !=-1)
+					Image = null;
     					
     				Refresh ();
 			}
     		}
 
+		private void CalcPreferredHeight ()
+		{
+			if (font == null) { 
+				preferred_height = 0;
+				return;
+			}
+
+			preferred_height = Font.Height;
+
+			if (border_style == BorderStyle.None)
+				preferred_height += 3;
+		}
     		
     		public virtual int PreferredHeight {
-    			get {return preferred_height; }
+    			get { return preferred_height; }
     		}
+
+		private void CalcPreferredWidth ()
+		{
+			if (font == null) { 
+				preferred_width = 0;
+				return;
+			}
+
+			SizeF size;    			
+    		 	size = dc_mem.MeasureString (Text, Font, new SizeF (paint_area.Width,
+    		 		paint_area.Height), string_format);
+    		 	
+    		 	preferred_width = Size.Width;
+		}
 
     		public virtual int PreferredWidth {
     			get {return preferred_width; }
@@ -263,6 +257,9 @@ namespace System.Windows.Forms
     			get { return text_align; }
 
     			set {
+				if (!Enum.IsDefined (typeof (ContentAlignment), value))
+					throw new InvalidEnumArgumentException (string.Format("Enum argument value '{0}' is not valid for ContentAlignment", value));
+
     				if (text_align != value) {
 
 	    				text_align = value;
@@ -309,8 +306,8 @@ namespace System.Windows.Forms
 						break;
 					}
 
-					if (textalignchanged_event != null)
-    						textalignchanged_event (this, new EventArgs ());
+					if (TextAlignChanged != null)
+    						TextAlignChanged (this, new EventArgs ());
 
     					Refresh();
 				}
@@ -424,8 +421,8 @@ namespace System.Windows.Forms
 
     		protected virtual void OnAutoSizeChanged (EventArgs e)
 		{
-    			if (autosizechanged_event != null)
-    				autosizechanged_event (this, e);
+    			if (AutoSizeChanged != null)
+    				AutoSizeChanged (this, e);
     		}
 
     		protected override void OnEnabledChanged (EventArgs e)
@@ -435,13 +432,15 @@ namespace System.Windows.Forms
 
     		protected override void OnFontChanged (EventArgs e)
     		{			
+			Console.WriteLine ("OnFontChanged");
 			base.OnFontChanged (e);
+			CalcPreferredHeight ();
     		}
     		
     		private void CalcAutoSize ()
     		{
     			if (IsHandleCreated == false)
-    				return;    				    			
+    				return;    			   	
     			
     			SizeF size;    			
     		 	size = dc_mem.MeasureString (Text, Font, new SizeF (paint_area.Width,
@@ -457,7 +456,7 @@ namespace System.Windows.Forms
 
     		protected virtual void draw ()
 		{
-			ThemePainter_Label.DrawLabel (dc_mem, paint_area, BorderStyle, Text, 
+			ThemeEngine.Current.DrawLabel (dc_mem, paint_area, BorderStyle, Text, 
 				ForeColor, BackColor, Font, string_format, Enabled);
 				
 			DrawImage (dc_mem, Image, paint_area, image_align);
@@ -491,15 +490,14 @@ namespace System.Windows.Forms
 
     		protected virtual void OnTextAlignChanged (EventArgs e)
     		{
-
-    			if (textalignchanged_event != null)
-    				textalignchanged_event (this, e);
+    			if (TextAlignChanged != null)
+    				TextAlignChanged (this, e);
     		}
 
     		protected override void OnTextChanged (EventArgs e)
     		{
 			base.OnTextChanged (e);
-			Invalidate ();
+			CalcPreferredWidth ();
 			Refresh ();
     		}
 
@@ -574,6 +572,7 @@ namespace System.Windows.Forms
 					break;
 			}
     		}
+
 #endregion
 
     	}

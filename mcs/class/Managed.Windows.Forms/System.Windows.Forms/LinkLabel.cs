@@ -30,9 +30,12 @@
 //	- Change the cursor to a hand cursor when you are over a link (when cursors are available)
 //
 //
-// $Revision: 1.2 $
+// $Revision: 1.3 $
 // $Modtime: $
 // $Log: LinkLabel.cs,v $
+// Revision 1.3  2004/08/07 19:16:31  jordi
+// throw exceptions, fixes events, missing methods
+//
 // Revision 1.2  2004/07/22 15:22:19  jordi
 // link label: check link overlapping, implement events, and fixes
 //
@@ -50,27 +53,9 @@ using System.Drawing.Drawing2D;
 
 namespace System.Windows.Forms
 {
-	#region ThemePainter support
-
-	/* TrackBar Theme painter class*/
-
-	internal class ThemePainter_LinkLabel
-	{
-		static public void DefaultColors (LinkLabel label)
-		{
-			label.ActiveLinkColor = Color.Red;
-			label.DisabledLinkColor = Color.FromArgb (255, 143, 140, 127);
-			label.LinkColor = Color.FromArgb (255, 0, 0, 255);
-			label.VisitedLinkColor = Color.FromArgb (255, 128, 0, 128);
-		}
-	}
-
-	#endregion // ThemePainter support
-
-
 	public class LinkLabel : Label, IButtonControl
 	{
-		/* Encapulates a piece of text (regular or link)*/
+		/* Encapsulates a piece of text (regular or link)*/
 		internal class Piece
 		{
 			public string		text;
@@ -99,13 +84,7 @@ namespace System.Windows.Forms
 		private Piece[] pieces;
 
 		#region Events
-		public event LinkLabelLinkClickedEventHandler linkclicked_event;
-
-		public void add_LinkClicked (LinkLabelLinkClickedEventHandler value)
-		{
-			linkclicked_event = value;
-		}
-
+		public event LinkLabelLinkClickedEventHandler LinkClicked;
 		#endregion // Events
 
 		public LinkLabel ()
@@ -116,8 +95,11 @@ namespace System.Windows.Forms
 			link_visited = false;
 			link_click = false;
 			pieces = null;
-
-			ThemePainter_LinkLabel.DefaultColors (this);
+			
+			ActiveLinkColor = Color.Red;
+			DisabledLinkColor = Color.FromArgb (255, 143, 140, 127);
+			LinkColor = Color.FromArgb (255, 0, 0, 255);
+			VisitedLinkColor = Color.FromArgb (255, 128, 0, 128);
 		}
 
 		#region Public Properties
@@ -129,7 +111,7 @@ namespace System.Windows.Forms
 					return;
 
 				active_link = value;
-				Invalidate ();
+				Refresh ();
 			}
 		}
 
@@ -141,7 +123,7 @@ namespace System.Windows.Forms
 					return;
 
 				disabled_link = value;
-				Invalidate ();
+				Refresh ();
 			}
 		}
 
@@ -152,7 +134,7 @@ namespace System.Windows.Forms
 					return;
 
 				link_color = value;
-				Invalidate ();
+				Refresh ();
 			}
 		}
 
@@ -163,13 +145,19 @@ namespace System.Windows.Forms
 					return;
 
 				visited_color = value;
-				Invalidate ();
+				Refresh ();
 			}
 		}
 
 		public LinkArea LinkArea {
 			get { return link_area;}
-			set { link_area = value;}
+			set { 
+				if (value.Start <0 || value.Length >0)
+					throw new ArgumentException();
+				
+				link_area = value;
+				Refresh ();
+			}
 		}
 
 		public LinkBehavior LinkBehavior {
@@ -180,7 +168,7 @@ namespace System.Windows.Forms
 					return;
 
 				link_behavior = value;
-				Invalidate ();
+				Refresh ();
 			}
 		}
 
@@ -196,7 +184,7 @@ namespace System.Windows.Forms
 					return;
 
 				link_visited = value;
-				Invalidate ();
+				Refresh ();
 			}
 		}
 
@@ -208,7 +196,7 @@ namespace System.Windows.Forms
 					return;
 
 				base.Text = value;
-				Invalidate ();
+				Refresh ();
 			}
 		}
 
@@ -294,14 +282,14 @@ namespace System.Windows.Forms
 			if (Links.Count == 0)  {
 				if (paint_area.Contains (pnt)) {
 					link_click = true;
-					Invalidate ();
+					Refresh ();
 				}
 			}
 			else {
 				for (int i = 0; i < pieces.Length; i++) {
 					if (pieces[i].rect.Contains (pnt)) {
 						link_click = true;
-						Invalidate ();
+						Refresh ();
 						break;
 					}
 				}
@@ -331,10 +319,10 @@ namespace System.Windows.Forms
 				if (paint_area.Contains (pnt)) {
 					link_click = false;
 
-					if (linkclicked_event != null)
-						linkclicked_event (this, new LinkLabelLinkClickedEventArgs (new Link ()));
+					if (LinkClicked != null)
+						LinkClicked (this, new LinkLabelLinkClickedEventArgs (new Link ()));
 
-					Invalidate ();
+					Refresh ();
 				}
 			}
 			else {
@@ -342,10 +330,10 @@ namespace System.Windows.Forms
 					if (pieces[i].rect.Contains (pnt)) {
 						link_click = false;
 
-						if ((linkclicked_event != null) && (pieces[i].link != null))
-							linkclicked_event (this, new LinkLabelLinkClickedEventArgs (pieces[i].link));
+						if ((LinkClicked != null) && (pieces[i].link != null))
+							LinkClicked (this, new LinkLabelLinkClickedEventArgs (pieces[i].link));
 
-						Invalidate ();
+						Refresh ();
 						break;
 					}
 				}
@@ -355,7 +343,7 @@ namespace System.Windows.Forms
 
 
 				link_click = false;
-				Invalidate ();
+				Refresh ();
 			}
 		}
 
@@ -442,7 +430,7 @@ namespace System.Windows.Forms
 				pieces[i].rect = charRegions[i].GetBounds (dc_mem);
 
 			if (Visible && IsHandleCreated)
-				Invalidate ();
+				Refresh ();
 
 		}
 
@@ -468,7 +456,6 @@ namespace System.Windows.Forms
 
 			if (Visible == false) return;
 
-
 			if (Enabled == false)
 				color = DisabledLinkColor;
 			else
@@ -482,7 +469,7 @@ namespace System.Windows.Forms
 
 			if (Links.Count == 0 || pieces == null) {
 
-				ThemePainter_Label.DrawLabel (dc_mem, paint_area, BorderStyle, Text,
+				ThemeEngine.Current.DrawLabel (dc_mem, paint_area, BorderStyle, Text,
 					color, BackColor, link_font, string_format,
 					true /* We paint ourselfs the disabled status*/);
 
