@@ -1,3 +1,7 @@
+2002-08-19  Tim Coleman <tim@timcoleman.com>
+	* XmlSerializationWriter.cs:
+		New stubs added.
+
 2002-08-14  Tim Coleman <tim@timcoleman.com>
 	* XmlSerializer.cs:
 		More reformatting of source code so I can
