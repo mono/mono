@@ -25,6 +25,7 @@ assemblies_DATA =	\
 	Mono.Data.TdsClient.dll					\
 	Mono.Data.Tds.dll					\
 	Mono.GetOptions.dll					\
+	Mono.Http.dll						\
 	Mono.PEToolkit.dll					\
 	Mono.Posix.dll						\
 	Npgsql.dll						\
