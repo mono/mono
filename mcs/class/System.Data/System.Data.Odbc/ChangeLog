@@ -1,4 +1,8 @@
 2004-07-07 Umadevi S (sumadevi@novell.com)
+        * OdbcConnection.cs - Allowed Close to be called multiple times
+                            - Implementation of Dispose method
+
+2004-07-07 Umadevi S (sumadevi@novell.com)
         * OdbcCommand.cs : fixed set method for Transaction
                                                           
 2004-07-01  Sureshkumar T (tsureshkumar@novell.com)
