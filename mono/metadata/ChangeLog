@@ -1,3 +1,18 @@
+2004-07-06  Ben Maurer  <bmaurer@ximian.com>
+
+	* reflection.c: more changes for the new api
+
+	* object.c: When we reflect on a field w/ a constant value, it
+	will not have a memory location, so we must access metadata. Also,
+	allow easier reading of strings so that we can read them from
+	the constant data.
+
+	* class.c (mono_class_layout_fields): no need for literal fields here.
+
+	* class-internals.h: api changes for const fields
+
+	* icall.c (ves_icall_get_enum_info): use new apis for const fields
+
 2004-07-06  Martin Baulig  <martin@ximian.com>
 
 	* mono-debug.h: Increment version number to 44.
