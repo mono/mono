@@ -660,6 +660,11 @@ namespace System.Web
 								_currentStateIdx++;
 							}
 
+							if (_currentStateIdx >= _handlers.Length) {
+								_currentStateIdx = _endStateIdx;
+								break;
+							}
+
 							handler = _handlers [_currentStateIdx];
 							_countSteps++;
 							lasterror = ExecuteState (handler, ref ready_sync);
@@ -674,7 +679,6 @@ namespace System.Web
 					}
 				}
 				
-
 				// Finish the request off..
 				if (lasterror != null || _currentStateIdx == _endStateIdx) {
 					_app._asyncWebResult.Complete ((_countSyncSteps == _countSteps),

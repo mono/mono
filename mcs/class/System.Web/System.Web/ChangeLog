@@ -1,3 +1,8 @@
+2005-01-20 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpApplication.cs: if there are no more handlers, finish the request and
+	ensure we call Complete on it. Now FreeTextBox 3.0 works.
+
 2004-12-21 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpRequest.cs: honor the maxRequestSize limit from machine.config.
