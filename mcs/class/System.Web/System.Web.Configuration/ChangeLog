@@ -1,3 +1,15 @@
+2002-10-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* System.Web.Configuration/HandlerFactoryConfiguration.cs: removed.
+
+	* System.Web.Configuration/HandlerItem.cs: added validation field.
+
+	* System.Web.Configuration/HttpHandlerTypeMapper.cs: holds mappings
+	between verbs and wilcards and their associated HandlerItem.
+
+	* System.Web.Configuration/HttpHandlersSectionHandler.cs: this one
+	processes system.web/httpHandlers section of machine.config file.
+
 2002-08-26  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AuthenticationMode.cs:

@@ -66,8 +66,9 @@ System.Web.Configuration/FormsAuthPasswordFormat.cs
 System.Web.Configuration/FormsProtectionEnum.cs
 System.Web.Configuration/GlobalizationConfiguration.cs
 System.Web.Configuration/HttpCapabilitiesBase.cs
-System.Web.Configuration/HandlerFactoryConfiguration.cs
 System.Web.Configuration/HandlerFactoryProxy.cs
+System.Web.Configuration/HttpHandlerTypeMapper.cs
+System.Web.Configuration/HttpHandlersSectionHandler.cs
 System.Web.Configuration/HandlerItem.cs
 System.Web.Configuration/ModulesConfiguration.cs
 System.Web.Configuration/ModuleItem.cs
