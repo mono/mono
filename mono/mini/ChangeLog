@@ -1,4 +1,17 @@
+2004-02-11  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini.c (mono_jit_compile_method_with_opt): New helper function to
+	compile a method with a given set of optimizations.
+
+	* mini.c: Compile icall wrappers on-demand instead of at startup.
+
+	* mini-sparc.c mini-ppc.c: Call mono_icall_get_wrapper to obtain the
+	wrapper for an icall.
+
 2004-02-10  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini.c (mono_method_to_ir): Handle switch with non-empty stack. Fixes
+	#54063.
 
 	* iltests.il: Add test for non-empty stack before switch instruction.
 
