@@ -10,14 +10,11 @@ using System;
 using System.ComponentModel;
 
 namespace System.Text.RegularExpressions {
-	/* I'm just guessing that this is the correct place for this
-	 * attribute, and that the option is correct.  It shuts up
-	 * CorCompare for this undocumented class.
-	 */
 	[EditorBrowsable (EditorBrowsableState.Never)]
 	public abstract class RegexRunner {
 		// constructor
-	
+
+		[MonoTODO]
 		protected internal RegexRunner () {
 			throw new NotImplementedException ("RegexRunner is not supported by Mono.");
 		}
@@ -32,66 +29,119 @@ namespace System.Text.RegularExpressions {
 
 		// protected methods
 
+		[MonoTODO]
 		protected void Capture (int capnum, int start, int end) {
+			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		protected static bool CharInSet (char ch, string set, string category) {
-			return false;
+			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		protected void Crawl (int i) {
+			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		protected int CrawlPos () {
-			return 0;
+			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		protected void DoubleCrawl () {
+			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		protected void DoubleStack () {
+			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		protected void DoubleTrack () {
+			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		protected void EnsureStorage () {
+			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		protected bool IsBoundary (int index, int startpos, int endpos) {
-			return false;
+			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		protected bool IsECMABoundary (int index, int startpos, int endpos) {
-			return false;
+			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		protected bool IsMatched (int cap) {
-			return false;
+			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		protected int MatchIndex (int cap) {
-			return 0;
+			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		protected int MatchLength (int cap) {
-			return 0;
+			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		protected int PopCrawl () {
-			return 0;
+			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		protected void TransferCapture (int capnum, int uncapnum, int start, int end) {
+			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		protected void Uncapture () {
+			throw new NotImplementedException ();
 		}
 
 		// internal
 		
 		protected internal Match Scan (Regex regex, string text, int textbeg, int textend, int textstart, int prevlen, bool quick) {
-			return null;
+			throw new NotImplementedException ();
 		}
+
+		[MonoTODO]
+		protected internal int[] runcrawl;
+		[MonoTODO]
+		protected internal int runcrawlpos;
+		[MonoTODO]
+		protected internal Match runmatch;
+		[MonoTODO]
+		protected internal Regex runregex;
+		[MonoTODO]
+		protected internal int[] runstack;
+		[MonoTODO]
+		protected internal int runstackpos;
+		[MonoTODO]
+		protected internal string runtext;
+		[MonoTODO]
+		protected internal int runtextbeg;
+		[MonoTODO]
+		protected internal int runtextend;
+		[MonoTODO]
+		protected internal int runtextpos;
+		[MonoTODO]
+		protected internal int runtextstart;
+		[MonoTODO]
+		protected internal int[] runtrack;
+		[MonoTODO]
+		protected internal int runtrackcount;
+		[MonoTODO]
+		protected internal int runtrackpos;
 	}
 }

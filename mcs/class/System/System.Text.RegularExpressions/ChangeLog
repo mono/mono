@@ -1,5 +1,10 @@
 2004-06-10  Gert Driesen <drieseng@users.sourceforge.net>
 
+	* RegexRunner.cs: marked TODO, added missing protected internal
+	fields, throw NotImplementedException in all methods
+
+2004-06-10  Gert Driesen <drieseng@users.sourceforge.net>
+
 	* RegexRunnerFactory.cs: removed comment, no longer throw exception
 	from ctor
 	* regex.cs: fixed public API signature by renaming protected 
