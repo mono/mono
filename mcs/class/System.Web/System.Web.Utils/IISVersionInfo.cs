@@ -30,7 +30,7 @@ namespace System.Web.Utils
 		private static string mscoreeVersion;
 		private static string systemWebVersion;
 
-		private static string lockStr = "lock";
+		private static readonly object lockObj;
 
 		public IISVersionInfo()
 		{
@@ -42,7 +42,7 @@ namespace System.Web.Utils
 			{
 				if(isapiVersion==null)
 				{
-					lock(lockStr)
+					lock(lockObj)
 					{
 						// Recheck - another thread may have set the value
 						// before entering lock / exiting previous lock
@@ -63,7 +63,7 @@ namespace System.Web.Utils
 			{
 				if(mscoreeVersion==null)
 				{
-					lock(lockStr)
+					lock(lockObj)
 					{
 						if(mscoreeVersion==null)
 						{
@@ -81,7 +81,7 @@ namespace System.Web.Utils
 			{
 				if(systemWebVersion == null)
 				{
-					lock(lockStr)
+					lock(lockObj)
 					{
 						if(systemWebVersion==null)
 						{

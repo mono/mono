@@ -4,7 +4,7 @@
  * 
  * Author:  Gaurav Vaish
  * Maintainer: gvaish@iitk.ac.in
- * Status:  100%
+ * Status:  ??%
  * 
  * (C) Gaurav Vaish (2001)
  */
@@ -83,6 +83,15 @@ namespace System.Web.Utils
 				}
 			}
 			return true;
+		}
+		
+		public static bool IsRooted(string path)
+		{
+			if(path!=null && path.Length > 0)
+			{
+				return (path[0]=='/' || path[0]=='\\');
+			}
+			return false;
 		}
 		
 		public static void FailIfPhysicalPath(string path)

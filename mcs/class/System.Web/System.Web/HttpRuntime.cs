@@ -102,11 +102,13 @@ namespace System.Web
 				if(!moduleObtained)
 				{
 					//TODO: Now what? Module still not obtained
-					// Try loading using native calls. something like LoadLibrary(...) in java
+					// Try loading using native calls. something like LoadLibrary(...) in *java*
+					// LoadLibrary(dir+"\\aspnet_asp.dll)
 				}
 				if(moduleObtained)
 				{
-					// Initialize the library
+					//TODO: Initialize the library
+					// InitIsapiLibrary();
 				}
 				installDir  = dir;
 				isapiLoaded = moduleObtained;

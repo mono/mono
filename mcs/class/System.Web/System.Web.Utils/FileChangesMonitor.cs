@@ -13,6 +13,12 @@
  * (C) Gaurav Vaish (2001)
  */
 
+using System;
+using System.IO;
+using System.Web;
+using System.Web.Utils;
+using System.Runtime.InteropServices;
+
 namespace System.Web.Utils
 {
 	internal class FileChangesMonitor
@@ -21,11 +27,32 @@ namespace System.Web.Utils
 		private static string BINDIR = "bin/";
 		private static string MAXLEN = 260;
 		
-		private FileChangeEventHandler rename;
-		private NativeFileChangeEventHandler subDir;
+		private FileChangeEventHandler       cbRename;
+		private NativeFileChangeEventHandler cbSubDirs;
 		
-		private int    monitoredSubdirs;
-		private string rootDir;
-		//private 
+		private int       monitoredSubdirs;
+		private string    rootDir;
+		private Hashtable allDirs;
+		private GCHandle  rootcbSubDirs;
+		
+		private ReaderWriterLock rwLock;
+		
+		public FileChangesMonitor()
+		{
+			allDirs = new Hashtable(WebHashcodeProvider.Default, WebEqualComparer.Default);
+			rsLock  = new ReaderWriterLock();
+		}
+		
+		/// <param name="file">Name of the file</param>
+		/// <param name="mTime">Last modification date</param>
+		/// <param name="length">Legnth of the file</param>
+		public void GetFileAttributes(string file, out DateTime mTime, long length)
+		{
+			if(!Path.IsRooted(file))
+			{
+				throw new HttpException(HttpRuntime.FormatResourceString("Path_must_be_rooted"));
+			}
+			mTime = File.
+		}
 	}
 }
