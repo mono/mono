@@ -1,3 +1,7 @@
+2005-03-06  Zoltan Varga  <vargaz@freemail.hu>
+
+	* delegate4.cs: Remove this, this is already tested in pinvoke3.cs.
+
 2005-03-04  Zoltan Varga  <vargaz@freemail.hu>
 
 	* remoting1.cs: Add new regression test.
