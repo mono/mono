@@ -1,11 +1,22 @@
+public interface INode<T>
+{
+	void Hello (T t);
+}
+
 public class Stack<T>
 {
-	public Stack ()
-	{ }
+	public T TheData;
+	public readonly Foo<T> TheFoo;
 
-	public Node GetNode (T t)
+	public Stack (T t)
 	{
-		return new Node (t);
+		this.TheData = t;
+		this.TheFoo = new Foo<T> (t);
+	}
+
+	public INode<T> GetNode ()
+	{
+		return new Node (this);
 	}
 
 	public Foo<T> GetFoo (T t)
@@ -18,19 +29,28 @@ public class Stack<T>
 		return new Bar<T> (t);
 	}
 
-	public class Node
+	protected class Node : INode<T>
 	{
-		public readonly T Data;
+		public readonly Stack<T> Stack;
 
-		public Node (T t)
+		public Node (Stack<T> stack)
 		{
-			this.Data = t;
+			this.Stack = stack;
+		}
+
+		public void Hello (T t)
+		{
 		}
 	}
 
 	public class Foo<T>
 	{
 		public readonly T Data;
+
+		public Bar<T> GetBar ()
+		{
+			return new Bar<T> (Data);
+		}
 
 		public Foo (T t)
 		{
@@ -46,6 +66,31 @@ public class Stack<T>
 		{
 			this.Data = u;
 		}
+
+		public Foo<T> GetFoo (Stack<T> stack)
+		{
+			return stack.TheFoo;
+		}
+
+		public class Baz<V>
+		{
+			public readonly V Data;
+
+			public Foo<T> GetFoo (Stack<T> stack)
+			{
+				return new Foo<T> (stack.TheData);
+			}
+
+			public Bar<V> GetBar ()
+			{
+				return new Bar<V> (Data);
+			}
+
+			public Baz (V v)
+			{
+				this.Data = v;
+			}
+		}
 	}
 }
 
@@ -53,8 +98,8 @@ class X
 {
 	static void Main ()
 	{
-		Stack<int> stack = new Stack<int> ();
-		Stack<int>.Node node = stack.GetNode (9);
+		Stack<int> stack = new Stack<int> (1);
+		INode<int> node = stack.GetNode ();
 		Stack<int>.Foo<int> foo = stack.GetFoo (7);
 		Stack<int>.Bar<int> bar = stack.GetBar (8);
 	}
