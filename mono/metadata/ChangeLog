@@ -1,3 +1,9 @@
+2004-11-28  Martin Baulig  <martin@ximian.com>
+
+	* loader.c
+	(method_from_methodspec): Also inflate the `gmethod->mtype_argv'.
+	Fixes gen-112.cs.
+
 2004-11-27  Miguel de Icaza  <miguel@ximian.com>
 
 	* assembly.c (do_mono_assembly_open): Instead of having a
