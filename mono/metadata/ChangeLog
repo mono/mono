@@ -1,3 +1,8 @@
+2004-10-06  Zoltan Varga  <vargaz@freemail.hu>
+
+	* image.c (load_modules): Don't include native modules in the modules
+	array.
+
 2004-10-05  Zoltan Varga  <vargaz@freemail.hu>
 
 	* reflection.h: Add param_defaults field.
