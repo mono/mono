@@ -1,3 +1,39 @@
+2002-10-25  Daniel Morgan <danmorg@sc.rr.com>
+
+	* all of the files: modified made sure 
+	  licensing terms were the same
+	  for mcs tools being under the GPL license
+
+	* sqlsharpgtk.cs: modified to load Login Dialog
+	  to Connect to database.  Create a toolbar and
+	  status bar.  When appending text to the output
+	  textview, scroll to the end of the text.
+	  created login dialog, toolbar, and status bar,
+	  and use new SQL editor
+
+	* LoginDialog.cs: added file to be the Login Dialog
+	
+	* DbProvider.cs
+	* DbProviderCollection.cs: added files for the
+	  database provider
+	  
+	* SqlEditorSharp.cs: added new file to be the
+	  SQL Editor written in C# and GTK#.  Replaces
+	  the SqlEditor.cs which was only C# bindings to
+	  native sqleditor.dll 
+
+	* win32.make: add new files to windows build and
+	  removed the old native sqleditor.dll as a dependency.
+
+	* SqlEditor.cs: file removed
+
+	* sql-editor-gtk-widget: directory removed
+	
+	* sql-editor-gtk-widget/win32.make: file removed
+	
+	* sql-editor-gtk-widget/gnome-db-sqleditor.c
+	* sql-editor-gtk-widget/gnome-db-sqleditor.h: removed files 
+
 2002-10-21  Daniel Morgan <danmorg@sc.rr.com>
 
 	* sqlsharpgtk.cs
