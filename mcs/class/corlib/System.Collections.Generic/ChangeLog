@@ -1,3 +1,8 @@
+2004-12-27  Ben Maurer  <bmaurer@ximian.com>
+
+	* List.cs: My new (mostly untested ;-) impl of List
+	<T>. Implements most of the API.
+
 2004-12-26  Ben Maurer  <bmaurer@ximian.com>
 
 	* Queue.cs: New, non-linked-list based impl.
