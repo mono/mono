@@ -51,7 +51,6 @@ namespace System.Xml.Schema
 
 			this.schema = schema;
 
-			//FIXME: Should we reset the values on error??
 			if(MaxOccurs != Decimal.One)
 				error(h,"maxOccurs must be 1");
 			if(MinOccurs != Decimal.One && MinOccurs != Decimal.Zero)

@@ -2,6 +2,7 @@
 //            Adwiv@Yahoo.com
 using System;
 using System.Collections;
+using System.Collections.Specialized;
 using System.Xml;
 
 namespace System.Xml.Schema
@@ -11,11 +12,13 @@ namespace System.Xml.Schema
 	/// </summary>
 	public class XmlSchemaObjectTable
 	{
-		private Hashtable table;
+//		private Hashtable table;
+		private HybridDictionary table;
 
 		internal XmlSchemaObjectTable ()
 		{
-			table = new Hashtable(); 
+//			table = new Hashtable(); 
+			table = new HybridDictionary (); 
 		}
 		public int Count 
 		{

@@ -69,7 +69,7 @@ namespace System.Xml.Schema
 
 			if (Items.Count == 0 || ValidatedMaxOccurs == 0)
 				OptimizedParticle = XmlSchemaParticle.Empty;
-			// FIXME: Regardless of isTop, it should remove pointless particle.
+			// LAMESPEC: Regardless of isTop, it should remove pointless particle. It seems ContentTypeParticle design bug.
 			else if (!isTop && Items.Count == 1 && ValidatedMinOccurs == 1 && ValidatedMaxOccurs == 1)
 				OptimizedParticle = ((XmlSchemaParticle) Items [0]).GetOptimizedParticle (false);
 			else {

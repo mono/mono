@@ -33,7 +33,6 @@ namespace System.Xml.Schema
 
 		/// <remarks>
 		/// 1. ref must be present
-		/// 2. The element must be empty. ?? FIXME: Is this correct or annotation is permitted?
 		/// </remarks>
 		internal override int Compile(ValidationEventHandler h, XmlSchema schema)
 		{
@@ -49,9 +48,6 @@ namespace System.Xml.Schema
 
 			XmlSchemaUtil.CompileID(Id,this, schema.IDCollection,h);
 
-//			if(this.Annotation != null)
-//				error(h, "attributegroup with a ref can't have any content");
-			
 			this.CompilationId = schema.CompilationId;
 			return errorCount;
 		}

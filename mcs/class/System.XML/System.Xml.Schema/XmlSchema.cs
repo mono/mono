@@ -454,10 +454,6 @@ namespace System.Xml.Schema
                                 {
                                         int numerr = ((XmlSchemaAnnotation)obj).Compile(handler, this);
                                         errorCount += numerr;
-                                        if( numerr == 0)
-                                        {
-                                                //FIXME: What PSVI set do we add this to?
-                                        }
                                 }
                                 else if(obj is XmlSchemaAttribute)
                                 {

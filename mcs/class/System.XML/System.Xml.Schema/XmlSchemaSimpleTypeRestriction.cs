@@ -99,6 +99,9 @@ namespace System.Xml.Schema
 
 			XmlSchemaUtil.CompileID(Id,this,schema.IDCollection,h);
 
+			for (int i = 0; i < this.Facets.Count; i++)
+				if (! (Facets [i] is XmlSchemaFacet))
+					error (h, "Only XmlSchemaFacet objects are allowed for Facets property");
 			this.CompilationId = schema.CompilationId;
 			return errorCount;
 		}
@@ -200,9 +203,7 @@ namespace System.Xml.Schema
 					}
 				}
 				else {
-					// FIXME: Not an XmlSchemaFacet, should we complain here?
-					// Definately not worth seeing what sort of facet it is, as
-					// it isn't any of them.
+					// Other than XmlSchemaFacet; already reported at Compile()
 					continue;
 				}
 

@@ -1,5 +1,18 @@
 2004-05-13  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlSchema.cs : Removed FIXME. No PSVI required.
+	* XmlSchemaAll.cs : Removed FIXME. It was not done.
+	* XmlSchemaAttributeGroupRef.cs : Removed FIXME. It can be annotated.
+	* XmlSchemaChoice.cs : not FIXME but LAMESPEC.
+	* XmlSchemaSimpleTypeRestriction.cs : Added check for non 
+	  XmlSchemaFacet items on Compile(). Thus removed FIXME.
+	* XmlSchemaUtil.cs : Fixed SplitList to handle sequential spaces.
+	  Thus removed FIXME.
+	* XmlSchemaObjectTable. cs: modified to use HybridDictionary (mostly
+	  for avoiding iterator order difference).
+
+2004-05-13  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlSchemaSimpleTypeRestriction.cs : Removed MonoTODO. done.
 
 2004-05-12  Atsushi Enomoto <atsushi@ximian.com>

@@ -217,22 +217,37 @@ namespace System.Xml.Schema
 			if(list == null || list == string.Empty)
 				return new string [0];
 
-			string[] listarr = list.Split(new char[]{' ','\t','\n'});
-			int pos=0;
-			int i = 0;
-			for(i=0;i<listarr.Length;i++)
-			{
-				if(listarr[i] != null && listarr[i] != String.Empty)
-				{
-					listarr[pos++] = listarr[i];
+			ArrayList al = null;
+			int start = 0;
+			bool wait = true;
+			for (int i = 0; i < list.Length; i++) {
+				switch (list [i]) {
+				case ' ':
+				case '\r':
+				case '\n':
+				case '\t':
+					if (!wait) {
+						if (al == null)
+							al = new ArrayList ();
+						al.Add (list.Substring (start, i - start));
+					}
+					wait = true;
+					break;
+				default:
+					if (wait) {
+						wait = false;
+						start = i;
+					}
+					break;
 				}
 			}
-			if(pos == i)
-				return listarr;
-			string[] retarr = new String[pos];
-			if(pos!=0)
-				Array.Copy(listarr, retarr, pos);
-			return retarr;
+
+			if (!wait && start == 0)
+				return new string [] {list};
+
+			if (!wait && start < list.Length)
+				al.Add (start == 0 ? list : list.Substring (start));
+			return al.ToArray (typeof (string)) as string [];
 		}
 
 		public static void ReadUnhandledAttribute(XmlReader reader, XmlSchemaObject xso)
