@@ -1,3 +1,7 @@
+2003-12-25 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* test-141.cs: add tests for #38674.
+
 2003-12-23 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* pp.cs: Also test for 2 entry-point-looking methods
