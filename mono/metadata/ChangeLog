@@ -1,3 +1,8 @@
+2005-03-30  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* domain.c: removed g_assert for runtimesecurityframe_class. This is 
+	only used with --security and hides the wrong corlib version error.
+
 2005-03-30  Joshua Tauberer  <tauberer@for.net>
 
 	* class.c: Changed mono_class_name_from_token so that types
