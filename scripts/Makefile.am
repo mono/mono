@@ -19,6 +19,7 @@ bin_SCRIPTS = \
 	macpack			\
 	mbas			\
 	mcs			\
+	mjs			\
 	mkbundle		\
 	mono-find-provides	\
 	mono-find-requires	\
