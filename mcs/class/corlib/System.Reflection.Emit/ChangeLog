@@ -1,3 +1,9 @@
+
+Tue Jul 9 19:03:03 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* TypeBuilder.cs: special case SerializarionAttribute.
+	Tweaks to get correct code in corlib.
+
 2002-07-06  Miguel de Icaza  <miguel@ximian.com>
 
 	* ILGenerator.cs (ILGenerator.Emit): For doubles and floats, swap

@@ -553,8 +553,7 @@ namespace System.Reflection.Emit {
 		}
 
 		protected override bool IsArrayImpl () {
-			// FIXME
-			return false;
+			return type_is_subtype_of (this, typeof (System.Array), false);
 		}
 		protected override bool IsByRefImpl () {
 			// FIXME
@@ -572,8 +571,14 @@ namespace System.Reflection.Emit {
 			return false;
 		}
 		protected override bool IsValueTypeImpl () {
-			// test this one
-			return type_is_subtype_of (this, pmodule.assemblyb.corlib_value_type, false);
+			//Console.WriteLine ("is value type: {0}: {1} ({2}) base: {3}", AssemblyQualifiedName, type_is_subtype_of (this, pmodule.assemblyb.corlib_value_type, false), pmodule.assemblyb.corlib_value_type.AssemblyQualifiedName, BaseType != null?BaseType.AssemblyQualifiedName: "");
+			return (type_is_subtype_of (this, pmodule.assemblyb.corlib_value_type, false) || type_is_subtype_of (this, typeof(System.ValueType), false));
+//				this != pmodule.assemblyb.corlib_value_type &&
+//				this != typeof (System.Enum); /* FIXME: handle a TypeBuilder System.Enum */
+
+/*			return type_is_subtype_of (this, typeof(System.ValueType), false) &&
+				this != typeof(System.ValueType) &&
+				this != typeof (System.Enum);*/
 		}
 		
 		public override RuntimeTypeHandle TypeHandle { get { return _impl; } }
@@ -665,6 +670,9 @@ namespace System.Reflection.Emit {
 						break; // error out...
 					}
 				}
+				return;
+			} else if (attrname == "System.SerializableAttribute") {
+				attrs |= TypeAttributes.Serializable;
 				return;
 			}
 			if (cattrs != null) {
