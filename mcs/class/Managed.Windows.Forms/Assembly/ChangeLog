@@ -1,3 +1,8 @@
+2005-02-13  Peter Bartok  <pbartok@novell.com>
+
+	* Locale.cs: Implemented support for reading resources from
+	  the assembly
+
 2004-04-13  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* Consts.cs: Added
