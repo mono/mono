@@ -3,8 +3,10 @@
 //
 // Authors:
 //	Ben Maurer (bmaurer@users.sourceforge.net)
+//	Sanjay Gupta (gsanjay@novell.com)
 //
 // (C) 2003 Ben Maurer
+// (C) 2004 Novell, Inc. (http://www.novell.com)
 //
 
 //
@@ -39,12 +41,7 @@ namespace System.Web.UI {
 		{
 		}
 		
-		public abstract IHierarchicalEnumerable GetHierarchicalList ();
-		public override IEnumerable Select ()
-		{
-			return GetHierarchicalList ();
-		}
-	 
+		public abstract IHierarchicalEnumerable Select();
 	}
 }
 #endif

@@ -1,5 +1,9 @@
 2004-10-18 Sanjay Gupta <gsanjay@novell.com>
 
+	* HierarchicalDataSourceView.cs: Updated.
+
+2004-10-18 Sanjay Gupta <gsanjay@novell.com>
+
 	* DataSourceSelectArguments.cs: Initial implementation.
 
 2004-10-12 Sanjay Gupta <gsanjay@novell.com>
