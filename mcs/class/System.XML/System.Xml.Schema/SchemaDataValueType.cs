@@ -109,6 +109,11 @@ namespace System.Xml.Schema
 		{
 			return value.GetHashCode ();
 		}
+
+		public override string ToString ()
+		{
+			return value;
+		}
 	}
 
 	internal struct StringArrayValueType

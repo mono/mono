@@ -1,3 +1,9 @@
+2004-01-20  Atsushi Enomoto <atsushi@ximian.com>
+
+	* SchemaDataValueType.cs : UriValueType.ToString() should return 
+	  actual URI string (as MS's XmlSchemaUri class does).
+	* XmlSchemaReader.cs : Make it internal.
+
 2004-01-16  David Sheldon <dave-mono@earth.li>
 
        * BuiltInDatatype.cs: added guard to stop index out of range error for

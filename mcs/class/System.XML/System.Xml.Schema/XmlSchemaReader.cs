@@ -6,7 +6,7 @@ namespace System.Xml.Schema
 	/// <summary>
 	/// A wrapper around XmlReader
 	/// </summary>
-	public class XmlSchemaReader : XmlReader, IXmlLineInfo
+	internal class XmlSchemaReader : XmlReader, IXmlLineInfo
 	{
 		XmlReader reader;
 		ValidationEventHandler handler;
