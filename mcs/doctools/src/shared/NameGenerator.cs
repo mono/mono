@@ -39,34 +39,28 @@ namespace Mono.Doc.Utils
 			// type specifier
 			if ((flags & NamingFlags.TypeSpecifier) != 0) {
 				// append a type specifier to this name
-				TypeNames tn   = GetTypeNameForMemberInfo(m);
 				string    type = null;
 
-				switch (tn) {
-					case TypeNames.Constructor:
-						type = "C";
-						break;
-					case TypeNames.Event:
-						type = "E";
-						break;
-					case TypeNames.Field:
-						type = "F";
-						break;
-					case TypeNames.Method:
-						type = "M";
-						break;
-					case TypeNames.Property:
-						type = "P";
-						break;
-					case TypeNames.Type:
-						type = "T";
-						break;
-					default:
-						type = "!";
-						break;
+				if (m is ConstructorInfo) {
+					type = "C";
+				} else if (m is EventInfo) {
+					type = "E";
+				} else if (m is FieldInfo) {
+					type = "F";
+				} else if (m is PropertyInfo) {
+					type = "P";
+				} else if (m is Type) {
+					type = "T";
+				} else {
+					type = "!";
 				}
 
 				name.Append(type + ":");
+			}
+
+			// first-class types
+			if (m.DeclaringType == null && m is Type) {
+				return name.Append((m as Type).FullName).ToString();
 			}
 
 			// full name
@@ -97,25 +91,30 @@ namespace Mono.Doc.Utils
 					name.Append("()");
 				}
 			}
-			
+
 			return name.ToString();
 		}
 
 
-		/// <summary>
-		/// Determines the kind of type a given MemberInfo object is.
-		/// </summary>
-		/// <param name="m">Determine the kind of this member</param>
-		/// <returns>An TypeNames enum specifying the kind of this member</returns>
-		public static TypeNames GetTypeNameForMemberInfo(MemberInfo m)
+		public static string GetKindNameForType(Type t)
 		{
-			if      (m is EventInfo)       return TypeNames.Event;
-			else if (m is FieldInfo)       return TypeNames.Field;
-			else if (m is MethodInfo)      return TypeNames.Method;
-			else if (m is ConstructorInfo) return TypeNames.Constructor;
-			else if (m is PropertyInfo)    return TypeNames.Property;
-			else if (m is Type)            return TypeNames.Type;
-			else                           return TypeNames.UNKNOWN;
+			string kind = null;
+
+			if (t.IsClass) {
+				kind = "class";
+			} else if (t.IsInterface) {
+				kind = "interface";
+			} else if (t.IsValueType) {
+				if (t.BaseType.FullName == "System.Enum") {
+					kind = "enum";
+				} else {
+					kind = "struct";
+				}
+			} else {
+				kind = "UNKNOWN";
+			}
+
+			return kind;
 		}
 	}
 }
