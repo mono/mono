@@ -23,7 +23,6 @@ SOURCES = \
 	../System.Windows.Forms/BoundsSpecified.cs \
 	../System.Windows.Forms/RightToLeft.cs \
 	../System.Windows.Forms/Shortcut.cs \
-	../System.Windows.Forms/MenuMerge.cs \
 	../System.Windows.Forms/MeasureItemEventArgs.cs \
 	../System.Windows.Forms/SizeGripStyle.cs \
 	../System.Windows.Forms/FormStartPosition.cs \
@@ -34,9 +33,6 @@ SOURCES = \
 	../System.Windows.Forms/InputLanguageChangingEventHandler.cs \
 	../System.Windows.Forms/DrawItemState.cs \
 	../System.Windows.Forms/ComVisible.cs \
-	../System.Windows.Forms/Menu.cs \
-	../System.Windows.Forms/MainMenu.cs \
-	../System.Windows.Forms/ContextMenu.cs \
 	../System.Windows.Forms/DialogResult.cs \
 	../System.Windows.Forms/IButtonControl.cs \
 	../System.Windows.Forms/FormBorderStyle.cs \
