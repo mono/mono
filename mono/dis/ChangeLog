@@ -1,3 +1,6 @@
+2003-11-19  Zoltan Varga  <vargaz@freemail.hu>
+
+	* get.c (dis_stringify_modifiers): Fix display of modreq and modopt.
 
 Thu Nov 13 16:12:09 CET 2003 Paolo Molaro <lupus@ximian.com>
 
