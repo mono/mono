@@ -5,6 +5,11 @@
 
 2004-11-28  Martin Baulig  <martin@ximian.com>
 
+	* mini.c (mono_method_to_ir): In CEE_DUP, added handle_stobj().
+	Fixes gen-112.cs.
+
+2004-11-28  Martin Baulig  <martin@ximian.com>
+
 	* mini-x86.c (mono_arch_call_opcode): Use the original type, not
 	the result of mono_type_get_underlying_type() to check whether
 	we're byref.
