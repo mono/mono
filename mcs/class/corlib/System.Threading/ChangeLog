@@ -1,3 +1,8 @@
+2004-02-06  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Thread.cs: Store the thread name in unmanaged memory, since the
+	thread object is shared between appdomains.
+
 2004-02-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Thread.cs: Implemented CurrentPrincipal.

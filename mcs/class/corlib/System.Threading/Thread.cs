@@ -378,18 +378,29 @@ namespace System.Threading
 			}
 		}
 
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private extern string GetName_internal ();
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private extern void SetName_internal (String name);
+
+		/* 
+		 * The thread name must be shared by appdomains, so it is stored in
+		 * unmanaged code.
+		 */
+
 		public string Name {
 			get {
-				return(thread_name);
+				return GetName_internal ();
 			}
 			
 			set {
 				lock (this) {
-					if(thread_name!=null) {
+					if(Name!=null) {
 						throw new InvalidOperationException ("Thread.Name can only be set once.");
 					}
 				
-					thread_name=value;
+					SetName_internal (value);
 				}
 			}
 		}
