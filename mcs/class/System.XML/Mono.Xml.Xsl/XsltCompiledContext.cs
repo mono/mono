@@ -150,7 +150,36 @@ namespace Mono.Xml.Xsl {
 		}
 
 		public override int CompareDocument (string baseUri, string nextBaseUri) { throw new NotImplementedException (); }
-		public override bool PreserveWhitespace (XPathNavigator nav) { throw new NotImplementedException (); }
+
+		public override bool PreserveWhitespace (XPathNavigator nav) 
+		{
+			XPathNavigator tmp = nav.Clone ();
+			switch (tmp.NodeType) {
+			case XPathNodeType.Root:
+				return false;
+			case XPathNodeType.Element:
+				break;
+			default:
+				tmp.MoveToParent ();
+				break;
+			}
+
+			for (; tmp.NodeType == XPathNodeType.Element; tmp.MoveToParent ()) {
+				object o = p.CompiledStyle.Style.SpaceControls [new XmlQualifiedName (tmp.LocalName, tmp.NamespaceURI)];
+				if (o == null)
+					continue;
+				XmlSpace space = (XmlSpace) o;
+				switch ((XmlSpace) o) {
+				case XmlSpace.Preserve:
+					return true;
+				case XmlSpace.Default:
+					return false;
+				// None: continue.
+				}
+			}
+			return true;
+		}
+
 		public override bool Whitespace { get { throw new NotImplementedException (); }}
 	}
 

@@ -678,11 +678,9 @@ namespace Mono.Xml.Xsl {
 	
 	public class XslNameUtil
 	{
-		static char [] wsChars = new char [] {' ', '\t', '\n', '\r'};
-
 		public static QName [] FromListString (string names, XPathNavigator current)
 		{
-			string [] nameArray = names.Split (wsChars);
+			string [] nameArray = names.Split (XmlChar.WhitespaceChars);
 			int idx = 0;
 			for (int i = 0; i < nameArray.Length; i++)
 				if (nameArray [i] != String.Empty)
@@ -693,12 +691,17 @@ namespace Mono.Xml.Xsl {
 			idx = 0;
 			for (int i = 0; i < nameArray.Length; i++)
 				if (nameArray [i] != String.Empty)
-					qnames [idx++] = FromString (nameArray [i], current);
+					qnames [idx++] = FromString (nameArray [i], current, true);
 
 			return qnames;
 		}
 
 		public static QName FromString (string name, XPathNavigator current)
+		{
+			return FromString (name, current, false);
+		}
+
+		public static QName FromString (string name, XPathNavigator current, bool useDefaultXmlns)
 		{
 			if (current.NodeType == XPathNodeType.Attribute)
 				(current = current.Clone ()).MoveToParent ();
@@ -707,8 +710,7 @@ namespace Mono.Xml.Xsl {
 			if (colon > 0)
 				return new QName (name.Substring (colon+ 1), current.GetNamespace (name.Substring (0, colon)));
 			else if (colon < 0)
-				// Default namespace is not used for unprefixed names.
-				return new QName (name, "");
+				return new QName (name, useDefaultXmlns ? current.GetNamespace (String.Empty) : "");
 			else
 				throw new ArgumentException ("Invalid name: " + name);
 		}

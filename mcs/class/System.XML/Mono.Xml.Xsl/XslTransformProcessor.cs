@@ -23,8 +23,6 @@ using QName = System.Xml.XmlQualifiedName;
 
 namespace Mono.Xml.Xsl {
 	public class XslTransformProcessor {
-		static char [] wsChars = new char [] {' ', '\t', '\n', '\r'};
-
 		CompiledStylesheet compiledStyle;
 		
 		XslStylesheet style;
@@ -477,8 +475,8 @@ namespace Mono.Xml.Xsl {
 
 		public bool PushCDataState (string name, string ns)
 		{
-			if (insideCDataSectionElements)
-				return false;
+//			if (insideCDataSectionElements)
+//				return false;
 			for (int i = 0; i < Output.CDataSectionElements.Length; i++) {
 				XmlQualifiedName qname = Output.CDataSectionElements [i];
 				if (qname.Name == name && qname.Namespace == ns) {
@@ -487,13 +485,19 @@ namespace Mono.Xml.Xsl {
 					return true;
 				}
 			}
+			this.insideCDataSectionElements = false;
+			Out.InsideCDataSection = false; //
 			return false;
 		}
 
-		public void PopCDataState ()
+		public void PopCDataState (bool isCData)
 		{
-			Out.InsideCDataSection = false;
-			this.insideCDataSectionElements = false;
+			Out.InsideCDataSection = this.insideCDataSectionElements = isCData;
+		}
+
+		public bool PreserveWhitespace ()
+		{
+			return XPathContext.PreserveWhitespace (CurrentNode);
 		}
 	}
 }

@@ -104,9 +104,9 @@ namespace Mono.Xml.Xsl
 				//Emit pending attributes
 				for (int i = 0; i < pendingAttributesPos; i++) {
 					Attribute attr = pendingAttributes [i];
-					string prefix = _nsManager.LookupPrefix (attr.Namespace);
-					if (prefix == null)
-						prefix = attr.Prefix;
+					string prefix = attr.Prefix;
+					if (prefix == String.Empty)
+						prefix = _nsManager.LookupPrefix (attr.Namespace);
 					_emitter.WriteAttributeString (prefix, attr.LocalName, attr.Namespace, attr.Value);
 				}
 				foreach (string prefix in _currentNsPrefixes) {
@@ -147,7 +147,8 @@ namespace Mono.Xml.Xsl
 
 			if (_state == WriteState.Prolog) {
 				//Seems to be the first element - take care of Doctype
-				if (_currentOutput.DoctypeSystem != null)
+				// Note that HTML does not require SYSTEM identifier.
+				if (_currentOutput.DoctypePublic != null || _currentOutput.DoctypeSystem != null)
 					_emitter.WriteDocType (prefix + (prefix==null? ":" : "") + localName, 
 						_currentOutput.DoctypePublic, _currentOutput.DoctypeSystem);
 			}
@@ -230,7 +231,8 @@ namespace Mono.Xml.Xsl
 				_nsManager.AddNamespace (prefix, nsUri);
 
 			if (_currentNamespaceDecls [prefix] as string != nsUri) {
-				_currentNsPrefixes.Add (prefix);
+				if (!_currentNsPrefixes.Contains (prefix))
+					_currentNsPrefixes.Add (prefix);
 				_currentNamespaceDecls [prefix] = nsUri;
 			}
 		}

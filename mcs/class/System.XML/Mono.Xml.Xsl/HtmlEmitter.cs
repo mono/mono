@@ -26,6 +26,7 @@ namespace Mono.Xml.Xsl
 		bool openAttribute;
 		int xmlDepth;
 		bool indent;
+		Encoding outputEncoding;
 
 		public HtmlEmitter (TextWriter writer, XslOutput output)
 		{
@@ -33,11 +34,11 @@ namespace Mono.Xml.Xsl
 			indent = !(output.Indent == "no");
 			elementNameStack = new Stack ();
 			xmlDepth = -1;
+			outputEncoding = output.Encoding;
 		}
 
 		public override void WriteStartDocument (StandaloneType standalone)
 		{
-			// do nothing
 		}
 		
 		public override void WriteEndDocument ()
@@ -47,19 +48,18 @@ namespace Mono.Xml.Xsl
 
 		public override void WriteDocType (string name, string publicId, string systemId)
 		{
-			writer.Write ("<!DOCTYPE ");
-			writer.Write (name);
-			writer.Write (' ');
+			writer.Write ("<!DOCTYPE html ");
 			if (publicId != null && publicId != String.Empty) {
-				writer.Write ("PUBLIC ");
+				writer.Write ("PUBLIC \"");
 				writer.Write (publicId);
-				writer.Write (' ');
+				writer.Write ("\" ");
 				writer.Write (systemId);
 			} else if (systemId != null && systemId != String.Empty) {
-				writer.Write ("SYSTEM ");
+				writer.Write ("SYSTEM \"");
 				writer.Write (systemId);
+				writer.Write ('\"');
 			}
-			writer.Write ('>');
+			writer.Write (">\r\n");
 		}
 
 		private void CloseAttribute ()
@@ -74,6 +74,16 @@ namespace Mono.Xml.Xsl
 				CloseAttribute ();
 			writer.Write ('>');
 			openElement = false;
+
+			if (outputEncoding != null && elementNameStack.Count > 0) {
+				string name = elementNameStack.Peek () as string;
+				if (name.ToUpper () == "HEAD") {
+					WriteStartElement (String.Empty, "META", String.Empty);
+					WriteAttributeString (String.Empty, "http-equiv", String.Empty, "Content-Type");
+					WriteAttributeString (String.Empty, "content", String.Empty, "text/html; charset=" + outputEncoding.WebName);
+					WriteEndElement ();
+				}
+			}
 		}
 
 		// FIXME: check all HTML elements' indentation.
@@ -166,7 +176,7 @@ namespace Mono.Xml.Xsl
 			case "COL":
 			case "FRAME":
 			case "HR":
-			case "IMAGE":
+			case "IMG":
 			case "INPUT":
 			case "ISINDEX":
 			case "LINK":
@@ -279,11 +289,6 @@ namespace Mono.Xml.Xsl
 						continue;
 					writer.Write (text.ToCharArray (), start, i - start);
 					writer.Write ("&lt;");
-					start = i;
-					break;
-				case '>':
-					writer.Write (text.ToCharArray (), start, i - start);
-					writer.Write ("&gt;");
 					start = i;
 					break;
 				case '\'':

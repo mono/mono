@@ -1,3 +1,27 @@
+2003-12-02 Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* Compiler.cs : In FromListString(), it should use default ns,
+	  not unqualified one.
+	* GenericOutputter.cs : CheckState() - attribute's Prefix should take
+	  precedence.  Doctype should be written even if SYSTEM id is absent.
+	  Fixed possible multiple xmlns output.
+	* HtmlEmitter.cs :
+	  - Encoding output using META element.
+	  - Doctype name is fixed (html).
+	  - Double quotation on PUBLIC and SYSTEM missing.
+	  - Fixed incorrect tag name check for IMG.
+	  - '>' should not be escaped.
+	* XmlWriterEmitter.cs :
+	  Added newline before doctype.  In WriteComment(), "--" and tail
+	  '-' are not allowed (it escapes, while XmlWriter simply rejects).
+	* XslTransformProcessor.cs : cdata-section-elements should enclose
+	  direct child tests only.   Added PreserveWhitespace() (incomplete).
+	* XsltCompiledContext.cs : Implemented PreserveWhitespace() (incomplete).
+
+2003-11-28 Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* IdPattern.cs : This should work against multiple ids.
+
 2003-11-27 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* Compiler.cs
