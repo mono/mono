@@ -1,3 +1,7 @@
+2004-12-09  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* SerializationCodeGenerator.cs: Yet another generation fix.
+
 2004-12-09  Lluis Sanchez Gual <lluis@novell.com>
 
 	* SerializationCodeGenerator.cs: Fixed generation of enum literals.

@@ -2352,7 +2352,7 @@ namespace System.Xml.Serialization
 		
 		string GetTypeOf (Type td)
 		{
-			return "typeof(" + td.FullName + ")";
+			return "typeof(" + td.FullName.Replace ('+','.') + ")";
 		}
 		
 		string GetString (string str)
