@@ -6,6 +6,7 @@ LIB_LIST = data_linux_test.args
 LIB_FLAGS =	\
 	-r $(topdir)/class/lib/corlib.dll \
 	-r $(topdir)/class/lib/System.Data.dll \
+	-r $(topdir)/class/lib/System.Xml.dll \
 	-r $(topdir)/class/lib/System.dll \
 	-r $(topdir)/class/lib/NUnitCore_mono.dll
 
