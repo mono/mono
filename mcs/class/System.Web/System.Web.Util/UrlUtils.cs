@@ -134,14 +134,15 @@ namespace System.Web.Util
 				return Reduce (basePath + slash + relPath);
 			}
 
+			if (basePath == null || basePath == "") {
+				basePath = HttpRuntime.AppDomainAppVirtualPath;
+				if (basePath.Length <= 1)
+					basePath = String.Empty;
+			}
 
-			string vPath = HttpRuntime.AppDomainAppVirtualPath;
-			if (vPath.Length <= 1)
-				vPath = String.Empty;
-
-			return Reduce (vPath + "/" + relPath);
+			return Reduce (basePath + "/" + relPath);
 		}
-		
+
 		public static bool IsValidProtocol(string protocol)
 		{
 			if(protocol.Length < 1)
