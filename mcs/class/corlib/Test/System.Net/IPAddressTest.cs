@@ -90,10 +90,8 @@ public class IPAddressTest : TestCase
 
 	public void TestParseWrong ()
 	{
-		bool failure = false;
 		IPAddress ip = IPAddress.None;
 
-		failure = false;
 		try {
 			ip = IPAddress.Parse ("12.+1.1.4");
                         Fail("Should raise a FormatException #1");
@@ -102,8 +100,6 @@ public class IPAddressTest : TestCase
 			Fail ("ParseWrong #1:" + e.ToString());
 		}
 
-
-		failure = false;
 		try {
 			ip = IPAddress.Parse ("12.1.-1.5");
                         Fail("Should raise a FormatException #2");
@@ -112,7 +108,6 @@ public class IPAddressTest : TestCase
 			Fail ("ParseWrong #2:" + e.ToString());
 		}
 
-		failure = false;
 		try {
 			ip = IPAddress.Parse ("257.1.1.9");
                         Fail("Should raise a FormatException #3");
@@ -121,7 +116,6 @@ public class IPAddressTest : TestCase
 			Fail ("ParseWrong #3:" + e.ToString());
 		}
 
-		failure = false;
 		try {
 			ip = IPAddress.Parse (null);
                         Fail("Should raise a ArgumentNullException #1");
