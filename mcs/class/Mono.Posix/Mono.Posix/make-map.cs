@@ -30,16 +30,8 @@ class MakeMap {
 		foreach (object aattr in a.GetCustomAttributes (false)){
 			Console.WriteLine ("Got: " + aattr.GetType ().Name);
 			if (aattr.GetType ().Name == "IncludeAttribute"){
-				IncludeAttribute ia = (IncludeAttribute) aattr;
-
-				foreach (string s in ia.Defines){
-					sc.WriteLine ("#define {0}", s);
-				}
-				
-				foreach (string s in ia.Includes){
-					sc.WriteLine ("#include <{0}>", s);
-				}
-
+				WriteDefines (sc, aattr);
+				WriteIncludes (sc, aattr);
 			}
 		}
 		string f = args [1];
@@ -95,5 +87,29 @@ class MakeMap {
 		sc.Close ();
 
 		return 0;
+	}
+
+	static void WriteDefines (TextWriter writer, object o)
+	{
+		PropertyInfo prop = o.GetType ().GetProperty ("Defines");
+		if (prop == null)
+			throw new Exception ("Cannot find 'Defines' property");
+
+		MethodInfo method = prop.GetGetMethod ();
+		string [] defines = (string []) method.Invoke (o, null);
+		foreach (string def in defines)
+			writer.WriteLine ("#define {0}", def);
+	}
+
+	static void WriteIncludes (TextWriter writer, object o)
+	{
+		PropertyInfo prop = o.GetType ().GetProperty ("Includes");
+		if (prop == null)
+			throw new Exception ("Cannot find 'Includes' property");
+
+		MethodInfo method = prop.GetGetMethod ();
+		string [] includes = (string []) method.Invoke (o, null);
+		foreach (string inc in includes)
+			writer.WriteLine ("#include <{0}>", inc);
 	}
 }

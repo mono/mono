@@ -6,6 +6,7 @@
 #include <sys/wait.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <signal.h>
 #include "map.h"
 int map_Mono_Posix_OpenFlags (int x)
 {
@@ -30,16 +31,6 @@ int map_Mono_Posix_OpenFlags (int x)
 		r |= O_NONBLOCK;
 	if ((x & Mono_Posix_OpenFlags_O_SYNC) != 0)
 		r |= O_SYNC;
-	if ((x & Mono_Posix_OpenFlags_O_NOFOLLOW) != 0)
-		r |= O_NOFOLLOW;
-	if ((x & Mono_Posix_OpenFlags_O_DIRECTORY) != 0)
-		r |= O_DIRECTORY;
-	if ((x & Mono_Posix_OpenFlags_O_DIRECT) != 0)
-		r |= O_DIRECT;
-	if ((x & Mono_Posix_OpenFlags_O_ASYNC) != 0)
-		r |= O_ASYNC;
-	if ((x & Mono_Posix_OpenFlags_O_LARGEFILE) != 0)
-		r |= O_LARGEFILE;
 	return r;
 }
 
@@ -155,12 +146,8 @@ int map_Mono_Posix_Signals (int x)
 		 return SIGWINCH;
 	if (x == Mono_Posix_Signals_SIGIO)
 		 return SIGIO;
-	if (x == Mono_Posix_Signals_SIGPWR)
-		 return SIGPWR;
 	if (x == Mono_Posix_Signals_SIGSYS)
 		 return SIGSYS;
-	if (x == Mono_Posix_Signals_SIGRTMIN)
-		 return SIGRTMIN;
 	return -1;
 }
 

@@ -1,3 +1,11 @@
+2004-01-07  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Syscall.cs: moved the assembly attribute to a proper place
+	and added 'signal.h'
+	* make-map.cs: use reflection to invoke the properties, as it
+	fails under MS runtime.
+	
+
 2004-01-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Syscall.cs: moved assembly attribute and added unsafe block to fix

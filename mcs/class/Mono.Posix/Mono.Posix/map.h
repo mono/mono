@@ -10,11 +10,6 @@
 #define Mono_Posix_OpenFlags_O_APPEND O_APPEND
 #define Mono_Posix_OpenFlags_O_NONBLOCK O_NONBLOCK
 #define Mono_Posix_OpenFlags_O_SYNC O_SYNC
-#define Mono_Posix_OpenFlags_O_NOFOLLOW O_NOFOLLOW
-#define Mono_Posix_OpenFlags_O_DIRECTORY O_DIRECTORY
-#define Mono_Posix_OpenFlags_O_DIRECT O_DIRECT
-#define Mono_Posix_OpenFlags_O_ASYNC O_ASYNC
-#define Mono_Posix_OpenFlags_O_LARGEFILE O_LARGEFILE
 
 #define Mono_Posix_FileMode_S_ISUID S_ISUID
 #define Mono_Posix_FileMode_S_ISGID S_ISGID
@@ -65,7 +60,5 @@
 #define Mono_Posix_Signals_SIGPROF SIGPROF
 #define Mono_Posix_Signals_SIGWINCH SIGWINCH
 #define Mono_Posix_Signals_SIGIO SIGIO
-#define Mono_Posix_Signals_SIGPWR SIGPWR
 #define Mono_Posix_Signals_SIGSYS SIGSYS
-#define Mono_Posix_Signals_SIGRTMIN SIGRTMIN
 
