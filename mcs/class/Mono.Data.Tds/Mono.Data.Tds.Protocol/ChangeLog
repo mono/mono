@@ -1,3 +1,6 @@
+2004-11-06 Gert Driesen <drieseng@users.sourceforge.net>
+	* Tds70.cs: avoid unnecessary property call.	
+
 2004-11-01 Gert Driesen <drieseng@users.sourceforge.net>
 	
 	* Tds70.cs: when type of parameter value is enum, convert value to
