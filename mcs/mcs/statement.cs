@@ -1464,38 +1464,43 @@ namespace Mono.CSharp {
 				Report.Debug (1, "MERGING CHILDREN", branching, this);
 
 				foreach (UsageVector child in children) {
-					Report.Debug (1, "  MERGING CHILD", child);
+					Report.Debug (1, "  MERGING CHILD", child, child.is_finally);
 
-					// If Returns is already set, perform an `And' operation on it,
-					// otherwise just set just.
-					if (!new_returns_set) {
-						new_returns = child.Returns;
-						new_returns_set = true;
-					} else
-						new_returns = AndFlowReturns (new_returns, child.Returns);
+					if (!child.is_finally) {
+						// If Returns is already set, perform an
+						// `And' operation on it, otherwise just set just.
+						if (!new_returns_set) {
+							new_returns = child.Returns;
+							new_returns_set = true;
+						} else
+							new_returns = AndFlowReturns (
+								new_returns, child.Returns);
 
-					// If Breaks is already set, perform an `And' operation on it,
-					// otherwise just set just.
-					if (!new_breaks_set) {
-						new_breaks = child.Breaks;
-						new_breaks_set = true;
+						// If Breaks is already set, perform an
+						// `And' operation on it, otherwise just set just.
+						if (!new_breaks_set) {
+							new_breaks = child.Breaks;
+							new_breaks_set = true;
+						} else
+							new_breaks = AndFlowReturns (
+								new_breaks, child.Breaks);
+
+						// Check whether control may reach the end of this sibling.
+						// This happens unless we either always return or always break.
+						if ((child.Returns == FlowReturns.EXCEPTION) ||
+						    (child.Returns == FlowReturns.ALWAYS) ||
+						    ((branching.Type != FlowBranchingType.SWITCH_SECTION) &&
+						     (branching.Type != FlowBranchingType.LOOP_BLOCK) &&
+						     (child.Breaks == FlowReturns.ALWAYS)))
+							breaks = true;
+						else
+							breaks = false;
 					} else
-						new_breaks = AndFlowReturns (new_breaks, child.Breaks);
+						breaks = false;
 
 					// Ignore unreachable children.
 					if (child.Returns == FlowReturns.UNREACHABLE)
 						continue;
-
-					// Check whether control may reach the end of this sibling.
-					// This happens unless we either always return or always break.
-					if ((child.Returns == FlowReturns.EXCEPTION) ||
-					    (child.Returns == FlowReturns.ALWAYS) ||
-					    ((branching.Type != FlowBranchingType.SWITCH_SECTION) &&
-					     (branching.Type != FlowBranchingType.LOOP_BLOCK) &&
-					     (child.Breaks == FlowReturns.ALWAYS)))
-						breaks = true;
-					else
-						breaks = false;
 
 					// A local variable is initialized after a flow branching if it
 					// has been initialized in all its branches which do neither
@@ -1611,6 +1616,9 @@ namespace Mono.CSharp {
 					} else
 						Breaks = AndFlowReturns (Breaks, new_breaks);
 				}
+
+				if (new_returns == FlowReturns.EXCEPTION)
+					Breaks = FlowReturns.UNREACHABLE;
 
 				Report.Debug (1, "MERGING CHILDREN DONE", new_params, new_locals,
 					      new_returns, new_breaks, this);

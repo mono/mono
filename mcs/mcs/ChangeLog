@@ -1,5 +1,11 @@
 2002-08-23  Martin Baulig  <martin@gnome.org>
 
+	* statements.cs (FlowBranching.UsageVector.MergeChildren):
+	A `finally' block never returns or breaks; improved handling of
+	unreachable code.
+
+2002-08-23  Martin Baulig  <martin@gnome.org>
+
 	* statement.cs (Throw.Resolve): Allow `throw null'.
 
 2002-08-23  Martin Baulig  <martin@gnome.org>
