@@ -1555,8 +1555,6 @@ namespace Mono.CSharp {
 			} else
 				e = converted;
 
-			ec.Mark (loc);
-
 			return e;
 		}
 		

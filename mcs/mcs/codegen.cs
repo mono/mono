@@ -405,11 +405,6 @@ namespace Mono.CSharp {
 		{
 			bool has_ret = false;
 
-//			Console.WriteLine ("Emitting: " + loc);
-
-			if (CodeGen.SymbolWriter != null)
-				Mark (loc);
-
 			if (block != null){
 				try {
 				int errors = Report.Errors;
