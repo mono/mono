@@ -1,3 +1,16 @@
+2005-03-30 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* CookieContainer.cs: adding to a CookieCollection might not increment
+	the number of items if the cookie is replaced. Now Count works properly.
+	Fixed an array index exception (typo).
+
+	* CookieCollection.cs: also compare the version.
+
+	* HttpWebResponse.cs: when we have cookies, add them to the request
+	container.
+
+	* HttpWebRequest.cs: changed last parameter of HttpWebResponse ctor.
+
 2005-03-30  Miguel de Icaza  <miguel@novell.com>
 
 	* Cookie.cs: Compare using the InvariantCulture, to match the

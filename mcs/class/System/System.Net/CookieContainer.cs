@@ -140,7 +140,7 @@ namespace System.Net
 					throw new CookieException ("Capacity exceeded");
 
 				cookies.Add (cookie);
-				count++;
+				count = cookies.Count;
 			}
 		}
 
@@ -265,7 +265,7 @@ namespace System.Net
 							continue;
 
 						if (path [path.Length - 1] != '/' && uripath.Length > path.Length &&
-						    path [path.Length] != '/')
+						    uripath [path.Length] != '/')
 							continue;
 					}
 				}

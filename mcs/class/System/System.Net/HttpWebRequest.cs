@@ -1023,7 +1023,7 @@ namespace System.Net
 
 			WebException wexc = null;
 			try {
-				webResponse = new HttpWebResponse (actualUri, method, data, (cookieContainer != null));
+				webResponse = new HttpWebResponse (actualUri, method, data, cookieContainer);
 				haveResponse = true;
 			} catch (Exception e) {
 				wexc = new WebException (e.Message, e, WebExceptionStatus.ProtocolError, null); 

@@ -52,13 +52,14 @@ namespace System.Net
 		string statusDescription;
 		long contentLength = -1;
 		string contentType;
+		CookieContainer cookieContainer;
 
 		bool disposed = false;
 		Stream stream;
 		
 		// Constructors
 		
-		internal HttpWebResponse (Uri uri, string method, WebConnectionData data, bool cookiesSet)
+		internal HttpWebResponse (Uri uri, string method, WebConnectionData data, CookieContainer container)
 		{
 			this.uri = uri;
 			this.method = method;
@@ -67,7 +68,8 @@ namespace System.Net
 			statusCode = (HttpStatusCode) data.StatusCode;
 			statusDescription = data.StatusDescription;
 			stream = data.stream;
-			if (cookiesSet) {
+			if (container != null) {
+				this.cookieContainer = container;
 				FillCookies ();
 			} else if (webHeaders != null) {
 				webHeaders.RemoveInternal ("Set-Cookie");
@@ -408,6 +410,8 @@ namespace System.Net
 				cookie.Domain = uri.Host;
 
 			cookieCollection.Add (cookie);
+			if (cookieContainer != null)
+				cookieContainer.Add (uri, cookie);
 		}
 
 		void SetCookie2 (string cookies_str)

@@ -82,7 +82,7 @@ namespace System.Net
 			int pos = SearchCookie (cookie);
 			if (pos == -1)
 				list.Add (cookie);
-			else 
+			else
 				list [pos] = cookie;
 		}
 
@@ -94,6 +94,9 @@ namespace System.Net
 
 			for (int i = list.Count - 1; i >= 0; i--) {
 				Cookie c = (Cookie) list [i];
+				if (c.Version != cookie.Version)
+					continue;
+
 				if (0 != String.Compare (domain, c.Domain, true, CultureInfo.InvariantCulture))
 					continue;
 
