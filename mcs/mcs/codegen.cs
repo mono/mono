@@ -227,7 +227,7 @@ namespace CIR {
 		
 		void EmitStatement (Statement s)
 		{
-			Console.WriteLine ("Emitting statement of type " + s.GetType ());
+			// Console.WriteLine ("Emitting statement of type " + s.GetType ());
 			
 			if (s is If)
 				EmitIf ((If) s);
@@ -266,7 +266,6 @@ namespace CIR {
 		{
 			block.EmitMeta (parent, ig, block);
 
-			Console.WriteLine ("Emitting Top Block");
 			EmitBlock (block);
 
 			ig.Emit (OpCodes.Ret);

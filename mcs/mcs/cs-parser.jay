@@ -1500,7 +1500,6 @@ primary_expression
 	: literal
 	  {
 		// 7.5.1: Literals
-		
 	  }
  
 	| qualified_identifier
@@ -1508,25 +1507,7 @@ primary_expression
 		string name = (string) $1;
 
 		$$ = null;
-		if (name.IndexOf ('.') == -1){
-			//
-			// we need to check against current_block not being null
-			// as `expression' is allowed in argument_lists, which 
-			// do not exist inside a block.  
-			//
-			if (current_block != null){
-				if (current_block.IsVariableDefined (name))
-					$$ = new LocalVariableReference (current_block, name);
-			}
-			if (($$ == null) && (current_local_parameters != null)){
-				int idx;
-				Parameter par = current_local_parameters.GetParameterByName (name, out idx);
-				if (par != null)
-					$$ = new ParameterReference (current_local_parameters, idx, name);
-			}
-		}
-		if ($$ == null)
-			$$ = new SimpleName (name);
+		$$ = QualifiedIdentifier (name);
 	  }
 	| parenthesized_expression
 	| member_access
@@ -2923,6 +2904,63 @@ CheckDef (bool result, string name)
 	CheckDef (DeclSpace.AdditionResult.NameExists, name);
 }
 
+object 
+SimpleLookup (string name)
+{
+	//
+	// we need to check against current_block not being null
+	// as `expression' is allowed in argument_lists, which 
+	// do not exist inside a block.  
+	//
+	if (current_block != null){
+		if (current_block.IsVariableDefined (name))
+			return new LocalVariableReference (current_block, name);
+	}
+
+	if (current_local_parameters != null){
+		int idx;
+		Parameter par = current_local_parameters.GetParameterByName (name, out idx);
+		if (par != null)
+			return new ParameterReference (current_local_parameters, idx, name);
+	}
+
+	return null;
+}
+
+// 
+// Assumes that the name contains a `.' and tries to perform a simple lookup
+// and shape the result to be a MemberAccess on a Local/Parameter
+//
+object CompositeLookup (string name)
+{
+	int pos = name.IndexOf (".");
+	string left = name.Substring (0, pos);
+	object o;
+
+	o = SimpleLookup (left);
+	if (o != null){
+		string right = name.Substring (pos + 1);
+		return new MemberAccess ((Expression) o, right);
+	}
+
+	return null;
+}
+
+object QualifiedIdentifier (string name)
+{
+	object o;
+
+	if (name.IndexOf ('.') == -1)
+	 	o = SimpleLookup (name);
+	else 
+		o = CompositeLookup (name);
+
+	if (o == null)
+		o = new SimpleName (name);
+
+	return o;
+}
+
 Block declare_local_variables (string type, ArrayList variable_declarators)
 {
 	Block implicit_block;
@@ -3096,6 +3134,7 @@ public override int parse ()
 	
 	return global_errors;
 }
+
 
 /* end end end */
 }

@@ -50,12 +50,18 @@ namespace CIR {
 
 		public int Count {
 			get {
+				if (pars == null)
+					return 0;
+				
 				return pars.Length;
 			}
 		}
 
 		public Type ParameterType (int pos)
 		{
+			if (pars == null)
+				return null;
+					
 			return pars [pos];
 		}
 	}

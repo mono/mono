@@ -115,7 +115,7 @@ namespace CIR {
 		protected static Expression MemberLookup (RootContext rc, Type t, string name, bool same_type)
 		{
 			MemberTypes mt =
-				// MemberTypes.Constructor |
+				MemberTypes.Constructor |
 				MemberTypes.Event       |
 				MemberTypes.Field       |
 				MemberTypes.Method      |
@@ -1451,6 +1451,10 @@ namespace CIR {
 			return -1;
 		}
 
+		// <summary>
+		//   Returns the Parameters (a ParameterData interface) for the
+		//   Method `mb'
+		// </summary>
 		static ParameterData GetParameterData (TypeContainer tc, MethodBase mb)
 		{
 			object pd = method_parameter_cache [mb];
@@ -1459,7 +1463,7 @@ namespace CIR {
 				return (ParameterData) pd;
 
 			if (mb is MethodBuilder){
-				Method m = tc.LookupMethodByBuilder ((MethodBuilder) mb);
+				Method m = TypeContainer.LookupMethodByBuilder ((MethodBuilder) mb);
 
 				InternalParameters ip = m.GetParameters ();
 				method_parameter_cache [mb] = ip;
@@ -1477,13 +1481,20 @@ namespace CIR {
 		// <summary>
 		//   Find the Applicable Function Members (7.4.2.1)
 		// </summary>
-		static MethodInfo OverloadResolve (TypeContainer tc, MethodGroupExpr me, ArrayList Arguments)
+		public static MethodInfo OverloadResolve (TypeContainer tc, MethodGroupExpr me,
+							  ArrayList Arguments)
 		{
 			ArrayList afm = new ArrayList ();
 			int best_match = 10000;
 			int best_match_idx = -1;
 			MethodInfo method = null;
-			
+			int argument_count;
+
+			if (Arguments == null)
+				argument_count = 0;
+			else
+				argument_count = Arguments.Count;
+
 			for (int i = me.Methods.Length; i > 0; ){
 				i--;
 				MethodBase mb = me.Methods [i];
@@ -1494,10 +1505,10 @@ namespace CIR {
 				//
 				// Compute how good this is
 				//
-				if (pd.Count == Arguments.Count){
+				if (pd.Count == argument_count){
 					int badness = 0;
 					
-					for (int j = Arguments.Count; j > 0;){
+					for (int j = argument_count; j > 0;){
 						int x;
 						j--;
 						
@@ -1540,7 +1551,7 @@ namespace CIR {
 
 			if (!(this.expr is MethodGroupExpr)){
 				tc.RootContext.Report.Error (118,
-				       "Denotes an " + this.expr.ExprClass + " while a method was expected");
+				       "Denotes a non-method (Detail: ExprClass=" + this.expr.ExprClass+")");
 				return null;
 			}
 
@@ -1572,17 +1583,42 @@ namespace CIR {
 			return this;
 		}
 
-		public override void Emit (EmitContext ec)
+		public static void EmitArguments (EmitContext ec, ArrayList Arguments)
 		{
-			int top = Arguments.Count;
+			int top;
+
+			if (Arguments != null)
+				top = Arguments.Count;
+			else
+				top = 0;
 
 			for (int i = 0; i < top; i++){
 				Argument a = (Argument) Arguments [i];
 
 				a.Emit (ec);
 			}
+		}
+		
+		public override void Emit (EmitContext ec)
+		{
+			bool is_static = method.IsStatic;
 
-			ec.ig.Emit (OpCodes.Call, (MethodInfo) method);
+			if (!is_static){
+				MethodGroupExpr mg = (MethodGroupExpr) this.expr;
+
+				if (mg.InstanceExpression == null){
+					Console.WriteLine ("Internal compiler error.  Should check in the method groups for static/instance");
+				}
+
+				mg.InstanceExpression.Emit (ec);
+			}
+			
+			EmitArguments (ec, Arguments);
+
+			if (method.IsVirtual)
+				ec.ig.Emit (OpCodes.Callvirt, method);
+			else
+				ec.ig.Emit (OpCodes.Call, method);
 		}
 	}
 
@@ -1601,6 +1637,7 @@ namespace CIR {
 		public readonly ArrayList Indices;
 		public readonly ArrayList Initializers;
 		
+		MethodInfo method = null;
 
 		public New (string requested_type, ArrayList arguments)
 		{
@@ -1620,12 +1657,61 @@ namespace CIR {
 		
 		public override Expression Resolve (TypeContainer tc)
 		{
-			// FIXME: Implement;
+			type = tc.LookupType (RequestedType, false);
+
+			if (type == null)
+				return null;
+
+			Expression ml;
+
+			MemberTypes mt =
+				MemberTypes.Constructor;
+			
+			BindingFlags bf =
+				BindingFlags.Public |
+				BindingFlags.Instance;
+			
+			MemberInfo [] mi = tc.RootContext.TypeManager.FindMembers (type, mt, bf, null, null);
+
+			Console.WriteLine ("Found: " + mi.Length);
+			for (int i = 0; i < mi.Length; i++)
+				Console.WriteLine (" " + i + ": " + mi [i]);
+			
+			ml = MemberLookup (tc.RootContext, type, ".ctor", false);
+
+			if (! (ml is MethodGroupExpr)){
+				//
+				// FIXME: Find proper error
+				//
+				tc.RootContext.Report.Error (118, "Did find something that is not a method");
+				return null;
+			}
+			
+			if (Arguments != null){
+				for (int i = Arguments.Count; i > 0;){
+					--i;
+					Argument a = (Argument) Arguments [i];
+
+					if (!a.Resolve (tc))
+						return null;
+				}
+			}
+
+			method = Invocation.OverloadResolve (tc, (MethodGroupExpr) ml, Arguments);
+
+			if (method == null){
+				tc.RootContext.Report.Error (-6,
+				"Figure out error: Can not find a good function for this argument list");
+				return null;
+			}
+
 			return this;
 		}
 
 		public override void Emit (EmitContext ec)
 		{
+			Invocation.EmitArguments (ec, Arguments);
+			ec.ig.Emit (OpCodes.Newobj, (MethodInfo) method);
 		}
 	}
 
@@ -1682,6 +1768,7 @@ namespace CIR {
 	public class MemberAccess : Expression {
 		public readonly string Identifier;
 		Expression expr;
+		Expression member_lookup;
 		
 		public MemberAccess (Expression expr, string id)
 		{
@@ -1697,8 +1784,37 @@ namespace CIR {
 		
 		public override Expression Resolve (TypeContainer tc)
 		{
-			// FIXME: Implement;
-			return this;
+			Expression new_expression = expr.Resolve (tc);
+
+			if (new_expression == null)
+				return null;
+
+			Console.WriteLine ("This is what I figured: " + expr.Type + "/" + expr.ExprClass);
+
+			member_lookup = MemberLookup (tc.RootContext, expr.Type, Identifier, false);
+
+			if (member_lookup is MethodGroupExpr){
+				MethodGroupExpr mg = (MethodGroupExpr) member_lookup;
+
+				//
+				// Bind the instance expression to it
+				//
+				// FIXME: This is a horrible way of detecting if it is
+				// an instance expression.  Figure out how to fix this.
+				//
+				Console.WriteLine ("FIXME: Horrible way of figuring if something is an isntance");
+
+				if (expr is LocalVariableReference)
+					mg.InstanceExpression = expr;
+					
+				return member_lookup;
+			} else
+				//
+				// FIXME: This should generate the proper node
+				// ie, for a Property Access, it should like call it
+				// and stuff.
+
+				return null;
 		}
 
 		public override void Emit (EmitContext ec)
@@ -1755,10 +1871,13 @@ namespace CIR {
 	}
 
 	// <summary>
-	//   Fully resolved expression that evaluates to a type
+	//   MethodGroup Expression.
+	//  
+	//   This is a fully resolved expression that evaluates to a type
 	// </summary>
 	public class MethodGroupExpr : Expression {
 		public readonly MethodInfo [] Methods;
+		Expression instance_expression = null;
 		
 		public MethodGroupExpr (MemberInfo [] mi)
 		{
@@ -1767,6 +1886,19 @@ namespace CIR {
 			eclass = ExprClass.MethodGroup;
 		}
 
+		//
+		// `A method group may have associated an instance expression' 
+		// 
+		public Expression InstanceExpression {
+			get {
+				return instance_expression;
+			}
+
+			set {
+				instance_expression = value;
+			}
+		}
+		
 		override public Expression Resolve (TypeContainer tc)
 		{
 			return this;
@@ -1810,6 +1942,7 @@ namespace CIR {
 		{
 			FieldInfo = fi;
 			eclass = ExprClass.Variable;
+			type = fi.FieldType;
 		}
 
 		override public Expression Resolve (TypeContainer tc)
@@ -1842,6 +1975,8 @@ namespace CIR {
 			for (int i = 0; i < acc.Length; i++)
 				if (acc [i].IsStatic)
 					IsStatic = true;
+
+			type = pi.PropertyType;
 		}
 
 		override public Expression Resolve (TypeContainer tc)

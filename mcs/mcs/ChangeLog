@@ -1,5 +1,38 @@
 2001-09-13  Miguel de Icaza  <miguel@ximian.com>
 
+	* expression.cs (MemberLookup): Fruitless attempt to lookup
+	constructors.  Maybe I need to emit default constructors?  That
+	might be it (currently .NET emits this for me automatically).
+	(Invocation::OverloadResolve): Cope with Arguments == null.
+	(Invocation::EmitArguments): new function, shared by the new
+	constructor and us.
+	(Invocation::Emit): Handle static and instance methods.  Emit
+	proper call instruction for virtual or non-virtual invocations.
+	(New::Emit): Implement.
+	(New::Resolve): Implement.
+	(MemberAccess:Resolve): Implement.
+	(MethodGroupExpr::InstanceExpression): used conforming to the spec
+	to track instances.
+	(FieldExpr::Resolve): Set type.
+
+	* support.cs: Handle empty arguments.
+		
+	* cs-parser.jay (CompositeLookup, QualifierIdentifier,
+	SimpleLookup): Auxiliary routines to help parse a qualifier
+	identifier.  
+
+	Update qualifier_identifier rule.
+
+	* codegen.cs: Removed debugging messages.
+
+	* class.cs: Make this a global thing, this acts just as a "key" to
+	objects that we might have around.
+
+	(Populate): Only initialize method_builders_to_methods once.
+
+	* expression.cs (PropertyExpr): Initialize type from the
+	PropertyType. 
+
 	* codegen.cs (EmitContext::EmitBoolExpression): Use propper
 	Resolve pattern.  Attempt to implicitly convert value to boolean.
 	Emit code.

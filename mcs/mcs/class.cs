@@ -62,7 +62,7 @@ namespace CIR {
 		ArrayList operators;
 
 		// Maps MethodBuilders to Methods
-		Hashtable method_builders_to_methods;
+		static Hashtable method_builders_to_methods;
 		
 		//
 		// Pointers to the default constructor and the default static constructor
@@ -607,11 +607,12 @@ namespace CIR {
 			}
 
 			if (Methods != null){
-				method_builders_to_methods = new Hashtable ();
+				if (method_builders_to_methods == null)
+					method_builders_to_methods = new Hashtable ();
 				
 				foreach (Method m in Methods){
 					m.Define (this);
-					method_builders_to_methods [m.MethodBuilder] = m;
+					method_builders_to_methods.Add (m.MethodBuilder, m);
 				}
 			}
 
@@ -648,7 +649,7 @@ namespace CIR {
 			
 		}
 
-		public Method LookupMethodByBuilder (MethodBuilder mb)
+		static public Method LookupMethodByBuilder (MethodBuilder mb)
 		{
 			return (Method) method_builders_to_methods [mb];
 		}
