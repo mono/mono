@@ -474,23 +474,25 @@ namespace System.Net
 							"method while a previous call is still in progress.");
 			}
 
-			WebAsyncResult result;
-			result = asyncWrite = new WebAsyncResult (this, callback, state);
+			asyncWrite = new WebAsyncResult (this, callback, state);
 			initialMethod = method;
 			if (haveRequest) {
 				if (writeStream != null) {
 					Monitor.Exit (this);
-					result.SetCompleted (true, writeStream);
-					result.DoCallback ();
-					return result;
+					asyncWrite.SetCompleted (true, writeStream);
+					asyncWrite.DoCallback ();
+					return asyncWrite;
 				}
 			}
 			
-			haveRequest = true;
 			gotRequestStream = true;
+			WebAsyncResult result = asyncWrite;
+			if (!requestSent) {
+				requestSent = true;
+				servicePoint = GetServicePoint ();
+				abortHandler = servicePoint.SendRequest (this, connectionGroup);
+			}
 			Monitor.Exit (this);
-			servicePoint = GetServicePoint ();
-			abortHandler = servicePoint.SendRequest (this, connectionGroup);
 			return result;
 		}
 
@@ -503,6 +505,7 @@ namespace System.Net
 			if (result == null)
 				throw new ArgumentException ("Invalid IAsyncResult");
 
+			asyncWrite = result;
 			result.WaitUntilComplete ();
 
 			Exception e = result.Exception;
@@ -515,6 +518,7 @@ namespace System.Net
 		public override Stream GetRequestStream()
 		{
 			IAsyncResult asyncResult = BeginGetRequestStream (null, null);
+			asyncWrite = (WebAsyncResult) asyncResult;
 			if (!asyncResult.AsyncWaitHandle.WaitOne (timeout, false)) {
 				Abort ();
 				throw new WebException ("The request timed out", WebExceptionStatus.Timeout);
@@ -551,6 +555,7 @@ namespace System.Net
 			}
 			
 			if (!requestSent) {
+				requestSent = true;
 				servicePoint = GetServicePoint ();
 				abortHandler = servicePoint.SendRequest (this, connectionGroup);
 			}
@@ -636,7 +641,7 @@ namespace System.Net
 		
 		void CheckRequestStarted () 
 		{
-			if (haveRequest)
+			if (requestSent)
 				throw new InvalidOperationException ("request started");
 		}
 

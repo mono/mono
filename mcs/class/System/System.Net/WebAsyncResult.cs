@@ -69,10 +69,8 @@ namespace System.Net
 			response = null;
 			writeStream = null;
 			exc = null;
-			if (handle != null) {
-				handle.Close ();
-				handle = null;
-			}
+			if (handle != null)
+				handle.Reset ();
 		}
 
 		internal void SetCompleted (bool synch, int nbytes)

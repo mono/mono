@@ -296,7 +296,6 @@ namespace System.Net
 
 			cnc.Write (bytes, 0, length);
 			requestWritten = true;
-			cnc.dataAvailable.Set ();
 		}
 
 		internal void InternalClose ()

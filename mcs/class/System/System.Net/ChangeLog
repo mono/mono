@@ -1,3 +1,10 @@
+2003-06-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpWebRequest.cs: *really* take care of requestSent to prevent
+	sending the same request twice.
+	* WebAsyncResult.cs: don't close the handle. Just Reset.
+	* WebConnectionStream.cs: removed unneeded line.
+
 2003-06-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpWebRequest.cs: use InternalClose when we are not going to send the
