@@ -7,6 +7,8 @@
 // (C) Ximian, Inc.  http://www.ximian.com
 //
 
+using System.Runtime.CompilerServices;
+
 namespace System 
 {
 	public sealed class LocalDataStoreSlot
