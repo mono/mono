@@ -624,6 +624,9 @@ namespace System.Text {
 
 					if (capacity >= Int32.MaxValue || capacity < 0)
 						capacity = Int32.MaxValue;
+
+					if (capacity > _maxCapacity)
+						throw new ArgumentOutOfRangeException ("size", "capacity was less than the current size.");
 				}
 
 				string tmp = String.InternalAllocateStr (capacity);
