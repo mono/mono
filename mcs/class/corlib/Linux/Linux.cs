@@ -371,47 +371,6 @@ namespace System.PAL
 			}
 		}
 
-
-		// For StdInputStream
-		public int ReadStdInput(byte[] buffer, int offset, int count)
-		{
-			return ReadFile(StdinHandle, buffer, offset, count);
-		}
-
-		// For StdOutputStream
-		public void FlushStdOutput(byte[] byteBuf)
-		{
-			FlushFile(StdoutHandle, byteBuf);
-		}
-
-		[MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.InternalCall)]
-		public extern int ReadFile(IntPtr handle, byte[] buffer, int offset, int count);
-
-		[MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.InternalCall)]
-		public extern int WriteFile(IntPtr handle, byte[] buffer, int offset, int count);
-		
-		[MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.InternalCall)]
-		public extern int SetLengthFile(IntPtr handle, long length);
-		
-		public void FlushFile(IntPtr handle, byte[] byteBuf)
-		{
-			WriteFile(handle, byteBuf, 0, byteBuf.Length);
-		}
-
-		[MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.InternalCall)]
-		public extern IntPtr OpenFile(String path, FileMode mode, FileAccess access, FileShare share);
-	    
-		[MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.InternalCall)]
-		public extern void CloseFile(IntPtr handle);
-	
-		[MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.InternalCall)]
-		public extern long SeekFile(IntPtr handle, long offset, SeekOrigin origin);
-	
-		public IntPtr CreateFile(string	path, FileMode mode, FileAccess	access,	FileShare share)
-		{
-			return OpenFile(path, FileMode.CreateNew, access, share);
-		}
-	
 		[MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.InternalCall)]
 		public extern void DeleteFile(string path);
 	
@@ -511,11 +470,6 @@ namespace System.PAL
 
 
 		public long FileLength(string path)
-		{
-			return 0;
-		}
-
-		public long FileLength(IntPtr handle)
 		{
 			return 0;
 		}
