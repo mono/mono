@@ -1,3 +1,16 @@
+2005-01-07  Marek Safar  <marek.safar@seznam.cz>
+
+	Fix #70942
+	* class.cs (PropertyMethod): Set Parent field in ctors.
+	(SetMethod.InternalParameters): Add unsafe switch hack.
+	Override MarkForDuplicationCheck where it is appropriate.
+
+	* decl.cs (MemberCore.MarkForDuplicationCheck): New method.
+	It says whether container allows members with the same name.
+	Base default is no.
+	(DeclSpace.AddToContainer): Use MarkForDuplicationCheck.
+	Removed is_method parameter.
+
 2005-01-06  Duncan Mak  <duncan@ximian.com>
 
 	* cs-tokenizer.cs (xtoken): Redo the work for signaling CS1040
