@@ -1,5 +1,10 @@
 2003-06-20  Martin Baulig  <martin@ximian.com>
 
+	* mono-debug-debugger.h (MonoDebuggerSymbolFile): Added `MonoImage
+	*image' field.
+
+2003-06-20  Martin Baulig  <martin@ximian.com>
+
 	* image.h, mono-debug-debugger.h: Fixed compiler warnings.
 
 2003-06-20  Martin Baulig  <martin@ximian.com>
