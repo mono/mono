@@ -41,21 +41,21 @@ namespace System.Data {
 
 			switch (mode) {
 
-			        case XmlReadMode.Fragment:
+				case XmlReadMode.Fragment:
 					break;
 				case XmlReadMode.ReadSchema:
 					Result = XmlReadMode.ReadSchema;
 					ReadModeSchema (reader, false);
 					break;
-			        case XmlReadMode.IgnoreSchema:
+				case XmlReadMode.IgnoreSchema:
 					Result = XmlReadMode.IgnoreSchema;
 					ReadModeSchema (reader, true);
 					break;
-			        case XmlReadMode.InferSchema:
+				case XmlReadMode.InferSchema:
 					Result = XmlReadMode.InferSchema;
 					ReadModeInferSchema (reader);
 					break;
-			        default:
+				default:
 					break;
 			}
 
@@ -139,25 +139,34 @@ namespace System.Data {
 			\*/
 
 			reader.MoveToContent ();
+			reader.ReadStartElement ();
+			reader.MoveToContent ();
 
-			while (reader.Read ()) {
+			while (reader.NodeType != XmlNodeType.EndElement) 
+			{
+				if (reader.NodeType == XmlNodeType.Element)
+				{
+					// FIXME: possible inline-schema should be readed here
+					if (String.Compare (reader.LocalName, "schema", true) == 0) 
+					{
+						if (!IgnoreSchema)
+							DSet.ReadXmlSchema (reader);
+					}
 
-				// FIXME: possible inline-schema should be readed here
-				if (String.Compare (reader.LocalName, "schema", true) == 0 && reader.NodeType == XmlNodeType.Element) {
-					if (!IgnoreSchema)
-						DSet.ReadXmlSchema (reader);
+					// find table
+					if (DSet.Tables.Contains (reader.LocalName)) 
+					{
+						DataTable table = DSet.Tables [reader.LocalName];
+						DataRow row = table.NewRow ();
+
+						reader.ReadStartElement ();
+						ReadColumns (reader, row, table, reader.LocalName);					
+						reader.ReadEndElement ();
+
+						table.Rows.Add (row);
+					}
 				}
-
-				// find table
-				if (reader.NodeType == XmlNodeType.Element && DSet.Tables.Contains (reader.LocalName)) {
-					
-					DataTable table = DSet.Tables [reader.LocalName];
-					DataRow row = table.NewRow ();
-
-					ReadColumns (reader, row, table, reader.LocalName);					
-
-					table.Rows.Add (row);
-				}
+				reader.MoveToContent ();
 			}
 		}
 
@@ -168,18 +177,47 @@ namespace System.Data {
 		private void ReadColumns (XmlReader reader, DataRow row, DataTable table, string TableName)
 		{
 			do {
-				if (reader.NodeType == XmlNodeType.Element && 
-				    table.Columns.Contains (reader.LocalName)) {
-					string columName = reader.LocalName;
-					reader.Read ();
-					row [columName] = reader.Value;
-								}
+				if (reader.NodeType == XmlNodeType.Element) {
+					DataColumn col = table.Columns [reader.LocalName];
+					if (col != null) {
+						reader.Read ();
+						row [col] = StringToObject (col.DataType, reader.Value);
+					}
+				}
 				else {
 					reader.Read ();
 				}
 				
 			} while (table.TableName != reader.LocalName 
 				 || reader.NodeType != XmlNodeType.EndElement);
+		}
+
+		internal static object StringToObject (Type type, string value)
+		{
+			if (type == null) return value;
+
+			switch (Type.GetTypeCode (type))
+			{
+				case TypeCode.Boolean: return XmlConvert.ToBoolean (value);
+				case TypeCode.Byte: return XmlConvert.ToByte (value);
+				case TypeCode.Char: return (char)XmlConvert.ToInt32 (value);
+				case TypeCode.DateTime: return XmlConvert.ToDateTime (value);
+				case TypeCode.Decimal: return XmlConvert.ToDecimal (value);
+				case TypeCode.Double: return XmlConvert.ToDouble (value);
+				case TypeCode.Int16: return XmlConvert.ToInt16 (value);
+				case TypeCode.Int32: return XmlConvert.ToInt32 (value);
+				case TypeCode.Int64: return XmlConvert.ToInt64 (value);
+				case TypeCode.SByte: return XmlConvert.ToSByte (value);
+				case TypeCode.Single: return XmlConvert.ToSingle (value);
+				case TypeCode.UInt16: return XmlConvert.ToUInt16 (value);
+				case TypeCode.UInt32: return XmlConvert.ToUInt32 (value);
+				case TypeCode.UInt64: return XmlConvert.ToUInt64 (value);
+			}
+
+			if (type == typeof (TimeSpan)) return XmlConvert.ToTimeSpan (value);
+			if (type == typeof (byte[])) return Convert.FromBase64String (value);
+
+			return Convert.ChangeType (value, type);
 		}
 
 		#endregion // Private helper methods

@@ -22,6 +22,7 @@ using System.IO;
 using System.Runtime.Serialization;
 using System.Xml;
 using System.Xml.Schema;
+using System.Xml.Serialization;
 
 namespace System.Data {
 	/// <summary>
@@ -32,7 +33,7 @@ namespace System.Data {
 	[DefaultProperty ("DataSetName")]
 	[Serializable]
 	public class DataSet : MarshalByValueComponent, IListSource,
-		ISupportInitialize, ISerializable {
+		ISupportInitialize, ISerializable, IXmlSerializable {
 		private string dataSetName;
 		private string _namespace = "";
 		private string prefix;
@@ -42,7 +43,7 @@ namespace System.Data {
 		private DataRelationCollection relationCollection;
 		private PropertyCollection properties;
 		private DataViewManager defaultView;
-		private CultureInfo locale;
+		private CultureInfo locale = System.Threading.Thread.CurrentThread.CurrentCulture;
 		
 		#region Constructors
 
@@ -654,14 +655,35 @@ namespace System.Data {
 		
 		protected virtual System.Xml.Schema.XmlSchema GetSchemaSerializable()
 		{
-			return null; // FIXME
+			return BuildSchema ();
 		}
 		
 		protected virtual void ReadXmlSerializable(XmlReader reader)
 		{
 			ReadXml(reader, XmlReadMode.DiffGram); // FIXME
 		}
+
+		void IXmlSerializable.ReadXml(XmlReader reader)
+		{
+			reader.MoveToContent ();
+			reader.ReadStartElement ();	// <DataSet>
+
+			reader.MoveToContent ();
+			ReadXmlSchema (reader);
+
+			reader.MoveToContent ();
+			ReadXml(reader, XmlReadMode.IgnoreSchema);
+
+			reader.MoveToContent ();
+			reader.ReadEndElement ();	// </DataSet>
+		}
 		
+		void IXmlSerializable.WriteXml(XmlWriter writer)
+		{
+			DoWriteXmlSchema (writer);
+			WriteXml(writer, XmlWriteMode.IgnoreSchema);
+		}
+
 		protected virtual bool ShouldSerializeRelations ()
 		{
 			return true;
@@ -855,52 +877,38 @@ namespace System.Data {
 						break;					
 				};
 		}
-		
-		private void DoWriteXmlSchema( XmlWriter writer )
-		{
-			//Create the root element and declare all the namespaces etc
-			writer.WriteStartElement(XmlConstants.SchemaPrefix, XmlConstants.SchemaElement,
-										XmlConstants.SchemaNamespace );
-			writer.WriteAttributeString( XmlConstants.TargetNamespace, Namespace );
-			writer.WriteAttributeString( "xmlns:" + XmlConstants.TnsPrefix, Namespace );
-			writer.WriteAttributeString( "xmlns", Namespace );
-			writer.WriteAttributeString(  "xmlns:" + XmlConstants.MsdataPrefix,                 
-			                            XmlConstants.MsdataNamespace );
-			//Set up the attribute and element forms.  
-			//TODO - is it possible to change this?
-			//I couldn't spot if it was so I assumed
-			//that this is set to qualified all round basedon the MS output
-			writer.WriteAttributeString( XmlConstants.AttributeFormDefault, 
-			                            XmlConstants.Qualified );
-			writer.WriteAttributeString( XmlConstants.ElementFormDefault, 
-			                            XmlConstants.Qualified );
-			
-			
-			//<xs:element name="DSName msdata:IsDataSet="true" msdata:Locale="machine-locale">
-			//Create the data set element
-			//All the tables are represented as choice elements in an unlimited series
-			writer.WriteStartElement( XmlConstants.SchemaPrefix,
-			                         	XmlConstants.Element,
-			                         	XmlConstants.SchemaNamespace );
-			
-			writer.WriteAttributeString( XmlConstants.Name, DataSetName );
-			writer.WriteAttributeString( XmlConstants.MsdataPrefix,  XmlConstants.IsDataSet, XmlConstants.MsdataNamespace, "true" );
-			//FIXME - sort out the locale string!
 
-			writer.WriteAttributeString( XmlConstants.MsdataPrefix, XmlConstants.Locale, XmlConstants.MsdataNamespace, Thread.CurrentThread.CurrentCulture.Name);
-			
-			//<xs:complexType>
-			writer.WriteStartElement( XmlConstants.SchemaPrefix,
-			                         	XmlConstants.ComplexType,
-			                         	XmlConstants.SchemaNamespace );
-			
-			//<xs:choice maxOccurs="unbounded">
-			writer.WriteStartElement( XmlConstants.SchemaPrefix,
-			                         	XmlConstants.Choice,
-			                         	XmlConstants.SchemaNamespace );
-			
-			writer.WriteAttributeString( XmlConstants.MaxOccurs, XmlConstants.Unbounded );
-			
+		XmlSchema IXmlSerializable.GetSchema()
+		{
+			return BuildSchema ();
+		}
+		
+		XmlSchema BuildSchema()
+		{
+			XmlSchema schema = new XmlSchema ();
+			schema.AttributeFormDefault = XmlSchemaForm.Qualified;
+
+			XmlSchemaElement elem = new XmlSchemaElement ();
+			elem.Name = DataSetName;
+
+			XmlDocument doc = new XmlDocument ();
+
+			XmlAttribute[] atts = new XmlAttribute [2];
+			atts[0] = doc.CreateAttribute (XmlConstants.MsdataPrefix,  XmlConstants.IsDataSet, XmlConstants.MsdataNamespace);
+			atts[0].Value = "true";
+
+			atts[1] = doc.CreateAttribute (XmlConstants.MsdataPrefix, XmlConstants.Locale, XmlConstants.MsdataNamespace);
+			atts[1].Value = locale.Name;
+			elem.UnhandledAttributes = atts;
+
+			schema.Items.Add (elem);
+
+			XmlSchemaComplexType complex = new XmlSchemaComplexType ();
+			elem.SchemaType = complex;
+
+			XmlSchemaChoice choice = new XmlSchemaChoice ();
+			complex.Particle = choice;
+			choice.MaxOccursString = XmlConstants.Unbounded;
 			
 			//Write out schema for each table in order, providing it is not
 			//part of another table structure via a nested parent relationship
@@ -918,145 +926,114 @@ namespace System.Data {
 				
 				if( isTopLevel )
 				{
-					WriteTableSchema(  writer, table );
+					choice.Items.Add (GetTableSchema (doc, table));
 				}
 			}
 			
-			//</xs:choice>
-			writer.WriteEndElement();
-			//</xs:complexType>
-			writer.WriteEndElement();
-			
 			//TODO - now add in the relationships as key and unique constraints etc
-			
-			//</xs:element>
-			writer.WriteEndElement();
-			
-			
-			//</schema>
-			writer.WriteEndElement();
+
+			return schema;
 		}
-		
-		private void WriteTableSchema( XmlWriter writer, DataTable table )
+
+		private XmlSchemaElement GetTableSchema (XmlDocument doc, DataTable table)
 		{
 			ArrayList elements;
 			ArrayList atts;
 			DataColumn simple;
 			
-			SplitColumns( table,out  atts, out elements, out simple );
-			
-			//<xs:element name="TableName">
-			writer.WriteStartElement( XmlConstants.SchemaPrefix,
-			                         XmlConstants.Element,
-			                         XmlConstants.SchemaNamespace );
-			
-			writer.WriteAttributeString( XmlConstants.Name, table.TableName );
-			
-			//<xs:complexType>
-			writer.WriteStartElement( XmlConstants.SchemaPrefix,
-			                         XmlConstants.ComplexType,
-			                         XmlConstants.SchemaNamespace );
-			
+			SplitColumns (table, out atts, out elements, out simple);
+
+			XmlSchemaElement elem = new XmlSchemaElement ();
+			elem.Name = table.TableName;
+
+			XmlSchemaComplexType complex = new XmlSchemaComplexType ();
+			elem.SchemaType = complex;
+
 			//TODO - what about the simple content?
 			if( elements.Count == 0 )				
 			{				
 			}
 			else
-			{				
-			//A sequence of element types or a simple content node
-			//<xs:sequence>
-			writer.WriteStartElement( XmlConstants.SchemaPrefix,
-			                         XmlConstants.Sequence,
-			                         XmlConstants.SchemaNamespace );
-			foreach( DataColumn col in elements )
 			{
-				//<xs:element name=ColumnName type=MappedType Ordinal=index>
-				writer.WriteStartElement( XmlConstants.SchemaPrefix,
-			                         XmlConstants.Element,
-			                         XmlConstants.SchemaNamespace );
-				
-				writer.WriteAttributeString( XmlConstants.Name, col.ColumnName );
-				
-				if (col.ColumnName != col.Caption && col.Caption != string.Empty)
-					writer.WriteAttributeString( XmlConstants.MsdataPrefix, XmlConstants.Caption, 
-								     XmlConstants.MsdataNamespace, col.Caption); 
+				//A sequence of element types or a simple content node
+				//<xs:sequence>
+				XmlSchemaSequence seq = new XmlSchemaSequence ();
+				complex.Particle = seq;
 
-				if (col.DefaultValue.ToString () != string.Empty)
-					writer.WriteAttributeString( XmlConstants.Default, col.DefaultValue.ToString ());
-
-				writer.WriteAttributeString( XmlConstants.Type, MapType( col.DataType ) );
-
-				if( col.AllowDBNull )
+				foreach( DataColumn col in elements )
 				{
-					writer.WriteAttributeString( XmlConstants.MinOccurs, "0" );
-				}
-
-				//writer.WriteAttributeString( XmlConstants.MsdataPrefix,
-				//                            XmlConstants.Ordinal,
-				//                            XmlConstants.MsdataNamespace,
-				//                            col.Ordinal.ToString() );
-
-				// Write SimpleType if column have MaxLength
-				if (col.MaxLength > -1) {
-
-					WriteTableSimpleType (writer, col);
-				}
+					//<xs:element name=ColumnName type=MappedType Ordinal=index>
+					XmlSchemaElement colElem = new XmlSchemaElement ();
+					colElem.Name = col.ColumnName;
 				
+					if (col.ColumnName != col.Caption && col.Caption != string.Empty)
+					{
+						XmlAttribute[] xatts = new XmlAttribute[1];
+						xatts[0] = doc.CreateAttribute (XmlConstants.MsdataPrefix, XmlConstants.Caption, XmlConstants.MsdataNamespace);
+						xatts[0].Value = col.Caption;
+						colElem.UnhandledAttributes = xatts;
+					}
 
-				//</xs:element>
-				writer.WriteEndElement();
+					if (col.DefaultValue.ToString () != string.Empty)
+						colElem.DefaultValue = col.DefaultValue.ToString ();
+
+					colElem.SchemaTypeName = MapType (col.DataType);
+
+					if( col.AllowDBNull )
+					{
+						colElem.MinOccurs = 0;
+					}
+
+					//writer.WriteAttributeString( XmlConstants.MsdataPrefix,
+					//                            XmlConstants.Ordinal,
+					//                            XmlConstants.MsdataNamespace,
+					//                            col.Ordinal.ToString() );
+
+					// Write SimpleType if column have MaxLength
+					if (col.MaxLength > -1) 
+					{
+						colElem.SchemaType = GetTableSimpleType (doc, col);
+					}
+
+					seq.Items.Add (colElem);
+				}
 			}
-			//</xs:sequence>
-			writer.WriteEndElement();
-				
-			}
+
 			//Then a list of attributes
 			foreach( DataColumn col in atts )
 			{
 				//<xs:attribute name=col.ColumnName form="unqualified" type=MappedType/>
-				writer.WriteStartElement( XmlConstants.SchemaPrefix,
-			                         XmlConstants.Attribute,
-			                         XmlConstants.SchemaNamespace );
-				
-				writer.WriteAttributeString( XmlConstants.Name, col.ColumnName );
-				writer.WriteAttributeString( XmlConstants.Form, XmlConstants.Unqualified );
-				writer.WriteAttributeString( XmlConstants.Type, MapType( col.DataType ) );
-				
-				writer.WriteEndElement();
+				XmlSchemaAttribute att = new XmlSchemaAttribute ();
+				att.Name = col.ColumnName;
+				att.Form = XmlSchemaForm.Unqualified;
+				att.SchemaTypeName = MapType (col.DataType);
+				complex.Attributes.Add (att);
 			}
-			
-			//</xs:complexType>
-			writer.WriteEndElement();
-			
-			//</xs:element>
-			writer.WriteEndElement();
+			return elem;
 		}
 
-		private void WriteTableSimpleType (XmlWriter writer, DataColumn col)
+		private XmlSchemaSimpleType GetTableSimpleType (XmlDocument doc, DataColumn col)
 		{
 			// SimpleType
-			writer.WriteStartElement( XmlConstants.SchemaPrefix, XmlConstants.SimpleType, 
-						  XmlConstants.SchemaNamespace);
-			
+			XmlSchemaSimpleType simple = new XmlSchemaSimpleType ();
+
 			// Restriction
-			writer.WriteStartElement( XmlConstants.SchemaPrefix, XmlConstants.Restriction, 
-						  XmlConstants.SchemaNamespace);
-			
-			writer.WriteAttributeString( XmlConstants.Base, MapType( col.DataType ) );
+			XmlSchemaSimpleTypeRestriction restriction = new XmlSchemaSimpleTypeRestriction ();
+			restriction.BaseTypeName = MapType (col.DataType);
 			
 			// MaxValue
-			writer.WriteStartElement( XmlConstants.SchemaPrefix, XmlConstants.MaxLength, 
-						  XmlConstants.SchemaNamespace);
-			writer.WriteAttributeString( XmlConstants.Value, col.MaxLength.ToString ());
-			
-			
-			writer.WriteEndElement();
-			
-			writer.WriteEndElement();
-			
-			writer.WriteEndElement();
+			XmlSchemaMaxLengthFacet max = new XmlSchemaMaxLengthFacet ();
+			max.Value = XmlConvert.ToString (col.MaxLength);
+			restriction.Facets.Add (max);
+
+			return simple;
 		}
 
+		private void DoWriteXmlSchema( XmlWriter writer )
+		{
+			GetSchemaSerializable ().Write (writer);
+		}
+		
 		///<summary>
 		/// Helper function to split columns into attributes elements and simple
 		/// content
@@ -1097,49 +1074,34 @@ namespace System.Data {
 			}
 		}
 		
-		[MonoTODO]
-		private string MapType( Type type )
+		private XmlQualifiedName MapType (Type type)
 		{
-			string Result = "xs:string";
-
-			// TODO: More types to map?
-
-			if (typeof (string) == type)
-				Result = "xs:string";
-			else if (typeof (short) == type)
-				Result = "xs:short";
-			else if (typeof (int) == type)
-				Result = "xs:int";
-			else if (typeof (long) == type)
-				Result = "xs:long";
-			else if (typeof (bool) == type)
-				Result = "xs:boolean";
-			else if (typeof (byte) == type)
-				Result = "xs:unsignedByte";
-			else if (typeof (char) == type)
-				Result = "xs:char";
-			else if (typeof (DateTime) == type)
-				Result = "xs:dateTime";
-			else if (typeof (decimal) == type)
-				Result = "xs:decimal";
-			else if (typeof (double) == type)
-				Result = "xs:double";
-			else if (typeof (sbyte) == type)
-				Result = "xs:sbyte";
-			else if (typeof (Single) == type)
-				Result = "xs:float";
-			else if (typeof (TimeSpan) == type)
-				Result = "xs:duration";
-			else if (typeof (ushort) == type)
-				Result = "xs:usignedShort";
-			else if (typeof (uint) == type)
-				Result = "xs:unsignedInt";
-			else if (typeof (ulong) == type)
-				Result = "xs:unsignedLong";
-		
-			return Result;
+			switch (Type.GetTypeCode (type))
+			{
+				case TypeCode.String: return XmlConstants.QnString;
+				case TypeCode.Int16: return XmlConstants.QnShort;
+				case TypeCode.Int32: return XmlConstants.QnInt;
+				case TypeCode.Int64: return XmlConstants.QnLong;
+				case TypeCode.Boolean: return XmlConstants.QnBoolean;
+				case TypeCode.Byte: return XmlConstants.QnUnsignedByte;
+				case TypeCode.Char: return XmlConstants.QnChar;
+				case TypeCode.DateTime: return XmlConstants.QnDateTime;
+				case TypeCode.Decimal: return XmlConstants.QnDecimal;
+				case TypeCode.Double: return XmlConstants.QnDouble;
+				case TypeCode.SByte: return XmlConstants.QnSbyte;
+				case TypeCode.Single: return XmlConstants.QnFloat;
+				case TypeCode.UInt16: return XmlConstants.QnUsignedShort;
+				case TypeCode.UInt32: return XmlConstants.QnUnsignedInt;
+				case TypeCode.UInt64: return XmlConstants.QnUnsignedLong;
+			}
+			
+			if (typeof (TimeSpan) == type) return XmlConstants.QnDuration;
+			else if (typeof (System.Uri) == type) return XmlConstants.QnUri;
+			else if (typeof (byte[]) == type) return XmlConstants.QnBase64Binary;
+			else if (typeof (XmlQualifiedName) == type) return XmlConstants.QnXmlQualifiedName;
+			else return XmlConstants.QnString;
 		}
-		
+
 		#endregion //Private Xml Serialisation
 	}
 }

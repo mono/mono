@@ -1,3 +1,12 @@
+2003-07-22  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* DataSet.cs: Implemented IXmlSerializable interface. Added basic support for
+	  xml serialization. Modified method of writing schema. Now it creates
+	  a XmlSchema object and serializes it using XmlSerializer.
+	* XmlConstants.cs: Added constants for data type names.
+	* XmlDataLoader.cs: Fixed deserialization of data. Now converts data to the
+	  type specified in the column.
+
 2003-04-20  Alan Tam <Tam@SiuLung.com>
 
 	* DataRelationCollection.cs: Fix a bug that prevent relations
