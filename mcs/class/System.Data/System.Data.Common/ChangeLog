@@ -1,3 +1,6 @@
+2004-05-09  Gert Driesen (drieseng@users.sourceforge.net)
+	* ComparerFactory.cs: marked internal
+
 2003-04-26  Boris Kirzner <borisk@mainsoft.com>
 	* DataColumnMappingCollection.cs : Small fix in exception message thrown.
 	  

@@ -6,7 +6,7 @@ namespace System.Data.Common
 	/// <summary>
 	/// Summary description for ComparerFactory.
 	/// </summary>
-	public class DBComparerFactory
+	internal class DBComparerFactory
 	{
 		private static IComparer comparableComparer = new ComparebleComparer();
 		private static IComparer ignoreCaseComparer = new IgnoreCaseComparer();
