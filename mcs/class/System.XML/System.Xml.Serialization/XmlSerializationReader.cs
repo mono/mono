@@ -4,6 +4,7 @@
 // Authors:
 // 	Tim Coleman (tim@timcoleman.com)
 // 	Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//  Lluis Sanchez Gual (lluis@ximian.com)
 //
 // Copyright (C) Tim Coleman, 2002
 // (c) 2002 Ximian, Inc. (http://www.ximian.com)
@@ -26,6 +27,7 @@ namespace System.Xml.Serialization {
 		Hashtable typesCallbacks;
 		ArrayList noIDTargets;
 		Hashtable targets;
+		XmlSerializer eventSource;
 
 		string w3SchemaNS;
 		string w3SchemaNS2000;
@@ -44,7 +46,7 @@ namespace System.Xml.Serialization {
 		string anyType;
 		#endregion
 
-		private void Initialize ()
+		internal void Initialize (XmlReader reader, XmlSerializer eventSource)
 		{
 			w3SchemaNS = reader.NameTable.Add ("http://www.w3.org/2001/XMLSchema");
 			w3SchemaNS2000 = reader.NameTable.Add ("http://www.w3.org/2000/10/XMLSchema");
@@ -61,9 +63,13 @@ namespace System.Xml.Serialization {
 			typeX = reader.NameTable.Add ("type");
 			arrayType = reader.NameTable.Add ("arrayType");
 			anyType = reader.NameTable.Add ("anyType");
+			this.reader = reader;
+			this.eventSource = eventSource;
 			InitIDs ();
 		}
 			
+		internal abstract object ReadObject ();
+
 		private ArrayList EnsureArrayList (ArrayList list)
 		{
 			if (list == null)
@@ -227,15 +233,15 @@ namespace System.Xml.Serialization {
 		protected bool GetNullAttr ()
 		{
 			string na = reader.GetAttribute (nullX, w3InstanceNS);
-			if (na == null) {
+			if (na == string.Empty) {
 				na = reader.GetAttribute (nil, w3InstanceNS);
-				if (na == null) {
+				if (na == string.Empty) {
 					na = reader.GetAttribute (nullX, w3InstanceNS2000);
-					if (na == null)
+					if (na == string.Empty)
 						na = reader.GetAttribute (nullX, w3InstanceNS1999);
 				}
 			}
-			return (na != null);
+			return (na != string.Empty);
 		}
 
 		[MonoTODO ("Implement")]
@@ -247,7 +253,16 @@ namespace System.Xml.Serialization {
 		[MonoTODO ("Implement")]
 		protected XmlQualifiedName GetXsiType ()
 		{
-			throw new NotImplementedException ();
+			string typeName = Reader.GetAttribute ("xsi:type");
+			if (typeName == string.Empty) return null;
+			int i = typeName.IndexOf (":");
+			if (i == -1) return new XmlQualifiedName (typeName, "");
+			else 
+			{
+				string prefix = typeName.Substring(0,i);
+				string name = typeName.Substring (i+1);
+				return new XmlQualifiedName (name, Reader.LookupNamespace (prefix));
+			}
 		}
 
 		protected abstract void InitCallbacks ();
@@ -307,7 +322,10 @@ namespace System.Xml.Serialization {
 
 			reader.ReadStartElement();
 			while (reader.NodeType != XmlNodeType.EndElement)
+			{
 				UnknownNode (null);
+				reader.Read ();
+			}
 			ReadEndElement ();
 			return true;
 		}
@@ -415,7 +433,11 @@ namespace System.Xml.Serialization {
 
 		protected XmlNode ReadXmlNode (bool wrapped)
 		{
-			return document.ReadNode (reader);
+			XmlNode node = Document.ReadNode (reader);
+			if (wrapped)
+				return node.FirstChild;
+			else
+				return node;
 		}
 
 		[MonoTODO ("Implement")]
@@ -424,10 +446,15 @@ namespace System.Xml.Serialization {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("Implement")]
 		protected Array ShrinkArray (Array a, int length, Type elementType, bool isNullable)
 		{
-			throw new NotImplementedException ();
+			if (length == 0 && isNullable) return null;
+			if (a == null) return Array.CreateInstance (elementType, length);
+			if (a.Length == length) return a;
+
+			Array result = Array.CreateInstance (elementType, length);
+			Array.Copy (a, result, length);
+			return result;
 		}
 
 		[MonoTODO ("Implement")]
@@ -520,28 +547,28 @@ namespace System.Xml.Serialization {
 			return new XmlQualifiedName (name, ns);
 		}
 
-		[MonoTODO ("Implement")]
 		protected void UnknownAttribute (object o, XmlAttribute attr)
 		{
-			throw new NotImplementedException ();
+			// TODO: line numbers
+			eventSource.OnUnknownAttribute (new XmlAttributeEventArgs (attr,0,0,o));
 		}
 
-		[MonoTODO ("Implement")]
 		protected void UnknownElement (object o, XmlElement elem)
 		{
-			throw new NotImplementedException ();
+			// TODO: line numbers
+			eventSource.OnUnknownElement (new XmlElementEventArgs(elem,0,0,o));
 		}
 
-		[MonoTODO ("Implement")]
 		protected void UnknownNode (object o)
 		{
-			throw new NotImplementedException ();
+			// TODO: line numbers
+			if (Reader.NodeType == XmlNodeType.Element) Reader.Skip();
+			eventSource.OnUnknownNode (new XmlNodeEventArgs(0, 0, Reader.LocalName, Reader.Name, Reader.NamespaceURI, Reader.NodeType, o, Reader.Value));
 		}
 
-		[MonoTODO ("Implement")]
 		protected void UnreferencedObject (string id, object o)
 		{
-			throw new NotImplementedException ();
+			eventSource.OnUnreferencedObject (new UnreferencedObjectEventArgs (o,id));
 		}
 
 		#endregion // Methods

@@ -1,3 +1,14 @@
+2003-05-26  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* TypeData.cs, TypeTranslator.cs: Implemented some methods.
+	* XmlCustomFormatter.cs: Added formatting methods.
+	* XmlReflectionImporter.cs, XmlSerializer.cs: New implementation.
+	* XmlReflectionMember.cs: Added new constructor.
+	* XmlSerializationReader.cs, XmlSerializationWriter.cs: Implemented some methods.
+	* XmlSerializationWriterInterpreter.cs, XmlSerializationReaderInterpreter.cs
+	  XmlTypeMapElementInfo.cs, XmlTypeMapMember.cs, XmlTypeMapMemberAttribute.cs
+	  XmlTypeMapMemberElement.cs, XmlTypeMapping.cs: Added
+
 2003-05-10  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* Added TypeTableEntry.cs.

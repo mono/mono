@@ -3,11 +3,13 @@
 //
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//  Lluis Sanchez Gual (lluis@ximian.com)
 //
 // (C) 2002 Ximian, Inc (http://www.ximian.com)
 //
 
 using System;
+using System.Collections;
 
 namespace System.Xml.Serialization
 {
@@ -21,23 +23,22 @@ namespace System.Xml.Serialization
 		{
 			this.type = type;
 			this.elementName = elementName;
+
 			if (isPrimitive)
 				sType = SchemaTypes.Primitive;
 			else
-				sType = SchemaTypes.NotSet;
-		}
-
-		private SchemaTypes GetSchemaType ()
-		{
-			if (type.IsEnum)
-				return SchemaTypes.Enum;
-			else if (type.IsArray)
-				return SchemaTypes.Array;
-			/*else if (type == typeof (System.Data.DataSet))
-				return SchemaTypes.DataSet;*/
-			else if (type == typeof (System.Xml.XmlNode))
-				return SchemaTypes.XmlNode;
-			return SchemaTypes.Class;
+			{
+				if (type.IsEnum)
+					sType = SchemaTypes.Enum;
+				/*else if (type == typeof (System.Data.DataSet))
+					sType = SchemaTypes.DataSet;*/
+				else if (typeof (System.Xml.XmlNode).IsAssignableFrom (type))
+					sType = SchemaTypes.XmlNode;
+				else if (type.IsArray || type.GetInterface ("IEnumerable") != null || type.GetInterface ("ICollection") != null)
+					sType = SchemaTypes.Array;
+				else
+					sType = SchemaTypes.Class;
+			}
 		}
 
 		public string ElementName
@@ -64,17 +65,38 @@ namespace System.Xml.Serialization
 		public string FullTypeName
 		{
 			get {
-				return type.FullName.Replace ('+', '.');
+//				return type.FullName.Replace ('+', '.');
+				return type.FullName;
 			}
 		}
 
 		public SchemaTypes SchemaType
 		{
 			get {
-				if (sType == SchemaTypes.NotSet)
-					sType = GetSchemaType ();
-
 				return sType;
+			}
+		}
+
+		public bool IsListType
+		{
+			get { return SchemaType == SchemaTypes.Array; }
+		}
+
+		public bool IsComplexType
+		{
+			get { return (SchemaType == SchemaTypes.Class || SchemaType == SchemaTypes.Array); }
+		}
+
+		public Type ListItemType
+		{
+			get
+			{
+				if (SchemaType != SchemaTypes.Array)
+					throw new InvalidOperationException (Type.FullName + " is not a collection");
+				else if (type.IsArray) 
+					return type.GetElementType ();
+				else
+					return type.GetMethod ("Add").GetParameters()[0].ParameterType;
 			}
 		}
 	}

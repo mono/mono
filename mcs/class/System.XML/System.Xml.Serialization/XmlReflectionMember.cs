@@ -23,8 +23,11 @@ namespace System.Xml.Serialization {
 
 		#region Constructors
 
-		public XmlReflectionMember ()
+		public XmlReflectionMember (string name, Type type, XmlAttributes attributes)
 		{
+			memberName = name;
+			memberType = type;
+			xmlAttributes = attributes;
 		}
 
 		#endregion // Constructors

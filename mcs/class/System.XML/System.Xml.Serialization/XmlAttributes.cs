@@ -20,13 +20,13 @@ namespace System.Xml.Serialization
 	public class XmlAttributes
 	{
 		private XmlAnyAttributeAttribute xmlAnyAttribute;
-		private XmlAnyElementAttributes xmlAnyElements;
+		private XmlAnyElementAttributes xmlAnyElements = new XmlAnyElementAttributes();
 		private XmlArrayAttribute xmlArray;
-		private XmlArrayItemAttributes xmlArrayItems;
+		private XmlArrayItemAttributes xmlArrayItems = new XmlArrayItemAttributes();
 		private XmlAttributeAttribute xmlAttribute;
 		private XmlChoiceIdentifierAttribute xmlChoiceIdentifier;
 		private object xmlDefaultValue;
-		private XmlElementAttributes xmlElements;
+		private XmlElementAttributes xmlElements = new XmlElementAttributes();
 		private XmlEnumAttribute xmlEnum;
 		private bool xmlIgnore;
 		private bool xmlns;
@@ -37,7 +37,7 @@ namespace System.Xml.Serialization
 		private MemberInfo minfo;
 		private FieldInfo  finfo;
 		private PropertyInfo pinfo;
-		internal ArrayList XmlIncludes;
+		internal ArrayList XmlIncludes = new ArrayList();
 		//internal string ElementName;
 
 		//The element Order in serialization.
@@ -80,10 +80,6 @@ namespace System.Xml.Serialization
 
 		public XmlAttributes ()
 		{
-			xmlAnyElements = new XmlAnyElementAttributes ();
-			xmlArrayItems = new XmlArrayItemAttributes ();
-			xmlElements = new XmlElementAttributes ();
-			XmlIncludes = new ArrayList();
 		}
 
 		static XmlAttributes ()

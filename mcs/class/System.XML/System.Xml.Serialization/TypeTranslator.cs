@@ -4,6 +4,7 @@
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //	Erik LeBel (eriklebel@yahoo.ca)
+//  Lluis Sanchez Gual (lluis@ximian.com)
 //
 // (C) 2002 Ximian, Inc (http://www.ximian.com)
 // (C) 2003 Erik Lebel
@@ -16,46 +17,50 @@ namespace System.Xml.Serialization
 {
 	internal class TypeTranslator
 	{
-		static Hashtable primitives;
+		static Hashtable nameCache;
 
 		static TypeTranslator ()
 		{
-			primitives = new Hashtable ();
-			primitives.Add (typeof (bool), "boolean");
-			primitives.Add (typeof (short), "short");
-			primitives.Add (typeof (ushort), "unsignedShort");
-			primitives.Add (typeof (int), "int");
-			primitives.Add (typeof (uint), "unsignedInt");
-			primitives.Add (typeof (long), "long");
-			primitives.Add (typeof (ulong), "unsignedLong");
-			primitives.Add (typeof (float), "float");
-			primitives.Add (typeof (double), "double");
-			primitives.Add (typeof (DateTime), "dateTime"); // TODO: timeInstant, Xml date, xml time
-			primitives.Add (typeof (Guid), "guid");
-			primitives.Add (typeof (Decimal), "decimal");
-			primitives.Add (typeof (XmlQualifiedName), "QName");
-			primitives.Add (typeof (string), "string");
-			primitives.Add (typeof (byte), "unsignedByte");
-			primitives.Add (typeof (sbyte), "byte");
-			primitives.Add (typeof (char), "char");
-			primitives.Add (typeof (object), "anyType");
-			primitives.Add (typeof (byte[]), "base64Binary");
+			nameCache = new Hashtable ();
+			nameCache.Add (typeof (bool), new TypeData (typeof (bool), "boolean", true));
+			nameCache.Add (typeof (short), new TypeData (typeof (short), "short", true));
+			nameCache.Add (typeof (ushort), new TypeData (typeof (ushort), "unsignedShort", true));
+			nameCache.Add (typeof (int), new TypeData (typeof (int), "int", true));
+			nameCache.Add (typeof (uint), new TypeData (typeof (uint), "unsignedInt", true));
+			nameCache.Add (typeof (long), new TypeData (typeof (long), "long", true));
+			nameCache.Add (typeof (ulong), new TypeData (typeof (ulong), "unsignedLong", true));
+			nameCache.Add (typeof (float), new TypeData (typeof (float), "float", true));
+			nameCache.Add (typeof (double), new TypeData (typeof (double), "double", true));
+			nameCache.Add (typeof (DateTime), new TypeData (typeof (DateTime), "dateTime", true));	// TODO: timeInstant, Xml date, xml time
+			nameCache.Add (typeof (Guid), new TypeData (typeof (Guid), "guid", true));
+			nameCache.Add (typeof (decimal), new TypeData (typeof (decimal), "decimal", true));
+			nameCache.Add (typeof (XmlQualifiedName), new TypeData (typeof (XmlQualifiedName), "QName", true));
+			nameCache.Add (typeof (string), new TypeData (typeof (string), "string", true));
+			nameCache.Add (typeof (byte), new TypeData (typeof (byte), "unsignedByte", true));
+			nameCache.Add (typeof (sbyte), new TypeData (typeof (sbyte), "byte", true));
+			nameCache.Add (typeof (char), new TypeData (typeof (char), "char", true));
+			nameCache.Add (typeof (object), new TypeData (typeof (object), "anyType", false));
+			nameCache.Add (typeof (byte[]), new TypeData (typeof (byte[]), "base64Binary", true));
+			nameCache.Add (typeof (XmlNode), new TypeData (typeof (XmlNode), "XmlNode", false));
+			nameCache.Add (typeof (XmlElement), new TypeData (typeof (XmlElement), "XmlElement", false));
 		}
 
-		public TypeTranslator ()
+		public static TypeData GetTypeData (Type type)
 		{
-		}
-
-		public TypeData GetTypeData (Type type)
-		{
-			string name = primitives [type] as string;
-			if (name == null && type.IsArray) {
-				name = primitives [type.GetElementType ()] as string;
-				if (name != null)
-					name = "ArrayOf" + Char.ToUpper (name [0]) + name.Substring (1);
-			}
+			TypeData typeData = nameCache[type] as TypeData;
+			if (typeData != null) return typeData;
 			
-			return new TypeData (type, (name == null) ? type.Name : name, name != null);
+			string name;
+			if (type.IsArray) {
+				string sufix = GetTypeData (type.GetElementType ()).ElementName;
+				name = "ArrayOf" + Char.ToUpper (sufix [0]) + sufix.Substring (1);
+			}
+			else 
+				name = type.Name;
+
+			typeData = new TypeData (type, name, false);
+			nameCache[type] = typeData;
+			return typeData;
 		}
 	}
 }

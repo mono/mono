@@ -3,6 +3,7 @@
 //
 // Author:
 //   Tim Coleman (tim@timcoleman.com)
+//   Lluis Sanchez Gual (lluis@ximian.com)
 //
 // Copyright (C) Tim Coleman, 2002
 //
@@ -54,6 +55,13 @@ namespace System.Xml.Serialization {
 		#endregion // Properties
 
 		#region Methods
+
+		internal void Initialize (XmlWriter writer)
+		{
+			this.writer = writer;
+		}
+
+		internal abstract void WriteObject (object ob);
 
 		[MonoTODO ("Implement")]
 		protected void AddWriteCallback (Type type, string typeName, string typeNs, XmlSerializationWriteCallback callback)
@@ -233,10 +241,22 @@ namespace System.Xml.Serialization {
 		[MonoTODO ("Implement")]
 		protected void WriteElementLiteral (XmlNode node, string name, string ns, bool isNullable, bool any)
 		{
-			name = XmlCustomFormatter.FromXmlName (name);
-			WriteStartElement (name, ns);
-			node.WriteTo (Writer);
-			WriteEndElement ();
+			if (name != string.Empty)
+			{
+				if (node == null)
+				{
+					if (isNullable)
+						WriteNullTagLiteral (name, ns);
+				}
+				else
+				{
+					Writer.WriteStartElement (name, ns);
+					node.WriteTo (Writer);
+					Writer.WriteEndElement ();
+				}
+			}
+			else
+				node.WriteTo (Writer);
 		}
 
 		protected void WriteElementQualifiedName (string localName, XmlQualifiedName value)
@@ -280,6 +300,8 @@ namespace System.Xml.Serialization {
 		[MonoTODO ("Implement")]
 		protected void WriteElementString (string localName, string ns, string value, XmlQualifiedName xsiType)
 		{
+			if (value == null) return;
+
 			if (xsiType != null) {
 				localName = XmlCustomFormatter.FromXmlNCName (localName);
 				WriteStartElement (localName, ns);
@@ -349,8 +371,8 @@ namespace System.Xml.Serialization {
 		protected void WriteEmptyTag (string name, string ns)
 		{
 			name = XmlCustomFormatter.FromXmlName (name);
-			Writer.WriteStartElement (name, ns);
-			Writer.WriteEndElement ();
+			WriteStartElement (name, ns);
+			WriteEndElement ();
 		}
 
 		protected void WriteEndElement ()
@@ -416,7 +438,14 @@ namespace System.Xml.Serialization {
 		[MonoTODO ("Implement")]
 		protected void WriteNullableStringLiteral (string name, string ns, string value)
 		{
-			throw new NotImplementedException ();
+			if (value != null)
+				WriteElementString (name, ns, value, null);
+			else
+			{
+				WriteStartElement (name, ns);
+				WriteAttribute ("xsi","nil", ns, "true");
+				WriteEndElement ();
+			}
 		}
 
 		[MonoTODO ("Implement")]
@@ -447,10 +476,11 @@ namespace System.Xml.Serialization {
 			WriteNullTagLiteral (name, String.Empty);
 		}
 
-		[MonoTODO ("Implement")]
 		protected void WriteNullTagLiteral (string name, string ns)
 		{
-			throw new NotImplementedException ();
+			WriteStartElement (name, ns);
+			WriteAttribute ("xsi","nil", XmlSchema.InstanceNamespace, "true");
+			WriteEndElement ();
 		}
 
 		protected void WritePotentiallyReferencingElement (string n, string ns, object o)
@@ -525,11 +555,18 @@ namespace System.Xml.Serialization {
 		[MonoTODO]
 		protected void WriteStartElement (string name, string ns, object o, bool writePrefixed)
 		{
+			WriteState oldState = Writer.WriteState;
+
 			if (writePrefixed) {
 				name = XmlCustomFormatter.FromXmlName (name);
 				Writer.WriteStartElement (String.Empty, name, ns);
 			} else
 				Writer.WriteStartElement (name, ns);
+
+			if (oldState == WriteState.Prolog) {
+				WriteAttribute ("xmlns","xsd",XmlSchema.Namespace,XmlSchema.Namespace);
+				WriteAttribute ("xmlns","xsi",XmlSchema.InstanceNamespace,XmlSchema.InstanceNamespace);
+			}
 		}
 
 		protected void WriteTypedPrimitive (string name, string ns, object o, bool xsiType)
@@ -576,7 +613,10 @@ namespace System.Xml.Serialization {
 
 		protected void WriteXsiType (string name, string ns)
 		{
-			WriteAttribute ("type", XmlSchema.InstanceNamespace, GetQualifiedName (name, ns));
+			if (ns != null && ns != string.Empty)
+				WriteAttribute ("xsi", "type", ns, GetQualifiedName (name, ns));
+			else
+				WriteAttribute ("xsi", "type", ns, name);
 		}
 		
 		#endregion

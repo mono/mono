@@ -3,6 +3,7 @@
 //
 // Author:
 //   Tim Coleman (tim@timcoleman.com)
+//   Lluis Sanchez Gual (lluis@ximian.com)
 //
 // Copyright (C) Tim Coleman, 2002
 //
@@ -147,6 +148,59 @@ namespace System.Xml.Serialization {
 		internal static string ToXmlNmTokens (string value)
 		{
 			return ToXmlName (value);
+		}
+
+		internal static string ToXmlString (object value)
+		{
+			if (value == null) return null;
+			switch (Type.GetTypeCode(value.GetType()))
+			{
+				case TypeCode.Boolean: return XmlConvert.ToString ((bool)value);
+				case TypeCode.Byte: return XmlConvert.ToString ((byte)value);
+				case TypeCode.Char: return XmlConvert.ToString ((char)value);
+				case TypeCode.DateTime: return XmlConvert.ToString ((DateTime)value);
+				case TypeCode.Decimal: return XmlConvert.ToString ((decimal)value);
+				case TypeCode.Double: return XmlConvert.ToString ((double)value);
+				case TypeCode.Int16: return XmlConvert.ToString ((Int16)value);
+				case TypeCode.Int32: return XmlConvert.ToString ((Int32)value);
+				case TypeCode.Int64: return XmlConvert.ToString ((Int64)value);
+				case TypeCode.SByte: return XmlConvert.ToString ((sbyte)value);
+				case TypeCode.Single: return XmlConvert.ToString ((Single)value);
+				case TypeCode.UInt16: return XmlConvert.ToString ((UInt16)value);
+				case TypeCode.UInt32: return XmlConvert.ToString ((UInt32)value);
+				case TypeCode.UInt64: return XmlConvert.ToString ((UInt64)value);
+			}
+
+			if (value.GetType() == typeof(TimeSpan)) return XmlConvert.ToString ((TimeSpan)value);
+			if (value.GetType() == typeof (Guid)) return XmlConvert.ToString ((Guid)value);
+
+			return value.ToString ();
+		}
+
+		internal static object FromXmlString (string typeName, string value)
+		{
+			if (value == null) return null;
+
+			switch (typeName)
+			{
+				case "System.Boolean": return XmlConvert.ToBoolean (value);
+				case "System.Byte": return XmlConvert.ToByte (value);
+				case "System.Char": return XmlConvert.ToChar (value);
+				case "System.DateTime": return XmlConvert.ToDateTime (value);
+				case "System.Decimal": return XmlConvert.ToDecimal (value);
+				case "System.Double": return XmlConvert.ToDouble (value);
+				case "System.Int16": return XmlConvert.ToInt16 (value);
+				case "System.Int32": return XmlConvert.ToInt32 (value);
+				case "System.Int64": return XmlConvert.ToInt64 (value);
+				case "System.SByte": return XmlConvert.ToSByte (value);
+				case "System.Single": return XmlConvert.ToSingle (value);
+				case "System.UInt16": return XmlConvert.ToUInt16 (value);
+				case "System.UInt32": return XmlConvert.ToUInt32 (value);
+				case "System.UInt64": return XmlConvert.ToUInt64 (value);
+				case "System.TimeSpan": return XmlConvert.ToTimeSpan (value);
+				case "System.Guid": return XmlConvert.ToGuid (value);
+				default: return Convert.ChangeType (value, Type.GetType(typeName));
+			}
 		}
 
 		#endregion // Methods
