@@ -62,7 +62,9 @@ namespace System.Web
 		ArrayList fileDependencies;
 		CachedRawResponse cached_response;
 		ArrayList cached_headers;
-		
+
+		string app_path_mod = null;
+                
 		public HttpResponse (TextWriter output)
 		{
 			 _bBuffering = true;
@@ -322,9 +324,17 @@ namespace System.Web
 				virtualPath = UrlUtils.Reduce (virtualPath);
 			}
 
+			if (app_path_mod != null && virtualPath.IndexOf (app_path_mod) > 0)
+				virtualPath = UrlUtils.Combine (app_path_mod, virtualPath);
+
 			return virtualPath;
 		}
 
+		internal void SetAppPathModifier (string app_path_mod)
+		{
+			this.app_path_mod = app_path_mod;
+		}
+		
 		public bool Buffer
 		{
 			get {

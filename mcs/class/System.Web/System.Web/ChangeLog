@@ -1,3 +1,9 @@
+2003-12-03  Jackson Harper <jackson@ximian.com>
+
+	* HttpResponse.cs: Actually apply an app path modifier in
+	ApplyAppPathModifer and add a method to set the app path modifier.
+	* HttpRequest.cs: Add utility method for setting a request header.
+	
 2003-12-02  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpApplication.cs: handle FileNotFound and DirectoryNotFound
