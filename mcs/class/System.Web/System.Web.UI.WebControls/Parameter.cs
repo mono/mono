@@ -3,8 +3,10 @@
 //
 // Authors:
 //	Ben Maurer (bmaurer@users.sourceforge.net)
+//      Sanjay Gupta (gsanjay@novell.com)
 //
 // (C) 2003 Ben Maurer
+// (C) 2004 Novell, Inc. (http://www.novell.com)
 //
 
 //
@@ -33,8 +35,10 @@ using System.Collections;
 using System.Collections.Specialized;
 using System.Text;
 using System.Data;
+using System.ComponentModel;
 
 namespace System.Web.UI.WebControls {
+	[DefaultPropertyAttribute ("DefaultValue")]
 	public class Parameter : ICloneable, IStateManager {
 
 		public Parameter () : base ()
@@ -45,7 +49,7 @@ namespace System.Web.UI.WebControls {
 		{
 			this.DefaultValue = original.DefaultValue;
 			this.Direction = original.Direction;
-			this.TreatEmptyStringAsNull = original.TreatEmptyStringAsNull;
+			this.ConvertEmptyStringToNull = original.ConvertEmptyStringToNull;
 			this.Type = original.Type;
 			this.Name = original.Name;
 		}
@@ -133,6 +137,8 @@ namespace System.Web.UI.WebControls {
 			return base.ToString ();
 		}
 		
+		[WebCategoryAttribute ("Parameter"), DefaultValueAttribute (""),
+		WebSysDescriptionAttribute ("Default value to be used in case value is null.") ]
 		public string DefaultValue {
 			get {
 				return ViewState ["DefaultValue"] as string;
@@ -145,8 +151,11 @@ namespace System.Web.UI.WebControls {
 				}
 			}
 		}
-		
-		public ParameterDirection Direction {
+
+		[WebCategoryAttribute ("Parameter"), DefaultValueAttribute ("Input"),
+		WebSysDescriptionAttribute ("Parameter's direction.")]
+		public ParameterDirection Direction
+		{
 			get {
 				object o = ViewState ["Direction"];
 				if (o != null)
@@ -154,17 +163,19 @@ namespace System.Web.UI.WebControls {
 				
 				return ParameterDirection.Input;
 			}
-			set {
-				
+			set {				
 				if (Direction != value) {
 					ViewState ["Direction"] = value;
 					OnParameterChanged ();
 				}
 			}
 		}
-		
 
-		public string Name {
+
+		[WebCategoryAttribute ("Parameter"), DefaultValueAttribute (""),
+		WebSysDescriptionAttribute ("Parameter's name.")]
+		public string Name
+		{
 			get {
 				string s = ViewState ["Name"] as string;
 				if (s != null)
@@ -181,24 +192,29 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-		public bool TreatEmptyStringAsNull {
+		[WebCategoryAttribute ("Parameter"), DefaultValueAttribute (true),
+	        WebSysDescriptionAttribute ("Checks whether an empty string is treated as a null value.")]
+		public bool ConvertEmptyStringToNull
+		{
 			get {
-				object o = ViewState ["TreatEmptyStringAsNull"];
+				object o = ViewState["ConvertEmptyStringToNull"];
 				if (o != null)
 					return (bool) o;
 				
 				return false;
 			}
 			set {
-				
-				if (TreatEmptyStringAsNull != value) {
-					ViewState ["TreatEmptyStringAsNull"] = value;
+				if (ConvertEmptyStringToNull != value) {
+					ViewState["ConvertEmptyStringToNull"] = value;
 					OnParameterChanged ();
 				}
 			}
 		}
-		
-		public TypeCode Type {
+
+		[WebCategoryAttribute ("Parameter"), 
+		WebSysDescriptionAttribute("Represents type of the parameter.")]
+		public TypeCode Type
+		{
 			get {
 				object o = ViewState ["Type"];
 				if (o != null)
@@ -217,6 +233,8 @@ namespace System.Web.UI.WebControls {
 		
 		StateBag viewState;
 		
+		[BrowsableAttribute (false), 
+		DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
 		protected StateBag ViewState {
 			get {
 				if (viewState == null) {
@@ -232,7 +250,18 @@ namespace System.Web.UI.WebControls {
 		protected bool IsTrackingViewState {
 			get { return isTrackingViewState; }
 		}
-		
+
+		protected virtual object Evaluate (HttpContext context, Control control)
+		{
+			return null;
+		}
+
+		protected internal virtual void SetDirty()
+		{
+			this.SaveViewState();
+		}
+
+
 		private ParameterCollection _owner;
 
 		internal void SetOwnerCollection (ParameterCollection own)

@@ -1,3 +1,7 @@
+2004-10-04 Sanjay Gupta <gsanjay@novell.com>
+
+	* Parameter.cs: Updated and completed implementation.
+
 2004-10-01 Sanjay Gupta <gsanjay@novell.com>
 
 	* ParameterCollection.cs: Resolved warnings, "Unreachable code detected"
