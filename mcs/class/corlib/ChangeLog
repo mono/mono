@@ -1,5 +1,13 @@
 2004-05-14  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* corlib.dll.sources: removed obsolete Mono/Runtime.cs
+	* corlib_test.dll.sources: added BinderTests
+	* Mono: removed obsolete directory.
+	* Mono/ChangeLog: Removed file.
+	* Mono/Runtime.cs: Removed file.
+
+2004-05-14  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* Makefile: install-local is verbose now.
 
 2004-05-14  Sebastien Pouliot  <sebastien@ximian.com>

@@ -7,7 +7,6 @@ Microsoft.Win32/Registry.cs
 Microsoft.Win32/RegistryHive.cs
 Microsoft.Win32/Win32RegistryApi.cs
 Microsoft.Win32/Win32ResultCode.cs
-Mono/Runtime.cs
 Mono.Math/BigInteger.cs
 Mono.Math.Prime/ConfidenceFactor.cs
 Mono.Math.Prime/PrimalityTests.cs
