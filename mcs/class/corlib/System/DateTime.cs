@@ -1278,13 +1278,13 @@ namespace System
 					if (num == 0) {
 						int offset = utcoffset.Hours;
 						str = offset.ToString ("d");
-						str = String.Concat ((offset >= 0) ? "+" : "-", str);
+						str = String.Concat ((offset >= 0) ? "+" : "", str);
 					} 
 					else if (num == 1) 
 					{
 						int offset = utcoffset.Hours;
 						str = offset.ToString ("d02");
-						str = String.Concat ((offset >= 0) ? "+" : "-", str);
+						str = String.Concat ((offset >= 0) ? "+" : "", str);
 					} 
 					else if (num == 2) 
 					{
@@ -1293,7 +1293,7 @@ namespace System
 						str = offhour.ToString ("d02");
 						str = String.Concat (str, dfi.TimeSeparator);
 						str = String.Concat (str, offminute.ToString ("d02"));
-						str = String.Concat ((offhour >= 0) ? "+" : "-", str);
+						str = String.Concat ((offhour >= 0) ? "+" : "", str);
 						num = 2;
 					}
 					break;
