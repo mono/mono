@@ -1552,6 +1552,10 @@ namespace Mono.CSharp {
 		{
 			return Child.ConvertToInt ();
 		}
+		
+		public override bool IsZeroInteger {
+			get { return Child.IsZeroInteger; }
+		}
 	}
 
 	/// <summary>
@@ -1565,11 +1569,13 @@ namespace Mono.CSharp {
 		public BoxedCast (Expression expr)
 			: base (expr, TypeManager.object_type) 
 		{
+			eclass = ExprClass.Value;
 		}
 
 		public BoxedCast (Expression expr, Type target_type)
 			: base (expr, target_type)
 		{
+			eclass = ExprClass.Value;
 		}
 		
 		public override Expression DoResolve (EmitContext ec)
@@ -2288,6 +2294,7 @@ namespace Mono.CSharp {
 		{
 			if (Type == TypeManager.enum_type ||
 			    (Type == TypeManager.value_type && RootContext.StdLib) ||
+			    Type == TypeManager.multicast_delegate_type ||
 			    Type == TypeManager.delegate_type ||
 			    Type == TypeManager.array_type)
 				return false;
@@ -2331,6 +2338,11 @@ namespace Mono.CSharp {
 			return Type == tobj.Type;
 		}
 
+		public override int GetHashCode ()
+		{
+			return Type.GetHashCode ();
+		}
+		
 		public override string ToString ()
 		{
 			return Name;

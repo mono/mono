@@ -146,6 +146,14 @@ namespace Mono.CSharp {
 		{
 			return null;
 		}
+		
+		//
+		// Returns true iff 1) the stack type of this is one of Object, 
+		// int32, int64 and 2) this == 0 or this == null.
+		//
+		public virtual bool IsZeroInteger {
+			get { return false; }
+		}
 	}
 	
 	public class BoolConstant : Constant {
@@ -176,6 +184,10 @@ namespace Mono.CSharp {
 				ec.ig.Emit (OpCodes.Ldc_I4_1);
 			else
 				ec.ig.Emit (OpCodes.Ldc_I4_0);
+		}
+		
+		public override bool IsZeroInteger {
+			get { return Value == false; }
 		}
 	}
 
@@ -232,6 +244,10 @@ namespace Mono.CSharp {
 		public override IntConstant ConvertToInt ()
 		{
 			return new IntConstant (Value);
+		}
+		
+		public override bool IsZeroInteger {
+			get { return Value == 0; }
 		}
 	}
 
@@ -318,6 +334,10 @@ namespace Mono.CSharp {
 		{
 			return new IntConstant (Value);
 		}
+		
+		public override bool IsZeroInteger {
+			get { return Value == '\0'; }
+		}
 	}
 
 	public class SByteConstant : Constant {
@@ -377,6 +397,10 @@ namespace Mono.CSharp {
 		{
 			return new IntConstant (Value);
 		}
+		
+		public override bool IsZeroInteger {
+			get { return Value == 0; }
+		}
 	}
 
 	public class ShortConstant : Constant {
@@ -433,6 +457,10 @@ namespace Mono.CSharp {
 		{
 			return new IntConstant (Value);
 		}
+		
+		public override bool IsZeroInteger {
+			get { return Value == 0; }
+		}
 	}
 
 	public class UShortConstant : Constant {
@@ -488,6 +516,10 @@ namespace Mono.CSharp {
 		public override IntConstant ConvertToInt ()
 		{
 			return new IntConstant (Value);
+		}
+		
+		public override bool IsZeroInteger {
+			get { return Value == 0; }
 		}
 	}
 
@@ -603,6 +635,10 @@ namespace Mono.CSharp {
 		{
 			return this;
 		}
+		
+		public override bool IsZeroInteger {
+			get { return Value == 0; }
+		}
 	}
 
 	public class UIntConstant : Constant {
@@ -658,6 +694,10 @@ namespace Mono.CSharp {
 		public override IntConstant ConvertToInt ()
 		{
 			return null;
+		}
+		
+		public override bool IsZeroInteger {
+			get { return Value == 0; }
 		}
 	}
 
@@ -730,6 +770,10 @@ namespace Mono.CSharp {
 		{
 			return null;
 		}
+		
+		public override bool IsZeroInteger {
+			get { return Value == 0; }
+		}
 	}
 
 	public class ULongConstant : Constant {
@@ -787,6 +831,10 @@ namespace Mono.CSharp {
 		public override IntConstant ConvertToInt ()
 		{
 			return null;
+		}
+		
+		public override bool IsZeroInteger {
+			get { return Value == 0; }
 		}
 	}
 

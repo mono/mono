@@ -194,11 +194,15 @@ namespace Mono.CSharp
 				"   -checked[+|-]      Set default context to checked\n" +
 				"   -codepage:ID       Sets code page to the one in ID\n" +
 				"                      (number, `utf8' or `reset')\n" +
+				"   -clscheck[+|-]     Disables CLS Compliance verifications" + Environment.NewLine +
 				"   -define:S1[;S2]    Defines one or more symbols (short: /d:)\n" +
-				"   -debug[+-]         Generate debugging information\n" + 
+				"   -debug[+|-]        Generate debugging information\n" + 
+				"   -delaysign[+|-]    Only insert the public key into the assembly (no signing)\n" +
 				"   -doc:FILE          XML Documentation file to generate\n" + 
 				"   -g                 Generate debugging information\n" +
 				"   --fatal            Makes errors fatal\n" +
+				"   -keycontainer:NAME The key pair container used to strongname the assembly\n" +
+				"   -keyfile:FILE      The strongname key file used to strongname the assembly\n" +
 				"   -lib:PATH1,PATH2   Adds the paths to the assembly link path\n" +
 				"   -main:class        Specified the class that contains the entry point\n" +
 				"   -noconfig[+|-]     Disables implicit references to assemblies\n" +
@@ -1075,6 +1079,14 @@ namespace Mono.CSharp
 				RootContext.Checked = false;
 				return true;
 
+			case "/clscheck":
+			case "/clscheck+":
+				return true;
+
+			case "/clscheck-":
+				RootContext.VerifyClsCompliance = false;
+				return true;
+
 			case "/unsafe":
 			case "/unsafe+":
 				RootContext.Unsafe = true;
@@ -1156,6 +1168,27 @@ namespace Mono.CSharp
 				return true;
 
 			case "/fullpaths":
+				return true;
+
+			case "/keyfile":
+				if (value == String.Empty) {
+					Report.Error (5, arg + " requires an argument");
+					Environment.Exit (1);
+				}
+				RootContext.StrongNameKeyFile = value;
+				return true;
+			case "/keycontainer":
+				if (value == String.Empty) {
+					Report.Error (5, arg + " requires an argument");
+					Environment.Exit (1);
+				}
+				RootContext.StrongNameKeyContainer = value;
+				return true;
+			case "/delaysign+":
+				RootContext.StrongNameDelaySign = true;
+				return true;
+			case "/delaysign-":
+				RootContext.StrongNameDelaySign = false;
 				return true;
 
 			case "/v2":
@@ -1434,6 +1467,12 @@ namespace Mono.CSharp
 				return false;
 			}
 			
+			if (RootContext.VerifyClsCompliance) { 
+				CodeGen.Assembly.ResolveClsCompliance ();
+				AttributeTester.VerifyModulesClsCompliance ();
+				TypeManager.LoadAllImportedTypes ();
+			}
+			
 			//
 			// The code generator
 			//
@@ -1568,8 +1607,19 @@ namespace Mono.CSharp
 			Timer.ShowTimers ();
 			
 			if (Report.ExpectedError != 0){
-				Console.WriteLine("Failed to report expected error " + Report.ExpectedError);
+				if (Report.Errors == 0) {
+					Console.WriteLine ("Failed to report expected error " + Report.ExpectedError + ".\n" +
+						"No other errors reported.");
+					
+					Environment.Exit (2);
+				} else {
+					Console.WriteLine ("Failed to report expected error " + Report.ExpectedError + ".\n" +
+						"However, other errors were reported.");
+					
 				Environment.Exit (1);
+				}
+				
+				
 				return false;
 			}
 

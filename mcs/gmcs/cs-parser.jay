@@ -1672,7 +1672,7 @@ destructor_declaration
                         if ((m & Modifiers.UNSAFE) != 0){
                                 if (!RootContext.Unsafe){
                                         Report.Error (227, l,
-					      "Unsafe code requires the --unsafe command " +
+					      "Unsafe code requires the -unsafe command " +
 					      "line option to be specified");
                                 }
                         }
@@ -1684,6 +1684,14 @@ destructor_declaration
 			d.Block = (Block) $7;
 			CheckDef (current_container.AddMethod (d), d.Name, d.Location);
 		}
+	  }
+	| opt_attributes opt_modifiers EVENT type member_name OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS block {
+		string mn = (string) $5;
+
+		if (mn.IndexOf ('.') != -1)
+			Report.Error (71, lexer.Location, "Explicit implementation of events requires property syntax");
+		else 
+			Report.Error (71, lexer.Location, "Event declaration should use property syntax");
 	  }
 	;
 
@@ -3215,14 +3223,14 @@ statement
 			current_block = (Block) $1;
 		}
 	  }
-	| embedded_statement
+	| valid_declaration_statement
 	  {
 		current_block.AddStatement ((Statement) $1);
 	  }
 	| labeled_statement
 	;
 
-embedded_statement
+valid_declaration_statement
 	: block
 	| empty_statement
         | expression_statement
@@ -3236,6 +3244,20 @@ embedded_statement
 	| using_statement
 	| unsafe_statement
 	| fixed_statement
+	;
+
+embedded_statement
+	: valid_declaration_statement
+	| declaration_statement
+	  {
+		  Report.Error (1023, lexer.Location, "An embedded statement may not be a declaration.");
+		  $$ = null;
+	  }
+	| labeled_statement
+	  {
+		  Report.Error (1023, lexer.Location, "An embedded statement may not be a labeled statement.");
+		  $$ = null;
+	  }
 	;
 
 empty_statement

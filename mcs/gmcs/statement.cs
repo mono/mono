@@ -2247,6 +2247,8 @@ namespace Mono.CSharp {
 			public long nFirst;
 			public long nLast;
 			public ArrayList rgKeys = null;
+			// how many items are in the bucket
+			public int Size = 1;
 			public int Length
 			{
 				get { return (int) (nLast - nFirst + 1); }
@@ -2298,10 +2300,11 @@ namespace Mono.CSharp {
 				for (int ikb = 1; ikb < rgKeyBlocks.Count; ikb++)
 				{
 					KeyBlock kb = (KeyBlock) rgKeyBlocks [ikb];
-					if ((kbCurr.Length + kb.Length) * 2 >=  KeyBlock.TotalLength (kbCurr, kb))
+					if ((kbCurr.Size + kb.Size) * 2 >=  KeyBlock.TotalLength (kbCurr, kb))
 					{
 						// merge blocks
 						kbCurr.nLast = kb.nLast;
+						kbCurr.Size += kb.Size;
 					}
 					else
 					{
@@ -3868,14 +3871,9 @@ namespace Mono.CSharp {
 		bool EmitCollectionForeach (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
-			VariableStorage enumerator, disposable;
+			VariableStorage enumerator;
 
 			enumerator = new VariableStorage (ec, hm.enumerator_type);
-			if (hm.is_disposable)
-				disposable = new VariableStorage (ec, TypeManager.idisposable_type);
-			else
-				disposable = null;
-
 			enumerator.EmitThis ();
 			//
 			// Instantiate the enumerator
@@ -3931,20 +3929,20 @@ namespace Mono.CSharp {
 			// Now the finally block
 			//
 			if (hm.is_disposable) {
-				Label end_finally = ig.DefineLabel ();
+				Label call_dispose = ig.DefineLabel ();
 				ig.BeginFinallyBlock ();
 
-				disposable.EmitThis ();
 				enumerator.EmitThis ();
 				enumerator.EmitLoad ();
 				ig.Emit (OpCodes.Isinst, TypeManager.idisposable_type);
-				disposable.EmitStore ();
-				disposable.EmitLoad ();
-				ig.Emit (OpCodes.Brfalse, end_finally);
-				disposable.EmitThis ();
-				disposable.EmitLoad ();
+				ig.Emit (OpCodes.Dup);
+				ig.Emit (OpCodes.Brtrue_S, call_dispose);
+				ig.Emit (OpCodes.Pop);
+				ig.Emit (OpCodes.Endfinally);
+				
+				ig.MarkLabel (call_dispose);
 				ig.Emit (OpCodes.Callvirt, TypeManager.void_dispose_void);
-				ig.MarkLabel (end_finally);
+				
 
 				// The runtime generates this anyways.
 				// ig.Emit (OpCodes.Endfinally);

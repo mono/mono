@@ -62,10 +62,21 @@ namespace Mono.CSharp {
 		public static Target Target = Target.Exe;
 		public static string TargetExt = ".exe";
 
+		public static bool VerifyClsCompliance = true;
+
 		//
 		// If set, enable C# version 2 features
 		//
 		public static bool V2 = true;
+
+		//
+		// We keep strongname related info here because
+		// it's also used as complier options from CSC 8.x
+		//
+		public static string StrongNameKeyFile;
+		public static string StrongNameKeyContainer;
+		public static bool StrongNameDelaySign = false;
+
 		//
 		// Constructor
 		//
@@ -330,7 +341,9 @@ namespace Mono.CSharp {
 				"System.Decimal", "System.Void",
 				"System.RuntimeFieldHandle",
 				"System.RuntimeTypeHandle",
-				"System.IntPtr"
+				"System.IntPtr",
+				"System.TypedReference",
+				"System.ArgIterator"
 			};
 			
 			foreach (string cname in structs_second_stage)
@@ -361,11 +374,11 @@ namespace Mono.CSharp {
 				"System.Diagnostics.ConditionalAttribute",
 				"System.ObsoleteAttribute",
 				"System.ParamArrayAttribute",
+				"System.CLSCompliantAttribute",
 				"System.Security.UnverifiableCodeAttribute",
 				"System.Runtime.CompilerServices.IndexerNameAttribute",
 				"System.Runtime.InteropServices.InAttribute",
-				"System.InvalidOperationException"
-
+				"System.InvalidOperationException",
 			};
 
 			// We must store them here before calling BootstrapCorlib_ResolveDelegate.
@@ -718,20 +731,21 @@ namespace Mono.CSharp {
 
 		static public void EmitCode ()
 		{
-			//
-			// Because of the strange way in which we do things, global
-			// attributes must be processed first.
-			//
-			CodeGen.Assembly.Emit ();
-			CodeGen.Module.Emit ();
-                        
 			if (attribute_types != null)
 				foreach (TypeContainer tc in attribute_types)
 					tc.Emit ();
 
+			CodeGen.Assembly.Emit ();
+			CodeGen.Module.Emit ();
+                        
+			if (Tree.Types.Enums != null) {
+				foreach (Enum e in Tree.Types.Enums)
+					e.Emit (Tree.Types);
+			}
+
                         if (interface_resolve_order != null){
 				foreach (Interface iface in interface_resolve_order)
-                                        iface.Emit ();
+					iface.Emit (Tree.Types);
 			}                        
 			
 			if (type_container_resolve_order != null) {
@@ -742,6 +756,10 @@ namespace Mono.CSharp {
 					tc.Emit ();
 			}
 			
+			if (Tree.Types.Delegates != null) {
+				foreach (Delegate d in Tree.Types.Delegates)
+					d.Emit (Tree.Types);
+			}			
 			//
 			// Run any hooks after all the types have been defined.
 			// This is used to create nested auxiliary classes for example

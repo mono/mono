@@ -66,6 +66,15 @@ namespace Mono.CSharp {
 				return false;
 			}
 
+			if ((ModFlags & Parameter.Modifier.ISBYREF) != 0){
+				if (parameter_type == TypeManager.typed_reference_type ||
+				    parameter_type == TypeManager.arg_iterator_type){
+					Report.Error (1601, l,
+						      "out or ref parameter can not be of type TypedReference or ArgIterator");
+					return false;
+				}
+			}
+			
 			return parameter_type != null;
 		}
 
@@ -119,6 +128,20 @@ namespace Mono.CSharp {
 			}
 
 			return ExternalType ().FullName;
+		}
+
+		public string GetSignatureForError ()
+		{
+			string typeName = TypeManager.CSharpName (parameter_type);
+			switch (ModFlags & ~Modifier.ISBYREF) {
+				case Modifier.OUT:
+					return "out " + typeName;
+				case Modifier.PARAMS:
+					return "params " + typeName;
+				case Modifier.REF:
+					return "ref " + typeName;
+			}
+			return typeName;
 		}
 	}
 

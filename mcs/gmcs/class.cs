@@ -124,6 +124,7 @@ namespace Mono.CSharp {
 
 		// The interfaces we implement.
 		TypeExpr [] ifaces;
+		Type[] base_inteface_types;
 
 		// The parent member container and our member cache
 		IMemberContainer parent_container;
@@ -876,7 +877,6 @@ namespace Mono.CSharp {
 				ModuleBuilder builder = CodeGen.Module.Builder;
 				TypeBuilder = builder.DefineType (
 					Name, type_attributes, ptype, null);
-				
 			} else {
 				TypeBuilder builder = Parent.DefineType ();
 				if (builder == null) {
@@ -939,12 +939,12 @@ namespace Mono.CSharp {
 
 			// add interfaces that were not added at type creation
 			if (ifaces != null) {
-				Type[] itypes = new Type [ifaces.Length];
-				for (int i = 0; i < ifaces.Length; i++) {
-					itypes [i] = ifaces [i].ResolveType (ec);
-					if (itypes [i] == null)
-						error = true;
-				}
+ 				Type[] itypes = new Type[ifaces.Length];
+ 				for (int i = 0; i < ifaces.Length; ++i) {
+ 					Type itype = ifaces [i].ResolveType (ec);
+ 					TypeBuilder.AddInterfaceImplementation (itype);
+ 					itypes [i] = itype;
+  				}
 
 				if (error)
 					return null;
@@ -953,9 +953,6 @@ namespace Mono.CSharp {
 					error = true;
 					return null;
 				}
-
-				for (int i = 0; i < ifaces.Length; i++)
-					TypeBuilder.AddInterfaceImplementation (itypes [i]);
 			}
 
 			//
@@ -1390,9 +1387,9 @@ namespace Mono.CSharp {
 				}
 			}
 
-			MethodInfo[] methods = new MethodInfo [members.Count];
-			members.CopyTo (methods, 0);
-			return methods;
+			MethodInfo[] retMethods = new MethodInfo [members.Count];
+			members.CopyTo (retMethods, 0);
+			return retMethods;
 		}
 		
 		/// <summary>
@@ -1762,7 +1759,8 @@ namespace Mono.CSharp {
 			//
 			// Lookup members in parent if requested.
 			//
-			if (((bf & BindingFlags.DeclaredOnly) == 0) && (TypeBuilder.BaseType != null)) {
+			if ((bf & BindingFlags.DeclaredOnly) == 0) {
+				if (TypeBuilder.BaseType != null) {
 				MemberList list = FindMembers (TypeBuilder.BaseType, mt, bf, filter, criteria);
 				if (list.Count > 0) {
 					if (members == null)
@@ -1771,6 +1769,19 @@ namespace Mono.CSharp {
 				members.AddRange (list);
 			}
 			}
+				
+ 				if (base_inteface_types != null) {
+ 					foreach (Type base_type in base_inteface_types) {
+ 						MemberList list = TypeContainer.FindMembers (base_type, mt, bf, filter, criteria);
+
+ 						if (list.Count > 0) {
+ 							if (members == null)
+ 								members = new ArrayList ();
+ 							members.AddRange (list);
+ 						}
+ 					}
+ 				}
+ 			}
 
 			Timer.StopTimer (TimerType.TcFindMembers);
 
@@ -1824,9 +1835,29 @@ namespace Mono.CSharp {
 		/// </summary>
 		public void Emit ()
 		{
-			if (instance_constructors != null)
+			Attribute.ApplyAttributes (ec, TypeBuilder, this, OptAttributes);
+
+			Emit (this);
+
+			if (instance_constructors != null) {
+				if (TypeBuilder.IsSubclassOf (TypeManager.attribute_type) && IsClsCompliaceRequired (this)) {
+					bool has_compliant_args = false;
+
+					foreach (Constructor c in instance_constructors) {
+						c.Emit (this);
+
+						if (has_compliant_args)
+							continue;
+
+						has_compliant_args = c.HasCompliantArgs;
+					}
+					if (!has_compliant_args)
+						Report.Error_T (3015, Location, GetSignatureForError ());
+				} else {
 				foreach (Constructor c in instance_constructors)
 					c.Emit (this);
+				}
+			}
 
 			if (default_static_constructor != null)
 				default_static_constructor.Emit (this);
@@ -1860,12 +1891,16 @@ namespace Mono.CSharp {
 					e.Emit (this);
 			}
 
+			if (delegates != null) {
+				foreach (Delegate d in Delegates) {
+					d.Emit (this);
+				}
+			}
+
 			if (Pending != null)
 				if (Pending.VerifyPendingMethods ())
 					return;
 			
-			Attribute.ApplyAttributes (ec, TypeBuilder, this, OptAttributes);
-
 			//
 			// Check for internal or private fields that were never assigned
 			//
@@ -2126,6 +2161,19 @@ namespace Mono.CSharp {
 				builder_and_args = new Hashtable ();
 			return true;
 		}
+
+		protected override bool VerifyClsCompliance (DeclSpace ds)
+		{
+			if (!base.VerifyClsCompliance (ds))
+				return false;
+
+			// parent_container is null for System.Object
+			if (parent_container != null && !AttributeTester.IsClsCompliant (parent_container.Type)) {
+				Report.Error_T (3009, Location, GetSignatureForError (),  TypeManager.CSharpName (parent_container.Type));
+			}
+			return true;
+		}
+
 
 		/// <summary>
 		///   Performs checks for an explicit interface implementation.  First it
@@ -2633,6 +2681,24 @@ namespace Mono.CSharp {
 			return true;
 		}
 
+		protected override bool VerifyClsCompliance (DeclSpace ds)
+		{
+			if (!base.VerifyClsCompliance (ds)) {
+				if ((ModFlags & Modifiers.ABSTRACT) != 0 && IsExposedFromAssembly (ds) && ds.IsClsCompliaceRequired (ds)) {
+					Report.Error_T (3011, Location, GetSignatureForError ());
+				}
+				return false;
+			}
+
+			AttributeTester.AreParametersCompliant (Parameters.FixedParameters, Location);
+
+			if (!AttributeTester.IsClsCompliant (MemberType)) {
+				Report.Error_T (3002, Location, GetSignatureForError ());
+			}
+
+			return true;
+		}
+
 		protected bool IsDuplicateImplementation (TypeContainer tc, MethodCore method)
 		{
 			if ((method == this) || (method.Name != Name))
@@ -2690,6 +2756,18 @@ namespace Mono.CSharp {
 					      tc.Name);
 				return true;
 			}
+
+ 			//
+ 			// Try to report 663: method only differs on out/ref
+ 			//
+ 			ParameterData info = ParameterInfo;
+ 			ParameterData other_info = method.ParameterInfo;
+ 			for (int i = 0; i < info.Count; i++){
+ 				if (info.ParameterModifier (i) != other_info.ParameterModifier (i)){
+ 					Report.Error (663, Location, "Overload method only differs in parameter modifier");
+ 					return false;
+ 				}
+ 			}
 
 			return false;
 		}
@@ -2858,6 +2936,11 @@ namespace Mono.CSharp {
 		public Type GetReturnType ()
 		{
 			return MemberType;
+		}
+
+		public override string GetSignatureForError()
+		{
+			return TypeManager.CSharpSignature (MethodBuilder);
 		}
 
                 void DuplicateEntryPoint (MethodInfo b, Location location)
@@ -3062,9 +3145,10 @@ namespace Mono.CSharp {
 		//
 		// Emits the code
 		// 
-		public void Emit (TypeContainer container)
+		public override void Emit (TypeContainer container)
 		{
 			MethodData.Emit (container, Block, this);
+			base.Emit (container);
 			Block = null;
 			MethodData = null;
 		}
@@ -3072,6 +3156,11 @@ namespace Mono.CSharp {
 		void IIteratorContainer.SetYields ()
 		{
 			ModFlags |= Modifiers.METHOD_YIELDS;
+		}
+	
+		protected override bool IsIdentifierClsCompliant (DeclSpace ds)
+		{
+			return IsIdentifierAndParamClsCompliant (ds, Name, MethodBuilder, parameter_types);
 		}
 	}
 
@@ -3195,6 +3284,7 @@ namespace Mono.CSharp {
 			Modifiers.EXTERN |		
 			Modifiers.PRIVATE;
 
+		bool has_compliant_args = false;
 		//
 		// The spec claims that static is not permitted, but
 		// my very own code has static constructors.
@@ -3205,6 +3295,17 @@ namespace Mono.CSharp {
 				new MemberName (name), null, args, l)
 		{
 			Initializer = init;
+		}
+
+		public override string GetSignatureForError()
+		{
+			return TypeManager.CSharpSignature (ConstructorBuilder);
+		}
+
+		public bool HasCompliantArgs {
+			get {
+				return has_compliant_args;
+			}
 		}
 
 		//
@@ -3307,7 +3408,7 @@ namespace Mono.CSharp {
 		//
 		// Emits the code
 		//
-		public void Emit (TypeContainer container)
+		public override void Emit (TypeContainer container)
 		{
 			ILGenerator ig = ConstructorBuilder.GetILGenerator ();
 			EmitContext ec = new EmitContext (container, Location, ig, null, ModFlags, true);
@@ -3394,8 +3495,77 @@ namespace Mono.CSharp {
 			if (generate_debugging)
 				sw.CloseMethod ();
 
+			base.Emit (container);
+
 			block = null;
 		}
+
+		// For constructors is needed to test only parameters
+		protected override bool IsIdentifierClsCompliant (DeclSpace ds)
+		{
+			if (parameter_types == null || parameter_types.Length == 0)
+				return true;
+
+			TypeContainer tc = ds as TypeContainer;
+
+			for (int i = 0; i < tc.InstanceConstructors.Count; i++) {
+				Constructor c = (Constructor) tc.InstanceConstructors [i];
+						
+				if (c == this || c.ParameterTypes.Length == 0)
+					continue;
+
+				if (!c.IsClsCompliaceRequired (ds))
+					continue;
+				
+				if (!AttributeTester.AreOverloadedMethodParamsClsCompliant (parameter_types, c.ParameterTypes)) {
+					Report.Error_T (3006, Location, GetSignatureForError ());
+					return false;
+				}
+			}
+
+			if (tc.TypeBuilder.BaseType == null)
+				return true;
+
+			DeclSpace temp_ds = TypeManager.LookupDeclSpace (tc.TypeBuilder.BaseType);
+			if (temp_ds != null)
+				return IsIdentifierClsCompliant (temp_ds);
+
+			MemberInfo[] ml = tc.TypeBuilder.BaseType.FindMembers (MemberTypes.Constructor, BindingFlags.Public | BindingFlags.DeclaredOnly | BindingFlags.Instance, null, null);
+			// Skip parameter-less ctor
+			if (ml.Length < 2)
+				return true;
+
+			foreach (ConstructorInfo ci in ml) {
+				object[] cls_attribute = ci.GetCustomAttributes (TypeManager.cls_compliant_attribute_type, false);
+				if (cls_attribute.Length == 1 && (!((CLSCompliantAttribute)cls_attribute[0]).IsCompliant))
+					continue;
+
+				if (!AttributeTester.AreOverloadedMethodParamsClsCompliant (parameter_types, TypeManager.GetArgumentTypes (ci))) {
+					Report.Error_T (3006, Location, GetSignatureForError ());
+					return false;
+				}
+			}
+			
+			return true;
+		}
+
+		protected override bool VerifyClsCompliance (DeclSpace ds)
+		{
+			if (!base.VerifyClsCompliance (ds)) {
+				return false;
+			}
+			
+			if (ds.TypeBuilder.IsSubclassOf (TypeManager.attribute_type)) {
+				foreach (Type param in parameter_types) {
+					if (param.IsArray) {
+						return false;
+					}
+				}
+			}
+			has_compliant_args = true;
+			return true;
+		}
+
 	}
 
 	//
@@ -4354,6 +4524,25 @@ namespace Mono.CSharp {
 
 			return true;
 		}
+
+		protected override bool IsIdentifierClsCompliant (DeclSpace ds)
+		{
+			return IsIdentifierAndParamClsCompliant (ds, Name, null, null);
+		}
+
+		protected override bool VerifyClsCompliance(DeclSpace ds)
+		{
+			if (base.VerifyClsCompliance (ds)) {
+				return true;
+			}
+
+			if (IsInterface && HasClsCompliantAttribute (ds) && ds.IsClsCompliaceRequired (ds)) {
+				Report.Error_T (3010, Location, GetSignatureForError ());
+			}
+			return false;
+		}
+
+
 	}
 
 	//
@@ -4419,6 +4608,27 @@ namespace Mono.CSharp {
 
 			return init_expr;
 		}
+
+		public override string GetSignatureForError ()
+		{
+			return TypeManager.GetFullNameSignature (FieldBuilder);
+		}
+
+		protected override bool VerifyClsCompliance (DeclSpace ds)
+		{
+			if (!base.VerifyClsCompliance (ds))
+				return false;
+
+			if (FieldBuilder == null) {
+				return true;
+			}
+
+			if (!AttributeTester.IsClsCompliant (FieldBuilder.FieldType)) {
+				Report.Error_T (3003, Location, GetSignatureForError ());
+			}
+			return true;
+		}
+
 
 		public void SetAssigned ()
 		{
@@ -4541,12 +4751,14 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public void Emit (TypeContainer tc)
+		public override void Emit (TypeContainer tc)
 		{
-			EmitContext ec = new EmitContext (tc, Location, null,
-							  FieldBuilder.FieldType, ModFlags);
-
+			if (OptAttributes != null) {
+				EmitContext ec = new EmitContext (tc, Location, null, FieldBuilder.FieldType, ModFlags);
 			Attribute.ApplyAttributes (ec, FieldBuilder, this, OptAttributes);
+		}
+
+			base.Emit (tc);
 		}
 	}
 
@@ -4600,6 +4812,32 @@ namespace Mono.CSharp {
 
 			return true;
 		}
+
+		public override string GetSignatureForError()
+		{
+			return TypeManager.CSharpSignature (PropertyBuilder, false);
+		}
+
+		protected virtual string RealMethodName {
+			get {
+				return Name;
+			}
+		}
+
+		protected override bool IsIdentifierClsCompliant (DeclSpace ds)
+		{
+			if (!IsIdentifierAndParamClsCompliant (ds, RealMethodName, null, null))
+				return false;
+
+			if (Get != null && !IsIdentifierAndParamClsCompliant (ds, "get_" + RealMethodName, null, null))
+				return false;
+
+			if (Set != null && !IsIdentifierAndParamClsCompliant (ds, "set_" + RealMethodName, null, null))
+				return false;
+
+			return true;
+		}
+
 
 		//
 		// Checks our base implementation if any
@@ -4722,7 +4960,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public void Emit (TypeContainer tc)
+		public override void Emit (TypeContainer tc)
 		{
 			//
 			// The PropertyBuilder can be null for explicit implementations, in that
@@ -4741,6 +4979,8 @@ namespace Mono.CSharp {
 				SetData.Emit (tc, Set.Block, Set);
 				Set.Block = null;
 			}
+
+			base.Emit (tc);
 		}
 	}
 			
@@ -5163,12 +5403,13 @@ namespace Mono.CSharp {
 			ig.Emit (OpCodes.Ret);
 		}
 
-		public void Emit (TypeContainer tc)
+		public override void Emit (TypeContainer tc)
 		{
 			EmitContext ec;
-
+			if (OptAttributes != null) {
 			ec = new EmitContext (tc, Location, null, MemberType, ModFlags);
 			Attribute.ApplyAttributes (ec, EventBuilder, this, OptAttributes);
+			}
 
 			if (Add != null) {
 				AddData.Emit (tc, Add.Block, Add);
@@ -5187,6 +5428,7 @@ namespace Mono.CSharp {
 				ec = new EmitContext (tc, Location, ig, TypeManager.void_type, ModFlags);
 				EmitDefaultMethod (ec, false);
 			}
+			base.Emit (tc);
 		}
 		
 	}
@@ -5234,6 +5476,12 @@ namespace Mono.CSharp {
 		{
 		}
 
+		void CheckIndexerName (string name)
+		{
+			if (name.IndexOf (' ') != -1)
+				Report.Error (633, Location, "The IndexerName specified is an invalid identifier");
+		}
+		       
 		public override bool Define (TypeContainer container)
 		{
 			PropertyAttributes prop_attr =
@@ -5246,10 +5494,13 @@ namespace Mono.CSharp {
 			IndexerName = Attribute.ScanForIndexerName (ec, OptAttributes);
 			if (IndexerName == null)
 				IndexerName = "Item";
-			else if (IsExplicitImpl)
+			else {
+				CheckIndexerName (IndexerName);
+				if (IsExplicitImpl)
 				Report.Error (592, Location,
-					      "Attribute 'IndexerName' is not valid on this declaration " +
-					      "type. It is valid on `property' declarations only.");
+						      "Attribute 'IndexerName' is not valid on explicit " +
+						      "implementations.");
+			}
 
 			ShortName = IndexerName;
 			if (IsExplicitImpl) {
@@ -5417,8 +5668,15 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public override string GetSignatureForError () {
+		public override string GetSignatureForError ()
+		{
 			return TypeManager.CSharpSignature (PropertyBuilder, true);
+		}
+
+		protected override string RealMethodName {
+			get {
+				return IndexerName;
+			}
 		}
 	}
 
@@ -5648,7 +5906,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 		
-		public void Emit (TypeContainer container)
+		public override void Emit (TypeContainer container)
 		{
 			//
 			// abstract or extern methods have no bodies

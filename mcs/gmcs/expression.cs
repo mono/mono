@@ -430,6 +430,11 @@ namespace Mono.CSharp {
 					return null;
 				}
 
+				if (ec.InFixedInitializer && ((variable != null) && variable.VerifyFixed (false))) {
+					Error (213, "You can not fix an already fixed expression");
+					return null;
+				}
+
 				// According to the specs, a variable is considered definitely assigned if you take
 				// its address.
 				if ((variable != null) && (variable.VariableInfo != null))
@@ -972,6 +977,13 @@ namespace Mono.CSharp {
 
 			ia.CacheTemporaries (ec);
 
+			//
+			// NOTE: We should probably handle three cases:
+			//
+			//     * method invocation required.
+			//     * direct stack manipulation possible
+			//     * the object requires an "instance" field
+			//
 			if (temp_storage == null){
 				//
 				// Temporary improvement: if we are dealing with something that does
@@ -2359,93 +2371,25 @@ namespace Mono.CSharp {
 				// If any of the arguments is a string, cast to string
 				//
 				
-				if (l == TypeManager.string_type){
-					MethodBase method;
-					
-					if (r == TypeManager.void_type) {
+				// Simple constant folding
+				if (left is StringConstant && right is StringConstant)
+					return new StringConstant (((StringConstant) left).Value + ((StringConstant) right).Value);
+
+				if (l == TypeManager.string_type || r == TypeManager.string_type) {
+
+					if (r == TypeManager.void_type || l == TypeManager.void_type) {
 						Error_OperatorCannotBeApplied ();
 						return null;
 					}
 					
-					if (r == TypeManager.string_type){
-						if (left is Constant && right is Constant){
-							StringConstant ls = (StringConstant) left;
-							StringConstant rs = (StringConstant) right;
-							
-							return new StringConstant (
-								ls.Value + rs.Value);
-						}
-
-						if (left is BinaryMethod){
-							BinaryMethod b = (BinaryMethod) left;
-
-							//
-							// Call String.Concat (string, string, string) or
-							// String.Concat (string, string, string, string)
-							// if possible.
-							//
-							if (b.method == TypeManager.string_concat_string_string ||
-							     b.method == TypeManager.string_concat_string_string_string){
-								int count = b.Arguments.Count;
-								
-								if (count == 2){
-									ArrayList bargs = new ArrayList (3);
-									bargs.AddRange (b.Arguments);
-									bargs.Add (new Argument (right, Argument.AType.Expression));
-									return new BinaryMethod (
-										TypeManager.string_type,
-										TypeManager.string_concat_string_string_string, bargs);
-								} else if (count == 3){
-									ArrayList bargs = new ArrayList (4);
-									bargs.AddRange (b.Arguments);
-									bargs.Add (new Argument (right, Argument.AType.Expression));
-									return new BinaryMethod (
-										TypeManager.string_type,
-										TypeManager.string_concat_string_string_string_string, bargs);
-								}
-							}
-						}
-
-						// string + string
-						method = TypeManager.string_concat_string_string;
-					} else {
-						// string + object
-						method = TypeManager.string_concat_object_object;
-						right = Convert.ImplicitConversion (
-							ec, right, TypeManager.object_type, loc);
-						if (right == null){
-							Error_OperatorCannotBeApplied (loc, OperName (oper), l, r);
-							return null;
-						}
+					// try to fold it in on the left
+					if (left is StringConcat) {
+						((StringConcat) left).Append (ec, right);
+						return left.Resolve (ec);
 					}
 
-					//
-					// Cascading concats will hold up to 2 arguments, any extras will be
-					// reallocated above.
-					//
-					ArrayList args = new ArrayList (2);
-					args.Add (new Argument (left, Argument.AType.Expression));
-					args.Add (new Argument (right, Argument.AType.Expression));
-
-					return new BinaryMethod (TypeManager.string_type, method, args);
-				} else if (r == TypeManager.string_type){
-					// object + string
-
-					if (l == TypeManager.void_type) {
-						Error_OperatorCannotBeApplied ();
-						return null;
-					}
-					
-					left = Convert.ImplicitConversion (ec, left, TypeManager.object_type, loc);
-					if (left == null){
-						Error_OperatorCannotBeApplied (loc, OperName (oper), l, r);
-						return null;
-					}
-					ArrayList args = new ArrayList (2);
-					args.Add (new Argument (left, Argument.AType.Expression));
-					args.Add (new Argument (right, Argument.AType.Expression));
-
-					return new BinaryMethod (TypeManager.string_type, TypeManager.string_concat_object_object, args);
+					// Otherwise, start a new concat expression
+					return new StringConcat (ec, loc, left, right).Resolve (ec);
 				}
 
 				//
@@ -2835,28 +2779,21 @@ namespace Mono.CSharp {
 			// but on top of that we want for == and != to use a special path
 			// if we are comparing against null
 			//
-			if (oper == Operator.Equality || oper == Operator.Inequality) {
+			if ((oper == Operator.Equality || oper == Operator.Inequality) && (left is Constant || right is Constant)) {
 				bool my_on_true = oper == Operator.Inequality ? onTrue : !onTrue;
 
-				if (left is NullLiteral || left is IntConstant && ((IntConstant) left).Value == 0) {
-					right.Emit (ec);
-					if (my_on_true)
-						ig.Emit (OpCodes.Brtrue, target);
-					else
-						ig.Emit (OpCodes.Brfalse, target);
+				//
+				// put the constant on the rhs, for simplicity
+				//
+				if (left is Constant) {
+					Expression swap = right;
+					right = left;
+					left = swap;
+				}
 					
-					return;
-				} else if (right is NullLiteral || right is IntConstant && ((IntConstant) right).Value == 0){
+				if (((Constant) right).IsZeroInteger) {
 					left.Emit (ec);
 					if (my_on_true)
-						ig.Emit (OpCodes.Brtrue, target);
-					else
-						ig.Emit (OpCodes.Brfalse, target);
-					
-					return;
-				} else if (left is BoolConstant){
-					right.Emit (ec);
-					if (my_on_true != ((BoolConstant) left).Value)
 						ig.Emit (OpCodes.Brtrue, target);
 					else
 						ig.Emit (OpCodes.Brfalse, target);
@@ -2912,7 +2849,7 @@ namespace Mono.CSharp {
 			right.Emit (ec);
 
 			Type t = left.Type;
-			bool isUnsigned = is_unsigned (t);
+			bool isUnsigned = is_unsigned (t) || t == TypeManager.double_type || t == TypeManager.float_type;
 
 			switch (oper){
 			case Operator.Equality:
@@ -2956,9 +2893,6 @@ namespace Mono.CSharp {
 				break;
 
 			case Operator.LessThanOrEqual:
-				if (t == TypeManager.double_type || t == TypeManager.float_type)
-					isUnsigned = true;
-
 				if (onTrue)
 					if (isUnsigned)
 						ig.Emit (OpCodes.Ble_Un, target);
@@ -2973,8 +2907,6 @@ namespace Mono.CSharp {
 
 
 			case Operator.GreaterThanOrEqual:
-				if (t == TypeManager.double_type || t == TypeManager.float_type)
-					isUnsigned = true;
 				if (onTrue)
 					if (isUnsigned)
 						ig.Emit (OpCodes.Bge_Un, target);
@@ -3199,6 +3131,137 @@ namespace Mono.CSharp {
 				ig.Emit (OpCodes.Call, (MethodInfo) method);
 			else
 				ig.Emit (OpCodes.Call, (ConstructorInfo) method);
+		}
+	}
+
+	//
+	// Represents the operation a + b [+ c [+ d [+ ...]]], where a is a string
+	// b, c, d... may be strings or objects.
+	//
+	public class StringConcat : Expression {
+		ArrayList operands;
+		bool invalid = false;
+		
+		
+		public StringConcat (EmitContext ec, Location loc, Expression left, Expression right)
+		{
+			this.loc = loc;
+			type = TypeManager.string_type;
+			eclass = ExprClass.Value;
+		
+			operands = new ArrayList (2);
+			Append (ec, left);
+			Append (ec, right);
+		}
+		
+		public override Expression DoResolve (EmitContext ec)
+		{
+			if (invalid)
+				return null;
+			
+			return this;
+		}
+		
+		public void Append (EmitContext ec, Expression operand)
+		{
+			//
+			// Constant folding
+			//
+			if (operand is StringConstant && operands.Count != 0) {
+				StringConstant last_operand = operands [operands.Count - 1] as StringConstant;
+				if (last_operand != null) {
+					operands [operands.Count - 1] = new StringConstant (last_operand.Value + ((StringConstant) operand).Value);
+					return;
+				}
+			}
+			
+			//
+			// Conversion to object
+			//
+			if (operand.Type != TypeManager.string_type) {
+				Expression no = Convert.ImplicitConversion (ec, operand, TypeManager.object_type, loc);
+				
+				if (no == null) {
+					Binary.Error_OperatorCannotBeApplied (loc, "+", TypeManager.string_type, operand.Type);
+					invalid = true;
+				}
+				operand = no;
+			}
+			
+			operands.Add (operand);
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			MethodInfo concat_method = null;
+			
+			//
+			// Are we also concating objects?
+			//
+			bool is_strings_only = true;
+			
+			//
+			// Do conversion to arguments; check for strings only
+			//
+			for (int i = 0; i < operands.Count; i ++) {
+				Expression e = (Expression) operands [i];
+				is_strings_only &= e.Type == TypeManager.string_type;
+			}
+			
+			for (int i = 0; i < operands.Count; i ++) {
+				Expression e = (Expression) operands [i];
+				
+				if (! is_strings_only && e.Type == TypeManager.string_type) {
+					// need to make sure this is an object, because the EmitParams
+					// method might look at the type of this expression, see it is a
+					// string and emit a string [] when we want an object [];
+					
+					e = Convert.ImplicitConversion (ec, e, TypeManager.object_type, loc);
+				}
+				operands [i] = new Argument (e, Argument.AType.Expression);
+			}
+			
+			//
+			// Find the right method
+			//
+			switch (operands.Count) {
+			case 1:
+				//
+				// This should not be possible, because simple constant folding
+				// is taken care of in the Binary code.
+				//
+				throw new Exception ("how did you get here?");
+			
+			case 2:
+				concat_method = is_strings_only ? 
+					TypeManager.string_concat_string_string :
+					TypeManager.string_concat_object_object ;
+				break;
+			case 3:
+				concat_method = is_strings_only ? 
+					TypeManager.string_concat_string_string_string :
+					TypeManager.string_concat_object_object_object ;
+				break;
+			case 4:
+				//
+				// There is not a 4 param overlaod for object (the one that there is
+				// is actually a varargs methods, and is only in corlib because it was
+				// introduced there before.).
+				//
+				if (!is_strings_only)
+					goto default;
+				
+				concat_method = TypeManager.string_concat_string_string_string_string;
+				break;
+			default:
+				concat_method = is_strings_only ? 
+					TypeManager.string_concat_string_dot_dot_dot :
+					TypeManager.string_concat_object_dot_dot_dot ;
+				break;
+			}
+			
+			Invocation.EmitArguments (ec, concat_method, operands);
+			ec.ig.Emit (OpCodes.Call, concat_method);
 		}
 	}
 
@@ -4007,8 +4070,9 @@ namespace Mono.CSharp {
 						
 						pr.AddressOf (ec, mode);
 					}
-				} else
+				} else {
 					((IMemoryLocation)Expr).AddressOf (ec, mode);
+				}
 			} else
 				Expr.Emit (ec);
 		}
@@ -4092,8 +4156,7 @@ namespace Mono.CSharp {
                                                      " does not resolve its type");
 
 			//
-			// This is a special case since csc behaves this way. I can't find
-			// it anywhere in the spec but oh well ...
+			// This is a special case since csc behaves this way.
 			//
 			if (argument_expr is NullLiteral &&
                             p == TypeManager.string_type &&
@@ -4104,6 +4167,25 @@ namespace Mono.CSharp {
                                  q == TypeManager.string_type)
 				return 0;
 			
+                        //
+                        // csc behaves this way so we emulate it. Basically, if the argument
+                        // is null and one of the types to compare is 'object' and the other
+                        // is a reference type, we prefer the other.
+                        //
+                        // I can't find this anywhere in the spec but we can interpret this
+                        // to mean that null can be of any type you wish in such a context
+                        //
+                        if (p != null && q != null) {
+                                if (argument_expr is NullLiteral &&
+                                    !p.IsValueType &&
+                                    q == TypeManager.object_type)
+                                        return 1;
+                                else if (argument_expr is NullLiteral &&
+                                         !q.IsValueType &&
+                                         p == TypeManager.object_type)
+                                        return 0;
+                        }
+                                
 			if (p == q)
 				return 0;
 			
@@ -4260,7 +4342,6 @@ namespace Mono.CSharp {
 			// best method, we cant tell. This happens
 			// if we have:
 			// 
-			//
 			//	interface IFoo {
 			//		void DoIt ();
 			//	}
@@ -4275,6 +4356,7 @@ namespace Mono.CSharp {
 			//
 			// However, we have to consider that
 			// Trim (); is better than Trim (params char[] chars);
+                        //
 			if (cand_count == 0 && argument_count == 0)
 				return best == null || best_params ? 1 : 0;
 
@@ -4359,6 +4441,9 @@ namespace Mono.CSharp {
 		public static string FullMethodDesc (MethodBase mb)
 		{
 			string ret_type = "";
+
+                        if (mb == null)
+                                return "";
 
 			if (mb is MethodInfo)
 				ret_type = TypeManager.CSharpName (((MethodInfo) mb).ReturnType);
@@ -4583,8 +4668,6 @@ namespace Mono.CSharp {
 			return true;
 		}
 		
-		
-
 		/// <summary>
 		///   Find the Applicable Function Members (7.4.2.1)
 		///
@@ -4614,6 +4697,8 @@ namespace Mono.CSharp {
                         // Used to keep a map between the candidate
                         // and whether it is being considered in its
                         // normal or expanded form
+                        //
+                        // false is normal form, true is expanded form
                         //
                         Hashtable candidate_to_form = new PtrHashtable ();
 
@@ -4773,9 +4858,9 @@ namespace Mono.CSharp {
 				// applicable so we debar the params
 				// method.
 				//
-                                if ((IsParamsMethodApplicable (ec, Arguments, candidate) &&
-                                     IsApplicable (ec, Arguments, method)))
-                                        continue;
+                                // if ((IsParamsMethodApplicable (ec, Arguments, candidate) &&
+//                                      IsApplicable (ec, Arguments, method)))
+//                                         continue;
                                 
                                 bool cand_params = (bool) candidate_to_form [candidate];
 				int x = BetterFunction (ec, Arguments,
@@ -5242,23 +5327,15 @@ namespace Mono.CSharp {
 			int count = arguments.Count - idx;
 			Argument a = (Argument) arguments [idx];
 			Type t = a.Expr.Type;
-			string array_type;
-			if (t.FullName != null)
-				array_type = t.FullName + "[]";
-			else
-				array_type = t.Name + "[]";
-			LocalBuilder array;
 
-			array = ig.DeclareLocal (TypeManager.LookupType (array_type));
 			IntConstant.EmitInt (ig, count);
 			ig.Emit (OpCodes.Newarr, TypeManager.TypeToCoreType (t));
-			ig.Emit (OpCodes.Stloc, array);
 
 			int top = arguments.Count;
 			for (int j = idx; j < top; j++){
 				a = (Argument) arguments [j];
 				
-				ig.Emit (OpCodes.Ldloc, array);
+				ig.Emit (OpCodes.Dup);
 				IntConstant.EmitInt (ig, j - idx);
 
 				bool is_stobj, has_type_arg;
@@ -5273,7 +5350,6 @@ namespace Mono.CSharp {
 				else
 					ig.Emit (op);
 			}
-			ig.Emit (OpCodes.Ldloc, array);
 		}
 		
 		/// <summary>
@@ -6504,9 +6580,6 @@ namespace Mono.CSharp {
 			int dims = bounds.Count;
 			int [] current_pos = new int [dims];
 			int top = array_data.Count;
-			LocalBuilder temp = ig.DeclareLocal (type);
-
-			ig.Emit (OpCodes.Stloc, temp);
 
 			MethodInfo set = null;
 
@@ -6548,7 +6621,8 @@ namespace Mono.CSharp {
 					    num_automatic_initializers <= max_automatic_initializers) {
 						Type etype = e.Type;
 						
-						ig.Emit (OpCodes.Ldloc, temp);
+						if (is_expression || i != top - 1)
+							ig.Emit (OpCodes.Dup);
 
 						for (int idx = 0; idx < dims; idx++) 
 							IntConstant.EmitInt (ig, current_pos [idx]);
@@ -6594,9 +6668,6 @@ namespace Mono.CSharp {
 					current_pos [j] = 0;
 				}
 			}
-
-			if (is_expression)
-				ig.Emit (OpCodes.Ldloc, temp);
 		}
 
 		void EmitArrayArguments (EmitContext ec)

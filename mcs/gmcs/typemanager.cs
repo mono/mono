@@ -86,6 +86,9 @@ public class TypeManager {
 	static public object obsolete_attribute_type;
 	static public object conditional_attribute_type;
 	static public Type in_attribute_type;
+	static public Type cls_compliant_attribute_type;
+	static public Type typed_reference_type;
+	static public Type arg_iterator_type;
 
 	//
 	// An empty array of types
@@ -137,7 +140,10 @@ public class TypeManager {
 	static public MethodInfo string_concat_string_string;
 	static public MethodInfo string_concat_string_string_string;
 	static public MethodInfo string_concat_string_string_string_string;
+	static public MethodInfo string_concat_string_dot_dot_dot;
 	static public MethodInfo string_concat_object_object;
+	static public MethodInfo string_concat_object_object_object;
+	static public MethodInfo string_concat_object_dot_dot_dot;
 	static public MethodInfo string_isinterneted_string;
 	static public MethodInfo system_type_get_type_from_handle;
 	static public MethodInfo object_getcurrent_void;
@@ -243,6 +249,12 @@ public class TypeManager {
 	// </remarks>
 
 	static Hashtable builder_to_method;
+
+	// <remarks>
+	//  Contains all public types from referenced assemblies.
+	//  This member is used only if CLS Compliance verification is required.
+	// </remarks>
+	public static Hashtable all_imported_types;
 
 	struct Signature {
 		public string name;
@@ -589,6 +601,12 @@ public class TypeManager {
 		modules = n;
 	}
 
+	public static Module[] Modules {
+		get {
+			return modules;
+		}
+	}
+
 	static Hashtable references = new Hashtable ();
 	
 	//
@@ -792,6 +810,23 @@ public class TypeManager {
 						continue;
 					Namespace.LookupNamespace (ns, true);
 				}
+			}
+		}
+	}
+
+	/// <summary>
+	/// Fills static table with exported types from all referenced assemblies.
+	/// This information is required for CLS Compliance tests.
+	/// </summary>
+	public static void LoadAllImportedTypes ()
+	{
+		if (!CodeGen.Assembly.IsClsCompliant)
+			return;
+
+		all_imported_types = new Hashtable ();
+		foreach (Assembly a in assemblies) {
+			foreach (Type t in a.GetExportedTypes ()) {
+				all_imported_types [t.FullName] = t;
 			}
 		}
 	}
@@ -1078,6 +1113,8 @@ public class TypeManager {
 		new_constraint_attr_type = CoreLookupType ("System.Runtime.CompilerServices.NewConstraintAttribute");
 		param_array_type     = CoreLookupType ("System.ParamArrayAttribute");
 		in_attribute_type    = CoreLookupType ("System.Runtime.InteropServices.InAttribute");
+		typed_reference_type = CoreLookupType ("System.TypedReference");
+		arg_iterator_type    = CoreLookupType ("System.ArgIterator");
 
 		//
 		// Sigh. Remove this before the release.  Wonder what versions of Mono
@@ -1100,6 +1137,7 @@ public class TypeManager {
 		//
 		obsolete_attribute_type = CoreLookupType ("System.ObsoleteAttribute");
 		conditional_attribute_type = CoreLookupType ("System.Diagnostics.ConditionalAttribute");
+		cls_compliant_attribute_type = CoreLookupType ("System.CLSCompliantAttribute");
 
 		//
 		// When compiling corlib, store the "real" types here.
@@ -1205,10 +1243,19 @@ public class TypeManager {
 		Type [] string_string_string_string = { string_type, string_type, string_type, string_type };
 		string_concat_string_string_string_string = GetMethod (
 			string_type, "Concat", string_string_string_string);
+		Type[] params_string = { TypeManager.LookupType ("System.String[]") };
+		string_concat_string_dot_dot_dot = GetMethod (
+			string_type, "Concat", params_string);
 
 		Type [] object_object = { object_type, object_type };
 		string_concat_object_object = GetMethod (
 			string_type, "Concat", object_object);
+		Type [] object_object_object = { object_type, object_type, object_type };
+		string_concat_object_object_object = GetMethod (
+			string_type, "Concat", object_object_object);
+		Type[] params_object = { TypeManager.LookupType ("System.Object[]") };
+		string_concat_object_dot_dot_dot = GetMethod (
+			string_type, "Concat", params_object);
 
 		Type [] string_ = { string_type };
 		string_isinterneted_string = GetMethod (
@@ -1392,7 +1439,7 @@ public class TypeManager {
 	///   our return value will already contain all inherited members and the caller don't need
 	///   to check base classes and interfaces anymore.
 	/// </summary>
-	private static MemberList MemberLookup_FindMembers (Type t, MemberTypes mt, BindingFlags bf,
+	private static MemberInfo [] MemberLookup_FindMembers (Type t, MemberTypes mt, BindingFlags bf,
 							    string name, out bool used_cache)
 	{
 		//
@@ -1425,6 +1472,7 @@ public class TypeManager {
 			}
 
 			// If there is no MemberCache, we need to use the "normal" FindMembers.
+			// Note, this is a VERY uncommon route!
 
 			MemberList list;
 			Timer.StartTimer (TimerType.FindMembers);
@@ -1432,7 +1480,7 @@ public class TypeManager {
 						 FilterWithClosure_delegate, name);
 			Timer.StopTimer (TimerType.FindMembers);
 			used_cache = false;
-			return list;
+			return (MemberInfo []) list;
 		}
 
 		if (t is GenericTypeParameterBuilder) {
@@ -1444,7 +1492,7 @@ public class TypeManager {
 						   FilterWithClosure_delegate, name);
 			Timer.StopTimer (TimerType.FindMembers);
 			used_cache = false;
-			return list;
+			return (MemberInfo []) list;
 		}
 
 		//
@@ -1575,12 +1623,15 @@ public class TypeManager {
 			if (t is TypeBuilder){
 				TypeContainer tc = LookupTypeContainer (t);
 
+				if (tc.Fields != null){
 				foreach (Field f in tc.Fields){
 					if (f.FieldBuilder.IsStatic)
 						continue;
 					if (!IsUnmanagedType (f.FieldBuilder.FieldType))
 						return false;
 				}
+				} else
+					return true;
 			} else {
 				FieldInfo [] fields = t.GetFields ();
 
@@ -2466,12 +2517,20 @@ public class TypeManager {
 		return "Item";
 	}
 
+	static MethodInfo pinned_method = null;
 	public static void MakePinned (LocalBuilder builder)
 	{
-		//
-		// FIXME: Flag the "LocalBuilder" type as being
-		// pinned.  Figure out API.
-		//
+		if (pinned_method == null) {
+			pinned_method = typeof (LocalBuilder).GetMethod ("MakePinned", BindingFlags.Instance | BindingFlags.NonPublic);
+			if (pinned_method == null) {
+				Report.Warning (-24, new Location (-1), "Microsoft.NET does not support making pinned variables." +
+					"This code may cause errors on a runtime with a moving GC");
+				
+				return;
+			}
+		}
+		
+		pinned_method.Invoke (builder, null);
 	}
 
 
@@ -2517,7 +2576,7 @@ public class TypeManager {
 	//
 	// The name is assumed to be the same.
 	//
-	public static ArrayList CopyNewMethods (ArrayList target_list, MemberList new_members)
+	public static ArrayList CopyNewMethods (ArrayList target_list, IList new_members)
 	{
 		if (target_list == null){
 			target_list = new ArrayList ();
@@ -2856,8 +2915,14 @@ public class TypeManager {
 			}
 		}
 		
+		// This is from the first time we find a method
+		// in most cases, we do not actually find a method in the base class
+		// so we can just ignore it, and save the arraylist allocation
+		MemberInfo [] first_members_list = null;
+		bool use_first_members_list = false;
+		
 		do {
-			MemberList list;
+			MemberInfo [] list;
 
 			//
 			// `NonPublic' is lame, because it includes both protected and
@@ -2912,7 +2977,7 @@ public class TypeManager {
 					current_type = TypeManager.object_type;
 			}
 			
-			if (list.Count == 0)
+			if (list.Length == 0)
 				continue;
 
 			//
@@ -2920,8 +2985,8 @@ public class TypeManager {
 			// searches, which means that our above FindMembers will
 			// return two copies of the same.
 			//
-			if (list.Count == 1 && !(list [0] is MethodBase)){
-				return (MemberInfo []) list;
+			if (list.Length == 1 && !(list [0] is MethodBase)){
+				return list;
 			}
 
 			//
@@ -2929,14 +2994,14 @@ public class TypeManager {
 			// name
 			//
 			if (list [0] is PropertyInfo)
-				return (MemberInfo []) list;
+				return list;
 
 			//
 			// We found an event: the cache lookup returns both the event and
 			// its private field.
 			//
 			if (list [0] is EventInfo) {
-				if ((list.Count == 2) && (list [1] is FieldInfo))
+				if ((list.Length == 2) && (list [1] is FieldInfo))
 					return new MemberInfo [] { list [0] };
 
 				// Oooops
@@ -2948,9 +3013,30 @@ public class TypeManager {
 			// mode.
 			//
 
-			method_list = CopyNewMethods (method_list, list);
-			mt &= (MemberTypes.Method | MemberTypes.Constructor);
+ 			if (first_members_list != null) {
+ 				if (use_first_members_list) {
+ 					method_list = CopyNewMethods (method_list, first_members_list);
+ 					use_first_members_list = false;
+ 				}
+ 				
+				method_list = CopyNewMethods (method_list, list);
+			} else {
+				first_members_list = list;
+ 				use_first_members_list = true;
+
+				mt &= (MemberTypes.Method | MemberTypes.Constructor);
+			}
 		} while (searching);
+
+ 		if (use_first_members_list) {
+ 			foreach (MemberInfo mi in first_members_list) {
+ 				if (! (mi is MethodBase)) {
+ 					method_list = CopyNewMethods (method_list, first_members_list);
+ 					return (MemberInfo []) method_list.ToArray (typeof (MemberInfo));
+ 				}
+ 			}
+ 			return (MemberInfo []) first_members_list;
+ 		}
 
 		if (method_list != null && method_list.Count > 0) {
                         return (MemberInfo []) method_list.ToArray (typeof (MemberInfo));
@@ -3197,7 +3283,7 @@ public sealed class TypeHandle : IMemberContainer {
 	public MemberList FindMembers (MemberTypes mt, BindingFlags bf, string name,
 				       MemberFilter filter, object criteria)
 	{
-		return member_cache.FindMembers (mt, bf, name, filter, criteria);
+		return new MemberList (member_cache.FindMembers (mt, bf, name, filter, criteria));
 	}
 
 	public MemberCache MemberCache {

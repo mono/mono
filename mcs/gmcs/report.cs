@@ -59,6 +59,55 @@ namespace Mono.CSharp {
 		//
 		static Hashtable warning_ignore_table;
 		
+		struct WarningData {
+			public WarningData (int level, string text) {
+				Level = level;
+				Message = text;
+			}
+
+			public bool IsEnabled ()
+			{
+				return RootContext.WarningLevel >= Level;
+			}
+
+			public string Format (params object[] args)
+			{
+				return String.Format (Message, args);
+			}
+
+			readonly string Message;
+			readonly int Level;
+		}
+
+		static string GetErrorMsg (int error_no)
+		{
+			switch (error_no) {
+				case 3001: return "Argument type '{0}' is not CLS-compliant";
+				case 3002: return "Return type of '{0}' is not CLS-compliant";
+				case 3003: return "Type of '{0}' is not CLS-compliant";
+				case 3005: return "Identifier '{0}' differing only in case is not CLS-compliant";
+				case 3006: return "Overloaded method '{0}' differing only in ref or out, or in array rank, is not CLS-compliant";
+				case 3008: return "Identifier '{0}' is not CLS-compliant";
+				case 3009: return "'{0}': base type '{1}' is not CLS-compliant";
+				case 3010: return "'{0}': CLS-compliant interfaces must have only CLS-compliant members";
+				case 3011: return "'{0}': only CLS-compliant members can be abstract";
+				case 3013: return "Added modules must be marked with the CLSCompliant attribute to match the assembly";
+				case 3014: return "'{0}' cannot be marked as CLS-compliant because the assembly does not have a CLSCompliant attribute";
+				case 3015: return "'{0}' has no accessible constructors which use only CLS-compliant types";
+				case 3016: return "Arrays as attribute arguments are not CLS-compliant";
+			}
+			throw new InternalErrorException (String.Format ("Missing error '{0}' text", error_no));
+		}
+
+		static WarningData GetWarningMsg (int warn_no)
+		{
+			switch (warn_no) {
+				case 3012: return new WarningData (1, "You must specify the CLSCompliant attribute on the assembly, not the module, to enable CLS compliance checking");
+			}
+
+			throw new InternalErrorException (String.Format ("Wrong warning number '{0}'", warn_no));
+		}
+		
 		static void Check (int code)
 		{
 			if (code == expected_error){
@@ -110,6 +159,10 @@ namespace Mono.CSharp {
 			return sb.ToString ();
 		}
 		
+		static public void LocationOfPreviousError (Location loc) {
+			Console.WriteLine (String.Format ("{0}({1}) (Location of symbol related to previous error)", loc.Name, loc.Row));
+		}
+
 		static public void RealError (string msg)
 		{
 			Errors++;
@@ -120,6 +173,43 @@ namespace Mono.CSharp {
 			
 			if (Fatal)
 				throw new Exception (msg);
+		}
+
+
+		/// <summary>
+		/// Method reports warning message. Only one reason why exist Warning and Report methods is beter code readability.
+		/// </summary>
+		static public void Warning (int code, Location loc, params object[] args)
+		{
+			WarningData warning = GetWarningMsg (code);
+			if (!warning.IsEnabled ())
+				return;
+
+			Warning (code, loc, warning.Format (args));
+		}
+
+		/// <summary>
+		/// Reports error message.
+		/// </summary>
+		static public void Error_T (int code, Location loc, params object[] args)
+		{
+			Error_T (code, String.Format ("{0}({1})", loc.Name, loc.Row), args);
+		}
+
+		static public void Error_T (int code, string location, params object[] args)
+		{
+			string errorText = String.Format (GetErrorMsg (code), args);
+			PrintError (code, location, errorText);
+		}
+
+		static void PrintError (int code, string l, string text)
+		{
+			if (code < 0)
+				code = 8000-code;
+			
+			string msg = String.Format ("{0} error CS{1:0000}: {2}", l, code, text);
+			RealError (msg);
+			Check (code);
 		}
 
 		static public void Error (int code, Location l, string text)
@@ -199,11 +289,6 @@ namespace Mono.CSharp {
 		static public void Error (int code, Location loc, string format, params object[] args)
 		{
 			Error (code, loc, String.Format (format, args));
-		}
-
-		static public void Error (int code, string format, params object[] args)
-		{
-			Error (code, String.Format (format, args));
 		}
 
 		static public void Warning (int code, Location loc, string format, params object[] args)
