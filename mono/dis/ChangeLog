@@ -1,3 +1,13 @@
+2004-09-05  Jambunathan K  <kjambunathan@novell.com>
+	* main.c (dump_cattrs_list): Newly carved out of dump_cattrs.
+	
+	Renamed cattrs_for_method() to more meaningful
+	dump_cattrs_for_method_params()
+	
+	(dump_cattrs_for_method_params): Fixed so that ".param[]" gets
+	dumped only when necessary. i.e., when a method parameter has
+	either a default value and/or when it has a custom attribute.
+
 2004-09-06  Zoltan Varga  <vargaz@freemail.hu>
 
 	* get.c: Fix printing of unmanaged calling conventions.
