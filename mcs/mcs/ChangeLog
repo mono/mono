@@ -1,5 +1,7 @@
 2004-03-29  Miguel de Icaza  <miguel@ximian.com>
 
+	* location.cs (LookupFile): Allow for the empty path.
+
 	* attribute.cs (DefinePInvokeMethod): Fix 56148;  I would like a
 	better approach for some of that patch, but its failing with the
 	CharSet enumeration.  For now try/catch will do.

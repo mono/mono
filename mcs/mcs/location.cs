@@ -120,7 +120,7 @@ namespace Mono.CSharp {
 		// </remarks>
 		static public SourceFile LookupFile (string name)
 		{
-			string path = Path.GetFullPath (name);
+			string path = name == "" ? "" : Path.GetFullPath (name);
 
 			if (!source_files.Contains (path)) {
 				if (source_count >= (1 << source_bits))
