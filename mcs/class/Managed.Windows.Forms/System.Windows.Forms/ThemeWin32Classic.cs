@@ -672,6 +672,32 @@ namespace System.Windows.Forms
 
 
 		#endregion	// CheckBox
+		
+		#region ComboBox
+		
+		// Drawing
+		
+		public override void DrawComboBoxDecorations (Graphics dc, ComboBox ctrl)
+		{			
+			Rectangle cl = ctrl.ClientRectangle;			
+			
+			dc.DrawLine (ResPool.GetPen (ColorButtonShadow), cl.X, cl.Y, cl.X + cl.Width, cl.Y); //top 
+			dc.DrawLine (ResPool.GetPen (ColorButtonDkShadow), cl.X + 1, cl.Y + 1, cl.X + cl.Width - 2, cl.Y + 1);
+			dc.DrawLine (ResPool.GetPen (ColorButtonFace), cl.X, cl.Y + cl.Height - 2, cl.X + cl.Width, cl.Y + cl.Height - 2); //down
+			dc.DrawLine (ResPool.GetPen (ColorButtonHilight), cl.X, cl.Y + cl.Height - 1, cl.X + cl.Width, cl.Y + cl.Height - 1);
+			dc.DrawLine (ResPool.GetPen (ColorButtonShadow), cl.X, cl.Y, cl.X, cl.Y + cl.Height); //left
+			dc.DrawLine (ResPool.GetPen (ColorButtonDkShadow), cl.X + 1, cl.Y + 1, cl.X + 1, cl.Y + cl.Height - 2); 
+			dc.DrawLine (ResPool.GetPen (ColorButtonFace), cl.X + cl.Width - 2, cl.Y, cl.X + cl.Width - 2, cl.Y + cl.Height); //right
+			dc.DrawLine (ResPool.GetPen (ColorButtonHilight), cl.X + cl.Width - 1, cl.Y + 1 , cl.X + cl.Width - 1, cl.Y + cl.Height - 1);				
+		}		
+		
+		// Sizing				
+		public override int DrawComboBoxDecorationTop () { return 2;}
+		public override int DrawComboBoxDecorationBottom () { return 2;}
+		public override int DrawComboBoxDecorationRight () { return 2;}
+		public override int DrawComboBoxDecorationLeft () { return 2;}
+		
+		#endregion ComboBox
 
 		#region GroupBox
 		public override void DrawGroupBox (Graphics dc,  Rectangle area, GroupBox box) {

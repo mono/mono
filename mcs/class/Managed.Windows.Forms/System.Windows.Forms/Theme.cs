@@ -243,6 +243,17 @@ namespace System.Windows.Forms
 		#region CheckBox
 		public abstract void DrawCheckBox(Graphics dc, Rectangle clip_area, CheckBox checkbox);
 		#endregion	// CheckBox
+		
+		#region ComboBox
+		// Drawing
+		public abstract void DrawComboBoxDecorations (Graphics dc, ComboBox ctrl);
+		
+		// Sizing
+		public abstract int DrawComboBoxDecorationTop ();
+		public abstract int DrawComboBoxDecorationBottom ();
+		public abstract int DrawComboBoxDecorationRight ();
+		public abstract int DrawComboBoxDecorationLeft ();
+		#endregion	// ComboBox
 
 		#region Control
 		#endregion	// Control

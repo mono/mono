@@ -1,3 +1,10 @@
+2004-12-26  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* ThemeWin32Classic, Theme.cs: ComboBox drawing methods
+	* ComboBoxStyle.cs: ComboBoxStyle enum
+	* ComboBox.cs: Initial work on ComboBox control
+
+
 2004-12-21  Peter Bartok  <pbartok@novell.com>
 
 	* Control.cs (ctor, CreateParams): Moved setting of is_visible
