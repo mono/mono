@@ -1,3 +1,7 @@
+2004-07-30  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-amd64.c cpu-amd64.md: Ongoing JIT work.
+	
 2004-07-30  Ben Maurer  <bmaurer@ximian.com>
 
 	* basic.cs: regression tests.
