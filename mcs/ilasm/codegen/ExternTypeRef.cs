@@ -100,7 +100,7 @@ namespace Mono.ILASM {
                 public IMethodRef GetMethodRef (ITypeRef ret_type, PEAPI.CallConv call_conv,
                                 string name, ITypeRef[] param)
                 {
-                        string sig = MethodDef.CreateSignature (name, param);
+                        string sig = MethodDef.CreateSignature (ret_type, name, param);
                         ExternMethodRef mr = method_table [sig] as ExternMethodRef;
                         
                         if (mr == null) {

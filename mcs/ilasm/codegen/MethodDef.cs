@@ -535,15 +535,16 @@ namespace Mono.ILASM {
                 private void CreateSignature ()
                 {
                         if (IsVararg)
-                                signature = CreateVarargSignature (name, param_list);
+                                signature = CreateVarargSignature (RetType, name, param_list);
                         else
-                                signature = CreateSignature (name, param_list);
+                                signature = CreateSignature (RetType, name, param_list);
                 }
 
-                public static string CreateSignature (string name, IList param_list)
+                public static string CreateSignature (ITypeRef RetType, string name, IList param_list)
                 {
                         StringBuilder builder = new StringBuilder ();
 
+			builder.Append (RetType.FullName);
                         builder.Append (name);
                         builder.Append ('(');
 
@@ -561,11 +562,13 @@ namespace Mono.ILASM {
                         return builder.ToString ();
                 }
 
-                public static string CreateVarargSignature (string name, IList param_list)
+                public static string CreateVarargSignature (ITypeRef RetType, string name, IList param_list)
                 {
                         StringBuilder builder = new StringBuilder ();
                         ParamDef last = null;
 
+			builder.Append (RetType.FullName);
+			builder.Append (" ");
                         builder.Append (name);
                         builder.Append ('(');
 
@@ -592,11 +595,13 @@ namespace Mono.ILASM {
                         return builder.ToString ();
                 }
 
-                public static string CreateVarargSignature (string name, ITypeRef [] param_list)
+                public static string CreateVarargSignature (ITypeRef RetType, string name, ITypeRef [] param_list)
                 {
                         StringBuilder builder = new StringBuilder ();
                         ITypeRef last = null;
 
+			builder.Append (RetType.FullName);
+			builder.Append (" ");
                         builder.Append (name);
                         builder.Append ('(');
 
@@ -625,10 +630,12 @@ namespace Mono.ILASM {
                         return builder.ToString ();
                 }
 
-                public static string CreateSignature (string name, ITypeRef[] param_list)
+                public static string CreateSignature (ITypeRef RetType, string name, ITypeRef[] param_list)
                 {
                         StringBuilder builder = new StringBuilder ();
 
+			builder.Append (RetType.FullName);
+			builder.Append (" ");
                         builder.Append (name);
                         builder.Append ('(');
 

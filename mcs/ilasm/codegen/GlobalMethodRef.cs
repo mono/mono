@@ -48,7 +48,7 @@ namespace Mono.ILASM {
 			if (is_resolved)
 				return;
 
-                        string sig = MethodDef.CreateSignature (name, param);
+                        string sig = MethodDef.CreateSignature (ret_type, name, param);
 
                         if ((call_conv & PEAPI.CallConv.Vararg) == 0) {
                                 peapi_method = code_gen.ResolveMethod (sig);

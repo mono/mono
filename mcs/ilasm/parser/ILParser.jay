@@ -690,7 +690,8 @@ class_decl		: method_all
                                 decl = owner.GetMethodRef ((ITypeRef) $7,
                                         (CallConv) $6, (string) $4, param_list);
 
-                                string sig = MethodDef.CreateSignature ((string) $10,
+				// NOTICE: `owner' here might be wrong
+                                string sig = MethodDef.CreateSignature (owner, (string) $10,
                                                                         param_list);
                                 codegen.CurrentTypeDef.AddOverride (sig, decl);                                        
                           }
