@@ -101,20 +101,11 @@ namespace System.Data.Odbc
 			}
 		}
 
-//		public string DataSource {
-//			get {
-//				if (State==ConnectionState.Open)
-//					return _dsn;
-//				else
-//					return null;
-//			}
-//		}
-		
 		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
                 [OdbcDescriptionAttribute ("Current data source Catlog value, 'Database=X' in the ConnectionString")]
 		public string Database {
 			get {
-				return "";
+                                return GetInfo (OdbcInfo.DatabaseName);
 			}
 		}
 
@@ -137,7 +128,7 @@ namespace System.Data.Odbc
                 [OdbcDescriptionAttribute ("Current data source, 'Server=X' in the ConnectionString")]
 		public string DataSource {
 			get {
-				throw new NotImplementedException ();
+                                return GetInfo (OdbcInfo.DataSourceName);
 			}
 		}
 
@@ -146,7 +137,7 @@ namespace System.Data.Odbc
                 [OdbcDescriptionAttribute ("Current ODBC Driver")]
                 public string Driver {
                         get {
-                                throw new NotImplementedException ();
+                                return GetInfo (OdbcInfo.DriverName);
                         }
                 }
 		
@@ -156,7 +147,7 @@ namespace System.Data.Odbc
                 [BrowsableAttribute (false)]
                 public string ServerVersion {
                         get {
-                                throw new NotImplementedException ();
+                                return GetInfo (OdbcInfo.DbmsVersion);
                         }
                 }
 
@@ -327,6 +318,25 @@ namespace System.Data.Odbc
 		public void EnlistDistributedTransaction ( ITransaction transaction) {
 			throw new NotImplementedException ();
 		}
+
+                internal string GetInfo (OdbcInfo info)
+                {
+                        if (State == ConnectionState.Closed)
+                                throw new InvalidOperationException ("The connection is closed.");
+                        
+                        OdbcReturn ret = OdbcReturn.Error;
+                        short max_length = 256;
+                        byte [] buffer = new byte [max_length];
+                        short actualLength = 0;
+                        
+                        ret = libodbc.SQLGetInfo (hdbc, info, buffer, max_length, ref actualLength);
+                        if (ret != OdbcReturn.Success && ret != OdbcReturn.SuccessWithInfo)
+                                throw new OdbcException (new OdbcError ("SQLGetInfo",
+                                                                        OdbcHandleType.Dbc,
+                                                                        hdbc));
+
+                        return System.Text.Encoding.Default.GetString (buffer);
+                }
 
 
 		#endregion

@@ -67,6 +67,15 @@ namespace System.Data.Odbc
 		TransactionIsolation=108
 	}
 
+        internal enum OdbcInfo : ushort
+        {
+                DataSourceName          = 2,
+                DriverName              = 6,
+                DriverVersion           = 7,
+                DatabaseName            = 16,
+                DbmsVersion             = 18
+        }
+
 	internal enum OdbcInputOutputDirection : short
 	{
 		Input=1,
@@ -244,6 +253,14 @@ namespace System.Data.Odbc
 
 		[DllImport ("odbc32.dll")]
 		internal static extern OdbcReturn SQLFreeStmt (IntPtr Handle,  SQLFreeStmtOptions option);
+
+		[DllImport ("odbc32.dll")]
+		internal static extern OdbcReturn SQLGetInfo (IntPtr connHandle, 
+                                                              OdbcInfo info, 
+                                                              byte [] buffer, 
+                                                              short buffLength, 
+                                                              ref short remainingStrLen);
+
 
                 #region Type Utilities
                 internal static OdbcType NativeToOdbcType (OdbcCType native)

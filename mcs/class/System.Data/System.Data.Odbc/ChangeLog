@@ -1,3 +1,10 @@
+2005-02-04  Sureshkumar T  <tsureshkumar@novell.com>
+	    Appasamy <appasamy@rediffmail.com>
+
+	* OdbcConnection.cs: Implemented properties database, datasource,
+	serverversion and driver.
+	* libodbc.cs: Added type OdbcInfo and native call SQLGetInfo.
+
 2005-01-20  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* OdbcDataReader.cs: case for type OdbcType.Double added in
