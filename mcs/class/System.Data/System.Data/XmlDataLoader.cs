@@ -72,7 +72,6 @@ namespace System.Data
 		{
 			// first load an XmlDocument from the reader.
 			XmlDocument doc = buildXmlDocument(reader);
-			doc.Load(reader);
 
 			// set EnforceConstraint to false - we do not want any validation during 
 			// load time.
