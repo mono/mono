@@ -6,6 +6,7 @@ struct MonoEnumInfo {
         void stuff() { val = 1; }
 
         static int GetInfo (out MonoEnumInfo info) {
+		info = new MonoEnumInfo ();
                 info.stuff();
                 return info.val;
         }

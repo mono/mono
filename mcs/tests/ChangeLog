@@ -1,6 +1,12 @@
+2002-07-29  Martin Baulig  <martin@gnome.org>
+
+	* makefile: Put back test-152.cs.
+
+	* test-143.cs: Fixed a compilation error in this test.
+
 2002-07-27  Martin Baulig  <martin@gnome.org>
 
-	* test-153.cs.cs: New test.
+	* test-153.cs: New test.
 
 2002-07-27  Martin Baulig  <martin@gnome.org>
 
