@@ -15,7 +15,7 @@ using System.Runtime.Serialization.Formatters;
 
 namespace System.Runtime.Serialization.Formatters.soap
 {
-	public class SoapFormatter : IFormatter, IRemoteFormatter
+	public class SoapFormatter : IRemotingFormatter, IFormatter
 	{
 		private ObjectSerializer   ObjSerializer;	
 		private ObjectDeserializer ObjDeserializer;
@@ -27,6 +27,24 @@ namespace System.Runtime.Serialization.Formatters.soap
 		{
 			get{return AssemblyFormat;}
 			set{AssemblyFormat= value;}
+		}
+
+		[MonoTODO]
+		public SerializationBinder Binder {
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
+		}
+
+		[MonoTODO]
+		public StreamingContext Context {
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
+		}
+
+		[MonoTODO]
+		public ISurrogateSelector SurrogateSelector {
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
 		}
 
 		public ISoapMessage TopObject
@@ -48,12 +66,22 @@ namespace System.Runtime.Serialization.Formatters.soap
         		
 		public void Serialize(Stream serializationStream, object graph)
 		{
+			Serialize (serializationStream, graph, null);
+		}
+
+		public void Serialize(Stream serializationStream, object graph, Header[] headers)
+		{
 			ObjSerializer= new ObjectSerializer(serializationStream);
 			ObjSerializer.BeginWrite();
 			ObjSerializer.Serialize(graph);
 		}
 
-		public object Deserialize(Stream serializationStream)			
+		public object Deserialize(Stream serializationStream)
+		{
+			return Deserialize (serializationStream, null);
+		}
+
+		public object Deserialize(Stream serializationStream, HeaderHandler handler)
 		{
 			ObjDeserializer= new ObjectDeserializer(serializationStream);
 			return ObjDeserializer.Deserialize(serializationStream);
