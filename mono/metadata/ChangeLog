@@ -1,3 +1,17 @@
+2004-03-25  Martin Baulig  <martin@ximian.com>
+
+	* loader.h (MonoMethodInflated): New typedef.
+
+	* metadata.h (MonoMethodSignature): Removed `gen_method', make
+	`generic_param_count' consume just 30 bits, added `is_inflated'
+	and `has_type_parameters' flags (one bit each).
+
+	* class.c (mono_class_inflate_generic_method): Create a
+	MonoMethodInflated instead of a MonoMethodNormal and set
+	`is_inflated' in the method signature.
+
+	* class.h (MonoGenericMethod): Removed `generic_method'.
+
 2004-03-25  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* image.c: Make sure the name of a MonoImage is always an absolute path.
