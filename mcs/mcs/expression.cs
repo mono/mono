@@ -25,7 +25,7 @@ namespace Mono.CSharp {
 		ArrayList args;
 		MethodInfo mi;
 
-		StaticCallExpr (MethodInfo m, ArrayList a, Location l)
+		public StaticCallExpr (MethodInfo m, ArrayList a, Location l)
 		{
 			mi = m;
 			args = a;
@@ -335,8 +335,11 @@ namespace Mono.CSharp {
 			switch (Oper){
 			case Operator.LogicalNot:
 				if (expr_type != TypeManager.bool_type) {
-					Error23 (Expr.Type);
-					return null;
+					Expr = ResolveBoolean (ec, Expr, loc);
+					if (Expr == null){
+						Error23 (Expr.Type);
+						return null;
+					}
 				}
 				
 				type = TypeManager.bool_type;

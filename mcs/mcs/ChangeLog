@@ -1,3 +1,20 @@
+2003-03-28  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (Unary.ResolveOperator): In LogicalNot, do an
+	implicit conversion to boolean.
+
+	* statement.cs (Statement.ResolveBoolean): A boolean expression is
+	also one where the type implements `operator true'. 
+
+	* ecore.cs (Expression.GetOperatorTrue): New helper routine to
+	get an expression that will invoke operator true based on an
+	expression.  
+
+	(GetConversionOperators): Removed the hack that called op_True
+	here.  
+
+	(Expression.ResolveBoolean): Move this from Statement.
+
 2003-03-17  Miguel de Icaza  <miguel@ximian.com>
 
 	* ecore.cs (FieldExpr): do not allow initialization of initonly
