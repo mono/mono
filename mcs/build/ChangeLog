@@ -1,3 +1,8 @@
+2004-11-17  Raja R Harinath  <rharinath@novell.com>
+
+	* executable.make: Improve support for building executable into a
+	different directory.
+
 2004-11-09  Raja R Harinath  <rharinath@novell.com>
 
 	* profiles/basic.make: New.

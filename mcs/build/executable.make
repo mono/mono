@@ -2,13 +2,12 @@
 #
 # The rules for building a program.
 
-# I'd rather not create a response file here,
-# but since on Win32 we need to munge the paths
-# anyway, we might as well.
-
 base_prog = $(shell basename $(PROGRAM))
 sourcefile = $(base_prog).sources
-PROGRAM_config := $(wildcard $(PROGRAM).config)
+base_prog_config := $(wildcard $(base_prog).config)
+ifdef base_prog_config
+PROGRAM_config := $(PROGRAM).config
+endif
 
 ifeq (cat,$(PLATFORM_CHANGE_SEPARATOR_CMD))
 response = $(sourcefile)
@@ -26,7 +25,7 @@ ifndef PROGRAM_INSTALL_DIR
 PROGRAM_INSTALL_DIR = $(prefix)/bin
 endif
 
-all-local: $(PROGRAM)
+all-local: $(PROGRAM) $(PROGRAM_config)
 
 install-local: $(PROGRAM) $(PROGRAM_config)
 	$(MKINSTALLDIRS) $(DESTDIR)$(PROGRAM_INSTALL_DIR)
@@ -49,7 +48,7 @@ run-test-local:
 run-test-ondotnet-local:
 	@:
 
-DISTFILES = $(sourcefile) $(EXTRA_DISTFILES)
+DISTFILES = $(sourcefile) $(base_prog_config) $(EXTRA_DISTFILES)
 
 dist-local: dist-default
 	for f in `cat $(sourcefile)` ; do \
@@ -62,7 +61,17 @@ PROGRAM_COMPILE = $(CSCOMPILE)
 endif
 
 $(PROGRAM): $(BUILT_SOURCES) $(EXTRA_SOURCES) $(response)
-	$(PROGRAM_COMPILE) /target:exe /out:$@ $(BUILT_SOURCES) $(EXTRA_SOURCES) @$(response)
+	$(PROGRAM_COMPILE) /target:exe /out:$(base_prog) $(BUILT_SOURCES) $(EXTRA_SOURCES) @$(response)
+ifneq ($(base_prog),$(PROGRAM))
+	mv $(base_prog) $(PROGRAM)
+endif
+
+ifdef PROGRAM_config
+ifneq ($(base_prog_config),$(PROGRAM_config))
+$(PROGRAM_config): $(base_prog_config)
+	cp $(base_prog_config) $(PROGRAM_config)
+endif
+endif
 
 $(makefrag): $(sourcefile)
 	@echo Creating $@ ...
