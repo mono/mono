@@ -329,6 +329,12 @@ namespace Mono.CSharp
 				update ();
 			}
 
+			public void SetThrowsSometimes ()
+			{
+				throws = FlowReturns.Sometimes;
+				update ();
+			}
+
 			public void SetBarrier ()
 			{
 				barrier = FlowReturns.Always;
@@ -636,6 +642,10 @@ namespace Mono.CSharp
 						if (new_r.Returns == FlowReturns.Always) {
 							// We're either finite or we may leave the loop.
 							new_r.SetReturnsSometimes ();
+						}
+						if (new_r.Throws == FlowReturns.Always) {
+							// We're either finite or we may leave the loop.
+							new_r.SetThrowsSometimes ();
 						}
 					}
 				} else if (branching.Type == BranchingType.Switch)

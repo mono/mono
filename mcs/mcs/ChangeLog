@@ -1,5 +1,11 @@
 2004-04-27  Martin Baulig  <martin@ximian.com>
 
+	* flowanalysis.cs (FlowBranching.UsageVector.MergeChild): If we're
+	a finite loop block, also do the ALWAYS->SOMETIMES for throws (not
+	just for returns).
+
+2004-04-27  Martin Baulig  <martin@ximian.com>
+
 	* statement.cs (Block.AddLabel): Also check for implicit blocks
 	and added a CS0158 check.
 
