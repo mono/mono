@@ -1,0 +1,13 @@
+System.Data.Common
+------------------
+
+ - implement DataAdapter.cs
+ - implement DataColumnMapping.cs
+ - implement DataColumnMappingCollection.cs
+ - implement DataTableMapping.cs
+ - implement DataTableMappingCollection.cs
+ - implement DbDataAdapter.cs
+ - implement DbDataPermission.cs
+ - implement DbDataPermissionAttribute.cs
+ - implement RowUpdatedEventArgs.cs
+ - implement RowUpdatingEventArgs.cs
