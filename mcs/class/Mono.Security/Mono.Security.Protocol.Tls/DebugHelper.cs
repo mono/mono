@@ -37,7 +37,7 @@ namespace Mono.Security.Protocol.Tls
 			if (!isInitialized)
 			{
 				Debug.Listeners.Add(new TextWriterTraceListener(Console.Out));
-				// Debug.Listeners.Add(new TextWriterTraceListener(@"ssl.log"));
+				// Debug.Listeners.Add(new TextWriterTraceListener(@"c:\ssl.log"));
 				Debug.AutoFlush = true;
 				Debug.Indent();
 
@@ -63,7 +63,7 @@ namespace Mono.Security.Protocol.Tls
 		public static void WriteLine(string message, byte[] buffer)
 		{
 			Initialize();
-			DebugHelper.WriteLine(String.Format("{0} ({1} bytes)", message, buffer.Length));
+			DebugHelper.WriteLine(String.Format("{0} ({1} bytes))", message, buffer.Length));
 			DebugHelper.WriteBuffer(buffer);
 		}
 

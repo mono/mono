@@ -72,21 +72,15 @@ namespace Mono.Security.Protocol.Tls.Handshake
 			this.context		= context;
 			this.handshakeType	= handshakeType;
 			this.contentType	= contentType;
-
-			// Process message
-			this.process();
 		}
 
 		public HandshakeMessage(
 			Context			context, 
 			HandshakeType	handshakeType, 
-			byte[]				data) : base(data)
+			byte[]			data) : base(data)
 		{
 			this.context		= context;
-			this.handshakeType	= handshakeType;
-						
-			// Process message
-			this.process();
+			this.handshakeType	= handshakeType;						
 		}
 
 		#endregion
@@ -101,7 +95,7 @@ namespace Mono.Security.Protocol.Tls.Handshake
 
 		#region Methods
 
-		private void process()
+		public void Process()
 		{
 			switch (this.Context.SecurityProtocol)
 			{

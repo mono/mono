@@ -29,32 +29,72 @@ using System.Security.Cryptography;
 
 namespace Mono.Security.Protocol.Tls
 {
-	internal sealed class CipherSuiteCollection : ArrayList
+	internal sealed class CipherSuiteCollection : ICollection, IList, IEnumerable
 	{
 		#region Fields
 
-		private SecurityProtocolType protocol;
+		private ArrayList				cipherSuites;
+		private SecurityProtocolType	protocol;
 
 		#endregion
 
-		#region Properties
+		#region Indexers
 
 		public CipherSuite this[string name] 
 		{
-			get { return (CipherSuite)this[IndexOf(name)]; }
-			set { this[IndexOf(name)] = (CipherSuite)value; }
+			get { return (CipherSuite)this.cipherSuites[this.IndexOf(name)]; }
+			set { this.cipherSuites[this.IndexOf(name)] = (CipherSuite)value; }
+		}
+
+		public CipherSuite this[int index] 
+		{
+			get { return (CipherSuite)this.cipherSuites[index]; }
+			set { this.cipherSuites[index] = (CipherSuite)value; }
 		}
 
 		public CipherSuite this[short code] 
 		{
-			get { return (CipherSuite)base[IndexOf(code)]; }
-			set { base[IndexOf(code)] = (CipherSuite)value; }
+			get { return (CipherSuite)this.cipherSuites[this.IndexOf(code)]; }
+			set { this.cipherSuites[this.IndexOf(code)] = (CipherSuite)value; }
 		}
 
-		public new CipherSuite this[int code] 
+		object IList.this[int index]
 		{
-			get { return (CipherSuite)base[code]; }
-			set { base[code] = (CipherSuite)value; }
+			get { return this[index]; }
+			set { this[index] = (CipherSuite)value; }
+		}
+
+		#endregion
+
+		#region ICollection Properties
+
+		bool ICollection.IsSynchronized
+		{
+			get { return this.cipherSuites.IsSynchronized; }
+		}
+
+		object ICollection.SyncRoot 
+		{
+			get { return this.cipherSuites.SyncRoot; }
+		}
+
+		public int Count 
+		{
+			get { return this.cipherSuites.Count; }
+		}
+		
+		#endregion
+
+		#region IList Properties
+
+		public bool IsFixedSize 
+		{
+			get { return this.cipherSuites.IsFixedSize; }
+		}
+
+		public bool IsReadOnly
+		{
+			get { return this.cipherSuites.IsReadOnly; }
 		}
 
 		#endregion
@@ -63,25 +103,49 @@ namespace Mono.Security.Protocol.Tls
 
 		public CipherSuiteCollection(SecurityProtocolType protocol) : base()
 		{
-			this.protocol = protocol;
+			this.protocol		= protocol;
+			this.cipherSuites	= new ArrayList();
 		}
 
 		#endregion
 
-		#region Methods
-	
-		public bool Contains(string name)
+		#region ICollection Methods
+
+		public void CopyTo(Array array, int index)
 		{
-			return (-1 != this.IndexOf(name));
+			this.cipherSuites.CopyTo(array, index);
 		}
 		
+		#endregion
+
+		#region IEnumerable Methods
+
+		IEnumerator IEnumerable.GetEnumerator()
+		{
+			return this.cipherSuites.GetEnumerator();
+		}
+
+		#endregion
+
+		#region IList Methods
+
+		public void Clear()
+		{
+			this.cipherSuites.Clear();
+		}
+			
+		bool IList.Contains(object value)
+		{
+			return this.cipherSuites.Contains(value as CipherSuite);
+		}
+
 		public int IndexOf(string name)
 		{
 			int index = 0;
 
-			foreach (CipherSuite suite in this)
+			foreach (CipherSuite cipherSuite in this.cipherSuites)
 			{
-				if (this.cultureAwareCompare(suite.Name, name))
+				if (this.cultureAwareCompare(cipherSuite.Name, name))
 				{
 					return index;
 				}
@@ -95,9 +159,9 @@ namespace Mono.Security.Protocol.Tls
 		{
 			int index = 0;
 
-			foreach (CipherSuite suite in this)
+			foreach (CipherSuite cipherSuite in this.cipherSuites)
 			{
-				if (suite.Code == code)
+				if (cipherSuite.Code == code)
 				{
 					return index;
 				}
@@ -107,9 +171,24 @@ namespace Mono.Security.Protocol.Tls
 			return -1;
 		}
 
-		public void RemoveAt(string errorMessage)
+		int IList.IndexOf(object value)
 		{
-			this.RemoveAt(this.IndexOf(errorMessage));
+			return this.cipherSuites.IndexOf(value as CipherSuite);
+		}
+
+		void IList.Insert(int index, object value)
+		{
+			this.cipherSuites.Insert(index, value as CipherSuite);
+		}
+
+		void IList.Remove(object value)
+		{
+			this.cipherSuites.Remove(value as CipherSuite);
+		}
+
+		void IList.RemoveAt(int index)
+		{
+			this.cipherSuites.RemoveAt(index);
 		}
 
 		public CipherSuite Add(
@@ -144,18 +223,23 @@ namespace Mono.Security.Protocol.Tls
 
 		private TlsCipherSuite add(TlsCipherSuite cipherSuite)
 		{
-			base.Add(cipherSuite);
+			this.cipherSuites.Add(cipherSuite);
 
 			return cipherSuite;
 		}
 
 		private SslCipherSuite add(SslCipherSuite cipherSuite)
 		{
-			base.Add(cipherSuite);
+			this.cipherSuites.Add(cipherSuite);
 
 			return cipherSuite;
 		}
 
+		int IList.Add(object value)
+		{
+			return this.cipherSuites.Add(value as CipherSuite);
+		}
+		
 		private bool cultureAwareCompare(string strA, string strB)
 		{
 			return CultureInfo.CurrentCulture.CompareInfo.Compare(

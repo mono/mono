@@ -189,10 +189,12 @@ namespace Mono.Security.Protocol.Tls
 			get { return this.ivSize; }
 		}
 
+		/*
 		public byte	BlockSize
 		{
 			get { return this.blockSize; }
 		}
+		*/
 
 		public Context Context
 		{
@@ -254,6 +256,7 @@ namespace Mono.Security.Protocol.Tls
 			}
 		}
 
+		/*
 		public void UpdateServerCipherIV(byte[] iv)
 		{
 			if (this.cipherMode == CipherMode.CBC)
@@ -265,6 +268,7 @@ namespace Mono.Security.Protocol.Tls
 				this.decryptionCipher = this.decryptionAlgorithm.CreateDecryptor();
 			}
 		}
+		*/
 
 		public byte[] EncryptRecord(byte[] fragment, byte[] mac)
 		{

@@ -29,7 +29,7 @@ using System.Runtime.Serialization;
 namespace Mono.Security.Protocol.Tls
 {
 	[Serializable]
-	public sealed class TlsException : Exception
+	internal sealed class TlsException : Exception
 	{	
 		#region Fields
 
@@ -39,7 +39,7 @@ namespace Mono.Security.Protocol.Tls
 
 		#region Properties
 
-		internal Alert Alert
+		public Alert Alert
 		{
 			get { return this.alert; }
 		}

@@ -102,7 +102,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 						buffer);
 				}
 			}
-
+			
 			this.validateCertificates(certificates);
 		}
 
@@ -222,6 +222,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 			X509CertificateCollection chain = new X509CertificateCollection (certificates);
 			chain.Remove (leaf);
 			X509Chain verify = new X509Chain (chain);
+
 			if (!verify.Build (leaf)) 
 			{
 				switch (verify.Status) 

@@ -42,12 +42,6 @@ namespace Mono.Security.Protocol.Tls
 
 		#region Properties
 
-		public Stream InnerStream
-		{
-			get { return this.innerStream; }
-			set { this.innerStream = value; }
-		}
-
 		public Context Context
 		{
 			get { return this.context; }

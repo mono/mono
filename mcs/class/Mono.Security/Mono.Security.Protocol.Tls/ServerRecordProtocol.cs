@@ -23,6 +23,7 @@
  */
 
 using System;
+using System.Globalization;
 using System.IO;
 
 using Mono.Security.Protocol.Tls.Handshake;
@@ -48,6 +49,7 @@ namespace Mono.Security.Protocol.Tls
 		{
 			// Create the record message
 			HandshakeMessage msg = this.createServerHandshakeMessage(type);
+			msg.Process();
 			
 			// Write record
 			this.SendRecord(msg.ContentType, msg.EncodeMessage());
@@ -86,6 +88,7 @@ namespace Mono.Security.Protocol.Tls
 
 			// Create and process the server message
 			message = this.createClientHandshakeMessage(handshakeType, data);
+			message.Process();
 
 			// Update the last handshake message
 			this.Context.LastHandshakeMsg = handshakeType;
@@ -124,7 +127,9 @@ namespace Mono.Security.Protocol.Tls
 				default:
 					throw new TlsException(
 						AlertDescription.UnexpectedMessage,
-						String.Format("Unknown server handshake message received ({0})", type.ToString()));
+						String.Format(CultureInfo.CurrentUICulture,
+							"Unknown server handshake message received ({0})", 
+							type.ToString()));
 			}
 		}
 

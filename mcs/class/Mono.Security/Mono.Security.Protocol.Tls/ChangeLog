@@ -1,3 +1,21 @@
+2004-05-09 Carlos Guzman Alvarez  <carlosga@telefonica.net>
+
+	* Mono.Security.Protocol.Tls/Alert.cs:
+	* Mono.Security.Protocol.Tls/CipherSuite.cs:
+	* Mono.Security.Protocol.Tls/CipherSuiteCollection.cs:
+	* Mono.Security.Protocol.Tls/ClientRecordProtocol.cs:
+	* Mono.Security.Protocol.Tls/Context.cs:
+	* Mono.Security.Protocol.Tls/RecordProtocol.cs:
+	* Mono.Security.Protocol.Tls/SecurityCompressionType.cs:
+	* Mono.Security.Protocol.Tls/ServerRecordProtocol.cs:
+	* Mono.Security.Protocol.Tls/SslServerStream.cs:
+	* Mono.Security.Protocol.Tls/TlsClientSettings.cs:
+
+		- Changes for fix FxCop Rules.
+
+		- Reworked CipherSuiteCollection class.
+
+
 2004-04-21 Carlos Guzman Alvarez  <carlosga@telefonica.net>
 
 	* Mono.Security.Protocol.Tls/DebugHelper.cs:

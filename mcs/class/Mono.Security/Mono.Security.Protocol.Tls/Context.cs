@@ -177,13 +177,11 @@ namespace Mono.Security.Protocol.Tls
 		public TlsServerSettings ServerSettings
 		{
 			get { return this.serverSettings; }
-			set { this.serverSettings = value; }
 		}
 
 		public TlsClientSettings ClientSettings
 		{
 			get { return this.clientSettings; }
-			set { this.clientSettings = value; }
 		}
 
 		public bool	IsActual

@@ -55,19 +55,6 @@ namespace Mono.Security.Protocol.Tls
 			get { return this.certificates; }
 			set { this.certificates = value; }
 		}
-
-		public SecurityCompressionType CompressionMethod
-		{
-			get { return this.compressionMethod; }
-			set 
-			{ 
-				if (value != SecurityCompressionType.None)
-				{
-					throw new NotSupportedException("Specified compression method is not supported");
-				}
-				this.compressionMethod = value; 
-			}
-		}
 		
 		public X509Certificate ClientCertificate
 		{
@@ -83,6 +70,21 @@ namespace Mono.Security.Protocol.Tls
 		{
 			get { return this.certificateRSA; }
 		}
+
+		/*
+		public SecurityCompressionType CompressionMethod
+		{
+			get { return this.compressionMethod; }
+			set 
+			{ 
+				if (value != SecurityCompressionType.None)
+				{
+					throw new NotSupportedException("Specified compression method is not supported");
+				}
+				this.compressionMethod = value; 
+			}
+		}
+		*/
 
 		#endregion
 

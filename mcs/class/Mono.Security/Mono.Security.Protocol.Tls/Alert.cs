@@ -97,10 +97,12 @@ namespace Mono.Security.Protocol.Tls
 			get { return this.level == AlertLevel.Warning ? true : false; }
 		}
 
+		/*
 		public bool IsFatal
 		{
 			get { return this.level == AlertLevel.Fatal ? true : false; }
 		}
+		*/
 
 		public bool IsCloseNotify
 		{
