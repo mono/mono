@@ -9,6 +9,9 @@
 	* typemanager.cs (GetMembers): Ensure that the list of members is
 	reversed. This keeps things in sync.
 
+	* attribute.cs (Attribute.CheckAttribute): Break as soon as we
+	find an AttributeUsage attribute.
+	
 2003-07-25  Martin Baulig  <martin@ximian.com>
 
 	* expression.cs (Indexers.GetIndexersForType): Only look in the
