@@ -33,7 +33,17 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Return value indicates whether all code paths emitted return.
 		/// </summary>
-		public abstract bool Emit (EmitContext ec);
+		protected abstract bool DoEmit (EmitContext ec);
+
+		/// <summary>
+		///   Return value indicates whether all code paths emitted return.
+		/// </summary>
+		public virtual bool Emit (EmitContext ec)
+		{
+			ec.Mark (loc);
+			Report.Debug (8, "MARK", this, loc);
+			return DoEmit (ec);
+		}
 		
 		public static Expression ResolveBoolean (EmitContext ec, Expression e, Location loc)
 		{
@@ -51,8 +61,7 @@ namespace Mono.CSharp {
 					31, loc, "Can not convert the expression to a boolean");
 			}
 
-			if (CodeGen.SymbolWriter != null)
-				ec.Mark (loc);
+			ec.Mark (loc);
 
 			return e;
 		}
@@ -114,7 +123,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 		
-		public override bool Emit (EmitContext ec)
+		protected override bool DoEmit (EmitContext ec)
 		{
 			return false;
 		}
@@ -173,7 +182,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 		
-		public override bool Emit (EmitContext ec)
+		protected override bool DoEmit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
 			Label false_target = ig.DefineLabel ();
@@ -264,7 +273,7 @@ namespace Mono.CSharp {
 			return ok;
 		}
 		
-		public override bool Emit (EmitContext ec)
+		protected override bool DoEmit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
 			Label loop = ig.DefineLabel ();
@@ -361,7 +370,7 @@ namespace Mono.CSharp {
 			return ok;
 		}
 		
-		public override bool Emit (EmitContext ec)
+		protected override bool DoEmit (EmitContext ec)
 		{
 			if (empty)
 				return false;
@@ -487,7 +496,7 @@ namespace Mono.CSharp {
 			return ok;
 		}
 		
-		public override bool Emit (EmitContext ec)
+		protected override bool DoEmit (EmitContext ec)
 		{
 			if (empty)
 				return false;
@@ -564,7 +573,7 @@ namespace Mono.CSharp {
 			return expr != null;
 		}
 		
-		public override bool Emit (EmitContext ec)
+		protected override bool DoEmit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
 			
@@ -616,7 +625,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 		
-		public override bool Emit (EmitContext ec)
+		protected override bool DoEmit (EmitContext ec)
 		{
 			if (ec.InFinally){
 				Report.Error (157,loc,"Control can not leave the body of the finally block");
@@ -699,7 +708,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override bool Emit (EmitContext ec)
+		protected override bool DoEmit (EmitContext ec)
 		{
 			Label l = label.LabelTarget (ec);
 			ec.ig.Emit (OpCodes.Br, l);
@@ -767,7 +776,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public override bool Emit (EmitContext ec)
+		protected override bool DoEmit (EmitContext ec)
 		{
 			LabelTarget (ec);
 			ec.ig.MarkLabel (label);
@@ -793,7 +802,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public override bool Emit (EmitContext ec)
+		protected override bool DoEmit (EmitContext ec)
 		{
 			if (ec.Switch == null){
 				Report.Error (153, loc, "goto default is only valid in a switch statement");
@@ -858,7 +867,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public override bool Emit (EmitContext ec)
+		protected override bool DoEmit (EmitContext ec)
 		{
 			ec.ig.Emit (OpCodes.Br, label);
 			return true;
@@ -906,7 +915,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 			
-		public override bool Emit (EmitContext ec)
+		protected override bool DoEmit (EmitContext ec)
 		{
 			if (expr == null){
 				if (ec.InCatch)
@@ -942,7 +951,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public override bool Emit (EmitContext ec)
+		protected override bool DoEmit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
 
@@ -973,7 +982,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public override bool Emit (EmitContext ec)
+		protected override bool DoEmit (EmitContext ec)
 		{
 			Label begin = ec.LoopBegin;
 			
@@ -3117,26 +3126,16 @@ namespace Mono.CSharp {
 			return ok;
 		}
 		
-		public override bool Emit (EmitContext ec)
+		protected override bool DoEmit (EmitContext ec)
 		{
 			Block prev_block = ec.CurrentBlock;
 
 			ec.CurrentBlock = this;
 
-			if (CodeGen.SymbolWriter != null) {
-				ec.Mark (StartLocation);
-				
-				foreach (Statement s in statements) {
-					ec.Mark (s.loc);
-					s.Emit (ec);
-				}
-
-				ec.Mark (EndLocation); 
-			} else {
-				foreach (Statement s in statements){
-					s.Emit (ec);
-				}
-			}
+			ec.Mark (StartLocation);
+			foreach (Statement s in statements)
+				s.Emit (ec);
+			ec.Mark (EndLocation); 
 			
 			ec.CurrentBlock = prev_block;
 			return has_ret;
@@ -3922,7 +3921,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 		
-		public override bool Emit (EmitContext ec)
+		protected override bool DoEmit (EmitContext ec)
 		{
 			// Store variable for comparission purposes
 			LocalBuilder value = ec.ig.DeclareLocal (SwitchType);
@@ -3979,7 +3978,7 @@ namespace Mono.CSharp {
 			return Statement.Resolve (ec) && expr != null;
 		}
 		
-		public override bool Emit (EmitContext ec)
+		protected override bool DoEmit (EmitContext ec)
 		{
 			Type type = expr.Type;
 			bool val;
@@ -4033,7 +4032,7 @@ namespace Mono.CSharp {
 			return Block.Resolve (ec);
 		}
 		
-		public override bool Emit (EmitContext ec)
+		protected override bool DoEmit (EmitContext ec)
 		{
 			bool previous_state = ec.CheckState;
 			bool previous_state_const = ec.ConstantCheckState;
@@ -4071,7 +4070,7 @@ namespace Mono.CSharp {
 			return ret;
 		}
 
-		public override bool Emit (EmitContext ec)
+		protected override bool DoEmit (EmitContext ec)
 		{
 			bool previous_state = ec.CheckState;
 			bool previous_state_const = ec.ConstantCheckState;
@@ -4107,7 +4106,7 @@ namespace Mono.CSharp {
 			return val;
 		}
 		
-		public override bool Emit (EmitContext ec)
+		protected override bool DoEmit (EmitContext ec)
 		{
 			bool previous_state = ec.InUnsafe;
 			bool val;
@@ -4257,7 +4256,7 @@ namespace Mono.CSharp {
 			return statement.Resolve (ec);
 		}
 		
-		public override bool Emit (EmitContext ec)
+		protected override bool DoEmit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
 
@@ -4509,7 +4508,7 @@ namespace Mono.CSharp {
 			return ok;
 		}
 		
-		public override bool Emit (EmitContext ec)
+		protected override bool DoEmit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
 			Label end;
@@ -4769,7 +4768,7 @@ namespace Mono.CSharp {
 			return Statement.Resolve (ec);
 		}
 		
-		public override bool Emit (EmitContext ec)
+		protected override bool DoEmit (EmitContext ec)
 		{
 			if (expression_or_block is DictionaryEntry)
 				return EmitLocalVariableDecls (ec);
@@ -5308,7 +5307,7 @@ namespace Mono.CSharp {
 			return false;
 		}
 		
-		public override bool Emit (EmitContext ec)
+		protected override bool DoEmit (EmitContext ec)
 		{
 			bool ret_val;
 			

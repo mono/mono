@@ -562,13 +562,13 @@ namespace Mono.CSharp {
 		/// </summary>
 		public void Mark (Location loc)
 		{
-			if (!Location.IsNull (loc)) {
+			if ((CodeGen.SymbolWriter != null) && !Location.IsNull (loc)) {
 				ISymbolDocumentWriter doc = loc.SymbolDocument;
 
 				if (doc != null)
 					ig.MarkSequencePoint (doc, loc.Row, 0,  loc.Row, 0);
-			}		}
-
+			}
+		}
 
 		/// <summary>
 		///   Returns a temporary storage for a variable of type t as 
