@@ -1,3 +1,7 @@
+2004-03-29 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* cs0176.cs: make this test better.
+
 2004-03-29 Marek Safar <marek.safar@seznam.cz>
 	* cs0029-3.cs,
           cs0173-2.cs,
