@@ -87,6 +87,7 @@ MustInheritA \
 NotInheritable \
 ConstructorA \
 ConstructorB \
+ConstructorC \
 Interface \
 InterfaceA \
 InterfaceB \
@@ -115,7 +116,10 @@ Variables \
 VariablesA \
 VariablesB \
 VariablesC \
-ConstantA
+VariablesD \
+VariablesE \
+ConstantA \
+ConstantB
 
 
 # All negetive test cases which should
@@ -202,6 +206,9 @@ NotInheritableC2 \
 NotInheritableC3 \
 ConstructorC1 \
 ConstructorC2 \
+ConstructorC4 \
+ConstructorC5 \
+ConstructorC6 \
 InterfaceC1 \
 InterfaceC2 \
 InterfaceC3 \
