@@ -1,5 +1,11 @@
 2003-04-23  Martin Baulig  <martin@ximian.com>
 
+	* mono-debug.c (mono_debug_source_location_from_il_offset):
+	New method; like mono_debug_source_location_from_address(), but
+	takes an IL offset instead of a machine address.
+
+2003-04-23  Martin Baulig  <martin@ximian.com>
+
 	* debug-mono-symfile.h (MonoDebugLineNumberEntry): Removed the
 	`line' field; this is now computed by the debugger.
 
