@@ -140,7 +140,7 @@ namespace Mono.CSharp {
 						iface = TypeManager.LookupInterface (t);
 						
 						mi = iface.GetMethods (container);
-					} else
+					} else 
 						mi = t.GetMethods ();
 
 					int count = mi.Length;
@@ -312,39 +312,33 @@ namespace Mono.CSharp {
 				if (!(t == null || tm.type == t))
 					continue;
 
-				int i = 0;
-				foreach (MethodInfo m in tm.methods){
-					if (m == null){
-						i++;
+				int method_count = tm.methods.Length;
+				MethodInfo m;
+				for (int i = 0; i < method_count; i++){
+					m = tm.methods [i];
+
+					if (m == null)
 						continue;
-					}
 
 					// `need_proxy' is not null when we're implementing an
 					// interface indexer and this is Clear(One/All) operation.
 					// If `name' is null, then we do a match solely based on the
 					// signature and not on the name (this is done in the Lookup
 					// for an interface indexer).
-					if ((name != null) && (need_proxy == null) && (name != m.Name)){
-						i++;
+					if ((name != null) && (need_proxy == null) && (name != m.Name))
 						continue;
-					}
 
 					if (ret_type != m.ReturnType){
 						if (!((ret_type == null && m.ReturnType == TypeManager.void_type) ||
 						      (m.ReturnType == null && ret_type == TypeManager.void_type)))
-						{
-							i++;
 							continue;
-						}
 					}
 
 					//
 					// Check if we have the same parameters
 					//
-					if (tm.args [i].Length != arg_len){
-						i++;
+					if (tm.args [i].Length != arg_len)
 						continue;
-					}
 
 					int j, top = args.Length;
 					bool fail = false;
@@ -355,10 +349,8 @@ namespace Mono.CSharp {
 							break;
 						}
 					}
-					if (fail){
-						i++;
+					if (fail)
 						continue;
-					}
 
 					if (op != Operation.Lookup){
 						// If `t != null', then this is an explicitly interface
@@ -369,7 +361,7 @@ namespace Mono.CSharp {
 						// match the IndexerName in the interface.
 						if ((t == null) && (need_proxy != null) && (name != m.Name))
 							tm.need_proxy [i] = need_proxy;
-						else
+						else 
 							tm.methods [i] = null;
 					}
 					tm.found [i] = true;

@@ -1,3 +1,9 @@
+2002-10-24  Miguel de Icaza  <miguel@ximian.com>
+
+	* pending.cs (PendingImplementation.InterfaceMethod): This routine
+	had an out-of-sync index variable, which caused it to remove from
+	the list of pending methods the wrong method sometimes.
+
 2002-10-22  Miguel de Icaza  <miguel@ximian.com>
 
 	* ecore.cs (PropertyExpr): Do not use PropertyInfo.CanRead,
