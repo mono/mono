@@ -1,5 +1,15 @@
 2003-08-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* threadpool.c: when mono_async_invoke was called, no one took care of
+	monitoring the queue. So if the method invoked took some time and we
+	got new async invoke requests after 500 ms (the thread created waited
+	that long in WaitForSingleObject), the new async invoke was not called
+	until the previous one finished.
+
+	This is fixed now. Thanks to Totte for helping with it.
+
+2003-08-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* threadpool.c: set threadpool_thread to TRUE. Patch by totte.
 
 2003-08-11  Martin Baulig  <martin@ximian.com>
