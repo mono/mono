@@ -1671,6 +1671,13 @@ namespace Mono.CSharp {
 			return retMethods;
 		}
 		
+		// Indicated whether container has StructLayout attribute set Explicit
+		public virtual bool HasExplicitLayout {
+			get {
+				return false;
+			}
+		}
+		
 		/// <summary>
 		///   This method returns the members of this type just like Type.FindMembers would
 		///   Only, we need to use this for types which are _being_ defined because MS' 
@@ -2158,6 +2165,8 @@ namespace Mono.CSharp {
 						c.Emit ();
 				}
 			}
+
+			EmitConstants ();
 
 			if (default_static_constructor != null)
 				default_static_constructor.Emit ();
@@ -2719,32 +2728,14 @@ namespace Mono.CSharp {
 			return PendingImplementation.GetPendingImplementations (this);
 		}
 
-		protected override void VerifyMembers (EmitContext ec) 
-		{
-			if (Fields != null) {
-				foreach (Field f in Fields) {
-					if ((f.ModFlags & Modifiers.STATIC) != 0)
-						continue;
-					if (hasExplicitLayout) {
-						if (f.OptAttributes == null 
-						    || !f.OptAttributes.Contains (TypeManager.field_offset_attribute_type, ec)) {
-							Report.Error (625, f.Location,
-								      "Instance field of type marked with" 
-								      + " StructLayout(LayoutKind.Explicit) must have a"
-								      + " FieldOffset attribute.");
-						}
-					}
-					else {
-						if (f.OptAttributes != null 
-						    && f.OptAttributes.Contains (TypeManager.field_offset_attribute_type, ec)) {
-							Report.Error (636, f.Location,
-								      "The FieldOffset attribute can only be placed on members of "
-								      + "types marked with the StructLayout(LayoutKind.Explicit)");
-						}
-					}
+		public override bool HasExplicitLayout {
+			get {
+				return hasExplicitLayout;
 				}
 			}
 
+		protected override void VerifyMembers (EmitContext ec)
+		{
 			base.VerifyMembers (ec);
 
 			if ((events != null) && (RootContext.WarningLevel >= 3)) {
@@ -5227,6 +5218,15 @@ namespace Mono.CSharp {
 			return String.Concat (tc.Name, '.', base.GetSignatureForError (tc));
 		}
 
+		protected bool IsTypePermitted ()
+		{
+			if (MemberType == TypeManager.arg_iterator_type || MemberType == TypeManager.typed_reference_type) {
+				Report.Error (610, Location, "Field or property cannot be of type '{0}'", TypeManager.CSharpName (MemberType));
+				return false;
+			}
+			return true;
+		}
+
 		protected override bool VerifyClsCompliance(DeclSpace ds)
 		{
 			if (base.VerifyClsCompliance (ds)) {
@@ -5375,12 +5375,6 @@ namespace Mono.CSharp {
 					      "Keyword 'void' cannot be used in this context");
 				return false;
 			}
-
-			if (MemberType == TypeManager.arg_iterator_type || MemberType == TypeManager.typed_reference_type) {
-				Report.Error (610, Location, "Field or property cannot be of type '{0}'", TypeManager.CSharpName (MemberType));
-				return false;
-			}
-
 			return true;
 		}
 
@@ -5420,10 +5414,77 @@ namespace Mono.CSharp {
 		}
 	}
 
+	public abstract class FieldMember: FieldBase
+	{
+		bool has_field_offset = false;
+
+		protected FieldMember (TypeContainer parent, Expression type, int mod,
+			int allowed_mod, MemberName name, object init, Attributes attrs, Location loc)
+			: base (parent, type, mod, allowed_mod, name, init, attrs, loc)
+		{
+		}
+
+		public override void ApplyAttributeBuilder(Attribute a, CustomAttributeBuilder cb)
+		{
+			if (a.Type == TypeManager.field_offset_attribute_type)
+			{
+				has_field_offset = true;
+
+				if (!Parent.HasExplicitLayout) {
+					Report.Error (636, Location, "The FieldOffset attribute can only be placed on members of types marked with the StructLayout(LayoutKind.Explicit)");
+					return;
+				}
+
+				if ((ModFlags & Modifiers.STATIC) != 0 || this is Const) {
+					Report.Error (637, Location, "The FieldOffset attribute is not allowed on static or const fields");
+					return;
+				}
+			}
+			base.ApplyAttributeBuilder (a, cb);
+		}
+
+
+		public override bool Define()
+		{
+			MemberType = Parent.ResolveType (Type, false, Location);
+			
+			if (MemberType == null)
+				return false;
+
+			if (!CheckBase ())
+				return false;
+			
+			if (!Parent.AsAccessible (MemberType, ModFlags)) {
+				Report.Error (52, Location,
+					"Inconsistent accessibility: field type `" +
+					TypeManager.CSharpName (MemberType) + "' is less " +
+					"accessible than field `" + Name + "'");
+				return false;
+			}
+
+			if (!IsTypePermitted ())
+				return false;
+
+			if (MemberType.IsPointer && !UnsafeOK (Parent))
+				return false;
+
+			return true;
+		}
+
+		public override void Emit ()
+		{
+			if (Parent.HasExplicitLayout && !has_field_offset && (ModFlags & Modifiers.STATIC) == 0) {
+				Report.Error (625, Location, "'{0}': Instance field types marked with StructLayout(LayoutKind.Explicit) must have a FieldOffset attribute.", GetSignatureForError ());
+			}
+
+			base.Emit ();
+		}
+	}
+
 	//
 	// The Field class is used to represents class/struct fields during parsing.
 	//
-	public class Field : FieldBase {
+	public class Field : FieldMember {
 		// <summary>
 		//   Modifiers allowed in a class declaration
 		// </summary>
@@ -5447,24 +5508,9 @@ namespace Mono.CSharp {
 
 		public override bool Define ()
 		{
-			MemberType = Parent.ResolveType (Type, false, Location);
-
-			if (MemberType == null)
+			if (!base.Define ())
 				return false;
 
-			CheckBase ();
-			
-			if (!Parent.AsAccessible (MemberType, ModFlags)) {
-				Report.Error (52, Location,
-					      "Inconsistent accessibility: field type `" +
-					      TypeManager.CSharpName (MemberType) + "' is less " +
-					      "accessible than field `" + Name + "'");
-				return false;
-			}
-
-			if (MemberType.IsPointer && !UnsafeOK (Parent))
-				return false;
-			
 			if (RootContext.WarningLevel > 1){
 				Type ptype = Parent.TypeBuilder.BaseType;
 
@@ -5937,15 +5983,21 @@ namespace Mono.CSharp {
 			}
 		}
 
-		protected override bool DoDefine (DeclSpace decl)
+		public override bool Define ()
 		{
-			if (!base.DoDefine (decl))
+			if (!DoDefine (Parent))
 				return false;
 
-			if (MemberType == TypeManager.arg_iterator_type || MemberType == TypeManager.typed_reference_type) {
-				Report.Error (610, Location, "Field or property cannot be of type '{0}'", TypeManager.CSharpName (MemberType));
+			if (!IsTypePermitted ())
 				return false;
-			}
+
+			return true;
+		}
+
+		protected override bool DoDefine (DeclSpace ds)
+		{
+			if (!base.DoDefine (ds))
+				return false;
 
 			if (MemberType.IsAbstract && MemberType.IsSealed) {
 				Report.Error (722, Location, Error722, TypeManager.CSharpName (MemberType));
@@ -6097,7 +6149,7 @@ namespace Mono.CSharp {
 			if (!DoDefineBase ())
 				return false;
 
-			if (!DoDefine (Parent))
+			if (!base.Define ())
 				return false;
 
 			if (!CheckBase ())
@@ -6821,7 +6873,7 @@ namespace Mono.CSharp {
 			if (!DoDefineBase ())
 				return false;
 
-			if (!DoDefine (Parent))
+			if (!base.Define ())
 				return false;
 
 			if (OptAttributes != null) {
@@ -6954,10 +7006,6 @@ namespace Mono.CSharp {
 			Modifiers.EXTERN |
 			Modifiers.STATIC;
 
-		const int RequiredModifiers =
-			Modifiers.PUBLIC |
-			Modifiers.STATIC;
-
 		public enum OpType : byte {
 
 			// Unary operators
@@ -7058,12 +7106,9 @@ namespace Mono.CSharp {
 
 		public override bool Define ()
 		{
+			const int RequiredModifiers = Modifiers.PUBLIC | Modifiers.STATIC;
 			if ((ModFlags & RequiredModifiers) != RequiredModifiers){
-				Report.Error (
-					558, Location, 
-					"User defined operators `" +
-					GetSignatureForError (Parent) +
-					"' must be declared static and public");
+				Report.Error (558, Location, "User defined operators '{0}' must be declared static and public", GetSignatureForError (Parent));
 				return false;
 			}
 
@@ -7146,23 +7191,25 @@ namespace Mono.CSharp {
 			} else if (Parameters.FixedParameters.Length == 1) {
 				// Checks for Unary operators
 				
+				if (OperatorType == OpType.Increment || OperatorType == OpType.Decrement) {
+					if (return_type != declaring_type && !return_type.IsSubclassOf (declaring_type)) {
+						Report.Error (448, Location,
+							"The return type for ++ or -- operator must be the containing type or derived from the containing type");
+						return false;
+					}
 				if (first_arg_type != declaring_type){
 					Report.Error (
+							559, Location, "The parameter type for ++ or -- operator must be the containing type");
+					return false;
+				}
+				}
+				
+				if (first_arg_type != declaring_type){
+						Report.Error (
 						562, Location,
 						"The parameter of a unary operator must be the " +
 						"containing type");
-					return false;
-				}
-				
-				if (OperatorType == OpType.Increment || OperatorType == OpType.Decrement) {
-					if (return_type != declaring_type){
-						Report.Error (
-							559, Location,
-							"The parameter and return type for ++ and -- " +
-							"must be the containing type");
 						return false;
-					}
-					
 				}
 				
 				if (OperatorType == OpType.True || OperatorType == OpType.False) {
