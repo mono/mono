@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.11 $
+// $Revision: 1.12 $
 // $Modtime: $
 // $Log: XplatUIWin32.cs,v $
+// Revision 1.12  2004/08/11 19:41:38  jordi
+// Fixes ClientRect
+//
 // Revision 1.11  2004/08/11 19:19:44  pbartok
 // - We had SetWindowPos and MoveWindow to set window positions and size,
 //   removed MoveWindow. We have GetWindowPos, so it made sense to keep
@@ -531,6 +534,8 @@ namespace System.Windows.Forms {
 			Win32ScreenToClient(Win32GetParent(handle), ref rect);
 			x = rect.left;
 			y = rect.top;
+
+			Win32GetClientRect(handle, out rect);
 			width = rect.right - rect.left;
 			height = rect.bottom - rect.top;
 			return;
@@ -717,6 +722,9 @@ namespace System.Windows.Forms {
 
 		[DllImport ("user32.dll", EntryPoint="GetWindowRect", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
 		private extern static IntPtr Win32GetWindowRect(IntPtr hWnd, out RECT rect);
+
+		[DllImport ("user32.dll", EntryPoint="GetClientRect", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		private extern static IntPtr Win32GetClientRect(IntPtr hWnd, out RECT rect);
 
 		[DllImport ("user32.dll", EntryPoint="ScreenToClient", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
 		private extern static IntPtr Win32ScreenToClient(IntPtr hWnd, ref RECT rect);
