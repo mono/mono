@@ -32,12 +32,12 @@ namespace MonoTests.System.Net.Sockets {
 			Socket lSock = new Socket(AddressFamily.InterNetwork,
 				SocketType.Stream, ProtocolType.Tcp);
 			
-			lSock.Bind(new IPEndPoint(IPAddress.Any, 1234));
+			lSock.Bind(new IPEndPoint(IPAddress.Any, 8765));
 			lSock.Listen(-1);
 
 
 			// connect to it with a TcpClient
-			TcpClient outClient = new TcpClient("localhost", 1234);
+			TcpClient outClient = new TcpClient("localhost", 8765);
 			Socket inSock = lSock.Accept();
 
 			

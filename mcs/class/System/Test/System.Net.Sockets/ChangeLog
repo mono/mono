@@ -1,3 +1,8 @@
+2005-03-06  Nick Drochak  <ndrochak@ieee.org>
+
+	* TcpClientTest.cs: Choose a different port so test will pass on MS.NET
+	* TcpListenerTest.cs: Ignore test that doesn't play well on MS.NET
+
 2005-02-23  Dick Porter  <dick@ximian.com>
 
 	* UdpClientTest.cs: Added, with UdpClientBroadcastTest from Chris

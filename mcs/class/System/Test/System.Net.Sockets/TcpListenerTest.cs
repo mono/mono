@@ -21,10 +21,11 @@ namespace MonoTests.System.Net.Sockets
 	public class TcpListenerTest : Assertion
 	{
 		[Test]
+		[Category("NotDotNet")]
 		public void TcpListener ()
 		{
 			// listen with a new listener (IPv4 is the default)
-			TcpListener inListener = new TcpListener (1234);
+			TcpListener inListener = new TcpListener (8766);
 			inListener.Start();
 			
 
@@ -37,8 +38,7 @@ namespace MonoTests.System.Net.Sockets
 					/// Only keep IPv4 addresses, our Server is in IPv4 only mode.
 					outSock = new Socket (address.AddressFamily, SocketType.Stream,
 						ProtocolType.IP);
-					IPEndPoint remote = new IPEndPoint (address, 1234);
-					outSock.Connect (remote);
+					IPEndPoint remote = new IPEndPoint (address, 8766);
 					break;
 				}
 			}
