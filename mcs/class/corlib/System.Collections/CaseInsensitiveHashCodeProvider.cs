@@ -9,8 +9,7 @@
 
 using System;
 using System.Collections;
-
-
+using System.Globalization;
 
 namespace System.Collections {
 
@@ -32,6 +31,10 @@ namespace System.Collections {
 		// Public instance constructor
 
 		public CaseInsensitiveHashCodeProvider ()
+		{
+		}
+
+		public CaseInsensitiveHashCodeProvider (CultureInfo culture)
 		{
 		}
 

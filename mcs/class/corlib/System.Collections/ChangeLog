@@ -1,3 +1,7 @@
+2002-07-22  Tim Coleman  <tim@timcoleman.com>
+	* CaseInsensitiveHashCodeProvider.cs: Added missing constructor
+		which was breaking System.Web build on linux
+
 2002-07-05  Sergey Chaban <serge@wildwestsoftware.com>
 
 	* SortedList.cs: Implemented thread-safe wrapper. Changed some
