@@ -155,6 +155,11 @@ namespace Mono.CSharp {
 		{
 			parameter_type = ds.ResolveType (TypeName, false, l);
 
+			if (parameter_type.IsAbstract && parameter_type.IsSealed) {
+				Report.Error (721, l, "'{0}': static types cannot be used as parameters", GetSignatureForError ());
+				return false;
+			}
+
 			if (parameter_type == TypeManager.void_type){
 				Report.Error (1536, l, "`void' parameter is not permitted");
 				return false;

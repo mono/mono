@@ -1022,6 +1022,10 @@ namespace Mono.CSharp {
 			if (VariableType == null)
 				return false;
 
+			if (VariableType.IsAbstract && VariableType.IsSealed) {
+				Report.Error (723, Location, "Cannot declare variable of static type '{0}'", TypeManager.CSharpName (VariableType));
+				return false;
+			}
 // TODO: breaks the build
 //			if (VariableType.IsPointer && !ec.InUnsafe)
 //				Expression.UnsafeError (Location);

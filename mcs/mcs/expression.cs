@@ -1770,6 +1770,11 @@ namespace Mono.CSharp {
 
 			CheckObsoleteAttribute (type);
 
+			if (type.IsAbstract && type.IsSealed) {
+				Report.Error (716, loc, "Cannot convert to static type '{0}'", TypeManager.CSharpName (type));
+				return null;
+			}
+
 			eclass = ExprClass.Value;
 
 			if (expr is Constant){
@@ -5541,6 +5546,11 @@ namespace Mono.CSharp {
 				return RequestedType;
 			}
 
+			if (type.IsAbstract && type.IsSealed) {
+				Report.Error (712, loc, "Cannot create an instance of the static class '{0}'", TypeManager.CSharpName (type));
+				return null;
+			}
+
 			if (type.IsInterface || type.IsAbstract){
 				Error (144, "It is not possible to create instances of interfaces or abstract classes");
 				return null;
@@ -6059,6 +6069,11 @@ namespace Mono.CSharp {
 			}
 			
 			array_element_type = TypeManager.GetElementType (type);
+
+			if (array_element_type.IsAbstract && array_element_type.IsSealed) {
+				Report.Error (719, loc, "'{0}': array elements cannot be of static type", TypeManager.CSharpName (array_element_type));
+				return null;
+			}
 
 			if (arg_count == 1) {
 				is_one_dimensional = true;

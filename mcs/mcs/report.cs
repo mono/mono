@@ -74,6 +74,11 @@ namespace Mono.CSharp {
 				Environment.Exit (0);
 			}
 		}
+
+		public static void FeatureIsNotStandardized (string feature)
+		{
+			Report.Error (1644, "Feature '{0}' cannot be used because it is not part of the standardized ISO C# language specification", feature);
+		}
 		
 		public static string FriendlyStackTrace (Exception e)
 		{
@@ -119,7 +124,12 @@ namespace Mono.CSharp {
 		static public void LocationOfPreviousError (Location loc)
 		{
 			Console.WriteLine (String.Format ("{0}({1}) (Location of symbol related to previous error)", loc.Name, loc.Row));
-		}                
+		}    
+        
+		static public void RuntimeMissingSupport (string feature) 
+		{
+			Report.Error (-88, "Your .NET Runtime does not support '{0}'. Please use the latest Mono runtime instead.");
+		}
 
 		/// <summary>
 		/// In most error cases is very useful to have information about symbol that caused the error.
@@ -155,7 +165,11 @@ namespace Mono.CSharp {
 
 		static public void SymbolRelatedToPreviousError (Type type)
 		{
-			SymbolRelatedToPreviousError (type.Assembly.Location, TypeManager.CSharpName (type));
+			DeclSpace temp_ds = TypeManager.LookupDeclSpace (type);
+			if (temp_ds == null)
+				SymbolRelatedToPreviousError (type.Assembly.Location, TypeManager.CSharpName (type));
+			else 
+				SymbolRelatedToPreviousError (temp_ds.Location, TypeManager.CSharpName (type));
 		}
 
 		static void SymbolRelatedToPreviousError (string loc, string symbol)

@@ -1,3 +1,21 @@
+2004-09-01  Marek Safar  <marek.safar@seznam.cz>
+
+	C# 2.0 Static classes implemented
+
+	* class.cs (TypeContainer): instance_constructors,
+	initialized_fields, initialized_static_fields,
+	default_constructor, base_inteface_types are protected to be
+	accessible from StaticClass.
+	(TypeContainer.DefineDefaultConstructor): New virtual method
+	for custom default constructor generating
+	(StaticClass): New class to handle "Static classes" feature.
+
+	* cs-parser.jay: Handle static keyword on class like instance
+	of StaticClass.
+
+	* driver.cs: Added "/langversion" command line switch with two
+	options (iso-1, default).
+
 2004-08-31  Marek Safar  <marek.safar@seznam.cz>
 
 	* ecore.cs (FieldExpr.Resolve): Fixed bug #64689.
