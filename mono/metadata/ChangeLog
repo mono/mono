@@ -5,6 +5,8 @@
 	* unicode.c: free some strings gotten from mono_string_to_utf8 and
 	changed a couple of free () by g_free ().
 
+	* decimal.c: one-liner in the comments for decimal2string ().
+
 2002-04-24	Patrik Torstensson <patrik.torstensson@labs2.com>
 
 	* object.c (mono_runtime_invoke_array) : Bug because of my incompetence.
