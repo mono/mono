@@ -62,6 +62,7 @@ namespace MonoTests.System.Security.Permissions {
 		{
 			UrlIdentityPermission uip = new UrlIdentityPermission (PermissionState.None);
 #if NET_2_0
+			// that cause a NullReferenceException before 2.0
 			Assert.AreEqual (String.Empty, uip.Url, "Url");
 #endif
 			SecurityElement se = uip.ToXml ();
@@ -69,8 +70,8 @@ namespace MonoTests.System.Security.Permissions {
 			Assert.AreEqual (2, se.Attributes.Count, "Xml-Attributes");
 			Assert.IsNull (se.Children, "Xml-Children");
 
-//			UrlIdentityPermission copy = (UrlIdentityPermission)uip.Copy ();
-//			Assert.IsFalse (Object.ReferenceEquals (uip, copy), "ReferenceEquals");
+			UrlIdentityPermission copy = (UrlIdentityPermission)uip.Copy ();
+			Assert.IsFalse (Object.ReferenceEquals (uip, copy), "ReferenceEquals");
 		}
 
 #if !NET_2_0
@@ -83,13 +84,28 @@ namespace MonoTests.System.Security.Permissions {
 		}
 #endif
 
+#if NET_2_0
+		[Test]
+		public void PermissionStateUnrestricted ()
+		{
+			// In 2.0 Unrestricted are permitted for identity permissions
+			UrlIdentityPermission uip = new UrlIdentityPermission (PermissionState.Unrestricted);
+			Assert.AreEqual (String.Empty, uip.Url, "Url");
+			SecurityElement se = uip.ToXml ();
+			// only class and version are present
+			Assert.AreEqual (3, se.Attributes.Count, "Xml-Attributes");
+			Assert.IsNull (se.Children, "Xml-Children");
+			// and they aren't equals to None
+			Assert.IsFalse (uip.Equals (new UrlIdentityPermission (PermissionState.None)));
+		}
+#else
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
 		public void PermissionState_Unrestricted ()
 		{
 			UrlIdentityPermission uip = new UrlIdentityPermission (PermissionState.Unrestricted);
 		}
-
+#endif
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
 		public void PermissionState_Bad ()
@@ -120,7 +136,12 @@ namespace MonoTests.System.Security.Permissions {
 		}
 
 		[Test]
+#if NET_2_0
+		// this was working in beta1 but is broken in Nov CTP
+		[ExpectedException (typeof (NullReferenceException))]
+#else
 		[ExpectedException (typeof (ArgumentNullException))]
+#endif
 		public void Url_Null ()
 		{
 			UrlIdentityPermission uip = new UrlIdentityPermission (PermissionState.None);
@@ -306,15 +327,23 @@ namespace MonoTests.System.Security.Permissions {
 		}
 
 		[Test]
-#if NET_2_0
-		[ExpectedException (typeof (ArgumentException))]
-#endif
 		public void Union_Different ()
 		{
 			UrlIdentityPermission uip1 = new UrlIdentityPermission (GoodUrls [0]);
 			UrlIdentityPermission uip2 = new UrlIdentityPermission (GoodUrls [1]);
 			UrlIdentityPermission result = (UrlIdentityPermission)uip1.Union (uip2);
+#if NET_2_0
+			Assert.IsNotNull (result, "Mono U Novell");
+			// new XML format is used to contain more than one site
+			SecurityElement se = result.ToXml ();
+			Assert.AreEqual (2, se.Children.Count, "Childs");
+			Assert.AreEqual (GoodUrls [0], (se.Children [0] as SecurityElement).Attribute ("Url"), "Url#1");
+			Assert.AreEqual (GoodUrls [1], (se.Children [1] as SecurityElement).Attribute ("Url"), "Url#2");
+			// strangely it is still versioned as 'version="1"'.
+			Assert.AreEqual ("1", se.Attribute ("version"), "Version");
+#else
 			Assert.IsNull (result, "Mono U Novell");
+#endif
 		}
 
 		[Test]

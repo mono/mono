@@ -42,14 +42,26 @@ namespace MonoTests.System.Security.Permissions {
 			ZoneIdentityPermission zip = new ZoneIdentityPermission (PermissionState.None);
 			Assert.AreEqual (SecurityZone.NoZone, zip.SecurityZone);
 		}
-
+#if NET_2_0
+		[Test]
+		public void PermissionStateUnrestricted ()
+		{
+			// In 2.0 Unrestricted are permitted for identity permissions
+			ZoneIdentityPermission zip = new ZoneIdentityPermission (PermissionState.Unrestricted);
+			Assert.AreEqual (SecurityZone.NoZone, zip.SecurityZone);
+			SecurityElement se = zip.ToXml ();
+			Assert.AreEqual (5, se.Children.Count, "Count");
+			// and they aren't equals to None
+			Assert.IsFalse (zip.Equals (new ZoneIdentityPermission (PermissionState.None)));
+		}
+#else
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
 		public void PermissionStateUnrestricted ()
 		{
 			ZoneIdentityPermission zip = new ZoneIdentityPermission (PermissionState.Unrestricted);
 		}
-
+#endif
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
 		public void PermissionStateInvalid ()
@@ -204,24 +216,27 @@ namespace MonoTests.System.Security.Permissions {
 			Assert.IsTrue (Same (a, z), "NoZone+Trusted");
 			Assert.IsFalse (Object.ReferenceEquals (a, z), "!ReferenceEquals4");
 		}
+
+		[Test]
+		public void Union_DifferentIdentities ()
+		{
+			ZoneIdentityPermission a = new ZoneIdentityPermission (SecurityZone.Trusted);
+			ZoneIdentityPermission b = new ZoneIdentityPermission (SecurityZone.Untrusted);
+			IPermission result = a.Union (b);
 #if NET_2_0
-		[Test]
-		[ExpectedException (typeof (ArgumentException))]
-		public void Union_DifferentIdentities ()
-		{
-			ZoneIdentityPermission a = new ZoneIdentityPermission (SecurityZone.Trusted);
-			ZoneIdentityPermission b = new ZoneIdentityPermission (SecurityZone.Untrusted);
-			a.Union (b);
-		}
+			Assert.IsNotNull (result, "Union");
+			// new XML format is used to contain more than one site
+			SecurityElement se = result.ToXml ();
+			Assert.AreEqual (2, se.Children.Count, "Childs");
+			Assert.AreEqual (a.SecurityZone.ToString (), (se.Children [0] as SecurityElement).Attribute ("Zone"), "Zone#1");
+			Assert.AreEqual (b.SecurityZone.ToString (), (se.Children [1] as SecurityElement).Attribute ("Zone"), "Zone#2");
+			// strangely it is still versioned as 'version="1"'.
+			Assert.AreEqual ("1", se.Attribute ("version"), "Version");
 #else
-		[Test]
-		public void Union_DifferentIdentities ()
-		{
-			ZoneIdentityPermission a = new ZoneIdentityPermission (SecurityZone.Trusted);
-			ZoneIdentityPermission b = new ZoneIdentityPermission (SecurityZone.Untrusted);
-			Assert.IsNull (a.Union (b));
-		}
+			Assert.IsNull (result);
 #endif
+		}
+
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
 		public void Union_DifferentPermissions ()

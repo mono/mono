@@ -96,11 +96,28 @@ namespace MonoTests.System.Security.Permissions {
 			AssertNotNull ("PublisherIdentityPermission(PermissionState.None)", p);
 			PublisherIdentityPermission copy = (PublisherIdentityPermission) p.Copy ();
 			SecurityElement se = p.ToXml ();
-			Assert ("ToXml-class", (se.Attributes ["class"] as string).StartsWith (className));
-			AssertEquals ("ToXml-version", "1", (se.Attributes ["version"] as string));
+			Assert ("ToXml-class", se.Attribute ("class").StartsWith (className));
+			AssertEquals ("ToXml-version", "1", se.Attribute("version"));
+			AssertNull ("ToXml-Unrestricted", se.Attribute("Unrestricted"));
 			AssertNull ("Certificate==null", p.Certificate);
 		}
-
+#if NET_2_0
+		[Test]
+		public void PermissionStateUnrestricted ()
+		{
+			// In 2.0 Unrestricted are permitted for identity permissions
+			PublisherIdentityPermission p = new PublisherIdentityPermission (PermissionState.Unrestricted);
+			AssertNotNull ("PublisherIdentityPermission(PermissionState.None)", p);
+			PublisherIdentityPermission copy = (PublisherIdentityPermission)p.Copy ();
+			SecurityElement se = p.ToXml ();
+			Assert ("ToXml-class", se.Attribute ("class").StartsWith (className));
+			AssertEquals ("ToXml-version", "1", se.Attribute("version"));
+			AssertEquals ("ToXml-Unrestricted", "true", se.Attribute("Unrestricted"));
+			AssertNull ("Certificate==null", p.Certificate);
+			// and they aren't equals to None
+			Assert (!p.Equals (new PublisherIdentityPermission (PermissionState.None)));
+		}
+#else
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
 		public void PermissionStateUnrestricted () 
@@ -108,7 +125,7 @@ namespace MonoTests.System.Security.Permissions {
 			// Unrestricted isn't permitted for identity permissions
 			PublisherIdentityPermission p = new PublisherIdentityPermission (PermissionState.Unrestricted);
 		}
-
+#endif
 		[Test]
 		public void Certificate () 
 		{
@@ -218,17 +235,26 @@ namespace MonoTests.System.Security.Permissions {
 			AssertEquals ("cert1 U cert1 == cert1", p3.ToString (), p1.ToString ());
 		}
 
-#if NET_2_0
 		[Test]
+#if !NET_2_0
 		[ExpectedException (typeof (ArgumentException))]
+#endif
 		public void Union_DifferentCertificates ()
 		{
 			PublisherIdentityPermission p1 = new PublisherIdentityPermission (x509);
 			X509Certificate x2 = new X509Certificate (cert2);
 			PublisherIdentityPermission p2 = new PublisherIdentityPermission (x2);
-			p1.Union (p2);
-		}
+			IPermission p = p1.Union (p2);
+#if NET_2_0
+			// new XML format is used to contain more than one X.509 certificate
+			SecurityElement se = p.ToXml ();
+			AssertEquals ("Childs", 2, se.Children.Count);
+			AssertEquals ("Cert#1", (se.Children [0] as SecurityElement).Attribute ("X509v3Certificate"), p1.ToXml ().Attribute ("X509v3Certificate"));
+			AssertEquals ("Cert#2", (se.Children [1] as SecurityElement).Attribute ("X509v3Certificate"), p2.ToXml ().Attribute ("X509v3Certificate"));
+			// strangely it is still versioned as 'version="1"'.
+			AssertEquals ("Version", "1", se.Attribute ("version"));
 #endif
+		}
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]

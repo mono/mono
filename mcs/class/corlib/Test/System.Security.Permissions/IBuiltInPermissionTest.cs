@@ -1,4 +1,4 @@
-﻿//
+//
 // IBuiltInPermissionTest.cs - NUnit Test Cases for IBuiltInPermission
 //
 // Author:
@@ -190,13 +190,6 @@ namespace MonoTests.System.Security.Permissions {
 		{
 			IPermission p = (IPermission)new KeyContainerPermission (PermissionState.None);
 			Assert.AreEqual (17, GetTokenIndex (p));
-		}
-
-		[Test]
-		public void DataProtection ()
-		{
-			IPermission p = (IPermission) new DataProtectionPermission (PermissionState.None);
-			Assert.AreEqual (18, GetTokenIndex (p));
 		}
 #endif
 	}

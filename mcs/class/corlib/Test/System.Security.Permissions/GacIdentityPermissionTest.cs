@@ -53,10 +53,25 @@ namespace MonoTests.System.Security.Permissions {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void PermissionStateUnrestricted ()
 		{
 			GacIdentityPermission gip = new GacIdentityPermission (PermissionState.Unrestricted);
+
+			// FX 2.0 now supports Unrestricted for Identity Permissions
+			// However the XML doesn't show the Unrestricted status...
+
+			SecurityElement se = gip.ToXml ();
+			// only class and version are present
+			Assert.AreEqual (2, se.Attributes.Count, "Xml-Attributes");
+			Assert.IsNull (se.Children, "Xml-Children");
+
+			GacIdentityPermission copy = (GacIdentityPermission)gip.Copy ();
+			Assert.IsFalse (Object.ReferenceEquals (gip, copy), "ReferenceEquals");
+
+			// ... and because it doesn't implement IUnrestrictedPermission
+			// there is not way to know if it's unrestricted so...
+			Assert.IsTrue (gip.Equals (new GacIdentityPermission (PermissionState.None)), "Unrestricted==None");
+			// there is not much difference after all ;-)
 		}
 
 		[Test]

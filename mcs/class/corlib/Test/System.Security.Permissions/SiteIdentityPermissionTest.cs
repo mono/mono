@@ -53,39 +53,45 @@ namespace MonoTests.System.Security.Permissions {
 			"www.mono-project.com:80",
 			"*www.mono-project.com",
 			"*-project.com",
+			"www.*.com",
 		};
 
 		[Test]
 		public void PermissionState_None ()
 		{
 			SiteIdentityPermission sip = new SiteIdentityPermission (PermissionState.None);
-//			Assert.IsNull (sip.Site, "Site");
-
+			Assert.AreEqual (String.Empty, sip.Site, "Site");
 			SecurityElement se = sip.ToXml ();
 			// only class and version are present
 			Assert.AreEqual (2, se.Attributes.Count, "Xml-Attributes");
 			Assert.IsNull (se.Children, "Xml-Children");
-
 			SiteIdentityPermission copy = (SiteIdentityPermission)sip.Copy ();
 			Assert.IsFalse (Object.ReferenceEquals (sip, copy), "ReferenceEquals");
 		}
 
+#if NET_2_0
 		[Test]
-// MS BUG
-		[ExpectedException (typeof (NullReferenceException))]
-		public void PermissionState_None_Site ()
+		public void PermissionStateUnrestricted ()
 		{
-			SiteIdentityPermission sip = new SiteIdentityPermission (PermissionState.None);
-			Assert.IsNull (sip.Site, "Site");
+			// In 2.0 Unrestricted are permitted for identity permissions
+			SiteIdentityPermission sip = new SiteIdentityPermission (PermissionState.Unrestricted);
+			Assert.AreEqual (String.Empty, sip.Site, "Site");
+			SecurityElement se = sip.ToXml ();
+			Assert.AreEqual (3, se.Attributes.Count, "Xml-Attributes");
+			Assert.IsNull (se.Children, "Xml-Children");
+			SiteIdentityPermission copy = (SiteIdentityPermission)sip.Copy ();
+			Assert.IsFalse (Object.ReferenceEquals (sip, copy), "ReferenceEquals");
+			// and they aren't equals to None
+			Assert.IsFalse (sip.Equals (new SiteIdentityPermission (PermissionState.None)));
 		}
-
+#else
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
 		public void PermissionState_Unrestricted ()
 		{
 			SiteIdentityPermission sip = new SiteIdentityPermission (PermissionState.Unrestricted);
 		}
-
+#endif
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
 		public void PermissionState_Bad ()
@@ -98,6 +104,13 @@ namespace MonoTests.System.Security.Permissions {
 		public void SiteIdentityPermission_NullSite ()
 		{
 			SiteIdentityPermission sip = new SiteIdentityPermission (null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void SiteIdentityPermission_EmptySite ()
+		{
+			SiteIdentityPermission sip = new SiteIdentityPermission (String.Empty);
 		}
 
 		[Test]
@@ -258,6 +271,15 @@ namespace MonoTests.System.Security.Permissions {
 		}
 
 		[Test]
+		public void IsSubset_Wildcard ()
+		{
+			SiteIdentityPermission sip1 = new SiteIdentityPermission (GoodSites [0]);
+			SiteIdentityPermission sip2 = new SiteIdentityPermission ("*.mono-project.com");
+			Assert.IsTrue (sip1.IsSubsetOf (sip2), "www.mono-project.com subset *.mono-project.com");
+			Assert.IsFalse (sip2.IsSubsetOf (sip1), "*.mono-project.com subset www.mono-project.com");
+		}
+
+		[Test]
 		public void Union_Null ()
 		{
 			SiteIdentityPermission sip = new SiteIdentityPermission (PermissionState.None);
@@ -295,26 +317,50 @@ namespace MonoTests.System.Security.Permissions {
 		{
 			SiteIdentityPermission sip = new SiteIdentityPermission (PermissionState.None);
 			SiteIdentityPermission union = (SiteIdentityPermission)sip.Union (sip);
+#if NET_2_0
+			Assert.IsNull (union, "None U None");
+#else
 			Assert.IsNotNull (union, "None U None"); // can't get null Site property
 			foreach (string s in GoodSites)	{
 				sip.Site = s;
 				union = (SiteIdentityPermission)sip.Union (sip);
 				Assert.AreEqual (s, union.Site, s);
 			}
+#endif
 		}
 
 		[Test]
-#if NET_2_0
-		[ExpectedException (typeof (ArgumentException))]
-#endif
 		public void Union_Different ()
 		{
 			SiteIdentityPermission sip1 = new SiteIdentityPermission (GoodSites [0]);
 			SiteIdentityPermission sip2 = new SiteIdentityPermission (GoodSites [1]);
 			SiteIdentityPermission result = (SiteIdentityPermission)sip1.Union (sip2);
+#if NET_2_0
+			Assert.IsNotNull (result, "Mono U Novell");
+			// new XML format is used to contain more than one site
+			SecurityElement se = result.ToXml ();
+			Assert.AreEqual (2, se.Children.Count, "Childs");
+			Assert.AreEqual ((se.Children [0] as SecurityElement).Attribute ("Site"), sip1.Site, "Site#1");
+			Assert.AreEqual ((se.Children [1] as SecurityElement).Attribute ("Site"), sip2.Site, "Site#2");
+			// strangely it is still versioned as 'version="1"'.
+			Assert.AreEqual ("1", se.Attribute ("version"), "Version");
+#else
+			// It's null for FX 1.0 and 1.1
 			Assert.IsNull (result, "Mono U Novell");
+#endif
 		}
-
+#if NET_2_0
+		[Test]
+		[ExpectedException (typeof (NotSupportedException))]
+		public void Union_Different_Site ()
+		{
+			SiteIdentityPermission sip1 = new SiteIdentityPermission (GoodSites [0]);
+			SiteIdentityPermission sip2 = new SiteIdentityPermission (GoodSites [1]);
+			SiteIdentityPermission result = (SiteIdentityPermission)sip1.Union (sip2);
+			// it's not possible to return many sites using the Site property so it throws
+			Assert.IsNull (result.Site);
+		}
+#endif
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void FromXml_Null ()

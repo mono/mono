@@ -204,7 +204,9 @@ namespace MonoTests.System.Security.Permissions {
 		}
 
 		[Test]
+#if !NET_2_0
 		[ExpectedException (typeof (ArgumentException))]
+#endif
 		public void Unrestricted () 
 		{
 			StrongNameIdentityPermissionAttribute a = new StrongNameIdentityPermissionAttribute (SecurityAction.Assert);

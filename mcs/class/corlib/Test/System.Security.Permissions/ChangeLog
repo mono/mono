@@ -1,3 +1,15 @@
+2005-01-04  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* GacIdentityPermissionTest.cs, IBuiltInPermissionTest.cs, 
+	PublisherIdentityPermissionAttributeTest.cs, 
+	PublisherIdentityPermissionTest.cs, 
+	SiteIdentityPermissionAttributeTest.cs, SiteIdentityPermissionTest.cs,
+	StrongNameIdentityPermissionAttributeTest.cs, 
+	StrongNameIdentityPermissionTest.cs, 
+	UrlIdentityPermissionAttributeTest.cs, UrlIdentityPermissionTest.cs,
+	ZoneIdentityPermissionTest.cs: Adjusted unit tests so they now execute
+	without errors on 2.0 Dec CTP.
+
 2004-10-15  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PrincipalPermissionTest.cs: Added two new tests to check for nulls

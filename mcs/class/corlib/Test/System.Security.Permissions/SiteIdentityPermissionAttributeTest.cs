@@ -48,7 +48,9 @@ namespace MonoTests.System.Security.Permissions {
 		}
 
 		[Test]
+#if !NET_2_0
 		[ExpectedException (typeof (NullReferenceException))]
+#endif
 		public void DefaultPermission ()
 		{
 			SiteIdentityPermissionAttribute a = new SiteIdentityPermissionAttribute (SecurityAction.Assert);
@@ -57,7 +59,7 @@ namespace MonoTests.System.Security.Permissions {
 			SiteIdentityPermission perm = (SiteIdentityPermission) a.CreatePermission ();
 			// ... but this works ...
 			Assert.IsNotNull (perm, "CreatePermission(null site)");
-			// ... but this doesn't!
+			// ... but this doesn't! (FIXED IN 2.0 NOV CTP)
 			string site = perm.Site;
 		}
 
@@ -112,7 +114,9 @@ namespace MonoTests.System.Security.Permissions {
 		}
 
 		[Test]
+#if !NET_2_0
 		[ExpectedException (typeof (ArgumentException))]
+#endif
 		public void Unrestricted () 
 		{
 			SiteIdentityPermissionAttribute a = new SiteIdentityPermissionAttribute (SecurityAction.Assert);

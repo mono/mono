@@ -117,7 +117,9 @@ namespace MonoTests.System.Security.Permissions {
 		}
 
 		[Test]
+#if !NET_2_0
 		[ExpectedException (typeof (ArgumentException))]
+#endif
 		public void Unrestricted () 
 		{
 			UrlIdentityPermissionAttribute a = new UrlIdentityPermissionAttribute (SecurityAction.Assert);
