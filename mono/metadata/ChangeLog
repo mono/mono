@@ -1,5 +1,21 @@
 2003-11-03  Zoltan Varga  <vargaz@freemail.hu>
 
+	* reflection.h (MonoDynamicImage): New type which is currently unused,
+	but will be used through the ref.emit code in place of 
+	MonoDynamicAssembly.
+
+	* reflection.h (MonoReflectionAssemblyBuilder): Track changes to the
+	object layout.
+
+	* reflection.c (create_dynamic_mono_image): Rewrote so it now creates
+	a MonoDynamicImage instead of just a MonoImage.
+	
+	* reflection.h reflection.c icall.c: Move nearly all AssemblyBuilder
+	icalls to ModuleBuilder but keep their semantics, so they will work
+	with moduleb->assemblyb. This will change later.
+	
+2003-11-03  Zoltan Varga  <vargaz@freemail.hu>
+
 	* reflection.h (MonoReflectionAssemblyBuilder): Track changes to the
 	object layout.
 
