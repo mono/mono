@@ -7,7 +7,7 @@ using System.Xml.Schema;
 
 namespace Mono.Xml
 {
-	public class DTDValidatingReader : /*XmlValidatingReader*/XmlReader, IXmlLineInfo
+	public class DTDValidatingReader : XmlReader, IXmlLineInfo
 	{
 		public DTDValidatingReader (XmlReader reader)
 			: this (reader, null)
@@ -16,8 +16,10 @@ namespace Mono.Xml
 
 		public DTDValidatingReader (XmlReader reader,
 			XmlValidatingReader validatingReader)
-//			: base (reader)
 		{
+			entityReaderStack = new Stack ();
+			entityReaderNameStack = new Stack ();
+			entityReaderDepthStack = new Stack ();
 			this.reader = reader;
 			this.sourceTextReader = reader as XmlTextReader;
 			elementStack = new Stack ();
@@ -30,8 +32,12 @@ namespace Mono.Xml
 			missingIDReferences = new ArrayList ();
 		}
 
+		Stack entityReaderStack;
+		Stack entityReaderNameStack;
+		Stack entityReaderDepthStack;
 		XmlReader reader;
 		XmlTextReader sourceTextReader;
+		XmlTextReader nextEntityReader;
 		DTDObjectModel dtd;
 		Stack elementStack;
 		Stack automataStack;
@@ -39,7 +45,6 @@ namespace Mono.Xml
 		string currentAttribute;
 		bool consumedAttribute;
 		bool insideContent;
-//		bool insideAttributeValue;
 		DTDAutomata currentAutomata;
 		DTDAutomata previousAutomata;
 		bool isStandalone;
@@ -49,8 +54,8 @@ namespace Mono.Xml
 		ArrayList idList;
 		ArrayList missingIDReferences;
 
+		// This field is used to get properties and to raise events.
 		XmlValidatingReader validatingReader;
-//		ValidationEventHandler handler;
 
 		public DTDObjectModel DTD {
 			get { return dtd; }
@@ -235,6 +240,21 @@ namespace Mono.Xml
 		{
 			MoveToElement ();
 
+			if (nextEntityReader != null) {
+				entityReaderStack.Push (reader);
+				entityReaderNameStack.Push (Name);
+				entityReaderDepthStack.Push (Depth);
+				reader = sourceTextReader = nextEntityReader;
+				nextEntityReader = null;
+				return Read ();
+			} else if (NodeType == XmlNodeType.EndEntity) {
+				reader = entityReaderStack.Pop () as XmlReader;
+				entityReaderNameStack.Pop ();
+				entityReaderDepthStack.Pop ();
+				sourceTextReader = reader as XmlTextReader;
+				return Read ();
+			}
+
 			bool b = reader.Read ();
 			currentElement = null;
 			currentAttribute = null;
@@ -251,6 +271,9 @@ namespace Mono.Xml
 			}
 
 			if (!b) {
+				if (entityReaderStack.Count > 0)
+					return true;	// EndEntity
+
 				if (elementStack.Count != 0)
 					throw new InvalidOperationException ("Unexpected end of XmlReader.");
 				return false;
@@ -532,10 +555,30 @@ namespace Mono.Xml
 			return reader.ReadString ();
 		}
 
-		[MonoTODO]
 		public override void ResolveEntity ()
 		{
-			throw new NotImplementedException ();
+			if (NodeType != XmlNodeType.EntityReference)
+				throw new InvalidOperationException ("The current node is not an Entity Reference");
+			DTDEntityDeclaration entity = DTD != null ? DTD.EntityDecls [Name] as DTDEntityDeclaration : null;
+
+			// MS.NET seems simply ignoring undeclared entity reference ;-(
+			string replacementText =
+				(entity != null) ? entity.EntityValue : String.Empty;
+
+			XmlNodeType xmlReaderNodeType =
+				(currentAttribute != null) ? XmlNodeType.Attribute : XmlNodeType.Element;
+
+			if (sourceTextReader == null)
+				throw new NotSupportedException (
+					"Entity resolution from non-XmlTextReader XmlReader could not be supported.");
+			XmlParserContext ctx = sourceTextReader.GetInternalParserContext ();
+
+			// FIXME: is seems impossible to get namespaceManager from XmlReader.
+//			ctx = new XmlParserContext (document.NameTable,
+//				new XmlNamespaceManager (NameTable),
+//				DTD,
+//				BaseURI, XmlLang, XmlSpace, Encoding.Unicode);
+			nextEntityReader = new XmlTextReader (replacementText, xmlReaderNodeType, ctx);
 		}
 
 		public override int AttributeCount {
@@ -558,14 +601,20 @@ namespace Mono.Xml
 			get { return true; }
 		}
 
-		[MonoTODO ("Should consider general entities' depth")]
 		public override int Depth {
-			get { return IsDefault ? reader.Depth + 1 : reader.Depth; }
+			get {
+				int baseNum = reader.Depth;
+				if (entityReaderDepthStack.Count > 0) {
+					baseNum += (int) entityReaderDepthStack.Peek ();
+					if (NodeType != XmlNodeType.EndEntity)
+						baseNum++;
+				}
+				return IsDefault ? baseNum + 1 : baseNum;
+			}
 		}
 
-		[MonoTODO]
 		public override bool EOF {
-			get { return reader.EOF; }
+			get { return reader.EOF && entityReaderStack.Count == 0; }
 		}
 
 		public override bool HasValue {
@@ -640,6 +689,9 @@ namespace Mono.Xml
 
 		public override XmlNodeType NodeType {
 			get {
+				if (entityReaderStack.Count > 0 && reader.EOF)
+					return XmlNodeType.EndEntity;
+
 				// If consumedAttribute is true, then entities must be resolved.
 				return consumedAttribute ? XmlNodeType.Text :
 					IsDefault ? XmlNodeType.Attribute :

@@ -81,7 +81,6 @@ namespace System.Xml
 			}
 		}
 
-		[MonoTODO]	// Is it really true always?
 		public override bool CanResolveEntity {
 			get {
 				return true;
@@ -91,7 +90,7 @@ namespace System.Xml
 		public override int Depth {
 			get {
 				if (entityReader != null && entityReader.ReadState == ReadState.Interactive)
-					return entityReader.Depth + depth + 1;
+					return entityReader.Depth + depth + entityReaderStack.Count + 1;
 
 				return depth;
 			}
@@ -144,7 +143,6 @@ namespace System.Xml
 			      
 		}
 
-		[MonoTODO("waiting for DTD implementation")]
 		public override bool IsDefault {
 			get {
 				if (entityReader != null)
@@ -671,7 +669,6 @@ namespace System.Xml
 				return true;
 		}
 
-		[MonoTODO("Entity handling is not supported.")]
 		public override bool Read ()
 		{
 			if (EOF)
@@ -829,7 +826,6 @@ namespace System.Xml
 			}
 		}
 
-		[MonoTODO("Need to move to next content.")]
 		// Its traversal behavior is almost same as Read().
 		public override string ReadOuterXml ()
 		{

@@ -1,3 +1,11 @@
+2003-08-02  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlDocumentFragment.cs : I missed to add it in relation to the
+	  previous XmlParserContext patch. Similar to XmlAttribute/XmlElement.
+	* XmlNodeReader.cs : removed some TODO attributes.
+	* DTDValidatingReader.cs,
+	  XmlValidatingReader.cs : Implemented ResolveEntity().
+
 2003-07-31  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XmlParserContext.cs,

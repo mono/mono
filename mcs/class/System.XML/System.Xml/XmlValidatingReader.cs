@@ -376,10 +376,9 @@ namespace System.Xml {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public override void ResolveEntity ()
 		{
-			throw new NotImplementedException ();
+			validatingReader.ResolveEntity ();
 		}
 
 		// It should be "protected" as usual "event model"
