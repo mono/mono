@@ -1,3 +1,7 @@
+2005-01-12 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ThreadAbortException.cs: added private serialization .ctor.
+
 2004-12-20  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CompressedStack.cs: Implemented most todo so it's usable for CAS.
