@@ -1,3 +1,8 @@
+* FindMembers
+
+	Move our utility FindMembers from TypeContainer to Decl, because interfaces
+	are also scanned with it.
+
 * Ordering
 
 	Can a constant_expression invoke overloaded operators?
