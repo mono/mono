@@ -10,6 +10,8 @@
 using System;
 using System.Reflection;
 using System.Runtime.Remoting.Messaging;
+using System.Runtime.Remoting.Proxies;
+using System.Runtime.Remoting.Channels;
 using System.Runtime.CompilerServices;
 
 namespace System.Runtime.Remoting
@@ -44,7 +46,33 @@ namespace System.Runtime.Remoting
 
 			return result;
 		}
-								   
-		
+
+		public static object Connect (Type classToProxy, string url)
+		{
+			IMessageSink sink = null;
+			string uri;
+			
+			IChannel [] channels = ChannelServices.RegisteredChannels;
+
+			foreach (IChannel c in channels) {
+				IChannelSender sender = c as IChannelSender;
+				
+				if (sender != null) {
+					sink = sender.CreateMessageSink (url, null, out uri);
+
+					if (sink != null)
+						break;
+				}
+			}
+
+			if (sink == null) {
+				string msg = String.Format ("Cannot create channel sink to connect to URL {0}.", url); 
+				throw new RemotingException (msg);
+			}
+
+			RemotingProxy real_proxy = new RemotingProxy (classToProxy, sink);
+
+			return real_proxy.GetTransparentProxy ();
+		}
 	}
 }

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<!-- NAnt build file for System.Runtime.Remoting.dll -->
+
+<project name="System" default="build">
+	<property name="debug" value="false"/>
+
+	<target name="build">
+		<csc target="library" output="../lib/System.Runtime.Remoting.dll" debug="${debug}">
+			<arg value="/nowarn:1595"/>
+			<arg value="/unsafe"/>
+			<sources>
+				<includes name="**/*.cs"/> 
+				<excludes name="Test/**"/> 
+			</sources>
+			<references>
+				<includes name="../lib/corlib.dll"/>
+				<includes name="../lib/System.dll"/>
+			</references>
+		</csc>
+	</target>
+	<target name="clean">
+		<delete file="../lib/System.Runtime.Remoting.dll" failonerror="false"/>
+	</target>
+</project>
