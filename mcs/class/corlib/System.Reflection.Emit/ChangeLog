@@ -1,3 +1,11 @@
+2004-03-30  Martin Baulig  <martin@ximian.com>
+
+	* TypeBuilder.cs (TypeBuilder.SetGenericParameterConstraints):
+	Added `bool has_ctor_constraint' argument.
+
+	* MethodBuilder.cs (MethodBuilder.SetGenericParameterConstraints):
+	Added `bool has_ctor_constraint' argument.
+
 2004-03-29 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* LocalBuilder.cs: pinned support.

@@ -1315,9 +1315,9 @@ namespace System.Reflection.Emit {
 			return generic_params [index];
 		}
 
-		public void SetGenericParameterConstraints (int index, Type[] constraints)
+		public void SetGenericParameterConstraints (int index, Type[] constraints, bool has_ctor_constraint)
 		{
-			generic_params [index].SetConstraints (constraints);
+			generic_params [index].SetConstraints (constraints, has_ctor_constraint);
 		}
 
 		public MethodBuilder DefineGenericMethod (string name, MethodAttributes attributes)
