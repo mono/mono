@@ -41,6 +41,7 @@ namespace MonoTests.System
 			TestSetValue2 ();
 			TestSetValue3 ();
 			TestSetValueN ();
+			TestSetValue4 ();
 			TestSort ();
 
 		}
