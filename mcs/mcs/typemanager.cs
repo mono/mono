@@ -744,7 +744,7 @@ public class TypeManager {
 	{
 		return Regex.Replace (t.FullName, 
 			@"^System\." +
-			@"(Int32|UInt32|Int16|Uint16|Int64|UInt64|" +
+			@"(Int32|UInt32|Int16|UInt16|Int64|UInt64|" +
 			@"Single|Double|Char|Decimal|Byte|SByte|Object|" +
 			@"Boolean|String|Void)" +
 			@"(\W+|\b)", 
