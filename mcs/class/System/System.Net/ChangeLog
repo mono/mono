@@ -1,3 +1,8 @@
+2003-07-05  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* WebPermission.cs: Added and partially implemented
+	* WebPermissionAttribute.cs: Added and implemented
+
 2003-07-01  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* WebClient.cs: fixed bug #45651.
