@@ -145,7 +145,7 @@ namespace System.Collections.Specialized
 				WriteCheck ();
 				if (hash.Contains (key)) {
 					int i = FindListEntry (key);
-					list [i] = value;
+					list [i] = new DictionaryEntry (key, value);
 				} else
 					list.Add (new DictionaryEntry (key, value));
 				

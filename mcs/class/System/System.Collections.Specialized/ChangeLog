@@ -1,3 +1,7 @@
+2005-03-23  Lluis Sanchez Gual <lluis@novell.com>
+
+	* OrderedDictionary.cs: Fix bug in item setter.
+
 2005-03-04  Lluis Sanchez Gual <lluis@novell.com>
 
 	* OrderedDictionary.cs: Implemented.
