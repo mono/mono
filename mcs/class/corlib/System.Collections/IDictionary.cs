@@ -29,7 +29,7 @@ namespace System.Collections {
 
 		void Add (object key, object value);
 
-		void clear ();
+		void Clear ();
 
 		bool Contains (object key);
 

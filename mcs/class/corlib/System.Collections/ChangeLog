@@ -1,3 +1,7 @@
+2001-07-15  Sean MacIsaac  <macisaac@ximian.com>
+
+	* IDictionary.cs: Clear was clear.
+
 2001-07-13  Miguel de Icaza  <miguel@ximian.com>
 
 	* All files: Renamespace things to System.
