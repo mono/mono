@@ -7,6 +7,7 @@
 // (C) 2001, 2002 Ximian, Inc. (http://www.ximian.com)
 //
 
+using System.Collections;
 using System.Threading;
 
 namespace System.Globalization
@@ -15,6 +16,7 @@ namespace System.Globalization
 	public class CultureInfo : ICloneable, IFormatProvider
 	{
 		static CultureInfo invariant_culture_info;
+		static Hashtable nameToID;
 		bool is_read_only;
 		int  lcid;
 		bool use_user_override;
@@ -256,418 +258,231 @@ namespace System.Globalization
 			this.use_user_override = use_user_override;
 		}
 
+		static void InitNameToID ()
+		{
+			nameToID = new Hashtable (CaseInsensitiveHashCodeProvider.Default,
+						  CaseInsensitiveComparer.Default);
+
+			nameToID.Add ("ar", 0x0001);
+			nameToID.Add ("ar-SA", 0x0401);
+			nameToID.Add ("ar-IQ", 0x0801);
+			nameToID.Add ("ar-EG", 0x0C01);
+			nameToID.Add ("ar-LY", 0x1001);
+			nameToID.Add ("ar-DZ", 0x1401);
+			nameToID.Add ("ar-MA", 0x1801);
+			nameToID.Add ("ar-TN", 0x1C01);
+			nameToID.Add ("ar-OM", 0x2001);
+			nameToID.Add ("ar-YE", 0x2401);
+			nameToID.Add ("ar-SY", 0x2801);
+			nameToID.Add ("ar-JO", 0x2C01);
+			nameToID.Add ("ar-LB", 0x3001);
+			nameToID.Add ("ar-KW", 0x3401);
+			nameToID.Add ("ar-AE", 0x3801);
+			nameToID.Add ("ar-BH", 0x3C01);
+			nameToID.Add ("ar-QA", 0x4001);
+			nameToID.Add ("bg", 0x0002);
+			nameToID.Add ("bg-BG", 0x0402);
+			nameToID.Add ("ca", 0x0003);
+			nameToID.Add ("ca-ES", 0x0403);
+			nameToID.Add ("zh-CHS", 0x0004);
+			nameToID.Add ("zh-TW", 0x0404);
+			nameToID.Add ("zh-CN", 0x0804);
+			nameToID.Add ("zh-HK", 0x0C04);
+			nameToID.Add ("zh-SG", 0x1004);
+			nameToID.Add ("zh-MO", 0x1404);
+			nameToID.Add ("zh-CHT", 0x7C04);
+			nameToID.Add ("cs", 0x0005);
+			nameToID.Add ("cs-CZ", 0x0405);
+			nameToID.Add ("da", 0x0006);
+			nameToID.Add ("da-DK", 0x0406);
+			nameToID.Add ("de", 0x0007);
+			nameToID.Add ("de-DE", 0x0407);
+			nameToID.Add ("de-CH", 0x0807);
+			nameToID.Add ("de-AT", 0x0C07);
+			nameToID.Add ("de-LU", 0x1007);
+			nameToID.Add ("de-LI", 0x1407);
+			nameToID.Add ("el", 0x0008);
+			nameToID.Add ("el-GR", 0x0408);
+			nameToID.Add ("en", 0x0009);
+			nameToID.Add ("en-US", 0x0409);
+			nameToID.Add ("en-GB", 0x0809);
+			nameToID.Add ("en-AU", 0x0C09);
+			nameToID.Add ("en-CA", 0x1009);
+			nameToID.Add ("en-NZ", 0x1409);
+			nameToID.Add ("en-IE", 0x1809);
+			nameToID.Add ("en-ZA", 0x1C09);
+			nameToID.Add ("en-JM", 0x2009);
+			nameToID.Add ("en-CB", 0x2409);
+			nameToID.Add ("en-BZ", 0x2809);
+			nameToID.Add ("en-TT", 0x2C09);
+			nameToID.Add ("en-ZW", 0x3009);
+			nameToID.Add ("en-PH", 0x3409);
+			nameToID.Add ("es", 0x000A);
+			nameToID.Add ("es-MX", 0x080A);
+			nameToID.Add ("es-ES", 0x0C0A);
+			nameToID.Add ("es-GT", 0x100A);
+			nameToID.Add ("es-CR", 0x140A);
+			nameToID.Add ("es-PA", 0x180A);
+			nameToID.Add ("es-DO", 0x1C0A);
+			nameToID.Add ("es-VE", 0x200A);
+			nameToID.Add ("es-CO", 0x240A);
+			nameToID.Add ("es-PE", 0x280A);
+			nameToID.Add ("es-AR", 0x2C0A);
+			nameToID.Add ("es-EC", 0x300A);
+			nameToID.Add ("es-CL", 0x340A);
+			nameToID.Add ("es-UY", 0x380A);
+			nameToID.Add ("es-PY", 0x3C0A);
+			nameToID.Add ("es-BO", 0x400A);
+			nameToID.Add ("es-SV", 0x440A);
+			nameToID.Add ("es-HN", 0x480A);
+			nameToID.Add ("es-NI", 0x4C0A);
+			nameToID.Add ("es-PR", 0x500A);
+			nameToID.Add ("fi", 0x000B);
+			nameToID.Add ("fi-FI", 0x040B);
+			nameToID.Add ("fr", 0x000C);
+			nameToID.Add ("fr-FR", 0x040C);
+			nameToID.Add ("fr-BE", 0x080C);
+			nameToID.Add ("fr-CA", 0x0C0C);
+			nameToID.Add ("fr-CH", 0x100C);
+			nameToID.Add ("fr-LU", 0x140C);
+			nameToID.Add ("fr-MC", 0x180C);
+			nameToID.Add ("he", 0x000D);
+			nameToID.Add ("he-IL", 0x040D);
+			nameToID.Add ("hu", 0x000E);
+			nameToID.Add ("hu-HU", 0x040E);
+			nameToID.Add ("is", 0x000F);
+			nameToID.Add ("is-IS", 0x040F);
+			nameToID.Add ("it", 0x0010);
+			nameToID.Add ("it-IT", 0x0410);
+			nameToID.Add ("it-CH", 0x0810);
+			nameToID.Add ("ja", 0x0011);
+			nameToID.Add ("ja-JP", 0x0411);
+			nameToID.Add ("ko", 0x0012);
+			nameToID.Add ("ko-KR", 0x0412);
+			nameToID.Add ("nl", 0x0013);
+			nameToID.Add ("nl-NL", 0x0413);
+			nameToID.Add ("nl-BE", 0x0813);
+			nameToID.Add ("no", 0x0014);
+			nameToID.Add ("nb-NO", 0x0414);
+			nameToID.Add ("nn-NO", 0x0814);
+			nameToID.Add ("pl", 0x0015);
+			nameToID.Add ("pl-PL", 0x0415);
+			nameToID.Add ("pt", 0x0016);
+			nameToID.Add ("pt-BR", 0x0416);
+			nameToID.Add ("pt-PT", 0x0816);
+			nameToID.Add ("ro", 0x0018);
+			nameToID.Add ("ro-RO", 0x0418);
+			nameToID.Add ("ru", 0x0019);
+			nameToID.Add ("ru-RU", 0x0419);
+			nameToID.Add ("hr", 0x001A);
+			nameToID.Add ("hr-HR", 0x041A);
+			nameToID.Add ("Lt-sr-SP", 0x081A);
+			nameToID.Add ("Cy-sr-SP", 0x0C1A);
+			nameToID.Add ("sk", 0x001B);
+			nameToID.Add ("sk-SK", 0x041B);
+			nameToID.Add ("sq", 0x001C);
+			nameToID.Add ("sq-AL", 0x041C);
+			nameToID.Add ("sv", 0x001D);
+			nameToID.Add ("sv-SE", 0x041D);
+			nameToID.Add ("sv-FI", 0x081D);
+			nameToID.Add ("th", 0x001E);
+			nameToID.Add ("th-TH", 0x041E);
+			nameToID.Add ("tr", 0x001F);
+			nameToID.Add ("tr-TR", 0x041F);
+			nameToID.Add ("ur", 0x0020);
+			nameToID.Add ("ur-PK", 0x0420);
+			nameToID.Add ("id", 0x0021);
+			nameToID.Add ("id-ID", 0x0421);
+			nameToID.Add ("uk", 0x0022);
+			nameToID.Add ("uk-UA", 0x0422);
+			nameToID.Add ("be", 0x0023);
+			nameToID.Add ("be-BY", 0x0423);
+			nameToID.Add ("sl", 0x0024);
+			nameToID.Add ("sl-SI", 0x0424);
+			nameToID.Add ("et", 0x0025);
+			nameToID.Add ("et-EE", 0x0425);
+			nameToID.Add ("lv", 0x0026);
+			nameToID.Add ("lv-LV", 0x0426);
+			nameToID.Add ("lt", 0x0027);
+			nameToID.Add ("lt-LT", 0x0427);
+			nameToID.Add ("fa", 0x0029);
+			nameToID.Add ("fa-IR", 0x0429);
+			nameToID.Add ("vi", 0x002A);
+			nameToID.Add ("vi-VN", 0x042A);
+			nameToID.Add ("hy", 0x002B);
+			nameToID.Add ("hy-AM", 0x042B);
+			nameToID.Add ("az", 0x002C);
+			nameToID.Add ("Lt-az-AZ", 0x042C);
+			nameToID.Add ("Cy-az-AZ", 0x082C);
+			nameToID.Add ("eu", 0x002D);
+			nameToID.Add ("eu-ES", 0x042D);
+			nameToID.Add ("mk", 0x002F);
+			nameToID.Add ("mk-MK", 0x042F);
+			nameToID.Add ("af", 0x0036);
+			nameToID.Add ("af-ZA", 0x0436);
+			nameToID.Add ("ka", 0x0037);
+			nameToID.Add ("ka-GE", 0x0437);
+			nameToID.Add ("fo", 0x0038);
+			nameToID.Add ("fo-FO", 0x0438);
+			nameToID.Add ("hi", 0x0039);
+			nameToID.Add ("hi-IN", 0x0439);
+			nameToID.Add ("ms", 0x003E);
+			nameToID.Add ("ms-MY", 0x043E);
+			nameToID.Add ("ms-BN", 0x083E);
+			nameToID.Add ("kk", 0x003F);
+			nameToID.Add ("kk-KZ", 0x043F);
+			nameToID.Add ("ky", 0x0040);
+			nameToID.Add ("ky-KZ", 0x0440);
+			nameToID.Add ("sw", 0x0041);
+			nameToID.Add ("sw-KE", 0x0441);
+			nameToID.Add ("uz", 0x0043);
+			nameToID.Add ("Lt-uz-UZ", 0x0443);
+			nameToID.Add ("Cy-uz-UZ", 0x0843);
+			nameToID.Add ("tt", 0x0044);
+			nameToID.Add ("tt-TA", 0x0444);
+			nameToID.Add ("pa", 0x0046);
+			nameToID.Add ("pa-IN", 0x0446);
+			nameToID.Add ("gu", 0x0047);
+			nameToID.Add ("gu-IN", 0x0447);
+			nameToID.Add ("ta", 0x0049);
+			nameToID.Add ("ta-IN", 0x0449);
+			nameToID.Add ("te", 0x004A);
+			nameToID.Add ("te-IN", 0x044A);
+			nameToID.Add ("kn", 0x004B);
+			nameToID.Add ("kn-IN", 0x044B);
+			nameToID.Add ("mr", 0x004E);
+			nameToID.Add ("mr-IN", 0x044E);
+			nameToID.Add ("sa", 0x004F);
+			nameToID.Add ("sa-IN", 0x044F);
+			nameToID.Add ("mn", 0x0050);
+			nameToID.Add ("mn-MN", 0x0450);
+			nameToID.Add ("gl", 0x0056);
+			nameToID.Add ("gl-ES", 0x0456);
+			nameToID.Add ("kok", 0x0057);
+			nameToID.Add ("kok-IN", 0x0457);
+			nameToID.Add ("syr", 0x005A);
+			nameToID.Add ("syr-SY", 0x045A);
+			nameToID.Add ("div", 0x0065);
+			nameToID.Add ("div-MV", 0x0465);
+			nameToID.Add ("", 0x007F);
+		}
+
 		//
 		// Maps a name to a culture id
 		//
 		static int NameToID (string name)
 		{
-			switch (name){
-			case "ar":
-				return 0x0001;
-			case "ar-SA":
-				return 0x0401;
-			case "ar-IQ":
-				return 0x0801;
-			case "ar-EG":
-				return 0x0C01;
-			case "ar-LY":
-				return 0x1001;
-			case "ar-DZ":
-				return 0x1401;
-			case "ar-MA":
-				return 0x1801;
-			case "ar-TN":
-				return 0x1C01;
-			case "ar-OM":
-				return 0x2001;
-			case "ar-YE":
-				return 0x2401;
-			case "ar-SY":
-				return 0x2801;
-			case "ar-JO":
-				return 0x2C01;
-			case "ar-LB":
-				return 0x3001;
-			case "ar-KW":
-				return 0x3401;
-			case "ar-AE":
-				return 0x3801;
-			case "ar-BH":
-				return 0x3C01;
-			case "ar-QA":
-				return 0x4001;
-			case "bg":
-				return 0x0002;
-			case "bg-BG":
-				return 0x0402;
-			case "ca":
-				return 0x0003;
-			case "ca-ES":
-				return 0x0403;
-			case "zh-CHS":
-				return 0x0004;
-			case "zh-TW":
-				return 0x0404;
-			case "zh-CN":
-				return 0x0804;
-			case "zh-HK":
-				return 0x0C04;
-			case "zh-SG":
-				return 0x1004;
-			case "zh-MO":
-				return 0x1404;
-			case "zh-CHT":
-				return 0x7C04;
-			case "cs":
-				return 0x0005;
-			case "cs-CZ":
-				return 0x0405;
-			case "da":
-				return 0x0006;
-			case "da-DK":
-				return 0x0406;
-			case "de":
-				return 0x0007;
-			case "de-DE":
-				return 0x0407;
-			case "de-CH":
-				return 0x0807;
-			case "de-AT":
-				return 0x0C07;
-			case "de-LU":
-				return 0x1007;
-			case "de-LI":
-				return 0x1407;
-			case "el":
-				return 0x0008;
-			case "el-GR":
-				return 0x0408;
-			case "en":
-				return 0x0009;
-			case "en-US":
-				return 0x0409;
-			case "en-GB":
-				return 0x0809;
-			case "en-AU":
-				return 0x0C09;
-			case "en-CA":
-				return 0x1009;
-			case "en-NZ":
-				return 0x1409;
-			case "en-IE":
-				return 0x1809;
-			case "en-ZA":
-				return 0x1C09;
-			case "en-JM":
-				return 0x2009;
-			case "en-CB":
-				return 0x2409;
-			case "en-BZ":
-				return 0x2809;
-			case "en-TT":
-				return 0x2C09;
-			case "en-ZW":
-				return 0x3009;
-			case "en-PH":
-				return 0x3409;
-			case "es":
-				return 0x000A;
-			case "es-MX":
-				return 0x080A;
-			case "es-ES":
-				return 0x0C0A;
-			case "es-GT":
-				return 0x100A;
-			case "es-CR":
-				return 0x140A;
-			case "es-PA":
-				return 0x180A;
-			case "es-DO":
-				return 0x1C0A;
-			case "es-VE":
-				return 0x200A;
-			case "es-CO":
-				return 0x240A;
-			case "es-PE":
-				return 0x280A;
-			case "es-AR":
-				return 0x2C0A;
-			case "es-EC":
-				return 0x300A;
-			case "es-CL":
-				return 0x340A;
-			case "es-UY":
-				return 0x380A;
-			case "es-PY":
-				return 0x3C0A;
-			case "es-BO":
-				return 0x400A;
-			case "es-SV":
-				return 0x440A;
-			case "es-HN":
-				return 0x480A;
-			case "es-NI":
-				return 0x4C0A;
-			case "es-PR":
-				return 0x500A;
-			case "fi":
-				return 0x000B;
-			case "fi-FI":
-				return 0x040B;
-			case "fr":
-				return 0x000C;
-			case "fr-FR":
-				return 0x040C;
-			case "fr-BE":
-				return 0x080C;
-			case "fr-CA":
-				return 0x0C0C;
-			case "fr-CH":
-				return 0x100C;
-			case "fr-LU":
-				return 0x140C;
-			case "fr-MC":
-				return 0x180C;
-			case "he":
-				return 0x000D;
-			case "he-IL":
-				return 0x040D;
-			case "hu":
-				return 0x000E;
-			case "hu-HU":
-				return 0x040E;
-			case "is":
-				return 0x000F;
-			case "is-IS":
-				return 0x040F;
-			case "it":
-				return 0x0010;
-			case "it-IT":
-				return 0x0410;
-			case "it-CH":
-				return 0x0810;
-			case "ja":
-				return 0x0011;
-			case "ja-JP":
-				return 0x0411;
-			case "ko":
-				return 0x0012;
-			case "ko-KR":
-				return 0x0412;
-			case "nl":
-				return 0x0013;
-			case "nl-NL":
-				return 0x0413;
-			case "nl-BE":
-				return 0x0813;
-			case "no":
-				return 0x0014;
-			case "nb-NO":
-				return 0x0414;
-			case "nn-NO":
-				return 0x0814;
-			case "pl":
-				return 0x0015;
-			case "pl-PL":
-				return 0x0415;
-			case "pt":
-				return 0x0016;
-			case "pt-BR":
-				return 0x0416;
-			case "pt-PT":
-				return 0x0816;
-			case "ro":
-				return 0x0018;
-			case "ro-RO":
-				return 0x0418;
-			case "ru":
-				return 0x0019;
-			case "ru-RU":
-				return 0x0419;
-			case "hr":
-				return 0x001A;
-			case "hr-HR":
-				return 0x041A;
-			case "Lt-sr-SP":
-				return 0x081A;
-			case "Cy-sr-SP":
-				return 0x0C1A;
-			case "sk":
-				return 0x001B;
-			case "sk-SK":
-				return 0x041B;
-			case "sq":
-				return 0x001C;
-			case "sq-AL":
-				return 0x041C;
-			case "sv":
-				return 0x001D;
-			case "sv-SE":
-				return 0x041D;
-			case "sv-FI":
-				return 0x081D;
-			case "th":
-				return 0x001E;
-			case "th-TH":
-				return 0x041E;
-			case "tr":
-				return 0x001F;
-			case "tr-TR":
-				return 0x041F;
-			case "ur":
-				return 0x0020;
-			case "ur-PK":
-				return 0x0420;
-			case "id":
-				return 0x0021;
-			case "id-ID":
-				return 0x0421;
-			case "uk":
-				return 0x0022;
-			case "uk-UA":
-				return 0x0422;
-			case "be":
-				return 0x0023;
-			case "be-BY":
-				return 0x0423;
-			case "sl":
-				return 0x0024;
-			case "sl-SI":
-				return 0x0424;
-			case "et":
-				return 0x0025;
-			case "et-EE":
-				return 0x0425;
-			case "lv":
-				return 0x0026;
-			case "lv-LV":
-				return 0x0426;
-			case "lt":
-				return 0x0027;
-			case "lt-LT":
-				return 0x0427;
-			case "fa":
-				return 0x0029;
-			case "fa-IR":
-				return 0x0429;
-			case "vi":
-				return 0x002A;
-			case "vi-VN":
-				return 0x042A;
-			case "hy":
-				return 0x002B;
-			case "hy-AM":
-				return 0x042B;
-			case "az":
-				return 0x002C;
-			case "Lt-az-AZ":
-				return 0x042C;
-			case "Cy-az-AZ":
-				return 0x082C;
-			case "eu":
-				return 0x002D;
-			case "eu-ES":
-				return 0x042D;
-			case "mk":
-				return 0x002F;
-			case "mk-MK":
-				return 0x042F;
-			case "af":
-				return 0x0036;
-			case "af-ZA":
-				return 0x0436;
-			case "ka":
-				return 0x0037;
-			case "ka-GE":
-				return 0x0437;
-			case "fo":
-				return 0x0038;
-			case "fo-FO":
-				return 0x0438;
-			case "hi":
-				return 0x0039;
-			case "hi-IN":
-				return 0x0439;
-			case "ms":
-				return 0x003E;
-			case "ms-MY":
-				return 0x043E;
-			case "ms-BN":
-				return 0x083E;
-			case "kk":
-				return 0x003F;
-			case "kk-KZ":
-				return 0x043F;
-			case "ky":
-				return 0x0040;
-			case "ky-KZ":
-				return 0x0440;
-			case "sw":
-				return 0x0041;
-			case "sw-KE":
-				return 0x0441;
-			case "uz":
-				return 0x0043;
-			case "Lt-uz-UZ":
-				return 0x0443;
-			case "Cy-uz-UZ":
-				return 0x0843;
-			case "tt":
-				return 0x0044;
-			case "tt-TA":
-				return 0x0444;
-			case "pa":
-				return 0x0046;
-			case "pa-IN":
-				return 0x0446;
-			case "gu":
-				return 0x0047;
-			case "gu-IN":
-				return 0x0447;
-			case "ta":
-				return 0x0049;
-			case "ta-IN":
-				return 0x0449;
-			case "te":
-				return 0x004A;
-			case "te-IN":
-				return 0x044A;
-			case "kn":
-				return 0x004B;
-			case "kn-IN":
-				return 0x044B;
-			case "mr":
-				return 0x004E;
-			case "mr-IN":
-				return 0x044E;
-			case "sa":
-				return 0x004F;
-			case "sa-IN":
-				return 0x044F;
-			case "mn":
-				return 0x0050;
-			case "mn-MN":
-				return 0x0450;
-			case "gl":
-				return 0x0056;
-			case "gl-ES":
-				return 0x0456;
-			case "kok":
-				return 0x0057;
-			case "kok-IN":
-				return 0x0457;
-			case "syr":
-				return 0x005A;
-			case "syr-SY":
-				return 0x045A;
-			case "div":
-				return 0x0065;
-			case "div-MV":
-				return 0x0465;
-			case "":
-				return 0x007F;
+			if (nameToID == null) {
+				lock (typeof (CultureInfo)) {
+					if (nameToID == null)
+						InitNameToID ();
+				}
 			}
-			return -1;
+
+			if (!nameToID.ContainsKey (name))
+				return -1;
+
+			return (int) nameToID [name];
 		}
 		
 		// <summary>

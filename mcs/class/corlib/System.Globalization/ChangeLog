@@ -1,3 +1,8 @@
+2003-02-27  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* CultureInfo.cs:
+	(NameToID): make it case insensitive and use a hashtable instead of
+	comparing all the strings.
 
 Mon Nov 18 13:02:09 CET 2002 Paolo Molaro <lupus@ximian.com>
 
