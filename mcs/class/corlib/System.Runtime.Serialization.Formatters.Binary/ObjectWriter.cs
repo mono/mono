@@ -223,6 +223,8 @@ namespace System.Runtime.Serialization.Formatters.Binary
 		StreamingContext _context;
 		FormatterAssemblyStyle _assemblyFormat;
 		FormatterTypeStyle _typeFormat;
+		byte[] arrayBuffer;
+		int ArrayBufferLength = 4096;
 		
 		class MetadataReference
 		{
@@ -544,8 +546,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 					break;
 
 				case TypeCode.Char:
-					foreach (char item in (char[]) array)
-						writer.Write (item);
+					writer.Write ((char[]) array);
 					break;
 
 				case TypeCode.DateTime: 
@@ -559,48 +560,75 @@ namespace System.Runtime.Serialization.Formatters.Binary
 					break;
 
 				case TypeCode.Double:
-					foreach (double item in (double[]) array)
-						writer.Write (item);
+					if (array.Length > 2)
+						BlockWrite (writer, array, 8);
+					else
+						foreach (double item in (double[]) array)
+							writer.Write (item);
 					break;
 
 				case TypeCode.Int16:
-					foreach (short item in (short[]) array)
-						writer.Write (item);
+					if (array.Length > 2)
+						BlockWrite (writer, array, 2);
+					else
+						foreach (short item in (short[]) array)
+							writer.Write (item);
 					break;
 
 				case TypeCode.Int32:
-					foreach (int item in (int[]) array)
-						writer.Write (item);
+					if (array.Length > 2)
+						BlockWrite (writer, array, 4);
+					else
+						foreach (int item in (int[]) array)
+							writer.Write (item);
 					break;
 
 				case TypeCode.Int64:
-					foreach (long item in (long[]) array)
-						writer.Write (item);
+					if (array.Length > 2)
+						BlockWrite (writer, array, 8);
+					else
+						foreach (long item in (long[]) array)
+							writer.Write (item);
 					break;
 
 				case TypeCode.SByte:
-					foreach (sbyte item in (sbyte[]) array)
-						writer.Write (item);
+					if (array.Length > 2)
+						BlockWrite (writer, array, 1);
+					else
+						foreach (sbyte item in (sbyte[]) array)
+							writer.Write (item);
 					break;
 
 				case TypeCode.Single:
-					foreach (float item in (float[]) array)
-						writer.Write (item);
+					if (array.Length > 2)
+						BlockWrite (writer, array, 4);
+					else
+						foreach (float item in (float[]) array)
+							writer.Write (item);
 					break;
 
 				case TypeCode.UInt16:
-					foreach (ushort item in (ushort[]) array)
-						writer.Write (item);
+					if (array.Length > 2)
+						BlockWrite (writer, array, 2);
+					else
+						foreach (ushort item in (ushort[]) array)
+							writer.Write (item);
 					break;
 
 				case TypeCode.UInt32:
-					foreach (uint item in (uint[]) array)
-						writer.Write (item);
+					if (array.Length > 2)
+						BlockWrite (writer, array, 4);
+					else
+						foreach (uint item in (uint[]) array)
+							writer.Write (item);
 					break;
 
 				case TypeCode.UInt64:
-					foreach (ulong item in (ulong[]) array)
-						writer.Write (item);
+					if (array.Length > 2)
+						BlockWrite (writer, array, 8);
+					else
+						foreach (ulong item in (ulong[]) array)
+							writer.Write (item);
 					break;
 
 				case TypeCode.String:
@@ -617,6 +645,27 @@ namespace System.Runtime.Serialization.Formatters.Binary
 						throw new NotSupportedException ("Unsupported primitive type: " + elementType.FullName);
 					break;
 			}			
+		}
+		
+		private void BlockWrite (BinaryWriter writer, Array array, int dataSize)
+		{
+			int totalSize = Buffer.ByteLength (array);
+			
+			if (arrayBuffer == null || (totalSize > arrayBuffer.Length && arrayBuffer.Length != ArrayBufferLength))
+				arrayBuffer = new byte [totalSize <= ArrayBufferLength ? totalSize : ArrayBufferLength];
+			
+			int pos = 0;
+			while (totalSize > 0) {
+				int size = totalSize < arrayBuffer.Length ? totalSize : arrayBuffer.Length;
+				Buffer.BlockCopy (array, pos, arrayBuffer, 0, size);
+				
+				if (!BitConverter.IsLittleEndian && dataSize > 1)
+					BinaryCommon.SwapBytes (arrayBuffer, size, dataSize);
+				
+				writer.Write (arrayBuffer, 0, size);
+				totalSize -= size;
+				pos += size;
+			}
 		}
 
 		private void WriteSingleDimensionArrayElements (BinaryWriter writer, Array array, Type elementType)

@@ -57,6 +57,8 @@ namespace System.Runtime.Serialization.Formatters.Binary
 		object _lastObject = null;
 		long _lastObjectID = 0;
 		long _rootObjectID = 0;
+		byte[] arrayBuffer;
+		int ArrayBufferLength = 4096;
 
 		class TypeMetadata
 		{
@@ -368,12 +370,26 @@ namespace System.Runtime.Serialization.Formatters.Binary
 				}
 
 				case TypeCode.Byte: {
-					val = reader.ReadBytes (length);
+					byte[] arr = new byte [length];
+					int pos = 0;
+					while (pos < length) {
+						int nr = reader.Read (arr, pos, length - pos);
+						if (nr == 0) break;
+						pos += nr;
+					}
+					val = arr;
 					break;
 				}
 
 				case TypeCode.Char: {
-					val = reader.ReadChars (length);
+					char[] arr = new char [length];
+					int pos = 0;
+					while (pos < length) {
+						int nr = reader.Read (arr, pos, length - pos);
+						if (nr == 0) break;
+						pos += nr;
+					}
+					val = arr;
 					break;
 				}
 
@@ -386,70 +402,97 @@ namespace System.Runtime.Serialization.Formatters.Binary
 
 				case TypeCode.Decimal: {
 					Decimal[] arr = new Decimal [length];
-					for (int n = 0; n < length; n++) arr [n] = Decimal.Parse (reader.ReadString(), CultureInfo.InvariantCulture);
+					for (int n = 0; n < length; n++) arr [n] = reader.ReadDecimal();
 					val = arr;
 					break;
 				}
 
 				case TypeCode.Double: {
 					Double[] arr = new Double [length];
-					for (int n = 0; n < length; n++) arr [n] = reader.ReadDouble();
+					if (length > 2)
+						BlockRead (reader, arr, 8);
+					else
+						for (int n = 0; n < length; n++) arr [n] = reader.ReadDouble();
 					val = arr;
 					break;
 				}
 
 				case TypeCode.Int16: {
 					short[] arr = new short [length];
-					for (int n = 0; n < length; n++) arr [n] = reader.ReadInt16();
+					if (length > 2)
+						BlockRead (reader, arr, 2);
+					else
+						for (int n = 0; n < length; n++) arr [n] = reader.ReadInt16();
 					val = arr;
 					break;
 				}
 
 				case TypeCode.Int32: {
 					int[] arr = new int [length];
-					for (int n = 0; n < length; n++) arr [n] = reader.ReadInt32();
+					if (length > 2)
+						BlockRead (reader, arr, 4);
+					else
+						for (int n = 0; n < length; n++) arr [n] = reader.ReadInt32();
 					val = arr;
 					break;
 				}
 
 				case TypeCode.Int64: {
 					long[] arr = new long [length];
-					for (int n = 0; n < length; n++) arr [n] = reader.ReadInt64();
+					if (length > 2)
+						BlockRead (reader, arr, 8);
+					else
+						for (int n = 0; n < length; n++) arr [n] = reader.ReadInt64();
 					val = arr;
 					break;
 				}
 
 				case TypeCode.SByte: {
 					sbyte[] arr = new sbyte [length];
-					for (int n = 0; n < length; n++) arr [n] = reader.ReadSByte();
+					if (length > 2)
+						BlockRead (reader, arr, 1);
+					else
+						for (int n = 0; n < length; n++) arr [n] = reader.ReadSByte();
 					val = arr;
 					break;
 				}
 
 				case TypeCode.Single: {
 					float[] arr = new float [length];
-					for (int n = 0; n < length; n++) arr [n] = reader.ReadSingle();
+					if (length > 2)
+						BlockRead (reader, arr, 4);
+					else
+						for (int n = 0; n < length; n++) arr [n] = reader.ReadSingle();
 					val = arr;
 					break;
 				}
 
 				case TypeCode.UInt16: {
 					ushort[] arr = new ushort [length];
-					for (int n = 0; n < length; n++) arr [n] = reader.ReadUInt16();
+					if (length > 2)
+						BlockRead (reader, arr, 2);
+					else
+						for (int n = 0; n < length; n++) arr [n] = reader.ReadUInt16();
 					val = arr;
 					break;
 				}
 
 				case TypeCode.UInt32: {
 					uint[] arr = new uint [length];
-					for (int n = 0; n < length; n++) arr [n] = reader.ReadUInt32();
+					if (length > 2)
+						BlockRead (reader, arr, 4);
+					else
+						for (int n = 0; n < length; n++) arr [n] = reader.ReadUInt32();
 					val = arr;
 					break;
 				}
 
 				case TypeCode.UInt64: {
 					ulong[] arr = new ulong [length];
-					for (int n = 0; n < length; n++) arr [n] = reader.ReadUInt64();
+					if (length > 2)
+						BlockRead (reader, arr, 8);
+					else
+						for (int n = 0; n < length; n++) arr [n] = reader.ReadUInt64();
 					val = arr;
 					break;
 				}
@@ -473,6 +516,33 @@ namespace System.Runtime.Serialization.Formatters.Binary
 				}
 			}			
 		}
+
+		private void BlockRead (BinaryReader reader, Array array, int dataSize)
+		{
+			int totalSize = Buffer.ByteLength (array);
+			
+			if (arrayBuffer == null || (totalSize > arrayBuffer.Length && arrayBuffer.Length != ArrayBufferLength))
+				arrayBuffer = new byte [totalSize <= ArrayBufferLength ? totalSize : ArrayBufferLength];
+			
+			int pos = 0;
+			while (totalSize > 0) {
+				int size = totalSize < arrayBuffer.Length ? totalSize : arrayBuffer.Length;
+				int ap = 0;
+				do {
+					int nr = reader.Read (arrayBuffer, ap, size - ap);
+					if (nr == 0) break;
+					ap += nr;
+				} while (ap < size);
+				
+				if (!BitConverter.IsLittleEndian && dataSize > 1)
+					BinaryCommon.SwapBytes (arrayBuffer, size, dataSize);
+
+				Buffer.BlockCopy (arrayBuffer, 0, array, pos, size);
+				totalSize -= size;
+				pos += size;
+			}
+		}
+		
 
 		private void ReadArrayOfObject (BinaryReader reader, out long objectId, out object array)
 		{

@@ -1,3 +1,11 @@
+2005-03-23  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* BinaryCommon.cs: Added helper method for swapping bytes.
+	* ObjectReader.cs:
+	* ObjectWriter.cs: Implemented serialization of arrays of primitive
+	types using Buffer.BlockCopy to create byffers of data that is written/
+	read in a single call. It's much faster now.
+
 2005-03-01  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* BinaryCommon.cs: Found the meaning of two unknown binary elements.

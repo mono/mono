@@ -118,6 +118,28 @@ namespace System.Runtime.Serialization.Formatters.Binary
 				throw new SerializationException ("Type " + type + " is not marked as Serializable.");
 			}
 		}
+		
+		public static void SwapBytes (byte[] byteArray, int size, int dataSize)
+		{
+			byte b;
+			if (dataSize == 8) {
+				for (int n=0; n<size; n+=8) {
+					b = byteArray [n]; byteArray [n] = byteArray [n + 7]; byteArray [n + 7] = b;
+					b = byteArray [n+1]; byteArray [n+1] = byteArray [n + 6]; byteArray [n + 6] = b;
+					b = byteArray [n+2]; byteArray [n+2] = byteArray [n + 5]; byteArray [n + 5] = b;
+					b = byteArray [n+3]; byteArray [n+3] = byteArray [n + 4]; byteArray [n + 4] = b;
+				}
+			} else if (dataSize == 4) {
+				for (int n=0; n<size; n+=4) {
+					b = byteArray [n]; byteArray [n] = byteArray [n + 3]; byteArray [n + 3] = b;
+					b = byteArray [n+1]; byteArray [n+1] = byteArray [n + 2]; byteArray [n + 2] = b;
+				}
+			} else if (dataSize == 2) {
+				for (int n=0; n<size; n+=2) {
+					b = byteArray [n]; byteArray [n] = byteArray [n + 1]; byteArray [n + 1] = b;
+				}
+			}
+		}
 	}
 
 	internal enum BinaryElement : byte
