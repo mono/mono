@@ -1,3 +1,7 @@
+2002-07-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpApplication.cs: events were not being initialized.
+
 2002-07-25  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ProcessModelInfo.cs: fixed compilation.

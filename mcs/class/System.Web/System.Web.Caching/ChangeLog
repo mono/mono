@@ -1,3 +1,9 @@
+2002-07-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* CacheDefinitions.cs: fixed a couple of enums.
+
+	* CacheDependency.cs: the class is sealed.
+
 2002-06-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CacheDependency.cs: fixed a couple of typos and don't throw

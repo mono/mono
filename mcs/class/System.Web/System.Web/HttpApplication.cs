@@ -1,9 +1,10 @@
 // 
 // System.Web.HttpApplication
 //
-// Author:
-//   Patrik Torstensson (Patrik.Torstensson@labs2.com)
-//   Tim Coleman (tim@timcoleman.com)
+// Authors:
+// 	Patrik Torstensson (Patrik.Torstensson@labs2.com)
+// 	Tim Coleman (tim@timcoleman.com)
+// 	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 using System;
 using System.ComponentModel;
@@ -27,16 +28,30 @@ namespace System.Web {
 		ISite _Site;
 		HttpModuleCollection _ModuleCollection;
 		HttpSessionState _Session;
-		IPrincipal user;
+
+		object evAuthenticateRequest = new object();
+		object evAuthorizeRequest = new object();
+		object evBeginRequest = new object();
+		object evDisposed = new object();
+		object evEndRequest = new object();
+		object evError = new object();
+		object evPostRequestHandlerExecute = new object();
+		object evPreRequestHandlerExecute = new object();
+		object evPreSendRequestContent = new object();
+		object evPreSendRequestHeaders = new object();
+		object evReleaseRequestState = new object();
+		object evResolveRequestCache = new object();
+		object evUpdateRequestCache = new object();
+		object evDefaultAuthentication = new object();
+		object evAcquireRequestState = new object();
+		EventHandlerList events;
 
 		#endregion // Fields
 
 		#region Constructors
 
-		[MonoTODO()]
 		public HttpApplication() 
 		{
-			// Init HTTP context and the methods from HttpRuntime....
 		}
 
 		#endregion // Constructors
@@ -61,13 +76,16 @@ namespace System.Web {
 		}
 
 		protected EventHandlerList Events {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get {
+				if (events == null)
+					events = new EventHandlerList ();
+				return events;
+			}
 		}
 
-		bool IHttpHandler.IsReusable {
-			[MonoTODO]
-			get { throw new NotImplementedException(); }
+		bool IHttpHandler.IsReusable
+		{
+			get { return true; }
 		}
 
 		[Browsable (false)]
@@ -132,9 +150,7 @@ namespace System.Web {
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public IPrincipal User {
-			get { return user; }
-			[MonoTODO ("This requires the ControlPrincipal flag to be set in Flags.")]
-			set { user = value; }
+			get { return _Context.User; }
 		}
 
 		#endregion Properties
@@ -211,9 +227,11 @@ namespace System.Web {
 			_CompleteRequest = true;
 		}
 
-		[MonoTODO("Cleanup")]
 		public virtual void Dispose () 
 		{
+			EventHandler eh = (EventHandler) Events [evDisposed];
+			if (eh != null)
+				eh.Invoke (this, EventArgs.Empty);
 		}
 
 		public virtual string GetVaryByCustomString (HttpContext context, string custom) 
@@ -249,20 +267,158 @@ namespace System.Web {
 
 		#region Events and Delegates
 
-		public event EventHandler AcquireRequestState;
-		public event EventHandler AuthenticateRequest;
-		public event EventHandler AuthorizeRequest;
-		public event EventHandler BeginRequest;
-		public event EventHandler Disposed;
-		public event EventHandler EndRequest;
-		public event EventHandler Error;
-		public event EventHandler PostRequestHandlerExecute;
-		public event EventHandler PreRequestHandlerExecute;
-		public event EventHandler PreSendRequestContent;
-		public event EventHandler PreSendRequestHeaders;
-		public event EventHandler ReleaseRequestState;
-		public event EventHandler ResolveRequestCache;
-		public event EventHandler UpdateRequestCache;
+		public event EventHandler AcquireRequestState
+		{
+			add {
+				Events.AddHandler (evAcquireRequestState, value);
+			}
+
+			remove {
+				Events.RemoveHandler (evAcquireRequestState, value);
+			}
+		}
+		
+		public event EventHandler AuthenticateRequest
+		{
+			add {
+				Events.AddHandler (evAuthenticateRequest, value);
+			}
+
+			remove {
+				Events.RemoveHandler (evAuthenticateRequest, value);
+			}
+		}
+		public event EventHandler AuthorizeRequest
+		{
+			add {
+				Events.AddHandler (evAuthorizeRequest, value);
+			}
+
+			remove {
+				Events.RemoveHandler (evAuthorizeRequest, value);
+			}
+		}
+		public event EventHandler BeginRequest
+		{
+			add {
+				Events.AddHandler (evBeginRequest, value);
+			}
+
+			remove {
+				Events.RemoveHandler (evBeginRequest, value);
+			}
+		}
+		public event EventHandler Disposed
+		{
+			add {
+				Events.AddHandler (evDisposed, value);
+			}
+
+			remove {
+				Events.RemoveHandler (evDisposed, value);
+			}
+		}
+		public event EventHandler EndRequest
+		{
+			add {
+				Events.AddHandler (evEndRequest, value);
+			}
+
+			remove {
+				Events.RemoveHandler (evEndRequest, value);
+			}
+		}
+		public event EventHandler Error
+		{
+			add {
+				Events.AddHandler (evError, value);
+			}
+
+			remove {
+				Events.RemoveHandler (evError, value);
+			}
+		}
+		public event EventHandler PostRequestHandlerExecute
+		{
+			add {
+				Events.AddHandler (evPostRequestHandlerExecute, value);
+			}
+
+			remove {
+				Events.RemoveHandler (evPostRequestHandlerExecute, value);
+			}
+		}
+		public event EventHandler PreRequestHandlerExecute
+		{
+			add {
+				Events.AddHandler (evPreRequestHandlerExecute, value);
+			}
+
+			remove {
+				Events.RemoveHandler (evPreRequestHandlerExecute, value);
+			}
+		}
+		public event EventHandler PreSendRequestContent
+		{
+			add {
+				Events.AddHandler (evPreSendRequestContent, value);
+			}
+
+			remove {
+				Events.RemoveHandler (evPreSendRequestContent, value);
+			}
+		}
+		public event EventHandler PreSendRequestHeaders
+		{
+			add {
+				Events.AddHandler (evPreSendRequestHeaders, value);
+			}
+
+			remove {
+				Events.RemoveHandler (evPreSendRequestHeaders, value);
+			}
+		}
+		public event EventHandler ReleaseRequestState
+		{
+			add {
+				Events.AddHandler (evReleaseRequestState, value);
+			}
+
+			remove {
+				Events.RemoveHandler (evReleaseRequestState, value);
+			}
+		}
+		public event EventHandler ResolveRequestCache
+		{
+			add {
+				Events.AddHandler (evResolveRequestCache, value);
+			}
+
+			remove {
+				Events.RemoveHandler (evResolveRequestCache, value);
+			}
+		}
+		public event EventHandler UpdateRequestCache
+		{
+			add {
+				Events.AddHandler (evUpdateRequestCache, value);
+			}
+
+			remove {
+				Events.RemoveHandler (evUpdateRequestCache, value);
+			}
+		}
+
+		public event EventHandler DefaultAuthentication
+		{
+			add {
+				Events.AddHandler (evDefaultAuthentication, value);
+			}
+
+			remove {
+				Events.RemoveHandler (evDefaultAuthentication, value);
+			}
+		}
 
 		#endregion // Events and Delegates
 	}

@@ -11,7 +11,7 @@ namespace System.Web.Caching
 	/// <summary>
 	/// Class to handle cache dependency, right now this class is only a mookup
 	/// </summary>
-	public class CacheDependency : System.IDisposable
+	public sealed class CacheDependency : System.IDisposable
 	{
 		private bool _boolDisposed;
 

@@ -12,12 +12,12 @@ namespace System.Web.Caching
 	/// Specifies the relative priority of items stored in the Cache.
 	/// </summary>
 	public enum CacheItemPriority {
-		AboveNormal,
-		BelowNormal,
-		Default,
-		High,
-		Low,
-		Normal,
+		Low = 1,
+		BelowNormal = 2,
+		Normal = 3,
+		Default = 3,
+		AboveNormal = 4,
+		High = 5,
 		NotRemovable 
 	}
 
@@ -36,10 +36,10 @@ namespace System.Web.Caching
 	/// Specifies the reason an item was removed from the Cache.
 	/// </summary>
 	public enum CacheItemRemovedReason {
-		DependencyChanged,
-		Expired,
-		Removed,
-		Underused
+		Expired = 1,
+		Removed = 2,
+		Underused = 3,
+		DependencyChanged = 4
 	}
 
 	/// <summary>

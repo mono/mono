@@ -18,8 +18,8 @@ using System.ComponentModel;
 
 namespace System.Web.UI.WebControls
 {
-	//TODO: [TypeConverter("??")]
-	public class DataGridColumn : IStateManager
+	[TypeConverter(typeof(ExpandableObjectConverter))]
+	public abstract class DataGridColumn : IStateManager
 	{
 		private StateBag viewState;
 		private bool     marked;

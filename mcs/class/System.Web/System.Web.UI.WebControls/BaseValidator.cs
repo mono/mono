@@ -2,13 +2,14 @@
  * Namespace: System.Web.UI.WebControls
  * Class:     BaseValidator
  *
- * Author:  Gaurav Vaish
+ * Authors:  Gaurav Vaish, Gonzalo Paniagua Javier
  * Maintainer: gvaish@iitk.ac.in
- * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
+ * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>, <gonzalo@ximian.com>
  * Implementation: yes
  * Status:  80%
  *
  * (C) Gaurav Vaish (2001)
+ * (c) 2002 Ximian, Inc. (http://www.ximian.com)
  */
 
 using System;
@@ -33,6 +34,9 @@ namespace System.Web.UI.WebControls
 		{
 			isValid = true;
 			ForeColor = Color.Red;
+			propertiesValid = true;
+			isPropertiesChecked = false;
+			renderUplevel = false;
 		}
 
 		public string ControlToValidate
@@ -98,6 +102,8 @@ namespace System.Web.UI.WebControls
 			}
 			set
 			{
+				if (value == false)
+					isValid = true;
 				base.Enabled = value;
 			}
 		}
@@ -133,22 +139,8 @@ namespace System.Web.UI.WebControls
 
 		public bool IsValid
 		{
-			get
-			{
-				if (Enabled == false)
-					return true;
-
-				object o = ViewState["IsValid"];
-				if(o != null)
-				{
-					return (bool)o;
-				}
-				return true;
-			}
-			set
-			{
-				ViewState["IsValid"] = value;
-			}
+			get { return isValid; }
+			set { isValid = value; }
 		}
 
 		public static PropertyDescriptor GetValidationProperty(object component)
@@ -209,11 +201,10 @@ namespace System.Web.UI.WebControls
 
 		protected override void AddAttributesToRender(HtmlTextWriter writer)
 		{
-			bool enabled = Enabled;
-			if(!Enabled)
-			{
+			bool enabled = base.Enabled;
+			if (enabled)
 				Enabled = true;
-			}
+
 			base.AddAttributesToRender(writer);
 			if(RenderUplevel)
 			{
@@ -238,18 +229,20 @@ namespace System.Web.UI.WebControls
 				{
 					writer.AddAttribute("isvalid", "False");
 				}
+
+				ControlStyle.AddAttributesToRender (writer, this);
 				if(!enabled)
 				{
 					writer.AddAttribute("enabled", "False");
 				}
 			}
-			if(!enabled)
+
+			if(enabled)
 			{
 				Enabled = false;
 			}
 		}
 
-		[MonoTODO]
 		protected void CheckControlValidationProperty(string name, string propertyName)
 		{
 			Control ctrl = NamingContainer.FindControl(name);
@@ -284,10 +277,11 @@ namespace System.Web.UI.WebControls
 			{
 				return false;
 			}
+
 			if(EnableClientScript)
 			{
-				// By now, return true
-				return true;
+				// By now, return false
+				return false;
 				////throw new NotImplementedException();
 				////TODO: I need to get the (Browser->Dom_version_major >= 4 &&
 				////                         Brower->Ecma_script_version >= 1.2)
@@ -364,38 +358,53 @@ namespace System.Web.UI.WebControls
 			throw new NotImplementedException();
 			//TODO: Since I have to access document.<ClientID> and register
 			// as page validator. Now this is Browser dependent :((
+
+			// This does not render anything on Mozilla, and does on IE
 		}
 
 		[MonoTODO("Render_ing_always_left")]
-		protected override void Render(HtmlTextWriter writer)
+		protected override void Render (HtmlTextWriter writer)
 		{
 			bool valid;
-			if(isPreRenderCalled)
-			{
-				valid = (Enabled && IsValid);
-			} else
-			{
+
+			if (!Enabled)
+				return;
+
+			if (isPreRenderCalled) {
+				valid = IsValid;
+			} else {
 				isPropertiesChecked = true;
 				propertiesValid     = true;
 				renderUplevel       = false;
 				valid               = true;
 			}
-			if(PropertiesValid)
-			{
-				if(Page != null)
-				{
-					Page.VerifyRenderingInServerForm(this);
-				}
+
+			if (PropertiesValid) {
+				if (Page != null)
+					Page.VerifyRenderingInServerForm (this);
+
 				ValidatorDisplay dis = Display;
-				if(RenderUplevel)
-				{
-					throw new NotImplementedException();
+				if (RenderUplevel) {
+					//FIXME: by now, don't do client-side validation
 				}
-				throw new NotImplementedException();
+				
+				if (!valid) {
+					RenderBeginTag (writer);
+					if (Text.Trim ().Length > 0 || HasControls ()) {
+						RenderContents (writer);
+						RenderEndTag (writer);
+					} else {
+						writer.Write (ErrorMessage);
+					}
+					RenderEndTag (writer);
+					return;
+				}
+			} else {
+				writer.Write ("&nbsp;");
 			}
-			return;
 		}
 
 		protected abstract bool EvaluateIsValid();
 	}
 }
+

@@ -52,7 +52,7 @@ namespace System.Web.UI.WebControls
 			string val = GetControlValidationValue(ControlToValidate);
 			if(val != null)
 			{
-				return (val.Trim() == InitialValue.Trim());
+				return (val.Trim() != InitialValue.Trim());
 			}
 			return true;
 		}

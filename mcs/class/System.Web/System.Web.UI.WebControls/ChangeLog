@@ -1,3 +1,9 @@
+2002-07-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* BaseValidator.cs: it works now.
+	* DataGridColumn.cs: added attribute and made it abstract.
+	* RequiredFieldValidator.cs: fixed return value in EvaluateIsValid.
+
 2002-07-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TextBox.cs: default for Wrap is true.
