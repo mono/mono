@@ -254,7 +254,24 @@ namespace MonoTests.Mono.Security.Cryptography {
 		}
 
 		[Test]
-		public void ToCapiKeyBlob () 
+		public void ToCapiKeyBlob_AsymmetricAlgorithm () 
+		{
+			AsymmetricAlgorithm rsa = RSA.Create ();
+			rsa.FromXmlString (strongNameString);
+			byte[] keypair = CryptoConvert.ToCapiKeyBlob (rsa, true);
+			AssertEquals ("RSA-KeyPair", strongName, keypair);
+
+			byte[] publicKey = CryptoConvert.ToCapiKeyBlob (rsa, false);
+			AssertEquals ("RSA-PublicKey", BitConverter.ToString (strongNamePublicKey, 12), BitConverter.ToString (publicKey));
+			
+			// TODO dsa (not implemented yet)
+			AsymmetricAlgorithm dsa = DSA.Create ();
+			AssertNull ("DSA-KeyPair", CryptoConvert.ToCapiKeyBlob (dsa, true));
+			AssertNull ("DSA-PublicKey", CryptoConvert.ToCapiKeyBlob (dsa, false));
+		}
+
+		[Test]
+		public void ToCapiKeyBlob_RSA () 
 		{
 			RSA rsa = RSA.Create ();
 			rsa.FromXmlString (strongNameString);
@@ -317,7 +334,7 @@ namespace MonoTests.Mono.Security.Cryptography {
 		public void FromHex () 
 		{
 			AssertNull ("FromHex(null)", CryptoConvert.FromHex (null));
-			string result = BitConverter.ToString (CryptoConvert.FromHex ("0123456789abcdef"));
+			string result = BitConverter.ToString (CryptoConvert.FromHex ("0123456789aBcDeF"));
 			AssertEquals ("0123456789abcdef", "01-23-45-67-89-AB-CD-EF", result);
 		}
 
@@ -342,7 +359,7 @@ namespace MonoTests.Mono.Security.Cryptography {
 			byte[] data = { 0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef };
 			AssertEquals ("0123456789abcdef", "0123456789ABCDEF", CryptoConvert.ToHex (data));
 		}
-
+		
 		[Test]
 		public void NUnitKey_Broken ()
 		{

@@ -2,13 +2,15 @@
 // MD2Test.cs - NUnit Test Cases for MD2 (RFC1319)
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot (sebastien@ximian.com)
 //
 // (C) 2002 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com)
 //
 
 using System;
 using System.IO;
+using System.Security.Cryptography;
 using System.Text;
 
 using Mono.Security.Cryptography;
@@ -216,12 +218,22 @@ namespace MonoTests.Mono.Security.Cryptography {
 		}
 
 		// none of those values changes for any implementation of MD2
+		[Test]
 		public virtual void StaticInfo () 
 		{
 			string className = hash.ToString ();
 			AssertEquals (className + ".HashSize", 128, hash.HashSize);
 			AssertEquals (className + ".InputBlockSize", 1, hash.InputBlockSize);
 			AssertEquals (className + ".OutputBlockSize", 1, hash.OutputBlockSize);
+		}
+		
+		[Test]
+		public virtual void Create () 
+		{
+			// create the default implementation
+			HashAlgorithm h = MD2.Create ();
+			Assert ("MD2Managed", (h is MD2Managed));
+			// Note: will fail is default is changed in machine.config
 		}
 	}
 }

@@ -2,16 +2,19 @@
 // MD4Test.cs - NUnit Test Cases for MD4 (RFC1320)
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot (sebastien@ximian.com)
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com)
 //
 
-using NUnit.Framework;
 using System;
 using System.IO;
-using Mono.Security.Cryptography;
+using System.Security.Cryptography;
 using System.Text;
+
+using Mono.Security.Cryptography;
+using NUnit.Framework;
 
 namespace MonoTests.Mono.Security.Cryptography {
 
@@ -215,12 +218,22 @@ namespace MonoTests.Mono.Security.Cryptography {
 		}
 
 		// none of those values changes for any implementation of MD4
+		[Test]
 		public virtual void StaticInfo () 
 		{
 			string className = hash.ToString ();
 			TestCase.AssertEquals (className + ".HashSize", 128, hash.HashSize);
 			TestCase.AssertEquals (className + ".InputBlockSize", 1, hash.InputBlockSize);
 			TestCase.AssertEquals (className + ".OutputBlockSize", 1, hash.OutputBlockSize);
+		}
+		
+		[Test]
+		public virtual void Create () 
+		{
+			// create the default implementation
+			HashAlgorithm h = MD4.Create ();
+			Assert ("MD4Managed", (h is MD4Managed));
+			// Note: will fail is default is changed in machine.config
 		}
 	}
 }

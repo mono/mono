@@ -2,12 +2,15 @@
 // MD4ManagedTest.cs - NUnit Test Cases for MD4 (RFC1320)
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot (sebastien@ximian.com)
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com)
 //
 
 using System;
+using System.Security.Cryptography;
+
 using NUnit.Framework;
 using Mono.Security.Cryptography;
 
@@ -23,5 +26,13 @@ namespace MonoTests.Mono.Security.Cryptography {
 		}
 
 		// this will run ALL tests defined in MD4Test.cs with the MD4Managed implementation
+		
+		[Test]
+		public override void Create () 
+		{
+			// try creating ourselve using Create
+			HashAlgorithm h = MD4.Create ("MD4Managed");
+			Assert ("MD4Managed", (h is MD4Managed));
+		}
 	}
 }
