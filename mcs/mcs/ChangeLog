@@ -7,6 +7,21 @@
 	target.ResolveLValue instead of the original source that was
 	passed to us.
 
+	Another change.  Use target.Resolve instead of LValueResolve.
+	Although we are resolving for LValues, we will let the Assign code
+	take care of that (it will be called again from Resolve).  This
+	basically allows code like this:
+
+	class X { X operator + (X x, object o) {} X this [int idx] { get; set; } }
+	class Y { void A (X x) { x [0] += o; }
+
+	The problem was that the indexer was trying to resolve for
+	set_Item (idx, object o) and never finding one.  The real set_Item
+	was set_Item (idx, X).  By delaying the process we get the right
+	semantics. 
+
+	Fixes bug 36505
+	
 2003-02-23  Martin Baulig  <martin@ximian.com>
 
 	* statement.cs (Block.Emit): Override this and set ec.CurrentBlock
