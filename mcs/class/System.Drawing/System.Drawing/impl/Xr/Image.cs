@@ -2,10 +2,11 @@
 // System.Drawing.Image.cs
 //
 // (C) 2002/3 Ximian, Inc.  http://www.ximian.com
-// Author:	Christian Meyer <Christian.Meyer@cs.tum.edu>
-//			Jason Perkins <jason@379.com>
-//			Dennis Hayes <dennish@raytek.com>
-//			Alexandre Pigolkine <pigolkine@gmx.de>
+// Authors:
+//   Christian Meyer <Christian.Meyer@cs.tum.edu>
+//   Jason Perkins <jason@379.com>
+//   Dennis Hayes <dennish@raytek.com>
+//   Alexandre Pigolkine <pigolkine@gmx.de>
 
 using System;
 using System.Runtime.Remoting;
@@ -22,12 +23,12 @@ namespace System.Drawing {
 
 		internal abstract class Image : MarshalByRefObject, IImage /*, ICloneable, ISerializable */ {
 
-			internal IntPtr nativeObject_;
-			internal Xr.XrFormat xrFormat_;
-			internal System.Drawing.XrImpl.Graphics selectedIntoGraphics_ = null;
-			internal Size  size;
+			internal IntPtr native_object;
+			internal Xr.Format xr_format;
+			internal System.Drawing.XrImpl.Graphics selected_into_graphics = null;
+			internal Size size;
 			internal PixelFormat format;
-			protected ImageFormat imageFormat_;
+			protected ImageFormat image_format;
 			
 			// constructor
 			public Image () {}
@@ -130,7 +131,7 @@ namespace System.Drawing {
 					createdFrom_ = new InternalImageInfo();
 					createdFrom_.Size = size;
 					createdFrom_.Format = format;
-					IntPtr memptr = GDK.gdk_pixbuf_get_pixels(nativeObject_);
+					IntPtr memptr = GDK.gdk_pixbuf_get_pixels(native_object);
 					int rowSize = (format == PixelFormat.Format32bppArgb) ? 4 * size.Width: 3 * size.Width;
 					int totalSize = rowSize * size.Height;
 					createdFrom_.Stride = rowSize;

@@ -15,7 +15,7 @@ namespace System.Drawing {
 
 		abstract public object Clone ();
         
-		internal System.Drawing.IBrush	implementation_ = null;
+		internal System.Drawing.IBrush	implementation = null;
         
 		internal Brush()
 		{
@@ -23,7 +23,7 @@ namespace System.Drawing {
 
 		public void Dispose ()
 		{
-			implementation_.Dispose();
+			implementation.Dispose();
 			Dispose (true);
 			System.GC.SuppressFinalize (this);
 		}

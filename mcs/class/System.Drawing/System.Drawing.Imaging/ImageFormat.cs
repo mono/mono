@@ -12,12 +12,12 @@ namespace System.Drawing.Imaging {
 
 	public sealed class ImageFormat {
 
-		Guid	guid_;
+		Guid	guid;
 
 		// constructors
 		[MonoTODO]
 		public ImageFormat(Guid guid) {
-			guid_ = guid;
+			guid = guid;
 		}
 		
 		// methods
@@ -37,11 +37,11 @@ namespace System.Drawing.Imaging {
 		}
 
 		// properties
-		static ImageFormat BmpImageFormat_ = new ImageFormat(new Guid("DFB9AC7D-498D-4bd8-9D42-E23E541964B1"));
+		static ImageFormat BmpImageFormat = new ImageFormat (new Guid ("DFB9AC7D-498D-4bd8-9D42-E23E541964B1"));
 
 		[MonoTODO]
 		public static ImageFormat Bmp {
-			get { return BmpImageFormat_; }
+			get { return BmpImageFormat; }
 		}
 		
 		[MonoTODO]
@@ -61,7 +61,7 @@ namespace System.Drawing.Imaging {
 		
 		[MonoTODO]
 		public Guid Guid {
-			get { return guid_; }
+			get { return guid; }
 		}
 		
 		[MonoTODO]
@@ -70,9 +70,9 @@ namespace System.Drawing.Imaging {
 		}
 		
 		[MonoTODO] 
-		static ImageFormat JpegImageFormat_ = new ImageFormat(new Guid("83BFFDF8-398F-407f-BA33-A7993D11B2DA"));
+		static ImageFormat JpegImageFormat = new ImageFormat(new Guid("83BFFDF8-398F-407f-BA33-A7993D11B2DA"));
 		public static ImageFormat Jpeg {
-			get { return JpegImageFormat_; }
+			get { return JpegImageFormat; }
 		}
 		
 		[MonoTODO]

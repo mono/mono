@@ -11,12 +11,10 @@ using System;
 using System.Drawing.Text;
 
 namespace System.Drawing {
-	/// <summary>
-	/// Summary description for FontFamily.
-	/// </summary>
+
 	public class FontFamily : MarshalByRefObject, IDisposable {
-		internal IFontFamily implementation_;
-		internal static IFontFamilyFactory factory_ = Factories.GetFontFamilyFactory();
+		internal IFontFamily implementation;
+		internal static IFontFamilyFactory factory = Factories.GetFontFamilyFactory();
 		
 		static FontFamily genericMonospace;
 		static FontFamily genericSansSerif;
@@ -25,17 +23,17 @@ namespace System.Drawing {
 		string name;
 		
 		public FontFamily(GenericFontFamilies genericFamily) {
-			implementation_ = factory_.FontFamily(genericFamily);
+			implementation = factory.FontFamily(genericFamily);
 		}
 		
 		public FontFamily(string familyName) {
 			name = familyName;
-			implementation_ = factory_.FontFamily(familyName);
+			implementation = factory.FontFamily(familyName);
 		}
 		
 		public FontFamily(string familyName, FontCollection collection) {
 			name = familyName;
-			implementation_ = factory_.FontFamily(familyName, collection);
+			implementation = factory.FontFamily(familyName, collection);
 		}
 		
 		public string Name {
@@ -72,27 +70,27 @@ namespace System.Drawing {
 		}
 		
 		public int GetCellAscent (FontStyle style) {
-			return implementation_.GetCellAscent(style);
+			return implementation.GetCellAscent(style);
 		}
 		
 		public int GetCellDescent (FontStyle style) {
-			return implementation_.GetCellDescent(style);
+			return implementation.GetCellDescent(style);
 		}
 		
 		public int GetEmHeight (FontStyle style) {
-			return implementation_.GetEmHeight(style);
+			return implementation.GetEmHeight(style);
 		}
 		
 		public int GetLineSpacing (FontStyle style) {
-			return implementation_.GetLineSpacing(style);
+			return implementation.GetLineSpacing(style);
 		}
 		
 		public bool IsStyleAvailable (FontStyle style){
-			return implementation_.IsStyleAvailable(style);
+			return implementation.IsStyleAvailable(style);
 		}
 		
 		public void Dispose() {
-			implementation_.Dispose();
+			implementation.Dispose();
 		}
 	}
 }

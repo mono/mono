@@ -16,68 +16,71 @@ using System.Runtime.InteropServices;
 
 namespace System.Drawing
 {
-	namespace XrImpl	{
+	namespace XrImpl {
 
 		internal class GraphicsFactory : IGraphicsFactory {
 
-			public System.Drawing.IGraphics Graphics(IntPtr nativeGraphics) {
-				return new Graphics(nativeGraphics);
+			public System.Drawing.IGraphics Graphics (IntPtr nativeGraphics)
+			{
+				return new Graphics (nativeGraphics);
 			}
 
-			public System.Drawing.IGraphics FromImage(System.Drawing.Image image) {
-				return XrImpl.Graphics.FromImage(image);
+			public System.Drawing.IGraphics FromImage (System.Drawing.Image image)
+			{
+				return XrImpl.Graphics.FromImage (image);
 			}
 
-			public System.Drawing.IGraphics FromHwnd( IntPtr hwnd) {
-				return XrImpl.Graphics.FromHwnd(hwnd);
+			public System.Drawing.IGraphics FromHwnd (IntPtr hwnd)
+			{
+				return XrImpl.Graphics.FromHwnd (hwnd);
 			}
 		}
 
 
-		[ComVisible(false)]
+		[ComVisible (false)]
 		internal sealed class Graphics : MarshalByRefObject, IGraphics
 		{
 			public delegate bool EnumerateMetafileProc (EmfPlusRecordType recordType,
-				int flags,
-				int dataSize,
-				IntPtr data,
-				PlayRecordCallback callbackData);
-
+								    int flags,
+								    int dataSize,
+								    IntPtr data,
+								    PlayRecordCallback callbackData);
+			
 			public delegate bool DrawImageAbort (IntPtr callbackData);
 
 			internal enum GraphicsType {
-				fromHdc, fromHwnd, fromImage
+				FromHDC, FromHwnd, FromImage
 			};
 
-			internal GraphicsType type_;
-			internal IntPtr nativeObject_ = IntPtr.Zero;
-			internal IntPtr initialHwnd_ = IntPtr.Zero;
-			internal System.Drawing.XrImpl.Image initializedFromImage_ = null;
+			internal GraphicsType type;
+			internal IntPtr native_object = IntPtr.Zero;
+			internal IntPtr initial_hwnd = IntPtr.Zero;
+			internal System.Drawing.XrImpl.Image initialized_from_image = null;
 
 			internal Graphics (IntPtr nativeGraphics)
 			{
-				nativeObject_ = nativeGraphics;
+				native_object = nativeGraphics;
 			}
 
 			#region Converters
-			internal static Pen ConvertPen( System.Drawing.Pen pen) 
+			internal static Pen ConvertPen (System.Drawing.Pen pen) 
 			{
-				return pen.implementation_ as Pen;
+				return pen.implementation as Pen;
 			}
 
-			internal static Brush ConvertBrush( System.Drawing.Brush brush) 
+			internal static Brush ConvertBrush (System.Drawing.Brush brush) 
 			{
-				return brush.implementation_ as Brush;
+				return brush.implementation as Brush;
 			}
 
-			internal static Image ConvertImage( System.Drawing.Image image) 
+			internal static Image ConvertImage (System.Drawing.Image image) 
 			{
-				return image.implementation_ as Image;
+				return image.implementation as Image;
 			}
 			
-			internal static Font ConvertFont( System.Drawing.Font font) 
+			internal static Font ConvertFont (System.Drawing.Font font) 
 			{
-				return font.implementation_ as Font;
+				return font.implementation as Font;
 			}
 			#endregion
 
@@ -114,13 +117,13 @@ namespace System.Drawing
 			[MonoTODO]
 			void IDisposable.Dispose ()
 			{
-				switch(type_) {
-					case GraphicsType.fromHwnd:
+				switch (type) {
+					case GraphicsType.FromHwnd:
 						break;
-					case GraphicsType.fromHdc:
+					case GraphicsType.FromHDC:
 						break;
-					case GraphicsType.fromImage:
-						Xr.XrDestroy(nativeObject_);
+					case GraphicsType.FromImage:
+						Xr.XrDestroy (native_object);
 						break;
 				}
 			}
@@ -491,66 +494,66 @@ namespace System.Drawing
 				throw new NotImplementedException ();
 			}
 
-			void DrawLine( Pen xrPen, float x1, float y1, float x2, float y2) 
+			void DrawLine (Pen xrPen, float x1, float y1, float x2, float y2) 
 			{
-				xrPen.SetXrValues(nativeObject_);
-				Xr.XrMoveTo (nativeObject_, (double)x1, (double)y1);
-				Xr.XrLineTo (nativeObject_, (double)x2, (double)y2);
-				Xr.XrStroke (nativeObject_);
+				xrPen.SetXrValues (native_object);
+				Xr.XrMoveTo (native_object, (double)x1, (double)y1);
+				Xr.XrLineTo (native_object, (double)x2, (double)y2);
+				Xr.XrStroke (native_object);
 			}
 			
 			[MonoTODO]
 			void IGraphics.DrawLine (System.Drawing.Pen pen, PointF pt1, PointF pt2)
 			{
-				DrawLine( ConvertPen(pen), pt1.X, pt1.Y, pt2.X, pt2.Y);
+				DrawLine (ConvertPen (pen), pt1.X, pt1.Y, pt2.X, pt2.Y);
 			}
 
 			[MonoTODO]
 			void IGraphics.DrawLine (System.Drawing.Pen pen, Point pt1, Point pt2)
 			{
-				DrawLine( ConvertPen(pen), (float)pt1.X, (float)pt1.Y, (float)pt2.X, (float)pt2.Y);
+				DrawLine (ConvertPen (pen), (float)pt1.X, (float)pt1.Y, (float)pt2.X, (float)pt2.Y);
 			}
 
 			[MonoTODO]
 			void IGraphics.DrawLine (System.Drawing.Pen pen, int x1, int y1, int x2, int y2)
 			{
-				DrawLine( ConvertPen(pen), (float)x1, (float)y1, (float)x2, (float)y2);
+				DrawLine (ConvertPen (pen), (float)x1, (float)y1, (float)x2, (float)y2);
 			}
 
 			[MonoTODO]
 			void IGraphics.DrawLine (System.Drawing.Pen pen, float x1, float y1, float x2, float y2)
 			{
-				DrawLine( ConvertPen(pen), x1, y1, x2, y2);
+				DrawLine (ConvertPen (pen), x1, y1, x2, y2);
 			}
 
 			[MonoTODO]
 			void IGraphics.DrawLines (System.Drawing.Pen pen, PointF [] points)
 			{
-				if( points.Length != 0) {
-					Pen XrPen = ConvertPen(pen);
-					XrPen.SetXrValues(nativeObject_);
-					Xr.XrMoveTo (nativeObject_, (double)points[0].X, (double)points[0].Y);
-					if( points.Length == 1) {
-						Xr.XrLineTo (nativeObject_, (double)points[0].X, (double)points[0].Y);
+				if (points.Length != 0) {
+					Pen XrPen = ConvertPen (pen);
+					XrPen.SetXrValues (native_object);
+					Xr.XrMoveTo (native_object, (double)points[0].X, (double)points[0].Y);
+					if (points.Length == 1) {
+						Xr.XrLineTo (native_object, (double)points[0].X, (double)points[0].Y);
 					}
 					else {
-						for( int i = 1; i < points.Length; i++) {
-							Xr.XrLineTo (nativeObject_, (double)points[i].X, (double)points[i].Y);
+						for (int i = 1; i < points.Length; i++) {
+							Xr.XrLineTo (native_object, (double)points[i].X, (double)points[i].Y);
 						}
 					}
-					Xr.XrStroke (nativeObject_);
+					Xr.XrStroke (native_object);
 				}
 			}
 
 			[MonoTODO]
 			void IGraphics.DrawLines (System.Drawing.Pen pen, Point [] points)
 			{
-				if( points.Length != 0) {
+				if (points.Length != 0) {
 					PointF[] pointsf = new PointF[points.Length];
-					for( int i = 0; i < points.Length; i++) {
-						pointsf[i] = new PointF(points[i].X, points[i].Y);
+					for (int i = 0; i < points.Length; i++) {
+						pointsf[i] = new PointF (points[i].X, points[i].Y);
 					}
-					((IGraphics)this).DrawLines( pen, pointsf);
+					 ((IGraphics)this).DrawLines (pen, pointsf);
 				}
 			}
 
@@ -599,48 +602,48 @@ namespace System.Drawing
 			[MonoTODO]
 			void IGraphics.DrawRectangle (System.Drawing.Pen pen, Rectangle rect)
 			{
-				DrawRectangle(ConvertPen(pen), (double)rect.Left, (double)rect.Top, (double)rect.Width, (double)rect.Height);
+				DrawRectangle (ConvertPen (pen), (double)rect.Left, (double)rect.Top, (double)rect.Width, (double)rect.Height);
 			}
 
 			[MonoTODO]
 			void IGraphics.DrawRectangle (System.Drawing.Pen pen, float x, float y, float width, float height)
 			{
-				DrawRectangle(ConvertPen(pen), (double)x, (double)y, (double)width, (double)height);
+				DrawRectangle (ConvertPen (pen), (double)x, (double)y, (double)width, (double)height);
 			}
 
 			void DrawRectangle (Pen XrPen, double x, double y, double width, double height)
 			{
-				XrPen.SetXrValues(nativeObject_);
+				XrPen.SetXrValues (native_object);
 
-				Xr.XrMoveTo (nativeObject_, x, y);
-				Xr.XrLineTo (nativeObject_, x + width, y);
-				Xr.XrLineTo (nativeObject_, x + width, y + height);
-				Xr.XrLineTo (nativeObject_, x, y + height);
-				Xr.XrLineTo (nativeObject_, x, y);
-				Xr.XrStroke (nativeObject_);
+				Xr.XrMoveTo (native_object, x, y);
+				Xr.XrLineTo (native_object, x + width, y);
+				Xr.XrLineTo (native_object, x + width, y + height);
+				Xr.XrLineTo (native_object, x, y + height);
+				Xr.XrLineTo (native_object, x, y);
+				Xr.XrStroke (native_object);
 			}
 
 			[MonoTODO]
 			void IGraphics.DrawRectangle (System.Drawing.Pen pen, int x, int y, int width, int height)
 			{
-				DrawRectangle(ConvertPen(pen), (double)x, (double)y, (double)width, (double)height);
+				DrawRectangle (ConvertPen (pen), (double)x, (double)y, (double)width, (double)height);
 			}
 
 			[MonoTODO]
 			void IGraphics.DrawRectangles (System.Drawing.Pen pen, RectangleF [] rects)
 			{
-				foreach( RectangleF rc in rects) 
+				foreach (RectangleF rc in rects) 
 				{
-					DrawRectangle(ConvertPen(pen), (double)rc.Left, (double)rc.Top, (double)rc.Width, (double)rc.Height);
+					DrawRectangle (ConvertPen (pen), (double)rc.Left, (double)rc.Top, (double)rc.Width, (double)rc.Height);
 				}
 			}
 
 			[MonoTODO]
 			void IGraphics.DrawRectangles (System.Drawing.Pen pen, Rectangle [] rects)
 			{
-				foreach( RectangleF rc in rects) 
+				foreach (RectangleF rc in rects) 
 				{
-					DrawRectangle(ConvertPen(pen), (double)rc.Left, (double)rc.Top, (double)rc.Width, (double)rc.Height);
+					DrawRectangle (ConvertPen (pen), (double)rc.Left, (double)rc.Top, (double)rc.Width, (double)rc.Height);
 				}
 			}
 
@@ -671,14 +674,14 @@ namespace System.Drawing
 			[MonoTODO]
 			void IGraphics.DrawString (string s, System.Drawing.Font font, System.Drawing.Brush brush, float x, float y)
 			{
-				Font xrFont = ConvertFont(font);
-				xrFont.SetXrValues (nativeObject_);
-				Brush xrBrush = ConvertBrush(brush);
-				if( xrBrush is SolidBrush) {
+				Font xrFont = ConvertFont (font);
+				xrFont.SetXrValues (native_object);
+				Brush xrBrush = ConvertBrush (brush);
+				if (xrBrush is SolidBrush) {
 					SolidBrush xrSolidBrush = xrBrush as SolidBrush;
-					xrSolidBrush.SetXrValues( nativeObject_);
-					Xr.XrMoveTo(nativeObject_, (double)x, (double)y);
-					Xr.XrShowText(nativeObject_, s);
+					xrSolidBrush.SetXrValues (native_object);
+					Xr.XrMoveTo (native_object, (double)x, (double)y);
+					Xr.XrShowText (native_object, s);
 				}
 				//throw new NotImplementedException ();
 			}
@@ -1034,56 +1037,56 @@ namespace System.Drawing
 			[MonoTODO]
 			void IGraphics.FillRectangle (System.Drawing.Brush brush, RectangleF rect)
 			{
-				FillRectangle( ConvertBrush(brush), rect.Left, rect.Top, rect.Width, rect.Height);
+				FillRectangle (ConvertBrush (brush), rect.Left, rect.Top, rect.Width, rect.Height);
 			}
 
 			[MonoTODO]
 			void IGraphics.FillRectangle (System.Drawing.Brush brush, Rectangle rect)
 			{
-				FillRectangle( ConvertBrush(brush), (float)rect.Left, (float)rect.Top, (float)rect.Width, (float)rect.Height);
+				FillRectangle (ConvertBrush (brush), (float)rect.Left, (float)rect.Top, (float)rect.Width, (float)rect.Height);
 			}
 
 			void FillRectangle (Brush brush, RectangleF rect)
 			{
-				FillRectangle( brush, rect.Left, rect.Top, rect.Width, rect.Height);
+				FillRectangle (brush, rect.Left, rect.Top, rect.Width, rect.Height);
 			}
 
 			void FillRectangle (Brush brush, Rectangle rect)
 			{
-				FillRectangle( brush, (float)rect.Left, (float)rect.Top, (float)rect.Width, (float)rect.Height);
+				FillRectangle (brush, (float)rect.Left, (float)rect.Top, (float)rect.Width, (float)rect.Height);
 			}
 
 			void FillRectangle (Brush brush, float x, float y, float width, float height)
 			{
 				//throw new NotImplementedException ();
-				if( brush is SolidBrush) {
+				if (brush is SolidBrush) {
 					SolidBrush xrBrush = brush as SolidBrush;
-					xrBrush.SetXrValues( nativeObject_);
-					Xr.XrRectangle(nativeObject_, x, y, width, height);
-					Xr.XrFill(nativeObject_);
+					xrBrush.SetXrValues (native_object);
+					Xr.XrRectangle (native_object, x, y, width, height);
+					Xr.XrFill (native_object);
 				}
 			}
 
 			[MonoTODO]
 			void IGraphics.FillRectangle (System.Drawing.Brush brush, int x, int y, int width, int height)
 			{
-				FillRectangle( brush, (float)x, (float)y, (float)width, (float)height);
+				FillRectangle (brush, (float)x, (float)y, (float)width, (float)height);
 			}
 
 			[MonoTODO]
 			void IGraphics.FillRectangle (System.Drawing.Brush brush, float x, float y, float width, float height)
 			{
-				FillRectangle( ConvertBrush(brush), (int)x, (int)y, (int)width, (int)height);
+				FillRectangle (ConvertBrush (brush), (int)x, (int)y, (int)width, (int)height);
 			}
 
 			[MonoTODO]
 			void IGraphics.FillRectangles (System.Drawing.Brush brush, Rectangle [] rects)
 			{
-				if(rects != null) 
+				if (rects != null) 
 				{
-					foreach( Rectangle rc in rects) 
+					foreach (Rectangle rc in rects) 
 					{
-						FillRectangle(ConvertBrush(brush), rc);
+						FillRectangle (ConvertBrush (brush), rc);
 					}
 				}
 			}
@@ -1091,11 +1094,11 @@ namespace System.Drawing
 			[MonoTODO]
 			void IGraphics.FillRectangles (System.Drawing.Brush brush, RectangleF [] rects)
 			{
-				if(rects != null) 
+				if (rects != null) 
 				{
-					foreach( RectangleF rc in rects) 
+					foreach (RectangleF rc in rects) 
 					{
-						FillRectangle(ConvertBrush(brush), rc);
+						FillRectangle (ConvertBrush (brush), rc);
 					}
 				}
 			}
@@ -1121,8 +1124,8 @@ namespace System.Drawing
 			[MonoTODO]
 			public static Graphics FromHdc (IntPtr hdc)
 			{
-				Graphics result = new Graphics(hdc);
-				result.type_ = GraphicsType.fromHdc;
+				Graphics result = new Graphics (hdc);
+				result.type = GraphicsType.FromHDC;
 				return result;
 			}
 
@@ -1153,14 +1156,14 @@ namespace System.Drawing
 			[MonoTODO]
 			public static Graphics FromImage (System.Drawing.Image image)
 			{
-				System.Drawing.XrImpl.Image	xrImage = ConvertImage(image);
-				IntPtr nativeObj = Xr.XrCreate();
-				Graphics result = new Graphics( nativeObj);
-				Xr.XrSetTargetImage(nativeObj, GDK.gdk_pixbuf_get_pixels(xrImage.nativeObject_), xrImage.xrFormat_,
-							xrImage.Width, xrImage.Height, GDK.gdk_pixbuf_get_rowstride(xrImage.nativeObject_));
-				xrImage.selectedIntoGraphics_ = result;
-				result.initializedFromImage_ = xrImage;
-				result.type_ = GraphicsType.fromImage;
+				System.Drawing.XrImpl.Image	xrImage = ConvertImage (image);
+				IntPtr nativeObj = Xr.XrCreate ();
+				Graphics result = new Graphics (nativeObj);
+				Xr.XrSetTargetImage (nativeObj, GDK.gdk_pixbuf_get_pixels (xrImage.native_object), xrImage.xr_format,
+							xrImage.Width, xrImage.Height, GDK.gdk_pixbuf_get_rowstride (xrImage.native_object));
+				xrImage.selected_into_graphics = result;
+				result.initialized_from_image = xrImage;
+				result.type = GraphicsType.FromImage;
 				return result;
 			}
 
@@ -1173,7 +1176,7 @@ namespace System.Drawing
 			[MonoTODO]
 			public IntPtr GetHdc ()
 			{
-				return nativeObject_;
+				return native_object;
 			}
 
 			[MonoTODO]
@@ -1339,13 +1342,13 @@ namespace System.Drawing
 			[MonoTODO]
 			void IGraphics.Restore (GraphicsState gstate)
 			{
-				Xr.XrRestore(nativeObject_);
+				Xr.XrRestore (native_object);
 			}
 
 			void IGraphics.RotateTransform (float angle)
 			{
 				double rad = angle * Math.PI / 180.0;				
-				Xr.XrRotate(nativeObject_, rad);
+				Xr.XrRotate (native_object, rad);
 			}
 
 			[MonoTODO]
@@ -1357,8 +1360,8 @@ namespace System.Drawing
 			[MonoTODO]
 			public GraphicsState Save ()
 			{
-				Xr.XrSave(nativeObject_);
-				return new GraphicsState();
+				Xr.XrSave (native_object);
+				return new GraphicsState ();
 			}
 
 			[MonoTODO]
@@ -1454,7 +1457,7 @@ namespace System.Drawing
 			[MonoTODO]
 			void IGraphics.TranslateTransform (float dx, float dy)
 			{
-				Xr.XrTranslate(nativeObject_, (double)dx, (double)dy);
+				Xr.XrTranslate (native_object, (double)dx, (double)dy);
 			}
 
 			[MonoTODO]

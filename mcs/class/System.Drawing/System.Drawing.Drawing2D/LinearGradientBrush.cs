@@ -15,19 +15,19 @@ namespace System.Drawing.Drawing2D
 	/// </summary>
 	public sealed class LinearGradientBrush : Brush
 	{
-		private Color[] linearColors_;
+		private Color[] linear_colors;
 		
 		//Constructors.
-		public LinearGradientBrush(Point point1, Point point2, Color color1, Color color2) {
-			linearColors_ = new Color[] { color1, color2 };
+		public LinearGradientBrush (Point point1, Point point2, Color color1, Color color2) {
+			linear_colors = new Color[] { color1, color2 };
 		}
 
-		public LinearGradientBrush(PointF point1, PointF point2, Color color1, Color color2) {
-			linearColors_ = new Color[] { color1, color2 };
+		public LinearGradientBrush (PointF point1, PointF point2, Color color1, Color color2) {
+			linear_colors = new Color[] { color1, color2 };
 		}
 
-		public LinearGradientBrush(Rectangle rect, Color color1, Color color2, LinearGradientMode linearGradientMode) {
-			linearColors_ = new Color[] { color1, color2 };
+		public LinearGradientBrush (Rectangle rect, Color color1, Color color2, LinearGradientMode linearGradientMode) {
+			linear_colors = new Color[] { color1, color2 };
 		}
 
 
@@ -58,11 +58,11 @@ namespace System.Drawing.Drawing2D
 
 		public Color [] LinearColors {
 			get {
-				return linearColors_;
+				return linear_colors;
 			}
 			set {
-				linearColors_[0] = value[0];
-				linearColors_[1] = value[1];
+				linear_colors[0] = value[0];
+				linear_colors[1] = value[1];
 			}
 		}
 		public RectangleF Rectange {
@@ -88,27 +88,27 @@ namespace System.Drawing.Drawing2D
 
 		// Public Methods
 		
-		public override object Clone(){
+		public override object Clone (){
 			throw new NotImplementedException ();
 		}
 
-		public void MultiplyTransform(Matrix matrix){
+		public void MultiplyTransform (Matrix matrix){
 			throw new NotImplementedException ();
 		}
 
-		public void MultiplyTransform(Matrix matrix, MatrixOrder order){
+		public void MultiplyTransform (Matrix matrix, MatrixOrder order){
 			throw new NotImplementedException ();
 		}
 
-		public void ResetTransform(){
+		public void ResetTransform (){
 			throw new NotImplementedException ();
 		}
 
-		public void RotateTransform(float angle, MatrixOrder order){
+		public void RotateTransform (float angle, MatrixOrder order){
 			throw new NotImplementedException ();
 		}
 
-		public void RotateTransform(float angle){
+		public void RotateTransform (float angle){
 			throw new NotImplementedException ();
 		}
 

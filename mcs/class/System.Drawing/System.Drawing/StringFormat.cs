@@ -15,36 +15,36 @@ namespace System.Drawing
 	/// </summary>
 	public class StringFormat
 	{
-		protected StringAlignment Alignment_;
-		protected StringAlignment LineAlignment_;
+		protected StringAlignment alignment;
+		protected StringAlignment line_alignment;
 
 		public StringFormat()
 		{
 			//
 			// TODO: Add constructor logic here
 			//
-			Alignment_ = StringAlignment.Center;
-			LineAlignment_ = StringAlignment.Center;
+			alignment = StringAlignment.Center;
+			line_alignment = StringAlignment.Center;
 		}
 		
 		public StringAlignment Alignment {
 			get {
-				return Alignment_;
+				return alignment;
 			}
 
 			set {
-				Alignment_ = value;
+				alignment = value;
 			}
 		}
 
 		public StringAlignment LineAlignment
 		{
 			get {
-				return LineAlignment_;
+				return line_alignment;
 			}
 
 			set {
-				LineAlignment_ = value;
+				line_alignment = value;
 			}
 		}
 	}

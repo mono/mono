@@ -24,7 +24,7 @@ namespace System.Drawing {
 
 			public IBitmap Bitmap(int width, int height, System.Drawing.Graphics g)
 			{
-				return new Bitmap(width, height, (Graphics)g.implementation_);
+				return new Bitmap(width, height, (Graphics)g.implementation);
 			}
 
 			public IBitmap Bitmap(int width, int height, System.Drawing.Imaging.PixelFormat format) {
@@ -32,7 +32,7 @@ namespace System.Drawing {
 			}
 
 			public IBitmap Bitmap(System.Drawing.Image original, Size newSize){
-				return new Bitmap((System.Drawing.Win32Impl.Image)original.implementation_, newSize);
+				return new Bitmap((System.Drawing.Win32Impl.Image)original.implementation, newSize);
 			}
 
 			public IBitmap Bitmap(Stream stream, bool useIcm){

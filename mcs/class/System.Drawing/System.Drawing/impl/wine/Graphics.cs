@@ -63,17 +63,17 @@ namespace System.Drawing
 			#region Converters
 			internal static Pen ConvertPen( System.Drawing.Pen pen) 
 			{
-				return pen.implementation_ as Pen;
+				return pen.implementation as Pen;
 			}
 
 			internal static Brush ConvertBrush( System.Drawing.Brush brush) 
 			{
-				return brush.implementation_ as Brush;
+				return brush.implementation as Brush;
 			}
 
 			internal static Image ConvertImage( System.Drawing.Image image) 
 			{
-				return image.implementation_ as Image;
+				return image.implementation as Image;
 			}
 			#endregion
 

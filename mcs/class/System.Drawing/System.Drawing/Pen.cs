@@ -16,34 +16,35 @@ namespace System.Drawing {
 		Brush brush;
 		Color color;
 		float width;
-        internal IPen implementation_;
-		internal static IPenFactory factory_ = Factories.GetPenFactory();
+
+		internal IPen implementation;
+		internal static IPenFactory factory = Factories.GetPenFactory();
 		//PenAlignment alignment;
 		
 		public Pen (Brush brush)
 		{
-			implementation_ = factory_.Pen(brush, 1);
+			implementation = factory.Pen(brush, 1);
 			this.brush = brush;
 			width = 1;
 		}
 
 		public Pen (Color color)
 		{
-			implementation_ = factory_.Pen(color, 1);
+			implementation = factory.Pen(color, 1);
 			this.color = color;
 			width = 1;
 		}
 
 		public Pen (Brush brush, float width)
 		{
-			implementation_ = factory_.Pen(brush, width);
+			implementation = factory.Pen(brush, width);
 			this.width = width;
 			this.brush = brush;
 		}
 
 		public Pen (Color color, float width)
 		{
-			implementation_ = factory_.Pen(color, width);
+			implementation = factory.Pen(color, width);
 			this.width = width;
 			this.color = color;
 		}
@@ -102,7 +103,7 @@ namespace System.Drawing {
 
 		public void Dispose ()
 		{
-			implementation_.Dispose();
+			implementation.Dispose();
 			Dispose (true);
 			System.GC.SuppressFinalize (this);
 		}

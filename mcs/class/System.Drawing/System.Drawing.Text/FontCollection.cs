@@ -9,23 +9,26 @@ using System;
 namespace System.Drawing.Text {
 
 	public abstract class FontCollection : IDisposable {
-		internal IFontCollection implementation_;
+		internal IFontCollection implementation;
 		
 		// methods
 		[MonoTODO]
-		public void Dispose() {
+		public void Dispose()
+		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		protected virtual void Dispose(bool disposing) {
+		protected virtual void Dispose (bool disposing)
+		{
 			throw new NotImplementedException ();
 		}
 
 		// properties
 		[MonoTODO]
-		public FontFamily[] Families {
-			get { return implementation_.Families; }
+		public FontFamily[] Families
+		{
+			get { return implementation.Families; }
 		}
 
 	}

@@ -18,21 +18,21 @@ namespace System.Drawing
 	[ComVisible(false)]
 	public sealed class Graphics : MarshalByRefObject, IDisposable
 	{
-		internal System.Drawing.IGraphics	implementation_;
-		internal static System.Drawing.IGraphicsFactory	graphicsFactory_ = Factories.GetGraphicsFactory();
+		internal System.Drawing.IGraphics implementation;
+		internal static System.Drawing.IGraphicsFactory	graphics_factory = Factories.GetGraphicsFactory();
 		internal Matrix transform = new Matrix();
 
 		public delegate bool EnumerateMetafileProc (EmfPlusRecordType recordType,
-							   int flags,
-							   int dataSize,
-							   IntPtr data,
-							   PlayRecordCallback callbackData);
-
+							    int flags,
+							    int dataSize,
+							    IntPtr data,
+							    PlayRecordCallback callbackData);
+		
 		public delegate bool DrawImageAbort (IntPtr callbackData);
 
 		private Graphics (IntPtr nativeGraphics)
 		{
-			implementation_ = graphicsFactory_.Graphics(nativeGraphics);
+			implementation = graphics_factory.Graphics(nativeGraphics);
 		}
 
 		[MonoTODO]
@@ -44,7 +44,7 @@ namespace System.Drawing
 		[MonoTODO]
 		public GraphicsContainer BeginContainer ()
 		{
-			return implementation_.BeginContainer();
+			return implementation.BeginContainer();
 		}
 
 		[MonoTODO]
@@ -235,139 +235,139 @@ namespace System.Drawing
 		[MonoTODO]
 		public void DrawImage (Image image, RectangleF rect)
 		{
-			implementation_.DrawImage(image, rect);
+			implementation.DrawImage(image, rect);
 		}
 
 		[MonoTODO]
 		public void DrawImage (Image image, PointF point)
 		{
-			implementation_.DrawImage(image, point);
+			implementation.DrawImage(image, point);
 		}
 
 		[MonoTODO]
 		public void DrawImage (Image image, Point [] destPoints)
 		{
-			implementation_.DrawImage(image, destPoints);
+			implementation.DrawImage(image, destPoints);
 		}
 
 		[MonoTODO]
 		public void DrawImage (Image image, Point point)
 		{
-			implementation_.DrawImage(image, point);
+			implementation.DrawImage(image, point);
 		}
 
 		[MonoTODO]
 		public void DrawImage (Image image, Rectangle rect)
 		{
-			implementation_.DrawImage(image, rect);
+			implementation.DrawImage(image, rect);
 		}
 
 		[MonoTODO]
 		public void DrawImage (Image image, PointF [] destPoints)
 		{
-			implementation_.DrawImage(image, destPoints);
+			implementation.DrawImage(image, destPoints);
 		}
 
 		[MonoTODO]
 		public void DrawImage (Image image, int x, int y)
 		{
-			implementation_.DrawImage(image, x, y, image.Width, image.Height);
+			implementation.DrawImage(image, x, y, image.Width, image.Height);
 		}
 
 		[MonoTODO]
 		public void DrawImage (Image image, float x, float y)
 		{
-			implementation_.DrawImage(image, x, y);
+			implementation.DrawImage(image, x, y);
 		}
 
 		[MonoTODO]
 		public void DrawImage (Image image, Rectangle destRect, Rectangle srcRect, GraphicsUnit srcUnit)
 		{
-			implementation_.DrawImage(image, destRect, srcRect, srcUnit);
+			implementation.DrawImage(image, destRect, srcRect, srcUnit);
 		}
 
 		[MonoTODO]
 		public void DrawImage (Image image, RectangleF destRect, RectangleF srcRect, GraphicsUnit srcUnit)
 		{
-			implementation_.DrawImage(image, destRect, srcRect, srcUnit);
+			implementation.DrawImage(image, destRect, srcRect, srcUnit);
 		}
 
 		[MonoTODO]
 		public void DrawImage (Image image, Point [] destPoints, Rectangle srcRect, GraphicsUnit srcUnit)
 		{
-			implementation_.DrawImage(image, destPoints, srcRect, srcUnit);
+			implementation.DrawImage(image, destPoints, srcRect, srcUnit);
 		}
 
 		[MonoTODO]
 		public void DrawImage (Image image, PointF [] destPoints, RectangleF srcRect, GraphicsUnit srcUnit)
 		{
-			implementation_.DrawImage(image, destPoints, srcRect, srcUnit);
+			implementation.DrawImage(image, destPoints, srcRect, srcUnit);
 		}
 
 		[MonoTODO]
 		public void DrawImage (Image image, Point [] destPoints, Rectangle srcRect, GraphicsUnit srcUnit, ImageAttributes imageAttr)
 		{
-			implementation_.DrawImage(image, destPoints, srcRect, srcUnit, imageAttr);
+			implementation.DrawImage(image, destPoints, srcRect, srcUnit, imageAttr);
 		}
 
 		[MonoTODO]
 		public void DrawImage (Image image, float x, float y, float width, float height)
 		{
-			implementation_.DrawImage(image, x, y, width, height);
+			implementation.DrawImage(image, x, y, width, height);
 		}
 
 		[MonoTODO]
 		public void DrawImage (Image image, PointF [] destPoints, RectangleF srcRect, GraphicsUnit srcUnit, ImageAttributes imageAttr)
 		{
-			implementation_.DrawImage(image, destPoints, srcRect, srcUnit, imageAttr);
+			implementation.DrawImage(image, destPoints, srcRect, srcUnit, imageAttr);
 		}
 
 		[MonoTODO]
 		public void DrawImage (Image image, int x, int y, Rectangle srcRect, GraphicsUnit srcUnit)
 		{
-			implementation_.DrawImage(image, x, y, srcRect, srcUnit);
+			implementation.DrawImage(image, x, y, srcRect, srcUnit);
 		}
 
 		[MonoTODO]
 		public void DrawImage (Image image, int x, int y, int width, int height)
 		{
-			implementation_.DrawImage(image, x, y, width, height);
+			implementation.DrawImage(image, x, y, width, height);
 		}
 
 		[MonoTODO]
 		public void DrawImage (Image image, float x, float y, RectangleF srcRect, GraphicsUnit srcUnit)
 		{
-			implementation_.DrawImage(image, x, y, srcRect, srcUnit);
+			implementation.DrawImage(image, x, y, srcRect, srcUnit);
 		}
 
 		[MonoTODO]
 		public void DrawImage (Image image, PointF [] destPoints, RectangleF srcRect, GraphicsUnit srcUnit, ImageAttributes imageAttr, DrawImageAbort callback)
 		{
-			implementation_.DrawImage(image, destPoints, srcRect, srcUnit, imageAttr, callback);
+			implementation.DrawImage(image, destPoints, srcRect, srcUnit, imageAttr, callback);
 		}
 
 		[MonoTODO]
 		public void DrawImage (Image image, Point [] destPoints, Rectangle srcRect, GraphicsUnit srcUnit, ImageAttributes imageAttr, DrawImageAbort callback)
 		{
-			implementation_.DrawImage(image, destPoints, srcRect, srcUnit, imageAttr, callback);
+			implementation.DrawImage(image, destPoints, srcRect, srcUnit, imageAttr, callback);
 		}
 
 		[MonoTODO]
 		public void DrawImage (Image image, Point [] destPoints, Rectangle srcRect, GraphicsUnit srcUnit, ImageAttributes imageAttr, DrawImageAbort callback, int callbackData)
 		{
-			implementation_.DrawImage(image, destPoints, srcRect, srcUnit, imageAttr, callback, callbackData);
+			implementation.DrawImage(image, destPoints, srcRect, srcUnit, imageAttr, callback, callbackData);
 		}
 
 		[MonoTODO]
 		public void DrawImage (Image image, Rectangle destRect, float srcX, float srcY, float srcWidth, float srcHeight, GraphicsUnit srcUnit)
 		{
-			implementation_.DrawImage(image, destRect, srcX, srcY, srcWidth, srcHeight, srcUnit);
+			implementation.DrawImage(image, destRect, srcX, srcY, srcWidth, srcHeight, srcUnit);
 		}
 
 		[MonoTODO]
 		public void DrawImage (Image image, PointF [] destPoints, RectangleF srcRect, GraphicsUnit srcUnit, ImageAttributes imageAttr, DrawImageAbort callback, int callbackData)
 		{
-			implementation_.DrawImage(image, destPoints, srcRect, srcUnit, imageAttr, callback, callbackData);
+			implementation.DrawImage(image, destPoints, srcRect, srcUnit, imageAttr, callback, callbackData);
 		}
 
 		[MonoTODO]
@@ -415,25 +415,25 @@ namespace System.Drawing
 		[MonoTODO]
 		public void DrawImageUnscaled (Image image, Point point)
 		{
-			implementation_.DrawImageUnscaled(image, point);
+			implementation.DrawImageUnscaled(image, point);
 		}
 
 		[MonoTODO]
 		public void DrawImageUnscaled (Image image, Rectangle rect)
 		{
-			implementation_.DrawImageUnscaled(image, rect);
+			implementation.DrawImageUnscaled(image, rect);
 		}
 
 		[MonoTODO]
 		public void DrawImageUnscaled (Image image, int x, int y)
 		{
-			implementation_.DrawImageUnscaled(image, x, y);
+			implementation.DrawImageUnscaled(image, x, y);
 		}
 
 		[MonoTODO]
 		public void DrawImageUnscaled (Image image, int x, int y, int width, int height)
 		{
-			implementation_.DrawImageUnscaled(image, x, y, width, height);
+			implementation.DrawImageUnscaled(image, x, y, width, height);
 		}
 
 		[MonoTODO]
@@ -443,7 +443,7 @@ namespace System.Drawing
 			pts[0] = pt1;
 			pts[1] = pt2;
 			transform.TransformPoints(pts);
-			implementation_.DrawLine(pen, pts[0], pts[1]);
+			implementation.DrawLine(pen, pts[0], pts[1]);
 		}
 
 		[MonoTODO]
@@ -453,7 +453,7 @@ namespace System.Drawing
 			pts[0] = pt1;
 			pts[1] = pt2;
 			transform.TransformPoints(pts);
-			implementation_.DrawLine(pen, pts[0], pts[1]);
+			implementation.DrawLine(pen, pts[0], pts[1]);
 		}
 
 		[MonoTODO]
@@ -474,7 +474,7 @@ namespace System.Drawing
 			PointF[] pts = new PointF[points.Length];
 			Array.Copy( points, pts, points.Length);
 			transform.TransformPoints(pts);
-			implementation_.DrawLines( pen, pts);
+			implementation.DrawLines( pen, pts);
 		}
 
 		[MonoTODO]
@@ -483,7 +483,7 @@ namespace System.Drawing
 			Point[] pts = new Point[points.Length];
 			Array.Copy( points, pts, points.Length);
 			transform.TransformPoints(pts);
-			implementation_.DrawLines( pen, pts);
+			implementation.DrawLines( pen, pts);
 		}
 
 		[MonoTODO]
@@ -543,7 +543,7 @@ namespace System.Drawing
 		[MonoTODO]
 		public void DrawRectangle (Pen pen, int x, int y, int width, int height)
 		{
-			implementation_.DrawRectangle(pen, x, y, width, height);
+			implementation.DrawRectangle(pen, x, y, width, height);
 		}
 
 		[MonoTODO]
@@ -583,13 +583,13 @@ namespace System.Drawing
 		[MonoTODO]
 		public void DrawString (string s, Font font, Brush brush, RectangleF layoutRectangle, StringFormat format)
 		{
-			implementation_.DrawString(s, font, brush, layoutRectangle, format);
+			implementation.DrawString(s, font, brush, layoutRectangle, format);
 		}
 
 		[MonoTODO]
 		public void DrawString (string s, Font font, Brush brush, float x, float y)
 		{
-			implementation_.DrawString(s, font, brush, x, y);
+			implementation.DrawString(s, font, brush, x, y);
 		}
 
 		[MonoTODO]
@@ -601,7 +601,7 @@ namespace System.Drawing
 		[MonoTODO]
 		public void EndContainer (GraphicsContainer container)
 		{
-			implementation_.EndContainer(container);
+			implementation.EndContainer(container);
 		}
 
 		[MonoTODO]
@@ -955,13 +955,13 @@ namespace System.Drawing
 		[MonoTODO]
 		public void FillRectangle (Brush brush, int x, int y, int width, int height)
 		{
-			implementation_.FillRectangle(brush, x, y, width, height);
+			implementation.FillRectangle(brush, x, y, width, height);
 		}
 
 		[MonoTODO]
 		public void FillRectangle (Brush brush, float x, float y, float width, float height)
 		{
-		    implementation_.FillRectangle( brush, x, y, width, height);
+		    implementation.FillRectangle( brush, x, y, width, height);
 		}
 
 		[MonoTODO]
@@ -999,7 +999,7 @@ namespace System.Drawing
 		[MonoTODO]
 		public void Flush (FlushIntention intention)
 		{
-			implementation_.Flush(intention);
+			implementation.Flush(intention);
 		}
 
 		[MonoTODO]
@@ -1025,7 +1025,7 @@ namespace System.Drawing
 		public static Graphics FromHwnd (IntPtr hwnd)
 		{
 			Graphics result = new Graphics(IntPtr.Zero);
-			result.implementation_ = graphicsFactory_.FromHwnd(hwnd);
+			result.implementation = graphics_factory.FromHwnd(hwnd);
 			return result;
 		}
 
@@ -1039,7 +1039,7 @@ namespace System.Drawing
 		public static Graphics FromImage (Image image)
 		{
 			Graphics result = new Graphics(IntPtr.Zero);
-			result.implementation_ = graphicsFactory_.FromImage(image);
+			result.implementation = graphics_factory.FromImage(image);
 			return result;
 		}
 
@@ -1052,7 +1052,7 @@ namespace System.Drawing
 		[MonoTODO]
 		public IntPtr GetHdc ()
 		{
-			return implementation_.GetHdc();
+			return implementation.GetHdc();
 		}
 
 		[MonoTODO]
@@ -1136,7 +1136,7 @@ namespace System.Drawing
 		[MonoTODO]
 		public SizeF MeasureString (string text, Font font)
 		{
-			return implementation_.MeasureString(text, font);
+			return implementation.MeasureString(text, font);
 		}
 
 		[MonoTODO]
@@ -1231,7 +1231,7 @@ namespace System.Drawing
 		[MonoTODO]
 		public GraphicsState Save ()
 		{
-			//return implementation_.Save();
+			//return implementation.Save();
 			GraphicsState state = new GraphicsState();
 			state.matrix = transform.Clone();
 			return state;

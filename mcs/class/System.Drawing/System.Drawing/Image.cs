@@ -20,24 +20,25 @@ using System.Drawing.Imaging;
 using System.IO;
 
 internal class InternalImageInfo {
-	Size			imageSize;
-	PixelFormat		format;
-	int				stride;
-	ColorPalette	palette;
-	byte[]			image;
-	ImageFormat		rawFormat;
+	Size         image_size;
+	PixelFormat  format;
+	int          stride;
+	ColorPalette palette;
+	byte[]       image;
+	ImageFormat  rawFormat;
 
-	internal InternalImageInfo() {
+	internal InternalImageInfo()
+	{
 		palette = new ColorPalette();
-		imageSize = new Size(0,0);
+		image_size = new Size(0,0);
 		format = PixelFormat.Format32bppArgb;
 		image = new byte[0];
 		stride = 0;
 	}
 
 	internal Size Size {
-		get { return imageSize; }
-		set { imageSize = value; }
+		get { return image_size; }
+		set { image_size = value; }
 	}
 
 	internal PixelFormat Format {
@@ -68,11 +69,10 @@ internal class InternalImageInfo {
 
 [Serializable]
 //[ComVisible(true)]
-
 public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISerializable {
 
-	internal IImage	implementation_ = null;
-	protected Size imageSize_;
+	internal IImage	implementation = null;
+	protected Size image_size;
 	
 	// constructor
 	public Image () {}
@@ -235,7 +235,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 	}
 
 	internal virtual InternalImageInfo ConvertToInternalImageInfo() {
-		return implementation_.ConvertToInternalImageInfo();
+		return implementation.ConvertToInternalImageInfo();
 	}
 
 	public void Save(Stream stream, ImageFormat format) {
@@ -283,7 +283,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 	
 	public int Height {
 		get {
-			return imageSize_.Height;
+			return image_size.Height;
 		}
 	}
 	
@@ -310,7 +310,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 	
 	public PixelFormat PixelFormat {
 		get {
-			return implementation_.PixelFormat;
+			return implementation.PixelFormat;
 		}
 	}
 	
@@ -322,19 +322,19 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 	
 	public PropertyItem[] PropertyItems {
 		get {
-			return implementation_.PropertyItems;
+			return implementation.PropertyItems;
 		}
 	}
 
 	public ImageFormat RawFormat {
 		get {
-			return implementation_.RawFormat;
+			return implementation.RawFormat;
 		}
 	}
 
 	public Size Size {
 		get {
-			return imageSize_;
+			return image_size;
 		}
 	}
 	
@@ -346,13 +346,13 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 	
 	public int Width {
 		get {
-			return imageSize_.Width;
+			return image_size.Width;
 		}
 	}
 	[MonoTODO]
 	public void Dispose ()
 	{
-		implementation_.Dispose();
+		implementation.Dispose();
 	}
 
 	[MonoTODO]

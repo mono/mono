@@ -21,7 +21,7 @@ namespace System.Drawing {
 			}
 
 			public IBitmap Bitmap(int width, int height, System.Drawing.Graphics g) {
-				return new Bitmap(width, height, (Graphics)g.implementation_);
+				return new Bitmap(width, height, (Graphics)g.implementation);
 			}
 
 			public IBitmap Bitmap(int width, int height, System.Drawing.Imaging.PixelFormat format) {
@@ -29,7 +29,7 @@ namespace System.Drawing {
 			}
 
 			public IBitmap Bitmap(System.Drawing.Image original, Size newSize){
-				return new Bitmap((System.Drawing.XrImpl.Image)original.implementation_, newSize);
+				return new Bitmap((System.Drawing.XrImpl.Image)original.implementation, newSize);
 			}
 
 			public IBitmap Bitmap(Stream stream, bool useIcm){
@@ -58,12 +58,12 @@ namespace System.Drawing {
 				size = new Size(width, height);
 				switch( format) {
 				case PixelFormat.Format32bppArgb:
-					xrFormat_ = Xr.XrFormat.XrFormatARGB32;
-					nativeObject_ = GDK.gdk_pixbuf_new(0, true, 8, width, height);
+					xr_format = Xr.Format.ARGB32;
+					native_object = GDK.gdk_pixbuf_new(0, true, 8, width, height);
 					break;
 				case PixelFormat.Format24bppRgb:
-					xrFormat_ = Xr.XrFormat.XrFormatRGB24;
-					nativeObject_ = GDK.gdk_pixbuf_new(0, false, 8, width, height);
+					xr_format = Xr.Format.RGB24;
+					native_object = GDK.gdk_pixbuf_new(0, false, 8, width, height);
 					break;
 				default:
 					throw new NotImplementedException ();
@@ -104,7 +104,7 @@ namespace System.Drawing {
 				if (info != null) {
 					createdFrom_ = info;
 					size = info.Size;
-					imageFormat_ = info.RawFormat;
+					image_format = info.RawFormat;
 					format =  info.Format;
 
 				}
@@ -236,8 +236,8 @@ namespace System.Drawing {
 			/// Methods 
 			/// </summary>
 			protected override void Dispose(bool disposing) {
-				if(selectedIntoGraphics_ == null) {
-					GDK.gdk_pixbuf_finalize(nativeObject_);			
+				if (selected_into_graphics == null) {
+					GDK.gdk_pixbuf_finalize (native_object);			
 				}
 				base.Dispose(disposing);
 			}

@@ -14,10 +14,10 @@ namespace System.Drawing
 	public class SolidBrush	: Brush {
 		
 		Color color;
-		internal ISolidBrushFactory factory_ = Factories.GetSolidBrushFactory();
+		internal ISolidBrushFactory factory = Factories.GetSolidBrushFactory();
 
 		public SolidBrush( Color color ) {
-			implementation_ = factory_.SolidBrush(color);
+			implementation = factory.SolidBrush(color);
 			this.Color = color;
 		}
 
@@ -27,7 +27,7 @@ namespace System.Drawing
 			}
 			set {
 			    color = value;
-				((ISolidBrush)implementation_).Color = value;
+				((ISolidBrush)implementation).Color = value;
 			}
 		}
 		

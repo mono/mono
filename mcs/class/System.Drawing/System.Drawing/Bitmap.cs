@@ -30,70 +30,70 @@ namespace System.Drawing {
 	[Serializable]
 	public sealed class Bitmap : Image {
 
-		internal static IBitmapFactory	factory_ = Factories.GetBitmapFactory();
+		internal static IBitmapFactory	factory = Factories.GetBitmapFactory();
 
 		#region constructors
 		// constructors
 		public Bitmap (int width, int height) {
-			implementation_ = factory_.Bitmap(width, height);
-			imageSize_ = new Size(width, height);
+			implementation = factory.Bitmap(width, height);
+			image_size = new Size(width, height);
 		}
 
 		public Bitmap (int width, int height, Graphics g) {
-			implementation_ = factory_.Bitmap(width, height, g);
-			imageSize_ = new Size(width, height);
+			implementation = factory.Bitmap(width, height, g);
+			image_size = new Size(width, height);
 		}
 
 		public Bitmap (int width, int height, PixelFormat format) {
-			implementation_ = factory_.Bitmap(width, height, format);
-			imageSize_ = new Size(width, height);
+			implementation = factory.Bitmap(width, height, format);
+			image_size = new Size(width, height);
 		}
 
 		public Bitmap (Image original) {
-			implementation_ = factory_.Bitmap(original, original.Size);
-			imageSize_ = original.Size;
+			implementation = factory.Bitmap(original, original.Size);
+			image_size = original.Size;
 		}
 
 		public Bitmap (Stream stream) {
-			implementation_ = factory_.Bitmap(stream, false);
-			imageSize_ = implementation_.Size;
+			implementation = factory.Bitmap(stream, false);
+			image_size = implementation.Size;
 		}
 
 		public Bitmap (string filename) {
-			implementation_ = factory_.Bitmap(filename, false);
-			imageSize_ = implementation_.Size;
+			implementation = factory.Bitmap(filename, false);
+			image_size = implementation.Size;
 		}
 
 		public Bitmap (Image original, Size newSize) {
-			implementation_ = factory_.Bitmap(original, newSize);
-			imageSize_ = newSize;
+			implementation = factory.Bitmap(original, newSize);
+			image_size = newSize;
 		}
 
 		public Bitmap (Stream stream, bool useIcm) {
-			implementation_ = factory_.Bitmap(stream, useIcm);
-			imageSize_ = implementation_.Size;
+			implementation = factory.Bitmap(stream, useIcm);
+			image_size = implementation.Size;
 		}
 
 		public Bitmap (string filename, bool useIcm) {
-			implementation_ = factory_.Bitmap(filename, useIcm);
-			imageSize_ = implementation_.Size;
+			implementation = factory.Bitmap(filename, useIcm);
+			image_size = implementation.Size;
 		}
 
 		public Bitmap (Type type, string resource) {
-			implementation_ = factory_.Bitmap(type, resource);
-			imageSize_ = implementation_.Size;
+			implementation = factory.Bitmap(type, resource);
+			image_size = implementation.Size;
 		}
 
 		public Bitmap (Image original, int width, int heigth) {
-			implementation_ = factory_.Bitmap(original, new Size(width, heigth));
-			imageSize_ = implementation_.Size;
+			implementation = factory.Bitmap(original, new Size(width, heigth));
+			image_size = implementation.Size;
 		}
 
 
 		public Bitmap (int width, int height, int stride,
 			       PixelFormat format, IntPtr scan0) {
-			implementation_ = factory_.Bitmap(width, height, stride, format, scan0);
-			imageSize_ = implementation_.Size;
+			implementation = factory.Bitmap(width, height, stride, format, scan0);
+			image_size = implementation.Size;
 		}
 
         	private Bitmap (SerializationInfo info, StreamingContext context)
@@ -103,24 +103,24 @@ namespace System.Drawing {
 		#endregion
 		// methods
 		public Color GetPixel (int x, int y) {
-			return ((IBitmap)implementation_).GetPixel(x, y);
+			return ((IBitmap)implementation).GetPixel(x, y);
 		}
 
 		public void SetPixel (int x, int y, Color color) {
-			((IBitmap)implementation_).SetPixel(x, y, color);
+			((IBitmap)implementation).SetPixel(x, y, color);
 		}
 
 		public Bitmap Clone (Rectangle rect,PixelFormat format) {
 			Bitmap result = new Bitmap(1, 1);
-			result.implementation_ = ((IBitmap)implementation_).Clone(rect, format);
-			result.imageSize_ = result.implementation_.Size;
+			result.implementation = ((IBitmap)implementation).Clone(rect, format);
+			result.image_size = result.implementation.Size;
 			return result;
 		}
 		
 		public Bitmap Clone (RectangleF rect, PixelFormat format) {
 			Bitmap result = new Bitmap(1, 1);
-			result.implementation_ = ((IBitmap)implementation_).Clone(rect, format);
-			result.imageSize_ = result.implementation_.Size;
+			result.implementation = ((IBitmap)implementation).Clone(rect, format);
+			result.image_size = result.implementation.Size;
 			return result;
 		}
 
@@ -134,36 +134,36 @@ namespace System.Drawing {
 		}
 
 		public IntPtr GetHbitmap () {
-			return ((IBitmap)implementation_).GetHbitmap();
+			return ((IBitmap)implementation).GetHbitmap();
 		}
 
 		public IntPtr GetHbitmap (Color background) {
-			return ((IBitmap)implementation_).GetHbitmap(background);
+			return ((IBitmap)implementation).GetHbitmap(background);
 		}
 
 		public IntPtr GetHicon () {
-			return ((IBitmap)implementation_).GetHicon();
+			return ((IBitmap)implementation).GetHicon();
 		}
 
 		public BitmapData LockBits (Rectangle rect, ImageLockMode flags,
 		                            PixelFormat format) {
-			return ((IBitmap)implementation_).LockBits(rect, flags, format);
+			return ((IBitmap)implementation).LockBits(rect, flags, format);
 		}
 
 		public void MakeTransparent () {
-			((IBitmap)implementation_).MakeTransparent();
+			((IBitmap)implementation).MakeTransparent();
 		}
 
 		public void MakeTransparent (Color transparentColor) {
-			((IBitmap)implementation_).MakeTransparent(transparentColor);
+			((IBitmap)implementation).MakeTransparent(transparentColor);
 		}
 
 		public void SetResolution (float xDpi, float yDpi) {
-			((IBitmap)implementation_).SetResolution(xDpi,yDpi );
+			((IBitmap)implementation).SetResolution(xDpi,yDpi );
 		}
 
 		public void UnlockBits (BitmapData bitmapdata) {
-			((IBitmap)implementation_).UnlockBits(bitmapdata);
+			((IBitmap)implementation).UnlockBits(bitmapdata);
 		}
 
 		// properties

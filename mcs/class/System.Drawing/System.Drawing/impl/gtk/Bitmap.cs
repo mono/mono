@@ -45,7 +45,7 @@ namespace System.Drawing {
 			}
 
 			public IBitmap Bitmap(System.Drawing.Image original, Size newSize){
-				return new Bitmap((System.Drawing.GTKImpl.Image)original.implementation_, newSize);
+				return new Bitmap((System.Drawing.GTKImpl.Image)original.implementation, newSize);
 			}
 
 			public IBitmap Bitmap(Stream stream, bool useIcm){
