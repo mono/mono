@@ -1,3 +1,7 @@
+2004-09-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AuthenticodeDeformatter.cs: Fixed warning (l4) for unused variables.
+
 2004-09-07  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AuthenticodeBase.cs: Merge from Mono.Security.dll. This version is 

@@ -32,7 +32,6 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 
-using Mono.Security;
 using Mono.Security.X509;
 
 namespace Mono.Security.Authenticode {
@@ -239,8 +238,8 @@ namespace Mono.Security.Authenticode {
 		{
 			string contentType = null;
 			ASN1 messageDigest = null;
-			string spcStatementType = null;
-			string spcSpOpusInfo = null;
+//			string spcStatementType = null;
+//			string spcSpOpusInfo = null;
 
 			for (int i=0; i < sd.SignerInfo.AuthenticatedAttributes.Count; i++) {
 				ASN1 attr = (ASN1) sd.SignerInfo.AuthenticatedAttributes [i];
@@ -259,16 +258,16 @@ namespace Mono.Security.Authenticode {
 						// possible values
 						// - individualCodeSigning (1 3 6 1 4 1 311 2 1 21)
 						// - commercialCodeSigning (1 3 6 1 4 1 311 2 1 22)
-						spcStatementType = ASN1Convert.ToOid (attr[1][0][0]);
+//						spcStatementType = ASN1Convert.ToOid (attr[1][0][0]);
 						break;
 					case "1.3.6.1.4.1.311.2.1.12":
 						// spcSpOpusInfo (Microsoft code signing)
-						try {
+/*						try {
 							spcSpOpusInfo = System.Text.Encoding.UTF8.GetString (attr[1][0][0][0].Value);
 						}
 						catch (NullReferenceException) {
 							spcSpOpusInfo = null;
-						}
+						}*/
 						break;
 					default:
 						break;
