@@ -165,6 +165,22 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException ();
 		}
 
+		public static Color Light(Color baseColor) {
+			return Light( baseColor, 10.0f);
+		}
+		
+		public static Color Light(Color baseColor,float percOfLightLight) {
+			int H, I, S;
+
+			ControlPaint.Color2HBS(baseColor, out H, out I, out S);
+			int NewIntensity = Math.Min( 255, I + ((255*(int)percOfLightLight)/100));
+			return ControlPaint.HBS2Color(H, NewIntensity, S);
+		}
+
+		public static Color LightLight(Color baseColor) {
+			return Light( baseColor, 20.0f);
+		}
+
 		public static Color Dark(Color baseColor) {
 			return Dark(baseColor, 10.0f);
 		}
@@ -736,6 +752,11 @@ namespace System.Windows.Forms {
 			if ((state & ButtonState.Inactive)!=0) {
 				dfcs |= DrawFrameControlStates.DFCS_INACTIVE;
 			}
+
+			if ((state & ButtonState.ThreeState)!=0) {
+				dfcs |= DrawFrameControlStates.DFCS_CHECKED | DrawFrameControlStates.DFCS_PUSHED;
+			}
+
 			DrawFrameControl(graphics, rectangle, DrawFrameControlTypes.DFC_BUTTON, dfcs);
 		}
 		
@@ -984,29 +1005,90 @@ namespace System.Windows.Forms {
 			penInside.Alignment=PenAlignment.Inset;
 
 			graphics.DrawRectangle(penBorder, rectangle);
-			graphics.DrawRectangle(penInside, new Rectangle(rectangle.X+2, rectangle.Y+2, rectangle.Width-5, rectangle.Height-5));
+			graphics.DrawRectangle(penInside, rectangle.X+2, rectangle.Y+2, rectangle.Width-5, rectangle.Height-5);
 			penBorder.Dispose();
 			penInside.Dispose();
 		}
 		
-		[MonoTODO]
 		public static void DrawMenuGlyph(Graphics graphics, Rectangle rectangle, MenuGlyph glyph) {
-			//FIXME:
+			Rectangle	rect;
+			int			lineWidth;
+
+			// MS seems to draw the background white
+			graphics.FillRectangle(new SolidBrush(Color.White), rectangle);
+
+			switch(glyph) {
+				case MenuGlyph.Arrow: {
+					Point[]			arrow = new Point[3];
+					Point				P1;
+					Point				P2;
+					Point				P3;
+					int				centerX;
+					int				centerY;
+					int				shiftX;
+					int				shiftY;
+
+					rect=new Rectangle(rectangle.X+rectangle.Width/4, rectangle.Y+rectangle.Height/4, rectangle.Width/2, rectangle.Height/2);
+					centerX=rect.Left+rect.Width/2;
+					centerY=rect.Top+rect.Height/2;
+					shiftX=Math.Max(1, rect.Width/8);
+					shiftY=Math.Max(1, rect.Height/8);
+
+					rect.X-=shiftX;
+					centerX-=shiftX;
+
+					P1=new Point(centerX, rect.Top-1);
+					P2=new Point(centerX, rect.Bottom);
+					P3=new Point(rect.Right, centerY);
+
+					arrow[0]=P1;
+					arrow[1]=P2;
+					arrow[2]=P3;
+
+					graphics.FillPolygon(SystemBrushes.ControlText, arrow, FillMode.Winding);
+
+					return;
+				}
+
+				case MenuGlyph.Bullet: {
+					SolidBrush	sb;
+
+					lineWidth=Math.Max(2, rectangle.Width/3);
+					rect=new Rectangle(rectangle.X+lineWidth, rectangle.Y+lineWidth, rectangle.Width-lineWidth*2, rectangle.Height-lineWidth*2);
+
+					sb=new SolidBrush(SystemColors.MenuText);
+					graphics.FillEllipse(sb, rect);
+					sb.Dispose();
+					return;
+				}
+
+				case MenuGlyph.Checkmark: {
+					int			Scale;
+
+					lineWidth=Math.Max(2, rectangle.Width/6);
+					Scale=Math.Max(1, rectangle.Width/12);
+
+					rect=new Rectangle(rectangle.X+lineWidth, rectangle.Y+lineWidth, rectangle.Width-lineWidth*2, rectangle.Height-lineWidth*2);
+
+					for (int i=0; i<lineWidth; i++) {
+						graphics.DrawLine(SystemPens.MenuText, rect.Left+lineWidth/2, rect.Top+lineWidth+i, rect.Left+lineWidth/2+2*Scale, rect.Top+lineWidth+2*Scale+i);
+						graphics.DrawLine(SystemPens.MenuText, rect.Left+lineWidth/2+2*Scale, rect.Top+lineWidth+2*Scale+i, rect.Left+lineWidth/2+6*Scale, rect.Top+lineWidth-2*Scale+i);
+					}
+					return;
+				}
+			}
 		}
 		
-		[MonoTODO]
 		public static void DrawMenuGlyph(Graphics graphics, int x, int y, int width, int height, MenuGlyph glyph) {
-			//FIXME:
+			DrawMenuGlyph(graphics, new Rectangle(x, y, width, height), glyph);
 		}
 		
-		[MonoTODO]
 		public static void DrawMixedCheckBox(Graphics graphics, Rectangle rectangle, ButtonState state) {
-			//FIXME:
+			DrawCheckBox(graphics, rectangle, state);
 		}
 		
-		[MonoTODO]
 		public static void DrawMixedCheckBox(Graphics graphics, int x, int y, int width, int height, ButtonState state) {
-			//FIXME:
+			DrawMixedCheckBox(graphics, new Rectangle(x, y, width, height), state);
 		}
 
 		internal static void DrawFrameControl(Graphics graphics, Rectangle rectangle, DrawFrameControlTypes Type, DrawFrameControlStates State) {
@@ -1153,6 +1235,10 @@ namespace System.Windows.Forms {
 			//FIXME:
 		}
 
+		[MonoTODO]
+		public static void FillReversibleRectangle(Rectangle rectangle, Color backColor) {
+			//FIXME:
+		}
 		
 		
 		public static void DrawScrollButton(Graphics graphics, Rectangle rectangle, ScrollButton button, ButtonState state) {
@@ -1254,75 +1340,77 @@ namespace System.Windows.Forms {
 			DrawScrollButton(graphics, new Rectangle(x, y, width, height), button, state);
 		}
 		
-		[MonoTODO]
 		public static void DrawSelectionFrame(Graphics graphics, bool active, Rectangle outsideRect, Rectangle insideRect, Color backColor) {
-			//FIXME:
+			int					h;
+			int					b;
+			int					s;
+			Color					foreColor;
+			HatchBrush			brush;
+			Color					transparent;
+			GraphicsContainer	container;
+
+			Color2HBS(backColor, out h, out b, out s);
+
+			if (b>127) {
+				foreColor=SystemColors.ControlDark;
+			} else {
+				foreColor=SystemColors.ControlLight;
+			}
+			transparent=Color.FromArgb(0, backColor);
+
+			if (active==true) {
+				brush=new HatchBrush(HatchStyle.LightUpwardDiagonal, foreColor, transparent);
+			} else {
+				brush=new HatchBrush(HatchStyle.Percent25, foreColor, transparent);
+			}
+
+			container=graphics.BeginContainer();
+			graphics.ExcludeClip(insideRect);
+			graphics.FillRectangle(brush, outsideRect);
+			graphics.EndContainer(container);
+			brush.Dispose();
 		}
 		
-		[MonoTODO]
 		public static void DrawSizeGrip(Graphics graphics, Color backColor, Rectangle bounds) {
-			//FIXME:
+			int	h;
+			int	b;
+			int	s;
+			Pen	pen1;
+			Pen	pen2;
+
+			Color2HBS(backColor, out h, out b, out s);
+
+			pen1=new Pen(HBS2Color(h, Math.Min(255, (b*166)/100), s), 1);
+			pen2=new Pen(HBS2Color(h, (b*33)/100, s), 1);
+
+			for (int i=0; i<bounds.Width; i+=4) {
+				graphics.DrawLine(pen1, bounds.Left+i, bounds.Bottom, bounds.Right, bounds.Top+i);
+				graphics.DrawLine(pen2, bounds.Left+i+1, bounds.Bottom, bounds.Right, bounds.Top+i+1);
+				graphics.DrawLine(pen2, bounds.Left+i+2, bounds.Bottom, bounds.Right, bounds.Top+i+2);
+			}
+			pen1.Dispose();
+			pen2.Dispose();
 		}
 		
-		[MonoTODO]
 		public static void DrawSizeGrip(Graphics graphics, Color backColor, int x, int y, int width, int height) {
-			//FIXME:
+			DrawSizeGrip(graphics, backColor, new Rectangle(x, y, width, height));
 		}
 		
-		[MonoTODO]
 		public static void DrawStringDisabled(Graphics graphics, string s, Font font, Color color, RectangleF layoutRectangle, StringFormat format) {
-			Rectangle rect = new Rectangle((int)layoutRectangle.Left, (int)layoutRectangle.Top, (int)layoutRectangle.Width, (int)layoutRectangle.Height);
-			RECT rc = new RECT();
-			
-			rect.Offset(1,1);
-			rc.left = rect.Left;
-			rc.top = rect.Top;
-			rc.right = rect.Right;
-			rc.bottom = rect.Bottom;
-			
-			IntPtr hdc = graphics.GetHdc();
-			
-			int prevColor = Win32.SetTextColor(hdc, Win32.GetSysColor(GetSysColorIndex.COLOR_3DHILIGHT));
-			BackgroundMode prevBkMode = Win32.SetBkMode(hdc, BackgroundMode.TRANSPARENT);
-			IntPtr prevFont = Win32.SelectObject(hdc, font.ToHfont());
-			
-			Win32.DrawText(hdc, s, s.Length, ref rc, Win32.StringFormat2DrawTextFormat(format));
-			
-			rect.Offset(-1,-1);
-			rc.left = rect.Left;
-			rc.top = rect.Top;
-			rc.right = rect.Right;
-			rc.bottom = rect.Bottom;
-			Win32.SetTextColor(hdc, Win32.GetSysColor(GetSysColorIndex.COLOR_3DSHADOW));
-			Win32.DrawText(hdc, s, s.Length, ref rc,  Win32.StringFormat2DrawTextFormat(format));
-			
-			Win32.SelectObject(hdc, prevFont);
-			Win32.SetBkMode(hdc, prevBkMode);
-			Win32.SetTextColor(hdc, prevColor);
-			
-			graphics.ReleaseHdc(hdc);
-		}
-		
-		[MonoTODO]
-		public static void FillReversibleRectangle(Rectangle rectangle, Color backColor) {
-			//FIXME:
-		}
-		
-		public static Color Light(Color baseColor) {
-			return Light( baseColor, 10.0f);
-		}
-		
-		public static Color Light(Color baseColor,float percOfLightLight) {
-			int H, I, S;
+			SolidBrush	brush;
 
-			ControlPaint.Color2HBS(baseColor, out H, out I, out S);
-			int NewIntensity = Math.Min( 255, I + ((255*(int)percOfLightLight)/100));
-			return ControlPaint.HBS2Color(H, NewIntensity, S);
-		}
+			brush=new SolidBrush(ControlPaint.Light(color, 25));
 
-		public static Color LightLight(Color baseColor) {
-			return Light( baseColor, 20.0f);
+			layoutRectangle.Offset(1.0f, 1.0f);
+			graphics.DrawString(s, font, brush, layoutRectangle, format);
+
+			brush.Color=ControlPaint.Dark(color, 35);
+			layoutRectangle.Offset(-1.0f, -1.0f);
+			graphics.DrawString(s, font, brush, layoutRectangle, format);
+
+			brush.Dispose();
 		}
+		
 		#endregion
 	}
 }
