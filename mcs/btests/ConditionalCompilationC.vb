@@ -15,5 +15,24 @@ Module ConditionalCompilation
 		End Try                                                                                                                     
                                                      
       End Sub
+
+
+#Const A = True
+#Const B = False
+#If A Then
+    Sub Z()
+    End Sub
+#Else
+    Sub W()
+    End Sub
+#End If
+#If B Then
+    Sub X()
+    End Sub
+#Else
+    Sub Y()
+    End Sub
+#End If
+
 End Module
 

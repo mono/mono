@@ -5,7 +5,6 @@
 TEST_SOURCES = \
 Test1 \
 Test2 \
-misc1 \
 misc2 \
 Identifier \
 IntegerTypeCharTest\
@@ -47,7 +46,6 @@ BoolLiteralA \
 StringLiterals \
 StringLiteralsA\
 CharacterLiterals \
-CharacterLiteralsA \
 DateLiterals \
 LiteralNothing \
 ConditionalCompilation \

@@ -1,0 +1,4 @@
+2004-03-16 Rafael Teixeira (rafaelteixeira@hotmail.com)
+	* Test1.vb: corrected mispelling in keyword
+	* Test.Sources: no misc1.vb or CharacterLiteralsA.vb sources
+	* ConditionalCompilationC.vb: added some tests with #Const

@@ -1,11 +1,11 @@
 Imports System
 Module ConditionalCompilation
 	Sub Main()
-		'Syntactically worng statement within #If block that satisfies the condition
+		'Syntactically wrong statement within #If block that satisfies the condition
 		#If True
 			Console.WriteLine("Hello)
 		#End If
-		
+
 		'Lexically invalid statement within #If block that satisfies condition
 		#If True
 			@#$^**

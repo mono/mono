@@ -1,6 +1,6 @@
 Module Test
 
-Pblic Sub Main()
+Public Sub Main()
 	System.Console.WriteLine ("1st Test")
 End Sub
 
