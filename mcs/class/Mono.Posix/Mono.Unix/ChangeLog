@@ -1,3 +1,7 @@
+2005-01-29  Jonathan Pryor <jonpryor@vt.edu>
+
+	* Stdlib.cs: sys_* functions shouldn't be public.
+
 2005-01-13  Jonathan Pryor <jonpryor@vt.edu>
 
 	* make-map.cs: libMonoPosixHelper exports Mono_Posix prefixes, not Mono_Unix

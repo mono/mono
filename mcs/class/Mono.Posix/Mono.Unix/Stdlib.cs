@@ -501,7 +501,7 @@ namespace Mono.Unix {
 		}
 
 		[DllImport (MPH, SetLastError=true, EntryPoint="Mono_Posix_Stdlib_fwrite")]
-		public static extern ulong sys_fwrite (byte[] ptr, 
+		private static extern ulong sys_fwrite (byte[] ptr, 
 				ulong size, ulong nmemb, IntPtr stream);
 
 		public static ulong fwrite (byte[] ptr, ulong size, ulong nmemb, IntPtr stream)
@@ -637,15 +637,10 @@ namespace Mono.Unix {
 		[DllImport (LIBC, SetLastError=true, EntryPoint="strerror")]
 		private static extern IntPtr sys_strerror (int errnum);
 
-		public static IntPtr sys_strerror (Error errnum)
-		{
-			int e = UnixConvert.FromError (errnum);
-			return sys_strerror (e);
-		}
-
 		public static string strerror (Error errnum)
 		{
-			IntPtr r = sys_strerror (errnum);
+			int e = UnixConvert.FromError (errnum);
+			IntPtr r = sys_strerror (e);
 			return UnixMarshal.PtrToString (r);
 		}
 	}
