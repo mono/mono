@@ -1,3 +1,8 @@
+2005-02-18  Zoltan Varga  <vargaz@freemail.hu>
+
+	* pinvoke3.cs libtest.c: Add tests for passing and returning small 
+	structs from delegates. Currently fails on windows.
+
 2005-02-16  Zoltan Varga  <vargaz@freemail.hu>
 
 	* pinvoke2.cs: Add test for #72625.
