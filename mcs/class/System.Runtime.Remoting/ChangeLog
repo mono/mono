@@ -1,3 +1,7 @@
+2003-11-11  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* System.Runtime.Remoting_test.dll.sources: Added CrossDomainCalls.cs test file.
+
 2003-09-14  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* TcpClientChannel.cs: Fixed constructor.

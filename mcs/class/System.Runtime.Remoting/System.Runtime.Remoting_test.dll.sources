@@ -8,4 +8,5 @@ AsyncCalls.cs
 ReflectionCalls.cs
 DelegateCalls.cs
 TcpCalls.cs
+CrossDomainCalls.cs
 HttpCalls.cs
