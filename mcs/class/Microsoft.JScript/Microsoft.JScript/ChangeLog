@@ -1,3 +1,9 @@
+2004-05-27  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
+
+	* Statement.cs: added parent as a parameter on Continue constructor. Added parent_is_itr_stm
+	* jscript-lexer-parser.g: set parent hierarchy for continue
+	statement. Set to correct parent in iteration_stm.
+
 2004-05-24  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
 	* StrictEquality.cs, JSFieldInfo.cs: got it back to Microsoft.JScript namespace.
