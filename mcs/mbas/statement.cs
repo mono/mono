@@ -5436,7 +5436,7 @@ namespace Mono.CSharp {
 			EvtHandler = evt_handler;
 			EvtTarget = evt_target;
 			loc = l;
-			Console.WriteLine ("Adding handler '" + evt_handler + "' for Event '" + evt_id +"'");
+			//Console.WriteLine ("Adding handler '" + evt_handler + "' for Event '" + evt_id +"'");
 		}
 
 		public override bool Resolve (EmitContext ec)
