@@ -1,3 +1,11 @@
+2004-10-21  Daniel Morgan <danielmorgan@verizon.net>
+
+	* SqlSharpCli.cs: removed obsolete providers (Mono.Data.MySql, 
+	Mono.Data.PostgreSqlClient, Mono.Data.DB2Client), 
+	added provider for FirebirdSql.Data.Firebird, fixed 
+	loading of external providers so they work with
+	Mono having a GAC
+
 2004-06-09  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (HAS_TEST): Remove.

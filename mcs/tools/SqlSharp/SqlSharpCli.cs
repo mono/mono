@@ -1,30 +1,15 @@
 //
-// SqlSharpCli.cs - main driver for SQL# Command Line Interface
+// SqlSharpCli.cs - main driver for Mono SQL Query Command Line Interface
 //                  found in mcs/tools/SqlSharp
-//
-//                  SQL# is a SQL query tool allowing to enter queries and get
-//                  back results displayed to the console, to an html file, or
-//                  an xml file.  SQL non-query commands and aggregates can be
-//                  can be entered too.
-//
-//                  Can be used to test the various data providers in Mono
-//                  and data providers external to Mono.
-//
-//                  There is a GTK# version of SQL# 
-//                  found in mcs/tools/SqlSharp/gui/gtk-sharp
 //
 //                  This program is included in Mono and is licenced under the GPL.
 //                  http://www.fsf.org/licenses/gpl.html  
 //
 //                  For more information about Mono, 
-//                  visit http://www.go-mono.com/
+//                  visit http://www.mono-project.com/
 //
-// To build SqlSharpCli.cs on Linux:
-// $ mcs SqlSharpCli.cs -r System.Data.dll
-//
-// To build SqlSharpCli.exe on Windows:
-// $ mono c:/cygwin/home/someuser/mono/install/bin/mcs.exe \ 
-//        SqlSharpCli.cs -r System.Data.dll
+// To build SqlSharpCli.cs
+// $ mcs SqlSharpCli.cs /r:System.Data.dll
 //
 // To run with mono:
 // $ mono SqlSharpCli.exe
@@ -36,9 +21,9 @@
 // $ cat commands.txt | mono SqlSharpCli.exe > results.txt
 //
 // Author:
-//    Daniel Morgan <danmorg@sc.rr.com>
+//    Daniel Morgan <danielmorgan@verizon.net>
 //
-// (C)Copyright 2002 Daniel Morgan
+// (C)Copyright 2002-2004 Daniel Morgan
 //
 
 using System;
@@ -686,9 +671,6 @@ namespace Mono.Data.SqlSharp {
 			DbDataAdapter adapter = null;
 
 			switch(provider) {
-			case "ODBC":
-				//adapter = (DbDataAdapter) new OdbcDataAdapter ();
-				break;
 			case "OLEDB":
 				adapter = (DbDataAdapter) new OleDbDataAdapter ();
 				break;
@@ -734,8 +716,8 @@ namespace Mono.Data.SqlSharp {
 			Console.WriteLine(@"Type:  \Q to quit");
 			Console.WriteLine(@"       \ConnectionString to set the ConnectionString");
 			Console.WriteLine(@"       \Provider to set the Provider:");
-			Console.WriteLine(@"                 {OleDb,SqlClient,MySql,MySqlNet,Odbc,DB2,");
-			Console.WriteLine(@"                  Oracle,PostgreSql,Npgsql,Sqlite,Sybase,Tds)");
+			Console.WriteLine(@"                 {OleDb,SqlClient,MySql,Odbc,DB2,");
+			Console.WriteLine(@"                  Oracle,PostgreSql,Sqlite,Sybase,Tds)");
 			Console.WriteLine(@"       \Open to open the connection");
 			Console.WriteLine(@"       \Close to close the connection");
 			Console.WriteLine(@"       \e to execute SQL query (SELECT)");
@@ -750,8 +732,8 @@ namespace Mono.Data.SqlSharp {
 			Console.WriteLine(@"Type:  \Q to quit");
 			Console.WriteLine(@"       \ConnectionString to set the ConnectionString");
 			Console.WriteLine(@"       \Provider to set the Provider:");
-			Console.WriteLine(@"                 {OleDb,SqlClient,MySql,MySqlNet,Odbc,MSODBC,DB2,");
-			Console.WriteLine(@"                  Oracle,PostgreSql,Npgsql,Sqlite,Sybase,Tds}");
+			Console.WriteLine(@"                 {OleDb,SqlClient,MySql,Odbc,MSODBC,");
+			Console.WriteLine(@"                  Oracle,PostgreSql,Sqlite,Sybase,Tds}");
 			Console.WriteLine(@"       \Open to open the connection");
 			Console.WriteLine(@"       \Close to close the connection");
 			Console.WriteLine(@"       \e to execute SQL query (SELECT)");
@@ -885,25 +867,16 @@ namespace Mono.Data.SqlSharp {
 				case "ORACLE":
 					extp = new string[3] {
 								     "\\loadextprovider",
-								     "System.Data.OracleClient",
+								     @"System.Data.OracleClient, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
 								     "System.Data.OracleClient.OracleConnection"};
 					SetupExternalProvider(extp);
 					UseParameters = false;
 					UseSimpleReader = false;
 					break;
-				case "DB2":
-					extp = new string[3] {
-								     "\\loadextprovider",
-								     "Mono.Data.DB2Client",
-								     "Mono.Data.DB2Client.DB2ClientConnection"};
-					SetupExternalProvider(extp);
-					UseParameters = false;
-					UseSimpleReader = true;
-					break;
 				case "TDS":
 					extp = new string[3] {
 								     "\\loadextprovider",
-								     "Mono.Data.TdsClient",
+									 @"Mono.Data.TdsClient, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756",
 								     "Mono.Data.TdsClient.TdsConnection"};
 					SetupExternalProvider(extp);
 					UseParameters = false;
@@ -912,35 +885,27 @@ namespace Mono.Data.SqlSharp {
 				case "SYBASE":
 					extp = new string[3] {
 								     "\\loadextprovider",
-								     "Mono.Data.SybaseClient",
+								     @"Mono.Data.SybaseClient, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756",
 								     "Mono.Data.SybaseClient.SybaseConnection"};
 					SetupExternalProvider(extp);
 					UseParameters = false;
 					UseSimpleReader = false;
 					break;
 				case "MYSQL":
-					extp = new string[3] {
-								     "\\loadextprovider",
-								     "Mono.Data.MySql",
-								     "Mono.Data.MySql.MySqlConnection"};
-					SetupExternalProvider(extp);
-					UseParameters = false;
-					UseSimpleReader = false;
-					break;
 				case "MYSQLNET":
 					extp = new string[3] {
 								     "\\loadextprovider",
-								     "ByteFX.Data",
-								     "ByteFX.Data.MySQLClient.MySQLConnection"};
+								     @"ByteFX.Data, Version=0.7.6.1, Culture=neutral, PublicKeyToken=0738eb9f132ed756",
+								     "ByteFX.Data.MySqlClient.MySqlConnection"};
 					SetupExternalProvider(extp);
 					UseParameters = false;
 					UseSimpleReader = false;
 					break;
 				case "SQLITE":
 					extp = new string[3] {
-								     "\\loadextprovider",
-								     "Mono.Data.SqliteClient",
-								     "Mono.Data.SqliteClient.SqliteConnection"};
+								    "\\loadextprovider",
+									@"Mono.Data.SqliteClient, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756",
+								    "Mono.Data.SqliteClient.SqliteConnection"};
 					SetupExternalProvider(extp);
 					UseParameters = false;
 					UseSimpleReader = true;
@@ -950,20 +915,20 @@ namespace Mono.Data.SqlSharp {
 					UseSimpleReader = false;
 					provider = parm;
 					break;
-				case "ODBC":
+				case "ODBC": // for MS NET 1.1 and above
 					extp = new string[3] {
-											 "\\loadextprovider",
-											 "System.Data",
-											 "System.Data.Odbc.OdbcConnection"};
+									"\\loadextprovider",
+									@"System.Data, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+									"System.Data.Odbc.OdbcConnection"};
 					SetupExternalProvider(extp);
 					UseParameters = false;
 					UseSimpleReader = false;
 					break;
-				case "MSODBC":
+				case "MSODBC": // for MS NET 1.0
 					extp = new string[3] {
-												"\\loadextprovider",
-												@"Microsoft.Data.Odbc, Culture=neutral, PublicKeyToken=b77a5c561934e089, Version=1.0.3300.0",
-												"Microsoft.Data.Odbc.OdbcConnection"};
+									"\\loadextprovider",
+									@"Microsoft.Data.Odbc, Culture=neutral, PublicKeyToken=b77a5c561934e089, Version=1.0.3300.0",
+									"Microsoft.Data.Odbc.OdbcConnection"};
 					SetupExternalProvider(extp);
 					UseParameters = false;
 					UseSimpleReader = false;
@@ -973,19 +938,20 @@ namespace Mono.Data.SqlSharp {
 					UseSimpleReader = true;
 					provider = parm;
 					break;
-				case "POSTGRESQL":
+				case "FIREBIRD":
 					extp = new string[3] {
-								     "\\loadextprovider",
-								     "Mono.Data.PostgreSqlClient",
-								     "Mono.Data.PostgreSqlClient.PgSqlConnection"};
+									"\\loadextprovider",
+									@"FirebirdSql.Data.Firebird, Version=1.6.3.0, Culture=neutral, PublicKeyToken=e1b4f92304d7b12f",
+									"FirebirdSql.Data.Firebird.FbConnection"};
 					SetupExternalProvider(extp);
 					UseParameters = false;
 					UseSimpleReader = false;
 					break;
+				case "POSTGRESQL":
 				case "NPGSQL":
 					extp = new string[3] {
 								     "\\loadextprovider",
-								     "Npgsql",
+								     @"Npgsql, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=5d8b90d52f46fda7",
 								     "Npgsql.NpgsqlConnection"};
 					SetupExternalProvider(extp);
 					UseParameters = false;
