@@ -1,99 +1,46 @@
-//
-// System.Text.Encoder.cs
-//
-// Authors:
-//   Dietmar Maurer (dietmar@ximian.com)
-//
-// (C) 2001 Ximian, Inc.  http://www.ximian.com
-//
+/*
+ * Encoder.cs - Implementation of the "System.Text.Encoder" class.
+ *
+ * Copyright (c) 2001  Southern Storm Software, Pty Ltd
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the "Software"),
+ * to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+ * and/or sell copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included
+ * in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+ * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+ * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+ * OTHER DEALINGS IN THE SOFTWARE.
+ */
 
 namespace System.Text
 {
 
-	[Serializable]
-	public abstract class Encoder
-	{
+using System;
 
-		protected Encoder()
-		{
-			// fixme: dont know what do do here
-		}
+public abstract class Encoder
+{
 
-		public abstract int GetByteCount (char[] chars, int index, int count, bool flush);
+	// Constructor.
+	protected Encoder() {}
 
-		public abstract int GetBytes (char[] chars, int charIndex, int charCount,
-					      byte[] bytes, int byteIndex, bool flush);
-	}
+	// Get the number of bytes needed to encode a buffer.
+	public abstract int GetByteCount(char[] chars, int index,
+									 int count, bool flush);
 
-	internal class DefaultEncoder : Encoder {
+	// Get the bytes that result from decoding a buffer.
+	public abstract int GetBytes(char[] chars, int charIndex, int charCount,
+								 byte[] bytes, int byteIndex, bool flush);
 
-		public Encoding encoding;
-		
-		public DefaultEncoder (Encoding enc)
-		{
-			encoding = enc;
-		}
+}; // class Encoder
 
-		public override int GetByteCount (char[] chars, int index, int count, bool flush)
-		{
-			return encoding.GetByteCount (chars, index, count);
-		}
-
-		public override int GetBytes (char[] chars, int charIndex, int charCount,
-					      byte[] bytes, int byteIndex, bool flush)
-		{
-			return encoding.GetBytes (chars, charIndex, charCount, bytes, byteIndex);
-		}
-
-	}
-	
-	internal class IConvEncoder : Encoder {
-
-		private IntPtr converter;
-
-		public IConvEncoder (string name, bool big_endian)
-		{
-			converter = Encoding.IConvNewEncoder (name, big_endian);
-		}
-
-		public override int GetByteCount (char[] chars, int index, int count, bool flush)
-		{
-			if (chars == null)
-				throw new ArgumentNullException ();
-
-			if (index + count > chars.Length)
-				throw new ArgumentOutOfRangeException ();
-
-			int res = Encoding.IConvGetByteCount (converter, chars, index, count);
-			
-			if (flush)
-				Encoding.IConvReset (converter);
-
-			return res;
-		}
-
-		public override int GetBytes (char[] chars, int charIndex, int charCount,
-					      byte[] bytes, int byteIndex, bool flush)
-		{
-			if ((chars == null) || (bytes == null))
-				throw new ArgumentNullException ();
-
-			if ((charIndex < 0) || (charCount < 0) || (byteIndex < 0))
-				throw new ArgumentOutOfRangeException ();
-
-			if (charIndex + charCount > chars.Length)
-				throw new ArgumentOutOfRangeException ();
-
-			if (byteIndex + charCount > bytes.Length)
-				throw new ArgumentOutOfRangeException ();
-
-			int res = Encoding.IConvGetBytes (converter, chars, charIndex, charCount,
-							  bytes, byteIndex);
-			
-			if (flush)
-				Encoding.IConvReset (converter);
-
-			return res;
-		}
-	}
-}
+}; // namespace System.Text

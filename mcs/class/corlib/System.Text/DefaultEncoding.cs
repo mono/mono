@@ -1,5 +1,6 @@
 /*
- * ASCIIEncoding.cs - Implementation of the "System.Text.ASCIIEncoding" class.
+ * DefaultEncoding.cs - Implementation of the
+ *		"System.Text.DefaultEncoding" class.
  *
  * Copyright (c) 2001  Southern Storm Software, Pty Ltd
  *
@@ -26,17 +27,15 @@ namespace System.Text
 {
 
 using System;
+using System.Runtime.CompilerServices;
 
-public class ASCIIEncoding : Encoding
+internal sealed class DefaultEncoding : Encoding
 {
-	// Magic number used by Windows for "ASCII".
-	internal const int ASCII_CODE_PAGE = 20127;
-
 	// Constructor.
-	public ASCIIEncoding() : base(ASCII_CODE_PAGE) {}
+	public DefaultEncoding() : base(0) {}
 
 	// Get the number of bytes needed to encode a character buffer.
-	public override int GetByteCount(char[] chars, int index, int count)
+	unsafe public override int GetByteCount(char[] chars, int index, int count)
 			{
 				if(chars == null)
 				{
@@ -52,7 +51,7 @@ public class ASCIIEncoding : Encoding
 					throw new ArgumentOutOfRangeException
 						("count", _("ArgRange_Array"));
 				}
-				return count;
+				return InternalGetByteCount(chars, index, count);
 			}
 
 	// Convenience wrappers for "GetByteCount".
@@ -62,7 +61,7 @@ public class ASCIIEncoding : Encoding
 				{
 					throw new ArgumentNullException("s");
 				}
-				return s.Length;
+				return InternalGetByteCount(s, 0, s.Length);
 			}
 
 	// Get the bytes that result from encoding a character buffer.
@@ -92,26 +91,13 @@ public class ASCIIEncoding : Encoding
 					throw new ArgumentOutOfRangeException
 						("byteIndex", _("ArgRange_Array"));
 				}
-				if((bytes.Length - byteIndex) < charCount)
+				int result = InternalGetBytes(chars, charIndex, charCount,
+											  bytes, byteIndex);
+				if(result != -1)
 				{
-					throw new ArgumentException
-						(_("Arg_InsufficientSpace"));
+					return result;
 				}
-				int count = charCount;
-				char ch;
-				while(count-- > 0)
-				{
-					ch = chars[charIndex++];
-					if(ch < (char)0x80)
-					{
-						bytes[byteIndex++] = (byte)ch;
-					}
-					else
-					{
-						bytes[byteIndex++] = (byte)'?';
-					}
-				}
-				return charCount;
+				throw new ArgumentException(_("Arg_InsufficientSpace"));
 			}
 
 	// Convenience wrappers for "GetBytes".
@@ -141,25 +127,23 @@ public class ASCIIEncoding : Encoding
 					throw new ArgumentOutOfRangeException
 						("byteIndex", _("ArgRange_Array"));
 				}
-				if((bytes.Length - byteIndex) < charCount)
+				int result = InternalGetBytes(s, charIndex, charCount,
+											  bytes, byteIndex);
+				if(result != -1)
 				{
-					throw new ArgumentException(_("Arg_InsufficientSpace"));
+					return result;
 				}
-				int count = charCount;
-				char ch;
-				while(count-- > 0)
+				throw new ArgumentException(_("Arg_InsufficientSpace"));
+			}
+	public override byte[] GetBytes(String s)
+			{
+				if(s == null)
 				{
-					ch = s[charIndex++];
-					if(ch < (char)0x80)
-					{
-						bytes[byteIndex++] = (byte)ch;
-					}
-					else
-					{
-						bytes[byteIndex++] = (byte)'?';
-					}
+					throw new ArgumentNullException("s");
 				}
-				return charCount;
+				byte[] bytes = new byte [InternalGetByteCount(s, 0, s.Length)];
+				InternalGetBytes(s, 0, s.Length, bytes, 0);
+				return bytes;
 			}
 
 	// Get the number of characters needed to decode a byte buffer.
@@ -179,7 +163,7 @@ public class ASCIIEncoding : Encoding
 					throw new ArgumentOutOfRangeException
 						("count", _("ArgRange_Array"));
 				}
-				return count;
+				return InternalGetCharCount(bytes, index, count);
 			}
 
 	// Get the characters that result from decoding a byte buffer.
@@ -209,16 +193,13 @@ public class ASCIIEncoding : Encoding
 					throw new ArgumentOutOfRangeException
 						("charIndex", _("ArgRange_Array"));
 				}
-				if((chars.Length - charIndex) < byteCount)
+				int result = InternalGetChars(bytes, byteIndex, byteCount,
+											  chars, charIndex);
+				if(result != -1)
 				{
-					throw new ArgumentException(_("Arg_InsufficientSpace"));
+					return result;
 				}
-				int count = byteCount;
-				while(count-- > 0)
-				{
-					chars[charIndex++] = (char)(bytes[byteIndex++]);
-				}
-				return byteCount;
+				throw new ArgumentException(_("Arg_InsufficientSpace"));
 			}
 
 	// Get the maximum number of bytes needed to encode a
@@ -230,7 +211,7 @@ public class ASCIIEncoding : Encoding
 					throw new ArgumentOutOfRangeException
 						("charCount", _("ArgRange_NonNegative"));
 				}
-				return charCount;
+				return InternalGetMaxByteCount(charCount);
 			}
 
 	// Get the maximum number of characters needed to decode a
@@ -242,7 +223,7 @@ public class ASCIIEncoding : Encoding
 					throw new ArgumentOutOfRangeException
 						("byteCount", _("ArgRange_NonNegative"));
 				}
-				return byteCount;
+				return InternalGetMaxCharCount(byteCount);
 			}
 
 	// Decode a buffer of bytes into a string.
@@ -262,18 +243,7 @@ public class ASCIIEncoding : Encoding
 					throw new ArgumentOutOfRangeException
 						("count", _("ArgRange_Array"));
 				}
-				/*String s = String.NewString(count);
-				int posn = 0;
-				while(count-- > 0)
-				{
-					s.SetChar(posn++, (char)(bytes[index++]));
-				}
-				return s;*/
-				unsafe {
-					fixed (byte *ss = &bytes [0]) {
-						return new String ((sbyte*)ss, index, count);
-					}
-				}
+				return InternalGetString(bytes, index, count);
 			}
 	public override String GetString(byte[] bytes)
 			{
@@ -281,80 +251,57 @@ public class ASCIIEncoding : Encoding
 				{
 					throw new ArgumentNullException("bytes");
 				}
-				int count = bytes.Length;
-				/*int posn = 0;
-				String s = String.NewString(count);
-				while(count-- > 0)
-				{
-					s.SetChar(posn, (char)(bytes[posn]));
-					++posn;
-				}
-				return s;*/
-				unsafe {
-					fixed (byte *ss = &bytes [0]) {
-						return new String ((sbyte*)ss, 0, count);
-					}
-				}
+				return InternalGetString(bytes, 0, bytes.Length);
 			}
 
-#if !ECMA_COMPAT
+	// Internal methods that are used by the runtime engine to
+	// provide the default encoding.  These may assume that their
+	// arguments have been fully validated.
 
-	// Get the mail body name for this encoding.
-	public override String BodyName
-			{
-				get
-				{
-					return "us-ascii";
-				}
-			}
+	[MethodImpl(MethodImplOptions.InternalCall)]
+	extern private static int InternalGetByteCount
+				(char[] chars, int index, int count);
 
-	// Get the human-readable name for this encoding.
-	public override String EncodingName
-			{
-				get
-				{
-					return "US-ASCII";
-				}
-			}
+	[MethodImpl(MethodImplOptions.InternalCall)]
+	extern private static int InternalGetByteCount
+				(String s, int index, int count);
 
-	// Get the mail agent header name for this encoding.
-	public override String HeaderName
-			{
-				get
-				{
-					return "us-ascii";
-				}
-			}
+	// Returns -1 if insufficient space in "bytes".
+	[MethodImpl(MethodImplOptions.InternalCall)]
+	extern private static int InternalGetBytes
+				(char[] chars, int charIndex, int charCount,
+				 byte[] bytes, int byteIndex);
 
-	// Determine if this encoding can be displayed in a mail/news agent.
-	public override bool IsMailNewsDisplay
-			{
-				get
-				{
-					return true;
-				}
-			}
+	// Returns -1 if insufficient space in "bytes".
+	[MethodImpl(MethodImplOptions.InternalCall)]
+	extern private static int InternalGetBytes
+				(String s, int charIndex, int charCount,
+				 byte[] bytes, int byteIndex);
 
-	// Determine if this encoding can be saved from a mail/news agent.
-	public override bool IsMailNewsSave
-			{
-				get
-				{
-					return true;
-				}
-			}
+	[MethodImpl(MethodImplOptions.InternalCall)]
+	extern private static int InternalGetCharCount
+				(byte[] bytes, int index, int count);
 
-	// Get the IANA-preferred Web name for this encoding.
-	public override String WebName
-			{
-				get
-				{
-					return "us-ascii";
-				}
-			}
+	// Returns -1 if insufficient space in "chars".
+	[MethodImpl(MethodImplOptions.InternalCall)]
+	extern private static int InternalGetChars
+				(byte[] bytes, int byteIndex, int byteCount,
+				 char[] chars, int charIndex);
 
-#endif // !ECMA_COMPAT
+	[MethodImpl(MethodImplOptions.InternalCall)]
+	extern private static int InternalGetMaxByteCount(int charCount);
 
-}; // class ASCIIEncoding
+	[MethodImpl(MethodImplOptions.InternalCall)]
+	extern private static int InternalGetMaxCharCount(int byteCount);
+
+	[MethodImpl(MethodImplOptions.InternalCall)]
+	extern private static String InternalGetString
+				(byte[] bytes, int index, int count);
+
+	// Get the default code page number.  Zero if unknown.
+	[MethodImpl(MethodImplOptions.InternalCall)]
+	extern internal static int InternalCodePage();
+
+}; // class DefaultEncoding
 
 }; // namespace System.Text

@@ -1,89 +1,45 @@
-//
-// System.Text.Decoder.cs
-//
-// Authors:
-//   Dietmar Maurer (dietmar@ximian.com)
-//
-// (C) 2001 Ximian, Inc.  http://www.ximian.com
-//
+/*
+ * Decoder.cs - Implementation of the "System.Text.Decoder" class.
+ *
+ * Copyright (c) 2001  Southern Storm Software, Pty Ltd
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the "Software"),
+ * to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+ * and/or sell copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included
+ * in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+ * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+ * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+ * OTHER DEALINGS IN THE SOFTWARE.
+ */
 
 namespace System.Text
 {
 
-	[Serializable]
-	public abstract class Decoder
-	{
-		
-		protected Decoder ()
-		{
-			// fixme: dont know what do do here
-		}
+using System;
 
-		public abstract int GetCharCount (byte[] bytes, int index, int count);
+public abstract class Decoder
+{
 
-		public abstract int GetChars (byte[] bytes, int byteIndex, int byteCount,
-					      char[] chars, int charIndex);
-	}
+	// Constructor.
+	protected Decoder() {}
 
-	internal class DefaultDecoder : Decoder {
+	// Get the number of characters needed to decode a buffer.
+	public abstract int GetCharCount(byte[] bytes, int index, int count);
 
-		public Encoding encoding;
+	// Get the characters that result from decoding a buffer.
+	public abstract int GetChars(byte[] bytes, int byteIndex, int byteCount,
+								 char[] chars, int charIndex);
 
-		public DefaultDecoder (Encoding enc)
-		{
-			encoding = enc;
-		}
+}; // class Decoder
 
-		public override int GetCharCount (byte[] bytes, int index, int count)
-		{
-			return encoding.GetCharCount (bytes, index, count);
-		}
-
-		public override int GetChars (byte[] bytes, int byteIndex, int byteCount,
-					      char[] chars, int charIndex)
-		{
-			return encoding.GetChars (bytes, byteIndex, byteCount, chars, charIndex);
-		}
-
-	}
-	
-	internal class IConvDecoder : Decoder {
-		
-		private IntPtr converter;
-
-		public IConvDecoder (string name, bool big_endian)
-		{
-			converter = Encoding.IConvNewDecoder (name, big_endian);
-		}
-
-		public override int GetCharCount (byte[] bytes, int index, int count)
-		{
-			if (bytes == null)
-				throw new ArgumentNullException ();
-
-			if (index + count > bytes.Length)
-				throw new ArgumentOutOfRangeException ();
-
-			return Encoding.IConvGetCharCount (converter, bytes, index, count);
-		}
-
-		public override int GetChars (byte[] bytes, int byteIndex, int byteCount,
-					      char[] chars, int charIndex)
-		{
-			if ((bytes == null) || (chars == null))
-				throw new ArgumentNullException ();
-
-			if ((byteIndex < 0) || (byteCount < 0) || (charIndex < 0))
-				throw new ArgumentOutOfRangeException ();
-
-			if (byteIndex + byteCount > bytes.Length)
-				throw new ArgumentOutOfRangeException ();
-
-			if (charIndex > chars.Length)
-				throw new ArgumentOutOfRangeException ();
-
-			return Encoding.IConvGetChars (converter, bytes, byteIndex, byteCount,
-						       chars, charIndex);
-		}
-	}	
-}
+}; // namespace System.Text
