@@ -31,7 +31,7 @@ test_sourcefile = $(test_lib).sources
 test_response = $(depsdir)/$(PROFILE)_$(test_lib).response
 test_makefrag = $(depsdir)/$(PROFILE)_$(test_lib).makefrag
 test_stampfile = $(depsdir)/$(PROFILE)_$(test_lib).stamp
-test_nunitfw = $(topdir)/class/lib/$(PROFILE)/NUnit.Framework.dll 
+test_nunitfw = $(topdir)/class/lib/$(PROFILE)/nunit.framework.dll 
 test_flags = /r:$(the_lib) /r:$(test_nunitfw) $(TEST_MCS_FLAGS)
 endif
 
