@@ -15,6 +15,7 @@ namespace System.IO.IsolatedStorage {
 
 	/// <summary>
 	/// </summary>
+	[Flags]
 	public enum IsolatedStorageScope {
 
 		/// <summary>

@@ -15,6 +15,7 @@ namespace System.Globalization {
 
 	/// <summary>
 	/// </summary>
+	[Flags]
 	public enum CompareOptions {
 
 		/// <summary>

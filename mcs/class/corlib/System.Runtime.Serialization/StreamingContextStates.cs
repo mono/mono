@@ -15,6 +15,7 @@ namespace System.Runtime.Serialization {
 
 	/// <summary>
 	/// </summary>
+	[Flags]
 	public enum StreamingContextStates {
 
 		/// <summary>

@@ -15,6 +15,7 @@ namespace System.Security.Permissions {
 
 	/// <summary>
 	/// </summary>
+	[Flags]
 	public enum RegistryPermissionAccess {
 
 		/// <summary>
