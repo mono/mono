@@ -1,3 +1,8 @@
+2005-03-24  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* DbDataAdapter.cs: Update: If  SourceColumn is null, do not set
+	value for the parameter.
+
 2005-03-23  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* DbDataAdapter.cs: For Update, disable ReadOnly constraint

@@ -737,6 +737,8 @@ namespace System.Data.Common {
 						string dsColumnName = parameter.SourceColumn;
 						if (columnMappings.Contains(parameter.SourceColumn))
 							dsColumnName = columnMappings [parameter.SourceColumn].DataSetColumn;
+                                                if (dsColumnName == null || dsColumnName.Length <= 0)
+                                                        continue;
 						DataRowVersion rowVersion = DataRowVersion.Default;
 
 						// Parameter version is ignored for non-update commands
