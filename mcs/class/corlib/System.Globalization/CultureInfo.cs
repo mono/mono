@@ -17,23 +17,45 @@ namespace System.Globalization
 	public class CultureInfo : ICloneable, IFormatProvider
 	{
 		static CultureInfo invariant_culture_info;
-		bool is_read_only;
-		int  lcid, parent_lcid, specific_lcid;
-		int datetime_index, number_index;
-		bool use_user_override;
-		NumberFormatInfo number_format;
-		DateTimeFormatInfo datetime_format;
-		TextInfo textinfo;
-
-		private string name;
+		
+		bool m_isReadOnly;
+		int  cultureID;
+		[NonSerialized]
+		int parent_lcid;
+		[NonSerialized]
+		int specific_lcid;
+		[NonSerialized]
+		int datetime_index;
+		[NonSerialized]
+		int number_index;
+		bool m_useUserOverride;
+		NumberFormatInfo numInfo;
+		DateTimeFormatInfo dateTimeInfo;
+		TextInfo textInfo;
+		private string m_name;
+		
+		[NonSerialized]
 		private string displayname;
+		[NonSerialized]
 		private string englishname;
+		[NonSerialized]
 		private string nativename;
+		[NonSerialized]
 		private string iso3lang;
+		[NonSerialized]
 		private string iso2lang;
+		[NonSerialized]
 		private string icu_name;
+		[NonSerialized]
 		private string win3lang;
-		private CompareInfo compareinfo;
+		CompareInfo compareInfo;
+		Calendar calendar;
+		
+		int m_dataItem;	// MS.NET serializes this.
+		
+		// Deserialized instances will set this to false
+		[NonSerialized]
+		bool constructed;
 		
 		private static readonly string MSG_READONLY = "This instance is read only";
 		
@@ -43,7 +65,7 @@ namespace System.Globalization
 					lock (typeof (CultureInfo)) {
 						if (invariant_culture_info == null) {
 							invariant_culture_info = new CultureInfo (0x7f, false);
-							invariant_culture_info.is_read_only = true;
+							invariant_culture_info.m_isReadOnly = true;
 						}
 					}
 				}
@@ -98,19 +120,20 @@ namespace System.Globalization
 
 		public virtual int LCID {
 			get {
-				return lcid;
+				return cultureID;
 			}
 		}
 
 		public virtual string Name {
 			get {
-				return(name);
+				return(m_name);
 			}
 		}
 
 		public virtual string NativeName
 		{
 			get {
+				if (!constructed) Construct ();
 				return(nativename);
 			}
 		}
@@ -119,7 +142,7 @@ namespace System.Globalization
 		[MonoTODO]
 		public virtual Calendar Calendar
 		{
-			get { return null; }
+			get { return calendar; }
 		}
 
 		[MonoTODO]
@@ -133,7 +156,8 @@ namespace System.Globalization
 		public virtual CultureInfo Parent
 		{
 			get {
-				if (parent_lcid == lcid)
+				if (!constructed) Construct ();
+				if (parent_lcid == cultureID)
 					return null;
 				return new CultureInfo (parent_lcid);
 			}
@@ -142,21 +166,22 @@ namespace System.Globalization
 		public virtual TextInfo TextInfo
 		{
 			get {
-				if (textinfo == null) {
+				if (textInfo == null) {
 					lock (this) {
-						if(textinfo == null) {
-							textinfo = new TextInfo (lcid);
+						if(textInfo == null) {
+							textInfo = new TextInfo (cultureID);
 						}
 					}
 				}
 				
-				return(textinfo);
+				return(textInfo);
 			}
 		}
 
 		public virtual string ThreeLetterISOLanguageName
 		{
 			get {
+				if (!constructed) Construct ();
 				return(iso3lang);
 			}
 		}
@@ -164,6 +189,7 @@ namespace System.Globalization
 		public virtual string ThreeLetterWindowsLanguageName
 		{
 			get {
+				if (!constructed) Construct ();
 				return(win3lang);
 			}
 		}
@@ -171,6 +197,7 @@ namespace System.Globalization
 		public virtual string TwoLetterISOLanguageName
 		{
 			get {
+				if (!constructed) Construct ();
 				return(iso2lang);
 			}
 		}
@@ -178,12 +205,13 @@ namespace System.Globalization
 		public bool UseUserOverride
 		{
 			get {
-				return use_user_override;
+				return m_useUserOverride;
 			}
 		}
 
 		internal string IcuName {
 			get {
+				if (!constructed) Construct ();
 				return icu_name;
 			}
 		}
@@ -196,8 +224,9 @@ namespace System.Globalization
 
 		public virtual object Clone()
 		{
+			if (!constructed) Construct ();
 			CultureInfo ci=(CultureInfo)MemberwiseClone ();
-			ci.is_read_only=false;
+			ci.m_isReadOnly=false;
 			return(ci);
 		}
 
@@ -206,7 +235,7 @@ namespace System.Globalization
 			CultureInfo b = value as CultureInfo;
 			
 			if (b != null)
-				return b.lcid == lcid;
+				return b.cultureID == cultureID;
 			return false;
 		}
 
@@ -221,7 +250,7 @@ namespace System.Globalization
 
 		public override int GetHashCode()
 		{
-			return lcid;
+			return cultureID;
 		}
 
 		public static CultureInfo ReadOnly(CultureInfo ci)
@@ -230,32 +259,33 @@ namespace System.Globalization
 				throw new ArgumentNullException("ci");
 			}
 
-			if(ci.is_read_only) {
+			if(ci.m_isReadOnly) {
 				return(ci);
 			} else {
 				CultureInfo new_ci=(CultureInfo)ci.Clone ();
-				new_ci.is_read_only=true;
+				new_ci.m_isReadOnly=true;
 				return(new_ci);
 			}
 		}
 
 		public override string ToString()
 		{
-			return(name);
+			return(m_name);
 		}
 		
 		public virtual CompareInfo CompareInfo
 		{
 			get {
-				if(compareinfo==null) {
+				if (!constructed) Construct ();
+				if(compareInfo==null) {
 					lock (this) {
-						if(compareinfo==null) {
-							compareinfo=new CompareInfo (this);
+						if(compareInfo==null) {
+							compareInfo=new CompareInfo (this);
 						}
 					}
 				}
 				
-				return(compareinfo);
+				return(compareInfo);
 			}
 		}
 
@@ -270,31 +300,34 @@ namespace System.Globalization
 
 		public virtual bool IsNeutralCulture {
 			get {
-				return ((lcid & 0xff00) == 0 || specific_lcid == 0);
+				if (!constructed) Construct ();
+				return ((cultureID & 0xff00) == 0 || specific_lcid == 0);
 			}
 		}
 
 		public virtual NumberFormatInfo NumberFormat {
 			get {
-				if (number_format == null){
+				if (!constructed) Construct ();
+				if (numInfo == null){
 					lock (this){
-						if (number_format == null) {
-							number_format = new NumberFormatInfo ();
+						if (numInfo == null) {
+							numInfo = new NumberFormatInfo ();
 							construct_number_format ();
 						}
 					}
 				}
 
-				return number_format;
+				return numInfo;
 			}
 
 			set {
-				if (is_read_only) throw new InvalidOperationException(MSG_READONLY);
+				if (!constructed) Construct ();
+				if (m_isReadOnly) throw new InvalidOperationException(MSG_READONLY);
 
 				if (value == null)
 					throw new ArgumentNullException ("NumberFormat");
 				
-				number_format = value;
+				numInfo = value;
 			}
 		}
 
@@ -302,34 +335,37 @@ namespace System.Globalization
 		{
 			get 
 			{
-				if (datetime_format == null)
+				if (!constructed) Construct ();
+				if (dateTimeInfo == null)
 				{
 					lock (this)
 					{
-						if (datetime_format == null) {
-							datetime_format = new DateTimeFormatInfo();
+						if (dateTimeInfo == null) {
+							dateTimeInfo = new DateTimeFormatInfo();
 							construct_datetime_format ();
 						}
 					}
 				}
 
-				return datetime_format;
+				return dateTimeInfo;
 			}
 
 			set 
 			{
-				if (is_read_only) throw new InvalidOperationException(MSG_READONLY);
+				if (!constructed) Construct ();
+				if (m_isReadOnly) throw new InvalidOperationException(MSG_READONLY);
 
 				if (value == null)
 					throw new ArgumentNullException ("DateTimeFormat");
 				
-				datetime_format = value;
+				dateTimeInfo = value;
 			}
 		}
 
 		public virtual string DisplayName
 		{
 			get {
+				if (!constructed) Construct ();
 				return(displayname);
 			}
 		}
@@ -337,6 +373,7 @@ namespace System.Globalization
 		public virtual string EnglishName
 		{
 			get {
+				if (!constructed) Construct ();
 				return(englishname);
 			}
 		}
@@ -352,7 +389,7 @@ namespace System.Globalization
 		public bool IsReadOnly 
 		{
 			get {
-				return(is_read_only);
+				return(m_isReadOnly);
 			}
 		}
 		
@@ -370,6 +407,12 @@ namespace System.Globalization
 				format = DateTimeFormat;
 			
 			return format;
+		}
+		
+		void Construct ()
+		{
+			construct_internal_locale_from_lcid (cultureID);
+			constructed = true;
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
@@ -403,19 +446,19 @@ namespace System.Globalization
 
 		private void ConstructInvariant (bool use_user_override)
 		{
-			is_read_only=false;
-			lcid=0x7f;
-			this.use_user_override=use_user_override;
+			m_isReadOnly=false;
+			cultureID=0x7f;
+			this.m_useUserOverride=use_user_override;
 
 			/* NumberFormatInfo defaults to the invariant data */
-			number_format=new NumberFormatInfo ();
+			numInfo=new NumberFormatInfo ();
 			
 			/* DateTimeFormatInfo defaults to the invariant data */
-			datetime_format=new DateTimeFormatInfo ();
+			dateTimeInfo=new DateTimeFormatInfo ();
 
-			textinfo=new TextInfo ();
+			textInfo=new TextInfo ();
 
-			name="";
+			m_name="";
 			displayname="Invariant Language (Invariant Country)";
 			englishname="Invariant Language (Invariant Country)";
 			nativename="Invariant Language (Invariant Country)";
@@ -430,6 +473,8 @@ namespace System.Globalization
 			if (culture < 0)
 				throw new ArgumentOutOfRangeException ("culture");
 
+			constructed = true;
+			
 			if(culture==0x007f) {
 				/* Short circuit the invariant culture */
 				ConstructInvariant (use_user_override);
@@ -437,7 +482,7 @@ namespace System.Globalization
 			}
 
 			if (!construct_internal_locale_from_lcid (culture))
-				throw new ArgumentException ("Culture name " + name +
+				throw new ArgumentException ("Culture name " + m_name +
 						" is not supported.", "name");
 		}
 
@@ -448,6 +493,8 @@ namespace System.Globalization
 			if (name == null)
 				throw new ArgumentNullException ();
 
+			constructed = true;
+			
 			if(name=="") {
 				/* Short circuit the invariant culture */
 				ConstructInvariant (use_user_override);
@@ -464,6 +511,6 @@ namespace System.Globalization
 		// This is used when creating by specific name and creating by
 		// current locale so we can initialize the object without
 		// doing any member initialization
-		private CultureInfo () { } 
+		private CultureInfo () { constructed = true; } 
 	}
 }

@@ -1,3 +1,10 @@
+2004-04-08  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* CompareInfo.cs, CultureInfo.cs, NumberFormatInfo.cs, TextInfo.cs:
+	Made those serializable-compatible with MS.NET: modified fields names to 
+	match MS.NET ones, and in CultureInfo added a flag to control when a
+	deserialized instance need to be initialized.
+
 2004-04-07  Jackson Harper  <jackson@ximian.com>
 
 	* CultureInfo.cs: Use new ICUless implementation in the runtime.

@@ -26,7 +26,7 @@ namespace System.Globalization {
 
 	[Serializable]
 	public sealed class NumberFormatInfo : ICloneable, IFormatProvider {
-		private bool readOnly;
+		private bool isReadOnly;
 		// used for temporary storage. Used in InitPatterns ()
 		string decimalFormats;
 		string currencyFormats;
@@ -43,7 +43,7 @@ namespace System.Globalization {
 		private int currencyPositivePattern;
 		private string currencySymbol;
 
-		private string naNSymbol;
+		private string nanSymbol;
 		private string negativeInfinitySymbol;
 		private string negativeSign;
 
@@ -66,6 +66,12 @@ namespace System.Globalization {
 		private string perMilleSymbol;
 		private string positiveInfinitySymbol;
 		private string positiveSign;
+		
+		string ansiCurrencySymbol;	// TODO, MS.NET serializes this.
+		int m_dataItem;	// Unused, but MS.NET serializes this.
+		bool m_useUserOverride; // Unused, but MS.NET serializes this.
+		bool validForParseAsNumber; // Unused, but MS.NET serializes this.
+		bool validForParseAsCurrency; // Unused, but MS.NET serializes this.
 
 		internal NumberFormatInfo (int lcid)
 		{
@@ -78,7 +84,7 @@ namespace System.Globalization {
 
 				// The Invariant Culture Info ID.
 			case 0x007f:
-				readOnly = false;
+				isReadOnly = false;
 				
 				// Currency Related Format Info
 				currencyDecimalDigits =       2;
@@ -89,7 +95,7 @@ namespace System.Globalization {
 				currencyPositivePattern =     0;
 				currencySymbol =              "$";
 				
-				naNSymbol =                   "NaN";
+				nanSymbol =                   "NaN";
 				negativeInfinitySymbol =      "-Infinity";
 				negativeSign =                "-";
 				
@@ -302,7 +308,7 @@ namespace System.Globalization {
 					throw new ArgumentOutOfRangeException
 					("The value specified for the property is less than 0 or greater than 99");
 				
-				if (readOnly)
+				if (isReadOnly)
 					throw new InvalidOperationException
 					("The current instance is read-only and a set operation was attempted");
 
@@ -320,7 +326,7 @@ namespace System.Globalization {
 					throw new ArgumentNullException
 					("The value specified for the property is a null reference");
 				
-				if (readOnly)
+				if (isReadOnly)
 					throw new InvalidOperationException
 					("The current instance is read-only and a set operation was attempted");
 				
@@ -339,7 +345,7 @@ namespace System.Globalization {
 					throw new ArgumentNullException
 					("The value specified for the property is a null reference");
 			
-				if (readOnly)
+				if (isReadOnly)
 					throw new InvalidOperationException
 					("The current instance is read-only and a set operation was attempted");	
 				
@@ -357,7 +363,7 @@ namespace System.Globalization {
 					throw new ArgumentNullException
 					("The value specified for the property is a null reference");
 				
-				if (readOnly)
+				if (isReadOnly)
 					throw new InvalidOperationException
 					("The current instance is read-only and a set operation was attempted");
 				
@@ -388,7 +394,7 @@ namespace System.Globalization {
 					throw new ArgumentOutOfRangeException
 					("The value specified for the property is less than 0 or greater than 15");
 				
-				if (readOnly)
+				if (isReadOnly)
 					throw new InvalidOperationException
 					("The current instance is read-only and a set operation was attempted");
 
@@ -407,7 +413,7 @@ namespace System.Globalization {
 					throw new ArgumentOutOfRangeException
 					("The value specified for the property is less than 0 or greater than 3");
 				
-				if (readOnly)
+				if (isReadOnly)
 					throw new InvalidOperationException
 					("The current instance is read-only and a set operation was attempted");
 
@@ -425,7 +431,7 @@ namespace System.Globalization {
 					throw new ArgumentNullException
 					("The value specified for the property is a null reference");
 			
-				if (readOnly)
+				if (isReadOnly)
 					throw new InvalidOperationException
 					("The current instance is read-only and a set operation was attempted");	
 				
@@ -438,7 +444,7 @@ namespace System.Globalization {
 		public static NumberFormatInfo CurrentInfo {
 			get {
 				NumberFormatInfo nfi = (NumberFormatInfo) System.Threading.Thread.CurrentThread.CurrentCulture.NumberFormat;
-				nfi.readOnly = true;
+				nfi.isReadOnly = true;
 				return nfi;
 			}		       
 		}
@@ -448,14 +454,14 @@ namespace System.Globalization {
 				// This uses invariant info, which is same as in the constructor
 				NumberFormatInfo nfi = new NumberFormatInfo ();
 				nfi.NumberNegativePattern = 1;
-				nfi.readOnly = true;
+				nfi.isReadOnly = true;
 				return nfi;
 			}		       
 		}
 
 		public bool IsReadOnly {
 			get {
-				return readOnly;
+				return isReadOnly;
 			}
 		}
 
@@ -463,7 +469,7 @@ namespace System.Globalization {
 
 		public string NaNSymbol {
 			get {
-				return naNSymbol;
+				return nanSymbol;
 			}
 			
 			set {
@@ -471,11 +477,11 @@ namespace System.Globalization {
 					throw new ArgumentNullException
 					("The value specified for the property is a null reference");
 			
-				if (readOnly)
+				if (isReadOnly)
 					throw new InvalidOperationException
 					("The current instance is read-only and a set operation was attempted");	
 				
-				naNSymbol = value;
+				nanSymbol = value;
 			}
 		}
 		
@@ -489,7 +495,7 @@ namespace System.Globalization {
 					throw new ArgumentNullException
 					("The value specified for the property is a null reference");
 			
-				if (readOnly)
+				if (isReadOnly)
 					throw new InvalidOperationException
 					("The current instance is read-only and a set operation was attempted");	
 				
@@ -507,7 +513,7 @@ namespace System.Globalization {
 					throw new ArgumentNullException
 					("The value specified for the property is a null reference");
 			
-				if (readOnly)
+				if (isReadOnly)
 					throw new InvalidOperationException
 					("The current instance is read-only and a set operation was attempted");	
 				
@@ -527,7 +533,7 @@ namespace System.Globalization {
 					throw new ArgumentOutOfRangeException
 					("The value specified for the property is less than 0 or greater than 99");
 				
-				if (readOnly)
+				if (isReadOnly)
 					throw new InvalidOperationException
 					("The current instance is read-only and a set operation was attempted");
 
@@ -545,7 +551,7 @@ namespace System.Globalization {
 					throw new ArgumentNullException
 					("The value specified for the property is a null reference");
 				
-				if (readOnly)
+				if (isReadOnly)
 					throw new InvalidOperationException
 					("The current instance is read-only and a set operation was attempted");
 				
@@ -564,7 +570,7 @@ namespace System.Globalization {
 					throw new ArgumentNullException
 					("The value specified for the property is a null reference");
 			
-				if (readOnly)
+				if (isReadOnly)
 					throw new InvalidOperationException
 					("The current instance is read-only and a set operation was attempted");	
 				
@@ -582,7 +588,7 @@ namespace System.Globalization {
 					throw new ArgumentNullException
 					("The value specified for the property is a null reference");
 				
-				if (readOnly)
+				if (isReadOnly)
 					throw new InvalidOperationException
 					("The current instance is read-only and a set operation was attempted");
 				
@@ -613,7 +619,7 @@ namespace System.Globalization {
 					throw new ArgumentOutOfRangeException
 					("The value specified for the property is less than 0 or greater than 15");
 				
-				if (readOnly)
+				if (isReadOnly)
 					throw new InvalidOperationException
 					("The current instance is read-only and a set operation was attempted");
 
@@ -633,7 +639,7 @@ namespace System.Globalization {
 					throw new ArgumentOutOfRangeException
 					("The value specified for the property is less than 0 or greater than 99");
 				
-				if (readOnly)
+				if (isReadOnly)
 					throw new InvalidOperationException
 					("The current instance is read-only and a set operation was attempted");
 
@@ -651,7 +657,7 @@ namespace System.Globalization {
 					throw new ArgumentNullException
 					("The value specified for the property is a null reference");
 				
-				if (readOnly)
+				if (isReadOnly)
 					throw new InvalidOperationException
 					("The current instance is read-only and a set operation was attempted");
 				
@@ -670,7 +676,7 @@ namespace System.Globalization {
 					throw new ArgumentNullException
 					("The value specified for the property is a null reference");
 			
-				if (readOnly)
+				if (isReadOnly)
 					throw new InvalidOperationException
 					("The current instance is read-only and a set operation was attempted");	
 				
@@ -688,7 +694,7 @@ namespace System.Globalization {
 					throw new ArgumentNullException
 					("The value specified for the property is a null reference");
 				
-				if (readOnly)
+				if (isReadOnly)
 					throw new InvalidOperationException
 					("The current instance is read-only and a set operation was attempted");
 				
@@ -719,7 +725,7 @@ namespace System.Globalization {
 					throw new ArgumentOutOfRangeException
 					("The value specified for the property is less than 0 or greater than 15");
 				
-				if (readOnly)
+				if (isReadOnly)
 					throw new InvalidOperationException
 					("The current instance is read-only and a set operation was attempted");
 
@@ -738,7 +744,7 @@ namespace System.Globalization {
 					throw new ArgumentOutOfRangeException
 					("The value specified for the property is less than 0 or greater than 3");
 				
-				if (readOnly)
+				if (isReadOnly)
 					throw new InvalidOperationException
 					("The current instance is read-only and a set operation was attempted");
 
@@ -756,7 +762,7 @@ namespace System.Globalization {
 					throw new ArgumentNullException
 					("The value specified for the property is a null reference");
 			
-				if (readOnly)
+				if (isReadOnly)
 					throw new InvalidOperationException
 					("The current instance is read-only and a set operation was attempted");	
 				
@@ -774,7 +780,7 @@ namespace System.Globalization {
 					throw new ArgumentNullException
 					("The value specified for the property is a null reference");
 				
-				if (readOnly)
+				if (isReadOnly)
 					throw new InvalidOperationException
 					("The current instance is read-only and a set operation was attempted");
 				
@@ -792,7 +798,7 @@ namespace System.Globalization {
 					throw new ArgumentNullException
 					("The value specified for the property is a null reference");
 			
-				if (readOnly)
+				if (isReadOnly)
 					throw new InvalidOperationException
 					("The current instance is read-only and a set operation was attempted");	
 				
@@ -810,7 +816,7 @@ namespace System.Globalization {
 					throw new ArgumentNullException
 					("The value specified for the property is a null reference");
 			
-				if (readOnly)
+				if (isReadOnly)
 					throw new InvalidOperationException
 					("The current instance is read-only and a set operation was attempted");	
 				
@@ -827,14 +833,14 @@ namespace System.Globalization {
 		{
 			NumberFormatInfo clone = (NumberFormatInfo) MemberwiseClone();
 			// clone is not read only
-			clone.readOnly = false;
+			clone.isReadOnly = false;
 			return clone;
 		}
 
 		public static NumberFormatInfo ReadOnly (NumberFormatInfo nfi)
 		{
 			NumberFormatInfo copy = (NumberFormatInfo)nfi.Clone();
-			copy.readOnly = true;
+			copy.isReadOnly = true;
 			return copy;
 		}			
 

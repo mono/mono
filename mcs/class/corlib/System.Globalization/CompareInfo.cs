@@ -18,9 +18,12 @@ namespace System.Globalization
 	public class CompareInfo : IDeserializationCallback
 	{
 		// Keep in synch with MonoCompareInfo in the runtime. 
-		private int lcid;
+		private int culture;
+		[NonSerialized]
 		private string icu_name;
+		[NonSerialized]
 		private IntPtr ICU_collator;
+		private int win32LCID;	// Unused, but MS.NET serializes this
 		
 		/* Hide the .ctor() */
 		CompareInfo() {}
@@ -30,7 +33,7 @@ namespace System.Globalization
 		
 		internal CompareInfo (CultureInfo ci)
 		{
-			this.lcid = ci.LCID;
+			this.culture = ci.LCID;
 			this.icu_name = ci.IcuName;
 			this.construct_compareinfo (icu_name);
 		}
@@ -278,7 +281,7 @@ namespace System.Globalization
 				return(false);
 			}
 			
-			return(other.lcid==lcid);
+			return(other.culture==culture);
 		}
 
 		public static CompareInfo GetCompareInfo(int culture)
@@ -346,7 +349,7 @@ namespace System.Globalization
 		public virtual SortKey GetSortKey(string source,
 						  CompareOptions options)
 		{
-			SortKey key=new SortKey (lcid, source, options);
+			SortKey key=new SortKey (culture, source, options);
 
 			/* Need to do the icall here instead of in the
 			 * SortKey constructor, as we need access to
@@ -693,7 +696,7 @@ namespace System.Globalization
 
 		public override string ToString()
 		{
-			return("CompareInfo - "+lcid);
+			return("CompareInfo - "+culture);
 		}
 
 		void IDeserializationCallback.OnDeserialization(object sender)
@@ -715,7 +718,7 @@ namespace System.Globalization
 		public int LCID
 		{
 			get {
-				return(lcid);
+				return(culture);
 			}
 		}
 	}

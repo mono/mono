@@ -16,7 +16,9 @@ namespace System.Globalization {
 	[Serializable]
 	public class TextInfo: IDeserializationCallback
 	{
-		private int lcid;
+		private int m_win32LangID;
+		int m_nDataItem;
+		bool m_useUserOverride;
 		
 		internal TextInfo ()
 		{
@@ -24,7 +26,7 @@ namespace System.Globalization {
 
 		internal TextInfo (int lcid)
 		{
-			this.lcid=lcid;
+			this.m_win32LangID=lcid;
 		}
 
 		[MonoTODO]
@@ -75,7 +77,7 @@ namespace System.Globalization {
 
 		public override int GetHashCode()
 		{
-			return(lcid);
+			return(m_win32LangID);
 		}
 
 		[MonoTODO]
