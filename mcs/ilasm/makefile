@@ -1,7 +1,6 @@
-RUNTIME = mono
-MCS = mcs
-CSFLAGS = --target exe -L ../class/lib
-LIBFLAGS = /r:PEAPI.dll
+CSC = csc
+CSFLAGS = /nologo /optimize /target:exe /out:ilasm.exe
+LIBFLAGS = /r:../class/lib/PEAPI.dll
 INSTALL = /usr/bin/install
 prefix = /usr
 
@@ -30,7 +29,7 @@ SOURCES = 				\
 	scanner/StringHelper.cs
 
 ilasm.exe: list
-	$(MCS) $(CSFLAGS) $(LIBFLAGS) @list -o ilasm.exe
+	$(CSC) $(CSFLAGS) $(LIBFLAGS) @list
 
 install: all
 	mkdir -p $(prefix)/bin
@@ -40,7 +39,7 @@ parser/ILParser.cs: parser/ILParser.jay ../jay/skeleton.cs
 	../jay/jay -ct < ../jay/skeleton.cs parser/ILParser.jay > parser/ILParser.cs
 
 list: $(SOURCES)
-	echo $(SOURCES) > list
+	echo $(SOURCES) | sed -e 's@/@\\@g' > list
 
 all: ilasm.exe
 
