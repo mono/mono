@@ -1,3 +1,10 @@
+2003-06-12  Duncan Mak  <duncan@ximian.com>
+
+	* UserPreferenceChangedEventArgs.cs 
+	* UserPreferenceChangingEventArgs.cs
+	(Category): Fixed typo. Patch from A. Nahr.
+	(A-Soft@A-SoftTech.com>.
+
 2003-04-17  Nick Drochak  <ndrochak@gol.com>
 
 	* UserPreferenceCategory.cs: Fix typo.

@@ -20,7 +20,7 @@ public class UserPreferenceChangedEventArgs : System.EventArgs{
 		this.mycategory = category;
 	}
 	
-	public UserPreferenceCategory category {
+	public UserPreferenceCategory Category {
 
 		get{
 			return mycategory;
