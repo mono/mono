@@ -3,7 +3,7 @@
 //
 // Authors:
 //	Duncan Mak (duncan@ximian.com)
-//  Lluis Sanchez Gual (lluis@novell.com)
+// 	Lluis Sanchez Gual (lluis@novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,6 +30,7 @@
 using System;
 using System.Collections;
 using System.Collections.Specialized;
+using System.Reflection;
 using System.Xml;
 using System.IO;
 
@@ -67,7 +68,7 @@ namespace System.Configuration {
 				rootGroup.FileName = file;
 			}
 			
-			if (file != null) Load (file);
+			if (file != null && File.Exists (file)) Load (file);
 		}
 		
 		internal Configuration Parent {
@@ -134,6 +135,12 @@ namespace System.Configuration {
 
 		public static Configuration GetExeConfiguration (string path, ConfigurationUserLevel level)
 		{
+			if (path == null) {
+				path = Assembly.GetCallingAssembly ().Location;
+			} else if (!File.Exists (path)) {
+				throw new ArgumentException ("File not found or not readable.", "path");
+			}
+
 			return new Configuration (path + ".config", GetMachineConfiguration ());
 		}
 
@@ -350,7 +357,7 @@ namespace System.Configuration {
 			this.fileName = fileName;
 			if (!File.Exists (fileName))
 				throw new ConfigurationException ("File '" + fileName + "' not found");
-#if (XML_DEP)
+
 			XmlTextReader reader = null;
 
 			try {
@@ -365,11 +372,9 @@ namespace System.Configuration {
 				if (reader != null)
 					reader.Close();
 			}
-#endif
 			return true;
 		}
 
-#if (XML_DEP)
 
 		internal void ReadConfigFile (XmlTextReader reader, string fileName)
 		{
@@ -398,7 +403,6 @@ namespace System.Configuration {
 			rootGroup.ReadRootData (reader, this);
 		}
 		
-#endif
 
 		private void ThrowException (string text, XmlTextReader reader)
 		{

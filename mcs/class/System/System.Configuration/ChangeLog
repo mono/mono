@@ -1,3 +1,11 @@
+2005-02-16 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Configuration.cs: (.ctor) don't fail if the file to load does not
+	exist.
+	(GetExeConfiguration): use caller assembly location if the path is null
+	and check that the exe file exists.
+	Removed if XML_DEP, as there's one at the top of the file.
+
 2004-11-18  Geoff Norton <gnorton@customerdna.com>
 
 	* ProviderSettingsCollection.cs: Add XML_DEP because this inherits 
