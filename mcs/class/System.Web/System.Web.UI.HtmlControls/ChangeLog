@@ -1,3 +1,6 @@
+2003-12-28  Alon Gazit <along@mainsoft.com>
+	* HtmlSelect.cs: fix upper bound of for statement.
+
 2003-12-19  Jackson Harper <jackson@ximian.com>
 
 	* HtmlInputFile.cs: Do not set value when loading post data.

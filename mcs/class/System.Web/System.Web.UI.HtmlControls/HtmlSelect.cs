@@ -55,7 +55,7 @@ namespace System.Web.UI.HtmlControls{
 				base.LoadViewState (state.First);
 				Items.LoadViewState (state.Second);
 				object indices = state.Third;
-				if (indices != null) {
+				if (indices != null) {
 					Select ((int []) indices);
 				}
 			}
@@ -206,11 +206,11 @@ namespace System.Web.UI.HtmlControls{
 					int postedValueCount = postedValueColl.Length;
 					int[] arr= new int[postedValueCount];
 					//fill an array with the posted Values
-					for (int i = 0; i <= postedValueCount; i++)
+					for (int i = 0; i < postedValueCount; i++)
 						arr[i] = Items.IndexOf(Items.FindByValue(postedValueColl[i]));
 					//test if everything went fine
 					if( postedValueCount == SelectedIndices.Length)
-						for (int i = 0; i <= postedValueCount; i++)
+						for (int i = 0; i < postedValueCount; i++)
 							if(arr[i] == SelectedIndices[i])
 								changed = true;
 					else
