@@ -18,7 +18,7 @@ namespace System.Collections {
 		private int head = 0;   // points to the first used slot
 		private int count = 0;
 		private int capacity = 16;
-		private float growFactor = 2.0;
+		private float growFactor = 2.0F;
 		private int modCount = 0;
 
 		public Queue () {
@@ -94,7 +94,7 @@ namespace System.Collections {
 		public virtual object Clone () {
 			Queue newQueue;
 			
-			queue = new Queue (); // FIXME: improve this...
+			newQueue = new Queue (); // FIXME: improve this...
 			
 			newQueue.contents = (object[]) this.contents.clone ();
 			newQueue.head = this.head;
@@ -166,7 +166,7 @@ namespace System.Collections {
 			if (queue == null) {
 				throw new ArgumentNullException ();
 			}
-			return new SyncQueue (s);
+			return new SyncQueue (queue);
 		}
 
 		public virtual object[] ToArray () {
@@ -284,7 +284,7 @@ namespace System.Collections {
 			private int modCount;
 			private int current;
 
-			internal Enumerator (Queue q) {
+			internal QueueEnumerator (Queue q) {
 				queue = q;
 				modCount = q.modCount;
 				current = -1;  // one element before the head

@@ -9,6 +9,5 @@ IEnumerable.cs
 IEnumerator.cs
 IHashCodeProvider.cs
 IList.cs
-Queue.cs
 Stack.cs
 SortedList.cs
