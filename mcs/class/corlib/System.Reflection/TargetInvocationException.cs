@@ -11,7 +11,7 @@ namespace System.Reflection
 	public sealed class TargetInvocationException : ApplicationException
 	{
 		public TargetInvocationException (Exception inner)
-			: base (inner)
+			: base (inner.Message, inner)
 		{			
 		}
 
