@@ -1,3 +1,7 @@
+2004-06-24  David Waite  <mass@akuma.org>
+
+	* dump.c: change to C90-style comments from C99/C++-style
+	
 2004-06-23  Raja R Harinath  <rharinath@novell.com>
 
 	* main.c (dis_event_signature): Decode and print event_flags.

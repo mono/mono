@@ -1,4 +1,7 @@
+2004-06-24  David Waite  <mass@akuma.org>
 
+	* monoburg.c: change to C90-style comments from C99/C++-style
+	
 Wed Apr 14 12:40:54 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
 	* monoburg.c, monoburg.h, monoburg.y: changed the grammar so that

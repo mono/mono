@@ -1,3 +1,6 @@
+2004-06-24  David Waite  <mass@akuma.org>
+
+	* interp.c:  change to C90-style comments from C99/C++-style
 
 Mon Jun 21 14:06:03 CEST 2004 Paolo Molaro <lupus@ximian.com>
 

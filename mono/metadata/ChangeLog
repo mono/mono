@@ -1,3 +1,11 @@
+2004-06-24  David Waite  <mass@akuma.org>
+
+	* appdomain.c, class.c, domain.c, file-io.c, gc.c, icall.c,
+	image.c, loader.c, locales.c, marshal.c, metadata.c,
+	mono-debug.[ch], object.c, reflection.c, security.c, socket-io.c,
+	string-icalls.c, threads.c: change to C90-style comments from C99 /
+	C++ -style
+
 2004-06-24  Dick Porter  <dick@ximian.com>
 
 	* threads.c
