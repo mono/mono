@@ -53,7 +53,7 @@ namespace System.Xml
 				s = wc.OpenRead (absoluteUri.ToString ());
 				if (s.GetType ().IsSubclassOf (ofObjectToReturn))
 					return s;
-				wc.Dispose ();
+//				wc.Dispose ();
 			}
 			return null;
 		}

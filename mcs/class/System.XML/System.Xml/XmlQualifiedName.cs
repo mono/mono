@@ -30,7 +30,7 @@ namespace System.Xml
 		{
 			this.name = (name == null) ? "" : name;
 			this.ns = (ns == null) ? "" : ns;
-			this.hash = name.GetHashCode () ^ ns.GetHashCode ();
+			this.hash = this.name.GetHashCode () ^ this.ns.GetHashCode ();
 		}
 
 		// Fields

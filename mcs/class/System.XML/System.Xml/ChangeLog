@@ -1,3 +1,14 @@
+2003-09-08  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlNamespaceManager.cs : GetEnumerator() should return all of the
+	  available pairs (of prefix and namespace).
+	* XmlQualifiedName.cs : Quick fix for NullReferenceException in case
+	  of name (or ns) is null. (The description of the immediate previous 
+	  changes will be inserted below.)
+	* XmlTextWriter.cs : Fixed WriteDocType(). Removed CheckValidName().
+	* XmlUrlResolver.cs : Changed not to call WebClient.Dispose() which
+	  will release resources it had allocated.
+
 2003-09-01 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* XmlDocument.cs (Save): use the encoding of the document, if

@@ -395,7 +395,7 @@ namespace System.Xml
 				w.Write (quoteChar);
 				w.Write (pubid);
 				w.Write (quoteChar);
-				
+				w.Write (' ');
 				w.Write (quoteChar);
 				w.Write (sysid);
 				w.Write (quoteChar);
@@ -508,27 +508,19 @@ namespace System.Xml
 			WriteEndElementInternal (true);
 		}
 
-		private void CheckValidName (string name, bool firstOnlyLetter)
-		{
-			if (firstOnlyLetter && !XmlConstructs.IsNameStart (name [0]))
-				throw new ArgumentException ("There is an invalid character: '" + name [0] +
-							     "'", "name");
-			foreach (char c in name) {
-				if (!XmlConstructs.IsName (c))
-					throw new ArgumentException ("There is an invalid character: '" + c +
-								     "'", "name");
-			}
-		}
-
 		public override void WriteName (string name)
 		{
-			CheckValidName (name, true);
+			if (!XmlChar.IsName (name))
+				throw new ArgumentException ("There is an invalid character: '" + name [0] +
+							     "'", "name");
 			w.Write (name);
 		}
 
 		public override void WriteNmToken (string name)
 		{
-			CheckValidName (name, false);
+			if (!XmlChar.IsNmToken (name))
+				throw new ArgumentException ("There is an invalid character: '" + name [0] +
+							     "'", "name");
 			w.Write (name);
 		}
 
@@ -549,7 +541,6 @@ namespace System.Xml
 			w.Write ("?>");
 		}
 
-		[MonoTODO]
 		public override void WriteQualifiedName (string localName, string ns)
 		{
 			if (localName == null || localName == String.Empty)

@@ -37,6 +37,7 @@ namespace System.Xml
 
 			PushScope ();
 			currentScope.Namespaces = new Hashtable ();
+			currentScope.Namespaces.Add ("", "");
 			currentScope.Namespaces.Add ("xml", XmlnsXml);
 			currentScope.Namespaces.Add ("xmlns", XmlnsXmlns);
 		}
@@ -94,10 +95,29 @@ namespace System.Xml
 
 		public virtual IEnumerator GetEnumerator ()
 		{
+			/*
 			if (currentScope.Namespaces == null)
 				currentScope.Namespaces = new Hashtable ();
 
 			return currentScope.Namespaces.Keys.GetEnumerator ();
+			*/
+
+			// In fact it returns such table's enumerator that contains all the namespaces.
+			// while HasNamespace() ignores pushed namespaces.
+			Hashtable ht = new Hashtable ();
+			NamespaceScope scope = currentScope;
+
+			while (scope != null) {
+				if (scope.Namespaces != null) {
+					IEnumerator e = scope.Namespaces.Keys.GetEnumerator ();
+					while (e.MoveNext ()) {
+						if (!ht.ContainsKey (e.Current))
+							ht.Add (e.Current, scope.Namespaces [e.Current]);
+					}
+				}
+				scope = scope.Next;
+			}
+			return ht.Keys.GetEnumerator ();
 		}
 
 		public virtual bool HasNamespace (string prefix)
