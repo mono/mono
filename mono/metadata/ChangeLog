@@ -1,4 +1,9 @@
 2004-09-16  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* threads.c: Fixed SET_CURRENT_OBJECT macros, they were ignoring the
+	macro parameter.
+
+2004-09-16  Lluis Sanchez Gual  <lluis@novell.com>
  
 	* locales.c: nullify the ICU_collator member of CompareInfo when it is
 	  finalized. There where random SIGSEVs at program termination, when
