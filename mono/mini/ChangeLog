@@ -1,3 +1,7 @@
+2004-09-07 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* liveness.c: reset spill costs on each scan
+
 2004-09-07  Bernie Solomon  <bernard@ugsolutions.com>
 
 	* exceptions-sparc.c (mono_arch_find_jit_info): remove
