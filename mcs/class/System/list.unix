@@ -328,6 +328,10 @@ System.Text.RegularExpressions/parser.cs
 System.Text.RegularExpressions/RegexRunner.cs
 System.Text.RegularExpressions/RegexRunnerFactory.cs
 System.Text.RegularExpressions/cache.cs
+System.Timers/ElapsedEventArgs.cs
+System.Timers/ElapsedEventHandler.cs
+System.Timers/Timer.cs
+System.Timers/TimersDescriptionAttribute.cs
 System.Security.Cryptography.X509Certificates/X509CertificateCollection.cs
 Microsoft.CSharp/CSharpCodeGenerator.cs
 Microsoft.CSharp/CSharpCodeProvider.cs
