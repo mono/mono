@@ -1,3 +1,15 @@
+2003-05-05  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* ChangeLog : Added missing ChangeLog of 2003-04-25.
+	* XmlCustomFormatter.cs : Fixed FromXmlNmTokens() to contain 
+	  separators. Added experimental method ToEnum().
+	* XmlSerializationReader.cs : unconfirmed implementation of
+	  ReadSerializable() and ToEnum().
+	* XmlSerializationWriter.cs : fixed WriteAttribute() so that if value 
+	  is null then no output will be written.
+	  Fixed WriteStartElement(), WriteElement*() and WriteEmptyTag() 
+	  to use custom formatted name.
+
 2003-05-02  Miguel de Icaza  <miguel@ximian.com>
 
 	* XmlReflectionImporter.cs: one of theImportTypeMapping mappings
@@ -7,6 +19,12 @@
 
 	* XmlIncludeAttribute.cs: Make XmlIncludeAttribute have the
 	`AllowMultiple' flags.  
+
+2003-04-25  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* TypeTranslator.cs : patch by Erik LeBel. Array consideration.
+	* XmlReflectionImporter.cs : patch by Erik LeBel. 
+	  Now uses XmlRootAttribute to determine element name.
 
 2003-03-17  Miguel de Icaza  <miguel@ximian.com>
 

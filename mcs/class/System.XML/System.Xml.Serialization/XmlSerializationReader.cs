@@ -393,10 +393,10 @@ namespace System.Xml.Serialization {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("Implement")]
 		protected IXmlSerializable ReadSerializable (IXmlSerializable serializable)
 		{
-			throw new NotImplementedException ();
+			serializable.ReadXml (reader);
+			return serializable;
 		}
 
 		protected string ReadString (string value)
@@ -469,10 +469,9 @@ namespace System.Xml.Serialization {
 			return XmlCustomFormatter.ToDateTime (value);
 		}
 
-		[MonoTODO ("Implement")]
 		protected static long ToEnum (string value, Hashtable h, string typeName)
 		{
-			throw new NotImplementedException ();
+			return XmlCustomFormatter.ToEnum (value, h, typeName, true);
 		}
 
 		protected static DateTime ToTime (string value)

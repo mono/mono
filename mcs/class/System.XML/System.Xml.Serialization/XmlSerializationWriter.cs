@@ -201,6 +201,9 @@ namespace System.Xml.Serialization {
 
 		protected void WriteAttribute (string localName, string ns, byte[] value)
 		{
+			if (value == null)
+				return;
+
 			Writer.WriteStartAttribute (localName, ns);
 			WriteValue (value);
 			Writer.WriteEndAttribute ();
@@ -213,6 +216,9 @@ namespace System.Xml.Serialization {
 
 		protected void WriteAttribute (string prefix, string localName, string ns, string value)
 		{
+			if (value == null)
+				return;
+
 			Writer.WriteStartAttribute (prefix, localName, ns);
 			WriteValue (value);
 			Writer.WriteEndAttribute ();
@@ -227,6 +233,7 @@ namespace System.Xml.Serialization {
 		[MonoTODO ("Implement")]
 		protected void WriteElementLiteral (XmlNode node, string name, string ns, bool isNullable, bool any)
 		{
+			name = XmlCustomFormatter.FromXmlName (name);
 			WriteStartElement (name, ns);
 			node.WriteTo (Writer);
 			WriteEndElement ();
@@ -249,6 +256,7 @@ namespace System.Xml.Serialization {
 
 		protected void WriteElementQualifiedName (string localName, string ns, XmlQualifiedName value, XmlQualifiedName xsiType)
 		{
+			localName = XmlCustomFormatter.FromXmlNCName (localName);
 			WriteStartElement (localName, ns);
 			Writer.WriteString (FromXmlQualifiedName (value));
 			WriteEndElement ();
@@ -273,6 +281,7 @@ namespace System.Xml.Serialization {
 		protected void WriteElementString (string localName, string ns, string value, XmlQualifiedName xsiType)
 		{
 			if (xsiType != null) {
+				localName = XmlCustomFormatter.FromXmlNCName (localName);
 				WriteStartElement (localName, ns);
 				WriteXsiType (xsiType.Name, xsiType.Namespace);
 				Writer.WriteString (value);
@@ -321,6 +330,7 @@ namespace System.Xml.Serialization {
 		[MonoTODO ("Implement")]
 		protected void WriteElementStringRaw (string localName, string ns, string value, XmlQualifiedName xsiType)
 		{
+			localName = XmlCustomFormatter.FromXmlNCName (localName);
 			WriteStartElement (localName, ns);
 
 			if (xsiType != null)
@@ -338,6 +348,7 @@ namespace System.Xml.Serialization {
 		[MonoTODO ("Verify")]
 		protected void WriteEmptyTag (string name, string ns)
 		{
+			name = XmlCustomFormatter.FromXmlName (name);
 			Writer.WriteStartElement (name, ns);
 			Writer.WriteEndElement ();
 		}
@@ -514,9 +525,10 @@ namespace System.Xml.Serialization {
 		[MonoTODO]
 		protected void WriteStartElement (string name, string ns, object o, bool writePrefixed)
 		{
-			if (writePrefixed)
+			if (writePrefixed) {
+				name = XmlCustomFormatter.FromXmlName (name);
 				Writer.WriteStartElement (String.Empty, name, ns);
-			else
+			} else
 				Writer.WriteStartElement (name, ns);
 		}
 
@@ -524,6 +536,7 @@ namespace System.Xml.Serialization {
 		{
 			string value;
 
+			name = XmlCustomFormatter.FromXmlName (name);
 			WriteStartElement (name, ns);
 
 			if (o is XmlQualifiedName)

@@ -8,6 +8,7 @@
 //
 
 using System;
+using System.Collections;
 using System.Text;
 using System.Xml;
 
@@ -80,11 +81,10 @@ namespace System.Xml.Serialization {
 
 		internal static string FromXmlNmTokens (string nmTokens)
 		{
-			StringBuilder output = new StringBuilder ();
 			string [] tokens = nmTokens.Split (' ');
-			foreach (string token in tokens)
-				output.Append (FromXmlNmToken (token));
-			return output.ToString ();
+			for (int i=0; i<tokens.Length; i++)
+				tokens [i] = FromXmlNmToken (tokens [i]);
+			return String.Join (" ", tokens);
 		}
 
 		internal static byte[] ToByteArrayBase64 (string value)
@@ -110,6 +110,23 @@ namespace System.Xml.Serialization {
 		internal static DateTime ToTime (string value)
 		{
 			return ToDateTime (value);
+		}
+
+		internal static long ToEnum (string value, Hashtable values, string typeName, bool validate)
+		{
+			// Assuming that h contains map from value to Enumerated Name
+/*
+			You can try : 
+				return ToEnum ("Element", h, "XmlNodeType");
+			where:
+				(1) no keys and values for h.
+				(2) string keys and Enum, Type, long, string value.
+*/
+			string memberName = (string) values [value];
+			if (memberName == null)
+				throw new InvalidOperationException (String.Format ("{0} is not a valid member of type {1}", value, typeName));
+
+			return (long) Enum.Parse (Type.GetType (typeName), memberName);
 		}
 
 		internal static string ToXmlName (string value)
