@@ -2175,15 +2175,21 @@ namespace Mono.MonoBASIC {
 
 
 			if (oper == Operator.Equality || oper == Operator.Inequality){
-				if (l == TypeManager.bool_type || r == TypeManager.bool_type){
-					if (r != TypeManager.bool_type || l != TypeManager.bool_type){
-						Error_OperatorCannotBeApplied ();
-						return null;
-					}
-					
-					type = TypeManager.bool_type;
-					return this;
-				}
+                                if (l == TypeManager.bool_type && r != TypeManager.bool_type){
+                                    left = ConvertImplicit(ec, left, r, loc);
+                                    if (left == null) {
+                                            Error_OperatorCannotBeApplied (loc, OperName(oper), l, r);
+                                            return null;
+                                    }
+                                    return ResolveOperator(ec);
+                                } else if (r == TypeManager.bool_type && l != TypeManager.bool_type) {
+                                        right = ConvertImplicit(ec, right, l, loc);
+                                        if (right == null) {
+                                            Error_OperatorCannotBeApplied (loc, OperName(oper), l, r);
+                                            return null;
+                                    }
+                                    return ResolveOperator(ec);
+                            }
 
 				//
 				// operator != (object a, object b)

@@ -1,3 +1,7 @@
+2005-02-17 Manjula GHM <mmanjula@novell.com>
+	* expression.cs :
+		 Support relational operator for other types
+
 2005-02-15 Manjula GHM <mmanjula@novell.com>
 	* ecore.cs :
 		 Fixed conversion from char[] to String
