@@ -1,3 +1,14 @@
+2002-02-24  Duncan Mak  <duncan@ximian.com>
+
+	* XmlTokenizedType.cs: Added to CVS.
+
+	* XmlUrlResolver.cs: Added to CVS with one TODO task.
+
+2002-02-23  Duncan Mak  <duncan@ximian.com>
+
+	* XmlQualifiedName.cs: Fixed ToString () and added the operators
+	(== and !=).
+
 2002-02-23  Jason Diamond <jason@injektilo.org>
 
 	* XmlTextReader.cs: Added support for qualified attributes.

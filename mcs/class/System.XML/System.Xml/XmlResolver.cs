@@ -15,7 +15,10 @@ namespace System.Xml
 {
 	public abstract class XmlResolver
 	{
-		public abstract ICredentials Credentials { set; }
+		public abstract ICredentials Credentials
+		{
+			set;
+		}
 
 		public abstract object GetEntity(
 			Uri absoluteUri,

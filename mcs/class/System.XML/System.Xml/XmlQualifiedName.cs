@@ -71,15 +71,35 @@ namespace System.Xml
 
 		public override string ToString ()
 		{
-			return ns + ":" + name;
+			if (ns == null)
+				return name;
+			else
+			 	return ns + ":" + name;
 		}
 
 		public static string ToString (string name, string ns)
 		{
 			if (ns == null)
 				return name;
+			else				
+				return ns + ":" + name;
+		}
+
+		// Operators
+		public static bool operator == (XmlQualifiedName a, XmlQualifiedName b)
+		{
+			if ((a.Name == b.Name) && (a.Namespace == b.Namespace))
+				return true;
 			else
-			 	return ns + ":" + name;
+				return false;
+		}
+
+		public static bool operator != (XmlQualifiedName a, XmlQualifiedName b)
+		{
+			if (!(a == b))
+				return false;
+			else
+				return true;
 		}
 	}
 }
