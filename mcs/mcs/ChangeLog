@@ -1,3 +1,12 @@
+2002-12-19  Miguel de Icaza  <miguel@ximian.com>
+
+	* attribute.cs (Attributes.Contains): Add new method.
+
+	* class.cs (MethodCore.LabelParameters): if the parameter is an
+	`out' parameter, check that no attribute `[In]' has been passed.
+
+	* enum.cs: Handle the `value__' name in an enumeration.
+
 2002-12-14  Jaroslaw Kowalski <jarek@atm.com.pl>
 
 	* decl.cs: Added special case to allow overrides on "protected

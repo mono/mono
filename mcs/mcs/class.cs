@@ -2133,17 +2133,24 @@ namespace Mono.CSharp {
 			if (p != null){
 				for (i = 0; i < p.Length; i++) {
 					ParameterBuilder pb;
+					ParameterAttributes par_attr = p [i].Attributes;
 					
 					if (mb == null)
 						pb = cb.DefineParameter (
-							i + 1, p [i].Attributes, p [i].Name);
+							i + 1, par_attr, p [i].Name);
 					else 
 						pb = mb.DefineParameter (
-							i + 1, p [i].Attributes, p [i].Name);
+							i + 1, par_attr, p [i].Name);
 					
 					Attributes attr = p [i].OptAttributes;
-					if (attr != null)
+					if (attr != null){
 						Attribute.ApplyAttributes (ec, pb, pb, attr);
+
+						if (par_attr == ParameterAttributes.Out){
+							if (attr.Contains (TypeManager.in_attribute_type))
+								Report.Error (36, Location, "Can not use [In] attribute on out parameter");
+						}
+					}
 				}
 			}
 
@@ -2285,6 +2292,8 @@ namespace Mono.CSharp {
 			if (!DoDefineParameters (parent))
 				return false;
 
+			return true;
+			
 			MethodSignature ms = new MethodSignature (Name, null, ParameterTypes);
 			if (!IsOperator) {
 				MemberList mi_this;
