@@ -1,5 +1,10 @@
 2002-10-16  Nick Drochak  <ndrochak@gol.com>
 
+	* CryptoConfigTest.cs (TestCreateFromName): Disable tests for
+	algorithms that aren't in the build yet.
+
+2002-10-16  Nick Drochak  <ndrochak@gol.com>
+
 	* AllTests.cs: Disable tests that use components were are excluding
 	from corlib.
 	* SHA1Test.cs: same
