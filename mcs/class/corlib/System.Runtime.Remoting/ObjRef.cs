@@ -32,6 +32,20 @@ namespace System.Runtime.Remoting {
 			// no idea why this needs to be public
 			channel_info = new ChannelInfoStore ();
 		}
+
+		internal bool IsPossibleToCAD () {
+			// we should check if this obj ref belongs to a cross app context
+			return true;
+		}
+
+		internal ObjRef (ObjRef o) {
+			channel_info = o.channel_info;
+			uri = o.uri;
+	
+			typeInfo = o.typeInfo;
+			envoyInfo = o.envoyInfo;
+			marshalledValue = true;
+		}
 		
 		public ObjRef (MarshalByRefObject mbr, Type type)
 		{
@@ -164,6 +178,14 @@ namespace System.Runtime.Remoting {
 		{
 			// as yet we do not consider this optimization
 			return false;
+		}
+
+		internal object GetInternalObject () {
+			if (!marshalledValue)
+				return this;
+			else {
+				return RemotingServices.Unmarshal (this);
+			}
 		}
 	}
 }

@@ -4,6 +4,7 @@
 // Authors:
 //   Dietmar Maurer (dietmar@ximian.com)
 //   Lluis Sanchez Gual (lluis@ideary.com)
+//   Patrik Torstensson
 //
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
@@ -33,7 +34,7 @@ namespace System.Runtime.Remoting
 		
 		static RemotingServices ()
 		{
-			 app_id = "/" + Guid.NewGuid().ToString().Replace('-', '_') + "/";
+			app_id = "/" + Guid.NewGuid().ToString().Replace('-', '_') + "/";
 
 			CreateServerIdentity (null, typeof(RemoteActivator), "RemoteActivationService.rem", ServiceType.Singleton);
 		}
@@ -226,7 +227,6 @@ namespace System.Runtime.Remoting
 			Marshal (obj, uri);
 		}
 
-
 		#region Internal Methods
 		
 		internal static Identity GetIdentityForUri (string uri)
@@ -299,7 +299,7 @@ namespace System.Runtime.Remoting
 
 			lock (uri_hash)
 			{
-				Identity identity = (Identity)uri_hash [objectUri];
+		                Identity identity = (Identity)uri_hash [objectUri];
 				if (identity != null) 
 				{
 					if (realObject != identity.RealObject)
@@ -329,6 +329,37 @@ namespace System.Runtime.Remoting
 			return id.RealObject;
 		}
 
+		internal static object GetDomainProxy(AppDomain domain) 
+		{
+			ObjRef appRef = null;
+
+			// Make sure that the channels is active in this domain
+			RegisterInternalChannels();
+
+			// this should use contexts in the future
+			AppDomain currentDomain = AppDomain.InternalSetDomain (domain);
+			try 
+			{
+				// Make sure that our new domain also has the internal channels
+				RegisterInternalChannels();
+
+				appRef = RemotingServices.Marshal(domain, null, null);
+			}
+			finally 
+			{
+				AppDomain.InternalSetDomain (currentDomain);
+			}
+
+			return (AppDomain) RemotingServices.Unmarshal(appRef);
+		}
+
+
+		private static void RegisterInternalChannels() 
+		{
+			CrossAppDomainChannel.RegisterCrossAppDomainChannel();
+		}
+
+	        
 		internal static void DisposeObject (MarshalByRefObject obj)
 		{
 			IDisposable disp = obj as IDisposable;
@@ -339,9 +370,6 @@ namespace System.Runtime.Remoting
 			else uri_hash.Remove (ident.ObjectUri);
 		}
 
-		#endregion
-		
+		#endregion	
 	}
-
-
 }

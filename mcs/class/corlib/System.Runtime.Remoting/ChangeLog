@@ -1,3 +1,10 @@
+2003-02-03 Patrik Torstensson
+
+	* ObjRef.cs: added copy constructor and two helpers for cross 
+	  appdomain message marshalling.
+	* RemotingServices.cs: Added helper to create transparant proxy for appdomain, and
+	  register internal cross appdomain channel.
+
 2003-01-29 Lluis Sanchez Gual <lluis@ideary.com>
 
 	* RemotingServices.cs: Added support for WellKnownService objects.
