@@ -1,3 +1,10 @@
+2005-03-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* declsec.c: Reworked linkdemand checks for icall. The previous code
+	was using the declaration code (untrusted) and didn't work as expected
+	with the CLR 2.0. We're now more compatible with 2.0 than 1.x for this
+	specific case.
+
 2005-03-13  Zoltan Varga  <vargaz@freemail.hu>
 
 	* iltests.il: Add new localloc test.
