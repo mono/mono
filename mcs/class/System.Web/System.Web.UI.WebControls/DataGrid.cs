@@ -658,35 +658,48 @@ namespace System.Web.UI.WebControls
 
 		protected override void LoadViewState(object savedState)
 		{
-			if(savedState != null)
-			{
-				object[] states = (object[])savedState;
-				if(states != null)
-				{
-					base.LoadViewState(states[0]);
-					if(columns != null)
-						((IStateManager)columns).LoadViewState(states[1]);
-					if(pagerStyle != null)
-						pagerStyle.LoadViewState(states[2]);
-					if(headerStyle != null)
-						headerStyle.LoadViewState(states[3]);
-					if(footerStyle != null)
-						footerStyle.LoadViewState(states[4]);
-					if(itemStyle != null)
-						itemStyle.LoadViewState(states[5]);
-					if(alternatingItemStyle != null)
-						alternatingItemStyle.LoadViewState(states[6]);
-					if(selectedItemStyle != null)
-						selectedItemStyle.LoadViewState(states[7]);
-					if(editItemStyle != null)
-						editItemStyle.LoadViewState(states[8]);
-				}
+			if (savedState == null)
+				return;
+
+			object [] states = (object []) savedState;
+			base.LoadViewState (states[0]);
+			if(columns != null)
+				((IStateManager)columns).LoadViewState(states[1]);
+			if(pagerStyle != null)
+				pagerStyle.LoadViewState(states[2]);
+			if(headerStyle != null)
+				headerStyle.LoadViewState(states[3]);
+			if(footerStyle != null)
+				footerStyle.LoadViewState(states[4]);
+			if(itemStyle != null)
+				itemStyle.LoadViewState(states[5]);
+			if(alternatingItemStyle != null)
+				alternatingItemStyle.LoadViewState(states[6]);
+			if(selectedItemStyle != null)
+				selectedItemStyle.LoadViewState(states[7]);
+			if(editItemStyle != null)
+				editItemStyle.LoadViewState(states[8]);
+
+			if (states [9] != null) {
+				object[] array = ((object[]) states [9]);
+				if (array.Length != 0)
+					this.autoGenColsArrayList = new ArrayList ();
+				else
+					this.autoGenColsArrayList = null; 
+
+				for (int i = 0; i < array.Length; i++) {
+					BoundColumn column1 = new BoundColumn ();
+					((IStateManager)column1).TrackViewState ();
+					((IStateManager)column1).LoadViewState (array [i]);
+					column1.SetOwner (this);
+					this.autoGenColsArrayList.Add (column1);
+				} 
 			}
 		}
 
 		protected override object SaveViewState()
 		{
-			object[] states = new object[9];
+			object[] states = new object [10];
 			states[0] = base.SaveViewState();
 			states[1] = (columns == null ? null : ((IStateManager)columns).SaveViewState());
 			states[2] = (pagerStyle == null ? null : pagerStyle.SaveViewState());
@@ -696,11 +709,21 @@ namespace System.Web.UI.WebControls
 			states[6] = (alternatingItemStyle == null ? null : alternatingItemStyle.SaveViewState());
 			states[7] = (selectedItemStyle == null ? null : selectedItemStyle.SaveViewState());
 			states[8] = (editItemStyle == null ? null : editItemStyle.SaveViewState());
-			
-			for (int i = 0; i < states.Length; i++) {
+
+			object [] array = null;
+			if ((this.autoGenColsArrayList != null) && (this.autoGenColsArrayList.Count != 0)) {
+				array = new object [((uint) this.autoGenColsArrayList.Count)];
+				for (int i = 0; i < array.Length; i++)
+					array [i] = ((IStateManager) this.autoGenColsArrayList [i]).SaveViewState ();
+ 			}
+
+			states [9] = array;
+
+			for (int i = states.Length - 1; i >= 0; i--) {
 				if (states [i] != null)
 					return states;
 			}
+
 			return null;
 		}
 

@@ -163,20 +163,16 @@ namespace System.Web.UI.WebControls
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		[WebCategory("Data")]
 		[WebSysDescription("BaseDataList_DataSource")]
-		public virtual object DataSource
-		{
-			get
-			{
+		public virtual object DataSource {
+			get {
 				return dataSource;
 			}
-			set
-			{
-				if( (value!=null) && (value is IListSource || value is IEnumerable) )
-				{
+			set {
+				if (value == null && (value is IListSource || value is IEnumerable) ) {
 					dataSource = value;
-				} else
-				{
-					throw new ArgumentException(HttpRuntime.FormatResourceString("Invalid_DataSource_Type", ID));
+				} else {
+					throw new ArgumentException (HttpRuntime.FormatResourceString (
+								"Invalid_DataSource_Type", ID));
 				}
 			}
 		}
