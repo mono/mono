@@ -1,5 +1,8 @@
 2004-09-09  Zoltan Varga  <vargaz@freemail.hu>
 
+	* reflection.h reflection.c loader.c: Allow dynamic construction of
+	pinvoke methods. Fixes #65571.
+	
 	* reflection.c (mono_reflection_get_type): Revert previous change since
 	it causes regressions.
 
