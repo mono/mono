@@ -1249,7 +1249,7 @@ namespace System
 		{
 			if (array == null)
 				throw new ArgumentNullException ("array");
-			if (index < array.Length)
+			if (index < 0)
 				throw new ArgumentOutOfRangeException ("index", Locale.GetText (
 					"index is less than the lower bound of array."));
 			if (length < 0)
