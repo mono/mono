@@ -354,16 +354,44 @@ public class Page : TemplateControl, IHttpHandler
 		throw new NotImplementedException ();
 	}
 	
+	MethodInfo [] autoEventsMethods = null;
+
 	private void InvokeEventMethod (string m_name, object sender, EventArgs e)
 	{
-		Type [] types = new Type [] {typeof (object), typeof (EventArgs)};
-		MethodInfo evt_method = GetType ().GetMethod (m_name, types);
+		if (autoEventsMethods == null) {
+			BindingFlags bf = BindingFlags.Public | BindingFlags.NonPublic |
+					  BindingFlags.DeclaredOnly | BindingFlags.Instance;
+			
+			MethodInfo [] m1 = GetType ().GetMethods (bf);
+			bf = BindingFlags.Public | BindingFlags.NonPublic |
+			     BindingFlags.DeclaredOnly | BindingFlags.Static;
 
-		if (evt_method != null){
+			MethodInfo [] m2 = GetType ().GetMethods (bf);
+			autoEventsMethods = new MethodInfo [m1.Length + m2.Length];
+			m1.CopyTo (autoEventsMethods, 0);
+			m2.CopyTo (autoEventsMethods, m1.Length);
+		}
+
+		foreach (MethodInfo m in autoEventsMethods) {
+			if (m.ReturnType != typeof (void))
+				continue;
+
+			if (m.Name != m_name)
+				continue;
+
+			ParameterInfo [] pi = m.GetParameters ();
+			if (pi.Length != 2)
+				continue;
+
+			if (pi [0].ParameterType != typeof (object) ||
+			    pi [1].ParameterType != typeof (EventArgs))
+				continue;
+
 			object [] parms = new object [2];
 			parms [0] = sender;
 			parms [1] = e;
-			evt_method.Invoke (this, parms);
+			m.Invoke (this, parms);
+			break;
 		}
 	}
 

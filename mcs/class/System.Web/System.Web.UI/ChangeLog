@@ -1,3 +1,8 @@
+2002-09-22  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Page.cs: fixed InvokeEventMethod now that Type.GetMethod does not
+	return pvt methods.
+
 2002-09-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* SimpleWebHandlerParser.cs: New file.
