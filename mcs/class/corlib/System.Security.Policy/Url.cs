@@ -18,6 +18,7 @@ namespace System.Security.Policy {
         public sealed class Url: IIdentityPermissionFactory
         {
                 string origin_url;
+                SecurityElement element;
                 
                 public Url (string name)
                 {
@@ -25,11 +26,22 @@ namespace System.Security.Policy {
                                 throw new ArgumentNullException (Locale.GetText ("name is null"));
 
                         origin_url = name;
+                        element = new SecurityElement (
+                                typeof (System.Security.Policy.Url).FullName);
+
+                        element.AddAttribute ("version", "1");
+                        element.AddChild (new SecurityElement ("Url", name));
+                }
+
+                private Url (string name, SecurityElement security_element)
+                {
+                        origin_url = name;
+                        element = security_element;
                 }
 
                 public object Copy ()
                 {
-                        return new Url (origin_url);
+                        return new Url (origin_url, element);
                 }
 
                 [MonoTODO]
@@ -50,7 +62,7 @@ namespace System.Security.Policy {
 
                 public override string ToString ()
                 {
-                        return origin_url;
+                        return element.ToString ();
                 }
 
                 public string Value {

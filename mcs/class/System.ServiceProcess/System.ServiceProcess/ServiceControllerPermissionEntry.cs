@@ -18,7 +18,6 @@ namespace System.ServiceProcess {
                 string machine_name;
                 string service_name;
                 ServiceControllerPermissionAccess permission_access;
-                                
                 
                 public ServiceControllerPermissionEntry ()
                 {
@@ -36,7 +35,6 @@ namespace System.ServiceProcess {
                         machine_name = machineName;
                         service_name = serviceName;
                 }
-                        
 
                 public string MachineName {
 

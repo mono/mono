@@ -1,3 +1,7 @@
+2003-07-25  Duncan Mak  <duncan@ximian.com>
+
+	* OpCodes.cs (Boxval): Marked with ObsoleteAttribute.
+
 2003-07-24  Miguel de Icaza  <miguel@ximian.com>
 
 	* TypeBuilder.cs: Added generics stubs.

@@ -1,3 +1,8 @@
+2003-07-30  Duncan Mak  <duncan@ximian.com>
+
+	* Url.cs (ToString): It should output an XML string, not just the
+	plain url.
+
 2003-07-28  Duncan Mak  <duncan@ximian.com>
 
 	* Site.cs: 

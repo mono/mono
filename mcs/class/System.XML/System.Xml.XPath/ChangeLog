@@ -1,3 +1,9 @@
+2003-07-30  Duncan Mak  <duncan@ximian.com>
+
+	* XPathException.cs
+	(GetObjectData): 
+	(Message): Added.
+
 2003-07-29 Piers Haken	<piersh@friskit.com>
 
 	* DefaultContext.cs: 'local-name' returns String, not NodeSet!

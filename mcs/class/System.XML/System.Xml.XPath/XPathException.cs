@@ -23,5 +23,24 @@ namespace System.Xml.XPath
 		internal XPathException (string message) : base (message, null) {}
 
 		#endregion
+
+                #region Properties
+
+                public override string Message {
+
+                        get { return base.Message; }
+
+                }
+                
+                #endregion
+
+                #region Methods
+
+                public override void GetObjectData (SerializationInfo info, StreamingContext context)
+                {
+                        base.GetObjectData (info, context);
+                }
+                
+                #endregion
 	}
 }
