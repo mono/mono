@@ -1,3 +1,8 @@
+2003-04-19  Ville Palo <vi64pa@kolumbus.fi>
+
+	* corlib_linux_test.args: added System.IO/BufferedStreamTest.cs
+	* corlib_test.args: added System.IO/BufferedStreamTest.cs
+		
 2003-04-11  Ville Palo <vi64pa@kolumbus.fi>
 
 	* corlib_linux_test.args: added System.IO/FileStreamTest.cs

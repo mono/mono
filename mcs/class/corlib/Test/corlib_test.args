@@ -55,6 +55,8 @@ System.Diagnostics/StackTraceTest.cs
 System.Diagnostics/TextWriterTraceListenerTest.cs
 System.Globalization/CalendarTest.cs
 System.IO/BinaryReaderTest.cs
+System.IO/BinaryWriterTest.cs
+System.IO/BufferedStreamTest.cs
 System.IO/FileTest.cs
 System.IO/FileStreamTest.cs
 System.IO/MemoryStreamTest.cs

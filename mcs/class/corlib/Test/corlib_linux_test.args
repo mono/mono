@@ -61,6 +61,8 @@ System.Globalization/AllTests.cs
 System.Globalization/CalendarTest.cs
 System.IO/AllTests.cs
 System.IO/BinaryReaderTest.cs
+System.IO/BinaryWriterTest.cs
+System.IO/BufferedStreamTest.cs
 System.IO/FileTest.cs
 System.IO/FileStreamTest.cs
 System.IO/MemoryStreamTest.cs
