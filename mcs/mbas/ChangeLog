@@ -1,3 +1,6 @@
+2004-08-06 Anirban Bhattacharjee <banirban@novell.com>
+	* class.cs: Improvements in the implementation of Implements clause in Type members
+
 2004-08-05 Anirban Bhattacharjee <banirban@novell.com>
 	* mb-parser,jay: Implements clause added to Event grammar
 

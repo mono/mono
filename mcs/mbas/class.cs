@@ -1925,9 +1925,9 @@ namespace Mono.MonoBASIC {
 			return true;
 		}
 
-		public static void Error_ExplicitInterfaceNotMemberInterface (Location loc, string name)
+		public static void Error_NotInterfaceMember (Location loc, string member_name, string iface_name)
 		{
-			Report.Error (539, loc, "Explicit implementation: `" + name + "' is not a member of the interface");
+			Report.Error (30401, loc, "'" + member_name + "' is not a member of the interface '" + iface_name + "'");
 		}
 
 		//
@@ -3101,38 +3101,40 @@ namespace Mono.MonoBASIC {
 		public virtual bool Define (TypeContainer parent)
 		{
 			MethodInfo implementing = null;
-			string method_name, name, prefix;
+			string method_name, name, prefix, impl_method_name;
 
 			if (OptAttributes != null)
 				if (!ApplyAttributes (OptAttributes, is_method))
 					return false;
 
-			if (member.IsExplicitImpl)
-				prefix = member.InterfaceType.FullName + ".";
-			else
-				prefix = "";
-
 			if (accessor_name != null)
 				name = accessor_name + "_" + member.ShortName;
 			else
 				name = member.ShortName;
-			method_name = prefix + name;
-			//string iname = null;
-			if (parent.Pending != null){
-			//if (member.Implements != null) {
-			/*	iname = member.Implements.ToString();
-				iname = iname.Substring(iname.LastIndexOf(".") + 1);
-			*/
+
+			method_name = name;
+			impl_method_name = name;
+
+			if (member.Implements != null) {
+				name = member.Implements.ToString();
+				prefix = name.Substring(0, name.LastIndexOf("."));
+				name = name.Substring(name.LastIndexOf(".") + 1);
+
+				if (accessor_name != null)
+					impl_method_name = accessor_name + "_" + name;
+				else
+					impl_method_name = name;
+
 				if (member is Indexer)
 					implementing = parent.Pending.IsInterfaceIndexer (
 						member.InterfaceType, ReturnType, ParameterTypes);
 				else
 					implementing = parent.Pending.IsInterfaceMethod (
-						member.InterfaceType, name, ReturnType, ParameterTypes);
+						member.InterfaceType, impl_method_name, ReturnType, ParameterTypes);
 
-				if (member.InterfaceType != null && implementing == null){
-					TypeContainer.Error_ExplicitInterfaceNotMemberInterface (
-						Location, name);
+				if (implementing == null){
+					TypeContainer.Error_NotInterfaceMember (
+						Location, name, prefix);
 					return false;
 				}
 			}
@@ -3184,12 +3186,6 @@ namespace Mono.MonoBASIC {
 					MethodAttributes.Virtual |
 					MethodAttributes.HideBySig;
 
-				// Get the method name from the explicit interface.
-				if (member.InterfaceType != null) {
-					name = implementing.Name;
-					method_name = prefix + name;
-				}
-
 				IsImplementing = true;
 			}
 
@@ -3228,11 +3224,10 @@ namespace Mono.MonoBASIC {
 						ParameterTypes, true);
 				} else
 					parent.Pending.ImplementMethod (
-						member.InterfaceType, name, ReturnType,
+						member.InterfaceType, impl_method_name, ReturnType,
 						ParameterTypes, member.IsExplicitImpl);
 
-				if (member.IsExplicitImpl)
-					parent.TypeBuilder.DefineMethodOverride (
+				parent.TypeBuilder.DefineMethodOverride (
 						builder, implementing);
 			}
 
@@ -3487,6 +3482,11 @@ namespace Mono.MonoBASIC {
 				iname = iname.Substring(0, iname.LastIndexOf("."));
 				bool iface_found = false;
 
+				InterfaceType  = RootContext.LookupType (
+					parent, iname, false, Location);
+				if (InterfaceType == null)
+					return false;
+
 				ArrayList bases = parent.Bases;
 				if (bases != null) {
 					foreach (Expression tbase in bases)	{
@@ -3546,22 +3546,6 @@ namespace Mono.MonoBASIC {
 				ShortName = Name.Substring (pos + 1);
 			} else
 				ShortName = Name;
-
-			if (ExplicitInterfaceName != null) {
-				InterfaceType  = RootContext.LookupType (
-					parent, ExplicitInterfaceName, false, Location);
-				if (InterfaceType == null)
-					return false;
-
-				// Compute the full name that we need to export.
-				Name = InterfaceType.FullName + "." + ShortName;
-				
-				if (!parent.VerifyImplements (InterfaceType, ShortName, Name, Location))
-					return false;
-				
-				IsExplicitImpl = true;
-			} else
-				IsExplicitImpl = false;
 
 			return true;
 		}
