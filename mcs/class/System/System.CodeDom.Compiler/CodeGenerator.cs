@@ -747,11 +747,11 @@ namespace System.CodeDom.Compiler {
 		{
 			bool first = true;
 			foreach (CodeParameterDeclarationExpression expr in parameters) {
-				GenerateExpression (expr);
 				if (first)
 					first = false;
 				else
 					output.Write (", ");
+				GenerateExpression (expr);
 			}
 		}
 
