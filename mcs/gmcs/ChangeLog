@@ -1,3 +1,9 @@
+2003-11-16  Martin Baulig  <martin@ximian.com>
+
+	* generic.cs (TypeArguments.Resolve):
+	`Expression.ResolveAsTypeTerminal()' returns a TypeExpr; call
+	`ResolveType()' on it to get the Type.
+
 2003-11-15  Martin Baulig  <martin@ximian.com>
 
 	* generic.cs (ConstructedType.GetInterfaces): Override this.

@@ -271,7 +271,7 @@ namespace Mono.CSharp {
 			atypes = new Type [count];
 			
 			for (int i = 0; i < count; i++){
-				Expression e = ((Expression)args [i]).ResolveAsTypeTerminal (ec);
+				TypeExpr e = ((Expression)args [i]).ResolveAsTypeTerminal (ec);
 				if (e == null) {
 					ok = false;
 					continue;
@@ -279,7 +279,7 @@ namespace Mono.CSharp {
 				if (e is TypeParameterExpr)
 					has_type_args = true;
 				args [i] = e;
-				atypes [i] = e.Type;
+				atypes [i] = e.ResolveType (ec);
 			}
 			return ok;
 		}
