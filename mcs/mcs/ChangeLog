@@ -1,5 +1,7 @@
 2002-11-19  Miguel de Icaza  <miguel@ximian.com>
 
+	* enum.cs: In FindMembers, perform a recursive lookup for values. (34308)
+
 	* ecore.cs (SimpleName.SimpleNameResolve): Remove the special
 	handling for enumerations, as we only needed the TypeContainer
 	functionality to begin with (this is required for the fix below to

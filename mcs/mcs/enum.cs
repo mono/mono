@@ -380,12 +380,20 @@ namespace Mono.CSharp {
 			return false;
 		}
 
+		//
+		// Horrible, horrible.  But there is no other way we can pass the EmitContext
+		// to the recursive definition triggered by the evaluation of a forward
+		// expression
+		//
+		static EmitContext current_ec = null;
+		
 		/// <summary>
 		///  This is used to lookup the value of an enum member. If the member is undefined,
 		///  it attempts to define it and return its value
 		/// </summary>
 		public object LookupEnumValue (EmitContext ec, string name, Location loc)
 		{
+			
 			object default_value = null;
 			Constant c = null;
 
@@ -425,7 +433,14 @@ namespace Mono.CSharp {
 						Location m_loc = (Mono.CSharp.Location)
 							member_to_location [n];
 						in_transit.Add (name, true);
+
+						EmitContext old_ec = current_ec;
+						current_ec = ec;
+			
 						default_value = LookupEnumValue (ec, n, m_loc);
+
+						current_ec = old_ec;
+						
 						in_transit.Remove (name);
 						if (default_value == null)
 							return null;
@@ -438,7 +453,12 @@ namespace Mono.CSharp {
 				bool old = ec.InEnumContext;
 				ec.InEnumContext = true;
 				in_transit.Add (name, true);
+
+				EmitContext old_ec = current_ec;
+				current_ec = ec;
 				val = val.Resolve (ec);
+				current_ec = old_ec;
+				
 				in_transit.Remove (name);
 				ec.InEnumContext = old;
 
@@ -584,6 +604,12 @@ namespace Mono.CSharp {
 			ArrayList members = new ArrayList ();
 
 			if ((mt & MemberTypes.Field) != 0) {
+				if (criteria is string){
+					if (member_to_value [criteria] == null && current_ec != null){
+						LookupEnumValue (current_ec, (string) criteria, Location.Null);
+					}
+				}
+				
 				foreach (FieldBuilder fb in field_builders)
 					if (filter (fb, criteria) == true)
 						members.Add (fb);
