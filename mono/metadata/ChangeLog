@@ -1,3 +1,8 @@
+2004-09-30  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* image.c: Always canonicalize image file names, to avoid loading
+	the same assembly twice when referenced using a relative path.
+
 2004-09-30  Zoltan Varga  <vargaz@freemail.hu>
 
 	* marshal.h marshal.c icall.c: Fix bugs in previous patch.
