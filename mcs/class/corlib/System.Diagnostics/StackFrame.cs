@@ -80,6 +80,9 @@ namespace System.Diagnostics {
                 /// </value>
                 private int columnNumber;
 
+			// Description of internal runtime method if methodBase==null
+			private string internalMethodName;
+
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		extern static bool get_frame_info (int skip, bool needFileInfo, out MethodBase method,
 						   out int iloffset, out int native_offset,
@@ -271,6 +274,11 @@ namespace System.Diagnostics {
                 {
                         return nativeOffset;                        
                 }
+
+			internal string GetInternalMethodName ()
+			{
+				return internalMethodName;
+			}
                 
                 /// <summary>
                 ///   Builds a readable representation of the stack frame.

@@ -1,3 +1,8 @@
+2005-03-04  Zoltan Varga  <vargaz@freemail.hu>
+
+	* StackFrame.cs: Add an internalMethodName field to return info about
+	the various runtime wrappers.
+
 2005-03-02  Chris Toshok  <toshok@ximian.com>
 
 	* DebuggerTypeProxyAttribute.cs, DebuggerBrowsableState.cs,
