@@ -56,6 +56,9 @@ namespace Mono.Util.CorCompare {
 			if (strFriendly == null)
 				strFriendly = strMS;
 
+			if (strXML == null)
+				strXML = strFriendly + ".xml";
+
 			ToDoAssembly td = new ToDoAssembly(strMono, strFriendly, strMS);
 
 			if (fList)
