@@ -1701,7 +1701,7 @@ public class TypeManager {
 		DeclSpace tc = LookupDeclSpace (t);
 		if (tc != null) {
 			if (!tc.IsGeneric)
-				throw new InvalidOperationException ();
+				return Type.EmptyTypes;
 
 			TypeParameter[] tparam = tc.TypeParameters;
 			Type[] ret = new Type [tparam.Length];

@@ -52,12 +52,16 @@ namespace Mono.CSharp {
 
 		static bool TypeParameter_to_Null (Type target_type)
 		{
-			if ((target_type.BaseType == null) ||
-			    (target_type.BaseType == TypeManager.value_type) ||
-			    target_type.BaseType.IsValueType)
+			GenericConstraints gc = TypeManager.GetTypeParameterConstraints (target_type);
+			if (gc == null)
 				return false;
 
-			return true;
+			if (gc.HasReferenceTypeConstraint)
+				return true;
+			if (gc.HasClassConstraint && !TypeManager.IsValueType (gc.ClassConstraint))
+				return true;
+
+			return false;
 		}
 
 		static Type TypeParam_EffectiveBaseType (EmitContext ec, Type t)
