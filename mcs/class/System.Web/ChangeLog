@@ -1,3 +1,7 @@
+2002-11-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* makefile.gnu: s/MONO_PATH_PREFIX/MONO_PATH/
+
 2002-10-28  Duncan Mak  <duncan@ximian.com>
 
 	* list: added DataGridLinkButton.cs.

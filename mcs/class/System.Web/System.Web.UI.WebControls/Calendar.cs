@@ -661,11 +661,7 @@ namespace System.Web.UI.WebControls
 
 		protected override void LoadViewState(object savedState)
 		{
-			if(savedState!=null)
-			{
-				if(ViewState["_CalendarSelectedDates"] != null)
-					selectedDates = (SelectedDatesCollection)ViewState["_CalendarSelectedDates"];
-
+			if (savedState!=null) {
 				object[] states = (object[]) savedState;
 				if(states[0] != null)
 					base.LoadViewState(states[0]);
@@ -687,12 +683,16 @@ namespace System.Web.UI.WebControls
 					TodayDayStyle.LoadViewState(states[8]);
 				if(states[9] != null)
 					WeekendDayStyle.LoadViewState(states[9]);
+
+				ArrayList dateList = ViewState ["_CalendarSelectedDates"] as ArrayList;
+				if (dateList != null)
+					selectedDates = new SelectedDatesCollection (dateList);
 			}
 		}
 
 		protected override object SaveViewState()
 		{
-			ViewState["_CalendarSelectedDates"] = (SelectedDates.Count > 0 ? selectedDates : null);
+			ViewState["_CalendarSelectedDates"] = (SelectedDates.Count > 0 ? selectedDates.GetDateList () : null);
 			object[] states = new object[11];
 			states[0] = base.SaveViewState();
 			states[1] = (dayHeaderStyle == null ? null : dayHeaderStyle.SaveViewState());
@@ -1102,6 +1102,7 @@ namespace System.Web.UI.WebControls
 			DateTime dt = VisibleDate;
 			if (VisibleDate == DateTime.MinValue)
 				 dt = TodaysDate;
+
 			return globCal.AddDays (dt, 1 - globCal.GetDayOfMonth (dt));
 		}
 

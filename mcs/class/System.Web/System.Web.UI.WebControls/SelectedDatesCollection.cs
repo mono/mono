@@ -116,5 +116,10 @@ namespace System.Web.UI.WebControls
 				local = local.AddDays(1);
 			} while(local < toDate);
 		}
+
+		internal ArrayList GetDateList ()
+		{
+			return dateList;
+		}
 	}
 }

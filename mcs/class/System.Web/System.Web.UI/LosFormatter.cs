@@ -36,6 +36,7 @@ namespace System.Web.UI
 		const char hashtableID = 'h';
 		const char binaryID = 'b';
 		const char arrayID = 'a';
+		const char dateTimeID = 'd';
 		
 		static Hashtable specialTypes;
 		static Hashtable idToType;
@@ -50,6 +51,7 @@ namespace System.Web.UI
 			specialTypes.Add (typeof (ArrayList), new WriteObject (WriteArrayList));
 			specialTypes.Add (typeof (Hashtable), new WriteObject (WriteHashtable));
 			specialTypes.Add (typeof (Array), new WriteObject (WriteArray));
+			specialTypes.Add (typeof (DateTime), new WriteObject (WriteDateTime));
 
 			idToType = new Hashtable ();
 			idToType.Add (typeof (string), stringID);
@@ -254,6 +256,9 @@ namespace System.Web.UI
 				BinaryFormatter fmt = new BinaryFormatter ();
 				obj = fmt.Deserialize (ms);
 				break;
+			case dateTimeID:
+				obj = new DateTime (Int64.Parse (enclosed));
+				break;
 			default:
 				throw new ArgumentException ("input");
 			}
@@ -387,6 +392,17 @@ namespace System.Web.UI
 					output.Write (';');
 				i++;
 			}
+			output.Write('>');
+		}
+
+		private static void WriteDateTime (LosFormatter formatter, TextWriter output, object value)
+		{
+			if (value == null)
+				return;
+			
+			output.Write (dateTimeID);
+			output.Write ('<');
+			output.Write (((DateTime) value).Ticks);
 			output.Write('>');
 		}
 
