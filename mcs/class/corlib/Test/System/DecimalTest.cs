@@ -889,6 +889,7 @@ namespace MonoTests.System {
 		Decimal d = 254.9m;
 		AssertEquals ("Decimal.ToByte", 254, Decimal.ToByte (d));
 		AssertEquals ("Convert.ToByte", 255, Convert.ToByte (d));
+		AssertEquals ("IConvertible.ToByte", 255, (d as IConvertible).ToByte (null));
 	}
 
 	[Test]
@@ -897,6 +898,7 @@ namespace MonoTests.System {
 		Decimal d = 126.9m;
 		AssertEquals ("Decimal.ToSByte", 126, Decimal.ToSByte (d));
 		AssertEquals ("Convert.ToSByte", 127, Convert.ToSByte (d));
+		AssertEquals ("IConvertible.ToSByte", 127, (d as IConvertible).ToSByte (null));
 	}
 
 	[Test]
@@ -905,6 +907,7 @@ namespace MonoTests.System {
 		Decimal d = 254.9m;
 		AssertEquals ("Decimal.ToInt16", 254, Decimal.ToInt16 (d));
 		AssertEquals ("Convert.ToInt16", 255, Convert.ToInt16 (d));
+		AssertEquals ("IConvertible.ToInt16", 255, (d as IConvertible).ToInt16 (null));
 	}
 
 	[Test]
@@ -913,6 +916,7 @@ namespace MonoTests.System {
 		Decimal d = 254.9m;
 		AssertEquals ("Decimal.ToUInt16", 254, Decimal.ToUInt16 (d));
 		AssertEquals ("Convert.ToUInt16", 255, Convert.ToUInt16 (d));
+		AssertEquals ("IConvertible.ToUInt16", 255, (d as IConvertible).ToUInt16 (null));
 	}
 
 	[Test]
@@ -921,6 +925,7 @@ namespace MonoTests.System {
 		Decimal d = 254.9m;
 		AssertEquals ("Decimal.ToInt32", 254, Decimal.ToInt32 (d));
 		AssertEquals ("Convert.ToInt32", 255, Convert.ToInt32 (d));
+		AssertEquals ("IConvertible.ToInt32", 255, (d as IConvertible).ToInt32 (null));
 	}
 
 	[Test]
@@ -929,6 +934,7 @@ namespace MonoTests.System {
 		Decimal d = 254.9m;
 		AssertEquals ("Decimal.ToUInt32", 254, Decimal.ToUInt32 (d));
 		AssertEquals ("Convert.ToUInt32", 255, Convert.ToUInt32 (d));
+		AssertEquals ("IConvertible.ToUInt32", 255, (d as IConvertible).ToUInt32 (null));
 	}
 
 	[Test]
@@ -937,6 +943,7 @@ namespace MonoTests.System {
 		Decimal d = 254.9m;
 		AssertEquals ("Decimal.ToInt64", 254, Decimal.ToInt64 (d));
 		AssertEquals ("Convert.ToInt64", 255, Convert.ToInt64 (d));
+		AssertEquals ("IConvertible.ToUInt64", 255, (d as IConvertible).ToUInt64 (null));
 	}
 
 	[Test]
@@ -945,6 +952,7 @@ namespace MonoTests.System {
 		Decimal d = 254.9m;
 		AssertEquals ("Decimal.ToUInt64", 254, Decimal.ToUInt64 (d));
 		AssertEquals ("Convert.ToUInt64", 255, Convert.ToUInt64 (d));
+		AssertEquals ("IConvertible.ToUInt64", 255, (d as IConvertible).ToUInt64 (null));
 	}
 
 	[Test]
@@ -953,6 +961,7 @@ namespace MonoTests.System {
 		Decimal d = 254.9m;
 		AssertEquals ("Decimal.ToSingle", 254.9f, Decimal.ToSingle (d));
 		AssertEquals ("Convert.ToSingle", 254.9f, Convert.ToSingle (d));
+		AssertEquals ("IConvertible.ToSingle", 254.9f, (d as IConvertible).ToSingle (null));
 	}
 
 	[Test]
@@ -961,6 +970,7 @@ namespace MonoTests.System {
 		Decimal d = 254.9m;
 		AssertEquals ("Decimal.ToDouble", 254.9d, Decimal.ToDouble (d));
 		AssertEquals ("Convert.ToDouble", 254.9d, Convert.ToDouble (d));
+		AssertEquals ("IConvertible.ToDouble", 254.9d, (d as IConvertible).ToDouble (null));
 	}
     }
 }
