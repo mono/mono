@@ -1,5 +1,9 @@
 2004-12-01  Jackson Harper  <jackson@ximian.com>
 
+	* TreeView.cs: Resize the hbar as well as the vbar on resize.
+
+2004-12-01  Jackson Harper  <jackson@ximian.com>
+
 	* NodeLabelEditEventArgs.cs:
 	* NodeLabelEditEventHandler.cs:
 	* OpenTreeNodeEnumerator.cs:
