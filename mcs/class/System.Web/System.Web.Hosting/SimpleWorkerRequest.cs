@@ -124,10 +124,11 @@ namespace System.Web.Hosting
                         string page = _Page;
 
 			if (Path.DirectorySeparatorChar != '/')
-                        {
                                 page = _Page.Replace ('/', Path.DirectorySeparatorChar);
-                        }
 
+			if (page [0] == Path.DirectorySeparatorChar)
+				page = page.Substring (1);
+			
 			return (Path.Combine (_AppPhysicalPath, page));
 		}
 
@@ -274,56 +275,45 @@ namespace System.Web.Hosting
                         return sPath;
 		}
 
-                //  "The extra path information, as given by the client. In
-                //  other words, scripts can be accessed by their virtual
-                //  pathname, followed by extra information at the end of this
-                //  path. The extra information is sent as PATH_INFO."
-                private void ExtractPagePathInfo ()
-                {
-                        if (_Page == null || _Page == String.Empty)
-                        {
-                                return;
-                        }
+		//  "The extra path information, as given by the client. In
+		//  other words, scripts can be accessed by their virtual
+		//  pathname, followed by extra information at the end of this
+		//  path. The extra information is sent as PATH_INFO."
+		private void ExtractPagePathInfo ()
+		{
+			if (_Page == null || _Page == String.Empty)
+				return;
 
-                        string FullPath = GetFilePathTranslated();
+			string FullPath = GetFilePathTranslated ();
+			int PathInfoLength = 0;
+			string LastFile = String.Empty;
 
-                        int PathInfoLength = 0;
+			while (PathInfoLength < _Page.Length) {
+				if (LastFile.Length > 0) {
+					// increase it by the length of the file plus 
+					// a "/"
+					//
+					PathInfoLength += LastFile.Length + 1;
+				}
 
-                        string LastFile = String.Empty;
+				if (File.Exists (FullPath) == true)
+					break;
 
-                        while (PathInfoLength < _Page.Length)
-                        {
-                                if (LastFile.Length > 0)
-                                {
-                                        // increase it by the length of the file plus 
-                                        // a "/"
-                                        //
-                                        PathInfoLength += LastFile.Length + 1;
-                                }
+				if (Directory.Exists (FullPath) == true) {
+					PathInfoLength -= (LastFile.Length + 1);
+					break;
+				}
 
-                                if (File.Exists (FullPath) == true)
-                                {
-                                        break;
-                                }
+				LastFile = Path.GetFileName (FullPath);
+				FullPath = Path.GetDirectoryName (FullPath);
+			}
 
-                                if (Directory.Exists (FullPath) == true)
-                                {
-                                        PathInfoLength -= (LastFile.Length + 1);
-                                        break;
-                                }
+			if (PathInfoLength <= 0 || PathInfoLength > _Page.Length)
+				return;
 
-                                LastFile = Path.GetFileName (FullPath);
-                                FullPath = Path.GetDirectoryName (FullPath);
-                        }
-
-                        if (PathInfoLength > _Page.Length)
-                        {
-                                return;
-                        }
-
-                        _PathInfo = _Page.Substring (_Page.Length - PathInfoLength);
-                        _Page = _Page.Substring (0, _Page.Length - PathInfoLength);
-                }
+			_PathInfo = _Page.Substring (_Page.Length - PathInfoLength);
+			_Page = _Page.Substring (0, _Page.Length - PathInfoLength);
+		}
 	}
 }
 

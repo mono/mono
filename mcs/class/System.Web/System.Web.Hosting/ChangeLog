@@ -1,3 +1,8 @@
+2003-08-29  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* SimpleWorkerRequest.cs: fixed GetFilePathTranslated and added a
+	paranoid condition to ExtractPathInfo.
+
 2003-06-25  Eric Lindvall <eric@5stops.com>
 
 	* SimpleWorkerRequest.cs: 
