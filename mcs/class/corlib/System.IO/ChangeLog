@@ -2,7 +2,8 @@
 
 	* FileStream.cs: (.ctor) do not set handle
 	in object until after it is validated via
-	GetFileType so finalizer doesn't see bad handles
+	GetFileType so finalizer doesn't see bad handles and
+	initialize this.handle to InvalidHandle
 
 2003-12-19  Bernie Solomon  <bernard@ugsolutions.com>
 

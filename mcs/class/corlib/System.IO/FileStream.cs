@@ -35,6 +35,8 @@ namespace System.IO
 
 		internal FileStream (IntPtr handle, FileAccess access, bool ownsHandle, int bufferSize, bool isAsync, bool noBuffering)
 		{
+			this.handle = MonoIO.InvalidHandle;
+
 			if (access < FileAccess.Read || access > FileAccess.ReadWrite)
 				throw new ArgumentOutOfRangeException ("access");
 
