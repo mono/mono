@@ -81,7 +81,6 @@ System.Web.Compilation/AspParser.cs
 System.Web.Compilation/AspGenerator.cs
 System.Web.Compilation/WebServiceCompiler.cs
 System.Web.Compilation/CachingCompiler.cs
-System.Web.Compilation/CSCompiler.cs
 System.Web.Compilation/Directive.cs
 System.Web.Compilation/GlobalAsaxCompiler.cs
 System.Web.Compilation/PageCompiler.cs

@@ -1,3 +1,7 @@
+2004-06-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* System.Web.dll.sources: removed CSCompiler.cs
+
 2004-06-07  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* System.Web.dll.sources: removing ServerVariablesCollection. It does

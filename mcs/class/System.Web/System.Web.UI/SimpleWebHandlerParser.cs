@@ -287,7 +287,7 @@ namespace System.Web.UI
 
 			AddDependency (realPath);
 
-			CompilerResults result = CachingCompiler.Compile (realPath, realPath, assemblies);
+			CompilerResults result = CachingCompiler.Compile (language, realPath, realPath, assemblies);
 			if (result.NativeCompilerReturnValue != 0) {
 				StreamReader reader = new StreamReader (realPath);
 				throw new CompilationException (realPath, result.Errors, reader.ReadToEnd ());

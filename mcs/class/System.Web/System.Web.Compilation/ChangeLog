@@ -1,5 +1,11 @@
 2004-06-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* CSCompiler.cs: removed.
+
+	* CachingCompiler.cs: language independent compilation for single files.
+
+2004-06-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* BaseCompiler.cs:
 	* WebServiceCompiler.cs: adapted to the 'new' CachingCompiler.
 	* CachingCompiler.cs: use HttpRuntime.Cache.

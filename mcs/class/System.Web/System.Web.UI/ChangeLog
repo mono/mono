@@ -1,5 +1,10 @@
 2004-06-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* SimpleWebHandlerParser.cs:
+	* TemplateParser.cs: pass the language when compiling from a file.
+
+2004-06-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* SimpleWebHandlerParser.cs: if we have a global.asax, move its
 	reference to the end to help mcs loading the assemblies. Fixes bug
 	#58768.

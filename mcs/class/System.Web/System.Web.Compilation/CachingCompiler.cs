@@ -8,13 +8,12 @@
 // (c) Copyright Novell, Inc. (http://www.novell.com)
 //
 using System;
-using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.Collections;
 using System.Collections.Specialized;
-using System.IO;
 using System.Web.UI;
 using System.Web.Caching;
+using System.Web.Configuration;
 
 namespace System.Web.Compilation
 {
@@ -79,7 +78,8 @@ namespace System.Web.Compilation
 			return options;
 		}
 
-		public static CompilerResults Compile (string key, string file, ArrayList assemblies)
+		public static CompilerResults Compile (string language, string key, string file,
+							ArrayList assemblies)
 		{
 			Cache cache = HttpRuntime.Cache;
 			CompilerResults results = (CompilerResults) cache [key];
@@ -90,9 +90,17 @@ namespace System.Web.Compilation
 				results = (CompilerResults) cache [key];
 				if (results != null)
 					return results;
+ 
+				CompilationConfiguration config;
+				config = CompilationConfiguration.GetInstance (HttpContext.Current);
+				CodeDomProvider provider = config.GetProvider (language);
+				if (provider == null)
+					throw new HttpException ("Configuration error. Language not supported: " +
+								  language, 500);
 
+				ICodeCompiler compiler = provider.CreateCompiler ();
 				CompilerParameters options = GetOptions (assemblies);
-				results = CSCompiler.Compiler.CompileAssemblyFromFile (options, file);
+				results = compiler.CompileAssemblyFromFile (options, file);
 				string [] deps = (string []) assemblies.ToArray (typeof (string));
 				cache.Insert (key, results, new CacheDependency (deps));
 			}
