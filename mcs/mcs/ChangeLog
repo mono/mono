@@ -1,3 +1,10 @@
+2003-06-30  Miguel de Icaza  <miguel@ximian.com>
+
+	* class.cs (Constructor.Define): Turn off initlocals for unsafe
+	constructors.
+
+	(MethodData.Define): Turn off initlocals for unsafe methods.
+
 2003-06-29  Miguel de Icaza  <miguel@ximian.com>
 
 	* decl.cs (DeclSpace.CheckAccessLevel): Make this routine

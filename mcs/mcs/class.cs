@@ -2665,6 +2665,9 @@ namespace Mono.CSharp {
 			ConstructorBuilder = container.TypeBuilder.DefineConstructor (
 				ca, GetCallingConvention (container is Class), ParameterTypes);
 
+			if ((ModFlags & Modifiers.UNSAFE) != 0)
+				ConstructorBuilder.InitLocals = false;
+			
 			//
 			// HACK because System.Reflection.Emit is lame
 			//
@@ -3135,6 +3138,9 @@ namespace Mono.CSharp {
 			if (builder == null)
 				return false;
 
+			if ((modifiers & Modifiers.UNSAFE) != 0)
+				builder.InitLocals = false;
+			
 			if (IsImplementing) {
 				//
 				// clear the pending implemntation flag
