@@ -409,6 +409,16 @@ namespace System.Data {
 			if (_dataColumns == null) return; //???
 
 			//Unique?
+			// check that the row has values for all columns in the constarint. 
+			object val;
+			for (int i = 0; i < _dataColumns.Length; i++)
+			{
+
+				val = row[_dataColumns[i]];
+				if (val == null || val == DBNull.Value)
+					throw new NoNullAllowedException("Column '" + _dataColumns[i].ColumnName + "' does not allow nulls.");
+			}
+
 			DataTable tbl = _dataTable;
 			bool isValid;
 			foreach(DataRow compareRow in tbl.Rows)
@@ -419,12 +429,17 @@ namespace System.Data {
 				{
 					//FIXME: should we compare to compareRow[DataRowVersion.Current]?
 					//FIXME: We need to compare to all columns the constraint is set to.
-					
+					object rowVal;
 					for (int i = 0; i < _dataColumns.Length; i++)
 					{
+						if(row.HasVersion(DataRowVersion.Proposed))
+							rowVal = row[_dataColumns[i], DataRowVersion.Proposed];
+						else
+							rowVal = row[_dataColumns[i], DataRowVersion.Current];
+						
 						// if the values in the row are not equal to the values of
 						// the original row from the table we can move to the next row.
-						if(!row[_dataColumns[i]].Equals( compareRow[_dataColumns[i]]))
+						if(!rowVal.Equals( compareRow[_dataColumns[i]]))
 						{
 							isValid = true;
 							break;

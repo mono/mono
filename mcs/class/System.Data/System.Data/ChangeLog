@@ -1,3 +1,25 @@
+2003-09-30  Duncan Mak  <duncan@ximian.com>        
+
+	Patches from Eran Domb <erand@mainsoft.com>.
+
+	* DataRelation.cs (constructor): When the name of the relation is
+	null, it should return an empty, not "Relation".
+	
+	* DataRow.cs (AcceptChanges): Added special case for
+	RowState.Detached.
+	(CancelEdit): Set editing flag to false.
+	(IsNull): Check that the value is DBNull.
+
+	* DataRowCollection.cs (Add): There was no check that the table of
+	the collection is owned by a DataSet.
+
+	* DataSet.cs (OnMergeFailed): Added.	
+
+	* UniqueConstraint.cs (AssertConstraint): There was no check that
+	values in the row are not null, where it is a primary key
+	column. Also check that the row has a proposed version, if not,
+	get the current version when we compare the rows.
+
 2003-09-25  Duncan Mak  <duncan@ximian.com>
 
         Patches from Eran Domb <erand@mainsoft.com>.

@@ -65,7 +65,7 @@ namespace System.Data
 			if (list.IndexOf(row) != -1)
 				throw new ArgumentException ("This row already belongs to this table.");
 			
-			if (table.DataSet.EnforceConstraints)
+			if (table.DataSet != null && table.DataSet.EnforceConstraints)
 				// we have to check that the new row doesn't colide with existing row
 				ValidateDataRowInternal(row);
 			

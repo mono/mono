@@ -54,7 +54,7 @@ namespace System.Data
 		public DataRelation (string relationName, DataColumn[] parentColumns, DataColumn[] childColumns, bool createConstraints) 
 		{
 			this.extendedProperties = new PropertyCollection();
-			if (relationName == null) relationName = "Relation";
+			if (relationName == null) relationName = string.Empty;
 			this.relationName = relationName;
 			if (parentColumns == null) throw new ArgumentNullException ();
 			this.parentColumns = parentColumns;

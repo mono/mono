@@ -1,3 +1,9 @@
+2003-09-30  Duncan Mak  <duncan@ximian.com>
+
+	Patch from Eran Domb <eran@mainsoft.com>.
+	
+	* DbDataAdapter.cs (Fill): Fixed an Exception from being thrown.
+
 2003-09-25  Duncan Mak  <duncan@ximian.com>
 
 	* DbDataAdapter.cs (Fill): Patch from Eran Domb, <eran@mainsoft.com>.

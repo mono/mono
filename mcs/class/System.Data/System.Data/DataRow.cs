@@ -392,13 +392,14 @@ namespace System.Data {
 			EndEdit(); // in case it hasn't been called
 			switch (rowState) {
 			case DataRowState.Added:
-			case DataRowState.Detached:
 			case DataRowState.Modified:
 				rowState = DataRowState.Unchanged;
 				break;
 			case DataRowState.Deleted:
 				_table.Rows.Remove (this);
 				break;
+			case DataRowState.Detached:
+				throw new RowNotInTableException("Cannot perform this operation on a row not in the table.");
 			}
 			// Accept from detached
 			if (original == null)
@@ -428,6 +429,7 @@ namespace System.Data {
 		[MonoTODO]
 		public void CancelEdit () 
 		{
+			editing = false;
 			//TODO: Events
 			if (HasVersion (DataRowVersion.Proposed)) {
 				proposed = null;
@@ -693,7 +695,8 @@ namespace System.Data {
 		/// </summary>
 		public bool IsNull (DataColumn column) 
 		{
-			return (this[column] == null);
+			object o = this[column];
+			return (o == null || o == DBNull.Value);
 		}
 
 		/// <summary>
@@ -702,7 +705,8 @@ namespace System.Data {
 		/// </summary>
 		public bool IsNull (int columnIndex) 
 		{
-			return (this[columnIndex] == null);
+			object o = this[columnIndex];
+			return (o == null || o == DBNull.Value);
 		}
 
 		/// <summary>
@@ -710,7 +714,8 @@ namespace System.Data {
 		/// </summary>
 		public bool IsNull (string columnName) 
 		{
-			return (this[columnName] == null);
+			object o = this[columnName];
+			return (o == null || o == DBNull.Value);
 		}
 
 		/// <summary>
@@ -719,7 +724,8 @@ namespace System.Data {
 		/// </summary>
 		public bool IsNull (DataColumn column, DataRowVersion version) 
 		{
-			return (this[column, version] == null);
+			object o = this[column, version];
+			return (o == null || o == DBNull.Value);
 		}
 
 		/// <summary>

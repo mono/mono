@@ -137,7 +137,14 @@ namespace System.Data.Common {
 
 		protected virtual int Fill (DataTable dataTable, IDbCommand command, CommandBehavior behavior) 
 		{
-			return Fill (dataTable, command.ExecuteReader (behavior));
+			CommandBehavior commandBehavior = behavior;
+			// first see that the connection is not close.
+			if (command.Connection.State == ConnectionState.Closed) 
+			{
+				command.Connection.Open ();
+				commandBehavior |= CommandBehavior.CloseConnection;
+			}
+			return Fill (dataTable, command.ExecuteReader (commandBehavior));
 		}
 
 		public int Fill (DataSet dataSet, int startRecord, int maxRecords, string srcTable) 

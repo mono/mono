@@ -709,6 +709,12 @@ namespace System.Data {
 		{
 		}
 
+		protected internal virtual void OnMergeFailed (MergeFailedEventArgs e)
+		{
+			if (MergeFailed != null)
+				MergeFailed(this, e);
+		}
+
 		[MonoTODO]
 		protected internal void RaisePropertyChanging (string name)
 		{
