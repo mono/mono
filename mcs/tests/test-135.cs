@@ -21,7 +21,7 @@ class T : IB {
         }
         static int Main() {
 		PropertyInfo[] p = typeof (T).GetProperties (BindingFlags.Public| BindingFlags.NonPublic|BindingFlags.Instance);
-		if (p == null || p.Length != 1)
+		if (p == null || p.Length != 2)
 			return 1;
                 return 0;
         }
