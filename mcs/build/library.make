@@ -8,7 +8,17 @@
 # All the dep files now land in the same directory so we
 # munge in the library name to keep the files from clashing.
 
-sourcefile = $(LIBRARY).sources
+core_sourcefile = $(LIBRARY).sources
+PLATFORM_excludes := $(wildcard $(LIBRARY).$(PLATFORM)-excludes)
+
+ifdef PLATFORM_excludes
+sourcefile = $(depsdir)/$(LIBRARY).$(PLATFORM)-sources
+$(sourcefile): $(core_sourcefile) $(PLATFORM_excludes)
+	sort $(core_sourcefile) $(PLATFORM_excludes) | uniq -u >$@
+else
+sourcefile = $(core_sourcefile)
+endif
+
 ifdef PLATFORM_CHANGE_SEPARATOR_CMD
 response = $(depsdir)/$(PROFILE)_$(LIBRARY).response
 else
@@ -30,19 +40,28 @@ test_nunitutil = $(topdir)/class/lib/$(PROFILE)/nunit.util.dll
 test_nunit_dep = $(test_nunitfw) $(test_nunitcore) $(test_nunitutil)
 test_nunit_ref = -r:$(test_nunitfw) -r:$(test_nunitcore) -r:$(test_nunitutil)
 
+ifndef test_against
+test_against = $(the_lib)
+test_dep = $(the_lib)
+endif
+
+ifndef test_lib
 test_lib = $(patsubst %.dll,%_test.dll,$(LIBRARY))
+endif
 test_pdb = $(patsubst %.dll,%.pdb,$(test_lib))
 test_sourcefile = $(test_lib).sources
 test_response = $(depsdir)/$(PROFILE)_$(test_lib).response
 test_makefrag = $(depsdir)/$(PROFILE)_$(test_lib).makefrag
-test_flags = /r:$(the_lib) $(test_nunit_ref) $(TEST_MCS_FLAGS)
+test_flags = /r:$(test_against) $(test_nunit_ref) $(TEST_MCS_FLAGS)
 
+ifndef btest_lib
 btest_lib = $(patsubst %.dll,%_btest.dll,$(LIBRARY))
+endif
 btest_pdb = $(patsubst %.dll,%.pdb,$(btest_lib))
 btest_sourcefile = $(btest_lib).sources
 btest_response = $(depsdir)/$(btest_lib).response
 btest_makefrag = $(depsdir)/$(btest_lib).makefrag
-btest_flags = /r:$(the_lib) $(test_nunit_ref) $(TEST_MBAS_FLAGS)
+btest_flags = /r:$(test_against) $(test_nunit_ref) $(TEST_MBAS_FLAGS)
 
 HAVE_CS_TESTS := $(wildcard $(test_sourcefile))
 HAVE_VB_TESTS := $(wildcard $(btest_sourcefile))
@@ -58,16 +77,22 @@ ifeq ($(PROFILE), net_2_0)
 PACKAGE = 2.0
 endif
 
-ifndef NO_SIGN_ASSEMBLY
-sign = sign_assembly
-else
-sign = 
-endif
-
 all-local: $(the_lib)
 
-install-local: $(the_lib) $(gacutil) $(sign)
-	$(RUNTIME)  $(gacutil) /i $(the_lib) /f /root $(DESTDIR)$(prefix)/lib /package $(PACKAGE)
+install-local: $(the_lib) maybe-sign-lib
+
+ifdef LIBRARY_INSTALL_DIR
+install-local:
+	$(MKINSTALLDIRS) $(DESTDIR)$(LIBRARY_INSTALL_DIR)
+	$(INSTALL_LIB) $(the_lib) $(DESTDIR)$(LIBRARY_INSTALL_DIR)/$(LIBRARY_NAME)
+
+uninstall-local:
+	-rm -f $(DESTDIR)$(LIBRARY_INSTALL_DIR)/$(LIBRARY_NAME)
+
+else
+
+install-local: $(gacutil)
+	$(RUNTIME) $(gacutil) /i $(the_lib) /f /root $(DESTDIR)$(prefix)/lib /package $(PACKAGE)
 
 uninstall-local: $(gacutil)
 	$(RUNTIME) $(gacutil) /u `echo $(LIBRARY_NAME) | sed 's,.dll$,,'`
@@ -75,17 +100,25 @@ uninstall-local: $(gacutil)
 $(gacutil):
 	cd $(topdir)/tools/gacutil && $(MAKE)
 
-$(sn):
-	cd $(topdir)/tools/security && $(MAKE) sn.exe || exit 1 ;
+endif
 
-sign_assembly: $(sn)
+maybe-sign-lib:
+ifndef NO_SIGN_ASSEMBLY
+maybe-sign-lib: $(sn)
 	$(RUNTIME) $(sn) -q -R $(the_lib) $(topdir)/class/mono.snk
+endif
+
+$(sn):
+	cd $(topdir)/tools/security && $(MAKE) sn.exe
 
 clean-local:
 	-rm -f $(the_lib) $(makefrag) $(test_lib) \
 	       $(test_makefrag) $(test_response) \
 	       $(the_pdb) $(test_pdb) $(CLEAN_FILES) \
 	       TestResult.xml
+ifdef PLATFORM_excludes
+	-rm -rf $(sourcefile)
+endif
 ifdef PLATFORM_CHANGE_SEPARATOR_CMD
 	-rm -rf $(response)
 endif
@@ -137,7 +170,7 @@ run-btest-ondotnet-lib: test-local
 
 endif
 
-DISTFILES = $(sourcefile) $(test_sourcefile) $(EXTRA_DISTFILES)
+DISTFILES = $(core_sourcefile) $(test_sourcefile) $(EXTRA_DISTFILES)
 
 TEST_FILES = 
 
@@ -149,7 +182,7 @@ TEST_FILES += `sed 's,^,Test/,' $(btest_sourcefile)`
 endif
 
 dist-local: dist-default
-	for f in `cat $(sourcefile)` $(TEST_FILES) ; do \
+	for f in `cat $(core_sourcefile)` $(TEST_FILES) ; do \
 	    dest=`dirname $(distdir)/$$f` ; \
 	    $(MKINSTALLDIRS) $$dest && cp $$f $$dest || exit 1 ; \
 	done
@@ -180,7 +213,7 @@ endif
 
 ifdef HAVE_CS_TESTS
 
-$(test_lib): $(test_makefrag) $(the_lib) $(test_response) $(test_nunit_dep)
+$(test_lib): $(test_makefrag) $(test_dep) $(test_response) $(test_nunit_dep)
 	$(CSCOMPILE) /target:library /out:$@ $(test_flags) @$(test_response)
 
 $(test_response): $(test_sourcefile)
@@ -201,7 +234,7 @@ endif
 
 ifdef HAVE_VB_TESTS
 
-$(btest_lib): $(btest_makefrag) $(the_lib) $(btest_response) $(test_nunit_dep)
+$(btest_lib): $(btest_makefrag) $(test_dep) $(btest_response) $(test_nunit_dep)
 	$(BASCOMPILE) /target:library /out:$@ $(btest_flags) @$(btest_response)
 
 $(btest_response): $(btest_sourcefile)

@@ -1,3 +1,21 @@
+2004-06-11  Raja R Harinath  <rharinath@novell.com>
+
+	Support enough features to build mscorlib.dll.
+	* library.make (core_sourcefile): New renamed from $(sourcefile).
+	(PLATFORM_excludes): Auto-detecting define that sees if
+	$(LIBRARY).$(PLATFORM)-excludes file exists.
+	(sourcefile): New.  Possibly-built file that removes
+	PLATFORM_excluded files from core_sourcefile.
+	(test_against, test_dep): New.  Allow the test assembly to be
+	built against a different library.
+	(test_lib): Allow makefile to override the name of the test
+	assembly.
+	(LIBRARY_INSTALL_DIR): If defined, switch to using $(INSTALL_LIB)
+	rather than $(gacutil).
+	(DISTFILES, dist-local): Use core_sourcefile.
+	(clean-local): Remove sourcefile if it was generated.
+	(test_lib, btest_lib): Depend on $(test_dep).
+
 2004-06-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* library.make: fixed PLATFORM_CHANGE_SEPARATOR_CHAR on windows.
