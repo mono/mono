@@ -115,6 +115,13 @@ elimination and inlining, you can use:
 	-O=all,-deadce,-inline
 .fi
 .TP
+.I "--security"
+Activate the security manager (experimental in 1.1). This allows the 
+support for declarative security attributes (e.g. execution of, CAS or 
+non-CAS, security demands). The security manager is OFF by default 
+(experimental). Note that this options is currently not compatible with
+AOT. The security manager will be disabled if AOT (--aot) is specified.
+.TP
 .I "-V", "--version"
 Prints JIT version information.
 
