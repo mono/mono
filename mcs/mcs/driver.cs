@@ -381,7 +381,7 @@ namespace Mono.CSharp
 			Assembly [] assemblies = AppDomain.CurrentDomain.GetAssemblies ();
 
 			foreach (Assembly a in assemblies){
-				string codebase = a.CodeBase;
+				string codebase = a.Location;
 				if (codebase.EndsWith ("corlib.dll")){
 					return codebase.Substring (0, codebase.LastIndexOf (System.IO.Path.DirectorySeparatorChar));
 				}
