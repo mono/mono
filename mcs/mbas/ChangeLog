@@ -1,4 +1,7 @@
 2004-08-12 Anirban Bhattacharjee <banirban@novell.com>
+	* mb-parser.jay: Implements support in Abstract methods
+
+2004-08-12 Anirban Bhattacharjee <banirban@novell.com>
 	* class.cs: Support for abstract method resolution
 	* pending.cs: Type of pending_implementations is set to base type
 		      Changed method names IsInterfaceIndexer and IsInterfaceMethod to IsAbstractIndexer and IsAbstractMethod respectively to make them more meaningful

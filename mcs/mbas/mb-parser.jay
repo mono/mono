@@ -1239,7 +1239,7 @@ must_override_declaration
 	;
 	
 must_override_sub_declaration
-	: MUSTOVERRIDE SUB identifier opt_params logical_end_of_line
+	: MUSTOVERRIDE SUB identifier opt_params opt_implement_clause logical_end_of_line
 	  {	
 	  	if (current_container is Module)
 	  		Report.Error (433, "Methods in a Module cannot be declared 'MustOverride'.");
@@ -1250,7 +1250,7 @@ must_override_sub_declaration
 	  	current_modifiers |= Modifiers.ABSTRACT;
 	  			  	
 	  	Method method = new Method (TypeManager.system_void_expr, (int) current_modifiers, (string) $3,
-					    (Parameters) $4, null, null, lexer.Location);
+					    (Parameters) $4, null, (ArrayList) $5, lexer.Location);
 					    
 		if (!(current_container is Class))
 			Report.Error (9999, "THIS SHOULD NEVER HAPPEN!");		
@@ -1261,7 +1261,7 @@ must_override_sub_declaration
 
 	
 must_override_func_declaration
-	: MUSTOVERRIDE FUNCTION identifier opt_type_character opt_params opt_type_with_ranks logical_end_of_line
+	: MUSTOVERRIDE FUNCTION identifier opt_type_character opt_params opt_type_with_ranks opt_implement_clause logical_end_of_line
 	  {	
 		Expression ftype = ($6 == null) ? (($4 == null) ? TypeManager.	
 			system_object_expr : (Expression) $4 ) : (Expression) $6;
@@ -1275,7 +1275,7 @@ must_override_func_declaration
 		current_modifiers |= Modifiers.ABSTRACT;
 			  			  	
 	  	Method method = new Method ((Expression) ftype, (int) current_modifiers, 
-						(string) $3,(Parameters) $5, null, null, 
+						(string) $3,(Parameters) $5, null, (ArrayList) $7, 
 						lexer.Location);
 					    
 		if (!(current_container is Class))
