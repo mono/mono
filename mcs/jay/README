@@ -2,8 +2,7 @@ This is a port of Jay to C#, the original Jay can be found here:
 	http://www.informatik.uni-osnabrueck.de/bernd/jay/
 
 This is a temporary solution as we move to a Bison-generated parser
-as it would provide better error recovery (and error productions
-are broken in my port of Jay).
+as it would provide better error recovery.
 
 The original README from Jay is in `README.jay'
 
