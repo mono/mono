@@ -1,3 +1,7 @@
+2003-04-30  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* CSharpCodeCompiler.cs: add quotes around out assembly name.
+
 2003-04-29  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CSharpCodeCompiler.cs:
