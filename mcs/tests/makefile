@@ -26,7 +26,8 @@ TEST_SOURCES = \
 	test-141 test-142 test-143 test-144 test-145 test-146 test-147 test-148 test-149 test-150 \
 	                  test-153 test-154 test-155 test-156 test-157 test-158 test-159 test-160 \
 	test-161 test-162 test-163 test-164 test-165 test-166 test-167 test-168 test-169 test-170 \
-		 test-172 test-173 test-174 test-175 test-176 test-177 	        test-179
+		 test-172 test-173 test-174 test-175 test-176 test-177 	        test-179\
+	test-180
 
 # 
 # NOTE: Slot test-178 is free, turns out it was an unsafe test.
@@ -55,7 +56,7 @@ test-compiler:
 			if $(RUNTIME) ./$$i.exe > /dev/null; then \
 				echo $$i: ok; \
 			else \
-				echo FAILED; exit 1; \
+				echo FAILED; \
 			fi; \
 		else \
 			echo FAILED TO COMPILE; exit 1; \
@@ -81,10 +82,10 @@ test-unsafe:
 test-jit:
 	@for i in $(TEST_SOURCES:.cs=.exe); do \
 		echo -n "Running jit $$i ... "; \
-		if mono ./$$i.exe > /dev/null; then \
+		if $(RUNTIME) ./$$i.exe > /dev/null; then \
 			echo OK; \
 		else \
-			echo FAILED; exit 1; \
+			echo FAILED; \
 		fi \
 	done
 

@@ -1324,7 +1324,7 @@ public class TypeManager {
 		
 	public static bool IsValueType (Type t)
 	{
-		if (t.IsSubclassOf (TypeManager.value_type))
+		if (t.IsSubclassOf (TypeManager.value_type) && (t != TypeManager.enum_type))
 			return true;
 		else
 			return false;
