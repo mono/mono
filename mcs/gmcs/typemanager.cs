@@ -85,7 +85,7 @@ public class TypeManager {
 	static public Type activator_type;
 	static public Type invalid_operation_exception_type;
 	static public Type obsolete_attribute_type;
-	static public object conditional_attribute_type;
+	static public Type conditional_attribute_type;
 	static public Type in_attribute_type;
 	static public Type cls_compliant_attribute_type;
 	static public Type typed_reference_type;
@@ -874,11 +874,25 @@ public class TypeManager {
 	/// </summary>
 	static public string GetFullNameSignature (MemberInfo mi)
 	{
-		string n = mi.Name;
-		if (n == ".ctor")
-			n = mi.DeclaringType.Name;
+		return mi.DeclaringType.FullName.Replace ('+', '.') + '.' + mi.Name;
+	}
 		
-		return mi.DeclaringType.FullName.Replace ('+', '.') + '.' + n;
+	static public string GetFullNameSignature (MethodBase mb)
+	{
+		string name = mb.Name;
+		if (name == ".ctor")
+			name = mb.DeclaringType.Name;
+
+		if (mb.IsSpecialName) {
+			if (name.StartsWith ("get_") || name.StartsWith ("set_")) {
+				name = name.Remove (0, 4);
+			}
+
+			if (name == "Item")
+				name = "this";
+		}
+
+		return mb.DeclaringType.FullName.Replace ('+', '.') + '.' + name;
 	}
 
 	static public string GetFullName (Type t)
@@ -938,7 +952,7 @@ public class TypeManager {
         /// </summary>
         static public string CSharpSignature (MethodBase mb)
         {
-                string sig = "(";
+		StringBuilder sig = new StringBuilder ("(");
 
 		//
 		// FIXME: We should really have a single function to do
@@ -949,15 +963,25 @@ public class TypeManager {
 		if (iparams == null)
 			iparams = new ReflectionParameters (mb);
 		
+		// Is property
+		if (mb.IsSpecialName && iparams.Count == 0)
+			return GetFullNameSignature (mb);
+		
                 for (int i = 0; i < iparams.Count; i++) {
                         if (i > 0) {
-                                sig += ", ";
+				sig.Append (", ");
                         }
-                        sig += iparams.ParameterDesc(i);
+			sig.Append (iparams.ParameterDesc (i));
                 }
-                sig += ")";
+		sig.Append (")");
 
-                return GetFullNameSignature (mb) + sig;
+		// Is indexer
+		if (mb.IsSpecialName && iparams.Count == 1) {
+			sig.Replace ('(', '[');
+			sig.Replace (')', ']');
+		}
+
+		return GetFullNameSignature (mb) + sig.ToString ();
         }
 
 	/// <summary>
@@ -2633,11 +2657,6 @@ public class TypeManager {
 		return target_list;
 	}
 
-	[Flags]
-	public enum MethodFlags {
-		ShouldIgnore = 1 << 2
-	}
-
 	static public bool IsGenericMethod (MethodBase mb)
 	{
 		if (mb.DeclaringType is TypeBuilder) {
@@ -2651,83 +2670,65 @@ public class TypeManager {
 		return mb.IsGenericMethodDefinition;
 	}
 	
-	//
-	// Returns the TypeManager.MethodFlags for this method.
-	// This emits an error 619 / warning 618 if the method is obsolete.
-	// In the former case, TypeManager.MethodFlags.IsObsoleteError is returned.
-	//
-	static public MethodFlags GetMethodFlags (MethodBase mb)
-	{
-		MethodFlags flags = 0;
-
-		if (mb.Mono_IsInflatedMethod)
-			mb = mb.GetGenericMethodDefinition ();
-
-		if (mb.DeclaringType is TypeBuilder){
-			IMethodData method = (IMethodData) builder_to_method [mb];
-			if (method == null) {
-				// FIXME: implement Obsolete attribute on Property,
-				//        Indexer and Event.
-				return 0;
-			}
-
-			if (method.ShouldIgnore ())
-				flags |= MethodFlags.ShouldIgnore;
-
-			return flags;
-		}
-
-		object [] attrs = mb.GetCustomAttributes (true);
-		foreach (object ta in attrs){
-			if (!(ta is System.Attribute)){
-				Console.WriteLine ("Unknown type in GetMethodFlags: " + ta);
-				continue;
-			}
-			System.Attribute a = (System.Attribute) ta;
-			
-			//
-			// Skip over conditional code.
-			//
-			if (a.TypeId == TypeManager.conditional_attribute_type){
-				ConditionalAttribute ca = (ConditionalAttribute) a;
-
-				if (RootContext.AllDefines [ca.ConditionString] == null)
-					flags |= MethodFlags.ShouldIgnore;
-			}
-		}
-
-		return flags;
-	}
-	
 #region MemberLookup implementation
 	
 	//
 	// Whether we allow private members in the result (since FindMembers
 	// uses NonPublic for both protected and private), we need to distinguish.
 	//
-	static bool     closure_private_ok;
-
-	//
-	// Who is invoking us and which type is being queried currently.
-	//
-	static Type     closure_invocation_type;
-	static Type     closure_qualifier_type;
-
-	//
-	// The assembly that defines the type is that is calling us
-	//
-	static Assembly closure_invocation_assembly;
 
 	static internal bool FilterNone (MemberInfo m, object filter_criteria)
 	{
 		return true;
 	}
+
+	internal class Closure {
+		internal bool     private_ok;
+
+	// Who is invoking us and which type is being queried currently.
+		internal Type     invocation_type;
+		internal Type     qualifier_type;
+
+	// The assembly that defines the type is that is calling us
+		internal Assembly invocation_assembly;
+		internal IList almost_match;
+
+		private bool CheckValidFamilyAccess (bool is_static, MemberInfo m)
+	{
+			if (invocation_type == null)
+				return false;
+
+			Debug.Assert (IsSubclassOrNestedChildOf (invocation_type, m.DeclaringType));
+
+			if (is_static)
+				return true;
+			
+			// A nested class has access to all the protected members visible to its parent.
+			if (qualifier_type != null
+			    && TypeManager.IsNestedChildOf (invocation_type, qualifier_type))
+				return true;
+
+			if (invocation_type == m.DeclaringType
+			    || invocation_type.IsSubclassOf (m.DeclaringType)) {
+				// Although a derived class can access protected members of its base class
+				// it cannot do so through an instance of the base class (CS1540).
+				// => Ancestry should be: declaring_type ->* invocation_type ->*  qualified_type
+				if (qualifier_type == null
+				    || qualifier_type == invocation_type
+				    || qualifier_type.IsSubclassOf (invocation_type))
+		return true;
+	}
 	
+			if (almost_match != null)
+				almost_match.Add (m);
+			return false;
+		}
+		
 	//
 	// This filter filters by name + whether it is ok to include private
 	// members in the search
 	//
-	static internal bool FilterWithClosure (MemberInfo m, object filter_criteria)
+		internal bool Filter (MemberInfo m, object filter_criteria)
 	{
 		//
 		// Hack: we know that the filter criteria will always be in the `closure'
@@ -2737,8 +2738,8 @@ public class TypeManager {
 		if ((filter_criteria != null) && (m.Name != (string) filter_criteria))
 			return false;
 
-		if (((closure_qualifier_type == null) || (closure_qualifier_type == closure_invocation_type)) &&
-		    (closure_invocation_type != null) && IsEqual (m.DeclaringType, closure_invocation_type))
+		if (((qualifier_type == null) || (qualifier_type == invocation_type)) &&
+		    (invocation_type != null) && IsEqual (m.DeclaringType, invocation_type))
 			return true;
 
 		//
@@ -2750,22 +2751,22 @@ public class TypeManager {
 			MethodAttributes ma = mb.Attributes & MethodAttributes.MemberAccessMask;
 
 			if (ma == MethodAttributes.Private)
-				return closure_private_ok ||
-					IsEqual (closure_invocation_type, m.DeclaringType) ||
-					IsNestedChildOf (closure_invocation_type, m.DeclaringType);
+				return private_ok ||
+					IsEqual (invocation_type, m.DeclaringType) ||
+					IsNestedChildOf (invocation_type, m.DeclaringType);
 
 			//
 			// FamAndAssem requires that we not only derivate, but we are on the
 			// same assembly.  
 			//
 			if (ma == MethodAttributes.FamANDAssem){
-				if (closure_invocation_assembly != mb.DeclaringType.Assembly)
+				if (invocation_assembly != mb.DeclaringType.Assembly)
 					return false;
 			}
 
 			// Assembly and FamORAssem succeed if we're in the same assembly.
 			if ((ma == MethodAttributes.Assembly) || (ma == MethodAttributes.FamORAssem)){
-				if (closure_invocation_assembly == mb.DeclaringType.Assembly)
+				if (invocation_assembly == mb.DeclaringType.Assembly)
 					return true;
 			}
 
@@ -2775,18 +2776,18 @@ public class TypeManager {
 
 			// Family and FamANDAssem require that we derive.
 			if ((ma == MethodAttributes.Family) || (ma == MethodAttributes.FamANDAssem)){
-				if (closure_invocation_type == null)
+				if (invocation_type == null)
 					return false;
 
-				if (!IsSubclassOrNestedChildOf (closure_invocation_type, mb.DeclaringType))
+				if (!IsSubclassOrNestedChildOf (invocation_type, mb.DeclaringType))
 					return false;
 
 				// Although a derived class can access protected members of its base class
 				// it cannot do so through an instance of the base class (CS1540).
-				if (!mb.IsStatic && (closure_invocation_type != closure_qualifier_type) &&
-				    (closure_qualifier_type != null) &&
-				    closure_invocation_type.IsSubclassOf (closure_qualifier_type) &&
-				    !TypeManager.IsNestedChildOf (closure_invocation_type, closure_qualifier_type))
+				if (!mb.IsStatic && (invocation_type != qualifier_type) &&
+				    (qualifier_type != null) &&
+				    invocation_type.IsSubclassOf (qualifier_type) &&
+				    !TypeManager.IsNestedChildOf (invocation_type, qualifier_type))
 					return false;
 
 				return true;
@@ -2801,22 +2802,22 @@ public class TypeManager {
 			FieldAttributes fa = fi.Attributes & FieldAttributes.FieldAccessMask;
 
 			if (fa == FieldAttributes.Private)
-				return closure_private_ok ||
-					IsEqual (closure_invocation_type, m.DeclaringType) ||
-					IsNestedChildOf (closure_invocation_type, m.DeclaringType);
+				return private_ok ||
+					IsEqual (invocation_type, m.DeclaringType) ||
+					IsNestedChildOf (invocation_type, m.DeclaringType);
 
 			//
 			// FamAndAssem requires that we not only derivate, but we are on the
 			// same assembly.  
 			//
 			if (fa == FieldAttributes.FamANDAssem){
-				if (closure_invocation_assembly != fi.DeclaringType.Assembly)
+				if (invocation_assembly != fi.DeclaringType.Assembly)
 					return false;
 			}
 
 			// Assembly and FamORAssem succeed if we're in the same assembly.
 			if ((fa == FieldAttributes.Assembly) || (fa == FieldAttributes.FamORAssem)){
-				if (closure_invocation_assembly == fi.DeclaringType.Assembly)
+				if (invocation_assembly == fi.DeclaringType.Assembly)
 					return true;
 			}
 
@@ -2826,18 +2827,18 @@ public class TypeManager {
 
 			// Family and FamANDAssem require that we derive.
 			if ((fa == FieldAttributes.Family) || (fa == FieldAttributes.FamANDAssem)){
-				if (closure_invocation_type == null)
+				if (invocation_type == null)
 					return false;
 
-				if (!IsSubclassOrNestedChildOf (closure_invocation_type, fi.DeclaringType))
+				if (!IsSubclassOrNestedChildOf (invocation_type, fi.DeclaringType))
 					return false;
 
 				// Although a derived class can access protected members of its base class
 				// it cannot do so through an instance of the base class (CS1540).
-				if (!fi.IsStatic && (closure_invocation_type != closure_qualifier_type) &&
-				    (closure_qualifier_type != null) &&
-				    closure_invocation_type.IsSubclassOf (closure_qualifier_type) &&
-				    !TypeManager.IsNestedChildOf (closure_invocation_type, closure_qualifier_type))
+				if (!fi.IsStatic && (invocation_type != qualifier_type) &&
+				    (qualifier_type != null) &&
+				    invocation_type.IsSubclassOf (qualifier_type) &&
+				    !TypeManager.IsNestedChildOf (invocation_type, qualifier_type))
 					return false;
 
 				return true;
@@ -2849,12 +2850,14 @@ public class TypeManager {
 
 		//
 		// EventInfos and PropertyInfos, return true because they lack permission
-		// informaiton, so we need to check later on the methods.
+			// information, so we need to check later on the methods.
 		//
 		return true;
 	}
+	}
 
-	static MemberFilter FilterWithClosure_delegate = new MemberFilter (FilterWithClosure);
+	static Closure closure = new Closure ();
+	static MemberFilter FilterWithClosure_delegate = new MemberFilter (closure.Filter);
 	static MemberFilter FilterNone_delegate = new MemberFilter (FilterNone);
 
 	//
@@ -2882,17 +2885,19 @@ public class TypeManager {
 	// is allowed to access (using the specified `qualifier_type' if given); only use
 	// BindingFlags.NonPublic to bypass the permission check.
 	//
+	// The 'almost_match' argument is used for reporting error CS1540.
+	//
 	// Returns an array of a single element for everything but Methods/Constructors
 	// that might return multiple matches.
 	//
 	public static MemberInfo [] MemberLookup (Type invocation_type, Type qualifier_type,
 						  Type queried_type, MemberTypes mt,
-						  BindingFlags original_bf, string name)
+						  BindingFlags original_bf, string name, IList almost_match)
 	{
 		Timer.StartTimer (TimerType.MemberLookup);
 
 		MemberInfo[] retval = RealMemberLookup (invocation_type, qualifier_type,
-							queried_type, mt, original_bf, name);
+							queried_type, mt, original_bf, name, almost_match);
 
 		Timer.StopTimer (TimerType.MemberLookup);
 
@@ -2901,7 +2906,7 @@ public class TypeManager {
 
 	static MemberInfo [] RealMemberLookup (Type invocation_type, Type qualifier_type,
 					       Type queried_type, MemberTypes mt,
-					       BindingFlags original_bf, string name)
+					       BindingFlags original_bf, string name, IList almost_match)
 	{
 		BindingFlags bf = original_bf;
 		
@@ -2911,9 +2916,10 @@ public class TypeManager {
 		bool skip_iface_check = true, used_cache = false;
 		bool always_ok_flag = false;
 
-		closure_invocation_type = invocation_type;
-		closure_invocation_assembly = invocation_type != null ? invocation_type.Assembly : null;
-		closure_qualifier_type = qualifier_type;
+		closure.invocation_type = invocation_type;
+		closure.invocation_assembly = invocation_type != null ? invocation_type.Assembly : null;
+		closure.qualifier_type = qualifier_type;
+		closure.almost_match = almost_match;
 
 		//
 		// If we are a nested class, we always have access to our container
@@ -2960,7 +2966,7 @@ public class TypeManager {
 			else
 				bf = original_bf;
 
-			closure_private_ok = (original_bf & BindingFlags.NonPublic) != 0;
+			closure.private_ok = (original_bf & BindingFlags.NonPublic) != 0;
 
 			Timer.StopTimer (TimerType.MemberLookup);
 
@@ -3084,7 +3090,7 @@ public class TypeManager {
 		foreach (TypeExpr itype in ifaces){
 			MemberInfo [] x;
 
-			x = MemberLookup (null, null, itype.Type, mt, bf, name);
+			x = MemberLookup (null, null, itype.Type, mt, bf, name, null);
 			if (x != null)
 				return x;
 		}

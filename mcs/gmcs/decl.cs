@@ -2,6 +2,7 @@
 // decl.cs: Declaration base class for structs, classes, enums and interfaces.
 //
 // Author: Miguel de Icaza (miguel@gnu.org)
+//         Marek Safar (marek.safar@seznam.cz)
 //
 // Licensed under the terms of the GNU GPL
 //
@@ -269,6 +270,9 @@ namespace Mono.CSharp {
 			HasCompliantAttribute_Undetected = 1 << 5,	// Presence of CLSCompliantAttribute has not been detected
 			HasClsCompliantAttribute = 1 << 6,			// Type has CLSCompliantAttribute
 			ClsCompliantAttributeTrue = 1 << 7,			// Type has CLSCompliant (true)
+			Excluded_Undetected = 1 << 8,		// Conditional attribute has not been detected yet
+			Excluded = 1 << 9					// Method is conditional
+
 		}
   
 		/// <summary>
@@ -282,7 +286,7 @@ namespace Mono.CSharp {
 			Name = name.GetName (!(this is GenericMethod) && !(this is Method));
 			MemberName = name;
 			Location = loc;
-			caching_flags = Flags.Obsolete_Undetected | Flags.ClsCompliance_Undetected | Flags.HasCompliantAttribute_Undetected;
+			caching_flags = Flags.Obsolete_Undetected | Flags.ClsCompliance_Undetected | Flags.HasCompliantAttribute_Undetected | Flags.Excluded_Undetected;
 		}
 
 		/// <summary>

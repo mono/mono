@@ -3,6 +3,7 @@
 //
 // Authors: Miguel de Icaza (miguel@gnu.org)
 //          Martin Baulig (martin@gnome.org)
+//          Marek Safar (marek.safar@seznam.cz)
 //
 // Licensed under the terms of the GNU GPL
 //
@@ -2224,7 +2225,6 @@ namespace Mono.CSharp {
 			}
 		}
 
-
 		//
 		// IMemberContainer
 		//
@@ -2921,7 +2921,6 @@ namespace Mono.CSharp {
 		public MethodBuilder MethodBuilder;
 		public MethodData MethodData;
 		ReturnParameter return_attributes;
-		bool should_ignore;
 
 		/// <summary>
 		///   Modifiers allowed in a class declaration
@@ -2980,12 +2979,13 @@ namespace Mono.CSharp {
 		/// <summary>
 		/// Use this method when MethodBuilder is null
 		/// </summary>
-		public string GetSignatureForError (TypeContainer tc)
+		public override string GetSignatureForError (TypeContainer tc)
 		{
-			System.Text.StringBuilder args = new System.Text.StringBuilder ("");
+			// TODO: move to parameters
+			System.Text.StringBuilder args = new System.Text.StringBuilder ();
 			if (parameter_info.Parameters.FixedParameters != null) {
 				for (int i = 0; i < parameter_info.Parameters.FixedParameters.Length; ++i) {
-					Parameter p =  parameter_info.Parameters.FixedParameters [i];
+					Parameter p = parameter_info.Parameters.FixedParameters [i];
 					args.Append (p.GetSignatureForError ());
 
 					if (i < parameter_info.Parameters.FixedParameters.Length - 1)
@@ -2993,7 +2993,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			return String.Concat (tc.Name, ".", Name, "(", args.ToString (), ")");
+			return String.Concat (base.GetSignatureForError (tc), "(", args.ToString (), ")");
 		}
 
                 void DuplicateEntryPoint (MethodInfo b, Location location)
@@ -3049,8 +3049,15 @@ namespace Mono.CSharp {
 				MethodBuilder.SetImplementationFlags (MethodImplAttributes.InternalCall | MethodImplAttributes.Runtime);
 			}
 
-			if (a.Type == TypeManager.dllimport_type)
+			if (a.Type == TypeManager.dllimport_type) {
+				const int extern_static = Modifiers.EXTERN | Modifiers.STATIC;
+				if ((ModFlags & extern_static) != extern_static) {
+					//"The DllImport attribute must be specified on a method marked `static' and `extern'"
+					Report.Error_T (601, a.Location);
+				}
+
 				return;
+			}
 
 			MethodBuilder.SetCustomAttribute (cb);
 		}
@@ -3173,8 +3180,6 @@ namespace Mono.CSharp {
 			if (!MethodData.Define (container))
 				return false;
 
-			should_ignore = MethodData.ShouldIgnore ();
-
 			//
 			// Setup iterator if we are one
 			//
@@ -3284,9 +3289,49 @@ namespace Mono.CSharp {
 			return GetObsoleteAttribute (ds);
 		}
 
-		public bool ShouldIgnore ()
+		/// <summary>
+		/// Returns true if method has conditional attribute and the conditions is not defined (method is excluded).
+		/// </summary>
+		public bool IsExcluded (EmitContext ec)
 		{
-			return should_ignore;
+			if ((caching_flags & Flags.Excluded_Undetected) == 0)
+				return (caching_flags & Flags.Excluded) != 0;
+
+			caching_flags &= ~Flags.Excluded_Undetected;
+
+			if (parent_method == null) {
+				if (OptAttributes == null)
+					return false;
+
+				Attribute[] attrs = OptAttributes.SearchMulti (TypeManager.conditional_attribute_type, ec);
+
+				if (attrs == null)
+					return false;
+
+				foreach (Attribute a in attrs) {
+					string condition = a.GetConditionalAttributeValue (ds);
+					if (RootContext.AllDefines.Contains (condition))
+						return false;
+				}
+
+				caching_flags |= Flags.Excluded;
+				return true;
+			}
+
+			IMethodData md = TypeManager.GetMethod (parent_method);
+			if (md == null) {
+				if (AttributeTester.IsConditionalMethodExcluded (parent_method)) {
+					caching_flags |= Flags.Excluded;
+					return true;
+				}
+				return false;
+			}
+
+			if (md.IsExcluded (ec)) {
+				caching_flags |= Flags.Excluded;
+				return true;
+			}
+			return false;
 		}
 
 		GenericMethod IMethodData.GenericMethod {
@@ -3820,7 +3865,8 @@ namespace Mono.CSharp {
 
 		EmitContext CreateEmitContext (TypeContainer tc, ILGenerator ig);
 		ObsoleteAttribute GetObsoleteAttribute ();
-		bool ShouldIgnore ();
+		string GetSignatureForError (TypeContainer tc);
+		bool IsExcluded (EmitContext ec);
 	}
 
 	//
@@ -3850,9 +3896,6 @@ namespace Mono.CSharp {
 		protected bool is_method;
 		protected Type declaring_type;
 
-		//
-		// It can either hold a string with the condition, or an arraylist of conditions.
-		object conditionals;
 		EmitContext ec;
 
 		MethodBuilder builder = null;
@@ -3877,7 +3920,6 @@ namespace Mono.CSharp {
 			this.modifiers = modifiers;
 			this.flags = flags;
 			this.is_method = is_method;
-			this.conditionals = null;
 
 			this.method = method;
 		}
@@ -3895,8 +3937,6 @@ namespace Mono.CSharp {
 		//
 		// Attributes.
 		//
-		Attribute dllimport_attribute = null;
-
 		public virtual bool ApplyAttributes (Attributes opt_attrs, bool is_method,
 						     EmitContext ec)
 		{
@@ -3908,34 +3948,9 @@ namespace Mono.CSharp {
 				if (attr_type == TypeManager.conditional_attribute_type) {
 					if (!ApplyConditionalAttribute (a))
 						return false;
-				} else if (attr_type == TypeManager.dllimport_type) {
-					if (!is_method) {
-						Attribute.Error_AttributeNotValidForElement (a, method.Location);
-						return false;
-					}
-					if (!ApplyDllImportAttribute (a))
-						return false;
-				}
-			}
-
-			return true;
 		}
-
-		//
-		// Applies the `DllImport' attribute to the method.
-		//
-		protected virtual bool ApplyDllImportAttribute (Attribute a)
-		{
-			const int extern_static = Modifiers.EXTERN | Modifiers.STATIC;
-			if ((modifiers & extern_static) != extern_static) {
-				Report.Error (601, method.Location,
-					      "The DllImport attribute must be specified on a method " +
-					      "marked `static' and `extern'.");
-				return false;
 			}
 
-			flags |= MethodAttributes.PinvokeImpl;
-			dllimport_attribute = a;
 			return true;
 		}
 
@@ -3983,47 +3998,7 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			//
-			// The likelyhood that the conditional will be more than 1 is very slim
-			//
-			if (conditionals == null)
-				conditionals = condition;
-			else if (conditionals is string){
-				string s = (string) conditionals;
-				conditionals = new ArrayList ();
-				((ArrayList)conditionals).Add (s);
-			} else
-				((ArrayList)conditionals).Add (condition);
-
 			return true;
-		}
-
-		//
-		// Checks whether this method should be ignored due to its Conditional attributes.
-		//
-		public bool ShouldIgnore ()
-		{
-			// When we're overriding a virtual method, we implicitly inherit the
-			// Conditional attributes from our parent.
-			if (member.ParentMethod != null) {
-				TypeManager.MethodFlags flags = TypeManager.GetMethodFlags (
-					member.ParentMethod);
-
-				if ((flags & TypeManager.MethodFlags.ShouldIgnore) != 0)
-					return true;
-			}
-
-			if (conditionals != null){
-				if (conditionals is string){
-					if (RootContext.AllDefines [conditionals] == null)
-						return true;
-				} else {
-					foreach (string condition in (ArrayList) conditionals)
-					if (RootContext.AllDefines [condition] == null)
-						return true;
-				}
-			}
-			return false;
 		}
 
 		public bool Define (TypeContainer container)
@@ -4133,27 +4108,7 @@ namespace Mono.CSharp {
 				IsImplementing = true;
 			}
 
-			//
-			// Create the MethodBuilder for the method
-			//
-			if ((flags & MethodAttributes.PinvokeImpl) != 0) {
-				if ((modifiers & Modifiers.STATIC) == 0) {
-					Report.Error (601, method.Location,
-						      "The DllImport attribute must be specified on " +
-						      "a method marked 'static' and 'extern'.");
-					return false;
-				}
-				builder = dllimport_attribute.DefinePInvokeMethod (
-					ec, container.TypeBuilder, method_name, flags,
-					method.ReturnType, ParameterTypes);
-			} else if (builder == null)
-				builder = container.TypeBuilder.DefineMethod (
-					method_name, flags, method.CallingConventions,
-					method.ReturnType, ParameterTypes);
-			else
-				builder.SetGenericMethodSignature (
-					flags, method.CallingConventions,
-					method.ReturnType, ParameterTypes);
+			DefineMethodBuilder (ec, container, method_name, ParameterTypes);
 
 			if (builder == null)
 				return false;
@@ -4202,6 +4157,47 @@ namespace Mono.CSharp {
 			TypeManager.AddMethod (builder, method);
 
 			return true;
+		}
+
+		/// <summary>
+		/// Create the MethodBuilder for the method 
+		/// </summary>
+		void DefineMethodBuilder (EmitContext ec, TypeContainer container, string method_name, Type[] ParameterTypes)
+		{
+			const int extern_static = Modifiers.EXTERN | Modifiers.STATIC;
+
+			if ((modifiers & extern_static) == extern_static) {
+
+				if (method.OptAttributes != null) {
+					Attribute dllimport_attribute = method.OptAttributes.Search (TypeManager.dllimport_type, ec);
+					if (dllimport_attribute != null) {
+						flags |= MethodAttributes.PinvokeImpl;
+						builder = dllimport_attribute.DefinePInvokeMethod (
+							ec, container.TypeBuilder, method_name, flags,
+							method.ReturnType, ParameterTypes);
+
+						return;
+					}
+				}
+
+				// for extern static method must be specified either DllImport attribute or MethodImplAttribute.
+				// We are more strict than Microsoft and report CS0626 like error
+				if (method.OptAttributes == null ||
+					!method.OptAttributes.Contains (TypeManager.methodimpl_attr_type, ec)) {
+					//"Method, operator, or accessor '{0}' is marked external and has no attributes on it. Consider adding a DllImport attribute to specify the external implementation"
+					Report.Error_T (626, method.Location, method.GetSignatureForError (container));
+					return;
+				}
+			}
+
+			if (builder == null)
+				builder = container.TypeBuilder.DefineMethod (
+					method_name, flags, method.CallingConventions,
+					method.ReturnType, ParameterTypes);
+			else
+				builder.SetGenericMethodSignature (
+					flags, method.CallingConventions,
+					method.ReturnType, ParameterTypes);
 		}
 
 		//
@@ -4720,6 +4716,14 @@ namespace Mono.CSharp {
 			return true;
 		}
 
+		/// <summary>
+		/// Use this method when MethodBuilder is null
+		/// </summary>
+		public virtual string GetSignatureForError (TypeContainer tc)
+		{
+			return String.Concat (tc.Name, '.', Name);
+		}
+
 		protected override bool IsIdentifierClsCompliant (DeclSpace ds)
 		{
 			return IsIdentifierAndParamClsCompliant (ds, Name, null, null);
@@ -5047,7 +5051,13 @@ namespace Mono.CSharp {
 				return method_data.MethodBuilder;
 			}
 
-			public override string MethodName {
+			public override string GetSignatureForError (TypeContainer tc)
+			{
+				return String.Concat (base.GetSignatureForError (tc), ".get");
+			}
+
+			public override string MethodName 
+			{
 				get {
 					return "get_" + method.ShortName;
 				}
@@ -5105,6 +5115,11 @@ namespace Mono.CSharp {
 					return null;
 
 				return method_data.MethodBuilder;
+			}
+
+			public override string GetSignatureForError (TypeContainer tc)
+			{
+				return String.Concat (base.GetSignatureForError (tc), ".set");
 			}
 
 			public override string MethodName {
@@ -5186,8 +5201,12 @@ namespace Mono.CSharp {
 			{
 				method_data.Emit (container, this);
 				block = null;
+			}
 
-				}
+			public virtual string GetSignatureForError (TypeContainer tc)
+			{
+				return String.Concat (tc.Name, '.', method.Name);
+			}
 
 			public override void ApplyAttributeBuilder(Attribute a, CustomAttributeBuilder cb)
 			{
@@ -5228,9 +5247,9 @@ namespace Mono.CSharp {
 				return method.GetObsoleteAttribute (method.ds);
 			}
 
-			bool IMethodData.ShouldIgnore ()
+			public bool IsExcluded (EmitContext ec)
 			{
-				return method_data.ShouldIgnore ();
+				return false;
 			}
 
 			GenericMethod IMethodData.GenericMethod {
@@ -5935,6 +5954,11 @@ namespace Mono.CSharp {
 				ig.Emit (OpCodes.Ret);
 			}
 
+			public string GetSignatureForError (TypeContainer tc)
+			{
+				return String.Concat (tc.Name, '.', method.Name);
+			}
+
 			protected abstract MethodInfo DelegateMethodInfo { get; }
 
 			public Type[] ParameterTypes {
@@ -5965,9 +5989,9 @@ namespace Mono.CSharp {
 				return method.GetObsoleteAttribute (method.ds);
 			}
 
-			bool IMethodData.ShouldIgnore ()
+			public bool IsExcluded (EmitContext ec)
 			{
-				return method_data.ShouldIgnore ();
+				return false;
 			}
 
 			GenericMethod IMethodData.GenericMethod {
@@ -6704,6 +6728,11 @@ namespace Mono.CSharp {
 				return "explicit";
 			default: return "";
 			}
+		}
+
+		public override string GetSignatureForError(TypeContainer tc)
+		{
+			return Prototype (tc);
 		}
 		
 		public override string ToString ()

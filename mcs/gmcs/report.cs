@@ -90,7 +90,9 @@ namespace Mono.CSharp {
 			switch (error_no) {
  				case 0122: return "'{0}' is inaccessible due to its protection level";
 				case 0160: return "A previous catch clause already catches all exceptions of this or a super type '{0}'";
+				case 0601: return "The DllImport attribute must be specified on a method marked `static' and `extern'";
 				case 0619: return "'{0}' is obsolete: '{1}'";
+				case 0626: return "Method, operator, or accessor '{0}' is marked external and has no attributes on it. Consider adding a DllImport attribute to specify the external implementation";
 				case 0657: return "'{0}' is not a valid attribute location for this declaration. Valid attribute locations for this declaration are '{1}'";
 				case 3001: return "Argument type '{0}' is not CLS-compliant";
 				case 3002: return "Return type of '{0}' is not CLS-compliant";
