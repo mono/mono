@@ -21,21 +21,21 @@ namespace System.Windows.Forms {
 
 		protected string DisplayMember_ = String.Empty;
 
-		private object _dataSource;
+		protected object DataSource_;
 		//ControlStyles controlStyles;
 		//
 		//  --- Public Properties
 		//
 		[MonoTODO]
-		public object DataSource {
+		public virtual object DataSource {
 			get {
-				return _dataSource;
+				return DataSource_;
 			}
 
 			set {
-				if (_dataSource != value) {
+				if (DataSource_ != value) {
 					if ((value is IList) || (value is System.ComponentModel.IListSource)) {
-						_dataSource = value;
+						DataSource_ = value;
 						OnDataSourceChanged (new EventArgs ());
 
 					} else
