@@ -1,3 +1,8 @@
+2004-11-04  Zoltan Varga  <vargaz@freemail.hu>
+
+	* reflection.c (mono_reflection_get_type): Avoid triggering a 
+	TypeResolve multiple times for the same type. Fixes #65577.
+
 2004-11-04  Ben Maurer  <bmaurer@ximian.com>
 	
 	* reflection.c (mono_module_get_object): free the basename we
