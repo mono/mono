@@ -15,7 +15,21 @@ namespace System.Reflection {
 
 		public abstract EventAttributes Attributes {get;}
 
-		public Type EventHandlerType {get {return null;}}
+		public Type EventHandlerType {
+			get {
+				ParameterInfo[] p;
+				MethodInfo add = GetAddMethod (true);
+				p = add.GetParameters ();
+				if (p.Length > 0) {
+					Type t = p [0].ParameterType;
+					/* is it alwasys the first arg?
+					if (!t.IsSubclassOf (typeof (System.Delegate)))
+						throw new Exception ("no delegate in event");*/
+					return t;
+				} else
+					return null;
+			}
+		}
 		public bool IsMulticast {get {return true;}}
 		public bool IsSpecialName {get {return false;}}
 		public override MemberTypes MemberType {
@@ -28,15 +42,15 @@ namespace System.Reflection {
 		public void AddEventHandler( object target, Delegate handler) {
 		}
 		public MethodInfo GetAddMethod() {
-			return null;
+			return GetAddMethod (false);
 		}
 		public abstract MethodInfo GetAddMethod(bool nonPublic);
 		public MethodInfo GetRaiseMethod() {
-			return null;
+			return GetRaiseMethod (false);
 		}
 		public abstract MethodInfo GetRaiseMethod( bool nonPublic);
 		public MethodInfo GetRemoveMethod() {
-			return null;
+			return GetRemoveMethod (false);
 		}
 		public abstract MethodInfo GetRemoveMethod( bool nonPublic);
 		public void RemoveEventHandler( object target, Delegate handler) {
