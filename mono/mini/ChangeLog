@@ -1,3 +1,9 @@
+
+Fri Jan 23 16:10:44 EST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* Makefile.am: make the version script conditional.
+	* jit-icalls.c: handle missing truncl().
+
 2004-01-23  Zoltan Varga  <vargaz@freemail.hu>
 
 	* exceptions.cs: Add more tests for double->int conversion.
