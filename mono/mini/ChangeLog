@@ -1,3 +1,6 @@
+2004-08-09  Zoltan Varga  <vargaz@freemail.hu>
+
+	* inssel-x86.brg: Set dreg of LOCALLOC correctly.
 
 Tue Aug 3 11:20:09 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
