@@ -448,6 +448,8 @@ namespace System.Xml.XPath
 			}
 			return Evaluate (iter);
 		}
+
+		public virtual bool RequireSorting { get { return false; } }
 	}
 
 	internal abstract class ExprBinary : Expression
@@ -841,6 +843,8 @@ namespace System.Xml.XPath
 			BaseIterator iterLeft = left.EvaluateNodeSet (iter);
 			return new SlashIterator (iterLeft, right);
 		}
+
+		public override bool RequireSorting { get { return left.RequireSorting || right.RequireSorting; } }
 	}
 	
 	internal class ExprSLASH2 : NodeSet {
@@ -865,6 +869,8 @@ namespace System.Xml.XPath
 				right
 			);
 		}
+
+		public override bool RequireSorting { get { return left.RequireSorting || right.RequireSorting; } }
 	}
 
 	internal class ExprRoot : NodeSet
@@ -1004,6 +1010,21 @@ namespace System.Xml.XPath
 		}
 		
 		public abstract void GetInfo (out string name, out string ns, out XPathNodeType nodetype, XmlNamespaceManager nsm);
+
+		public override bool RequireSorting {
+			get {
+				switch (_axis.Axis) {
+				case Axes.Ancestor:
+				case Axes.AncestorOrSelf:
+				case Axes.Preceding:
+				case Axes.PrecedingSibling:
+					return true;
+				default:
+					return false;
+				}
+			}
+
+		}
 	}
 
 	internal class NodeTypeTest : NodeTest
@@ -1261,7 +1282,6 @@ namespace System.Xml.XPath
 		}
 	}
 
-#if false
 	internal class ExprParens : Expression
 	{
 		protected Expression _expr;
@@ -1273,10 +1293,14 @@ namespace System.Xml.XPath
 		public override XPathResultType ReturnType { get { return _expr.ReturnType; }}
 		public override object Evaluate (BaseIterator iter)
 		{
-			return _expr.Evaluate (new ParensIterator (iter));
+			object o = (_expr.Evaluate (iter));
+			BaseIterator predBase = o as BaseIterator;
+			if (predBase != null)
+				return new ParensIterator (predBase);
+			else
+				return o;
 		}
 	}
-#endif
 
 	internal class FunctionArguments
 	{

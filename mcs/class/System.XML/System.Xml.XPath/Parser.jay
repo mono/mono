@@ -335,7 +335,7 @@ PrimaryExpr
 	}
 	| PAREN_OPEN Expr PAREN_CLOSE
 	{
-		$$ = $2;
+		$$ = new ExprParens ((Expression) $2);
 	}
 	| LITERAL
 	{

@@ -1,3 +1,32 @@
+2003-11-24  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
+
+	* Parser.jay, Expression.cs, Iterator.cs :
+	  Added ExprParens and ParensIterator classes which is used to handle
+	  precedence of parenthesized expressions.
+	  (e.g. consider "(preceding::*)[3]" and "preceding::[3]" )
+
+	* Expression.cs, Iterator.cs :
+	  Added RequireSorting property for each Expr and BaseIterator classes.
+	  SlashIterator.MoveNext() now considers correct sorting. But
+	  considering performance, it separates two logics, sorted and sortless
+	  depending on RequireSorting of left iterator and right expression.
+
+	* Iterator.cs :
+	  SimpleIterator.ctor() should consider when nav is null.
+	  FollowingIterator.MoveNext() and PrecedingIterator.MoveNext() should
+	  not return any nodes.
+	  AncestorIterator and AncestorOrSelfIterator copy ctr() should clone
+	  positions.
+	  AncestorIterator.MoveNext() should skip Root if context node is
+	  Root itself.
+	  FollowingIterator.MoveNext() should not handle children of context
+	  itself.
+	  PrecedingIterator.MoveNext() should skip its ancestors.
+	  AxisIterator.ReverseAxis should be dependent on its containing iter.
+	  UnionIterator.MoveNext() should consider comparison of nodes in 
+	  different document. The behavior is implementation dependent.
+	  (see XSLT spec 12.1)
+
 2003-11-19  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
 
 	* Added XPathComparer.cs
