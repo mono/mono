@@ -4,6 +4,7 @@ LIBRARY = system_linux_test.dll
 
 LIB_LIST = system_linux_test.args
 LIB_FLAGS =	\
+		/debug+ /debug:full \
 		-r $(topdir)/class/lib/corlib.dll \
 		-r $(topdir)/class/lib/System.dll \
 		-r $(topdir)/class/lib/System.Xml.dll \

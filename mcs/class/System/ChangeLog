@@ -1,5 +1,10 @@
+2003-05-29  Nick Drochak <ndrochak@gol.com>
+
+	* makefile.gnu: turn on debug since it works again.
+
 2003-05-21  Ben Maurer <bmaurer@users.sourceforge.net>
-	StringWriter.cs: Fixed bug #43379 "Missing WebException.Response
+
+	* StringWriter.cs: Fixed bug #43379 "Missing WebException.Response
 	property."
 
 2003-03-30  Martin Willemoes Hansen <mwh@sysrq.dk>
