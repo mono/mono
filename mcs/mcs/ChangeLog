@@ -1,3 +1,8 @@
+2004-01-03 Todd Berman <tberman@gentoo.org>
+	
+	* ecore.cs, attribute.cs:
+	Applying fix from #52429.
+
 2004-01-03 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* ecore.cs, expression.cs, statement.cs:

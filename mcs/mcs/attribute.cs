@@ -144,6 +144,12 @@ namespace Mono.CSharp {
 				result =  ((ArrayCreation) e).EncodeAsAttribute ();
 				if (result != null)
 					return true;
+			} else if (e is EmptyCast) {
+				result = e;
+				if (((EmptyCast) e).Child is Constant) {
+					result = ((Constant) ((EmptyCast)e).Child).GetValue();
+				}
+				return true;
 			}
 
 			result = null;
@@ -295,6 +301,8 @@ namespace Mono.CSharp {
 						
 					} else if (e is TypeOf) {
 						prop_values.Add (((TypeOf) e).TypeArg);
+					} else if (e is ArrayCreation) {
+						prop_values.Add (((ArrayCreation) e).EncodeAsAttribute());
 					} else {
 						Error_AttributeArgumentNotValid (Location);
 						return null;
