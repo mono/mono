@@ -1,5 +1,7 @@
 2001-08-10  Dietmar Maurer  <dietmar@ximian.com>
 
+	* interp.c (ves_exec_method): impl CASTCLASS
+
 	* icall.c: moved the internal call stuff to this file
 
 	* interp.c (ves_exec_method): impl. BOX/UNBOX

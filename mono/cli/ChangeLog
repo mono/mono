@@ -1,3 +1,7 @@
+2001-08-10  Dietmar Maurer  <dietmar@ximian.com>
+
+	* object.c (mono_object_clone): impl.
+
 2001-08-09  Dietmar Maurer  <dietmar@ximian.com>
 
 	* object.c (mono_new_szarray): impl.
