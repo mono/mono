@@ -1,5 +1,7 @@
 2005-04-05  Raja R Harinath  <rharinath@novell.com>
 
+	* mtest-8-dll.cs, mtest-8-exe.cs: New test from #73820.
+
 	* test-360.cs: New test from #74041.
 
 2005-04-01  Kamil Skalski  <nazgul@omega.pl>

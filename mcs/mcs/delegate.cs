@@ -85,7 +85,8 @@ namespace Mono.CSharp {
 				TypeAttributes.Class | TypeAttributes.Sealed;
 
 			if (TypeManager.multicast_delegate_type == null && !RootContext.StdLib) {
-				TypeExpr expr = new TypeLookupExpression ("System.MulticastDelegate");
+				Namespace system = Namespace.LookupNamespace ("System", true);
+				TypeExpr expr = system.Lookup (this, "MulticastDelegate", Location) as TypeExpr;
 				TypeManager.multicast_delegate_type = expr.ResolveType (ec);
 			}
 
@@ -246,7 +247,24 @@ namespace Mono.CSharp {
 			}
 			if (Parameters.ArrayParameter != null){
 				Parameter p = Parameters.ArrayParameter;
-				p.DefineParameter (ec, InvokeBuilder, null, i + 1, Location);
+
+				if (TypeManager.param_array_type == null && !RootContext.StdLib) {
+					Namespace system = Namespace.LookupNamespace ("System", true);
+					TypeExpr expr = system.Lookup (this, "ParamArrayAttribute", Location) as TypeExpr;
+					TypeManager.param_array_type = expr.ResolveType (ec);
+				}
+
+				if (TypeManager.cons_param_array_attribute == null) {
+					Type [] void_arg = { };
+					TypeManager.cons_param_array_attribute = TypeManager.GetConstructor (
+						TypeManager.param_array_type, void_arg);
+				}
+
+				ParameterBuilder pb = InvokeBuilder.DefineParameter (
+					i + 1, Parameters.ArrayParameter.Attributes,Parameters.ArrayParameter.Name);
+				
+				pb.SetCustomAttribute (
+					new CustomAttributeBuilder (TypeManager.cons_param_array_attribute, new object [0]));
 			}
 			
 			InvokeBuilder.SetImplementationFlags (MethodImplAttributes.Runtime);
