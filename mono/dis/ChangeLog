@@ -1,4 +1,8 @@
 
+Thu Mar 28 16:52:11 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* dis-cil.c, dump.c, get.c, main.c, util.h: spring warning cleanup.
+
 Thu Mar 28 11:29:58 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* util.c: when an invalid flags combination is seen,
