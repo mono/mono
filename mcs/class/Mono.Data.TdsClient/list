@@ -1,3 +1,4 @@
+Mono.Data.TdsClient/Locale.cs
 Mono.Data.TdsClient/TdsCommand.cs
 Mono.Data.TdsClient/TdsConnection.cs
 Mono.Data.TdsClient/TdsConnectionPool.cs
@@ -44,3 +45,20 @@ Mono.Data.TdsClient.Internal/TdsSchemaInfo.cs
 Mono.Data.TdsClient.Internal/TdsServerType.cs
 Mono.Data.TdsClient.Internal/TdsVersion.cs
 Mono.Data.TdsClient.Internal/TODOAttribute.cs
+Mono.Data.TdsTypes/TdsBinary.cs
+Mono.Data.TdsTypes/TdsBoolean.cs
+Mono.Data.TdsTypes/TdsByte.cs
+Mono.Data.TdsTypes/TdsCompareOptions.cs
+Mono.Data.TdsTypes/TdsDateTime.cs
+Mono.Data.TdsTypes/TdsDecimal.cs
+Mono.Data.TdsTypes/TdsDouble.cs
+Mono.Data.TdsTypes/TdsGuid.cs
+Mono.Data.TdsTypes/TdsInt16.cs
+Mono.Data.TdsTypes/TdsInt32.cs
+Mono.Data.TdsTypes/TdsInt64.cs
+Mono.Data.TdsTypes/TdsMoney.cs
+Mono.Data.TdsTypes/TdsNullValueException.cs
+Mono.Data.TdsTypes/TdsSingle.cs
+Mono.Data.TdsTypes/TdsString.cs
+Mono.Data.TdsTypes/TdsTruncateException.cs
+Mono.Data.TdsTypes/TdsTypeException.cs

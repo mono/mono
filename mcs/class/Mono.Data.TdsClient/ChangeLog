@@ -1,6 +1,8 @@
 2002-11-03  Tim Coleman (tim@timcoleman.com)
 	* list :
-		Add TdsColumnStatus.cs
+		Add Mono.Data.TdsTypes
+		Add Mono.Data.TdsClient.Locale.cs
+		Add Mono.Data.TdsClient.Internal.TdsColumnStatus.cs
 
 2002-10-31  Tim Coleman (tim@timcoleman.com)
 	* list :
