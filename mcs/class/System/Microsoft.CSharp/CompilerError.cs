@@ -68,7 +68,7 @@ namespace Microsoft.CSharp {
 
 		public string SourceFile {
 			get { 
-				return (null == file ? "" : file);
+				return (null == file ? String.Empty : file);
 			}
 			set { file = value; }
   		}
@@ -107,7 +107,7 @@ namespace Microsoft.CSharp {
 			get {
 				if (ErrorLevel.FatalError == ErrorLevel)
 					return "Error Fatal";
-				return ErrorLevel.ToString ();
+				return ErrorLevel.ToString ().ToLower ();
 			}
 		}
 	}

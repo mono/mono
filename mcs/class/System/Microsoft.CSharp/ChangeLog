@@ -1,3 +1,7 @@
+2002-11-11 Jackson Harper <jackson@latitudegeo.com>
+
+	* CompilerError.cs: Error levels are now lower case to match MS spec
+
 2002-11-9 Jackson Harper <jackson@latitudegeo.com>
 
 	* CompilerError.cs: ToString() Do not show source file info if there was no source file in the error message
