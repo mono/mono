@@ -2803,7 +2803,7 @@ declaration_statement
 		if ($1 != null){
 			DictionaryEntry de = (DictionaryEntry) $1;
 
-			$$ = declare_local_constant ((Expression) de.Key, (VariableDeclaration) de.Value);
+			$$ = declare_local_constant ((Expression) de.Key, (ArrayList) de.Value);
 		}
 	  }
 	;	 
@@ -2817,10 +2817,10 @@ local_variable_declaration
 
 	
 local_constant_declaration
-	: CONST constant_declarator
+	: CONST constant_declarators
 	  {
 		if ($2 != null)
-			$$ = new DictionaryEntry ($1, $2);
+			$$ = new DictionaryEntry (DecomposeQI("_local_consts_", lexer.Location), $2);
 		else
 			$$ = null;
 	  }
@@ -3841,18 +3841,20 @@ Block declare_local_variables (Expression dummy_type, ArrayList variable_declara
 	return implicit_block;
 }
 
-
-Block declare_local_constant (Expression type, VariableDeclaration decl)
+Block declare_local_constant (Expression dummy_type, ArrayList variable_declarators)
 {
 	Block implicit_block;
+	VariableDeclaration.FixupTypes (variable_declarators);
 
 	if (current_block.Used)
 		implicit_block = new Block (current_block, true);
 	else
 		implicit_block = current_block;
 
-	if (!(implicit_block.AddConstant (type, decl.identifier, (Expression) decl.expression_or_array_initializer,
-					  current_local_parameters, decl.Location))){
+	foreach (VariableDeclaration decl in variable_declarators){
+		Expression type = decl.type;
+		implicit_block.AddConstant (type, decl.identifier, (Expression) decl.expression_or_array_initializer,
+					  current_local_parameters, decl.Location);
 	}
 	
 	return implicit_block;
