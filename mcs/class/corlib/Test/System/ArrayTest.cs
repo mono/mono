@@ -91,14 +91,6 @@ public class ArrayTest : TestCase
 		Assert("#B02", errorThrown);
 
 		{
-			char[] bad = {'d', 'a', 'd', 'a', 'c', 'a'};
-			AssertEquals("#B03", -1, Array.BinarySearch(bad, 'c'));
-		}
-		{
-			char[] bad = {'a', 'd', 'a', 'd', 'a', 'c', 'a'};
-			AssertEquals("#B04", -2, Array.BinarySearch(bad, 'c'));
-		}
-		{
 			char[] arr = {'a', 'b', 'b', 'c', 'c', 'c', 'd', 'd'};
 			Assert("#B05", 
 			       Array.BinarySearch(arr, 'c') >= 3);
@@ -157,16 +149,6 @@ public class ArrayTest : TestCase
 		}
 		Assert("#B24", errorThrown);
 
-		// FIXME - see commented-out tests in TestBinarySearch1, above
-		
-		{
-			char[] bad = {'z', 'z', 'd', 'a', 'd', 'a', 'c', 'a'};
-			AssertEquals("#B25", -3, Array.BinarySearch(bad, 2, 6, 'c'));
-		}
-		{
-			char[] bad = {'z', 'z', 'a', 'd', 'a', 'd', 'a', 'c', 'a'};
-			AssertEquals("#B25", -4, Array.BinarySearch(bad, 2, 7, 'c'));
-		}
 		{
 			char[] arr = {'z', 'z', 'a', 'b', 'b', 'c', 'c', 'c', 'd', 'd'};
 			Assert("#B26", 

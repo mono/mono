@@ -1,3 +1,8 @@
+2002-04-09  Nick Drochak  <ndrochak@gol.com>
+
+	* ArrayTest.cs: Remove BinarySearch test on unsorted arrays. The
+	behavior is undefined if the array isn't sorted.
+
 2002/04/09  Nick Drochak <ndrochak@gol.com>
 
 	* DecimalTest.cs: Use AssertEquals() for better diagnostic message.
