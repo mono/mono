@@ -1,5 +1,10 @@
 2004-06-09  Duncan Mak  <duncan@ximian.com>
 
+	* ObjectManager.cs (RegisterObject): Add checks for
+	ArgumentNullException as well.
+
+2004-06-09  Duncan Mak  <duncan@ximian.com>
+
 	* SerializationInfoEnumerator.cs: Instead of using
 	IDictionaryEnumerator from a Hashtable, use a normal IEnumerator
 	from the newly added ArrayList in SerializationInfo.
