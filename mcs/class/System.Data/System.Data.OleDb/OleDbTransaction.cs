@@ -15,5 +15,17 @@ namespace System.Data.OleDb
 	public sealed class OleDbTransaction : MarshalByRefObject,
 		IDbTransaction, IDisposable
 	{
+		private OleDbConnection m_connection = null;
+		
+		protected OleDbTransaction (OleDbConnection cnc)
+		{
+			m_connection = null;
+		}
+
+		protected OleDbTransaction (OleDbConnection cnc,
+					    IsolationLevel level) : this (cnc)
+		{
+			/* FIXME: use 'level' parameter */
+		}
 	}
 }
