@@ -29,3 +29,5 @@ numbers to match the Microsoft numbers:
 
 -10	User-defined conversion cannot convert between types that derive 
 	from each other.
+
+-11	Delegate creation expression takes only one argument
