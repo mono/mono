@@ -23,9 +23,10 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.2 $
-// $Modtime: $
 // $Log: ImageList.cs,v $
+// Revision 1.3  2004/08/11 13:43:13  pbartok
+// - Added missing creation of the collection list
+//
 // Revision 1.2  2004/08/09 23:12:13  pbartok
 // - Fixed several bugs Ravindra pointed out
 //
@@ -64,6 +65,7 @@ namespace System.Windows.Forms {
 			#region ImageCollection Private Constructors
 			internal ImageCollection(ImageList owner) {
 				this.owner=owner;
+				this.list=new ArrayList();
 			}
 			#endregion	// ImageCollection Private Constructor
 
