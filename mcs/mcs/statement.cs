@@ -251,7 +251,7 @@ namespace Mono.CSharp {
 			expr = ResolveBoolean (ec, expr, loc);
 			if (expr == null)
 				ok = false;
-			
+
 			return ok;
 		}
 		
@@ -1324,7 +1324,7 @@ namespace Mono.CSharp {
 			//
 			MyBitVector locals, parameters;
 			FlowReturns real_returns, real_breaks;
-			bool returns_set, breaks_set, is_finally;
+			bool breaks_set, is_finally;
 
 			static int next_id = 0;
 			int id;
@@ -1433,7 +1433,6 @@ namespace Mono.CSharp {
 
 				set {
 					real_returns = value;
-					returns_set = true;
 				}
 			}
 
@@ -1572,12 +1571,7 @@ namespace Mono.CSharp {
 					}
 				}
 
-				// Set new `Returns' status.
-				if (!returns_set) {
-					Returns = new_returns;
-					returns_set = true;
-				} else
-					Returns = AndFlowReturns (Returns, new_returns);
+				Returns = new_returns;
 
 				//
 				// We've now either reached the point after the branching or we will

@@ -1,5 +1,14 @@
 2002-09-19  Martin Baulig  <martin@gnome.org>
 
+	* codegen.cs (EmitContext.EmitTopBlock): If control flow analysis
+	says that a method always returns or always throws an exception,
+	don't report the CS0161.
+
+	* statement.cs (FlowBranching.UsageVector.MergeChildren): Always
+	set `Returns = new_returns'.
+
+2002-09-19  Martin Baulig  <martin@gnome.org>
+
 	* expression.cs (MemberAccess.ResolveMemberAccess): When resolving
 	to an enum constant, check for a CS0176.
 
