@@ -1,3 +1,8 @@
+2003-07-07  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Hashtable.cs: made SynchedHashtable serializable. Fixes bug #45918.
+	Thanks to JoergR@voelcker.com (Joerg Rosenkranz).
+
 2003-06-26  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* Hashtable.cs: Fixed bug when serializing and deserializing

@@ -908,7 +908,7 @@ namespace System.Collections {
 		}
 
 
-
+		[Serializable]
 		protected class SynchedHashtable : Hashtable, IEnumerable {
 
 			private Hashtable host;
