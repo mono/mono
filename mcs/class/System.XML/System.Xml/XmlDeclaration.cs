@@ -15,10 +15,13 @@ namespace System.Xml
 	{
 		string encoding = "UTF-8"; // defaults to UTF-8
 		string standAlone;
+		string version;
 
-		protected internal XmlDeclaration (string encoding, string standAlone, XmlDocument doc)
+		protected internal XmlDeclaration (string version, string encoding,
+						   string standAlone, XmlDocument doc)
 			: base (doc)
 		{
+			this.version = version;
 			this.encoding = encoding;
 			this.standAlone = standAlone;
 		}
@@ -74,7 +77,7 @@ namespace System.Xml
 		}
 
 		public string Version {
-			get { return "1.0"; }
+			get { return version; }
 		}
 
 		public override XmlNode CloneNode (bool deep)

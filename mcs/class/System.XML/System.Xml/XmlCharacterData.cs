@@ -33,21 +33,14 @@ namespace System.Xml
 			set { data = value; }
 		}
 
-		[MonoTODO]
 		public override string InnerText {
-			get {
-				throw new NotImplementedException ();
-			}
+			get { return data; }
 
-			set {
-				throw new NotImplementedException ();
-			}
+			set { data = value; }
 		}
 
 		public int Length {
-			get {
-				return data != null ? data.Length : 0;
-			}
+			get { return data != null ? data.Length : 0; }
 		}
 
 		public override string Value {
@@ -84,10 +77,9 @@ namespace System.Xml
 			throw new NotImplementedException();
 		}
 
-		[MonoTODO]
-		public virtual string Substring(int offset, int count)
+		public virtual string Substring (int offset, int count)
 		{
-			throw new NotImplementedException();
+			return new data.SubString (offset, count);
 		}
 
 		#endregion

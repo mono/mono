@@ -1,5 +1,13 @@
 2002-03-26  Duncan Mak  <duncan@ximian.com>
 
+	* XmlCharacterData.cs (InnerText): Implemented. Funny that the
+	docs say it is the "The concatenated values of the node and all
+	the children of the node.". I wrote some test programs and
+	couldn't get any of the derived nodes to AppendChild. For now,
+	InnerText == Data == Value.
+
+	* XmlDeclaration.cs (XmlDeclaration): Fixed the constructor parameter signature.
+
 	* XmlImplementation.cs (CreateDocument): Implemented.
 
 2002-03-25  Duncan Mak  <duncan@ximian.com>
