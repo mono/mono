@@ -286,7 +286,7 @@ public class cilc
 		H.WriteLine ();
 
 		H.WriteLine ("#ifdef __cplusplus");
-		H.WriteLine ("extern \"C\" {");
+		H.WriteLine ("extern \"C\" {", false);
 		H.WriteLine ("#endif /* __cplusplus */");
 		H.WriteLine ();
 
@@ -300,7 +300,7 @@ public class cilc
 
 		H.WriteLine ();
 		H.WriteLine ("#ifdef __cplusplus");
-		H.WriteLine ("}");
+		H.WriteLine ("}", false);
 		H.WriteLine ("#endif /* __cplusplus */");
 		H.WriteLine ();
 
@@ -889,16 +889,21 @@ class CodeWriter
 
 	public void WriteLine (string text)
 	{
+		WriteLine (text, true);
+	}
+
+	public void WriteLine (string text, bool autoindent)
+	{
 		char[] opentags = {'{', '('};
 		char[] closetags = {'}', ')'};
 
-		if (text.TrimStart (closetags) != text)
+		if (autoindent && text.TrimStart (closetags) != text)
 			Outdent ();
 
 		w.Write (cur_indent);
 		w.WriteLine (text);
 
-		if (text.TrimEnd (opentags) != text)
+		if (autoindent && text.TrimEnd (opentags) != text)
 			Indent ();
 	}
 
