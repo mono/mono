@@ -772,6 +772,11 @@ namespace Mono.Xml.Schema
 	// xs:float
 	public class XsdFloat : XsdAnySimpleType
 	{
+		internal XsdFloat ()
+		{
+			this.WhitespaceValue = XsdWhitespaceFacet.Collapse;
+		}
+    
 		// Fundamental Facets
 		public override bool Bounded {
 			get { return true; }
@@ -805,6 +810,11 @@ namespace Mono.Xml.Schema
 	// xs:double
 	public class XsdDouble : XsdAnySimpleType
 	{
+		internal XsdDouble ()
+		{
+			this.WhitespaceValue = XsdWhitespaceFacet.Collapse;
+		}
+    
 		// Fundamental Facets
 		public override bool Bounded {
 			get { return true; }
@@ -858,6 +868,7 @@ namespace Mono.Xml.Schema
 	{
 		internal XsdHexBinary ()
 		{
+      this.WhitespaceValue = XsdWhitespaceFacet.Collapse;
 		}
 
 		public override XmlTokenizedType TokenizedType {
@@ -921,6 +932,7 @@ namespace Mono.Xml.Schema
 	{
 		internal XsdBoolean ()
 		{
+      this.WhitespaceValue = XsdWhitespaceFacet.Collapse;
 		}
 
 		public override XmlTokenizedType TokenizedType {
@@ -982,6 +994,7 @@ namespace Mono.Xml.Schema
 	{
 		internal XsdDuration ()
 		{
+      this.WhitespaceValue = XsdWhitespaceFacet.Collapse;
 		}
 
 		public override XmlTokenizedType TokenizedType {
@@ -1025,6 +1038,7 @@ namespace Mono.Xml.Schema
 	{
 		internal XsdDateTime ()
 		{
+			this.WhitespaceValue = XsdWhitespaceFacet.Collapse;
 		}
 
 		public override XmlTokenizedType TokenizedType {
@@ -1064,6 +1078,11 @@ namespace Mono.Xml.Schema
 	// xs:date
 	public class XsdDate : XsdAnySimpleType
 	{
+		internal XsdDate ()
+		{
+			this.WhitespaceValue = XsdWhitespaceFacet.Collapse;
+		}
+    
 		public override XmlTokenizedType TokenizedType {
 			get { return XmlTokenizedType.CDATA; }
 		}
@@ -1119,6 +1138,11 @@ namespace Mono.Xml.Schema
 			  "HH:mm:ss.ffffffZ",
 			  "HH:mm:ss.fffffffZ"};
 
+		internal XsdTime ()
+		{
+			this.WhitespaceValue = XsdWhitespaceFacet.Collapse;
+		}
+
 		public override XmlTokenizedType TokenizedType {
 			get { return XmlTokenizedType.CDATA; }
 		}
@@ -1147,6 +1171,11 @@ namespace Mono.Xml.Schema
 	// xs:gYearMonth
 	public class XsdGYearMonth : XsdAnySimpleType
 	{
+		internal XsdGYearMonth ()
+		{
+			this.WhitespaceValue = XsdWhitespaceFacet.Collapse;
+		}
+    
 		public override Type ValueType {
 			get { return typeof (DateTime); }
 		}
@@ -1166,6 +1195,11 @@ namespace Mono.Xml.Schema
 	// xs:gMonthDay
 	public class XsdGMonthDay : XsdAnySimpleType
 	{
+		internal XsdGMonthDay ()
+		{
+			this.WhitespaceValue = XsdWhitespaceFacet.Collapse;
+		}
+    
 		public override Type ValueType {
 			get { return typeof (DateTime); }
 		}
@@ -1185,7 +1219,12 @@ namespace Mono.Xml.Schema
 	// xs:gYear
 	public class XsdGYear : XsdAnySimpleType
 	{
-		public override Type ValueType {
+		internal XsdGYear ()
+		{
+			this.WhitespaceValue = XsdWhitespaceFacet.Collapse;
+		}
+		
+    public override Type ValueType {
 			get { return typeof (DateTime); }
 		}
 
@@ -1194,7 +1233,7 @@ namespace Mono.Xml.Schema
 		public override object ParseValue (string s,
 			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
 		{
-			return DateTime.ParseExact (s, "yyyy", null);
+			return DateTime.ParseExact (Normalize(s), "yyyy", null);
 		}
 		
 		internal override bool AllowsFacet(XmlSchemaFacet xsf) 
@@ -1206,6 +1245,11 @@ namespace Mono.Xml.Schema
 	// xs:gMonth
 	public class XsdGMonth : XsdAnySimpleType
 	{
+		internal XsdGMonth ()
+		{
+			this.WhitespaceValue = XsdWhitespaceFacet.Collapse;
+		}
+		
 		public override Type ValueType {
 			get { return typeof (DateTime); }
 		}
@@ -1213,7 +1257,7 @@ namespace Mono.Xml.Schema
 		public override object ParseValue (string s,
 			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
 		{
-			return DateTime.ParseExact (s, "--MM--", null);
+			return DateTime.ParseExact (Normalize(s), "--MM--", null);
 		}
 		
 		internal override bool AllowsFacet(XmlSchemaFacet xsf) 
@@ -1225,6 +1269,11 @@ namespace Mono.Xml.Schema
 	// xs:gDay
 	public class XsdGDay : XsdAnySimpleType
 	{
+		internal XsdGDay ()
+		{
+			this.WhitespaceValue = XsdWhitespaceFacet.Collapse;
+		}
+		
 		public override Type ValueType {
 			get { return typeof (DateTime); }
 		}
@@ -1232,7 +1281,7 @@ namespace Mono.Xml.Schema
 		public override object ParseValue (string s,
 			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
 		{
-			return DateTime.ParseExact (s, "---dd", null);
+			return DateTime.ParseExact (Normalize(s), "---dd", null);
 		}
 		
 		internal override bool AllowsFacet(XmlSchemaFacet xsf) 
