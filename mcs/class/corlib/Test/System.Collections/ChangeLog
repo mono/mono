@@ -1,3 +1,7 @@
+2003-04-15  Eduardo Garcia Cebollero <kiwnix@yahoo.es>
+
+	* CaseInsensitiveComparerTest.cs: Added Some Tests.
+
 2003-04-09  Ville Palo <vi64pa@kolumbus.fi>
 
 	* ArraListTest.cs: Added little test for Sort ().
