@@ -35,7 +35,10 @@ namespace System.Xml
 			get {
 				if (current.ParentNode != null && current.ParentNode.NodeType == XmlNodeType.Attribute)
 					return ((XmlAttribute) current.ParentNode).OwnerElement;
-				return (current.NodeType == XmlNodeType.Attribute) ? ((XmlAttribute)current).OwnerElement : current;
+				else if (current.NodeType == XmlNodeType.Attribute) 
+					return ((XmlAttribute) current).OwnerElement;
+				else
+					return current;
 			}
 		}
 
@@ -64,9 +67,10 @@ namespace System.Xml
 					return entityReader.ReadState == ReadState.Interactive ?
 						entityReader.AttributeCount : 0;
 
-				if (isEndElement || current == null || current.Attributes == null)
+				if (isEndElement || current == null)
 					return 0;
-				return ownerElement.Attributes.Count;
+				XmlNode n = ownerElement;
+				return n.Attributes != null ? n.Attributes.Count : 0;
 			}
 		}
 
@@ -92,6 +96,13 @@ namespace System.Xml
 				if (entityReader != null && entityReader.ReadState == ReadState.Interactive)
 					return entityReader.Depth + depth + entityReaderStack.Count + 1;
 
+				if (current == null)
+					return 0;
+				if (current.NodeType == XmlNodeType.Attribute)
+					return depth + 1;
+				if (current.ParentNode != null && current.ParentNode.NodeType == XmlNodeType.Attribute)
+					return depth + 2;
+
 				return depth;
 			}
 		}
@@ -112,8 +123,12 @@ namespace System.Xml
 				if (isEndElement || current == null)
 					return false;
 
-				if (current.Attributes == null ||
-					current.Attributes.Count == 0)
+				// MS BUG: inconsistent return value between XmlTextReader and XmlNodeReader.
+				// As for attribute and its descendants, XmlReader returns element's HasAttributes.
+				XmlNode n = ownerElement;
+
+				if (n.Attributes == null ||
+					n.Attributes.Count == 0)
 					return false;
 				else
 					return true;
@@ -129,16 +144,18 @@ namespace System.Xml
 				if (current == null)
 					return false;
 
-				if (current.NodeType == XmlNodeType.Element ||
-				    current.NodeType == XmlNodeType.EntityReference ||
-				    current.NodeType == XmlNodeType.Document ||
-				    current.NodeType == XmlNodeType.DocumentFragment ||
-				    current.NodeType == XmlNodeType.Notation ||
-				    current.NodeType == XmlNodeType.EndElement ||
-				    current.NodeType == XmlNodeType.EndEntity)
+				switch (current.NodeType) {
+				case XmlNodeType.Element:
+				case XmlNodeType.EntityReference:
+				case XmlNodeType.Document:
+				case XmlNodeType.DocumentFragment:
+				case XmlNodeType.Notation:
+				case XmlNodeType.EndElement:
+				case XmlNodeType.EndEntity:
 					return false;
-				else
+				default:
 					return true;
+				}
 			}
 			      
 		}
@@ -276,9 +293,9 @@ namespace System.Xml
 				if (current == null)
 					return String.Empty;
 
-				if (current.NodeType == XmlNodeType.Attribute)
-					return current.Prefix != String.Empty ? current.Prefix : null;
-				else
+//				if (current.NodeType == XmlNodeType.Attribute)
+//					return current.Prefix != String.Empty ? current.Prefix : null;
+//				else
 					return current.Prefix;
 			}
 		}
@@ -600,8 +617,10 @@ namespace System.Xml
 
 			if (current == null)
 				return false;
-			if (current.NodeType == XmlNodeType.Attribute) {
-				current = ((XmlAttribute) current).OwnerElement;
+			XmlNode n = ownerElement;
+			if (current != n) {
+//			if (current.NodeType == XmlNodeType.Attribute) {
+				current = n;//((XmlAttribute) current).OwnerElement;
 				return true;
 			} else 
 				return false;

@@ -1,5 +1,21 @@
 2003-10-04  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
+	* XmlDocumentFragment.cs,
+	  XmlElement.cs,
+	  XmlEntityReference.cs : Removed extraneous MonoTODO.
+	* XmlNode.cs : Implemented Normalize().
+	* XmlNodeReader.cs :
+	  - AttributeCount and HasAttributes should return its owner element's
+	    value, to be consistent with XmlTextReader.
+	  - Fixed Depth to reflect correct attribute/attribute-value iteration.
+	  - simplified ownerElement and HasValue.
+	  - Prefix won't return null.
+	  - MoveToElement() should also work against attribute value nodes.
+	* XmlTextReader.cs : MoveToElement() should return false if it is
+	  positioned at element itself.
+
+2003-10-04  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
 	* XmlTextReader.cs : Improved SignificantWhitespace handling.
 
 2003-10-01  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>

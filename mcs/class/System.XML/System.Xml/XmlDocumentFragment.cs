@@ -33,7 +33,6 @@ namespace System.Xml
 
 		#region Properties
 
-		[MonoTODO("Setter is as incomplete as that of XmlElement.InnerXml")]
 		public override string InnerXml {
 			set {
 				// Copied from XmlElement.InnerXml (in the meantime;-))

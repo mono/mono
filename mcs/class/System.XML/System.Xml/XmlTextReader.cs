@@ -408,6 +408,9 @@ namespace System.Xml
 			if (currentToken == null)	// for attribute .ctor()
 				return false;
 
+			if (cursorToken == currentToken)
+				return false;
+
 			if (currentAttribute >= 0) {
 				currentAttribute = -1;
 				currentAttributeValue = -1;

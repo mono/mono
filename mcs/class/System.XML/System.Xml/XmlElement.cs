@@ -269,7 +269,6 @@ namespace System.Xml
 			return attributeNode != null;
 		}
 
-		[MonoTODO ("confirm not removing default attributes [when DTD feature was implemented.")]
 		public override void RemoveAll ()
 		{
 			// Remove the child nodes.
@@ -279,13 +278,11 @@ namespace System.Xml
 			attributes.RemoveAll ();
 		}
 
-		[MonoTODO ("confirm not removing default attributes [when DTD feature was implemented.")]
 		public virtual void RemoveAllAttributes ()
 		{
 			attributes.RemoveAll ();
 		}
 
-		[MonoTODO ("confirm not resetting default attributes [when DTD feature was implemented.")]
 		public virtual void RemoveAttribute (string name)
 		{
 			XmlAttribute attr = attributes.GetNamedItem (name) as XmlAttribute;
@@ -293,7 +290,6 @@ namespace System.Xml
 				attributes.Remove(attr);
 		}
 
-		[MonoTODO ("confirm not resetting default attributes [when DTD feature was implemented.")]
 		public virtual void RemoveAttribute (string localName, string namespaceURI)
 		{
 			XmlAttribute attr = attributes.GetNamedItem(localName, namespaceURI) as XmlAttribute;
@@ -301,19 +297,16 @@ namespace System.Xml
 				attributes.Remove(attr);
 		}
 
-		[MonoTODO ("confirm not resetting default attributes [when DTD feature was implemented.")]
 		public virtual XmlNode RemoveAttributeAt (int i)
 		{
 			return attributes.RemoveAt (i);
 		}
 
-		[MonoTODO ("confirm not resetting default attributes [when DTD feature was implemented.")]
 		public virtual XmlAttribute RemoveAttributeNode (XmlAttribute oldAttr)
 		{
 			return attributes.Remove(oldAttr);
 		}
 
-		[MonoTODO ("confirm not resetting default attributes [when DTD feature was implemented.")]
 		public virtual XmlAttribute RemoveAttributeNode (string localName, string namespaceURI)
 		{
 			return attributes.Remove(attributes[localName, namespaceURI]);

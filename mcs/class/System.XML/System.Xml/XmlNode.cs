@@ -23,6 +23,7 @@ namespace System.Xml
 
 		XmlDocument ownerDocument;
 		XmlNode parentNode;
+		StringBuilder tmpBuilder;
 
 		#endregion
 
@@ -70,7 +71,6 @@ namespace System.Xml
 			get { return LastChild != null; }
 		}
 
-		[MonoTODO("confirm whether this way is right for each not-overriden types.")]
 		public virtual string InnerText {
 			get {
 				StringBuilder builder = new StringBuilder ();
@@ -78,7 +78,7 @@ namespace System.Xml
 				return builder.ToString ();
 			}
 
-			set { throw new NotImplementedException (); }
+			set { throw new InvalidOperationException ("This node is read only. Cannot be modified."); }
 		}
 
 		private void AppendChildValues (XmlNode parent, StringBuilder builder)
@@ -455,10 +455,64 @@ namespace System.Xml
 			return newChild;
 		}
 
-		[MonoTODO]
 		public virtual void Normalize ()
 		{
-			throw new NotImplementedException ();
+//			if (tmpBuilder == null)
+				tmpBuilder = new StringBuilder ();
+//			tmpBuilder.Length = 0;
+			int count = this.ChildNodes.Count;
+			int start = 0;
+			for (int i = 0; i < count; i++) {
+				XmlNode c = ChildNodes [i];
+				switch (c.NodeType) {
+				case XmlNodeType.Text:
+				case XmlNodeType.Whitespace:
+				case XmlNodeType.SignificantWhitespace:
+					tmpBuilder.Append (c.Value);
+					break;
+				default:
+					c.Normalize ();
+					NormalizeRange (start, i);
+					// Continue to normalize from next node.
+					start = i + 1;
+					break;
+				}
+			}
+			if (start < count) {
+				NormalizeRange (start, count);
+			}
+
+			tmpBuilder = null;
+		}
+
+		private void NormalizeRange (int start, int i)
+		{
+			int keepPos = -1;
+			// If Texts and Whitespaces are mixed, Text takes precedence to remain.
+			// i.e. Whitespace should be removed.
+			for (int j = start; j < i; j++) {
+				XmlNode keep = ChildNodes [j];
+				if (keep.NodeType == XmlNodeType.Text) {
+					keepPos = j;
+					break;
+				}
+				else if (keep.NodeType == XmlNodeType.SignificantWhitespace)
+					keepPos = j;
+					// but don't break up to find Text nodes.
+			}
+			// But if no Texts and one or more Whitespaces, then the first
+			if (keepPos < 0 && i > start)
+					keepPos = 0;
+
+			if (keepPos >= 0) {
+				for (int del = start; del < keepPos; del++)
+					RemoveChild (ChildNodes [del]);
+				for (int del = keepPos + 1; del < i; del++)
+					RemoveChild (ChildNodes [del]);
+			}
+
+			ChildNodes [keepPos].Value = tmpBuilder.ToString ();
+			tmpBuilder.Length = 0;
 		}
 
 		public virtual XmlNode PrependChild (XmlNode newChild)

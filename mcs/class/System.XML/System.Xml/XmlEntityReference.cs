@@ -22,7 +22,6 @@ namespace System.Xml
 		}
 
 		// Properties
-		[MonoTODO]
 		public override string BaseURI {
 			get { return base.BaseURI; }
 		}
