@@ -4124,7 +4124,7 @@ namespace Mono.CSharp {
 					is_volatile = true;
 				
 				f.status |= Field.Status.USED;
-			}
+			} 
 			
 			if (FieldInfo.IsStatic){
 				if (ec.RemapToProxy){
@@ -4211,7 +4211,9 @@ namespace Mono.CSharp {
 				
 				if ((f.ModFlags & Modifiers.VOLATILE) != 0)
 					ig.Emit (OpCodes.Volatile);
-			}
+				
+				f.status |= Field.Status.ASSIGNED;
+			} 
 
 			if (ec.RemapToProxy)
 				ig.Emit (OpCodes.Stfld, FieldInfo);
@@ -4221,12 +4223,6 @@ namespace Mono.CSharp {
 				else 
 					ig.Emit (OpCodes.Stfld, FieldInfo);
 			}
-
-			if (FieldInfo is FieldBuilder){
-				FieldBase f = TypeManager.GetField (FieldInfo);
-
-				f.status |= Field.Status.ASSIGNED;
-			}
 		}
 		
 		public void AddressOf (EmitContext ec, AddressOp mode)
@@ -4235,18 +4231,16 @@ namespace Mono.CSharp {
 			
 			if (FieldInfo is FieldBuilder){
 				FieldBase f = TypeManager.GetField (FieldInfo);
-				if ((f.ModFlags & Modifiers.VOLATILE) != 0)
-					ig.Emit (OpCodes.Volatile);
-			}
-
-			if (FieldInfo is FieldBuilder){
-				FieldBase f = TypeManager.GetField (FieldInfo);
-
+				if ((f.ModFlags & Modifiers.VOLATILE) != 0){
+					Error (676, "volatile variable: can not take its address, or pass as ref/out parameter");
+					return;
+				}
+				
 				if ((mode & AddressOp.Store) != 0)
 					f.status |= Field.Status.ASSIGNED;
 				if ((mode & AddressOp.Load) != 0)
 					f.status |= Field.Status.USED;
-			}
+			} 
 
 			//
 			// Handle initonly fields specially: make a copy and then

@@ -772,6 +772,13 @@ field_declaration
 			CheckDef (current_container.AddField (field), field.Name, l);
 		}
 	  }
+	| opt_attributes
+	  opt_modifiers
+	  VOID  
+	  variable_declarators
+	  SEMICOLON {
+		Report.Error (670, lexer.Location, "void type is not allowed for fields");
+	  }
 	;
 
 variable_declarators

@@ -1,3 +1,17 @@
+2003-05-04  Miguel de Icaza  <miguel@ximian.com>
+
+	* cs-parser.jay (field_declaration): catch void field declaration
+	to flag a better error. 
+
+	* class.cs (MemberBase.CheckBase): Report an error instead of a
+	warning if a new protected member is declared in a struct. 
+	(Field.Define): catch the error of readonly/volatile.
+
+	* ecore.cs (FieldExpr.EmitAssign): reuse the field lookup.
+
+	(FieldExpr.AddressOf): ditto.  Catch error where the address of a
+	volatile variable is taken
+
 2003-05-02  Miguel de Icaza  <miguel@ximian.com>
 
 	* statement.cs (Fixed.Resolve): Report an error if we are not in

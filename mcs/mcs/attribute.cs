@@ -345,7 +345,6 @@ namespace Mono.CSharp {
 				}
 			}
 			
-			try {
 				if (named_args.Count > 0) {
 					PropertyInfo [] prop_info_arr = new PropertyInfo [prop_infos.Count];
 					FieldInfo [] field_info_arr = new FieldInfo [field_infos.Count];
@@ -366,6 +365,7 @@ namespace Mono.CSharp {
 				else
 					cb = new CustomAttributeBuilder (
 						(ConstructorInfo) constructor, pos_values);
+			try {
 			} catch (NullReferenceException) {
 				// 
 				// Don't know what to do here

@@ -2822,7 +2822,6 @@ namespace Mono.CSharp {
 			this.is_method = is_method;
 			this.Location = member.Location;
 			this.conditionals = null;
-			Driver.counter1++;
 		}
 
 		//
@@ -3342,9 +3341,13 @@ namespace Mono.CSharp {
 
 		protected virtual bool CheckBase (TypeContainer container)
 		{
-			if (RootContext.WarningLevel > 3){
+			if ((container is Struct) || (RootContext.WarningLevel > 3)){
 				if ((ModFlags & Modifiers.PROTECTED) != 0 && (container.ModFlags & Modifiers.SEALED) != 0){
-					Report.Warning (628, Location, "Member " + container.MakeName (Name) + " protected in sealed class");
+					if (container is Struct){
+						Report.Error (666, Location, "Protected member in struct declaration");
+						return false;
+					} else
+						Report.Warning (628, Location, "Member " + container.MakeName (Name) + " protected in sealed class");
 				}
 			}
 			return true;
@@ -3599,6 +3602,13 @@ namespace Mono.CSharp {
 						return false;
 					}
 				}
+
+				if ((ModFlags & Modifiers.READONLY) != 0){
+					Report.Error (
+						      678, Location,
+						      "A field can not be both volatile and readonly");
+					return false;
+				}
 			}
 
 			FieldAttributes fa = Modifiers.FieldAttr (ModFlags);
@@ -3611,6 +3621,7 @@ namespace Mono.CSharp {
 					      "' causes a cycle in the structure layout");
 				return false;
 			}
+
 			FieldBuilder = container.TypeBuilder.DefineField (
 				Name, t, Modifiers.FieldAttr (ModFlags));
 
