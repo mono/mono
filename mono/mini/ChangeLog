@@ -1,5 +1,7 @@
 2003-12-04  Zoltan Varga  <vargaz@freemail.hu>
 
+	* Makefile.am: Distribute regression tests.
+
 	* mini-x86.c (mono_arch_get_allocatable_int_vars): Sort the var list
 	at the end instead of inserting each variable into the sorted list.
 
