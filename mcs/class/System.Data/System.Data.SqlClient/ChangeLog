@@ -1,3 +1,9 @@
+2005-02-22  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* SqlDataReader.cs: GetBytes: return the length of the data if
+        output buffer is null. if not, copy the values to buffer and
+        return the bytes actually read.
+
 2005-02-02  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* SqlConnection.cs: 

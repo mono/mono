@@ -269,15 +269,15 @@ namespace System.Data.SqlClient {
 				throw new InvalidCastException ("Type is " + value.GetType ().ToString ());
 			}
 			
-			if ( buffer == null ) {
-				// Return length of data
-				return ((byte []) value).Length;
-			}
-			else {
-				// Copy data into buffer
-				Array.Copy ((byte []) value, (int) dataIndex, buffer, bufferIndex, length);
-				return ((byte []) value).Length - dataIndex;
-			}
+			if ( buffer == null )
+                                return ((byte []) value).Length; // Return length of data
+                        
+                        // Copy data into buffer
+                        int availLen = (int) ( ( (byte []) value).Length - dataIndex);
+                        if (availLen < length)
+                                length = availLen;
+                        Array.Copy ((byte []) value, (int) dataIndex, buffer, bufferIndex, length);
+                        return length; // return actual read count
 		}
                                                                                                     
 		[EditorBrowsableAttribute (EditorBrowsableState.Never)]
