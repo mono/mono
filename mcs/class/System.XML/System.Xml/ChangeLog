@@ -1,3 +1,9 @@
+2002-08-03  Tim Coleman <tim@timcoleman.com>
+	* XmlNamespaceManager.cs:
+		.Net allows the empty namespace to be redefined
+		at a later point, but the current implementation
+		did not.  This fixes a hashtable conflict.
+
 2002-07-26  Tim Coleman <tim@timcoleman.com>
 	* XmlTextWriter.cs:
 		When given a textwriter, check to see if it has a
