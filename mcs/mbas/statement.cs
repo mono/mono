@@ -5489,59 +5489,75 @@ namespace Mono.CSharp {
 
 			return false;
 		}
-	}	
+	}
 	
+	public class RedimClause {
+		public Expression Expr;
+		public ArrayList NewIndexes;
+		
+		public RedimClause (Expression e, ArrayList args)
+		{
+			Expr = e;
+			NewIndexes = args;
+		}
+	}
+
 	public class ReDim : Statement {
-		Expression RedimTarget;
-		ArrayList NewIndexes;
+		ArrayList RedimTargets;
 		Type BaseType;
 		bool Preserve;
-		
+
 		private StatementExpression ReDimExpr;
-		
-		public ReDim (Expression expr, ArrayList args, bool opt_preserve, Location l)
+
+		public ReDim (ArrayList targets, bool opt_preserve, Location l)
 		{
 			loc = l;
-			RedimTarget = expr;
-			NewIndexes = args;
+			RedimTargets = targets;
 			Preserve = opt_preserve;
 		}
-		
+
 		public override bool Resolve (EmitContext ec)
 		{
-			RedimTarget = RedimTarget.Resolve (ec);
-			if (!RedimTarget.Type.IsArray) 
-				Report.Error (49, "'ReDim' statement requires an array");
+			Expression RedimTarget;
+			ArrayList NewIndexes;
 
-			ArrayList args = new ArrayList();
-			foreach (Argument a in NewIndexes) {
-				if (a.Resolve(ec, loc))
-					args.Add (a.Expr);
-			}
-			
-			for (int x = 0; x < args.Count; x++) {
-				args[x] = new Binary (Binary.Operator.Addition, 
-							(Expression) args[x], new IntLiteral (1), Location.Null);	
-			}
+			foreach (RedimClause rc in RedimTargets) {
+				RedimTarget = rc.Expr;
+				NewIndexes = rc.NewIndexes;
 
-			NewIndexes = args;
-			if (RedimTarget.Type.GetArrayRank() != args.Count) 
-				Report.Error (415, "'ReDim' cannot change the number of dimensions of an array.");
-				
-			BaseType = RedimTarget.Type.GetElementType();
-			Expression BaseTypeExpr = MonoBASIC.Parser.DecomposeQI(BaseType.FullName.ToString(), Location.Null);
-			ArrayCreation acExpr = new ArrayCreation (BaseTypeExpr, NewIndexes, "", null, Location.Null); 	
-			if (Preserve)
-			{
-				// TODO: Generate call to copying code, which has to make lots of verifications
-				//PreserveExpr = (ExpressionStatement) new Preserve(RedimTarget, acExpr, loc);
-				//ReDimExpr = (StatementExpression) new StatementExpression ((ExpressionStatement) new Assign (RedimTarget, PreserveExpr, loc), loc);
-				ReDimExpr = (StatementExpression) new StatementExpression ((ExpressionStatement) new Assign (RedimTarget, acExpr, loc), loc);
+				RedimTarget = RedimTarget.Resolve (ec);
+				if (!RedimTarget.Type.IsArray)
+					Report.Error (49, "'ReDim' statement requires an array");
+
+				ArrayList args = new ArrayList();
+				foreach (Argument a in NewIndexes) {
+					if (a.Resolve(ec, loc))
+						args.Add (a.Expr);
+				}
+
+				for (int x = 0; x < args.Count; x++) {
+					args[x] = new Binary (Binary.Operator.Addition,
+								(Expression) args[x], new IntLiteral (1), Location.Null);	
+				}
+
+				NewIndexes = args;
+				if (RedimTarget.Type.GetArrayRank() != args.Count)
+					Report.Error (415, "'ReDim' cannot change the number of dimensions of an array.");
+
+				BaseType = RedimTarget.Type.GetElementType();
+				Expression BaseTypeExpr = MonoBASIC.Parser.DecomposeQI(BaseType.FullName.ToString(), Location.Null);
+				ArrayCreation acExpr = new ArrayCreation (BaseTypeExpr, NewIndexes, "", null, Location.Null); 	
+				if (Preserve)
+				{
+					// TODO: Generate call to copying code, which has to make lots of verifications
+					//PreserveExpr = (ExpressionStatement) new Preserve(RedimTarget, acExpr, loc);
+					//ReDimExpr = (StatementExpression) new StatementExpression ((ExpressionStatement) new Assign (RedimTarget, PreserveExpr, loc), loc);
+					ReDimExpr = (StatementExpression) new StatementExpression ((ExpressionStatement) new Assign (RedimTarget, acExpr, loc), loc);
+				}
+				else
+					ReDimExpr = (StatementExpression) new StatementExpression ((ExpressionStatement) new Assign (RedimTarget, acExpr, loc), loc);
+				ReDimExpr.Resolve(ec);
 			}
-			else
-				ReDimExpr = (StatementExpression) new StatementExpression ((ExpressionStatement) new Assign (RedimTarget, acExpr, loc), loc);
-			ReDimExpr.Resolve(ec);
-			
 			return true;
 		}
 				

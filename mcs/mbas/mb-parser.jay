@@ -1885,7 +1885,7 @@ statement :
 	    {
 	    	RaiseEvent ((string) $2, (ArrayList) $4);
 	    }
-	  | array_handling_statement
+	  /* | array_handling_statement */
 	  /* | empty_statement */
 	  | with_statement 
 	    {
@@ -1914,8 +1914,8 @@ embedded_statement
 	| selection_statement
 	| iteration_statement
 	| try_statement
-	| jump_statement 
-/*	| array_handling_statement */
+	| jump_statement
+	| array_handling_statement 
 	;
 /*        
 empty_statement
@@ -1953,11 +1953,9 @@ redim_statement
 	: REDIM opt_preserve redim_clauses
 	  {
 	  	ArrayList list = (ArrayList) $3;
-		foreach(Invocation i in list)
-		{
-	  		ReDim r = new ReDim (i.expr, i.Arguments, (bool) $2, lexer.Location);
-	  		current_block.AddStatement (r);
-		}
+		ReDim r = new ReDim (list, (bool) $2, lexer.Location);
+		$$ = r;
+
 	  }
 	;
 	
@@ -1985,8 +1983,13 @@ redim_clauses
 
 redim_clause
 	: invocation_expression
+	  {
+	  	Invocation i = (Invocation) $1;
+		RedimClause rc = new RedimClause (i.expr, i.Arguments);
+		$$ = rc;
+	  }
 	;
-			
+
 erase_statement
 	: ERASE erase_clauses
 	{
@@ -1994,7 +1997,7 @@ erase_statement
 		foreach(Expression e in list)
 		{
 	  		Erase r = new Erase (e, lexer.Location);
-	  		current_block.AddStatement (r);	
+	  		$$ = r;
 		}
 	}
 	;
@@ -2006,7 +2009,7 @@ erase_clauses
 
 		clauses.Add ($1);
 		$$ = clauses;
-	  }	
+	  }
 	| erase_clauses COMMA erase_clause
 	  {
 		ArrayList clauses = (ArrayList) ($1);
