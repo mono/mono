@@ -11,6 +11,6 @@ namespace System.Windows.Forms {
 	[Serializable]
 	public delegate void HelpEventHandler (
 	object sender,
-	HelpEventArgs e
+	HelpEventArgs hlpevent
 	);
 }

@@ -28,6 +28,8 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 		}
+
+
 		[MonoTODO]
 		public DataGridTableStyle this[string s]  {
 			get {
@@ -58,8 +60,12 @@ namespace System.Windows.Forms {
 		}
 
 		[MonoTODO]
-		public bool Contains(DataGridTableStyle table)
-		{
+		public bool Contains(DataGridTableStyle table) {
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public bool Contains(string name) {
 			throw new NotImplementedException ();
 		}
 

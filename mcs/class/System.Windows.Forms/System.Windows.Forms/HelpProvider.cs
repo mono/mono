@@ -42,17 +42,26 @@ namespace System.Windows.Forms {
 		//
 
 		[MonoTODO]
-		public virtual  string GetHelpKeyword(Control ctl) {
+		public virtual bool CanExtend(object target) {
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public virtual  HelpNavigator GetHelpNavigator(Control ctl) {
+		public virtual void ResetShowHelp(Control ctl) {
+		}
+
+		[MonoTODO]
+		public virtual string GetHelpKeyword(Control ctl) {
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public virtual  string GetHelpString(Control ctl) {
+		public virtual HelpNavigator GetHelpNavigator(Control ctl) {
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public virtual string GetHelpString(Control ctl) {
 			throw new NotImplementedException ();
 		}
 

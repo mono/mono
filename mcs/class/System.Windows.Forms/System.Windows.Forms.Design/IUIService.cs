@@ -15,12 +15,12 @@ namespace System.Windows.Forms.Design
 		void SetUIDirty();
 		bool ShowComponentEditor( object component, IWin32Window parent);		
 		void ShowError(Exception ex);
-		void ShowError(string str);
-		void ShowError(Exception ex, string str);
+		void ShowError(string message);
+		void ShowError(Exception ex, string message);
 		DialogResult ShowDialog(Form form);		
-		void ShowMessage(string str);
-		void ShowMessage(string str1, string str2);
-		DialogResult ShowMessage(string str1, string str2, MessageBoxButtons btn);
+		void ShowMessage(string message);
+		void ShowMessage(string message, string caption);
+		DialogResult ShowMessage(string message, string caption, MessageBoxButtons buttons);
 		bool ShowToolWindow( Guid toolWindow);
 	}
 }

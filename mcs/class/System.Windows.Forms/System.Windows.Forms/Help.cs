@@ -28,11 +28,11 @@ namespace System.Windows.Forms {
 			//FIXME:
 		}
 
-		[MonoTODO]
-		public static void ShowHelp(Control parent, string caption, Point location)
-		{
-			//FIXME:
-		}
+//		[MonoTODO]
+//		public static void ShowHelp(Control parent, string url, Point location)
+//		{
+//			//FIXME:
+//		}
 
 		[MonoTODO]
 		public static void ShowHelp(Control parent, string url, string keyword)

@@ -1,3 +1,12 @@
+2003-09-29  Dennis Hayes <dennish@raytek.com>
+
+	* HelpEventHandler.cs
+	* GridTableStylesCollection.cs
+	* HelpProvider.cs
+	* Help.cs	
+
+	*signiture corrections
+
 2003-09-28  Dennis Hayes <dennish@raytek.com>
 	* ControlBindingsCollection.cs
 	* ErrorProvider.cs
@@ -11,6 +20,7 @@
 	* FontDialog.cs
 
 	*signiture corrections
+
 2003-09-28  Dennis Hayes <dennish@raytek.com>
 	* FileDialog.cs
 	* FolderBrowserDialog.cs
