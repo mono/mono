@@ -1,3 +1,8 @@
+2002-11-13  Duncan Mak  <duncan@ximian.com>
+
+	* XmlElement.cs (IsEmpty): A temporary check-in to keep gtk-sharp
+	compiling.
+
 2002-11-14  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XmlDocument.cs : unified all constructors, added ConventionalParser,

@@ -22,6 +22,7 @@ namespace System.Xml
 		private string localName;
 		private string namespaceURI;
 		private string prefix;
+		private bool isEmpty;
 
 		#endregion
 
@@ -95,11 +96,11 @@ namespace System.Xml
 			}
 		}
 
-		[MonoTODO]
+		[MonoTODO ("This is only a temporary fix, remove ASAP!")]
 		public bool IsEmpty {
-			get { throw new NotImplementedException (); }
+			get { return isEmpty; }
 
-			set { throw new NotImplementedException (); }
+			set { isEmpty = value; }
 		}
 
 		public override string LocalName {
