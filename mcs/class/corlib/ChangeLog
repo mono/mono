@@ -1,3 +1,9 @@
+2004-05-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Makefile: build NUnit if the dll is not found when running
+	'make test'. Use INTERNAL_MCS to build the tests as csc fails miserably
+	to compile them.
+
 2004-05-07  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (corlib_net_2_0_bootstrap): Copy System.dll and

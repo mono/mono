@@ -50,7 +50,8 @@ test_sourcefile = corlib_test.dll.sources
 test_response = $(depsdir)/$(PROFILE)_$(testlib).response
 test_makefrag = $(depsdir)/$(PROFILE)_$(testlib).makefrag
 test_stampfile = $(depsdir)/$(PROFILE)_$(testlib).stamp
-test_flags = /nowarn:0618 /nowarn:0672 /unsafe /r:$(test_against) /r:$(topdir)/class/lib/$(PROFILE)/NUnit.Framework.dll
+test_nunitfw = $(topdir)/class/lib/$(PROFILE)/NUnit.Framework.dll
+test_flags = /nowarn:0618 /nowarn:0672 /unsafe /r:$(test_against) /r:$(test_nunitfw)
 
 cmp_response = $(depsdir)/$(PROFILE)_corlib_cmp.dll.response
 cmp_makefrag = $(depsdir)/$(PROFILE)_corlib_cmp.dll.makefrag
@@ -66,7 +67,7 @@ plattest_excludes = corlib_plattest.dll.excludes
 plattest_response = $(depsdir)/$(PROFILE)_$(plattestlib).response
 plattest_makefrag = $(depsdir)/$(PROFILE)_$(plattestlib).makefrag
 plattest_stampfile = $(depsdir)/$(PROFILE)_$(plattestlib).stamp
-plattest_flags = /debug+ /debug:full /nowarn:0618 /nowarn:0672 /unsafe /r:$(PLATFORM_CORLIB) /r:$(topdir)/class/lib/$(PROFILE)/NUnit.Framework.dll
+plattest_flags = /debug+ /debug:full /nowarn:0618 /nowarn:0672 /unsafe /r:$(PLATFORM_CORLIB) /r:$(test_nunitfw)
 
 # Here, we make all.
 
@@ -109,12 +110,15 @@ clean-local:
 # You can access either one on demand with either 'make
 # run-monotest' or 'make run-plattest'.
 
+$(test_nunitfw):
+	(cd ${topdir}/nunit20 && make)
+
 ifdef PLATFORM_MONO_NATIVE
-test-local: $(test_against) $(testlib)
+test-local: $(test_nunitfw) $(test_against) $(testlib)
 
 run-test-local: run-monotest
 else
-test-local: $(plattestlib)
+test-local: $(test_nunitfw) $(plattestlib)
 
 run-test-local: run-plattest
 endif
@@ -295,7 +299,8 @@ endif
 # corlib_plattest
 
 $(plattestlib): $(plattest_makefrag) $(plattest_response) $(plattest_stampfile)
-	$(CSCOMPILE) $(plattest_flags) /target:library /out:$@ @$(plattest_response)
+	$(INTERNAL_MCS) $(plattest_flags) /target:library /out:$@ @$(plattest_response)
+	#$(CSCOMPILE) $(plattest_flags) /target:library /out:$@ @$(plattest_response)
 
 $(plattest_response): $(test_sourcefile) $(plattest_excludes)
 	@echo Creating $@ ...
