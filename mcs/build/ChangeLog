@@ -1,3 +1,10 @@
+2004-12-14  Raja R Harinath  <rharinath@novell.com>
+
+	* profiles/basic.make (do-profile-check): Rename from
+	'real-profile-check'.  Rewrite slightly to use 'make' to build the
+	sanity check.
+	(clean-profile): Remove the files.
+
 2004-12-08  Raja R Harinath  <rharinath@novell.com>
 
 	* profiles/basic.make (real-profile-check): Update to new location
