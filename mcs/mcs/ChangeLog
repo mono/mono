@@ -2,6 +2,27 @@
 
 	* convert.cs: add a trivial cache for overload operator resolution.
 
+2004-05-30 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* expression.cs:
+	According to the spec, 
+
+	In a member access of the form E.I, if E is a single identifier,
+	and if the meaning of E as a simple-name (§7.5.2) is a constant,
+	field, property, localvariable, or parameter with the same type as
+	the meaning of E as a type-name (§3.8), then both possible
+	meanings of E are permitted.
+
+	We did not check that E as a simple-name had the same type as E as
+	a type name.
+
+	This trivial check gives us 5-7% on bootstrap time.
+
+2004-05-30 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* expression.cs (Invocation.OverloadResolve): Avoid the
+	use of hashtables and boxing here by allocating on demand.
+
 2004-05-30  Martin Baulig  <martin@ximian.com>
 
 	* rootcontext.cs (RootContext.LookupType): Don't cache things if
