@@ -1,3 +1,15 @@
+2005-01-28  Peter Bartok  <pbartok@novell.com>
+
+	* SWF.csproj: Deleted, no longer used. Instead,
+	  Managed.Windows.Forms/SWF.csproj should be used
+	* XplatUIX11.cs: Instead of posting the WM_PAINT, we send it
+	  directly, to avoid a potential race condition with the next
+	  scroll
+
+2005-01-28  Peter Bartok  <pbartok@novell.com>
+
+	* XplatUI.cs: Made class internal
+
 2005-01-28  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* CheckedListBox.cs:

@@ -2078,28 +2078,36 @@ namespace System.Windows.Forms {
 		internal override void ScrollWindow(IntPtr hwnd, Rectangle area, int XAmount, int YAmount, bool clear) {
 			IntPtr		gc;
 			XGCValues	gc_values;
+			HandleData	data;
+
+			data = (HandleData) handle_data [hwnd];
+			if (data == null) {
+				data = new HandleData ();
+				handle_data [hwnd] = data;
+			}
 
 			gc_values = new XGCValues();
 
 			gc = XCreateGC(DisplayHandle, hwnd, 0, ref gc_values);
 
 			XCopyArea(DisplayHandle, hwnd, hwnd, gc, area.X - XAmount, area.Y - YAmount, area.Width, area.Height, area.X, area.Y);
-
+			
 			// Generate an expose for the area exposed by the horizontal scroll
 			if (XAmount > 0) {
-				XClearArea(DisplayHandle, hwnd, area.X, area.Y, XAmount, area.Height, clear);
+				data.AddToInvalidArea (area.X, area.Y, XAmount, area.Height);
 			} else if (XAmount < 0) {
-				XClearArea(DisplayHandle, hwnd, XAmount + area.X + area.Width, area.Y, -XAmount, area.Height, clear);
+				data.AddToInvalidArea (XAmount + area.X + area.Width, area.Y, -XAmount, area.Height);
 			}
 
 			// Generate an expose for the area exposed by the vertical scroll
 			if (YAmount > 0) {
-				XClearArea(DisplayHandle, hwnd, area.X, area.Y, area.Width, YAmount, clear);
+				data.AddToInvalidArea (area.X, area.Y, area.Width, YAmount);
 			} else if (YAmount < 0) {
-				XClearArea(DisplayHandle, hwnd, area.X, YAmount + area.Y + area.Height, area.Width, -YAmount, clear);
+				data.AddToInvalidArea (area.X, YAmount + area.Y + area.Height, area.Width, -YAmount);
 			}
-
 			XFreeGC(DisplayHandle, gc);
+
+			NativeWindow.WndProc(hwnd, Msg.WM_PAINT, IntPtr.Zero, IntPtr.Zero);
 		}
 
 		internal override void ScrollWindow(IntPtr hwnd, int XAmount, int YAmount, bool clear) {
@@ -2112,6 +2120,13 @@ namespace System.Windows.Forms {
 			int		height;
 			int		border_width;
 			int		depth;
+			HandleData	data;
+
+			data = (HandleData) handle_data [hwnd];
+			if (data == null) {
+				data = new HandleData ();
+				handle_data [hwnd] = data;
+			}
 
 			// We're abusing clear_width and height, here, don't want two extra vars, we don't use the results here
 			XGetGeometry(DisplayHandle, hwnd, out root, out x, out y, out width, out height, out border_width, out depth);
@@ -2124,19 +2139,21 @@ namespace System.Windows.Forms {
 
 			// Generate an expose for the area exposed by the horizontal scroll
 			if (XAmount > 0) {
-				XClearArea(DisplayHandle, hwnd, 0, 0, XAmount, height, clear);
+				data.AddToInvalidArea (0, 0, XAmount, height);
 			} else if (XAmount < 0) {
-                                XClearArea(DisplayHandle, hwnd, XAmount + width, 0, -XAmount, height, clear);
+                                data.AddToInvalidArea (XAmount + width, 0, -XAmount, height);
 			}
 
 			// Generate an expose for the area exposed by the vertical scroll
 			if (YAmount > 0) {
-				XClearArea(DisplayHandle, hwnd, 0, 0, width, YAmount, clear);
+				data.AddToInvalidArea (0, 0, width, YAmount);
 			} else if (YAmount < 0) {
-				XClearArea(DisplayHandle, hwnd, 0, YAmount + height, width, -YAmount, clear);
+				data.AddToInvalidArea (0, YAmount + height, width, -YAmount);
 			}
 
 			XFreeGC(DisplayHandle, gc);
+
+			NativeWindow.WndProc(hwnd, Msg.WM_PAINT, IntPtr.Zero, IntPtr.Zero);
 		}
 
 		internal override bool SystrayAdd(IntPtr hwnd, string tip, Icon icon, out ToolTip tt) {
