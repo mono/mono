@@ -6,6 +6,7 @@
 //   Miguel de Icaza (miguel@ximian.com) 
 //
 // (C) Ximian, Inc.  http://www.ximian.com
+// Copyright (C) 2004 Novell (http://www.novell.com)
 //
 
 using System;
@@ -145,9 +146,11 @@ namespace System.IO {
 		internal void Initialize (Stream stream, Encoding encoding, bool detect_encoding_from_bytemarks, int buffer_size)
 		{
 			if (null == stream)
-				throw new ArgumentNullException("stream");
+				throw new ArgumentNullException ("stream");
+			if (null == encoding)
+				throw new ArgumentNullException ("encoding");
 			if (!stream.CanRead)
-				throw new ArgumentException("Cannot read stream");
+				throw new ArgumentException ("Cannot read stream");
 
 			if (buffer_size < MinimumBufferSize)
 				buffer_size = MinimumBufferSize;
@@ -311,15 +314,15 @@ namespace System.IO {
 		{
 			if (base_stream == null)
 				throw new ObjectDisposedException ("StreamReader", "Cannot read from a closed StreamReader");
-
 			if (dest_buffer == null)
-				throw new ArgumentException ();
-
-			if ((index < 0) || (count < 0))
-				throw new ArgumentOutOfRangeException ();
-
-			if (index + count > dest_buffer.Length)
-				throw new ArgumentException ();
+				throw new ArgumentNullException ("dest_buffer");
+			if (index < 0)
+				throw new ArgumentOutOfRangeException ("index", "< 0");
+			if (count < 0)
+				throw new ArgumentOutOfRangeException ("count", "< 0");
+			// re-ordered to avoid possible integer overflow
+			if (index > dest_buffer.Length - count)
+				throw new ArgumentException ("index + count > dest_buffer.Length");
 
 			int chars_read = 0;
 			while (count > 0)
