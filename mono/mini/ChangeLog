@@ -1,3 +1,9 @@
+2004-09-07  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini.c mini.h mini-x86.h tramp-x86.c: Instead of freeing delegate
+	trampolines, make them call an error function so people can fix their
+	code.
+
 2004-09-06  Martin Baulig  <martin@ximian.com>
 
 	* mini.c (mono_method_to_ir): When initializing locals, handle a
