@@ -209,9 +209,6 @@ public sealed class TypeDescriptor
 	public static TypeConverter GetConverter (Type type)
 	{
 		Type t = DefaultConverters [type] as Type;
-		if (t == null && type.IsEnum)
-			t = (Type) DefaultConverters [typeof (Enum)];
-
 		string converter_name = null;
 		if (t == null) {
 			object [] attrs = type.GetCustomAttributes (false);
@@ -222,6 +219,12 @@ public sealed class TypeDescriptor
 					break;
 				}
 			}
+
+			if (converter_name == null && type.IsEnum) {
+				t = (Type) DefaultConverters [typeof (Enum)];
+				converter_name = t.FullName;
+			}
+
 		} else {
 			converter_name = t.FullName;
 		}

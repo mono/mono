@@ -1,3 +1,8 @@
+2003-07-16  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* TypeDescriptor.cs: fixed GetConverter (type) for enumerations that
+	have a TypeConverter. Fixes bug #46397.
+
 2003-07-14 Jerome Laban <jlaban@wanadoo.fr>
 
 	* IComponent.cs: Removed duplicate Designer attribute.
