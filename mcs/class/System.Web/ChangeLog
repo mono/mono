@@ -1,3 +1,7 @@
+2003-04-15  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* list: added CollectionBuilder and TemplateBuilder.
+
 2003-04-09  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* list: added Watcher.cs

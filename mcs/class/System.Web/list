@@ -110,6 +110,7 @@ System.Web.Mail/MailHeader.cs
 System.Web.Mail/MailUtil.cs
 System.Web.UI/BuildMethod.cs
 System.Web.UI/BuildTemplateMethod.cs
+System.Web.UI/CollectionBuilder.cs
 System.Web.UI/Control.cs
 System.Web.UI/DataBindingHandlerAttribute.cs
 System.Web.UI/DesignTimeParseData.cs
@@ -137,6 +138,7 @@ System.Web.UI/PropertyConverter.cs
 System.Web.UI/StateBag.cs
 System.Web.UI/StateItem.cs
 System.Web.UI/SimpleWebHandlerParser.cs
+System.Web.UI/TemplateBuilder.cs
 System.Web.UI/ToolboxDataAttribute.cs
 System.Web.UI/Utils.cs
 System.Web.UI/ConstructorNeedsTagAttribute.cs

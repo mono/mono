@@ -1,3 +1,12 @@
+2003-04-15  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* CollectionBuilder.cs:
+	* TemplateBuilder.cs: new classes derived from ControlBuilder that
+	represent a property or a ITemplate.
+	
+	* ControlBuilder.cs: implemented all the missing bits.
+	* TemplateParser.cs: added mapping from tag name to Type feature.
+
 2003-02-15  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Control.cs: have i definitely fixed naming container stuff this time?

@@ -13,16 +13,32 @@ using System.Web;
 
 namespace System.Web.UI
 {
+	internal delegate Type TagMapper (string tag);
+
 	public abstract class TemplateParser : BaseParser
 	{
 		string inputFile;
 		string text;
 		Hashtable options;
+		TagMapper mapper;
 
 		protected abstract Type CompileIntoType ();
 
 		protected virtual void HandleOptions (object obj)
 		{
+		}
+
+		internal void SetTagMapper (TagMapper mapper)
+		{
+			this.mapper = mapper;
+		}
+
+		internal Type GetTypeFromTag (string tag)
+		{
+			if (mapper == null)
+				throw new HttpException ("No tag mapper set!");
+
+			return mapper (tag);
 		}
 
 		protected abstract Type DefaultBaseType { get; }
