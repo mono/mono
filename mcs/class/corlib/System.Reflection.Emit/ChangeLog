@@ -1,4 +1,8 @@
 
+Fri Jul 12 11:34:58 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* ILGenerator.cs: fixup typebuilder tokens as well.
+
 Tue Jul 9 19:03:03 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* TypeBuilder.cs: special case SerializarionAttribute.

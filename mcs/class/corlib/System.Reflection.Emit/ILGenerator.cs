@@ -543,6 +543,8 @@ namespace System.Reflection.Emit {
 		public virtual void Emit (OpCode opcode, Type type) {
 			make_room (6);
 			ll_emit (opcode);
+			if (type is TypeBuilder)
+				add_token_fixup (type);
 			emit_int (abuilder.GetToken (type));
 		}
 
