@@ -1,3 +1,9 @@
+
+Mon Jan 24 16:39:42 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* alloc.c, include/gc.h: add event notification, mostly from 
+	a patch by Ben Maurer.
+
 2005-01-23  Geoff Norton  <gnorton@customerdna.com>
 	
 	* os_dir.c: Change GC_task_self to be static everywhere on Darwin.

@@ -92,6 +92,22 @@ GC_API GC_PTR (*GC_oom_fn) GC_PROTO((size_t bytes_requested));
 			/* pointer to a previously allocated heap 	*/
 			/* object.					*/
 
+typedef enum {
+	GC_EVENT_START,
+	GC_EVENT_MARK_START,
+	GC_EVENT_MARK_END,
+	GC_EVENT_RECLAIM_START,
+	GC_EVENT_RECLAIM_END,
+	GC_EVENT_END
+} GCEventType;
+
+GC_API void (*GC_notify_event) GC_PROTO((GCEventType event_type));
+			/* Invoked at specific points during every collection.
+			 */
+			 
+GC_API void (*GC_on_heap_resize) GC_PROTO((size_t new_size));
+			/* Invoked when the heap grows or shrinks        */
+
 GC_API int GC_find_leak;
 			/* Do not actually garbage collect, but simply	*/
 			/* report inaccessible memory that was not	*/

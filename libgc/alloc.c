@@ -260,6 +260,10 @@ void GC_maybe_gc()
     static int n_partial_gcs = 0;
 
     if (GC_should_collect()) {
+	if (GC_notify_event)
+		GC_notify_event (GC_EVENT_START);
+	    
+	    
         if (!GC_incremental) {
             GC_gcollect_inner();
             n_partial_gcs = 0;
@@ -305,6 +309,10 @@ void GC_maybe_gc()
 	        GC_n_attempts++;
 	    }
 	}
+	
+
+	if (GC_notify_event)
+		GC_notify_event (GC_EVENT_END);
     }
 }
 
@@ -478,11 +486,16 @@ GC_stop_func stop_func;
 #   if defined(CONDPRINT) && !defined(PRINTTIMES)
 	if (GC_print_stats) GET_TIME(start_time);
 #   endif
+	
 #   if defined(REGISTER_LIBRARIES_EARLY)
         GC_cond_register_dynamic_libraries();
 #   endif
     STOP_WORLD();
     IF_THREADS(GC_world_stopped = TRUE);
+	
+	if (GC_notify_event)
+		GC_notify_event (GC_EVENT_MARK_START);
+	
 #   ifdef CONDPRINT
       if (GC_print_stats) {
 	GC_printf1("--> Marking for collection %lu ",
@@ -547,6 +560,10 @@ GC_stop_func stop_func;
             (*GC_check_heap)();
         }
     
+
+	if (GC_notify_event)
+		GC_notify_event (GC_EVENT_MARK_END);
+	
     IF_THREADS(GC_world_stopped = FALSE);
     START_WORLD();
 #   ifdef PRINTTIMES
@@ -617,6 +634,9 @@ GC_stop_func stop_func;
    }
 }
 
+void (*GC_notify_event) GC_PROTO((GCEventType e));
+void (*GC_on_heap_resize) GC_PROTO((size_t new_size));
+
 /* Finish up a collection.  Assumes lock is held, signals are disabled,	*/
 /* but the world is otherwise running.					*/
 void GC_finish_collection()
@@ -629,6 +649,10 @@ void GC_finish_collection()
 	GET_TIME(start_time);
 	finalize_time = start_time;
 #   endif
+	
+
+	if (GC_notify_event)
+		GC_notify_event (GC_EVENT_RECLAIM_START);
 
 #   ifdef GATHERSTATS
         GC_mem_found = 0;
@@ -638,6 +662,7 @@ void GC_finish_collection()
 	  GC_print_address_map();
 	}
 #   endif
+
     COND_DUMP;
     if (GC_find_leak) {
       /* Mark all objects on the free list.  All objects should be */
@@ -740,6 +765,10 @@ void GC_finish_collection()
 #   ifdef USE_MUNMAP
       GC_unmap_old();
 #   endif
+	
+	if (GC_notify_event)
+		GC_notify_event (GC_EVENT_RECLAIM_END);
+	
 #   ifdef PRINTTIMES
 	GET_TIME(done_time);
 	GC_printf2("Finalize + initiate sweep took %lu + %lu msecs\n",
@@ -960,6 +989,9 @@ word n;
         if (GC_collect_at_heapsize < GC_heapsize /* wrapped */)
          GC_collect_at_heapsize = (word)(-1);
 #     endif
+	if (GC_on_heap_resize)
+		GC_on_heap_resize (GC_heapsize);
+	
     return(TRUE);
 }
 
