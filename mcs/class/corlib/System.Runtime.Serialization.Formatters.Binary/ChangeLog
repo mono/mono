@@ -1,3 +1,7 @@
+2004-12-06  Zoltan Varga  <vargaz@freemail.hu>
+
+	* CodeGenerator.cs: Mark the created assembly builder as internal.
+
 2004-11-29  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* CodeGenerator.cs: Addded EnumToUnderlying method to get the underlying
