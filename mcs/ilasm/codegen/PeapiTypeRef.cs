@@ -20,6 +20,7 @@ namespace Mono.ILASM {
                 private bool is_pinned;
                 private bool is_array;
                 private bool is_ref;
+                private bool use_type_spec;
 
                 public PeapiTypeRef (PEAPI.Type peapi_type, string full_name)
                 {
@@ -28,6 +29,7 @@ namespace Mono.ILASM {
                         is_pinned = false;
                         is_array = false;
                         is_ref = false;
+                        use_type_spec = false;
                 }
 
                 public string FullName {
@@ -46,12 +48,18 @@ namespace Mono.ILASM {
                         get { return is_ref; }
                 }
 
+                public bool UseTypeSpec {
+                        get { return use_type_spec; }
+                }
+
                 public PEAPI.Type PeapiType {
                         get { return peapi_type; }
                 }
 
                 public void MakeArray ()
                 {
+                        use_type_spec = true;
+
                         if (peapi_type is PEAPI.Class) {
                                 PEAPI.Class klass = (PEAPI.Class) peapi_type;
                                 peapi_type = klass.GetZeroBasedArray ();
@@ -64,6 +72,8 @@ namespace Mono.ILASM {
 
                 public void MakeBoundArray (ArrayList bound_list)
                 {
+                        use_type_spec = true;
+
                         int dimen = bound_list.Count;
                         int[] lower_array = new int[dimen];
                         int[] size_array = new int[dimen];
@@ -106,6 +116,8 @@ namespace Mono.ILASM {
 
                 public void MakeManagedPointer ()
                 {
+                        use_type_spec = true;
+
                         peapi_type = new PEAPI.ManagedPointer (peapi_type);
                         full_name += "&";
                         is_ref = true;
@@ -113,6 +125,8 @@ namespace Mono.ILASM {
 
                 public void MakeUnmanagedPointer ()
                 {
+                        use_type_spec = true;
+
                         peapi_type = new PEAPI.UnmanagedPointer (peapi_type);
                         full_name += "*";
                 }
@@ -120,6 +134,8 @@ namespace Mono.ILASM {
                 public void MakeCustomModified (CodeGen code_gen, PEAPI.CustomModifier modifier,
                                 IClassRef klass)
                 {
+                        use_type_spec = true;
+
                         klass.Resolve (code_gen);
                         peapi_type = new PEAPI.CustomModifiedType (peapi_type,
                                         modifier, klass.PeapiClass);
@@ -127,6 +143,7 @@ namespace Mono.ILASM {
 
                 public void MakePinned ()
                 {
+                        use_type_spec = true;
                         is_pinned = true;
                 }
 

@@ -41,6 +41,17 @@ namespace Mono.ILASM {
                         }
                 }
 
+                public IMethodRef GetMethodRef (ITypeRef ret_type, PEAPI.CallConv call_conv,
+                                string name, ITypeRef[] param)
+                {
+                        return new TypeSpecMethodRef (this, ret_type, call_conv, name, param);
+                }
+
+                public IFieldRef GetFieldRef (ITypeRef ret_type, string name)
+                {
+                        return new TypeSpecFieldRef (this, ret_type, name);
+                }
+
                 public IClassRef AsClassRef (CodeGen code_gen)
                 {
                         PEAPI.ClassRef class_ref = code_gen.ExternTable.GetValueClass ("corlib", FullName);

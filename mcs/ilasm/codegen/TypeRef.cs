@@ -32,6 +32,7 @@ namespace Mono.ILASM {
                 private bool is_pinned;
                 private bool is_ref;
                 private bool is_array;
+                private bool use_type_spec;
 
                 private bool is_resolved;
 
@@ -47,6 +48,7 @@ namespace Mono.ILASM {
                         is_array = false;
                         conversion_list = new ArrayList ();
                         is_resolved = false;
+                        use_type_spec = false;
                 }
 
                 public string FullName {
@@ -65,6 +67,10 @@ namespace Mono.ILASM {
                         get { return is_ref; }
                 }
 
+                public bool UseTypeSpec {
+                        get { return use_type_spec; }
+                }
+
                 public PEAPI.Type PeapiType {
                         get { return resolved_type; }
                 }
@@ -79,12 +85,14 @@ namespace Mono.ILASM {
 
                 public void MakeArray ()
                 {
+                        use_type_spec = true;
                         conversion_list.Add (ConversionMethod.MakeArray);
                         is_array = true;
                 }
 
                 public void MakeBoundArray (ArrayList bounds)
                 {
+                        use_type_spec = true;
                         conversion_list.Add (ConversionMethod.MakeBoundArray);
                         conversion_list.Add (bounds);
                         is_array = true;
@@ -92,18 +100,21 @@ namespace Mono.ILASM {
 
                 public void MakeManagedPointer ()
                 {
+                        use_type_spec = true;
                         conversion_list.Add (ConversionMethod.MakeManagedPointer);
                         is_ref = true;
                 }
 
                 public void MakeUnmanagedPointer ()
                 {
+                        use_type_spec = true;
                         conversion_list.Add (ConversionMethod.MakeUnmanagedPointer);
                 }
 
                 public void MakeCustomModified (CodeGen code_gen, PEAPI.CustomModifier modifier,
                                 IClassRef klass)
                 {
+                        use_type_spec = true;
                         conversion_list.Add (ConversionMethod.MakeCustomModified);
                         conversion_list.Add (klass);
                         conversion_list.Add (modifier);
@@ -111,6 +122,7 @@ namespace Mono.ILASM {
 
                 public void MakePinned ()
                 {
+                        use_type_spec = true;
                         is_pinned = true;
                 }
 

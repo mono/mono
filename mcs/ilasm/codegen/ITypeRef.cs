@@ -26,6 +26,7 @@ namespace Mono.ILASM {
                 bool IsPinned { get; }
                 bool IsRef { get; }
                 bool IsArray { get; }
+                bool UseTypeSpec { get; }
 
                 /// <summary>
                 ///  The PEAPI.Type of this typeref, this is not guaranteed
@@ -67,6 +68,11 @@ namespace Mono.ILASM {
                 void MakePinned ();
 
                 void Resolve (CodeGen code_gen);
+
+                IMethodRef GetMethodRef (ITypeRef ret_type, PEAPI.CallConv call_conv,
+                                string name, ITypeRef[] param);
+
+                IFieldRef GetFieldRef (ITypeRef ret_type, string name);
 
                 /// <summary>
                 ///  Convert this typeref to a classref if not possible
