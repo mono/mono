@@ -1,3 +1,22 @@
+2003-08-22  Martin Baulig  <martin@ximian.com>
+
+	Rewrote and improved the flow analysis code.
+
+	* flowbranching.cs (FlowBranching): Make this class abstract.
+	(FlowBranching.CreateBranching): New static function to create a
+	new flow branching.
+	(FlowBranchingBlock, FlowBranchingException): New classes.
+	(FlowBranching.UsageVector.Type): New public readonly field.
+	(FlowBranching.UsageVector.Breaks): Removed the setter.
+	(FlowBranching.UsageVector.Returns): Removed the setter.
+	(FlowBranching.UsageVector): Added Break(), Return(),
+	NeverReachable() and Throw() methods to modify the reachability.
+	(FlowBranching.UsageVector.MergeChildren): Removed, this is now
+	done by FlowBranching.Merge().
+	(FlowBranching.UsageVector.MergeChild): New method; merges the
+	merge result into the current vector.
+	(FlowBranching.Merge): New abstract method to merge a branching.
+
 2003-08-12  Martin Baulig  <martin@ximian.com>
 
 	* expression.cs (Indirection.CacheTemporaries): Create the

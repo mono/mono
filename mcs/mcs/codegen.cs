@@ -381,7 +381,7 @@ namespace Mono.CSharp {
 		// </summary>
 		public FlowBranching StartFlowBranching (FlowBranching.BranchingType type, Location loc)
 		{
-			FlowBranching cfb = new FlowBranching (CurrentBranching, type, null, loc);
+			FlowBranching cfb = FlowBranching.CreateBranching (CurrentBranching, type, null, loc);
 
 			FlowStack.Push (cfb);
 
@@ -401,7 +401,7 @@ namespace Mono.CSharp {
 			else
 				type = FlowBranching.BranchingType.Block;
 
-			cfb = new FlowBranching (CurrentBranching, type, block, block.StartLocation);
+			cfb = FlowBranching.CreateBranching (CurrentBranching, type, block, block.StartLocation);
 
 			FlowStack.Push (cfb);
 
@@ -445,7 +445,8 @@ namespace Mono.CSharp {
 					bool old_do_flow_analysis = DoFlowAnalysis;
 					DoFlowAnalysis = true;
 
-					FlowBranching cfb = new FlowBranching (block, loc);
+					FlowBranching cfb = FlowBranching.CreateBranching (
+						null, FlowBranching.BranchingType.Block, block, loc);
 					FlowStack.Push (cfb);
 
 					if (!block.Resolve (this)) {

@@ -605,8 +605,7 @@ namespace Mono.CSharp {
 			else
 				vector.CheckOutParameters (ec.CurrentBranching);
 
-			vector.Returns = FlowBranching.FlowReturns.Always;
-			vector.Breaks = FlowBranching.FlowReturns.Always;
+			ec.CurrentBranching.Return ();
 			return true;
 		}
 		
@@ -677,8 +676,7 @@ namespace Mono.CSharp {
 			if (!label.IsDefined)
 				label.AddUsageVector (ec.CurrentBranching.CurrentUsageVector);
 
-			ec.CurrentBranching.CurrentUsageVector.Breaks = FlowBranching.FlowReturns.Always;
-			ec.CurrentBranching.CurrentUsageVector.Returns = FlowBranching.FlowReturns.Always;
+			ec.CurrentBranching.Goto ();
 
 			return true;
 		}
@@ -752,12 +750,7 @@ namespace Mono.CSharp {
 
 		public override bool Resolve (EmitContext ec)
 		{
-			if (vectors != null)
-				ec.CurrentBranching.CurrentUsageVector.MergeJumpOrigins (vectors);
-			else {
-				ec.CurrentBranching.CurrentUsageVector.Breaks = FlowBranching.FlowReturns.Never;
-				ec.CurrentBranching.CurrentUsageVector.Returns = FlowBranching.FlowReturns.Never;
-			}
+			ec.CurrentBranching.Label (vectors);
 
 			referenced = true;
 
@@ -786,8 +779,7 @@ namespace Mono.CSharp {
 
 		public override bool Resolve (EmitContext ec)
 		{
-			ec.CurrentBranching.CurrentUsageVector.Breaks = FlowBranching.FlowReturns.Always;
-			ec.CurrentBranching.CurrentUsageVector.Returns = FlowBranching.FlowReturns.Always;
+			ec.CurrentBranching.Goto ();
 			return true;
 		}
 
@@ -853,8 +845,7 @@ namespace Mono.CSharp {
 
 			label = sl.ILLabelCode;
 
-			ec.CurrentBranching.CurrentUsageVector.Breaks = FlowBranching.FlowReturns.Unreachable;
-			ec.CurrentBranching.CurrentUsageVector.Returns = FlowBranching.FlowReturns.Always;
+			ec.CurrentBranching.Goto ();
 			return true;
 		}
 
@@ -901,8 +892,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			ec.CurrentBranching.CurrentUsageVector.Returns = FlowBranching.FlowReturns.Exception;
-			ec.CurrentBranching.CurrentUsageVector.Breaks = FlowBranching.FlowReturns.Exception;
+			ec.CurrentBranching.Throw ();
 			return true;
 		}
 			
@@ -938,7 +928,7 @@ namespace Mono.CSharp {
 		public override bool Resolve (EmitContext ec)
 		{
 			ec.CurrentBranching.MayLeaveLoop = true;
-			ec.CurrentBranching.CurrentUsageVector.Breaks = FlowBranching.FlowReturns.Always;
+			ec.CurrentBranching.Break ();
 			return true;
 		}
 
@@ -969,7 +959,7 @@ namespace Mono.CSharp {
 
 		public override bool Resolve (EmitContext ec)
 		{
-			ec.CurrentBranching.CurrentUsageVector.Breaks = FlowBranching.FlowReturns.Always;
+			ec.CurrentBranching.Goto ();
 			return true;
 		}
 
@@ -1753,7 +1743,7 @@ namespace Mono.CSharp {
 				if (s is LabeledStatement)
 					unreachable = false;
 				else
-					unreachable = ! ec.CurrentBranching.IsReachable ();
+					unreachable = ec.CurrentBranching.CurrentUsageVector.IsUnreachable;
 
 				new_statements.Add (s);
 			}
@@ -1777,6 +1767,8 @@ namespace Mono.CSharp {
 						Report.Warning (164, label.Location,
 								"This label has not been referenced");
 			}
+
+			Report.Debug (1, "RESOLVE BLOCK DONE #2", StartLocation, returns);
 
 			if ((returns == FlowBranching.FlowReturns.Always) ||
 			    (returns == FlowBranching.FlowReturns.Exception) ||
@@ -3155,13 +3147,6 @@ namespace Mono.CSharp {
 					ok = false;
 
 				ec.InCatch = old_in_catch;
-
-				FlowBranching.UsageVector current = ec.CurrentBranching.CurrentUsageVector;
-
-				if (!current.AlwaysReturns && !current.AlwaysBreaks)
-					vector.AndLocals (current);
-				else
-					vector.Or (current);
 			}
 
 			Report.Debug (1, "END OF CATCH BLOCKS", ec.CurrentBranching);
@@ -3177,13 +3162,6 @@ namespace Mono.CSharp {
 					ok = false;
 
 				ec.InCatch = old_in_catch;
-
-				FlowBranching.UsageVector current = ec.CurrentBranching.CurrentUsageVector;
-
-				if (!current.AlwaysReturns && !current.AlwaysBreaks)
-					vector.AndLocals (current);
-				else	
-					vector.Or (current);
 			}
 
 			Report.Debug (1, "END OF GENERAL CATCH BLOCKS", ec.CurrentBranching);
@@ -3206,15 +3184,7 @@ namespace Mono.CSharp {
 
 			FlowBranching.UsageVector f_vector = ec.CurrentBranching.CurrentUsageVector;
 
-			Report.Debug (1, "END OF FINALLY", ec.CurrentBranching, returns, vector, f_vector);
-
-			if ((returns == FlowBranching.FlowReturns.Sometimes) || (returns == FlowBranching.FlowReturns.Always)) {
-				ec.CurrentBranching.CheckOutParameters (f_vector.Parameters, loc);
-			}
-
-			ec.CurrentBranching.CurrentUsageVector.Or (vector);
-
-			Report.Debug (1, "END OF TRY", ec.CurrentBranching);
+			Report.Debug (1, "END OF TRY", ec.CurrentBranching, returns, vector, f_vector);
 
 			if (returns != FlowBranching.FlowReturns.Always) {
 				// Unfortunately, System.Reflection.Emit automatically emits a leave
