@@ -638,6 +638,12 @@ public class DateTimeTest : Assertion
 		DTAssertEquals ("I01", d, new DateTime(1913, 9, 8, 9, 56, 46, 0), Resolution.Second);
 		AssertEquals ("I02", d.ToOADate(), number);
 	}
+
+	[Test]
+	public void MaxValueYear () // bug52075
+	{
+		AssertEquals ("#01", "9999", DateTime.MaxValue.Year.ToString ());
+	}
 }
 
 }

@@ -1,11 +1,16 @@
+
+2004-01-22  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* DateTimeTest.cs: added test for bug 52075.
+
 2004-01-16  Zoltan Varga  <vargaz@freemail.hu>
 
 	* TypeTest.cs: Add Tests for vectors<->one dim. arrays.
 
 2003-01-11 David Sheldon <dave-mono@earth.li>
 
-  * DateTimeTest.cs: Tests for bug 52274 fix, formats such as 
-   '--MM--'
+	* DateTimeTest.cs: Tests for bug 52274 fix, formats such as 
+	'--MM--'
 
 2003-12-27  Nick Drochak <ndrochak@gol.com>
 
