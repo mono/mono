@@ -1416,7 +1416,13 @@ namespace System
 		internal extern static void InternalStrcpy (String dest, int destPos, String src);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal extern static void InternalStrcpy (String dest, int destPos, char[] chars);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal extern static void InternalStrcpy (String dest, int destPos, String src, int sPos, int count);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal extern static void InternalStrcpy (String dest, int destPos, char[] chars, int sPos, int count);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern static string InternalIntern (string str);
