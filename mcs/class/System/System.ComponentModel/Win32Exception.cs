@@ -102,6 +102,9 @@ namespace System.ComponentModel
 				       Locale.GetText("Connection refused"));
 			w32_errors.Add(10093,
 				       Locale.GetText("Winsock not initialized"));
+			w32_errors.Add(10107,
+				       Locale.GetText("System call failed"));
+
 			w32_errors.Add(11001,
 				       Locale.GetText("No such host is known"));
 			w32_errors.Add(11002,

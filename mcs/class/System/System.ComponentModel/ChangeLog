@@ -1,3 +1,7 @@
+2002-11-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Win32Exception.cs: added 10107 -> WASSYSCALLFAILURE.
+
 2002-11-04  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ListBindableAttribute.cs: implemented.
