@@ -11,7 +11,10 @@ using System.Runtime.Serialization;
 namespace System.Collections
 {
 	[Serializable]
-	public sealed class Comparer : IComparer, ISerializable
+	public sealed class Comparer : IComparer
+#if NET_1_1
+, ISerializable
+#endif
 	{
 		public static readonly Comparer Default = new Comparer ();
 #if NET_1_1
@@ -69,6 +72,7 @@ namespace System.Collections
 
 		#region Implementation of ISerializable
 
+#if NET_1_1
 		private Comparer (SerializationInfo info, StreamingContext context)
 		{
 			_compareInfo = null;
@@ -94,6 +98,7 @@ namespace System.Collections
 				info.AddValue("CompareInfo", _compareInfo);
 			}
 		}
+#endif
 
 		#endregion Implementation of ISerializable
 	}
