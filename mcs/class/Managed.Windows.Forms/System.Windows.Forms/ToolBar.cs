@@ -32,9 +32,20 @@
 // Copyright (C) Novell Inc., 2004 (http://www.novell.com)
 //
 //
-// $Revision: 1.11 $
+// $Revision: 1.12 $
 // $Modtime: $
 // $Log: ToolBar.cs,v $
+// Revision 1.12  2004/09/28 18:44:25  pbartok
+// - Streamlined Theme interfaces:
+//   * Each DrawXXX method for a control now is passed the object for the
+//     control to be drawn in order to allow accessing any state the theme
+//     might require
+//
+//   * ControlPaint methods for the theme now have a CP prefix to avoid
+//     name clashes with the Draw methods for controls
+//
+//   * Every control now retrieves it's DefaultSize from the current theme
+//
 // Revision 1.11  2004/09/16 13:00:19  ravindra
 // Invalidate should be done before redrawing.
 //
@@ -87,20 +98,20 @@ namespace System.Windows.Forms
 	public class ToolBar : Control
 	{
 		#region Instance Variables
-		private ToolBarAppearance appearance;
-		private bool autosize;
-		private BorderStyle borderStyle;
-		private ToolBarButtonCollection buttons;
-		private Size buttonSize;
-		private bool divider;
-		private bool dropDownArrows;
-		private ImageList imageList;
-		private ImeMode imeMode;
-		private bool showToolTips;
-		private ToolBarTextAlign textAlignment;
-		private bool wrappable;        // flag to make the toolbar wrappable
-		private bool redraw;           // flag to force redrawing the control
-		private ToolBarButton currentButton; // the highlighted button
+		internal ToolBarAppearance	appearance;
+		internal bool			autosize;
+		internal BorderStyle		borderStyle;
+		internal ToolBarButtonCollection buttons;
+		internal Size			buttonSize;
+		internal bool			divider;
+		internal bool			dropDownArrows;
+		internal ImageList		imageList;
+		internal ImeMode		imeMode;
+		internal bool			showToolTips;
+		internal ToolBarTextAlign	textAlignment;
+		internal bool			wrappable;        // flag to make the toolbar wrappable
+		internal bool			redraw;           // flag to force redrawing the control
+		internal ToolBarButton		currentButton; // the highlighted button
 		#endregion Instance Variables
 
 		#region Events
@@ -174,7 +185,7 @@ namespace System.Windows.Forms
 		}
 
 		protected override Size DefaultSize {
-			get { return new Size (100, 42); }
+			get { return ThemeEngine.Current.ToolBarDefaultSize; }
 		}
 		#endregion
 
@@ -668,17 +679,7 @@ namespace System.Windows.Forms
 		private void Draw ()
 		{
 			if (redraw) {
-				StringFormat strFormat = new StringFormat ();
-				if (textAlignment == ToolBarTextAlign.Underneath) {
-					strFormat.LineAlignment = StringAlignment.Center;
-					strFormat.Alignment = StringAlignment.Center;
-				}
-				else {
-					strFormat.LineAlignment = StringAlignment.Center;
-					strFormat.Alignment = StringAlignment.Near;
-				}
-
-				ThemeEngine.Current.DrawToolBar (this.DeviceContext, this, strFormat);
+				ThemeEngine.Current.DrawToolBar (this.DeviceContext, this.ClientRectangle, this);
 			}
 			redraw = false;
 		}

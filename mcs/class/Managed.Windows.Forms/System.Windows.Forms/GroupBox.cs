@@ -74,7 +74,7 @@ namespace System.Windows.Forms
 		}
 
 		protected override Size DefaultSize {
-			get { return new Size (200,100); }
+			get { return ThemeEngine.Current.GroupBoxDefaultSize;}
 		}
 
 		public override Rectangle DisplayRectangle {

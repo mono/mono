@@ -133,7 +133,7 @@ namespace System.Windows.Forms {
 		}
 
 		protected override Size DefaultSize {
-			get { return new Size (100, 50); }
+			get { return ThemeEngine.Current.PictureBoxDefaultSize; }
 		}
 
 		protected override void Dispose (bool disposing)

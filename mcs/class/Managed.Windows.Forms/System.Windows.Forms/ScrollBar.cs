@@ -26,9 +26,20 @@
 //	Jordi Mas i Hernandez	jordi@ximian.com
 //
 //
-// $Revision: 1.21 $
+// $Revision: 1.22 $
 // $Modtime: $
 // $Log: ScrollBar.cs,v $
+// Revision 1.22  2004/09/28 18:44:25  pbartok
+// - Streamlined Theme interfaces:
+//   * Each DrawXXX method for a control now is passed the object for the
+//     control to be drawn in order to allow accessing any state the theme
+//     might require
+//
+//   * ControlPaint methods for the theme now have a CP prefix to avoid
+//     name clashes with the Draw methods for controls
+//
+//   * Every control now retrieves it's DefaultSize from the current theme
+//
 // Revision 1.21  2004/09/17 16:43:27  pbartok
 // - Fixed behaviour of arrow buttons. Now properly behaves like Buttons (and
 //   like Microsoft's scrollbar arrow buttons)
@@ -108,16 +119,16 @@ namespace System.Windows.Forms
 		private int maximum;
 		private int large_change;
 		private int small_change;
-		private int scrollbutton_height;
-		private int scrollbutton_width;
-		private Rectangle paint_area = new Rectangle ();
+		internal int scrollbutton_height;
+		internal int scrollbutton_width;
+		internal Rectangle paint_area = new Rectangle ();
 		private ScrollBars type;
 		private Rectangle first_arrow_area = new Rectangle ();		// up or left
 		private Rectangle second_arrow_area = new Rectangle ();		// down or right
 		private Rectangle thumb_pos = new Rectangle ();
 		private Rectangle thumb_area = new Rectangle ();
-		private ButtonState firstbutton_state = ButtonState.Normal;
-		private ButtonState secondbutton_state = ButtonState.Normal;
+		internal ButtonState firstbutton_state = ButtonState.Normal;
+		internal ButtonState secondbutton_state = ButtonState.Normal;
 		private bool firstbutton_pressed = false;
 		private bool secondbutton_pressed = false;
 		private bool thumb_pressed = false;
@@ -184,14 +195,47 @@ namespace System.Windows.Forms
 			base.Resize += new EventHandler (OnResizeSB);
 			base.TabStop = false;
 
-			if (ThemeEngine.Current.WriteToWindow == true)
-				double_buffering = false;
-			else
+			if (ThemeEngine.Current.DoubleBufferingSupported == true) {
 				double_buffering = true;
+			} else {
+				double_buffering = false;
+			}
 
 			SetStyle (ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
 			SetStyle (ControlStyles.ResizeRedraw | ControlStyles.Opaque, true);
 		}
+
+		#region Internal & Private Properties
+		internal Rectangle FirstArrowArea {
+			get {
+				return this.first_arrow_area;
+			}
+
+			set {
+				this.first_arrow_area = value;
+			}
+		}
+
+		internal Rectangle SecondArrowArea {
+			get {
+				return this.second_arrow_area;
+			}
+
+			set {
+				this.second_arrow_area = value;
+			}
+		}
+
+		internal Rectangle ThumbPos {
+			get {
+				return thumb_pos;
+			}
+
+			set {
+				thumb_pos = value;
+			}
+		}
+		#endregion	// Internal & Private Properties
 
 		#region Public Properties
 
@@ -490,11 +534,7 @@ namespace System.Windows.Forms
 		
 		private void Draw ()
 		{
-			ThemeEngine.Current.DrawScrollBar (DeviceContext, paint_area, this, ref thumb_pos,
-				ref first_arrow_area, ref second_arrow_area,
-				firstbutton_state, secondbutton_state,
-				ref scrollbutton_width, ref scrollbutton_height, vert);
-
+			ThemeEngine.Current.DrawScrollBar(DeviceContext, this.ClientRectangle, this);
 		}
 
 		private void LargeIncrement ()

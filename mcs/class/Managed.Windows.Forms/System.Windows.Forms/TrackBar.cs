@@ -30,9 +30,20 @@
 // Copyright (C) Novell Inc., 2004
 //
 //
-// $Revision: 1.13 $
+// $Revision: 1.14 $
 // $Modtime: $
 // $Log: TrackBar.cs,v $
+// Revision 1.14  2004/09/28 18:44:25  pbartok
+// - Streamlined Theme interfaces:
+//   * Each DrawXXX method for a control now is passed the object for the
+//     control to be drawn in order to allow accessing any state the theme
+//     might require
+//
+//   * ControlPaint methods for the theme now have a CP prefix to avoid
+//     name clashes with the Draw methods for controls
+//
+//   * Every control now retrieves it's DefaultSize from the current theme
+//
 // Revision 1.13  2004/08/23 20:10:03  jordi
 // fixes properties and methods
 //
@@ -90,19 +101,19 @@ namespace System.Windows.Forms
 	{
 		private int minimum;
 		private int maximum;
-		private int tickFrequency;
+		internal int tickFrequency;
 		private bool autosize;
 		private int position;
 		private int smallChange;
 		private int largeChange;
 		private Orientation orientation;
 		private TickStyle tickStyle;
-		private Rectangle paint_area = new Rectangle ();
+		internal Rectangle paint_area = new Rectangle ();
 		private Rectangle thumb_pos = new Rectangle ();	 /* Current position and size of the thumb */
 		private Rectangle thumb_area = new Rectangle (); /* Area where the thumb can scroll */
-		private bool thumb_pressed = false;		 
+		internal bool thumb_pressed = false;		 
 		private System.Timers.Timer holdclick_timer = new System.Timers.Timer ();
-		private int thumb_mouseclick;		
+		internal int thumb_mouseclick;		
 		private bool mouse_clickmove;
 
 		#region Events
@@ -137,6 +148,28 @@ namespace System.Windows.Forms
 			SetStyle (ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
 			SetStyle (ControlStyles.ResizeRedraw | ControlStyles.Opaque, true);			
 		}
+
+		#region Private & Internal Properties
+		internal Rectangle ThumbPos {
+			get {
+				return thumb_pos;
+			}
+
+			set {
+				thumb_pos = value;
+			}
+		}
+
+		internal Rectangle ThumbArea {
+			get {
+				return thumb_area;
+			}
+
+			set {
+				thumb_area = value;
+			}
+		}
+		#endregion	// Private & Internal Properties
 
 		#region Public Properties
 
@@ -178,7 +211,7 @@ namespace System.Windows.Forms
 		}
 
 		protected override Size DefaultSize {
-			get { return new System.Drawing.Size (104, 42); }
+			get { return ThemeEngine.Current.TrackBarDefaultSize; }
 		}	
 		
 		[EditorBrowsable (EditorBrowsableState.Never)]	 
@@ -522,13 +555,7 @@ namespace System.Windows.Forms
 		{					
 			float ticks = (Maximum - Minimum) / tickFrequency; /* N of ticks draw*/                        
 	
-			if (thumb_pressed)
-				ThemeEngine.Current.DrawTrackBar (DeviceContext, paint_area, this, 
-					ref thumb_pos, ref thumb_area, thumb_pressed, ticks, thumb_mouseclick, true);
-			else
-				ThemeEngine.Current.DrawTrackBar (DeviceContext, paint_area, this,
-					ref thumb_pos, ref thumb_area, thumb_pressed, ticks,  Value - Minimum, false);
-
+			ThemeEngine.Current.DrawTrackBar(DeviceContext, this.ClientRectangle, this);
 		}		
 
 		private void OnMouseUpTB (object sender, MouseEventArgs e)

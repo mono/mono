@@ -24,9 +24,20 @@
 //	Peter Bartok, pbartok@novell.com
 //
 //
-// $Revision: 1.14 $
+// $Revision: 1.15 $
 // $Modtime: $
 // $Log: Label.cs,v $
+// Revision 1.15  2004/09/28 18:44:25  pbartok
+// - Streamlined Theme interfaces:
+//   * Each DrawXXX method for a control now is passed the object for the
+//     control to be drawn in order to allow accessing any state the theme
+//     might require
+//
+//   * ControlPaint methods for the theme now have a CP prefix to avoid
+//     name clashes with the Draw methods for controls
+//
+//   * Every control now retrieves it's DefaultSize from the current theme
+//
 // Revision 1.14  2004/09/07 09:40:15  jordi
 // LinkLabel fixes, methods, multiple links
 //
@@ -175,7 +186,7 @@ namespace System.Windows.Forms
     		}
 
     		protected override Size DefaultSize {
-    			get {return new Size (100,23);}
+    			get {return ThemeEngine.Current.LabelDefaultSize;}
     		}
 
     		public FlatStyle FlatStyle {
@@ -556,8 +567,7 @@ namespace System.Windows.Forms
 
     		internal void Draw ()
 		{			
-			ThemeEngine.Current.DrawLabel (DeviceContext, ClientRectangle, BorderStyle, Text,
-				ForeColor, BackColor, Font, string_format, Enabled);
+			ThemeEngine.Current.DrawLabel(DeviceContext, ClientRectangle, this);
 
 			DrawImage (DeviceContext, Image, ClientRectangle, image_align);
 		}

@@ -23,9 +23,20 @@
 //		Jordi Mas i Hernandez	jordi@ximian.com
 //
 //
-// $Revision: 1.7 $
+// $Revision: 1.8 $
 // $Modtime: $
 // $Log: ProgressBar.cs,v $
+// Revision 1.8  2004/09/28 18:44:25  pbartok
+// - Streamlined Theme interfaces:
+//   * Each DrawXXX method for a control now is passed the object for the
+//     control to be drawn in order to allow accessing any state the theme
+//     might require
+//
+//   * ControlPaint methods for the theme now have a CP prefix to avoid
+//     name clashes with the Draw methods for controls
+//
+//   * Every control now retrieves it's DefaultSize from the current theme
+//
 // Revision 1.7  2004/08/25 18:29:14  jordi
 // new methods, properties, and fixes for progressbar
 //
@@ -68,10 +79,10 @@ namespace System.Windows.Forms
 		#region Local Variables
 		private int maximum;
 		private int minimum;
-		private int step;
-		private int val;
-		private Rectangle paint_area = new Rectangle ();
-		private Rectangle client_area = new Rectangle ();
+		internal int step;
+		internal int val;
+		internal Rectangle paint_area = new Rectangle ();
+		internal Rectangle client_area = new Rectangle ();
 		#endregion	// Local Variables
 
 		#region Events
@@ -160,7 +171,7 @@ namespace System.Windows.Forms
 
 		protected override Size DefaultSize
 		{
-			get { return new Size(100, 23); }
+			get { return ThemeEngine.Current.ProgressBarDefaultSize; }
 		}
 
 		// Setting this property in MS .Net 1.1 does not have any visual effect and it
@@ -371,14 +382,7 @@ namespace System.Windows.Forms
 
 		private void Draw ()
 		{
-			int block_width, barpos_pixels;
-			int steps = (Maximum - Minimum) / step;
-
-			block_width = ((client_area.Height) * 2 ) / 3;
-			barpos_pixels = ((Value - Minimum) * client_area.Width) / (Maximum - Minimum);
-
-			ThemeEngine.Current.DrawProgressBar (DeviceContext, paint_area, client_area, barpos_pixels,
-				block_width);
+			ThemeEngine.Current.DrawProgressBar (DeviceContext, this.ClientRectangle, this);
 		}
 
 		private void OnPaintPB (Object o, PaintEventArgs pevent)

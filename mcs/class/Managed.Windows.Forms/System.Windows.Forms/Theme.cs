@@ -23,9 +23,20 @@
 //	Jordi Mas i Hernandez, jordi@ximian.com
 //
 //
-// $Revision: 1.9 $
+// $Revision: 1.10 $
 // $Modtime: $
 // $Log: Theme.cs,v $
+// Revision 1.10  2004/09/28 18:44:25  pbartok
+// - Streamlined Theme interfaces:
+//   * Each DrawXXX method for a control now is passed the object for the
+//     control to be drawn in order to allow accessing any state the theme
+//     might require
+//
+//   * ControlPaint methods for the theme now have a CP prefix to avoid
+//     name clashes with the Draw methods for controls
+//
+//   * Every control now retrieves it's DefaultSize from the current theme
+//
 // Revision 1.9  2004/09/17 12:18:42  jordi
 // Very early menu support
 //
@@ -250,111 +261,167 @@ namespace System.Windows.Forms
 			syscolors.SetValue (color, (int) idx);
 		}
 
+		#region Principal Theme Methods
 		// If the theme writes directly to a window instead of a device context
-		public abstract bool WriteToWindow {get;}
+		public abstract bool DoubleBufferingSupported {get;}
+		#endregion	// Principal Theme Methods
 
-		/*
-		  	Control sizing properties
-		*/
+		#region	OwnerDraw Support
+		public abstract void DrawOwnerDrawBackground (DrawItemEventArgs e);
+		public abstract void DrawOwnerDrawFocusRectangle (DrawItemEventArgs e);
+		#endregion	// OwnerDraw Support
 
-		public abstract int SizeGripWidth {get;}
-		public abstract int StatusBarHorzGapWidth {get;}
-		public abstract int ScrollBarButtonSize {get;}
+		#region Button
+		#endregion	// Button
 
-		/*
-		  	ToolBar Control properties
-		 */
+		#region ButtonBase
+		// Drawing
+		public abstract void DrawButtonBase(Graphics dc, Rectangle clip_area, ButtonBase button);
+
+		// Sizing
+		public abstract Size ButtonBaseDefaultSize{get;}
+		#endregion	// ButtonBase
+
+		#region CheckBox
+		public abstract void DrawCheckBox(Graphics dc, Rectangle clip_area, CheckBox checkbox);
+		#endregion	// CheckBox
+
+		#region Control
+		#endregion	// Control
+
+		#region GroupBox
+		// Drawing
+		public abstract void DrawGroupBox (Graphics dc,  Rectangle clip_area, GroupBox box);
+
+		// Sizing
+		public abstract Size GroupBoxDefaultSize{get;}
+		#endregion	// GroupBox
+
+		#region HScrollBar
+		public abstract Size HScrollBarDefaultSize{get;}	// Default size of the scrollbar
+		#endregion	// HScrollBar
+
+		#region Label
+		// Drawing
+		public abstract void DrawLabel (Graphics dc, Rectangle clip_rectangle, Label label);
+
+		// Sizing
+		public abstract Size LabelDefaultSize{get;}
+		#endregion	// Label
+
+		#region LinkLabel
+		#endregion	// LinkLabel
+
+		#region Panel
+		// Sizing
+		public abstract Size PanelDefaultSize{get;}
+		#endregion	// Panel
+
+		#region PictureBox
+		// Drawing
+		public abstract void DrawPictureBox (Graphics dc, PictureBox pb);
+
+		// Sizing
+		public abstract Size PictureBoxDefaultSize{get;}
+		#endregion	// PictureBox
+
+		#region ProgressBar
+		// Drawing
+		public abstract void DrawProgressBar (Graphics dc, Rectangle clip_rectangle, ProgressBar progress_bar);
+
+		// Sizing
+		public abstract Size ProgressBarDefaultSize{get;}
+		#endregion	// ProgressBar
+
+		#region RadioButton
+		// Drawing
+		public abstract void DrawRadioButton (Graphics dc, Rectangle clip_rectangle, RadioButton radio_button);
+
+		// Sizing
+		public abstract Size RadioButtonDefaultSize{get;}
+		#endregion	// RadioButton
+
+		#region ScrollBar
+		// Drawing
+		//public abstract void DrawScrollBar (Graphics dc, Rectangle area, ScrollBar bar, ref Rectangle thumb_pos, ref Rectangle first_arrow_area, ref Rectangle second_arrow_area, ButtonState first_arrow, ButtonState second_arrow, ref int scrollbutton_width, ref int scrollbutton_height, bool vert);
+		public abstract void DrawScrollBar (Graphics dc, Rectangle clip_rectangle, ScrollBar bar);
+
+		// Sizing
+		public abstract int ScrollBarButtonSize {get;}		// Size of the scroll button
+		#endregion	// ScrollBar
+
+		#region StatusBar
+		// Drawing
+		public abstract void DrawStatusBar (Graphics dc, Rectangle clip_rectangle, StatusBar sb);
+
+		// Sizing
+		public abstract int StatusBarSizeGripWidth {get;}		// Size of Resize area
+		public abstract int StatusBarHorzGapWidth {get;}	// Gap between panels
+		public abstract Size StatusBarDefaultSize{get;}
+		#endregion	// StatusBar
+
+		#region	ToolBar
+		// Drawing
+		public abstract void DrawToolBar (Graphics dc, Rectangle clip_area, ToolBar control);
+
+		// Sizing
 		public abstract int ToolBarGripWidth {get;}              // Grip width for the ToolBar
 		public abstract int ToolBarImageGripWidth {get;}         // Grip width for the Image on the ToolBarButton
 		public abstract int ToolBarSeparatorWidth {get;}         // width of the separator
 		public abstract int ToolBarDropDownWidth { get; }        // width of the dropdown arrow rect
 		public abstract int ToolBarDropDownArrowWidth { get; }   // width for the dropdown arrow on the ToolBarButton
 		public abstract int ToolBarDropDownArrowHeight { get; }  // height for the dropdown arrow on the ToolBarButton
+		public abstract Size ToolBarDefaultSize{get;}
+		#endregion	// ToolBar
 
-		/*
-			Methods that mimic ControlPaint signature and draw basic objects
-		*/
+		#region TrackBar
+		// Drawing
+		public abstract void DrawTrackBar (Graphics dc, Rectangle clip_rectangle, TrackBar tb);
+//public abstract void DrawTrackBar (Graphics dc, Rectangle area, TrackBar tb, 
+//ref Rectangle thumb_pos, 
+//ref Rectangle thumb_area, 
+//bool highli_thumb, 
+//float ticks, 
+//int value_pos, 
+//bool mouse_value);
 
-		public abstract void DrawBorder (Graphics graphics, Rectangle bounds, Color leftColor, int leftWidth,
+		// Sizing
+		public abstract Size TrackBarDefaultSize{get; }		// Default size for the TrackBar control
+		#endregion	// TrackBar
+
+		#region VScrollBar
+		public abstract Size VScrollBarDefaultSize{get;}	// Default size of the scrollbar
+		#endregion	// VScrollBar
+
+
+		#region	ControlPaint Methods
+		public abstract void CPDrawBorder (Graphics graphics, Rectangle bounds, Color leftColor, int leftWidth,
 			ButtonBorderStyle leftStyle, Color topColor, int topWidth, ButtonBorderStyle topStyle,
 			Color rightColor, int rightWidth, ButtonBorderStyle rightStyle, Color bottomColor,
 			int bottomWidth, ButtonBorderStyle bottomStyle);
 
-		public abstract void DrawBorder3D (Graphics graphics, Rectangle rectangle, Border3DStyle style, Border3DSide sides);
-
-		public abstract void DrawButton (Graphics graphics, Rectangle rectangle, ButtonState state);
-
-		public abstract void DrawCaptionButton (Graphics graphics, Rectangle rectangle, CaptionButton button, ButtonState state);
-
-		public abstract void DrawCheckBox (Graphics graphics, Rectangle rectangle, ButtonState state);
-
-		public abstract void DrawComboButton (Graphics graphics, Rectangle rectangle, ButtonState state);
-
-		public abstract void DrawContainerGrabHandle (Graphics graphics, Rectangle bounds);
-
-		public abstract void DrawFocusRectangle (Graphics graphics, Rectangle rectangle, Color foreColor, Color backColor);
-
-		public abstract void DrawGrabHandle (Graphics graphics, Rectangle rectangle, bool primary, bool enabled);
-
-		public abstract void DrawGrid (Graphics graphics, Rectangle area, Size pixelsBetweenDots, Color backColor);
-
-		public abstract void DrawImageDisabled (Graphics graphics, Image image, int x, int y, Color background);
-
-		public abstract void DrawLockedFrame (Graphics graphics, Rectangle rectangle, bool primary);
-
-		public abstract void DrawMenuGlyph (Graphics graphics, Rectangle rectangle, MenuGlyph glyph);
-
-		public abstract void DrawRadioButton (Graphics graphics, Rectangle rectangle, ButtonState state);
-
-		public abstract void DrawReversibleFrame (Rectangle rectangle, Color backColor, FrameStyle style);
-
-		public abstract void DrawReversibleLine (Point start, Point end, Color backColor);
-
-		public abstract void DrawScrollButton (Graphics graphics, Rectangle rectangle, ScrollButton button, ButtonState state);
-
-		public abstract void DrawSelectionFrame (Graphics graphics, bool active, Rectangle outsideRect, Rectangle insideRect,
+		public abstract void CPDrawBorder3D (Graphics graphics, Rectangle rectangle, Border3DStyle style, Border3DSide sides);
+		public abstract void CPDrawButton (Graphics graphics, Rectangle rectangle, ButtonState state);
+		public abstract void CPDrawCaptionButton (Graphics graphics, Rectangle rectangle, CaptionButton button, ButtonState state);
+		public abstract void CPDrawCheckBox (Graphics graphics, Rectangle rectangle, ButtonState state);
+		public abstract void CPDrawComboButton (Graphics graphics, Rectangle rectangle, ButtonState state);
+		public abstract void CPDrawContainerGrabHandle (Graphics graphics, Rectangle bounds);
+		public abstract void CPDrawFocusRectangle (Graphics graphics, Rectangle rectangle, Color foreColor, Color backColor);
+		public abstract void CPDrawGrabHandle (Graphics graphics, Rectangle rectangle, bool primary, bool enabled);
+		public abstract void CPDrawGrid (Graphics graphics, Rectangle area, Size pixelsBetweenDots, Color backColor);
+		public abstract void CPDrawImageDisabled (Graphics graphics, Image image, int x, int y, Color background);
+		public abstract void CPDrawLockedFrame (Graphics graphics, Rectangle rectangle, bool primary);
+		public abstract void CPDrawMenuGlyph (Graphics graphics, Rectangle rectangle, MenuGlyph glyph);
+		public abstract void CPDrawRadioButton (Graphics graphics, Rectangle rectangle, ButtonState state);
+		public abstract void CPDrawReversibleFrame (Rectangle rectangle, Color backColor, FrameStyle style);
+		public abstract void CPDrawReversibleLine (Point start, Point end, Color backColor);
+		public abstract void CPDrawScrollButton (Graphics graphics, Rectangle rectangle, ScrollButton button, ButtonState state);
+		public abstract void CPDrawSelectionFrame (Graphics graphics, bool active, Rectangle outsideRect, Rectangle insideRect,
 			Color backColor);
-
-		public abstract void DrawSizeGrip (Graphics graphics, Color backColor, Rectangle bounds);
-
-		public abstract void DrawStringDisabled (Graphics graphics, string s, Font font, Color color, RectangleF layoutRectangle,
+		public abstract void CPDrawSizeGrip (Graphics graphics, Color backColor, Rectangle bounds);
+		public abstract void CPDrawStringDisabled (Graphics graphics, string s, Font font, Color color, RectangleF layoutRectangle,
 			StringFormat format);
-			
-		public abstract void DrawBorderStyle (Graphics dc, Rectangle area, BorderStyle border_style);
-
-		/*
-			Methods that draw complete controls			
-		*/
-
-		public abstract void DrawLabel (Graphics dc, Rectangle area, BorderStyle border_style, string text, 
-			Color fore_color, Color back_color, Font font, StringFormat string_format, bool Enabled);
-
-		public abstract void DrawScrollBar (Graphics dc, Rectangle area, ScrollBar bar,
-			ref Rectangle thumb_pos, ref Rectangle first_arrow_area, ref Rectangle second_arrow_area, 
-			ButtonState first_arrow, ButtonState second_arrow, ref int scrollbutton_width, 
-			ref int scrollbutton_height, bool vert);
-
-		public abstract void DrawTrackBar (Graphics dc, Rectangle area, TrackBar tb,
-				ref Rectangle thumb_pos, ref Rectangle thumb_area, bool highli_thumb,
-				float ticks, int value_pos, bool mouse_value);
-
-		public abstract void DrawProgressBar (Graphics dc, Rectangle area,  Rectangle client_area,
-			int barpos_pixels, int block_width);
-
-		public abstract void DrawToolBar (Graphics dc, ToolBar control, StringFormat format);
-
-		public abstract void DrawStatusBar (Graphics dc, Rectangle area, StatusBar sb);
-
-		public abstract void DrawOwnerDrawBackground (DrawItemEventArgs e);
-
-		public abstract void DrawOwnerDrawFocusRectangle (DrawItemEventArgs e);
-
-		public abstract void DrawStatusBarPanel (Graphics dc, Rectangle area, int index,
-			SolidBrush br_forecolor, StatusBarPanel panel);
-		
-		public abstract void DrawPictureBox (Graphics dc, PictureBox pb);
-		
-		public abstract void DrawGroupBox (Graphics dc,  Rectangle area, GroupBox box);
-		
+		public abstract void CPDrawBorderStyle (Graphics dc, Rectangle area, BorderStyle border_style);
+		#endregion	// ControlPaint Methods
 	}
 }

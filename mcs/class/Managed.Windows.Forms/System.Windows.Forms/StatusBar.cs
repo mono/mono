@@ -41,7 +41,7 @@ namespace System.Windows.Forms {
 		private bool show_panels = false;
 		private bool sizing_grip = true;
 
-		private Rectangle paint_area = new Rectangle ();
+		internal Rectangle paint_area = new Rectangle ();
 
 		public StatusBar ()
 		{
@@ -177,7 +177,7 @@ namespace System.Windows.Forms {
 		}
 
 		protected override Size DefaultSize {
-			get { return new Size (100, 22); }
+			get { return ThemeEngine.Current.StatusBarDefaultSize; }
 		}
 
 		protected override ImeMode DefaultImeMode {
@@ -330,7 +330,7 @@ namespace System.Windows.Forms {
 				return;
 
 			int spring_total = springs.Count;
-			int total_width = Width - taken - ThemeEngine.Current.SizeGripWidth;
+			int total_width = Width - taken - ThemeEngine.Current.StatusBarSizeGripWidth;
 			for (int i = 0; i < spring_total; i++) {
 				StatusBarPanel p = (StatusBarPanel) springs [i];
 				p.Width = total_width / spring_total;
@@ -346,7 +346,7 @@ namespace System.Windows.Forms {
 
 		private void Draw ()
 		{
-			ThemeEngine.Current.DrawStatusBar (DeviceContext, paint_area, this);
+			ThemeEngine.Current.DrawStatusBar (DeviceContext, this.ClientRectangle, this);
 		}
 
 		public class StatusBarPanelCollection :	 IList, ICollection, IEnumerable {

@@ -25,6 +25,17 @@
 //
 //
 // $Log: CheckBox.cs,v $
+// Revision 1.7  2004/09/28 18:44:25  pbartok
+// - Streamlined Theme interfaces:
+//   * Each DrawXXX method for a control now is passed the object for the
+//     control to be drawn in order to allow accessing any state the theme
+//     might require
+//
+//   * ControlPaint methods for the theme now have a CP prefix to avoid
+//     name clashes with the Draw methods for controls
+//
+//   * Every control now retrieves it's DefaultSize from the current theme
+//
 // Revision 1.6  2004/09/01 20:01:24  pbartok
 // - Added missing default
 // - Added missing region mark
@@ -54,13 +65,12 @@ using System.Drawing;
 namespace System.Windows.Forms {
 	public class CheckBox : ButtonBase {
 		#region Local Variables
-		private Appearance		appearance;
-		private bool			auto_check;
-		private ContentAlignment	check_alignment;
-		private ContentAlignment	text_alignment;
-		private CheckState		check_state;
-		private bool			three_state;
-		private int			checkmark_size=13;		// Keep it configurable for accessability
+		internal Appearance		appearance;
+		internal bool			auto_check;
+		internal ContentAlignment	check_alignment;
+		internal ContentAlignment	text_alignment;
+		internal CheckState		check_state;
+		internal bool			three_state;
 		#endregion	// Local Variables
 
 
@@ -270,194 +280,7 @@ namespace System.Windows.Forms {
 
 		#region	Internal drawing code
 		internal override void Redraw() {
-			StringFormat		text_format;
-			Rectangle		client_rectangle;
-			Rectangle		text_rectangle;
-			Rectangle		checkbox_rectangle;
-			SolidBrush		sb;
-
-			client_rectangle = ClientRectangle;
-			text_rectangle = client_rectangle;
-			checkbox_rectangle = new Rectangle(text_rectangle.X, text_rectangle.Y, checkmark_size, checkmark_size);
-
-			text_format = new StringFormat();
-			text_format.Alignment=StringAlignment.Near;
-			text_format.LineAlignment=StringAlignment.Center;
-
-			/* Calculate the position of text and checkbox rectangle */
-			if (appearance!=Appearance.Button) {
-				switch(check_alignment) {
-					case ContentAlignment.BottomCenter: {
-						if (client_rectangle.Height<checkmark_size*2) {
-							ClientSize=new Size(client_rectangle.Width, checkmark_size*2);
-							client_rectangle = ClientRectangle;
-						}
-						checkbox_rectangle.X=(client_rectangle.Right-client_rectangle.Left)/2-checkmark_size/2;
-						checkbox_rectangle.Y=client_rectangle.Bottom-checkmark_size;
-						text_rectangle.X=client_rectangle.X;
-						text_rectangle.Width=client_rectangle.Width;
-						break;
-					}
-
-					case ContentAlignment.BottomLeft: {
-						checkbox_rectangle.X=client_rectangle.Left;
-						checkbox_rectangle.Y=client_rectangle.Bottom-checkmark_size;
-						text_rectangle.X=client_rectangle.X+checkmark_size;
-						text_rectangle.Width=client_rectangle.Width-checkmark_size;
-						break;
-					}
-
-					case ContentAlignment.BottomRight: {
-						checkbox_rectangle.X=client_rectangle.Right-checkmark_size;
-						checkbox_rectangle.Y=client_rectangle.Bottom-checkmark_size;
-						text_rectangle.X=client_rectangle.X;
-						text_rectangle.Width=client_rectangle.Width-checkmark_size;
-						break;
-					}
-
-					case ContentAlignment.MiddleCenter: {
-						checkbox_rectangle.X=(client_rectangle.Right-client_rectangle.Left)/2-checkmark_size/2;
-						checkbox_rectangle.Y=(client_rectangle.Bottom-client_rectangle.Top)/2-checkmark_size/2;
-						text_rectangle.X=client_rectangle.X;
-						text_rectangle.Width=client_rectangle.Width;
-						break;
-					}
-
-					default:
-					case ContentAlignment.MiddleLeft: {
-						checkbox_rectangle.X=client_rectangle.Left;
-						checkbox_rectangle.Y=(client_rectangle.Bottom-client_rectangle.Top)/2-checkmark_size/2;
-						text_rectangle.X=client_rectangle.X+checkmark_size;
-						text_rectangle.Width=client_rectangle.Width-checkmark_size;
-						break;
-					}
-
-					case ContentAlignment.MiddleRight: {
-						checkbox_rectangle.X=client_rectangle.Right-checkmark_size;
-						checkbox_rectangle.Y=(client_rectangle.Bottom-client_rectangle.Top)/2-checkmark_size/2;
-						text_rectangle.X=client_rectangle.X;
-						text_rectangle.Width=client_rectangle.Width-checkmark_size;
-						break;
-					}
-
-					case ContentAlignment.TopCenter: {
-						if (client_rectangle.Height<checkmark_size*2) {
-							ClientSize=new Size(client_rectangle.Width, checkmark_size*2);
-							client_rectangle = ClientRectangle;
-						}
-						checkbox_rectangle.X=(client_rectangle.Right-client_rectangle.Left)/2-checkmark_size/2;
-						checkbox_rectangle.Y=client_rectangle.Top;
-						text_rectangle.X=client_rectangle.X;
-						text_rectangle.Y=checkmark_size;
-						text_rectangle.Width=client_rectangle.Width;
-						text_rectangle.Height=client_rectangle.Height-checkmark_size;
-						break;
-					}
-
-					case ContentAlignment.TopLeft: {
-						checkbox_rectangle.X=client_rectangle.Left;
-						checkbox_rectangle.Y=client_rectangle.Top;
-						text_rectangle.X=client_rectangle.X+checkmark_size;
-						text_rectangle.Width=client_rectangle.Width-checkmark_size;
-						break;
-					}
-
-					case ContentAlignment.TopRight: {
-						checkbox_rectangle.X=client_rectangle.Right-checkmark_size;
-						checkbox_rectangle.Y=client_rectangle.Top;
-						text_rectangle.X=client_rectangle.X;
-						text_rectangle.Width=client_rectangle.Width-checkmark_size;
-						break;
-					}
-				}
-			} else {
-				text_rectangle.X=client_rectangle.X;
-				text_rectangle.Width=client_rectangle.Width;
-			}
-
-			/* Set the horizontal alignment of our text */
-			switch(text_alignment) {
-				case ContentAlignment.BottomLeft:
-				case ContentAlignment.MiddleLeft:
-				case ContentAlignment.TopLeft: {
-					text_format.Alignment=StringAlignment.Near;
-					break;
-				}
-
-				case ContentAlignment.BottomCenter:
-				case ContentAlignment.MiddleCenter:
-				case ContentAlignment.TopCenter: {
-					text_format.Alignment=StringAlignment.Center;
-					break;
-				}
-
-				case ContentAlignment.BottomRight:
-				case ContentAlignment.MiddleRight:
-				case ContentAlignment.TopRight: {
-					text_format.Alignment=StringAlignment.Far;
-					break;
-				}
-			}
-
-			/* Set the vertical alignment of our text */
-			switch(text_alignment) {
-				case ContentAlignment.TopLeft: 
-				case ContentAlignment.TopCenter: 
-				case ContentAlignment.TopRight: {
-					text_format.LineAlignment=StringAlignment.Near;
-					break;
-				}
-
-				case ContentAlignment.BottomLeft:
-				case ContentAlignment.BottomCenter:
-				case ContentAlignment.BottomRight: {
-					text_format.LineAlignment=StringAlignment.Far;
-					break;
-				}
-
-				case ContentAlignment.MiddleLeft:
-				case ContentAlignment.MiddleCenter:
-				case ContentAlignment.MiddleRight: {
-					text_format.LineAlignment=StringAlignment.Center;
-					break;
-				}
-			}
-
-			ButtonState state = ButtonState.Normal;
-			if (FlatStyle == FlatStyle.Flat) {
-				state |= ButtonState.Flat;
-			}
-			
-			if (Checked) {
-				state |= ButtonState.Checked;
-			}
-			
-			if (ThreeState && (CheckState == CheckState.Indeterminate)) {
-				state |= ButtonState.Checked;
-				state |= ButtonState.Pushed;
-			}
-
-			// Start drawing
-
-			sb=new SolidBrush(BackColor);
-			this.DeviceContext.FillRectangle(sb, ClientRectangle);
-			sb.Dispose();
-
-			if (appearance!=Appearance.Button) {
-				ControlPaint.DrawCheckBox(this.DeviceContext, checkbox_rectangle, state);
-			} else {
-				ControlPaint.DrawButton(this.DeviceContext, text_rectangle, state);
-			}
-
-			/* Place the text; to be compatible with Windows place it after the checkbox has been drawn */
-			sb=new SolidBrush(ForeColor);
-			this.DeviceContext.DrawString(Text, Font, sb, text_rectangle, text_format);
-			sb.Dispose();
-
-			if (Focused) {
-				ControlPaint.DrawFocusRectangle(this.DeviceContext, text_rectangle);
-			}
-
+			ThemeEngine.Current.DrawCheckBox(this.DeviceContext, this.ClientRectangle, this);
 			Refresh();
 		}
 		#endregion	// Internal drawing code

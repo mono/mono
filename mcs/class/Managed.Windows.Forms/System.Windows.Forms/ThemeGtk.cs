@@ -37,9 +37,20 @@
 //		- GTK paints controls into a window no a device context. We should inverstigate if we 
 //		we can encapsulate a dc in a gtkwindow.
 //
-// $Revision: 1.5 $
+// $Revision: 1.6 $
 // $Modtime: $
 // $Log: ThemeGtk.cs,v $
+// Revision 1.6  2004/09/28 18:44:25  pbartok
+// - Streamlined Theme interfaces:
+//   * Each DrawXXX method for a control now is passed the object for the
+//     control to be drawn in order to allow accessing any state the theme
+//     might require
+//
+//   * ControlPaint methods for the theme now have a CP prefix to avoid
+//     name clashes with the Draw methods for controls
+//
+//   * Every control now retrieves it's DefaultSize from the current theme
+//
 // Revision 1.5  2004/09/02 16:32:54  jordi
 // implements resource pool for pens, brushes, and hatchbruses
 //
@@ -249,8 +260,8 @@ namespace System.Windows.Forms
 			br_buttontext = new SolidBrush (defaultWindowForeColor);			
 		}	
 
-		public override bool WriteToWindow {
-			get {return true; }
+		public override bool DoubleBufferingSupported {
+			get {return false; }
 		}	
 
 
@@ -301,7 +312,7 @@ namespace System.Windows.Forms
 					area.Width / 2, area.Height / 2);			
 		
 		}
-		
+#if updated		
 		public override void DrawScrollBar (Graphics dc, Rectangle area, ScrollBar bar,
 			ref Rectangle thumb_pos, ref Rectangle first_arrow_area, ref Rectangle second_arrow_area, 
 			ButtonState first_arrow, ButtonState second_arrow, ref int scrollbutton_width, 
@@ -377,7 +388,7 @@ namespace System.Windows.Forms
 
 			//gtk_style_detach (style);
 		}
-
+#endif
 		
 		private static Color ColorFromGdkColor (GdkColorStruct gtkcolor)
 		{

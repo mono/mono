@@ -30,9 +30,20 @@
 //	- Change the cursor to a hand cursor when you are over a link (when cursors are available)
 //	- Focus handeling
 //
-// $Revision: 1.8 $
+// $Revision: 1.9 $
 // $Modtime: $
 // $Log: LinkLabel.cs,v $
+// Revision 1.9  2004/09/28 18:44:25  pbartok
+// - Streamlined Theme interfaces:
+//   * Each DrawXXX method for a control now is passed the object for the
+//     control to be drawn in order to allow accessing any state the theme
+//     might require
+//
+//   * ControlPaint methods for the theme now have a CP prefix to avoid
+//     name clashes with the Draw methods for controls
+//
+//   * Every control now retrieves it's DefaultSize from the current theme
+//
 // Revision 1.8  2004/09/07 09:40:15  jordi
 // LinkLabel fixes, methods, multiple links
 //
@@ -525,7 +536,7 @@ namespace System.Windows.Forms
 			Color color;
 
 			//dc.FillRectangle (label_br_back_color, area);
-			ThemeEngine.Current.DrawBorderStyle (DeviceContext, ClientRectangle, BorderStyle);
+			ThemeEngine.Current.CPDrawBorderStyle (DeviceContext, ClientRectangle, BorderStyle);
 
 			if (Links.Count == 1 && Links[0].Start == 0 &&	Links[0].Length == -1) {
 

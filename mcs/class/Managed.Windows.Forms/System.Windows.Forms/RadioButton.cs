@@ -23,6 +23,17 @@
 //	Peter Bartok	pbartok@novell.com
 //
 // $Log: RadioButton.cs,v $
+// Revision 1.4  2004/09/28 18:44:25  pbartok
+// - Streamlined Theme interfaces:
+//   * Each DrawXXX method for a control now is passed the object for the
+//     control to be drawn in order to allow accessing any state the theme
+//     might require
+//
+//   * ControlPaint methods for the theme now have a CP prefix to avoid
+//     name clashes with the Draw methods for controls
+//
+//   * Every control now retrieves it's DefaultSize from the current theme
+//
 // Revision 1.3  2004/09/02 20:26:48  pbartok
 // - Added missing RadioButton.RadioButtonAccessibleObject class
 //
@@ -43,13 +54,12 @@ using System.Drawing.Text;
 namespace System.Windows.Forms {
 	public class RadioButton : ButtonBase {
 		#region Local Variables
-		private Appearance		appearance;
-		private bool			auto_check;
-		private ContentAlignment	radiobutton_alignment;
-		private ContentAlignment	text_alignment;
-		private CheckState		check_state;
+		internal Appearance		appearance;
+		internal bool			auto_check;
+		internal ContentAlignment	radiobutton_alignment;
+		internal ContentAlignment	text_alignment;
+		internal CheckState		check_state;
 		private bool			is_tabstop;
-		private int 			radiobutton_size = 12;		// Might not be correct
 		#endregion	// Local Variables
 
 		#region RadioButtonAccessibleObject Subclass
@@ -216,7 +226,7 @@ namespace System.Windows.Forms {
 
 		protected override Size DefaultSize {
 			get {
-				return new Size(104,24);
+				return ThemeEngine.Current.RadioButtonDefaultSize;
 			}
 		}
 		#endregion	// Protected Instance Properties
@@ -272,189 +282,7 @@ namespace System.Windows.Forms {
 
 		#region Internal Drawing Code
 		internal override void Redraw() {
-			StringFormat	text_format;
-			Rectangle 	client_rectangle;
-			Rectangle	text_rectangle;
-			Rectangle 	radiobutton_rectangle;
-			SolidBrush	sb;
-
-			client_rectangle = ClientRectangle;
-			text_rectangle = client_rectangle;
-			radiobutton_rectangle = new Rectangle(text_rectangle.X, text_rectangle.Y, radiobutton_size, radiobutton_size);
-
-			text_format = new StringFormat();
-			text_format.Alignment = StringAlignment.Near;
-			text_format.LineAlignment = StringAlignment.Center;
-
-			/* Calculate the position of text and checkbox rectangle */
-			if (appearance!=Appearance.Button) {
-				switch(radiobutton_alignment) {
-				case ContentAlignment.BottomCenter: {
-					if (client_rectangle.Height<radiobutton_size*2) {
-						ClientSize=new Size(client_rectangle.Width, radiobutton_size*2);
-						client_rectangle = ClientRectangle;
-					}
-					radiobutton_rectangle.X=(client_rectangle.Right-client_rectangle.Left)/2-radiobutton_size/2;
-					radiobutton_rectangle.Y=client_rectangle.Bottom-radiobutton_size;
-					text_rectangle.X=client_rectangle.X;
-					text_rectangle.Width=client_rectangle.Width;
-					break;
-				}
-
-				case ContentAlignment.BottomLeft: {
-					radiobutton_rectangle.X=client_rectangle.Left;
-					radiobutton_rectangle.Y=client_rectangle.Bottom-radiobutton_size;
-					text_rectangle.X=client_rectangle.X+radiobutton_size;
-					text_rectangle.Width=client_rectangle.Width-radiobutton_size;
-					break;
-				}
-
-				case ContentAlignment.BottomRight: {
-					radiobutton_rectangle.X=client_rectangle.Right-radiobutton_size;
-					radiobutton_rectangle.Y=client_rectangle.Bottom-radiobutton_size;
-					text_rectangle.X=client_rectangle.X;
-					text_rectangle.Width=client_rectangle.Width-radiobutton_size;
-					break;
-				}
-
-				case ContentAlignment.MiddleCenter: {
-					radiobutton_rectangle.X=(client_rectangle.Right-client_rectangle.Left)/2-radiobutton_size/2;
-					radiobutton_rectangle.Y=(client_rectangle.Bottom-client_rectangle.Top)/2-radiobutton_size/2;
-					text_rectangle.X=client_rectangle.X;
-					text_rectangle.Width=client_rectangle.Width;
-					break;
-				}
-
-				default:
-				case ContentAlignment.MiddleLeft: {
-					radiobutton_rectangle.X=client_rectangle.Left;
-					radiobutton_rectangle.Y=(client_rectangle.Bottom-client_rectangle.Top)/2-radiobutton_size/2;
-					text_rectangle.X=client_rectangle.X+radiobutton_size;
-					text_rectangle.Width=client_rectangle.Width-radiobutton_size;
-					break;
-				}
-
-				case ContentAlignment.MiddleRight: {
-					radiobutton_rectangle.X=client_rectangle.Right-radiobutton_size;
-					radiobutton_rectangle.Y=(client_rectangle.Bottom-client_rectangle.Top)/2-radiobutton_size/2;
-					text_rectangle.X=client_rectangle.X;
-					text_rectangle.Width=client_rectangle.Width-radiobutton_size;
-					break;
-				}
-
-				case ContentAlignment.TopCenter: {
-					if (client_rectangle.Height<radiobutton_size*2) {
-						ClientSize=new Size(client_rectangle.Width, radiobutton_size*2);
-						client_rectangle = ClientRectangle;
-					}
-					radiobutton_rectangle.X=(client_rectangle.Right-client_rectangle.Left)/2-radiobutton_size/2;
-					radiobutton_rectangle.Y=client_rectangle.Top;
-					text_rectangle.X=client_rectangle.X;
-					text_rectangle.Y=radiobutton_size;
-					text_rectangle.Width=client_rectangle.Width;
-					text_rectangle.Height=client_rectangle.Height-radiobutton_size;
-					break;
-				}
-
-				case ContentAlignment.TopLeft: {
-					radiobutton_rectangle.X=client_rectangle.Left;
-					radiobutton_rectangle.Y=client_rectangle.Top;
-					text_rectangle.X=client_rectangle.X+radiobutton_size;
-					text_rectangle.Width=client_rectangle.Width-radiobutton_size;
-					break;
-				}
-
-				case ContentAlignment.TopRight: {
-					radiobutton_rectangle.X=client_rectangle.Right-radiobutton_size;
-					radiobutton_rectangle.Y=client_rectangle.Top;
-					text_rectangle.X=client_rectangle.X;
-					text_rectangle.Width=client_rectangle.Width-radiobutton_size;
-					break;
-				}
-				}
-			} else {
-				text_rectangle.X=client_rectangle.X;
-				text_rectangle.Width=client_rectangle.Width;
-			}
-
-			/* Set the horizontal alignment of our text */
-			switch(text_alignment) {
-			case ContentAlignment.BottomLeft:
-			case ContentAlignment.MiddleLeft:
-			case ContentAlignment.TopLeft: {
-				text_format.Alignment=StringAlignment.Near;
-				break;
-			}
-
-			case ContentAlignment.BottomCenter:
-			case ContentAlignment.MiddleCenter:
-			case ContentAlignment.TopCenter: {
-				text_format.Alignment=StringAlignment.Center;
-				break;
-			}
-
-			case ContentAlignment.BottomRight:
-			case ContentAlignment.MiddleRight:
-			case ContentAlignment.TopRight: {
-				text_format.Alignment=StringAlignment.Far;
-				break;
-			}
-			}
-
-			/* Set the vertical alignment of our text */
-			switch(text_alignment) {
-			case ContentAlignment.TopLeft: 
-			case ContentAlignment.TopCenter: 
-			case ContentAlignment.TopRight: {
-				text_format.LineAlignment=StringAlignment.Near;
-				break;
-			}
-
-			case ContentAlignment.BottomLeft:
-			case ContentAlignment.BottomCenter:
-			case ContentAlignment.BottomRight: {
-				text_format.LineAlignment=StringAlignment.Far;
-				break;
-			}
-
-			case ContentAlignment.MiddleLeft:
-			case ContentAlignment.MiddleCenter:
-			case ContentAlignment.MiddleRight: {
-				text_format.LineAlignment=StringAlignment.Center;
-				break;
-			}
-			}
-
-			ButtonState state = ButtonState.Normal;
-			if (FlatStyle == FlatStyle.Flat) {
-				state |= ButtonState.Flat;
-			}
-			
-			if (Checked) {
-				state |= ButtonState.Checked;
-			}
-
-			// Start drawing
-
-			sb=new SolidBrush(BackColor);
-			this.DeviceContext.FillRectangle(sb, ClientRectangle);
-			sb.Dispose();
-
-			if (appearance!=Appearance.Button) {
-				ControlPaint.DrawRadioButton(this.DeviceContext, radiobutton_rectangle, state);
-			} else {
-				ControlPaint.DrawButton(this.DeviceContext, text_rectangle, state);
-			}
-
-			/* Place the text; to be compatible with Windows place it after the radiobutton has been drawn */
-			sb=new SolidBrush(ForeColor);
-			this.DeviceContext.DrawString(Text, Font, sb, text_rectangle, text_format);
-			sb.Dispose();
-
-			if (Focused) {
-				ControlPaint.DrawFocusRectangle(this.DeviceContext, text_rectangle);
-			}
-
+			ThemeEngine.Current.DrawRadioButton(this.DeviceContext, this.ClientRectangle, this);
 			Refresh();
 		}
 		#endregion	// Internal Drawing Code

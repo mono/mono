@@ -25,9 +25,20 @@
 //
 //
 //
-// $Revision: 1.37 $
+// $Revision: 1.38 $
 // $Modtime: $
 // $Log: ThemeWin32Classic.cs,v $
+// Revision 1.38  2004/09/28 18:44:25  pbartok
+// - Streamlined Theme interfaces:
+//   * Each DrawXXX method for a control now is passed the object for the
+//     control to be drawn in order to allow accessing any state the theme
+//     might require
+//
+//   * ControlPaint methods for the theme now have a CP prefix to avoid
+//     name clashes with the Draw methods for controls
+//
+//   * Every control now retrieves it's DefaultSize from the current theme
+//
 // Revision 1.37  2004/09/09 08:28:11  pbartok
 // - Improve disabled string look
 //
@@ -189,8 +200,9 @@ namespace System.Windows.Forms
 
 		/* Cache */
 		protected SolidBrush label_br_fore_color;
-		protected SolidBrush label_br_back_color;		
+		protected SolidBrush label_br_back_color;
 
+		#region	Principal Theme Methods
 		public ThemeWin32Classic ()
 		{
 			label_br_fore_color = null;
@@ -212,11 +224,946 @@ namespace System.Windows.Forms
 			default_font =	new Font (FontFamily.GenericSansSerif, 8.25f);
 		}	
 
-		public override bool WriteToWindow {
-			get {return false; }
+		public override bool DoubleBufferingSupported {
+			get {return true; }
+		}
+		#endregion	// Principal Theme Methods
+
+		#region	Internal Methods
+		protected SolidBrush GetControlBackBrush (Color c) {
+			if (c == DefaultControlBackColor)
+				return ResPool.GetSolidBrush (ColorButtonFace);
+			return new SolidBrush (c);
+		}
+
+		protected SolidBrush GetControlForeBrush (Color c) {
+			if (c == DefaultControlForeColor)
+				return ResPool.GetSolidBrush (ColorButtonText);
+			return new SolidBrush (c);
+		}
+		#endregion	// Internal Methods
+
+		#region OwnerDraw Support
+		public  override void DrawOwnerDrawBackground (DrawItemEventArgs e)
+		{
+			if (e.State == DrawItemState.Selected) {
+				e.Graphics.FillRectangle (SystemBrushes.Highlight, e.Bounds);
+				return;
+			}
+
+			e.Graphics.FillRectangle (GetControlBackBrush (e.BackColor), e.Bounds);
+		}
+
+		public  override void DrawOwnerDrawFocusRectangle (DrawItemEventArgs e)
+		{
+			if (e.State == DrawItemState.Focus)
+				CPDrawFocusRectangle (e.Graphics, e.Bounds, e.ForeColor, e.BackColor);
+		}
+		#endregion	// OwnerDraw Support
+
+		#region ButtonBase
+		public override void DrawButtonBase(Graphics dc, Rectangle clip_area, ButtonBase button) {
+			ButtonState	state;
+			int		width;
+			int		height;
+
+			width = button.ClientSize.Width;
+			height = button.ClientSize.Height;
+
+			SolidBrush	sb = new SolidBrush(button.BackColor);
+			dc.FillRectangle(sb, button.ClientRectangle);
+			sb.Dispose();
+
+			CPDrawButton(dc, button.ClientRectangle, button.ButtonState);
+
+			if (button.has_focus) {
+				CPDrawFocusRectangle(dc, button.ClientRectangle, ColorButtonText, ColorButtonFace);
+			}
+
+			// First, draw the image
+			if ((button.image != null) || (button.image_list != null)) {
+				// Need to draw a picture
+				Image	i;
+				int	image_x;
+				int	image_y;
+				int	image_width;
+				int	image_height;
+
+				if (button.ImageIndex!=-1) {	// We use ImageIndex instead of image_index since it will return -1 if image_list is null
+					i = button.image_list.Images[button.image_index];
+				} else {
+					i = button.image;
+				}
+
+				image_width = button.image.Width;
+				image_height = button.image.Height;
+
+				switch(button.image_alignment) {
+				case ContentAlignment.TopLeft: {
+					image_x=0;
+					image_y=0;
+					break;
+				}
+
+				case ContentAlignment.TopCenter: {
+					image_x=(width-image_width)/2;
+					image_y=0;
+					break;
+				}
+
+				case ContentAlignment.TopRight: {
+					image_x=width-image_width;
+					image_y=0;
+					break;
+				}
+
+				case ContentAlignment.MiddleLeft: {
+					image_x=0;
+					image_y=(height-image_height)/2;
+					break;
+				}
+
+				case ContentAlignment.MiddleCenter: {
+					image_x=(width-image_width)/2;
+					image_y=(height-image_height)/2;
+					break;
+				}
+
+				case ContentAlignment.MiddleRight: {
+					image_x=width-image_width;
+					image_y=(height-image_height)/2;
+					break;
+				}
+
+				case ContentAlignment.BottomLeft: {
+					image_x=0;
+					image_y=height-image_height;
+					break;
+				}
+
+				case ContentAlignment.BottomCenter: {
+					image_x=(width-image_width)/2;
+					image_y=height-image_height;
+					break;
+				}
+
+				case ContentAlignment.BottomRight: {
+					image_x=width-image_width;
+					image_y=height-image_height;
+					break;
+				}
+
+				default: {
+					image_x=0;
+					image_y=0;
+					break;
+				}
+				}
+
+				if (button.is_pressed) {
+					image_x+=2;
+					image_y+=2;
+				}
+
+				if (button.is_enabled) {
+					dc.DrawImage(i, image_x, image_y); 
+				} else {
+					CPDrawImageDisabled(dc, i, image_x, image_y, ColorButtonFace);
+				}
+			}
+
+			// Now the text
+			if (button.text != null && button.text != String.Empty) {
+				Rectangle	text_rect = new Rectangle(3, 3, button.ClientSize.Width-6, button.ClientSize.Height-6); // FIXME; calculate rect properly
+
+				if (button.is_pressed) {
+					text_rect.X++;
+					text_rect.Y++;
+				}
+
+				if (button.is_enabled) {
+					SolidBrush	b = new SolidBrush(button.ForeColor);
+					dc.DrawString(button.text, button.Font, b, text_rect, button.text_format);
+					b.Dispose();
+				} else {
+					CPDrawStringDisabled(dc, button.text, button.Font, ColorButtonText, text_rect, button.text_format);
+				}
+			}
+		}
+
+		public override Size ButtonBaseDefaultSize {
+			get {
+				return new Size(75, 23);
+			}
+		}
+		#endregion	// ButtonBase
+
+		#region CheckBox
+		public override void DrawCheckBox(Graphics dc, Rectangle clip_area, CheckBox checkbox) {
+			StringFormat		text_format;
+			Rectangle		client_rectangle;
+			Rectangle		text_rectangle;
+			Rectangle		checkbox_rectangle;
+			SolidBrush		sb;
+			int			checkmark_size=13;
+
+			client_rectangle = checkbox.ClientRectangle;
+			text_rectangle = client_rectangle;
+			checkbox_rectangle = new Rectangle(text_rectangle.X, text_rectangle.Y, checkmark_size, checkmark_size);
+
+			text_format = new StringFormat();
+			text_format.Alignment=StringAlignment.Near;
+			text_format.LineAlignment=StringAlignment.Center;
+
+			/* Calculate the position of text and checkbox rectangle */
+			if (checkbox.appearance!=Appearance.Button) {
+				switch(checkbox.check_alignment) {
+					case ContentAlignment.BottomCenter: {
+						checkbox_rectangle.X=(client_rectangle.Right-client_rectangle.Left)/2-checkmark_size/2;
+						checkbox_rectangle.Y=client_rectangle.Bottom-checkmark_size;
+						text_rectangle.X=client_rectangle.X;
+						text_rectangle.Width=client_rectangle.Width;
+						break;
+					}
+
+					case ContentAlignment.BottomLeft: {
+						checkbox_rectangle.X=client_rectangle.Left;
+						checkbox_rectangle.Y=client_rectangle.Bottom-checkmark_size;
+						text_rectangle.X=client_rectangle.X+checkmark_size;
+						text_rectangle.Width=client_rectangle.Width-checkmark_size;
+						break;
+					}
+
+					case ContentAlignment.BottomRight: {
+						checkbox_rectangle.X=client_rectangle.Right-checkmark_size;
+						checkbox_rectangle.Y=client_rectangle.Bottom-checkmark_size;
+						text_rectangle.X=client_rectangle.X;
+						text_rectangle.Width=client_rectangle.Width-checkmark_size;
+						break;
+					}
+
+					case ContentAlignment.MiddleCenter: {
+						checkbox_rectangle.X=(client_rectangle.Right-client_rectangle.Left)/2-checkmark_size/2;
+						checkbox_rectangle.Y=(client_rectangle.Bottom-client_rectangle.Top)/2-checkmark_size/2;
+						text_rectangle.X=client_rectangle.X;
+						text_rectangle.Width=client_rectangle.Width;
+						break;
+					}
+
+					default:
+					case ContentAlignment.MiddleLeft: {
+						checkbox_rectangle.X=client_rectangle.Left;
+						checkbox_rectangle.Y=(client_rectangle.Bottom-client_rectangle.Top)/2-checkmark_size/2;
+						text_rectangle.X=client_rectangle.X+checkmark_size;
+						text_rectangle.Width=client_rectangle.Width-checkmark_size;
+						break;
+					}
+
+					case ContentAlignment.MiddleRight: {
+						checkbox_rectangle.X=client_rectangle.Right-checkmark_size;
+						checkbox_rectangle.Y=(client_rectangle.Bottom-client_rectangle.Top)/2-checkmark_size/2;
+						text_rectangle.X=client_rectangle.X;
+						text_rectangle.Width=client_rectangle.Width-checkmark_size;
+						break;
+					}
+
+					case ContentAlignment.TopCenter: {
+						checkbox_rectangle.X=(client_rectangle.Right-client_rectangle.Left)/2-checkmark_size/2;
+						checkbox_rectangle.Y=client_rectangle.Top;
+						text_rectangle.X=client_rectangle.X;
+						text_rectangle.Y=checkmark_size;
+						text_rectangle.Width=client_rectangle.Width;
+						text_rectangle.Height=client_rectangle.Height-checkmark_size;
+						break;
+					}
+
+					case ContentAlignment.TopLeft: {
+						checkbox_rectangle.X=client_rectangle.Left;
+						checkbox_rectangle.Y=client_rectangle.Top;
+						text_rectangle.X=client_rectangle.X+checkmark_size;
+						text_rectangle.Width=client_rectangle.Width-checkmark_size;
+						break;
+					}
+
+					case ContentAlignment.TopRight: {
+						checkbox_rectangle.X=client_rectangle.Right-checkmark_size;
+						checkbox_rectangle.Y=client_rectangle.Top;
+						text_rectangle.X=client_rectangle.X;
+						text_rectangle.Width=client_rectangle.Width-checkmark_size;
+						break;
+					}
+				}
+			} else {
+				text_rectangle.X=client_rectangle.X;
+				text_rectangle.Width=client_rectangle.Width;
+			}
+
+			/* Set the horizontal alignment of our text */
+			switch(checkbox.text_alignment) {
+				case ContentAlignment.BottomLeft:
+				case ContentAlignment.MiddleLeft:
+				case ContentAlignment.TopLeft: {
+					text_format.Alignment=StringAlignment.Near;
+					break;
+				}
+
+				case ContentAlignment.BottomCenter:
+				case ContentAlignment.MiddleCenter:
+				case ContentAlignment.TopCenter: {
+					text_format.Alignment=StringAlignment.Center;
+					break;
+				}
+
+				case ContentAlignment.BottomRight:
+				case ContentAlignment.MiddleRight:
+				case ContentAlignment.TopRight: {
+					text_format.Alignment=StringAlignment.Far;
+					break;
+				}
+			}
+
+			/* Set the vertical alignment of our text */
+			switch(checkbox.text_alignment) {
+				case ContentAlignment.TopLeft: 
+				case ContentAlignment.TopCenter: 
+				case ContentAlignment.TopRight: {
+					text_format.LineAlignment=StringAlignment.Near;
+					break;
+				}
+
+				case ContentAlignment.BottomLeft:
+				case ContentAlignment.BottomCenter:
+				case ContentAlignment.BottomRight: {
+					text_format.LineAlignment=StringAlignment.Far;
+					break;
+				}
+
+				case ContentAlignment.MiddleLeft:
+				case ContentAlignment.MiddleCenter:
+				case ContentAlignment.MiddleRight: {
+					text_format.LineAlignment=StringAlignment.Center;
+					break;
+				}
+			}
+
+			ButtonState state = ButtonState.Normal;
+			if (checkbox.FlatStyle == FlatStyle.Flat) {
+				state |= ButtonState.Flat;
+			}
+			
+			if (checkbox.Checked) {
+				state |= ButtonState.Checked;
+			}
+			
+			if (checkbox.ThreeState && (checkbox.CheckState == CheckState.Indeterminate)) {
+				state |= ButtonState.Checked;
+				state |= ButtonState.Pushed;
+			}
+
+			// Start drawing
+
+			sb=new SolidBrush(checkbox.BackColor);
+			dc.FillRectangle(sb, checkbox.ClientRectangle);
+			sb.Dispose();
+
+			if (checkbox.appearance!=Appearance.Button) {
+				ControlPaint.DrawCheckBox(dc, checkbox_rectangle, state);
+			} else {
+				ControlPaint.DrawButton(dc, text_rectangle, state);
+			}
+
+			/* Place the text; to be compatible with Windows place it after the checkbox has been drawn */
+			sb=new SolidBrush(checkbox.ForeColor);
+			dc.DrawString(checkbox.Text, checkbox.Font, sb, text_rectangle, text_format);
+			sb.Dispose();
+
+			if (checkbox.Focused) {
+				ControlPaint.DrawFocusRectangle(dc, text_rectangle);
+			}
+		}
+
+		#endregion	// CheckBox
+
+		#region GroupBox
+		public override void DrawGroupBox (Graphics dc,  Rectangle area, GroupBox box) {
+			SizeF size;
+			int width, y;
+			Rectangle rect = box.ClientRectangle;
+			Color disabled = ColorGrayText;
+			
+			Pen pen_light = ResPool.GetPen (Color.FromArgb (255,255,255,255));
+			Pen pen_dark = ResPool.GetPen (Color.FromArgb (255, 128, 128,128));
+			
+			// TODO: When the Light and Dark methods work this code should be activate it
+			//Pen pen_light = new Pen (ControlPaint.Light (disabled, 1));
+			//Pen pen_dark = new Pen (ControlPaint.Dark (disabled, 0));
+
+			dc.FillRectangle (ResPool.GetSolidBrush (box.BackColor), rect);
+
+			size = dc.MeasureString (box.Text, box.Font);
+			width = (int) size.Width;
+			
+			if (width > box.Width - 16)
+				width = box.Width - 16;
+			
+			y = box.Font.Height / 2;
+			
+			/* Draw group box*/
+			dc.DrawLine (pen_dark, 0, y, 8, y); // top 
+			dc.DrawLine (pen_light, 0, y + 1, 8, y + 1);			
+			dc.DrawLine (pen_dark, 8 + width, y, box.Width, y);			
+			dc.DrawLine (pen_light, 8 + width, y + 1, box.Width, y + 1);
+			
+			dc.DrawLine (pen_dark, 0, y + 1, 0, box.Height); // left
+			dc.DrawLine (pen_light, 1, y + 1, 1, box.Height);			
+			
+			dc.DrawLine (pen_dark, 0, box.Height - 2, box.Width,  box.Height - 2); // bottom
+			dc.DrawLine (pen_light, 0, box.Height - 1, box.Width,  box.Height - 1);
+			
+			dc.DrawLine (pen_dark, box.Width - 2, y,  box.Width - 2, box.Height - 2); // right
+			dc.DrawLine (pen_light, box.Width - 1, y, box.Width - 1, box.Height - 2);
+			
+			
+			/* Text */
+			if (box.Enabled)
+				dc.DrawString (box.Text, box.Font, new SolidBrush (box.ForeColor), 10, 0);
+			else
+				CPDrawStringDisabled (dc, box.Text, box.Font, box.ForeColor, 
+					new RectangleF (10, 0, width,  box.Font.Height), new StringFormat ());					
+				
+		}
+
+		public override Size GroupBoxDefaultSize {
+			get {
+				return new Size (200,100);
+			}
+		}
+		#endregion
+
+		#region HScrollBar
+		public override Size HScrollBarDefaultSize {
+			get {
+				return new Size (80,13);
+			}
+		}
+
+		#endregion	// HScrollBar
+
+		#region Label
+		public  override void DrawLabel (Graphics dc, Rectangle clip_rectangle, Label label) {
+			if (label_br_fore_color == null || label_br_fore_color.Color != label.ForeColor) {
+				label_br_fore_color = GetControlForeBrush (label.ForeColor);
+			}
+
+			if (label_br_back_color == null || label_br_back_color.Color != label.BackColor) {
+				label_br_back_color = GetControlBackBrush (label.BackColor);
+			}
+
+			dc.FillRectangle (label_br_back_color, clip_rectangle);
+			
+			CPDrawBorderStyle (dc, clip_rectangle, label.BorderStyle);		
+
+			if (label.Enabled) {
+				dc.DrawString (label.Text, label.Font, label_br_fore_color, clip_rectangle, label.string_format);
+			} else {
+				ControlPaint.DrawStringDisabled (dc, label.Text, label.Font, label.ForeColor, clip_rectangle, label.string_format);
+			}
+		
+		}
+
+		public override Size LabelDefaultSize {
+			get {
+				return new Size (100,23);
+			}
+		}
+		#endregion	// Label
+
+		#region Panel
+		public override Size PanelDefaultSize {
+			get {
+				return new Size (200, 100);
+			}
+		}
+
+		#endregion	// Panel
+
+		#region PictureBox
+		public override void DrawPictureBox (Graphics dc, PictureBox pb) {
+			Rectangle client = pb.ClientRectangle;
+			int x, y, width, height;
+
+			dc.FillRectangle (new SolidBrush (pb.BackColor), client);
+
+			x = y = 0;
+			if (pb.Image != null) {
+				switch (pb.SizeMode) {
+				case PictureBoxSizeMode.StretchImage:
+					width = client.Width;
+					height = client.Height;
+					break;
+				case PictureBoxSizeMode.CenterImage:
+					width = client.Width;
+					height = client.Height;
+					x = width / 2;
+					y = (height - pb.Image.Height) / 2;
+					break;
+				default:
+					// Normal, AutoSize
+					width = client.Width;
+					height = client.Height;
+					break;
+				}
+				dc.DrawImage (pb.Image, x, y, width, height);
+			}
+			CPDrawBorderStyle (dc, client, pb.BorderStyle);
+		}
+
+		public override Size PictureBoxDefaultSize {
+			get {
+				return new Size (100, 50);
+			}
+		}
+		#endregion	// PictureBox
+
+		#region ProgressBar
+		public override void DrawProgressBar (Graphics dc, Rectangle clip_rectangle, ProgressBar progress_bar) {
+			Rectangle	client_area		= progress_bar.client_area;
+			Rectangle	paint_area		= progress_bar.paint_area;
+			int		steps			= (progress_bar.Maximum - progress_bar.Minimum) / progress_bar.step;
+			int		space_betweenblocks	= 2;
+			int		x;
+			int		block_width;
+			int		increment;
+			int		barpos_pixels;
+
+			x = client_area.X;
+			block_width = ((client_area.Height) * 2 ) / 3;
+			barpos_pixels = ((progress_bar.Value - progress_bar.Minimum) * client_area.Width) / (progress_bar.Maximum - progress_bar.Minimum);
+			increment = block_width + space_betweenblocks;
+
+			/* Draw border */
+			CPDrawBorder3D (dc, progress_bar.paint_area, Border3DStyle.SunkenInner, Border3DSide.All);
+			
+			/* Draw Blocks */
+			while ((x - client_area.X) < barpos_pixels) {
+				dc.FillRectangle (br_progressbarblock, x, client_area.Y, block_width, client_area.Height);
+				x  = x + increment;
+			}
 		}
 		
-		public override int SizeGripWidth {
+		public override Size ProgressBarDefaultSize {
+			get {
+				return new Size(100, 23);
+			}
+		}
+
+		#endregion	// ProgressBar
+
+		#region RadioButton
+		public override void DrawRadioButton (Graphics dc, Rectangle clip_rectangle, RadioButton radio_button) {
+			StringFormat	text_format;
+			Rectangle 	client_rectangle;
+			Rectangle	text_rectangle;
+			Rectangle 	radiobutton_rectangle;
+			SolidBrush	sb;
+			int		radiobutton_size = 12;
+
+			client_rectangle = radio_button.ClientRectangle;
+			text_rectangle = client_rectangle;
+			radiobutton_rectangle = new Rectangle(text_rectangle.X, text_rectangle.Y, radiobutton_size, radiobutton_size);
+
+			text_format = new StringFormat();
+			text_format.Alignment = StringAlignment.Near;
+			text_format.LineAlignment = StringAlignment.Center;
+
+			/* Calculate the position of text and checkbox rectangle */
+			if (radio_button.appearance!=Appearance.Button) {
+				switch(radio_button.radiobutton_alignment) {
+				case ContentAlignment.BottomCenter: {
+					radiobutton_rectangle.X=(client_rectangle.Right-client_rectangle.Left)/2-radiobutton_size/2;
+					radiobutton_rectangle.Y=client_rectangle.Bottom-radiobutton_size;
+					text_rectangle.X=client_rectangle.X;
+					text_rectangle.Width=client_rectangle.Width;
+					break;
+				}
+
+				case ContentAlignment.BottomLeft: {
+					radiobutton_rectangle.X=client_rectangle.Left;
+					radiobutton_rectangle.Y=client_rectangle.Bottom-radiobutton_size;
+					text_rectangle.X=client_rectangle.X+radiobutton_size;
+					text_rectangle.Width=client_rectangle.Width-radiobutton_size;
+					break;
+				}
+
+				case ContentAlignment.BottomRight: {
+					radiobutton_rectangle.X=client_rectangle.Right-radiobutton_size;
+					radiobutton_rectangle.Y=client_rectangle.Bottom-radiobutton_size;
+					text_rectangle.X=client_rectangle.X;
+					text_rectangle.Width=client_rectangle.Width-radiobutton_size;
+					break;
+				}
+
+				case ContentAlignment.MiddleCenter: {
+					radiobutton_rectangle.X=(client_rectangle.Right-client_rectangle.Left)/2-radiobutton_size/2;
+					radiobutton_rectangle.Y=(client_rectangle.Bottom-client_rectangle.Top)/2-radiobutton_size/2;
+					text_rectangle.X=client_rectangle.X;
+					text_rectangle.Width=client_rectangle.Width;
+					break;
+				}
+
+				default:
+				case ContentAlignment.MiddleLeft: {
+					radiobutton_rectangle.X=client_rectangle.Left;
+					radiobutton_rectangle.Y=(client_rectangle.Bottom-client_rectangle.Top)/2-radiobutton_size/2;
+					text_rectangle.X=client_rectangle.X+radiobutton_size;
+					text_rectangle.Width=client_rectangle.Width-radiobutton_size;
+					break;
+				}
+
+				case ContentAlignment.MiddleRight: {
+					radiobutton_rectangle.X=client_rectangle.Right-radiobutton_size;
+					radiobutton_rectangle.Y=(client_rectangle.Bottom-client_rectangle.Top)/2-radiobutton_size/2;
+					text_rectangle.X=client_rectangle.X;
+					text_rectangle.Width=client_rectangle.Width-radiobutton_size;
+					break;
+				}
+
+				case ContentAlignment.TopCenter: {
+					radiobutton_rectangle.X=(client_rectangle.Right-client_rectangle.Left)/2-radiobutton_size/2;
+					radiobutton_rectangle.Y=client_rectangle.Top;
+					text_rectangle.X=client_rectangle.X;
+					text_rectangle.Y=radiobutton_size;
+					text_rectangle.Width=client_rectangle.Width;
+					text_rectangle.Height=client_rectangle.Height-radiobutton_size;
+					break;
+				}
+
+				case ContentAlignment.TopLeft: {
+					radiobutton_rectangle.X=client_rectangle.Left;
+					radiobutton_rectangle.Y=client_rectangle.Top;
+					text_rectangle.X=client_rectangle.X+radiobutton_size;
+					text_rectangle.Width=client_rectangle.Width-radiobutton_size;
+					break;
+				}
+
+				case ContentAlignment.TopRight: {
+					radiobutton_rectangle.X=client_rectangle.Right-radiobutton_size;
+					radiobutton_rectangle.Y=client_rectangle.Top;
+					text_rectangle.X=client_rectangle.X;
+					text_rectangle.Width=client_rectangle.Width-radiobutton_size;
+					break;
+				}
+				}
+			} else {
+				text_rectangle.X=client_rectangle.X;
+				text_rectangle.Width=client_rectangle.Width;
+			}
+
+			/* Set the horizontal alignment of our text */
+			switch(radio_button.text_alignment) {
+				case ContentAlignment.BottomLeft:
+				case ContentAlignment.MiddleLeft:
+				case ContentAlignment.TopLeft: {
+					text_format.Alignment=StringAlignment.Near;
+					break;
+				}
+
+				case ContentAlignment.BottomCenter:
+				case ContentAlignment.MiddleCenter:
+				case ContentAlignment.TopCenter: {
+					text_format.Alignment=StringAlignment.Center;
+					break;
+				}
+
+				case ContentAlignment.BottomRight:
+				case ContentAlignment.MiddleRight:
+				case ContentAlignment.TopRight: {
+					text_format.Alignment=StringAlignment.Far;
+					break;
+				}
+			}
+
+			/* Set the vertical alignment of our text */
+			switch(radio_button.text_alignment) {
+				case ContentAlignment.TopLeft: 
+				case ContentAlignment.TopCenter: 
+				case ContentAlignment.TopRight: {
+					text_format.LineAlignment=StringAlignment.Near;
+					break;
+				}
+
+				case ContentAlignment.BottomLeft:
+				case ContentAlignment.BottomCenter:
+				case ContentAlignment.BottomRight: {
+					text_format.LineAlignment=StringAlignment.Far;
+					break;
+				}
+
+				case ContentAlignment.MiddleLeft:
+				case ContentAlignment.MiddleCenter:
+				case ContentAlignment.MiddleRight: {
+					text_format.LineAlignment=StringAlignment.Center;
+					break;
+				}
+			}
+
+			ButtonState state = ButtonState.Normal;
+			if (radio_button.FlatStyle == FlatStyle.Flat) {
+				state |= ButtonState.Flat;
+			}
+			
+			if (radio_button.Checked) {
+				state |= ButtonState.Checked;
+			}
+
+			// Start drawing
+
+			sb=new SolidBrush(radio_button.BackColor);
+			dc.FillRectangle(sb, radio_button.ClientRectangle);
+			sb.Dispose();
+
+			if (radio_button.appearance!=Appearance.Button) {
+				ControlPaint.DrawRadioButton(dc, radiobutton_rectangle, state);
+			} else {
+				ControlPaint.DrawButton(dc, text_rectangle, state);
+			}
+
+			/* Place the text; to be compatible with Windows place it after the radiobutton has been drawn */
+			sb=new SolidBrush(radio_button.ForeColor);
+			dc.DrawString(radio_button.Text, radio_button.Font, sb, text_rectangle, text_format);
+			sb.Dispose();
+
+			if (radio_button.Focused) {
+				ControlPaint.DrawFocusRectangle(dc, text_rectangle);
+			}
+		}
+
+		public override Size RadioButtonDefaultSize {
+			get {
+				return new Size(104,24);
+			}
+		}
+		#endregion	// RadioButton
+
+		#region ScrollBar
+		public override void DrawScrollBar(Graphics dc, Rectangle clip_rectangle, ScrollBar bar) {
+			int		scrollbutton_width = bar.scrollbutton_width;
+			int		scrollbutton_height = bar.scrollbutton_height;
+			Rectangle	first_arrow_area;
+			Rectangle	second_arrow_area;
+			Rectangle	area;
+			Rectangle	thumb_pos;
+
+			area = bar.paint_area;
+			thumb_pos = bar.ThumbPos;
+
+			if (bar.vert) {
+				first_arrow_area = new Rectangle(0, 0, bar.Width, scrollbutton_height);
+				bar.FirstArrowArea = first_arrow_area;
+
+				second_arrow_area = new Rectangle(0, area.Height - scrollbutton_height, bar.Width, scrollbutton_height);
+				bar.SecondArrowArea = second_arrow_area;
+
+				thumb_pos.Width = bar.Width;
+				bar.ThumbPos = thumb_pos;
+
+				/* Buttons */
+				CPDrawScrollButton (dc, first_arrow_area, ScrollButton.Up, bar.firstbutton_state);
+				CPDrawScrollButton (dc, second_arrow_area, ScrollButton.Down, bar.secondbutton_state);				
+
+				/* Background */
+				switch (bar.thumb_moving) {
+				case ScrollBar.ThumbMoving.None: {
+					dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, ColorButtonHilight, ColorButtonFace), 0,  
+						scrollbutton_height, area.Width, area.Height - (scrollbutton_height * 2));
+					
+					break;
+				}
+				case ScrollBar.ThumbMoving.Forward: {
+					dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, ColorButtonHilight, ColorButtonFace),
+						0,  scrollbutton_height,
+						area.Width, thumb_pos.Y - scrollbutton_height);
+												
+					dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, Color.FromArgb (255, 63,63,63), Color.Black),
+						0, thumb_pos.Y + thumb_pos.Height,
+						area.Width, area.Height -  (thumb_pos.Y + thumb_pos.Height) - scrollbutton_height);						
+						
+					break;
+				}
+				
+				case ScrollBar.ThumbMoving.Backwards: {
+					dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, Color.FromArgb (255, 63,63,63), Color.Black),
+						0,  scrollbutton_height,
+						area.Width, thumb_pos.Y - scrollbutton_height);
+												
+					dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, ColorButtonHilight, ColorButtonFace),
+						0, thumb_pos.Y + thumb_pos.Height,
+						area.Width, area.Height -  (thumb_pos.Y + thumb_pos.Height) - scrollbutton_height);						
+						
+					break;
+				}
+				
+				default:
+					break;
+				}
+					
+			}
+			else {
+				first_arrow_area = new Rectangle(0, 0, scrollbutton_width, bar.Height);
+				bar.FirstArrowArea = first_arrow_area;
+
+				second_arrow_area = new Rectangle(0, area.Width - scrollbutton_width, scrollbutton_width, bar.Height);
+				bar.SecondArrowArea = second_arrow_area;
+
+				thumb_pos.Height = bar.Height;
+				bar.ThumbPos = thumb_pos;
+
+				/* Buttons */
+				CPDrawScrollButton (dc, bar.FirstArrowArea, ScrollButton.Left, bar.firstbutton_state);
+				CPDrawScrollButton (dc, bar.SecondArrowArea, ScrollButton.Right, bar.secondbutton_state);
+
+				/* Background */
+				//dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, ColorButtonHilight, ColorButtonFace), scrollbutton_width, 
+				//	0, area.Width - (scrollbutton_width * 2), area.Height);
+					
+				switch (bar.thumb_moving) {
+				case ScrollBar.ThumbMoving.None: {
+					dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, ColorButtonHilight, ColorButtonFace), scrollbutton_width,
+						0, area.Width - (scrollbutton_width * 2), area.Height);
+					
+					break;
+				}
+				
+				case ScrollBar.ThumbMoving.Forward: {
+					dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, ColorButtonHilight, ColorButtonFace),
+						scrollbutton_width,  0,
+						thumb_pos.X - scrollbutton_width, area.Height);
+												
+					dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, Color.FromArgb (255, 63,63,63), Color.Black),
+						thumb_pos.X + thumb_pos.Width, 0,
+						area.Width -  (thumb_pos.X + thumb_pos.Width) - scrollbutton_width, area.Height);
+						
+					break;
+				}
+				
+				case ScrollBar.ThumbMoving.Backwards: {
+					dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, Color.FromArgb (255, 63,63,63), Color.Black),
+						scrollbutton_width,  0,
+						thumb_pos.X - scrollbutton_width, area.Height);
+												
+					dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, ColorButtonHilight, ColorButtonFace),
+						thumb_pos.X + thumb_pos.Width, 0,
+						area.Width -  (thumb_pos.X + thumb_pos.Width) - scrollbutton_width, area.Height);
+
+						
+					break;
+				}
+				
+				default:
+					break;
+				}
+			}
+
+			/* Thumb */
+			if (bar.Enabled)
+				DrawScrollButtonPrimitive (dc, thumb_pos, ButtonState.Normal);			
+		}
+
+		public override int ScrollBarButtonSize {
+			get { return 16; }
+		}
+		#endregion	// ScrollBar
+
+		#region StatusBar
+		public  override void DrawStatusBar (Graphics dc, Rectangle clip_rectangle, StatusBar sb) {
+			Rectangle	area	    = sb.paint_area;
+			int		horz_border = 2;
+			int		vert_border = 2;
+
+			dc.FillRectangle (GetControlBackBrush (sb.BackColor), area);
+			
+			if (sb.ShowPanels && sb.Panels.Count == 0) {
+				// Create a default panel.
+				SolidBrush br_forecolor = GetControlForeBrush (sb.ForeColor);
+				
+				StatusBarPanel panel = new StatusBarPanel ();
+				Rectangle new_area = new Rectangle (area.X + horz_border,
+					area.Y + horz_border,
+					area.Width - StatusBarSizeGripWidth - horz_border,
+					area.Height - horz_border);
+				DrawStatusBarPanel (dc, new_area, -1, br_forecolor, panel);
+			} else if (sb.ShowPanels) {
+				SolidBrush br_forecolor = GetControlForeBrush (sb.ForeColor);
+				int prev_x = area.X + horz_border;
+				int y = area.Y + vert_border;
+				for (int i = 0; i < sb.Panels.Count; i++) {
+					Rectangle pr = new Rectangle (prev_x, y,
+						sb.Panels [i].Width, area.Height);
+					prev_x += pr.Width + StatusBarHorzGapWidth;
+					DrawStatusBarPanel (dc, pr, i, br_forecolor, sb.Panels [i]);
+				}
+			}
+
+			if (sb.SizingGrip)
+				CPDrawSizeGrip (dc, ColorButtonFace, area);
+
+		}
+
+
+		private void DrawStatusBarPanel (Graphics dc, Rectangle area, int index,
+			SolidBrush br_forecolor, StatusBarPanel panel) {
+			int border_size = 3; // this is actually const, even if the border style is none
+
+			area.Height -= border_size;
+			if (panel.BorderStyle != StatusBarPanelBorderStyle.None) {
+				Border3DStyle border_style = Border3DStyle.SunkenInner;
+				if (panel.BorderStyle == StatusBarPanelBorderStyle.Raised)
+					border_style = Border3DStyle.RaisedOuter;
+				CPDrawBorder3D(dc, area, border_style, Border3DSide.All);
+			}
+
+			if (panel.Style == StatusBarPanelStyle.OwnerDraw) {
+				StatusBarDrawItemEventArgs e = new StatusBarDrawItemEventArgs (
+					dc, panel.Parent.Font, area, index, DrawItemState.Default,
+					panel, panel.Parent.ForeColor, panel.Parent.BackColor);
+				panel.Parent.OnDrawItemInternal (e);
+				return;
+			}
+
+			int left = area.Left;
+			if (panel.Icon != null) {
+				left += 2;
+				int size = area.Height - border_size;
+				Rectangle ia = new Rectangle (left, border_size, size, size);
+				dc.DrawIcon (panel.Icon, left, area.Top);
+				left += panel.Icon.Width;
+			}
+
+			if (panel.Text == String.Empty)
+				return;
+
+			string text = panel.Text;
+			StringFormat string_format = new StringFormat ();
+			string_format.LineAlignment = StringAlignment.Center;
+			string_format.Alignment = StringAlignment.Near;
+			string_format.FormatFlags = StringFormatFlags.NoWrap;
+
+			if (text [0] == '\t') {
+				string_format.Alignment = StringAlignment.Center;
+				text = text.Substring (1);
+				if (text [0] == '\t') {
+					string_format.Alignment = StringAlignment.Far;
+					text = text.Substring (1);
+				}
+			}
+
+			float x = left + border_size;
+			float y = ((area.Bottom - area.Top) / 2.0F) + border_size;
+
+			dc.DrawString (text, panel.Parent.Font, br_forecolor, x, y, string_format);
+		}
+
+		public override int StatusBarSizeGripWidth {
 			get { return 15; }
 		}
 
@@ -224,22 +1171,277 @@ namespace System.Windows.Forms
 			get { return 3; }
 		}
 
-		public override int ScrollBarButtonSize {
-			get { return 16; }
+		public override Size StatusBarDefaultSize {
+			get {
+				return new Size (100, 22);
+			}
+		}
+		#endregion	// StatusBar
+
+		#region ToolBar
+		public  override void DrawToolBar (Graphics dc, Rectangle clip_area, ToolBar control) {
+			StringFormat	format = new StringFormat();
+
+			if (control.textAlignment == ToolBarTextAlign.Underneath) {
+				format.LineAlignment = StringAlignment.Center;
+				format.Alignment = StringAlignment.Center;
+			} else {
+				format.LineAlignment = StringAlignment.Center;
+				format.Alignment = StringAlignment.Near;
+			}
+
+			
+			// Exclude the area for divider
+			Rectangle paint_area = new Rectangle (0, ToolBarGripWidth / 2, 
+				control.Width, control.Height - ToolBarGripWidth / 2);
+			bool flat = (control.Appearance == ToolBarAppearance.Flat);
+			dc.FillRectangle (SystemBrushes.Control, paint_area);
+			CPDrawBorderStyle (dc, paint_area, control.BorderStyle);
+
+			if (control.Divider)
+				dc.DrawLine (ResPool.GetPen (ColorButtonHilight), 0, 0, paint_area.Width, 0);
+
+			foreach (ToolBarButton button in control.Buttons) {
+
+				Image image = null;
+				Rectangle buttonArea = button.Rectangle;
+				Rectangle imgRect = Rectangle.Empty;  // rect to draw the image
+				Rectangle txtRect = buttonArea;       // rect to draw the text
+				Rectangle ddRect = Rectangle.Empty;   // rect for the drop down arrow
+
+				// calculate different rects and draw the frame if its not separator button
+				if (button.Style != ToolBarButtonStyle.Separator) {
+					/* Adjustment for drop down arrow */
+					if (button.Style == ToolBarButtonStyle.DropDownButton && control.DropDownArrows) {
+						ddRect.X = buttonArea.X + buttonArea.Width - this.ToolBarDropDownWidth;
+						ddRect.Y = buttonArea.Y;
+						ddRect.Width = this.ToolBarDropDownWidth;
+						ddRect.Height = buttonArea.Height;
+					}
+
+					// calculate txtRect and imgRect, if imageIndex and imageList are present
+					if (button.ImageIndex > -1 && control.ImageList != null) {
+						if (button.ImageIndex < control.ImageList.Images.Count)
+							image = control.ImageList.Images [button.ImageIndex];
+						// draw the image at the centre if textalignment is underneath
+						if (control.TextAlign == ToolBarTextAlign.Underneath) {
+							imgRect.X = buttonArea.X + ((buttonArea.Width - ddRect.Width 
+								- control.ImageSize.Width) / 2) 
+								+ this.ToolBarImageGripWidth;
+							imgRect.Y = buttonArea.Y + this.ToolBarImageGripWidth;
+							imgRect.Width = control.ImageSize.Width;
+							imgRect.Height = control.ImageSize.Height;
+
+							txtRect.X = buttonArea.X;
+							txtRect.Y = buttonArea.Y + imgRect.Height + 2 * this.ToolBarImageGripWidth;
+							txtRect.Width = buttonArea.Width - ddRect.Width;
+							txtRect.Height = buttonArea.Height - imgRect.Height 
+								- 2 * this.ToolBarImageGripWidth;
+						}
+						else {
+							imgRect.X = buttonArea.X + this.ToolBarImageGripWidth;
+							imgRect.Y = buttonArea.Y + this.ToolBarImageGripWidth;
+							imgRect.Width = control.ImageSize.Width;
+							imgRect.Height = control.ImageSize.Height;
+
+							txtRect.X = buttonArea.X + imgRect.Width + 2 * this.ToolBarImageGripWidth;
+							txtRect.Y = buttonArea.Y;
+							txtRect.Width = buttonArea.Width - imgRect.Width 
+								- 2 * this.ToolBarImageGripWidth - ddRect.Width;
+							txtRect.Height = buttonArea.Height;
+						}
+					}
+					/* Draw the button frame, only if it is not a separator */
+					if (flat) { 
+						if (button.Pushed || button.Pressed)
+							ControlPaint.DrawBorder3D (dc, buttonArea, Border3DStyle.SunkenOuter,
+								Border3DSide.All);
+						else if (button.Hilight) {
+							dc.DrawRectangle (ResPool.GetPen (ColorButtonText), buttonArea);
+							if (! ddRect.IsEmpty) {
+								dc.DrawLine (ResPool.GetPen (ColorButtonText), ddRect.X, ddRect.Y, ddRect.X, 
+									ddRect.Y + ddRect.Height);
+								buttonArea.Width -= this.ToolBarDropDownWidth;
+							}
+						}
+					}
+					else { // normal toolbar
+						if (button.Pushed || button.Pressed) {
+							ControlPaint.DrawBorder3D (dc, buttonArea, Border3DStyle.SunkenInner,
+								Border3DSide.All);
+							if (! ddRect.IsEmpty) {
+								ControlPaint.DrawBorder3D (dc, ddRect, Border3DStyle.SunkenInner,
+									Border3DSide.Left);
+								buttonArea.Width -= this.ToolBarDropDownWidth;
+							}
+						}
+						else {
+							ControlPaint.DrawBorder3D (dc, buttonArea, Border3DStyle.RaisedInner,
+								Border3DSide.All);
+							if (! ddRect.IsEmpty) {
+								ControlPaint.DrawBorder3D (dc, ddRect, Border3DStyle.RaisedInner,
+									Border3DSide.Left);
+								buttonArea.Width -= this.ToolBarDropDownWidth;
+							}
+						}
+					}
+				}
+				DrawToolBarButton (dc, button, control.Font, format, paint_area, buttonArea,
+					imgRect, image, txtRect, ddRect, flat);
+			}
 		}
 
-		/*
-		 * ToolBar Control properties
-		 */
+		private void DrawToolBarButton (Graphics dc, ToolBarButton button, Font font, StringFormat format,
+			Rectangle controlArea, Rectangle buttonArea, Rectangle imgRect, 
+			Image image, Rectangle txtRect, Rectangle ddRect, bool flat) {
+			if (! button.Visible)
+				return;
+
+			switch (button.Style) {
+
+			case ToolBarButtonStyle.Separator:
+				// separator is drawn only in the case of flat appearance
+				if (flat) {
+					dc.DrawLine (ResPool.GetPen (ColorButtonShadow), buttonArea.X + 1, buttonArea.Y, 
+						buttonArea.X + 1, buttonArea.Height);
+					dc.DrawLine (ResPool.GetPen (ColorButtonHilight), buttonArea.X + 1 + (int) ResPool.GetPen (ColorButtonFace).Width,
+						buttonArea.Y, buttonArea.X + 1 + (int) ResPool.GetPen (ColorButtonFace).Width, buttonArea.Height);
+					/* draw a horizontal separator */
+					if (button.Wrapper) {
+						int y = buttonArea.Height + this.ToolBarSeparatorWidth / 2;
+						dc.DrawLine (ResPool.GetPen (ColorButtonShadow), 0, y, controlArea.Width, y);
+						dc.DrawLine (ResPool.GetPen (ColorButtonHilight), 0, y + 1 + (int) ResPool.GetPen (ColorButtonFace).Width, controlArea.Width,
+							y + 1 + (int) ResPool.GetPen (ColorButtonFace).Width);
+					}
+				}
+				break;
+
+			case ToolBarButtonStyle.ToggleButton:
+				Rectangle toggleArea = Rectangle.Empty;
+				toggleArea.X = buttonArea.X + this.ToolBarImageGripWidth;
+				toggleArea.Y = buttonArea.Y + this.ToolBarImageGripWidth;
+				toggleArea.Width = buttonArea.Width - 2 * this.ToolBarImageGripWidth;
+				toggleArea.Height = buttonArea.Height - 2 * this.ToolBarImageGripWidth;
+				if (button.PartialPush && button.Pushed) {
+					dc.FillRectangle (SystemBrushes.ControlLightLight, toggleArea);
+					if (! imgRect.IsEmpty) {
+						if (button.Enabled && image != null)
+							button.Parent.ImageList.Draw (dc, imgRect.X, imgRect.Y, imgRect.Width, 
+								imgRect.Height, button.ImageIndex);
+						else {
+							dc.FillRectangle (new SolidBrush (ColorGrayText), imgRect);
+							ControlPaint.DrawBorder3D (dc, imgRect, Border3DStyle.SunkenOuter,
+								Border3DSide.Right | Border3DSide.Bottom);
+						}
+					}
+					if (button.Enabled)
+						dc.DrawString (button.Text, font, SystemBrushes.ControlText, txtRect, format);
+					else
+						ControlPaint.DrawStringDisabled (dc, button.Text, font, SystemColors.ControlLightLight,
+							txtRect, format);
+				}
+
+				else if (button.PartialPush) {
+					dc.FillRectangle (SystemBrushes.ControlLight, toggleArea);
+					if (! imgRect.IsEmpty) {
+						if (button.Enabled && image != null)
+							button.Parent.ImageList.Draw (dc, imgRect.X, imgRect.Y, imgRect.Width,
+								imgRect.Height, button.ImageIndex);
+						else {
+							dc.FillRectangle (new SolidBrush (ColorGrayText), imgRect);
+							ControlPaint.DrawBorder3D (dc, imgRect, Border3DStyle.SunkenOuter,
+								Border3DSide.Right | Border3DSide.Bottom);
+						}
+					}
+					if (button.Enabled)
+						dc.DrawString (button.Text, font, SystemBrushes.ControlText, txtRect, format);
+					else
+						ControlPaint.DrawStringDisabled (dc, button.Text, font, SystemColors.ControlLightLight,
+							txtRect, format);
+				}
+
+				else if (button.Pushed) {
+					dc.FillRectangle (SystemBrushes.ControlLightLight, toggleArea);
+					if (! imgRect.IsEmpty) {
+						if (button.Enabled && image != null)
+							button.Parent.ImageList.Draw (dc, imgRect.X, imgRect.Y, imgRect.Width,
+								imgRect.Height, button.ImageIndex);
+						else {
+							dc.FillRectangle (new SolidBrush (ColorGrayText), imgRect);
+							ControlPaint.DrawBorder3D (dc, imgRect, Border3DStyle.SunkenOuter,
+								Border3DSide.Right | Border3DSide.Bottom);
+						}
+					}
+					if (button.Enabled)
+						dc.DrawString (button.Text, font, SystemBrushes.ControlText, txtRect, format);
+					else
+						ControlPaint.DrawStringDisabled (dc, button.Text, font, SystemColors.ControlLightLight,
+							txtRect, format);
+				}
+
+				else {
+					dc.FillRectangle (SystemBrushes.Control, toggleArea);
+					//dc.FillRectangle (new SolidBrush (Color.FromArgb(255, 180, 190, 214)), toggleArea);
+					if (! imgRect.IsEmpty) {
+						if (button.Enabled && image != null)
+							button.Parent.ImageList.Draw (dc, imgRect.X, imgRect.Y, imgRect.Width,
+								imgRect.Height, button.ImageIndex);
+						else {
+							dc.FillRectangle (new SolidBrush (ColorGrayText), imgRect);
+							ControlPaint.DrawBorder3D (dc, imgRect, Border3DStyle.SunkenOuter,
+								Border3DSide.Right | Border3DSide.Bottom);
+						}
+					}
+					if (button.Enabled)
+						dc.DrawString (button.Text, font, SystemBrushes.ControlText, txtRect, format);
+					else
+						ControlPaint.DrawStringDisabled (dc, button.Text, font, SystemColors.ControlLightLight,
+							txtRect, format);
+				}
+				break;
+
+			case ToolBarButtonStyle.DropDownButton:
+				// draw the dropdown arrow
+				if (! ddRect.IsEmpty) {
+					PointF [] vertices = new PointF [3];
+					PointF ddCenter = new PointF (ddRect.X + (ddRect.Width/2.0f), ddRect.Y + (ddRect.Height/2.0f));
+					vertices [0].X = ddCenter.X - this.ToolBarDropDownArrowWidth / 2.0f + 0.5f;
+					vertices [0].Y = ddCenter.Y;
+					vertices [1].X = ddCenter.X + this.ToolBarDropDownArrowWidth / 2.0f + 0.5f;
+					vertices [1].Y = ddCenter.Y;
+					vertices [2].X = ddCenter.X + 0.5f; // 0.5 is added for adjustment
+					vertices [2].Y = ddCenter.Y + this.ToolBarDropDownArrowHeight;
+					dc.FillPolygon (SystemBrushes.ControlText, vertices);
+				}
+				goto case ToolBarButtonStyle.PushButton;
+
+			case ToolBarButtonStyle.PushButton:
+				if (! imgRect.IsEmpty){
+					if (button.Enabled && image != null)
+						button.Parent.ImageList.Draw (dc, imgRect.X, imgRect.Y, imgRect.Width, imgRect.Height,
+							button.ImageIndex);
+					else {
+						dc.FillRectangle (new SolidBrush (ColorGrayText), imgRect);
+						ControlPaint.DrawBorder3D (dc, imgRect, Border3DStyle.SunkenOuter,
+							Border3DSide.Right | Border3DSide.Bottom);
+					}
+				}
+				if (button.Enabled)
+					dc.DrawString (button.Text, font, SystemBrushes.ControlText, txtRect, format);
+				else
+					ControlPaint.DrawStringDisabled (dc, button.Text, font, SystemColors.ControlLightLight,
+						txtRect, format);
+				break;
+			}
+		}
+
 		// Grip width for the ToolBar
-		public override int ToolBarGripWidth
-		{
+		public override int ToolBarGripWidth {
 			get { return 2;}
 		}
 
 		// Grip width for the Image on the ToolBarButton
-		public override int ToolBarImageGripWidth
-		{
+		public override int ToolBarImageGripWidth {
 			get { return 2;}
 		}
 
@@ -263,8 +1465,443 @@ namespace System.Windows.Forms
 			get { return 3;}
 		}
 
-		private enum DrawFrameControlStates
-		{
+		public override Size ToolBarDefaultSize {
+			get {
+				return new Size (100, 42);
+			}
+		}
+		#endregion	// ToolBar
+
+		#region	TrackBar
+		private void DrawTrackBar_Vertical (Graphics dc, Rectangle area, TrackBar tb,
+			ref Rectangle thumb_pos, ref Rectangle thumb_area,  Brush br_thumb,
+			float ticks, int value_pos, bool mouse_value) {			
+
+			Point toptick_startpoint = new Point ();
+			Point bottomtick_startpoint = new Point ();
+			Point channel_startpoint = new Point ();
+			float pixel_len;
+			float pixels_betweenticks;
+			const int space_from_right = 8;
+			const int space_from_left = 8;			
+			
+			switch (tb.TickStyle) 	{
+			case TickStyle.BottomRight:
+			case TickStyle.None:
+				channel_startpoint.Y = 8;
+				channel_startpoint.X = 9;
+				bottomtick_startpoint.Y = 13;
+				bottomtick_startpoint.X = 24;				
+				break;
+			case TickStyle.TopLeft:
+				channel_startpoint.Y = 8;
+				channel_startpoint.X = 19;
+				toptick_startpoint.Y = 13;
+				toptick_startpoint.X = 8;
+				break;
+			case TickStyle.Both:
+				channel_startpoint.Y = 8;
+				channel_startpoint.X = 18;	
+				bottomtick_startpoint.Y = 13;
+				bottomtick_startpoint.X = 32;				
+				toptick_startpoint.Y = 13;
+				toptick_startpoint.X = 8;				
+				break;
+			default:
+				break;
+			}
+			
+			thumb_area.X = area.X + channel_startpoint.X;
+			thumb_area.Y = area.Y + channel_startpoint.Y;
+			thumb_area.Height = area.Height - space_from_right - space_from_left;
+			thumb_area.Width = 4;
+
+			/* Draw channel */
+			dc.FillRectangle (ResPool.GetSolidBrush (ColorButtonShadow), channel_startpoint.X, channel_startpoint.Y,
+				1, thumb_area.Height);
+			
+			dc.FillRectangle (ResPool.GetSolidBrush (ColorButtonDkShadow), channel_startpoint.X + 1, channel_startpoint.Y,
+				1, thumb_area.Height);
+
+			dc.FillRectangle (ResPool.GetSolidBrush (ColorButtonHilight), channel_startpoint.X + 3, channel_startpoint.Y,
+				1, thumb_area.Height);
+
+			pixel_len = thumb_area.Height - 11;
+			pixels_betweenticks = pixel_len / (tb.Maximum - tb.Minimum);
+			
+			/* Convert thumb position from mouse position to value*/
+			if (mouse_value) {
+				
+				if (value_pos >= channel_startpoint.Y)
+					value_pos = (int)(((float) (value_pos - channel_startpoint.Y)) / pixels_betweenticks);
+				else
+					value_pos = 0;			
+
+				if (value_pos + tb.Minimum > tb.Maximum)
+					value_pos = tb.Maximum - tb.Minimum;
+                                
+				tb.Value = value_pos + tb.Minimum;
+			}			
+			
+			thumb_pos.Y = channel_startpoint.Y + (int) (pixels_betweenticks * (float) value_pos);
+			
+			/* Draw thumb fixed 10x22 size */
+			thumb_pos.Width = 10;
+			thumb_pos.Height = 22;
+
+			switch (tb.TickStyle) 	{
+			case TickStyle.BottomRight:
+			case TickStyle.None: {
+				thumb_pos.X = channel_startpoint.X - 8;
+
+				dc.DrawLine (ResPool.GetPen (ColorButtonHilight), thumb_pos.X, thumb_pos.Y, thumb_pos.X , thumb_pos.Y + 10);
+				dc.DrawLine (ResPool.GetPen (ColorButtonHilight), thumb_pos.X, thumb_pos.Y, thumb_pos.X + 16, thumb_pos.Y);
+				dc.DrawLine (ResPool.GetPen (ColorButtonHilight), thumb_pos.X + 16, thumb_pos.Y, thumb_pos.X + 16 + 4, thumb_pos.Y + 4);
+				
+				dc.DrawLine (ResPool.GetPen (ColorButtonShadow), thumb_pos.X +1, thumb_pos.Y + 9, thumb_pos.X +15, thumb_pos.Y  +9);
+				dc.DrawLine (ResPool.GetPen (ColorButtonShadow), thumb_pos.X + 16, thumb_pos.Y + 9, thumb_pos.X +16 + 4, thumb_pos.Y  +9 - 4);
+
+				dc.DrawLine (ResPool.GetPen (ColorButtonDkShadow), thumb_pos.X, thumb_pos.Y  + 10, thumb_pos.X +16, thumb_pos.Y +10);
+				dc.DrawLine (ResPool.GetPen (ColorButtonDkShadow), thumb_pos.X + 16, thumb_pos.Y  + 10, thumb_pos.X  +16 + 5, thumb_pos.Y +10 - 5);
+
+				dc.FillRectangle (br_thumb, thumb_pos.X + 1, thumb_pos.Y + 1, 16, 8);
+				dc.FillRectangle (br_thumb, thumb_pos.X + 17, thumb_pos.Y + 2, 1, 6);
+				dc.FillRectangle (br_thumb, thumb_pos.X + 18, thumb_pos.Y + 3, 1, 4);
+				dc.FillRectangle (br_thumb, thumb_pos.X + 19, thumb_pos.Y + 4, 1, 2);
+
+				break;
+			}
+			case TickStyle.TopLeft: {
+				thumb_pos.X = channel_startpoint.X - 10;
+
+				dc.DrawLine (ResPool.GetPen (ColorButtonHilight), thumb_pos.X + 4, thumb_pos.Y, thumb_pos.X + 4 + 16, thumb_pos.Y);
+				dc.DrawLine (ResPool.GetPen (ColorButtonHilight), thumb_pos.X + 4, thumb_pos.Y, thumb_pos.X, thumb_pos.Y + 4);
+
+				dc.DrawLine (ResPool.GetPen (ColorButtonShadow), thumb_pos.X  + 4, thumb_pos.Y + 9, thumb_pos.X + 4 + 16 , thumb_pos.Y+ 9);
+				dc.DrawLine (ResPool.GetPen (ColorButtonShadow), thumb_pos.X + 4, thumb_pos.Y  + 9, thumb_pos.X, thumb_pos.Y + 5);
+				dc.DrawLine (ResPool.GetPen (ColorButtonShadow), thumb_pos.X  + 19, thumb_pos.Y + 9, thumb_pos.X  +19 , thumb_pos.Y+ 1);
+
+				dc.DrawLine (ResPool.GetPen (ColorButtonDkShadow), thumb_pos.X  + 4, thumb_pos.Y+ 10, thumb_pos.X  + 4 + 16, thumb_pos.Y+ 10);
+				dc.DrawLine (ResPool.GetPen (ColorButtonDkShadow), thumb_pos.X  + 4, thumb_pos.Y + 10, thumb_pos.X  -1, thumb_pos.Y+ 5);
+				dc.DrawLine (ResPool.GetPen (ColorButtonDkShadow), thumb_pos.X + 20, thumb_pos.Y, thumb_pos.X+ 20, thumb_pos.Y + 10);
+
+				dc.FillRectangle (br_thumb, thumb_pos.X + 4, thumb_pos.Y + 1, 15, 8);
+				dc.FillRectangle (br_thumb, thumb_pos.X + 3, thumb_pos.Y + 2, 1, 6);
+				dc.FillRectangle (br_thumb, thumb_pos.X + 2, thumb_pos.Y + 3, 1, 4);
+				dc.FillRectangle (br_thumb, thumb_pos.X + 1, thumb_pos.Y + 4, 1, 2);
+
+				break;
+			}
+
+			case TickStyle.Both: {
+				thumb_pos.X = area.X + 10;
+				dc.DrawLine (ResPool.GetPen (ColorButtonHilight), thumb_pos.X, thumb_pos.Y, thumb_pos.X, thumb_pos.Y + 9);
+				dc.DrawLine (ResPool.GetPen (ColorButtonHilight), thumb_pos.X, thumb_pos.Y, thumb_pos.X + 19, thumb_pos.Y);
+
+				dc.DrawLine (ResPool.GetPen (ColorButtonShadow), thumb_pos.X + 1, thumb_pos.Y + 9, thumb_pos.X+ 19, thumb_pos.Y  + 9);
+				dc.DrawLine (ResPool.GetPen (ColorButtonShadow), thumb_pos.X  + 10, thumb_pos.Y+ 1, thumb_pos.X + 19, thumb_pos.Y  + 8);
+
+				dc.DrawLine (ResPool.GetPen (ColorButtonDkShadow), thumb_pos.X, thumb_pos.Y + 10, thumb_pos.X+ 20, thumb_pos.Y  +10);
+				dc.DrawLine (ResPool.GetPen (ColorButtonDkShadow), thumb_pos.X  + 20, thumb_pos.Y, thumb_pos.X  + 20, thumb_pos.Y+ 9);
+
+				dc.FillRectangle (br_thumb, thumb_pos.X + 1, thumb_pos.Y + 1, 18, 8);
+
+				break;
+			}
+
+			default:
+				break;
+			}
+
+			pixel_len = thumb_area.Height - 11;
+			pixels_betweenticks = pixel_len / ticks;				
+			
+			/* Draw ticks*/
+			if (pixels_betweenticks > 0 && ((tb.TickStyle & TickStyle.BottomRight) == TickStyle.BottomRight ||
+				((tb.TickStyle & TickStyle.Both) == TickStyle.Both))) {	
+				
+				for (float inc = 0; inc < (pixel_len + 1); inc += pixels_betweenticks) 	{					
+					if (inc == 0 || (inc +  pixels_betweenticks) >= pixel_len +1)
+						dc.DrawLine (pen_ticks, area.X + bottomtick_startpoint.X , area.Y + bottomtick_startpoint.Y  + inc, 
+							area.X + bottomtick_startpoint.X  + 3, area.Y + bottomtick_startpoint.Y + inc);
+					else
+						dc.DrawLine (pen_ticks, area.X + bottomtick_startpoint.X, area.Y + bottomtick_startpoint.Y  + inc, 
+							area.X + bottomtick_startpoint.X  + 2, area.Y + bottomtick_startpoint.Y + inc);
+				}
+			}
+
+			if (pixels_betweenticks > 0 &&  ((tb.TickStyle & TickStyle.TopLeft) == TickStyle.TopLeft ||
+				((tb.TickStyle & TickStyle.Both) == TickStyle.Both))) {
+
+				pixel_len = thumb_area.Height - 11;
+				pixels_betweenticks = pixel_len / ticks;
+				
+				for (float inc = 0; inc < (pixel_len + 1); inc += pixels_betweenticks) {
+					//Console.WriteLine ("{0} {1} {2}", pixel_len, inc, pixels_betweenticks );
+					if (inc == 0 || (inc +  pixels_betweenticks) >= pixel_len +1)
+						dc.DrawLine (pen_ticks, area.X + toptick_startpoint.X  - 3 , area.Y + toptick_startpoint.Y + inc, 
+							area.X + toptick_startpoint.X, area.Y + toptick_startpoint.Y + inc);
+					else
+						dc.DrawLine (pen_ticks, area.X + toptick_startpoint.X  - 2, area.Y + toptick_startpoint.Y + inc, 
+							area.X + toptick_startpoint.X, area.Y + toptick_startpoint.Y  + inc);
+				}			
+			}
+		}
+
+		/* 
+			Horizontal trackbar 
+		  
+			Does not matter the size of the control, Win32 always draws:
+				- Ticks starting from pixel 13, 8
+				- Channel starting at pos 8, 19 and ends at Width - 8
+				- Autosize makes always the control 40 pixels height
+				- Ticks are draw at (channel.Witdh - 10) / (Maximum - Minimum)
+				
+		*/
+		private void DrawTrackBar_Horizontal (Graphics dc, Rectangle area, TrackBar tb,
+			ref Rectangle thumb_pos, ref Rectangle thumb_area, Brush br_thumb,
+			float ticks, int value_pos, bool mouse_value) {			
+			Point toptick_startpoint = new Point ();
+			Point bottomtick_startpoint = new Point ();
+			Point channel_startpoint = new Point ();
+			float pixel_len;
+			float pixels_betweenticks;
+			const int space_from_right = 8;
+			const int space_from_left = 8;		
+						
+			switch (tb.TickStyle) {
+			case TickStyle.BottomRight:
+			case TickStyle.None:
+				channel_startpoint.X = 8;
+				channel_startpoint.Y = 9;
+				bottomtick_startpoint.X = 13;
+				bottomtick_startpoint.Y = 24;				
+				break;
+			case TickStyle.TopLeft:
+				channel_startpoint.X = 8;
+				channel_startpoint.Y = 19;
+				toptick_startpoint.X = 13;
+				toptick_startpoint.Y = 8;
+				break;
+			case TickStyle.Both:
+				channel_startpoint.X = 8;
+				channel_startpoint.Y = 18;	
+				bottomtick_startpoint.X = 13;
+				bottomtick_startpoint.Y = 32;				
+				toptick_startpoint.X = 13;
+				toptick_startpoint.Y = 8;				
+				break;
+			default:
+				break;
+			}
+						
+			thumb_area.X = area.X + channel_startpoint.X;
+			thumb_area.Y = area.Y + channel_startpoint.Y;
+			thumb_area.Width = area.Width - space_from_right - space_from_left;
+			thumb_area.Height = 4;
+			
+			/* Draw channel */
+			dc.FillRectangle (ResPool.GetSolidBrush (ColorButtonShadow), channel_startpoint.X, channel_startpoint.Y,
+				thumb_area.Width, 1);
+			
+			dc.FillRectangle (ResPool.GetSolidBrush (ColorButtonDkShadow), channel_startpoint.X, channel_startpoint.Y + 1,
+				thumb_area.Width, 1);
+
+			dc.FillRectangle (ResPool.GetSolidBrush (ColorButtonHilight), channel_startpoint.X, channel_startpoint.Y +3,
+				thumb_area.Width, 1);
+
+			pixel_len = thumb_area.Width - 11;
+			pixels_betweenticks = pixel_len / (tb.Maximum - tb.Minimum);
+
+			/* Convert thumb position from mouse position to value*/
+			if (mouse_value) {			
+				if (value_pos >= channel_startpoint.X)
+					value_pos = (int)(((float) (value_pos - channel_startpoint.X)) / pixels_betweenticks);
+				else
+					value_pos = 0;				
+
+				if (value_pos + tb.Minimum > tb.Maximum)
+					value_pos = tb.Maximum - tb.Minimum;
+                                
+				tb.Value = value_pos + tb.Minimum;
+			}			
+			
+			thumb_pos.X = channel_startpoint.X + (int) (pixels_betweenticks * (float) value_pos);
+			
+			/* Draw thumb fixed 10x22 size */
+			thumb_pos.Width = 10;
+			thumb_pos.Height = 22;
+
+			switch (tb.TickStyle) {
+			case TickStyle.BottomRight:
+			case TickStyle.None: {
+				thumb_pos.Y = channel_startpoint.Y - 8;
+
+				dc.DrawLine (ResPool.GetPen (ColorButtonHilight), thumb_pos.X, thumb_pos.Y, thumb_pos.X + 10, thumb_pos.Y);
+				dc.DrawLine (ResPool.GetPen (ColorButtonHilight), thumb_pos.X, thumb_pos.Y, thumb_pos.X, thumb_pos.Y + 16);
+				dc.DrawLine (ResPool.GetPen (ColorButtonHilight), thumb_pos.X, thumb_pos.Y + 16, thumb_pos.X + 4, thumb_pos.Y + 16 + 4);
+
+				dc.DrawLine (ResPool.GetPen (ColorButtonShadow), thumb_pos.X + 9, thumb_pos.Y + 1, thumb_pos.X +9, thumb_pos.Y +15);
+				dc.DrawLine (ResPool.GetPen (ColorButtonShadow), thumb_pos.X + 9, thumb_pos.Y + 16, thumb_pos.X +9 - 4, thumb_pos.Y +16 + 4);
+
+				dc.DrawLine (ResPool.GetPen (ColorButtonDkShadow), thumb_pos.X + 10, thumb_pos.Y, thumb_pos.X +10, thumb_pos.Y +16);
+				dc.DrawLine (ResPool.GetPen (ColorButtonDkShadow), thumb_pos.X + 10, thumb_pos.Y + 16, thumb_pos.X +10 - 5, thumb_pos.Y +16 + 5);
+
+				dc.FillRectangle (br_thumb, thumb_pos.X + 1, thumb_pos.Y + 1, 8, 16);
+				dc.FillRectangle (br_thumb, thumb_pos.X + 2, thumb_pos.Y + 17, 6, 1);
+				dc.FillRectangle (br_thumb, thumb_pos.X + 3, thumb_pos.Y + 18, 4, 1);
+				dc.FillRectangle (br_thumb, thumb_pos.X + 4, thumb_pos.Y + 19, 2, 1);
+				break;
+			}
+			case TickStyle.TopLeft:	{
+				thumb_pos.Y = channel_startpoint.Y - 10;
+
+				dc.DrawLine (ResPool.GetPen (ColorButtonHilight), thumb_pos.X, thumb_pos.Y + 4, thumb_pos.X, thumb_pos.Y + 4 + 16);
+				dc.DrawLine (ResPool.GetPen (ColorButtonHilight), thumb_pos.X, thumb_pos.Y + 4, thumb_pos.X + 4, thumb_pos.Y);
+
+				dc.DrawLine (ResPool.GetPen (ColorButtonShadow), thumb_pos.X + 9, thumb_pos.Y + 4, thumb_pos.X + 9, thumb_pos.Y + 4 + 16);
+				dc.DrawLine (ResPool.GetPen (ColorButtonShadow), thumb_pos.X + 9, thumb_pos.Y + 4, thumb_pos.X + 5, thumb_pos.Y);
+				dc.DrawLine (ResPool.GetPen (ColorButtonShadow), thumb_pos.X + 9, thumb_pos.Y + 19, thumb_pos.X + 1 , thumb_pos.Y +19);
+
+				dc.DrawLine (ResPool.GetPen (ColorButtonDkShadow), thumb_pos.X + 10, thumb_pos.Y + 4, thumb_pos.X + 10, thumb_pos.Y + 4 + 16);
+				dc.DrawLine (ResPool.GetPen (ColorButtonDkShadow), thumb_pos.X + 10, thumb_pos.Y + 4, thumb_pos.X + 5, thumb_pos.Y -1);
+				dc.DrawLine (ResPool.GetPen (ColorButtonDkShadow), thumb_pos.X, thumb_pos.Y + 20, thumb_pos.X + 10, thumb_pos.Y + 20);
+
+				dc.FillRectangle (br_thumb, thumb_pos.X + 1, thumb_pos.Y + 4, 8, 15);
+				dc.FillRectangle (br_thumb, thumb_pos.X + 2, thumb_pos.Y + 3, 6, 1);
+				dc.FillRectangle (br_thumb, thumb_pos.X + 3, thumb_pos.Y + 2, 4, 1);
+				dc.FillRectangle (br_thumb, thumb_pos.X + 4, thumb_pos.Y + 1, 2, 1);
+				break;
+			}
+
+			case TickStyle.Both: {
+				thumb_pos.Y = area.Y + 10;
+				dc.DrawLine (ResPool.GetPen (ColorButtonHilight), thumb_pos.X, thumb_pos.Y, thumb_pos.X + 9, thumb_pos.Y);
+				dc.DrawLine (ResPool.GetPen (ColorButtonHilight), thumb_pos.X, thumb_pos.Y, thumb_pos.X, thumb_pos.Y + 19);
+
+				dc.DrawLine (ResPool.GetPen (ColorButtonShadow), thumb_pos.X + 9, thumb_pos.Y + 1, thumb_pos.X + 9, thumb_pos.Y + 19);
+				dc.DrawLine (ResPool.GetPen (ColorButtonShadow), thumb_pos.X + 1, thumb_pos.Y + 10, thumb_pos.X + 8, thumb_pos.Y + 19);
+
+				dc.DrawLine (ResPool.GetPen (ColorButtonDkShadow), thumb_pos.X + 10, thumb_pos.Y, thumb_pos.X +10, thumb_pos.Y + 20);
+				dc.DrawLine (ResPool.GetPen (ColorButtonDkShadow), thumb_pos.X, thumb_pos.Y + 20, thumb_pos.X + 9, thumb_pos.Y + 20);
+
+				dc.FillRectangle (br_thumb, thumb_pos.X + 1, thumb_pos.Y + 1, 8, 18);
+
+				break;
+			}
+
+			default:
+				break;
+			}
+
+			pixel_len = thumb_area.Width - 11;
+			pixels_betweenticks = pixel_len / ticks;
+
+			/* Draw ticks*/
+			if (pixels_betweenticks > 0 && ((tb.TickStyle & TickStyle.BottomRight) == TickStyle.BottomRight ||
+				((tb.TickStyle & TickStyle.Both) == TickStyle.Both))) {				
+				
+				for (float inc = 0; inc < (pixel_len + 1); inc += pixels_betweenticks) {					
+					if (inc == 0 || (inc +  pixels_betweenticks) >= pixel_len +1)
+						dc.DrawLine (pen_ticks, area.X + bottomtick_startpoint.X + inc , area.Y + bottomtick_startpoint.Y, 
+							area.X + bottomtick_startpoint.X + inc , area.Y + bottomtick_startpoint.Y + 3);
+					else
+						dc.DrawLine (pen_ticks, area.X + bottomtick_startpoint.X + inc, area.Y + bottomtick_startpoint.Y, 
+							area.X + bottomtick_startpoint.X + inc, area.Y + bottomtick_startpoint.Y + 2);
+				}
+			}
+
+			if (pixels_betweenticks > 0 && ((tb.TickStyle & TickStyle.TopLeft) == TickStyle.TopLeft ||
+				((tb.TickStyle & TickStyle.Both) == TickStyle.Both))) {
+				
+				for (float inc = 0; inc < (pixel_len + 1); inc += pixels_betweenticks) {					
+					if (inc == 0 || (inc +  pixels_betweenticks) >= pixel_len +1)
+						dc.DrawLine (pen_ticks, area.X + toptick_startpoint.X + inc , area.Y + toptick_startpoint.Y - 3, 
+							area.X + toptick_startpoint.X + inc , area.Y + toptick_startpoint.Y);
+					else
+						dc.DrawLine (pen_ticks, area.X + toptick_startpoint.X + inc, area.Y + toptick_startpoint.Y - 2, 
+							area.X + toptick_startpoint.X + inc, area.Y + toptick_startpoint.Y );
+				}			
+			}
+		}
+
+		public override void DrawTrackBar (Graphics dc, Rectangle clip_rectangle, TrackBar tb) {
+//public override void DrawTrackBar (Graphics dc, 
+//Rectangle area, 
+//TrackBar tb,
+//ref Rectangle thumb_pos, 
+//ref Rectangle thumb_area,  
+			Brush		br_thumb;
+			int		value_pos;
+			bool		mouse_value;
+			float		ticks = (tb.Maximum - tb.Minimum) / tb.tickFrequency; /* N of ticks draw*/
+			Rectangle	area;
+			Rectangle	thumb_pos = tb.ThumbPos;
+			Rectangle	thumb_area = tb.ThumbArea;
+
+			if (tb.thumb_pressed) {
+				value_pos = tb.thumb_mouseclick;
+				mouse_value = true;
+			} else {
+				value_pos = tb.Value - tb.Minimum;
+				mouse_value = false;
+			}
+
+			area = tb.paint_area;
+
+			if (tb.thumb_pressed == true) {
+				br_thumb = (Brush) ResPool.GetHatchBrush (HatchStyle.Percent50, ColorButtonHilight, ColorButtonFace);
+			} else {
+				br_thumb = ResPool.GetSolidBrush (ColorButtonFace);
+			}
+
+			
+			/* Control Background */
+			if (tb.BackColor == DefaultControlBackColor) {
+				dc.FillRectangle (ResPool.GetSolidBrush (ColorButtonFace), area);
+			} else {
+				dc.FillRectangle (ResPool.GetSolidBrush (tb.BackColor), area);
+			}
+			
+
+			if (tb.Focused) {
+				dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, ColorButtonFace, Color.Black), area.X, area.Y, area.Width - 1, 1);
+				dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, ColorButtonFace, Color.Black), area.X, area.Y + area.Height - 1, area.Width - 1, 1);
+				dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, ColorButtonFace, Color.Black), area.X, area.Y, 1, area.Height - 1);
+				dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, ColorButtonFace, Color.Black), area.X + area.Width - 1, area.Y, 1, area.Height - 1);
+			}
+
+			if (tb.Orientation == Orientation.Vertical) {
+				DrawTrackBar_Vertical (dc, area, tb, ref thumb_pos, ref thumb_area,
+					br_thumb, ticks, value_pos, mouse_value);
+			
+			} else {
+				DrawTrackBar_Horizontal (dc, area, tb, ref thumb_pos, ref thumb_area,
+					br_thumb, ticks, value_pos, mouse_value);
+			}
+
+			tb.ThumbPos = thumb_pos;
+			tb.ThumbArea = thumb_area;
+		}
+
+		public override Size TrackBarDefaultSize {
+			get {
+				return new Size (104, 42);
+			}
+		}
+
+		#endregion	// TrackBar
+
+		#region	VScrollBar
+		public override Size VScrollBarDefaultSize {
+			get {
+				return new Size(13,80);
+			}
+		}
+		#endregion	// VScrollBar
+
+		#region ControlPaint
+		private enum DrawFrameControlStates {
 			ButtonCheck		= 0x0000,
 			ButtonRadioImage	= 0x0001,
 			ButtonRadioMask		= 0x0002,
@@ -302,31 +1939,24 @@ namespace System.Windows.Forms
 
 		}
 
-		private enum DrawFrameControlTypes
-		{
+		private enum DrawFrameControlTypes {
 			Caption	= 1,
 			Menu	= 2,
 			Scroll	= 3,
 			Button	= 4
 		}
 
-		/*
-			Methods that mimic ControlPaint signature and draw basic objects
-		*/
-
-		public override void DrawBorder (Graphics graphics, Rectangle bounds, Color leftColor, int leftWidth,
+		public override void CPDrawBorder (Graphics graphics, Rectangle bounds, Color leftColor, int leftWidth,
 			ButtonBorderStyle leftStyle, Color topColor, int topWidth, ButtonBorderStyle topStyle,
 			Color rightColor, int rightWidth, ButtonBorderStyle rightStyle, Color bottomColor,
-			int bottomWidth, ButtonBorderStyle bottomStyle)
-		{
+			int bottomWidth, ButtonBorderStyle bottomStyle) {
 			DrawBorderInternal(graphics, bounds.Left, bounds.Top, bounds.Left, bounds.Bottom-1, leftWidth, leftColor, leftStyle, Border3DSide.Left);
 			DrawBorderInternal(graphics, bounds.Left, bounds.Top, bounds.Right-1, bounds.Top, topWidth, topColor, topStyle, Border3DSide.Top);
 			DrawBorderInternal(graphics, bounds.Right-1, bounds.Top, bounds.Right-1, bounds.Bottom-1, rightWidth, rightColor, rightStyle, Border3DSide.Right);
 			DrawBorderInternal(graphics, bounds.Left, bounds.Bottom-1, bounds.Right-1, bounds.Bottom-1, bottomWidth, bottomColor, bottomStyle, Border3DSide.Bottom);
 		}
 
-		public override void DrawBorder3D (Graphics graphics, Rectangle rectangle, Border3DStyle style, Border3DSide sides)
-		{
+		public override void CPDrawBorder3D (Graphics graphics, Rectangle rectangle, Border3DStyle style, Border3DSide sides) {
 			Pen			penTopLeft;
 			Pen			penTopLeftInner;
 			Pen			penBottomRight;
@@ -435,8 +2065,7 @@ namespace System.Windows.Forms
 		}
 
 
-		public override void DrawButton (Graphics graphics, Rectangle rectangle, ButtonState state)
-		{
+		public override void CPDrawButton (Graphics graphics, Rectangle rectangle, ButtonState state) {
 			DrawFrameControlStates	dfcs=DrawFrameControlStates.ButtonPush;
 
 			if ((state & ButtonState.Pushed)!=0) {
@@ -458,12 +2087,11 @@ namespace System.Windows.Forms
 		}
 
 
-		public override void DrawCaptionButton (Graphics graphics, Rectangle rectangle, CaptionButton button, ButtonState state)
-		{
+		public override void CPDrawCaptionButton (Graphics graphics, Rectangle rectangle, CaptionButton button, ButtonState state) {
 			Rectangle	captionRect;
 			int			lineWidth;
 
-			DrawButton(graphics, rectangle, state);
+			CPDrawButton(graphics, rectangle, state);
 
 			if (rectangle.Width<rectangle.Height) {
 				captionRect=new Rectangle(rectangle.X+1, rectangle.Y+rectangle.Height/2-rectangle.Width/2+1, rectangle.Width-4, rectangle.Width-4);
@@ -479,46 +2107,45 @@ namespace System.Windows.Forms
 			lineWidth=Math.Max(1, captionRect.Width/7);
 
 			switch(button) {
-				case CaptionButton.Close: {
-					Pen	pen;
+			case CaptionButton.Close: {
+				Pen	pen;
 
-					if ((state & ButtonState.Inactive)!=0) {
-						pen=new Pen(ColorButtonHilight, lineWidth);
-						DrawCaptionHelper(graphics, ColorButtonHilight, pen, lineWidth, 1, captionRect, button);
-						pen.Dispose();
+				if ((state & ButtonState.Inactive)!=0) {
+					pen=new Pen(ColorButtonHilight, lineWidth);
+					DrawCaptionHelper(graphics, ColorButtonHilight, pen, lineWidth, 1, captionRect, button);
+					pen.Dispose();
 
-						pen=new Pen(ColorButtonShadow, lineWidth);
-						DrawCaptionHelper(graphics, ColorButtonShadow, pen, lineWidth, 0, captionRect, button);
-						pen.Dispose();
-						return;
-					} else {
-						pen=new Pen(SystemColors.ControlText, lineWidth);
-						DrawCaptionHelper(graphics, SystemColors.ControlText, pen, lineWidth, 0, captionRect, button);
-						pen.Dispose();
-						return;
-					}
+					pen=new Pen(ColorButtonShadow, lineWidth);
+					DrawCaptionHelper(graphics, ColorButtonShadow, pen, lineWidth, 0, captionRect, button);
+					pen.Dispose();
+					return;
+				} else {
+					pen=new Pen(SystemColors.ControlText, lineWidth);
+					DrawCaptionHelper(graphics, SystemColors.ControlText, pen, lineWidth, 0, captionRect, button);
+					pen.Dispose();
+					return;
 				}
+			}
 
-				case CaptionButton.Help:
-				case CaptionButton.Maximize:
-				case CaptionButton.Minimize:
-				case CaptionButton.Restore: {
-					if ((state & ButtonState.Inactive)!=0) {
-						DrawCaptionHelper(graphics, ColorButtonHilight, SystemPens.ControlLightLight, lineWidth, 1, captionRect, button);
+			case CaptionButton.Help:
+			case CaptionButton.Maximize:
+			case CaptionButton.Minimize:
+			case CaptionButton.Restore: {
+				if ((state & ButtonState.Inactive)!=0) {
+					DrawCaptionHelper(graphics, ColorButtonHilight, SystemPens.ControlLightLight, lineWidth, 1, captionRect, button);
 
-						DrawCaptionHelper(graphics, ColorButtonShadow, SystemPens.ControlDark, lineWidth, 0, captionRect, button);
-						return;
-					} else {
-						DrawCaptionHelper(graphics, SystemColors.ControlText, SystemPens.ControlText, lineWidth, 0, captionRect, button);
-						return;
-					}
+					DrawCaptionHelper(graphics, ColorButtonShadow, SystemPens.ControlDark, lineWidth, 0, captionRect, button);
+					return;
+				} else {
+					DrawCaptionHelper(graphics, SystemColors.ControlText, SystemPens.ControlText, lineWidth, 0, captionRect, button);
+					return;
 				}
+			}
 			}
 		}
 
 
-		public override void DrawCheckBox (Graphics graphics, Rectangle rectangle, ButtonState state)
-		{
+		public override void CPDrawCheckBox (Graphics graphics, Rectangle rectangle, ButtonState state) {
 			DrawFrameControlStates	dfcs=DrawFrameControlStates.ButtonCheck;
 
 			if ((state & ButtonState.Pushed)!=0) {
@@ -541,8 +2168,7 @@ namespace System.Windows.Forms
 
 		}
 
-		public override void DrawComboButton (Graphics graphics, Rectangle rectangle, ButtonState state)
-		{
+		public override void CPDrawComboButton (Graphics graphics, Rectangle rectangle, ButtonState state) {
 			Point[]			arrow = new Point[3];
 			Point				P1;
 			Point				P2;
@@ -561,9 +2187,9 @@ namespace System.Windows.Forms
 				ControlPaint.DrawBorder(graphics, rectangle, ColorButtonShadow, ButtonBorderStyle.Solid);
 			} else {
 				if ((state & (ButtonState.Pushed | ButtonState.Checked))!=0) {
-					DrawBorder3D(graphics, rectangle, Border3DStyle.Sunken, Border3DSide.Left | Border3DSide.Top | Border3DSide.Right | Border3DSide.Bottom);
+					CPDrawBorder3D(graphics, rectangle, Border3DStyle.Sunken, Border3DSide.Left | Border3DSide.Top | Border3DSide.Right | Border3DSide.Bottom);
 				} else {
-					DrawBorder3D(graphics, rectangle, Border3DStyle.Raised, Border3DSide.Left | Border3DSide.Top | Border3DSide.Right | Border3DSide.Bottom);
+					CPDrawBorder3D(graphics, rectangle, Border3DStyle.Raised, Border3DSide.Left | Border3DSide.Top | Border3DSide.Right | Border3DSide.Bottom);
 				}
 			}
 
@@ -609,8 +2235,7 @@ namespace System.Windows.Forms
 		}
 
 
-		public override void DrawContainerGrabHandle (Graphics graphics, Rectangle bounds)
-		{
+		public override void CPDrawContainerGrabHandle (Graphics graphics, Rectangle bounds) {
 			
 			Pen			pen	= new Pen(Color.Black, 1);
 			Rectangle	rect	= new Rectangle(bounds.X, bounds.Y, bounds.Width-1, bounds.Height-1);	// Dunno why, but MS does it that way, too
@@ -638,8 +2263,7 @@ namespace System.Windows.Forms
 		}
 
 
-		public override void DrawFocusRectangle (Graphics graphics, Rectangle rectangle, Color foreColor, Color backColor)
-		{
+		public override void CPDrawFocusRectangle (Graphics graphics, Rectangle rectangle, Color foreColor, Color backColor) {
 			//Color			colorForeInverted;
 			Color			colorBackInverted;
 			Pen			pen;
@@ -659,8 +2283,7 @@ namespace System.Windows.Forms
 		}
 
 
-		public override void DrawGrabHandle (Graphics graphics, Rectangle rectangle, bool primary, bool enabled)
-		{
+		public override void CPDrawGrabHandle (Graphics graphics, Rectangle rectangle, bool primary, bool enabled) {
 			SolidBrush	sb;
 			Pen			pen;
 
@@ -686,8 +2309,7 @@ namespace System.Windows.Forms
 		}
 
 
-		public override void DrawGrid (Graphics graphics, Rectangle area, Size pixelsBetweenDots, Color backColor)
-		{
+		public override void CPDrawGrid (Graphics graphics, Rectangle area, Size pixelsBetweenDots, Color backColor) {
 			Color	foreColor;
 			int	h;
 			int	b;
@@ -739,8 +2361,7 @@ namespace System.Windows.Forms
 			bitmap.Dispose();
 		}
 
-		public override void DrawImageDisabled (Graphics graphics, Image image, int x, int y, Color background)
-		{
+		public override void CPDrawImageDisabled (Graphics graphics, Image image, int x, int y, Color background) {
 			/*
 				Microsoft seems to ignore the background and simply make
 				the image grayscale. At least when having > 256 colors on
@@ -749,23 +2370,23 @@ namespace System.Windows.Forms
 
 			ImageAttributes	imageAttributes=new ImageAttributes();
 			ColorMatrix			colorMatrix=new ColorMatrix(new float[][] {
-// This table would create a perfect grayscale image, based on luminance
-//				new float[]{0.3f,0.3f,0.3f,0,0},
-//				new float[]{0.59f,0.59f,0.59f,0,0},
-//				new float[]{0.11f,0.11f,0.11f,0,0},
-//				new float[]{0,0,0,1,0,0},
-//				new float[]{0,0,0,0,1,0},
-//				new float[]{0,0,0,0,0,1}
+													  // This table would create a perfect grayscale image, based on luminance
+													  //				new float[]{0.3f,0.3f,0.3f,0,0},
+													  //				new float[]{0.59f,0.59f,0.59f,0,0},
+													  //				new float[]{0.11f,0.11f,0.11f,0,0},
+													  //				new float[]{0,0,0,1,0,0},
+													  //				new float[]{0,0,0,0,1,0},
+													  //				new float[]{0,0,0,0,0,1}
 
-// This table generates a image that is grayscaled and then
-// brightened up. Seems to match MS close enough.
-				new float[]{0.2f,0.2f,0.2f,0,0},
-				new float[]{0.41f,0.41f,0.41f,0,0},
-				new float[]{0.11f,0.11f,0.11f,0,0},
-				new float[]{0.15f,0.15f,0.15f,1,0,0},
-				new float[]{0.15f,0.15f,0.15f,0,1,0},
-				new float[]{0.15f,0.15f,0.15f,0,0,1}
-			});
+													  // This table generates a image that is grayscaled and then
+													  // brightened up. Seems to match MS close enough.
+													  new float[]{0.2f,0.2f,0.2f,0,0},
+													  new float[]{0.41f,0.41f,0.41f,0,0},
+													  new float[]{0.11f,0.11f,0.11f,0,0},
+													  new float[]{0.15f,0.15f,0.15f,1,0,0},
+													  new float[]{0.15f,0.15f,0.15f,0,1,0},
+													  new float[]{0.15f,0.15f,0.15f,0,0,1}
+												  });
 
 			imageAttributes.SetColorMatrix(colorMatrix);
 			graphics.DrawImage(image, new Rectangle(x, y, image.Width, image.Height), 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, imageAttributes);
@@ -773,8 +2394,7 @@ namespace System.Windows.Forms
 		}
 
 
-		public override void DrawLockedFrame (Graphics graphics, Rectangle rectangle, bool primary)
-		{
+		public override void CPDrawLockedFrame (Graphics graphics, Rectangle rectangle, bool primary) {
 			Pen	penBorder;
 			Pen	penInside;
 
@@ -795,8 +2415,7 @@ namespace System.Windows.Forms
 		}
 
 
-		public override void DrawMenuGlyph (Graphics graphics, Rectangle rectangle, MenuGlyph glyph)
-		{
+		public override void CPDrawMenuGlyph (Graphics graphics, Rectangle rectangle, MenuGlyph glyph) {
 			Rectangle	rect;
 			int			lineWidth;
 
@@ -804,70 +2423,69 @@ namespace System.Windows.Forms
 			graphics.FillRectangle(ResPool.GetSolidBrush (ColorButtonText), rectangle);
 
 			switch(glyph) {
-				case MenuGlyph.Arrow: {
-					Point[]			arrow = new Point[3];
-					Point				P1;
-					Point				P2;
-					Point				P3;
-					int				centerX;
-					int				centerY;
-					int				shiftX;
-					int				shiftY;
+			case MenuGlyph.Arrow: {
+				Point[]			arrow = new Point[3];
+				Point				P1;
+				Point				P2;
+				Point				P3;
+				int				centerX;
+				int				centerY;
+				int				shiftX;
+				int				shiftY;
 
-					rect=new Rectangle(rectangle.X+rectangle.Width/4, rectangle.Y+rectangle.Height/4, rectangle.Width/2, rectangle.Height/2);
-					centerX=rect.Left+rect.Width/2;
-					centerY=rect.Top+rect.Height/2;
-					shiftX=Math.Max(1, rect.Width/8);
-					shiftY=Math.Max(1, rect.Height/8);
+				rect=new Rectangle(rectangle.X+rectangle.Width/4, rectangle.Y+rectangle.Height/4, rectangle.Width/2, rectangle.Height/2);
+				centerX=rect.Left+rect.Width/2;
+				centerY=rect.Top+rect.Height/2;
+				shiftX=Math.Max(1, rect.Width/8);
+				shiftY=Math.Max(1, rect.Height/8);
 
-					rect.X-=shiftX;
-					centerX-=shiftX;
+				rect.X-=shiftX;
+				centerX-=shiftX;
 
-					P1=new Point(centerX, rect.Top-1);
-					P2=new Point(centerX, rect.Bottom);
-					P3=new Point(rect.Right, centerY);
+				P1=new Point(centerX, rect.Top-1);
+				P2=new Point(centerX, rect.Bottom);
+				P3=new Point(rect.Right, centerY);
 
-					arrow[0]=P1;
-					arrow[1]=P2;
-					arrow[2]=P3;
+				arrow[0]=P1;
+				arrow[1]=P2;
+				arrow[2]=P3;
 
-					graphics.FillPolygon(SystemBrushes.ControlText, arrow, FillMode.Winding);
+				graphics.FillPolygon(SystemBrushes.ControlText, arrow, FillMode.Winding);
 
-					return;
+				return;
+			}
+
+			case MenuGlyph.Bullet: {
+				SolidBrush	sb;
+
+				lineWidth=Math.Max(2, rectangle.Width/3);
+				rect=new Rectangle(rectangle.X+lineWidth, rectangle.Y+lineWidth, rectangle.Width-lineWidth*2, rectangle.Height-lineWidth*2);
+
+				sb=ResPool.GetSolidBrush (ColorButtonText);
+				graphics.FillEllipse(sb, rect);
+				sb.Dispose();
+				return;
+			}
+
+			case MenuGlyph.Checkmark: {
+				int			Scale;
+
+				lineWidth=Math.Max(2, rectangle.Width/6);
+				Scale=Math.Max(1, rectangle.Width/12);
+
+				rect=new Rectangle(rectangle.X+lineWidth, rectangle.Y+lineWidth, rectangle.Width-lineWidth*2, rectangle.Height-lineWidth*2);
+
+				for (int i=0; i<lineWidth; i++) {
+					graphics.DrawLine(SystemPens.MenuText, rect.Left+lineWidth/2, rect.Top+lineWidth+i, rect.Left+lineWidth/2+2*Scale, rect.Top+lineWidth+2*Scale+i);
+					graphics.DrawLine(SystemPens.MenuText, rect.Left+lineWidth/2+2*Scale, rect.Top+lineWidth+2*Scale+i, rect.Left+lineWidth/2+6*Scale, rect.Top+lineWidth-2*Scale+i);
 				}
-
-				case MenuGlyph.Bullet: {
-					SolidBrush	sb;
-
-					lineWidth=Math.Max(2, rectangle.Width/3);
-					rect=new Rectangle(rectangle.X+lineWidth, rectangle.Y+lineWidth, rectangle.Width-lineWidth*2, rectangle.Height-lineWidth*2);
-
-					sb=ResPool.GetSolidBrush (ColorButtonText);
-					graphics.FillEllipse(sb, rect);
-					sb.Dispose();
-					return;
-				}
-
-				case MenuGlyph.Checkmark: {
-					int			Scale;
-
-					lineWidth=Math.Max(2, rectangle.Width/6);
-					Scale=Math.Max(1, rectangle.Width/12);
-
-					rect=new Rectangle(rectangle.X+lineWidth, rectangle.Y+lineWidth, rectangle.Width-lineWidth*2, rectangle.Height-lineWidth*2);
-
-					for (int i=0; i<lineWidth; i++) {
-						graphics.DrawLine(SystemPens.MenuText, rect.Left+lineWidth/2, rect.Top+lineWidth+i, rect.Left+lineWidth/2+2*Scale, rect.Top+lineWidth+2*Scale+i);
-						graphics.DrawLine(SystemPens.MenuText, rect.Left+lineWidth/2+2*Scale, rect.Top+lineWidth+2*Scale+i, rect.Left+lineWidth/2+6*Scale, rect.Top+lineWidth-2*Scale+i);
-					}
-					return;
-				}
+				return;
+			}
 			}
 
 		}
 
-		public override void DrawRadioButton (Graphics graphics, Rectangle rectangle, ButtonState state)
-		{
+		public override void CPDrawRadioButton (Graphics graphics, Rectangle rectangle, ButtonState state) {
 			DrawFrameControlStates	dfcs=DrawFrameControlStates.ButtonRadio;
 
 			if ((state & ButtonState.Pushed)!=0) {
@@ -890,29 +2508,25 @@ namespace System.Windows.Forms
 		}
 
 
-		public override void DrawReversibleFrame (Rectangle rectangle, Color backColor, FrameStyle style)
-		{
+		public override void CPDrawReversibleFrame (Rectangle rectangle, Color backColor, FrameStyle style) {
 
 		}
 
 
-		public override void DrawReversibleLine (Point start, Point end, Color backColor)
-		{
+		public override void CPDrawReversibleLine (Point start, Point end, Color backColor) {
 
 		}
 
 
 		/* Scroll button: regular button + direction arrow */
-		public override void DrawScrollButton (Graphics dc, Rectangle area, ScrollButton type, ButtonState state)
-		{
+		public override void CPDrawScrollButton (Graphics dc, Rectangle area, ScrollButton type, ButtonState state) {
 			bool enabled = (state == ButtonState.Inactive) ? false: true;			
 					
 			DrawScrollButtonPrimitive (dc, area, state);
 
 			/* Paint arrows */
 			switch (type) {
-			case ScrollButton.Up:
-			{
+			case ScrollButton.Up: {
 				int x = area.X +  (area.Width / 2) - 4;
 				int y = area.Y + 9;
 
@@ -926,8 +2540,7 @@ namespace System.Windows.Forms
 				dc.FillRectangle (br_arrow, x + 3, area.Y + 6, 1, 1);				
 				break;
 			}
-			case ScrollButton.Down:
-			{
+			case ScrollButton.Down: {
 				int x = area.X +  (area.Width / 2) - 4;
 				int y = area.Y + 5;
 
@@ -942,8 +2555,7 @@ namespace System.Windows.Forms
 				break;
 			}
 
-			case ScrollButton.Left:
-			{
+			case ScrollButton.Left: {
 				int y = area.Y +  (area.Height / 2) - 4;
 				int x = area.X + 9;
 
@@ -957,8 +2569,7 @@ namespace System.Windows.Forms
 				break;
 			}
 
-			case ScrollButton.Right:
-			{
+			case ScrollButton.Right: {
 				int y = area.Y +  (area.Height / 2) - 4;
 				int x = area.X + 5;
 
@@ -979,15 +2590,13 @@ namespace System.Windows.Forms
 		}
 
 
-		public  override void DrawSelectionFrame (Graphics graphics, bool active, Rectangle outsideRect, Rectangle insideRect,
-			Color backColor)
-		{
+		public  override void CPDrawSelectionFrame (Graphics graphics, bool active, Rectangle outsideRect, Rectangle insideRect,
+			Color backColor) {
 
 		}
 
 
-		public override void DrawSizeGrip (Graphics dc, Color backColor, Rectangle bounds)
-		{
+		public override void CPDrawSizeGrip (Graphics dc, Color backColor, Rectangle bounds) {
 			Point pt = new Point (bounds.Right - 2, bounds.Bottom - 1);
 
 			dc.DrawLine (ResPool.GetPen (ColorButtonFace), pt.X - 12, pt.Y, pt.X, pt.Y);
@@ -1004,9 +2613,8 @@ namespace System.Windows.Forms
 		}
 
 
-		public  override void DrawStringDisabled (Graphics graphics, string s, Font font, Color color, RectangleF layoutRectangle,
-			StringFormat format)
-		{
+		public  override void CPDrawStringDisabled (Graphics graphics, string s, Font font, Color color, RectangleF layoutRectangle,
+			StringFormat format) {
 			SolidBrush	brush;
 
 			brush=new SolidBrush(ControlPaint.Light(color, 95));
@@ -1021,1196 +2629,189 @@ namespace System.Windows.Forms
 			brush.Dispose();
 		}
 
-		
-		/*
-			Methods that draw complex controls
-		*/
-
-
-		public override void DrawScrollBar (Graphics dc, Rectangle area, ScrollBar bar,
-			ref Rectangle thumb_pos, ref Rectangle first_arrow_area, ref Rectangle second_arrow_area, 
-			ButtonState first_arrow, ButtonState second_arrow, ref int scrollbutton_width, 
-			ref int scrollbutton_height, bool vert)
-		{
-			
-			if (vert) {		
-
-				first_arrow_area.X = first_arrow_area. Y = 0;
-				first_arrow_area.Width = bar.Width;
-				first_arrow_area.Height = scrollbutton_height;
-
-				second_arrow_area.X = 0;
-				second_arrow_area.Y = area.Height - scrollbutton_height;
-				second_arrow_area.Width = bar.Width;
-				second_arrow_area.Height = scrollbutton_height;
-				thumb_pos.Width = bar.Width;
-
-				/* Buttons */
-				DrawScrollButton (dc, first_arrow_area, ScrollButton.Up, first_arrow);
-				DrawScrollButton (dc, second_arrow_area, ScrollButton.Down, second_arrow);				
-
-				/* Background */
-				switch (bar.thumb_moving) {
-				case ScrollBar.ThumbMoving.None:				
-				{
-					dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, ColorButtonHilight, ColorButtonFace), 0,  
-						scrollbutton_height, area.Width, area.Height - (scrollbutton_height * 2));
-					
-					break;
-				}
-				case ScrollBar.ThumbMoving.Forward: {
-					dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, ColorButtonHilight, ColorButtonFace),
-						0,  scrollbutton_height,
-						area.Width, thumb_pos.Y - scrollbutton_height);
-												
-					dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, Color.FromArgb (255, 63,63,63), Color.Black),
-						0, thumb_pos.Y + thumb_pos.Height,
-						area.Width, area.Height -  (thumb_pos.Y + thumb_pos.Height) - scrollbutton_height);						
-						
-					break;
-				}
-				
-				case ScrollBar.ThumbMoving.Backwards: {
-					dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, Color.FromArgb (255, 63,63,63), Color.Black),
-						0,  scrollbutton_height,
-						area.Width, thumb_pos.Y - scrollbutton_height);
-												
-					dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, ColorButtonHilight, ColorButtonFace),
-						0, thumb_pos.Y + thumb_pos.Height,
-						area.Width, area.Height -  (thumb_pos.Y + thumb_pos.Height) - scrollbutton_height);						
-						
-					break;
-				}
-				
-				default:
-					break;
-				}
-					
-			}
-			else {
-				
-				first_arrow_area.X = first_arrow_area. Y = 0;
-				first_arrow_area.Width = scrollbutton_width;
-				first_arrow_area.Height = bar.Height;
-
-				second_arrow_area.Y = 0;
-				second_arrow_area.X = area.Width - scrollbutton_width;
-				second_arrow_area.Width = scrollbutton_width;
-				second_arrow_area.Height = bar.Height;
-				thumb_pos.Height = bar.Height;
-
-				/* Buttons */
-				DrawScrollButton (dc, first_arrow_area, ScrollButton.Left, first_arrow );
-				DrawScrollButton (dc, second_arrow_area, ScrollButton.Right, second_arrow);
-
-				/* Background */
-				//dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, ColorButtonHilight, ColorButtonFace), scrollbutton_width, 
-				//	0, area.Width - (scrollbutton_width * 2), area.Height);
-					
-				switch (bar.thumb_moving) {
-				case ScrollBar.ThumbMoving.None:				
-				{
-					dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, ColorButtonHilight, ColorButtonFace), scrollbutton_width,
-						0, area.Width - (scrollbutton_width * 2), area.Height);
-					
-					break;
-				}
-				
-				case ScrollBar.ThumbMoving.Forward: {
-					dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, ColorButtonHilight, ColorButtonFace),
-						scrollbutton_width,  0,
-						thumb_pos.X - scrollbutton_width, area.Height);
-												
-					dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, Color.FromArgb (255, 63,63,63), Color.Black),
-						thumb_pos.X + thumb_pos.Width, 0,
-						area.Width -  (thumb_pos.X + thumb_pos.Width) - scrollbutton_width, area.Height);
-						
-					break;
-				}
-				
-				case ScrollBar.ThumbMoving.Backwards: {
-					dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, Color.FromArgb (255, 63,63,63), Color.Black),
-						scrollbutton_width,  0,
-						thumb_pos.X - scrollbutton_width, area.Height);
-												
-					dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, ColorButtonHilight, ColorButtonFace),
-						thumb_pos.X + thumb_pos.Width, 0,
-						area.Width -  (thumb_pos.X + thumb_pos.Width) - scrollbutton_width, area.Height);
-
-						
-					break;
-				}
-				
-				default:
-					break;
-				}
-			}
-
-			/* Thumb */
-			if (bar.Enabled)
-				DrawScrollButtonPrimitive (dc, thumb_pos, ButtonState.Normal);			
-		}
-
-		/*
-			DrawTrackBar
-		*/
-
-		/* Vertical trackbar */
-		private void DrawTrackBar_Vertical (Graphics dc, Rectangle area, TrackBar tb,
-			ref Rectangle thumb_pos, ref Rectangle thumb_area,  Brush br_thumb,
-			float ticks, int value_pos, bool mouse_value)		
-		{			
-			
-			Point toptick_startpoint = new Point ();
-			Point bottomtick_startpoint = new Point ();
-			Point channel_startpoint = new Point ();
-			float pixel_len;
-			float pixels_betweenticks;
-			const int space_from_right = 8;
-			const int space_from_left = 8;			
-			
-			switch (tb.TickStyle) 	{
-			case TickStyle.BottomRight:
-			case TickStyle.None:
-				channel_startpoint.Y = 8;
-				channel_startpoint.X = 9;
-				bottomtick_startpoint.Y = 13;
-				bottomtick_startpoint.X = 24;				
-				break;
-			case TickStyle.TopLeft:
-				channel_startpoint.Y = 8;
-				channel_startpoint.X = 19;
-				toptick_startpoint.Y = 13;
-				toptick_startpoint.X = 8;
-				break;
-			case TickStyle.Both:
-				channel_startpoint.Y = 8;
-				channel_startpoint.X = 18;	
-				bottomtick_startpoint.Y = 13;
-				bottomtick_startpoint.X = 32;				
-				toptick_startpoint.Y = 13;
-				toptick_startpoint.X = 8;				
-				break;
-			default:
-				break;
-			}
-			
-			thumb_area.X = area.X + channel_startpoint.X;
-			thumb_area.Y = area.Y + channel_startpoint.Y;
-			thumb_area.Height = area.Height - space_from_right - space_from_left;
-			thumb_area.Width = 4;
-
-			/* Draw channel */
-			dc.FillRectangle (ResPool.GetSolidBrush (ColorButtonShadow), channel_startpoint.X, channel_startpoint.Y,
-				1, thumb_area.Height);
-			
-			dc.FillRectangle (ResPool.GetSolidBrush (ColorButtonDkShadow), channel_startpoint.X + 1, channel_startpoint.Y,
-				1, thumb_area.Height);
-
-			dc.FillRectangle (ResPool.GetSolidBrush (ColorButtonHilight), channel_startpoint.X + 3, channel_startpoint.Y,
-				1, thumb_area.Height);
-
-			pixel_len = thumb_area.Height - 11;
-			pixels_betweenticks = pixel_len / (tb.Maximum - tb.Minimum);
-			
-			/* Convert thumb position from mouse position to value*/
-			if (mouse_value) {
-				
-				if (value_pos >= channel_startpoint.Y)
-					value_pos = (int)(((float) (value_pos - channel_startpoint.Y)) / pixels_betweenticks);
-				else
-					value_pos = 0;			
-
-				if (value_pos + tb.Minimum > tb.Maximum)
-					value_pos = tb.Maximum - tb.Minimum;
-                                
-				tb.Value = value_pos + tb.Minimum;
-			}			
-			
-			thumb_pos.Y = channel_startpoint.Y + (int) (pixels_betweenticks * (float) value_pos);
-			
-			/* Draw thumb fixed 10x22 size */
-			thumb_pos.Width = 10;
-			thumb_pos.Height = 22;
-
-			switch (tb.TickStyle) 	{
-			case TickStyle.BottomRight:
-			case TickStyle.None:
-			{
-				thumb_pos.X = channel_startpoint.X - 8;
-
-				dc.DrawLine (ResPool.GetPen (ColorButtonHilight), thumb_pos.X, thumb_pos.Y, thumb_pos.X , thumb_pos.Y + 10);
-				dc.DrawLine (ResPool.GetPen (ColorButtonHilight), thumb_pos.X, thumb_pos.Y, thumb_pos.X + 16, thumb_pos.Y);
-				dc.DrawLine (ResPool.GetPen (ColorButtonHilight), thumb_pos.X + 16, thumb_pos.Y, thumb_pos.X + 16 + 4, thumb_pos.Y + 4);
-				
-				dc.DrawLine (ResPool.GetPen (ColorButtonShadow), thumb_pos.X +1, thumb_pos.Y + 9, thumb_pos.X +15, thumb_pos.Y  +9);
-				dc.DrawLine (ResPool.GetPen (ColorButtonShadow), thumb_pos.X + 16, thumb_pos.Y + 9, thumb_pos.X +16 + 4, thumb_pos.Y  +9 - 4);
-
-				dc.DrawLine (ResPool.GetPen (ColorButtonDkShadow), thumb_pos.X, thumb_pos.Y  + 10, thumb_pos.X +16, thumb_pos.Y +10);
-				dc.DrawLine (ResPool.GetPen (ColorButtonDkShadow), thumb_pos.X + 16, thumb_pos.Y  + 10, thumb_pos.X  +16 + 5, thumb_pos.Y +10 - 5);
-
-				dc.FillRectangle (br_thumb, thumb_pos.X + 1, thumb_pos.Y + 1, 16, 8);
-				dc.FillRectangle (br_thumb, thumb_pos.X + 17, thumb_pos.Y + 2, 1, 6);
-				dc.FillRectangle (br_thumb, thumb_pos.X + 18, thumb_pos.Y + 3, 1, 4);
-				dc.FillRectangle (br_thumb, thumb_pos.X + 19, thumb_pos.Y + 4, 1, 2);
-
-				break;
-			}
-			case TickStyle.TopLeft:
-			{
-				thumb_pos.X = channel_startpoint.X - 10;
-
-				dc.DrawLine (ResPool.GetPen (ColorButtonHilight), thumb_pos.X + 4, thumb_pos.Y, thumb_pos.X + 4 + 16, thumb_pos.Y);
-				dc.DrawLine (ResPool.GetPen (ColorButtonHilight), thumb_pos.X + 4, thumb_pos.Y, thumb_pos.X, thumb_pos.Y + 4);
-
-				dc.DrawLine (ResPool.GetPen (ColorButtonShadow), thumb_pos.X  + 4, thumb_pos.Y + 9, thumb_pos.X + 4 + 16 , thumb_pos.Y+ 9);
-				dc.DrawLine (ResPool.GetPen (ColorButtonShadow), thumb_pos.X + 4, thumb_pos.Y  + 9, thumb_pos.X, thumb_pos.Y + 5);
-				dc.DrawLine (ResPool.GetPen (ColorButtonShadow), thumb_pos.X  + 19, thumb_pos.Y + 9, thumb_pos.X  +19 , thumb_pos.Y+ 1);
-
-				dc.DrawLine (ResPool.GetPen (ColorButtonDkShadow), thumb_pos.X  + 4, thumb_pos.Y+ 10, thumb_pos.X  + 4 + 16, thumb_pos.Y+ 10);
-				dc.DrawLine (ResPool.GetPen (ColorButtonDkShadow), thumb_pos.X  + 4, thumb_pos.Y + 10, thumb_pos.X  -1, thumb_pos.Y+ 5);
-				dc.DrawLine (ResPool.GetPen (ColorButtonDkShadow), thumb_pos.X + 20, thumb_pos.Y, thumb_pos.X+ 20, thumb_pos.Y + 10);
-
-				dc.FillRectangle (br_thumb, thumb_pos.X + 4, thumb_pos.Y + 1, 15, 8);
-				dc.FillRectangle (br_thumb, thumb_pos.X + 3, thumb_pos.Y + 2, 1, 6);
-				dc.FillRectangle (br_thumb, thumb_pos.X + 2, thumb_pos.Y + 3, 1, 4);
-				dc.FillRectangle (br_thumb, thumb_pos.X + 1, thumb_pos.Y + 4, 1, 2);
-
-				break;
-			}
-
-			case TickStyle.Both:
-			{
-				thumb_pos.X = area.X + 10;
-				dc.DrawLine (ResPool.GetPen (ColorButtonHilight), thumb_pos.X, thumb_pos.Y, thumb_pos.X, thumb_pos.Y + 9);
-				dc.DrawLine (ResPool.GetPen (ColorButtonHilight), thumb_pos.X, thumb_pos.Y, thumb_pos.X + 19, thumb_pos.Y);
-
-				dc.DrawLine (ResPool.GetPen (ColorButtonShadow), thumb_pos.X + 1, thumb_pos.Y + 9, thumb_pos.X+ 19, thumb_pos.Y  + 9);
-				dc.DrawLine (ResPool.GetPen (ColorButtonShadow), thumb_pos.X  + 10, thumb_pos.Y+ 1, thumb_pos.X + 19, thumb_pos.Y  + 8);
-
-				dc.DrawLine (ResPool.GetPen (ColorButtonDkShadow), thumb_pos.X, thumb_pos.Y + 10, thumb_pos.X+ 20, thumb_pos.Y  +10);
-				dc.DrawLine (ResPool.GetPen (ColorButtonDkShadow), thumb_pos.X  + 20, thumb_pos.Y, thumb_pos.X  + 20, thumb_pos.Y+ 9);
-
-				dc.FillRectangle (br_thumb, thumb_pos.X + 1, thumb_pos.Y + 1, 18, 8);
-
-				break;
-			}
-
-			default:
-				break;
-			}
-
-			pixel_len = thumb_area.Height - 11;
-			pixels_betweenticks = pixel_len / ticks;				
-			
-			/* Draw ticks*/
-			if (pixels_betweenticks > 0 && ((tb.TickStyle & TickStyle.BottomRight) == TickStyle.BottomRight ||
-				((tb.TickStyle & TickStyle.Both) == TickStyle.Both))) {	
-				
-				for (float inc = 0; inc < (pixel_len + 1); inc += pixels_betweenticks) 	{					
-					if (inc == 0 || (inc +  pixels_betweenticks) >= pixel_len +1)
-						dc.DrawLine (pen_ticks, area.X + bottomtick_startpoint.X , area.Y + bottomtick_startpoint.Y  + inc, 
-							area.X + bottomtick_startpoint.X  + 3, area.Y + bottomtick_startpoint.Y + inc);
-					else
-						dc.DrawLine (pen_ticks, area.X + bottomtick_startpoint.X, area.Y + bottomtick_startpoint.Y  + inc, 
-							area.X + bottomtick_startpoint.X  + 2, area.Y + bottomtick_startpoint.Y + inc);
-				}
-			}
-
-			if (pixels_betweenticks > 0 &&  ((tb.TickStyle & TickStyle.TopLeft) == TickStyle.TopLeft ||
-				((tb.TickStyle & TickStyle.Both) == TickStyle.Both))) {
-
-				pixel_len = thumb_area.Height - 11;
-				pixels_betweenticks = pixel_len / ticks;
-				
-				for (float inc = 0; inc < (pixel_len + 1); inc += pixels_betweenticks) 
-				{
-					//Console.WriteLine ("{0} {1} {2}", pixel_len, inc, pixels_betweenticks );
-					if (inc == 0 || (inc +  pixels_betweenticks) >= pixel_len +1)
-						dc.DrawLine (pen_ticks, area.X + toptick_startpoint.X  - 3 , area.Y + toptick_startpoint.Y + inc, 
-							area.X + toptick_startpoint.X, area.Y + toptick_startpoint.Y + inc);
-					else
-						dc.DrawLine (pen_ticks, area.X + toptick_startpoint.X  - 2, area.Y + toptick_startpoint.Y + inc, 
-							area.X + toptick_startpoint.X, area.Y + toptick_startpoint.Y  + inc);
-				}			
-			}
-		}
-
-		/* 
-			Horizontal trackbar 
-		  
-		 	Does not matter the size of the control, Win32 always draws:
-		 		- Ticks starting from pixel 13, 8
-		 		- Channel starting at pos 8, 19 and ends at Width - 8
-		 		- Autosize makes always the control 40 pixels height
-		 		- Ticks are draw at (channel.Witdh - 10) / (Maximum - Minimum)
-				
-		*/
-		private void DrawTrackBar_Horizontal (Graphics dc, Rectangle area, TrackBar tb,
-			ref Rectangle thumb_pos, ref Rectangle thumb_area, Brush br_thumb,
-			float ticks, int value_pos, bool mouse_value)
-		{			
-			Point toptick_startpoint = new Point ();
-			Point bottomtick_startpoint = new Point ();
-			Point channel_startpoint = new Point ();
-			float pixel_len;
-			float pixels_betweenticks;
-			const int space_from_right = 8;
-			const int space_from_left = 8;		
-						
-			switch (tb.TickStyle) {
-			case TickStyle.BottomRight:
-			case TickStyle.None:
-				channel_startpoint.X = 8;
-				channel_startpoint.Y = 9;
-				bottomtick_startpoint.X = 13;
-				bottomtick_startpoint.Y = 24;				
-				break;
-			case TickStyle.TopLeft:
-				channel_startpoint.X = 8;
-				channel_startpoint.Y = 19;
-				toptick_startpoint.X = 13;
-				toptick_startpoint.Y = 8;
-				break;
-			case TickStyle.Both:
-				channel_startpoint.X = 8;
-				channel_startpoint.Y = 18;	
-				bottomtick_startpoint.X = 13;
-				bottomtick_startpoint.Y = 32;				
-				toptick_startpoint.X = 13;
-				toptick_startpoint.Y = 8;				
-				break;
-			default:
-				break;
-			}
-						
-			thumb_area.X = area.X + channel_startpoint.X;
-			thumb_area.Y = area.Y + channel_startpoint.Y;
-			thumb_area.Width = area.Width - space_from_right - space_from_left;
-			thumb_area.Height = 4;
-			
-			/* Draw channel */
-			dc.FillRectangle (ResPool.GetSolidBrush (ColorButtonShadow), channel_startpoint.X, channel_startpoint.Y,
-				thumb_area.Width, 1);
-			
-			dc.FillRectangle (ResPool.GetSolidBrush (ColorButtonDkShadow), channel_startpoint.X, channel_startpoint.Y + 1,
-				thumb_area.Width, 1);
-
-			dc.FillRectangle (ResPool.GetSolidBrush (ColorButtonHilight), channel_startpoint.X, channel_startpoint.Y +3,
-				thumb_area.Width, 1);
-
-			pixel_len = thumb_area.Width - 11;
-			pixels_betweenticks = pixel_len / (tb.Maximum - tb.Minimum);
-
-			/* Convert thumb position from mouse position to value*/
-			if (mouse_value) {			
-				if (value_pos >= channel_startpoint.X)
-					value_pos = (int)(((float) (value_pos - channel_startpoint.X)) / pixels_betweenticks);
-				else
-					value_pos = 0;				
-
-				if (value_pos + tb.Minimum > tb.Maximum)
-					value_pos = tb.Maximum - tb.Minimum;
-                                
-				tb.Value = value_pos + tb.Minimum;
-			}			
-			
-			thumb_pos.X = channel_startpoint.X + (int) (pixels_betweenticks * (float) value_pos);
-			
-			/* Draw thumb fixed 10x22 size */
-			thumb_pos.Width = 10;
-			thumb_pos.Height = 22;
-
-			switch (tb.TickStyle) {
-			case TickStyle.BottomRight:
-			case TickStyle.None: 
-			{
-				thumb_pos.Y = channel_startpoint.Y - 8;
-
-				dc.DrawLine (ResPool.GetPen (ColorButtonHilight), thumb_pos.X, thumb_pos.Y, thumb_pos.X + 10, thumb_pos.Y);
-				dc.DrawLine (ResPool.GetPen (ColorButtonHilight), thumb_pos.X, thumb_pos.Y, thumb_pos.X, thumb_pos.Y + 16);
-				dc.DrawLine (ResPool.GetPen (ColorButtonHilight), thumb_pos.X, thumb_pos.Y + 16, thumb_pos.X + 4, thumb_pos.Y + 16 + 4);
-
-				dc.DrawLine (ResPool.GetPen (ColorButtonShadow), thumb_pos.X + 9, thumb_pos.Y + 1, thumb_pos.X +9, thumb_pos.Y +15);
-				dc.DrawLine (ResPool.GetPen (ColorButtonShadow), thumb_pos.X + 9, thumb_pos.Y + 16, thumb_pos.X +9 - 4, thumb_pos.Y +16 + 4);
-
-				dc.DrawLine (ResPool.GetPen (ColorButtonDkShadow), thumb_pos.X + 10, thumb_pos.Y, thumb_pos.X +10, thumb_pos.Y +16);
-				dc.DrawLine (ResPool.GetPen (ColorButtonDkShadow), thumb_pos.X + 10, thumb_pos.Y + 16, thumb_pos.X +10 - 5, thumb_pos.Y +16 + 5);
-
-				dc.FillRectangle (br_thumb, thumb_pos.X + 1, thumb_pos.Y + 1, 8, 16);
-				dc.FillRectangle (br_thumb, thumb_pos.X + 2, thumb_pos.Y + 17, 6, 1);
-				dc.FillRectangle (br_thumb, thumb_pos.X + 3, thumb_pos.Y + 18, 4, 1);
-				dc.FillRectangle (br_thumb, thumb_pos.X + 4, thumb_pos.Y + 19, 2, 1);
-				break;
-			}
-			case TickStyle.TopLeft:	{
-				thumb_pos.Y = channel_startpoint.Y - 10;
-
-				dc.DrawLine (ResPool.GetPen (ColorButtonHilight), thumb_pos.X, thumb_pos.Y + 4, thumb_pos.X, thumb_pos.Y + 4 + 16);
-				dc.DrawLine (ResPool.GetPen (ColorButtonHilight), thumb_pos.X, thumb_pos.Y + 4, thumb_pos.X + 4, thumb_pos.Y);
-
-				dc.DrawLine (ResPool.GetPen (ColorButtonShadow), thumb_pos.X + 9, thumb_pos.Y + 4, thumb_pos.X + 9, thumb_pos.Y + 4 + 16);
-				dc.DrawLine (ResPool.GetPen (ColorButtonShadow), thumb_pos.X + 9, thumb_pos.Y + 4, thumb_pos.X + 5, thumb_pos.Y);
-				dc.DrawLine (ResPool.GetPen (ColorButtonShadow), thumb_pos.X + 9, thumb_pos.Y + 19, thumb_pos.X + 1 , thumb_pos.Y +19);
-
-				dc.DrawLine (ResPool.GetPen (ColorButtonDkShadow), thumb_pos.X + 10, thumb_pos.Y + 4, thumb_pos.X + 10, thumb_pos.Y + 4 + 16);
-				dc.DrawLine (ResPool.GetPen (ColorButtonDkShadow), thumb_pos.X + 10, thumb_pos.Y + 4, thumb_pos.X + 5, thumb_pos.Y -1);
-				dc.DrawLine (ResPool.GetPen (ColorButtonDkShadow), thumb_pos.X, thumb_pos.Y + 20, thumb_pos.X + 10, thumb_pos.Y + 20);
-
-				dc.FillRectangle (br_thumb, thumb_pos.X + 1, thumb_pos.Y + 4, 8, 15);
-				dc.FillRectangle (br_thumb, thumb_pos.X + 2, thumb_pos.Y + 3, 6, 1);
-				dc.FillRectangle (br_thumb, thumb_pos.X + 3, thumb_pos.Y + 2, 4, 1);
-				dc.FillRectangle (br_thumb, thumb_pos.X + 4, thumb_pos.Y + 1, 2, 1);
-				break;
-			}
-
-			case TickStyle.Both: {
-				thumb_pos.Y = area.Y + 10;
-				dc.DrawLine (ResPool.GetPen (ColorButtonHilight), thumb_pos.X, thumb_pos.Y, thumb_pos.X + 9, thumb_pos.Y);
-				dc.DrawLine (ResPool.GetPen (ColorButtonHilight), thumb_pos.X, thumb_pos.Y, thumb_pos.X, thumb_pos.Y + 19);
-
-				dc.DrawLine (ResPool.GetPen (ColorButtonShadow), thumb_pos.X + 9, thumb_pos.Y + 1, thumb_pos.X + 9, thumb_pos.Y + 19);
-				dc.DrawLine (ResPool.GetPen (ColorButtonShadow), thumb_pos.X + 1, thumb_pos.Y + 10, thumb_pos.X + 8, thumb_pos.Y + 19);
-
-				dc.DrawLine (ResPool.GetPen (ColorButtonDkShadow), thumb_pos.X + 10, thumb_pos.Y, thumb_pos.X +10, thumb_pos.Y + 20);
-				dc.DrawLine (ResPool.GetPen (ColorButtonDkShadow), thumb_pos.X, thumb_pos.Y + 20, thumb_pos.X + 9, thumb_pos.Y + 20);
-
-				dc.FillRectangle (br_thumb, thumb_pos.X + 1, thumb_pos.Y + 1, 8, 18);
-
-				break;
-			}
-
-			default:
-				break;
-			}
-
-			pixel_len = thumb_area.Width - 11;
-			pixels_betweenticks = pixel_len / ticks;
-
-			/* Draw ticks*/
-			if (pixels_betweenticks > 0 && ((tb.TickStyle & TickStyle.BottomRight) == TickStyle.BottomRight ||
-				((tb.TickStyle & TickStyle.Both) == TickStyle.Both))) {				
-				
-				for (float inc = 0; inc < (pixel_len + 1); inc += pixels_betweenticks) {					
-					if (inc == 0 || (inc +  pixels_betweenticks) >= pixel_len +1)
-						dc.DrawLine (pen_ticks, area.X + bottomtick_startpoint.X + inc , area.Y + bottomtick_startpoint.Y, 
-							area.X + bottomtick_startpoint.X + inc , area.Y + bottomtick_startpoint.Y + 3);
-					else
-						dc.DrawLine (pen_ticks, area.X + bottomtick_startpoint.X + inc, area.Y + bottomtick_startpoint.Y, 
-							area.X + bottomtick_startpoint.X + inc, area.Y + bottomtick_startpoint.Y + 2);
-				}
-			}
-
-			if (pixels_betweenticks > 0 && ((tb.TickStyle & TickStyle.TopLeft) == TickStyle.TopLeft ||
-				((tb.TickStyle & TickStyle.Both) == TickStyle.Both))) {
-				
-				for (float inc = 0; inc < (pixel_len + 1); inc += pixels_betweenticks) {					
-					if (inc == 0 || (inc +  pixels_betweenticks) >= pixel_len +1)
-						dc.DrawLine (pen_ticks, area.X + toptick_startpoint.X + inc , area.Y + toptick_startpoint.Y - 3, 
-							area.X + toptick_startpoint.X + inc , area.Y + toptick_startpoint.Y);
-					else
-						dc.DrawLine (pen_ticks, area.X + toptick_startpoint.X + inc, area.Y + toptick_startpoint.Y - 2, 
-							area.X + toptick_startpoint.X + inc, area.Y + toptick_startpoint.Y );
-					}			
-			}
-		}
-
-		public override void DrawTrackBar (Graphics dc, Rectangle area, TrackBar tb,
-			ref Rectangle thumb_pos, ref Rectangle thumb_area,  bool highli_thumb,
-			float ticks, int value_pos, bool mouse_value)
-
-		{
-			Brush br_thumb;			
-
-			if (highli_thumb == true)
-				br_thumb = (Brush) ResPool.GetHatchBrush (HatchStyle.Percent50, ColorButtonHilight, ColorButtonFace);
-			else
-				br_thumb = ResPool.GetSolidBrush (ColorButtonFace);
-
-			
-			/* Control Background */
-			if (tb.BackColor == DefaultControlBackColor)
-				dc.FillRectangle (ResPool.GetSolidBrush (ColorButtonFace), area);
-			else
-				dc.FillRectangle (ResPool.GetSolidBrush (tb.BackColor), area);
-			
-
-			if (tb.Focused) {
-				dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, ColorButtonFace, Color.Black), area.X, area.Y, area.Width - 1, 1);
-				dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, ColorButtonFace, Color.Black), area.X, area.Y + area.Height - 1, area.Width - 1, 1);
-				dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, ColorButtonFace, Color.Black), area.X, area.Y, 1, area.Height - 1);
-				dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, ColorButtonFace, Color.Black), area.X + area.Width - 1, area.Y, 1, area.Height - 1);
-			}
-
-			if (tb.Orientation == Orientation.Vertical) 
-				DrawTrackBar_Vertical (dc, area, tb, ref thumb_pos, ref thumb_area,
-					br_thumb, ticks, value_pos, mouse_value);
-			
-			else
-				DrawTrackBar_Horizontal (dc, area, tb, ref thumb_pos, ref thumb_area,
-					br_thumb, ticks, value_pos, mouse_value);
-		}
-
-		public override void DrawProgressBar (Graphics dc, Rectangle area,  Rectangle client_area,
-			int barpos_pixels, int block_width)
-
-		{
-			int space_betweenblocks = 2;
-			int increment = block_width + space_betweenblocks;
-			int x = client_area.X;
-
-			/* Draw border */
-			DrawBorder3D (dc, area, Border3DStyle.SunkenInner, Border3DSide.All);
-			
-			/* Draw Blocks */
-			while ((x - client_area.X) < barpos_pixels) {
-
-				dc.FillRectangle (br_progressbarblock, x, client_area.Y, block_width, client_area.Height);
-				x  = x + increment;
-			}			
-		}
-		
-
-		public  override void DrawLabel (Graphics dc, Rectangle area, BorderStyle border_style, string text, 
-			Color fore_color, Color back_color, Font font, StringFormat string_format, bool Enabled)
-
-		{
-			if (label_br_fore_color == null || label_br_fore_color.Color != fore_color) 
-				label_br_fore_color = GetControlForeBrush (fore_color);
-
-			if (label_br_back_color == null || label_br_back_color.Color != back_color) 
-				label_br_back_color = GetControlBackBrush (back_color);
-
-			dc.FillRectangle (label_br_back_color, area);
-			
-			DrawBorderStyle (dc, area, border_style);		
-
-			if (Enabled)
-				dc.DrawString (text, font, label_br_fore_color, area, string_format);
-			else
-				ControlPaint.DrawStringDisabled (dc, text, font, fore_color, area, string_format);
-		
-		}
-
-		public  override void DrawStatusBar (Graphics dc, Rectangle area, StatusBar sb)
-		{
-			int horz_border = 2;
-			int vert_border = 2;
-
-			dc.FillRectangle (GetControlBackBrush (sb.BackColor), area);
-			
-			if (sb.ShowPanels && sb.Panels.Count == 0) {
-				// Create a default panel.
-				SolidBrush br_forecolor = GetControlForeBrush (sb.ForeColor);
-				
-				StatusBarPanel panel = new StatusBarPanel ();
-				Rectangle new_area = new Rectangle (area.X + horz_border,
-						area.Y + horz_border,
-						area.Width - SizeGripWidth - horz_border,
-						area.Height - horz_border);
-				DrawStatusBarPanel (dc, new_area, -1, br_forecolor, panel);
-			} else if (sb.ShowPanels) {
-				SolidBrush br_forecolor = GetControlForeBrush (sb.ForeColor);
-				int prev_x = area.X + horz_border;
-				int y = area.Y + vert_border;
-				for (int i = 0; i < sb.Panels.Count; i++) {
-					Rectangle pr = new Rectangle (prev_x, y,
-							sb.Panels [i].Width, area.Height);
-					prev_x += pr.Width + StatusBarHorzGapWidth;
-					DrawStatusBarPanel (dc, pr, i, br_forecolor, sb.Panels [i]);
-				}
-			}
-
-			if (sb.SizingGrip)
-				DrawSizeGrip (dc, ColorButtonFace, area);
-
-		}
-
-
-		public override void DrawStatusBarPanel (Graphics dc, Rectangle area, int index,
-				SolidBrush br_forecolor, StatusBarPanel panel)
-		{
-			int border_size = 3; // this is actually const, even if the border style is none
-
-			area.Height -= border_size;
-			if (panel.BorderStyle != StatusBarPanelBorderStyle.None) {
-				Border3DStyle border_style = Border3DStyle.SunkenInner;
-				if (panel.BorderStyle == StatusBarPanelBorderStyle.Raised)
-					border_style = Border3DStyle.RaisedOuter;
-				DrawBorder3D(dc, area, border_style, Border3DSide.All);
-			}
-
-			if (panel.Style == StatusBarPanelStyle.OwnerDraw) {
-                                StatusBarDrawItemEventArgs e = new StatusBarDrawItemEventArgs (
-                                        dc, panel.Parent.Font, area, index, DrawItemState.Default,
-                                        panel, panel.Parent.ForeColor, panel.Parent.BackColor);
-                                panel.Parent.OnDrawItemInternal (e);
-                                return;
-                        }
-
-			int left = area.Left;
-			if (panel.Icon != null) {
-				left += 2;
-				int size = area.Height - border_size;
-				Rectangle ia = new Rectangle (left, border_size, size, size);
-				dc.DrawIcon (panel.Icon, left, area.Top);
-				left += panel.Icon.Width;
-			}
-
-			if (panel.Text == String.Empty)
-				return;
-
-			string text = panel.Text;
-			StringFormat string_format = new StringFormat ();
-			string_format.LineAlignment = StringAlignment.Center;
-			string_format.Alignment = StringAlignment.Near;
-			string_format.FormatFlags = StringFormatFlags.NoWrap;
-
-			if (text [0] == '\t') {
-				string_format.Alignment = StringAlignment.Center;
-				text = text.Substring (1);
-				if (text [0] == '\t') {
-					string_format.Alignment = StringAlignment.Far;
-					text = text.Substring (1);
-				}
-			}
-
-			float x = left + border_size;
-			float y = ((area.Bottom - area.Top) / 2.0F) + border_size;
-
-			dc.DrawString (text, panel.Parent.Font, br_forecolor, x, y, string_format);
-		}
-
-		public override void DrawPictureBox (Graphics dc, PictureBox pb)
-		{
-			Rectangle client = pb.ClientRectangle;
-			int x, y, width, height;
-
-			dc.FillRectangle (new SolidBrush (pb.BackColor), client);
-
-			x = y = 0;
-			if (pb.Image != null) {
-				switch (pb.SizeMode) {
-				case PictureBoxSizeMode.StretchImage:
-					width = client.Width;
-					height = client.Height;
-					break;
-				case PictureBoxSizeMode.CenterImage:
-					width = client.Width;
-					height = client.Height;
-					x = width / 2;
-					y = (height - pb.Image.Height) / 2;
-					break;
-				default:
-					// Normal, AutoSize
-					width = client.Width;
-					height = client.Height;
-					break;
-				}
-				dc.DrawImage (pb.Image, x, y, width, height);
-			}
-			DrawBorderStyle (dc, client, pb.BorderStyle);
-		}
-
-		public  override void DrawOwnerDrawBackground (DrawItemEventArgs e)
-		{
-			if (e.State == DrawItemState.Selected) {
-				e.Graphics.FillRectangle (SystemBrushes.Highlight, e.Bounds);
-				return;
-			}
-
-			e.Graphics.FillRectangle (GetControlBackBrush (e.BackColor), e.Bounds);
-		}
-
-		public  override void DrawOwnerDrawFocusRectangle (DrawItemEventArgs e)
-		{
-			if (e.State == DrawItemState.Focus)
-				DrawFocusRectangle (e.Graphics, e.Bounds, e.ForeColor, e.BackColor);
-		}
-
-		public  override void DrawToolBar (Graphics dc, ToolBar control, StringFormat format)
-		{
-			// Exclude the area for divider
-			Rectangle paint_area = new Rectangle (0, ThemeEngine.Current.ToolBarGripWidth / 2, 
-							      control.Width, control.Height - ThemeEngine.Current.ToolBarGripWidth / 2);
-			bool flat = (control.Appearance == ToolBarAppearance.Flat);
-			dc.FillRectangle (SystemBrushes.Control, paint_area);
-			DrawBorderStyle (dc, paint_area, control.BorderStyle);
-
-			if (control.Divider)
-				dc.DrawLine (ResPool.GetPen (ColorButtonHilight), 0, 0, paint_area.Width, 0);
-
-			foreach (ToolBarButton button in control.Buttons) {
-
-				Image image = null;
-				Rectangle buttonArea = button.Rectangle;
-				Rectangle imgRect = Rectangle.Empty;  // rect to draw the image
-				Rectangle txtRect = buttonArea;       // rect to draw the text
-				Rectangle ddRect = Rectangle.Empty;   // rect for the drop down arrow
-
-				// calculate different rects and draw the frame if its not separator button
-				if (button.Style != ToolBarButtonStyle.Separator) {
-					/* Adjustment for drop down arrow */
-					if (button.Style == ToolBarButtonStyle.DropDownButton && control.DropDownArrows) {
-						ddRect.X = buttonArea.X + buttonArea.Width - this.ToolBarDropDownWidth;
-						ddRect.Y = buttonArea.Y;
-						ddRect.Width = this.ToolBarDropDownWidth;
-						ddRect.Height = buttonArea.Height;
-					}
-
-					// calculate txtRect and imgRect, if imageIndex and imageList are present
-					if (button.ImageIndex > -1 && control.ImageList != null) {
-						if (button.ImageIndex < control.ImageList.Images.Count)
-							image = control.ImageList.Images [button.ImageIndex];
-						// draw the image at the centre if textalignment is underneath
-						if (control.TextAlign == ToolBarTextAlign.Underneath) {
-							imgRect.X = buttonArea.X + ((buttonArea.Width - ddRect.Width 
-										     - control.ImageSize.Width) / 2) 
-								                 + this.ToolBarImageGripWidth;
-							imgRect.Y = buttonArea.Y + this.ToolBarImageGripWidth;
-							imgRect.Width = control.ImageSize.Width;
-							imgRect.Height = control.ImageSize.Height;
-
-							txtRect.X = buttonArea.X;
-							txtRect.Y = buttonArea.Y + imgRect.Height + 2 * this.ToolBarImageGripWidth;
-							txtRect.Width = buttonArea.Width - ddRect.Width;
-							txtRect.Height = buttonArea.Height - imgRect.Height 
-								                           - 2 * this.ToolBarImageGripWidth;
-						}
-						else {
-							imgRect.X = buttonArea.X + this.ToolBarImageGripWidth;
-							imgRect.Y = buttonArea.Y + this.ToolBarImageGripWidth;
-							imgRect.Width = control.ImageSize.Width;
-							imgRect.Height = control.ImageSize.Height;
-
-							txtRect.X = buttonArea.X + imgRect.Width + 2 * this.ToolBarImageGripWidth;
-							txtRect.Y = buttonArea.Y;
-							txtRect.Width = buttonArea.Width - imgRect.Width 
-								                         - 2 * this.ToolBarImageGripWidth - ddRect.Width;
-							txtRect.Height = buttonArea.Height;
-						}
-					}
-					/* Draw the button frame, only if it is not a separator */
-					if (flat) { 
-						if (button.Pushed || button.Pressed)
-							ControlPaint.DrawBorder3D (dc, buttonArea, Border3DStyle.SunkenOuter,
-										   Border3DSide.All);
-						else if (button.Hilight) {
-							dc.DrawRectangle (ResPool.GetPen (ColorButtonText), buttonArea);
-							if (! ddRect.IsEmpty) {
-								dc.DrawLine (ResPool.GetPen (ColorButtonText), ddRect.X, ddRect.Y, ddRect.X, 
-									     ddRect.Y + ddRect.Height);
-								buttonArea.Width -= this.ToolBarDropDownWidth;
-							}
-						}
-					}
-					else { // normal toolbar
-						if (button.Pushed || button.Pressed) {
-							ControlPaint.DrawBorder3D (dc, buttonArea, Border3DStyle.SunkenInner,
-										   Border3DSide.All);
-							if (! ddRect.IsEmpty) {
-								ControlPaint.DrawBorder3D (dc, ddRect, Border3DStyle.SunkenInner,
-											   Border3DSide.Left);
-								buttonArea.Width -= this.ToolBarDropDownWidth;
-							}
-						}
-						else {
-							ControlPaint.DrawBorder3D (dc, buttonArea, Border3DStyle.RaisedInner,
-										   Border3DSide.All);
-							if (! ddRect.IsEmpty) {
-								ControlPaint.DrawBorder3D (dc, ddRect, Border3DStyle.RaisedInner,
-											   Border3DSide.Left);
-								buttonArea.Width -= this.ToolBarDropDownWidth;
-							}
-						}
-					}
-				}
-				DrawToolBarButton (dc, button, control.Font, format, paint_area, buttonArea,
-						   imgRect, image, txtRect, ddRect, flat);
-			}
-		}
-		
-		public override void DrawGroupBox (Graphics dc,  Rectangle area, GroupBox box)
-		{
-			SizeF size;
-			int width, y;
-			Rectangle rect = box.ClientRectangle;
-			Color disabled = ThemeEngine.Current.ColorGrayText;
-			
-			Pen pen_light = ResPool.GetPen (Color.FromArgb (255,255,255,255));
-			Pen pen_dark = ResPool.GetPen (Color.FromArgb (255, 128, 128,128));
-			
-			// TODO: When the Light and Dark methods work this code should be activate it
-			//Pen pen_light = new Pen (ControlPaint.Light (disabled, 1));
-			//Pen pen_dark = new Pen (ControlPaint.Dark (disabled, 0));
-
-			dc.FillRectangle (ResPool.GetSolidBrush (box.BackColor), rect);
-
-			size = dc.MeasureString (box.Text, box.Font);
-			width = (int) size.Width;
-			
-			if (width > box.Width - 16)
-				width = box.Width - 16;
-			
-			y = box.Font.Height / 2;
-			
-			/* Draw group box*/
-			dc.DrawLine (pen_dark, 0, y, 8, y); // top 
-			dc.DrawLine (pen_light, 0, y + 1, 8, y + 1);			
-			dc.DrawLine (pen_dark, 8 + width, y, box.Width, y);			
-			dc.DrawLine (pen_light, 8 + width, y + 1, box.Width, y + 1);
-			
-			dc.DrawLine (pen_dark, 0, y + 1, 0, box.Height); // left
-			dc.DrawLine (pen_light, 1, y + 1, 1, box.Height);			
-			
-			dc.DrawLine (pen_dark, 0, box.Height - 2, box.Width,  box.Height - 2); // bottom
-			dc.DrawLine (pen_light, 0, box.Height - 1, box.Width,  box.Height - 1);
-			
-			dc.DrawLine (pen_dark, box.Width - 2, y,  box.Width - 2, box.Height - 2); // right
-			dc.DrawLine (pen_light, box.Width - 1, y, box.Width - 1, box.Height - 2);
-			
-			
-			/* Text */
-			if (box.Enabled)
-				dc.DrawString (box.Text, box.Font, new SolidBrush (box.ForeColor), 10, 0);
-			else
-				DrawStringDisabled (dc, box.Text, box.Font, box.ForeColor, 
-					new RectangleF (10, 0, width,  box.Font.Height), new StringFormat ());					
-				
-		}
-
-		/*
-		 * Private methods
-		 */
-
-		private void DrawToolBarButton (Graphics dc, ToolBarButton button, Font font, StringFormat format,
-						Rectangle controlArea, Rectangle buttonArea, Rectangle imgRect, 
-						Image image, Rectangle txtRect, Rectangle ddRect, bool flat)
-		{
-			if (! button.Visible)
-				return;
-
-			switch (button.Style) {
-
-			case ToolBarButtonStyle.Separator:
-				// separator is drawn only in the case of flat appearance
-				if (flat) {
-					dc.DrawLine (ResPool.GetPen (ColorButtonShadow), buttonArea.X + 1, buttonArea.Y, 
-						     buttonArea.X + 1, buttonArea.Height);
-					dc.DrawLine (ResPool.GetPen (ColorButtonHilight), buttonArea.X + 1 + (int) ResPool.GetPen (ColorButtonFace).Width,
-						     buttonArea.Y, buttonArea.X + 1 + (int) ResPool.GetPen (ColorButtonFace).Width, buttonArea.Height);
-					/* draw a horizontal separator */
-					if (button.Wrapper) {
-						int y = buttonArea.Height + this.ToolBarSeparatorWidth / 2;
-						dc.DrawLine (ResPool.GetPen (ColorButtonShadow), 0, y, controlArea.Width, y);
-						dc.DrawLine (ResPool.GetPen (ColorButtonHilight), 0, y + 1 + (int) ResPool.GetPen (ColorButtonFace).Width, controlArea.Width,
-							     y + 1 + (int) ResPool.GetPen (ColorButtonFace).Width);
-					}
-				}
-				break;
-
-			case ToolBarButtonStyle.ToggleButton:
-				Rectangle toggleArea = Rectangle.Empty;
-				toggleArea.X = buttonArea.X + this.ToolBarImageGripWidth;
-				toggleArea.Y = buttonArea.Y + this.ToolBarImageGripWidth;
-				toggleArea.Width = buttonArea.Width - 2 * this.ToolBarImageGripWidth;
-				toggleArea.Height = buttonArea.Height - 2 * this.ToolBarImageGripWidth;
-				if (button.PartialPush && button.Pushed) {
-					dc.FillRectangle (SystemBrushes.ControlLightLight, toggleArea);
-					if (! imgRect.IsEmpty) {
-						if (button.Enabled && image != null)
-							button.Parent.ImageList.Draw (dc, imgRect.X, imgRect.Y, imgRect.Width, 
-										      imgRect.Height, button.ImageIndex);
-						else {
-							dc.FillRectangle (new SolidBrush (ColorGrayText), imgRect);
-							ControlPaint.DrawBorder3D (dc, imgRect, Border3DStyle.SunkenOuter,
-										   Border3DSide.Right | Border3DSide.Bottom);
-						}
-					}
-					if (button.Enabled)
-						dc.DrawString (button.Text, font, SystemBrushes.ControlText, txtRect, format);
-					else
-						ControlPaint.DrawStringDisabled (dc, button.Text, font, SystemColors.ControlLightLight,
-										 txtRect, format);
-				}
-
-				else if (button.PartialPush) {
-					dc.FillRectangle (SystemBrushes.ControlLight, toggleArea);
-					if (! imgRect.IsEmpty) {
-						if (button.Enabled && image != null)
-							button.Parent.ImageList.Draw (dc, imgRect.X, imgRect.Y, imgRect.Width,
-										      imgRect.Height, button.ImageIndex);
-						else {
-							dc.FillRectangle (new SolidBrush (ColorGrayText), imgRect);
-							ControlPaint.DrawBorder3D (dc, imgRect, Border3DStyle.SunkenOuter,
-										   Border3DSide.Right | Border3DSide.Bottom);
-						}
-					}
-					if (button.Enabled)
-						dc.DrawString (button.Text, font, SystemBrushes.ControlText, txtRect, format);
-					else
-						ControlPaint.DrawStringDisabled (dc, button.Text, font, SystemColors.ControlLightLight,
-										 txtRect, format);
-				}
-
-				else if (button.Pushed) {
-					dc.FillRectangle (SystemBrushes.ControlLightLight, toggleArea);
-					if (! imgRect.IsEmpty) {
-						if (button.Enabled && image != null)
-							button.Parent.ImageList.Draw (dc, imgRect.X, imgRect.Y, imgRect.Width,
-										      imgRect.Height, button.ImageIndex);
-						else {
-							dc.FillRectangle (new SolidBrush (ColorGrayText), imgRect);
-							ControlPaint.DrawBorder3D (dc, imgRect, Border3DStyle.SunkenOuter,
-										   Border3DSide.Right | Border3DSide.Bottom);
-						}
-					}
-					if (button.Enabled)
-						dc.DrawString (button.Text, font, SystemBrushes.ControlText, txtRect, format);
-					else
-						ControlPaint.DrawStringDisabled (dc, button.Text, font, SystemColors.ControlLightLight,
-										 txtRect, format);
-				}
-
-				else {
-					dc.FillRectangle (SystemBrushes.Control, toggleArea);
-					//dc.FillRectangle (new SolidBrush (Color.FromArgb(255, 180, 190, 214)), toggleArea);
-					if (! imgRect.IsEmpty) {
-						if (button.Enabled && image != null)
-							button.Parent.ImageList.Draw (dc, imgRect.X, imgRect.Y, imgRect.Width,
-										      imgRect.Height, button.ImageIndex);
-						else {
-							dc.FillRectangle (new SolidBrush (ColorGrayText), imgRect);
-							ControlPaint.DrawBorder3D (dc, imgRect, Border3DStyle.SunkenOuter,
-										   Border3DSide.Right | Border3DSide.Bottom);
-						}
-					}
-					if (button.Enabled)
-						dc.DrawString (button.Text, font, SystemBrushes.ControlText, txtRect, format);
-					else
-						ControlPaint.DrawStringDisabled (dc, button.Text, font, SystemColors.ControlLightLight,
-										 txtRect, format);
-				}
-				break;
-
-			case ToolBarButtonStyle.DropDownButton:
-				// draw the dropdown arrow
-				if (! ddRect.IsEmpty) {
-					PointF [] vertices = new PointF [3];
-					PointF ddCenter = new PointF (ddRect.X + (ddRect.Width/2.0f), ddRect.Y + (ddRect.Height/2.0f));
-					vertices [0].X = ddCenter.X - this.ToolBarDropDownArrowWidth / 2.0f + 0.5f;
-					vertices [0].Y = ddCenter.Y;
-					vertices [1].X = ddCenter.X + this.ToolBarDropDownArrowWidth / 2.0f + 0.5f;
-					vertices [1].Y = ddCenter.Y;
-					vertices [2].X = ddCenter.X + 0.5f; // 0.5 is added for adjustment
-					vertices [2].Y = ddCenter.Y + this.ToolBarDropDownArrowHeight;
-					dc.FillPolygon (SystemBrushes.ControlText, vertices);
-				}
-				goto case ToolBarButtonStyle.PushButton;
-
-			case ToolBarButtonStyle.PushButton:
-				if (! imgRect.IsEmpty){
-					if (button.Enabled && image != null)
-						button.Parent.ImageList.Draw (dc, imgRect.X, imgRect.Y, imgRect.Width, imgRect.Height,
-									      button.ImageIndex);
-					else {
-						dc.FillRectangle (new SolidBrush (ColorGrayText), imgRect);
-						ControlPaint.DrawBorder3D (dc, imgRect, Border3DStyle.SunkenOuter,
-									   Border3DSide.Right | Border3DSide.Bottom);
-					}
-				}
-				if (button.Enabled)
-					dc.DrawString (button.Text, font, SystemBrushes.ControlText, txtRect, format);
-				else
-					ControlPaint.DrawStringDisabled (dc, button.Text, font, SystemColors.ControlLightLight,
-									 txtRect, format);
-				break;
-			}
-		}
-
 		private static void DrawBorderInternal(Graphics graphics, int startX, int startY, int endX, int endY,
 			int width, Color color, ButtonBorderStyle style, Border3DSide side) {
 
 			Pen	pen=new Pen(color, 1);
 
 			switch(style) {
-				case ButtonBorderStyle.Solid: {
-					pen.DashStyle=DashStyle.Solid;
-					break;
-				}
+			case ButtonBorderStyle.Solid: {
+				pen.DashStyle=DashStyle.Solid;
+				break;
+			}
 
-				case ButtonBorderStyle.Dashed: {
-					pen.DashStyle=DashStyle.Dash;
-					break;
-				}
+			case ButtonBorderStyle.Dashed: {
+				pen.DashStyle=DashStyle.Dash;
+				break;
+			}
 
-				case ButtonBorderStyle.Dotted: {
-					pen.DashStyle=DashStyle.Dot;
-					break;
-				}
+			case ButtonBorderStyle.Dotted: {
+				pen.DashStyle=DashStyle.Dot;
+				break;
+			}
 
-				case ButtonBorderStyle.Inset: {
-					pen.DashStyle=DashStyle.Solid;
-					break;
-				}
+			case ButtonBorderStyle.Inset: {
+				pen.DashStyle=DashStyle.Solid;
+				break;
+			}
 
-				case ButtonBorderStyle.Outset: {
-					pen.DashStyle=DashStyle.Solid;
-					break;
-				}
+			case ButtonBorderStyle.Outset: {
+				pen.DashStyle=DashStyle.Solid;
+				break;
+			}
 
-				default:
-				case ButtonBorderStyle.None: {
-					pen.Dispose();
-					return;
-				}
+			default:
+			case ButtonBorderStyle.None: {
+				pen.Dispose();
+				return;
+			}
 			}
 
 
 			switch(style) {
-				case ButtonBorderStyle.Outset: {
-					Color		colorGrade;
-					int		hue, brightness, saturation;
-					int		brightnessSteps;
-					int		brightnessDownSteps;
+			case ButtonBorderStyle.Outset: {
+				Color		colorGrade;
+				int		hue, brightness, saturation;
+				int		brightnessSteps;
+				int		brightnessDownSteps;
 
-					ControlPaint.Color2HBS(color, out hue, out brightness, out saturation);
+				ControlPaint.Color2HBS(color, out hue, out brightness, out saturation);
 
-					brightnessDownSteps=brightness/width;
-					if (brightness>127) {
-						brightnessSteps=Math.Max(6, (160-brightness)/width);
-					} else {
-						brightnessSteps=(127-brightness)/width;
-					}
-
-					for (int i=0; i<width; i++) {
-						switch(side) {
-							case Border3DSide.Left:	{
-								pen.Dispose();
-								colorGrade=ControlPaint.HBS2Color(hue, Math.Min(255, brightness+brightnessSteps*(width-i)), saturation);
-								pen=new Pen(colorGrade, 1);
-								graphics.DrawLine(pen, startX+i, startY+i, endX+i, endY-i);
-								break;
-							}
-
-							case Border3DSide.Right: {
-								pen.Dispose();
-								colorGrade=ControlPaint.HBS2Color(hue, Math.Max(0, brightness-brightnessDownSteps*(width-i)), saturation);
-								pen=new Pen(colorGrade, 1);
-								graphics.DrawLine(pen, startX-i, startY+i, endX-i, endY-i);
-								break;
-							}
-
-							case Border3DSide.Top: {
-								pen.Dispose();
-								colorGrade=ControlPaint.HBS2Color(hue, Math.Min(255, brightness+brightnessSteps*(width-i)), saturation);
-								pen=new Pen(colorGrade, 1);
-								graphics.DrawLine(pen, startX+i, startY+i, endX-i, endY+i);
-								break;
-							}
-
-							case Border3DSide.Bottom: {
-								pen.Dispose();
-								colorGrade=ControlPaint.HBS2Color(hue, Math.Max(0, brightness-brightnessDownSteps*(width-i)), saturation);
-								pen=new Pen(colorGrade, 1);
-								graphics.DrawLine(pen, startX+i, startY-i, endX-i, endY-i);
-								break;
-							}
-						}
-					}
-					break;
+				brightnessDownSteps=brightness/width;
+				if (brightness>127) {
+					brightnessSteps=Math.Max(6, (160-brightness)/width);
+				} else {
+					brightnessSteps=(127-brightness)/width;
 				}
 
-				case ButtonBorderStyle.Inset: {
-					Color		colorGrade;
-					int		hue, brightness, saturation;
-					int		brightnessSteps;
-					int		brightnessDownSteps;
-
-					ControlPaint.Color2HBS(color, out hue, out brightness, out saturation);
-
-					brightnessDownSteps=brightness/width;
-					if (brightness>127) {
-						brightnessSteps=Math.Max(6, (160-brightness)/width);
-					} else {
-						brightnessSteps=(127-brightness)/width;
+				for (int i=0; i<width; i++) {
+					switch(side) {
+					case Border3DSide.Left:	{
+						pen.Dispose();
+						colorGrade=ControlPaint.HBS2Color(hue, Math.Min(255, brightness+brightnessSteps*(width-i)), saturation);
+						pen=new Pen(colorGrade, 1);
+						graphics.DrawLine(pen, startX+i, startY+i, endX+i, endY-i);
+						break;
 					}
 
-					for (int i=0; i<width; i++) {
-						switch(side) {
-							case Border3DSide.Left:	{
-								pen.Dispose();
-								colorGrade=ControlPaint.HBS2Color(hue, Math.Max(0, brightness-brightnessDownSteps*(width-i)), saturation);
-								pen=new Pen(colorGrade, 1);
-								graphics.DrawLine(pen, startX+i, startY+i, endX+i, endY-i);
-								break;
-							}
-
-							case Border3DSide.Right: {
-								pen.Dispose();
-								colorGrade=ControlPaint.HBS2Color(hue, Math.Min(255, brightness+brightnessSteps*(width-i)), saturation);
-								pen=new Pen(colorGrade, 1);
-								graphics.DrawLine(pen, startX-i, startY+i, endX-i, endY-i);
-								break;
-							}
-
-							case Border3DSide.Top: {
-								pen.Dispose();
-								colorGrade=ControlPaint.HBS2Color(hue, Math.Max(0, brightness-brightnessDownSteps*(width-i)), saturation);
-								pen=new Pen(colorGrade, 1);
-								graphics.DrawLine(pen, startX+i, startY+i, endX-i, endY+i);
-								break;
-							}
-
-							case Border3DSide.Bottom: {
-								pen.Dispose();
-								colorGrade=ControlPaint.HBS2Color(hue, Math.Min(255, brightness+brightnessSteps*(width-i)), saturation);
-								pen=new Pen(colorGrade, 1);
-								graphics.DrawLine(pen, startX+i, startY-i, endX-i, endY-i);
-								break;
-							}
-						}
+					case Border3DSide.Right: {
+						pen.Dispose();
+						colorGrade=ControlPaint.HBS2Color(hue, Math.Max(0, brightness-brightnessDownSteps*(width-i)), saturation);
+						pen=new Pen(colorGrade, 1);
+						graphics.DrawLine(pen, startX-i, startY+i, endX-i, endY-i);
+						break;
 					}
-					break;
+
+					case Border3DSide.Top: {
+						pen.Dispose();
+						colorGrade=ControlPaint.HBS2Color(hue, Math.Min(255, brightness+brightnessSteps*(width-i)), saturation);
+						pen=new Pen(colorGrade, 1);
+						graphics.DrawLine(pen, startX+i, startY+i, endX-i, endY+i);
+						break;
+					}
+
+					case Border3DSide.Bottom: {
+						pen.Dispose();
+						colorGrade=ControlPaint.HBS2Color(hue, Math.Max(0, brightness-brightnessDownSteps*(width-i)), saturation);
+						pen=new Pen(colorGrade, 1);
+						graphics.DrawLine(pen, startX+i, startY-i, endX-i, endY-i);
+						break;
+					}
+					}
 				}
+				break;
+			}
+
+			case ButtonBorderStyle.Inset: {
+				Color		colorGrade;
+				int		hue, brightness, saturation;
+				int		brightnessSteps;
+				int		brightnessDownSteps;
+
+				ControlPaint.Color2HBS(color, out hue, out brightness, out saturation);
+
+				brightnessDownSteps=brightness/width;
+				if (brightness>127) {
+					brightnessSteps=Math.Max(6, (160-brightness)/width);
+				} else {
+					brightnessSteps=(127-brightness)/width;
+				}
+
+				for (int i=0; i<width; i++) {
+					switch(side) {
+					case Border3DSide.Left:	{
+						pen.Dispose();
+						colorGrade=ControlPaint.HBS2Color(hue, Math.Max(0, brightness-brightnessDownSteps*(width-i)), saturation);
+						pen=new Pen(colorGrade, 1);
+						graphics.DrawLine(pen, startX+i, startY+i, endX+i, endY-i);
+						break;
+					}
+
+					case Border3DSide.Right: {
+						pen.Dispose();
+						colorGrade=ControlPaint.HBS2Color(hue, Math.Min(255, brightness+brightnessSteps*(width-i)), saturation);
+						pen=new Pen(colorGrade, 1);
+						graphics.DrawLine(pen, startX-i, startY+i, endX-i, endY-i);
+						break;
+					}
+
+					case Border3DSide.Top: {
+						pen.Dispose();
+						colorGrade=ControlPaint.HBS2Color(hue, Math.Max(0, brightness-brightnessDownSteps*(width-i)), saturation);
+						pen=new Pen(colorGrade, 1);
+						graphics.DrawLine(pen, startX+i, startY+i, endX-i, endY+i);
+						break;
+					}
+
+					case Border3DSide.Bottom: {
+						pen.Dispose();
+						colorGrade=ControlPaint.HBS2Color(hue, Math.Min(255, brightness+brightnessSteps*(width-i)), saturation);
+						pen=new Pen(colorGrade, 1);
+						graphics.DrawLine(pen, startX+i, startY-i, endX-i, endY-i);
+						break;
+					}
+					}
+				}
+				break;
+			}
 
 				/*
 					I decided to have the for-loop duplicated for speed reasons;
 					that way we only have to switch once (as opposed to have the
 					for-loop around the switch)
 				*/
-				default: {
-					switch(side) {
-						case Border3DSide.Left:	{
-							for (int i=0; i<width; i++) {
-								graphics.DrawLine(pen, startX+i, startY+i, endX+i, endY-i);
-							}
-							break;
-						}
-
-						case Border3DSide.Right: {
-							for (int i=0; i<width; i++) {
-								graphics.DrawLine(pen, startX-i, startY+i, endX-i, endY-i);
-							}
-							break;
-						}
-
-						case Border3DSide.Top: {
-							for (int i=0; i<width; i++) {
-								graphics.DrawLine(pen, startX+i, startY+i, endX-i, endY+i);
-							}
-							break;
-						}
-
-						case Border3DSide.Bottom: {
-							for (int i=0; i<width; i++) {
-								graphics.DrawLine(pen, startX+i, startY-i, endX-i, endY-i);
-							}
-							break;
-						}
+			default: {
+				switch(side) {
+				case Border3DSide.Left:	{
+					for (int i=0; i<width; i++) {
+						graphics.DrawLine(pen, startX+i, startY+i, endX+i, endY-i);
 					}
 					break;
 				}
+
+				case Border3DSide.Right: {
+					for (int i=0; i<width; i++) {
+						graphics.DrawLine(pen, startX-i, startY+i, endX-i, endY-i);
+					}
+					break;
+				}
+
+				case Border3DSide.Top: {
+					for (int i=0; i<width; i++) {
+						graphics.DrawLine(pen, startX+i, startY+i, endX-i, endY+i);
+					}
+					break;
+				}
+
+				case Border3DSide.Bottom: {
+					for (int i=0; i<width; i++) {
+						graphics.DrawLine(pen, startX+i, startY-i, endX-i, endY-i);
+					}
+					break;
+				}
+				}
+				break;
+			}
 			}
 			pen.Dispose();
 		}
@@ -2223,234 +2824,232 @@ namespace System.Windows.Forms
 
 		private static void DrawCaptionHelper(Graphics graphics, Color color, Pen pen, int lineWidth, int shift, Rectangle captionRect, CaptionButton button) {
 			switch(button) {
-				case CaptionButton.Close: {
-					pen.StartCap=LineCap.Triangle;
-					pen.EndCap=LineCap.Triangle;
-					if (lineWidth<2) {
-						graphics.DrawLine(pen, captionRect.Left+2*lineWidth+1+shift, captionRect.Top+2*lineWidth+shift, captionRect.Right-2*lineWidth+1+shift, captionRect.Bottom-2*lineWidth+shift);
-						graphics.DrawLine(pen, captionRect.Right-2*lineWidth+1+shift, captionRect.Top+2*lineWidth+shift, captionRect.Left+2*lineWidth+1+shift, captionRect.Bottom-2*lineWidth+shift);
-					}
-
-					graphics.DrawLine(pen, captionRect.Left+2*lineWidth+shift, captionRect.Top+2*lineWidth+shift, captionRect.Right-2*lineWidth+shift, captionRect.Bottom-2*lineWidth+shift);
-					graphics.DrawLine(pen, captionRect.Right-2*lineWidth+shift, captionRect.Top+2*lineWidth+shift, captionRect.Left+2*lineWidth+shift, captionRect.Bottom-2*lineWidth+shift);
-					return;
+			case CaptionButton.Close: {
+				pen.StartCap=LineCap.Triangle;
+				pen.EndCap=LineCap.Triangle;
+				if (lineWidth<2) {
+					graphics.DrawLine(pen, captionRect.Left+2*lineWidth+1+shift, captionRect.Top+2*lineWidth+shift, captionRect.Right-2*lineWidth+1+shift, captionRect.Bottom-2*lineWidth+shift);
+					graphics.DrawLine(pen, captionRect.Right-2*lineWidth+1+shift, captionRect.Top+2*lineWidth+shift, captionRect.Left+2*lineWidth+1+shift, captionRect.Bottom-2*lineWidth+shift);
 				}
 
-				case CaptionButton.Help: {
-					StringFormat	sf = new StringFormat();
-					SolidBrush		sb = new SolidBrush(color);
-					Font				font = new Font("Microsoft Sans Serif", captionRect.Height, FontStyle.Bold, GraphicsUnit.Pixel);
+				graphics.DrawLine(pen, captionRect.Left+2*lineWidth+shift, captionRect.Top+2*lineWidth+shift, captionRect.Right-2*lineWidth+shift, captionRect.Bottom-2*lineWidth+shift);
+				graphics.DrawLine(pen, captionRect.Right-2*lineWidth+shift, captionRect.Top+2*lineWidth+shift, captionRect.Left+2*lineWidth+shift, captionRect.Bottom-2*lineWidth+shift);
+				return;
+			}
 
-					sf.Alignment=StringAlignment.Center;
-					sf.LineAlignment=StringAlignment.Center;
+			case CaptionButton.Help: {
+				StringFormat	sf = new StringFormat();
+				SolidBrush		sb = new SolidBrush(color);
+				Font				font = new Font("Microsoft Sans Serif", captionRect.Height, FontStyle.Bold, GraphicsUnit.Pixel);
+
+				sf.Alignment=StringAlignment.Center;
+				sf.LineAlignment=StringAlignment.Center;
 
 
-					graphics.DrawString("?", font, sb, captionRect.X+captionRect.Width/2+shift, captionRect.Y+captionRect.Height/2+shift+lineWidth/2, sf);
+				graphics.DrawString("?", font, sb, captionRect.X+captionRect.Width/2+shift, captionRect.Y+captionRect.Height/2+shift+lineWidth/2, sf);
 
-					sf.Dispose();
-					sb.Dispose();
-					font.Dispose();
+				sf.Dispose();
+				sb.Dispose();
+				font.Dispose();
 
-					return;
+				return;
+			}
+
+			case CaptionButton.Maximize: {
+				/* Top 'caption bar' line */
+				for (int i=0; i<Math.Max(2, lineWidth); i++) {
+					graphics.DrawLine(pen, captionRect.Left+lineWidth+shift, captionRect.Top+2*lineWidth+shift+i, captionRect.Right-lineWidth-lineWidth/2+shift, captionRect.Top+2*lineWidth+shift+i);
 				}
 
-				case CaptionButton.Maximize: {
-					/* Top 'caption bar' line */
-					for (int i=0; i<Math.Max(2, lineWidth); i++) {
-						graphics.DrawLine(pen, captionRect.Left+lineWidth+shift, captionRect.Top+2*lineWidth+shift+i, captionRect.Right-lineWidth-lineWidth/2+shift, captionRect.Top+2*lineWidth+shift+i);
-					}
-
-					/* Left side line */
-					for (int i=0; i<Math.Max(1, lineWidth/2); i++) {
-						graphics.DrawLine(pen, captionRect.Left+lineWidth+shift+i, captionRect.Top+2*lineWidth+shift, captionRect.Left+lineWidth+shift+i, captionRect.Bottom-lineWidth+shift);
-					}
-
-					/* Right side line */
-					for (int i=0; i<Math.Max(1, lineWidth/2); i++) {
-						graphics.DrawLine(pen, captionRect.Right-lineWidth-lineWidth/2+shift+i, captionRect.Top+2*lineWidth+shift, captionRect.Right-lineWidth-lineWidth/2+shift+i, captionRect.Bottom-lineWidth+shift);
-					}
-
-					/* Bottom line */
-					for (int i=0; i<Math.Max(1, lineWidth/2); i++) {
-						graphics.DrawLine(pen, captionRect.Left+lineWidth+shift, captionRect.Bottom-lineWidth+shift-i, captionRect.Right-lineWidth-lineWidth/2+shift, captionRect.Bottom-lineWidth+shift-i);
-					}
-					return;
+				/* Left side line */
+				for (int i=0; i<Math.Max(1, lineWidth/2); i++) {
+					graphics.DrawLine(pen, captionRect.Left+lineWidth+shift+i, captionRect.Top+2*lineWidth+shift, captionRect.Left+lineWidth+shift+i, captionRect.Bottom-lineWidth+shift);
 				}
 
-				case CaptionButton.Minimize: {
-					/* Bottom line */
-					for (int i=0; i<Math.Max(2, lineWidth); i++) {
-						graphics.DrawLine(pen, captionRect.Left+lineWidth+shift, captionRect.Bottom-lineWidth+shift-i, captionRect.Right-3*lineWidth+shift, captionRect.Bottom-lineWidth+shift-i);
-					}
-					return;
+				/* Right side line */
+				for (int i=0; i<Math.Max(1, lineWidth/2); i++) {
+					graphics.DrawLine(pen, captionRect.Right-lineWidth-lineWidth/2+shift+i, captionRect.Top+2*lineWidth+shift, captionRect.Right-lineWidth-lineWidth/2+shift+i, captionRect.Bottom-lineWidth+shift);
 				}
 
-				case CaptionButton.Restore: {
-					/** First 'window' **/
-					/* Top 'caption bar' line */
-					for (int i=0; i<Math.Max(2, lineWidth); i++) {
-						graphics.DrawLine(pen, captionRect.Left+3*lineWidth+shift, captionRect.Top+2*lineWidth+shift-i, captionRect.Right-lineWidth-lineWidth/2+shift, captionRect.Top+2*lineWidth+shift-i);
-					}
-
-					/* Left side line */
-					for (int i=0; i<Math.Max(1, lineWidth/2); i++) {
-						graphics.DrawLine(pen, captionRect.Left+3*lineWidth+shift+i, captionRect.Top+2*lineWidth+shift, captionRect.Left+3*lineWidth+shift+i, captionRect.Top+4*lineWidth+shift);
-					}
-
-					/* Right side line */
-					for (int i=0; i<Math.Max(1, lineWidth/2); i++) {
-						graphics.DrawLine(pen, captionRect.Right-lineWidth-lineWidth/2+shift-i, captionRect.Top+2*lineWidth+shift, captionRect.Right-lineWidth-lineWidth/2+shift-i, captionRect.Top+5*lineWidth-lineWidth/2+shift);
-					}
-
-					/* Bottom line */
-					for (int i=0; i<Math.Max(1, lineWidth/2); i++) {
-						graphics.DrawLine(pen, captionRect.Right-3*lineWidth-lineWidth/2+shift, captionRect.Top+5*lineWidth-lineWidth/2+shift+1+i, captionRect.Right-lineWidth-lineWidth/2+shift, captionRect.Top+5*lineWidth-lineWidth/2+shift+1+i);
-					}
-
-					/** Second 'window' **/
-					/* Top 'caption bar' line */
-					for (int i=0; i<Math.Max(2, lineWidth); i++) {
-						graphics.DrawLine(pen, captionRect.Left+lineWidth+shift, captionRect.Top+4*lineWidth+shift+1-i, captionRect.Right-3*lineWidth-lineWidth/2+shift, captionRect.Top+4*lineWidth+shift+1-i);
-					}
-
-					/* Left side line */
-					for (int i=0; i<Math.Max(1, lineWidth/2); i++) {
-						graphics.DrawLine(pen, captionRect.Left+lineWidth+shift+i, captionRect.Top+4*lineWidth+shift+1, captionRect.Left+lineWidth+shift+i, captionRect.Bottom-lineWidth+shift);
-					}
-
-					/* Right side line */
-					for (int i=0; i<Math.Max(1, lineWidth/2); i++) {
-						graphics.DrawLine(pen, captionRect.Right-3*lineWidth-lineWidth/2+shift-i, captionRect.Top+4*lineWidth+shift+1, captionRect.Right-3*lineWidth-lineWidth/2+shift-i, captionRect.Bottom-lineWidth+shift);
-					}
-
-					/* Bottom line */
-					for (int i=0; i<Math.Max(1, lineWidth/2); i++) {
-						graphics.DrawLine(pen, captionRect.Left+lineWidth+shift, captionRect.Bottom-lineWidth+shift-i, captionRect.Right-3*lineWidth-lineWidth/2+shift, captionRect.Bottom-lineWidth+shift-i);
-					}
-
-					return;
+				/* Bottom line */
+				for (int i=0; i<Math.Max(1, lineWidth/2); i++) {
+					graphics.DrawLine(pen, captionRect.Left+lineWidth+shift, captionRect.Bottom-lineWidth+shift-i, captionRect.Right-lineWidth-lineWidth/2+shift, captionRect.Bottom-lineWidth+shift-i);
 				}
+				return;
+			}
+
+			case CaptionButton.Minimize: {
+				/* Bottom line */
+				for (int i=0; i<Math.Max(2, lineWidth); i++) {
+					graphics.DrawLine(pen, captionRect.Left+lineWidth+shift, captionRect.Bottom-lineWidth+shift-i, captionRect.Right-3*lineWidth+shift, captionRect.Bottom-lineWidth+shift-i);
+				}
+				return;
+			}
+
+			case CaptionButton.Restore: {
+				/** First 'window' **/
+				/* Top 'caption bar' line */
+				for (int i=0; i<Math.Max(2, lineWidth); i++) {
+					graphics.DrawLine(pen, captionRect.Left+3*lineWidth+shift, captionRect.Top+2*lineWidth+shift-i, captionRect.Right-lineWidth-lineWidth/2+shift, captionRect.Top+2*lineWidth+shift-i);
+				}
+
+				/* Left side line */
+				for (int i=0; i<Math.Max(1, lineWidth/2); i++) {
+					graphics.DrawLine(pen, captionRect.Left+3*lineWidth+shift+i, captionRect.Top+2*lineWidth+shift, captionRect.Left+3*lineWidth+shift+i, captionRect.Top+4*lineWidth+shift);
+				}
+
+				/* Right side line */
+				for (int i=0; i<Math.Max(1, lineWidth/2); i++) {
+					graphics.DrawLine(pen, captionRect.Right-lineWidth-lineWidth/2+shift-i, captionRect.Top+2*lineWidth+shift, captionRect.Right-lineWidth-lineWidth/2+shift-i, captionRect.Top+5*lineWidth-lineWidth/2+shift);
+				}
+
+				/* Bottom line */
+				for (int i=0; i<Math.Max(1, lineWidth/2); i++) {
+					graphics.DrawLine(pen, captionRect.Right-3*lineWidth-lineWidth/2+shift, captionRect.Top+5*lineWidth-lineWidth/2+shift+1+i, captionRect.Right-lineWidth-lineWidth/2+shift, captionRect.Top+5*lineWidth-lineWidth/2+shift+1+i);
+				}
+
+				/** Second 'window' **/
+				/* Top 'caption bar' line */
+				for (int i=0; i<Math.Max(2, lineWidth); i++) {
+					graphics.DrawLine(pen, captionRect.Left+lineWidth+shift, captionRect.Top+4*lineWidth+shift+1-i, captionRect.Right-3*lineWidth-lineWidth/2+shift, captionRect.Top+4*lineWidth+shift+1-i);
+				}
+
+				/* Left side line */
+				for (int i=0; i<Math.Max(1, lineWidth/2); i++) {
+					graphics.DrawLine(pen, captionRect.Left+lineWidth+shift+i, captionRect.Top+4*lineWidth+shift+1, captionRect.Left+lineWidth+shift+i, captionRect.Bottom-lineWidth+shift);
+				}
+
+				/* Right side line */
+				for (int i=0; i<Math.Max(1, lineWidth/2); i++) {
+					graphics.DrawLine(pen, captionRect.Right-3*lineWidth-lineWidth/2+shift-i, captionRect.Top+4*lineWidth+shift+1, captionRect.Right-3*lineWidth-lineWidth/2+shift-i, captionRect.Bottom-lineWidth+shift);
+				}
+
+				/* Bottom line */
+				for (int i=0; i<Math.Max(1, lineWidth/2); i++) {
+					graphics.DrawLine(pen, captionRect.Left+lineWidth+shift, captionRect.Bottom-lineWidth+shift-i, captionRect.Right-3*lineWidth-lineWidth/2+shift, captionRect.Bottom-lineWidth+shift-i);
+				}
+
+				return;
+			}
 
 			}
 		}
 
 		[MonoTODO("Finish drawing code for Caption, Menu and Scroll")]
-		private void DrawFrameControl(Graphics graphics, Rectangle rectangle, DrawFrameControlTypes Type, DrawFrameControlStates State) 
-		{
+		private void DrawFrameControl(Graphics graphics, Rectangle rectangle, DrawFrameControlTypes Type, DrawFrameControlStates State) {
 			switch(Type) {
-				case DrawFrameControlTypes.Button: {
-					if ((State & DrawFrameControlStates.ButtonPush)!=0) {
-						/* Goes first, affects the background */
-						if ((State & DrawFrameControlStates.Checked)!=0) {
-							HatchBrush	hatchBrush=new HatchBrush(HatchStyle.Percent50, SystemColors.ControlLight, SystemColors.ControlLightLight);
-							graphics.FillRectangle(hatchBrush,rectangle);
-							hatchBrush.Dispose();
-						}
-
-						if ((State & DrawFrameControlStates.Pushed)!=0) {
-							DrawBorder3D(graphics, rectangle, Border3DStyle.Sunken, Border3DSide.Left | Border3DSide.Top | Border3DSide.Right | Border3DSide.Bottom);
-						} else if ((State & DrawFrameControlStates.Flat)!=0) {
-							ControlPaint.DrawBorder(graphics, rectangle, ColorButtonShadow, ButtonBorderStyle.Solid);
-						} else if ((State & DrawFrameControlStates.Inactive)!=0) {
-							/* Same as normal, it would seem */
-							DrawBorder3D(graphics, rectangle, Border3DStyle.Raised, Border3DSide.Left | Border3DSide.Top | Border3DSide.Right | Border3DSide.Bottom);
-						} else {
-							DrawBorder3D(graphics, rectangle, Border3DStyle.Raised, Border3DSide.Left | Border3DSide.Top | Border3DSide.Right | Border3DSide.Bottom);
-						}
-					} else if ((State & DrawFrameControlStates.ButtonRadio)!=0) {
-						Pen			penFatDark	= new Pen(ColorButtonShadow, 2);
-						Pen			penFatLight	= new Pen(SystemColors.ControlLight, 2);
-						int			lineWidth;
-
-						graphics.DrawArc(penFatDark, rectangle.X+1, rectangle.Y+1, rectangle.Width-2, rectangle.Height-2, 135, 180);
-						graphics.DrawArc(penFatLight, rectangle.X+1, rectangle.Y+1, rectangle.Width-2, rectangle.Height-2, 315, 180);
-
-						graphics.DrawArc(SystemPens.ControlDark, rectangle, 135, 180);
-						graphics.DrawArc(SystemPens.ControlLightLight, rectangle, 315, 180);
-
-						lineWidth=Math.Max(1, Math.Min(rectangle.Width, rectangle.Height)/3);
-
-						if ((State & DrawFrameControlStates.Checked)!=0) {
-							SolidBrush	buttonBrush;
-
-							if ((State & DrawFrameControlStates.Inactive)!=0) {
-								buttonBrush=(SolidBrush)SystemBrushes.ControlDark;
-							} else {
-								buttonBrush=(SolidBrush)SystemBrushes.ControlText;
-							}
-							graphics.FillPie(buttonBrush, rectangle.X+lineWidth, rectangle.Y+lineWidth, rectangle.Width-lineWidth*2, rectangle.Height-lineWidth*2, 0, 359);
-						}
-						penFatDark.Dispose();
-						penFatLight.Dispose();
-					} else if ((State & DrawFrameControlStates.ButtonRadioImage)!=0) {
-						throw new NotImplementedException () ;
-					} else if ((State & DrawFrameControlStates.ButtonRadioMask)!=0) {
-						throw new NotImplementedException ();
-					} else {	/* Must be Checkbox */
-						Pen			pen;
-						int			lineWidth;
-						Rectangle	rect;
-						int			Scale;
-
-						/* FIXME: I'm sure there's an easier way to calculate all this, but it should do for now */
-
-						/* Goes first, affects the background */
-						if ((State & DrawFrameControlStates.Pushed)!=0) {
-							HatchBrush	hatchBrush=new HatchBrush(HatchStyle.Percent50, SystemColors.ControlLight, SystemColors.ControlLightLight);
-							graphics.FillRectangle(hatchBrush,rectangle);
-							hatchBrush.Dispose();
-						}
-
-						/* Draw the sunken frame */
-						if ((State & DrawFrameControlStates.Flat)!=0) {
-							ControlPaint.DrawBorder(graphics, rectangle, ColorButtonShadow, ButtonBorderStyle.Solid);
-						} else {
-							DrawBorder3D(graphics, rectangle, Border3DStyle.Sunken, Border3DSide.Left | Border3DSide.Top | Border3DSide.Right | Border3DSide.Bottom);
-						}
-
-						/* Make sure we've got at least a line width of 1 */
-						lineWidth=Math.Max(3, rectangle.Width/6);
-						Scale=Math.Max(1, rectangle.Width/12);
-
-						rect=new Rectangle(rectangle.X+lineWidth, rectangle.Y+lineWidth, rectangle.Width-lineWidth*2, rectangle.Height-lineWidth*2);
-						if ((State & DrawFrameControlStates.Inactive)!=0) {
-							pen=SystemPens.ControlDark;
-						} else {
-							pen=SystemPens.ControlText;
-						}
-
-						if ((State & DrawFrameControlStates.Checked)!=0) {
-							/* Need to draw a check-mark */
-							for (int i=0; i<lineWidth; i++) {
-								graphics.DrawLine(pen, rect.Left+lineWidth/2, rect.Top+lineWidth+i, rect.Left+lineWidth/2+2*Scale, rect.Top+lineWidth+2*Scale+i);
-								graphics.DrawLine(pen, rect.Left+lineWidth/2+2*Scale, rect.Top+lineWidth+2*Scale+i, rect.Left+lineWidth/2+6*Scale, rect.Top+lineWidth-2*Scale+i);
-							}
-
-						}
+			case DrawFrameControlTypes.Button: {
+				if ((State & DrawFrameControlStates.ButtonPush)!=0) {
+					/* Goes first, affects the background */
+					if ((State & DrawFrameControlStates.Checked)!=0) {
+						HatchBrush	hatchBrush=new HatchBrush(HatchStyle.Percent50, SystemColors.ControlLight, SystemColors.ControlLightLight);
+						graphics.FillRectangle(hatchBrush,rectangle);
+						hatchBrush.Dispose();
 					}
-					return;
-				}
 
-				case DrawFrameControlTypes.Caption: {
-					// FIXME:
-					break;
-				}
+					if ((State & DrawFrameControlStates.Pushed)!=0) {
+						CPDrawBorder3D(graphics, rectangle, Border3DStyle.Sunken, Border3DSide.Left | Border3DSide.Top | Border3DSide.Right | Border3DSide.Bottom);
+					} else if ((State & DrawFrameControlStates.Flat)!=0) {
+						ControlPaint.DrawBorder(graphics, rectangle, ColorButtonShadow, ButtonBorderStyle.Solid);
+					} else if ((State & DrawFrameControlStates.Inactive)!=0) {
+						/* Same as normal, it would seem */
+						CPDrawBorder3D(graphics, rectangle, Border3DStyle.Raised, Border3DSide.Left | Border3DSide.Top | Border3DSide.Right | Border3DSide.Bottom);
+					} else {
+						CPDrawBorder3D(graphics, rectangle, Border3DStyle.Raised, Border3DSide.Left | Border3DSide.Top | Border3DSide.Right | Border3DSide.Bottom);
+					}
+				} else if ((State & DrawFrameControlStates.ButtonRadio)!=0) {
+					Pen			penFatDark	= new Pen(ColorButtonShadow, 2);
+					Pen			penFatLight	= new Pen(SystemColors.ControlLight, 2);
+					int			lineWidth;
 
-				case DrawFrameControlTypes.Menu: {
-					// FIXME:
-					break;
-				}
+					graphics.DrawArc(penFatDark, rectangle.X+1, rectangle.Y+1, rectangle.Width-2, rectangle.Height-2, 135, 180);
+					graphics.DrawArc(penFatLight, rectangle.X+1, rectangle.Y+1, rectangle.Width-2, rectangle.Height-2, 315, 180);
 
-				case DrawFrameControlTypes.Scroll: {
-					// FIXME:
-					break;
+					graphics.DrawArc(SystemPens.ControlDark, rectangle, 135, 180);
+					graphics.DrawArc(SystemPens.ControlLightLight, rectangle, 315, 180);
+
+					lineWidth=Math.Max(1, Math.Min(rectangle.Width, rectangle.Height)/3);
+
+					if ((State & DrawFrameControlStates.Checked)!=0) {
+						SolidBrush	buttonBrush;
+
+						if ((State & DrawFrameControlStates.Inactive)!=0) {
+							buttonBrush=(SolidBrush)SystemBrushes.ControlDark;
+						} else {
+							buttonBrush=(SolidBrush)SystemBrushes.ControlText;
+						}
+						graphics.FillPie(buttonBrush, rectangle.X+lineWidth, rectangle.Y+lineWidth, rectangle.Width-lineWidth*2, rectangle.Height-lineWidth*2, 0, 359);
+					}
+					penFatDark.Dispose();
+					penFatLight.Dispose();
+				} else if ((State & DrawFrameControlStates.ButtonRadioImage)!=0) {
+					throw new NotImplementedException () ;
+				} else if ((State & DrawFrameControlStates.ButtonRadioMask)!=0) {
+					throw new NotImplementedException ();
+				} else {	/* Must be Checkbox */
+					Pen			pen;
+					int			lineWidth;
+					Rectangle	rect;
+					int			Scale;
+
+					/* FIXME: I'm sure there's an easier way to calculate all this, but it should do for now */
+
+					/* Goes first, affects the background */
+					if ((State & DrawFrameControlStates.Pushed)!=0) {
+						HatchBrush	hatchBrush=new HatchBrush(HatchStyle.Percent50, SystemColors.ControlLight, SystemColors.ControlLightLight);
+						graphics.FillRectangle(hatchBrush,rectangle);
+						hatchBrush.Dispose();
+					}
+
+					/* Draw the sunken frame */
+					if ((State & DrawFrameControlStates.Flat)!=0) {
+						ControlPaint.DrawBorder(graphics, rectangle, ColorButtonShadow, ButtonBorderStyle.Solid);
+					} else {
+						CPDrawBorder3D(graphics, rectangle, Border3DStyle.Sunken, Border3DSide.Left | Border3DSide.Top | Border3DSide.Right | Border3DSide.Bottom);
+					}
+
+					/* Make sure we've got at least a line width of 1 */
+					lineWidth=Math.Max(3, rectangle.Width/6);
+					Scale=Math.Max(1, rectangle.Width/12);
+
+					rect=new Rectangle(rectangle.X+lineWidth, rectangle.Y+lineWidth, rectangle.Width-lineWidth*2, rectangle.Height-lineWidth*2);
+					if ((State & DrawFrameControlStates.Inactive)!=0) {
+						pen=SystemPens.ControlDark;
+					} else {
+						pen=SystemPens.ControlText;
+					}
+
+					if ((State & DrawFrameControlStates.Checked)!=0) {
+						/* Need to draw a check-mark */
+						for (int i=0; i<lineWidth; i++) {
+							graphics.DrawLine(pen, rect.Left+lineWidth/2, rect.Top+lineWidth+i, rect.Left+lineWidth/2+2*Scale, rect.Top+lineWidth+2*Scale+i);
+							graphics.DrawLine(pen, rect.Left+lineWidth/2+2*Scale, rect.Top+lineWidth+2*Scale+i, rect.Left+lineWidth/2+6*Scale, rect.Top+lineWidth-2*Scale+i);
+						}
+
+					}
 				}
+				return;
+			}
+
+			case DrawFrameControlTypes.Caption: {
+				// FIXME:
+				break;
+			}
+
+			case DrawFrameControlTypes.Menu: {
+				// FIXME:
+				break;
+			}
+
+			case DrawFrameControlTypes.Scroll: {
+				// FIXME:
+				break;
+			}
 			}
 		}
 
 		/* Generic scroll button */
-		public void DrawScrollButtonPrimitive (Graphics dc, Rectangle area, ButtonState state)
-		{
+		public void DrawScrollButtonPrimitive (Graphics dc, Rectangle area, ButtonState state) {
 			if ((state & ButtonState.Pushed) == ButtonState.Pushed) {
 				dc.FillRectangle (ResPool.GetSolidBrush (ColorButtonFace), area.X + 1,
 					area.Y + 1, area.Width - 2 , area.Height - 2);
@@ -2487,8 +3086,7 @@ namespace System.Windows.Forms
 			
 		}
 		
-		public override void DrawBorderStyle (Graphics dc, Rectangle area, BorderStyle border_style)
-		{
+		public override void CPDrawBorderStyle (Graphics dc, Rectangle area, BorderStyle border_style) {
 			switch (border_style){
 			case BorderStyle.Fixed3D:				
 				dc.DrawLine (ResPool.GetPen (ColorButtonShadow), area.X, area.Y, area.X +area.Width, area.Y);
@@ -2507,20 +3105,8 @@ namespace System.Windows.Forms
 			}
 			
 		}
+		#endregion	// ControlPaint
 
-		protected SolidBrush GetControlBackBrush (Color c)
-		{
-			if (c == DefaultControlBackColor)
-				return ResPool.GetSolidBrush (ColorButtonFace);
-			return new SolidBrush (c);
-		}
-
-		protected SolidBrush GetControlForeBrush (Color c)
-		{
-			if (c == DefaultControlForeColor)
-				return ResPool.GetSolidBrush (ColorButtonText);
-			return new SolidBrush (c);
-		}
 
 	} //class
 }

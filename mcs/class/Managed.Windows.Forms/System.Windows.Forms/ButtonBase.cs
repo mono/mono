@@ -23,6 +23,17 @@
 //	Peter Bartok	pbartok@novell.com
 //
 // $Log: ButtonBase.cs,v $
+// Revision 1.9  2004/09/28 18:44:25  pbartok
+// - Streamlined Theme interfaces:
+//   * Each DrawXXX method for a control now is passed the object for the
+//     control to be drawn in order to allow accessing any state the theme
+//     might require
+//
+//   * ControlPaint methods for the theme now have a CP prefix to avoid
+//     name clashes with the Draw methods for controls
+//
+//   * Every control now retrieves it's DefaultSize from the current theme
+//
 // Revision 1.8  2004/09/02 22:24:35  pbartok
 // - Fixed selection of text color
 // - Fixed handling of resize event; now properly recreates double buffering
@@ -67,18 +78,18 @@ using System.Drawing;
 namespace System.Windows.Forms {
 	public abstract class ButtonBase : Control {
 		#region Local Variables
-		private FlatStyle		flat_style;
-		private int			image_index;
-		private Image			image;
-		private ImageList		image_list;
-		private ContentAlignment	image_alignment;
-		private ContentAlignment	text_alignment;
+		internal FlatStyle		flat_style;
+		internal int			image_index;
+		internal Image			image;
+		internal ImageList		image_list;
+		internal ContentAlignment	image_alignment;
+		internal ContentAlignment	text_alignment;
 		private ImeMode			ime_mode;
 		private bool			is_default;
-		private bool			has_focus;
-		private bool			is_pressed;
-		private bool			is_entered;
-		StringFormat			text_format;
+		internal bool			has_focus;
+		internal bool			is_pressed;
+		internal bool			is_entered;
+		internal StringFormat		text_format;
 		#endregion	// Local Variables
 
 		#region Private Properties and Methods
@@ -113,132 +124,7 @@ namespace System.Windows.Forms {
 
 		[MonoTODO("Make the FillRectangle use a global brush instead of creating one every time")]
 		internal virtual void Redraw() {
-			ButtonState	state;
-			int		width;
-			int		height;
-
-			width = this.ClientSize.Width;
-			height = this.ClientSize.Height;
-
-			SolidBrush	sb = new SolidBrush(this.BackColor);
-			this.DeviceContext.FillRectangle(sb, this.ClientRectangle);
-			sb.Dispose();
-
-			ThemeEngine.Current.DrawButton(this.DeviceContext, this.ClientRectangle, this.ButtonState);
-
-			if (has_focus) {
-				ThemeEngine.Current.DrawFocusRectangle(this.DeviceContext, this.ClientRectangle, ThemeEngine.Current.ColorButtonText, ThemeEngine.Current.ColorButtonFace);
-			}
-
-			// First, draw the image
-			if ((image != null) || (image_list != null)) {
-				// Need to draw a picture
-				Image	i;
-				int	image_x;
-				int	image_y;
-				int	image_width;
-				int	image_height;
-
-				if (ImageIndex!=-1) {	// We use ImageIndex instead of image_index since it will return -1 if image_list is null
-					i = this.image_list.Images[image_index];
-				} else {
-					i = this.image;
-				}
-
-				image_width = image.Width;
-				image_height = image.Height;
-
-				switch(image_alignment) {
-					case ContentAlignment.TopLeft: {
-						image_x=0;
-						image_y=0;
-						break;
-					}
-
-					case ContentAlignment.TopCenter: {
-						image_x=(width-image_width)/2;
-						image_y=0;
-						break;
-					}
-
-					case ContentAlignment.TopRight: {
-						image_x=width-image_width;
-						image_y=0;
-						break;
-					}
-
-					case ContentAlignment.MiddleLeft: {
-						image_x=0;
-						image_y=(height-image_height)/2;
-						break;
-					}
-
-					case ContentAlignment.MiddleCenter: {
-						image_x=(width-image_width)/2;
-						image_y=(height-image_height)/2;
-						break;
-					}
-
-					case ContentAlignment.MiddleRight: {
-						image_x=width-image_width;
-						image_y=(height-image_height)/2;
-						break;
-					}
-
-					case ContentAlignment.BottomLeft: {
-						image_x=0;
-						image_y=height-image_height;
-						break;
-					}
-
-					case ContentAlignment.BottomCenter: {
-						image_x=(width-image_width)/2;
-						image_y=height-image_height;
-						break;
-					}
-
-					case ContentAlignment.BottomRight: {
-						image_x=width-image_width;
-						image_y=height-image_height;
-						break;
-					}
-
-					default: {
-						image_x=0;
-						image_y=0;
-						break;
-					}
-				}
-
-				if (is_pressed) {
-					image_x+=2;
-					image_y+=2;
-				}
-
-				if (is_enabled) {
-					this.DeviceContext.DrawImage(i, image_x, image_y); 
-				} else {
-					ThemeEngine.Current.DrawImageDisabled(this.DeviceContext, i, image_x, image_y, ThemeEngine.Current.ColorButtonFace);
-				}
-			}
-
-			// Now the text
-			if (text != null && text != String.Empty) {
-				Rectangle	text_rect = new Rectangle(3, 3, ClientSize.Width-6, ClientSize.Height-6); // FIXME; calculate rect properly
-
-				if (is_pressed) {
-					text_rect.X++;
-					text_rect.Y++;
-				}
-
-				if (is_enabled) {
-					SolidBrush	b = new SolidBrush(this.ForeColor);
-					this.DeviceContext.DrawString(text, this.Font, b, text_rect, text_format);
-					b.Dispose();
-				} else {
-					ThemeEngine.Current.DrawStringDisabled(this.DeviceContext, text, this.Font, ThemeEngine.Current.ColorButtonText, text_rect, text_format);
-				}
-			}
+			ThemeEngine.Current.DrawButtonBase(this.DeviceContext, this.ClientRectangle, this);
 			Refresh();
 		}
 
@@ -268,6 +154,8 @@ namespace System.Windows.Forms {
 			text_format	= new StringFormat();
 			text_format.Alignment = StringAlignment.Center;
 			text_format.LineAlignment = StringAlignment.Center;
+
+			CreateBuffers(client_size.Width, this.client_size.Height);
 
 			SizeChanged+=new System.EventHandler(SizeEvent);
 			TextChanged+=new System.EventHandler(RedrawEvent);
@@ -451,7 +339,7 @@ namespace System.Windows.Forms {
 
 		protected override Size DefaultSize {
 			get {
-				return new Size(75, 23);
+				return ThemeEngine.Current.ButtonBaseDefaultSize;
 			}
 		}
 
@@ -473,7 +361,6 @@ namespace System.Windows.Forms {
 		[MonoTODO("Finish setting properties of the AccessibleObject")]
 		protected override AccessibleObject CreateAccessibilityInstance() {
 			AccessibleObject ao;
-
 			ao=base.CreateAccessibilityInstance();
 			ao.description="Button";
 
