@@ -1,3 +1,19 @@
+2001-12-14  Miguel de Icaza  <miguel@ximian.com>
+
+	* parameter.cs (GetParameterInfo): return a zero-sized array.
+
+	* class.cs (TypeContainer.MethodModifiersValid): Move all the
+	method modifier validation to the typecontainer so we can reuse
+	this on properties.
+
+	(MethodCore.ParameterTypes): return an empty sized array of types.
+
+	(Property.Define): Test property modifier validity.
+
+	Add tests for sealed/override too.
+
+	(Method.Emit): abstract or extern methods have no bodies.
+
 2001-12-14  Ravi Pratap  <ravi@ximian.com>
 
 	* class.cs (Method.IsPInvoke): Get rid of it as it is an expensive

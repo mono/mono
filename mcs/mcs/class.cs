@@ -1495,7 +1495,7 @@ namespace Mono.CSharp {
 					d.CloseDelegate ();
 		}
 
-		string MakeName (string n)
+		public string MakeName (string n)
 		{
 			return "`" + Name + "." + n + "'";
 		}
@@ -1503,6 +1503,93 @@ namespace Mono.CSharp {
 		public static int CheckMember (string name, MemberInfo mi, int ModFlags)
 		{
 			return 0;
+		}
+
+		//
+		// Performs the validation on a Method's modifiers (properties have
+		// the same properties).
+		//
+		public bool MethodModifiersValid (int flags, string n, Location loc)
+		{
+			const int vao = (Modifiers.VIRTUAL | Modifiers.ABSTRACT | Modifiers.OVERRIDE);
+			const int nv = (Modifiers.NEW | Modifiers.VIRTUAL);
+			bool ok = true;
+			string name = MakeName (n);
+			
+			//
+			// At most one of static, virtual or override
+			//
+			if ((flags & Modifiers.STATIC) != 0){
+				if ((flags & vao) != 0){
+					Report.Error (
+						112, loc, "static method " + name + "can not be marked " +
+						"as virtual, abstract or override");
+					ok = false;
+				}
+			}
+
+			if ((flags & Modifiers.OVERRIDE) != 0 && (flags & nv) != 0){
+				Report.Error (
+					113, loc, name +
+					" marked as override cannot be marked as new or virtual");
+				ok = false;
+			}
+
+			//
+			// If the declaration includes the abstract modifier, then the
+			// declaration does not include static, virtual or extern
+			//
+			if ((flags & Modifiers.ABSTRACT) != 0){
+				if ((flags & Modifiers.EXTERN) != 0){
+					Report.Error (
+						180, loc, name + " can not be both abstract and extern");
+					ok = false;
+				}
+
+				if ((flags & Modifiers.VIRTUAL) != 0){
+					Report.Error (
+						503, loc, name + " can not be both abstract and virtual");
+					ok = false;
+				}
+
+				if ((ModFlags & Modifiers.ABSTRACT) == 0){
+					Report.Error (
+						513, loc, name +
+						" is abstract but its container class is not");
+					ok = false;
+
+				}
+			}
+
+			if ((flags & Modifiers.PRIVATE) != 0){
+				if ((flags & vao) != 0){
+					Report.Error (
+						621, loc, name +
+						" virtual or abstract members can not be private");
+					ok = false;
+				}
+			}
+
+			if ((flags & Modifiers.SEALED) != 0){
+				if ((flags & Modifiers.OVERRIDE) == 0){
+					Report.Error (
+						238, loc, name +
+						" cannot be sealed because it is not an override");
+					ok = false;
+				}
+			}
+
+			return ok;
+		}
+
+		//
+		// Returns true if `type' is as accessible as the flags `flags'
+		// given for this member
+		//
+		static public bool AsAccessible (Type type, int flags)
+		{
+			// FIXME: Implement me
+			return true;
 		}
 	}
 
@@ -1703,7 +1790,7 @@ namespace Mono.CSharp {
 				return false;
 
 			MethodSignature sig = (MethodSignature) filter_criteria;
-			
+
 			if (m.Name != sig.Name)
 				return false;
 			
@@ -1774,16 +1861,11 @@ namespace Mono.CSharp {
 							   
 		}
 
-		string MakeName (TypeContainer parent)
-		{
-			return "`" + parent.Name + "." + Name + "'";
-		}
-
 		string MethodBaseName (MethodBase mb)
 		{
 			return "`" + mb.ReflectedType.Name + "." + mb.Name + "'";
 		}
-		
+
 		bool CheckMethod (TypeContainer parent, MemberInfo [] mi)
 		{
 			MethodInfo mb = (MethodInfo) mi [0];
@@ -1791,7 +1873,7 @@ namespace Mono.CSharp {
 			if ((ModFlags & (Modifiers.NEW | Modifiers.OVERRIDE)) == 0){
 				Report.Warning (
 					108, Location, "The keyword new is required on " + 
-					MakeName (parent) + " because it hides `" +
+					parent.MakeName (Name) + " because it hides `" +
 					mb.ReflectedType.Name + "." +
 					mb.Name + "'");
 			}
@@ -1799,7 +1881,7 @@ namespace Mono.CSharp {
 			if (mb.IsVirtual || mb.IsAbstract){
 				if ((ModFlags & (Modifiers.NEW | Modifiers.OVERRIDE)) == 0){
 					Report.Warning (
-						114, Location, MakeName (parent) + 
+						114, Location, parent.MakeName (Name) + 
 						"hides inherited member " + MethodBaseName (mb) +
 						".  To make the current member override that " +
 						"implementation, add the override keyword, " +
@@ -1822,6 +1904,23 @@ namespace Mono.CSharp {
 			MethodInfo implementing;
 			Type iface_type = null;
 			string iface = "", short_name;
+
+			if (!parent.MethodModifiersValid (ModFlags, Name, Location))
+				return null;
+
+			//
+			// verify accessibility
+			//
+			if (!TypeContainer.AsAccessible (ret_type, ModFlags))
+				return null;
+
+			if (parameters != null)
+				foreach (Type partype in parameters)
+					if (!TypeContainer.AsAccessible (partype, ModFlags))
+						error = true;
+
+			if (error)
+				return null;
 			
 			//
 			// Verify if the parent has a type with the same name, and then
@@ -1847,7 +1946,7 @@ namespace Mono.CSharp {
 					
 					if ((ModFlags & Modifiers.OVERRIDE) != 0)
 						Report.Error (115, Location,
-							      MakeName (parent) +
+							      parent.MakeName (Name) +
 							      " no suitable methods found to override");
 				}
 			} else if ((ModFlags & Modifiers.NEW) != 0)
@@ -1923,62 +2022,6 @@ namespace Mono.CSharp {
 				parent.IsInterfaceMethod (
 					iface_type, short_name, ret_type, parameters, true);
 			}
-
-			//
-			// Catch invalid uses of virtual and abtract modifiers
-			//
-			const int va = (Modifiers.VIRTUAL | Modifiers.ABSTRACT);
-			const int vao = (Modifiers.VIRTUAL | Modifiers.ABSTRACT | Modifiers.OVERRIDE);
-			const int nv = (Modifiers.NEW | Modifiers.VIRTUAL);
-
-			if ((ModFlags & va) == va){
-				Report.Error (
-					503, Location, "The abstract method " +
-					MakeName (parent) + "can not be marked virtual");
-				error = true;
-			}
-
-			if ((ModFlags & Modifiers.ABSTRACT) != 0){
-				if ((parent.ModFlags & Modifiers.ABSTRACT) == 0){
-					Report.Error (
-						513, Location, MakeName (parent) +
-						" is abstract but its container class is not");
-					error = true;
-				}
-			}
-
-			if ((ModFlags & va) != 0 && ((ModFlags & Modifiers.PRIVATE) != 0)){
-				Report.Error (
-					621, Location, MakeName (parent) +
-					" virtual or abstract members can not be private");
-				error = true;
-			}
-
-			if ((ModFlags & Modifiers.STATIC) != 0){
-				if ((ModFlags & vao) != 0){
-					Report.Error (
-						112, Location, "static method " + MakeName (parent) +
-						" can not be marked as virtual, abstract or override");
-
-					error = true;
-				}
-			}
-			
-			if ((ModFlags & Modifiers.OVERRIDE) != 0 && ((ModFlags & nv) != 0)){
-				Report.Error (
-					113, Location, MakeName (parent) +
-					"marked as override cannot be marked as new or virtual");
-				error = true;
-			}
-
-			if ((ModFlags & Modifiers.EXTERN) != 0 && (ModFlags & Modifiers.ABSTRACT) != 0) {
-				Report.Error (180, Location, MakeName (parent) +
-					      " cannot be both extern and abstract");
-				error = true;
-			}
-
-			if (error)
-				return null;
 
 			Attribute dllimport_attr = null;
 			if (OptAttributes != null && OptAttributes.AttributeSections != null) {
@@ -2118,6 +2161,12 @@ namespace Mono.CSharp {
 					}
 				}
 			}
+
+			//
+			// abstract or extern methods have no bodies
+			//
+			if ((ModFlags & (Modifiers.ABSTRACT | Modifiers.EXTERN)) != 0)
+				return;
 
 			//
 			// Handle destructors specially
@@ -2459,9 +2508,11 @@ namespace Mono.CSharp {
 
 		public void Define (TypeContainer parent)
 		{
-
 			MethodAttributes method_attr = Modifiers.MethodAttr(ModFlags);
-					
+
+			if (!parent.MethodModifiersValid (ModFlags, Name, Location))
+				return;
+
 			// FIXME - PropertyAttributes.HasDefault ?
 
 			PropertyAttributes prop_attr = PropertyAttributes.RTSpecialName |
@@ -2472,6 +2523,9 @@ namespace Mono.CSharp {
 			Type [] parameters = new Type [1];
 			parameters [0] = PropertyType;
 
+			if (!TypeContainer.AsAccessible (PropertyType, ModFlags))
+				return;
+			
 			PropertyBuilder = parent.TypeBuilder.DefineProperty (
 				Name, prop_attr, PropertyType, null);
 

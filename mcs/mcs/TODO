@@ -3,6 +3,8 @@ Major tasks:
 
 	Apply the method verification process to indexers and properties as well.
 
+	Properties and 17.6.3: Finish it.
+
 BUGS
 ----
 
@@ -113,6 +115,14 @@ BUGS
 	Currently various hashtables fail because the Equals implementation
 	for MethodBuilders is not complete enough.  We could work around this
 	by having our own Hashtable implementation.
+
+* We need to catch:
+
+	extern string Property {
+		get { } 
+	}
+
+	The get there should only have a semicolon
 	
 *
 > // CSC sets beforefieldinit
