@@ -51,6 +51,7 @@ namespace System.Reflection {
 		internal string name;
 		internal string scopename;
 		internal bool is_resource;
+		internal int token;
 	
 		const BindingFlags defaultBindingFlags = 
 			BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance;
@@ -87,7 +88,12 @@ namespace System.Reflection {
 			get {
 				return new ModuleHandle (_impl);
 			}
-		}			
+		}
+
+		public extern int MetadataToken {
+			[MethodImplAttribute (MethodImplOptions.InternalCall)]
+			get;
+		}		
 #endif
 	
 		public virtual Type[] FindTypes(TypeFilter filter, object filterCriteria) 

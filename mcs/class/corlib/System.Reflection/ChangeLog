@@ -1,3 +1,9 @@
+2004-09-20  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Assembly.cs: Implement 2.0 reflection properties.
+
+	* Module.cs: Implement 2.0 reflection properties. Add 'token' field.
+
 2004-09-19  Zoltan Varga  <vargaz@freemail.hu>
 
 	* PortableExecutableKind.cs ImageFileMachine.cs: Make this internal

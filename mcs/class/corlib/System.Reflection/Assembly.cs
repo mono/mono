@@ -628,28 +628,38 @@ namespace System.Reflection {
 			get { return 0; }
 		}
 
-		[MonoTODO ("choice is rather limited")]
 		[ComVisible (false)]
 		public ImageFileMachine ImageFileMachine {
-			get { return ImageFileMachine.I386; }
+			get {
+				ImageFileMachine machine;
+				PortableExecutableKind kind;
+				ModuleHandle handle = ManifestModule.ModuleHandle;
+				handle.GetPEKind (out kind, out machine);
+				return machine;
+			}
 		}
 
-		[MonoTODO]
 		[ComVisible (false)]
-		public Module ManifestModule {
-			get { return null; }
+		public extern Module ManifestModule {
+			[MethodImplAttribute (MethodImplOptions.InternalCall)]
+			get;
 		}
 
-		[MonoTODO]
 		[ComVisible (false)]
-		public int MetadataToken {
-			get { return 0; }
+		public extern int MetadataToken {
+			[MethodImplAttribute (MethodImplOptions.InternalCall)]
+			get;
 		}
 
-		[MonoTODO]
 		[ComVisible (false)]
 		public PortableExecutableKind PortableExecutableKind {
-			get { return PortableExecutableKind.ILOnly; }
+			get {
+				ImageFileMachine machine;
+				PortableExecutableKind kind;
+				ModuleHandle handle = ManifestModule.ModuleHandle;
+				handle.GetPEKind (out kind, out machine);
+				return kind;
+			}
 		}
 
 		[MonoTODO ("see ReflectionOnlyLoad")]
