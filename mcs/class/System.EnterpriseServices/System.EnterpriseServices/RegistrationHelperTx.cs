@@ -12,6 +12,7 @@ using System.Runtime.InteropServices;
 
 namespace System.EnterpriseServices {
 	[Guid("9e31421c-2f15-4f35-ad20-66fb9d4cd428")]
+	[TransactionAttribute (TransactionOption.RequiresNew)]
 	public sealed class RegistrationHelperTx : ServicedComponent {
 
 		#region Constructors

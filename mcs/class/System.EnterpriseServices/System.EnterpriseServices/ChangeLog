@@ -1,10 +1,15 @@
-2004-05-15  Gert Driesen (drieseng@users.sourceforge.net)
+2004-06-11  Gert Driesen (drieseng@users.sourceforge.net>
+
+	* RegistrationHelperTx.cs: added missing attribute on class
+	* TransactionOption.cs: corrected values of enum fields
+
+2004-05-15  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* ServiceDomain.cs: added private ctor to match MS
 	* BYOT.cs: added private ctor to match MS
 	* RegistrationErrorInfo.cs: marked ctor internal
 
-2004-05-15  Gert Driesen (drieseng@users.sourceforge.net)
+2004-05-15  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* IConfigurationAttribute.cs: added
 	* ApplicationAccessControlAttribute.cs:
