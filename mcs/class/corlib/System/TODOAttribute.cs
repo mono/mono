@@ -16,10 +16,10 @@ namespace System {
 	/// <remarks>
 	///   Use this to decorate any element which you think is not complete
 	/// </remarks>
-	[AttributeUsage (AttributeTargets.All)]
-	internal class MonoTODOAttribute : Attribute {
+	[AttributeUsage (AttributeTargets.All, AllowMultiple=true)]
+	public class MonoTODOAttribute : Attribute {
 
-		string comment;
+		private string comment;
 		
 		public MonoTODOAttribute ()
 		{}
@@ -27,6 +27,11 @@ namespace System {
 		public MonoTODOAttribute (string comment)
 		{
 			this.comment = comment;
+		}
+
+		public string Comment
+		{
+			get { return comment; }
 		}
 	}
 }
