@@ -29,81 +29,94 @@ using System.Security.Cryptography.X509Certificates;
 
 namespace Mono.Security.Protocol.Tls.Handshake.Server
 {
-	internal class TlsClientKeyExchange : HandshakeMessage
-	{
-		#region Constructors
+    internal class TlsClientKeyExchange : HandshakeMessage
+    {
+        #region Constructors
 
-		public TlsClientKeyExchange(Context context, byte[] buffer) : 
+        public TlsClientKeyExchange(Context context, byte[] buffer) : 
 			base(context,
 				HandshakeType.ClientKeyExchange, 
 				buffer)
-		{
-		}
+        {
+        }
 
-		#endregion
+        #endregion
 
-		#region Protected Methods
+        #region Protected Methods
 
-		protected override void ProcessAsSsl3()
-		{
-			ServerContext context = (ServerContext)this.Context;
-            
-			// Select the private key information
-			RSA rsa = (RSA)context.SslStream.PrivateKeyCertSelectionDelegate(
-				new X509Certificate(context.ServerSettings.Certificates[0].RawData),
-				null);
-			
-			// Read client premaster secret
-			byte[] clientSecret = this.ReadBytes((int)this.Length);
+        protected override void ProcessAsSsl3()
+        {
+            AsymmetricAlgorithm privKey = null;
+            ServerContext context = (ServerContext)this.Context;
 
-			// Decrypt premaster secret
-			RSAPKCS1KeyExchangeDeformatter deformatter = new RSAPKCS1KeyExchangeDeformatter(rsa);
+            // Select the private key information
+            privKey = context.SslStream.RaisePrivateKeySelection(
+                new X509Certificate(context.ServerSettings.Certificates[0].RawData),
+                null);
 
-			byte[] preMasterSecret = deformatter.DecryptKeyExchange(clientSecret);
+            if (privKey == null)
+            {
+                throw new TlsException(AlertDescription.UserCancelled, "Server certificate Private Key unavailable.");
+            }
 
-			// Create master secret
-			this.Context.Cipher.ComputeMasterSecret(preMasterSecret);
+            // Read client premaster secret
+            byte[] clientSecret = this.ReadBytes((int)this.Length);
 
-			// Create keys
-			this.Context.Cipher.ComputeKeys();
+            // Decrypt premaster secret
+            RSAPKCS1KeyExchangeDeformatter deformatter = new RSAPKCS1KeyExchangeDeformatter(privKey);
 
-			// Initialize Cipher Suite
-			this.Context.Cipher.InitializeCipher();
+            byte[] preMasterSecret = deformatter.DecryptKeyExchange(clientSecret);
 
-			// Clear resources
-			rsa.Clear();
-		}
+            // Create master secret
+            this.Context.Cipher.ComputeMasterSecret(preMasterSecret);
 
-		protected override void ProcessAsTls1()
-		{
-			ServerContext context = (ServerContext)this.Context;
-            
-			// Select the private key information
-			RSA rsa = (RSA)context.SslStream.PrivateKeyCertSelectionDelegate(
-				new X509Certificate(context.ServerSettings.Certificates[0].RawData),
-				null);
-			
-			// Read client premaster secret
-			byte[] clientSecret = this.ReadBytes(this.ReadInt16());
+            // Create keys
+            this.Context.Cipher.ComputeKeys();
 
-			// Decrypt premaster secret
-			RSAPKCS1KeyExchangeDeformatter deformatter = new RSAPKCS1KeyExchangeDeformatter(rsa);
+            // Initialize Cipher Suite
+            this.Context.Cipher.InitializeCipher();
 
-			byte[] preMasterSecret = deformatter.DecryptKeyExchange(clientSecret);
+            // Clear resources
+            privKey.Clear();
+        }
 
-			// Create master secret
-			this.Context.Cipher.ComputeMasterSecret(preMasterSecret);
+        protected override void ProcessAsTls1()
+        {
+            AsymmetricAlgorithm privKey = null;
+            ServerContext context = (ServerContext)this.Context;
 
-			// Create keys
-			this.Context.Cipher.ComputeKeys();
+            // Select the private key information
+            // Select the private key information
+            privKey = context.SslStream.RaisePrivateKeySelection(
+                new X509Certificate(context.ServerSettings.Certificates[0].RawData),
+                null);
 
-			// Initialize Cipher Suite
-			this.Context.Cipher.InitializeCipher();
+            if (privKey == null)
+            {
+                throw new TlsException(AlertDescription.UserCancelled, "Server certificate Private Key unavailable.");
+            }
 
-			// Clear resources
-			rsa.Clear();
-		}
+            // Read client premaster secret
+            byte[] clientSecret = this.ReadBytes(this.ReadInt16());
 
-		#endregion
-	}
+            // Decrypt premaster secret
+            RSAPKCS1KeyExchangeDeformatter deformatter = new RSAPKCS1KeyExchangeDeformatter(privKey);
+
+            byte[] preMasterSecret = deformatter.DecryptKeyExchange(clientSecret);
+
+            // Create master secret
+            this.Context.Cipher.ComputeMasterSecret(preMasterSecret);
+
+            // Create keys
+            this.Context.Cipher.ComputeKeys();
+
+            // Initialize Cipher Suite
+            this.Context.Cipher.InitializeCipher();
+
+            // Clear resources
+            privKey.Clear();
+        }
+
+        #endregion
+    }
 }
