@@ -15,6 +15,9 @@ namespace demo
 	
 	public class GtkForm : System.Windows.Forms.Form
   	{
+		private Button copybutton = new Button();
+		private Button pastebutton = new Button();
+		private Button cutbutton = new Button();
 	    	private Button button1 = new Button(); 
 			private Button button2 = new Button(); 
 			private Label label1 = new Label();
@@ -41,7 +44,23 @@ namespace demo
     	  	  	button2.Size = new Size(128, 44);
        	 	button2.Text = "File";
     	  		button2.Click += new EventHandler(this.button2_Click); 
- 
+
+  	  	copybutton.Click += new EventHandler(this.copybutton_Click); 
+  	  	pastebutton.Click += new EventHandler(this.pastebutton_Click); 
+  	  	cutbutton.Click += new EventHandler(this.cutbutton_Click); 
+
+		copybutton.Location = new Point(320, 80); 
+		pastebutton.Location = new Point(320, 100); 
+		cutbutton.Location = new Point(320, 120);
+
+		copybutton.Size = new Size(150, 20); 
+		pastebutton.Size = new Size(150, 20); 
+		cutbutton.Size = new Size(150, 20); 
+
+		copybutton.Text ="Copy";
+		pastebutton.Text ="Paste";
+		cutbutton.Text ="Cut";
+
     	    	text1.Location = new Point(320,48);
     	    	text1.Name = "textBox1";
    	    	text1.Size = new Size(150, 22);
@@ -81,6 +100,9 @@ namespace demo
           this.Controls.AddRange(new System.Windows.Forms.Control[] { 
 									this.button1,
 									this.button2,
+									this.copybutton,
+									this.pastebutton,
+									this.cutbutton,
                      	this.text1, 
 									this.bar1, 
 									this.check1,
@@ -98,6 +120,20 @@ namespace demo
     	   	InitializeWidgets();
 
     	}
+
+		private void copybutton_Click(object sender, EventArgs e){ 
+			//text1.Select (1, 4);
+			text1.Copy();
+		}
+
+		private void pastebutton_Click(object sender, EventArgs e){ 
+			//text1.SelectAll();
+			text1.Paste();
+		}
+
+		private void cutbutton_Click(object sender, EventArgs e){ 
+			text1.Cut();
+		}
 
 		private void button1_Click(object sender, EventArgs e){ 
 			pbox.File = fdialog.OpenFile;
