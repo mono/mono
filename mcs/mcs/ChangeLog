@@ -1,5 +1,20 @@
 2002-08-08  Martin Baulig  <martin@gnome.org>
 
+	* typemanager.cs (TypeManager.FilterWithClosure): If we have
+	Family access, make sure the invoking type isn't a subclass of the
+	queried type (that'd be a CS1540).
+
+	* ecore.cs (Expression.MemberLookup): Added overloaded version of
+	this method which takes an additional `Type invocation_type'.
+
+	* expression.cs (BaseAccess.DoResolve): Use the base type as
+	invocation and query type.
+	(MemberAccess.DoResolve): If the lookup failed and we're about to
+	report a CS0122, try a lookup with the ec.ContainerType - if this
+	succeeds, we must report a CS1540.
+
+2002-08-08  Martin Baulig  <martin@gnome.org>
+
 	* ecore.cs (IMemberExpr): Added `bool IsInstance' property.
 	(MethodGroupExpr): Implement the IMemberExpr interface.
 

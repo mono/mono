@@ -1756,6 +1756,7 @@ public class TypeManager {
 	//
 	static Type     closure_invocation_type;
 	static Type     closure_queried_type;
+	static Type     closure_start_type;
 
 	//
 	// The assembly that defines the type is that is calling us
@@ -1807,8 +1808,21 @@ public class TypeManager {
 				return false;
 
 			// Family and FamANDAssem require that we derive.
-			if ((ma == MethodAttributes.Family) || (ma == MethodAttributes.FamANDAssem))
-				return IsSubclassOrNestedChildOf (closure_invocation_type, mb.DeclaringType);
+			if ((ma == MethodAttributes.Family) || (ma == MethodAttributes.FamANDAssem)){
+				if (!IsSubclassOrNestedChildOf (closure_invocation_type, mb.DeclaringType))
+					return false;
+
+				Report.Debug ("CHECK", closure_start_type, closure_invocation_type,
+					      closure_invocation_type.IsSubclassOf (closure_start_type));
+
+				// Although a derived class can access protected members of its base class
+				// it cannot do so through an instance of the base class (CS1540).
+				if ((closure_invocation_type != closure_start_type) &&
+				    closure_invocation_type.IsSubclassOf (closure_start_type))
+					return false;
+
+				return true;
+			}
 
 			// Public.
 			return true;
@@ -1841,8 +1855,18 @@ public class TypeManager {
 				return false;
 
 			// Family and FamANDAssem require that we derive.
-			if ((fa == FieldAttributes.Family) || (fa == FieldAttributes.FamANDAssem))
-				return IsSubclassOrNestedChildOf (closure_invocation_type, fi.DeclaringType);
+			if ((fa == FieldAttributes.Family) || (fa == FieldAttributes.FamANDAssem)){
+				if (!IsSubclassOrNestedChildOf (closure_invocation_type, fi.DeclaringType))
+					return false;
+
+				// Although a derived class can access protected members of its base class
+				// it cannot do so through an instance of the base class (CS1540).
+				if ((closure_invocation_type != closure_start_type) &&
+				    closure_invocation_type.IsSubclassOf (closure_start_type))
+					return false;
+
+				return true;
+			}
 
 			// Public.
 			return true;
@@ -1879,6 +1903,7 @@ public class TypeManager {
 		closure_name = name;
 		closure_invocation_type = invocation_type;
 		closure_invocation_assembly = invocation_type != null ? invocation_type.Assembly : null;
+		closure_start_type = queried_type;
 
 		//
 		// If we are a nested class, we always have access to our container

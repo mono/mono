@@ -5501,7 +5501,31 @@ namespace Mono.CSharp {
 				if (lookup == null)
 					Error (117, "`" + expr_type + "' does not contain a " +
 					       "definition for `" + Identifier + "'");
-				else
+				else if ((expr_type != ec.ContainerType) &&
+					 ec.ContainerType.IsSubclassOf (expr_type)){
+
+					// Although a derived class can access protected members of
+					// its base class it cannot do so through an instance of the
+					// base class (CS1540).  If the expr_type is a parent of the
+					// ec.ContainerType and the lookup succeeds with the latter one,
+					// then we are in this situation.
+
+					lookup = TypeManager.MemberLookup (
+						ec.ContainerType, ec.ContainerType, AllMemberTypes,
+						AllBindingFlags, Identifier);
+
+					if (lookup != null)
+						Error (1540, "Cannot access protected member `" +
+						       expr_type + "." + Identifier + "' " +
+						       "via a qualifier of type `" +
+						       TypeManager.CSharpName (expr_type) + "'; the " +
+						       "qualifier must be of type `" +
+						       TypeManager.CSharpName (ec.ContainerType) + "' " +
+						       "(or derived from it)");
+					else
+						Error (122, "`" + expr_type + "." + Identifier + "' " +
+						       "is inaccessible because of its protection level");
+				} else
 					Error (122, "`" + expr_type + "." + Identifier + "' " +
 					       "is inaccessible because of its protection level");
 					      
@@ -6250,7 +6274,8 @@ namespace Mono.CSharp {
 				return null;
 			}
 			
-			member_lookup = MemberLookup (ec, base_type, member, loc);
+			member_lookup = MemberLookup (ec, base_type, base_type, member,
+						      AllMemberTypes, AllBindingFlags, loc);
 			if (member_lookup == null) {
 				Error (117,
 					      TypeManager.CSharpName (base_type) + " does not " +
@@ -6306,7 +6331,8 @@ namespace Mono.CSharp {
 				return null;
 			}
 			
-			member_lookup = MemberLookup (ec, base_type, "get_Item", MemberTypes.Method, AllBindingFlags, loc);
+			member_lookup = MemberLookup (ec, base_type, base_type, "get_Item",
+						      MemberTypes.Method, AllBindingFlags, loc);
 			if (member_lookup == null)
 				return null;
 

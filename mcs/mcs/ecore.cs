@@ -469,7 +469,14 @@ namespace Mono.CSharp {
 		public static Expression MemberLookup (EmitContext ec, Type t, string name,
 						       MemberTypes mt, BindingFlags bf, Location loc)
 		{
-			MemberInfo [] mi = TypeManager.MemberLookup (ec.ContainerType, t, mt, bf, name);
+			return MemberLookup (ec, ec.ContainerType, t, name, mt, bf, loc);
+		}
+
+		public static Expression MemberLookup (EmitContext ec, Type invocation_type, Type t,
+						       string name, MemberTypes mt, BindingFlags bf,
+						       Location loc)
+		{
+			MemberInfo [] mi = TypeManager.MemberLookup (invocation_type, t, mt, bf, name);
 
 			if (mi == null)
 				return null;
@@ -500,12 +507,14 @@ namespace Mono.CSharp {
 
 		public static Expression MemberLookup (EmitContext ec, Type t, string name, Location loc)
 		{
-			return MemberLookup (ec, t, name, AllMemberTypes, AllBindingFlags, loc);
+			return MemberLookup (ec, ec.ContainerType, t, name,
+					     AllMemberTypes, AllBindingFlags, loc);
 		}
 
 		public static Expression MethodLookup (EmitContext ec, Type t, string name, Location loc)
 		{
-			return MemberLookup (ec, t, name, MemberTypes.Method, AllBindingFlags, loc);
+			return MemberLookup (ec, ec.ContainerType, t, name,
+					     MemberTypes.Method, AllBindingFlags, loc);
 		}
 
 		/// <summary>
@@ -527,7 +536,7 @@ namespace Mono.CSharp {
 
 			int errors = Report.Errors;
 
-			e = MemberLookup (ec, t, name, mt, bf, loc);
+			e = MemberLookup (ec, ec.ContainerType, t, name, mt, bf, loc);
 
 			if (e != null)
 				return e;
