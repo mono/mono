@@ -1,3 +1,12 @@
+2004-10-26  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* exceptions-ppc.c, exceptions-s390.c, exceptions-s390x.c,
+	mini-exceptions.c: handle the new wrapper types.
+	* mini.c: The CEE_ISINST and CEE_CASTCLASS opcodes now take the
+	token value as a MonoClass* when compiling a wrapper.
+	mono_jit_create_remoting_trampoline now takes an additional
+	MonoRemotingTarget parameter.
+	
 2004-11-10  Martin Baulig  <martin@localhost>
 
 	* mini.c (mono_method_to_ir): Use `generic_container->context'
