@@ -1,26 +1,31 @@
-using System;
+//
+// This test ensures that we emit attributes for operators
+// only once.
+//
 
-namespace testapp{
-        public unsafe class LibTestAPI{
+using System.ComponentModel;
+using System.Reflection;
 
-                struct LibTestStruct{
-                        void* pData;
-                        void* pTest1;
-                }
-
-                LibTestStruct* the_struct;
-
-                public void Create(){
-                        IntPtr MyPtr = new IntPtr(0); // Usually created elsewhere
-                        the_struct = (LibTestStruct *) 0;  // error CS1002
-                }
+public class BrowsableClass
+{
+        [EditorBrowsable(EditorBrowsableState.Always)]
+        public static BrowsableClass operator ++(BrowsableClass a) 
+        { 
+                return null; 
         }
 
-        class TestApp{
-                static void Main(string[] args){
-                        LibTestAPI myapi = new LibTestAPI();
-                        myapi.Create();
-                }
+        public static int Main ()
+        {
+                BrowsableClass c = new BrowsableClass ();
+                MethodInfo mi = c.GetType().GetMethod ("op_Increment");
+                
+                object[] attributes = mi.GetCustomAttributes
+                        (typeof(EditorBrowsableAttribute), false);
+
+                if (attributes.Length != 1)
+                        return 1;
+
+                return 0;
         }
 }
 

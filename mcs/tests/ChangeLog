@@ -1,3 +1,12 @@
+2003-07-13  Ravi Pratap M  <ravi@ximian.com>
+
+	* test-178.cs: Use this as it is a free slot. Test 
+	for bug #45876.
+
+	* makefile: Update.
+
+	* README.tests: Update
+
 2003-07-13  Martin Baulig  <martin@ximian.com>
 
 	* test-202.cs: Added test for bug #41975.
