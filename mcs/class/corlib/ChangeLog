@@ -1,3 +1,12 @@
+2004-01-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* corlib.dll.sources: Removed System.Security.Permissions/
+	DataProtectionPermission.cs, DataProtectionPermissionAttribute.cs and
+	DataProtectionFlags.cs as they are now part of the System.Security
+	assembly.
+	* corlib_test.dll.sources : Removed Test/System.Security.Permissions/
+	DataProtectionPermissionAttributeTest.cs for the same reason.
+
 2004-12-27  Ben Maurer  <bmaurer@ximian.com>
 
 	* corlib_test.dll.sources: Add s.col.gen.stack test

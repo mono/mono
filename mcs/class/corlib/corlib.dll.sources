@@ -979,9 +979,6 @@ System.Security.Cryptography.X509Certificates/X509Certificate.cs
 System.Security.Cryptography.X509Certificates/X509ContentType.cs
 System.Security.Cryptography.X509Certificates/X509KeyStorageFlags.cs
 System.Security.Permissions/CodeAccessSecurityAttribute.cs
-System.Security.Permissions/DataProtectionPermission.cs
-System.Security.Permissions/DataProtectionPermissionAttribute.cs
-System.Security.Permissions/DataProtectionPermissionFlags.cs
 System.Security.Permissions/EnvironmentPermission.cs
 System.Security.Permissions/EnvironmentPermissionAccess.cs
 System.Security.Permissions/EnvironmentPermissionAttribute.cs

@@ -169,7 +169,6 @@ System.Security.Cryptography.X509Certificates/X509CertificateTest.cs
 System.Security.Cryptography.X509Certificates/X509SpcTest.cs
 System.Security/NamedPermissionSetTest.cs
 System.Security.Permissions/CodeAccessSecurityAttributeTest.cs
-System.Security.Permissions/DataProtectionPermissionAttributeTest.cs
 System.Security.Permissions/EnvironmentPermissionAttributeTest.cs
 System.Security.Permissions/EnvironmentPermissionTest.cs
 System.Security/PermissionSetTest.cs
