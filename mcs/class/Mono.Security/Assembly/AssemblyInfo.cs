@@ -46,4 +46,4 @@ using System.Runtime.InteropServices;
 
 
 [assembly: AssemblyDelaySign (true)]
-[assembly: AssemblyKeyFile ("../ecma.pub")]
+[assembly: AssemblyKeyFile ("../mono.pub")]
