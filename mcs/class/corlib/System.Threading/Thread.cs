@@ -35,7 +35,13 @@ namespace System.Threading
 		
 		public static Context CurrentContext {
 			get {
-				return AppDomain.InternalGetContext ();
+				Context ctx = AppDomain.InternalGetContext ();
+				if (ctx == null) {
+					ctx = Context.DefaultContext;
+					AppDomain.InternalSetContext (ctx);
+				}
+
+				return ctx;
 			}
 		}
 
