@@ -1,3 +1,10 @@
+2001-09-26  Dietmar Maurer  <dietmar@ximian.com>
+
+	* emit-x86.c (arch_compile_method): more documentation.
+
+	* testjit.c: moved the architecture specific things to emit-x86.c
+	and x86.brg. Added more documentation. code cleanup.
+
 2001-09-25  Dietmar Maurer  <dietmar@ximian.com>
 
 	* x86.brg: we now have different types of addresses: ADDR_L for local
