@@ -140,7 +140,7 @@ public class Outline {
 		if (t.IsSerializable)
 			o.WriteLine ("[Serializable]");
 
-		if (t.GetCustomAttributes (typeof (System.FlagsAttribute), true).Length > 0)
+		if (t.IsDefined (typeof (System.FlagsAttribute), true))
 			o.WriteLine ("[Flags]");
 	}
 
@@ -213,7 +213,7 @@ public class Outline {
 			if (p.ParameterType.IsByRef) {
 				o.Write (p.IsOut ? "out " : "ref ");
 				o.Write (FormatType (p.ParameterType.GetElementType ()));
-			} else if (p.GetCustomAttributes (typeof (ParamArrayAttribute), false).Length > 0) {
+			} else if (p.IsDefined (typeof (ParamArrayAttribute), false)) {
 				o.Write ("params ");
 				o.Write (FormatType (p.ParameterType));
 			} else {

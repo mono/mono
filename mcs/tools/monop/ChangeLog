@@ -1,3 +1,8 @@
+2004-09-22  John Luke  <john.luke@gmail.com>
+
+	* outline.cs: use simpler IsDefined method
+	for checking params and [Flags]
+
 2004-09-18  John Luke  <john.luke@gmail.com>
 
 	* outline.cs: add const = value; for const fields (Ben's idea)
