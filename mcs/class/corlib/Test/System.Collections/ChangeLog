@@ -1,3 +1,8 @@
+2003-10-07 Nick Drochak <ndrochak@gol.com>
+
+	* DictionaryBaseTest.cs:
+	* NewArrayListTest.cs: Clean up warnings that were annoying me.
+
 2003-08-12  Nick Drochak <ndrochak@gol.com>
 
 	* NewArrayListTest.cs: Disable part that was failing on .NET. Marked

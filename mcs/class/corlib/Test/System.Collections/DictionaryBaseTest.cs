@@ -504,8 +504,6 @@ namespace MonoTests.System.Collections
 		[Test]
 		public void GetNoKey() 
 		{
-			bool exceptionThrown = false;
-
 			ConcreteDictionary myDictionary = new ConcreteDictionary(18);
 			AssertNull(myDictionary.BaseDictionary[100]);
 		}

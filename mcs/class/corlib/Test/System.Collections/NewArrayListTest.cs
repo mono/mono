@@ -888,7 +888,7 @@ namespace MonoTests.System.Collections
 
 				Assertion.Fail("1: Binary search on object that doesn't support IComparable.");
 			}
-			catch (ArgumentException e) 
+			catch (ArgumentException) 
 			{				
 			}
 			catch (InvalidOperationException) 
@@ -902,7 +902,7 @@ namespace MonoTests.System.Collections
 
 				Assertion.Fail("2: Binary search on incompatible object.");
 			}
-			catch (ArgumentException e) 
+			catch (ArgumentException) 
 			{				
 			}
 			catch (InvalidOperationException) 
