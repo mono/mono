@@ -2,13 +2,14 @@
 // HashAlgorithmTest.cs - NUnit Test Cases for HashAlgorithm
 //
 // Author:
-//		Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot (spouliot@motus.com)
 //
-// (C) 2002 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 //
 
 using NUnit.Framework;
 using System;
+using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -115,6 +116,21 @@ public class HashAlgorithmTest : TestCase {
 		}
 		catch (Exception e) {
 			Fail ("ComputeHash after clear should throw ObjectDisposedException not " + e.ToString ());
+		}
+	}
+
+	public void TestNullStream () 
+	{
+		Stream s = null;
+		try {
+			byte[] result = hash.ComputeHash (s);
+			Fail ("Expected NullReferenceException but got none");
+		}
+		catch (NullReferenceException) {
+			// do nothing, this is what we expect
+		}
+		catch (Exception e) {
+			Fail ("Expected NullReferenceException but got " + e.ToString ());
 		}
 	}
 

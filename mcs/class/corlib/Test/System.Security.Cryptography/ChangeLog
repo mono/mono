@@ -1,3 +1,8 @@
+2003-01-12  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* HashAlgorithmTest.cs: Added new test for null streams.
+	* MACTripleDESTest.cs: New. Test suite par MAC using 3DES.
+
 2002-12-21  Nick Drochak <ndrochak@gol.com>
 
 	* all: make tests build and run under nunit2
