@@ -49,7 +49,7 @@ namespace Mono.Tools {
 			if (header != null)
 				tw.WriteLine (header);
 
-			if ((ps == null) || ((ps.Count == 0) || !ps.IsUnrestricted ())) {
+			if ((ps == null) || ((ps.Count == 0) && !ps.IsUnrestricted ())) {
 				tw.WriteLine ("\tNone");
 			} else {
 				tw.WriteLine (ps.ToString ());
