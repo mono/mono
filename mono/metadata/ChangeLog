@@ -1,3 +1,12 @@
+2004-12-11  Martin Baulig  <martin@ximian.com>
+
+	* metadata.c (mono_metadata_load_generic_params): Added
+	`MonoGenericContainer *parent_container' argument; automatically
+	compute `container->is_method'; pass the correct owner to
+	get_constraints().	
+
+	* reflection.c (compare_genericparam): Sort the GenericParam table
+	according to increasing owners.	
 
 Fri Dec 10 18:43:46 CET 2004 Paolo Molaro <lupus@ximian.com>
 
