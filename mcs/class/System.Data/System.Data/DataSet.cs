@@ -1545,7 +1545,8 @@ namespace System.Data {
 						XmlSchemaXPath field;
 						foreach (DataColumn column in uqConst.Columns) {
 				 			field = new XmlSchemaXPath();
-							field.XPath = constraintPrefix+column.ColumnName;
+							string typePrefix = column.ColumnMapping == MappingType.Attribute ? "@" : "";
+							field.XPath = typePrefix + constraintPrefix+column.ColumnName;
 							uniq.Fields.Add(field);
 						}
 				
@@ -1612,7 +1613,8 @@ namespace System.Data {
 				XmlSchemaXPath field;
 				foreach (DataColumn column in rel.ChildColumns)	{
 				 	field = new XmlSchemaXPath();
-					field.XPath = constraintPrefix+column.ColumnName;
+					string typePrefix = column.ColumnMapping == MappingType.Attribute ? "@" : "";
+					field.XPath = typePrefix + constraintPrefix + column.ColumnName;
 					keyRef.Fields.Add(field);
 				}
 

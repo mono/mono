@@ -1,3 +1,8 @@
+2004-10-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataSet.cs : Attribute constraint field XPath must be written as
+	  @blah. This fixes bug #66366.
+
 2004-09-28 Umadevi S <sumadevi@novell.com>
 	* DataRow.cs - checked for Enforceconstraints, while using indices to search for related rows
 
