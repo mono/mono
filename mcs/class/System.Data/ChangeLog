@@ -1,3 +1,8 @@
+2002-11-20  Ville Palo <vi64pa@koti.soon.fi>
+
+	* System.Data.SqlTypes/SqlDecimal.cs: Ported some divide-stuff from 
+	decimal.c file. Does not work correctly yet.
+	
 2002-11-18  Tim Coleman <tim@timcoleman.com>
 	* System.Data.SqlClient/SqlConnection.cs:
 		BeginTransaction bug.
