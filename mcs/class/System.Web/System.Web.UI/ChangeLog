@@ -1,3 +1,10 @@
+2004-07-02 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Page.cs: added additional checks for saving/displaying trace data.
+
+	* PageParser.cs: removed checks for trace enabled in configuration
+	files.
+
 2004-06-29 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ControlCollection.cs: when clearing the control collection, tell the
