@@ -166,12 +166,12 @@ namespace Commons.Xml.Relaxng.Derivative
 			throw new InvalidOperationException ();
 		}
 
-		internal virtual RdpPattern expandRef (Hashtable defs)
+		internal protected virtual RdpPattern ExpandRef (Hashtable defs)
 		{
 			return this;
 		}
 
-		internal virtual RdpPattern reduceEmptyAndNotAllowed (ref bool result, Hashtable visited)
+		internal protected virtual RdpPattern ReduceEmptyAndNotAllowed (ref bool result, Hashtable visited)
 		{
 			return this;
 		}
@@ -481,16 +481,16 @@ namespace Commons.Xml.Relaxng.Derivative
 		}
 
 		bool expanded;
-		internal override RdpPattern expandRef (Hashtable defs)
+		internal protected override RdpPattern ExpandRef (Hashtable defs)
 		{
 			if (!expanded) {
-				l = l.expandRef (defs);
-				r = r.expandRef (defs);
+				l = l.ExpandRef (defs);
+				r = r.ExpandRef (defs);
 			}
 			return this;
 		}
 
-		internal override RdpPattern reduceEmptyAndNotAllowed (ref bool result, Hashtable visited)
+		internal protected override RdpPattern ReduceEmptyAndNotAllowed (ref bool result, Hashtable visited)
 		{
 			if (visited.Contains (this))
 				return this;
@@ -502,13 +502,13 @@ namespace Commons.Xml.Relaxng.Derivative
 				return RdpNotAllowed.Instance;
 			} else if (LValue.PatternType == RngPatternType.Empty) {
 				result = true;
-				return RValue.reduceEmptyAndNotAllowed (ref result, visited);
+				return RValue.ReduceEmptyAndNotAllowed (ref result, visited);
 			} else if (RValue.PatternType == RngPatternType.Empty) {
 				result = true;
-				return LValue.reduceEmptyAndNotAllowed (ref result, visited);
+				return LValue.ReduceEmptyAndNotAllowed (ref result, visited);
 			} else {
-				LValue = LValue.reduceEmptyAndNotAllowed (ref result, visited);
-				RValue = RValue.reduceEmptyAndNotAllowed (ref result, visited);
+				LValue = LValue.ReduceEmptyAndNotAllowed (ref result, visited);
+				RValue = RValue.ReduceEmptyAndNotAllowed (ref result, visited);
 				return this;
 			}
 		}
@@ -532,7 +532,7 @@ namespace Commons.Xml.Relaxng.Derivative
 			}
 		}
 
-		internal override RdpPattern reduceEmptyAndNotAllowed (ref bool result, Hashtable visited)
+		internal protected override RdpPattern ReduceEmptyAndNotAllowed (ref bool result, Hashtable visited)
 		{
 			if (visited.Contains (this))
 				return this;
@@ -544,22 +544,22 @@ namespace Commons.Xml.Relaxng.Derivative
 				return RdpNotAllowed.Instance;
 			} else if (LValue.PatternType == RngPatternType.NotAllowed) {
 				result = true;
-				return RValue.reduceEmptyAndNotAllowed (ref result, visited);
+				return RValue.ReduceEmptyAndNotAllowed (ref result, visited);
 			} else if (RValue.PatternType == RngPatternType.NotAllowed) {
 				result = true;
-				return LValue.reduceEmptyAndNotAllowed (ref result, visited);
+				return LValue.ReduceEmptyAndNotAllowed (ref result, visited);
 			} else if (LValue.PatternType == RngPatternType.Empty &&
 				RValue.PatternType == RngPatternType.Empty) {
 				result = true;
 				return RdpEmpty.Instance;
 			} else if (RValue.PatternType == RngPatternType.Empty) {
 				result = true;
-				RValue = LValue.reduceEmptyAndNotAllowed (ref result, visited);
+				RValue = LValue.ReduceEmptyAndNotAllowed (ref result, visited);
 				LValue = RdpEmpty.Instance;
 				return this;
 			} else {
-				LValue = LValue.reduceEmptyAndNotAllowed (ref result, visited);
-				RValue = RValue.reduceEmptyAndNotAllowed (ref result, visited);
+				LValue = LValue.ReduceEmptyAndNotAllowed (ref result, visited);
+				RValue = RValue.ReduceEmptyAndNotAllowed (ref result, visited);
 				return this;
 			}
 		}
@@ -637,7 +637,7 @@ namespace Commons.Xml.Relaxng.Derivative
 			}
 		}
 
-		internal override RdpPattern reduceEmptyAndNotAllowed (ref bool result, Hashtable visited)
+		internal protected override RdpPattern ReduceEmptyAndNotAllowed (ref bool result, Hashtable visited)
 		{
 			if (visited.Contains (this))
 				return this;
@@ -648,8 +648,8 @@ namespace Commons.Xml.Relaxng.Derivative
 				result = true;
 				return RdpNotAllowed.Instance;
 			} else {
-				LValue = LValue.reduceEmptyAndNotAllowed (ref result, visited);
-				RValue = RValue.reduceEmptyAndNotAllowed (ref result, visited);
+				LValue = LValue.ReduceEmptyAndNotAllowed (ref result, visited);
+				RValue = RValue.ReduceEmptyAndNotAllowed (ref result, visited);
 				return this;
 			}
 		}
@@ -667,11 +667,8 @@ namespace Commons.Xml.Relaxng.Derivative
 			RdpPattern handledL = LValue.StartTagOpenDeriv (name, ns);
 			RdpPattern handledR = RValue.StartTagOpenDeriv (name, ns);
 			RdpFlip flipL = new RdpFlip (new RdpBinaryFunction (RdpUtil.Interleave), RValue);
-			// FIXME: It is not flip in fact, but there are no proper class ;-(
-			RdpFlip flipR = new RdpFlip (new RdpBinaryFunction (RdpUtil.Interleave), handledR);
 			RdpPattern choiceL = handledL.ApplyAfter (new RdpApplyAfterHandler (flipL.Apply));
-			RdpPattern choiceR = LValue.ApplyAfter (new RdpApplyAfterHandler (flipR.Apply));
-
+			RdpPattern choiceR = handledR.ApplyAfter (new RdpApplyAfterHandler (LValue.Interleave));
 			return choiceL.Choice (choiceR);
 		}
 
@@ -793,10 +790,10 @@ namespace Commons.Xml.Relaxng.Derivative
 		RdpPattern child;
 		bool isExpanded;
 
-		internal override RdpPattern expandRef (Hashtable defs)
+		internal protected override RdpPattern ExpandRef (Hashtable defs)
 		{
 			if (!isExpanded)
-				child = child.expandRef (defs);
+				child = child.ExpandRef (defs);
 			return this;
 		}
 
@@ -823,7 +820,7 @@ namespace Commons.Xml.Relaxng.Derivative
 			get { return Child.Nullable; }
 		}
 
-		internal override RdpPattern reduceEmptyAndNotAllowed (ref bool result, Hashtable visited)
+		internal protected override RdpPattern ReduceEmptyAndNotAllowed (ref bool result, Hashtable visited)
 		{
 			if (visited.Contains (this))
 				return this;
@@ -835,7 +832,7 @@ namespace Commons.Xml.Relaxng.Derivative
 			} else if (Child.PatternType == RngPatternType.Empty)
 				return RdpEmpty.Instance;
 			else {
-				Child = Child.reduceEmptyAndNotAllowed (ref result, visited);
+				Child = Child.ReduceEmptyAndNotAllowed (ref result, visited);
 				return this;
 			}
 		}
@@ -899,7 +896,7 @@ namespace Commons.Xml.Relaxng.Derivative
 		{
 		}
 
-		internal override RdpPattern reduceEmptyAndNotAllowed (ref bool result, Hashtable visited)
+		internal protected override RdpPattern ReduceEmptyAndNotAllowed (ref bool result, Hashtable visited)
 		{
 			if (visited.Contains (this))
 				return this;
@@ -909,7 +906,7 @@ namespace Commons.Xml.Relaxng.Derivative
 				result = true;
 				return RdpNotAllowed.Instance;
 			} else {
-				Child = Child.reduceEmptyAndNotAllowed (ref result, visited);
+				Child = Child.ReduceEmptyAndNotAllowed (ref result, visited);
 				return this;
 			}
 		}
@@ -1002,7 +999,7 @@ namespace Commons.Xml.Relaxng.Derivative
 			set { except = value; }
 		}
 
-		internal override RdpPattern reduceEmptyAndNotAllowed (ref bool result, Hashtable visited)
+		internal protected override RdpPattern ReduceEmptyAndNotAllowed (ref bool result, Hashtable visited)
 		{
 			if (visited.Contains (this))
 				return this;
@@ -1012,7 +1009,7 @@ namespace Commons.Xml.Relaxng.Derivative
 				result = true;
 				return new RdpData (this.Datatype, this.ParamList);
 			} else {
-				except = except.reduceEmptyAndNotAllowed (ref result, visited);
+				except = except.ReduceEmptyAndNotAllowed (ref result, visited);
 				return this;
 			}
 		}
@@ -1106,16 +1103,16 @@ namespace Commons.Xml.Relaxng.Derivative
 		}
 
 		bool isExpanded;
-		internal override RdpPattern expandRef (Hashtable defs)
+		internal protected override RdpPattern ExpandRef (Hashtable defs)
 		{
 			if (!isExpanded) {
 				isExpanded = true;
-				children = children.expandRef (defs);
+				children = children.ExpandRef (defs);
 			}
 			return this;
 		}
 
-		internal override RdpPattern reduceEmptyAndNotAllowed (ref bool result, Hashtable visited)
+		internal protected override RdpPattern ReduceEmptyAndNotAllowed (ref bool result, Hashtable visited)
 		{
 			if (visited.Contains (this))
 				return this;
@@ -1125,7 +1122,7 @@ namespace Commons.Xml.Relaxng.Derivative
 				result = true;
 				return RdpNotAllowed.Instance;
 			} else {
-				children = children.reduceEmptyAndNotAllowed (ref result, visited);
+				children = children.ReduceEmptyAndNotAllowed (ref result, visited);
 				return this;
 			}
 		}
@@ -1191,22 +1188,22 @@ namespace Commons.Xml.Relaxng.Derivative
 		}
 
 		bool isExpanded;
-		internal override RdpPattern expandRef (Hashtable defs)
+		internal protected override RdpPattern ExpandRef (Hashtable defs)
 		{
 			if (!isExpanded) {
 				isExpanded = true;
-				children = children.expandRef (defs);
+				children = children.ExpandRef (defs);
 			}
 			return this;
 		}
 
-		internal override RdpPattern reduceEmptyAndNotAllowed (ref bool result, Hashtable visited)
+		internal protected override RdpPattern ReduceEmptyAndNotAllowed (ref bool result, Hashtable visited)
 		{
 			if (visited.Contains (this))
 				return this;
 			visited.Add (this, this);
 
-			children = children.reduceEmptyAndNotAllowed (ref result, visited);
+			children = children.ReduceEmptyAndNotAllowed (ref result, visited);
 			return this;
 		}
 
