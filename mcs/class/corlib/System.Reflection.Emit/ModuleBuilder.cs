@@ -83,18 +83,37 @@ namespace System.Reflection.Emit {
 		public override Type GetType( string className, bool ignoreCase) {
 			return GetType (className, false, ignoreCase);
 		}
+
+		private TypeBuilder search_in_array (TypeBuilder[] arr, string className, bool ignoreCase) {
+			int i;
+			for (i = 0; i < arr.Length; ++i) {
+				if (String.Compare (className, arr [i].FullName, ignoreCase) == 0) {
+					return arr [i];
+				}
+			}
+			return null;
+		}
 		
 		public override Type GetType( string className, bool throwOnError, bool ignoreCase) {
-			int i;
+			int subt;
+			TypeBuilder result = null;
+
 			if (types == null && throwOnError)
 				throw new TypeLoadException (className);
-			for (i = 0; i < types.Length; ++i) {
-				if (String.Compare (className, types [i].Name, ignoreCase) == 0)
-					return types [i];
+			subt = className.IndexOf ('+');
+			if (subt < 0) {
+				result = search_in_array (types, className, ignoreCase);
+			} else {
+				string pname, rname;
+				pname = className.Substring (0, subt);
+				rname = className.Substring (subt + 1);
+				result = search_in_array (types, pname, ignoreCase);
+				if ((result != null) && (result.subtypes != null))
+					result = search_in_array (result.subtypes, rname, ignoreCase);
 			}
-			if (throwOnError)
+			if ((result == null) && throwOnError)
 				throw new TypeLoadException (className);
-			return null;
+			return result;
 		}
 
 		internal int get_next_table_index (int table, bool inc) {

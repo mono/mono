@@ -170,7 +170,7 @@ namespace System {
 			}
 		}
 
-		// FIXME: is this correct syntax??
+		[IndexerName("Chars")]
 		public char this [int index] {
 			get {
 				if (index >= this.length)

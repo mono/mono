@@ -69,6 +69,8 @@ namespace System.Reflection.Emit {
 			return false;
 		}
 		public void SetConstant( object defaultValue) {
+			/*if (defaultValue.GetType() != type)
+				throw new ArgumentException ("Constant doesn't match field type");*/
 			def_value = defaultValue;
 		}
 		public void SetCustomAttribute( CustomAttributeBuilder customBuilder) {

@@ -1,4 +1,9 @@
 
+Mon Jan 14 17:07:32 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* ModulerBuilder.cs: search also for subtypes in GetTypes().
+	* TypeBuilder.cs: bugfix in FullName. Implemented DefineNestedType().
+
 Fri Jan 11 19:00:29 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* MethodBuilder.cs, ConstructorBuilder.cs: save parameter info.

@@ -23,6 +23,7 @@ namespace System.Reflection.Emit {
 	private ConstructorBuilder[] ctors;
 	private PropertyBuilder[] properties;
 	private FieldBuilder[] fields;
+	internal TypeBuilder[] subtypes;
 	private TypeAttributes attrs;
 	private int table_idx;
 	private ModuleBuilder pmodule;
@@ -66,7 +67,7 @@ namespace System.Reflection.Emit {
 
 		public override string FullName {
 			get {
-				if (nspace != null)
+				if ((nspace != null) && (nspace.Length > 0))
 					return String.Concat (nspace, ".", tname);
 				return tname;
 			}
@@ -115,15 +116,15 @@ namespace System.Reflection.Emit {
 
 		public TypeBuilder DefineNestedType (string name, TypeAttributes attr, Type parent, Type[] interfaces) {
 			TypeBuilder res = new TypeBuilder (pmodule, name, attr, parent, interfaces);
-			/*if (types != null) {
-				TypeBuilder[] new_types = new TypeBuilder [types.Length];
-				System.Array.Copy (types, new_types, types.Length);
-				new_types [types.Length] = res;
-				types = new_types;
+			if (subtypes != null) {
+				TypeBuilder[] new_types = new TypeBuilder [subtypes.Length + 1];
+				System.Array.Copy (subtypes, new_types, subtypes.Length);
+				new_types [subtypes.Length] = res;
+				subtypes = new_types;
 			} else {
-				types = new TypeBuilder [1];
-				types [0] = res;
-			}*/
+				subtypes = new TypeBuilder [1];
+				subtypes [0] = res;
+			}
 			return res;
 		}
 

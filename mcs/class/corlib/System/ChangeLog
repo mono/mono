@@ -1,4 +1,8 @@
 
+Mon Jan 14 17:06:40 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* String.cs: use IndexerName in index char accessor.
+
 Thu Jan 10 21:05:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* MonoType.cs: add rank to MonoTypeInfo and implement GetArrayRank.
