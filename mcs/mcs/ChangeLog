@@ -1,5 +1,8 @@
 2003-06-28  Miguel de Icaza  <miguel@ximian.com>
 
+	* class.cs (Constructor.Define): Set the private flag for static
+	constructors as well.
+
 	* cs-parser.jay (statement_expression): Set the return value to
 	null, to avoid a crash when we catch an error.
 

@@ -2635,9 +2635,9 @@ namespace Mono.CSharp {
 			if (!DoDefineParameters (container))
 				return false;
 
-			if ((ModFlags & Modifiers.STATIC) != 0)
-				ca |= MethodAttributes.Static;
-			else {
+			if ((ModFlags & Modifiers.STATIC) != 0){
+				ca |= MethodAttributes.Static | MethodAttributes.Private;
+			} else {
 				if (container is Struct && ParameterTypes.Length == 0){
 					Report.Error (
 						568, Location, 
