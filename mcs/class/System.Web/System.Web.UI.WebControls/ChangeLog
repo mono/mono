@@ -1,6 +1,11 @@
+2003-03-29  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* DataGrid.cs: Fixed SaveViewState and type of ItemDataBound.
+
 2003-03-17  George Kodinov <gkodinov@openlinksw.co.uk>
         
-        * Unit.cs: Called the correct method to get the Numeric locale for the double conversion
+        * Unit.cs: Called the correct method to get the Numeric locale for the
+	double conversion
 
 2003-02-15  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 

@@ -512,7 +512,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		public event DataGridCommandEventHandler ItemDataBound
+		public event DataGridItemEventHandler ItemDataBound
 		{
 			add
 			{
@@ -599,7 +599,7 @@ namespace System.Web.UI.WebControls
 		protected override object SaveViewState()
 		{
 			object[] states = new object[9];
-			states[0] = SaveViewState();
+			states[0] = base.SaveViewState();
 			states[1] = (columns == null ? null : ((IStateManager)columns).SaveViewState());
 			states[2] = (pagerStyle == null ? null : pagerStyle.SaveViewState());
 			states[3] = (headerStyle == null ? null : headerStyle.SaveViewState());
