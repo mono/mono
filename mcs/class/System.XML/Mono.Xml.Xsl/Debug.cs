@@ -38,13 +38,28 @@ namespace Mono.Xml.Xsl {
 	
 			WriteLine(output);
 		}
-		
+
 		[System.Diagnostics.Conditional("DEBUG")]
-		internal static void WriteLine(string message) {
-			Console.Error.WriteLine(message);
+		internal static void Assert (bool condition, string message)
+		{
+			if (!condition)
+				throw new Exception (message);
+		}
+
+		[System.Diagnostics.Conditional("DEBUG")]
+		internal static void WriteLine (object value)
+		{
+			Console.Error.WriteLine (value);
+		}
+
+		[System.Diagnostics.Conditional("DEBUG")]
+		internal static void WriteLine (string message)
+		{
+			Console.Error.WriteLine (message);
 		}
 		
 		static Stack eleStack = new Stack ();
+		
 		[System.Diagnostics.Conditional("DEBUG")]
 		internal static void EnterNavigator (Compiler c)
 		{
@@ -59,6 +74,5 @@ namespace Mono.Xml.Xsl {
 				throw new Exception ("Position must be the same on enter/exit. Enter node: " + x.Name + " exit node " + c.Input.Name);
 			
 		}
-
 	}
 }

@@ -1,5 +1,12 @@
 2003-07-30 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	* XslApplyTemplates.cs, XslCallTemplate.cs, XslCompiledElement.cs,
+	XslTemplateContent.cs, XslVariable.cs:
+	Store variable values in the XslTransformProcessor
+
+
+2003-07-30 Ben Maurer  <bmaurer@users.sourceforge.net>
+
 	* XslAvt.cs, XslCopyOf.cs, XslIf.cs, XslText.cs, XslValueOf.cs,
 	XslVariable.cs:
 	Use new strong typed methods, remove verbose debugging messages.

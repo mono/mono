@@ -17,17 +17,17 @@ using Mono.Xml.Xsl;
 
 namespace System.Xml.Xsl {
 	internal class ManagedXslTransform : XslTransformImpl {
-		XslTransformProcessor p;
+		CompiledStylesheet s;
+		
 		
 		public override void Load (XPathNavigator stylesheet, XmlResolver resolver)
 		{
-			Compiler c = new Compiler ();
-			p = new XslTransformProcessor (c.Compile (stylesheet, resolver));
+			s = new Compiler ().Compile (stylesheet, resolver);
 		}
 
 		public override void Transform (XPathNavigator input, XsltArgumentList args, XmlWriter output, XmlResolver resolver)
 		{
-			p.Process (input, output, args); // todo use resolver
+			new XslTransformProcessor (s).Process (input, output, args); // todo use resolver
 		}
 	}
 }

@@ -34,7 +34,7 @@ namespace Mono.Xml.Xsl.Operations {
 					switch (c.Input.LocalName)
 					{
 						case "with-param":
-							withParams.Add (new XslWithParam (c));
+							withParams.Add (new XslVariableInformation (c));
 							break;
 						default:
 							throw new Exception ("unexptected element"); // todo forwards compat
@@ -46,13 +46,15 @@ namespace Mono.Xml.Xsl.Operations {
 		
 		public override void Evaluate (XslTransformProcessor p)
 		{
-			foreach (XslWithParam param in withParams)
-				param.Evaluate (p);
+			Hashtable passedParams = null;
 			
-			p.CallTemplate (name, withParams);
+			if (withParams.Count > 0) {
+				passedParams = new Hashtable ();
+				foreach (XslVariableInformation param in withParams)
+					passedParams [param.Name] = param.Evaluate (p);
+			}
 			
-			foreach (XslWithParam param in withParams)
-				param.Clear ();
+			p.CallTemplate (name, passedParams);
 		}
 	}
 }

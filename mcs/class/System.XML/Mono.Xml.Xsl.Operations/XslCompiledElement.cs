@@ -20,11 +20,12 @@ using QName = System.Xml.XmlQualifiedName;
 namespace Mono.Xml.Xsl.Operations {
 
 	public abstract class XslCompiledElement : XslOperation {
+		bool hasStack;
+		int stackSize;
+		
 		public XslCompiledElement (Compiler c)
 		{
-			c.PushScope ();
 			this.Compile (c);
-			c.PopScope ();
 		}
 		
 		protected abstract void Compile (Compiler c);

@@ -37,7 +37,7 @@ namespace Mono.Xml.Xsl.Operations {
 					switch (c.Input.LocalName)
 					{
 						case "with-param":
-							withParams.Add (new XslWithParam (c));
+							withParams.Add (new XslVariableInformation (c));
 							break;
 							
 						case "sort":
@@ -55,16 +55,18 @@ namespace Mono.Xml.Xsl.Operations {
 		
 		public override void Evaluate (XslTransformProcessor p)
 		{
-			foreach (XslWithParam param in withParams)
-				param.Evaluate (p);
+			Hashtable passedParams = null;
+			
+			if (withParams.Count > 0) {
+				passedParams = new Hashtable ();
+				foreach (XslVariableInformation param in withParams)
+					passedParams [param.Name] = param.Evaluate (p);
+			}
 			
 			if (select == null)	
-				p.ApplyTemplates (p.CurrentNode.SelectChildren (XPathNodeType.All), mode, withParams);
+				p.ApplyTemplates (p.CurrentNode.SelectChildren (XPathNodeType.All), mode, passedParams);
 			else
-				p.ApplyTemplates (p.Select (select), mode, withParams);
-						
-			foreach (XslWithParam param in withParams)
-				param.Clear ();
+				p.ApplyTemplates (p.Select (select), mode, passedParams);
 		}
 	}
 }

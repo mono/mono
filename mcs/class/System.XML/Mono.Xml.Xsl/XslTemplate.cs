@@ -147,6 +147,8 @@ namespace Mono.Xml.Xsl {
 		XslOperation content;
 
 		XslStylesheet style;
+		int stackSize;
+		
 		
 		public XslTemplate (Compiler c)
 		{
@@ -171,7 +173,7 @@ namespace Mono.Xml.Xsl {
 				Parse (c);
 			}
 			
-			c.PopScope ();
+			stackSize = c.PopScope ().VariableHighTide;
 			
 		}
 
@@ -228,26 +230,29 @@ namespace Mono.Xml.Xsl {
 			}
 		}
 		
-		public virtual void Evaluate (XslTransformProcessor p, ArrayList withParams)
+		public virtual void Evaluate (XslTransformProcessor p, Hashtable withParams)
 		{
+			p.PushStack (stackSize);
+
 			if (parameters != null) {
-				
-				if (withParams != null)
-					foreach (XslWithParam wp in withParams) {
-						if (parameters.Contains (wp.Name))
-							((XslLocalParam)parameters [wp.Name]).Override (wp.Value);
+				if (withParams == null) {
+					foreach (XslLocalParam param in parameters.Values)
+						param.Evaluate (p);
+				} else {
+					foreach (XslLocalParam param in parameters.Values)
+					{
+						if (withParams.Contains (param.Name))
+							param.Override (p, withParams [param.Name]);
+						else
+							param.Evaluate (p);
 					}
-				foreach (XslLocalParam param in parameters.Values)
-					param.Evaluate (p);
+				}
 			}
 			
 			if (content != null)
 				content.Evaluate (p);
-			
-			if (parameters != null) {
-				foreach (XslLocalParam param in parameters.Values)
-					param.Clear ();
-			}
+
+			p.PopStack ();
 		}
 		public void Evaluate (XslTransformProcessor p)
 		{
@@ -268,7 +273,7 @@ namespace Mono.Xml.Xsl {
 			get { return instance; }
 		}
 		
-		public override void Evaluate (XslTransformProcessor p, ArrayList withParams)
+		public override void Evaluate (XslTransformProcessor p, Hashtable withParams)
 		{
 			p.ApplyTemplates (p.CurrentNode.SelectChildren (XPathNodeType.All), mode, null);
 		}
@@ -283,7 +288,7 @@ namespace Mono.Xml.Xsl {
 			get { return instance; }
 		}
 		
-		public override void Evaluate (XslTransformProcessor p, ArrayList withParams)
+		public override void Evaluate (XslTransformProcessor p, Hashtable withParams)
 		{
 		}
 	}
@@ -297,7 +302,7 @@ namespace Mono.Xml.Xsl {
 			get { return instance; }
 		}
 		
-		public override void Evaluate (XslTransformProcessor p, ArrayList withParams)
+		public override void Evaluate (XslTransformProcessor p, Hashtable withParams)
 		{
 			p.Out.WriteString (p.CurrentNode.Value);
 		}

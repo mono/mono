@@ -1,5 +1,10 @@
 2003-07-30 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	* ManagedXslTransform.cs: Hold reference to CompiledStyle, not the
+	XslTransformProcessor. Will help with thread safty.
+
+2003-07-30 Ben Maurer  <bmaurer@users.sourceforge.net>
+
 	* ManagedXslTransform.cs: remove verbose debugging messages
 
 2003-07-28 Ben Maurer  <bmaurer@users.sourceforge.net>

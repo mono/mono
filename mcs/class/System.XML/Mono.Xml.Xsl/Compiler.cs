@@ -227,7 +227,6 @@ namespace Mono.Xml.Xsl {
 			return new XslTemplateContent (this);
 		}
 #endregion
-		
 
 		public void AddGlobalVariable (XslGlobalVariable var)
 		{
@@ -246,17 +245,20 @@ namespace Mono.Xml.Xsl {
 			curVarScope = new VariableScope (curVarScope);
 		}
 		
-		public void PopScope ()
+		public VariableScope PopScope ()
 		{
+			curVarScope.giveHighTideToParent ();
+			VariableScope cur = curVarScope;
 			curVarScope = curVarScope.Parent;
+			return cur;
 		}
 		
-		public void AddVariable (XslLocalVariable v)
+		public int AddVariable (XslLocalVariable v)
 		{
 			if (curVarScope == null)
 				throw new Exception ("not inited");
 			
-			curVarScope.AddVariable (v);
+			return curVarScope.AddVariable (v);
 		}
 		
 		public void AddSort (XPathExpression e, Sort s)
@@ -269,20 +271,33 @@ namespace Mono.Xml.Xsl {
 	public class VariableScope {
 		Hashtable variables;
 		VariableScope parent;
-			
+		int nextSlot = 0;
+		int highTide = 0; // this will be the size of the stack frame
+		
+		internal void giveHighTideToParent ()
+		{
+			if (parent != null)
+				parent.highTide = System.Math.Max (VariableHighTide, parent.VariableHighTide);
+		}
+
+		public int VariableHighTide { get { return  System.Math.Max (highTide, nextSlot); }}
+		
 		public VariableScope (VariableScope parent)
 		{
 			this.parent = parent;
+			if (parent != null)
+				this.nextSlot = parent.nextSlot;
 		}
 		
 		public VariableScope Parent { get { return parent; }}
 		
-		public void AddVariable (XslLocalVariable v)
+		public int AddVariable (XslLocalVariable v)
 		{
 			if (variables == null)
 				variables = new Hashtable ();
 			
 			variables [v.Name] = v;
+			return nextSlot++;
 		}
 		
 		public XslLocalVariable Resolve (QName name)
@@ -290,7 +305,9 @@ namespace Mono.Xml.Xsl {
 			for (VariableScope s = this; s != null; s = s.Parent)			
 				if (s.variables != null && s.variables.Contains (name)) {
 					XslLocalVariable v = (XslLocalVariable)s.variables [name];								
-					if (v.Evaluated) return v;
+					return v;
+					// TODO: replace this logic
+					//	if (v.Evaluated) return v;
 				}
 			
 			return null;

@@ -24,13 +24,14 @@ namespace Mono.Xml.Xsl {
 		
 		XslStylesheet style;
 		
-		Stack outputStack = new Stack ();
-		Stack nodesetStack = new Stack ();
 		Stack currentTemplateStack = new Stack ();
 		
 		XPathNavigator root;
 		XsltContext ctx;
 		XsltArgumentList args;
+
+		// Store the values of global params
+		internal Hashtable globalVariableTable = new Hashtable ();
 		
 		public XslTransformProcessor (CompiledStylesheet style)
 		{
@@ -44,7 +45,7 @@ namespace Mono.Xml.Xsl {
 				if (v is XslGlobalParam) {
 					object p = args.GetParam(v.Name.Name, v.Name.Namespace);
 					if (p != null)
-						((XslGlobalParam)v).Override (p);
+						((XslGlobalParam)v).Override (this, p);
 				}
 			}
 			
@@ -52,13 +53,14 @@ namespace Mono.Xml.Xsl {
 			this.root = root;
 			this.outputStack.Push (output);
 			this.ApplyTemplates (root.Select ("."), QName.Empty, null);
-			foreach (XslGlobalVariable v in CompiledStyle.Variables.Values)
-				v.Clear ();
 		}
 		
 		public XsltContext Context { get { return ctx; }}
 		public CompiledStylesheet CompiledStyle { get { return compiledStyle; }}
 		public XsltArgumentList Arguments {get{return args;}}
+		
+		#region Output
+		Stack outputStack = new Stack ();
 		
 		public XmlWriter Out { get { return (XmlWriter)outputStack.Peek(); }}
 		
@@ -71,8 +73,10 @@ namespace Mono.Xml.Xsl {
 		{
 			return (XmlWriter)this.outputStack.Pop ();
 		}
+		#endregion
 		
-		public void ApplyTemplates (XPathNodeIterator nodes, QName mode, ArrayList withParams)
+		#region Templates -- Apply/Call
+		public void ApplyTemplates (XPathNodeIterator nodes, QName mode, Hashtable withParams)
 		{
 			PushNodeset (nodes);
 			while (NodesetMoveNext ()) {
@@ -85,21 +89,11 @@ namespace Mono.Xml.Xsl {
 			PopNodeset ();
 		}
 		
-		public void CallTemplate (QName name, ArrayList withParams)
+		public void CallTemplate (QName name, Hashtable withParams)
 		{
 			XslTemplate t = FindTemplate (name);
 			currentTemplateStack.Push (null);
 			t.Evaluate (this, withParams);
-			currentTemplateStack.Pop ();
-		}
-		
-		public void PushForEachContext ()
-		{
-			currentTemplateStack.Push (null);
-		}
-		
-		public void PopForEachContext ()
-		{
 			currentTemplateStack.Pop ();
 		}
 		
@@ -187,7 +181,24 @@ namespace Mono.Xml.Xsl {
 				
 			throw new Exception ("Could not resolve named template " + name);
 		}
+		
+		#endregion
+		
 
+		public void PushForEachContext ()
+		{
+			currentTemplateStack.Push (null);
+		}
+		
+		public void PopForEachContext ()
+		{
+			currentTemplateStack.Pop ();
+		}
+		
+
+		#region Nodeset Context
+		Stack nodesetStack = new Stack ();
+		
 		public XPathNodeIterator CurrentNodeset {
 			get { return (XPathNodeIterator)nodesetStack.Peek (); }
 		}
@@ -210,7 +221,9 @@ namespace Mono.Xml.Xsl {
 		{
 			nodesetStack.Pop ();
 		}
+		#endregion
 		
+		#region Evaluate
 		public object Evaluate (XPathExpression expr)
 		{
 			expr = CompiledStyle.ExpressionStore.PrepForExecution (expr, this);
@@ -241,9 +254,39 @@ namespace Mono.Xml.Xsl {
 			return CurrentNodeset.Current.Select (expr);
 		}
 		
+		#endregion
+		
 		public XslAttributeSet ResolveAttributeSet (QName name)
 		{
 			return CompiledStyle.ResolveAttributeSet (name);
 		}
+		
+		#region Variable Stack
+		Stack variableStack = new Stack ();
+		object [] currentStack;
+		
+		public object GetStackItem (int slot)
+		{
+			return currentStack [slot];
+		}
+		
+		public void SetStackItem (int slot, object o)
+		{
+			currentStack [slot] = o;
+		}
+		
+		public void PushStack (int stackSize)
+		{
+			variableStack.Push (currentStack);
+			currentStack = new object [stackSize];
+		}
+		
+		public void PopStack ()
+		{
+			currentStack = (object[])variableStack.Pop();
+		}
+		
+		#endregion
+		
 	}
 }

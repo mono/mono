@@ -18,17 +18,14 @@ using System.Xml.Xsl;
 using QName = System.Xml.XmlQualifiedName;
 
 namespace Mono.Xml.Xsl.Operations {
-	public abstract class XslGeneralVariable : XslCompiledElement, IXsltContextVariable {
-		protected QName name;
-		protected XPathExpression select;
-		protected XslOperation content;
-		protected object value;
-		protected bool busy, evaluated;
+	
+	public class XslVariableInformation
+	{
+		QName name;
+		XPathExpression select;
+		XslOperation content;
 		
-		
-		public XslGeneralVariable (Compiler c) : base (c) {}
-		
-		protected override void Compile (Compiler c)
+		public XslVariableInformation (Compiler c)
 		{
 			c.AssertAttribute ("name");
 			name = c.ParseQNameAttribute ("name");
@@ -43,69 +40,82 @@ namespace Mono.Xml.Xsl.Operations {
 			}
 		}
 		
-		public override void Evaluate (XslTransformProcessor p) {
-			Evaluate (p, false);
-		}
-		
-		protected virtual void Evaluate (XslTransformProcessor p, bool isFromXPath)
+		public object Evaluate (XslTransformProcessor p)
 		{
-			if (!evaluated) {
-				if (busy) throw new Exception ("Circular dependency");
-				busy = true;
-				
-				if (select != null) {
-					value = p.Evaluate (select);
-				} else if (content != null) {
-					XmlNodeWriter w = new XmlNodeWriter ();
-					p.PushOutput (w);
-					content.Evaluate (p);
-					p.PopOutput ();
-					value = w.Document.CreateNavigator ().SelectChildren (XPathNodeType.All);
-				} else {
-					value = "";
-				}
-				
-				evaluated = true;
-				busy = false;
-			}
-			
-		}
-		
-		public QName Name {get {return this.name;}}
-		
-		public XPathResultType VariableType { 
-			get {
-				if (value != null) return Functions.XPFuncImpl.GetXPathType (value.GetType ());
-				return XPathResultType.Any;
+			if (select != null) {
+				return p.Evaluate (select);
+			} else if (content != null) {
+				XmlNodeWriter w = new XmlNodeWriter ();
+				p.PushOutput (w);
+				content.Evaluate (p);
+				p.PopOutput ();
+				return w.Document.CreateNavigator ().SelectChildren (XPathNodeType.All);
+			} else {
+				return "";
 			}
 		}
+		
+		public QName Name { get { return name; }}
+	}
+	
+	public abstract class XslGeneralVariable : XslCompiledElement, IXsltContextVariable {
+		protected XslVariableInformation var;	
+		
+		public XslGeneralVariable (Compiler c) : base (c) {}
+		
+		protected override void Compile (Compiler c)
+		{
+			this.var = new XslVariableInformation (c);
+		}
+		
+		public override abstract void Evaluate (XslTransformProcessor p);
+		protected abstract object GetValue (XslTransformProcessor p);
+		
 		
 		public object Evaluate (XsltContext xsltContext)
 		{
-			if (!evaluated)
-				Evaluate (((XsltCompiledContext)xsltContext).Processor, true);
+			XslTransformProcessor p = ((XsltCompiledContext)xsltContext).Processor;
+			Evaluate (p);
+			
+			object value = GetValue (p);
 			
 			if (value is XPathNodeIterator)			
 				return ((XPathNodeIterator)value).Clone ();
 			
 			return value;
-			
 		}
-		
-				
-		public virtual void Clear ()
-		{
-			evaluated = false;
-			value = null;
-		}
-		
-		public bool Evaluated { get { return evaluated; }}
+
+		public QName Name {get {return  var.Name;}}
+		public XPathResultType VariableType { get {return XPathResultType.Any;}}
 		public abstract bool IsLocal { get; }
 		public abstract bool IsParam { get; }
 	}
 	
 	public class XslGlobalVariable : XslGeneralVariable {
 		public XslGlobalVariable (Compiler c) : base (c) {}
+		static object busyObject = new Object ();
+		
+			
+		public override void Evaluate (XslTransformProcessor p)
+		{
+			Hashtable varInfo = p.globalVariableTable;
+			
+			if (varInfo.Contains (this)) {
+				if (varInfo [this] == busyObject)
+					throw new Exception ("Circular Dependency");
+				return;
+			}
+			
+			varInfo [this] = busyObject;
+			varInfo [this] = var.Evaluate (p);
+			
+		}
+		
+		protected override object GetValue (XslTransformProcessor p)
+		{
+			return p.globalVariableTable [this];
+		}
+			
 		public override bool IsLocal { get { return false; }}
 		public override bool IsParam { get { return false; }}
 	}
@@ -116,49 +126,36 @@ namespace Mono.Xml.Xsl.Operations {
 		
 		public XslGlobalParam (Compiler c) : base (c) {}
 			
-		public void Override (object paramVal)
+		public void Override (XslTransformProcessor p, object paramVal)
 		{
-			if (evaluated)
-				throw new Exception ("why was i called again?");
-			evaluated = true;
+			Debug.Assert (!p.globalVariableTable.Contains (this), "Shouldn't have been evaluated by this point");
 			
-			this.value = paramVal;
+			p.globalVariableTable [this] = paramVal;
 		}
+		
 		public override bool IsParam { get { return true; }}
 	}
 	
 	public class XslLocalVariable : XslGeneralVariable {
-		protected Stack values;
-			
+		protected int slot;
+				
 		public XslLocalVariable (Compiler c) : base (c)
 		{
-			c.AddVariable (this);
+			slot = c.AddVariable (this);
 		}
+		
+		public override void Evaluate (XslTransformProcessor p)
+		{	
+			p.SetStackItem (slot, var.Evaluate (p));
+		}
+		
+		protected override object GetValue (XslTransformProcessor p)
+		{
+			return p.GetStackItem (slot);
+		}
+		
 		public override bool IsLocal { get { return true; }}
 		public override bool IsParam { get { return false; }}
-		
-		protected override void Evaluate (XslTransformProcessor p, bool isFromXPath)
-		{
-			if (!evaluated && isFromXPath)
-				throw new Exception ("Variable used before decleration");
-			
-			if (evaluated && !isFromXPath) {
-				if (values == null)
-					values = new Stack ();
-				values.Push (value);
-			}
-			
-			base.Evaluate (p, isFromXPath);
-		}
-		
-		public override void Clear ()
-		{
-			base.Clear ();
-			if (values != null && values.Count != 0) {
-				value = values.Pop ();
-				evaluated = true;
-			}
-		}
 	}
 	
 	public class XslLocalParam : XslLocalVariable {
@@ -166,32 +163,19 @@ namespace Mono.Xml.Xsl.Operations {
 		object paramVal;
 		
 		public XslLocalParam (Compiler c) : base (c) {}
-			
-		public void Override (object paramVal)
-		{
-			if (evaluated) {
-				if (values == null)
-					values = new Stack ();
-				values.Push (value);
-			}
-			evaluated = true;
-			
-			this.value = paramVal;
-		}
-		public override bool IsParam { get { return true; }}
-	}
-	
-	public class XslWithParam : XslGeneralVariable {
-		public XslWithParam (Compiler c) : base (c) {}
-		public override bool IsLocal { get { return false; }}
-		public override bool IsParam { get { return false; }}
 		
-		public object Value {
-			get {
-				if (!evaluated) throw new Exception ("why wasn't I evaluated");
-				if (value is XPathNodeIterator) return ((XPathNodeIterator)value).Clone ();
-				return value;
-			}
+		public override void Evaluate (XslTransformProcessor p)
+		{		
+			if (p.GetStackItem (slot) != null) return; // evaluated already
+				
+			base.Evaluate (p);
 		}
+		
+		public void Override (XslTransformProcessor p, object paramVal)
+		{
+			p.SetStackItem (slot, paramVal);
+		}
+		
+		public override bool IsParam { get { return true; }}
 	}
 }

@@ -1,5 +1,12 @@
 2003-07-30 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	* Compiler.cs, XslTemplate.cs, XslTransformProcessor.cs: Store
+	variable values in the XslTransformProcessor.
+	* XsltCompiledContext.cs: If the scope is null, don't look there!
+	* Debug.cs: New method Assert
+
+2003-07-30 Ben Maurer  <bmaurer@users.sourceforge.net>
+
 	* Compiler.cs, XsltCompiledContext.cs: Remove verbose messages
 	* XslTransformProcessor.cs: Use strongtyped evaluation, using new
 	internal methods in XPathNavigator. Remove verbose debugging messages.

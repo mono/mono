@@ -20,9 +20,14 @@ namespace Mono.Xml.Xsl.Operations {
 		ArrayList content = new ArrayList ();
 		ArrayList variables;
 		
+		bool hasStack;
+		int stackSize;
+		
 		public XslTemplateContent (Compiler c) : base (c) {}
 		protected override void Compile (Compiler c)
 		{
+			hasStack = (c.CurrentVariableScope == null);
+			c.PushScope ();
 			do {	
 				Debug.EnterNavigator (c);
 				XPathNavigator n = c.Input;			
@@ -82,10 +87,7 @@ namespace Mono.Xml.Xsl.Operations {
 							content.Add (new XslValueOf(c));
 							break;
 						case "variable":
-							XslLocalVariable v = new XslLocalVariable (c);
-							if (variables == null) variables = new ArrayList ();
-							variables.Add (v);
-							content.Add (v);
+							content.Add (new XslLocalVariable (c));
 							break;
 						default:
 							// TODO: handle fallback, like we should
@@ -109,16 +111,25 @@ namespace Mono.Xml.Xsl.Operations {
 				Debug.ExitNavigator (c);
 				
 			} while (c.Input.MoveToNext ());
+			
+			
+			if (hasStack) {
+				stackSize = c.PopScope ().VariableHighTide;
+				hasStack = stackSize > 0;
+			} else 
+				c.PopScope ();
 		}
 		
 		public override void Evaluate (XslTransformProcessor p)
 		{
+			if (hasStack)
+				p.PushStack (stackSize);
+			
 			foreach (XslOperation op in content)
 				op.Evaluate (p);
 			
-			if (this.variables != null)
-				foreach (XslLocalVariable v in this.variables)
-					v.Clear ();
+			if (hasStack)
+				p.PopStack ();
 		}
 	}
 }
