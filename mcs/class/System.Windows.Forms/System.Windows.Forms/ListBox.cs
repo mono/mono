@@ -6,7 +6,7 @@
 //   Dennis Hayes (dennish@Raytek.com)
 //   Alexandre Pigolkine (pigolkine@gmx.de)
 //
-// (C) 2002 Ximian, Inc
+// (C) 2002/3 Ximian, Inc
 //
 using System.Collections;
 using System.Drawing;

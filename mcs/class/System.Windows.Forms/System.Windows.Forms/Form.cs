@@ -7,7 +7,7 @@
     //	Dennis Hayes (dennish@raytek.com)
     //   WINELib implementation started by John Sohn (jsohn@columbus.rr.com)
     //
-    // (C) 2002 Ximian, Inc
+    // (C) 2002/3 Ximian, Inc
     //
     
     using System;

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 5/11/2002 Carlos Harvey Perez 
+ * Modifcations and additons, Copyright Ximian 2002/3
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
