@@ -72,8 +72,9 @@ namespace Mono.Xml.XPath {
 				return true;
 			
 			if (patternPrevious != null) {
-				if (isAncestor) {
+				if (!isAncestor) {
 					XPathNavigator parent = node.Clone ();
+					parent.MoveToParent ();
 					if (!patternPrevious.Matches (parent, ctx))
 						return false;
 				} else {
@@ -92,8 +93,9 @@ namespace Mono.Xml.XPath {
 			if (filter == null)
 				return true;
 			
-			BaseIterator parentItr = new ParentIterator (node, ctx);
-			BaseIterator matches = filter.EvaluateNodeSet (parentItr);
+			XPathNavigator p = node.Clone ();
+			p.MoveToParent ();
+			BaseIterator matches = filter.EvaluateNodeSet (new NullIterator (p, ctx));
 			
 			while (matches.MoveNext ()) {
 				if (node.IsSamePosition (matches.Current))
