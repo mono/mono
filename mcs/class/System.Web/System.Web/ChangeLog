@@ -1,5 +1,11 @@
 2004-02-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* HttpServerUtility.cs:
+	* HttpUtility.cs: added some checks for null. Fixed UrlPathEncode (bug
+	#53670).
+
+2004-02-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* HttpUtility.cs: fixed length check. Closes bug #54201.
 	Thanks to Michal Moskal. Use MemoryStream instead of an ArrayList when
 	decoding.

@@ -605,12 +605,10 @@ namespace System.Web {
 			int end = offset + count;
 			for (int i = offset; i < end; i++) {
 				char c = (char) bytes [i];
-				if (c == ' ')
-					result.WriteByte ((byte) '+');
-				else if ((c < '0' && c != '-' && c != '.') ||
-					 (c < 'A' && c > '9') ||
-					 (c > 'Z' && c < 'a' && c != '_') ||
-					 (c > 'z')) {
+				if ((c == ' ') || (c < '0' && c != '-' && c != '.') ||
+				    (c < 'A' && c > '9') ||
+				    (c > 'Z' && c < 'a' && c != '_') ||
+				    (c > 'z')) {
 					result.WriteByte ((byte) '%');
 					int idx = ((int) c) >> 4;
 					result.WriteByte ((byte) hexChars [idx]);
@@ -634,11 +632,6 @@ namespace System.Web {
 			for (int i = 0; i < end; i++) {
 				int idx;
 				char c = str [i];
-				if (c == ' ') {
-					result.Append ('+');
-					continue;
-				} 
-
 				if (c > 255) {
 					result.Append ("%u");
 					idx = ((int) c) >> 24;
@@ -652,7 +645,7 @@ namespace System.Web {
 					continue;
 				}
 				
-				if ((c < '0' && c != '-' && c != '.') ||
+				if ((c == ' ') || (c < '0' && c != '-' && c != '.') ||
 				    (c < 'A' && c > '9') ||
 				    (c > 'Z' && c < 'a' && c != '_') ||
 				    (c > 'z')) {
@@ -738,7 +731,8 @@ namespace System.Web {
 		/// <param name="output">The TextWriter output stream containing the decoded string. </param>
 		public static void HtmlDecode(string s, TextWriter output) 
 		{
-			output.Write (HtmlDecode (s));
+			if (s != null)
+				output.Write (HtmlDecode (s));
 		}
 	
 		/// <summary>
@@ -787,17 +781,24 @@ namespace System.Web {
 		/// <param name="output">The TextWriter output stream containing the encoded string. </param>
 		public static void HtmlEncode(string s, TextWriter output) 
 		{
-			output.Write (HtmlEncode (s));
+			if (s != null)
+				output.Write (HtmlEncode (s));
 		}
 
 #if NET_1_1
 		public string UrlPathEncode (string s)
 		{
-			// find the path portion (?)
+			if (s == null)
+				return null;
+
 			int idx = s.IndexOf ("?");
-			string s2 = s.Substring (0, idx-1);
-			s2 = UrlEncode (s2);
-			s2 += s.Substring (idx);
+			string s2 = null;
+			if (idx != -1) {
+				s2 = s.Substring (0, idx-1);
+				s2 = UrlEncode (s2) + s.Substring (idx);
+			} else {
+				s2 = UrlEncode (s);
+			}
 
 			return s2;
 		}

@@ -335,7 +335,8 @@ namespace System.Web
 		/// <param name="output"></param>
 		public void UrlDecode (string s, TextWriter output)
 		{
-			output.Write (UrlDecode (s));
+			if (s != null)
+				output.Write (UrlDecode (s));
 		}
 
 		/// <summary>
@@ -355,7 +356,8 @@ namespace System.Web
 		/// <param name="output">The TextWriter output stream containing the encoded string. </param>
 		public void UrlEncode (string s, TextWriter output)
 		{
-			output.Write (UrlEncode (s));
+			if (s != null)
+				output.Write (UrlEncode (s));
 		}
 
 		/// <summary>
@@ -366,11 +368,17 @@ namespace System.Web
 		/// <remarks>Does not do any browser specific adjustments, just encode everything</remarks>
 		public string UrlPathEncode (string s)
 		{
-			// find the path portion (?)
+			if (s == null)
+				return null;
+
 			int idx = s.IndexOf ("?");
-			string s2 = s.Substring (0, idx-1);
-			s2 = UrlEncode (s2);
-			s2 += s.Substring (idx);
+			string s2 = null;
+			if (idx != -1) {
+				s2 = s.Substring (0, idx-1);
+				s2 = UrlEncode (s2) + s.Substring (idx);
+			} else {
+				s2 = UrlEncode (s);
+			}
 
 			return s2;
 		}
