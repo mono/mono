@@ -273,6 +273,9 @@ namespace System.Security {
 		{
 			StringBuilder sb = new StringBuilder (base.ToString ());
 			try {
+				if (permissionType != null) {
+					sb.AppendFormat ("{0}Type: {1}", Environment.NewLine, PermissionType);
+				}
 				if (_method != null) {
 					// method string representation doesn't include the type
 					string m = _method.ToString ();
@@ -282,9 +285,6 @@ namespace System.Security {
 				}
 				if (permissionState != null) {
 					sb.AppendFormat ("{0}State: {1}", Environment.NewLine, PermissionState);
-				}
-				if (permissionType != null) {
-					sb.AppendFormat ("{0}Type: {1}", Environment.NewLine, PermissionType);
 				}
 				if ((_granted != null) && (_granted.Length > 0)) {
 					sb.AppendFormat ("{0}Granted: {1}", Environment.NewLine, GrantedSet);

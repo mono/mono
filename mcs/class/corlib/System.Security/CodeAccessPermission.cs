@@ -42,6 +42,7 @@ using System.Threading;
 namespace System.Security {
 
 	[Serializable]
+	[SecurityPermission (SecurityAction.InheritanceDemand, ControlEvidence = true, ControlPolicy = true)]
 	public abstract class CodeAccessPermission : IPermission, ISecurityEncodable, IStackWalk {
 
 		protected CodeAccessPermission ()
@@ -335,9 +336,17 @@ namespace System.Security {
 
 			// 2. CheckPermitOnly
 			if (frame.PermitOnly != null) {
+				// the demanded permission must be in one of the permitted...
+				bool permit = false;
 				foreach (IPermission p in frame.PermitOnly) {
-					if (!CheckPermitOnly (p as CodeAccessPermission))
-						ThrowSecurityException (this, "PermitOnly", current, frame.Method, SecurityAction.Demand, p);
+					if (CheckPermitOnly (p as CodeAccessPermission)) {
+						permit = true;
+						break;
+					}
+				}
+				if (!permit) {
+					// ...or else we throw
+					ThrowSecurityException (this, "PermitOnly", current, frame.Method, SecurityAction.Demand, null);
 				}
 			}
 

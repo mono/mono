@@ -1,3 +1,14 @@
+2005-03-24  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CodeAccessPermission.cs: Fixed PermitOnly when used in a set. Added
+	an InheritanceDemand for ControlEvidence and ControlPolicy on the 
+	class.
+	* PermissionSet.cs: Added an InheritanceDemand for MS public key on 
+	class.
+	* SecurityException.cs: Moved PermissionType up in ToString as this
+	property isn't restricted (i.e. will be part of the output even if
+	the other properties can't make it).
+
 2005-03-15  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CodeAccessPermission.cs: Fixed depth for starting the stack walk
