@@ -4,7 +4,7 @@
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
-// (C) 2003 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2003-2005 Novell, Inc (http://www.novell.com)
 //
 
 using System;
@@ -12,6 +12,7 @@ using System.Collections;
 using System.Globalization;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Security.Permissions;
 using System.Text;
 using System.Xml;
 
@@ -811,6 +812,13 @@ namespace Mono.AssemblyInfo
 			for (int i = 0; i < atts.Length; ++i) {
 				Type t = atts [i].GetType ();
 				if (!t.IsPublic && !t.Name.EndsWith ("TODOAttribute"))
+					continue;
+
+				// we ignore attributes that inherit from SecurityAttribute on purpose as they:
+				// * aren't part of GetCustomAttributes in Fx 1.0/1.1;
+				// * are encoded differently and in a different metadata table; and
+				// * won't ever exactly match MS implementation (from a syntax pov)
+				if (t.IsSubclassOf (typeof (SecurityAttribute)))
 					continue;
 
 				XmlNode node = document.CreateElement ("attribute");

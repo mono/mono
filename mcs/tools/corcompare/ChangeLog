@@ -1,3 +1,10 @@
+2005-03-11  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* mono-api-info.exe: Don't process attributes inheriting from 
+	SecurityAttribute as we won't ever match them 100% (at least from a 
+	syntaxic point of view). The tool permview.exe can be used to extract
+	and compare them if/when required.
+
 2005-02-21  Michal Moskal  <malekith@pld-linux.org>
 
 	* Makefile (PROGRAM_INSTALL_DIR): Define in terms of $(libdir).
