@@ -1,5 +1,10 @@
 2003-08-07  Martin Baulig  <martin@ximian.com>
 
+	* flowanalysis.cs (FlowBranchingType): This is now nested in the
+	`FlowBranching' class and called `BranchingType'.
+
+2003-08-07  Martin Baulig  <martin@ximian.com>
+
 	* flowanalysis.cs: Moved all the control flow analysis code into
 	its own file.
 

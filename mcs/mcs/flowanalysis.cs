@@ -14,36 +14,38 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Diagnostics;
 
-namespace Mono.CSharp {
-	// <summary>
-	//   The type of a FlowBranching.
-	// </summary>
-	public enum FlowBranchingType {
-		// Normal (conditional or toplevel) block.
-		BLOCK,
-
-		// A loop block.
-		LOOP_BLOCK,
-
-		// Try/Catch block.
-		EXCEPTION,
-
-		// Switch block.
-		SWITCH,
-
-		// Switch section.
-		SWITCH_SECTION
-	}
-
+namespace Mono.CSharp
+{
 	// <summary>
 	//   A new instance of this class is created every time a new block is resolved
 	//   and if there's branching in the block's control flow.
 	// </summary>
-	public class FlowBranching {
+	public class FlowBranching
+	{
+		// <summary>
+		//   The type of a FlowBranching.
+		// </summary>
+		public enum BranchingType {
+			// Normal (conditional or toplevel) block.
+			Block,
+
+			// A loop block.
+			LoopBlock,
+
+			// Try/Catch block.
+			Exception,
+
+			// Switch block.
+			Switch,
+
+			// Switch section.
+			SwitchSection
+		}
+
 		// <summary>
 		//   The type of this flow branching.
 		// </summary>
-		public readonly FlowBranchingType Type;
+		public readonly BranchingType Type;
 
 		// <summary>
 		//   The block this branching is contained in.  This may be null if it's not
@@ -408,7 +410,7 @@ namespace Mono.CSharp {
 						// not always throw an exception.
 						if (parameters != null) {
 							bool and_params = child.Breaks != FlowReturns.EXCEPTION;
-							if (branching.Type == FlowBranchingType.EXCEPTION)
+							if (branching.Type == BranchingType.Exception)
 								and_params &= child.Returns != FlowReturns.NEVER;
 							if (and_params) {
 								if (new_params != null)
@@ -426,14 +428,14 @@ namespace Mono.CSharp {
 				}
 
 				Returns = new_returns;
-				if ((branching.Type == FlowBranchingType.BLOCK) ||
-				    (branching.Type == FlowBranchingType.EXCEPTION) ||
+				if ((branching.Type == BranchingType.Block) ||
+				    (branching.Type == BranchingType.Exception) ||
 				    (new_breaks == FlowReturns.UNREACHABLE) ||
 				    (new_breaks == FlowReturns.EXCEPTION))
 					Breaks = new_breaks;
-				else if (branching.Type == FlowBranchingType.SWITCH_SECTION)
+				else if (branching.Type == BranchingType.SwitchSection)
 					Breaks = new_returns;
-				else if (branching.Type == FlowBranchingType.SWITCH){
+				else if (branching.Type == BranchingType.Switch){
 					if (new_breaks == FlowReturns.ALWAYS)
 						Breaks = FlowReturns.ALWAYS;
 				}
@@ -462,7 +464,7 @@ namespace Mono.CSharp {
 					      new_params, new_locals, new_returns, new_breaks,
 					      branching.Infinite, branching.MayLeaveLoop, this);
 
-				if (branching.Type == FlowBranchingType.SWITCH_SECTION) {
+				if (branching.Type == BranchingType.SwitchSection) {
 					if ((new_breaks != FlowReturns.ALWAYS) &&
 					    (new_breaks != FlowReturns.EXCEPTION) &&
 					    (new_breaks != FlowReturns.UNREACHABLE))
@@ -492,7 +494,7 @@ namespace Mono.CSharp {
 					}
 				}
 
-				if (branching.Type == FlowBranchingType.LOOP_BLOCK) {
+				if (branching.Type == BranchingType.LoopBlock) {
 					Report.Debug (2, "MERGING LOOP BLOCK DONE", branching,
 						      branching.Infinite, branching.MayLeaveLoop,
 						      new_breaks, new_returns);
@@ -644,7 +646,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		FlowBranching (FlowBranchingType type, Location loc)
+		FlowBranching (BranchingType type, Location loc)
 		{
 			this.Block = null;
 			this.Location = loc;
@@ -658,7 +660,7 @@ namespace Mono.CSharp {
 		//   the block.
 		// </summary>
 		public FlowBranching (Block block, Location loc)
-			: this (FlowBranchingType.BLOCK, loc)
+			: this (BranchingType.Block, loc)
 		{
 			Block = block;
 			Parent = null;
@@ -677,7 +679,7 @@ namespace Mono.CSharp {
 		//   introduces any new variables - in this case, we need to create a new
 		//   usage vector with a different size than our parent's one.
 		// </summary>
-		public FlowBranching (FlowBranching parent, FlowBranchingType type,
+		public FlowBranching (FlowBranching parent, BranchingType type,
 				      Block block, Location loc)
 			: this (type, loc)
 		{
@@ -700,7 +702,7 @@ namespace Mono.CSharp {
 			AddSibling (vector);
 
 			switch (Type) {
-			case FlowBranchingType.EXCEPTION:
+			case BranchingType.Exception:
 				finally_vectors = new ArrayList ();
 				break;
 
@@ -747,7 +749,7 @@ namespace Mono.CSharp {
 		// </summary>
 		public void CreateSiblingForFinally ()
 		{
-			if (Type != FlowBranchingType.EXCEPTION)
+			if (Type != BranchingType.Exception)
 				throw new NotSupportedException ();
 
 			CreateSibling ();
@@ -785,8 +787,8 @@ namespace Mono.CSharp {
 		{
 			FlowReturns returns = CurrentUsageVector.MergeChildren (child, child.Siblings);
 
-			if ((child.Type != FlowBranchingType.LOOP_BLOCK) &&
-			    (child.Type != FlowBranchingType.SWITCH_SECTION))
+			if ((child.Type != BranchingType.LoopBlock) &&
+			    (child.Type != BranchingType.SwitchSection))
 				MayLeaveLoop |= child.MayLeaveLoop;
 
 			return returns;
@@ -797,7 +799,7 @@ namespace Mono.CSharp {
 		// </summary>
 		public FlowReturns MergeTopBlock ()
 		{
-			if ((Type != FlowBranchingType.BLOCK) || (Block == null))
+			if ((Type != BranchingType.Block) || (Block == null))
 				throw new NotSupportedException ();
 
 			UsageVector vector = new UsageVector (null, param_map.Length, local_map.Length);
@@ -874,13 +876,13 @@ namespace Mono.CSharp {
 			bool reachable;
 
 			switch (Type) {
-			case FlowBranchingType.SWITCH_SECTION:
+			case BranchingType.SwitchSection:
 				// The code following a switch block is reachable unless the switch
 				// block always returns.
 				reachable = !CurrentUsageVector.AlwaysReturns;
 				break;
 
-			case FlowBranchingType.LOOP_BLOCK:
+			case BranchingType.LoopBlock:
 				// The code following a loop is reachable unless the loop always
 				// returns or it's an infinite loop without any `break's in it.
 				reachable = !CurrentUsageVector.AlwaysReturns &&

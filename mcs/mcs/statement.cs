@@ -139,7 +139,7 @@ namespace Mono.CSharp {
 				return false;
 			}
 			
-			ec.StartFlowBranching (FlowBranchingType.BLOCK, loc);
+			ec.StartFlowBranching (FlowBranching.BranchingType.Block, loc);
 			
 			if (!TrueStatement.Resolve (ec)) {
 				ec.KillFlowBranching ();
@@ -229,7 +229,7 @@ namespace Mono.CSharp {
 		{
 			bool ok = true;
 
-			ec.StartFlowBranching (FlowBranchingType.LOOP_BLOCK, loc);
+			ec.StartFlowBranching (FlowBranching.BranchingType.LoopBlock, loc);
 
 			if (!EmbeddedStatement.Resolve (ec))
 				ok = false;
@@ -314,7 +314,7 @@ namespace Mono.CSharp {
 			if (expr == null)
 				return false;
 
-			ec.StartFlowBranching (FlowBranchingType.LOOP_BLOCK, loc);
+			ec.StartFlowBranching (FlowBranching.BranchingType.LoopBlock, loc);
 
 			//
 			// Inform whether we are infinite or not
@@ -451,7 +451,7 @@ namespace Mono.CSharp {
 			} else
 				infinite = true;
 
-			ec.StartFlowBranching (FlowBranchingType.LOOP_BLOCK, loc);
+			ec.StartFlowBranching (FlowBranching.BranchingType.LoopBlock, loc);
 			if (!infinite)
 				ec.CurrentBranching.CreateSibling ();
 
@@ -2762,7 +2762,7 @@ namespace Mono.CSharp {
 			ec.Switch = this;
 			ec.Switch.SwitchType = SwitchType;
 
-			ec.StartFlowBranching (FlowBranchingType.SWITCH, loc);
+			ec.StartFlowBranching (FlowBranching.BranchingType.Switch, loc);
 
 			bool first = true;
 			foreach (SwitchSection ss in Sections){
@@ -3310,7 +3310,7 @@ namespace Mono.CSharp {
 		{
 			bool ok = true;
 			
-			ec.StartFlowBranching (FlowBranchingType.EXCEPTION, Block.StartLocation);
+			ec.StartFlowBranching (FlowBranching.BranchingType.Exception, Block.StartLocation);
 
 			Report.Debug (1, "START OF TRY BLOCK", Block.StartLocation);
 
@@ -3740,7 +3740,7 @@ namespace Mono.CSharp {
 				empty = new EmptyExpression (hm.element_type);
 			}
 
-			ec.StartFlowBranching (FlowBranchingType.LOOP_BLOCK, loc);
+			ec.StartFlowBranching (FlowBranching.BranchingType.LoopBlock, loc);
 			ec.CurrentBranching.CreateSibling ();
 
  			//

@@ -379,7 +379,7 @@ namespace Mono.CSharp {
 		//   Starts a new code branching.  This inherits the state of all local
 		//   variables and parameters from the current branching.
 		// </summary>
-		public FlowBranching StartFlowBranching (FlowBranchingType type, Location loc)
+		public FlowBranching StartFlowBranching (FlowBranching.BranchingType type, Location loc)
 		{
 			FlowBranching cfb = new FlowBranching (CurrentBranching, type, null, loc);
 
@@ -394,12 +394,12 @@ namespace Mono.CSharp {
 		public FlowBranching StartFlowBranching (Block block)
 		{
 			FlowBranching cfb;
-			FlowBranchingType type;
+			FlowBranching.BranchingType type;
 
-			if (CurrentBranching.Type == FlowBranchingType.SWITCH)
-				type = FlowBranchingType.SWITCH_SECTION;
+			if (CurrentBranching.Type == FlowBranching.BranchingType.Switch)
+				type = FlowBranching.BranchingType.SwitchSection;
 			else
-				type = FlowBranchingType.BLOCK;
+				type = FlowBranching.BranchingType.Block;
 
 			cfb = new FlowBranching (CurrentBranching, type, block, block.StartLocation);
 
