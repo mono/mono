@@ -676,7 +676,7 @@ namespace System.Web.Compilation
 				builder.method.Statements.Add (invoke);
 			}
 			
-			if (typeof (Control).IsAssignableFrom (builder.ControlType))
+			if (!childrenAsProperties && typeof (Control).IsAssignableFrom (builder.ControlType))
 				builder.method.Statements.Add (new CodeMethodReturnStatement (ctrlVar));
 		}
 

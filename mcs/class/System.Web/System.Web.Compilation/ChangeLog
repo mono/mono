@@ -1,3 +1,8 @@
+2003-10-21  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* TemplateControlCompiler.cs: fix bug #42994. Now we don't generate
+	a return statement for user controls with 'void' return type.
+
 2003-10-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AspParser.cs: fixed bug #49627.
