@@ -44,10 +44,11 @@ namespace System.Windows.Forms
 		
 		public Pen GetPen (Color color)
 		{
-			string hash = color.ToString();			
-			
-			if (pens.Contains (hash))
-				return (Pen) pens[hash];				
+			int hash = color.ToArgb ();			
+
+			Pen res = pens [hash] as Pen;
+			if (res != null)
+				return res;
 			
 			Pen pen = new Pen (color);
 			pens.Add (hash, pen);
@@ -56,10 +57,11 @@ namespace System.Windows.Forms
 		
 		public SolidBrush GetSolidBrush (Color color)
 		{
-			string hash = color.ToString ();
-						
-			if (solidbrushes.Contains (hash))
-				return (SolidBrush) solidbrushes[hash];							
+			int hash = color.ToArgb ();
+
+			SolidBrush res = solidbrushes [hash] as SolidBrush;
+			if (res != null)
+				return res;
 			
 			SolidBrush brush = new SolidBrush (color);
 			solidbrushes.Add (hash, brush);

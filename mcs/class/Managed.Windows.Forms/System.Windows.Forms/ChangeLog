@@ -1,3 +1,8 @@
+2005-01-06  Jackson Harper  <jackson@ximian.com>
+
+	* Theme.cs: Speed up getting pens and solid brushes, by using
+	their ARGB as a hash instead of tostring and not calling Contains.
+
 2005-01-06  Peter Bartok <pbartok@novell.com>
 
 	* Form.cs:
