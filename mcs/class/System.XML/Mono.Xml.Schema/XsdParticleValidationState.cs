@@ -81,7 +81,7 @@ namespace Mono.Xml.Schema
 			case "XmlSchemaParticleEmpty":	// Mono
 				return AddEmpty ();
 			default:
-				throw new NotImplementedException ();
+				throw new InvalidOperationException ();	// Should not occur.
 			}
 		}
 

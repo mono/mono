@@ -1,3 +1,10 @@
+2003-10-21  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XsdKeyTable.cs : Reduced compilation warning.
+	* XsdParticleValidationState.cs : Reduced NotImplementedException.
+	* XsdValidatingReader.cs : Removed XmlResolver. Implemented more simple
+	  type validation, such as list, union and facets.
+
 2003-09-30  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* added XsdIdentityPath.cs, XsdIdentityState.cs, XsdKeyTable.cs

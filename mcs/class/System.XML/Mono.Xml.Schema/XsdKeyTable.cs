@@ -100,12 +100,10 @@ namespace Mono.Xml.Schema
 				if (reader.Depth - this.StartDepth < path.OrderedSteps.Length - 1)
 					continue;
 
-				bool isAttributePath = false;
 				int iter = path.OrderedSteps.Length;
-				if (path.OrderedSteps [iter-1].IsAttribute) {
-					isAttributePath = true;
+				if (path.OrderedSteps [iter-1].IsAttribute)
 					iter--;
-				}
+
 				if (path.Descendants && reader.Depth < this.StartDepth + iter)
 					continue;
 				else if (!path.Descendants && reader.Depth != this.StartDepth + iter)

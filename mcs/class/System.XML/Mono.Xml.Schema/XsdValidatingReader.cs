@@ -6,6 +6,11 @@
 //
 //	(C)2003 Atsushi Enomoto
 //
+// Note:
+//
+// This class doesn't support set_XmlResolver, since it isn't common to XmlReader interface. 
+// Try to set that of xml reader which is used to construct this object.
+//
 using System;
 using System.Collections;
 using System.Collections.Specialized;
@@ -141,10 +146,6 @@ namespace Mono.Xml.Schema
 				else
 					return ValidationType.Schema;
 			}
-		}
-
-		public XmlResolver XmlResolver {
-			set { throw new NotImplementedException (); }
 		}
 
 		// It is used only for independent XmlReader use, not for XmlValidatingReader.
@@ -507,8 +508,8 @@ namespace Mono.Xml.Schema
 			XmlSchemaSimpleType st = context.ActualType as XmlSchemaSimpleType;
 			if (dt == null) {
 				if (st != null) {
-					if (st.Variety == XmlSchemaDerivationMethod.Restriction)
-						dt = st.Datatype;
+//					if (st.Variety == XmlSchemaDerivationMethod.Restriction)
+					dt = st.Datatype;
 				} else {
 					XmlSchemaComplexType ct = context.ActualType as XmlSchemaComplexType;
 					dt = ct.Datatype;
@@ -526,10 +527,8 @@ namespace Mono.Xml.Schema
 				if (context.Element != null && context.Element.ValidatedFixedValue != null)
 					if (value != context.Element.ValidatedFixedValue)
 						HandleError ("Fixed value constraint was not satisfied.");
-
 				AssessStringValid (st, dt, value);
 			}
-			// TODO: facet validation
 
 			// Identity field value
 			while (this.currentKeyFieldConsumers.Count > 0) {
@@ -547,7 +546,6 @@ namespace Mono.Xml.Schema
 				}
 				if (identity == null)
 					identity = value;
-				// TODO: validity check
 				
 				if (!field.SetIdentityField (identity, dt as XsdAnySimpleType, this))
 					HandleError ("Two or more identical key value was found: '" + value + "' .");
@@ -558,29 +556,94 @@ namespace Mono.Xml.Schema
 		}
 
 		// 3.14.4 String Valid 
-		private void AssessStringValid (XmlSchemaSimpleType st, XmlSchemaDatatype dt, string value)
+		private void AssessStringValid (XmlSchemaSimpleType st,
+			XmlSchemaDatatype dt, string value)
 		{
-			try {
-				if (st != null) {
-					switch (st.DerivedBy) {
-					case XmlSchemaDerivationMethod.List:
-						string [] values = dt.Normalize (value).Split (wsChars);
-						foreach (string each in values)
-							dt.ParseValue (each, NameTable, ParserContext.NamespaceManager);
-						break;
-					case XmlSchemaDerivationMethod.Union:
-						XmlSchemaSimpleTypeUnion union = st.Content as XmlSchemaSimpleTypeUnion;
-						// TODO: validate.
-						break;
-					// TODO: rest
+			XmlSchemaDatatype validatedDatatype = dt;
+			if (st != null) {
+				string normalized = validatedDatatype.Normalize (value);
+				string [] values;
+				XmlSchemaDatatype itemDatatype;
+				XmlSchemaSimpleType itemSimpleType;
+				switch (st.DerivedBy) {
+				case XmlSchemaDerivationMethod.List:
+					XmlSchemaSimpleTypeList listContent = st.Content as XmlSchemaSimpleTypeList;
+					values = normalized.Split (wsChars);
+					itemDatatype = listContent.ValidatedListItemType as XmlSchemaDatatype;
+					itemSimpleType = listContent.ValidatedListItemType as XmlSchemaSimpleType;
+					foreach (string each in values) {
+						if (each == String.Empty)
+							continue;
+						// validate against ValidatedItemType
+						if (itemDatatype != null) {
+							try {
+								itemDatatype.ParseValue (each, NameTable, ParserContext.NamespaceManager);
+							} catch (Exception ex) { // FIXME: better exception handling ;-(
+								HandleError ("List type value contains one or more invalid values.", ex);
+								break;
+							}
+						}
+						else
+							AssessStringValid (itemSimpleType, itemSimpleType.Datatype, each);
 					}
+					break;
+				case XmlSchemaDerivationMethod.Union:
+					XmlSchemaSimpleTypeUnion union = st.Content as XmlSchemaSimpleTypeUnion;
+//					values = normalized.Split (wsChars);
+				{
+string each = normalized;
+//					foreach (string each in values) {
+//						if (each == String.Empty)
+//							continue;
+						// validate against ValidatedItemType
+						bool passed = false;
+						foreach (object eachType in union.ValidatedTypes) {
+							itemDatatype = eachType as XmlSchemaDatatype;
+							itemSimpleType = eachType as XmlSchemaSimpleType;
+							if (itemDatatype != null) {
+								try {
+									itemDatatype.ParseValue (each, NameTable, ParserContext.NamespaceManager);
+								} catch (Exception) { // FIXME: better exception handling ;-(
+									continue;
+								}
+							}
+							else {
+								try {
+									AssessStringValid (itemSimpleType, itemSimpleType.Datatype, each);
+								} catch (XmlSchemaException) {
+									continue;
+								}
+							}
+							passed = true;
+							break;
+						}
+						if (!passed) {
+							HandleError ("Union type value contains one or more invalid values.");
+							break;
+						}
+					}
+					break;
+				// TODO: rest
+				case XmlSchemaDerivationMethod.Restriction:
+					XmlSchemaSimpleTypeRestriction str = st.Content as XmlSchemaSimpleTypeRestriction;
+					// facet validation
+					if (str != null) {
+						if (!str.ValidateValueWithFacets (normalized, NameTable)) {
+							HandleError ("Specified value was invalid against the facets.");
+							break;
+						}
+					}
+					validatedDatatype = st.Datatype;
+					break;
 				}
-				else
-					dt.ParseValue (value, NameTable, ParserContext.NamespaceManager);
-			} catch (Exception ex) {	// FIXME: It is really bad design ;-P
-				HandleError ("Invalidly typed data was specified.");
 			}
-
+			if (validatedDatatype != null) {
+				try {
+					validatedDatatype.ParseValue (value, NameTable, ParserContext.NamespaceManager);
+				} catch (Exception ex) {	// FIXME: It is really bad design ;-P
+					HandleError ("Invalidly typed data was specified.", ex);
+				}
+			}
 		}
 
 		private object GetLocalTypeDefinition (string name)
