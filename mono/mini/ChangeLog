@@ -1,5 +1,8 @@
 2004-02-11  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini.c (mono_runtime_install_handlers): Remove check for valgrind
+	since newer valgrind versions do not need it.
+	
 	* mini.c (mono_jit_compile_method_with_opt): New helper function to
 	compile a method with a given set of optimizations.
 
