@@ -1,5 +1,7 @@
 2004-06-30  Zoltan Varga  <vargaz@freemail.hu>
 
+	* inssel-sparc.brg: Add new rule to avoid register moves.
+
 	* inssel.brg: Add ldind_to_load_membase helper function.
 
 2004-06-30  Ben Maurer  <bmaurer@ximian.com>
