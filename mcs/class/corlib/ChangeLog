@@ -1,3 +1,7 @@
+2004-02-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* corlib_test.dll.sources : Added CharCategoryTest.cs
+
 2004-02-17 Lluis Sanches Gual  <lluis@ximian.com>
 	
 	* corlib.dll.sources: Added 

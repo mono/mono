@@ -6,6 +6,7 @@ System/BitConverterTest.cs
 System/BooleanTest.cs
 System/BufferTest.cs
 System/ByteTest.cs
+System/CharCategoryTest.cs
 System/CharEnumeratorTest.cs
 System/CharTest.cs
 System.Collections/ArrayListTest.cs
