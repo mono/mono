@@ -25,11 +25,11 @@ compilers and tools.
 
 If you only want to build a snapshot or a fresh CVS checkout of the
 sources, you should go into the `mono' sibling directory and issue the
-make bootstrap command, like this:
+make command, like this:
 
 	  cd ../mono
 	  ./autogen.sh --prefix=/usr/local
-	  make bootstrap
+	  make
 	  make install
 
 The compilation is bundled with the build due to dependencies on the
@@ -68,7 +68,8 @@ If you get "corlib out of sync" errors, try
 
     make PROFILE="atomic"
 
-The difference between the two modes is explained farther down.
+A better alternative would be to fire off a 'make' from a sibling or
+parent 'mono/' tree.
 
 Troubleshooting
 ===============
