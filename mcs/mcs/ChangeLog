@@ -1,3 +1,8 @@
+2004-07-19  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs: Resolve the constant expression before returning
+	it. 
+
 2004-07-19  Martin Baulig  <martin@ximian.com>
 
 	* iterators.cs (Iterator.MapVariable): Don't define fields twice.
