@@ -56,10 +56,15 @@ namespace Mono.CSharp {
 		}
 		
 		/// <remarks>
-		///    Emits a bool expression.
+		///    Encapsulates the emission of a boolean test and jumping to a
+		///    destination.
+		///
+		///    This will emit the bool expression in `bool_expr' and if
+		///    `target_is_for_true' is true, then the code will generate a 
+		///    brtrue to the target.   Otherwise a brfalse. 
 		/// </remarks>
 		public static void EmitBoolExpression (EmitContext ec, Expression bool_expr,
-						       Label target, bool isTrue)
+						       Label target, bool target_is_for_true)
 		{
 			ILGenerator ig = ec.ig;
 			
@@ -72,12 +77,17 @@ namespace Mono.CSharp {
 
 					u.EmitLogicalNot (ec);
 				}
-			} 
+			} else if (bool_expr is Binary){
+				Binary b = (Binary) bool_expr;
+
+				if (b.EmitBranchable (ec, target, target_is_for_true))
+					return;
+			}
 
 			if (!invert)
 				bool_expr.Emit (ec);
 
-			if (isTrue){
+			if (target_is_for_true){
 				if (invert)
 					ig.Emit (OpCodes.Brfalse, target);
 				else
@@ -406,7 +416,8 @@ namespace Mono.CSharp {
 			bool old_inloop = ec.InLoop;
 			bool old_breaks = ec.Breaks;
 			Label loop = ig.DefineLabel ();
-
+			Label test = ig.DefineLabel ();
+			
 			if (InitStatement != null)
 				if (! (InitStatement is EmptyStatement))
 					InitStatement.Emit (ec);
@@ -415,15 +426,8 @@ namespace Mono.CSharp {
 			ec.LoopEnd = ig.DefineLabel ();
 			ec.InLoop = true;
 
+			ig.Emit (OpCodes.Br, test);
 			ig.MarkLabel (loop);
-
-			//
-			// If test is null, there is no test, and we are just
-			// an infinite loop
-			//
-			if (Test != null)
-				EmitBoolExpression (ec, Test, ec.LoopEnd, false);
-
 			ec.Breaks = false;
 			Statement.Emit (ec);
 			bool breaks = ec.Breaks;
@@ -431,7 +435,16 @@ namespace Mono.CSharp {
 			ig.MarkLabel (ec.LoopBegin);
 			if (!(Increment is EmptyStatement))
 				Increment.Emit (ec);
-			ig.Emit (OpCodes.Br, loop);
+
+			ig.MarkLabel (test);
+			//
+			// If test is null, there is no test, and we are just
+			// an infinite loop
+			//
+			if (Test != null)
+				EmitBoolExpression (ec, Test, loop, true);
+			else
+				ig.Emit (OpCodes.Br, loop);
 			ig.MarkLabel (ec.LoopEnd);
 
 			ec.LoopBegin = old_begin;
@@ -2174,7 +2187,14 @@ namespace Mono.CSharp {
 
 		public override bool Resolve (EmitContext ec)
 		{
-			return Block.Resolve (ec);
+			bool previous_state = ec.InUnsafe;
+			bool val;
+			
+			ec.InUnsafe = true;
+			val = Block.Resolve (ec);
+			ec.InUnsafe = previous_state;
+
+			return val;
 		}
 		
 		public override bool Emit (EmitContext ec)

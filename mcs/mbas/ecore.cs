@@ -447,7 +447,14 @@ namespace Mono.CSharp {
 			}
 			
 			return null;
-		}			
+		}
+
+		static public MemberInfo GetFieldFromEvent (EventExpr event_expr)
+		{
+			EventInfo ei = event_expr.EventInfo;
+
+			return TypeManager.GetPrivateFieldOfEvent (ei);
+		}
 		
 		static EmptyExpression MyEmptyExpr;
 		static public Expression ImplicitReferenceConversion (Expression expr, Type target_type)
@@ -2499,6 +2506,7 @@ namespace Mono.CSharp {
 		//
 		public static int GetTypeSize (Type t)
 		{
+			t = TypeManager.TypeToCoreType (t);
 			if (t == TypeManager.int32_type ||
 			    t == TypeManager.uint32_type ||
 			    t == TypeManager.float_type)
@@ -2525,6 +2533,59 @@ namespace Mono.CSharp {
 		public void CacheTemporaries (EmitContext ec)
 		{
 		}
+
+		static void Error_NegativeArrayIndex (Location loc)
+		{
+			Report.Error (284, loc, "Can not create array with a negative size");
+		}
+		
+		//
+		// Converts `source' to an int, uint, long or ulong.
+		//
+		public Expression ExpressionToArrayArgument (EmitContext ec, Expression source, Location loc)
+		{
+			Expression target;
+			
+			bool old_checked = ec.CheckState;
+			ec.CheckState = true;
+			
+			target = ConvertImplicit (ec, source, TypeManager.int32_type, loc);
+			if (target == null){
+				target = ConvertImplicit (ec, source, TypeManager.uint32_type, loc);
+				if (target == null){
+					target = ConvertImplicit (ec, source, TypeManager.int64_type, loc);
+					if (target == null){
+						target = ConvertImplicit (ec, source, TypeManager.uint64_type, loc);
+						if (target == null)
+							Expression.Error_CannotConvertImplicit (loc, source.Type, TypeManager.int32_type);
+					}
+				}
+			} 
+			ec.CheckState = old_checked;
+
+			//
+			// Only positive constants are allowed at compile time
+			//
+			if (target is Constant){
+				if (target is IntConstant){
+					if (((IntConstant) target).Value < 0){
+						Error_NegativeArrayIndex (loc);
+						return null;
+					}
+				}
+
+				if (target is LongConstant){
+					if (((LongConstant) target).Value < 0){
+						Error_NegativeArrayIndex (loc);
+						return null;
+					}
+				}
+				
+			}
+
+			return target;
+		}
+		
 	}
 
 	/// <summary>
@@ -3078,7 +3139,7 @@ namespace Mono.CSharp {
 			Location = l;
 		}
 
-		public static void Error120 (Location l, string name)
+		public static void Error_ObjectRefRequired (Location l, string name)
 		{
 			Report.Error (
 				120, l,
@@ -3096,25 +3157,25 @@ namespace Mono.CSharp {
 				FieldInfo fi = ((FieldExpr) e).FieldInfo;
 				
 				if (!fi.IsStatic){
-					Error120 (Location, Name);
+					Error_ObjectRefRequired (Location, Name);
 					return null;
 				}
 			} else if (e is MethodGroupExpr){
 				MethodGroupExpr mg = (MethodGroupExpr) e;
 
 				if (!mg.RemoveInstanceMethods ()){
-					Error120 (Location, mg.Methods [0].Name);
+					Error_ObjectRefRequired (Location, mg.Methods [0].Name);
 					return null;
 				}
 				return e;
 			} else if (e is PropertyExpr){
 				if (!((PropertyExpr) e).IsStatic){
-					Error120 (Location, Name);
+					Error_ObjectRefRequired (Location, Name);
 					return null;
 				}
 			} else if (e is EventExpr) {
 				if (!((EventExpr) e).IsStatic) {
-					Error120 (Location, Name);
+					Error_ObjectRefRequired (Location, Name);
 					return null;
 				}
 			}
@@ -3260,7 +3321,7 @@ namespace Mono.CSharp {
 				
 				if (ec.IsStatic){
 					if (!allow_static && !fi.IsStatic){
-						Error120 (Location, Name);
+						Error_ObjectRefRequired (Location, Name);
 						return null;
 					}
 				} else {
@@ -3341,11 +3402,11 @@ namespace Mono.CSharp {
 				EventExpr ee = (EventExpr) e;
 
 				Expression ml = MemberLookup (
-					ec, ec.DeclSpace.TypeBuilder, ee.EventInfo.Name,
+					ec, ec.ContainerType, ee.EventInfo.Name,
 					MemberTypes.Event, AllBindingFlags, Location);
 
 				if (ml != null) {
-					MemberInfo mi = ec.TypeContainer.GetFieldFromEvent ((EventExpr) ml);
+					MemberInfo mi = GetFieldFromEvent ((EventExpr) ml);
 
 					if (mi == null) {
 						//
@@ -3389,6 +3450,8 @@ namespace Mono.CSharp {
 				return e;
 		}
 
+		
+		
 		public override void Emit (EmitContext ec)
 		{
 			//
@@ -3715,14 +3778,18 @@ namespace Mono.CSharp {
 			// get the address of the copy.
 			//
 			if (FieldInfo.IsInitOnly){
-				LocalBuilder local;
+				if (ec.IsConstructor) {
+					ig.Emit (OpCodes.Ldsflda, FieldInfo);
+				} else {
+					LocalBuilder local;
 				
-				Emit (ec);
-				local = ig.DeclareLocal (type);
-				ig.Emit (OpCodes.Stloc, local);
-				ig.Emit (OpCodes.Ldloca, local);
+					Emit (ec);
+					local = ig.DeclareLocal (type);
+					ig.Emit (OpCodes.Stloc, local);
+					ig.Emit (OpCodes.Ldloca, local);
+				}
 				return;
-			} 
+			}
 
 			if (FieldInfo.IsStatic)
 				ig.Emit (OpCodes.Ldsflda, FieldInfo);

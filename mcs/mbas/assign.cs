@@ -200,11 +200,11 @@ namespace Mono.CSharp {
 				if (ml == null) {
 				        //
 					// If this is the case, then the Event does not belong 
-					// to this TypeContainer and so, according to the spec
+					// to this Type and so, according to the spec
 					// is allowed to only appear on the left hand of
 					// the += and -= operators
 					//
-					// Note that if target will not appear as an EventExpr
+					// Note that target will not appear as an EventExpr
 					// in the case it is being referenced within the same type container;
 					// it will appear as a FieldExpr in that case.
 					//
@@ -223,7 +223,7 @@ namespace Mono.CSharp {
 				}
 			}
 			
-			if (source is New && target_type.IsSubclassOf (TypeManager.value_type)){
+			if (source is New && target_type.IsValueType){
 				New n = (New) source;
 
 				n.ValueTypeVariable = target;

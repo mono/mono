@@ -655,14 +655,15 @@ public class TypeManager {
 			system_void_array_copyto_array_int = GetMethod (
 				system_array_type, "CopyTo", system_array_int_arg);
 
-			Type [] system_type_type_arg = { system_type_type, system_type_type };
+			Type [] system_type_type_arg = { system_type_type, system_type_type, system_type_type };
 			system_void_set_corlib_type_builders = GetMethod (
 				system_assemblybuilder_type, "SetCorlibTypeBuilders",
 				system_type_type_arg);
 
-			object[] args = new object [2];
+			object[] args = new object [3];
 			args [0] = object_type;
 			args [1] = value_type;
+			args [2] = enum_type;
 
 			system_void_set_corlib_type_builders.Invoke (CodeGen.AssemblyBuilder, args);
 		}
@@ -1057,6 +1058,26 @@ public class TypeManager {
 			return ei.GetAddMethod ();
 	}
 
+	static Hashtable priv_fields_events;
+
+	static public bool RegisterPrivateFieldOfEvent (EventInfo einfo, FieldBuilder builder)
+	{
+		if (priv_fields_events == null)
+			priv_fields_events = new Hashtable ();
+
+		if (priv_fields_events.Contains (einfo))
+			return false;
+
+		priv_fields_events.Add (einfo, builder);
+
+		return true;
+	}
+
+	static public MemberInfo GetPrivateFieldOfEvent (EventInfo ei)
+	{
+		return (MemberInfo) priv_fields_events [ei];
+	}
+	
 	static Hashtable properties;
 	
 	static public bool RegisterProperty (PropertyBuilder pb, MethodBase get, MethodBase set)
@@ -1367,6 +1388,10 @@ public class TypeManager {
 		case TypeCode.String:
 			return TypeManager.string_type;
 		default:
+			if (t == typeof (void))
+				return TypeManager.void_type;
+			if (t == typeof (object))
+				return TypeManager.object_type;
 			return t;
 		}
 	}
