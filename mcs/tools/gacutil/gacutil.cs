@@ -43,6 +43,7 @@ namespace Mono.Tools
 				args = stripped;
 			}
 	
+
 			string[] remainder_args = new string[args.Length - 1];
 			
 			if (args.Length >= 2) {
@@ -256,7 +257,9 @@ namespace Mono.Tools
 				force = true;
 
 		
-			string version_token = an.Version + "__" + GetStringToken (an.GetPublicKeyToken ());
+			string version_token = an.Version + "_" +
+				an.CultureInfo.Name.ToLower () +
+				"_" + GetStringToken (an.GetPublicKeyToken ());
 
 			string fullPath = String.Format ("{0}{3}{1}{3}{2}{3}", gac_path, an.Name, version_token, Path.DirectorySeparatorChar);
 

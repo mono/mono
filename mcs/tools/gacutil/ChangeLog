@@ -1,3 +1,7 @@
+2004-03-25  Jackson Harper  <jackson@ximian.com>
+
+	* gacutil.cs: Add culture to assemblies version string.
+	
 2003-12-10  Todd Berman  <tberman@gentoo.org>
 
 	* gacutil.cs: Properly detect and fail gracefully on ms.net runtime
