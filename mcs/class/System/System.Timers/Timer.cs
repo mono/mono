@@ -136,9 +136,6 @@ namespace System.Timers
 		static void Callback (object state)
 		{
 			Timer timer = (Timer) state;
-			if (timer.autoReset == false)
-				timer.enabled = false;
-
 			if (timer.Elapsed == null)
 				return;
 
@@ -156,8 +153,12 @@ namespace System.Timers
 			wait = new ManualResetEvent (false);
 
 			WaitCallback wc = new WaitCallback (Callback);
-			while (enabled && wait.WaitOne ((int) interval, false) == false)
+			while (enabled && wait.WaitOne ((int) interval, false) == false) {
+				if (autoReset == false)
+					enabled = false;
+
 				ThreadPool.QueueUserWorkItem (wc, this);
+			}
 			
 			wc = null;
 			((IDisposable) wait).Dispose ();
