@@ -1,5 +1,12 @@
 2003-02-02  Martin Baulig  <martin@ximian.com>
 
+	* jit.c (mono_jit_compile_method): Call mono_debug_add_wrapper()
+	to add the interncall to the symbol file.
+
+	* debug.c (mono_debug_add_wrapper): New public function.
+
+2003-02-02  Martin Baulig  <martin@ximian.com>
+
 	* debug.c (debug_update_il_offsets): Set the prologue end address
 	to the address of the first source line.
 
