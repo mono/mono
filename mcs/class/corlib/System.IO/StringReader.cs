@@ -53,8 +53,16 @@ namespace System.IO {
 		// the actual number of characters read, or zero if the end of the string 
 		// has been reached and no characters are read.
 
-		public override int Read( out char[] buffer, int index, int count ) {
-			
+		public override int Read( char[] buffer, int index, int count ) {
+
+			if( buffer == null ) {
+				throw new ArgumentNullException();
+			} else if( buffer.Length - index < count ) {
+				throw new ArgumentException(); 
+			} else if( index < 0 || count < 0 ) {
+				throw new ArgumentOutOfRangeException();
+			}
+
 			int charsToRead;
 
 			if( nextChar + count > sourceLength ) {
@@ -62,8 +70,6 @@ namespace System.IO {
 			} else {
 				charsToRead = count;
 			}
-			
-			buffer = new char [charsToRead];
 
 			Array.Copy(sourceChars, nextChar, buffer, index, charsToRead );
 
