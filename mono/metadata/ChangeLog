@@ -1,3 +1,12 @@
+2004-09-29  Geoff Norton  <gnorton@customerdna.com>
+
+	* marshal.c (mono_ftnptr_to_delegate): This method was improperly
+	attempting to marshal the delegate_trampoline as the method_addr.
+	This patch has a static hashtable of marshalled delegates so that 
+	we can map delegate_trampoline addresses back to delegates.  This
+	allows a delegate passed to managed code to be passed back into native
+	code.  Fixes #67039
+
 2004-09-28  Zoltan Varga  <vargaz@freemail.hu>
 
 	* icall.c: Add GetFunctionPointerForDelegateInternal icall.
