@@ -21,6 +21,7 @@ namespace System.Reflection
 		private IntPtr klass;
 		protected MonoGenericInst parent;
 		protected Type generic_type;
+		private MonoGenericInst[] interfaces;
 		private MethodInfo[] methods;
 		private ConstructorInfo[] ctors;
 		private FieldInfo[] fields;
@@ -54,6 +55,9 @@ namespace System.Reflection
 				mlist.AddRange (generic_type.BaseType.GetMethods (flags));
 				clist.AddRange (generic_type.BaseType.GetConstructors (flags));
 				flist.AddRange (generic_type.BaseType.GetFields (flags));
+			} else if (interfaces != null) {
+				foreach (MonoGenericInst iface in interfaces)
+					iface.inflate (iface, mlist, clist, flist);
 			}
 
 			foreach (MethodInfo m in generic_type.GetMethods (flags))

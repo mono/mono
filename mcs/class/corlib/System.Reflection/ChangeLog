@@ -1,3 +1,11 @@
+2003-11-14  Martin Baulig  <martin@ximian.com>
+
+	* MonoGenericInst.cs (MonoGenericInst): Added
+	`MonoGenericInst[] interfaces' field.  This is only used for
+	interface types.
+	(MonoGenericInst.inflate): If we're an interface type, add the
+	methods from all interfaces we inherit.
+
 2003-11-14  Zoltan Varga  <vargaz@freemail.hu>
 
 	* AssemblyNameFlags.cs MethodAttributes.cs: Add new enumerated values 
