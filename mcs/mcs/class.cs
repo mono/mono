@@ -3568,6 +3568,9 @@ namespace Mono.CSharp {
 				return false;
 			}
 
+			if (t.IsPointer && !UnsafeOK (container))
+				return false;
+			
 			if (RootContext.WarningLevel > 1){
 				Type ptype = container.TypeBuilder.BaseType;
 
