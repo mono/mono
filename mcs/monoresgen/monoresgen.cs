@@ -417,6 +417,7 @@ class PoResourceWriter : IResourceWriter
 		foreach (char c in ns){
 			switch (c){
 			case '"':
+			case '\\':
 				ebuilder.Append ('\\');
 				ebuilder.Append (c);
 				break;
