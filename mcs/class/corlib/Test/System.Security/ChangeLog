@@ -1,3 +1,8 @@
+2004-01-02  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* SecurityElementTest.cs: Added new tests, constructors and null 
+	related, and converted to NUnit2.
+
 2003-06-28  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* PermissionSetTest.cs: New. Partial unit tests for PermissionSet.
