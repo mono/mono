@@ -5,6 +5,9 @@
 	  another iteration is a must.
 
 2004-08-06 Anirban Bhattacharjee <banirban@novell.com>
+	* mb-parser.jay: Small bug fix in Event grammar
+
+2004-08-06 Anirban Bhattacharjee <banirban@novell.com>
 	* class.cs: Event still needed to have a constructor which takes value of Implements clause.
 	* mb-parser.jay: Passing Implements clause value to the constructor
 

@@ -1454,9 +1454,11 @@ event_declaration
 	  }
 	| EVENT identifier opt_params opt_implement_clause logical_end_of_line
 	  {
-		string delName = (string) $2;
-		delName = delName + "EventHandler";
+		string delName = null;
+
 		if ($4 == null) {
+			delName = (string) $2;
+			delName = delName + "EventHandler";
 			Mono.MonoBASIC.Delegate del = new Mono.MonoBASIC.Delegate 
 							(current_container, TypeManager.system_void_expr, 
 							(int) current_modifiers, MakeName(delName), (Parameters) $3, 
@@ -1464,7 +1466,13 @@ event_declaration
 						     	  
 			del.Namespace = current_namespace;
 			CheckDef (current_container.AddDelegate (del), del.Name, lexer.Location);
+		} else {
+			Expression impl = (Expression) $4;
+			delName = impl.ToString();
+			delName = delName.Substring (delName.LastIndexOf(".") + 1);
+			delName = delName + "EventHandler";
 		}
+		
 		Event e = new Event (DecomposeQI (delName, lexer.Location),
 					 (string) $2, 
 				     null, current_modifiers, null, null, 
