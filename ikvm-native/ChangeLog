@@ -1,3 +1,7 @@
+2005-04-05  Zoltan Varga  <vargaz@freemail.hu>
+
+	* jni.c: Apply patch from freebsd ports tree.
+
 2005-01-20  Zoltan Varga  <vargaz@freemail.hu>
 
 	* jni.h: Applied patch from Bernie Solomon to fix compilation on
