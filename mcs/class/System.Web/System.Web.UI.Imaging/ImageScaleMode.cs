@@ -28,9 +28,8 @@
 //
 
 #if NET_2_0
-namespace System.Web.UI.Imaging{
-	public enum ImageScaleMode
-	{
+namespace System.Web.UI.Imaging {
+	public enum ImageScaleMode {
 		FitBasedOnWidth = 0,
 		FitBasedOnHeight = 1,
 		ScaleBasedOnWidth = 2,

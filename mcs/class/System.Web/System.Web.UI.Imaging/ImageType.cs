@@ -28,9 +28,8 @@
 //
 
 #if NET_2_0
-namespace System.Web.UI.Imaging{
-	public enum ImageType
-	{
+namespace System.Web.UI.Imaging {
+	public enum ImageType {
 		Automatic = 0,
 		Jpeg = 1,
 		Png = 2,

@@ -28,9 +28,8 @@
 //
 
 #if NET_2_0
-namespace System.Web.UI.Imaging{
-	public enum StorageType
-	{
+namespace System.Web.UI.Imaging {
+	public enum StorageType {
 		Cache = 0,
 		Disk = 1
 	} 
