@@ -17,7 +17,7 @@ using System.Text;
 namespace System.Security.Permissions {
 
 	[Serializable]
-	public sealed class EnvironmentPermission : CodeAccessPermission, IUnrestrictedPermission {
+	public sealed class EnvironmentPermission : CodeAccessPermission, IUnrestrictedPermission, IBuiltInPermission {
 
 		#region Fields
 
@@ -299,6 +299,12 @@ namespace System.Security.Permissions {
 			if (path != null)
 				ep.AddPathList (EnvironmentPermissionAccess.Write, path);
 			return ep;
+		}
+
+		// IBuiltInPermission
+		int IBuiltInPermission.GetTokenIndex ()
+		{
+			return 0;
 		}
 
 		#endregion // Methods

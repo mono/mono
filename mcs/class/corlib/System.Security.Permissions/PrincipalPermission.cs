@@ -16,7 +16,7 @@ using System.Threading;
 namespace System.Security.Permissions {
 
 	[Serializable]
-	public sealed class PrincipalPermission : IPermission, IUnrestrictedPermission {
+	public sealed class PrincipalPermission : IPermission, IUnrestrictedPermission, IBuiltInPermission {
 
 		internal class PrincipalInfo {
 
@@ -253,6 +253,12 @@ namespace System.Security.Permissions {
 				principals.Add (pi);
 
 			return union;
+		}
+
+		// IBuiltInPermission
+		int IBuiltInPermission.GetTokenIndex ()
+		{
+			return 8;
 		}
 	}
 }

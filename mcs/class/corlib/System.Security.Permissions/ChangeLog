@@ -2,6 +2,31 @@
 
 	* IBuiltInPermission.cs: New. Undocumented interface used by most
 	<*>Permission classes.
+	* EnvironmentPermission.cs: Added IBuiltInPermission.GetTokenIndex. 
+	Returns 0.
+	* FileDialogPermission.cs: Added IBuiltInPermission.GetTokenIndex. 
+	Returns 1.
+	* IsolatedStorageFilePermission.cs: Added IBuiltInPermission.
+	GetTokenIndex. Returns 3.
+	* PrincipalPermission.cs: Added IBuiltInPermission.GetTokenIndex. 
+	Returns 8.
+	* PublisherIdentityPermission.cs: Added IBuiltInPermission.
+	GetTokenIndex. Returns 9.
+	* ReflectionPermission.cs: Added IBuiltInPermission.GetTokenIndex. 
+	Returns 4.
+	* RegistryPermission.cs: Added IBuiltInPermission.GetTokenIndex. 
+	Returns 5.
+	* SecurityPermission.cs: Added IBuiltInPermission.GetTokenIndex. 
+	Returns 6. 
+	* SiteIdentityPermission.cs: Added IBuiltInPermission.GetTokenIndex. 
+	Returns 10.
+	* StrongNameIdentityPermission.cs: Added [Serializable] and 
+	IBuiltInPermission.GetTokenIndex. Returns 11.
+	* UIPermission.cs: Added IBuiltInPermission.GetTokenIndex. Returns 7.
+	* UrlIdentityPermission.cs: Added IBuiltInPermission.GetTokenIndex. 
+	Returns 12.
+	* ZoneIdentityPermission.cs: Added IBuiltInPermission.GetTokenIndex. 
+	Returns 13.
 
 2003-07-01  Sebastien Pouliot  <spouliot@videotron.ca>
 

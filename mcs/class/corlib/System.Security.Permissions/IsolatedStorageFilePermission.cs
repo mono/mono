@@ -12,7 +12,7 @@ using System;
 namespace System.Security.Permissions {
 
 	[Serializable]
-	public sealed class IsolatedStorageFilePermission : IsolatedStoragePermission {
+	public sealed class IsolatedStorageFilePermission : IsolatedStoragePermission, IBuiltInPermission {
 
 		// Constructors
 
@@ -46,6 +46,12 @@ namespace System.Security.Permissions {
 		public override IPermission Union (IPermission target)
 		{
 			return null;
+		}
+
+		// IBuiltInPermission
+		int IBuiltInPermission.GetTokenIndex ()
+		{
+			return 3;
 		}
 	}
 }

@@ -13,7 +13,7 @@ using System.Security.Cryptography.X509Certificates;
 namespace System.Security.Permissions {
 
 	[Serializable]
-	public sealed class PublisherIdentityPermission : CodeAccessPermission {
+	public sealed class PublisherIdentityPermission : CodeAccessPermission, IBuiltInPermission {
 	
 		private X509Certificate x509;
 	
@@ -142,6 +142,12 @@ namespace System.Security.Permissions {
 			else if ((x509 != null) && (o.x509 == null))
 				return new PublisherIdentityPermission (x509);
 			return null;
+		}
+
+		// IBuiltInPermission
+		int IBuiltInPermission.GetTokenIndex ()
+		{
+			return 9;
 		}
 	} 
 }

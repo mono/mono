@@ -12,7 +12,7 @@ using System.Security;
 namespace System.Security.Permissions {
 
 	[Serializable]
-	public sealed class ZoneIdentityPermission : CodeAccessPermission {
+	public sealed class ZoneIdentityPermission : CodeAccessPermission, IBuiltInPermission {
 
 		SecurityZone zone;
 
@@ -113,6 +113,12 @@ namespace System.Security.Permissions {
 					throw new ArgumentException ("invalid zone");
 				zone = value;
 			}
+		}
+
+		// IBuiltInPermission
+		int IBuiltInPermission.GetTokenIndex ()
+		{
+			return 13;
 		}
 	}
 }

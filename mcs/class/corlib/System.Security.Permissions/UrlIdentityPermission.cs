@@ -12,7 +12,7 @@ using System;
 namespace System.Security.Permissions {
 
 	[Serializable]
-	public sealed class UrlIdentityPermission : CodeAccessPermission {
+	public sealed class UrlIdentityPermission : CodeAccessPermission, IBuiltInPermission {
 
 		private string url;
 
@@ -80,6 +80,12 @@ namespace System.Security.Permissions {
 		public override IPermission Union (IPermission target) 
 		{
 			return null;
+		}
+
+		// IBuiltInPermission
+		int IBuiltInPermission.GetTokenIndex ()
+		{
+			return 12;
 		}
 	}
 }

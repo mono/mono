@@ -16,7 +16,7 @@ namespace System.Security.Permissions {
 	
 	[Serializable]
 	public sealed class SecurityPermission :
-		CodeAccessPermission, IUnrestrictedPermission {
+		CodeAccessPermission, IUnrestrictedPermission, IBuiltInPermission {
 
 		[MonoTODO]
 		public SecurityPermission (PermissionState state) 
@@ -77,5 +77,11 @@ namespace System.Security.Permissions {
 		// private 
 		
 		private SecurityPermissionFlag flags;
+
+		// IBuiltInPermission
+		int IBuiltInPermission.GetTokenIndex ()
+		{
+			return 6;
+		}
 	}
 }

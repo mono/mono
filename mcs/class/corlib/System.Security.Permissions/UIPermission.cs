@@ -12,7 +12,7 @@ using System;
 namespace System.Security.Permissions {
 
 	[Serializable]
-	public sealed class UIPermission : CodeAccessPermission, IUnrestrictedPermission {
+	public sealed class UIPermission : CodeAccessPermission, IUnrestrictedPermission, IBuiltInPermission {
 
 		private UIPermissionWindow _window;
 		private UIPermissionClipboard _clipboard;
@@ -91,6 +91,12 @@ namespace System.Security.Permissions {
 		public override IPermission Union (IPermission target)
 		{
 			return null;
+		}
+
+		// IBuiltInPermission
+		int IBuiltInPermission.GetTokenIndex ()
+		{
+			return 7;
 		}
 	}
 }

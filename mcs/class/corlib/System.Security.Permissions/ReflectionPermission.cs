@@ -14,7 +14,7 @@ using System;
 namespace System.Security.Permissions {
 
 	[Serializable]
-	public sealed class ReflectionPermission : CodeAccessPermission, IUnrestrictedPermission {
+	public sealed class ReflectionPermission : CodeAccessPermission, IUnrestrictedPermission, IBuiltInPermission {
 
 		#region Fields
 
@@ -180,6 +180,12 @@ namespace System.Security.Permissions {
 			ReflectionPermission p = (ReflectionPermission) o.Copy ();
 			p.Flags |= flags;
 			return p;
+		}
+
+		// IBuiltInPermission
+		int IBuiltInPermission.GetTokenIndex ()
+		{
+			return 4;
 		}
 
 		#endregion // Methods

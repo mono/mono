@@ -12,7 +12,7 @@ using System;
 namespace System.Security.Permissions {
 
 	[Serializable]
-	public sealed class RegistryPermission : CodeAccessPermission, IUnrestrictedPermission {
+	public sealed class RegistryPermission : CodeAccessPermission, IUnrestrictedPermission, IBuiltInPermission {
 
 		private RegistryPermissionAccess _access;
 		private string _pathList;
@@ -85,6 +85,12 @@ namespace System.Security.Permissions {
 		public override IPermission Union (IPermission target)
 		{
 			return null;
+		}
+
+		// IBuiltInPermission
+		int IBuiltInPermission.GetTokenIndex ()
+		{
+			return 5;
 		}
 	}
 }

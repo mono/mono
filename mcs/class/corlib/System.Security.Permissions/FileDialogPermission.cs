@@ -12,7 +12,7 @@ using System;
 namespace System.Security.Permissions {
 
 	[Serializable]
-	public sealed class FileDialogPermission : CodeAccessPermission, IUnrestrictedPermission {
+	public sealed class FileDialogPermission : CodeAccessPermission, IUnrestrictedPermission, IBuiltInPermission {
 
 		private FileDialogPermissionAccess _access;
 
@@ -171,6 +171,12 @@ namespace System.Security.Permissions {
 			FileDialogPermission ep = (FileDialogPermission) Copy ();
 			ep.Access = _access | o.Access;
 			return ep;
+		}
+
+		// IBuiltInPermission
+		int IBuiltInPermission.GetTokenIndex ()
+		{
+			return 1;
 		}
 	}
 }
