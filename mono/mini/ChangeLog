@@ -1,5 +1,7 @@
 2005-03-11  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini-amd64.c (mono_arch_get_vcall_slot_addr): Fix ordering of cases.
+
 	* aot.c (mono_aot_load_method): Get rid of bogus make_writable call.
 
 2005-03-09  Ben Maurer  <bmaurer@ximian.com>
