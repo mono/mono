@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.1 $
+// $Revision: 1.2 $
 // $Modtime: $
 // $Log: XplatUIStructs.cs,v $
+// Revision 1.2  2004/07/15 17:06:48  jordi
+// added MsgButons enum
+//
 // Revision 1.1  2004/07/09 05:21:25  pbartok
 // - Initial check-in
 //
@@ -359,6 +362,17 @@ namespace System.Windows.Forms {
 		WM_MOUSELEAVE		= 0x02A3,
 	}
 #endif
+
+	internal enum MsgButtons {
+		
+		MK_LBUTTON		= 0x0001,
+		MK_RBUTTON		= 0x0002,
+		MK_SHIFT		= 0x0004,
+		MK_CONTROL		= 0x0008,
+		MK_MBUTTON          	= 0x0010,
+		MK_XBUTTON1		= 0x0020,
+		MK_XBUTTON2		= 0x0040,
+	}
 
 	[StructLayout(LayoutKind.Sequential)]
 	internal struct POINT {
