@@ -1,4 +1,5 @@
-MCS = mcs
+RUNTIME = mono
+MCS = $(RUNTIME) $(topdir)/mcs/mcs.exe
 MCS_FLAGS = --target exe
 INSTALL = /usr/bin/install
 prefix = /usr
@@ -19,8 +20,9 @@ clean:
 
 -include .makefrag-exe
 
-$(PROGRAM): .response-exe .makefrag-exe #program-deps
-	$(MCS) $(MCS_FLAGS) -o $(PROGRAM) $(PROGRAM_FLAGS) @.response-exe
+$(PROGRAM): .response-exe .makefrag-exe program-deps
+	MONO_PATH=$(MONO_PATH_PREFIX)$(MONO_PATH) $(MCS) $(MCS_FLAGS) -o $(PROGRAM) $(PROGRAM_FLAGS) @.response-exe
+	touch -r $(PROGRAM) program-deps
 
 install: all
 	mkdir -p $(prefix)/bin/

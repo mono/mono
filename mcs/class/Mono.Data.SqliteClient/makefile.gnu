@@ -8,6 +8,5 @@ LIB_FLAGS = --unsafe -r System.Data
 
 SOURCES_INCLUDE=*.cs
 
-export MONO_PATH_PREFIX = $(topdir)/class/lib
-
+export MONO_PATH_PREFIX=$(topdir)/class/lib:
 include $(topdir)/class/library.make

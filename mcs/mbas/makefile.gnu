@@ -1,8 +1,10 @@
+topdir=..
 MCS = ../mcs/mcs.exe
 MCS_FLAGS = /target:exe $(MCS_DEFINES)
 INSTALL = /usr/bin/install
 prefix = /usr
 RUNTIME=mono
+MONO_PATH_PREFIX=$(topdir)/class/lib:
 
 COMPILER_SOURCES = \
       AssemblyInfo.cs   \
@@ -42,7 +44,7 @@ COMPILER_SOURCES = \
 all: mbas.exe
 
 mbas.exe: $(COMPILER_SOURCES)
-	$(RUNTIME) $(MCS) $(MCSFLAGS) /r:Mono.GetOptions.dll /out:mbas.exe $(COMPILER_SOURCES)
+	MONO_PATH=$(MONO_PATH_PREFIX)$(MONO_PATH) $(RUNTIME) $(MCS) $(MCSFLAGS) /r:Mono.GetOptions.dll /out:mbas.exe $(COMPILER_SOURCES)
 
 clean:
 	rm -f mbas.exe y.output mbas.pdb *~ .*~ mb-parser.cs mbas.log response

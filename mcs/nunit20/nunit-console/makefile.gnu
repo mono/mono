@@ -10,11 +10,10 @@ topdir = ../..
 PROGRAM = ../nunit-console.exe
 
 PROGRAM_LIST = list.unix
-PROGRAM_FLAGS =
+PROGRAM_FLAGS = /r:NUnit.Framework.dll \
+		/r:NUnit.Util.dll
+
+MONO_PATH_PREFIX=$(topdir)/class/lib:
 
 include $(topdir)/class/executable.make
-
-RUNTIME=mono
-MCS = $(RUNTIME) $(topdir)/mcs/mcs.exe
-MCS_FLAGS = -L $(topdir)/class/lib /r:NUnit.Framework.dll /r:NUnit.Util.dll
 
