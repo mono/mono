@@ -770,7 +770,6 @@ namespace System.Net
 
 		string GetHeaders ()
 		{
-			StringBuilder result = new StringBuilder ();
 			bool continue100 = false;
 			if (gotRequestStream && contentLength != -1) {
 				continue100 = true;

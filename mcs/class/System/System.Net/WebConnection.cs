@@ -411,16 +411,17 @@ namespace System.Net
 				}
 			}
 		}
+
 		internal void NextRead ()
 		{
 			lock (this) {
 				busy = false;
 				string header = (sPoint.UsesProxy) ? "Proxy-Connection" : "Connection";
 				string cncHeader = (Data.Headers != null) ? Data.Headers [header] : null;
-				bool keepAlive = this.keepAlive;
+				bool keepAlive = (Data.Version == HttpVersion.Version11);
 				if (cncHeader != null) {
 					cncHeader = cncHeader.ToLower ();
-					keepAlive = (keepAlive && cncHeader.IndexOf ("keep-alive") != -1);
+					keepAlive = (this.keepAlive && cncHeader.IndexOf ("keep-alive") != -1);
 				}
 
 				if ((socket != null && !socket.Connected) ||
