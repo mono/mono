@@ -1,3 +1,10 @@
+2004-06-22  Dick Porter <dick@ximian.com>
+
+	* MutexTest.cs: No need to ignore these tests now
+
+	* ThreadTest.cs: You can't Start() a thread that's been aborted.
+	Improve state tests.
+
 2004-06-17  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* ThreadTest.cs: Improved test.

@@ -124,7 +124,6 @@ namespace MonoTests.System.Threading
 		}
 
 */
-		[Ignore("this hangs mono")]
 		public void TestWaitAndSignal1()
 		{
 			Mutex Sem = new Mutex(false);
@@ -134,7 +133,7 @@ namespace MonoTests.System.Threading
 			while(thread1.IsAlive);
 			AssertEquals("#41 Mutex Worked InCorrecly:",100,class1.marker);
 		}
-		[Ignore("Test hangs mono")]
+
 		public void TestWaitAndFoget1()
 		{
 			Mutex Sem = new Mutex(false);

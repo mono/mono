@@ -369,9 +369,6 @@ namespace MonoTests.System.Threading {
 		public void TestNestedThreads2()
 		{
 			C4Test test1 = new C4Test();
-			test1.thread1.Start();
-			test1.thread1.Abort();
-			while(test1.thread1.IsAlive);
 			Thread TestThread = new Thread(new ThreadStart(test1.TestMethod1));
 			try
 			{
@@ -416,12 +413,12 @@ namespace MonoTests.System.Threading {
 			TestThread.Start();
 			//while(!TestThread.IsAlive); //In the MS Documentation this is not necessary
 										  //but in the MS SDK it is
-			AssertEquals("#102 Wrong Thread State", ThreadState.Running | ThreadState.Unstarted ,TestThread.ThreadState);
+			Assert("#102 Wrong Thread State: " + TestThread.ThreadState.ToString(), TestThread.ThreadState == ThreadState.Running || (TestThread.ThreadState & ThreadState.Unstarted) != 0);
 			TestThread.Abort();
 			while(TestThread.IsAlive);
 			// Docs say state will be Stopped, but Aborted happens sometimes (?)
-			Assert("#103 Wrong Thread State", ThreadState.Stopped == TestThread.ThreadState 
-				|| ThreadState.Aborted == TestThread.ThreadState);
+			Assert("#103 Wrong Thread State: " + TestThread.ThreadState.ToString(), (ThreadState.Stopped & TestThread.ThreadState) != 0 
+				|| (ThreadState.Aborted & TestThread.ThreadState) != 0);
 		} 
 
 		[Test]
