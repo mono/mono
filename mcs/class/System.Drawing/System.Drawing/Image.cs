@@ -241,21 +241,34 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 				continue;
 			if (!(this is Bitmap))
 				continue;
-			encoder.encode(this, stream);
+			Save (stream, encoder, null);
 			break;
 		}
 	}
 
 	public void Save(string filename, ImageFormat format) 
 	{
-		FileStream fs = new FileStream (filename, FileMode.Create);
+		//gdip doesnt allow to write to existing file, so we should always create a new file
+		//Below method will throw an exception if we try to overwrite existing file
+		FileStream fs = new FileStream (filename, FileMode.CreateNew);
 		Save(fs, format);
 		fs.Flush();
 		fs.Close();
 	}
 
-	//public void Save(Stream stream, ImageCodecInfo encoder, EncoderParameters encoderParams);
-	//public void Save(string filename, ImageCodecInfo encoder, EncoderParameters encoderParams);
+	public void Save(Stream stream, ImageCodecInfo encoder, EncoderParameters encoderParams)
+	{
+		 encoder.encode(this, stream);
+	}
+
+	public void Save(string filename, ImageCodecInfo encoder, EncoderParameters encoderParams)
+	{
+		FileStream fs = new FileStream (filename, FileMode.CreateNew);
+		Save (fs , encoder, null);
+		fs.Flush();
+		fs.Close();
+	}
+	
 	//public void SaveAdd(EncoderParameters_ encoderParams);
 	//public void SaveAdd(Image image, EncoderParameters_ encoderParams);
 	//public int SelectActiveFrame(FrameDimension dimension, int frameIndex);
