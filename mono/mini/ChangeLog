@@ -1,5 +1,7 @@
 2004-09-02  Zoltan Varga  <vargaz@freemail.hu>
 
+	* inssel-long32.brg: Fix OP_LCONV_TO_OVF_I1 rule. Fixes #64578.
+
 	* trace.c (is_filenamechar): Allow 0..9 in strings. Fixes #65094.
 	
 2004-09-02  Martin Baulig  <martin@ximian.com>
