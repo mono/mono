@@ -556,6 +556,8 @@ namespace System.Xml
 				{
 					string existingPrefix = namespaceManager.LookupPrefix (ns);
 
+					if (existingPrefix == String.Empty && !namespaceManager.HasNamespace (prefix))
+						namespaceManager.AddNamespace (prefix, ns);
 					if (prefix == String.Empty)
 						prefix = existingPrefix;
 

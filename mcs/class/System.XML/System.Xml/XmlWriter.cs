@@ -63,7 +63,13 @@ namespace System.Xml
 		public void WriteAttributeString (string prefix, string localName, string ns, string value)
 		{
 			if ((prefix == "xmlns") || (localName == "xmlns"))
+			  {
 				ns = value;
+				if (prefix == "xmlns" && namespaceManager.HasNamespace (localName))
+				  	return;
+				else if (localName == "xmlns" && namespaceManager.HasNamespace (String.Empty))
+				  	return;
+			  }
 			
 			WriteStartAttribute (prefix, localName, ns);
 			WriteString (value);

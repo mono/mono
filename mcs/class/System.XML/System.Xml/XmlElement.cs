@@ -178,8 +178,20 @@ namespace System.Xml
 		public virtual XmlNodeList GetElementsByTagName (string name)
 		{
 			ArrayList nodeArrayList = new ArrayList ();
-			this.searchNodesRecursively (this, name, String.Empty, nodeArrayList);
+			this.searchNodesRecursively (this, name, nodeArrayList);
 			return new XmlNodeArrayList (nodeArrayList);
+		}
+
+		private void searchNodesRecursively (XmlNode argNode, string argName, 
+			ArrayList argArrayList)
+		{
+			XmlNodeList xmlNodeList = argNode.ChildNodes;
+			foreach (XmlNode node in xmlNodeList){
+				if (node.Name.Equals (argName))
+					argArrayList.Add (node);
+				else	
+					this.searchNodesRecursively (node, argName, argArrayList);
+			}
 		}
 
 		private void searchNodesRecursively (XmlNode argNode, string argName, string argNamespaceURI, 
