@@ -47,5 +47,15 @@ namespace Mono.Data.TdsClient.Internal {
 		}
 
 		#endregion // Properties
+
+		#region Methods 
+
+		public int Add (object value)
+		{
+			return row.Add (value);
+		}
+
+		#endregion // Methods
+
 	}
 }

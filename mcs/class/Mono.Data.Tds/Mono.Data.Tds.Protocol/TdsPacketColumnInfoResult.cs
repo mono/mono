@@ -7,21 +7,52 @@
 // Copyright (C) Tim Coleman, 2002
 //
 
+using System.Collections;
 using System.Data;
 
 namespace Mono.Data.TdsClient.Internal {
-	internal class TdsPacketColumnInfoResult : TdsPacketResult
+	internal class TdsPacketColumnInfoResult : TdsPacketResult, IEnumerable
 	{
-		DataColumnCollection columns;
+		#region Fields
 
-		public TdsPacketColumnInfoResult (DataColumnCollection columns)
+		ArrayList list;
+		
+		#endregion // Fields
+
+		#region Constructors
+
+		public TdsPacketColumnInfoResult ()
 			: base (TdsPacketSubType.ColumnNameToken)
 		{
-			this.columns = columns;
+			list = new ArrayList ();
 		}
 
-		public DataColumnCollection Columns {
-			get { return columns; }
+		#endregion // Constructors
+
+		#region Properties
+
+		public TdsColumnSchema this [int index] {
+			get { return (TdsColumnSchema) list[index]; }
+			set { list[index] = value; }
 		}
+
+		#endregion // Properties
+
+		#region Methods
+
+		public int Add (TdsColumnSchema schema)
+		{
+			int index;
+			index = list.Add (schema);
+			schema.ColumnOrdinal = index;
+			return index;
+		}
+
+		public IEnumerator GetEnumerator ()
+		{
+			return list.GetEnumerator ();
+		}
+
+		#endregion // Methods
 	}
 }

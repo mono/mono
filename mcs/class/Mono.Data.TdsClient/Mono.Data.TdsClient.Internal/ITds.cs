@@ -31,17 +31,24 @@ namespace Mono.Data.TdsClient.Internal {
 			get;
 		}
 
+		TdsPacketColumnInfoResult ColumnInfo {
+			get;
+		}
+
+		TdsPacketRowResult ColumnValues {
+			get;
+		}
+
 		#endregion // Properties
 
 		#region Methods
 
 		bool Connect (TdsConnectionParameters connectionParameters);
-
 		void Disconnect ();
-
 		int ExecuteNonQuery (string sql);
-
 		void ExecuteQuery (string sql);
+		bool NextResult ();
+		bool NextRow ();
 
 		#endregion
 	}

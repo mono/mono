@@ -1,3 +1,19 @@
+2002-10-24  Tim Coleman (tim@timcoleman.com)
+	* ITds.cs:
+		Added column info, and NextResult/NextRow
+		to interface
+	* TdsColumnSchema.cs:
+		New class added to keep track of column info
+	* Tds.cs:
+		Many, many changes to get queries working
+		for the most part.
+	* TdsPacketColumnInfoResult.cs:
+	* TdsPacketColumnNamesResult.cs:
+		Doesn't use a DataColumnCollection anymore
+		Also more complete.
+	* TdsPacketRowResult.cs:
+		Added Add() method.
+
 2002-10-23  Tim Coleman (tim@timcoleman.com)
         * ITds.cs:
         * Tds42.cs:
