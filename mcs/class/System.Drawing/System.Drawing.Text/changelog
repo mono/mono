@@ -1,3 +1,8 @@
+2003-06-22 Alexandre Pigolkine <pigolkine@gmx.de>
+	* FontCollection.cs
+	* InstalledFontCollection.cs
+		calls to implementation added
+	
 2002-09-16  Nick Drochak  <ndrochak@gol.com>
 
 	* PrivateFontCollection.cs: Fix build error.  Cannot put ComVisible on

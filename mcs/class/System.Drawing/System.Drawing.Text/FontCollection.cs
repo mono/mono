@@ -9,7 +9,8 @@ using System;
 namespace System.Drawing.Text {
 
 	public abstract class FontCollection : IDisposable {
-
+		internal IFontCollection implementation_;
+		
 		// methods
 		[MonoTODO]
 		public void Dispose() {
@@ -24,7 +25,7 @@ namespace System.Drawing.Text {
 		// properties
 		[MonoTODO]
 		public FontFamily[] Families {
-			get { throw new NotImplementedException (); }
+			get { return implementation_.Families; }
 		}
 
 	}
