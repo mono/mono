@@ -1,10 +1,32 @@
 2003-08-26  Zoltan Varga  <vargaz@freemail.hu>
 
+	* assembly.c: Reworked assembly loading to make it really thread safe.
+	After these changes, the assembly returned by mono_assembly_open is
+	fully initialized, i.e. all its references assemblies are loaded.
+
+	* assembly.c (mono_image_load_references): Renamed to 
+	mono_assembly_load_references, and made private, since clients no
+	longer need to call it.
+
+	* class.c: Removed calls to mono_assembly_load_references, since it was
+	a source of deadlocks.
+
+	* loader.h loader.c class.h class.c: Protect data structures using a 
+	new lock, the loader lock.
+
+	* class.c (mono_class_setup_vtable): Create temporary hash tables and
+	GPtrArrays only when needed.
+
+	* class.c (mono_class_layout_fields): Ignore the dummy field inserted 
+	into empty structures by mcs. Fixes pinvoke7.cs.
+	
+	* domain.c (mono_init): Call a new initialization function.
+
 	* appdomain.c (mono_runtime_init): Call the new initializer function
 	of the marshal module.
 
 	* marshal.c (mono_marshal_load_type_info): Ignore the dummy field
-	inserted into empty structures by mono. Fixes pinvoke7.cs.
+	inserted into empty structures by mcs. Fixes pinvoke7.cs.
 
 	* marshal.h marshal.c: Added locks around the wrapper caches to make
 	this module thread safe.
