@@ -103,6 +103,8 @@ namespace System.IO
 				if (path.Length > 0)
 				{
 					int nLast = path.LastIndexOfAny (PathSeparatorChars);
+					if (nLast == 0)
+						nLast++;
 
 					if (nLast > 0)
 						return path.Substring (0, nLast);
@@ -139,10 +141,10 @@ namespace System.IO
 				throw new ArgumentException ("Illegal characters in path", "path");
 
 			int nLast = path.LastIndexOfAny (PathSeparatorChars);
-			if (nLast > 0)
+			if (nLast >= 0)
 				return path.Substring (nLast + 1);
 
-			return nLast == 0 ? null : path;
+			return path;
 		}
 
 		public static string GetFileNameWithoutExtension (string path)

@@ -1,3 +1,7 @@
+2003-03-02  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Path.cs: fixed a couple of bugs reported in #35906.
+
 2003-03-01  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Directory.cs: fixed bugs #38939 and #38940. No need for separate
