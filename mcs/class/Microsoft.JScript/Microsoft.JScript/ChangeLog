@@ -1,5 +1,7 @@
 2005-02-22  Cesar Lopez Nataren  <cnataren@novell.com>
 
+	* Block.cs: Report error JS5040. Reopened #72674, see last comment of it.
+
 	* CodeGenerator.cs: Added method VariableDefined.
 	
 	* TypeManager.cs: Added method SetMethod.

@@ -148,11 +148,13 @@ namespace Microsoft.JScript {
 					string name = ((FunctionDeclaration) e).func_obj.name;
 					AST binding = context.Get (Symbol.CreateSymbol (name));
 
-					if (binding == null) {						
+					if (binding == null) {
 						ocurrences.Add (name, i);
 						context.Enter (Symbol.CreateSymbol (((FunctionDeclaration) e).func_obj.name), new FunctionDeclaration ());
 					} else {
 						Console.WriteLine ("warning: JS1111: '{0}' has already been defined.", name);
+						if (!(binding is FunctionDeclaration))
+							throw new Exception ("error JS5040: '" + ((VariableDeclaration) binding).id + "' it's read only.");
 						int k = (int) ocurrences [name];
 						elems.RemoveAt (k);
 						if (k < i)
