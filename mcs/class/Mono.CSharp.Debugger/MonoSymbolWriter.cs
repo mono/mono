@@ -129,16 +129,13 @@ namespace Mono.CSharp.Debugger
 			}
 		}
 
-		static LocalVariableEntry [] locals_buf = new LocalVariableEntry [20];
-		int locals_pos = 0;
-		
 		public LocalVariableEntry[] Locals {
 			get {
-				if (locals_pos == 0)
+				if (_locals == null)
 					return new LocalVariableEntry [0];
 				else {
-					LocalVariableEntry[] retval = new LocalVariableEntry [locals_pos];
-					Array.Copy (locals_buf, retval, locals_pos);
+					LocalVariableEntry[] retval = new LocalVariableEntry [_locals.Count];
+					_locals.CopyTo (retval, 0);
 					return retval;
 				}
 			}
@@ -146,12 +143,9 @@ namespace Mono.CSharp.Debugger
 
 		public void AddLocal (string name, FieldAttributes attributes, byte[] signature)
 		{
-			if (locals_pos == locals_buf.Length) {
-				LocalVariableEntry [] t = new LocalVariableEntry [locals_buf.Length * 2 + 1];
-				Array.Copy (locals_buf, t, locals_pos);
-				locals_buf = t;
-			}
-			locals_buf [locals_pos ++] = new LocalVariableEntry (name, attributes, signature, CurrentBlock.Index);
+			if (_locals == null)
+				_locals = new ArrayList ();
+			_locals.Add (new LocalVariableEntry (name, attributes, signature, CurrentBlock.Index));
 		}
 
 		public MethodBase MethodBase {
