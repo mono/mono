@@ -1,3 +1,8 @@
+2002-02-10  Nick Drochak  <ndrochak@gol.com>
+
+	* AllTests.cs: Remove StringBuilderTest suite.  There's a major failure
+	when it's included and the test errors aren't displayed. 
+
 2002-02-09  Nick Drochak  <ndrochak@gol.com>
 
 	* StringBuilderTest.cs: Fixed tests that were failing against mscorlib. 
