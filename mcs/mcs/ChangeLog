@@ -1,5 +1,14 @@
 2003-12-11  Martin Baulig  <martin@ximian.com>
 
+	* flowanalysis.cs (MergeResult): This class is now gone; we now
+	use the `UsageVector' for this.  The reason for this is that if a
+	branching just has one sibling, we don't need to "merge" them at
+	all - that's the next step to do.
+	(FlowBranching.Merge): We now return a `UsageVector' instead of a
+	`MergeResult'.
+
+2003-12-11  Martin Baulig  <martin@ximian.com>
+
 	Reworked flow analyis and made it more precise and bug-free.  The
 	most important change is that we're now using a special `Reachability'
 	class instead of having "magic" meanings of `FlowReturns'.  I'll

@@ -461,6 +461,19 @@ namespace Mono.CSharp
 				: this (type, parent, loc, parent.CountParameters, parent.CountLocals)
 			{ }
 
+			public UsageVector (MyBitVector parameters, MyBitVector locals,
+					    Reachability reachability, Location loc)
+			{
+				this.Type = SiblingType.Block;
+				this.Location = loc;
+
+				this.reachability = reachability;
+				this.parameters = parameters;
+				this.locals = locals;
+
+				id = ++next_id;
+			}
+
 			// <summary>
 			//   This does a deep copy of the usage vector.
 			// </summary>
@@ -584,6 +597,32 @@ namespace Mono.CSharp
 				Report.Debug (2, "  MERGING RESULT DONE", this);
 
 				IsDirty = true;
+			}
+
+			protected void MergeFinally (FlowBranching branching, ArrayList finally_vectors,
+						     MyBitVector f_params)
+			{
+				foreach (UsageVector vector in finally_vectors) {
+					MyBitVector temp_params = f_params.Clone ();
+					temp_params.Or (vector.Parameters);
+
+					branching.CheckOutParameters (temp_params, branching.Location);
+				}
+			}
+
+			public void MergeFinally (FlowBranching branching, UsageVector f_vector,
+						  ArrayList vectors)
+			{
+				if (parameters != null) {
+					if (f_vector != null) {
+						MergeFinally (branching, vectors, f_vector.Parameters);
+						MyBitVector.Or (ref parameters, f_vector.ParameterVector);
+					} else
+						MergeFinally (branching, vectors, parameters);
+				}
+
+				if (f_vector != null)
+					MyBitVector.Or (ref locals, f_vector.LocalVector);
 			}
 
 			// <summary>
@@ -822,22 +861,7 @@ namespace Mono.CSharp
 			}
 		}
 
-		protected class MergeResult
-		{
-			public MyBitVector Parameters;
-			public MyBitVector Locals;
-			public Reachability Reachability;
-
-			public MergeResult (MyBitVector parameters, MyBitVector locals,
-					    Reachability reachability)
-			{
-				this.Parameters = parameters;
-				this.Locals = locals;
-				this.Reachability = reachability;
-			}
-		}
-
-		protected MergeResult Merge (ArrayList children)
+		protected UsageVector Merge (ArrayList children)
 		{
 			MyBitVector locals = null;
 			MyBitVector parameters = null;
@@ -947,20 +971,20 @@ namespace Mono.CSharp
 			Report.Debug (2, "  MERGING CHILDREN DONE", parameters, locals,
 				      reachability, Infinite);
 
-			return new MergeResult (parameters, locals, reachability);
+			return new UsageVector (parameters, locals, reachability, Location);
 		}
 
-		protected abstract MergeResult Merge ();
+		protected abstract UsageVector Merge ();
 
 		// <summary>
 		//   Merge a child branching.
 		// </summary>
 		public Reachability MergeChild (FlowBranching child)
 		{
-			MergeResult result = child.Merge ();
+			UsageVector result = child.Merge ();
 
 			CurrentUsageVector.MergeResult (
-				result.Parameters, result.Locals, result.Reachability);
+				result.ParameterVector, result.LocalVector, result.Reachability);
 
 			Report.Debug (4, "  MERGE CHILD", Location, child, CurrentUsageVector,
 				      result.Reachability);
@@ -979,8 +1003,9 @@ namespace Mono.CSharp
 			UsageVector vector = new UsageVector (
 				SiblingType.Conditional, null, Location, param_map.Length, local_map.Length);
 
-			MergeResult result = Merge ();
-			vector.MergeResult (result.Parameters, result.Locals, result.Reachability);
+			UsageVector result = Merge ();
+			vector.MergeResult (result.ParameterVector, result.LocalVector,
+					    result.Reachability);
 
 			Report.Debug (4, "MERGE TOP BLOCK", Location, vector, result.Reachability);
 
@@ -1085,7 +1110,7 @@ namespace Mono.CSharp
 			CurrentUsageVector.MergeJumpOrigins (origin_vectors);
 		}
 
-		protected override MergeResult Merge ()
+		protected override UsageVector Merge ()
 		{
 			return Merge (siblings);
 		}
@@ -1143,32 +1168,13 @@ namespace Mono.CSharp
 			CurrentUsageVector.MergeJumpOrigins (origin_vectors);
 		}
 
-		protected void MergeFinally (MyBitVector f_params, ref MergeResult result)
+		protected override UsageVector Merge ()
 		{
-			foreach (UsageVector vector in finally_vectors) {
-				MyBitVector temp_params = f_params.Clone ();
-				temp_params.Or (vector.Parameters);
+			UsageVector vector = Merge (catch_vectors);
 
-				CheckOutParameters (temp_params, Location);
-			}
-		}
+			vector.MergeFinally (this, finally_vector, finally_vectors);
 
-		protected override MergeResult Merge ()
-		{
-			MergeResult result = Merge (catch_vectors);
-
-			if (has_params) {
-				if (finally_vector != null) {
-					MergeFinally (finally_vector.Parameters, ref result);
-					MyBitVector.Or (ref result.Parameters, finally_vector.ParameterVector);
-				} else
-					MergeFinally (result.Parameters, ref result);
-			}
-
-			if (finally_vector != null)
-				MyBitVector.Or (ref result.Locals, finally_vector.LocalVector);
-
-			return result;
+			return vector;
 		}
 	}
 
