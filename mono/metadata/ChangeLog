@@ -1,3 +1,8 @@
+
+Thu Mar 28 18:06:14 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* object.h, reflection.h: use the correct type instead of MonoObject.
+
 2002-03-28  Martin Baulig  <martin@gnome.org>
 
 	* debug-symfile.c (mono_debug_class_get): Don't look in referenced assemblies.
