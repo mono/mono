@@ -1,3 +1,7 @@
+2004-06-18  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* IStateRuntime.cs: added missing marshalling attributes
+
 2004-06-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* SessionSQLServerHandler.cs:

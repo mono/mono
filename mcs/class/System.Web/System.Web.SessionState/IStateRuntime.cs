@@ -17,10 +17,15 @@ namespace System.Web.SessionState
 	public interface IStateRuntime
 	{
 		void ProcessRequest (
-			[In] IntPtr tracker, [In] int verb,
-			[In] string uri, [In] int exclusive, [In] int timeout,
-			[In] int lockCookieExists, [In] int lockCookie,
-			[In] int contentLength, [In] IntPtr content);
+			[In, MarshalAs(UnmanagedType.SysInt)] IntPtr tracker, 
+			[In, MarshalAs(UnmanagedType.I4)] int verb,
+			[In, MarshalAs(UnmanagedType.LPWStr)] string uri,
+			[In, MarshalAs(UnmanagedType.I4)] int exclusive, 
+			[In, MarshalAs(UnmanagedType.I4)] int timeout,
+			[In, MarshalAs(UnmanagedType.I4)] int lockCookieExists,
+			[In, MarshalAs(UnmanagedType.I4)] int lockCookie,
+			[In, MarshalAs(UnmanagedType.I4)] int contentLength,
+			[In, MarshalAs(UnmanagedType.SysInt)] IntPtr content);
 
 		void StopProcessing ();
 	}
