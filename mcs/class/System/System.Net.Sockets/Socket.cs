@@ -132,8 +132,8 @@ namespace System.Net.Sockets
 			}
 
 			private void End() {
-				callback(result);
 				((ManualResetEvent)result.AsyncWaitHandle).Set();
+				callback(result);
 				result.IsCompleted=true;
 			}
 			
@@ -445,6 +445,7 @@ namespace System.Net.Sockets
 						object state) {
 			SocketAsyncResult req=new SocketAsyncResult(state);
 			Worker worker=new Worker(this, callback, req);
+			req.Worker=worker;
 			Thread child=new Thread(new ThreadStart(worker.Accept));
 			child.Start();
 			return(req);
@@ -456,6 +457,7 @@ namespace System.Net.Sockets
 			SocketAsyncResult req=new SocketAsyncResult(state);
 			Worker worker=new Worker(this, end_point, callback,
 						 req);
+			req.Worker=worker;
 			Thread child=new Thread(new ThreadStart(worker.Connect));
 			child.Start();
 			return(req);
@@ -469,6 +471,7 @@ namespace System.Net.Sockets
 			SocketAsyncResult req=new SocketAsyncResult(state);
 			Worker worker=new Worker(this, buffer, offset, size,
 						 socket_flags, callback, req);
+			req.Worker=worker;
 			Thread child=new Thread(new ThreadStart(worker.Receive));
 			child.Start();
 			return(req);
@@ -484,6 +487,7 @@ namespace System.Net.Sockets
 			Worker worker=new Worker(this, buffer, offset, size,
 						 socket_flags, remote_end,
 						 callback, req);
+			req.Worker=worker;
 			Thread child=new Thread(new ThreadStart(worker.ReceiveFrom));
 			child.Start();
 			return(req);
@@ -497,6 +501,7 @@ namespace System.Net.Sockets
 			SocketAsyncResult req=new SocketAsyncResult(state);
 			Worker worker=new Worker(this, buffer, offset, size,
 						 socket_flags, callback, req);
+			req.Worker=worker;
 			Thread child=new Thread(new ThreadStart(worker.Send));
 			child.Start();
 			return(req);
@@ -512,6 +517,7 @@ namespace System.Net.Sockets
 			Worker worker=new Worker(this, buffer, offset, size,
 						 socket_flags, remote_end,
 						 callback, req);
+			req.Worker=worker;
 			Thread child=new Thread(new ThreadStart(worker.SendTo));
 			child.Start();
 			return(req);
