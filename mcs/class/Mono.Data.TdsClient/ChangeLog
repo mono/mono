@@ -2,6 +2,7 @@
 	* list:
 		Add TODOAttribute in both
 		namespaces
+		Add TdsConnectionPool
 
 2002-10-20  Tim Coleman (tim@timcoleman.com)
 	* list: 

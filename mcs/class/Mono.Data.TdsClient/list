@@ -1,5 +1,6 @@
 Mono.Data.TdsClient/TdsCommand.cs
 Mono.Data.TdsClient/TdsConnection.cs
+Mono.Data.TdsClient/TdsConnectionPool.cs
 Mono.Data.TdsClient/TdsDataReader.cs
 Mono.Data.TdsClient/TdsError.cs
 Mono.Data.TdsClient/TdsErrorCollection.cs
