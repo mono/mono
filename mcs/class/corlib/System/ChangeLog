@@ -1,5 +1,13 @@
 2005-01-31 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* ConsoleDriver.cs:
+	* Console.cs:
+	* TermInfoDriver.cs:
+	* IConsoleDriver.cs: added a few more properties and fixed cursor
+	addressing.
+
+2005-01-31 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* ConsoleDriver.cs: static class that forwards the Console 2.0 class
 	calls to the proper driver.
 	* TermInfoDriver.cs: terminfo based console driver.

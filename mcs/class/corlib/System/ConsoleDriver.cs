@@ -110,10 +110,26 @@ namespace System {
 			get { return driver.TreatControlCAsInput; }
 			set { driver.TreatControlCAsInput = value; }
 		} 
-		//int WindowHeight { get; set; }
-		//int WindowLeft { get; set; }
-		//int WindowTop { get; set; }
-		//int WindowWidth { get; set; }
+
+		public static int WindowHeight {
+			get { return driver.WindowHeight; }
+			set { driver.WindowHeight = value; }
+		}
+
+		public static int WindowLeft {
+			get { return driver.WindowLeft; }
+			set { driver.WindowLeft = value; }
+		}
+
+		public static int WindowTop {
+			get { return driver.WindowTop; }
+			set { driver.WindowTop = value; }
+		}
+
+		public static int WindowWidth {
+			get { return driver.WindowWidth; }
+			set { driver.WindowWidth = value; }
+		}
 
 		public static void Beep (int frequency, int duration)
 		{
@@ -141,15 +157,25 @@ namespace System {
 			driver.ResetColor ();
 		}
 
-		//void SetBufferSize (int width, int height);
+		public static void SetBufferSize (int width, int height)
+		{
+			driver.SetBufferSize (width, height);
+		}
 
 		public static void SetCursorPosition (int left, int top)
 		{
 			driver.SetCursorPosition (left, top);
 		}
 
-		//void SetWindowPosition (int left, int top);
-		//void SetWindowSize (int width, int height);
+		public static void SetWindowPosition (int left, int top)
+		{
+			driver.SetWindowPosition (left, top);
+		}
+
+		public static void SetWindowSize (int width, int height)
+		{
+			driver.SetWindowSize (width, height);
+		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal static extern bool Isatty (IntPtr handle);

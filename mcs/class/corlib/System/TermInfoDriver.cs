@@ -46,8 +46,14 @@ namespace System {
 		string term;
 		Stream stdout;
 		Stream stdin;
+
 		int windowWidth;
 		int windowHeight;
+		//int windowTop;
+		//int windowLeft;
+		int bufferHeight;
+		int bufferWidth;
+
 		string enterCA, exitCA;
 		bool controlCAsInput;
 		bool inited;
@@ -55,9 +61,6 @@ namespace System {
 		string origPair;
 		string origColors;
 		string cursorAddress;
-		bool addOneWhenAddressing;
-		int bufferHeight = 200; // FIXME
-		int bufferWidth = 200; // FIXME
 		ConsoleColor fgcolor = ConsoleColor.White;
 		ConsoleColor bgcolor = ConsoleColor.Black;
 		string setafcolor; // TODO: use setforeground/setbackground if available for better
@@ -91,7 +94,6 @@ namespace System {
 			return null;
 		}
 
-		// FIXME: this won't work on windows
 		static void WriteConsole (string str)
 		{
 			if (str == null)
@@ -108,8 +110,6 @@ namespace System {
 		public TermInfoDriver (string term)
 		{
 			this.term = term;
-			if (term == null)
-				this.term = "ansi";
 
 			if (term == "xterm") {
 				reader = new TermInfoReader (term, KnownTerminals.xterm);
@@ -117,12 +117,14 @@ namespace System {
 				reader = new TermInfoReader (term, KnownTerminals.linux);
 			} else if (term == "cygwin") {
 				reader = new TermInfoReader (term, KnownTerminals.cygwin);
-			} else if (term == "ansi") {
-				reader = new TermInfoReader (term, KnownTerminals.ansi);
 			} else {
 				string filename = SearchTerminfo (term);
-				reader = new TermInfoReader (term, filename);
+				if (filename != null)
+					reader = new TermInfoReader (term, filename);
 			}
+
+			if (reader == null)
+				reader = new TermInfoReader (term, KnownTerminals.ansi);
 		}
 
 		public bool Initialized {
@@ -178,8 +180,7 @@ namespace System {
 			cursorAddress = reader.Get (TermInfoStrings.CursorAddress);
 			if (cursorAddress != null) {
 				string result = cursorAddress.Replace ("%i", "");
-				addOneWhenAddressing = (cursorAddress != result);
-				cursorAddress = MangleParameters (cursorAddress);
+				cursorAddress = MangleParameters (result);
 			}
 		}
 
@@ -371,6 +372,73 @@ namespace System {
 			}
 		}
 
+		void GetWindowDimensions ()
+		{
+			//TODO: Handle SIGWINCH
+			windowWidth = reader.Get (TermInfoNumbers.Columns);
+			string env = Environment.GetEnvironmentVariable ("COLUMNS");
+			if (env != null) {
+				try {
+					windowWidth = (int) UInt32.Parse (env);
+				} catch {
+				}
+			}
+
+			windowHeight = reader.Get (TermInfoNumbers.Lines);
+			env = Environment.GetEnvironmentVariable ("LINES");
+			if (env != null) {
+				try {
+					windowHeight = (int) UInt32.Parse (env);
+				} catch {
+				}
+			}
+
+			//windowTop = 0;
+			//windowLeft = 0;
+			bufferHeight = windowHeight;
+			bufferWidth = windowWidth;
+		}
+
+		public int WindowHeight {
+			get {
+				GetWindowDimensions ();
+				return windowHeight;
+			}
+			set {
+				throw new NotSupportedException ();
+			}
+		}
+
+		public int WindowLeft {
+			get {
+				//GetWindowDimensions ();
+				return 0;
+			}
+			set {
+				throw new NotSupportedException ();
+			}
+		}
+
+		public int WindowTop {
+			get {
+				//GetWindowDimensions ();
+				return 0;
+			}
+			set {
+				throw new NotSupportedException ();
+			}
+		}
+
+		public int WindowWidth {
+			get {
+				GetWindowDimensions ();
+				return windowWidth;
+			}
+			set {
+				throw new NotSupportedException ();
+			}
+		}
+
 		public void Clear ()
 		{
 			Init ();
@@ -388,8 +456,10 @@ namespace System {
 		public ConsoleKeyInfo ReadKey (bool intercept)
 		{
 			Init ();
+			bool prevEcho = Echo;
 			Echo  = !intercept;
 			int b = stdin.ReadByte ();
+			Echo = prevEcho;
 			return new ConsoleKeyInfo ((char) b, (ConsoleKey) b, false, false, false);
 		}
 
@@ -400,8 +470,16 @@ namespace System {
 			WriteConsole (str);
 		}
 
+		public void SetBufferSize (int width, int height)
+		{
+			throw new NotImplementedException ("");
+		}
+
 		public void SetCursorPosition (int left, int top)
 		{
+			if (bufferWidth == 0)
+				GetWindowDimensions ();
+
 			if (left < 0 || left >= bufferWidth)
 				throw new ArgumentOutOfRangeException ("left", "Value must be positive and below the buffer width.");
 
@@ -412,10 +490,19 @@ namespace System {
 
 			// Either CursorAddress or nothing.
 			// We might want to play with up/down/left/right/home when ca is not available.
-			int adj = (addOneWhenAddressing) ? 1 : 0;
-			WriteConsole (String.Format (cursorAddress, left + adj, top + adj));
+			WriteConsole (String.Format (cursorAddress, top, left));
 			cursorLeft = left;
 			cursorTop = top;
+		}
+
+		public void SetWindowPosition (int left, int top)
+		{
+			throw new NotSupportedException ();
+		}
+
+		public void SetWindowSize (int width, int height)
+		{
+			throw new NotSupportedException ();
 		}
 	}
 }

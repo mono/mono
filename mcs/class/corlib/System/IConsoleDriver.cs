@@ -46,10 +46,10 @@ namespace System {
 		//bool NumberLock { get; }
 		string Title { get; set; }
 		bool TreatControlCAsInput { get; set; } 
-		//int WindowHeight { get; set; }
-		//int WindowLeft { get; set; }
-		//int WindowTop { get; set; }
-		//int WindowWidth { get; set; }
+		int WindowHeight { get; set; }
+		int WindowLeft { get; set; }
+		int WindowTop { get; set; }
+		int WindowWidth { get; set; }
 
 		void Beep (int frequency, int duration);
 		void Clear ();
@@ -61,10 +61,10 @@ namespace System {
 
 		ConsoleKeyInfo ReadKey (bool intercept);
 		void ResetColor ();
-		//void SetBufferSize (int width, int height);
+		void SetBufferSize (int width, int height);
 		void SetCursorPosition (int left, int top);
-		//void SetWindowPosition (int left, int top);
-		//void SetWindowSize (int width, int height);
+		void SetWindowPosition (int left, int top);
+		void SetWindowSize (int width, int height);
 	}
 }
 #endif

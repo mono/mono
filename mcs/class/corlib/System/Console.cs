@@ -467,6 +467,26 @@ namespace System
 			set { ConsoleDriver.TreatControlCAsInput = value; }
 		}
 
+		public static int WindowHeight {
+			get { return ConsoleDriver.WindowHeight; }
+			set { ConsoleDriver.WindowHeight = value; }
+		}
+
+		public static int WindowLeft {
+			get { return ConsoleDriver.WindowLeft; }
+			set { ConsoleDriver.WindowLeft = value; }
+		}
+
+		public static int WindowTop {
+			get { return ConsoleDriver.WindowTop; }
+			set { ConsoleDriver.WindowTop = value; }
+		}
+
+		public static int WindowWidth {
+			get { return ConsoleDriver.WindowWidth; }
+			set { ConsoleDriver.WindowWidth = value; }
+		}
+
 		public static void Beep ()
 		{
 			Beep (1000, 500);
@@ -518,10 +538,9 @@ namespace System
 			ConsoleDriver.ResetColor ();
 		}
 
-		[MonoTODO]
 		public static void SetBufferSize (int width, int height)
 		{
-			throw new NotImplementedException ();
+			ConsoleDriver.SetBufferSize (width, height);
 		}
 
 		public static void SetCursorPosition (int left, int top)
@@ -529,16 +548,14 @@ namespace System
 			ConsoleDriver.SetCursorPosition (left, top);
 		}
 
-		[MonoTODO]
 		public static void SetWindowPosition (int left, int top)
 		{
-			throw new NotImplementedException ();
+			ConsoleDriver.SetWindowPosition (left, top);
 		}
 
-		[MonoTODO]
 		public static void SetWindowSize (int width, int height)
 		{
-			throw new NotImplementedException ();
+			ConsoleDriver.SetWindowSize (width, height);
 		}
 
 		//FIXME
