@@ -1,6 +1,12 @@
 2002-02-22  Miguel de Icaza  <miguel@ximian.com>
 
-	* driver.cs: Be conservative on our command line handling.
+	* driver.cs (MainDriver): Be conservative on our command line
+	handling.
+
+	Catch DirectoryNotFoundException when calling GetFiles.
+	
+	(SplitPathAndPattern): Used to split the input specification into
+	a path and a pattern that we can feed to Directory.GetFiles.
 
 2002-02-21  Miguel de Icaza  <miguel@ximian.com>
 

@@ -291,6 +291,60 @@ namespace Mono.CSharp
 			Report.Error (-15, "Can not compute my system path");
 			return "";
 		}
+
+		//
+		// Given a path specification, splits the path from the file/pattern
+		//
+		static void SplitPathAndPattern (string spec, out string path, out string pattern)
+		{
+			int p = spec.LastIndexOf ("/");
+			if (p != -1){
+				//
+				// Windows does not like /file.cs, switch that to:
+				// "\", "file.cs"
+				//
+				if (p == 0){
+					path = "\\";
+					pattern = spec.Substring (1);
+				} else {
+					path = spec.Substring (0, p);
+					pattern = spec.Substring (p + 1);
+				}
+				return;
+			}
+
+			p = spec.LastIndexOf ("\\");
+			if (p != -1){
+				path = spec.Substring (0, p - 1);
+				pattern = spec.Substring (p);
+				return;
+			}
+
+			path = ".";
+			pattern = spec;
+		}
+
+		static int ProcessFile (string f)
+		{
+			if (source_files.Contains (f)){
+				Report.Error (
+					1516,
+					"Source file `" + f + "' specified multiple times");
+				Environment.Exit (1);
+			} else
+				source_files.Add (f, f);
+					
+			if (tokenize)
+				tokenize_file (f);
+			else
+				return parse (f);
+			return 0;
+		}
+
+		static void RecurseOn (string pattern)
+		{
+			// FIXME: implement.
+		}
 		
 		/// <summary>
 		///    Parses the arguments, and drives the compilation
@@ -354,6 +408,10 @@ namespace Mono.CSharp
 					argc = new_args.Length;
 					continue;
 				}
+
+				//
+				// Prepare to recurse
+				//
 				
 				if (parsing_options && (arg.StartsWith ("-") || arg.StartsWith ("/"))){
 					switch (arg){
@@ -531,6 +589,15 @@ namespace Mono.CSharp
 						About ();
 						return;
 
+					case "--recurse":
+						if ((i + 1) >= argc){
+							Usage (true);
+							error_count++;
+							return;
+						}
+						RecurseOn (args [++i]);
+						continue;
+						
 					case "--timestamp":
 						timestamps = true;
 						last_time = DateTime.Now;
@@ -541,29 +608,18 @@ namespace Mono.CSharp
 				if (first_source == null)
 					first_source = arg;
 
-				string [] files = Directory.GetFiles (".", arg);
-				
-				foreach (string f in files){
-					if (!f.ToLower ().EndsWith (".cs")){
-						error ("Do not know how to compile " + arg);
-						errors++;
-						continue;
-					}
-
-					if (source_files.Contains (f)){
-						Report.Error (
-							1516,
-							"Source file `" + f + "' specified multiple times");
-						Environment.Exit (1);
-					} else
-						source_files.Add (f, f);
-					
-					if (tokenize)
-						tokenize_file (f);
-					else {
-						errors += parse (f);
-					}
+				string path, pattern;
+				SplitPathAndPattern (arg, out path, out pattern);
+				string [] files = null;
+				try {
+					files = Directory.GetFiles (path, pattern);
+				} catch (System.IO.DirectoryNotFoundException) {
+					Report.Error (2001, "Source file `" + arg + "' could not be found");
+					continue;
 				}
+				
+				foreach (string f in files)
+					errors += ProcessFile (f);
 			}
 
 			if (tokenize)
