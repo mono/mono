@@ -1,3 +1,7 @@
+2004-01-05  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Win32Resources.cs: New file.
+
 2003-12-17  Zoltan Varga  <vargaz@freemail.hu>
 
 	* ResourceWriter.cs (Stream): New internal property used by Ref.Emit.
