@@ -1,0 +1,6 @@
+2002-10-30  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AllTests.cs:
+	* ChangeLog:
+	* EventHandlerListTests.cs: new test.
+
