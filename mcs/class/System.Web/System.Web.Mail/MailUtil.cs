@@ -22,7 +22,8 @@ namespace System.Web.Mail {
 	public static bool NeedEncoding( string str ) {
 	    bool needEnc = false;
 	    
-	    foreach( int ch in str ) {
+	    foreach( char chr in str ) {
+		int ch = (int)chr;
 		if( ! ( ( ch > 33 ) && ( ch < 61 ) ) ||
 		    ( ( ch > 61 ) && ( ch < 127 ) ) ) needEnc = true;
 	    }
