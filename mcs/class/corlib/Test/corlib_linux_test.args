@@ -122,3 +122,5 @@ System.Security.Policy/EvidenceTest.cs
 System.Text/ASCIIEncodingTest.cs
 System.Text/AllTests.cs
 System.Text/StringBuilderTest.cs
+System.Threading/AllTests.cs
+System.Threading/ThreadTest.cs
