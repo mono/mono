@@ -1,3 +1,7 @@
+2004-05-25  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* DateTimeTest.cs: test for bug 56436.
+
 2004-05-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ArrayTest.cs: Added a new test to clear outside the bound of a

@@ -659,6 +659,14 @@ public class DateTimeTest : Assertion
 		// technically this is invalid (PKIX) because of the missing seconds but it exists so...
 		AssertEquals ("yyMMddHHmmZ", "02/23/1996 19:15:00", DateTime.ParseExact ("9602231915Z", "yyMMddHHmmZ", null).ToUniversalTime ().ToString ());
 	}
+
+	[Test]
+	public void QuotedFormat () // bug 56436
+	{
+		string date = "28/Mar/2004:19:12:37 +0200";
+		string [] expectedFormats = {"dd\"/\"MMM\"/\"yyyy:HH:mm:ss zz\"00\""};
+		DateTime mydate = DateTime.ParseExact (date, expectedFormats, null, DateTimeStyles.AllowWhiteSpaces);
+	}
 }
 
 }
