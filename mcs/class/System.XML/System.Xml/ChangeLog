@@ -1,3 +1,9 @@
+2005-02-17  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlNode.cs : It does not have to iterate children to find argument
+	  node. Fixed exception type to ArgumentException. Patch by Andrew
+	  Skiba.
+
 2005-02-16  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlAttribute.cs : just use InnerText for Value. Patch by Andrew

@@ -685,17 +685,11 @@ namespace System.Xml
 				throw new ArgumentException ("The node to be removed is not a child of this node.");
 			
 			if (newChild == this || IsAncestor (newChild))
-				throw new InvalidOperationException("Cannot insert a node or any ancestor of that node as a child of itself.");
+				throw new ArgumentException("Cannot insert a node or any ancestor of that node as a child of itself.");
 			
-			for (int i = 0; i < ChildNodes.Count; i++) {
-				XmlNode n = ChildNodes [i];
-				if(n == oldChild) {
-					XmlNode prev = oldChild.PreviousSibling;
-					RemoveChild (oldChild);
-					InsertAfter (newChild, prev);
-					break;
-				}
-			}
+			XmlNode next = oldChild.NextSibling;
+			RemoveChild (oldChild);
+			XmlNode node = InsertBefore (newChild, next);
 			return oldChild;
 		}
 
