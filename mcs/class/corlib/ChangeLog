@@ -1,3 +1,7 @@
+2003-07-23  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* corlib_test.dll.sources: added System.Runtime.Serialization/SerializationTest.cs
+
 2003-07-20  Peter Williams  <peter@newton.cx>
 
 	* Makefile: Add in corlib_res.dll, which we use as a basis
