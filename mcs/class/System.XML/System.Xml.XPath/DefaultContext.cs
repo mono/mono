@@ -225,7 +225,7 @@ namespace System.Xml.XPath
 					rgNodes.Add (n.Clone ());
 
 			rgNodes.Sort (XPathNavigatorComparer.Instance);
-			return new EnumeratorIterator (iter, rgNodes.GetEnumerator ());
+			return new ListIterator (iter, rgNodes, true);
 		}
 
 		public override string ToString ()

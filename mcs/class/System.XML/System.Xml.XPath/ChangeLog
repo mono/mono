@@ -1,3 +1,13 @@
+2004-02-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Iterator.cs : Added overriden Count properties for some iterators
+	  (this fixes the half of #50678).
+	  Added ListIterator class (which can reduce GetEnumerator()). 
+	  In some places we can omit clone for Current property, so added 
+	  some check logic (It has no effect as yet).
+	* Expression.cs, DefaultContext.cs :
+	  use ListIterator instead of EnumeratorIterator.
+
 2004-02-08  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DefaultContext.cs, Expression.cs, Iterator.cs :

@@ -185,7 +185,7 @@ namespace System.Xml.XPath
 					XPathSortElement elt = (XPathSortElement) rgElts [iResult];
 					rgResults [iResult] = elt.Navigator;
 				}
-				return new EnumeratorIterator (iter, rgResults.GetEnumerator ());
+				return new ListIterator (iter, rgResults, false);
 			}
 
 			class XPathSortElement
