@@ -183,12 +183,12 @@ namespace System.Xml.Xsl
 				resultDocument = ApplyStylesheet (xmlDocument, null, null);
 
 				/*
-				* If I do this, the <?xml version=... is always present *
+				 * If I do this, the <?xml version=... is always present *
 				if (-1 == xsltSaveResultToFilename (outputfile, resultDocument, stylesheet, 0))
 					throw new XmlException ("Error xsltSaveResultToFilename");
 				*/
 				StreamWriter writer = new StreamWriter (new FileStream (outputfile, FileMode.Create));
-				writer.Write (GetStringFromDocument (resultDocument));
+				writer.Write (GetStringFromDocument (resultDocument, stylesheet));
 				writer.Close ();
 			} finally {
 				if (xmlDocument != IntPtr.Zero)
@@ -294,32 +294,25 @@ namespace System.Xml.Xsl
 			xmlCleanupParser ();
 		}
 
-		static string GetStringFromDocument (IntPtr doc)
+		static string GetStringFromDocument (IntPtr doc, IntPtr stylesheet)
 		{
 			IntPtr mem = IntPtr.Zero;
 			int size = 0;
-			xmlDocDumpMemory (doc, ref mem, ref size);
-			if (mem == IntPtr.Zero)
-				throw new XmlException ("Error dumping document");
+
+			int res = xsltSaveResultToString (ref mem, ref size, doc,
+											  stylesheet);
+			if (res == -1)
+				throw new XmlException ("xsltSaveResultToString () failed.");
 
 			string docStr = Marshal.PtrToStringAnsi (mem, size);
-			// FIXME: Using xmlFree segfaults :-???
-			//xmlFree (mem);
 			Marshal.FreeHGlobal (mem);
-			//
-
-			// Get rid of the <?xml...
-			// FIXME: any other (faster) way that works?
-			StringReader result = new StringReader (docStr);
-			result.ReadLine (); // we want the semantics of line ending used here
-			//
-			return result.ReadToEnd ();
+			return docStr;
 		}
 
 		string ApplyStylesheetAndGetString (IntPtr doc, string[] argArr, Hashtable extobjects)
 		{
 			IntPtr xmlOutput = ApplyStylesheet (doc, argArr, extobjects);
-			string strOutput = GetStringFromDocument (xmlOutput);
+			string strOutput = GetStringFromDocument (xmlOutput, stylesheet);
 			xmlFreeDoc (xmlOutput);
 
 			return strOutput;
@@ -692,6 +685,10 @@ namespace System.Xml.Xsl
 
 		[DllImport ("xslt")]
 		static extern IntPtr xsltApplyStylesheet (IntPtr stylePtr, IntPtr DocPtr, string[] argPtr);
+
+		[DllImport ("xslt")]
+		static extern int xsltSaveResultToString (ref IntPtr stringPtr, ref int stringLen,
+												  IntPtr docPtr, IntPtr stylePtr);
 
 		[DllImport ("xslt")]
 		static extern int xsltSaveResultToFilename (string URI, IntPtr doc, IntPtr styleSheet, int compression);

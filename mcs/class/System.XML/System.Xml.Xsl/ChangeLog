@@ -1,3 +1,10 @@
+2003-06-30  Zoltan Varga  <vargaz@freemail.hu>
+
+	* XslTransform.cs (GetStringFromDocument): Read the result using
+	xsltSaveResultToString, since the XML document returned by
+	applyStylesheet is missing the output processing done due to the
+	usage of the xsl:output directive.
+
 2003-06-21  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XslTransform.cs : Fixed Transform (string, string) not to call
