@@ -1,3 +1,9 @@
+2004-04-22  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* AppDomainSetupTest.cs: Changed again test 3 to test that the appdomain is 
+	  relative to the current dir, rather than the temp dir. I confirment that
+	  this is how ms.net works.
+
 2004-04-13  Zoltan Varga  <vargaz@freemail.hu>
 
 	* TypeTest.cs: Add new regression test for bug #55874.
