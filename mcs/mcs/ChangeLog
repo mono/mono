@@ -1,5 +1,12 @@
 2002-06-27  Martin Baulig  <martin@gnome.org>
 
+	* ecore.cs (Expression.ImplicitReferenceConversionExists): Use
+	`target_type == TypeManager.array_type', not IsAssignableFrom() in
+	the "from an array-type to System.Array" case.  This makes it work
+	when compiling corlib.
+
+2002-06-27  Martin Baulig  <martin@gnome.org>
+
 	* ecore.cs (Expression.SimpleNameResolve): If the expression is a
 	non-static PropertyExpr, set its InstanceExpression.  This makes
 	the `ICollection.Count' property work in System/Array.cs.

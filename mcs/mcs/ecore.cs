@@ -797,7 +797,7 @@ namespace Mono.CSharp {
 				}
 				
 				// from an array-type to System.Array
-				if (expr_type.IsArray && target_type.IsAssignableFrom (expr_type))
+				if (expr_type.IsArray && (target_type == TypeManager.array_type))
 					return true;
 				
 				// from any delegate type to System.Delegate
