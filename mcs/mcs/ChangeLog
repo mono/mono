@@ -1,3 +1,33 @@
+2004-10-01  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #65833, test-300.cs, cs0122-5.cs, cs0122-6.cs.
+	* class.c (TypeContainer.DefineType): Flag error if
+	base types aren't accessible due to access permissions.
+	* decl.cs (DeclSpace.ResolveType): Move logic to
+	Expression.ResolveAsTypeTerminal.
+	(DeclSpace.ResolveTypeExpr): Thin layer over
+	Expression.ResolveAsTypeTerminal.
+	(DeclSpace.CheckAccessLevel, DeclSpace.FamilyAccess):
+	Refactor code into NestedAccess.  Use it.
+	(DeclSpace.NestedAccess): New.
+	* ecore.cs (Expression.ResolveAsTypeTerminal): Add new
+	argument to silence errors.  Check access permissions.
+	(TypeExpr.DoResolve, TypeExpr.ResolveType): Update.
+	* expression.cs (ProbeExpr.DoResolve): Use ResolveAsTypeTerminal.
+	(Cast.DoResolve): Likewise.
+	(New.DoResolve): Likewise.
+	(InvocationOrCast.DoResolve,ResolveStatement): Likewise.
+	(TypeOf.DoResolve): Likewise.
+
+	* expression.cs (Invocation.BetterConversion): Return the Type of
+	the better conversion.  Implement section 14.4.2.3 more faithfully.
+	(Invocation.BetterFunction): Make boolean.  Make correspondence to
+	section 14.4.2.2 explicit.
+	(Invocation.OverloadResolve): Update.
+	(Invocation): Remove is_base field.
+	(Invocation.DoResolve): Don't use is_base.  Use mg.IsBase.
+	(Invocation.Emit): Likewise.
+
 2004-09-27  Raja R Harinath  <rharinath@novell.com>
 
 	* README: Update to changes.

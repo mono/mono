@@ -1125,7 +1125,7 @@ namespace Mono.CSharp {
 
 			if (error)
 				return null;
-			
+
 			if (InTransit) {
 				Report.Error (146, Location, "Class definition is circular: `{0}'", Name);
 				error = true;
@@ -1164,8 +1164,13 @@ namespace Mono.CSharp {
 
 			TypeAttributes type_attributes = TypeAttr;
 
-			if (parent != null)
+			if (parent != null) {
 				base_class_type = parent.ResolveType (ec);
+				if (base_class_type == null) {
+					error = true;
+					return null;
+				}
+			}
 
 			try {
 				if (IsTopLevel){
@@ -1209,9 +1214,16 @@ namespace Mono.CSharp {
 				base_inteface_types = new Type[ifaces.Length];
 				for (int i = 0; i < ifaces.Length; ++i) {
 					Type itype = ifaces [i].ResolveType (ec);
+					if (itype == null) {
+						error = true;
+						continue;
+					}
 					TypeBuilder.AddInterfaceImplementation (itype);
 					base_inteface_types [i] = itype;
 				}
+
+				if (error)
+					return null;
 			}
 
 			//

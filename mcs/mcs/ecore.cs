@@ -253,9 +253,24 @@ namespace Mono.CSharp {
 		// value will be returned if the expression is not a type
 		// reference
 		//
-		public TypeExpr ResolveAsTypeTerminal (EmitContext ec)
+		public TypeExpr ResolveAsTypeTerminal (EmitContext ec, bool silent)
 		{
-			return ResolveAsTypeStep (ec) as TypeExpr;
+			int errors = Report.Errors;
+
+			TypeExpr te = ResolveAsTypeStep (ec) as TypeExpr;
+
+			if (te == null || te.eclass != ExprClass.Type) {
+				if (!silent && errors == Report.Errors)
+					Report.Error (246, Location, "Cannot find type '{0}'", ToString ());
+				return null;
+			}
+
+			if (!te.CheckAccessLevel (ec.DeclSpace)) {
+				Report.Error (122, Location, "'{0}' is inaccessible due to its protection level", te.Name);
+				return null;
+			}
+
+			return te;
 		}
 	       
 		/// <summary>
@@ -2239,7 +2254,7 @@ namespace Mono.CSharp {
 
 		override public Expression DoResolve (EmitContext ec)
 		{
-			return ResolveAsTypeTerminal (ec);
+			return ResolveAsTypeTerminal (ec, true);
 		}
 
 		override public void Emit (EmitContext ec)
@@ -2301,7 +2316,7 @@ namespace Mono.CSharp {
 
 		public virtual Type ResolveType (EmitContext ec)
 		{
-			TypeExpr t = ResolveAsTypeTerminal (ec);
+			TypeExpr t = ResolveAsTypeTerminal (ec, false);
 			if (t == null)
 				return null;
 

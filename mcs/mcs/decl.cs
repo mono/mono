@@ -544,27 +544,8 @@ namespace Mono.CSharp {
 		// </summary>
 		public Type ResolveType (Expression e, bool silent, Location loc)
 		{
-			if (type_resolve_ec == null)
-				type_resolve_ec = GetTypeResolveEmitContext (Parent, loc);
-			type_resolve_ec.loc = loc;
-			type_resolve_ec.ContainerType = TypeBuilder;
-
-			int errors = Report.Errors;
-			TypeExpr d = e.ResolveAsTypeTerminal (type_resolve_ec);
-			
-			if (d == null || d.eclass != ExprClass.Type){
-				if (!silent && errors == Report.Errors){
-					Report.Error (246, loc, "Cannot find type `"+ e.ToString () +"'");
-				}
-				return null;
-			}
-
-			if (!d.CheckAccessLevel (this)) {
-				Report.Error (122, loc, "'{0}' is inaccessible due to its protection level", d.Name);
-				return null;
-			}
-
-			return d.Type;
+			TypeExpr d = ResolveTypeExpr (e, silent, loc);
+			return d == null ? null : d.Type;
 		}
 
 		// <summary>
@@ -578,25 +559,16 @@ namespace Mono.CSharp {
 			type_resolve_ec.loc = loc;
 			type_resolve_ec.ContainerType = TypeBuilder;
 
-			TypeExpr d = e.ResolveAsTypeTerminal (type_resolve_ec);
-			 
-			if (d == null || d.eclass != ExprClass.Type){
-				if (!silent){
-					Report.Error (246, loc, "Cannot find type `"+ e +"'");
-				}
-				return null;
-			}
-
-			return d;
+			return e.ResolveAsTypeTerminal (type_resolve_ec, silent);
 		}
 		
-		public bool CheckAccessLevel (Type check_type) 
+		public bool CheckAccessLevel (Type check_type)
 		{
 			if (check_type == TypeBuilder)
 				return true;
 			
 			TypeAttributes check_attr = check_type.Attributes & TypeAttributes.VisibilityMask;
-			
+
 			//
 			// Broken Microsoft runtime, return public for arrays, no matter what 
 			// the accessibility is for their underlying class, and they return 
@@ -605,16 +577,17 @@ namespace Mono.CSharp {
 			if (check_type.IsArray || check_type.IsPointer)
 				return CheckAccessLevel (TypeManager.GetElementType (check_type));
 
+			if (TypeBuilder == null)
+				// FIXME: TypeBuilder will be null when invoked by Class.GetNormalBases().
+				//        However, this is invoked again later -- so safe to return true.
+				//        May also be null when resolving top-level attributes.
+				return true;
+
 			switch (check_attr){
 			case TypeAttributes.Public:
 				return true;
 
 			case TypeAttributes.NotPublic:
-
-				// In same cases is null.
-				if (TypeBuilder == null)
-					return true;
-
 				//
 				// This test should probably use the declaringtype.
 				//
@@ -624,29 +597,9 @@ namespace Mono.CSharp {
 				return true;
 
 			case TypeAttributes.NestedPrivate:
-				string check_type_name = check_type.FullName;
-				string type_name = TypeBuilder.FullName;
-				
-				int cio = check_type_name.LastIndexOf ('+');
-				string container = check_type_name.Substring (0, cio);
-
-				//
-				// Check if the check_type is a nested class of the current type
-				//
-				if (check_type_name.StartsWith (type_name + "+")){
-					return true;
-				}
-				
-				if (type_name.StartsWith (container)){
-					return true;
-				}
-
-				return false;
+				return NestedAccessible (check_type);
 
 			case TypeAttributes.NestedFamily:
-				//
-				// Only accessible to methods in current type or any subtypes
-				//
 				return FamilyAccessible (check_type);
 
 			case TypeAttributes.NestedFamANDAssem:
@@ -666,24 +619,32 @@ namespace Mono.CSharp {
 
 		}
 
+		protected bool NestedAccessible (Type check_type)
+		{
+			string check_type_name = check_type.FullName;
+
+			// At this point, we already know check_type is a nested class.
+			int cio = check_type_name.LastIndexOf ('+');
+
+			// Ensure that the string 'container' has a '+' in it to avoid false matches
+			string container = check_type_name.Substring (0, cio + 1);
+
+			// Ensure that type_name ends with a '+' so that it can match 'container', if necessary
+			string type_name = TypeBuilder.FullName + "+";
+
+			// If the current class is nested inside the container of check_type,
+			// we can access check_type even if it is private or protected.
+			return type_name.StartsWith (container);
+		}
+
 		protected bool FamilyAccessible (Type check_type)
 		{
 			Type declaring = check_type.DeclaringType;
-			if (TypeBuilder.IsSubclassOf (declaring))
+			if (TypeBuilder == declaring ||
+			    TypeBuilder.IsSubclassOf (declaring))
 				return true;
 
-			string check_type_name = check_type.FullName;
-			
-			int cio = check_type_name.LastIndexOf ('+');
-			string container = check_type_name.Substring (0, cio);
-			
-			//
-			// Check if the check_type is a nested class of the current type
-			//
-			if (check_type_name.StartsWith (container + "+"))
-				return true;
-
-			return false;
+			return NestedAccessible (check_type);
 		}
 
 		// Access level of a type.

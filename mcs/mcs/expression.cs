@@ -1012,7 +1012,7 @@ namespace Mono.CSharp {
 	///   size. 
 	/// </remarks>
 	public abstract class Probe : Expression {
-		public readonly Expression ProbeType;
+		public Expression ProbeType;
 		protected Expression expr;
 		protected Type probe_type;
 		
@@ -1031,10 +1031,10 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			probe_type = ec.DeclSpace.ResolveType (ProbeType, false, loc);
-
-			if (probe_type == null)
+			ProbeType = ProbeType.ResolveAsTypeTerminal (ec, false);
+			if (ProbeType == null)
 				return null;
+			probe_type = ProbeType.Type;
 
 			CheckObsoleteAttribute (probe_type);
 
@@ -1768,10 +1768,11 @@ namespace Mono.CSharp {
 			if (expr == null)
 				return null;
 
-			type = ec.DeclSpace.ResolveType (target_type, false, Location);
-			
-			if (type == null)
+			TypeExpr target = target_type.ResolveAsTypeTerminal (ec, false);
+			if (target == null)
 				return null;
+
+			type = target.Type;
 
 			CheckObsoleteAttribute (type);
 
@@ -4096,7 +4097,6 @@ namespace Mono.CSharp {
 
 		Expression expr;
 		MethodBase method = null;
-		bool is_base;
 		
 		static Hashtable method_parameter_cache;
 
@@ -4154,10 +4154,11 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Determines "better conversion" as specified in 7.4.2.3
 		///
-                ///    Returns : 1 if a->p is better
-		///              0 if a->q or neither is better 
+                ///    Returns : p    if a->p is better,
+ 		///              q    if a->q is better,
+		///              null if neither is better
 		/// </summary>
-		static int BetterConversion (EmitContext ec, Argument a, Type p, Type q, Location loc)
+		static Type BetterConversion (EmitContext ec, Argument a, Type p, Type q, Location loc)
 		{
 			Type argument_type = a.Type;
 			Expression argument_expr = a.Expr;
@@ -4169,71 +4170,82 @@ namespace Mono.CSharp {
 			if (p == null || q == null)
 				throw new InternalErrorException ("BetterConversion Got a null conversion");
 
-			//
-			// This is a special case since csc behaves this way.
-			//
-			if (argument_expr is NullLiteral &&
-                            p == TypeManager.string_type &&
-                            q == TypeManager.object_type)
-				return 1;
-			else if (argument_expr is NullLiteral &&
-                                 p == TypeManager.object_type &&
-                                 q == TypeManager.string_type)
-				return 0;
-			
-                        //
-                        // csc behaves this way so we emulate it. Basically, if the argument
-                        // is null and one of the types to compare is 'object' and the other
-                        // is a reference type, we prefer the other.
-                        //
-                        // I can't find this anywhere in the spec but we can interpret this
-                        // to mean that null can be of any type you wish in such a context
-                        //
-			if (argument_expr is NullLiteral &&
-			    !p.IsValueType &&
-			    q == TypeManager.object_type)
-				return 1;
-			else if (argument_expr is NullLiteral &&
-				 !q.IsValueType &&
-				 p == TypeManager.object_type)
-				return 0;
-
-                                
 			if (p == q)
-				return 0;
-			
+				return null;
+
+			if (argument_expr is NullLiteral) {
+				//
+				// If the argument is null and one of the types to compare is 'object' and
+				// the other is a reference type, we prefer the other.
+				//
+				// This follows from the usual rules:
+				//   * There is an implicit conversion from 'null' to type 'object'
+				//   * There is an implicit conversion from 'null' to any reference type
+				//   * There is an implicit conversion from any reference type to type 'object'
+				//   * There is no implicit conversion from type 'object' to other reference types
+				//  => Conversion of 'null' to a reference type is better than conversion to 'object'
+				//
+				//  FIXME: This probably isn't necessary, since the type of a NullLiteral is 'System.Null'.
+				//         I think it used to be 'object' and thus needed a special case to avoid the
+				//         immediately following two checks.
+				//
+				if (!p.IsValueType && q == TypeManager.object_type)
+					return p;
+				if (!q.IsValueType && p == TypeManager.object_type)
+					return q;
+			}
+                                
 			if (argument_type == p)
-				return 1;
+				return p;
 
 			if (argument_type == q)
-				return 0;
+				return q;
 
 			Expression p_tmp = new EmptyExpression (p);
 			Expression q_tmp = new EmptyExpression (q);
-			
-			if (Convert.ImplicitConversionExists (ec, p_tmp, q) == true &&
-			    Convert.ImplicitConversionExists (ec, q_tmp, p) == false)
-				return 1;
+
+			bool p_to_q = Convert.ImplicitConversionExists (ec, p_tmp, q);
+			bool q_to_p = Convert.ImplicitConversionExists (ec, q_tmp, p);
+
+			if (p_to_q && !q_to_p)
+				return p;
+
+			if (q_to_p && !p_to_q)
+				return q;
 
 			if (p == TypeManager.sbyte_type)
 				if (q == TypeManager.byte_type || q == TypeManager.ushort_type ||
 				    q == TypeManager.uint32_type || q == TypeManager.uint64_type)
-					return 1;
+					return p;
+			if (q == TypeManager.sbyte_type)
+				if (p == TypeManager.byte_type || p == TypeManager.ushort_type ||
+				    p == TypeManager.uint32_type || p == TypeManager.uint64_type)
+					return q;
 
 			if (p == TypeManager.short_type)
 				if (q == TypeManager.ushort_type || q == TypeManager.uint32_type ||
 				    q == TypeManager.uint64_type)
-					return 1;
+					return p;
+			if (q == TypeManager.short_type)
+				if (p == TypeManager.ushort_type || p == TypeManager.uint32_type ||
+				    p == TypeManager.uint64_type)
+					return q;
 
 			if (p == TypeManager.int32_type)
 				if (q == TypeManager.uint32_type || q == TypeManager.uint64_type)
-					return 1;
+					return p;
+			if (q == TypeManager.int32_type)
+				if (p == TypeManager.uint32_type || p == TypeManager.uint64_type)
+					return q;
 
 			if (p == TypeManager.int64_type)
 				if (q == TypeManager.uint64_type)
-					return 1;
+					return p;
+			if (q == TypeManager.int64_type)
+				if (p == TypeManager.uint64_type)
+					return q;
 
-			return 0;
+			return null;
 		}
 		
 		/// <summary>
@@ -4242,12 +4254,12 @@ namespace Mono.CSharp {
 		/// </summary>
 		/// <remarks>
 		///    Returns an integer indicating :
-		///     0 if candidate ain't better
-		///     1 if candidate is better than the current best match
+		///     false if candidate ain't better
+		///     true if candidate is better than the current best match
 		/// </remarks>
-		static int BetterFunction (EmitContext ec, ArrayList args, int argument_count,
-					   MethodBase candidate, bool candidate_params,
-					   MethodBase best, bool best_params, Location loc)
+		static bool BetterFunction (EmitContext ec, ArrayList args, int argument_count,
+					    MethodBase candidate, bool candidate_params,
+					    MethodBase best, bool best_params, Location loc)
 		{
 			ParameterData candidate_pd = GetParameterData (candidate);
 			ParameterData best_pd = GetParameterData (best);
@@ -4276,19 +4288,15 @@ namespace Mono.CSharp {
 			// Trim (); is better than Trim (params char[] chars);
                         //
 			if (cand_count == 0 && argument_count == 0)
-				return best_params ? 1 : 0;
+				return !candidate_params && best_params;
 
 			if ((candidate_pd.ParameterModifier (cand_count - 1) != Parameter.Modifier.PARAMS) &&
 			    (candidate_pd.ParameterModifier (cand_count - 1) != Parameter.Modifier.ARGLIST))
 				if (cand_count != argument_count)
-					return 0;
+					return false;
 
-
-			int rating1 = 0, rating2 = 0;
-			
+			bool better_at_least_one = false;
 			for (int j = 0; j < argument_count; ++j) {
-				int x, y;
-				
 				Argument a = (Argument) args [j];
 
 				Type ct = candidate_pd.ParameterType (j);
@@ -4302,14 +4310,17 @@ namespace Mono.CSharp {
 					if (best_params)
 						bt = TypeManager.GetElementType (bt);
 
-				x = BetterConversion (ec, a, ct, bt, loc);
-				y = BetterConversion (ec, a, bt, ct, loc);
+				Type better = BetterConversion (ec, a, ct, bt, loc);
 
-				if (x < y)
-					return 0;
-				
-				rating1 += x;
-				rating2 += y;
+				// for each argument, the conversion to 'ct' should be no worse than 
+				// the conversion to 'bt'.
+				if (better == bt)
+					return false;
+
+				// for at least one argument, the conversion to 'ct' should be better than 
+				// the conversion to 'bt'.
+				if (better == ct)
+					better_at_least_one = true;
 			}
 
                         //
@@ -4320,12 +4331,9 @@ namespace Mono.CSharp {
                         // force it to select the candidate
                         //
                         if (!candidate_params && best_params && cand_count == argument_count)
-                                return 1;
+                                return true;
 
-			if (rating1 > rating2)
-				return 1;
-			else
-				return 0;
+			return better_at_least_one;
 		}
 
 		public static string FullMethodDesc (MethodBase mb)
@@ -4592,7 +4600,7 @@ namespace Mono.CSharp {
 		///
 		/// </summary>
 		public static MethodBase OverloadResolve (EmitContext ec, MethodGroupExpr me,
-							  ArrayList Arguments, bool may_fail,
+							  ArrayList Arguments, bool may_fail, 
 							  Location loc)
 		{
 			MethodBase method = null;
@@ -4762,7 +4770,7 @@ namespace Mono.CSharp {
                                 
 				if (BetterFunction (ec, Arguments, arg_count, 
 						    candidate, cand_params,
-						    method, method_params, loc) != 0) {
+						    method, method_params, loc)) {
 					method = candidate;
 					method_params = cand_params;
 				}
@@ -4780,10 +4788,10 @@ namespace Mono.CSharp {
                                         continue;
 
                                 bool cand_params = candidate_to_form != null && candidate_to_form.Contains (candidate);
-				if (BetterFunction (ec, Arguments, arg_count,
-						    method, method_params,
-						    candidate, cand_params,
-						    loc) != 1) {
+				if (!BetterFunction (ec, Arguments, arg_count,
+						     method, method_params,
+						     candidate, cand_params,
+						     loc)) {
 					Report.SymbolRelatedToPreviousError (candidate);
 					ambiguous = true;
 				}
@@ -4791,7 +4799,7 @@ namespace Mono.CSharp {
 
 			if (ambiguous) {
 				Report.SymbolRelatedToPreviousError (method);
-				Report.Error (121, loc, "Ambiguous call when selecting function due to implicit casts");					
+				Report.Error (121, loc, "Ambiguous call when selecting function due to implicit casts");
 				return null;
 			}
 
@@ -4933,9 +4941,6 @@ namespace Mono.CSharp {
 			// First, resolve the expression that is used to
 			// trigger the invocation
 			//
-			if (expr is BaseAccess)
-				is_base = true;
-
 			expr = expr.Resolve (ec, ResolveFlags.VariableOrValue | ResolveFlags.MethodGroup);
 			if (expr == null)
 				return null;
@@ -4971,7 +4976,7 @@ namespace Mono.CSharp {
 
 			if (method == null)
 				return null;
-			
+
 			MethodInfo mi = method as MethodInfo;
 			if (mi != null) {
 				type = TypeManager.TypeToCoreType (mi.ReturnType);
@@ -5001,14 +5006,14 @@ namespace Mono.CSharp {
 			//
 			// Only base will allow this invocation to happen.
 			//
-			if (is_base && method.IsAbstract){
+			if (mg.IsBase && method.IsAbstract){
 				Report.Error (205, loc, "Cannot call an abstract base member: " +
 					      FullMethodDesc (method));
 				return null;
 			}
 
 			if (method.Name == "Finalize" && Arguments == null) {
-				if (is_base)
+				if (mg.IsBase)
 					Report.Error (250, loc, "Do not directly call your base class Finalize method. It is called automatically from your destructor");
 				else
 					Report.Error (245, loc, "Destructors and object.Finalize cannot be called directly. Consider calling IDisposable.Dispose if available");
@@ -5349,7 +5354,7 @@ namespace Mono.CSharp {
 		{
 			MethodGroupExpr mg = (MethodGroupExpr) this.expr;
 
-			EmitCall (ec, is_base, method.IsStatic, mg.InstanceExpression, method, Arguments, loc);
+			EmitCall (ec, mg.IsBase, method.IsStatic, mg.InstanceExpression, method, Arguments, loc);
 		}
 		
 		public override void EmitStatement (EmitContext ec)
@@ -5384,9 +5389,9 @@ namespace Mono.CSharp {
 			//
 			// First try to resolve it as a cast.
 			//
-			type = ec.DeclSpace.ResolveType (expr, true, loc);
-			if (type != null) {
-				Cast cast = new Cast (new TypeExpression (type, loc), argument, loc);
+			TypeExpr te = expr.ResolveAsTypeTerminal (ec, true);
+			if (te != null) {
+				Cast cast = new Cast (te, argument, loc);
 				return cast.Resolve (ec);
 			}
 
@@ -5431,8 +5436,8 @@ namespace Mono.CSharp {
 			//
 			// First try to resolve it as a cast.
 			//
-			type = ec.DeclSpace.ResolveType (expr, true, loc);
-			if (type != null) {
+			TypeExpr te = expr.ResolveAsTypeTerminal (ec, true);
+			if (te != null) {
 				error201 ();
 				return null;
 			}
@@ -5566,10 +5571,11 @@ namespace Mono.CSharp {
 				return this;
 			}
 			
-			type = ec.DeclSpace.ResolveType (RequestedType, false, loc);
-			
-			if (type == null)
+			RequestedType = RequestedType.ResolveAsTypeTerminal (ec, false);
+			if (RequestedType == null)
 				return null;
+
+			type = RequestedType.Type;
 			
 			CheckObsoleteAttribute (type);
 
@@ -6756,7 +6762,7 @@ namespace Mono.CSharp {
 	///   Implements the typeof operator
 	/// </summary>
 	public class TypeOf : Expression {
-		public readonly Expression QueriedType;
+		public Expression QueriedType;
 		protected Type typearg;
 		
 		public TypeOf (Expression queried_type, Location l)
@@ -6767,10 +6773,11 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			typearg = ec.DeclSpace.ResolveType (QueriedType, false, loc);
-
-			if (typearg == null)
+			QueriedType = QueriedType.ResolveAsTypeTerminal (ec, false);
+			if (QueriedType == null)
 				return null;
+
+			typearg = QueriedType.Type;
 
 			if (typearg == TypeManager.void_type) {
 				Error (673, "System.Void cannot be used from C# - " +
