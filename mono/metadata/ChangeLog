@@ -1,3 +1,7 @@
+2002-03-19  Dan Lewis <dihlewis@yahoo.co.uk>
+
+	* file-io.c: FileStream flush support; FileSetLength now
+	restores file pointer.
 
 Tue Mar 19 18:17:21 CET 2002 Paolo Molaro <lupus@ximian.com>
 
