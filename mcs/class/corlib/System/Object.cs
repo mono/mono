@@ -11,6 +11,8 @@
 // of an object. 
 //
 
+using System.Runtime.CompilerServices;
+
 namespace System {
 
 	public class Object {
@@ -80,10 +82,8 @@ namespace System {
 		// <summary>
 		//   Shallow copy of the object.
 		// </summary>
-		protected object MemberwiseClone ()
-		{
-			return null;	
-		}
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		protected extern object MemberwiseClone ();
 
 		// <summary>
 		//   Returns a stringified representation of the object.
