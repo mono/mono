@@ -1,3 +1,11 @@
+2005-03-08  Zoltan Varga  <vargaz@freemail.hu>
+
+	* class.c (mono_class_is_assignable_from): If oklass is dynamic, call
+	the managed IsAssignableFrom method. Fixes #73469.
+
+	* reflection.c (mono_reflection_call_is_assignable_from): New helper
+	function.
+
 2005-03-04  Zoltan Varga  <vargaz@freemail.hu>
 
 	* object.c (mono_load_remote_field_new): Fix returning uninitialized
