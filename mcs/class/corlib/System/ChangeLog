@@ -1,3 +1,7 @@
+2005-01-30  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Int32.cs : (FindSign) IndexOf() is better than creating substring.
+
 2005-01-27  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* BadImageFormatException.cs: Protect the fusion (GAC) log from being
