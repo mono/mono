@@ -1,3 +1,14 @@
+2004-12-19  Ben Maurer  <bmaurer@ximian.com>
+
+	* linear-scan.c (mono_linear_scan): When expiring actives, you
+	don't need to keep around variables that expire on this
+	instruction. This makes it so that:
+	     a = b + 1
+	will turn into:
+	     store (ebx add (ebx, 1))
+	which will become
+	     add ebx, 1
+
 2004-12-19  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini.c (mono_method_to_ir): Optimize the common ldobj+stloc 
