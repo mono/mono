@@ -118,7 +118,7 @@ namespace Mono.ILASM {
                         }
 
                         try {
-                                if (num.IndexOf ('.') != -1) {
+                                if (dec_found || is_real) {
                                         double d = Double.Parse (num, nstyles, NumberFormatInfo.InvariantInfo);
                                         result.token = Token.FLOAT64;
                                         result.val = d;

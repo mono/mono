@@ -1,3 +1,9 @@
+2004-07-06  Jackson Harper  <jackson@ximian.com>
+
+	* NumberHelper.cs: Handle real numbers. Thanks to steve brown for
+	pointing this out. Also don't bother scanning the string again,
+	its allready been scanned.
+	
 2004-06-10  Jackson Harper  <jackson@ximian.com>
 
 	* ILTables.cs: Remove opcodes, these are contained in codegen/IntrTable.cs
