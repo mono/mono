@@ -71,7 +71,7 @@ namespace System.ComponentModel
 
 		public bool Equals (PropertyTabAttribute other)
 		{
-			return this.Equals (other);
+			return this.Equals ((object) other);
 		}
 
 		public override int GetHashCode()
