@@ -1,19 +1,12 @@
 2004-01-16  Martin Baulig  <martin@ximian.com>
 
-	[NOTE: This change is only forward binary compatible !
-
-	This means that this version of the symbol writer can still read
-	symbol files from the last mono release, but an older version of
-	the symbol writer can't read the new symbol files.
+	Set version number to 36.
 
 	* MonoSymbolFile.cs (MonoSymbolFile): Removed 'FindMethod' and
 	'MethodLookup'.
 
 	* MonoSymbolTable.cs (MethodEntry): Don't write the method's full
 	name into the symbol file.
-	[NOTE: For the moment, the corresponding fields are still being
-	written into the symbol file.  They'll be removed shortly before
-	the next mono release.]
 
 2004-01-16  Martin Baulig  <martin@ximian.com>
 

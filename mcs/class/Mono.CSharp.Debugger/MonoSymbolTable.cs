@@ -52,7 +52,7 @@ namespace Mono.CSharp.Debugger
 {
 	public struct OffsetTable
 	{
-		public const int  Version = 35;
+		public const int  Version = 36;
 		public const long Magic   = 0x45e82623fd7fa614;
 
 		#region This is actually written to the symbol file
@@ -449,7 +449,6 @@ namespace Mono.CSharp.Debugger
 	{
 		#region This is actually written to the symbol file
 		public readonly int FileOffset;
-		public readonly int FullNameOffset;
 		public readonly int Token;
 		#endregion
 
@@ -457,31 +456,28 @@ namespace Mono.CSharp.Debugger
 			get { return 12; }
 		}
 
-		public MethodIndexEntry (int offset, int name_offset, int token)
+		public MethodIndexEntry (int offset, int token)
 		{
 			this.FileOffset = offset;
-			this.FullNameOffset = name_offset;
 			this.Token = token;
 		}
 
 		internal MethodIndexEntry (BinaryReader reader)
 		{
 			FileOffset = reader.ReadInt32 ();
-			FullNameOffset = reader.ReadInt32 ();
 			Token = reader.ReadInt32 ();
 		}
 
 		internal void Write (BinaryWriter bw)
 		{
 			bw.Write (FileOffset);
-			bw.Write (FullNameOffset);
 			bw.Write (Token);
 		}
 
 		public override string ToString ()
 		{
-			return String.Format ("MethodIndexEntry ({0}:{1}:{2:x})",
-					      FileOffset, FullNameOffset, Token);
+			return String.Format ("MethodIndexEntry ({0}:{1:x})",
+					      FileOffset, Token);
 		}
 	}
 
@@ -500,7 +496,6 @@ namespace Mono.CSharp.Debugger
 		public readonly bool LocalNamesAmbiguous;
 
 		int NameOffset;
-		int FullNameOffset;
 		int TypeIndexTableOffset;
 		int LocalVariableTableOffset;
 		int LineNumberTableOffset;
@@ -547,7 +542,6 @@ namespace Mono.CSharp.Debugger
 			NumLocals = reader.ReadInt32 ();
 			NumLineNumbers = reader.ReadInt32 ();
 			NameOffset = reader.ReadInt32 ();
-			FullNameOffset = reader.ReadInt32 ();
 			TypeIndexTableOffset = reader.ReadInt32 ();
 			LocalVariableTableOffset = reader.ReadInt32 ();
 			LineNumberTableOffset = reader.ReadInt32 ();
@@ -762,7 +756,6 @@ namespace Mono.CSharp.Debugger
 			bw.Write (NumLocals);
 			bw.Write (NumLineNumbers);
 			bw.Write (NameOffset);
-			bw.Write (FullNameOffset);
 			bw.Write (TypeIndexTableOffset);
 			bw.Write (LocalVariableTableOffset);
 			bw.Write (LineNumberTableOffset);
@@ -776,7 +769,7 @@ namespace Mono.CSharp.Debugger
 
 		internal void WriteIndex (BinaryWriter bw)
 		{
-			new MethodIndexEntry (file_offset, FullNameOffset, Token).Write (bw);
+			new MethodIndexEntry (file_offset, Token).Write (bw);
 		}
 
 		public override string ToString ()
