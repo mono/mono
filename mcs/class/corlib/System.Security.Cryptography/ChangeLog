@@ -1,3 +1,8 @@
+2003-11-10  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* Rfc2898DeriveBytes.cs: Implementation for PKCS5 PBKDF2. It works
+	except for the Reset() part - which implies some kind of Resume.
+
 2003-11-09  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* CryptoConfig.cs: Updated for RIPEMD160 and HMAC.
