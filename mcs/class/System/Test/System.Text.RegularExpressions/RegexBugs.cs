@@ -104,5 +104,13 @@ namespace MonoTests.System.Text.RegularExpressions
 			Assert("RIC #12", Regex.IsMatch(str, @"[A-a]+", RegexOptions.IgnoreCase));
 
                 }
+
+		[Test]
+		public void Escape0 () // bug54797
+		{
+            		Regex r = new Regex(@"^[\s\0]*$");
+			AssertEquals ("E0-1", true, r.Match(" \0").Success);
+		}
 	}
 }
+

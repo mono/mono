@@ -1,3 +1,7 @@
+2004-03-16  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* RegexBugs.cs: added test case for bug 54797.
+
 2004-02-02  Nick Drochak <ndrochak@ieee.org>
 
 	* RegexBugs.cs (RangeIgnoreCase): made the last assert pass on .NET.
