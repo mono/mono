@@ -3,11 +3,16 @@
 //
 // Author:
 //   Jason Diamond (jason@injektilo.org)
+//   Atsushi Enomoto (atsushi@ximian.com)
 //
 // (C) 2002 Jason Diamond  http://injektilo.org/
+// (C) 2004 Novell Inc.
 //
 
 using System;
+using System.Collections;
+using System.Xml;
+using System.Xml.Schema;
 using Mono.Xml.XPath;
 
 namespace System.Xml.XPath
@@ -461,5 +466,197 @@ namespace System.Xml.XPath
 		}
 
 		#endregion
+
+#if NET_2_0
+
+		[MonoTODO]
+		public virtual bool CheckValidity (XmlSchemaSet schemas, ValidationEventHandler handler)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public virtual bool CheckValidity (XmlSchemaSet schemas, ValidationEventHandler handler, XmlSchemaAttribute attribute)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public virtual bool CheckValidity (XmlSchemaSet schemas, ValidationEventHandler handler, XmlSchemaElement element)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public virtual bool CheckValidity (XmlSchemaSet schemas, ValidationEventHandler handler, XmlSchemaType schemaType)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public virtual object CopyAsObject (Type targetType)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public virtual XPathNavigator CreateNavigator ()
+		{
+			return Clone ();
+		}
+
+		[MonoTODO]
+		public virtual object Evaluate (string xpath, IXmlNamespaceResolver nsResolver)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public virtual IDictionary GetNamespacesInScope (XmlNamespaceScope scope)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public virtual string LookupNamespace (string prefix)
+		{
+			return LookupNamespace (prefix, false);
+		}
+
+		[MonoTODO]
+		public virtual string LookupNamespace (string prefix, bool atomizedNames)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public virtual string LookupPrefix (string namespaceUri)
+		{
+			return LookupPrefix (namespaceUri, false);
+		}
+
+		[MonoTODO]
+		public virtual string LookupPrefix (string namespaceUri, bool atomizedNames)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public virtual XmlReader ReadSubtree ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		public virtual XPathNavigator SelectSingleNode (string xpath)
+		{
+			return SelectSingleNode (xpath, null);
+		}
+
+		[MonoTODO]
+		public virtual XPathNavigator SelectSingleNode (string xpath, IXmlNamespaceResolver nsResolver)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public virtual object ValueAs (Type type)
+		{
+			return ValueAs (type, null);
+		}
+
+		[MonoTODO]
+		public virtual object ValueAs (Type type, IXmlNamespaceResolver nsResolver)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public virtual XmlWriter WriteSubtree ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public bool HasNamespaceResolver {
+			get { throw new NotImplementedException (); }
+		}
+
+		[MonoTODO]
+		public virtual string InnerXml {
+			get { throw new NotImplementedException (); }
+		}
+
+		public virtual bool IsNode {
+			get { throw new NotImplementedException (); }
+		}
+
+/* FIXME: It should be member, but requires new Collection type.
+		[MonoTODO]
+		public virtual IKeyComparer NavigatorComparer {
+			get { throw new NotImplementedException (); }
+		}
+*/
+		[MonoTODO]
+		public virtual string OuterXml {
+			get { throw new NotImplementedException (); }
+		}
+
+		[MonoTODO]
+		public virtual IXmlSchemaInfo SchemaInfo {
+			get { throw new NotImplementedException (); }
+		}
+
+		[MonoTODO]
+		public virtual object TypedValue {
+			get { throw new NotImplementedException (); }
+		}
+
+		[MonoTODO]
+		public virtual object UnderlyingObject {
+			get { throw new NotImplementedException (); }
+		}
+
+		public virtual bool ValueAsBoolean {
+			get { throw new NotImplementedException (); }
+		}
+
+		public virtual DateTime ValueAsDateTime {
+			get { throw new NotImplementedException (); }
+		}
+
+		public virtual decimal ValueAsDecimal {
+			get { throw new NotImplementedException (); }
+		}
+
+		public virtual double ValueAsDouble {
+			get { throw new NotImplementedException (); }
+		}
+
+		public virtual int ValueAsInt32 {
+			get { throw new NotImplementedException (); }
+		}
+
+		public virtual long ValueAsInt64 {
+			get { throw new NotImplementedException (); }
+		}
+
+		public virtual ICollection ValueAsList {
+			get { throw new NotImplementedException (); }
+		}
+
+		public virtual float ValueAsSingle {
+			get { throw new NotImplementedException (); }
+		}
+
+		public virtual Type ValueType {
+			get { throw new NotImplementedException (); }
+		}
+
+		public virtual XmlSchemaType XmlType {
+			get { throw new NotImplementedException (); }
+		}
+
+		protected XmlReader GetValidatingReader (XmlSchemaSet schemas, ValidationEventHandler handler)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 	}
 }

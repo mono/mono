@@ -13,6 +13,7 @@ using System.Collections;
 using System.IO;
 using System.Xml;
 using System.Xml.Schema;
+using System.Text;
 using Mono.Xml.XPath;
 
 namespace System.Xml.XPath
@@ -67,12 +68,203 @@ namespace System.Xml.XPath
 
 #endregion
 
+#region Events
+
+#if NET_2_0
+
+		public event NodeChangedEventHandler ChangeRejected;
+
+		public event NodeChangedEventHandler ItemChanged;
+
+		public event NodeChangedEventHandler ItemChanging;
+
+		public event NodeChangedEventHandler ItemInserted;
+
+		public event NodeChangedEventHandler ItemInserting;
+
+		public event NodeChangedEventHandler ItemRemoved;
+
+		public event NodeChangedEventHandler ItemRemoving;
+
+		public event NodeChangedEventHandler RejectingChange;
+
+#endif // NET_2_0
+
+#endregion // Events
+
+#region Properties
+
+#if NET_2_0
+
+		[MonoTODO]
+		public virtual bool ContainsListCollection {
+			get { throw new NotImplementedException (); }
+		}
+
+		[MonoTODO]
+		public bool EnableChangeTracking {
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
+		}
+
+		[MonoTODO]
+		public Encoding Encoding {
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
+		}
+
+		[MonoTODO]
+		public XmlNameTable NameTable {
+			get { throw new NotImplementedException (); }
+		}
+
+		[MonoTODO]
+		public bool PreserveWhitespace {
+			get { throw new NotImplementedException (); }
+		}
+
+		[MonoTODO]
+		public XmlSchemaSet Schemas {
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
+		}
+
+#endif // NET_2_0
+
+#endregion // Properies
+
+
 #region Methods
+
+#if NET_2_0
+
+		[MonoTODO]
+		public XPathChangeNavigator CreateChangeNavigator ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public XPathEditableNavigator CreateEditor ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO ("This code is only for compatibility.")]
+		public XPathNavigator CreateNavigator ()
+		{
+			return document.CreateNavigator ();
+		}
+
+		[MonoTODO]
+		public XmlWriter CreateWriter ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public virtual IList GetList ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public bool HasChanges ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public bool HasChanges (XmlChangeFilters changeFilter)  
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public void Load (string xml)  
+		{
+			throw new NotImplementedException ();
+//			tree = new XPathDocumentTree (xmlReader);
+//			if (acceptChangesOnLoad)
+//				AcceptChanges ();
+		}
+
+		[MonoTODO]
+		public void RejectChanges ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO ("Confirm writer settings etc.")]
+		public void Save (Stream stream)
+		{
+			Save (new XmlTextWriter (stream, null));
+		}
+
+		[MonoTODO ("Confirm writer settings etc.")]
+		public void Save (string filename)
+		{
+			using (XmlWriter w = new XmlTextWriter (filename, null)) {
+				Save (w);
+			}
+		}
+
+		[MonoTODO ("Confirm writer settings etc.")]
+		public void Save (TextWriter writer)
+		{
+			Save (new XmlTextWriter (writer));
+		}
+
+		[MonoTODO]
+		public void Save (XmlWriter writer)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public XPathNodeIterator SelectNodes (string xpath)
+		{
+			return SelectNodes (xpath, null);
+		}
+
+		[MonoTODO]
+		public XPathNodeIterator SelectNodes (XPathExpression expr)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public XPathNodeIterator SelectNodes (string xpath ,IXmlNamespaceResolver nsResolver)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public XPathEditableNavigator SelectSingleNode (string xpath)
+		{
+			return SelectSingleNode (xpath, null);
+		}
+
+		[MonoTODO]
+		public XPathEditableNavigator SelectSingleNode (XPathExpression expr)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public XPathEditableNavigator SelectSingleNode (string xpath ,IXmlNamespaceResolver nsResolver)
+		{
+			throw new NotImplementedException ();
+		}
+
+#else // !NET_2_0
 
 		public XPathNavigator CreateNavigator ()
 		{
 			return document.CreateNavigator ();
 		}
+
+#endif
 
 #endregion
 

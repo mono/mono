@@ -1,3 +1,19 @@
+2004-05-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* IXPathChangeNavigable.cs,
+	  IXPathEditable.cs,
+	  NodeChangedEventArgs.cs,
+	  NodeChangedEventHandler.cs,
+	  XPathAtomicValue.cs,
+	  XPathChangeNavigator.cs,
+	  XPathDocumentNodeChangedAction.cs,
+	  XPathEditableNavigator.cs,
+	  XPathItem.cs,
+	  XmlChangeFilters.cs,
+	  XmlNodeChangeType.cs : added NET_2_0 classes.
+	* XPathDocument.cs,
+	  XPathNavigator.cs : updated NET_2_0 members.
+
 2004-05-20  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Expression.cs : We should not catch all kind of exception. Just
