@@ -101,7 +101,7 @@ public class HebrewCalendar : Calendar {
 			return twoDigitYearMax;
 		}
 		set {
-			M_ArgumentInRange ("value", value, 100, M_MaxYear);
+			M_ArgumentInRange ("value", value, M_MinYear, M_MaxYear);
 
 			twoDigitYearMax = value;
 		}
@@ -901,10 +901,17 @@ public class HebrewCalendar : Calendar {
 			hour, minute, second, milliseconds);
 	}
 
-	[MonoTODO]
 	public override int ToFourDigitYear (int year)
 	{
-		throw new NotImplementedException ();
+		M_ArgumentInRange ("year", year, 0, 99);
+		
+		int baseExtra = this.twoDigitYearMax % 100;
+		int baseCentury = this.twoDigitYearMax - baseExtra;
+		
+		if (year <= baseExtra)
+			return baseCentury + year;
+		else
+			return baseCentury + year - 100;
 	}
 
 } // class HebrewCalendar
