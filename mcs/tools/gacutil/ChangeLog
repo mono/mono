@@ -1,3 +1,8 @@
+2004-04-29  Jackson Harper  <jackson@ximian.com>
+
+	* gacutil.cs: Allow a prefix to be specified. This is only for
+	packaging if you install to some wack prefix it wont work.
+	
 2004-04-29  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* gacutil.cs: return non-zero when something fails.

@@ -262,16 +262,17 @@ namespace Mono.Tools
 
 			bool force = false;
 
-			if(args.Length == 2 && (args[1] == "/f" || args[1] == "--force"))
+			if(args.Length >= 2 && (args[1] == "/f" || args[1] == "--force"))
 				force = true;
-
+                        if (args.Length == 4 && (args [2] == "/prefix"))
+                                gac_path = args [3];
 		
 			string version_token = an.Version + "_" +
 				an.CultureInfo.Name.ToLower () +
 				"_" + GetStringToken (an.GetPublicKeyToken ());
-
+                        
 			string fullPath = String.Format ("{0}{3}{1}{3}{2}{3}", gac_path, an.Name, version_token, Path.DirectorySeparatorChar);
-
+                        Console.WriteLine ("installing to fullpath:  " + fullPath);
 			if (File.Exists (fullPath + an.Name + ".dll") && force == false) {
 				Hashtable assemInfo = GetAssemblyInfo (fullPath + "__AssemblyInfo__");
 				assemInfo["RefCount"] = ((int) Convert.ToInt32 (assemInfo["RefCount"]) + 1).ToString ();
