@@ -1,3 +1,7 @@
+2002-02-26  Duncan Mak  <duncan@ximian.com>
+
+	* WeakReference.cs: Committed for Ajay Kumar Dwivedi.	
+
 2002-02-26  Martin Baulig  <martin@gnome.org>
 
 	* TimeZone.cs: Use an internal enum rather than magic numbers to access the
