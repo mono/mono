@@ -78,17 +78,17 @@ namespace System.Configuration
 		static DefaultConfig instance;
 		ConfigurationData config;
 
-		static DefaultConfig ()
-		{
-			instance = new DefaultConfig ();
-		}
-
 		private DefaultConfig ()
 		{
 		}
 
 		public static DefaultConfig GetInstance ()
 		{
+			lock (typeof (DefaultConfig)) {
+				if (instance == null)
+					instance = new DefaultConfig ();
+			}
+
 			return instance;
 		}
 
