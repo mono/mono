@@ -806,5 +806,11 @@ namespace MonoTests.System.Xml
 			doc.LoadXml("<root />");
 			AssertNotNull(doc.DocumentElement);
 		}
+
+		public void TestDocumentLoadFromUrl()
+		{
+			XmlDocument doc = new XmlDocument();
+			doc.Load("http://www.w3.org/"); // Until they decide to change their policy:-)
+		}
 	}
 }

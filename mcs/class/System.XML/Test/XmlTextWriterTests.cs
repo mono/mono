@@ -908,5 +908,36 @@ namespace MonoTests.System.Xml
 			AssertEquals (XmlSpace.Default, xtw.XmlSpace);
 			AssertEquals ("<foo xml:space='default'", StringWriterText);
 		}
+
+		public void TestWriteAttributes ()
+		{
+			XmlDocument doc = new XmlDocument();
+			StringWriter sw = new StringWriter();
+			XmlWriter wr = new XmlTextWriter(sw);
+			StringBuilder sb = sw.GetStringBuilder();
+			XmlParserContext ctx = new XmlParserContext(doc.NameTable, new XmlNamespaceManager(doc.NameTable), "", XmlSpace.Default);
+			XmlTextReader xtr = new XmlTextReader("<?xml version='1.0' encoding='utf-8' standalone='no'?><root a1='A' b2='B' c3='C'><foo><bar /></foo></root>", XmlNodeType.Document, ctx);
+
+			xtr.Read();	// read XMLDecl
+			wr.WriteAttributes(xtr, false);
+			// This method don't always have to take this double-quoted style...
+			AssertEquals("#WriteAttributes.XmlDecl.1", "version=\"1.0\" encoding=\"utf-8\" standalone=\"no\"", sw.ToString().Trim());
+
+			sb.Remove(0, sb.Length);	// init
+			xtr = new XmlTextReader("<?xml version='1.0'		 standalone='no'?><root a1='A' b2='B' c3='C'><foo><bar /></foo></root>", XmlNodeType.Document, ctx);
+			xtr.Read();	// read XMLDecl
+			wr.WriteAttributes(xtr, false);
+			// This method don't always have to take this double-quoted style...
+			AssertEquals("#WriteAttributes.XmlDecl.2", "version=\"1.0\" standalone=\"no\"", sw.ToString().Trim());
+
+			sb.Remove(0, sb.Length);	// init
+			xtr.Read();	// read root
+			wr.WriteStartElement(xtr.LocalName, xtr.Value);
+			wr.WriteAttributes(xtr, false);
+			wr.WriteEndElement();
+			wr.Close();
+			// This method don't always have to take this double-quoted style...
+			AssertEquals("#WriteAttributes.Element", "<root a1=\"A\" b2=\"B\" c3=\"C\" />", sw.ToString().Trim());
+		}
 	}
 }
