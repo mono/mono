@@ -1,3 +1,13 @@
+
+Tue Sep 10 11:58:46 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* class.h, class.c: move field layout code to it's own function and
+	export it. Get an interface id earlier. Move fields in MonoClass
+	so they are more cache friendly and align the bitfields.
+	* loader.c: temporary handle get_param_names() for a runtime method.
+	* reflection.c, reflection.h: more code to handle runtime creation of
+	types.
+
 2002-09-09  Martin Baulig  <martin@gnome.org>
 
 	* marshal.c (mono_marshal_get_native_wrapper): We need to use a special
