@@ -1,3 +1,8 @@
+2005-01-20  Zoltan Varga  <vargaz@freemail.hu>
+
+	* jni.h: Applied patch from Bernie Solomon to fix compilation on
+	non-gcc compilers.
+
 2005-01-13  Zoltan Varga  <vargaz@freemail.hu>
 
 	* jni.c: Fix compilation on PPC.

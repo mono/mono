@@ -64,10 +64,10 @@ typedef signed char jbyte;
 typedef unsigned short jchar;
 typedef short jshort;
 typedef int jint;
-#ifdef __GNUC__
-	typedef long long int jlong;
-#else
+#ifdef _MSC_VER
 	typedef __int64 jlong;
+#else
+	typedef long long int jlong;
 #endif
 typedef float jfloat;
 typedef double jdouble;
