@@ -374,9 +374,9 @@ namespace System.Web.UI.WebControls
 		{
 			get
 			{
-				if(tagName == null && tagKey != 0)
+				if(tagName == null && TagKey != 0)
 				{
-					tagName = Enum.Format(typeof(HtmlTextWriterTag), tagKey, "G").ToString();
+					tagName = Enum.Format(typeof(HtmlTextWriterTag), TagKey, "G").ToString();
 				}
 				// What if tagName is null and tagKey 0?
 				return tagName;

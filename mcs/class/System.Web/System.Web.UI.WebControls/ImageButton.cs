@@ -121,7 +121,7 @@ namespace System.Web.UI.WebControls
 					writer.AddAttribute("language", "javascript");
 				}
 			}
-			AddAttributesToRender(writer);
+			base.AddAttributesToRender(writer);
 		}
 
 		protected virtual void OnClick(ImageClickEventArgs e)

@@ -1,5 +1,14 @@
 2002-06-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* ImageButton.cs:
+	(AddAttributesToRender): fixer another stack overflow.
+
+	* WebControl.cs:
+	(TagName): modified to use TagKey instead of tagKey as the property
+	can be overriden.
+
+2002-06-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* LinkButton.cs: mono-stylized.
 	(AddParsedSubObject):
 	(RenderControls): little fixes.
