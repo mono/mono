@@ -1,7 +1,5 @@
 ; =====================================================
-; mono.nsi - Mono Setup Wizard for Windows
-;            uses NullSoft Installer System
-;            found at http://nsis.sourceforge.net/
+; mono.nsi - Mono Setup wizard for windows
 ; =====================================================
 ;
 ; (C) Copyright 2003 by Johannes Roith
@@ -12,7 +10,7 @@
 ;       Daniel Morgan <danmorg@sc.rr.com>
 ;
 ; This .nsi includes code from the NSIS Archives:
-; function StrReplace
+; function StrReplace and VersionCheck 
 ; by Hendri Adriaens
 ; HendriAdriaens@hotmail.com
 ; 
@@ -27,7 +25,7 @@
 ;
 ;
   !define MILESTONE "0.23" ;
-  !define SOURCE_INSTALL_DIR "c:\mono-0.23\install\\*" ;
+  !define SOURCE_INSTALL_DIR "c:\mono-0.23-setup\install\\*" ;
 
 ; =====================================================
 ; BUILDING
@@ -39,11 +37,8 @@
 ; 2. In your install directory, delete the *.a files.
 ;     Most people won't need them and it saves ~ 4 MB.
 ;
-; 3. Get latest the latest NSIS from cvs or 
-;    a development snapshot
-;    from http://nsis.sourceforge.net/
-;
-;    Documentation for it can be found
+; 3. Get latest nsis from cvs or a development snapshot
+;    from http://nsis.sf.net
 ;
 ; 4. Adapt the MILESTONE
 ;
@@ -53,12 +48,9 @@
 ; 6. Open this script in makensisw.exe
 ;
 ; 7. The output file is mono-[MILESTONE]-win32-1.exe
-;    If there has been a mono-[MILESTONE]-win32-1.exe
-;    created, then increment the number after win32- 
-;    to indicate the win32 package build number, such as,
-;    mono-[MILESTONE]-win32-2.exe  
-;    Usually, this would be done if there were errors in
-;    the 1st package that was released.
+;
+;
+;
 ;
 ;
 ; =====================================================
@@ -132,7 +124,10 @@
 
 Section "Uninstall"
 
+  MessageBox MB_YESNO "Are you sure you want to uninstall Mono from your system?" IDNO NoUnInstall
+
   Delete $INSTDIR\Uninst.exe ; delete Uninstaller
+  DeleteRegKey HKLM SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Mono-${MILESTONE} ; Remove Entry in Software List
 
   MessageBox MB_YESNO "Mono was installed into $INSTDIR. Should this directory be removed completly?" IDNO GoNext1
   RMDir /r $INSTDIR
@@ -158,13 +153,26 @@ Section "Uninstall"
   Delete $WINDIR\monosn.bat
 
   GoNext2:
-
+  NoUnInstall:
 
 SectionEnd
 
 
-
  Section
+
+ ; Warn people if a newer Mono is already installed
+
+ ReadRegStr $0 HKEY_LOCAL_MACHINE SOFTWARE\Mono\ DefaultCLR
+ Push $0
+ Push ${MILESTONE} 
+ Call VersionCheck
+ Pop $0
+ StrCmp $0 0 NoAskInstall
+ StrCmp $0 2 NoAskInstall
+ MessageBox MB_YESNO "A newer Mono version is already installed. Still continue?" IDNO NoInstall
+
+ NoAskInstall:
+
  SetOutPath $INSTDIR
  File /r "${SOURCE_INSTALL_DIR}"
  WriteUninstaller Uninst.exe
@@ -174,6 +182,10 @@ SectionEnd
  WriteRegStr HKEY_LOCAL_MACHINE SOFTWARE\Mono\${MILESTONE} MonoConfigDir $INSTDIR\etc\mono
  ;WriteRegStr HKEY_LOCAL_MACHINE SOFTWARE\Mono\${MILESTONE} GtkSharpLibPath $INSTDIR\lib
  WriteRegStr HKEY_LOCAL_MACHINE SOFTWARE\Mono DefaultCLR ${MILESTONE}
+
+ ; Mono Uninstall Entry in Windows Software List in the Control panel
+ WriteRegStr HKEY_LOCAL_MACHINE SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Mono-${MILESTONE} DisplayName "Mono ${MILESTONE}"
+ WriteRegStr HKEY_LOCAL_MACHINE SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Mono-${MILESTONE} UninstallString $INSTDIR\uninst.exe
 
  ;original string is like C:\mono-0.20\install
  StrCpy $5 $INSTDIR 
@@ -233,7 +245,7 @@ FileOpen $0 "$INSTDIR\bin\monodis.exe.sh" "w"
 FileWrite $0 "#!/bin/sh$\r$\n"
 FileWrite $0 "export MONO_PATH=$6/lib$\r$\n"
 FileWrite $0 "export MONO_CFG_DIR=$6/etc/mono$\r$\n"
-FileWrite $0 '$6/bin/monodis.exe "$$@"'
+FileWrite $0 '$6/bin/mono.exe $6/bin/monodis.exe "$$@"'
 FileClose $0
 
 ; create bin/monoresgen wrapper to be used if the user has cygwin
@@ -249,7 +261,7 @@ FileOpen $0 "$INSTDIR\bin\monoilasm.exe.sh" "w"
 FileWrite $0 "#!/bin/sh$\r$\n"
 FileWrite $0 "export MONO_PATH=$6/lib$\r$\n"
 FileWrite $0 "export MONO_CFG_DIR=$6/etc/mono$\r$\n"
-FileWrite $0 '$6/bin/mono.exe $6/bin/ilasm.exe "$$@"'
+FileWrite $0 '$6/bin/mono.exe $6/bin/monoilasm.exe "$$@"'
 FileClose $0
 
 ; create bin/monosn wrapper to be used if the user has cygwin
@@ -418,7 +430,7 @@ FileWrite $0 "goto loop$\r$\n"
 FileWrite $0 ":done$\r$\n"
 FileWrite $0 "setlocal$\r$\n"
 FileWrite $0 'set path="%MONO_BASEPATH%\bin\;%MONO_BASEPATH%\lib\;%path%"$\r$\n'
-FileWrite $0 "%MONO_BASEPATH%\bin\mono.exe %MONO_BASEPATH%\bin\ilasm.exe %MONOARGS%$\r$\n"
+FileWrite $0 "%MONO_BASEPATH%\bin\mono.exe %MONO_BASEPATH%\bin\monoilasm.exe %MONOARGS%$\r$\n"
 FileWrite $0 "endlocal$\r$\n"
 
 FileClose $0
@@ -535,6 +547,7 @@ FileWrite $0 "endlocal$\r$\n"
 
 FileClose $0
 
+NoInstall:
 SectionEnd
 
 ; function StrReplace
@@ -584,6 +597,60 @@ function StrReplace
   Pop $4
   Pop $3
   Pop $2
+  Pop $1
+  Exch $0
+FunctionEnd
+
+Function VersionCheck
+  Exch $0 ;second versionnumber
+  Exch
+  Exch $1 ;first versionnumber
+  Push $R0 ;counter for $0
+  Push $R1 ;counter for $1
+  Push $3 ;temp char
+  Push $4 ;temp string for $0
+  Push $5 ;temp string for $1
+  StrCpy $R0 "-1"
+  StrCpy $R1 "-1"
+  Start:
+  StrCpy $4 ""
+  DotLoop0:
+  IntOp $R0 $R0 + 1
+  StrCpy $3 $0 1 $R0
+  StrCmp $3 "" DotFound0
+  StrCmp $3 "." DotFound0
+  StrCpy $4 $4$3
+  Goto DotLoop0
+  DotFound0:
+  StrCpy $5 ""
+  DotLoop1:
+  IntOp $R1 $R1 + 1
+  StrCpy $3 $1 1 $R1
+  StrCmp $3 "" DotFound1
+  StrCmp $3 "." DotFound1
+  StrCpy $5 $5$3
+  Goto DotLoop1
+  DotFound1:
+  Strcmp $4 "" 0 Not4
+    StrCmp $5 "" Equal
+    Goto Ver2Less
+  Not4:
+  StrCmp $5 "" Ver2More
+  IntCmp $4 $5 Start Ver2Less Ver2More
+  Equal:
+  StrCpy $0 "0"
+  Goto Finish
+  Ver2Less:
+  StrCpy $0 "1"
+  Goto Finish
+  Ver2More:
+  StrCpy $0 "2"
+  Finish:
+  Pop $5
+  Pop $4
+  Pop $3
+  Pop $R1
+  Pop $R0
   Pop $1
   Exch $0
 FunctionEnd
