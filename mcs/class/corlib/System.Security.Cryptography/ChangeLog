@@ -1,5 +1,13 @@
 2004-07-07  Sebastien Pouliot  <sebastien@ximian.com>
 
+	* DES.cs: Fixed FeedbackSizeValue to 8.
+	* RC2.cs: Fixed FeedbackSizeValue to 8.
+	* RC2CryptoServiceProvider.cs: When key size is different from 
+	effective key size we throw CryptographicUnexpectedOperationException.
+	* TripleDES.cs: Fixed FeedbackSizeValue to 8.
+
+2004-07-07  Sebastien Pouliot  <sebastien@ximian.com>
+
 	* CryptoAPITransform.cs: Added the new Reset method for NET_2_0. This
 	is a NOP as this class isn't used by Mono (all crypto transforms are 
 	managed).

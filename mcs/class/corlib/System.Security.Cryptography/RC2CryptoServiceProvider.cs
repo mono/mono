@@ -51,7 +51,11 @@ namespace System.Security.Cryptography {
 			get { return base.EffectiveKeySize; }
 			set {
 				if (value != KeySizeValue) {
+#if NET_1_1
+					throw new CryptographicUnexpectedOperationException (
+#else
 					throw new CryptographicException (
+#endif
 						Locale.GetText ("Effective key size must match key size for compatibility"));
 				}
 				base.EffectiveKeySize = value; 
