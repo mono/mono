@@ -9,6 +9,7 @@
 //
 // (C) 2001 Bob Smith.  http://www.thestuff.net
 // Copyright (C) 2003 Pedro Martínez Juliá <yoros@wanadoo.es>
+// Copyright (C) 2004 Novell (http://www.novell.com)
 //
 
 using System.Runtime.CompilerServices;
@@ -105,11 +106,12 @@ namespace System
 		public static double IEEERemainder (double x, double y)
 		{
 			double r;
-			if (y == 0) return Double.NaN;
+			if (y == 0)
+				return Double.NaN;
 			r = x - (y * Math.Round(x/y));
 			if (r != 0)
 				return r;
-			return (x > 0)? 0: -0;
+			return (x > 0) ? 0: (BitConverter.Int64BitsToDouble (Int64.MinValue));
 		}
 
 		public static double Log (double a, double newBase)
