@@ -1,0 +1,62 @@
+<?xml version="1.0" standalone="no"?>
+<!--This file represents the results of running a test suite-->
+<test-results name="C:\cygwin\home\Nick\mcs\nunit20\corlib_reference2.dll" total="42" failures="0" not-run="0" date="12/2/2002" time="10:38 PM">
+  <test-suite name="C:\cygwin\home\Nick\mcs\nunit20\corlib_reference2.dll" success="True" time="0.400576">
+    <results>
+      <test-suite name="MonoTests" success="True" time="0.3805472">
+        <results>
+          <test-suite name="System" success="True" time="0.3705328">
+            <results>
+              <test-suite name="ArrayTest" success="True" time="0.350504">
+                <results>
+                  <test-case name="MonoTests.System.ArrayTest.TestIsFixedSize" executed="True" success="True" time="0.010" />
+                  <test-case name="MonoTests.System.ArrayTest.TestIsReadOnly" executed="True" success="True" time="0.000" />
+                  <test-case name="MonoTests.System.ArrayTest.TestIsSynchronized" executed="True" success="True" time="0.000" />
+                  <test-case name="MonoTests.System.ArrayTest.TestLength" executed="True" success="True" time="0.010" />
+                  <test-case name="MonoTests.System.ArrayTest.TestRank" executed="True" success="True" time="0.000" />
+                  <test-case name="MonoTests.System.ArrayTest.TestBinarySearch1" executed="True" success="True" time="0.000" />
+                  <test-case name="MonoTests.System.ArrayTest.TestBinarySearch2" executed="True" success="True" time="0.010" />
+                  <test-case name="MonoTests.System.ArrayTest.TestClear" executed="True" success="True" time="0.010" />
+                  <test-case name="MonoTests.System.ArrayTest.TestClone" executed="True" success="True" time="0.010" />
+                  <test-case name="MonoTests.System.ArrayTest.TestCopy" executed="True" success="True" time="0.010" />
+                  <test-case name="MonoTests.System.ArrayTest.TestCopy2" executed="True" success="True" time="0.000" />
+                  <test-case name="MonoTests.System.ArrayTest.TestCopyTo" executed="True" success="True" time="0.000" />
+                  <test-case name="MonoTests.System.ArrayTest.TestCreateInstance" executed="True" success="True" time="0.000" />
+                  <test-case name="MonoTests.System.ArrayTest.TestGetEnumerator" executed="True" success="True" time="0.000" />
+                  <test-case name="MonoTests.System.ArrayTest.TestGetEnumeratorMultipleDimension" executed="True" success="True" time="0.000" />
+                  <test-case name="MonoTests.System.ArrayTest.TestGetEnumeratorNonZeroLowerBounds" executed="True" success="True" time="0.010" />
+                  <test-case name="MonoTests.System.ArrayTest.TestIList_Add" executed="True" success="True" time="0.000" />
+                  <test-case name="MonoTests.System.ArrayTest.TestIList_Insert" executed="True" success="True" time="0.000" />
+                  <test-case name="MonoTests.System.ArrayTest.TestIList_Remove" executed="True" success="True" time="0.000" />
+                  <test-case name="MonoTests.System.ArrayTest.TestIList_RemoveAt" executed="True" success="True" time="0.000" />
+                  <test-case name="MonoTests.System.ArrayTest.TestIList_Contains" executed="True" success="True" time="0.000" />
+                  <test-case name="MonoTests.System.ArrayTest.TestIList_IndexOf" executed="True" success="True" time="0.000" />
+                  <test-case name="MonoTests.System.ArrayTest.TestGetLength" executed="True" success="True" time="0.010" />
+                  <test-case name="MonoTests.System.ArrayTest.TestGetLowerBound" executed="True" success="True" time="0.000" />
+                  <test-case name="MonoTests.System.ArrayTest.TestGetUpperBound" executed="True" success="True" time="0.010" />
+                  <test-case name="MonoTests.System.ArrayTest.TestGetValue1" executed="True" success="True" time="0.000" />
+                  <test-case name="MonoTests.System.ArrayTest.TestGetValue2" executed="True" success="True" time="0.010" />
+                  <test-case name="MonoTests.System.ArrayTest.TestGetValue3" executed="True" success="True" time="0.000" />
+                  <test-case name="MonoTests.System.ArrayTest.TestGetValueN" executed="True" success="True" time="0.000" />
+                  <test-case name="MonoTests.System.ArrayTest.TestIndexOf1" executed="True" success="True" time="0.000" />
+                  <test-case name="MonoTests.System.ArrayTest.TestIndexOf2" executed="True" success="True" time="0.000" />
+                  <test-case name="MonoTests.System.ArrayTest.TestIndexOf3" executed="True" success="True" time="0.010" />
+                  <test-case name="MonoTests.System.ArrayTest.TestLastIndexOf1" executed="True" success="True" time="0.000" />
+                  <test-case name="MonoTests.System.ArrayTest.TestLastIndexOf2" executed="True" success="True" time="0.000" />
+                  <test-case name="MonoTests.System.ArrayTest.TestLastIndexOf3" executed="True" success="True" time="0.000" />
+                  <test-case name="MonoTests.System.ArrayTest.TestReverse" executed="True" success="True" time="0.000" />
+                  <test-case name="MonoTests.System.ArrayTest.TestSetValue1" executed="True" success="True" time="0.010" />
+                  <test-case name="MonoTests.System.ArrayTest.TestSetValue2" executed="True" success="True" time="0.000" />
+                  <test-case name="MonoTests.System.ArrayTest.TestSetValue3" executed="True" success="True" time="0.000" />
+                  <test-case name="MonoTests.System.ArrayTest.TestSetValueN" executed="True" success="True" time="0.010" />
+                  <test-case name="MonoTests.System.ArrayTest.TestSetValue4" executed="True" success="True" time="0.050" />
+                  <test-case name="MonoTests.System.ArrayTest.TestSort" executed="True" success="True" time="0.010" />
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+    </results>
+  </test-suite>
+</test-results>
