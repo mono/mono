@@ -516,8 +516,10 @@ namespace Mono.CSharp {
 		{
 			Type t;
 
-			if (ds.Cache.Contains (name)) {
+			if (ds.Cache.Contains (name)){
 				t = (Type) ds.Cache [name];
+				if (t != null)
+					return t;
 			} else {
 				//
 				// For the case the type we are looking for is nested within this one
@@ -525,25 +527,9 @@ namespace Mono.CSharp {
 				//
 				DeclSpace containing_ds = ds;
 				while (containing_ds != null){
-					
-					// if the member cache has been created, lets use it.
-					// the member cache is MUCH faster.
-					if (containing_ds.MemberCache != null) {
-						t = containing_ds.MemberCache.FindNestedType (name);
-						if (t == null) {
-							containing_ds = containing_ds.Parent;
-							continue;
-						}
-						
-						ds.Cache [name] = t;
-						return t;
-					}
-					
-					// no member cache. Do it the hard way -- reflection
 					Type current_type = containing_ds.TypeBuilder;
 					
-					while (current_type != null &&
-					       current_type != TypeManager.object_type) {
+					while (current_type != null) {
 						//
 						// nested class
 						//
@@ -560,14 +546,16 @@ namespace Mono.CSharp {
 				}
 				
 				t = NamespaceLookup (ds, name, silent, loc);
-				if (!silent)
+				if (t != null){
 					ds.Cache [name] = t;
+					return t;
+				}
 			}
 
-			if (t == null && !silent)
+			if (!silent)
 				Report.Error (246, loc, "Cannot find type `"+name+"'");
 			
-			return t;
+			return null;
 		}
 
 		// <summary>

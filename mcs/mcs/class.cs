@@ -111,7 +111,7 @@ namespace Mono.CSharp {
 		// from classes from the arraylist `type_bases' 
 		//
 		string     base_class_name;
-		public Type base_class_type;
+		public Type base_classs_type;
 
 		ArrayList type_bases;
 
@@ -819,7 +819,7 @@ namespace Mono.CSharp {
 			TypeAttributes type_attributes = TypeAttr;
 
 			if (parent != null)
-				base_class_type = parent.ResolveType (ec);
+				base_classs_type = parent.ResolveType (ec);
 
 			if (IsTopLevel){
 				if (TypeManager.NamespaceClash (Name, Location)) {
@@ -829,7 +829,7 @@ namespace Mono.CSharp {
 				
 				ModuleBuilder builder = CodeGen.Module.Builder;
 				TypeBuilder = builder.DefineType (
-					Name, type_attributes, base_class_type, null);
+					Name, type_attributes, base_classs_type, null);
 				
 			} else {
 				TypeBuilder builder = Parent.DefineType ();
@@ -837,7 +837,7 @@ namespace Mono.CSharp {
 					return null;
 				
 				TypeBuilder = builder.DefineNestedType (
-					Basename, type_attributes, base_class_type, null);
+					Basename, type_attributes, base_classs_type, null);
 			}
 				
 			//
@@ -2100,19 +2100,6 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		protected override void VerifyObsoleteAttribute()
-		{
-			CheckUsageOfObsoleteAttribute (base_class_type);
-
-			if (ifaces == null)
-				return;
-
-			foreach (TypeExpr expr in ifaces) {
-				CheckUsageOfObsoleteAttribute (expr.Type);
-			}
-		}
-
-
 		//
 		// IMemberContainer
 		//
@@ -2679,18 +2666,6 @@ namespace Mono.CSharp {
 			
 			return cc;
 		}
-
-		protected override void VerifyObsoleteAttribute()
-		{
-			base.VerifyObsoleteAttribute ();
-
-			if (parameter_types == null)
-				return;
-
-			foreach (Type type in parameter_types) {
-				CheckUsageOfObsoleteAttribute (type);
-			}
-		}
 	}
 
 	public class Method : MethodCore, IIteratorContainer, IMethodData {
@@ -2750,25 +2725,6 @@ namespace Mono.CSharp {
 		public override string GetSignatureForError()
 		{
 			return TypeManager.CSharpSignature (MethodBuilder);
-		}
-
-		/// <summary>
-		/// Use this method when MethodBuilder is null
-		/// </summary>
-		public string GetSignatureForError (TypeContainer tc)
-		{
-			System.Text.StringBuilder args = new System.Text.StringBuilder ("");
-			if (parameter_info.Parameters.FixedParameters != null) {
-				for (int i = 0; i < parameter_info.Parameters.FixedParameters.Length; ++i) {
-					Parameter p =  parameter_info.Parameters.FixedParameters [i];
-					args.Append (p.GetSignatureForError ());
-
-					if (i < parameter_info.Parameters.FixedParameters.Length - 1)
-						args.Append (',');
-				}
-			}
-
-			return String.Concat (tc.Name, ".", Name, "(", args.ToString (), ")");
 		}
 
                 void DuplicateEntryPoint (MethodInfo b, Location location)
@@ -2898,12 +2854,6 @@ namespace Mono.CSharp {
 								"inherited member " + name);
 							return false;
 						}
-					}
-
-					ObsoleteAttribute oa = AttributeTester.GetMethodObsoleteAttribute (parent_method);
-					if (oa != null) {
-						Report.SymbolRelatedToPreviousError (parent_method);
-						Report.Warning_T (672, Location, GetSignatureForError (container));
 					}
 				} else {
 					if (!OverridesSomething && ((ModFlags & Modifiers.NEW) != 0))
@@ -3219,7 +3169,7 @@ namespace Mono.CSharp {
 			if (parent_constructor == null)
 				return;
 
-			TypeContainer type_ds = TypeManager.LookupTypeContainer (tc.base_class_type);
+			TypeContainer type_ds = TypeManager.LookupTypeContainer (tc.base_classs_type);
 			if (type_ds == null) {
 				ObsoleteAttribute oa = AttributeTester.GetMemberObsoleteAttribute (parent_constructor);
 
@@ -4444,10 +4394,7 @@ namespace Mono.CSharp {
 			return false;
 		}
 
-		protected override void VerifyObsoleteAttribute()
-		{
-			CheckUsageOfObsoleteAttribute (MemberType);
-		}
+
 	}
 
 	//
