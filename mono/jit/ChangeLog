@@ -1,5 +1,36 @@
 2002-03-14  Martin Baulig  <martin@gnome.org>
 
+	* debug.c (MonoDebugFormat): New public enums specifying which debugging
+	format to use.
+	(mono_debug_open_file): Added MonoDebugFormat argument.
+	(mono_debug_make_symbols): Don't take an argument to make it easier to call
+	this function from GDB. It's now safe to call this function multiple times;
+	it'll always write a complete debugging file.
+
+	* debug.c: Splitted this file into a general part which remains in this file
+	and the debugging format specific parts debug-stabs.c and debug-dwarf2.c.
+	All public functions now call a corresponding format specific function.
+
+	* debug.c: The following changes are private to debug.c:
+	(AssemblyDebugInfo, MonoDebugHandle): Moved declarations to debug-private.h.
+	(record_line_number, debug_generate_method_lines): New private functions.
+	(mono_debug_open_ass): Renamed to mono_debug_open_assembly; this function now
+	calls a debugging-format-specific function (mono_debug_open_assembly_stabs or
+	mono_debug_open_assembly_dwarf2).
+	(mono_debug_make_symbols): Calls mono_debug_write_assembly_stabs/dwarf2(). It's
+	now safe to call this function multiple times.
+	(mono_debug_get_type): New public function. This takes a `MonoClass *' and
+	returns an unique index for this type. It's used to ensure that we only write
+	each class once to the debugging file.
+	(mono_debug_add_method, mono_debug_add_type): Store all the data in an internal
+	data structure, but don't directly write to the debugging file. This is done
+	later from mono_debug_write_assembly().
+
+	* jit.c (main): Added "--dwarf" command line argument to generate DWARF 2
+	debugging output. Call mono_debug_close() on cleanup if necessary.
+
+2002-03-14  Martin Baulig  <martin@gnome.org>
+
 	* debug-private.h: New private header file.
 
 	* debug-stabs.c: Added the stabs type generation stuff which was
