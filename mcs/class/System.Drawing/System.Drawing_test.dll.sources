@@ -6,5 +6,6 @@ System.Drawing/TestSize.cs
 System.Drawing/TestSizeF.cs
 System.Drawing/TestStringFormat.cs
 System.Drawing/TestSystemBrushes.cs
+System.Drawing/TestSystemPens.cs
 System.Drawing.Drawing2D/TestBlend.cs
 System.Drawing.Drawing2D/TestColorBlend.cs

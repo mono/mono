@@ -1,3 +1,8 @@
+2004-04-16  Ravindra <rkumar@novell.com>
+
+	* System.Drawing_test.dll.sources: Added TestSystemPens.cs
+	to the test sources list.
+
 2004-04-12  Ravindra <rkumar@novell.com>
 
 	* System.Drawing_test.dll.sources: Added TestSystemBrushes.cs
