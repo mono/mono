@@ -46,6 +46,9 @@ namespace System.IO
 			}
 			
 			InitBuffer (bufferSize);
+
+			/* Can't set append mode */
+			this.append_startpos=0;
 		}
 
 		// construct from filename
@@ -80,6 +83,14 @@ namespace System.IO
 				throw new UnauthorizedAccessException ("Access to the path '" + Path.GetFullPath (name) + "' is denied.");
 			}
 
+			/* Append streams can't be read (see FileMode
+			 * docs)
+			 */
+			if (mode==FileMode.Append &&
+			    (access&FileAccess.Read)==FileAccess.Read) {
+				throw new ArgumentException("Append streams can not be read");
+			}
+
 			this.name = name;
 
 			// TODO: demand permissions
@@ -106,6 +117,13 @@ namespace System.IO
 			}
 
 			InitBuffer (bufferSize);
+
+			if (mode==FileMode.Append) {
+				this.Seek (0, SeekOrigin.End);
+				this.append_startpos=this.Position;
+			} else {
+				this.append_startpos=0;
+			}
 		}
 
 		// properties
@@ -294,6 +312,11 @@ namespace System.IO
 				 */
 				throw new ArgumentException("Attempted to Seek before the beginning of the stream");
 			}
+
+			if(pos < this.append_startpos) {
+				/* More undocumented crap */
+				throw new IOException("Can't seek back over pre-existing data in append mode");
+			}
 			
 			if (pos >= buf_start && pos <= buf_start + buf_length) {
 				buf_offset = (int) (pos - buf_start);
@@ -473,6 +496,8 @@ namespace System.IO
 		private bool owner;
 		private bool async;
 		private bool canseek;
+		private long append_startpos;
+		
 
 		private byte [] buf;			// the buffer
 		private int buf_size;			// capacity in bytes
