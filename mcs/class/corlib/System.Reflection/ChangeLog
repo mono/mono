@@ -1,3 +1,8 @@
+
+Fri Apr 12 18:32:34 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* MonoMethod.cs: make Name property an icall.
+
 2002-04-08  Nick Drochak  <ndrochak@gol.com>
 
 	* DefaultMemberAttribute.cs: Add AttributeUsage attribute for class,

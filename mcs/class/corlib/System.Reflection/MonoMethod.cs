@@ -98,12 +98,9 @@ namespace System.Reflection {
 				return info.parent;
 			}
 		}
-		public override string Name {
-			get {
-				MonoMethodInfo info;
-				MonoMethodInfo.get_method_info (mhandle, out info);
-				return info.name;
-			}
+		public extern override string Name {
+			[MethodImplAttribute(MethodImplOptions.InternalCall)]
+			get;
 		}
 		
 		public override bool IsDefined (Type attributeType, bool inherit) {
