@@ -109,6 +109,11 @@ namespace System
 			message = s;
 		}
 
+		internal void SetStackTrace (string s)
+		{
+			stack_trace = s;
+		}
+
 		public virtual string Message {
 			get {
 				if (message == null)

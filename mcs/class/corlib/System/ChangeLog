@@ -1,3 +1,7 @@
+2004-11-10  Lluis Sanchez  <lluis@novell.com>
+
+	* Exception.cs: Added setter for StackTrace.
+
 2004-11-07  Ben Maurer  <bmaurer@ximian.com>
 
 	* IntegerFormatter.cs: Avoid .ToCharArray
