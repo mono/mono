@@ -239,6 +239,7 @@ namespace System.Windows.Forms {
 		Spinner spinner;
 		int border;
 		int scrollbar_button_size = ThemeEngine.Current.ScrollBarButtonSize;
+		LeftRightAlignment updown_align = LeftRightAlignment.Right;
 		bool changing_text = false;
 		bool user_edit = false;
 		
@@ -251,6 +252,7 @@ namespace System.Windows.Forms {
 			entry.Size = new Size (120, Font.Height);
 			entry.LostFocus += new EventHandler (EntryOnLostFocus);
 			entry.TextChanged += new EventHandler (OnTextBoxTextChanged);
+			entry.ReadOnly = false;
 			Controls.Add (entry);
 
 			spinner = new Spinner (this);
@@ -530,6 +532,27 @@ namespace System.Windows.Forms {
 				
 				if (ChangingText)
 					ChangingText = false;
+			}
+		}
+
+		public LeftRightAlignment UpDownAlign
+		{
+			get {
+				return updown_align;
+			}
+			
+			set {
+				updown_align = value;
+                        }
+                }
+
+		public bool ReadOnly {
+			get {
+				return entry.ReadOnly;
+			}
+
+			set {
+				entry.ReadOnly = value;
 			}
 		}
 		
