@@ -791,7 +791,6 @@ namespace Mono.CSharp {
 
 			TypeAttributes type_attributes = TypeAttr;
 
-			// if (parent_builder is ModuleBuilder) {
 			if (IsTopLevel){
 				if (TypeManager.NamespaceClash (Name, Location))
 					return null;
@@ -801,7 +800,7 @@ namespace Mono.CSharp {
 					Name, type_attributes, parent, ifaces);
 				
 			} else {
-				TypeBuilder builder = Parent.TypeBuilder;
+				TypeBuilder builder = Parent.DefineType ();
 				TypeBuilder = builder.DefineNestedType (
 					Basename, type_attributes, parent, ifaces);
 			}

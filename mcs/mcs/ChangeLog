@@ -1,5 +1,10 @@
 2003-08-22  Martin Baulig  <martin@ximian.com>
 
+	* class.cs (TypeManager.DefineType): When defining a nested type,
+	call DefineType() on our parent; fixes #47801.
+
+2003-08-22  Martin Baulig  <martin@ximian.com>
+
 	* class.cs (MethodData.Define): While checking if a method is an
 	interface implementation, improve the test a bit more to fix #47654.
 
