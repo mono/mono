@@ -36,7 +36,6 @@ namespace Microsoft.JScript.Tmp
 		public void Run ()
 		{
 			this.GetAST (filename);
-			Console.WriteLine (this.program.ToString ());
 			// this.SemanticAnalysis ();
 			this.GenerateCode ();
 
@@ -70,7 +69,6 @@ namespace Microsoft.JScript.Tmp
 				Jsc compiler = new Jsc (args [0]);
 
 				compiler.Run ();
-				Console.WriteLine (compiler.program.ToString ());
 
 			} catch (IndexOutOfRangeException) {
 				Console.WriteLine ("Usage: [mono] mjs.exe filename.js");
