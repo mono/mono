@@ -319,6 +319,7 @@ class MonoP {
 
 		string message = null;
 		string tname = args [i];
+		Type t = null;
 
 		if (search){
 			string matches = SearchTypes (tname);
@@ -331,7 +332,7 @@ class MonoP {
 				goto notfound;
 		}
 			
-		Type t = GetType (tname);
+		t = GetType (tname);
 
 		if (t == null) {
 			// Try some very common ones, dont load anything

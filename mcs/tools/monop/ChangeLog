@@ -1,3 +1,7 @@
+2004-12-30  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* monop.cs : csc build fix (see bug #70185).
+
 2004-12-29  Duncan Mak  <duncan@ximian.com>
 
 	* monop.cs (SearchType): New method, returns a list of type names
