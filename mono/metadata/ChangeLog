@@ -1,5 +1,8 @@
 2004-10-25  Zoltan Varga  <vargaz@freemail.hu>
 
+	* metadata.c (mono_metadata_parse_type_full): Fix parsing of custom
+	modifiers.
+	
 	* appdomain.c (ves_icall_System_AppDomain_ExecuteAssembly): Fix 
 	argument of mono_get_exception_file_not_found.
 
