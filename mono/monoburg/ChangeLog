@@ -1,4 +1,8 @@
 
+Fri Feb 15 14:20:30 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* Makefile.am: avoid automake for build on host stuff.
+
 Fri Feb 8 12:31:40 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* monoburg.c: make generated arrays const, so that they are shared.
