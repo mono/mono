@@ -1,3 +1,9 @@
+2004-11-09  Raja R Harinath  <rharinath@novell.com>
+
+	* profiles/basic.make: New.
+	* profiles/net_2_0.make (PROFILE_MCS_FLAGS): Remove '-2' flag.
+	* profiles/net_1_1_bootstrap.make (NO_SIGN_ASSEMBLY): Set.
+
 2004-11-04  Raja R Harinath  <rharinath@novell.com>
 
 	* profiles/net_1_1_bootstrap.make: New profile.
