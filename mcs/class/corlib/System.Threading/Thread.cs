@@ -395,7 +395,7 @@ namespace System.Threading
 
 		[MonoTODO]
 		public void Resume() {
-			// FIXME
+			throw new NotImplementedException ();
 		}
 
 		// Launches the thread
@@ -425,6 +425,7 @@ namespace System.Threading
 			set_state(ThreadState.SuspendRequested);
 			// FIXME - somehow let the interpreter know that
 			// this thread should now suspend
+			Console.WriteLine ("WARNING: Thread.Suspend () partially implemented");
 		}
 
 		// Closes the system thread handle
