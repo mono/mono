@@ -1,0 +1,31 @@
+2004-03-27  Duncan Mak  <duncan@ximian.com>
+
+	* Microsoft.VisualBasic_test.dll.sources: Added ForEachEnum and OpenModeTypes.
+
+2004-01-21  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* Microsoft.VisualBasic_test.dll.sources: Added new test files
+
+2003-11-13  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+	* Microsoft.VisualBasic.dll.sources: Added Assembly files
+
+2003-03-12  Martin Willemoes Hansen <mwh@sysrq.dk>
+	* Patched makefile.gnu to work with the new NUnit2 tests
+
+2002-08-15  Tim Coleman <tim@timcoleman.com>
+	* list:
+	* makefile.gnu:
+		Added files to allow build on linux.
+
+2002-05-12  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* Microsoft.VisualBasic: Strings.cs - Merged all method implementations provided 
+          by Martin Adoue, with method signatures (specially attributes) provided 
+          by Chris J. Breisch. Some tweaking for the Mid member (two overloads versus third optional parameter).
+
+2002-05-18  Chris J Breisch <cjbreisch@altavista.net>
+
+	* Microsoft.VisualBasic: *.cs/Test/*.cs - Cleaned up code, added
+	implementations for Collection.cs, Conversion.cs and NUnit Tests
+	for both
+
+
+
