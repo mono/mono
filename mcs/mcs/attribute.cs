@@ -709,6 +709,24 @@ namespace Mono.CSharp {
 						"\tMicrosoft .NET runtime");
 						}
 						
+					} else if (kind is Interface) {
+						Interface iface = (Interface) kind;
+
+						if ((a.Type == TypeManager.default_member_type) &&
+						    (iface.InterfaceIndexers != null)) {
+							Report.Error (
+								646, loc,
+								"Cannot specify the DefaultMember attribute on" +
+								" a type containing an indexer");
+							return;
+						}
+
+						if (!CheckAttribute (a, kind)) {
+							Error_AttributeNotValidForElement (a, loc);
+							return;
+						}
+
+						((TypeBuilder) builder).SetCustomAttribute (cb);
 					} else if (kind is AssemblyBuilder){
 						((AssemblyBuilder) builder).SetCustomAttribute (cb);
 					} else if (kind is ModuleBuilder) {

@@ -826,7 +826,12 @@ namespace Mono.CSharp {
 				if (cb != null)
 					TypeBuilder.SetCustomAttribute (cb);
  			}
-			
+
+			if (OptAttributes != null) {
+				EmitContext ec = new EmitContext (parent, Location, null, null, ModFlags);
+				Attribute.ApplyAttributes (ec, TypeBuilder, this, OptAttributes, Location);
+			}
+
 			return true;
 		}
 
