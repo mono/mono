@@ -1,3 +1,8 @@
+2004-11-07  Ben Maurer  <bmaurer@ximian.com>
+
+	* class-internals.h (MonoMethod): Remove remoting_tramp. It is
+	unused. Saves a cool 4 bytes / method.
+
 2004-11-06  Ben Maurer  <bmaurer@ximian.com>
 
 	* metadata.c (builtin_types): Add types for System.Object here.
