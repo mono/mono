@@ -48,7 +48,7 @@ TEST_SOURCES_common = \
 	test-31  test-32  test-33  test-34  test-35  test-36  test-37  test-38  test-39  test-40  \
 	test-41  test-42  test-43  test-44  test-45  test-46  test-47  test-48  test-49  	  \
 	test-51  test-52  test-53  test-54  test-55  test-56  test-57  test-58  test-59  test-60  \
-	test-61	 test-62  test-63  test-64           test-66           test-68  test-69  test-70  \
+	test-61	 test-62  test-63  test-64  test-65  test-66           test-68  test-69  test-70  \
 	test-71  test-72  test-73  test-74  test-75  test-76  test-77  test-78  test-79  test-80  \
 	test-81  test-82  test-83  test-84  test-85  test-86  test-87  test-88  test-89  test-90  \
 	test-91  test-92  test-93  test-94  test-95  test-96  test-97  test-98  test-99  test-100 \
@@ -97,7 +97,7 @@ TEST_SOURCES_net_2_0 = \
 	        gen-32  gen-33  gen-34  gen-35  gen-36  gen-37  gen-38  gen-39  gen-40 \
 	gen-41  gen-42  gen-43  gen-44  gen-45  gen-46          gen-48  gen-49  gen-50 \
 	gen-51  gen-52  gen-53  gen-54  gen-55  gen-56          gen-58  gen-59  gen-60 \
-	        gen-62  gen-63  gen-64  gen-65  gen-66  gen-67  gen-68  gen-69  gen-70 \
+	        gen-62  gen-63  gen-64          gen-66  gen-67  gen-68  gen-69  gen-70 \
 	gen-71  gen-72  gen-73  gen-74  gen-75  gen-76  gen-77  gen-78  gen-79  gen-80 \
 	gen-81  gen-82  gen-83  gen-84
 
