@@ -461,6 +461,29 @@ namespace MonoTests.System.IO
 			writer.Write (testStreamData);
 			AssertEquals ("#07", 326, ms.Length);
 		}
+
+		[Test]
+		public void MoreWriteByte ()
+		{
+			byte[] buffer = new byte [44];
+			
+			MemoryStream ms = new MemoryStream (buffer);
+			BinaryWriter bw = new BinaryWriter (ms);
+			for(int i=0; i < 44; i++)
+				bw.Write ((byte) 1);
+		}
+
+		[Test]
+		[ExpectedException (typeof (NotSupportedException))]
+		public void MoreWriteByte2 ()
+		{
+			byte[] buffer = new byte [43]; // Note the 43 here
+			
+			MemoryStream ms = new MemoryStream (buffer);
+			BinaryWriter bw = new BinaryWriter (ms);
+			for(int i=0; i < 44; i++)
+				bw.Write ((byte) 1);
+		}
 	}
 }
 
