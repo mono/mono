@@ -34,7 +34,6 @@ namespace System.Web.Caching
 		static string [] noStrings = new string [0];
 		static CacheDependency noDependency = new CacheDependency ();
 		DateTime start;
-		string [] filenames;
 		bool changed;
 		bool disposed;
 		CacheEntry [] entries;
@@ -85,23 +84,26 @@ namespace System.Web.Caching
 					CacheDependency dependency,
 					DateTime start)
 		{
+			Cache cache = HttpRuntime.Cache;
+
 			this.start = start;
 			if (filenames == null)
-				this.filenames = noStrings;
-				
+				filenames = noStrings;
+
 			foreach (string file in filenames) {
 				if (file == null)
 					throw new ArgumentNullException ("filenames");
 			}
 
-			this.filenames = filenames;
-
 			if (cachekeys == null)
 				cachekeys = noStrings;
 
+			int missing_keys = 0;
 			foreach (string ck in cachekeys) {
 				if (ck == null)
 					throw new ArgumentNullException ("cachekeys");
+				if (cache.GetEntry (ck) == null)
+					missing_keys++;
 			}
 
 			if (dependency == null)
@@ -113,7 +115,7 @@ namespace System.Web.Caching
 				return;
 
 			int nentries = cachekeys.Length + ((dependency.entries == null) ? 0 :
-								  dependency.entries.Length);
+								  dependency.entries.Length) - missing_keys;
 
 			if (nentries != 0) {
 				this.removedDelegate = new CacheItemRemovedCallback (CacheItemRemoved);
@@ -127,9 +129,10 @@ namespace System.Web.Caching
 					}
 				}
 
-				Cache cache = HttpRuntime.Cache;
 				for (int c=0; c<cachekeys.Length; c++) {
 					CacheEntry entry = cache.GetEntry (cachekeys [c]);
+					if (entry == null)
+						continue;
 					entry._onRemoved += removedDelegate;
 					entries [i++] = entry;
 				}
