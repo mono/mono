@@ -1,3 +1,13 @@
+2004-06-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* FloatingPointFormatter.cs :
+	  - Don't format more than 15 fraction digits. Don't report to Pedro
+	    directly (removing the error message with his concent).
+	  - When format string starts with '.', it means integral part format 
+	    is not specified. Ignore '.' characters after the first
+	    appearance. Fixed bug #59890.
+	  - 0.0 is formatted only before the third ';' appearance.
+
 2004-06-11  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DateTime.cs: Added a AddRoundedMilliseconds which use the "old Mono"

@@ -2,7 +2,7 @@
 // System.FloatingPointFormatter.cs
 //
 // Author:
-//   Pedro Martinez Juliá <yoros@wanadoo.es>
+//   Pedro Martinez Julia <yoros@wanadoo.es>
 //
 // Copyright (C) 2003 Pedro Martíez Juliá <yoros@wanadoo.es>
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
@@ -84,19 +84,7 @@ namespace System {
 			char specifier;
 			int precision;
 			if (!ParseFormat(format, out specifier, out precision)) {
-				try {
-					return FormatCustom (format1, value, nfi, format);
-				}
-				catch (Exception) {
-					string msg = "An exception was thrown but the " +
-						"application will continue working right.\n" +
-						"Please mail to \"yoros@wanadoo.es\" with the " +
-						"subject \"FORMAT_EXCEPTION\" and the content: " +
-						"Format: ->" + format + "<-; Value: ->" + value +
-						"<-;\n";
-					Console.Error.Write (msg); 
-					return FormatGeneral (format1, value, nfi, -1);
-				}
+				return FormatCustom (format1, value, nfi, format);
 			}
 			
 			Format formatData = format1;//(precision > format1.dec_len+1) ? format2 : format1;
@@ -593,10 +581,10 @@ namespace System {
 
 		private string FormatCustom (Format formatData, double value,
 				NumberFormatInfo nfi, string format) {
-			int first_semicolon, last_semicolon;
+			int first_semicolon, second_semicolon, third_semicolon;
 			first_semicolon = format.IndexOf(';');
-			last_semicolon = format.LastIndexOf(';');
-			if (first_semicolon == last_semicolon) {
+			second_semicolon = format.IndexOf(';', first_semicolon + 1);
+			if (second_semicolon < 0) {
 				if (first_semicolon == -1) {
 					if (value < 0.0) {
 						string result = FormatCustomParser (formatData, value, nfi, format);
@@ -625,10 +613,15 @@ namespace System {
 			else if (value < 0.0) {
 				return FormatCustomParser (formatData, value, nfi,
 						format.Substring (first_semicolon + 1,
-							last_semicolon - first_semicolon));
+							second_semicolon - first_semicolon - 1));
 			}
-			return FormatCustomParser (formatData, value, nfi,
-					format.Substring(last_semicolon + 1));
+			third_semicolon = second_semicolon < 0 ?  - 1 : format.IndexOf (';', second_semicolon + 1);
+			if (third_semicolon < 0)
+				return FormatCustomParser (formatData, value,
+					nfi, format.Substring(second_semicolon + 1));
+			else
+				return FormatCustomParser (formatData, value,
+					nfi, format.Substring(second_semicolon + 1, third_semicolon - second_semicolon - 1));
 		}
 
 		private struct Flags {
@@ -666,9 +659,12 @@ namespace System {
 						f.Groupping = true;
 						aux = 0;
 					}
-					count++;
+					if (count < 15)
+						count++;
 					break;
 				case '.':
+					if (f.DotPos >= 0)
+						break; // ignore
 					f.DotPos = i;
 					f.IntegralLength = count;
 					count = 0;
@@ -927,7 +923,8 @@ namespace System {
 				mantissa /= 10;
 			}
 			for (int i = f.FirstFormatPos - 1; i >= 0; i--) {
-				sb.Insert(0, format[i]);
+				if (format [i] != '.')
+					sb.Insert(0, format[i]);
 			}
 			return sb.ToString();
 		}
