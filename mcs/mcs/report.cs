@@ -89,6 +89,7 @@ namespace Mono.CSharp {
 		{
 			switch (error_no) {
  				case 0122: return "'{0}' is inaccessible due to its protection level";
+				case 0160: return "A previous catch clause already catches all exceptions of this or a super type '{0}'";
 				case 0619: return "'{0}' is obsolete: '{1}'";
 				case 0657: return "'{0}' is not a valid attribute location for this declaration. Valid attribute locations for this declaration are '{1}'";
 				case 3001: return "Argument type '{0}' is not CLS-compliant";

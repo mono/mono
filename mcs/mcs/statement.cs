@@ -3158,10 +3158,7 @@ namespace Mono.CSharp {
 			} else
 				type = null;
 
-			if (!Block.Resolve (ec))
-				return false;
-
-			return true;
+			return Block.Resolve (ec);
 		}
 	}
 
@@ -3201,6 +3198,8 @@ namespace Mono.CSharp {
 
 			Report.Debug (1, "START OF CATCH BLOCKS", vector);
 
+			Type[] prevCatches = new Type [Specific.Count];
+			int last_index = 0;
 			foreach (Catch c in Specific){
 				ec.CurrentBranching.CreateSibling (
 					c.Block, FlowBranching.SiblingType.Catch);
@@ -3216,7 +3215,17 @@ namespace Mono.CSharp {
 				}
 
 				if (!c.Resolve (ec))
-					ok = false;
+					return false;
+
+				Type resolvedType = c.CatchType;
+				for (int ii = 0; ii < last_index; ++ii) {
+					if (resolvedType.IsSubclassOf (prevCatches [ii])) {
+						Report.Error_T (160, c.Location, prevCatches [ii].FullName);
+						return false;
+					}
+				}
+
+				prevCatches [last_index++] = resolvedType;
 			}
 
 			Report.Debug (1, "END OF CATCH BLOCKS", ec.CurrentBranching);

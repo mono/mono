@@ -1,5 +1,11 @@
 2004-05-30  Marek Safar  <marek.safar@seznam.cz>
 
+	Fixed bug #59071 & cs0160.cs
+	* statement.cs (Try.Resolve): Check here whether order of catch
+	clauses matches their dependencies.
+
+2004-05-30  Marek Safar  <marek.safar@seznam.cz>
+
 	Fixed bug #58624
 	* ecore.cs (SimpleName.SimpleNameResolve): Added test for
 	unsafe type.
