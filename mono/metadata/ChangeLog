@@ -1,3 +1,23 @@
+2004-05-28  Vladimir Vukicevic  <vladimir@pobox.com>
+
+	* marshal.c (emit_struct_conv): increment src/dst after blit
+	(mono_marshal_get_managed_wrapper,
+	mono_marshal_get_native_wrapper): make sure we have marshalling
+	info before marshalling params (info computation affects
+	blittable)
+
+	* class.c (class_compute_field_layout): correctly deal with
+	blittable
+	(mono_class_layout_fields): Don't do gc_aware_layout for AUTO
+	value types (as per what windows dows by default)
+	(mono_class_setup_mono_type): System.ValueType is blittable
+	(mono_ptr_class_get, mono_fnptr_class_get): Pointer classes are
+	blittable
+
+	* marshal.c (mono_marshal_load_type_info): flag types  as
+	non-blittable if the native layout doesn't match the managed
+	layout
+
 2004-05-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* appdomain.c: don't add stuff in the private search path that is
