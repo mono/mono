@@ -54,6 +54,36 @@ namespace Mono.Http.Modules
 			return (DateTime.Now <= expireTime);
 		}
 
+		protected virtual bool GetUserByName (HttpApplication app, string username,
+									   out string password, out string[] roles)
+		{
+			password = String.Empty;
+			roles = new string[0];
+
+			string userFileName = app.Request.MapPath (ConfigurationSettings.AppSettings ["Digest.Users"]);
+			if (userFileName == null || !File.Exists (userFileName))
+				return false;
+
+			XmlDocument userDoc = new XmlDocument ();
+			userDoc.Load (userFileName);
+
+			string xPath = String.Format ("/users/user[@name='{0}']", username);
+			XmlNode user = userDoc.SelectSingleNode (xPath);
+
+			if (user == null)
+				return false;
+
+			password = user.Attributes ["password"].Value;
+
+			XmlNodeList roleNodes = user.SelectNodes ("role");
+			roles = new string [roleNodes.Count];
+			int i = 0;
+			foreach (XmlNode xn in roleNodes)
+				roles [i++] = xn.Attributes ["name"].Value;
+
+			return true;
+		}
+
 		protected override bool AcceptCredentials (HttpApplication app, string authentication) 
 		{
 			// digest
@@ -69,21 +99,12 @@ namespace Mono.Http.Modules
 			}
 
 			string username = (string) reqInfo ["username"];
+			string password;
+			string[] roles;
 
-			string userFileName = app.Request.MapPath (ConfigurationSettings.AppSettings ["Digest.Users"]);
-			if (userFileName == null || !File.Exists (userFileName))
+			if (!GetUserByName (app, username, out password, out roles))
 				return false;
 
-			XmlDocument userDoc = new XmlDocument ();
-			userDoc.Load (userFileName);
-
-			string xPath = String.Format ("/users/user[@name='{0}']", username);
-			XmlNode user = userDoc.SelectSingleNode (xPath);
-
-			if (user == null)
-				return false;
-
-			string password = user.Attributes ["password"].Value;
 			string realm = ConfigurationSettings.AppSettings ["Digest.Realm"];
 
 			// calculate the Digest hashes
@@ -135,12 +156,6 @@ namespace Mono.Http.Modules
 
 			bool result = (((string)reqInfo["response"] == hashedDigest) && (!isNonceStale));
 			if (result) {
-				XmlNodeList roleNodes = user.SelectNodes ("role");
-				string[] roles = new string [roleNodes.Count];
-				int i = 0;
-				foreach (XmlNode xn in roleNodes)
-					roles [i++] = xn.Attributes ["name"].Value;
-
 				IIdentity id = new GenericIdentity (username, AuthenticationMethod);
 				app.Context.User = new GenericPrincipal (id, roles);
 			}

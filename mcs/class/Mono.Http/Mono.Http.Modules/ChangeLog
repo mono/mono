@@ -1,3 +1,8 @@
+2004-04-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* DigestAuthenticationModule.cs: introduces new overridable method
+	GetUserByName(), which by default works exactly like it used to, but
+	inherited classes can implement their own version. Patch by Tambet Ingo.
 2003-12-15  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AuthenticationModule.cs:
