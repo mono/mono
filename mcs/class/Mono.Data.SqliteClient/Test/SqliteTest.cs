@@ -56,7 +56,7 @@ namespace Test.Mono.Data.SqliteClient
 			dbcmd.CommandText = 
 				"CREATE TABLE MONO_TEST ( " +
 				"NID INT, " +
-				"NDESC TEXT )";		
+				"NDESC TEXT )";
 			Console.WriteLine("execute command...");
 			dbcmd.ExecuteNonQuery();
 
@@ -79,7 +79,23 @@ namespace Test.Mono.Data.SqliteClient
 				Console.WriteLine("Data 1: " + reader[0].ToString());
 				Console.WriteLine("Data 2: " + reader[1].ToString());
 			}
+
+			Console.WriteLine("read and display data using DataAdapter...");
+			SqliteDataAdapter adapter = new SqliteDataAdapter("SELECT * FROM MONO_TEST", connectionString);
+			DataSet dataset = new DataSet();
+			adapter.Fill(dataset);
+			foreach(DataTable myTable in dataset.Tables){
+				foreach(DataRow myRow in myTable.Rows){
+					foreach (DataColumn myColumn in myTable.Columns){
+						Console.WriteLine(myRow[myColumn]);
+					}
+				}
+			}
+
+			
 			Console.WriteLine("clean up...");
+			dataset.Dispose();
+			adapter.Dispose();
 			reader.Close();
 			dbcmd.Dispose();
 			dbcon.Close();

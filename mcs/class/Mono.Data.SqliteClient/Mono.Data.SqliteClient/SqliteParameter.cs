@@ -1,12 +1,13 @@
-// -*- c-basic-offset: 8; inent-tabs-mode: nil -*-
 //
-//  SqliteParameter.cs
+// Mono.Data.SqliteClient.SqliteParameter.cs
 //
-//  Author(s): Vladimir Vukicevic  <vladimir@pobox.com>
+// Represents a parameter to a SqliteCommand, and optionally, its mapping to 
+// DataSet columns.
 //
-//  Copyright (C) 2002  Vladimir Vukicevic
+// Author(s): Vladimir Vukicevic  <vladimir@pobox.com>
+//            Everaldo Canuto  <everaldo_canuto@yahoo.com.br>
 //
-
+// Copyright (C) 2002  Vladimir Vukicevic
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -33,136 +34,109 @@ using System.Data;
 
 namespace Mono.Data.SqliteClient
 {
-        public class SqliteParameter : IDbDataParameter
-        {
-                string name;
-                DbType type;
-                string source_column;
-                ParameterDirection direction;
-                DataRowVersion row_version;
-                object param_value;
-                byte precision;
-                byte scale;
-                int size;
+	public class SqliteParameter : IDbDataParameter
+	{
 
-                public SqliteParameter ()
-                {
-                        type = DbType.String;
-                        direction = ParameterDirection.Input;
-                }
+		#region Fields
+		
+		private string name;
+		private DbType type;
+		private string source_column;
+		private ParameterDirection direction;
+		private DataRowVersion row_version;
+		private object param_value;
+		private byte precision;
+		private byte scale;
+		private int size;
+		
+		#endregion
 
-                public SqliteParameter (string name_in, DbType type_in)
-                {
-                        name = name_in;
-                        type = type_in;
-                }
+		#region Constructors and destructors
+		
+		public SqliteParameter ()
+		{
+			type = DbType.String;
+			direction = ParameterDirection.Input;
+		}
+		
+		public SqliteParameter (string name_in, DbType type_in)
+		{
+			name = name_in;
+			type = type_in;
+		}
+		
+		public SqliteParameter (string name_in, object param_value_in)
+		{
+			name = name_in;
+			type = DbType.String;
+			param_value = param_value_in;
+			direction = ParameterDirection.Input;
+		}
+		
+		public SqliteParameter (string name_in, DbType type_in, int size_in) : this (name_in, type_in)
+		{
+			size = size_in;
+		}
+		
+		public SqliteParameter (string name_in, DbType type_in, int size, string src_column) : this (name_in ,type_in)
+		{
+			source_column = src_column;
+		}
+		
+		#endregion
 
-                public SqliteParameter (string name_in, object param_value_in)
-                {
-                        name = name_in;
-                        type = DbType.String;
-                        param_value = param_value_in;
-                        direction = ParameterDirection.Input;
-                }
+		#region Properties
+		
+		public DbType DbType {
+			get { return type; }
+			set { type = value; }
+		}
+		
+		public ParameterDirection Direction {
+			get { return direction; }
+			set { direction = value; }
+		}
+		
+		public bool IsNullable {
+			get { return true; }
+		}
+		
+		public string ParameterName {
+			get { return name; }
+			set { name = value; }
+		}
+		
+		public byte Precision {
+			get { return precision; }
+			set { precision = value; }
+		}
+		
+		public byte Scale {
+			get { return scale; }
+			set { scale = value; }
+		}
+		
+		public int Size {
+			get { return size; }
+			set { size = value; }
+		}
+		
+		public string SourceColumn {
+			get { return source_column; }
+			set { source_column = value; }
+		}
+		
+		public DataRowVersion SourceVersion {
+			get { return row_version; }
+			set { row_version = value; }
+		}
+		
+		public object Value {
+			get { return param_value; }
+			set { param_value = value; }
+		}
+		
+		#endregion
 
-                public SqliteParameter (string name_in, DbType type_in, int size_in)
-                        : this (name_in, type_in)
-                {
-                        size = size_in;
-                }
-
-                public SqliteParameter (string name_in, DbType type_in, int size, string src_column)
-                        : this (name_in ,type_in)
-                {
-                        source_column = src_column;
-                }
-
-                public DbType DbType {
-                        get {
-                                return type;
-                        }
-                        set {
-                                type = value;
-                        }
-                }
-
-                public ParameterDirection Direction {
-                        get {
-                                return direction;
-                        }
-                        set {
-                                direction = value;
-                        }
-                }
-
-                public bool IsNullable {
-                        get {
-                                // uhh..
-                                return true;
-                        }
-                }
-
-                public string ParameterName {
-                        get {
-                                return name;
-                        }
-                        set {
-                                name = value;
-                        }
-                }
-
-                public string SourceColumn {
-                        get {
-                                return source_column;
-                        }
-                        set {
-                                source_column = value;
-                        }
-                }
-
-                public DataRowVersion SourceVersion {
-                        get {
-                                return row_version;
-                        }
-                        set {
-                                row_version = value;
-                        }
-                }
-
-                public object Value {
-                        get {
-                                return param_value;
-                        }
-                        set {
-                                param_value = value;
-                        }
-                }
-
-                public byte Precision {
-                        get {
-                                return precision;
-                        }
-                        set {
-                                precision = value;
-                        }
-                }
-
-                public byte Scale {
-                        get {
-                                return scale;
-                        }
-                        set {
-                                scale = value;
-                        }
-                }
-
-                public int Size {
-                        get {
-                                return size;
-                        }
-                        set {
-                                size = value;
-                        }
-                }
-        }
+	}
 }
