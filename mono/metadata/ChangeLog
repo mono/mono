@@ -1,3 +1,8 @@
+2005-02-03  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mono-debug-debugger.c (get_exception_message): Use 
+	mono_class_get_method_from_name_flags ().
+
 2005-02-02  Ben Maurer  <bmaurer@ximian.com>
 
 	* reflection.c, appdomain.c: Replace a few manual searches that
