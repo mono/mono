@@ -1,3 +1,9 @@
+2002-08-22  Dick Porter  <dick@ximian.com>
+
+	* socket-io.c (ves_icall_System_Net_Sockets_Socket_RecvFrom_internal):
+	Don't free a buffer while it's still needed.  Patch from Jonathan
+	Liger <Jonathan.liger@wanadoo.fr>
+
 2002-08-21  Miguel de Icaza  <miguel@ximian.com>
 
 	* icall.c (ves_icall_System_Environment_get_Platform): Add new
