@@ -1,3 +1,8 @@
+2002-02-14  Jeffrey Stedfast  <fejj@ximian.com>
+
+	* sockets.c: conditionally include sys/filio.h and sys/sockio.h
+	for FIONBIO, FIONREAD, and SIOCATMARK.
+
 2002-02-13  Dick Porter  <dick@ximian.com>
 
 	* sockets.c: Implement shutdown and select
