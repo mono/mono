@@ -1,4 +1,10 @@
-2003-07.17 Jackson Harper <jackson@latitudegeo.com>
+2003-07-20 Jackson Harper <jackson@latitudegeo.com>
+
+	* ILParser.jay: Do not use the AsClassRef method anymore to attach
+	methods and fields to types. All types can do this now. Create
+	generic type refs and generic type instances. 
+	
+2003-07-17 Jackson Harper <jackson@latitudegeo.com>
 
 	* ILParser.jay: Add generic type refs, and fake generic class refs.
 		

@@ -353,7 +353,7 @@ namespace Mono.ILASM {
 %token K_STRING
 %token K_TRUE
 %token K_FALSE
-%token K_IN
+%token K_IS
 
 /* end generated */
 
@@ -448,7 +448,7 @@ class_all		: class_head OPEN_BRACE class_decls CLOSE_BRACE
                           }
 			;
 
-class_head 		: D_CLASS class_attr id typars_clause extends_clause
+class_head 		: D_CLASS class_attr id formal_typars_clause extends_clause
                           impl_clause
                           {
                                 codegen.BeginTypeDef ((TypeAttr) $2, (string) $3, 
@@ -507,13 +507,20 @@ impl_clause		: /* EMPTY */
                           }
 			;
 
-typars_clause           : /* EMPTY */
+formal_typars_clause           : /* EMPTY */
                         | OPEN_ANGLE_BRACKET formal_typars CLOSE_ANGLE_BRACKET
                           {
                                 $$ = $2;
                           }
                         ;
-/*
+
+typars_clause           : /* EMPTY */
+                        | OPEN_ANGLE_BRACKET typars CLOSE_ANGLE_BRACKET
+                          {
+                                $$ = $2;
+                          }
+                        ;
+
 typars                  : type
                           {
                                 ArrayList typars_list = new ArrayList ();
@@ -527,7 +534,7 @@ typars                  : type
                                 $$ = typars_list;
                           }
                         ;
-*/
+
 formal_typars           : formal_typar
                           {
                                 ArrayList formal_list = new ArrayList ();
@@ -589,11 +596,7 @@ class_ref		: OPEN_BRACKET file_name CLOSE_BRACKET slashed_name
                                 else
                                         $$ = new TypeRef ((string) $1, null);
                           }
-                        | slashed_name OPEN_ANGLE_BRACKET BANG int32 CLOSE_ANGLE_BRACKET
-                          {
-                                // Just cheat for now
-                                $$ = new TypeRef ((string) $1, null);
-                          }
+                      
 			;
 
 class_decls		: /* EMPTY */
@@ -768,6 +771,18 @@ type			: K_CLASS class_ref
                         | BANG BANG int32
                           {
                                 // access method type parameter by number
+                          }
+                        | K_CLASS slashed_name OPEN_ANGLE_BRACKET BANG int32 CLOSE_ANGLE_BRACKET
+                          {
+                                // Just cheat for now
+                                $$ = new TypeRef ((string) $2, null);
+                          }
+                        | K_CLASS slashed_name OPEN_ANGLE_BRACKET typars CLOSE_ANGLE_BRACKET
+                          {
+                                ArrayList typar_list = (ArrayList) $4;
+                                ITypeRef[] typar_array = (ITypeRef[]) typar_list.ToArray (typeof (ITypeRef));
+                                
+                                $$ = new GenericTypeInst ((string)$2, typar_array);
                           }
 			;
 
@@ -1364,7 +1379,7 @@ method_all		: method_head OPEN_BRACE method_decls CLOSE_BRACE
 			;
 
 method_head		: D_METHOD meth_attr call_conv param_attr type method_name
-                          typars_clause OPEN_PARENS sig_args CLOSE_PARENS impl_attr
+                          formal_typars_clause OPEN_PARENS sig_args CLOSE_PARENS impl_attr
                           {
                                 MethodDef methdef = new MethodDef ((MethAttr) $2, (CallConv) $3,
                                         (ImplAttr) $11, (string) $6, (ITypeRef) $5,
@@ -1786,8 +1801,9 @@ instr			: INSTR_NONE
                           }
 			| INSTR_FIELD type type_spec DOUBLE_COLON id
                           {
+                                
                                 ITypeRef owner = (ITypeRef) $3;
-                                IFieldRef fieldref = owner.AsClassRef (codegen).GetFieldRef (
+                                IFieldRef fieldref = owner.GetFieldRef (
                                         (ITypeRef) $2, (string) $5);
 
                                 codegen.CurrentMethodDef.AddInstr (new FieldInstr ((FieldOp) $1, fieldref));
@@ -1852,7 +1868,7 @@ method_ref		: call_conv type type_spec DOUBLE_COLON method_name
                                 else
                                         param_list = new ITypeRef[0];
 
-                                $$ = owner.AsClassRef (codegen).GetMethodRef ((ITypeRef) $2,
+                                $$ = owner.GetMethodRef ((ITypeRef) $2,
                                         (CallConv) $1, (string) $5, param_list);
                           }
 			| call_conv type method_name 
@@ -1908,7 +1924,7 @@ member_ref		: K_METHOD method_ref
                           {
                                 ITypeRef owner = (ITypeRef) $3;
 
-                                $$ = owner.AsClassRef (codegen).GetFieldRef (
+                                $$ = owner.GetFieldRef (
                                         (ITypeRef) $2, (string) $5);
                           }
 			| K_FIELD type id
