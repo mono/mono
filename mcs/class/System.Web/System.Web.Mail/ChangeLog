@@ -1,3 +1,7 @@
+2003-12-18  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* MailMessage.cs: added Fields property.
+
 2003-11-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* MailMessageWrapper.cs: fixed typo that made all messages be sent as

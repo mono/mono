@@ -103,6 +103,12 @@ namespace System.Web.Mail
 			set { urlContentLocation = value; }
 		}
 
+#if NET_1_1
+		[MonoTODO]
+		public IDictionary Fields {
+			get { throw new NotImplementedException (); }
+		}
+#endif
 	}
 	
 } //namespace System.Web.Mail
