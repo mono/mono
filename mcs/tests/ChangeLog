@@ -1,3 +1,7 @@
+2004-07-18  Martin Baulig  <martin@ximian.com>
+
+	* gen-63.cs: New test.
+
 2004-07-16  Martin Baulig  <martin@ximian.com>
 
 	* gen-62.cs: New test for generic iterators.
