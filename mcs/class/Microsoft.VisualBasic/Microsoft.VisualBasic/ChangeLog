@@ -1,10 +1,10 @@
 2004-08-11 Anirban Bhattachartjee <banirban@novell.com>
-	* Strings.cs: - Bug fix (#62235) - by Pedro Cardoso<smeegoan@yahoo.com.br>
+	* Strings.cs: - Bug fix (#62235) - by Rob Tillie<Rob.Tillie@student.tul.EDU>
 		      - Excetion handling in Join
 		      - Support for Hex in format function (not sure whether this fix is a complete one)		
 
 2004-08-11 Anirban Bhattachartjee <banirban@novell.com>
-	* Interaction.cs: Bug fix (#62234) - by Pedro Cardoso<smeegoan@yahoo.com.br>
+	* Interaction.cs: Bug fix (#62234) - by Rob Tillie<Rob.Tillie@student.tul.EDU>
 
 2004-07-31  Jambunathan K  <kjambunathan@novell.com>
 	* Strings.cs: Fixed a bug in Format()
