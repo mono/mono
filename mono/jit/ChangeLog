@@ -1,3 +1,10 @@
+
+Thu May 23 18:43:07 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* mono.c: remove generated code from hash when benchmarking/testing
+	method compilation.
+	* invoke.cs: special case string ctors.
+
 2002-05-23  Dietmar Maurer  <dietmar@ximian.com>
 
 	* *.c: code cleanups - tried to separate architecture dependent things. 
