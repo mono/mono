@@ -1,3 +1,9 @@
+2003-09-22  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AspGenerator.cs: don't process code render tags inside scripts. Check
+	the language of the script and treat javascript as verbatim input.
+	Fixes bug #48592.
+
 2003-09-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TemplateControlCompiler.cs: fixed bug #48212.

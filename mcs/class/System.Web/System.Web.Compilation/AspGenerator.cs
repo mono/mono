@@ -112,7 +112,7 @@ namespace System.Web.Compilation
 		TemplateParser tparser;
 		StringBuilder text;
 		RootBuilder rootBuilder;
-		bool inScript;
+		bool inScript, javascript;
 		ILocation location;
 		static Hashtable emptyHash = new Hashtable ();
 
@@ -292,7 +292,7 @@ namespace System.Web.Compilation
 
 		void TextParsed (ILocation location, string text)
 		{
-			if (text.IndexOf ("<%") != -1) {
+			if (text.IndexOf ("<%") != -1 && !inScript && !javascript) {
 				if (this.text.Length > 0)
 					FlushText ();
 				CodeRenderParser r = new CodeRenderParser (text, stack.Builder);
@@ -367,18 +367,33 @@ namespace System.Web.Compilation
 
 		bool ProcessScript (TagType tagtype, TagAttributes attributes)
 		{
-			if (tagtype != TagType.Close && attributes != null && attributes.IsRunAtServer ()) {
-				if (tagtype == TagType.Tag) {
-					Parser.VerbatimID = "script";
-					inScript = true;
-				} //else if (tagtype == TagType.SelfClosing)
-					// load script file here
+			if (tagtype != TagType.Close) {
+				if (attributes != null && attributes.IsRunAtServer ()) {
+					CheckLanguage ((string) attributes ["language"]);
+					if (tagtype == TagType.Tag) {
+						Parser.VerbatimID = "script";
+						inScript = true;
+					} //else if (tagtype == TagType.SelfClosing)
+						// load script file here
 
-				return true;
+					return true;
+				} else {
+					Parser.VerbatimID = "script";
+					javascript = true;
+					TextParsed (location, location.PlainText);
+					return true;
+				}
 			}
 
-			bool result = inScript;
-			inScript = false;
+			bool result;
+			if (inScript) {
+				result = inScript;
+				inScript = false;
+			} else {
+				result = javascript;
+				javascript = false;
+				TextParsed (location, location.PlainText);
+			}
 
 			return result;
 		}
@@ -418,6 +433,17 @@ namespace System.Web.Compilation
 			get { return location; }
 		}
 
+		void CheckLanguage (string lang)
+		{
+			if (lang == null || lang == "")
+				return;
+
+			if (String.Compare (lang, tparser.Language, true) != 0) {
+				// FIXME: throw the same exception as MS
+				throw new Exception ("Trying to mix " + tparser.Language + " and " +
+						     lang + ".");
+			}
+		}
 		// Used to get CodeRender tags in attribute values
 		class CodeRenderParser
 		{
