@@ -1,5 +1,7 @@
 2003-10-13  Zoltan Varga  <vargaz@freemail.hu>
 
+	* bug-46781.cs: New regression test.
+
 	* libtest.c pinvoke2.cs: Add new test for SetLastError functionality.
 
 	* Makefile.am (TEST_CS_SRC): Remove merged tests.
