@@ -730,11 +730,6 @@ namespace System.Net.Sockets
 			int error;
 			IntPtr sock=Accept_internal(socket, out error);
 
-			if (!blocking && error == 10035) {
-				Poll (-1, SelectMode.SelectRead);
-				sock = Accept_internal (socket, out error);
-			}
-
 			if (error != 0) {
 				throw new SocketException (error);
 			}
