@@ -1,4 +1,4 @@
-// $ANTLR 2.7.3rc2: "jscript-lexer-parser.g" -> "JScriptParser.cs"$
+// $ANTLR 2.7.3rc3-20040317: "jscript-lexer-parser.g" -> "JScriptParser.cs"$
 
 namespace Microsoft.JScript
 {
@@ -305,7 +305,7 @@ _loop4_breakloop:			;
 		case LITERAL_while:
 		case LITERAL_for:
 		{
-			iteration_stm(parent);
+			stm=iteration_stm(parent);
 			break;
 		}
 		case LITERAL_continue:
@@ -657,10 +657,16 @@ _loop15_breakloop:			;
 		return if_stm;
 	}
 	
-	public void iteration_stm(
+	public AST  iteration_stm(
 		AST parent
 	) //throws RecognitionException, TokenStreamException
 {
+		AST iter;
+		
+		
+			iter = null;
+			AST stm = null;
+			AST exprn = null;
 		
 		
 		switch ( LA(1) )
@@ -668,21 +674,33 @@ _loop15_breakloop:			;
 		case LITERAL_do:
 		{
 			match(LITERAL_do);
-			statement(null);
+			stm=statement(parent);
 			match(LITERAL_while);
 			match(OPEN_PARENS);
-			expr(parent);
+			exprn=expr(parent);
 			match(CLOSE_PARENS);
 			match(SEMI_COLON);
+			if (0==inputState.guessing)
+			{
+				
+						  iter = new DoWhile (parent, stm, exprn);
+					
+			}
 			break;
 		}
 		case LITERAL_while:
 		{
 			match(LITERAL_while);
 			match(OPEN_PARENS);
-			expr(parent);
+			exprn=expr(parent);
 			match(CLOSE_PARENS);
-			statement(null);
+			stm=statement(parent);
+			if (0==inputState.guessing)
+			{
+				
+						  iter = new While (parent, exprn, stm);
+					
+			}
 			break;
 		}
 		case LITERAL_for:
@@ -699,6 +717,7 @@ _loop15_breakloop:			;
 			throw new NoViableAltException(LT(1), getFilename());
 		}
 		 }
+		return iter;
 	}
 	
 	public AST  continue_stm() //throws RecognitionException, TokenStreamException
