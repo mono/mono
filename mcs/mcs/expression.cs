@@ -4852,9 +4852,12 @@ namespace Mono.CSharp {
 			byte [] element;
 			int count = array_data.Count;
 
+			if (underlying_type.IsEnum)
+				underlying_type = TypeManager.EnumToUnderlying (underlying_type);
+
 			factor = GetTypeSize (underlying_type);
 			if (factor == 0)
-				return null;
+				throw new Exception ("Unrecognized type in MakeByteBlob");
 
 			data = new byte [(count * factor + 4) & ~3];
 			int idx = 0;
@@ -4979,16 +4982,14 @@ namespace Mono.CSharp {
 			ILGenerator ig = ec.ig;
 			
 			byte [] data = MakeByteBlob (array_data, underlying_type, loc);
-			
-			if (data != null) {
-				fb = RootContext.MakeStaticData (data);
 
-				if (is_expression)
-					ig.Emit (OpCodes.Dup);
-				ig.Emit (OpCodes.Ldtoken, fb);
-				ig.Emit (OpCodes.Call,
-					 TypeManager.void_initializearray_array_fieldhandle);
-			}
+			fb = RootContext.MakeStaticData (data);
+
+			if (is_expression)
+				ig.Emit (OpCodes.Dup);
+			ig.Emit (OpCodes.Ldtoken, fb);
+			ig.Emit (OpCodes.Call,
+				 TypeManager.void_initializearray_array_fieldhandle);
 		}
 		
 		//
