@@ -17,7 +17,7 @@ namespace System {
 	///   Use this to decorate any element which you think is not complete
 	/// </remarks>
 	[AttributeUsage (AttributeTargets.All)]
-	internal class TODOAttribute : Attribute {
+	internal class MonoTODOAttribute : Attribute {
 
 		// No methods.
 	}

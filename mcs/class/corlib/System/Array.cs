@@ -72,7 +72,7 @@ namespace System
 			}
 		}
 
-		//[MonoTODO]
+		[MonoTODO]
 		public bool IsSynchronized {
 			get {
 				// FIXME?
@@ -80,7 +80,7 @@ namespace System
 			}
 		}
 
-		//[MonoTODO]
+		[MonoTODO]
 		public object SyncRoot {
 			get {
 				// FIXME
@@ -88,7 +88,7 @@ namespace System
 			}
 		}
 
-		//[MonoTODO]
+		[MonoTODO]
 		public virtual IEnumerator GetEnumerator ()
 		{
 			// FIXME
