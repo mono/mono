@@ -34,6 +34,13 @@ www.go-mono.com/daily. On Windows, you can just use the
 Microsoft compiler. You also need GNU make to build the software (on
 Windows, you will need for example the Cygwin environment setup).
 
+You can customize your MCS configuration by using:
+
+    ./configure [--prefix=PREFIX] [--profile=PROFILE] 
+
+If you do not run the above, the defaults are /usr/local for the
+prefix, and `default' for the profile.
+
 To build the compiler and class libraries, run:
 
     make
@@ -44,10 +51,6 @@ compiler executable in mcs/.
 To install them, run the following:
 
     make install
-
-The default prefix is /usr/local. To change this configuration option type:
-
-    echo prefix=/your-prefix >> build/config.make
 
 If you get "corlib out of sync" errors, try
 
@@ -112,7 +115,7 @@ rest of your build can proceed.
 
 If you want to always use the atomic profile, run this command:
 
-	echo PROFILE=atomic >> build/config.make
+       ./configure --profile=atomic
 
 More About the Build System
 ===========================
