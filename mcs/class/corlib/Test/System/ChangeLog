@@ -1,3 +1,7 @@
+2005-01-27  Nick Drochak  <ndrochak@ieee.org>
+
+	* UInt64Test.cs: Identify tests better
+
 2005-01-24  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* EnvironmentTest.cs: Updated to NUnit 2.2 syntax. Added some tests
