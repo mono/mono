@@ -1,4 +1,8 @@
 
+Tue Feb 19 12:24:15 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* monograph.c: fix typo. Update for changes in mono_init ().
+
 Mon Feb 18 14:37:17 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* monograph.c: First commit: program to generate call graphs
