@@ -1,3 +1,7 @@
+2004-09-04 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Stream.cs: Close() does not call Flush(). Fixes bug #65340.
+
 2004-08-26 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* StreamWriter.cs: avoid String.ToCharArray for perf.

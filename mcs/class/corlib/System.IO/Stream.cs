@@ -77,7 +77,6 @@ namespace System.IO
 
 		public virtual void Close ()
 		{
-			Flush ();
 		}
 
 		void IDisposable.Dispose ()
