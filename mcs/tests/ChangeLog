@@ -1,3 +1,7 @@
+2003-07-28  Martin Baulig  <martin@ximian.com>
+
+	* test-210.cs: New test for bug #46923.
+
 2003-07-26  Martin Baulig  <martin@ximian.com>
 
 	* test-209.cs: New test for implict conversions and embedded assignments.

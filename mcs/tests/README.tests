@@ -33,9 +33,9 @@ Test cases listed by Category:
 
   test-151.cs test-159.cs test-160.cs test-161.cs test-190.cs
 
-* Invocation
+* Invocation and Casts
 
-  test-153.cs test-163.c
+  test-153.cs test-163.c test-207.cs test-210.cs
 
 * Flow Analysis
 
@@ -344,6 +344,11 @@ test-209.cs
 
 Embedded assignments; while fixing a bug and making a mistake, I discovered some
 problems during class libs compilation.  Let's just add a testcase for them here.
+
+test-210.cs
+-----------
+
+Cast something to a delegate and then invoke it; bug #46923.
 
 verify-1.cs
 -----------
