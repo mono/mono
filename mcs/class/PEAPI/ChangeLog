@@ -1,3 +1,11 @@
+2003-05-31 Jackson Harper <jackson@latitudegeo.com>
+
+	* PEAPI.cs: Initial work on implementing custom
+	attributes. Attributes can now be added to ClassDefs and
+	MethodDefs. Still need to implement for other metadata elements.
+	Added the stele.r4 and stelem.r8 instructions, this should also
+	shift the stelem.ref instruction to the proper value (0xA2)
+		
 2003-05-25 Jackson Harper <jackson@latitudegeo.com>
 
 	* PEAPI.cs: Create a list of vararg signatures and add them all to

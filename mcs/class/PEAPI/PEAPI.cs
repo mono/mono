@@ -550,7 +550,7 @@ namespace PEAPI
     conv_ovf_u4_un, conv_ovf_u8_un, conv_ovf_i_un, conv_ovf_u_un, 
     ldlen = 0x8E, ldelem_i1 = 0x90, ldelem_u1, ldelem_i2, ldelem_u2, 
     ldelem_i4, ldelem_u4, ldelem_i8, ldelem_i, ldelem_r4, ldelem_r8, 
-    ldelem_ref, stelem_i, stelem_i1, stelem_i2, stelem_i4, stelem_i8, 
+    ldelem_ref, stelem_i, stelem_i1, stelem_i2, stelem_i4, stelem_i8, stelem_r4 = 0xA0, stelem_r8,
     stelem_ref, conv_ovf_i1 = 0xb3, conv_ovf_u1, conv_ovf_i2, conv_ovf_u2, 
     conv_ovf_i4, conv_ovf_u4, conv_ovf_i8, conv_ovf_u8, ckfinite = 0xC3, 
     conv_u2 = 0xD1, conv_u1, conv_i, conv_ovf_i, conv_ovf_u, add_ovf, 
@@ -1899,6 +1899,7 @@ namespace PEAPI
         md.AddToTable(MDTable.PropertyMap,new MapElem(this,
                           ((Property)properties[0]).Row,MDTable.Property));
       }
+      DoCustomAttributes (md);
       // Console.WriteLine("End of building tables");
       done = true;
     }
@@ -2555,9 +2556,7 @@ namespace PEAPI
     internal sealed override void BuildTables(MetaData md) {
       BinaryWriter bw = new BinaryWriter(new MemoryStream());
       bw.Write((ushort)1);
-
-
-
+      md.AddToTable(MDTable.CustomAttribute, this);
       MemoryStream str = (MemoryStream)bw.BaseStream;
       valIx = md.AddToBlobHeap(str.ToArray());
     }
@@ -4600,6 +4599,7 @@ namespace PEAPI
       BuildTable(metaDataTables[(int)MDTable.TypeDef]);
       BuildTable(metaDataTables[(int)MDTable.MemberRef]);
       BuildTable(metaDataTables[(int)MDTable.GenericParam]);
+      BuildTable(metaDataTables[(int)MDTable.CustomAttribute]);
 /*      for (int i=0; i < metaDataTables.Length; i++) {
         ArrayList table = metaDataTables[i];
         if (table != null) {
@@ -5164,6 +5164,7 @@ namespace PEAPI
         varArgSig.BuildTables(md);
       }
       }
+      DoCustomAttributes (md);
       // Console.WriteLine("method has " + numPars + " parameters");
       done = true;
     }
