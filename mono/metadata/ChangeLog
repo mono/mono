@@ -1,3 +1,7 @@
+2005-02-07  Zoltan Varga  <vargaz@freemail.hu>
+
+	* marshal.c (mono_marshal_get_stfld_remote_wrapper): Fix wrapper type.
+
 2005-02-05  Zoltan Varga  <vargaz@freemail.hu>
 
 	* loader.c (mono_lookup_pinvoke_call): Allow for combination of stdcall and charset name mangling.
