@@ -3,13 +3,16 @@
 //
 // Author:
 //   Dave Bettin (javabettin@yahoo.com)
+//   Tim Coleman (tim@timcoleman.com)  
 //
 // Copyright (C) Dave Bettin, 2002
+// Copyright (C) Tim Coleman, 2002
 //
 
 using System.Collections;
 using System.IO;
 using System.Xml;
+using System.Xml.Serialization;
 
 namespace System.Web.Services.Discovery {
 	public sealed class DiscoveryDocument {
@@ -31,7 +34,8 @@ namespace System.Web.Services.Discovery {
 		#endregion // Constructors
 
 		#region Properties
-		
+	
+		[XmlIgnore]
 		public IList References {
 			[MonoTODO]
 			get { throw new NotImplementedException (); }

@@ -1,3 +1,10 @@
+2002-08-03  Tim Coleman <tim@timcoleman.com>
+	* DiscoveryDocument.cs:
+		Added XmlIgnore attribute to References property
+	* DiscoveryDocumentReference.cs:
+		Implemented Ref/Url properties and added XmlIgnore
+		attributes.
+
 2002-07-28  Dave Bettin <javabettin@yahoo.com>
 		* ContractReference.cs
 		* ContractSearchPattern.cs

@@ -3,28 +3,36 @@
 //
 // Author:
 //   Dave Bettin (javabettin@yahoo.com)
+//   Tim Coleman (tim@timcoleman.com)
 //
 // Copyright (C) Dave Bettin, 2002
+// Copyright (C) Tim Coleman, 2002
 //
 
 using System.IO;
 using System.Web.Services.Description;
+using System.Xml.Serialization;
 
 namespace System.Web.Services.Discovery {
 	public sealed class DiscoveryDocumentReference : DiscoveryReference {
+
+		#region Fields
+
+		string href;
+
+		#endregion // Fields
 
 		#region Constructors
 
 		[MonoTODO]
 		public DiscoveryDocumentReference () 
 		{
-			throw new NotImplementedException ();
+			href = String.Empty;
 		}
 		
-		[MonoTODO]
-		public DiscoveryDocumentReference (string href) : this() 
+		public DiscoveryDocumentReference (string href) : this () 
 		{
-			throw new NotImplementedException ();
+			this.href = href;
 		}		
 		
 		#endregion // Constructors
@@ -32,33 +40,29 @@ namespace System.Web.Services.Discovery {
 		#region Properties
 		
 		[MonoTODO]
+		[XmlIgnore]
 		public DiscoveryDocument Document {
 			[MonoTODO]
 			get { throw new NotImplementedException (); }
 		}
 		
 		[MonoTODO]
+		[XmlIgnore]
 		public override string DefaultFilename {
 			[MonoTODO]
 			get { throw new NotImplementedException (); }
 		}
-		
-		[MonoTODO]
+	
+		[MonoTODO ("Set the XmlAttribute on this.")]
 		public string Ref {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
-			
-			[MonoTODO]
-			set { throw new NotImplementedException (); }
+			get { return href; }
+			set { href = value; }
 		}
 		
-		[MonoTODO]
+		[XmlIgnore]
 		public override string Url {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
-			
-			[MonoTODO]
-			set { throw new NotImplementedException (); }
+			get { return Ref; }
+			set { Ref = value; }
 		}
 		
 		#endregion // Properties
