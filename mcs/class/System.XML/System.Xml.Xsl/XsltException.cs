@@ -124,6 +124,7 @@ namespace System.Xml.Xsl
 		}
 
 #if NET_2_0
+#else
 		public override string Message {
 			get {
 				string msg = base.Message;
