@@ -1,3 +1,19 @@
+2004-08-12  Sanjay Gupta <gsanjay@novell.com>
+
+	* IField.cs:
+	* IFilter.cs:
+	* IParameters.cs:
+	* IPersonalizable.cs:
+	* IRow.cs:
+	* ITable.cs:
+	* ITrackingPersonalizable.cs:
+	* ITransformerConfigurationControl.cs:
+	* IVersioningPersonalizable.cs:
+	* IWebActionable.cs:
+	* IWebEditable.cs:
+	* IWebPart.cs:
+	* IWebPartHttpHandler.cs: Added new interfaces.
+
 2004-08-12 Sanjay Gupta <gsanjay@novell.com>
 
 	* ConnectionConsumerCallback.cs:
