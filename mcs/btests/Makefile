@@ -1,6 +1,6 @@
 thisdir = btests
 SUBDIRS = 
-COMPILER_FLAGS = /libpath:../class/lib /import:System
+COMPILER_FLAGS = /libpath:../class/lib /imports:System
 INTERNAL_MBAS = $(TEST_RUNTIME) ../mbas/mbas.exe --stacktrace $(COMPILER_FLAGS)
 #INTERNAL_MBAS = vbc $(COMPILER_FLAGS)
 all: test-compiler-jit 
@@ -36,46 +36,46 @@ test-compiler-jit-ngtive_run
 
 test-compiler-jit-real:
 	@rm -f *.exe *.out ; \
-	/usr/bin/echo "********** Positive Tests ************" > results.out; \
-	/usr/bin/echo "********** Positive Tests ************" ; \
+	/bin/echo "********** Positive Tests ************" > results.out; \
+	/bin/echo "********** Positive Tests ************" ; \
 	for i in $(TEST_SOURCES) ; do \
-		/usr/bin/echo -n -e "========================\n$$i: " >> results.out; \
-	    /usr/bin/echo -n "$$i: "; \
+		/bin/echo -n -e "========================\n$$i: " >> results.out; \
+	    /bin/echo -n "$$i: "; \
 	    if $(INTERNAL_MBAS) $$i.vb 1>output ; then \
-            /usr/bin/echo -n "COMPILED OK : " >> results.out; \
-	        /usr/bin/echo -n "COMPILED OK : " ;\
+            /bin/echo -n "COMPILED OK : " >> results.out; \
+	        /bin/echo -n "COMPILED OK : " ;\
 			true ; \
 	    else \
-			/usr/bin/echo -n -e "FAILED COMPILATION\n---\n" >> results.out; \
+			/bin/echo -n -e "FAILED COMPILATION\n---\n" >> results.out; \
 			cat output >> results.out; \
-	        /usr/bin/echo FAILED COMPILATION ;  \
+	        /bin/echo FAILED COMPILATION ;  \
 			continue;\
 	    fi ; \
 	    if $(TEST_RUNTIME) ./$$i.exe 1>output ; then \
-			/usr/bin/echo "EXECUTED OK" >> results.out; \
-	        /usr/bin/echo "EXECUTED OK" ; \
+			/bin/echo "EXECUTED OK" >> results.out; \
+	        /bin/echo "EXECUTED OK" ; \
 	    else \
-			/usr/bin/echo -n -e "$$i : FAILED AT RUNTIME\n---\n" >> results.out; \
+			/bin/echo -n -e "$$i : FAILED AT RUNTIME\n---\n" >> results.out; \
 			cat output >> results.out; \
-	        /usr/bin/echo "FAILED AT RUNTIME"; \
+	        /bin/echo "FAILED AT RUNTIME"; \
 	    fi ; \
 	    rm -f ./$$i.exe output; \
 	done; \
-	/usr/bin/echo "========================" >> results.out
+	/bin/echo "========================" >> results.out
 
 test-compiler-jit-ngtive_compile:
 	@rm -f *.exe ; \
-	/usr/bin/echo "********** Negative Compilation Tests ************" >> results.out; \
-	/usr/bin/echo "********** Negative Compilation Tests ************" ; \
+	/bin/echo "********** Negative Compilation Tests ************" >> results.out; \
+	/bin/echo "********** Negative Compilation Tests ************" ; \
 	for i in $(TEST_NGTIVE_COMPILATION_SOURCES) ; do \
-		/usr/bin/echo -n -e "========================\n$$i: " >> results.out; \
-		/usr/bin/echo -n "$$i: "; \
+		/bin/echo -n -e "========================\n$$i: " >> results.out; \
+		/bin/echo -n "$$i: "; \
 	    if $(INTERNAL_MBAS) $$i.vb > /dev/null ; then \
-			/usr/bin/echo "UNEXPECTED BEHAVIOUR" >> results.out; \
-	        /usr/bin/echo UNEXPECTED BEHAVIOUR ; \
+			/bin/echo "UNEXPECTED BEHAVIOUR" >> results.out; \
+	        /bin/echo UNEXPECTED BEHAVIOUR ; \
 	    else \
-			/usr/bin/echo OK >> results.out; \
-			/usr/bin/echo OK; \
+			/bin/echo OK >> results.out; \
+			/bin/echo OK; \
 	        continue;\
 	    fi ; \
 	    rm -f ./$$i.exe output; \
@@ -83,26 +83,26 @@ test-compiler-jit-ngtive_compile:
 
 test-compiler-jit-ngtive_run:
 	@rm -f *.exe; \
-	/usr/bin/echo "********** Negative Execution Tests ************" >> results.out; \
-	/usr/bin/echo "********** Negative Execution Tests ************" ; \
+	/bin/echo "********** Negative Execution Tests ************" >> results.out; \
+	/bin/echo "********** Negative Execution Tests ************" ; \
 	for i in $(TEST_NGTIVE_RUNTIME_SOURCES) ; do \
-	    /usr/bin/echo -n "$$i: "; \
+	    /bin/echo -n "$$i: "; \
 	    if $(INTERNAL_MBAS) $$i.vb 1>output ; then \
 			true ; \
 	    else \
-			/usr/bin/echo -n -e "\n$$i : FAILED COMPILATION\n " >> results.out; \
+			/bin/echo -n -e "\n$$i : FAILED COMPILATION\n " >> results.out; \
 			cat output >> results.out; \
-			/usr/bin/echo -n -e "\n========================" >> results.out; \
-	        /usr/bin/echo FAILED COMPILATION ; \
+			/bin/echo -n -e "\n========================" >> results.out; \
+	        /bin/echo FAILED COMPILATION ; \
 	        continue;\
 	    fi ; \
 	    if $(TEST_RUNTIME) ./$$i.exe > /dev/null ; then \
-			/usr/bin/echo -n -e "\n$$i : UNEXPECTED BEHAVIOUR\n " >> results.out; \
-			/usr/bin/echo -n -e "\n========================" >> results.out; \
-	        /usr/bin/echo UNEXPECTED BEHAVIOUR ; \
+			/bin/echo -n -e "\n$$i : UNEXPECTED BEHAVIOUR\n " >> results.out; \
+			/bin/echo -n -e "\n========================" >> results.out; \
+	        /bin/echo UNEXPECTED BEHAVIOUR ; \
 	    else \
-			/usr/bin/echo OK >> results.out; \
-			/usr/bin/echo OK; \
+			/bin/echo OK >> results.out; \
+			/bin/echo OK; \
 	    fi ; \
 	    rm -f ./$$i.exe output; \
 	done
