@@ -12,10 +12,4 @@ LIB_MCS_FLAGS = \
 	/r:System.Xml.dll
 NO_TEST = yes
 
-EXTRA_DISTFILES = \
-	System.Web/NOTES		\
-	System.Web/TODO			\
-	System.Web.UI/TODO		\
-	System.Web.UI.WebControls/TODO	\
-
 include ../../build/library.make
