@@ -3,9 +3,10 @@ DIRS =	corlib				\
 	System.XML			\
 	System.Drawing			\
 	System.Data			\
-	System.EnterpriseServices
+	System.EnterpriseServices	\
+	System.Web			\
+	System.Web.Services
 
-#	System.Web			\
 #	Microsoft.VisualBasic		\
 #	System.Configuration.Install
 
