@@ -1,3 +1,8 @@
+2002-12-31  Martin Baulig  <martin@ximian.com>
+
+	* debug.c: Propertly lock everything and avoid race conditions.
+	(MonoDebuggerInfo): Removed the `symbol_file_modified' again.
+
 2002-12-31  Duncan Mak  <duncan@ximian.com>
 
 	* debug.c (initialize_debugger_support): Fix build error by
