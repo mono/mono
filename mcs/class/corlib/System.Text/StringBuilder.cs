@@ -7,6 +7,8 @@
 // TODO: Make sure the coding complies to the ECMA draft, there's some
 // variable names that probably don't (like sString)
 //
+using System.Runtime.CompilerServices;
+
 namespace System.Text {
 	
 	[Serializable]
@@ -150,6 +152,7 @@ namespace System.Text {
 			}
 		}
 
+		[IndexerName("Chars")]
 		public char this[ int index ] {
 			get {
 
