@@ -118,18 +118,17 @@ namespace Mono.Data.MySql {
 			return TransactionBegin (iso); // call private method
 		}
 
-		[MonoTODO]
 		public void ChangeDatabase (string databaseName) {
 			dbname = databaseName;
-			//Console.WriteLine("MySql Selecting Database: " + dbname + "...");
-			Console.Out.Flush();
 			int sdb = MySql.SelectDb(mysqlInitStruct, dbname);
 			if (sdb != 0) {
-				Console.WriteLine("Error: Can not select the "+dbname+" database.");
-				Console.Out.Flush();
-				Console.WriteLine("MySql Error: " + MySql.Error(mysqlInitStruct));
-				Console.Out.Flush();
-				return;
+				string msg = 
+					"MySql Error: " + 
+					"Can not select the " +
+					dbname + 
+					" database because: " + 
+					MySql.Error(mysqlInitStruct);
+				throw new MySqlException (msg);
 			}
 		}
 		
@@ -165,7 +164,10 @@ namespace Mono.Data.MySql {
 					"dbname missing");
 			else if(conState == ConnectionState.Open)
 				throw new InvalidOperationException(
-					"ConnnectionState is already Open");		
+					"ConnnectionState is already Open");
+			else if(connectionString.Equals(String.Empty))
+				throw new InvalidOperationException(
+					"ConnectionString is not set");
 
 			// FIXME: check to make sure we have 
 			//        everything to connect,
@@ -173,9 +175,7 @@ namespace Mono.Data.MySql {
 
 			mysqlInitStruct = MySql.Init(IntPtr.Zero);
 			if (mysqlInitStruct == IntPtr.Zero) {
-				// TODO: throw exception instead
-				Console.WriteLine("MySQL Init failed.");
-				return;
+				throw new MySqlException("MySQL Init failed.");
 			}
 
 			
@@ -198,9 +198,9 @@ namespace Mono.Data.MySql {
 				socketName,
 				flags);
 			if (mysqlConn == IntPtr.Zero) {
-				// TODO: throw exception instead
-				Console.WriteLine("MySQL Connect failed, "+MySql.Error(mysqlInitStruct));
-				return;
+				string msg = "MySQL Connect failed, " +
+					MySql.Error(mysqlInitStruct);
+				throw new MySqlException(msg);
 			}
 
 			this.ChangeDatabase (dbname);
@@ -401,8 +401,10 @@ namespace Mono.Data.MySql {
 					break;
 
 				default:
-					// throw an exception?
-					break;
+					string msg = "Connection Parameter " + 
+						parmKey + 
+						" not supported or is invalid";
+					throw new NotImplementedException(msg);
 				}
 			}
 			return addParm;
@@ -484,7 +486,7 @@ namespace Mono.Data.MySql {
 		#endregion // Public Properties
 
 		#region Internal Properties
-/*
+
 		// For Mono.Data.MySql classes
 		// to get the current transaction
 		// in progress - if any
@@ -493,7 +495,7 @@ namespace Mono.Data.MySql {
 				return trans;
 			}
 		}
-*/
+
 		// For Mono.Data.MySql classes 
 		// to get the unmanaged MySql connection
 		internal IntPtr NativeMySqlConnection {

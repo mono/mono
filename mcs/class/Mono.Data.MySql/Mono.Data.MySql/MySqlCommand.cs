@@ -28,7 +28,7 @@ namespace Mono.Data.MySql {
 		// for command execution
 
 		private MySqlConnection conn = null;
-		//private MySqlTransaction trans = null;
+		private MySqlTransaction trans = null;
 		private CommandType cmdType = CommandType.Text;
 		private bool designTime = false;
 		//private MySqlParameterCollection parmCollection = new 
@@ -59,15 +59,13 @@ namespace Mono.Data.MySql {
 			conn = connection;
 		}
 
-		/*
 		public MySqlCommand (string cmdText, MySqlConnection connection, 
 			MySqlTransaction transaction) {
 			sql = cmdText;
 			conn = connection;
 			trans = transaction;
 		}
-		*/
-
+		
 		#endregion // Constructors
 
 		#region Methods
@@ -87,26 +85,28 @@ namespace Mono.Data.MySql {
 
 		/*
 		[MonoTODO]
-		public SqlParameter CreateParameter () {
-			return new SqlParameter ();
+		public MySqlParameter CreateParameter () {
+			return new MySqlParameter ();
 		}
 		*/
 
 		[MonoTODO]
 		public int ExecuteNonQuery () {	
 			int rowsAffected = -1;
+			string msg = "";
 			//TODO: need to do this correctly
 			//      this is just something quick
 			//      thrown together to see if we can
 			//      execute a SQL Command
 			int rcq = MySql.Query(conn.NativeMySqlInitStruct, sql);
 			if (rcq != 0) {
-				// TODO: throw an exception here?
-				Console.WriteLine("Error: Couldn't execute ["+sql+"] on server.");
-				Console.Out.Flush();
-				Console.WriteLine("MySql Error: " + MySql.Error(conn.NativeMySqlInitStruct));
-				Console.Out.Flush();
-				return 0;
+				msg = 
+					"MySql Error: " + 
+					"Could not execute command [" + 
+					sql + 
+					"] on server because: " +
+					MySql.Error(conn.NativeMySqlInitStruct);
+				throw new MySqlException(msg);
 			}
 			// TODO: need to return the number of rows affected for an INSERT, UPDATE, or DELETE
 			//       otherwise, it is -1
@@ -134,6 +134,7 @@ namespace Mono.Data.MySql {
 		public MySqlDataReader ExecuteReader (CommandBehavior behavior) {	
 
 			MySqlDataReader reader = null;
+			string msg = "";
 
 			// TODO: check to see if you everything you need
 			//       and the connection is open, etc...
@@ -142,13 +143,12 @@ namespace Mono.Data.MySql {
 			// execute query
 			int rcq = MySql.Query(conn.NativeMySqlInitStruct, sql);
 			if (rcq != 0) {
-				// TODO: throw an exception here
-				Console.WriteLine("Error: Couldn't execute ["+sql+"] on server.");
-				Console.Out.Flush();
-				Console.WriteLine("MySql Error: " + MySql.Error(conn.NativeMySqlInitStruct));
-				Console.Out.Flush();
-				return null;
-
+				msg = "MySql Error: " +
+					"Could not execute [" +
+					sql +
+					"] on server because: " +
+					MySql.Error(conn.NativeMySqlInitStruct);
+				throw new MySqlException(msg);
 			}
 
 			reader = new MySqlDataReader(this, behavior);
@@ -160,15 +160,15 @@ namespace Mono.Data.MySql {
 		[MonoTODO]
 		public object ExecuteScalar () {
 			object obj = null;
+			string msg = "";
 			
 			int rcq = MySql.Query(conn.NativeMySqlInitStruct, sql);
 			if (rcq != 0) {
-				// TODO: throw an exception here
-				Console.WriteLine("Error: Couldn't execute ["+sql+"] on server.");
-				Console.Out.Flush();
-				Console.WriteLine("MySql Error: " + MySql.Error(conn.NativeMySqlInitStruct));
-				Console.Out.Flush();
-				return 0; 
+				msg = "MySqlError: Could not execute [" +
+					sql +
+					"] on server because: " +
+					MySql.Error(conn.NativeMySqlInitStruct);
+				throw new MySqlException(msg);
 			}
 
 			IntPtr res = MySql.StoreResult(conn.NativeMySqlInitStruct);
@@ -188,7 +188,8 @@ namespace Mono.Data.MySql {
 			IntPtr row;
 			row = MySql.FetchRow(res);
 			if(row == IntPtr.Zero) {
-				Console.WriteLine("*** Error: Row returned IntPtr.Zero");
+				// EOF
+				obj = null;
 			}
 			else {
 				// only get first column/first row
@@ -196,6 +197,7 @@ namespace Mono.Data.MySql {
 				obj = MySqlHelper.ConvertDbTypeToSystem (fieldDbType, objValue);
 			}
 			MySql.FreeResult(res);
+			res = IntPtr.Zero;
 
 			return obj;
 		}
@@ -321,7 +323,7 @@ namespace Mono.Data.MySql {
 			}
 		}
 
-		//public SqlParameterCollection Parameters {
+		//public MySqlParameterCollection Parameters {
 		//	get { 
 		//		return parmCollection;
 		//	}
@@ -331,21 +333,18 @@ namespace Mono.Data.MySql {
 		//        way to handle a return of a stronger type?
 		IDbTransaction IDbCommand.Transaction 	{
 			get { 
-				//return Transaction;
-				return null;
+				return Transaction;
 			}
 
 			set { 
 				// FIXME: error handling - do not allow
 				// setting of transaction if transaction
 				// has already begun
-
-				//Transaction = (MySqlTransaction) value;
-				throw new NotImplementedException();
+				Transaction = (MySqlTransaction) value;
+				
 			}
 		}
-
-		/*
+		
 		public MySqlTransaction Transaction {
 			get { 
 				return trans; 
@@ -356,8 +355,7 @@ namespace Mono.Data.MySql {
 				trans = value; 
 			}
 		}
-		*/	
-
+		
 		[MonoTODO]
 		public UpdateRowSource UpdatedRowSource	{
 			// FIXME: do this once DbDataAdaptor 

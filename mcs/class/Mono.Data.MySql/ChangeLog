@@ -1,3 +1,19 @@
+2002-10-26  Daniel Morgan <danmorg@sc.rr.com>
+
+	* Mono.Data.MySql/MySqlError.cs
+	* Mono.Data.MySql/MySqlErrorCollection.cs
+	* Mono.Data.MySql/MySqlException.cs: added files for
+	MySQL Exceptions
+	
+	* Mono.Data.MySql.build: removed excludes for new
+	files (thus adding them to the build) on Windows
+	
+	* list: added files to build on Linux
+	
+	* Mono.Data.MySql/MySqlCommand.cs
+	* Mono.Data.MySql/MySqlConnection.cs: modified
+	to throw a new MySqlException when a MySqlError occurs
+
 2002-10-13  Daniel Morgan <danmorg@sc.rr.com>
 
 	* Mono.Data.MySql/MySqlDataReader.cs: change "DataType" in 

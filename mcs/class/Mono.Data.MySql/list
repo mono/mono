@@ -6,4 +6,7 @@ Mono.Data.MySql/TODOAttribute.cs
 Mono.Data.MySql/MySqlDataReader.cs
 Mono.Data.MySql/MySqlTypes.cs
 Mono.Data.MySql/MySqlTransaction.cs
+Mono.Data.MySql/MySqlError.cs
+Mono.Data.MySql/MySqlErrorCollection.cs
+Mono.Data.MySql/MySqlException.cs
 
