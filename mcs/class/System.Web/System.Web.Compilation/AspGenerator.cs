@@ -911,17 +911,19 @@ class AspGenerator
 		controls.Push (control_type, control_id, tag_id, children_kind, defaultPropertyName);
 		bool is_generic = control_type ==  typeof (System.Web.UI.HtmlControls.HtmlGenericControl);
 		functions.Push (current_function);
-		if (control_type != typeof (System.Web.UI.WebControls.ListItem))
+		if (control_type != typeof (System.Web.UI.WebControls.ListItem) &&
+		    prev_children_kind != ChildrenKind.DBCOLUMNS) {
 			current_function.AppendFormat ("\t\tprivate System.Web.UI.Control __BuildControl_" +
 							"{0} ()\n\t\t{{\n\t\t\t{1} __ctrl;\n\n\t\t\t__ctrl" +
 							" = new {1} ({2});\n\t\t\tthis.{0} = __ctrl;\n",
 							control_id, control_type,
 							(is_generic? "\"" + tag_id + "\"" : ""));
-		else
+		} else {
 			current_function.AppendFormat ("\t\tprivate void __BuildControl_{0} ()\n\t\t{{" +
 							"\n\t\t\t{1} __ctrl;\n\t\t\t__ctrl = new {1} ();" +
 							"\n\t\t\tthis.{0} = __ctrl;\n",
 							control_id, control_type);
+		}
 
 		if (children_kind == ChildrenKind.CONTROLS || children_kind == ChildrenKind.OPTION)
 			current_function.Append ("\t\t\tSystem.Web.UI.IParserAccessor __parser = " + 
@@ -1612,7 +1614,7 @@ class AspGenerator
 		current_function = new StringBuilder ();
 		functions.Push (current_function);
 		current_function.AppendFormat ("\t\tprivate void __BuildControl_{0} " +
-						"(System.Web.UI.WebControl.DataGridColumnCollection __ctrl)\n" +
+						"(System.Web.UI.WebControls.DataGridColumnCollection __ctrl)\n" +
 						"\t\t{{\n", prop_id);
 	}
 

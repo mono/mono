@@ -1,5 +1,10 @@
 2003-01-07  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* AspGenerator.cs: functions for columns don't return anything. Fixed
+	typo.
+
+2003-01-07  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* AspGenerator.cs: add data bound controls to code render function.
 
 2003-01-07  Gonzalo Paniagua Javier <gonzalo@ximian.com>
