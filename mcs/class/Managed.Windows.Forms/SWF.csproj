@@ -1064,6 +1064,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\ThreadExceptionDialog.cs"
+                    SubType = "Component"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\TickStyle.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -1119,46 +1124,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "System.Windows.Forms\TreeNode.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Forms\TreeNodeCollection.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Forms\TreeView.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Forms\TreeViewAction.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Forms\TreeViewCancelEventArgs.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Forms\TreeViewCancelEventHandler.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Forms\TreeViewEventArgs.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Forms\TreeViewEventHandler.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "System.Windows.Forms\TrackBar.cs"
                     SubType = "Component"
                     BuildAction = "Compile"
@@ -1184,7 +1149,22 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\TreeViewCancelEventArgs.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\TreeViewCancelEventHandler.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\TreeViewEventArgs.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\TreeViewEventHandler.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

@@ -1,3 +1,9 @@
+2004-12-07  Ravindra  <rkumar@novell.com>
+
+	* SWF.csproj: Added ThreadExceptionDialog.cs to project and removed
+	some of the components that were added twice. This fixes MWF build on
+	Windows.
+
 2004-12-03  Marek Safar  <marek.safar@seznam.cz>
 
 	* System.Windows.Forms.dll.sources: Add ThreadExceptionDialog.cs
