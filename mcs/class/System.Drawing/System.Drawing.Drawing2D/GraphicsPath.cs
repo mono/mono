@@ -702,7 +702,7 @@ namespace System.Drawing.Drawing2D
                         return retval;
                 }  		
                 
-                public void SetMarker ()
+                public void SetMarkers ()
                 {
                 	Status s = GDIPlus.GdipSetPathMarker (nativePath);
 
