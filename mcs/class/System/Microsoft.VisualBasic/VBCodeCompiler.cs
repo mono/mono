@@ -256,7 +256,7 @@ namespace Microsoft.VisualBasic
 
 			CompilerError error = new CompilerError ();
 			Regex reg = new Regex (@"^(\s*(?<file>.*)\((?<line>\d*)(,(?<column>\d*))?\)\s+)*" +
-						@"(?<level>\w+)\s*(?<number>.*):\s(?<message>.*)",
+						@"(?<level>error|warning)\s*(?<number>.*):\s(?<message>.*)",
 						RegexOptions.Compiled | RegexOptions.ExplicitCapture);
 
 			Match match = reg.Match (error_string);
@@ -272,7 +272,7 @@ namespace Microsoft.VisualBasic
 			if (String.Empty != match.Result( "${column}"))
 				error.Column = Int32.Parse (match.Result ("${column}"));
 
-			if (match.Result ("${level}") ==" warning")
+			if (match.Result ("${level}") =="warning")
 				error.IsWarning = true;
 
 			error.ErrorNumber = match.Result ("${number}");

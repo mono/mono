@@ -1,3 +1,9 @@
+2004-08-09  Jambunathan K  <kjambunathan@novell.com>
+	* VBCodeCompiler.cs: Regex pattern in CreateErrorFromString() now
+	  reads (?<level>error|warning) instead of (?<level>\w*). This is
+	  so that mbas's ALPHA message doesn't get captured as a error
+	  string.
+
 2004-06-28  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* VBCodeCompiler.cs : (only for windows) First check mono.bat, then
