@@ -1,3 +1,8 @@
+2002-03-29  Dan Lewis <dihlewis@yahoo.co.uk>
+
+	* io.h, io.c, uglify.h: added MoveFile, CopyFile, CreateDirectory,
+	RemoveDirectory, GetFileAttributes, GetFileAttributesEx
+
 2002-03-19  Dietmar Maurer  <dietmar@ximian.com>
 
 	* threads.c (Sleep): bug fix: 1ms == 1000000ns
