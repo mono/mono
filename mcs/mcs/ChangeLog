@@ -1,5 +1,7 @@
 2004-09-06  Miguel de Icaza  <miguel@ximian.com>
 
+	* parameter.cs: Do not crash if the type can not be resolved. 
+
 	* expression.cs: Report errors with unsafe pointers, fixes #64896
 
 2004-09-06 Ben Maurer  <bmaurer@users.sourceforge.net>
