@@ -1,5 +1,10 @@
 2004-05-07  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini-x86.c (mono_arch_local_regalloc): Remove the previous fix, since
+	it causes regressions.
+
+2004-05-07  Zoltan Varga  <vargaz@freemail.hu>
+
 	* mini-sparc.c: Fix vararg support + add beginnings of sigaltstack
 	support.
 
