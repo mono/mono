@@ -556,7 +556,7 @@ namespace System.Reflection
 				if (!initialized)
 					throw new InvalidOperationException ();
 				if ((constraints.Length == 0) || constraints [0].IsInterface)
-					return null;
+					return typeof (object);
 				else
 					return constraints [0];
 			}
