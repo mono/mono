@@ -178,6 +178,7 @@ namespace System.Net
 	class DigestSession
 	{
 		static RandomNumberGenerator rng;
+		DateTime lastUse;
 		
 		static DigestSession () 
 		{
@@ -192,6 +193,7 @@ namespace System.Net
 		public DigestSession () 
 		{
 			_nc = 1;
+			lastUse = DateTime.Now;
 		}
 
 		public string Algorithm {
@@ -292,6 +294,7 @@ namespace System.Net
 			if (request == null)
 				return null;
 	
+			lastUse = DateTime.Now;
 			NetworkCredential cred = credentials.GetCredential (request.RequestUri, "digest");
 			string userName = cred.UserName;
 			if (userName == null || userName == "")
@@ -334,20 +337,59 @@ namespace System.Net
 			auth.Length -= 2; // remove ", "
 			return new Authorization (auth.ToString ());
 		}
+
+		public DateTime LastUse {
+			get { return lastUse; }
+		}
 	}
 
 	class DigestClient : IAuthenticationModule
 	{
 
-		static Hashtable cache;		// cache entries by nonce
+		static Hashtable cache;
 
-		static DigestClient () 
-		{
-			cache = Hashtable.Synchronized (new Hashtable ());
-		}
-	
 		public DigestClient () {}
-	
+
+		static Hashtable Cache {
+			get {
+				lock (typeof (DigestClient)) {
+					if (cache == null) {
+						cache = Hashtable.Synchronized (new Hashtable ());
+					} else {
+						CheckExpired (cache.Count);
+					}
+
+					return cache;
+				}
+			}
+		}
+
+		static void CheckExpired (int count)
+		{
+			if (count < 10)
+				return;
+
+			DateTime t = DateTime.MaxValue;
+			DateTime now = DateTime.Now;
+			ArrayList list = null;
+			foreach (int key in cache.Keys) {
+				DigestSession elem = (DigestSession) cache [key];
+				if (elem.LastUse < t &&
+				    (elem.LastUse - now).Ticks > TimeSpan.TicksPerMinute * 10) {
+					t = elem.LastUse;
+					if (list == null)
+						list = new ArrayList ();
+
+					list.Add (key);
+				}
+			}
+
+			if (list != null) {
+				foreach (int k in list)
+					cache.Remove (k);
+			}
+		}
+		
 		// IAuthenticationModule
 	
 		public Authorization Authenticate (string challenge, WebRequest webRequest, ICredentials credentials) 
@@ -363,7 +405,8 @@ namespace System.Net
 			if (request == null)
 				return null;
 
-			DigestSession ds = (DigestSession) cache [request.Address];
+			int hashcode = request.Address.GetHashCode () ^ credentials.GetHashCode ();
+			DigestSession ds = (DigestSession) Cache [hashcode];
 			bool addDS = (ds == null);
 			if (addDS)
 				ds = new DigestSession ();
@@ -372,7 +415,7 @@ namespace System.Net
 				return null;
 
 			if (addDS)
-				cache.Add (request.Address, ds);
+				Cache.Add (hashcode, ds);
 
 			return ds.Authenticate (webRequest, credentials);
 		}
@@ -383,8 +426,11 @@ namespace System.Net
 			if (request == null)
 				return null;
 
-			// check cache for URI
-			DigestSession ds = (DigestSession) cache [request.Address];
+			if (credentials == null)
+				return null;
+
+			int hashcode = request.Address.GetHashCode () ^ credentials.GetHashCode ();
+			DigestSession ds = (DigestSession) Cache [hashcode];
 			if (ds == null)
 				return null;
 

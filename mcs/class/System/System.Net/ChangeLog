@@ -1,3 +1,9 @@
+2004-05-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* DigestClient.cs: cache the sessions based on address and
+	credentials, not only address. Added poor men's expiration to
+	the session cache. Fixes bug #59202.
+
 2004-05-26  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* IPAddress.cs:
@@ -6,7 +12,8 @@
 
 2004-05-18  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
-	* WebException.cs: implemented serialization .ctor and GetObjectData().
+	* WebException.cs: implemented serialization .ctor and
+	GetObjectData().
 
 2004-05-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
