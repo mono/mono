@@ -1,5 +1,7 @@
 2005-01-31  Zoltan Varga  <vargaz@freemail.hu>
 
+	* inssel.brg: Fix warnings.
+
 	* mini-exceptions.c: Fix warnings.
 
 2005-01-31  Martin Baulig  <martin@ximian.com>
