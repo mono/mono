@@ -1,3 +1,8 @@
+2003-11-14 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* MemoryStream.cs (.ctor): We need to check if buffer is null
+	before we get the Length of it.
+
 2003-11-14  Miguel de Icaza  <miguel@ximian.com>
 
 	* StreamReader.cs, TextReader, StreamReader (Read): Add [Out]

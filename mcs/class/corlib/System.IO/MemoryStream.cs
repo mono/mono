@@ -46,11 +46,17 @@ namespace System.IO
 
 		public MemoryStream (byte [] buffer)
 		{
+			if (buffer == null)
+				throw new ArgumentNullException ("buffer");
+			
 			InternalConstructor (buffer, 0, buffer.Length, true, false);                        
 		}
 
 		public MemoryStream (byte [] buffer, bool writeable)
 		{
+			if (buffer == null)
+				throw new ArgumentNullException ("buffer");
+			
 			InternalConstructor (buffer, 0, buffer.Length, writeable, false);
 		}
 
