@@ -1,3 +1,7 @@
+2002-09-30  Dick Porter  <dick@ximian.com>
+
+	* Win32Exception.cs: Sorted the errors, added EINPROGRESS
+
 2002-09-17  Asier Llano Palacios <asierllano@infonegocio.com>
 
 	* CancelEventArgs.cs
