@@ -228,7 +228,7 @@ namespace System.Xml
 			}
 
 			for (int i = 0; i < declPos + count; i++) {
-				if (decls [i].Prefix == String.Empty) {
+				if (decls [i].Prefix == String.Empty && decls [i].Uri == String.Empty) {
 					if (table.Contains (String.Empty))
 						table.Remove (String.Empty);
 				}

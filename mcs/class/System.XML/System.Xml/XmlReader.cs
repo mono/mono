@@ -36,6 +36,7 @@ using System.IO;
 using System.Security.Policy;
 using System.Text;
 using System.Xml.Schema; // only required for NET_2_0 (SchemaInfo)
+using System.Xml.Serialization; // only required for NET_2_0 (SchemaInfo)
 using Mono.Xml; // only required for NET_2_0
 
 namespace System.Xml
@@ -144,11 +145,8 @@ namespace System.Xml
 		public abstract ReadState ReadState { get; }
 
 #if NET_2_0
-		[MonoTODO]
 		public virtual IXmlSchemaInfo SchemaInfo {
-			get {
-				throw new NotImplementedException ();
-			}
+			get { return null; }
 		}
 
 		public virtual XmlReaderSettings Settings {
@@ -682,9 +680,8 @@ namespace System.Xml
 		}
 
 #if NET_2_0
-		[MonoTODO]
-		public Type ValueType {
-			get { throw new NotImplementedException (); }
+		public virtual Type ValueType {
+			get { return typeof (string); }
 		}
 
 		[MonoTODO]
@@ -735,14 +732,16 @@ namespace System.Xml
 			return false;
 		}
 
-		[MonoTODO]
-		public object ReadAsObject (Type type)
+		public virtual object ReadAsObject (Type type)
 		{
-			throw new NotImplementedException ();
+			if (NodeType != XmlNodeType.Element)
+				throw new InvalidOperationException ("ReadAsObject() can be called only when the node is an element.");
+			XmlSerializer ser = new XmlSerializer (type);
+			return ser.Deserialize (this);
 		}
 
 		[MonoTODO]
-		public XmlReader ReadSubtree ()
+		public virtual XmlReader ReadSubtree ()
 		{
 			return new SubtreeXmlReader (this);
 		}
@@ -750,7 +749,7 @@ namespace System.Xml
 		[MonoTODO]
 		public virtual object ReadTypedValue ()
 		{
-			return ReadAsObject (ValueType);
+			return ReadValueAs (ValueType);
 		}
 
 		[MonoTODO]
