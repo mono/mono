@@ -1,3 +1,9 @@
+
+Tue Jan 14 14:52:52 CET 2003 Paolo Molaro <lupus@ximian.com>
+
+	* object.c: register the vtable before there is a chance it's
+	queried again recursively.
+
 2003-01-13  Duncan Mak  <duncan@ximian.com>
 
 	* Makefile.am (libmonoruntime_la_SOURCES): Change gc.h to
