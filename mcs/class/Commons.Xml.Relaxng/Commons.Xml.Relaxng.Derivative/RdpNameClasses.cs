@@ -23,11 +23,10 @@ namespace Commons.Xml.Relaxng.Derivative
 		NameClassChoice = 6
 	}
 
-	public abstract class RdpNameClass : ICloneable
+	public abstract class RdpNameClass
 	{
 		public abstract RdpNameClassType NameClassType { get; }
 		public abstract bool Contains (string name, string ns);
-		public abstract object Clone ();
 	}
 
 	public class RdpAnyName : RdpNameClass
@@ -52,11 +51,6 @@ namespace Commons.Xml.Relaxng.Derivative
 		{
 			return true;
 		}
-
-		public override object Clone ()
-		{
-			return instance;
-		}
 	}
 
 	public class RdpAnyNameExcept : RdpNameClass
@@ -80,14 +74,6 @@ namespace Commons.Xml.Relaxng.Derivative
 		{
 			return (except == null) || !except.Contains (name, ns);
 		}
-
-		public override object Clone ()
-		{
-			return new RdpAnyNameExcept (
-				(except != null) ?
-					this.except.Clone () as RdpNameClass :
-					null);
-		}
 	}
 
 	public class RdpNsName : RdpNameClass
@@ -110,11 +96,6 @@ namespace Commons.Xml.Relaxng.Derivative
 		public override bool Contains (string name, string ns)
 		{
 			return NamespaceURI == ns;
-		}
-
-		public override object Clone ()
-		{
-			return new RdpNsName (this.ns);
 		}
 	}
 
@@ -142,14 +123,6 @@ namespace Commons.Xml.Relaxng.Derivative
 		{
 			return this.ns == ns &&
 				(except == null || !except.Contains (name, ns));
-		}
-
-		public override object Clone ()
-		{
-			return new RdpNsNameExcept (this.ns,
-				(except != null) ?
-					this.except.Clone () as RdpNameClass :
-					null);
 		}
 	}
 
@@ -180,11 +153,6 @@ namespace Commons.Xml.Relaxng.Derivative
 		{
 			return this.ns == ns && this.local == name;
 		}
-
-		public override object Clone ()
-		{
-			return new RdpName (this.local, this.ns);
-		}
 	}
 
 	public class RdpNameClassChoice : RdpNameClass
@@ -213,12 +181,6 @@ namespace Commons.Xml.Relaxng.Derivative
 		public override bool Contains (string name, string ns)
 		{
 			return l.Contains (name, ns) || r.Contains (name, ns);
-		}
-
-		public override object Clone ()
-		{
-			return new RdpNameClassChoice (l.Clone () as RdpNameClass,
-				r.Clone () as RdpNameClass);
 		}
 	}
 

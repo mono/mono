@@ -86,22 +86,24 @@ namespace Commons.Xml.Relaxng.Derivative
 			return p.Nullable;
 		}
 
+		/*
 		// childDeriv :: Context -> Pattern -> ChildNode -> Pattern
 		internal static RdpPattern ChildDeriv (RdpContext ctx, RdpPattern p, RdpChildNode child)
 		{
 			return p.ChildDeriv (child);
 		}
+		*/
 
 		// textDeriv :: Context -> Pattern -> String -> Pattern
-		internal static RdpPattern TextDeriv (RdpContext ctx, RdpPattern p, string s)
+		internal static RdpPattern TextDeriv (XmlReader reader, RdpPattern p, string s)
 		{
-			return p.TextDeriv (s);
+			return p.TextDeriv (s, reader);
 		}
 
 		// listDeriv :: Context -> Pattern -> [String] -> Pattern
-		internal static RdpPattern ListDeriv (RdpContext ctx, RdpPattern p, string [] list)
+		internal static RdpPattern ListDeriv (XmlReader reader, RdpPattern p, string [] list)
 		{
-			return p.ListDeriv (list);
+			return p.ListDeriv (list, 0, reader);
 		}
 
 		// choice :: Pattern -> Pattern -> Pattern
@@ -130,15 +132,15 @@ namespace Commons.Xml.Relaxng.Derivative
 
 		// datatypeAllows :: Datatype -> ParamList -> String -> Context -> Bool
 
-		internal static bool DatatypeAllows (RdpDatatype dt, RdpParamList pl, string value, RdpContext ctx)
+		internal static bool DatatypeAllows (RdpDatatype dt, string value, XmlReader reader)
 		{
-			return dt.IsAllowed (pl, value);
+			return dt.IsAllowed (value, reader);
 		}
 
 		// datatypeEqual :: Datatype -> String -> Context -> String -> Context -> Bool
-		internal static bool DatatypeEqual (RdpDatatype dt, string value1, RdpContext ctx1, string value2, RdpContext ctx2)
+		internal static bool DatatypeEqual (RdpDatatype dt, string value1, string value2, XmlReader reader)
 		{
-			return dt.IsTypeEqual (value1, ctx1, value2);
+			return dt.IsTypeEqual (value1, value2, reader);
 		}
 
 #if false
@@ -166,26 +168,28 @@ namespace Commons.Xml.Relaxng.Derivative
 			return pattern.StartTagOpenDeriv (name, ns);
 		}
 
+		/*
 		// attsDeriv :: Context -> Pattern -> [AttributeNode] -> Pattern
 		// [implemented in RdpPattern]
 		internal static RdpPattern AttsDeriv (RdpPattern p, RdpAttributes attributes)
 		{
 			return p.AttsDeriv (attributes);
 		}
+		*/
 
 		// attDeriv :: Context -> Pattern -> AttributeNode -> Pattern
 		// [all implemented]
-		internal static RdpPattern AttDeriv (RdpContext ctx,
+		internal static RdpPattern AttDeriv (XmlReader reader,
 			RdpPattern p, string name, string ns, string value)
 		{
-			return p.AttDeriv (name, ns, value);
+			return p.AttDeriv (name, ns, value, reader);
 		}
 
 		// valueMatch :: Context -> Pattern -> String -> Bool
 		// [implemented in RdpPattern]
-		internal static bool ValueMatch (RdpPattern p, string s)
+		internal static bool ValueMatch (RdpPattern p, string s, XmlReader reader)
 		{
-			return p.ValueMatch (s);
+			return p.ValueMatch (s, reader);
 		}
 
 		// startTagCloseDeriv :: Pattern -> Pattern
@@ -200,14 +204,6 @@ namespace Commons.Xml.Relaxng.Derivative
 		internal static RdpPattern OneOrMore (RdpPattern p)
 		{
 			return p.OneOrMore ();
-		}
-
-		// childrenDeriv :: Context -> Pattern -> [ChildNode] -> Pattern
-		// [implemented in RdpPattern. also stripChildrenDeriv is.]
-		internal static RdpPattern ChildrenDeriv (RdpContext ctx, 
-			RdpPattern p, RdpChildNodes children)
-		{
-			return p.ChildrenDeriv (children);
 		}
 
 		// writespace :: String -> Bool

@@ -1,3 +1,11 @@
+2004-02-25  Atsushi Enomoto <atsushi@ximian.com>
+
+	* Added RdpContextType.cs.
+	* RdpNameClasses.cs,
+	  RdpObjects.cs,
+	  RdpPatterns.cs,
+	  Util.cs : radical design change (too many things to write up).
+
 2003-05-19  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* RdpPattern.cs : Some method name capitalization.

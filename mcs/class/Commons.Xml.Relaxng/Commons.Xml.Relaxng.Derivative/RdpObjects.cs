@@ -15,21 +15,6 @@ using System.Xml;
 namespace Commons.Xml.Relaxng.Derivative
 {
 	///
-	/// Context Class
-	///
-	public class RdpContext : ICloneable
-	{
-		public RdpContext ()
-		{
-		}
-
-		public object Clone ()
-		{
-			return new RdpContext ();
-		}
-	}
-
-	///
 	/// Datatype Related Classes
 	///
 	public class RdpParamList : ArrayList
@@ -39,7 +24,7 @@ namespace Commons.Xml.Relaxng.Derivative
 		}
 	}
 
-	public class RdpParam : ICloneable
+	public class RdpParam
 	{
 		public RdpParam (string localName, string value)
 		{
@@ -56,63 +41,51 @@ namespace Commons.Xml.Relaxng.Derivative
 		public string LocalName {
 			get { return localName; }
 		}
-
-		public object Clone ()
-		{
-			return new RdpParam (this.localName, this.value);
-		}
 	}
 
-	public class RdpDatatype : ICloneable
+	public class RdpDatatype
 	{
-		public RdpDatatype (string ns, string localName)
+		RelaxngDatatypeProvider provider;
+		string localName;
+		string ns;
+		RelaxngDatatype datatype;
+
+		public RdpDatatype (string ns, string localName, RelaxngParamList parameters, RelaxngDatatypeProvider provider)
 		{
 			this.ns = ns;
 			this.localName = localName;
+			this.provider = provider;
+			if (provider == null)
+				provider = RelaxngMergedProvider.DefaultProvider;
+			datatype = provider.GetDatatype (localName, ns, parameters);
+			if (datatype == null) {
+				throw new RelaxngException ("Invalid datatype was found.");
+//				datatype = RelaxngString.Instance;
+			}
 		}
 
-		string ns;
 		public string NamespaceURI {
 			get { return ns; }
 		}
 
-		string localName;
 		public string LocalName {
 			get { return localName; }
 		}
 
-		public virtual bool IsAllowed (RdpParamList pl, string value)
+		public virtual bool IsAllowed (string value, XmlReader reader)
 		{
-			if (ns == String.Empty && localName == "string")
-				return true;
-			else if (ns == String.Empty && localName == "token")
-				return true;
-			else
-				return true;
-//				throw new NotSupportedException ("non-supported datatype validation.");
+			return datatype.IsValid (value, reader);
 		}
 
-		public virtual bool IsTypeEqual (string s1, RdpContext ctx1, string s2)
-		{
-			if (ns == String.Empty && localName == "string")
-				return s1 == s2;
-			else if (ns == String.Empty && localName == "token")
-				return NormalizeWhitespace (s1) ==
-					NormalizeWhitespace (s2);
-			else
-				throw new NotSupportedException ("non-supported datatype validation.");
-		}
+		static char [] wsChars = new char [] {' ', '\n', '\r', '\t'};
 
-		public string NormalizeWhitespace (string s)
+		public virtual bool IsTypeEqual (string s1, string s2, XmlReader reader)
 		{
-			return String.Join (" ", s.Split (RdpUtil.WhitespaceChars));
-		}
-
-		public object Clone ()
-		{
-			return new RdpDatatype (ns, localName);
+			return datatype.CompareString (s1, s2, reader);
 		}
 	}
+
+	/*
 
 	///
 	/// ChildNode Classes
@@ -178,7 +151,9 @@ namespace Commons.Xml.Relaxng.Derivative
 			get { return childNodes; }
 		}
 	}
+	*/
 
+	/*
 	public class RdpChildNodes : ArrayList
 	{
 		public RdpChildNodes () : base ()
@@ -217,5 +192,6 @@ namespace Commons.Xml.Relaxng.Derivative
 			get { return ns; }
 		}
 	}
+	*/
 }
 

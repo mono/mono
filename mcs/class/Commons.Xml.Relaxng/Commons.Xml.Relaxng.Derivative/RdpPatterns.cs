@@ -10,16 +10,17 @@
 using System;
 using System.Collections;
 using System.Xml;
+using Commons.Xml.Relaxng;
 
 namespace Commons.Xml.Relaxng.Derivative
 {
 	public delegate RdpPattern RdpApplyAfterHandler (RdpPattern p);
 
 	// abstract Pattern
-	public abstract class RdpPattern : ICloneable
+	public abstract class RdpPattern
 	{
-		internal protected bool NullableComputed;
-		internal protected bool IsNullable;
+		internal bool nullableComputed;
+		internal bool isNullable;
 		Hashtable patternPool;
 
 		internal string debug ()
@@ -27,9 +28,11 @@ namespace Commons.Xml.Relaxng.Derivative
 			return RdpUtil.DebugRdpPattern (this, new Hashtable ());
 		}
 
-		public abstract RngPatternType PatternType { get; }
+		public abstract RelaxngPatternType PatternType { get; }
 
-		private Hashtable setupTable (RngPatternType type, RdpPattern p)
+		public abstract RdpContentType ContentType { get; }
+
+		private Hashtable setupTable (RelaxngPatternType type, RdpPattern p)
 		{
 			// Why?
 			if (patternPool == null) {
@@ -51,7 +54,7 @@ namespace Commons.Xml.Relaxng.Derivative
 
 		public RdpChoice MakeChoice (RdpPattern p1, RdpPattern p2)
 		{
-			Hashtable p1Table = setupTable (RngPatternType.Choice, p1);
+			Hashtable p1Table = setupTable (RelaxngPatternType.Choice, p1);
 			if (p1Table [p2] == null) {
 				RdpChoice c = new RdpChoice (p1, p2);
 				c.setInternTable (this.patternPool);
@@ -62,7 +65,7 @@ namespace Commons.Xml.Relaxng.Derivative
 
 		public RdpPattern MakeGroup (RdpPattern p1, RdpPattern p2)
 		{
-			Hashtable p1Table = setupTable (RngPatternType.Group, p1);
+			Hashtable p1Table = setupTable (RelaxngPatternType.Group, p1);
 			if (p1Table [p2] == null) {
 				RdpGroup g = new RdpGroup (p1, p2);
 				g.setInternTable (this.patternPool);
@@ -73,7 +76,7 @@ namespace Commons.Xml.Relaxng.Derivative
 
 		public RdpInterleave MakeInterleave (RdpPattern p1, RdpPattern p2)
 		{
-			Hashtable p1Table = setupTable (RngPatternType.Interleave, p1);
+			Hashtable p1Table = setupTable (RelaxngPatternType.Interleave, p1);
 			if (p1Table [p2] == null) {
 				RdpInterleave i = new RdpInterleave (p1, p2);
 				i.setInternTable (this.patternPool);
@@ -84,7 +87,7 @@ namespace Commons.Xml.Relaxng.Derivative
 
 		public RdpAfter MakeAfter (RdpPattern p1, RdpPattern p2)
 		{
-			Hashtable p1Table = setupTable (RngPatternType.After, p1);
+			Hashtable p1Table = setupTable (RelaxngPatternType.After, p1);
 			if (p1Table [p2] == null) {
 				RdpAfter a = new RdpAfter (p1, p2);
 				a.setInternTable (this.patternPool);
@@ -95,10 +98,10 @@ namespace Commons.Xml.Relaxng.Derivative
 
 		public RdpOneOrMore MakeOneOrMore (RdpPattern p)
 		{
-			Hashtable pTable = (Hashtable) patternPool [RngPatternType.OneOrMore];
+			Hashtable pTable = (Hashtable) patternPool [RelaxngPatternType.OneOrMore];
 			if (pTable == null) {
 				pTable = new Hashtable ();
-				patternPool [RngPatternType.OneOrMore] = pTable;
+				patternPool [RelaxngPatternType.OneOrMore] = pTable;
 			}
 			if (pTable [p] == null)
 				pTable [p] = new RdpOneOrMore (p);
@@ -155,40 +158,48 @@ namespace Commons.Xml.Relaxng.Derivative
 			}
 
 			switch (PatternType) {
-			case RngPatternType.Empty:
-			case RngPatternType.NotAllowed:
-			case RngPatternType.Text:
-			case RngPatternType.Data:
-			case RngPatternType.Value:
+			case RelaxngPatternType.Empty:
+			case RelaxngPatternType.NotAllowed:
+			case RelaxngPatternType.Text:
+			case RelaxngPatternType.Data:
+			case RelaxngPatternType.Value:
 				return;
 			}
 
+#if REPLACE_IN_ADVANCE
 			throw new InvalidOperationException ();
+#endif
 		}
 
-		internal protected virtual RdpPattern ExpandRef (Hashtable defs)
+		internal abstract void MarkReachableDefs ();
+
+		internal abstract void CheckConstraints (bool attribute, bool oneOrMore, bool oneOrMoreGroup, bool oneOrMoreInterleave, bool list, bool dataExcept);
+
+		internal abstract bool ContainsText ();
+
+		internal virtual RdpPattern ExpandRef (Hashtable defs)
 		{
 			return this;
 		}
 
-		internal protected virtual RdpPattern ReduceEmptyAndNotAllowed (ref bool result, Hashtable visited)
+		internal virtual RdpPattern ReduceEmptyAndNotAllowed (ref bool result, Hashtable visited)
 		{
 			return this;
 		}
 
 		public abstract bool Nullable { get; }
 
-		public abstract object Clone ();
-
-		public virtual RdpPattern TextDeriv (string s)
+		#region Derivative
+		public virtual RdpPattern TextDeriv (string s, XmlReader reader)
 		{
 			return RdpNotAllowed.Instance;
 		}
 
+/*
 		public RdpPattern ChildDeriv (RdpChildNode child)
 		{
 			RdpTextChild tc = child as RdpTextChild;
-			RdpElementChild ec = child as RdpElementChild;
+//			RdpElementChild ec = child as RdpElementChild;
 			if (tc != null) {
 				return TextDeriv (tc.Text);
 			} else {
@@ -200,18 +211,19 @@ namespace Commons.Xml.Relaxng.Derivative
 					.EndTagDeriv ();
 			}
 		}
+*/
 
-		public RdpPattern ListDeriv (string [] list)
+		public RdpPattern ListDeriv (string [] list, int index, XmlReader reader)
 		{
-			return listDerivInternal (list, 0);
+			return listDerivInternal (list, 0, reader);
 		}
 
-		private RdpPattern listDerivInternal (string [] list, int start)
+		private RdpPattern listDerivInternal (string [] list, int start, XmlReader reader)
 		{
 			if (list.Length <= start)
 				return this;
 			else
-				return this.TextDeriv (list [start]).listDerivInternal (list, start + 1);
+				return this.TextDeriv (list [start], reader).listDerivInternal (list, start + 1, reader);
 		}
 
 		// Choice(this, p)
@@ -221,9 +233,6 @@ namespace Commons.Xml.Relaxng.Derivative
 				return this;
 			else if (this is RdpNotAllowed)
 				return p;
-			// Atsushi Eno added
-//			else if (this == RdpEmpty.Instance && p == RdpEmpty.Instance)
-//				return this;
 			else
 				return MakeChoice (this, p);
 		}
@@ -277,35 +286,17 @@ namespace Commons.Xml.Relaxng.Derivative
 			return RdpNotAllowed.Instance;
 		}
 
-		// attsDeriv (ctx, this, [att])
-		// It is equal to "foreach (attr att in attributes) AttDeriv(att)"
-		public RdpPattern AttsDeriv (RdpAttributes attributes)
-		{
-			return attsDerivInternal (attributes, 0);
-		}
-
-		RdpPattern attsDerivInternal (RdpAttributes attributes, int start)
-		{
-			if (attributes.Count <= start)
-				return this;
-			else {
-				RdpAttributeNode attr = 
-					(RdpAttributeNode) attributes [start];
-				return AttDeriv (attr.LocalName, attr.NamespaceURI, attr.Value).attsDerivInternal (attributes, start + 1);
-			}
-		}
-
 		// attDeriv(ctx, this, att)
 		// attDeriv _ _ _ = NotAllowed
-		public virtual RdpPattern AttDeriv (string name, string ns, string value)
+		public virtual RdpPattern AttDeriv (string name, string ns, string value, XmlReader reader)
 		{
 			return RdpNotAllowed.Instance;
 		}
 
-		public bool ValueMatch (string s)
+		public bool ValueMatch (string s, XmlReader reader)
 		{
 			return (Nullable && RdpUtil.Whitespace (s)) ||
-				TextDeriv (s).Nullable;
+				TextDeriv (s, reader).Nullable;
 		}
 
 		public virtual RdpPattern StartTagCloseDeriv ()
@@ -313,6 +304,7 @@ namespace Commons.Xml.Relaxng.Derivative
 			return this;
 		}
 
+		/*
 		public RdpPattern ChildrenDeriv (RdpChildNodes children)
 		{
 			return childrenDerivInternal (children, 0);
@@ -349,10 +341,11 @@ namespace Commons.Xml.Relaxng.Derivative
 				return p.childrenDerivInternal (children, start + 1);
 			}
 		}
+		*/
 
 		public RdpPattern OneOrMore ()
 		{
-			if (PatternType == RngPatternType.NotAllowed)
+			if (PatternType == RelaxngPatternType.NotAllowed)
 				return RdpNotAllowed.Instance;
 			else
 				return MakeOneOrMore (this);
@@ -362,7 +355,7 @@ namespace Commons.Xml.Relaxng.Derivative
 		{
 			return RdpNotAllowed.Instance;
 		}
-
+		#endregion
 	}
 
 	// Empty
@@ -383,13 +376,28 @@ namespace Commons.Xml.Relaxng.Derivative
 			get { return instance; }
 		}
 
-		public override object Clone ()
-		{
-			return instance;
+		public override RelaxngPatternType PatternType {
+			get { return RelaxngPatternType.Empty; }
 		}
 
-		public override RngPatternType PatternType {
-			get { return RngPatternType.Empty; }
+		public override RdpContentType ContentType {
+			get { return RdpContentType.Empty; }
+		}
+
+		internal override void MarkReachableDefs () 
+		{
+			// do nothing
+		}
+
+		internal override void CheckConstraints (bool attribute, bool oneOrMore, bool oneOrMoreGroup, bool oneOrMoreInterleave, bool list, bool dataExcept)
+		{
+			if (dataExcept)
+				throw new RelaxngException ("empty cannot appear under except of a data pattern.");
+		}
+
+		internal override bool ContainsText()
+		{
+			return false;
 		}
 	}
 
@@ -416,19 +424,38 @@ namespace Commons.Xml.Relaxng.Derivative
 			return RdpNotAllowed.Instance;
 		}
 
-		public override object Clone ()
-		{
-			return instance;
+		public override RelaxngPatternType PatternType {
+			get { return RelaxngPatternType.NotAllowed; }
 		}
 
-		public override RngPatternType PatternType {
-			get { return RngPatternType.NotAllowed; }
+		public override RdpContentType ContentType {
+			get { return RdpContentType.Empty; }
+		}
+
+		internal override void MarkReachableDefs () 
+		{
+			// do nothing
+		}
+
+		internal override void CheckConstraints (bool attribute, bool oneOrMore, bool oneOrMoreGroup, bool oneOrMoreInterleave, bool list, bool dataExcept)
+		{
+			// do nothing
+		}
+
+		internal override bool ContainsText()
+		{
+			return false;
 		}
 	}
 
 	// Text
 	public class RdpText : RdpPattern
 	{
+		static RdpText instance;
+		public static RdpText Instance {
+			get { return instance; }
+		}
+
 		public RdpText () {}
 		static RdpText ()
 		{
@@ -439,23 +466,35 @@ namespace Commons.Xml.Relaxng.Derivative
 			get { return true; }
 		}
 
-		static RdpText instance;
-		public static RdpText Instance {
-			get { return instance; }
+		public override RelaxngPatternType PatternType {
+			get { return RelaxngPatternType.Text; }
 		}
 
-		public override RdpPattern TextDeriv (string s)
+		public override RdpContentType ContentType {
+			get { return RdpContentType.Complex; }
+		}
+
+		public override RdpPattern TextDeriv (string s, XmlReader reader)
 		{
 			return this;
 		}
 
-		public override object Clone ()
+		internal override void MarkReachableDefs () 
 		{
-			return instance;
+			// do nothing
 		}
 
-		public override RngPatternType PatternType {
-			get { return RngPatternType.Text; }
+		internal override void CheckConstraints (bool attribute, bool oneOrMore, bool oneOrMoreGroup, bool oneOrMoreInterleave, bool list, bool dataExcept)
+		{
+			if (list)
+				throw new RelaxngException ("text is not allowed under a list.");
+			if (dataExcept)
+				throw new RelaxngException ("text is not allowed under except of a list.");
+		}
+
+		internal override bool ContainsText()
+		{
+			return true;
 		}
 	}
 
@@ -480,8 +519,21 @@ namespace Commons.Xml.Relaxng.Derivative
 			set { r = value; }
 		}
 
+		public override RdpContentType ContentType {
+			get {
+				if (l.ContentType == RdpContentType.Empty)
+					return r.ContentType;
+				if (r.ContentType == RdpContentType.Empty)
+					return l.ContentType;
+
+				if ((l.ContentType & RdpContentType.Simple) != 0 || ((r.ContentType & RdpContentType.Simple) != 0))
+					throw new RelaxngException ("The content type of this group is invalid.");
+				return RdpContentType.Complex;
+			}
+		}
+
 		bool expanded;
-		internal protected override RdpPattern ExpandRef (Hashtable defs)
+		internal override RdpPattern ExpandRef (Hashtable defs)
 		{
 			if (!expanded) {
 				l = l.ExpandRef (defs);
@@ -490,20 +542,20 @@ namespace Commons.Xml.Relaxng.Derivative
 			return this;
 		}
 
-		internal protected override RdpPattern ReduceEmptyAndNotAllowed (ref bool result, Hashtable visited)
+		internal override RdpPattern ReduceEmptyAndNotAllowed (ref bool result, Hashtable visited)
 		{
 			if (visited.Contains (this))
 				return this;
 			visited.Add (this, this);
 
-			if (LValue.PatternType == RngPatternType.NotAllowed ||
-				RValue.PatternType == RngPatternType.NotAllowed) {
+			if (LValue.PatternType == RelaxngPatternType.NotAllowed ||
+				RValue.PatternType == RelaxngPatternType.NotAllowed) {
 				result = true;
 				return RdpNotAllowed.Instance;
-			} else if (LValue.PatternType == RngPatternType.Empty) {
+			} else if (LValue.PatternType == RelaxngPatternType.Empty) {
 				result = true;
 				return RValue.ReduceEmptyAndNotAllowed (ref result, visited);
-			} else if (RValue.PatternType == RngPatternType.Empty) {
+			} else if (RValue.PatternType == RelaxngPatternType.Empty) {
 				result = true;
 				return LValue.ReduceEmptyAndNotAllowed (ref result, visited);
 			} else {
@@ -511,6 +563,17 @@ namespace Commons.Xml.Relaxng.Derivative
 				RValue = RValue.ReduceEmptyAndNotAllowed (ref result, visited);
 				return this;
 			}
+		}
+
+		internal override void MarkReachableDefs () 
+		{
+			l.MarkReachableDefs ();
+			r.MarkReachableDefs ();
+		}
+
+		internal override bool ContainsText()
+		{
+			return l.ContainsText () || r.ContainsText ();
 		}
 	}
 
@@ -523,36 +586,50 @@ namespace Commons.Xml.Relaxng.Derivative
 
 		public override bool Nullable {
 			get {
-				if (!NullableComputed) {
-					IsNullable =
+				if (!nullableComputed) {
+					isNullable =
 						LValue.Nullable || RValue.Nullable;
-					NullableComputed = true;
+					nullableComputed = true;
 				}
-				return IsNullable;
+				return isNullable;
 			}
 		}
 
-		internal protected override RdpPattern ReduceEmptyAndNotAllowed (ref bool result, Hashtable visited)
+		public override RelaxngPatternType PatternType {
+			get { return RelaxngPatternType.Choice; }
+		}
+
+		public override RdpContentType ContentType {
+			get {
+				if (LValue.ContentType == RdpContentType.Simple ||
+					RValue.ContentType == RdpContentType.Simple)
+					return RdpContentType.Simple;
+				return base.ContentType;
+			}
+		}
+
+
+		internal override RdpPattern ReduceEmptyAndNotAllowed (ref bool result, Hashtable visited)
 		{
 			if (visited.Contains (this))
 				return this;
 			visited.Add (this, this);
 
-			if (LValue.PatternType == RngPatternType.NotAllowed &&
-				RValue.PatternType == RngPatternType.NotAllowed) {
+			if (LValue.PatternType == RelaxngPatternType.NotAllowed &&
+				RValue.PatternType == RelaxngPatternType.NotAllowed) {
 				result = true;
 				return RdpNotAllowed.Instance;
-			} else if (LValue.PatternType == RngPatternType.NotAllowed) {
+			} else if (LValue.PatternType == RelaxngPatternType.NotAllowed) {
 				result = true;
 				return RValue.ReduceEmptyAndNotAllowed (ref result, visited);
-			} else if (RValue.PatternType == RngPatternType.NotAllowed) {
+			} else if (RValue.PatternType == RelaxngPatternType.NotAllowed) {
 				result = true;
 				return LValue.ReduceEmptyAndNotAllowed (ref result, visited);
-			} else if (LValue.PatternType == RngPatternType.Empty &&
-				RValue.PatternType == RngPatternType.Empty) {
+			} else if (LValue.PatternType == RelaxngPatternType.Empty &&
+				RValue.PatternType == RelaxngPatternType.Empty) {
 				result = true;
 				return RdpEmpty.Instance;
-			} else if (RValue.PatternType == RngPatternType.Empty) {
+			} else if (RValue.PatternType == RelaxngPatternType.Empty) {
 				result = true;
 				RValue = LValue.ReduceEmptyAndNotAllowed (ref result, visited);
 				LValue = RdpEmpty.Instance;
@@ -564,9 +641,9 @@ namespace Commons.Xml.Relaxng.Derivative
 			}
 		}
 
-		public override RdpPattern TextDeriv (string s)
+		public override RdpPattern TextDeriv (string s, XmlReader reader)
 		{
-			return LValue.TextDeriv (s).Choice (RValue.TextDeriv (s));
+			return LValue.TextDeriv (s, reader).Choice (RValue.TextDeriv (s, reader));
 		}
 
 		public override RdpPattern ApplyAfter (RdpApplyAfterHandler handler)
@@ -589,10 +666,10 @@ namespace Commons.Xml.Relaxng.Derivative
 
 		// attDeriv cx (Choice p1 p2) att =
 		//  choice (attDeriv cx p1 att) (attDeriv cx p2 att)
-		public override RdpPattern AttDeriv (string name, string ns, string value)
+		public override RdpPattern AttDeriv (string name, string ns, string value, XmlReader reader)
 		{
-			return LValue.AttDeriv (name, ns, value)
-				.Choice (RValue.AttDeriv (name, ns, value));
+			return LValue.AttDeriv (name, ns, value, reader)
+				.Choice (RValue.AttDeriv (name, ns, value, reader));
 		}
 
 		// startTagCloseDeriv (Choice p1 p2) =
@@ -608,14 +685,10 @@ namespace Commons.Xml.Relaxng.Derivative
 			return LValue.EndTagDeriv ().Choice (RValue.EndTagDeriv ());
 		}
 
-		public override object Clone ()
+		internal override void CheckConstraints (bool attribute, bool oneOrMore, bool oneOrMoreGroup, bool oneOrMoreInterleave, bool list, bool dataExcept)
 		{
-			return new RdpChoice (this.LValue.Clone () as RdpPattern,
-				this.RValue.Clone () as RdpPattern);
-		}
-
-		public override RngPatternType PatternType {
-			get { return RngPatternType.Choice; }
+			LValue.CheckConstraints (attribute, oneOrMore, oneOrMoreGroup, oneOrMoreInterleave, list, dataExcept);
+			RValue.CheckConstraints (attribute, oneOrMore, oneOrMoreGroup, oneOrMoreInterleave, list, dataExcept);
 		}
 	}
 
@@ -628,23 +701,23 @@ namespace Commons.Xml.Relaxng.Derivative
 
 		public override bool Nullable {
 			get {
-				if (!NullableComputed) {
-					IsNullable =
+				if (!nullableComputed) {
+					isNullable =
 						LValue.Nullable && RValue.Nullable;
-					NullableComputed = true;
+					nullableComputed = true;
 				}
-				return IsNullable;
+				return isNullable;
 			}
 		}
 
-		internal protected override RdpPattern ReduceEmptyAndNotAllowed (ref bool result, Hashtable visited)
+		internal override RdpPattern ReduceEmptyAndNotAllowed (ref bool result, Hashtable visited)
 		{
 			if (visited.Contains (this))
 				return this;
 			visited.Add (this, this);
 
-			if (LValue.PatternType == RngPatternType.NotAllowed ||
-				RValue.PatternType == RngPatternType.NotAllowed) {
+			if (LValue.PatternType == RelaxngPatternType.NotAllowed ||
+				RValue.PatternType == RelaxngPatternType.NotAllowed) {
 				result = true;
 				return RdpNotAllowed.Instance;
 			} else {
@@ -654,10 +727,10 @@ namespace Commons.Xml.Relaxng.Derivative
 			}
 		}
 
-		public override RdpPattern TextDeriv (string s)
+		public override RdpPattern TextDeriv (string s, XmlReader reader)
 		{
-			return LValue.TextDeriv (s).Interleave (RValue)
-				.Choice (LValue.Interleave (RValue.TextDeriv (s)));
+			return LValue.TextDeriv (s, reader).Interleave (RValue)
+				.Choice (LValue.Interleave (RValue.TextDeriv (s, reader)));
 		}
 
 		// => choice (applyAfter (flip interleave p2) (startTagOpenDeriv p1 qn)) (applyAfter (interleave p1) (startTagOpenDeriv p2 qn)
@@ -675,12 +748,12 @@ namespace Commons.Xml.Relaxng.Derivative
 		// attDeriv cx (Interleave p1 p2) att =
 		//  choice (interleave (attDeriv cx p1 att) p2)
 		//         (interleave p1 (attDeriv cx p2 att))
-		public override RdpPattern AttDeriv (string name, string ns, string value)
+		public override RdpPattern AttDeriv (string name, string ns, string value, XmlReader reader)
 		{
-			return LValue.AttDeriv (name, ns, value)
+			return LValue.AttDeriv (name, ns, value, reader)
 				.Interleave (RValue)
 				.Choice (LValue.Interleave (
-					RValue.AttDeriv (name, ns, value)));
+					RValue.AttDeriv (name, ns, value, reader)));
 		}
 
 		// startTagCloseDeriv (Interleave p1 p2) =
@@ -703,14 +776,26 @@ namespace Commons.Xml.Relaxng.Derivative
 		}
 		*/
 
-		public override object Clone ()
-		{
-			return new RdpInterleave (this.LValue.Clone () as RdpPattern,
-				this.RValue.Clone () as RdpPattern);
+		public override RelaxngPatternType PatternType {
+			get { return RelaxngPatternType.Interleave; }
 		}
 
-		public override RngPatternType PatternType {
-			get { return RngPatternType.Interleave; }
+		internal override void CheckConstraints (bool attribute, bool oneOrMore, bool oneOrMoreGroup, bool oneOrMoreInterleave, bool list, bool dataExcept)
+		{
+			if (list)
+				throw new RelaxngException ("interleave is not allowed under a list.");
+			if (dataExcept)
+				throw new RelaxngException ("interleave is not allowed under except of a data.");
+
+			// 7.1
+			LValue.CheckConstraints (attribute, oneOrMore, oneOrMoreGroup, oneOrMore, list, dataExcept);
+			RValue.CheckConstraints (attribute, oneOrMore, oneOrMoreGroup, oneOrMore, list, dataExcept);
+
+			// 7.4
+			// TODO: (1) unique name analysis
+			// (2) text/text prohibited
+			if (LValue.PatternType == RelaxngPatternType.Text && RValue.PatternType == RelaxngPatternType.Text)
+				throw new RelaxngException ("Both branches of the interleave contains a text pattern.");
 		}
 	}
 
@@ -723,20 +808,20 @@ namespace Commons.Xml.Relaxng.Derivative
 
 		public override bool Nullable {
 			get {
-				if (!NullableComputed) {
-					IsNullable =
+				if (!nullableComputed) {
+					isNullable =
 						LValue.Nullable && RValue.Nullable;
-					NullableComputed = true;
+					nullableComputed = true;
 				}
-				return IsNullable;
+				return isNullable;
 			}
 		}
 
-		public override RdpPattern TextDeriv (string s)
+		public override RdpPattern TextDeriv (string s, XmlReader reader)
 		{
-			RdpPattern p = LValue.TextDeriv (s).Group (RValue);
+			RdpPattern p = LValue.TextDeriv (s, reader).Group (RValue);
 			return p.Nullable ?
-				p.Choice (RValue.TextDeriv(s)) : p;
+				p.Choice (RValue.TextDeriv(s, reader)) : p;
 		}
 
 		// startTagOpenDeriv (Group p1 p2) qn =
@@ -759,11 +844,11 @@ namespace Commons.Xml.Relaxng.Derivative
 		// attDeriv cx (Group p1 p2) att =
 		//  choice (group (attDeriv cx p1 att) p2)
 		//         (group p1 (attDeriv cx p2 att))
-		public override RdpPattern AttDeriv (string name, string ns, string value)
+		public override RdpPattern AttDeriv (string name, string ns, string value, XmlReader reader)
 		{
-			return LValue.AttDeriv (name, ns, value).Group (RValue)
+			return LValue.AttDeriv (name, ns, value, reader).Group (RValue)
 				.Choice (LValue.Group (
-					RValue.AttDeriv (name, ns, value)));
+					RValue.AttDeriv (name, ns, value, reader)));
 		}
 
 		// startTagCloseDeriv (Group p1 p2) =
@@ -774,14 +859,17 @@ namespace Commons.Xml.Relaxng.Derivative
 				.Group (RValue.StartTagCloseDeriv ());
 		}
 
-		public override object Clone ()
-		{
-			return new RdpGroup (this.LValue.Clone () as RdpPattern,
-				this.RValue.Clone () as RdpPattern);
+		public override RelaxngPatternType PatternType {
+			get { return RelaxngPatternType.Group; }
 		}
 
-		public override RngPatternType PatternType {
-			get { return RngPatternType.Group; }
+		internal override void CheckConstraints (bool attribute, bool oneOrMore, bool oneOrMoreGroup, bool oneOrMoreInterleave, bool list, bool dataExcept)
+		{
+			if (dataExcept)
+				throw new RelaxngException ("interleave is not allowed under except of a data.");
+
+			LValue.CheckConstraints (attribute, oneOrMore, oneOrMore, oneOrMoreInterleave, list, dataExcept);
+			RValue.CheckConstraints (attribute, oneOrMore, oneOrMore, oneOrMoreInterleave, list, dataExcept);
 		}
 	}
 
@@ -790,7 +878,7 @@ namespace Commons.Xml.Relaxng.Derivative
 		RdpPattern child;
 		bool isExpanded;
 
-		internal protected override RdpPattern ExpandRef (Hashtable defs)
+		internal override RdpPattern ExpandRef (Hashtable defs)
 		{
 			if (!isExpanded)
 				child = child.ExpandRef (defs);
@@ -807,6 +895,15 @@ namespace Commons.Xml.Relaxng.Derivative
 			set { child = value; }
 		}
 
+		internal override void MarkReachableDefs () 
+		{
+			child.MarkReachableDefs ();
+		}
+
+		internal override bool ContainsText()
+		{
+			return child.ContainsText ();
+		}
 	}
 
 	// OneOrMore
@@ -816,20 +913,32 @@ namespace Commons.Xml.Relaxng.Derivative
 		{
 		}
 
+		public override RelaxngPatternType PatternType {
+			get { return RelaxngPatternType.OneOrMore; }
+		}
+
+		public override RdpContentType ContentType {
+			get {
+				if (Child.ContentType == RdpContentType.Simple)
+					throw new RelaxngException ("Invalid content type was found.");
+				return Child.ContentType;
+			}
+		}
+
 		public override bool Nullable {
 			get { return Child.Nullable; }
 		}
 
-		internal protected override RdpPattern ReduceEmptyAndNotAllowed (ref bool result, Hashtable visited)
+		internal override RdpPattern ReduceEmptyAndNotAllowed (ref bool result, Hashtable visited)
 		{
 			if (visited.Contains (this))
 				return this;
 			visited.Add (this, this);
 
-			if (Child.PatternType == RngPatternType.NotAllowed) {
+			if (Child.PatternType == RelaxngPatternType.NotAllowed) {
 				result = true;
 				return RdpNotAllowed.Instance;
-			} else if (Child.PatternType == RngPatternType.Empty)
+			} else if (Child.PatternType == RelaxngPatternType.Empty)
 				return RdpEmpty.Instance;
 			else {
 				Child = Child.ReduceEmptyAndNotAllowed (ref result, visited);
@@ -837,21 +946,21 @@ namespace Commons.Xml.Relaxng.Derivative
 			}
 		}
 
-		public override RdpPattern TextDeriv (string s)
+		public override RdpPattern TextDeriv (string s, XmlReader reader)
 		{
-			return Child.TextDeriv (s).Group (Choice (RdpEmpty.Instance));
+			return Child.TextDeriv (s, reader).Group (Choice (RdpEmpty.Instance));
 		}
 
 		// attDeriv cx (OneOrMore p) att =
 		//  group (attDeriv cx p att) (choice (OneOrMore p) Empty)
-		public override RdpPattern AttDeriv (string name, string ns, string value)
+		public override RdpPattern AttDeriv (string name, string ns, string value, XmlReader reader)
 		{
 #if UseStatic
 			return RdpUtil.Group (
 				RdpUtil.AttDeriv (ctx, children, att),
 				RdpUtil.Choice (RdpUtil.OneOrMore (children), RdpEmpty.Instance));
 #else
-			return Child.AttDeriv (name, ns, value)
+			return Child.AttDeriv (name, ns, value, reader)
 				.Group (Choice (RdpEmpty.Instance));
 #endif
 		}
@@ -879,14 +988,13 @@ namespace Commons.Xml.Relaxng.Derivative
 #endif
 		}
 
-		public override object Clone ()
+		internal override void CheckConstraints (bool attribute, bool oneOrMore, bool oneOrMoreGroup, bool oneOrMoreInterleave, bool list, bool dataExcept)
 		{
-			return new RdpOneOrMore (Child.Clone () as RdpPattern);
+			if (dataExcept)
+				throw new RelaxngException ("oneOrMore is not allowed under except of a data.");
+			this.Child.CheckConstraints (attribute, true, oneOrMoreGroup, oneOrMoreInterleave, list, dataExcept);
 		}
 
-		public override RngPatternType PatternType {
-			get { return RngPatternType.OneOrMore; }
-		}
 	}
 
 	// List
@@ -896,13 +1004,13 @@ namespace Commons.Xml.Relaxng.Derivative
 		{
 		}
 
-		internal protected override RdpPattern ReduceEmptyAndNotAllowed (ref bool result, Hashtable visited)
+		internal override RdpPattern ReduceEmptyAndNotAllowed (ref bool result, Hashtable visited)
 		{
 			if (visited.Contains (this))
 				return this;
 			visited.Add (this, this);
 
-			if (Child.PatternType == RngPatternType.NotAllowed) {
+			if (Child.PatternType == RelaxngPatternType.NotAllowed) {
 				result = true;
 				return RdpNotAllowed.Instance;
 			} else {
@@ -911,32 +1019,54 @@ namespace Commons.Xml.Relaxng.Derivative
 			}
 		}
 
+/*
+		// This is not written in James Clark's derivative algorithm
+		// ( http://www.thaiopensource.com/relaxng/derivative.html ),
+		// but it looks required.
+		public override bool Nullable {
+			get { return this.Child.Nullable; }
+		}
+		
+		// ... but it also causes different error:
+		// <list><group><data .../><data .../></group></list>
+*/
 		public override bool Nullable {
 			get { return false; }
 		}
 
-		public override RdpPattern TextDeriv (string s)
-		{
-			return Child.TextDeriv (s).Group (Choice (RdpEmpty.Instance));
+		public override RelaxngPatternType PatternType {
+			get { return RelaxngPatternType.List; }
 		}
 
-		public override object Clone ()
-		{
-			return new RdpList (Child.Clone () as RdpPattern);
+		public override RdpContentType ContentType {
+			get { return RdpContentType.Simple; }
 		}
 
-		public override RngPatternType PatternType {
-			get { return RngPatternType.List; }
+		public override RdpPattern TextDeriv (string s, XmlReader reader)
+		{
+			RdpPattern p = Child.ListDeriv (Util.NormalizeWhitespace (s).Split (RdpUtil.WhitespaceChars), 0, reader);			
+			if (p.Nullable)
+				return RdpEmpty.Instance;
+			else
+				return RdpNotAllowed.Instance;
+		}
+
+		internal override void CheckConstraints (bool attribute, bool oneOrMore, bool oneOrMoreGroup, bool oneOrMoreInterleave, bool list, bool dataExcept)
+		{
+			if (list)
+				throw new RelaxngException ("list is not allowed uner another list.");
+			if (dataExcept)
+				throw new RelaxngException ("list is not allowed under except of a data.");
+			this.Child.CheckConstraints (attribute, oneOrMore, oneOrMoreGroup, oneOrMoreInterleave, true, dataExcept);
 		}
 	}
 
 	// Data
 	public class RdpData : RdpPattern
 	{
-		public RdpData (RdpDatatype dt, RdpParamList pl)
+		public RdpData (RdpDatatype dt)
 		{
 			this.dt = dt;
-			this.pl = pl;
 		}
 
 		RdpDatatype dt;
@@ -944,54 +1074,57 @@ namespace Commons.Xml.Relaxng.Derivative
 			get { return dt; }
 		}
 
-		RdpParamList pl;
-		public RdpParamList ParamList {
-			get { return pl; }
-		}
-
+		// This is not written in James Clark's derivative algorithm
+		// ( http://www.thaiopensource.com/relaxng/derivative.html ),
+		// but it looks required.
 		public override bool Nullable {
-			get { return false; }
+			get {
+				if (dt.NamespaceURI.Length == 0)
+					return true;
+				return false; 
+			}
 		}
 
-		public override RdpPattern TextDeriv (string s)
+		public override RelaxngPatternType PatternType {
+			get { return RelaxngPatternType.Data; }
+		}
+
+		public override RdpContentType ContentType {
+			get { return RdpContentType.Simple; }
+		}
+
+		public override RdpPattern TextDeriv (string s, XmlReader reader)
 		{
-			if (dt.IsAllowed (pl, s))
+			if (dt.IsAllowed (s, reader))
 				return RdpEmpty.Instance;
 			else
 				return RdpNotAllowed.Instance;
 		}
 
-		public override object Clone ()
+		internal override void MarkReachableDefs () 
 		{
-			return new RdpData (dt.Clone () as RdpDatatype,
-				pl.Clone () as RdpParamList);
+			// do nothing
 		}
 
-		public override RngPatternType PatternType {
-			get { return RngPatternType.Data; }
+		internal override void CheckConstraints (bool attribute, bool oneOrMore, bool oneOrMoreGroup, bool oneOrMoreInterleave, bool list, bool dataExcept)
+		{
+			// do nothing
+		}
+
+		internal override bool ContainsText()
+		{
+			return false;
 		}
 	}
 
 	// DataExcept
 	public class RdpDataExcept : RdpData
 	{
-		public RdpDataExcept (RdpDatatype dt, RdpParamList pl, RdpPattern except)
-			: base (dt, pl)
+		public RdpDataExcept (RdpDatatype dt, RdpPattern except)
+			: base (dt)
 		{
-//			this.dt = dt;
-//			this.pl = pl;
 			this.except = except;
 		}
-
-//		RdpDatatype dt;
-//		public RdpDatatype Datatype {
-//			get { return dt; }
-//		}
-
-//		RdpParamList pl;
-//		public RdpParamList ParamList {
-//			get { return pl; }
-//		}
 
 		RdpPattern except;
 		public RdpPattern Except {
@@ -999,49 +1132,58 @@ namespace Commons.Xml.Relaxng.Derivative
 			set { except = value; }
 		}
 
-		internal protected override RdpPattern ReduceEmptyAndNotAllowed (ref bool result, Hashtable visited)
+		public override RelaxngPatternType PatternType {
+			get { return RelaxngPatternType.DataExcept; }
+		}
+
+		public override RdpContentType ContentType {
+			get {
+				RdpContentType c = except.ContentType; // conformance required for except pattern.
+				return RdpContentType.Simple;
+			}
+		}
+
+		internal override RdpPattern ReduceEmptyAndNotAllowed (ref bool result, Hashtable visited)
 		{
 			if (visited.Contains (this))
 				return this;
 			visited.Add (this, this);
 
-			if (except.PatternType == RngPatternType.NotAllowed) {
+			if (except.PatternType == RelaxngPatternType.NotAllowed) {
 				result = true;
-				return new RdpData (this.Datatype, this.ParamList);
+				return new RdpData (this.Datatype);
 			} else {
 				except = except.ReduceEmptyAndNotAllowed (ref result, visited);
 				return this;
 			}
 		}
 
-		public override RdpPattern TextDeriv (string s)
+		public override RdpPattern TextDeriv (string s, XmlReader reader)
 		{
-			if (Datatype.IsAllowed (ParamList, s) && !except.TextDeriv (s).Nullable)
+			if (Datatype.IsAllowed (s, reader) && !except.TextDeriv (s, reader).Nullable)
 				return RdpEmpty.Instance;
 			else
 				return RdpNotAllowed.Instance;
 		}
 
-		public override object Clone ()
+		internal override void CheckConstraints (bool attribute, bool oneOrMore, bool oneOrMoreGroup, bool oneOrMoreInterleave, bool list, bool dataExcept)
 		{
-			return new RdpDataExcept (Datatype.Clone () as RdpDatatype,
-				ParamList.Clone () as RdpParamList,
-				this.except.Clone () as RdpPattern);
+			this.except.CheckConstraints (attribute, oneOrMore, oneOrMoreGroup, oneOrMoreInterleave, list, true);
 		}
 
-		public override RngPatternType PatternType {
-			get { return RngPatternType.DataExcept; }
+		internal override bool ContainsText()
+		{
+			return except.ContainsText ();
 		}
 	}
 
 	// Value
 	public class RdpValue : RdpPattern
 	{
-		public RdpValue (RdpDatatype dt, string value, RdpContext vctx)
+		public RdpValue (RdpDatatype dt, string value)
 		{
 			this.dt = dt;
 			this.value = value;
-			this.vctx = vctx;
 		}
 
 		RdpDatatype dt;
@@ -1054,31 +1196,46 @@ namespace Commons.Xml.Relaxng.Derivative
 			get { return value; }
 		}
 
-		RdpContext vctx;
-		public RdpContext ValueContext {
-			get { return vctx; }
-		}
-
+		// This is not written in James Clark's derivative algorithm
+		// ( http://www.thaiopensource.com/relaxng/derivative.html ),
+		// but it looks required.
 		public override bool Nullable {
-			get { return false; }
+			get {
+				if (dt.NamespaceURI.Length == 0 && value.Length == 0)
+					return true;
+				return false; 
+			}
 		}
 
-		public override RdpPattern TextDeriv (string s)
+		public override RelaxngPatternType PatternType {
+			get { return RelaxngPatternType.Value; }
+		}
+
+		public override RdpContentType ContentType {
+			get { return RdpContentType.Simple; }
+		}
+
+		public override RdpPattern TextDeriv (string s, XmlReader reader)
 		{
-			if (dt.IsTypeEqual (value, vctx, s))
+			if (dt.IsTypeEqual (value, s, reader))
 				return RdpEmpty.Instance;
 			else
 				return RdpNotAllowed.Instance;
 		}
 
-		public override object Clone ()
+		internal override void MarkReachableDefs () 
 		{
-			return new RdpValue (dt.Clone () as RdpDatatype,
-				this.value, this.vctx.Clone () as RdpContext);
+			// do nothing
 		}
 
-		public override RngPatternType PatternType {
-			get { return RngPatternType.Value; }
+		internal override void CheckConstraints (bool attribute, bool oneOrMore, bool oneOrMoreGroup, bool oneOrMoreInterleave, bool list, bool dataExcept) 
+		{
+			// nothing to be checked
+		}
+
+		internal override bool ContainsText()
+		{
+			return false;
 		}
 	}
 
@@ -1102,8 +1259,20 @@ namespace Commons.Xml.Relaxng.Derivative
 			set { children = value; }
 		}
 
+		public override bool Nullable {
+			get { return false; }
+		}
+
+		public override RelaxngPatternType PatternType {
+			get { return RelaxngPatternType.Attribute; }
+		}
+
+		public override RdpContentType ContentType {
+			get { return RdpContentType.Empty; }
+		}
+
 		bool isExpanded;
-		internal protected override RdpPattern ExpandRef (Hashtable defs)
+		internal override RdpPattern ExpandRef (Hashtable defs)
 		{
 			if (!isExpanded) {
 				isExpanded = true;
@@ -1112,13 +1281,13 @@ namespace Commons.Xml.Relaxng.Derivative
 			return this;
 		}
 
-		internal protected override RdpPattern ReduceEmptyAndNotAllowed (ref bool result, Hashtable visited)
+		internal override RdpPattern ReduceEmptyAndNotAllowed (ref bool result, Hashtable visited)
 		{
 			if (visited.Contains (this))
 				return this;
 			visited.Add (this, this);
 
-			if (children.PatternType == RngPatternType.NotAllowed) {
+			if (children.PatternType == RelaxngPatternType.NotAllowed) {
 				result = true;
 				return RdpNotAllowed.Instance;
 			} else {
@@ -1127,13 +1296,9 @@ namespace Commons.Xml.Relaxng.Derivative
 			}
 		}
 
-		public override bool Nullable {
-			get { return false; }
-		}
-
 		// attDeriv cx (Attribute nc p) (AttributeNode qn s) =
 		//  if contains nc qn && valueMatch cx p s then Empty else NotAllowed
-		public override RdpPattern AttDeriv (string name, string ns, string value)
+		public override RdpPattern AttDeriv (string name, string ns, string value, XmlReader reader)
 		{
 #if UseStatic
 			if (RdpUtil.Contains (this.nameClass, att.QName)
@@ -1143,7 +1308,7 @@ namespace Commons.Xml.Relaxng.Derivative
 				return RdpNotAllowed.Instance;
 #else
 			if (nameClass.Contains (name, ns) &&
-				children.ValueMatch (value))
+				children.ValueMatch (value, reader))
 				return RdpEmpty.Instance;
 			else
 				return RdpNotAllowed.Instance;
@@ -1156,14 +1321,21 @@ namespace Commons.Xml.Relaxng.Derivative
 			return RdpNotAllowed.Instance;
 		}
 
-		public override object Clone ()
+		internal override void MarkReachableDefs () 
 		{
-			return new RdpAttribute (this.nameClass.Clone () as RdpNameClass,
-				children.Clone () as RdpPattern);
+			children.MarkReachableDefs ();
 		}
 
-		public override RngPatternType PatternType {
-			get { return RngPatternType.Attribute; }
+		internal override void CheckConstraints (bool attribute, bool oneOrMore, bool oneOrMoreGroup, bool oneOrMoreInterleave, bool list, bool dataExcept) 
+		{
+			if (attribute || oneOrMoreGroup || oneOrMoreInterleave || list || dataExcept)
+				throw new RelaxngException ("Not allowed attribute occurence was specified in the pattern.");
+			this.Children.CheckConstraints (true, oneOrMore, false, false, false, false);
+		}
+
+		internal override bool ContainsText()
+		{
+			return children.ContainsText ();
 		}
 	}
 
@@ -1187,8 +1359,28 @@ namespace Commons.Xml.Relaxng.Derivative
 			set { children = value; }
 		}
 
+		public override bool Nullable {
+			get { return false; }
+		}
+
+		public override RelaxngPatternType PatternType {
+			get { return RelaxngPatternType.Element; }
+		}
+
+		bool contentTypeCheckDone;
+		public override RdpContentType ContentType {
+			get {
+				if (!contentTypeCheckDone) {
+					contentTypeCheckDone = true;
+					RdpContentType ct = children.ContentType; // conformance required.
+				}
+				return RdpContentType.Complex;
+			}
+		}
+
+
 		bool isExpanded;
-		internal protected override RdpPattern ExpandRef (Hashtable defs)
+		internal override RdpPattern ExpandRef (Hashtable defs)
 		{
 			if (!isExpanded) {
 				isExpanded = true;
@@ -1197,7 +1389,7 @@ namespace Commons.Xml.Relaxng.Derivative
 			return this;
 		}
 
-		internal protected override RdpPattern ReduceEmptyAndNotAllowed (ref bool result, Hashtable visited)
+		internal override RdpPattern ReduceEmptyAndNotAllowed (ref bool result, Hashtable visited)
 		{
 			if (visited.Contains (this))
 				return this;
@@ -1205,10 +1397,6 @@ namespace Commons.Xml.Relaxng.Derivative
 
 			children = children.ReduceEmptyAndNotAllowed (ref result, visited);
 			return this;
-		}
-
-		public override bool Nullable {
-			get { return false; }
 		}
 
 		public override RdpPattern StartTagOpenDeriv (string name, string ns)
@@ -1225,14 +1413,25 @@ namespace Commons.Xml.Relaxng.Derivative
 #endif
 		}
 
-		public override object Clone ()
+		internal override void MarkReachableDefs () 
 		{
-			return new RdpElement (this.nameClass.Clone () as RdpNameClass,
-				children.Clone () as RdpPattern);
+			children.MarkReachableDefs ();
 		}
 
-		public override RngPatternType PatternType {
-			get { return RngPatternType.Element; }
+		bool constraintsChecked;
+		internal override void CheckConstraints (bool attribute, bool oneOrMore, bool oneOrMoreGroup, bool oneOrMoreInterleave, bool list, bool dataExcept) 
+		{
+			if (constraintsChecked)
+				return;
+			constraintsChecked = true;
+			if (attribute || list || dataExcept)
+				throw new RelaxngException ("Not allowed element occurence was specified in the pattern.");
+			this.Children.CheckConstraints (false, oneOrMore, oneOrMoreGroup, oneOrMoreInterleave, false, false);
+		}
+
+		internal override bool ContainsText()
+		{
+			return children.ContainsText ();
 		}
 	}
 
@@ -1247,9 +1446,9 @@ namespace Commons.Xml.Relaxng.Derivative
 			get { return false; }
 		}
 
-		public override RdpPattern TextDeriv (string s)
+		public override RdpPattern TextDeriv (string s, XmlReader reader)
 		{
-			return LValue.TextDeriv (s).After (RValue);
+			return LValue.TextDeriv (s, reader).After (RValue);
 		}
 
 		// startTagOpenDeriv (After p1 p2) qn =
@@ -1269,9 +1468,9 @@ namespace Commons.Xml.Relaxng.Derivative
 
 		// attDeriv cx (After p1 p2) att =
 		//  after (attDeriv cx p1 att) p2
-		public override RdpPattern AttDeriv (string name, string ns, string value)
+		public override RdpPattern AttDeriv (string name, string ns, string value, XmlReader reader)
 		{
-			return LValue.AttDeriv (name, ns, value).After (RValue);
+			return LValue.AttDeriv (name, ns, value, reader).After (RValue);
 		}
 
 		public override RdpPattern StartTagCloseDeriv ()
@@ -1284,14 +1483,23 @@ namespace Commons.Xml.Relaxng.Derivative
 			return LValue.Nullable ? RValue : RdpNotAllowed.Instance;
 		}
 
-		public override object Clone ()
-		{
-			return new RdpAfter (LValue.Clone () as RdpPattern,
-				RValue.Clone () as RdpPattern);
+		public override RelaxngPatternType PatternType {
+			get { return RelaxngPatternType.After; }
 		}
 
-		public override RngPatternType PatternType {
-			get { return RngPatternType.After; }
+		internal override void MarkReachableDefs () 
+		{
+			throw new InvalidOperationException ();
+		}
+
+		internal override void CheckConstraints (bool attribute, bool oneOrMore, bool oneOrMoreGroup, bool oneOrMoreInterleave, bool list, bool dataExcept) 
+		{
+			throw new InvalidOperationException ();
+		}
+
+		internal override bool ContainsText()
+		{
+			throw new InvalidOperationException ();
 		}
 	}
 }
