@@ -1,4 +1,9 @@
 
+Mon Jun 17 17:31:19 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* get.h, get.c: get_marshal_info() to get a marshal descriptor.
+	* main.c, dump.h, dump.c: added code to dump the FieldMarshl table.
+
 Tue Jun 11 14:11:12 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* get.c: handle modulerefs.
