@@ -1,3 +1,9 @@
+
+Tue Feb 26 16:18:07 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* appdomain.c: give the user an informative message when corlib can't
+	be loaded.
+
 2002-02-26  Martin Baulig  <martin@gnome.org>
 
 	* icall.c (ves_icall_System_CurrentTimeZone_GetTimeZoneData):
