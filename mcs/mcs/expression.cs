@@ -5624,7 +5624,7 @@ namespace Mono.CSharp {
 				ig.Emit (OpCodes.Ldelem_I1);
 			else if (type == TypeManager.short_type)
 				ig.Emit (OpCodes.Ldelem_I2);
-			else if (type == TypeManager.ushort_type)
+			else if (type == TypeManager.ushort_type || type == TypeManager.char_type)
 				ig.Emit (OpCodes.Ldelem_U2);
 			else if (type == TypeManager.int32_type)
 				ig.Emit (OpCodes.Ldelem_I4);

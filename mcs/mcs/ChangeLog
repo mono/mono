@@ -1,6 +1,9 @@
 2002-07-12  Miguel de Icaza  <miguel@ximian.com>
 
-	* expression.cs (New.DoEmit): Use IsValueType instead of
+	* expression.cs (EmitLoadOpcode): System.Char is a U2, use that
+	instead of the default for ValueTypes.
+
+	(New.DoEmit): Use IsValueType instead of
 	IsSubclassOf (value_type)
 	(New.DoResolve): ditto.
 	(Invocation.EmitCall): ditto.
