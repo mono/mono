@@ -143,8 +143,7 @@ namespace System.Windows.Forms {
 			button_x_offset = 5;
 			button_size = new Size (22, 17);
 			// default settings based on 8.25 pt San Serif Font
-			// Not sure of algroithm used to establish this
-			Size title_size = new Size(24*7, 46);		// 7 cells, not including WeekNumber column
+			// Not sure of algorithm used to establish this
 			date_cell_size = new Size (24, 16);		// default size at san-serif 8.25
 			divider_line_offset = 4;
 			calendar_spacing = new Size (4, 5);		// horiz and vert spacing between months in a calendar grid
@@ -1190,7 +1189,6 @@ namespace System.Windows.Forms {
 			DayOfWeek first_day = GetDayOfWeek (first_day_of_week);
 			// find the first day of the year
 			DayOfWeek first_day_of_year = new DateTime (date.Year, 1, 1).DayOfWeek;
-			DayOfWeek day_of_week = date.DayOfWeek;
 			// adjust for the starting day of the week
 			int offset = first_day_of_year - first_day;
 			int week = ((date.DayOfYear + offset) / 7) + 1;
@@ -1497,7 +1495,6 @@ namespace System.Windows.Forms {
 				first_select_start_date = SelectionStart;
 				is_shift_pressed = e.Shift;
 			}
-			bool changed = true;		
 			switch (e.KeyCode) {
 				case Keys.Home:
 					// set the date to the start of the month
@@ -1588,7 +1585,6 @@ namespace System.Windows.Forms {
 					this.OnDateSelected (new DateRangeEventArgs (SelectionStart, SelectionEnd));
 					break;
 				default:
-					changed = false;
 					break;
 			}
 			e.Handled = true;

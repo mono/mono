@@ -758,8 +758,6 @@ namespace System.Windows.Forms
 
 			public void AddRange (object[] items)
 			{
-				int cnt = Count;
-
 				foreach (object mi in items)
 					AddItem (mi);
 			}

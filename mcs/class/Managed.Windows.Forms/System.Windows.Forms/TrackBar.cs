@@ -458,15 +458,17 @@ namespace System.Windows.Forms
 
 		private void UpdatePos (int newPos, bool update_trumbpos)
 		{
-			int old = position;
-
-			if (newPos < minimum)
+			if (newPos < minimum){
 				Value = minimum;
-			else
-				if (newPos > maximum)
-				Value = maximum;
-			else
-				Value = newPos;    			
+			}
+			else {
+				if (newPos > maximum) {
+					Value = maximum;
+				}
+				else {
+					Value = newPos;
+				}
+			}
 		}
 		
 		private void LargeIncrement ()
@@ -499,8 +501,6 @@ namespace System.Windows.Forms
     		
 		private void Draw ()
 		{					
-			float ticks = (Maximum - Minimum) / tickFrequency; /* N of ticks draw*/                        
-	
 			ThemeEngine.Current.DrawTrackBar(DeviceContext, this.ClientRectangle, this);
 		}		
 
@@ -577,8 +577,6 @@ namespace System.Windows.Forms
     		{    			
     			if (!Enabled) return;
     		
-    			Point pnt = new Point (e.X, e.Y);
-
     			/* Moving the thumb */
     			if (thumb_pressed) {
 								 				

@@ -1,3 +1,8 @@
+2005-01-04  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* ComboBox.cs, TabPage.cs, MenuAPI.cs, ThemeWin32Classic.cs,
+	TrackBar.cs, MonthCalendar.cs: remove unused vars
+
 2005-01-03  Jackson Harper  <jackson@ximian.com>
 
 	* ThemeWin32Classic.cs:

@@ -607,7 +607,6 @@ namespace System.Windows.Forms
 				HideSubPopups (hMenu);
 
 			if (tracker.hCurrentMenu != hMenu) {
-				MENU current_menu = GetMenuFromID (hMenu);
 				menu.Wnd.Capture = true;
 				tracker.hCurrentMenu = hMenu;
 			}
@@ -1087,7 +1086,6 @@ namespace System.Windows.Forms
     		{
     			/* Click outside the client area*/
 			MenuAPI.MENUITEM item = MenuAPI.FindItemByCoords (hMenu, new Point (e.X, e.Y));
-			MenuAPI.MENU menu = MenuAPI.GetMenuFromID (hMenu);
 
 			if (item != null) {
 				item.item.PerformClick ();
@@ -1099,7 +1097,6 @@ namespace System.Windows.Forms
 		private void OnMouseMovePUW (object sender, MouseEventArgs e)
 		{	
 			MenuAPI.MENUITEM item = MenuAPI.FindItemByCoords (hMenu, new Point (e.X, e.Y));
-			MenuAPI.MENU menu = MenuAPI.GetMenuFromID (hMenu);
 			
 			if (item != null) {				
 				MenuAPI.SelectItem (hMenu, item, true, tracker);

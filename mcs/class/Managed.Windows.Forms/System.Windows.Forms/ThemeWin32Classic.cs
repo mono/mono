@@ -1641,8 +1641,6 @@ namespace System.Windows.Forms
 		#region ProgressBar
 		public override void DrawProgressBar (Graphics dc, Rectangle clip_rectangle, ProgressBar progress_bar) {
 			Rectangle	client_area		= progress_bar.client_area;
-			Rectangle	paint_area		= progress_bar.paint_area;
-			int		steps			= (progress_bar.Maximum - progress_bar.Minimum) / progress_bar.step;
 			int		space_betweenblocks	= 2;
 			int		x;
 			int		block_width;
@@ -2133,7 +2131,6 @@ namespace System.Windows.Forms
 			int left = area.Left;
 			if (panel.Icon != null) {
 				left += 2;
-				int size = area.Height - border_size;
 				dc.DrawIcon (panel.Icon, left, area.Top);
 				left += panel.Icon.Width;
 			}
