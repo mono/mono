@@ -1,6 +1,10 @@
 2004-10-08 Sanjay Gupta <gsanjay@novell.com>
 
-	* AssociatedIDConverter.cs: Implemented.
+	* ValidatedControlConverter.cs: Updated.
+
+2004-10-08 Sanjay Gupta <gsanjay@novell.com>
+
+	* AssociatedControlConverter.cs: Implemented.
 
 2004-10-08 Sanjay Gupta <gsanjay@novell.com>
 

@@ -28,8 +28,10 @@
  * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
  * Implementation: yes
  * Status:  100%
- *
+ * Modifier: Sanjay Gupta
+ * Contact: gsanjay@novell.com
  * (C) Gaurav Vaish (2002)
+ * (C) 2004 Novell, Inc. (http://www.novell.com)
  */
 
 using System;
@@ -40,12 +42,31 @@ using System.Web.UI;
 
 namespace System.Web.UI.WebControls
 {
-	public class ValidatedControlConverter : StringConverter
+	public class ValidatedControlConverter : 
+#if NET_2_0
+	ControlIDConverter
+#else
+	StringConverter
+#endif
 	{
 		public ValidatedControlConverter(): base()
 		{
 		}
-
+#if NET_2_0
+		protected override bool FilterControl(Control control)
+		{
+			//GetCustomAttributes (false);
+			//What shall we use above method or the one used
+			object [] attribs = control.GetType ().GetCustomAttributes 
+					(typeof (ValidationPropertyAttribute), false);
+			
+			foreach (Attribute attr in attribs) 
+				if (attr is ValidationPropertyAttribute)
+					return true;
+			
+			return false;										
+		}
+#else
 		private object[] GetValues(IContainer container)
 		{
 			ArrayList values = new ArrayList();
@@ -93,5 +114,6 @@ namespace System.Web.UI.WebControls
 		{
 			return true;
 		}
+#endif
 	}
 }
