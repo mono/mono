@@ -1,3 +1,10 @@
+2002-03-06  Duco Fijma  <duco@lorentz.xs4all.nl>
+	* CharEnumerator.cs: fixes to CharEnumertor.MoveNext, fixing 
+	some of the failures found be new tests (see ChangeLog in 
+	Test/System). Comments added to this method, based on
+	the representation invariant of this class, that (try to) explain
+	why it now should be correct.
+
 2002-03-06  Dietmar Maurer  <dietmar@ximian.com>
 
 	* Int64.cs (Parse): bug fix for max. negative value. 

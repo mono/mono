@@ -16,6 +16,9 @@ namespace System
 		private string str;
 		private int index;
 		private int length;
+		// Representation invariant:
+		// length == str.Length
+		// -1 <= index <= length
 		
 		// Constructor
 		internal CharEnumerator (string s)
@@ -29,7 +32,7 @@ namespace System
 		public char Current
 		{
 			get {
-				if (index == -1)
+				if (index == -1 || index == length)
 					throw new InvalidOperationException
 						("The position is not valid.");
 
@@ -40,7 +43,7 @@ namespace System
 		object IEnumerator.Current
 		{
 			get {
-				if (index == -1)
+				if (index == -1 || index == length)
 					throw new InvalidOperationException
 						("The position is not valid");
 
@@ -58,13 +61,23 @@ namespace System
 		
 		public bool MoveNext ()
 		{
-			if (length == 0)
-				return false;			
+			// Representation invariant holds: -1 <= index <= length
 
 			index ++;
+
+			// Now: 0 <= index <= length+1;
+			//   <=>
+			// 0 <= index < length (OK) || 
+			// length <= index <= length+1 (Out of bounds)
 			
-			if (index == length) 				
-				return false;
+			if (index >= length) {
+				index = length;
+				// Invariant restored:
+				// length == index
+				//   =>
+				// -1 <= index <= length
+				return false;	
+			}
 			else
 				return true;
 		}

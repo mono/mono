@@ -85,19 +85,9 @@ public class CharEnumeratorTest : TestCase
 		}
 		Assert ("A1", exception);
 
-		ce.MoveNext ();
+		AssertEquals("A2", true, ce.MoveNext ());
 
-		AssertEquals ("A2", _s, GetFromEnumerator (ce));
-
-		try {
-			c = ce.Current;
-		}
-		catch (InvalidOperationException) {
-			exception = true;
-		}
-		Assert ("A3", exception);
-
-		ce.Reset ();
+		AssertEquals ("A3", _s, GetFromEnumerator (ce));
 
 		try {
 			c = ce.Current;
@@ -107,9 +97,25 @@ public class CharEnumeratorTest : TestCase
 		}
 		Assert ("A4", exception);
 
-		ce.MoveNext ();
+		AssertEquals("A5", false, ce.MoveNext() );
+		AssertEquals("A6", false, ce.MoveNext() );
 
-		AssertEquals ("A5", _s, GetFromEnumerator (ce));
+		ce.Reset ();
+
+		try {
+			c = ce.Current;
+		}
+		catch (InvalidOperationException) {
+			exception = true;
+		}
+		Assert ("A7", exception);
+
+		AssertEquals ("A8", true, ce.MoveNext ());
+
+		AssertEquals ("A9", _s, GetFromEnumerator (ce));
+
+		AssertEquals ("A10", false, ce.MoveNext ());
+		AssertEquals ("A11", false, ce.MoveNext ());
 	}
 
 }

@@ -1,3 +1,7 @@
+2002-03-06  Duco Fijma  <duco@lorentz.xs4all.nl>
+	* CharEnumeratorTest.cs: made test regarding out-of-bounds checking
+	a bit stronger (new failures fixed in CharEnumerator.cs).
+
 2002-03-06  Martin Baulig  <martin@gnome.org>
 
 	* ArrayTest.cs (TestSetValue4): Added testcases #M94-#M96 for Array.Copy.
