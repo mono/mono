@@ -76,6 +76,7 @@ System.Web.Services.Description/SoapExtensionImporter.cs
 System.Web.Services.Description/SoapExtensionReflector.cs
 System.Web.Services.Description/SoapFaultBinding.cs
 System.Web.Services.Description/SoapHeaderBinding.cs
+System.Web.Services.Description/SoapHttpTransportImporter.cs
 System.Web.Services.Description/SoapOperationBinding.cs
 System.Web.Services.Description/SoapHeaderFaultBinding.cs
 System.Web.Services.Description/SoapProtocolImporter.cs

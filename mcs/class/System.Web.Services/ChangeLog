@@ -1,3 +1,7 @@
+2003-09-28  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* System.Web.Services.dll.sources: Added SoapHttpTransportImporter.cs.
+
 2003-09-14  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* System.Web.Services_test.dll.sources: Added BindingCollectionTest.cs 
