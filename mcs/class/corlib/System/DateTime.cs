@@ -67,6 +67,8 @@ namespace System
 
 			"yyyy-MM-dd",
 			"yyyy-MM-ddTHH:mm:sszzz",
+			"yyyy-MM-ddTHH:mm:ss.fffffff",
+			"yyyy-MM-ddTHH:mm:ss.fffffffzzz",
 			// UTC / allow any separator
 			"yyyy/MM/ddTHH:mm:ssZ",
 			// bug #58938

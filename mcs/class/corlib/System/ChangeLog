@@ -1,3 +1,7 @@
+2004-06-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DateTime.cs : Added more common patterns.
+
 2004-06-09  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Decimal.cs: Fixed banker rounding by calling Math.Round. This won't
