@@ -1,7 +1,7 @@
 2003-07-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AppDomainSetup.cs: remove the "file://" prefix from ApplicationBase
-	if it's present.
+	if it's present and get the full path for non-Uri paths.
 
 2003-07-2  Lluis Sanchez Gual <lluis@ximian.com>
 

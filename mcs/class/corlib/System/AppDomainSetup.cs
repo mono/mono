@@ -8,6 +8,7 @@
 //
 
 using System;
+using System.IO;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -45,6 +46,8 @@ namespace System {
 			int len = appBase.Length;
 			if (len >= 8 && appBase.ToLower ().StartsWith ("file://"))
 				appBase = appBase.Substring (7);
+			else if (appBase.IndexOf (':') == -1)
+				appBase = Path.GetFullPath (appBase);
 
 			return appBase;
 		}
