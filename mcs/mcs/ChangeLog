@@ -1,3 +1,8 @@
+2004-12-05  Miguel de Icaza  <miguel@ximian.com>
+
+	* class.cs: Distinguish between 1721 and 1722 (just a little help
+	for the programmer).
+
 2004-12-03  Miguel de Icaza  <miguel@ximian.com>
 
 	* delegate.cs: Only allow this on new versions of the language. 

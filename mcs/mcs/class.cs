@@ -1092,11 +1092,16 @@ namespace Mono.CSharp {
 					error = true;
 					return null;
 				}
-				
 				if (iface.IsClass) {
-					Report.Error (1722, Location,
-						      "In Class `{0}', `{1}' is not " +
-						      "an interface, a base class must be listed first", Name, iface.Name);
+					if (parent != null)
+						Report.Error (1721, Location,
+							      "In Class `{0}', `{1}' is not an interface, and a base class has already been defined",
+							      Name, iface.Name);
+					else {
+						Report.Error (1722, Location,
+							      "In Class `{0}', `{1}' is not " +
+							      "an interface, a base class must be listed first", Name, iface.Name);
+					}
 					error = true;
 					return null;
 				}
