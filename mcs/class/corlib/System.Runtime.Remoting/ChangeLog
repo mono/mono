@@ -1,3 +1,8 @@
+2004-09-27  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* ServerIdentity.cs: Only set the target identity if it has not already
+	  been set.
+
 2004-09-23  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* RemotingServices.cs: Fixed wrong patch for InternalExecuteMessage.

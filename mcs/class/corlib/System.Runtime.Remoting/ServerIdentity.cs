@@ -109,7 +109,8 @@ namespace System.Runtime.Remoting
 			if (RemotingServices.IsTransparentProxy (serverObject))
 			{
 				RealProxy rp = RemotingServices.GetRealProxy (serverObject);
-				rp.ObjectIdentity = this;
+				if (rp.ObjectIdentity == null)
+					rp.ObjectIdentity = this;
 			}
 			else
 			{
@@ -241,7 +242,7 @@ namespace System.Runtime.Remoting
 			// SingleCallIdentity creates and disposes an instance in each call
 
 			MarshalByRefObject obj = (MarshalByRefObject)Activator.CreateInstance (_objectType, true);
-			obj.ObjectIdentity = this;
+			if (obj.ObjectIdentity == null) obj.ObjectIdentity = this;
 			IMessageSink serverSink = _context.CreateServerObjectSinkChain (obj, false);
 			IMessage result = serverSink.SyncProcessMessage (msg);
 			if (obj is IDisposable) ((IDisposable)obj).Dispose();
