@@ -1,3 +1,9 @@
+2004-09-25  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
+
+    * Npgsql/NpgsqlCommand.cs:
+        ReplaceParameterValue: Fixed parameter replace when next byte after parameter name is '\\r'. Thanks Ivan Radovanovic rivan at sezampro dot yu for the fix.
+        GetParseCommandText: Added a workaround to have some queries which are giving parameter type problems. Thanks Martin ( martijn at boland dot org) for bug report.
+
 2004-09-23  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
 
     * NpgsqlTypes/NpgsqlTypesHelper.cs:

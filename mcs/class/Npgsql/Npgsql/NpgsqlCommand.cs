@@ -536,14 +536,14 @@ namespace Npgsql
                 String portalName = "NpgsqlPortal" + Connector.NextPortalIndex();
 
                 parse = new NpgsqlParse(planName, GetParseCommandText(), new Int32[] {});
-
+                
                 Connector.Parse(parse);
                 Connector.Mediator.RequireReadyForQuery = false;
                 Connector.Flush();
-
+                
                 // Check for errors and/or notifications and do the Right Thing.
                 connector.CheckErrorsAndNotifications();
-
+                
                 bind = new NpgsqlBind(portalName, planName, new Int16[] {0}, null, new Int16[] {0});
             }
         }
@@ -691,7 +691,7 @@ namespace Npgsql
                     //result = result.Replace(":" + parameterName, parameters[i].Value.ToString());
                     parameterName = parameters[i].ParameterName;
                     //textCommand = textCommand.Replace(':' + parameterName, "$" + (i+1));
-                    parseCommand = ReplaceParameterValue(parseCommand, parameterName, "$" + (i+1));
+                    parseCommand = ReplaceParameterValue(parseCommand, parameterName, "$" + (i+1) + "::" + parameters[i].NpgsqlDbType.ToString());
 
                 }
             }
@@ -781,6 +781,7 @@ namespace Npgsql
                          result[paramEnd] == ')' ||
                          result[paramEnd] == ';' ||
                          result[paramEnd] == '\n' ||
+                         result[paramEnd] == '\r' ||
                          result[paramEnd] == '\t'))
                 {
                     result = result.Substring(0, paramStart) + paramVal + result.Substring(paramEnd);
