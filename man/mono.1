@@ -415,6 +415,28 @@ managed implementation (slow). If unset, mono will try to use FAM under
 Unix systems and native API calls on Windows, falling back to the
 managed implementation on error.
 .TP
+.I "MONO_PATH"
+Provides a search path to the runtime where to look for library files.
+Directories are separated by the platform path separator (colons on unix). Example:
+.B /home/username/lib:/usr/local/mono/lib
+.TP
+.I "MONO_RTC"
+Experimental RTC support in the statistical profiler: if the user has
+the permission, more accurate statistics are gathered.  The MONO_RTC
+value must be restricted to what the linux rtc allows: power of two
+from 64 to 8192 Hz.
+.Sp
+For example:
+.nf
+	MONO_RTC=4096 mono --profiler=default:stat program.exe
+.fi
+.TP 
+.I "MONO_SHARED_DIR"
+If set its the directory where the ".wapi" handle state is stored.
+This is the directory where the Windows I/O Emulation layer stores its
+shared state data (files, events, mutexes, pipes).  By default Mono
+will store the ".wapi" directory in the users's home directory.
+.TP
 .I "MONO_THREADS_PER_CPU"
 Sets the maximum number of threads in the threadpool per CPU. The default is
 50 for non-windows systems and 25 for windows.
@@ -426,17 +448,6 @@ It can be set to a filename, and to Console.Out or Console.Error to display
 output to standard output or standard error, respectively.
 See the System.Diagnostics.DefaultTraceListener documentation for more
 information.
-.TP 
-.I "MONO_SHARED_DIR"
-If set its the directory where the ".wapi" handle state is stored.
-This is the directory where the Windows I/O Emulation layer stores its
-shared state data (files, events, mutexes, pipes).  By default Mono
-will store the ".wapi" directory in the users's home directory.
-.TP
-.I "MONO_PATH"
-Provides a search path to the runtime where to look for library files.
-Directories are separated by the platform path separator (colons on unix). Example:
-.B /home/username/lib:/usr/local/mono/lib
 .TP
 .I "MONO_XMLSERIALIZER_THS"
 Controls the threshold for the XmlSerializer to produce a custom
