@@ -60,8 +60,12 @@ class MonoP {
 	static void PrintTypes (string assembly)
 	{
 		Assembly a = Assembly.Load (assembly);
-		foreach (Type t in a.GetExportedTypes ())
+		Type [] types = a.GetExportedTypes ();
+
+		foreach (Type t in types)
 			Console.WriteLine (t.FullName);
+
+		Console.WriteLine ("\nTotal: {0} types.", types.Length);
 	}
 	
 	static void Main (string [] args)

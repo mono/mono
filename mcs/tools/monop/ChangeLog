@@ -1,3 +1,8 @@
+2004-04-03  Duncan Mak  <duncan@ximian.com>
+
+	* monop.cs (PrintTypes): show the number of types in the assembly
+	as well.
+
 2004-03-30 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* monop.cs: Print out class list on just -r.
