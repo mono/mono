@@ -1,3 +1,24 @@
+2004-11-30  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* fstab.c: Added; wrap <fstab.h> functions: getfsent(3), getfsfile(3), 
+	  getfsspec(3).
+	* map.c: Add new conversion functions for SyslogOptions, SyslogFacility, 
+	  SyslogLevel; see syslog(3) for details.
+	* map.h: Add new conversion functions and values for SyslogOptions, 
+	  SyslogFacility, SyslogLevel; see syslog(3) for details.
+	* Makefile.am (MPH_SOURCE): add fstab.c, sys-statvfs.c, x-struct-str.c.
+	* mph.h: Document location for Mac OS X man page documentation; add
+	  MPH_INTERNAL macro for intra-library function calls (for functions that
+	  shouldn't be exported from libMonoPosixHelper.so); declare
+	  _mph_copy_structure_strings().
+	* pwd.c: Use _mph_copy_structure_strings() to copy strings embedded within
+	  struct passwd.
+	* sys-statvfs.c: Added; wrap <sys/statvfs.h> functions statvfs(2),
+	  fstatvfs(2), and (to complicate things) implement (f)statvfs(2) in terms
+	  of (f)statfs(2) on Mac OS X (which lacks the -vfs calls).
+	* x-struct-str.c: implements _mph_copy_structure_strings(), which is a
+	  generalized interface to copy strings between structures (as is needed in
+	  pwd.c and fstab.c).
 
 Thu Dec 23 14:58:09 EST 2004 Paolo Molaro <lupus@ximian.com>
 

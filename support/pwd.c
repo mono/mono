@@ -28,6 +28,24 @@ struct Mono_Posix_Syscall__Passwd {
 	/* string */ char      *_pw_buf_;
 };
 
+static const size_t
+passwd_offsets[] = {
+	offsetof (struct passwd, pw_name),
+	offsetof (struct passwd, pw_passwd),
+	offsetof (struct passwd, pw_gecos),
+	offsetof (struct passwd, pw_dir),
+	offsetof (struct passwd, pw_shell)
+};
+
+static const size_t
+mph_passwd_offsets[] = {
+	offsetof (struct Mono_Posix_Syscall__Passwd, pw_name),
+	offsetof (struct Mono_Posix_Syscall__Passwd, pw_passwd),
+	offsetof (struct Mono_Posix_Syscall__Passwd, pw_gecos),
+	offsetof (struct Mono_Posix_Syscall__Passwd, pw_dir),
+	offsetof (struct Mono_Posix_Syscall__Passwd, pw_shell)
+};
+
 /*
  * Copy the native `passwd' structure to it's managed representation.
  *
@@ -37,57 +55,16 @@ struct Mono_Posix_Syscall__Passwd {
 static int
 copy_passwd (struct Mono_Posix_Syscall__Passwd *to, struct passwd *from)
 {
-	enum {PW_NAME = 0, PW_PASSWD, PW_GECOS, PW_DIR, PW_SHELL, PW_LAST};
-	size_t buflen, len[PW_LAST];
-	/* bool */ unsigned char copy[PW_LAST] = {0};
-	const char *source[PW_LAST];
-	char **dest[PW_LAST];
-	int i;
-	char *cur;
+	char *buf;
+	buf = _mph_copy_structure_strings (to, mph_passwd_offsets,
+			from, passwd_offsets, sizeof(passwd_offsets)/sizeof(passwd_offsets[0]));
 
 	to->pw_uid    = from->pw_uid;
 	to->pw_gid    = from->pw_gid;
 
-	to->pw_name   = NULL;
-	to->pw_passwd = NULL;
-	to->pw_gecos  = NULL;
-	to->pw_dir    = NULL;
-	to->pw_shell  = NULL;
-	to->_pw_buf_  = NULL;
-
-	source[PW_NAME]   = from->pw_name;
-	source[PW_PASSWD] = from->pw_passwd;
-	source[PW_GECOS]  = from->pw_gecos;
-	source[PW_DIR]    = from->pw_dir;
-	source[PW_SHELL]  = from->pw_shell;
-
-	dest[PW_NAME]   = &to->pw_name;
-	dest[PW_PASSWD] = &to->pw_passwd;
-	dest[PW_GECOS]  = &to->pw_gecos;
-	dest[PW_DIR]    = &to->pw_dir;
-	dest[PW_SHELL]  = &to->pw_shell;
-
-	buflen = PW_LAST;
-
-	/* over-rigorous checking for integer overflow */
-	for (i = 0; i != PW_LAST; ++i) {
-		len[i] = strlen (source[i]);
-		if (len[i] < INT_MAX - buflen) {
-			buflen += len[i];
-			copy[i] = 1;
-		}
-	}
-
-	cur = to->_pw_buf_ = (char*) malloc (buflen);
-	if (cur == NULL) {
+	to->_pw_buf_ = buf;
+	if (buf == NULL) {
 		return -1;
-	}
-
-	for (i = 0; i != PW_LAST; ++i) {
-		if (copy[i]) {
-			*dest[i] = strcpy (cur, source[i]);
-			cur += (len[i] + 1);
-		}
 	}
 
 	return 0;

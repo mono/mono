@@ -15,6 +15,7 @@ MPH_SOURCE = \
 	dirent.c 	\
 	errno.c 	\
 	fcntl.c 	\
+	fstab.c   \
 	grp.c 		\
 	macros.c	\
 	map.c 		\
@@ -26,11 +27,13 @@ MPH_SOURCE = \
 	sys-mman.c 	\
 	sys-sendfile.c 	\
 	sys-stat.c 	\
+	sys-statvfs.c 	\
 	sys-time.c 	\
 	sys-wait.c 	\
 	time.c 		\
 	unistd.c	 \
-	utime.c
+	utime.c    \
+	x-struct-str.c
 
 if HAVE_ZLIB
 libMonoPosixHelper_la_SOURCES = \

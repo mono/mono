@@ -138,6 +138,49 @@ G_BEGIN_DECLS
 int Mono_Posix_FromError (int x, int *r);
 int Mono_Posix_ToError (int x, int *r);
 
+#define Mono_Posix_SyslogOptions_LOG_PID 0x00000001
+#define Mono_Posix_SyslogOptions_LOG_CONS 0x00000002
+#define Mono_Posix_SyslogOptions_LOG_ODELAY 0x00000004
+#define Mono_Posix_SyslogOptions_LOG_NDELAY 0x00000008
+#define Mono_Posix_SyslogOptions_LOG_NOWAIT 0x00000010
+#define Mono_Posix_SyslogOptions_LOG_PERROR 0x00000020
+int Mono_Posix_FromSyslogOptions (int x, int *r);
+int Mono_Posix_ToSyslogOptions (int x, int *r);
+
+#define Mono_Posix_SyslogFacility_LOG_KERN 0x00000000
+#define Mono_Posix_SyslogFacility_LOG_USRE 0x00000008
+#define Mono_Posix_SyslogFacility_LOG_MAIL 0x00000010
+#define Mono_Posix_SyslogFacility_LOG_DAEMON 0x00000018
+#define Mono_Posix_SyslogFacility_LOG_AUTH 0x00000020
+#define Mono_Posix_SyslogFacility_LOG_SYSLOG 0x00000028
+#define Mono_Posix_SyslogFacility_LOG_LPR 0x00000030
+#define Mono_Posix_SyslogFacility_LOG_NEWS 0x00000038
+#define Mono_Posix_SyslogFacility_LOG_UUCP 0x00000040
+#define Mono_Posix_SyslogFacility_LOG_CRON 0x00000040
+#define Mono_Posix_SyslogFacility_LOG_AUTHPRIV 0x00000050
+#define Mono_Posix_SyslogFacility_LOG_FTP 0x00000058
+#define Mono_Posix_SyslogFacility_LOG_LOCAL0 0x00000080
+#define Mono_Posix_SyslogFacility_LOG_LOCAL1 0x00000088
+#define Mono_Posix_SyslogFacility_LOG_LOCAL2 0x00000090
+#define Mono_Posix_SyslogFacility_LOG_LOCAL3 0x00000098
+#define Mono_Posix_SyslogFacility_LOG_LOCAL4 0x000000a0
+#define Mono_Posix_SyslogFacility_LOG_LOCAL5 0x000000a8
+#define Mono_Posix_SyslogFacility_LOG_LOCAL6 0x000000b0
+#define Mono_Posix_SyslogFacility_LOG_LOCAL7 0x000000b8
+int Mono_Posix_FromSyslogFacility (int x, int *r);
+int Mono_Posix_ToSyslogFacility (int x, int *r);
+
+#define Mono_Posix_SyslogLevel_LOG_EMERG 0x00000000
+#define Mono_Posix_SyslogLevel_LOG_ALERT 0x00000001
+#define Mono_Posix_SyslogLevel_LOG_CRIT 0x00000002
+#define Mono_Posix_SyslogLevel_LOG_ERR 0x00000003
+#define Mono_Posix_SyslogLevel_LOG_WARNING 0x00000004
+#define Mono_Posix_SyslogLevel_LOG_NOTICE 0x00000005
+#define Mono_Posix_SyslogLevel_LOG_INFO 0x00000006
+#define Mono_Posix_SyslogLevel_LOG_DEBUG 0x00000007
+int Mono_Posix_FromSyslogLevel (int x, int *r);
+int Mono_Posix_ToSyslogLevel (int x, int *r);
+
 #define Mono_Posix_OpenFlags_O_RDONLY 0x00000000
 #define Mono_Posix_OpenFlags_O_WRONLY 0x00000001
 #define Mono_Posix_OpenFlags_O_RDWR 0x00000002

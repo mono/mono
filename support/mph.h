@@ -17,6 +17,9 @@
  *
  * See the typedefs for type size assumptions.  These typedefs *must* be kept
  * in sync with the types used in Mono.Posix.dll.
+ *
+ * See also:
+ *   http://developer.apple.com/documentation/Darwin/Reference/ManPages/
  */
 
 #ifndef INC_mph_H
@@ -36,6 +39,8 @@
 #define MPH_ON_BSD
 #endif
 
+#define MPH_INTERNAL __attribute__((visibility("hidden")))
+
 typedef    gint64 mph_blkcnt_t;
 typedef    gint64 mph_blksize_t;
 typedef   guint64 mph_dev_t;
@@ -49,6 +54,8 @@ typedef   guint32 mph_gid_t;
 typedef   guint32 mph_uid_t;
 typedef    gint64 mph_time_t;
 typedef    gint64 mph_clock_t;
+typedef   guint64 mph_fsblkcnt_t;
+typedef   guint64 mph_fsfilcnt_t;
 
 #ifdef HAVE_LARGE_FILE_SUPPORT
 #define MPH_OFF_T_MAX G_MAXINT64
@@ -125,6 +132,12 @@ recheck_range (int ret)
 		return errno == ERANGE;
 	return 0;
 }
+
+MPH_INTERNAL char* 
+_mph_copy_structure_strings (
+	void *to,   size_t *to_offsets, 
+	void *from, size_t *from_offsets, 
+	size_t num_strings);
 
 #endif /* ndef INC_mph_H */
 
