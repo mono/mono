@@ -1,5 +1,14 @@
 2002-05-22  Martin Baulig  <martin@gnome.org>
 
+	* debug-dwarf2.c (dwarf2_write_section_end): Removed.  This is not needed
+	and not supported by all assemblers.
+	(dwarf2_write_2byte): Use ".word" instead of ".2byte" since ".2byte" is a
+	GNU extension.
+
+	* mono.c (--debug): Small fix in the argument parsing.
+
+2002-05-22  Martin Baulig  <martin@gnome.org>
+
 	* debug.c: Added "dont_assemble" and "dont_precompile" argument for dwarf-plus.
 
 	* mono.c: Applied patch from Miguel:
