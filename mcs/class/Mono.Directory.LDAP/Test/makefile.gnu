@@ -3,21 +3,26 @@ topdir = ../../..
 LIBRARY = dslib_linux_test.dll
 
 LIB_LIST = dslib_linux_test.args
-LIB_FLAGS = -r ../../lib/Mono.Directory.LDAP.dll -r ../../lib/corlib.dll -r ../../lib/System.dll \
-	    -r $(topdir)/nunit/src/NUnitCore/NUnitCore_mono.dll
+LIB_FLAGS =     \
+                -r $(topdir)/class/lib/corlib.dll \
+                -r $(topdir)/class/lib/System.dll \
+                -r $(topdir)/class/lib/Mono.Directory.LDAP.dll \
+                -r $(topdir)/nunit20/NUnit.Framework.dll
 
-include ../../library.make
+ifdef SUBDIR
+USE_SOURCE_RULES=1
+SOURCES_INCLUDE=./$(SUBDIR)/*.cs
+SOURCES_EXCLUDE=_DUMMY_
+endif
 
-MCS_FLAGS = --target library --noconfig
+include $(topdir)/class/library.make
 
-TEST_SUITE_PREFIX = MonoTests.Directory.LDAP.
-TEST_SUITE = AllTests
-NUNITCONSOLE=$(topdir)/nunit/src/NUnitConsole/NUnitConsole_mono.exe 
-NUNIT_MONO_PATH=$(topdir)/nunit/src/NUnitCore:.
+NUNITCONSOLE=$(topdir)/nunit20/nunit-console.exe
+MONO_PATH = $(topdir)/nunit20:.
 
 test: $(LIBRARY) run_test
 
 .PHONY: run_test
 
 run_test:
-	MONO_PATH=$(NUNIT_MONO_PATH) mono $(NUNITCONSOLE) $(TEST_SUITE_PREFIX)$(TEST_SUITE),dslib_linux_test.dll
+        -MONO_PATH=$(MONO_PATH) mono --debug $(NUNITCONSOLE) $(LIBRARY)

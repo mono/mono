@@ -1,10 +1,2 @@
---target library
--o dslib_linux_test.dll
---noconfig
--r ../../lib/Mono.Directory.LDAP.dll
--r ../../lib/corlib.dll
--r ../../lib/System.dll
--r ../../../nunit/NUnitCore_mono.dll
 Mono.Directory.LDAP/BindSimpleTest.cs
-Mono.Directory.LDAP/QueryRootDSE.cs
-Mono.Directory.LDAP/AllTests.cs
+Mono.Directory.LDAP/QueryRootDSETest.cs

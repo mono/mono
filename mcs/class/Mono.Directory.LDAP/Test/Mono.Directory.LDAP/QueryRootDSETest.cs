@@ -1,3 +1,4 @@
+// QueryRootDSETest.cs
 
 using NUnit.Framework;
 using System;
@@ -5,26 +6,18 @@ using Mono.Directory.LDAP;
 
 namespace MonoTests.Directory.LDAP
 {
-	public class QueryRootDSE : TestCase {
-		public QueryRootDSE () :
-			base ("[MonoTests.Directory.LDAP.QueryRootDSE]'") {}
+	[TestFixture]
+	public class QueryRootDSETest {
 
-		public QueryRootDSE (string name) :
-			base (name) {}
+		[SetUp]
+		public void GetReady () {}
 
-		protected override void SetUp () {}
+		[TearDown]
+		public void Clear () {}
 
-		protected override void TearDown () {}
-
-		public static ITest Suite
+		[Test]
+		public void Stuff() 
 		{
-			get {
-				return new TestSuite (typeof (QueryRootDSE));
-			}
-		}
-		
-
-		public void TestStuff() {
 			string myLDAPPath = "ldap://ldap.toshok.org";
 			try {
 				LDAP ld = new LDAP (myLDAPPath);

@@ -61,7 +61,7 @@ namespace Mono.Directory.LDAP
 
 		public int StartTLS () {
 			// FIXME should expose client/server ctrls
-			return ldap_start_tls_s (ld, (IntPtr)null, (IntPtr)null);
+			return ldap_start_tls_s (ld, IntPtr.Zero, IntPtr.Zero);
 		}
 
 		public int Search (string      base_entry,
@@ -92,10 +92,9 @@ namespace Mono.Directory.LDAP
 		  return rv;
 		}
 				   
-
 		public void Unbind () {
 			// FIXME should expose client/server ctrls
-			ldap_unbind_ext_s (ld, (IntPtr)null, (IntPtr)null);
+			ldap_unbind_ext_s (ld, IntPtr.Zero, IntPtr.Zero);
 			// FIXME throw something here if ldap_unbind_ext_s returns an error
 		}
 

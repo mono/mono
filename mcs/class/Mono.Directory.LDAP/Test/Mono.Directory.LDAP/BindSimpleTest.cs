@@ -1,3 +1,4 @@
+// BindSimpleTest.cs 
 
 using NUnit.Framework;
 using System;
@@ -5,26 +6,18 @@ using Mono.Directory.LDAP;
 
 namespace MonoTests.Directory.LDAP
 {
-	public class BindSimpleTest : TestCase {
-		public BindSimpleTest () :
-			base ("[MonoTests.Directory.LDAP.BindSimpleTest]'") {}
+	[TestFixture]
+	public class BindSimpleTest {
 
-		public BindSimpleTest (string name) :
-			base (name) {}
+		[SetUp]
+		public void GetReady () {}
 
-		protected override void SetUp () {}
+		[TearDown]
+		public void Clear () {}
 
-		protected override void TearDown () {}
-
-		public static ITest Suite
+		[Test]
+		public void Stuff() 
 		{
-			get {
-				return new TestSuite (typeof (BindSimpleTest));
-			}
-		}
-		
-
-		public void TestStuff() {
 			string myLDAPPath = "ldap://ldap.toshok.org";
 			string username = "cn=Manager,dc=toshok,dc=org", passwd = "evotest";
 			try {
