@@ -1,3 +1,7 @@
+2004-04-30  Todd Berman  <tberman@sevenl.net>
+
+	* Npgsql/AssemblyInfo.cs: use the proper path to the .pub file
+
 2004-04-30  Duncan Mak  <duncan@ximian.com>
 
 	* Npgsql/AssemblyInfo.cs: Enable delay signing, using Npgsql.pub.

@@ -61,4 +61,4 @@ using System.Runtime.CompilerServices;
 // to do.
 //
 [assembly: AssemblyDelaySign (true)]
-[assembly: AssemblyKeyFile ("Npgsql.pub")]
+[assembly: AssemblyKeyFile ("Npgsql/Npgsql.pub")]
