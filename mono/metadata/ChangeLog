@@ -1,3 +1,9 @@
+2004-10-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* icall.c: Allows the runtime to "share" (when known) the public key
+	token of an assembly. This avoid the need to recalculate the token 
+	(from the public key) in managed code.
+
 2004-10-21  Chris Toshok  <toshok@ximian.com>
 
 	* debug-helpers.c (append_class_name): argh, revert last patch.
