@@ -163,7 +163,17 @@ namespace System {
 		{ 
 			return (value != 0); 
 		}
-
+ 
+		public static bool ToBoolean (char value)
+		{
+			throw new InvalidCastException (Locale.GetText ("Can't convert char to bool"));
+		}
+		
+		public static bool ToBoolean (DateTime value)
+		{
+			throw new InvalidCastException (Locale.GetText ("Can't convert date to bool"));
+		}
+		
 		public static bool ToBoolean (decimal value) 
 		{ 
 			return (value != 0M); 

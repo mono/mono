@@ -1,3 +1,8 @@
+2002-01-03  Kristian Rietveld  <kris@gtk.org>
+
+        * Convert.cs: add non-CLS-compliant ToBoolean methods for char,
+        DateTime and object.
+
 2001-12-30  Nick Drochak  <ndrochak@gol.com>
 
 	* Byte.cs (Parse): Add comments to aid in testing.
