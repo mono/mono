@@ -118,6 +118,48 @@ public class StringReaderTest : TestCase {
 
                 AssertEquals( "Line4", test );
         }
+
+        public void TestClose() {
+        	
+        	StringReader reader = new StringReader("reader");
+        	reader.Close ();
+        	
+        	try {
+        		reader.Read ();
+        		Fail();
+        	} catch (Exception e) {
+        		AssertEquals ("Close 1", typeof (ObjectDisposedException), e.GetType ());
+        	}
+        	
+        	try {
+        		reader.Peek ();
+        		Fail ();
+        	} catch (Exception e) {
+        		AssertEquals ("Close 2", typeof (ObjectDisposedException), e.GetType ());        		             
+        	}        	
+        }
+        
+        public void TestExceptions() {
+        	
+        	StringReader reader;
+        	
+        	try {
+	        	reader = new StringReader(null);
+        		Fail ();
+        	} catch (Exception e) {
+        		AssertEquals ("Exception 1", typeof (ArgumentNullException), e.GetType ());
+        	}
+        	
+        	reader = new StringReader ("this is a test\nAnd nothing else");
+		
+		try {
+			reader.Read (null, 0, 12);
+			Fail ();
+		} catch (Exception e) {
+			AssertEquals ("Exception 2", typeof (ArgumentNullException), e.GetType ());
+		}        		
+        }
+
 }
 
 }

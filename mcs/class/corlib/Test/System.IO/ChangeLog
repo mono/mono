@@ -1,5 +1,9 @@
 2003-04-11  Ville Palo <vi64pa@kolumbus.fi>
 
+	* StringReaderTest.cs: Tests for close and some exceptions
+	
+2003-04-11  Ville Palo <vi64pa@kolumbus.fi>
+
 	* StringWriterTest.cs: Added some Exception tests.
 	
 2003-04-10  Ville Palo <vi64pa@kolumbus.fi>
