@@ -1,4 +1,8 @@
 
+Wed Feb 20 22:10:48 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* dump.c: fix the fix and more complete custom attribute decoder.
+
 Tue Feb 19 20:20:15 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* dump.c: the prolog is before each arg in the custom attribute blob.
