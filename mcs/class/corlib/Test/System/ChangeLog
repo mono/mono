@@ -1,3 +1,8 @@
+2005-01-10  Nick Drochak  <ndrochak@ieee.org>
+
+	* ConvertTest.cs: Test for exception thrown by 1.1. This is different
+	than the MSDN docs say.  Probably a doc bug.
+
 2005-01-08  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AppDomainTest.cs: Un-ignore tests that unloaded the appdomain (they
