@@ -295,16 +295,29 @@ namespace Mono.Security.Cryptography {
 			//	digestAlgorithm AlgorithmIdentifier,
 			//	digest OCTET STRING
 			// }
-			string oid = CryptoConfig.MapNameToOID (hash.ToString ());
-			ASN1 digestAlgorithm = new ASN1 (0x30);
-			digestAlgorithm.Add (new ASN1 (CryptoConfig.EncodeOID (oid)));
-			digestAlgorithm.Add (new ASN1 (0x05));			// NULL
-			ASN1 digest = new ASN1 (0x04, hashValue);
-			ASN1 digestInfo = new ASN1 (0x30);
-			digestInfo.Add (digestAlgorithm);
-			digestInfo.Add (digest);
+		
+			byte[] t = null;
 
-			byte[] t = digestInfo.GetBytes ();
+			string oid = CryptoConfig.MapNameToOID (hash.ToString ());
+			if (oid != null)
+			{
+				ASN1 digestAlgorithm = new ASN1 (0x30);
+				digestAlgorithm.Add (new ASN1 (CryptoConfig.EncodeOID (oid)));
+				digestAlgorithm.Add (new ASN1 (0x05));		// NULL
+				ASN1 digest = new ASN1 (0x04, hashValue);
+				ASN1 digestInfo = new ASN1 (0x30);
+				digestInfo.Add (digestAlgorithm);
+				digestInfo.Add (digest);
+
+				t = digestInfo.GetBytes ();
+			}
+			else
+			{
+				// There are no valid OID, in this case t = hashValue
+				// This is the case of the MD5SHA hash algorithm
+				t = hashValue;
+			}
+
 			Array.Copy (hashValue, 0, t, t.Length - hashValue.Length, hashValue.Length);
 	
 			int PSLength = System.Math.Max (8, emLength - t.Length - 3);

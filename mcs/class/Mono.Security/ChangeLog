@@ -1,5 +1,10 @@
 2004-02-10 Carlos Guzmán Álvarez  <carlosga@telefonica.net>
 
+    * Mono.Security.Cryptography/PKCS1.cs:
+
+        - Added little change for allow the class to be used with
+        hash implementations that doesn't have an oid like the MD5SHA1 hash.
+
     * Mono.Security.Protocol.Tls.Handshake.Client/TlsClientCertificateVerify.cs:
 
         - Throw exception if the Private Key is null.

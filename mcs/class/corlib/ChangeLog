@@ -1,3 +1,10 @@
+2004-02-10 Carlos Guzmán Álvarez  <carlosga@telefonica.net>
+
+    * Mono.Security.Cryptography/PKCS1.cs:
+
+        - Added little change for allow the class to be used with
+        hash implementations that doesn't have an oid like the MD5SHA1 hash.
+
 2004-02-06  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* corlib.dll.sources: Moved SymmetricTransform class from System.
