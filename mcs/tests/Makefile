@@ -40,7 +40,7 @@ TEST_SOURCES = \
 # C# 2.0 tests 
 #
 TEST2_SOURCES = \
-	2test-1 2test-2 2test-3
+	2test-1 2test-2 2test-3 2test-4
 
 UNSAFE_SOURCES = \
 	unsafe-1 unsafe-2 unsafe-3 test-58 test-171 unsafe-5 unsafe-6
