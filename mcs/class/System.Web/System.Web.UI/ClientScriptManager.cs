@@ -95,7 +95,7 @@ namespace System.Web.UI
 			}
 			
 			if (options.ActionUrl != null)
-				RegisterHiddenField (page.PreviousPageID, page.Request.FilePath);
+				RegisterHiddenField (Page.PreviousPageID, page.Request.FilePath);
 			
 			if (options.ClientSubmit || options.ActionUrl != null)
 				page.RequiresPostBackScript ();

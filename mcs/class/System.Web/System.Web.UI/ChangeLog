@@ -1,3 +1,7 @@
+2005-03-16  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* ClientScriptManager.cs: Fix build.
+
 2005-03-11  Lluis Sanchez Gual <lluis@novell.com>
 
 	* Utils.cs, Control.cs: Don't use Page.GetPostBackClientEvent
@@ -514,7 +518,7 @@
 2004-06-02  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HtmlTextWriter.cs: render end tag for unknown tags.
-	Patch frmo Markus Kräutner. Fixes bug #59466.
+	Patch frmo Markus Krutner. Fixes bug #59466.
 
 2004-05-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
@@ -959,7 +963,7 @@
 	* System.Web.UI/TemplateControl.cs: support for wiring up events without
 	parameters.
 
-2003-10-08  Pedro Martínez Juliá  <yoros@wanadoo.es>
+2003-10-08  Pedro Martnez Juli  <yoros@wanadoo.es>
 
 	* PageParser.cs: drop some useless code.
 
