@@ -91,6 +91,7 @@ namespace MonoTests.System.XmlSerialization
 		}
 		
 		[Test]
+		[Category("NotDotNet")]
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void DeserializeEmptyPrivateCollection ()
 		{

@@ -22,7 +22,8 @@ namespace MonoTests.System.XmlSerialization
 	public class ComplexDataStructure: Assertion
 	{
 		[Test]
-		public void TestWriteLiteral ()
+		[NUnit.Framework.Category("NotDotNet")]
+		public void WriteLiteral ()
 		{
 			Test data = BuildTestObject ();
 
@@ -41,7 +42,9 @@ namespace MonoTests.System.XmlSerialization
 			AssertEquals (expected, serialized);
 		}
 		
-		public void TestReadLiteral ()
+		[Test]
+		[NUnit.Framework.Category("NotDotNet")]
+		public void ReadLiteral ()
 		{
 			XmlSerializer ss = new XmlSerializer (GetLiteralTypeMapping ());
 			XmlSerializerNamespaces nams = new XmlSerializerNamespaces ();

@@ -1,3 +1,8 @@
+2005-01-30  Nick Drochak  <ndrochak@ieee.org>
+
+	* ComplexDataStructure.cs:
+	* DeserializationTests.cs: Ignore failures on .NET
+
 2004-09-02  Lluis Sanchez Gual <lluis@novell.com>
 
 	* XmlSerializerTestClasses.cs: Added some test classes.
