@@ -91,6 +91,7 @@ System.Data/VersionNotFoundException.cs
 System.Data/XmlReadMode.cs
 System.Data/XmlWriteMode.cs
 System.Data/XmlConstants.cs
+System.Data/XmlDiffLoader.cs
 System.Data.Common/DataAdapter.cs
 System.Data.Common/DataColumnMapping.cs
 System.Data.Common/DataColumnMappingCollection.cs
