@@ -73,12 +73,14 @@ namespace System.ComponentModel
 
 		protected Attribute GetDefaultAttribute (Type attributeType)
 		{
-			Attribute attr;
+			Attribute attr = null;
 			BindingFlags bf = BindingFlags.Public | BindingFlags.Static;
 
 			FieldInfo def = attributeType.GetField ("Default", bf);
 			if (def == null) {
-				attr = Activator.CreateInstance (attributeType) as Attribute;
+				ConstructorInfo constructorInfo = attributeType.GetConstructor (Type.EmptyTypes);
+				if (constructorInfo != null)
+					attr = constructorInfo.Invoke (null) as Attribute;
 				if (attr != null && !attr.IsDefaultAttribute ())
 					attr = null;
 			} else {
