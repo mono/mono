@@ -300,6 +300,22 @@ namespace System.Reflection {
 			throw new NotImplementedException ();
 		}
 
+#if NET_1_1
+		[MonoTODO]
+		public static Assembly LoadFile (String path, Evidence securityEvidence) {
+			if (path == null)
+				throw new ArgumentNullException ("path");
+			if (path == String.Empty)
+				throw new ArgumentException ("Path can't be empty", "path");
+			// FIXME: Make this do the right thing
+			return LoadFrom (path, securityEvidence);
+		}
+
+		public static Assembly LoadFile (String path) {
+			return LoadFile (path, null);
+		}
+#endif
+
 		public static Assembly Load (String assemblyString)
 		{
 			return AppDomain.CurrentDomain.Load (assemblyString);
