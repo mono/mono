@@ -1,5 +1,9 @@
 2004-04-30  Todd Berman  <tberman@sevenl.net>
 
+	* gacutil.cs: cleanup help.
+
+2004-04-30  Todd Berman  <tberman@sevenl.net>
+
 	* gacutil.cs: remove /prefix, now --root and /root
 
 2004-04-30  Todd Berman  <tberman@sevenl.net>

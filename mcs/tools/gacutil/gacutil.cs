@@ -61,6 +61,7 @@ namespace Mono.Tools
 	
 			switch (args[0]) {
 			case "/?":
+			case "-?":
 			case "--help":
 				ShowHelp (true);
 				return 0;
@@ -347,7 +348,7 @@ namespace Mono.Tools
 
 			sb.Append ("Usage: gacutil.exe <commands> [ <options> ]\n");
 			sb.Append ("Commands:\n");
-			sb.Append ("  -i <assembly_path> [ -f ] [ -root ROOTDIR]\n");
+			sb.Append ("  -i <assembly_path> [ -f ] [ --root ROOTDIR]\n");
 			if (detailed == false) {
 				sb.Append ("    Installs an assembly into the global assembly cache\n");
 			} else {
@@ -370,7 +371,7 @@ namespace Mono.Tools
 
 			sb.Append ("\n");
 
-			sb.Append ("  /u <assembly_display_name>\n");
+			sb.Append ("  -u <assembly_display_name>\n");
 			if (detailed == false) {
 				sb.Append ("    Uninstalls an assembly from the global assembly cache\n");
 			} else {
@@ -381,7 +382,7 @@ namespace Mono.Tools
 
 			sb.Append ("\n");
 
-			sb.Append ("  /ul <assembly_display_name_list_file>\n");
+			sb.Append ("  -ul <assembly_display_name_list_file>\n");
 			if (detailed == false) {
 				sb.Append ("    Uninstalls one or more assemblies from the global assembly cache\n");
 			} else {
@@ -394,7 +395,7 @@ namespace Mono.Tools
 
 			sb.Append ("\n");
 
-			sb.Append ("  /l\n");
+			sb.Append ("  -l\n");
 			if (detailed == false) {
 				sb.Append ("    List the global assembly cache\n");
 			} else {
@@ -403,7 +404,7 @@ namespace Mono.Tools
 
 			sb.Append ("\n");
 
-			sb.Append ("  /?\n");
+			sb.Append ("  -?\n");
 			if (detailed == false) {
 				sb.Append ("    Displays a detailed help screen\n");
 			} else {
@@ -414,7 +415,7 @@ namespace Mono.Tools
 
 			if (detailed == true) {
 				sb.Append ("Options:\n");
-				sb.Append ("  /f\n");
+				sb.Append ("  -f\n");
 				sb.Append ("    Forces reinstall of assembly, resets reference count\n");
 				sb.Append ("\n");
 				sb.Append ("\n");
