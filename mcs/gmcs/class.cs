@@ -836,48 +836,20 @@ namespace Mono.CSharp {
 
 			error = false;
 
-			if (Kind == Kind.Struct)
-				parent = TypeManager.system_valuetype_expr;
-			else
-				parent = null;
-
 			TypeExpr[] ifaces;
-			TypeExpr new_parent;
 
 			if (parts != null)
-				ifaces = GetPartialBases (out new_parent, out error);
+				ifaces = GetPartialBases (out parent, out error);
 			else if (Bases == null){
-				if (Kind == Kind.Class){
-					if (RootContext.StdLib)
-						parent = TypeManager.system_object_expr;
-					else if (Name != "System.Object")
-						parent = TypeManager.system_object_expr;
-				} else {
-					//
-					// If we are compiling our runtime,
-					// and we are defining ValueType, then our
-					// parent is `System.Object'.
-					//
-					if (!RootContext.StdLib && Name == "System.ValueType")
-						parent = TypeManager.system_object_expr;
-				}
-
+				parent = null;
 				return null;
 			} else
-				ifaces = GetNormalBases (out new_parent, out error);
+				ifaces = GetNormalBases (out parent, out error);
 
 			if (error)
 				return null;
 
-			//
-			// Bases should be null if there are no bases at all
-			//
-			if (Kind == Kind.Class){
-				if (new_parent != null)
-					parent = new_parent;
-				else
-					parent = TypeManager.system_object_expr;
-
+			if ((parent != null) && (Kind == Kind.Class)){
 				if (parent is TypeParameterExpr){
 					Report.Error (
 						689, parent.Location,
@@ -1034,9 +1006,27 @@ namespace Mono.CSharp {
 			ec = new EmitContext (this, Mono.CSharp.Location.Null, null, null, ModFlags);
 
 			ifaces = GetClassBases (out parent_type, out error); 
-
 			if (error)
 				return null;
+
+			if (parent_type == null) {
+				if (Kind == Kind.Class){
+					if (RootContext.StdLib)
+						parent_type = TypeManager.system_object_expr;
+					else if (Name != "System.Object")
+						parent_type = TypeManager.system_object_expr;
+				} else {
+					//
+					// If we are compiling our runtime,
+					// and we are defining ValueType, then our
+					// parent is `System.Object'.
+					//
+					if (!RootContext.StdLib && Name == "System.ValueType")
+						parent_type = TypeManager.system_object_expr;
+					else if (Kind == Kind.Struct)
+						parent_type = TypeManager.system_valuetype_expr;
+				}
+			}
 
 			if (IsGeneric) {
 				foreach (TypeParameter type_param in TypeParameters)
