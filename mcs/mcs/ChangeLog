@@ -1,3 +1,11 @@
+2005-02-22  Marek Safar  <marek.safar@seznam.cz>
+
+	* expression.cs.cs (ConditionalLogicalOperator.DoResolve):
+	Fixed error 217.
+	
+	* class.cs (MethodCore.CheckMethodAgainstBase):
+	Add error 239 report.
+
 2005-02-21  Raja R Harinath  <rharinath@novell.com>
 
 	Fix #68955.

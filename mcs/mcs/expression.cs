@@ -3339,8 +3339,14 @@ namespace Mono.CSharp {
 			method = Invocation.OverloadResolve (
 				ec, (MethodGroupExpr) operator_group, arguments, false, loc)
 				as MethodInfo;
-			if ((method == null) || (method.ReturnType != type)) {
+			if (method == null) {
 				Error19 ();
+				return null;
+			}
+
+			if (method.ReturnType != type) {
+				Report.Error (217, loc, "In order to be applicable as a short circuit operator a user-defined logical operator ('{0}') " +
+						"must have the same return type as the type of its 2 parameters", TypeManager.CSharpSignature (method));
 				return null;
 			}
 
