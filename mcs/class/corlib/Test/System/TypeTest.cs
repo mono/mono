@@ -26,6 +26,17 @@ namespace MonoTests.System
 	class Duper: Super {
 	}
 
+	interface IFace1 {
+		void foo ();
+    }
+
+	interface IFace2 : IFace1 {
+		void bar ();
+    }
+
+	interface IFace3 : IFace2 {
+	}
+
 	enum TheEnum { A, B, C };
 
 	abstract class Base {
@@ -188,6 +199,16 @@ namespace MonoTests.System
 		[Test]
 		public void Namespace () {
 			AssertEquals (null, typeof (NoNamespaceClass).Namespace);
+		}
+
+		[Test]
+		public void GetInterfaces () {
+			Type[] t = typeof (Duper).GetInterfaces ();
+			AssertEquals (1, t.Length);
+			AssertEquals (typeof (ICloneable), t [0]);
+
+			Type[] t2 = typeof (IFace3).GetInterfaces ();
+			AssertEquals (2, t2.Length);
 		}
 	}
 }

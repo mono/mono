@@ -1,3 +1,7 @@
+2004-10-06  Zoltan Varga  <vargaz@freemail.hu>
+
+	* TypeTest.cs: Add tests for GetInterfaces ().
+
 2004-10-05  Zoltan Varga  <vargaz@freemail.hu>
 
 	* TypeTest.cs: Add test for empty namespaces.
