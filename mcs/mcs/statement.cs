@@ -3,6 +3,7 @@
 //
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
+//   Martin Baulig (martin@gnome.org)
 //
 // (C) 2001, 2002 Ximian, Inc.
 //
