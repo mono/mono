@@ -133,7 +133,7 @@ install-local: $(gacutil)
 	$(GACUTIL) /i $(the_lib) /f $(gacdir_flag) /root $(GACROOT) /package $(FRAMEWORK_VERSION)
 
 uninstall-local: $(gacutil)
-	$(GACUTIL) /u $(LIBRARY_NAME:.dll=)
+	-$(GACUTIL) /u $(LIBRARY_NAME:.dll=) $(gacdir_flag) /root $(GACROOT) /package $(FRAMEWORK_VERSION)
 
 endif
 endif

@@ -1,3 +1,7 @@
+2004-12-07  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (DISTFILES): Add expected error and ignored test lists.
+
 2004-12-07  Martin Baulig  <martin@ximian.com>
 
 	* gcs0305.cs: Renamed to cs0246-2.cs.

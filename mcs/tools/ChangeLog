@@ -1,3 +1,7 @@
+2004-12-07  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (run-test-ondotnet-local, uninstall-local): New.
+
 2004-11-22  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (net_1_1_bootstrap_SUBDIRS): Add 'security' directory.

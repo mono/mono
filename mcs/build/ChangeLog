@@ -1,5 +1,10 @@
 2004-12-07  Raja R Harinath  <rharinath@novell.com>
 
+	* executable.make (uninstall-local): Remove .config file too.
+	* library.make (uninstall-local): Don't error out if GACUTIL fails.
+
+2004-12-07  Raja R Harinath  <rharinath@novell.com>
+
 	* library.make (BUILT_SOURCES_cmdline): Use
 	PLATFORM_CHANGE_SEPARATOR_CMD on BUILT_SOURCES too.
 	($(the_lib)): Use it.

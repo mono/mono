@@ -1,3 +1,9 @@
+2004-12-07  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (DISTFILES): Distribute *.inc files too.
+	(with_mono_path): New.
+	(casts.cs, boot-casts.out, mcs-casts.out): Use it.
+
 2004-12-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Makefile: was missing in the previous commit. Also, moved xml-033 to

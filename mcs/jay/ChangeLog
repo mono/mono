@@ -1,3 +1,7 @@
+2004-12-07  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (uninstall-local): Remove $(prefix)/man/man1/jay.1.
+
 2004-11-24  Miguel de Icaza  <miguel@ximian.com>
 
 	* skeleton.cs: use yacc_verbose_flag to control verbosity.

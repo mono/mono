@@ -7,15 +7,16 @@ thisdir = tests
 SUBDIRS = 
 include ../build/rules.make
 
-DISTFILES = README.tests harness.mk $(wildcard *.cs) $(wildcard *.il) $(wildcard *.xml)
+DISTFILES = README.tests harness.mk $(wildcard *.cs) $(wildcard *.il) $(wildcard *.xml) $(wildcard *.inc)
+
+with_mono_path = MONO_PATH="$(topdir)/class/lib/$(PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH"
 
 ifeq (default, $(PROFILE))
 # force this, we don't case if CSC is broken. This also
 # means we can use --options, yay.
-
-MCS = MONO_PATH="$(topdir)/class/lib/$(PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(INTERNAL_MCS)
+MCS = $(with_mono_path) $(INTERNAL_MCS)
 endif
-ILASM = MONO_PATH="$(topdir)/class/lib/$(PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(INTERNAL_ILASM)
+ILASM = $(with_mono_path) $(INTERNAL_ILASM)
 
 # We don't want debugging info :-)
 
@@ -138,7 +139,7 @@ bootstrap-cast.exe: gen-cast-test.cs
 	$(BOOT_COMPILE) -target:exe /out:$@ $<
 
 casts.cs: bootstrap-cast.exe
-	$(RUNTIME) $< >$@
+	$(with_mono_path) $(RUNTIME) $< >$@
 
 casts-mcs.exe: casts.cs
 	$(CSCOMPILE) -target:exe /out:$@ $<
@@ -147,10 +148,10 @@ casts-boot.exe: casts.cs
 	$(BOOT_COMPILE) -target:exe /out:$@ $<
 
 boot-casts.out: casts-boot.exe
-	$(RUNTIME) $< >$@
+	$(with_mono_path) $(RUNTIME) $< >$@
 
 mcs-casts.out: casts-mcs.exe
-	$(RUNTIME) $< >$@
+	$(with_mono_path) $(RUNTIME) $< >$@
 
 test-casts: boot-casts.out mcs-casts.out
 	cmp $^

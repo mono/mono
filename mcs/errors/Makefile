@@ -22,7 +22,10 @@ DISTFILES = \
 	fail			\
 	runtest.pl		\
 	do-tests.pl		\
-	$(wildcard *.cs)
+	$(wildcard *.cs)	\
+	mcs-expect-no-error mcs-expect-wrong-error mcs-ignore-tests \
+	gmcs-expect-no-error gmcs-expect-wrong-error gmcs-ignore-tests \
+	generics-expect-no-error generics-expect-wrong-error
 
 #all-local: run-test-local test-multi-local
 all-local: CS0571-3-lib.dll CS0618-2-lib.dll \
