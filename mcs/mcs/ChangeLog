@@ -1,7 +1,18 @@
+2003-05-27  Ravi Pratap  <ravi@ximian.com>
+
+	* expression.cs (ArrayAccess.GetStoreOpCode): For System.IntPtr,
+	we use the stobj opcode.
+
+	(ArrayCreation.EmitDynamicInitializers): Revert Miguel's patch
+	since it wasn't the correct fix. 
+
+	It still is puzzling that we are required to use stobj for IntPtr
+	which seems to be a ValueType.
+
 2003-05-26  Miguel de Icaza  <miguel@ximian.com>
 
 	* ecore.cs (SimpleName.SimpleNameResolve): Consider using aliases
-	during regtular simple name resolution.   Now, the trick is that
+	during regular simple name resolution.   Now, the trick is that
 	instead of returning for processing the simplename, we do a
 	TypeManager.LookupType (ie, a rooted lookup as opposed to a
 	contextual lookup type).   If a match is found, return that, if
