@@ -1,5 +1,8 @@
 2004-08-03  Sebastien Pouliot  <sebastien@ximian.com>
 
+	* corlib.dll.sources: Added PermissionSetCollection and SecureString
+	in System.Security. Moved CriticalFinalizerObject to System.Runtime.
+	ConstrainedExecution.
 	* corlib_test.dll.sources: Added /Test/System.Security.Permissions/
 	ZoneIdentityPermissionTest.cs to unit tests.
 
