@@ -154,8 +154,9 @@ namespace Mono.CSharp.Debugger
 	public class SourceFileEntry
 	{
 		public readonly string SourceFile;
-		public readonly MethodSourceEntry[] Methods = null;
 
+		IMonoBinaryReader reader;
+		long method_position;
 		ArrayList methods;
 		int count;
 
@@ -191,9 +192,30 @@ namespace Mono.CSharp.Debugger
 			SourceFile = Encoding.UTF8.GetString (name);
 
 			count = reader.ReadInt32 ();
-			Methods = new MethodSourceEntry [count];
+			this.reader = reader;
+			this.method_position = reader.Position;
+
+			reader.Position += count * MethodSourceEntry.Size;
+		}
+
+		public MethodSourceEntry[] Methods {
+			get {
+				read_methods ();
+				MethodSourceEntry[] retval = new MethodSourceEntry [methods.Count];
+				methods.CopyTo (retval, 0);
+				return retval;
+			}
+		}
+
+		void read_methods ()
+		{
+			if (methods != null)
+				return;
+
+			reader.Position = method_position;
+			methods = new ArrayList ();
 			for (int i = 0; i < count; i++)
-				Methods [i] = new MethodSourceEntry (reader);
+				methods.Add (new MethodSourceEntry (reader));
 		}
 
 		public override string ToString ()
@@ -202,7 +224,7 @@ namespace Mono.CSharp.Debugger
 		}
 	}
 
-	public class MethodSourceEntry : IComparable
+	public struct MethodSourceEntry : IComparable
 	{
 		public readonly int Index;
 		public readonly int FileOffset;
@@ -223,6 +245,13 @@ namespace Mono.CSharp.Debugger
 			FileOffset = reader.ReadInt32 ();
 			StartRow = reader.ReadInt32 ();
 			EndRow = reader.ReadInt32 ();
+		}
+
+		public static int Size
+		{
+			get {
+				return 16;
+			}
 		}
 
 		internal void Write (BinaryWriter bw)

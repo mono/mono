@@ -1,5 +1,11 @@
 2002-10-13  Martin Baulig  <martin@gnome.org>
 
+	* MonoSymbolTable.cs: Set version number to 28.
+	(SourceFileEntry): Read the methods when they're needed.
+	(MethodSourceEntry): Made this a struct, not a class.
+
+2002-10-13  Martin Baulig  <martin@gnome.org>
+
 	* MonoSymbolTable.cs: Set version number to 27.  Added a source
 	file table which is used to search a method by source file + line number.
 
