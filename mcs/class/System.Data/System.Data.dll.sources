@@ -270,6 +270,7 @@ System.Data.SqlClient/SqlInfoMessageEventHandler.cs
 System.Data.SqlClient/SqlParameter.cs
 System.Data.SqlClient/SqlParameterCollection.cs
 System.Data.SqlClient/SqlParameterConverter.cs
+System.Data.SqlClient/SqlResultSet.cs
 System.Data.SqlClient/SqlRowUpdatedEventArgs.cs
 System.Data.SqlClient/SqlRowUpdatedEventHandler.cs
 System.Data.SqlClient/SqlRowUpdatingEventArgs.cs
