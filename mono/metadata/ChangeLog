@@ -1,3 +1,8 @@
+2002-02-22  Dietmar Maurer  <dietmar@ximian.com>
+
+	* object.c (mono_object_isinst): fix for arrays
+
+	* icall.c (ves_icall_type_is_subtype_of): fix for 2 interfaces
 
 Thu Feb 21 21:00:13 CET 2002 Paolo Molaro <lupus@ximian.com>
 
