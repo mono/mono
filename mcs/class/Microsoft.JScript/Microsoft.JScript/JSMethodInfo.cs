@@ -28,17 +28,27 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System;
+using System.Reflection;
+using System.Globalization;
 
-namespace Microsoft.JScript.Tmp
-{
-	using System;
-	using System.Reflection;
-	using System.Globalization;
+namespace Microsoft.JScript {
 	
-	public sealed class JSMethodInfo : MethodInfo
-	{
+	public sealed class JSMethodInfo : MethodInfo {
+
+		string name;
+		MethodAttributes attrs;
+
+		MethodInfo method;
+
+		internal JSMethodInfo (string name, MethodInfo method)
+		{
+			this.name = name;
+			this.method = method;
+		}
+
 		public override MethodAttributes Attributes {
-			get { throw new NotImplementedException (); }
+			get { return attrs; }
 		}
 
 
@@ -49,7 +59,7 @@ namespace Microsoft.JScript.Tmp
 
 		public override MethodInfo GetBaseDefinition ()
 		{
-			throw new NotImplementedException ();
+			return this;
 		}
 
 	
