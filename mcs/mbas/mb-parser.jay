@@ -1764,14 +1764,20 @@ field_declaration
 	;
 	
 withevents_declaration
-	: WITHEVENTS variable_declarators EOL
+	: opt_dim_stmt WITHEVENTS variable_declarators EOL
 	  {
+		// Module members are static by default, but delegates *can't* be declared static
+		// so we must fix it, if mbas was the one actually responsible for this
+		// instead of triggering an error.
+		if (implicit_modifiers && ((current_modifiers & Modifiers.STATIC) != 0))
+			current_modifiers = (current_modifiers & ~Modifiers.STATIC);
+	  
 	  	/* WithEvents Fields must be resolved into properties
 	  	   with a bit of magic behind the scenes */
 	  	  
-	  	VariableDeclaration.FixupTypes ((ArrayList) $2);
+	  	VariableDeclaration.FixupTypes ((ArrayList) $3);
 	  	
-		foreach (VariableDeclaration var in (ArrayList) $2) {
+		foreach (VariableDeclaration var in (ArrayList) $3) {
 			// 1 - We create a private field
 			Location l = var.Location;
 			Property prop;
@@ -1781,7 +1787,7 @@ withevents_declaration
 			Field field = new Field (var.type, Modifiers.PRIVATE, "_" + var.identifier, 
 						 var.expression_or_array_initializer, 
 						 (Attributes) null, l);
-
+						 
 			CheckDef (current_container.AddField (field), field.Name, l);	
 			
 			// 2 - Public property
