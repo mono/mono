@@ -33,12 +33,12 @@ All Classes, Interfaces, Structures, Delegates and Enumerations
 * CommandEventArgs
 & CompareValidator
 CustomValidator
-DataGrid
+& DataGrid
 DataGridColumn
 DataGridColumnCollection
 * DataGridCommandEventArgs
-DataGridItem
-DataGridItemCollection
+& DataGridItem
+* DataGridItemCollection
 * DataGridItemEventArgs
 * DataGridPageChangedEventArgs
 DataGridPagerStyle
