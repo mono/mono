@@ -12,12 +12,12 @@ using System;
 namespace System.Messaging 
 {
 	internal class MonoTODOAttribute : Attribute 
-	{
-		public string Description;
+	{		
+
 		
-		public MonoTODOAttribute(string description)
+		public MonoTODOAttribute (string comment)
 		{
-			Description = description;
+			this.comment = comment;
 		}
 		
 		public MonoTODOAttribute() {}

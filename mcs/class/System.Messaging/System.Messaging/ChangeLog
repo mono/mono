@@ -1,3 +1,9 @@
+2004-06-03  Duncan Mak  <duncan@ximian.com>
+
+	* MonoTODO.cs: Remove the Description field and use Comment, this
+	makes it consistent with the other TODOAttributes, and it also
+	fixes the build.
+
 2004-06-02  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* AccessControlEntry.cs: removed extra finalizer
