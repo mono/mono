@@ -2195,7 +2195,7 @@ GC_bool is_ptrfree;
     /* Using vm_protect (mach syscall) over mprotect (BSD syscall) seems to
        decrease the likelihood of some of the problems described below. */
     #include <mach/vm_map.h>
-    extern mach_port_t GC_task_self;
+    static mach_port_t GC_task_self;
     #define PROTECT(addr,len) \
         if(vm_protect(GC_task_self,(vm_address_t)(addr),(vm_size_t)(len), \
                 FALSE,VM_PROT_READ) != KERN_SUCCESS) { \

@@ -1,3 +1,7 @@
+2005-01-23  Geoff Norton  <gnorton@customerdna.com>
+	
+	* os_dir.c: Change GC_task_self to be static everywhere on Darwin.
+	Allows gcc4.0 to compile.
 
 Tue Jan 18 11:19:47 CET 2005 Paolo Molaro <lupus@ximian.com>
 
