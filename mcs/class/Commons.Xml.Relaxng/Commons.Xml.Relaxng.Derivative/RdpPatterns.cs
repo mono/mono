@@ -906,7 +906,7 @@ namespace Commons.Xml.Relaxng.Derivative
 		public override RdpPattern TextDeriv (string s, XmlReader reader)
 		{
 			RdpPattern p = LValue.TextDeriv (s, reader).Group (RValue);
-			return p.Nullable ?
+			return LValue.Nullable ?
 				p.Choice (RValue.TextDeriv(s, reader)) : p;
 		}
 

@@ -1,3 +1,8 @@
+2005-03-01  Atsushi Enomoto <atsushi@ximian.com>
+
+	* RdpPattern.cs : In "textDeriv(group p1 p2) s", "nullable p1" is
+	  incorrectly computed as "nullable p".
+
 2005-02-06  Atsushi Enomoto <atsushi@ximian.com>
 
 	* RdpObjects.cs : provide error type name. removed commented code block.
