@@ -7,7 +7,12 @@ GLIB20_LIB=`pkg-config --libs glib-2.0` `pkg-config --libs gmodule-2.0`
 # GLIB20_LIB_INCLUDE=/usr/lib/glib-2.0/include
 LIBMONO=/usr/local/lib/libmono.a
 SOURCES = \
-	Win32.cs \
+	win32Enums.cs\
+	win32functions.cs\
+	win32Handles.cs\
+	win32Structs.cs\
+	win32RegistryUtil.cs\
+	win32Interfaces.cs\
 	Font.cs \
 	MenuItem.cs \
 	DrawItemEventArgs.cs \
