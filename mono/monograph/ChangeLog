@@ -1,3 +1,8 @@
+2005-02-09  Ben Maurer  <bmaurer@ximian.com>
+
+	* monograph.c (print_method): Don't use method->info, as this will
+	be removed soon.
+
 2005-02-03  Zoltan Varga  <vargaz@freemail.hu>
 
 	* monograph.c: Fix warnings.
