@@ -113,6 +113,7 @@ namespace System {
 			get;
 		}
 
+		[MonoTODO]
 		public bool HasEmelentType {
 			get {return false;} // FIXME
 		}
@@ -304,6 +305,7 @@ namespace System {
 			}
 		}
 
+		[MonoTODO]
 		public override MemberTypes MemberType {
 			get {return MemberTypes.TypeInfo;} // FIXME
 		}
@@ -373,6 +375,7 @@ namespace System {
 			return ret;
 		}
 
+		[MonoTODO]
 		public static TypeCode GetTypeCode( Type type)
 		{
 			// FIXME
@@ -653,6 +656,7 @@ namespace System {
 		protected virtual bool IsContextfulImpl () {
 			return typeof (ContextBoundObject).IsAssignableFrom (this);
 		}
+		[MonoTODO]
 		protected virtual bool IsMarshalByRefImpl () {
 			// FIXME
 			return false;
@@ -762,11 +766,13 @@ namespace System {
 			return result;
 		}
 
+		[MonoTODO]
 		public object InvokeMember( string name, BindingFlags invokeAttr, Binder binder, object target, object[] args) {
 			// FIXME
 			return null;
 		}
 
+		[MonoTODO]
 		public object InvokeMember( string name, BindingFlags invokeAttr, Binder binder, object target, object[] args, CultureInfo culture) {
 			// FIXME
 			return null;
