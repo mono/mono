@@ -1,3 +1,7 @@
+2004-06-30  Zoltan Varga  <vargaz@freemail.hu>
+
+	* inssel.brg: Add ldind_to_load_membase helper function.
+
 2004-06-30  Ben Maurer  <bmaurer@ximian.com>
 
 	* mini.c: OffsetToStringData intrinsic.
