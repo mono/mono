@@ -202,7 +202,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		}
 
 		[Test]
-		public void TestSymmetricHMACSHA1Verify () 
+		public void SymmetricHMACSHA1Verify () 
 		{
 			string value = "<Signature xmlns=\"http://www.w3.org/2000/09/xmldsig#\"><SignedInfo><CanonicalizationMethod Algorithm=\"http://www.w3.org/TR/2001/REC-xml-c14n-20010315\" /><SignatureMethod Algorithm=\"http://www.w3.org/2000/09/xmldsig#hmac-sha1\" /><Reference URI=\"#MyObjectId\"><DigestMethod Algorithm=\"http://www.w3.org/2000/09/xmldsig#sha1\" /><DigestValue>/Vvq6sXEVbtZC8GwNtLQnGOy/VI=</DigestValue></Reference></SignedInfo><SignatureValue>e2RxYr5yGbvTqZLCFcgA2RAC0yE=</SignatureValue><Object Id=\"MyObjectId\"><MyElement xmlns=\"samples\">This is some text</MyElement></Object></Signature>";
 			XmlDocument doc = new XmlDocument ();
@@ -215,6 +215,23 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			HMACSHA1 hmac = new HMACSHA1 (secretkey);
 
 			Assert ("HMACSHA1-CheckSignature(key)", v1.CheckSignature (hmac));
+		}
+
+		[Test]
+		// adapted from http://bugzilla.ximian.com/show_bug.cgi?id=52084
+		public void GetIdElement () 
+		{
+			string value = "<Signature xmlns=\"http://www.w3.org/2000/09/xmldsig#\"><SignedInfo><CanonicalizationMethod Algorithm=\"http://www.w3.org/TR/2001/REC-xml-c14n-20010315\" /><SignatureMethod Algorithm=\"http://www.w3.org/2000/09/xmldsig#rsa-sha1\" /><Reference URI=\"#MyObjectId\"><DigestMethod Algorithm=\"http://www.w3.org/2000/09/xmldsig#sha1\" /><DigestValue>CTnnhjxUQHJmD+t1MjVXrOW+MCA=</DigestValue></Reference></SignedInfo><SignatureValue>dbFt6Zw3vR+Xh7LbM/vuifyFA7gPh/NlDM2Glz/SJBsveISieuTBpZlk/zavAeuXR/Nu0Ztt4OP4tCOg09a2RNlrTP0dhkeEfL1jTzpnVaLHuQbCiwOWCgbRif7Xt7N12FuiHYb3BltP/YyXS4E12NxlGlqnDiFA1v/mkK5+C1o=</SignatureValue><KeyInfo><KeyValue xmlns=\"http://www.w3.org/2000/09/xmldsig#\"><RSAKeyValue><Modulus>hEfTJNa2idz2u+fSYDDG4Lx/xuk4aBbvOPVNqgc1l9Y8t7Pt+ZyF+kkF3uUl8Y0700BFGAsprnhwrWENK+PGdtvM5796ZKxCCa0ooKkofiT4355HqK26hpV8dvj38vq/rkJe1jHZgkTKa+c/0vjcYZOI/RT/IZv9JfXxVWLuLxk=</Modulus><Exponent>EQ==</Exponent></RSAKeyValue></KeyValue></KeyInfo><Object Id=\"MyObjectId\" xmlns=\"http://www.w3.org/2000/09/xmldsig#\"><ObjectListTag xmlns=\"\" /></Object></Signature>";
+
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml (value);
+
+			SignedXml v1 = new SignedXml ();
+			v1.LoadXml (doc.DocumentElement);
+			Assert ("CheckSignature", v1.CheckSignature ());
+
+			XmlElement xel = v1.GetIdElement (doc, "MyObjectId");
+			Assert ("GetIdElement", xel.InnerXml.StartsWith ("<ObjectListTag"));
 		}
 	}
 }

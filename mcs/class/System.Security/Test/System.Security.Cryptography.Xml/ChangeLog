@@ -1,3 +1,9 @@
+2003-12-14  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* SignedXmlTest.cs: Added a new unit test to verify both bugs (no
+	key assigned on verification and GetElementId) found when fixing 
+	#52084.
+
 2003-07-28  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* XmlDsigC14NTransformTest.cs: Corrected test for .NET 1.1 (that was a 
