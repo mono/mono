@@ -16,6 +16,7 @@ using System.ComponentModel.Design;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Collections;
+using System.Threading;
 
 namespace System.Diagnostics {
 	[DefaultEvent ("Exited"), DefaultProperty ("StartInfo")]
@@ -36,6 +37,7 @@ namespace System.Diagnostics {
 		
 		IntPtr process_handle;
 		int pid;
+		bool enableRaisingEvents;
 		
 		/* Private constructor called from other methods */
 		private Process(IntPtr handle, int id) {
@@ -61,10 +63,15 @@ namespace System.Diagnostics {
 		[MonitoringDescription ("Check for exiting of the process to raise the apropriate event.")]
 		public bool EnableRaisingEvents {
 			get {
-				return(false);
+				return enableRaisingEvents;
 			}
-			set {
+			set { 
+				if (process_handle != IntPtr.Zero)
+					throw new InvalidOperationException ("The process is already started.");
+
+				enableRaisingEvents = value;
 			}
+
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -725,6 +732,12 @@ namespace System.Diagnostics {
 
 				throw new Win32Exception (-proc_info.pid);
 			}
+
+			if (process.enableRaisingEvents && process.Exited != null) {
+				WaitOrTimerCallback cb = new WaitOrTimerCallback (CBOnExit);
+				ProcessWaitHandle h = new ProcessWaitHandle (proc_info.process_handle);
+				ThreadPool.RegisterWaitForSingleObject (h, cb, process, -1, true);
+			}
 			
 			process.process_handle=proc_info.process_handle;
 			process.pid=proc_info.pid;
@@ -844,10 +857,24 @@ namespace System.Diagnostics {
 			base.Dispose (disposing);
 		}
 
+		static void CBOnExit (object state, bool unused)
+		{
+			Process p = (Process) state;
+			p.OnExited ();
+		}
+
 		protected void OnExited() 
 		{
 			if (Exited != null)
 				Exited (this, EventArgs.Empty);
+		}
+
+		class ProcessWaitHandle : WaitHandle
+		{
+			public ProcessWaitHandle (IntPtr handle)
+			{
+				Handle = handle;
+			}
 		}
 	}
 }
