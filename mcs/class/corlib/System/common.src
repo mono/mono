@@ -44,8 +44,10 @@ NotFiniteNumberException.cs
 NotSupportedException.cs
 NullReferenceException.cs
 Object.cs
+OperatingSystem.cs
 OutOfMemoryException.cs
 OverflowException.cs
+PlatformID.cs
 RankException.cs
 SByte.cs
 Single.cs
