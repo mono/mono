@@ -1,3 +1,7 @@
+2004-11-03  Miguel de Icaza  <miguel@ximian.com>
+
+	* ColorPalette.cs: Add internal Clone method
+
 2004-06-13  Gert Driesen <drieseng@users.sourceforge.net>
 	
 	* EmfPlusRecordType.cs: fixed mismatches in enum field values

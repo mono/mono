@@ -176,6 +176,9 @@ namespace System.Drawing
 			GDIPlus.CheckStatus (status);
 
 			TextureBrush clone = new TextureBrush (clonePtr);
+			if (image != null)
+				clone.image = (Image) image.Clone ();
+			
 			return clone;
 		}
 

@@ -564,6 +564,7 @@ namespace System.Drawing
 				lock (this)
 				{
 					GDIPlus.GdipDeleteRegion (nativeRegion);
+					nativeRegion = IntPtr.Zero;
 				}
 			}
 		}

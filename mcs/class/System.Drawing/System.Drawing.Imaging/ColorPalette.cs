@@ -97,6 +97,18 @@ namespace System.Drawing.Imaging
 			
 			return lfBuffer;
 		}
+
+		internal ColorPalette Clone ()
+		{
+			ColorPalette clone = new ColorPalette ();
+
+			clone.flags = flags;
+			clone.entries = new Color [entries.Length];
+			for (int i = 0; i < entries.Length; i++)
+				clone.entries [i] = entries [i];
+			
+			return clone;
+		}
 		
 		internal void setFromGDIPalette(IntPtr palette) 
 		{

@@ -439,7 +439,13 @@ namespace System.Drawing {
                         IntPtr ptr;
                         Status status = GDIPlus.GdipClonePen (nativeObject, out ptr);
 			GDIPlus.CheckStatus (status);
-                        return new Pen (ptr);
+                        Pen p = new Pen (ptr);
+			p.brush = brush;
+			p.color = color;
+			p.startCap = startCap;
+			p.endCap = endCap;
+
+			return p;
 		}
 
 		public void Dispose ()
@@ -450,15 +456,15 @@ namespace System.Drawing {
 
 		void Dispose (bool disposing)
 		{
-			// Pen is disposed if and only if it is not disposed and
-			// it is modifiable OR it is not disposed and it is being
-			// collected by GC.
-			if (! disposed) {
-				if (isModifiable || disposing == false) {
-					lock (this)
-					{
+			lock (this){
+				// Pen is disposed if and only if it is not disposed and
+				// it is modifiable OR it is not disposed and it is being
+				// collected by GC.
+				if (! disposed) {
+					if (isModifiable || disposing == false) {
 						Status status = GDIPlus.GdipDeletePen (nativeObject);
 						GDIPlus.CheckStatus (status);
+						nativeObject = IntPtr.Zero;
 						disposed = true;
 					}
 				}

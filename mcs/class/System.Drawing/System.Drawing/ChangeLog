@@ -1,3 +1,29 @@
+2004-11-03  Miguel de Icaza  <miguel@ximian.com>
+
+	* TextureBrush.cs (Clone): While cloning, it is not enough to let
+	GDIPlus clone the underlying data, we must alos clone the managed
+	information. 
+
+	* Pen.cs (Dispose): Set the nativeObject to IntPtr.Zero to catch
+	errors in the future, set the lock on the object before doing any
+	other tests, not after.
+	
+	(Clone): While cloning, it is not enough to let
+	GDIPlus clone the underlying data, we must alos clone the managed
+	information. 
+
+	* Brush.cs (Dispose): Set the nativeObject to IntPtr.Zero to catch
+	errors in the future.
+
+	Set the lock in the object before checkign disposed.
+
+	* SolidBrush.cs (Clone): While cloning, it is not enough to let
+	GDIPlus clone the underlying data, we must alos clone the managed
+	information. 
+
+	(Dispose): Set the nativeObject to IntPtr.Zero to catch
+	errors in the future.
+	
 2004-10-04  Ravindra  <rkumar@novell.com>
 
 	* gdipFunctioncs.cs: Backporting. Fix from Alois for bug #67383.

@@ -154,6 +154,7 @@ namespace System.Drawing
 				{
 					status = GDIPlus.GdipDeleteGraphics (nativeObject);
 					GDIPlus.CheckStatus (status);
+					nativeObject = IntPtr.Zero;
 					disposed = true;
 				}
 			}

@@ -35,6 +35,7 @@
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Collections;
 
 namespace System.Drawing
 {
@@ -60,11 +61,10 @@ namespace System.Drawing
 				nativeObject = value;
 			}
 		}
-
+		
                 internal Brush CreateBrush (IntPtr brush, System.Drawing.BrushType type)
                 {
                         switch (type) {
-
                         case BrushType.BrushTypeSolidColor:
                                 return new SolidBrush (brush);
 
@@ -87,12 +87,11 @@ namespace System.Drawing
 
 		protected virtual void Dispose (bool disposing)
 		{
-			if (disposed == false) {
-				lock (this)
-				{
+			lock (this){
+				if (disposed == false) {
 					Status status = GDIPlus.GdipDeleteBrush (nativeObject);
-					GDIPlus.CheckStatus (status);
 					disposed = true;
+					nativeObject = IntPtr.Zero;
 				}
 			}
 		}

@@ -44,7 +44,6 @@ namespace System.Drawing
                 internal SolidBrush (IntPtr ptr)
                         : base (ptr)
                 {
-		
 			int val;
 			Status status = GDIPlus.GdipGetSolidFillColor (ptr, out val);
 			GDIPlus.CheckStatus (status);
@@ -85,6 +84,7 @@ namespace System.Drawing
 				GDIPlus.CheckStatus (status);
 	
 				SolidBrush clone = new SolidBrush (clonePtr);
+				clone.color = color;
 				return clone;
 			}
 		}
@@ -100,6 +100,7 @@ namespace System.Drawing
 					{
 						Status status = GDIPlus.GdipDeleteBrush (nativeObject);
 						GDIPlus.CheckStatus (status);
+						nativeObject = IntPtr.Zero;
 						disposed = true;
 					}
 				}
