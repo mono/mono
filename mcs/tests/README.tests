@@ -223,6 +223,11 @@ test-186.cs
 Typecasts were not being constant-folded/reduced, which triggered
 the bug 37363.   (String) null was not a null constant in attributes.
 
+test-187.cs
+-----------
+This test verifies that we resolve the source expression in a compound
+expression before we attempt to use it.
+
 verify-1.cs
 -----------
 Test whether we do not jump out of the method in a Try/Finally block.
