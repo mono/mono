@@ -1,3 +1,12 @@
+2002-10-12 John Sohn <jsohn@columbus.rr.com>
+	* Control.cs: 
+	* Label.cs: changed CreateHandle method to use CreateParams property
+	* README: added instructions for building and using project
+	* makefile: removed monostart.c from makefile
+	* monostart.c:
+	* test.sh
+	* build.sh: no longer used, removed
+	
 2002-9-29  John Sohn <jsohn@columbus.rr.com>
 	* Form.cs: Site property now calls base class
 	* FormTest.cs: set label position on test form

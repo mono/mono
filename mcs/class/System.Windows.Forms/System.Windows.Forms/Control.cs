@@ -75,7 +75,6 @@ namespace System.Windows.Forms {
 		bool tabStop;
 		string text;
 		bool visible;
-		CreateParams createParams;
 
 		// --- Constructors ---
 		public Control ()
@@ -109,7 +108,6 @@ namespace System.Windows.Forms {
 			visible = true;
 			parent = null;
 			window = null;
-			createParams = new CreateParams ();
 		}
 		
 		// according to docs, the constructors do not create 
@@ -421,6 +419,24 @@ namespace System.Windows.Forms {
 		
 		protected virtual CreateParams CreateParams {
 			get {
+				CreateParams createParams = new CreateParams ();
+				createParams.Caption = Text;
+				createParams.ClassName = "mono_native_window";
+				createParams.X = Top;
+				createParams.Y = Left;
+				createParams.Width = Width;
+				createParams.Height = Height;
+				createParams.ClassStyle = 0;
+				createParams.ExStyle = 0;
+				createParams.Param = 0;
+				
+				if (parent != null)
+					createParams.Parent = parent.Handle;
+				else 
+					createParams.Parent = (IntPtr) 0;
+
+				createParams.Style = (int) Win32.WS_OVERLAPPEDWINDOW;
+
 				return createParams;
 			}
 		}
@@ -943,25 +959,7 @@ namespace System.Windows.Forms {
 		protected virtual void CreateHandle ()
 		{
 			window = new ControlNativeWindow (this);
-			
-			createParams.Caption = Text;
-			createParams.ClassName = "mono_native_window";
-			createParams.X = Top;
-			createParams.Y = Left;
-			createParams.Width = Width;
-			createParams.Height = Height;
-			createParams.ClassStyle = 0;
-			createParams.ExStyle = 0;
-			createParams.Param = 0;
-
-			if (parent != null)
-				createParams.Parent = parent.Handle;
-			else 
-				createParams.Parent = (IntPtr) 0;
-
-			createParams.Style = (int) Win32.WS_OVERLAPPEDWINDOW;
-
-			window.CreateHandle (createParams);
+			window.CreateHandle (CreateParams);
 		}
 	
 		protected virtual void DefWndProc (ref Message m)

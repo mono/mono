@@ -20,7 +20,6 @@ namespace System.Windows.Forms {
 	
 	public class Label : Control {
 
-		CreateParams createParams;
 		Image backgroundImage;
 		BorderStyle borderStyle;
 		bool autoSize;
@@ -178,6 +177,23 @@ namespace System.Windows.Forms {
 
 		protected override CreateParams CreateParams {
 			get {
+				CreateParams createParams = new CreateParams ();
+				window = new ControlNativeWindow (this);
+
+				createParams.Caption = Text;
+				createParams.ClassName = "STATIC";
+				createParams.X = Top;
+				createParams.Y = Left;
+				createParams.Width = Width;
+				createParams.Height = Height;
+				createParams.ClassStyle = 0;
+				createParams.ExStyle = 0;
+				createParams.Param = 0;
+				createParams.Parent = Parent.Handle;
+				createParams.Style = (int) (
+					Win32.WS_CHILD | 
+					Win32.WS_VISIBLE | Win32.SS_LEFT );
+				window.CreateHandle (createParams);
 				return createParams;
 			}
 		}
@@ -265,27 +281,6 @@ namespace System.Windows.Forms {
 //  		{
 //  			throw new NotImplementedException ();
 //  		}
-
-		protected override void CreateHandle () 
-		{
-			CreateParams createParams = new CreateParams ();
-			window = new ControlNativeWindow (this);
-
-			createParams.Caption = Text;
-			createParams.ClassName = "STATIC";
-			createParams.X = Top;
-			createParams.Y = Left;
-			createParams.Width = Width;
-			createParams.Height = Height;
-			createParams.ClassStyle = 0;
-			createParams.ExStyle = 0;
-			createParams.Param = 0;
-			createParams.Parent = Parent.Handle;
-			createParams.Style = (int) (
-				Win32.WS_CHILD | 
-				Win32.WS_VISIBLE | Win32.SS_LEFT );
-			window.CreateHandle (createParams);
-		}
 
 		protected new virtual void Dispose()
 		{

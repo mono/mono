@@ -108,7 +108,7 @@ monostub.exe.so: monostub.o monostub.exe.spec.o monostub.exe.dbg.o
 	monostub.exe.spec.o \
 	monostub.o monostub.exe.dbg.o -I/usr/local/include \
 	 $(GLIB20_INCUDE) -L/usr/lib \
-	/usr/local/lib/libmono.a  \
+	/usr/local/lib/libmono.a  -lgc \
 	-lwine -lntdll.dll $(GLIB20_LIB) -lm -lpthread 
 
 clean:	
@@ -117,10 +117,7 @@ clean:
 monostub.o: monostub.c
 	gcc -c -I. -I$(WINE_INCLUDE)  $(GLIB20_INCLUDE) -g -O2 -Wall -I$(X11R6_INCLUDE) -D_REENTRANT -DWINELIB -o monostub.o monostub.c
 
-monostart.o: monostart.c
-	gcc -c -I. -g -O2 -Wall -I$(X11R6_INCLUDE) -D_REENTRANT -DWINELIB -o monostart.o monostart.c $(GLIB20_INCLUDE) -I$(WINE_INCLUDE)
-
-monostub.exe.tmp.o: monostub.o monostart.o
+monostub.exe.tmp.o: monostub.o 
 	ld -r  monostub.o -o monostub.exe.tmp.o  
 	strip --strip-unneeded monostub.exe.tmp.o
 
