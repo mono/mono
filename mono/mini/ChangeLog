@@ -1,3 +1,8 @@
+2005-02-13  Zoltan Varga  <vargaz@freemail.hu>
+
+	* declsec.c (mono_declsec_linkdemand_aptc): Applied patch from Robert Jordan (robertj@gmx.net).
+	Fix compilation errors under gcc-2.95.
+
 2005-02-12  Ben Maurer  <bmaurer@ximian.com>
 
 	* mini.c, driver.c: Use the new jit trampoline hashtable
