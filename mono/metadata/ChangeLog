@@ -1,3 +1,7 @@
+2004-05-26  Zoltan Varga  <vargaz@freemail.hu>
+
+	* marshal.c (mono_ftnptr_to_delegate): Implement this.
+	
 2004-05-26  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* culture-info-tables.h: reflecting locale-builder updates.
