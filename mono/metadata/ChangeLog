@@ -1,3 +1,9 @@
+2003-10-21  Dick Porter  <dick@ximian.com>
+
+	* socket-io.c
+	(ves_icall_System_Net_Sockets_Socket_Select_internal): Applied
+	patch from Laramie Leavitt moving divide out of loop. (Bug 45381).
+
 2003-10-21  Martin Baulig  <martin@ximian.com>
 
 	* reflection.c (mono_reflection_bind_generic_parameters):
