@@ -1,3 +1,7 @@
+2004-12-21  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* declsec.c: Removed unused variable (and related warning ;-)
+
 2004-12-21  Ben Maurer  <bmaurer@ximian.com>
 
 	* mini-x86.c (mono_arch_output_basic_block): Just use ecx as the
