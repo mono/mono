@@ -86,7 +86,9 @@ clean-local:
 dist-local: dist-default
 	rm -f $(distdir)/casts.cs
 
-test-compiler-jit: multi
+test-compiler-jit: multi test-compiler-jit-real
+
+test-compiler-jit-real:
 	@rm -f *.exe ; \
 	echo "Flags \"$(TEST_RUNTIME)\" ... " ; \
 	for i in $(TEST_SOURCES) ; do \
@@ -102,6 +104,12 @@ test-compiler-jit: multi
 	        echo FAILED ; exit 1; \
 	    fi ; \
 	done
+
+GENERIC_KNOWN_FAILURES = test-55
+
+test-generic:
+	(sources=`echo $(TEST_SOURCES) | tr ' ' '\n' | grep -v $(GENERIC_KNOWN_FAILURES)| tr '\n' ' ' `;  \
+	make INTERNAL_MCS="mono ../gmcs/gmcs.exe" test-compiler-jit-real TEST_SOURCES="$$sources")
 
 test-unsafe-compiler-jit:
 	@echo "Running UNSAFE tests ..." ; \
