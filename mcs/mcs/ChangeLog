@@ -1,3 +1,8 @@
+2002-08-08  Martin Baulig  <martin@gnome.org>
+
+	* statement.cs (FlowBranchingType): Added LOOP_BLOCK.
+	(UsageVector.MergeChildren): `break' breaks unless we're in a switch
+	or loop block.
 
 Thu Aug 8 10:28:07 CEST 2002 Paolo Molaro <lupus@ximian.com>
 

@@ -145,7 +145,7 @@ namespace Mono.CSharp {
 
 		public override bool Resolve (EmitContext ec)
 		{
-			Report.Debug (1, "START IF BLOCK");
+			Report.Debug (1, "START IF BLOCK", loc);
 
 			expr = ResolveBoolean (ec, expr, loc);
 			if (expr == null){
@@ -168,7 +168,7 @@ namespace Mono.CSharp {
 					
 			ec.EndFlowBranching ();
 
-			Report.Debug (1, "END IF BLOCK");
+			Report.Debug (1, "END IF BLOCK", loc);
 
 			return true;
 		}
@@ -239,14 +239,20 @@ namespace Mono.CSharp {
 
 		public override bool Resolve (EmitContext ec)
 		{
+			bool ok = true;
+
+			ec.StartFlowBranching (FlowBranchingType.LOOP_BLOCK, loc);
+
 			if (!EmbeddedStatement.Resolve (ec))
-				return false;
+				ok = false;
+
+			ec.EndFlowBranching ();
 
 			expr = ResolveBoolean (ec, expr, loc);
 			if (expr == null)
-				return false;
+				ok = false;
 			
-			return true;
+			return ok;
 		}
 		
 		public override bool Emit (EmitContext ec)
@@ -316,11 +322,20 @@ namespace Mono.CSharp {
 
 		public override bool Resolve (EmitContext ec)
 		{
+			bool ok = true;
+
 			expr = ResolveBoolean (ec, expr, loc);
 			if (expr == null)
 				return false;
-			
-			return Statement.Resolve (ec);
+
+			ec.StartFlowBranching (FlowBranchingType.LOOP_BLOCK, loc);
+
+			if (!Statement.Resolve (ec))
+				ok = false;
+
+			ec.EndFlowBranching ();
+
+			return ok;
 		}
 		
 		public override bool Emit (EmitContext ec)
@@ -426,8 +441,15 @@ namespace Mono.CSharp {
 				if (!Increment.Resolve (ec))
 					ok = false;
 			}
-			
-			return Statement.Resolve (ec) && ok;
+
+			ec.StartFlowBranching (FlowBranchingType.LOOP_BLOCK, loc);
+
+			if (!Statement.Resolve (ec))
+				ok = false;
+
+			ec.EndFlowBranching ();
+
+			return ok;
 		}
 		
 		public override bool Emit (EmitContext ec)
@@ -1170,6 +1192,9 @@ namespace Mono.CSharp {
 		// Normal (conditional or toplevel) block.
 		BLOCK,
 
+		// A loop block.
+		LOOP_BLOCK,
+
 		// Try/Catch block.
 		EXCEPTION,
 
@@ -1563,10 +1588,23 @@ namespace Mono.CSharp {
 				// `return' statement in one of the branches), then we may return to our
 				// parent block before reaching the end of the block, so set `Breaks'.
 				//
-
 				if ((Returns != FlowReturns.NEVER) && (Returns != FlowReturns.SOMETIMES)) {
 					real_breaks = Returns;
 					breaks_set = true;
+				}
+
+				//
+				// If this is not a loop or switch block, `break' actually breaks.
+				// However, if we may have returned, then Breaks has already been set.
+				//
+
+				if ((branching.Type == FlowBranchingType.BLOCK) &&
+				    (Returns == FlowReturns.NEVER)) {
+					if (!breaks_set) {
+						Breaks = new_breaks;
+						breaks_set = true;
+					} else
+						Breaks = AndFlowReturns (Breaks, new_breaks);
 				}
 
 				Report.Debug (1, "MERGING CHILDREN DONE", new_params, new_locals,
