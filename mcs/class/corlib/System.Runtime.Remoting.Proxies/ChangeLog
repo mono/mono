@@ -1,3 +1,8 @@
+2003-07-25  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* RemotingProxy.cs: Check the return arguments types. (a wrong type
+	  would make the runtime to crash).
+
 2003-07-16  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* RemotingProxy.cs: Assign to the message the full uri, if available,

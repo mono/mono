@@ -80,8 +80,10 @@ namespace System.Runtime.Remoting.Proxies
 			}
 			else
 				response = sink.SyncProcessMessage (request);
-
 			_objectIdentity.NotifyClientDynamicSinks (false, request, true, false);
+
+			if (!(response is IConstructionReturnMessage))
+				CheckResponse (response, request);
 
 			return response;
 		}
@@ -123,6 +125,30 @@ namespace System.Runtime.Remoting.Proxies
 
 			_ctorCall.CopyFrom (request);
 			return ActivationServices.Activate (this, _ctorCall);
+		}
+
+		void CheckResponse (IMessage response, IMessage call)
+		{
+			IMethodReturnMessage mrm = (IMethodReturnMessage) response;
+			if (mrm.Exception != null) return;
+
+			// Check return type
+
+			MethodInfo mi = (MethodInfo) mrm.MethodBase;
+			if (mrm.ReturnValue != null && !mi.ReturnType.IsInstanceOfType (mrm.ReturnValue))
+				throw new RemotingException ("Return value has an invalid type");
+
+			// Check out parameters
+
+			ParameterInfo[] parameters = mi.GetParameters();
+			int narg = 0;
+
+			foreach (ParameterInfo pi in parameters)
+				if(pi.ParameterType.IsByRef) {
+					object pval = mrm.GetOutArg (narg++);
+					if (pval != null && !pi.ParameterType.IsInstanceOfType (pval))
+						throw new RemotingException ("Return argument has an invalid type");
+				}
 		}
 	}
 }
