@@ -472,7 +472,6 @@ namespace System.Windows.Forms {
 			bool ismatch = false;
 			
 			foreach (KeyboardLayout current in KeyboardLayouts.Layouts) {
-				Console.WriteLine ("testing layout: {0}", current.Comment);
 				int ind = 0;
 				int ok = 0;
 				int score = 0;
