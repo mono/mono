@@ -1,3 +1,8 @@
+2003-01-27  Zoltan Varga  <vargaz@freemail.hu>
+
+	* AppDomain.cs: Added DoTypeResolve method which will be called by
+	the runtime to raise TypeResolve events.
+
 2003-01-27  Duncan Mak  <duncan@ximian.com>
 
 	* Enum.cs (ToType): Implement this using Convert.ToType.

@@ -616,6 +616,28 @@ namespace System {
 
 			return null;
 		}
+
+		private Assembly DoTypeResolve (Object name_or_tb)
+		{
+			if (TypeResolve == null)
+				return null;
+
+			string name;
+
+			if (name_or_tb is TypeBuilder)
+				name = ((TypeBuilder)name_or_tb).FullName;
+			else
+				name = (string)name_or_tb;
+
+			foreach (Delegate d in TypeResolve.GetInvocationList ()) {
+				ResolveEventHandler eh = (ResolveEventHandler)d;
+				Assembly assembly = eh (this, new ResolveEventArgs (name));
+				if (assembly != null)
+					return assembly;
+			}
+
+			return null;
+		}
 		// End of methods called from the runtime
 		
 		public event AssemblyLoadEventHandler AssemblyLoad;
