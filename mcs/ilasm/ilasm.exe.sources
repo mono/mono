@@ -49,6 +49,9 @@ codegen/FaultBlock.cs
 codegen/CatchBlock.cs
 codegen/CustomAttr.cs
 codegen/GenericTypeRef.cs
+codegen/GenericTypeInst.cs
+codegen/TypeSpecMethodRef.cs
+codegen/TypeSpecFieldRef.cs
 parser/ScannerAdapter.cs
 scanner/ILReader.cs
 scanner/ILSyntaxError.cs
