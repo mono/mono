@@ -1,5 +1,9 @@
 2004-05-19  Boris Kirzner  <borisk@mainsoft.com>
 
+	* DataColumn.cs - removed default member attribute.
+
+2004-05-19  Boris Kirzner  <borisk@mainsoft.com>
+
 	* DataColumn.cs,
 	  DataColumnChangeEventArgs.cs,
 	  DataColumnCollection.cs,

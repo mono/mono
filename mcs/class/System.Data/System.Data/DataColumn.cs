@@ -31,7 +31,6 @@ namespace System.Data {
 
 	[Editor]
 	[ToolboxItem (false)]
-	[DefaultMember ("Item")]
 	[DefaultProperty ("ColumnName")]
 	[DesignTimeVisible (false)]
 	public class DataColumn : MarshalByValueComponent
