@@ -203,6 +203,18 @@ namespace Mono.CSharp {
 		}
 
 		/// <summary>
+		/// Tests presence of ObsoleteAttribute and report proper error
+		/// </summary>
+		protected void CheckObsoleteAttribute (Type type)
+		{
+			ObsoleteAttribute obsolete_attr = AttributeTester.GetObsoleteAttribute (type);
+			if (obsolete_attr == null)
+				return;
+
+			AttributeTester.Report_ObsoleteMessage (obsolete_attr, type.FullName, loc);
+		}
+
+		/// <summary>
 		///   Performs semantic analysis on the Expression
 		/// </summary>
 		///
@@ -2617,6 +2629,18 @@ namespace Mono.CSharp {
 								       ResolveFlags.DisableFlowAnalysis);
 				if (instance_expr == null)
 					return null;
+			}
+
+			ObsoleteAttribute oa;
+			FieldBase f = TypeManager.GetField (FieldInfo);
+			if (f != null) {
+				oa = f.GetObsoleteAttribute (ec.DeclSpace);
+				if (oa != null)
+					AttributeTester.Report_ObsoleteMessage (oa, f.GetSignatureForError (), loc);
+			} else {
+				oa = AttributeTester.GetMemberObsoleteAttribute (FieldInfo);
+				if (oa != null)
+					AttributeTester.Report_ObsoleteMessage (oa, TypeManager.GetFullNameSignature (FieldInfo), loc);
 			}
 
 			// If the instance expression is a local variable or parameter.

@@ -1190,6 +1190,7 @@ namespace Mono.CSharp {
 	sealed class AttributeTester
 	{
 		static PtrHashtable analyzed_types = new PtrHashtable ();
+		static PtrHashtable analyzed_types_obsolete = new PtrHashtable ();
 		static PtrHashtable analyzed_member_obsolete = new PtrHashtable ();
 		static PtrHashtable analyzed_method_excluded = new PtrHashtable ();
 
@@ -1350,6 +1351,38 @@ namespace Mono.CSharp {
 				return IsClsCompliant (type.Assembly);
 
 			return ((CLSCompliantAttribute)CompliantAttribute[0]).IsCompliant;
+		}
+
+		/// <summary>
+		/// Returns instance of ObsoleteAttribute when type is obsolete
+		/// </summary>
+		public static ObsoleteAttribute GetObsoleteAttribute (Type type)
+		{
+			object type_obsolete = analyzed_types_obsolete [type];
+			if (type_obsolete == FALSE)
+				return null;
+
+			if (type_obsolete != null)
+				return (ObsoleteAttribute)type_obsolete;
+
+			ObsoleteAttribute result = null;
+			if (type.IsByRef || type.IsArray || type.IsPointer) {
+				result = GetObsoleteAttribute (TypeManager.GetElementType (type));
+			} else {
+				DeclSpace type_ds = TypeManager.LookupDeclSpace (type);
+
+				// Type is external, we can get attribute directly
+				if (type_ds == null) {
+					object[] attribute = type.GetCustomAttributes (TypeManager.obsolete_attribute_type, false);
+					if (attribute.Length == 1)
+						result = (ObsoleteAttribute)attribute [0];
+				} else {
+					result = type_ds.GetObsoleteAttribute (type_ds);
+				}
+			}
+
+			analyzed_types_obsolete.Add (type, result == null ? FALSE : result);
+			return result;
 		}
 
 		/// <summary>

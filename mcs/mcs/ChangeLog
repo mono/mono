@@ -1,6 +1,42 @@
 2004-05-31  Marek Safar  <marek.safar@seznam.cz>
 
 	* attribute.cs
+	(AttributeTester.GetObsoleteAttribute): Returns instance of
+	ObsoleteAttribute when type is obsolete.
+
+	* class.cs
+	(TypeContainer.VerifyObsoleteAttribute): Override.
+	(Method.GetSignatureForError): New method for usage when MethodBuilder is null.
+	(MethodCode.VerifyObsoleteAttribute): Override.
+	(MemberBase.VerifyObsoleteAttribute): Override.
+
+	* decl.cs
+	(MemberCore.CheckUsageOfObsoleteAttribute): Tests presence of ObsoleteAttribute
+	and report proper error.
+
+	*delegate.cs
+	(Delegate.VerifyObsoleteAttribute): Override.
+
+	* ecore.cs
+	(Expression.CheckObsoleteAttribute): Tests presence of ObsoleteAttribute
+	and report proper error.
+	(FieldExpr.DoResolve): Added tests for ObsoleteAttribute.
+
+	* enum.cs
+	(Enum.GetObsoleteAttribute): Returns ObsoleteAttribute for both enum type
+	and enum member.
+
+	* expression.cs
+	(Probe.DoResolve, Cast.DoResolve, LocalVariableReference.DoResolve,
+	New.DoResolve, SizeOf.DoResolve, TypeOf.DoResolce, MemberAccess.DoResolve):
+	Added test for ObsoleteAttribute.
+
+	* statement.cs
+	(Catch): Derived from Statement.
+
+2004-05-31  Marek Safar  <marek.safar@seznam.cz>
+
+	* attribute.cs
 	(GetConditionalAttributeValue): New method. Returns
 	condition of ConditionalAttribute.
 	(SearchMulti): New method.  Returns all attributes of type 't'.
@@ -182,7 +218,7 @@
 	don't have any dots.  Fixes #52622, added cs0246-8.cs.
 
 	* namespace.cs (NamespaceEntry.Lookup): Likewise.
-
+        
 2004-05-23  Marek Safar  <marek.safar@seznam.cz>
 
 	* class.cs (MemberBase.Define): Reuse MemberType member for 
