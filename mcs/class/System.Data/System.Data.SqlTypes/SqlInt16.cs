@@ -100,10 +100,22 @@ namespace System.Data.SqlTypes
 				return 1;
 			else if (!(value is SqlInt16))
 				throw new ArgumentException (Locale.GetText ("Value is not a System.Data.SqlTypes.SqlInt16"));
-			else if (((SqlInt16)value).IsNull)
+			return CompareSqlInt16 ((SqlInt16) value);
+		}
+
+		#if NET_2_0
+                public int CompareTo (SqlInt16 value)
+                {
+                        return CompareSqlInt16 (value);
+                }
+                #endif
+
+		private int CompareSqlInt16 (SqlInt16 value)
+		{
+			 if (((SqlInt16)value).IsNull)
 				return 1;
 			else
-				return this.value.CompareTo (((SqlInt16)value).Value);
+				return this.value.CompareTo (value.Value);
 		}
 
 		public static SqlInt16 Divide (SqlInt16 x, SqlInt16 y)
@@ -157,7 +169,15 @@ namespace System.Data.SqlTypes
 		{
 			return (x % y);
 		}
-
+		
+		#if NET_2_0
+		public static SqlInt16 Modulus (SqlInt16 x, SqlInt16 y)
+		{
+			return (x % y);
+		}  
+		#endif
+		
+		
 		public static SqlInt16 Multiply (SqlInt16 x, SqlInt16 y)
 		{
 			return (x * y);

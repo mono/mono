@@ -108,10 +108,22 @@ namespace System.Data.SqlTypes
 				return 1;
 			else if (!(value is SqlInt32))
 				throw new ArgumentException (Locale.GetText ("Value is not a System.Data.SqlTypes.SqlInt32"));
-			else if (((SqlInt32)value).IsNull)
+			return CompareSqlInt32 ((SqlInt32) value);
+		}
+
+		#if NET_2_0
+		public int CompareTo (SqlInt32 value)
+		{
+			return CompareSqlInt32 (value);
+		}
+		#endif
+	
+		private int CompareSqlInt32 (SqlInt32 value)
+		{
+			if (value.IsNull)
 				return 1;
 			else
-				return this.value.CompareTo (((SqlInt32)value).Value);
+				return this.value.CompareTo (value.Value);
 		}
 
 		public static SqlInt32 Divide(SqlInt32 x, SqlInt32 y) 
@@ -165,6 +177,13 @@ namespace System.Data.SqlTypes
 		{
 			return (x % y);
 		}
+
+		#if NET_2_0
+		public static SqlInt32 Modulus (SqlInt32 x, SqlInt32 y)
+		{
+			return (x % y);
+		}
+		#endif
 
 		public static SqlInt32 Multiply(SqlInt32 x, SqlInt32 y) 
 		{
