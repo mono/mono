@@ -415,13 +415,15 @@ public class Page : TemplateControl, IHttpHandler
 						string varyByParam)
 	{
 		HttpCachePolicy cache = _context.Response.Cache;
+		bool set_vary = false;
 
 		switch (location) {
 		case OutputCacheLocation.Any:
 			cache.SetCacheability (HttpCacheability.Public);
 			cache.SetMaxAge (new TimeSpan (0, 0, duration));		
 			cache.SetLastModified (_context.Timestamp);
-			goto case OutputCacheLocation.Server;
+			set_vary = true;
+			break;
 		case OutputCacheLocation.Client:
 			cache.SetCacheability (HttpCacheability.Private);
 			cache.SetMaxAge (new TimeSpan (0, 0, duration));		
@@ -432,7 +434,15 @@ public class Page : TemplateControl, IHttpHandler
 			cache.SetMaxAge (new TimeSpan (0, 0, duration));		
 			cache.SetLastModified (_context.Timestamp);
 			break;
-		case OutputCacheLocation.Server:
+		case OutputCacheLocation.Server:			
+			cache.SetCacheability (HttpCacheability.Server);
+			set_vary = true;
+			break;
+		case OutputCacheLocation.None:
+			break;
+		}
+
+		if (set_vary) {
 			if (varyByCustom != null)
 				cache.SetVaryByCustom (varyByCustom);
 
@@ -450,12 +460,8 @@ public class Page : TemplateControl, IHttpHandler
 				foreach (string h in hdrs)
 					cache.VaryByHeaders [h.Trim ()] = true;
 			}
-
-			cache.SetCacheability (HttpCacheability.Server);
-			break;
-		case OutputCacheLocation.None:
-			break;
 		}
+			
 		cache.Duration = duration;
 		cache.SetExpires (_context.Timestamp.AddSeconds (duration));
 	}
