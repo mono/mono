@@ -1,3 +1,9 @@
+2004-07-02  Raja R Harinath  <rharinath@novell.com>
+
+	* config-default.make (TEST_RUNTIME): Use 'mono' by default.
+	* platforms/win32.make (TEST_RUNTIME): Remove.
+	* profiles/default.make (TEST_RUNTIME): Remove.
+
 2004-06-28  Raja R Harinath  <rharinath@novell.com>
 
 	* platforms/linux.make (RESGEN): Define using $(INTERNAL_RESGEN).

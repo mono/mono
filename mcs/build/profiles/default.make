@@ -17,7 +17,6 @@
 ifdef PLATFORM_MONO_NATIVE
 MCS = MONO_PATH="$(topdir)/class/lib/$(PROFILE):$$MONO_PATH" $(INTERNAL_MCS)
 MBAS = MONO_PATH="$(topdir)/class/lib/$(PROFILE):$$MONO_PATH" $(INTERNAL_MBAS)
-TEST_RUNTIME = MONO_PATH="$(topdir)/class/lib/$(PROFILE):$$MONO_PATH" $(RUNTIME) --debug
 else
 MCS = $(PLATFORM_RUNTIME) $(BOOTSTRAP_MCS) /lib:$(topdir)/class/lib/$(PROFILE)
 MBAS = $(PLATFORM_RUNTIME) $(BOOTSTRAP_MBAS) /lib:$(topdir)/class/lib/$(PROFILE)

@@ -13,9 +13,9 @@ MBAS_FLAGS = $(PLATFORM_DEBUG_FLAGS)
 LIBRARY_FLAGS = /noconfig
 CFLAGS = -g -O2
 INSTALL = /usr/bin/install
-RUNTIME = mono $(RUNTIME_FLAGS)
-TEST_RUNTIME=$(PLATFORM_RUNTIME)
 prefix = /usr/local
+RUNTIME = mono $(RUNTIME_FLAGS)
+TEST_RUNTIME = MONO_PATH="$(topdir)/class/lib/$(PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) --debug
 
 # In case you want to add MCS_FLAGS, this lets you not have to
 # keep track of the default value
