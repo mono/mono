@@ -1,5 +1,5 @@
 //
-// System.Windows.Forms.TrackBar.cs
+// System.Windows.Forms.IButtonControl.cs
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -25,9 +25,12 @@
 //
 //
 //
-// $Revision: 1.1 $
+// $Revision: 1.2 $
 // $Modtime: $
 // $Log: IButtonControl.cs,v $
+// Revision 1.2  2004/07/21 16:28:05  jordi
+// fixes comments filenames
+//
 // Revision 1.1  2004/07/21 16:19:17  jordi
 // LinkLabel control implementation
 //
