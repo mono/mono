@@ -65,6 +65,9 @@ namespace System.Runtime.Remoting.MetadataServices
 							out ITransportHeaders responseHeaders,
 							out Stream responseStream)
 		{
+			responseMsg = null;
+			responseStream = null;
+			responseHeaders = null;
 			string verb = requestHeaders [CommonTransportKeys.RequestVerb] as string;
 			string uri = (string) requestHeaders [CommonTransportKeys.RequestUri];
 			
