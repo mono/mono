@@ -225,9 +225,11 @@ namespace System.Diagnostics {
 		/// </summary>
 		protected virtual void WriteIndent ()
 		{
+			// Must set NeedIndent to false before Write; otherwise, we get endless
+			// recursion with Write->WriteIndent->Write->WriteIndent...*boom*
+			NeedIndent = false;
 			String indent = new String (' ', IndentLevel*IndentSize);
 			Write (indent);
-			NeedIndent = false;
 		}
 
 		/// <summary>
