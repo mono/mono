@@ -1,0 +1,5 @@
+Mono.Data.TdsClient/TdsConnection.cs
+Mono.Data.TdsClient/TdsTransaction.cs
+Mono.Data.TdsClient/TdsCommand.cs
+Mono.Data.TdsClient/TdsServerType.cs
+Mono.Data.TdsClient/IsolationLevel.cs
