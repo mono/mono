@@ -1,3 +1,10 @@
+2002-01-26  Gaurav Vaish <gvaish@iitk.ac.in>
+
+	* EnumCheckAssemblyCollection.cs,
+	* assemblies.xml:  Files related to EnumCheck checked-in. Now EnumCheck does
+	                   not have any path hardcoded. It takes the assemblies to
+	                   search from a xml files, which by default is assemblies.xml
+
 2002-01-25  Nick Drochak  <ndrochak@gol.com>
 
 	* .cvsignore: ignore .dll files now since we build NUnitCore.dll ourselves
