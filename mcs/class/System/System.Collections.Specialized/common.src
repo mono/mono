@@ -1,3 +1,4 @@
 BitVector32.cs
 StringCollection.cs
 StringEnumerator.cs
+NameValueCollection.cs
