@@ -57,6 +57,7 @@ namespace Commons.Xml.Relaxng.Rnc
 		XmlNamespaceManager nsmgr;
 		XmlNamespaceManager dtnsmgr;
 		string defaultNamespace = String.Empty;
+		static int yacc_verbose_flag;
 
 		RncTokenizer tokenizer;
 
