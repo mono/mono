@@ -139,7 +139,10 @@ EventB \
 EventC \
 EventD \
 EventE \
-EventF 
+EventF \
+AssignmentOperators \
+RelationalOperators \
+RelationalOperatorsA 
 
 # All negetive test cases which should
 # fail during compilation goes here
