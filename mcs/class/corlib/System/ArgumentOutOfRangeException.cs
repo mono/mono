@@ -52,6 +52,15 @@ namespace System {
 			}
 		}
 
+		public override string Message {
+			get {
+				if (actual_value == null)
+					return Locale.GetText ("Argument is out of range.");
+				else
+					return Locale.GetText ("Argument is out of range.") + actual_value;
+			}
+		}
+
 		// Methods
 		public override void GetObjectData (SerializationInfo info, StreamingContext context)
 		{

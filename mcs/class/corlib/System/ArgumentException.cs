@@ -56,6 +56,15 @@ namespace System {
 			}
 		}
 
+		public override string Message {
+			get {
+				if (param_name == null)
+					return Locale.GetText ("An invalid argument was specified.");
+				else
+					return Locale.GetText ("An invalid argument was specified.") + ParamName;
+			}
+		}
+		
 		public override void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			base.GetObjectData (info, context);
