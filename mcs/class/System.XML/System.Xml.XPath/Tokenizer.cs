@@ -90,7 +90,7 @@ namespace System.Xml.XPath
 		private char PutBack ()
 		{
 			if (m_ich == 0)
-				throw new XPathException ("invalid tokenizer state");	// TODO: better description
+				throw new XPathException ("XPath parser returned an error status: invalid tokenizer state.");
 			return m_rgchInput [--m_ich];
 		}
 

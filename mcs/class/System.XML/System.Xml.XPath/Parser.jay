@@ -19,6 +19,7 @@ namespace Mono.Xml.XPath
 		internal XPathParser (System.Xml.Xsl.IStaticXsltContext context)
 		{
 			Context = context;
+			ErrorOutput = System.IO.TextWriter.Null;
 		}
 		
 		internal Expression Compile (string xpath)

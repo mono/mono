@@ -1,3 +1,11 @@
+2003-12-18 Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
+
+	* Parser.jay : now it supresses error output from jay.
+	* DefaultContext.cs : (XPathFunctionSubstring) exclude -Infinity.
+	* Tokenizer.cs : better error message.
+	* XPathDocument.cs : Use XmlValidatingReader to support id() function.
+	  (just found MS.NET actually supports it)
+
 2003-12-16 Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
 
 	* Iterator.cs : On its iteration, moving Current must not affect to

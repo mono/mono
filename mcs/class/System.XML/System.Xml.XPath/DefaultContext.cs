@@ -531,13 +531,13 @@ namespace System.Xml.XPath
 		
 		public override XPathResultType ReturnType { get { return XPathResultType.String; }}
 		
-		[MonoTODO]
 		public override object Evaluate (BaseIterator iter)
 		{
-			// TODO: check this, what the hell were they smoking?
 			string str = arg0.EvaluateString (iter);
 			double ich = Math.Round (arg1.EvaluateNumber (iter)) - 1;
-			if (Double.IsNaN (ich) || ich >= (double) str.Length)
+			if (Double.IsNaN (ich) ||
+				Double.IsNegativeInfinity (ich) ||
+				ich >= (double) str.Length)
 				return "";
 
 			if (arg2 == null)

@@ -25,18 +25,22 @@ namespace System.Xml.XPath
 #region Constructors
 
 		public XPathDocument (Stream stream)
-			: this (new XmlTextReader (stream))
 		{
+			XmlValidatingReader vr = new XmlValidatingReader (new XmlTextReader (stream));
+			vr.ValidationType = ValidationType.None;
+			Initialize (vr, XmlSpace.None);
 		}
 
-		public XPathDocument (string uri)
-			: this (new XmlTextReader (uri))
+		public XPathDocument (string uri) 
+			: this (uri, XmlSpace.None)
 		{
 		}
 
 		public XPathDocument (TextReader reader)
-			: this (new XmlTextReader (reader))
 		{
+			XmlValidatingReader vr = new XmlValidatingReader (new XmlTextReader (reader));
+			vr.ValidationType = ValidationType.None;
+			Initialize (vr, XmlSpace.None);
 		}
 
 		public XPathDocument (XmlReader reader)
@@ -45,11 +49,18 @@ namespace System.Xml.XPath
 		}
 
 		public XPathDocument (string uri, XmlSpace space)
-			: this (new XmlTextReader (uri), space)
 		{
+			XmlValidatingReader vr = new XmlValidatingReader (new XmlTextReader (uri));
+			vr.ValidationType = ValidationType.None;
+			Initialize (vr, space);
 		}
 
 		public XPathDocument (XmlReader reader, XmlSpace space)
+		{
+			Initialize (reader, space);
+		}
+
+		private void Initialize (XmlReader reader, XmlSpace space)
 		{
 			document = new DTMXPathDocumentBuilder (reader, space).CreateDocument ();
 		}
