@@ -364,6 +364,10 @@ System.Resources/ResourceSet.cs
 System.Resources/ResourceWriter.cs
 System.Resources/SatelliteContractVersionAttribute.cs
 System.Runtime.CompilerServices/AccessedThroughPropertyAttribute.cs
+System.Runtime.CompilerServices/CallConvCdecl.cs
+System.Runtime.CompilerServices/CallConvFastcall.cs
+System.Runtime.CompilerServices/CallConvThiscall.cs
+System.Runtime.CompilerServices/CallConvStdcall.cs
 System.Runtime.CompilerServices/CompilationRelaxationsAttribute.cs
 System.Runtime.CompilerServices/CustomConstantAttribute.cs
 System.Runtime.CompilerServices/DateTimeConstantAttribute.cs

@@ -10,6 +10,12 @@ namespace System.Runtime.CompilerServices
 	[Serializable]
 	public sealed class RuntimeHelpers
 	{
+		private static int offset_to_string_data;
+
+		static RuntimeHelpers () {
+			offset_to_string_data = GetOffsetToStringData();
+		}
+
 		private RuntimeHelpers () {}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -17,10 +23,17 @@ namespace System.Runtime.CompilerServices
 
 		public static int OffsetToStringData {
 			get {
-				// FIXME: this requires the reimplementation of String
-				// as of my mail a few months ago, dum de dum
-				throw new NotImplementedException ();
+				return offset_to_string_data;
 			}
 		}
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public static extern object GetObjectValue (object obj);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public static extern void RunClassConstructor (RuntimeTypeHandle type);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private static extern int GetOffsetToStringData();
 	}
 }
