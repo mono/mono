@@ -46,6 +46,7 @@ System/Int16Test.cs
 System/Int32Test.cs
 System/Int64Test.cs
 System/IntegerFormatterTest.cs
+System/IntPtrTest.cs
 System.IO/BinaryReaderTest.cs
 System.IO/BinaryWriterTest.cs
 System.IO/BufferedStreamTest.cs
