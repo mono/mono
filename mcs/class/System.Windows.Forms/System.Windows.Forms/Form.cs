@@ -21,19 +21,15 @@
     	public class Form : ContainerControl  {
 			DialogResult dialogResult;
 			Size maximumSize;
-			Size minimizeSize;
+			Size minimumSize;
 			double opacity;
 			bool   topLevel;
 			bool   autoScale;
-			// Temperary varibles that may be replaced
-			// with win32 functions
 
-			// owner draw 
 			private bool controlBox;
 			private bool minimizeBox;
 			private bool maximizeBox;
 			private bool helpButton;
-			//end owner draw
 			
 			FormBorderStyle formBorderStyle;
 
@@ -79,22 +75,29 @@
 		Size	  autoScaleBaseSize;
 		bool	  keyPreview;
 		bool      showInTaskbar;
+		bool      topMost;
+		SizeGripStyle sizeGripStyle;
+		FormStartPosition formStartPosition;
 
 		public Form () : base ()
     		{
-			opacity = 0;
+			opacity = 1.00;
 			topLevel = true;
 			modal    = false;
 			dialogResult = DialogResult.None;
 			autoScale = true;
 			formBorderStyle = FormBorderStyle.Sizable;
+			sizeGripStyle = SizeGripStyle.Auto;
 			maximizeBox = true;
 			minimizeBox = true;
 			controlBox  = true;
 			keyPreview  = false;
 			showInTaskbar = true;
+			topMost = false;
 			helpButton = false;
 			maximumSize = Size.Empty;
+			minimumSize = Size.Empty;
+			formStartPosition = FormStartPosition.WindowsDefaultLocation;
     		}
     		
     		static Form ()
@@ -117,7 +120,7 @@
     		[MonoTODO]
     		public static Form ActiveForm {
     			get {
-				Control control = Control.FromHandle ( Win32.GetActiveWindow ( ) );
+				Control control = Control.FromChildHandle ( Win32.GetActiveWindow ( ) );
 				if ( control != null && ! ( control is Form ) )
 					control = control.getParentForm ( );
 				return control as Form;
@@ -213,8 +216,8 @@
     				throw new NotImplementedException ();
     			}
     			set {
-					//FIXME:
-				}
+				SetDesktopLocation ( value.X, value.Y );
+			}
     		}
     
   			//Compact Framework
@@ -318,15 +321,21 @@
     
     		[MonoTODO]
     		public Size MaximumSize {
-    			get {
-    				return maximumSize;
-    			}
+    			get { return maximumSize; }
     			set {
 				if ( value.Width < 0 || value.Height < 0 )
 					throw new ArgumentOutOfRangeException( "value" );
 
     				if ( maximumSize != value ) {
 					maximumSize = value;
+					
+					if ( minimumSize != Size.Empty ) {
+						if ( maximumSize.Width < minimumSize.Width )
+							minimumSize.Width = maximumSize.Width;
+						if ( maximumSize.Height < minimumSize.Height )
+							minimumSize.Height = maximumSize.Height;
+					}
+
 					Size = Size;
 					OnMaximumSizeChanged ( EventArgs.Empty );
 				}
@@ -419,12 +428,25 @@
     
     		[MonoTODO]
     		public Size MinimumSize {
-    			get {
-    				return maximumSize;
-    			}
+    			get { return minimumSize; }
     			set {
-    				maximumSize = value;
-    			}
+				if ( value.Width < 0 || value.Height < 0 )
+					throw new ArgumentOutOfRangeException( "value" );
+
+				if ( minimumSize != value ) {
+					minimumSize = value;
+
+					if ( maximumSize != Size.Empty ) {
+						if ( minimumSize.Width > maximumSize.Width )
+							maximumSize.Width = minimumSize.Width;
+						if ( minimumSize.Height > maximumSize.Height )
+							maximumSize.Height = minimumSize.Height;
+					}
+
+					Size = Size;
+					OnMinimumSizeChanged ( EventArgs.Empty );
+				}
+			}
     		}
     
     		public bool Modal {
@@ -493,42 +515,43 @@
     
     		[MonoTODO]
     		public SizeGripStyle SizeGripStyle {
-    			get {
-    				throw new NotImplementedException ();
-    			}
+    			get { return sizeGripStyle; }
     			set {
-					//FIXME:
-				}
-    		}
-    
-    		[MonoTODO]
-    		public FormStartPosition StartPosition {
-    			get {
-    				throw new NotImplementedException ();
-    			}
-    			set {
-					//FIXME:
-				}
-    		}
-    
-    		[MonoTODO]
-    		public bool TopLevel {
-    			get {
-    				return topLevel;
-    			}
-    			set {
-				topLevel = value;
+				if ( !Enum.IsDefined ( typeof( SizeGripStyle ), value ) )
+					throw new InvalidEnumArgumentException( "SizeGripStyle",
+						(int)value,
+						typeof( SizeGripStyle ) );
+
+				sizeGripStyle = value;
 			}
     		}
     
-    		[MonoTODO]
-    		public bool TopMost {
-    			get {
-    				throw new NotImplementedException ();
-    			}
+    		public FormStartPosition StartPosition {
+    			get { return formStartPosition; }
     			set {
-					//FIXME:
-				}
+				if ( !Enum.IsDefined ( typeof( FormStartPosition ), value ) )
+					throw new InvalidEnumArgumentException( "StartPosition",
+						(int)value,
+						typeof( FormStartPosition ) );
+
+				formStartPosition = value;
+			}
+    		}
+    
+		[MonoTODO]
+		public bool TopLevel {
+    			get { return topLevel;  }
+    			set { topLevel = value; }
+    		}
+    
+    		public bool TopMost {
+    			get { return topMost; }
+    			set {
+				topMost = value;
+				if ( IsHandleCreated )
+					Win32.SetWindowPos ( Handle, topMost ? SetWindowPosZOrder.HWND_TOPMOST : SetWindowPosZOrder.HWND_NOTOPMOST,
+						0, 0, 0, 0, SetWindowPosFlags.SWP_NOSIZE | SetWindowPosFlags.SWP_NOMOVE );
+			}
     		}
     
     		[MonoTODO]
@@ -662,12 +685,9 @@
 			return DialogResult;
 		}
     
-  			//Compact Framework
-    		[MonoTODO]
     		public override string ToString ()
     		{
-				//FIXME:
-				return base.ToString();
+			return GetType( ).FullName.ToString( ) + ", Text: " + Text;
     		}
     
     		//  --- Public Events
@@ -688,12 +708,12 @@
 			//Compact Framework
     		public event EventHandler  Load;
     		
-			public event EventHandler  MaximizedBoundsChanged;
-    		public event EventHandler MaximumSizeChanged;
+		public event EventHandler  MaximizedBoundsChanged;
+    		public event EventHandler  MaximumSizeChanged;
     		public event EventHandler  MdiChildActivate;
     		public event EventHandler  MenuComplete;
     		public event EventHandler  MenuStart;
-    		public event EventHandler  MinimumSizedChanged;
+    		public event EventHandler  MinimumSizeChanged;
     
     		
     		//  --- Protected Properties
@@ -715,12 +735,6 @@
 					pars.ExStyle |= (int)WindowExStyles.WS_EX_MDICHILD;
 				}
 				else {
-					if ( !RecreatingHandle ) {
-						// don't change location of the form when it is being recreated
-						pars.X = (int)CreateWindowCoordinates.CW_USEDEFAULT;
-						pars.Y = (int)CreateWindowCoordinates.CW_USEDEFAULT;
-					}
-
 					pars.Style |= (int)( WindowStyles.WS_CLIPSIBLINGS  |
 							     WindowStyles.WS_CLIPCHILDREN );
 				}
@@ -756,13 +770,17 @@
 				else
 					pars.ExStyle &= ~(int) WindowExStyles.WS_EX_CONTEXTHELP;
 
+				if ( TopMost )
+					pars.ExStyle |= (int) WindowExStyles.WS_EX_TOPMOST;
+
 				// this property is used for modal dialogs
 				if ( dlgOwner != null )
 					pars.Parent = dlgOwner.Handle;
-				
-				// should have WS_CLIPCHILDREN style but there are
-				// problems with GroupBox at the moment
 
+				if ( !RecreatingHandle ) {
+					// don't change location of the form when it is being recreated
+					getStartPosition ( ref pars );
+				}
 				return pars;
     			}
     		}
@@ -873,6 +891,7 @@
     			base.OnHandleCreated (e);
 			if ( IsMdiChild ) 
 				activateMdiChild ( );
+			Rectangle bnds = Bounds;
 			assignMenu();
 		}
     
@@ -934,8 +953,9 @@
     
     		protected virtual void OnMinimumSizeChanged (EventArgs e)
     		{
-				//FIXME:
-			}
+			if ( MinimumSizeChanged != null )
+				MinimumSizeChanged ( this, e );
+		}
     
 	 		//Compact Framework
     		protected override void  OnPaint (PaintEventArgs e)
@@ -1042,15 +1062,19 @@
 			ClientSize = new Size ( (int) ( ClientSize.Width * x ), (int) ( ClientSize.Height * y) );
     		}
     
-    		protected override void SetBoundsCore (
-    			int x, int y,  int width, int height,  
-    			BoundsSpecified specified)
+    		protected override void SetBoundsCore (	int x, int y,  int width, int height, BoundsSpecified specified )
     		{
 			if ( MaximumSize != Size.Empty ) {
 				if ( width > MaximumSize.Width )
 					width = MaximumSize.Width;
 				if ( height > MaximumSize.Height )
 					height = MaximumSize.Height;
+			}
+			if ( MinimumSize != Size.Empty ) {
+				if ( width < MinimumSize.Width )
+					width = MinimumSize.Width;
+				if ( height < MinimumSize.Height )
+					height = MinimumSize.Height;
 			}
 
     			base.SetBoundsCore (x, y, width, height, specified);
@@ -1127,11 +1151,48 @@
     				EventArgs enterMenuLoopArgs = new EventArgs();
     				OnMenuStart (enterMenuLoopArgs);
     				break;
+			case Msg.WM_WINDOWPOSCHANGING:
+				if ( StartPosition == FormStartPosition.WindowsDefaultBounds && MaximumSize != Size.Empty || MinimumSize != Size.Empty) {
+					WINDOWPOS winpos = (WINDOWPOS) Marshal.PtrToStructure ( m.LParam, typeof ( WINDOWPOS ) );
+					if ( ( winpos.flags & (uint)SetWindowPosFlags.SWP_SHOWWINDOW ) == (uint)SetWindowPosFlags.SWP_SHOWWINDOW ) {
+
+						RECT rect = new RECT ( );
+						Win32.GetWindowRect ( Handle, ref rect );
+						
+						winpos.cx  = rect.right  - rect.left;
+						winpos.cy  = rect.bottom - rect.top;
+
+						if ( MaximumSize != Size.Empty ) {
+							if ( winpos.cx > MaximumSize.Width )
+								winpos.cx = MaximumSize.Width;
+							if ( winpos.cy > MaximumSize.Height )
+								winpos.cy = MaximumSize.Height;
+						}
+
+						if ( MinimumSize != Size.Empty ) {
+							if ( winpos.cx  < MinimumSize.Width )
+								winpos.cx = MinimumSize.Width;
+							if ( winpos.cy < MinimumSize.Height )
+								winpos.cy = MinimumSize.Height;
+						}
+
+						winpos.flags &= ~ (uint)SetWindowPosFlags.SWP_NOSIZE;
+						winpos.flags |=   (uint)SetWindowPosFlags.SWP_NOSENDCHANGING;
+
+						Marshal.StructureToPtr ( winpos, m.LParam, false );
+					}
+				}
+				base.WndProc ( ref m );
+			break;
 			case Msg.WM_GETMINMAXINFO:
 				MINMAXINFO minmax = (MINMAXINFO) Marshal.PtrToStructure ( m.LParam, typeof ( MINMAXINFO ) );
 				if ( MaximumSize != Size.Empty ) {
 					minmax.ptMaxTrackSize.x = MaximumSize.Width;
 					minmax.ptMaxTrackSize.y = MaximumSize.Height;
+				}
+				if ( MinimumSize != Size.Empty ) {
+					minmax.ptMinTrackSize.x = MinimumSize.Width;
+					minmax.ptMinTrackSize.y = MinimumSize.Height;
 				}
 				Marshal.StructureToPtr ( minmax, m.LParam, false );
 			break;
@@ -1303,6 +1364,27 @@
 			if ( ControlBox )
 				sysStyles  |= (int)( WindowStyles.WS_SYSMENU );
 			return sysStyles;
+		}
+
+		private void getStartPosition ( ref CreateParams pars )
+		{
+			switch ( StartPosition ) {
+			case FormStartPosition.WindowsDefaultLocation:
+				pars.X = pars.Y = (int)CreateWindowCoordinates.CW_USEDEFAULT;
+			break;
+			case FormStartPosition.WindowsDefaultBounds:
+				pars.X = pars.Y = pars.Width = pars.Height = (int)CreateWindowCoordinates.CW_USEDEFAULT;
+			break;
+			case FormStartPosition.Manual:
+				// use location and size ( they are set in Control.CreateParams )
+			break;
+			case FormStartPosition.CenterScreen:
+				// FIXME
+			break;
+			case FormStartPosition.CenterParent:
+				// FIXME
+			break;
+			}
 		}
 
     		//sub class

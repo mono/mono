@@ -108,6 +108,19 @@ namespace System.Windows.Forms
 	}
 	#endregion
 
+	#region WINDOWPOS
+	[StructLayout(LayoutKind.Sequential)]
+	internal struct WINDOWPOS {
+		internal IntPtr hwnd; 
+		internal IntPtr hwndInsertAfter; 
+		internal int  x; 
+		internal int  y; 
+		internal int  cx; 
+		internal int  cy; 
+		internal uint flags; 
+	}
+	#endregion
+
 	#region NMHDR
 	[StructLayout(LayoutKind.Sequential)]
 	internal struct NMHDR
