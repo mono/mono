@@ -256,12 +256,17 @@ namespace System.Web
 		public IPrincipal User
 		{
 			get {
-				return Thread.CurrentPrincipal;
+				if (user == null) {
+					return Thread.CurrentPrincipal;
+				}
+				return user;
 			}
 			set {
+				user = value;
 				Thread.CurrentPrincipal = value;
 			}
 		}
+		private IPrincipal user = null;
 
 		internal bool TimeoutPossible {
 			get { return (Interlocked.CompareExchange (ref timeoutPossible, 1, 1) == 1); }

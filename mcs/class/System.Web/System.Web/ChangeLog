@@ -1,3 +1,9 @@
+2004-06-09  Pedro Martínez Juliá  <yoros@wanadoo.es>
+
+	* HttpContext: User property returns its own "user" value because
+	the context can walk through different Threads. When "User" property
+	is changed, change "Thread.CurrentPrincipal" too.
+
 2004-06-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpRequest.cs: removed extra ^Ms and fixed style of last patch.
