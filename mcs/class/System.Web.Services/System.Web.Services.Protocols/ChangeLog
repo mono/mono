@@ -1,3 +1,9 @@
+2004-07-27  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* HttpSimpleClientProtocol.cs, HttpWebClientProtocol.cs, 
+	  SoapHttpClientProtocol.cs: Implemented support for the new async model.
+	* InvokeCompletedEventArgs.cs: Implemented.
+
 2004-07-20  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* HttpWebClientProtocol.cs: Add received cookies to cookieContainer when

@@ -204,4 +204,20 @@ namespace System.Web.Services.Protocols {
 
 		#endregion // Methods
 	}
+	
+#if NET_2_0
+	internal class InvokeAsyncInfo
+	{
+		public SynchronizationContext Context;
+		public object UserState;
+		public SendOrPostCallback Callback;
+		
+		public InvokeAsyncInfo (SendOrPostCallback callback, object userState)
+		{
+			Callback = callback;
+			UserState = userState;
+			Context = SynchronizationContext.Current;
+		}
+	}
+#endif
 }

@@ -174,18 +174,27 @@ namespace System.Web.Services.Protocols {
 		
 #if NET_2_0
 
-		[MonoTODO]
 		protected void InvokeAsync (string methodName, string requestUrl, object[] parameters, SendOrPostCallback callback)
 		{
-			throw new NotImplementedException ();
+			InvokeAsync (methodName, requestUrl, parameters, callback, null);
 		}
 
-		[MonoTODO]
 		protected void InvokeAsync (string methodName, string requestUrl, object[] parameters, SendOrPostCallback callback, object userState)
 		{
-			throw new NotImplementedException ();
+			InvokeAsyncInfo info = new InvokeAsyncInfo (callback, userState);
+			BeginInvoke (methodName, requestUrl, parameters, new AsyncCallback (InvokeAsyncCallback), info);
 		}
 
+		void InvokeAsyncCallback (IAsyncResult ar)
+		{
+			InvokeAsyncInfo info = (InvokeAsyncInfo) ar.AsyncState;
+			SimpleWebClientAsyncResult sar = (SimpleWebClientAsyncResult) ar;
+			InvokeCompletedEventArgs args = new InvokeCompletedEventArgs (sar.Exception, false, info.UserState, (object[]) sar.Result);
+			if (info.Context != null)
+				info.Context.SendOrPost (info.Callback, args);
+			else
+				info.Callback (args);
+		}
 #endif
 		
 		#endregion // Methods

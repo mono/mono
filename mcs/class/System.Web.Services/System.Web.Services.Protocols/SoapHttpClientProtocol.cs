@@ -344,16 +344,26 @@ namespace System.Web.Services.Protocols
 			set { soapVersion = value; }
 		}
 		
-		[MonoTODO]
 		protected void InvokeAsync (string methodName, object[] parameters, SendOrPostCallback callback)
 		{
-			throw new NotImplementedException ();
+			InvokeAsync (methodName, parameters, callback, null);
 		}
 
-		[MonoTODO]
 		protected void InvokeAsync (string methodName, object[] parameters, SendOrPostCallback callback, object userState)
 		{
-			throw new NotImplementedException ();
+			InvokeAsyncInfo info = new InvokeAsyncInfo (callback, userState);
+			BeginInvoke (methodName, parameters, new AsyncCallback (InvokeAsyncCallback), info);
+		}
+		
+		void InvokeAsyncCallback (IAsyncResult ar)
+		{
+			InvokeAsyncInfo info = (InvokeAsyncInfo) ar.AsyncState;
+			SoapWebClientAsyncResult sar = (SoapWebClientAsyncResult) ar;
+			InvokeCompletedEventArgs args = new InvokeCompletedEventArgs (sar.Exception, false, info.UserState, (object[]) sar.Result);
+			if (info.Context != null)
+				info.Context.SendOrPost (info.Callback, args);
+			else
+				info.Callback (args);
 		}
 
 #endif
@@ -361,3 +371,4 @@ namespace System.Web.Services.Protocols
 		#endregion // Methods
 	}
 }
+
