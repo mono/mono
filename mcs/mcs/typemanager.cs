@@ -1864,13 +1864,27 @@ public class TypeManager {
 
 	public static bool CheckStructCycles (TypeContainer tc, Hashtable seen)
 	{
+		Hashtable hash = new Hashtable ();
+		return CheckStructCycles (tc, seen, hash);
+	}
+
+	public static bool CheckStructCycles (TypeContainer tc, Hashtable seen,
+					      Hashtable hash)
+	{
 		if (!(tc is Struct))
 			return true;
 
-		// We already checked that type.
+		//
+		// `seen' contains all types we've already visited.
+		//
 		if (seen.Contains (tc))
 			return true;
 		seen.Add (tc, null);
+
+		//
+		// `hash' contains all types in the current path.
+		//
+		hash.Add (tc, null);
 
 		if (tc.Fields == null)
 			return true;
@@ -1884,7 +1898,7 @@ public class TypeManager {
 			if (ftc == null)
 				continue;
 
-			if (seen.Contains (ftc)) {
+			if (hash.Contains (ftc)) {
 				Report.Error (523, tc.Location,
 					      "Struct member `{0}.{1}' of type `{2}' " +
 					      "causes a cycle in the struct layout",
@@ -1892,7 +1906,7 @@ public class TypeManager {
 				return false;
 			}
 
-			if (!CheckStructCycles (ftc, seen))
+			if (!CheckStructCycles (ftc, seen, hash))
 				return false;
 		}
 
