@@ -60,6 +60,7 @@ namespace System.Web.Compilation
 			}
 
 			AddInterfaces ();
+			AddClassAttributes ();
 			CreateStaticFields ();
 			AddScripts ();
 			CreateConstructor (null, null);
@@ -125,6 +126,10 @@ namespace System.Web.Compilation
 			}
 		}
 
+		protected virtual void AddClassAttributes ()
+		{
+		}
+		
 		protected virtual void ProcessObjectTag (ObjectTagBuilder tag)
 		{
 		}

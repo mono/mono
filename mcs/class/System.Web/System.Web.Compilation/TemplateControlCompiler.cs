@@ -429,6 +429,29 @@ namespace System.Web.Compilation
 		{
 			CodeMethodReferenceExpression m = new CodeMethodReferenceExpression (thisRef, child.method.Name);
 			CodeMethodInvokeExpression expr = new CodeMethodInvokeExpression (m);
+
+			object [] atts = child.ControlType.GetCustomAttributes (typeof (PartialCachingAttribute), true);
+			if (atts != null && atts.Length > 0) {
+				PartialCachingAttribute pca = (PartialCachingAttribute) atts [0];
+				CodeTypeReferenceExpression cc = new CodeTypeReferenceExpression("System.Web.UI.StaticPartialCachingControl");
+				CodeMethodInvokeExpression build = new CodeMethodInvokeExpression (cc, "BuildCachedControl");
+				build.Parameters.Add (new CodeArgumentReferenceExpression("__ctrl"));
+				build.Parameters.Add (new CodePrimitiveExpression (child.ID));
+				build.Parameters.Add (new CodePrimitiveExpression (Guid.NewGuid ().ToString ())); // GUID
+				build.Parameters.Add (new CodePrimitiveExpression (pca.Duration));
+				build.Parameters.Add (new CodePrimitiveExpression (pca.VaryByParams));
+				build.Parameters.Add (new CodePrimitiveExpression (pca.VaryByControls));
+				build.Parameters.Add (new CodePrimitiveExpression (pca.VaryByCustom));
+				build.Parameters.Add (new CodeDelegateCreateExpression (
+							      new CodeTypeReference (typeof (System.Web.UI.BuildMethod)),
+							      thisRef, child.method.Name));
+				
+				parent.method.Statements.Add (build);
+				if (parent.HasAspCode)
+					AddRenderControl (parent);
+				return;
+			}
+                                
 			if (child.isProperty || parent.ChildrenAsProperties) {
 				expr.Parameters.Add (new CodeFieldReferenceExpression (ctrlVar, child.TagName));
 				parent.method.Statements.Add (expr);

@@ -1,3 +1,12 @@
+2004-01-13  Jackson Harper <jackson@ximian.com>
+	
+	* TemplateControlCompiler.cs: If an item has the partial caching
+	attribute build a PartialCachingControl in the parents __Build method.
+	* BaseCompiler.cs: Add a method for adding class attributes to the
+	class.
+	* UserControlCompiler.cs: If caching is enabled on a user control
+	add the PartialCachingAttribute to it.
+	
 2004-01-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* PageCompiler.cs: invoke Request.ValidateInput if required.
