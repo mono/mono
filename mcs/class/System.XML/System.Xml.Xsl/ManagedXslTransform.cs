@@ -10,6 +10,7 @@
 using System;
 using System.Collections;
 using System.IO;
+using System.Security.Policy;
 using System.Text;
 using System.Xml.XPath;
 using Mono.Xml.Xsl;
@@ -20,14 +21,21 @@ namespace System.Xml.Xsl {
 		CompiledStylesheet s;
 		
 		
-		public override void Load (XPathNavigator stylesheet, XmlResolver resolver)
+		public override void Load (XPathNavigator stylesheet, XmlResolver resolver, Evidence evidence)
 		{
-			s = new Compiler ().Compile (stylesheet, resolver);
+			s = new Compiler ().Compile (stylesheet, resolver, evidence);
 		}
 
 		public override void Transform (XPathNavigator input, XsltArgumentList args, XmlWriter output, XmlResolver resolver)
 		{
+			bool wroteStartDocument = false;
+			if (output.WriteState == WriteState.Start) {
+				output.WriteStartDocument ();
+				wroteStartDocument = true;
+			}
 			new XslTransformProcessor (s).Process (input, output, args, resolver);
+			if (wroteStartDocument)
+				output.WriteEndDocument ();
 		}
 	}
 }

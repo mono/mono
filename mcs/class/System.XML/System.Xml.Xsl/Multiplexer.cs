@@ -13,6 +13,7 @@ using System.Collections;
 using System.IO;
 using System.Text;
 using System.Runtime.InteropServices;
+using System.Security.Policy;
 using System.Xml.XPath;
 
 namespace System.Xml.Xsl {
@@ -95,34 +96,81 @@ namespace System.Xml.Xsl {
 			impl.Load (url, resolver);
 		}
 
+#if NET_1_1
+		[Obsolete("You should pass evidence.", false)]
+#endif
 		public void Load (XmlReader stylesheet)
 		{
-			Load (stylesheet, null);
+			Load (stylesheet, null, null);
 		}
 
+#if NET_1_1
+		[Obsolete("You should pass evidence.", false)]
+#endif
 		public void Load (XmlReader stylesheet, XmlResolver resolver)
 		{
-			impl.Load (stylesheet, resolver);
+			Load (stylesheet, resolver, null);
 		}
 
+#if NET_1_1
+		[Obsolete("You should pass evidence.", false)]
+#endif
 		public void Load (XPathNavigator stylesheet)
 		{
-			Load (stylesheet, null);
+			Load (stylesheet, null, null);
 		}
 
+#if NET_1_1
+		[Obsolete("You should pass evidence.", false)]
+#endif
 		public void Load (XPathNavigator stylesheet, XmlResolver resolver)
 		{
-			impl.Load (stylesheet, resolver);
+			Load (stylesheet, resolver, null);
 		}
 		
+#if NET_1_1
+		[Obsolete("You should pass evidence.", false)]
+#endif
 		public void Load (IXPathNavigable stylesheet)
 		{
 			Load (stylesheet.CreateNavigator(), null);
 		}
 
+#if NET_1_1
+		[Obsolete("You should pass evidence.", false)]
+#endif
 		public void Load (IXPathNavigable stylesheet, XmlResolver resolver)
 		{
 			Load (stylesheet.CreateNavigator(), resolver);
 		}
+
+		// Introduced in .NET 1.1
+#if NET_1_1
+		public void Load (IXPathNavigable stylesheet, XmlResolver resolver, Evidence evidence)
+#else
+		internal void Load (IXPathNavigable stylesheet, XmlResolver resolver, Evidence evidence)
+#endif
+		{
+			impl.Load (stylesheet.CreateNavigator(), resolver, evidence);
+		}
+
+#if NET_1_1
+		public void Load (XPathNavigator stylesheet, XmlResolver resolver, Evidence evidence)
+#else
+		internal void Load (XPathNavigator stylesheet, XmlResolver resolver, Evidence evidence)
+#endif
+		{
+			impl.Load (stylesheet, resolver, evidence);
+		}
+
+#if NET_1_1
+		public void Load (XmlReader stylesheet, XmlResolver resolver, Evidence evidence)
+#else
+		internal void Load (XmlReader stylesheet, XmlResolver resolver, Evidence evidence)
+#endif
+		{
+			Load (stylesheet, resolver, null);
+		}
+
 	}
 }

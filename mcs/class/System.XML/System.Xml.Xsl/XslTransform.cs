@@ -14,6 +14,7 @@
 using System;
 using System.Collections;
 using System.IO;
+using System.Security.Policy;
 using System.Text;
 using System.Runtime.InteropServices;
 using System.Xml.XPath;
@@ -64,7 +65,7 @@ namespace System.Xml.Xsl
 				throw new XmlException ("Error creating stylesheet");
 		}
 		
-		public override void Load (XmlReader stylesheet, XmlResolver resolver)
+		public override void Load (XmlReader stylesheet, XmlResolver resolver, Evidence evidence)
 		{
 			FreeStylesheetIfNeeded ();
 			// Create a document for the stylesheet
@@ -82,7 +83,7 @@ namespace System.Xml.Xsl
 				throw new XmlException ("Error creating stylesheet");
 		}
 
-		public override void Load (XPathNavigator stylesheet, XmlResolver resolver)
+		public override void Load (XPathNavigator stylesheet, XmlResolver resolver, Evidence evidence)
 		{
 			FreeStylesheetIfNeeded ();
 			StringWriter sr = new UTF8StringWriter ();
