@@ -317,6 +317,9 @@ namespace System.Net
 	
 			lastUse = DateTime.Now;
 			NetworkCredential cred = credentials.GetCredential (request.RequestUri, "digest");
+			if (cred == null)
+				return null;
+
 			string userName = cred.UserName;
 			if (userName == null || userName == "")
 				return null;
