@@ -1,3 +1,25 @@
+2005-02-11  Miguel de Icaza  <miguel@novell.com>
+
+	* anonymous.cs (CaptureContext): Track whether `this' has been
+	referenced.   
+
+	* expression.cs (This.ResolveBase): Call CaptureThis.  Before we
+	only captured `this' if it was implicitly done (instance
+	methods/variables were used). 
+
+	* codegen.cs (EmitContext.CaptureThis): New method to flag that
+	`this' must be captured.
+
+2005-01-30  Miguel de Icaza  <miguel@novell.com>
+ 
+	* anonymous.cs (CreateMethodHost): If there Scope.ScopeTypeBuilder
+	is null it means that there has been no need to capture anything,
+	so we just create a sibling.
+
+	Renamed `EmitHelperClasses' to `EmitAnonymousHelperClasses'
+
+	Just a partial fix.  The other half is fairly elusive.
+	
 2005-02-10  Raja R Harinath  <rharinath@novell.com>
 
 	Fix #52586, cs0121-4.cs.

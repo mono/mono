@@ -113,7 +113,8 @@ namespace Mono.CSharp {
 			//
 			
 			TypeBuilder current_type = ec.TypeContainer.TypeBuilder;
-			TypeBuilder type_host = Scope == null ? current_type : Scope.ScopeTypeBuilder;
+			TypeBuilder type_host = (Scope == null ) // || Scope.ScopeTypeBuilder == null)
+				? current_type : Scope.ScopeTypeBuilder;
 
 			if (current_type == null)
 				throw new Exception ("The current_type is null");
@@ -657,7 +658,7 @@ namespace Mono.CSharp {
 	public class CaptureContext {
 		public static int count;
 		public int cc_id;
-		Location loc;
+		public Location loc;
 		
 		//
 		// Points to the toplevel block that owns this CaptureContext
@@ -665,6 +666,7 @@ namespace Mono.CSharp {
 		ToplevelBlock toplevel_owner;
 		Hashtable scopes = new Hashtable ();
 		bool have_captured_vars = false;
+		bool referenced_this = false;
 		ScopeInfo topmost = null;
 
 		//
@@ -909,7 +911,14 @@ namespace Mono.CSharp {
 			else
 				captured_fields [fe] = fe;
 		}
-		
+
+		public void CaptureThis ()
+		{
+			CaptureContext parent = ParentCaptureContext;
+			if (parent != null)
+				parent.CaptureThis ();
+			referenced_this = true;
+		}
 
 		public bool HaveCapturedVariables {
 			get {
@@ -948,15 +957,15 @@ namespace Mono.CSharp {
 			return false;
 		}
 
-		public void EmitHelperClasses (EmitContext ec)
+		public void EmitAnonymousHelperClasses (EmitContext ec)
 		{
 			if (topmost != null){
-				topmost.NeedThis = HaveCapturedFields;
+				topmost.NeedThis = HaveCapturedFields || referenced_this;
 				topmost.EmitScopeType (ec);
 			} 
 		}
 
-		public void CloseHelperClasses ()
+		public void CloseAnonymousHelperClasses ()
 		{
 			if (topmost != null)
 				topmost.CloseTypes ();
