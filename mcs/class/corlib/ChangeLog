@@ -1,5 +1,8 @@
 2004-06-11  Raja R Harinath  <rharinath@novell.com>
 
+	* corlib_plattest.dll.excludes: Remove contents.  Any file listed
+	here has also to be listed in corlib_test.dll.sources.
+
 	* Makefile: Rewrite to use library.make.  Do away with stampfiles.
 
 2004-06-04  Atsushi Enomoto  <atsushi@ximian.com>
