@@ -162,7 +162,6 @@ namespace Mono.ILASM {
 	public abstract class InstrCallBase : InstrBase {
 		
 		private string return_type;
-		private string assembly_name;
 		private string binding_flags;
 		private string calling_type;
 		private string method_name;
@@ -171,12 +170,11 @@ namespace Mono.ILASM {
 		/// <summary>
 		/// </summary>
 		/// <param name="tok"></param>
-		public InstrCallBase (OpCode op, string binding_flags, string return_type, string assembly_name, 
+		public InstrCallBase (OpCode op, string binding_flags, string return_type, 
 				string calling_type, string method_name, ArrayList arg_list) : base (op) {
 
 			this.binding_flags = binding_flags;
 			this.return_type = return_type;
-			this.assembly_name = assembly_name;
 			this.calling_type = calling_type;
 			this.method_name = method_name;
 			this.arg_list = arg_list;
@@ -225,9 +223,9 @@ namespace Mono.ILASM {
 		/// <summary>
 		/// </summary>
 		/// <param name="tok"></param>
-		public InstrCall (OpCode op, string binding_flags, string return_type, string assembly_name, 
-				string calling_type, string method_name, ArrayList arg_list) : base (op, binding_flags, 
-				return_type, assembly_name, calling_type, method_name, arg_list) {
+		public InstrCall (OpCode op, string binding_flags, string return_type, string calling_type, 
+			string method_name, ArrayList arg_list) : base (op, binding_flags, 
+				return_type, calling_type, method_name, arg_list) {
 
 		}
 
@@ -236,9 +234,7 @@ namespace Mono.ILASM {
 		/// </summary>
 		/// <param name="ilgen"></param>
 		public override void Emit (ILGenerator ilgen, CodeGen code_gen) {
-			// Create MethodInfo
-			Assembly assembly = Assembly.LoadWithPartialName (assembly_name);
-			Type type_to_call = assembly.GetType (calling_type);
+			Type type_to_call = code_gen.TypeManager[calling_type];
 			MethodInfo calling_method;
 			
 			calling_method = type_to_call.GetMethod (method_name, CreateBindingFlags (), 
@@ -262,9 +258,9 @@ namespace Mono.ILASM {
 		/// <summary>
 		/// </summary>
 		/// <param name="tok"></param>
-		public InstrNewobj (OpCode op, string binding_flags, string return_type, string assembly_name, 
-				string calling_type, string method_name, ArrayList arg_list) : base (op, binding_flags,
-				return_type, assembly_name, calling_type, method_name, arg_list) {
+		public InstrNewobj (OpCode op, string binding_flags, string return_type, string calling_type, 
+			string method_name, ArrayList arg_list) : base (op, binding_flags,
+				return_type, calling_type, method_name, arg_list) {
 
 		}
 
@@ -273,8 +269,7 @@ namespace Mono.ILASM {
 		/// </summary>
 		/// <param name="ilgen"></param>
 		public override void Emit (ILGenerator ilgen, CodeGen code_gen) {
-			Assembly assembly = Assembly.LoadWithPartialName (assembly_name);
-			Type type_to_call = assembly.GetType (calling_type);
+			Type type_to_call = code_gen.TypeManager[calling_type];
 			ConstructorInfo calling_constructor = null;
 
 			calling_constructor = type_to_call.GetConstructor (CreateArgsTypeArray (code_gen));
