@@ -1,3 +1,10 @@
+2001-09-08  Jeffrey Stedfast  <fejj@ximian.com>
+
+	* String.cs (TrimStart): Don't keep looping through the trimchars
+	once we've found a match.
+	(TrimEnd): Same here.
+	(Trim): And finally here.
+
 2001-09-07  Ravi Pratap  <ravi@ximian.com>
 
 	* Char.cs (IsLetterOrDigit): Implement.

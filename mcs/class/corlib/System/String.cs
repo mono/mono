@@ -1534,8 +1534,11 @@ namespace System {
 			for (begin = 0; matches && begin < this.length; begin++) {
 				if (trimChars != null) {
 					matches = false;
-					foreach (char c in trimChars)
+					foreach (char c in trimChars) {
 						matches = this.c_str[begin] == c;
+						if (matches)
+							break;
+					}
 				} else {
 					matches = is_lwsp (this.c_str[begin]);
 				}
@@ -1545,8 +1548,11 @@ namespace System {
 			for (end = this.length; end > begin; end--) {
 				if (trimChars != null) {
 					matches = false;
-					foreach (char c in trimChars)
+					foreach (char c in trimChars) {
 						matches = this.c_str[end] == c;
+						if (matches)
+							break;
+					}
 				} else {
 					matches = is_lwsp (this.c_str[end]);
 				}
@@ -1566,8 +1572,11 @@ namespace System {
 			for (end = this.length; end > 0; end--) {
 				if (trimChars != null) {
 					matches = false;
-					foreach (char c in trimChars)
+					foreach (char c in trimChars) {
 						matches = this.c_str[end] == c;
+						if (matches)
+							break;
+					}
 				} else {
 					matches = is_lwsp (this.c_str[end]);
 				}
@@ -1587,8 +1596,11 @@ namespace System {
 			for (begin = 0; matches && begin < this.length; begin++) {
 				if (trimChars != null) {
 					matches = false;
-					foreach (char c in trimChars)
+					foreach (char c in trimChars) {
 						matches = this.c_str[begin] == c;
+						if (matches)
+							break;
+					}
 				} else {
 					matches = is_lwsp (this.c_str[begin]);
 				}
