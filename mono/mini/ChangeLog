@@ -1,5 +1,8 @@
 2005-01-06  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini-amd64.c (mono_arch_emit_exceptions): Remove duplicate epilog stuff
+	left in by mistake.
+
 	* driver.c (EXCLUDED_FROM_ALL): Disable SSAPRE until bug #70637 is 
 	fixed.
 
