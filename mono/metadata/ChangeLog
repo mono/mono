@@ -1,3 +1,7 @@
+2003-04-22  Dietmar Maurer  <dietmar@ximian.com>
+
+	* domain.c (mono_init): initialize mono_defaults.monitor_class
+
 2003-04-21  Miguel de Icaza  <miguel@ximian.com>
 
 	* reflection.c (method_encode_code): Add a spicy exception to help
