@@ -1071,24 +1071,25 @@ namespace System.Drawing
                                 FillRectangle(brush, rc);
 		}
 
-		[MonoTODO]
+		
 		public void FillRegion (Brush brush, Region region)
 		{
-			throw new NotImplementedException ();
+			Status status = GDIPlus.GdipFillRegion (nativeObject, brush.NativeObject, region.NativeObject);                  
+                        GDIPlus.CheckStatus (status);                                            
 		}
 
-		[MonoTODO]
+		
 		public void Flush ()
 		{
 			Flush (FlushIntention.Flush);
 		}
 
-		[MonoTODO]
+		
 		public void Flush (FlushIntention intention)
 		{
-			throw new NotImplementedException ();
+			Status status = GDIPlus.GdipFlush (nativeObject, intention);
+                        GDIPlus.CheckStatus (status);                                                                
 		}
-
 		
 		public static Graphics FromHdc (IntPtr hdc)
 		{

@@ -1,3 +1,7 @@
+2004-04-05  Jordi Mas i Hernandez <jordi@ximian.com>
+	* Region.cs: implemented new methods
+	* Graphics.cs: implemented new methods
+
 2004-04-02  Jordi Mas i Hernandez <jordi@ximian.com>
 	* Region.cs: implemented
 

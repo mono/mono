@@ -266,5 +266,15 @@ namespace System.Drawing.Drawing2D
                 {
                         TransformVectors (pts);
                 }
+                
+                internal IntPtr NativeObject
+                {
+			get{
+				return nativeMatrix;
+			}
+			set	{
+				nativeMatrix = value;
+			}
+		}
         }
 }

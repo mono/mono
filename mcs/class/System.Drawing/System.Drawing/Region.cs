@@ -38,19 +38,20 @@ namespace System.Drawing
 
 		public Region (Rectangle rect)                
 		{
-                        Status status = GDIPlus.GdipCreateRegionRectI (rect, out nativeRegion);
+                        Status status = GDIPlus.GdipCreateRegionRectI (ref rect, out nativeRegion);
                         GDIPlus.CheckStatus (status);
 		}
 
 		public Region (RectangleF rect)
 		{
-                        Status status = GDIPlus.GdipCreateRegionRect (rect, out nativeRegion);
+                        Status status = GDIPlus.GdipCreateRegionRect (ref rect, out nativeRegion);
                         GDIPlus.CheckStatus (status);
 		}
 
                 [MonoTODO]
 		public Region (RegionData region_data)
 		{
+			throw new NotImplementedException ();
 		}
 		
 		//                                                                                                     a
@@ -429,6 +430,70 @@ namespace System.Drawing
                         GDIPlus.CheckStatus (status);                      
 		}
 		
+		public bool Equals(Region region, Graphics g)
+		{
+			bool result;
+			
+			Status status = GDIPlus.GdipIsEqualRegion (nativeRegion, region.NativeObject,
+                           g.NativeObject, out result);                                   
+                           
+                        GDIPlus.CheckStatus (status);                      
+                        
+			return result;			
+		}
+		
+		
+		public static Region FromHrgn(IntPtr hrgn)
+		{
+			return new Region (hrgn);
+		}
+		
+		
+		public IntPtr GetHrgn(Graphics g)
+		{
+			return nativeRegion;
+		}
+		
+		
+		public RegionData GetRegionData()
+		{
+			int size, filled;			
+			
+			Status status = GDIPlus.GdipGetRegionDataSize (nativeRegion, out size);                  
+                        GDIPlus.CheckStatus (status);                      
+                        
+                        byte[] buff = new byte [size];			
+                        
+			status = GDIPlus.GdipGetRegionData (nativeRegion, buff, size, out filled);
+			GDIPlus.CheckStatus (status);                      
+			
+			RegionData rgndata = new RegionData();
+			rgndata.Data = buff;
+			
+			return rgndata;
+		}
+		
+		
+		public RectangleF[] GetRegionScans(Matrix matrix)
+		{
+			int cnt;			
+			
+			Status status = GDIPlus.GdipGetRegionScansCount (nativeRegion, out cnt, matrix.NativeObject);                  
+                        GDIPlus.CheckStatus (status);                                             
+                        
+                        RectangleF[] rects = new RectangleF [cnt];					
+                        
+			status = GDIPlus.GdipGetRegionScans (nativeRegion, ptr, cnt, matrix.NativeObject);
+			GDIPlus.CheckStatus (status);                      	
+			
+			return rects;			
+		}		
+		
+		public void Transform(Matrix matrix)
+		{
+			Status status = GDIPlus.GdipTransformRegion (nativeRegion, matrix.NativeObject);
+			GDIPlus.CheckStatus (status);                      				
+		}		
 		
 		[ComVisible (false)]
 		public Region Clone()

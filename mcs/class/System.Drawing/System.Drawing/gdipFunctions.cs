@@ -66,15 +66,15 @@ namespace System.Drawing {
 				Marshal.StructureToPtr(pts[i], (IntPtr)pos, false);	
 			
 			return dest;			
-		}
-		
-		// Copies a Ptr to an array of PointsF and releases the memory
-		static public void FromUnManagedMemoryToPoint(IntPtr prt, PointF [] pts)
+		}		
+				
+		// Copies a Ptr to an array of v and releases the memory
+		static public void FromUnManagedMemoryToRectangles (IntPtr prt, RectangleF [] pts)
 		{						
 			int nPointSize = Marshal.SizeOf(pts[0]);
 			int pos = prt.ToInt32();
 			for (int i=0; i<pts.Length; i++, pos+=nPointSize)
-				pts[i] = (PointF) Marshal.PtrToStructure((IntPtr)pos, typeof(PointF));
+				pts[i] = (RectangleF) Marshal.PtrToStructure((IntPtr)pos, typeof(PointF));
 			
 			Marshal.FreeHGlobal(prt);			
 		}
@@ -165,10 +165,10 @@ namespace System.Drawing {
 		static internal extern Status GdipCloneRegion (IntPtr region, out IntPtr cloned);
 
                 [DllImport("gdiplus.dll")]
-		static internal extern Status GdipCreateRegionRect (RectangleF rect, out IntPtr region);
+		static internal extern Status GdipCreateRegionRect (ref RectangleF rect, out IntPtr region);
 
                 [DllImport("gdiplus.dll")]
-		static internal extern Status GdipCreateRegionRectI (Rectangle rect,  out IntPtr region);
+		static internal extern Status GdipCreateRegionRectI (ref Rectangle rect,  out IntPtr region);
 
                 [DllImport("gdiplus.dll")]
 		static internal extern Status GdipCreateRegionPath (IntPtr path, out IntPtr region);
@@ -225,7 +225,30 @@ namespace System.Drawing {
                 [DllImport("gdiplus.dll")]
 		static internal extern Status GdipCombineRegionRegion (IntPtr region, IntPtr region2,
                         CombineMode combineMode);
+                        
+		[DllImport("gdiplus.dll")]
+		static internal extern Status GdipIsEqualRegion (IntPtr region, IntPtr region2,
+                           IntPtr graphics, out bool result);                                   
+                           
+                [DllImport("gdiplus.dll")]
+		static internal extern Status GdipGetRegionDataSize (IntPtr region, out int bufferSize);
 
+		[DllImport("gdiplus.dll")]
+		static internal extern Status GdipGetRegionData (IntPtr region, byte[] buffer, int bufferSize, 
+                  out int sizeFilled);
+                  
+		[DllImport("gdiplus.dll")]
+		static internal extern Status GdipGetRegionScansCount (IntPtr region, out int count, IntPtr matrix);
+
+		[DllImport("gdiplus.dll")]
+		static internal extern Status GdipGetRegionScans (IntPtr region,  RectangleF [] rects, int count, 
+                   IntPtr matrix);
+                
+                [DllImport("gdiplus.dll")]
+		static internal extern Status GdipTransformRegion(IntPtr region, IntPtr matrix);
+		
+		[DllImport("gdiplus.dll")]
+		static internal extern Status GdipFillRegion(IntPtr graphics, IntPtr brush, IntPtr region);
 		
 		// Solid brush functions
 		[DllImport("gdiplus.dll")]
@@ -590,6 +613,9 @@ namespace System.Drawing {
 		internal static extern Status GdipGetTextRenderingHint(IntPtr graphics, out TextRenderingHint mode);
 		[DllImport("gdiplus.dll")]                   
 		internal static extern Status GdipGetVisibleClipBounds(IntPtr graphics, out RectangleF rect);
+		
+		[DllImport("gdiplus.dll")]                   
+		internal static extern Status GdipFlush(IntPtr graphics, FlushIntention intention);
 
 				
 		// Pen functions

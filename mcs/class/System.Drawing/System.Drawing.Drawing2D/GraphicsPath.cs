@@ -5,6 +5,7 @@
 //
 //   Miguel de Icaza (miguel@ximian.com)
 //   Duncan Mak (duncan@ximian.com)
+//   Jordi Mas i Hernandez (jordi@ximian.com)
 //
 // (C) 2004 Novell, Inc
 //
@@ -17,7 +18,7 @@ namespace System.Drawing.Drawing2D
 {
         public sealed class GraphicsPath : MarshalByRefObject, ICloneable, IDisposable {
 
-                internal IntPtr nativePath;
+                internal IntPtr nativePath = IntPtr.Zero;
 
                 GraphicsPath (IntPtr ptr)
                 {
@@ -26,14 +27,47 @@ namespace System.Drawing.Drawing2D
                            		
                 public GraphicsPath ()
                 {
-                        GDIPlus.GdipCreatePath (FillMode.Alternate, out nativePath);
+                        Status status = GDIPlus.GdipCreatePath (FillMode.Alternate, out nativePath);
+                        GDIPlus.CheckStatus (status);                      	
+                }
+                
+                [MonoTODO]
+                public GraphicsPath (FillMode fillMode)
+                {
+                	throw new NotImplementedException ();
+                }
+                
+                [MonoTODO]
+                public GraphicsPath (Point[] pts, byte[] types)
+                {
+                	throw new NotImplementedException ();
+                }
+                
+                [MonoTODO]
+                public GraphicsPath (PointF[] pts, byte[] types)
+                {
+                	throw new NotImplementedException ();
+                }
+                
+                [MonoTODO]
+		public GraphicsPath (Point[] pts,  byte[] types,  FillMode fillMode)
+		{
+                	throw new NotImplementedException ();	
+                }
+
+		[MonoTODO]
+		public GraphicsPath(PointF[] pts,  byte[] types,   FillMode fillMode)
+		{
+                	throw new NotImplementedException ();
                 }
 	
+		
                 public object Clone ()
                 {
                         IntPtr clone;
 
-                        GDIPlus.GdipClonePath (nativePath, out clone);
+                        Status status = GDIPlus.GdipClonePath (nativePath, out clone);
+                        GDIPlus.CheckStatus (status);                      	
 
                         return new GraphicsPath (clone);
                 }
@@ -59,12 +93,15 @@ namespace System.Drawing.Drawing2D
                         get {
 
                                 FillMode mode;
-                                GDIPlus.GdipGetPathFillMode (nativePath, out mode);
+                                Status status = GDIPlus.GdipGetPathFillMode (nativePath, out mode);
+                                GDIPlus.CheckStatus (status);                      	
+                                
                                 return mode;
                         }
 
                         set {
-                                GDIPlus.GdipSetPathFillMode (nativePath, value);
+                                Status status = GDIPlus.GdipSetPathFillMode (nativePath, value);
+                                GDIPlus.CheckStatus (status);                      	
                         }
                 }
 
@@ -72,7 +109,8 @@ namespace System.Drawing.Drawing2D
 
                         get {
                                 IntPtr tmp;
-                                GDIPlus.GdipGetPathData (nativePath, out tmp);
+                                Status status = GDIPlus.GdipGetPathData (nativePath, out tmp);
+                                GDIPlus.CheckStatus (status);                      	
 
                                 throw new Exception ();
                         }
@@ -83,11 +121,13 @@ namespace System.Drawing.Drawing2D
                         get {
                                 int count;
                         
-                                GDIPlus.GdipGetPointCount (nativePath, out count);
+                                Status status = GDIPlus.GdipGetPointCount (nativePath, out count);
+                                GDIPlus.CheckStatus (status);                      	
 
                                 PointF [] points = new PointF [count];
 
-                                GDIPlus.GdipGetPathPoints (nativePath, points, count); 
+                                status = GDIPlus.GdipGetPathPoints (nativePath, points, count); 
+                                GDIPlus.CheckStatus (status);                      	
 
                                 return points;
                         }
@@ -97,10 +137,12 @@ namespace System.Drawing.Drawing2D
 
                         get {
                                 int count;
-                                GDIPlus.GdipGetPointCount (nativePath, out count);
+                                Status status = GDIPlus.GdipGetPointCount (nativePath, out count);
+                                GDIPlus.CheckStatus (status);                      	
 
                                 byte [] types = new byte [count];
-                                GDIPlus.GdipGetPathTypes (nativePath, types, count);
+                                status = GDIPlus.GdipGetPathTypes (nativePath, types, count);
+                                GDIPlus.CheckStatus (status);                      	
 
                                 return types;
                         }
@@ -111,7 +153,8 @@ namespace System.Drawing.Drawing2D
                         get {
                                 int count;
 
-                                GDIPlus.GdipGetPointCount (nativePath, out count);
+                                Status status = GDIPlus.GdipGetPointCount (nativePath, out count);
+                                GDIPlus.CheckStatus (status);                      	
 
                                 return count;
                         }
@@ -132,22 +175,26 @@ namespace System.Drawing.Drawing2D
                 //
                 public void AddArc (Rectangle rect, float start_angle, float sweep_angle)
                 {
-                        GDIPlus.GdipAddPathArcI (nativePath, rect.X, rect.Y, rect.Width, rect.Height, start_angle, sweep_angle);
+                        Status status = GDIPlus.GdipAddPathArcI (nativePath, rect.X, rect.Y, rect.Width, rect.Height, start_angle, sweep_angle);
+                        GDIPlus.CheckStatus (status);                      	
                 }
 
                 public void AddArc (RectangleF rect, float start_angle, float sweep_angle)
                 {
-                        GDIPlus.GdipAddPathArc (nativePath, rect.X, rect.Y, rect.Width, rect.Height, start_angle, sweep_angle);
+                        Status status = GDIPlus.GdipAddPathArc (nativePath, rect.X, rect.Y, rect.Width, rect.Height, start_angle, sweep_angle);
+                        GDIPlus.CheckStatus (status);                      	
                 }
 
                 public void AddArc (int x, int y, int width, int height, float start_angle, float sweep_angle)
                 {
-                        GDIPlus.GdipAddPathArcI (nativePath, x, y, width, height, start_angle, sweep_angle);                
+                        Status status = GDIPlus.GdipAddPathArcI (nativePath, x, y, width, height, start_angle, sweep_angle);                
+                        GDIPlus.CheckStatus (status);                      	
                 }
 
                 public void AddArc (float x, float y, float width, float height, float start_angle, float sweep_angle)
                 {
-                        GDIPlus.GdipAddPathArc (nativePath, x, y, width, height, start_angle, sweep_angle);
+                        Status status = GDIPlus.GdipAddPathArc (nativePath, x, y, width, height, start_angle, sweep_angle);
+                        GDIPlus.CheckStatus (status);                      	
                 }
 
                 //
@@ -155,24 +202,30 @@ namespace System.Drawing.Drawing2D
                 //
                 public void AddBezier (Point pt1, Point pt2, Point pt3, Point pt4)
                 {
-                        GDIPlus.GdipAddPathBezierI (nativePath, pt1.X, pt1.Y,
+                        Status status = GDIPlus.GdipAddPathBezierI (nativePath, pt1.X, pt1.Y,
                                         pt2.X, pt2.Y, pt3.X, pt3.Y, pt4.X, pt4.Y);
+                                        
+			GDIPlus.CheckStatus (status);                      		                                      
                 }
 
                 public void AddBezier (PointF pt1, PointF pt2, PointF pt3, PointF pt4)
                 {
-                        GDIPlus.GdipAddPathBezier (nativePath, pt1.X, pt1.Y,
+                        Status status = GDIPlus.GdipAddPathBezier (nativePath, pt1.X, pt1.Y,
                                         pt2.X, pt2.Y, pt3.X, pt3.Y, pt4.X, pt4.Y);
+                                        
+			GDIPlus.CheckStatus (status);                      	                                       
                 }
 
                 public void AddBezier (int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4)
                 {
-                        GDIPlus.GdipAddPathBezierI (nativePath, x1, y1, x2, y2, x3, y3, x4, y4);
+                        Status status = GDIPlus.GdipAddPathBezierI (nativePath, x1, y1, x2, y2, x3, y3, x4, y4);
+                        GDIPlus.CheckStatus (status);                      	
                 }
 
                 public void AddBezier (float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4)
                 {
-                        GDIPlus.GdipAddPathBezier (nativePath, x1, y1, x2, y2, x3, y3, x4, y4);
+                        Status status = GDIPlus.GdipAddPathBezier (nativePath, x1, y1, x2, y2, x3, y3, x4, y4);
+                        GDIPlus.CheckStatus (status);                      	
                 }
 
                 //
@@ -180,12 +233,14 @@ namespace System.Drawing.Drawing2D
                 //
                 public void AddBeziers (Point [] pts)
                 {
-                        GDIPlus.GdipAddPathBeziersI (nativePath, pts, pts.Length);
+                        Status status = GDIPlus.GdipAddPathBeziersI (nativePath, pts, pts.Length);
+                        GDIPlus.CheckStatus (status);                      	
                 }
 
                 public void AddBeziers (PointF [] pts)
                 {
-                        GDIPlus.GdipAddPathBeziers (nativePath, pts, pts.Length);
+                        Status status = GDIPlus.GdipAddPathBeziers (nativePath, pts, pts.Length);
+                        GDIPlus.CheckStatus (status);                      	
                 }
 
                 //
@@ -193,22 +248,26 @@ namespace System.Drawing.Drawing2D
                 //
                 public void AddEllipse (RectangleF r)
                 {
-                        GDIPlus.GdipAddPathEllipse (nativePath, r.X, r.Y, r.Width, r.Height);
+                        Status status = GDIPlus.GdipAddPathEllipse (nativePath, r.X, r.Y, r.Width, r.Height);
+                        GDIPlus.CheckStatus (status);                      	
                 }
                 
                 public void AddEllipse (float x, float y, float width, float height)
                 {
-                        GDIPlus.GdipAddPathEllipse (nativePath, x, y, width, height);
+                        Status status = GDIPlus.GdipAddPathEllipse (nativePath, x, y, width, height);
+                        GDIPlus.CheckStatus (status);                      	
                 }
 
                 public void AddEllipse (Rectangle r)
                 {
-                        GDIPlus.GdipAddPathEllipseI (nativePath, r.X, r.Y, r.Width, r.Height);
+                        Status status = GDIPlus.GdipAddPathEllipseI (nativePath, r.X, r.Y, r.Width, r.Height);
+                        GDIPlus.CheckStatus (status);                      	
                 }
                 
                 public void AddEllipse (int x, int y, int width, int height)
                 {
-                        GDIPlus.GdipAddPathEllipseI (nativePath, x, y, width, height);
+                        Status status = GDIPlus.GdipAddPathEllipseI (nativePath, x, y, width, height);
+                        GDIPlus.CheckStatus (status);                      	
                 }
                 
 
@@ -217,24 +276,30 @@ namespace System.Drawing.Drawing2D
                 //
                 public void AddLine (Point a, Point b)
                 {
-                        GDIPlus.GdipAddPathLineI (nativePath, a.X, a.Y, b.X, b.Y);
+                        Status status = GDIPlus.GdipAddPathLineI (nativePath, a.X, a.Y, b.X, b.Y);
+                        GDIPlus.CheckStatus (status);                      	
                 }
 
                 public void AddLine (PointF a, PointF b)
                 {
-                        GDIPlus.GdipAddPathLine (nativePath, a.X, a.Y, b.X,
+                        Status status = GDIPlus.GdipAddPathLine (nativePath, a.X, a.Y, b.X,
                                         b.Y);
+                                        
+			GDIPlus.CheckStatus (status);                      	                                       
                 }
 
                 public void AddLine (int x1, int y1, int x2, int y2)
                 {
-                        GDIPlus.GdipAddPathLineI (nativePath, x1, y1, x2, y2);
+                        Status status = GDIPlus.GdipAddPathLineI (nativePath, x1, y1, x2, y2);
+                        GDIPlus.CheckStatus (status);                      	
                 }
 
                 public void AddLine (float x1, float y1, float x2, float y2)
                 {
-                        GDIPlus.GdipAddPathLine (nativePath, x1, y1, x2,
+                        Status status = GDIPlus.GdipAddPathLine (nativePath, x1, y1, x2,
                                         y2);                
+                                        
+			GDIPlus.CheckStatus (status);                      	                                       
                 }
 
                 //
@@ -246,7 +311,8 @@ namespace System.Drawing.Drawing2D
 
                         for (int i = 0; i < length - 2; i += 2) {
                                 int j = i + 1;
-                                GDIPlus.GdipAddPathLineI (nativePath, points [i].X, points [i].Y, points [j].X, points [j].Y);
+                                Status status = GDIPlus.GdipAddPathLineI (nativePath, points [i].X, points [i].Y, points [j].X, points [j].Y);
+                                GDIPlus.CheckStatus (status);                      	
                         }
                 }
 
@@ -256,7 +322,8 @@ namespace System.Drawing.Drawing2D
 
                         for (int i = 0; i < length - 2; i += 2) {
                                 int j = i + 1;
-                                GDIPlus.GdipAddPathLine (nativePath, points [i].X, points [i].Y, points [j].X, points [j].Y);
+                                Status status = GDIPlus.GdipAddPathLine (nativePath, points [i].X, points [i].Y, points [j].X, points [j].Y);
+                                GDIPlus.CheckStatus (status);                      	
                         }
                 }
         
@@ -265,17 +332,20 @@ namespace System.Drawing.Drawing2D
                 //
                 public void AddPie (Rectangle rect, float startAngle, float sweepAngle)
                 {
-                        GDIPlus.GdipAddPathPie (nativePath, rect.X, rect.Y, rect.Width, rect.Height, startAngle, sweepAngle);
+                        Status status = GDIPlus.GdipAddPathPie (nativePath, rect.X, rect.Y, rect.Width, rect.Height, startAngle, sweepAngle);
+                        GDIPlus.CheckStatus (status);                      	
                 }
 
                 public void AddPie (int x, int y, int width, int height, float startAngle, float sweepAngle)
                 {
-                        GDIPlus.GdipAddPathPie (nativePath, x, y, width, height, startAngle, sweepAngle);
+                        Status status = GDIPlus.GdipAddPathPie (nativePath, x, y, width, height, startAngle, sweepAngle);
+                        GDIPlus.CheckStatus (status);                      	
                 }
 
                 public void AddPie (float x, float y, float width, float height, float startAngle, float sweepAngle)
                 {
-                        GDIPlus.GdipAddPathPie (nativePath, x, y, width, height, startAngle, sweepAngle);                
+                        Status status = GDIPlus.GdipAddPathPie (nativePath, x, y, width, height, startAngle, sweepAngle);                
+                        GDIPlus.CheckStatus (status);                      	
                 }
 
                 //
@@ -283,13 +353,14 @@ namespace System.Drawing.Drawing2D
                 //
                 public void AddPolygon (Point [] points)
                 {
-
-                        GDIPlus.GdipAddPathPolygonI (nativePath, points, points.Length);
+                        Status status = GDIPlus.GdipAddPathPolygonI (nativePath, points, points.Length);
+                        GDIPlus.CheckStatus (status);                      	
                 }
 
                 public void AddPolygon (PointF [] points)
                 {
-                        GDIPlus.GdipAddPathPolygon (nativePath, points, points.Length);
+                        Status status = GDIPlus.GdipAddPathPolygon (nativePath, points, points.Length);
+                        GDIPlus.CheckStatus (status);                      	
                 }
 
                 //
@@ -297,12 +368,14 @@ namespace System.Drawing.Drawing2D
                 //
                 public void AddRectangle (Rectangle rect)
                 {
-                        GDIPlus.GdipAddPathRectangleI (nativePath, rect.X, rect.Y, rect.Width, rect.Height);
+                        Status status = GDIPlus.GdipAddPathRectangleI (nativePath, rect.X, rect.Y, rect.Width, rect.Height);
+                        GDIPlus.CheckStatus (status);                      	
                 }
 
                 public void AddRectangle (RectangleF rect)
                 {
-                        GDIPlus.GdipAddPathRectangle (nativePath, rect.X, rect.Y, rect.Width, rect.Height);
+                        Status status = GDIPlus.GdipAddPathRectangle (nativePath, rect.X, rect.Y, rect.Width, rect.Height);
+                        GDIPlus.CheckStatus (status);                      	
                 }
 
                 //
@@ -310,12 +383,14 @@ namespace System.Drawing.Drawing2D
                 //
                 public void AddRectangles (Rectangle [] rects)
                 {
-                        GDIPlus.GdipAddPathRectanglesI (nativePath, rects, rects.Length);
+                        Status status = GDIPlus.GdipAddPathRectanglesI (nativePath, rects, rects.Length);
+                        GDIPlus.CheckStatus (status);                      	
                 }
 
                 public void AddRectangles (RectangleF [] rects)
                 {
-                        GDIPlus.GdipAddPathRectangles (nativePath, rects, rects.Length);
+                        Status status = GDIPlus.GdipAddPathRectangles (nativePath, rects, rects.Length);
+                        GDIPlus.CheckStatus (status);                      	
                 }
 
                 //
@@ -323,13 +398,15 @@ namespace System.Drawing.Drawing2D
                 //
                 public void AddPath (GraphicsPath addingPath, bool connect)
                 {
-                        GDIPlus.GdipAddPathPath (nativePath, addingPath.nativePath, connect);
+                        Status status = GDIPlus.GdipAddPathPath (nativePath, addingPath.nativePath, connect);
+                        GDIPlus.CheckStatus (status);                      	
                 }
 
                 public PointF GetLastPoint ()
                 {
                         PointF pt;
-                        GDIPlus.GdipGetPathLastPoint (nativePath, out pt);
+                        Status status = GDIPlus.GdipGetPathLastPoint (nativePath, out pt);
+                        GDIPlus.CheckStatus (status);                      	
 
                         return pt;
                 }
@@ -339,22 +416,26 @@ namespace System.Drawing.Drawing2D
                 //
                 public void AddClosedCurve (Point [] points)
                 {
-                        GDIPlus.GdipAddPathClosedCurveI (nativePath, points, points.Length);
+                        Status status = GDIPlus.GdipAddPathClosedCurveI (nativePath, points, points.Length);
+                        GDIPlus.CheckStatus (status);                      	
                 }
 
                 public void AddClosedCurve (PointF [] points)
                 {
-                        GDIPlus.GdipAddPathClosedCurve (nativePath, points, points.Length);
+                        Status status = GDIPlus.GdipAddPathClosedCurve (nativePath, points, points.Length);
+                        GDIPlus.CheckStatus (status);                      	
                 }
 
                 public void AddClosedCurve (Point [] points, float tension)
                 {
-                        GDIPlus.GdipAddPathClosedCurve2I (nativePath, points, points.Length, tension);
+                        Status status = GDIPlus.GdipAddPathClosedCurve2I (nativePath, points, points.Length, tension);
+                        GDIPlus.CheckStatus (status);                      	
                 }
 
                 public void AddClosedCurve (PointF [] points, float tension)
                 {
-                        GDIPlus.GdipAddPathClosedCurve2 (nativePath, points, points.Length, tension);
+                        Status status = GDIPlus.GdipAddPathClosedCurve2 (nativePath, points, points.Length, tension);
+                        GDIPlus.CheckStatus (status);                      	
                 }
 
                 //
@@ -362,50 +443,284 @@ namespace System.Drawing.Drawing2D
                 //
                 public void AddCurve (Point [] points)
                 {
-                        GDIPlus.GdipAddPathCurveI (nativePath, points, points.Length);
+                        Status status = GDIPlus.GdipAddPathCurveI (nativePath, points, points.Length);
+                        GDIPlus.CheckStatus (status);                      	
                 }
                 
                 public void AddCurve (PointF [] points)
                 {
-                        GDIPlus.GdipAddPathCurve (nativePath, points, points.Length);
+                        Status status = GDIPlus.GdipAddPathCurve (nativePath, points, points.Length);
+                        GDIPlus.CheckStatus (status);                      	
                 }
                 
                 public void AddCurve (Point [] points, float tension)
                 {
-                        GDIPlus.GdipAddPathCurve2I (nativePath, points, points.Length, tension);
+                        Status status = GDIPlus.GdipAddPathCurve2I (nativePath, points, points.Length, tension);
+                        GDIPlus.CheckStatus (status);                      	
                 }
                 
                 public void AddCurve (PointF [] points, float tension)
                 {
-                        GDIPlus.GdipAddPathCurve2 (nativePath, points, points.Length, tension);
+                        Status status = GDIPlus.GdipAddPathCurve2 (nativePath, points, points.Length, tension);
+                        GDIPlus.CheckStatus (status);                      	
                 }
 
                 public void AddCurve (Point [] points, int offset, int numberOfSegments, float tension)
                 {
-                        GDIPlus.GdipAddPathCurve3I (nativePath, points, points.Length,
+                        Status status = GDIPlus.GdipAddPathCurve3I (nativePath, points, points.Length,
                                         offset, numberOfSegments, tension);
+                                        
+			GDIPlus.CheckStatus (status);                      	                                       
                 }
                 
                 public void AddCurve (PointF [] points, int offset, int numberOfSegments, float tension)
                 {
-                        GDIPlus.GdipAddPathCurve3 (nativePath, points, points.Length,
+                        Status status = GDIPlus.GdipAddPathCurve3 (nativePath, points, points.Length,
                                         offset, numberOfSegments, tension);
+                                        
+			GDIPlus.CheckStatus (status);                      	                                       
                 }
                         
                 public void Reset ()
                 {
-                        GDIPlus.GdipResetPath (nativePath);
+                        Status status = GDIPlus.GdipResetPath (nativePath);
+                        GDIPlus.CheckStatus (status);                      	
                 }
 
                 public void Reverse ()
                 {
-                        GDIPlus.GdipReversePath (nativePath);
+                        Status status = GDIPlus.GdipReversePath (nativePath);
+                        GDIPlus.CheckStatus (status);                      	
                 }
 
                 public void Transform (Matrix matrix)
                 {
-                        GDIPlus.GdipTransformPath (nativePath, matrix.nativeMatrix);
+                        Status status = GDIPlus.GdipTransformPath (nativePath, matrix.nativeMatrix);
+                        GDIPlus.CheckStatus (status);                      	
                 }
+                
+                [MonoTODO]
+                public void AddString (string s, FontFamily family, int style,  float emSize,  Point origin,   StringFormat format)
+                {
+                	throw new NotImplementedException ();
+                }  	
+                
+                [MonoTODO]
+  		public void AddString (string s,  FontFamily family,  int style,  float emSize,  PointF origin,   StringFormat format)
+  		{
+                	throw new NotImplementedException ();
+                }  	
+  		
+  		[MonoTODO]
+  		public void AddString (string s, FontFamily family, int style, float emSize,  Rectangle layoutRect, StringFormat format)
+  		{
+                	throw new NotImplementedException ();
+                }  	
+  		
+  		[MonoTODO]
+  		public void AddString (string s, FontFamily family, int style, float emSize,  RectangleF layoutRect,   StringFormat format)
+  		{
+                	throw new NotImplementedException ();
+                }  	
+                
+                [MonoTODO]
+		public void ClearMarkers()               
+		{
+                	throw new NotImplementedException ();
+                }  	
+                
+                [MonoTODO]
+		public void CloseAllFigures()
+		{
+                	throw new NotImplementedException ();
+                }  	
+                
+                [MonoTODO]
+                public void Flatten ()
+                {
+                	throw new NotImplementedException ();
+                }  	
+  
+  		[MonoTODO]
+		public void Flatten (Matrix matrix)
+		{
+                	throw new NotImplementedException ();
+                }  	
+		
+		[MonoTODO]
+		public void Flatten (Matrix matrix, float flatness)
+		{
+                	throw new NotImplementedException ();
+                }  		
+                
+                [MonoTODO]
+                public RectangleF GetBounds ()
+                {
+                	throw new NotImplementedException ();
+                }  		
+                
+                [MonoTODO]
+                public RectangleF GetBounds (Matrix matrix)
+                {
+                	throw new NotImplementedException ();
+                }  		
+                
+                [MonoTODO]
+                public RectangleF GetBounds (Matrix matrix, Pen pen)
+                {
+                	throw new NotImplementedException ();
+                }  		
+		
+		[MonoTODO]
+		public bool IsOutlineVisible (Point point,  Pen pen)
+		{
+                	throw new NotImplementedException ();
+                }  		
+		
+		[MonoTODO]
+		public bool IsOutlineVisible (PointF point,  Pen pen)
+		{
+                	throw new NotImplementedException ();
+                }  		
+		
+		[MonoTODO]
+		public bool IsOutlineVisible (int x, int y, Pen pen)
+		{
+                	throw new NotImplementedException ();
+                }  		
+		
+		[MonoTODO]
+		public bool IsOutlineVisible (Point pt, Pen pen, Graphics graphics)
+		{
+                	throw new NotImplementedException ();
+                }  		
+		
+		[MonoTODO]
+		public bool IsOutlineVisible (PointF pt, Pen pen, Graphics graphics)
+		{
+                	throw new NotImplementedException ();
+                }  		
+		
+		[MonoTODO]
+		public bool IsOutlineVisible (float x, float y, Pen pen)
+		{
+                	throw new NotImplementedException ();
+                }  		
+		
+		[MonoTODO]
+		public bool IsOutlineVisible (int x, int y, Pen pen, Graphics graphics)
+		{
+                	throw new NotImplementedException ();
+                }  		
+		
+		[MonoTODO]
+		public bool IsOutlineVisible (float x, float y, Pen pen, Graphics graphics)
+		{
+                	throw new NotImplementedException ();
+                }  		
+                
+                [MonoTODO]
+                public bool IsVisible (Point point)
+                {
+                	throw new NotImplementedException ();
+                }  		
+                
+                [MonoTODO]
+                public bool IsVisible (PointF point)
+                {
+                	throw new NotImplementedException ();
+                }  		
+                
+                [MonoTODO]
+                public bool IsVisible (int x, int y)
+                {
+                	throw new NotImplementedException ();
+                }  		
+                
+                [MonoTODO]
+                public bool IsVisible (Point pt, Graphics graphics)
+                {
+                	throw new NotImplementedException ();
+                }  		
+                
+                [MonoTODO]
+                public bool IsVisible (PointF pt, Graphics graphics)
+                {
+                	throw new NotImplementedException ();
+                }  		
+                
+                [MonoTODO]
+                public bool IsVisible (float x, float y)
+                {
+                	throw new NotImplementedException ();
+                }  		
+                
+                [MonoTODO]
+                public bool IsVisible (int x, int y, Graphics graphics)
+                {
+                	throw new NotImplementedException ();
+                }  		
+                
+                [MonoTODO]
+                public bool IsVisible (float x, float y, Graphics graphics)
+                {
+                	throw new NotImplementedException ();
+                }  		
+                
+                [MonoTODO]
+                public void SetMarkers()
+                {
+                	throw new NotImplementedException ();
+                }
+                
+                [MonoTODO]
+                public void StartFigure()
+                {
+                	throw new NotImplementedException ();
+                }  		
+                
+                [MonoTODO]
+                public void Warp (PointF[] destPoints,  RectangleF srcRect)
+                {
+                	throw new NotImplementedException ();
+                }  		
+
+		[MonoTODO]
+		public void Warp (PointF[] destPoints, RectangleF srcRect,  Matrix matrix)
+		{
+                	throw new NotImplementedException ();
+                }  		
+
+		[MonoTODO]
+		public void Warp (PointF[] destPoints, RectangleF srcRect, Matrix matrix, WarpMode warpMode)
+		{
+                	throw new NotImplementedException ();
+                }  		
+
+		[MonoTODO]
+		public void Warp (PointF[] destPoints, RectangleF srcRect, Matrix matrix,  WarpMode warpMode, float flatness)
+		{
+                	throw new NotImplementedException ();
+                }  		                
+                
+                [MonoTODO]
+                public void Widen (Pen pen)
+		{
+                	throw new NotImplementedException ();
+                }  		
+                
+		[MonoTODO]
+		public void Widen (Pen pen,  Matrix matrix)
+		{	
+                	throw new NotImplementedException ();
+                }  		
+                
+		[MonoTODO]
+		public void Widen (Pen pen, Matrix matrix, float flatness)
+                {
+                	throw new NotImplementedException ();
+                }  		            
+
         }
 }
 
