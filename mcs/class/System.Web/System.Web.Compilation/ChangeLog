@@ -1,3 +1,9 @@
+2003-05-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* TemplateControlCompiler.cs: duh! Generate SupportAutoEvents instead
+	of AutoEventWireup (which is internal). Thanks to Stuart Ballard for
+	reporting.
+
 2003-05-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CompilationException.cs: don't add duplicated lines in the case that

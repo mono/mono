@@ -808,8 +808,8 @@ namespace System.Web.Compilation
 		{
 			// The getter returns false
 			CodeMemberProperty prop = new CodeMemberProperty ();
-			prop.Type = new CodeTypeReference (typeof (int));
-			prop.Name = "AutoEventWireup";
+			prop.Type = new CodeTypeReference (typeof (bool));
+			prop.Name = "SupportAutoEvents";
 			prop.Attributes = MemberAttributes.Family | MemberAttributes.Override;
 			prop.GetStatements.Add (new CodeMethodReturnStatement (new CodePrimitiveExpression (false)));
 			mainClass.Members.Add (prop);
