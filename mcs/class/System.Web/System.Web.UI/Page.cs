@@ -41,9 +41,6 @@ public class Page : TemplateControl, IHttpHandler
 	private string _errorPage;
 	private bool _isValid;
 	private bool _smartNavigation = false;
-	private TraceContext _trace;
-	private bool _traceEnabled;
-	private TraceMode _traceModeValue;
 	private int _transactionMode;
 	private HttpContext _context;
 	private ValidatorCollection _validators;
@@ -249,19 +246,19 @@ public class Page : TemplateControl, IHttpHandler
 	[Browsable (false)]
 	public TraceContext Trace
 	{
-		get { return _trace; }
+		get { return Context.Trace; }
 	}
 
 	[EditorBrowsable (EditorBrowsableState.Never)]
 	protected bool TraceEnabled
 	{
-		set { _traceEnabled = value; }
+		set { Trace.IsEnabled = value; }
 	}
 
 	[EditorBrowsable (EditorBrowsableState.Never)]
 	protected TraceMode TraceModeValue
 	{
-		set { _traceModeValue = value; }
+		set { Trace.TraceMode = value; }
 	}
 
 	[EditorBrowsable (EditorBrowsableState.Never)]
