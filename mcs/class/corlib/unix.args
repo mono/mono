@@ -427,7 +427,7 @@ System.Runtime.InteropServices/ClassInterfaceAttribute.cs
 System.Runtime.InteropServices/ClassInterfaceType.cs
 System.Runtime.InteropServices/CoClassAttribute.cs
 System.Runtime.InteropServices/ComAliasNameAttribute.cs
-System.Runtime.InteropServices.ComCompatibleVersionAttribute.cs
+System.Runtime.InteropServices/ComCompatibleVersionAttribute.cs
 System.Runtime.InteropServices/ComConversionLossAttribute.cs
 System.Runtime.InteropServices/COMException.cs
 System.Runtime.InteropServices/ComEventInterfaceAttribute.cs
@@ -482,7 +482,7 @@ System.Runtime.InteropServices/TypeLibTypeAttribute.cs
 System.Runtime.InteropServices/TypeLibTypeFlags.cs
 System.Runtime.InteropServices/TypeLibVarAttribute.cs
 System.Runtime.InteropServices/TypeLibVarFlags.cs
-System.Runtime.InteropServices.TypeLibVersionAttribute.cs
+System.Runtime.InteropServices/TypeLibVersionAttribute.cs
 System.Runtime.InteropServices/UCOMTypeComp.cs
 System.Runtime.InteropServices/UCOMTypeInfo.cs
 System.Runtime.InteropServices/UCOMTypeLib.cs

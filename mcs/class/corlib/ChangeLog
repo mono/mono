@@ -1,6 +1,10 @@
+2003-07-13  Zoltan Varga  <vargaz@freemail.hu>
+
+	* unix.args: Fix UNIX build.
+
 2003-07-12  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
-	* list.args: Added Runtime.InteropServices.ComCompatibleVersionAttribute.cs,
+	* unix.args: Added Runtime.InteropServices.ComCompatibleVersionAttribute.cs,
 	Runtime.InteropServices.TypeLibVersionAttribute.cs
 
 2003-07-05  Sebastien Pouliot <spouliot@videotron.ca>
