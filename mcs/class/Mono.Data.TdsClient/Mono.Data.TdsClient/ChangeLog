@@ -1,3 +1,18 @@
+2002-10-23  Tim Coleman (tim@timcoleman.com)
+	* TdsCommand.cs: 
+		Change ExecuteReader call
+	* TdsConnection.cs:
+		Much to do with the restructuring
+		of the TDS objects and some 
+		simplification.
+	* TdsConnectionPool.cs:
+		Some modifications to do with above.
+	* TdsTransaction.cs:
+		Move calls out of Tds object and
+		into here.  Simpler, makes Tds
+		object smaller, doesn't change this
+		much.
+
 2002-10-22  Tim Coleman (tim@timcoleman.com)
 	* TdsConnectionPool.cs:
 		New class added for pooling connections

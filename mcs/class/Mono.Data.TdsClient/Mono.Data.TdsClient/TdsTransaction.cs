@@ -30,7 +30,7 @@ namespace Mono.Data.TdsClient {
 			this.connection = connection;
 			this.isolationLevel = isolevel;
 
-			connection.Tds.BeginTransaction ();
+			connection.Tds.ExecuteNonQuery ("BEGIN TRAN");
 			open = true;
 		}
 
@@ -62,7 +62,7 @@ namespace Mono.Data.TdsClient {
 		{
 			if (!open)
 				throw new InvalidOperationException ("This TdsTransaction has completed; it is no longer usable.");
-			connection.Tds.CommitTransaction ();
+			connection.Tds.ExecuteNonQuery ("IF @@TRANCOUNT>0 COMMIT TRAN");
 			open = false;
 		}
 
@@ -75,7 +75,7 @@ namespace Mono.Data.TdsClient {
 		{
 			if (!open)
 				throw new InvalidOperationException ("This TdsTransaction has completed; it is no longer usable.");
-			connection.Tds.RollbackTransaction ();
+			connection.Tds.ExecuteNonQuery ("IF @@TRANCOUNT>0 ROLLBACK TRAN");
 			open = false;
 		}
 
@@ -83,7 +83,7 @@ namespace Mono.Data.TdsClient {
 		{
 			if (!open)
 				throw new InvalidOperationException ("This TdsTransaction has completed; it is no longer usable.");
-			connection.Tds.SaveTransaction (savePointName);
+			connection.Tds.ExecuteNonQuery (String.Format ("SAVE TRAN {0}", savePointName));
 		}
 
                 #endregion // Methods

@@ -154,7 +154,7 @@ namespace Mono.Data.TdsClient {
 				throw new TdsException ("The connection is closed.");
 			if (commandText == String.Empty || commandText == null)
 				throw new TdsException ("The command text is not set.");
-			connection.Tds.SubmitProcedure (FormatQuery (commandText, commandType));
+			connection.Tds.ExecuteQuery (FormatQuery (commandText, commandType));
 			return null;
 		}
 

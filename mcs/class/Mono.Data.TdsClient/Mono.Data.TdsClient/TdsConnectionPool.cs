@@ -17,17 +17,23 @@ namespace Mono.Data.TdsClient {
 		#region Fields
 
 		ArrayList list = new ArrayList ();
+
 		int maxSize;
 		int minSize;
-		TdsConnectionParameters parms = null;
+		int packetSize;
+		int port;
+
+		string dataSource;
 
 		#endregion // Fields
 
 		#region Constructors
 
-		public TdsConnectionPool (TdsConnectionParameters parms, int minSize, int maxSize)
+		public TdsConnectionPool (string dataSource, int port, int packetSize, int minSize, int maxSize)
 		{
-			this.parms = parms;
+			this.dataSource = dataSource;
+			this.port = port;
+			this.packetSize = packetSize;
 			this.minSize = minSize;
 			this.maxSize = maxSize;
 		}
@@ -73,10 +79,6 @@ namespace Mono.Data.TdsClient {
 			get { throw new InvalidOperationException (); }
 		}
 
-		public TdsConnectionParameters ConnectionParameters {
-			get { return parms; }
-		}
-
 		#endregion // Properties
 
 		#region Methods
@@ -112,7 +114,7 @@ namespace Mono.Data.TdsClient {
 			// make sure we have the minimum count (really only useful the first time)
 			lock (list) {
 				for (int i = Count; i < minSize; i += 1)
-					Add (new Tds (parms));
+					Add (new Tds42 (dataSource, port, packetSize));
 
 				// look for a tds that isn't in use
 				foreach (object o in list) {
@@ -122,7 +124,7 @@ namespace Mono.Data.TdsClient {
 
 				// otherwise, try to expand the list, if not at limits
 				if (Count < maxSize) {
-					Tds tds = new Tds (parms);
+					Tds tds = new Tds42 (dataSource, port, packetSize);
 					Add (tds);
 					return tds;
 				}
