@@ -322,7 +322,7 @@ namespace_declaration
 					RootContext.AddGlobalAttributeSection (current_container, asec);
 		}
 
-		current_namespace = RootContext.Tree.RecordNamespace (current_namespace, name, (string) $3);
+		current_namespace = RootContext.Tree.RecordNamespace (current_namespace, file, (string) $3);
 	} 
 	  namespace_body opt_semicolon
 	  { 
@@ -3925,7 +3925,7 @@ public Tokenizer Lexer {
 
 public CSharpParser (StreamReader reader, SourceFile file, ArrayList defines)
 {
-	current_namespace = new Namespace (null, "");
+	current_namespace = new Namespace (null, file, "");
 	this.name = file.Name;
 	this.file = file;
 	current_container = RootContext.Tree.Types;

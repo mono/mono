@@ -16,6 +16,8 @@ using System.Diagnostics.SymbolStore;
 namespace Mono.CSharp {
 	public class SymbolWriter {
 		ISymbolWriter symwriter;
+		MethodInfo define_namespace;
+		MethodInfo open_method;
 
 		protected SymbolWriter (ISymbolWriter symwriter)
 		{
@@ -24,7 +26,21 @@ namespace Mono.CSharp {
 
 		bool Initialize ()
 		{
+			Type type = symwriter.GetType ();
+			define_namespace = type.GetMethod ("DefineNamespace", new Type[] {
+				typeof (string), typeof (ISymbolDocumentWriter),
+				typeof (string []), typeof (int) });
+			if (define_namespace == null)
+				return false;
+
+			open_method = type.GetMethod ("OpenMethod", new Type[] {
+				typeof (ISymbolDocumentWriter), typeof (int), typeof (int),
+				typeof (int), typeof (int), typeof (MethodBase), typeof (int) });
+			if (open_method == null)
+				return false;
+
 			Location.DefineSymbolDocuments (this);
+			Namespace.DefineNamespaces (this);
 
 			return true;
 		}
@@ -36,11 +52,17 @@ namespace Mono.CSharp {
 				SymDocumentType.Text);
 		}
 
-		public void OpenMethod (MethodToken token, Location start, Location end)
+		public int DefineNamespace (string name, SourceFile file, string[] using_list, int parent)
 		{
-			symwriter.OpenMethod (new SymbolToken (token.Token));
-			symwriter.SetMethodSourceRange (
-				start.SymbolDocument, start.Row, 0, end.SymbolDocument, end.Row, 0);
+			return (int) define_namespace.Invoke (symwriter, new object[] {
+				name, file.SymbolDocument, using_list, parent });
+		}
+
+		public void OpenMethod (TypeContainer parent, MethodBase method, Location start, Location end)
+		{
+			int ns_id = parent.Namespace.SymbolFileID;
+			open_method.Invoke (symwriter, new object[] {
+				start.SymbolDocument, start.Row, 0, end.Row, 0, method, ns_id });
 		}
 
 		public void CloseMethod ()

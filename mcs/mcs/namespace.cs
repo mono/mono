@@ -20,6 +20,8 @@ namespace Mono.CSharp {
 		
 		Namespace parent;
 		string name;
+		SourceFile file;
+		int symfile_id;
 		ArrayList using_clauses;
 		Hashtable aliases;
 		public bool DeclarationFound = false;
@@ -49,9 +51,10 @@ namespace Mono.CSharp {
 		///   name.  This is bootstrapped with parent == null
 		///   and name = ""
 		/// </summary>
-		public Namespace (Namespace parent, string name)
+		public Namespace (Namespace parent, SourceFile file, string name)
 		{
 			this.name = name;
+			this.file = file;
 			this.parent = parent;
 
 			all_namespaces.Add (this);
@@ -78,6 +81,12 @@ namespace Mono.CSharp {
 		public Namespace Parent {
 			get {
 				return parent;
+			}
+		}
+
+		public int SymbolFileID {
+			get {
+				return symfile_id;
 			}
 		}
 
@@ -141,6 +150,32 @@ namespace Mono.CSharp {
 				value = Parent.LookupAlias (alias);
 
 			return value;
+		}
+
+		void DefineNamespace (SymbolWriter symwriter)
+		{
+			if (symfile_id != 0)
+				return;
+			if (parent != null)
+				parent.DefineNamespace (symwriter);
+
+			string[] using_list;
+			if (using_clauses != null) {
+				using_list = new string [using_clauses.Count];
+				for (int i = 0; i < using_clauses.Count; i++)
+					using_list [i] = ((UsingEntry) using_clauses [i]).Name;
+			} else {
+				using_list = new string [0];
+			}				
+
+			int parent_id = parent != null ? parent.symfile_id : 0;
+			symfile_id = symwriter.DefineNamespace (name, file, using_list, parent_id);
+		}
+
+		public static void DefineNamespaces (SymbolWriter symwriter)
+		{
+			foreach (Namespace ns in all_namespaces)
+				ns.DefineNamespace (symwriter);
 		}
 
 		/// <summary>
