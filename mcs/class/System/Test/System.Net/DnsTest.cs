@@ -19,6 +19,8 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Collections;
 
+namespace Ximian.Mono.Tests.System {
+
 public class DnsTest: TestCase {
         
         private String site1Name = "www.go-mono.com",
@@ -28,8 +30,8 @@ public class DnsTest: TestCase {
                 noneExistingSite = "www.hopefullydoesnotexist.dk";
         private uint site1IP = 2180692201, site2IP = 2195808260; // Big-Endian
         
-        public DnsTest(String name): base(name) {
-        }
+        public DnsTest(): base("Ximian.Mono.Tests.System.Net.DnsTest testsuite") { }
+        public DnsTest(String name): base(name) { }
 
         public static ITest Suite {
                 get { return new TestSuite(typeof(DnsTest)); }
@@ -37,27 +39,27 @@ public class DnsTest: TestCase {
         
         private void Callback(IAsyncResult ar) { 
                 IPHostEntry h;
-                h = System.Net.Dns.EndGetHostByName(ar);
+                h = Dns.EndGetHostByName(ar);
                 SubTestValidIPHostEntry(h);
         }
 
         public void TestAsyncGetHostByName(){
                 IAsyncResult r;
-                r = System.Net.Dns.BeginGetHostByName(site1Name, new AsyncCallback(Callback), null);
+                r = Dns.BeginGetHostByName(site1Name, new AsyncCallback(Callback), null);
         }
         
         public void TestAsyncResolve() {
                 IAsyncResult r;
-                r = System.Net.Dns.BeginResolve(site1Name, new AsyncCallback(Callback), null);
+                r = Dns.BeginResolve(site1Name, new AsyncCallback(Callback), null);
         }
         
         public void TestGetHostName() {
-                string hostName = System.Net.Dns.GetHostName();
+                string hostName = Dns.GetHostName();
                 Assert(hostName != null);
         }
         
         private void SubTestGetHostByName(string siteName, string siteDot) {
-                IPHostEntry h = System.Net.Dns.GetHostByName(siteName);
+                IPHostEntry h = Dns.GetHostByName(siteName);
                 SubTestValidIPHostEntry(h);
                 Assert(h.HostName.Equals(siteName));
                 Assert(h.AddressList[0].ToString() == siteDot);
@@ -67,12 +69,12 @@ public class DnsTest: TestCase {
                 SubTestGetHostByName(site1Name, site1Dot);
                 SubTestGetHostByName(site2Name, site2Dot);
                 try {
-                        System.Net.Dns.GetHostByName(noneExistingSite);
+                        Dns.GetHostByName(noneExistingSite);
                         Fail("Should raise a SocketException (assuming that '" + noneExistingSite + "' does not exist)");
                 } catch (SocketException) {
                 } 
                 try {
-                        System.Net.Dns.GetHostByName(null);
+                        Dns.GetHostByName(null);
                         Fail("Should raise an ArgumentNullException");
                 } catch (ArgumentNullException) {
                 } 
@@ -80,21 +82,21 @@ public class DnsTest: TestCase {
         
         private void SubTestGetHostByAddressStringFormatException(string addr) {
                 try {
-                        System.Net.Dns.GetHostByAddress(addr);
+                        Dns.GetHostByAddress(addr);
                         Fail("Should raise a FormatException");
                 } catch (FormatException) {
                 } 
         }
         
         private void SubTestGetHostByAddressString(string addr) {
-                IPHostEntry h = System.Net.Dns.GetHostByAddress(addr);
+                IPHostEntry h = Dns.GetHostByAddress(addr);
                 SubTestValidIPHostEntry(h);
         }
         
         public void TestGetHostByAddressString() {
                 try {
                         String addr = null;
-                        System.Net.Dns.GetHostByAddress(addr);
+                        Dns.GetHostByAddress(addr);
                         Fail("Should raise an ArgumentNullException");
                 } catch (ArgumentNullException) {
                 }
@@ -106,7 +108,7 @@ public class DnsTest: TestCase {
         }
         
         private void SubTestGetHostByAddressIPAddress(IPAddress addr) {
-                IPHostEntry h = System.Net.Dns.GetHostByAddress(addr);
+                IPHostEntry h = Dns.GetHostByAddress(addr);
                 SubTestValidIPHostEntry(h);
                 Assert(h.AddressList[0].ToString() == addr.ToString());
         }
@@ -114,7 +116,7 @@ public class DnsTest: TestCase {
         public void TestGetHostByAddressIPAddress() {
                 try {
                         IPAddress addr = null;
-                        System.Net.Dns.GetHostByAddress(addr);
+                        Dns.GetHostByAddress(addr);
                         Fail("Should raise an ArgumentNullException");
                 } catch (ArgumentNullException) {
                 }
@@ -123,7 +125,7 @@ public class DnsTest: TestCase {
         }
         
         private void SubTestResolve(string addr) {
-                IPHostEntry h = System.Net.Dns.Resolve(addr);
+                IPHostEntry h = Dns.Resolve(addr);
                 SubTestValidIPHostEntry(h);
         }
         
@@ -157,3 +159,4 @@ public class DnsTest: TestCase {
         }
 }
 
+}

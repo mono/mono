@@ -7,7 +7,7 @@
 //
 
 using NUnit.Framework;
-namespace Ximian.Mono.Tests
+namespace Ximian.Mono.Tests.System
 {
 	/// <summary>
 	///   Combines all unit tests for the System.dll assembly
@@ -19,12 +19,11 @@ namespace Ximian.Mono.Tests
 
 		public static ITest Suite {
 			get {
-				TestSuite suite =  new TestSuite();
-				suite.AddTest(DnsTest.Suite);
-				
-				suite.AddTest(Testsuite.System.Collections.Specialized.NameValueCollectionTest.Suite);
-				suite.AddTest(new TestSuite(typeof(System.Collections.Specialized.StringCollectionTest)));
-				suite.AddTest(MonoTests.System.Text.RegularExpressions.AllTests.Suite);
+				TestSuite suite = new TestSuite();
+				suite.AddTest (DnsTest.Suite);
+				suite.AddTest (Collections.Specialized.NameValueCollectionTest.Suite);
+				suite.AddTest (Collections.Specialized.StringCollectionTest.Suite);
+				suite.AddTest (Text.RegularExpressions.AllTests.Suite);
 				return suite;
 			}
 		}

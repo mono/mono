@@ -1,3 +1,18 @@
+2002-02-27  Martin Baulig  <martin@gnome.org>
+
+	* System_test.build: Build new executable RunTests.System.exe which you can
+	use to run the tests on Linux.
+
+	* NameValueCollectionTest.cs: Split out BasicOperationTest into
+	BasicOperationTest.cs.
+
+	* AllTests.cs: Use namespace Ximian.Mono.Tests.System instead of
+	Ximian.Mono.Tests.
+
+	* DnsTest.cs: Put this into namespace Ximian.Mono.Tests.Systeam.
+	* NameValueCollectionTest.cs: Likewise.
+	* StringCollectionTest.cs: Likewise.
+
 2002-02-11  Duncan Mak  <duncan@ximian.com>
 
 	* AllTests.cs: Removed entry for IPHostEntryTest.cs because Mads

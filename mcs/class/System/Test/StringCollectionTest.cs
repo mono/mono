@@ -7,8 +7,15 @@
 
 using NUnit.Framework;
 
-namespace System.Collections.Specialized {
+namespace Ximian.Mono.Tests.System.Collections.Specialized {
 	public class StringCollectionTest : TestCase {
+
+		public static ITest Suite {
+			get {
+				return new TestSuite(typeof (StringCollectionTest));
+			}
+		}
+
 		private StringCollection sc;
 		string[] strings = {
 			"foo",
@@ -20,6 +27,7 @@ namespace System.Collections.Specialized {
 			"ringo"
 		};
 		
+		public StringCollectionTest() : base("Ximian.Mono.Tests.System.Collections.Specialized.StringCollectionTest testsuite") {}
 		public StringCollectionTest(string name) : base(name) {}
 		
 		protected override void SetUp() {
