@@ -1,3 +1,8 @@
+2005-02-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlReflectionImporterTests.cs : set NotWorking for trivial empty
+	  string comparison.
+
 2005-02-10  Nick Drochak  <ndrochak@ieee.org>
 
 	* DeserializeTests.cs: Ignore new test on MS.NET, since it fails there.

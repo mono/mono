@@ -253,6 +253,7 @@ namespace MonoTests.System.Xml
 			AssertEquals ("#7", "<xs:schema xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" />", doc.DocumentElement.OuterXml);
 		}
 
+		[Category ("NotWorking")]
 		[Test]
 		public void TestWriteNamespaces2 ()
 		{
@@ -263,22 +264,22 @@ namespace MonoTests.System.Xml
 			StringWriter sw;
 			sw = new StringWriter ();
 			xs.Write (new XmlTextWriter (sw));
-			AssertEquals (xmldecl + "<xs:schema xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" />", sw.ToString ());
+			AssertEquals ("#1", xmldecl + "<xs:schema xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" />", sw.ToString ());
 
 			xs.Namespaces = nss;
 			sw = new StringWriter ();
 			xs.Write (new XmlTextWriter (sw));
-			AssertEquals (xmldecl + "<xs:schema xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" />", sw.ToString ());
+			AssertEquals ("#2", xmldecl + "<xs:schema xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" />", sw.ToString ());
 
 			nss.Add ("foo", "urn:foo");
 			sw = new StringWriter ();
 			xs.Write (new XmlTextWriter (sw));
-			AssertEquals (xmldecl + "<schema xmlns:foo=\"urn:foo\" xmlns=\"http://www.w3.org/2001/XMLSchema\" />", sw.ToString ());
+			AssertEquals ("#3", xmldecl + "<schema xmlns:foo=\"urn:foo\" xmlns=\"http://www.w3.org/2001/XMLSchema\" />", sw.ToString ());
 
 			nss.Add ("", "urn:foo");
 			sw = new StringWriter ();
 			xs.Write (new XmlTextWriter (sw));
-			AssertEquals (xmldecl + "<q1:schema xmlns:foo=\"urn:foo\" xmlns=\"urn:foo\" xmlns:q1=\"http://www.w3.org/2001/XMLSchema\" />", sw.ToString ());
+			AssertEquals ("#4", xmldecl + "<q1:schema xmlns:foo=\"urn:foo\" xmlns=\"urn:foo\" xmlns:q1=\"http://www.w3.org/2001/XMLSchema\" />", sw.ToString ());
 
 			nss.Add ("q1", "urn:q1");
 			sw = new StringWriter ();

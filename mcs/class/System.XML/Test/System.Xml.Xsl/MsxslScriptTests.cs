@@ -106,6 +106,7 @@ namespace MonoTests.System.Xml.Xsl
 		}
 
 		[Test]
+		[Category ("NotWorking")] // it depends on "mcs" existence
 		public void TestCSharp ()
 		{
 			string style = xslstring.Replace ("***** rewrite here *****", cs1);
@@ -115,6 +116,7 @@ namespace MonoTests.System.Xml.Xsl
 		}
 
 		[Test]
+		[Category ("NotWorking")] // it depends on "mbas" existence
 		public void TestVB ()
 		{
 			string style = xslstring.Replace ("***** rewrite here *****", vb1);
@@ -124,6 +126,7 @@ namespace MonoTests.System.Xml.Xsl
 		}
 
 		[Test]
+		[Category ("NotWorking")] // it depends on "mjs" existence
 		public void TestJScript ()
 		{
 			string style = xslstring.Replace ("***** rewrite here *****", js1);
@@ -133,6 +136,7 @@ namespace MonoTests.System.Xml.Xsl
 		}
 
 		[Test]
+		[Ignore ("Actually it should throw compile exception")]
 		[ExpectedException (typeof (XsltException))]
 		public void InvalidScript ()
 		{

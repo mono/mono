@@ -89,7 +89,7 @@ distclean :
 	rm -rf testsuite
 	rm -f $(TEST_ARCHIVE) $(XSLTTEST_RESULTS_ARCHIVE) $(MSTEST_RESULTS_ARCHIVE)
 
-create-reference-output : clean-original xslttest.exe
+create-reference-output : clean-xslttest xslttest.exe
 	./xslttest.exe --generate
 	find testsuite/TESTS -name *.out > output.lst
 	zip xslttest-reference-output.zip -@ < output.lst

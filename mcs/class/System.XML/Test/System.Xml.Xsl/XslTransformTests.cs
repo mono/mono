@@ -89,6 +89,7 @@ namespace MonoTests.System.Xml.Xsl
 		}
 
 		[Test()]
+		[Category ("NotWorking")] // it depends on "mcs" existence
 		public void MsxslTest() {
 			string _styleSheet = @"
 			<xslt:stylesheet xmlns:xslt=""http://www.w3.org/1999/XSL/Transform"" version=""1.0"" xmlns:msxsl=""urn:schemas-microsoft-com:xslt"" xmlns:stringutils=""urn:schemas-sourceforge.net-blah"">

@@ -365,6 +365,7 @@ namespace MonoTests.System.XmlSerialization
 
 		
 		[Test]
+		[Category ("NotWorking")]
 		public void TestImportMembersMapping()
 		{
 			Type type = typeof(SimpleClass);
