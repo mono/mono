@@ -605,6 +605,7 @@ System.Runtime.InteropServices/UCOMITypeComp.cs
 System.Runtime.InteropServices/UCOMITypeInfo.cs
 System.Runtime.InteropServices/UCOMITypeLib.cs
 System.Runtime.InteropServices/UnknownWrapper.cs
+System.Runtime.InteropServices/UnmanagedFunctionPointerAttribute.cs
 System.Runtime.InteropServices/UnmanagedType.cs
 System.Runtime.InteropServices/VARDESC.cs
 System.Runtime.InteropServices/VarEnum.cs

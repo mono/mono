@@ -1,3 +1,7 @@
+2004-09-29  Zoltan Varga  <vargaz@freemail.hu>
+
+	* corlib.dll.sources: Add System.Runtime.InteropServices/UnmanagedFunctionPointerAttribute.cs.
+
 2004-09-27  Zoltan Varga  <vargaz@freemail.hu>
 
 	* corlib.dll.sources: Add more 2.0 System.Reflection classes.
