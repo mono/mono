@@ -346,12 +346,12 @@ namespace Mono.CSharp
 
 		bool is_identifier_start_character (char c)
 		{
-			return Char.IsLetter (c) || c == '_' ;
+			return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c == '_' || Char.IsLetter (c);
 		}
 
 		bool is_identifier_part_character (char c)
 		{
-			return (Char.IsLetter (c) || Char.IsDigit (c) || c == '_');
+			return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_' || (c >= '0' && c <= '9') || Char.IsLetter (c);
 		}
 
 		int is_punct (char c, ref bool doread)
@@ -526,7 +526,7 @@ namespace Mono.CSharp
 				number_builder.Append ((char) c);
 			
 			while ((d = peekChar ()) != -1){
-				if (Char.IsDigit ((char)d)){
+				if (d >= '0' && d <= '9'){
 					number_builder.Append ((char) d);
 					getChar ();
 					seen_digits = true;
@@ -537,9 +537,9 @@ namespace Mono.CSharp
 			return seen_digits;
 		}
 
-		bool is_hex (char e)
+		bool is_hex (int e)
 		{
-			return Char.IsDigit (e) || (e >= 'A' && e <= 'F') || (e >= 'a' && e <= 'f');
+			return (e >= '0' && e <= '9') || (e >= 'A' && e <= 'F') || (e >= 'a' && e <= 'f');
 		}
 		
 		void hex_digits (int c)
@@ -549,10 +549,8 @@ namespace Mono.CSharp
 			if (c != -1)
 				number_builder.Append ((char) c);
 			while ((d = peekChar ()) != -1){
-				char e = Char.ToUpper ((char) d);
-				
-				if (is_hex (e)){
-					number_builder.Append ((char) e);
+				if (is_hex (d)){
+					number_builder.Append ((char) d);
 					getChar ();
 				} else
 					break;
@@ -725,7 +723,7 @@ namespace Mono.CSharp
 
 			number_builder.Length = 0;
 
-			if (Char.IsDigit ((char)c)){
+			if (c >= '0' && c <= '9'){
 				if (c == '0' && peekChar () == 'x' || peekChar () == 'X'){
 					ulong ul;
 					getChar ();
@@ -807,16 +805,18 @@ namespace Mono.CSharp
 			error = false;
 			for (i = 0; i < top; i++){
 				c = getChar ();
-				e = Char.ToUpper ((char) c);
 				
-				if (!is_hex (e)){
+				if (c >= '0' && c <= '9')
+					c = (int) c - (int) '0';
+				else if (c >= 'A' && c <= 'F')
+					c = (int) c - (int) 'A' + 10;
+				else if (c >= 'a' && c <= 'f')
+					c = (int) c - (int) 'a' + 10;
+				else {
 					error = true;
 					return 0;
 				}
-				if (Char.IsDigit (e))
-					c = (int) e - (int) '0';
-				else
-					c = (int) e - (int) 'A' + 10;
+				
 				total = (total * 16) + c;
 				if (count == -1){
 					int p = peekChar ();
@@ -1481,12 +1481,13 @@ namespace Mono.CSharp
 
 				if (c == '.'){
 					tokens_seen = true;
-					if (Char.IsDigit ((char) peekChar ()))
+					int peek = peekChar ();
+					if (peek >= '0' && peek <= '9')
 						return is_number (c);
 					return Token.DOT;
 				}
 				
-				if (Char.IsDigit ((char) c)){
+				if (c >= '0' && c <= '9'){
 					tokens_seen = true;
 					return is_number (c);
 				}

@@ -1,6 +1,10 @@
 2002-11-24  Miguel de Icaza  <miguel@ximian.com>
 
-	* cs-tokenizer.cs (consume_identifier): Cut by half the number of
+	* cs-tokenizer.cs: Avoid calling Char.IsDigit which is an
+	internalcall as it is a pretty simple operation;  Avoid whenever
+	possible to call Char.IsLetter.
+
+	(consume_identifier): Cut by half the number of
 	hashtable calls by merging the is_keyword and GetKeyword behavior.
 
 	Do not short-circuit, because if we do, we
