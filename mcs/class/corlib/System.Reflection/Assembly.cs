@@ -42,14 +42,13 @@ using System.Configuration.Assemblies;
 
 namespace System.Reflection {
 
-	internal class ResolveEventHolder {
-		public event ModuleResolveEventHandler ModuleResolve;
-	}
-
 	[Serializable]
 	[ClassInterface(ClassInterfaceType.None)]
 	public class Assembly : System.Reflection.ICustomAttributeProvider,
 		System.Security.IEvidenceFactory, System.Runtime.Serialization.ISerializable {
+		internal class ResolveEventHolder {
+			public event ModuleResolveEventHandler ModuleResolve;
+		}
 
 		// Note: changes to fields must be reflected in _MonoReflectionAssembly struct (object-internals.h)
 		private IntPtr _mono_assembly;
@@ -69,7 +68,7 @@ namespace System.Reflection {
 
 		//
 		// We can't store the event directly in this class, since the
-		// compile would silently insert the fields before _mono_assembly
+		// compiler would silently insert the fields before _mono_assembly
 		//
 		public event ModuleResolveEventHandler ModuleResolve {
 			add {
