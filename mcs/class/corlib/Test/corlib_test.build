@@ -73,9 +73,9 @@
 
 
 	<target name="test" depends="assemblies">
-
-		<exec program="..\..\..\nunit\NUnitConsole" commandline="MonoTests.AllTests,corlib_test.dll" failonerror="false"/>
-
+<!-- Do not run the unit tests with mono corlib on ms.net.  With all the icalls the results provide no useful info -->
+<!-- Change this to be "mint NUnitConsole" or "mono NUnitConsole" when those are ready to be run on Windows -->
+<!--		<exec program="..\..\..\nunit\NUnitConsole" commandline="MonoTests.AllTests,corlib_test.dll" failonerror="false"/> -->
 		<exec program="..\..\..\nunit\NUnitConsole" commandline="MonoTests.AllTests,corlib_reference.dll" failonerror="false"/>
 	</target>
 
