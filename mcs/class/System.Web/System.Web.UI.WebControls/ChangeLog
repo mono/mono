@@ -1,3 +1,9 @@
+2003-08-14  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ListControl.cs: patch by Yaacov Akiba Slama <ya@slamail.org> that
+	fixes selection of values before assigning a data source and other
+	issues.
+
 2003-08-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CheckBox.cs: save viewstate when needed and correctly handle post
