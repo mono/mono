@@ -40,6 +40,11 @@ public class StringWriterTest : TestCase {
 
                 writer.Write( testBuffer, 5, 6 );
                 AssertEquals( "A fooTestString", writer.ToString() );
+
+		writer = new StringWriter ();
+                writer.Write(null as string);
+                AssertEquals( "", writer.ToString() );
+
         }
 
         public void TestNewLine() {
@@ -95,7 +100,35 @@ public class StringWriterTest : TestCase {
         	} catch (Exception e) {
         		AssertEquals ("Close 2", typeof (ObjectDisposedException), e.GetType ());
         	}
+
+        	AssertEquals ("Close 3", "mono", writer.ToString ());
+        	writer.Flush ();
+        	StringBuilder builder = writer.GetStringBuilder ();
+        	AssertEquals ("Close 4", "mono", builder.ToString ());
+        	
+        	builder.Append (" kicks ass");
+        	AssertEquals ("Close 5", "mono kicks ass", writer.ToString ());
         }
+
+        public void TestExceptions () {
+        	
+        	try {
+        		StringWriter writer = new StringWriter (null as StringBuilder);
+        		Fail();
+        	} catch (Exception e) {
+        		AssertEquals ("Exceptions 1", typeof (ArgumentNullException), e.GetType ());
+        	}
+        	{
+       		StringWriter writer = new StringWriter (null as IFormatProvider);
+        	}
+        	try {
+	        	StringWriter writer = new StringWriter (null as StringBuilder, null as IFormatProvider);
+        		Fail ();
+        	} catch (Exception e) {
+        		AssertEquals ("Exceptions 2", typeof (ArgumentNullException), e.GetType ());
+        	}        	        	
+        }
+
 
 }
 
