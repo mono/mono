@@ -1,5 +1,7 @@
 2004-09-02  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mono-codeman.c (new_codechunk): Fix windows build.
+
 	* mono-codeman.h mono-codeman.c: Generalize so it can be used to
 	allocate code for dynamic methods (one method per code manager).
 
