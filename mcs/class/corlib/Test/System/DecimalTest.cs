@@ -901,9 +901,7 @@ namespace MonoTests.System {
             }
         }
 	
-	[Ignore ("Bug 37744 - Bankers rounding not implemented")]
-	// When this bug is fixed, this case can be reinserted into the above test.
-	public void TestRoundFailures()
+	public void TestRoundFailures ()
         {
             decimal[,] dtab = { 
                 {1.2345m, 3, 1.234m} 
@@ -1193,6 +1191,89 @@ namespace MonoTests.System {
 		AssertEquals ("-12.1 / 12.1", -1, Decimal.Divide (n1, p1));
 		AssertEquals ("12.1 / -12.1", -1, Decimal.Divide (p1, n1));
 		AssertEquals ("-12.1 / -12.1", 1, Decimal.Divide (n1, n1));
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void Round_InvalidDecimals_Negative () 
+	{
+		Decimal.Round (254.9m, -1);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void Round_InvalidDecimals_TooHigh () 
+	{
+		Decimal.Round (254.9m, 29);
+	}
+
+	[Test]
+	public void Round_OddValue () 
+	{
+		decimal five = 5.5555555555555555555555555555m;
+		AssertEquals ("5,5_,00", 6, Decimal.Round (five, 0));
+		AssertEquals ("5,5_,01", 5.6m, Decimal.Round (five, 1));
+		AssertEquals ("5,5_,02", 5.56m, Decimal.Round (five, 2));
+		AssertEquals ("5,5_,03", 5.556m, Decimal.Round (five, 3));
+		AssertEquals ("5,5_,04", 5.5556m, Decimal.Round (five, 4));
+		AssertEquals ("5,5_,05", 5.55556m, Decimal.Round (five, 5));
+		AssertEquals ("5,5_,06", 5.555556m, Decimal.Round (five, 6));
+		AssertEquals ("5,5_,07", 5.5555556m, Decimal.Round (five, 7));
+		AssertEquals ("5,5_,08", 5.55555556m, Decimal.Round (five, 8));
+		AssertEquals ("5,5_,09", 5.555555556m, Decimal.Round (five, 9));
+		AssertEquals ("5,5_,10", 5.5555555556m, Decimal.Round (five, 10));
+		AssertEquals ("5,5_,11", 5.55555555556m, Decimal.Round (five, 11));
+		AssertEquals ("5,5_,12", 5.555555555556m, Decimal.Round (five, 12));
+		AssertEquals ("5,5_,13", 5.5555555555556m, Decimal.Round (five, 13));
+		AssertEquals ("5,5_,14", 5.55555555555556m, Decimal.Round (five, 14));
+		AssertEquals ("5,5_,15", 5.555555555555556m, Decimal.Round (five, 15));
+		AssertEquals ("5,5_,16", 5.5555555555555556m, Decimal.Round (five, 16));
+		AssertEquals ("5,5_,17", 5.55555555555555556m, Decimal.Round (five, 17));
+		AssertEquals ("5,5_,18", 5.555555555555555556m, Decimal.Round (five, 18));
+		AssertEquals ("5,5_,19", 5.5555555555555555556m, Decimal.Round (five, 19));
+		AssertEquals ("5,5_,20", 5.55555555555555555556m, Decimal.Round (five, 20));
+		AssertEquals ("5,5_,21", 5.555555555555555555556m, Decimal.Round (five, 21));
+		AssertEquals ("5,5_,22", 5.5555555555555555555556m, Decimal.Round (five, 22));
+		AssertEquals ("5,5_,23", 5.55555555555555555555556m, Decimal.Round (five, 23));
+		AssertEquals ("5,5_,24", 5.555555555555555555555556m, Decimal.Round (five, 24));
+		AssertEquals ("5,5_,25", 5.5555555555555555555555556m, Decimal.Round (five, 25));
+		AssertEquals ("5,5_,26", 5.55555555555555555555555556m, Decimal.Round (five, 26));
+		AssertEquals ("5,5_,27", 5.555555555555555555555555556m, Decimal.Round (five, 27));
+		AssertEquals ("5.5_,28", 5.5555555555555555555555555555m, Decimal.Round (five, 28));
+	}
+
+	[Test]
+	public void Round_EvenValue () 
+	{
+		AssertEquals ("2,2_5,00", 2, Decimal.Round (2.5m, 0));
+		AssertEquals ("2,2_5,01", 2.2m, Decimal.Round (2.25m, 1));
+		AssertEquals ("2,2_5,02", 2.22m, Decimal.Round (2.225m, 2));
+		AssertEquals ("2,2_5,03", 2.222m, Decimal.Round (2.2225m, 3));
+		AssertEquals ("2,2_5,04", 2.2222m, Decimal.Round (2.22225m, 4));
+		AssertEquals ("2,2_5,05", 2.22222m, Decimal.Round (2.222225m, 5));
+		AssertEquals ("2,2_5,06", 2.222222m, Decimal.Round (2.2222225m, 6));
+		AssertEquals ("2,2_5,07", 2.2222222m, Decimal.Round (2.22222225m, 7));
+		AssertEquals ("2,2_5,08", 2.22222222m, Decimal.Round (2.222222225m, 8));
+		AssertEquals ("2,2_5,09", 2.222222222m, Decimal.Round (2.2222222225m, 9));
+		AssertEquals ("2,2_5,10", 2.2222222222m, Decimal.Round (2.22222222225m, 10));
+		AssertEquals ("2,2_5,11", 2.22222222222m, Decimal.Round (2.222222222225m, 11));
+		AssertEquals ("2,2_5,12", 2.222222222222m, Decimal.Round (2.2222222222225m, 12));
+		AssertEquals ("2,2_5,13", 2.2222222222222m, Decimal.Round (2.22222222222225m, 13));
+		AssertEquals ("2,2_5,14", 2.22222222222222m, Decimal.Round (2.222222222222225m, 14));
+		AssertEquals ("2,2_5,15", 2.222222222222222m, Decimal.Round (2.2222222222222225m, 15));
+		AssertEquals ("2,2_5,16", 2.2222222222222222m, Decimal.Round (2.22222222222222225m, 16));
+		AssertEquals ("2,2_5,17", 2.22222222222222222m, Decimal.Round (2.222222222222222225m, 17));
+		AssertEquals ("2,2_5,18", 2.222222222222222222m, Decimal.Round (2.2222222222222222225m, 18));
+		AssertEquals ("2,2_5,19", 2.2222222222222222222m, Decimal.Round (2.22222222222222222225m, 19));
+		AssertEquals ("2,2_5,20", 2.22222222222222222222m, Decimal.Round (2.222222222222222222225m, 20));
+		AssertEquals ("2,2_5,21", 2.222222222222222222222m, Decimal.Round (2.2222222222222222222225m, 21));
+		AssertEquals ("2,2_5,22", 2.2222222222222222222222m, Decimal.Round (2.22222222222222222222225m, 22));
+		AssertEquals ("2,2_5,23", 2.22222222222222222222222m, Decimal.Round (2.222222222222222222222225m, 23));
+		AssertEquals ("2,2_5,24", 2.222222222222222222222222m, Decimal.Round (2.2222222222222222222222225m, 24));
+		AssertEquals ("2,2_5,25", 2.2222222222222222222222222m, Decimal.Round (2.22222222222222222222222225m, 25));
+		AssertEquals ("2,2_5,26", 2.22222222222222222222222222m, Decimal.Round (2.222222222222222222222222225m, 26));
+		AssertEquals ("2,2_5,27", 2.222222222222222222222222222m, Decimal.Round (2.2222222222222222222222222225m, 27));
+		AssertEquals ("2,2_5,28", 2.2222222222222222222222222222m, Decimal.Round (2.22222222222222222222222222225m, 28));
 	}
     }
 }
