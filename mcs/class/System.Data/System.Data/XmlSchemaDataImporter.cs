@@ -41,7 +41,6 @@
 //	Local elements are converted into either a table or a column in
 //	the "context DataTable". Simple-typed element is not always converted
 //	into a DataColumn; if maxOccurs > 1, it will be converted as a table.
-//	(FIXME: Not implemented yet)
 //
 // ** Name Convention
 //
@@ -144,6 +143,48 @@ using System.Xml.Schema;
 
 namespace System.Data
 {
+	internal class TableStructureCollection : CollectionBase
+	{
+		public void Add (TableStructure table)
+		{
+			List.Add (table);
+		}
+
+		public TableStructure this [int i] {
+			get { return List [i] as TableStructure; }
+		}
+
+		public TableStructure this [string name] {
+			get {
+				foreach (TableStructure ts in List)
+					if (ts.Table.TableName == name)
+						return ts;
+				return null;
+			}
+		}
+	}
+
+	internal class RelationStructureCollection : CollectionBase
+	{
+		public void Add (RelationStructure rel)
+		{
+			List.Add (rel);
+		}
+
+		public RelationStructure this [int i] {
+			get { return List [i] as RelationStructure; }
+		}
+
+		public RelationStructure this [string parent, string child] {
+			get {
+				foreach (RelationStructure rel in List)
+					if (rel.ParentTableName == parent && rel.ChildTableName == child)
+						return rel;
+				return null;
+			}
+		}
+	}
+
 	internal class TableStructure
 	{
 		public TableStructure (DataTable table)
@@ -208,8 +249,6 @@ namespace System.Data
 		DataSet dataset;
 		XmlSchema schema;
 
-//		Hashtable relationParentColumns = new Hashtable ();
-//		Hashtable nestedRelationColumns = new Hashtable ();
 		ArrayList relations = new ArrayList ();
 
 		// such element that has an attribute msdata:IsDataSet="true"

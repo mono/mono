@@ -525,28 +525,18 @@ namespace System.Data {
 			return false;		
 		}
 
-		[MonoTODO ("Consider ignored namespace array")]
 		public void InferXmlSchema (XmlReader reader, string[] nsArray)
 		{
 			if (reader == null)
 				return;
-#if true
 			XmlDocument doc = new XmlDocument ();
 			doc.Load (reader);
 			InferXmlSchema (doc, nsArray);
-#else
-			XmlDataLoader Loader = new XmlDataLoader (this);
-			Loader.LoadData (reader, XmlReadMode.InferSchema);
-#endif
 		}
 
 		private void InferXmlSchema (XmlDocument doc, string [] nsArray)
 		{
-#if true
-			XmlDataInferenceLoader.Infer (this, doc, XmlReadMode.InferSchema, false);
-#else
-			XmlDataInferenceLoader.Infer (this, new XmlNodeReader (doc), XmlReadMode.InferSchema, false);
-#endif
+			XmlDataInferenceLoader.Infer (this, doc, XmlReadMode.InferSchema, nsArray);
 		}
 
 		public void InferXmlSchema (Stream stream, string[] nsArray)
@@ -838,7 +828,6 @@ namespace System.Data {
 			return ReadXml (new XmlTextReader (reader), mode);
 		}
 
-		[MonoTODO]
 		public XmlReadMode ReadXml (XmlReader reader, XmlReadMode mode)
 		{
 			switch (reader.ReadState) {

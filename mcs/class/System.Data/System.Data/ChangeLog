@@ -1,3 +1,11 @@
+2004-05-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataSet.cs : Implemented ignored namespaces in InferXmlSchema().
+	  Supported repeated elements. Removed MonoTODOs.
+	* XmlDataInferenceLoader.cs : Design change to support ignored
+	  namespace and repeated elements.
+	* XmlSchemaDataImporter.cs : Added mapping support classes.
+
 2004-05-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CustomDataClassGenerator.cs :

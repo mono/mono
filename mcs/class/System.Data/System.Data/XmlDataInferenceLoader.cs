@@ -19,176 +19,434 @@ using System.Xml.Serialization;
 
 namespace System.Data
 {
+	internal enum ElementMappingType {
+		Simple,
+		Repeated,
+		Complex
+	}
 
-	internal enum ElementMapType
+	internal class TableMappingCollection : CollectionBase
 	{
-		DataTable,
-		DataColumn,
-		Undetermined
+		public void Add (TableMapping map)
+		{
+			this.List.Add (map);
+		}
+
+		public TableMapping this [string name] {
+			get {
+				foreach (TableMapping map in List)
+					if (map.Table.TableName == name)
+						return map;
+				return null;
+			}
+		}
+	}
+
+	internal class TableMapping
+	{
+		public DataTable Table;
+		public ArrayList Elements = new ArrayList ();
+		public ArrayList Attributes = new ArrayList ();
+		public DataColumn SimpleContent;
+		public DataColumn PrimaryKey;
+		public DataColumn ReferenceKey;
+
+		// Parent TableMapping
+		public TableMapping ParentTable;
+
+		// LocalName -> TableMapping
+		public TableMappingCollection ChildTables = new TableMappingCollection ();
+
+		public TableMapping (string name)
+		{
+			Table = new DataTable (name);
+		}
+
+		public TableMapping (DataTable dt)
+		{
+			Table = dt;
+			foreach (DataColumn col in dt.Columns) {
+				switch (col.ColumnMapping) {
+				case MappingType.Element:
+					Elements.Add (col);
+					break;
+				case MappingType.Attribute:
+					Attributes.Add (col);
+					break;
+				case MappingType.SimpleContent:
+					SimpleContent = col;
+					break;
+				}
+			}
+		}
+
+		public bool ContainsColumn (string name)
+		{
+			return GetColumn (name) != null;
+		}
+
+		public DataColumn GetColumn (string name)
+		{
+			foreach (DataColumn col in Elements)
+				if (col.ColumnName == name)
+					return col;
+			foreach (DataColumn col in Attributes)
+				if (col.ColumnName == name)
+					return col;
+			if (SimpleContent != null && name == SimpleContent.ColumnName)
+				return SimpleContent;
+			if (PrimaryKey != null && name == PrimaryKey.ColumnName)
+				return PrimaryKey;
+			return null;
+		}
+
+		public void RemoveElementColumn (string name)
+		{
+			foreach (DataColumn col in Elements) {
+				if (col.ColumnName == name) {
+					Elements.Remove (col);
+					return;
+				}
+			}
+		}
 	}
 
 	internal class XmlDataInferenceLoader
 	{
-		public static XmlReadMode Infer (DataSet dataset, XmlDocument document, XmlReadMode mode, bool readData)
+		const string XmlnsNS = "http://www.w3.org/2000/xmlns/";
+
+		public static void Infer (DataSet dataset, XmlDocument document, XmlReadMode mode, string [] ignoredNamespaces)
 		{
-			return new XmlDataInferenceLoader (dataset, document, mode, readData).ReadXml ();
+			new XmlDataInferenceLoader (dataset, document, mode, ignoredNamespaces).ReadXml ();
 		}
 
-		private XmlDataInferenceLoader (DataSet ds, XmlDocument doc, XmlReadMode mode, bool readData)
+		private XmlDataInferenceLoader (DataSet ds, XmlDocument doc, XmlReadMode mode, string [] ignoredNamespaces)
 		{
 			dataset = ds;
 			document = doc;
-			reader = new XmlNodeReader (doc);
 			this.mode = mode;
-			this.readData = readData;
-			switch (mode) {
-			case XmlReadMode.Auto:
-				inferSchema = dataset.Tables.Count == 0;
-				break;
-			case XmlReadMode.InferSchema:
-				inferSchema = true;
-				break;
-			}
+			this.ignoredNamespaces = ignoredNamespaces != null ? new ArrayList (ignoredNamespaces) : new ArrayList ();
+
+			// Fill existing table info
+			foreach (DataTable dt in dataset.Tables)
+				tables.Add (new TableMapping (dt));
 		}
 
 		DataSet dataset;
 		XmlDocument document;
-		XmlReader reader;
 		XmlReadMode mode;
-		bool readData;
-		bool inferSchema;
-		ArrayList relations = new ArrayList ();
+		ArrayList ignoredNamespaces;
+		TableMappingCollection tables = new TableMappingCollection ();
+		RelationStructureCollection relations = new RelationStructureCollection ();
 
-		private bool ReadData {
-			get { return readData; }
-		}
-
-		private bool InferSchema {
-			get { return inferSchema; }
-		}
-
-		private XmlReadMode ReadXml ()
+		private void ReadXml ()
 		{
-			if (document.DocumentElement != null)
-				// no dataset infered.
-				ReadTopLevelElement ();
-			// ReadElement does not always end as EndElement. 
-			// Consider an empty element
-			if (reader.NodeType == XmlNodeType.EndElement)
-				reader.ReadEndElement ();
-			switch (mode) {
-			case XmlReadMode.Fragment:
-				return XmlReadMode.Fragment;
-			case XmlReadMode.Auto:
-				return InferSchema ? XmlReadMode.InferSchema : XmlReadMode.IgnoreSchema;
-			default:
-				return mode;
-			}
-		}
+			if (document.DocumentElement == null)
+				return;
 
-		private void ReadTopLevelElement ()
-		{
-			reader.MoveToContent ();
 			// If the root element is not a data table, treat 
 			// this element as DataSet.
-			if (mode == XmlReadMode.Fragment) {
-				// Read till the end of the reader
-				while (!reader.EOF) {
-					switch (reader.NodeType) {
-					case XmlNodeType.Element:
-						ReadElement (null);
-						break;
-					case XmlNodeType.EndElement:
-						reader.ReadEndElement ();
-						break;
-					default:
-						reader.Read ();
-						break;
-					}
-					if (reader.IsEmptyElement)
-						reader.Read ();
-					reader.MoveToContent ();
-				}
-			} else {
-				// Read one element. It might be DataSet element.
-				string topprefix = reader.Prefix;
-				string topname = reader.LocalName;
-				string topns = reader.NamespaceURI;
+			// Read one element. It might be DataSet element.
+			XmlElement el = document.DocumentElement;
 
-				if (IsDocumentElementTable ())
-					ReadElement (null);
-				else {
-					dataset.DataSetName = topname;
-					dataset.Namespace = topns;
-					dataset.Prefix = topprefix;
-					if (reader.IsEmptyElement)
-						reader.Read ();
-					else {
-						int depth = reader.Depth;
-						reader.Read ();
-						reader.MoveToContent ();
-						do {
-							if (reader.NodeType == XmlNodeType.Element) {
-								ReadElement (null);
-								if (reader.NodeType == XmlNodeType.EndElement)
-									reader.ReadEndElement ();
-							}
-							else
-								reader.Skip ();
-							reader.MoveToContent ();
-						} while (reader.Depth > depth);
-						if (reader.NodeType == XmlNodeType.EndElement)
-							reader.Read ();
-					}
-					reader.MoveToContent ();
-				}
-				
-				foreach (DataRelation rel in relations) {
-					rel.ParentTable.PrimaryKey = rel.ParentColumns;
-					dataset.Relations.Add (rel);
-				}
-
-				if (reader.IsEmptyElement)
-					reader.Read ();
+			if (IsDocumentElementTable ())
+				InferTopLevelTable (el);
+			else {
+				dataset.DataSetName = el.LocalName;
+				dataset.Namespace = el.NamespaceURI;
+				dataset.Prefix = el.Prefix;
+				foreach (XmlNode n in el.ChildNodes)
+					if (n.NodeType == XmlNodeType.Element)
+						InferTopLevelTable (n as XmlElement);
 			}
+
+			foreach (TableMapping map in tables) {
+				foreach (TableMapping ct in map.ChildTables) {
+					ct.ReferenceKey = GetMappedColumn (ct, map.Table.TableName + "_Id", map.Table.Prefix, map.Table.Namespace, MappingType.Hidden);
+				}
+			}
+
+			foreach (TableMapping map in tables) {
+				if (map.PrimaryKey != null)
+					map.Table.Columns.Add (map.PrimaryKey);
+				foreach (DataColumn col in map.Elements)
+					map.Table.Columns.Add (col);
+				foreach (DataColumn col in map.Attributes)
+					map.Table.Columns.Add (col);
+				if (map.SimpleContent != null)
+					map.Table.Columns.Add (map.SimpleContent);
+				if (map.ReferenceKey != null)
+					map.Table.Columns.Add (map.ReferenceKey);
+				dataset.Tables.Add (map.Table);
+			}
+
+			foreach (RelationStructure rs in relations) {
+				string relName = rs.ExplicitName != null ? rs.ExplicitName : rs.ParentTableName + "_" + rs.ChildTableName;
+				DataTable pt = dataset.Tables [rs.ParentTableName];
+				DataTable ct = dataset.Tables [rs.ChildTableName];
+				DataColumn pc = pt.Columns [rs.ParentColumnName];
+				DataColumn cc = ct.Columns [rs.ChildColumnName];
+				if (pt == null)
+					throw new DataException ("Parent table was not found : " + rs.ParentTableName);
+				else if (ct == null)
+					throw new DataException ("Child table was not found : " + rs.ChildTableName);
+				else if (pc == null)
+					throw new DataException ("Parent column was not found :" + rs.ParentColumnName);
+				else if (cc == null)
+					throw new DataException ("Child column was not found :" + rs.ChildColumnName);
+				DataRelation rel = new DataRelation (relName, pc, cc, rs.CreateConstraint);
+				if (rs.IsNested) {
+					rel.Nested = true;
+					rel.ParentTable.PrimaryKey = rel.ParentColumns;
+				}
+				dataset.Relations.Add (rel);
+			}
+		}
+
+		private void InferTopLevelTable (XmlElement el)
+		{
+			InferTableElement (null, el);
+		}
+
+		private void InferColumnElement (TableMapping table, XmlElement el)
+		{
+			DataColumn col = table.GetColumn (el.LocalName);
+			if (col != null) {
+				if (col.ColumnMapping != MappingType.Element)
+					throw new DataException (String.Format ("Column {0} is already mapped to {1}.", el.LocalName, col.ColumnMapping));
+				return;
+			}
+			if (table.ChildTables [el.LocalName] != null)
+				// Child is already mapped, or infered as a table
+				// (in that case, that takes precedence than
+				// this simple column inference.)
+				return;
+
+			col = new DataColumn (el.LocalName, typeof (string));
+			col.Namespace = el.NamespaceURI;
+			col.Prefix = el.Prefix;
+			table.Elements.Add (col);
+		}
+
+		private void CheckExtraneousElementColumn (TableMapping parentTable, XmlElement el)
+		{
+			if (parentTable == null)
+				return;
+			DataColumn elc = parentTable.GetColumn (el.LocalName);
+			if (elc != null)
+				parentTable.RemoveElementColumn (el.LocalName);
+		}
+
+		private void PopulatePrimaryKey (TableMapping table)
+		{
+			if (table.PrimaryKey != null) {
+				if (table.PrimaryKey.ColumnName != table.Table.TableName + "_Id")
+					throw new DataException ("There is already a primary key column.");
+				return;
+			}
+			DataColumn col = new DataColumn (table.Table.TableName + "_Id");
+			col.ColumnMapping = MappingType.Hidden;
+			col.DataType = typeof (int);
+			col.AllowDBNull = false;
+			col.AutoIncrement = true;
+			col.Namespace = table.Table.Namespace;
+			col.Prefix = table.Table.Prefix;
+			table.PrimaryKey = col;
+		}
+
+		private void PopulateRelationStructure (string parent, string child)
+		{
+			if (relations [parent, child] != null)
+				return;
+
+			RelationStructure rs = new RelationStructure ();
+			rs.ParentTableName = parent;
+			rs.ChildTableName = child;
+			rs.ParentColumnName = parent + "_Id";
+			rs.ChildColumnName = parent + "_Id";
+			rs.CreateConstraint = true;
+			rs.IsNested = true;
+			relations.Add (rs);
+		}
+
+		private void InferRepeatedElement (TableMapping parentTable, XmlElement el)
+		{
+			// FIXME: can be checked later
+			CheckExtraneousElementColumn (parentTable, el);
+			TableMapping table = GetMappedTable (parentTable, el.LocalName);
+
+			// If the mapping is actually complex type (not simple
+			// repeatable), then ignore it.
+			if (table.Elements.Count > 0)
+				return;
+
+			// If simple column already exists, do nothing
+			if (table.SimpleContent != null)
+				return;
+
+			GetMappedColumn (table, el.LocalName + "_Column", el.Prefix, el.NamespaceURI, MappingType.SimpleContent);
+		}
+
+		private void InferTableElement (TableMapping parentTable, XmlElement el)
+		{
+			// If parent table already has the same name column but
+			// mapped as Element, that must be removed.
+			// FIXME: This can be done later (doing it here is
+			// loss of performance.
+			CheckExtraneousElementColumn (parentTable, el);
+
+			TableMapping table = GetMappedTable (parentTable, el.LocalName);
+
+			bool hasChildElements = false;
+			bool hasAttributes = false;
+			bool hasText = false;
+
+			foreach (XmlAttribute attr in el.Attributes) {
+				if (attr.NamespaceURI == XmlnsNS)
+					continue;
+				if (ignoredNamespaces.Contains (attr.NamespaceURI))
+					continue;
+
+				hasAttributes = true;
+				DataColumn col = GetMappedColumn (table,
+					attr.LocalName,
+					attr.Prefix,
+					attr.NamespaceURI,
+					MappingType.Attribute);
+			}
+
+			foreach (XmlNode n in el.ChildNodes) {
+				switch (n.NodeType) {
+				case XmlNodeType.Comment:
+				case XmlNodeType.ProcessingInstruction: // ignore
+					continue;
+				default: // text content
+					hasText = true;
+					break;
+				case XmlNodeType.Element: // child
+					hasChildElements = true;
+					XmlElement cel = n as XmlElement;
+
+					switch (GetElementMappingType (cel)) {
+					case ElementMappingType.Simple:
+						InferColumnElement (table, cel);
+						break;
+					case ElementMappingType.Repeated:
+						PopulatePrimaryKey (table);
+						PopulateRelationStructure (table.Table.TableName, cel.LocalName);
+						InferRepeatedElement (table, cel);
+						break;
+					case ElementMappingType.Complex:
+						PopulatePrimaryKey (table);
+						PopulateRelationStructure (table.Table.TableName, cel.LocalName);
+						InferTableElement (table, cel);
+						break;
+					}
+					break;
+				}
+			}
+
+			// Attributes + !Children + Text = SimpleContent
+			if (table.SimpleContent == null // no need to create
+				&& !hasChildElements && hasText && hasAttributes) {
+				GetMappedColumn (table, table.Table.TableName + "_Text", String.Empty, String.Empty, MappingType.SimpleContent);
+			}
+		}
+
+		private TableMapping GetMappedTable (TableMapping parent, string tableName)
+		{
+			TableMapping map = tables [tableName];
+			if (map != null) {
+				if (map.ParentTable != parent)
+					throw new DataException (String.Format ("The table {0} is already allocated as another table's child table.", tableName));
+			} else {
+				map = new TableMapping (tableName);
+				map.ParentTable = parent;
+				tables.Add (map);
+				if (parent != null)
+					parent.ChildTables.Add (map);
+			}
+			return map;
+		}
+
+		private DataColumn GetMappedColumn (TableMapping table, string name, string prefix, string ns, MappingType type)
+		{
+			DataColumn col = table.GetColumn (name);
+			// Infer schema
+			if (col == null) {
+				col = new DataColumn (name);
+				col.Prefix = prefix;
+				col.Namespace = ns;
+				col.ColumnMapping = type;
+				switch (type) {
+				case MappingType.Element:
+					table.Elements.Add (col);
+					break;
+				case MappingType.Attribute:
+					table.Attributes.Add (col);
+					break;
+				case MappingType.SimpleContent:
+					table.SimpleContent = col;
+					break;
+				case MappingType.Hidden:
+					// To generate parent key
+					col.DataType = typeof (int);
+					table.ReferenceKey = col;
+					break;
+				}
+			}
+			else if (col.ColumnMapping != type) // Check mapping type
+				throw new DataException (String.Format ("There are already another column that has different mapping type. Column is {0}, existing mapping type is {1}", col.ColumnName, col.ColumnMapping));
+
+			return col;
+		}
+
+		private ElementMappingType GetElementMappingType (XmlElement el)
+		{
+			foreach (XmlAttribute attr in el.Attributes) {
+				if (attr.NamespaceURI == XmlnsNS)
+					continue;
+				if (ignoredNamespaces.Contains (attr.NamespaceURI))
+					continue;
+				return ElementMappingType.Complex;
+			}
+			foreach (XmlNode n in el.ChildNodes)
+				if (n.NodeType == XmlNodeType.Element)
+					return ElementMappingType.Complex;
+
+			for (XmlNode n = el.NextSibling; n != null; n = n.NextSibling)
+				if (n.NodeType == XmlNodeType.Element && n.LocalName == el.LocalName)
+					return GetElementMappingType (n as XmlElement) == ElementMappingType.Complex ? ElementMappingType.Complex : ElementMappingType.Repeated;
+
+			/*
+			foreach (XmlNode n in el.ParentNode.ChildNodes) {
+				if (n.NodeType == XmlNodeType.Element && n.LocalName == el.LocalName && n != el)
+					return ElementMappingType.Repeated;
+			}
+			*/
+
+			return ElementMappingType.Simple;
 		}
 
 		private bool IsDocumentElementTable ()
 		{
 			XmlElement top = document.DocumentElement;
 			foreach (XmlAttribute attr in top.Attributes) {
-				if (attr.NamespaceURI == "http://www.w3.org/2000/xmlns/")
+				if (attr.NamespaceURI == XmlnsNS)
+					continue;
+				if (ignoredNamespaces.Contains (attr.NamespaceURI))
 					continue;
 				// document element has attributes other than xmlns
 				return true;
 			}
-			ArrayList tableNames = new ArrayList ();
-			ArrayList columnNames = new ArrayList ();
 			foreach (XmlNode n in top.ChildNodes) {
 				XmlElement el = n as XmlElement;
 				if (el == null)
 					continue;
-
-				bool loop = true;
-				for (int i = 0; loop && i < tableNames.Count; i++)
-					if (tableNames.Contains (el.LocalName))
-						loop = false;
-				loop = false;
-				for (int i = 0; loop && i < columnNames.Count; i++) {
-					if (columnNames.Contains (el.LocalName)) {
-						// it turned out a table
-						columnNames.Remove (el.LocalName);
-						tableNames.Add (el.LocalName);
-						loop = false;
-					}
-				}
-				if (IsPossibleColumnElement (el))
-					// document element has column element
-					columnNames.Add (el.LocalName);
-				else
-					tableNames.Add (el.LocalName);
+				if (this.GetElementMappingType (el) == ElementMappingType.Simple)
+					return true;
 			}
-			return columnNames.Count > 0;
+			return false;
 		}
 
 		// Returns if it "might" be a column element (this method is
@@ -205,249 +463,6 @@ namespace System.Data
 				if (n.NodeType == XmlNodeType.Element)
 					return false;
 			return true;
-		}
-
-		// Return values are:
-		//	DataColumn
-		//	DataTable
-		private object ReadElement (DataRow currentRow)
-		{
-			DataTable table = null;
-
-			object ret = null;
-			string elementName = reader.LocalName;
-			string textContent = null;
-			bool hasChildElements = false;
-			bool hasAttributes = reader.HasAttributes;
-
-			// FIXME: Just skipping the element would be much 
-			// better if no mapped table was found and no suitable
-			// table to fill data.
-
-			if (reader.MoveToFirstAttribute ()) {
-				do {
-					if (reader.NamespaceURI == "http://www.w3.org/2000/xmlns/")
-						continue;
-					if (table == null) {
-						table = GetMappedTable (elementName);
-						currentRow = table.NewRow ();
-						if (ReadData)
-							table.Rows.Add (currentRow);
-					}
-					ret = table;
-					ReadAttribute (table, currentRow);
-				} while (reader.MoveToNextAttribute ());
-				reader.MoveToElement ();
-			}
-
-			if (reader.AttributeCount == 0 && reader.IsEmptyElement) {
-				if (currentRow == null)
-					return null;
-				// no need to fill row ... it is empty
-				return GetMappedColumn (currentRow.Table, reader.LocalName, reader.Prefix, reader.NamespaceURI, MappingType.Element);
-			}
-
-			if (reader.IsEmptyElement) {
-				if (currentRow != null)
-					reader.Read ();
-			} else {
-				// read content
-				reader.Read ();
-				reader.MoveToContent ();
-
-				while (!reader.EOF && reader.NodeType != XmlNodeType.EndElement) {
-					switch (reader.NodeType) {
-					case XmlNodeType.Element: // child
-
-						if (table == null) {
-							table = GetMappedTable (elementName);
-							currentRow = table.NewRow ();
-							if (ReadData)
-								table.Rows.Add (currentRow);
-						}
-						hasChildElements = true;
-
-						object o = ReadElement (currentRow);
-						DataTable childTable = o as DataTable;
-						if (childTable != null) {
-							// Add thisTable_Id column if not exist.
-//							if (uniqueKeyAlreadyExist)
-//								break;
-							// Add unique key to "current" table.
-//							uniqueKeyAlreadyExist = true;
-							DataColumn col = GetMappedColumn (table, table.TableName + "_Id", String.Empty, String.Empty, MappingType.Hidden);
-							if (col != null) {
-								// Remove SimpleContent column if exists
-								foreach (DataColumn c in table.Columns)
-									if (c.ColumnMapping == MappingType.SimpleContent)
-										table.Columns.Remove (c);
-								col.Unique = true;
-								col.AllowDBNull = false;
-
-								// Add foreign key column and DataRelation
-								bool exists = false;
-								foreach (DataColumn cc in childTable.Columns) {
-									if (cc.ColumnName == table.TableName + "_Id" && cc.ColumnMapping == MappingType.Hidden) {
-										exists = true;
-										break;
-									}
-								}
-								DataColumn childColumn = GetMappedColumn (childTable, table.TableName + "_Id", String.Empty, String.Empty, MappingType.Hidden);
-								childColumn.AutoIncrement = false;
-								if (!exists) {
-									DataRelation rel = new DataRelation (table.TableName + "_" + childTable.TableName, col, childColumn);
-									rel.Nested = true;
-									relations.Add (rel);
-								}
-								if (ReadData) {
-									childTable.Rows [childTable.Rows.Count - 1] [childColumn] = currentRow [col];
-								}
-							}
-						}// else {
-							// Simple content element column.
-							// That should be already added
-							// to the current table.
-							// (cannot be done here since text contents cannot be acquired here).
-							// FIXME: If the name has already appeared, then the element must be DataTable (oneOrMore).
-						//}
-
-						if (!reader.IsEmptyElement)
-							reader.ReadEndElement ();
-						else
-							reader.Read ();
-						reader.MoveToContent ();
-						ret = table;
-						break;
-					case XmlNodeType.Text:
-					case XmlNodeType.CDATA:
-						// skip mixed content.
-						if (!hasChildElements) {
-							if (ReadData)
-								textContent += reader.Value;
-							else
-								textContent = String.Empty;
-						}
-						reader.Read ();
-						reader.MoveToContent ();
-						break;
-					case XmlNodeType.EndElement:
-						break; // end
-					default:
-						reader.Read ();
-						break;
-					}
-				}
-			}
-
-			if (currentRow != null && !hasChildElements) {
-				DataTable currentTable = currentRow.Table;
-				// Attributes + !Children + Text = SimpleContent
-				if (textContent != null && hasAttributes) {
-					DataColumn col = GetMappedColumn (currentTable, currentTable.TableName + "_Text", String.Empty, String.Empty, MappingType.SimpleContent);
-					if (ReadData && col != null) // read, only when the column exists
-						currentRow [col] = StringToObject (col.DataType, textContent);
-				} else if (!hasAttributes) {
-					if (textContent == null)
-						textContent = "";
-					// Otherwise, simple element column
-					DataColumn col = GetMappedColumn (currentTable, reader.LocalName,
-						reader.Prefix,
-						reader.NamespaceURI,
-						MappingType.Element);
-					if (ReadData && col != null && col.ColumnMapping != MappingType.Hidden)
-						currentRow [col] = StringToObject (col.DataType, textContent);
-					ret = col;
-				}
-			}
-
-			return ret;
-		}
-
-		private DataTable GetMappedTable (string tableName)
-		{
-			DataTable dt = dataset.Tables [tableName];
-			if (dt == null) {
-				dt = new DataTable (tableName);
-				dataset.Tables.Add (dt);
-			}
-			return dt;
-		}
-
-		private void ReadAttribute (DataTable table, DataRow currentRow)
-		{
-			DataColumn col = GetMappedColumn (table,
-				reader.LocalName,
-				reader.Prefix,
-				reader.NamespaceURI,
-				MappingType.Attribute);
-
-			// Read data
-			if (ReadData && col != null)
-				currentRow [col] = StringToObject (col.DataType, reader.Value);
-		}
-
-		// FIXME: When arg is primary key column, it should be added
-		// on the top of the column list, so Columns.Add() should not 
-		// be done here.
-		//
-		// However, we need to fill data to the column, which requires
-		// DataRow (and subsequently DataTable), so inference and
-		// data fill will have to be done separately.
-		//
-		private DataColumn GetMappedColumn (DataTable table, string name, string prefix, string ns, MappingType type)
-		{
-			DataColumn col = table.Columns [name];
-			// Infer schema
-			if (col == null) {
-				if (InferSchema) {
-					col = new DataColumn ();
-					col.ColumnName = name;
-					col.Prefix = prefix;
-					col.Namespace = ns;
-					col.ColumnMapping = type;
-					if (type == MappingType.Hidden) {
-						col.DataType = typeof (int);
-						col.AutoIncrement = true;
-					}
-					table.Columns.Add (col);
-				}
-				else
-					return null; // no mappable column
-			}
-			// Check mapping type
-			else if (col.ColumnMapping != type)
-				throw new DataException (String.Format ("There are already another column that has different mapping type. Column is {0}, existing mapping type is {1}", col.ColumnName, col.ColumnMapping));
-
-			return col;
-		}
-
-		// Copied from XmlDataLoader.cs
-		internal static object StringToObject (Type type, string value)
-		{
-			if (type == null) return value;
-
-			switch (Type.GetTypeCode (type)) {
-				case TypeCode.Boolean: return XmlConvert.ToBoolean (value);
-				case TypeCode.Byte: return XmlConvert.ToByte (value);
-				case TypeCode.Char: return (char)XmlConvert.ToInt32 (value);
-				case TypeCode.DateTime: return XmlConvert.ToDateTime (value);
-				case TypeCode.Decimal: return XmlConvert.ToDecimal (value);
-				case TypeCode.Double: return XmlConvert.ToDouble (value);
-				case TypeCode.Int16: return XmlConvert.ToInt16 (value);
-				case TypeCode.Int32: return XmlConvert.ToInt32 (value);
-				case TypeCode.Int64: return XmlConvert.ToInt64 (value);
-				case TypeCode.SByte: return XmlConvert.ToSByte (value);
-				case TypeCode.Single: return XmlConvert.ToSingle (value);
-				case TypeCode.UInt16: return XmlConvert.ToUInt16 (value);
-				case TypeCode.UInt32: return XmlConvert.ToUInt32 (value);
-				case TypeCode.UInt64: return XmlConvert.ToUInt64 (value);
-			}
-
-			if (type == typeof (TimeSpan)) return XmlConvert.ToTimeSpan (value);
-			if (type == typeof (Guid)) return XmlConvert.ToGuid (value);
-			if (type == typeof (byte[])) return Convert.FromBase64String (value);
-
-			return Convert.ChangeType (value, type);
 		}
 	}
 }
@@ -587,7 +602,7 @@ DumpDataSet (ds);
 			xtr = new XmlTextReader (args [0]);
 			XmlDocument doc = new XmlDocument ();
 			doc.Load (xtr);
-			XmlDataInferenceLoader.Infer (ds, doc, XmlReadMode.Auto, false);
+			XmlDataInferenceLoader.Infer (ds, doc, XmlReadMode.Auto, null);
 DumpDataSet (ds);
 			sw = new StringWriter ();
 sw = Console.Out;
