@@ -220,7 +220,7 @@ namespace Mono.CSharp {
 				Type declaring_type = mi.DeclaringType;
 					
 				if (invocation_type != declaring_type)
-					return TypeManager.IsSubclassOrNestedChildOf (invocation_type, declaring_type);
+					return TypeManager.IsNestedFamilyAccessible (invocation_type, declaring_type);
 
 				return true;
 			}
@@ -244,7 +244,7 @@ namespace Mono.CSharp {
 
 			// Family and FamANDAssem require that we derive.
 			if ((ma == MethodAttributes.Family) || (ma == MethodAttributes.FamANDAssem) || (ma == MethodAttributes.FamORAssem)){
-				if (!TypeManager.IsSubclassOrNestedChildOf (invocation_type, mi.DeclaringType))
+				if (!TypeManager.IsNestedFamilyAccessible (invocation_type, mi.DeclaringType))
 					return false;
 
 				if (!TypeManager.IsNestedChildOf (invocation_type, mi.DeclaringType))
@@ -2233,7 +2233,7 @@ namespace Mono.CSharp {
 					return e;
 				
 				if (!me.IsStatic &&
-				    TypeManager.IsSubclassOrNestedChildOf (me.InstanceExpression.Type, me.DeclaringType) &&
+				    TypeManager.IsNestedFamilyAccessible (me.InstanceExpression.Type, me.DeclaringType) &&
 				    me.InstanceExpression.Type != me.DeclaringType &&
 				    !me.InstanceExpression.Type.IsSubclassOf (me.DeclaringType) &&
 				    (!intermediate || !MemberAccess.IdenticalNameAndTypeName (ec, this, e, loc))) {

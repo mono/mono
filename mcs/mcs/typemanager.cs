@@ -1611,10 +1611,27 @@ public class TypeManager {
 		return tc.Kind == Kind.Interface;
 	}
 
+	public static bool IsSubclassOf (Type type, Type parent)
+	{
+		do {
+			if (type.Equals (parent))
+				return true;
+
+			type = type.BaseType;
+		} while (type != null);
+
+		return false;
+	}
+
+	public static bool IsFamilyAccessible (Type type, Type parent)
+	{
+		return IsSubclassOf (type, parent);
+	}
+
 	//
 	// Checks whether `type' is a subclass or nested child of `parent'.
 	//
-	public static bool IsSubclassOrNestedChildOf (Type type, Type parent)
+	public static bool IsNestedFamilyAccessible (Type type, Type parent)
 	{
 		do {
 			if ((type == parent) || type.IsSubclassOf (parent))
@@ -2423,7 +2440,7 @@ public class TypeManager {
 			if (invocation_type == null)
 				return false;
 
-			Debug.Assert (IsSubclassOrNestedChildOf (invocation_type, m.DeclaringType));
+			Debug.Assert (IsNestedFamilyAccessible (invocation_type, m.DeclaringType));
 
 			if (is_static)
 				return true;
