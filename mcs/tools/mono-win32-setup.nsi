@@ -106,7 +106,7 @@
 ; =====================================================
 
  !define NAME "Mono" ;
- !define TARGET_INSTALL_DIR "c:\mono-${MILESTONE}" ;
+ !define TARGET_INSTALL_DIR "$PROGRAMFILES\Mono-${MILESTONE}" ;
  !define OUTFILE "mono-${MILESTONE}-win32-1.exe" ;
 
 ; =====================================================
@@ -319,7 +319,7 @@ FileClose $0
 ;========================
 
 FileOpen $0 "$WINDIR\monobasepath.bat" "w"
-FileWrite $0 "set MONO_BASEPATH=$INSTDIR$\r$\n"
+FileWrite $0 'set MONO_BASEPATH="$INSTDIR"$\r$\n'
 FileWrite $0 "set MONO_PATH=%MONO_BASEPATH%\lib$\r$\n"
 FileWrite $0 "set MONO_CFG_DIR=%MONO_BASEPATH%\etc\mono"
 FileClose $0
