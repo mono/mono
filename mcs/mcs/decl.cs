@@ -376,7 +376,6 @@ namespace Mono.CSharp {
 		{
 			type_resolve_ec = new EmitContext (parent, this, loc, null, null, ModFlags, false);
 			type_resolve_ec.ResolvingTypeTree = true;
-			type_resolve_ec.OnlyLookupTypes = true;
 
 			return type_resolve_ec;
 		}

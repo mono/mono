@@ -295,13 +295,6 @@ namespace Mono.CSharp {
 		public Location loc;
 
 		/// <summary>
-		///   Used to "flag" the resolution process to only lookup types,
-		///   and nothing else.  This is an out-of-band communication
-		///   path to SimpleName from the cast operation.
-		/// </summary>
-		public bool OnlyLookupTypes;
-
-		/// <summary>
 		///   Used to flag that it is ok to define types recursively, as the
 		///   expressions are being evaluated as part of the type lookup
 		///   during the type resolution process
@@ -343,7 +336,6 @@ namespace Mono.CSharp {
 				else
 					InUnsafe = (code_flags & Modifiers.UNSAFE) != 0;
 			}
-			OnlyLookupTypes = false;
 			loc = l;
 
 			FlowStack = new Stack ();

@@ -56,6 +56,9 @@ namespace Mono.CSharp {
 		// partially resolved (namespace-qualified names for example).
 		SimpleName		= 8,
 
+		// Mask of all the expression class flags.
+		MaskExprClass		= 15,
+
 		// Disable control flow analysis while resolving the expression.
 		// This is used when resolving the instance expression of a field expression.
 		DisableFlowAnalysis	= 16
@@ -159,6 +162,17 @@ namespace Mono.CSharp {
 		Expression InstanceExpression {
 			get; set;
 		}
+	}
+
+	/// <summary>
+	///   Expression which resolves to a type.
+	/// </summary>
+	public interface ITypeExpression
+	{
+		/// <summary>
+		///   Resolve the expression, but only lookup types.
+		/// </summary>
+		Expression DoResolveType (EmitContext ec);
 	}
 
 	/// <remarks>
@@ -268,12 +282,21 @@ namespace Mono.CSharp {
 		/// </remarks>
 		public Expression Resolve (EmitContext ec, ResolveFlags flags)
 		{
-			Expression e;
+			// Are we doing a types-only search ?
+			if ((flags & ResolveFlags.MaskExprClass) == ResolveFlags.Type) {
+				ITypeExpression type_expr = this as ITypeExpression;
+
+				if (type_expr == null)
+					return null;
+
+				return type_expr.DoResolveType (ec);
+			}
 
 			bool old_do_flow_analysis = ec.DoFlowAnalysis;
 			if ((flags & ResolveFlags.DisableFlowAnalysis) != 0)
 				ec.DoFlowAnalysis = false;
 
+			Expression e;
 			if (this is SimpleName)
 				e = ((SimpleName) this).DoResolveAllowStatic (ec);
 			else 
@@ -3329,7 +3352,7 @@ namespace Mono.CSharp {
 	///   The downside of this is that we might be hitting `LookupType' too many
 	///   times with this scheme.
 	/// </remarks>
-	public class SimpleName : Expression {
+	public class SimpleName : Expression, ITypeExpression {
 		public readonly string Name;
 		
 		public SimpleName (string name, Location l)
@@ -3386,6 +3409,47 @@ namespace Mono.CSharp {
 			return SimpleNameResolve (ec, null, true);
 		}
 
+		public Expression DoResolveType (EmitContext ec)
+		{
+			//
+			// Stage 3: Lookup symbol in the various namespaces. 
+			//
+			DeclSpace ds = ec.DeclSpace;
+			Type t;
+			string alias_value;
+
+			if ((t = RootContext.LookupType (ds, Name, true, loc)) != null)
+				return new TypeExpr (t, loc);
+				
+			//
+			// Stage 2 part b: Lookup up if we are an alias to a type
+			// or a namespace.
+			//
+			// Since we are cheating: we only do the Alias lookup for
+			// namespaces if the name does not include any dots in it
+			//
+				
+			alias_value = ec.DeclSpace.LookupAlias (Name);
+				
+			if (Name.IndexOf ('.') == -1 && alias_value != null) {
+				if ((t = RootContext.LookupType (ds, alias_value, true, loc)) != null)
+					return new TypeExpr (t, loc);
+					
+				// we have alias value, but it isn't Type, so try if it's namespace
+				return new SimpleName (alias_value, loc);
+			}
+				
+			if (ec.ResolvingTypeTree){
+				Type dt = ec.DeclSpace.FindType (Name);
+				if (dt != null)
+					return new TypeExpr (dt, loc);
+			}
+
+			// No match, maybe our parent can compose us
+			// into something meaningful.
+			return this;
+		}
+
 		/// <remarks>
 		///   7.5.2: Simple Names. 
 		///
@@ -3410,119 +3474,72 @@ namespace Mono.CSharp {
 			//
 			// Stage 1: Performed by the parser (binding to locals or parameters).
 			//
-			if (!ec.OnlyLookupTypes){
-				Block current_block = ec.CurrentBlock;
-				if (current_block != null && current_block.IsVariableDefined (Name)){
-					LocalVariableReference var;
-					
-					var = new LocalVariableReference (ec.CurrentBlock, Name, loc);
+			Block current_block = ec.CurrentBlock;
+			if (current_block != null && current_block.IsVariableDefined (Name)){
+				LocalVariableReference var;
 
-					if (right_side != null)
-						return var.ResolveLValue (ec, right_side);
-					else
-						return var.Resolve (ec);
-				}
+				var = new LocalVariableReference (ec.CurrentBlock, Name, loc);
 
-				if (current_block != null){
-					int idx = -1;
-					Parameter par = null;
-					Parameters pars = current_block.Parameters;
-					if (pars != null)
-						par = pars.GetParameterByName (Name, out idx);
-
-					if (par != null) {
-						ParameterReference param;
-					
-						param = new ParameterReference (pars, idx, Name, loc);
-
-						if (right_side != null)
-							return param.ResolveLValue (ec, right_side);
-						else
-							return param.Resolve (ec);
-					}
-				}
-
-				//
-				// Stage 2: Lookup members 
-				//
-
-				//
-				// For enums, the TypeBuilder is not ec.DeclSpace.TypeBuilder
-				// Hence we have two different cases
-				//
-
-				DeclSpace lookup_ds = ec.DeclSpace;
-				do {
-					if (lookup_ds.TypeBuilder == null)
-						break;
-
-					e = MemberLookup (ec, lookup_ds.TypeBuilder, Name, loc);
-					if (e != null)
-						break;
-
-					//
-					// Classes/structs keep looking, enums break
-					//
-					if (lookup_ds is TypeContainer)
-						lookup_ds = ((TypeContainer) lookup_ds).Parent;
-					else
-						break;
-				} while (lookup_ds != null);
-				
-				if (e == null && ec.ContainerType != null)
-					e = MemberLookup (ec, ec.ContainerType, Name, loc);
+				if (right_side != null)
+					return var.ResolveLValue (ec, right_side);
+				else
+					return var.Resolve (ec);
 			}
 
-			// Continuation of stage 2
-			if (e == null){
-				//
-				// Stage 3: Lookup symbol in the various namespaces. 
-				//
-				DeclSpace ds = ec.DeclSpace;
-				Type t;
-				string alias_value;
+			if (current_block != null){
+				int idx = -1;
+				Parameter par = null;
+				Parameters pars = current_block.Parameters;
+				if (pars != null)
+					par = pars.GetParameterByName (Name, out idx);
 
-				if ((t = RootContext.LookupType (ds, Name, true, loc)) != null)
-					return new TypeExpr (t, loc);
-				
-				//
-				// Stage 2 part b: Lookup up if we are an alias to a type
-				// or a namespace.
-				//
-				// Since we are cheating: we only do the Alias lookup for
-				// namespaces if the name does not include any dots in it
-				//
-				
-				alias_value = ec.DeclSpace.LookupAlias (Name);
-				
-				if (Name.IndexOf ('.') == -1 && alias_value != null) {
-					if ((t = RootContext.LookupType (ds, alias_value, true, loc))
-					    != null)
-						return new TypeExpr (t, loc);
+				if (par != null) {
+					ParameterReference param;
 					
-				// we have alias value, but it isn't Type, so try if it's namespace
-					return new SimpleName (alias_value, loc);
+					param = new ParameterReference (pars, idx, Name, loc);
+
+					if (right_side != null)
+						return param.ResolveLValue (ec, right_side);
+					else
+						return param.Resolve (ec);
 				}
-				
-				if (ec.ResolvingTypeTree){
-					Type dt = ec.DeclSpace.FindType (Name);
-					if (dt != null)
-						return new TypeExpr (dt, loc);
-				}
-				
-				// No match, maybe our parent can compose us
-				// into something meaningful.
-				return this;
 			}
 
 			//
-			// Stage 2 continues here. 
-			// 
+			// Stage 2: Lookup members 
+			//
+
+			//
+			// For enums, the TypeBuilder is not ec.DeclSpace.TypeBuilder
+			// Hence we have two different cases
+			//
+
+			DeclSpace lookup_ds = ec.DeclSpace;
+			do {
+				if (lookup_ds.TypeBuilder == null)
+					break;
+
+				e = MemberLookup (ec, lookup_ds.TypeBuilder, Name, loc);
+				if (e != null)
+					break;
+
+				//
+				// Classes/structs keep looking, enums break
+				//
+				if (lookup_ds is TypeContainer)
+					lookup_ds = ((TypeContainer) lookup_ds).Parent;
+				else
+					break;
+			} while (lookup_ds != null);
+				
+			if (e == null && ec.ContainerType != null)
+				e = MemberLookup (ec, ec.ContainerType, Name, loc);
+
+			if (e == null)
+				return DoResolveType (ec);
+
 			if (e is TypeExpr)
 				return e;
-
-			if (ec.OnlyLookupTypes)
-				return null;
 
 			if (e is IMemberExpr) {
 				e = MemberAccess.ResolveMemberAccess (ec, e, null, loc, this);
@@ -3576,12 +3593,17 @@ namespace Mono.CSharp {
 	/// <summary>
 	///   Fully resolved expression that evaluates to a type
 	/// </summary>
-	public class TypeExpr : Expression {
+	public class TypeExpr : Expression, ITypeExpression {
 		public TypeExpr (Type t, Location l)
 		{
 			Type = t;
 			eclass = ExprClass.Type;
 			loc = l;
+		}
+
+		public Expression DoResolveType (EmitContext ec)
+		{
+			return this;
 		}
 
 		override public Expression DoResolve (EmitContext ec)
@@ -3597,27 +3619,32 @@ namespace Mono.CSharp {
 
 	/// <summary>
 	///   Used to create types from a fully qualified name.  These are just used
-	///   by the parser to setup the core types.  A TypeExpression is always
+	///   by the parser to setup the core types.  A TypeLookupExpression is always
 	///   classified as a type.
 	/// </summary>
-	public class TypeExpression : TypeExpr {
+	public class TypeLookupExpression : TypeExpr {
 		string name;
 		
-		public TypeExpression (string name) : base (null, Location.Null)
+		public TypeLookupExpression (string name) : base (null, Location.Null)
 		{
 			this.name = name;
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolveType (EmitContext ec)
 		{
 			if (type == null)
 				type = RootContext.LookupType (ec.DeclSpace, name, false, Location.Null);
 			return this;
 		}
 
+		public override Expression DoResolve (EmitContext ec)
+		{
+			return DoResolveType (ec);
+		}
+
 		public override void Emit (EmitContext ec)
 		{
-			throw new Exception ("Should never be called");			
+			throw new Exception ("Should never be called");
 		}
 
 		public override string ToString ()

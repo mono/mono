@@ -1434,10 +1434,7 @@ namespace Mono.CSharp {
 
 			int errors = Report.Errors;
 
-			bool old_state = ec.OnlyLookupTypes;
-			ec.OnlyLookupTypes = true;
 			target_type = target_type.Resolve (ec, ResolveFlags.Type);
-			ec.OnlyLookupTypes = old_state;
 			
 			if (target_type == null){
 				if (errors == Report.Errors)
@@ -5311,7 +5308,7 @@ namespace Mono.CSharp {
 	/// <summary>
 	///   Implements the member access expression
 	/// </summary>
-	public class MemberAccess : Expression {
+	public class MemberAccess : Expression, ITypeExpression {
 		public readonly string Identifier;
 		Expression expr;
 		Expression member_lookup;
@@ -5527,7 +5524,7 @@ namespace Mono.CSharp {
 			return null;
 		}
 		
-		public Expression DoResolve (EmitContext ec, Expression right_side)
+		public Expression DoResolve (EmitContext ec, Expression right_side, ResolveFlags flags)
 		{
 			if (type != null)
 				throw new Exception ();
@@ -5539,8 +5536,7 @@ namespace Mono.CSharp {
 			//
 
 			Expression original = expr;
-			expr = expr.Resolve (ec, ResolveFlags.VariableOrValue | ResolveFlags.SimpleName |
-					     ResolveFlags.Type | ResolveFlags.DisableFlowAnalysis);
+			expr = expr.Resolve (ec, flags | ResolveFlags.DisableFlowAnalysis);
 
 			if (expr == null)
 				return null;
@@ -5550,8 +5546,7 @@ namespace Mono.CSharp {
 				
 				Expression new_expr = new SimpleName (child_expr.Name + "." + Identifier, loc);
 
-				return new_expr.Resolve (ec, ResolveFlags.VariableOrValue |
-							 ResolveFlags.SimpleName | ResolveFlags.Type);
+				return new_expr.Resolve (ec, flags);
 			}
 					
 			//
@@ -5633,6 +5628,12 @@ namespace Mono.CSharp {
 				return null;
 			}
 
+			if (member_lookup is TypeExpr){
+				member_lookup.Resolve (ec, ResolveFlags.Type);
+				return member_lookup;
+			} else if ((flags & ResolveFlags.MaskExprClass) == ResolveFlags.Type)
+				return null;
+			
 			member_lookup = ResolveMemberAccess (ec, member_lookup, expr, loc, original);
 			if (member_lookup == null)
 				return null;
@@ -5650,12 +5651,19 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			return DoResolve (ec, null);
+			return DoResolve (ec, null, ResolveFlags.VariableOrValue |
+					  ResolveFlags.SimpleName | ResolveFlags.Type);
 		}
 
 		public override Expression DoResolveLValue (EmitContext ec, Expression right_side)
 		{
-			return DoResolve (ec, right_side);
+			return DoResolve (ec, right_side, ResolveFlags.VariableOrValue |
+					  ResolveFlags.SimpleName | ResolveFlags.Type);
+		}
+
+		public Expression DoResolveType (EmitContext ec)
+		{
+			return DoResolve (ec, null, ResolveFlags.Type);
 		}
 
 		public override void Emit (EmitContext ec)
@@ -6555,7 +6563,7 @@ namespace Mono.CSharp {
 	//   the type specification, we just use this to construct the type
 	//   one bit at a time.
 	// </summary>
-	public class ComposedCast : Expression {
+	public class ComposedCast : Expression, ITypeExpression {
 		Expression left;
 		string dim;
 		
@@ -6566,7 +6574,7 @@ namespace Mono.CSharp {
 			loc = l;
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		public Expression DoResolveType (EmitContext ec)
 		{
 			left = left.Resolve (ec, ResolveFlags.Type);
 			if (left == null)
@@ -6590,6 +6598,11 @@ namespace Mono.CSharp {
 			
 			eclass = ExprClass.Type;
 			return this;
+		}
+
+		public override Expression DoResolve (EmitContext ec)
+		{
+			return DoResolveType (ec);
 		}
 
 		public override void Emit (EmitContext ec)

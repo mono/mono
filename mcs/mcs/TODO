@@ -131,12 +131,6 @@ OPTIMIZATIONS
 	The only pending problem is that the code that implements Aliases
 	is on TypeContainer, and probably should go in DeclSpace.
 
-* Casts need to trigger a name resolution against types only.
-
-	currently we use a secret hand shake, probably we should use
-	a differen path, and only expressions (memberaccess, simplename)
-	would participate in this protocol.
-
 * Use of local temporary in UnaryMutator
 
 	We should get rid of the Localtemporary there for some cases

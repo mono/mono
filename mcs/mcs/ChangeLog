@@ -1,5 +1,32 @@
 2002-08-12  Martin Baulig  <martin@gnome.org>
 
+	* ecore.cs (ITypeExpression): New interface for expressions which
+	resolve to a type.
+	(TypeExpression): Renamed to TypeLookupExpression.
+	(Expression.DoResolve): If we're doing a types-only lookup, the
+	expression must implement the ITypeExpression interface and we
+	call DoResolveType() on it.
+	(SimpleName): Implement the new ITypeExpression interface.
+	(SimpleName.SimpleNameResolve): Removed the ec.OnlyLookupTypes
+	hack, the situation that we're only looking up types can't happen
+	anymore when this method is called.  Moved the type lookup code to
+	DoResolveType() and call it.
+	(SimpleName.DoResolveType): This ITypeExpression interface method
+	is now doing the types-only lookup.
+	(TypeExpr, TypeLookupExpression): Implement ITypeExpression.
+	(ResolveFlags): Added MaskExprClass.
+
+	* expression.cs (MemberAccess): Implement the ITypeExpression
+	interface.
+	(MemberAccess.DoResolve): Added support for a types-only lookup
+	when we're called via ITypeExpression.DoResolveType().
+	(ComposedCast): Implement the ITypeExpression interface.
+
+	* codegen.cs (EmitContext.OnlyLookupTypes): Removed.  Call
+	Expression.Resolve() with ResolveFlags.Type instead.
+
+2002-08-12  Martin Baulig  <martin@gnome.org>
+
 	* interface.cs (Interface.Define): Apply attributes.
 
 	* attribute.cs (Attribute.ApplyAttributes): Added support for

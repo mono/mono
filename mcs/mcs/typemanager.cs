@@ -288,24 +288,24 @@ public class TypeManager {
 	//
 	static void InitExpressionTypes ()
 	{
-		system_object_expr  = new TypeExpression ("System.Object");
-		system_string_expr  = new TypeExpression ("System.String");
-		system_boolean_expr = new TypeExpression ("System.Boolean");
-		system_decimal_expr = new TypeExpression ("System.Decimal");
-		system_single_expr  = new TypeExpression ("System.Single");
-		system_double_expr  = new TypeExpression ("System.Double");
-		system_sbyte_expr   = new TypeExpression ("System.SByte");
-		system_byte_expr    = new TypeExpression ("System.Byte");
-		system_int16_expr   = new TypeExpression ("System.Int16");
-		system_uint16_expr  = new TypeExpression ("System.UInt16");
-		system_int32_expr   = new TypeExpression ("System.Int32");
-		system_uint32_expr  = new TypeExpression ("System.UInt32");
-		system_int64_expr   = new TypeExpression ("System.Int64");
-		system_uint64_expr  = new TypeExpression ("System.UInt64");
-		system_char_expr    = new TypeExpression ("System.Char");
-		system_void_expr    = new TypeExpression ("System.Void");
-		system_asynccallback_expr = new TypeExpression ("System.AsyncCallback");
-		system_iasyncresult_expr = new TypeExpression ("System.IAsyncResult");
+		system_object_expr  = new TypeLookupExpression ("System.Object");
+		system_string_expr  = new TypeLookupExpression ("System.String");
+		system_boolean_expr = new TypeLookupExpression ("System.Boolean");
+		system_decimal_expr = new TypeLookupExpression ("System.Decimal");
+		system_single_expr  = new TypeLookupExpression ("System.Single");
+		system_double_expr  = new TypeLookupExpression ("System.Double");
+		system_sbyte_expr   = new TypeLookupExpression ("System.SByte");
+		system_byte_expr    = new TypeLookupExpression ("System.Byte");
+		system_int16_expr   = new TypeLookupExpression ("System.Int16");
+		system_uint16_expr  = new TypeLookupExpression ("System.UInt16");
+		system_int32_expr   = new TypeLookupExpression ("System.Int32");
+		system_uint32_expr  = new TypeLookupExpression ("System.UInt32");
+		system_int64_expr   = new TypeLookupExpression ("System.Int64");
+		system_uint64_expr  = new TypeLookupExpression ("System.UInt64");
+		system_char_expr    = new TypeLookupExpression ("System.Char");
+		system_void_expr    = new TypeLookupExpression ("System.Void");
+		system_asynccallback_expr = new TypeLookupExpression ("System.AsyncCallback");
+		system_iasyncresult_expr = new TypeLookupExpression ("System.IAsyncResult");
 	}
 	
 	static TypeManager ()
