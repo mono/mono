@@ -1,5 +1,10 @@
 2002-07-31  Duncan Mak  <duncan@ximian.com>
 
+	* unix.args: Added new classes in
+	System.Runtime.Remoting.Contexts.
+	
+2002-07-31  Duncan Mak  <duncan@ximian.com>
+
 	* unix.args: Added new Exceptions, Interfaces and various
 	TypeEntries from System.Runtime.Remoting.
 

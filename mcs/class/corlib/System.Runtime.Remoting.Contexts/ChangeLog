@@ -1,3 +1,13 @@
+2002-07-31  Duncan Mak  <duncan@ximian.com>
+
+	* SynchronizationAttribute.cs: Added more interfaces, it
+	implements them (via CorCompare), but they're not listed in the docs.
+
+	* ContextProperty.cs: 
+	* CrossContextDelegate.cs: Added to CVS.
+
+	* ContextAttribute.cs: Added missing constructor.
+
 2002-07-29  Duncan Mak  <duncan@ximian.com>
 
 	* IContributeServerContentSink.cs: Removed.

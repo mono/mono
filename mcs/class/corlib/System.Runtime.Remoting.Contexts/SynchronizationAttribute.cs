@@ -15,7 +15,7 @@ namespace System.Runtime.Remoting.Contexts {
 
 	[Serializable]
 	[AttributeUsage (AttributeTargets.Class)]
-	public class SynchronizationAttribute : ContextAttribute
+	public class SynchronizationAttribute : ContextAttribute, IContributeClientContextSink, IContributeServerContextSink
 	{
 		public const int NOT_SUPPORTED = 1;
 		public const int SUPPORTED = 2;

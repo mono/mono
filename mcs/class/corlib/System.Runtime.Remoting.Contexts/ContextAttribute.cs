@@ -17,6 +17,16 @@ namespace System.Runtime.Remoting.Contexts {
 	public class ContextAttribute : Attribute, IContextAttribute, IContextProperty {
 		protected string AttributeName;
 
+		// TODO: Is this needed?
+		public ContextAttribute ()
+		{
+		}
+
+		public ContextAttribute (string name)
+		{
+			AttributeName = name;
+		}
+
 		public virtual string Name {
 			get {
 				return AttributeName;

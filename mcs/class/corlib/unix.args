@@ -459,8 +459,12 @@ System.Runtime.Remoting.Activation/IConstructionReturnMessage.cs
 System.Runtime.Remoting.Activation/UrlAttribute.cs
 System.Runtime.Remoting.Contexts/Context.cs
 System.Runtime.Remoting.Contexts/ContextAttribute.cs
+System.Runtime.Remoting.Contexts/ContextProperty.cs
+System.Runtime.Remoting.Contexts/CrossContextDelegate.cs
 System.Runtime.Remoting.Contexts/IContextAttribute.cs
 System.Runtime.Remoting.Contexts/IContextProperty.cs
+System.Runtime.Remoting.Contexts/IContributeClientContextSink.cs
+System.Runtime.Remoting.Contexts/IContributeServerContextSink.cs
 System.Runtime.Remoting.Contexts/IDynamicMessageSink.cs
 System.Runtime.Remoting.Contexts/IDynamicProperty.cs
 System.Runtime.Remoting.Contexts/SynchronizationAttribute.cs
