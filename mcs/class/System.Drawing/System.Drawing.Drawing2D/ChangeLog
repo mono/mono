@@ -1,4 +1,10 @@
 2002-9-2  DennisHayes <dennish@raytek.com>
+
+	* Matrix.cs
+	* Added stubs, implmentation
+
+2002-9-2  DennisHayes <dennish@raytek.com>
+
 	* GraphicsPath.cs
 	* added stub needed for system.windows.forms
 

@@ -417,7 +417,7 @@ namespace System.Drawing.Drawing2D
         }
         
         // LAMESPEC: quote from beta 2 sdk docs: "[To be supplied!]"
-	[MonoTODO]    
+//	[MonoTODO]    
 	public void VectorTransformPoints(Point[] pts)
         {
             // TODO
