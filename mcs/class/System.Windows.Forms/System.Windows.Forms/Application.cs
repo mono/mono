@@ -60,18 +60,20 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public static string CompanyName {
 			get {
-				//FIXME:
-				return "Company Name";
+                AssemblyCompanyAttribute[] attrs =(AssemblyCompanyAttribute[]) Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyCompanyAttribute),true);
+                if (attrs != null && attrs[0] != null)
+                    return attrs[0].Company;
+                return "";
 			}
 		}
 	
 		[MonoTODO]
 		public static CultureInfo CurrentCulture {
 			get {
-				throw new NotImplementedException ();
+				return CultureInfo.CurrentCulture;
 			}
 			set {
-				//FIXME:
+				Thread.CurrentThread.CurrentCulture = value;
 			}
 		}
 	
@@ -83,9 +85,8 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public static string ExecutablePath {
 			get {
-				//FIXME:
-				return "";
-			}
+                    return Assembly.GetExecutingAssembly().Location;			
+            }
 		}
 	
 		[MonoTODO]
@@ -105,16 +106,20 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public static string ProductName {
 			get {
-				//FIXME:
-				return "Product Name";
+                    AssemblyProductAttribute[] attrs =(AssemblyProductAttribute[]) Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyProductAttribute),true);
+                    if (attrs != null && attrs[0] != null)
+                        return attrs[0].Product;
+                    return "";
 			}
 		}
 	
 		[MonoTODO]
 		public static string ProductVersion {
-			get {
-				//FIXME:
-				return "0.0.0";
+            get {
+                    AssemblyVersionAttribute[] attrs =(AssemblyVersionAttribute[]) Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyVersionAttribute),true);
+                    if (attrs != null && attrs[0] != null)
+                        return attrs[0].Version;
+                    return "";
 			}
 		}
 	
