@@ -141,6 +141,7 @@ namespace MonoTests.System.Xml
 
 			xtr = new XmlTextReader (new StringReader (xml));
 			XmlValidatingReader xvr = new XmlValidatingReader (xtr);
+			xvr.EntityHandling = EntityHandling.ExpandCharEntities;
 			method (xvr);
 		}
 

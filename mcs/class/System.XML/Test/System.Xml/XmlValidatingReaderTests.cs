@@ -635,5 +635,79 @@ namespace MonoTests.System.Xml
 			} catch (XmlSchemaException) {
 			}
 		}
+
+		// Entity tests are almost copied from XmlNodeReaderTests.
+		[Test]
+		public void ResolveEntity ()
+		{
+			string ent1 = "<!ENTITY ent 'entity string'>";
+			string ent2 = "<!ENTITY ent2 '<foo/><foo/>'>]>";
+			string dtd = "<!DOCTYPE root[<!ELEMENT root (#PCDATA|foo)*>" + ent1 + ent2;
+			string xml = dtd + "<root>&ent;&ent2;</root>";
+			dvr = new XmlValidatingReader (xml, XmlNodeType.Document, null);
+			dvr.ValidationType = ValidationType.None;
+			dvr.EntityHandling = EntityHandling.ExpandCharEntities;
+			dvr.Read ();	// DTD
+			dvr.Read ();	// root
+			dvr.Read ();	// &ent;
+			AssertEquals (XmlNodeType.EntityReference, dvr.NodeType);
+			AssertEquals (1, dvr.Depth);
+			dvr.ResolveEntity ();
+			// It is still entity reference.
+			AssertEquals (XmlNodeType.EntityReference, dvr.NodeType);
+			dvr.Read ();
+			AssertEquals (XmlNodeType.Text, dvr.NodeType);
+			AssertEquals (2, dvr.Depth);
+			AssertEquals ("entity string", dvr.Value);
+			dvr.Read ();
+			AssertEquals (XmlNodeType.EndEntity, dvr.NodeType);
+			AssertEquals (1, dvr.Depth);
+			AssertEquals ("", dvr.Value);
+
+			dvr.Read ();	// &ent2;
+			AssertEquals (XmlNodeType.EntityReference, dvr.NodeType);
+			AssertEquals (1, dvr.Depth);
+			dvr.ResolveEntity ();
+			// It is still entity reference.
+			AssertEquals (XmlNodeType.EntityReference, dvr.NodeType);
+			// It now became element node.
+			dvr.Read ();
+			AssertEquals (XmlNodeType.Element, dvr.NodeType);
+			AssertEquals (2, dvr.Depth);
+		}
+
+		[Test]
+		public void ResolveEntity2 ()
+		{
+			string ent1 = "<!ENTITY ent 'entity string'>";
+			string ent2 = "<!ENTITY ent2 '<foo/><foo/>'>]>";
+			string dtd = "<!DOCTYPE root[<!ELEMENT root (#PCDATA|foo)*>" + ent1 + ent2;
+			string xml = dtd + "<root>&ent3;&ent2;</root>";
+			dvr = new XmlValidatingReader (xml, XmlNodeType.Document, null);
+			dvr.ValidationType = ValidationType.None;
+			dvr.EntityHandling = EntityHandling.ExpandCharEntities;
+			dvr.Read ();	// DTD
+			dvr.Read ();	// root
+			dvr.Read ();	// &ent3;
+			AssertEquals (XmlNodeType.EntityReference, dvr.NodeType);
+			// ent3 does not exists in this dtd.
+			dvr.ResolveEntity ();
+			AssertEquals (XmlNodeType.EntityReference, dvr.NodeType);
+			try {
+				dvr.Read ();
+				Fail ("Undeclared entity resolution should be failed.");
+			} catch (XmlException) {
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (XmlException))]
+		public void ResolveEntityWithoutDTD ()
+		{
+			string xml = "<root>&ent;&ent2;</root>";
+			dvr = new XmlValidatingReader (xml, XmlNodeType.Document, null);
+			dvr.Read ();	// root
+			dvr.Read ();	// &ent;
+		}
 	}
 }

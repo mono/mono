@@ -1,3 +1,10 @@
+2003-08-05  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlReaderCommonTests.cs : Its XmlValidatingReader.EntityHandling
+	  should be ExpandCharEntities.
+	* XmlValidatingReaderTests.cs : added ResolveEntity(),
+	  ResolveEntity2() and ResolveEntityWithoutDTD().
+
 2003-07-31  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XmlDocumentTests.cs : added LoadThrowsUndeclaredEntity() and
