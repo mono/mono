@@ -409,7 +409,7 @@ namespace System.CodeDom.Compiler {
 		protected abstract void GenerateSnippetMember( CodeSnippetTypeMember m );
 		protected virtual void GenerateSnippetStatement( CodeSnippetStatement s )
 		{
-			output.Write( s.Value );
+			output.WriteLine (s.Value);
 		}
 
 		protected void GenerateStatement( CodeStatement s )

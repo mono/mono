@@ -1,3 +1,8 @@
+2003-04-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* CodeGenerator.cs:
+	(GenerateSnippetStatement): use WriteLine instead of Write.
+
 2003-04-25  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CodeGenerator.cs:
