@@ -1,5 +1,14 @@
 ﻿<?xml version="1.0" encoding="UTF-8" ?>
 <ldml>
+	<numbers>
+		<decimalFormats>
+			<decimalFormatLength >
+				<decimalFormat >
+					<pattern>#,##0.###;-#,##0.###</pattern>
+				</decimalFormat>
+			</decimalFormatLength >
+		</decimalFormats>
+	</numbers>
 	<dates>
 		<calendars>
 			<calendar type="gregorian">

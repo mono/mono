@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <ldml>
 	<dates>
 		<calendars>
@@ -6,14 +6,14 @@
 				<dateFormats>
 					<dateFormatLength type="short">
 						<dateFormat >
-							<pattern>yyyy.MM.dd</pattern>
+							<pattern>dd/MM/yyyy</pattern>
 						</dateFormat>
 					</dateFormatLength >
 				</dateFormats>
 				<timeFormats>
 					<timeFormatLength type="long">
 						<timeFormat >
-							<pattern>HH:mm:ss</pattern>
+							<pattern>hh:mm:ss tt</pattern>
 						</timeFormat>
 					</timeFormatLength >
 				</timeFormats>

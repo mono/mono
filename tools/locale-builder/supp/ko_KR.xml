@@ -1,5 +1,14 @@
 ﻿<?xml version="1.0" encoding="UTF-8" ?>
 <ldml>
+	<numbers>
+		<currencyFormats>
+			<currencyFormatLength >
+				<currencyFormat >
+					<pattern>#,##0;-#,##0</pattern>
+				</currencyFormat>
+			</currencyFormatLength >
+		</currencyFormats>
+	</numbers>
 	<dates>
 		<calendars>
 			<calendar type="gregorian">

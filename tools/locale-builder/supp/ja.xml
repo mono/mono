@@ -6,11 +6,15 @@
 ]
 >
 <ldml>
-	<identity>
-		<version number="2.0"/>
-		<generation date="2003-12-19" />
-		<language type="ja" /> 
-	</identity>
+	<numbers>
+		<currencyFormats>
+			<currencyFormatLength >
+				<currencyFormat >
+					<pattern>#,##0;-#,##0</pattern>
+				</currencyFormat>
+			</currencyFormatLength >
+		</currencyFormats>
+	</numbers>
 	<dates>
 		<calendars>
 			<calendar type="gregorian">

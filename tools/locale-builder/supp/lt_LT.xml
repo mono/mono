@@ -1,12 +1,21 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+﻿<?xml version="1.0" encoding="UTF-8" ?>
 <ldml>
+	<numbers>
+		<decimalFormats>
+			<decimalFormatLength >
+				<decimalFormat >
+					<pattern>#,##0.###;-#,##0.###</pattern>
+				</decimalFormat>
+			</decimalFormatLength >
+		</decimalFormats>
+	</numbers>
 	<dates>
 		<calendars>
 			<calendar type="gregorian">
 				<dateFormats>
 					<dateFormatLength type="short">
 						<dateFormat >
-							<pattern>dd/MM/yyyy</pattern>
+							<pattern>yyyy.MM.dd</pattern>
 						</dateFormat>
 					</dateFormatLength >
 				</dateFormats>
@@ -20,13 +29,4 @@
 			</calendar>
 		</calendars>
 	</dates>
-  <numbers>
-    <decimalFormats>
-      <decimalFormatLength >
-        <decimalFormat >
-          <pattern>#,##0.###;-#,##0.###</pattern>
-        </decimalFormat>
-      </decimalFormatLength >
-    </decimalFormats>
-  </numbers>
 </ldml>

@@ -26,7 +26,7 @@
     <decimalFormats>
       <decimalFormatLength >
         <decimalFormat >
-          <pattern>#,##0.##;-#,##0.##</pattern>
+          <pattern>#,##0.###;-#,##0.###</pattern>
         </decimalFormat>
       </decimalFormatLength >
     </decimalFormats>

@@ -1,3 +1,14 @@
+2004-06-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* fr_CH.xml : missing updates.
+	* Renamed cs.xml as cs_CZ.xml and added number format.
+	  Also renamed lt.xml as lt_LT.xml. They are files' precedence matter.
+	* es_NI.xml : added.
+	* en.xml, en_CA.xml, en_IE.xml, en_PH.xml, en_US.xml, en_ZW.xml :
+	  Change with related to the change of NumberDecimalDigits handling.
+	* es_PR.xml, ja.xml, ko_KR.xml :
+	  Added number format.
+
 2004-05-27  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* en_PH.xml, en_ZW.xml, fr_CA.xml, fr_CH.xml, fr_FR.xml, fr_LU.xml :
