@@ -1,3 +1,7 @@
+2003-12-16  Tim Coleman <tim@timcoleman.com>
+	* System.Data.dll.sources:
+		Add new .NET 1.2 sources.
+
 2003-11-26  Tim Coleman <tim@timcoleman.com>
 	* System.Data.dll.sources:
 		Add many new System.Data classes for NET_1_2 build.
