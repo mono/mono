@@ -1,3 +1,13 @@
+2001-08-06  Dietmar Maurer  <dietmar@ximian.com>
+
+	* common.src: added Object.cs
+
+	* mono.src: added ValueType.cs
+
+2001-08-02  Dietmar Maurer  <dietmar@ximian.com>
+
+	* Math.cs: replaced libc with libm
+
 2001-08-02  Bob Smith  <bob@thestuff.net>
 
         * Random.cs: Implemented. Needs testing.

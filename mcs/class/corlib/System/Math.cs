@@ -52,34 +52,34 @@ namespace System
                                 throw new OverflowException("Value is too small.");
                         return (short)((value < 0)? -value: value);
                 }
-                [ DllImport("libc", EntryPoint="acos") ]
+                [ DllImport("libm", EntryPoint="acos") ]
                 private extern static double _Acos(double d);
                 public static double Acos(double d)
                 {
                         if (d < -1 || d > 1) return Double.NaN;
                         return Math._Acos(d);
                 }
-                [ DllImport("libc", EntryPoint="asin") ]
+                [ DllImport("libm", EntryPoint="asin") ]
                 private extern static double _Asin(double d);
                 public static double Asin(double d)
                 {
                         if (d < -1 || d > 1) return Double.NaN;
                         return Math._Asin(d);
                 }
-                [ DllImport("libc", EntryPoint="atan") ]
+                [ DllImport("libm", EntryPoint="atan") ]
                 public extern static double Atan(double d);
-                [ DllImport("libc", EntryPoint="atan2") ]
+                [ DllImport("libm", EntryPoint="atan2") ]
                 public extern static double Atan2(double y, double x);
                 public static double Ceiling(double a)
                 {
                         double b = (double)((long)a);
                         return (b < a)? b+1: b;
                 }
-                [ DllImport("libc", EntryPoint="cos") ]
+                [ DllImport("libm", EntryPoint="cos") ]
                 public extern static double Cos(double d);
-                [ DllImport("libc", EntryPoint="cosh") ]
+                [ DllImport("libm", EntryPoint="cosh") ]
                 public extern static double Cosh(double value);
-                [ DllImport("libc", EntryPoint="exp") ]
+                [ DllImport("libm", EntryPoint="exp") ]
                 public extern static double Exp(double d);
                 public static double Floor(double d) {
 		    return (double)((long)d) ;
@@ -92,7 +92,7 @@ namespace System
                         if (r != 0) return r;
                         return (x > 0)? 0: -0;
                 }
-                [ DllImport("libc", EntryPoint="log") ]
+                [ DllImport("libm", EntryPoint="log") ]
                 private extern static double _Log(double d);
                 public static double Log(double d)
                 {
@@ -106,7 +106,7 @@ namespace System
                         else if (a < 0) return Double.NaN;
                         return Math._Log(a)/Math._Log(newBase);
                 }
-                [ DllImport("libc", EntryPoint="log10") ]
+                [ DllImport("libm", EntryPoint="log10") ]
                 private extern static double _Log10(double d);
                 public static double Log10(double d)
                 {
@@ -202,7 +202,7 @@ namespace System
                 {
                         return (val1 < val2)? val1: val2;
                 }
-                [ DllImport("libc", EntryPoint="pow") ]
+                [ DllImport("libm", EntryPoint="pow") ]
                 public extern static double Pow(double x, double y);
                 public static decimal Round(decimal d)
                 {
@@ -292,20 +292,20 @@ namespace System
                         if (value > 0) return 1;
                         return (value == 0)? 0: -1;
                 }
-                [ DllImport("libc", EntryPoint="sin") ]
+                [ DllImport("libm", EntryPoint="sin") ]
                 public extern static double Sin(double a);
-                [ DllImport("libc", EntryPoint="sinh") ]
+                [ DllImport("libm", EntryPoint="sinh") ]
                 public extern static double Sinh(double value);
-                [ DllImport("libc", EntryPoint="sqrt") ]
+                [ DllImport("libm", EntryPoint="sqrt") ]
                 private extern static double _Sqrt(double d);
                 public static double Sqrt(double d) 
                 {
                         if (d < 0) return Double.NaN;
                         return Math._Sqrt(d);
                 }
-                [ DllImport("libc", EntryPoint="tan") ]
+                [ DllImport("libm", EntryPoint="tan") ]
                 public extern static double Tan(double a);
-                [ DllImport("libc", EntryPoint="tanh") ]
+                [ DllImport("libm", EntryPoint="tanh") ]
                 public extern static double Tanh(double value);
         }
 }
