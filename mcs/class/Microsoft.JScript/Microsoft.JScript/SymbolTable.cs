@@ -15,22 +15,18 @@ namespace Microsoft.JScript {
 
 	internal class SymbolTable {
 
+		internal SymbolTable parent;
 		internal Hashtable symbols;
 
-		internal SymbolTable ()
+		internal SymbolTable (SymbolTable parent)
 		{
 			symbols = new Hashtable ();
+			this.parent = parent;
 		}
 		
-
-		internal void Add (string id, VariableDeclaration d)
+		internal void Add (string id, object d)
 		{
 			symbols.Add (id, d);
-		}
-
-		internal void Add (string id, FunctionDeclaration fd)
-		{
-			symbols.Add (id, fd);
 		}
 
 		internal AST Retrieve (string id)

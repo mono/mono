@@ -36,7 +36,7 @@ namespace Microsoft.JScript {
 		}
 	}
 			
-	public class FormalParameterList {
+	public class FormalParameterList : AST {
 
 		internal ArrayList ids;
 
@@ -60,5 +60,18 @@ namespace Microsoft.JScript {
 		
 			return sb.ToString ();
 		}
+
+		internal override bool Resolve (IdentificationTable context)
+		{
+			FormalParam f;
+			int i, size = ids.Count;
+
+			for (i = 0; i < size; i++) {
+				f = (FormalParam) ids [i];
+				context.Enter (f.id, f);
+			}
+
+			return true;
+		} 
 	}
 }

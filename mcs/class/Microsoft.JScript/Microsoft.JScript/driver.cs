@@ -25,8 +25,9 @@ namespace Microsoft.JScript {
 			JSParser parser = new JSParser (ctx);
 
 			ScriptBlock prog_tree = parser.Parse ();
-
 			Console.WriteLine (prog_tree.ToString ());
+
+			SemanticAnalyser.Run (prog_tree);
 
 			CodeGenerator.Run (args [0], prog_tree);
 		}

@@ -818,7 +818,7 @@ assignment_op returns [JSToken assign_op]
 primary_expr returns [AST prim_exp]
 {
 	prim_exp = null;
-	Literal l = null;
+	AST l = null;
 	Expression e = null;
 }
 	: p:"this" { prim_exp = new This (); }
@@ -841,7 +841,7 @@ object_literal
 
 	;
 
-literal returns [Literal l]
+literal returns [AST l]
 {
 	l = null; 
 }

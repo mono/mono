@@ -1942,7 +1942,7 @@ _loop58_breakloop:			;
 		Token  id = null;
 		
 			prim_exp = null;
-			Literal l = null;
+			AST l = null;
 			Expression e = null;
 		
 		
@@ -3665,9 +3665,9 @@ _loop139_breakloop:					;
 		match(CLOSE_BRACE);
 	}
 	
-	public Literal  literal() //throws RecognitionException, TokenStreamException
+	public AST  literal() //throws RecognitionException, TokenStreamException
 {
-		Literal l;
+		AST l;
 		
 		Token  s = null;
 		

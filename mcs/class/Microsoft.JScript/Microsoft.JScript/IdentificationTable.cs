@@ -19,23 +19,27 @@ namespace Microsoft.JScript {
 		internal IdentificationTable ()
 		{
 			stack = new Stack ();
-			stack.Push (new SymbolTable ());
+			stack.Push (new SymbolTable (null));
 		}
 		
 		internal void OpenBlock ()
 		{
-			stack.Push (new SymbolTable ());
+			System.Console.WriteLine ("IdTable::OpenBlock");
+
+			SymbolTable parent = (SymbolTable) stack.Peek ();
+			stack.Push (new SymbolTable (parent));
 		}
 
 		internal void CloseBlock ()
 		{
+			System.Console.WriteLine ("IdTable::CloseBlock");
 			stack.Pop ();
 		}
 
-		internal void Enter (string id, VariableDeclaration decl)
-		{
+		internal void Enter (string id, object decl)
+		{			
 			((SymbolTable) stack.Peek ()).Add (id , decl);
-			System.Console.WriteLine ("IdentificationTable::Enter");
+			System.Console.WriteLine ("IdentificationTable::Enter::{0}", id);
 		}
 
 		internal AST Retrieve (string id)
@@ -45,7 +49,18 @@ namespace Microsoft.JScript {
 
 		internal bool Contains (string id)
 		{
-			return ((SymbolTable) stack.Peek ()).Contains (id);
+			SymbolTable parent, current_scope = (SymbolTable) stack.Peek ();
+			bool found = current_scope.Contains (id);
+
+			if (found)
+				return true;	
+			else {
+				parent = current_scope.parent;
+
+				if (parent != null)
+					found = parent.Contains (id);
+			}
+			return found;
 		}
 
 		public override string ToString ()

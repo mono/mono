@@ -35,7 +35,9 @@ namespace Microsoft.JScript {
 
 		internal override bool Resolve (IdentificationTable context)
 		{
-			throw new NotImplementedException ();
+			operand.Resolve (context);
+
+			return true;
 		}			
 	}
 
@@ -66,7 +68,13 @@ namespace Microsoft.JScript {
 
 		internal override bool Resolve (IdentificationTable context)
 		{
-			throw new NotImplementedException ();
+			if (left != null)
+				left.Resolve (context);
+
+			if (right != null)
+				right.Resolve (context);
+
+			return true;
 		}
 	}
 
@@ -126,7 +134,13 @@ namespace Microsoft.JScript {
 
 		internal override bool Resolve (IdentificationTable context)
 		{
-			throw new NotImplementedException ();
+			if (left != null)
+				left.Resolve (context);
+
+			if (args != null)
+				args.Resolve (context);
+
+			return true;
 		}
 	}
 
@@ -146,7 +160,11 @@ namespace Microsoft.JScript {
 
 		internal override bool Resolve (IdentificationTable context)
 		{
-			throw new NotImplementedException ();
+			if (name == "print")
+				return SemanticAnalyser.print;
+			else if (context.Contains (name))
+				return true;
+			else throw new Exception ("variable not found: " +  name);
 		}
 	}
 
@@ -166,7 +184,14 @@ namespace Microsoft.JScript {
 
 		internal override bool Resolve (IdentificationTable context)
 		{
-			throw new NotImplementedException ();
+			int i, size = elems.Count;
+			AST tmp;
+
+			for (i = 0; i < size; i++) {
+				tmp = (AST) elems [i];
+				tmp.Resolve (context);
+			}
+			return true;
 		}
 	}
 
@@ -202,7 +227,12 @@ namespace Microsoft.JScript {
 
 		internal override bool Resolve (IdentificationTable context)
 		{
-			throw new NotImplementedException ();
+			int i, size = exprs.Count;
+
+			for (i = 0; i < size; i++)
+				((AST) exprs [i]).Resolve (context);
+
+			return true;
 		}
 	}
 }

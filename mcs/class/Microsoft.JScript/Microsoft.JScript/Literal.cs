@@ -11,10 +11,7 @@ using System;
 
 namespace Microsoft.JScript {
 
-	public class Literal : AST {
-
-		public Literal ()
-		{}
+	internal class This : AST {
 
 		internal override bool Resolve (IdentificationTable context)
 		{
@@ -22,15 +19,7 @@ namespace Microsoft.JScript {
 		}
 	}
 
-	internal class This : Literal {
-
-		internal override bool Resolve (IdentificationTable context)
-		{
-			throw new NotImplementedException ();
-		}
-	}
-
-	internal class BooleanLiteral : Literal {
+	internal class BooleanLiteral : AST {
 
 		internal bool val;
 
@@ -50,7 +39,7 @@ namespace Microsoft.JScript {
 		}
 	}
 
-	public class NumericLiteral : Literal {
+	public class NumericLiteral : AST {
 
 		double val;
 
@@ -62,6 +51,11 @@ namespace Microsoft.JScript {
 		public override string ToString ()
 		{
 			return val.ToString ();
+		}
+
+		internal override bool Resolve (IdentificationTable context)
+		{
+			return true;
 		}
 	}
 }

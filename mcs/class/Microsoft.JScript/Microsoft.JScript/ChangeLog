@@ -1,3 +1,37 @@
+2003-11-09 cesar lopez nataren <cesar@ciencias.unam.mx>
+
+	* FormalParameterList.cs: Now inherits from AST. Each of the
+	formal parameters gets into the IdentificationTable at Resolve.
+
+	* FunctionDeclaration.cs:Resolve (), We open a new block when
+	encountering a FunctionDeclaration, resolve de parameters and the
+	body, at the end we close the block.
+
+	* IdentificationTable.cs: Now we keep track of parent of the
+	current block. 'Enter (...)' now receives an object, not a
+	VarDecl. 'Contains' now take care of searching through the binding
+	chain.
+
+	* Literal.cs: Deleted 'Literal' class, was being used for
+	nothing. All the classes the inherited from it, now do it from
+	AST. A 'literal' does resolve to true by default.
+
+	* Relational.cs: Resolve recursively left and right.
+
+	* SemanticAnalyser.cs: added flag for 'print statement'.
+
+	* Statement.cs: 'If' class, resolves firstly the condition, the true_stm
+	and false_stm.
+
+	* driver.cs:  Init the semantic analysis phase.
+
+	* expression.cs: 'Unary' class, resolves its operand
+	first. 'Binary' class,resolves left and right first. 'Args' class
+	resolve all the formal parameters first. 'Expression' resolve all
+	the nested expressions first.
+
+	* jscript-lexer-parser.g: Replaced 'Literal' references for AST ones.
+	
 2003-11-08 cesar lopez nataren <cesar@ciencias.unam.mx>
 
 	* jscript-lexer-parser.g: Allow the building of numeric_literal and DECIMAL_LITERAL,
@@ -82,7 +116,7 @@
 
 	* SymbolTable.cs: Added Add method that receives the id and the
 	declaration class. Retrieve changed to return an AST. Added
-	ToString method.
+	ToString method. Added 'SymbolTable parent' field.
 
 	* VariableDeclaration.cs: Added InitValue property.
 

@@ -39,7 +39,11 @@ namespace Microsoft.JScript {
 
 		internal override bool Resolve (IdentificationTable context)
 		{
-			throw new NotImplementedException ();
+			cond.Resolve (context);
+			true_stm.Resolve (context);
+			false_stm.Resolve (context);
+
+			return true;
 		}
 
 	}
@@ -90,7 +94,8 @@ namespace Microsoft.JScript {
 
 		internal override bool Resolve (IdentificationTable context)
 		{
-			throw new NotImplementedException ();
+			expression.Resolve (context);
+			return true;
 		}
 	}
 }

@@ -90,7 +90,16 @@ namespace Microsoft.JScript {
 
 		internal override bool Resolve (IdentificationTable context)
 		{
-			throw new NotImplementedException ();
+			context.Enter (Function.name, this);
+
+			context.OpenBlock ();
+
+			Function.parameters.Resolve (context);
+			Function.body.Resolve (context);
+
+			context.CloseBlock ();
+		
+			return true;
 		}
 	}
 }

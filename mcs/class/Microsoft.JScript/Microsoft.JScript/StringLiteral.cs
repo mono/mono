@@ -11,7 +11,7 @@ using System;
 
 namespace Microsoft.JScript {
 
-	internal class StringLiteral : Literal {
+	internal class StringLiteral : AST {
 
 		internal string str;
 
@@ -28,6 +28,11 @@ namespace Microsoft.JScript {
 		public override string ToString ()
 		{
 			return str;
+		}
+
+		internal override bool Resolve (IdentificationTable context)
+		{
+			return true;
 		}
 	}
 }

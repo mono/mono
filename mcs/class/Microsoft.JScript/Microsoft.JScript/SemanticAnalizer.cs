@@ -13,6 +13,8 @@ namespace Microsoft.JScript {
 
 	public class SemanticAnalyser {
 
+		internal static bool print = true;
+
 		//
 		// We must include the default 'Global Object',
 		// which contains the built-in objects: Math, String, ...

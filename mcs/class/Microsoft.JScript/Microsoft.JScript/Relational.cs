@@ -54,7 +54,13 @@ namespace Microsoft.JScript {
 
 		internal override bool Resolve (IdentificationTable context)
 		{
-			throw new NotImplementedException ();
+			if (left != null)
+				left.Resolve (context);
+
+			if (right != null)
+				right.Resolve (context);
+
+			return true;			
 		}
 	}
 }
