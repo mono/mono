@@ -326,6 +326,11 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		internal void SetOwner (DataGrid datagrid)
+		{
+			owner = datagrid;
+		}
+		
 		protected virtual object SaveViewState()
 		{
 			object[] states = new object[4];

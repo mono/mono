@@ -427,7 +427,7 @@ namespace System.Web.UI.WebControls
 				object o = ViewState["ShowHeader"];
 				if(o != null)
 					return (bool)o;
-				return false;
+				return true;
 			}
 			set
 			{
@@ -839,9 +839,8 @@ namespace System.Web.UI.WebControls
 				                          if(headerStyle != null)
 				                          {
 				                          	item.MergeStyle(headerStyle);
-				                          	goto case ListItemType.Separator;
 				                          }
-				                          break;
+							  goto case ListItemType.Separator;
 				case ListItemType.Footer: if(!ShowFooter)
 				                          {
 				                          	item.Visible = false;
@@ -850,9 +849,8 @@ namespace System.Web.UI.WebControls
 				                          if(footerStyle != null)
 				                          {
 				                          	item.MergeStyle(footerStyle);
-				                          	goto case ListItemType.Separator;
 				                          }
-				                          break;
+				                          goto case ListItemType.Separator;
 				case ListItemType.Item  : item.MergeStyle(itemStyle);
 				                          goto case ListItemType.Separator;
 				case ListItemType.AlternatingItem:
@@ -1053,6 +1051,7 @@ namespace System.Web.UI.WebControls
 					itemCount = 0;
 					CreateItem(-1, -1, ListItemType.Header, useDataSource, null,
 					           cols, deployRows, null);
+					
 					if(storedDataValid && storedDataFirst != null)
 					{
 						if(dsUse)

@@ -1,5 +1,12 @@
 2003-01-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* DataGrid.cs: default value for ShowHeaders is true. Fixed style for
+	Header and Footer.
+	* DataGridColumn.cs: added SetOwner method.
+	* DataGridColumnCollection.cs: set the owner of the column when added.
+
+2003-01-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* BoundColumn.cs: typo.
 	* DataGrid.cs: use 'as' instead of casting. Typo.
 	* HyperLinkColumn.cs: call OnColumnChanged when any property change.

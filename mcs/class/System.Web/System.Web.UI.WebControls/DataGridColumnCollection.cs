@@ -84,8 +84,8 @@ namespace System.Web.UI.WebControls
 			{
 				columns.Insert(index, column);
 			}
-			//TODO: To put. DataGridColumn class not created!
-			//column->owner = owner;
+
+			column.SetOwner (owner);
 			if(trackViewState)
 			{
 				((IStateManager)column).TrackViewState();
