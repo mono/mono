@@ -1,3 +1,7 @@
+2003-01-16  Jonathan Pryor <jonpryor@vt.edu>
+	* makefile.core: Fix the multiple-build problem.  Again.  Hopefully it'll
+	  stay fixed this time...
+
 2003-01-14  Jonathan Pryor <jonpryor@vt.edu>
 	- General: massive file movement.  I felt it would be cleaner if related
 	  files were in the same directory, instead of (nearly) everything

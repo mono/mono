@@ -82,6 +82,10 @@ GUI_SWF_FLAGS =
 
 MAKE_INVOKE = $(MAKE) -f $(MAKEFILE)
 
+# These are files that are `touch'ed during the build process to prevent
+# constant rebuilding.
+TARGETS = gui-all gtk swf
+
 all: gui
 
 console : $(PROGRAM)
@@ -89,8 +93,6 @@ console : $(PROGRAM)
 $(PROGRAM) : $(PROGRAM_FILES)
 	$(CSC_INVOKE)
 	chmod +x $(PROGRAM)
-
-.PHONY: gtk swf
 
 # Pick the appropriate GUI Toolkit...
 # Fall back on console-only if nothing else compiles.
@@ -101,16 +103,19 @@ gui: $(PROGRAM_FILES) $(GUI_GTK_FILES) $(GUI_GTK_GLADE_FILE) $(PROGRAM_FILES) $(
 gui-all: $(PROGRAM_FILES) $(GUI_GTK_FILES) $(GUI_GTK_GLADE_FILE) $(PROGRAM_FILES) $(GUI_SWF_FILES)
 	$(CSC_INVOKE) $(GUI_GTK_FLAGS) $(GUI_SWF_FLAGS) $(GUI_GTK_FILES) $(GUI_SWF_FILES) $(GUI_GTK_LIBS) $(GUI_SWF_LIBS) $(GUI_LIBS)
 	chmod +x $(PROGRAM)
+	touch $@
 
 # Gtk# front-end
 gtk: $(PROGRAM_FILES) $(GUI_GTK_FILES) $(GUI_GTK_GLADE_FILE)
 	$(CSC_INVOKE) $(GUI_GTK_FLAGS) $(GUI_GTK_FILES) $(GUI_GTK_LIBS) $(GUI_LIBS)
 	chmod +x $(PROGRAM)
+	touch $@
 
 # System.Windows.Forms front-end
 swf: $(PROGRAM_FILES) $(GUI_SWF_FILES)
 	$(CSC_INVOKE) $(GUI_SWF_FLAGS) $(GUI_SWF_FILES) $(GUI_SWF_LIBS) $(GUI_LIBS)
 	chmod +x $(PROGRAM)
+	touch $@
 
 test-run : $(PROGRAM)
 	$(MONO) $(PROGRAM) -A $(PROGRAM) $(ARGS)
@@ -125,7 +130,7 @@ windows:
 	NAnt -buildfile:type-reflector.build
 
 clean:
-	rm -f *.exe *.pdb *.dll *.dbg *~ $(DISPLAYERS_DIR)*~ $(GUI_GTK_DIR)*~ $(GUI_SWF_DIR)*~ $(FINDERS_DIR)*~ $(FORMATTERS_DIR)*~
+	rm -f *.exe *.pdb *.dll *.dbg *~ $(TARGETS) $(DISPLAYERS_DIR)*~ $(GUI_GTK_DIR)*~ $(GUI_SWF_DIR)*~ $(FINDERS_DIR)*~ $(FORMATTERS_DIR)*~
 
 INSTALL_FILES = \
 	$(PROGRAM) \
