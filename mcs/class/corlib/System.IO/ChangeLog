@@ -1,3 +1,7 @@
+2003-11-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* DirectoryInfo.cs: fixed ToString. Closes bug #50842.
+
 2003-11-12  Miguel de Icaza  <miguel@ximian.com>
 
 	* Directory.cs: Adjust for missing PlatformID.Unix.
