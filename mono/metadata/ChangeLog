@@ -1,8 +1,13 @@
+2003-02-27  Zoltan Varga  <vargaz@freemail.hu>
+
+	* metadata.c (mono_metadata_nesting_typedef): fix bug in previous
+	change.
+	
 2003-02-27  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Makefile.am: make assemblies dir have \ instead of / on windows.
 
-2003-02-27  Zoltan Varga  <vargaz@freemail.hu>
+2003-02-27  Zoltan Varga  <vargaz@freemail.hu>	
 
 	* metadata.c metadata.h (mono_metadata_nesting_typedef): changed to
 	iterate over the NESTEDCLASS table using a linear search since the
