@@ -1,3 +1,7 @@
+2004-10-27  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* signcode.cs: -i (url) and -n (description) parameters were inverted.
+
 2004-09-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AssemblyInfo.cs: Updated version to 1.0.3 for next stable release.
