@@ -1,5 +1,10 @@
 2004-09-06  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlNode.cs : GetEnumerator() does not have to create ChildNodes
+	  every time. Removed unused StringBuilder field.
+
+2004-09-06  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlWriter.cs : on reader.NodeType is None, WriteNode() still tries
 	  to read more (and might result in an error).
 

@@ -45,7 +45,6 @@ namespace System.Xml
 
 		XmlDocument ownerDocument;
 		XmlNode parentNode;
-		StringBuilder tmpBuilder;
 		XmlLinkedNode lastLinkedChild;
 		XmlNodeListChildren childNodes;
 		bool isReadOnly;
@@ -295,7 +294,7 @@ namespace System.Xml
 
 		public IEnumerator GetEnumerator ()
 		{
-			return new XmlNodeListChildren (this).GetEnumerator ();
+			return ChildNodes.GetEnumerator ();
 		}
 
 		public virtual string GetNamespaceOfPrefix (string prefix)
