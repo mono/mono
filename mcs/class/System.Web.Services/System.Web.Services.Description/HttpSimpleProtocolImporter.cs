@@ -74,6 +74,12 @@ namespace System.Web.Services.Description
 
 		protected override void EndClass ()
 		{
+			if (xmlExporter.IncludeMetadata.Count > 0)
+			{
+				if (CodeTypeDeclaration.CustomAttributes == null)
+					CodeTypeDeclaration.CustomAttributes = new CodeAttributeDeclarationCollection ();
+				CodeTypeDeclaration.CustomAttributes.AddRange (xmlExporter.IncludeMetadata);
+			}
 		}
 
 		protected override void EndNamespace ()
@@ -180,11 +186,7 @@ namespace System.Web.Services.Description
 			{
 //				CodeParameterDeclarationExpression param = new CodeParameterDeclarationExpression (inputMembers[n].TypeFullName, inputMembers[n].MemberName);
 
-				// MS always use System.String for input parameters
-				string ptype = inputMembers[n].TypeFullName;
-				int i = ptype.IndexOf ('[');
-				if (i == -1) i = ptype.Length;
-				ptype = "System.String" + ptype.Substring (i);
+				string ptype = GetSimpleType (inputMembers[n]);
 				CodeParameterDeclarationExpression param = new CodeParameterDeclarationExpression (ptype, inputMembers[n].MemberName);
 				
 				param.Direction = FieldDirection.In;
@@ -278,6 +280,26 @@ namespace System.Web.Services.Description
 				return typeof (XmlReturnReader);
 				
 			return typeof(NopReturnReader);
+		}
+		
+		string GetSimpleType (XmlMemberMapping member)
+		{
+			// MS seems to always use System.String for input parameters, except for byte[]
+			
+			switch (member.TypeName)
+			{
+				case "hexBinary":
+				case "base64Binary":
+					return "System.String";
+				
+				default:
+					string ptype = member.TypeFullName;
+					int i = ptype.IndexOf ('[');
+					if (i == -1)
+						return "System.String";
+					else 
+						return "System.String" + ptype.Substring (i);
+			}
 		}
 
 		#endregion

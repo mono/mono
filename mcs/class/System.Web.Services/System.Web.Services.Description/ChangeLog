@@ -1,3 +1,11 @@
+2004-06-10  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* HttpSimpleProtocolImporter.cs: Add needed XmlInclude attributes to the
+	  generated class. Generate the correct data type for input parameters.
+	* SoapProtocolImporter.cs: Like in MS.NET, take the first output parameter
+	  as the return value of the method. When generating a header variable,
+	  use the type name as the base for the variable name, not the part name.
+
 2004-06-02  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* HttpSimpleProtocolImporter.cs: Fixed case of generated methods to match

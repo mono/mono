@@ -318,6 +318,7 @@ namespace System.Web.Services.Description {
 
 			if (outputMembers != null)
 			{
+				bool hasReturn = false;
 				for (int n=0; n<outputMembers.Count; n++)
 				{
 					CodeParameterDeclarationExpression cpd = GenerateParameter (outputMembers[n], FieldDirection.Out);
@@ -336,9 +337,9 @@ namespace System.Web.Services.Description {
 					
 					if (found) continue;
 	
-					if ((outputMembers [n].ElementName == Operation.Name + "Result") || 
-						(outputMembers.Count==1)) 
+					if (!hasReturn) 
 					{
+						hasReturn = true;
 						method.ReturnType = cpd.Type;
 						methodEnd.ReturnType = cpd.Type;
 						GenerateReturnAttributes (outputMembers, outputMembers[n], bodyBinding.Use, method);
@@ -554,7 +555,7 @@ namespace System.Web.Services.Description {
 			string varName = headerVariables [map] as string;
 			if (varName == null) 
 			{
-				varName = memberIds.AddUnique(CodeIdentifier.MakeValid (hb.Part + "Value"),hb);
+				varName = memberIds.AddUnique(CodeIdentifier.MakeValid (map.TypeName + "Value"),hb);
 				headerVariables.Add (map, varName);
 				CodeMemberField codeField = new CodeMemberField (map.TypeFullName, varName);
 				codeField.Attributes = MemberAttributes.Public;
