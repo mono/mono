@@ -1,5 +1,11 @@
 2004-03-30  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini-sparc.c: Update status.
+
+	* mini-sparc.c tramp-sparc.c: Save lmf in trampolines.
+
+	* exceptions-sparc.c: Fix return value in filters.
+
 	* inssel-sparc.brg: Fix register allocation in some rules.
 
 2004-03-28  Martin Baulig  <martin@ximian.com>
