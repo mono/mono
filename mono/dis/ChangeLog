@@ -1,3 +1,10 @@
+2004-10-04  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* dump.c: Added new "internal" security actions for non-CAS demands:
+	NonCasDemand, NonCasLinkDemand and NonCasInheritance.
+	* main.c: Added new "internal" security actions for non-CAS demands:
+	noncasdemand, noncaslinkdemand and noncasinheritance.
+
 2004-09-24  Zoltan Varga  <vargaz@freemail.hu>
 
 	* main.c: Add support for pinvoke flags BestFit and 
