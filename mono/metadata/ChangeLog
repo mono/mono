@@ -1,3 +1,9 @@
+
+Sat Jun 14 19:01:32 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* icall.c: when getting timezone info, return reasonable values if we
+	can't get the actual data.
+
 2003-06-14  Dick Porter  <dick@ximian.com>
 
 	* threads.c (start_wrapper): Remove the reference to the thread
@@ -5832,6 +5838,7 @@ Tue Jul  3 18:33:32 CEST 2001 Paolo Molaro <lupus@ximian.com>
 	Beta2. 
 
 	* mono/metadata/assembly.c (load_metadata_ptrs): Fix for Beta2
+
 
 
 
