@@ -61,9 +61,9 @@ namespace Mono.Math.Prime {
 				case ConfidenceFactor.Medium:
 					return Rounds;
 				case ConfidenceFactor.High:
-					return Rounds <<= 1;
+					return Rounds << 1;
 				case ConfidenceFactor.ExtraHigh:
-					return Rounds <<= 2;
+					return Rounds << 2;
 				case ConfidenceFactor.Provable:
 					throw new Exception ("The Rabin-Miller test can not be executed in a way such that its results are provable");
 				default:
@@ -106,21 +106,41 @@ namespace Mono.Math.Prime {
 			int bits = bi.BitCount ();
 			BigInteger a = null;
 			BigInteger.ModulusRing mr = new BigInteger.ModulusRing (bi);
+			
+			// Applying optimization from HAC section 4.50 (base == 2)
+			// not a really random base but an interesting (and speedy) one
+			BigInteger b = mr.Pow (2, t);
+			if (b != 1) {
+				bool result = false;
+				for (int j=0; j < s; j++) {
+					if (b == p_sub1) {         // a^((2^j)*t) mod p = p-1 for some 0 <= j <= s-1
+						result = true;
+						break;
+					}
 
-			for (int round = 0; round < Rounds; round++) {
+					b = (b * b) % bi;
+				}
+				if (!result)
+					return false;
+			}
+
+			// still here ? start at round 1 (round 0 was a == 2)
+			for (int round = 1; round < Rounds; round++) {
 				while (true) {		           // generate a < n
 					a = BigInteger.GenerateRandom (bits);
 
-					// make sure "a" is not 0
-					if (a > 1 && a < bi)
+					// make sure "a" is not 0 (and not 2 as we have already tested that)
+					if (a > 2 && a < bi)
 						break;
 				}
 
-				if (a.GCD (bi) != 1) return false;
+				if (a.GCD (bi) != 1)
+					return false;
 
-				BigInteger b = mr.Pow (a, t);
+				b = mr.Pow (a, t);
 
-				if (b == 1) continue;              // a^t mod p = 1
+				if (b == 1)
+					continue;              // a^t mod p = 1
 
 				bool result = false;
 				for (int j = 0; j < s; j++) {
@@ -133,7 +153,7 @@ namespace Mono.Math.Prime {
 					b = (b * b) % bi;
 				}
 
-				if (result == false)
+				if (!result)
 					return false;
 			}
 			return true;
@@ -173,7 +193,6 @@ namespace Mono.Math.Prime {
 					return false;
 			}
 			return true;
-
 		}
 
 		#endregion
