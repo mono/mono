@@ -18,17 +18,13 @@ EXTRA_DISTFILES = \
 	System.ComponentModel.Design/Changelog		\
 	Test/test-config-file
 
-A_SYSTEM = ../lib/$(PROFILE)/System.dll
-A_SYSTEMXML = ../lib/$(PROFILE)/System.Xml.dll
-
 ifdef SECOND_PASS
 	include ../../build/library.make
-all-local:
-	@if test ! -f $(A_SYSTEMXML) ; then exit 0; fi
-	@ if test $(A_SYSTEM) -ot $(A_SYSTEMXML) ; then \
-		rm -f $(A_SYSTEM); \
-		$(MAKE) SECOND_PASS=yes EXTRA_FLAGS='/define:XML_DEP /r:$(CYCLIC_DEP)' || exit 1; \
-	fi
+
+ifdef HAVE_SYSTEM_XML
+$(the_lib): ../lib/$(PROFILE)/$(CYCLIC_DEP)
+endif
+
 else
 # First pass:
 #   1. Build temporary System.dll without depending on System.Xml.dll
@@ -36,25 +32,14 @@ else
 all-local:
 	@if test ! -f ../lib/$(PROFILE)/$(CYCLIC_DEP) ; then \
 	    echo "Creating temporary $(LIBRARY) without $(CYCLIC_DEP) reference." ; \
-	    rm -f $(A_SYSTEM); \
 	    $(MAKE) SECOND_PASS=yes CSCOMPILE='$(BOOT_COMPILE)' || exit 1 ; \
 	    rm -f '$(depsdir)/$(PROFILE)_$(LIBRARY).stamp'; \
 	else \
-	    $(MAKE) SECOND_PASS=yes EXTRA_FLAGS='/define:XML_DEP /r:$(CYCLIC_DEP)' || exit 1; \
+	    $(MAKE) SECOND_PASS=yes HAVE_SYSTEM_XML=yes EXTRA_FLAGS="/define:XML_DEP /r:$(CYCLIC_DEP)" || exit 1; \
 	fi
 
-## TODO: how to do this without duplication
-
-install-local:
-	    @$(MAKE) SECOND_PASS=yes EXTRA_FLAGS='/r:$(CYCLIC_DEP)' install-local || exit 1; \
-	    
 test-local: all-local
-	    @$(MAKE) SECOND_PASS=yes EXTRA_FLAGS='/r:$(CYCLIC_DEP)' test-local || exit 1; \
-	    
-run-test-local:
-	    @$(MAKE) SECOND_PASS=yes EXTRA_FLAGS='/r:$(CYCLIC_DEP)' run-test-local || exit 1; \
-	    
-clean-local:
-	    @$(MAKE) SECOND_PASS=yes EXTRA_FLAGS='/r:$(CYCLIC_DEP)' clean-local || exit 1; \
-	    
+
+install-local test-local run-test-local clean-local:
+	    $(MAKE) SECOND_PASS=yes EXTRA_FLAGS='/r:$(CYCLIC_DEP)' $@
 endif

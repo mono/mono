@@ -1,5 +1,12 @@
 2004-05-07  Raja R Harinath  <rharinath@novell.com>
 
+	* Makefile (all-local) [SECOND_PASS]: Rewrite to use 'make' itself
+	to determine out-of-date-ness.  (This fixes an unlogged change.)
+	(install-local,test-local,run-test-local,clean-local): Collapse
+	near-identical rules.
+
+2004-05-07  Raja R Harinath  <rharinath@novell.com>
+
 	* Makefile (all-local): Built first pass with BOOT_COMPILE.
 
 2004-04-26  Jackson Harper  <jackson@ximian.com>
