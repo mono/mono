@@ -1,3 +1,7 @@
+2002-13-07 Jackson Harper <jackson@latitudegeo.com>
+
+	* Compiler.cs: Source text is now implemented so you can pass strings of C# code to be compiled
+
 2002-12-07 Jackson Harper <jackson@latitudegeo.com>
 
 	* TODOAttribute.cs: Added file

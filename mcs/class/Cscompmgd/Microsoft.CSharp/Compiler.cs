@@ -21,21 +21,47 @@ namespace Microsoft.CSharp {
 		{
 		}
 
-		[MonoTODO("Not sure what to do about sourceTextNames yet")]
+		[MonoTODO("Have not implemented bugreports")]
 		public static CompilerError[] Compile(string[] sourceTexts,
 			string[] sourceTextNames, string target, string[] imports,
    			IDictionary options)
 		{
 			VerifyArgs (sourceTexts, sourceTextNames, target);
 			
+			string[] temp_cs_files;
+			CompilerError[] errors;
+
+			temp_cs_files = CreateCsFiles (sourceTexts, sourceTextNames);
+			
+			try {
+				errors = CompileFiles (temp_cs_files, target, imports, options);
+			} catch {
+				throw;
+			} finally {
+				foreach (string temp_file in temp_cs_files) {
+					FileInfo file = new FileInfo (temp_file);
+					file.Delete ();
+				}
+			}
+			
+			return errors;
+		}
+		
+		//
+		// Private Methods
+		//
+
+		private static CompilerError[] CompileFiles (string[] cs_files,
+			string target, string[] imports, IDictionary options) 
+		{
 			ArrayList error_list = new ArrayList ();
 			Process mcs = new Process ();
 			string mcs_output;
 			string[] mcs_output_lines;
 
 			mcs.StartInfo.FileName = "mcs";
-			mcs.StartInfo.Arguments = BuildArgs (sourceTexts, 
-				sourceTextNames, target, imports, options);
+			mcs.StartInfo.Arguments = BuildArgs (cs_files, 
+				target, imports, options);
 			mcs.StartInfo.CreateNoWindow = true;
 			mcs.StartInfo.UseShellExecute = false;
 			mcs.StartInfo.RedirectStandardOutput = true;
@@ -58,10 +84,6 @@ namespace Microsoft.CSharp {
 			
 			return (CompilerError[])error_list.ToArray (typeof(CompilerError));
 		}
-		
-		//
-		// Private Methods
-		//
 
 		/// <summary>
 		///   Converts an error string into a CompilerError object
@@ -70,7 +92,7 @@ namespace Microsoft.CSharp {
 		private static CompilerError CreateErrorFromString(string error_string) 
 		{
 			CompilerError error = new CompilerError();
-			Regex reg = new Regex (@"^((?<file>.*\.cs)\((?<line>\d*)(,(?<column>\d*))?\)\s){0,}(?<level>\w+)\sCS(?<number>\d*):\s(?<message>.*)", 
+			Regex reg = new Regex (@"^((?<file>.*)\((?<line>\d*)(,(?<column>\d*))?\)\s){0,}(?<level>\w+)\sCS(?<number>\d*):\s(?<message>.*)", 
 			RegexOptions.Compiled | RegexOptions.ExplicitCapture);
 
 			Match match = reg.Match (error_string);
@@ -92,9 +114,30 @@ namespace Microsoft.CSharp {
 			return error;
 		}
 
-		private static string BuildArgs(string[] sourceTexts,
-			string[] sourceTextNames, string target, string[] imports,
-   			IDictionary options)
+		private static string[] CreateCsFiles (string[] source_text, string[] source_name) 
+		{
+			ArrayList temp_file_list = new ArrayList ();
+
+			for (int i=0; i<source_text.Length; i++) {
+				string temp_path = Path.GetTempFileName ();
+				StreamWriter writer = new StreamWriter (temp_path);
+				try {
+					writer.WriteLine (String.Format ("#line 1 \"{0}\"", 
+						source_name[i]));
+					writer.Write (source_text[i]);
+				} catch {
+
+				} finally {
+					writer.Close ();
+				}
+				temp_file_list.Add (temp_path);
+			}
+		
+			return (string[])temp_file_list.ToArray (typeof(string));	
+		}
+
+		private static string BuildArgs(string[] source_files,
+			string target, string[] imports, IDictionary options)
 		{
 			StringBuilder args = new StringBuilder ();
 
@@ -112,7 +155,7 @@ namespace Microsoft.CSharp {
 				}
 			}
 			
-			foreach (string source in sourceTexts)
+			foreach (string source in source_files)
 				args.AppendFormat ("{0} ", source);
 
 			return args.ToString ();
