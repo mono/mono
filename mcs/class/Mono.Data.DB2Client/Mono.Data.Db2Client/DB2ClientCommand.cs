@@ -25,7 +25,9 @@ namespace DB2ClientCS
 		private int commandTimeout;
 		private bool prepared = false;
 		private IntPtr hwndStmt;  //Our statement handle
-		private IDataParameterCollection parameters;
+		IntPtr[] dbVals;          //arameter values are transfered here
+		IntPtr[] sqlLen_or_IndPtr;
+		private DB2ClientParameterCollection parameters = new DB2ClientParameterCollection();
 
 		#endregion
 
@@ -135,7 +137,14 @@ namespace DB2ClientCS
 		///
 		/// Parameter list, Not yet implemented
 		/// 
-		public IDataParameterCollection Parameters
+		public DB2ClientParameterCollection Parameters
+		{
+			get
+			{
+				return parameters;
+			}
+		}
+		IDataParameterCollection IDbCommand.Parameters
 		{
 			get
 			{
@@ -217,9 +226,7 @@ namespace DB2ClientCS
 		///
 		public IDbDataParameter CreateParameter()
 		{
-			//Will wait until I get deeper into the DB2/.Net interface.  I'm not sure how
-			//.Net and DB2 parameters talk to each other
-			throw new DB2ClientException("Parameters not yet supported in this driver.");
+			throw new DB2ClientException("TBD");
 		}
 		#endregion
 		#region ExecuteNonQuery
@@ -283,12 +290,30 @@ namespace DB2ClientCS
 		{
 			DB2ClientUtils util = new DB2ClientUtils();
 			short sqlRet = 0;
+			IntPtr nullable = IntPtr.Zero;
+			IntPtr paramSize = IntPtr.Zero;
+			IntPtr decimalDigits = IntPtr.Zero;
+			IntPtr dataType = IntPtr.Zero;
 
 			IntPtr numParams = IntPtr.Zero;
 			sqlRet = DB2ClientPrototypes.SQLPrepare(hwndStmt, commandText, commandText.Length);
 			util.DB2CheckReturn(sqlRet, DB2ClientConstants.SQL_HANDLE_STMT, hwndStmt, "SQLPrepare error.");
 			sqlRet = DB2ClientPrototypes.SQLNumParams(hwndStmt, ref numParams);
 			util.DB2CheckReturn(sqlRet, DB2ClientConstants.SQL_HANDLE_STMT, hwndStmt, "SQLNumParams error.");
+			Int32 name;
+			dbVals = new IntPtr[(short)numParams];
+			sqlLen_or_IndPtr = new IntPtr[(short)numParams];
+			for (short i=1; i<=(short)numParams; i++) 
+			{
+				sqlRet = DB2ClientPrototypes.SQLDescribeParam(hwndStmt, i, ref dataType, ref paramSize, ref decimalDigits, ref nullable);
+				util.DB2CheckReturn(sqlRet, DB2ClientConstants.SQL_HANDLE_STMT, hwndStmt, "SQLDescribeParam");
+				name = i;
+				DB2ClientParameter parameter = new DB2ClientParameter(name.ToString(), dataType);
+				parameters.Add(parameter);
+				sqlLen_or_IndPtr[i-1] = new IntPtr();
+				dbVals[i-1] = Marshal.AllocHGlobal(paramSize.ToInt32()+1);
+			}
+			prepared=true;
 		}
 		#endregion
 	}
