@@ -230,6 +230,9 @@ namespace System.Threading
 
 			// Should throw an exception here if
 			// Thread_internal returns NULL
+			if(system_thread_handle==(IntPtr)0) {
+				throw new SystemException("Thread creation failed");
+			}
 		}
 
 		[MonoTODO]

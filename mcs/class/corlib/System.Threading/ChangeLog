@@ -1,3 +1,8 @@
+2003-07-01  Dick Porter  <dick@ximian.com>
+
+	* Thread.cs: Throw an exception if thread creation failed.
+	(Better than just blowing up later.)
+
 2003-06-27  Dietmar Maurer  <dietmar@ximian.com>
 
 	* ThreadPool.cs: use async delegate invoke.
