@@ -1,3 +1,8 @@
+2002-02-27  Jason Diamond <jason@injektilo.org>
+
+	* XmlElement.cs: Reformatted, added missing members, and MonoTODO 
+	attributes.
+
 2002-02-26  Duncan Mak  <duncan@ximian.com>
 
 	* XmlCDataSection.cs: Initial implementation.

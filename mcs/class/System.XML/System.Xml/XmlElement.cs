@@ -1,4 +1,3 @@
-// -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
 //
 // System.Xml.XmlElement
 //
@@ -6,163 +5,255 @@
 //   Daniel Weber (daniel-weber@austin.rr.com)
 //
 // (C) 2001 Daniel Weber
+
 using System;
 
 namespace System.Xml
 {
 	public class XmlElement : XmlLinkedNode
 	{
-		// Private/Protected internal data structures
-		//===========================================================================
-		private XmlAttributeCollection _attributes;
+		#region Fields
 
-		private string prefix;
+		private XmlAttributeCollection attributes;
 		private string localName;
 		private string namespaceURI;
+		private string prefix;
 
-		// Public Properties
-		//===========================================================================
+		#endregion
 
-		/// <summary>
-		/// Return the XmlAttributeCollection on the Element
-		/// </summary>
-		public override XmlAttributeCollection Attributes
-		{
-			get
-			{
-				// TODO - implement Attributes
-				return _attributes;
-			}
-		}
+		#region Constructor
 
-		/// <summary>
-		/// Get/Set the value for this node
-		/// </summary>
-		public override string Value
-		{
-			get
-			{
-				return null;
-			}
-
-			set
-			{
-				// Do nothing, can't set value on XmlElement...
-			}
-		}
-
-		// Implement abstract methods of XmlNode
-		//=====================================================================
-		/// <summary>
-		/// Remove all children and attributes.  If
-		/// </summary>
-		public override void RemoveAll()
-		{
-			// Remove all child nodes
-			base.RemoveAll();
-
-			// Remove all attributes
-			_attributes.RemoveAll();
-
-			// If we have any default attributes, add them back in with the
-			//	appropriate namespace, baseURI, name, localName
-			// TODO - implement adding default attributes back in XmlElement.RemoveAll()
-		}
-
-		/// <summary>
-		/// Return a clone of the node
-		/// </summary>
-		/// <param name="deep">Make copy of all children</param>
-		/// <returns>Cloned node</returns>
-		public override XmlNode CloneNode( bool deep)
-		{
-			// TODO - implement CloneNode()
-			throw new NotImplementedException();
-		}
-
-		/// <summary>
-		/// Saves all children of the current node to the passed writer
-		/// </summary>
-		/// <param name="w"></param>
-		public override void WriteContentTo(XmlWriter w)
-		{
-			// TODO - implement WriteContentsTo(XmlWriter)
-			throw new NotImplementedException();
-		}
-
-		/// <summary>
-		/// Saves the current node to writer w
-		/// </summary>
-		/// <param name="w"></param>
-		public override void WriteTo(XmlWriter w)
-		{
-			// TODO - implement WriteTo(XmlWriter)
-			throw new NotImplementedException();
-		}
-
-		/// <summary>
-		/// Returns the local name of the node with qualifiers removed
-		/// LocalName of ns:elementName = "elementName"
-		/// </summary>
-		public override string LocalName
-		{
-			get {
-				return localName;
-			}
-		}
-
-
-		/// <summary>
-		/// Get the qualified node name
-		/// derived classes must implement as behavior varies
-		/// by tag type.
-		/// </summary>
-		public override string Name
-		{
-			get
-			{
-				return prefix != String.Empty ? prefix + ":" + localName : localName;
-			}
-		}
-
-		public override string NamespaceURI
-		{
-			get
-			{
-				return namespaceURI;
-			}
-		}
-
-		public override XmlNodeType NodeType
-		{
-			get
-			{
-				return XmlNodeType.Element;
-			}
-		}
-
-		public override string Prefix
-		{
-			get
-			{
-				return prefix;
-			}
-		}
-
-
-		// ============= Internal calls =============================================
-
-		// Constructors
-		// ==========================================================================
 		protected internal XmlElement(string prefix, string localName, string namespaceURI, XmlDocument doc) : base(doc)
 		{
 			this.prefix = prefix;
 			this.localName = localName;
 			this.namespaceURI = namespaceURI;
 
-			_attributes = new XmlAttributeCollection(doc, this, null);
+			attributes = new XmlAttributeCollection(doc, this, null);
 		}
 
+		#endregion
 
-		} // class
-	}  //namespace
+		#region Properties
+
+		public override XmlAttributeCollection Attributes
+		{
+			get { return attributes; }
+		}
+
+		public virtual bool HasAttributes
+		{
+			get { return attributes.Count > 0; }
+		}
+
+		[MonoTODO]
+		public override string InnerText
+		{
+			get { throw new NotImplementedException(); }
+			set { throw new NotImplementedException(); }
+		}
+
+		[MonoTODO]
+		public override string InnerXml
+		{
+			get { throw new NotImplementedException(); }
+			set { throw new NotImplementedException(); }
+		}
+
+		[MonoTODO]
+		public bool IsEmpty
+		{
+			get { throw new NotImplementedException(); }
+			set { throw new NotImplementedException(); }
+		}
+
+		public override string LocalName
+		{
+			get { return localName; }
+		}
+
+		public override string Name
+		{
+			get { return prefix != String.Empty ? prefix + ":" + localName : localName; }
+		}
+
+		public override string NamespaceURI
+		{
+			get { return namespaceURI; }
+		}
+
+		[MonoTODO()]
+		public override XmlNode NextSibling
+		{
+			get { return base.NextSibling; }
+		}
+
+		public override XmlNodeType NodeType
+		{
+			get { return XmlNodeType.Element; }
+		}
+
+		public override string Prefix
+		{
+			get { return prefix; }
+		}
+
+		[MonoTODO]
+		public override XmlDocument OwnerDocument
+		{
+			get { return base.OwnerDocument; }
+		}
+
+		public override string Value
+		{
+			get { return null; }
+
+			set
+			{
+				// Do nothing.
+			}
+		}
+
+		#endregion
+
+		#region Methods
+
+		[MonoTODO]
+		public override XmlNode CloneNode (bool deep)
+		{
+			throw new NotImplementedException();
+		}
+
+		[MonoTODO]
+		public virtual string GetAttribute(string name)
+		{
+			throw new NotImplementedException();
+		}
+
+		[MonoTODO]
+		public virtual string GetAttribute(string localName, string namespaceURI)
+		{
+			throw new NotImplementedException();
+		}
+
+		[MonoTODO]
+		public virtual XmlAttribute GetAttributeNode(string name)
+		{
+			throw new NotImplementedException();
+		}
+
+		[MonoTODO]
+		public virtual XmlAttribute GetAttributeNode(string localName, string namespaceURI)
+		{
+			throw new NotImplementedException();
+		}
+
+		[MonoTODO]
+		public virtual XmlNodeList GetElementsByTagName(string name)
+		{
+			throw new NotImplementedException();
+		}
+
+		[MonoTODO]
+		public virtual XmlNodeList GetElementsByTagName(string localName, string namespaceURI)
+		{
+			throw new NotImplementedException();
+		}
+
+		[MonoTODO]
+		public virtual bool HasAttribute(string name)
+		{
+			throw new NotImplementedException();
+		}
+
+		[MonoTODO]
+		public virtual bool HasAttribute(string localName, string namespaceURI)
+		{
+			throw new NotImplementedException();
+		}
+
+		[MonoTODO("Don't remove default attributes.")]
+		public override void RemoveAll()
+		{
+			// Remove the child nodes.
+			base.RemoveAll();
+
+			// Remove all attributes.
+			attributes.RemoveAll();
+		}
+
+		[MonoTODO]
+		public virtual void RemoveAllAttributes()
+		{
+			throw new NotImplementedException();
+		}
+
+		[MonoTODO]
+		public virtual void RemoveAttribute(string name)
+		{
+			throw new NotImplementedException();
+		}
+
+		[MonoTODO]
+		public virtual void RemoveAttribute(string localName, string namespaceURI)
+		{
+			throw new NotImplementedException();
+		}
+
+		[MonoTODO]
+		public virtual XmlNode RemoveAttributeAt(int i)
+		{
+			throw new NotImplementedException();
+		}
+
+		[MonoTODO]
+		public virtual XmlAttribute RemoveAttributeNode(XmlAttribute oldAttr)
+		{
+			throw new NotImplementedException();
+		}
+
+		[MonoTODO]
+		public virtual XmlAttribute RemoveAttributeNode(string localName, string namespaceURI)
+		{
+			throw new NotImplementedException();
+		}
+
+		[MonoTODO]
+		public virtual void SetAttribute(string name, string value)
+		{
+			throw new NotImplementedException();
+		}
+
+		[MonoTODO]
+		public virtual void SetAttribute(string localName, string namespaceURI, string value)
+		{
+			throw new NotImplementedException();
+		}
+
+		[MonoTODO]
+		public virtual XmlAttribute SetAttributeNode(XmlAttribute newAttr)
+		{
+			throw new NotImplementedException();
+		}
+
+		[MonoTODO]
+		public virtual XmlAttribute SetAttributeNode(string localName, string namespaceURI)
+		{
+			throw new NotImplementedException();
+		}
+
+		[MonoTODO]
+		public override void WriteContentTo(XmlWriter w)
+		{
+			throw new NotImplementedException();
+		}
+
+		[MonoTODO]
+		public override void WriteTo(XmlWriter w)
+		{
+			throw new NotImplementedException();
+		}
+
+		#endregion
+	}
+}
