@@ -56,8 +56,7 @@ namespace System.Windows.Forms
 		private int smallChange;
 		private int largeChange;
 		private Orientation orientation;
-		private TickStyle tickStyle;
-		internal Rectangle paint_area = new Rectangle ();
+		private TickStyle tickStyle;		
 		private Rectangle thumb_pos = new Rectangle ();	 /* Current position and size of the thumb */
 		private Rectangle thumb_area = new Rectangle (); /* Area where the thumb can scroll */
 		internal bool thumb_pressed = false;		 
@@ -114,8 +113,7 @@ namespace System.Windows.Forms
 			tickStyle = TickStyle.BottomRight;
 			smallChange = 1;
 			largeChange = 5;			
-			mouse_clickmove = false;
-			SizeChanged += new System.EventHandler (OnResizeTB);
+			mouse_clickmove = false;			
 			MouseDown += new MouseEventHandler (OnMouseDownTB); 
 			MouseUp += new MouseEventHandler (OnMouseUpTB); 
 			MouseMove += new MouseEventHandler (OnMouseMoveTB);
@@ -235,8 +233,7 @@ namespace System.Windows.Forms
 				if (value < 0)
 					throw new Exception( string.Format("Value '{0}' must be greater than or equal to 0.", value));
 
-				largeChange = value;
-				Refresh ();
+				largeChange = value;				
 			}
 		}
 
@@ -301,8 +298,7 @@ namespace System.Windows.Forms
 					throw new Exception( string.Format("Value '{0}' must be greater than or equal to 0.", value));
 
 				if (smallChange != value) {
-					smallChange = value;
-					Refresh ();
+					smallChange = value;					
 				}
 			}
 		}
@@ -363,7 +359,7 @@ namespace System.Windows.Forms
 					if (ValueChanged != null)				
 						ValueChanged (this, new EventArgs ());
 						
-					Refresh ();
+					Invalidate (thumb_area);
 				}				
 			}
 		}
@@ -390,23 +386,24 @@ namespace System.Windows.Forms
 
 		protected override bool IsInputKey (Keys keyData)
 		{
-			return false;
+			return base.IsInputKey (keyData);
 		}
 
 		protected override void OnBackColorChanged (EventArgs e)
 		{
-
+			base.OnBackColorChanged (e);
 		}
 
 		protected override void OnHandleCreated (EventArgs e)
-		{			
+		{	
+			base.OnHandleCreated (e);
+					
 			if (AutoSize)
 				if (Orientation == Orientation.Horizontal)
 					Size = new Size (Width, 40);
 				else
 					Size = new Size (50, Height);
-
-			UpdateArea ();
+			
 			UpdatePos (Value, true);			
 		}
 	
@@ -439,9 +436,7 @@ namespace System.Windows.Forms
 		public void SetRange (int minValue, int maxValue)
 		{
 			Minimum = minValue;
-			Maximum = maxValue;
-
-			Refresh ();
+			Maximum = maxValue;			
 		}
 
 		public override string ToString()
@@ -482,14 +477,7 @@ namespace System.Windows.Forms
 		#endregion Public Methods
 
 		#region Private Methods
-
-		private void UpdateArea ()
-		{
-			paint_area.X = paint_area.Y = 0;
-			paint_area.Width = Width;
-			paint_area.Height = Height;			
-		}
-
+		
 		private void UpdatePos (int newPos, bool update_trumbpos)
 		{
 			if (newPos < minimum){
@@ -508,34 +496,34 @@ namespace System.Windows.Forms
 		private void LargeIncrement ()
     		{    			
 			UpdatePos (position + LargeChange, true);
-			Refresh ();
+			Invalidate (thumb_area);
 			OnScroll (new EventArgs ());
     		}
 
     		private void LargeDecrement ()
     		{
 			UpdatePos (position - LargeChange, true);
-			Refresh ();
+			Invalidate (thumb_area);
 			OnScroll (new EventArgs ());
     		}
 
 		private void SmallIncrement ()
     		{    			
 			UpdatePos (position + SmallChange, true);
-			Refresh ();
+			Invalidate (thumb_area);
 			OnScroll (new EventArgs ());
     		}
 
     		private void SmallDecrement ()
     		{
 			UpdatePos (position - SmallChange, true);
-			Refresh ();
+			Invalidate (thumb_area);
 			OnScroll (new EventArgs ());	
     		}
     		
-		private void Draw ()
+		private void Draw (Rectangle clip)
 		{					
-			ThemeEngine.Current.DrawTrackBar(DeviceContext, this.ClientRectangle, this);
+			ThemeEngine.Current.DrawTrackBar (DeviceContext, clip, this);			
 		}		
 
 		private void OnMouseUpTB (object sender, MouseEventArgs e)
@@ -546,7 +534,7 @@ namespace System.Windows.Forms
 				thumb_pressed = false;
 				holdclick_timer.Enabled = false;
 				this.Capture = false;
-				Refresh ();
+				Invalidate (thumb_area);
 			}
 		}
 
@@ -564,16 +552,16 @@ namespace System.Windows.Forms
 					this.Capture = true;
 					thumb_pressed = true;
 					thumb_mouseclick = e.X;
-					Refresh ();					
+					Invalidate (thumb_area);
 				}
 				else {
-					if (paint_area.Contains (point)) {
+					if (ClientRectangle.Contains (point)) {
 						if (e.X > thumb_pos.X + thumb_pos.Width)
 							LargeIncrement ();
 						else
 							LargeDecrement ();
 
-						Refresh ();
+						Invalidate (thumb_area);
 						fire_timer = true;
 						mouse_clickmove = true;
 					}
@@ -584,17 +572,17 @@ namespace System.Windows.Forms
 					this.Capture = true;
 					thumb_pressed = true;
 					thumb_mouseclick = e.Y;
-					Refresh ();
+					Invalidate (thumb_area);
 					
 				}
 				else {
-					if (paint_area.Contains (point)) {
+					if (ClientRectangle.Contains (point)) {
 						if (e.Y > thumb_pos.Y + thumb_pos.Height)
 							LargeIncrement ();
 						else
 							LargeDecrement ();
 
-						Refresh ();
+						Invalidate (thumb_area);
 						fire_timer = true;
 						mouse_clickmove = true;
 					}
@@ -615,27 +603,20 @@ namespace System.Windows.Forms
     			if (thumb_pressed) {
 								 				
     				if (orientation == Orientation.Horizontal){
-					if (paint_area.Contains (e.X, thumb_pos.Y))
+					if (ClientRectangle.Contains (e.X, thumb_pos.Y))
 						thumb_mouseclick = e.X;	
 				}
     				else {
-					if (paint_area.Contains (thumb_pos.X, e.Y))
+					if (ClientRectangle.Contains (thumb_pos.X, e.Y))
 						thumb_mouseclick = e.Y;
 				}
 
-				Refresh ();
+				Invalidate (thumb_area);
     				OnScroll (new EventArgs ());
 			}
     		}
 
-		private void OnResizeTB (object sender, System.EventArgs e)
-    		{			
-    			if (Width <= 0 || Height <= 0)
-    				return;
-
-			UpdateArea ();
-		}		
-
+		
 		private void OnPaintTB (PaintEventArgs pevent)
 		{		
 			if (Paint != null) {
@@ -645,23 +626,39 @@ namespace System.Windows.Forms
 			if (Width <= 0 || Height <=  0 || Visible == false)
     				return;		
 
-			/* Copies memory drawing buffer to screen*/
-			UpdateArea ();
-			Draw ();
-			pevent.Graphics.DrawImage (ImageBuffer, 0, 0);			
+			/* Copies memory drawing buffer to screen */
+			Draw (pevent.ClipRectangle);
+			pevent.Graphics.DrawImage (ImageBuffer, pevent.ClipRectangle, pevent.ClipRectangle, GraphicsUnit.Pixel);
 		}  
 
 		private void OnKeyDownTB (KeyEventArgs e) 
 		{			
 			switch (e.KeyCode) {			
-			case Keys.Up:
+			
+			case Keys.Down:
 			case Keys.Right:
 				SmallIncrement ();
 				break;
-
-			case Keys.Down:
+			
+			case Keys.Up:
 			case Keys.Left:
 				SmallDecrement ();
+				break;
+				
+			case Keys.PageUp:
+				LargeDecrement ();
+				break;
+				
+			case Keys.PageDown:
+				LargeIncrement ();
+				break;
+				
+			case Keys.Home:
+				Value = Minimum;
+				break;
+			
+			case Keys.End:
+				Value = Maximum;
 				break;
 			
 			default:
@@ -690,7 +687,7 @@ namespace System.Windows.Forms
 						LargeDecrement ();
 				}
 
-				Refresh ();
+				Invalidate (thumb_area);
 
 			}			
 		}					

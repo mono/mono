@@ -3391,7 +3391,7 @@ namespace System.Windows.Forms
 		#endregion	// ToolTip
 
 		#region	TrackBar
-		private void DrawTrackBar_Vertical (Graphics dc, Rectangle area, TrackBar tb,
+		private void DrawTrackBar_Vertical (Graphics dc, Rectangle clip_rectangle, TrackBar tb,
 			ref Rectangle thumb_pos, ref Rectangle thumb_area,  Brush br_thumb,
 			float ticks, int value_pos, bool mouse_value) {			
 
@@ -3401,7 +3401,8 @@ namespace System.Windows.Forms
 			float pixel_len;
 			float pixels_betweenticks;
 			const int space_from_right = 8;
-			const int space_from_left = 8;			
+			const int space_from_left = 8;
+			Rectangle area = tb.ClientRectangle;
 			
 			switch (tb.TickStyle) 	{
 			case TickStyle.BottomRight:
@@ -3532,37 +3533,47 @@ namespace System.Windows.Forms
 			}
 
 			pixel_len = thumb_area.Height - 11;
-			pixels_betweenticks = pixel_len / ticks;				
+			pixels_betweenticks = pixel_len / ticks;
+			
+			thumb_area.X = thumb_pos.X;
+			thumb_area.Y = channel_startpoint.Y;
+			thumb_area.Width = thumb_pos.Height;
 			
 			/* Draw ticks*/
-			if (pixels_betweenticks > 0 && ((tb.TickStyle & TickStyle.BottomRight) == TickStyle.BottomRight ||
-				((tb.TickStyle & TickStyle.Both) == TickStyle.Both))) {	
-				
-				for (float inc = 0; inc < (pixel_len + 1); inc += pixels_betweenticks) 	{					
-					if (inc == 0 || (inc +  pixels_betweenticks) >= pixel_len +1)
-						dc.DrawLine (ResPool.GetPen (pen_ticks_color), area.X + bottomtick_startpoint.X , area.Y + bottomtick_startpoint.Y  + inc, 
-							area.X + bottomtick_startpoint.X  + 3, area.Y + bottomtick_startpoint.Y + inc);
-					else
-						dc.DrawLine (ResPool.GetPen (pen_ticks_color), area.X + bottomtick_startpoint.X, area.Y + bottomtick_startpoint.Y  + inc, 
-							area.X + bottomtick_startpoint.X  + 2, area.Y + bottomtick_startpoint.Y + inc);
+			Region outside = new Region (area);
+			outside.Exclude (thumb_area);			
+			
+			if (outside.IsVisible (clip_rectangle)) {				
+				if (pixels_betweenticks > 0 && ((tb.TickStyle & TickStyle.BottomRight) == TickStyle.BottomRight ||
+					((tb.TickStyle & TickStyle.Both) == TickStyle.Both))) {	
+					
+					for (float inc = 0; inc < (pixel_len + 1); inc += pixels_betweenticks) 	{					
+						if (inc == 0 || (inc +  pixels_betweenticks) >= pixel_len +1)
+							dc.DrawLine (ResPool.GetPen (pen_ticks_color), area.X + bottomtick_startpoint.X , area.Y + bottomtick_startpoint.Y  + inc, 
+								area.X + bottomtick_startpoint.X  + 3, area.Y + bottomtick_startpoint.Y + inc);
+						else
+							dc.DrawLine (ResPool.GetPen (pen_ticks_color), area.X + bottomtick_startpoint.X, area.Y + bottomtick_startpoint.Y  + inc, 
+								area.X + bottomtick_startpoint.X  + 2, area.Y + bottomtick_startpoint.Y + inc);
+					}
+				}
+	
+				if (pixels_betweenticks > 0 &&  ((tb.TickStyle & TickStyle.TopLeft) == TickStyle.TopLeft ||
+					((tb.TickStyle & TickStyle.Both) == TickStyle.Both))) {
+	
+					pixel_len = thumb_area.Height - 11;
+					pixels_betweenticks = pixel_len / ticks;
+					
+					for (float inc = 0; inc < (pixel_len + 1); inc += pixels_betweenticks) {					
+						if (inc == 0 || (inc +  pixels_betweenticks) >= pixel_len +1)
+							dc.DrawLine (ResPool.GetPen (pen_ticks_color), area.X + toptick_startpoint.X  - 3 , area.Y + toptick_startpoint.Y + inc, 
+								area.X + toptick_startpoint.X, area.Y + toptick_startpoint.Y + inc);
+						else
+							dc.DrawLine (ResPool.GetPen (pen_ticks_color), area.X + toptick_startpoint.X  - 2, area.Y + toptick_startpoint.Y + inc, 
+								area.X + toptick_startpoint.X, area.Y + toptick_startpoint.Y  + inc);
+					}			
 				}
 			}
-
-			if (pixels_betweenticks > 0 &&  ((tb.TickStyle & TickStyle.TopLeft) == TickStyle.TopLeft ||
-				((tb.TickStyle & TickStyle.Both) == TickStyle.Both))) {
-
-				pixel_len = thumb_area.Height - 11;
-				pixels_betweenticks = pixel_len / ticks;
-				
-				for (float inc = 0; inc < (pixel_len + 1); inc += pixels_betweenticks) {					
-					if (inc == 0 || (inc +  pixels_betweenticks) >= pixel_len +1)
-						dc.DrawLine (ResPool.GetPen (pen_ticks_color), area.X + toptick_startpoint.X  - 3 , area.Y + toptick_startpoint.Y + inc, 
-							area.X + toptick_startpoint.X, area.Y + toptick_startpoint.Y + inc);
-					else
-						dc.DrawLine (ResPool.GetPen (pen_ticks_color), area.X + toptick_startpoint.X  - 2, area.Y + toptick_startpoint.Y + inc, 
-							area.X + toptick_startpoint.X, area.Y + toptick_startpoint.Y  + inc);
-				}			
-			}
+			
 		}
 
 		/* 
@@ -3575,7 +3586,7 @@ namespace System.Windows.Forms
 				- Ticks are draw at (channel.Witdh - 10) / (Maximum - Minimum)
 				
 		*/
-		private void DrawTrackBar_Horizontal (Graphics dc, Rectangle area, TrackBar tb,
+		private void DrawTrackBar_Horizontal (Graphics dc, Rectangle clip_rectangle, TrackBar tb,
 			ref Rectangle thumb_pos, ref Rectangle thumb_area, Brush br_thumb,
 			float ticks, int value_pos, bool mouse_value) {			
 			Point toptick_startpoint = new Point ();
@@ -3584,7 +3595,8 @@ namespace System.Windows.Forms
 			float pixel_len;
 			float pixels_betweenticks;
 			const int space_from_right = 8;
-			const int space_from_left = 8;		
+			const int space_from_left = 8;
+			Rectangle area = tb.ClientRectangle;
 						
 			switch (tb.TickStyle) {
 			case TickStyle.BottomRight:
@@ -3715,31 +3727,39 @@ namespace System.Windows.Forms
 			pixels_betweenticks = pixel_len / ticks;
 
 			/* Draw ticks*/
-			if (pixels_betweenticks > 0 && ((tb.TickStyle & TickStyle.BottomRight) == TickStyle.BottomRight ||
-				((tb.TickStyle & TickStyle.Both) == TickStyle.Both))) {				
-				
-				for (float inc = 0; inc < (pixel_len + 1); inc += pixels_betweenticks) {					
-					if (inc == 0 || (inc +  pixels_betweenticks) >= pixel_len +1)
-						dc.DrawLine (ResPool.GetPen (pen_ticks_color), area.X + bottomtick_startpoint.X + inc , area.Y + bottomtick_startpoint.Y, 
-							area.X + bottomtick_startpoint.X + inc , area.Y + bottomtick_startpoint.Y + 3);
-					else
-						dc.DrawLine (ResPool.GetPen (pen_ticks_color), area.X + bottomtick_startpoint.X + inc, area.Y + bottomtick_startpoint.Y, 
-							area.X + bottomtick_startpoint.X + inc, area.Y + bottomtick_startpoint.Y + 2);
+			thumb_area.Y = thumb_pos.Y;
+			thumb_area.X = channel_startpoint.X;
+			thumb_area.Height = thumb_pos.Height;
+			Region outside = new Region (area);
+			outside.Exclude (thumb_area);			
+			
+			if (outside.IsVisible (clip_rectangle)) {				
+				if (pixels_betweenticks > 0 && ((tb.TickStyle & TickStyle.BottomRight) == TickStyle.BottomRight ||
+					((tb.TickStyle & TickStyle.Both) == TickStyle.Both))) {				
+					
+					for (float inc = 0; inc < (pixel_len + 1); inc += pixels_betweenticks) {					
+						if (inc == 0 || (inc +  pixels_betweenticks) >= pixel_len +1)
+							dc.DrawLine (ResPool.GetPen (pen_ticks_color), area.X + bottomtick_startpoint.X + inc , area.Y + bottomtick_startpoint.Y, 
+								area.X + bottomtick_startpoint.X + inc , area.Y + bottomtick_startpoint.Y + 3);
+						else
+							dc.DrawLine (ResPool.GetPen (pen_ticks_color), area.X + bottomtick_startpoint.X + inc, area.Y + bottomtick_startpoint.Y, 
+								area.X + bottomtick_startpoint.X + inc, area.Y + bottomtick_startpoint.Y + 2);
+					}
 				}
-			}
-
-			if (pixels_betweenticks > 0 && ((tb.TickStyle & TickStyle.TopLeft) == TickStyle.TopLeft ||
-				((tb.TickStyle & TickStyle.Both) == TickStyle.Both))) {
-				
-				for (float inc = 0; inc < (pixel_len + 1); inc += pixels_betweenticks) {					
-					if (inc == 0 || (inc +  pixels_betweenticks) >= pixel_len +1)
-						dc.DrawLine (ResPool.GetPen (pen_ticks_color), area.X + toptick_startpoint.X + inc , area.Y + toptick_startpoint.Y - 3, 
-							area.X + toptick_startpoint.X + inc , area.Y + toptick_startpoint.Y);
-					else
-						dc.DrawLine (ResPool.GetPen (pen_ticks_color), area.X + toptick_startpoint.X + inc, area.Y + toptick_startpoint.Y - 2, 
-							area.X + toptick_startpoint.X + inc, area.Y + toptick_startpoint.Y );
-				}			
-			}
+	
+				if (pixels_betweenticks > 0 && ((tb.TickStyle & TickStyle.TopLeft) == TickStyle.TopLeft ||
+					((tb.TickStyle & TickStyle.Both) == TickStyle.Both))) {
+					
+					for (float inc = 0; inc < (pixel_len + 1); inc += pixels_betweenticks) {					
+						if (inc == 0 || (inc +  pixels_betweenticks) >= pixel_len +1)
+							dc.DrawLine (ResPool.GetPen (pen_ticks_color), area.X + toptick_startpoint.X + inc , area.Y + toptick_startpoint.Y - 3, 
+								area.X + toptick_startpoint.X + inc , area.Y + toptick_startpoint.Y);
+						else
+							dc.DrawLine (ResPool.GetPen (pen_ticks_color), area.X + toptick_startpoint.X + inc, area.Y + toptick_startpoint.Y - 2, 
+								area.X + toptick_startpoint.X + inc, area.Y + toptick_startpoint.Y );
+					}			
+				}
+			}			
 		}
 
 		public override void DrawTrackBar (Graphics dc, Rectangle clip_rectangle, TrackBar tb) 
@@ -3751,7 +3771,7 @@ namespace System.Windows.Forms
 			Rectangle	area;
 			Rectangle	thumb_pos = tb.ThumbPos;
 			Rectangle	thumb_area = tb.ThumbArea;
-
+			
 			if (tb.thumb_pressed) {
 				value_pos = tb.thumb_mouseclick;
 				mouse_value = true;
@@ -3760,7 +3780,7 @@ namespace System.Windows.Forms
 				mouse_value = false;
 			}
 
-			area = tb.paint_area;
+			area = tb.ClientRectangle;
 
 			if (tb.thumb_pressed == true) {
 				br_thumb = (Brush) ResPool.GetHatchBrush (HatchStyle.Percent50, ColorButtonHilight, ColorButtonFace);
@@ -3771,9 +3791,9 @@ namespace System.Windows.Forms
 			
 			/* Control Background */
 			if (tb.BackColor == DefaultControlBackColor) {
-				dc.FillRectangle (ResPool.GetSolidBrush (ColorButtonFace), area);
+				dc.FillRectangle (ResPool.GetSolidBrush (ColorButtonFace), clip_rectangle);
 			} else {
-				dc.FillRectangle (ResPool.GetSolidBrush (tb.BackColor), area);
+				dc.FillRectangle (ResPool.GetSolidBrush (tb.BackColor), clip_rectangle);
 			}
 			
 
@@ -3785,11 +3805,11 @@ namespace System.Windows.Forms
 			}
 
 			if (tb.Orientation == Orientation.Vertical) {
-				DrawTrackBar_Vertical (dc, area, tb, ref thumb_pos, ref thumb_area,
+				DrawTrackBar_Vertical (dc, clip_rectangle, tb, ref thumb_pos, ref thumb_area,
 					br_thumb, ticks, value_pos, mouse_value);
 			
 			} else {
-				DrawTrackBar_Horizontal (dc, area, tb, ref thumb_pos, ref thumb_area,
+				DrawTrackBar_Horizontal (dc, clip_rectangle, tb, ref thumb_pos, ref thumb_area,
 					br_thumb, ticks, value_pos, mouse_value);
 			}
 

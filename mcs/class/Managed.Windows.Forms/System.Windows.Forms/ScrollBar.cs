@@ -954,7 +954,7 @@ namespace System.Windows.Forms
 			}
 			case Keys.Home:
 			{		
-				SetValue (0);
+				SetValue (Minimum);
 				break;
 			}			
 			case Keys.End:

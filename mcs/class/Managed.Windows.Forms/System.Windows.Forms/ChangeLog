@@ -1,5 +1,12 @@
 2005-02-24  Jordi Mas i Hernandez <jordi@ximian.com>
 
+	* ThemeWin32Classic.cs: Adds Cliping to TrackBar drawing
+	* ScrollBar.cs: Fixes bug
+	* TrackBar.cs: removes death code, clipping, mimize refreshes, 
+	 keyboard navigation enhancements
+
+2005-02-24  Jordi Mas i Hernandez <jordi@ximian.com>
+
 	* Control.cs: Call DefWndProc at WM_PAINT only if UserPaint not defined
 	* GroupBox.cs: Add control styles
 	* Label.cs: Add control styles	
