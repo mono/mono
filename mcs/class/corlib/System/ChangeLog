@@ -1,3 +1,9 @@
+2002-05-19  Martin Baulig  <martin@gnome.org>
+
+	* Convert.cs (FromBase64CharArray): Convert the char array using
+	System.Text.UTF8Encoding, not UnicodeEncoding (which is UTF-16) to
+	a byte array.
+
 2002-05-17  Miguel de Icaza  <miguel@ximian.com>
 
 	* MonoType.cs: Style changes.
