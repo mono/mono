@@ -36,6 +36,7 @@ SOURCES =				\
         codegen/IMethodRef.cs           \
         codegen/ExternMethodRef.cs      \
         codegen/MethodRef.cs            \
+	codegen/GlobalMethodRef.cs      \
 	parser/ILParser.cs		\
 	parser/ScannerAdapter.cs	\
 	scanner/ILReader.cs		\
