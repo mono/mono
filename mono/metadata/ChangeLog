@@ -1,5 +1,8 @@
 2003-11-26  Zoltan Varga  <vargaz@freemail.hu>
 
+	* loader.c (mono_get_method_from_token): Methods which contain
+	native code do not have entries in the ImplMap.
+
 	(ves_icall_System_AppDomain_LoadAssemblyRaw): Fix exception throw.
 	Thanks to Gonzalo for spotting this.
 	
