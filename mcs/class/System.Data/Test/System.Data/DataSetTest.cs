@@ -613,6 +613,11 @@ namespace MonoTests.System.Data
 		}
 		
 		[Test]
+		[Ignore ("MS behavior is far from consistent to be regarded as a reference implementation.")]
+		// MS ReadXmlSchema() is too inconsistent to regard as a 
+		// reference implementation. To find the reason why, try to
+		// read store2.xsd and store4.xsd, write and compare for each
+		// DataSet property.
 		public void ReadWriteXmlSchemaIgnoreSchema ()
 		{
 			DataSet ds = new DataSet ();
@@ -761,6 +766,8 @@ namespace MonoTests.System.Data
 		}
 		
 		[Test]
+		[Ignore ("MS behavior is far from consistent to be regarded as a reference implementation.")]
+		// See comments on ReadWriteXmlSchemaIgnoreSchema().
 		public void ReadWriteXmlSchema ()
 		{
 			DataSet ds = new DataSet ();

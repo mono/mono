@@ -1,3 +1,10 @@
+2005-01-24  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* store2.xsd, store3.xsd, store4.xsd : Added.
+	* DataSetTest.cs :
+	  Disabled ReadWriteXmlSchema() and ReadWriteXmlSchemaIgnoreSchema()
+	  for now. See the details in the code.
+
 2005-01-21  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataRowTest.cs : more test for Current -> Default, test for 
