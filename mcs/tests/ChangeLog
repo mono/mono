@@ -1,3 +1,7 @@
+2003-11-21  Miguel de Icaza  <miguel@ximian.com>
+
+	* test-150.cs: Improved test.
+
 2003-10-17  Martin Baulig  <martin@ximian.com>
 
 	* gen-test.sh: Removed.
