@@ -471,16 +471,6 @@ namespace System.Net
 			WriteRequest ();
 		}
 
-		internal void ResetWriteBuffer ()
-		{
-			if (!allowBuffering)
-				return;
-
-			writeBuffer = new MemoryStream ();
-			requestWritten = false;
-			headersSent = false;
-		}
-		
 		public override long Seek (long a, SeekOrigin b)
 		{
 			throw new NotSupportedException ();

@@ -1,6 +1,20 @@
+2004-10-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ChunkStream.cs:
+	(WantMore): we're not done until we get a 0 chunk size and the trailer.
+	The 0 can be expressed as more than one character too (ie, 000000).
+
+	* HttpWebRequest.cs: new argument in SetResponseError.
+	* WebConnection.cs: added argument to HandleError as a hint for
+	debugging.
+	(Connect): make the chunked stream be in the expected state when
+	reusing.
+
+	* WebConnectionStream.cs: removed unused method (ResetWriteBuffer).
+
 2004-10-10 David Sheldon <dave-mono@earth.li>
-  
-  * HttpWebRequest.cs: Use RemoveAndAdd for AddRange. Fixes unittest.
+
+	* HttpWebRequest.cs: Use RemoveAndAdd for AddRange. Fixes unittest.
 
 2004-10-05 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 

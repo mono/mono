@@ -89,10 +89,12 @@ namespace System.Net
 			queue = group.Queue;
 		}
 
-		public void Connect ()
+		void Connect ()
 		{
 			lock (this) {
 				if (socket != null && socket.Connected && status == WebExceptionStatus.Success) {
+					// Take the chunked stream to the expected state (State.None)
+					while (chunkedRead && chunkStream.WantMore && Read (buffer, 0, buffer.Length) > 0);
 					reused = true;
 					return;
 				}
@@ -248,15 +250,13 @@ namespace System.Net
 			return true;
 		}
 		
-		void HandleError (WebExceptionStatus st, Exception e)
+		void HandleError (WebExceptionStatus st, Exception e, string where)
 		{
 			status = st;
 			lock (this) {
 				busy = false;
 				if (st == WebExceptionStatus.RequestCanceled)
 					Data = new WebConnectionData ();
-
-				status = st;
 			}
 
 			if (e == null) { // At least we now where it comes from
@@ -268,7 +268,7 @@ namespace System.Net
 			}
 
 			if (Data != null && Data.request != null)
-				Data.request.SetResponseError (st, e);
+				Data.request.SetResponseError (st, e, where);
 
 			Close (true);
 		}
@@ -287,19 +287,17 @@ namespace System.Net
 			try {
 				nread = ns.EndRead (result);
 			} catch (Exception e) {
-				cnc.status = WebExceptionStatus.ReceiveFailure;
-				cnc.HandleError (cnc.status, e);
+				cnc.HandleError (WebExceptionStatus.ReceiveFailure, e, "ReadDone1");
 				return;
 			}
 
 			if (nread == 0) {
-				cnc.status = WebExceptionStatus.ReceiveFailure;
-				cnc.HandleError (cnc.status, null);
+				cnc.HandleError (WebExceptionStatus.ReceiveFailure, null, "ReadDone2");
 				return;
 			}
 
 			if (nread < 0) {
-				cnc.HandleError (WebExceptionStatus.ServerProtocolViolation, null);
+				cnc.HandleError (WebExceptionStatus.ServerProtocolViolation, null, "ReadDone3");
 				return;
 			}
 
@@ -315,7 +313,7 @@ namespace System.Net
 				}
 
 				if (exc != null) {
-					cnc.HandleError (WebExceptionStatus.ServerProtocolViolation, exc);
+					cnc.HandleError (WebExceptionStatus.ServerProtocolViolation, exc, "ReadDone4");
 					return;
 				}
 			}
@@ -391,7 +389,7 @@ namespace System.Net
 				int size = cnc.buffer.Length - cnc.position;
 				ns.BeginRead (cnc.buffer, cnc.position, size, readDoneDelegate, cnc);
 			} catch (Exception e) {
-				cnc.HandleError (WebExceptionStatus.ReceiveFailure, e);
+				cnc.HandleError (WebExceptionStatus.ReceiveFailure, e, "InitRead");
 			}
 		}
 		
@@ -624,6 +622,7 @@ namespace System.Net
 			return true;
 		}
 
+
 		internal IAsyncResult BeginRead (byte [] buffer, int offset, int size, AsyncCallback cb, object state)
 		{
 			if (nstream == null)
@@ -714,8 +713,7 @@ namespace System.Net
 				if (chunkedRead)
 					chunkStream.WriteAndReadBack (buffer, offset, size, ref result);
 			} catch (Exception e) {
-				status = WebExceptionStatus.ReceiveFailure;
-				HandleError (status, e);
+				HandleError (WebExceptionStatus.ReceiveFailure, e, "Read");
 			}
 
 			return result;
@@ -740,7 +738,7 @@ namespace System.Net
 		{
 			lock (this) {
 				if (!reused) {
-					HandleError (WebExceptionStatus.SendFailure, null);
+					HandleError (WebExceptionStatus.SendFailure, null, "TryReconnect");
 					return false;
 				}
 
@@ -748,12 +746,12 @@ namespace System.Net
 				reused = false;
 				Connect ();
 				if (status != WebExceptionStatus.Success) {
-					HandleError (WebExceptionStatus.SendFailure, null);
+					HandleError (WebExceptionStatus.SendFailure, null, "TryReconnect2");
 					return false;
 				}
 			
 				if (!CreateStream (Data.request)) {
-					HandleError (WebExceptionStatus.SendFailure, null);
+					HandleError (WebExceptionStatus.SendFailure, null, "TryReconnect3");
 					return false;
 				}
 			}
@@ -787,7 +785,7 @@ namespace System.Net
 
 		void Abort (object sender, EventArgs args)
 		{
-			HandleError (WebExceptionStatus.RequestCanceled, null);
+			HandleError (WebExceptionStatus.RequestCanceled, null, "Abort");
 		}
 
 		internal bool Busy {
