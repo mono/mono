@@ -7,16 +7,17 @@ PROGRAM = cilc.exe
 # fixme: make clean doesn't know to rm -rf generated.
 # and we can't extend the make clean target.
 
-HAS_TEST = yes
 CLEAN_FILES = generated Test.dll Test.pdb
 
 EXTRA_DISTFILES = demo.c README TODO Test.cs
 
 include ../../build/executable.make
 
-test-local: cilc.exe Test.dll
+test-local: Test.dll
 
-run-test-local: cilc.exe Test.dll
+run-test-local: run-cilc-test
+
+run-cilc-test: cilc.exe Test.dll
 	rm -rf generated
 	mkdir generated
 	$(RUNTIME) cilc.exe Test.dll generated
