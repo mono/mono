@@ -713,7 +713,16 @@ namespace Mono.CSharp {
 
 		public override AttributeTargets AttributeTargets {
 			get {
-				throw new NotSupportedException ();
+				switch (Kind) {
+				case Kind.Class:
+					return AttributeTargets.Class;
+				case Kind.Struct:
+					return AttributeTargets.Struct;
+				case Kind.Interface:
+					return AttributeTargets.Interface;
+				default:
+					throw new NotSupportedException ();
+				}
 			}
 		}
 
@@ -2794,12 +2803,6 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override AttributeTargets AttributeTargets {
-			get {
-				return AttributeTargets.Class;
-			}
-		}
-
 		public override void ApplyAttributeBuilder(Attribute a, CustomAttributeBuilder cb)
 		{
 			if (a.UsageAttribute != null) {
@@ -2874,12 +2877,6 @@ namespace Mono.CSharp {
 			this.ModFlags |= Modifiers.SEALED;
 		}
 
-		public override AttributeTargets AttributeTargets {
-			get {
-				return AttributeTargets.Struct;
-			}
-		}
-
 		public const TypeAttributes DefaultTypeAttributes =
 			TypeAttributes.SequentialLayout |
 			TypeAttributes.Sealed |
@@ -2934,12 +2931,6 @@ namespace Mono.CSharp {
 		public override PendingImplementation GetPendingImplementations ()
 		{
 			return null;
-		}
-
-		public override AttributeTargets AttributeTargets {
-			get {
-				return AttributeTargets.Interface;
-			}
 		}
 
 		public const TypeAttributes DefaultTypeAttributes =
