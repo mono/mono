@@ -1,3 +1,12 @@
+2002-05-07  Rodrigo Moya <rodrigo@ximian.com>
+
+	* EventDescriptor.cs: added missing constructors.
+
+	* EventDescriptorCollection.cs: fixed interface methods implementation
+
+	* IDataErrorInfo.cs:
+	* IEditableObject.cs: new interfaces.
+
 2002-05-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* System.ComponentModel/AttributeCollection.cs: added a cast to make

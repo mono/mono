@@ -1,9 +1,10 @@
 //
 // System.ComponentModel.ICustomTypeDescriptor.cs
 //
-// Author: Rodrigo Moya (rodrigo@ximian.com)
+// (C) 2002 Ximian, Inc.  http://www.ximian.com
 //
-// (C) Ximian, Inc.
+// Authors:
+//   Rodrigo Moya (rodrigo@ximian.com)
 //
 
 namespace System.ComponentModel

@@ -21,7 +21,7 @@ namespace System.ComponentModel
 				this.Add (events[i]);
 		}
 
-		public int Add (EventDescriptor value) {
+		public int IList.Add (object value) {
 			return eventList.Add (value);
 		}
 
