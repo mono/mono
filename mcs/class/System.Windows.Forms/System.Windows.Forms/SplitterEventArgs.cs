@@ -9,6 +9,8 @@
 // (C) 2002 Ximian, Inc
 //
 
+using System.Runtime.InteropServices;
+
 namespace System.Windows.Forms {
 
 	// <summary>

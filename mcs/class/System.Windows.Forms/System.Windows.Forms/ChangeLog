@@ -1,3 +1,13 @@
+2004-04-13  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* ComVisible.cs: Removed - does not belong here
+	* SplitterEventArgs.cs
+	* FormWindowState.cs
+	* FormStartPosition.cs
+	* FormBorderStyle.cs
+	* DragAction.cs
+	* DialogResult.cs: Added needed using
+
 2004-04-08  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* SystemInformation.cs: Fixed bad pointer arithmetic in _gethostname.

@@ -7,7 +7,7 @@
 // (C) 2002/3 Ximian, Inc.  http://www.ximian.com
 //
 
-using System;
+using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms {
 
