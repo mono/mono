@@ -316,7 +316,10 @@ namespace System.Xml
 		[MonoTODO]
 		public override string GetAttribute (int i)
 		{
-			throw new NotImplementedException ();
+			if (i > attributes.Count)
+				throw new ArgumentOutOfRangeException ("i is smaller than AttributeCount");
+			else
+				throw new NotImplementedException ();
 		}
 
 		public override string GetAttribute (string name)

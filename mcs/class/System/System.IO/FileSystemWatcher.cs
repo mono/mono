@@ -29,8 +29,13 @@ namespace System.IO {
 		#region Constructors
 
 		public FileSystemWatcher ()
-			: this (String.Empty, String.Empty)
 		{
+			this.notifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName;
+			this.enableRaisingEvents = false;
+			this.filter = "*.*";
+			this.includeSubdirectories = false;
+			this.internalBufferSize = 8192;
+			this.path = "";
 		}
 
 		public FileSystemWatcher (string path)
