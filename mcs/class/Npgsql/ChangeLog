@@ -1,3 +1,30 @@
+2004-11-25  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com>
+    
+    Updated to 0.7beta3 release.
+    * NpgsqlBind.cs:  Minor code cleanup.
+    * NpgsqlClosedState.cs: Code formatting.
+    * NpgsqlCommand.cs: Code cleanup and updating for new Plan and Portal name generation code.
+    * NpgsqlConnection.cs: Fixed contructor log message.
+    * NpgsqlConnectionString.cs: Code formatting.
+    * NpgsqlConnector.cs:
+        ReleasePlansPortals: Added method to release used plans and portals.
+        NextPortalName, NextPlanName: Added methods to handle name generation.
+    * NpgsqlConnectorPool.cs:
+        UngetPooledConnector: Added call to release plans and portals in connector.
+    * NpgsqlError.cs: New constructor which takes ProtocolVersion and String parameters.
+    * NpgsqlQuery.cs: Changed constructor to take an NpgsqlCommand instead of just the command string.
+    * NpgsqlReadyState.cs: Changed code to reflect NpgsqlQuery change.
+    * NpgsqlState.cs: 
+        ProcessBackendResponses_Ver_(2,3): Fixed handling of invalid authentication methods. Thanks Magnus Hagander (mha at sollentuna dot net) for the heads up.
+    * NpgsqlState.resx: Fixed resource key typo.
+    * NpgsqlTransaction.cs: Fixed IDisposable pattern implementation of NpgsqlTransaction. Now it doesn't incorrectly raise InvalidOperation exceptions. Thanks Ivan Radovanovic ( rivan at sezampro dot yu ) for heads up.
+     * NpgsqlDbType.cs: Code cleanup.
+     * NpgsqlTypeConverters.cs : Removed method to handle string. String quoting is handled prevously as it depends in the type of query: simple or extended.
+     * NpgsqlTypes.cs: Code cleanup.
+     * NpgsqlTypesHelper.cs: 
+        (CreateAndLoadInitialTypesMapping): Removed delegate handler of String types. It's not necessary anymore.
+        (ConvertToBackend): Refactorying. Fixed gborg 1035. Thanks Magnus Hagander (mha at sollentuna dot net) for the heads up.
+
 2004-11-25  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (EXTRA_DISTFILES): Add Npgsql.dll.resources.
