@@ -63,7 +63,6 @@ $(monobins_DATA):
 	-cp $(top_srcdir)/../mcs/mcs/mcs.exe . || cp $(monobinsdir)/mcs.exe . 
 	-cp $(top_srcdir)/../mcs/mbas/mbas.exe . || cp $(monobinsdir)/mbas.exe .
 	-cp $(top_srcdir)/../mcs/tools/security/secutil.exe . || cp $(monobinsdir)/secutil.exe . 
-	-cp $(top_srcdir)/../mcs/tools/SqlSharp/sqlsharp.exe . || cp $(monobinsdir)/sqlsharp.exe . 
 	-cp $(top_srcdir)/../mcs/monoresgen/monoresgen.exe . || cp $(monobinsdir)/monoresgen.exe . 
 	-cp $(top_srcdir)/../mcs/ilasm/ilasm.exe . || cp $(monobinsdir)/ilasm.exe .
 	-cp $(top_srcdir)/../mcs/tools/cilc/cilc.exe . || cp $(monobinsdir)/cilc.exe .
