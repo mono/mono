@@ -911,7 +911,7 @@ namespace Mono.CSharp {
 		{
 			if (Constants != null){
 				foreach (Constant c in Constants)
-					c.EmitConstant (RootContext, this);
+					c.Define (this);
 			}
 
 			if (Fields != null){
@@ -1332,6 +1332,11 @@ namespace Mono.CSharp {
 		/// </summary>
 		public void Emit ()
 		{
+
+			if (Constants != null)
+				foreach (Constant con in Constants)
+					con.EmitConstant (this);
+			
 			if (Constructors != null)
 				foreach (Constructor c in Constructors)
 					c.Emit (this);

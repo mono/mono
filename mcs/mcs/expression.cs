@@ -2911,6 +2911,9 @@ namespace Mono.CSharp {
 		bool IsBuiltinType = false;
 
 		int dimensions = 0;
+		Type underlying_type;
+
+		ArrayList ArrayData;
 
 		public ArrayCreation (string requested_type, ArrayList exprs,
 				      string rank, ArrayList initializers, Location l)
@@ -2975,96 +2978,118 @@ namespace Mono.CSharp {
 			Report.Error (178, loc, "Incorrectly structured array initializer");
 		}
 
-		bool ValidateInitializers (EmitContext ec)
+		public bool CheckIndices (EmitContext ec, ArrayList probe, int idx,
+					  bool require_constant, bool unspecified_dims)
 		{
-			if (Initializers == null)
-				return true;
+			foreach (object o in probe) {
+				
+				if (o is ArrayList) {
 
-			Type underlying_type = ec.TypeContainer.LookupType (RequestedType, false);
+					if (!unspecified_dims) { 
+						Argument a = (Argument) Arguments [idx];
+						
+						if (!a.Resolve (ec, loc))
+							return false;
+						
+						Expression e = Expression.Reduce (ec, a.Expr);
+						
+						if (!(e is Literal) && require_constant) {
+							Report.Error (150, loc, "A constant value is expected");
+							return false;
+						}
+						
+						int value = (int) ((Literal) e).GetValue ();
+						
+						if (value != probe.Count) {
+							error178 ();
+							return false;
+						}
+					}
 
-			ArrayList probe = Initializers;
-
-			if (Arguments != null) {
-				for (int i = 0; i < Arguments.Count; i++) {
-					Argument a = (Argument) Arguments [i];
+					bool ret = CheckIndices (ec, (ArrayList) o, ++idx,
+								 require_constant, unspecified_dims);
+					if (!ret)
+						return false;
 					
-					Expression e = Expression.Reduce (ec, a.Expr);
+				} else {
 					
-					if (!(e is Literal)) {
+					Expression tmp = (Expression) o;
+					tmp = tmp.Resolve (ec);
+					tmp = Expression.Reduce (ec, tmp);
+					
+					if (!(tmp is Literal) && require_constant) {
 						Report.Error (150, loc, "A constant value is expected");
 						return false;
 					}
 					
-					int value = (int) ((Literal) e).GetValue ();
-		
-					if (probe == null) {
-						error178 ();
+					Expression conv = ConvertImplicitRequired (ec, tmp,
+										   underlying_type, loc);
+					
+					if (conv == null)
 						return false;
-					}
-						
-					if (value != probe.Count) {
-						error178 ();
-						return false;
-					}
 
-					if (probe [0] is ArrayList)
-						probe = (ArrayList) probe [0];
-					else {
-						for (int j = 0; j < probe.Count; ++j) {
-							Expression tmp = (Expression) probe [j];
-							
-							tmp = tmp.Resolve (ec);
-
-							Expression conv = ConvertImplicitRequired (ec, tmp,
-												   underlying_type, loc);
-
-							if (conv == null)
-								return false;
-						}
-
-						probe = null;
-					}
-				}
-
-			} else {
-				//
-				// Here is where we update dimension info in the case
-				// that the user skips doing that
-				//
-
-				Arguments = new ArrayList ();
-				
-				for (probe = Initializers; probe != null; ) {
-					Expression e = new IntLiteral (probe.Count);
-
-					Arguments.Add (new Argument (e, Argument.AType.Expression));
-
-					if (probe [0] is ArrayList)
-						probe = (ArrayList) probe [0];
-					else {
-						for (int j = 0; j < probe.Count; ++j) {
-							Expression tmp = (Expression) probe [j];
-							
-							tmp = tmp.Resolve (ec);
-
-							Expression conv = ConvertImplicitRequired (ec, tmp,
-												   underlying_type, loc);
-
-							if (conv == null)
-								return false;
-						}
-						
-						probe = null;
-					}
-				}
-
-				if (Arguments.Count != dimensions) {
-					error178 ();
-					return false;
+					ArrayData.Add (((Literal) tmp).GetValue ());
 				}
 			}
 
 			return true;
+		}
+		
+		public void UpdateIndices (EmitContext ec)
+		{			
+			for (ArrayList probe = Initializers; probe != null;) {
+
+				if (probe [0] is ArrayList) {
+					Expression e = new IntLiteral (probe.Count);
+					Arguments.Add (new Argument (e, Argument.AType.Expression));
+
+					probe = (ArrayList) probe [0];
+					
+				} else {
+					Expression e = new IntLiteral (probe.Count);
+					Arguments.Add (new Argument (e, Argument.AType.Expression));
+					
+					probe = null;
+				}
+			}
+
+		}
+		
+		public bool ValidateInitializers (EmitContext ec)
+		{
+			if (Initializers == null)
+				return true;
+			
+			underlying_type = ec.TypeContainer.LookupType (RequestedType, false);
+
+			//
+			// We use this to store all the date values in the order in which we
+			// will need to store them in the byte blob later
+			//
+			ArrayData = new ArrayList ();
+			
+			bool ret;
+			
+			if (Arguments != null) {
+				ret = CheckIndices (ec, Initializers, 0, true, false);
+				return ret;
+				
+			} else {
+				Arguments = new ArrayList ();
+
+				ret = CheckIndices (ec, Initializers, 0, true, true);
+				if (!ret)
+					return false;
+				
+				UpdateIndices (ec);
+				
+				if (Arguments.Count != dimensions) {
+					error178 ();
+					return false;
+				}
+				
+				return ret;
+			}
 		}
 		
 		public override Expression DoResolve (EmitContext ec)
@@ -3176,6 +3201,47 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public byte [] MakeByteBlob ()
+		{
+			int factor;
+			byte [] data;
+
+			int count = ArrayData.Count;
+
+			if (underlying_type == TypeManager.int32_type ||
+			    underlying_type == TypeManager.uint32_type ||
+			    underlying_type == TypeManager.float_type)
+			        factor = 4;
+			else if (underlying_type == TypeManager.int64_type ||
+				 underlying_type == TypeManager.uint64_type ||
+				 underlying_type == TypeManager.double_type)
+			        factor = 8;
+			else if (underlying_type == TypeManager.byte_type ||
+				 underlying_type == TypeManager.sbyte_type ||
+				 underlying_type == TypeManager.char_type ||
+				 underlying_type == TypeManager.bool_type) 	
+			        factor = 1;
+			else if (underlying_type == TypeManager.short_type ||
+				 underlying_type == TypeManager.ushort_type)
+				factor = 2;
+			else {	
+				Report.Error (-100, loc, "Unhandled type in MakeByteBlob!!");
+				return null;
+			}
+
+			data = new byte [count * factor];
+			
+			for (int i = 0; i < count; ++i) {
+				int val = (int) ArrayData [i];
+				for (int j = 0; j < factor; ++j) {
+					data [(i * factor) + j] = (byte) (val & 0xFF);
+					val = val >> 8;
+				}
+			}
+			
+			return data;
+		}
+		
 		public override void Emit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
@@ -3193,18 +3259,18 @@ namespace Mono.CSharp {
 					ig.Emit (OpCodes.Newobj, (MethodInfo) method);
 			}
 
-			if (Initializers != null){
+			if (Initializers != null) {
 				FieldBuilder fb;
 
-				// FIXME: This is just sample data, need to fill with
-				// real values.
-				byte [] a = new byte [4] { 1, 2, 3, 4 };
-				
-				fb = ec.TypeContainer.RootContext.MakeStaticData (a);
+				byte [] data = MakeByteBlob ();
 
-				ig.Emit (OpCodes.Dup);
-				ig.Emit (OpCodes.Ldtoken, fb);
-				ig.Emit (OpCodes.Call, TypeManager.void_initializearray_array_fieldhandle);
+				if (data != null) {
+					fb = ec.TypeContainer.RootContext.MakeStaticData (data);
+					
+					ig.Emit (OpCodes.Dup);
+					ig.Emit (OpCodes.Ldtoken, fb);
+					ig.Emit (OpCodes.Call, TypeManager.void_initializearray_array_fieldhandle);
+				}
 			}
 		}
 		

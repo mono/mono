@@ -17,11 +17,16 @@ namespace Mono.CSharp {
 
 
 	public class Constant : Expression {
-		string     name;
-		Expression expr;
-		string     constant_type;
-		int        mod_flags;
+
+		public readonly string     Name;
+		public Expression Expr;
+		public readonly string     ConstantType;
 		public Attributes  OptAttributes;
+		
+		int        mod_flags;
+
+		Location Location;
+		FieldBuilder FieldBuilder;
 
 		public const int AllowedModifiers =
 			Modifiers.NEW |
@@ -30,36 +35,27 @@ namespace Mono.CSharp {
 			Modifiers.INTERNAL |
 			Modifiers.PRIVATE;
 
-		public Constant (string constant_type, string name, Expression expr, int mod_flags, Attributes attrs)
+		public Constant (string constant_type, string name, Expression expr, int mod_flags,
+				 Attributes attrs, Location loc)
 		{
-			this.constant_type = constant_type;
-			this.name = name;
-			this.expr = expr;
+			this.ConstantType = constant_type;
+			this.Name = name;
+			this.Expr = expr;
 			this.mod_flags = Modifiers.Check (AllowedModifiers, mod_flags, Modifiers.PRIVATE);
+			this.Location = loc;
 			OptAttributes = attrs;
-		}
-
-		public string Name {
-			get {
-				return name;
-			}
-		}
-
-		public string ConstantType {
-			get {
-				return constant_type;
-			}
-		}
-
-		public Expression Expr {
-			get {
-				return expr;
-			}
 		}
 
 		public FieldAttributes FieldAttr {
 			get {
-				return FieldAttributes.Literal | Modifiers.FieldAttr (mod_flags) ;
+				return FieldAttributes.Literal | FieldAttributes.Static |
+					Modifiers.FieldAttr (mod_flags) ;
+			}
+		}
+
+		public int ModFlags {
+			get {
+				return mod_flags;
 			}
 		}
 
@@ -77,39 +73,46 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Defines the constant in the @parent
 		/// </summary>
-		public void EmitConstant (RootContext rc, TypeContainer parent)
+		public void Define (TypeContainer parent)
 		{
-			FieldBuilder fb;
-			TypeCode tc;
-			Type t;
-			
-			t = rc.LookupType (parent, constant_type);
-			if (t == null)
+			type = parent.LookupType (ConstantType, true);
+
+			if (type == null)
 				return;
-
-			tc = System.Type.GetTypeCode (t);
 			
-			if ((tc == TypeCode.SByte)  || (tc == TypeCode.Byte)   ||
-			    (tc == TypeCode.Int16)  || (tc == TypeCode.UInt16) ||
-			    (tc == TypeCode.Int32)  || (tc == TypeCode.Int64)  ||
-			    (tc == TypeCode.UInt32) || (tc == TypeCode.UInt64)) {
-				
-			} else if ((tc == TypeCode.Double) || (tc == TypeCode.Single)) {
+			if (!TypeManager.IsBuiltinType (type) && (!type.IsSubclassOf (TypeManager.enum_type))) {
+				Report.Error (-3, "Constant type is not valid (only system types are allowed)");
+				return;
+			}
+			
+			FieldBuilder = parent.TypeBuilder.DefineField (Name, type, FieldAttr);
+			
+		}
 
-			} else if (tc == TypeCode.Char) {
-			} else if (tc == TypeCode.Decimal) {
+		/// <summary>
+		///  Emits the field value by evaluating the expression
+		/// </summary>
+		public void EmitConstant (TypeContainer parent)
+		{
+			if (FieldBuilder == null)
+				return;
+			
+			EmitContext ec = new EmitContext (parent, null, type, ModFlags);
 
-			} else if (t.IsSubclassOf (typeof (System.String))) {
+			Expr = Expression.Reduce (ec, Expr);
 
-			} else if (t.IsSubclassOf (typeof (System.Enum))) {
-
-			} else {
-				Report.Error (-3, "Constant type is not valid (only system types are allowed");
+			if (!(Expr is Literal)) {
+				Report.Error (150, Location, "A constant value is expected");
 				return;
 			}
 
-			fb = parent.TypeBuilder.DefineField (name, t, FieldAttr);
+			object val = ((Literal) Expr).GetValue ();
+
+			FieldBuilder.SetConstant (val);
+
+			TypeManager.RegisterField (FieldBuilder, val);
 			
+			return;
 		}
 	}
 }

@@ -1,3 +1,36 @@
+2001-11-20  Ravi Pratap  <ravi@ximian.com>
+
+	* expression.cs (ArrayCreation::CheckIndices): The story continues :-) Complete
+	re-write of the logic to now make it recursive.
+
+	(UpdateIndices): Re-write accordingly.
+
+	Store element data in a separate ArrayData list in the above methods.
+
+	(MakeByteBlob): Implement to dump the array data into a byte array.
+
+2001-11-19  Ravi Pratap  <ravi@ximian.com>
+
+	* expression.cs (ArrayCreation): Factor out some code from ValidateInitializers
+	into CheckIndices.
+
+	* constant.cs (Define): Implement.
+
+	(EmitConstant): Re-write fully.
+
+	Pass in location info.
+
+	* class.cs (Populate, Emit): Call Constant::Define and Constant::EmitConstant
+	respectively.
+
+	* cs-parser.jay (constant_declarator): Use VariableDeclaration instead of
+	DictionaryEntry since we need location info too.
+
+	(constant_declaration): Update accordingly.
+
+	* expression.cs (ArrayCreation): Make ValidateInitializers simpler by factoring
+	code into another method : UpdateIndices.
+
 2001-11-18  Ravi Pratap  <ravi@ximian.com>
 
 	* expression.cs (ArrayCreation::ValidateInitializers): Update to perform
@@ -6,7 +39,7 @@
 2001-11-17  Ravi Pratap  <ravi@ximian.com>
 
 	* expression.cs (ArrayCreation::ValidateInitializers): Implement
-	bits to provide dimension info is user skips doing that.
+	bits to provide dimension info if the user skips doing that.
 
 	Update second constructor to store the rank correctly.
 
