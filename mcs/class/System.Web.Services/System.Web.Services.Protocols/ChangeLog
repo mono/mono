@@ -1,3 +1,8 @@
+2004-08-25  Lluis Sanchez Gual <lluis@novell.com>
+
+	* HttpSoapWebServiceHandler.cs, WebServiceHandler.cs: Do not assign the
+	  context to the service. It already gets it from HttpContext.Current.
+
 2004-07-20  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* HttpWebClientProtocol.cs: Add received cookies to cookieContainer when
