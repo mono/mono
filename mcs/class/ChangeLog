@@ -1,5 +1,6 @@
 2004-05-02  Duncan Mak  <duncan@ximian.com>
 
+	* ByteFX.Data/AssemblyInfo.cs:
 	* Microsoft.Vsa/Assembly/AssemblyInfo.cs: Add assembly-level
 	attributes for versioning (1.0 vs. 1.1 vs. 2.0).
 
