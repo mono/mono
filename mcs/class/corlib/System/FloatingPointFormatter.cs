@@ -1,5 +1,5 @@
 //
-// System.DoubleFormatter.cs
+// System.FloatingPointFormatter.cs
 //
 // Author:
 //   Pedro Martinez Juliá  <yoros@wanadoo.es>
@@ -864,8 +864,14 @@ namespace System {
 					}
 				}
 			}
+			int gro = 0;
 			for (int i = f.DotPos - 1; i >= f.FirstFormatPos; i--) {
 				if (format[i] == '#' || format[i] == '0') {
+					if (f.Groupping && gro == nfi.NumberGroupSizes[0]) {
+						sb.Insert(0, nfi.NumberGroupSeparator);
+						gro = 0;
+					}
+					gro++;
 					if (exponent > 0) {
 						sb.Insert(0, '0');
 						exponent--;
@@ -887,10 +893,20 @@ namespace System {
 				}
 			}
 			while (exponent > 0) {
+				if (f.Groupping && gro == nfi.NumberGroupSizes[0]) {
+					sb.Insert(0, nfi.NumberGroupSeparator);
+					gro = 0;
+				}
+				gro++;
 				sb.Insert(0, '0');
 				exponent--;
 			}
 			while (mantissa > 0) {
+				if (f.Groupping && gro == nfi.NumberGroupSizes[0]) {
+					sb.Insert(0, nfi.NumberGroupSeparator);
+					gro = 0;
+				}
+				gro++;
 				sb.Insert(0, Digits[mantissa % 10]);
 				mantissa /= 10;
 			}
