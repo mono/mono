@@ -1,3 +1,13 @@
+2003-05-13  Lluis Sanchez Gual <lluis@ideary.com>
+
+    * ObjectReader.cs: Changed signature of ReadObjectGraph, so now it returns the
+      deserialized object and the headers.
+    * MessageFormatter.cs: The result of the call to the HeaderHandler delegate is
+      now interpreted as the uri of the target object. This seems to be MS.NET
+      behavior.
+	* BinaryFormatter.cs: Deserialize now calls the HeaderHandler delegate,
+	  if provided.
+
 2003-02-25  Lluis Sanchez Gual <lluis@ideary.com>
 
 	* BinaryFormatter.cs: Implemented support for binders.

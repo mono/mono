@@ -269,6 +269,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			object methodSignature = null;
 			object callContext = null;
 			object[] extraProperties = null;
+			Header[] headers = null;
 
 			if ((flags & MethodFlags.PrimitiveArguments) > 0)
 			{
@@ -284,7 +285,10 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			if ((flags & MethodFlags.NeedsInfoArrayMask) > 0)
 			{
 				ObjectReader objectReader = new ObjectReader(surrogateSelector, context, binder);
-				object[] msgInfo = (object[]) objectReader.ReadObjectGraph (reader, hasHeaders, headerHandler);
+
+				object result;
+				objectReader.ReadObjectGraph (reader, hasHeaders, out result, out headers);
+				object[] msgInfo = (object[]) result;
 
 				if ((flags & MethodFlags.ArgumentsInSimpleArray) > 0) {
 					arguments = msgInfo;
@@ -313,12 +317,17 @@ namespace System.Runtime.Serialization.Formatters.Binary
 
 			if (arguments == null) arguments = new object[0];
 
-			Header[] methodInfo = new Header[5];
+			string uri = null;
+			if (headerHandler != null)
+				uri = headerHandler(headers) as string;
+
+			Header[] methodInfo = new Header[6];
 			methodInfo[0] = new Header("__MethodName", methodName);
 			methodInfo[1] = new Header("__MethodSignature", methodSignature);
 			methodInfo[2] = new Header("__TypeName", className);
 			methodInfo[3] = new Header("__Args", arguments);
 			methodInfo[4] = new Header("__CallContext", callContext);
+			methodInfo[5] = new Header("__Uri", uri);
 
 			MethodCall call = new MethodCall (methodInfo);
 
@@ -348,6 +357,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			LogicalCallContext callContext = null;
 			Exception exception = null;
 			object[] extraProperties = null;
+			Header[] headers = null;
 
 			if ((typeTag & ReturnTypeTag.PrimitiveType) > 0)
 			{
@@ -373,7 +383,9 @@ namespace System.Runtime.Serialization.Formatters.Binary
 				// There objects that need to be deserialized using an ObjectReader
 
 				ObjectReader objectReader = new ObjectReader(surrogateSelector, context, binder);
-				object[] msgInfo = (object[]) objectReader.ReadObjectGraph (reader, hasHeaders, headerHandler);
+				object result;
+				objectReader.ReadObjectGraph (reader, hasHeaders, out result, out headers);
+				object[] msgInfo = (object[]) result;
 
 				if ((typeTag & ReturnTypeTag.Exception) > 0) {
 					exception = (Exception) msgInfo[0];
@@ -398,6 +410,9 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			else {
 				reader.ReadByte ();	// Reads the stream ender
 			}
+
+			if (headerHandler != null) 
+				headerHandler(headers);
 
 			if (exception != null)
 				return new ReturnMessage (exception, methodCallMessage);

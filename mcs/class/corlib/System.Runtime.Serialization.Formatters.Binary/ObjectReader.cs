@@ -54,9 +54,9 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			_binder = binder;
 		}
 
-		public object ReadObjectGraph (BinaryReader reader, bool readHeaders, HeaderHandler headerHandler)
+		public void ReadObjectGraph (BinaryReader reader, bool readHeaders, out object result, out Header[] headers)
 		{
-			Header[] headers = null;
+			headers = null;
 
 			// Reads the objects. The first object in the stream is the
 			// root object.
@@ -69,10 +69,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 					if (_rootObjectID == 0) _rootObjectID = _lastObjectID;
 			}
 
-			if (readHeaders && headerHandler != null)
-				headerHandler (headers);
-
-			return _manager.GetObject (_rootObjectID);
+			result = _manager.GetObject (_rootObjectID);
 		}
 
 		public bool ReadNextObject (BinaryReader reader)

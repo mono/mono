@@ -119,7 +119,12 @@ namespace System.Runtime.Serialization.Formatters.Binary {
 			}
 			else {
 				ObjectReader serializer = new ObjectReader (surrogate_selector, context, binder);
-				return serializer.ReadObjectGraph (reader, hasHeader, handler);
+
+				object result;
+				Header[] headers;
+				serializer.ReadObjectGraph (reader, hasHeader, out result, out headers);
+				if (handler != null) handler(headers);
+				return result;
 			}
 		}
 		
