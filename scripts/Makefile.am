@@ -9,6 +9,7 @@ bin_SCRIPTS = \
 	certmgr			\
 	chktrust		\
 	cilc			\
+	caspol			\
 	disco			\
 	dtd2xsd			\
 	gacutil			\
@@ -17,6 +18,7 @@ bin_SCRIPTS = \
 	makecert		\
 	mbas			\
 	mcs			\
+	mint			\
 	mkbundle		\
 	mono-find-provides	\
 	mono-find-requires	\

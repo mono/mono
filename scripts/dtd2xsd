@@ -1,2 +1,2 @@
 #!/bin/sh
-exec /usr/local/bin/mono C:/cygwin/usr/local/lib/mono/1.0/dtd2xsd.exe "$@"
+exec /mono/bin/mono /mono/lib/mono/1.0/dtd2xsd.exe "$@"
