@@ -63,7 +63,11 @@ Microsoft.Web.Services.Addressing/AttributedUri.cs
 Microsoft.Web.Services.Addressing/AttributedUriString.cs
 Microsoft.Web.Services.Addressing/EndpointReference.cs
 Microsoft.Web.Services.Addressing/EndpointReferenceType.cs
+Microsoft.Web.Services.Addressing/FaultTo.cs
+Microsoft.Web.Services.Addressing/From.cs
+Microsoft.Web.Services.Addressing/MessageID.cs
 Microsoft.Web.Services.Addressing/PortType.cs
+Microsoft.Web.Services.Addressing/Recipient.cs
 Microsoft.Web.Services.Addressing/ReferenceProperties.cs
 Microsoft.Web.Services.Addressing/ReplyTo.cs
 Microsoft.Web.Services.Addressing/ServiceName.cs

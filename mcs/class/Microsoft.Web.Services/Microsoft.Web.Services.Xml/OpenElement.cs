@@ -23,7 +23,7 @@ namespace Microsoft.Web.Services.Xml
 			_anyElement = new ArrayList ();
 		}
 
-		public void GetXmlAny (XmlDocument document, XmlElement element)
+		protected virtual void GetXmlAny (XmlDocument document, XmlElement element)
 		{
 			if(document == null) {
 				throw new ArgumentNullException ("document");
@@ -41,7 +41,7 @@ namespace Microsoft.Web.Services.Xml
 			}
 		}
 
-		public void LoadXmlAny (XmlElement element)
+		protected virtual void LoadXmlAny (XmlElement element)
 		{
 			if(element == null) {
 				throw new ArgumentNullException ("element");
