@@ -1,3 +1,7 @@
+2003-02-26  Dick Porter  <dick@ximian.com>
+
+	* process.c: Cope with padding in .rsrc blocks
+
 2003-02-26  Dietmar Maurer  <dietmar@ximian.com>
 
 	* metadata.h: reverted the filter_len change, it breaks reflection
