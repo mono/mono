@@ -182,7 +182,7 @@ namespace MonoTests.System.Reflection
 								    BindingFlags.Instance);
 
 			PropertyInfo prop = binder.SelectProperty (0, props, null, new Type [0], null);
-			Assert.IsNotNull (prop, "empty");
+			Assert.IsNull (prop, "empty");
 			prop = binder.SelectProperty (0, props, null, new Type [] { typeof (long) }, null);
 			Assert.IsNull (prop, "long");
 			prop = binder.SelectProperty (0, props, null, new Type [] { typeof (int) }, null);

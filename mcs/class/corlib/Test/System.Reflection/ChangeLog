@@ -1,4 +1,8 @@
-2003-08-09  Sebastien Pouliot  <sebastien@ximian.com>
+2004-08-29  Nick Drochak <ndrochak@ieee.org>
+
+	* BinderTests.cs: Make tests pass on MS.NET 1.1.
+
+2004-08-09  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AssemblyTest.cs: Added new tests for 1.1 and 2.0 features. Converted
 	existing tests to NUnit 2.2.
