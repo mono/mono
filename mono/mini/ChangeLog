@@ -1,3 +1,7 @@
+2004-06-25  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini.c mini-x86.h mini-x86.c: Applied patch from Guenter Feldmann 
+	(fld@informatik.uni-bremen.de): Add Solaris x86 support.
 
 Tue Jun 22 21:29:11 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
