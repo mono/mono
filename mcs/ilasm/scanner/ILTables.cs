@@ -290,6 +290,7 @@ namespace Mono.ILASM {
                                 directives [".class"] = new ILToken (Token.D_CLASS, ".class");
                                 directives [".comtype"] = new ILToken (Token.D_COMTYPE, ".comtype");
                                 directives [".config"] = new ILToken (Token.D_CONFIG, ".config");
+                                directives [".imagebase"] = new ILToken (Token.D_IMAGEBASE, ".imagebase");
                                 directives [".corflags"] = new ILToken (Token.D_CORFLAGS, ".corflags");
                                 directives [".ctor"] = new ILToken (Token.D_CTOR, ".ctor");
                                 directives [".custom"] = new ILToken (Token.D_CUSTOM, ".custom");
