@@ -1,3 +1,7 @@
+2004-03-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Makefile: Added /nowarn to cleanup display when building.
+
 2004-03-16  Atsushi Enomoto <atsushi@ximian.com>
 
 	* System.Security.dll.sources: added XmlDsigNodeList.cs
