@@ -1,3 +1,8 @@
+
+Sat Jun 1 13:57:17 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* main.c: print byte values correctly.
+
 2002-05-20  Martin Baulig  <martin@gnome.org>
 
 	* main.c: Added `--output=FILENAME' command line option.
