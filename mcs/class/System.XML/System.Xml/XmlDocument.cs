@@ -321,7 +321,7 @@ namespace System.Xml
 		{
 			if ((localName == null) || (localName == String.Empty))
 				throw new ArgumentException ("The local name for elements or attributes cannot be null or an empty string.");
-			// FIXME: MS.NET has a weird behavior that they can Load() from XmlTextReader 
+			// LAMESPEC: MS.NET has a weird behavior that they can Load() from XmlTextReader 
 			// whose Namespaces = false, but their CreateElement() never allows qualified name.
 			// I leave it as it is.
 			return new XmlElement (prefix != null ? prefix : String.Empty, localName, namespaceURI != null ? namespaceURI : String.Empty, this, false);
@@ -429,7 +429,7 @@ namespace System.Xml
 		// check on GetIdenticalAttribute. To make such way complete,
 		// we have to use MultiMap, not Hashtable.
 		//
-		// Well, MS.NET is also fragile around ID.
+		// Well, MS.NET is also fragile around here.
 		public virtual XmlElement GetElementById (string elementId)
 		{
 			XmlAttribute attr = GetIdenticalAttribute (elementId);
@@ -850,7 +850,8 @@ namespace System.Xml
 		public virtual void Save (Stream outStream)
 		{
 			XmlTextWriter xmlWriter = new XmlTextWriter (outStream, TextEncoding);
-			xmlWriter.Formatting = Formatting.Indented;
+			if (!PreserveWhitespace)
+				xmlWriter.Formatting = Formatting.Indented;
 			WriteContentTo (xmlWriter);
 			xmlWriter.Flush ();
 		}
@@ -859,7 +860,8 @@ namespace System.Xml
 		{
 			XmlTextWriter xmlWriter = new XmlTextWriter (filename, TextEncoding);
 			try {
-				xmlWriter.Formatting = Formatting.Indented;
+				if (!PreserveWhitespace)
+					xmlWriter.Formatting = Formatting.Indented;
 				WriteContentTo (xmlWriter);
 			} finally {
 				xmlWriter.Close ();
@@ -869,7 +871,8 @@ namespace System.Xml
 		public virtual void Save (TextWriter writer)
 		{
 			XmlTextWriter xmlWriter = new XmlTextWriter (writer);
-			xmlWriter.Formatting = Formatting.Indented;
+			if (!PreserveWhitespace)
+				xmlWriter.Formatting = Formatting.Indented;
 			if (FirstChild != null && FirstChild.NodeType != XmlNodeType.XmlDeclaration)
 				xmlWriter.WriteStartDocument ();
 			WriteContentTo (xmlWriter);

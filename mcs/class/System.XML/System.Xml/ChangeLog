@@ -1,5 +1,11 @@
 2004-05-27  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlDocument.cs : Save() should indent only when PreserveWhitespace
+	  is false. Fixed bug #59155.
+	  Modified comment lines a bit.
+
+2004-05-27  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlTextWriter.cs : WriteRaw() looks to proceed WriteState to Prolog
 	  (if it is Start). Fixed bug #59154.
 
