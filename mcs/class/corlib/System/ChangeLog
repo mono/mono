@@ -1,3 +1,9 @@
+2003-10-09  Miguel de Icaza  <miguel@ximian.com>
+
+	* DateTime.cs: Patch from Chris Turchin: the DateTime.MaxValue
+	should not be TimeSpan.MaxValue, because it overflow.  Set this to
+	be MAX_VALUE_TICKS
+
 2003-10-09  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* MonoCustomAttrs.cs: from_cache is now thread-safe. Yeah, I got a
