@@ -258,10 +258,15 @@ CalcFunction
 	{
 		$$ = new TrimFunction ((IExpression)$3);
 	}
-	| CONVERT PAROPEN Expr COMMA StringLiteral PARCLOSE
+	| CONVERT PAROPEN Expr COMMA TypeSpecifier PARCLOSE
 	{
 		$$ = new ConvertFunction ((IExpression)$3, (string)$5);
 	}
+	;
+
+TypeSpecifier
+	: StringLiteral
+	| Identifier
 	;
 
 IsPredicate

@@ -46,8 +46,8 @@ namespace Mono.Data.SqlExpressions {
 						o1 = (IComparable)Convert.ChangeType (o1, o2.GetType ());
 				if (o2 is string && Numeric.IsNumeric (o1))
 						o2 = (IComparable)Convert.ChangeType (o2, o1.GetType ());
-			} catch (Exception) {
-				throw new EvaluateException("Comparison of numeric and non-numeric values is not allowed.");
+			} catch (FormatException) {
+				throw new EvaluateException (String.Format ("Cannot perform compare operation on {0} and {1}.", o1.GetType(), o2.GetType()));
 			}
 
 			if (o1 is string && o2 is string && !caseSensitive) {

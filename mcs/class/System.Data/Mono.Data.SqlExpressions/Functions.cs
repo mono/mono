@@ -45,7 +45,11 @@ namespace Mono.Data.SqlExpressions {
 		Type targetType;
 		public ConvertFunction (IExpression e, string targetType) : base (e)
 		{
-			this.targetType = Type.GetType (targetType);
+			try {
+				this.targetType = Type.GetType (targetType, true);
+			} catch (TypeLoadException) {
+				throw new EvaluateException (String.Format ("Invalid type name '{0}'.", targetType));
+			}
 		}
 		
 		override public object Eval (DataRow row)

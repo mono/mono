@@ -31,6 +31,10 @@ namespace Mono.Data.SqlExpressions {
 			this.columnName = columnName;
 		}
 
+		public ReferencedTable ReferencedTable {
+			get { return refTable; }
+		}
+
 		protected DataRelation GetRelation (DataRow row)
 		{
 			DataRelationCollection relations;
@@ -120,7 +124,7 @@ namespace Mono.Data.SqlExpressions {
 			try {			
 				val = referencedRow [columnName];
 			} catch (IndexOutOfRangeException) {
-				throw new EvaluateException (String.Format ("Column '{0}' does not exist.", columnName));
+				throw new EvaluateException (String.Format ("Cannot find column [{0}].", columnName));
 			}
 			return Unify (val);
 		}

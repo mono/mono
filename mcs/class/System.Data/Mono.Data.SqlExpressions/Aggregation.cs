@@ -35,8 +35,10 @@ namespace Mono.Data.SqlExpressions {
 	
 		public object Eval (DataRow row)
 		{
-			//TODO: make this work for Parent/Child-columns too!
-			if (cacheResults && result != null)
+			//TODO: implement a better caching strategy and a mechanism for cache invalidation.
+			//for now only aggregation over the table owning 'row' (e.g. 'sum(parts)'
+			//in constrast to 'sum(parent.parts)' and 'sum(child.parts)') is cached.
+			if (cacheResults && result != null && column.ReferencedTable == ReferencedTable.Self)
 				return result;
 				
 			count = 0;
