@@ -1,5 +1,14 @@
-Frs-Denis Gonthier <fgonthier@hermes.usherb.ca> - Screen - 10-26-2002
-John Sohn <jsohn@columbus.rr.com> - Button, ButtonBase, Label - 10-26-2002
-Jeff Bakst <jbakst@telocity.com> - All *tree* classes - 10-26-2002
-Dennis Hayes <dennish@raytek.com> - All *Scroll* classes scroable window and scrolable control  - 10-26-2002
- 
+Before you checkin code, run monostyle.exe on it.
+More checkins are better! Checkin often!. More than once a day is great.
+If you do not update your checkout date for 10 days, someone else may take them.
+
+Here are the file currently checked out:
+
+Screen - 10-26-2002 - Frs-Denis Gonthier <fgonthier@hermes.usherb.ca>
+Button, ButtonBase - 10-26-2002 John Sohn <jsohn@columbus.rr.com>
+Label - 10-26-2002 John Sohn <jsohn@columbus.rr.com>
+All *tree* classes - 10-26-2002 - Jeff Bakst <jbakst@telocity.com>
+All *arg*classes - Dennis Hayes <dennish@raytek.com>
+All *Scroll* classes scrollable window and scrollable control  - 10-26-2002  - Dennis Hayes <dennish@raytek.com>
+
+Who wants to take on Data* and Binding*, all releated to database stuff, probably more than win32 api.?
