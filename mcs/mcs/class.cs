@@ -1044,8 +1044,14 @@ namespace Mono.CSharp {
 					en.Populate (this);
 			
 			if (Delegates != null) {
-				foreach (Delegate d in Delegates) 
-					d.Populate (this);
+				foreach (Delegate d in Delegates) {
+					if (!d.Populate (this))
+						remove_list.Add (d);
+				}
+				foreach (object o in remove_list)
+					delegates.Remove (o);
+
+				remove_list.Clear ();
 			}
 			
 			if (Types != null) {

@@ -1,3 +1,19 @@
+2001-12-16  Miguel de Icaza  <miguel@ximian.com>
+
+	* class.cs (TypeContainer): Remove Delegates who fail to be
+	defined.
+
+	* delegate.cs (Populate): Verify that we dont get null return
+	values.   TODO: Check for AsAccessible.
+
+	* cs-parser.jay: Use basename to emit error 574 (destructor should
+	have the same name as container class), not the full name.
+
+	* cs-tokenizer.cs (adjust_int): Fit the integer in the best
+	possible representation.  
+
+	Also implements integer type suffixes U and L.
+
 2001-12-15  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs (ArrayCreation.DoResolve): We need to do the

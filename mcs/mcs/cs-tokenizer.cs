@@ -453,8 +453,7 @@ namespace Mono.CSharp
 			while ((d = peekChar ()) != -1){
 				char e = Char.ToUpper ((char) d);
 				
-				if (Char.IsDigit (e) ||
-				    (e >= 'A' && e <= 'F')){
+				if (Char.IsDigit (e) || (e >= 'A' && e <= 'F')){
 					number.Append ((char) e);
 					getChar ();
 				} else
@@ -483,18 +482,94 @@ namespace Mono.CSharp
 			return t;
 		}
 
-		int integer_type_suffix (int c)
+		int integer_type_suffix (ulong ul, int c)
 		{
-			// FIXME: Handle U and L suffixes.
-			// We also need to see in which kind of
-			// Int the thing fits better according to the spec.
+			bool is_unsigned = false;
+			bool is_long = false;
+
+			if (c != -1){
+				bool scanning = true;
+				do {
+					switch (c){
+					case 'U': case 'u':
+						if (is_unsigned)
+							scanning = false;
+						is_unsigned = true;
+						getChar ();
+						break;
+
+					case 'l':
+						if (!is_unsigned){
+							//
+							// if we have not seen anything in between
+							// report this error
+							//
+							Report.Warning (
+								78, Location,
+							"the 'l' suffix is easily confused with digit `1'," +
+							" use 'L' for clarity");
+						}
+						goto case 'L';
+						
+					case 'L': 
+						if (is_long)
+							scanning = false;
+						is_long = true;
+						getChar ();
+						break;
+						
+					default:
+						scanning = false;
+						break;
+					}
+					c = peekChar ();
+				} while (scanning);
+			}
+
+			if (is_long && is_unsigned){
+				val = ul;
+				return Token.LITERAL_INTEGER;
+			} else if (is_unsigned){
+				// uint if possible, or ulong else.
+
+				if ((ul & 0xffffffff00000000) == 0)
+					val = (uint) ul;
+				else
+					val = ul;
+			} else if (is_long){
+				// long if possible, ulong otherwise
+				if ((ul & 0x8000000000000000) != 0)
+					val = ul;
+				else
+					val = (long) ul;
+			} else {
+				// int, uint, long or ulong in that order
+				if ((ul & 0xffffffff00000000) == 0){
+					uint ui = (uint) ul;
+					
+					if ((ui & 0x80000000) != 0)
+						val = ui;
+					else
+						val = (int) ui;
+				} else {
+					if ((ul & 0x8000000000000000) != 0)
+						val = ul;
+					else
+						val = (long) ul;
+				}
+			}
 			return Token.LITERAL_INTEGER;
 		}
-		
-		void adjust_int (int t)
+				
+		//
+		// given `c' as the next char in the input decide whether
+		// we need to convert to a special type, and then choose
+		// the best representation for the integer
+		//
+		int adjust_int (int c)
 		{
-			val = new System.Int32();
-			val = System.Int32.Parse (number.ToString (), 0);
+			ulong ul = System.UInt64.Parse (number.ToString ());
+			return integer_type_suffix (ul, c);
 		}
 
 		int adjust_real (int t)
@@ -548,21 +623,7 @@ namespace Mono.CSharp
 					string s = number.ToString ();
 
 					ul = System.UInt64.Parse (s, NumberStyles.HexNumber);
-					if ((ul & 0xffffffff00000000) == 0){
-						uint ui = (uint) ul;
-						
-						if ((ui & 0x80000000) != 0)
-							val = ui;
-						else
-							val = (int) ui;
-					} else {
-						if ((ul & 0x8000000000000000) != 0)
-							val = ul;
-						else
-							val = (long) ul;
-					}
-
-					return integer_type_suffix (peekChar ());
+					return integer_type_suffix (ul, peekChar ());
 				}
 				decimal_digits (c);
 				c = getChar ();
@@ -579,8 +640,7 @@ namespace Mono.CSharp
 				} else {
 					putback ('.');
 					number.Length -= 1;
-					adjust_int (Token.LITERAL_INTEGER);
-					return Token.LITERAL_INTEGER;
+					return adjust_int (-1);
 				}
 			}
 			
@@ -605,10 +665,8 @@ namespace Mono.CSharp
 
 			type = real_type_suffix (c);
 			if (type == Token.NONE && !is_real){
-				type = integer_type_suffix (c);
-				adjust_int (type);
 				putback (c);
-				return type;
+				return adjust_int (c);
 			} else
 				is_real = true;
 

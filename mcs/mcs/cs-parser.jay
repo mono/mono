@@ -1348,7 +1348,7 @@ constructor_initializer
 destructor_declaration
 	: opt_attributes TILDE IDENTIFIER OPEN_PARENS CLOSE_PARENS block
 	  {
-		if ((string) $3 != current_container.Name){
+		if ((string) $3 != current_container.Basename){
 			Report.Error (574, lexer.Location, "Name of destructor must match name of class");
 		} else if (!(current_container is Class)){
 			Report.Error (575, lexer.Location, "Destructors are only allowed in class types");

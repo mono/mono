@@ -86,7 +86,7 @@ namespace Mono.CSharp {
 			RootContext.TypeManager.AddDelegateType (Name, TypeBuilder, this);
 		}
 
-		public void Populate (TypeContainer parent)
+		public bool Populate (TypeContainer parent)
 		{
 
 			MethodAttributes mattr;
@@ -109,10 +109,20 @@ namespace Mono.CSharp {
 			// Here the various methods like Invoke, BeginInvoke etc are defined
 
 			//
+			// TODO: Call AsAccessible for each type
+			//
+
+			//
 			// Invoke method
 			//
  			param_types = Parameters.GetParameterInfo (parent);
+			if (param_types == null)
+				return false;
+			
   			ret_type = parent.LookupType (ReturnType, false);
+			if (ret_type == null)
+				return false;
+			
   			CallingConventions cc = Parameters.GetCallingConvention ();
 
  			mattr = MethodAttributes.Public | MethodAttributes.HideBySig | MethodAttributes.Virtual;
@@ -203,6 +213,8 @@ namespace Mono.CSharp {
 						    new InternalParameters (
 							    parent, new Parameters (end_params, null)),
 						    end_param_types);
+
+			return true;
 		}
 
 		/// <summary>
