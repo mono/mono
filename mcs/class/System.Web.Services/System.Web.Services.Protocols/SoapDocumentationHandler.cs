@@ -11,8 +11,12 @@ using System;
 using System.Web;
 using System.IO;
 using System.Xml.Serialization;
+using System.Xml.Schema;
 using System.Web.Services.Description;
 using System.Web.Services.Configuration;
+using System.CodeDom;
+using System.CodeDom.Compiler;
+using Microsoft.CSharp;
 
 namespace System.Web.Services.Protocols
 {
@@ -46,6 +50,7 @@ namespace System.Web.Services.Protocols
 				string key = req.QueryString.GetKey(0).ToLower();
 				if (key  == "wsdl") GenerateWsdlDocument (context, req.QueryString ["wsdl"]);
 				else if (key == "schema") GenerateSchema (context, req.QueryString ["schema"]);
+				else if (key == "code") GenerateCode (context, req.QueryString ["code"]);
 				else GenerateDocumentationPage (context);
 			}
 			else
@@ -79,6 +84,52 @@ namespace System.Web.Services.Protocols
 			Stream outStream = context.Response.OutputStream;
 			GetSchemas() [di].Write (outStream);
 			outStream.Close ();
+		}
+		
+		void GenerateCode (HttpContext context, string langId)
+		{
+			context.Response.ContentType = "text/plain; charset=utf-8";
+			CodeNamespace codeNamespace = new CodeNamespace();
+			CodeCompileUnit codeUnit = new CodeCompileUnit();
+			
+			codeUnit.Namespaces.Add (codeNamespace);
+
+			ServiceDescriptionImporter importer = new ServiceDescriptionImporter();
+			
+			foreach (ServiceDescription sd in GetDescriptions ())
+				importer.AddServiceDescription(sd, null, null);
+
+			foreach (XmlSchema sc in GetSchemas())
+				importer.Schemas.Add (sc);
+
+			importer.Import(codeNamespace, codeUnit);
+			
+			if (langId == null || langId == "") langId = "cs";
+			CodeDomProvider provider = GetProvider (langId);
+			ICodeGenerator generator = provider.CreateGenerator();
+			CodeGeneratorOptions options = new CodeGeneratorOptions();
+			
+			StreamWriter writer = new StreamWriter(context.Response.OutputStream);
+			generator.GenerateCodeFromCompileUnit(codeUnit, writer, options);
+			writer.Close ();
+		}
+		
+		private CodeDomProvider GetProvider(string langId)
+		{
+			// FIXME these should be loaded dynamically using reflection
+			CodeDomProvider provider;
+			
+			switch (langId.ToUpper())
+			{
+			    case "CS":
+				    provider = new CSharpCodeProvider();
+				    break;
+			    
+			    default:
+				    throw new Exception("Unknown language: " + langId);
+			}
+
+			return provider;
 		}
 		
 		ServiceDescriptionCollection GetDescriptions ()
