@@ -1,3 +1,8 @@
+2002-12-01  Tim Coleman <tim@timcoleman.com>
+	* System.Data.SqlClient/SqlDataAdapter.cs:
+		Change to reflect TdsSchemaInfo -> TdsDataColumnCollection
+		shift.
+
 2002-12-01  Ville Palo <vi64pa@koti.soon.fi>
 
 	* list: Added XmlDataDocument.cs
