@@ -490,6 +490,7 @@ namespace System.Windows.Forms {
 			}
 
 			//[MonoTODO]
+#if A
 			object IList.this[int index]{
 				get{
 					throw new NotImplementedException ();
@@ -498,6 +499,7 @@ namespace System.Windows.Forms {
 					throw new NotImplementedException ();
 				}
 			}
+#endif
 		
 			[MonoTODO]
 			void IList.Clear(){
@@ -680,6 +682,7 @@ namespace System.Windows.Forms {
 				}
 			}
 
+#if A
 			//[MonoTODO]
 			object IList.this[int index]{
 				get{
@@ -689,6 +692,7 @@ namespace System.Windows.Forms {
 					throw new NotImplementedException ();
 				}
 			}
+#endif
 		
 			[MonoTODO]
 			void IList.Clear(){

@@ -37,9 +37,10 @@ namespace System.Windows.Forms {
 		}
 		
 		[MonoTODO]
-		public Binding this[string propertyName] {
-			get { throw new NotImplementedException (); }
-		}
+		// Commented out: bug in mcs, it has been now filed.
+//		public Binding this[string propertyName] {
+//			get { throw new NotImplementedException (); }
+//		}
 		#endregion
 		
 		
