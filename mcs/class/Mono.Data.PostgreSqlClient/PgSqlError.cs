@@ -1,5 +1,5 @@
 //
-// System.Data.SqlClient.SqlError.cs
+// Mono.Data.PostgreSqlClient.PgSqlError.cs
 //
 // Author:
 //   Rodrigo Moya (rodrigo@ximian.com)
@@ -11,13 +11,13 @@ using System;
 using System.Data;
 using System.Runtime.InteropServices;
 
-namespace System.Data.SqlClient
+namespace Mono.Data.PostgreSqlClient
 {
 	/// <summary>
 	/// Describes an error from a SQL database.
 	/// </summary>
 	[MonoTODO]
-	public sealed class SqlError
+	public sealed class PgSqlError
 	{
 		byte theClass = 0;
 		int lineNumber = 0;
@@ -28,7 +28,7 @@ namespace System.Data.SqlClient
 		string source = "";
 		byte state = 0;
 
-		internal SqlError(byte theClass, int lineNumber,
+		internal PgSqlError(byte theClass, int lineNumber,
 			string message,	int number, string procedure,
 			string server, string source, byte state) {
 			this.theClass = theClass;
@@ -113,7 +113,7 @@ namespace System.Data.SqlClient
 			String stackTrace;
 			stackTrace = " <Stack Trace>";
 			// FIXME: generate the correct SQL error string
-			toStr = "SqlError:" + message + stackTrace;
+			toStr = "PgSqlError:" + message + stackTrace;
 			return toStr;
 		}
 

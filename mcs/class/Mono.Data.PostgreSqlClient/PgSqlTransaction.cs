@@ -1,5 +1,5 @@
 //
-// System.Data.SqlClient.SqlTransaction.cs
+// Mono.Data.PostgreSqlClient.PgSqlTransaction.cs
 //
 // Author:
 //   Rodrigo Moya (rodrigo@ximian.com)
@@ -16,19 +16,19 @@ using System;
 using System.Data;
 using System.Data.Common;
 
-namespace System.Data.SqlClient
+namespace Mono.Data.PostgreSqlClient
 {
 	/// <summary>
 	/// Represents a transaction to be performed on a SQL database.
 	/// </summary>
-	// public sealed class SqlTransaction : MarshalByRefObject,
+	// public sealed class PgSqlTransaction : MarshalByRefObject,
 	//	IDbTransaction, IDisposable
-	public sealed class SqlTransaction : IDbTransaction
+	public sealed class PgSqlTransaction : IDbTransaction
 	{
 		#region Fields
 
 		private bool doingTransaction = false;
-		private SqlConnection conn = null;
+		private PgSqlConnection conn = null;
 		private IsolationLevel isolationLevel =	
 			IsolationLevel.ReadCommitted;
 		// There are only two IsolationLevel's for PostgreSQL:
@@ -49,7 +49,7 @@ namespace System.Data.SqlClient
 					"thus PostgreSQL can not " +
 					"Commit transaction.");
 			
-			SqlCommand cmd = new SqlCommand("COMMIT", conn);
+			PgSqlCommand cmd = new PgSqlCommand("COMMIT", conn);
 			cmd.ExecuteNonQuery();
 						
 			doingTransaction = false;
@@ -65,7 +65,7 @@ namespace System.Data.SqlClient
 					"thus PostgreSQL can not " +
 					"Rollback transaction.");
 			
-			SqlCommand cmd = new SqlCommand("ROLLBACK", conn);
+			PgSqlCommand cmd = new PgSqlCommand("ROLLBACK", conn);
 			cmd.ExecuteNonQuery();
 						
 			doingTransaction = false;
@@ -88,7 +88,7 @@ namespace System.Data.SqlClient
 
 		#endregion // Public Methods
 
-		#region Internal Methods to System.Data.dll Assembly
+		#region Internal Methods to Mono.Data.PostgreSqlClient.dll Assembly
 
 		internal void Begin()
 		{
@@ -98,7 +98,7 @@ namespace System.Data.SqlClient
 					"and PostgreSQL does not " +
 					"support nested transactions.");
 			
-			SqlCommand cmd = new SqlCommand("BEGIN", conn);
+			PgSqlCommand cmd = new PgSqlCommand("BEGIN", conn);
 			cmd.ExecuteNonQuery();
 						
 			doingTransaction = true;
@@ -124,13 +124,13 @@ namespace System.Data.SqlClient
 					//   ReadCommitted or Serializable
 					break;
 			}
-			SqlCommand cmd = new SqlCommand(sSql, conn);
+			PgSqlCommand cmd = new PgSqlCommand(sSql, conn);
 			cmd.ExecuteNonQuery();
 
 			this.isolationLevel = isoLevel;
 		}
 
-		internal void SetConnection(SqlConnection connection)
+		internal void SetConnection(PgSqlConnection connection)
 		{
 			this.conn = connection;
 		}
@@ -145,7 +145,7 @@ namespace System.Data.SqlClient
 			}
 		}
 
-		public SqlConnection Connection	{
+		public PgSqlConnection Connection	{
 			get { 
 				return conn; 
 			}
@@ -180,7 +180,7 @@ namespace System.Data.SqlClient
 		[MonoTODO]
 		// [Serializable]
 		// [ClassInterface(ClassInterfaceType.AutoDual)]
-		~SqlTransaction() {
+		~PgSqlTransaction() {
 			// FIXME: need to properly release resources
 			// Dispose(false);
 		}

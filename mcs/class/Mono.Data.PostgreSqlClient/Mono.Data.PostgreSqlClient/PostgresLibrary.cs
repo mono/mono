@@ -1,5 +1,5 @@
 //
-// System.Data.SqlClient.PostgresLibrary.cs  
+// Mono.Data.PostgreSqlClient.PostgresLibrary.cs  
 //
 // PInvoke methods to libpq
 // which is PostgreSQL client library
@@ -23,7 +23,7 @@ using System.Runtime.InteropServices;
 using System.Diagnostics;
 using System.Collections;
 
-namespace System.Data.SqlClient {
+namespace Mono.Data.PostgreSqlClient {
 
 	/* IMPORTANT: DO NOT CHANGE ANY OF THESE ENUMS BELOW */
 	

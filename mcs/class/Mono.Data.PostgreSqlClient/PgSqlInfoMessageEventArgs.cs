@@ -1,5 +1,5 @@
 //
-// System.Data.SqlClient.SqlInfoMessageEventArgs.cs
+// Mono.Data.PostgreSqlClient.PgSqlInfoMessageEventArgs.cs
 //
 // Author:
 //   Rodrigo Moya (rodrigo@ximian.com)
@@ -11,12 +11,12 @@
 using System;
 using System.Data;
 
-namespace System.Data.SqlClient
+namespace Mono.Data.PostgreSqlClient
 {
-	public sealed class SqlInfoMessageEventArgs : EventArgs
+	public sealed class PgSqlInfoMessageEventArgs : EventArgs
 	{
 		[MonoTODO]
-		public SqlErrorCollection Errors {
+		public PgSqlErrorCollection Errors {
 			get { 
 				throw new NotImplementedException (); 
 			}
@@ -44,7 +44,7 @@ namespace System.Data.SqlClient
 		}
 
 		//[MonoTODO]
-		//~SqlInfoMessageEventArgs() {
+		//~PgSqlInfoMessageEventArgs() {
 			// FIXME: destructor needs to release resources
 		//}
 	}

@@ -1,5 +1,5 @@
 //
-// System.Data.SqlClient.SqlConnection.cs
+// Mono.Data.PostgreSqlClient.PgSqlConnection.cs
 //
 // Author:
 //   Rodrigo Moya (rodrigo@ximian.com)
@@ -30,12 +30,12 @@ using System.Data.Common;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace System.Data.SqlClient {
+namespace Mono.Data.PostgreSqlClient {
 
 	/// <summary>
 	/// Represents an open connection to a SQL data source
 	/// </summary>
-	public sealed class SqlConnection : Component, IDbConnection,
+	public sealed class PgSqlConnection : Component, IDbConnection,
 		ICloneable	
 	{
 		// FIXME: Need to implement class Component, 
@@ -51,7 +51,7 @@ namespace System.Data.SqlClient {
 		// OLE DB Connection String
 		private string pgConnectionString = ""; 
 		// PostgreSQL Connection String
-		private SqlTransaction trans = null;
+		private PgSqlTransaction trans = null;
 		private int connectionTimeout = 15;     
 		// default for 15 seconds
 		
@@ -85,7 +85,7 @@ namespace System.Data.SqlClient {
 		private ConnectionState conState = ConnectionState.Closed;
 		
 		// DataReader state
-		private SqlDataReader rdr = null;
+		private PgSqlDataReader rdr = null;
 		private bool dataReaderOpen = false;
 		// FIXME: if true, throw an exception if SqlConnection 
 		//        is used for anything other than reading
@@ -101,12 +101,12 @@ namespace System.Data.SqlClient {
 
 		// A lot of the defaults were initialized in the Fields
 		[MonoTODO]
-		public SqlConnection () {
+		public PgSqlConnection () {
 
 		}
 	
 		[MonoTODO]
-		public SqlConnection (String connectionString) {
+		public PgSqlConnection (String connectionString) {
 			SetConnectionString (connectionString);
 		}
 
@@ -133,7 +133,7 @@ namespace System.Data.SqlClient {
 		// aka Finalize()
 		// [ClassInterface(ClassInterfaceType.AutoDual)]
 		[MonoTODO]
-		~SqlConnection() {
+		~PgSqlConnection() {
 			Dispose (false);
 		}
 		
@@ -145,7 +145,7 @@ namespace System.Data.SqlClient {
 			return BeginTransaction ();
 		}
 
-		public SqlTransaction BeginTransaction () {
+		public PgSqlTransaction BeginTransaction () {
 			return TransactionBegin (); // call private method
 		}
 
@@ -154,19 +154,19 @@ namespace System.Data.SqlClient {
 			return BeginTransaction (il);
 		}
 
-		public SqlTransaction BeginTransaction (IsolationLevel il) {
+		public PgSqlTransaction BeginTransaction (IsolationLevel il) {
 			return TransactionBegin (il); // call private method
 		}
 
 		// PostgreSQL does not support named transactions/savepoint
 		//            nor nested transactions
 		[Obsolete]
-		public SqlTransaction BeginTransaction(string transactionName) {
+		public PgSqlTransaction BeginTransaction(string transactionName) {
 			return TransactionBegin (); // call private method
 		}
 
 		[Obsolete]
-		public SqlTransaction BeginTransaction(IsolationLevel iso,
+		public PgSqlTransaction BeginTransaction(IsolationLevel iso,
 			string transactionName) {
 			return TransactionBegin (iso); // call private method
 		}
@@ -195,8 +195,8 @@ namespace System.Data.SqlClient {
 			return CreateCommand ();
 		}
 
-		public SqlCommand CreateCommand () {
-			SqlCommand sqlcmd = new SqlCommand ("", this);
+		public PgSqlCommand CreateCommand () {
+			PgSqlCommand sqlcmd = new PgSqlCommand ("", this);
 
 			return sqlcmd;
 		}
@@ -235,7 +235,7 @@ namespace System.Data.SqlClient {
 					PQerrorMessage (pgConn);
 				errorMessage += ": Could not connect to database.";
 
-				throw new SqlException(0, 0,
+				throw new PgSqlException(0, 0,
 					errorMessage, 0, "",
 					host, "SqlConnection", 0);
 			}
@@ -249,7 +249,7 @@ namespace System.Data.SqlClient {
 		// from doing anything while
 		// SqlDataReader is open.
 		// Open the Reader. (called from SqlCommand)
-		internal void OpenReader(SqlDataReader reader) 
+		internal void OpenReader(PgSqlDataReader reader) 
 		{	
 			if(dataReaderOpen == true) {
 				// TODO: throw exception here?
@@ -298,7 +298,7 @@ namespace System.Data.SqlClient {
 
 		private string GetDatabaseServerVersion() 
 		{
-			SqlCommand cmd = new SqlCommand("select version()",this);
+			PgSqlCommand cmd = new PgSqlCommand("select version()",this);
 			return (string) cmd.ExecuteScalar();
 		}
 
@@ -451,10 +451,10 @@ namespace System.Data.SqlClient {
 			return addParm;
 		}
 
-		private SqlTransaction TransactionBegin () {
+		private PgSqlTransaction TransactionBegin () {
 			// FIXME: need to keep track of 
 			// transaction in-progress
-			trans = new SqlTransaction ();
+			trans = new PgSqlTransaction ();
 			// using internal methods of SqlTransaction
 			trans.SetConnection (this);
 			trans.Begin();
@@ -462,10 +462,10 @@ namespace System.Data.SqlClient {
 			return trans;
 		}
 
-		private SqlTransaction TransactionBegin (IsolationLevel il) {
+		private PgSqlTransaction TransactionBegin (IsolationLevel il) {
 			// FIXME: need to keep track of 
 			// transaction in-progress
-			trans = new SqlTransaction ();
+			trans = new PgSqlTransaction ();
 			// using internal methods of SqlTransaction
 			trans.SetConnection (this);
 			trans.SetIsolationLevel (il);
@@ -531,7 +531,7 @@ namespace System.Data.SqlClient {
 		// For System.Data.SqlClient classes
 		// to get the current transaction
 		// in progress - if any
-		internal SqlTransaction Transaction {
+		internal PgSqlTransaction Transaction {
 			get {
 				return trans;
 			}
@@ -569,7 +569,7 @@ namespace System.Data.SqlClient {
 		#region Events
                 
 		public event 
-		SqlInfoMessageEventHandler InfoMessage;
+		PgSqlInfoMessageEventHandler InfoMessage;
 
 		public event 
 		StateChangeEventHandler StateChange;
@@ -585,7 +585,7 @@ namespace System.Data.SqlClient {
 
 			private Hashtable hashTypes;
 			private ArrayList pgTypes;
-			private SqlConnection con;
+			private PgSqlConnection con;
 
 			// Got this SQL with the permission from 
 			// the authors of libgda
@@ -597,7 +597,7 @@ namespace System.Data.SqlClient {
 				"'smgr', 'tid', 'unknown', 'xid') " +
 				"ORDER BY typname";
 
-			internal PostgresTypes(SqlConnection sqlcon) {
+			internal PostgresTypes(PgSqlConnection sqlcon) {
 				
 				con = sqlcon;
 				hashTypes = new Hashtable();
@@ -667,7 +667,7 @@ namespace System.Data.SqlClient {
 					PQexec (con.PostgresConnection, SEL_SQL_GetTypes);
 
 				if(pgResult.Equals(IntPtr.Zero)) {
-					throw new SqlException(0, 0,
+					throw new PgSqlException(0, 0,
 						"No Resultset from PostgreSQL", 0, "",
 						con.DataSource, "SqlConnection", 0);
 				}
@@ -706,7 +706,7 @@ namespace System.Data.SqlClient {
 						PostgresLibrary.PQclear (pgResult);
 						pgResult = IntPtr.Zero;
 
-						throw new SqlException(0, 0,
+						throw new PgSqlException(0, 0,
 							errorMessage, 0, "",
 							con.DataSource, "SqlConnection", 0);
 					}

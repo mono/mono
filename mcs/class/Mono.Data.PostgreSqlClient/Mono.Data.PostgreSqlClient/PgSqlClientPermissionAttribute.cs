@@ -1,5 +1,5 @@
 //
-// System.Data.SqlClient.SqlClientPermissionAttribute.cs
+// Mono.Data.PostgreSqlClient.PgSqlClientPermissionAttribute.cs
 //
 // Author:
 //   Rodrigo Moya (rodrigo@ximian.com)
@@ -14,7 +14,7 @@ using System.Data.Common;
 using System.Security;
 using System.Security.Permissions;
 
-namespace System.Data.SqlClient {
+namespace Mono.Data.PostgreSqlClient {
 
 	[AttributeUsage(AttributeTargets.Assembly    | 
 			AttributeTargets.Class 	     | 
@@ -22,11 +22,11 @@ namespace System.Data.SqlClient {
 			AttributeTargets.Constructor |
 			AttributeTargets.Method)]
 	[Serializable]
-	public sealed class SqlClientPermissionAttribute :
+	public sealed class PgSqlClientPermissionAttribute :
 		DBDataPermissionAttribute {
 
 		[MonoTODO]
-		public SqlClientPermissionAttribute(SecurityAction action) : 
+		public PgSqlClientPermissionAttribute(SecurityAction action) : 
 			base(action)
 		{
 			// FIXME: do constructor
@@ -38,7 +38,7 @@ namespace System.Data.SqlClient {
 		}
 
 		//[MonoTODO]
-		//~SqlClientPermissionAttribute() {
+		//~PgSqlClientPermissionAttribute() {
 		//	// FIXME: destructor to release resources
 		//}
 	}

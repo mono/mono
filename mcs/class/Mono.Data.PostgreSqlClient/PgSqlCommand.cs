@@ -1,5 +1,5 @@
 //
-// System.Data.SqlClient.SqlCommand.cs
+// Mono.Data.PostgreSqlClient.PgSqlCommand.cs
 //
 // Author:
 //   Rodrigo Moya (rodrigo@ximian.com)
@@ -33,13 +33,13 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Xml;
 
-namespace System.Data.SqlClient {
+namespace Mono.Data.PostgreSqlClient {
 	/// <summary>
 	/// Represents a SQL statement that is executed 
 	/// while connected to a SQL database.
 	/// </summary>
-	// public sealed class SqlCommand : Component, IDbCommand, ICloneable
-	public sealed class SqlCommand : IDbCommand {
+	// public sealed class PgSqlCommand : Component, IDbCommand, ICloneable
+	public sealed class PgSqlCommand : IDbCommand {
 
 		#region Fields
 
@@ -48,15 +48,15 @@ namespace System.Data.SqlClient {
 		// default is 30 seconds 
 		// for command execution
 
-		private SqlConnection conn = null;
-		private SqlTransaction trans = null;
+		private PgSqlConnection conn = null;
+		private PgSqlTransaction trans = null;
 		private CommandType cmdType = CommandType.Text;
 		private bool designTime = false;
-		private SqlParameterCollection parmCollection = new 
-			SqlParameterCollection();
+		private PgSqlParameterCollection parmCollection = new 
+			PgSqlParameterCollection();
 
-		// SqlDataReader state data for ExecuteReader()
-		private SqlDataReader dataReader = null;
+		// PgSqlDataReader state data for ExecuteReader()
+		private PgSqlDataReader dataReader = null;
 		private string[] queries = null;
 		private int currentQuery = -1;
 		private CommandBehavior cmdBehavior = CommandBehavior.Default;
@@ -67,21 +67,21 @@ namespace System.Data.SqlClient {
 
 		#region Constructors
 
-		public SqlCommand() {
+		public PgSqlCommand() {
 			sql = "";
 		}
 
-		public SqlCommand (string cmdText) {
+		public PgSqlCommand (string cmdText) {
 			sql = cmdText;
 		}
 
-		public SqlCommand (string cmdText, SqlConnection connection) {
+		public PgSqlCommand (string cmdText, PgSqlConnection connection) {
 			sql = cmdText;
 			conn = connection;
 		}
 
-		public SqlCommand (string cmdText, SqlConnection connection, 
-			SqlTransaction transaction) {
+		public PgSqlCommand (string cmdText, PgSqlConnection connection, 
+			PgSqlTransaction transaction) {
 			sql = cmdText;
 			conn = connection;
 			trans = transaction;
@@ -104,8 +104,8 @@ namespace System.Data.SqlClient {
 		}
 
 		[MonoTODO]
-		public SqlParameter CreateParameter () {
-			return new SqlParameter ();
+		public PgSqlParameter CreateParameter () {
+			return new PgSqlParameter ();
 		}
 
 		public int ExecuteNonQuery () {	
@@ -160,7 +160,7 @@ namespace System.Data.SqlClient {
 				PostgresLibrary.PQclear (pgResult);
 				pgResult = IntPtr.Zero;
 
-				throw new SqlException(0, 0,
+				throw new PgSqlException(0, 0,
 					errorMessage, 0, "",
 					conn.DataSource, "SqlCommand", 0);
 			}
@@ -174,7 +174,7 @@ namespace System.Data.SqlClient {
 		}
 
 		[MonoTODO]
-		public SqlDataReader ExecuteReader () {
+		public PgSqlDataReader ExecuteReader () {
 			return ExecuteReader(CommandBehavior.Default);
 		}
 
@@ -185,7 +185,7 @@ namespace System.Data.SqlClient {
 		}
 
 		[MonoTODO]
-		public SqlDataReader ExecuteReader (CommandBehavior behavior) 
+		public PgSqlDataReader ExecuteReader (CommandBehavior behavior) 
 		{
 			if(conn.State != ConnectionState.Open)
 				throw new InvalidOperationException(
@@ -195,7 +195,7 @@ namespace System.Data.SqlClient {
 
 			queries = null;
 			currentQuery = -1;
-			dataReader = new SqlDataReader(this);
+			dataReader = new PgSqlDataReader(this);
 
 			queries = sql.Split(new Char[] {';'});			
 
@@ -204,9 +204,9 @@ namespace System.Data.SqlClient {
 			return dataReader;
 		}
 
-		internal SqlResult NextResult() 
+		internal PgSqlResult NextResult() 
 		{
-			SqlResult res = new SqlResult();
+			PgSqlResult res = new PgSqlResult();
 			res.Connection = this.Connection;
 			res.Behavior = cmdBehavior;
 			string statement;
@@ -293,7 +293,7 @@ namespace System.Data.SqlClient {
 			return statement;
 		}
 
-		private void ExecuteQuery (string query, SqlResult res)
+		private void ExecuteQuery (string query, PgSqlResult res)
 		{			
 			IntPtr pgResult;
 		
@@ -336,7 +336,7 @@ namespace System.Data.SqlClient {
 				PostgresLibrary.PQclear (pgResult);
 				pgResult = IntPtr.Zero;
 
-				throw new SqlException(0, 0,
+				throw new PgSqlException(0, 0,
 					errorMessage, 0, "",
 					conn.DataSource, "SqlCommand", 0);
 			}
@@ -360,7 +360,7 @@ namespace System.Data.SqlClient {
 
 		// only meant to be used between SqlConnectioin,
 		// SqlCommand, and SqlDataReader
-		internal void OpenReader(SqlDataReader reader) {
+		internal void OpenReader(PgSqlDataReader reader) {
 			conn.OpenReader(reader);
 		}
 
@@ -483,7 +483,7 @@ namespace System.Data.SqlClient {
 				PostgresLibrary.PQclear (pgResult);
 				pgResult = IntPtr.Zero;
 
-				throw new SqlException(0, 0,
+				throw new PgSqlException(0, 0,
 					errorMessage, 0, "",
 					conn.DataSource, "SqlCommand", 0);
 			}
@@ -503,7 +503,7 @@ namespace System.Data.SqlClient {
 		}
 
 		[MonoTODO]
-		public SqlCommand Clone () {
+		public PgSqlCommand Clone () {
 			throw new NotImplementedException ();
 		}
 
@@ -558,7 +558,7 @@ namespace System.Data.SqlClient {
 				// transaction in progress
 
 				// csc
-				Connection = (SqlConnection) value; 
+				Connection = (PgSqlConnection) value; 
 				// mcs
 				// Connection = value; 
 				
@@ -566,7 +566,7 @@ namespace System.Data.SqlClient {
 			}
 		}
 		
-		public SqlConnection Connection {
+		public PgSqlConnection Connection {
 			get { 
 				// conn defaults to null
 				return conn;
@@ -599,7 +599,7 @@ namespace System.Data.SqlClient {
 			}
 		}
 
-		public SqlParameterCollection Parameters {
+		public PgSqlParameterCollection Parameters {
 			get { 
 				return parmCollection;
 			}
@@ -618,13 +618,13 @@ namespace System.Data.SqlClient {
 				// has already begun
 
 				// csc
-				Transaction = (SqlTransaction) value;
+				Transaction = (PgSqlTransaction) value;
 				// mcs
 				// Transaction = value; 
 			}
 		}
 
-		public SqlTransaction Transaction {
+		public PgSqlTransaction Transaction {
 			get { 
 				return trans; 
 			}
@@ -662,7 +662,7 @@ namespace System.Data.SqlClient {
 		}
 
 		[MonoTODO]
-		~SqlCommand() {
+		~PgSqlCommand() {
 			// FIXME: need proper way to release resources
 			// Dispose(false);
 		}
@@ -672,7 +672,7 @@ namespace System.Data.SqlClient {
 
 	// SqlResult is used for passing Result Set data 
 	// from SqlCommand to SqlDataReader
-	internal class SqlResult {
+	internal class PgSqlResult {
 
 		private DataTable dataTableSchema = null; // only will contain the schema
 		private IntPtr pg_result = IntPtr.Zero; // native PostgreSQL PGresult
@@ -680,7 +680,7 @@ namespace System.Data.SqlClient {
 		private int fieldCount = 0;
 		private string[] pgtypes = null; // PostgreSQL types (typname)
 		private bool resultReturned = false;
-		private SqlConnection con = null;
+		private PgSqlConnection con = null;
 		private int rowsAffected = -1;
 		private ExecStatusType execStatus = ExecStatusType.PGRES_FATAL_ERROR;
 		private int currentQuery = -1;
@@ -725,7 +725,7 @@ namespace System.Data.SqlClient {
 
 		}
 
-		internal SqlConnection Connection {
+		internal PgSqlConnection Connection {
 			get {
 				return con;
 			}

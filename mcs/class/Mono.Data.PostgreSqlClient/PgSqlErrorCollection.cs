@@ -1,5 +1,5 @@
 //
-// System.Data.SqlClient.SqlError.cs
+// Mono.Data.PostgreSqlClient.PgSqlError.cs
 //
 // Author:
 //   Rodrigo Moya (rodrigo@ximian.com)
@@ -12,20 +12,20 @@ using System.Collections;
 using System.Data;
 using System.Runtime.InteropServices;
 
-namespace System.Data.SqlClient
+namespace Mono.Data.PostgreSqlClient
 {
 	/// <summary>
 	/// Describes an error from a SQL database.
 	/// </summary>
 	[MonoTODO]
-	public sealed class SqlErrorCollection : ICollection, IEnumerable
+	public sealed class PgSqlErrorCollection : ICollection, IEnumerable
 	{
 		ArrayList errorList = new ArrayList();
 
-		internal SqlErrorCollection() {
+		internal PgSqlErrorCollection() {
 		}
 
-		internal SqlErrorCollection(byte theClass, int lineNumber,
+		internal PgSqlErrorCollection(byte theClass, int lineNumber,
 			string message,	int number, string procedure,
 			string server, string source, byte state) {
 			
@@ -69,9 +69,9 @@ namespace System.Data.SqlClient
 		
 		// Index property (indexer)
 		// [MonoTODO]
-		public SqlError this[int index] {
+		public PgSqlError this[int index] {
 			get {
-				return (SqlError) errorList[index];
+				return (PgSqlError) errorList[index];
 			}
 		}
 
@@ -86,7 +86,7 @@ namespace System.Data.SqlClient
 		}
 		#endregion
 
-		internal void Add(SqlError error) {
+		internal void Add(PgSqlError error) {
 			errorList.Add(error);
 		}
 
@@ -94,7 +94,7 @@ namespace System.Data.SqlClient
 			string message,	int number, string procedure,
 			string server, string source, byte state) {
 			
-			SqlError error = new SqlError(theClass,
+			PgSqlError error = new PgSqlError(theClass,
 				lineNumber, message,
 				number, procedure,
 				server, source, state);
@@ -104,7 +104,7 @@ namespace System.Data.SqlClient
 		#region Destructors
 
 		[MonoTODO]
-		~SqlErrorCollection()
+		~PgSqlErrorCollection()
 		{
 			// FIXME: do the destructor - release resources
 		}

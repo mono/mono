@@ -1,5 +1,5 @@
 //
-// System.Data.SqlClient.SqlDataReader.cs
+// Mono.Data.PostgreSqlClient.PgSqlDataReader.cs
 //
 // Author:
 //   Rodrigo Moya (rodrigo@ximian.com)
@@ -28,19 +28,19 @@ using System.Collections;
 using System.ComponentModel;
 using System.Data;
 
-namespace System.Data.SqlClient {
+namespace Mono.Data.PostgreSqlClient {
 	/// <summary>
 	/// Provides a means of reading one or more forward-only streams
 	/// of result sets obtained by executing a command 
 	/// at a SQL database.
 	/// </summary>
-	//public sealed class SqlDataReader : MarshalByRefObject,
+	//public sealed class PgSqlDataReader : MarshalByRefObject,
 	//	IEnumerable, IDataReader, IDisposable, IDataRecord
-	public sealed class SqlDataReader : IEnumerable, 
+	public sealed class PgSqlDataReader : IEnumerable, 
 		IDataReader, IDataRecord {
 		#region Fields
 
-		private SqlCommand cmd;
+		private PgSqlCommand cmd;
 		private DataTable table = null;
 
 		// columns in a row
@@ -64,7 +64,7 @@ namespace System.Data.SqlClient {
 
 		#region Constructors
 
-		internal SqlDataReader (SqlCommand sqlCmd) {
+		internal PgSqlDataReader (PgSqlCommand sqlCmd) {
 
 			cmd = sqlCmd;
 			open = true;
@@ -97,7 +97,7 @@ namespace System.Data.SqlClient {
 
 		[MonoTODO]
 		public bool NextResult() {
-			SqlResult res;
+			PgSqlResult res;
 			currentRow = -1;
 			bool resultReturned;
 			
@@ -341,7 +341,7 @@ namespace System.Data.SqlClient {
 		}
 
 		//[MonoTODO]
-		//~SqlDataReader() {
+		//~PgSqlDataReader() {
 		//}
 
 		#endregion // Destructors

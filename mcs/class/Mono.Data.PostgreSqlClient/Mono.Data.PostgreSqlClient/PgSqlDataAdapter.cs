@@ -1,5 +1,5 @@
 //
-// System.Data.SqlClient.SqlDataAdapter.cs
+// Mono.Data.PostgreSqlClient.PgSqlDataAdapter.cs
 //
 // Author:
 //   Rodrigo Moya (rodrigo@ximian.com)
@@ -15,21 +15,21 @@ using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
 
-namespace System.Data.SqlClient
+namespace Mono.Data.PostgreSqlClient
 {
 	/// <summary>
 	/// Represents a set of command-related properties that are used 
 	/// to fill the DataSet and update a data source, all this 
 	/// from a SQL database.
 	/// </summary>
-	public sealed class SqlDataAdapter : DbDataAdapter, IDbDataAdapter 
+	public sealed class PgSqlDataAdapter : DbDataAdapter, IDbDataAdapter 
 	{
 		#region Fields
 	
-		SqlCommand deleteCommand;
-		SqlCommand insertCommand;
-		SqlCommand selectCommand;
-		SqlCommand updateCommand;
+		PgSqlCommand deleteCommand;
+		PgSqlCommand insertCommand;
+		PgSqlCommand selectCommand;
+		PgSqlCommand updateCommand;
 
 		static readonly object EventRowUpdated = new object(); 
 		static readonly object EventRowUpdating = new object(); 
@@ -38,26 +38,26 @@ namespace System.Data.SqlClient
 
 		#region Constructors
 		
-		public SqlDataAdapter () 	
-			: this (new SqlCommand ())
+		public PgSqlDataAdapter () 	
+			: this (new PgSqlCommand ())
 		{
 		}
 
-		public SqlDataAdapter (SqlCommand selectCommand) 
+		public PgSqlDataAdapter (PgSqlCommand selectCommand) 
 		{
-			DeleteCommand = new SqlCommand ();
-			InsertCommand = new SqlCommand ();
+			DeleteCommand = new PgSqlCommand ();
+			InsertCommand = new PgSqlCommand ();
 			SelectCommand = selectCommand;
-			UpdateCommand = new SqlCommand ();
+			UpdateCommand = new PgSqlCommand ();
 		}
 
-		public SqlDataAdapter (string selectCommandText, SqlConnection selectConnection) 
-			: this (new SqlCommand (selectCommandText, selectConnection))
+		public PgSqlDataAdapter (string selectCommandText, PgSqlConnection selectConnection) 
+			: this (new PgSqlCommand (selectCommandText, selectConnection))
 		{ 
 		}
 
-		public SqlDataAdapter (string selectCommandText, string selectConnectionString)
-			: this (selectCommandText, new SqlConnection (selectConnectionString))
+		public PgSqlDataAdapter (string selectCommandText, string selectConnectionString)
+			: this (selectCommandText, new PgSqlConnection (selectConnectionString))
 		{
 		}
 
@@ -65,7 +65,7 @@ namespace System.Data.SqlClient
 
 		#region Properties
 
-		public SqlCommand DeleteCommand {
+		public PgSqlCommand DeleteCommand {
 			get {
 				return deleteCommand;
 			}
@@ -74,7 +74,7 @@ namespace System.Data.SqlClient
 			}
 		}
 
-		public SqlCommand InsertCommand {
+		public PgSqlCommand InsertCommand {
 			get {
 				return insertCommand;
 			}
@@ -83,7 +83,7 @@ namespace System.Data.SqlClient
 			}
 		}
 
-		public SqlCommand SelectCommand {
+		public PgSqlCommand SelectCommand {
 			get {
 				return selectCommand;
 			}
@@ -92,7 +92,7 @@ namespace System.Data.SqlClient
 			}
 		}
 
-		public SqlCommand UpdateCommand {
+		public PgSqlCommand UpdateCommand {
 			get {
 				return updateCommand;
 			}
@@ -104,36 +104,36 @@ namespace System.Data.SqlClient
 		IDbCommand IDbDataAdapter.DeleteCommand {
 			get { return DeleteCommand; }
 			set { 
-				if (!(value is SqlCommand)) 
+				if (!(value is PgSqlCommand)) 
 					throw new ArgumentException ();
-				DeleteCommand = (SqlCommand)value;
+				DeleteCommand = (PgSqlCommand)value;
 			}
 		}
 
 		IDbCommand IDbDataAdapter.InsertCommand {
 			get { return InsertCommand; }
 			set { 
-				if (!(value is SqlCommand)) 
+				if (!(value is PgSqlCommand)) 
 					throw new ArgumentException ();
-				InsertCommand = (SqlCommand)value;
+				InsertCommand = (PgSqlCommand)value;
 			}
 		}
 
 		IDbCommand IDbDataAdapter.SelectCommand {
 			get { return SelectCommand; }
 			set { 
-				if (!(value is SqlCommand)) 
+				if (!(value is PgSqlCommand)) 
 					throw new ArgumentException ();
-				SelectCommand = (SqlCommand)value;
+				SelectCommand = (PgSqlCommand)value;
 			}
 		}
 
 		IDbCommand IDbDataAdapter.UpdateCommand {
 			get { return UpdateCommand; }
 			set { 
-				if (!(value is SqlCommand)) 
+				if (!(value is PgSqlCommand)) 
 					throw new ArgumentException ();
-				UpdateCommand = (SqlCommand)value;
+				UpdateCommand = (PgSqlCommand)value;
 			}
 		}
 
@@ -148,39 +148,39 @@ namespace System.Data.SqlClient
 
 		protected override RowUpdatedEventArgs CreateRowUpdatedEvent (DataRow dataRow, IDbCommand command, StatementType statementType, DataTableMapping tableMapping) 
 		{
-			return new SqlRowUpdatedEventArgs (dataRow, command, statementType, tableMapping);
+			return new PgSqlRowUpdatedEventArgs (dataRow, command, statementType, tableMapping);
 		}
 
 
 		protected override RowUpdatingEventArgs CreateRowUpdatingEvent (DataRow dataRow, IDbCommand command, StatementType statementType, DataTableMapping tableMapping) 
 		{
-			return new SqlRowUpdatingEventArgs (dataRow, command, statementType, tableMapping);
+			return new PgSqlRowUpdatingEventArgs (dataRow, command, statementType, tableMapping);
 		}
 
 		protected override void OnRowUpdated (RowUpdatedEventArgs value) 
 		{
-         		SqlRowUpdatedEventHandler handler = (SqlRowUpdatedEventHandler) Events[EventRowUpdated];
-			if ((handler != null) && (value is SqlRowUpdatedEventArgs))
-            			handler(this, (SqlRowUpdatedEventArgs) value);
+         		PgSqlRowUpdatedEventHandler handler = (PgSqlRowUpdatedEventHandler) Events[EventRowUpdated];
+			if ((handler != null) && (value is PgSqlRowUpdatedEventArgs))
+            			handler(this, (PgSqlRowUpdatedEventArgs) value);
 		}
 
 		protected override void OnRowUpdating (RowUpdatingEventArgs value) 
 		{
-         		SqlRowUpdatingEventHandler handler = (SqlRowUpdatingEventHandler) Events[EventRowUpdating];
-			if ((handler != null) && (value is SqlRowUpdatingEventArgs))
-            			handler(this, (SqlRowUpdatingEventArgs) value);
+         		PgSqlRowUpdatingEventHandler handler = (PgSqlRowUpdatingEventHandler) Events[EventRowUpdating];
+			if ((handler != null) && (value is PgSqlRowUpdatingEventArgs))
+            			handler(this, (PgSqlRowUpdatingEventArgs) value);
 		}
 
 		#endregion // Methods
 
 		#region Events and Delegates
 
-		public event SqlRowUpdatedEventHandler RowUpdated {
+		public event PgSqlRowUpdatedEventHandler RowUpdated {
 			add { Events.AddHandler (EventRowUpdated, value); }
 			remove { Events.RemoveHandler (EventRowUpdated, value); }
 		}
 
-		public event SqlRowUpdatingEventHandler RowUpdating {
+		public event PgSqlRowUpdatingEventHandler RowUpdating {
 			add { Events.AddHandler (EventRowUpdating, value); }
 			remove { Events.RemoveHandler (EventRowUpdating, value); }
 		}

@@ -1,5 +1,5 @@
 //
-// System.Data.SqlClient.SqlRowUpdatedEventArgs.cs
+// Mono.Data.PostgreSqlClient.PgSqlRowUpdatedEventArgs.cs
 //
 // Author:
 //   Rodrigo Moya (rodrigo@ximian.com)
@@ -12,23 +12,23 @@ using System;
 using System.Data;
 using System.Data.Common;
 
-namespace System.Data.SqlClient {
-	public sealed class SqlRowUpdatedEventArgs : RowUpdatedEventArgs 
+namespace Mono.Data.PostgreSqlClient {
+	public sealed class PgSqlRowUpdatedEventArgs : RowUpdatedEventArgs 
 	{
 		[MonoTODO]
-		public SqlRowUpdatedEventArgs (DataRow row, IDbCommand command, StatementType statementType, DataTableMapping tableMapping) 
+		public PgSqlRowUpdatedEventArgs (DataRow row, IDbCommand command, StatementType statementType, DataTableMapping tableMapping) 
 			: base (row, command, statementType, tableMapping)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public new SqlCommand Command {
+		public new PgSqlCommand Command {
 			get { throw new NotImplementedException (); }
 		}
 
 		[MonoTODO]
-		~SqlRowUpdatedEventArgs () 
+		~PgSqlRowUpdatedEventArgs () 
 		{
 			throw new NotImplementedException ();
 		}

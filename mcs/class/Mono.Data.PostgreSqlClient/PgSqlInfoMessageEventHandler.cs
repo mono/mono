@@ -1,5 +1,5 @@
 //
-// System.Data.SqlClient.SqlInfoMessageEventHandler.cs
+// Mono.Data.PostgreSqlClient.PgSqlInfoMessageEventHandler.cs
 //
 // Author:
 //   Rodrigo Moya (rodrigo@ximian.com)
@@ -11,9 +11,9 @@
 using System;
 using System.Data;
 
-namespace System.Data.SqlClient
+namespace Mono.Data.PostgreSqlClient
 {
 	public delegate void 
-	SqlInfoMessageEventHandler (object sender,
-				SqlInfoMessageEventArgs e);
+	PgSqlInfoMessageEventHandler (object sender,
+				PgSqlInfoMessageEventArgs e);
 }

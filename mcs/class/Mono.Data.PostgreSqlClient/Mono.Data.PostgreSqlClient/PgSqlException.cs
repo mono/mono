@@ -1,5 +1,5 @@
 //
-// System.Data.SqlClient.SqlException.cs
+// Mono.Data.PostgreSqlClient.PgSqlException.cs
 //
 // Author:
 //   Rodrigo Moya (rodrigo@ximian.com)
@@ -11,26 +11,26 @@ using System;
 using System.Data;
 using System.Runtime.Serialization;
 
-namespace System.Data.SqlClient
+namespace Mono.Data.PostgreSqlClient
 {
 	/// <summary>
 	/// Exceptions, as returned by SQL databases.
 	/// </summary>
-	public sealed class SqlException : SystemException
+	public sealed class PgSqlException : SystemException
 	{
-		private SqlErrorCollection errors; 
+		private PgSqlErrorCollection errors; 
 
-		internal SqlException() 
+		internal PgSqlException() 
 			: base("a SQL Exception has occurred") {
-			errors = new SqlErrorCollection();
+			errors = new PgSqlErrorCollection();
 		}
 
-		internal SqlException(byte theClass, int lineNumber,
+		internal PgSqlException(byte theClass, int lineNumber,
 			string message,	int number, string procedure,
 			string server, string source, byte state) 
 				: base(message) {	
 			
-			errors = new SqlErrorCollection (theClass, 
+			errors = new PgSqlErrorCollection (theClass, 
 				lineNumber, message,
 				number, procedure,
 				server, source, state);
@@ -53,7 +53,7 @@ namespace System.Data.SqlClient
 		}
 
 		[MonoTODO]
-		public SqlErrorCollection Errors {
+		public PgSqlErrorCollection Errors {
 			get { 
 				return errors;
 			}
@@ -195,7 +195,7 @@ namespace System.Data.SqlClient
 		}
 
 		[MonoTODO]
-		~SqlException() {
+		~PgSqlException() {
 			// FIXME: destructor to release resources
 		}
 

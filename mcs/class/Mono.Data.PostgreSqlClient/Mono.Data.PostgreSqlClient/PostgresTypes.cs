@@ -10,16 +10,15 @@
 
 // Note: this might become PostgresType and PostgresTypeCollection
 //       also, the PostgresTypes that exist as an inner internal class
-//       within SqlConnection maybe moved here in the future
+//       within PgSqlConnection maybe moved here in the future
 
 using System;
 using System.Collections;
 using System.Data;
 using System.Data.Common;
-using System.Data.SqlClient;
 using System.Text;
 
-namespace System.Data.SqlClient {
+namespace Mono.Data.PostgreSqlClient {
 
 	internal struct PostgresType {
 		public int oid;

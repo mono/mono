@@ -1,5 +1,5 @@
 //
-// System.Data.SqlClient.SqlClientPermission.cs
+// Mono.Data.PostgreSqlClient.PgSqlClientPermission.cs
 //
 // Author:
 //   Rodrigo Moya (rodrigo@ximian.com)
@@ -14,22 +14,22 @@ using System.Data.Common;
 using System.Security;
 using System.Security.Permissions;
 
-namespace System.Data.SqlClient {
+namespace Mono.Data.PostgreSqlClient {
 
-	public sealed class SqlClientPermission : DBDataPermission {
+	public sealed class PgSqlClientPermission : DBDataPermission {
 		
 		[MonoTODO]
-		public SqlClientPermission() {
+		public PgSqlClientPermission() {
 			// FIXME: do constructor
 		}
 
 		[MonoTODO]
-		public SqlClientPermission(PermissionState state) {
+		public PgSqlClientPermission(PermissionState state) {
 			// FIXME: do constructor
 		}
 
 		[MonoTODO]
-		public SqlClientPermission(PermissionState state,
+		public PgSqlClientPermission(PermissionState state,
 			bool allowBlankPassword) { 
 			throw new NotImplementedException ();
 		}
@@ -71,7 +71,7 @@ namespace System.Data.SqlClient {
 		}
 
 		[MonoTODO]
-		~SqlClientPermission() {
+		~PgSqlClientPermission() {
 			// FIXME: destructor to release resources
 		}
 	}

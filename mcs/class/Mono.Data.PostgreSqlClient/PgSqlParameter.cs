@@ -1,5 +1,5 @@
 //
-// System.Data.SqlClient.SqlParameter.cs
+// Mono.Data.PostgreSqlClient.PgSqlParameter.cs
 //
 // Author:
 //   Rodrigo Moya (rodrigo@ximian.com)
@@ -13,16 +13,16 @@ using System.Data;
 using System.Data.Common;
 using System.Runtime.InteropServices;
 
-namespace System.Data.SqlClient
+namespace Mono.Data.PostgreSqlClient
 {
 	/// <summary>
 	/// Represents a parameter to a Command object, and optionally, 
 	/// its mapping to DataSet columns; and is implemented by .NET 
 	/// data providers that access data sources.
 	/// </summary>
-	//public sealed class SqlParameter : MarshalByRefObject,
+	//public sealed class PgSqlParameter : MarshalByRefObject,
 	//	IDbDataParameter, IDataParameter, ICloneable
-	public sealed class SqlParameter : IDbDataParameter, IDataParameter
+	public sealed class PgSqlParameter : IDbDataParameter, IDataParameter
 	{
 		private string parmName;
 		private SqlDbType dbtype;
@@ -38,24 +38,24 @@ namespace System.Data.SqlClient
 		private int offset;
 
 		[MonoTODO]
-		public SqlParameter () {
+		public PgSqlParameter () {
 		
 		}
 
 		[MonoTODO]
-		public SqlParameter (string parameterName, object value) {
+		public PgSqlParameter (string parameterName, object value) {
 			this.parmName = parameterName;
 			this.objValue = value;
 		}
 		
 		[MonoTODO]
-		public SqlParameter(string parameterName, SqlDbType dbType) {
+		public PgSqlParameter(string parameterName, SqlDbType dbType) {
 			this.parmName = parameterName;
 			this.dbtype = dbType;
 		}
 
 		[MonoTODO]
-		public SqlParameter(string parameterName, SqlDbType dbType,
+		public PgSqlParameter(string parameterName, SqlDbType dbType,
 			int size) {
 
 			this.parmName = parameterName;
@@ -64,7 +64,7 @@ namespace System.Data.SqlClient
 		}
 		
 		[MonoTODO]
-		public SqlParameter(string parameterName, SqlDbType dbType,
+		public PgSqlParameter(string parameterName, SqlDbType dbType,
 			int size, string sourceColumn) {
 
 			this.parmName = parameterName;
@@ -74,7 +74,7 @@ namespace System.Data.SqlClient
 		}
 			 
 		[MonoTODO]
-		public SqlParameter(string parameterName, SqlDbType dbType,
+		public PgSqlParameter(string parameterName, SqlDbType dbType,
 			int size, ParameterDirection direction, 
 			bool isNullable, byte precision,
 			byte scale, string sourceColumn,

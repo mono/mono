@@ -1,5 +1,5 @@
 //
-// System.Data.SqlClient.SqlParameterCollection.cs
+// Mono.Data.PostgreSqlClient.PgSqlParameterCollection.cs
 //
 // Author:
 //   Rodrigo Moya (rodrigo@ximian.com)
@@ -14,15 +14,15 @@ using System.Data;
 using System.Data.Common;
 using System.Collections;
 
-namespace System.Data.SqlClient
+namespace Mono.Data.PostgreSqlClient
 {
 	/// <summary>
 	/// Collects all parameters relevant to a Command object 
 	/// and their mappings to DataSet columns.
 	/// </summary>
-	// public sealed class SqlParameterCollection : MarshalByRefObject,
+	// public sealed class PgSqlParameterCollection : MarshalByRefObject,
 	// IDataParameterCollection, IList, ICollection, IEnumerable
-	public sealed class SqlParameterCollection : IDataParameterCollection,
+	public sealed class PgSqlParameterCollection : IDataParameterCollection,
 		IList
 	{
 		private ArrayList parameterList = new ArrayList();
@@ -38,24 +38,24 @@ namespace System.Data.SqlClient
 		{
 			// Call the add version that receives a SqlParameter 
 			
-			// Check if value is a SqlParameter.
+			// Check if value is a PgSqlParameter.
 			CheckType(value);
-			Add((SqlParameter) value);
+			Add((PgSqlParameter) value);
 
 			return IndexOf (value);
 		}
 
 		
-		public SqlParameter Add(SqlParameter value)
+		public PgSqlParameter Add(PgSqlParameter value)
 		{
 			parameterList.Add(value);
 			return value;
 		}
 
 		
-		public SqlParameter Add(string parameterName, object value)
+		public PgSqlParameter Add(string parameterName, object value)
 		{
-			SqlParameter sqlparam = new SqlParameter();
+			PgSqlParameter sqlparam = new PgSqlParameter();
 			sqlparam.Value = value;
 			// TODO: Get the dbtype and Sqldbtype from system type of value.
 			
@@ -63,19 +63,19 @@ namespace System.Data.SqlClient
 		}
 
 		
-		public SqlParameter Add(string parameterName, SqlDbType sqlDbType)
+		public PgSqlParameter Add(string parameterName, SqlDbType sqlDbType)
 		{
-			SqlParameter sqlparam = new SqlParameter();
+			PgSqlParameter sqlparam = new PgSqlParameter();
 			sqlparam.ParameterName = parameterName;
 			sqlparam.SqlDbType = sqlDbType;
 			return Add(sqlparam);			
 		}
 
 		
-		public SqlParameter Add(string parameterName,
+		public PgSqlParameter Add(string parameterName,
 			SqlDbType sqlDbType, int size)
 		{
-			SqlParameter sqlparam = new SqlParameter();
+			PgSqlParameter sqlparam = new PgSqlParameter();
 			sqlparam.ParameterName = parameterName;
 			sqlparam.SqlDbType = sqlDbType;
 			sqlparam.Size = size;
@@ -83,10 +83,10 @@ namespace System.Data.SqlClient
 		}
 
 		
-		public SqlParameter Add(string parameterName,
+		public PgSqlParameter Add(string parameterName,
 			SqlDbType sqlDbType, int size, string sourceColumn)
 		{
-			SqlParameter sqlparam = new SqlParameter();
+			PgSqlParameter sqlparam = new PgSqlParameter();
 			sqlparam.ParameterName = parameterName;
 			sqlparam.SqlDbType = sqlDbType;
 			sqlparam.Size = size;
@@ -105,7 +105,7 @@ namespace System.Data.SqlClient
 		{
 			// Check if value is a SqlParameter
 			CheckType(value);
-			return Contains(((SqlParameter)value).ParameterName);
+			return Contains(((PgSqlParameter)value).ParameterName);
 		}
 
 
@@ -113,7 +113,7 @@ namespace System.Data.SqlClient
 		public bool Contains(string value)
 		{
 			for(int p = 0; p < parameterList.Count; p++) {
-				if(((SqlParameter)parameterList[p]).ParameterName.Equals(value))
+				if(((PgSqlParameter)parameterList[p]).ParameterName.Equals(value))
 					return true;
 			}
 			return false;
@@ -130,7 +130,7 @@ namespace System.Data.SqlClient
 		{
 			// Check if value is a SqlParameter
 			CheckType(value);
-			return IndexOf(((SqlParameter)value).ParameterName);
+			return IndexOf(((PgSqlParameter)value).ParameterName);
 		}
 
 		
@@ -139,7 +139,7 @@ namespace System.Data.SqlClient
 			int p = -1;
 
 			for(p = 0; p < parameterList.Count; p++) {
-				if(((SqlParameter)parameterList[p]).ParameterName.Equals(parameterName))
+				if(((PgSqlParameter)parameterList[p]).ParameterName.Equals(parameterName))
 					return p;
 			}
 			return p;
@@ -179,22 +179,22 @@ namespace System.Data.SqlClient
 		object IList.this[int index] {
 			[MonoTODO]
 			get { 
-				return (SqlParameter) this[index];
+				return (PgSqlParameter) this[index];
 			}
 			
 			[MonoTODO]
 			set { 
-				this[index] = (SqlParameter) value;
+				this[index] = (PgSqlParameter) value;
 			}
 		}
 
-		public SqlParameter this[int index] {
+		public PgSqlParameter this[int index] {
 			get {	
-				return (SqlParameter) parameterList[index];
+				return (PgSqlParameter) parameterList[index];
 			}			  
 			
 			set {	
-				parameterList[index] = (SqlParameter) value;
+				parameterList[index] = (PgSqlParameter) value;
 			}			  
 		}
 
@@ -207,22 +207,22 @@ namespace System.Data.SqlClient
 			[MonoTODO]
 			set { 
 				CheckType(value);
-				this[parameterName] = (SqlParameter) value;
+				this[parameterName] = (PgSqlParameter) value;
 			}
 		}
 
-		public SqlParameter this[string parameterName] {
+		public PgSqlParameter this[string parameterName] {
 			get {	
 				for(int p = 0; p < parameterList.Count; p++) {
-					if(parameterName.Equals(((SqlParameter)parameterList[p]).ParameterName))
-						return (SqlParameter) parameterList[p];
+					if(parameterName.Equals(((PgSqlParameter)parameterList[p]).ParameterName))
+						return (PgSqlParameter) parameterList[p];
 				}
 				throw new IndexOutOfRangeException("The specified name does not exist: " + parameterName);
 			}	  
 			
 			set {	
 				for(int p = 0; p < parameterList.Count; p++) {
-					if(parameterName.Equals(((SqlParameter)parameterList[p]).ParameterName))
+					if(parameterName.Equals(((PgSqlParameter)parameterList[p]).ParameterName))
 						parameterList[p] = value;
 				}
 				throw new IndexOutOfRangeException("The specified name does not exist: " + parameterName);
@@ -255,12 +255,12 @@ namespace System.Data.SqlClient
 		
 		/// <summary>
 		/// This method checks if the parameter value is of 
-		/// SqlParameter type. If it doesn't, throws an InvalidCastException.
+		/// PgSqlParameter type. If it doesn't, throws an InvalidCastException.
 		/// </summary>
 		private void CheckType(object value)
 		{
-			if(!(value is SqlParameter))
-				throw new InvalidCastException("Only SQLParameter objects can be used.");
+			if(!(value is PgSqlParameter))
+				throw new InvalidCastException("Only PgSqlParameter objects can be used.");
 		}
 		
 	}

@@ -15,7 +15,7 @@ using System;
 using System.Data;
 using System.Text;
 
-namespace System.Data.SqlClient {
+namespace Mono.Data.PostgreSqlClient {
 
 	enum PostgresBindVariableCharacter {
 		Semicolon,
@@ -27,7 +27,7 @@ namespace System.Data.SqlClient {
 
 		private string sql = "";
 		private string resultSql = "";
-		private SqlParameterCollection parmsCollection = null;
+		private PgSqlParameterCollection parmsCollection = null;
 		
 		static private PostgresBindVariableCharacter PgbindChar = PostgresBindVariableCharacter.Semicolon;
 		static char bindChar;
@@ -49,7 +49,7 @@ namespace System.Data.SqlClient {
 			}
 		}
 				
-		public ParmUtil(string query, SqlParameterCollection parms) {
+		public ParmUtil(string query, PgSqlParameterCollection parms) {
 			sql = query;
 			parmsCollection = parms;
 		}
@@ -150,7 +150,7 @@ namespace System.Data.SqlClient {
 #if DEBUG_ParmUtil
 				Console.WriteLine("Parameter Found: " + p);
 #endif
-				SqlParameter prm = parmsCollection[p];
+				PgSqlParameter prm = parmsCollection[p];
 
 #if DEBUG_ParmUtil																	
 				// DEBUG 

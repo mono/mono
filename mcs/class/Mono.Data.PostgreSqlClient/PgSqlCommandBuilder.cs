@@ -1,5 +1,5 @@
 //
-// System.Data.SqlClient.SqlCommandBuilder.cs
+// Mono.Data.PostgreSqlClient.PgSqlCommandBuilder.cs
 //
 // Author:
 //   Rodrigo Moya (rodrigo@ximian.com)
@@ -12,27 +12,27 @@ using System;
 using System.Data;
 using System.ComponentModel;
 
-namespace System.Data.SqlClient {
+namespace Mono.Data.PostgreSqlClient {
 
 	/// <summary>
 	/// Builder of one command
 	/// that will be used in manipulating a table for
 	/// a DataSet that is assoicated with a database.
 	/// </summary>
-	public sealed class SqlCommandBuilder : Component {
+	public sealed class PgSqlCommandBuilder : Component {
 		
 		[MonoTODO]
-		public SqlCommandBuilder() {
+		public PgSqlCommandBuilder() {
 
 		}
 
 		[MonoTODO]
-		public SqlCommandBuilder(SqlDataAdapter adapter) {
+		public PgSqlCommandBuilder(PgSqlDataAdapter adapter) {
 		
 		}
 
 		[MonoTODO]
-		public SqlDataAdapter DataAdapter {
+		public PgSqlDataAdapter DataAdapter {
 			get {
 				throw new NotImplementedException ();
 			}
@@ -65,22 +65,22 @@ namespace System.Data.SqlClient {
 		}
 
 		[MonoTODO]
-		public static void DeriveParameters(SqlCommand command) {
+		public static void DeriveParameters(PgSqlCommand command) {
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public SqlCommand GetDeleteCommand() {
+		public PgSqlCommand GetDeleteCommand() {
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public SqlCommand GetInsertCommand() {
+		public PgSqlCommand GetInsertCommand() {
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public SqlCommand GetUpdateCommand() {
+		public PgSqlCommand GetUpdateCommand() {
 			throw new NotImplementedException ();
 		}
 
@@ -95,7 +95,7 @@ namespace System.Data.SqlClient {
 		}
 
 		[MonoTODO]
-		~SqlCommandBuilder() {
+		~PgSqlCommandBuilder() {
 			// FIXME: create destructor - release resources
 		}
 	}

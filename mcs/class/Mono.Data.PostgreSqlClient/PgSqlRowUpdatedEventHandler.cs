@@ -1,5 +1,5 @@
 //
-// System.Data.SqlClient.SqlRowUpdatedEventHandler.cs
+// Mono.Data.PostgreSqlClient.PgSqlRowUpdatedEventHandler.cs
 //
 // Author:
 //   Rodrigo Moya (rodrigo@ximian.com)
@@ -11,8 +11,8 @@
 using System;
 using System.Data;
 
-namespace System.Data.SqlClient
+namespace Mono.Data.PostgreSqlClient
 {
-	public delegate void SqlRowUpdatedEventHandler(object sender,
-					SqlRowUpdatedEventArgs e);
+	public delegate void PgSqlRowUpdatedEventHandler(object sender,
+					PgSqlRowUpdatedEventArgs e);
 }
