@@ -29,25 +29,25 @@ namespace System.Web.UI.WebControls
 	[Designer ("System.Web.UI.Design.WebControls.XmlDesigner, " + Consts.AssemblySystem_Design, typeof (IDesigner))]
 	public class Xml : Control
 	{
-		private XmlDocument      document;
-		private string           documentContent;
-		private string           documentSource;
-		private XslTransform     transform;
-		private XsltArgumentList transformArgumentList;
-		private string           transformSource;
+		static XslTransform defaultTransform;
 
-		private XPathDocument xpathDoc;
+		XmlDocument document;
+		string documentContent;
+		string documentSource;
+		XslTransform transform;
+		XsltArgumentList transformArgumentList;
+		string transformSource;
+		XPathDocument xpathDoc;
 
-		private static XslTransform defaultTransform;
-
-		static Xml()
+		static Xml ()
 		{
-			XmlTextReader reader = new XmlTextReader(new StringReader("<xsl:stylesheet version='1.0' " +
+			XmlTextReader reader = new XmlTextReader (new StringReader("<xsl:stylesheet version='1.0' " +
 			                                        "xmlns:xsl='http://www.w3.org/1999/XSL/Transform'>" +
 			                                        "<xsl:template match=\"*\">" +
 			                                        "<xsl:copy-of select=\".\"/>" +
 			                                        "</xsl:template>" +
 			                                        "</xsl:stylesheet>"));
+
 			defaultTransform = new XslTransform();
 #if NET_1_0
 			defaultTransform.Load (reader);
@@ -56,7 +56,7 @@ namespace System.Web.UI.WebControls
 #endif
 		}
 
-		public Xml(): base()
+		public Xml ()
 		{
 		}
 
@@ -64,48 +64,42 @@ namespace System.Web.UI.WebControls
 		private void LoadXmlDoc ()
 		{
 			if (documentContent != null && documentContent.Length > 0) {
-				document = new XmlDocument();
+				document = new XmlDocument ();
 				document.LoadXml (documentContent);
 				return;
 			}
 
 			if (documentSource != null && documentSource.Length != 0) {
-				document = new XmlDocument();
+				document = new XmlDocument ();
 				document.Load (documentSource);
 			}
 		}
 
 		[Browsable (false), DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[WebSysDescription ("This is the XML document that is used for the XML Webcontrol.")]
-		public XmlDocument Document
-		{
-			get
-			{
-				if(document == null)
-					LoadXmlDoc();
+		public XmlDocument Document {
+			get {
+				if (document == null)
+					LoadXmlDoc ();
 				return document;
 			}
-			set
-			{
+			set {
 				documentSource  = null;
 				documentContent = null;
-				xpathDoc        = null;
-				document        = value;
+				xpathDoc = null;
+				document = value;
 			}
 		}
 
 		[Browsable (false), DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[WebSysDescription ("The XML content that is transformed for the XML Webcontrol.")]
-		public string DocumentContent
-		{
-			get
-			{
+		public string DocumentContent {
+			get {
 				return String.Empty;
 			}
-			set
-			{
-				document        = null;
-				xpathDoc        = null;
+			set {
+				document = null;
+				xpathDoc = null;
 				documentContent = value;
 			}
 		}
@@ -113,77 +107,61 @@ namespace System.Web.UI.WebControls
 		[DefaultValue (""), Bindable (true), WebCategory ("Behavior")]
 		[Editor ("System.Web.UI.Design.XmlUrlEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
 		[WebSysDescription ("The URL or the source of the XML content that is transformed for the XML Webcontrol.")]
-		public string DocumentSource
-		{
-			get
-			{
-				if(documentSource != null)
+		public string DocumentSource {
+			get {
+				if (documentSource != null)
 					return documentSource;
 				return String.Empty;
 			}
-			set
-			{
-				document        = null;
+			set {
+				document = null;
 				documentContent = null;
-				xpathDoc        = null;
-				documentSource  = value;
+				xpathDoc = null;
+				documentSource = value;
 			}
 		}
 
 		[Browsable (false), DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[WebSysDescription ("The XSL transform that is applied to this XML Webcontrol.")]
-		public XslTransform Transform
-		{
-			get
-			{
+		public XslTransform Transform {
+			get {
 				return transform;
 			}
-			set
-			{
+			set {
 				transformSource = null;
-				transform       = value;
+				transform = value;
 			}
 		}
 
 		[DefaultValue (""), Bindable (true), WebCategory ("Behavior")]
 		[Editor ("System.Web.UI.Design.XmlUrlEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
 		[WebSysDescription ("An URL specifying the source that is used for the XSL transformation.")]
-		public string TransformSource
-		{
-			get
-			{
-				if(transformSource != null)
+		public string TransformSource {
+			get {
+				if (transformSource != null)
 					return transformSource;
 				return String.Empty;
 			}
-			set
-			{
-				transform       = null;
+			set {
+				transform = null;
 				transformSource = value;
 			}
 		}
 
 		[Browsable (false), DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[WebSysDescription ("Arguments that are used by the XSL Transform.")]
-		public XsltArgumentList TransformArgumentList
-		{
-			get
-			{
-				return transformArgumentList;
-			}
-			set
-			{
-				transformArgumentList = value;
-			}
+		public XsltArgumentList TransformArgumentList {
+			get { return transformArgumentList; }
+			set { transformArgumentList = value; }
 		}
 
-		protected override void AddParsedSubObject(object obj)
+		protected override void AddParsedSubObject (object obj)
 		{
-			if(obj is LiteralControl)
-			{
-				DocumentContent = ((LiteralControl)obj).Text;
+			if (obj is LiteralControl) {
+				DocumentContent = ((LiteralControl) obj).Text;
 				return;
 			}
+
 			throw new HttpException (HttpRuntime.FormatResourceString (
 							"Cannot_Have_Children_of_Type",
 							"Xml",
@@ -193,7 +171,7 @@ namespace System.Web.UI.WebControls
 		[MonoTODO("security")]
 		private void LoadXpathDoc ()
 		{
-			if(documentContent != null && documentContent.Length > 0) {
+			if (documentContent != null && documentContent.Length > 0) {
 				xpathDoc = new XPathDocument (new StringReader (documentContent));
 				return;
 			}
@@ -218,26 +196,32 @@ namespace System.Web.UI.WebControls
 
 		protected override void Render(HtmlTextWriter output)
 		{
-			if(document == null)
-			{
+			if (document == null) {
 				LoadXpathDoc();
 			}
 
 			LoadTransform();
-			if(document == null && xpathDoc == null)
-			{
+			if (document == null && xpathDoc == null) {
 				return;
 			}
-			if(transform == null)
-			{
+
+			if (transform == null) {
 				transform = defaultTransform;
 			}
-			if(document != null)
-			{
+
+			if (document != null) {
+#if NET_1_0
 				Transform.Transform(document, transformArgumentList, output);
+#else
+				Transform.Transform(document, transformArgumentList, output, null);
+#endif
 				return;
 			}
+#if NET_1_0
 			Transform.Transform(xpathDoc, transformArgumentList, output);
+#else
+			Transform.Transform(xpathDoc, transformArgumentList, output, null);
+#endif
 		}
 	}
 }

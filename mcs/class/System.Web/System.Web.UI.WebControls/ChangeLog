@@ -1,3 +1,7 @@
+2004-01-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Xml.cs: mono-stylized and removed warnings.
+
 2004-1-1 Alon Gazit <along@mainsoft.com>
 	* RadioButtonList.cs: update RenderItem() so that each RadioButton
 	is enabled or disabled like the RadioButtonList.
