@@ -36,8 +36,9 @@ DIRS =	corlib				\
 	Npgsql				\
 	PEAPI				\
 	Mono.Security			\
-	ICSharpCode.SharpZipLib	\
-	ByteFX.Data	
+	ICSharpCode.SharpZipLib		\
+	ByteFX.Data			\
+	Commons.Xml.Relaxng	
 
 default: all
 
