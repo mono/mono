@@ -298,6 +298,8 @@ namespace System.Net.Sockets
 		private SocketType socket_type;
 		private ProtocolType protocol_type;
 		private bool blocking=true;
+		private int pendingEnds;
+		private int closeDelayed;
 
 		/*
 		 *	These two fields are looked up by name by the runtime, don't change
@@ -309,6 +311,8 @@ namespace System.Net.Sockets
 		 * the last IO operation
 		 */
 		private bool connected=false;
+		/* true if we called Close_internal */
+		private bool closed;
 
 		/* Used in LocalEndPoint and RemoteEndPoint if the
 		 * Mono.Posix assembly is available
@@ -468,6 +472,9 @@ namespace System.Net.Sockets
 		
 		public int Available {
 			get {
+				if (disposed && closed)
+					throw new ObjectDisposedException (GetType ().ToString ());
+
 				return(Available_internal(socket));
 			}
 		}
@@ -505,6 +512,9 @@ namespace System.Net.Sockets
 		[MonoTODO("Support non-IP endpoints")]
 		public EndPoint LocalEndPoint {
 			get {
+				if (disposed && closed)
+					throw new ObjectDisposedException (GetType ().ToString ());
+
 				SocketAddress sa;
 				
 				sa=LocalEndPoint_internal(socket);
@@ -535,6 +545,9 @@ namespace System.Net.Sockets
 		[MonoTODO("Support non-IP endpoints")]
 		public EndPoint RemoteEndPoint {
 			get {
+				if (disposed && closed)
+					throw new ObjectDisposedException (GetType ().ToString ());
+
 				SocketAddress sa;
 				
 				sa=RemoteEndPoint_internal(socket);
@@ -627,6 +640,9 @@ namespace System.Net.Sockets
 		private extern static IntPtr Accept_internal(IntPtr sock);
 		
 		public Socket Accept() {
+			if (disposed && closed)
+				throw new ObjectDisposedException (GetType ().ToString ());
+
 			IntPtr sock=Accept_internal(socket);
 			
 			return(new Socket(this.AddressFamily, this.SocketType,
@@ -635,10 +651,16 @@ namespace System.Net.Sockets
 
 		public IAsyncResult BeginAccept(AsyncCallback callback,
 						object state) {
+
+			if (disposed && closed)
+				throw new ObjectDisposedException (GetType ().ToString ());
+
+			Interlocked.Increment (ref pendingEnds);
 			SocketAsyncResult req=new SocketAsyncResult(state);
 			Worker worker=new Worker(this, callback, req);
 			req.Worker=worker;
 			Thread child=new Thread(new ThreadStart(worker.Accept));
+			child.IsBackground = true;
 			child.Start();
 			return(req);
 		}
@@ -646,11 +668,20 @@ namespace System.Net.Sockets
 		public IAsyncResult BeginConnect(EndPoint end_point,
 						 AsyncCallback callback,
 						 object state) {
+
+			if (disposed && closed)
+				throw new ObjectDisposedException (GetType ().ToString ());
+
+			if (end_point == null)
+				throw new ArgumentNullException ("end_point");
+
+			Interlocked.Increment (ref pendingEnds);
 			SocketAsyncResult req=new SocketAsyncResult(state);
 			Worker worker=new Worker(this, end_point, callback,
 						 req);
 			req.Worker=worker;
 			Thread child=new Thread(new ThreadStart(worker.Connect));
+			child.IsBackground = true;
 			child.Start();
 			return(req);
 		}
@@ -660,11 +691,29 @@ namespace System.Net.Sockets
 						 SocketFlags socket_flags,
 						 AsyncCallback callback,
 						 object state) {
+
+			if (disposed && closed)
+				throw new ObjectDisposedException (GetType ().ToString ());
+
+			if (buffer == null)
+				throw new ArgumentNullException ("buffer");
+
+			if (offset < 0)
+				throw new ArgumentOutOfRangeException ("offset must be >= 0");
+
+			if (size < 0)
+				throw new ArgumentOutOfRangeException ("size must be >= 0");
+
+			if (offset + size > buffer.Length)
+				throw new ArgumentOutOfRangeException ("offset + size exceeds the buffer length");
+
+			Interlocked.Increment (ref pendingEnds);
 			SocketAsyncResult req=new SocketAsyncResult(state);
 			Worker worker=new Worker(this, buffer, offset, size,
 						 socket_flags, callback, req);
 			req.Worker=worker;
 			Thread child=new Thread(new ThreadStart(worker.Receive));
+			child.IsBackground = true;
 			child.Start();
 			return(req);
 		}
@@ -675,12 +724,29 @@ namespace System.Net.Sockets
 						     ref EndPoint remote_end,
 						     AsyncCallback callback,
 						     object state) {
+			if (disposed && closed)
+				throw new ObjectDisposedException (GetType ().ToString ());
+
+			if (buffer == null)
+				throw new ArgumentNullException ("buffer");
+
+			if (offset < 0)
+				throw new ArgumentOutOfRangeException ("offset must be >= 0");
+
+			if (size < 0)
+				throw new ArgumentOutOfRangeException ("size must be >= 0");
+
+			if (offset + size > buffer.Length)
+				throw new ArgumentOutOfRangeException ("offset + size exceeds the buffer length");
+
+			Interlocked.Increment (ref pendingEnds);
 			SocketAsyncResult req=new SocketAsyncResult(state);
 			Worker worker=new Worker(this, buffer, offset, size,
 						 socket_flags, remote_end,
 						 callback, req);
 			req.Worker=worker;
 			Thread child=new Thread(new ThreadStart(worker.ReceiveFrom));
+			child.IsBackground = true;
 			child.Start();
 			return(req);
 		}
@@ -690,11 +756,28 @@ namespace System.Net.Sockets
 					      SocketFlags socket_flags,
 					      AsyncCallback callback,
 					      object state) {
+			if (disposed && closed)
+				throw new ObjectDisposedException (GetType ().ToString ());
+
+			if (buffer == null)
+				throw new ArgumentNullException ("buffer");
+
+			if (offset < 0)
+				throw new ArgumentOutOfRangeException ("offset must be >= 0");
+
+			if (size < 0)
+				throw new ArgumentOutOfRangeException ("size must be >= 0");
+
+			if (offset + size > buffer.Length)
+				throw new ArgumentOutOfRangeException ("offset + size exceeds the buffer length");
+
+			Interlocked.Increment (ref pendingEnds);
 			SocketAsyncResult req=new SocketAsyncResult(state);
 			Worker worker=new Worker(this, buffer, offset, size,
 						 socket_flags, callback, req);
 			req.Worker=worker;
 			Thread child=new Thread(new ThreadStart(worker.Send));
+			child.IsBackground = true;
 			child.Start();
 			return(req);
 		}
@@ -705,12 +788,29 @@ namespace System.Net.Sockets
 						EndPoint remote_end,
 						AsyncCallback callback,
 						object state) {
+			if (disposed && closed)
+				throw new ObjectDisposedException (GetType ().ToString ());
+
+			if (buffer == null)
+				throw new ArgumentNullException ("buffer");
+
+			if (offset < 0)
+				throw new ArgumentOutOfRangeException ("offset must be >= 0");
+
+			if (size < 0)
+				throw new ArgumentOutOfRangeException ("size must be >= 0");
+
+			if (offset + size > buffer.Length)
+				throw new ArgumentOutOfRangeException ("offset + size exceeds the buffer length");
+
+			Interlocked.Increment (ref pendingEnds);
 			SocketAsyncResult req=new SocketAsyncResult(state);
 			Worker worker=new Worker(this, buffer, offset, size,
 						 socket_flags, remote_end,
 						 callback, req);
 			req.Worker=worker;
 			Thread child=new Thread(new ThreadStart(worker.SendTo));
+			child.IsBackground = true;
 			child.Start();
 			return(req);
 		}
@@ -721,8 +821,11 @@ namespace System.Net.Sockets
 							 SocketAddress sa);
 
 		public void Bind(EndPoint local_end) {
+			if (disposed && closed)
+				throw new ObjectDisposedException (GetType ().ToString ());
+
 			if(local_end==null) {
-				throw new ArgumentNullException();
+				throw new ArgumentNullException("local_end");
 			}
 			
 			Bind_internal(socket, local_end.Serialize());
@@ -733,7 +836,7 @@ namespace System.Net.Sockets
 		private extern static void Close_internal(IntPtr socket);
 		
 		public void Close() {
-			this.Dispose();
+			((IDisposable) this).Dispose ();
 		}
 
 		// Connects to the remote address
@@ -742,8 +845,11 @@ namespace System.Net.Sockets
 							    SocketAddress sa);
 
 		public void Connect(EndPoint remote_end) {
+			if (disposed && closed)
+				throw new ObjectDisposedException (GetType ().ToString ());
+
 			if(remote_end==null) {
-				throw new ArgumentNullException();
+				throw new ArgumentNullException("remote_end");
 			}
 
 			Connect_internal(socket, remote_end.Serialize());
@@ -751,52 +857,120 @@ namespace System.Net.Sockets
 		}
 		
 		public Socket EndAccept(IAsyncResult result) {
-			SocketAsyncResult req=(SocketAsyncResult)result;
+			if (disposed && closed)
+				throw new ObjectDisposedException (GetType ().ToString ());
+
+			if (result == null)
+				throw new ArgumentNullException ("result");
+
+			SocketAsyncResult req = result as SocketAsyncResult;
+			if (req == null)
+				throw new ArgumentException ("Invalid IAsyncResult");
 
 			result.AsyncWaitHandle.WaitOne();
+			Interlocked.Decrement (ref pendingEnds);
+			CheckIfClose ();
 			req.CheckIfThrowDelayedException();
 			return(req.Worker.Socket);
 		}
 
 		public void EndConnect(IAsyncResult result) {
-			SocketAsyncResult req=(SocketAsyncResult)result;
+			if (disposed && closed)
+				throw new ObjectDisposedException (GetType ().ToString ());
+
+			if (result == null)
+				throw new ArgumentNullException ("result");
+
+			SocketAsyncResult req = result as SocketAsyncResult;
+			if (req == null)
+				throw new ArgumentException ("Invalid IAsyncResult");
 
 			result.AsyncWaitHandle.WaitOne();
+			Interlocked.Decrement (ref pendingEnds);
+			CheckIfClose ();
 			req.CheckIfThrowDelayedException();
 		}
 
 		public int EndReceive(IAsyncResult result) {
-			SocketAsyncResult req=(SocketAsyncResult)result;
+			if (disposed && closed)
+				throw new ObjectDisposedException (GetType ().ToString ());
+
+			if (result == null)
+				throw new ArgumentNullException ("result");
+
+			SocketAsyncResult req = result as SocketAsyncResult;
+			if (req == null)
+				throw new ArgumentException ("Invalid IAsyncResult");
 
 			result.AsyncWaitHandle.WaitOne();
+			Interlocked.Decrement (ref pendingEnds);
+			CheckIfClose ();
 			req.CheckIfThrowDelayedException();
 			return(req.Worker.Total);
 		}
 
 		public int EndReceiveFrom(IAsyncResult result,
 					  ref EndPoint end_point) {
-			SocketAsyncResult req=(SocketAsyncResult)result;
+			if (disposed && closed)
+				throw new ObjectDisposedException (GetType ().ToString ());
+
+			if (result == null)
+				throw new ArgumentNullException ("result");
+
+			SocketAsyncResult req = result as SocketAsyncResult;
+			if (req == null)
+				throw new ArgumentException ("Invalid IAsyncResult");
 
 			result.AsyncWaitHandle.WaitOne();
+			Interlocked.Decrement (ref pendingEnds);
+			CheckIfClose ();
  			req.CheckIfThrowDelayedException();
 			end_point=req.Worker.EndPoint;
 			return(req.Worker.Total);
 		}
 
 		public int EndSend(IAsyncResult result) {
-			SocketAsyncResult req=(SocketAsyncResult)result;
+			if (disposed && closed)
+				throw new ObjectDisposedException (GetType ().ToString ());
+
+			if (result == null)
+				throw new ArgumentNullException ("result");
+
+			SocketAsyncResult req = result as SocketAsyncResult;
+			if (req == null)
+				throw new ArgumentException ("Invalid IAsyncResult");
 
 			result.AsyncWaitHandle.WaitOne();
+			Interlocked.Decrement (ref pendingEnds);
+			CheckIfClose ();
 			req.CheckIfThrowDelayedException();
 			return(req.Worker.Total);
 		}
 
 		public int EndSendTo(IAsyncResult result) {
-			SocketAsyncResult req=(SocketAsyncResult)result;
+			if (disposed && closed)
+				throw new ObjectDisposedException (GetType ().ToString ());
+
+			if (result == null)
+				throw new ArgumentNullException ("result");
+
+			SocketAsyncResult req = result as SocketAsyncResult;
+			if (req == null)
+				throw new ArgumentException ("Invalid IAsyncResult");
 
 			result.AsyncWaitHandle.WaitOne();
+			Interlocked.Decrement (ref pendingEnds);
+			CheckIfClose ();
 			req.CheckIfThrowDelayedException();
 			return(req.Worker.Total);
+		}
+
+		void CheckIfClose ()
+		{
+			if (Interlocked.CompareExchange (ref closeDelayed, 1, 0) == 1) {
+				closed = true;
+				Close_internal(socket);
+			}
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -1148,7 +1322,7 @@ namespace System.Net.Sockets
 			return (int) socket; 
 		}
 
-		private bool disposed = false;
+		private bool disposed;
 		
 		protected virtual void Dispose(bool explicitDisposing) {
 			// Check to see if Dispose has already been called
@@ -1163,16 +1337,22 @@ namespace System.Net.Sockets
 				this.disposed=true;
 			
 				connected=false;
-				Close_internal(socket);
+				Interlocked.CompareExchange (ref closeDelayed, 0, 1);
+				if (Interlocked.CompareExchange (ref pendingEnds, 0, 0) == 0) {
+					if (Interlocked.CompareExchange (ref closeDelayed, 1, 0) == 1) {
+						closed = true;
+						Close_internal(socket);
+					}
+				}
 			}
 		}
 
-		public void Dispose() {
-			Dispose(true);
-			// Take yourself off the Finalization queue
-			GC.SuppressFinalize(this);
+		void IDisposable.Dispose ()
+		{
+			Dispose (true);
+			GC.SuppressFinalize (this);
 		}
-
+		
 		~Socket () {
 			Dispose(false);
 		}

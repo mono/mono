@@ -1,3 +1,10 @@
+2004-01-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Socket.cs: if we have a pending async event, delay socket closing
+	until EndX is called. Fixes bug #53229. Check parameters and if the
+	socket has been disposed. Implemented IDisposable explicitly. The
+	threads created have IsBackground = true now.
+
 2004-01-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Socket.cs: patch from Brad Fitzpatrick <brad@danga.com> episode 2.
