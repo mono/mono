@@ -12,7 +12,7 @@
 
 .namespace Mono.ILASM.Tests {
 
-	.class public auto ansi Hello extends [mscorlib]System.Object {
+	.class public auto ansi Test_1 extends [mscorlib]System.Object {
 	
 		.method public static void check( ) cil managed {
 			.entrypoint
