@@ -1,7 +1,6 @@
 2003-07-07  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
-	* namespace.cs: fixed compilation with csc. I'll file a bug report
-	about this.
+	* namespace.cs: fixed compilation with csc. It's bugzilla #44302.
 	
 2003-07-07  Miguel de Icaza  <miguel@ximian.com>
 
