@@ -2,63 +2,13 @@
 # being compiled on windows.
 #
 
-mcs_topdir=$(top_srcdir)/../mcs
+SUBDIRS = net_1_1 net_2_0
 
-assemblies_DATA =	\
-	Accessibility.dll					\
-	ByteFX.Data.dll						\
-	Commons.Xml.Relaxng.dll					\
-	mscorlib.dll						\
-	Cscompmgd.dll						\
-	I18N.CJK.dll						\
-	I18N.dll						\
-	I18N.MidEast.dll					\
-	I18N.Other.dll						\
-	I18N.Rare.dll						\
-	I18N.West.dll						\
-	ICSharpCode.SharpZipLib.dll				\
-	Microsoft.VisualBasic.dll				\
-	Microsoft.VisualC.dll					\
-	Microsoft.Vsa.dll					\
-	Mono.Cairo.dll			\
-	Mono.CSharp.Debugger.dll				\
-	Mono.Data.SqliteClient.dll				\
-	Mono.Data.SybaseClient.dll				\
-	Mono.Data.TdsClient.dll					\
-	Mono.Data.Tds.dll					\
-	Novell.Directory.Ldap.dll					\
-	Mono.GetOptions.dll					\
-	Mono.Http.dll						\
-	Mono.Posix.dll						\
-	Mono.Security.dll					\
-	Mono.Security.Win32.dll					\
-	Npgsql.dll						\
-	NUnit.Util.dll						\
-	NUnit.Framework.dll					\
-	PEAPI.dll						\
-	System.Configuration.Install.dll			\
-	System.Data.dll						\
-	System.Data.OracleClient.dll				\
-	System.dll						\
-	System.Design.dll					\
-	System.DirectoryServices.dll				\
-	System.Drawing.Design.dll				\
-	System.Drawing.dll					\
-	System.EnterpriseServices.dll				\
-	System.Management.dll					\
-	System.Messaging.dll					\
-	System.Runtime.Remoting.dll				\
-	System.Runtime.Serialization.Formatters.Soap.dll	\
-	System.Security.dll					\
-	System.ServiceProcess.dll				\
-	System.Web.dll						\
-	System.Web.Services.dll					\
-	System.Windows.Forms.dll				\
-	System.Xml.dll
+mcs_topdir=$(top_srcdir)/../mcs
 
 monobins_DATA = mcs.exe mbas.exe monoresgen.exe secutil.exe ilasm.exe cilc.exe xsd.exe wsdl.exe genxs.exe al.exe disco.exe sqlsharp.exe signcode.exe chktrust.exe soapsuds.exe monop.exe setreg.exe cert2spc.exe certmgr.exe MakeCert.exe
 
-EXTRA_DIST = $(monobins_DATA) $(assemblies_DATA)
+EXTRA_DIST = $(monobins_DATA)
 
 #
 # Keep in sync with mono/mono/metadata/Makefile.am
@@ -69,12 +19,6 @@ monobinsdir = $(libdir)
 else
 monobinsdir = $(bindir)
 endif
-
-$(assemblies_DATA):
-	@f=$(mcs_topdir)/class/lib/default/$@; \
-	if test -f $$f; then :; else f=$(assembliesdir)/$@; fi ; \
-	echo "cp -f $$f $(srcdir)"; \
-	cp -f $$f $(srcdir)
 
 $(monobins_DATA):
 	@case "$@" in \
@@ -106,7 +50,7 @@ $(monobins_DATA):
 	cp -f $$f $(srcdir)
 
 dist-hook:
-	for i in $(monobins_DATA) $(assemblies_DATA); do	\
+	for i in $(monobins_DATA) $(assemblies_DATA); do        \
 		if test ! -s $(srcdir)/$$i; then echo $$i is empty && exit 1; fi	\
 	done
 
