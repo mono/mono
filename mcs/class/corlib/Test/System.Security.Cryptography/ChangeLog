@@ -1,3 +1,9 @@
+2003-05-28  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* RSAPKCS1SignatureDeformatter.cs: Fixed (well I hope so) a test
+	which doesn't throw the same exception under 1.1. Also converted 
+	the tests to NUnit2 format.
+
 2003-05-12  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* PKCS1MaskGenerationMethodTest.cs: Uncommented PKCS#1 v.2.1 vector 
