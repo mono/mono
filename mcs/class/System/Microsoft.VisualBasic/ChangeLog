@@ -1,3 +1,8 @@
+2004-06-24  Atsushi Enomoto <atsushi@ximian.com>
+
+	* VBCodeCompiler.cs : On windows we use fixed mono.exe and mbas.exe
+	  located by mscorlib.dll. (The same fix as that of CSharpCodeCompiler)
+
 2004-06-03  Jochen Wezel <jwezel@compumaster.de>
 
 	* VBCodeGenerator.cs: MemberAttributes made more compatible to MS

@@ -47,6 +47,26 @@ namespace Microsoft.VisualBasic
 
 	internal class VBCodeCompiler: VBCodeGenerator, ICodeCompiler
 	{
+		static string windowsMonoPath;
+		static string windowsMbasPath;
+		static VBCodeCompiler ()
+		{
+			if (Path.DirectorySeparatorChar == '\\') {
+				// FIXME: right now we use "fixed" version 1.0
+				// mcs at any time.
+				PropertyInfo gac = typeof (Environment).GetProperty ("GacPath", BindingFlags.Static|BindingFlags.NonPublic);
+				MethodInfo get_gac = gac.GetGetMethod (true);
+				string p = Path.GetDirectoryName (
+					(string) get_gac.Invoke (null, null));
+				windowsMonoPath = Path.Combine (
+					Path.GetDirectoryName (
+						Path.GetDirectoryName (p)),
+					"bin\\mono.exe");
+				windowsMbasPath =
+					Path.Combine (p, "1.0\\mbas.exe");
+			}
+		}
+
 		//
 		// Constructors
 		//
@@ -111,8 +131,15 @@ namespace Microsoft.VisualBasic
 
 			string mbas_output;
 			string [] mbas_output_lines;
-			mbas.StartInfo.FileName = "mbas";
-			mbas.StartInfo.Arguments = BuildArgs(options,fileNames);
+			// FIXME: these lines had better be platform independent.
+			if (Path.DirectorySeparatorChar == '\\') {
+				mbas.StartInfo.FileName = windowsMonoPath;
+				mbas.StartInfo.Arguments = windowsMbasPath + ' ' + BuildArgs (options, fileNames);
+			}
+			else {
+				mbas.StartInfo.FileName = "mbas";
+				mbas.StartInfo.Arguments = BuildArgs (options,fileNames);
+			}
 			mbas.StartInfo.CreateNoWindow = true;
 			mbas.StartInfo.UseShellExecute = false;
 			mbas.StartInfo.RedirectStandardOutput = true;
