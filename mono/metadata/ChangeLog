@@ -1,3 +1,9 @@
+2003-02-03  Miguel de Icaza  <miguel@ximian.com>
+
+	* icall.c
+	(ves_icall_System_Reflection_Assembly_GetReferencedAssemblies):
+	Populate the codebase field as well.
+
 2003-02-02  Martin Baulig  <martin@ximian.com>
 
 	* debug-mono-symfile.c
