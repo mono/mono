@@ -1,3 +1,7 @@
+2002-08-05  Dietmar Maurer  <dietmar@ximian.com>
+
+	* marshal.c (mono_marshal_get_managed_wrapper): add suppport for
+	String as return type.
 
 Fri Aug 2 21:15:42 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
