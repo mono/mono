@@ -1,3 +1,8 @@
+2004-10-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.Xml.dll.sources:
+	  added System.Xml.Query/XQueryFunctionContextAttribute.cs.
+
 2004-09-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System.Xml_test.dll.sources : Added XPathAtomicValueTests.cs.
