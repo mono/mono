@@ -124,7 +124,8 @@ namespace FirebirdSql.Data.Common
 
 		public void BuildExceptionMessage()
 		{
-			string resources = "FirebirdSql.Data.Common.Resources.isc_error_msg";
+			string resources = "FirebirdSql.Data.Common.Resources.isc_error_msg";			
+
 			StringBuilder builder = new StringBuilder();
 			ResourceManager rm = new ResourceManager(resources, Assembly.GetExecutingAssembly());
 
@@ -144,7 +145,14 @@ namespace FirebirdSql.Data.Common
 					}
 					catch
 					{
-						message = String.Format(CultureInfo.CurrentUICulture, "No message for error code {0} found.", code);
+						message = null;
+					}
+					finally
+					{
+						if (message == null)
+						{
+							message = String.Format(CultureInfo.CurrentUICulture, "No message for error code {0} found.", code);
+						}
 					}
 
 					ArrayList param = new ArrayList();
@@ -159,17 +167,26 @@ namespace FirebirdSql.Data.Common
 
 					object[] args = (object[])param.ToArray(typeof(object));
 
-					if (code == IscCodes.isc_except)
+					try
 					{
-						// Custom exception	add	the	first argument as error	code
-						this.errorCode = Convert.ToInt32(args[0], CultureInfo.InvariantCulture);
-					}
-					else
-					{
-						if (builder.Length > 0)
+						if (code == IscCodes.isc_except)
 						{
-							builder.Append("\n");
+							// Custom exception	add	the	first argument as error	code
+							this.errorCode = Convert.ToInt32(args[0], CultureInfo.InvariantCulture);
 						}
+						else
+						{
+							if (builder.Length > 0)
+							{
+								builder.Append("\n");
+							}
+
+							builder.AppendFormat(CultureInfo.CurrentUICulture, message, args);
+						}
+					}
+					catch
+					{
+						message = String.Format(CultureInfo.CurrentUICulture, "No message for error code {0} found.", code);
 
 						builder.AppendFormat(CultureInfo.CurrentUICulture, message, args);
 					}

@@ -2,6 +2,67 @@ Firebird ADO.NET Data provider for .NET and Mono
 ================================================
 
 
+------------------ Release Candidate 2 ----------------------
+
+2005-02-21 Carlos Guzman Alvarez  <carlosga@telefonica.net>
+
+	* FirebirdSql.Data.Common/IscException.cs
+
+		- Changes for better exception handling on message formatting.
+
+2005-02-16 Carlos Guzman Alvarez  <carlosga@telefonica.net>
+
+	* FirebirdSql.Data.Firebird/FbConnectionString.cs:
+
+		- Added missing synonym (Thanks to Mike Scott by his feedback)
+
+	* FirebirdSql.Data.Firebird/DbSchema/FbProcedures.cs:
+
+		- Added column for the procedure source.
+
+2005-02-15 Carlos Guzman Alvarez  <carlosga@telefonica.net>
+
+	* FirebirdSql.Data.Gds/GdsStatement.cs:
+	* FirebirdSql.Data.Gds/FesStatement.cs:
+
+		- Fixed problem with transaction value set (Thanks to Oleg Paschenko)
+
+2005-02-14 Carlos Guzman Alvarez  <carlosga@telefonica.net>
+
+	* FirebirdSql.Data.Firebird/Design/DataAdapter/VSExtensibility.cs:
+
+		- Added Visual Studio 2002 support.
+
+2005-02-14 Carlos Guzman Alvarez  <carlosga@telefonica.net>
+
+	* FirebirdSql.Data.Gds/GdsConnection.cs:
+
+		- Do not include calls to Socket.SetSocketOption when working
+		with the .NET Compact Framework that should allow the provider
+		to do connections when working with the .NET Compact Framework
+		(Thanks to Fonzetto Michaël for his feedback)
+
+2005-02-13 Carlos Guzman Alvarez  <carlosga@telefonica.net>
+
+	* FirebirdSql.Data.Gds/GdsConnection.cs:
+
+		- Changed ProtocolType used to configure the Socket to ProtocolType.Tcp
+
+	* FirebirdSql.Data.Firebird/Isql/FbScript.cs:
+
+		- Undo latest changes on RemoveComments method as they breaks the execution of some tstatements.
+
+	* FirebirdSql.Data.Firebird/Isql/FbBatchExecition.cs:
+
+		- Fixed bug on autocommit mode.
+
+2005-02-12 Carlos Guzman Alvarez  <carlosga@telefonica.net>
+
+	* FirebirdSql.Data.Common/IscException.cs:
+
+		- Fix for exception message building.
+
+
 ------------------ Release Candidate 1 ----------------------
 
 2005-02-04 Carlos Guzman Alvarez  <carlosga@telefonica.net>

@@ -54,32 +54,22 @@ namespace FirebirdSql.Data.Embedded
 			get { return this.transaction; }
 			set
 			{
-				if (value == null)
+				if (this.transaction != value)
 				{
-					this.transaction = null;
-				}
-				else
-				{
-					bool addHandler = false;
-
-					if (this.transaction != value)
+					if (this.TransactionUpdate != null && this.transaction != null)
 					{
-						if (this.TransactionUpdate != null && this.Transaction != null)
-						{
-							this.Transaction.Update -= this.TransactionUpdate;
-							this.TransactionUpdate = null;
-						}
-
-						// Add event handler for transaction updates
-						this.TransactionUpdate = new TransactionUpdateEventHandler(this.TransactionUpdated);
-
-						addHandler = true;
+						this.transaction.Update -= this.TransactionUpdate;
+						this.TransactionUpdate = null;
 					}
 
-					this.transaction = (FesTransaction)value;
-
-					if (addHandler)
+					if (value == null)
 					{
+						this.transaction = null;
+					}
+					else
+					{
+						this.transaction = (FesTransaction)value;
+						this.TransactionUpdate = new TransactionUpdateEventHandler(this.TransactionUpdated);
 						this.transaction.Update += this.TransactionUpdate;
 					}
 				}

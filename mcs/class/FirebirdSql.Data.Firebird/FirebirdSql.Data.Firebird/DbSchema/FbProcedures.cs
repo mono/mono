@@ -47,6 +47,7 @@ namespace FirebirdSql.Data.Firebird.DbSchema
 					"rdb$procedure_name AS PROCEDURE_NAME, " +
 					"rdb$procedure_inputs AS INPUTS, " +
 					"rdb$procedure_outputs AS OUTPUTS, " +
+					"rdb$procedure_source AS SOURCE, " +
 					"rdb$description AS DESCRIPTION " +
 				"FROM " +
 					"rdb$procedures");

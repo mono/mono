@@ -43,6 +43,7 @@ namespace FirebirdSql.Data.Firebird
 			Hashtable synonyms = new Hashtable();
 
 			synonyms.Add("data source", "data source");
+			synonyms.Add("datasource", "data source");
 			synonyms.Add("server", "data source");
 			synonyms.Add("host", "data source");
 			synonyms.Add("port", "port number");

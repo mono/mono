@@ -79,7 +79,9 @@ namespace FirebirdSql.Data.Gds
 				this.socket = new Socket(
 					AddressFamily.InterNetwork,
 					SocketType.Stream,
-					ProtocolType.IP);
+					ProtocolType.Tcp);
+
+#if (!NETCF)
 
 				// Set Receive Buffer size.
 				this.socket.SetSocketOption(
@@ -92,8 +94,9 @@ namespace FirebirdSql.Data.Gds
 					SocketOptionLevel.Socket,
 					SocketOptionName.SendBuffer,
 					packetSize);
+#endif
 
-#if	(!LINUX)
+#if	(NET)
 				// Disables	the	Nagle algorithm	for	send coalescing.
 				// This	seems to be	not	supported in Linux (using mono::)
 				this.socket.SetSocketOption(

@@ -57,31 +57,22 @@ namespace FirebirdSql.Data.Gds
 			get { return this.transaction; }
 			set
 			{
-				if (value == null)
+				if (this.transaction != value)
 				{
-					this.transaction = null;
-				}
-				else
-				{
-					bool addHandler = false;
-					if (this.transaction != value)
+					if (this.TransactionUpdate != null && this.transaction != null)
 					{
-						if (this.TransactionUpdate != null && this.transaction != null)
-						{
-							this.transaction.Update -= this.TransactionUpdate;
-							this.TransactionUpdate = null;
-						}
-
-						// Add event handler for transaction updates
-						this.TransactionUpdate = new TransactionUpdateEventHandler(this.TransactionUpdated);
-
-						addHandler = true;
+						this.transaction.Update -= this.TransactionUpdate;
+						this.TransactionUpdate	= null;
 					}
 
-					this.transaction = (GdsTransaction)value;
-
-					if (addHandler && this.transaction != null)
+					if (value == null)
 					{
+						this.transaction = null;
+					}
+					else
+					{
+						this.transaction		= (GdsTransaction)value;
+						this.TransactionUpdate	= new TransactionUpdateEventHandler(this.TransactionUpdated);
 						this.transaction.Update += this.TransactionUpdate;
 					}
 				}

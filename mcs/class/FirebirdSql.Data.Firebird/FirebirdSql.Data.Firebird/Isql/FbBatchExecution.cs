@@ -466,7 +466,7 @@ namespace FirebirdSql.Data.Firebird.Isql
 		/// <param name="autoCommit">Specifies if the transaction should be	committed after	a DDL command execution</param>
 		public virtual void	Execute(bool autoCommit) 
 		{
-			if (this.SqlStatements == null ||this.SqlStatements.Count == 0)	
+			if (this.SqlStatements == null || this.SqlStatements.Count == 0)	
 			{
 				throw new InvalidOperationException("There are no commands for execution.");
 			}
@@ -857,7 +857,7 @@ namespace FirebirdSql.Data.Firebird.Isql
 		protected internal int ExecuteCommand(FbCommand	command, bool autocommit)
 		{
 			int	rowsAffected = command.ExecuteNonQuery();
-			if (autocommit && command.IsDDLCommand())
+			if (autocommit && command.IsDDLCommand() && command.Transaction != null)
 			{
 				command.Transaction.CommitRetaining();
 			}
