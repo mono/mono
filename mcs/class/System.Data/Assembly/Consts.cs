@@ -37,6 +37,8 @@ internal sealed class Consts
 
 	public const string AssemblySystem_Drawing = "System.Drawing, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
 	public const string AssemblyMicrosoft_VSDesigner = "Microsoft.VSDesigner, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
+	public const string AssemblySystem = "System, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
+	public const string AssemblySystem_Data = "System.Data, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
 
 //#elif (NET_1_1)
 #else
@@ -45,6 +47,8 @@ internal sealed class Consts
 
 	public const string AssemblySystem_Drawing = "System.Drawing, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
 	public const string AssemblyMicrosoft_VSDesigner = "Microsoft.VSDesigner, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
+	public const string AssemblySystem = "System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
+        public const string AssemblySystem_Data = "System.Data, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
 
 #endif
 
