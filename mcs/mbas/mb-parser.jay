@@ -360,6 +360,7 @@ namespace Mono.MonoBASIC
 %left OPEN_PARENS
 %left OPEN_BRACKET OPEN_BRACE
 %left DOT
+%right NOT
 %nonassoc HIGHPREC
 
 %start compilation_unit
@@ -3021,8 +3022,16 @@ element_access
 	;
 */
 
+negation_expression
+	: NOT expression 
+	  {
+		$$ = new Unary (Unary.Operator.LogicalNot, (Expression) $2, lexer.Location);
+	  }
+	;
+		
 expression
 	: conditional_expression { $$ = $1; }
+	| negation_expression
 	/*| assignment_expression*/
 	;
 
@@ -3065,13 +3074,13 @@ this_access
 
 unary_expression
 	: primary_expression
-	| NOT prefixed_unary_expression
+	/*| NOT prefixed_unary_expression
 	  {
 		$$ = new Unary (Unary.Operator.LogicalNot, (Expression) $2, lexer.Location);
 	  }
-	/*| cast_expression */
+	| cast_expression */
 	;
-
+	
 cast_expression
         : cast_operator OPEN_PARENS expression CLOSE_PARENS
 	  {
