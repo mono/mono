@@ -1439,6 +1439,12 @@ method_head		: D_METHOD meth_attr call_conv param_attr type method_name
                                         methdef.AddPInvokeInfo (pinvoke_attr, pinvoke_mod, pinvoke_meth);
                                         pinvoke_info = false;
                                 }
+
+                                if ($7 != null) {
+                                        ArrayList typars_list = (ArrayList) $7;
+                                        foreach (string id in typars_list)
+                                                methdef.AddGenericParam (id);
+                                }
                           }
 			| D_METHOD meth_attr call_conv param_attr type 
 			  K_MARSHAL OPEN_PARENS native_type CLOSE_PARENS method_name
