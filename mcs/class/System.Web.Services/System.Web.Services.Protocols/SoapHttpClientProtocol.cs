@@ -207,13 +207,20 @@ namespace System.Web.Services.Protocols {
 		//    
 		object [] ReceiveResponse (WebResponse response, SoapClientMessage message, SoapExtension[] extensions)
 		{
-			HttpWebResponse http_response = (HttpWebResponse) response;
-			HttpStatusCode code = http_response.StatusCode;
 			SoapMethodStubInfo msi = message.MethodStubInfo;
-
-			if (!(code == HttpStatusCode.Accepted || code == HttpStatusCode.OK || code == HttpStatusCode.InternalServerError))
-				throw new WebException ("Request error. Return code was: " + http_response.StatusCode);
-
+			HttpWebResponse http_response = response as HttpWebResponse;
+			bool isSuccessful = true;
+			
+			if (http_response != null)
+			{
+				HttpStatusCode code = http_response.StatusCode;
+	
+				if (!(code == HttpStatusCode.Accepted || code == HttpStatusCode.OK || code == HttpStatusCode.InternalServerError))
+					throw new WebException ("Request error. Return code was: " + http_response.StatusCode);
+					
+				isSuccessful = (code != HttpStatusCode.InternalServerError);
+			}
+			
 			//
 			// Remove optional encoding
 			//
@@ -237,7 +244,6 @@ namespace System.Web.Services.Protocols {
 			StreamReader reader = new StreamReader (stream, encoding, false);
 			XmlTextReader xml_reader = new XmlTextReader (reader);
 
-			bool isSuccessful = (code != HttpStatusCode.InternalServerError);
 			SoapHeaderCollection headers;
 			object content;
 

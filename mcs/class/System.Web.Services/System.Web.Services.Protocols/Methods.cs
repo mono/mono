@@ -7,9 +7,6 @@
 //
 // (C) 2003 Ximian, Inc.
 //
-// TODO:
-//    
-//
 
 using System.Reflection;
 using System.Collections;

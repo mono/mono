@@ -62,6 +62,10 @@ namespace System.Web.Services.Protocols
 				vpath += "/" + help;
 
 			string physPath = Path.Combine (path, help);
+			
+			if (!File.Exists (physPath))
+				throw new InvalidOperationException ("Documentation page '" + physPath + "' not found");
+
 			_pageHandler = PageParser.GetCompiledPageInstance (vpath, physPath, context);
 				
 		}

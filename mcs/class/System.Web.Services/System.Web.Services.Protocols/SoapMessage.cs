@@ -7,9 +7,6 @@
 //
 // Copyright (C) Tim Coleman, 2002
 //
-// TODO:
-//    Need to set the stream variable from the outside, or the constructor.
-//
 
 using System.IO;
 using System.Web.Services;
