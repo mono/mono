@@ -58,7 +58,8 @@ namespace System.Windows.Forms {
 		bool 			today_date_set;
 		Color 			trailing_fore_color;
 		ContextMenu		menu;
-
+		Timer		 	timer;
+		
 		// internal variables used
 		internal DateTime 		current_month;			// the month that is being displayed in top left corner of the grid		
 		internal int 			button_x_offset;
@@ -89,6 +90,13 @@ namespace System.Windows.Forms {
 		#region Public Constructors
 
 		public MonthCalendar() {
+			// set up the control painting
+			SetStyle (ControlStyles.UserPaint, true);
+			SetStyle (ControlStyles.AllPaintingInWmPaint, true);
+			
+			// mouse down timer
+			timer = new Timer ();
+			
 			// initialise default values 
 			DateTime now = DateTime.Now.Date;
 			selection_range = new SelectionRange (now, now);
@@ -145,6 +153,7 @@ namespace System.Windows.Forms {
 			SetUpContextMenu ();
 
 			// event handlers
+			//timer.Tick += new EventHandler (OnTimerHandler);
 			MouseDown += new MouseEventHandler (MouseDownHandler);
 			KeyDown += new KeyEventHandler (KeyDownHandler);
 			MouseUp += new MouseEventHandler (MouseUpHandler);
@@ -1265,21 +1274,31 @@ namespace System.Windows.Forms {
 		// to check if the mouse has come down on this control
 		private void MouseDownHandler (object sender, MouseEventArgs e)
 		{
-			// reset first			
-			bool invalidate = true;
 			//establish where was hit
 			HitTestInfo hti = this.HitTest(e.X, e.Y);
 			switch(hti.HitArea) {
 				case HitArea.NextMonthButton:
 					// show the click then move on
 					SetItemClick(hti);
-					this.Invalidate ();
+					// invalidate the next monthbutton
+					this.Invalidate(
+						new Rectangle (
+							this.ClientRectangle.Right - 1 - button_x_offset - button_size.Width,
+							this.ClientRectangle.Y + 1 + (title_size.Height - button_size.Height)/2,
+							button_size.Width,
+							button_size.Height));					
 					this.CurrentMonth = this.CurrentMonth.AddMonths (ScrollChange);
 					break;
 				case HitArea.PrevMonthButton:
 					// show the click then move on
 					SetItemClick(hti);
-					this.Invalidate ();
+					// invalidate the prev monthbutton
+					this.Invalidate(
+						new Rectangle (
+							this.ClientRectangle.X + 1 + button_x_offset,
+							this.ClientRectangle.Y + 1 + (title_size.Height - button_size.Height)/2,
+							button_size.Width,
+							button_size.Height));
 					this.CurrentMonth = this.CurrentMonth.AddMonths (ScrollChange*-1);
 					break;
 				case HitArea.PrevMonthDate:
@@ -1314,13 +1333,7 @@ namespace System.Windows.Forms {
 					this.is_previous_clicked = false;
 					this.is_next_clicked = false;
 					this.is_date_clicked = false;
-					invalidate = false;
 					break;
-			}
-			
-			// invalidate if something worthwhile happened
-			if (invalidate) {
-				this.Invalidate ();
 			}
 		}
 
