@@ -4772,7 +4772,7 @@ if (rsrc != null)
               foreach (CustomAttribute cattr in cattr_list)
                       cattr.BuildTables (this);
       }
-      BuildTable(metaDataTables[(int)MDTable.CustomAttribute]);
+
 /*      for (int i=0; i < metaDataTables.Length; i++) {
         ArrayList table = metaDataTables[i];
         if (table != null) {
