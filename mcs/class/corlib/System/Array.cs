@@ -301,9 +301,6 @@ namespace System
 
 		public static Array CreateInstance(Type elementType, int[] lengths)
 		{
-                        if (elementType == null || lengths == null)
-                                throw new ArgumentException ("The input cannot be null.");
-
                         if (lengths.Length > 255)
                                 throw new TypeLoadException ();
 
@@ -314,18 +311,8 @@ namespace System
 
 		public static Array CreateInstance(Type elementType, int[] lengths, int [] bounds)
 		{
-			if (elementType == null || bounds == null || bounds == null)
-				throw new ArgumentNullException ("The input cannot be null.");
-
-                        if (lengths.Length < 1 || lengths.Length != bounds.Length)
-                                throw new ArgumentException ();
-
-                        foreach (int i in lengths)
-                                if (i < 0) throw new ArgumentOutOfRangeException ();
-
-                        for (int j = 0; j < bounds.Length; j ++)
-                                if (bounds [j] + lengths [j] > Int32.MaxValue)
-                                        throw new ArgumentOutOfRangeException ();
+			if (bounds == null)
+				throw new ArgumentNullException("bounds");
 
                         if (lengths.Length > 255)
                                 throw new TypeLoadException ();
@@ -628,11 +615,9 @@ namespace System
 			if (array.Rank > 1)
 				throw new RankException ();
 
-			if (length < 0 ||
-                                index < array.GetLowerBound (0) || index > array.GetUpperBound (0) ||
-                                index-length+1 < array.GetLowerBound (0) || index > array.GetUpperBound (0))
-                                throw new ArgumentOutOfRangeException ();
-				
+			if (length < 0 || index-length+1 < array.GetLowerBound (0) ||
+			    index > array.GetUpperBound (0))
+				throw new ArgumentOutOfRangeException ();
 
 			for (int i = index; i >= index-length+1; i--)
 			{
@@ -738,12 +723,6 @@ namespace System
 			
 			if (length < 0)
 				throw new ArgumentOutOfRangeException ("length");
-
-                        if (comparer == null) {
-                                foreach (object k in keys)
-                                        if (k is IComparable == false)
-                                                throw new InvalidOperationException ("The elements must implement IComparable.");
-                        }
 			
 			if (keys.Length - (index + keys.GetLowerBound (0)) < length 
 				|| (items != null && index > items.Length - length))

@@ -1,3 +1,7 @@
+2003-06-08 Jackson Harper <jackson@latitudegeo.com>
+
+	* Array.cs: Revert last patch, it broke some other functionality.
+		
 2003-06-08  Duncan Mak  <duncan@ximian.com>
 
 	* Array.cs: Throw more exceptions. This fixes the errors we see
