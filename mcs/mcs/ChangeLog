@@ -1,3 +1,9 @@
+2003-11-05  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (UnaryMutator.EmitCode): When I updated
+	LocalVariableReference.DoResolve, I overdid it, and dropped an
+	optimization done on local variable references.
+
 2003-11-04  Miguel de Icaza  <miguel@ximian.com>
 
 	* ecore.cs: Convert the return from Ldlen into an int.

@@ -975,7 +975,8 @@ namespace Mono.CSharp {
 				// For now: only localvariables when not remapped
 				//
 
-				if (method == null && (expr is FieldExpr && ((FieldExpr) expr).FieldInfo.IsStatic)){
+				if (method == null &&
+				    ((expr is LocalVariableReference) ||(expr is FieldExpr && ((FieldExpr) expr).FieldInfo.IsStatic))){
 					if (empty_expr == null)
 						empty_expr = new EmptyExpression ();
 					
