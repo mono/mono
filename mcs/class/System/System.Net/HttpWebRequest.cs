@@ -190,6 +190,10 @@ namespace System.Net
 				int count = value.Count;
 				for (int i = 0; i < count; i++) 
 					newHeaders.Add (value.GetKey (i), value.Get (i));
+				newHeaders.SetInternal ("Host", this.webHeaders["Host"]);
+				newHeaders.SetInternal ("Date", this.webHeaders["Date"]);
+				newHeaders.SetInternal ("Expect", this.webHeaders["Expect"]);
+				newHeaders.SetInternal ("Connection", this.webHeaders["Connection"]);
 				webHeaders = newHeaders;
 			}
 		}
@@ -222,6 +226,8 @@ namespace System.Net
 			set {
 				CheckRequestStarted ();
 				keepAlive = value;
+				if (Connection == null)
+				  webHeaders.SetInternal ("Connection", value ? "Keep-Alive" : "Close");
 			}
 		}
 		
@@ -451,6 +457,7 @@ namespace System.Net
 		
 		internal Stream GetRequestStreamInternal ()
 		{
+		        if (this.requestStream == null)
 			this.requestStream = new HttpWebStream (this);
 			return this.requestStream;
 		}
@@ -504,16 +511,14 @@ namespace System.Net
 		{
 			if (webResponse != null)
 				return webResponse;			
-			lock (this) {
-				if (requesting) {
-					requestEndEvent = new AutoResetEvent (false);
-				}
-			}
-			if (requestEndEvent != null) {
-				requestEndEvent.WaitOne ();
-			}
-			Stream responseStream = new HttpWebStream (this);
+
+			Stream responseStream = this.requestStream == null ? 
+			    new HttpWebStream (this) : this.requestStream;
+			do
+			  {
  			this.webResponse = new HttpWebResponse (this.actualUri, method, responseStream);
+			  }
+			while (this.webResponse.StatusCode == HttpStatusCode.Continue);
  			return (WebResponse) this.webResponse;
 		}
 

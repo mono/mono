@@ -1,3 +1,8 @@
+2002-10-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpWebRequest.cs: applied patch from Tim Haynes
+	(thaynes@openlinksw.com)
+
 2002-10-03  Dick Porter  <dick@ximian.com>
 
 	* Dns.cs: Fixed GetHostName()
