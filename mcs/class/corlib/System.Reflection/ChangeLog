@@ -1,5 +1,7 @@
 2004-09-23  Zoltan Varga  <vargaz@freemail.hu>
 
+	* EventInfo.cs: Fix 2.0 build.
+
 	* MonoEvent.cs (MonoEventInfo): Add 'other_methods' field.
 
 	* EventInfo.cs MonoEvent.cs: Add NET 2.0 GetOtherMethods method.

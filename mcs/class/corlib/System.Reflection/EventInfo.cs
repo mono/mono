@@ -93,7 +93,7 @@ namespace System.Reflection {
 #if NET_2_0
 		public virtual MethodInfo[] GetOtherMethods (bool nonPublic) {
 			// Shouldn't this be abstract, like the other methods ?
-			throw new NotImplementException ();
+			throw new NotImplementedException ();
 		}
 
 		public MethodInfo[] GetOtherMethods () {
