@@ -23,7 +23,9 @@ namespace System.Security.Cryptography
 	/// </summary>
 	public abstract class DSA : AsymmetricAlgorithm
 	{
-		internal DSA () {}
+		// now public like RSA (but unlike MS which is internal)
+		// this caused problems to compile the test suite
+		public DSA () {}
 	
 		public static new DSA Create ()
 		{

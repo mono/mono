@@ -3,11 +3,13 @@
 //
 // Authors:
 //   Matthew S. Ford (Matthew.S.Ford@Rose-Hulman.Edu)
+//   Sebastien Pouliot (spouliot@motus.com)
 //
 // Copyright 2001 by Matthew S. Ford.
+// Portions (C) 2002 Motus Technologies Inc. (http://www.motus.com)
 //
 
-
+using System.IO;
 using System.Security.Cryptography;
 
 namespace System.Security.Cryptography {
@@ -15,56 +17,88 @@ namespace System.Security.Cryptography {
 		protected byte[] HashValue; // Caches the hash after it is calculated.  Accessed through the Hash property.
 		protected int HashSizeValue; // The size of the hash in bits.
 		protected int State;  // nonzero when in use;  zero when not in use
+		private bool disposed;
 
 		/// <summary>
 		/// Called from constructor of derived class.
 		/// </summary>
-		protected HashAlgorithm () {
-		
-		}
-	
-
-		/// <summary>
-		/// FIXME: Always true for hashes?
-		/// Get whether or not the hash can transform multiple blocks at a time.
-		/// </summary>
-		[MonoTODO]
-		public virtual bool CanTransformMultipleBlocks {
-			get {
-				return true;
-			}
-		}
-
-		void System.IDisposable.Dispose() 
+		protected HashAlgorithm () 
 		{
-                }
+			disposed = false;
+		}
+
+		// important so we can destory any unmanaged resources
+		~HashAlgorithm () 
+		{
+			Dispose (true);
+		}
 	
+		/// <summary>
+		/// Get whether or not the hash can transform multiple blocks at a time.
+		/// Note: MUST be overriden if descendant can transform multiple block
+		/// on a single call!
+		/// </summary>
+		public virtual bool CanTransformMultipleBlocks {
+			get { return true; }
+		}
+
+		public virtual bool CanReuseTransform {
+			get { return true; }
+		}
+
+		public void Clear() 
+		{
+			// same as System.IDisposable.Dispose() which is documented
+			Dispose (true);
+		}
+
 		/// <summary>
 		/// Computes the entire hash of all the bytes in the byte array.
 		/// </summary>
-		public byte[] ComputeHash (byte[] input) {
-			// inputData = input.Clone();
-			HashCore (input, 0, input.Length);
+		public byte[] ComputeHash (byte[] input) 
+		{
+			return ComputeHash (input, 0, input.Length);
+		}
+
+		public byte[] ComputeHash (byte[] buffer, int offset, int count) 
+		{
+			if (disposed)
+				throw new ObjectDisposedException ("HashAlgorithm");
+
+			HashCore (buffer, offset, count);
 			HashValue = HashFinal ();
 			Initialize ();
 			
 			return HashValue;
+		}
+
+		public byte[] ComputeHash (Stream inputStream) 
+		{
+			// don't read stream unless object is ready to use
+			if (disposed)
+				throw new ObjectDisposedException ("HashAlgorithm");
+
+			int l = (int) (inputStream.Length - inputStream.Position);
+			byte[] buffer = new byte [l];
+			inputStream.Read (buffer, 0, l);
+
+			return ComputeHash (buffer);
 		}
 	
 		/// <summary>
 		/// Creates the default implementation of the default hash algorithm (SHA1).
 		/// </summary>
 		public static HashAlgorithm Create () 
-                {
+		{
 			return Create ("System.Security.Cryptography.HashAlgorithm");
 		}
 	
 		/// <summary>
 		/// Creates a specific implementation of the general hash idea.
 		/// </summary>
-		/// <param name="st">Specifies which derived class to create.</param>
-		public static HashAlgorithm Create (string hashName) 
-                {
+		/// <param name="hashName">Specifies which derived class to create.</param>
+		public static HashAlgorithm Create (string hashName)
+		{
 			return (HashAlgorithm) CryptoConfig.CreateFromName (hashName);
 		}
 	
@@ -72,8 +106,10 @@ namespace System.Security.Cryptography {
 		/// Gets the previously computed hash.
 		/// </summary>
 		public virtual byte[] Hash {
-			get {
-				return HashValue;
+			get { 
+				if (HashValue == null)
+					throw new CryptographicUnexpectedOperationException ();
+				return HashValue; 
 			}
 		}
 	
@@ -94,34 +130,36 @@ namespace System.Security.Cryptography {
 		/// Returns the size in bits of the hash.
 		/// </summary>
 		public virtual int HashSize {
-			get {
-				return HashSizeValue;
-			}
+			get { return HashSizeValue; }
 		}
 	
 		/// <summary>
 		/// When overridden in a derived class, initializes the object to prepare for hashing.
 		/// </summary>
 		public abstract void Initialize ();
-	
-		/// <summary>
-		/// FIXME: Not quire valid for the hashes?  Returns 1?
-		/// </summary>
-		[MonoTODO]
-		public virtual int InputBlockSize {
-			get {
-				return 1;
-			}
+
+		protected virtual void Dispose (bool disposing)
+		{
+			disposed = true;
 		}
 	
 		/// <summary>
-		/// FIXME: Not quire valid for the hashes?  Returns 1?
+		/// Must be overriden if not 1
 		/// </summary>
-		[MonoTODO]
+		public virtual int InputBlockSize {
+			get { return 1; }
+		}
+	
+		/// <summary>
+		/// Must be overriden if not 1
+		/// </summary>
 		public virtual int OutputBlockSize {
-			get {
-				return 1;
-			}
+			get { return 1; }
+		}
+
+		void System.IDisposable.Dispose () 
+		{
+			Dispose (true);
 		}
 		
 		/// <summary>
@@ -132,8 +170,8 @@ namespace System.Security.Cryptography {
 		/// <param name="inputCount">The number of bytes to be copied.</param>
 		/// <param name="outputBuffer">The buffer to write the copied data to.</param>
 		/// <param name="outputOffset">At what point in the outputBuffer to write the data at.</param>
-		public int TransformBlock (byte[] inputBuffer, int inputOffset, int inputCount, byte[] outputBuffer, int outputOffset) {
-
+		public int TransformBlock (byte[] inputBuffer, int inputOffset, int inputCount, byte[] outputBuffer, int outputOffset) 
+		{
 			Buffer.BlockCopy (inputBuffer, inputOffset, outputBuffer, outputOffset, inputCount);
 			HashCore (inputBuffer, inputOffset, inputCount);
 
@@ -146,7 +184,8 @@ namespace System.Security.Cryptography {
 		/// <param name="inputBuffer">The buffer from which to grab the data to be copied.</param>
 		/// <param name="inputOffset">The offset into the input buffer to start reading at.</param>
 		/// <param name="inputCount">The number of bytes to be copied.</param>
-		public byte[] TransformFinalBlock (byte[] inputBuffer, int inputOffset, int inputCount) {
+		public byte[] TransformFinalBlock (byte[] inputBuffer, int inputOffset, int inputCount) 
+		{
 			byte[] outputBuffer = new byte[inputCount];
 			
 			Buffer.BlockCopy (inputBuffer, inputOffset, outputBuffer, 0, inputCount);
