@@ -9,7 +9,7 @@ public class Blah {
 	static string [] names = {
 		"Miguel", "Paolo", "Dietmar", "Dick", "Ravi"
 	};
-	
+
 	public static int Main ()
 	{
 		int [] i = new int [4] { 0, 1, 2, 3 };
@@ -28,13 +28,14 @@ public class Blah {
 		float [] f_array = new float [] { 1.23F, 4.5F, 6.24F };
 
 		double [] double_arr = new double [] { 34.4567, 90.1226, 54.9823 };
+	
 
 		if (i [2] != 2)
 			return 1;
 		
 		if (j [1,1] != 3)
 			return 1;
-		
+
 		for (int t = 0; t < 4; ++t) {
 			if (array [t] != t)
 				return 1;
