@@ -243,6 +243,12 @@ namespace Npgsql
             {
                 // Here we use a fake NpgsqlCommand, just to send the test query string.
                 Query(new NpgsqlCommand("select 1 as ConnectionTest"));
+                
+                // Clear mediator.
+                Mediator.ResetResponses();
+                Mediator.ResetExpectations();
+                
+                
             }
             catch
             {

@@ -1,3 +1,6 @@
+2004-12-05  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com>
+	* Npgsql/NpgsqlConnector (IsValid): Clean mediator after get a connection from pool and test it for validity. This fix a bug which some times occured which made available this test resultset to user when it shouldn't. 
+
 2004-12-07  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (CLEAN_FILES): Add $(RESX_RES).
