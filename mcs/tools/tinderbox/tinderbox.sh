@@ -19,7 +19,7 @@ EMAIL_MESSAGE="mono-patches@ximian.com"
 #EMAIL_MESSAGE="mono-hackers-list@ximian.com"
 EMAIL_FROM="piersh@friskit.com"
 EMAIL_HOST="zeus.sfhq.friskit.com"
-EMAIL_CC="piersh@friskit.com"
+EMAIL_CC="-c piersh@friskit.com"
 
 DELAY_SUCCESS=5m			# wait after a successful build
 DELAY_CHECK_BROKEN=5m		# wait while verifying the build is broken
@@ -81,6 +81,7 @@ function build_mono ()
 	cd $TOPDIR/mono
 
 	# configure mono build
+	rm -f config.cache
 	./autogen.sh --prefix=/home/server/mono/install 2>&1 | tee -a $LOG
 	[ $PIPESTATUS == "0" ] || return 1
 
@@ -162,7 +163,7 @@ function build_fixed ()
 	echo "Previous build:    `cat .build.date.last_success`" >> $BUILDMSG
 	echo >> $BUILDMSG
 
-	$SENDMAIL -h $EMAIL_HOST -f $EMAIL_FROM -t $EMAIL_MESSAGE -c $EMAIL_CC -s "[MONOBUILD] fixed (`uname -s -m`)" -m $BUILDMSG
+	$SENDMAIL -h $EMAIL_HOST -f $EMAIL_FROM -t $EMAIL_MESSAGE $EMAIL_CC -s "[MONOBUILD] fixed (`uname -s -m`)" -m $BUILDMSG
 	rm -f $BUILDMSG
 }
 
@@ -173,9 +174,11 @@ function build_failed ()
 	echo "Previous build: `cat .build.date.last_success`" >> $BUILDMSG
 	echo >> $BUILDMSG
 
-	$SENDMAIL -h $EMAIL_HOST -f $EMAIL_FROM -t $EMAIL_MESSAGE -c $EMAIL_CC -a $LOG -s "[MONOBUILD] broken (`uname -s -m`)" -m $BUILDMSG
+	$SENDMAIL -h $EMAIL_HOST -f $EMAIL_FROM -t $EMAIL_MESSAGE $EMAIL_CC -a $LOG -s "[MONOBUILD] broken (`uname -s -m`)" -m $BUILDMSG
 	rm -f $BUILDMSG
 }
+
+[ -f $LOGPREV ] && mv $LOGPREV $LOG
 
 while [ 1 ] ; do
 
@@ -196,35 +199,39 @@ while [ 1 ] ; do
 	else
 
 		cd $TOPDIR
-		rm -f $LOGPREV
 
-		until compare_logs ; do
+		if ! compare_logs ; then
 
-			date > $LOGDATE.last_fail
-			echo logs differ
+			until compare_logs ; do
 
-			sleep $DELAY_CHECK_BROKEN
+				date > $LOGDATE.last_fail
+				echo logs differ
 
-			if build_mono ; then
+				echo sleeping for $DELAY_CHECK_BROKEN
+				sleep $DELAY_CHECK_BROKEN
+
+				if build_mono ; then
+
+					cd $TOPDIR
+					build_fixed
+					echo "|||||||||||||||||||||"
+					echo "|||| BUILD FIXED ||||"
+					echo "|||||||||||||||||||||"
+					echo FIXED: `date` >> $LOGLOG
+					date > $LOGDATE.last_success
+					echo sleeping for $DELAY_SUCCESS
+					sleep $DELAY_SUCCESS
+					break 2
+				fi
 
 				cd $TOPDIR
-				build_fixed
-				echo "|||||||||||||||||||||"
-				echo "|||| BUILD FIXED ||||"
-				echo "|||||||||||||||||||||"
-				echo FIXED: `date` >> $LOGLOG
-				date > $LOGDATE.last_success
-				echo sleeping for $DELAY_SUCCESS
-				sleep $DELAY_SUCCESS
-				break 2
-			fi
+				echo CHECK: `date` >> $LOGLOG
 
-			cd $TOPDIR
-			echo CHECK: `date` >> $LOGLOG
+			done
 
-		done
+			build_failed
+		fi
 
-		build_failed
 		echo "||||||||||||||||||||||"
 		echo "|||| BUILD BROKEN ||||"
 		echo "||||||||||||||||||||||"
