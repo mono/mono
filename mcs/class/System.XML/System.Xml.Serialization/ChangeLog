@@ -1,5 +1,12 @@
 2003-06-13  Lluis Sanchez Gual <lluis@ximian.com>
 
+	* XmlSerializationReader.cs: Fixed error message.
+	* XmlSerializationReaderInterpreter.cs: Fixed bug when reading XmlQualifiedNames as attributes
+	  Thanks to Atsushi!
+	* XmlSerializationWriter.cs: Null check in FromXmlQualifiedName.
+
+2003-06-13  Lluis Sanchez Gual <lluis@ximian.com>
+
 	* XmlSerializationReader.cs: Fixed implementation of ReadElementQualifiedName() and ReadTypedPrimitive().
 	* XmlSerializationReaderInterpreter.cs: Improved serialization of XmlQualifiedNames.
 	* XmlSerializationWriter.cs: implemented methods for reading XmlQualifiedNames.

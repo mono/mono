@@ -158,9 +158,9 @@ namespace System.Xml.Serialization {
 			return XmlCustomFormatter.FromXmlNmTokens (nmTokens);
 		}
 
-		[MonoTODO ("Implement")]
 		protected string FromXmlQualifiedName (XmlQualifiedName xmlQualifiedName)
 		{
+			if (xmlQualifiedName == null) return string.Empty;
 			return GetQualifiedName (xmlQualifiedName.Name, xmlQualifiedName.Namespace);
 		}
 

@@ -733,7 +733,7 @@ namespace System.Xml.Serialization {
 				string prefix = value.Substring (0, lastColon);
 				ns = reader.LookupNamespace (prefix);
 				if (ns == null)
-					throw new InvalidOperationException ("namespace " + prefix + "not defined");
+					throw new InvalidOperationException ("namespace " + prefix + " not defined");
 
 				name = reader.NameTable.Add (value.Substring (lastColon + 1));
 			}

@@ -406,6 +406,8 @@ namespace System.Xml.Serialization
 		{
 			if (typeData.SchemaType == SchemaTypes.Enum)
 				return GetEnumValue (typeMap, value);
+			else if (typeData.Type == typeof (XmlQualifiedName))
+				return ToXmlQualifiedName (value);
 			else 
 				return XmlCustomFormatter.FromXmlString (typeData.Type, value);
 		}
