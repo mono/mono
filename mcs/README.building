@@ -6,7 +6,7 @@
 2. Use the script to build mono (mono/doc/mono-build.sh).
 
 3. Copy the dlls and mcs.exe from the latest monocharge tarball
-(http://www.gnome-db.org/~gonzalo/mono/) to /where/you/installed/mono/lib and
+(http://www.gotmono.com/sapians/jackson to /where/you/installed/mono/lib and
 ..../bin respectively.
 
 
