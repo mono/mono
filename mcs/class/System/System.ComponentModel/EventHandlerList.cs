@@ -3,6 +3,7 @@
 //
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
+//   Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
 //
@@ -31,14 +32,11 @@ namespace System.ComponentModel {
 				if (table == null)
 					return null;
 
-				return (Delegate) table [key];
+				return table [key] as Delegate;
 			}
 
 			set {
-				if (table == null)
-					table = new Hashtable ();
-
-				table.Add (key, value);
+				AddHandler (key, value);
 			}
 		}
 
@@ -47,12 +45,19 @@ namespace System.ComponentModel {
 			if (table == null)
 				table = new Hashtable ();
 
-			table.Add (key, value);
+			Delegate prev = table [key] as Delegate;
+			prev = Delegate.Combine (prev, value);
+			table [key] = prev;
 		}
 
 		public void RemoveHandler (object key, Delegate value)
 		{
-			table.Remove (key);
+			if (table == null)
+				return;
+
+			Delegate prev = table [key] as Delegate;
+			prev = Delegate.Remove (prev, value);
+			table [key] = prev;
 		}
 
 		public void Dispose ()

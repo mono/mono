@@ -1,3 +1,7 @@
+2002-10-30  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* EventHandlerList.cs: fixed bug #29535.
+
 2002-10-03  Dick Porter  <dick@ximian.com>
 
 	* Win32Exception.cs: Added ETIMEDOUT
