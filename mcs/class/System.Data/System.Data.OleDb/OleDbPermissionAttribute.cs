@@ -30,6 +30,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.ComponentModel;
 using System.Data.Common;
 using System.Security;
 using System.Security.Permissions;
@@ -43,6 +44,12 @@ namespace System.Data.OleDb {
 	[Serializable]
 	public sealed class OleDbPermissionAttribute : DBDataPermissionAttribute {
 
+		#region Fields
+
+		private string _provider;
+
+		#endregion // Fields
+
 		#region Constructors 
 
 		public OleDbPermissionAttribute (SecurityAction action) 
@@ -53,18 +60,30 @@ namespace System.Data.OleDb {
 		#endregion
 
 		#region Properties
+
+#if NET_2_0
+		[Obsolete ()]
+		[EditorBrowsableAttribute (EditorBrowsableState.Never)]
+#endif
+		public string Provider {
+			get {
+				if (_provider == null)
+					return String.Empty;
+				return _provider;
+			}
+			set { _provider = value; }
+		}
+
 		#endregion
 
 		#region Methods
 
 		public override IPermission CreatePermission () 
 		{
-			if (base.Unrestricted) {
-				return new OleDbPermission (PermissionState.Unrestricted);
-			}
-
-			OleDbPermission p = new OleDbPermission (PermissionState.None, this.AllowBlankPassword);
-			p.Add (this.ConnectionString, this.KeyRestrictions, this.KeyRestrictionBehavior);
+			OleDbPermission p = new OleDbPermission (this);
+#if !NET_2_0
+			p.Provider = _provider;
+#endif
 			return p;
 		}
 

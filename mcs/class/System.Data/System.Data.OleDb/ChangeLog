@@ -1,3 +1,11 @@
+2004-09-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* OleDbPermission.cs: Added internal constructor accepting an OleDb
+	PermissionAttribute parameter (using base class protected ctor).
+	Re-added the Provider property (removed by error).
+	* OleDbPermission.cs: Copy now use the new OleDbPermission
+	constructor. Re-added the Provider property (removed by error).
+
 2004-09-13  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* OleDbPermission.cs: Mostly completed (needs tests).

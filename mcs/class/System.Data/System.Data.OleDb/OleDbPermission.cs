@@ -2,14 +2,12 @@
 // System.Data.OleDb.OleDbPermission
 //
 // Author:
-//   Rodrigo Moya (rodrigo@ximian.com)
-//   Tim Coleman (tim@timcoleman.com)
+//	Rodrigo Moya (rodrigo@ximian.com)
+//	Tim Coleman (tim@timcoleman.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // Copyright (C) Rodrigo Moya, 2002
 // Copyright (C) Tim Coleman, 2002
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -32,6 +30,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.ComponentModel;
 using System.Data.Common;
 using System.Security;
 using System.Security.Permissions;
@@ -40,6 +39,12 @@ namespace System.Data.OleDb {
 
 	[Serializable]
 	public sealed class OleDbPermission : DBDataPermission {
+
+		#region Fields
+
+		private string _provider;
+
+		#endregion // Fields
 
 		#region Constructors
 
@@ -71,9 +76,29 @@ namespace System.Data.OleDb {
 		{
 		}
 
+		// easier (and common) permission creation from attribute class
+		internal OleDbPermission (DBDataPermissionAttribute attribute)
+			: base (attribute)
+		{
+		}
+
 		#endregion
 
 		#region Properties
+
+#if NET_2_0
+		[Obsolete ()]
+		[EditorBrowsableAttribute (EditorBrowsableState.Never)]
+#endif
+		public string Provider {
+			get {
+				if (_provider == null)
+					return String.Empty;
+				return _provider;
+			}
+			set { _provider = value; }
+		}
+
 		#endregion
 
 		#region Methods
@@ -83,29 +108,35 @@ namespace System.Data.OleDb {
 			return new OleDbPermission (this);
 		}
 
-		[MonoTODO]
+#if !NET_2_0
+		// methods required to support Provider were removed in Fx 2.0
+		// i.e. Provider isn't included in the XML output
+
 		public override void FromXml (SecurityElement securityElement)
 		{
+			base.FromXml (securityElement);
+			// Provider
 		}
 
-		[MonoTODO]
+		[MonoTODO ("is it worth to implement as it is being removed ?")]
 		public override IPermission Intersect (IPermission target)
 		{
-			throw new NotImplementedException ();
+			return base.Intersect (target);
 		}
 
-		[MonoTODO]
 		public override SecurityElement ToXml ()
 		{
-			throw new NotImplementedException ();
+			SecurityElement se = base.ToXml ();
+			// add Provider
+			return se;
 		}
 
-		[MonoTODO]
+		[MonoTODO ("is it worth to implement as it is being removed ?")]
 		public override IPermission Union (IPermission target)
 		{
-			throw new NotImplementedException ();
+			return base.Union (target);
 		}
-
+#endif
 		#endregion
 	}
 }
