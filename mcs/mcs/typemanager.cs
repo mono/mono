@@ -1077,7 +1077,7 @@ public class TypeManager {
 	{
 		return (MemberInfo) priv_fields_events [ei];
 	}
-	
+		
 	static Hashtable properties;
 	
 	static public bool RegisterProperty (PropertyBuilder pb, MethodBase get, MethodBase set)

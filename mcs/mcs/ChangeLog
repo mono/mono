@@ -1,3 +1,8 @@
+2002-07-16  Ravi Pratap  <ravi@ximian.com>
+
+	* ecore.cs (SimpleName.SimpleNameResolve) : Apply Gonzalo's fix 
+	here too.
+
 2002-07-16  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* expression.cs: fixed bug #27811.

@@ -3403,7 +3403,7 @@ namespace Mono.CSharp {
 
 				Expression ml = MemberLookup (
 					ec, ec.ContainerType, ee.EventInfo.Name,
-					MemberTypes.Event, AllBindingFlags, Location);
+					MemberTypes.Event, AllBindingFlags | BindingFlags.DeclaredOnly, Location);
 
 				if (ml != null) {
 					MemberInfo mi = GetFieldFromEvent ((EventExpr) ml);
