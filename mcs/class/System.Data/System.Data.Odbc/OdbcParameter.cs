@@ -18,7 +18,7 @@ namespace System.Data.Odbc
 		#region Fields
 
 		string name;
-		object value;
+		object ParamValue;
 		int size;
 		bool isNullable;
 		byte precision;
@@ -29,7 +29,10 @@ namespace System.Data.Odbc
 		OdbcType odbcType;
 		DbType dbType;
 
-		int IntValue;
+		// Buffers for parameter value based on type. Currently I've only optimized 
+		// for int parameters and everything else is just converted to a string.
+		int intbuf;
+		byte[] buffer;
 
 		#endregion
 
@@ -38,7 +41,7 @@ namespace System.Data.Odbc
 		public OdbcParameter ()
 		{
 			name = String.Empty;
-			value = null;
+			ParamValue = null;
 			size = 0;
 			isNullable = true;
 			precision = 0;
@@ -50,7 +53,7 @@ namespace System.Data.Odbc
 			: this ()
 		{
 			this.name = name;
-			this.value = value;
+			this.ParamValue = value;
 		}
 
 		public OdbcParameter (string name, OdbcType dataType) 
@@ -58,11 +61,6 @@ namespace System.Data.Odbc
 		{
 			this.name = name;
 			OdbcType = dataType;
-
-			// These paramter types aren't supported yet...
-			if (odbcType==OdbcType.Date || odbcType==OdbcType.Time || odbcType==OdbcType.DateTime ||
-				OdbcType==OdbcType.Timestamp || odbcType==OdbcType.SmallDateTime)
-				throw new NotSupportedException();
 		}
 
 		public OdbcParameter (string name, OdbcType dataType, int size)
@@ -85,7 +83,7 @@ namespace System.Data.Odbc
 			this.precision = precision;
 			this.scale = scale;
 			this.sourceVersion = srcVersion;
-			this.value = value;
+			this.ParamValue = value;
 		}
 
 		#endregion
@@ -147,22 +145,52 @@ namespace System.Data.Odbc
 		
 		public object Value {
 			get { 
-				return IntValue;
+				return ParamValue;
 			}
-			set { this.IntValue =(int) value; }
+			set { 
+				this.ParamValue = value; 
+				// Load buffer with new value
+				if (odbcType==OdbcType.Int)
+					intbuf=(int) value;
+				else
+				{
+					// Treat everything else as a string
+					// Init string buffer
+					if (buffer==null || buffer.Length< ((size>20)?size:20) )
+						buffer=new byte[(size>20)?size:20];
+					else
+						buffer.Initialize();
+					// Convert value into string and store into buffer
+					byte[] strValueBuffer=System.Text.Encoding.ASCII.GetBytes(ParamValue.ToString());
+					strValueBuffer.CopyTo(buffer,0);
+				}
+			}
 		}
 
 		#endregion // Properties
 
-		#region Internal Properties
+		#region public Properties
 
-		internal void Bind(IntPtr hstmt,int ParamNum)
+		public void Bind(IntPtr hstmt,int ParamNum)
 		{
-			OdbcReturn ret=libodbc.SQLBindParam(hstmt, Convert.ToInt16(ParamNum), (short) odbcType, (short) odbcType, 0,0,ref IntValue, 0);
-			libodbchelper.DisplayError("SQLBindParam",ret);		
+			OdbcReturn ret;
+			// Convert System.Data.ParameterDirection into odbc enum
+			OdbcInputOutputDirection paramdir=libodbc.ConvertParameterDirection(this.direction);
+			// Bind parameter based on type
+			if (odbcType==OdbcType.Int)
+				ret=libodbc.SQLBindParameter(hstmt, (ushort) ParamNum, (short) paramdir, 
+					(short) odbcType, (short) odbcType, Convert.ToUInt32(size), 
+					0, ref intbuf, 0, 0);
+			else
+				ret=libodbc.SQLBindParameter(hstmt, (ushort) ParamNum, 	(short) paramdir,
+					(short) OdbcType.Char, (short) odbcType, Convert.ToUInt32(size), 
+					0, 	buffer, 0, 0);
+			// Check for error condition
+			if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
+				throw new OdbcException(new OdbcError("SQLBindParam",OdbcHandleType.Stmt,hstmt));
 		}
 		
-		#endregion // Internal Properties
+		#endregion // public Properties
 
 		#region Methods
 

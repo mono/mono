@@ -11,7 +11,6 @@ using System.Collections;
 using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
-using System.Runtime.InteropServices;
 
 namespace System.Data.Odbc
 {
@@ -24,14 +23,16 @@ namespace System.Data.Odbc
 		private int currentRow;
 		private OdbcColumn[] cols;
 		private IntPtr hstmt;
+		private CommandBehavior behavior;
 
 		#endregion
 
 		#region Constructors
 
-		internal OdbcDataReader (OdbcCommand command) 
+		internal OdbcDataReader (OdbcCommand command, CommandBehavior behavior) 
 		{
 			this.command = command;
+			this.behavior=behavior;
 			this.command.Connection.DataReader = this;
 			open = true;
 			currentRow = -1;
@@ -118,12 +119,12 @@ namespace System.Data.Odbc
 				byte[] colname_buffer=new byte[bufsize];
 				string colname;
 				short colname_size=0;
-				OdbcType DataType=OdbcType.Int;
 				short ColSize=0, DecDigits=0, Nullable=0, dt=0;
 				OdbcReturn ret=libodbc.SQLDescribeCol(hstmt, Convert.ToUInt16(ordinal+1), 
 					colname_buffer, bufsize, ref colname_size, ref dt, ref ColSize, 
 					ref DecDigits, ref Nullable);
-				libodbchelper.DisplayError("SQLDescribeCol",ret);
+				if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
+					throw new OdbcException(new OdbcError("SQLDescribeCol",OdbcHandleType.Stmt,hstmt));
 				colname=System.Text.Encoding.Default.GetString(colname_buffer);
 				colname=colname.Replace((char) 0,' ').Trim();
 				OdbcColumn c=new OdbcColumn(colname, (OdbcType) dt);
@@ -141,12 +142,16 @@ namespace System.Data.Odbc
 			// libodbc.SQLFreeHandle((ushort) OdbcHandleType.Stmt, hstmt);
 		
 			OdbcReturn ret=libodbc.SQLCloseCursor(hstmt);
-			libodbchelper.DisplayError("SQLCancel",ret);
+			if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
+				throw new OdbcException(new OdbcError("SQLCloseCursor",OdbcHandleType.Stmt,hstmt));
 	
 			open = false;
 			currentRow = -1;
 
 			this.command.Connection.DataReader = null;
+
+			if ((behavior & CommandBehavior.CloseConnection)==CommandBehavior.CloseConnection)
+				this.command.Connection.Close();
 		}
 
 		~OdbcDataReader ()
@@ -339,12 +344,12 @@ namespace System.Data.Odbc
 					schemaRow["IsLong"] = false;
 					schemaRow["IsReadOnly"] = false;
 					
-					schemaRow.AcceptChanges();
+	//				schemaRow.AcceptChanges();
 					
 				}
 
 			}
-			
+			dataTableSchema.AcceptChanges();
 			return dataTableSchema;
 		}
 
@@ -440,13 +445,13 @@ namespace System.Data.Odbc
 						break;
 				}
 
+				if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
+					throw new OdbcException(new OdbcError("SQLGetData",OdbcHandleType.Stmt,hstmt));
+
 				if (outsize==-1) // This means SQL_NULL_DATA 
 					col.Value=DBNull.Value;
 				else
-				{
-					libodbchelper.DisplayError("SQLGetData("+col.OdbcType.ToString()+")",ret);
-					col.Value=DataValue;	
-				}
+					col.Value=DataValue;
 			}
 			return col.Value;
 		}

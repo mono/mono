@@ -20,7 +20,7 @@ namespace System.Data.Odbc
 		string connectionString;
 		int connectionTimeout;
 		OdbcDataReader dataReader;
-		internal OdbcTransaction transaction;
+		public OdbcTransaction transaction;
 		IntPtr henv=IntPtr.Zero, hdbc=IntPtr.Zero;
 		
 		#endregion
@@ -33,10 +33,12 @@ namespace System.Data.Odbc
 		
 			// allocate Environment handle	
 			ret=libodbc.SQLAllocHandle(OdbcHandleType.Env, IntPtr.Zero, ref henv);
-			libodbchelper.DisplayError("SQLAllocHandle", ret);
+			if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
+				throw new OdbcException(new OdbcError("SQLAllocHandle"));
 		
 			ret=libodbc.SQLSetEnvAttr(henv, OdbcEnv.OdbcVersion, (IntPtr) 3 , 0); 
-			libodbchelper.DisplayError("SQLSetEnvAttr", ret);
+			if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
+				throw new OdbcException(new OdbcError("SQLSetEnvAttr",OdbcHandleType.Env,henv));
 		
 			//Console.WriteLine("ODBCInit Complete.");
 			connectionTimeout = 15;
@@ -99,7 +101,7 @@ namespace System.Data.Odbc
 			}
 		}
 
-		internal OdbcDataReader DataReader
+		public OdbcDataReader DataReader
 	        {
 			get {
 				return dataReader;
@@ -185,7 +187,8 @@ namespace System.Data.Odbc
 						
 			// allocate connection handle
 			OdbcReturn ret=libodbc.SQLAllocHandle(OdbcHandleType.Dbc, henv, ref hdbc);
-			libodbchelper.DisplayError("SQLAllocHandle(hdbc)", ret);
+			if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
+				throw new OdbcException(new OdbcError("SQLAllocHandle",OdbcHandleType.Env,henv));
 			
 			// DSN connection
 			if (connectionString.ToLower().IndexOf("dsn=")>=0)
@@ -209,7 +212,8 @@ namespace System.Data.Odbc
 					}
 				}
 				ret=libodbc.SQLConnect(hdbc, _dsn, -3, _uid, -3, _pwd, -3);
-				libodbchelper.DisplayError("SQLConnect",ret);
+				if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
+					throw new OdbcException(new OdbcError("SQLConnect",OdbcHandleType.Dbc,hdbc));
 			}
 			else 
 			{
@@ -218,7 +222,8 @@ namespace System.Data.Odbc
 				short OutLen=0;
 				ret=libodbc.SQLDriverConnect(hdbc, IntPtr.Zero, connectionString, -3, 
 					OutConnectionString, (short) OutConnectionString.Length, ref OutLen, 0);
-				libodbchelper.DisplayError("SQLConnect",ret);
+				if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
+					throw new OdbcException(new OdbcError("SQLDriverConnect",OdbcHandleType.Dbc,hdbc));
 			}
 
 		}

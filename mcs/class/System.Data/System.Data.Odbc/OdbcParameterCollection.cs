@@ -1,4 +1,3 @@
-
 //
 // System.Data.Odbc.OdbcParameterCollection
 //
@@ -119,7 +118,7 @@ namespace System.Data.Odbc
 		}
 
 
-		internal void Bind(IntPtr hstmt)
+		public void Bind(IntPtr hstmt)
 		{
 			for (int i=0;i<Count;i++)
 			{

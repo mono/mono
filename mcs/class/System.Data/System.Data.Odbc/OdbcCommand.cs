@@ -31,8 +31,7 @@ namespace System.Data.Odbc
 		bool designTimeVisible;
 		bool prepared=false;
 		OdbcDataReader dataReader;
-		CommandBehavior behavior;
-		internal IntPtr hstmt;
+		public IntPtr hstmt;
 		
 		#endregion // Fields
 
@@ -48,7 +47,6 @@ namespace System.Data.Odbc
 			transaction = null;
 			designTimeVisible = false;
 			dataReader = null;
-			behavior = CommandBehavior.Default;
 		}
 
 		public OdbcCommand (string cmdText) : this ()
@@ -186,8 +184,9 @@ namespace System.Data.Odbc
 		{
 			if (hstmt!=IntPtr.Zero)
 			{
-				OdbcReturn ret=libodbc.SQLCancel(hstmt);
-				libodbchelper.DisplayError("SQLCancel",ret);
+				OdbcReturn Ret=libodbc.SQLCancel(hstmt);
+				if ((Ret!=OdbcReturn.Success) && (Ret!=OdbcReturn.SuccessWithInfo)) 
+					throw new OdbcException(new OdbcError("SQLCancel",OdbcHandleType.Stmt,hstmt));
 			}
 			else
 				throw new InvalidOperationException();
@@ -211,25 +210,25 @@ namespace System.Data.Odbc
 		private void ExecSQL(string sql)
 		{
 			OdbcReturn ret;
-	
-			if (!prepared)
-			{
+
+			if ((parameters.Count>0) && !prepared)
 				Prepare();
-				if (Parameters.Count>0)
-					Parameters.Bind(hstmt);
-			}
-			
+	
 			if (prepared)
 			{
 				ret=libodbc.SQLExecute(hstmt);
-				libodbchelper.DisplayError("SQLExecute",ret);
+				if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
+					throw new OdbcException(new OdbcError("SQLExecute",OdbcHandleType.Stmt,hstmt));
 			}
 			else
 			{
 				ret=libodbc.SQLAllocHandle(OdbcHandleType.Stmt, Connection.hDbc, ref hstmt);
-				libodbchelper.DisplayError("SQLAllocHandle(hstmt)",ret);
+				if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
+					throw new OdbcException(new OdbcError("SQLAllocHandle",OdbcHandleType.Dbc,Connection.hDbc));
+
 				ret=libodbc.SQLExecDirect(hstmt, sql, sql.Length);
-				libodbchelper.DisplayError("SQLExecDirect",ret);
+				if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
+					throw new OdbcException(new OdbcError("SQLExecDirect",OdbcHandleType.Stmt,hstmt));
 			}
 		}
 
@@ -245,17 +244,28 @@ namespace System.Data.Odbc
 
 			ExecSQL(CommandText);
 
-			if (!prepared)
-				libodbc.SQLFreeHandle( (ushort) OdbcHandleType.Stmt, hstmt);
+//			if (!prepared)
+//				libodbc.SQLFreeHandle( (ushort) OdbcHandleType.Stmt, hstmt);
 			return 0;
 		}
 
 		public void Prepare()
 		{
 			OdbcReturn ret=libodbc.SQLAllocHandle(OdbcHandleType.Stmt, Connection.hDbc, ref hstmt);
-			libodbchelper.DisplayError("SQLAlloc(Prepare)",ret);
+			if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
+				throw new OdbcException(new OdbcError("SQLAllocHandle",OdbcHandleType.Dbc,Connection.hDbc));
+
 			ret=libodbc.SQLPrepare(hstmt, CommandText, CommandText.Length);
-			libodbchelper.DisplayError("SQLPrepare",ret);
+			if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
+				throw new OdbcException(new OdbcError("SQLPrepare",OdbcHandleType.Stmt,hstmt));
+
+			int i=1;
+			foreach (OdbcParameter p in parameters)
+			{
+				p.Bind(hstmt, i);
+				i++;
+			}
+
 			prepared=true;
 		}
 
@@ -272,7 +282,7 @@ namespace System.Data.Odbc
 		public OdbcDataReader ExecuteReader (CommandBehavior behavior)
 		{
 			ExecuteNonQuery();
-			dataReader=new OdbcDataReader(this);
+			dataReader=new OdbcDataReader(this,behavior);
 			return dataReader;
 		}
 
@@ -283,10 +293,19 @@ namespace System.Data.Odbc
 		
 		public object ExecuteScalar ()
 		{
-					throw new NotImplementedException ();
-//			if (connection.DataReader != null)
-//				throw new InvalidOperationException ();
-//			
+			if (connection.DataReader != null)
+				throw new InvalidOperationException ();
+			object val;
+			OdbcDataReader reader=ExecuteReader();
+			try
+			{
+				val=reader[0];
+			}
+			finally
+			{
+				reader.Close();
+			}
+			return val;
 		}
 
 		[MonoTODO]
