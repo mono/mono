@@ -931,7 +931,7 @@ namespace System {
 			return FullName;
 		}
 
-#if GENERICS
+#if NET_1_2
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern Type [] GetGenericArguments ();
 

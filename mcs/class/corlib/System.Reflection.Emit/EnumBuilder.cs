@@ -265,7 +265,7 @@ namespace System.Reflection.Emit {
 			SetCustomAttribute (new CustomAttributeBuilder (con, binaryAttribute));
 		}
 
-#if GENERICS
+#if NET_1_2
 		public override bool HasGenericArguments {
 			get {
 				throw new NotImplementedException ();

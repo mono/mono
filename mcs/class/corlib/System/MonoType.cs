@@ -538,7 +538,7 @@ namespace System
 			UnitySerializationHolder.GetTypeData (this, info, context);
 		}
 
-#if GENERICS
+#if NET_1_2
 		public extern override bool HasGenericArguments {
 			[MethodImplAttribute(MethodImplOptions.InternalCall)]
 			get;

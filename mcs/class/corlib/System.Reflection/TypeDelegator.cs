@@ -229,7 +229,7 @@ namespace System.Reflection {
 			throw new NotImplementedException ();
 			//return typeImpl.IsValueTypeImpl ();
 		}
-#if GENERICS
+#if NET_1_2
 		public override bool HasGenericArguments {
 			get {
 				throw new NotImplementedException ();

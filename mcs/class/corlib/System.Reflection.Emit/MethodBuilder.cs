@@ -235,7 +235,7 @@ namespace System.Reflection.Emit {
 			return new NotSupportedException ("The invoked member is not supported in a dynamic module.");
 		}
 
-#if GENERICS
+#if NET_1_2
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern Type define_generic_parameter (TypeBuilder.MonoGenericParam param);
 		

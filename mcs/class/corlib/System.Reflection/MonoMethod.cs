@@ -167,7 +167,7 @@ namespace System.Reflection {
 			ReflectionSerializationHolder.Serialize ( info, Name, ReflectedType, ToString(), MemberTypes.Method);
 		}
 
-#if GENERICS
+#if NET_1_2
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public override extern Type [] GetGenericArguments ();
 #endif

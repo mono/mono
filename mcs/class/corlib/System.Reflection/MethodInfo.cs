@@ -25,7 +25,7 @@ namespace System.Reflection {
 		public abstract Type ReturnType { get; }
 		public abstract ICustomAttributeProvider ReturnTypeCustomAttributes { get; } 
 
-#if GENERICS
+#if NET_1_2
 		public extern bool IsGenericMethodDefinition {
 			[MethodImplAttribute(MethodImplOptions.InternalCall)]
 			get;

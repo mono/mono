@@ -998,7 +998,7 @@ namespace System.Reflection.Emit {
 				throw new ArgumentException (argName, "Illegal name.");
 		}
 
-#if GENERICS
+#if NET_1_2
 		public override Type GetGenericTypeDefinition ()
 		{
 			setup_generic_class (this);

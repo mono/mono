@@ -108,7 +108,7 @@ namespace System.Reflection {
 			return ReturnType.Name+" "+Name+"("+parms+")";
 		}
 
-#if GENERICS
+#if NET_1_2
 		public override Type[] GetGenericArguments ()
 		{
 			throw new NotImplementedException ();
