@@ -1,3 +1,7 @@
+2005-01-11  Zoltan Varga  <vargaz@freemail.hu>
+
+	* aot.c: Add write-symbols and save-temps options.
+
 2005-01-10  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-x86.c: Add support for returning structs in registers from pinvoke functions on WIN32.
