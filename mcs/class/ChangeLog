@@ -1,3 +1,7 @@
+2004-10-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile : just remove System.Data.SqlXml.dll.
+
 2004-10-11  Duncan Mak  <duncan@ximian.com>
 
         * Makefile: Move Microsoft.VisualBasic.dll to be built after
