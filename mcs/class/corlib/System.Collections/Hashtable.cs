@@ -51,6 +51,9 @@ namespace System.Collections {
 		private float loadFactor;
 		private Slot [] table;
 		private int threshold;
+	
+		private HashKeys hashKeys;
+		private HashValues hashValues;
 
 		private IHashCodeProvider hcpRef;
 		private IComparer comparerRef;
@@ -101,10 +104,10 @@ namespace System.Collections {
 
 		public Hashtable (int capacity, float loadFactor, IHashCodeProvider hcp, IComparer comparer) {
 			if (capacity<0)
-				throw new ArgumentOutOfRangeException ("negative capacity");
+				throw new ArgumentOutOfRangeException ("capacity", "negative capacity");
 
 			if (loadFactor < 0.1f || loadFactor > 1.0f || Single.IsNaN (loadFactor))
-				throw new ArgumentOutOfRangeException ("load factor");
+				throw new ArgumentOutOfRangeException ("loadFactor", "load factor");
 
 			if (capacity == 0) ++capacity;
 			this.loadFactor = 0.75f*loadFactor;
@@ -250,13 +253,17 @@ namespace System.Collections {
 
 		public virtual ICollection Keys {
 			get {
-				return new HashKeys (this);
+				if (this.hashKeys == null)
+					this.hashKeys = new HashKeys (this);
+				return this.hashKeys;
 			}
 		}
 
 		public virtual ICollection Values {
 			get {
-				return new HashValues (this);
+				if (this.hashValues == null)
+					this.hashValues = new HashValues (this);
+				return this.hashValues;
 			}
 		}
 
@@ -346,8 +353,8 @@ namespace System.Collections {
 		public virtual void Remove (Object key)
 		{
 			int i = Find (key);
-			Slot [] table = this.table;
 			if (i >= 0) {
+				Slot [] table = this.table;
 				int h = table [i].hashMix;
 				h &= CHAIN_MARKER;
 				table [i].hashMix = h;
@@ -360,9 +367,6 @@ namespace System.Collections {
 			}
 		}
 
-
-
-
 		public virtual bool ContainsKey (object key)
 		{
 			return Contains (key);
@@ -372,12 +376,21 @@ namespace System.Collections {
 		{
 			int size = this.table.Length;
 			Slot [] table = this.table;
-
-			for (int i = 0; i < size; i++) {
-				Slot entry = table [i];
-				if (entry.key != null && entry.key!= KeyMarker.Removed
-				    && value.Equals (entry.value)) {
-					return true;
+			if (value == null) {
+				for (int i = 0; i < size; i++) {
+					Slot entry = table [i];
+					if (entry.key != null && entry.key!= KeyMarker.Removed
+				    	&& entry.value == null) {
+						return true;
+					}
+				}
+			} else { 
+				for (int i = 0; i < size; i++) {
+					Slot entry = table [i];
+					if (entry.key != null && entry.key!= KeyMarker.Removed
+				    	&& value.Equals (entry.value)) {
+						return true;
+					}
 				}
 			}
 			return false;
@@ -425,6 +438,8 @@ namespace System.Collections {
 		/// </summary>
 		public static Hashtable Synchronized (Hashtable table)
 		{
+			if (table == null)
+				throw new ArgumentNullException("table");
 			return new SynchedHashtable (table);
 		}
 
@@ -494,7 +509,7 @@ namespace System.Collections {
 		private int Find (Object key)
 		{
 			if (key == null)
-				throw new ArgumentNullException ("null key");
+				throw new ArgumentNullException ("key", "null key");
 
 			uint size = (uint) this.table.Length;
 			int h = this.GetHash (key) & Int32.MaxValue;
@@ -566,7 +581,7 @@ namespace System.Collections {
 		private void PutImpl (Object key, Object value, bool overwrite)
 		{
 			if (key == null)
-				throw new ArgumentNullException ("null key");
+				throw new ArgumentNullException ("key", "null key");
 
 			uint size = (uint)this.table.Length;
 			if (this.inUse >= this.threshold) {

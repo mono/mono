@@ -1,3 +1,9 @@
+2003-10-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HashtableTest.cs: patch from Carlos A.  Barcenilla
+	(barce@frlp.utn.edu.ar) that includes some fixes for Hashtable +
+	NUnit2 tests.
+
 2003-10-07 Nick Drochak <ndrochak@gol.com>
 
 	* DictionaryBaseTest.cs:

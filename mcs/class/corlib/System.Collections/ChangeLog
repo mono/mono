@@ -1,3 +1,9 @@
+2003-10-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* System.Collections/Hashtable.cs: patch from Carlos A.
+	Barcenilla (barce@frlp.utn.edu.ar) that includes some fixes for
+	Hashtable + NUnit2 tests.
+
 2003-10-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Queue.cs: nullify the array in Clear.
