@@ -1,3 +1,10 @@
+2004-07-15  Dick Porter  <dick@ximian.com>
+
+	* Thread.cs: Hold a lock in GetNamedDataSlot.  Fixes bug 61582,
+	based on patch by Sébastien Robitaille
+	(sebastien.robitaille@croesus.com).  Also fix instances of
+	lock(typeof(Thread)) to lock a private object instead.
+
 2004-07-14  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AsyncFlowControl.cs: New structure in Fx 2.0 required in 
