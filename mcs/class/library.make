@@ -8,7 +8,7 @@ prefix = /usr
 
 SOURCES_CMD=find . \
 	! \( $(SOURCES_INCLUDE:%=! -path '%' ) \) -a	\
-	  \( $(SOURCES_EXCLUDE:%=! -path '%' ) \) -a	\
+	  \( $(SOURCES_EXCLUDE:%=! -path '%' ) ! -path '/dev/null' \) -a	\
 	  ! -path '*/__*.cs'
 
 
