@@ -1508,9 +1508,16 @@ namespace Mono.CSharp {
 			if (variables == null)
 				variables = new Hashtable ();
 
+			Block cur = this;
+			while (cur != null && cur.Implicit)
+				cur = cur.Parent;
+
 			LocalInfo vi = GetLocalInfo (name);
 			if (vi != null) {
-				if (vi.Block != this)
+				Block var = vi.Block;
+				while (var != null && var.Implicit)
+					var = var.Parent;
+				if (var != cur)
 					Report.Error (136, l, "A local variable named `" + name + "' " +
 						      "cannot be declared in this scope since it would " +
 						      "give a different meaning to `" + name + "', which " +
@@ -1549,9 +1556,6 @@ namespace Mono.CSharp {
 			variables.Add (name, vi);
 
 			// Mark 'name' as "used by a child block" in every surrounding block
-			Block cur = this;
-			while (cur != null && cur.Implicit) 
-				cur = cur.Parent;
 			if (cur != null)
 				for (Block par = cur.Parent; par != null; par = par.Parent)
 					par.AddChildVariableName (name);

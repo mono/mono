@@ -1,5 +1,9 @@
 2005-03-22  Raja R Harinath  <rharinath@novell.com>
 
+	Fix cs0128.cs
+	* statement.cs (Block.AddVariable): Ensure that we skip implicit
+	blocks before deciding whether the error is cs0136 or cs0128.
+
 	* cs-parser.jay: Pass MemberName to RootContext.Tree.RecordDecl.
 	(using_alias_directive,	using_namespace_directive): Pass
 	MemberName, not an expression to Namespace.UsingAlias and 
