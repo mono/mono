@@ -1,3 +1,10 @@
+2002-07-18  Dietmar Maurer  <dietmar@ximian.com>
+
+	* exception.c (arch_handle_exception): removed duplicated code,
+	added support for exception filters
+
+	* jit.c (mono_jit_compile_method): support exception filters
+
 2002-07-17  Dietmar Maurer  <dietmar@ximian.com>
 
 	* jit.c (mono_analyze_stack CEE_DIV): added fix from Zoltan Varga
