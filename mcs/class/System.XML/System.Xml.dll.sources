@@ -113,6 +113,8 @@ System.Xml/XmlImplementation.cs
 System.Xml/XmlConvert.cs
 System.Xml/XmlDateTimeSerializationMode.cs
 System.Xml/XmlLinkedNode.cs
+System.Xml/XmlNameEntry.cs
+System.Xml/XmlNameEntryCache.cs
 System.Xml/XmlNameTable.cs
 System.Xml/XmlNamedNodeMap.cs
 System.Xml/XmlNamespaceScope.cs
