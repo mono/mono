@@ -1,3 +1,8 @@
+2004-09-24  Zoltan Varga  <vargaz@freemail.hu>
+
+	* main.c: Add support for pinvoke flags BestFit and 
+	ThrowOnUnmappableChar.
+
 2004-09-23  Miguel de Icaza  <miguel@ximian.com>
 
 	* main.c (dis_directive_assemblyref): Dump the locale and public
