@@ -1,4 +1,3 @@
-//
 // System.Collections.ArrayList
 //
 // Author:
@@ -245,12 +244,7 @@ namespace System.Collections {
 				if (Count < (index + count))
 					throw new ArgumentException ();
 				
-				ArrayList result = new ArrayList (count);
-
-				for (int i = 0; i < count; i++)
-					result.Add (list [i]);
-
-				return result;
+				return (ArrayList) new Range (this, index, count);
 			}
 
 			public override void InsertRange (int index, ICollection col) {
@@ -337,14 +331,7 @@ namespace System.Collections {
 						list [i] = o;
 			}
 
-			public override void Sort () {
-				Sort (null);
-			}
-
-			public override void Sort (IComparer comparer) {
-				Sort (0, Count, comparer);
-			}
-
+			// Other overloads just call this
 			public override void Sort (int index, int count, IComparer comparer) {
 				if ((index < 0) || (count < 0))
 					throw new ArgumentOutOfRangeException ();
@@ -1028,6 +1015,409 @@ namespace System.Collections {
 			version++;
 		}
 
+		
+		private class Range : ArrayList {
+			ArrayList baseList;
+			int baseIndex;
+			int baseSize;
+			long baseVersion;
+			
+			internal Range (ArrayList list, int index, int count)
+			{
+				baseList = list;
+				baseIndex = index;
+				baseSize = count;
+				baseVersion = list.version;
+			}
+			
+			int RealIndex (int index)
+			{
+				return index + baseIndex;
+			}
+			
+			int RealEnd {
+				get {return baseIndex + baseSize;}
+			}
+			
+			
+			private void CheckVersion ()
+			{
+				if (baseVersion != this.baseList.version)
+					throw new InvalidOperationException ();
+			}
+			
+			public override int Add (object value) 
+			{
+				CheckVersion ();
+				baseList.Insert (RealEnd, value);
+				baseVersion++;
+				return baseSize++;
+			}
+			
+			public override void AddRange (ICollection c)
+			{
+				CheckVersion ();
+				baseList.InsertRange (RealEnd, c);
+				baseVersion++;
+				baseSize += c.Count;
+			}
+			
+			public override int BinarySearch (int index, int count, object value, IComparer comparer)
+			{
+				CheckVersion ();
+				
+				if ((index < 0) || (count < 0))
+					throw new ArgumentOutOfRangeException ();
+				if ((index > Count) || (index + count) > Count)
+					throw new ArgumentException ();
+				
+				int i = baseList.BinarySearch (RealIndex (index), count, value, comparer);
+				
+				// Account for how a BinarySearch works
+				if (i >= 0) return i - baseIndex;
+				return i + baseIndex;
+			}
+			
+			public override int Capacity {
+				get {return baseList.Capacity;}
+             
+				set {
+					if (value < Count) 
+						throw new ArgumentOutOfRangeException("value");
+					// From profiling it looks like Microsoft does not do anything
+					// This make sense, since we can't very well have a "capacity" for the range.
+				}
+			}
+    
+
+			public override void Clear ()
+			{
+				CheckVersion ();
+				if (baseSize != 0) {
+					baseList.RemoveRange (baseIndex, baseSize);
+					baseVersion++;
+					baseSize = 0;
+				}
+			}
+
+			public override object Clone ()
+			{
+				CheckVersion ();
+				
+				// Debugging Microsoft shows that this is _exactly_ how they do it.
+				Range arrayList = new Range (baseList, baseIndex, baseSize);
+				arrayList.baseList = (ArrayList)baseList.Clone ();
+				
+				return arrayList;
+			}
+
+			public override bool Contains (object item)
+			{
+				CheckVersion ();
+				
+				// Is much faster to check for null than to call Equals.
+				if (item == null) {
+					for (int i = 0; i < baseSize; i++)
+						if (baseList[baseIndex + i] == null)
+							return true;
+					return false;
+				} else {
+					for (int i = 0; i < baseSize; i++)
+						if (item.Equals (baseList [baseIndex + i]))
+							return true;
+					return false;
+				}
+			}
+    
+		
+			public override void CopyTo (Array array, int index) 
+			{
+				CheckVersion ();
+				if (null == array)
+					throw new ArgumentNullException ("array");
+				if (array.Rank > 1)
+					throw new ArgumentException ("array cannot be multidimensional");
+				if (index < 0)
+					throw new ArgumentOutOfRangeException ("index");
+				if (array.Length - index < baseSize)
+					throw new ArgumentException ();
+				
+				Array.Copy (baseList.dataArray, baseIndex, array, index, baseSize);
+			}
+
+			public override void CopyTo (int index, Array array, int arrayIndex, int count)
+			{
+				CheckVersion ();
+				
+				if (null == array)
+					throw new ArgumentNullException ("array");
+				if (array.Rank > 1)
+					throw new ArgumentException ("array cannot be multidimensional");
+				if (index < 0)
+					throw new ArgumentOutOfRangeException ("index");
+				if (count < 0)
+					throw new ArgumentOutOfRangeException ("count");
+				if (array.Length - index < baseSize)
+					throw new ArgumentException ();
+				if (baseSize - index < count)
+					throw new ArgumentException ();
+				
+				Array.Copy (baseList.dataArray, RealIndex (index), array, arrayIndex, count);
+			}
+
+			public override int Count {
+				get {
+					CheckVersion ();
+					return baseSize; 
+				}
+			}
+
+			public override bool IsReadOnly {
+				get { return baseList.IsReadOnly; }
+			}
+
+			public override bool IsFixedSize {
+				get { return baseList.IsFixedSize; }
+			}
+
+			public override bool IsSynchronized {
+				get { return baseList.IsSynchronized; }
+			}
+								
+			public override IEnumerator GetEnumerator ()
+			{
+				return GetEnumerator (0, baseSize);
+			}
+
+			public override IEnumerator GetEnumerator (int index, int count) 
+			{
+				CheckVersion ();
+				if (index < 0)
+					throw new ArgumentOutOfRangeException ("index");
+				if (count < 0)
+					throw new ArgumentOutOfRangeException ("count");			
+				if (baseSize - index < count)
+					throw new ArgumentException ();
+				
+				return baseList.GetEnumerator (RealIndex (index), count);
+			}
+
+			public override ArrayList GetRange (int index, int count)
+			{
+				CheckVersion ();
+				
+				if (index < 0)
+					throw new ArgumentOutOfRangeException ("index");
+				if (count < 0)
+					throw new ArgumentOutOfRangeException ("count");			
+				if (baseSize - index < count)
+					throw new ArgumentException ();
+				
+				// We have to create a wrapper around a wrapper
+				// because if we update the inner most wrapper, the
+				// outer ones must still function. If we just wrapped
+				// the outer most ArrayList, the others would not update
+				// their version.
+				return new Range (this, index, count);
+			}
+
+			public override object SyncRoot {
+				get {return baseList.SyncRoot;}
+			}
+        
+
+			public override int IndexOf (object value)
+			{
+				CheckVersion ();
+				int i = baseList.IndexOf (value, baseIndex, baseSize);
+				
+				if (i >= 0) return i - baseIndex;
+				else return -1;
+			}
+
+			public override int IndexOf (object value, int startIndex)
+			{
+				CheckVersion ();
+				if (startIndex < 0 || startIndex > baseSize)
+					throw new ArgumentOutOfRangeException ();
+
+				int i = baseList.IndexOf (value, RealIndex (startIndex), baseSize - startIndex);
+				if (i >= 0) return i - baseIndex;
+				return -1;
+			}
+			
+			public override int IndexOf (object value, int startIndex, int count)
+			{
+				CheckVersion ();
+				if (startIndex < 0 || startIndex > baseSize)
+					throw new ArgumentOutOfRangeException("startIndex");
+					
+				if (count < 0 || (startIndex > baseSize - count))
+					throw new ArgumentOutOfRangeException("count");
+
+				int i = baseList.IndexOf (value, RealIndex (startIndex), count);
+				if (i >= 0) return i - baseIndex;
+				return -1;
+			}
+
+			public override void Insert (int index, object value)
+			{
+				CheckVersion ();
+				if (index < 0 || index > baseSize)
+					throw new ArgumentOutOfRangeException("index");
+				baseList.Insert ( RealIndex (index), value);
+				baseVersion++;
+				baseSize++;
+			}
+
+			public override void InsertRange (int index, ICollection c) 
+			{
+				CheckVersion ();
+				if (index < 0 || index > baseSize) 
+					throw new ArgumentOutOfRangeException("index");
+				
+				baseList.InsertRange (RealIndex (index), c);
+				baseVersion++;
+				baseSize += c.Count;
+			}
+
+			public override int LastIndexOf (object value)
+			{
+				CheckVersion ();
+				int i = baseList.LastIndexOf (value, baseIndex, baseSize);
+				if (i >= 0) return i - baseIndex;
+				return -1;
+			}
+
+			public override int LastIndexOf (object value, int startIndex)
+			{
+				return LastIndexOf (value, startIndex, startIndex + 1);
+			}
+
+			public override int LastIndexOf (object value, int startIndex, int count)
+			{
+				CheckVersion ();
+				if (baseSize == 0)
+					return -1;
+   
+				if (startIndex < 0 || startIndex >= baseSize)
+					throw new ArgumentOutOfRangeException("startIndex");
+				
+				int i = baseList.LastIndexOf (value, RealIndex (startIndex), count);
+				if (i >= 0) return i - baseIndex;
+				return -1;
+			}
+
+			// Remove will just call the overrided methods in here
+
+			public override void RemoveAt (int index) 
+			{
+				CheckVersion ();
+				if (index < 0 || index >= baseSize) 
+					throw new ArgumentOutOfRangeException ("index");
+				baseList.RemoveAt (RealIndex (index));
+				baseVersion++;
+				baseSize--;
+			}
+
+			public override void RemoveRange (int index, int count)
+			{
+				CheckVersion ();
+				if (index < 0)
+					throw new ArgumentOutOfRangeException ("index");
+				if (count < 0)
+					throw new ArgumentOutOfRangeException ("count");
+				if (baseSize - index < count)
+					throw new ArgumentException ();
+				
+				baseList.RemoveRange (RealIndex (index), count);
+				baseVersion++;
+				baseSize -= count;
+			}
+
+			public override void Reverse (int index, int count)
+			{
+				CheckVersion ();
+				if (index < 0)
+					throw new ArgumentOutOfRangeException ("index");
+				if (count < 0)
+					throw new ArgumentOutOfRangeException ("count");
+				if (baseSize - index < count)
+					throw new ArgumentException ();
+				
+				baseList.Reverse (RealIndex (index), count);
+				baseVersion++;
+			}
+
+
+			public override void SetRange (int index, ICollection c) 
+			{
+				CheckVersion ();
+				if (index < 0 || index >= baseSize) 
+					throw new ArgumentOutOfRangeException("index");
+				
+				baseList.SetRange (RealIndex (index), c);
+				baseVersion++;
+			}
+			
+			// Other overloads just call this
+			public override void Sort (int index, int count, IComparer comparer) 
+			{
+				CheckVersion ();
+				
+				if (index < 0)
+					throw new ArgumentOutOfRangeException ("index");
+				if (count < 0)
+					throw new ArgumentOutOfRangeException ("count");
+				if (baseSize - index < count)
+					throw new ArgumentException ();
+				
+				baseList.Sort (RealIndex (index), count, comparer);
+				baseVersion++;
+			}
+
+			public override object this [int index] {
+				get {
+					CheckVersion ();
+					if (index < 0 || index >= baseSize)
+						throw new ArgumentOutOfRangeException("index");
+					
+					return baseList[baseIndex + index];
+				}
+				set {
+					CheckVersion ();
+					if (index < 0 || index >= baseSize)
+						throw new ArgumentOutOfRangeException("index");
+					
+					baseList [baseIndex + index] = value;
+					baseVersion++;
+				}
+			}
+
+			public override object [] ToArray () 
+			{
+				CheckVersion ();
+				object [] array = new object [baseSize];
+				Array.Copy (baseList.dataArray, baseIndex, array, 0, baseSize);
+				return array;
+			}
+
+			public override Array ToArray (Type type)
+			{
+				CheckVersion ();
+				if (type == null)
+					throw new ArgumentNullException("type");
+				
+				Array array = Array.CreateInstance (type, baseSize);
+				Array.Copy (baseList.dataArray, baseIndex, array, 0, baseSize);
+				return array;
+			}
+
+			public override void TrimToSize ()
+			{
+				throw new NotSupportedException ("Can not trim range");
+			}
+		}
 		private class SyncArrayList : ArrayList {
 			private ArrayList	_list;
 
