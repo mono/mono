@@ -1,3 +1,13 @@
+2004-02-26  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AssemblyInfo.cs: Ajusted versions, informations and copyrights.
+	* certmgr.cs: New. Very limited certificate manager. Allow to add new 
+	certificates into the Trusted certificate store.
+	* Makefile: Added certmgr and setreg to the build.
+	* README: Updated.
+	* setreg.cs: New. Allow to add/remove test root certificates from the
+	trusted certificate store.
+
 2003-11-10  Todd Berman  <tberman@gentoo.org>
 
 	* sn.cs: Wow, gonzalo is so super s-m-a-r-t, changing up last fix to

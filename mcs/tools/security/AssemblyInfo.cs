@@ -3,10 +3,10 @@ using System.Runtime.CompilerServices;
 
 // AssemblyTitle - included in tool's source code
 // AssemblyDescription - included in tool's source code
-[assembly: AssemblyCompany("Sébastien Pouliot, Motus Technologies")]
-[assembly: AssemblyProduct("Open Source Tools for .NET")]
-[assembly: AssemblyCopyright("Copyright 2002, 2003 Motus Technologies. Released under BSD license.")]
-[assembly: AssemblyVersion("0.28.99")]
+[assembly: AssemblyCompany("Motus Technologies, Novell")]
+[assembly: AssemblyProduct("Mono Security Tools")]
+[assembly: AssemblyCopyright("Copyright 2002, 2003 Motus Technologies. Copyright 2004 Novell. BSD licensed.")]
+[assembly: AssemblyVersion("0.30.99")]
 //[assembly: AssemblyConfiguration("")]
 //[assembly: AssemblyTrademark("")]
 //[assembly: AssemblyCulture("")]

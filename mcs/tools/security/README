@@ -1,14 +1,14 @@
 Mono's Security Tools - README
-Last updated: September 1, 2003 (post mono 0.26)
+Last updated: February 24, 2004 (post mono 0.30)
 
 * General notes
 
 - This directory contains clones for .NET security tools;
 - All tools are 100% managed code with no dependency to the Mono's runtime.
 - A much as possible the same command line arguments as the original are used;
-- Documentation (man) is available for some tools;
+- Documentation (man) is available for most tools;
 - All tools, except secutil.exe, requires the Mono.Security.dll assembly.
-- Authenticode(tm) support is MINIMAL - there are still many missing
+- Authenticode(r) support is MINIMAL - there are still many missing
   validations.
 
 
@@ -31,9 +31,8 @@ The command:
 mono makecert.exe -n "CN=your name" -sv yourkeypair.pvk yourcert.cer
 
 will create both a PVK file (containing your private key) and a CER file
-(containing the X.509 certificate). This step will take some time (about a
-minute on a P3-800) because the tools must generate your own keypair (in
-this case a 1024 bits RSA keypair).
+(containing the X.509 certificate). This step will take some time because the
+tools must generate your own keypair (in this case a 1024 bits RSA keypair).
 
 example:
 mono makecert.exe -n "CN=Sebastien Pouliot" -sv spouliot.pvk spouliot.cer
@@ -104,8 +103,5 @@ system. This is bad for several reason, foremost that EVERYONE has access to
 it's private key! Please remove the test certificate AS SOON as you have 
 finished testing using it.
 
------------------
-Sebastien Pouliot
-Security Architect, Motus Technologies, http://www.motus.com/
-work: spouliot@motus.com
-home: spouliot@videotron.ca
+--------------------
+sebastien@ximian.com

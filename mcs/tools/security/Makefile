@@ -5,7 +5,7 @@ include ../../build/rules.make
 
 LOCAL_MCS_FLAGS = /r:$(topdir)/class/lib/Mono.Security.dll
 
-SECURITY_PROGRAMS = secutil.exe cert2spc.exe sn.exe MakeCert.exe chktrust.exe signcode.exe
+SECURITY_PROGRAMS = secutil.exe cert2spc.exe sn.exe MakeCert.exe chktrust.exe signcode.exe setreg.exe certmgr.exe
 
 DISTFILES = \
 	AssemblyInfo.cs	\
@@ -15,7 +15,9 @@ DISTFILES = \
 	secutil.cs	\
 	sn.cs		\
 	chktrust.cs	\
-	signcode.cs
+	signcode.cs	\
+	setreg.cs	\
+	certmgr.cs
 
 all-local: $(SECURITY_PROGRAMS)
 
