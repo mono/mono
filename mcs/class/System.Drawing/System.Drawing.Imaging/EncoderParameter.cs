@@ -73,9 +73,8 @@ namespace System.Drawing.Imaging {
 
 			ASCIIEncoding ascii = new ASCIIEncoding ();
 			int asciiByteCount = ascii.GetByteCount (value);
-			byte[] bytes = new byte[asciiByteCount+1];
+			byte[] bytes = new byte [asciiByteCount];
 			ascii.GetBytes (value, 0, value.Length, bytes, 0);
-			bytes[asciiByteCount] = (byte) '\0';
 
 			this.value = ascii.GetString (bytes);
 			this.valuesCount = bytes.Length;
@@ -114,6 +113,9 @@ namespace System.Drawing.Imaging {
 
 		public EncoderParameter (Encoder encoder, int[] numerator, int[] denominator)
 		{
+			if (numerator.Length != denominator.Length)
+				throw new ArgumentException ("Invalid parameter used.");
+
 			this.encoder = encoder;
 			this.value = new int[][] {numerator, denominator};
 			this.valuesCount = numerator.Length;
@@ -130,6 +132,9 @@ namespace System.Drawing.Imaging {
 
 		public EncoderParameter (Encoder encoder, long[] rangebegin, long[] rangeend)
 		{
+			if (rangebegin.Length != rangeend.Length)
+				throw new ArgumentException ("Invalid parameter used.");
+
 			this.encoder = encoder;
 			int[] startRange = convertToIntArr (rangebegin);
 			int[] endRange = convertToIntArr (rangeend);
@@ -156,6 +161,11 @@ namespace System.Drawing.Imaging {
 
 		public EncoderParameter (Encoder encoder, int[] numerator1, int[] denominator1, int[] numerator2, int[] denominator2)
 		{
+			if (numerator1.Length != denominator1.Length ||
+			    numerator2.Length != denominator2.Length ||
+			    numerator1.Length != numerator2.Length)
+				throw new ArgumentException ("Invalid parameter used.");
+
 			this.encoder = encoder;
 			this.value = new int[][] {numerator1, denominator1, numerator2, denominator2};
 			this.valuesCount = numerator1.Length;
@@ -205,11 +215,17 @@ namespace System.Drawing.Imaging {
 			Dispose (false);
 		}
 
+		internal Object Value {
+			get {
+				return value;
+			}
+		}
+
 		internal int[] convertToIntArr (long[] arr)
 		{
 			int[] intArr = new int [arr.Length];
 
-			for (int i=0; i<arr.Length; i++)
+			for (int i = 0; i < arr.Length; i++)
 				intArr[i] = (int) arr[i];
 
 			return intArr;

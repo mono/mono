@@ -1,3 +1,7 @@
+2004-02-17 Ravindra <rkumar@novell.com>
+	* EncoderParameter.cs: Did few bug fixes and changed the file
+	format to unix.
+
 2004-02-13 Sanjay Gupta <gsanjay@novell.com>
 	* FrameDimension.cs: Implemented missing functionalities
 
