@@ -1,5 +1,7 @@
 2003-09-26  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini.c (mono_codegen): Print full method name in verbose output.
+
 	* mini-x86.c (mono_arch_patch_code): Fix warning.
 	
 	* mini-x86.c (mono_arch_patch_code): Allways create a trampoline for
