@@ -40,7 +40,7 @@ namespace Mono.Doc.Core
 		protected ValueConstrainedArrayList   interfaces;
 		protected ValueConstrainedArrayList      structs;
 
-		public AbstractClassStructDoc() : base()
+		public AbstractClassStructDoc(string name) : base(name)
 		{
 			this.constructors = new ValueConstrainedArrayList(Type.GetType("Mono.Doc.Core.ConstructorDoc", true));
 			this.events       = new ValueConstrainedArrayList(Type.GetType("Mono.Doc.Core.EventDoc", true));
@@ -52,6 +52,10 @@ namespace Mono.Doc.Core
 			this.enums        = new ValueConstrainedArrayList(Type.GetType("Mono.Doc.Core.EnumDoc", true));
 			this.interfaces   = new ValueConstrainedArrayList(Type.GetType("Mono.Doc.Core.InterfaceDoc", true));
 			this.structs      = new ValueConstrainedArrayList(Type.GetType("Mono.Doc.Core.StructDoc", true));
+		}
+
+		public AbstractClassStructDoc() : this(string.Empty)
+		{
 		}
 
 		public ValueConstrainedArrayList Constructors

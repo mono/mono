@@ -25,7 +25,11 @@ namespace Mono.Doc.Core
 {
 	public class FieldDoc : AbstractDoc
 	{
-		public FieldDoc() : base()
+		public FieldDoc(string name) : base(name)
+		{
+		}
+
+		public FieldDoc() : this(string.Empty)
 		{
 		}
 	}

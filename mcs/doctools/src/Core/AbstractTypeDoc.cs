@@ -27,9 +27,13 @@ namespace Mono.Doc.Core
 	{
 		protected string assembly;
 
-		public AbstractTypeDoc() : base()
+		public AbstractTypeDoc(string name) : base(name)
 		{
 			this.assembly = string.Empty;
+		}
+
+		public AbstractTypeDoc() : this(string.Empty)
+		{
 		}
 
 		public string Assembly

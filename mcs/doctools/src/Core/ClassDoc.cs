@@ -25,7 +25,11 @@ namespace Mono.Doc.Core
 {
 	public class ClassDoc : AbstractClassStructDoc
 	{
-		public ClassDoc() : base()
+		public ClassDoc(string name) : base(name)
+		{
+		}
+
+		public ClassDoc() : this(string.Empty)
 		{
 		}
 	}

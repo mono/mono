@@ -20,19 +20,24 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 using System;
+using System.Collections.Specialized;
 
 namespace Mono.Doc.Core
 {
 	public class EnumDoc : AbstractTypeDoc
 	{
-		private ValueConstrainedArrayList members;
+		private StringDictionary members;
 		
-		public EnumDoc() : base()
+		public EnumDoc(string name) : base(name)
 		{
-			this.members = new ValueConstrainedArrayList(Type.GetType("Mono.Doc.Core.EnumMember", true));
+			this.members = new StringDictionary();
 		}
 
-		public ValueConstrainedArrayList Members
+		public EnumDoc() : this(string.Empty)
+		{
+		}
+
+		public StringDictionary Members
 		{
 			get { return this.members; }
 		}

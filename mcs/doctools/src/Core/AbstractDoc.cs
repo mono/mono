@@ -32,13 +32,17 @@ namespace Mono.Doc.Core
 		protected string           language;
 		protected StringCollection seeAlso;
 
-		protected AbstractDoc()
+		public AbstractDoc(string name)
 		{
-			this.name     = string.Empty;
+			this.name     = name;
 			this.summary  = string.Empty;
 			this.remarks  = string.Empty;
 			this.language = string.Empty;
 			this.seeAlso  = new StringCollection();
+		}
+
+		public AbstractDoc() : this(string.Empty)
+		{
 		}
 
 		public string Summary

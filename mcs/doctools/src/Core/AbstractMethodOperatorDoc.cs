@@ -30,10 +30,14 @@ namespace Mono.Doc.Core
 		protected StringDictionary            parameters;
 		protected string                      returns;
 
-		public AbstractMethodOperatorDoc() : base()
+		public AbstractMethodOperatorDoc(string name) : base(name)
 		{
 			this.exceptions = new ValueConstrainedArrayList(Type.GetType("Mono.Doc.Core.ExceptionDoc", true));
 			this.parameters = new StringDictionary();
+		}
+
+		public AbstractMethodOperatorDoc() : this(string.Empty)
+		{
 		}
 
 		public ValueConstrainedArrayList Exceptions

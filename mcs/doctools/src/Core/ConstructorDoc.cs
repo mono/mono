@@ -29,10 +29,14 @@ namespace Mono.Doc.Core
 		public ValueConstrainedArrayList exceptions;
 		public StringDictionary parameters;
 
-		public ConstructorDoc() : base()
+		public ConstructorDoc(string name) : base(name)
 		{
 			this.exceptions = new ValueConstrainedArrayList(Type.GetType("Mono.Doc.Core.ExceptionDoc", true));
 			this.parameters = new StringDictionary();
+		}
+
+		public ConstructorDoc() : this(string.Empty)
+		{
 		}
 
 		public ValueConstrainedArrayList Exceptions

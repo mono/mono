@@ -25,7 +25,11 @@ namespace Mono.Doc.Core
 {
 	public class InterfaceDoc : AbstractTypeDoc
 	{
-		public InterfaceDoc()
+		public InterfaceDoc(string name) : base(name)
+		{
+		}
+
+		public InterfaceDoc() : this(string.Empty)
 		{
 		}
 	}

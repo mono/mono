@@ -29,9 +29,13 @@ namespace Mono.Doc.Core
 	{
 		private string data;
 
-		public EventDoc() : base()
+		public EventDoc(string name) : base(name)
 		{
 			this.data = string.Empty;
+		}
+
+		public EventDoc() : this(string.Empty)
+		{
 		}
 
 		public string Data

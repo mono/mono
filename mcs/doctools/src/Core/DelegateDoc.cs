@@ -28,9 +28,13 @@ namespace Mono.Doc.Core
 	{
 		private StringDictionary parameters;
 
-		public DelegateDoc() : base()
+		public DelegateDoc(string name) : base(name)
 		{
 			this.parameters = new StringDictionary();
+		}
+
+		public DelegateDoc() : this (string.Empty)
+		{
 		}
 
 		public StringDictionary Parameters

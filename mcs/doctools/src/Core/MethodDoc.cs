@@ -25,7 +25,11 @@ namespace Mono.Doc.Core
 {
 	public class MethodDoc : AbstractMethodOperatorDoc
 	{
-		public MethodDoc() : base()
+		public MethodDoc(string name) : base(name)
+		{
+		}
+
+		public MethodDoc() : this(string.Empty)
 		{
 		}
 	}

@@ -28,10 +28,14 @@ namespace Mono.Doc.Core
 		private string                    value;
 		private ValueConstrainedArrayList exceptions;
 
-		public PropertyDoc() : base()
+		public PropertyDoc(string name) : base(name)
 		{
 			this.value      = string.Empty;
 			this.exceptions = new ValueConstrainedArrayList(Type.GetType("Mono.Doc.Core.ExceptionDoc", true));
+		}
+
+		public PropertyDoc() : this(string.Empty)
+		{
 		}
 
 		public string Value
