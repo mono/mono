@@ -140,16 +140,6 @@ namespace System.Data {
 			int ordinal = base.List.Add(column);
 			column.SetOrdinal (ordinal);
 
-			//add constraints if neccesary
-
-			if (column.Unique)
-			{
-				UniqueConstraint uc = new UniqueConstraint(column);
-				parentTable.Constraints.Add(uc);
-			}
-
-			//TODO: add missing constraints. i.e. Primary/Foreign keys
-
 			OnCollectionChanged (e);
 		}
 

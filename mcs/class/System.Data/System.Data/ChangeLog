@@ -1,3 +1,9 @@
+2004-04-20  Boris Kirzner <borisk@mainsoft.com>
+
+	* DataColumnCollection.cs : Since unique constraint is added now
+	  in DataColumn.SetTable() the additional creation of constraint in 
+	  DataColumnCollection.Add() is redundant and causes exception - fixed.
+	  
 2004-04-19  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlDataLoader.cs : Added "never add data rows" mode.
