@@ -357,6 +357,10 @@ namespace System {
 			if (null == value)
 				throw new ArgumentNullException();
 
+			if (value == String.Empty) {
+				return(true);
+			}
+			
 			if (value.length > this.length) {
 				return false;
 			}
@@ -606,6 +610,10 @@ namespace System {
 		public bool StartsWith(String value) {
 			if (value == null) {
 				throw new ArgumentNullException("value");
+			}
+			
+			if (value == String.Empty) {
+				return(true);
 			}
 
 			if (this.length < value.length) {

@@ -233,7 +233,8 @@ public class StringTest : Assertion
 		AssertEquals("char-by-char copy bad", s1, s2);
 	}
 
-	public void TestEndsWith()
+	[Test]
+	public void EndsWith()
 	{
 		string s1 = "original";
 		
@@ -248,6 +249,7 @@ public class StringTest : Assertion
 		Assert("should match", s1.EndsWith("l"));
 		Assert("should match 2", s1.EndsWith("inal"));
 		Assert("should fail", !s1.EndsWith("ina"));
+		Assert ("should match 3", s1.EndsWith (""));
 	}
 
 	public void TestEquals()
@@ -954,7 +956,8 @@ public class StringTest : Assertion
 		AssertEquals ("#02", "123", st [0]);
 	}
 
-	public void TestStartsWith() {
+	[Test]
+	public void StartsWith() {
 		string s1 = "original";
 		
 		bool errorThrown = false;
