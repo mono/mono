@@ -2754,11 +2754,8 @@ namespace Mono.CSharp {
 				// If we are not in static code (ec.IsStatic) and this
 				// field is not static, set the instance to `this'.
 				//
-				if (!fe.FieldInfo.IsStatic && !ec.IsStatic){
-					This this_expr = new This (Location);
-
-					fe.InstanceExpression = this_expr.DoResolve (ec);
-				}
+				if (!fe.FieldInfo.IsStatic && !ec.IsStatic)
+					fe.InstanceExpression = ec.This;
 
 				FieldInfo fi = fe.FieldInfo;
 				
@@ -2813,7 +2810,7 @@ namespace Mono.CSharp {
 					if (fi.IsStatic)
 						instance_expr = null;
 					else
-						instance_expr = new This (Mono.CSharp.Location.Null);
+						instance_expr = ec.This;
 
 					instance_expr = instance_expr.Resolve (ec);
 

@@ -1,3 +1,15 @@
+2001-12-30  Miguel de Icaza  <miguel@ximian.com>
+
+	* codegen.cs (EmitContext.This): a codegen property that keeps the
+	a single instance of this instead of creating many different this
+	instances. 
+
+	* delegate.cs (Delegate.DoResolve): Update to use the property;
+
+	* ecore.cs (SimpleName.SimpleNameResolve): Ditto
+
+	* expression.cs (BaseAccess.DoResolve): Ditto.
+
 2001-12-29  Ravi Pratap  <ravi@ximian.com>
 
 	* typemanager.cs (methodimpl_attr_type): Add to hold the type

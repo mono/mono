@@ -552,8 +552,7 @@ namespace Mono.CSharp {
 					delegate_instance_expr = mg.InstanceExpression.Resolve (ec);
 				else {
 					if (!ec.IsStatic)
-						delegate_instance_expr = (
-							new This (Mono.CSharp.Location.Null)).Resolve (ec);
+						delegate_instance_expr = ec.This;
 					else
 						delegate_instance_expr = null;
 				}

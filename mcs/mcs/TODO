@@ -5,7 +5,7 @@ Major tasks:
 
 	Properties and 17.6.3: Finish it.
 
-	Implement pre-processor.
+	Finish pre-processor (and, or and nested expressions not yet supported).
 
 BUGS
 ----
@@ -67,13 +67,6 @@ BUGS
 
 	The code is mostly done, but `base' is missing.  The reason it is 
 	missing is because we have to implement visibility first.
-
-* Method Names
-
-	Method names could be; `IFACE.NAME' in the method declaration,
-	stating that they implement a specific interface method.
-
-	We currently fail to parse it.
 
 * Arrays
 
@@ -154,39 +147,16 @@ PENDING TASKS
 
 	Currently we pass the pointer to the pointer (see expression.cs:Argument.Emit)
 
-* Function Declarations
-
-	Support PINvoke/Internallcall and extern declarated-functions.
-
-* Manual field layout in structures
-
 * Make the rules for inheritance/overriding apply to 
   properties, operators and indexers (currently we only do this
   on methods).
 
 * Handle volatile
 
-* Support Re-Throw exceptions:
-
-	try {
-		X ();
-	} catch (SomeException e){
-		LogIt ();
-		throw;
-	}
-
 * Static flow analysis
 
 	Required to warn about reachability of code and definite
 	assignemt as well as missing returns on functions.
-
-* Implement `goto case expr'
-
-	switch (x){
-		case 1: print ("1"); goto case 4;
-		case 2: ...
-		case 4: ...
-	}
 
 * Code cleanup
 
@@ -215,19 +185,10 @@ OPTIMIZATIONS
 	Currently it calls the parent constructor before initializing fields.
 	It should do it the other way around.
 
-* Reducer and -Literal
-
-	Maybe we should never handle -Literal in Unary expressions and let
-	the reducer take care of it always?
-
 * Use of EmitBranchable
 
 	Currently I use brfalse/brtrue in the code for statements, instead of
 	using the EmitBranchable function that lives in Binary
-
-* Create an UnimplementedExpcetion
-
-  	And use that instead of plain Exceptions to flag compiler errors.
 
 * ConvertImplicit
 

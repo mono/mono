@@ -276,5 +276,19 @@ namespace Mono.CSharp {
 
 			return return_value;
 		}
+
+		/// <summary>
+	        ///   A dynamic This that is shared by all variables in a emitcontext.
+		///   Created on demand.
+		/// </summary>
+		public Expression my_this;
+		public Expression This {
+			get {
+				if (my_this == null)
+					my_this = new This (loc).Resolve (this);
+
+				return my_this;
+			}
+		}
 	}
 }
