@@ -1,3 +1,21 @@
+2003-10-22  Zoltan Varga  <vargaz@freemail.hu>
+
+	* reflection.h (MonoReflectionMethodAux): New structure to store
+	information which is rarely used, thus is not in the MonoMethod
+	structure.
+
+	* reflection.h (MonoDynamicAssembly): New field 'method_aux_hash' to
+	store the aux info.
+
+	* reflection.c (mono_methodbuilder_to_mono_method): Store param names
+	and marshalling info into the aux structure.
+
+	* loader.c (mono_method_get_marshal_info): Retrieve the marshal info
+	from the aux structure.
+
+	* loader.c (mono_method_get_param_names): Retrieve the param names from
+	the aux structure.
+	
 2003-10-21  Zoltan Varga  <vargaz@freemail.hu>
 
 	* exception.h exception.c: Add AppDomainUnloadedException && fix 
