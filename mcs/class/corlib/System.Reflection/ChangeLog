@@ -1,3 +1,7 @@
+2004-09-22  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Module.cs: Implement net 2.0 ResolveXXX methods.
+
 2004-09-21  Martin Baulig  <martin@ximian.com>
 
 	* Assembly.cs (MonoDebugger_CheckRuntimeVersion): New internal method.

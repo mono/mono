@@ -39,6 +39,12 @@ using System.Runtime.CompilerServices;
 
 namespace System.Reflection {
 
+	internal enum ResolveTokenError {
+		OutOfRange,
+		BadTable,
+		Other
+	};
+
 	[Serializable]
 	public class Module : ISerializable, ICustomAttributeProvider {
 	
@@ -239,6 +245,66 @@ namespace System.Reflection {
 			}
 		}
 
+#if NET_2_0
+		private Exception resolve_token_exception (int metadataToken, ResolveTokenError error, string tokenType) {
+			if (error == ResolveTokenError.OutOfRange)
+				return new ArgumentOutOfRangeException (String.Format ("Token 0x{0:x} is not valid in the scope of module {1}", metadataToken, name), "metadataToken");
+			else
+				return new ArgumentOutOfRangeException (String.Format ("Token 0x{0:x} is not a valid {1} token in the scope of module {2}", metadataToken, tokenType, name), "metadataToken");
+		}
+
+		public FieldInfo ResolveField (int metadataToken) {
+			ResolveTokenError error;
+
+			IntPtr handle = ResolveFieldToken (_impl, metadataToken, out error);
+			if (handle == IntPtr.Zero)
+				throw resolve_token_exception (metadataToken, error, "Field");
+			else
+				return FieldInfo.GetFieldFromHandle (new RuntimeFieldHandle (handle));
+		}
+
+		[MonoTODO]
+		public MemberInfo ResolveMember (int metadataToken) {
+			ResolveTokenError error;
+
+			MemberInfo m = ResolveMemberToken (_impl, metadataToken, out error);
+			if (m == null)
+				throw resolve_token_exception (metadataToken, error, "MemberInfo");
+			else
+				return m;
+		}
+
+		public MethodBase ResolveMethod (int metadataToken) {
+			ResolveTokenError error;
+
+			IntPtr handle = ResolveMethodToken (_impl, metadataToken, out error);
+			if (handle == IntPtr.Zero)
+				throw resolve_token_exception (metadataToken, error, "MethodBase");
+			else
+				return MethodBase.GetMethodFromHandle (new RuntimeMethodHandle (handle));
+		}
+
+		public string ResolveString (int metadataToken) {
+			ResolveTokenError error;
+
+			string s = ResolveStringToken (_impl, metadataToken, out error);
+			if (s == null)
+				throw resolve_token_exception (metadataToken, error, "string");
+			else
+				return s;
+		}
+
+		public Type ResolveType (int metadataToken) {
+			ResolveTokenError error;
+
+			IntPtr handle = ResolveTypeToken (_impl, metadataToken, out error);
+			if (handle == IntPtr.Zero)
+				throw resolve_token_exception (metadataToken, error, "Type");
+			else
+				return Type.GetTypeFromHandle (new RuntimeTypeHandle (handle));
+		}
+#endif
+
 		// Mono Extension: returns the GUID of this module
 		internal static Guid Mono_GetGuid (Module module)
 		{
@@ -271,13 +337,19 @@ namespace System.Reflection {
 		private extern void Close ();
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal static extern IntPtr ResolveTypeToken (IntPtr module, int token);
+		internal static extern IntPtr ResolveTypeToken (IntPtr module, int token, out ResolveTokenError error);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal static extern IntPtr ResolveMethodToken (IntPtr module, int token);
+		internal static extern IntPtr ResolveMethodToken (IntPtr module, int token, out ResolveTokenError error);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal static extern IntPtr ResolveFieldToken (IntPtr module, int token);
+		internal static extern IntPtr ResolveFieldToken (IntPtr module, int token, out ResolveTokenError error);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal static extern string ResolveStringToken (IntPtr module, int token, out ResolveTokenError error);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal static extern MemberInfo ResolveMemberToken (IntPtr module, int token, out ResolveTokenError error);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern void GetPEKind (IntPtr module, out PortableExecutableKind peKind, out ImageFileMachine machine);
