@@ -1,3 +1,11 @@
+2002-05-22  Martin Baulig  <martin@gnome.org>
+
+	* debug.c: Added "dont_assemble" and "dont_precompile" argument for dwarf-plus.
+
+	* mono.c: Applied patch from Miguel:
+	(--debug): This is now a `--debug=[FORMAT]' argument where FORMAT defaults
+	to dwarf-plus.
+
 2002-05-21  Martin Baulig  <martin@gnome.org>
 
 	* debug.c (mono_debug_source_location_from_address): Added support for the
