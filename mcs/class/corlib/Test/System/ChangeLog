@@ -2,7 +2,8 @@
 
 	* ConvertTest.cs: Removed extra 0 from ToInt16_MinValue. Added overflow
 	testing for integer types convertion. Added new tests for pasring 
-	MinValue and MaxValue of integer types in all supported bases.
+	MinValue and MaxValue of integer types in all supported bases. Added 
+	case for a prefixed hexadecimal without a number.
 
 2004-05-27  Sebastien Pouliot  <sebastien@ximian.com>
 
