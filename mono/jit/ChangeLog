@@ -1,5 +1,7 @@
 2002-04-20  Dietmar Maurer  <dietmar@ximian.com>
 
+	* jit.c (check_inlining): added statistics about inlineing
+
 	* mono.c (usage): new switch --noinline to disable inlining
 
 	* jit.c (mono_analyze_stack): added a check for (this!=NULL) if we
