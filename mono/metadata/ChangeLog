@@ -1,3 +1,8 @@
+2005-03-09  Zoltan Varga  <vargaz@freemail.hu>
+
+	* class.c (mono_class_is_assignable_from): Another try at fixing 
+	#73469 without breaking anything.
+
 2005-03-08  Zoltan Varga  <vargaz@freemail.hu>
 
 	* class.c: (mono_class_is_assignable_from): Revert the last changes
