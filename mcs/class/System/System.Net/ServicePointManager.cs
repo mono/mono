@@ -60,13 +60,11 @@ namespace System.Net
 		public const int DefaultPersistentConnectionLimit = 2;
 
 		const string configKey = "system.net/connectionManagement";
-		static Hashtable config;
+		static ConnectionManagementData manager;
 		
 		static ServicePointManager ()
 		{
-			ConnectionManagementData manager;
 			manager = (ConnectionManagementData) ConfigurationSettings.GetConfig (configKey);
-			config = manager.Data;
 		}
 		// Constructors
 		private ServicePointManager ()
@@ -153,10 +151,7 @@ namespace System.Net
 					throw new InvalidOperationException ("maximum number of service points reached");
 
 				string addr = address.ToString ();
-				int limit = defaultConnectionLimit;
-				if (config.Contains (addr))
-					limit = (int) config [addr];
-				
+				int limit = (int) manager.GetMaxConnections (addr);
 				sp = new ServicePoint (address, limit, maxServicePointIdleTime);
 				sp.UsesProxy = usesProxy;
 				servicePoints.Add (address, sp);

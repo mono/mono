@@ -1,5 +1,10 @@
 2004-01-09  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* ServicePointManager.cs: use GetMaxConnections to get the appropiate
+	number of connections limit.
+
+2004-01-09  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* MonoHttpDate.cs: use the invariant culture, not en-US. Suspected
 	guilty for bug 52629.
 
