@@ -103,12 +103,12 @@ namespace NUnit.Util
 						xmlWriter.WriteStartElement("error");
 				
 					xmlWriter.WriteStartElement("message");
-					xmlWriter.WriteCData( EncodeCData (caseResult.Message ) );
+					xmlWriter.WriteString( caseResult.Message );
 					xmlWriter.WriteEndElement();
 				
 					xmlWriter.WriteStartElement("stack-trace");
 					if(caseResult.StackTrace != null)
-						xmlWriter.WriteCData( EncodeCData ( StackTraceFilter.Filter( caseResult.StackTrace ) ) );
+						xmlWriter.WritrString( ( StackTraceFilter.Filter( caseResult.StackTrace ) );
 					xmlWriter.WriteEndElement();
 				
 					xmlWriter.WriteEndElement();
