@@ -1,3 +1,9 @@
+2005-01-10  Dick Porter  <dick@ximian.com>
+
+	* misc.c (_wapi_calc_timeout): Guard against overflow when
+	calculating timeouts.  This makes waiting with a large
+	(Int32.MaxValue) timeout not return immediately.
+
 2004-12-13 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* io.c: check for the existence of 'dest' and set ERROR_ALREADY_EXISTS
