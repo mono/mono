@@ -794,11 +794,13 @@ namespace System.Web
 
 		internal void RecycleHandlers ()
 		{
-			if (null == _recycleHandlers)
+			if (null == _recycleHandlers || _recycleHandlers.Count == 0)
 				return;
 
 			foreach (HandlerFactory item in _recycleHandlers) 
 				item.Factory.ReleaseHandler (item.Handler);
+				
+			_recycleHandlers.Clear ();
 		}
 
 		internal void InitModules ()
