@@ -1,3 +1,11 @@
+2003-11-04 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* Control.cs (GetWebResourceUrl): new v2 function
+	* Page.cs (GetWebResourceUrl): ditto.
+	make the JS we generate work with moz if the form is not a child
+	of document.
+	* WebResourceAttribute.cs: Added, new v2 attribute.
+
 2003-10-22  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* DesignTimeTemplateParser.cs: added FIXME related to PageParser.

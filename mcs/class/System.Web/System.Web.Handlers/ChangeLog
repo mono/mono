@@ -1,3 +1,7 @@
+2003-11-04 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* AssemblyResourceLoader.cs: New file. New v2 handler.
+
 2002-10-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ChangeLog: New file.

@@ -153,7 +153,8 @@ namespace System.Web
 		public bool IsCustomErrorEnabled
 		{
 			get {
-				throw new NotImplementedException ();
+				return false;
+				//throw new NotImplementedException ();
 			}
 		}
 

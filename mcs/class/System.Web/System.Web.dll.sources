@@ -113,6 +113,7 @@ System.Web.Configuration/AuthorizationConfig.cs
 System.Web.Configuration/GlobalizationConfigurationHandler.cs
 System.Web.Configuration/WebCompiler.cs
 System.Web.Configuration/WebControlsSectionHandler.cs
+System.Web.Handlers/AssemblyResourceLoader.cs
 System.Web.Handlers/TraceHandler.cs
 System.Web.Hosting/AppDomainFactory.cs
 System.Web.Hosting/ApplicationHost.cs
@@ -246,6 +247,7 @@ System.Web.UI/Utils.cs
 System.Web.UI/ValidationPropertyAttribute.cs
 System.Web.UI/ValidatorCollection.cs
 System.Web.UI/WebHandlerParser.cs
+System.Web.UI/WebResourceAttribute.cs
 System.Web.UI/WebServiceParser.cs
 System.Web.UI/ObjectTagBuilder.cs
 System.Web.UI/LosFormatter.cs

@@ -43,7 +43,7 @@ namespace System.Web {
             throw new ArgumentOutOfRangeException("offset");
          }
 
-         if (length <= 0) {
+         if (length < 0) {
             throw new ArgumentOutOfRangeException("length");
          }
 		   

@@ -437,7 +437,7 @@ public class Page : TemplateControl, IHttpHandler
 		writer.WriteLine ("<script language=\"javascript\">");
 		writer.WriteLine ("<!--");
 		writer.WriteLine ("\tfunction __doPostBack(eventTarget, eventArgument) {");
-		writer.WriteLine ("\t\tvar theform = document.{0};", formUniqueID);
+		writer.WriteLine ("\t\tvar theform = document.getElementById ('{0}');", formUniqueID);
 		writer.WriteLine ("\t\ttheform.{0}.value = eventTarget;", postEventSourceID);
 		writer.WriteLine ("\t\ttheform.{0}.value = eventArgument;", postEventArgumentID);
 		writer.WriteLine ("\t\ttheform.submit();");
@@ -819,5 +819,20 @@ public class Page : TemplateControl, IHttpHandler
 	}
 
 	#endregion
+	
+	#if NET_1_2
+	public string GetWebResourceUrl(Type type, string resourceName)
+	{
+		if (type == null)
+			throw new ArgumentNullException ("type");
+	
+		if (resourceName == null || resourceName.Length == 0)
+			throw new ArgumentNullException ("type");
+	
+		return System.Web.Handlers.AssemblyResourceLoader.GetResourceUrl (type, resourceName); 
+	} 
+
+	
+	#endif
 }
 }

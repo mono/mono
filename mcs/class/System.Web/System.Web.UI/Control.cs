@@ -898,5 +898,13 @@ namespace System.Web.UI
 		}
 
                 //TODO: I think there are some needed Interface implementations to do here.
+		
+		#if NET_1_2
+		protected string GetWebResourceUrl (string resourceName)
+		{
+			return Page.GetWebResourceUrl (GetType(), resourceName); 
+		} 
+
+		#endif
         }
 }
