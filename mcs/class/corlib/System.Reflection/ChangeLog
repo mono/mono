@@ -1,3 +1,8 @@
+
+Thu Feb 3 15:22:55 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* Module.cs: removed the finalizer and the now unused Close() icall.
+
 2005-01-21  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Assembly.cs: Fixed add for ModuleResolve.

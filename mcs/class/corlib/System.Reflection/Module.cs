@@ -70,10 +70,6 @@ namespace System.Reflection {
 		internal Module () {
 		}
 
-		~Module () {
-			Close ();
-		}
-	
 		public Assembly Assembly {
 			get { return assembly; }
 		}
@@ -357,9 +353,6 @@ namespace System.Reflection {
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern Type GetGlobalType ();
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern void Close ();
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern IntPtr ResolveTypeToken (IntPtr module, int token, out ResolveTokenError error);
