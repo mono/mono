@@ -1,3 +1,7 @@
+2003-12-21  Tim Coleman <tim@timcoleman.com>
+	* Tds70.cs:
+		Fix Integrated Security to work with Domain users.
+
 2003-12-06  Sebastien Pouliot <spouliot@videotron.ca> 
 	for Daniel Morgan <danielmorgan@verizon.net>
 

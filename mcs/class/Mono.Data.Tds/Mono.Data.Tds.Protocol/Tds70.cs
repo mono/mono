@@ -167,6 +167,9 @@ namespace Mono.Data.Tds.Protocol {
 			if ((idx = username.IndexOf (@"\")) > -1) {
 				domain = username.Substring (0, idx);
 				username = username.Substring (idx + 1);
+
+				connectionParameters.DefaultDomain = domain;
+				connectionParameters.User = username;
 			}
 							
 			short partialPacketSize = (short) (86 + (
