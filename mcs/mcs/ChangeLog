@@ -1,3 +1,16 @@
+2004-04-16  Raja R Harinath  <rharinath@novell.com>
+
+	* class.cs (TypeContainer.AddIndexer): Use
+	'ExplicitInterfaceName' to determine if interface name was
+	explicitly specified.  'InterfaceType' is not initialized at this time.
+	(TypeContainer.DefineIndexers): Remove use of temporary list.  The
+	Indexers array is already in the required order.  Initialize
+	'IndexerName' only if there are normal indexers.
+	(TypeContainer.DoDefineMembers): Don't initialize IndexerName.
+	(TypeContainer.Emit): Emit DefaultMember attribute only if
+	IndexerName is initialized.
+	Fixes #56300.
+	
 2004-04-15  Benjamin Jemlich  <pcgod@gmx.net>
 
 	* enum.cs (Enum.DefineType): Don't allow char as type for enum.
