@@ -1,10 +1,10 @@
 //
-// System.Windows.Forms.CharacterCasing
+// System.Windows.Forms.CharacterCasing.cs
 //
 // Author:
 //   Jaak Simm (jaaksimm@firm.ee)
 //   Dennis Hayes (dennish@raytek.com)
-// (C) Ximian, Inc.  http://www.ximian.com
+// (C) 2002 Ximian, Inc.  http://www.ximian.com
 //
 
 using System;

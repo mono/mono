@@ -3,9 +3,9 @@
 //
 // Authors:
 //   Jaak Simm (jaaksimm@firm.ee)
-//   Dennis Hayes (DENNISH@Raytek.com)
+//   Dennis Hayes (dennish@Raytek.com)
 //
-// (C) Ximian, Inc.  http://www.ximian.com
+// (C) 2002 Ximian, Inc.  http://www.ximian.com
 //
 
 namespace System.Windows.Forms
