@@ -39,7 +39,6 @@ namespace System.ComponentModel.Design
 			AddService (serviceType, callback, false);
 		}
 
-		[MonoTODO]
 		public void AddService (Type serviceType, 
 					object serviceInstance,
 					bool promote)
@@ -49,11 +48,12 @@ namespace System.ComponentModel.Design
 			if (promote)
 				if (parentProvider != null)
 					((IServiceContainer)parentProvider.GetService(typeof(IServiceContainer))).AddService (serviceType, serviceInstance, promote);
-			// Add real implementation
-			throw new NotImplementedException();
+			if (services.Contains (serviceType)) {
+					throw new ArgumentException (string.Format ("The service {0} already exists in the service container.", serviceType.ToString()));
+			}
+			services.Add (serviceType, serviceInstance);
 		}
 
-		[MonoTODO]
 		public void AddService (Type serviceType,
 					ServiceCreatorCallback callback,
 					bool promote)
@@ -63,8 +63,10 @@ namespace System.ComponentModel.Design
 			if (promote)
 				if (parentProvider != null)
 					((IServiceContainer)parentProvider.GetService(typeof(IServiceContainer))).AddService (serviceType, callback, promote);
-			// Add real implementation
-			throw new NotImplementedException();
+			if (services.Contains (serviceType)) {
+					throw new ArgumentException (string.Format ("The service {0} already exists in the service container.", serviceType.ToString()));
+			}
+			services.Add (serviceType, callback);
 		}
 
 		public void RemoveService (Type serviceType)
@@ -83,10 +85,21 @@ namespace System.ComponentModel.Design
 				services.Remove (serviceType);
 		}
 
-		[MonoTODO]
 		public object GetService (Type serviceType)
 		{
-			throw new NotImplementedException();
+			object result = services[serviceType];
+			if (result == null && parentProvider != null){
+				result = parentProvider.GetService (serviceType);
+			}
+			if (result != null) {
+				ServiceCreatorCallback	cb = result as ServiceCreatorCallback;
+				if (cb != null) {
+					result = cb (this, serviceType);
+					services[serviceType] = result;
+				}
+				
+			}
+			return result;
 		}
 	}
 }
