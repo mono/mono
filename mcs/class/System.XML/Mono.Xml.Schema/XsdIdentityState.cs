@@ -71,11 +71,9 @@ namespace Mono.Xml.Schema
 		public bool Consumed;
 
 		// Return false if there is already the same key.
-		public bool SetIdentityField (object identity, bool isXsiNil, XsdAnySimpleType type, XsdValidatingReader reader)
+		public bool SetIdentityField (object identity, bool isXsiNil, XsdAnySimpleType type, int depth, IXmlLineInfo li)
 		{
-			IXmlLineInfo li = reader as IXmlLineInfo;
-
-			FieldFoundDepth = reader.Depth;
+			FieldFoundDepth = depth;
 			Identity = identity;
 			IsXsiNil = isXsiNil;
 			FieldFound |= isXsiNil;
@@ -190,10 +188,10 @@ namespace Mono.Xml.Schema
 			XmlSchemaSimpleType st = reader.SchemaType as XmlSchemaSimpleType;
 			if (dt == null && st != null)
 				dt = st.Datatype;
-			object identity = reader.ReadTypedValue ();
+			object identity = XmlSchemaUtil.ReadTypedValue (reader, reader.SchemaType, reader.ParserContext.NamespaceManager, null);
 			if (identity == null)
 				identity = reader.Value;
-			if (!this.SetIdentityField (identity, reader.Depth - 1 == reader.XsiNilDepth , dt as XsdAnySimpleType, reader))
+			if (!this.SetIdentityField (identity, reader.Depth - 1 == reader.XsiNilDepth , dt as XsdAnySimpleType, reader.Depth, (IXmlLineInfo) reader))
 				throw new XmlSchemaException ("Two or more identical field was found.", 
 					reader, reader.BaseURI, entry.KeySequence.SourceSchemaIdentity, null);
 			// HACK: This is not logical. Attributes never be cosuming,
@@ -316,9 +314,10 @@ namespace Mono.Xml.Schema
 		public XsdKeyTable KeySequence;
 		private bool keyFound = false;
 
-		public XsdKeyEntry (XsdKeyTable keyseq, XmlReader reader)
+		public XsdKeyEntry (
+			XsdKeyTable keyseq, int depth, IXmlLineInfo li)
 		{
-			Init (keyseq, reader);
+			Init (keyseq, depth, li);
 		}
 
 		public bool KeyFound {
@@ -336,14 +335,13 @@ namespace Mono.Xml.Schema
 			}
 		}
 
-		private void Init (XsdKeyTable keyseq, XmlReader reader)
+		private void Init (XsdKeyTable keyseq, int depth, IXmlLineInfo li)
 		{
 			KeySequence = keyseq;
 			KeyFields = new XsdKeyEntryFieldCollection ();
 			for (int i = 0; i < keyseq.Selector.Fields.Length; i++)
 				KeyFields.Add (new XsdKeyEntryField (this, keyseq.Selector.Fields [i]));
-			StartDepth = reader.Depth;
-			IXmlLineInfo li = reader as IXmlLineInfo;
+			StartDepth = depth;
 			if (li != null) {
 				if (li.HasLineInfo ()) {
 					this.SelectorHasLineInfo = true;
@@ -385,7 +383,7 @@ namespace Mono.Xml.Schema
 							keyField.Consuming = false;
 					}
 					if (!keyField.Consumed) {
-						if (reader.XsiNilDepth == reader.Depth && !keyField.SetIdentityField (Guid.Empty, true, XsdAnySimpleType.Instance, reader))
+						if (reader.XsiNilDepth == reader.Depth && !keyField.SetIdentityField (Guid.Empty, true, XsdAnySimpleType.Instance, reader.Depth, (IXmlLineInfo) reader))
 							throw new XmlSchemaException ("Two or more identical field was found.", reader, reader.BaseURI, KeySequence.SourceSchemaIdentity, null);
 						else {
 							XmlSchemaComplexType ct = reader.SchemaType as XmlSchemaComplexType;

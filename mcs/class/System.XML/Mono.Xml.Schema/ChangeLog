@@ -1,3 +1,14 @@
+2004-12-11  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XsdValidatingReader.cs,
+	  XsdIdentityState.cs : more refactoring.
+	  Reduced XmlReader dependency in identity constraint classes.
+	  Hide State in XsdValidationContext.
+	  Simplify character validation and state resetting.
+	  Need more event deligation on ExamineAdditionalSchema().
+	  Just cache attribute type directly instead of QName.
+	  Use XmlSchemaUtil.ReadTypedValue() common code.
+
 2004-12-09  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XsdKeyTable.cs :
