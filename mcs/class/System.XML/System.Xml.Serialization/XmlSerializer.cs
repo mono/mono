@@ -23,7 +23,7 @@ namespace System.Xml.Serialization
 
 #region Fields
 
-		XmlTypeMapping typeMapping;
+		XmlMapping typeMapping;
 
 #endregion // Fields
 
@@ -41,6 +41,11 @@ namespace System.Xml.Serialization
 		public XmlSerializer (XmlTypeMapping xmlTypeMapping)
 		{
 			typeMapping = xmlTypeMapping;
+		}
+
+		internal XmlSerializer (XmlMapping mapping)
+		{
+			typeMapping = mapping;
 		}
 
 		public XmlSerializer (Type type, string defaultNamespace)
@@ -82,6 +87,7 @@ namespace System.Xml.Serialization
 
 			typeMapping = importer.ImportTypeMapping (type, root, defaultNamespace);
 		}
+
 
 #endregion // Constructors
 
@@ -142,7 +148,10 @@ namespace System.Xml.Serialization
 		public virtual bool CanDeserialize (XmlReader xmlReader)
 		{
 			xmlReader.MoveToContent	();
-			return typeMapping.ElementName == xmlReader.LocalName;
+			if (typeMapping is XmlMembersMapping) 
+				return true;
+			else
+				return ((XmlTypeMapping)typeMapping).ElementName == xmlReader.LocalName;
 		}
 
 		protected virtual XmlSerializationReader CreateReader ()
@@ -183,11 +192,7 @@ namespace System.Xml.Serialization
 		{
 			XmlSerializer [] sers = new XmlSerializer [mappings.Length];
 			for (int n=0; n<mappings.Length; n++)
-			{
-				XmlTypeMapping map = mappings[n] as XmlTypeMapping;
-				if (map == null) throw new NotSupportedException ("Unsupported mapping type");
-				sers[n] = new XmlSerializer (map);
-			}
+				sers[n] = new XmlSerializer (mappings[n]);
 			return sers;
 		}
 
@@ -240,11 +245,9 @@ namespace System.Xml.Serialization
 
 		public void Serialize (XmlWriter writer, object o, XmlSerializerNamespaces namespaces)
 		{
-			writer.WriteStartDocument ();
 			XmlSerializationWriter xsWriter = CreateWriter ();
 			xsWriter.Initialize (writer);
 			Serialize (o, xsWriter);
-			writer.WriteEndDocument();
 			writer.Flush ();
 		}
 #endregion // Methods

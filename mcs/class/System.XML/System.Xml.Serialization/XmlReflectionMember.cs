@@ -59,12 +59,18 @@ namespace System.Xml.Serialization {
 		}
 
 		public SoapAttributes SoapAttributes {
-			get { return soapAttributes; }
+			get { 
+				if (soapAttributes == null) soapAttributes = new SoapAttributes();
+				return soapAttributes; 
+			}
 			set { soapAttributes = value; }
 		}
 
 		public XmlAttributes XmlAttributes {
-			get { return xmlAttributes; }
+			get { 
+				if (xmlAttributes == null) xmlAttributes = new XmlAttributes();
+				return xmlAttributes; 
+			}
 			set { xmlAttributes = value; }
 		}
 

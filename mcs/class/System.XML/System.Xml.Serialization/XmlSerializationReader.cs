@@ -257,7 +257,7 @@ namespace System.Xml.Serialization {
 		protected XmlQualifiedName GetXsiType ()
 		{
 			string typeName = Reader.GetAttribute ("xsi:type");
-			if (typeName == string.Empty) return null;
+			if (typeName == string.Empty || typeName == null) return null;
 			int i = typeName.IndexOf (":");
 			if (i == -1) return new XmlQualifiedName (typeName, "");
 			else 
@@ -325,10 +325,8 @@ namespace System.Xml.Serialization {
 
 			reader.ReadStartElement();
 			while (reader.NodeType != XmlNodeType.EndElement)
-			{
 				UnknownNode (null);
-				reader.Read ();
-			}
+
 			ReadEndElement ();
 			return true;
 		}
@@ -566,8 +564,13 @@ namespace System.Xml.Serialization {
 		protected void UnknownNode (object o)
 		{
 			// TODO: line numbers
-			if (Reader.NodeType == XmlNodeType.Element) Reader.Skip();
 			eventSource.OnUnknownNode (new XmlNodeEventArgs(0, 0, Reader.LocalName, Reader.Name, Reader.NamespaceURI, Reader.NodeType, o, Reader.Value));
+			if (Reader.NodeType != XmlNodeType.Attribute)
+			{
+				Reader.Skip();
+				if (Reader.ReadState == ReadState.EndOfFile) 
+					throw new InvalidOperationException ("End of document found");
+			}
 		}
 
 		protected void UnreferencedObject (string id, object o)

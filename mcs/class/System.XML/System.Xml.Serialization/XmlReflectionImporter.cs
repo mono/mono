@@ -57,13 +57,18 @@ namespace System.Xml.Serialization {
 
 		#region Methods
 
-		[MonoTODO]
 		public XmlMembersMapping ImportMembersMapping (string elementName,
 			string ns,
 			XmlReflectionMember [] members,
 			bool hasWrapperElement)
 		{
-			throw new NotImplementedException ();
+			XmlMemberMapping[] mapping = new XmlMemberMapping[members.Length];
+			for (int n=0; n<members.Length; n++)
+			{
+				XmlTypeMapMember mapMem = CreateMapMember (members[n], ns);
+				mapping[n] = new XmlMemberMapping (members[n], mapMem);
+			}
+			return new XmlMembersMapping (elementName, ns, hasWrapperElement, mapping);
 		}
 
 		public XmlTypeMapping ImportTypeMapping (Type type)
@@ -109,7 +114,7 @@ namespace System.Xml.Serialization {
 			string membersNamespace = defaultNamespace;
 			string elementName;
 			XmlAttributes atts = null;
-			if (defaultXmlType == null) defaultXmlType = typeData.ElementName;
+			if (defaultXmlType == null) defaultXmlType = typeData.XmlType;
 
 			if (!typeData.IsListType)
 			{
@@ -158,15 +163,22 @@ namespace System.Xml.Serialization {
 			RegisterClrType (map, type, defaultNamespace);
 			RegisterSchemaType (map, map.XmlType, defaultNamespace);
 
-			map.ObjectMap = new ClassMap ();
+			ClassMap classMap = new ClassMap ();
+			map.ObjectMap = classMap;
 
 			// Import members
 
-			ICollection members = GetReflectionMembers (type);
-			foreach (XmlReflectionMember rmember in members)
+			try
 			{
-				if (rmember.XmlAttributes.XmlIgnore) continue;
-				AddMember (map, rmember, map.Namespace);
+				ICollection members = GetReflectionMembers (type);
+				foreach (XmlReflectionMember rmember in members)
+				{
+					if (rmember.XmlAttributes.XmlIgnore) continue;
+					classMap.AddMember (CreateMapMember (rmember, map.Namespace));
+				}
+			}
+			catch (Exception ex) {
+				throw CreateError (map, ex.Message);
 			}
 
 			// Import derived classes
@@ -225,7 +237,7 @@ namespace System.Xml.Serialization {
 
 				if (att.ElementName != null) elem.ElementName = att.ElementName;
 				else if (elem.MappedType != null) elem.ElementName = elem.MappedType.ElementName;
-				else elem.ElementName = TypeTranslator.GetTypeData(elemType).ElementName;
+				else elem.ElementName = TypeTranslator.GetTypeData(elemType).XmlType;
 
 				list.Add (elem);
 			}
@@ -239,7 +251,7 @@ namespace System.Xml.Serialization {
 					elem.MappedType = ImportTypeMapping (itemType, null, defaultNamespace);
 
 				if (elem.MappedType != null) elem.ElementName = elem.MappedType.ElementName;
-				else elem.ElementName = TypeTranslator.GetTypeData(itemType).ElementName ;
+				else elem.ElementName = TypeTranslator.GetTypeData(itemType).XmlType ;
 
 				elem.Namespace = (defaultNamespace != null) ? defaultNamespace : "";
 				elem.IsNullable = true;	// By default, items are nullable
@@ -368,7 +380,7 @@ namespace System.Xml.Serialization {
 			return members;
 		}
 		
-		private void AddMember (XmlTypeMapping map, XmlReflectionMember rmember, string defaultNamespace)
+		private XmlTypeMapMember CreateMapMember (XmlReflectionMember rmember, string defaultNamespace)
 		{
 			XmlTypeMapMember mapMember;
 			XmlAttributes atts = rmember.XmlAttributes;
@@ -402,7 +414,7 @@ namespace System.Xml.Serialization {
 				// An attribute
 
 				if (atts.XmlElements != null && atts.XmlElements.Count > 0)
-					throw CreateError (map, "XmlAttributeAttribute and XmlElementAttribute cannot be applied to the same member");
+					throw new Exception ("XmlAttributeAttribute and XmlElementAttribute cannot be applied to the same member");
 
 				XmlTypeMapMemberAttribute mapAttribute = new XmlTypeMapMemberAttribute ();
 				if (atts.XmlAttribute.AttributeName == null) 
@@ -458,7 +470,7 @@ namespace System.Xml.Serialization {
 
 			mapMember.TypeData = typeData;
 			mapMember.Name = rmember.MemberName;
-			((ClassMap)map.ObjectMap).AddMember (mapMember);
+			return mapMember;
 		}
 
 		XmlTypeMapElementInfoList ImportElementInfo (string defaultName, string defaultNamespace, Type defaultType, XmlTypeMapMemberElement member, XmlAttributes atts)
@@ -475,6 +487,7 @@ namespace System.Xml.Serialization {
 				list.Add (elem);
 			}
 
+			bool multiType = (atts.XmlElements.Count > 1);
 			foreach (XmlElementAttribute att in atts.XmlElements)
 			{
 				Type elemType = (att.Type != null) ? att.Type : defaultType;
@@ -486,6 +499,16 @@ namespace System.Xml.Serialization {
 				elem.IsNullable = att.IsNullable;
 				if (elem.TypeData.IsComplexType)
 					elem.MappedType = ImportTypeMapping (elemType, null, elem.Namespace);
+
+				if (att.ElementName != null) 
+					elem.ElementName = att.ElementName;
+				else if (multiType) {
+					if (elem.MappedType != null) elem.ElementName = elem.MappedType.ElementName;
+					else elem.ElementName = TypeTranslator.GetTypeData(elemType).XmlType;
+				}
+				else
+					elem.ElementName = defaultName;
+
 				list.Add (elem);
 			}
 			return list;
@@ -544,7 +567,7 @@ namespace System.Xml.Serialization {
 
 		Exception CreateError (XmlTypeMapping map, string message)
 		{
-			throw new InvalidOperationException ("There was an error reflecting '" + map.TypeFullName + "': " + message);
+			return new InvalidOperationException ("There was an error reflecting '" + map.TypeFullName + "': " + message);
 		}
 
 		#endregion // Methods

@@ -522,7 +522,8 @@ namespace System.Xml.Serialization {
 
 		protected void WriteStartDocument ()
 		{
-			Writer.WriteStartDocument ();
+			if (Writer.WriteState == WriteState.Start)
+				Writer.WriteStartDocument ();
 		}
 
 		protected void WriteStartElement (string name)
@@ -579,7 +580,7 @@ namespace System.Xml.Serialization {
 				TypeData td = TypeTranslator.GetTypeData (o.GetType ());
 				if (td.SchemaType != SchemaTypes.Primitive)
 					throw new InvalidOperationException ("Invalid type: " + o.GetType().FullName);
-				WriteXsiType (td.ElementName, XmlSchema.Namespace);
+				WriteXsiType (td.XmlType, XmlSchema.Namespace);
 			}
 
 			WriteValue (value);

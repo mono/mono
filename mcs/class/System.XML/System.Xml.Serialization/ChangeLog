@@ -1,3 +1,16 @@
+2003-05-29  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* TypeData.cs, TypeTranslator.cs: Renamed some properties.
+	* XmlCustomFormatter.cs: Fixed bug in serialization of chars. Support for byte[].
+	* XmlMapping.cs: Added internal property.
+	* XmlMemberMapping.cs, XmlMembersMapping.cs: Implemented.
+	* XmlReflectionImporter.cs: Implemented importing of XmlMembersMapping. Several fixes.
+	* XmlReflectionMember.cs: XmlAttributes are now created by default
+	* XmlSerializationReader.cs, XmlSerializationWriter.cs: Several fixes.
+	* XmlSerializationReaderInterpreter.cs, XmlSerializationWriterInterpreter.cs, XmlSerializer.cs: 
+	  Implemented support for XmlMembersMapping.
+	* XmlTypeMapping.cs: Property ObjectMap moved to XmlMapping.
+
 2003-05-28  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* TypeData.cs, TypeTranslator.cs: Added support for enums. Added method for translating

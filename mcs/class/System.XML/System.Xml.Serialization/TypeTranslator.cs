@@ -48,7 +48,7 @@ namespace System.Xml.Serialization
 			primitiveTypes = new Hashtable();
 			ICollection types = nameCache.Values;
 			foreach (TypeData td in types)
-				primitiveTypes.Add (td.ElementName, td);
+				primitiveTypes.Add (td.XmlType, td);
 		}
 
 		public static TypeData GetTypeData (Type type)
@@ -58,7 +58,7 @@ namespace System.Xml.Serialization
 			
 			string name;
 			if (type.IsArray) {
-				string sufix = GetTypeData (type.GetElementType ()).ElementName;
+				string sufix = GetTypeData (type.GetElementType ()).XmlType;
 				name = "ArrayOf" + Char.ToUpper (sufix [0]) + sufix.Substring (1);
 			}
 			else 

@@ -3,6 +3,7 @@
 //
 // Author:
 //   John Donagher (john@webmeta.com)
+//   Lluis Sanchez Gual (lluis@ximian.com)
 //
 // (C) 2002 John Donagher
 //
@@ -11,13 +12,22 @@ using System;
 
 namespace System.Xml.Serialization
 {
-	/// <summary>
-	/// Summary description for XmlMapping.
-	/// </summary>
 	public abstract class XmlMapping
 	{
+		ObjectMap map;
+
 		internal XmlMapping ()
 		{
 		}
+
+		internal ObjectMap ObjectMap
+		{
+			get { return map; }
+			set { map = value; }
+		}
+	}
+
+	internal class ObjectMap
+	{
 	}
 }

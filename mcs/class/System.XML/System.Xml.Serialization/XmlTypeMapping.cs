@@ -20,7 +20,6 @@ namespace System.Xml.Serialization
 		private string ns;
 		private string xmlType;
 		TypeData type;
-		ObjectMap map;
 
 		ArrayList _derivedTypes = new ArrayList();
 
@@ -86,18 +85,7 @@ namespace System.Xml.Serialization
 				if (map.xmlType == name && map.ns == ens) return map;
 			return null;
 		}
-
-		internal ObjectMap ObjectMap
-		{
-			get { return map; }
-			set { map = value; }
-		}
 	}
-
-	internal class ObjectMap
-	{
-	}
-
 
 	// Mapping info for classes and structs
 

@@ -15,9 +15,9 @@ namespace System.Xml.Serialization
 {
 	internal class XmlSerializationWriterInterpreter: XmlSerializationWriter
 	{
-		XmlTypeMapping _typeMap;
+		XmlMapping _typeMap;
 
-		public XmlSerializationWriterInterpreter(XmlTypeMapping typeMap)
+		public XmlSerializationWriterInterpreter(XmlMapping typeMap)
 		{
 			_typeMap = typeMap;
 		}
@@ -28,7 +28,17 @@ namespace System.Xml.Serialization
 
 		internal override void WriteObject (object ob)
 		{
-			WriteObject (_typeMap, ob, _typeMap.ElementName, _typeMap.Namespace, true, false);
+			WriteStartDocument ();
+
+			if (_typeMap is XmlTypeMapping)
+			{
+				XmlTypeMapping mp = (XmlTypeMapping) _typeMap;
+				WriteObject (mp, ob, mp.ElementName, mp.Namespace, true, false);
+			}
+			else if (ob is object[])
+				WriteMessage ((XmlMembersMapping)_typeMap, (object[]) ob);
+			else
+				throw CreateUnknownTypeException (ob);
 		}
 
 		void WriteObject (XmlTypeMapping typeMap, object ob, string element, string namesp, bool isNullable, bool needType)
@@ -58,26 +68,50 @@ namespace System.Xml.Serialization
 			}
 		}
 
+		void WriteMessage (XmlMembersMapping membersMap, object[] parameters)
+		{
+			if (membersMap.HasWrapperElement) {
+				WriteStartDocument();
+				// TopLevelElement();
+				WriteStartElement(membersMap.ElementName, membersMap.Namespace);
+			}
+			
+			WriteMembers ((ClassMap)membersMap.ObjectMap, parameters, true);
+
+			if (membersMap.HasWrapperElement)
+				WriteEndElement();
+		}
+
 		void WriteObjectElement (XmlTypeMapping typeMap, object ob, string element, string namesp, bool needType)
 		{
 			WriteStartElement(element, namesp, ob);
 			if (needType) 
 				WriteXsiType(typeMap.XmlType, typeMap.Namespace);
 
+			ClassMap map = (ClassMap)typeMap.ObjectMap;
+			WriteMembers (map, ob, false);
+			WriteEndElement (ob);
+		}
+
+		void WriteMembers (ClassMap map, object ob, bool isValueList)
+		{
 			// Write attributes
 
-			ClassMap map = (ClassMap)typeMap.ObjectMap;
 			ICollection attributes = map.AttributeMembers;
 			if (attributes != null)
 			{
-				foreach (XmlTypeMapMemberAttribute attr in attributes)
-					WriteAttribute(attr.AttributeName, attr.Namespace, XmlCustomFormatter.ToXmlString (attr.GetValue(ob)));
+				foreach (XmlTypeMapMemberAttribute attr in attributes) {
+					if (MemberHasValue (attr, ob, isValueList))
+						WriteAttribute(attr.AttributeName, attr.Namespace, XmlCustomFormatter.ToXmlString (GetMemberValue (attr, ob, isValueList)));
+				}
 			}
 
-			if (map.DefaultAnyAttributeMember != null)
+			XmlTypeMapMember anyAttrMember = map.DefaultAnyAttributeMember;
+			if (anyAttrMember != null && MemberHasValue (anyAttrMember, ob, isValueList))
 			{
-				ICollection extraAtts = (ICollection) map.DefaultAnyAttributeMember.GetValue (ob);
-				if (extraAtts != null) {
+				ICollection extraAtts = (ICollection) GetMemberValue (anyAttrMember, ob, isValueList);
+				if (extraAtts != null) 
+				{
 					foreach (XmlAttribute attr in extraAtts)
 						WriteAttribute(attr.LocalName, attr.NamespaceURI, attr.Value);
 				}
@@ -90,8 +124,11 @@ namespace System.Xml.Serialization
 			{
 				foreach (XmlTypeMapMemberElement member in members)
 				{
-					object memberValue = member.GetValue (ob);
-					if (member.GetType() == typeof(XmlTypeMapMemberList))
+					if (!MemberHasValue (member, ob, isValueList)) continue;
+					object memberValue = GetMemberValue (member, ob, isValueList);
+					Type memType = member.GetType();
+
+					if (memType == typeof(XmlTypeMapMemberList))
 					{
 						if (memberValue != null) 
 						{
@@ -101,26 +138,26 @@ namespace System.Xml.Serialization
 							WriteEndElement (memberValue);
 						}
 					}
-					else if (member.GetType() == typeof(XmlTypeMapMemberFlatList))
+					else if (memType == typeof(XmlTypeMapMemberFlatList))
 					{
 						if (memberValue != null)
 							WriteListContent (member.TypeData, ((XmlTypeMapMemberFlatList)member).ListMap, memberValue);
 					}
-					else if (member.GetType() == typeof(XmlTypeMapMemberAnyElement))
+					else if (memType == typeof(XmlTypeMapMemberAnyElement))
 					{
 						if (memberValue != null)
 							WriteAnyElementContent ((XmlTypeMapMemberAnyElement)member, memberValue);
 					}
-					else if (member.GetType() == typeof(XmlTypeMapMemberAnyElement))
+					else if (memType == typeof(XmlTypeMapMemberAnyElement))
 					{
 						if (memberValue != null)
 							WriteAnyElementContent ((XmlTypeMapMemberAnyElement)member, memberValue);
 					}
-					else if (member.GetType() == typeof(XmlTypeMapMemberAnyAttribute))
+					else if (memType == typeof(XmlTypeMapMemberAnyAttribute))
 					{
 						// Ignore
 					}
-					else if (member.GetType() == typeof(XmlTypeMapMemberElement))
+					else if (memType == typeof(XmlTypeMapMemberElement))
 					{
 						XmlTypeMapElementInfo elem = member.FindElement (ob, memberValue);
 						WriteMemberElement (elem, memberValue);
@@ -129,7 +166,18 @@ namespace System.Xml.Serialization
 						throw new InvalidOperationException ("Unknown member type");
 				}
 			}
-			WriteEndElement (ob);
+		}
+
+		object GetMemberValue (XmlTypeMapMember member, object ob, bool isValueList)
+		{
+			if (isValueList) return ((object[])ob)[member.Index];
+			else return member.GetValue (ob);
+		}
+
+		bool MemberHasValue (XmlTypeMapMember member, object ob, bool isValueList)
+		{
+			if (isValueList) return member.Index < ((object[])ob).Length;
+			else return true;
 		}
 
 		void WriteMemberElement (XmlTypeMapElementInfo elem, object memberValue)

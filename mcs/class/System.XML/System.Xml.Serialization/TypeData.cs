@@ -41,17 +41,17 @@ namespace System.Xml.Serialization
 			}
 		}
 
-		public string ElementName
-		{
-			get {
-				return elementName;
-			}
-		}
-				
 		public string TypeName
 		{
 			get {
 				return type.Name;
+			}
+		}
+				
+		public string XmlType
+		{
+			get {
+				return elementName;
 			}
 		}
 				
