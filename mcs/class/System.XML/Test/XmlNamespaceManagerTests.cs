@@ -134,5 +134,17 @@ namespace MonoTests.System.Xml
 			// make sure that popping again doesn't cause an exception.
 			Assert (!namespaceManager.PopScope ());
 		}
+
+		public void TestLookupPrefix ()
+		{
+			// This test should use an empty nametable.
+			XmlNamespaceManager nsmgr =
+				new XmlNamespaceManager (new NameTable ());
+			nsmgr.NameTable.Add ("urn:hoge");
+			nsmgr.NameTable.Add ("urn:fuga");
+			nsmgr.AddNamespace (string.Empty, "urn:hoge");
+			AssertNull (nsmgr.LookupPrefix ("urn:fuga"));
+			AssertEquals (String.Empty, nsmgr.LookupPrefix ("urn:hoge"));
+		}
 	}
 }

@@ -26,6 +26,8 @@ namespace MonoTests.System.Xml
 		XmlElement element2;
 		bool inserted;
 		bool inserting;
+		bool changed;
+		bool changing;
 		bool removed;
 		bool removing;
 
@@ -48,6 +50,16 @@ namespace MonoTests.System.Xml
 		private void EventNodeInserting (Object sender, XmlNodeChangedEventArgs e)
 		{
 			inserting = true;
+		}
+
+		private void EventNodeChanged(Object sender, XmlNodeChangedEventArgs e)
+		{
+			changed = true;
+		}
+
+		private void EventNodeChanging (Object sender, XmlNodeChangedEventArgs e)
+		{
+			changing = true;
 		}
 
 		private void EventNodeRemoved(Object sender, XmlNodeChangedEventArgs e)
@@ -113,11 +125,12 @@ namespace MonoTests.System.Xml
 			XmlElement docelem = document.DocumentElement;
 			docelem.InsertBefore(document.CreateElement("good_child"), docelem.FirstChild);
 			AssertEquals("InsertBefore.Normal", "good_child", docelem.FirstChild.Name);
-			try {
-				document.InsertBefore(document.CreateElement("BAD_MAN"), docelem);
-				Fail("#InsertBefore.BadPositionButNoError.1");
-			}
-			catch(XmlException) {}
+			// These are required for .NET 1.0 but not for .NET 1.1.
+//			try {
+//				document.InsertBefore (document.CreateElement ("BAD_MAN"), docelem);
+//				Fail ("#InsertBefore.BadPositionButNoError.1");
+//			}
+//			catch (XmlException) {}
 		}
 
 		public void TestInsertAfter()
@@ -177,6 +190,20 @@ namespace MonoTests.System.Xml
 			AssertEquals ("c2", String.Empty, document.DocumentElement.FirstChild.GetPrefixOfNamespace ("urn:foo"));
 			AssertEquals ("c3", "foo", document.DocumentElement.FirstChild.FirstChild.GetPrefixOfNamespace ("urn:foo"));
 
+		}
+
+		public void TestReplaceChild ()
+		{
+			document.LoadXml ("<root/>");
+			document.NodeInserted += new XmlNodeChangedEventHandler (this.EventNodeInserted);
+			document.NodeChanged += new XmlNodeChangedEventHandler (this.EventNodeChanged);
+			document.NodeRemoved += new XmlNodeChangedEventHandler (this.EventNodeRemoved);
+			inserted = changed = removed = false;
+			XmlElement el = document.CreateElement("root2");
+			document.ReplaceChild (el, document.DocumentElement);
+			AssertEquals ("root2", document.DocumentElement.Name);
+			AssertEquals (1, document.ChildNodes.Count);
+			Assert (inserted && removed && !changed);
 		}
 	}
 }

@@ -104,7 +104,7 @@ namespace MonoTests.System.Xml
 		public void TestReadString ()
 		{
 			XmlDocument doc = new XmlDocument ();
-			doc.LoadXml ("<root>test of <b>mixed</b> string.</root>");
+			doc.LoadXml ("<root>test of <b>mixed</b> string.<![CDATA[ cdata string.]]></root>");
 			XmlNodeReader nrdr = new XmlNodeReader (doc);
 			nrdr.Read ();
 			string s = nrdr.ReadString ();
@@ -113,11 +113,15 @@ namespace MonoTests.System.Xml
 			s = nrdr.ReadString ();
 			AssertEquals ("readString.2.ret_val", "mixed", s);
 			AssertEquals ("readString.2.NodeType", XmlNodeType.EndElement, nrdr.NodeType);
-			s = nrdr.ReadString ();
-			AssertEquals ("readString.3.NodeType", XmlNodeType.EndElement, nrdr.NodeType);
 			s = nrdr.ReadString ();	// never proceeds.
-			AssertEquals ("readString.4.ret_val", String.Empty, s);
-			AssertEquals ("readString.4.NodeType", XmlNodeType.EndElement, nrdr.NodeType);
+			AssertEquals ("readString.3.ret_val", String.Empty, s);
+			AssertEquals ("readString.3.NodeType", XmlNodeType.EndElement, nrdr.NodeType);
+			nrdr.Read ();
+			AssertEquals ("readString.4.NodeType", XmlNodeType.Text, nrdr.NodeType);
+			AssertEquals ("readString.4.Value", " string.", nrdr.Value);
+			s = nrdr.ReadString ();	// reads the same Text node.
+			AssertEquals ("readString.5.ret_val", " string. cdata string.", s);
+			AssertEquals ("readString.5.NodeType", XmlNodeType.EndElement, nrdr.NodeType);
 		}
 
 		public void TestRedInnerXml ()

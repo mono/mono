@@ -1,3 +1,10 @@
+2003-01-26  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
+
+	* XmlNodeTests.cs : added TestReplaceChild.
+	* XmlNodeReaderTests.cs : modified TestReadString more complex.
+	* XmlNamespaceManagerTests.cs : added TestLookupPrefix.
+	* XmlTextTests.cs : added TestSplitText.
+
 2003-01-22  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
 
 	*  added recent tests below to System.XML_linux_test.args
