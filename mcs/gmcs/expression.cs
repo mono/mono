@@ -7643,6 +7643,8 @@ namespace Mono.CSharp {
 			}
 
 			Type expr_type = ((TypeExpr) new_expr).ResolveType (ec);
+			if (expr_type == null)
+				return null;
 
 			if (expr_type.IsPointer){
 				Error (23, "The `.' operator can not be applied to pointer operands (" +
