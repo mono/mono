@@ -3,7 +3,7 @@
 	* expression.cs (Args.Emit): check if num_of_args is -1.
 	* ast.cs (Function.NumOfArgs): avoid using a null pointer. In the
 	code generation phase if num_of_args is -1 means the actual
-	arguments are the desired number of args.
+	arguments are the desired number of args. Fixes #72697.
 
 	* Parser.cs: Pass proper parent.
 	* CodeGenerator.cs: added emit_get_default_this.
