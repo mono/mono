@@ -1497,6 +1497,113 @@ namespace Mono.MonoBASIC {
 		}
 	}
 
+        public class StringConcat : Expression {
+
+		Expression left, right;
+		ArrayList Arguments; 
+		protected MethodBase method;
+	
+		public StringConcat(Location loc, Expression left, Expression right) {
+			this.left = left;
+			this.right = right;
+			this.loc = loc;
+		}
+
+		public override Expression DoResolve (EmitContext ec)
+		{
+			left = left.Resolve (ec);
+			right = right.Resolve (ec);
+
+			if (left == null || right == null)
+				return null;
+
+			if (left.Type == null)
+				throw new Exception (
+					"Resolve returned non null, but did not set the type! (" +
+					left + ") at Line: " + loc.Row);
+			if (right.Type == null)
+				throw new Exception (
+					"Resolve returned non null, but did not set the type! (" +
+					right + ") at Line: "+ loc.Row);
+
+			eclass = ExprClass.Value;
+			if (left is StringConstant && right is StringConstant){
+				return new StringConstant (
+							   ((StringConstant) left).Value +
+							   ((StringConstant) right).Value);
+			}
+			
+			Type l = left.Type;
+			Type r = right.Type;
+
+			if (l == TypeManager.string_type && r == TypeManager.string_type) {
+				type = TypeManager.string_type;
+				method = TypeManager.string_concat_string_string;
+				Arguments = new ArrayList ();
+				Arguments.Add (new Argument (left, Argument.AType.Expression));
+				Arguments.Add (new Argument (right, Argument.AType.Expression));
+				return this;
+			}
+
+			if (l != TypeManager.string_type) {
+				method = TypeManager.string_concat_object_object;
+				left = ConvertImplicit (ec, left, TypeManager.string_type, loc);
+				if (left == null){
+					Error_OperatorCannotBeApplied (loc, "&", l, r);
+					return null;
+				}
+                                        
+				type = TypeManager.string_type;
+				Arguments = new ArrayList ();
+				Arguments.Add (new Argument (left, Argument.AType.Expression));
+				Arguments.Add (new Argument (right, Argument.AType.Expression));
+				return this;
+			}
+
+			if (r != TypeManager.string_type) {
+				method = TypeManager.string_concat_object_object;
+				right = ConvertImplicit (ec, right, TypeManager.string_type, loc);
+				if (right == null){
+					Error_OperatorCannotBeApplied (loc, "&", l, r);
+					return null;
+				}
+                                        
+				type = TypeManager.string_type;
+				Arguments = new ArrayList ();
+				Arguments.Add (new Argument (left, Argument.AType.Expression));
+				Arguments.Add (new Argument (right, Argument.AType.Expression));
+				return this;
+			}
+			return this;
+		}
+
+                public override void Emit (EmitContext ec)
+                {
+                        ILGenerator ig = ec.ig;
+                        if (method != null) {
+                                // Note that operators are static anyway
+                                if (Arguments != null)
+                                        Invocation.EmitArguments (ec, method, Arguments);
+                                if (method is MethodInfo)
+                                        ig.Emit (OpCodes.Call, (MethodInfo) method);
+                                else
+                                        ig.Emit (OpCodes.Call, (ConstructorInfo) method);
+
+                                return;
+                        }
+		}
+
+                static public void Error_OperatorCannotBeApplied (Location loc, string name, Type l, Type r)
+                {  
+	                 Report.Error (19, loc,
+                               "Operator " + name + " cannot be applied to operands of type '" +
+                               TypeManager.MonoBASIC_Name (l) + "' and '" +
+                               TypeManager.MonoBASIC_Name (r) + "'");
+                }
+
+        }
+
+
 	/// <summary>
 	///   Binary operators
 	/// </summary>
@@ -1914,7 +2021,7 @@ namespace Mono.MonoBASIC {
 			//
 			// Step 0: String concatenation (because overloading will get this wrong)
 			//
-			if (oper == Operator.Addition){
+			if (oper == Operator.Addition) {
 				//
 				// If any of the arguments is a string, cast to string
 				//
@@ -1939,14 +2046,14 @@ namespace Mono.MonoBASIC {
 						method = TypeManager.string_concat_string_string;
 					} else {
 						// string + object
-						method = TypeManager.string_concat_object_object;
-						right = ConvertImplicit (ec, right,
-									 TypeManager.object_type, loc);
-						if (right == null){
+						left = ConvertImplicit (ec, left, r, loc);
+						if (left == null){
 							Error_OperatorCannotBeApplied (loc, OperName (oper), l, r);
 							return null;
 						}
+						return ResolveOperator(ec);
 					}
+
 					type = TypeManager.string_type;
 
 					Arguments = new ArrayList ();
@@ -1962,20 +2069,15 @@ namespace Mono.MonoBASIC {
 						Error_OperatorCannotBeApplied ();
 						return null;
 					}
-					
-					method = TypeManager.string_concat_object_object;
-					left = ConvertImplicit (ec, left, TypeManager.object_type, loc);
-					if (left == null){
-						Error_OperatorCannotBeApplied (loc, OperName (oper), l, r);
-						return null;
-					}
-					Arguments = new ArrayList ();
-					Arguments.Add (new Argument (left, Argument.AType.Expression));
-					Arguments.Add (new Argument (right, Argument.AType.Expression));
-
 					type = TypeManager.string_type;
+					
+                                        right = ConvertImplicit(ec, right, l, loc);
+                                        if (right == null) {
+						Error_OperatorCannotBeApplied (loc, OperName (oper), l, r);
+                                                return null;
+                                        }
 
-					return this;
+					return ResolveOperator(ec);
 				}
 
 				//

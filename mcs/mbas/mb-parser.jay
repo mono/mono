@@ -4212,8 +4212,8 @@ concat_expression
           {
 	      // FIXME: This should only work for String expressions
 	      // We probably need to use something from the runtime
-	      $$ = new Binary (Binary.Operator.Addition,
-			       (Expression) $1, (Expression) $3, lexer.Location);
+	      $$ = new StringConcat (lexer.Location,
+			       (Expression) $1, (Expression) $3);
 	  }	
 	;
 

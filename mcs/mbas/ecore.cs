@@ -1901,11 +1901,15 @@ namespace Mono.MonoBASIC {
 				//
 				if ((expr_type == TypeManager.int32_type) || 
 				    (expr_type == TypeManager.int64_type) ||
-				    (expr_type == TypeManager.double_type) ||
-				    (expr_type == TypeManager.float_type)  ||
 				    (expr_type == TypeManager.short_type) ||
 				    (expr_type == TypeManager.decimal_type))
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_I1);
+
+				if ((expr_type == TypeManager.float_type) ||
+				    (expr_type == TypeManager.double_type)) {
+					Expression rounded_expr = RTConversionExpression(ec, "System.Math", ".Round", expr, loc);
+					return new OpcodeCast (rounded_expr, target_type, OpCodes.Conv_I1);
+				}
 				
 			} else if (target_type == TypeManager.byte_type){
 				//
@@ -1917,10 +1921,14 @@ namespace Mono.MonoBASIC {
 				    (expr_type == TypeManager.uint32_type) ||
 				    (expr_type == TypeManager.uint64_type) ||
 				    (expr_type == TypeManager.int64_type) ||
-				    (expr_type == TypeManager.float_type) ||
-				    (expr_type == TypeManager.double_type) ||
 				    (expr_type == TypeManager.decimal_type))
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_U1);
+
+				if ((expr_type == TypeManager.float_type) ||
+				    (expr_type == TypeManager.double_type)) {
+					Expression rounded_expr = RTConversionExpression(ec, "System.Math", ".Round", expr, loc);
+					return new OpcodeCast (rounded_expr, target_type, OpCodes.Conv_U1);
+				}
 	
 			} else if (target_type == TypeManager.short_type){
 				//
@@ -1928,11 +1936,15 @@ namespace Mono.MonoBASIC {
 				// 
 				if ((expr_type == TypeManager.int32_type) ||
 				    (expr_type == TypeManager.int64_type) ||
-				    (expr_type == TypeManager.double_type) ||
-				    (expr_type == TypeManager.float_type) ||
 				    (expr_type == TypeManager.decimal_type))
 
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_I2);
+
+				if ((expr_type == TypeManager.float_type) ||
+				    (expr_type == TypeManager.double_type)) {
+					Expression rounded_expr = RTConversionExpression(ec, "System.Math", ".Round", expr, loc);
+					return new OpcodeCast (rounded_expr, target_type, OpCodes.Conv_I2);
+				}
 					
 			} else if (target_type == TypeManager.ushort_type){
 				//
@@ -1942,20 +1954,28 @@ namespace Mono.MonoBASIC {
 				    (expr_type == TypeManager.uint64_type) ||
 				    (expr_type == TypeManager.int32_type) ||
 				    (expr_type == TypeManager.int64_type) ||
-				    (expr_type == TypeManager.double_type) ||
-				    (expr_type == TypeManager.float_type) ||
 				    (expr_type == TypeManager.decimal_type))
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_U2);
+
+				if ((expr_type == TypeManager.float_type) ||
+				    (expr_type == TypeManager.double_type)) {
+					Expression rounded_expr = RTConversionExpression(ec, "System.Math", ".Round", expr, loc);
+					return new OpcodeCast (rounded_expr, target_type, OpCodes.Conv_U2);
+				}
 				    
 			} else if (target_type == TypeManager.int32_type){
 				//
 				// To int from long, float, double
 				//
 				if ((expr_type == TypeManager.int64_type) ||
-				    (expr_type == TypeManager.double_type) ||
-				    (expr_type == TypeManager.float_type) ||
 				    (expr_type == TypeManager.decimal_type))
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_I4);
+
+				if ((expr_type == TypeManager.float_type) ||
+				    (expr_type == TypeManager.double_type)) {
+					Expression rounded_expr = RTConversionExpression(ec, "System.Math", ".Round", expr, loc);
+					return new OpcodeCast (rounded_expr, target_type, OpCodes.Conv_I4);
+				}
 					
 			} else if (target_type == TypeManager.uint32_type){
 				//
@@ -1963,20 +1983,28 @@ namespace Mono.MonoBASIC {
 				//
 				if ((expr_type == TypeManager.int64_type) ||
 				    (expr_type == TypeManager.uint64_type) ||
-				    (expr_type == TypeManager.double_type) ||
-				    (expr_type == TypeManager.float_type) ||
 				    (expr_type == TypeManager.decimal_type))
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_U4);
+
+				if ((expr_type == TypeManager.float_type) ||
+				    (expr_type == TypeManager.double_type)) {
+					Expression rounded_expr = RTConversionExpression(ec, "System.Math", ".Round", expr, loc);
+					return new OpcodeCast (rounded_expr, target_type, OpCodes.Conv_U4);
+				}
 					
 			} else if ((target_type == TypeManager.uint64_type) ||
 				   (target_type == TypeManager.int64_type)) {
 				//
 				// To long/ulong from float, double
 				//
-				if ((expr_type == TypeManager.double_type) ||
-				    (expr_type == TypeManager.float_type) ||
-				    (expr_type == TypeManager.decimal_type))
+				if (expr_type == TypeManager.decimal_type)
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_I8);
+
+				if ((expr_type == TypeManager.float_type) ||
+				    (expr_type == TypeManager.double_type)) {
+					Expression rounded_expr = RTConversionExpression(ec, "System.Math", ".Round", expr, loc);
+					return new OpcodeCast (rounded_expr, target_type, OpCodes.Conv_I8);
+				}
 				    
 			} else if (target_type == TypeManager.char_type){
 				//
@@ -1987,10 +2015,14 @@ namespace Mono.MonoBASIC {
 				    (expr_type == TypeManager.uint32_type) ||
 				    (expr_type == TypeManager.uint64_type) ||
 				    (expr_type == TypeManager.int64_type) ||
-				    (expr_type == TypeManager.float_type) ||
-				    (expr_type == TypeManager.double_type) ||
 				    (expr_type == TypeManager.decimal_type))
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_U2);
+
+				if ((expr_type == TypeManager.float_type) ||
+				    (expr_type == TypeManager.double_type)) {
+					Expression rounded_expr = RTConversionExpression(ec, "System.Math", ".Round", expr, loc);
+					return new OpcodeCast (rounded_expr, target_type, OpCodes.Conv_U2);
+				}
 
 			} else if (target_type == TypeManager.float_type){
 				//

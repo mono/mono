@@ -1,3 +1,12 @@
+2005-02-04  Satya Sudha K  <ksathyasudha@novell.com>
+	* ecore.cs 	: Fixed the implicit conversion of float/double to integral types:
+				- Rounding the float/double values before performing the actual conversion
+
+	* expression.cs : 1) Added a class 'StringConcat' to handle string concatenations
+			  2) Fixed string conversions in arithmatic operations
+
+	* mb-parser.jay : Create a new 'StringConcat' object (instead of Binary) for concat_expression
+ 
 2005-02-03  Manjula GHM  <mmanjula@novell.com>
 	*mb-parser.jay : Reports error with correct line number in most of the cases covered by existing testcases. Need to cover in expressions and few more areas. 
  
