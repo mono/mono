@@ -454,6 +454,8 @@ namespace System.Collections {
 
 		public virtual void OnDeserialization (object sender)
 		{
+			if (serializationInfo == null) return;
+
 			loadFactor = (float) serializationInfo.GetValue ("LoadFactor", typeof(float));
 			modificationCount = (int) serializationInfo.GetValue ("Version", typeof(int));
 			comparerRef = (IComparer) serializationInfo.GetValue ("Comparer", typeof (object));

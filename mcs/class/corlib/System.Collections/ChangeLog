@@ -1,3 +1,9 @@
+2004-12-20  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* Hashtable.cs: Check for null serialization info in OnDeserialization.
+	A hashtable subclass can fully override the constructor, so
+	serializationInfo would be null in this case. Fixes bug #70698.
+
 2004-12-16 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ArrayList.cs: don't initialize _items twice. Closes bug #70620.
