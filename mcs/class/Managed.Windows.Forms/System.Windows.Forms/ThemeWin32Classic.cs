@@ -26,9 +26,13 @@
 //
 //
 //
-// $Revision: 1.63 $
+// $Revision: 1.64 $
 // $Modtime: $
 // $Log: ThemeWin32Classic.cs,v $
+// Revision 1.64  2004/11/10 19:22:26  jackson
+// 	* ThemeWin32Classic.cs: Don't bother drawing tabs outside of the
+// 	clip area.
+//
 // Revision 1.63  2004/11/10 01:04:28  jackson
 // 	* TabControl.cs (CalcXPos): New helper method so we can determine
 // 	the proper place to start drawing vertical tabs.
@@ -1836,6 +1840,8 @@ namespace System.Windows.Forms
 						if (r != tab.TabPages [i].Row)
 							continue;
 						Rectangle rect = tab.GetTabRect (i);
+						if (!rect.IntersectsWith (area))
+							continue;
 						DrawTab (dc, tab.TabPages [i], tab, rect, false);
 					}
 				}
@@ -1847,6 +1853,8 @@ namespace System.Windows.Forms
 						if (r != tab.TabPages [i].Row)
 							continue;
 						Rectangle rect = tab.GetTabRect (i);
+						if (!rect.IntersectsWith (area))
+							continue;
 						DrawTab (dc, tab.TabPages [i], tab, rect, false);
 					}
 				}
