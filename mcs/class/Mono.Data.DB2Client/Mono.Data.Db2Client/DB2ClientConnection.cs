@@ -1,22 +1,37 @@
 #region Licence
 	/// DB2DriverCS - A DB2 driver for .Net
+	/// 
+	/// Authors:
+	///	Christopher Bockner
+	///	
 	/// Copyright 2003 By Christopher Bockner
+	/// 
 	/// Released under the terms of the MIT/X11 Licence
 	/// Please refer to the Licence.txt file that should be distributed with this package
 	/// This software requires that DB2 client software be installed correctly on the machine
 	/// (or instance) on which the driver is running.  
 #endregion
 using System;
+using System.Collections;
+using System.Collections.Specialized;
 using System.Data;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace DB2ClientCS
 {
 	/// <summary>	/// This class is IDbConnection compliant.  Refer to MSDN documentation for reference.
 	/// </summary>
+	/// 
 	
 	public class DB2ClientConnection : IDbConnection
 	{
+		private class ConnectionParameters {
+			internal string server = "";
+			internal string username = "";
+			internal string authentication = "";
+		}
+		private ConnectionParameters connectionParms = new ConnectionParameters();
 		private string connectionString = null;
 		private string dbName = null;
 		private int connectionTimeout;
@@ -31,7 +46,7 @@ namespace DB2ClientCS
 		}
 		public DB2ClientConnection(string conString)
 		{
-			this.connectionString = conString;
+			SetConnectionString(conString);
 		}
 		#region ConnectionString property
 		/// 
@@ -44,7 +59,7 @@ namespace DB2ClientCS
 			}
 			set
 			{
-				connectionString = value;
+				SetConnectionString(value);
 			}
 		}
 		#endregion
@@ -173,7 +188,10 @@ namespace DB2ClientCS
 			{
 				throw new DB2ClientException(DB2ClientConstants.SQL_HANDLE_ENV, penvHandle, "Alloc Env Handle: ");
 			}
-			sqlReturn = DB2ClientPrototypes.SQLConnect(pdbHandle, "sample", 6, "Administrator", 13, "tirpitz", 7);
+			sqlReturn = DB2ClientPrototypes.SQLConnect(pdbHandle, 
+				connectionParms.server, (short)connectionParms.server.Length, 
+				connectionParms.username, (short)connectionParms.username.Length, 
+				connectionParms.authentication, (short)connectionParms.authentication.Length);
 			if (sqlReturn == DB2ClientConstants.SQL_ERROR) 
 			{
 				throw new DB2ClientException(DB2ClientConstants.SQL_HANDLE_DBC, pdbHandle, "Error connecting to DB: ");
@@ -211,19 +229,96 @@ namespace DB2ClientCS
 
 		#endregion
 
-		/// <summary>
-		/// Called after the connection string is set, this parses the it and saves the connection attributes. 
-		/// </summary>
-		protected void ParseConnectionString()
-		{
-		
-		}
 		private void CheckState()
 		{
 			if (ConnectionState.Closed == State)
 				throw new DB2ClientException ("Connection is currently closed.");
 		}
 
+		void SetConnectionString (string connectionString) 
+		{
+			this.connectionString = connectionString;
+			
+			connectionString += ";";
+			NameValueCollection parameters = new NameValueCollection ();
 
+			if (connectionString == String.Empty)
+				return;
+
+			bool inQuote = false;
+			bool inDQuote = false;
+
+			string name = String.Empty;
+			string value = String.Empty;
+			StringBuilder sb = new StringBuilder ();
+
+			foreach (char c in connectionString) {
+				switch (c) {
+				case '\'':
+					inQuote = !inQuote;
+					break;
+				case '"' :
+					inDQuote = !inDQuote;
+					break;
+				case ';' :
+					if (!inDQuote && !inQuote) {
+						if (name != String.Empty && name != null) {
+							value = sb.ToString ();
+							parameters [name.ToUpper ().Trim ()] = value.Trim ();
+						}
+						name = String.Empty;
+						value = String.Empty;
+						sb = new StringBuilder ();
+					}
+					else
+						sb.Append (c);
+					break;
+				case '=' :
+					if (!inDQuote && !inQuote) {
+						name = sb.ToString ();
+						sb = new StringBuilder ();
+					}
+					else
+						sb.Append (c);
+					break;
+				default:
+					sb.Append (c);
+					break;
+				}
+			}
+
+			SetProperties (parameters);
+		}
+
+		private void SetProperties (NameValueCollection parameters) 
+		{
+			string value;
+			foreach (string name in parameters) {
+				value = parameters[name];
+				
+				switch (name) {
+				case "INITIAL CATALOG" :
+				case "DATA SOURCE" :
+				case "DATABASE" :
+					// set Database property
+					connectionParms.server = value;
+					break;
+				case "PASSWORD" :
+				case "AUTHENTICATION" :
+				case "PWD" :
+					connectionParms.authentication = value;
+					break;
+				case "USER ID" :
+				case "UID" :
+				case "USERNAME" :
+				case "USER" :
+					connectionParms.username = value;
+					break;
+				default:
+					throw new ArgumentException("Invalid connection parameter: " + name);
+				}
+			}
+		}
 	}
 }
+

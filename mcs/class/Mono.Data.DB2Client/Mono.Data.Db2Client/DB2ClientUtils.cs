@@ -39,7 +39,6 @@ namespace DB2ClientCS
 						throw new DB2ClientException(handleType, handle, message);
 					else
 						throw new DB2ClientException(message);
-					break;
 				default:
 					return 0;
 			}
