@@ -104,7 +104,7 @@ namespace Mono.Xml.Xsl.Operations {
 				break;
 
 			default:
-				Console.WriteLine ("unhandled node type {0}", p.CurrentNode.NodeType);
+//				Console.WriteLine ("unhandled node type {0}", p.CurrentNode.NodeType);
 				break;
 			}
 		}

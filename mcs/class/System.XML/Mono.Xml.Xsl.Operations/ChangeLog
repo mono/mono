@@ -1,3 +1,11 @@
+2004-01-14 Atsushi Enomoto <atsushi@ximian.com>
+
+	* XslVariable.cs : Use new GenericOutputter.ctor() to indicate it is
+	  created for variable. (It is required not to output "PI for xmldecl"
+	  incorrectly.)
+	* XslNumber.cs : trivial code refactoring.
+	* XslCopy.cs : comment out WriteLine().
+
 2004-01-08  Nick Drochak <ndrochak@ieee.org>
 
 	* XslAttribute.cs: Removed unused variable

@@ -82,14 +82,14 @@ namespace Mono.Xml.Xsl.Operations {
 		
 		XslNumberFormatter GetNumberFormatter (XslTransformProcessor p)
 		{
-			string format = "1";
+			string formatStr = "1";
 			string lang = null;
 			string letterValue = null;
 			char groupingSeparatorChar = '\0';
 			int groupingSize = 0;
 			
 			if (this.format != null)
-				format = this.format.Evaluate (p);
+				formatStr = this.format.Evaluate (p);
 			
 			if (this.lang != null)
 				lang = this.lang.Evaluate (p);
@@ -103,7 +103,7 @@ namespace Mono.Xml.Xsl.Operations {
 			if (this.groupingSize != null)
 				groupingSize = int.Parse (this.groupingSize.Evaluate (p));
 			
-			return new XslNumberFormatter (format, lang, letterValue, groupingSeparatorChar, groupingSize);
+			return new XslNumberFormatter (formatStr, lang, letterValue, groupingSeparatorChar, groupingSize);
 		}
 		
 		string GetFormat (XslTransformProcessor p)
@@ -456,7 +456,6 @@ namespace Mono.Xml.Xsl.Operations {
 					string number = num.ToString ("N", nfi);
 					int len = decimalSectionLength;
 					if (len > 1) {
-						// It is hack, but in most case it will work.
 						if (numberBuilder == null)
 							numberBuilder = new StringBuilder ();
 						for (int i = len; i > number.Length; i--)

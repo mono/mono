@@ -51,7 +51,7 @@ namespace Mono.Xml.Xsl.Operations {
 				return p.Evaluate (select);
 			} else if (content != null) {
 				XmlNodeWriter w = new XmlNodeWriter (false);
-				Outputter outputter = new GenericOutputter(w, p.Outputs);
+				Outputter outputter = new GenericOutputter(w, p.Outputs, null, true);
 				p.PushOutput (outputter);
 				content.Evaluate (p);
 				p.PopOutput ();
