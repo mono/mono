@@ -1,3 +1,6 @@
+2002-07-19  Dietmar Maurer  <dietmar@ximian.com>
+
+	* jit.c (mono_analyze_stack): avoid recursive inlining
 
 Fri Jul 19 18:45:11 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
