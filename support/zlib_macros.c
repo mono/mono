@@ -15,6 +15,11 @@ create_z_stream(int compress, unsigned char gzip)
 	z_stream *z;
 	int retval;
 
+#if !defined(ZLIB_VERNUM) || (ZLIB_VERNUM < 0x1204)
+	/* Older versions of zlib do not support raw deflate or gzip */
+	return NULL;
+#endif
+
 	z = malloc (sizeof (z_stream));
 	z->next_in = Z_NULL;
 	z->avail_in = 0;
