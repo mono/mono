@@ -26,9 +26,8 @@
 //
 // Author:
 //   Sunil Kumar (sunilk@novell.com)
-//   Raja R Harinath <rharinath@novell.com>
 //
-// Copyright (C) 2003, 2004  Novell Inc.
+// (C)  Novell Inc.
 //
 
 using System.Collections;
@@ -41,59 +40,169 @@ namespace System.DirectoryServices
 	/// SchemaFilter property of a DirectoryEntries
 	///  object can use.
 	/// </summary>
-	public class SchemaNameCollection : CollectionBase
+	public class SchemaNameCollection : IList, ICollection, IEnumerable
 	{
 		internal SchemaNameCollection ()
 		{
 		}
 		
-		public int Add (string value)
+		[MonoTODO]
+		int IList.Add(object avalue)
 		{
-			return List.Add (value);
+			throw new NotImplementedException();
 		}
 
-		public string this[int pos]
+		[MonoTODO]
+		int Add (string value)
 		{
-			get { return List[pos] as string; }
-			set { List[pos] = value; }
+			throw new NotImplementedException();
+		}
+		
+		[MonoTODO]
+		void IList.Clear()
+		{
+				throw new NotImplementedException();
+		}
+		[MonoTODO]
+		bool IList.Contains(object cvalue)
+		{
+				throw new NotImplementedException();
+		}
+		[MonoTODO]
+		int IList.IndexOf(object ivalue)
+		{
+				throw new NotImplementedException();
+		}
+		[MonoTODO]
+		void IList.Insert(int index,object ivalue)
+		{
+				throw new NotImplementedException();
+		}
+		[MonoTODO]
+		void IList.Remove(object rvalue)
+		{
+				throw new NotImplementedException();
+		}
+		[MonoTODO]
+		void IList.RemoveAt(int index)
+		{
+			throw new NotImplementedException();
+		}
+		
+		bool IList.IsFixedSize 
+		{
+			get
+			{
+				return true;
+			}
 		}
 
-		public int IndexOf (string s)
+		bool IList.IsReadOnly 
 		{
-			return List.IndexOf (s);
+			get
+			{
+				return true;
+			}
+		}
+		object IList.this[int recordIndex] 
+		{
+			[MonoTODO]
+			get 
+			{
+				throw new InvalidOperationException();
+			}
+			[MonoTODO]
+			set
+			{
+				throw new InvalidOperationException();
+			}
 		}
 
-		public bool Contains (string s)
+		string this[int index]
 		{
-			return List.Contains (s);
+			[MonoTODO]
+			get { throw new NotImplementedException (); }
+			[MonoTODO]
+			set { throw new NotImplementedException (); }
+
 		}
 
-		public void AddRange (string[] coll)
+		[MonoTODO]
+		public void CopyTo(Array array,int index)
 		{
-			foreach (string s in coll)
-				Add (s);
+			throw new NotImplementedException();
 		}
 
+		int ICollection.Count 
+		{
+			get
+			{
+				return 0;
+			}
+		}
+		bool ICollection.IsSynchronized 
+		{
+			[MonoTODO]
+			get
+			{
+				return true;
+			}
+		}
+
+		object ICollection.SyncRoot { 
+			[MonoTODO]
+			get {
+				// FIXME:
+				return this;
+			}
+		}
+
+		[MonoTODO]
+		IEnumerator IEnumerable.GetEnumerator() 
+		{
+			throw new NotImplementedException();
+		}
+
+		[MonoTODO]
 		public void AddRange (SchemaNameCollection coll)
 		{
-			foreach (string s in coll)
-				Add (s);
+			throw new NotImplementedException();
 		}
 
+		[MonoTODO]
+		public void AddRange (string[] coll)
+		{
+			throw new NotImplementedException();
+		}
+
+		[MonoTODO]
+		public bool Contains (string s)
+		{
+			throw new NotImplementedException();
+		}
+
+		[MonoTODO]
+		public void CopyTo (string[] copy_to, int pos)
+		{
+			throw new NotImplementedException();
+		}
+
+		[MonoTODO]
+		public int IndexOf (string s)
+		{
+			throw new NotImplementedException();
+		}
+
+		[MonoTODO]
 		public void Insert (int pos, string s)
 		{
-			List.Insert (pos, s);
+			throw new NotImplementedException();
 		}
 
-		public void CopyTo (string[] copy_to, int index)
-		{
-			foreach (string s in List)
-				copy_to[index++] = s;
-		}
-
+		[MonoTODO]
 		public void Remove (string s)
 		{
-			List.Remove (s);
+			throw new NotImplementedException();
 		}
 	}
 }

@@ -45,8 +45,8 @@ namespace System.DirectoryServices
 		[MonoTODO]
 		public DirectoryServicesPermission (DirectoryServicesPermissionEntry[] entries)
 		{
-			entries = new DirectoryServicesPermissionEntryCollection ();
-			entries.AddRange (entries);
+			this.entries = new DirectoryServicesPermissionEntryCollection ();
+			this.entries.AddRange (entries);
 		}
 
  		[MonoTODO]
