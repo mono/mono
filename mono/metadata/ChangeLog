@@ -6,6 +6,11 @@ Wed Sep 25 22:18:03 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 2002-09-25  Martin Baulig  <martin@gnome.org>
 
+	* debug-mono-symfile.h (MonoSymbolFileMethodAddress): Use pointers
+	instead of guint64 for addresses and added prologue/epilogue info.
+
+2002-09-25  Martin Baulig  <martin@gnome.org>
+
 	* debug-mono-symfile.h (MonoDebugLineNumberEntry): New type to
 	store line number info.  For the dynamic symbol file, we only need
 	to provide the JIT generated dynamic line number info for the dynamic
