@@ -1,10 +1,15 @@
 // 
 // System.Web.HttpException
 //
-// Author:
+// Authors:
 // 	Patrik Torstensson (Patrik.Torstensson@labs2.com)
+//	Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//
+// (c) 2002 Patrik Torstensson
+// (c) 2003 Ximian, Inc. (http://www.ximian.com)
 //
 using System;
+using System.IO;
 using System.Text;
 //using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -16,6 +21,7 @@ namespace System.Web
 	{
 		int _HttpCode;
 		int _HR;
+		string fileName;
 
 		public HttpException () : base ()
 		{
@@ -54,16 +60,104 @@ namespace System.Web
 			_HttpCode = iHttpCode;
 		}
 
-		[MonoTODO("Format messages")]
+		internal HttpException (string message, string fileName)
+			: base (message)
+		{
+			this.fileName = fileName;
+			
+		}
+		
 		public string GetHtmlErrorMessage ()
 		{
-			StringBuilder sb = new StringBuilder ();
-			sb.Append ("<html>\n<title>");
-			sb.Append (HttpUtility.HtmlEncode (Message));
-			sb.Append ("</title><body><h1>Error</h1>\n<pre>");
-			sb.Append (HttpUtility.HtmlEncode (ToString ()));
-			sb.Append ("</pre></body>\n</html>\n");
-			return sb.ToString ();
+			if (!(this.InnerException is HtmlizedException))
+				return GetDefaultErrorMessage ();
+
+			return GetHtmlizedErrorMessage ();
+		}
+
+		string GetDefaultErrorMessage ()
+		{
+			StringBuilder builder = new StringBuilder ("<html>\n<title>");
+			builder.Append ("Error"); //FIXME
+			builder.AppendFormat ("</title><body bgcolor=\"white\">" + 
+					      "<h1><font color=\"red\">Error in '{0}' " + 
+					      "Application</font></h1><hr>\n",
+					      HttpRuntime.AppDomainAppVirtualPath);
+
+			builder.AppendFormat ("<h2><font color=\"maroon\"><i>{0}</i></font></h2>\n", "Error"); //FIXME
+			builder.AppendFormat ("<b>Description: </b>{0}\n<p>\n", "Error processing request.");
+			builder.AppendFormat ("<b>Error Message: </b>{0}\n<p>\n", HtmlEncode (this.Message));
+			builder.AppendFormat ("<b>Stack Trace: </b>");
+
+			Exception e = (InnerException != null) ? InnerException : this;
+			builder.Append ("<table summary=\"Stack Trace\" width=\"100%\" bgcolor=\"#ffffc\">\n<tr><td>");
+			FormatReader (builder, new StringReader (e.ToString ()), 0, false);
+			builder.Append ("</td></tr>\n</table>\n<p>\n");
+
+			builder.Append ("<hr>\n</body>\n</html>\n");
+			builder.AppendFormat ("<!--\n{0}\n-->\n", HtmlEncode (this.ToString ()));
+
+			return builder.ToString ();
+		}
+
+		static string HtmlEncode (string s)
+		{
+			return HttpUtility.HtmlEncode (s);
+		}
+		
+		string GetHtmlizedErrorMessage ()
+		{
+			StringBuilder builder = new StringBuilder ("<html>\n<title>");
+			HtmlizedException exc = (HtmlizedException) this.InnerException;
+			builder.Append (exc.Title);
+			builder.AppendFormat ("</title><body bgcolor=\"white\">" + 
+					      "<h1><font color=\"red\">Server Error in '{0}' " + 
+					      "Application</font></h1><hr>\n",
+					      HttpRuntime.AppDomainAppVirtualPath);
+
+			builder.AppendFormat ("<h2><font color=\"maroon\"><i>{0}</i></font></h2>\n", exc.Title);
+			builder.AppendFormat ("<b>Description: </b>{0}\n<p>\n", HtmlEncode (exc.Description));
+			builder.AppendFormat ("<b>Error message: </b>{0}\n<p>\n", HtmlEncode (exc.ErrorMessage));
+
+			if (exc.HaveSourceError) {
+				builder.Append ("<b>Source Error: </b>\n<p>\n");
+				builder.Append ("<table summary=\"Source error\" width=\"100%\" bgcolor=\"#ffffc\">\n<tr><td>");
+				FormatReader (builder, exc.SourceError, exc.SourceErrorLine);
+				builder.Append ("</td></tr>\n</table>\n<p>\n");
+			}
+
+			builder.AppendFormat ("<b>Source File: </b>{0}\n<p>\n", exc.FileName);
+
+			if (exc.HaveSourceFile) {
+				builder.Append ("<table summary=\"Source file\" width=\"100%\" bgcolor=\"#ffffc\">\n<tr><td>");
+				FormatReader (builder, exc.SourceFile, 0);
+				builder.Append ("</td></tr>\n</table>\n<p>\n");
+			}
+			
+			
+			builder.Append ("<hr>\n</body>\n</html>\n");
+			builder.AppendFormat ("<!--\n{0}\n-->\n", HtmlEncode (exc.ToString ()));
+			return builder.ToString ();
+		}
+
+		static void FormatReader (StringBuilder builder, TextReader reader, int errorLine)
+		{
+			FormatReader (builder, reader, errorLine, true);
+		}
+		
+		static void FormatReader (StringBuilder builder, TextReader reader, int errorLine, bool lines)
+		{
+			int current = (errorLine > 0) ? errorLine : 1;
+			string s;
+			builder.Append ("<code><pre>\n");
+			while ((s = reader.ReadLine ()) != null) {
+				if (lines)
+					builder.AppendFormat ("Line {0}: {1}\n", current++, HtmlEncode (s));
+				else
+					builder.AppendFormat ("{1}\n", current++, HtmlEncode (s));
+			}
+
+			builder.Append ("</pre></code>\n");
 		}
 
 		[MonoTODO("Check error type and Set the correct error code")]
