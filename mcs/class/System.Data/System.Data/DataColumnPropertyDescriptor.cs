@@ -25,6 +25,7 @@ namespace System.Data
 		public DataColumnPropertyDescriptor (string name, int columnIndex, Attribute [] attrs)
 			: base (name, attrs) 
 		{
+			this.columnIndex = columnIndex;
 		}
 
 		public void SetReadOnly (bool value) 

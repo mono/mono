@@ -1,5 +1,9 @@
 2003-01-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* DataColumnPropertyDescriptor.cs: store columnIndex in the .ctor.
+
+2003-01-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* DataColumnPropertyDescriptor.cs: fixed typo.
 	* DataViewManagerListItemTypeDescriptor.cs: added new internal property
 	to get the DataViewManager and removed TablePD class.
