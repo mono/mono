@@ -1,4 +1,10 @@
 
+Tue Jul 27 16:05:19 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c, mini-sparc.c, mini-s390.c: keep track of line
+	numbers in the debug info (spotted by Geoff Norton,
+	<gnorton@customerdna.com>).
+
 Mon Jul 12 17:47:00 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
 	* inssel-ppc.brg: arguments on the stack are always
