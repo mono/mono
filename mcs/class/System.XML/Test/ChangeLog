@@ -1,3 +1,8 @@
+2003-03-22  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XPathNavigatorTests.cs : added DocumentWithXmlDeclaration() 
+	  for bugzilla #36672.
+
 2003-03-21  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XmlNodeListTests.cs : added ReturnNullWhenIndexIsOutOfRange() for 

@@ -20,21 +20,28 @@ namespace MonoTests.System.Xml
 	[TestFixture]
 	public class XPathNavigatorTests
 	{
+		XmlDocument document;
+		XPathNavigator navigator;
+
+		[SetUp]
+		public void GetReady ()
+		{
+			document = new XmlDocument ();
+		}
+		
 		[Test]
 		public void CreateNavigator ()
 		{
-			XmlDocument document = new XmlDocument ();
 			document.LoadXml ("<foo />");
-			XPathNavigator navigator = document.CreateNavigator ();
+			navigator = document.CreateNavigator ();
 			Assertion.AssertNotNull (navigator);
 		}
 
 		[Test]
 		public void PropertiesOnDocument ()
 		{
-			XmlDocument document = new XmlDocument ();
 			document.LoadXml ("<foo:bar xmlns:foo='#foo' />");
-			XPathNavigator navigator = document.CreateNavigator ();
+			navigator = document.CreateNavigator ();
 			
 			Assertion.AssertEquals (XPathNodeType.Root, navigator.NodeType);
 			Assertion.AssertEquals (String.Empty, navigator.Name);
@@ -49,9 +56,8 @@ namespace MonoTests.System.Xml
 		[Test]
 		public void PropertiesOnElement ()
 		{
-			XmlDocument document = new XmlDocument ();
 			document.LoadXml ("<foo:bar xmlns:foo='#foo' />");
-			XPathNavigator navigator = document.DocumentElement.CreateNavigator ();
+			navigator = document.DocumentElement.CreateNavigator ();
 			
 			Assertion.AssertEquals (XPathNodeType.Element, navigator.NodeType);
 			Assertion.AssertEquals ("foo:bar", navigator.Name);
@@ -66,9 +72,8 @@ namespace MonoTests.System.Xml
 		[Test]
 		public void PropertiesOnAttribute ()
 		{
-			XmlDocument document = new XmlDocument ();
 			document.LoadXml ("<foo bar:baz='quux' xmlns:bar='#bar' />");
-			XPathNavigator navigator = document.DocumentElement.GetAttributeNode("baz", "#bar").CreateNavigator ();
+			navigator = document.DocumentElement.GetAttributeNode("baz", "#bar").CreateNavigator ();
 			
 			Assertion.AssertEquals (XPathNodeType.Attribute, navigator.NodeType);
 			Assertion.AssertEquals ("bar:baz", navigator.Name);
@@ -83,9 +88,8 @@ namespace MonoTests.System.Xml
 		[Test]
 		public void Navigation ()
 		{
-			XmlDocument document = new XmlDocument ();
 			document.LoadXml ("<foo><bar /><baz /></foo>");
-			XPathNavigator navigator = document.DocumentElement.CreateNavigator ();
+			navigator = document.DocumentElement.CreateNavigator ();
 			
 			Assertion.AssertEquals ("foo", navigator.Name);
 			Assertion.Assert (navigator.MoveToFirstChild ());
@@ -146,9 +150,8 @@ namespace MonoTests.System.Xml
 		[Test]
 		public void AttributeNavigation ()
 		{
-			XmlDocument document = new XmlDocument ();
 			document.LoadXml ("<foo bar='baz' quux='quuux' />");
-			XPathNavigator navigator = document.DocumentElement.CreateNavigator ();
+			navigator = document.DocumentElement.CreateNavigator ();
 
 			Assertion.AssertEquals (XPathNodeType.Element, navigator.NodeType);
 			Assertion.AssertEquals ("foo", navigator.Name);
@@ -165,9 +168,8 @@ namespace MonoTests.System.Xml
 		[Test]
 		public void ElementAndRootValues()
 		{
-			XmlDocument document = new XmlDocument ();
 			document.LoadXml ("<foo><bar>baz</bar><quux>quuux</quux></foo>");
-			XPathNavigator navigator = document.DocumentElement.CreateNavigator ();
+			navigator = document.DocumentElement.CreateNavigator ();
 
 			Assertion.AssertEquals (XPathNodeType.Element, navigator.NodeType);
 			Assertion.AssertEquals ("foo", navigator.Name);
@@ -175,6 +177,18 @@ namespace MonoTests.System.Xml
 
 			navigator.MoveToRoot ();
 			//Assertion.AssertEquals ("bazquuux", navigator.Value);
+		}
+
+		[Test]
+		public void DocumentWithXmlDeclaration ()
+		{
+			document.LoadXml ("<?xml version=\"1.0\" standalone=\"yes\"?>\"<Root><foo>bar</foo></Root>");
+			navigator = document.CreateNavigator ();
+
+			navigator.MoveToRoot ();
+			navigator.MoveToFirstChild ();
+			Assertion.AssertEquals (XPathNodeType.Element, navigator.NodeType);
+			Assertion.AssertEquals ("Root", navigator.Name);
 		}
 	}
 }
