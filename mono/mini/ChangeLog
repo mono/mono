@@ -1,3 +1,9 @@
+2004-08-05  Zoltan Varga  <vargaz@freemail.hu>
+
+	* exceptions-amd64.c (mono_arch_get_throw_exception): Fix maximum length.
+
+	* mini-amd64.c (mono_arch_allocate_vars): Fix tls offset detection.
+
 Tue Aug 3 23:50:00 EST 2004 Neale Ferguson <Neale.Ferguson@SoftwareAG-usa.com>
 	
 	* mini-s390x.c mini-s390x.h tramp-s390x.c inssel-s390x.brg
