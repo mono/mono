@@ -1,4 +1,8 @@
 
+Tue Feb 1 15:52:26 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: handle value types in dup, fixes gen-112.cs.
+
 Tue Feb 1 11:45:19 CET 2005 Paolo Molaro <lupus@ximian.com>
 
 	* mini-ppc.c, cpu-g4.md, tramp-ppc.c: use a slower code
