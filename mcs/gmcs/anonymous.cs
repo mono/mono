@@ -123,8 +123,9 @@ namespace Mono.CSharp {
 				throw new Exception ("Type host is null");
 			
 			if (current_type == type_host && ec.IsStatic){
-				if (ec.IsStatic)
+				if (ec.IsStatic){
 					method_modifiers |= Modifiers.STATIC;
+				}
 				current_type = null;
 			} 
 
@@ -134,7 +135,6 @@ namespace Mono.CSharp {
 				method_modifiers, false, new MemberName ("<#AnonymousMethod>" + anonymous_method_count++),
 				Parameters, null, loc);
 			method.Block = Block;
-
 			
 			//
 			// Swap the TypeBuilder while we define the method, then restore
@@ -276,13 +276,14 @@ namespace Mono.CSharp {
 				ec.TypeContainer, ec.DeclSpace, loc, null,
 				invoke_mb.ReturnType,
 				/* REVIEW */ (ec.InIterator ? Modifiers.METHOD_YIELDS : 0) |
-				(ec.InUnsafe ? Modifiers.UNSAFE : 0),
+				(ec.InUnsafe ? Modifiers.UNSAFE : 0) |
+				(ec.IsStatic ? Modifiers.STATIC : 0),
 				/* No constructor */ false);
 
 			aec.CurrentAnonymousMethod = this;
 			ContainerAnonymousMethod = ec.CurrentAnonymousMethod;
 			ContainingBlock = ec.CurrentBlock;
-		
+
 			if (aec.ResolveTopBlock (ec, Block, amp, loc, out unreachable))
 				return new AnonymousDelegate (this, delegate_type, loc).Resolve (ec);
 
@@ -309,8 +310,7 @@ namespace Mono.CSharp {
 			// Adjust based on the computed state of the
 			// method from CreateMethodHost
 			
-			if ((method_modifiers & Modifiers.STATIC) != 0)
-				aec.IsStatic = true;
+			aec.MethodIsStatic = (method_modifiers & Modifiers.STATIC) != 0;
 			
 			aec.EmitMeta (Block, amp);
 			aec.EmitResolvedTopBlock (Block, unreachable);

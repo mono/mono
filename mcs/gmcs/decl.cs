@@ -1771,10 +1771,8 @@ namespace Mono.CSharp {
 			// method cache with all declared and inherited methods.
 			Type type = container.Type;
 			if (!(type is TypeBuilder) && !type.IsInterface && !type.IsGenericParameter) {
-				if (Container.BaseCache != null) {
+				if (Container.BaseCache != null)
 					method_hash = DeepCopy (Container.BaseCache.method_hash);
-					ClearDeclaredOnly (method_hash);
-				}
 				else
 					method_hash = new Hashtable ();
 				AddMethods (type);
@@ -1818,15 +1816,6 @@ namespace Mono.CSharp {
 			 }
                                 
 			return hash;
-		}
-
-		void ClearDeclaredOnly (Hashtable hash)
-		{
-			IDictionaryEnumerator it = hash.GetEnumerator ();
-			while (it.MoveNext ()) {
-				foreach (CacheEntry ce in (ArrayList) it.Value)
-					ce.EntryType &= ~EntryType.Declared;
-			}
 		}
 
 		/// <summary>
@@ -1963,7 +1952,7 @@ namespace Mono.CSharp {
 
 					if (member.MethodHandle.Value == old.MethodHandle.Value && 
 					    declaring_type == old.DeclaringType) {
-						entry.Member = member;
+						list [n] = new CacheEntry (entry, member);
 						break;
 					}
 				}
@@ -2060,8 +2049,8 @@ namespace Mono.CSharp {
 
 		protected class CacheEntry {
 			public readonly IMemberContainer Container;
-			public EntryType EntryType;
-			public MemberInfo Member;
+			public readonly EntryType EntryType;
+			public readonly MemberInfo Member;
 
 			public CacheEntry (IMemberContainer container, MemberInfo member,
 					   MemberTypes mt, BindingFlags bf)
@@ -2069,6 +2058,13 @@ namespace Mono.CSharp {
 				this.Container = container;
 				this.Member = member;
 				this.EntryType = GetEntryType (mt, bf);
+			}
+
+			public CacheEntry (CacheEntry other, MemberInfo update)
+			{
+				this.Container = other.Container;
+				this.EntryType = other.EntryType & ~EntryType.Declared;
+				this.Member = update;
 			}
 
 			public override string ToString ()
