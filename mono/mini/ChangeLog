@@ -1,3 +1,8 @@
+2004-05-18  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini.c (create_helper_signature): Use a helper function to reduce
+	the code which needs to be written. Also set the calling convention of
+	icalls on windows. Fixes #57840.
 
 Tue May 18 11:05:18 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
