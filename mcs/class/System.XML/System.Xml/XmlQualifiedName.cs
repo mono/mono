@@ -79,6 +79,8 @@ namespace System.Xml
 		{
 			if (ns == null)
 				return name;
+			else if (ns == string.Empty)
+				return name;
 			else
 			 	return ns + ":" + name;
 		}

@@ -1,3 +1,7 @@
+2002-12-05  Ville Palo <vi64p@koti.soon.fi>
+
+	* XmlQualifiedName.cs: Little fix to ToString () -method
+
 2002-12-04  Tim Haynes  <thaynes@openlinksw.com>
 
         * class/System.XML/System.Xml/XmlElement.cs: Made more refined
