@@ -157,14 +157,30 @@ namespace System.Web
 			Clear ();
 		}
 
-		[MonoTODO("string ToString(bool UrlEncode)")]
 		internal string ToString (bool UrlEncode)
 		{
-			if (_bHeaders) {
+			StringBuilder result = new StringBuilder ();
+			string eq = (_bHeaders ? ":" : "=");
+			string separator = (_bHeaders ? "\r\n" : "&");
+
+			foreach (string strKey in AllKeys) {
+
+				if (result.Length > 0)
+					result.Append (separator);
+
+				if (UrlEncode) {
+					// use encoding
+					result.Append (HttpUtility.UrlEncode (strKey, WebEncoding.Encoding));
+					result.Append (eq);
+					result.Append (HttpUtility.UrlEncode (Get (strKey), WebEncoding.Encoding));
+				} else {
+					result.Append (strKey);
+					result.Append (eq);
+					result.Append (Get (strKey));
+				}                               
 			}
 
-			// TODO: Should return a correctly formated string (different depending on header flag)
-			throw new NotImplementedException ();
+			return result.ToString ();
 		}
 
 		virtual new public string ToString ()

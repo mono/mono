@@ -1,3 +1,9 @@
+
+2002-12-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpValueCollection.cs: patch from Botjan Vizin 
+	<bostjan.vizin@siol.net> that implements ToString (bool).
+
 2002-12-18  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpApplicationFactory.cs: add the context as parameter when building
