@@ -1,3 +1,6 @@
+2003-07-22  Jerome Laban <jlaban@wanadoo.fr>
+
+	* Guid.cs: Fixed ToString (), was producing incorrect string.
 
 2003-07-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 

@@ -518,6 +518,11 @@ public struct Guid  : IFormattable, IComparable  {
 		return res;
 	}
 
+	private static char ToHex(int b)
+	{
+		return (char)((b<0xA)?('0' + b):('a' + b - 0xA));
+	}
+
 	[MonoTODO]
 	public static Guid NewGuid ()
 	{
@@ -580,25 +585,36 @@ public struct Guid  : IFormattable, IComparable  {
 		if (h) {
 			res.Append ('-');
 		}
-		res.Append ((char)('0' + ((_clockSeqHiAndReserved >> 4) & 0xf)));
-		res.Append ((char)('0' + (_clockSeqHiAndReserved & 0xf)));
-		res.Append ((char)('0' + ((_clockSeqLow >> 4) & 0xf)));
-		res.Append ((char)('0' + (_clockSeqLow & 0xf)));
+
+		char[] vals1 = {
+						   ToHex((_clockSeqHiAndReserved >> 4) & 0xf),
+						   ToHex(_clockSeqHiAndReserved & 0xf),
+						   ToHex((_clockSeqLow >> 4) & 0xf),
+						   ToHex(_clockSeqLow & 0xf)
+					   };
+
+		res.Append (vals1);
+
 		if (h) {
 			res.Append ('-');
 		}
-		res.Append ((char)('0' + ((_node0 >> 4) & 0xf)));
-		res.Append ((char)('0' + (_node0 & 0xf)));
-		res.Append ((char)('0' + ((_node1 >> 4) & 0xf)));
-		res.Append ((char)('0' + (_node1 & 0xf)));
-		res.Append ((char)('0' + ((_node2 >> 4) & 0xf)));
-		res.Append ((char)('0' + (_node2 & 0xf)));
-		res.Append ((char)('0' + ((_node3 >> 4) & 0xf)));
-		res.Append ((char)('0' + (_node3 & 0xf)));
-		res.Append ((char)('0' + ((_node4 >> 4) & 0xf)));
-		res.Append ((char)('0' + (_node4 & 0xf)));
-		res.Append ((char)('0' + ((_node5 >> 4) & 0xf)));
-		res.Append ((char)('0' + (_node5 & 0xf)));
+	
+		char[] vals2 = {
+						  ToHex((_node0 >> 4) & 0xf),
+						  ToHex(_node0 & 0xf),
+						  ToHex((_node1 >> 4) & 0xf),
+						  ToHex(_node1 & 0xf),
+						  ToHex((_node2 >> 4) & 0xf),
+						  ToHex(_node2 & 0xf),
+						  ToHex((_node3 >> 4) & 0xf),
+						  ToHex(_node3 & 0xf),
+						  ToHex((_node4 >> 4) & 0xf),
+						  ToHex(_node4 & 0xf),
+						  ToHex((_node5 >> 4) & 0xf),
+						  ToHex(_node5 & 0xf)
+		};
+
+		res.Append (vals2);
 
 		if (p) {
 			res.Append (')');
