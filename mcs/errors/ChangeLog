@@ -1,3 +1,7 @@
+2002-07-06  Andrew Birkett  <adb@tardis.ed.ac.uk>
+
+	* cs1039.cs, cs1033.cs, cs1010.cs: New tests.
+
 2002-06-26    <adb@tardis.ed.ac.uk>
 
 	* cs1501-3.cs: Added new test for struct ctr typechecks.
