@@ -26,10 +26,12 @@ namespace System.IO.IsolatedStorage
 			this.directory.Create ();
 		}
 
+		[CLSCompliant(false)]
 		public override ulong CurrentSize {
 			get {return IsolatedStorageInfo.GetDirectorySize(directory);}
 		}
 
+		[CLSCompliant(false)]
 		[MonoTODO("The IsolatedStorage area should be limited, to prevent DOS attacks.  What's a reasonable size?")]
 		public override ulong MaximumSize {
 			get {return ulong.MaxValue;}

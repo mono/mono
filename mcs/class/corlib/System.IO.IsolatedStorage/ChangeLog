@@ -1,3 +1,9 @@
+2003-01-19  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* IsolatedStorageFile.cs: Added missing [CLSCompliant(false)]
+	to CurrentSize and MaximumSize to fix compilation (at least 
+	under Windows/csc).
+
 2003-01-18  Jonathan Pryor <jonpryor@vt.edu>
 
 	- General: Get a simple implementation working.  Simple, not-all-there, but
