@@ -348,8 +348,8 @@ namespace Microsoft.VisualBasic.CompilerServices {
 		 */
 		
 		public static void ThrowException1(int hr, string param1) {
-			string str = "";
 			//TODO: delete or convert???
+			//string str = "";
 
 			//			if (hr > 0 && hr <= 65535)
 			//			

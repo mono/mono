@@ -31,7 +31,7 @@ namespace Microsoft.VisualBasic
                 	{
                 		Environment.CurrentDirectory=Path;
                 	}
-                	catch ( Exception e){ throw new System.IO.FileNotFoundException ("Invalid drive is specified, or drive is unavailable");}
+                	catch /*( Exception e)*/{ throw new System.IO.FileNotFoundException ("Invalid drive is specified, or drive is unavailable");}
                 	
                 }
                 
@@ -458,13 +458,13 @@ namespace Microsoft.VisualBasic
 		{
 			System.Single DecimalValue=0;
 			string buffer="";
-			int factor=1;
+			//int factor=1;
 			string BufDecimal="";
 			InternalInputExceptions(FileNumber);
 			buffer=InternalInput(FileNumber,2);
 			if (buffer[0]=='-')
 			{
-				factor=-1;
+				//factor=-1;
 				buffer=buffer.Substring(1);
 			}
 			if ( buffer.IndexOf(".")>=0)
@@ -507,13 +507,13 @@ namespace Microsoft.VisualBasic
 		{
 			double DecimalValue=0;
 			string buffer="";
-			int factor=1;
+			//int factor=1;
 			string BufDecimal="";
 			InternalInputExceptions(FileNumber);
 			buffer=InternalInput(FileNumber,2);
 			if (buffer[0]=='-')
 			{
-				factor=-1;
+				//factor=-1;
 				buffer=buffer.Substring(1);
 			}
 			if ( buffer.IndexOf(".")>=0)
@@ -556,7 +556,7 @@ namespace Microsoft.VisualBasic
                 [MonoTODO("Needs Testing")]
                 public static void Input (System.Int32 FileNumber, ref System.String Value)
 		{
-			string buffer="";
+			//string buffer="";
 			InternalInputExceptions(FileNumber);
 			Value=InternalInput(FileNumber,0);
 		}
@@ -1042,7 +1042,7 @@ namespace Microsoft.VisualBasic
                 			{
                 				FHandle[bucle].Close();	
                 			}
-                			catch (Exception e) 
+                			catch /*(Exception e) */
 					{ 
 						FHandle[bucle]=null ;
 					}

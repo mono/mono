@@ -73,8 +73,8 @@ namespace Microsoft.VisualBasic.CompilerServices {
 				// no member with the name specified found
 				throw new NullReferenceException();
 			}
-
-			int invokeAttr = 0;
+			//TODO removed to fix compile warning, add when used.
+			//int invokeAttr = 0;
 
 			if (memberInfo[0] is MethodInfo) {
 				// the member is a method
@@ -100,7 +100,7 @@ namespace Microsoft.VisualBasic.CompilerServices {
 
 			// invoke member - takes care about all three cases : field,property and field.
 			// TODO: 
-			throw new NotImplementedException("LateBinding not implmented");
+			//throw new NotImplementedException("LateBinding not implmented");
 			//return objType.InvokeMember(name, invokeAttr, null, o, args);
 		}
 
@@ -145,7 +145,8 @@ namespace Microsoft.VisualBasic.CompilerServices {
 				throw new NullReferenceException();
 			}
 
-			int invokeAttr = 0;
+			// TODO: readd when used
+			//int invokeAttr = 0;
 
 			if (memberInfo[0] is PropertyInfo) {
 				// the member is a property
@@ -165,7 +166,7 @@ namespace Microsoft.VisualBasic.CompilerServices {
 
 			// invoke member - takes care about the cases : field and property.
 			// TODO: 
-			throw new NotImplementedException("LateBinding not implmented");
+			//throw new NotImplementedException("LateBinding not implmented");
 			//objType.InvokeMember(name, invokeAttr, null, o, args);
 		}
 		//mono implmentation
@@ -255,8 +256,8 @@ namespace Microsoft.VisualBasic.CompilerServices {
 			for (int i = 0; i < types.Length; i++) {
 				types[i] = args[i].GetType();
 			}
-			string defaultPropName;
 			// TODO: 
+			//string defaultPropName;
 			throw new NotImplementedException("LateBinding not implmented");
 			//if (type is TypeInfo)
 			//	defaultPropName = getDefaultMemberName(type);
@@ -384,7 +385,7 @@ namespace Microsoft.VisualBasic.CompilerServices {
 				//types[i] = ObjectStaticWrapper.GetType(args[i]);
 				//System.out.println("in Set:" + types[i].get_FullName());
 			}
-			string defaultPropName;
+			//string defaultPropName;
 				// TODO: 
 				throw new NotImplementedException("LateBinding not implmented");
 			//if (type is TypeInfo)
@@ -394,19 +395,19 @@ namespace Microsoft.VisualBasic.CompilerServices {
 			//	defaultPropName = "Chars";
 			//else
 			//	defaultPropName = "Item";
-			PropertyInfo propertyInfo = null;
-			if (defaultPropName != null)
-				propertyInfo = type.GetProperty(defaultPropName, types);
-			if (propertyInfo != null) {
-				object newVal = args[args.Length - 1];
-				object[] Params = new object[args.Length - 1];
+			//PropertyInfo propertyInfo = null;
+			//if (defaultPropName != null)
+			//	propertyInfo = type.GetProperty(defaultPropName, types);
+			//if (propertyInfo != null) {
+			//	object newVal = args[args.Length - 1];
+			//	object[] Params = new object[args.Length - 1];
 
-				Array.Copy(args, 0, Params, 0, args.Length - 1);
-				// java System.arraycopy(args, 0, Params, 0, args.Length - 1);
-				propertyInfo.SetValue(o, newVal, Params);
-			}
-			else
-				throw new NotSupportedException();
+			//	Array.Copy(args, 0, Params, 0, args.Length - 1);
+			//	// java System.arraycopy(args, 0, Params, 0, args.Length - 1);
+			//	propertyInfo.SetValue(o, newVal, Params);
+			//}
+			//else
+			//	throw new NotSupportedException();
 		}
 
 		[System.Diagnostics.DebuggerHiddenAttribute]

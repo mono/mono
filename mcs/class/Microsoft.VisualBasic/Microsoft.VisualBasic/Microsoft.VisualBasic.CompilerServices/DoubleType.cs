@@ -135,7 +135,7 @@ namespace Microsoft.VisualBasic.CompilerServices
 				//			d = ClrDouble.Parse(Value, NumberStyles.Any, numberFormat);
 				d = double.Parse(Value, NumberStyles.Any, numberFormat);
 			}
-			catch (Exception e) {
+			catch /*(Exception e)*/ {
 				//			d = ClrDouble.Parse(Value, 255, numberFormat);
 				d = double.Parse(Value, (NumberStyles)255, numberFormat);
 			}
