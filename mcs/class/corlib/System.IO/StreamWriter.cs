@@ -31,6 +31,7 @@ namespace System.IO {
 		private byte[] TheBuffer;
 
 		private bool DisposedAlready = false;
+		private bool preamble_done = false;
 
 		public new static readonly StreamWriter Null = new StreamWriter (Stream.Null, Encoding.UTF8Unmarked, 0);
 
@@ -160,6 +161,13 @@ namespace System.IO {
 			int resPos = 0;
 
 			len = internalEncoding.GetBytes (buffer, index, count, res, 0);
+			// write the encoding preamble only at the start of the stream
+			if (!preamble_done && len > 0) {
+				byte[] preamble = internalEncoding.GetPreamble ();
+				if (preamble.Length > 0)
+					internalStream.Write (preamble, 0, preamble.Length);
+				preamble_done = true;
+			}
 
 			// if they want AutoFlush, don't bother buffering
 			if (iflush) {

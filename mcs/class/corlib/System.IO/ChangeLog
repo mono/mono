@@ -1,3 +1,9 @@
+
+Tue Nov 19 13:01:22 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* StreamWriter.cs: output the encoding preamble at the start of a
+	stream if needed.
+
 2002-11-07  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* StreamReader.cs: Changed all Encoding.UTF8 to Encoding.UTF8Unmarked.
