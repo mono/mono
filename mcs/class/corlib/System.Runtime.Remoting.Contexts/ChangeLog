@@ -1,3 +1,9 @@
+2004-10-26  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* Context.cs: Added NeedsContextSink property, which returns TRUE if
+	the current context has sinks that need to be executed when switching to
+	another context.
+
 2004-09-22  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* Context.cs: In CreateServerObjectSinkChain, added a parameter to

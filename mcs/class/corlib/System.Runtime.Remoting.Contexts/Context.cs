@@ -105,6 +105,15 @@ namespace System.Runtime.Remoting.Contexts {
 			get { return context_id == 0; }
 		}
 
+		internal bool NeedsContextSink
+		{
+			get {
+				return context_id != 0 || 
+					(global_dynamic_properties != null && global_dynamic_properties.HasProperties) || 
+					(context_dynamic_properties != null && context_dynamic_properties.HasProperties);
+			}
+		}
+
 		public static bool RegisterDynamicProperty(IDynamicProperty prop, ContextBoundObject obj, Context ctx)
 		{
 			DynamicPropertyCollection col = GetDynamicPropertyCollection (obj, ctx);
