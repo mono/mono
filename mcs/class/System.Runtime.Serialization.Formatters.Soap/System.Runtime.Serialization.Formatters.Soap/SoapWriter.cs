@@ -299,7 +299,7 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 			_xmlWriter.WriteAttributeString("xmlns", "SOAP-ENC", null, "http://schemas.xmlsoap.org/soap/encoding/");
 			_xmlWriter.WriteAttributeString("xmlns", "SOAP-ENV", null, "http://schemas.xmlsoap.org/soap/envelope/");
 			_xmlWriter.WriteAttributeString("xmlns", "clr", null, "http://schemas.microsoft.com/soap/encoding/clr/1.0" );
-			_xmlWriter.WriteAttributeString("SOAP-ENV", "encodingStyle", null, "http://schemas.xmlsoap.org/soap/encoding/");
+			_xmlWriter.WriteAttributeString("SOAP-ENV", "encodingStyle", "http://schemas.xmlsoap.org/soap/envelope/", "http://schemas.xmlsoap.org/soap/encoding/");
 			
 			WriteBody();
 			
