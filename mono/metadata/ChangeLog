@@ -1,5 +1,9 @@
 2005-02-02  Zoltan Varga  <vargaz@freemail.hu>
 
+	* loader.c (mono_method_get_index): New helper function.
+
+	* loader.c reflection.c: Use mono_method_get_index ().
+
 	* class.c (mono_class_get_method_from_name_flags): New helper method.
 
 	* debug-helpers.h debug-helpers.c (mono_find_method_by_name): Remove
