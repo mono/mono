@@ -1,3 +1,10 @@
+2005-02-04 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpWebRequest.cs: send the headers when we're supposed to write
+	a POST/PUT but call GetResponse before GetRequestStream.
+
+	* WebConnectionStream.cs: new RequestWritten property.
+
 2005-01-20  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* EndpointPermission.cs: Fix IsSubsetof(hostname) so that the regression 

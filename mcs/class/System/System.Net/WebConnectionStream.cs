@@ -402,6 +402,10 @@ namespace System.Net
 			}
 		}
 
+		internal bool RequestWritten {
+			get { return requestWritten; }
+		}
+
 		internal void WriteRequest ()
 		{
 			if (requestWritten)
