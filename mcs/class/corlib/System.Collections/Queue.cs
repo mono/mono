@@ -328,7 +328,7 @@ namespace System.Collections {
 				}
 
 				if (current >= queue._size - 1) {
-					current = -1; // to late!
+					current = Int32.MaxValue; // to late!
 					return false;
 				} else {
 					current++;
