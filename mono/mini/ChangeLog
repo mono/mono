@@ -1,5 +1,8 @@
 2004-02-16  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini-x86.c: Call mono_arch_get_lmf_addr instead of mono_get_lmf_addr
+	if we have a working __thread implementation.
+
 	* mini-ops.h cpu-pentium.md mini-x86.c inssel-x86.brg: Remove 
 	OP_CALL_IMM opcodes, since the CALL opcodes handles immediates as well.
 
