@@ -54,5 +54,4 @@ using System.Runtime.CompilerServices;
 //       documentation for more information on this.
 //
 [assembly: AssemblyDelaySign(true)]
-[assembly: AssemblyKeyFile("../ecma.pub")]
-[assembly: AssemblyKeyName("")]
+[assembly: AssemblyKeyFile("../mono.pub")]
