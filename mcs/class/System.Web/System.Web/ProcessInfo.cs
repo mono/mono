@@ -28,8 +28,14 @@ namespace System.Web {
 		}
 
 		public ProcessInfo (DateTime startTime, TimeSpan age, int processID, int requestCount, ProcessStatus status, ProcessShutdownReason shutdownReason, int peakMemoryUsed)
-			: SetAll (startTime, age, processID, requestCount, status, shutdownReason, peakMemoryUsed)
 		{
+			this.age = age;
+			this.peakMemoryUsed = peakMemoryUsed;
+			this.processID = processID;
+			this.requestCount = requestCount;
+			this.shutdownReason = shutdownReason;
+			this.startTime = startTime;
+			this.status = status;
 		}
 
 		#endregion
@@ -74,7 +80,7 @@ namespace System.Web {
 			this.peakMemoryUsed = peakMemoryUsed;
 			this.processID = processID;
 			this.requestCount = requestCount;
-			this.shutdownReason = shutdownreason;
+			this.shutdownReason = shutdownReason;
 			this.startTime = startTime;
 			this.status = status;
 		}

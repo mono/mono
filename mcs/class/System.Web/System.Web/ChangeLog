@@ -1,4 +1,8 @@
 2002-07-24  Tim Coleman <tim@timcoleman.com>
+	* ProcessInfo.cs: 
+		Fix constructor, reference to shutdownreason.
+
+2002-07-24  Tim Coleman <tim@timcoleman.com>
 	* HttpCachePolicy.cs:
 		Added stubbs to this class.
 	* HttpCacheability.cs:
