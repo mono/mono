@@ -17,7 +17,8 @@ namespace System.Runtime.Remoting.Channels.Tcp
 	{
 		private TcpClientChannel _clientChannel;
 		private TcpServerChannel _serverChannel = null;
-		private string _name;
+		private string _name = "tcp";
+		private int _priority = 1;
 	
 		public TcpChannel (): this (0)
         {
@@ -30,16 +31,18 @@ namespace System.Runtime.Remoting.Channels.Tcp
 			Init(ht, null, null);
 		}
 
-		public void Init(IDictionary properties, IClientChannelSinkProvider clientSink, IServerChannelSinkProvider serverSink)
+		public void Init (IDictionary properties, IClientChannelSinkProvider clientSink, IServerChannelSinkProvider serverSink)
 		{
 			_clientChannel = new TcpClientChannel(properties,clientSink);
 
 			if(properties["port"] != null)
- 			{
 				_serverChannel = new TcpServerChannel(properties, serverSink);
- 			}
 
-			_name = properties["name"] as string;
+			object val = properties ["name"];
+			if (val != null) _name = val as string;
+			
+			val = properties ["priority"];
+			if (val != null) _priority = Convert.ToInt32 (val);
 		}
 
 
@@ -62,7 +65,7 @@ namespace System.Runtime.Remoting.Channels.Tcp
 
 		public int ChannelPriority
 		{
-			get { return 1; }
+			get { return _priority; }
 		}
 
 		public void StartListening (object data)
