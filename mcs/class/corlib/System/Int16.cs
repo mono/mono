@@ -53,7 +53,59 @@ namespace System {
 
 		public static short Parse (string s)
 		{
-			return Parse (s, NumberStyles.Integer, null);
+			short val = 0;
+			int len;
+			int i;
+			bool neg = false;
+			bool digits_seen = false;
+			
+			if (s == null)
+				throw new ArgumentNullException (Locale.GetText ("s is null"));
+
+			len = s.Length;
+
+			char c;
+			for (i = 0; i < len; i++){
+				c = s [i];
+				if (!Char.IsWhiteSpace (c))
+					break;
+			}
+			
+			if (i == len)
+				throw new FormatException ();
+
+			c = s [i];
+			if (c == '+')
+				i++;
+			else if (c == '-'){
+				neg = true;
+				i++;
+			}
+			
+			for (; i < len; i++){
+				c = s [i];
+
+				if (c >= '0' && c <= '9'){
+					val = checked ((short) (val * 10 + (c - '0')));
+					digits_seen = true;
+				} else {
+					if (Char.IsWhiteSpace (c)){
+						for (i++; i < len; i++){
+							if (!Char.IsWhiteSpace (s [i]))
+								throw new FormatException ();
+						}
+						break;
+					} else
+						throw new FormatException ();
+				}
+			}
+			if (!digits_seen)
+				throw new FormatException ();
+			
+			if (neg)
+				val = checked ((short) -val);
+
+			return val;
 		}
 
 		public static short Parse (string s, IFormatProvider fp)

@@ -46,7 +46,53 @@ namespace System {
 
 		public static ushort Parse (string s)
 		{
-			return Parse (s, NumberStyles.Integer, null);
+			ushort val = 0;
+			int len;
+			int i;
+			bool digits_seen = false;
+			
+			if (s == null)
+				throw new ArgumentNullException (Locale.GetText ("s is null"));
+
+			len = s.Length;
+
+			char c;
+			for (i = 0; i < len; i++){
+				c = s [i];
+				if (!Char.IsWhiteSpace (c))
+					break;
+			}
+			
+			if (i == len)
+				throw new FormatException ();
+
+			if (s [i] == '+')
+				i++;
+
+			for (; i < len; i++){
+				c = s [i];
+
+				if (c >= '0' && c <= '9'){
+					ushort d = (ushort) (c - '0');
+					
+					val = checked ((ushort) (val * 10 + d));
+					digits_seen = true;
+				} else {
+					if (Char.IsWhiteSpace (c)){
+						for (i++; i < len; i++){
+							if (!Char.IsWhiteSpace (s [i]))
+								throw new FormatException ();
+						}
+						break;
+					} else
+						throw new FormatException ();
+				}
+			}
+			if (!digits_seen)
+				throw new FormatException ();
+			
+			return val;
+
 		}
 
 		public static ushort Parse (string s, IFormatProvider fp)

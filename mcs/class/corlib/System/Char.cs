@@ -317,8 +317,17 @@ namespace System {
 
 		public static char Parse (string str)
 		{
-			// TODO: Implement me
-			return (char) 0;
+			if (str == null)
+				throw new ArgumentNullException (Locale.GetText ("str is a null reference"));
+
+			int len = str.Length;
+			if (len != 1){
+				if (len < 1)
+					throw new ArgumentNullException ();
+				else
+					throw new FormatException ();
+			}
+			return str [0];
 		}
 
 		public static char ToLower (char c)

@@ -1,3 +1,18 @@
+2001-12-21  Miguel de Icaza  <miguel@ximian.com>
+
+	* Char.cs (Parse): Implement.
+
+	* Byte.cs (Parse): Implement a fast parser.
+	
+	* SByte.cs (Parse): Implement a fast parser.
+
+	* UInt16.cs (Parse): Implement a fast parser.
+	
+	* Int16.cs (Parse): Implement a fast parser.
+
+	* UInt32.cs (Parse): Implement a fast parser.
+
+	* Int32.cs (Parse): Implement a fast parser.
 
 Fri Dec 21 15:14:52 CET 2001 Paolo Molaro <lupus@ximian.com>
 
