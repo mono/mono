@@ -1,23 +1,14 @@
-DIRS=corlib System System.Drawing System.Web System.XML
-ROOT=/cygdrive/$(subst \,/,$(subst :\,/,$(SYSTEMROOT)))
-CSC=$(ROOT)/microsoft.net/framework/v1.0.2914/csc.exe
-
 all:
-	@echo "You must use 'make windows' or 'make unix'."
-	@echo "'make unix' is broken for now."
+	@echo "You must use 'make windows' or 'make linux'."
 
 windows:
-	for i in $(DIRS); do				\
-		(cd $$i; CSC=$(CSC) NUNIT_CONSOLE=NUnitConsole.exe PLATFORM=window make windows) || exit 1;\
-	done;
+	../nant/NAnt.exe windows
 
-unix:
-	@echo "'make unix' is broken for now."
+linux:
+	../nant/NAnt.exe linux
 
 push:
-	scp */*.dll mono-cvs:libs
+	scp lib/*.dll mono-cvs:libs
 
 clean:
-	for i in $(DIRS); do	\
-		(cd $$i; make clean) || exit 1;\
-	done;
+	../nant/NAnt.exe clean

@@ -18,6 +18,8 @@
 				<excludes name="System.Net.Sockets/NetworkStream.cs"/>
 				<excludes name="System.Net.Sockets/Socket.cs"/>
 				<excludes name="System.Net.Sockets/SocketException.cs"/>
+				<excludes name="System.Net/Dns.cs"/>
+				<excludes name="System.Net/IPHostEntry.cs"/>
 			</sources>
 		</csc>
 		<nant basedir="Test" target="build"/>
