@@ -1,3 +1,8 @@
+2002-11-16  Martin Baulig  <martin@ximian.com>
+
+	* ecore.cs (PropertyExpr.VerifyAssignable): Check whether we have
+	a setter rather than using PropertyInfo.CanWrite.
+
 2002-11-15  Nick Drochak  <ndrochak@gol.com>
 
 	* class.cs: Allow acces to block member by subclasses. Fixes build

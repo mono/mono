@@ -4172,7 +4172,7 @@ namespace Mono.CSharp {
 
 		public bool VerifyAssignable ()
 		{
-			if (!PropertyInfo.CanWrite){
+			if (setter == null) {
 				Report.Error (200, loc, 
 					      "The property `" + PropertyInfo.Name +
 					      "' can not be assigned to, as it has not set accessor");
