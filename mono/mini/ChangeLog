@@ -1,3 +1,10 @@
+2003-10-31  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini.h mini.c (mono_method_same_domain): New function to return
+	whenever the caller and the callee are in the same domain.
+
+	* tramp-x86.c (x86_magic_trampoline): Use the new function.	
+
 2003-10-30  Martin Baulig  <martin@ximian.com>
 
 	* mini.c (MTYPE_PARAM_TO_TYPE, MTYPE_PARAM_TO_CLASS): New macros;
