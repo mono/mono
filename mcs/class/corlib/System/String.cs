@@ -357,7 +357,10 @@ namespace System {
 				throw new ArgumentOutOfRangeException ();
 			
 			if (sindex == 0 && this.length == 0)
-				return -1;			
+				return -1;
+
+			if (value.length == 0)
+				return 0;
 
 			return InternalIndexOf(value, sindex, count);
 		}
@@ -404,7 +407,7 @@ namespace System {
 				throw new ArgumentNullException();
 			
 			if (value.length == 0)
-				return 0;
+				return length - 1;
 
 			if (this.length == 0)
 				return -1;

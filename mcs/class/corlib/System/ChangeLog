@@ -1,3 +1,9 @@
+
+2003-05-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* String.cs: fixed bug #41411 and another similar problem in
+	LastIndexOf (string).
+
 2003-05-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* String.cs: patch by Jean Marc <jean-marc.andre@polymtl.ca> that fixes
