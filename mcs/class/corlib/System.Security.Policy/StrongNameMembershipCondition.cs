@@ -36,6 +36,7 @@ using System.Security.Permissions;
 
 namespace System.Security.Policy {
 
+	[Serializable]
         public sealed class StrongNameMembershipCondition
                 : IMembershipCondition, ISecurityEncodable, ISecurityPolicyEncodable, IConstantMembershipCondition
         {

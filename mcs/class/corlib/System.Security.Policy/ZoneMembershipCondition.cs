@@ -35,6 +35,7 @@ using System.Globalization;
 
 namespace System.Security.Policy {
 
+	[Serializable]
         public sealed class ZoneMembershipCondition
                 : IMembershipCondition, ISecurityEncodable, ISecurityPolicyEncodable, IConstantMembershipCondition
         {
