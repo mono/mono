@@ -2026,16 +2026,15 @@ element_access
 		  
 		Expression expr = (Expression) $1;  
 		if (!(expr is SimpleName || expr is MemberAccess)) {
-			Location l = lexer.Location;
-			Report.Error (-1, l, "Invalid Type definition");
-			$$ = "System.Object";
+			Error_ExpectingTypeName (lexer.Location, expr);
+			$$ = TypeManager.system_object_expr;
+		} else {
+			//
+			// So we extract the string corresponding to the SimpleName
+			// or MemberAccess
+			// 
+			$$ = new SimpleName (GetQualifiedIdentifier (expr) + (string) $2, lexer.Location);
 		}
-		
-		//
-		// So we extract the string corresponding to the SimpleName
-		// or MemberAccess
-		// 
-		$$ = new SimpleName (GetQualifiedIdentifier (expr) + (string) $2, lexer.Location);
 	  }
 	;
 
@@ -2675,7 +2674,7 @@ statement_list
 statement
 	: declaration_statement
 	  {
-		if ((Block) $1 != current_block){
+		if ($1 != null && (Block) $1 != current_block){
 			current_block.AddStatement ((Statement) $1);
 			current_block = (Block) $1;
 		}
@@ -2730,16 +2729,20 @@ labeled_statement
 declaration_statement
 	: local_variable_declaration SEMICOLON
 	  {
-		DictionaryEntry de = (DictionaryEntry) $1;
+		if ($1 != null){
+			DictionaryEntry de = (DictionaryEntry) $1;
 
-		$$ = declare_local_variables ((Expression) de.Key, (ArrayList) de.Value, lexer.Location);
+			$$ = declare_local_variables ((Expression) de.Key, (ArrayList) de.Value, lexer.Location);
+		}
 	  }
 
 	| local_constant_declaration SEMICOLON
 	  {
-		DictionaryEntry de = (DictionaryEntry) $1;
+		if ($1 != null){
+			DictionaryEntry de = (DictionaryEntry) $1;
 
-		$$ = declare_local_constant ((Expression) de.Key, (VariableDeclaration) de.Value);
+			$$ = declare_local_constant ((Expression) de.Key, (VariableDeclaration) de.Value);
+		}
 	  }
 	;
 
@@ -2770,19 +2773,18 @@ local_variable_type
 		  
 		Expression expr = (Expression) $1;  
 		if (!(expr is SimpleName || expr is MemberAccess)) {
-			Location l = lexer.Location;
-			Report.Error (-1, l, "Invalid Type definition");
-			$$ = TypeManager.system_object_expr;
+			Error_ExpectingTypeName (lexer.Location, expr);
+			$$ = null;
+		} else {
+			//
+			// So we extract the string corresponding to the SimpleName
+			// or MemberAccess
+			// 
+			if ((string) $2 == "")
+				$$ = $1;
+			else
+				$$ = new ComposedCast ((Expression) $1, (string) $2, lexer.Location);
 		}
-		
-		//
-		// So we extract the string corresponding to the SimpleName
-		// or MemberAccess
-		// 
-		if ((string) $2 == "")
-			$$ = $1;
-		else
-			$$ = new ComposedCast ((Expression) $1, (string) $2, lexer.Location);
 	  }
 	| builtin_types opt_rank_specifier
 	  {
@@ -2797,13 +2799,14 @@ local_variable_pointer_type
 	: primary_expression STAR
 	  {
 		Expression expr = (Expression) $1;  
+		Location l = lexer.Location;
+
 		if (!(expr is SimpleName || expr is MemberAccess)) {
-			Location l = lexer.Location;
-			Report.Error (-1, l, "Invalid Type definition");
-			$$ = "System.Object";
-		}
-		
-		$$ = new ComposedCast ((Expression) $1, "*", lexer.Location);
+			Error_ExpectingTypeName (l, expr);
+
+			$$ = null;
+		} else 
+			$$ = new ComposedCast ((Expression) $1, "*", l);
 	  }
         | builtin_types STAR
 	  {
@@ -2822,24 +2825,33 @@ local_variable_pointer_type
 local_variable_declaration
 	: local_variable_type variable_declarators
 	  {
-		$$ = new DictionaryEntry ($1, $2);
+		if ($1 != null)
+			$$ = new DictionaryEntry ($1, $2);
+		else
+			$$ = null;
 	  }
         | local_variable_pointer_type opt_rank_specifier variable_declarators
 	{
-		Expression t;
+		if ($1 != null){
+			Expression t;
 
-		if ((string) $2 == "")
-			t = (Expression) $1;
-		else
-			t = new ComposedCast ((Expression) $1, (string) $2, lexer.Location);
-		$$ = new DictionaryEntry (t, $3);
+			if ((string) $2 == "")
+				t = (Expression) $1;
+			else
+				t = new ComposedCast ((Expression) $1, (string) $2, lexer.Location);
+			$$ = new DictionaryEntry (t, $3);
+		} else 
+			$$ = null;
 	}
  	;
 
 local_constant_declaration
 	: CONST local_variable_type constant_declarator
 	  {
-		$$ = new DictionaryEntry ($2, $3);
+		if ($2 != null)
+			$$ = new DictionaryEntry ($2, $3);
+		else
+			$$ = null;
 	  }
 	;
 
@@ -3594,6 +3606,15 @@ public class OperatorDeclaration {
 		this.location = location;
 	}
 
+}
+
+void Error_ExpectingTypeName (Location l, Expression expr)
+{
+	if (expr is Invocation){
+		Report.Error (1002, l, "; expected");
+	} else {
+		Report.Error (-1, l, "Invalid Type definition");
+	}
 }
 
 // <summary>

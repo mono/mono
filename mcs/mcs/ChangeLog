@@ -1,5 +1,11 @@
 2002-09-25  Miguel de Icaza  <miguel@ximian.com>
 
+	* cs-parser.jay: Improve error reporting when we get a different
+	kind of expression in local_variable_type and
+	local_variable_pointer_type. 
+
+	Propagate this to avoid missleading errors being reported.
+
 	* ecore.cs (ImplicitReferenceConversion): treat
 	TypeManager.value_type as a target just like object_type.   As
 	code like this:
