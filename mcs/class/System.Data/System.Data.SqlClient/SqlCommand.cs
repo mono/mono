@@ -300,7 +300,7 @@ namespace System.Data.SqlClient {
 			ValidateCommand ("DeriveParameters");
 
 			SqlParameterCollection localParameters = new SqlParameterCollection (this);
-			localParameters.Add ("@P1", SqlDbType.NVarChar, commandText.Length).Value = commandText;
+			localParameters.Add ("@procedure_name", SqlDbType.NVarChar, commandText.Length).Value = commandText;
 
 			string sql = "sp_procedure_params_rowset";
 
@@ -315,6 +315,7 @@ namespace System.Data.SqlClient {
 				parameters.Add (new SqlParameter (dbValues));
 			}
 			reader.Close ();	
+
 		}
 
 		private void Execute (CommandBehavior behavior, bool wantResults)

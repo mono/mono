@@ -1,3 +1,12 @@
+2005-01-27  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* SqlCommand.cs (DeriveParameters): Change parameter name to
+	"procedure_name".
+	* SqlParameter.cs (SqlParameter (object [])) : call default
+	constructor to create Tds.Metaparameter.
+
+	fixes bug #63122.
+
 2005-01-03  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* SqlCommand.cs: Fixed bug #68973. Reset Tds.RecordsAffected to 0

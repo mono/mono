@@ -114,9 +114,10 @@ namespace System.Data.SqlClient {
 		// This constructor is used internally to construct a
 		// SqlParameter.  The value array comes from sp_procedure_params_rowset.
 		// This is in SqlCommand.DeriveParameters.
-		internal SqlParameter (object[] dbValues)
+		internal SqlParameter (object[] dbValues) 
+                        : this (dbValues [3].ToString (), String.Empty)
 		{
-			Precision = 0;
+                        Precision = 0;
 			Scale = 0;
 			Direction = ParameterDirection.Input;
 
@@ -135,16 +136,20 @@ namespace System.Data.SqlClient {
 			case 4:
 				Direction = ParameterDirection.ReturnValue;
 				break;
+                        default:
+                                Direction = ParameterDirection.Input;
+                                break;
 			}
+			IsNullable = (dbValues [8] != null && 
+                                      dbValues [8] != DBNull.Value) ? (bool) dbValues [8] : false;
 
-			IsNullable = (bool) dbValues[8];
+			if (dbValues [12] != null && dbValues [12] != DBNull.Value)
+				Precision = (byte) ((short) dbValues [12]);
 
-			if (dbValues[12] != null)
-				Precision = (byte) ((short) dbValues[12]);
-			if (dbValues[13] != null)
-				Scale = (byte) ((short) dbValues[13]);
+			if (dbValues [13] != null && dbValues [13] != DBNull.Value)
+				Scale = (byte) ( (short) dbValues [13]);
 
-			SetDbTypeName ((string) dbValues[16]);
+			SetDbTypeName ((string) dbValues [16]);
 		}
 
 		#endregion // Constructors
