@@ -479,15 +479,15 @@ public abstract class Encoding
 
 #if !ECMA_COMPAT
 
-	internal protected string body_name;
-	internal protected string encoding_name;
-	internal protected string header_name;
-	internal protected bool   is_mail_news_display;
-	internal protected bool   is_mail_news_save;
-	internal protected bool   is_browser_save = false;
-	internal protected bool   is_browser_display = false;
-	internal protected string web_name;
-	
+	internal string body_name;
+	internal string encoding_name;
+	internal string header_name;
+	internal bool is_mail_news_display;
+	internal bool is_mail_news_save;
+	internal bool is_browser_save = false;
+	internal bool is_browser_display = false;
+	internal string web_name;
+
 	// Get the mail body name for this encoding.
 	public virtual String BodyName
 	{
