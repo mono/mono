@@ -1,5 +1,11 @@
 2004-06-09  Gert Driesen <drieseng@users.sourceforge.net>
 
+        * MethodBuilder.cs: move check to see if type has already 
+	been created up, to match MS.NET behaviour. Fix GetHashCode 
+	(removed TODO)
+
+2004-06-09  Gert Driesen <drieseng@users.sourceforge.net>
+
         * MethodRental.cs: Added check for method size
 
 2004-06-08  Martin Baulig  <martin@ximian.com>

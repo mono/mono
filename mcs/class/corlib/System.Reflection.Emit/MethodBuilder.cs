@@ -194,13 +194,13 @@ namespace System.Reflection.Emit {
 		
 		public ParameterBuilder DefineParameter (int position, ParameterAttributes attributes, string strParamName)
 		{
+			RejectIfCreated ();
+			
 			//
 			// Extension: Mono allows position == 0 for the return attribute
 			//
 			if ((position < 0) || (position > parameters.Length))
 				throw new ArgumentOutOfRangeException ("position");
-
-			RejectIfCreated ();
 
 			ParameterBuilder pb = new ParameterBuilder (this, position, attributes, strParamName);
 			if (pinfo == null)
@@ -300,14 +300,13 @@ namespace System.Reflection.Emit {
 			return base.Equals (obj);
 		}
 
-		[MonoTODO]
 		public override int GetHashCode ()
 		{
-			return base.GetHashCode ();
+			return name.GetHashCode ();
 		}
 
 		internal override int get_next_table_index (object obj, int table, bool inc) {
-		    return type.get_next_table_index (obj, table, inc);
+			return type.get_next_table_index (obj, table, inc);
 		}
 
 		internal void set_override (MethodInfo mdecl) {
