@@ -16,6 +16,7 @@
 using System;
 using System.Collections;
 using System.Globalization;
+using System.Xml;
 
 namespace System.Data {
 	/// <summary>
@@ -82,6 +83,11 @@ namespace System.Data {
 				this [dc] = dc.AutoIncrementValue();
 			}
 			_table.Columns.CollectionChanged += new System.ComponentModel.CollectionChangeEventHandler(CollectionChanged);
+
+			// create mapped XmlDataElement
+			DataSet ds = _table.DataSet;
+			if (ds != null && ds._xmlDataDocument != null)
+				new XmlDataDocument.XmlDataElement (this, _table.Prefix, _table.TableName, _table.Namespace, ds._xmlDataDocument);
 		}
 
 		
