@@ -1,3 +1,7 @@
+2004-10-05  John Luke <john.luke@gmail.com>
+
+	* cs-parser.jay: add location to error CS0175
+
 2004-10-04  Miguel de Icaza  <miguel@ximian.com>
 
 	* ecore.cs (Expression.Constantity): Add support for turning null
