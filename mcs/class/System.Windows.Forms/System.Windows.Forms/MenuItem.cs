@@ -339,12 +339,11 @@ namespace System.Windows.Forms {
 			}
 		}
 
-        internal void SetParent( Menu parent) {
-        	// FIXME: set exception parameters
-        	if( parent != null && parent_ != null)
-        		throw new System.Exception();
-        	parent_ = parent;
-        }
+		internal void SetParent( Menu parent) {
+			if( parent == null)
+				throw new System.ArgumentNullException ("parent");
+			parent_ = parent;
+		}
         
 		public Menu Parent {
 

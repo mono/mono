@@ -1,3 +1,9 @@
+2004-04-24  Todd Berman  <tberman@sevenl.net>
+
+	* System.Windows.Forms/ContextMenu.cs:
+	* System.Windows.Forms/Menu.cs: Whitespace fixes.
+	* System.Windows.Forms/MenuItem.cs: fix the check for a null parent.
+
 2004-03-15  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* System.Windows.Forms.dll.sources: Added files

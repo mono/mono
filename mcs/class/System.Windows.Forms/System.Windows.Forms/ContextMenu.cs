@@ -59,7 +59,7 @@ namespace System.Windows.Forms {
 		{
 			if ( Handle == IntPtr.Zero )
 				return;
-
+			
 			sourceControl = control;
 
 			POINT pt = new POINT ();
