@@ -772,46 +772,25 @@ namespace Mono.CSharp {
 			// if (parent_builder is ModuleBuilder) {
 			if (IsTopLevel){
 				ModuleBuilder builder = CodeGen.ModuleBuilder;
+				TypeBuilder = builder.DefineType (
+					Name, type_attributes, parent, ifaces);
 				
-				//
-				// Structs with no fields need to have a ".size 1"
-				// appended
-				//
-
-				if (!is_class && !have_nonstatic_fields)
-					TypeBuilder = builder.DefineType (Name,
-									  type_attributes,
-									  parent, 
-									  PackingSize.Unspecified, 1);
-				else
-				//
-				// classes or structs with fields
-				//
-					TypeBuilder = builder.DefineType (Name,
-									  type_attributes,
-									  parent,
-									  ifaces);
 			} else {
 				TypeBuilder builder = Parent.TypeBuilder;
+				TypeBuilder = builder.DefineNestedType (
+					Basename, type_attributes, parent, ifaces);
+			}
 				
-				//
-				// Structs with no fields need to have a ".size 1"
-				// appended
-				//
-				if (!is_class && !have_nonstatic_fields)
-					TypeBuilder = builder.DefineNestedType (Basename,
-										type_attributes,
-										parent, 
-										PackingSize.Unspecified);
-				else {
-					//
-					// classes or structs with fields
-					//
-					TypeBuilder = builder.DefineNestedType (Basename,
-										type_attributes,
-										parent,
-										ifaces);
-				}
+			//
+			// Structs with no fields need to have at least one byte.
+			// The right thing would be to set the PackingSize in a DefineType
+			// but there are no functions that allow interfaces *and* the size to
+			// be specified.
+			//
+
+			if (!is_class && !have_nonstatic_fields){
+				TypeBuilder.DefineField ("$PRIVATE$", TypeManager.byte_type,
+							 FieldAttributes.Private);
 			}
 
 			// add interfaces that were not added at type creation (weird API issue)
@@ -2873,7 +2852,7 @@ namespace Mono.CSharp {
 			else
 				name = member.ShortName;
 			method_name = prefix + name;
-				
+
 			if (parent.Pending != null){
 				if (member is Indexer)
 					implementing = parent.Pending.IsInterfaceIndexer (

@@ -694,16 +694,17 @@ namespace Mono.CSharp {
 					return new EmptyCast (expr, target_type);
 
 				// from any class-type S to any interface-type T.
-				if (expr_type.IsClass && target_type.IsInterface) {
-					if (TypeManager.ImplementsInterface (expr_type, target_type))
-						return new EmptyCast (expr, target_type);
-					else
-						return null;
+				if (target_type.IsInterface) {
+					if (TypeManager.ImplementsInterface (expr_type, target_type)){
+						if (expr_type.IsClass)
+							return new EmptyCast (expr, target_type);
+						else if (expr_type.IsValueType)
+							return new BoxedCast (expr);
+					}
 				}
 
 				// from any interface type S to interface-type T.
 				if (expr_type.IsInterface && target_type.IsInterface) {
-
 					if (TypeManager.ImplementsInterface (expr_type, target_type))
 						return new EmptyCast (expr, target_type);
 					else
@@ -973,7 +974,7 @@ namespace Mono.CSharp {
 				// from ImplicitReferenceConversion so make sure code remains in sync
 				
 				// from any class-type S to any interface-type T.
-				if (expr_type.IsClass && target_type.IsInterface) {
+				if (target_type.IsInterface) {
 					if (TypeManager.ImplementsInterface (expr_type, target_type))
 						return true;
 				}

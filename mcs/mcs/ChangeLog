@@ -1,5 +1,16 @@
 2002-09-19  Miguel de Icaza  <miguel@ximian.com>
 
+	* class.cs (TypeContainer.DefineType): We can not use the nice
+	PackingSize with the size set to 1 DefineType method, because it
+	will not allow us to define the interfaces that the struct
+	implements.
+
+	This completes the fixing of bug 27287
+
+	* ecore.cs (Expresion.ImplicitReferenceConversion): `class-type S'
+	means also structs.  This fixes part of the problem. 
+	(Expresion.ImplicitReferenceConversionExists): ditto.
+
 	* decl.cs (DeclSparce.ResolveType): Only report the type-not-found
 	error if there were no errors reported during the type lookup
 	process, to avoid duplicates or redundant errors.  Without this
