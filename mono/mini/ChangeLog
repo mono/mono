@@ -1,3 +1,7 @@
+2004-12-14  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile.am (RUNTIME): Set MONO_SHARED_DIR.
+
 2004-12-13 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* mini-x86.c: disabling the Interlocked optimizing code. It segfaults

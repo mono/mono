@@ -1,3 +1,7 @@
+2004-12-14  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile.am (TEST_PROG_RUN, JITTEST_PROG_RUN): Set MONO_SHARED_DIR.
+
 2004-12-11  Ben Maurer  <bmaurer@ximian.com>
 
 	* thread-static-init.cs: New test.
