@@ -1,9 +1,5 @@
 2002-07-24  Duncan Mak  <duncan@ximian.com>
 
-	* IsVolatile.cs: change visibility on the constructor.
-
-2002-07-24  Duncan Mak  <duncan@ximian.com>
-
 	* AccessedThroughPropertyAttribute.cs:
 	* CompilationRelaxationsAttribute.cs: 
 	* CompilerGlobalScopeAttribute.cs: 

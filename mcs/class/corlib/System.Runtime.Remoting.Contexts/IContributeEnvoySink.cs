@@ -7,7 +7,7 @@
 //
 
 using System;
-using System.Runtime.Remoting.Contexts;
+using System.Runtime.Remoting.Messaging;
 
 namespace System.Runtime.Remoting.Contexts {
 
