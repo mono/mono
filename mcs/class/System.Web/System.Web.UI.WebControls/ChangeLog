@@ -1,5 +1,10 @@
 2003-11-29  Jackson Harper <jackson@ximian.com>
 
+	* DataGrid.cs: Display paging controls even when there is no
+	data. Path by Mohammad DAMT. Fixes bug #51487.
+	
+2003-11-29  Jackson Harper <jackson@ximian.com>
+
 	* DataGrid.cs: Call TrackViewState when loading bound columns view
 	state. So that their state is saved. This fixes bug #51424. Also
 	set ReadOnly.

@@ -1326,19 +1326,26 @@ namespace System.Web.UI.WebControls
 					toAdd.Controls.Add(label);
 				}
 				toAdd.Controls.Add(new LiteralControl("&nbsp;"));
-				if(!pagedDataSource.IsLastPage)
-				{
-					LinkButton link = new DataGridLinkButton();
-					link.Text = PagerStyle.NextPageText;
-					link.CommandName = "Page";
-					link.CommandArgument = "Next";
-					link.CausesValidation = false;
-					toAdd.Controls.Add(link);
-				} else
-				{
+				
+				if (pagedDataSource.PageCount == 0) {
 					Label label = new Label();
 					label.Text = PagerStyle.NextPageText;
 					toAdd.Controls.Add(label);
+				} else {				
+					if(!pagedDataSource.IsLastPage)
+					{
+						LinkButton link = new DataGridLinkButton();
+						link.Text = PagerStyle.NextPageText;
+						link.CommandName = "Page";
+						link.CommandArgument = "Next";
+						link.CausesValidation = false;
+						toAdd.Controls.Add(link);
+					} else
+					{
+						Label label = new Label();
+						label.Text = PagerStyle.NextPageText;
+						toAdd.Controls.Add(label);
+					}
 				}
 			} else
 			{
@@ -1350,6 +1357,7 @@ namespace System.Web.UI.WebControls
 					numberOfPages = pageCount;
 				int firstPageNumber = 1; // 10
 				int lastPageNumber  = numberOfPages; // 11
+
 				if(currPage > lastPageNumber)
 				{
 					firstPageNumber = (pagedDataSource.CurrentPageIndex / btnCount) * btnCount + 1;
@@ -1369,25 +1377,31 @@ namespace System.Web.UI.WebControls
 					toAdd.Controls.Add(toAddBtn);
 					toAdd.Controls.Add(new LiteralControl("&nbsp;"));
 				}
-				for(int i = firstPageNumber; i <= lastPageNumber; i++)
-				{
-					string argText = i.ToString(NumberFormatInfo.InvariantInfo);
-					if(i == currPage)
+				if (lastPageNumber == 0) {
+					Label cPageLabel = new Label();
+					cPageLabel.Text = "1";
+					toAdd.Controls.Add(cPageLabel);
+				} else {
+					for(int i = firstPageNumber; i <= lastPageNumber; i++)
 					{
-						Label cPageLabel = new Label();
-						cPageLabel.Text = argText;
-						toAdd.Controls.Add(cPageLabel);
-					} else
-					{
-						LinkButton indexButton = new DataGridLinkButton();
-						indexButton.Text = argText;
-						indexButton.CommandName = "Page";
-						indexButton.CommandArgument = argText;
-						indexButton.CausesValidation = false;
-						toAdd.Controls.Add(indexButton);
+						string argText = i.ToString(NumberFormatInfo.InvariantInfo);
+						if(i == currPage)
+						{
+							Label cPageLabel = new Label();
+							cPageLabel.Text = argText;
+							toAdd.Controls.Add(cPageLabel);
+						} else
+						{
+							LinkButton indexButton = new DataGridLinkButton();
+							indexButton.Text = argText;
+							indexButton.CommandName = "Page";
+							indexButton.CommandArgument = argText;
+							indexButton.CausesValidation = false;
+							toAdd.Controls.Add(indexButton);
+						}
+						if(i < lastPageNumber)
+							toAdd.Controls.Add(new LiteralControl("&nbsp;"));
 					}
-					if(i < lastPageNumber)
-						toAdd.Controls.Add(new LiteralControl("&nbsp;"));
 				}
 				if(pageCount > lastPageNumber)
 				{
