@@ -94,7 +94,7 @@ check-local: mcs-do-test-profiles
 
 $(tmpinst)/config: ../data/config
 	d=`cd ../support && pwd`; \
-	sed 's,<configuration>,& <dllmap dll="MonoPosixHelper" target="'$$d/MonoPosixHelper.la'" />,' ../data/config > $@
+	sed 's,<configuration>,& <dllmap dll="MonoPosixHelper" target="'$$d/libMonoPosixHelper.la'" />,' ../data/config > $@
 
 $(tmpinst)/bin/mono: mono-wrapper
 	sed 's,/data/config",/runtime/$(tmpinst)/config",' mono-wrapper > $@
