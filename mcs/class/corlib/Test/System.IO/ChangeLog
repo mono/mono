@@ -1,0 +1,6 @@
+2002-01-20 Nick Drochak  <ndrochak@gol.com>
+
+	* AllTests.cs: removed duplicate MemoryStream test
+	* MemoryStreamTest.cs: wrapped try-catch blocks around read/write/seek
+	tests. These were throwing exceptions that NUnit wasn't catching.  I 
+	don't think it used to behave this way before .NET.1.0.

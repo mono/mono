@@ -30,7 +30,7 @@ public class MemoryStreamTest : TestCase {
 		}
 	}
 
-        protected override void SetUp() {
+	protected override void SetUp() {
                 testStreamData = new byte[100];
 
                 for( int i = 0; i < 100; i++ ) {
@@ -38,23 +38,6 @@ public class MemoryStreamTest : TestCase {
                 }
 
                 testStream = new MemoryStream( testStreamData );
-        }
-
-	public void TestConstructors() {
-                MemoryStream ms = new MemoryStream();
-
-                AssertEquals( 0, ms.Length );
-                AssertEquals( 0, ms.Capacity );
-                AssertEquals( true, ms.CanWrite );
-                
-                ms = new MemoryStream( 10 );
-
-                // FIXME: Should ms.Length be 0 if there is no data?
-                // the spec is a little unclear.  If this is changed then
-                // the code will probably need to change
-
-                AssertEquals( 10, ms.Length );
-                AssertEquals( 10, ms.Capacity );
         }
 
         // 
@@ -77,62 +60,93 @@ public class MemoryStreamTest : TestCase {
                 }
         }
 
+	public void TestConstructors() {
+                MemoryStream ms = new MemoryStream();
+
+                AssertEquals( 0, ms.Length );
+                AssertEquals( 0, ms.Capacity );
+                AssertEquals( true, ms.CanWrite );
+                
+                ms = new MemoryStream( 10 );
+
+                AssertEquals( 0, ms.Length );
+                AssertEquals( 10, ms.Capacity );
+        }
+
         public void TestRead() {
                 byte[] readBytes = new byte[20];
 
-                /* Test simple read */
-                testStream.Read( readBytes, 0, 10 );
-                VerifyTestData( readBytes, 0, 10 );
+		try {
+			/* Test simple read */
+			testStream.Read( readBytes, 0, 10 );
+			VerifyTestData( readBytes, 0, 10 );
 
-                /* Seek back to beginning */
+			/* Seek back to beginning */
 
-                testStream.Seek( 0, SeekOrigin.Begin );
+			testStream.Seek( 0, SeekOrigin.Begin );
  
-                /* Read again, bit more this time */
-                testStream.Read( readBytes, 0, 20 );
-                VerifyTestData( readBytes, 0, 20 );
+			/* Read again, bit more this time */
+			testStream.Read( readBytes, 0, 20 );
+			VerifyTestData( readBytes, 0, 20 );
 
-                /* Seek to 20 bytes from End */
-                testStream.Seek( -20, SeekOrigin.End );
-                testStream.Read( readBytes, 0, 20);
-                VerifyTestData( readBytes, 80, 20);
+			/* Seek to 20 bytes from End */
+			testStream.Seek( -20, SeekOrigin.End );
+			testStream.Read( readBytes, 0, 20);
+			VerifyTestData( readBytes, 80, 20);
 
-                int readByte = testStream.ReadByte();
-                AssertEquals( -1, readByte );
-                                      
+			int readByte = testStream.ReadByte();
+			AssertEquals( -1, readByte );
+		}
+		catch(Exception e){
+			Fail("Threw an unexpected exception:"+e.ToString());
+			return;
+		}
         }
 
         public void TestWriteBytes() {
                 byte[] readBytes = new byte[100];
-                MemoryStream ms = new MemoryStream( 100 );
 
-                for( int i = 0; i < 100; i++ ) {
-                        ms.WriteByte( testStreamData[i] );
-                }
+		try {
+			MemoryStream ms = new MemoryStream( 100 );
 
-                ms.Seek( 0, SeekOrigin.Begin); 
-                
-                testStream.Read( readBytes, 0, 100 );
+			for( int i = 0; i < 100; i++ ) {
+				ms.WriteByte( testStreamData[i] );
+			}
 
-                VerifyTestData( readBytes, 0, 100 );
+			ms.Seek( 0, SeekOrigin.Begin); 
+			
+			testStream.Read( readBytes, 0, 100 );
+
+			VerifyTestData( readBytes, 0, 100 );
+		}
+		catch(Exception e){
+			Fail("Threw an unexpected exception:"+e.ToString());
+			return;
+		}
         }               
 
         public void TestWriteBlock() {
                 byte[] readBytes = new byte[100];
-                MemoryStream ms = new MemoryStream( 100 );
 
-                ms.Write( testStreamData, 0, 100 );
+		try {
+			MemoryStream ms = new MemoryStream( 100 );
 
-                ms.Seek( 0, SeekOrigin.Begin); 
-                
-                testStream.Read( readBytes, 0, 100 );
+			ms.Write( testStreamData, 0, 100 );
 
-                VerifyTestData( readBytes, 0, 100 );
+			ms.Seek( 0, SeekOrigin.Begin); 
+			
+			testStream.Read( readBytes, 0, 100 );
 
-                byte[] arrayBytes = testStream.ToArray();
+			VerifyTestData( readBytes, 0, 100 );
 
-                VerifyTestData( arrayBytes, 0, 100 );
+			byte[] arrayBytes = testStream.ToArray();
 
+			VerifyTestData( arrayBytes, 0, 100 );
+		}
+		catch(Exception e){
+			Fail("Threw an unexpected exception:"+e.ToString());
+			return;
+		}
         }
 }
 

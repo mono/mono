@@ -22,7 +22,6 @@ namespace MonoTests.System.IO {
                                 TestSuite suite =  new TestSuite();
                                 suite.AddTest(MemoryStreamTest.Suite);
                                 suite.AddTest(PathTest.Suite);
-                                suite.AddTest(MemoryStreamTest.Suite);
                                 suite.AddTest(StringReaderTest.Suite);
                                 suite.AddTest(StringWriterTest.Suite);
                                 return suite;
