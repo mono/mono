@@ -193,7 +193,7 @@ nss.Add (Reader.LocalName, Reader.Value);
 					}	
 					else if (anyAttrMember != null) 
 					{
-						AddListValue (anyAttrMember.TypeData.Type, ref anyAttributeArray, anyAttributeIndex++, Document.ReadNode(Reader), true);
+						AddListValue (anyAttrMember.TypeData, ref anyAttributeArray, anyAttributeIndex++, Document.ReadNode(Reader), true);
 					}
 					else
 						UnknownNode(ob);
@@ -276,12 +276,12 @@ nss.Add (Reader.LocalName, Reader.Value);
 						else if (info.Member.GetType() == typeof (XmlTypeMapMemberFlatList))
 						{
 							XmlTypeMapMemberFlatList mem = (XmlTypeMapMemberFlatList)info.Member;
-							AddListValue (mem.TypeData.Type, ref flatLists[mem.FlatArrayIndex], indexes[mem.FlatArrayIndex]++, ReadObjectElement (info), !IsReadOnly (info.Member, ob, isValueList));
+							AddListValue (mem.TypeData, ref flatLists[mem.FlatArrayIndex], indexes[mem.FlatArrayIndex]++, ReadObjectElement (info), !IsReadOnly (info.Member, ob, isValueList));
 						}
 						else if (info.Member.GetType() == typeof (XmlTypeMapMemberAnyElement))
 						{
 							XmlTypeMapMemberAnyElement mem = (XmlTypeMapMemberAnyElement)info.Member;
-							if (mem.TypeData.IsListType) AddListValue (mem.TypeData.Type, ref flatLists[mem.FlatArrayIndex], indexes[mem.FlatArrayIndex]++, ReadXmlNode (false), true);
+							if (mem.TypeData.IsListType) AddListValue (mem.TypeData, ref flatLists[mem.FlatArrayIndex], indexes[mem.FlatArrayIndex]++, ReadXmlNode (false), true);
 							else SetMemberValue (mem, ob, ReadXmlNode (false), isValueList);
 						}
 						else if (info.Member.GetType() == typeof(XmlTypeMapMemberElement))
@@ -303,7 +303,7 @@ nss.Add (Reader.LocalName, Reader.Value);
 					else if (map.DefaultAnyElementMember != null)
 					{
 						XmlTypeMapMemberAnyElement mem = map.DefaultAnyElementMember;
-						if (mem.TypeData.IsListType) AddListValue (mem.TypeData.Type, ref flatLists[mem.FlatArrayIndex], indexes[mem.FlatArrayIndex]++, ReadXmlNode (false), true);
+						if (mem.TypeData.IsListType) AddListValue (mem.TypeData, ref flatLists[mem.FlatArrayIndex], indexes[mem.FlatArrayIndex]++, ReadXmlNode (false), true);
 						else SetMemberValue (mem, ob, ReadXmlNode (false), isValueList);
 					}
 					else 
@@ -316,7 +316,7 @@ nss.Add (Reader.LocalName, Reader.Value);
 						XmlTypeMapMemberFlatList mem = (XmlTypeMapMemberFlatList)map.XmlTextCollector;
 						XmlTypeMapElementInfo info = (XmlTypeMapElementInfo) mem.ListMap.ItemInfo [0];
 						object val = (info.TypeData.Type == typeof (string)) ? (object) Reader.ReadString() : (object) ReadXmlNode (false);
-						AddListValue (mem.TypeData.Type, ref flatLists[mem.FlatArrayIndex], indexes[mem.FlatArrayIndex]++, val, true);
+						AddListValue (mem.TypeData, ref flatLists[mem.FlatArrayIndex], indexes[mem.FlatArrayIndex]++, val, true);
 					}
 					else
 					{
@@ -456,7 +456,7 @@ nss.Add (Reader.LocalName, Reader.Value);
 				{
 					XmlTypeMapElementInfo elemInfo = listMap.FindElement (Reader.LocalName, Reader.NamespaceURI);
 					if (elemInfo != null)
-						AddListValue (listType, ref list, index++, ReadObjectElement (elemInfo), false);
+						AddListValue (typeMap.TypeData, ref list, index++, ReadObjectElement (elemInfo), false);
 					else
 						UnknownNode(null);
 				}
@@ -495,21 +495,22 @@ nss.Add (Reader.LocalName, Reader.Value);
 			return list;
 		}
 
-		void AddListValue (Type listType, ref object list, int index, object value, bool canCreateInstance)
+		void AddListValue (TypeData listType, ref object list, int index, object value, bool canCreateInstance)
 		{
-			if (listType.IsArray)
+			Type type = listType.Type;
+			if (type.IsArray)
 			{
-				list = EnsureArrayIndex ((Array)list, index, listType.GetElementType());
+				list = EnsureArrayIndex ((Array)list, index, type.GetElementType());
 				((Array)list).SetValue (value, index);
 			}
 			else	// Must be IEnumerable
 			{
 				if (list == null) {
-					if (canCreateInstance) list = Activator.CreateInstance (listType);
-					else throw CreateReadOnlyCollectionException (listType.FullName);
+					if (canCreateInstance) list = Activator.CreateInstance (type);
+					else throw CreateReadOnlyCollectionException (type.FullName);
 				}
 
-				MethodInfo mi = listType.GetMethod ("Add");
+				MethodInfo mi = type.GetMethod ("Add", new Type[] {listType.ListItemType} );
 				mi.Invoke (list, new object[] { value });
 			}
 		}

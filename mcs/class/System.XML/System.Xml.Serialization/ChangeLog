@@ -1,3 +1,8 @@
+2003-07-2  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* XmlSerializationReaderInterpreter.cs: Use the parameter type when getting the Add method
+	  for adding elements to a list.
+
 2003-06-31  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* SoapReflectionImporter.cs, XmlReflectionImporter.cs: Fixed so XmlIncludeAttribute and 
