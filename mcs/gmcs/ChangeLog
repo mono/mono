@@ -426,6 +426,293 @@
 	MemberName into an expression.
 	(method_header): Use namespace_or_type_name instead of member_name.	
 
+2004-04-07  Miguel de Icaza  <miguel@ximian.com>
+
+	* rootcontext.cs: Add new types to the boot resolution.
+
+	* ecore.cs (TypeExpr.CanInheritFrom): Inheriting from
+	MulticastDelegate is not allowed.
+
+	* typemanager.cs: Add new types to lookup: System.TypedReference
+	and ArgIterator.
+
+	* paramter.cs (Parameter.Resolve): if we are an out/ref parameter,
+	check for TypedReference or ArgIterator, they are not allowed. 
+
+	* ecore.cs (BoxedCast): Set the eclass to ExprClass.Value, this
+	makes us properly catch 1510 in some conditions (see bug 56016 for
+	details). 
+
+2004-04-06  Bernie Solomon  <bernard@ugsolutions.com>
+
+	* CryptoConvert.cs: update from corlib version
+	with endian fixes.
+
+2004-04-05  Miguel de Icaza  <miguel@ximian.com>
+
+	* class.cs (Indexer.Define): Check indexername declaration
+
+2004-04-05  Marek Safar  <marek.safar@seznam.cz>
+
+	* attribute.cs (IsClsCompliant): Fixed problem with handling
+	all three states (compliant, not-compliant, undetected).
+
+2004-03-30  Marek Safar  <marek.safar@seznam.cz>
+
+	* attribute.cs (Attribute): Location is now public.
+	(Resolve): Store resolved arguments (pos_values) in attribute class.
+	Attribute extractors (now GetClsCompliantAttributeValue) can reuse them.
+	(GetClsCompliantAttributeValue): New method that gets
+	CLSCompliantAttribute value.
+	(GetClsCompliantAttribute): Returns CLSCompliantAttribute for DeclSpace
+	if exists else null.
+	(AttributeTester): New class for CLS-Compliant verification routines.
+
+	* class.cs (Emit): Add CLS-Compliant verification.
+	(Method.GetSignatureForError): Implemented.
+	(Constructor.GetSignatureForError): Implemented
+	(Constructor.HasCompliantArgs): Returns if constructor has
+	CLS-Compliant arguments.
+	(Constructor.Emit): Override.
+	(Construcor.IsIdentifierClsCompliant): New method; For constructors
+	is needed to test only parameters.
+	(FieldBase.GetSignatureForError): Implemented.
+	(TypeContainer): New member for storing base interfaces.
+	(TypeContainer.FindMembers): Search in base interfaces too.
+
+	* codegen.cs (GetClsComplianceAttribute): New method that gets
+	assembly or module CLSCompliantAttribute value.
+	(ResolveClsCompliance): New method that resolve CLSCompliantAttribute
+	for assembly.
+	(ModuleClass.Emit): Add error 3012 test.
+
+	* const.cs (Emit): Override and call base for CLS-Compliant tests.
+
+	* decl.cs (ClsComplianceValue): New enum that holds CLS-Compliant
+	state for all decl types.
+	(MemberCore.Emit): Emit is now virtual and call VerifyClsCompliance
+	if CLS-Compliant tests are required.
+	(IsClsCompliaceRequired): New method. Analyze whether code
+	must be CLS-Compliant.
+	(IsExposedFromAssembly): New method. Returns true when MemberCore
+	is exposed from assembly.
+	(GetClsCompliantAttributeValue): New method. Resolve CLSCompliantAttribute
+	value or gets cached value.
+	(HasClsCompliantAttribute): New method. Returns true if MemberCore
+	is explicitly marked with CLSCompliantAttribute.
+	(IsIdentifierClsCompliant): New abstract method. This method is
+	used to testing error 3005.
+	(IsIdentifierAndParamClsCompliant): New method. Common helper method
+	for identifier and parameters CLS-Compliant testing.
+	(VerifyClsCompliance): New method. The main virtual method for
+	CLS-Compliant verifications.
+	(CheckAccessLevel): In one special case (System.Drawing) was TypeBuilder
+	null. I don't know why is null (too many public members !).
+	(GetClsCompliantAttributeValue). New method. Goes through class hierarchy
+	and get value of first CLSCompliantAttribute that found.
+
+	* delegate.cs (Emit): Override and call base for CLS-Compliant tests.
+	(VerifyClsCompliance): Override and add extra tests.
+
+	* driver.cs (CSCParseOption): New command line options (clscheck[+|-]).
+	clscheck- disable CLS-Compliant verification event if assembly is has
+	CLSCompliantAttribute(true).
+
+	* enum.cs (Emit): Override and call base for CLS-Compliant tests.
+	ApllyAttribute is now called in emit section as in the other cases.
+	Possible future Emit integration.
+	(IsIdentifierClsCompliant): New override.
+	(VerifyClsCompliance): New override.
+	(GetEnumeratorName): Returns full enum name.
+
+	* parameter.cs (GetSignatureForError): Implemented.
+
+	* report.cs (WarningData): New struct for Warning message information.
+	(LocationOfPreviousError): New method.
+	(Warning): New method. Reports warning based on the warning table.
+	(Error_T): New method. Reports error based on the error table.
+
+	* rootcontext.cs (EmitCode): Added new Emit(s) because CLS-Compliant
+	verifications are done here.
+
+	* tree.cs (RecordDecl): Used new LocationOfPreviousError method.
+
+	* typemanager.cs (cls_compliant_attribute_type): New member thath holds
+	CLSCompliantAttribute.
+	(all_imported_types): New member holds all imported types from other
+	assemblies.
+	(LoadAllImportedTypes): New method fills static table with exported types
+	from all referenced assemblies.
+	(Modules): New property returns all assembly modules.
+
+2004-03-30  Miguel de Icaza  <miguel@ximian.com>
+
+	* cs-parser.jay: Add a rule to catch wrong event syntax instead of
+	throwing a parser error.
+
+	* ecore.cs (PropertyExpr.GetAccessor): Apply patch from Patrik Reali
+	which removes the hardcoded get_/set_ prefixes for properties, as
+	IL allows for the properties to be named something else.  
+
+	Bug #56013
+
+	* expression.cs: Do not override operand before we know if it is
+	non-null.  Fix 56207
+
+2004-03-29 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* typemanager.cs: support for pinned variables.
+
+2004-03-29 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* decl.cs, typemanager.cs: Avoid using an arraylist
+	as a buffer if there is only one result set.
+
+2004-03-29 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* expression.cs: Make sure you cant call a static method
+	with an instance expression, bug #56174.
+
+2004-03-29  Miguel de Icaza  <miguel@ximian.com>
+
+	* class.cs (IsDuplicateImplementation): Improve error reporting to
+	flag 663 (method only differs in parameter modifier).
+
+	* cs-tokenizer.cs: Do not require whitespace when a ( or " will do
+	in preprocessor directives.
+
+	* location.cs (LookupFile): Allow for the empty path.
+
+	* attribute.cs (DefinePInvokeMethod): Fix 56148;  I would like a
+	better approach for some of that patch, but its failing with the
+	CharSet enumeration.  For now try/catch will do.
+
+	* typemanager.cs: Do not crash if a struct does not have fields.
+	Fixes 56150.
+
+2004-03-28 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* expression.cs: cs0213, cant fix a fixed expression.
+	fixes 50231.
+
+2004-03-28 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* cs-parser.jay: detect invalid embeded statements gracefully.
+	bug #51113.
+
+2004-03-28 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* ecore.cs, typemanager.cs: Correct impl of cs1540 check.
+	As a regex:
+	s/
+	the invocation type may not be a subclass of the tye of the item/
+	The type of the item must be a subclass of the invocation item.
+	/g
+
+	Fixes bug #50820.
+
+2004-03-25  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* attribute.cs: Added methods to get a string and a bool from an
+	attribute. Required to information from AssemblyKeyFileAttribute,
+	AttributeKeyNameAttribute (string) and AssemblyDelaySign (bool).
+	* codegen.cs: Modified AssemblyName creation to include support for
+	strongnames. Catch additional exceptions to report them as CS1548.
+	* compiler.csproj: Updated include CryptoConvert.cs.
+	* compiler.csproj.user: Removed file - user specific configuration.
+	* CryptoConvert.cs: New. A COPY of the class CryptoConvert from 
+	Mono.Security assembly. The original class is maintained and tested in
+	/mcs/class/Mono.Security/Mono.Security.Cryptography/CryptoConvert.cs.
+	* drivers.cs: Added support for /keyfile, /keycontainer and /delaysign
+	like CSC 8.0 (C# v2) supports.
+	* Makefile: Added CryptoConvert.cs to mcs sources.
+	* rootcontext.cs: Added new options for strongnames.
+
+2004-03-24 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* driver.cs: For --expect-error, report error code `2'
+	if the program compiled with no errors, error code `1' if
+	it compiled with an error other than the one expected.
+
+2004-03-24  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* compiler.csproj: Updated for Visual Studio .NET 2003.
+	* compiler.csproj.user: Updated for Visual Studio .NET 2003.
+	* compiler.sln: Updated for Visual Studio .NET 2003.
+
+2004-03-24  Ravi Pratap M  <ravi@ximian.com>
+
+	* expression.cs: Fix bug #47234. We basically need to apply the
+	rule that we prefer the conversion of null to a reference type
+	when faced with a conversion to 'object' (csc behaviour).
+
+2004-03-23 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* statement.cs: Shorter form for foreach, eliminates
+	a local variable. r=Martin.
+
+2004-03-23 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* constant.cs, ecore.cs, literal.cs: New prop IsZeroInteger that
+	checks if we can use brtrue/brfalse to test for 0.
+	* expression.cs: use the above in the test for using brtrue/brfalse.
+	cleanup code a bit.
+
+2004-03-23 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* expression.cs: Rewrite string concat stuff. Benefits:
+
+	- "a" + foo + "b" + "c" becomes "a" + foo + "bc"
+	- "a" + foo + "b" + bar + "c" + baz ... uses concat (string []).
+	rather than a concat chain.
+
+	* typemanager.cs: Add lookups for more concat overloads.
+
+2004-03-23 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* expression.cs: Emit shorter il code for array init.
+
+	newarr
+	dup
+	// set 1
+
+	// set 2
+
+	newarr
+	stloc.x
+
+	ldloc.x
+	// set 1
+
+	ldloc.x
+	// set 2
+
+2004-03-22 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* statement.cs: Before, two switch blocks would be merged if the
+	total size of the blocks (end_item - begin_item + 1) was less than
+	two times the combined sizes of the blocks.
+
+	Now, it will only merge if after the merge at least half of the
+	slots are filled.
+
+	fixes 55885.
+
+2004-03-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* class.cs : csc build fix for GetMethods(). See bug #52503.
+
+2004-03-20 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* expression.cs: Make sure fp comparisons work with NaN.
+	This fixes bug #54303. Mig approved this patch a long
+	time ago, but we were not able to test b/c the runtime
+	had a related bug.
+
+2004-03-19  Miguel de Icaza  <miguel@ximian.com>
+
+	* ecore.cs (TypExpr.GetHashCode): implement this overload. 
+
 2004-03-19  Martin Baulig  <martin@ximian.com>
 
 	* class.cs (MemberCore.IsDuplicateImplementation): Check whether
