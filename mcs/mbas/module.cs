@@ -55,7 +55,8 @@ namespace Mono.MonoBASIC
 			this.ModFlags = Modifiers.Check (AllowedModifiers, mod, Modifiers.INTERNAL, l);
 
 			// add specialized attribute
-			Utils.AddSpecializedAttribute(ref attrs, "Microsoft.VisualBasic.CompilerServices.StandardModuleAttribute", null, l);
+			// FIXME: Is this implemented?
+			// Utils.AddSpecializedAttribute(ref attrs, "Microsoft.VisualBasic.CompilerServices.StandardModuleAttribute", null, l);
 			this.attributes = attrs;
 		}
 

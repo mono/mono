@@ -386,8 +386,9 @@ namespace Mono.Languages
 				"System",
 				"System.Data",
 				"System.Xml",
-				"Microsoft.VisualBasic", // just for now
-#if false
+				"System.Drawing",        // just for now
+				//"Microsoft.VisualBasic", // just for now
+#if EXTRA_DEFAULT_REFS
 				//
 				// Is it worth pre-loading all this stuff?
 				//
