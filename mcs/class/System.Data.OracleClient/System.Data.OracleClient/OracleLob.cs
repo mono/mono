@@ -79,10 +79,8 @@ namespace System.Data.OracleClient {
 		public int ChunkSize {
 			[MonoTODO]
 			get { 
-				if (Connection.State == ConnectionState.Closed)
-					throw new InvalidOperationException ();
-				if (!isOpen)
-					throw new ObjectDisposedException ("OracleLob");
+				AssertConnectionIsOpen ();
+				AssertObjectNotDisposed ();
 				return locator.GetChunkSize ();
 			}
 		}
@@ -101,20 +99,16 @@ namespace System.Data.OracleClient {
 
 		public bool IsTemporary {
 			get { 
-				if (Connection.State == ConnectionState.Closed)
-					throw new InvalidOperationException ();
-				if (!isOpen)
-					throw new ObjectDisposedException ("OracleLob");
+				AssertConnectionIsOpen ();
+				AssertObjectNotDisposed ();
 				throw new NotImplementedException ();
 			}
 		}
 
 		public override long Length {
 			get { 
-				if (Connection.State == ConnectionState.Closed)
-					throw new InvalidOperationException ();
-				if (!isOpen)
-					throw new ObjectDisposedException ("OracleLob");
+				AssertConnectionIsOpen ();
+				AssertObjectNotDisposed ();
 				if (length >= 0)
 					return length;
 				return locator.GetLength (LobType == OracleType.Blob);
@@ -125,28 +119,26 @@ namespace System.Data.OracleClient {
 			get { return type; }
 		}
 
+		internal OciLobLocator Locator {
+			get { return locator; }
+		}
 
 		public override long Position {
 			get { 
-				if (Connection.State == ConnectionState.Closed)
-					throw new InvalidOperationException ();
-				if (!isOpen)
-					throw new ObjectDisposedException ("OracleLob");
+				AssertConnectionIsOpen ();
+				AssertObjectNotDisposed ();
 				return position;
 			}
 			set {
-				if (!isOpen)
-					throw new ObjectDisposedException ("OracleLob");
-				if (value > Length) 
-					throw new ArgumentOutOfRangeException ();
+				AssertConnectionIsOpen ();
+				AssertObjectNotDisposed ();
 				position = value;
 			}
 		}
 
 		public object Value {
 			get { 
-				if (!isOpen)
-					throw new ObjectDisposedException ("OracleLob");
+				AssertObjectNotDisposed ();
 				if (IsNull)
 					return DBNull.Value;
 				
@@ -173,6 +165,38 @@ namespace System.Data.OracleClient {
 			throw new NotImplementedException ();
 		}
 
+		void AssertAmountIsEven (long amount, string argName)
+		{
+			if (amount % 2 == 1)
+				throw new ArgumentOutOfRangeException ("CLOB and NCLOB parameters require even number of bytes for this argument.");
+		}
+
+		void AssertAmountIsValid (long amount, string argName)
+		{
+			if (amount > UInt32.MaxValue)
+				throw new ArgumentOutOfRangeException ("Argument too big.");
+			if (LobType == OracleType.Clob || LobType == OracleType.NClob)
+				AssertAmountIsEven (amount, argName);
+		}
+
+		void AssertConnectionIsOpen ()
+		{
+			if (connection.State == ConnectionState.Closed)
+				throw new InvalidOperationException ("Invalid operation. The connection is closed.");
+		}
+
+		void AssertObjectNotDisposed ()
+		{
+			if (!isOpen)
+				throw new ObjectDisposedException ("OracleLob");
+		}
+
+		void AssertTransactionExists ()
+		{
+			if (connection.Transaction == null)
+				throw new InvalidOperationException ("Modifying a LOB requires that the connection be transacted.");
+		}
+
 		public void BeginBatch ()
 		{
 			BeginBatch (OracleLobOpenMode.ReadOnly);
@@ -180,8 +204,11 @@ namespace System.Data.OracleClient {
 
 		public void BeginBatch (OracleLobOpenMode mode)
 		{
-			isBatched = true;
+			AssertConnectionIsOpen ();
+			AssertObjectNotDisposed ();
+
 			locator.BeginBatch (mode);
+			isBatched = true;
 		}
 
 		[MonoTODO]
@@ -197,22 +224,28 @@ namespace System.Data.OracleClient {
 			isOpen = false;
 		}
 
-		[MonoTODO]
 		public long CopyTo (OracleLob destination)
 		{
-			throw new NotImplementedException ();
+			return CopyTo (0, destination, 0, Length);
 		}
 
-		[MonoTODO]
 		public long CopyTo (OracleLob destination, long destinationOffset)
 		{
-			throw new NotImplementedException ();
+			return CopyTo (0, destination, destinationOffset, Length);
 		}
 
-		[MonoTODO]
 		public long CopyTo (long sourceOffset, OracleLob destination, long destinationOffset, long amount)
 		{
-			throw new NotImplementedException ();
+			if (destination.IsNull)
+				throw new ArgumentNullException ();
+
+			AssertAmountIsValid (sourceOffset, "sourceOffset");
+			AssertAmountIsValid (destinationOffset, "destinationOffset");
+			AssertAmountIsValid (amount, "amount");
+			AssertTransactionExists ();
+			AssertConnectionIsOpen ();
+
+			return (long) locator.Copy (destination.Locator, (uint) amount, (uint) destinationOffset + 1, (uint) sourceOffset + 1);
 		}
 
 		[MonoTODO]
@@ -223,6 +256,9 @@ namespace System.Data.OracleClient {
 
 		public void EndBatch ()
 		{
+			AssertConnectionIsOpen ();
+			AssertObjectNotDisposed ();
+
 			locator.EndBatch ();
 			isBatched = false;
 		}
@@ -234,16 +270,14 @@ namespace System.Data.OracleClient {
 
 		public long Erase (long offset, long amount)
 		{
-			if (offset < 0)
-				throw new ArgumentOutOfRangeException ();
-			if (amount < 0)
-				throw new ArgumentOutOfRangeException ();
+			if (offset < 0 || amount < 0)
+				throw new ArgumentOutOfRangeException ("Must be a positive value.");
 			if (offset + amount > Length)
 				throw new ArgumentOutOfRangeException ();
-			if (offset > UInt32.MaxValue)
-				throw new ArgumentOutOfRangeException ();
-			if (amount > UInt32.MaxValue)
-				throw new ArgumentOutOfRangeException ();
+
+			AssertAmountIsValid (offset, "offset");
+			AssertAmountIsValid (amount, "amount");
+
 			return (long) locator.Erase ((uint) offset + 1, (uint) amount);
 		}
 
@@ -254,6 +288,14 @@ namespace System.Data.OracleClient {
 
 		public override int Read (byte[] buffer, int offset, int count)
 		{
+			if (buffer == null)
+				throw new ArgumentNullException ();
+
+			AssertAmountIsValid (offset, "offset");
+			AssertAmountIsValid (count, "count");
+			AssertConnectionIsOpen ();
+			AssertObjectNotDisposed ();
+
 			int bytesRead;
 			byte[] output = new byte[count];
 
@@ -290,18 +332,10 @@ namespace System.Data.OracleClient {
 		[MonoTODO]
 		public override void SetLength (long value)
 		{
-			if ((LobType == OracleType.Clob || LobType == OracleType.NClob) && (value % 2) == 1)
-				throw new ArgumentOutOfRangeException ();
-			if (value > UInt32.MaxValue)
-				throw new ArgumentOutOfRangeException ();
-			if (connection.Transaction == null)
-				throw new InvalidOperationException ();
-			if (IsNull)
-				throw new InvalidOperationException ();
-			if (Connection.State == ConnectionState.Closed)
-				throw new InvalidOperationException ();
-			if (!isOpen)
-				throw new ObjectDisposedException ("OracleLob");
+			AssertAmountIsValid (value, "value");
+			AssertTransactionExists ();
+			AssertConnectionIsOpen ();
+			AssertObjectNotDisposed ();
 
 			locator.Trim ((uint) value);
 			length = value;
@@ -311,38 +345,25 @@ namespace System.Data.OracleClient {
 		{
 			if (buffer == null)
 				throw new ArgumentNullException ("Buffer is null.");
-			if (offset < 0)
-				throw new ArgumentOutOfRangeException ("Offset parameter must be positive.");
-			if (count < 0)
-				throw new ArgumentOutOfRangeException ("Count parameter must be positive.");
+			if (offset < 0 || count < 0)
+				throw new ArgumentOutOfRangeException ("Must be a positive value.");
 			if (offset + count > buffer.Length)
-				throw new ArgumentOutOfRangeException ("Offset + Count > buffer Length.");
-			if (offset > UInt32.MaxValue)
-				throw new ArgumentOutOfRangeException ("Offset too big.");
-			if (count > UInt32.MaxValue)
-				throw new ArgumentOutOfRangeException ("Count too big.");
-			if (LobType == OracleType.Clob || LobType == OracleType.NClob) {
-				if (offset % 2 == 1)
-					throw new ArgumentOutOfRangeException ("Offset must be even.");
-				if (count % 2 == 1)
-					throw new ArgumentOutOfRangeException ("Count must be even.");
-			}
-			if (connection.Transaction == null)
-				throw new InvalidOperationException ("Transaction is null.");
-			if (IsNull)
-				throw new InvalidOperationException ("LOB is null.");
-			if (connection.State == ConnectionState.Closed)
-				throw new InvalidOperationException ("Connection is closed.");
-			if (!isOpen)
-				throw new ObjectDisposedException ("OracleLob");
+				throw new ArgumentOutOfRangeException ("The offset and count values specified exceed the buffer provided.");
+			AssertAmountIsValid (offset, "offset");
+			AssertAmountIsValid (count, "count");
+			AssertTransactionExists ();
+			AssertConnectionIsOpen ();
+			AssertObjectNotDisposed ();
 
+			byte[] value = null;
 			if (offset + count == buffer.Length && offset == 0)
-				position += locator.Write (buffer, (uint) Position, (uint) buffer.Length, LobType);
+				value = buffer;
 			else {
-				byte[] copy = new byte [count];
-				Array.Copy (buffer, offset, copy, 0, count);
-				position += locator.Write (copy, (uint) Position, (uint) copy.Length, LobType);
+				value = new byte[count];
+				Array.Copy (buffer, offset, value, 0, count);
 			}
+
+			position += locator.Write (value, (uint) offset, (uint) value.Length, LobType);
 		}
 
 		#endregion // Methods

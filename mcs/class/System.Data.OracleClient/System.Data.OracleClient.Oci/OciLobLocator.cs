@@ -67,6 +67,15 @@ namespace System.Data.OracleClient.Oci {
 						IntPtr locp);
 
 		[DllImport ("oci")]
+		static extern int OCILobCopy (IntPtr svchp,
+						IntPtr errhp,
+						IntPtr dst_locp,
+						IntPtr src_locp,
+						uint amount,
+						uint dst_offset,
+						uint src_offset);
+
+		[DllImport ("oci")]
 		static extern int OCILobErase (IntPtr svchp,
 						IntPtr errhp,
 						IntPtr locp,
@@ -137,6 +146,18 @@ namespace System.Data.OracleClient.Oci {
 				OciErrorInfo info = ErrorHandle.HandleError ();
 				throw new OracleException (info.ErrorCode, info.ErrorMessage);
 			}
+		}
+
+		public uint Copy (OciLobLocator destination, uint amount, uint destinationOffset, uint sourceOffset)
+		{
+			OCILobCopy (Service,
+					ErrorHandle,
+					destination,
+					Handle,
+					amount,
+					destinationOffset,
+					sourceOffset);
+			return amount;
 		}
 
 		protected override void Dispose (bool disposing)

@@ -49,7 +49,6 @@ namespace System.Data.OracleClient.Oci {
 		public OciDefineHandle (OciHandle parent, IntPtr newHandle)
 			: base (OciHandleType.Define, parent, newHandle)
 		{
-			int status = 0;
 		}
 
 		public void DefineByPosition (int position)

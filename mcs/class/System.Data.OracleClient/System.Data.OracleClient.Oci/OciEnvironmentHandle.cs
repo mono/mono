@@ -32,8 +32,8 @@ namespace System.Data.OracleClient.Oci {
 			: base (OciHandleType.Environment, null, IntPtr.Zero)
 		{
 			int status = 0;
-			IntPtr handle = IntPtr.Zero;
-			status = OCIEnvCreate (out handle, 
+			IntPtr newHandle = IntPtr.Zero;
+			status = OCIEnvCreate (out newHandle, 
 						mode, 
 						IntPtr.Zero, 
 						IntPtr.Zero, 
@@ -42,7 +42,7 @@ namespace System.Data.OracleClient.Oci {
 						0, 
 						IntPtr.Zero);
 
-			SetHandle (handle);
+			SetHandle (newHandle);
 		}
 
 		#endregion // Constructors
