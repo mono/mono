@@ -1,5 +1,9 @@
 2005-03-28  Atsushi Enomoto <atsushi@ximian.com>
 
+	* RncTokenizer.cs : oops, so stupid hex computation.
+
+2005-03-28  Atsushi Enomoto <atsushi@ximian.com>
+
 	* RncTokenizer.cs :
 	  Handle hexadecimal escaping (\x{...}) and triple-quot/apos literals.
 	  Quote literal didn't handle '...' as expected.

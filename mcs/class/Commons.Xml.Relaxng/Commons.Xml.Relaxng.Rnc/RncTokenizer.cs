@@ -93,7 +93,7 @@ namespace Commons.Xml.Relaxng.Rnc
 
 		// private methods
 
-		private int ReadEscapedHexNumber ()
+		private int ReadEscapedHexNumber (int current)
 		{
 			int i = source.Read ();
 			switch (i) {
@@ -107,24 +107,27 @@ namespace Commons.Xml.Relaxng.Rnc
 			case '7':
 			case '8':
 			case '9':
-				return (i - '0') * 16 + ReadEscapedHexNumber ();
+				current = current * 16 + (i - '0');
+				return ReadEscapedHexNumber (current);
 			case 'A':
 			case 'B':
 			case 'C':
 			case 'D':
 			case 'E':
 			case 'F':
-				return (i - 'A' + 10) * 16 + ReadEscapedHexNumber ();
+				current = current * 16 + (i - 'A') + 10;
+				return ReadEscapedHexNumber (current);
 			case 'a':
 			case 'b':
 			case 'c':
 			case 'd':
 			case 'e':
 			case 'f':
-				return (i - 'a' + 10) * 16 + ReadEscapedHexNumber ();
+				current = current * 16 + (i - 'a' + 10);
+				return ReadEscapedHexNumber (current);
 			}
 			peekChar = i;
-			return 0;
+			return current;
 		}
 
 		private int ReadFromStream ()
@@ -149,7 +152,7 @@ namespace Commons.Xml.Relaxng.Rnc
 						peekString += (char) tmp;
 					return '\\';
 				}
-				ret = ReadEscapedHexNumber ();
+				ret = ReadEscapedHexNumber (0);
 				if (peekChar != '}')
 					break;
 				peekChar = 0;
