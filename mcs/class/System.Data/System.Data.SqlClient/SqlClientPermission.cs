@@ -30,7 +30,7 @@ namespace System.Data.SqlClient {
 
 		 [Obsolete ("Use SqlClientPermission(PermissionState.None)", true)]
 		public SqlClientPermission ()
-			: this (PermissionState.None, false)
+//			: this (PermissionState.None, false)
 		{
 		}
 
