@@ -1,3 +1,10 @@
+2002-05-03  Sergey Chaban <serge@wildwestsoftware.com>
+
+	* x86.brg: more coni4 optimizations
+	MUL: generate optimized code for some consts other
+	than powers of 2 (hardcoded impl. for 3, 5, 10 etc.);
+	DIV_UN: multiply with reciprocal instead of dividing;
+
 2002-05-03  Dietmar Maurer  <dietmar@ximian.com>
 
 	* x86.brg: use VAROFFSET macro
