@@ -192,7 +192,7 @@ namespace System.Xml.Serialization
 
 		protected virtual object Deserialize (XmlSerializationReader reader)
 		{
-			if (typeMapping == null)
+			if (typeMapping != null)
 			{
 				XmlSerializationReaderInterpreter rd = reader as XmlSerializationReaderInterpreter;
 				if (rd == null) throw new InvalidOperationException ();

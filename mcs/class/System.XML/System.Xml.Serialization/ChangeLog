@@ -1,5 +1,9 @@
 2003-08-28  Lluis Sanchez Gual <lluis@ximian.com>
 
+	* XmlSerializer.cs: Fix in Deserialize() method.
+
+2003-08-28  Lluis Sanchez Gual <lluis@ximian.com>
+
 	* XmlReflectionImporter.cs: Fill RelatedMaps property of the generated map.
 	* XmlSchemas.cs: Find method: make sure the returned object belongs to
 	  the requested type.
