@@ -3181,7 +3181,7 @@ _loop86_breakloop:			;
 					  if (right == null)
 						  eq_expr = left;
 					  else {
-						  eq_expr = new Binary (parent, left, right, ((Binary) right).old_op);
+						  eq_expr = new Equality (parent, left, right, ((Equality) right).old_op);
 					  }
 				
 		}
@@ -3216,10 +3216,10 @@ _loop86_breakloop:			;
 				{
 					
 							   if (right == null)
-								  eq_aux = new Binary (parent, left, null, JSToken.None);
+								  eq_aux = new Equality (parent, left, null, JSToken.None);
 							   else
-								  eq_aux = new Binary (parent, left, right, ((Binary) right).old_op);
-							  ((Binary) eq_aux).old_op = op;
+								  eq_aux = new Equality (parent, left, right, ((Equality) right).old_op);
+							  ((Equality) eq_aux).old_op = op;
 						
 				}
 				break;

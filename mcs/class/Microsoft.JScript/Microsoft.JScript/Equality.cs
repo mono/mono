@@ -60,17 +60,56 @@ namespace Microsoft.JScript {
 
 		internal override bool Resolve (IdentificationTable context)
 		{
-			return true;
+			bool r = true;
+			if (left != null)
+				r &= left.Resolve (context);
+			if (right != null)
+				r &= right.Resolve (context);
+			return r;
 		}
 
 		internal override bool Resolve (IdentificationTable context, bool no_effect)
 		{
-			throw new NotImplementedException ();
+			this.no_effect = no_effect;
+			return  Resolve (context);
 		}	       
 
 		internal override void Emit (EmitContext ec)
 		{
-			throw new NotImplementedException ();
+			ILGenerator ig = ec.ig;
+			LocalBuilder local_builder;
+
+			if (current_op != JSToken.None) {
+				Type t = typeof (Equality);				
+				local_builder = ig.DeclareLocal (t);
+				if (current_op == JSToken.Equal)
+					ig.Emit (OpCodes.Ldc_I4_S, (byte) 53);
+				else if (current_op == JSToken.NotEqual)
+					ig.Emit (OpCodes.Ldc_I4_S, (byte) 54);
+				ig.Emit (OpCodes.Newobj, t.GetConstructor (new Type [] {typeof (int)}));
+				ig.Emit (OpCodes.Stloc, local_builder);
+				ig.Emit (OpCodes.Ldloc, local_builder);
+			}
+
+			if (left != null)
+				left.Emit (ec);
+			if (right != null)
+				right.Emit (ec);			       
+			
+			if (current_op == JSToken.Equal) {
+				ig.Emit (OpCodes.Call, typeof (Equality).GetMethod ("EvaluateEquality"));
+				Label t = ig.DefineLabel ();
+				Label f = ig.DefineLabel ();
+				ig.Emit (OpCodes.Brtrue_S, t);
+				ig.Emit (OpCodes.Ldc_I4_0);
+				ig.Emit (OpCodes.Br_S, f);
+				ig.MarkLabel (t);
+				ig.Emit (OpCodes.Ldc_I4_1);
+				ig.MarkLabel (f);
+			}
+
+			if (no_effect)
+				ig.Emit (OpCodes.Pop);
 		}
 	}
 }

@@ -142,18 +142,6 @@ namespace Microsoft.JScript {
 			case JSToken.UnsignedRightShift:
 				ig.Emit (OpCodes.Call, typeof (BitwiseBinary).GetMethod ("EvaluateBitwiseBinary"));
 					 break;
-			case JSToken.Equal:
-				ig.Emit (OpCodes.Call, typeof (Equality).GetMethod ("EvaluateEquality"));
-				Label t = ig.DefineLabel ();
-				Label f = ig.DefineLabel ();
-				ig.Emit (OpCodes.Brtrue_S, t);
-				ig.Emit (OpCodes.Ldc_I4_0);
-				ig.Emit (OpCodes.Br_S, f);
-				ig.MarkLabel (t);
-				ig.Emit (OpCodes.Ldc_I4_1);
-				ig.MarkLabel (f);
-				ig.Emit (OpCodes.Pop);
-				break;				
 			}
 		}
 
@@ -209,14 +197,6 @@ namespace Microsoft.JScript {
 				t = typeof (BitwiseBinary);
 				local_builder = ig.DeclareLocal (t);
 				ig.Emit (OpCodes.Ldc_I4_S, (byte) 52);
-			} else if (current_op == JSToken.Equal) {
-				t = typeof (Equality);
-				local_builder = ig.DeclareLocal (t);
-				ig.Emit (OpCodes.Ldc_I4_S, (byte) 53);
-			} else if (current_op == JSToken.NotEqual) {
-				t = typeof (Equality);
-				local_builder = ig.DeclareLocal (t);
-				ig.Emit (OpCodes.Ldc_I4_S, (byte) 54);
 			}
 
 			ig.Emit (OpCodes.Newobj, t.GetConstructor (new Type [] {typeof (int)}));
