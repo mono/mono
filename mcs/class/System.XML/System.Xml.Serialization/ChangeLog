@@ -1,3 +1,8 @@
+2003-10-10  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* SoapReflectionImporter.cs, XmlReflectionImporter.cs: Fixed bug #49476.
+	  Read only properties are only serialized if the type is an array.
+
 2003-10-09  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* SoapReflectionImporter.cs, XmlReflectionImporter.cs, 
