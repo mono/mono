@@ -1,3 +1,8 @@
+2005-01-14  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* object-internals.h: Added some needed fields from StringBuilder class.
+	* marshal.c: Set the maxCapacity when creating a StringBuilder.
+
 2005-01-13  Zoltan Varga  <vargaz@freemail.hu>
 
 	* icall.c (ves_icall_System_Environment_Exit): Suspend all managed
