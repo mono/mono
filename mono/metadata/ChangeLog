@@ -1,3 +1,8 @@
+2004-09-06 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* object.c: When allocating an array, we have to throw
+	an overflow exception if any of the lengths are < 0.
+
 2004-09-06  Zoltan Varga  <vargaz@freemail.hu>
 
 	* marshal.h marshal.c: Free unmanaged memory allocated by managed code
