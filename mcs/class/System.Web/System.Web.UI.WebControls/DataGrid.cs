@@ -1374,7 +1374,7 @@ namespace System.Web.UI.WebControls
 					LinkButton toAddBtn = new DataGridLinkButton();
 					toAddBtn.Text = "...";
 					toAddBtn.CommandName = "Page";
-					toAddBtn.CommandArgument = (lastPageNumber - 1).ToString(NumberFormatInfo.InvariantInfo);
+					toAddBtn.CommandArgument = (firstPageNumber - 1).ToString(NumberFormatInfo.InvariantInfo);
 					toAddBtn.CausesValidation = false;
 					toAdd.Controls.Add(toAddBtn);
 					toAdd.Controls.Add(new LiteralControl("&nbsp;"));

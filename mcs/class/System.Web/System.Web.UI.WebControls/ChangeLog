@@ -1,3 +1,10 @@
+2004-02-01 Alon Gazit <along@mainsoft.com>
+
+	* DataGrid.cs: fixed a problem in the paging mechanism in the method
+	InitializePager().
+	the problem was when (PagerStyle.Mode == PagerMode.NumericPages),
+	while clicking the "..." link in the second page.
+
 2004-01-28 Alon Gazit <along@mainsoft.com>
 
 	* Calendar.cs: prevent NullReferenceException in RenderAllDays().
