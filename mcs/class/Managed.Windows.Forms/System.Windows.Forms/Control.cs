@@ -3023,6 +3023,11 @@ namespace System.Windows.Forms
 			if (value!=is_visible) {
 				is_visible=value;
 				XplatUI.SetVisible(Handle, value);
+				// Explicitly move Toplevel windows to where we want them;
+				// apparently moving unmapped toplevel windows doesn't work
+				if (is_visible && (this is Form.FormParentWindow)) {
+					XplatUI.SetWindowPos(window.Handle, bounds.X, bounds.Y, bounds.Width, bounds.Height);
+				}
 				OnVisibleChanged(EventArgs.Empty);
 				if (!is_visible) {
 					if (dc_mem != null) {

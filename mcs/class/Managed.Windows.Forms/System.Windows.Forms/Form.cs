@@ -643,6 +643,7 @@ Console.WriteLine("ParentForm got focus");
 
 				if (this.form_parent_window == null) {
 					form_parent_window = new FormParentWindow(this);
+					form_parent_window.MenuChanged();
 				}
 
 				cp.Caption = "ClientArea";
@@ -651,10 +652,10 @@ Console.WriteLine("ParentForm got focus");
 				cp.ExStyle=0;
 				cp.Param=0;
 				cp.Parent = form_parent_window.window.Handle;
-				cp.X = Left;
-				cp.Y = Top;
-				cp.Width = Width;
-				cp.Height = Height;
+				cp.X = 0;
+				cp.Y = 0;
+				cp.Width = form_parent_window.ClientSize.Width;
+				cp.Height = form_parent_window.ClientSize.Width;
 				
 				cp.Style = (int)WindowStyles.WS_CHILD;
 				cp.Style |= (int)WindowStyles.WS_VISIBLE;

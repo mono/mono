@@ -1,3 +1,12 @@
+2005-01-26  Peter Bartok  <pbartok@novell.com>
+
+	* Form.cs (CreateClientParams): Always set the location to 0,0
+	  since we're a child window.
+
+	* Control.cs (SetVisibleCore): Always explicitly setting the location
+	  of a toplevel window, apparently X11 doesn't like to move windows
+	  while they're not mapped.
+
 2005-01-26  Jackson Harper  <jackson@ximian.com>
 
 	* TabControl.cs: Implement FillToRight size mode with vertically
