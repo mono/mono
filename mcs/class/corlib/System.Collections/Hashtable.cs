@@ -570,8 +570,8 @@ namespace System.Collections {
 				Object k = entry.key;
 				if (k == null)
 					return -1;
-				if ((entry.hashMix & Int32.MaxValue) == h
-				    && this.KeyEquals (key, k)) {
+				if (k == key || ((entry.hashMix & Int32.MaxValue) == h
+				    && this.KeyEquals (key, k))) {
 					return indx;
 				}
 

@@ -1,5 +1,9 @@
 2004-12-20  Ben Maurer  <bmaurer@ximian.com>
 
+	* Hashtable.cs (Find): Before calling KeyEquals, check to see if k
+	== key (ie, they are the same pointer). In many cases, this will
+	avoid two virtual calls. This gives me 1% on mcs bootstrap (!!!!)
+	
 	* Hashtable.cs (Find): Make `i' a uint rather than an int. This
 	avoids having a long compare.
 
