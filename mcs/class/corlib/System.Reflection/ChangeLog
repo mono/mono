@@ -1,3 +1,11 @@
+2003-10-31  Martin Baulig  <martin@ximian.com>
+
+	* MonoGenericInst.cs (MonoInflatedField): New internal class.
+	(MonoGenericInst.GetFields): Override this method and inflate
+	the fields.
+
+	* MonoField.cs: Don't make this class sealed.
+
 2003-10-30  Martin Baulig  <martin@ximian.com>
 
 	* MonoGenericInst.cs (MonoInflatedMethod, MonoInflatedCtor): New

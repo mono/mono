@@ -23,6 +23,7 @@ namespace System.Reflection
 		protected Type generic_type;
 		private MethodInfo[] methods;
 		private ConstructorInfo[] ctors;
+		private FieldInfo[] fields;
 
 		[MonoTODO]
 		internal MonoGenericInst ()
@@ -38,6 +39,9 @@ namespace System.Reflection
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern ConstructorInfo inflate_ctor (ConstructorInfo ctor);
 
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private extern FieldInfo inflate_field (FieldInfo field);
+
 		private const BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic |
 		BindingFlags.Static | BindingFlags.Instance | BindingFlags.DeclaredOnly;
 
@@ -50,6 +54,10 @@ namespace System.Reflection
 			ctors = generic_type.GetConstructors (flags);
 			for (int i = 0; i < ctors.Length; i++)
 				ctors [i] = inflate_ctor (ctors [i]);
+
+			fields = generic_type.GetFields (flags);
+			for (int i = 0; i < fields.Length; i++)
+				fields [i] = inflate_field (fields [i]);
 		}
 
 		public override Type BaseType {
@@ -171,6 +179,64 @@ namespace System.Reflection
 			l.CopyTo (result);
 			return result;
 		}
+
+		public override FieldInfo[] GetFields (BindingFlags bindingAttr)
+		{
+			if (fields == null)
+				initialize ();
+
+			ArrayList list = new ArrayList ();
+			BindingFlags new_bf = bindingAttr | BindingFlags.DeclaredOnly;
+
+			if ((bindingAttr & BindingFlags.DeclaredOnly) == 0) {
+				Type current = BaseType;
+				while (current != null) {
+					list.AddRange (current.GetFields (new_bf));
+					current = current.BaseType;
+				}
+			}
+
+			list.AddRange (GetFields_impl (new_bf));
+
+			FieldInfo[] res = new FieldInfo [list.Count];
+			list.CopyTo (res, 0);
+			return res;
+		}
+
+		protected FieldInfo[] GetFields_impl (BindingFlags bindingAttr)
+		{
+			ArrayList l = new ArrayList ();
+			bool match;
+			FieldAttributes fattrs;
+
+			foreach (FieldInfo c in fields) {
+				match = false;
+				fattrs = c.Attributes;
+				if ((fattrs & FieldAttributes.FieldAccessMask) == FieldAttributes.Public) {
+					if ((bindingAttr & BindingFlags.Public) != 0)
+						match = true;
+				} else {
+					if ((bindingAttr & BindingFlags.NonPublic) != 0)
+						match = true;
+				}
+				if (!match)
+					continue;
+				match = false;
+				if ((fattrs & FieldAttributes.Static) != 0) {
+					if ((bindingAttr & BindingFlags.Static) != 0)
+						match = true;
+				} else {
+					if ((bindingAttr & BindingFlags.Instance) != 0)
+						match = true;
+				}
+				if (!match)
+					continue;
+				l.Add (c);
+			}
+			FieldInfo[] result = new FieldInfo [l.Count];
+			l.CopyTo (result);
+			return result;
+		}
 	}
 
 	internal class MonoInflatedMethod : MonoMethod
@@ -213,5 +279,10 @@ namespace System.Reflection
 			// FIXME
 			return new object [0];
 		}
+	}
+
+	internal class MonoInflatedField : MonoField
+	{
+		private readonly IntPtr dhandle;
 	}
 }

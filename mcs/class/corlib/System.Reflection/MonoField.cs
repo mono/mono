@@ -16,7 +16,7 @@ using System.Runtime.InteropServices;
 
 namespace System.Reflection {
 	
-	internal sealed class MonoField : FieldInfo {
+	internal class MonoField : FieldInfo {
 		internal IntPtr klass;
 		internal RuntimeFieldHandle fhandle;
 		string name;
