@@ -1,3 +1,16 @@
+2003-10-04  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* ProtocolReflector.cs: The ReflectionImporter property now creates a
+	  reflector if the TypeStubInfo does not provide one.
+	  Do not create XmlSchemaExporter. Take it from the service reflector, sine
+	  it must be reused for all protocol reflectors. Moved some code to
+	  SoapProtocolReflector, since it cannot be reused for all reflectors.
+	* ServiceDescriptionReflector.cs: Reflect the type for all available 
+	  protocols.
+	* SoapProtocolReflector.cs: Moved here some code from ProtoclReflector.
+	* HttpGetProtocolReflector.cs, HttpPostProtocolReflector.cs,
+	  HttpSimpleProtocolReflector.cs: new files.
+	
 2003-10-01  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* ProtocolReflector.cs: Adapted to the changes in TypeStubInfo. Moved some

@@ -11,6 +11,7 @@
 using System.Web.Services;
 using System.Web.Services.Protocols;
 using System.Xml.Serialization;
+using System.Xml.Schema;
 using System.Xml;
 
 namespace System.Web.Services.Description {
@@ -46,7 +47,7 @@ namespace System.Web.Services.Description {
 		{
 			SoapBinding sb = new SoapBinding ();
 			sb.Transport = SoapBinding.HttpTransport;
-			sb.Style = TypeInfo.SoapBindingStyle;
+			sb.Style = ((SoapTypeStubInfo)TypeInfo).SoapBindingStyle;
 			Binding.Extensions.Add (sb);
 
 			SoapAddressBinding abind = new SoapAddressBinding ();
@@ -61,14 +62,19 @@ namespace System.Web.Services.Description {
 		protected override bool ReflectMethod ()
 		{
 			SoapOperationBinding sob = new SoapOperationBinding();
-			sob.SoapAction = MethodStubInfo.Action;
-			sob.Style = MethodStubInfo.SoapBindingStyle;
+			SoapMethodStubInfo method = (SoapMethodStubInfo) MethodStubInfo;
+			
+			sob.SoapAction = method.Action;
+			sob.Style = method.SoapBindingStyle;
 			OperationBinding.Extensions.Add (sob);
 			
-			AddOperationMsgBindings (OperationBinding.Input);
-			AddOperationMsgBindings (OperationBinding.Output);
+			ImportMessage (method.InputMembersMapping, InputMessage);
+			ImportMessage (method.OutputMembersMapping, OutputMessage);
+				
+			AddOperationMsgBindings (method, OperationBinding.Input);
+			AddOperationMsgBindings (method, OperationBinding.Output);
 
-			foreach (HeaderInfo hf in MethodStubInfo.Headers)
+			foreach (HeaderInfo hf in method.Headers)
 			{
 				Message msg = new Message ();
 				msg.Name = Operation.Name + hf.HeaderType.Name;
@@ -80,9 +86,9 @@ namespace System.Web.Services.Description {
 				SoapHeaderBinding hb = new SoapHeaderBinding ();
 				hb.Message = new XmlQualifiedName (msg.Name, ServiceDescription.TargetNamespace);
 				hb.Part = part.Name;
-				hb.Use = MethodStubInfo.Use;
+				hb.Use = method.Use;
 				
-				if (MethodStubInfo.Use == SoapBindingUse.Literal)
+				if (method.Use == SoapBindingUse.Literal)
 				{
 					XmlTypeMapping mapping = ReflectionImporter.ImportTypeMapping (hf.HeaderType, ServiceDescription.TargetNamespace);
 					part.Element = new XmlQualifiedName (mapping.ElementName, mapping.Namespace);
@@ -105,21 +111,60 @@ namespace System.Web.Services.Description {
 			return true;
 		}
 
-		void AddOperationMsgBindings (MessageBinding msg)
+		void AddOperationMsgBindings (SoapMethodStubInfo method, MessageBinding msg)
 		{
 			SoapBodyBinding sbbo = new SoapBodyBinding();
 			msg.Extensions.Add (sbbo);
-			sbbo.Use = MethodStubInfo.Use;
-			if (MethodStubInfo.Use == SoapBindingUse.Encoded)
+			sbbo.Use = method.Use;
+			if (method.Use == SoapBindingUse.Encoded)
 			{
 				sbbo.Namespace = ServiceDescription.TargetNamespace;
 				sbbo.Encoding = EncodingNamespace;
 			}
 		}
 		
+		void ImportMessage (XmlMembersMapping members, Message msg)
+		{
+			SoapMethodStubInfo method = (SoapMethodStubInfo) MethodStubInfo;
+			
+			if (method.ParameterStyle == SoapParameterStyle.Wrapped)
+			{
+				MessagePart part = new MessagePart ();
+				part.Name = "parameters";
+				XmlQualifiedName qname = new XmlQualifiedName (members.ElementName, members.Namespace);
+				if (method.Use == SoapBindingUse.Literal) part.Element = qname;
+				else part.Type = qname;
+				msg.Parts.Add (part);
+			}
+			else
+			{
+				for (int n=0; n<members.Count; n++)
+				{
+					MessagePart part = new MessagePart ();
+					part.Name = members[n].MemberName;
+					
+					if (method.Use == SoapBindingUse.Literal) {
+						part.Element = new XmlQualifiedName (members[n].MemberName, members[n].Namespace);
+					}
+					else {
+						string namesp = members[n].TypeNamespace;
+						if (namesp == "") namesp = XmlSchema.Namespace;
+						part.Type = new XmlQualifiedName (members[n].TypeName, namesp);
+					}
+					msg.Parts.Add (part);
+				}
+			}
+			
+			
+			if (method.Use == SoapBindingUse.Literal)
+				SchemaExporter.ExportMembersMapping (members);
+			else
+				SoapSchemaExporter.ExportMembersMapping (members);
+		}
+
 		protected override string ReflectMethodBinding ()
 		{
-			return MethodStubInfo.Binding;
+			return ((SoapMethodStubInfo)MethodStubInfo).Binding;
 		}
 
 		#endregion

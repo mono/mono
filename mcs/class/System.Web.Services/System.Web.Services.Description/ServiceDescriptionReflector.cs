@@ -13,11 +13,11 @@ using System.Xml.Serialization;
 using System.Xml;
 using System.Xml.Schema;
 using System.Web.Services.Protocols;
+using System.Web.Services.Configuration;
 
 namespace System.Web.Services.Description {
-	public class ServiceDescriptionReflector {
-
-		ProtocolReflector reflector;
+	public class ServiceDescriptionReflector 
+	{
 		ServiceDescriptionCollection serviceDescriptions;
 		Types types;
 
@@ -25,7 +25,6 @@ namespace System.Web.Services.Description {
 	
 		public ServiceDescriptionReflector ()
 		{
-			reflector = new SoapProtocolReflector ();
 			types = new Types ();
 			serviceDescriptions = new ServiceDescriptionCollection ();
 		}
@@ -49,7 +48,16 @@ namespace System.Web.Services.Description {
 
 		public void Reflect (Type type, string url)
 		{
-			reflector.Reflect (this, type, url);
+			XmlSchemaExporter schemaExporter = new XmlSchemaExporter (Schemas);
+			SoapSchemaExporter soapSchemaExporter = new SoapSchemaExporter (Schemas);
+			
+			new SoapProtocolReflector ().Reflect (this, type, url, schemaExporter, soapSchemaExporter);
+			
+			if (WSConfig.IsSupported (WSProtocol.HttpGet))
+				new HttpGetProtocolReflector ().Reflect (this, type, url, schemaExporter, soapSchemaExporter);
+			
+			if (WSConfig.IsSupported (WSProtocol.HttpPost))
+				new HttpPostProtocolReflector ().Reflect (this, type, url, schemaExporter, soapSchemaExporter);
 			
 			if (serviceDescriptions.Count == 1)
 				serviceDescriptions[0].Types = types;

@@ -37,11 +37,14 @@ namespace System.Web.Services.Description {
 		Type serviceType;
 		string serviceUrl;
 		SoapSchemaExporter soapSchemaExporter;
-		SoapMethodStubInfo methodStubInfo;
-		SoapTypeStubInfo typeInfo;
+		MethodStubInfo methodStubInfo;
+		TypeStubInfo typeInfo;
 		ArrayList extensionReflectors;
 		ServiceDescriptionReflector serviceReflector;
 
+		XmlReflectionImporter reflectionImporter;
+		SoapReflectionImporter soapReflectionImporter;
+		
 		#endregion // Fields
 
 		#region Constructors
@@ -108,12 +111,30 @@ namespace System.Web.Services.Description {
 			get; 
 		}
 
-		public XmlReflectionImporter ReflectionImporter {
-			get { return typeInfo.XmlImporter;; }
+		public XmlReflectionImporter ReflectionImporter 
+		{
+			get
+			{
+				if (reflectionImporter == null) {
+					reflectionImporter = typeInfo.XmlImporter;
+					if (reflectionImporter == null)
+						reflectionImporter = new XmlReflectionImporter();
+				}
+				return reflectionImporter;
+			}
 		}
 
-		internal SoapReflectionImporter SoapReflectionImporter {
-			get { return typeInfo.SoapImporter;; }
+		internal SoapReflectionImporter SoapReflectionImporter 
+		{
+			get
+			{
+				if (soapReflectionImporter == null) {
+					soapReflectionImporter = typeInfo.SoapImporter;
+					if (soapReflectionImporter == null)
+						soapReflectionImporter = new SoapReflectionImporter();
+				}
+				return soapReflectionImporter;
+			}
 		}
 
 		public XmlSchemaExporter SchemaExporter {
@@ -148,11 +169,11 @@ namespace System.Web.Services.Description {
 			get { return serviceUrl; }
 		}
 		
-		internal SoapMethodStubInfo MethodStubInfo {
+		internal MethodStubInfo MethodStubInfo {
 			get { return methodStubInfo; }
 		}
 		
-		internal SoapTypeStubInfo TypeInfo {
+		internal TypeStubInfo TypeInfo {
 			get { return typeInfo; }
 		}
 
@@ -161,16 +182,16 @@ namespace System.Web.Services.Description {
 
 		#region Methods
 		
-		internal void Reflect (ServiceDescriptionReflector serviceReflector, Type type, string url)
+		internal void Reflect (ServiceDescriptionReflector serviceReflector, Type type, string url, XmlSchemaExporter xxporter, SoapSchemaExporter sxporter)
 		{
 			this.serviceReflector = serviceReflector;
 			serviceUrl = url;
 			serviceType = type;
 			
-			schemaExporter = new XmlSchemaExporter (Schemas);
-			soapSchemaExporter = new SoapSchemaExporter (Schemas);
+			schemaExporter = xxporter;
+			soapSchemaExporter = sxporter;
 			
-			typeInfo = (SoapTypeStubInfo) TypeStubManager.GetTypeStub (type, typeof(SoapTypeStubInfo));
+			typeInfo = TypeStubManager.GetTypeStub (type, ProtocolName);
 			
 			ServiceDescription desc = ServiceDescriptions [typeInfo.WebServiceNamespace];
 			
@@ -185,7 +206,7 @@ namespace System.Web.Services.Description {
 			ImportService (desc, typeInfo, url);			
 		}
 
-		void ImportService (ServiceDescription desc, SoapTypeStubInfo typeInfo, string url)
+		void ImportService (ServiceDescription desc, TypeStubInfo typeInfo, string url)
 		{
 			service = desc.Services [typeInfo.WebServiceName];
 			if (service == null)
@@ -200,7 +221,7 @@ namespace System.Web.Services.Description {
 				ImportBinding (desc, service, typeInfo, url, binfo);
 		}
 		
-		void ImportBinding (ServiceDescription desc, Service service, SoapTypeStubInfo typeInfo, string url, BindingInfo binfo)
+		void ImportBinding (ServiceDescription desc, Service service, TypeStubInfo typeInfo, string url, BindingInfo binfo)
 		{
 			port = new Port ();
 			port.Name = binfo.Name;
@@ -224,7 +245,7 @@ namespace System.Web.Services.Description {
 				ImportBindingContent (desc, typeInfo, url, binfo);
 		}
 
-		void ImportBindingContent (ServiceDescription desc, SoapTypeStubInfo typeInfo, string url, BindingInfo binfo)
+		void ImportBindingContent (ServiceDescription desc, TypeStubInfo typeInfo, string url, BindingInfo binfo)
 		{
 			serviceDescription = desc;
 			binding = new Binding ();
@@ -238,7 +259,7 @@ namespace System.Web.Services.Description {
 
 			BeginClass ();
 			
-			foreach (SoapMethodStubInfo method in typeInfo.Methods)
+			foreach (MethodStubInfo method in typeInfo.Methods)
 			{
 				methodStubInfo = method;
 				
@@ -249,14 +270,22 @@ namespace System.Web.Services.Description {
 				operation.Name = method.Name;
 				operation.Documentation = method.MethodAttribute.Description;
 				
+				inputMessage = new Message ();
+				inputMessage.Name = operation.Name + ProtocolName + "In";
+				ServiceDescription.Messages.Add (inputMessage);
+				
+				outputMessage = new Message ();
+				outputMessage.Name = operation.Name + ProtocolName + "Out";
+				ServiceDescription.Messages.Add (outputMessage);
+
 				OperationInput inOp = new OperationInput ();
-				inOp.Message = ImportMessage (operation.Name + ProtocolName + "In", method.InputMembersMapping, method, out inputMessage);
-				operation.Messages.Add (inOp);
+				Operation.Messages.Add (inOp);
+				inOp.Message = new XmlQualifiedName (inputMessage.Name, ServiceDescription.TargetNamespace);
 				
 				OperationOutput outOp = new OperationOutput ();
-				outOp.Message = ImportMessage (operation.Name + ProtocolName + "Out", method.OutputMembersMapping, method, out outputMessage);
-				operation.Messages.Add (outOp);
-
+				Operation.Messages.Add (outOp);
+				outOp.Message = new XmlQualifiedName (outputMessage.Name, ServiceDescription.TargetNamespace);
+			
 				portType.Operations.Add (operation);
 				ImportOperationBinding ();
 				
@@ -286,49 +315,6 @@ namespace System.Web.Services.Description {
 			binding.Operations.Add (operationBinding);
 		}
 		
-		XmlQualifiedName ImportMessage (string name, XmlMembersMapping members, SoapMethodStubInfo method, out Message msg)
-		{
-			msg = new Message ();
-			msg.Name = name;
-			
-			if (method.ParameterStyle == SoapParameterStyle.Wrapped)
-			{
-				MessagePart part = new MessagePart ();
-				part.Name = "parameters";
-				XmlQualifiedName qname = new XmlQualifiedName (members.ElementName, members.Namespace);
-				if (method.Use == SoapBindingUse.Literal) part.Element = qname;
-				else part.Type = qname;
-				msg.Parts.Add (part);
-			}
-			else
-			{
-				for (int n=0; n<members.Count; n++)
-				{
-					MessagePart part = new MessagePart ();
-					part.Name = members[n].MemberName;
-					
-					if (method.Use == SoapBindingUse.Literal) {
-						part.Element = new XmlQualifiedName (members[n].MemberName, members[n].Namespace);
-					}
-					else {
-						string namesp = members[n].TypeNamespace;
-						if (namesp == "") namesp = XmlSchema.Namespace;
-						part.Type = new XmlQualifiedName (members[n].TypeName, namesp);
-					}
-					msg.Parts.Add (part);
-				}
-			}
-			
-			serviceDescription.Messages.Add (msg);
-			
-			if (method.Use == SoapBindingUse.Literal)
-				schemaExporter.ExportMembersMapping (members);
-			else
-				soapSchemaExporter.ExportMembersMapping (members);
-			
-			return new XmlQualifiedName (name, members.Namespace);
-		}
-
 		internal static void AddImport (ServiceDescription desc, string ns, string location)
 		{
 			Import im = new Import();
