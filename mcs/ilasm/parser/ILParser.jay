@@ -710,7 +710,7 @@ method_ref		: internal_method_ref
 			| external_method_ref
 			;
 
-external_method_ref	: type_ref external_type_ref DOUBLE_COLON name1 OPEN_PARENS arg_list CLOSE_PARENS
+external_method_ref	: type_ref external_type_ref DOUBLE_COLON name1 OPEN_PARENS param_list CLOSE_PARENS
 			  {
 				TypeRef ret_type = (TypeRef)$1;
 				ClassRef parent = (ClassRef) ((TypeRef) $2).Type;
@@ -719,18 +719,19 @@ external_method_ref	: type_ref external_type_ref DOUBLE_COLON name1 OPEN_PARENS 
 					ArrayList param_list = $6 as ArrayList;
 					int index = 0;
 					type_array = new PEAPI.Type[param_list.Count];
-					foreach (DictionaryEntry entry in param_list) {
-						type_array[index] = ((TypeRef)entry.Value).Type;
+					foreach (TypeRef type in param_list) {
+						type_array[index] = type.Type;
 						index++;
 					}
 				} else {
 					type_array = new PEAPI.Type[0];
 				}	
 				$$ = parent.AddMethod ((string) $4, ret_type.Type, type_array);
+				
 			  }
 			;  
 
-internal_method_ref	: type_ref internal_type_ref DOUBLE_COLON name1 OPEN_PARENS arg_list CLOSE_PARENS
+internal_method_ref	: type_ref internal_type_ref DOUBLE_COLON name1 OPEN_PARENS param_list CLOSE_PARENS
 			  {	
 				TypeRef parent, return_type;
 				parent = (TypeRef) $2;
@@ -743,9 +744,10 @@ internal_method_ref	: type_ref internal_type_ref DOUBLE_COLON name1 OPEN_PARENS 
 					int index = 0;
 					param_array = new Param[param_list.Count];
 					typeref_array = new TypeRef[param_list.Count];
-					foreach (DictionaryEntry entry in param_list) {
-						param_array[index] = entry.Key as Param;
-						typeref_array[index] = entry.Value as TypeRef;
+					foreach (TypeRef type in param_list) {
+						param_array[index] = new Param (ParamAttr.Default, 
+							String.Empty, type.Type);
+						typeref_array[index] = type;
 						index++;
 					}
 				} else {
@@ -756,7 +758,7 @@ internal_method_ref	: type_ref internal_type_ref DOUBLE_COLON name1 OPEN_PARENS 
 				$$ = codegen.GetMethodRef (parent, (string) $4, return_type, param_array, 
 					typeref_array, null);
 			  }
-			;			
+			;
 
 
 methodHead              : D_METHOD methAttr callConv type_ref methodName 
@@ -896,17 +898,24 @@ methodDecl              : D_EMITBYTE int32
 				codegen.CurrentMethod.SetMaxStack ((int) $2);
 			  }
 			| localsHead OPEN_PARENS sigArgs0 CLOSE_PARENS 
-			| localsHead K_INIT OPEN_PARENS named_arg_list CLOSE_PARENS  
+			| localsHead K_INIT OPEN_PARENS arg_list CLOSE_PARENS  
 				{
-					/*
 					ArrayList arg_list = $4 as ArrayList;
-					
+					Local[] local_list;
+
 					if (arg_list != null) {
+						local_list = new Local[arg_list.Count];
+						int index = 0;
 						foreach (DictionaryEntry local in arg_list) {
-							method.AddLocal (local);
+							string name = (string) local.Value;
+							PEAPI.Type type = ((TypeRef) local.Key).Type;
+							local_list[index++] = new Local (name, type);
 						}
+					} else {
+						local_list = new Local[0];
 					}
-					*/
+					
+					codegen.CurrentMethod.AddLocals (local_list, false);
 				}
 			| D_ENTRYPOINT          
 			  { 
@@ -1118,6 +1127,22 @@ instr                   : INSTR_NONE
 			| INSTR_TOK typeSpec 
 			| INSTR_SWITCH OPEN_PARENS labels CLOSE_PARENS 
 			| INSTR_PHI int16s 
+			;
+
+param_list		: /* EMPTY */
+			| type_ref			
+			  { 
+				ArrayList param_list = new ArrayList ();
+				
+				param_list.Add ($1);
+				$$ = param_list; 
+			  }
+			| param_list COMMA type_ref
+			  {
+				ArrayList param_list = (ArrayList) $1;
+				
+				param_list.Add ($3);
+			  }
 			;
 
 param_name		: /* EMPTY */

@@ -1,5 +1,9 @@
 2003-03-15 Jackson Harper <jackson@latitudegeo.com>
 
+	* ILParser.jay: Add param_list definition, use param_list for method refs
+
+2003-03-15 Jackson Harper <jackson@latitudegeo.com>
+
 	* ILParser.jay: de-bacwardificate values passed to add method, 
 	I was setting the return to the parent before, but the parent 
 	value was being set to the return type value so it all worked 
