@@ -1,5 +1,20 @@
 2005-01-11  Jackson Harper  <jackson@ximian.com>
 
+	* TreeView.cs: Still need to draw lines to siblings even if out of
+	the current node is out of the clip.
+
+2005-01-11  Jackson Harper  <jackson@ximian.com>
+
+	* TreeView.cs: When setting the hbar/vbar/grip position use
+	SetBounds so that perform layout is only called once. Also suspend
+	and resume layout so layout is only done once for all controls.
+	- Removed some debug fluff
+	* SizeGrip.cs: Call base implmentation in overriding methods.
+	- When visibility is changed the drawing buffers are killed so we
+	need to redraw.
+
+2005-01-11  Jackson Harper  <jackson@ximian.com>
+
 	* TreeView.cs: Calculate the open node count while drawing. This
 	saves us an entire tree traversal for every paint operation. Use
 	a member var for the open node count so less vars are passed around.

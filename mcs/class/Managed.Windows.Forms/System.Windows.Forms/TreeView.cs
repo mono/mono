@@ -693,7 +693,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		private void DrawNodeLines (TreeNode node, Pen dash, int x, int y, int middle, int item_height, int node_count)
+		private void DrawNodeLines (TreeNode node, bool visible, Pen dash, int x, int y, int middle, int item_height, int node_count)
 		{
 			int ladjust = 9; // left adjust
 			int radjust = 0; // right adjust
@@ -704,6 +704,9 @@ namespace System.Windows.Forms {
 				radjust = 3;
 
 			DeviceContext.DrawLine (dash, x - indent + ladjust, middle, x + radjust, middle);
+
+			if (!visible)
+				return;
 
 			int ly = 0;
 			if (node.PrevNode != null) {
@@ -780,8 +783,8 @@ namespace System.Windows.Forms {
 				ox += 19;
 			}
 
-			if (visible && show_lines)
-				DrawNodeLines (node, dash, x, y, middle, item_height, _n_count);
+			if (show_lines)
+				DrawNodeLines (node, visible, dash, x, y, middle, item_height, _n_count);
 
 			if (visible && ImageList != null) {
 				if (visible)
