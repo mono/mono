@@ -378,8 +378,9 @@ namespace System.Xml.Serialization {
 
 		protected void WriteElementStringRaw (string localName, string ns, byte[] value, XmlQualifiedName xsiType)
 		{
-                        if (value == null)
-			  return ;
+			if (value == null)
+				return;
+
 			WriteStartElement (localName, ns);
 
 			if (xsiType != null)
@@ -468,16 +469,20 @@ namespace System.Xml.Serialization {
 				WriteNullTagEncoded (name, ns);
 		}
 
-		[MonoTODO ("Implement")]
 		protected void WriteNullableStringEncodedRaw (string name, string ns, byte[] value, XmlQualifiedName xsiType)
 		{
-			throw new NotImplementedException ();
+			if (value == null)
+				WriteNullTagEncoded (name, ns);
+			else
+				WriteElementStringRaw (name, ns, value, xsiType);
 		}
 
-		[MonoTODO ("Implement")]
 		protected void WriteNullableStringEncodedRaw (string name, string ns, string value, XmlQualifiedName xsiType)
 		{
-			throw new NotImplementedException ();
+			if (value == null)
+				WriteNullTagEncoded (name, ns);
+			else
+				WriteElementStringRaw (name, ns, value, xsiType);
 		}
 
 		protected void WriteNullableStringLiteral (string name, string ns, string value)
@@ -488,16 +493,20 @@ namespace System.Xml.Serialization {
 				WriteNullTagLiteral (name, ns);
 		}
 
-		[MonoTODO ("Implement")]
 		protected void WriteNullableStringLiteralRaw (string name, string ns, byte[] value)
 		{
-			throw new NotImplementedException ();
+			if (value == null)
+				WriteNullTagLiteral (name, ns);
+			else
+				WriteElementStringRaw (name, ns, value);
 		}
 
-		[MonoTODO ("Implement")]
 		protected void WriteNullableStringLiteralRaw (string name, string ns, string value)
 		{
-			throw new NotImplementedException ();
+			if (value == null)
+				WriteNullTagLiteral (name, ns);
+			else
+				WriteElementStringRaw (name, ns, value);
 		}
 
 		protected void WriteNullTagEncoded (string name)
@@ -508,7 +517,11 @@ namespace System.Xml.Serialization {
 		protected void WriteNullTagEncoded (string name, string ns)
 		{
 			Writer.WriteStartElement (name, ns);
+#if NET_1_1
+			Writer.WriteAttributeString ("nil", XmlSchema.InstanceNamespace, "true");
+#else
 			Writer.WriteAttributeString ("null", XmlSchema.InstanceNamespace, "1");
+#endif
 			Writer.WriteEndElement ();
 		}
 
@@ -519,9 +532,9 @@ namespace System.Xml.Serialization {
 
 		protected void WriteNullTagLiteral (string name, string ns)
 		{
-			Writer.WriteStartElement (name, ns);
+			WriteStartElement (name, ns);
 			Writer.WriteAttributeString ("nil", XmlSchema.InstanceNamespace, "true");
-			Writer.WriteEndElement ();
+			WriteEndElement ();
 		}
 
 		protected void WritePotentiallyReferencingElement (string n, string ns, object o)

@@ -113,6 +113,7 @@ namespace System.Xml.Serialization
 		{
 			// Returns the map for a subtype of this map's type
 
+			objectFullTypeName = objectFullTypeName.Replace ('+','.');
 			if (TypeFullName == objectFullTypeName) return this;
 			for (int n=0; n<_derivedTypes.Count; n++) {
 				XmlTypeMapping map = (XmlTypeMapping) _derivedTypes[n];

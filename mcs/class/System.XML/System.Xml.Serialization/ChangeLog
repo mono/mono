@@ -1,5 +1,12 @@
 2004-05-07  Lluis Sanchez Gual <lluis@ximian.com>
 
+	* XmlSerializationWriter.cs: Implemented some missing methods.
+	  In .NET 1.0, encoded null elements use the attribute null="1", while in
+	  1.1 the attribute is nil="true".
+	* XmlTypeMapping.cs: Little fix for nested classes.
+
+2004-05-07  Lluis Sanchez Gual <lluis@ximian.com>
+
 	* XmlReflectionImporter.cs: Don't reset the internal tables at every
 	  ImportMembersMapping call. This fixes bug #58112. The problem is that
 	  it imported two different arrays (only different in the array item
