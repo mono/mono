@@ -1,5 +1,9 @@
 2005-02-14  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XPathNavigatorTests.cs : new test code was broken.
+
+2005-02-14  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XPathNavigatorTests.cs : added SignificantWhitespaceConstruction().
 
 2004-09-13  Atsushi Enomoto <atsushi@ximian.com>
