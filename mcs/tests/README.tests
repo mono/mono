@@ -364,6 +364,11 @@ test-212.cs
 
 Params overload resolution with implicit user conversion
 
+test-213.cs
+-----------
+
+Unboxing struct from interface type; bug #47822.
+
 verify-1.cs
 -----------
 Test whether we do not jump out of the method in a Try/Finally block.

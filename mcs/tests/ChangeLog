@@ -1,3 +1,7 @@
+2003-08-25  Martin Baulig  <martin@ximian.com>
+
+	* test-213.cs: New test for bug #47822.
+
 2003-08-22  Martin Baulig  <martin@ximian.com>
 
 	* test-154.cs: Added testcase for bug #46949.
