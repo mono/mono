@@ -1,5 +1,21 @@
 2002-04-12  Duncan Mak  <duncan@ximian.com>
 
+	* AssemblyAlgorithmIdAttribute.cs: Fixed typo in AlgorithmId
+	property.
+
+	* AssemblyDelaySignAttribute.cs: Fixed type in DelaySign
+	attribute.
+
+	* AssemblyFileVersionAttribute.cs: Renamed FileVersion property to
+	Version.
+
+	* BindingFlags.cs: Added missing value "PutRefDispProperty".
+
+	* FieldAttributes.cs: Removed value "HasSecurity".
+
+	* ManifestResourceInfo.cs: Added missing properties FileName,
+	ReferencedAssembly and ResourceLocation.
+
 	* TargetInvocationException.cs: Added the missing constructors.
 
 Fri Apr 12 18:32:34 CEST 2002 Paolo Molaro <lupus@ximian.com>

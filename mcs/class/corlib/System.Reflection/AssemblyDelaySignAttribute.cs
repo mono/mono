@@ -22,7 +22,7 @@ namespace System.Reflection
 		}
 
 		// Property
-		public bool DelaySIgn
+		public bool DelaySign
 		{
 			get { return delay; }
 		}

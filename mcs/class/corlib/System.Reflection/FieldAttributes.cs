@@ -83,11 +83,11 @@ namespace System.Reflection {
 
 		/// <summary>
 		/// </summary>
-		HasFieldMarshal = 4096,
+		HasFieldMarshal = 4096,	
 
 		/// <summary>
 		/// </summary>
-		HasSecurity = 16384,
+		// HasSecurity = 16384,
 
 		/// <summary>
 		/// </summary>

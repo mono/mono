@@ -21,7 +21,7 @@ namespace System.Reflection
 		}
 
 		// Property
-		public string FileVersion
+		public string Version
 		{
 			get { return name; }
 		}

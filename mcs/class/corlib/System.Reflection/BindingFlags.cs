@@ -69,8 +69,10 @@ namespace System.Reflection {
 		/// <summary>
 		/// </summary>
 		SetProperty = 0x00002000,
-
+	       
 		PutDispProperty = 0x00004000,
+
+		PutRefDispProperty = 0x00008000,
 
 		/// <summary>
 		/// </summary>

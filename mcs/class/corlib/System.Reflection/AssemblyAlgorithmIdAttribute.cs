@@ -31,7 +31,7 @@ namespace System.Reflection
 		
 		// Property
 		[CLSCompliant (false)]
-		public uint Algorithmid
+		public uint AlgorithmId
 		{
 			get { return id; }
 		}
