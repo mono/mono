@@ -10,7 +10,10 @@
 
 using NUnit.Framework;
 using System;
+using System.IO;
+using System.Reflection;
 using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Security.Principal;
 
 namespace MonoTests.System.Security.Principal {
@@ -174,6 +177,48 @@ namespace MonoTests.System.Security.Principal {
 			ISerializable s = (id as ISerializable);
 			AssertNotNull ("ISerializable", s);
 #endif
+		}
+
+		// This is clearly a hack - but I've seen it too many times so I think we 
+		// better support it too :(
+		// http://dotnetjunkies.com/WebLog/chris.taylor/archive/2004/02/25/7945.aspx
+		public string[] GetWindowsIdentityRoles (WindowsIdentity identity)
+		{
+			object result = typeof(WindowsIdentity).InvokeMember ("_GetRoles",
+				BindingFlags.Static | BindingFlags.InvokeMethod | BindingFlags.NonPublic,
+				null, identity, new object[] {identity.Token}, null);
+			return (string[]) result;
+		}
+
+		[Test]
+		public void GetRolesViaReflection () 
+		{
+			WindowsIdentity wi = WindowsIdentity.GetCurrent ();
+			WindowsPrincipal wp = new WindowsPrincipal (wi);
+			string[] roles = GetWindowsIdentityRoles (wi);
+			foreach (string role in roles) {
+				// somehow I got a null in there ?
+				if (role != null)
+					Assert (role, wp.IsInRole (role));
+			}
+		}
+
+		[Test]
+		public void SerializeRoundTrip () 
+		{
+			WindowsIdentity wi = WindowsIdentity.GetCurrent ();
+			MemoryStream ms = new MemoryStream ();
+			IFormatter formatter = new BinaryFormatter ();
+			formatter.Serialize (ms, wi);
+			ms.Position = 0;
+			WindowsIdentity back = (WindowsIdentity) formatter.Deserialize (ms);
+			AssertEquals ("AuthenticationType", wi.AuthenticationType, back.AuthenticationType);
+			AssertEquals ("IsAnonymous", wi.IsAnonymous, back.IsAnonymous);
+			AssertEquals ("IsAuthenticated", wi.IsAuthenticated, back.IsAuthenticated);
+			AssertEquals ("IsGuest", wi.IsGuest, back.IsGuest);
+			AssertEquals ("IsSystem", wi.IsSystem, back.IsSystem);
+			AssertEquals ("Name", wi.Name, back.Name);
+			// note: token may be different (no compare)
 		}
 	}
 }
