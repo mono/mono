@@ -1,4 +1,9 @@
-2002-06-29  Nick Drochak  <ndrochak@gol.com>
+2003-06-29  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* PermissionSet.cs: Added missing "virtual" to Count, IsSynchronized 
+	and SyncRoot.
+
+2003-06-29  Nick Drochak  <ndrochak@gol.com>
 
 	* NamedPermissionSet.cs : Fix buglet/typo/thinko. Thank you unit tests.
 

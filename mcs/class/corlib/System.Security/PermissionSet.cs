@@ -220,11 +220,11 @@ namespace System.Security {
 			return null;
 		}
 
-		public int Count {
+		public virtual int Count {
 			get { return list.Count; }
 		}
 
-		public bool IsSynchronized {
+		public virtual bool IsSynchronized {
 			get { return list.IsSynchronized; }
 		}
 
@@ -232,7 +232,7 @@ namespace System.Security {
 			get { return false; } // always false
 		}
 
-		public object SyncRoot {
+		public virtual object SyncRoot {
 			get { return list.SyncRoot; }
 		}
 
