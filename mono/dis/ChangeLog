@@ -1,3 +1,10 @@
+2004-08-18  Jambunathan K  <kjambunathan@novell.com>
+	* get.c: Changed dis_stringify_param to emit [opt] for parameters
+	  that are marked as Optional.
+
+	* dump.c: Fixed dump_table_constant so that the parent field's
+	  description is correctly displayed.
+
 2004-08-08  Zoltan Varga  <vargaz@freemail.hu>
 
 	* get.c (get_typespec): Append '*' to pointer types. Fixes #62331.

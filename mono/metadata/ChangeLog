@@ -1,3 +1,7 @@
+2004-08-18  Jambunathan K  <kjambunathan@novell.com>
+	* tabledefs.h: Corretced PARAM_ATTRIBUTE_OPTIONAL to the right
+	value 0x0010.
+
 2004-08-18 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* appdomain.c: use the Tls function for appdomain too,
