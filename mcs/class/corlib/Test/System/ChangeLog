@@ -1,5 +1,13 @@
 2002-05-21  Nick Drochak  <ndrochak@gol.com>
 
+	* MathTest.cs:
+		(TestPow): Add try-catch to determine where we are throwing.
+		(TestLog): Re-enable failing test
+		(TestLog2): same although this test still fails on mono. Not
+		sure what the proper value	to use here. It works on MS.NET
+
+2002-05-21  Nick Drochak  <ndrochak@gol.com>
+
 	* MathTest.cs: Better reporting of failures
 	* Int64Test.cs: Add try-catch to determine where we are throwing.
 

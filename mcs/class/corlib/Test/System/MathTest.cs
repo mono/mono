@@ -277,8 +277,7 @@ public class MathTest : TestCase {
 		double a = Math.Log(x, y);
 		double b = -0.83251695325303621;
 
-		//Assert(a + " != " + b + " because diff is " + Math.Abs(a - b) * 10000000000.0, 
-		//      (Math.Abs(a - b) <= double.Epsilon));
+		Assert(a + " != " + b + " because diff is " + Math.Abs(a - b), (Math.Abs(a - b) <= double.Epsilon));
 		Assert(double.IsNaN(Math.Log(-1, y)));
 		Assert(double.IsNaN(Math.Log(double.NaN, y)));
 		Assert(double.IsNaN(Math.Log(x, double.NaN)));
@@ -308,23 +307,36 @@ public class MathTest : TestCase {
 	}	
 
  	public void TestPow() {
-		double a = Math.Pow(y, x);
-		double b = 1.363609446060212;
+		int iTest = 1;
 
-		Assert(a.ToString("G99") + " != " + b.ToString("G99"), 
-		       (Math.Abs(a - b) <= double.Epsilon));
-		Assert(double.IsNaN(Math.Pow(y, double.NaN)));
-		Assert(double.IsNaN(Math.Pow(double.NaN, x)));
-		Assert(Math.Pow(double.NegativeInfinity, 1) == double.NegativeInfinity);
-		Assert(Math.Pow(double.NegativeInfinity, 2) == double.PositiveInfinity);
+		try {
+			double a = Math.Pow(y, x);
+			double b = 1.363609446060212;
 
-		// MS docs say this should be 0
-		Assert(double.IsNaN(Math.Pow(1, double.NegativeInfinity)));
-		Assert(Math.Pow(double.PositiveInfinity, double.NegativeInfinity) == 0);
-		Assert(Math.Pow(double.PositiveInfinity, 1) == double.PositiveInfinity);
+			Assert(a.ToString("G99") + " != " + b.ToString("G99"), (Math.Abs(a - b) <= double.Epsilon));
+			iTest++;
+			Assert (double.IsNaN(Math.Pow(y, double.NaN)));
+			iTest++;
+			Assert (double.IsNaN(Math.Pow(double.NaN, x)));
+			iTest++;
+			Assert ("Math.Pow(double.NegativeInfinity, 1) should be NegativeInfinity", double.IsNegativeInfinity(Math.Pow(double.NegativeInfinity, 1)));
+			iTest++;
+			Assert ("Math.Pow(double.NegativeInfinity, 2) should be PositiveInfinity", double.IsPositiveInfinity(Math.Pow(double.NegativeInfinity, 2)));
 
-		// MS docs say this should be PositiveInfinity
-		Assert(double.IsNaN(Math.Pow(1, double.PositiveInfinity)));
+			// MS docs say this should be 0
+			iTest++;
+			Assert(double.IsNaN(Math.Pow(1, double.NegativeInfinity)));
+			iTest++;
+			AssertEquals ("Math.Pow(double.PositiveInfinity, double.NegativeInfinity)", (double)0, Math.Pow(double.PositiveInfinity, double.NegativeInfinity));
+			iTest++;
+			Assert ("Math.Pow(double.PositiveInfinity, 1) should be PositiveInfinity", double.IsPositiveInfinity(Math.Pow(double.PositiveInfinity, 1)));
+
+			// MS docs say this should be PositiveInfinity
+			iTest++;
+			Assert ("Math.Pow(1, double.PositiveInfinity) should be NaN", double.IsNaN(Math.Pow(1, double.PositiveInfinity)));
+		} catch (Exception e) {
+			Fail ("Unexpected exception at iTest=" + iTest + ". e=" + e);
+		}
 	}	
 
 	public void TestByteMax() {
