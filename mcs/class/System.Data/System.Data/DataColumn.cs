@@ -19,7 +19,7 @@ namespace System.Data
 	/// <summary>
 	/// Summary description for DataColumn.
 	/// </summary>
-	public class DataColumn
+	public class DataColumn : MarshalByValueComponent
 	{		
 		#region Fields
 
@@ -28,9 +28,7 @@ namespace System.Data
 		private long autoIncrementSeed = 0;
 		private long autoIncrementStep = 1;
 		private string caption = null;
-		// FIXME: what does ms.net do for default of columnMapping
-		//        when not specified by the constructor?
-		private MappingType columnMapping = MappingType.SimpleContent; // default?
+		private MappingType columnMapping = MappingType.Element;
 		private string columnName = null;
 		private Type dataType = null;
 		private object defaultValue = null;
@@ -59,8 +57,7 @@ namespace System.Data
 
 		public DataColumn(string columnName, Type dataType): this(columnName)
 		{
-			if(dataType == null)
-			{
+			if(dataType == null) {
 				throw new ArgumentNullException();
 			}
 			
@@ -85,12 +82,10 @@ namespace System.Data
 		
 		public bool AllowDBNull
 		{
-			get
-			{
+			get {
 				return allowDBNull;
 			}
-			set
-			{
+			set {
 				allowDBNull = value;
 			}
 		}
@@ -106,12 +101,10 @@ namespace System.Data
 		///	</remarks>
 		public bool AutoIncrement
 		{
-			get
-			{
+			get {
 				return autoIncrement;
 			}
-			set
-			{
+			set {
 				autoIncrement = value;
 				if(autoIncrement == true)
 				{
@@ -132,75 +125,63 @@ namespace System.Data
 
 		public long AutoIncrementSeed
 		{
-			get
-			{
+			get {
 				return autoIncrementSeed;
 			}
-			set
-			{
+			set {
 				autoIncrementSeed = value;
 			}
 		}
 
 		public long AutoIncrementStep
 		{
-			get
-			{
+			get {
 				return autoIncrementStep;
 			}
-			set
-			{
+			set {
 				autoIncrementStep = value;
 			}
 		}
 
 		public string Caption 
 		{
-			get
-			{
+			get {
 				if(caption == null)
 					return columnName;
 				else
 					return caption;
 			}
-			set
-			{
+			set {
 				caption = value;
 			}
 		}
 
 		public virtual MappingType ColumnMapping
 		{
-			get
-			{
+			get {
 				return columnMapping;
 			}
-			set
-			{
+			set {
 				columnMapping = value;
 			}
 		}
 
 		public string ColumnName
 		{
-			get
-			{
+			get {
 				return columnName;
 			}
-			set
-			{
+			set {
 				columnName = value;
 			}
 		}
 
 		public Type DataType
 		{
-			get
-			{
+			get {
 				return dataType;
 			}
-			set
-			{
+			set {
 				if(AutoIncrement == true && 
 				   Type.GetTypeCode(value) != TypeCode.Int32)
 				{
@@ -216,56 +197,47 @@ namespace System.Data
 		/// <remarks>When AutoIncrement is set to true, there can be no default value.</remarks>
 		public object DefaultValue
 		{
-			get
-			{
+			get {
 				return defaultValue;
 			}
-			set
-			{
+			set {
 				defaultValue = value;
 			}
 		}
 
 		public string Expression
 		{
-			get
-			{
+			get {
 				return expression;
 			}
-			set
-			{
+			set {
 				expression = value;
 			}
 		}
 
 		public PropertyCollection ExtendedProperties
 		{
-			get
-			{
+			get {
 				return extendedProperties;
 			}
 		}
 
 		public int MaxLength
 		{
-			get
-			{
+			get {
 				return maxLength;
 			}
-			set
-			{
+			set {
 				maxLength = value;
 			}
 		}
 
 		public string Namespace
 		{
-			get
-			{
+			get {
 				return nameSpace;
 			}
-			set
-			{
+			set {
 				nameSpace = value;
 			}
 		}
@@ -273,52 +245,44 @@ namespace System.Data
 		//Need a good way to set the Ordinal when the column is added to a columnCollection.
 		public int Ordinal
 		{
-			get
-			{
+			get {
 				return ordinal;
 			}
 		}
 
 		public string Prefix
 		{
-			get
-			{
+			get {
 				return prefix;
 			}
-			set
-			{
+			set {
 				prefix = value;
 			}
 		}
 
 		public bool ReadOnly
 		{
-			get
-			{
+			get {
 				return readOnly;
 			}
-			set
-			{
+			set {
 				readOnly = value;
 			}
 		}
 
 		public DataTable Table
 		{
-			get
-			{
+			get {
 				return table;
 			}
 		}
 
 		public bool Unique
 		{
-			get
-			{
+			get {
 				return unique;
 			}
-			set
-			{
+			set {
 				unique = value;
 			}
 		}
@@ -352,14 +316,10 @@ namespace System.Data
 		[MonoTODO]
 		public override string ToString()
 		{
-			if(expression != null && expression != string.Empty)
-			{
+			if (expression != null)
 				return expression;
-			}
-			else
-			{
-				return columnName;
-			}
+			
+			return columnName;
 		}
 
 		[MonoTODO]

@@ -22,8 +22,8 @@ namespace System.Data
 	/// Represents one table of in-memory data.
 	/// </summary>
 	[Serializable]
-	public class DataTable : ISerializable
-                /* MarshalByValueComponent, IListSource, ISupportInitialize,*/
+		public class DataTable : ISerializable
+                //MarshalByValueComponent, IListSource, ISupportInitialize
 	{
 		
 		private bool _caseSensitive;
@@ -91,45 +91,17 @@ namespace System.Data
 		/// Intitalizes a new instance of the DataTable class with the specified table name.
 		/// </summary>
 		
-		public DataTable(string tableName)
+		public DataTable(string tableName) : this ()
 		{
-			// _dataSet = null;     // FIXME: temporarily commented
-			// _defaultView = null; // FIXME: temporarily commented
-			_columnCollection = new DataColumnCollection(this);
-			//_constraintCollection = new ConstraintCollection(); TODO: uncomment after ConstraintCollection is built.
-			_extendedProperties = null;
 			_tableName = tableName;
-			_nameSpace = null;
-			_caseSensitive = false;
-			_displayExpression = null;
-			_primaryKey = null;
-			
-			// FIXME: temporarily commented DataTableRelationCollection
-			// _childRelations = new DataTableRelationCollection();
-			// _parentRelations = new DataTableRelationCollection();
-
-			//_nextRowID = 1;
-			//_elementColumnCount = 0;
-			//_caseSensitiveAmbient = true;
-			//_culture = null; // _locale??
-			//_compareFlags = 25; // why 25??
-			//_fNestedInDataset = true; // what?
-			_encodedTableName = tableName;
-			//_xmlText = null; //??
-			//_colUnique = null; //??
-			//_textOnly = false; //??
-			//repeatableElement = false; //??
-			//zeroIntegers[]
-			//zeroColumns[]
-			//primaryIndex[]
-			//delayedSetPrimaryKey = null; //??
 		}
 
 		/// <summary>
 		/// Initializes a new instance of the DataTable class with the SerializationInfo and the StreamingContext.
 		/// </summary>
 		
-		protected DataTable(SerializationInfo info,	StreamingContext context)
+		protected DataTable(SerializationInfo info, StreamingContext context)
+			: this ()
 		{
 			//
 			// TODO: Add constructor logic here
@@ -142,12 +114,10 @@ namespace System.Data
 		
 		public bool CaseSensitive 
 		{
-			get
-			{
+			get {
 				return _caseSensitive;
 			}
-			set
-			{
+			set {
 				_caseSensitive = value;
 			}
 		}
@@ -159,8 +129,7 @@ namespace System.Data
 		
 		public DataRelationCollection ChildRelations
 		{
-			get
-			{
+			get {
 				// FIXME: temporarily commented to compile
 				// return (DataRelationCollection)_childRelations;
 				throw new NotImplementedException ();
@@ -173,8 +142,7 @@ namespace System.Data
 		
 		public DataColumnCollection Columns
 		{
-			get
-			{
+			get {
 				return _columnCollection;
 			}
 		}
@@ -185,8 +153,7 @@ namespace System.Data
 		
 		public ConstraintCollection Constraints
 		{
-			get
-			{
+			get {
 				return _constraintCollection;
 			}
 		}
@@ -227,12 +194,10 @@ namespace System.Data
 		
 		public string DisplayExpression 
 		{
-			get
-			{
+			get {
 				return _displayExpression;
 			}
-			set
-			{
+			set {
 				_displayExpression = value;
 			}
 		}
@@ -242,8 +207,7 @@ namespace System.Data
 		/// </summary>
 		public PropertyCollection ExtendedProperties
 		{
-			get
-			{
+			get {
 				return _extendedProperties;
 			}
 		}
@@ -255,8 +219,7 @@ namespace System.Data
 		/// </summary>
 		public bool HasErrors
 		{
-			get
-			{
+			get {
 				return _hasErrors;
 			}
 		}
@@ -267,12 +230,10 @@ namespace System.Data
 		/// </summary>
 		public CultureInfo Locale
 		{
-			get
-			{
+			get {
 				return _locale;
 			}
-			set
-			{
+			set {
 				_locale = value;
 			}
 		}
@@ -282,12 +243,10 @@ namespace System.Data
 		/// </summary>
 		public int MinimumCapacity
 		{
-			get
-			{
+			get {
 				return _minimumCapacity;
 			}
-			set
-			{
+			set {
 				_minimumCapacity = value;
 			}
 		}
@@ -298,12 +257,10 @@ namespace System.Data
 		/// </summary>
 		public string Namespace
 		{
-			get
-			{
+			get {
 				return _nameSpace;
 			}
-			set
-			{
+			set {
 				_nameSpace = value;
 			}
 		}
@@ -314,8 +271,7 @@ namespace System.Data
 		/// </summary>
 		public DataRelationCollection ParentRelations
 		{
-			get
-			{	
+			get {	
 				// FIXME: temporarily commented to compile
 				// return _parentRelations;
 				throw new NotImplementedException ();
@@ -328,12 +284,10 @@ namespace System.Data
 		/// </summary>
 		public string Prefix
 		{
-			get
-			{
+			get {
 				return _prefix;
 			}
-			set
-			{
+			set {
 				_prefix = value;
 			}
 		}
@@ -344,12 +298,10 @@ namespace System.Data
 		/// </summary>
 		public DataColumn[] PrimaryKey
 		{
-			get
-			{
+			get {
 				return _primaryKey;
 			}
-			set
-			{
+			set {
 				_primaryKey = value;
 			}
 		}
@@ -360,8 +312,7 @@ namespace System.Data
 		
 		public DataRowCollection Rows
 		{
-			get
-			{
+			get {
 				return _rows;
 			}
 		}
@@ -373,12 +324,10 @@ namespace System.Data
 		
 		public virtual ISite Site
 		{
-			get
-			{
+			get {
 				return _site;
 			}
-			set
-			{
+			set {
 				_site = value;
 			}
 		}
@@ -389,12 +338,10 @@ namespace System.Data
 		
 		public string TableName
 		{
-			get
-			{
+			get {
 				return _tableName;
 			}
-			set
-			{
+			set {
 				_tableName = value;
 			}
 		}
@@ -402,8 +349,7 @@ namespace System.Data
 		/* FIXME: implement IListSource
 		public bool IListSource.ContainsListCollection
 		{
-			get
-			{
+			get {
 				return _containsListCollection;
 			}
 		}
@@ -443,6 +389,7 @@ namespace System.Data
 		
 		public void Clear()
 		{
+			_rows.Clear ();
 		}
 
 		/// <summary>
@@ -520,10 +467,10 @@ namespace System.Data
 		/// Gets an array of DataRow objects that contain errors.
 		/// </summary>
 		
-		//public DataRow[] GetErrors()
-		//{
-		//	return _rows;
-		//}
+		public DataRow[] GetErrors()
+		{
+			throw new NotImplementedException ();
+		}
 
 		/// <summary>
 		/// This member supports the .NET Framework infrastructure
@@ -580,8 +527,8 @@ namespace System.Data
 		/// </summary>
 		public DataRow NewRow()
 		{
-			DataRow dataRow = new DataRow();
-			dataRow.SetTable(this);
+			DataRow dataRow = new DataRow ();
+			dataRow.SetTable (this);
 			return dataRow;
 		}
 
