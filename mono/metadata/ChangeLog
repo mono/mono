@@ -1,4 +1,7 @@
-
+Tue Jan 8 22:47:44 EST 2002 Matt Kimball <matt@kimball.net>
+	* object.c: mono_string_new should return a NULL when the string 
+	passed in is NULL -- not try to deference it.
+	
 Sat Jan 5 15:48:04 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* icall.c: hack to make IsSubType work for TypeBuilders.
