@@ -133,6 +133,14 @@ namespace System.Reflection.Emit {
 			}
 			return retval;
 		}
+		
+		internal override int GetParameterCount ()
+		{
+			if (parameters == null)
+				return 0;
+			
+			return parameters.Length;
+		}
 
 		public Module GetModule () {
 			return type.Module;

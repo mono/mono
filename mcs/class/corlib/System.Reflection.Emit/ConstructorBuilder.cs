@@ -69,6 +69,15 @@ namespace System.Reflection.Emit {
 
 			return retval;
 		}
+		
+		internal override int GetParameterCount ()
+		{
+			if (parameters == null)
+				return 0;
+			
+			return parameters.Length;
+		}
+		
 		public override Object Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture) {
 			throw not_supported ();
 		}

@@ -418,9 +418,9 @@ namespace System.Reflection.Emit {
 			if (constructor.DeclaringType.Module == module)
 				add_token_fixup (constructor);
 			emit_int (token);
-			ParameterInfo[] mparams = constructor.GetParameters();
-			if ((opcode.StackBehaviourPop == StackBehaviour.Varpop) && (mparams != null))
-				cur_stack -= mparams.Length;
+			
+			if (opcode.StackBehaviourPop == StackBehaviour.Varpop)
+				cur_stack -= constructor.GetParameterCount ();
 		}
 		
 		public virtual void Emit (OpCode opcode, double val)
@@ -622,9 +622,9 @@ namespace System.Reflection.Emit {
 			emit_int (token);
 			if (method.ReturnType != void_type)
 				cur_stack ++;
-			ParameterInfo[] mparams = method.GetParameters();
-			if ((opcode.StackBehaviourPop == StackBehaviour.Varpop) && (mparams != null))
-				cur_stack -= mparams.Length;
+
+			if (opcode.StackBehaviourPop == StackBehaviour.Varpop)
+				cur_stack -= method.GetParameterCount ();
 		}
 
 		[CLSCompliant(false)]

@@ -1,3 +1,8 @@
+2003-12-29 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* MethodBuilder.cs, ConstructorBuilder.cs: Override GetParameterCount.
+	* ILGenerator.cs: Use GetParameterCount.
+
 2003-12-20  Zoltan Varga  <vargaz@freemail.hu>
 
 	* AssemblyBuilder.cs (AddModule): New internal method to support 
