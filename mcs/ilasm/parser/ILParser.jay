@@ -420,8 +420,7 @@ namespace_head		: D_NAMESPACE comp_name
                           }
 			;
 
-class_all		: class_head OPEN_BRACE class_decls
-                          CLOSE_BRACE
+class_all		: class_head OPEN_BRACE class_decls CLOSE_BRACE
                           {
                                 codegen.CompleteClass ();
                           }
@@ -430,7 +429,7 @@ class_all		: class_head OPEN_BRACE class_decls
 class_head 		: D_CLASS class_attr id typars_clause extends_clause
                           impl_clause
                           {
-                                if ($4 != null) {
+                                if ($5 != null) {
 					codegen.AddClass ((TypeAttr) $2, (string) $3, 
 						((TypeRef)$5).Type as Class, null);
 				} else {
@@ -442,6 +441,15 @@ class_head 		: D_CLASS class_attr id typars_clause extends_clause
 					foreach (TypeRef type_ref in impl_list)
 						codegen.CurrentClass.AddImplementedInterface (type_ref.Type as Class);
 				}
+
+                                if ($4 != null) {
+                                        ArrayList typars_list = (ArrayList) $4;
+                                        foreach (DictionaryEntry entry in typars_list) {
+                                                TypeRef type = (TypeRef) entry.Key;
+                                                string name = (string) entry.Value;
+                                                codegen.CurrentClass.AddGenericParameter (type.Type, name);
+                                        }
+                                }
                           }
 			;
 
@@ -525,8 +533,8 @@ formal_typars           : formal_typar
                         ;
 
 
-formal_typar            : type
-                        | type id
+formal_typar            : type          { $$ = new DictionaryEntry ($1, null); }
+                        | type id       { $$ = new DictionaryEntry ($1, $2); }
                         ;
                         
 class_refs		: class_ref
@@ -551,13 +559,13 @@ slashed_name		: comp_name
 
 class_ref		: OPEN_BRACKET comp_name CLOSE_BRACKET slashed_name
                           {
-                                PEAPI.Type type = codegen.ExternTable.GetClass ((string) $2, (string)$4);
-                                $$ = new TypeRef (type, (string) $4);
+                                Class klass = codegen.ExternTable.GetClass ((string) $2, (string)$4);
+                                $$ = new ClassRef (klass, (string) $4);
                           }
 			| OPEN_BRACKET D_MODULE comp_name CLOSE_BRACKET slashed_name
 			| slashed_name
                           {
-                                $$ = new TypeRef (codegen.ClassTable.GetReference ((string) $1, null),
+                                $$ = new ClassRef (codegen.ClassTable.GetReference ((string) $1, null),
 					(string) $1);
                           }
 			;
