@@ -1,25 +1,46 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="iso-8859-1"?>
 
-<!--
-    This is the build file of Npgsql
--->
+<!-- NAnt build file for Npgsql.dll -->
 
-<project name="Npgsql" default="build" basedir=".">
+<project name="Npgsql" default="build">
+	<property name="debug" value="false"/>
 
-    <property name="build.dir" value="build" />
-    <property name="assemblyname" value="Npgsql" />
-    
-    <target name="clean" description="cleans the build directory">
-        <delete dir="${build.dir}" verbose="true" failonerror="true"/>
-    </target>
-    
-    <target name="build">
-        <!--<mkdir dir="${build.dir}" />-->
-        <csc target="library" output="..\lib\${assemblyname}.dll" debug="true">
-            <sources>
-                <includes name="*.cs" />
-            </sources>
-        </csc>
-    </target>
+	<target name="build">
+		<csc target="library" output="../lib/Npgsql.dll" debug="${debug}">
+			<arg value="/nowarn:1595"/>
+			<arg value="/nowarn:0067"/>
+			<arg value="/nowarn:0109"/>
+			<arg value="/nowarn:0169"/>
+			<arg value="/nowarn:0649"/>
+			<arg value="/unsafe"/>
+			<arg value="/noconfig"/>
+			<arg value="/r:System.dll"/>
+			<arg value="/r:System.Xml.dll"/>
+			<arg value="/r:System.Data.dll"/>
+			<sources>
+				<includes name="**/*.cs"/> 
+				<excludes name="Test/**"/>
+				
+			</sources>
+			<references>
+				<includes name="../lib/corlib.dll"/>
+				<includes name="../lib/System.dll"/>
+				<includes name="../lib/System.Xml.dll"/>
+				<includes name="../lib/System.Data.dll"/>
+			</references>
+		</csc>
+		<copy file="../lib/System.Data.dll" tofile="Test/System.Data.dll"/>
+		<copy file="../lib/Npgsql.dll" tofile="Test/Npgsql.dll"/>
+		<copy file="../lib/Npgsql.dll" tofile="Npgsql.dll"/>
+		<copy file="../lib/Npgsql.dll" tofile="../System.Data/Test/Npgsql.dll"/>
+	</target>
+	<target name="test" depends="build">
+		<nant basedir="Test" target="test"/>
+	</target>
+	<target name="clean">
+		<delete file="Test/System.Data.dll" failonerror="false"/>
+		<delete file="../lib/Npgsql.dll" failonerror="false"/>
+		<delete file="Test/Npgsql.dll" failonerror="false"/>
+
+	</target>
 </project>
-
