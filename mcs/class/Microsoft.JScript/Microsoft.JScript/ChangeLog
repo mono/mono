@@ -1,5 +1,6 @@
 2005-01-06  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
+	* BooleanObject.cs: implement ctr's.
 	* BooleanPrototype.cs: back to M.J namespace. Implement contructor
 	property, toString and valueOf, add AssertType.
 
