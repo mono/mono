@@ -8,6 +8,7 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "mph.h"
 
@@ -137,7 +138,7 @@ Mono_Posix_Stdlib_ftell (FILE* stream)
 }
 
 fpos_t*
-Mono_Posix_Stdlib_CreateFilePosition ()
+Mono_Posix_Stdlib_CreateFilePosition (void)
 {
 	fpos_t* pos = malloc (sizeof(fpos_t));
 	return pos;

@@ -11,19 +11,19 @@ G_BEGIN_DECLS
 typedef void (*mph_sighandler_t)(int);
 
 mph_sighandler_t
-Mono_Posix_Stdlib_SIG_DFL ()
+Mono_Posix_Stdlib_SIG_DFL (void)
 {
 	return SIG_DFL;
 }
 
 mph_sighandler_t
-Mono_Posix_Stdlib_SIG_ERR ()
+Mono_Posix_Stdlib_SIG_ERR (void)
 {
 	return SIG_ERR;
 }
 
 mph_sighandler_t
-Mono_Posix_Stdlib_SIG_IGN ()
+Mono_Posix_Stdlib_SIG_IGN (void)
 {
 	return SIG_IGN;
 }

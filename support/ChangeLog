@@ -1,5 +1,10 @@
 2005-01-03  Jonathan Pryor  <jonpryor@vt.edu>
 
+	* signal.c, stdio.c: Remove "function declaration isn't a prototype" warnings.
+	* unistd.c: Check for presence of gethostname and sethostname.
+
+2005-01-03  Jonathan Pryor  <jonpryor@vt.edu>
+
 	* mph.h, x-struct-str.c: Add "const" to parameters to remove 
 	  "warning: passing arg [2|4]...discards qualifiers" message.
 

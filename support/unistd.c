@@ -187,19 +187,23 @@ Mono_Posix_Syscall_sethostid (gint64 hostid)
 }
 #endif /* def HAVE_SETHOSTID */
 
+#ifdef HAVE_GETDOMAINNAME
 gint32
 Mono_Posix_Syscall_getdomainname (char *name, mph_size_t len)
 {
 	mph_return_if_size_t_overflow (len);
 	return getdomainname (name, (size_t) len);
 }
+#endif /* def HAVE_GETDOMAINNAME */
 
+#ifdef HAVE_SETDOMAINNAME
 gint32
 Mono_Posix_Syscall_setdomainname (const char *name, mph_size_t len)
 {
 	mph_return_if_size_t_overflow (len);
 	return setdomainname (name, (size_t) len);
 }
+#endif /* def HAVE_SETDOMAINNAME */
 
 gint32
 Mono_Posix_Syscall_truncate (const char *path, mph_off_t length)
