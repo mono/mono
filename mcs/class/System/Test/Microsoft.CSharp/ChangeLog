@@ -1,3 +1,7 @@
+2002-12-08 Jackson Harper <jackson@latitudegeo.com>
+
+	* AllTests.cs: Remove references to soon to be removed Tests
+
 2002-11-13 Jackson Harper <jackson@latitudegeo.com>
 
 	* CompilerTest.cs: Added more tests
