@@ -1,8 +1,14 @@
+2002-11-28  Alejandro Sánchez Acosta  <raciel@es.gnu.org>
+
+	* Registry.cs: Added missed field.
+
+
 2002-11-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* RegistryHive.cs: patch from Jackson Harper that fixes compilation.
 
-  2002-11-27  DennisHayes <dennish@raytek.com>	
+2002-11-27  DennisHayes <dennish@raytek.com>	
+
 	* checkin for Alexandre Pigolkine (pigolkine@gmx.de) with minor changes
 	* needed for System.Windows.Forms
 	

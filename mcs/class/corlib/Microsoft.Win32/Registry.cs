@@ -15,6 +15,7 @@ namespace Microsoft.Win32
 		public static readonly RegistryKey CurrentUser;
 		public static readonly RegistryKey DynData;
 		public static readonly RegistryKey LocalMachine;
+		public static readonly RegistryKey PerformanceData;
 		public static readonly RegistryKey Users;
 	}
 }
