@@ -1,3 +1,9 @@
+2004-12-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* RSA.cs: Throw the proper CryptographicException exception when 
+	exporting a private key without CRT parameters, while keeping the
+	ArgumentNullException when the private exponent (D) is missing.
+
 2004-12-06  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* RSACryptoServiceProvider.cs: Merge from HEAD.
