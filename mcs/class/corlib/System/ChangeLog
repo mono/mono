@@ -1,3 +1,7 @@
+2003-10-08 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* DateTime.cs (ToString): Total rewrite, fixes #49358.
+
 2003-10-03  Zoltan Varga  <vargaz@freemail.hu>
 
 	* AppDomain.cs: Change accessibility of DoTypeResolve to fix build.
