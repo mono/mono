@@ -1,3 +1,10 @@
+2003-12-04  Jackson Harper <jackson@ximian.com>
+
+	* HtmlInputRadioButton.cs: Lookup name in postadata and compare to
+	value. This is because radio button groups are created by setting
+	the name to the same value with each button, then on postback the
+	value of the name is the id of the selected radio button. 
+	
 2003-12-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HtmlContainerControl.cs: encode/decode InnerText. Fixes bug #51653.

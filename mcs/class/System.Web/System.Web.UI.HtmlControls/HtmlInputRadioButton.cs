@@ -44,7 +44,7 @@ namespace System.Web.UI.HtmlControls{
 		bool IPostBackDataHandler.LoadPostData (string postDataKey,
 							NameValueCollection postCollection)
 		{
-			string postValue = postCollection [postDataKey];
+			string postValue = postCollection [Name];
 			bool myBool = false;
 			if (postValue != null && postValue.Equals (Value)) {
 				if (!Checked) {
@@ -88,10 +88,10 @@ namespace System.Web.UI.HtmlControls{
 				return false;
 			}
 			set{
-				if (value != true){
-					Attributes["checked"] = null;
-				}
-				Attributes["checked"] = "checked";
+				if (value)
+					Attributes["checked"] = "checked";
+				else
+					Attributes.Remove ("checked");
 			}
 		}
 		public override string Name
