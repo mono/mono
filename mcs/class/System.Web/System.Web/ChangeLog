@@ -1,3 +1,8 @@
+2004-09-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpValueCollection.cs: fixed signature of ToString (). Closes bug
+	#65392.
+
 2004-09-06 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* HttpWriter.cs (.ctor): Dont create teh StreamWriter twice
