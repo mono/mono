@@ -1,0 +1,34 @@
+Microsoft Visual Studio Solution File, Format Version 7.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Windows.Forms", "System.Windows.Forms\System.Windows.Forms.csproj", "{E0B52BB7-B244-4724-9A63-9616B6FAA5E8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Windows.Forms.Test", "System.Windows.Forms.Test\System.Windows.Forms.Test.csproj", "{783720DE-479C-43D1-A571-C63F10593548}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Windows.Forms.Design", "System.Windows.Forms.Design\System.Windows.Forms.Design.csproj", "{A38C110F-63F4-4B53-A67E-9A46681C768E}"
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		ConfigName.0 = Debug
+		ConfigName.1 = Release
+	EndGlobalSection
+	GlobalSection(ProjectDependencies) = postSolution
+		{E0B52BB7-B244-4724-9A63-9616B6FAA5E8}.0 = {A38C110F-63F4-4B53-A67E-9A46681C768E}
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{E0B52BB7-B244-4724-9A63-9616B6FAA5E8}.Debug.ActiveCfg = Debug|.NET
+		{E0B52BB7-B244-4724-9A63-9616B6FAA5E8}.Debug.Build.0 = Debug|.NET
+		{E0B52BB7-B244-4724-9A63-9616B6FAA5E8}.Release.ActiveCfg = Release|.NET
+		{E0B52BB7-B244-4724-9A63-9616B6FAA5E8}.Release.Build.0 = Release|.NET
+		{783720DE-479C-43D1-A571-C63F10593548}.Debug.ActiveCfg = Debug|.NET
+		{783720DE-479C-43D1-A571-C63F10593548}.Debug.Build.0 = Debug|.NET
+		{783720DE-479C-43D1-A571-C63F10593548}.Release.ActiveCfg = Release|.NET
+		{783720DE-479C-43D1-A571-C63F10593548}.Release.Build.0 = Release|.NET
+		{A38C110F-63F4-4B53-A67E-9A46681C768E}.Debug.ActiveCfg = Debug|.NET
+		{A38C110F-63F4-4B53-A67E-9A46681C768E}.Debug.Build.0 = Debug|.NET
+		{A38C110F-63F4-4B53-A67E-9A46681C768E}.Release.ActiveCfg = Release|.NET
+		{A38C110F-63F4-4B53-A67E-9A46681C768E}.Release.Build.0 = Release|.NET
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal
