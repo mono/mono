@@ -5,28 +5,6 @@
 //
 // (C) 2002 Jonathan Pryor
 //
-// Permission is hereby granted, free of charge, to any           
-// person obtaining a copy of this software and associated        
-// documentation files (the "Software"), to deal in the           
-// Software without restriction, including without limitation     
-// the rights to use, copy, modify, merge, publish,               
-// distribute, sublicense, and/or sell copies of the Software,    
-// and to permit persons to whom the Software is furnished to     
-// do so, subject to the following conditions:                    
-//                                                                 
-// The above copyright notice and this permission notice          
-// shall be included in all copies or substantial portions        
-// of the Software.                                               
-//                                                                 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY      
-// KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO         
-// THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A               
-// PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL      
-// THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,      
-// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,  
-// TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION       
-// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-//
 
 using System;
 using System.Collections;
@@ -39,6 +17,9 @@ using System.Text.RegularExpressions;
 namespace Mono.TypeReflector
 {
 	public class TypeLoader {
+
+		private static TraceSwitch info = 
+			new TraceSwitch ("type-loader", "TypeLoader messages");
 
 		// String collection
 		private ICollection assemblies = null;
@@ -80,6 +61,7 @@ namespace Mono.TypeReflector
 
 		public TypeLoader (ICollection assemblies)
 		{
+			Console.WriteLine ("type-loader: " + info.Level);
 			this.assemblies = assemblies;
 		}
 
@@ -113,10 +95,10 @@ namespace Mono.TypeReflector
 						types.Add (t);
 				}
 			} catch (Exception e) {
-				Trace.WriteLine (String.Format (
+				Trace.WriteLineIf (info.TraceError, String.Format (
 					"Unable to load type regex `{0}' from `{1}'.",
 					match, where));
-				Trace.WriteLine (e.ToString());
+				Trace.WriteLineIf (info.TraceError, e.ToString());
 			}
 		}
 
@@ -136,7 +118,7 @@ namespace Mono.TypeReflector
 				    (!MatchNamespace ? false : r.Match (t.BaseType.Namespace).Success);
 			}
 			// TODO: MatchMethodReturnType
-			Trace.WriteLine (String.Format("TypeLoader.Matches: c={0}, b={1}, rt={2}, n={3}", c, b, rt, n));
+			Trace.WriteLineIf (info.TraceInfo, String.Format("TypeLoader.Matches: c={0}, b={1}, rt={2}, n={3}", c, b, rt, n));
 			return f || c || b || rt || n;
 		}
 	}

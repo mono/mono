@@ -155,6 +155,9 @@ namespace Mono.TypeReflector
 
 	public abstract class NodeFinder : INodeFinder {
 
+		private static BooleanSwitch info = 
+			new BooleanSwitch ("node-finder", "NodeFinder messages");
+
 		private bool showBase = false;
 		private bool showConstructors = false;
 		private bool showEvents = false;
@@ -279,7 +282,7 @@ namespace Mono.TypeReflector
 
 		public virtual NodeInfoCollection GetChildren (NodeInfo root)
 		{
-			Trace.WriteLine ("NodeFinder.GetChildren");
+			Trace.WriteLineIf (info.Enabled, "NodeFinder.GetChildren");
 			NodeInfoCollection c = new NodeInfoCollection ();
 
 			// always handle NodeTypes.Type

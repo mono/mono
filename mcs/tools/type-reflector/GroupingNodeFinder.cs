@@ -20,6 +20,9 @@ namespace Mono.TypeReflector
 	 */
 	public class GroupingNodeFinder : INodeFinder {
 
+		private static BooleanSwitch info = 
+			new BooleanSwitch ("grouping-node-finder", "GroupingNodeFinder messages");
+
 		private sealed class GroupingInfo {
 			public string Group;
 			public NodeInfo Info;
@@ -56,7 +59,7 @@ namespace Mono.TypeReflector
 
 		public NodeInfoCollection GetChildren (NodeInfo root)
 		{
-			Trace.WriteLine ("GroupingNodeFinder.GetChildren");
+			Trace.WriteLineIf (info.Enabled, "GroupingNodeFinder.GetChildren");
 			NodeInfoCollection collection = null;
 
 			switch (root.NodeType) {
@@ -75,7 +78,7 @@ namespace Mono.TypeReflector
 				return collection;
 			case NodeTypes.Other:
 				if (root.Description is GroupingInfo) {
-					Trace.WriteLine ("Found GroupingInfo");
+					Trace.WriteLineIf (info.Enabled, "Found GroupingInfo");
 					GroupingInfo g = (GroupingInfo) root.Description;
 					collection = (NodeInfoCollection) nodes[g.Group];
 					return collection;

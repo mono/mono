@@ -22,11 +22,14 @@ namespace Mono.TypeReflector
 {
 	public class ConsoleOutput {
 
+		private static BooleanSwitch console = new BooleanSwitch ("console",
+				"console-specific and command-line handling output");
+
 		private static void TraceStringArray (string message, IEnumerable contents)
 		{
-			Trace.WriteLine (message);
+			Trace.WriteLineIf (console.Enabled, message);
 			foreach (string s in contents) {
-				Trace.WriteLine ("  " + s);
+				Trace.WriteLineIf (console.Enabled, "  " + s);
 			}
 		}
 

@@ -18,6 +18,9 @@ namespace Mono.TypeReflector
 {
 	public class ExplicitNodeFinder : NodeFinder {
 
+		private static BooleanSwitch info = 
+			new BooleanSwitch ("explicit-node-finder", "ExplicitNodeFinder messages");
+
 		// supported sub-groups
 		private const string parameters = "GetParameters():";
 		private const string customAttributes= "GetCustomAttributes(true):";
@@ -26,7 +29,7 @@ namespace Mono.TypeReflector
 		public override NodeInfoCollection GetChildren (NodeInfo root)
 		{
 			// We don't want an infinite loop; quite showing children
-			Trace.WriteLine ("GetChildren for root.NodeType=" + root.NodeType);
+			Trace.WriteLineIf (info.Enabled, "GetChildren for root.NodeType=" + root.NodeType);
 			if (!CanShowChildren (root))
 				return new NodeInfoCollection();
 
@@ -35,7 +38,7 @@ namespace Mono.TypeReflector
 
 		private static bool CanShowChildren (NodeInfo node)
 		{
-			Trace.WriteLine ("CanShowChildren");
+			Trace.WriteLineIf (info.Enabled, "CanShowChildren");
 			if (node.Parent != null) {
 				if (node.NodeType == NodeTypes.Parameter)
 					return true;
@@ -229,7 +232,7 @@ namespace Mono.TypeReflector
 
 		protected override void GetFieldChildren (NodeInfoCollection c, NodeInfo parent, FieldInfo field)
 		{
-			Trace.WriteLine ("Getting Field Children");
+			Trace.WriteLineIf (info.Enabled, "Getting Field Children");
 			AddMemberChildren (parent, field, c);
 			AddMembers (parent, field, "Attributes", c);
 			AddMembers (parent, field, "FieldHandle", c);

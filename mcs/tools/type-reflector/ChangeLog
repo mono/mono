@@ -1,3 +1,15 @@
+2002-12-21  Jonathan Pryor <jonpryor@vt.edu>
+	* ConsoleOutput.cs: Use a Switch for trace messages.
+	* ExplicitNodeFinder.cs: Use a Switch for trace messages.
+	* GroupingNodeFinder.cs: Use a Switch for trace messages.
+	* IndentingTextWriter.cs: Use a Switch for trace messages; remove copyright
+	  statement.
+	* NodeFinder.cs: Use a Switch for trace messages.
+	* TypeLoader.cs: Use a Switch for trace messages; remove copyright
+	  statement.
+	* type-reflector.exe.config: default .config file (disable all trace
+	  messages)
+
 2002-12-10  Jonathan Pryor <jonpryor@vt.edu>
 	* TestTypes.cs: Use a different attribute type for [return:] attribute on 
 		TestClass.PublicMethod, as mcs doesn't support [return:] attributes yet
