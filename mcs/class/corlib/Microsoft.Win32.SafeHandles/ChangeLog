@@ -1,0 +1,4 @@
+2005-01-31  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SafeFileHandle.cs: Class declaration to allow compiling System.IO
+	and System.IO.IsolatedStorage for the NET_2_0 profile.
