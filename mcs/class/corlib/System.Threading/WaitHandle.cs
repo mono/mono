@@ -207,7 +207,7 @@ namespace System.Threading
 
 		protected static readonly IntPtr InvalidHandle = IntPtr.Zero;
 
-		private bool disposed = false;
+		bool disposed = false;
 
 		void IDisposable.Dispose() {
 			Dispose(true);

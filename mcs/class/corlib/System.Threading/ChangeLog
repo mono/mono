@@ -1,3 +1,9 @@
+2004-12-05  Miguel de Icaza  <miguel@ximian.com>
+
+	* AutoResetEvent.cs (Set, Reset): If we are disposed, throw a
+	ObjectDisposedEvent, helped track the WebConnection destructor
+	issue. 
+
 2004-09-16 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Timer.cs: don't invoke the callback twice when the timer changes.
