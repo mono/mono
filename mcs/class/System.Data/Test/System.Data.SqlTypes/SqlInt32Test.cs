@@ -392,7 +392,7 @@ namespace MonoTests.System.Data.SqlTypes
 
 			// Case 15: Test non-null conversion to SqlMoney
 			x = new SqlInt32 (27);
-			AssertEquals ("SqlInt32 (27) -> SqlMoney does not yield a value of 27", x.ToSqlMoney ().Value, (decimal)27);
+			AssertEquals ("SqlInt32 (27) -> SqlMoney does not yield a value of 27", x.ToSqlMoney ().Value, 27.0000M);
 
 			// Case 16: SqlInt32.Null -> SqlSingle == SqlSingle.Null
 			x = SqlInt32.Null;

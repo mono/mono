@@ -330,9 +330,9 @@ namespace MonoTests.System.Data.SqlTypes
                         AssertEquals ("TestF#3", (long)288, Test288.ToSqlInt64 ().Value);
 
                         // ToSqlMoney ()
-                        AssertEquals ("TestG#1", (decimal)12, Test12.ToSqlMoney ().Value);
+                        AssertEquals ("TestG#1", 12.0000M, Test12.ToSqlMoney ().Value);
                         AssertEquals ("TestG#2", (decimal)0, Test0.ToSqlMoney ().Value);
-                        AssertEquals ("TestG#3", (decimal)288, Test288.ToSqlMoney ().Value);
+                        AssertEquals ("TestG#3", 288.0000M, Test288.ToSqlMoney ().Value);
 
                         // ToSqlSingle ()
                         AssertEquals ("TestH#1", (float)12, Test12.ToSqlSingle ().Value);

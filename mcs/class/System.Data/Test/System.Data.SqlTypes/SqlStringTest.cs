@@ -480,7 +480,7 @@ namespace MonoTests.System.Data.SqlTypes
                         AssertEquals ("#O32", (long)250, String250.ToSqlInt64 ().Value);
 
                         // ToSqlMoney ()
-                        AssertEquals ("#O35", (decimal)250, String250.ToSqlMoney ().Value);
+                        AssertEquals ("#O35", 250.0000M, String250.ToSqlMoney ().Value);
 
 
                         // ToSqlSingle ()

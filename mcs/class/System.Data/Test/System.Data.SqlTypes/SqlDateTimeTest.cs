@@ -12,6 +12,8 @@
 using NUnit.Framework;
 using System;
 using System.Data.SqlTypes;
+using System.Threading;
+using System.Globalization;
 
 namespace MonoTests.System.Data.SqlTypes
 {
@@ -35,6 +37,7 @@ namespace MonoTests.System.Data.SqlTypes
 		[SetUp]
                 public void GetReady() 
 		{
+			Thread.CurrentThread.CurrentCulture = new CultureInfo ("en-US");
 			Test1 = new SqlDateTime (2002, 10, 19, 9, 40, 0);
 			Test2 = new SqlDateTime (2003, 11, 20,10, 50, 1);
 			Test3 = new SqlDateTime (2003, 11, 20, 10, 50, 1);
@@ -349,8 +352,8 @@ namespace MonoTests.System.Data.SqlTypes
                         SqlDateTime t2 = new SqlDateTime (2002, 2, 25, 15, 25, 13);
 			
 			// Standard patterns
-                        AssertEquals("L01", "25.2.2002 5:25:13", t1.ToString ());
-                        AssertEquals("L02", (SqlString)"25.2.2002 5:25:13", t1.ToSqlString ());
+                        AssertEquals("L01", "2/25/2002 5:25:13 AM", t1.ToString ());
+                        AssertEquals("L02", (SqlString)"2/25/2002 5:25:13 AM", t1.ToSqlString ());
 		}
 
                 // OPERATORS

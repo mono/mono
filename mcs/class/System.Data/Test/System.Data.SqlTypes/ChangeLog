@@ -1,5 +1,9 @@
 2003-06-02  Ville Palo <vi64pa@kolumbus.fi>
 
+	* All files except SqlGuidTest.cs: Now works fine on ms.net 1.1
+	
+2003-06-02  Ville Palo <vi64pa@kolumbus.fi>
+
 	* SqlStringTest.cs: exception tests to nunit2
 	
 2003-06-02  Ville Palo <vi64pa@kolumbus.fi>

@@ -12,6 +12,8 @@
 using NUnit.Framework;
 using System;
 using System.Data.SqlTypes;
+using System.Threading;
+using System.Globalization;
 
 namespace MonoTests.System.Data.SqlTypes
 {
@@ -26,6 +28,7 @@ namespace MonoTests.System.Data.SqlTypes
 		[SetUp]
                 public void GetReady() 
 		{
+			Thread.CurrentThread.CurrentCulture = new CultureInfo ("en-US");			
 			Test1 = new SqlMoney (6464.6464d);
 			Test2 = new SqlMoney (90000.0m);
 			Test3 = new SqlMoney (90000.0m);
@@ -45,7 +48,7 @@ namespace MonoTests.System.Data.SqlTypes
 			}
 
                         SqlMoney CreationTest = new SqlMoney ((decimal)913.3);
-			AssertEquals ("A03", 913.3m, CreationTest.Value);
+			AssertEquals ("A03", 913.3000m, CreationTest.Value);
 
 			try {
 				SqlMoney Test = new SqlMoney (1e200);
@@ -56,13 +59,13 @@ namespace MonoTests.System.Data.SqlTypes
 			}
                         
                         SqlMoney CreationTest2 = new SqlMoney ((double)913.3);
-			AssertEquals ("A06", 913.3m, CreationTest2.Value);
+			AssertEquals ("A06", 913.3000m, CreationTest2.Value);
 
                         SqlMoney CreationTest3 = new SqlMoney ((int)913);
-			AssertEquals ("A07", 913m, CreationTest3.Value);
+			AssertEquals ("A07", 913.0000m, CreationTest3.Value);
 
                         SqlMoney CreationTest4 = new SqlMoney ((long)913.3);
-                        AssertEquals ("A08", 913m, CreationTest4.Value);
+                        AssertEquals ("A08", 913.0000m, CreationTest4.Value);
                 }
 
                 // Test public fields
@@ -82,8 +85,8 @@ namespace MonoTests.System.Data.SqlTypes
 		[Test]
                 public void Properties()
                 {
-			AssertEquals ("#C01", 90000m, Test2.Value);
-                        AssertEquals ("#C02", -45000m, Test4.Value);
+			AssertEquals ("#C01", 90000.0000m, Test2.Value);
+                        AssertEquals ("#C02", -45000.0000m, Test4.Value);
 			Assert ("#C03", SqlMoney.Null.IsNull);
                 }
 
@@ -238,7 +241,7 @@ namespace MonoTests.System.Data.SqlTypes
                                 AssertEquals ("#L06", typeof (OverflowException), e.GetType ());
                         }
 
-                        AssertEquals("#L07", (decimal)150, SqlMoney.Parse ("150").Value);
+                        AssertEquals("#L07", 150.0000M, SqlMoney.Parse ("150").Value);
                 }
 
 		[Test]
@@ -277,7 +280,7 @@ namespace MonoTests.System.Data.SqlTypes
 
                         // ToSqlDecimal ()
                         AssertEquals ("#M13", (decimal)6464.6464, Test1.ToSqlDecimal ().Value);
-                        AssertEquals ("#M14", (decimal)-45000, Test4.ToSqlDecimal ().Value);
+                        AssertEquals ("#M14", -45000.0000m, Test4.ToSqlDecimal ().Value);
 
                         // ToSqlInt16 ()
                         AssertEquals ("#M15", (short)6465, Test1.ToSqlInt16 ().Value);
@@ -308,12 +311,12 @@ namespace MonoTests.System.Data.SqlTypes
                         AssertEquals ("#M25", (float)6464.6464, Test1.ToSqlSingle ().Value);
 
                         // ToSqlString ()
-                        AssertEquals ("#M26", "6464,6464", Test1.ToSqlString ().Value);
-                        AssertEquals ("#M27", "90000", Test2.ToSqlString ().Value);
+                        AssertEquals ("#M26", "6464.6464", Test1.ToSqlString ().Value);
+                        AssertEquals ("#M27", "90000.0000", Test2.ToSqlString ().Value);
 
                         // ToString ()
-                        AssertEquals ("#M28", "6464,6464", Test1.ToString ());
-                        AssertEquals ("#M29", "90000", Test2.ToString ());
+                        AssertEquals ("#M28", "6464.6464", Test1.ToString ());
+                        AssertEquals ("#M29", "90000.0000", Test2.ToString ());
                 }
 
                 // OPERATORS
@@ -406,7 +409,7 @@ namespace MonoTests.System.Data.SqlTypes
                 {
 
                         AssertEquals ("#P01", (decimal)(-6464.6464), -(Test1).Value);
-                        AssertEquals ("#P02", (decimal)45000, -(Test4).Value);
+                        AssertEquals ("#P02", 45000.0000M, -(Test4).Value);
                 }
 
 		[Test]
@@ -414,7 +417,7 @@ namespace MonoTests.System.Data.SqlTypes
                 {
                         SqlBoolean TestBoolean = new SqlBoolean (true);
 
-                        AssertEquals ("#Q01", (decimal)1, ((SqlMoney)TestBoolean).Value);
+                        AssertEquals ("#Q01", 1.0000M, ((SqlMoney)TestBoolean).Value);
 			Assert ("#Q02", ((SqlDecimal)SqlBoolean.Null).IsNull);
                 }
 		
@@ -425,7 +428,7 @@ namespace MonoTests.System.Data.SqlTypes
 			SqlDecimal TestDecimal2 = new SqlDecimal (1E+20);
 
 			SqlMoney TestMoney = (SqlMoney)TestDecimal;
-			AssertEquals ("#R01", TestMoney.Value, TestDecimal.Value);
+			AssertEquals ("#R01", 4000.0000M,TestMoney.Value);
 
 			try {
 				SqlMoney test = (SqlMoney)TestDecimal2;
@@ -442,7 +445,7 @@ namespace MonoTests.System.Data.SqlTypes
 			SqlDouble TestDouble2 = new SqlDouble (1E+20);
 			
 			SqlMoney TestMoney = (SqlMoney)TestDouble;
-			AssertEquals ("#S01", 1000000000m, TestMoney.Value);
+			AssertEquals ("#S01", 1000000000.0000m, TestMoney.Value);
 
 			try {
 				SqlMoney test = (SqlMoney)TestDouble2;
@@ -456,7 +459,7 @@ namespace MonoTests.System.Data.SqlTypes
 		public void SqlMoneyToDecimal()
 		{
                         AssertEquals ("#T01", (decimal)6464.6464, (decimal)Test1);
-                        AssertEquals ("#T02", (decimal)(-45000), (decimal)Test4);
+                        AssertEquals ("#T02", -45000.0000M, (decimal)Test4);
 		}
 
 		[Test]
@@ -465,7 +468,7 @@ namespace MonoTests.System.Data.SqlTypes
 			SqlSingle TestSingle = new SqlSingle (1e10);
 			SqlSingle TestSingle2 = new SqlSingle (1e20);
 
-			AssertEquals ("#U01", 10000000000m, ((SqlMoney)TestSingle).Value);
+			AssertEquals ("#U01", 10000000000.0000m, ((SqlMoney)TestSingle).Value);
 
 			try {
 				SqlMoney test = (SqlMoney)TestSingle2;
@@ -481,7 +484,7 @@ namespace MonoTests.System.Data.SqlTypes
                         SqlString TestString = new SqlString ("Test string");
                         SqlString TestString100 = new SqlString ("100");
 
-                        AssertEquals ("#V01", (decimal)100, ((SqlMoney)TestString100).Value);
+                        AssertEquals ("#V01", 100.0000M, ((SqlMoney)TestString100).Value);
 
                         try {
                                 SqlMoney test = (SqlMoney)TestString;
@@ -496,7 +499,7 @@ namespace MonoTests.System.Data.SqlTypes
 		{
                         decimal TestDecimal = 1e10m;
                         decimal TestDecimal2 = 1e20m;
-			AssertEquals ("#W01", 10000000000, ((SqlMoney)TestDecimal).Value);
+			AssertEquals ("#W01", 10000000000.0000M, ((SqlMoney)TestDecimal).Value);
 			
 			try {
 				SqlMoney test = (SqlMoney)TestDecimal2;
@@ -510,7 +513,7 @@ namespace MonoTests.System.Data.SqlTypes
                 public void SqlByteToSqlMoney() 
    	        {
                         SqlByte TestByte = new SqlByte ((byte)200);               
-			AssertEquals ("#X01", 200m, ((SqlMoney)TestByte).Value);
+			AssertEquals ("#X01", 200.0000m, ((SqlMoney)TestByte).Value);
 		}
 
 		[Test]
@@ -520,9 +523,9 @@ namespace MonoTests.System.Data.SqlTypes
 			SqlInt32 TestInt32 = new SqlInt32 (5000);
 			SqlInt64 TestInt64 = new SqlInt64 (5000);
 			
-			AssertEquals ("#Y01", 5000m, ((SqlMoney)TestInt16).Value);
-			AssertEquals ("#Y02", 5000m, ((SqlMoney)TestInt32).Value);
-			AssertEquals ("#Y03", 5000m, ((SqlMoney)TestInt64).Value);
+			AssertEquals ("#Y01", 5000.0000m, ((SqlMoney)TestInt16).Value);
+			AssertEquals ("#Y02", 5000.0000m, ((SqlMoney)TestInt32).Value);
+			AssertEquals ("#Y03", 5000.0000m, ((SqlMoney)TestInt64).Value);
 
 			try {
 				SqlMoney test = (SqlMoney)SqlInt64.MaxValue;

@@ -12,12 +12,20 @@
 using NUnit.Framework;
 using System;
 using System.Data.SqlTypes;
+using System.Threading;
+using System.Globalization;
 
 namespace MonoTests.System.Data.SqlTypes
 {
 	[TestFixture]
         public class SqlByteTest : Assertion {
 		private const string Error = " does not work correctly";
+
+		[SetUp]
+		public void SetUp ()
+		{
+			Thread.CurrentThread.CurrentCulture = new CultureInfo ("en-US");
+		}
 
 		// Test constructor
 		[Test]
@@ -520,11 +528,11 @@ namespace MonoTests.System.Data.SqlTypes
 			SqlByte TestByte228 = new SqlByte(228);
 
 			AssertEquals("ToSqMoney method 1" + Error,
-				     (decimal)12, TestByte12.ToSqlMoney().Value);
+				     12.0000M, TestByte12.ToSqlMoney().Value);
 			AssertEquals("ToSqlMoney method 2" + Error,
 				     (decimal)0, TestByte0.ToSqlMoney().Value);
 			AssertEquals("ToSqlMoney method 3" + Error,
-				     (decimal)228, TestByte228.ToSqlMoney().Value);
+				     228.0000M, TestByte228.ToSqlMoney().Value);
 		}
 
 		[Test]

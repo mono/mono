@@ -10,6 +10,8 @@
 using NUnit.Framework;
 using System;
 using System.Data.SqlTypes;
+using System.Threading;
+using System.Globalization;
 
 namespace MonoTests.System.Data.SqlTypes
 {
@@ -21,6 +23,8 @@ namespace MonoTests.System.Data.SqlTypes
 
 		[SetUp]
 		public void GetReady() {
+			
+			Thread.CurrentThread.CurrentCulture = new CultureInfo ("en-US");
 			SqlTrue = new SqlBoolean(true);
 			SqlFalse = new SqlBoolean(false);
 
@@ -375,7 +379,7 @@ namespace MonoTests.System.Data.SqlTypes
 			String error = "ToSqlMoney method does not work correctly ";
 
 			SqlTestMoney = SqlTrue.ToSqlMoney();
-			AssertEquals(error, (decimal)1, SqlTestMoney.Value);
+			AssertEquals(error, 1.0000M, SqlTestMoney.Value);
 
 			SqlTestMoney = SqlFalse.ToSqlMoney();
 			AssertEquals(error, (decimal)0, SqlTestMoney.Value);

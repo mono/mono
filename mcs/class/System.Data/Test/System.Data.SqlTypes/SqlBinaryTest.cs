@@ -81,7 +81,7 @@ namespace MonoTests.System.Data.SqlTypes
                                 byte test = TestBinary [TestBinary.Length];
 				Fail ("#C04");
 			} catch (Exception e) {
-				AssertEquals ("#C05", typeof (SqlNullValueException),
+				AssertEquals ("#C05", typeof (IndexOutOfRangeException),
 					    e.GetType ());
 			}
                  

@@ -12,12 +12,19 @@
 using NUnit.Framework;
 using System;
 using System.Data.SqlTypes;
+using System.Threading;
+using System.Globalization;
 
 namespace MonoTests.System.Data.SqlTypes
 {
 	[TestFixture]
         public class SqlDoubleTest : Assertion {
 
+		[SetUp]
+		public void SetUp ()
+		{
+	              Thread.CurrentThread.CurrentCulture = new CultureInfo ("en-US");
+		}
                 // Test constructor
 		[Test]
                 public void Create()
@@ -272,7 +279,7 @@ namespace MonoTests.System.Data.SqlTypes
                         }
 
                         // ToSqlDecimal ()
-                        AssertEquals ("#M01C", (decimal)250, Test1.ToSqlDecimal ().Value);
+                        AssertEquals ("#M01C", 250.00000000000000M, Test1.ToSqlDecimal ().Value);
                         AssertEquals ("#M02C", (decimal)0, Test0.ToSqlDecimal ().Value);
 
                         try {
@@ -316,7 +323,7 @@ namespace MonoTests.System.Data.SqlTypes
                         }        
 
                         // ToSqlMoney ()
-                        AssertEquals ("#M01G", (decimal)250, Test1.ToSqlMoney ().Value);
+                        AssertEquals ("#M01G", 250.0000M, Test1.ToSqlMoney ().Value);
                         AssertEquals ("#M02G", (decimal)0, Test0.ToSqlMoney ().Value);
 
                         try {
@@ -340,12 +347,12 @@ namespace MonoTests.System.Data.SqlTypes
                         // ToSqlString ()
                         AssertEquals ("#M01I", "250", Test1.ToSqlString ().Value);
                         AssertEquals ("#M02I", "0", Test0.ToSqlString ().Value);
-                        AssertEquals ("#M03I", "6,4E+65", Test2.ToSqlString ().Value);
+                        AssertEquals ("#M03I", "6.4E+65", Test2.ToSqlString ().Value);
 
                         // ToString ()
                         AssertEquals ("#M01J", "250", Test1.ToString ());
                         AssertEquals ("#M02J", "0", Test0.ToString ());
-                        AssertEquals ("#M03J", "6,4E+65", Test2.ToString ());
+                        AssertEquals ("#M03J", "6.4E+65", Test2.ToString ());
                 }
 
                 // OPERATORS
