@@ -134,6 +134,19 @@ namespace System.Xml.Serialization {
 		{
 			throw new NotImplementedException ();
 		}
+
+		[MonoTODO]
+		protected virtual XmlSerializationReader CreateReader ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		protected virtual XmlSerializationReader CreateWriter ()
+		{
+			throw new NotImplementedException ();
+		}
+
 		[MonoTODO]
 		public object Deserialize (Stream stream)
 		{
@@ -146,6 +159,18 @@ namespace System.Xml.Serialization {
 		}
 		[MonoTODO]
 		public object Deserialize (XmlReader xmlReader)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public object Deserialize (XmlSerializationReader reader)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		protected virtual void Serialize (object o, XmlSerializationWriter writer)
 		{
 			throw new NotImplementedException ();
 		}

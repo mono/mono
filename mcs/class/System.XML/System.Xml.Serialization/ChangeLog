@@ -1,4 +1,6 @@
 2002-08-19  Tim Coleman <tim@timcoleman.com>
+	* XmlSerializer.cs:
+		New stubs added.
 	* XmlSerializationWriter.cs:
 		New stubs added.
 
