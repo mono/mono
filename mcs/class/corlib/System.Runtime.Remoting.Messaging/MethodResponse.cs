@@ -278,6 +278,7 @@ namespace System.Runtime.Remoting.Messaging {
 
 		public object GetOutArg (int argNum)
 		{
+			if (_args == null) return null;
 			if (_inArgInfo == null) _inArgInfo = new ArgInfo (MethodBase, ArgInfoType.Out);
 			return _args[_inArgInfo.GetInOutArgIndex (argNum)];
 		}
