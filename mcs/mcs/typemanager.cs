@@ -1416,26 +1416,6 @@ public class TypeManager {
 		return true;
 	}
 
-	static public MethodInfo GetPropertySetter (PropertyInfo pi)
-	{
-		if (pi is PropertyBuilder){
-			Pair de = (Pair) properties [pi];
-
-			return (MethodInfo) de.Second;
-		} else
-			return pi.GetSetMethod ();
-	}
-
-	static public MethodInfo GetPropertyGetter (PropertyInfo pi)
-	{
-		if (pi is PropertyBuilder){
-			Pair de = (Pair) properties [pi];
-
-			return (MethodInfo) de.First;
-		} else
-			return pi.GetGetMethod ();
-	}
-
 	/// <summary>
 	///   Given an array of interface types, expand and eliminate repeated ocurrences
 	///   of an interface.  

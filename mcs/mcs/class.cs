@@ -1,4 +1,3 @@
-
 //
 // class.cs: Class and Struct handlers
 //
@@ -3544,52 +3543,47 @@ namespace Mono.CSharp {
 			}
 
 			//
-			// Find properties with the same name on the base class
+			// Pull either the get or the set method from this property, and use
+			// that as our reference method.  The following two variables are computed:
 			//
-			MemberList props;
-			MemberList props_static = TypeContainer.FindMembers (
-				parent.TypeBuilder.BaseType, MemberTypes.Property,
-				BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static,
-				MethodSignature.inheritable_property_signature_filter, base_ms);
+			Type property_type = null;
+			MethodInfo reference = null;
+			
+			MemberInfo [] group;
 
-			MemberList props_instance = TypeContainer.FindMembers (
-				parent.TypeBuilder.BaseType, MemberTypes.Property,
-				BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance,
-				MethodSignature.inheritable_property_signature_filter,
-				base_ms);
+			group = TypeManager.MemberLookup (
+				parent.TypeBuilder, parent.TypeBuilder.BaseType, MemberTypes.Method,
+				BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.NonPublic,
+				"get_" + ms.Name);
 
-			//
-			// Find if we have anything
-			//
-			if (props_static.Count > 0)
-				props = props_static;
-			else if (props_instance.Count > 0)
-				props = props_instance;
-			else
-				props = null;
+			if (group == null || group.Length == 0){
+				group = TypeManager.MemberLookup (
+					parent.TypeBuilder, parent.TypeBuilder.BaseType, MemberTypes.Method,
+					BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.NonPublic,
+					"set_" + ms.Name);
 
-			//
-			// If we have something on the base.
-			if (props != null && props.Count > 0){
-				PropertyInfo pi = (PropertyInfo) props [0];
-
-				MethodInfo inherited_get = TypeManager.GetPropertyGetter (pi);
-				MethodInfo inherited_set = TypeManager.GetPropertySetter (pi);
-
-				MethodInfo reference = inherited_get == null ?
-					inherited_set : inherited_get;
-				
-				if (reference != null) {
-					string name = reference.DeclaringType.Name + "." + report_name;
-
-					if (!CheckMethodAgainstBase (parent, flags, reference, name))
-						return false;
+				if (group != null && group.Length > 0){
+					reference = (MethodInfo) group [0];
+					if (reference is MethodBuilder)
+						property_type = TypeManager.LookupParametersByBuilder (reference).ParameterType (0);
+					else 
+						property_type = reference.GetParameters () [0].ParameterType;
 				}
+			} else {
+				reference = (MethodInfo) group [0];
+				property_type = reference.ReturnType;
+			}
 
-				if (((ModFlags & Modifiers.NEW) == 0) && (pi.PropertyType != MemberType)) {
-					Report.Error (508, parent.MakeName (Name) + ": cannot " +
+			if (reference != null){
+				string name = reference.DeclaringType.Name + "." + report_name;
+
+				if (!CheckMethodAgainstBase (parent, flags, reference, name))
+					return false;
+
+				if (((ModFlags & Modifiers.NEW) == 0) && (property_type != MemberType)) {
+					Report.Error (508, Location, parent.MakeName (Name) + ": cannot " +
 						      "change return type when overriding inherited " +
-						      "member `" + pi.DeclaringType + "." + pi.Name + "'");
+						      "member `" + reference.DeclaringType + "." + ms.Name + "'");
 					return false;
 				}
 			} else {
@@ -4546,21 +4540,11 @@ namespace Mono.CSharp {
 		/// </summary>
 		public static MemberFilter inheritable_method_signature_filter;
 
-		/// <summary>
-		///   This delegate is used to extract inheritable methods which
-		///   have the same signature as the argument.  By inheritable,
-		///   this means that we have permissions to override the method
-		///   from the current assembly and class
-		/// </summary>
-		public static MemberFilter inheritable_property_signature_filter;
-		
 		static MethodSignature ()
 		{
 			method_signature_filter = new MemberFilter (MemberSignatureCompare);
 			inheritable_method_signature_filter = new MemberFilter (
 				InheritableMemberSignatureCompare);
-			inheritable_property_signature_filter = new MemberFilter (
-				InheritablePropertySignatureCompare);
 		}
 		
 		public MethodSignature (string name, Type ret_type, Type [] parameters)
@@ -4667,47 +4651,6 @@ namespace Mono.CSharp {
 		{
 		        if (MemberSignatureCompare (m, filter_criteria)){
 				MethodInfo mi = (MethodInfo) m;
-				MethodAttributes prot = mi.Attributes & MethodAttributes.MemberAccessMask;
-
-				// If only accessible to the current class.
-				if (prot == MethodAttributes.Private)
-					return false;
-
-				// If only accessible to the defining assembly or 
-				if (prot == MethodAttributes.FamANDAssem ||
-				    prot == MethodAttributes.Assembly){
-					if (m.DeclaringType.Assembly == CodeGen.AssemblyBuilder)
-						return true;
-					else
-						return false;
-				}
-
-				// Anything else (FamOrAssembly and Public) is fine
-				return true;
-			}
-			return false;
-		}
-
-		//
-		// This filter should be used when we are requesting properties that
-		// we want to override.
-		//
-		// This makes a number of assumptions, for example
-		// that the methods being extracted are of a parent
-		// class (this means we know implicitly that we are
-		// being called to find out about members by a derived
-		// class).
-		// 
-		static bool InheritablePropertySignatureCompare (MemberInfo m, object filter_criteria)
-		{
-		        if (MemberSignatureCompare (m, filter_criteria)){
-				PropertyInfo pi = (PropertyInfo) m;
-
-				MethodInfo inherited_get = TypeManager.GetPropertyGetter (pi);
-				MethodInfo inherited_set = TypeManager.GetPropertySetter (pi);
-
-				MethodInfo mi = inherited_get == null ? inherited_set : inherited_get;
-
 				MethodAttributes prot = mi.Attributes & MethodAttributes.MemberAccessMask;
 
 				// If only accessible to the current class.

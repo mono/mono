@@ -1,5 +1,31 @@
 2002-10-24  Miguel de Icaza  <miguel@ximian.com>
 
+	* class.cs: Remove InheritablePropertySignatureCompare from the
+	class, as we no longer depend on the property signature to compute
+	whether it is possible to implement a method or not.
+
+	The reason is that calling PropertyInfo.GetGetMethod will return
+	null (in .NET, in Mono it works, and we should change this), in
+	cases where the Get Method does not exist in that particular
+	class.
+
+	So this code:
+
+	class X { public virtual int A { get { return 1; } } }
+	class Y : X { }
+	class Z : Y { public override int A { get { return 2; } } }
+
+	Would fail in Z because the parent (Y) would not have the property
+	defined.  So we avoid this completely now (because the alternative
+	fix was ugly and slow), and we now depend exclusively on the
+	method names.
+
+	(PropertyBase.CheckBase): Use a method-base mechanism to find our
+	reference method, instead of using the property.
+
+	* typemanager.cs (GetPropertyGetter, GetPropertySetter): These
+	routines are gone now.
+
 	* typemanager.cs (GetPropertyGetter, GetPropertySetter): swap the
 	names, they were incorrectly named.
 
