@@ -40,6 +40,9 @@ using NpgsqlTypes;
 
 namespace Npgsql
 {
+  
+  public delegate void NotificationEventHandler(Object sender, NpgsqlNotificationEventArgs e);  
+  
   /// <summary>
   /// This class represents a connection to 
   /// PostgreSQL Server.
@@ -49,7 +52,9 @@ namespace Npgsql
   /// 
   public sealed class NpgsqlConnection : IDbConnection
   {
-  	
+  	public event NotificationEventHandler OnNotification;
+    
+    
   	private NpgsqlState			state;
   	
     private ConnectionState	connection_state;
@@ -174,6 +179,14 @@ namespace Npgsql
     }
 
 		
+		
+		internal void Notification(NpgsqlNotificationEventArgs e)
+ 	  {
+ 		  if (OnNotification != null)
+ 			  OnNotification(this, e);
+ 	  }
+
+
 		public NpgsqlTransaction BeginTransaction()
 		{
 			NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".BeginTransaction()", LogLevel.Debug);

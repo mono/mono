@@ -196,6 +196,14 @@ namespace Npgsql
 			}
 		}
 		
+		public void CheckNotification()
+ 		{
+ 			if (connection.Mediator.Notifications.Count > 0)
+ 				for (int i=0; i < connection.Mediator.Notifications.Count; i++)
+ 					connection.Notification((NpgsqlNotificationEventArgs) connection.Mediator.Notifications[i]);
+ 
+ 		}
+
 		public void Cancel()
 		{
 		  NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".Cancel()", LogLevel.Debug);
@@ -238,6 +246,9 @@ namespace Npgsql
 			if (connection.Mediator.Errors.Count > 0)
 				throw new NpgsqlException(connection.Mediator.Errors[0].ToString());
 			
+			CheckNotification();
+		  
+		  
 			// The only expected result is the CompletedResponse result.
 			
 			String[] ret_string_tokens = ((String)connection.Mediator.GetCompletedResponses()[0]).Split(null);	// whitespace separator.
@@ -303,6 +314,8 @@ namespace Npgsql
 			if (connection.Mediator.Errors.Count > 0)
 				throw new NpgsqlException(connection.Mediator.Errors[0].ToString());
 			
+			CheckNotification();
+		  
 			
 			// Get the resultsets and create a Datareader with them.
 			return new NpgsqlDataReader(connection.Mediator.GetResultSets(), connection.Mediator.GetCompletedResponses(), connection);
@@ -326,7 +339,8 @@ namespace Npgsql
 			if (connection.Mediator.Errors.Count > 0)
 				throw new NpgsqlException(connection.Mediator.Errors[0].ToString());
 			
-			
+			CheckNotification();
+		  
 			//ArrayList results = connection.Mediator.Data;
 			
 			Object result = null;	// Result of the ExecuteScalar().

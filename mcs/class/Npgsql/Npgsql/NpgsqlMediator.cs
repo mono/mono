@@ -41,6 +41,7 @@ namespace Npgsql
 		private ArrayList							_errorMessages;
 		private	ArrayList							_resultSets;
 		private ArrayList							_responses;
+	  private ArrayList             _notifications;
 		
 		private NpgsqlRowDescription	_rd;
 		private ArrayList							_rows;
@@ -51,6 +52,7 @@ namespace Npgsql
 			_errorMessages = new ArrayList();
 			_resultSets = new ArrayList();
 			_responses = new ArrayList();
+		  _notifications = new ArrayList();
 		}
 						
 		public void Reset()
@@ -58,6 +60,7 @@ namespace Npgsql
 			_errorMessages.Clear();
 			_resultSets.Clear();
 			_responses.Clear();
+		  _notifications.Clear();
 			_rd = null;
 		}
 		
@@ -68,6 +71,22 @@ namespace Npgsql
 				return _errorMessages;
 			}
 		}
+		
+		public ArrayList Notifications
+		{
+		  get
+		  {
+		    return _notifications;
+		  }
+		  
+		}
+		
+		public void AddNotification(NpgsqlNotificationEventArgs data)
+ 		{
+ 		  _notifications.Add(data);
+ 		}
+ 
+
 		
 		public void AddCompletedResponse(String response)
 		{

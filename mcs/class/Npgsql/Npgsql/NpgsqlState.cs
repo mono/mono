@@ -324,6 +324,19 @@ namespace Npgsql
 						PGUtil.ReadString(stream, context.Encoding);
 						break;
 					
+					case NpgsqlMessageTypes.NotificationResponse  :
+ 
+ 						NpgsqlEventLog.LogMsg("NotificationResponse message from Server", LogLevel.Debug);
+ 
+ 						Byte[] input_buffer = new Byte[4];
+ 						stream.Read(input_buffer, 0, 4);
+ 						Int32 PID = IPAddress.NetworkToHostOrder(BitConverter.ToInt32(input_buffer, 0));
+ 						String notificationResponse = PGUtil.ReadString( stream, context.Encoding );
+ 						mediator.AddNotification(new NpgsqlNotificationEventArgs(PID, notificationResponse));
+ 
+ 						NpgsqlEventLog.LogMsg("Listening for next message", LogLevel.Debug);
+ 						// Wait for ReadForQuery message
+ 						break;
 										
 				}
 			}
