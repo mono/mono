@@ -1,3 +1,7 @@
+2004-05-02  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AssemblyInfo.cs: Now that bug #57941 (incomplete key pairs) is fixed
+	we now use nunit.key to sign their assemblies.
 
 2003-01-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 

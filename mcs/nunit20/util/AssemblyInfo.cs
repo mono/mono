@@ -63,5 +63,5 @@ using System.Runtime.CompilerServices;
 	[assembly: AssemblyVersion ("1.0.3300.0")]
 #endif
 
-[assembly: AssemblyDelaySign (true)]
-[assembly: AssemblyKeyFile ("../../class/mono.pub")]
+[assembly: AssemblyDelaySign (false)]
+[assembly: AssemblyKeyFile ("../nunit.key")]
