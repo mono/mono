@@ -4,6 +4,12 @@
 
 2004-11-29 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* HttpApplicationFactory.cs: monitor changes in global.asax and bin
+	directory and shutdown the application when that happens. Fixes bug
+	#49651.
+
+2004-11-29 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* ReusableMemoryStream.cs: copied from System.IO.MemoryStream and
 	slightly modified to allow expanding the buffer for cases on which the
 	regular MemoryStream don't allow it.
