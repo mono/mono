@@ -10,7 +10,7 @@ using System.Drawing.Drawing2D;
 namespace MyFormProject
 {
 
-	class MainForm : System.Windows.Forms.Form
+	class MainForm 
 	{
 		public MainForm()
 		{
