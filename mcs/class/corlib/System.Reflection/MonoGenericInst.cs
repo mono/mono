@@ -56,8 +56,10 @@ namespace System.Reflection
 				clist.AddRange (generic_type.BaseType.GetConstructors (flags));
 				flist.AddRange (generic_type.BaseType.GetFields (flags));
 			} else if (interfaces != null) {
-				foreach (MonoGenericInst iface in interfaces)
-					iface.inflate (iface, mlist, clist, flist);
+				foreach (MonoGenericInst iface in interfaces) {
+					if (iface != null)
+						iface.inflate (iface, mlist, clist, flist);
+				}
 			}
 
 			foreach (MethodInfo m in generic_type.GetMethods (flags))
