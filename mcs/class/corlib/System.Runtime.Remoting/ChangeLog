@@ -1,3 +1,8 @@
+2002-07-09  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* IObjectHandle.cs: New file.
+	* ObjectHandle.cs: implemented constructor and Unwrap.
+
 2002-01-05  Ravi Pratap  <ravi@ximian.com>
 
 	* ObjRef.cs : Strew the MonoTODO attribute.

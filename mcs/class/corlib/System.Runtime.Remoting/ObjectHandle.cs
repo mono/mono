@@ -1,8 +1,9 @@
 //
 // System.Runtime.Remoting.ObjectHandle.cs
 //
-// Author:
-//   Dietmar Maurer (dietmr@ximian.com)
+// Authors:
+//   Dietmar Maurer (dietmar@ximian.com)
+//   Gonzalo Paniagua (gonzalo@ximian.com)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
 //
@@ -13,12 +14,12 @@ using System.Runtime.Serialization;
 
 namespace System.Runtime.Remoting {
 
-	public class ObjectHandle : MarshalByRefObject, IObjectReference {
+	public class ObjectHandle : MarshalByRefObject, IObjectHandle {
+		private object _wrapped;
 		
-		[MonoTODO]
 		public ObjectHandle (object o)
 		{
-			throw new NotImplementedException ();
+			_wrapped = o;
 		}
 
 		[MonoTODO]
@@ -27,15 +28,9 @@ namespace System.Runtime.Remoting {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public object Unwrap ()
 		{
-			throw new NotImplementedException ();
-		}
-
-		public object GetRealObject (StreamingContext context)
-		{
-			throw new NotImplementedException ();
+			return _wrapped;
 		}
 
 	}
