@@ -1,0 +1,35 @@
+//
+// Test a generic type type param field
+//
+
+.assembly extern mscorlib { }
+
+
+.namespace Mono.ILASM.Tests {
+
+           .class public Set<T> extends [mscorlib]System.Object {
+
+                  .field public !0 val
+
+           }
+
+           .class public Driver extends [mscorlib]System.Object {
+
+                  .method public static void Main ()
+                  {
+                        .entrypoint
+                        .locals init (class Mono.ILASM.Tests.Set<int32>)
+
+                        ldloc.0
+                        ldc.i4.1
+                        stfld int32 class Mono.ILASM.Tests.Set<int32>::val
+
+                        ldfld int32 class Mono.ILASM.Tests.Set<int32>::val
+                        call void [mscorlib]System.Console::WriteLine (int32)
+
+                        ret
+                  }
+
+           }
+}
+
