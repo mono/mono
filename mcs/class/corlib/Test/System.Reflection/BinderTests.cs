@@ -116,6 +116,9 @@ namespace MonoTests.System.Reflection
 					  typeof (int), typeof (long),
 					  typeof (MyEnum) };
 
+			/* MS matches short for sbyte!!! */
+			/* MS matches int for ushort!!! */
+			/* MS matches long for uint!!! */
 			/** These do weird things under MS if used together and then in separate arrays *
 			Type [] types = { typeof (ulong), typeof (float), typeof (double),
 					  typeof (decimal), typeof (object) };
