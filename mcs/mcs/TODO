@@ -1,6 +1,43 @@
-The information on this file is mostly outdated, and its kept here for
-historical reasons
+NEW NOTES:
+----------
 
+	ImplicitStandardConversionExists and ImplicitStandardConversion
+	should always be the same, but there are a few diverging lines that
+	must be studied:
+
+			if (expr_type == target_type && !(expr is NullLiteral))
+				return expr;
+
+	vs:
+
+			if (expr_type == target_type)
+				return true;
+
+
+Null Type
+---------
+
+	Need to introduce the NullType concept into the compiler, to address a 
+	few small buglets and remove the hardcoded values for NullLiteral.
+
+	NullLiteral will be the only expression that has the NullType as its type.
+
+	This is what must be used to test for Null literals, instead of `is NullLiteral',
+	and this will introduce a couple of fixes to the rules.
+
+	Revert Martin's patch to Conditional expression that worked around this bug:
+
+		Reference r = xx ? null : null
+
+	The right fix is to introduce NullType
+
+****************************************************************************************
+* 
+*   The information on the rest of this file is mostly outdated, and its kept here for
+*   historical reasons
+*
+****************************************************************************************
+ 
 Error Reporting:
 ----------------
 
