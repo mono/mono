@@ -2959,30 +2959,32 @@ type_parameter_constraints_clauses
 type_parameter_constraints_clause
 	: WHERE type_parameter COLON type_parameter_constraints {
 		ArrayList constraints = new ArrayList (1);
-		constraints.Add (new Constraints ((string) $2, (ArrayList) $4));
+		constraints.Add (new Constraints ((string) $2, (ArrayList) $4, lexer.Location));
 		$$ = constraints;
 	  }
 	; 
 
 type_parameter_constraints
-	: type { 
+	: type_parameter_constraint {
 		ArrayList constraints = new ArrayList (1);
 		constraints.Add ($1);
 		$$ = constraints;
 	  }
-	| NEW OPEN_PARENS CLOSE_PARENS { 
-		ArrayList constraints = new ArrayList (1);
-		constraints.Add (true);
-		$$ = constraints;
-	  } 
-	| type_parameter_constraints COMMA type {
+	| type_parameter_constraints COMMA type_parameter_constraint {
 		ArrayList constraints = (ArrayList) $1;
 
 		constraints.Add ($3);
 		$$ = constraints;
-	}
+	  }
 	;
-	
+
+type_parameter_constraint
+	: type
+	| NEW OPEN_PARENS CLOSE_PARENS {
+		$$ = true;
+	  }
+	;
+
 //
 // Statements (8.2)
 //

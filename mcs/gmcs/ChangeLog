@@ -1,5 +1,19 @@
 2003-09-15  Martin Baulig  <martin@ximian.com>
 
+	* cs-parser.jay: Fix grammar wrt. type_parameter_constraints.
+
+	* generic.cs (Constraints.Resolve): New public method; this is
+	called to resolve the constraint types and to check whether all
+	the constraints are correct.
+	(Constraints.Types): New public property.
+	(TypeParameter.Resolve): New public method; resolves all the
+	type's constraints.
+
+	* class.cs (TypeContainer.DefineType): Call
+	TypeParameter.Resolve() before actually defining the type.
+
+2003-09-15  Martin Baulig  <martin@ximian.com>
+
 	* class.cs (TypeContainer.DefineType): Added an error flag to
 	avoid reporting duplicate CS0146's ("class definition is
 	circular.").

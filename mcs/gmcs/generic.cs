@@ -19,21 +19,90 @@ namespace Mono.CSharp {
 	public class Constraints {
 		string type_parameter;
 		ArrayList constraints;
+		Location loc;
 		
 		//
 		// type_parameter is the identifier, constraints is an arraylist of
 		// Expressions (with types) or `true' for the constructor constraint.
 		// 
-		public Constraints (string type_parameter, ArrayList constraints)
+		public Constraints (string type_parameter, ArrayList constraints,
+				    Location loc)
 		{
 			this.type_parameter = type_parameter;
 			this.constraints = constraints;
+			this.loc = loc;
 		}
 
 		public string TypeParameter {
 			get {
 				return type_parameter;
 			}
+		}
+
+		protected void Error (string message)
+		{
+			Report.Error (-218, "Invalid constraints clause for type " +
+				      "parameter `{0}': {1}", type_parameter, message);
+		}
+
+		bool has_ctor_constraint;
+		Type class_constraint;
+		ArrayList iface_constraints;
+		Type[] constraint_types;
+		int num_constraints;
+
+		public bool HasConstructorConstraint {
+			get { return has_ctor_constraint; }
+		}
+
+		public Type[] Types {
+			get { return constraint_types; }
+		}
+
+		public bool Resolve (TypeContainer tc)
+		{
+			iface_constraints = new ArrayList ();
+
+			if (constraints == null) {
+				constraint_types = new Type [0];
+				return true;
+			}
+
+			foreach (object obj in constraints) {
+				if (has_ctor_constraint) {
+					Error ("can only use one constructor constraint and " +
+					       "it must be the last constraint in the list.");
+					return false;
+				}
+
+				if (obj is bool) {
+					has_ctor_constraint = true;
+					continue;
+				}
+
+				Expression expr = tc.ResolveTypeExpr ((Expression) obj, false, loc);
+				if (expr == null)
+					return false;
+
+				Type etype = expr.Type;
+				if (etype.IsInterface)
+					iface_constraints.Add (etype);
+				else if (class_constraint != null) {
+					Error ("can have at most one class constraint.");
+					return false;
+				} else
+					class_constraint = etype;
+
+				num_constraints++;
+			}
+
+			constraint_types = new Type [num_constraints];
+			int pos = 0;
+			if (class_constraint != null)
+				constraint_types [pos++] = class_constraint;
+			iface_constraints.CopyTo (constraint_types, pos);
+
+			return true;
 		}
 	}
 
@@ -76,10 +145,22 @@ namespace Mono.CSharp {
 				return type;
 			}
 		}
-		
+
+		public bool Resolve (TypeContainer tc)
+		{
+			if (constraints != null)
+				return constraints.Resolve (tc);
+
+			return true;
+		}
+
 		public Type Define (TypeBuilder tb)
 		{
-			type = tb.DefineGenericParameter (name, new Type [0]);
+			if (constraints != null)
+				type = tb.DefineGenericParameter (name, constraints.Types);
+			else
+				type = tb.DefineGenericParameter (name, new Type [0]);
+
 			return type;
 		}
 

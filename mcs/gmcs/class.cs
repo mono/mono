@@ -813,6 +813,14 @@ namespace Mono.CSharp {
 				return null;
 			}
 			
+			if (IsGeneric) {
+				foreach (TypeParameter type_param in TypeParameters)
+					if (!type_param.Resolve (this)) {
+						error = true;
+						return null;
+					}
+			}
+			
 			if (!is_class && TypeManager.value_type == null)
 				throw new Exception ();
 
