@@ -83,7 +83,11 @@ $(monoone_DATA) $(monotwo_DATA) $(monobins_DATA):
 	gacutil.exe)		 d=tools/gacutil		;; \
 	gmcs.exe)                d=gmcs				;; \
 	esac; \
-	echo "  cd $(srcdir) && $(LN_S) ../../mcs/$$d/$@ $@" ; \
+	echo "test -f $(top_srcdir)/../mcs/$$d/$@" ; \
+	test -f $(top_srcdir)/../mcs/$$d/$@ || exit 1 ; \
+	echo "rm -f $(srcdir)/$@" ; \
+	rm -f $(srcdir)/$@ ; \
+	echo "cd $(srcdir) && $(LN_S) ../../mcs/$$d/$@ $@" ; \
 	cd $(srcdir) && $(LN_S) ../../mcs/$$d/$@ $@
 
 copy_dlls:
