@@ -1,5 +1,10 @@
 2003-07-17  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
+	* HtmlControlPersistableAttribute.cs: Added
+	* IgnoreUnknownContentAttribute.cs: Added
+
+2003-07-17  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
 	* IUserControlDesignerAccessor.cs: Added and implemented
 	* Control.cs: Missing member added, added all attributes
 	* Page.cs: Added attributes, fixed signature
