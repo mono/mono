@@ -33,7 +33,9 @@ using System;
 using System.Collections;
 using System.Configuration;
 using System.IO;
+#if XML_DEP
 using System.Xml;
+#endif
 
 namespace System.CodeDom.Compiler
 {
