@@ -1,3 +1,7 @@
+2003-12-10  Alon Gazit <along@mainsoft.com>
+	* TableItemStyle.cs: Add setting of The WRAP flag in the Wrap
+	property's set method.
+	
 2003-12-09  Jackson Harper <jackson@ximian.com>
 
 	* PagedDataSource.cs (PrivateICollectionEnumerator.MoveNext):

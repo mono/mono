@@ -96,6 +96,7 @@ namespace System.Web.UI.WebControls
 			set
 			{
 				ViewState["Wrap"] = value;
+				Set(WRAP);
 			}
 		}
 
