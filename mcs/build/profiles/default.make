@@ -25,4 +25,4 @@ endif
 
 profile-check:
 
-PROFILE_MCS_FLAGS = -d:NET_1_1
+PROFILE_MCS_FLAGS = -d:NET_1_1 -d:ONLY_1_1

@@ -1,3 +1,9 @@
+2003-12-17  Jackson Harper <jackson@ximian.com>
+
+	* profiles/default.make:
+	* profiles/net_1_0.make: Add ONLY_1_0 and ONLY_1_1 defines to fix
+	the build
+	
 2003-12-08  Peter Williams  <peter@newton.cx>
 
 	* config-default.make: Don't check for / define

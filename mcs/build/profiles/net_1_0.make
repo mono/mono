@@ -10,6 +10,6 @@
 
 include $(topdir)/build/profiles/default.make
 
-PROFILE_MCS_FLAGS = /d:NET_1_0
+PROFILE_MCS_FLAGS = /d:NET_1_0 /d:ONLY_1_0
 
 # done
