@@ -1899,129 +1899,170 @@ namespace Mono.MonoBASIC {
 				//
 				// To sbyte from short, int, long, float, double.
 				//
-				if ((expr_type == TypeManager.int32_type) || 
-				    (expr_type == TypeManager.int64_type) ||
-				    (expr_type == TypeManager.short_type) ||
-				    (expr_type == TypeManager.decimal_type))
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_I1);
+				if (expr_type == TypeManager.int32_type) 
+					return new ConvCast (ec, expr, target_type, ConvCast.Mode.I4_I1);
+				if (expr_type == TypeManager.int64_type)
+					return new ConvCast (ec, expr, target_type, ConvCast.Mode.I8_I1);
+				if (expr_type == TypeManager.short_type)
+					return new ConvCast (ec, expr, target_type, ConvCast.Mode.I2_I1);
 
-				if ((expr_type == TypeManager.float_type) ||
-				    (expr_type == TypeManager.double_type)) {
+				if (expr_type == TypeManager.float_type) {
 					Expression rounded_expr = RTConversionExpression(ec, "System.Math", ".Round", expr, loc);
-					return new OpcodeCast (rounded_expr, target_type, OpCodes.Conv_I1);
+					return new ConvCast (ec, rounded_expr, target_type, ConvCast.Mode.R4_I1);
+				}
+				if (expr_type == TypeManager.double_type) {
+					Expression rounded_expr = RTConversionExpression(ec, "System.Math", ".Round", expr, loc);
+					return new ConvCast (ec, rounded_expr, target_type, ConvCast.Mode.R8_I1);
 				}
 				
 			} else if (target_type == TypeManager.byte_type){
 				//
 				// To byte from short, ushort, int, uint, long, ulong, float, double
 				// 
-				if ((expr_type == TypeManager.short_type) ||
-				    (expr_type == TypeManager.ushort_type) ||
-				    (expr_type == TypeManager.int32_type) ||
-				    (expr_type == TypeManager.uint32_type) ||
-				    (expr_type == TypeManager.uint64_type) ||
-				    (expr_type == TypeManager.int64_type) ||
-				    (expr_type == TypeManager.decimal_type))
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_U1);
+				if (expr_type == TypeManager.short_type) 
+					return new ConvCast (ec, expr, target_type, ConvCast.Mode.I2_U1);
+				if (expr_type == TypeManager.ushort_type) 
+					return new ConvCast (ec, expr, target_type, ConvCast.Mode.U2_U1);
+				if (expr_type == TypeManager.int32_type) 
+					return new ConvCast (ec, expr, target_type, ConvCast.Mode.I4_U1);
+				if (expr_type == TypeManager.uint32_type)
+					return new ConvCast (ec, expr, target_type, ConvCast.Mode.U4_U1);
+				if (expr_type == TypeManager.uint64_type)
+					return new ConvCast (ec, expr, target_type, ConvCast.Mode.U8_U1);
+				if (expr_type == TypeManager.int64_type) 
+					return new ConvCast (ec, expr, target_type, ConvCast.Mode.I8_U1);
 
-				if ((expr_type == TypeManager.float_type) ||
-				    (expr_type == TypeManager.double_type)) {
+				if (expr_type == TypeManager.float_type) {
 					Expression rounded_expr = RTConversionExpression(ec, "System.Math", ".Round", expr, loc);
-					return new OpcodeCast (rounded_expr, target_type, OpCodes.Conv_U1);
+					return new ConvCast (ec, rounded_expr, target_type, ConvCast.Mode.R4_U1);
+				}
+				if (expr_type == TypeManager.double_type) {
+					Expression rounded_expr = RTConversionExpression(ec, "System.Math", ".Round", expr, loc);
+					return new ConvCast (ec, rounded_expr, target_type, ConvCast.Mode.R8_U1);
 				}
 	
-			} else if (target_type == TypeManager.short_type){
+			} else if (target_type == TypeManager.short_type) {
 				//
 				// To short from int, long, float, double
 				// 
-				if ((expr_type == TypeManager.int32_type) ||
-				    (expr_type == TypeManager.int64_type) ||
-				    (expr_type == TypeManager.decimal_type))
+				if (expr_type == TypeManager.int32_type) 
+					return new ConvCast (ec, expr, target_type, ConvCast.Mode.I4_I2);
+				if (expr_type == TypeManager.int64_type) 
+					return new ConvCast (ec, expr, target_type, ConvCast.Mode.I8_I2);
 
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_I2);
-
-				if ((expr_type == TypeManager.float_type) ||
-				    (expr_type == TypeManager.double_type)) {
+				if (expr_type == TypeManager.float_type) {
 					Expression rounded_expr = RTConversionExpression(ec, "System.Math", ".Round", expr, loc);
-					return new OpcodeCast (rounded_expr, target_type, OpCodes.Conv_I2);
+					return new ConvCast (ec, rounded_expr, target_type, ConvCast.Mode.R4_I2);
+				}
+				if (expr_type == TypeManager.double_type) {
+					Expression rounded_expr = RTConversionExpression(ec, "System.Math", ".Round", expr, loc);
+					return new ConvCast (ec, rounded_expr, target_type, ConvCast.Mode.R8_I2);
 				}
 					
-			} else if (target_type == TypeManager.ushort_type){
+			} else if (target_type == TypeManager.ushort_type) {
 				//
 				// To ushort from int, uint, long, ulong, float, double
 				//
-				if ((expr_type == TypeManager.uint32_type) ||
-				    (expr_type == TypeManager.uint64_type) ||
-				    (expr_type == TypeManager.int32_type) ||
-				    (expr_type == TypeManager.int64_type) ||
-				    (expr_type == TypeManager.decimal_type))
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_U2);
+				if (expr_type == TypeManager.uint32_type) 
+					return new ConvCast (ec, expr, target_type, ConvCast.Mode.U4_U2);
+				if (expr_type == TypeManager.uint64_type)
+					return new ConvCast (ec, expr, target_type, ConvCast.Mode.U8_U2);
+				if (expr_type == TypeManager.int32_type)
+					return new ConvCast (ec, expr, target_type, ConvCast.Mode.I4_U2);
+				if (expr_type == TypeManager.int64_type)
+					return new ConvCast (ec, expr, target_type, ConvCast.Mode.I8_U2);
 
-				if ((expr_type == TypeManager.float_type) ||
-				    (expr_type == TypeManager.double_type)) {
+				if (expr_type == TypeManager.float_type) {
 					Expression rounded_expr = RTConversionExpression(ec, "System.Math", ".Round", expr, loc);
-					return new OpcodeCast (rounded_expr, target_type, OpCodes.Conv_U2);
+					return new ConvCast (ec, rounded_expr, target_type, ConvCast.Mode.R4_U2);
+				}
+
+				if (expr_type == TypeManager.double_type) {
+					Expression rounded_expr = RTConversionExpression(ec, "System.Math", ".Round", expr, loc);
+					return new ConvCast (ec, rounded_expr, target_type, ConvCast.Mode.R8_U2);
 				}
 				    
 			} else if (target_type == TypeManager.int32_type){
 				//
 				// To int from long, float, double
 				//
-				if ((expr_type == TypeManager.int64_type) ||
-				    (expr_type == TypeManager.decimal_type))
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_I4);
+				if (expr_type == TypeManager.int64_type)
+					return new ConvCast (ec, expr, target_type, ConvCast.Mode.I8_I4);
 
-				if ((expr_type == TypeManager.float_type) ||
-				    (expr_type == TypeManager.double_type)) {
+				if (expr_type == TypeManager.float_type) {
 					Expression rounded_expr = RTConversionExpression(ec, "System.Math", ".Round", expr, loc);
-					return new OpcodeCast (rounded_expr, target_type, OpCodes.Conv_I4);
+					return new ConvCast (ec, rounded_expr, target_type, ConvCast.Mode.R4_I4);
+				}
+				if (expr_type == TypeManager.double_type) {
+					Expression rounded_expr = RTConversionExpression(ec, "System.Math", ".Round", expr, loc);
+					return new ConvCast (ec, rounded_expr, target_type, ConvCast.Mode.R8_I4);
 				}
 					
 			} else if (target_type == TypeManager.uint32_type){
 				//
 				// To uint from long, ulong, float, double
 				//
-				if ((expr_type == TypeManager.int64_type) ||
-				    (expr_type == TypeManager.uint64_type) ||
-				    (expr_type == TypeManager.decimal_type))
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_U4);
-
-				if ((expr_type == TypeManager.float_type) ||
-				    (expr_type == TypeManager.double_type)) {
+				if (expr_type == TypeManager.int64_type) 
+					return new ConvCast (ec, expr, target_type, ConvCast.Mode.I8_U4);
+				if (expr_type == TypeManager.uint64_type)
+					return new ConvCast (ec, expr, target_type, ConvCast.Mode.U8_I4);
+				if (expr_type == TypeManager.float_type) {
 					Expression rounded_expr = RTConversionExpression(ec, "System.Math", ".Round", expr, loc);
-					return new OpcodeCast (rounded_expr, target_type, OpCodes.Conv_U4);
+					return new ConvCast (ec, rounded_expr, target_type, ConvCast.Mode.R4_U4);
+				}
+				if (expr_type == TypeManager.double_type) {
+					Expression rounded_expr = RTConversionExpression(ec, "System.Math", ".Round", expr, loc);
+					return new ConvCast (ec, rounded_expr, target_type, ConvCast.Mode.R8_U4);
 				}
 					
-			} else if ((target_type == TypeManager.uint64_type) ||
-				   (target_type == TypeManager.int64_type)) {
+			} else if (target_type == TypeManager.uint64_type) {
 				//
 				// To long/ulong from float, double
 				//
-				if (expr_type == TypeManager.decimal_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_I8);
-
-				if ((expr_type == TypeManager.float_type) ||
-				    (expr_type == TypeManager.double_type)) {
+				if (expr_type == TypeManager.float_type) {
 					Expression rounded_expr = RTConversionExpression(ec, "System.Math", ".Round", expr, loc);
-					return new OpcodeCast (rounded_expr, target_type, OpCodes.Conv_I8);
+					return new ConvCast (ec, rounded_expr, target_type, ConvCast.Mode.R4_U8);
+				}
+				if (expr_type == TypeManager.double_type) {
+					Expression rounded_expr = RTConversionExpression(ec, "System.Math", ".Round", expr, loc);
+					return new ConvCast (ec, rounded_expr, target_type, ConvCast.Mode.R8_U8);
+				}
+				    
+			} else if (target_type == TypeManager.int64_type) {
+				//
+				// To long/ulong from float, double
+				//
+				if (expr_type == TypeManager.float_type) {
+					Expression rounded_expr = RTConversionExpression(ec, "System.Math", ".Round", expr, loc);
+					return new ConvCast (ec, rounded_expr, target_type, ConvCast.Mode.R4_I8);
+				}
+				if (expr_type == TypeManager.double_type) {
+					Expression rounded_expr = RTConversionExpression(ec, "System.Math", ".Round", expr, loc);
+					return new ConvCast (ec, rounded_expr, target_type, ConvCast.Mode.R8_I8);
 				}
 				    
 			} else if (target_type == TypeManager.char_type){
 				//
 				// To char from ushort, int, uint, long, ulong, float, double
 				// 
-				if ((expr_type == TypeManager.ushort_type) ||
-				    (expr_type == TypeManager.int32_type) ||
-				    (expr_type == TypeManager.uint32_type) ||
-				    (expr_type == TypeManager.uint64_type) ||
-				    (expr_type == TypeManager.int64_type) ||
-				    (expr_type == TypeManager.decimal_type))
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_U2);
+				if (expr_type == TypeManager.ushort_type)
+					return new ConvCast (ec, expr, target_type, ConvCast.Mode.U2_CH);
+				if (expr_type == TypeManager.int32_type)
+					return new ConvCast (ec, expr, target_type, ConvCast.Mode.I4_CH);
+				if (expr_type == TypeManager.uint32_type)
+					return new ConvCast (ec, expr, target_type, ConvCast.Mode.U4_CH);
+				if (expr_type == TypeManager.uint64_type)
+					return new ConvCast (ec, expr, target_type, ConvCast.Mode.U8_CH);
+				if (expr_type == TypeManager.int64_type) 
+					return new ConvCast (ec, expr, target_type, ConvCast.Mode.I8_CH);
 
-				if ((expr_type == TypeManager.float_type) ||
-				    (expr_type == TypeManager.double_type)) {
+				if (expr_type == TypeManager.float_type) {
 					Expression rounded_expr = RTConversionExpression(ec, "System.Math", ".Round", expr, loc);
-					return new OpcodeCast (rounded_expr, target_type, OpCodes.Conv_U2);
+					return new ConvCast (ec, rounded_expr, target_type, ConvCast.Mode.R4_CH);
+				}
+				if (expr_type == TypeManager.double_type) {
+					Expression rounded_expr = RTConversionExpression(ec, "System.Math", ".Round", expr, loc);
+					return new ConvCast (ec, rounded_expr, target_type, ConvCast.Mode.R8_CH);
 				}
 
 			} else if (target_type == TypeManager.float_type){
@@ -2029,7 +2070,7 @@ namespace Mono.MonoBASIC {
 				// To float from double
 				//
 				if (expr_type == TypeManager.double_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
+					return new ConvCast (ec, expr, target_type, ConvCast.Mode.R8_R4);
 			}	
 
 			TypeCode dest_type = Type.GetTypeCode (target_type);

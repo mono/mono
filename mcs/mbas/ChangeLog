@@ -1,3 +1,10 @@
+2005-02-08  Satya Sudha K  <ksathyasudha@novell.com>
+	* assign.cs: Fix for implicit conversions in Compound Assignments
+	* ecore.cs :
+		- Fixed the explicit conversion of float/double to integral types
+		  by rounding the float/double values before performing the actual 
+		  conversion
+		- Using 'ConvCast' instead of 'OpcodeCast' for Narrowing conversions
 
 2005-02-07  Ritvik Mayank <mritvik@novell.com>
 	* modifiers.cs

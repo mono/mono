@@ -348,13 +348,15 @@ namespace Mono.MonoBASIC {
 					// 2. and the original right side is implicitly convertible to
 					// the type of target_type.
 					//
-					if (StandardConversionExists (a.original_source, target_type))
+					source = ConvertImplicit(ec, source, target_type, loc);
+					if (source != null)
 						return this;
 
 					Error_CannotConvertImplicit (loc, a.original_source.Type, target_type);
 					return null;
 				}
 			}
+
 			if (IsLateIndexSet(target, ec)) 
 			{
 				// then we must rewrite the whole expression, since 
@@ -362,6 +364,7 @@ namespace Mono.MonoBASIC {
 				Invocation i = (Invocation) target;
 				return i;
 			}
+
 			source = ConvertImplicitRequired (ec, source, target_type, loc);
 			if (source == null)
 				return null;
