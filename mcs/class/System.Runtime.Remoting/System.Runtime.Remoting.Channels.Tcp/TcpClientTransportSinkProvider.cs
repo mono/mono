@@ -12,7 +12,7 @@ using System.Runtime.Remoting.Channels;
 
 namespace System.Runtime.Remoting.Channels.Tcp
 {
-	public class TcpClientTransportSinkProvider : IClientChannelSinkProvider
+	internal class TcpClientTransportSinkProvider : IClientChannelSinkProvider
 	{
 		public TcpClientTransportSinkProvider ()
 		{

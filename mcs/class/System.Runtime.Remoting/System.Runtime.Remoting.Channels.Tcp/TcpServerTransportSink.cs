@@ -14,7 +14,7 @@ using System.IO;
 
 namespace System.Runtime.Remoting.Channels.Tcp
 {
-	public class TcpServerTransportSink : IServerChannelSink, IChannelSinkBase
+	internal class TcpServerTransportSink : IServerChannelSink, IChannelSinkBase
 	{
 		IServerChannelSink next_sink;
 		

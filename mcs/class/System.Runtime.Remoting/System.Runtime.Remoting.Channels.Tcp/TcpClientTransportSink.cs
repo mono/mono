@@ -16,15 +16,17 @@ using System.Threading;
 
 namespace System.Runtime.Remoting.Channels.Tcp
 {
-	public class TcpClientTransportSink : IClientChannelSink
+	internal class TcpClientTransportSink : IClientChannelSink
 	{
 		string _host;
-		string _objectUri;
+		string _url;
 		int _port;
 		
 		public TcpClientTransportSink (string url)
 		{
-			_host = TcpChannel.ParseTcpURL (url, out _objectUri, out _port);
+			string objectUri;
+			_host = TcpChannel.ParseTcpURL (url, out objectUri, out _port);
+			_url = url;
 		}
 
 		public IDictionary Properties
@@ -53,7 +55,7 @@ namespace System.Runtime.Remoting.Channels.Tcp
 			try
 			{
 				if (headers == null) headers = new TransportHeaders();
-				headers [CommonTransportKeys.RequestUri] = ((IMethodCallMessage)msg).Uri;
+				headers [CommonTransportKeys.RequestUri] = ((IMethodMessage)msg).Uri;
 				
 				// Sends the stream using a connection from the pool
 				// and creates a WorkItem that will wait for the
@@ -139,7 +141,7 @@ namespace System.Runtime.Remoting.Channels.Tcp
 			try
 			{
 				if (requestHeaders == null) requestHeaders = new TransportHeaders();
-				requestHeaders [CommonTransportKeys.RequestUri] = ((IMethodCallMessage)msg).Uri;
+				requestHeaders [CommonTransportKeys.RequestUri] = ((IMethodMessage)msg).Uri;
 				
 				// Sends the message
 				connection = TcpConnectionPool.GetConnection (_host, _port);

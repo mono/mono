@@ -1,3 +1,9 @@
+2004-05-13  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* TcpChannel.cs: Made Init private.
+	* TcpClientTransportSink.cs, TcpClientTransportSinkProvider.cs,
+	  TcpServerTransportSink.cs: Made internal.
+
 ﻿2004-04-16  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* TcpClientChannel.cs: Initialize the sink provider in the default
