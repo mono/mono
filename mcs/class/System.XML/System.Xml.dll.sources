@@ -124,7 +124,8 @@ System.Xml/XmlNodeChangedEventHandler.cs
 System.Xml/XmlNodeList.cs
 System.Xml/XmlNodeListChildren.cs
 System.Xml/XmlNodeOrder.cs
-System.Xml/XmlNodeReader.cs
+System.Xml/XmlNodeReader2.cs
+System.Xml/XmlNodeReaderImpl.cs
 System.Xml/XmlNodeType.cs
 System.Xml/XmlParserContext.cs
 System.Xml/XmlProcessingInstruction.cs
@@ -180,7 +181,6 @@ System.Xml.Xsl/XsltCompileException.cs
 System.Xml.Xsl/XsltContext.cs
 System.Xml.Xsl/XsltException.cs
 System.Xml.Schema/BuiltInDatatype.cs
-System.Xml.Schema/CustomSerializer.cs
 System.Xml.Schema/IXmlSchemaInfo.cs
 System.Xml.Schema/SchemaDataValueType.cs
 System.Xml.Schema/ValidationEventArgs.cs
@@ -246,6 +246,7 @@ System.Xml.Schema/XmlSchemaPatternFacet.cs
 System.Xml.Schema/XmlSchemaRedefine.cs
 System.Xml.Schema/XmlSchemaSet.cs
 System.Xml.Schema/XmlSchemaSequence.cs
+System.Xml.Schema/XmlSchemaSerializer.cs
 System.Xml.Schema/XmlSchemaSimpleContent.cs
 System.Xml.Schema/XmlSchemaSimpleContentExtension.cs
 System.Xml.Schema/XmlSchemaSimpleContentRestriction.cs
