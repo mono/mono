@@ -1,5 +1,8 @@
 2002-07-17  Martin Baulig  <martin@gnome.org>
 
+	* ConvertTest.cs: Commented out line 456 which contains a non-printable
+	character which mcs does not like.  See also bug #27655.
+
 	* DecimalTest.cs, DecimanTest2.cs: Removed the `using S = System'.
 
 2002-07-11  Nick Drochak  <ndrochak@gol.com>

@@ -453,7 +453,7 @@ namespace MonoTests.System
 			AssertEquals("#F07", '@', Convert.ToChar("@"));
 			AssertEquals("#F08", 'K', Convert.ToChar((ushort)75));
 			AssertEquals("#F09", '=', Convert.ToChar((uint)61));
-			AssertEquals("#F10", 'È', Convert.ToChar((ulong)200));
+			// AssertEquals("#F10", 'È', Convert.ToChar((ulong)200));
 			AssertEquals("#F11", '{', Convert.ToChar((object)trySByte, ci));
 			AssertEquals("#F12", 'o', Convert.ToChar(tryStr.Substring(1,1), ci));
 			
