@@ -1,4 +1,11 @@
 
+Mon Jun 30 19:16:33 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c, mini-ops.h, inssel.brg, mini-x86.c: optimized access to fields.
+	Moved inlined mempcy code to its own function so that is can be
+	reused. Added an inline memset function as well (optimized initobj).
+	* cpu-pentium.md, inssel-x86.brg: add and use lea_membase.
+
 Fri Jun 27 11:19:10 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* mini.c, mini-ops.h, inssel.brg: optimized a couple of Array methods.
