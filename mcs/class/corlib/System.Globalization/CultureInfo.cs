@@ -526,7 +526,8 @@ namespace System.Globalization
 		public CultureInfo (int culture, bool use_user_override)
 		{
 			if (culture < 0)
-				throw new ArgumentOutOfRangeException ("culture");
+				throw new ArgumentOutOfRangeException ("Positive number required.",
+						"culture");
 
 			constructed = true;
 			
@@ -537,8 +538,9 @@ namespace System.Globalization
 			}
 
 			if (!ConstructInternalLocaleFromLcid (culture))
-				throw new ArgumentException ("Culture name " + m_name +
-						" is not supported.", "name");
+				throw new ArgumentException (
+					String.Format ("Culture ID {0} (0x{0:X4}) is not a " +
+							"supported culture.", culture), "culture");
 		}
 
 		public CultureInfo (int culture) : this (culture, false) {}

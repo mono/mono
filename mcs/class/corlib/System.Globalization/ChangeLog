@@ -1,3 +1,8 @@
+2004-05-17  Jackson Harper  <jackson@ximian.com>
+
+	* CultureInfo.cs: Properify error messages when invalid lcid's are
+	used.
+
 2004-05-15  Jackson Harper  <jackson@ximian.com>
 
 	* CultureInfo.cs: Initialize optional calendars. A pointer to an
