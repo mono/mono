@@ -32,9 +32,16 @@
 // Copyright (C) Novell, Inc. 2004 (http://www.novell.com)
 //
 //
-// $Revision: 1.15 $
+// $Revision: 1.16 $
 // $Modtime: $
 // $Log: ToolBar.cs,v $
+// Revision 1.16  2004/10/14 11:14:05  ravindra
+// 	- Changed Redraw () to do a Refresh () always.
+// 	- Fixed the MouseMove event handling when mouse is pressed,
+// 	ie drag event handling.
+// 	- Replaced the usage of ToolBarButton.Pressed property to
+// 	ToolBarButton.pressed internal variable.
+//
 // Revision 1.15  2004/10/06 09:59:05  jordi
 // removes warnings from compilation
 //
@@ -518,7 +525,7 @@ namespace System.Windows.Forms
 				else
 					e.Button.Pushed = false;
 			}
-			e.Button.Pressed = false;
+			e.Button.pressed = false;
 
 			Invalidate (e.Button.Rectangle);
 			Redraw (false);
@@ -603,7 +610,8 @@ namespace System.Windows.Forms
 					}
 					// If it is not dropdown then we treat it as a normal
 					// button press.
-					button.Pressed = true;
+					button.pressed = true;
+					button.inside = true;
 					Invalidate (button.Rectangle);
 					Redraw (false);
 					break;
@@ -636,12 +644,12 @@ namespace System.Windows.Forms
 						}
 					}
 					// Fire a ButtonClick
-					if (button.Pressed)
+					if (button.pressed)
 						this.OnButtonClick (new ToolBarButtonClickEventArgs (button));
 				}
 				// Clear the button press flags, if any
-				else if (button.Pressed) {
-					button.Pressed = false;
+				else if (button.pressed) {
+					button.pressed = false;
 					Invalidate (button.Rectangle);
 					Redraw (false);
 				}
@@ -662,31 +670,48 @@ namespace System.Windows.Forms
 
 		private void ToolBar_MouseMove (object sender, MouseEventArgs me)
 		{
-			if (! this.Enabled || appearance != ToolBarAppearance.Flat) return;
+			if (! this.Enabled) return;
 
 			Point hit = new Point (me.X, me.Y);
 
-			if (currentButton != null && currentButton.Rectangle.Contains (hit)) {
-				if (currentButton.Hilight || currentButton.Pushed)
-					return;
-				currentButton.Hilight = true;
-				Invalidate (currentButton.Rectangle);
-				Redraw (false);
-			}
-			else {
+			if (this.Capture) {
+				// If the button was pressed and we leave, release the 
+				// button press and vice versa
 				foreach (ToolBarButton button in buttons) {
-					if (button.Rectangle.Contains (hit) && button.Enabled) {
-						currentButton = button;
-						if (currentButton.Hilight || currentButton.Pushed)
-							continue;
-						currentButton.Hilight = true;
-						Invalidate (currentButton.Rectangle);
-						Redraw (false);
-					}
-					else if (button.Hilight) {
+					if (button.pressed &&
+					    (button.inside != button.Rectangle.Contains (hit))) {
+						button.inside = button.Rectangle.Contains (hit);
 						button.Hilight = false;
 						Invalidate (button.Rectangle);
 						Redraw (false);
+						break;
+					}
+				}
+			}
+			// following is only for flat style toolbar
+			else if (appearance == ToolBarAppearance.Flat) {
+				if (currentButton != null && currentButton.Rectangle.Contains (hit)) {
+					if (currentButton.Hilight || currentButton.Pushed)
+						return;
+					currentButton.Hilight = true;
+					Invalidate (currentButton.Rectangle);
+					Redraw (false);
+				}
+				else {
+					foreach (ToolBarButton button in buttons) {
+						if (button.Rectangle.Contains (hit) && button.Enabled) {
+							currentButton = button;
+							if (currentButton.Hilight || currentButton.Pushed)
+								continue;
+							currentButton.Hilight = true;
+							Invalidate (currentButton.Rectangle);
+							Redraw (false);
+						}
+						else if (button.Hilight) {
+							button.Hilight = false;
+							Invalidate (button.Rectangle);
+							Redraw (false);
+						}
 					}
 				}
 			}
@@ -715,6 +740,7 @@ namespace System.Windows.Forms
 				CalcToolBar ();
 
 			redraw = true;
+			Refresh ();
 		}
 
 		private Size CalcButtonSize ()
