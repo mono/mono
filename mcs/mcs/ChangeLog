@@ -1,5 +1,10 @@
 2003-05-18  Martin Baulig  <martin@ximian.com>
 
+	* expression.cs (This.DoResolve): Report a CS0027 if we're
+	emitting a field initializer.
+
+2003-05-18  Martin Baulig  <martin@ximian.com>
+
 	* expression.cs (This.ResolveBase): New public function.
 	(This.DoResolve): Check for CS0188.
 

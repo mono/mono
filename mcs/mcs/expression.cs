@@ -5931,6 +5931,12 @@ namespace Mono.CSharp {
 				return this;
 			}
 
+			if (ec.IsFieldInitializer) {
+				Error (27, "Keyword `this' can't be used outside a constructor, " +
+				       "a method or a property.");
+				return null;
+			}
+
 			return this;
 		}
 
