@@ -1,3 +1,18 @@
+2004-08-16  Atsushi Enomoto <atsushi@ximian.com>
+
+	* NewMonoXSD.cs : /language should support custom assembly qualified
+	  name specification. This fixes bug #63081.
+	  Also fixed usage message. "VB" is considered as valid.
+
+2004-08-07  Atsushi Enomoto <atsushi@ximian.com>
+
+	* NewMonoXSD.cs : /generator (/g) option didn't work, since it usually
+	  ends with .dll (or .exe) and regarded as mere assembly filename.
+
+2004-07-12  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* NewMonoXSD.cs: Accept files with absolute paths.
+
 2004-05-07  Atsushi Enomoto <atsushi@ximian.com>
 
 	* NewMonoXSD.cs : Previous change broke default C# code generation.

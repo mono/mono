@@ -40,8 +40,10 @@ namespace Mono.Util {
 			"   /e /element:NAME   Element from schema to generate code for.\n" +
 			"                      Multiple elements can be specified.\n" +
 			"   /u /uri:NAME       Namespace uri of the elements to generate code for.\n" +
-			"   /l /language:NAME  The language to use for the generated code.\n" +
-			"                      Currently, the only supported language is CS (C#).\n" +
+			"   /l /language:NAME  The language, or type name of custom CodeDomProvider\n" +
+			"                      to use for the generated code.\n" +
+			"                      Shorthand specifiers are: \"CS\" (C#) and \"VB\" (VB.NET).\n" +
+			"                      For type name, assembly qualified name is required.\n" +
 			"   /g /generator:TYPE Code Generator type name, followed by ','\n" + 
 			"                      and assembly file name.\n" +
 			"   /o /outputdir:PATH The directory where to generate the code or schemas.\n" +
@@ -110,8 +112,11 @@ namespace Mono.Util {
 
 			foreach (string arg in args)
 			{
-				if (!arg.StartsWith ("--") && !arg.StartsWith ("/")) {
-					if (arg.EndsWith (".dll") || arg.EndsWith (".exe"))
+				if (!arg.StartsWith ("--") && !arg.StartsWith ("/") ||
+					(arg.StartsWith ("/") && arg.IndexOfAny (Path.InvalidPathChars) == -1)
+					) 
+				{
+					if ((arg.EndsWith (".dll") || arg.EndsWith (".exe")) && !arg.Substring (1).StartsWith ("generator:") && !arg.Substring (1).StartsWith ("g:"))
 					{
 						if (!readingFiles) throw new Exception (incorrectOrder);
 						assemblies.Add (arg);
@@ -132,7 +137,7 @@ namespace Mono.Util {
 						inference = true;
 						continue;
 					}
-					else //if (!arg.StartsWith ("/") && !arg.StartsWith ("-"))
+					else if (!arg.StartsWith ("/"))
 					{
 						if (!readingFiles) Error (incorrectOrder);
 						unknownFiles.Add (arg);
@@ -217,6 +222,9 @@ namespace Mono.Util {
 
 			if (outputDir == null) outputDir = ".";
 
+			string typename = null;
+			Type generatorType = null;
+
 			if (language != null) {
 				switch (language) {
 				case "CS":
@@ -226,18 +234,20 @@ namespace Mono.Util {
 					provider = new VBCodeProvider ();
 					break;
 				default:
-					Error (languageNotSupported, language);
+					typename = StripQuot (language);
+
+					generatorType = Type.GetType (typename);
+					if (generatorType == null)
+						Error (generatorTypeNotFound, typename);
 					break;
 				}
 			}
 
 			if (providerOption != null) {
 				string param = providerOption;
-				string typename;
-				Type generatorType;
 				int comma = param.IndexOf (',');
 				if (comma < 0) {
-					typename = param;
+					typename = StripQuot (param);
 					generatorType = Type.GetType (param);
 				} else {
 					typename = param.Substring (0, comma);
@@ -253,14 +263,16 @@ namespace Mono.Util {
 				}
 				if (generatorType == null)
 					Error (generatorTypeNotFound, typename);
+			}
+			if (generatorType != null) {
 				if (!generatorType.IsSubclassOf (typeof (CodeDomProvider)))
 					Error (generatorTypeIsNotCodeGenerator, typename);
 				try {
 					provider = (CodeDomProvider) Activator.CreateInstance (generatorType, null);
 				} catch (Exception ex) {
-					Error (generatorThrewException, param);
+					Error (generatorThrewException, generatorType.AssemblyQualifiedName.ToString () + " --> " + ex.Message);
 				}
-				Console.WriteLine ("Loaded custom generator type " + param + " .");
+				Console.WriteLine ("Loaded custom generator type " + generatorType + " .");
 			}
 			if (provider == null)
 				provider = new CSharpCodeProvider ();
@@ -468,6 +480,17 @@ namespace Mono.Util {
 		public void Error (string msg, string param)
 		{
 			throw new Exception (string.Format(msg,param));
+		}
+
+		private string StripQuot (string input)
+		{
+			if (input.Length < 2)
+				return input;
+			if (input [0] == '"' && input [input.Length -1] == '"' ||
+				input [0] == '\'' && input [input.Length - 1] == '\'')
+				return input.Substring (1, input.Length - 2);
+			else
+				return language;
 		}
 	}
 }
