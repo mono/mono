@@ -46,7 +46,7 @@ namespace System.Drawing.Cairo {
 
                 [DllImport (CairoImp)]
 		[CLSCompliant(false)]
-                public static extern void cairo_set_target_drawble (IntPtr cr, IntPtr dpy, ulong drawable);
+                public static extern void cairo_set_target_drawable (IntPtr cr, IntPtr dpy, ulong drawable);
                 
 		[DllImport (CairoImp)]
 		public static extern void cairo_set_operator (IntPtr cr, Operator op);

@@ -1,3 +1,7 @@
+2003-09-03  Alp Toker  <alp@atoker.com>
+
+	cairo-api.cs: drawble -> drawable typo
+
 2003-08-24  Duncan Mak  <duncan@ximian.com> 		
 
 	* cairo-api.cs: New file, replace Cairo.cs and cairo.cs. That
