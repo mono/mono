@@ -223,7 +223,8 @@ ExceptionHandlingB \
 ExceptionHandlingC \
 InvocationStatementA \
 ControlFlowA \
-SyncLockA
+SyncLockA \
+ConversionsA
 
 # All negetive test cases which should
 # fail during compilation goes here
