@@ -1,3 +1,7 @@
+2002-04-04  Dietmar Maurer  <dietmar@ximian.com>
+
+	* message.c: added documentation
+
 2002-04-03  Dietmar Maurer  <dietmar@ximian.com>
 
 	* mono.c (main): use --trace instead of --trace-calls
