@@ -1,3 +1,25 @@
+2004-12-03  Martin Baulig  <martin@ximian.com>
+
+	* class.c
+	(inflate_generic_type): Set the `context->container' when creating
+	a new MonoGenericContext.
+	(mono_class_inflate_generic_method): Likewise.
+	(mono_class_create_from_typespec): Just use `context->container'
+	to get the container.
+
+	* loader.c (method_from_methodspec): Set `context->parent' from
+	`context->container' - and if that's a method container, use its
+	parent.  Also set the `context->container' when creating a new
+	MonoGenericContext.
+	(mono_get_method_from_token): Use just `context->container' to get
+	the container.
+
+	* metadata.c (do_mono_metadata_parse_generic_class): Also set
+	`gclass->context->container'.
+
+	* reflection.c (do_mono_reflection_bind_generic_parameters): Set
+	the `context->container' when creating a new MonoGenericContext.
+
 2004-12-03  Zoltan Varga  <vargaz@freemail.hu>
 
 	* reflection.c (compare_genericparam): Sort params with identical
