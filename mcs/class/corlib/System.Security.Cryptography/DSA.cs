@@ -6,11 +6,7 @@
 //	Sebastien Pouliot (sebastien@ximian.com)
 //
 // Portions (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
-// (C) 2004 Novell (http://www.novell.com)
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -47,13 +43,18 @@ namespace System.Security.Cryptography {
 
 	public abstract class DSA : AsymmetricAlgorithm	{
 
+#if NET_2_0
+		// Constructor visibility fixed in Fx 2.0
+		protected DSA ()
+#else
 		// LAMESPEC: It says to derive new DSA implemenation from DSA class.
 		// Well it's aint gonna be easy this way.
 		// RSA constructor is public
 		internal DSA ()
+#endif
 		{
 		}
-	
+
 		public static new DSA Create ()
 		{
 			return Create ("System.Security.Cryptography.DSA");
@@ -159,9 +160,13 @@ namespace System.Security.Cryptography {
 					int l = inArr.Length;
 					while (inArr[l-1] == 0x00)
 						l--;
-					byte[] c = new byte [l];
-					Buffer.BlockCopy (inArr, 0, c, 0, l);
-					sb.Append (Convert.ToBase64String (c));
+					if (l > 0) {
+						byte[] c = new byte [l];
+						Buffer.BlockCopy (inArr, 0, c, 0, l);
+						sb.Append (Convert.ToBase64String (c));
+					} else {
+						sb.Append ("AA==");	// base64 encoded 0
+					}
 					sb.Append ("</PgenCounter>");
 				}
 
