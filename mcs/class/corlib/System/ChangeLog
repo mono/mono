@@ -1,3 +1,12 @@
+2003-05-21  Pedro Martínez Juliá  <yoros@wanadoo.es>
+
+	* FloatingPointFormatter.cs: Take care with the explicit precision
+	and round the number to that precision.
+
+	* DoubleFormatter.cs: Adapt to the two level precision (15 - 17).
+
+	* SingleFormatter.cs: Adapt to the two level precision (7 - 8).
+
 2003-05-20  Philip Van Hoof <spamfrommailing@freax.org>
 
 	* DateTime.cs (FromOADate, GetDateTimeFormats, ToOADate):

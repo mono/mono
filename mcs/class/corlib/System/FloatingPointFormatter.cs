@@ -27,16 +27,31 @@ namespace System {
 		int dec_len;
 		int dec_len_min;
 
+		double p1;
+		double p101;
+		int dec_len1;
+		int dec_len_min1;
+
+		double p2;
+		double p102;
+		int dec_len2;
+		int dec_len_min2;
+
 		public FloatingPointFormatter
 			(string format, NumberFormatInfo nfi, double value,
-			 double p, double p10, int dec_len, int dec_len_min) {
+			 double p, double p10, int dec_len, int dec_len_min,
+			 double p2, double p102, int dec_len2, int dec_len_min2) {
 			this.format = format;
 			this.nfi = nfi;
 			this.value = value;
-			this.p = p;
-			this.p10 = p10;
-			this.dec_len = dec_len;
-			this.dec_len_min = dec_len_min;
+			this.p = this.p1 = p;
+			this.p10 = this.p101 = p10;
+			this.dec_len = this.dec_len1 = dec_len;
+			this.dec_len_min = this.dec_len_min1 = dec_len_min;
+			this.p2 = p2;
+			this.p102 = p102;
+			this.dec_len2 = dec_len2;
+			this.dec_len_min2 = dec_len_min2;
 			number_as_string = NumberToString();
 		}
 
@@ -76,6 +91,12 @@ namespace System {
 					Console.Error.Write(msg); 
 					return FormatGeneral(-1);
 				}
+			}
+			if (precision > dec_len+1) {
+				p = p2;
+				p10 = p102;
+				dec_len = dec_len2;
+				dec_len_min = dec_len_min2;
 			}
 			switch (specifier) {
 			case 'C':
@@ -286,11 +307,21 @@ namespace System {
 		private string FormatExponential (int precision) {
 			StringBuilder sb = new StringBuilder();
 			precision = (precision >= 0) ?
-				precision : nfi.NumberDecimalDigits;
+				precision : 6; //nfi.NumberDecimalDigits;
 			int decimals = precision;
 			long mantissa;
 			int exponent;
 			Normalize(value, precision, out mantissa, out exponent);
+			if (dec_len > precision) {
+				double aux = mantissa;
+				for (int i = 0; i < dec_len - precision; i++) {
+					aux /= 10;
+				}
+				mantissa = (long) Math.Round(aux);
+				for (int i = 0; i < dec_len - precision; i++) {
+					mantissa *= 10;
+				}
+			}
 			bool not_null = false;
 			if (mantissa != 0.0) {
 				for (int i = 0; i < dec_len || mantissa >= 10; i++) {
@@ -305,16 +336,21 @@ namespace System {
 					exponent++;
 				}
 			}
-			precision++;
-			while (precision > 0) {
-				sb.Append('0');
-				precision--;
+			if (decimals == 0) {
+				sb = new StringBuilder();
+				sb.Append(Digits[mantissa % 10]);
 			}
-			if (sb.Length == 0) {
-				sb.Insert(0, "0");
+			else {
+				while (precision > 0) {
+					sb.Append('0');
+					precision--;
+				}
+				if (sb.Length == 0) {
+					sb.Insert(0, "0");
+				}
+				sb.Insert
+					(0, Digits[mantissa % 10] + nfi.NumberDecimalSeparator);
 			}
-			sb.Insert
-				(0, Digits[mantissa % 10] + nfi.NumberDecimalSeparator);
 			if (exponent >= 0) {
 				sb.Append("E" + nfi.PositiveSign);
 			}
