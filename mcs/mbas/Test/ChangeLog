@@ -1,3 +1,7 @@
+2004-10-18  Jambunathan K  <kjambunathan@novell.com>
+	* Migrating mbas test cases from mcs/btests to mcs/mbas/Test
+	folder.
+
 2004-10-15  Jambunathan K  <kjambunathan@novell.com>
 	* Audited existing negative test cases that emit multiple,
 	mutually independent error messages and splitted them in to
