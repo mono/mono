@@ -1,10 +1,12 @@
-2004-10-19    <vargaz@freemail.hu>
+2004-10-19  Zoltan Varga  <vargaz@freemail.hu>
 
-	* marshal.c icall.c: Applied patch from Alexandre Rocha Lima e Marcondes  (alexandremarcondes@psl-pr.softwarelivre.org). Really fix 2.95 build.
+	* marshal.c, icall.c: Applied patch from Alexandre Rocha Lima e
+	Marcondes (alexandremarcondes@psl-pr.softwarelivre.org). Really
+	fix 2.95 build.	
 
 	* icall.c (ves_icall_InternalExecute): Fix build for gcc-2.95.
 
-2004-10-18    <vargaz@freemail.hu>
+2004-10-18  Zoltan Varga  <vargaz@freemail.hu>
 
 	* marshal.c (emit_marshal_object): Fix freeing of memory when a reference type is
 	marshalled as [In,Out]. Fixes #58325.
