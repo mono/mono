@@ -382,7 +382,7 @@ namespace Mono.CSharp {
 					} else if ((need_proxy == null) && (name != m.Name))
 						continue;
 
-					if (!TypeManager.IsEqual (ret_type, m.ReturnType)){
+					if (!TypeManager.Real_IsEqual (ret_type, m.ReturnType)){
 						if (!((ret_type == null && m.ReturnType == TypeManager.void_type) ||
 						      (m.ReturnType == null && ret_type == TypeManager.void_type)))
 							continue;
@@ -396,9 +396,9 @@ namespace Mono.CSharp {
 
 					int j, top = args.Length;
 					bool fail = false;
-					
+
 					for (j = 0; j < top; j++){
-						if (!TypeManager.IsEqual (tm.args [i][j], args[j])){
+						if (!TypeManager.Real_IsEqual (tm.args [i][j], args[j])){
 							fail = true;
 							break;
 						}

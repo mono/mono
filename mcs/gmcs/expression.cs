@@ -4995,7 +4995,7 @@ namespace Mono.CSharp {
 					while (check.IsArray)
 						check = check.GetElementType ();
 
-					if (pt.Equals (check))
+					if (pt == check)
 						return false;
 
 					infered [pos] = at;

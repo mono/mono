@@ -1213,7 +1213,8 @@ namespace Mono.CSharp {
 			TypeManager.AddUserType (Name, TypeBuilder, this);
 
 			if (IsGeneric) {
-				foreach (TypeParameter type_param in TypeParameters) {
+				int offset = CountTypeParameters - CurrentTypeParameters.Length;
+				foreach (TypeParameter type_param in CurrentTypeParameters) {
 					if (!type_param.Resolve (this)) {
 						error = true;
 						return null;
@@ -1231,8 +1232,8 @@ namespace Mono.CSharp {
 				
 				gen_params = TypeBuilder.DefineGenericParameters (param_names);
 
-				for (int i = 0; i < gen_params.Length; i++)
-					TypeParameters [i].Define (gen_params [i]);
+				for (int i = offset; i < gen_params.Length; i++)
+					CurrentTypeParameters [i - offset].Define (gen_params [i]);
 			}
 
 			if (IsGeneric) {
@@ -5182,8 +5183,9 @@ namespace Mono.CSharp {
 				return false;
 
 			if (IsExplicitImpl) {
-				InterfaceType = Parent.ResolveType (
-					ExplicitInterfaceName.GetTypeExpression (Location), false, Location);
+				Expression iface_expr = ExplicitInterfaceName.GetTypeExpression (Location);
+
+				InterfaceType = Parent.ResolveType (iface_expr, false, Location);
 				if (InterfaceType == null)
 					return false;
 

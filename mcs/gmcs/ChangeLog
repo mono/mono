@@ -1,3 +1,20 @@
+2004-10-11  Martin Baulig  <martin@ximian.com>
+
+	* class.cs (TypeContainer.DefineType): Only call TypeParameter.Define()
+	on our own type parameters, not on the ones we inherit from a containing
+	class.
+
+	* expression.cs (Invocation.InferType): Use `==', not `Equals()' for
+	the comparision.
+
+	* generic.cs (TypeParameter.Define): We may only be called once.
+
+	* pending.cs (Pending.InterfaceMethod): Call TypeManager.Real_IsEqual()
+	instead of TypeManager.IsEqual().
+
+	* typemanager.cs (TypeManager.Real_IsEqual): New method; this'll
+	soon be renamed to IsEqual() and thus replace the old IsEqual().	
+
 2004-09-28  Martin Baulig  <martin@ximian.com>
 
 	* generic.cs

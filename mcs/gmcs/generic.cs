@@ -529,6 +529,9 @@ namespace Mono.CSharp {
 
 		public void Define (GenericTypeParameterBuilder type)
 		{
+			if (this.type != null)
+				throw new InvalidOperationException ();
+
 			this.type = type;
 			Type[] ifaces = null;
 			if (constraints != null)
