@@ -1,3 +1,7 @@
+2003-06-03  Dietmar Maurer  <dietmar@ximian.com>
+
+	* marshal.c (mono_marshal_get_native_wrapper): started support for
+	custom marshalers.
 
 Tue Jun 3 11:17:02 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
