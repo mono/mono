@@ -1,3 +1,8 @@
+2002-04-19  Dan Lewis  <dihlewis@yahoo.co.uk>
+
+	* object.h, object.c: changed array format so that szarrays do not
+	require a bounds structure.
+	* icall.c, appdomain.c: support for new szarray format.
 
 Fri Apr 19 18:04:34 CEST 2002 Paolo Molaro <lupus@ximian.com>
 

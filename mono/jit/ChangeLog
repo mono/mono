@@ -1,3 +1,8 @@
+2002-04-19  Dan Lewis  <dihlewis@yahoo.co.uk>
+	
+	* x86.brg: LDLEN uses max_length instead of bounds[0]
+	* jit.c: support for new szarray format
+
 2002-04-18  Dietmar Maurer  <dietmar@ximian.com>
 
 	* jit.c (check_inlining): added inlining support

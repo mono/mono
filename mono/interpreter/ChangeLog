@@ -1,3 +1,6 @@
+2002-04-19  Dan Lewis  <dihlewis@yahoo.co.uk>
+	
+	* interp.c: support for new szarray format.
 
 Tue Apr 16 20:12:58 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
