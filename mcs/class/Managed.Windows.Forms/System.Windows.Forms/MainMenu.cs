@@ -17,7 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004 Novell, Inc.
+// Copyright (c) 2004-2005 Novell, Inc.
 //
 // Authors:
 //	Jordi Mas i Hernandez, jordi@ximian.com
@@ -26,8 +26,11 @@
 
 // NOT COMPLETE
 
+using System.ComponentModel;
+
 namespace System.Windows.Forms
 {
+	[ToolboxItemFilter("System.Windows.Forms.MainMenu", ToolboxItemFilterType.Allow)]
 	public class MainMenu : Menu
 	{
 		private RightToLeft right_to_left;
@@ -45,7 +48,7 @@ namespace System.Windows.Forms
 		}
 
 		#region Public Properties
-		
+		[Localizable(true)]
 		public virtual RightToLeft RightToLeft {
 			get { return right_to_left;}
 			set { right_to_left = value; }

@@ -1,6 +1,7 @@
 2005-02-03  Peter Bartok  <pbartok@novell.com>
 
 	* Menu.cs: Added missing attributes
+	* MainMenu.cs: Added missing attributes
 	* GroupBox.cs: Added missing attributes
 	* Label.cs: Added missing attributes
 	* CheckBox.cs: Implemented CheckBoxAccessibleObject class
