@@ -1,3 +1,9 @@
+2005-01-08  Miguel de Icaza  <miguel@ximian.com>
+
+	* Convert.cs (Convert.ToType): Throw an InvalidCastException if
+	the conversion is invalid, not ArgumentException, this fixes
+	another regression in our test suite.
+
 2005-01-08  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AppDomain.cs: Add ApplicationIdentity property for 2.0;

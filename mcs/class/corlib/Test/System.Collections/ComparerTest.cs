@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections;
+using System.Globalization;
 using NUnit.Framework;
 
 
@@ -46,7 +47,19 @@ namespace MonoTests.System.Collections {
 		public void Invariant ()
 		{
 			Comparer c = Comparer.DefaultInvariant;
+
+			//
+			// In Mono we are comparing the ordinal values 
+			// of the strings, while it seems that the MS
+			// runtime considers lowercase letters like "a"
+			// to come before "A".
+			//
+			// I have not found any documentation on this
+			// behavior of the InvariantCulture
+			//
 			Assert.IsTrue (c.Compare ("a", "A") < 0);
+			
+			Assert.IsTrue (CultureInfo.InvariantCulture.CompareInfo.Compare ("a", "A", CompareOptions.Ordinal) < 0);
 		}
 	}
 }

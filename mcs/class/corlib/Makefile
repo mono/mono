@@ -43,7 +43,7 @@ cmplib = $(topdir)/class/lib/$(PROFILE)/corlib_cmp.dll
 $(plattestlib).sources: corlib_test.dll.sources $(plattestlib).excludes
 	sort corlib_test.dll.sources $(plattestlib).excludes | uniq -u >$@
 
-TEST_MCS_FLAGS = /debug+ /debug:full /nowarn:0618 /nowarn:0672 /unsafe
+TEST_MCS_FLAGS = -debug+ -debug:full -nowarn:168 -nowarn:219 -nowarn:0618 -nowarn:0672 -unsafe
 
 ifndef PLATFORM_MONO_NATIVE
 test_lib = $(plattestlib)
