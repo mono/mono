@@ -1,3 +1,10 @@
+2005-03-01  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* System.Data.dll.sources: Added System.Data.Common/
+	ConnectionStringsSectionHandler.cs.
+	* app_test_2.0.config: Changed the configuration handler for
+	seciton "connectionStrings".
+
 2005-02-22  Sureshkumar T  <tsureshkumar@novell.com>
         
 	* System.Data_test.dll.sources: Added

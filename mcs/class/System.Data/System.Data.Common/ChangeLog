@@ -1,3 +1,9 @@
+2005-03-01  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* ConnectionStringsSectionHandler.cs: Added. configuration section
+	handler for section "connectionStrings". This handler is a ad hoc
+	solution till the new configuration API is available in mono.
+
 2005-02-04  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* DbDataAdapter.cs (Update ()) :

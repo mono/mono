@@ -48,13 +48,9 @@ namespace MonoTests.System.Configuration
         {
     
             object o = ConfigurationSettings.GetConfig ("connectionStrings_test");
-            Console.WriteLine ("done");
             Assert.IsNotNull (o, "getconfig returns null");
 
             ConnectionStringsSection css = (ConnectionStringsSection) o;
-            foreach (ConnectionStringSettings m in css.ConnectionStrings) {
-                Console.WriteLine (m.Name);
-            }
             ConnectionStringSettings cs= css.ConnectionStrings ["Publications"];
             Assert.IsNotNull (cs, "connectionstringsettings is null");
             
