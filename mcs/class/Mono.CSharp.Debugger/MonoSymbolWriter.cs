@@ -60,7 +60,7 @@ namespace Mono.CSharp.Debugger
 		static private int next_index;
 		private readonly int _index;
 
-		public SourceBlock (SourceMethod method, SourceLine start, SourceLine end)
+		public SourceBlock (SourceMethod method, LineNumberEntry start, LineNumberEntry end)
 		{
 			this._method = method;
 			this._start = start;
@@ -71,7 +71,7 @@ namespace Mono.CSharp.Debugger
 		internal SourceBlock (SourceMethod method, int startOffset)
 		{
 			this._method = method;
-			this._start = new SourceLine (startOffset);
+			this._start_offset = startOffset;
 			this._index = ++next_index;
 		}
 
@@ -82,8 +82,17 @@ namespace Mono.CSharp.Debugger
 
 		private readonly SourceMethod _method;
 		private ArrayList _blocks = new ArrayList ();
-		internal SourceLine _start;
-		internal SourceLine _end;
+		internal LineNumberEntry _start = LineNumberEntry.Null;
+		internal LineNumberEntry _end = LineNumberEntry.Null;
+		internal int _start_offset, _end_offset;
+		bool _has_source;
+
+		internal void SetSourceRange (int startLine, int endLine)
+		{
+			_start = new LineNumberEntry (startLine, _start_offset);
+			_end = new LineNumberEntry (endLine, _end_offset);
+			_has_source = true;
+		}
 
 		private ArrayList _locals = new ArrayList ();
 
@@ -106,13 +115,19 @@ namespace Mono.CSharp.Debugger
 			_blocks.Add (block);
 		}
 
-		public SourceLine Start {
+		public bool HasSource {
+			get {
+				return _has_source;
+			}
+		}
+
+		public LineNumberEntry Start {
 			get {
 				return _start;
 			}
 		}
 
-		public SourceLine End {
+		public LineNumberEntry End {
 			get {
 				return _end;
 			}
@@ -135,63 +150,6 @@ namespace Mono.CSharp.Debugger
 		public void AddLocal (LocalVariableEntry local)
 		{
 			_locals.Add (local);
-		}
-	}
-
-	internal class SourceLine
-	{
-		public SourceLine (int row, int column)
-			: this (0, row, column)
-		{
-			this._type = SourceOffsetType.OFFSET_NONE;
-		}
-
-		public SourceLine (int offset, int row, int column)
-		{
-			this._offset = offset;
-			this._row = row;
-			this._column = column;
-			this._type = SourceOffsetType.OFFSET_IL;
-		}
-
-		internal SourceLine (int offset)
-			: this (offset, 0, 0)
-		{ }
-
-		public override string ToString ()
-		{
-			return "SourceLine (" + _offset + "@" + _row + ":" + _column + ")";
-		}
-
-		internal SourceOffsetType _type;
-		internal int _offset;
-		internal int _row;
-		internal int _column;
-
-		// interface SourceLine
-
-		public SourceOffsetType OffsetType {
-			get {
-				return _type;
-			}
-		}
-
-		public int Offset {
-			get {
-				return _offset;
-			}
-		}
-
-		public int Row {
-			get {
-				return _row;
-			}
-		}
-
-		public int Column {
-			get {
-				return _column;
-			}
 		}
 	}
 
@@ -226,10 +184,8 @@ namespace Mono.CSharp.Debugger
 					    int endLine, int endColumn)
 		{
 			_source_file = sourceFile;
-			_implicit_block._start = new SourceLine (startLine, startColumn);
-			_implicit_block._end = new SourceLine (endLine, endColumn);
+			_implicit_block.SetSourceRange (startLine, endLine);
 		}
-
 
 		public void StartBlock (SourceBlock block)
 		{
@@ -239,7 +195,7 @@ namespace Mono.CSharp.Debugger
 		public void EndBlock (int endOffset) {
 			SourceBlock block = (SourceBlock) _block_stack.Pop ();
 
-			block._end = new SourceLine (endOffset);
+			block._end_offset = endOffset;
 
 			if (_block_stack.Count > 0) {
 				SourceBlock parent = (SourceBlock) _block_stack.Peek ();
@@ -254,8 +210,8 @@ namespace Mono.CSharp.Debugger
 		public void SetBlockRange (int BlockID, int startOffset, int endOffset)
 		{
 			SourceBlock block = (SourceBlock) _block_hash [BlockID];
-			((SourceLine) block.Start)._offset = startOffset;
-			((SourceLine) block.End)._offset = endOffset;
+			block._start_offset = startOffset;
+			block._end_offset = endOffset;
 		}
 
 		public SourceBlock CurrentBlock {
@@ -267,15 +223,15 @@ namespace Mono.CSharp.Debugger
 			}
 		}
 
-		public SourceLine[] Lines {
+		public LineNumberEntry[] Lines {
 			get {
-				SourceLine[] retval = new SourceLine [_lines.Count];
+				LineNumberEntry[] retval = new LineNumberEntry [_lines.Count];
 				_lines.CopyTo (retval);
 				return retval;
 			}
 		}
 
-		public void AddLine (SourceLine line)
+		public void AddLine (LineNumberEntry line)
 		{
 			_lines.Add (line);
 		}
@@ -350,18 +306,19 @@ namespace Mono.CSharp.Debugger
 			}
 		}
 
-		public SourceLine Start {
+		public bool HasSource {
 			get {
-				if (_implicit_block.Start == null)
-					return null;
-				else if (_implicit_block.Start.Row == 0)
-					return null;
+				return _implicit_block.HasSource && (_source_file != null);
+			}
+		}
 
+		public LineNumberEntry Start {
+			get {
 				return _implicit_block.Start;
 			}
 		}
 
-		public SourceLine End {
+		public LineNumberEntry End {
 			get {
 				return _implicit_block.End;
 			}
@@ -370,7 +327,6 @@ namespace Mono.CSharp.Debugger
 
 	public class MonoSymbolWriter : IMonoSymbolWriter
 	{
-		protected Assembly assembly;
 		protected ModuleBuilder module_builder;
 		protected ArrayList locals = null;
 		protected ArrayList orphant_methods = null;
@@ -395,16 +351,14 @@ namespace Mono.CSharp.Debugger
 		}
 
 		private SourceMethod current_method = null;
-		private string assembly_filename = null;
 		private string output_filename = null;
 
 		//
 		// Interface IMonoSymbolWriter
 		//
 
-		public MonoSymbolWriter (ModuleBuilder mb, string filename, ArrayList mbuilder_array)
+		public MonoSymbolWriter (ModuleBuilder mb, ArrayList mbuilder_array)
 		{
-			this.assembly_filename = filename;
 			this.module_builder = mb;
 			this.methods = new ArrayList ();
 			this.sources = new Hashtable ();
@@ -413,13 +367,13 @@ namespace Mono.CSharp.Debugger
 			this.mbuilder_array = mbuilder_array;
 		}
 
-		public void Close () {
-			if (assembly == null)
-				assembly = Assembly.LoadFrom (assembly_filename);
+		public void Close () { }
 
-			DoFixups (assembly);
+		public byte[] CreateSymbolFile (AssemblyBuilder assembly_builder)
+		{
+			DoFixups (assembly_builder);
 
-			CreateOutput (assembly);
+			return CreateOutput (assembly_builder);
 		}
 
 		public void CloseNamespace () {
@@ -496,7 +450,7 @@ namespace Mono.CSharp.Debugger
 			if (current_method == null)
 				return;
 
-			SourceLine source_line = new SourceLine (offsets [0], lines [0], columns [0]);
+			LineNumberEntry source_line = new LineNumberEntry (lines [0], offsets [0]);
 
 			if (current_method != null)
 				current_method.AddLine (source_line);
@@ -507,10 +461,9 @@ namespace Mono.CSharp.Debugger
 			throw new NotSupportedException ();
 		}
 
-		public void Initialize (string assembly_filename, string filename, string[] args)
+		public void Initialize (string filename)
 		{
 			this.output_filename = filename;
-			this.assembly_filename = assembly_filename;
 		}
 
 		public void OpenMethod (SymbolToken symbol_token)
@@ -638,10 +591,10 @@ namespace Mono.CSharp.Debugger
 			}
 		}
 
-		protected void CreateOutput (Assembly assembly)
+		protected byte[] CreateOutput (Assembly assembly)
 		{
-			MonoSymbolTableWriter writer = new MonoSymbolTableWriter (output_filename);
-			writer.WriteSymbolTable (this);
+			MonoSymbolTableWriter writer = new MonoSymbolTableWriter ();
+			return writer.CreateSymbolTable (this);
 		}
 	}
 }

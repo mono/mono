@@ -59,6 +59,15 @@ namespace Mono.CSharp.Debugger
 			bw.Write (MethodTableSize);
 			bw.Write (TypeCount);
 		}
+
+		public override string ToString ()
+		{
+			return String.Format (
+				"OffsetTable [{0} - {1}:{2} - {3}:{4}:{5} - {6}:{7}:{8} - {9}]",
+				TotalFileSize, DataSectionOffset, DataSectionSize, SourceCount,
+				SourceTableOffset, SourceTableSize, MethodCount, MethodTableOffset,
+				MethodTableSize, TypeCount);
+		}
 	}
 
 	public struct LineNumberEntry
@@ -72,9 +81,7 @@ namespace Mono.CSharp.Debugger
 			this.Offset = offset;
 		}
 
-		internal LineNumberEntry (SourceLine line)
-			: this (line.Row, line.Offset)
-		{ }
+		public static LineNumberEntry Null = new LineNumberEntry (0, 0);
 
 		internal LineNumberEntry (BinaryReader reader)
 		{
@@ -87,6 +94,41 @@ namespace Mono.CSharp.Debugger
 			bw.Write (Row);
 			bw.Write (Offset);
 		}
+
+		private class OffsetComparerClass : IComparer
+		{
+			public int Compare (object a, object b)
+			{
+				LineNumberEntry l1 = (LineNumberEntry) a;
+				LineNumberEntry l2 = (LineNumberEntry) b;
+
+				if (l1.Offset < l2.Offset)
+					return -1;
+				else if (l1.Offset > l2.Offset)
+					return 1;
+				else
+					return 0;
+			}
+		}
+
+		private class RowComparerClass : IComparer
+		{
+			public int Compare (object a, object b)
+			{
+				LineNumberEntry l1 = (LineNumberEntry) a;
+				LineNumberEntry l2 = (LineNumberEntry) b;
+
+				if (l1.Row < l2.Row)
+					return -1;
+				else if (l1.Row > l2.Row)
+					return 1;
+				else
+					return 0;
+			}
+		}
+
+		public static readonly IComparer OffsetComparer = new OffsetComparerClass ();
+		public static readonly IComparer RowComparer = new RowComparerClass ();
 
 		public override string ToString ()
 		{
@@ -411,8 +453,8 @@ namespace Mono.CSharp.Debugger
 			StartRow = start_row;
 			EndRow = end_row;
 
-			NumLineNumbers = lines.Length;
-			LineNumbers = lines;
+			LineNumbers = BuildLineNumberTable (lines);
+			NumLineNumbers = LineNumbers.Length;
 
 			ParameterInfo[] parameters = method.GetParameters ();
 			if (parameters == null)
@@ -451,6 +493,35 @@ namespace Mono.CSharp.Debugger
 				ThisTypeIndex = file.DefineType (method.ReflectedType);
 		}
 
+		LineNumberEntry[] BuildLineNumberTable (LineNumberEntry[] line_numbers)
+		{
+			Array.Sort (line_numbers, LineNumberEntry.OffsetComparer);
+
+			ArrayList list = new ArrayList ();
+			int last_offset = -1;
+			int last_row = -1;
+
+			for (int i = 0; i < line_numbers.Length; i++) {
+				LineNumberEntry line = (LineNumberEntry) line_numbers [i];
+
+				if (line.Offset > last_offset) {
+					if (last_row >= 0)
+						list.Add (new LineNumberEntry (last_row, last_offset));
+					last_row = line.Row;
+					last_offset = line.Offset;
+				} else if (line.Row > last_row) {
+					last_row = line.Row;
+				}
+			}
+
+			if (last_row >= 0)
+				list.Add (new LineNumberEntry (last_row, last_offset));
+
+			LineNumberEntry[] retval = new LineNumberEntry [list.Count];
+			list.CopyTo (retval, 0);
+			return retval;
+		}
+
 		internal MethodSourceEntry Write (MonoSymbolFile file, BinaryWriter bw)
 		{
 			NameOffset = (int) bw.BaseStream.Position;
@@ -475,6 +546,9 @@ namespace Mono.CSharp.Debugger
 
 			for (int i = 0; i < NumLineNumbers; i++)
 				LineNumbers [i].Write (bw);
+
+			file.LineNumberCount += NumLineNumbers;
+			file.LocalCount += NumLocals;
 
 			file_offset = (int) bw.BaseStream.Position;
 
@@ -503,9 +577,10 @@ namespace Mono.CSharp.Debugger
 
 		public override string ToString ()
 		{
-			return String.Format ("[Method {0}:{1}:{2}:{3}:{4} - {5} - {6}]",
+			return String.Format ("[Method {0}:{1}:{2}:{3}:{4} - {7}:{8}:{9}:{10} - {5} - {6}]",
 					      SourceFileIndex, index, Token, StartRow, EndRow,
-					      SourceFile, FullName);
+					      SourceFile, FullName, ThisTypeIndex, NumParameters,
+					      NumLocals, NumLineNumbers);
 		}
 	}
 }

@@ -27,6 +27,149 @@ namespace Mono.CSharp.Debugger
 		{ }
 	}
 
+	internal class MyMemoryStream : Stream
+	{
+		int length;
+		int real_length;
+		int position;
+
+		int chunk_size = 4096;
+		ArrayList chunks = new ArrayList ();
+
+		private struct Chunk {
+			public readonly int Offset;
+			public readonly int Length;
+			public byte[] Buffer;
+
+			public Chunk (int offset, int length)
+			{
+				this.Offset = offset;
+				this.Length = length;
+				this.Buffer = new Byte [length];
+			}
+		}
+
+		public override long Position {
+			get { return position; }
+
+			set {
+				if (value > length)
+					throw new ArgumentOutOfRangeException ();
+
+				position = (int) value;
+			}
+		}
+
+		public override long Length {
+			get { return length; }
+		}
+
+		public override bool CanRead {
+			get { return true; }
+		}
+
+		public override bool CanWrite {
+			get { return true; }
+		}
+
+		public override bool CanSeek {
+			get { return true; }
+		}
+
+		public override void SetLength (long new_length)
+		{
+			if (new_length < length)
+				throw new ArgumentException ();
+
+			while (new_length >= real_length) {
+				Chunk new_chunk = new Chunk (real_length, chunk_size);
+				chunks.Add (new_chunk);
+				real_length += chunk_size;
+			}
+
+			length = (int) new_length;
+		}
+
+		public override void Flush ()
+		{ }
+
+		public override long Seek (long offset, SeekOrigin origin)
+		{
+			int ref_point;
+
+                        switch (origin) {
+			case SeekOrigin.Begin:
+				ref_point = 0;
+				break;
+			case SeekOrigin.Current:
+				ref_point = position;
+				break;
+			case SeekOrigin.End:
+				ref_point = length;
+				break;
+			default:
+				throw new ArgumentException ("Invalid SeekOrigin");
+                        }
+
+                        if ((ref_point + offset < 0) || (offset > real_length))
+                                throw new ArgumentOutOfRangeException ();
+
+                        position = ref_point + (int) offset;
+
+			return position;
+		}
+
+		Chunk FindChunk (int offset)
+		{
+			return (Chunk) chunks [offset / chunk_size];
+		}
+
+		public override int Read (byte[] buffer, int offset, int count)
+		{
+			int old_count = count;
+
+			while (count > 0) {
+				Chunk chunk = FindChunk (position);
+				int coffset = position - chunk.Offset;
+				int rest = chunk.Length - coffset;
+				int size = Math.Min (count, rest);
+
+				Array.Copy (chunk.Buffer, coffset, buffer, offset, size);
+				position += size;
+				offset += size;
+				count -= size;
+			}
+
+			return old_count;
+		}
+
+		public override void Write (byte[] buffer, int offset, int count)
+		{
+			if (position + count > length)
+				SetLength (position + count);
+
+			while (count > 0) {
+				Chunk chunk = FindChunk (position);
+				int coffset = position - chunk.Offset;
+				int rest = chunk.Length - coffset;
+				int size = Math.Min (count, rest);
+
+				Array.Copy (buffer, offset, chunk.Buffer, coffset, size);
+				position += size;
+				offset += size;
+				count -= size;
+			}
+		}
+
+		public byte[] GetContents ()
+		{
+			byte[] retval = new byte [length];
+			position = 0;
+			Read (retval, 0, length);
+			return retval;
+		}
+	}
+
 	public class MonoSymbolFile : IDisposable
 	{
 		ArrayList methods = new ArrayList ();
@@ -85,6 +228,7 @@ namespace Mono.CSharp.Debugger
 			byte[] data = Encoding.UTF8.GetBytes (text);
 			bw.Write ((int) data.Length);
 			bw.Write (data);
+			StringSize += data.Length;
 		}
 
 		internal string ReadString (int offset)
@@ -156,16 +300,23 @@ namespace Mono.CSharp.Debugger
 			bw.Seek (0, SeekOrigin.End);
 		}
 
-		public void WriteSymbolFile (string output_filename)
+		public byte[] CreateSymbolFile ()
 		{
 			if (reader != null)
 				throw new InvalidOperationException ();
 
-			using (FileStream stream = new FileStream (output_filename, FileMode.Create))
+			using (MyMemoryStream stream = new MyMemoryStream ()) {
 				Write (new BinaryWriter (stream));
+				Console.WriteLine ("WROTE SYMFILE: {0} sources, {1} methods, {2} types, " +
+						   "{3} line numbers, {4} locals, {5} bytes of string data",
+						   SourceCount, MethodCount, TypeCount, LineNumberCount,
+						   LocalCount, StringSize);
+				Console.WriteLine (ot);
+				return stream.GetContents ();
+			}
 		}
 
-		FileStream stream;
+		Stream stream;
 		BinaryReader reader;
 		Hashtable method_hash;
 		Hashtable source_file_hash;
@@ -173,9 +324,13 @@ namespace Mono.CSharp.Debugger
 		Hashtable method_name_hash;
 		Hashtable source_name_hash;
 
-		public MonoSymbolFile (string file_name)
+		public MonoSymbolFile (Assembly assembly)
 		{
-			stream = File.OpenRead (file_name);
+			stream = assembly.GetManifestResourceStream ("MonoSymbolFile");
+			if (stream == null)
+				throw new MonoSymbolFileException (
+					"Assembly doesn't contain any debugging info.");
+
 			reader = new BinaryReader (stream);
 
 			try {
@@ -203,6 +358,10 @@ namespace Mono.CSharp.Debugger
 		public int TypeCount {
 			get { return ot.TypeCount; }
 		}
+
+		internal int LineNumberCount = 0;
+		internal int LocalCount = 0;
+		internal int StringSize = 0;
 
 		public SourceFileEntry GetSourceFile (int index)
 		{

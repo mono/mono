@@ -1,3 +1,11 @@
+2003-02-07  Martin Baulig  <martin@ximian.com>
+
+	* MonoSymbolFile.cs: The symbol file is now a resource in the
+	assembly instead of a separate file.
+
+	* MonoSymbolTable.cs: Did a few more cleanups, sort the line
+	number table and remove duplicate line numbers.
+
 2003-02-05  Martin Baulig  <martin@ximian.com>
 
 	Modified the symbol file format to speed up method looks by name
