@@ -15,22 +15,56 @@ namespace Microsoft.Web.Services.Addressing
 	public class ReplyTo : EndpointReferenceType, IXmlElement
 	{
 
-		[MonoTODO()]
-		public ReplyTo (Uri address)
+		public ReplyTo (Address address) : base (address)
 		{
-			throw new NotImplementedException ();
+		}
+		
+		public ReplyTo (Uri address) : base (address)
+		{
 		}
 
-		[MonoTODO()]
+		public ReplyTo (XmlElement element) : base ()
+		{
+			LoadXml (element);
+		}
+		
 		public XmlElement GetXml (XmlDocument document)
 		{
-			throw new NotImplementedException ();
+			if(document == null) {
+				throw new ArgumentNullException ("document");
+			}
+
+			XmlElement element = document.CreateElement ("wsa",
+			                                             "ReplyTo",
+								     "http://schemas.xmlsoap.org/2003/03/addressing");
+			GetXmlAny (document, element);
+			return element;
 		}
 
-		[MonoTODO()]
 		public void LoadXml (XmlElement element)
 		{
-			throw new NotImplementedException ();
+			if(element == null) {
+				throw new ArgumentNullException ("element");
+			}
+
+			if(element.LocalName != "ReplyTo" || element.NamespaceURI != "http://schemas.xmlsoap.org/2003/03/addressing") {
+				throw new ArgumentException ("Invalid Argument Supplied");
+			}
+
+			LoadXmlAny (element);
+		}
+
+		public static implicit operator ReplyTo (Uri uri)
+		{
+			return new ReplyTo (uri);
+		}
+
+		public static implicit operator Uri (ReplyTo obj)
+		{
+			if(obj == null) {
+				return null;
+			}
+			return obj.Address.Value;
 		}
 
 	}
