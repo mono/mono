@@ -370,7 +370,6 @@ namespace System.Data {
 			}
 		}
 
-		[MonoTODO]
 		[DataCategory ("Data")]
 		[DataSysDescription ("Indicates the value that this column computes for each row based on other columns instead of taking user input.")]
 		[DefaultValue ("")]
@@ -591,7 +590,6 @@ namespace System.Data {
 		/// </summary>
 		/// <returns>The Expression value, if the property is set; 
 		/// otherwise, the ColumnName property.</returns>
-		[MonoTODO]
 		public override string ToString()
 		{
 			if (expression != string.Empty)

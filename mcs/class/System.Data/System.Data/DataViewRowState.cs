@@ -7,6 +7,8 @@
 // (C) Chris Podurgiel
 //
 
+using System.ComponentModel;
+
 namespace System.Data
 {
 	/// <summary>
@@ -14,6 +16,7 @@ namespace System.Data
 	/// This enumeration has a FlagsAttribute that allows a bitwise combination of its member values.
 	/// </summary>
 	[Flags]
+	[EditorAttribute("Microsoft.VSDesigner.Data.Design.DataViewRowStateEditor, "+Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+Consts.AssemblySystem_Drawing )]
 	[Serializable]
 	public enum DataViewRowState
 	{
