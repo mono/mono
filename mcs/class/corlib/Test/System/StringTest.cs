@@ -968,6 +968,9 @@ public class StringTest : Assertion
 		Assert("should match", s1.StartsWith("o"));
 		Assert("should match 2", s1.StartsWith("orig"));
 		Assert("should fail", !s1.StartsWith("rig"));
+		Assert("should match 3", s1.StartsWith(String.Empty));
+		Assert("should match 4", String.Empty.StartsWith(String.Empty));
+		Assert("should fail 2", !String.Empty.StartsWith("rig"));
 	}
 
 	public void TestSubstring() {

@@ -1,3 +1,7 @@
+2003-12-17  Atsushi Enomoto <atsushi@ximian.com>
+
+	* StringTests.cs : Added more tests on TestStartsWith.
+
 2003-12-08  Patrik Torstensson <p@rxc.se>
 
 	* TypeTest.cs: Added basic tests for GetMethodImpl and GetPropertyImpl
