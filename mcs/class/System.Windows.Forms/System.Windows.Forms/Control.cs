@@ -2840,7 +2840,7 @@ namespace System.Windows.Forms {
 			//case Msg.WM_CTLCOLORSTATIC:
 			//	if ( !Control.ReflectMessage ( m.LParam, ref m ) ) 
 			//		CallControlWndProc ( ref m );
-			break;
+			//break;
 				case Msg.WM_NOTIFY:
 					NMHDR nmhdr = (NMHDR)Marshal.PtrToStructure (m.LParam,
 									typeof (NMHDR));
