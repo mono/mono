@@ -1160,13 +1160,18 @@ namespace System.Globalization
 			}
 		}
 
-		[MonoTODO]
 		public virtual TextInfo TextInfo
 		{
 			get {
-				if (textinfo == null) 
-					textinfo = new TextInfo ();
-				return textinfo;
+				if (textinfo == null) {
+					lock (textinfo) {
+						if(textinfo == null) {
+							textinfo = new TextInfo (lcid);
+						}
+					}
+				}
+				
+				return(textinfo);
 			}
 		}
 

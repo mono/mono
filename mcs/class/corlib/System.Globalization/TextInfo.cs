@@ -16,8 +16,15 @@ namespace System.Globalization {
 	[Serializable]
 	public class TextInfo: IDeserializationCallback
 	{
+		private int lcid;
+		
 		public TextInfo ()
 		{
+		}
+
+		internal TextInfo (int lcid)
+		{
+			this.lcid=lcid;
 		}
 
 		[MonoTODO]
@@ -66,10 +73,9 @@ namespace System.Globalization {
 			throw new NotImplementedException();
 		}
 
-		[MonoTODO]
 		public override int GetHashCode()
 		{
-			throw new NotImplementedException();
+			return(lcid);
 		}
 
 		[MonoTODO]

@@ -1,3 +1,9 @@
+2003-10-21  Dick Porter  <dick@ximian.com>
+
+	* TextInfo.cs: 
+	* CultureInfo.cs: Implement TextInfo.GetHashCode().  Fixes bug
+	49923.
+
 2003-10-09  Dick Porter  <dick@ximian.com>
 
 	* CultureInfo.cs: Implemented, with internal calls to ICU apart
