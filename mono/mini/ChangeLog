@@ -1,3 +1,8 @@
+2005-01-31  Martin Baulig  <martin@ximian.com>
+
+	* driver.c (compile_all_methods_thread_main): Don't try to compile
+	generic methods or anything which has type parameters.
+
 2005-01-30  Zoltan Varga  <vargaz@freemail.hu>
 
 	* aot.c: Avoid costly calls to mono_method_full_name in tracing code and fix memory leaks.
