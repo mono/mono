@@ -11,7 +11,7 @@ using System;
 
 namespace System.Windows.Forms.Design
 {
-	public sealed class EventHandlerService : IEventHandlerService
+	public sealed class EventHandlerService
 	{
 		public event EventHandler EventHandlerChanged;
 

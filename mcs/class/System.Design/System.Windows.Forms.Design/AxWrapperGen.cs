@@ -7,7 +7,7 @@
 // (C) 2004 Novell
 //
 
-using System;
+using System.Collections;
 
 namespace System.Windows.Forms.Design
 {

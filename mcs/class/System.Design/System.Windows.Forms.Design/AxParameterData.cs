@@ -7,7 +7,8 @@
 // (C) 2004 Novell
 //
 
-using System;
+using System.CodeDom;
+using System.Reflection;
 
 namespace System.Windows.Forms.Design
 {

@@ -7,7 +7,8 @@
 // (C) 2004 Novell
 //
 
-using System;
+using System.ComponentModel;
+using System.Drawing.Design;
 
 namespace System.Windows.Forms.Design
 {
