@@ -1,4 +1,7 @@
-2004-11-02  Jambunathan K  <kjambunathan@novell.com>
+2004-11-22  Jambunathan K  <kjambunathan@novell.com>
+	* EnumD.vb: New positive test case.
+
+2004-11-22  Jambunathan K  <kjambunathan@novell.com>
 	* test-mbas.make: Implemented all STD_TARGETS specifically run-test and
 	run-test-ondotnet.
 

@@ -689,15 +689,7 @@ namespace Mono.MonoBASIC {
 					} else if (a.Type != TypeManager.dllimport_type){
 							((MethodBuilder) builder).SetCustomAttribute (cb);
 					}
-				} else if (kind is ParameterBuilder) {
-					if (a.Type == TypeManager.marshal_as_attr_type) {
-						UnmanagedMarshal marshal = UnmanagedMarshal.DefineUnmanagedMarshal (a.UnmanagedType);
-						((ParameterBuilder) builder).SetMarshal (marshal);
-					} else 
-						((ParameterBuilder) builder).SetCustomAttribute (cb);
-				} else if (kind is FieldBuilder) {
-					((FieldBuilder) builder).SetCustomAttribute (cb);
-				} else
+				}  else
 					throw new Exception ("Unknown kind: " + kind);
 			}
 		}

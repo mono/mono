@@ -5842,11 +5842,14 @@ namespace Mono.MonoBASIC {
 					Enum en = TypeManager.LookupEnum (expr_type);
 
 					if (en != null) {
-						object value = en.LookupEnumValue (ec, Identifier, loc);
+						object value = en.LookupEnumValue (Identifier);
 						
 						if (value != null){
 							Constant c = Constantify (value, en.UnderlyingType);
 							return new EnumConstant (c, expr_type);
+						} else {
+							Report.Error (30456, loc,
+								Identifier + " is not found in member list of enum " + en.Name);
 						}
 					}
 				}
@@ -5912,11 +5915,14 @@ namespace Mono.MonoBASIC {
 				Enum en = TypeManager.LookupEnum (expr_type);
 				
 				if (en != null) {
-					object value = en.LookupEnumValue (ec, Identifier, loc);
+					object value = en.LookupEnumValue (Identifier);
 					expr_type = TypeManager.int32_type;
 					if (value != null) {
 						Constant c = Constantify (value, en.UnderlyingType);
 						return new EnumConstant (c, en.UnderlyingType);
+					} else {
+						Report.Error (30456, loc,
+							Identifier + " is not found in member list of enum " + en.Name);
 					}
 				}
 			}

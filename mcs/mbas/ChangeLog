@@ -1,4 +1,17 @@
 2004-11-22  Jambunathan K  <kjambunathan@novell.com>
+	* enum.cs: Factored out a new class EnumMember from the existing
+	class Enum. Much of the functionality that existed in
+	Enum.LookupEnumValue() is now moved in to
+	EnumMember.DoDefineMember().
+
+	One significant departure from the previous Enum implmenentation
+	is that now the resolution of an EnumMember's value happens in the
+	EmitContext set up for the Enum.
+	
+	* attribute.cs: 
+	* expression.cs: Trivial changes related to the above change.
+
+2004-11-22  Jambunathan K  <kjambunathan@novell.com>
 	* Makefile: Added new make target 'consolidate-test-results'.
 
 2004-11-22  Jambunathan K  <kjambunathan@novell.com>
