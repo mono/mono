@@ -297,6 +297,8 @@ namespace Mono.CSharp
 				} else {
 					a = LoadAssemblyFromGac (assembly);
 					if (a == null)
+						a = Assembly.LoadFrom (assembly);
+					if (a == null)
 						a = Assembly.Load (assembly);
 				}
 				TypeManager.AddAssembly (a);
