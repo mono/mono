@@ -1,3 +1,8 @@
+
+2003-05-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* socket-io.c: patch by Jerome Laban that fixes bug #42393.
+
 2003-05-10  Zoltan Varga  <vargaz@freemail.hu>
 
 	* object.c (mono_string_new_wrapper): Compatibility fix for MS
