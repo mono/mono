@@ -187,8 +187,8 @@ namespace Mono.Security.Cryptography {
 		{
 			if (m_disposed)
 				throw new ObjectDisposedException ("Object is disposed");
-
-			if (outputOffset + inputCount > outputBuffer.Length)
+			// reordered to avoid possible integer overflow
+			if (outputOffset > outputBuffer.Length - inputCount)
 				throw new CryptographicException ("Insufficient output buffer size.");
 
 			int offs = inputOffset;

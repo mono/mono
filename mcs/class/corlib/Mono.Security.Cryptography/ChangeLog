@@ -1,3 +1,7 @@
+2004-05-27  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SymmetricTransform.cs: Fixed possible integer overflow.
+
 2004-05-01  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CryptoConvert.cs: Synched with Mono.Security.dll. Fix bug #57941 
