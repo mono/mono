@@ -169,19 +169,11 @@ namespace System.Windows.Forms {
 				return;
 			}
 
-			caret.on = !caret.on;
-			Graphics g = Graphics.FromHwnd (caret.hwnd);
-
-			if (caret.on) {
-				g.FillRectangle (caretOnBrush, caret.rect);
-				g.DrawRectangle (caretOnPen, caret.rect);
+			if (!caret.on) {
+				ShowCaret ();
 			} else {
-				// Fixme; this will kill what was underneath it before
-				g.FillRectangle (caretOffBrush, caret.rect);
-				g.DrawRectangle (caretOffPen, caret.rect);
+				HideCaret ();
 			}
-			g.Flush ();
-			g.Dispose ();
 		}
 
 		[MonoTODO]
@@ -458,16 +450,30 @@ Console.WriteLine ("Invalidating {0:x}", (int)handle);
 						CheckError (GetKeyboardFocus (controlHnd, ref cntrl), "GetKeyboardFocus()");
 						msg.hwnd = cntrl;
 						msg.lParam = IntPtr.Zero;
+						switch (charCode) {
+							case 28:
+								charCode = 0x25;
+								break;
+							case 29:
+								charCode = 0x27;
+								break;
+							case 30:
+								charCode = 0x26;
+								break;
+							case 31:
+								charCode = 0x28;
+								break;
+						}
 						msg.wParam = (IntPtr)charCode;
 						switch (eventKind) {
 							// keydown
 							case 1: {
-								msg.message = Msg.WM_CHAR;
+								msg.message = Msg.WM_KEYDOWN;
 								break;
 							}
 							// repeat
 							case 2: {
-								msg.message = Msg.WM_CHAR;
+								msg.message = Msg.WM_KEYDOWN;
 								break;
 							}
 							// keyup
@@ -746,7 +752,29 @@ Console.WriteLine ("Invalidating {0:x}", (int)handle);
 		}
 
 		internal override bool TranslateMessage(ref MSG msg) {
+			bool res = false;
+
+			if (msg.message >= Msg.WM_KEYFIRST && msg.message <= Msg.WM_KEYLAST)
+				res = true;
+
+			if (msg.message != Msg.WM_KEYDOWN && msg.message != Msg.WM_SYSKEYDOWN)
+				return res;
+
+			if ((int)msg.wParam >= (int)'0' && (int)msg.wParam <= (int)'z') {
+				Msg message;
+				message = Msg.WM_CHAR;
+				PostMessage (msg.hwnd, message, msg.wParam, msg.lParam);
+			}
 			return true;
+		}
+
+		public static void PostMessage (IntPtr hwnd, Msg message, IntPtr wParam, IntPtr lParam) {
+			MSG msg = new MSG();
+			msg.hwnd = hwnd;
+			msg.message = message;
+			msg.wParam = wParam;
+			msg.lParam = lParam;
+			carbonEvents.Enqueue (msg);
 		}
 
 		internal override IntPtr DispatchMessage(ref MSG msg) {
@@ -929,27 +957,60 @@ Console.WriteLine ("Invalidating {0:x}", (int)handle);
 			}
 		}
 
-		internal static void ShowCaret () {
+		internal void DrawText () {
+			IntPtr cgContext = IntPtr.Zero;
+			IntPtr window = GetControlOwner (caret.hwnd);
+			// Get the port of the window
+			IntPtr port = GetWindowPort (window);
+			// Create a CGContext ref
+			CreateCGContextForPort (port, ref cgContext);
+
+			// Get the bounds of the window
+			Rect wBounds = new Rect ();
+			GetWindowBounds (window, 32, ref wBounds);
+
+			// Get the bounds of the view
+			HIRect vBounds = new HIRect ();
+			HIViewGetBounds (caret.hwnd, ref vBounds);
+
+			// Convert the view local bounds to window coordinates
+			HIViewConvertRect (ref vBounds, caret.hwnd, IntPtr.Zero);
+			CGContextTranslateCTM (cgContext, vBounds.origin.x, (wBounds.bottom-wBounds.top)-(vBounds.origin.y+vBounds.size.height));
+			CGContextSelectFont (cgContext, "Zapfino", 24, 1);
+			CGContextSetRGBFillColor (cgContext, (float)0.25, (float)0.25, (float)0.25, (float)0.5);
+			CGContextSetRGBStrokeColor (cgContext, (float)0.25, (float)0.25, (float)0.25, (float)0.5);
+			CGContextSetTextDrawingMode (cgContext, 0);
+			CGAffineTransform ctm = CGContextGetTextMatrix (cgContext);
+			ctm.a = 1.0f;
+			ctm.d = -1.0f;
+			CGContextSetTextMatrix (cgContext, ctm);
+			CGContextShowTextAtPoint (cgContext, 200, 200, "Quartz Text", 11);
+			CGContextFlush (cgContext);
+		}
+		internal void InvertCaret () {
+			IntPtr window = GetControlOwner (caret.hwnd);
+			SetPortWindowPort (window);
+			Rect r = new Rect ();
+			GetWindowPortBounds (window, ref r);
+			r.top += (short)caret.y;
+			r.left += (short)caret.x;
+			r.bottom = (short)(r.top + caret.height);
+			r.right = (short)(r.left + caret.width);
+			InvertRect (ref r);
+		}
+		internal void ShowCaret () {
 			if (caret.on)
 				return;
 			caret.on = true;
-			Graphics g = Graphics.FromHwnd (caret.hwnd);
-			g.FillRectangle (caretOnBrush, caret.rect);
-			g.DrawRectangle (caretOnPen, caret.rect);
-			g.Flush ();
-			g.Dispose ();
+			InvertCaret ();
 		}
 
-		internal static void HideCaret () {
+		internal void HideCaret () {
 			if (!caret.on)
 				return;
 			caret.on = false;
 			// Fixme; this will kill what was underneath it before
-			Graphics g = Graphics.FromHwnd (caret.hwnd);
-			g.FillRectangle (caretOffBrush, caret.rect);
-			g.DrawRectangle (caretOffPen, caret.rect);
-			g.Flush ();
-			g.Dispose ();
+			InvertCaret ();
 		}
 
 		internal override void CreateCaret (IntPtr hwnd, int width, int height) {
@@ -981,7 +1042,6 @@ Console.WriteLine ("Invalidating {0:x}", (int)handle);
 				HideCaret ();
 				caret.x = x;
 				caret.y = y;
-				caret.rect = new Rectangle (x, y, Math.Max (caret.width-1, 0), Math.Max (caret.height-1, 0));
 				if (caret.visible == 1) {
 					ShowCaret ();
 					caret.timer.Start ();
@@ -1072,6 +1132,8 @@ Console.WriteLine ("Invalidating {0:x}", (int)handle);
 		internal static extern bool HIViewIsVisible (IntPtr vHnd);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern int HIViewGetBounds (IntPtr vHnd, ref HIRect r);
+		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		internal static extern int HIViewConvertRect (ref HIRect r, IntPtr a, IntPtr b);
 		
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern void SetRect (ref IntPtr r, short left, short top, short right, short bottom);
@@ -1117,6 +1179,28 @@ Console.WriteLine ("Invalidating {0:x}", (int)handle);
 		static extern int SetEventParameter (IntPtr evt, uint inName, uint inType, uint bufSize, ref short outData);
 
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		internal static extern void CGContextFlush (IntPtr cgc);
+		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		internal static extern CGAffineTransform CGContextGetTextMatrix (IntPtr cgContext);
+		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		internal static extern int CGContextSetTextMatrix (IntPtr cgContext, CGAffineTransform ctm);
+		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		internal static extern int CGContextSetRGBFillColor (IntPtr cgContext, float r, float g, float b, float alpha);
+		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		internal static extern int CGContextSetRGBStrokeColor (IntPtr cgContext, float r, float g, float b, float alpha);
+		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		internal static extern int CGContextSetTextDrawingMode (IntPtr cgContext, int drawingMode);
+		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		internal static extern int CGContextSelectFont (IntPtr cgContext, string fontName, float size, int textEncoding);
+		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		internal static extern int CGContextShowTextAtPoint (IntPtr cgContext, float x, float y, string text, int length);
+		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		internal static extern int CGContextClipToRect (IntPtr cgContext, HIRect clip);
+		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		internal static extern void CreateCGContextForPort (IntPtr port, ref IntPtr cgc);
+		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		internal static extern IntPtr GetWindowPort (IntPtr hWnd);
+		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		static extern int SetPortWindowPort (IntPtr hWnd);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		static extern int GlobalToLocal (ref QDPoint outData);
@@ -1130,7 +1214,11 @@ Console.WriteLine ("Invalidating {0:x}", (int)handle);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern int SetWindowBounds (IntPtr wHnd, uint reg, ref IntPtr rect);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		internal static extern int GetWindowPortBounds (IntPtr wHnd, ref Rect rect);
+		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern int GetWindowBounds (IntPtr wHnd, uint reg, ref Rect rect);
+		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		internal static extern int InvertRect (ref Rect r);
 
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern int SetControlTitleWithCFString (IntPtr hWnd, IntPtr titleCFStr);
@@ -1247,7 +1335,6 @@ Console.WriteLine ("Invalidating {0:x}", (int)handle);
 	{
 		internal Timer timer;
 		internal IntPtr hwnd;
-		internal Rectangle rect;
 		internal int x;
 		internal int y;
 		internal int width;
@@ -1255,5 +1342,15 @@ Console.WriteLine ("Invalidating {0:x}", (int)handle);
 		internal int visible;
 		internal bool on;
 		internal bool paused;
+	}
+
+	internal struct CGAffineTransform
+	{
+		internal float a;
+		internal float b;
+		internal float c;
+		internal float d;
+		internal float tx;
+		internal float ty;
 	}
 }	

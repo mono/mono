@@ -1,3 +1,8 @@
+2004-12-17  Geoff Norton  <gnorton@customerdna.com>
+
+	* XplatUIOSX.cs:  Fix cursor to use an Invert instead of drawing it
+	Some more keyboard support (INCOMPLETE)
+
 2004-12-17  Peter Bartok  <pbartok@novell.com>
 
 	* TextControl.cs:
