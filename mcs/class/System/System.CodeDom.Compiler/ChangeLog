@@ -1,3 +1,7 @@
+2004-02-10  Jackson Harper <jackson@ximian.com>
+
+	* CompilerParameters.cs: TempFiles should never return null.
+	
 2004-02-04  Jackson Harper <jackson@ximian.com>
 
 	* CodeGenerator.cs (GenerateExpression): Don't allow null

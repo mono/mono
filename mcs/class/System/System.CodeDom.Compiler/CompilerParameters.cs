@@ -140,6 +140,8 @@ namespace System.CodeDom.Compiler
 
 		public TempFileCollection TempFiles {
 			get {
+				if (tempFiles == null)
+					tempFiles = new TempFileCollection ();
 				return tempFiles;
 			}
 			set {
