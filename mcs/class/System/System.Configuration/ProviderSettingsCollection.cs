@@ -28,7 +28,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
+#if NET_2_0 && XML_DEP
 
 using System;
 using System.Configuration;

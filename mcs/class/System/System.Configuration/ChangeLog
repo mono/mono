@@ -1,3 +1,8 @@
+2004-11-18  Geoff Norton <gnorton@customerdna.com>
+
+	* ProviderSettingsCollection.cs: Add XML_DEP because this inherits 
+	ConfigurationElementCollection which has XML_DEP.  Fixes bootstrap
+	
 2004-11-18  Lluis Sanchez Gual <lluis@novell.com>
 
 	* ProviderSettings.cs, ProviderSettingsCollection.cs: Mostly implemented.
