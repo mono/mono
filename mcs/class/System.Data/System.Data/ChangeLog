@@ -1,3 +1,13 @@
+2002-12-17  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* DataSet.cs: implemented DefaultViewManager and GetList.
+
+	* DataViewManager.cs: a bit of work on IList and ITypedList needed by
+	DataList in System.Web.
+
+	* DataViewManagerListItemTypeDescriptor.cs: custom type descriptor for
+	DataViewManager.
+
 2002-12-16  Ville Palo <vi64pa@koti.soon.fi>
 
 	* DataRow.cs

@@ -39,6 +39,7 @@ namespace System.Data {
 		private DataTableCollection tableCollection;
 		// private DataTableRelationCollection relationCollection;
 		private PropertyCollection properties;
+		private DataViewManager defaultView;
 		
 		#region Constructors
 
@@ -80,15 +81,11 @@ namespace System.Data {
 		[DataSysDescription ("Indicates a custom \"view\" of the data contained by the DataSet. This view allows filtering, searching, and navigating through the custom data view.")]
 		[Browsable (false)]
 		public DataViewManager DefaultViewManager {
-			[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				if (defaultView == null)
+					defaultView = new DataViewManager (this);
+				return defaultView;
 			} 
-			
-			[MonoTODO]
-			set {
-				throw new NotImplementedException ();
-			}
 		}
 
 		[DataSysDescription ("Indicates whether constraint rules are to be followed.")]
@@ -412,12 +409,12 @@ namespace System.Data {
 		#region IListSource methods
 		IList IListSource.GetList ()
 		{
-			throw new NotImplementedException ();
+			return DefaultViewManager;
 		}
 
 		bool IListSource.ContainsListCollection {
 			get {
-				throw new NotImplementedException ();
+				return true;
 			}
 		}
 		#endregion IListSource methods

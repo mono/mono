@@ -23,6 +23,7 @@ namespace System.Data
 		#region Fields
 
 		DataSet dataSet;
+		DataViewManagerListItemTypeDescriptor descriptor;
 
 		#endregion // Fields
 
@@ -78,20 +79,22 @@ namespace System.Data
 		}
 
 		bool IList.IsFixedSize {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get { return true; }
 		}
 
 		bool IList.IsReadOnly {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get { return true; }
 		}
 
 		object IList.this [int index] {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
-			[MonoTODO]
-			set { throw new NotImplementedException (); }
+			get { 
+				if (descriptor == null)
+					descriptor = new DataViewManagerListItemTypeDescriptor (this);
+
+				return descriptor;
+			}
+
+			set { throw new ArgumentException ("Not modifiable"); }
 		}
 
 		bool IBindingList.AllowEdit {
@@ -239,9 +242,14 @@ namespace System.Data
 			throw new NotImplementedException ();
 		}
 	
-		[MonoTODO]
 		PropertyDescriptorCollection ITypedList.GetItemProperties (PropertyDescriptor[] listAccessors)
 		{
+			if (dataSet == null)
+				throw new DataException ("dataset is null");
+
+			if (listAccessors == null || listAccessors.Length == 0)
+				return TypeDescriptor.GetProperties (this);
+				
 			throw new NotImplementedException ();
 		}
 	
