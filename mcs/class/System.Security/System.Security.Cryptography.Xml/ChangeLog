@@ -1,3 +1,8 @@
+2003-05-25  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* XmlSignature.cs: Changed string "RetrievalElement" to "RetrievalMethod"
+	to match framework 1.1 (this was a bug in framework 1.0).
+
 2003-05-10  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* SignedXml.cs: Added property XmlResolver Resolver as per framework 1.1
