@@ -1,2 +1,1 @@
-./AllTests.cs
-./System.Configuration.Install/AllTests.cs
+System.Configuration.Install/FakeTest.cs

@@ -1,5 +1,10 @@
+2003-03-12  Martin Willemoes Hansen <mwh@sysrq.dk>
+	* Removed AllTests.cs, System.Configuration.Install/AllTests.cs
+	  System.Configuration.Install/ChangeLog
+	* NUnit2ified makefile.gnu, system_configuration_install_linux_test.args,
+	* Added System.Configuration.Install/FakeTest.cs
+	
 2002-07-15  Gonzalo Paniagua Javier <gonzalo@ximian.com>
-
 	* AllTests.cs: New file.
 	* System.Configuration.Install_test.build: modified randomly until it
 	works.
