@@ -1,3 +1,8 @@
+
+Fri Feb 21 11:36:57 CET 2003 Paolo Molaro <lupus@ximian.com>
+
+	* class.c, image.c: load exported types from file references.
+
 2003-02-19  Lluis Sanchez Gual  <lluis@ideary.com>
 
 	* appdomain.h: Added in MonoDomain a couple of MonoMethod* variables
