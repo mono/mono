@@ -1,5 +1,7 @@
 2004-09-02  Zoltan Varga  <vargaz@freemail.hu>
 
+	* exceptions.cs: Add array size tests.
+
 	* mini.c: Allocate a separate icall wrapper for each arity of 
 	mono_array_new_va. Fixes #59509.
 
