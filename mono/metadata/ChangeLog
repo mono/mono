@@ -1,6 +1,7 @@
 2002-07-11  Dietmar Maurer  <dietmar@ximian.com>
 
 	* marshal.c (mono_marshal_get_native_wrapper): support BOOLEAN
+	(mono_marshal_get_native_wrapper): make it comp. with the old code
 
 2002-06-25  Dietmar Maurer  <dietmar@ximian.com>
 
