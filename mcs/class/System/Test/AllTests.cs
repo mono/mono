@@ -21,12 +21,13 @@ namespace MonoTests
 			get {
 				TestSuite suite = new TestSuite();
 				suite.AddTest (System.AllTests.Suite);
-				suite.AddTest (System.Net.DnsTest.Suite);
-				suite.AddTest (System.Collections.Specialized.NameValueCollectionTest.Suite);
-				suite.AddTest (System.Collections.Specialized.StringCollectionTest.Suite);
-				suite.AddTest (System.Text.RegularExpressions.AllTests.Suite);
-			        suite.AddTest (System.Diagnostics.AllTests.Suite);
+				suite.AddTest (System.Collections.Specialized.AllTests.Suite);
+				suite.AddTest (System.Diagnostics.AllTests.Suite);
                                 suite.AddTest (System.Net.AllTests.Suite);
+				suite.AddTest (System.Text.RegularExpressions.AllTests.Suite);
+				
+				//suite.AddTest (System.Net.DnsTest.Suite);
+				
 				return suite;
 			}
 		}

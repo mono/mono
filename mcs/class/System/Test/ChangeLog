@@ -1,6 +1,7 @@
 2002/05/09  Lawrence Pit  <loz@cable.a2000.nl>
 
 	* AllTests.cs: added System.AllTests
+	* Moved 2 files to the System.Collections.Specialized dir
 
 2002/05/07  Nick Drochak <ndrochak@gol.com>
 
