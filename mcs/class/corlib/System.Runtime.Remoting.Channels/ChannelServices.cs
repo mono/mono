@@ -190,7 +190,20 @@ namespace System.Runtime.Remoting.Channels
 			if (identity == null) return new ReturnMessage (new RemotingException ("No receiver for uri " + call.Uri), (IMethodCallMessage) msg);
 
 			RemotingServices.SetMessageTargetIdentity (msg, identity);
-			return _crossContextSink.SyncProcessMessage (msg);
+
+			if (call.LogicalCallContext != null)
+				CallContext.SetCurrentCallContext (call.LogicalCallContext);
+
+			try
+			{
+				IMessage response = _crossContextSink.SyncProcessMessage (msg);
+				response.Properties ["__CallContext"] = CallContext.CreateLogicalCallContext ();
+				return response;
+			}
+			finally
+			{
+				CallContext.ResetCurrentCallContext ();
+			}
 		}
 
 		public static void UnregisterChannel (IChannel chnl)
@@ -202,12 +215,9 @@ namespace System.Runtime.Remoting.Channels
 
 			registeredChannels.Remove ((object) chnl);
 
-/*
-			FIXME: uncomment when Thread.Abort works for windows.
 			IChannelReceiver chnlReceiver = chnl as IChannelReceiver;
 			if(chnlReceiver != null)
 				chnlReceiver.StopListening(null);
-				*/
 }
 
 		internal static object [] GetCurrentChannelInfo ()

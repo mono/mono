@@ -1,3 +1,8 @@
+2003-08-14  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* ChannelServices.cs: Set call context info for the incoming
+	  remote call, and restore the context after the call.
+
 2003-07-28  Duncan Mak  <duncan@ximian.com>
 
 	* TransportHeaders.cs: Added Serializable attribute.
