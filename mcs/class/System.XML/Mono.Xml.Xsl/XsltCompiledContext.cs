@@ -56,7 +56,7 @@ namespace Mono.Xml.Xsl {
 			object extension = null;
 			
 			if (p.Arguments != null)
-				p.Arguments.GetExtensionObject (ns);
+				extension = p.Arguments.GetExtensionObject (ns);
 			
 			bool isScript = false;
 			if (extension == null) {
