@@ -827,8 +827,13 @@ namespace MonoTests.System
 		// Apparently "tmp" is supposed to be a hostname (!)...
 		// Since "correct" behavior would confuse all Linux developers, and having
 		// an expected failure is evil, we'll just ignore this for now...
+		//
+		// Furthermore, Microsoft fixed this so it behaves sensibly in .NET 2.0.
+		//
+		// You are surrounded by conditional-compilation code, all alike.
+		// You are likely to be eaten by a Grue...
 		[Test]
-#if NET_1_1
+#if ONLY_1_1
 		[Category ("NotWorking")]
 #endif
 		public void UnixLocalPath_WTF ()
@@ -836,7 +841,11 @@ namespace MonoTests.System
 			// Empty path == localhost, in theory
 			string path = "file:///tmp/foo/bar";
 			Uri fileUri = new Uri( path );
+#if NET_2_0
+			AssertEquals (path, "/tmp/foo/bar", fileUri.AbsolutePath);
+#else
 			AssertEquals (path, "/foo/bar", fileUri.AbsolutePath);
+#endif
 		}
 
 		public static void Print (Uri uri)

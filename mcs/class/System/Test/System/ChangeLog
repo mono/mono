@@ -1,5 +1,11 @@
 2005-01-19  Jonathan Pryor  <jonpryor@vt.edu>
 
+	* UriTest.cs: Update UnixLocalPath_WTF.  Category("NotWorking") is
+	  conditional on ONLY_1_1, and the test itself is conditional on NET_2_0
+	  (since .NET 2.0 behaves sanely, while 1.1 doesn't).
+
+2005-01-19  Jonathan Pryor  <jonpryor@vt.edu>
+
 	* UriTest.cs: Ignore one of the tests on Linux, as .NET's behavior is
 	  counterintuitive (see the UnixLocalPath_WTF comment).
 
