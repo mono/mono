@@ -1,3 +1,7 @@
+2004-12-01  Jackson Harper  <jackson@ximian.com>
+
+	* System.Windows.Forms.dll.sources: Add TreeNode love to the build.
+
 2004-11-30  Peter Bartok  <pbartok@novell.com>
 
 	* System.Windows.Forms.dll.sources: Removed textbox
