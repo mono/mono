@@ -3925,7 +3925,7 @@ namespace Mono.CSharp {
 			else
 				return null;
 
-			data = new byte [count * factor];
+			data = new byte [(count * factor + 4) & ~3];
 			int idx = 0;
 			
 			for (int i = 0; i < count; ++i) {
@@ -3935,113 +3935,102 @@ namespace Mono.CSharp {
 					v = ((EnumConstant) v).Child;
 
 				if (underlying_type == TypeManager.int64_type){
-					long val = 0;
-					if (!(v is Expression))
-						val = (long) v;
-
-				        for (int j = 0; j < factor; ++j) {
-						data [idx + j] = (byte) (val & 0xFF);
-						val = (val >> 8);
+					if (!(v is Expression)){
+						long val = (long) v;
+						
+						for (int j = 0; j < factor; ++j) {
+							data [idx + j] = (byte) (val & 0xFF);
+							val = (val >> 8);
+						}
 					}
 				} else if (underlying_type == TypeManager.uint64_type){
-					ulong val = 0;
-					if (!(v is Expression))
-						val = (ulong) v;
+					if (!(v is Expression)){
+						ulong val = (ulong) v;
 
-				        for (int j = 0; j < factor; ++j) {
-						data [idx + j] = (byte) (val & 0xFF);
-						val = (val >> 8);
+						for (int j = 0; j < factor; ++j) {
+							data [idx + j] = (byte) (val & 0xFF);
+							val = (val >> 8);
+						}
 					}
 				} else if (underlying_type == TypeManager.float_type) {
 #if __MonoCS__
 #else
 					unsafe {
-						float val = 0;
+						if (!(v is Expression)){
+							float val = (float) v;
 
-						if (!(v is Expression))
-							val = (float) v;
-
-						byte *ptr = (byte *) &val;
-						
-						for (int j = 0; j < factor; ++j)
-							data [idx + j] = (byte) ptr [j];
+							byte *ptr = (byte *) &val;
+							
+							for (int j = 0; j < factor; ++j)
+								data [idx + j] = (byte) ptr [j];
+						}
 					}
 #endif
 				} else if (underlying_type == TypeManager.double_type) {
 #if __MonoCS__
 #else
 					unsafe {
-						double val = 0;
+						if (!(v is Expression)){
+							double val = (double) v;
 
-						if (!(v is Expression))
-							val = (double) v;
-
-						byte *ptr = (byte *) &val;
+							byte *ptr = (byte *) &val;
 						
-						for (int j = 0; j < factor; ++j)
-							data [idx + j] = (byte) ptr [j];
+							for (int j = 0; j < factor; ++j)
+								data [idx + j] = (byte) ptr [j];
+						}
 					}
 #endif
 				} else if (underlying_type == TypeManager.char_type){
-					int val = 0;
+					if (!(v is Expression)){
+						int val = (int) ((char) v);
 
-					if (!(v is Expression))
-						val = (int) ((char) v);
-
-					data [idx] = (byte) (val & 0xff);
-					data [idx+1] = (byte) (val >> 8);
+						data [idx] = (byte) (val & 0xff);
+						data [idx+1] = (byte) (val >> 8);
+					}
 				} else if (underlying_type == TypeManager.short_type){
-					int val = (int) 0;
-
-					if (!(v is Expression))
-						val = (int) ((short) v);
+					if (!(v is Expression)){
+						int val = (int) ((short) v);
 					
-					data [idx] = (byte) (val & 0xff);
-					data [idx+1] = (byte) (val >> 8);
-
+						data [idx] = (byte) (val & 0xff);
+						data [idx+1] = (byte) (val >> 8);
+					}
 				} else if (underlying_type == TypeManager.ushort_type){
-					int val = (int) 0;
-
-					if (!(v is Expression))
-						val = (int) ((ushort) v);
+					if (!(v is Expression)){
+						int val = (int) ((ushort) v);
 					
-					data [idx] = (byte) (val & 0xff);
-					data [idx+1] = (byte) (val >> 8);
-
+						data [idx] = (byte) (val & 0xff);
+						data [idx+1] = (byte) (val >> 8);
+					}
 				} else if (underlying_type == TypeManager.int32_type) {
-					int val = 0;
+					if (!(v is Expression)){
+						int val = (int) v;
 					
-					if (!(v is Expression))
-						val = (int) v;
-					
-					data [idx]   = (byte) (val & 0xff);
-					data [idx+1] = (byte) ((val >> 8) & 0xff);
-					data [idx+2] = (byte) ((val >> 16) & 0xff);
-					data [idx+3] = (byte) (val >> 24);
+						data [idx]   = (byte) (val & 0xff);
+						data [idx+1] = (byte) ((val >> 8) & 0xff);
+						data [idx+2] = (byte) ((val >> 16) & 0xff);
+						data [idx+3] = (byte) (val >> 24);
+					}
 				} else if (underlying_type == TypeManager.uint32_type) {
-					uint val = 0;
+					if (!(v is Expression)){
+						uint val = (uint) v;
 					
-					if (!(v is Expression))
-						val = (uint) v;
-					
-					data [idx]   = (byte) (val & 0xff);
-					data [idx+1] = (byte) ((val >> 8) & 0xff);
-					data [idx+2] = (byte) ((val >> 16) & 0xff);
-					data [idx+3] = (byte) (val >> 24);
+						data [idx]   = (byte) (val & 0xff);
+						data [idx+1] = (byte) ((val >> 8) & 0xff);
+						data [idx+2] = (byte) ((val >> 16) & 0xff);
+						data [idx+3] = (byte) (val >> 24);
+					}
 				} else if (underlying_type == TypeManager.sbyte_type) {
-					sbyte val = 0;
+					if (!(v is Expression)){
+						sbyte val = (sbyte) v;
 					
-					if (!(v is Expression))
-						val = (sbyte) v;
-					
-					data [idx] = (byte) val;
+						data [idx] = (byte) val;
+					}
 				} else if (underlying_type == TypeManager.byte_type) {
-					byte val = 0;
+					if (!(v is Expression)){
+						byte val = (byte) v;
 					
-					if (!(v is Expression))
-						val = (byte) v;
-					
-					data [idx] = (byte) val;
+						data [idx] = (byte) val;
+					}
 				} else
 					throw new Exception ("Unrecognized type in MakeByteBlob");
 
@@ -4066,7 +4055,7 @@ namespace Mono.CSharp {
 			
 			if (data != null) {
 				fb = RootContext.MakeStaticData (data);
-				
+
 				if (is_expression)
 					ig.Emit (OpCodes.Dup);
 				ig.Emit (OpCodes.Ldtoken, fb);

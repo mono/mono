@@ -1,5 +1,11 @@
 2002-01-01  Miguel de Icaza  <miguel@ximian.com>
 
+	* expression.cs (MakeByteBlob): Optimize: we do not need to fill
+	byte-by-byte information when we know the data is zero.
+
+	Make the block always a multiple of 4, because
+	DefineInitializedData has a bug.
+
 	* assign.cs: Fix, we should assign from the temporary, not from
 	the source. 
 
