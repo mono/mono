@@ -510,13 +510,15 @@ namespace CIR {
 	
 	public class Unary : Expression {
 		public enum Operator {
-			Plus, Minus, Negate, BitComplement,
+			Add, Subtract, Negate, BitComplement,
 			Indirection, AddressOf, PreIncrement,
 			PreDecrement, PostIncrement, PostDecrement
 		}
 
 		Operator   oper;
 		Expression expr;
+		ArrayList  Arguments;
+		MethodBase method;
 		
 		public Unary (Operator op, Expression expr)
 		{
@@ -544,17 +546,189 @@ namespace CIR {
 			}
 		}
 
+		// <summary>
+		//   Returns a stringified representation of the Operator
+		// </summary>
+		string OperName ()
+		{
+			switch (oper){
+			case Operator.Add:
+				return "+";
+			case Operator.Subtract:
+				return "-";
+			case Operator.Negate:
+				return "!";
+			case Operator.BitComplement:
+				return "~";
+			case Operator.AddressOf:
+				return "&";
+			case Operator.Indirection:
+				return "*";
+			case Operator.PreIncrement : case Operator.PostIncrement :
+				return "++";
+			case Operator.PreDecrement : case Operator.PostDecrement :
+				return "--";
+			}
+
+			return oper.ToString ();
+		}
+
+		Expression ForceConversion (Expression expr, Type target_type)
+		{
+			if (expr.Type == target_type)
+				return expr;
+
+			return ConvertImplicit (expr, target_type);
+		}
+		
+		Expression ResolveOperator (TypeContainer tc)
+		{
+			Type expr_type = expr.Type;
+
+			//
+			// Step 1: Perform Operator Overload location
+			//
+			Expression mg;
+			string op_name;
+				
+			if (oper == Operator.PostIncrement || oper == Operator.PreIncrement)
+				op_name = "op_Increment";
+			else if (oper == Operator.PostDecrement || oper == Operator.PreDecrement)
+				op_name = "op_Decrement";
+			else
+				op_name = "op_" + oper;
+
+			mg = MemberLookup (tc.RootContext, expr_type, op_name, false);
+			
+			if (mg != null) {
+				Arguments = new ArrayList ();
+				Arguments.Add (new Argument (expr, Argument.AType.Expression));
+				
+				method = Invocation.OverloadResolve ((MethodGroupExpr) mg, Arguments);
+				if (method != null)
+					return this;
+			}
+
+			//
+			// Step 2: Default operations on CLI native types.
+			//
+
+			// Only perform numeric promotions on:
+			// +, -, ++, --
+
+			if (expr_type == null)
+				return null;
+			
+			if (oper == Operator.Negate && expr_type != TypeManager.bool_type) {
+				tc.RootContext.Report.Error (
+				       19,
+				       "Operator " + OperName () + " cannot be applied to operands of type `" +
+				       TypeManager.CSharpName (expr.Type) + "'");
+				return null;
+			} else {
+				expr = ForceConversion (expr, TypeManager.int32_type);
+				type = TypeManager.int32_type;
+			}
+			
+			if (oper == Operator.BitComplement) {
+				if (!((expr_type == TypeManager.int32_type) ||
+				      (expr_type == TypeManager.uint32_type) ||
+				      (expr_type == TypeManager.int64_type) ||
+				      (expr_type == TypeManager.uint64_type))){
+					tc.RootContext.Report.Error (
+					       19,
+					       "Operator " + OperName () + " cannot be applied to operands of type `" +
+					       TypeManager.CSharpName (expr.Type) + "'");
+					return null;
+				}
+			}
+
+			// FIXME : Are we supposed to check that we have an object type
+			// for & and * operators ?
+
+			return this;
+
+		}
+
 		public override Expression Resolve (TypeContainer tc)
 		{
-			// FIXME: Implement;
-			return this;
+			expr = expr.Resolve (tc);
+
+			if (expr == null)
+				return null;
+			
+			return ResolveOperator (tc);
 		}
 
 		public override void Emit (EmitContext ec)
 		{
-		}
-	}
 
+			ILGenerator ig = ec.ig;
+			Type expr_type = expr.Type;
+
+			if (method != null) {
+
+				// Note that operators are static anyway
+				
+				if (Arguments != null) 
+					Invocation.EmitArguments (ec, Arguments);
+				
+				if (method is MethodInfo)
+					ig.Emit (OpCodes.Call, (MethodInfo) method);
+				else
+					ig.Emit (OpCodes.Call, (ConstructorInfo) method);
+				
+				return;
+			}
+
+			// FIXME : This is commented out for now
+			// expr.Emit (ec);
+
+			switch (oper){
+			case Operator.Add:
+				// Which one ?
+				break;
+
+			case Operator.Subtract:
+				// Which one ?
+				break;
+
+				
+			case Operator.Negate:
+				// Which one ?
+				break;
+
+			case Operator.BitComplement:
+				// Which one ?
+				break;
+
+			case Operator.AddressOf :
+				// Which one ?
+				break;
+
+			case Operator.Indirection :
+				// Which one ?
+				break;
+
+			case Operator.PreIncrement : case Operator.PostIncrement :
+				// Which one ?
+				break;
+
+			case Operator.PreDecrement : case Operator.PostDecrement :
+				// Which one ?
+				break;
+				
+			default:
+				throw new Exception ("This should not happen: Operator = "
+						     + oper.ToString ());
+			}
+
+			// FIXME : Commented out for now. 
+			// ig.Emit (opcode);
+		}
+		
+	}
+	
 	public class Probe : Expression {
 		string probe_type;
 		Expression expr;
@@ -692,7 +866,7 @@ namespace CIR {
 
 
 		// <summary>
-		//   Retruns a stringified representation of the Operator
+		//   Returns a stringified representation of the Operator
 		// </summary>
 		string OperName ()
 		{
@@ -890,23 +1064,11 @@ namespace CIR {
 			//
 			Expression left_expr, right_expr;
 			
-			string op = "Operator" + oper;
+			string op = "op_" + oper;
 
 			left_expr = MemberLookup (tc.RootContext, l, op, false);
 
-			if (!(left_expr is MethodGroupExpr)){
-				// FIXME: Find proper error
-				tc.RootContext.Report.Error (118, "Did find something that is not a method");
-				return null;
-			}
-
 			right_expr = MemberLookup (tc.RootContext, r, op, false);
-
-			if (!(right_expr is MethodGroupExpr)){
-				// FIXME: Find proper error
-				tc.RootContext.Report.Error (118, "Did find something that is not a method");
-				return null;
-			}
 
 			if (left_expr != null || right_expr != null) {
 				//
@@ -1092,28 +1254,17 @@ namespace CIR {
 
 			if (method != null) {
 
-				bool is_static = method.IsStatic;
-
-				// FIXME : I am just not able to get this right !!
-				// There's something wrong with this part which causes
-				// an InvalidProgramException if this code is emitted
+				// Note that operators are static anyway
 				
-				//if (Arguments != null)
-				//	Invocation.EmitArguments (ec, Arguments);
+				if (Arguments != null) 
+					Invocation.EmitArguments (ec, Arguments);
 				
-				//if (is_static){
-				//	if (method is MethodInfo)
-				//		ig.Emit (OpCodes.Call, (MethodInfo) method);
-				//	else
-				//		ig.Emit (OpCodes.Call, (ConstructorInfo) method);
-				//} else {
-				//	if (method is MethodInfo)
-				//		ig.Emit (OpCodes.Callvirt, (MethodInfo) method);
-				//	else
-				//		ig.Emit (OpCodes.Callvirt, (ConstructorInfo) method);
-				//}
+				if (method is MethodInfo)
+					ig.Emit (OpCodes.Call, (MethodInfo) method);
+				else
+					ig.Emit (OpCodes.Call, (ConstructorInfo) method);
 				
-				//return;
+				return;
 			}
 			
 			left.Emit (ec);
@@ -1231,7 +1382,7 @@ namespace CIR {
 						     + oper.ToString ());
 			}
 
-			ec.ig.Emit (opcode);
+			ig.Emit (opcode);
 		}
 	}
 

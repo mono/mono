@@ -1827,11 +1827,11 @@ unchecked_expression
 unary_expression
 	: primary_expression
 	| PLUS unary_expression		{ 
-	  	$$ = new Unary (Unary.Operator.Plus, (Expression) $2);
+	  	$$ = new Unary (Unary.Operator.Add, (Expression) $2);
 	  } 
 	| MINUS unary_expression 
 	  { 
-		$$ = new Unary (Unary.Operator.Minus, (Expression) $2);
+		$$ = new Unary (Unary.Operator.Subtract, (Expression) $2);
 	  }
 	| BANG unary_expression 
 	  {

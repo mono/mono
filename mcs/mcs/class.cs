@@ -1466,12 +1466,16 @@ namespace CIR {
 
 		public void Define (TypeContainer parent)
 		{
-			MethodName = "Operator" + OperatorType;
+			int length = 1;
+			MethodName = "op_" + OperatorType;
+			
+			if (SecondArgType != null)
+				length = 2;
+			
+			Parameter [] param_list = new Parameter [length];
 
-			Parameter [] param_list = new Parameter [2];
 			param_list[0] = new Parameter (FirstArgType, FirstArgName,
 						       Parameter.Modifier.NONE, null);
-			
 			if (SecondArgType != null)
 				param_list[1] = new Parameter (SecondArgType, SecondArgName,
 							       Parameter.Modifier.NONE, null);

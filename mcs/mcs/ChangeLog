@@ -1,3 +1,33 @@
+2001-09-19  Ravi Pratap  <ravi@ximian.com>
+
+	* expression.cs (Binary::Emit): Finally get the emission right ! Woo!
+
+	* class.cs (Operator::Define): Change the methodname prefix to 'op_' 
+	instead of 'Operator'
+
+	* expression.cs (Binary::ResolveOperator): Update accordingly.
+	(Unary::Operator): Change names to 'Add' and 'Subtract' instead 'Plus'
+	and 'Minus'
+
+	* cs-parser.jay (unary_expression): Update to use the new names.
+
+	* gen-treedump.cs (GetUnary): Same here.
+
+	* expression.cs (Unary::Resolve): Implement.
+	(Binary::ResolveOperator): Re-write bits to quietly continue if no overloaded 
+	operators are found instead of making noise ;-)
+	(Unary::ResolveOperator): New method to do precisely the same thing which
+	Binary::ResolveOperator does for Binary expressions.
+	(Unary.method, .Arguments): Add.
+	(Unary::OperName): Implement.	
+	(Unary::ForceConversion): Copy and Paste !
+
+	* class.cs (Operator::Define): Fix a small bug for the case when we have 
+	a unary operator.
+
+	* expression.cs (Unary::Emit): Implement. Need to find the right Opcodes
+	for the inbuilt operators. Only overloading works for now ;-)
+
 2001-09-18  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs (CheckedExpr::Resolve, CheckedExpr::Emit,
