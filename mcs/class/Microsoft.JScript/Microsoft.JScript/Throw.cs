@@ -8,13 +8,25 @@
 
 using System;
 
-namespace Microsoft.JScript.Tmp {
+namespace Microsoft.JScript {
 
 	public class Throw : AST {
+	
+		internal AST expression;
+
+		internal Throw (AST exp)
+		{
+			expression = exp;
+		}
 
 		public static Exception JScriptThrow (object value)
 		{
 			throw new NotImplementedException ();
+		}
+
+		public override string ToString ()
+		{
+			return expression.ToString ();
 		}
 	}
 }

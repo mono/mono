@@ -62,4 +62,19 @@ namespace Microsoft.JScript {
 			return identifier;
 		}
 	}
+
+	internal class Return : Statement {
+
+		internal AST expression;
+
+		internal Return (AST exp)
+		{
+			expression = exp;
+		}
+
+		public override string ToString ()
+		{
+			return expression.ToString ();
+		}
+	}
 }

@@ -351,7 +351,7 @@ _loop4_breakloop:			;
 			}
 			case LITERAL_return:
 			{
-				return_stm();
+				stm=return_stm();
 				break;
 			}
 			case LITERAL_with:
@@ -366,7 +366,7 @@ _loop4_breakloop:			;
 			}
 			case LITERAL_throw:
 			{
-				throw_stm();
+				stm=throw_stm();
 				break;
 			}
 			case LITERAL_try:
@@ -787,11 +787,16 @@ _loop12_breakloop:				;
 		}
 	}
 	
-	public void return_stm() //throws RecognitionException, TokenStreamException
+	public AST  return_stm() //throws RecognitionException, TokenStreamException
 {
+		AST r;
 		
 		traceIn("return_stm");
 		try { // debugging
+			
+				r = null;
+				AST e = null;
+			
 			
 			match(LITERAL_return);
 			{
@@ -819,7 +824,11 @@ _loop12_breakloop:				;
 				case DECIMAL_LITERAL:
 				case HEX_INTEGER_LITERAL:
 				{
-					expr();
+					e=expr();
+					if (0==inputState.guessing)
+					{
+						r = new Return (e);
+					}
 					break;
 				}
 				case SEMI_COLON:
@@ -833,6 +842,7 @@ _loop12_breakloop:				;
 				 }
 			}
 			match(SEMI_COLON);
+			return r;
 		}
 		finally
 		{ // debugging
@@ -889,15 +899,27 @@ _loop12_breakloop:				;
 		}
 	}
 	
-	public void throw_stm() //throws RecognitionException, TokenStreamException
+	public AST  throw_stm() //throws RecognitionException, TokenStreamException
 {
+		AST t;
 		
 		traceIn("throw_stm");
 		try { // debugging
 			
+				t = null;
+				AST e = null;
+			
+			
 			match(LITERAL_throw);
-			expr();
+			e=expr();
 			match(SEMI_COLON);
+			if (0==inputState.guessing)
+			{
+				
+						  t = new Throw (e);
+					
+			}
+			return t;
 		}
 		finally
 		{ // debugging
