@@ -1,3 +1,8 @@
+2003-02-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Socket.cs: patch from Elan Feingold <efeingold@mn.rr.com>. Fixes
+	NullReferenceException when the callback is null.
+
 2003-02-17  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* NetworkStream.cs: allow 0 size array in Write.

@@ -134,7 +134,8 @@ namespace System.Net.Sockets
 			private void End() {
 				((ManualResetEvent)result.AsyncWaitHandle).Set();
 				result.IsCompleted=true;
-				callback(result);
+				if (callback != null)
+					callback(result);
 			}
 			
 			public void Accept() {
