@@ -1,5 +1,13 @@
 2002-10-13  Daniel Morgan <danmorg@sc.rr.com>
 
+	* Test: added new directory to hold
+	tests for Mono.Data.SqliteClient
+	
+	* Test/SqliteTest.cs: added file
+	to test Mono.Data.SqliteClient.  
+
+2002-10-13  Daniel Morgan <danmorg@sc.rr.com>
+
 	* Mono.Data.SqliteClient: add file
 	to build on Windows
 	
