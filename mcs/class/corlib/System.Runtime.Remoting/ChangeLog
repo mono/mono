@@ -1,3 +1,7 @@
+2003-01-28 Patrik Torstensson
+
+	* ObjRef.cs: Fixed Objref marshalling flags
+	
 2003-01-24 Lluis Sanchez Gual <lluis@ideary.com>
 
 	* RemotingServices.cs: Implemented some missing methods: IsMethodOverloaded, 
