@@ -156,7 +156,7 @@ namespace System
 				// LAMESPEC: it doesn't say to always prepend a 
 				// question mark to the value.. it does say this 
 				// for fragment.
-				if (value == null)
+				if (value == null || value == "")
 					query = String.Empty;
 				else
 					query = "?" + EncodeUtf8 (value);

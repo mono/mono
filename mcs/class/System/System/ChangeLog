@@ -1,3 +1,7 @@
+2004-04-22  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* UriBuilder.cs: ignore empty Query. Fixes bug #57082.
+
 2004-03-21  Jackson Harper  <jackson@ximian.com>
 
 	* Uri.cs: Equals should be case insensitive for all parts except
