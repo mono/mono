@@ -160,7 +160,13 @@ public class TypeManager {
 	//  Keeps a list of module builders. We used this to do lookups
 	//  on the modulebuilder using GetType -- needed for arrays
 	// </remarks>
-	static ModuleBuilder [] modules;
+	
+	// This is changed from list of ModuleBuilders 
+	// to list of Modules for getting addmodule 
+	// compiler option working
+	// Anirban - 13.07.2004
+
+	static System.Reflection.Module [] modules;
 
 	// <remarks>
 	//   This is the type_cache from the assemblies to avoid
@@ -454,17 +460,16 @@ public class TypeManager {
 	/// <summary>
 	///  Registers a module builder to lookup types from
 	/// </summary>
-	public static void AddModule (ModuleBuilder mb)
+	public static void AddModule (System.Reflection.Module mb)
 	{
 		int top = modules != null ? modules.Length : 0;
-		ModuleBuilder [] n = new ModuleBuilder [top + 1];
+		System.Reflection.Module [] n = new System.Reflection.Module [top + 1];
 
 		if (modules != null)
 			modules.CopyTo (n, 0);
 		n [top] = mb;
 		modules = n;
 	}
-
 
 	private class StandardModule {
 		public readonly string Namespace;
@@ -552,7 +557,7 @@ public class TypeManager {
 					return t;
 			}
 
-			foreach (ModuleBuilder mb in modules) {
+			foreach (System.Reflection.Module mb in modules) {
 				t = mb.GetType (name, false, true);
 				if (t != null){
 					return t;
@@ -652,7 +657,7 @@ public class TypeManager {
 			}
 		}
 
-		foreach (ModuleBuilder mb in modules) {
+		foreach (System.Reflection.Module mb in modules) {
 			foreach (Type t in mb.GetTypes ()) {
 				string ns = t.Namespace;
 

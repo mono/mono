@@ -133,7 +133,7 @@ namespace Mono.Languages
 		//------------------------------------------------------------------
 		public ArrayList AddedModules = new ArrayList();
 
-		[Option("[NOT IMPLEMENTED YET]References metadata from specified {module}", "addmodule")]
+		[Option("References metadata from specified {module}", "addmodule")]
 		public string AddedModule { set { AddedModules.Add(value); } }
 
 		[Option("[NOT IMPLEMENTED YET]Include all files in the current directory and subdirectories according to the {wildcard}", "recurse")]
@@ -396,6 +396,56 @@ namespace Mono.Languages
 			return 0;
 		}
 
+		public void LoadModule (MethodInfo adder_method, string module)
+		{
+			System.Reflection.Module m;
+			string total_log = "";
+
+			try {
+				try {
+					m = (System.Reflection.Module)adder_method.Invoke (CodeGen.AssemblyBuilder, new object [] { module });
+				}
+				catch (TargetInvocationException ex) {
+					throw ex.InnerException;
+				}
+				TypeManager.AddModule (m);
+
+			} 
+			catch (FileNotFoundException) {
+				foreach (string dir in libpath)	{
+					string full_path = Path.Combine (dir, module);
+					if (!module.EndsWith (".netmodule"))
+						full_path += ".netmodule";
+
+					try {
+						try {
+							m = (System.Reflection.Module) adder_method.Invoke (CodeGen.AssemblyBuilder, new object [] { full_path });
+						}
+						catch (TargetInvocationException ex) {
+							throw ex.InnerException;
+						}
+						TypeManager.AddModule (m);
+						return;
+					}
+					catch (FileNotFoundException ff) {
+						total_log += ff.FusionLog;
+						continue;
+					}
+				}
+				Report.Error (6, "Cannot find module `" + module + "'" );
+				Console.WriteLine ("Log: \n" + total_log);
+			}
+			catch (BadImageFormatException f) {
+				Report.Error(6, "Cannot load module (bad file format)" + f.FusionLog);
+			}
+			catch (FileLoadException f)	{
+				Report.Error(6, "Cannot load module " + f.FusionLog);
+			}
+			catch (ArgumentNullException) {
+				Report.Error(6, "Cannot load module (null argument)");
+			}
+		}
+
 		void Error(string message)
 		{
 			Console.WriteLine(message);
@@ -613,8 +663,7 @@ namespace Mono.Languages
 
 		bool ParseAll() // Phase 1
 		{
-			if (first_source == null)
-			{
+			if (first_source == null) {
 				Report.Error(2008, "No files to compile were specified");
 				return false;
 			}
@@ -674,7 +723,17 @@ namespace Mono.Languages
 				TypeManager.AddModule (CodeGen.ModuleBuilder);
 			}
 
-			
+			if (AddedModules.Count > 0) {
+				MethodInfo adder_method = typeof (AssemblyBuilder).GetMethod ("AddModule", BindingFlags.Instance|BindingFlags.NonPublic);
+				if (adder_method == null) {
+					Report.Error (0, new Location (-1, -1), "Cannot use /addmodule on this runtime: Try the Mono runtime instead.");
+					Environment.Exit (1);
+				}
+
+				foreach (string module in AddedModules)
+					LoadModule (adder_method, module);
+			}
+
 
 			//
 			// Before emitting, we need to get the core

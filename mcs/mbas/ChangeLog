@@ -1,4 +1,8 @@
 2004-07-13 Anirban Bhattacharjee <banirban@novell.com>
+	* driver.cs: Added support for AddModule compiler option
+	* typemanager.cs: AddModule function will now store list of Modules instaed of ModuleBuilders. This change has been made to get LoadModule function working of driver.cs.
+
+2004-07-13 Anirban Bhattacharjee <banirban@novell.com>
 	* driver.cs: Compilation to module is supported now
 
 2004-07-09 Anirban Bhattacharjee <banirban@novell.com>
