@@ -178,9 +178,6 @@ namespace System.Reflection.Emit {
 			get { return class_size; }
 		}
 		public override Type ReflectedType {get {return nesting_type;}}
-		public override MemberTypes MemberType { 
-			get {return MemberTypes.TypeInfo;}
-		}
 
 		[MonoTODO]
 		public void AddDeclarativeSecurity( SecurityAction action, PermissionSet pset) {

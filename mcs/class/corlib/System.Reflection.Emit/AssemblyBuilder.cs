@@ -95,6 +95,15 @@ namespace System.Reflection.Emit {
 			}
 		}
 
+#if NET_1_1
+		/* This is to keep signature compatibility with MS.NET */
+		public override string ImageRuntimeVersion {
+			get {
+				return base.ImageRuntimeVersion;
+			}
+		}
+#endif
+
 		public void AddResourceFile (string name, string fileName)
 		{
 			AddResourceFile (name, fileName, ResourceAttributes.Public);
@@ -297,10 +306,6 @@ namespace System.Reflection.Emit {
 			throw not_supported ();
 		}
 
-		public override FileStream[] GetFiles() {
-			throw not_supported ();
-		}
-
 		public override FileStream[] GetFiles(bool getResourceModules) {
 			throw not_supported ();
 		}
@@ -459,7 +464,7 @@ namespace System.Reflection.Emit {
 				cattrs [0] = customBuilder;
 			}
 		}
-		public void SetCustomAttribute( ConstructorInfo con, byte[] binaryAttribute) {
+		public void SetCustomAttribute ( ConstructorInfo con, byte[] binaryAttribute) {
 			if (con == null)
 				throw new ArgumentNullException ("con");
 			if (binaryAttribute == null)

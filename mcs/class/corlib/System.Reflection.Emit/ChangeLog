@@ -1,3 +1,12 @@
+2003-12-10  Zoltan Varga  <vargaz@freemail.hu>
+
+	* AssemblyBuilder.cs (GetFiles): Get rid of unneccessary override.
+
+	* AssemblyBuilder.cs (ImageRuntimeVersion): Add override to keep
+	signature compatibility with MS.NET.
+
+	* TypeBuilder.cs (MemberType): Get rid of unneccessary override.
+
 2003-12-08  Martin Baulig  <martin@ximian.com>
 
 	* TypeBuilder.cs (TypeBuilder.MonoGenericParam): Removed; use the
