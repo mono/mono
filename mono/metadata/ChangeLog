@@ -1,4 +1,9 @@
 
+Thu Feb 10 15:03:46 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* icall.c, gc.c, gc-internal.h: make sure gchandles can't be used
+	lo leak objects between appdomains.
+
 Thu Feb 10 14:25:00 CET 2005 Paolo Molaro <lupus@ximian.com>
 
 	* assembly.c: old compilers compilation fix from 
