@@ -15,15 +15,12 @@ namespace Microsoft.JScript {
 
 		public Plus ()
 		{
-			throw new NotImplementedException ();
 		}
-
 
 		public  object EvaluatePlus (object v1, object v2)
 		{
-			throw new NotImplementedException ();
+			return new object ();
 		}
-
 
 		public static object DoOp (object v1, object v2)
 		{
@@ -31,6 +28,11 @@ namespace Microsoft.JScript {
 		}
 
 		internal override bool Resolve (IdentificationTable context)
+		{
+			throw new NotImplementedException ();
+		}
+
+		internal override bool Resolve (IdentificationTable context, bool no_effect)
 		{
 			throw new NotImplementedException ();
 		}

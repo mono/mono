@@ -9,7 +9,7 @@
 
 namespace Microsoft.JScript {
 
-	public abstract class UnaryOp : AST {
+	public abstract class UnaryOp : Exp {
 
 		internal AST operand;
 		internal JSToken oper;

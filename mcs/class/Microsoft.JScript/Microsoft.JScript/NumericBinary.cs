@@ -14,14 +14,13 @@ namespace Microsoft.JScript {
 	public sealed class NumericBinary : BinaryOp {
 
 		public NumericBinary (int operatorTok)
-		{
-			throw new NotImplementedException ();
+		{			
+			current_op = (JSToken) operatorTok;
 		}
-
 
 		public object EvaluateNumericBinary (object v1, object v2)
 		{
-			throw new NotImplementedException ();
+			return new object ();
 		}
 
 
@@ -33,6 +32,12 @@ namespace Microsoft.JScript {
 		internal override bool Resolve (IdentificationTable context)
 		{
 			throw new NotImplementedException ();
+		}
+
+		internal override bool Resolve (IdentificationTable context, bool no_effect)
+		{
+			this.no_effect = no_effect;
+			return Resolve (context);
 		}
 
 		internal override void Emit (EmitContext ec)

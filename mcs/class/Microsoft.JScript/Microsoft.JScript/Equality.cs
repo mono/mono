@@ -9,6 +9,7 @@
 
 using System;
 using System.Text;
+using System.Reflection.Emit;
 
 namespace Microsoft.JScript {
 
@@ -26,10 +27,14 @@ namespace Microsoft.JScript {
 			throw new NotImplementedException ();
 		}
 
+		public Equality (int i)
+		{
+			current_op = (JSToken) i;
+		}
 
 		public bool EvaluateEquality (object v1, object v2)
 		{
-			throw new NotImplementedException ();
+			return false;
 		}
 
 
@@ -55,8 +60,13 @@ namespace Microsoft.JScript {
 
 		internal override bool Resolve (IdentificationTable context)
 		{
-			throw new NotImplementedException ();
+			return true;
 		}
+
+		internal override bool Resolve (IdentificationTable context, bool no_effect)
+		{
+			throw new NotImplementedException ();
+		}	       
 
 		internal override void Emit (EmitContext ec)
 		{

@@ -1,5 +1,17 @@
 2004-01-16  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
+	* UnaryOp.cs: inherit from Exp now.
+	* Plus.cs: Don't throw the exception when calling constructor, let
+	it build the default handler. Return a new object when calling
+	EvaluatePlus until properly implemented.
+
+	* NumericUnary.cs: added new Resolve.
+	* NumericBinary.cs: assign operator val at ctr. Return a new
+	object when calling EvaluateNumericBinary until properly
+	implemented. Added Resolve.
+	* Equality.cs: added ctr and return false for EvaluateEquality
+	until properly implemented. Added Resolve's functions.
+
 	* Block.cs (Resolve): That check was not necessary.
 	
 	* InstanceOf.cs, PostOrPrefixOperator.cs, Relational.cs,
