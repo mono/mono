@@ -3,6 +3,8 @@
 	CommandEventArgs.cs        - Completed
 	DataGridCommandEventArgs.cs - Completed
 	RepeaterCommandEventArgs.cs - Completed
+	DataListCommandEventArgs.cs - Completed
+	CompareValidator.cs         - Partial Implementation
 
 2001-12-02
 		Gaurav Vaish <gvaish@iitk.ac.in>
