@@ -407,6 +407,7 @@ namespace Mono.CSharp {
 		public static void ApplyAttributes (EmitContext ec, object builder, object kind,
 						    Attributes opt_attrs, Location loc)
 		{
+			
 			if (opt_attrs == null)
 				return;
 
@@ -420,6 +421,7 @@ namespace Mono.CSharp {
 
 				foreach (Attribute a in asec.Attributes) {
 					CustomAttributeBuilder cb = a.Resolve (ec);
+
 					if (cb == null)
 						continue;
 
@@ -462,7 +464,6 @@ namespace Mono.CSharp {
 						((TypeBuilder) builder).SetCustomAttribute (cb); 
 
 					} else if (kind is TypeContainer) {
-
 						TypeContainer tc = (TypeContainer) kind;
 						
 						if (a.UsageAttr) {
@@ -476,7 +477,7 @@ namespace Mono.CSharp {
 						} else if (a.Type == TypeManager.default_member_type) {
 							if (tc.Indexers != null) {
 								Report.Error (646, loc,
-								      "Cannot specify the DefaultMember attribute on " +
+								      "Cannot specify the DefaultMember attribute on" +
 								      " a type containing an indexer");
 								return;
 							}

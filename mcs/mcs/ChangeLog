@@ -1,3 +1,19 @@
+2002-04-05  Ravi Pratap  <ravi@ximian.com>
+
+	* expression.cs (Invocation.OverloadResolve): Factor out code which
+	does parameter compatibility checking with arguments so that we can 
+	re-use the code even from Delegate.VerifyApplicability
+
+	(VerifyArgumentsCompat): Move above code here.
+
+	* delegate.cs (VerifyApplicability): Get rid of duplicate code
+	and instead make a call to the above method.
+
+2002-03-31  Ravi Pratap  <ravi@ximian.com>
+
+	* typemanager.cs (attribute_type): Corresponds to System.Attribute.
+	We use it to keep track of classes which are attribute types.
+
 2002-04-02  Miguel de Icaza  <miguel@ximian.com>
 
 	* delegate.cs (Delegate.Define): Correctly define the types in the
@@ -182,6 +198,7 @@
 	* ecore.cs (Expression.MemberLookup): On interfaces, lookup
 	members also on the parent interfaces recursively.
 
+>>>>>>> 1.390
 2002-03-27  Miguel de Icaza  <miguel@ximian.com>
 
 	* report.cs: Use new formats, since Gonzalo finished the missing

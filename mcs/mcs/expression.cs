@@ -3371,20 +3371,34 @@ namespace Mono.CSharp {
 							chose_params_expanded, loc);
 
 				if (x != 1) {
-					//Console.WriteLine ("Candidate : " + FullMethodDesc (candidate));
-					//Console.WriteLine ("Best : " + FullMethodDesc (method));
  					Report.Error (
  						121, loc,
  						"Ambiguous call when selecting function due to implicit casts");
 					return null;
  				}
 			}
-			
-			// And now convert implicitly, each argument to the required type
-			
-			pd = GetParameterData (method);
-			int pd_count = pd.Count;
 
+			//
+			// And now check if the arguments are all compatible, perform conversions
+			// if necessary etc. and return if everything is all right
+			//
+
+			if (VerifyArgumentsCompat (ec, Arguments, argument_count, method,
+						   chose_params_expanded, true, null, loc))
+				return method;
+			else
+				return null;
+		}
+
+		public static bool VerifyArgumentsCompat (EmitContext ec, ArrayList Arguments, int argument_count,
+							  MethodBase method, 
+							  bool chose_params_expanded,
+							  bool is_delegate, Type delegate_type,
+							  Location loc)
+		{
+			ParameterData pd = GetParameterData (method);
+			int pd_count = pd.Count;
+			
 			for (int j = 0; j < argument_count; j++) {
 				Argument a = (Argument) Arguments [j];
 				Expression a_expr = a.Expr;
@@ -3400,16 +3414,22 @@ namespace Mono.CSharp {
 
 					if (conv == null) {
 						if (!Location.IsNull (loc)) {
-							Error (1502, loc,
-							       "The best overloaded match for method '" +
-							       FullMethodDesc (method) +
-							       "' has some invalid arguments");
+							if (!is_delegate) 
+								Error (1502, loc,
+								       "The best overloaded match for method '" +
+								       FullMethodDesc (method) +
+								       "' has some invalid arguments");
+							else
+								Report.Error (1594, loc,
+									      "Delegate '" + delegate_type.ToString () +
+									      "' has some invalid arguments.");
 							Error (1503, loc,
 							 "Argument " + (j+1) +
 							 ": Cannot convert from '" + Argument.FullDesc (a) 
 							 + "' to '" + pd.ParameterDesc (j) + "'");
 						}
-						return null;
+						
+						return false;
 					}
 					
 					//
@@ -3417,10 +3437,6 @@ namespace Mono.CSharp {
 					//
 					if (a_expr != conv)
 						a.Expr = conv;
-
-					// FIXME : For the case of params methods, we need to actually instantiate
-					// an array and initialize it with the argument values etc etc.
-
 				}
 				
 				if (a.GetParameterModifier () != pd.ParameterModifier (j) &&
@@ -3437,11 +3453,12 @@ namespace Mono.CSharp {
 						       ": Cannot convert from '" + Argument.FullDesc (a) 
 						       + "' to '" + pd.ParameterDesc (j) + "'");
 					}
-					return null;
+					
+					return false;
 				}
 			}
-			
-			return method;
+
+			return true;
 		}
 		
 		public override Expression DoResolve (EmitContext ec)
@@ -4775,7 +4792,8 @@ namespace Mono.CSharp {
 			if (member_lookup is FieldExpr){
 				FieldExpr fe = (FieldExpr) member_lookup;
 				FieldInfo fi = fe.FieldInfo;
-
+				Type decl_type = fi.DeclaringType;
+				
 				if (fi is FieldBuilder) {
 					Const c = TypeManager.LookupConstant ((FieldBuilder) fi);
 					
@@ -4789,7 +4807,7 @@ namespace Mono.CSharp {
 
 				if (fi.IsLiteral) {
 					Type t = fi.FieldType;
-					Type decl_type = fi.DeclaringType;
+					
 					object o;
 
 					if (fi is FieldBuilder)

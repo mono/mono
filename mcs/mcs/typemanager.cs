@@ -54,6 +54,7 @@ public class TypeManager {
 	static public Type intptr_type;
 	static public Type monitor_type;
 	static public Type runtime_field_handle_type;
+	static public Type attribute_type;
 	static public Type attribute_usage_type;
 	static public Type dllimport_type;
 	static public Type unverifiable_code_type;
@@ -510,6 +511,7 @@ public class TypeManager {
 		monitor_type         = CoreLookupType ("System.Threading.Monitor");
 		intptr_type          = CoreLookupType ("System.IntPtr");
 
+		attribute_type       = CoreLookupType ("System.Attribute");
 		attribute_usage_type = CoreLookupType ("System.AttributeUsageAttribute");
 		dllimport_type       = CoreLookupType ("System.Runtime.InteropServices.DllImportAttribute");
 		methodimpl_attr_type = CoreLookupType ("System.Runtime.CompilerServices.MethodImplAttribute");

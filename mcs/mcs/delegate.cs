@@ -133,7 +133,6 @@ namespace Mono.CSharp {
 			if (param_types == null)
 				return false;
 
-
 			//
 			// Invoke method
 			//
@@ -344,7 +343,9 @@ namespace Mono.CSharp {
 		//  Verifies whether the invocation arguments are compatible with the
 		//  delegate's target method
 		// </summary>
-		public static bool VerifyApplicability (EmitContext ec, Type delegate_type, ArrayList args,
+		public static bool VerifyApplicability (EmitContext ec,
+							Type delegate_type,
+							ArrayList args,
 							Location loc)
 		{
 			int arg_count;
@@ -363,47 +364,23 @@ namespace Mono.CSharp {
 			}
 			
 			MethodBase mb = ((MethodGroupExpr) ml).Methods [0];
-
 			ParameterData pd = Invocation.GetParameterData (mb);
-			
-			if (pd.Count != arg_count) {
+
+			int pd_count = pd.Count;
+
+			bool not_params_method = (pd.ParameterModifier (pd_count - 1) != Parameter.Modifier.PARAMS);
+
+			if (not_params_method && pd_count != arg_count) {
 				Report.Error (1593, loc,
 					      "Delegate '" + delegate_type.ToString ()
 					      + "' does not take '" + arg_count + "' arguments");
 				return false;
 			}
 
-			for (int i = arg_count; i > 0;) {
-				i--;
-				Expression conv;
-				Argument a = (Argument) args [i];
-				Expression a_expr = a.Expr;
-				
-				if (pd.ParameterType (i) != a_expr.Type) {
-					
-					conv = Expression.ConvertImplicitStandard (ec, a_expr, pd.ParameterType (i), loc);
-
-					if (conv == null) {
-						Report.Error (1594, loc,
-							      "Delegate '" + delegate_type.ToString () +
-							      "' has some invalid arguments.");
-
-						Report.Error (1503, loc,
-						       "Argument " + (i+1) +
-						       ": Cannot convert from '" +
-						       TypeManager.CSharpName (a_expr.Type)
-						       + "' to '" + TypeManager.CSharpName (pd.ParameterType (i)) + "'");
-						return false;
-					}
-
-					if (a_expr != conv)
-						a.Expr = conv;
-				}
-			}
-
-			return true;
+			return Invocation.VerifyArgumentsCompat (ec, args, arg_count, mb, !not_params_method,
+								 true, delegate_type, loc);
 		}
-
+		
 		/// <summary>
 		///  Verifies whether the delegate in question is compatible with this one in
 		///  order to determine if instantiation from the same is possible.
@@ -562,7 +539,7 @@ namespace Mono.CSharp {
 					      "Delegate creation expression takes only one argument");
 				return null;
 			}
-			
+
 			if (Arguments.Count != 1) {
 				Report.Error (-11, Location,
 					      "Delegate creation expression takes only one argument");
@@ -578,7 +555,6 @@ namespace Mono.CSharp {
 			}
 
 			constructor_method = ((MethodGroupExpr) ml).Methods [0];
-			
 			Argument a = (Argument) Arguments [0];
 			
 			if (!a.Resolve (ec, Location))
@@ -595,7 +571,6 @@ namespace Mono.CSharp {
 				}
 				
 				delegate_method  = Delegate.VerifyMethod (ec, type, mg.Methods [0], Location);
-				
 				if (delegate_method == null)
 					return null;
 
@@ -679,7 +654,6 @@ namespace Mono.CSharp {
 		public override Expression DoResolve (EmitContext ec)
 		{
 			Type del_type = InstanceExpr.Type;
-
 			if (del_type == null)
 				return null;
 			
@@ -697,16 +671,13 @@ namespace Mono.CSharp {
 				return null;
 
 			Expression ml = Expression.MemberLookup (ec, del_type, "Invoke", Location);
-			
 			if (!(ml is MethodGroupExpr)) {
 				Report.Error (-100, Location, "Internal error : could not find Invoke method!");
 				return null;
 			}
 			
 			method = ((MethodGroupExpr) ml).Methods [0];
-			
 			type = ((MethodInfo) method).ReturnType;
-			
 			eclass = ExprClass.Value;
 			
 			return this;

@@ -781,7 +781,7 @@ namespace Mono.CSharp {
 					error = true;
 					return null;
 				}
-				
+
 				if (first.IsClass){
 					parent = first;
 					start = 1;
@@ -878,7 +878,7 @@ namespace Mono.CSharp {
 					return null;
 				}
 			}
-
+			
 			// if (parent_builder is ModuleBuilder) {
 			if (IsTopLevel){
 				ModuleBuilder builder = CodeGen.ModuleBuilder;
@@ -1634,7 +1634,7 @@ namespace Mono.CSharp {
 			if (pending_implementations != null)
 				if (!VerifyPendingMethods ())
 					return;
-
+			
 			EmitContext ec = new EmitContext (
 						  this, Mono.CSharp.Location.Null, null, null,
 						  ModFlags);
