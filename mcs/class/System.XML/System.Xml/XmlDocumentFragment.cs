@@ -53,7 +53,17 @@ namespace System.Xml
 		#region Methods		
 		public override XmlNode CloneNode (bool deep)
 		{
-			return new XmlDocumentFragment (OwnerDocument);
+			if (deep) { // clone document + child nodes
+				XmlNode node = FirstChild;
+
+				while ((node != null) && (node.HasChildNodes)) {
+					AppendChild (node.NextSibling.CloneNode (false));
+					node = node.NextSibling;
+				}
+
+				return node;
+			} else
+				return new XmlDocumentFragment (OwnerDocument);
 		}
 
 		[MonoTODO]

@@ -146,13 +146,20 @@ namespace System.Xml
 
 		#region Methods
 
-		[MonoTODO]
 		public override XmlNode CloneNode (bool deep)
 		{
-			if (deep) { // recursively clone the subtree
-				throw new NotImplementedException ();
+			if (deep) { // recursively clone the subtree 
+				XmlNode node = FirstChild; // Attributes have no ParentNodes
+
+				while ((node != null) && (node.HasChildNodes)) {
+					AppendChild (node.NextSibling.CloneNode (false));
+					node = node.NextSibling;
+				}
+
+				return node;
 			} else
-				return new XmlAttribute (prefix, localName, namespaceURI, OwnerDocument);
+				return new XmlAttribute (prefix, localName, namespaceURI,
+							 OwnerDocument);
 		}
 
 		internal void SetOwnerElement (XmlElement ownerElement)

@@ -145,11 +145,36 @@ namespace System.Xml
 		#endregion
 
 		#region Methods
-
+		
 		[MonoTODO]
 		public override XmlNode CloneNode (bool deep)
 		{
-			throw new NotImplementedException ();
+			if (deep) {
+				XmlNode node = ParentNode.FirstChild;
+
+				while ((node != null) && (node.HasChildNodes)) {
+					//
+					// XmlNode.CloneNode says we should also clone the attributes,
+					// does the NextSibling.CloneNode do the Right Thing?
+					//
+					AppendChild (node.NextSibling.CloneNode (false));
+					node = node.NextSibling;
+				}
+
+				return node;
+			} else {
+				XmlNode node =  new XmlElement (prefix, localName, namespaceURI,
+								OwnerDocument);
+
+				//
+				// XmlNode.CloneNode says 'Clones the element node, its attributes
+				// including its default attributes.'
+				//
+				for (int i = 0; i < node.Attributes.Count; i++)
+					node.AppendChild (node.Attributes [i].CloneNode (false));
+
+				return node;
+			}
 		}
 
 		[MonoTODO]
