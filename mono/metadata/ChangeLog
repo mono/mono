@@ -1,5 +1,10 @@
 2004-03-16  Martin Baulig  <martin@ximian.com>
 
+	* class.c (mono_class_from_generic_parameter): Use the actual
+	parameter name.	
+
+2004-03-16  Martin Baulig  <martin@ximian.com>
+
 	* reflection.c (type_get_signature_size): New static function.
 	Compues the size of the type in a method signature.
 	(method_get_signature_size): New static function; calls
