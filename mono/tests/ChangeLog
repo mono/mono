@@ -1,3 +1,9 @@
+2005-02-05  Zoltan Varga  <vargaz@freemail.hu>
+
+	* libtest.c: Mark all exported functions STDCALL.
+
+	* Makefile.am (CSC): Disable some warnings.
+
 2005-01-30  Zoltan Varga  <vargaz@freemail.hu>
 
 	* libtest.c: Fix some warnings.
