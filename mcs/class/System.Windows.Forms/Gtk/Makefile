@@ -10,13 +10,13 @@ CSCOMPILE=mcs
 # features and our build rules are more complicated than it can
 # handle.
 
-EXES = demo.exe Demo2.exe singlewidget.exe
+EXES = demo.exe Demo2.exe Demo3.exe singlewidget.exe
 LIBRARY = System.Windows.Forms.dll 
 
-LIB_MCS_FLAGS = /r:glib-sharp.dll /r:gdk-sharp.dll /r:gtk-sharp.dll \
+LIB_MCS_FLAGS = /r:Accessibility /r:glib-sharp.dll /r:gdk-sharp.dll /r:gtk-sharp.dll \
     /r:gnome-sharp.dll /r:System.Drawing.dll -L `pkg-config --variable=prefix gtk-sharp`/lib
 
-EXE_MCS_FLAGS = /r:$(LIBRARY) /r:System.Drawing.dll
+EXE_MCS_FLAGS = /r:$(LIBRARY) /r:System.Drawing.dll /r:System.Data /r:ByteFX.Data.dll 
 
 LIB_SOURCES = \
 	TODOAttribute.cs	\
@@ -77,8 +77,48 @@ LIB_SOURCES = \
 	DockStyle.cs \
 	ListControl.cs \
 	ListBox.cs \
-	LayoutEventArgs.cs 
-#	DataGrid.cs	\
+	CurrencyManager.cs	\
+	BindingManagerBase.cs	\
+	BindingsCollection.cs	\
+	BaseCollection.cs	\
+	Binding.cs	\
+	ItemChangedEventArgs.cs	\
+	ItemChangedEventHandler.cs	\
+	ConvertEventArgs.cs	\
+	ConvertEventHandler.cs	\
+	BindingMemberInfo.cs	\
+	BorderStyle.cs	\
+	KeyEventArgs.cs	\
+	KeyEventHandler.cs	\
+	KeyPressEventArgs.cs	\
+	KeyPressEventHandler.cs	\
+	Keys.cs	\
+	AccessibleObject.cs	\
+	AccessibleEvents.cs	\
+	AccessibleNavigation.cs	\
+	AccessibleRole.cs	\
+	AccessibleSelection.cs	\
+	AccessibleStates.cs	\
+	NavigateEventArgs.cs	\
+	NavigateEventHandler.cs	\
+	PaintEventArgs.cs	\
+	PaintEventHandler.cs	\
+	GridTableStylesCollection.cs	\
+	GridColumnStylesCollection.cs	\
+	DataGrid.cs	\
+	IDataGridColumnStyleEditingNotificationService.cs	\
+	IDataGridEditingService.cs	\
+	DataGridColumnStyle.cs	\
+	DataGridBoolColumn.cs	\
+	DataGridCell.cs	\
+	DataGridLineStyle.cs	\
+	DataGridParentRowsLabelStyle.cs	\
+	DataGridPreferredColumnWidthTypeConverter.cs	\
+	DataGridTableStyle.cs	\
+	DataGridTextBoxColumn.cs	\
+	DataGridTextBox.cs	\
+	LayoutEventArgs.cs	
+
 
 all-local: $(LIBRARY) $(EXES)
 
@@ -87,7 +127,7 @@ clean-local:
 
 test-local run-test-local install-local:
 
-DISTFILES = demo.cs Demo2.cs singlewidget.cs $(LIB_SOURCES)
+DISTFILES = demo.cs Demo2.cs Demo3.cs singlewidget.cs $(LIB_SOURCES)
 
 dist-local: dist-default
 

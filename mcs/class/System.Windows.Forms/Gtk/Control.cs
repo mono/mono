@@ -434,6 +434,14 @@ namespace System.Windows.Forms {
 				this.widget.ModifyFg (Gtk.StateType.Normal, new Gdk.Color (value));
 			}
 		}
+		
+		public event EventHandler ForeColorChanged;
+		
+		protected virtual void OnForeColorChanged (EventArgs e) {
+			
+			if (ForeColorChanged != null)
+				ForeColorChanged (this, e);
+		}
 
 		[MonoTODO]
 		public virtual System.Drawing.Image BackgroundImage {
@@ -455,6 +463,83 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		public event EventHandler BackColorChanged;
+		
+		protected virtual void OnBackColorChanged (EventArgs e) {
+			
+			if (BackColorChanged != null)
+				BackColorChanged (this, e);
+		}
+		
+		public event EventHandler MouseLeave;
+	
+		[MonoTODO]
+		protected virtual void OnMouseLeave(EventArgs e)
+		{
+		}
+	
+		[MonoTODO]
+		protected virtual void OnMouseMove(MouseEventArgs e)
+		{
+		}
+		
+		[MonoTODO]
+		protected virtual AccessibleObject CreateAccessibilityInstance() 
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		protected virtual void OnEnter(EventArgs e) 
+		{
+		}
+		
+		[MonoTODO]
+		protected virtual void OnKeyDown(KeyEventArgs e) 
+		{
+		}
+		
+		[MonoTODO]
+		protected virtual void OnKeyPress(KeyPressEventArgs kpe) 
+		{
+		}
+		
+		[MonoTODO]
+		protected virtual void OnLeave(EventArgs e) 
+		{
+		}
+		
+		[MonoTODO]
+		protected virtual void OnMouseWheel(MouseEventArgs e) 
+		{
+		}
+		
+		[MonoTODO]
+		protected virtual void OnPaint(PaintEventArgs pe) 
+		{
+		}
+		
+		[MonoTODO]
+		protected virtual void OnPaintBackground(PaintEventArgs ebe) 
+		{
+		}
+		
+		[MonoTODO]
+		protected virtual bool ProcessDialogKey(Keys keyData) 
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		public virtual void ResetBackColor() 
+		{
+		}
+		
+		[MonoTODO]
+		public virtual void ResetForeColor() 
+		{
+		}
+		
 		public bool TabStop {
 			get {
 				return tabStop;
@@ -484,6 +569,11 @@ namespace System.Windows.Forms {
 		protected virtual void OnMouseDown(MouseEventArgs e)
 		{
 		}
+		
+		[MonoTODO]
+		protected virtual void OnMouseUp(MouseEventArgs e)
+		{
+		}
 
 		[MonoTODO]
 		protected virtual void OnResize(EventArgs e)
@@ -500,6 +590,14 @@ namespace System.Windows.Forms {
 
 			get { throw new NotImplementedException(); }
 			set { throw new NotImplementedException(); }
+		}
+		
+		public event EventHandler FontChanged;
+		
+		protected virtual void OnFontChanged (EventArgs e) {
+			
+			if (FontChanged != null)
+				FontChanged (this, e);
 		}
 
 		protected virtual Size DefaultSize {

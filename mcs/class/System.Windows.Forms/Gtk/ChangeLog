@@ -1,3 +1,47 @@
+Tue Nov 18 23:00:00 GMT+2 2003 Joel Basson <jstrike@mweb.co.za>
+
+	* New start to DataGrid. Imported files from swf-winelib
+	* CurrencyManager.cs	
+	* BindingManagerBase.cs	
+	* BindingsCollection.cs	
+	* BaseCollection.cs	
+	* Binding.cs	
+	* ItemChangedEventArgs.cs	
+	* ItemChangedEventHandler.cs	
+	* ConvertEventArgs.cs	
+	* ConvertEventHandler.cs	
+	* BindingMemberInfo.cs	
+	* BorderStyle.cs	
+	* KeyEventArgs.cs	
+	* KeyEventHandler.cs	
+	* KeyPressEventArgs.cs	
+	* KeyPressEventHandler.cs	
+	* Keys.cs	
+	* AccessibleObject.cs	
+	* AccessibleEvents.cs	
+	* AccessibleNavigation.cs	
+	* AccessibleRole.cs	
+	* AccessibleSelection.cs	
+	* AccessibleStates.cs	
+	* NavigateEventArgs.cs	
+	* NavigateEventHandler.cs	
+	* PaintEventArgs.cs	
+	* PaintEventHandler.cs	
+	* GridTableStylesCollection.cs	
+	* GridColumnStylesCollection.cs	
+	* DataGrid.cs	
+	* IDataGridColumnStyleEditingNotificationService.cs	
+	* IDataGridEditingService.cs	
+	* DataGridColumnStyle.cs	
+	* DataGridBoolColumn.cs	
+	* DataGridCell.cs	
+	* DataGridLineStyle.cs	
+	* DataGridParentRowsLabelStyle.cs	
+	* DataGridPreferredColumnWidthTypeConverter.cs	
+	* DataGridTableStyle.cs	
+	* DataGridTextBoxColumn.cs	
+	* DataGridTextBox.cs	
+
 Fri Oct	24 20:50:00	GMT+2 2003 Joel Basson <jstrike@mweb.co.za>
 
 	* Added start of DataGrid
