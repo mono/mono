@@ -54,7 +54,7 @@ namespace System.Data
 		// Parent TableMapping
 		public TableMapping ParentTable;
 
-		// LocalName -> TableMapping
+		// decoded LocalName -> TableMapping
 		public TableMappingCollection ChildTables = new TableMappingCollection ();
 
 		public TableMapping (string name)
@@ -152,7 +152,8 @@ namespace System.Data
 			if (IsDocumentElementTable ())
 				InferTopLevelTable (el);
 			else {
-				dataset.DataSetName = el.LocalName;
+				string localName = XmlConvert.DecodeName (el.LocalName);
+				dataset.DataSetName = localName;
 				dataset.Namespace = el.NamespaceURI;
 				dataset.Prefix = el.Prefix;
 				foreach (XmlNode n in el.ChildNodes)
@@ -210,19 +211,20 @@ namespace System.Data
 
 		private void InferColumnElement (TableMapping table, XmlElement el)
 		{
-			DataColumn col = table.GetColumn (el.LocalName);
+			string localName = XmlConvert.DecodeName (el.LocalName);
+			DataColumn col = table.GetColumn (localName);
 			if (col != null) {
 				if (col.ColumnMapping != MappingType.Element)
-					throw new DataException (String.Format ("Column {0} is already mapped to {1}.", el.LocalName, col.ColumnMapping));
+					throw new DataException (String.Format ("Column {0} is already mapped to {1}.", localName, col.ColumnMapping));
 				return;
 			}
-			if (table.ChildTables [el.LocalName] != null)
+			if (table.ChildTables [localName] != null)
 				// Child is already mapped, or infered as a table
 				// (in that case, that takes precedence than
 				// this simple column inference.)
 				return;
 
-			col = new DataColumn (el.LocalName, typeof (string));
+			col = new DataColumn (localName, typeof (string));
 			col.Namespace = el.NamespaceURI;
 			col.Prefix = el.Prefix;
 			table.Elements.Add (col);
@@ -232,9 +234,10 @@ namespace System.Data
 		{
 			if (parentTable == null)
 				return;
-			DataColumn elc = parentTable.GetColumn (el.LocalName);
+			string localName = XmlConvert.DecodeName (el.LocalName);
+			DataColumn elc = parentTable.GetColumn (localName);
 			if (elc != null)
-				parentTable.RemoveElementColumn (el.LocalName);
+				parentTable.RemoveElementColumn (localName);
 		}
 
 		private void PopulatePrimaryKey (TableMapping table)
@@ -271,9 +274,10 @@ namespace System.Data
 
 		private void InferRepeatedElement (TableMapping parentTable, XmlElement el)
 		{
+			string localName = XmlConvert.DecodeName (el.LocalName);
 			// FIXME: can be checked later
 			CheckExtraneousElementColumn (parentTable, el);
-			TableMapping table = GetMappedTable (parentTable, el.LocalName);
+			TableMapping table = GetMappedTable (parentTable, localName);
 
 			// If the mapping is actually complex type (not simple
 			// repeatable), then ignore it.
@@ -284,7 +288,7 @@ namespace System.Data
 			if (table.SimpleContent != null)
 				return;
 
-			GetMappedColumn (table, el.LocalName + "_Column", el.Prefix, el.NamespaceURI, MappingType.SimpleContent);
+			GetMappedColumn (table, localName + "_Column", el.Prefix, el.NamespaceURI, MappingType.SimpleContent);
 		}
 
 		private void InferTableElement (TableMapping parentTable, XmlElement el)
@@ -295,7 +299,8 @@ namespace System.Data
 			// loss of performance.
 			CheckExtraneousElementColumn (parentTable, el);
 
-			TableMapping table = GetMappedTable (parentTable, el.LocalName);
+			string localName = XmlConvert.DecodeName (el.LocalName);
+			TableMapping table = GetMappedTable (parentTable, localName);
 
 			bool hasChildElements = false;
 			bool hasAttributes = false;
@@ -309,7 +314,7 @@ namespace System.Data
 
 				hasAttributes = true;
 				DataColumn col = GetMappedColumn (table,
-					attr.LocalName,
+					XmlConvert.DecodeName (attr.LocalName),
 					attr.Prefix,
 					attr.NamespaceURI,
 					MappingType.Attribute);
@@ -326,6 +331,7 @@ namespace System.Data
 				case XmlNodeType.Element: // child
 					hasChildElements = true;
 					XmlElement cel = n as XmlElement;
+					string childLocalName = XmlConvert.DecodeName (cel.LocalName);
 
 					switch (GetElementMappingType (cel)) {
 					case ElementMappingType.Simple:
@@ -333,12 +339,12 @@ namespace System.Data
 						break;
 					case ElementMappingType.Repeated:
 						PopulatePrimaryKey (table);
-						PopulateRelationStructure (table.Table.TableName, cel.LocalName);
+						PopulateRelationStructure (table.Table.TableName, childLocalName);
 						InferRepeatedElement (table, cel);
 						break;
 					case ElementMappingType.Complex:
 						PopulatePrimaryKey (table);
-						PopulateRelationStructure (table.Table.TableName, cel.LocalName);
+						PopulateRelationStructure (table.Table.TableName, childLocalName);
 						InferTableElement (table, cel);
 						break;
 					}
@@ -417,13 +423,6 @@ namespace System.Data
 			for (XmlNode n = el.NextSibling; n != null; n = n.NextSibling)
 				if (n.NodeType == XmlNodeType.Element && n.LocalName == el.LocalName)
 					return GetElementMappingType (n as XmlElement) == ElementMappingType.Complex ? ElementMappingType.Complex : ElementMappingType.Repeated;
-
-			/*
-			foreach (XmlNode n in el.ParentNode.ChildNodes) {
-				if (n.NodeType == XmlNodeType.Element && n.LocalName == el.LocalName && n != el)
-					return ElementMappingType.Repeated;
-			}
-			*/
 
 			return ElementMappingType.Simple;
 		}

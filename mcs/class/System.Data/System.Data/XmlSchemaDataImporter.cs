@@ -447,15 +447,13 @@ el.ElementType != schemaAnyType)
 
 		private void ProcessDataTableElement (XmlSchemaElement el)
 		{
+			string tableName = XmlConvert.DecodeName (el.QualifiedName.Name);
 			// If it is already registered, just ignore.
-			if (dataset.Tables.Contains (el.QualifiedName.Name))
+			if (dataset.Tables.Contains (tableName))
 				return;
 
-			string name = el.QualifiedName.Name;
-
-			DataTable table = new DataTable ();
+			DataTable table = new DataTable (tableName);
 			currentTable = new TableStructure (table);
-			table.TableName = name;
 
 			dataset.Tables.Add (table);
 
@@ -525,7 +523,7 @@ el.ElementType != schemaAnyType)
 				ctab.Columns.Add (ccol);
 			}
 
-			string name = rs.ExplicitName != null ? rs.ExplicitName : ptab.TableName + '_' + ctab.TableName;
+			string name = rs.ExplicitName != null ? rs.ExplicitName : XmlConvert.DecodeName (ptab.TableName) + '_' + XmlConvert.DecodeName (ctab.TableName);
 			DataRelation rel = new DataRelation (name, pcol, ccol, rs.CreateConstraint);
 			rel.Nested = rs.IsNested;
 			if (rs.CreateConstraint)
@@ -651,7 +649,8 @@ el.ElementType != schemaAnyType)
 			if (targetElements.Contains (el))
 				return; // do nothing
 
-			if (el.QualifiedName.Name == dataset.DataSetName)
+			string elName = XmlConvert.DecodeName (el.QualifiedName.Name);
+			if (elName == dataset.DataSetName)
 				// Well, why it is ArgumentException :-?
 				throw new ArgumentException ("Nested element must not have the same name as DataSet's name.");
 
@@ -662,8 +661,8 @@ el.ElementType != schemaAnyType)
 				DataColumn pkey = currentTable.PrimaryKey;
 
 				RelationStructure rel = new RelationStructure ();
-				rel.ParentTableName = parent.QualifiedName.Name;
-				rel.ChildTableName = el.QualifiedName.Name;
+				rel.ParentTableName = XmlConvert.DecodeName (parent.QualifiedName.Name);
+				rel.ChildTableName = elName;
 				rel.ParentColumnName = pkey.ColumnName;
 				rel.ChildColumnName = pkey.ColumnName;
 				rel.CreateConstraint = true;
@@ -684,7 +683,7 @@ el.ElementType != schemaAnyType)
 				return;
 
 			// check name identity
-			string name = parent.QualifiedName.Name + "_Id";
+			string name = XmlConvert.DecodeName (parent.QualifiedName.Name) + "_Id";
 			if (currentTable.ContainsColumn (name))
 				throw new DataException (String.Format ("There is already a column that has the same name: {0}", name));
 			// check existing primary key
@@ -712,18 +711,21 @@ el.ElementType != schemaAnyType)
 			AddParentKeyColumn (parent, el, col);
 			DataColumn pkey = currentTable.PrimaryKey;
 
+			string elName = XmlConvert.DecodeName (el.QualifiedName.Name);
+			string parentName = XmlConvert.DecodeName (parent.QualifiedName.Name);
+
 			DataTable dt = new DataTable ();
-			dt.TableName = el.QualifiedName.Name;
+			dt.TableName = elName;
 			// reference key column to parent
 			DataColumn cc = new DataColumn ();
-			cc.ColumnName = parent.QualifiedName.Name + "_Id";
+			cc.ColumnName = parentName + "_Id";
 			cc.Namespace = parent.QualifiedName.Namespace;
 			cc.ColumnMapping = MappingType.Hidden;
 			cc.DataType = typeof (int);
 
 			// repeatable content simple element
 			DataColumn cc2 = new DataColumn ();
-			cc2.ColumnName = el.QualifiedName.Name + "_Column";
+			cc2.ColumnName = elName + "_Column";
 			cc2.Namespace = el.QualifiedName.Namespace;
 			cc2.ColumnMapping = MappingType.SimpleContent;
 			cc2.AllowDBNull = false;
@@ -734,7 +736,7 @@ el.ElementType != schemaAnyType)
 			dataset.Tables.Add (dt);
 
 			RelationStructure rel = new RelationStructure ();
-			rel.ParentTableName = parent.QualifiedName.Name;
+			rel.ParentTableName = parentName;
 			rel.ChildTableName = dt.TableName;
 			rel.ParentColumnName = pkey.ColumnName;
 			rel.ChildColumnName = cc.ColumnName;
@@ -745,7 +747,7 @@ el.ElementType != schemaAnyType)
 
 		private void FillDataColumnSimpleElement (XmlSchemaElement el, DataColumn col)
 		{
-			col.ColumnName = el.QualifiedName.Name;
+			col.ColumnName = XmlConvert.DecodeName (el.QualifiedName.Name);
 			col.Namespace = el.QualifiedName.Namespace;
 			col.ColumnMapping = MappingType.Element;
 			col.DataType = ConvertDatatype (GetSchemaPrimitiveType (el.ElementType));
@@ -813,7 +815,7 @@ el.ElementType != schemaAnyType)
 			if (index > 0)
 				tableName = tableName.Substring (index + 1);
 
-			return tableName;
+			return XmlConvert.DecodeName (tableName);
 		}
 
 		private void ProcessParentKey (XmlSchemaIdentityConstraint ic)
@@ -835,6 +837,7 @@ el.ElementType != schemaAnyType)
 				if (index > 0)
 					colName = colName.Substring (index + 1);
 
+				colName = XmlConvert.DecodeName (colName);
 				DataColumn col = dt.Columns [colName];
 				if (col == null)
 					throw new DataException (String.Format ("Invalid XPath selection inside field. Cannot find: {0}", tableName));
@@ -885,6 +888,7 @@ el.ElementType != schemaAnyType)
 				if (index != -1)
 					colName = colName.Substring (index + 1);
 
+				colName = XmlConvert.DecodeName (colName);
 				cols [i] = dt.Columns [colName];
 				i++;
 			}

@@ -1,5 +1,13 @@
 2004-05-17  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DataSet.cs,
+	  XmlDataInferenceLoader.cs,
+	  XmlDataReader.cs,
+	  XmlSchemaDataImporter.cs : XmlDecode every local name to read and
+	  XmlEncode every local name to write. This should fix bug #58268.
+
+2004-05-17  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DataSet.cs : Implemented ignored namespaces in InferXmlSchema().
 	  Supported repeated elements. Removed MonoTODOs.
 	* XmlDataInferenceLoader.cs : Design change to support ignored

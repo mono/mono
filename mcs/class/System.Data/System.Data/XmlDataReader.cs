@@ -89,7 +89,7 @@ namespace System.Data
 
 			if (mode == XmlReadMode.Fragment) {
 				do {
-					if (reader.LocalName == dataset.DataSetName)
+					if (XmlConvert.DecodeName (reader.LocalName) == dataset.DataSetName)
 						ReadTopLevelElement ();
 					else
 						reader.Skip ();
@@ -97,7 +97,7 @@ namespace System.Data
 			} else {
 				// Top level element can be ignored, being regarded 
 				// just as a wrapper (even it is not dataset element).
-				DataTable tab = dataset.Tables [reader.LocalName];
+				DataTable tab = dataset.Tables [XmlConvert.DecodeName (reader.LocalName)];
 				if (tab != null)
 					ReadDataSetContent ();
 				else
@@ -126,7 +126,7 @@ namespace System.Data
 
 		private void ReadDataSetContent ()
 		{
-			DataTable table = dataset.Tables [reader.LocalName];
+			DataTable table = dataset.Tables [XmlConvert.DecodeName (reader.LocalName)];
 			if (table == null) {
 				reader.Skip ();
 				reader.MoveToContent ();
@@ -177,7 +177,7 @@ namespace System.Data
 
 		private void ReadElementAttribute (DataRow row)
 		{
-			DataColumn col = row.Table.Columns [reader.LocalName];
+			DataColumn col = row.Table.Columns [XmlConvert.DecodeName (reader.LocalName)];
 			if (col == null)
 				return;
 			row [col] = reader.Value;
@@ -231,11 +231,11 @@ namespace System.Data
 			// content element, or child element
 
 			// MS.NET crashes here... but it seems just a bug.
-//			DataColumn col = row.Table.Columns [reader.LocalName];
+//			DataColumn col = row.Table.Columns [XmlConvert.DecodeName (reader.LocalName)];
 			DataColumn col = null;
 			DataColumnCollection cols = row.Table.Columns;
 			for (int i = 0; i < cols.Count; i++) {
-				if (cols [i].ColumnName == reader.LocalName) {
+				if (cols [i].ColumnName == XmlConvert.DecodeName (reader.LocalName)) {
 					col = cols [i];
 					break;
 				}
@@ -281,7 +281,7 @@ namespace System.Data
 				DataRelation rel = rels [i];
 				if (!rel.Nested)
 					continue;
-				if (rel.ChildTable.TableName != reader.LocalName)
+				if (rel.ChildTable.TableName != XmlConvert.DecodeName (reader.LocalName))
 					continue;
 
 				DataRow childRow = rel.ChildTable.NewRow ();

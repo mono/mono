@@ -1169,7 +1169,7 @@ namespace System.Data {
 
 				// If all of the columns were null, we have to write empty element
 				if (AllNulls) {
-					writer.WriteElementString (table.TableName, "");
+					writer.WriteElementString (XmlConvert.EncodeLocalName (table.TableName), "");
 					continue;
 				}
 				
@@ -1211,14 +1211,14 @@ namespace System.Data {
 				colnspc = col.Namespace;
 	
 			//TODO check if I can get away with write element string
-			WriteStartElement (writer, mode, colnspc, col.Prefix, col.ColumnName);
+			WriteStartElement (writer, mode, colnspc, col.Prefix, XmlConvert.EncodeLocalName (col.ColumnName));
 			writer.WriteString (WriteObjectXml (rowObject));
 			writer.WriteEndElement ();
 		}
 
 		private void WriteColumnAsAttribute (XmlWriter writer, XmlWriteMode mode, DataColumn col, DataRow row, DataRowVersion version)
 		{
-			WriteAttributeString (writer, mode, col.Namespace, col.Prefix, col.ColumnName, row[col, version].ToString ());
+			WriteAttributeString (writer, mode, col.Namespace, col.Prefix, XmlConvert.EncodeLocalName (col.ColumnName), row[col, version].ToString ());
 		}
 
 		private void WriteTableElement (XmlWriter writer, XmlWriteMode mode, DataTable table, DataRow row, DataRowVersion version)
@@ -1226,7 +1226,7 @@ namespace System.Data {
 			//sort out the namespacing
 			string nspc = table.Namespace.Length > 0 ? table.Namespace : Namespace;
 
-			WriteStartElement (writer, mode, nspc, table.Prefix, table.TableName);
+			WriteStartElement (writer, mode, nspc, table.Prefix, XmlConvert.EncodeLocalName (table.TableName));
 
 			if (mode == XmlWriteMode.DiffGram) {
 				WriteAttributeString (writer, mode, XmlConstants.DiffgrNamespace, XmlConstants.DiffgrPrefix, "id", table.TableName + (row.XmlRowID + 1));
