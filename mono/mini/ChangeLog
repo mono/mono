@@ -1,3 +1,7 @@
+2003-12-08  Zoltan Varga  <vargaz@freemail.hu>
+
+	* driver.c (mono_main): Call mono_verify_corlib.
+
 2003-12-07  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* inssel.brg: In CEE_ISINST and CEE_CASTCLASS, removed check for proxy. 
