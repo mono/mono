@@ -60,9 +60,13 @@ namespace System.Data {
 			original = null; 
 			
 			proposed = new object[_table.Columns.Count];
+			// Initialise the data coloumns of the row with the dafault values, if any 
 			for (int c = 0; c < _table.Columns.Count; c++) 
 			{
-				proposed[c] = DBNull.Value;
+				if(_table.Columns [c].DefaultValue == null)
+					proposed[c] = DBNull.Value;
+				else
+					proposed [c] = _table.Columns[c].DefaultValue;
 			}
 			
 			columnErrors = new string[_table.Columns.Count];
@@ -89,7 +93,6 @@ namespace System.Data {
 		/// Gets a value indicating whether there are errors in a row.
 		/// </summary>
 		public bool HasErrors {
-			[MonoTODO]
 			get {
 				if (RowError != string.Empty)
 					return true;
@@ -235,7 +238,6 @@ namespace System.Data {
 		/// <summary>
 		/// Gets or sets all of the values for this row through an array.
 		/// </summary>
-		[MonoTODO]
 		public object[] ItemArray {
 			get { 
 				// row not in table
@@ -1208,7 +1210,6 @@ namespace System.Data {
 		/// <summary>
 		/// Sets the parent row of a DataRow with specified new parent DataRow.
 		/// </summary>
-		[MonoTODO]
 		public void SetParentRow (DataRow parentRow) 
 		{
 			SetParentRow(parentRow, null);
@@ -1218,7 +1219,6 @@ namespace System.Data {
 		/// Sets the parent row of a DataRow with specified new parent DataRow and
 		/// DataRelation.
 		/// </summary>
-		[MonoTODO]
 		public void SetParentRow (DataRow parentRow, DataRelation relation) 
 		{
 			if (_table == null || parentRow.Table == null || RowState == DataRowState.Detached)
