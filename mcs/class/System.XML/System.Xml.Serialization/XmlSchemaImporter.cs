@@ -601,8 +601,6 @@ namespace System.Xml.Serialization {
 		{
 			foreach (XmlSchemaObject item in items)
 			{
-				XmlTypeMapMember mapMember;
-
 				if (item is XmlSchemaElement)
 				{
 					string ns;
