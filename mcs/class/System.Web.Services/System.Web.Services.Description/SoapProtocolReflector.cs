@@ -158,7 +158,10 @@ namespace System.Web.Services.Description {
 					part.Name = members[n].MemberName;
 					
 					if (method.Use == SoapBindingUse.Literal) {
-						part.Element = new XmlQualifiedName (members[n].MemberName, members[n].Namespace);
+						if (members[n].Any)
+							part.Type = new XmlQualifiedName ("any", members[n].Namespace);
+						else
+							part.Element = new XmlQualifiedName (members[n].MemberName, members[n].Namespace);
 					}
 					else {
 						string namesp = members[n].TypeNamespace;

@@ -243,11 +243,18 @@ namespace System.Web.Services.Description {
 				{
 					if (style == SoapBindingStyle.Rpc)
 						throw new InvalidOperationException ("The combination of style=rpc with use=literal is not supported");
-						
-					XmlQualifiedName[] pnames = new XmlQualifiedName [msg.Parts.Count];
-					for (int n=0; n<pnames.Length; n++)
-						pnames[n] = msg.Parts[n].Element;
-					return xmlImporter.ImportMembersMapping (pnames);
+					
+					if (msg.Parts.Count == 1 && msg.Parts[0].Type != XmlQualifiedName.Empty)
+					{
+						return xmlImporter.ImportAnyType (msg.Parts[0].Type, null);
+					}
+					else
+					{
+						XmlQualifiedName[] pnames = new XmlQualifiedName [msg.Parts.Count];
+						for (int n=0; n<pnames.Length; n++)
+							pnames[n] = msg.Parts[n].Element;
+						return xmlImporter.ImportMembersMapping (pnames);
+					}
 				}
 			}
 		}
