@@ -4,6 +4,24 @@
 
 2004-03-25  Martin Baulig  <martin@ximian.com>
 
+	* class.c (mono_class_get_full): New public function; does a
+	mono_class_get(), but also takes a `MonoGenericContext *'.
+
+	* loader.c (mono_field_from_memberref): Renamed to
+	`field_from_memberref', made static and added `MonoGenericContext *'
+	argument.
+	(mono_field_from_token): Added `MonoGenericInst *' argument.
+	(method_from_memberef): Likewise.
+	(mono_get_method_from_token): Likewise.
+	(mono_get_method_full): New public function; does a
+	mono_get_method(), but also takes a `MonoGenericContext *'.
+
+	* verify.c (mono_method_verify): Get the method's generic context
+	and pass it to mono_field_from_token(), mono_get_method_full() and
+	mono_class_get_full().
+
+2004-03-25  Martin Baulig  <martin@ximian.com>
+
 	* class.c (mono_class_inflate_generic_type): Take a
 	`MonoGenericContext *' instead of a `MonoGenericInst *' and a
 	`MonoGenericMethod *'.
