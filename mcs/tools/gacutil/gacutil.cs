@@ -18,7 +18,7 @@ namespace Mono.Tools
 	public class Driver
 	{
 
-		private string gac_path = "/usr/lib/mono/gac/";
+		private string gac_path = GetGacPath ();
 		
 		public static void Main (string[] args)
 		{
@@ -398,6 +398,12 @@ namespace Mono.Tools
 			}
 
 			Console.WriteLine (sb.ToString ());
+		}
+
+		private static string GetGacPath () {
+			PropertyInfo gac = typeof (System.Environment).GetProperty ("GacPath", BindingFlags.Instance|BindingFlags.NonPublic);
+			MethodInfo getGac = gac.GetGetMethod (true);
+			return Path.Combine ((string) getGac.Invoke (null, null), "");
 		}
 	}
 }
