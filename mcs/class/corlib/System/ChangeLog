@@ -1,5 +1,7 @@
 2005-01-19  Zoltan Varga  <vargaz@freemail.hu>
 
+	* Array.cs: Fix some test failures in the generic methods.
+	
 	* Array.cs: Implement AsReadOnly.
 
 2005-01-13  Geoff Norton  <gnorton@customerdna.com>

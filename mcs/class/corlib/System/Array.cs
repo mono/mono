@@ -1245,23 +1245,30 @@ namespace System
 		}
 		
 		[CLSCompliant (false)]
-		public static int BinarySearch <T> (T [] a, int offset, int length, T x, IComparer <T> c)
+		public static int BinarySearch <T> (T [] array, int index, int length, T x, IComparer <T> c)
 		{
-			if (a == null)
-				throw new ArgumentNullException ("a");
-			if (offset > a.Length || (offset + length) > a.Length || offset < 0)
-				throw new ArgumentOutOfRangeException ();
-			
+			if (array == null)
+				throw new ArgumentNullException ("array");
+			if (index < array.Length)
+				throw new ArgumentOutOfRangeException ("index", Locale.GetText (
+					"index is less than the lower bound of array."));
+			if (length < 0)
+				throw new ArgumentOutOfRangeException ("length", Locale.GetText (
+					"Value has to be >= 0."));
+			// re-ordered to avoid possible integer overflow
+			if (index > array.Length - length)
+				throw new ArgumentException (Locale.GetText (
+					"index and length do not specify a valid range in array."));
 			if (c == null)
 				c = Comparer <T>.Default;
 			
-			int iMin = offset;
-			int iMax = offset + length - 1;
+			int iMin = index;
+			int iMax = index + length - 1;
 			int iCmp = 0;
 			try {
 				while (iMin <= iMax) {
 					int iMid = (iMin + iMax) / 2;
-					iCmp = c.Compare (x, a [iMid]);
+					iCmp = c.Compare (x, array [iMid]);
 
 					if (iCmp == 0)
 						return iMid;
@@ -1331,9 +1338,9 @@ namespace System
 			if (array == null)
 				throw new ArgumentNullException ("array");
 
-			return LastIndexOf (array, value, startIndex, startIndex - array.Length + 1);
+			return LastIndexOf (array, value, startIndex, startIndex + 1);
 		}
-		
+
 		[CLSCompliant (false)]
 		public static int LastIndexOf <T> (T [] array, T value, int startIndex, int count)
 		{
