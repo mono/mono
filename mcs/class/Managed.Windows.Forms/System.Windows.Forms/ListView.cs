@@ -22,9 +22,12 @@
 // Author:
 //	Ravindra (rkumar@novell.com)
 //
-// $Revision: 1.1 $
+// $Revision: 1.2 $
 // $Modtime: $
 // $Log: ListView.cs,v $
+// Revision 1.2  2004/10/02 11:32:01  ravindra
+// Added attributes.
+//
 // Revision 1.1  2004/09/30 13:24:25  ravindra
 // Initial implementation.
 //
@@ -32,13 +35,17 @@
 // NOT COMPLETE
 //
 
-using System;
-using System.ComponentModel;
 using System.Collections;
+using System.ComponentModel;
+using System.ComponentModel.Design;
 using System.Drawing;
+using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms
 {
+	[DefaultEvent ("SelectedIndexChanged")]
+	[DefaultProperty ("Items")]
+	[Designer ("System.Windows.Forms.Design.ListViewDesigner, " + Consts.AssemblySystem_Design, typeof (IDesigner))]
 	public class ListView : Control
 	{
 		private ItemActivation activation = ItemActivation.Standard;
@@ -74,14 +81,25 @@ namespace System.Windows.Forms
 
 		#region Events
 		public event LabelEditEventHandler AfterLabelEdit;
+
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler BackgroundImageChanged;
+
 		public event LabelEditEventHandler BeforeLabelEdit;
 		public event ColumnClickEventHandler ColumnClick;
 		public event EventHandler ItemActivate;
 		public event ItemCheckEventHandler ItemCheck;
 		public event ItemDragEventHandler ItemDrag;
+
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event PaintEventHandler Paint;
+
 		public event EventHandler SelectedIndexChanged;
+
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler TextChanged;
 		#endregion // Events
 
@@ -108,21 +126,26 @@ namespace System.Windows.Forms
 		#endregion	// Protected Properties
 
 		#region Public Instance Properties
+		[DefaultValue (ItemActivation.Standard)]
 		public ItemActivation Activation {
 			get { return activation; }
 			set { activation = value; }
 		}
 
+		[DefaultValue (ListViewAlignment.Top)]
+		[Localizable (true)]
 		public ListViewAlignment Alignment {
 			get { return alignment; }
 			set { alignment = value; }
 		}
 
+		[DefaultValue (false)]
 		public bool AllowColumnReorder {
 			get { return allowColumnReorder; }
 			set { allowColumnReorder = value; }
 		}
 
+		[DefaultValue (true)]
 		public bool AutoArrange {
 			get { return autoArrange; }
 			set { autoArrange = value; }
@@ -133,6 +156,8 @@ namespace System.Windows.Forms
 			set { base.BackColor = value; }
 		}
 
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override Image BackgroundImage {
 			get { return background_image; }
 			set {
@@ -145,28 +170,40 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DefaultValue (BorderStyle.Fixed3D)]
+		[DispId (-504)]
 		public BorderStyle BorderStyle {
 			get { return borderStyle; }
 			set { borderStyle = value; }
 		}
 
+		[DefaultValue (false)]
 		public bool CheckBoxes {
 			get { return checkBoxes; }
 			set { checkBoxes = value; }
 		}
 
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public CheckedIndexCollection CheckedIndices {
 			get { return checkedIndices; }
 		}
 
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public CheckedListViewItemCollection CheckedItems {
 			get { return checkedItems; }
 		}
 
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		[Localizable (true)]
+		[MergableProperty (false)]
 		public ColumnHeaderCollection Columns {
 			get { return columns; }
 		}
 
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public ListViewItem FocusedItem {
 			get { return focusedItem; }
 		}
@@ -176,88 +213,114 @@ namespace System.Windows.Forms
 			set { base.ForeColor = value; }
 		}
 
+		[DefaultValue (false)]
 		public bool FullRowSelect {
 			get { return fullRowSelect; }
 			set { fullRowSelect = value; }
 		}
 
+		[DefaultValue (false)]
 		public bool GridLines {
 			get { return gridLines; }
 			set { gridLines = value; }
 		}
 
+		[DefaultValue (ColumnHeaderStyle.Clickable)]
 		public ColumnHeaderStyle HeaderStyle {
 			get { return headerStyle; }
 			set { headerStyle = value; }
 		}
 
+		[DefaultValue (true)]
 		public bool HideSelection {
 			get { return hideSelection; }
 			set { hideSelection = value; }
 		}
 
+		[DefaultValue (false)]
 		public bool HoverSelection {
 			get { return hoverSelection; }
 			set { hoverSelection = value; }
 		}
 
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		[Localizable (true)]
+		[MergableProperty (false)]		
 		public ListViewItemCollection Items {
 			get { return items; }
 		}
 
+		[DefaultValue (false)]
 		public bool LabelEdit {
 			get { return labelEdit; }
 			set { labelEdit = value; }
 		}
 
+		[DefaultValue (false)]
+		[Localizable (true)]
 		public bool LabelWrap {
 			get { return labelWrap; }
 			set { labelWrap = value; }
 		}
 
+		[DefaultValue (null)]
 		public ImageList LargeImageList {
 			get { return largeImageList; }
 			set { largeImageList = value; }
 		}
 
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public IComparer ListViewItemSorter {
 			get { return itemSorter; }
 			set { itemSorter = value; }
 		}
 
+		[DefaultValue (true)]
 		public bool MultiSelect {
 			get { return multiselect; }
 			set { multiselect = value; }
 		}
 
+		[DefaultValue (true)]
 		public bool Scrollable {
 			get { return scrollable; }
 			set { scrollable = value; }
 		}
 
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public SelectedIndexCollection SelectedIndices {
 			get { return selectedIndices; }
 		}
 
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public SelectedListViewItemCollection SelectedItems {
 			get { return selectedItems; }
 		}
 
+		[DefaultValue (null)]
 		public ImageList SmallImageList {
 			get { return smallImageList; }
 			set { smallImageList = value; }
 		}
 
+		[DefaultValue (SortOrder.None)]
 		public SortOrder Sorting {
 			get { return sortOrder; }
 			set { sortOrder = value; }
 		}
 
+		[DefaultValue (null)]
 		public ImageList StateImageList {
 			get { return stateImageList; }
 			set { stateImageList = value; }
 		}
 
+		[Bindable (false)]
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override string Text {
 			get { return text; } 
 			set {
@@ -270,10 +333,13 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public ListViewItem TopItem {
 			get { return items [0]; }
 		}
 
+		[DefaultValue (View.LargeIcon)]
 		public View View {
 			get { return view; }
 			set { view = value; }
@@ -489,6 +555,7 @@ namespace System.Windows.Forms
 			#endregion	// Public Constructor
 
 			#region Public Properties
+			[Browsable (false)]
 			public virtual int Count {
 				get { return list.Count; }
 			}
@@ -596,6 +663,7 @@ namespace System.Windows.Forms
 			#endregion	// Public Constructor
 
 			#region Public Properties
+			[Browsable (false)]
 			public virtual int Count {
 				get { return list.Count; }
 			}
@@ -703,6 +771,7 @@ namespace System.Windows.Forms
 			#endregion	// Public Constructor
 
 			#region Public Properties
+			[Browsable (false)]
 			public virtual int Count {
 				get { return list.Count; }
 			}
@@ -871,6 +940,7 @@ namespace System.Windows.Forms
 			#endregion	// Public Constructor
 
 			#region Public Properties
+			[Browsable (false)]
 			public virtual int Count {
 				get { return list.Count; }
 			}
@@ -1084,6 +1154,7 @@ namespace System.Windows.Forms
 			#endregion	// Public Constructor
 
 			#region Public Properties
+			[Browsable (false)]
 			public virtual int Count {
 				get { return list.Count; }
 			}
@@ -1191,6 +1262,7 @@ namespace System.Windows.Forms
 			#endregion	// Public Constructor
 
 			#region Public Properties
+			[Browsable (false)]
 			public virtual int Count {
 				get { return list.Count; }
 			}
