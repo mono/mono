@@ -1,3 +1,9 @@
+2004-11-18  Lluis Sanchez Gual <lluis@novell.com>
+
+	* ProviderSettings.cs, ProviderSettingsCollection.cs: Mostly implemented.
+	* Configuration.cs: Implemented GetSection() and GetSectionGroup().
+	* AppSettingsSection.cs: Better null check in Reset().
+
 2004-11-15  Lluis Sanchez Gual <lluis@novell.com>
 
 	* TimeSpanConfigurationProperty.cs, TimeSpanPropertyFlags.cs,

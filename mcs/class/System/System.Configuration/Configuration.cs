@@ -1,5 +1,5 @@
 //
-// System.Configuration.ConfigurationLocation.cs
+// System.Configuration.Configuration.cs
 //
 // Authors:
 //	Duncan Mak (duncan@ximian.com)
@@ -210,6 +210,31 @@ namespace System.Configuration {
 						string path, string site, string subpath, string server, string username, string password)
 		{
 			throw new NotImplementedException ();
+		}
+		
+		public ConfigurationSection GetSection (string path)
+		{
+			string[] parts = path.Split ('/');
+			if (parts.Length == 1)
+				return Sections [parts[0]];
+
+			ConfigurationSectionGroup group = SectionGroups [parts[0]];
+			for (int n=1; group != null && n<parts.Length-1; n++)
+				group = group.SectionGroups [parts [n]];
+
+			if (group != null)
+				return group.Sections [parts [parts.Length - 1]];
+			else
+				return null;
+		}
+		
+		public ConfigurationSectionGroup GetSectionGroup (string path)
+		{
+			string[] parts = path.Split ('/');
+			ConfigurationSectionGroup group = SectionGroups [parts[0]];
+			for (int n=1; group != null && n<parts.Length; n++)
+				group = group.SectionGroups [parts [n]];
+			return group;
 		}
 		
 		internal ConfigurationSection GetSectionInstance (SectionInfo config, bool createDefaultInstance)

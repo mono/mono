@@ -61,10 +61,10 @@ namespace System.Configuration {
 		protected internal override void Reset (ConfigurationElement parentSection, object context)
 		{
 			AppSettingsSection sec = parentSection as AppSettingsSection;
-			if (sec != null && sec.Settings != null)
-				values = new ConfigNameValueCollection ((ConfigNameValueCollection) sec.Settings);
+			if (sec != null && sec.values != null)
+				values = new ConfigNameValueCollection (sec.values);
 			else
-				values = new ConfigNameValueCollection ();
+				values = null;
 		}
 
 		protected internal override void ResetModified ()
