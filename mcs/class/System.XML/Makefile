@@ -3,6 +3,7 @@ SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = System.Xml.dll
+LIBRARY_USE_INTERMEDIATE_FILE = yes
 
 ifeq ($(PROFILE),atomic)
 SCARY_LIB=

@@ -1,3 +1,7 @@
+2004-07-02  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (LIBRARY_USE_INTERMEDIATE_FILE): Define.
+
 2004-06-13  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* System_test.dll.sources: Added IndentedTextWriterTest to unit

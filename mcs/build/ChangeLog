@@ -1,5 +1,12 @@
 2004-07-02  Raja R Harinath  <rharinath@novell.com>
 
+	Support for avoiding "sharing violations" while compiling core
+	libraries with an in-tree compiler.
+	* library.make (LIBRARY_USE_INTERMEDIATE_FILE): New toggle.
+	($(the_lib)): Use it.
+
+2004-07-02  Raja R Harinath  <rharinath@novell.com>
+
 	* rules.make (OVERRIDE_BARE_TARGETS): Remove.
 	(OVERRIDE_TARGET_ALL): New control for overriding the default all:
 	rule.  If set, 'make all' will run 'all.override' from the client

@@ -3,6 +3,7 @@ SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = System.dll
+LIBRARY_USE_INTERMEDIATE_FILE = yes
 
 # Because System.dll and Syste.Xml.dll have cyclic dependency we need two-pass build.
 # 1st pass - build System.dll without System.Xml.dll reference

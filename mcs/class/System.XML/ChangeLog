@@ -1,3 +1,7 @@
+2004-07-02  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (LIBRARY_USE_INTERMEDIATE_FILE): Define.
+
 2004-06-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Mono.System.XML.csproj : now contains new NET_2_0 files.

@@ -1,5 +1,9 @@
 2004-07-02  Raja R Harinath  <rharinath@novell.com>
 
+	* Makefile (LIBRARY_USE_INTERMEDIATE_FILE): Define.
+
+2004-07-02  Raja R Harinath  <rharinath@novell.com>	
+
 	* Makefile ($(net20bootstrap_makefrag)): Build from net_2_0
 	profile response file.
 	(gmcs): Style update.

@@ -199,7 +199,12 @@ $(gacutil) $(sn):
 # The library
 
 $(the_lib): $(response)
+ifdef LIBRARY_USE_INTERMEDIATE_FILE
+	$(LIBRARY_COMPILE) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS) /target:library /out:$(@F) @$(response)
+	mv $(@F) $@
+else
 	$(LIBRARY_COMPILE) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS) /target:library /out:$@ @$(response)
+endif
 
 $(makefrag): $(sourcefile)
 	@echo Creating $@ ...

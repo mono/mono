@@ -14,6 +14,7 @@ LOCAL_MCS_FLAGS = /nowarn:649 /nowarn:169 -d:INSIDE_CORLIB
 LIBRARY = corlib.dll
 LIBRARY_NAME = mscorlib.dll
 LIB_MCS_FLAGS = $(corlib_flags)
+LIBRARY_USE_INTERMEDIATE_FILE = yes
 
 # disable, until people fix their code...
 #corlib_flags = /unsafe /nostdlib /d:INSIDE_CORLIB
