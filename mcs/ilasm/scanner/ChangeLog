@@ -1,5 +1,10 @@
 2003-03-31 Jackson Harper <jackson@latitudegeo.com>
 
+	* ILTables.cs: Remove 'ptr' I can't find documentation for this
+	keyword and ildasm does not esacpe it.
+		
+2003-03-31 Jackson Harper <jackson@latitudegeo.com>
+
 	* NumberHelper.cs: handle sci, hex, and byte
 	do not handle all corner case
 	will optimize soon
