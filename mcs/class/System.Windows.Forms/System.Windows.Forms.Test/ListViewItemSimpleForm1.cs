@@ -10,7 +10,7 @@ using System;
 using System.Collections;
 using System.Windows.Forms;
 using System.Drawing;
-
+using System.Threading;
 
 
 public class MyListViewForm : System.Windows.Forms.Form
@@ -23,9 +23,19 @@ public class MyListViewForm : System.Windows.Forms.Form
 	ListView.SelectedListViewItemCollection sel = null;
 	int nColInserted = 100;
 	
+	
+	static void SimpleHandler(object Sender, ThreadExceptionEventArgs Args)
+	{
+	      Exception e = (Exception)Args.Exception;
+	      Console.WriteLine ( "Caught : " + e.Message ) ;
+	}                                   
+
+	
 	public static void Main(string[] args)
 	{
+		//Application.ThreadException += new ThreadExceptionEventHandler(SimpleHandler) ;
 		Application.Run(new MyListViewForm());
+		
 	}
 	
 	// Clear all columns
@@ -40,14 +50,14 @@ public class MyListViewForm : System.Windows.Forms.Form
 		
 		//IList lst = (IList) listViewCtrl.CheckedItems;		
 		
-		Console.WriteLine ("MyListViewForm.ItemPropButton");				
-				
+						
 		string sText = "Item properties---------------\n";
 		
 		for (int i=0; i < listViewCtrl.Items.Count; i++)
 			sText+=("Item->" +  listViewCtrl.Items[i].Text + " idx: " + listViewCtrl.Items[i].Index + 
 			 " Backcolor: "+  listViewCtrl.Items[i].BackColor + " Selected: " +  listViewCtrl.Items[i].Selected +
 			 " Checked: "  +  listViewCtrl.Items[i].Checked + " Focused: " + listViewCtrl.Items[i].Focused +
+			 " Bounds: " + listViewCtrl.Items[i].Bounds+			 
 			"\n");
 			
 		MessageBox.Show(sText);		
@@ -162,14 +172,16 @@ public class MyListViewForm : System.Windows.Forms.Form
 		Console.WriteLine ("ItemActivation " + listViewCtrl.Activation);				
 		Console.WriteLine ("ColumnHeaderStyle " + listViewCtrl.HeaderStyle);				
 		Console.WriteLine ("BorderStyle " + listViewCtrl.BorderStyle);				
+		Console.WriteLine ("HideSelection " + listViewCtrl.HideSelection);						
+		Console.WriteLine ("HoverSelection " + listViewCtrl.HoverSelection);								
 		
 		ListViewItem item = new ListViewItem();
 		
 		Console.WriteLine ("ListView item----");
 		Console.WriteLine ("BackColor " + item.BackColor);		
 		Console.WriteLine ("ForeColor  " + item.ForeColor);		
-		Console.WriteLine ("UseItemStyleForSubItems  " + item.UseItemStyleForSubItems);		
-				 
+		Console.WriteLine ("UseItemStyleForSubItems  " + item.UseItemStyleForSubItems);	
+						 
 	}
 	
 	public MyListViewForm()
@@ -181,8 +193,7 @@ public class MyListViewForm : System.Windows.Forms.Form
 	{
 		listViewCtrl = new myListView();
 		
-		ShowClassDefaults();
-		
+		ShowClassDefaults();	
 		
 		
 		// Set params
@@ -191,7 +202,7 @@ public class MyListViewForm : System.Windows.Forms.Form
 		listViewCtrl.AllowColumnReorder=true;
 		listViewCtrl.FullRowSelect = true;	
 		listViewCtrl.GridLines = true;
-		listViewCtrl.Activation = ItemActivation.OneClick;
+		//listViewCtrl.Activation = ItemActivation.OneClick;
 		
 		
     	listViewCtrl.Bounds = new Rectangle(new Point(10,60), new Size(600, 550));
@@ -210,9 +221,7 @@ public class MyListViewForm : System.Windows.Forms.Form
     	ListViewItem.ListViewSubItem subItem11_1 = new ListViewItem.ListViewSubItem();          	
     	ListViewItem.ListViewSubItem subItem11_2 = new ListViewItem.ListViewSubItem();          	
     	
-    	//ListViewItem item11 = new ListViewItem(new ListViewItem.ListViewSubItem[]{subItem11_1, subItem11_2});
-    	//listViewCtrl.Items.Add( new ListViewItem(new string[]{"boy 1", "boy 2", "boy 3"}));
-    	
+    	    	
     	subItem11_1.Text  = "subitem 11-1";
     	subItem11_2.Text  = "subitem 11-2";    	    		
 		
@@ -232,20 +241,23 @@ public class MyListViewForm : System.Windows.Forms.Form
    	   	
    	   	item6.BackColor = Color.Green;  		   	 
    	   	item6.UseItemStyleForSubItems = false;
-   	   	ListViewItem.ListViewSubItem subItem= item6.SubItems.Add("Red subitem 1");          	
+   	   	ListViewItem.ListViewSubItem subItem= item6.SubItems.Add("Red subitem 1");          	   	   	   	   	
    	   	subItem.BackColor = Color.Red;  		   	 
-   	   	subItem.ForeColor = Color.White;  		   	 
-   	   	    
-   	   	  	    
+   	   	subItem.ForeColor = Color.White;  		   	      	 
+		   	   	  	    
 		listViewCtrl.Items.Add(item1);					
-		listViewCtrl.Items.Add(item2);					
-		
+		listViewCtrl.Items.Add(item2);						
+				
 		listViewCtrl.Items.AddRange(new ListViewItem[]{item3,item4,item5,item6,item7,item8,item9,item10});
 				
     	item1.SubItems.Add("sub item 1");        
-    	item1.SubItems.Add("sub item 2");        
+    	item1.SubItems.Add("sub item 2");            	 	
     	
     	listViewCtrl.Items.Add( new ListViewItem(new string[]{"boy 1", "boy 2", "boy 3"}));
+    	
+    	listViewCtrl.Items.Add( new ListViewItem(new string[]{"burger 1", "burger 2", "burger 3"}, 
+    			0, Color.White, Color.Black, new Font("Arial", (float)9.0, FontStyle.Regular) ));
+    	
     	
    		DelColumnButton button = new DelColumnButton(this);		
 		button.Location = new System.Drawing.Point(5, 10);
@@ -522,3 +534,4 @@ public class myListView : System.Windows.Forms.ListView
 			
 
 }
+

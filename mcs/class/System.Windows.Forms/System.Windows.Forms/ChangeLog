@@ -1,3 +1,7 @@
+2003-10-27 Jordi Mas i Hernàndez <jmas@softcatala.org>
+	* ListListView.cs, ListViewItem.cs, win32Enums.cs
+	More work on the ListView implementation (bug fixing, new methods and properties)
+
 2003-10-20 Jordi Mas i Hernàndez <jmas@softcatala.org>
 	* Application.cs added a default form to show unhandled exceptions 
 	

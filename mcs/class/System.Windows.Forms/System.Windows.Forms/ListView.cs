@@ -11,6 +11,9 @@
 	TODO
 	 
 	- Multiple insertions of the same items should thown an exception
+	- Images
+	- Drag and drop
+	- Font
 */
 
 using System.Collections;
@@ -50,6 +53,8 @@ namespace System.Windows.Forms {
 		private ColumnHeaderStyle headerStyle = ColumnHeaderStyle.Clickable;
 		private	BorderStyle borderStyle = BorderStyle.Fixed3D;
 		bool bScrollable = true;
+		bool bHideSelection = true;
+		bool bHoverSelection = false;
 				
 		
 		//
@@ -190,22 +195,17 @@ namespace System.Windows.Forms {
 			get {return headerStyle; }
 			set {headerStyle = value;}			
 		}
-		[MonoTODO]
+		
 		public bool HideSelection {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+			get {return bHideSelection;}			
+			set {bHideSelection=value;}
 		}
-		[MonoTODO]
+
 		public bool HoverSelection {
-			get {
-				throw new NotImplementedException ();
-			}
+			get {return bHideSelection;}			
 			set {
-				throw new NotImplementedException ();
+				ExtendedStyleCtrl(ListViewExtendedFlags.LVS_EX_TRACKSELECT, value);
+				bHideSelection=value;
 			}
 		}
 		
@@ -389,6 +389,7 @@ namespace System.Windows.Forms {
 				if (!bLabelWrap)  createParams.Style |= (int) ListViewFlags.LVS_NOLABELWRAP;
 				if (!bMultiSelect) createParams.Style |= (int) ListViewFlags.LVS_SINGLESEL;
 				if (!bScrollable)  createParams.Style |= (int) ListViewFlags.LVS_NOSCROLL;
+				if (!bHideSelection) createParams.Style |= (int) ListViewFlags.LVS_SHOWSELALWAYS;
 								
 				switch (headerStyle)
 				{
@@ -657,10 +658,42 @@ namespace System.Windows.Forms {
 		}	
 		
 		
+		// Get item bound
+		internal Rectangle GetItemBoundInCtrl(int iIndex)
+		{			
+			if (!bInitialised) return new Rectangle();						
+			
+			IntPtr lpBuffer = IntPtr.Zero;
+			
+			try {									
+					RECT rect = new RECT();										
+					rect.left = (int) SubItemPortion.LVIR_BOUNDS;
+					lpBuffer = Marshal.AllocHGlobal(Marshal.SizeOf(rect));					
+					Marshal.StructureToPtr(rect, lpBuffer, false);													
+					Win32.SendMessage (Handle, (int) ListViewMessages.LVM_GETITEMRECT , iIndex, lpBuffer);
+					
+					rect = (RECT) Marshal.PtrToStructure (lpBuffer, typeof (RECT));					
+					return new Rectangle (rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top );
+				}
+				finally {
+					Marshal.FreeHGlobal (lpBuffer);					
+				}
+		}	
+		
+		// Forces label edit
+		internal void LabelEditInCtrl(int iIndex)
+		{			
+			if (!bInitialised) return;
+			
+			Win32.SetFocus(Handle);	// Need focus first
+			Win32.SendMessage (Handle, (int) ListViewMessages.LVM_EDITLABEL, iIndex, 0);
+		}
+		
+		
 		// Sets a subitem
 		internal void SetItemInCtrl(ListViewItem.ListViewSubItem listViewSubItem, int nPos)
 		{			
-			if (!bInitialised) return;
+			if (!bInitialised) return;			
 			
 			LVITEM item = new LVITEM();							
 			
@@ -670,10 +703,14 @@ namespace System.Windows.Forms {
 			item.lParam = 0;
 			item.mask = ListViewItemFlags.LVIF_TEXT;
 			
+			Console.WriteLine("SetItemInCtrl " + nPos); 			
+			
 			IntPtr liBuffer = Marshal.AllocHGlobal(Marshal.SizeOf(item));
   			Marshal.StructureToPtr(item, liBuffer, false);			
   			Win32.SendMessage(Handle, (int)ListViewMessages.LVM_SETITEMA, 0, liBuffer);
   			Marshal.FreeHGlobal(liBuffer);						
+  			
+  			
 		}
 		
 		// Remove a column from the control
@@ -742,15 +779,17 @@ namespace System.Windows.Forms {
 		
 		internal void insertItemsInCtrl()	{
 			
-			Win32.SendMessage(Handle, (int)ListViewMessages.LVM_DELETEALLITEMS, 0,0);			
-		
+			Win32.SendMessage(Handle, (int)ListViewMessages.LVM_DELETEALLITEMS, 0,0);						
+			Win32.SendMessage(Handle, (int)Msg.WM_SETREDRAW, 0,0);			
 			for (int i=0; i<Items.Count; i++){	// Insert items		
 					
-				InsertItemInCtrl(Items[i]);							 						   								
+				InsertItemInCtrl(Items[i]);							 						   																	
 				
 				for (int s=0; s<Items[i].SubItems.Count; s++)	// Insert subitems		
 					SetItemInCtrl(Items[i].SubItems[s], s+1);
+				
 			}						
+			Win32.SendMessage(Handle, (int)Msg.WM_SETREDRAW, 1,0);			
 		}
 		
 		//						
@@ -764,6 +803,7 @@ namespace System.Windows.Forms {
 				if (bFullRowSelect)	ExtendedStyleCtrl(ListViewExtendedFlags.LVS_EX_FULLROWSELECT, bFullRowSelect);
 				if (bGridLines)	ExtendedStyleCtrl(ListViewExtendedFlags.LVS_EX_GRIDLINES, bGridLines);
 				if (bCheckBoxes) ExtendedStyleCtrl(ListViewExtendedFlags.LVS_EX_CHECKBOXES, bCheckBoxes);
+				if (bHoverSelection) ExtendedStyleCtrl(ListViewExtendedFlags.LVS_EX_TRACKSELECT, bHoverSelection);							
 				
 				SetBkColorCtrl();				
 				ItemActivationCtrl();
@@ -863,7 +903,7 @@ namespace System.Windows.Forms {
 							
 						break;
 					}
-					
+
 					case (int)ListViewNotifyMsg.LVN_ITEMCHANGED:					
 					{			
 						
@@ -903,9 +943,8 @@ namespace System.Windows.Forms {
 						}
 						
 						break;
-					}
-					
-					
+					}							 
+
 					// Note: Under WinXP we get HDN_ITEMCHANGEDW
 					// seems that we change this using LVM_SETUNICODEFORMAT										
 					case (int)HeaderCtrlNOtify.HDN_ITEMCHANGEDA:
@@ -923,20 +962,23 @@ namespace System.Windows.Forms {
 												   																										
 						break;	
 					}
+						
 					
 					// Used to paint item colours and font
 					case (int)NotificationMessages.NM_CUSTOMDRAW:
 					{						
+						
 						NMLVCUSTOMDRAW LVNmCustom = (NMLVCUSTOMDRAW)Marshal.PtrToStructure (m.LParam,	typeof (NMLVCUSTOMDRAW));																																		
 					
 						switch(LVNmCustom.nmcd.dwDrawStage)    {							
+						
 						
 						case (int)CustomDrawDrawStateFlags.CDDS_PREPAINT:														
 							m.Result = (IntPtr)CustomDrawReturnFlags.CDRF_NOTIFYITEMDRAW;
 							return;
 					
 						case (int)CustomDrawDrawStateFlags.CDDS_ITEMPREPAINT:						    						    	
-														
+						
 							if (Items[(int)LVNmCustom.nmcd.dwItemSpec].UseItemStyleForSubItems)	{						
 							  
 								LVNmCustom.clrTextBk = (uint) Win32.RGB (Items[(int)LVNmCustom.nmcd.dwItemSpec].BackColor);						
@@ -952,23 +994,29 @@ namespace System.Windows.Forms {
 						  case (int)(CustomDrawDrawStateFlags.CDDS_SUBITEM  | CustomDrawDrawStateFlags.CDDS_ITEMPREPAINT):						  						  
 						  
 						  	ListViewItem item = Items[(int)LVNmCustom.nmcd.dwItemSpec];						    
+						  	
 						    
 						    if (LVNmCustom.iSubItem==0)    {						    	
 						    	LVNmCustom.clrTextBk = (uint) Win32.RGB (Items[(int)LVNmCustom.nmcd.dwItemSpec].BackColor);						
 						    	LVNmCustom.clrText = (uint) Win32.RGB (Items[(int)LVNmCustom.nmcd.dwItemSpec].ForeColor);
-								Marshal.StructureToPtr(LVNmCustom, m.LParam, false);								        				        
-								m.Result =(IntPtr)CustomDrawReturnFlags.CDRF_NEWFONT;		    								
+								Marshal.StructureToPtr(LVNmCustom, m.LParam, false);
+						  		m.Result =(IntPtr)CustomDrawReturnFlags.CDRF_NEWFONT;									  									
 							}
-							else{						    															
+							else{						    																														
 								
 								ListViewItem.ListViewSubItem subItem;
-								subItem = item.SubItems[(int)LVNmCustom.iSubItem-1];																																	
-						    	LVNmCustom.clrTextBk = (uint) Win32.RGB (subItem.BackColor);												    							  								    	
-						    	LVNmCustom.clrText = (uint) Win32.RGB (subItem.ForeColor);												    							  								    	
-						  	}
+								int nIdx = (int) LVNmCustom.iSubItem-1;																
+								
+								// We get an event by column even if the item is not inseted
+								if (nIdx<item.SubItems.Count){ 
+									subItem = item.SubItems[nIdx];																																																							
+						    		LVNmCustom.clrTextBk = (uint) Win32.RGB (subItem.BackColor);												    							  								    	
+						    		LVNmCustom.clrText = (uint) Win32.RGB (subItem.ForeColor);												    							  								    						    							    	
+						    		Marshal.StructureToPtr(LVNmCustom, m.LParam, false);
+						  			m.Result =(IntPtr)CustomDrawReturnFlags.CDRF_NEWFONT;									  									
+						    	}								
+						  	}													  	
 						  	
-						  	Marshal.StructureToPtr(LVNmCustom, m.LParam, false);
-						  	m.Result =(IntPtr)CustomDrawReturnFlags.CDRF_NEWFONT;			
 						  	return;				
 						  	
 							
@@ -1027,9 +1075,14 @@ namespace System.Windows.Forms {
 						
 			public ListViewItem this[int index] {				
 								
-				get {return  container.Items[(int)collection[index]];}
-				set { collection[index] = value.Index;}				
-			}
+				get {
+					if (index<0 || index>=Count) throw  new  ArgumentOutOfRangeException();					
+					return  container.Items[(int)collection[index]];
+				}
+				set { 	
+					if (index<0 || index>=Count) throw  new  ArgumentOutOfRangeException();					
+					collection[index] = value.Index;}				
+				}
 			
 			//
 			//  --- Internal Methods for the implementation
@@ -1186,8 +1239,14 @@ namespace System.Windows.Forms {
 			} 			
 			
 			public virtual ListViewItem this[int index] {				
-				get {return  container.Items[(int)collection[index]];}
-				set { collection[index] = value.Index;}	
+				get {
+					if (index<0 || index>=Count) throw  new  ArgumentOutOfRangeException();					
+					return  container.Items[(int)collection[index]];
+				}
+				set { 
+					if (index<0 || index>=Count) throw  new  ArgumentOutOfRangeException();					
+					collection[index] = value.Index;
+				}	
 			}
 			
 			//
@@ -1344,8 +1403,14 @@ namespace System.Windows.Forms {
 			}
 			
 			public virtual ColumnHeader this[int index] {
-				get { return (ColumnHeader) collection[index];}
-				set { collection[index] = value;}				
+				get { 
+					if (index<0 || index>=Count) throw  new  ArgumentOutOfRangeException();					
+					return (ColumnHeader) collection[index];
+				}
+				set { 
+					if (index<0 || index>=Count) throw  new  ArgumentOutOfRangeException();					
+					collection[index] = value;
+				}				
 			}
 						
 			//
@@ -1604,8 +1669,15 @@ namespace System.Windows.Forms {
 			}
 			
 			public virtual ListViewItem this [int index] {
-				get { return (ListViewItem) collection[index];}
-				set { collection[index] = value;}		
+				get { 
+					
+					if (index<0 || index>=Count) throw  new  ArgumentOutOfRangeException();					
+					return (ListViewItem) collection[index];
+				}
+				set { 
+					if (index<0 || index>=Count) throw new  ArgumentOutOfRangeException();					
+					collection[index] = value;
+				}		
 			}
 
 			//
@@ -1616,6 +1688,7 @@ namespace System.Windows.Forms {
 				Console.WriteLine("ListViewItem.Add " +  item.Text + " idx: " + item.Index);											
 				
 				item.CtrlIndex = Count;				
+				item.Container = container;
 				container.InsertItemInCtrl(item);		
 				int nIdx = collection.Add(item);						
 				return (ListViewItem)collection[nIdx];
@@ -1816,7 +1889,10 @@ namespace System.Windows.Forms {
 			
 			
 			public int this [int index] {
-				get {return container.SelectedItems[index].Index;}
+				get {
+					if (index<0 || index>=Count) throw  new  ArgumentOutOfRangeException();					
+					return container.SelectedItems[index].Index;
+				}
 			}
 
 			//
@@ -1961,7 +2037,10 @@ namespace System.Windows.Forms {
 			}			
 			
 			public int this[int index] {
-				get {return container.CheckedItems[index].Index;}
+				get {
+					if (index<0 || index>=Count) throw  new  ArgumentOutOfRangeException();					
+					return container.CheckedItems[index].Index;
+				}
 			}
 
 			//
@@ -2092,3 +2171,4 @@ namespace System.Windows.Forms {
 //		}
 	}	
 }
+

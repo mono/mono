@@ -11,7 +11,7 @@
 using System.Runtime.Serialization;
 using System.Drawing;
 using System.Collections;
-
+using System.Runtime.InteropServices;
  
 namespace System.Windows.Forms 
 {
@@ -21,8 +21,8 @@ namespace System.Windows.Forms
 	public class ListViewItem :  ICloneable, ISerializable 
 	{		
 		private ListView container = null;
-		private string  m_sText;
-		private	ListViewSubItemCollection	m_colSubItem = null;
+		private string  text;
+		private	ListViewSubItemCollection	colSubItem = null;
 		private int index;
 		private bool bSelected = false;
 		private bool useItemStyleForSubItems = true;
@@ -30,13 +30,14 @@ namespace System.Windows.Forms
 		private bool bFocused = false;
 		private	Color backColor = SystemColors.Window;
 		private	Color foreColor = SystemColors.WindowText;
-		private	System.Drawing.Rectangle m_Bounds;
+		private object tag = null;
+		
 
 		//
 		//  --- Constructor
 		//					
 		protected void CommonConstructor(){
-			m_colSubItem = new 	ListViewSubItemCollection(this);
+			colSubItem = new 	ListViewSubItemCollection(this);
 		}
 		
 		public ListViewItem(){			
@@ -46,7 +47,7 @@ namespace System.Windows.Forms
 		public ListViewItem(string str)	{
 			Console.WriteLine("ListViewItem.ListViewItem str");					
 			CommonConstructor();			
-			m_sText = str;
+			text = str;
 		}
 		
 		public ListViewItem(string[] strings){	// An array of strings that represent the subitems of the new item.
@@ -55,12 +56,12 @@ namespace System.Windows.Forms
 			CommonConstructor();
 			
 			if (strings.Length>0)			
-				m_sText = strings[0];
+				text = strings[0];
 				
 			if (strings.Length>1)			
 			{
 				for (int i=1; i<strings.Length; i++)
-					m_colSubItem.Add(strings[i]);		
+					colSubItem.Add(strings[i]);		
 			}
 		}
 
@@ -69,25 +70,54 @@ namespace System.Windows.Forms
 			
 			CommonConstructor();
 			for (int i=0; i<subItems.Length; i++)
-					m_colSubItem.Add(subItems[i]);		
+					colSubItem.Add(subItems[i]);		
 		}
 
-		[MonoTODO]
-		public ListViewItem(string str, int val)
-		{
-			throw new NotImplementedException ();
+		
+		public ListViewItem(string str, int imageIndex){							
+				//TODO: Image index
+				CommonConstructor();
+				text = str;
 		}
 
-		[MonoTODO]
-		public ListViewItem(string[] strings, int val)
-		{
-			throw new NotImplementedException ();
+		
+		public ListViewItem(string[] strings, int imageIndex){			
+			//TODO: Image index
+			CommonConstructor();
+			
+			if (strings.Length>0)			
+				text = strings[0];
+				
+			if (strings.Length>1)			
+			{
+				for (int i=1; i<strings.Length; i++)
+					colSubItem.Add(strings[i]);		
+			}
 		}
 
-		[MonoTODO]
-		public ListViewItem(string[] strings, int val,  Color color1, Color color2, Font font)
-		{
-			throw new NotImplementedException ();
+		
+		public ListViewItem(string[] strings, int imageIndex,  Color fColor, Color  bColor, Font font){
+			
+			//TODO: Image index
+			CommonConstructor();
+			
+			if (strings.Length>0){
+				
+				text = strings[0];
+				BackColor = bColor;
+				ForeColor = fColor;
+			}
+				
+			if (strings.Length>1){
+				ListViewSubItem subItem;
+				
+				for (int i=1; i<strings.Length; i++){
+					subItem = colSubItem.Add(strings[i]);		
+					subItem.BackColor = bColor;
+					subItem.ForeColor = fColor;
+				}
+			}			
+			
 		}
 
 		[MonoTODO]
@@ -111,14 +141,9 @@ namespace System.Windows.Forms
 			set {backColor = value;}
 		}
 
-		[MonoTODO]
-		public Rectangle Bounds 
-		{
-			get 
-			{
-				// TODO: Windows Win32 api call to calculate the bound
-				return m_Bounds;
-			}
+		
+		public Rectangle Bounds {
+			get {return	container.GetItemBoundInCtrl(Index);}
 		}
 		
 		public bool Checked {
@@ -134,7 +159,7 @@ namespace System.Windows.Forms
 
 		[MonoTODO]
 		public Font Font {
-			get {
+			get { // see Control.DefaultFont
 				throw new NotImplementedException ();
 			}
 			set {
@@ -185,26 +210,19 @@ namespace System.Windows.Forms
 			}
 		}
 		
-		public ListViewSubItemCollection SubItems 
-		{
-			get 
-			{
-				return m_colSubItem;
-			}
+		public ListViewSubItemCollection SubItems {
+			get {return colSubItem;}
 		}
-		[MonoTODO]
+		
+
 		public object Tag {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				//FIXME:
-			}
+			get {return tag;}
+			set {tag = value;}
 		}
 		
 		public string Text 	{
-			get { return m_sText;}
-			set { m_sText = value;}		
+			get { return text;}
+			set { text = value;}		
 			
 		}
 		
@@ -216,21 +234,24 @@ namespace System.Windows.Forms
 		//
 		//  --- Private Methods
 		//		
-		public ListView Container {			
+		internal ListView Container {			
 			set{container=value;}
 		}				
 		
-		public int CtrlIndex{					
+		internal int CtrlIndex{					
 			set{index=value;}
 		}		
 		
 		//
 		//  --- Public Methods
-		//
-		[MonoTODO]
-		public void BeginEdit()
-		{
-			//FIXME:
+		//		
+		public void BeginEdit(){
+			
+			if (!container.LabelEdit)
+				throw new InvalidOperationException("LabelEdit disabled");
+			
+			container.LabelEditInCtrl(Index);
+			
 		}
 		[MonoTODO]
 		public object Clone()
@@ -296,124 +317,125 @@ namespace System.Windows.Forms
 		public class ListViewSubItemCollection :  IList, ICollection, IEnumerable 
 		{
 			
-			private ArrayList m_collection = new ArrayList();
-			private ListViewItem m_owner = null;
+			private ArrayList collection = new ArrayList();
+			private ListViewItem owner = null;
 			
 			
 			//
 			//  --- Constructor
 			//		
-			public ListViewSubItemCollection(ListViewItem owner) {
-				m_owner = owner;
+			public ListViewSubItemCollection(ListViewItem item) {
+				owner = item;
 			}			
 			
 			//
 			//  --- Public Properties
 			//			
 			public int Count {
-				get { return m_collection.Count; }
+				get { return collection.Count; }
 			}			
 			
 			public bool IsReadOnly 
 			{
-				get { return m_collection.IsReadOnly; }
+				get { return collection.IsReadOnly; }
 			}		
 			
 			public ListViewSubItem this[int index] 
 			{
-				get { return (ListViewSubItem) m_collection[index];}
-				set { m_collection[index] = value;}				
+				get { 
+					if (index<0 || index>=Count) throw  new  ArgumentOutOfRangeException();					
+						
+					return (ListViewSubItem) collection[index];
+				}
+				set { 
+					if (index<0 || index>=Count) throw  new  ArgumentOutOfRangeException();					
+					collection[index] = value;
+				}				
 			}	
 			
 			/// --- ICollection properties ---
 			bool IList.IsFixedSize 
 			{
-				get { return m_collection.IsFixedSize; }
+				get { return collection.IsFixedSize; }
 			}
 			
 			object IList.this[int index] 
 			{
-				get { return m_collection[index]; }
-				set { m_collection[index] = value; }
+				get { return collection[index]; }
+				set { collection[index] = value; }
 			}
 	
 			object ICollection.SyncRoot 
 			{
-				get { return m_collection.SyncRoot; }
+				get { return collection.SyncRoot; }
 			}
 	
 			bool ICollection.IsSynchronized 
 			{
-				get { return m_collection.IsSynchronized; }
+				get { return collection.IsSynchronized; }
 			}
 			
 			//
 			//  --- Public Methods
 			//			
 			public ListViewSubItem Add(ListViewItem.ListViewSubItem item) 
-			{			
-				
-				Console.WriteLine("ListViewSubItem.Add " +  item.Text);											
-				int nIdx = m_collection.Add(item);				
-								
-				return (ListViewSubItem)m_collection[nIdx]; // TODO: Check this in .Net?
+			{					
+				if (item.ListViewItem==null) item.ListViewItem = owner;
+				int nIdx = collection.Add(item);												
+				return (ListViewSubItem)collection[nIdx]; 
 			} 
 			
 			
 			public ListViewSubItem Add(string text) 
+			{				
+				ListViewItem.ListViewSubItem item = new ListViewSubItem(owner, text);	 						
+				return Add(item);
+			}			
+			
+			public ListViewSubItem Add(string text,Color fColor,Color bColor,Font font) 
 			{
+				ListViewSubItem item = new ListViewSubItem(owner, text);
+				item.ForeColor = fColor;
+				item.BackColor = bColor;
+				return Add(item);
+			}
+			
+			
+			public void AddRange(ListViewItem.ListViewSubItem[] values) 	{
 				
-				Console.WriteLine("ListViewSubItem.Add " +  text);											
-				ListViewItem.ListViewSubItem item = new ListViewSubItem(m_owner, text);	 
-						
-				int nIdx = m_collection.Add(item); 
-				return (ListViewSubItem)m_collection[nIdx]; 
+				for (int i=0; i<values.Length; i++)	
+				{
+					if (values[i].ListViewItem==null) values[i].ListViewItem = owner;
+					Add(values[i]);										
+				}
+			}			
+			
+			public void AddRange(string[] values) {
+				
+				for (int i=0; i<values.Length; i++)	
+					Add(values[i]);										
 			}
 			
-			[MonoTODO]
-			public ListViewSubItem Add(string text,Color foreColor,Color backColor,Font font) 
-			{
-				throw new NotImplementedException ();
-			}
 			
-			[MonoTODO]
-			public void AddRange(ListViewItem.ListViewSubItem[] items) 
-			{
-				//FIXME:
-			}
-			
-			[MonoTODO]
-			public void AddRange(string[] items) 
-			{
-				//FIXME:
-			}
-			
-			[MonoTODO]
-			public void AddRange(
-				string[] items,
-				Color foreColor,
-				Color backColor,
-				Font font) {
-
-				//FIXME:
+			public void AddRange(string[] items,Color fColor, Color bColor,	Font font) {
+				
+				for (int i=0; i<items.Length; i++)	
+					Add(items[i], fColor, bColor, font);														
 			}
 			
 			[MonoTODO]
 			public void Clear() 
 			{
 				//FIXME:
+			}			
+			
+			public bool Contains(ListViewItem.ListViewSubItem subItem) 	{
+				
+				return collection.Contains(subItem);
 			}
 			
-			[MonoTODO]
-			public bool Contains(ListViewItem.ListViewSubItem subItem) 
-			{
-				throw new NotImplementedException ();
-			}
-			
-			[MonoTODO]
-			public IEnumerator GetEnumerator() 
-			{
-				throw new NotImplementedException ();
+			public IEnumerator GetEnumerator() 	{				
+				return collection.GetEnumerator();
 			}
 			
 			[MonoTODO]
@@ -496,11 +518,13 @@ namespace System.Windows.Forms
 		private	Color foreColor = SystemColors.WindowText;
 		private Font font;
 		
-		
-		public ListViewItem ListViewItem{
+			
+		internal ListViewItem ListViewItem{				
 			get{return owner;}
+			set{owner=value;}
 		}
-	
+			
+			
 		//
 		//  --- Constructor
 		//

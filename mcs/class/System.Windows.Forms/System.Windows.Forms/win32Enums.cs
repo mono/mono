@@ -1089,7 +1089,9 @@ namespace System.Windows.Forms{
 		LVM_GETNEXTITEM         		= (LVM_FIRST + 12),
 		LVM_SETITEMCOUNT        		= (LVM_FIRST + 47),
 		LVM_GETITEMCOUNT        		= (LVM_FIRST + 4),
-		LVM_SETCOLUMNWIDTH          	= (LVM_FIRST + 30)
+		LVM_SETCOLUMNWIDTH          	= (LVM_FIRST + 30),
+		LVM_GETITEMRECT         		= (LVM_FIRST + 14),
+		LVM_EDITLABEL					= (LVM_FIRST + 23)
 	}
 	#endregion
 
