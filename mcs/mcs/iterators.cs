@@ -718,6 +718,11 @@ namespace Mono.CSharp {
 				this.field = field;
 			}
 
+			public override Expression DoResolveLValue (EmitContext ec, Expression right_side)
+			{
+				return DoResolve (ec);
+			}
+
 			public override Expression DoResolve (EmitContext ec)
 			{
 				FieldExpr fexpr = new FieldExpr (field.FieldBuilder, loc);
