@@ -86,7 +86,7 @@ namespace System.IO
 			if (access < FileAccess.Read || access > FileAccess.ReadWrite)
 				throw new ArgumentOutOfRangeException ("access");
 
-			if (share < FileShare.None || share > FileAccess.ReadWrite)
+			if (share < FileShare.None || share > FileShare.ReadWrite)
 				throw new ArgumentOutOfRangeException ("share");
 
 			if (name.IndexOfAny (Path.InvalidPathChars) != -1) {

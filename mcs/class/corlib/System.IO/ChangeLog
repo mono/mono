@@ -1,3 +1,8 @@
+2003-04-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* FileStream.cs: fixed the windows build. This is an mcs bug. I'll
+	fill a bug report.
+
 2003-04-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* FileStream.cs: fixed bug #40182 and made more unit test pass.
