@@ -1074,27 +1074,26 @@ namespace Microsoft.VisualBasic
 		/// <param name="Expression">Required. String expression whose characters are to be reversed. If Expression is a zero-length string (""), a zero-length string is returned.</param>
 		public static string StrReverse(string Expression)
 		{
+			// patched by Daniel Campos 
+			// danielcampos@myway.com
+			if (Expression != null)
+			{
+				if ( Expression.Length>0)
+				{
+					int counter=0;
+					char[] buf=new char[Expression.Length];
 
-			if (Expression == null)
-				return String.Empty; // "If Expression is a zero-length string (""), a zero-length string is returned."
-
-			int count = Expression.Length;
-
-			if (count == 0)
-				return String.Empty; // "If Expression is a zero-length string (""), a zero-length string is returned."
-
-			/*
-			 * This would be much faster if I had access to the internal array. 
-			 * I'd just reverse the array. Maybe as strings are inmutable in .net (is this true in Mono?)
-			 * it'll be the same. Comments?
-			 */
-			char[] chars = new char[count - 1];
-			chars = Expression.ToCharArray();
-
-			System.Array.Reverse (chars);
-
-			return new string(chars);
-
+					for (int backwardsCounter=Expression.Length - 1;
+					backwardsCounter>=0;
+					backwardsCounter--)
+						buf[counter++]=Expression[backwardsCounter];
+					return new string(buf);
+				}
+				else
+					return String.Empty;
+			}
+			else
+				return String.Empty;
 		}
 
 		/// <summary>
