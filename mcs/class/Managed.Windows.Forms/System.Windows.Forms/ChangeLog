@@ -1,3 +1,8 @@
+2005-01-26  Jackson Harper  <jackson@ximian.com>
+
+	* TabControl.cs: Implement FillToRight size mode with vertically
+	rendered tabs.
+
 2005-01-26  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* ControlPaint.cs, ThemeWin32Classic.cs

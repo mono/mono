@@ -601,7 +601,8 @@ namespace System.Windows.Forms {
 			int prev_row = 1;
 			Size spacing = TabSpacing;
 			int xpos = CalcXPos ();
-
+			int begin_prev = 0;
+			
 			if (TabPages.Count == 0)
 				return;
 
@@ -625,8 +626,20 @@ namespace System.Windows.Forms {
 				page.TabBounds = new Rectangle (xpos + (row_count - page.Row) * ((item_size.Height - 2) + spacing.Width),
 						ypos, item_size.Height - 2, width);
 
+				if (page.Row != prev_row) {
+					if (SizeMode == TabSizeMode.FillToRight) {
+						FillRowV (begin_prev, i - 1, ((row_width - TabPages [i - 1].TabBounds.Bottom) / (i - begin_prev)), spacing);
+					}
+					begin_prev = i;
+				}
+
 				ypos += width + spacing.Width;
 				prev_row = page.Row;
+			}
+
+			if (SizeMode == TabSizeMode.FillToRight) {
+				FillRowV (begin_prev, TabPages.Count - 1,
+						((row_width - TabPages [TabPages.Count - 1].TabBounds.Bottom) / (TabPages.Count - begin_prev)), spacing);
 			}
 
 			if (SelectedIndex != -1) {
@@ -701,6 +714,20 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		private void FillRowV (int start, int end, int amount, Size spacing)
+		{
+			int ypos = TabPages [start].TabBounds.Top;
+			for (int i = start; i <= end; i++) {
+				TabPage page = TabPages [i];
+				int top = ypos;
+				int height = (i == end ? Height - top - 3 : page.TabBounds.Height + amount);
+
+				page.TabBounds = new Rectangle (page.TabBounds.Left, top,
+						page.TabBounds.Width, height);
+				ypos = page.TabBounds.Bottom + 1 + spacing.Width;
+			}
+		}
+
 		private void ExpandSelected (TabPage page, int left_edge, int right_edge)
 		{
 			if (Appearance != TabAppearance.Normal)
@@ -749,7 +776,7 @@ namespace System.Windows.Forms {
 
 			Draw (pe.ClipRectangle);
 			pe.Graphics.DrawImage (ImageBuffer, pe.ClipRectangle,
-                                        pe.ClipRectangle, GraphicsUnit.Pixel);
+					pe.ClipRectangle, GraphicsUnit.Pixel);
 			// On MS the Paint event never seems to be raised
 		}
 
