@@ -1,4 +1,5 @@
-CollectionTest.cs
-ConversionTest.cs
-DateAndTimeTest.cs
-StringsTest.cs
+Microsoft.VisualBasic/CollectionTest.cs
+Microsoft.VisualBasic/ConversionTest.cs
+Microsoft.VisualBasic/DateAndTimeTest.cs
+Microsoft.VisualBasic/StringsTest.cs
+Microsoft.VisualBasic/FileSystemTest.cs
