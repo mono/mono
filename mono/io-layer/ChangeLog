@@ -1,3 +1,7 @@
+2002-05-10  Dan Lewis  <dihlewis@yahoo.co.uk>
+
+	* io.c:	Nasty typo.
+
 2002-05-09  Dick Porter  <dick@ximian.com>
 
 	* threads.c: 
