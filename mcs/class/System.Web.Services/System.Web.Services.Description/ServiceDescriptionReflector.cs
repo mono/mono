@@ -79,6 +79,12 @@ namespace System.Web.Services.Description {
 			
 			if (WSConfig.IsSupported (WSProtocol.HttpPost))
 				new HttpPostProtocolReflector ().Reflect (this, type, url, schemaExporter, soapSchemaExporter);
+				
+			int i=0;
+			while (i < types.Schemas.Count) {
+				if (types.Schemas[i].Items.Count == 0) types.Schemas.RemoveAt (i);
+				else i++;
+			}
 			
 			if (serviceDescriptions.Count == 1)
 				serviceDescriptions[0].Types = types;

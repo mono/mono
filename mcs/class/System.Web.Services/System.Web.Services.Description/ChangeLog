@@ -1,3 +1,7 @@
+2004-09-13  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* ServiceDescriptionReflector.cs: Don't generate empty schemas.
+
 2004-09-03  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* ProtocolImporter.cs: Fixing the fix. The generated class must always
