@@ -60,30 +60,30 @@ namespace Mfconsulting.General
 			pi.UseShellExecute = false;
 			pi.Arguments = strArgLine;
 			Process p = null;
-			try 
+			try 
 			{
 				p = Process.Start (pi);
-			} 
-			catch (Exception e) 
+			} 
+			catch (Exception e) 
 			{
 				Console.WriteLine("Couldn't run pkg-config: " + e.Message);
 				return null;
 			}
 
-			if (p.StandardOutput == null)
+			if (p.StandardOutput == null)
 			{
 				Console.WriteLine("Specified package did not return any information");
 			}
 			
 			pkgout = p.StandardOutput.ReadToEnd ();		
 			p.WaitForExit ();
-			if (p.ExitCode != 0) 
+			if (p.ExitCode != 0) 
 			{
 				Console.WriteLine("Error running pkg-config. Check the above output.");
 				return null;
 			}
 
-			if (pkgout != null)
+			if (pkgout != null)
 			{
 				p.Close ();
 				return pkgout;

@@ -54,7 +54,7 @@ namespace Mfconsulting.General.Prj2Make.Cui
 
 			MyInitializeComponents();
     		
-			if (inputFileName == null || inputFileName.Length < 1) 
+			if (inputFileName == null || inputFileName.Length < 1) 
 			{
 				Console.WriteLine ("No input file has been specified.");
 				return;            
