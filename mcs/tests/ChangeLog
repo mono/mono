@@ -1,5 +1,7 @@
 2002-07-24  Martin Baulig  <martin@gnome.org>
 
+	* test-150.cs: New test.
+
 	* test-149.cs: New test.
 
 	* test-95.cs: .... and finally, another bug in MCS is fixed and

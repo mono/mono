@@ -21,6 +21,10 @@ Test cases listed by Category:
 
   test-149.cs
 
+* Constant Folding
+
+  test-150.cs
+
 Test cases listed by Number:
 ============================
 
@@ -40,6 +44,11 @@ Testing the `IndexerName' attribute in interface indexers.
 test-149.cs
 -----------
 Testing interface events.
+
+test-150.cs
+-----------
+Test for folding of UIntConstants.  See bug #28106.
+FIXME:  We should all all possible test cases to this test.
 
 verify-1.cs
 -----------
