@@ -273,7 +273,7 @@ namespace System.Xml
 			string localName;
 
 			ParseName (qualifiedName, out prefix, out localName);
-
+			
 			return CreateElement (prefix, localName, namespaceURI);
 		}
 
@@ -284,7 +284,7 @@ namespace System.Xml
 		{
 			if ((localName == null) || (localName == String.Empty))
 				throw new ArgumentException ("The local name for elements or attributes cannot be null or an empty string.");
-
+			CheckName (localName);
 			return new XmlElement (prefix != null ? prefix : String.Empty, localName, namespaceURI != null ? namespaceURI : String.Empty, this);
 		}
 
@@ -649,6 +649,14 @@ namespace System.Xml
 				prefix = "";
 				localName = name;
 			}
+		}
+
+		// Checks that Element's name is valid
+		private void CheckName (String name)
+		{
+			// TODO: others validations?
+			if (name.IndexOf (" ") >= 0)
+				throw new XmlException ("The ' ' characted cannot be included in a name");
 		}
 
 		// Reads XmlReader and creates Attribute Node.

@@ -1,3 +1,7 @@
+2003-01-13  Ville Palo <vi64pa@koti.soon.fi>
+
+	* XmlDocument.cs: Added CheckName () method to check names validity.
+	
 2003-01-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* XmlTextReader.cs:
