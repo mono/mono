@@ -38,6 +38,7 @@
 				<excludes name="System.PAL/IOperatingSystem.cs"/>
 				<excludes name="System/Object.cs" />
 				<excludes name="System/ValueType.cs" />
+				<excludes name="System/Delegate.cs" />
 			</sources>
 		</csc>
 		<!-- NUnit can only run under windows right now, so build for windows

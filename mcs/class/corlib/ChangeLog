@@ -1,3 +1,7 @@
+2002-01-19  Nick Drochak  <ndrochak@gol.com>
+	
+	* corlib.build: exclude Delegate from corlib_cmp.
+
 2002-01-09  Nick Drochak  <ndrochak@gol.com>
 
 	* corlib.build: Exclude Security Attribute classes that need mcs
