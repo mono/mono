@@ -25,10 +25,8 @@
 using System;
 using System.Collections;
 using System.IO;
-using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
-using System.Threading;
 
 using Mono.Security.Protocol.Tls.Handshake;
 
@@ -74,30 +72,6 @@ namespace Mono.Security.Protocol.Tls
 
 		#region Reveive Record Methods
 
-		internal const int Timeout = 1000;
-
-		internal bool WaitForData ()
-		{
-			// problem: NetworkStream.ReadByte blocks until a byte is received
-			// and (maybe) no byte will ever be received
-			if (this.innerStream is NetworkStream)
-			{
-				NetworkStream ns = (this.innerStream as NetworkStream);
-				int delay = 10;
-				while (delay < Timeout)
-				{
-					if (ns.DataAvailable)
-						return true;
-					Thread.Sleep (delay);
-					delay *= 2;
-				}
-				// nothing to see, move along
-				return false;
-			}
-			// we assume other type of stream have their own timeout capabilities
-			return true;
-		}
-
 		public byte[] ReceiveRecord()
 		{
 			if (this.context.ConnectionEnd)
@@ -106,14 +80,9 @@ namespace Mono.Security.Protocol.Tls
 					AlertDescription.InternalError,
 					"The session is finished and it's no longer valid.");
 			}
-
-			if (!WaitForData ())
-			{
-				return null;
-			}
-
+	
 			// Try to read the Record Content Type
-			int type = this.innerStream.ReadByte ();
+			int type = this.innerStream.ReadByte();
 			if (type == -1)
 			{
 				return null;
@@ -123,7 +92,7 @@ namespace Mono.Security.Protocol.Tls
 			this.context.LastHandshakeMsg = HandshakeType.ClientHello;
 
 			ContentType	contentType	= (ContentType)type;
-			byte[] buffer = this.ReadRecordBuffer (type);
+			byte[] buffer = this.ReadRecordBuffer(type);
 
 			TlsStream message = new TlsStream(buffer);
 		
@@ -205,18 +174,12 @@ namespace Mono.Security.Protocol.Tls
 
 		private byte[] ReadClientHelloV2()
 		{
-			int msgType = -1;
-			byte[] message = null;
+			int msgLength			= this.innerStream.ReadByte();
+			byte[] message = new byte [msgLength];
+			this.innerStream.Read (message, 0, msgLength);
 
-			int msgLength = this.innerStream.ReadByte();
-			if (msgLength > 0) 
-			{
-				message = new byte [msgLength];
-				if (this.innerStream.Read (message, 0, msgLength) == msgLength)
-					msgType = message [0];
-			}
-
-			if ((msgType != 1) || (message.Length < 9))
+			int msgType		= message [0];
+			if (msgType != 1)
 			{
 				throw new TlsException(AlertDescription.DecodeError);
 			}
@@ -268,19 +231,6 @@ namespace Mono.Security.Protocol.Tls
 			return message;
 		}
 
-		private bool Wait (ref int delay)
-		{
-			if (delay < 10)
-				delay = 10;
-
-			if (delay >= Timeout)
-				return false;
-
-			Thread.Sleep (delay);
-			delay *= 2;
-			return true;
-		}
-
 		private byte[] ReadStandardRecordBuffer()
 		{
 			short protocol	= this.ReadShort();
@@ -289,21 +239,9 @@ namespace Mono.Security.Protocol.Tls
 			// Read Record data
 			int		received	= 0;
 			byte[]	buffer		= new byte[length];
-			int n = 0;
 			while (received != length)
 			{
-				int incoming = this.innerStream.Read(buffer, received, buffer.Length - received);
-				// we risk an infinite loop is data isn't available
-				if (incoming == 0)
-				{
-					if (!Wait (ref n))
-						throw new TlsException (AlertLevel.Fatal, AlertDescription.CloseNotify);
-				}
-				else
-				{
-					n = 0; // reset
-				}
-				received += incoming;
+				received += this.innerStream.Read(buffer, received, buffer.Length - received);
 			}
 
 			// Check that the message has a valid protocol version
@@ -321,10 +259,7 @@ namespace Mono.Security.Protocol.Tls
 		private short ReadShort()
 		{
 			byte[] b = new byte[2];
-			if (this.innerStream.Read (b, 0, b.Length) != 2)
-			{
-				throw new TlsException (AlertLevel.Fatal, AlertDescription.DecodeError);
-			}
+			this.innerStream.Read(b, 0, b.Length);
 
 			short val = BitConverter.ToInt16(b, 0);
 
