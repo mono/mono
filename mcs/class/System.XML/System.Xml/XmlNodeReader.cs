@@ -206,7 +206,7 @@ namespace System.Xml
 
 				XmlAttribute attr = ownerElement.Attributes [name];
 				if (attr == null)
-					return String.Empty;
+					return null;
 				else
 					return attr.Value;
 			}
@@ -223,7 +223,7 @@ namespace System.Xml
 
 				XmlAttribute attr = ownerElement.Attributes [name, namespaceURI];
 				if (attr == null)
-					return String.Empty;
+					return null;	// In fact MS.NET returns null instead of String.Empty.
 				else
 					return attr.Value;
 			}

@@ -312,6 +312,13 @@ namespace System.Xml
 
 		public override void WriteBase64 (byte[] buffer, int index, int count)
 		{
+			CheckState ();
+
+			if (!openAttribute) {
+				IndentingOverriden = true;
+				CloseStartElement ();
+			}
+
 			w.Write (Convert.ToBase64String (buffer, index, count));
 		}
 
@@ -553,7 +560,8 @@ namespace System.Xml
 				if (existingPrefix == null) 
 				{
 					newAttributeNamespaces.Add (ns);
-					prefix = "d" + indentLevel + "p" + newAttributeNamespaces.Count;
+					if (prefix == "" || namespaceManager.LookupNamespace (prefix) != null)
+						prefix = "d" + indentLevel + "p" + newAttributeNamespaces.Count;
 					namespaceManager.AddNamespace (prefix, ns);
 				}
 

@@ -1,3 +1,11 @@
+2003-06-15  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlNodeReader.cs : this [name] and this [name, ns] (and
+	  GetAttribute() methods in turn) returns null instead of String.Empty.
+	* XmlTextWriter.cs : WriteStartAttribute() should try to use specified
+	  prefix before auto-generating prefixes.
+	  Implemented WriteBase64().
+
 2003-06-13  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XmlNodeReader.cs : LookupNamespace () has refered invalid current
