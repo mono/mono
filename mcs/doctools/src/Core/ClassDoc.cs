@@ -35,5 +35,19 @@ namespace Mono.Doc.Core
 		public ClassDoc() : this(string.Empty)
 		{
 		}
+
+		public ClassDoc(Type t, AssemblyLoader loader) : base(t, loader)
+		{
+			// TODO: type-checking should happen before the base ctor call.
+			if (!t.IsClass)
+			{
+				throw new ArgumentException("Type must be a class.", "t");
+			}
+		}
+
+		public override string ToString()
+		{
+			return "[ClassDoc " + this.Name + "]";
+		}
 	}
 }

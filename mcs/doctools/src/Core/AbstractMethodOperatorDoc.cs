@@ -20,36 +20,48 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 using System;
-using System.Collections.Specialized;
+using System.Reflection;
+using System.Xml.Serialization;
 
 namespace Mono.Doc.Core
 {
 	public abstract class AbstractMethodOperatorDoc : AbstractDoc
 	{
-		protected ValueConstrainedArrayList   exceptions;
-		protected StringDictionary            parameters;
-		protected string                      returns;
+		protected ValueConstrainedArrayList exceptions = new ValueConstrainedArrayList(typeof(ExceptionDoc));
+		protected ValueConstrainedArrayList parameters = new ValueConstrainedArrayList(typeof(ParameterDoc));
+		protected string                    returns    = string.Empty;
 
 		public AbstractMethodOperatorDoc(string name) : base(name)
 		{
-			this.exceptions = new ValueConstrainedArrayList(Type.GetType("Mono.Doc.Core.ExceptionDoc", true));
-			this.parameters = new StringDictionary();
 		}
 
 		public AbstractMethodOperatorDoc() : this(string.Empty)
 		{
 		}
 
+		public AbstractMethodOperatorDoc(MethodInfo m, AssemblyLoader loader) : base(m, loader)
+		{
+			foreach (ParameterInfo param in m.GetParameters())
+			{
+				this.Parameters.Add(new ParameterDoc(param.Name, AbstractDoc.TODO));
+			}
+
+			this.Returns = AbstractDoc.TODO;
+		}
+
+		[XmlElement(ElementName = "exception", Type = typeof(ExceptionDoc))]
 		public ValueConstrainedArrayList Exceptions
 		{
 			get { return this.exceptions; }
 		}
 
-		public StringDictionary Parameters
+		[XmlElement(ElementName = "param", Type = typeof(ParameterDoc))]
+		public ValueConstrainedArrayList Parameters
 		{
 			get { return this.parameters; }
 		}
 
+		[XmlElement(ElementName = "returns")]
 		public string Returns
 		{
 			get { return this.returns;  }

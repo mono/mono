@@ -22,22 +22,30 @@
 // IN THE SOFTWARE.
 
 using System;
+using System.Reflection;
+using System.Xml.Serialization;
 
 namespace Mono.Doc.Core
 {
+	[XmlType(TypeName = "event")]
 	public class EventDoc : AbstractDoc
 	{
-		private string data;
+		private string data = string.Empty;
 
 		public EventDoc(string name) : base(name)
 		{
-			this.data = string.Empty;
 		}
 
 		public EventDoc() : this(string.Empty)
 		{
 		}
 
+		public EventDoc(EventInfo ev, AssemblyLoader loader) : base(ev, loader)
+		{
+			this.data = AbstractDoc.TODO;
+		}
+
+		[XmlElement(ElementName = "data")]
 		public string Data
 		{
 			get { return this.data;  }

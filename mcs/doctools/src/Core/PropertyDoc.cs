@@ -20,30 +20,37 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 using System;
+using System.Reflection;
+using System.Xml.Serialization;
 
 namespace Mono.Doc.Core
 {
 	public class PropertyDoc : AbstractDoc
 	{
-		private string                    value;
-		private ValueConstrainedArrayList exceptions;
+		private string                    value      = string.Empty;
+		private ValueConstrainedArrayList exceptions = new ValueConstrainedArrayList(typeof(ExceptionDoc));
 
 		public PropertyDoc(string name) : base(name)
 		{
-			this.value      = string.Empty;
-			this.exceptions = new ValueConstrainedArrayList(Type.GetType("Mono.Doc.Core.ExceptionDoc", true));
 		}
 
 		public PropertyDoc() : this(string.Empty)
 		{
 		}
 
+		public PropertyDoc(PropertyInfo prop, AssemblyLoader loader) : base(prop, loader)
+		{
+			value = AbstractDoc.TODO;
+		}
+
+		[XmlElement(ElementName = "value")]
 		public string Value
 		{
 			get { return this.value;  }
 			set { this.value = value; }
 		}
 
+		[XmlElement(ElementName = "exception", Type = typeof(ExceptionDoc))]
 		public ValueConstrainedArrayList Exceptions
 		{
 			get { return this.exceptions;  }

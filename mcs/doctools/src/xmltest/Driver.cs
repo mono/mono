@@ -7,29 +7,32 @@ namespace Mono.Doc.XmlTest
 {
 	public class Driver
 	{
+		private static string assemblyFile = 
+			@"D:\projects\mcs\doctools\build\System.Xml.dll";
+		private static string sampleClass = "System.Xml.XmlDocument";
+		private static string sampleEnum  = "System.Xml.WriteState";
+
 		public Driver()
 		{
 		}
 
 		public static void Main(string[] args)
 		{
-			MonodocFile file  = new MonodocFile();
-			XmlSerializer ser = new XmlSerializer(file.GetType());
+			AssemblyLoader loader = new AssemblyLoader(assemblyFile);
+			Type           t      = loader.Assembly.GetType(sampleClass, true, false);
+			MonodocFile    file   = new MonodocFile();
+			XmlSerializer  ser    = new XmlSerializer(file.GetType());
+			ClassDoc       aClass = new ClassDoc(t, loader);
 
-			// a class
-			ClassDoc hashtable = new ClassDoc("System.Collections.Hashtable");
-			hashtable.Assembly = "corlib";
+			file.Types.Add(aClass);
 
-			file.Types.Add(hashtable);
+			EnumDoc anEnum = new EnumDoc(loader.Assembly.GetType(sampleEnum, true, false), loader);
 
-			// an interface
-			InterfaceDoc icollection = new InterfaceDoc("System.Collections.ICollection");
-			icollection.Assembly     = "corlib";
+			file.Types.Add(anEnum);
 
-			file.Types.Add(icollection);
-
+			// serialize to stdout for now
 			ser.Serialize(Console.Out, file);
-			Console.WriteLine("\n\n");
+			Console.WriteLine();
 		}
 	}
 }

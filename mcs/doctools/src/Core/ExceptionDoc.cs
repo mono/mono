@@ -20,9 +20,11 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 using System;
+using System.Xml.Serialization;
 
 namespace Mono.Doc.Core
 {
+	[XmlType(TypeName = "exception")]	
 	public class ExceptionDoc
 	{
 		private string cref;
@@ -40,12 +42,14 @@ namespace Mono.Doc.Core
 			this.description = description;
 		}
 
+		[XmlAttribute(AttributeName = "cref")]
 		public string Cref
 		{
 			get { return this.cref;  }
 			set { this.cref = value; }
 		}
 
+		[XmlText]
 		public string Description
 		{
 			get { return this.description;  }

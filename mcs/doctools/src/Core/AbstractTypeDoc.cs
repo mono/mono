@@ -37,6 +37,10 @@ namespace Mono.Doc.Core
 		{
 		}
 
+		public AbstractTypeDoc(Type t, AssemblyLoader loader) : base(t, loader)
+		{
+			this.assembly = t.Assembly.GetName().Name;
+		}
 
 		[XmlAttribute(AttributeName = "assembly")]
 		public string Assembly

@@ -20,95 +20,138 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 using System;
+using System.Reflection;
+using System.Xml.Serialization;
 
 namespace Mono.Doc.Core
 {
 	public abstract class AbstractClassStructDoc : AbstractTypeDoc
 	{
-		// constructor | event | field | method | operator | property
-		protected ValueConstrainedArrayList constructors;
-		protected ValueConstrainedArrayList       events;
-		protected ValueConstrainedArrayList       fields;
-		protected ValueConstrainedArrayList      methods;
-		protected ValueConstrainedArrayList    operators;
-		protected ValueConstrainedArrayList    properties;
+		protected ValueConstrainedArrayList constructors = new ValueConstrainedArrayList(typeof(ConstructorDoc));
+		protected ValueConstrainedArrayList       events = new ValueConstrainedArrayList(typeof(EventDoc));
+		protected ValueConstrainedArrayList       fields = new ValueConstrainedArrayList(typeof(FieldDoc));
+		protected ValueConstrainedArrayList      methods = new ValueConstrainedArrayList(typeof(MethodDoc));
+		protected ValueConstrainedArrayList    operators = new ValueConstrainedArrayList(typeof(OperatorDoc));
+		protected ValueConstrainedArrayList   properties = new ValueConstrainedArrayList(typeof(PropertyDoc));
 
 		// nested items
-		protected ValueConstrainedArrayList       classes;
-		protected ValueConstrainedArrayList    delegates;
-		protected ValueConstrainedArrayList        enums;
-		protected ValueConstrainedArrayList   interfaces;
-		protected ValueConstrainedArrayList      structs;
+		protected ValueConstrainedArrayList      classes = new ValueConstrainedArrayList(typeof(ClassDoc));
+		protected ValueConstrainedArrayList    delegates = new ValueConstrainedArrayList(typeof(DelegateDoc));
+		protected ValueConstrainedArrayList        enums = new ValueConstrainedArrayList(typeof(EnumDoc));
+		protected ValueConstrainedArrayList   interfaces = new ValueConstrainedArrayList(typeof(InterfaceDoc));
+		protected ValueConstrainedArrayList      structs = new ValueConstrainedArrayList(typeof(StructDoc));
 
 		public AbstractClassStructDoc(string name) : base(name)
 		{
-			this.constructors = new ValueConstrainedArrayList(Type.GetType("Mono.Doc.Core.ConstructorDoc", true));
-			this.events       = new ValueConstrainedArrayList(Type.GetType("Mono.Doc.Core.EventDoc", true));
-			this.fields       = new ValueConstrainedArrayList(Type.GetType("Mono.Doc.Core.FieldDoc", true));
-			this.methods      = new ValueConstrainedArrayList(Type.GetType("Mono.Doc.Core.MethodDoc", true));
-			this.operators    = new ValueConstrainedArrayList(Type.GetType("Mono.Doc.Core.OperatorDoc", true));
-			this.properties   = new ValueConstrainedArrayList(Type.GetType("Mono.Doc.Core.PropertyDoc", true));
-			this.classes      = new ValueConstrainedArrayList(Type.GetType("Mono.Doc.Core.ClassDoc", true));
-			this.enums        = new ValueConstrainedArrayList(Type.GetType("Mono.Doc.Core.EnumDoc", true));
-			this.interfaces   = new ValueConstrainedArrayList(Type.GetType("Mono.Doc.Core.InterfaceDoc", true));
-			this.structs      = new ValueConstrainedArrayList(Type.GetType("Mono.Doc.Core.StructDoc", true));
 		}
 
 		public AbstractClassStructDoc() : this(string.Empty)
 		{
 		}
 
+		public AbstractClassStructDoc(Type t, AssemblyLoader loader) : base(t, loader)
+		{
+			// constructors
+			foreach (ConstructorInfo cons in loader.GetConstructors(t))
+			{
+				this.Constructors.Add(new ConstructorDoc(cons, loader));
+			}
+
+			// events
+			foreach (EventInfo ev in loader.GetEvents(t))
+			{
+				this.Events.Add(new EventDoc(ev, loader));
+			}
+
+			// fields
+			foreach (FieldInfo field in loader.GetFields(t))
+			{
+				this.Fields.Add(new FieldDoc(TypeNameHelper.GetName(field)));
+			}
+
+			// methods
+			foreach (MethodInfo m in loader.GetMethods(t))
+			{
+				this.Methods.Add(new MethodDoc(m, loader));
+			}
+
+			// operators
+			foreach (MethodInfo o in loader.GetOperators(t))
+			{
+				this.Operators.Add(new OperatorDoc(o, loader));
+			}
+
+			// properties
+			foreach (PropertyInfo prop in loader.GetProperties(t))
+			{
+				this.Properties.Add(new PropertyDoc(prop, loader));
+			}
+
+			// TODO: nested types
+		}
+
+		[XmlElement(ElementName = "constructor", Type = typeof(ConstructorDoc))]
 		public ValueConstrainedArrayList Constructors
 		{
 			get { return this.constructors;  }
 		}
 
+		[XmlElement(ElementName = "event", Type = typeof(EventDoc))]
 		public ValueConstrainedArrayList Events
 		{
 			get { return this.events;  }
 		}
 
+		[XmlElement(ElementName = "field", Type = typeof(FieldDoc))]
 		public ValueConstrainedArrayList Fields
 		{
 			get { return this.fields;  }
 		}
 
+		[XmlElement(ElementName = "method", Type = typeof(MethodDoc))]
 		public ValueConstrainedArrayList Methods
 		{
 			get { return this.methods;  }
 		}
 
+		[XmlElement(ElementName = "operator", Type = typeof(OperatorDoc))]
 		public ValueConstrainedArrayList Operators
 		{
 			get { return this.operators;  }
 		}
 
+		[XmlElement(ElementName = "property", Type = typeof(PropertyDoc))]
 		public ValueConstrainedArrayList Properties
 		{
 			get { return this.properties;  }
 		}
 
-		public ValueConstrainedArrayList NestedClasses
+		[XmlElement(ElementName = "class", Type = typeof(ClassDoc))]
+		public ValueConstrainedArrayList Classes
 		{
 			get { return this.classes;  }
 		}
 
-		public ValueConstrainedArrayList NestedDelegates
+		[XmlElement(ElementName = "delegate", Type = typeof(DelegateDoc))]
+		public ValueConstrainedArrayList Delegates
 		{
 			get { return this.delegates;  }
 		}
 
-		public ValueConstrainedArrayList NestedEnums
+		[XmlElement(ElementName = "enum", Type = typeof(EnumDoc))]
+		public ValueConstrainedArrayList Enums
 		{
 			get { return this.enums;  }
 		}
 
-		public ValueConstrainedArrayList NestedInterfaces
+		[XmlElement(ElementName = "interface", Type = typeof(InterfaceDoc))]
+		public ValueConstrainedArrayList Interfaces
 		{
 			get { return this.interfaces;  }
 		}
 
-		public ValueConstrainedArrayList NestedStructs
+		[XmlElement(ElementName = "struct", Type = typeof(StructDoc))]
+		public ValueConstrainedArrayList Structs
 		{
 			get { return this.structs;  }
 		}

@@ -20,9 +20,12 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 using System;
+using System.Reflection;
+using System.Xml.Serialization;
 
 namespace Mono.Doc.Core
 {
+	[XmlType(TypeName = "struct")]
 	public class StructDoc : AbstractClassStructDoc
 	{
 		public StructDoc(string name) : base(name)
@@ -31,6 +34,14 @@ namespace Mono.Doc.Core
 
 		public StructDoc() : this(string.Empty)
 		{
+		}
+
+		public StructDoc(Type t, AssemblyLoader loader) : base(t, loader)
+		{
+			if (!AssemblyLoader.IsStruct(t))
+			{
+				throw new ArgumentException("Structdoc Type must be a struct.", "t");
+			}
 		}
 	}
 }

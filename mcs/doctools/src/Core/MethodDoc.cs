@@ -20,9 +20,12 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 using System;
+using System.Reflection;
+using System.Xml.Serialization;
 
 namespace Mono.Doc.Core
 {
+	[XmlType(TypeName = "method")]
 	public class MethodDoc : AbstractMethodOperatorDoc
 	{
 		public MethodDoc(string name) : base(name)
@@ -30,6 +33,10 @@ namespace Mono.Doc.Core
 		}
 
 		public MethodDoc() : this(string.Empty)
+		{
+		}
+
+		public MethodDoc(MethodInfo m, AssemblyLoader loader) : base(m, loader)
 		{
 		}
 	}

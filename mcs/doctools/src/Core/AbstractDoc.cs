@@ -21,6 +21,7 @@
 
 using System;
 using System.Collections.Specialized;
+using System.Reflection;
 using System.Xml.Serialization;
 
 namespace Mono.Doc.Core
@@ -30,20 +31,26 @@ namespace Mono.Doc.Core
 		protected string           name;
 		protected string           summary;
 		protected string           remarks;
-		protected string           language;
 		protected StringCollection seeAlso;
+
+		public static readonly string TODO = "Documentation forthcoming.";
 
 		public AbstractDoc(string name)
 		{
 			this.name     = name;
 			this.summary  = string.Empty;
 			this.remarks  = string.Empty;
-			this.language = string.Empty;
 			this.seeAlso  = new StringCollection();
 		}
 
 		public AbstractDoc() : this(string.Empty)
 		{
+		}
+
+		public AbstractDoc(MemberInfo m, AssemblyLoader loader) : this(TypeNameHelper.GetName(m))
+		{
+			this.summary = AbstractDoc.TODO;
+			this.remarks = AbstractDoc.TODO;
 		}
 
 		[XmlElement(ElementName = "summary")]
@@ -67,7 +74,7 @@ namespace Mono.Doc.Core
 			set { this.name = value; }
 		}
 
-		// TODO: correct xml serialization
+		[XmlElement(ElementName = "seealso")]
 		public StringCollection SeeAlso
 		{
 			get { return this.seeAlso; }

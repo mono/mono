@@ -20,9 +20,12 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 using System;
+using System.Xml.Serialization;
 
 namespace Mono.Doc.Core
 {
+
+	[XmlType(TypeName = "field")]
 	public class FieldDoc : AbstractDoc
 	{
 		public FieldDoc(string name) : base(name)

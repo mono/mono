@@ -7,8 +7,8 @@ namespace Mono.Doc.Core
 	[XmlRoot(ElementName="monodoc")]
 	public class MonodocFile
 	{
-		private string    language  = "en";
-		private ArrayList types     = new ArrayList();
+		private string    language = "en";
+		private ArrayList types    = new ArrayList();
 
 		public MonodocFile()
 		{
@@ -21,8 +21,9 @@ namespace Mono.Doc.Core
 			set { language = value; }
 		}
 
-		// TODO: add structs and delegates as XmlArrayItems
-		[XmlElement(Type = typeof(ClassDoc)), XmlElement(Type = typeof(InterfaceDoc))]
+		[XmlElement(Type = typeof(ClassDoc)), XmlElement(Type = typeof(InterfaceDoc)),
+		 XmlElement(Type = typeof(StructDoc)), XmlElement(Type = typeof(DelegateDoc)),
+		 XmlElement(Type = typeof(EnumDoc))]
 		public ArrayList Types
 		{
 			get { return types; }

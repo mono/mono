@@ -20,26 +20,57 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 using System;
-using System.Collections.Specialized;
+using System.Reflection;
+using System.Xml.Serialization;
 
 namespace Mono.Doc.Core
 {
+	[XmlType(TypeName = "enum")]
 	public class EnumDoc : AbstractTypeDoc
 	{
-		private StringDictionary members;
+		private ValueConstrainedArrayList members = new ValueConstrainedArrayList(typeof(EnumDoc.Member));
 		
 		public EnumDoc(string name) : base(name)
 		{
-			this.members = new StringDictionary();
 		}
 
 		public EnumDoc() : this(string.Empty)
 		{
 		}
 
-		public StringDictionary Members
+		public EnumDoc(Type t, AssemblyLoader loader) : base(t, loader)
+		{
+			if (!t.IsEnum)
+			{
+				throw new ArgumentException("EnumDoc Type must be an enum.", "t");
+			}
+
+			foreach (FieldInfo m in t.GetFields())
+			{
+				this.Members.Add(new EnumDoc.Member(m.Name, AbstractDoc.TODO));
+			}
+		}
+
+		[XmlElement(ElementName = "member", Type = typeof(EnumDoc.Member))]
+		public ValueConstrainedArrayList Members
 		{
 			get { return this.members; }
+		}
+
+
+		[XmlType(TypeName = "member")]
+		public struct Member
+		{
+			[XmlAttribute(AttributeName = "name")]
+			public string Name;
+			[XmlText]
+			public string Description;
+
+			public Member(string name, string description)
+			{
+				Name        = name;
+				Description = description;
+			}
 		}
 	}
 }

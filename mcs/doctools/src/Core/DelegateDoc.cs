@@ -20,24 +20,25 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 using System;
-using System.Collections.Specialized;
+using System.Xml.Serialization;
 
 namespace Mono.Doc.Core
 {
+	[XmlType(TypeName = "delegate")]
 	public class DelegateDoc : AbstractTypeDoc
 	{
-		private StringDictionary parameters;
+		private ValueConstrainedArrayList parameters = new ValueConstrainedArrayList(typeof(ParameterDoc));
 
 		public DelegateDoc(string name) : base(name)
 		{
-			this.parameters = new StringDictionary();
 		}
 
 		public DelegateDoc() : this (string.Empty)
 		{
 		}
 
-		public StringDictionary Parameters
+		[XmlElement(ElementName = "param", Type = typeof(ParameterDoc))]
+		public ValueConstrainedArrayList Parameters
 		{
 			get { return this.parameters; }
 		}

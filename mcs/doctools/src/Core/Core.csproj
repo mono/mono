@@ -192,6 +192,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "ParameterDoc.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "PropertyDoc.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

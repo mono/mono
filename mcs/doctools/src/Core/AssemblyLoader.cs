@@ -124,6 +124,26 @@ namespace Mono.Doc.Core
 
 		#endregion // Private Instance Methods
 
+		#region Public Static Methods
+
+		public static bool IsClass(Type t)
+		{
+			return (t.IsClass && !IsDelegate(t)) ? true : false;
+		}
+
+		public static bool IsDelegate(Type t)
+		{
+			return t.BaseType.FullName == "System.Delegate" ||
+				t.BaseType.FullName == "System.MulticastDelegate";
+		}
+
+		public static bool IsStruct(Type t)
+		{
+			return (t.IsValueType && !t.IsEnum) ? true : false;
+		}
+
+		#endregion
+
 		#region Public Instance Methods
 
 		public Type[] GetTypes()

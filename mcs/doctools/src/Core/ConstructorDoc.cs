@@ -21,30 +21,42 @@
 
 using System;
 using System.Collections.Specialized;
+using System.Reflection;
+using System.Xml.Serialization;
 
 namespace Mono.Doc.Core
 {
+	[XmlType(TypeName = "constructor")]
 	public class ConstructorDoc : AbstractDoc
 	{
-		public ValueConstrainedArrayList exceptions;
-		public StringDictionary parameters;
+		private ValueConstrainedArrayList exceptions = new ValueConstrainedArrayList(typeof(ExceptionDoc));
+		private ValueConstrainedArrayList parameters = new ValueConstrainedArrayList(typeof(ParameterDoc));
 
 		public ConstructorDoc(string name) : base(name)
 		{
-			this.exceptions = new ValueConstrainedArrayList(Type.GetType("Mono.Doc.Core.ExceptionDoc", true));
-			this.parameters = new StringDictionary();
 		}
 
 		public ConstructorDoc() : this(string.Empty)
 		{
 		}
 
+		public ConstructorDoc(ConstructorInfo cons, AssemblyLoader loader) : base(cons, loader)
+		{
+			// parameters
+			foreach (ParameterInfo param in cons.GetParameters())
+			{
+				this.Parameters.Add(new ParameterDoc(param.Name, AbstractDoc.TODO));
+			}
+		}
+
+		[XmlElement(ElementName = "exception", Type = typeof(ExceptionDoc))]
 		public ValueConstrainedArrayList Exceptions
 		{
 			get { return this.exceptions; }
 		}
 
-		public StringDictionary Parameters
+		[XmlElement(ElementName = "param", Type = typeof(ParameterDoc))]
+		public ValueConstrainedArrayList Parameters
 		{
 			get { return this.parameters; }
 		}
