@@ -1,5 +1,9 @@
 2003-05-06  Ville Palo <vi64pa@kolumbus.fi>
 
+	* DirectoryInfoTest.cs: Removed OS-specific test
+	
+2003-05-06  Ville Palo <vi64pa@kolumbus.fi>
+
 	* DirectoryTest: Fixed Utc errors
 	* FileTest: Fixes Utc errors. Now these tests works in other 
 	timezones too.

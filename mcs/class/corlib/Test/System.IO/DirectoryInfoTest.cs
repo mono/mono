@@ -352,7 +352,6 @@ namespace MonoTests.System.IO
 				Assertion.AssertEquals ("test#03", 2, info.GetFiles ("file*file").Length);
 				Assertion.AssertEquals ("test#04", 3, info.GetFiles ("*file*").Length);
 				Assertion.AssertEquals ("test#05", 2, info.GetFiles ("file?20file").Length);
-				Assertion.AssertEquals ("test#06", 3, info.GetFiles ("*.abc").Length);
 				Assertion.AssertEquals ("test#07", 1, info.GetFiles ("*.abcd").Length);
 				Assertion.AssertEquals ("test#08", 2, info.GetFiles ("*.abcd*").Length);				                        
 			} finally {
