@@ -133,10 +133,8 @@ namespace System.Windows.Forms {
 			manager = control.BindingContext [data_source, property_name];
 			manager.AddBinding (this);
 
-			PropertyDescriptor pd = TypeDescriptor.GetProperties (manager.Current).Find (data_member, false);
-			prop_desc.SetValue (control, pd.GetValue (manager.Current));
-
 			PullData ();
+			PushData ();
 		}
 
 		internal void PushData ()
@@ -146,7 +144,7 @@ namespace System.Windows.Forms {
 
 		internal void PullData ()
 		{
-			PropertyDescriptor pd = TypeDescriptor.GetProperties (manager.Current).Find (data_member, false);
+			PropertyDescriptor pd = TypeDescriptor.GetProperties (manager.Current).Find (data_member, true);
 			data = pd.GetValue (manager.Current);
 		}
 

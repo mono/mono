@@ -1,3 +1,8 @@
+2005-02-02  Jackson Harper  <jackson@ximian.com>
+
+	* Binding.cs: Make property searches case-insensitive. Eliminate
+	some duplicated code.
+
 2005-03-01  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* ComboBox.cs: 
