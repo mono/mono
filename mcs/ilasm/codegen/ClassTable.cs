@@ -135,7 +135,12 @@ namespace Mono.ILASM {
                 public ClassDef AddDefinition (string name_space, string name,
                         TypeAttr attr, Location location)
                 {
-                        string full_name = String.Format ("{0}.{1}", name_space, name);
+                        string full_name;
+
+                        if (name_space != null)
+                                full_name = String.Format ("{0}.{1}", name_space, name);
+                        else
+                                full_name = name;
 
                         ClassTableItem item = (ClassTableItem) table[full_name];
 
@@ -154,7 +159,12 @@ namespace Mono.ILASM {
                 public ClassDef AddDefinition (string name_space, string name,
                         TypeAttr attr, Class parent, Location location)
                 {
-                        string full_name = String.Format ("{0}.{1}", name_space, name);
+                        string full_name;
+
+                        if (name_space != null)
+                                full_name = String.Format ("{0}.{1}", name_space, name);
+                        else
+                                full_name = name;
 
                         ClassTableItem item = (ClassTableItem) table[full_name];
 
