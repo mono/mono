@@ -58,7 +58,7 @@ assemblies_DATA =	\
 	System.Windows.Forms.dll				\
 	System.Xml.dll
 
-monobins_DATA = mcs.exe mbas.exe monoresgen.exe secutil.exe ilasm.exe cilc.exe
+monobins_DATA = mcs.exe mbas.exe monoresgen.exe secutil.exe ilasm.exe cilc.exe xsd.exe
 
 EXTRA_DIST = $(monobins_DATA) $(assemblies_DATA)
 
@@ -78,6 +78,7 @@ $(monobins_DATA):
 	-cp $(top_srcdir)/../mcs/monoresgen/monoresgen.exe . || cp $(monobinsdir)/monoresgen.exe . 
 	-cp $(top_srcdir)/../mcs/ilasm/ilasm.exe . || cp $(monobinsdir)/ilasm.exe .
 	-cp $(top_srcdir)/../mcs/tools/cilc/cilc.exe . || cp $(monobinsdir)/cilc.exe .
+	-cp $(top_srcdir)/../mcs/tools/mono-xsd/xsd.exe . || cp $(monobinsdir)/xsd.exe .
 
 dist-hook:
 	for i in $(monobins_DATA) $(assemblies_DATA); do	\
