@@ -49,7 +49,7 @@ namespace System.Runtime.Remoting.Messaging {
 		}
 
 		[MonoTODO]
-		public object SetRootObject (object obj)
+		public void SetRootObject (object obj)
 		{
 			if (obj == null)
 				throw new ArgumentNullException ();
