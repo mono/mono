@@ -1,3 +1,11 @@
+2003-02-25  Alan Tam <Tam@SiuLung.com>
+
+	* DataColumn.cs: Fixed wrong storage representation of Expression
+	(using empty string instead of null) so that ToString() returns nothing.
+	* DataColumnCollection.cs: Reimplemented GetNextDefaultColumnName so that
+	auto column naming now works as expected. Reimplemented some Add methods
+	to eliminate code duplication.
+
 2003-02-19  Ville Palo <vi64pa@kolumbus.fi>
 
 	* DataTable.cs: DataTable.CaseSensitive follows parent 

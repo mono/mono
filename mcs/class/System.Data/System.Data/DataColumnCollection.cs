@@ -21,16 +21,12 @@ namespace System.Data {
 	[DefaultEvent ("CollectionChanged")]
 	public class DataColumnCollection : InternalDataCollectionBase
 	{
-		// The defaultNameIndex is used to create a default name for a column if one wasn't given.
-		private int defaultNameIndex;
-
 		//table should be the DataTable this DataColumnCollection belongs to.
 		private DataTable parentTable = null;
 
 		// Internal Constructor.  This Class can only be created from other classes in this assembly.
 		internal DataColumnCollection(DataTable table):base()
 		{
-			defaultNameIndex = 1;
 			parentTable = table;
 		}
 
@@ -105,8 +101,10 @@ namespace System.Data {
 
 		private string GetNextDefaultColumnName ()
 		{
-			string defColumnName = "Column" + defaultNameIndex.ToString();
-			defaultNameIndex++;
+			string defColumnName = "Column";
+			for (int index = 1; Contains (defColumnName); ++index) {
+				defColumnName = "Column" + index;
+			}
 			return defColumnName;
 		}
 
@@ -116,37 +114,32 @@ namespace System.Data {
 		/// <param name="column">The DataColumn to add.</param>
 		[MonoTODO]
 		public void Add(DataColumn column)
-		{	
-			if(column.ColumnName.Equals(String.Empty)) {
+		{
+			if (column.ColumnName.Equals(String.Empty))
+			{
 				column.ColumnName = GetNextDefaultColumnName ();
 			}
-					
-			//FIXME:
-			if(Contains(column.ColumnName))
+			else if (Contains(column.ColumnName))
 			{
 				throw new DuplicateNameException("A column named " + column.ColumnName + " already belongs to this DataTable.");
 			}
-			else
+			CollectionChangeEventArgs e = new CollectionChangeEventArgs(CollectionChangeAction.Add, this);
+
+			column.SetTable (parentTable);
+			int ordinal = base.List.Add(column);
+			column.SetOrdinal (ordinal);
+
+			//add constraints if neccesary
+
+			if (column.Unique)
 			{
-				CollectionChangeEventArgs e = new CollectionChangeEventArgs(CollectionChangeAction.Add, this);
-				
-				column.SetTable( parentTable);
-				int ordinal = base.List.Add(column);
-				column.SetOrdinal (ordinal);
-				
-				//add constraints if neccesary
-
-				if(column.Unique)
-				{
-					UniqueConstraint uc = new UniqueConstraint(column);
-					parentTable.Constraints.Add(uc);
-				}
-				
-				//TODO: add missing constraints. i.e. Primary/Foreign keys
-
-				OnCollectionChanged(e);
-				return;
+				UniqueConstraint uc = new UniqueConstraint(column);
+				parentTable.Constraints.Add(uc);
 			}
+
+			//TODO: add missing constraints. i.e. Primary/Foreign keys
+
+			OnCollectionChanged (e);
 		}
 
 		/// <summary>
@@ -156,29 +149,14 @@ namespace System.Data {
 		/// <returns>The newly created DataColumn.</returns>
 		public virtual DataColumn Add(string columnName)
 		{
-			
-			//FIXME: this wont work.  If the user decides to add a column named
-			//"ColumnXX" where XX is a number these two will conflict.
 			if (columnName == null || columnName == String.Empty)
 			{
 				columnName = GetNextDefaultColumnName ();
 			}
 			
-			if(Contains(columnName))
-			{
-				throw new DuplicateNameException("A column named " + columnName + " already belongs to this DataTable.");
-			}
-			else
-			{
-				DataColumn column = new DataColumn(columnName);
-				
-				CollectionChangeEventArgs e = new CollectionChangeEventArgs(CollectionChangeAction.Add, this);
-				column.SetTable(parentTable);				
-				int ordinal = base.List.Add(column);
-				column.SetOrdinal( ordinal );
-				OnCollectionChanged(e);
-				return column;
-			}
+			DataColumn column = new DataColumn(columnName);
+			Add (column);
+			return column;
 		}
 
 		/// <summary>
@@ -191,25 +169,12 @@ namespace System.Data {
 		{
 			if (columnName == null || columnName == "")
 			{
-				//FIXME: this wont work.  If the user decides to add a column named
-				//"ColumnXX" where XX is a number these two will conflict.
 				columnName = GetNextDefaultColumnName ();
 			}
-
-			if(Contains(columnName))
-			{
-				throw new DuplicateNameException("A column named " + columnName + " already belongs to this DataTable.");
-			}
-			else
-			{
-				DataColumn column = new DataColumn(columnName, type);
-				CollectionChangeEventArgs e = new CollectionChangeEventArgs(CollectionChangeAction.Add, this);
-				column.SetTable(parentTable);
-				int ordinal = base.List.Add(column);
-				column.SetOrdinal( ordinal );				
-				OnCollectionChanged(e);
-				return column;
-			}
+			
+			DataColumn column = new DataColumn(columnName, type);
+			Add (column);
+			return column;
 		}
 
 		/// <summary>
@@ -219,28 +184,16 @@ namespace System.Data {
 		/// <param name="type">The DataType of the new column.</param>
 		/// <param name="expression">The expression to assign to the Expression property.</param>
 		/// <returns>The newly created DataColumn.</returns>
-		public virtual DataColumn Add(string columnName, Type type,	string expression)
+		public virtual DataColumn Add(string columnName, Type type, string expression)
 		{
-			//FIXME: See Add Logic
 			if (columnName == null || columnName == "")
 			{
 				columnName = GetNextDefaultColumnName ();
 			}
 			
-			if(Contains(columnName))
-			{
-				throw new DuplicateNameException("A column named " + columnName + " already belongs to this DataTable.");
-			}
-			else
-			{
-				DataColumn column = new DataColumn(columnName, type, expression);
-				CollectionChangeEventArgs e = new CollectionChangeEventArgs(CollectionChangeAction.Add, this);
-				column.SetTable(parentTable);
-				int ordinal = base.List.Add(column);
-				column.SetOrdinal( ordinal );
-				OnCollectionChanged(e);
-				return column;
-			}
+			DataColumn column = new DataColumn(columnName, type, expression);
+			Add (column);
+			return column;
 		}
 
 		/// <summary>

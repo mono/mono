@@ -56,7 +56,7 @@ namespace System.Data {
 		private string _columnName = null;
 		private Type _dataType = Type.GetType ("System.String");
 		private object _defaultValue = DBNull.Value;
-		private string expression = "";
+		private string expression = null;
 		private PropertyCollection _extendedProperties = new PropertyCollection ();
 		private int maxLength = -1; //-1 represents no length limit
 		private string nameSpace = "";
@@ -168,7 +168,7 @@ namespace System.Data {
 				if(value == true)
 				{
 					//Can't be true if this is a computed column
-					if(!Expression.Equals(String.Empty))
+					if (Expression != null)
 					{
 						throw new ArgumentException("Can not Auto Increment a computed column."); 
 					}
