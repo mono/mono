@@ -181,7 +181,6 @@ namespace System.Xml
 			if (!openWriter) {
 				throw new InvalidOperationException ("The Writer is closed.");
 			}
-
 			if ((documentStarted == true) && (formatting == Formatting.Indented) && (!IndentingOverriden)) {
 				indentFormatting = "\r\n";
 				if (indentLevel > 0) {
@@ -350,13 +349,11 @@ namespace System.Xml
 				throw new InvalidOperationException("There was no XML start tag open.");
 
 			indentLevel--;
-
 			CheckState ();
 
 			if (openStartElement) {
 				if (openAttribute)
 					WriteEndAttribute ();
-
 				if (fullEndElement)
 					w.Write ("></{0}>", ((XmlTextWriterOpenElement)openElements.Peek ()).Name);
 				else
@@ -523,7 +520,7 @@ namespace System.Xml
 
 			CheckState ();
 			CloseStartElement ();
-
+			
 			string formatXmlns = "";
 			string formatPrefix = "";
 
@@ -549,6 +546,7 @@ namespace System.Xml
 					formatPrefix = prefix + ":";
 				}
 			}
+
 			w.Write ("{0}<{1}{2}{3}", indentFormatting, formatPrefix, localName, formatXmlns);
 
 			openElements.Push (new XmlTextWriterOpenElement (formatPrefix + localName));
@@ -596,8 +594,10 @@ namespace System.Xml
 				}
 
 				if (!openAttribute)
+				{
+					IndentingOverriden = true;
 					CloseStartElement ();
-
+				}
 				if (!openXmlLang && !openXmlSpace)
 					w.Write (text);
 				else 
@@ -620,8 +620,6 @@ namespace System.Xml
 					}
 				}
 			}
-
-			IndentingOverriden = true;
 		}
 
 		[MonoTODO]

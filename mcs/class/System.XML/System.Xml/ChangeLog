@@ -1,5 +1,10 @@
 2002-07-06  Ajay kumar Dwivedi <adwiv@yahoo.com>
 
+	* XmlTextWriter: Fixed Indentation. IndentationOverridden should
+		not be set when inside a attribute.
+
+2002-07-06  Ajay kumar Dwivedi <adwiv@yahoo.com>
+
 	* XmlTextWriter: In WriteStartElement, if namespace is null and 
 		prefix is null|empty do not write out xmlns=""
 	
