@@ -1,3 +1,9 @@
+
+Mon Feb 21 16:17:14 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* assembly.c: special case mscorlib.dll (bug#72536),
+	patch from Carlos Alberto Cortez.
+
 2005-02-20  Zoltan Varga  <vargaz@freemail.hu>
 
 	* threads-types.h threads.c: Fix build bustage.
