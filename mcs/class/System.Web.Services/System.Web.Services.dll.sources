@@ -88,10 +88,16 @@ System.Web.Services.Protocols/AnyReturnReader.cs
 System.Web.Services.Protocols/HtmlFormParameterReader.cs
 System.Web.Services.Protocols/HtmlFormParameterWriter.cs
 System.Web.Services.Protocols/HttpGetClientProtocol.cs
+System.Web.Services.Protocols/HttpGetTypeStubInfo.cs
+System.Web.Services.Protocols/HttpGetWebServiceHandler.cs
 System.Web.Services.Protocols/HttpMethodAttribute.cs
 System.Web.Services.Protocols/HttpPostClientProtocol.cs
+System.Web.Services.Protocols/HttpPostTypeStubInfo.cs
+System.Web.Services.Protocols/HttpPostWebServiceHandler.cs
 System.Web.Services.Protocols/HttpServerProtocol.cs
 System.Web.Services.Protocols/HttpSimpleClientProtocol.cs
+System.Web.Services.Protocols/HttpSimpleTypeStubInfo.cs
+System.Web.Services.Protocols/HttpSimpleWebServiceHandler.cs
 System.Web.Services.Protocols/HttpSoapWebServiceHandler.cs
 System.Web.Services.Protocols/HttpWebClientProtocol.cs
 System.Web.Services.Protocols/LogicalMethodInfo.cs
@@ -129,6 +135,7 @@ System.Web.Services.Protocols/SoapServerProtocol.cs
 System.Web.Services.Protocols/SoapServiceRoutingStyle.cs
 System.Web.Services.Protocols/SoapUnknownHeader.cs
 System.Web.Services.Protocols/TextReturnReader.cs
+System.Web.Services.Protocols/TypeStubManager.cs
 System.Web.Services.Protocols/UrlEncodedParameterWriter.cs
 System.Web.Services.Protocols/UrlParameterReader.cs
 System.Web.Services.Protocols/UrlParameterWriter.cs

@@ -1,5 +1,16 @@
 2003-09-28  Lluis Sanchez Gual  <lluis@ximian.com>
 
+	* System.Web.Services.dll.sources: Added 
+		System.Web.Services.Protocols/HttpGetTypeStubInfo.cs,
+		System.Web.Services.Protocols/HttpGetWebServiceHandler.cs,
+		System.Web.Services.Protocols/HttpPostTypeStubInfo.cs,
+		System.Web.Services.Protocols/HttpPostWebServiceHandler.cs,
+		System.Web.Services.Protocols/HttpSimpleTypeStubInfo.cs,
+		System.Web.Services.Protocols/HttpSimpleWebServiceHandler.cs,
+		System.Web.Services.Protocols/TypeStubManager.cs
+
+2003-09-28  Lluis Sanchez Gual  <lluis@ximian.com>
+
 	* System.Web.Services.dll.sources: Added SoapHttpTransportImporter.cs.
 
 2003-09-14  Lluis Sanchez Gual  <lluis@ximian.com>
