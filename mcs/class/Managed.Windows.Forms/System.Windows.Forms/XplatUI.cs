@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.11 $
+// $Revision: 1.12 $
 // $Modtime: $
 // $Log: XplatUI.cs,v $
+// Revision 1.12  2004/08/13 18:53:14  pbartok
+// - Changed GetWindowPos to also provide client area size
+//
 // Revision 1.11  2004/08/12 22:59:03  pbartok
 // - Implemented method to get current mouse position
 //
@@ -221,8 +224,8 @@ namespace System.Windows.Forms {
 			driver.SetWindowPos(handle, x, y, width, height);
 		}
 
-		internal static void GetWindowPos(IntPtr handle, out int x, out int y, out int width, out int height) {
-			driver.GetWindowPos(handle, out x, out y, out width, out height);
+		internal static void GetWindowPos(IntPtr handle, out int x, out int y, out int width, out int height, out int client_width, out int client_height) {
+			driver.GetWindowPos(handle, out x, out y, out width, out height, out client_width, out client_height);
 		}
 
 		internal static void Invalidate(IntPtr handle, Rectangle rc, bool clear) {
