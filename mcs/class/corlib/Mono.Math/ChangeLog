@@ -1,3 +1,9 @@
+2004-02-09  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* BigInteger.cs: Added INSIDE_CORLIB to define ModulusRing as 
+	internal. Without this the unit tests for Mono.Math (now in
+	Mono.Security assembly) wont compile (see bugzilla #44845).
+
 2003-11-20 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* BigInteger.cs: Fix prob. prime test for small numbers (Pieter Philippaerts)
