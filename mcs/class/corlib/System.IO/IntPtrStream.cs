@@ -106,7 +106,7 @@ namespace System.IO {
 			if (position >= size)
 				return -1;
 
-			if (handle == MonoIO.InvalidHandle)
+			if (closed)
 				throw new ObjectDisposedException ("Stream has been closed");
 
 			unsafe {
@@ -120,7 +120,7 @@ namespace System.IO {
 			if (offset > (long) Int32.MaxValue)
 				throw new ArgumentOutOfRangeException ("Offset out of range. " + offset);
 
-			if (handle == MonoIO.InvalidHandle)
+			if (closed)
 				throw new ObjectDisposedException ("Stream has been closed");
 
 			int ref_point;

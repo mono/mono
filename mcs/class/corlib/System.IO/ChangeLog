@@ -1,5 +1,7 @@
 2004-01-19  Zoltan Varga  <vargaz@freemail.hu>
 
+	* IntPtrStream.cs: Fix build bustage.
+	
 	* IntPtrStream.cs: Add a 'Closed' event. Also throw exceptions after
 	the stream is closed.
 
