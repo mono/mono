@@ -42,6 +42,8 @@ SOURCES =				\
         codegen/GlobalFieldRef.cs       \
         codegen/FieldRef.cs             \
         codegen/FieldInstr.cs           \
+	codegen/LdtokenInstr.cs         \
+        codegen/CalliInstr.cs           \
 	parser/ILParser.cs		\
 	parser/ScannerAdapter.cs	\
 	scanner/ILReader.cs		\
