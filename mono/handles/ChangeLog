@@ -1,3 +1,8 @@
+2003-06-05  Dick Porter  <dick@ximian.com>
+
+	* hps.c:
+	* shmdel.c:
+	* scratch.c: Update to new api
 
 Sat Jun 1 13:54:29 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
