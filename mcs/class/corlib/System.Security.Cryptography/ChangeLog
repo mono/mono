@@ -1,3 +1,9 @@
+2002-11-02  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* SignatureDescription.cs: Updated class to match unit test results
+	* X509Certificate.cs: REMOVED! Wrong namespace. An almost complete
+	implementation is now in System.Security.Cryptography.X509Certificates
+
 2002-11-01  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* bouncycastle.txt: Bouncy Castle JCE License.
