@@ -1,3 +1,6 @@
+2002-03-07  Nick Drochak  <ndrochak@gol.com>
+
+	* BindingFlags.cs: Add missing enum values.  Thanks CorCompare.
 
 Tue Mar 5 20:33:14 CET 2002 Paolo Molaro <lupus@ximian.com>
 

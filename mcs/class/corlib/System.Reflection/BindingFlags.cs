@@ -18,6 +18,8 @@ namespace System.Reflection {
 	[Flags]
 	public enum BindingFlags {
 
+		Default = 0,
+
 		/// <summary>
 		/// </summary>
 		IgnoreCase = 0x00000001,
@@ -42,6 +44,8 @@ namespace System.Reflection {
 		/// </summary>
 		NonPublic = 0x00000020,
 
+		FlattenHierarchy = 0x00000040,
+		
 		/// <summary>
 		/// </summary>
 		InvokeMethod = 0x00000100,
@@ -66,6 +70,8 @@ namespace System.Reflection {
 		/// </summary>
 		SetProperty = 0x00002000,
 
+		PutDispProperty = 0x00004000,
+
 		/// <summary>
 		/// </summary>
 		ExactBinding = 0x00010000,
@@ -77,6 +83,8 @@ namespace System.Reflection {
 		/// <summary>
 		/// </summary>
 		OptionalParamBinding = 0x00040000,
+
+		IgnoreReturn = 0x01000000
 	} // BindingFlags
 
 } // System.Reflection
