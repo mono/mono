@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.15 $
+// $Revision: 1.16 $
 // $Modtime: $
 // $Log: XplatUIWin32.cs,v $
+// Revision 1.16  2004/08/13 19:00:15  jordi
+// implements PointToClient (ScreenToClient)
+//
 // Revision 1.15  2004/08/13 18:53:57  pbartok
 // - Changed GetWindowPos to also provide client area size
 // - Fixed broken prototypes for several win32 functions
@@ -684,6 +687,19 @@ Console.WriteLine("Creating window at {0}:{1} {2}x{3}", cp.X, cp.Y, cp.Width, cp
 			y=pt.y;
 		}
 
+		internal override void ScreenToClient(IntPtr handle, ref int x, ref int y)
+		{
+			POINT pnt;			
+
+			pnt.x = x;
+			pnt.y = y;
+			Win32ScreenToClient (handle, ref pnt);
+
+			x = pnt.x;
+			y = pnt.y;
+			
+		}
+
 		// Santa's little helper
 		static void Where() {
 			Console.WriteLine("Here: {0}", new StackTrace().ToString());
@@ -770,7 +786,7 @@ Console.WriteLine("Creating window at {0}:{1} {2}x{3}", cp.X, cp.Y, cp.Width, cp
 		private extern static IntPtr Win32GetClientRect(IntPtr hWnd, out RECT rect);
 
 		[DllImport ("user32.dll", EntryPoint="ScreenToClient", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
-		private extern static IntPtr Win32ScreenToClient(IntPtr hWnd, ref POINT pt);
+		private extern static bool Win32ScreenToClient(IntPtr hWnd, ref POINT pt);
 
 		[DllImport ("user32.dll", EntryPoint="GetParent", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
 		private extern static IntPtr Win32GetParent(IntPtr hWnd);

@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.12 $
+// $Revision: 1.13 $
 // $Modtime: $
 // $Log: XplatUIDriver.cs,v $
+// Revision 1.13  2004/08/13 19:00:15  jordi
+// implements PointToClient (ScreenToClient)
+//
 // Revision 1.12  2004/08/13 18:53:14  pbartok
 // - Changed GetWindowPos to also provide client area size
 //
@@ -160,6 +163,7 @@ namespace System.Windows.Forms {
 		internal abstract bool CalculateWindowRect(IntPtr hWnd, ref Rectangle ClientRect, int Style, bool HasMenu, out Rectangle WindowRect);
 
 		internal abstract void GetCursorPos(IntPtr handle, ref int x, ref int y);
+		internal abstract void ScreenToClient(IntPtr handle, ref int x, ref int y);
 
 		internal abstract void GrabWindow(IntPtr hWnd);
 		internal abstract void ReleaseWindow(IntPtr hWnd);

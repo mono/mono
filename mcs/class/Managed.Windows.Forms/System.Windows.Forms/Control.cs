@@ -29,9 +29,12 @@
 //	Jaak Simm		jaaksimm@firm.ee
 //	John Sohn		jsohn@columbus.rr.com
 //
-// $Revision: 1.26 $
+// $Revision: 1.27 $
 // $Modtime: $
 // $Log: Control.cs,v $
+// Revision 1.27  2004/08/13 19:00:15  jordi
+// implements PointToClient (ScreenToClient)
+//
 // Revision 1.26  2004/08/13 18:52:07  pbartok
 // - Added Dispose() and destructor
 // - Fixed resizing and bounds calculation
@@ -549,8 +552,10 @@ namespace System.Windows.Forms
 		}
 
 		public static Point MousePosition {
-			get {
-				return XplatUI.State.MousePosition;
+			get {				
+				int x = 0, y = 0;
+				XplatUI.GetCursorPos (IntPtr.Zero, ref x, ref y);
+				return new Point (x, y);
 			}
 		}
 		#endregion	// Public Static Properties
@@ -1451,6 +1456,17 @@ namespace System.Windows.Forms
 		{
 			layout_suspended++;
 		}
+
+		public Point PointToClient (Point p)
+		{
+			int x = p.X;
+			int y = p.Y;
+
+			XplatUI.ScreenToClient (Handle, ref x, ref y);
+
+			return new Point (x, y);
+		}
+
 
 		[MonoTODO]
 		protected virtual void WndProc(ref Message m) {

@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.21 $
+// $Revision: 1.22 $
 // $Modtime: $
 // $Log: XplatUIX11.cs,v $
+// Revision 1.22  2004/08/13 19:00:15  jordi
+// implements PointToClient (ScreenToClient)
+//
 // Revision 1.21  2004/08/13 18:52:59  pbartok
 // - Added generation of WM_POSCHANGED
 // - Changed GetWindowPos to also provide client area size
@@ -783,8 +786,22 @@ Console.WriteLine("ConfigureNotify: Width:{0} Height:{1}", xevent.ConfigureEvent
 			}
 		}
 
+		internal override void ScreenToClient(IntPtr handle, ref int x, ref int y)
+		{
+			int dest_x_return = 0;
+			int dest_y_return = 0;
+			IntPtr child;
+
+			XTranslateCoordinates (DisplayHandle, root_window, handle, x, y, out dest_x_return, 
+                            out dest_y_return, out child);			
+
+			x = dest_x_return;
+			y = dest_y_return;
+		}
+
 		// Santa's little helper
-		static void Where() {
+		static void Where() 
+		{
 			Console.WriteLine("Here: {0}", new StackTrace().ToString());
 		}
 		#endregion	// Public Static Methods
@@ -900,6 +917,10 @@ Console.WriteLine("ConfigureNotify: Width:{0} Height:{1}", xevent.ConfigureEvent
 
 		[DllImport ("libX11.so", EntryPoint="XQueryPointer")]
 		internal extern static bool XQueryPointer(IntPtr display, IntPtr window, out IntPtr root, out IntPtr child, out int root_x, out int root_y, out int win_x, out int win_y, out int keys_buttons);
+
+		[DllImport ("libX11.so", EntryPoint="XTranslateCoordinates")]
+		internal extern static bool XTranslateCoordinates (IntPtr display, IntPtr src_w, IntPtr dest_w, int src_x, int src_y, out int intdest_x_return,  out int dest_y_return, out IntPtr child_return);
+		
 
 		// Drawing
 		[DllImport ("libX11.so", EntryPoint="XCreateGC")]
