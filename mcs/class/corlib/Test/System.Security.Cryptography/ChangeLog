@@ -1,3 +1,9 @@
+2005-01-04  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* CryptoStreamTest.cs: Undo some previous fixes that have changed from
+	2.0 Nov CTP. Stream chaining was working on Nov CTP but are failing 
+	again with Dec.
+
 2004-12-23  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* CryptoStreamTest.cs: Fixed tests to execute properly on 2.0 Nov CTP.
