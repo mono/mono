@@ -1,5 +1,9 @@
 2004-06-08  Martin Baulig  <martin@ximian.com>
 
+	* Makefile: Enable test-157.
+
+2004-06-08  Martin Baulig  <martin@ximian.com>
+
 	* test-269.cs: New test for varargs methods.
 
 2004-06-01  Marek Safar <marek.safar@seznam.cz>
