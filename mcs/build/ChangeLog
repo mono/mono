@@ -1,7 +1,11 @@
 2004-05-24  Raja R Harinath  <rharinath@novell.com>
 
+	* library.make (LIBRARY_COMPILE): New define.
+	($(the_lib)): Use $(LIBRARY_COMPILE) to compile $(the_lib).
+
 	* executable.make (PROGRAM_INSTALL_DIR): Allow makefile to specify
 	a different directory for installation.
+	(install-local, uninstall-local): Use it.
 
 2004-05-20  Raja R Harinath  <rharinath@novell.com>
 

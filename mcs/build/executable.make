@@ -28,7 +28,7 @@ install-local: $(PROGRAM)
 	$(INSTALL_BIN) $(PROGRAM) $(DESTDIR)$(PROGRAM_INSTALL_DIR)
 
 uninstall-local:
-	-rm -f $(DESTDIR)$(prefix)/bin/$(base_prog)
+	-rm -f $(DESTDIR)$(PROGRAM_INSTALL_DIR)/$(base_prog)
 
 clean-local:
 	-rm -f *.exe $(BUILT_SOURCES) $(CLEAN_FILES) $(pdb) $(stampfile) $(makefrag)

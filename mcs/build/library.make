@@ -95,10 +95,14 @@ dist-local: dist-default
 	    $(MKINSTALLDIRS) $$dest && cp $$f $$dest || exit 1 ; \
 	done
 
+ifndef LIBRARY_COMPILE
+LIBRARY_COMPILE = $(CSCOMPILE)
+endif
+
 # Fun with dependency tracking
 
 $(the_lib): $(makefrag) $(stampfile) $(response)
-	$(CSCOMPILE) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS) /target:library /out:$@ @$(response)
+	$(LIBRARY_COMPILE) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS) /target:library /out:$@ @$(response)
 
 # warning: embedded tab in the 'echo touch' line
 $(makefrag): $(sourcefile)
