@@ -1,3 +1,60 @@
+2005-03-13  Zoltan Varga  <vargaz@freemail.hu>
+
+	* iltests.il: Add new localloc test.
+
+	* mini-amd64.c: Handle large stack allocations the same way as on
+	windows if stack overflow handling is working.
+	
+	* mini-amd64.c: Allocate the signal stack using mmap.
+
+	* mini.c (sigsegv_signal_handler): Fix reading of context.
+
+	* mini-exceptions.c: Fix up stack overflow handling.
+
+	* mini-amd64.h mini-amd64.c: Fix up stack overflow handling.
+
+	* tramp-amd64.c (create_specific_trampoline): Optimize trampoline size.
+
+	* exceptions-amd64.c (mono_amd64_exceptions_init): Remove this.
+
+	* mini.h mini.c tramp-*.c: Move common trampoline code to mini.c.
+
+	* mini-x86.h mini-x86.c mini-amd64.h mini-amd64.c: Get rid of the
+	tramp_init functions as they are no longer needed.
+
+2005-03-12  Zoltan Varga  <vargaz@freemail.hu>
+
+	* tramp-amd64.c (mono_amd64_tramp_init): Fix typo.
+	
+	* tramp-amd64.c (mono_amd64_tramp_init): Init AOT trampoline as well.
+
+	* mini-amd64.h mini-amd64.c (mono_amd64_exceptions_init): Remove this.
+	
+	* mini.c mini-*.h: Remove OUT_OF_LINE_BBLOCK defines since all arches
+	support that now.
+
+	* mini-ops.h: Add OP_LMUL_IMM.
+
+	* mini.c jit-icalls.cmini-amd64.h mini-amd64.c cpu-amd64.md: Implement
+	long mul/div opcodes as intrinsic.
+
+	* mini-amd64.c (emit_call): Handle the case when the callee might be
+	an AOT method.
+
+2005-03-11  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-amd64.c (mono_arch_get_vcall_slot_addr): Reorder cases to be
+	extra safe.
+	
+	* mini-amd64.c (mono_arch_get_vcall_slot_addr): Fix ordering of cases.
+
+	* aot.c (mono_aot_load_method): Get rid of bogus make_writable call.
+
+2005-03-09  Ben Maurer  <bmaurer@ximian.com>
+
+	* mini.c (mono_codegen): Don't leak here, to help people running
+	monogrind.
+
 2005-03-08  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-amd64.c (mono_arch_output_basic_block): Fix int->float 

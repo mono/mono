@@ -13,6 +13,8 @@
 #include "mini.h"
 #include <string.h>
 #include <math.h>
+#include <unistd.h>
+#include <sys/mman.h>
 
 #include <mono/metadata/appdomain.h>
 #include <mono/metadata/debug-helpers.h>
@@ -667,9 +669,6 @@ mono_arch_cpu_init (void)
 	fpcw |= X86_FPCW_PREC_DOUBLE;
 	__asm__  __volatile__ ("fldcw %0\n": : "m" (fpcw));
 	__asm__  __volatile__ ("fnstcw %0\n": "=m" (fpcw));
-
-	mono_amd64_exceptions_init ();
-	mono_amd64_tramp_init ();
 }
 
 /*
@@ -1275,9 +1274,16 @@ emit_call (MonoCompile *cfg, guint8 *code, guint32 patch_type, gconstpointer dat
 		 * guaranteed to be at a 32 bit offset.
 		 */
 
-		if (patch_type != MONO_PATCH_INFO_ABS)
+		if (patch_type != MONO_PATCH_INFO_ABS) {
 			/* The target is in memory allocated using the code manager */
 			near_call = TRUE;
+
+			if ((patch_type == MONO_PATCH_INFO_METHOD) || (patch_type == MONO_PATCH_INFO_METHOD_JUMP)) {
+				if (((MonoMethod*)data)->klass->image->assembly->aot_module)
+					/* The callee might be an AOT method */
+					near_call = FALSE;
+			}
+		}
 		else {
 			if (mono_find_class_init_trampoline_by_addr (data))
 				near_call = TRUE;
@@ -2966,48 +2972,54 @@ static unsigned char*
 mono_emit_stack_alloc (guchar *code, MonoInst* tree)
 {
 	int sreg = tree->sreg1;
-#ifdef PLATFORM_WIN32
-	guint8* br[5];
+	int need_touch = FALSE;
 
-	NOT_IMPLEMENTED;
-
-	/*
-	 * Under Windows:
-	 * If requested stack size is larger than one page,
-	 * perform stack-touch operation
-	 */
-	/*
-	 * Generate stack probe code.
-	 * Under Windows, it is necessary to allocate one page at a time,
-	 * "touching" stack after each successful sub-allocation. This is
-	 * because of the way stack growth is implemented - there is a
-	 * guard page before the lowest stack page that is currently commited.
-	 * Stack normally grows sequentially so OS traps access to the
-	 * guard page and commits more pages when needed.
-	 */
-	amd64_test_reg_imm (code, sreg, ~0xFFF);
-	br[0] = code; x86_branch8 (code, X86_CC_Z, 0, FALSE);
-
-	br[2] = code; /* loop */
-	amd64_alu_reg_imm (code, X86_SUB, AMD64_RSP, 0x1000);
-	amd64_test_membase_reg (code, AMD64_RSP, 0, AMD64_RSP);
-	amd64_alu_reg_imm (code, X86_SUB, sreg, 0x1000);
-	amd64_alu_reg_imm (code, X86_CMP, sreg, 0x1000);
-	br[3] = code; x86_branch8 (code, X86_CC_AE, 0, FALSE);
-	amd64_patch (br[3], br[2]);
-	amd64_test_reg_reg (code, sreg, sreg);
-	br[4] = code; x86_branch8 (code, X86_CC_Z, 0, FALSE);
-	amd64_alu_reg_reg (code, X86_SUB, AMD64_RSP, sreg);
-
-	br[1] = code; x86_jump8 (code, 0);
-
-	amd64_patch (br[0], code);
-	amd64_alu_reg_reg (code, X86_SUB, AMD64_RSP, sreg);
-	amd64_patch (br[1], code);
-	amd64_patch (br[4], code);
-#else /* PLATFORM_WIN32 */
-	amd64_alu_reg_reg (code, X86_SUB, AMD64_RSP, tree->sreg1);
+#if defined(PLATFORM_WIN32) || defined(MONO_ARCH_SIGSEGV_ON_ALTSTACK)
+	if (!tree->flags & MONO_INST_INIT)
+		need_touch = TRUE;
 #endif
+
+	if (need_touch) {
+		guint8* br[5];
+
+		/*
+		 * Under Windows:
+		 * If requested stack size is larger than one page,
+		 * perform stack-touch operation
+		 */
+		/*
+		 * Generate stack probe code.
+		 * Under Windows, it is necessary to allocate one page at a time,
+		 * "touching" stack after each successful sub-allocation. This is
+		 * because of the way stack growth is implemented - there is a
+		 * guard page before the lowest stack page that is currently commited.
+		 * Stack normally grows sequentially so OS traps access to the
+		 * guard page and commits more pages when needed.
+		 */
+		amd64_test_reg_imm (code, sreg, ~0xFFF);
+		br[0] = code; x86_branch8 (code, X86_CC_Z, 0, FALSE);
+
+		br[2] = code; /* loop */
+		amd64_alu_reg_imm (code, X86_SUB, AMD64_RSP, 0x1000);
+		amd64_test_membase_reg (code, AMD64_RSP, 0, AMD64_RSP);
+		amd64_alu_reg_imm (code, X86_SUB, sreg, 0x1000);
+		amd64_alu_reg_imm (code, X86_CMP, sreg, 0x1000);
+		br[3] = code; x86_branch8 (code, X86_CC_AE, 0, FALSE);
+		amd64_patch (br[3], br[2]);
+		amd64_test_reg_reg (code, sreg, sreg);
+		br[4] = code; x86_branch8 (code, X86_CC_Z, 0, FALSE);
+		amd64_alu_reg_reg (code, X86_SUB, AMD64_RSP, sreg);
+
+		br[1] = code; x86_jump8 (code, 0);
+
+		amd64_patch (br[0], code);
+		amd64_alu_reg_reg (code, X86_SUB, AMD64_RSP, sreg);
+		amd64_patch (br[1], code);
+		amd64_patch (br[4], code);
+	}
+	else
+		amd64_alu_reg_reg (code, X86_SUB, AMD64_RSP, tree->sreg1);
+
 	if (tree->flags & MONO_INST_INIT) {
 		int offset = 0;
 		if (tree->dreg != AMD64_RAX && sreg != AMD64_RAX) {
@@ -3420,7 +3432,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case CEE_BREAK:
 			amd64_breakpoint (code);
 			break;
-
 		case OP_ADDCC:
 		case CEE_ADD:
 			amd64_alu_reg_reg (code, X86_ADD, ins->sreg1, ins->sreg2);
@@ -3459,16 +3470,20 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			amd64_alu_reg_imm (code, X86_AND, ins->sreg1, ins->inst_imm);
 			break;
 		case CEE_MUL:
+		case OP_LMUL:
 			amd64_imul_reg_reg (code, ins->sreg1, ins->sreg2);
 			break;
 		case OP_MUL_IMM:
+		case OP_LMUL_IMM:
 			amd64_imul_reg_reg_imm (code, ins->dreg, ins->sreg1, ins->inst_imm);
 			break;
 		case CEE_DIV:
+		case OP_LDIV:
 			amd64_cdq (code);
 			amd64_div_reg (code, ins->sreg2, TRUE);
 			break;
 		case CEE_DIV_UN:
+		case OP_LDIV_UN:
 			amd64_alu_reg_reg (code, X86_XOR, AMD64_RDX, AMD64_RDX);
 			amd64_div_reg (code, ins->sreg2, FALSE);
 			break;
@@ -3479,10 +3494,12 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			amd64_div_reg (code, ins->sreg2, TRUE);
 			break;
 		case CEE_REM:
+		case OP_LREM:
 			amd64_cdq (code);
 			amd64_div_reg (code, ins->sreg2, TRUE);
 			break;
 		case CEE_REM_UN:
+		case OP_LREM_UN:
 			amd64_alu_reg_reg (code, X86_XOR, AMD64_RDX, AMD64_RDX);
 			amd64_div_reg (code, ins->sreg2, FALSE);
 			break;
@@ -3491,6 +3508,10 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			amd64_mov_reg_imm (code, ins->sreg2, ins->inst_imm);
 			amd64_cdq (code);
 			amd64_div_reg (code, ins->sreg2, TRUE);
+			break;
+		case OP_LMUL_OVF:
+			amd64_imul_reg_reg (code, ins->sreg1, ins->sreg2);
+			EMIT_COND_SYSTEM_EXCEPTION (X86_CC_O, FALSE, "OverflowException");
 			break;
 		case CEE_OR:
 			amd64_alu_reg_reg (code, X86_OR, ins->sreg1, ins->sreg2);
@@ -3630,9 +3651,11 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			amd64_imul_reg_reg_size (code, ins->sreg1, ins->sreg2, 4);
 			EMIT_COND_SYSTEM_EXCEPTION (X86_CC_O, FALSE, "OverflowException");
 			break;
-		case OP_IMUL_OVF_UN: {
+		case OP_IMUL_OVF_UN:
+		case OP_LMUL_OVF_UN: {
 			/* the mul operation and the exception check should most likely be split */
 			int non_eax_reg, saved_eax = FALSE, saved_edx = FALSE;
+			int size = (ins->opcode == OP_IMUL_OVF_UN) ? 4 : 8;
 			/*g_assert (ins->sreg2 == X86_EAX);
 			g_assert (ins->dreg == X86_EAX);*/
 			if (ins->sreg2 == X86_EAX) {
@@ -3645,7 +3668,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 					saved_eax = TRUE;
 					amd64_push_reg (code, X86_EAX);
 				}
-				amd64_mov_reg_reg (code, X86_EAX, ins->sreg1, 4);
+				amd64_mov_reg_reg (code, X86_EAX, ins->sreg1, size);
 				non_eax_reg = ins->sreg2;
 			}
 			if (ins->dreg == X86_EDX) {
@@ -3657,10 +3680,10 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				saved_edx = TRUE;
 				amd64_push_reg (code, X86_EDX);
 			}
-			amd64_mul_reg_size (code, non_eax_reg, FALSE, 4);
+			amd64_mul_reg_size (code, non_eax_reg, FALSE, size);
 			/* save before the check since pop and mov don't change the flags */
 			if (ins->dreg != X86_EAX)
-				amd64_mov_reg_reg (code, ins->dreg, X86_EAX, 4);
+				amd64_mov_reg_reg (code, ins->dreg, X86_EAX, size);
 			if (saved_edx)
 				amd64_pop_reg (code, X86_EDX);
 			if (saved_eax)
@@ -4999,7 +5022,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 
 	if (alloc_size) {
 		/* See mono_emit_stack_alloc */
-#ifdef PLATFORM_WIN32
+#if defined(PLATFORM_WIN32) || defined(MONO_ARCH_SIGSEGV_ON_ALTSTACK)
 		guint32 remaining_size = alloc_size;
 		while (remaining_size >= 0x1000) {
 			amd64_alu_reg_imm (code, X86_SUB, AMD64_RSP, 0x1000);
@@ -5674,11 +5697,12 @@ mono_arch_get_vcall_slot_addr (guint8* code, gpointer *regs)
 	 */
 	code -= 7;
 
-	if (IS_REX (code [4]) && (code [5] == 0xff) && (amd64_modrm_reg (code [6]) == 0x2) && (amd64_modrm_mod (code [6]) == 0x3)) {
-		/* call *%reg */
-		return NULL;
-	}
-	else if ((code [0] == 0x41) && (code [1] == 0xff) && (code [2] == 0x15)) {
+	/* 
+	 * A given byte sequence can match more than case here, so we have to be
+	 * really careful about the ordering of the cases. Longer sequences
+	 * come first.
+	 */
+	if ((code [0] == 0x41) && (code [1] == 0xff) && (code [2] == 0x15)) {
 		/* call OFFSET(%rip) */
 		return NULL;
 	}
@@ -5689,6 +5713,14 @@ mono_arch_get_vcall_slot_addr (guint8* code, gpointer *regs)
 		reg = amd64_modrm_rm (code [2]);
 		disp = *(guint32*)(code + 3);
 		//printf ("B: [%%r%d+0x%x]\n", reg, disp);
+	}
+	else if (code [2] == 0xe8) {
+		/* call <ADDR> */
+		return NULL;
+	}
+	else if (IS_REX (code [4]) && (code [5] == 0xff) && (amd64_modrm_reg (code [6]) == 0x2) && (amd64_modrm_mod (code [6]) == 0x3)) {
+		/* call *%reg */
+		return NULL;
 	}
 	else if ((code [4] == 0xff) && (amd64_modrm_reg (code [5]) == 0x2) && (amd64_modrm_mod (code [5]) == 0x1)) {
 		/* call *[reg+disp8] */
@@ -5709,9 +5741,6 @@ mono_arch_get_vcall_slot_addr (guint8* code, gpointer *regs)
 		reg = amd64_modrm_rm (code [6]);
 		disp = 0;
 	}
-	else if (code [2] == 0xe8)
-		/* call <ADDR> */
-		return NULL;
 	else
 		g_assert_not_reached ();
 
@@ -5795,17 +5824,69 @@ read_tls_offset_from_method (void* method)
 	return -1;
 }
 
+#ifdef MONO_ARCH_SIGSEGV_ON_ALTSTACK
+
+static void
+setup_stack (MonoJitTlsData *tls)
+{
+	pthread_t self = pthread_self();
+	pthread_attr_t attr;
+	size_t stsize = 0;
+	struct sigaltstack sa;
+	guint8 *staddr = NULL;
+	guint8 *current = (guint8*)&staddr;
+
+	if (mono_running_on_valgrind ())
+		return;
+
+	/* Determine stack boundaries */
+#ifdef HAVE_PTHREAD_GETATTR_NP
+	pthread_getattr_np( self, &attr );
+#else
+#ifdef HAVE_PTHREAD_ATTR_GET_NP
+	pthread_attr_get_np( self, &attr );
+#elif defined(sun)
+	pthread_attr_init( &attr );
+	pthread_attr_getstacksize( &attr, &stsize );
+#else
+#error "Not implemented"
+#endif
+#endif
+#ifndef sun
+	pthread_attr_getstack( &attr, (void**)&staddr, &stsize );
+#endif
+
+	g_assert (staddr);
+
+	g_assert ((current > staddr) && (current < staddr + stsize));
+
+	tls->end_of_stack = staddr + stsize;
+
+	/*
+	 * threads created by nptl does not seem to have a guard page, and
+	 * since the main thread is not created by us, we can't even set one.
+	 * Increasing stsize fools the SIGSEGV signal handler into thinking this
+	 * is a stack overflow exception.
+	 */
+	tls->stack_size = stsize + getpagesize ();
+
+	/* Setup an alternate signal stack */
+	tls->signal_stack = mmap (0, SIGNAL_STACK_SIZE, PROT_READ|PROT_WRITE|PROT_EXEC, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
+	tls->signal_stack_size = SIGNAL_STACK_SIZE;
+
+	g_assert (tls->signal_stack);
+
+	sa.ss_sp = tls->signal_stack;
+	sa.ss_size = SIGNAL_STACK_SIZE;
+	sa.ss_flags = SS_ONSTACK;
+	sigaltstack (&sa, NULL);
+}
+
+#endif
+
 void
 mono_arch_setup_jit_tls_data (MonoJitTlsData *tls)
 {
-#ifdef MONO_ARCH_SIGSEGV_ON_ALTSTACK
-	pthread_t self = pthread_self();
-	pthread_attr_t attr;
-	void *staddr = NULL;
-	size_t stsize = 0;
-	struct sigaltstack sa;
-#endif
-
 	if (!tls_offset_inited) {
 		tls_offset_inited = TRUE;
 
@@ -5815,40 +5896,7 @@ mono_arch_setup_jit_tls_data (MonoJitTlsData *tls)
 	}		
 
 #ifdef MONO_ARCH_SIGSEGV_ON_ALTSTACK
-
-	/* Determine stack boundaries */
-	if (!mono_running_on_valgrind ()) {
-#ifdef HAVE_PTHREAD_GETATTR_NP
-		pthread_getattr_np( self, &attr );
-#else
-#ifdef HAVE_PTHREAD_ATTR_GET_NP
-		pthread_attr_get_np( self, &attr );
-#elif defined(sun)
-		pthread_attr_init( &attr );
-		pthread_attr_getstacksize( &attr, &stsize );
-#else
-#error "Not implemented"
-#endif
-#endif
-#ifndef sun
-		pthread_attr_getstack( &attr, &staddr, &stsize );
-#endif
-	}
-
-	/* 
-	 * staddr seems to be wrong for the main thread, so we keep the value in
-	 * tls->end_of_stack
-	 */
-	tls->stack_size = stsize;
-
-	/* Setup an alternate signal stack */
-	tls->signal_stack = g_malloc (SIGNAL_STACK_SIZE);
-	tls->signal_stack_size = SIGNAL_STACK_SIZE;
-
-	sa.ss_sp = tls->signal_stack;
-	sa.ss_size = SIGNAL_STACK_SIZE;
-	sa.ss_flags = SS_ONSTACK;
-	sigaltstack (&sa, NULL);
+	setup_stack (tls);
 #endif
 }
 
@@ -5864,7 +5912,7 @@ mono_arch_free_jit_tls_data (MonoJitTlsData *tls)
 	sigaltstack  (&sa, NULL);
 
 	if (tls->signal_stack)
-		g_free (tls->signal_stack);
+		munmap (tls->signal_stack, SIGNAL_STACK_SIZE);
 #endif
 }
 

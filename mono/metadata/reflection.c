@@ -5786,6 +5786,7 @@ mono_get_object_from_blob (MonoDomain *domain, MonoType *type, const char *blob)
 	void *retval;
 	MonoClass *klass;
 	MonoObject *object;
+	MonoType *basetype = type;
 
 	if (!blob)
 		return NULL;
@@ -5794,11 +5795,13 @@ mono_get_object_from_blob (MonoDomain *domain, MonoType *type, const char *blob)
 	if (klass->valuetype) {
 		object = mono_object_new (domain, klass);
 		retval = ((gchar *) object + sizeof (MonoObject));
+		if (klass->enumtype)
+			basetype = klass->enum_basetype;
 	} else {
 		retval = &object;
 	}
 			
-	if (!mono_get_constant_value_from_blob (domain, type->type,  blob, retval))
+	if (!mono_get_constant_value_from_blob (domain, basetype->type,  blob, retval))
 		return object;
 	else
 		return NULL;
@@ -8477,6 +8480,10 @@ ensure_runtime_vtable (MonoClass *klass)
 		for (i = 0; i < klass->method.count; ++i)
 			klass->methods [i]->slot = i;
 
+	if (!((MonoDynamicImage*)klass->image)->run)
+		/* No need to create a generic vtable */
+		return;
+
 	/* Overrides */
 	onum = 0;
 	if (tb->methods) {
@@ -8679,9 +8686,13 @@ mono_reflection_create_runtime_class (MonoReflectionTypeBuilder *tb)
 	klass->has_cctor = 1;
 	klass->has_finalize = 1;
 
-	if (!((MonoDynamicImage*)(MonoDynamicImage*)klass->image)->run)
-		/* No need to fully construct the type */
-		return mono_type_get_object (mono_object_domain (tb), &klass->byval_arg);
+	if (!((MonoDynamicImage*)klass->image)->run) {
+		if (klass->generic_container) {
+			/* FIXME: The code below can't handle generic classes */
+			klass->wastypebuilder = TRUE;
+			return mono_type_get_object (mono_object_domain (tb), &klass->byval_arg);
+		}
+	}
 
 	/* enums are done right away */
 	if (!klass->enumtype)

@@ -147,6 +147,14 @@ static MonoCodeManager *global_codeman = NULL;
 
 static GHashTable *jit_icall_name_hash = NULL;
 
+/*
+ * Address of the trampoline code.  This is used by the debugger to check
+ * whether a method is a trampoline.
+ */
+guint8 *mono_generic_trampoline_code = NULL;
+
+static guint8* trampoline_code [MONO_TRAMPOLINE_NUM];
+
 gboolean
 mono_running_on_valgrind (void)
 {
@@ -6783,6 +6791,25 @@ mono_icall_get_wrapper (MonoJitICallInfo* callinfo)
 	return callinfo->wrapper;
 }
 
+static void
+mono_init_trampolines (void)
+{
+	trampoline_code [MONO_TRAMPOLINE_GENERIC] = mono_arch_create_trampoline_code (MONO_TRAMPOLINE_GENERIC);
+	trampoline_code [MONO_TRAMPOLINE_JUMP] = mono_arch_create_trampoline_code (MONO_TRAMPOLINE_JUMP);
+	trampoline_code [MONO_TRAMPOLINE_CLASS_INIT] = mono_arch_create_trampoline_code (MONO_TRAMPOLINE_CLASS_INIT);
+#ifdef MONO_ARCH_HAVE_PIC_AOT
+	trampoline_code [MONO_TRAMPOLINE_AOT] = mono_arch_create_trampoline_code (MONO_TRAMPOLINE_AOT);
+#endif
+
+	mono_generic_trampoline_code = trampoline_code [MONO_TRAMPOLINE_GENERIC];
+}
+
+guint8 *
+mono_get_trampoline_code (MonoTrampolineType tramp_type)
+{
+	return trampoline_code [tramp_type];
+}
+
 gpointer
 mono_create_class_init_trampoline (MonoVTable *vtable)
 {
@@ -8151,7 +8178,6 @@ optimize_branches (MonoCompile *cfg)
 					}
 				}
 
-#ifdef MONO_ARCH_HAVE_OUT_OF_LINE_BBLOCKS
 				if (bb->last_ins && MONO_IS_COND_BRANCH_NOFP (bb->last_ins)) {
 					if (bb->last_ins->inst_false_bb->out_of_line && (bb->region == bb->last_ins->inst_false_bb->region)) {
 						/* Reverse the branch */
@@ -8166,7 +8192,6 @@ optimize_branches (MonoCompile *cfg)
 									 bb->block_num);
 					}
 				}
-#endif
 			}
 		}
 	} while (changed && (niterations > 0));
@@ -8428,7 +8453,6 @@ mono_codegen (MonoCompile *cfg)
 		bb->native_offset = cfg->code_len;
 		mono_arch_output_basic_block (cfg, bb);
 
-#ifdef MONO_ARCH_HAVE_OUT_OF_LINE_BBLOCKS
 		if (bb == cfg->bb_exit) {
 			cfg->epilog_begin = cfg->code_len;
 
@@ -8440,17 +8464,11 @@ mono_codegen (MonoCompile *cfg)
 
 			mono_arch_emit_epilog (cfg);
 		}
-#endif
 	}
 
-#ifndef MONO_ARCH_HAVE_OUT_OF_LINE_BBLOCKS
-	cfg->bb_exit->native_offset = cfg->code_len;
-	max_epilog_size = mono_arch_max_epilog_size (cfg);
-#else
 	mono_arch_emit_exceptions (cfg);
 
 	max_epilog_size = 0;
-#endif
 
 	code = cfg->native_code + cfg->code_len;
 
@@ -8479,18 +8497,6 @@ mono_codegen (MonoCompile *cfg)
 	code = cfg->native_code + cfg->code_len;
   
 	/* g_assert (((int)cfg->native_code & (MONO_ARCH_CODE_ALIGNMENT - 1)) == 0); */
-
-#ifndef MONO_ARCH_HAVE_OUT_OF_LINE_BBLOCKS
-	cfg->epilog_begin = cfg->code_len;
-
-	if (cfg->prof_options & MONO_PROFILE_ENTER_LEAVE)
-		code = mono_arch_instrument_epilog (cfg, mono_profiler_method_leave, code, FALSE);
-
-	cfg->code_len = code - cfg->native_code;
-
-	mono_arch_emit_epilog (cfg);
-#endif
-
 	for (patch_info = cfg->patch_info; patch_info; patch_info = patch_info->next) {
 		switch (patch_info->type) {
 		case MONO_PATCH_INFO_ABS: {
@@ -8543,11 +8549,14 @@ mono_codegen (MonoCompile *cfg)
 		}
 	}
        
-	if (cfg->verbose_level > 0)
+	if (cfg->verbose_level > 0) {
+		char* nm = mono_method_full_name (cfg->method, TRUE);
 		g_print ("Method %s emitted at %p to %p [%s]\n", 
-				 mono_method_full_name (cfg->method, TRUE), 
+				 nm, 
 				 cfg->native_code, cfg->native_code + cfg->code_len, cfg->domain->friendly_name);
-
+		g_free (nm);
+	}
+	
 	mono_arch_patch_code (cfg->method, cfg->domain, cfg->native_code, cfg->patch_info, cfg->run_cctors);
 
 	if (cfg->method->dynamic) {
@@ -9526,7 +9535,7 @@ sigsegv_signal_handler (int _dummy, siginfo_t *info, void *context)
 {
 	MonoException *exc;
 	MonoJitTlsData *jit_tls = TlsGetValue (mono_jit_tls_id);
-	struct sigcontext *ctx = (struct sigcontext *)&(((ucontext_t*)context)->uc_mcontext);
+	GET_CONTEXT
 
 	/* Can't allocate memory using Boehm GC on altstack */
 	if (jit_tls->stack_size && 
@@ -9779,6 +9788,8 @@ mini_init (const char *filename)
 
 	mono_arch_cpu_init ();
 
+	mono_init_trampolines ();
+
 	if (!g_thread_supported ())
 		g_thread_init (NULL);
 	
@@ -9863,13 +9874,15 @@ mini_init (const char *filename)
 	 * when adding emulation for some opcodes, remember to also add a dummy
 	 * rule to the burg files, because we need the arity information to be correct.
 	 */
+#ifndef MONO_ARCH_NO_EMULATE_LONG_MUL_OPTS
 	mono_register_opcode_emulation (OP_LMUL, "__emul_lmul", helper_sig_long_long_long, mono_llmult, TRUE);
-	mono_register_opcode_emulation (OP_LMUL_OVF_UN, "__emul_lmul_ovf_un", helper_sig_long_long_long, mono_llmult_ovf_un, FALSE);
-	mono_register_opcode_emulation (OP_LMUL_OVF, "__emul_lmul_ovf", helper_sig_long_long_long, mono_llmult_ovf, FALSE);
 	mono_register_opcode_emulation (OP_LDIV, "__emul_ldiv", helper_sig_long_long_long, mono_lldiv, FALSE);
 	mono_register_opcode_emulation (OP_LDIV_UN, "__emul_ldiv_un", helper_sig_long_long_long, mono_lldiv_un, FALSE);
 	mono_register_opcode_emulation (OP_LREM, "__emul_lrem", helper_sig_long_long_long, mono_llrem, FALSE);
 	mono_register_opcode_emulation (OP_LREM_UN, "__emul_lrem_un", helper_sig_long_long_long, mono_llrem_un, FALSE);
+	mono_register_opcode_emulation (OP_LMUL_OVF_UN, "__emul_lmul_ovf_un", helper_sig_long_long_long, mono_llmult_ovf_un, FALSE);
+	mono_register_opcode_emulation (OP_LMUL_OVF, "__emul_lmul_ovf", helper_sig_long_long_long, mono_llmult_ovf, FALSE);
+#endif
 
 #ifndef MONO_ARCH_NO_EMULATE_LONG_SHIFT_OPS
 	mono_register_opcode_emulation (OP_LSHL, "__emul_lshl", helper_sig_long_long_int, mono_lshl, TRUE);

@@ -1,3 +1,7 @@
+2005-03-10  Zoltan Varga  <vargaz@freemail.hu>
+
+	* dataslot.cs: Add tests for #65414.
+
 2005-03-06  Zoltan Varga  <vargaz@freemail.hu>
 
 	* rounding.cs: Remove this, this is now in the JIT regression tests.

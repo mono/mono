@@ -442,17 +442,6 @@ void * GC_local_gcj_fast_malloc(size_t lw, void * ptr_to_struct_containing_descr
 
 # endif /* !THREAD_LOCAL_ALLOC */
 
-int GC_thread_is_registered (void)
-{
-	void *ptr;
-
-	LOCK();
-	ptr = (void *)GC_lookup_thread(pthread_self());
-	UNLOCK();
-
-	return ptr ? 1 : 0;
-}
-
 #if 0
 /*
 To make sure that we're using LinuxThreads and not some other thread
@@ -685,6 +674,17 @@ GC_thread GC_lookup_thread(pthread_t id)
     
     while (p != 0 && !pthread_equal(p -> id, id)) p = p -> next;
     return(p);
+}
+
+int GC_thread_is_registered (void)
+{
+	void *ptr;
+
+	LOCK();
+	ptr = (void *)GC_lookup_thread(pthread_self());
+	UNLOCK();
+
+	return ptr ? 1 : 0;
 }
 
 #ifdef HANDLE_FORK

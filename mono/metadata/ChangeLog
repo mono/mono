@@ -1,7 +1,75 @@
+2005-03-13  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* process.c: Fix buffer length in ves_icall_System_Diagnostics_Process
+	_ProcessName_internal.
+
+2005-03-13  Zoltan Varga  <vargaz@freemail.hu>
+
+	* object.c (mono_array_new_full): Fix aligning of array size. Fixes
+	#73631.
+
+	* icall.c threads.c threads-types.h: Remove slothash icalls as they
+	are no longer used.
+
+2005-03-11  Zoltan Varga  <vargaz@freemail.hu>
+
+	* object.c (compute_class_bitmap): Add support for generics. Fixes
+	#73527.
+
+2005-03-10  Zoltan Varga  <vargaz@freemail.hu>
+
+	* reflection.c (mono_reflection_create_runtime_class): Fix 2.0 build.
+
+2005-03-10 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* filewatcher.c: commented out the code for windows watcher, as we don't
+	use it (we use the managed implementation instead).
+
+2005-03-10  Zoltan Varga  <vargaz@freemail.hu>
+
+	* object-internals.h (MonoThread): Remove 'unused1' field.
+
+	* appdomain.c: Bump corlib version.
+
+	* marshal.c: Remove calls to Reset/RestoreDataStoreStatus ().
+
+	* reflection.c (mono_reflection_create_runtime_class): Remove the
+	AssemblyBuilder.Save optimization since it causes too many problems.
+
+2005-03-10  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* exception.c|h: Added mono_get_exception_reflection_type_load to
+	create a ReflectionTypeLoadException object.
+	* icall.c: Updated ves_icall_System_Reflection_Assembly_InternalGetType
+	to return NULL is a InheritanceDemand fails during reflection. Updated
+	ves_icall_System_Reflection_Assembly_GetTypes to throw a 
+	ReflectionTypeLoadException if an InheritanceDemand fails during 
+	reflection. Added icall mapping for GetLinkDemandSecurity.
+	* security-manager.c|h: Added ves_icall_System_Security_
+	SecurityManager_GetLinkDemandSecurity internal call to return the
+	class and methods permissions set for a LinkDemand. Removed unused
+	fields in MonoSecurityManager.
+
+2005-03-10  Martin Baulig  <martin@ximian.com>
+
+	* class.c (mono_bounded_array_class_get): Initialize `eclass' if
+	it's a generic instance.
+
+2005-03-09  Zoltan Varga  <vargaz@freemail.hu>
+
+	* reflection.c (mono_get_object_from_blob): Applied patch from
+	Ankit Jain (radical@gmail.com). Fix enum default values. Fixes #73457.
+
+	* class.c (mono_class_is_assignable_from): Another try at fixing 
+	#73469 without breaking anything.
+
 2005-03-08  Zoltan Varga  <vargaz@freemail.hu>
 
-	* class.c (mono_class_is_assignable_from): Fix build bustage.
+	* class.c: (mono_class_is_assignable_from): Revert the last changes
+	since they don't work with generics.
 	
+	* class.c (mono_class_is_assignable_from): Fix build bustage.
+
 	* class.c (mono_class_is_assignable_from): If oklass is dynamic, call
 	the managed IsAssignableFrom method. Fixes #73469.
 

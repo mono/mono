@@ -1,0 +1,5 @@
+2005-03-11  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Makefile: This makefiles calls all CAS tests (in subdirectories) 
+	that shouldn't fail in SVN. It can be called to see if any regressions
+	occured that affects the security manager.

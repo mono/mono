@@ -1,0 +1,9 @@
+2005-03-10  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* pinvoke1-3.cs: New. Tests that P/Invoking unmanaged methods provoke
+	a stack walk (Demand) for SecurityPermissionFlag.UnmanagedCode.
+	* sucs1-4.cs: New. Tests that [SuppressUnmanagedCodeSecurity] removes
+	the stack walk when present on either the p/invoked definition or on
+	it's class.
+	* Makefile: New. Build/execute new tests.
+	* README: New. Instruction and details about the tests.
