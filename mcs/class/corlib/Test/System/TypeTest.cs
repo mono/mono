@@ -321,6 +321,28 @@ PublicKeyToken=b77a5c561934e089"));
 			    Type.FilterNameIgnoreCase, "NonExistingMethod");
 			AssertEquals(0, mi.Length);
 		}
+
+		public int byref_field;
+
+		public int byref_property {
+			get {
+				return 0;
+			}
+		}
+
+		[Test]
+		public void ByrefTypes ()
+		{
+			Type t = Type.GetType ("MonoTests.System.TypeTest&");
+			AssertEquals (0, t.GetMethods (BindingFlags.Public|BindingFlags.Instance).Length);
+			AssertEquals (0, t.GetConstructors (BindingFlags.Public|BindingFlags.Instance).Length);
+			AssertEquals (0, t.GetEvents (BindingFlags.Public|BindingFlags.Instance).Length);
+			AssertEquals (0, t.GetProperties (BindingFlags.Public|BindingFlags.Instance).Length);
+
+			AssertNull (t.GetMethod ("ByrefTypes"));
+			AssertNull (t.GetField ("byref_field"));
+			AssertNull (t.GetProperty ("byref_property"));
+		}
 	}
 }
 
