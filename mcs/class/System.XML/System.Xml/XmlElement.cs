@@ -183,7 +183,8 @@ namespace System.Xml
 		[MonoTODO]
 		public virtual bool HasAttribute (string name)
 		{
-			throw new NotImplementedException ();
+			XmlNode attributeNode = Attributes.GetNamedItem (name);
+			return attributeNode != null;
 		}
 
 		[MonoTODO]
