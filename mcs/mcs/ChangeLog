@@ -1,3 +1,13 @@
+2002-09-16  Miguel de Icaza  <miguel@ximian.com>
+
+	* ecore.cs (FindMostSpecificSource): Use an Expression argument
+	instead of a Type, because we might be handed over a Literal which
+	gets a few more implicit conversions that plain types do not.  So
+	this information was being lost.
+
+	Also, we drop the temporary type-holder expression when not
+	required.
+
 2002-09-17  Martin Baulig  <martin@gnome.org>
 
 	* class.cs (PropertyBase.CheckBase): Don't check the base class if

@@ -1296,7 +1296,7 @@ namespace Mono.CSharp {
 		///   by making use of FindMostEncomp* methods. Applies the correct rules separately
 		///   for explicit and implicit conversion operators.
 		/// </summary>
-		static public Type FindMostSpecificSource (MethodGroupExpr me, Type source_type,
+		static public Type FindMostSpecificSource (MethodGroupExpr me, Expression source,
 							   bool apply_explicit_conv_rules,
 							   Location loc)
 		{
@@ -1304,10 +1304,11 @@ namespace Mono.CSharp {
 			
 			if (priv_fms_expr == null)
 				priv_fms_expr = new EmptyExpression ();
-			
+
 			//
 			// If any operator converts from S then Sx = S
 			//
+			Type source_type = source.Type;
 			foreach (MethodBase mb in me.Methods){
 				ParameterData pd = Invocation.GetParameterData (mb);
 				Type param_type = pd.ParameterType (0);
@@ -1328,16 +1329,14 @@ namespace Mono.CSharp {
 					if (StandardConversionExists (priv_fms_expr, source_type))
 						src_types_set.Add (param_type);
 					else {
-						priv_fms_expr.SetType (source_type);
-						if (StandardConversionExists (priv_fms_expr, param_type))
+						if (StandardConversionExists (source, param_type))
 							src_types_set.Add (param_type);
 					}
 				} else {
 					//
 					// Only if S is encompassed by param_type
 					//
-					priv_fms_expr.SetType (source_type);
-					if (StandardConversionExists (priv_fms_expr, param_type))
+					if (StandardConversionExists (source, param_type))
 						src_types_set.Add (param_type);
 				}
 			}
@@ -1349,9 +1348,7 @@ namespace Mono.CSharp {
 				ArrayList candidate_set = new ArrayList ();
 
 				foreach (Type param_type in src_types_set){
-					priv_fms_expr.SetType (source_type);
-					
-					if (StandardConversionExists (priv_fms_expr, param_type))
+					if (StandardConversionExists (source, param_type))
 						candidate_set.Add (param_type);
 				}
 
@@ -1444,8 +1441,10 @@ namespace Mono.CSharp {
 			//
 			if (apply_explicit_conv_rules)
 				return FindMostEncompassedType (tgt_types_set);
-			else
+			else {
+				Console.WriteLine ("Here with: " + tgt_types_set.Count);
 				return FindMostEncompassingType (tgt_types_set);
+			}
 		}
 		
 		/// <summary>
@@ -1566,14 +1565,14 @@ namespace Mono.CSharp {
 			}
 #endif
 			
-			most_specific_source = FindMostSpecificSource (union, source_type, look_for_explicit, loc);
+			most_specific_source = FindMostSpecificSource (union, source, look_for_explicit, loc);
 			if (most_specific_source == null)
 				return null;
 
 			most_specific_target = FindMostSpecificTarget (union, target, look_for_explicit, loc);
 			if (most_specific_target == null) 
 				return null;
-			
+
 			int count = 0;
 
 			foreach (MethodBase mb in union.Methods){
