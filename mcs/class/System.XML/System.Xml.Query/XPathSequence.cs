@@ -113,8 +113,8 @@ namespace Mono.Xml.XPath2
 	// empty iterator (still required since it contains XQueryContext)
 	class XPathEmptySequence : XPathSequence
 	{
-		internal XPathEmptySequence (XPathSequence iter)
-			: base (iter.Context)
+		internal XPathEmptySequence (XQueryContext ctx)
+			: base (ctx)
 		{
 		}
 
@@ -512,7 +512,28 @@ namespace Mono.Xml.XPath2
 
 		protected override bool MoveNextCore ()
 		{
-			throw new NotImplementedException ();
+			while (left.MoveNext ()) {
+				bool skipThisItem = false;
+				// Examine all filters
+				foreach (ExprSequence expr in filter) {
+					bool doesntPass = true;
+					// Treat as OK if any of expr passed.
+					foreach (ExprSingle single in expr) {
+						if (single.EvaluateAsBoolean (left)) {
+							doesntPass = false;
+							break;
+						}
+					}
+					if (doesntPass) {
+						skipThisItem = true;
+						break;
+					}
+				}
+				if (skipThisItem)
+					continue;
+				return true;
+			}
+			return false;
 		}
 
 		public override XPathItem CurrentCore {
@@ -877,7 +898,7 @@ namespace Mono.Xml.XPath2
 					return true;
 
 				if (!Node.MoveToParent ())	// should NEVER fail!
-					throw new XPathException ("There seems some bugs on the XPathNavigator implementation class.");
+					throw new XmlQueryException ("There seems some bugs on the XPathNavigator implementation class.");
 				depth --;
 			}
 			finished = true;
@@ -925,7 +946,7 @@ namespace Mono.Xml.XPath2
 					return true;
 
 				if (!Node.MoveToParent ())	// should NEVER fail!
-					throw new XPathException ("There seems some bugs on the XPathNavigator implementation class.");
+					throw new XmlQueryException ("There seems some bugs on the XPathNavigator implementation class.");
 				depth --;
 			}
 			finished = true;
@@ -1149,10 +1170,14 @@ namespace Mono.Xml.XPath2
 		}
 	}
 
+	// FLWOR - Order By
 	internal class FLWORIterator : XPathSequence
 	{
 		XPathSequence contextSequence;
 		FLWORExpr expr;
+		ArrayList forStack = new ArrayList ();
+		IEnumerator en;
+		bool finished;
 
 		public FLWORIterator (XPathSequence iter, FLWORExpr expr)
 			: base (iter.Context)
@@ -1166,7 +1191,10 @@ namespace Mono.Xml.XPath2
 		{
 			contextSequence = other.contextSequence;
 			expr = other.expr;
-			throw new NotImplementedException ();
+			forStack = other.forStack.Clone () as ArrayList;
+			if (en != null)
+				en = ((ICloneable) other.en).Clone () as IEnumerator;
+			finished = other.finished;
 		}
 
 		public override XPathSequence Clone ()
@@ -1174,13 +1202,87 @@ namespace Mono.Xml.XPath2
 			return new FLWORIterator (this);
 		}
 
+#if false
 		protected override bool MoveNextCore ()
 		{
 			throw new NotImplementedException ();
 		}
+#else
+		protected override bool MoveNextCore ()
+		{
+			if (en == null)
+				en = GetEnumerator ();
+			return !en.MoveNext ();
+		}
+
+		public override IEnumerator GetEnumerator ()
+		{
+			IEnumerator forLetClauses = expr.ForLetClauses.GetEnumerator ();
+			return EvaluateRemainingForLet (forLetClauses);
+		}
+		
+		private IEnumerator EvaluateRemainingForLet (IEnumerator forLetClauses)
+		{
+			// Prepare iteration stack
+			if (forLetClauses.MoveNext ()) {
+				ForLetClause flc = (ForLetClause) forLetClauses.Current;
+				IEnumerator flsb = flc.GetEnumerator ();
+				IEnumerator items = EvaluateRemainingForLetSingleItem (forLetClauses, flsb);
+				while (items.MoveNext ())
+					yield return items.Current;
+				yield break;
+			}
+			bool passedFilter = false;
+			if (expr.WhereClause != null)
+				passedFilter = expr.WhereClause.EvaluateAsBoolean (contextSequence);
+			if (passedFilter)
+				foreach (XPathItem item in expr.ReturnExpr.Evaluate (contextSequence))
+					yield return item;
+		}
+
+		private IEnumerator EvaluateRemainingForLetSingleItem (IEnumerator forLetClauses, IEnumerator singleBodies)
+		{
+			if (singleBodies.MoveNext ()) {
+				ForLetSingleBody sb = singleBodies.Current as ForLetSingleBody;
+				ForSingleBody fsb = sb as ForSingleBody;
+				if (fsb != null) {
+					XPathSequence backup = contextSequence;
+					contextSequence = sb.Expression.Evaluate (Context.CurrentSequence);
+					Context.ContextManager.PushCurrentSequence (contextSequence);
+//					Context = Context.ContextManager.CurrentContext;
+					foreach (XPathItem forItem in contextSequence) {
+						Context.PushVariable (fsb.PositionalVar, Context.CurrentSequence.Position);
+						Context.PushVariable (sb.VarName, forItem);
+						// recurse here (including following bindings)
+						IEnumerator items = 
+EvaluateRemainingForLetSingleItem (forLetClauses, singleBodies);
+						while (items.MoveNext ())
+							yield return (XPathItem) items.Current;
+						Context.PopVariable ();
+						Context.PopVariable ();
+					}
+					Context.ContextManager.PopCurrentSequence ();
+//					Context = Context.ContextManager.CurrentContext;
+					contextSequence = backup;
+				} else {
+					Context.PushVariable (sb.VarName, sb.Expression.Evaluate (contextSequence));
+					// recurse here (including following bindings)
+					IEnumerator items = EvaluateRemainingForLetSingleItem (forLetClauses, singleBodies);
+					while (items.MoveNext ())
+						yield return (XPathItem) items.Current;
+					Context.PopVariable ();
+				}
+			} else {
+				// examine next binding
+				IEnumerator items = EvaluateRemainingForLet (forLetClauses);
+				while (items.MoveNext ())
+					yield return (XPathItem) items.Current;
+			}
+		}
+#endif
 
 		public override XPathItem CurrentCore {
-			get { throw new NotImplementedException (); }
+			get { return (XPathItem) en.Current; }
 		}
 	}
 
@@ -1234,7 +1336,7 @@ namespace Mono.Xml.XPath2
 			: base (iter.Context)
 		{
 			this.iter = iter;
-			type = type;
+			this.type = type;
 		}
 
 		private ConvertingIterator (ConvertingIterator other)
@@ -1288,14 +1390,29 @@ namespace Mono.Xml.XPath2
 			if (!iter.MoveNext ())
 				return false;
 			// FIXME: use OnMessageEvent
-//			Context.ErrorOutput.Write (format, iter.Current.TypedValue);
-			throw new NotImplementedException ();
+			string output = String.Format (format, iter.Current.TypedValue);
+			Context.StaticContext.OnMessageEvent (iter.Current, new TraceEventArgs (output));
 			return true;
 		}
 
 		public override XPathItem CurrentCore {
 			get { return iter.Current; }
 		}
+
+		internal class TraceEventArgs : QueryEventArgs
+		{
+			string message;
+
+			internal TraceEventArgs (string message)
+			{
+				this.message = message;
+			}
+
+			public override string Message {
+				get { return message; }
+			}
+		}
+
 	}
 
 	internal class ListIterator : XPathSequence
@@ -1329,6 +1446,41 @@ namespace Mono.Xml.XPath2
 
 		public override XPathItem CurrentCore {
 			get { return (XPathItem) list [Position - 1]; }
+		}
+	}
+
+	internal class EnumeratorIterator : XPathSequence
+	{
+		IEnumerator list;
+
+		public EnumeratorIterator (XQueryContext ctx, IEnumerable en)
+			: base (ctx)
+		{
+			list = en.GetEnumerator ();
+			if (list is ICloneable)
+				this.list = list;
+			else
+				throw new InvalidOperationException (String.Format ("XQuery internal error: target list's enumerator is not cloneable. List is {0}.", en != null ? en.GetType ().ToString () : "null argument"));
+		}
+
+		private EnumeratorIterator (EnumeratorIterator other)
+			: base (other)
+		{
+			this.list = (IEnumerator) ((ICloneable) other.list).Clone ();
+		}
+
+		public override XPathSequence Clone ()
+		{
+			return new EnumeratorIterator (this);
+		}
+
+		protected override bool MoveNextCore ()
+		{
+			return list.MoveNext ();
+		}
+
+		public override XPathItem CurrentCore {
+			get { return (XPathItem) list.Current; }
 		}
 	}
 }

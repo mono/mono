@@ -139,7 +139,7 @@ namespace Mono.Xml.XPath2
 					throw new XmlQueryException ("Current output can not accept root node.");
 				nav.WriteSubtree (w);
 			} else
-				w.WriteValue (item.Value);
+				w.WriteValue (item.TypedValue);
 		}
 
 		// get EBV (fn:boolean())
@@ -163,6 +163,8 @@ namespace Mono.Xml.XPath2
 				return v.ValueAsSingle != Single.NaN && v.ValueAsSingle != 0.0;
 			case XmlTypeCode.Double:
 				return v.ValueAsDouble != Double.NaN && v.ValueAsSingle != 0.0;
+			case XmlTypeCode.Decimal:
+				return v.ValueAsDecimal != 0;
 			case XmlTypeCode.Integer:
 			case XmlTypeCode.NonPositiveInteger:
 			case XmlTypeCode.NegativeInteger:
@@ -566,33 +568,33 @@ namespace Mono.Xml.XPath2
 
 		public override bool EvaluateAsBoolean (XPathSequence iter)
 		{
-			foreach (QuantifiedExprBody qb in BodyList) {
+			return EvaluateQuantification (iter, BodyList.GetEnumerator ());
+		}
+
+		private bool EvaluateQuantification (XPathSequence iter, IEnumerator bodies)
+		{
+			if (bodies.MoveNext ()) {
+				QuantifiedExprBody qb = bodies.Current as QuantifiedExprBody;
 				XPathSequence seq = qb.Expression.Evaluate (iter);
-				// FIXME: consider qb.Type
-//				if (!qb.Type.IsValid (seq))
-//					throw new XmlQueryException ("Quantified expression resulted in type promotion error.");
-				iter.Context.PushVariable (qb.VarName, seq);
-			}
-
-			bool result = every;
-
-			foreach (XPathItem item in iter) {
-				if (satisfies.EvaluateAsBoolean (new SingleItemIterator (item, iter))) {
-					if (!every) {
-						result = true;
-						break;
+				bool passed = false;
+				foreach (XPathItem item in seq) {
+					passed = true;
+					// FIXME: consider qb.Type
+					try {
+						iter.Context.PushVariable (qb.VarName, item);
+						if (EvaluateQuantification (iter, bodies)) {
+							if (!Every)
+								return true;
+						}
+						else if (Every)
+							return false;
+					} finally {
+						iter.Context.PopVariable ();
 					}
 				}
-				else if (every) {
-					result = false;
-					break;
-				}
+				return passed;
 			}
-
-			for (int i = 0; i < BodyList.Count; i++)
-				iter.Context.PopVariable ();
-
-			return result;
+			return Satisfies.EvaluateAsBoolean (iter);
 		}
 #endregion
 	}
@@ -1471,10 +1473,10 @@ namespace Mono.Xml.XPath2
 		public override XPathSequence Evaluate (XPathSequence iter)
 		{
 			if (!iter.MoveNext ())
-				return new XPathEmptySequence (iter);
+				return new XPathEmptySequence (iter.Context);
 			XPathNavigator nav = iter.Current as XPathNavigator;
 			if (nav == null)
-				return new XPathEmptySequence (iter);
+				return new XPathEmptySequence (iter.Context);
 			nav = nav.Clone ();
 			nav.MoveToRoot ();
 			return new SingleItemIterator (nav, iter);
@@ -1942,7 +1944,7 @@ namespace Mono.Xml.XPath2
 
 		public override XPathSequence Evaluate (XPathSequence iter)
 		{
-			XPathSequence variable = iter.Context.ResolveVariable (VariableName, iter);
+			XPathSequence variable = iter.Context.ResolveVariable (VariableName);
 			// FIXME: if Evaluate() accepts XPathSequence, then XPathSequence must be public class (to make IXPath2Variable public).
 			return variable;
 		}
@@ -1955,6 +1957,8 @@ namespace Mono.Xml.XPath2
 
 		public ParenthesizedExpr (ExprSequence expr)
 		{
+			if (expr == null)
+				expr = new ExprSequence ();
 			this.expr = expr;
 		}
 
@@ -1979,6 +1983,8 @@ namespace Mono.Xml.XPath2
 
 		public override XPathSequence Evaluate (XPathSequence iter)
 		{
+			if (Expr.Count == 0)
+				return new XPathEmptySequence (iter.Context);
 			return new ExprSequenceIterator (iter, Expr);
 		}
 #endregion

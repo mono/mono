@@ -47,10 +47,50 @@ namespace System.Xml
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public static XmlTypeCode GetFallbackType (XmlTypeCode type)
 		{
-			throw new NotImplementedException ();
+			switch (type) {
+			case XmlTypeCode.AnyAtomicType:
+				return XmlTypeCode.Item;
+			case XmlTypeCode.UntypedAtomic:
+				return XmlTypeCode.String;
+			case XmlTypeCode.Notation:
+				return XmlTypeCode.QName;
+			case XmlTypeCode.NormalizedString:
+			case XmlTypeCode.Token:
+			case XmlTypeCode.Language:
+			case XmlTypeCode.NmToken:
+			case XmlTypeCode.Name:
+			case XmlTypeCode.NCName:
+			case XmlTypeCode.Id:
+			case XmlTypeCode.Idref:
+			case XmlTypeCode.Entity:
+				return XmlTypeCode.String;
+			case XmlTypeCode.NonPositiveInteger:
+				return XmlTypeCode.Decimal;
+			case XmlTypeCode.NegativeInteger:
+				return XmlTypeCode.NonPositiveInteger;
+			case XmlTypeCode.Long:
+				return XmlTypeCode.Integer;
+			case XmlTypeCode.Short:
+				return XmlTypeCode.Int;
+			case XmlTypeCode.Byte:
+				return XmlTypeCode.Int;
+			case XmlTypeCode.NonNegativeInteger:
+				return XmlTypeCode.Decimal;
+			case XmlTypeCode.UnsignedLong:
+				return XmlTypeCode.NonNegativeInteger;
+			case XmlTypeCode.UnsignedInt:
+				return XmlTypeCode.Integer;
+			case XmlTypeCode.UnsignedShort:
+				return XmlTypeCode.Int;
+			case XmlTypeCode.UnsignedByte:
+				return XmlTypeCode.UnsignedShort;
+			case XmlTypeCode.PositiveInteger:
+				return XmlTypeCode.NonNegativeInteger;
+			default:
+				return XmlTypeCode.None;
+			}
 		}
 
 		[MonoTODO]
@@ -372,13 +412,13 @@ namespace System.Xml
 			return (long) value;
 		}
 
-		[MonoTODO] // what is value was negative?
+		[MonoTODO] // what if value was negative?
 		public static decimal DecimalToNonNegativeInteger (decimal value)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO] // what is value was positive?
+		[MonoTODO] // what if value was positive?
 		public static decimal DecimalToNonPositiveInteger (decimal value)
 		{
 			throw new NotImplementedException ();
@@ -420,13 +460,13 @@ namespace System.Xml
 			return (long) value;
 		}
 
-		[MonoTODO] // what is value was negative?
+		[MonoTODO] // what if value was negative?
 		public static decimal DoubleToNonNegativeInteger (double value)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO] // what is value was positive?
+		[MonoTODO] // what if value was positive?
 		public static decimal DoubleToNonPositiveInteger (double value)
 		{
 			throw new NotImplementedException ();
@@ -487,13 +527,13 @@ namespace System.Xml
 			return (long) value;
 		}
 
-		[MonoTODO] // what is value was negative?
+		[MonoTODO] // what if value was negative?
 		public static decimal FloatToNonNegativeInteger (float value)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO] // what is value was positive?
+		[MonoTODO] // what if value was positive?
 		public static decimal FloatToNonPositiveInteger (float value)
 		{
 			throw new NotImplementedException ();

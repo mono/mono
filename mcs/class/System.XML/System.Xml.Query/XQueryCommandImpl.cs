@@ -31,6 +31,7 @@
 using System;
 using System.Collections;
 using System.IO;
+using System.Reflection;
 using System.Security.Policy;
 using System.Xml;
 using System.Xml.Query;
@@ -38,30 +39,59 @@ using System.Xml.XPath;
 using Mono.Xml.XPath2;
 using Mono.Xml.XQuery.Parser;
 
-namespace Mono.Xml.XQuery
+namespace Mono.Xml.XPath2
 {
 	public class XQueryCommandImpl
 	{
+		MethodInfo xqueryCommandOnMessageEventMethod;
+
+		MethodInfo GetEventHandler (object qobj)
+		{
+			if (xqueryCommandOnMessageEventMethod == null) {
+				EventInfo ei = qobj.GetType ().GetEvent ("OnMessageEvent");
+				xqueryCommandOnMessageEventMethod = ei.GetRaiseMethod (true);
+			}
+			return xqueryCommandOnMessageEventMethod;
+		}
+
 		XQueryStaticContext staticContext;
+		object xqueryCommand;
 
 		public XQueryCommandImpl ()
 		{
 		}
 
-		public void Compile (TextReader input, Evidence evidence)
+		public void Compile (TextReader input, Evidence evidence, object xqueryCommand)
 		{
-			staticContext = XQueryASTCompiler.Compile (XQueryParser.Parse (input), null);
+			staticContext = XQueryASTCompiler.Compile (XQueryParser.Parse (input), null, evidence, this);
+			this.xqueryCommand = xqueryCommand;
 			// FIXME: generate executable assembly, and load it with evidence.
 		}
 
 		public void Execute (XPathNavigator input, XmlResolver resolver, XmlArgumentList args, XmlWriter writer)
 		{
+			if (staticContext == null)
+				throw new XmlQueryException ("Query string is not compiled.");
+			// Initialize event handler method info.
+			xqueryCommandOnMessageEventMethod = null;
+
 			XQueryContext ctx = new XQueryContext (new XQueryContextManager (staticContext, input, writer, resolver, args));
 
 			XPathSequence iter = new SingleItemIterator (input, ctx);
 
 			foreach (ExprSingle expr in staticContext.QueryBody)
 				expr.Serialize (iter);
+		}
+
+		internal void ProcessMessageEvent (object sender, QueryEventArgs e)
+		{
+			// FIXME: how to handle event raise method?
+			throw new NotImplementedException ().
+			/*
+			MethodInfo mi = GetEventHandler (xqueryCommand);
+			if (mi != null)
+				mi.Invoke (xqueryCommand, new object [] {sender, e});
+			*/
 		}
 	}
 

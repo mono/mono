@@ -55,7 +55,6 @@ namespace Mono.Xml.XPath2
 		XmlWriter currentWriter;
 		XPathItem input; // source input item(node)
 		XPathSequence currentSequence;
-		Hashtable currentVariables = new Hashtable ();
 		XmlNamespaceManager namespaceManager;
 		Hashtable localCollationCache = new Hashtable ();
 
@@ -90,10 +89,6 @@ namespace Mono.Xml.XPath2
 
 		public XmlArgumentList Arguments {
 			get { return args; }
-		}
-
-		public Hashtable LocalVariables {
-			get { return currentVariables; }
 		}
 
 		public XmlWriter Writer {
@@ -147,23 +142,13 @@ namespace Mono.Xml.XPath2
 				throw new SystemException ("XQuery error: should not happen.");
 		}
 
-		// FIXME: According to the spec 3.8.1, variales bindings in
-		// FLWOR is not necesarrily bound to the order of bindings. 
-		// Thus, we might not have to create every XQueryContext for
-		// each variable binding (not sure for other kind of bindings).
-		public void PushVariable (XmlQualifiedName name, XPathSequence iter)
+		internal void PushContext ()
 		{
 			contextStack.Push (currentContext);
-			currentVariables.Add (name, iter);
 			currentContext = new XQueryContext (this);
 		}
 
-		public void PopVariable ()
-		{
-			PopContext ();
-		}
-
-		private void PopContext ()
+		internal void PopContext ()
 		{
 			currentContext = contextStack.Pop ();
 		}
@@ -187,10 +172,11 @@ namespace Mono.Xml.XPath2
 		internal XQueryContext (XQueryContextManager manager, XPathSequence currentSequence)
 		{
 			contextManager = manager;
-//			if (manager.Initialized) // this condition is not filled on initial creation.
-//				currentSequence = manager.CurrentContext.currentSequence;
 			this.currentSequence = currentSequence;
-			currentVariables = (Hashtable) manager.LocalVariables.Clone ();
+			if (manager.CurrentContext != null)
+				currentVariables = (Hashtable) manager.CurrentContext.currentVariables.Clone ();
+			else
+				currentVariables = new Hashtable ();
 		}
 
 		internal XmlWriter Writer {
@@ -232,37 +218,37 @@ namespace Mono.Xml.XPath2
 			return contextManager.GetCulture (collation);
 		}
 
-		internal void PushVariable (XmlQualifiedName name, XPathSequence iter)
+		internal void PushVariable (XmlQualifiedName name, object iter)
 		{
-			contextManager.PushVariable (name, iter);
+			contextManager.PushContext ();
+			currentVariables [name] = iter;
 		}
 
 		internal void PopVariable ()
 		{
-			contextManager.PopVariable ();
+			contextManager.PopContext ();
 		}
 
-		internal XPathSequence ResolveVariable (XmlQualifiedName name, XPathSequence context)
+		internal XPathSequence ResolveVariable (XmlQualifiedName name)
 		{
 			object obj = currentVariables [name];
-			if (obj == null)
+			if (obj == null && contextManager.Arguments != null)
 				obj = contextManager.Arguments.GetParameter (name.Name, name.Namespace);
 			if (obj == null)
-				// FIXME: location
-				throw new XmlQueryException (String.Format ("Cannot resolve variable '{0}'.", name));
+				return new XPathEmptySequence (this);
 			XPathSequence seq = obj as XPathSequence;
 			if (seq != null)
 				return seq;
 			XPathItem item = obj as XPathItem;
 			if (item == null)
-				item = new XPathAtomicValue (obj, null);
-			return new SingleItemIterator (item, context);
+				item = new XPathAtomicValue (obj, XmlSchemaType.GetBuiltInType (XPathAtomicValue.XmlTypeCodeFromRuntimeType (obj.GetType (), true)));
+			return new SingleItemIterator (item, this);
 		}
 
 		internal XPathSequence ResolveCollection (string name)
 		{
 			// FIXME: support later.
-			return new XPathEmptySequence (currentSequence);
+			return new XPathEmptySequence (currentSequence.Context);
 		}
 
 		public IXmlNamespaceResolver NSResolver {

@@ -32,6 +32,7 @@ using System;
 using System.Collections;
 using System.Collections.Specialized;
 using System.IO;
+using System.Security.Policy;
 using System.Xml;
 using System.Xml.Query;
 using System.Xml.Schema;
@@ -44,20 +45,22 @@ namespace Mono.Xml.XPath2
 	{
 		// Static method
 
-		public static XQueryStaticContext Compile (XQueryModule module, XQueryCompileOptions options)
+		public static XQueryStaticContext Compile (XQueryModule module, XQueryCompileOptions options, Evidence evidence, XQueryCommandImpl commandImpl)
 		{
 			if (options == null)
 				options = new XQueryCompileOptions ();
-			return new XQueryASTCompiler (module, options, new XQueryCompileContext ()).Compile ();
+			return new XQueryASTCompiler (module, options, new XQueryCompileContext (), evidence, commandImpl).Compile ();
 		}
 
 		// Constructor
 
-		private XQueryASTCompiler (XQueryModule module, XQueryCompileOptions options, XQueryCompileContext compileContext)
+		private XQueryASTCompiler (XQueryModule module, XQueryCompileOptions options, XQueryCompileContext compileContext, Evidence evidence, XQueryCommandImpl commandImpl)
 		{
 			this.module = module;
 			this.options = options;
 			this.compileContext = compileContext;
+			this.evidence = evidence;
+			this.commandImpl = commandImpl;
 
 			inScopeSchemas = new XmlSchemaSet ();
 			localVariables = new Hashtable ();
@@ -82,6 +85,8 @@ namespace Mono.Xml.XPath2
 		bool constructionSpace; // construction mode
 		bool defaultOrdered; // Ordering mode
 		string baseUri;
+		Evidence evidence;
+		XQueryCommandImpl commandImpl;
 
 		// methods.
 
@@ -105,7 +110,9 @@ namespace Mono.Xml.XPath2
 				preserveWhitespace,
 				constructionSpace,
 				defaultOrdered,
-				baseUri);
+				baseUri,
+				evidence,
+				commandImpl);
 		}
 
 		private void CompileProlog ()
@@ -122,7 +129,7 @@ namespace Mono.Xml.XPath2
 					XQueryLibraryModule ext = XQueryParser.Parse (new StreamReader (s)) as XQueryLibraryModule;
 					if (ext == null)
 						throw new XmlQueryCompileException (String.Format ("External module {0} is resolved as a main module, while it should be a library module."));
-					XQueryStaticContext sctx = new XQueryASTCompiler (ext, options, compileContext).Compile ();
+					XQueryStaticContext sctx = new XQueryASTCompiler (ext, options, compileContext, evidence, commandImpl).Compile ();
 					libModuleContexts.Add (sctx);
 				}
 			}
@@ -170,7 +177,7 @@ namespace Mono.Xml.XPath2
 
 		internal void CheckSchemaTypeName (XmlQualifiedName name)
 		{
-			XmlSchemaType type = XmlSchemaType.GetBuiltInSimpleType (name);
+			XmlSchemaType type = XmlSchemaType.GetBuiltInType (name);
 			if (type != null)
 				return;
 			throw new XmlQueryCompileException (String.Format ("Unresolved schema type name: {0}", name));
@@ -212,10 +219,7 @@ namespace Mono.Xml.XPath2
 
 		internal XmlSchemaType ResolveSchemaType (XmlQualifiedName name)
 		{
-			XmlSchemaType type = XmlSchemaType.GetBuiltInSimpleType (name);
-			if (type != null)
-				return type;
-			type = XmlSchemaType.GetBuiltInComplexType (name);
+			XmlSchemaType type = XmlSchemaType.GetBuiltInType (name);
 			if (type != null)
 				return type;
 			type = inScopeSchemas.GlobalTypes [name] as XmlSchemaType;

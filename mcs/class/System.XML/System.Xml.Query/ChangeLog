@@ -1,3 +1,38 @@
+2004-08-30  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XQueryASTCompiler.cs, XQueryStaticContext.cs :
+	  Now it requires Evidence and XQueryCommandImpl for security check 
+	  and event dispatch.
+	* XQueryCommandImpl.cs :
+	  Provide Evidence for compiler. Added some code for message dispatch.
+	* XQueryContext.cs :
+	  Now don't pool variable only in XQueryContextManager.
+	  When variable name could not be resolved, return empty sequence
+	  (not sure if it is always correct).
+	  Fixes which reflects XPathEmptySequence.ctor() parameter changes.
+	* XQueryCliFunction.cs :
+	  Now it requires CAS if Evidence is supplied (in the future 
+	  Evidence won't be null _at any time_).
+	* XQueryConvert.cs :
+	  implemented GetFallbackType(). Fixed some comments.
+	* XPathSequence.cs :
+	  Don't require XPathSequence as an argument for XPathEmptySequence.
+	  Implemented FilteredIterator.
+	  Implemented FLWORIterator partly (not working).
+	  Fixed some incorrect exception type: XPathEx- to XmlQueryEx-.
+	  Dispatch message event to XQueryStaticContext.OnMessageEvent().
+	  Added EnumeratorIterator.
+	* XQueryFunction.cs:
+	  Fixes which reflects XPathEmptySequence.ctor() parameter changes.
+	* XQueryExpression.cs :
+	  Commonized content serialization for node constructors.
+	* XPath2Expression.cs :
+	  use XPathItem.TypedValue instead of (string) Value.
+	  In effective boolean value computation, Check Decimal as well. 
+	  Fixed misimplemented QuantifiedExpr.EvaluateAsBoolean().
+	  Fix which reflects XQueryContext.PushVariables() changes.
+	  Handle possible null argument on ParenthesizedExpr i.e. "( )".
+
 2004-08-26  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XPath2Expression.cs :

@@ -73,6 +73,36 @@ namespace Mono.Xml.XQuery
 			// construction.
 			return iter.Context;
 		}
+
+		public XPathSequence EvaluateNode (XPathSequence iter)
+		{
+			return EvaluateNode (iter, XPathNodeType.All);
+		}
+		
+		public XPathSequence EvaluateNode (XPathSequence iter, XPathNodeType moveAfterCreation)
+		{
+			XPathDocument doc = new XPathDocument ();
+			XmlWriter w = iter.Context.Writer;
+			try {
+				iter.Context.Writer = doc.CreateEditor ().AppendChild ();
+				Serialize (iter);
+				iter.Context.Writer.Close ();
+			} finally {
+				iter.Context.Writer = w;
+			}
+			XPathNavigator nav = doc.CreateNavigator ();
+			switch (moveAfterCreation) {
+			case XPathNodeType.Attribute:
+				nav.MoveToFirstAttribute ();
+				break;
+			case XPathNodeType.Root:
+				break;
+			default:
+				nav.MoveToFirstChild ();
+				break;
+			}
+			return new SingleItemIterator (nav, iter);
+		}
 #endregion
 	}
 
@@ -154,20 +184,7 @@ namespace Mono.Xml.XQuery
 
 		public override XPathSequence Evaluate (XPathSequence iter)
 		{
-			XmlQualifiedName name = EvaluateName (iter);
-
-			XPathDocument doc = new XPathDocument ();
-			XmlWriter w = iter.Context.Writer;
-			try {
-				iter.Context.Writer = doc.CreateWriter ();
-				Serialize (iter);
-				iter.Context.Writer.Close ();
-			} finally {
-				iter.Context.Writer = w;
-			}
-			XPathNavigator nav = doc.CreateNavigator ();
-			nav.MoveToFirstChild ();
-			return new SingleItemIterator (nav, iter);
+			return EvaluateNode (iter);
 		}
 
 		private XmlQualifiedName EvaluateName (XPathSequence iter)
@@ -259,21 +276,7 @@ namespace Mono.Xml.XQuery
 
 		public override XPathSequence Evaluate (XPathSequence iter)
 		{
-			XmlQualifiedName name = EvaluateName (iter);
-
-			XPathDocument doc = new XPathDocument ();
-			XmlWriter w = iter.Context.Writer;
-			try {
-				iter.Context.Writer = doc.CreateEditor ().CreateAttributes ();
-				// FIXME: maybe container element is required?
-				Serialize (iter);
-				iter.Context.Writer.Close ();
-			} finally {
-				iter.Context.Writer = w;
-			}
-			XPathNavigator nav = doc.CreateNavigator ();
-			nav.MoveToFirstAttribute ();
-			return new SingleItemIterator (nav, iter);
+			return EvaluateNode (iter, XPathNodeType.Attribute);
 		}
 
 		private XmlQualifiedName EvaluateName (XPathSequence iter)
@@ -386,7 +389,7 @@ namespace Mono.Xml.XQuery
 
 		public override XPathSequence Evaluate (XPathSequence iter)
 		{
-			throw new NotImplementedException ();
+			return EvaluateNode (iter, XPathNodeType.Root);
 		}
 #endregion
 	}
@@ -439,7 +442,7 @@ namespace Mono.Xml.XQuery
 
 		public override XPathSequence Evaluate (XPathSequence iter)
 		{
-			throw new NotImplementedException ();
+			return EvaluateNode (iter);
 		}
 #endregion
 	}
@@ -486,7 +489,7 @@ namespace Mono.Xml.XQuery
 
 		public override XPathSequence Evaluate (XPathSequence iter)
 		{
-			throw new NotImplementedException ();
+			return EvaluateNode (iter);
 		}
 #endregion
 	}
@@ -558,7 +561,7 @@ namespace Mono.Xml.XQuery
 
 		public override XPathSequence Evaluate (XPathSequence iter)
 		{
-			throw new NotImplementedException ();
+			return EvaluateNode (iter);
 		}
 
 		private string GetName (XPathSequence iter)

@@ -34,6 +34,7 @@
 using System;
 using System.Collections;
 using System.Reflection;
+using System.Security;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Query;
@@ -105,7 +106,7 @@ namespace Mono.Xml.XPath2
 
 			MethodInfo m = (MethodInfo) methods [maxArgs];
 			if (m == null)
-				throw new NotImplementedException ("Should not happen: maxArgs is " + maxArgs);
+				throw new SystemException ("Should not happen: maxArgs is " + maxArgs);
 			ParameterInfo [] pl = m.GetParameters ();
 			for (int i = 0; i < pl.Length; i++)
 				if (pl [i].ParameterType != typeof (XQueryContext))
@@ -157,6 +158,12 @@ namespace Mono.Xml.XPath2
 			if (mi == null)
 				throw new ArgumentException ("The number of custom function parameter does not match with the registered method's signature.");
 			ParameterInfo [] prms = mi.GetParameters ();
+
+			// Use Evidence and PermissionSet.Demand() here
+			// before invoking external function.
+			if (context.StaticContext.Evidence != null)
+				SecurityManager.ResolvePolicy (context.StaticContext.Evidence).Demand ();
+
 			if (prms.Length > 0 && prms [0].ParameterType == typeof (XQueryContext)) {
 				ArrayList pl = new ArrayList (args);
 				pl.Insert (0, context);

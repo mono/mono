@@ -33,6 +33,7 @@ using System.Collections;
 using System.Collections.Specialized;
 using System.Globalization;
 using System.IO;
+using System.Security.Policy;
 using System.Xml;
 using System.Xml.Query;
 using System.Xml.Schema;
@@ -65,7 +66,9 @@ namespace Mono.Xml.XPath2
 			bool preserveWhitespace,
 			bool constructionSpace,
 			bool defaultOrdered,
-			string baseUri)
+			string baseUri,
+			Evidence evidence,
+			XQueryCommandImpl commandImpl)
 		{
 			// Initialization phase.
 			compat = options.Compatibility;
@@ -90,12 +93,17 @@ namespace Mono.Xml.XPath2
 			this.defaultCollation = options.DefaultCollation;
 			// FIXME: set contextItemStaticType
 			// FIXME: set extDocResolver
+
+			this.evidence = evidence;
+			this.commandImpl = commandImpl;
 		}
 
 		// It holds in-effect components et. al.
 		XQueryCompileContext compileContext;
 
 		XmlNameTable nameTable;
+		Evidence evidence; // for safe custom function execution / safe assembly loading
+		XQueryCommandImpl commandImpl; // for event delegate
 
 		ExprSequence queryBody;
 
@@ -137,6 +145,10 @@ namespace Mono.Xml.XPath2
 
 		public XmlNameTable NameTable {
 			get { return nameTable; }
+		}
+
+		public Evidence Evidence {
+			get { return evidence; }
 		}
 
 		public CultureInfo DefaultCollation {
@@ -208,6 +220,11 @@ namespace Mono.Xml.XPath2
 		internal CultureInfo GetCulture (string collation)
 		{
 			return null;
+		}
+
+		internal void OnMessageEvent (object sender, QueryEventArgs e)
+		{
+			commandImpl.ProcessMessageEvent (sender, e);
 		}
 	}
 }

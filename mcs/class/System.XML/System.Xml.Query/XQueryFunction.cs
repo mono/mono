@@ -249,7 +249,7 @@ namespace Mono.Xml.XPath2
 				instParams [i] = Args [i].Type.ToRuntimeType (args [i].Evaluate (iter));
 			object o = Invoke (iter.Context, instParams);
 			if (o == null)
-				return new XPathEmptySequence (iter);
+				return new XPathEmptySequence (iter.Context);
 			if (o is XPathSequence)
 				return (XPathSequence) o;
 			XPathItem item = o as XPathItem;
