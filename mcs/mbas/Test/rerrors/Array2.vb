@@ -1,15 +1,18 @@
-' System.InvalidCastException: Cast from string to integer not valid
-
+'System.FormatException  '
+                                                                                
 Imports System
+Imports Nunit.Framework
+                                                                                
+<TestFixture> _
+Public Class ArrayFormat
+                                                                                
+                <Test, ExpectedException (GetType (System.FormatException))> _
+                Public Sub TestArrayFormat ()
+                        Dim arr As Integer(,) = {{1, "Hello"}, {3, 4}}
+                        If arr(0, 0) <> 1 Then
+                        Throw New Exception("#A1")
+                End if
+                End Sub
+End Class
 
-Module Array2
-
-    Sub Main()
-        Dim arr As Integer(,) = {{1, "Hello"}, {3, 4}}
-        If arr(0, 0) <> 1 Then
-            Throw New Exception("#A1")
-        End If
-    End Sub
-
-End Module
 

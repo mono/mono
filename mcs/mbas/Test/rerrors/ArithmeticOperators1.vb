@@ -1,15 +1,27 @@
-
+'Syetem.DivideByZeroException: A =A/0 is not valid '
+                                                                                
 Imports System
+Imports Nunit.Framework
+                                                                                
+<TestFixture> _
+Public Class DivideByZero
+                                                                                
+                <Test, ExpectedException (GetType (DivideByZeroException))> _
+                Public Sub TestDivideByZero ()
+                        Dim A As Integer
+                        A = 34
+                        Dim Zero As Decimal = 0
+                        A = A/0
+                End Sub
+End Class
 
-Module ArithmeticOperators1
 
-    Sub main()
 
-        Dim b1 As Decimal
-        b1 = 34.45
-        b1 = b1 / 0
-        Console.WriteLine(b1)
 
-    End Sub
 
-End Module
+
+
+
+
+
+
