@@ -1,5 +1,9 @@
 2004-09-02 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	* LocalBuilder.cs: another s.ioe
+
+2004-09-02 Ben Maurer  <bmaurer@users.sourceforge.net>
+
 	* ModuleBuilder.cs: dont throw an S.IOE for debugging stuff.
 	makes sre apps work
 

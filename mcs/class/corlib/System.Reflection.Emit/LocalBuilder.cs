@@ -65,7 +65,7 @@ namespace System.Reflection.Emit {
 
 		public void SetLocalSymInfo (string lname, int startOffset, int endOffset)
 		{
-			throw new InvalidOperationException ();
+			// nop
 		}
 
 		public void SetLocalSymInfo (string lname)
