@@ -102,11 +102,11 @@ namespace System.Web.UI.WebControls
 				                          break;
 				case ListItemType.Footer: toRender = footerTemplate;
 				                          break;
+				case ListItemType.AlternatingItem:
 				case ListItemType.Item:   toRender = itemTemplate;
 				                          break;
-				case ListItemType.AlternatingItem: toRender = itemTemplate;
-				                          break;
-				case ListItemType.SelectedItem: toRender = editItemTemplate;
+				case ListItemType.SelectedItem:
+					toRender = (editItemTemplate != null ? editItemTemplate : itemTemplate);
 				                          break;
 				default:                  toRender = editItemTemplate;
 				                          break;
