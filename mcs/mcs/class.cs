@@ -2817,6 +2817,16 @@ namespace Mono.CSharp {
 			//
 			// Find properties with the same name on the base class
 			//
+
+			
+			//
+			// Ok, this code is broken.  We should use the same concept
+			// that is available in `MemberLookup', because that does the
+			// right thing (ie, stops when it finds something).
+			//
+			// Currently we return multiple matches from the type hierarchy
+			// of properties
+			//
 			MemberInfo [] props;
 			MemberInfo [] props_static = TypeContainer.FindMembers (
 				parent.TypeBuilder.BaseType,
