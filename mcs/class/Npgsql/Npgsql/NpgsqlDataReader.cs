@@ -428,10 +428,9 @@ namespace Npgsql
 	  
 	  public Boolean IsDBNull(Int32 i)
 	  {
-	  	//throw new NotImplementedException();
 	  	
-	  	if (!CanRead())
-	  	  throw new InvalidOperationException("Cannot read data");
+	  	CheckCanRead();
+	    
 	  	return ((NpgsqlAsciiRow)_currentResultset[_rowIndex]).IsNull(i);
 	  }
 
