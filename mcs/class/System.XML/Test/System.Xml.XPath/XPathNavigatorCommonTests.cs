@@ -358,8 +358,8 @@ namespace MonoTests.System.Xml
 			XPathNavigator tmp = nav.Clone ();
 			XPathNodeIterator iter = nav.Select ("//e");
 			iter.MoveNext ();
-			nav.MoveTo (iter.Current);
-			nav.MoveToFirstAttribute ();
+			Assert (nav.MoveTo (iter.Current));
+			Assert (nav.MoveToFirstAttribute ());
 			AssertEquals ("attr", nav.Name);
 			AssertEquals ("", tmp.Name);
 			Assert (tmp.IsDescendant (nav));
@@ -372,6 +372,25 @@ namespace MonoTests.System.Xml
 			AssertEquals ("e", tmp.Name);
 			Assert (tmp.IsDescendant (nav));
 			Assert (!nav.IsDescendant (tmp));
+		}
+
+		[Test]
+		public void LiterallySplittedText ()
+		{
+			string xml = "<root><![CDATA[test]]> string</root>";
+
+			nav = GetXmlDocumentNavigator (xml);
+			LiterallySplittedText (nav);
+			nav = GetXPathDocumentNavigator (document);
+			LiterallySplittedText (nav);
+		}
+
+		private void LiterallySplittedText (XPathNavigator nav)
+		{
+			nav.MoveToFirstChild ();
+			nav.MoveToFirstChild ();
+			AssertEquals (XPathNodeType.Text, nav.NodeType);
+			AssertEquals ("test string", nav.Value);
 		}
 	}
 }

@@ -1,3 +1,7 @@
+2004-03-16  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XPathNavigatorCommonTests.cs : Added test for splitted text.
+
 2004-02-17  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XPathNavigatorMatchesTest.cs : commonified some code blocks.
