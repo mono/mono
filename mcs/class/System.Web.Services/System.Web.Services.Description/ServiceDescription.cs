@@ -208,26 +208,7 @@ namespace System.Web.Services.Description {
 		internal class ServiceDescriptionSerializer : XmlSerializer 
 		{
 			static XmlTypeMapping _typeMap;
-			static Type[] _builtinExtensionTypes = new Type[] {
-				typeof (HttpAddressBinding), 
-				typeof (HttpBinding),
-				typeof (HttpOperationBinding),
-				typeof (HttpUrlEncodedBinding),
-				typeof (HttpUrlReplacementBinding),
-				typeof (MimeContentBinding),
-				typeof (MimeMultipartRelatedBinding),
-				typeof (MimePart),
-				typeof (MimeTextBinding),
-				typeof (MimeXmlBinding),
-				typeof (SoapAddressBinding),
-				typeof (SoapBinding),
-				typeof (SoapBodyBinding),
-				typeof (SoapFaultBinding),
-				typeof (SoapHeaderBinding),
-				typeof (SoapHeaderFaultBinding),
-				typeof (SoapOperationBinding)
-			};
-			
+/*
 			protected override void Serialize (object o, XmlSerializationWriter writer)
 			{
 				ServiceDescriptionWriter xsWriter = writer as ServiceDescriptionWriter;
@@ -254,13 +235,16 @@ namespace System.Web.Services.Description {
 			{
 				if (_typeMap == null) {
 					XmlReflectionImporter ri = new XmlReflectionImporter (ServiceDescription.Namespace);
-					foreach (Type t in _builtinExtensionTypes) ri.IncludeType (t);
+					foreach (ExtensionInfo fei in ExtensionManager.GetFormatExtensions()) 
+						ri.IncludeType (fei.Type);
 					_typeMap = ri.ImportTypeMapping (typeof (ServiceDescription));
 				}
 				return _typeMap;
 			}
+			*/
 		}
 		
+		/*
 		internal class ServiceDescriptionWriter : XmlSerializationWriterInterpreter
 		{
 			public ServiceDescriptionWriter (XmlMapping typeMap)
@@ -270,29 +254,11 @@ namespace System.Web.Services.Description {
 
 			protected override void WriteObjectElementElements (XmlTypeMapping typeMap, object ob)
 			{
-				Type type = ob.GetType ();
-				object[] ats = type.GetCustomAttributes (typeof(XmlFormatExtensionPointAttribute), true);
-				if (ats.Length > 0)
+				ServiceDescriptionFormatExtensionCollection extensions = ExtensionManager.GetExtensionPoint (ob);
+				if (extensions != null)
 				{
-					XmlFormatExtensionPointAttribute at = (XmlFormatExtensionPointAttribute)ats[0];
-					IEnumerable extensions = null;
-					
-					PropertyInfo prop = type.GetProperty (at.MemberName);
-					if (prop != null)
-						extensions = (IEnumerable) prop.GetValue (ob, null);
-					else {
-						FieldInfo field = type.GetField (at.MemberName);
-						if (field != null)
-							extensions = (IEnumerable) field.GetValue (ob);
-						else
-							throw new InvalidOperationException ("XmlFormatExtensionPointAttribute: Member " + at.MemberName + " not found");
-					}
-					
-					if (extensions != null)
-					{
-						foreach (ServiceDescriptionFormatExtension ext in extensions)
-							WriteExtension (ext);
-					}
+					foreach (ServiceDescriptionFormatExtension ext in extensions)
+						WriteExtension (ext);
 				}
 				
 				base.WriteObjectElementElements (typeMap, ob);
@@ -300,38 +266,18 @@ namespace System.Web.Services.Description {
 			
 			void WriteExtension (ServiceDescriptionFormatExtension ext)
 			{
-				string prefix = null;
-				string ns = null;
-				string name = null;
-				
 				Type type = ext.GetType ();
+				ExtensionInfo info = ExtensionManager.GetFormatExtensionInfo (type);
+				string prefix = info.Prefix;
 				
-				object[] ats = type.GetCustomAttributes (typeof(XmlFormatExtensionPrefixAttribute), true);
-				if (ats.Length > 0)
-				{
-					XmlFormatExtensionPrefixAttribute at = (XmlFormatExtensionPrefixAttribute)ats[0];
-					prefix = at.Prefix;
-					ns = at.Namespace;
-				}
-				
-				ats = type.GetCustomAttributes (typeof(XmlFormatExtensionAttribute), true);
-				if (ats.Length > 0)
-				{
-					XmlFormatExtensionAttribute at = (XmlFormatExtensionAttribute)ats[0];
-					name = at.ElementName;
-					if (at.Namespace != null) ns = at.Namespace;
-				}
-				
-				if (name == null) throw new InvalidOperationException ("XmlFormatExtensionAttribute must be applied to type " + type);
-				
-				if (prefix == null || prefix == "") prefix = Writer.LookupPrefix (ns);
+				if (prefix == null || prefix == "") prefix = Writer.LookupPrefix (info.Namespace);
 				
 				if (prefix != null && prefix != "")
-					Writer.WriteStartElement (prefix, name, ns);
+					Writer.WriteStartElement (prefix, info.ElementName, info.Namespace);
 				else
-					WriteStartElement (name, ns, false);
+					WriteStartElement (info.ElementName, info.Namespace, false);
 
-				WriteObjectElement (GetTypeMap (type), ext, name, ns);
+				WriteObjectElement (GetTypeMap (type), ext, info.ElementName, info.Namespace);
 					
 				WriteEndElement ();
 			}
@@ -343,6 +289,23 @@ namespace System.Web.Services.Description {
 			: base (typeMap)
 			{
 			}
+			
+			protected override void ProcessUnknownElement (object ob)
+			{
+				ServiceDescriptionFormatExtensionCollection extensions = ExtensionManager.GetExtensionPoint (ob);
+				if (extensions != null)
+				{
+					ExtensionInfo info = ExtensionManager.GetFormatExtensionInfo (Reader.LocalName, Reader.NamespaceURI);
+					if (info != null)
+					{
+						object extension = Activator.CreateInstance (info.Type);
+						ReadClassInstanceMembers (GetTypeMap (info.Type), extension);
+						extensions.Add ((ServiceDescriptionFormatExtension)extension);
+					}
+				}
+				base.ProcessUnknownElement (ob);
+			}
 		}
+		*/
 	}
 }

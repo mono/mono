@@ -1,3 +1,8 @@
+2003-08-29  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* ServiceDescription.cs: Disabled suspport for serialization, until I found
+	  an easy way of generate serialization readers and writers.
+
 2003-08-28  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* MessageBinding.cs: Added default value attribute for Name property.
