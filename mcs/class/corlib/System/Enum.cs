@@ -53,7 +53,7 @@ namespace System
 	[Serializable]
 	public abstract class Enum : ValueType, IComparable, IConvertible, IFormattable
 	{
-		internal Enum ()
+		protected Enum ()
 		{
 		}
 

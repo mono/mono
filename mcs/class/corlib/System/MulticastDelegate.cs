@@ -36,7 +36,7 @@ namespace System
 		}
 
 
-		internal override object DynamicInvokeImpl (object[] args)
+		protected override object DynamicInvokeImpl (object[] args)
 		{
 			if (prev != null)
 				prev.DynamicInvokeImpl (args);

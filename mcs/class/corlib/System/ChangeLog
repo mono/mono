@@ -1,3 +1,12 @@
+2004-06-10  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* Delegate.cs: marked protected fields private to match public
+	API of MS.NET, marked DynamicInvokeImpl and GetMethodImpl
+	protected to fix public API
+	* Enum.cs: marked ctor protected to match public API of MS.NET
+	* MulticastDelegate.cs: marked DynamicInvokeImpl protected to
+	match public API of MS.NET
+
 2004-06-10  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DateTime.cs : Added more common patterns.
@@ -49,6 +58,7 @@
 	  - RFC1123 pattern is (again) now parsed in local time. I regressed
 	    some problems in previous fix.
 
+>>>>>>> 1.864
 2004-06-08  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Decimal.cs: Fixed cast to integer types to truncate (not round) the

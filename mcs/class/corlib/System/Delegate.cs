@@ -21,12 +21,12 @@ namespace System
 #endif
 	public abstract class Delegate : ICloneable, ISerializable
 	{
-		protected Type target_type;
-		protected object m_target;
-		protected string method_name;
-		protected IntPtr method_ptr;
-		protected IntPtr delegate_trampoline;
-		protected MethodInfo method_info;
+		private Type target_type;
+		private object m_target;
+		private string method_name;
+		private IntPtr method_ptr;
+		private IntPtr delegate_trampoline;
+		private MethodInfo method_info;
 
 		protected Delegate (object target, string method)
 		{
@@ -183,7 +183,7 @@ namespace System
 			return DynamicInvokeImpl (args);
 		}
 
-		internal virtual object DynamicInvokeImpl (object[] args)
+		protected virtual object DynamicInvokeImpl (object[] args)
 		{
 			if (Method == null) {
 				Type[] mtypes = new Type [args.Length];
@@ -217,6 +217,11 @@ namespace System
 		public override int GetHashCode ()
 		{
 			return (int)method_ptr;
+		}
+
+		protected virtual MethodInfo GetMethodImpl ()
+		{
+			return Method;
 		}
 
 		// This is from ISerializable
