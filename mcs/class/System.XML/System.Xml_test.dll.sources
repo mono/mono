@@ -58,4 +58,3 @@ System.Xml.XPath/XPathNavigatorTests.cs
 System.Xml.XPath/XPathNavigatorCommonTests.cs
 System.Xml.Xsl/XslTransformTests.cs
 System.Xml.Xsl/MsxslScriptTests.cs
-
