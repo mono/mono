@@ -50,7 +50,7 @@ opt:
 	$(CSC) /nologo /optimize+ /r:System.dll /target:exe /out:mbas.exe $(COMPILER_SOURCES)
 
 clean:
-	rm -f mbas.exe y.output mcs.pdb *~ .*~ mb-parser.cs mbas.log response
+	rm -f mbas.exe y.output mbas.pdb *~ .*~ mb-parser.cs mbas.log response
 
 mb-parser.cs: mb-parser.jay
 	../jay/jay -ctv < ../jay/skeleton.cs mb-parser.jay > mb-parser.cs
