@@ -27,11 +27,13 @@ namespace System.Reflection.Emit {
 		internal int filter_offset;
 		
 		internal void Debug () {
+#if NO
 			System.Console.Write ("\ttype="+type.ToString()+" start="+start.ToString()+" len="+len.ToString());
 			if (extype != null)
 				System.Console.WriteLine (" extype="+extype.ToString());
 			else
 				System.Console.WriteLine ("");
+#endif
 		}
 	}
 	internal struct ILExceptionInfo {
@@ -40,6 +42,10 @@ namespace System.Reflection.Emit {
 		int len;
 		internal Label end;
 
+		internal int NumHandlers () {
+			return handlers.Length;
+		}
+		
 		internal void AddCatch (Type extype, int offset) {
 			int i;
 			End (offset);
@@ -75,9 +81,9 @@ namespace System.Reflection.Emit {
 				return ILExceptionBlock.CATCH;
 		}
 
-		internal void Debug () {
+		internal void Debug (int b) {
 #if NO
-			System.Console.WriteLine ("Handler at "+start.ToString()+ " len: "+len.ToString());
+			System.Console.WriteLine ("Handler {0} at {1}, len: {2}", b, start, len);
 			for (int i = 0; i < handlers.Length; ++i)
 				handlers [i].Debug ();
 #endif
@@ -128,7 +134,7 @@ namespace System.Reflection.Emit {
 		private ISymbolWriter sym_writer;
 		private Stack scopes;
 		private int cur_block;
-		private int open_blocks;
+		private Stack open_blocks;
 
 		internal ILGenerator (MethodBase mb, int size) {
 			if (size < 0)
@@ -150,6 +156,7 @@ namespace System.Reflection.Emit {
 			}
 			abuilder = (AssemblyBuilder)module.Assembly;
 			sym_writer = module.GetSymWriter ();
+			open_blocks = new Stack ();
 		}
 
 		private void add_token_fixup (MemberInfo mi) {
@@ -260,7 +267,7 @@ namespace System.Reflection.Emit {
 		}
 
 		public virtual void BeginCatchBlock (Type exceptionType) {
-			if (open_blocks <= 0)
+			if (open_blocks.Count <= 0)
 				throw new NotSupportedException ("Not in an exception block");
 			InternalEndClause ();
 			ex_handlers [cur_block].AddCatch (exceptionType, code_len);
@@ -282,23 +289,22 @@ namespace System.Reflection.Emit {
 				ex_handlers = new ILExceptionInfo [1];
 				cur_block = 0;
 			}
-			open_blocks++;
+			open_blocks.Push (cur_block);
 			ex_handlers [cur_block].start = code_len;
 			return ex_handlers [cur_block].end = DefineLabel ();
 		}
 		public virtual void BeginFaultBlock() {
-			if (open_blocks <= 0)
+			if (open_blocks.Count <= 0)
 				throw new NotSupportedException ("Not in an exception block");
 			//System.Console.WriteLine ("Begin fault Block");
 			//throw new NotImplementedException ();
 		}
 		public virtual void BeginFinallyBlock() {
-			if (open_blocks <= 0)
+			if (open_blocks.Count <= 0)
 				throw new NotSupportedException ("Not in an exception block");
-			//System.Console.WriteLine ("Begin finally Block");
 			InternalEndClause ();
+			//System.Console.WriteLine ("Begin finally Block");
 			ex_handlers [cur_block].AddFinally (code_len);
-			//throw new NotImplementedException ();
 		}
 		public virtual void BeginScope () {
 			if (sym_writer != null)
@@ -540,15 +546,17 @@ namespace System.Reflection.Emit {
 		}
 
 		public virtual void EndExceptionBlock () {
-			if (open_blocks <= 0)
+			if (open_blocks.Count <= 0)
 				throw new NotSupportedException ("Not in an exception block");
 			InternalEndClause ();
 			MarkLabel (ex_handlers [cur_block].end);
 			ex_handlers [cur_block].End (code_len);
-			ex_handlers [cur_block].Debug ();
-			--cur_block;
-			--open_blocks;
-			//System.Console.WriteLine ("End Block");
+			ex_handlers [cur_block].Debug (cur_block);
+			//System.Console.WriteLine ("End Block {0} (handlers: {1})", cur_block, ex_handlers [cur_block].NumHandlers ());
+			open_blocks.Pop ();
+			if (open_blocks.Count > 0)
+				cur_block = (int)open_blocks.Peek ();
+			//Console.WriteLine ("curblock restored to {0}", cur_block);
 			//throw new NotImplementedException ();
 		}
 		public virtual void EndScope () {
