@@ -17,9 +17,17 @@ namespace System.Data.SqlTypes
 		private decimal value;
 
 		public static readonly byte MaxPrecision = 38; 
+
+		[MonoTODO]
 		public static readonly byte MaxScale; 
+
+		[MonoTODO]
 		public static readonly SqlDecimal MaxValue;
+
+		[MonoTODO]
 		public static readonly SqlDecimal MinValue;
+		
+		[MonoTODO]
 		public static readonly SqlDecimal Null;
 
 		#endregion
@@ -31,22 +39,19 @@ namespace System.Data.SqlTypes
 			this.value = value;
 		}
 
-		[MonoTODO]
 		public SqlDecimal (double value) 
 		{
-			throw new NotImplementedException();
+			this.value = ((decimal)value);
 		}
 
-		[MonoTODO]
 		public SqlDecimal (int value) 
 		{
-			throw new NotImplementedException();
+			this.value = ((decimal)value);
 		}
 
-		[MonoTODO]
 		public SqlDecimal (long value) 
 		{
-			throw new NotImplementedException();
+			this.value = ((decimal)value);
 		}
 
 		[MonoTODO]
@@ -76,7 +81,7 @@ namespace System.Data.SqlTypes
 		}
 
 		public bool IsNull { 
-			get { throw new NotImplementedException (); }
+			get { return (bool) (this == SqlDecimal.Null); }
 		}
 
 		public bool IsPositive { 
@@ -91,7 +96,7 @@ namespace System.Data.SqlTypes
 			get { throw new NotImplementedException (); }
 		}
 
-		public byte Value { 
+		public decimal Value { 
 			get { return value; }
 		}
 
@@ -102,7 +107,7 @@ namespace System.Data.SqlTypes
 		[MonoTODO]
 		public static SqlDecimal Abs (SqlDecimal n)
 		{
-			return new NotImplementedException();
+			throw new NotImplementedException();
 		}
 
 		public static SqlDecimal Add (SqlDecimal x, SqlDecimal y)
@@ -113,7 +118,7 @@ namespace System.Data.SqlTypes
 		[MonoTODO]
 		public static SqlDecimal Ceiling (SqlDecimal n)
 		{
-			return new NotImplementedException();
+			throw new NotImplementedException();
 		}
 
 		[MonoTODO]
@@ -147,7 +152,7 @@ namespace System.Data.SqlTypes
 		[MonoTODO]
 		public static SqlDecimal Floor (SqlDecimal n)
 		{
-			return new NotImplementedException();
+			throw new NotImplementedException();
 		}
 
 		[MonoTODO]
@@ -215,64 +220,53 @@ namespace System.Data.SqlTypes
 			return (x - y);
 		}
 
-		[MonoTODO]
-		public static double ToDouble ()
+		public double ToDouble ()
 		{
-			return new NotImplementedException ();
+			return ((double)value);
 		}
 
-		public static SqlBoolean ToSqlBoolean ()
+		public SqlBoolean ToSqlBoolean ()
 		{
-			if (value != 0) return SqlBoolean.True;
-			if (value == 0) return SqlBoolean.False;
-
-			return SqlBoolean.Null;
+			return ((SqlBoolean)this);
 		}
 		
-		[MonoTODO]
-		public static SqlByte ToSqlByte ()
+		public SqlByte ToSqlByte ()
 		{
-			throw new NotImplementedException ();
+			return ((SqlByte)this);
+		}
+
+		public SqlDouble ToSqlDouble ()
+		{
+			return ((SqlDouble)this);
+		}
+
+		public SqlInt16 ToSqlInt16 ()
+		{
+			return ((SqlInt16)this);
+		}
+
+		public SqlInt32 ToSqlInt32 ()
+		{
+			return ((SqlInt32)this);
+		}
+
+		public SqlInt64 ToSqlInt64 ()
+		{
+			return ((SqlInt64)this);
+		}
+
+		public SqlMoney ToSqlMoney ()
+		{
+			return ((SqlMoney)this);
+		}
+
+		public SqlSingle ToSqlSingle ()
+		{
+			return ((SqlSingle)this);
 		}
 
 		[MonoTODO]
-		public static SqlDouble ToSqlDouble ()
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public static SqlInt16 ToSqlInt16 ()
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public static SqlInt32 ToSqlInt32 ()
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public static SqlInt64 ToSqlInt64 ()
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public static SqlMoney ToSqlMoney ()
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public static SqlSingle ToSqlSingle ()
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public static SqlString ToSqlString ()
+		public SqlString ToSqlString ()
 		{
 			throw new NotImplementedException ();
 		}
@@ -301,37 +295,37 @@ namespace System.Data.SqlTypes
 
 		public static SqlBoolean operator == (SqlDecimal x, SqlDecimal y)
 		{
-			if (x == null || y == null) return SqlBoolean.Null;
+			if (x.IsNull || y.IsNull) return SqlBoolean.Null;
 			return new SqlBoolean (x.Value == y.Value);
 		}
 
 		public static SqlBoolean operator > (SqlDecimal x, SqlDecimal y)
 		{
-			if (x == null || y == null) return SqlBoolean.Null;
+			if (x.IsNull || y.IsNull) return SqlBoolean.Null;
 			return new SqlBoolean (x.Value > y.Value);
 		}
 
 		public static SqlBoolean operator >= (SqlDecimal x, SqlDecimal y)
 		{
-			if (x == null || y == null) return SqlBoolean.Null;
+			if (x.IsNull || y.IsNull) return SqlBoolean.Null;
 			return new SqlBoolean (x.Value >= y.Value);
 		}
 
 		public static SqlBoolean operator != (SqlDecimal x, SqlDecimal y)
 		{
-			if (x == null || y == null) return SqlBoolean.Null;
+			if (x.IsNull || y.IsNull) return SqlBoolean.Null;
 			return new SqlBoolean (!(x.Value == y.Value));
 		}
 
 		public static SqlBoolean operator < (SqlDecimal x, SqlDecimal y)
 		{
-			if (x == null || y == null) return SqlBoolean.Null;
+			if (x.IsNull || y.IsNull) return SqlBoolean.Null;
 			return new SqlBoolean (x.Value < y.Value);
 		}
 
 		public static SqlBoolean operator <= (SqlDecimal x, SqlDecimal y)
 		{
-			if (x == null || y == null) return SqlBoolean.Null;
+			if (x.IsNull || y.IsNull) return SqlBoolean.Null;
 			return new SqlBoolean (x.Value <= y.Value);
 		}
 
@@ -350,34 +344,30 @@ namespace System.Data.SqlTypes
 			return new SqlDecimal (-(n.Value));
 		}
 
-		[MonoTODO]
 		public static explicit operator SqlDecimal (SqlBoolean x)
 		{
-			return new NotImplementedException ();
+			return new SqlDecimal ((decimal)x.ByteValue);
 		}
 
-		[MonoTODO]
 		public static explicit operator Decimal (SqlDecimal n)
 		{
-			return new NotImplementedException ();
+			return n.Value;
 		}
 
-		[MonoTODO]
 		public static explicit operator SqlDecimal (SqlDouble x)
 		{
-			return new NotImplementedException ();
+			return new SqlDecimal ((decimal)x.Value);
 		}
 
-		[MonoTODO]
 		public static explicit operator SqlDecimal (SqlSingle x)
 		{
-			return new NotImplementedException ();
+			return new SqlDecimal ((decimal)x.Value);
 		}
 
 		[MonoTODO]
 		public static explicit operator SqlDecimal (SqlString x)
 		{
-			return new NotImplementedException ();
+			throw new NotImplementedException ();
 		}
 
 		public static explicit operator SqlDecimal (decimal x)
@@ -385,34 +375,29 @@ namespace System.Data.SqlTypes
 			return new SqlDecimal (x);
 		}
 
-		[MonoTODO]
 		public static explicit operator SqlDecimal (SqlByte x)
 		{
-			return new NotImplementedException ();
+			return new SqlDecimal ((decimal)x.Value);
 		}
 
-		[MonoTODO]
 		public static explicit operator SqlDecimal (SqlInt16 x)
 		{
-			return new NotImplementedException ();
+			return new SqlDecimal ((decimal)x.Value);
 		}
 
-		[MonoTODO]
 		public static explicit operator SqlDecimal (SqlInt32 x)
 		{
-			return new NotImplementedException ();
+			return new SqlDecimal ((decimal)x.Value);
 		}
 
-		[MonoTODO]
 		public static explicit operator SqlDecimal (SqlInt64 x)
 		{
-			return new NotImplementedException ();
+			return new SqlDecimal ((decimal)x.Value);
 		}
 
-		[MonoTODO]
 		public static explicit operator SqlDecimal (SqlMoney x)
 		{
-			return new NotImplementedException ();
+			return new SqlDecimal ((decimal)x.Value);
 		}
 
 		#endregion

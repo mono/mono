@@ -18,6 +18,7 @@ namespace System.Data.SqlTypes
 
 		public static readonly SqlInt16 MaxValue = new SqlInt16 (32767);
 		public static readonly SqlInt16 MinValue = new SqlInt16 (-32768);
+		[MonoTODO]
 		public static readonly SqlInt16 Null;
 		public static readonly SqlInt16 Zero = new SqlInt16 (0);
 
@@ -34,9 +35,8 @@ namespace System.Data.SqlTypes
 
 		#region Properties
 
-		[MonoTODO]
 		public bool IsNull { 
-			get { throw new NotImplementedException (); }
+			get { return (bool) (this == SqlInt16.Null); }
 		}
 
 		public short Value { 
@@ -141,54 +141,44 @@ namespace System.Data.SqlTypes
 			return (x - y);
 		}
 
-		public static SqlBoolean ToSqlBoolean ()
+		public SqlBoolean ToSqlBoolean ()
 		{
-			if (value != 0) return SqlBoolean.True;
-			if (value == 0) return SqlBoolean.False;
-
-			return SqlBoolean.Null;
+			return ((SqlBoolean)this);
 		}
 		
-		[MonoTODO]
-		public static SqlByte ToSqlByte ()
+		public SqlByte ToSqlByte ()
 		{
-			throw new NotImplementedException ();
+			return ((SqlByte)this);
 		}
 
-		[MonoTODO]
-		public static SqlDecimal ToSqlDecimal ()
+		public SqlDecimal ToSqlDecimal ()
 		{
-			throw new NotImplementedException ();
+			return ((SqlDecimal)this);
 		}
 
-		[MonoTODO]
-		public static SqlInt16 ToSqlDouble ()
+		public SqlDouble ToSqlDouble ()
 		{
-			throw new NotImplementedException ();
+			return ((SqlDouble)this);
 		}
 
-		[MonoTODO]
-		public static SqlInt32 ToSqlInt32 ()
+		public SqlInt32 ToSqlInt32 ()
 		{
-			throw new NotImplementedException ();
+			return ((SqlInt32)this);
 		}
 
-		[MonoTODO]
-		public static SqlInt64 ToSqlInt64 ()
+		public SqlInt64 ToSqlInt64 ()
 		{
-			throw new NotImplementedException ();
+			return ((SqlInt64)this);
 		}
 
-		[MonoTODO]
-		public static SqlMoney ToSqlMoney ()
+		public SqlMoney ToSqlMoney ()
 		{
-			throw new NotImplementedException ();
+			return ((SqlMoney)this);
 		}
 
-		[MonoTODO]
-		public static SqlSingle ToSqlSingle ()
+		public SqlSingle ToSqlSingle ()
 		{
-			throw new NotImplementedException ();
+			return ((SqlSingle)this);
 		}
 
 		[MonoTODO]
@@ -210,136 +200,134 @@ namespace System.Data.SqlTypes
 
 		public static SqlInt16 operator + (SqlInt16 x, SqlInt16 y)
 		{
-			return new SqlInt16 (x.Value + y.Value);
+			return new SqlInt16 ((short) (x.Value + y.Value));
 		}
 
 		public static SqlInt16 operator & (SqlInt16 x, SqlInt16 y)
 		{
-			return new SqlInt16 (x.value & y.Value);
+			return new SqlInt16 ((short) (x.value & y.Value));
 		}
 
 		public static SqlInt16 operator | (SqlInt16 x, SqlInt16 y)
 		{
-			return new SqlInt16 (x.value | y.Value);
+			return new SqlInt16 ((short) (x | y));
 		}
 
 		public static SqlInt16 operator / (SqlInt16 x, SqlInt16 y)
 		{
-			return new SqlInt16 (x.Value / y.Value);
+			return new SqlInt16 ((short) (x.Value / y.Value));
 		}
 
 		public static SqlBoolean operator == (SqlInt16 x, SqlInt16 y)
 		{
-			if (x == null || y == null) return SqlBoolean.Null;
+			if (x.IsNull || y.IsNull) return SqlBoolean.Null;
 			return new SqlBoolean (x.Value == y.Value);
 		}
 
 		public static SqlInt16 operator ^ (SqlInt16 x, SqlInt16 y)
 		{
-			return new SqlInt16 (x.Value ^ y.Value);
+			return new SqlInt16 ((short) (x.Value ^ y.Value));
 		}
 
 		public static SqlBoolean operator > (SqlInt16 x, SqlInt16 y)
 		{
-			if (x == null || y == null) return SqlBoolean.Null;
+			if (x.IsNull || y.IsNull) return SqlBoolean.Null;
 			return new SqlBoolean (x.Value > y.Value);
 		}
 
 		public static SqlBoolean operator >= (SqlInt16 x, SqlInt16 y)
 		{
-			if (x == null || y == null) return SqlBoolean.Null;
+			if (x.IsNull || y.IsNull) return SqlBoolean.Null;
 			return new SqlBoolean (x.Value >= y.Value);
 		}
 
 		public static SqlBoolean operator != (SqlInt16 x, SqlInt16 y)
 		{
-			if (x == null || y == null) return SqlBoolean.Null;
+			if (x.IsNull || y.IsNull) return SqlBoolean.Null;
 			return new SqlBoolean (!(x.Value == y.Value));
 		}
 
 		public static SqlBoolean operator < (SqlInt16 x, SqlInt16 y)
 		{
-			if (x == null || y == null) return SqlBoolean.Null;
+			if (x.IsNull || y.IsNull) return SqlBoolean.Null;
 			return new SqlBoolean (x.Value < y.Value);
 		}
 
 		public static SqlBoolean operator <= (SqlInt16 x, SqlInt16 y)
 		{
-			if (x == null || y == null) return SqlBoolean.Null;
+			if (x.IsNull || y.IsNull) return SqlBoolean.Null;
 			return new SqlBoolean (x.Value <= y.Value);
 		}
 
 		public static SqlInt16 operator % (SqlInt16 x, SqlInt16 y)
 		{
-			return new SqlInt16 (x.Value % y.Value);
+			return new SqlInt16 ((short) (x.Value % y.Value));
 		}
 
 		public static SqlInt16 operator * (SqlInt16 x, SqlInt16 y)
 		{
-			return new SqlInt16 (x.Value * y.Value);
+			return new SqlInt16 ((short) (x.Value * y.Value));
 		}
 
 		public static SqlInt16 operator ~ (SqlInt16 x)
 		{
-			return new SqlInt16 (~(x.Value));
+			return new SqlInt16 ((short) (~x.Value));
 		}
 
 		public static SqlInt16 operator - (SqlInt16 x, SqlInt16 y)
 		{
-			return new SqlInt16 (x.Value - y.Value);
+			return new SqlInt16 ((short) (x.Value - y.Value));
 		}
 
 		public static SqlInt16 operator - (SqlInt16 n)
 		{
-			return new SqlInt16 (-(n.Value));
+			return new SqlInt16 ((short) (-n.Value));
 		}
 
-		[MonoTODO]
 		public static explicit operator SqlInt16 (SqlBoolean x)
 		{
-			return new NotImplementedException ();
+			return new SqlInt16 ((short)x.ByteValue);
 		}
 
-		[MonoTODO]
 		public static explicit operator SqlInt16 (SqlDecimal x)
 		{
-			return new NotImplementedException ();
+			return new SqlInt16 ((short)x.Value);
 		}
 
-		[MonoTODO]
 		public static explicit operator SqlInt16 (SqlDouble x)
 		{
-			return new NotImplementedException ();
+			return new SqlInt16 ((short)x.Value);
 		}
 
-		[MonoTODO]
+		public static explicit operator short (SqlInt16 x)
+		{
+			return x.Value; 
+		}
+
 		public static explicit operator SqlInt16 (SqlInt32 x)
 		{
-			return new NotImplementedException ();
+			return new SqlInt16 ((short)x.Value);
 		}
 
-		[MonoTODO]
 		public static explicit operator SqlInt16 (SqlInt64 x)
 		{
-			return new NotImplementedException ();
+			return new SqlInt16 ((short)x.Value);
 		}
 
-		[MonoTODO]
 		public static explicit operator SqlInt16 (SqlMoney x)
 		{
-			return new NotImplementedException ();
+			return new SqlInt16 ((short)x.Value);
 		}
 
-		[MonoTODO]
 		public static explicit operator SqlInt16 (SqlSingle x)
 		{
-			return new NotImplementedException ();
+			return new SqlInt16 ((short)x.Value);
 		}
 
 		[MonoTODO]
 		public static explicit operator SqlInt16 (SqlString x)
 		{
-			return new NotImplementedException ();
+			throw new NotImplementedException ();
 		}
 
 		public static explicit operator SqlInt16 (short x)
@@ -347,10 +335,9 @@ namespace System.Data.SqlTypes
 			return new SqlInt16 (x);
 		}
 
-		[MonoTODO]
 		public static explicit operator SqlInt16 (SqlByte x)
 		{
-			return new NotImplementedException ();
+			return new SqlInt16 ((short)x.Value);
 		}
 
 		#endregion

@@ -18,6 +18,7 @@ namespace System.Data.SqlTypes
 
 		public static readonly SqlDateTime MaxValue = new SqlDateTime (9999,12,31);
 		public static readonly SqlDateTime MinValue = new SqlDateTime (1753,1,1);
+		[MonoTODO]
 		public static readonly SqlDateTime Null;
 		public static readonly int SQLTicksPerHour;
 		public static readonly int SQLTicksPerMinute;
@@ -35,6 +36,7 @@ namespace System.Data.SqlTypes
 		[MonoTODO]
 		public SqlDateTime (int dayTicks, int timeTicks) 
 		{
+			throw new NotImplementedException ();
 		}
 
 		public SqlDateTime (int year, int month, int day) 
@@ -47,15 +49,16 @@ namespace System.Data.SqlTypes
 			this.value = new DateTime (year, month, day, hour, minute, second);
 		}
 
+		[MonoTODO]
 		public SqlDateTime (int year, int month, int day, int hour, int minute, int second, double millisecond) 
 		{
-			this.value = new DateTime (year, month, day, hour, minute, second, millisecond);
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		public SqlDateTime (int year, int month, int day, int hour, int minute, int second, int bilisecond) 
 		{
-			return new NotImplementedException();
+			throw new NotImplementedException ();
 		}
 
 		#endregion
@@ -67,9 +70,8 @@ namespace System.Data.SqlTypes
 			get { throw new NotImplementedException (); }
 		}
 
-		[MonoTODO]
-		public byte IsNull { 
-			get { throw new NotImplementedException (); }
+		public bool IsNull { 
+			get { return (bool) (this == SqlDateTime.Null); }
 		}
 
 		[MonoTODO]
@@ -77,9 +79,8 @@ namespace System.Data.SqlTypes
 			get { throw new NotImplementedException (); }
 		}
 
-		[MonoTODO]
-		public int Value {
-			get { throw new NotImplementedException (); }
+		public DateTime Value {
+			get { return value; }
 		}
 
 		#endregion
@@ -140,7 +141,7 @@ namespace System.Data.SqlTypes
 			throw new NotImplementedException ();
 		}
 
-		public static SqlBoolean ToSqlString ()
+		public SqlString ToSqlString ()
 		{
 			return new SqlString (value.ToString ());
 		}
@@ -149,53 +150,53 @@ namespace System.Data.SqlTypes
 		{	
 			return value.ToString ();
 		}
-		
+	
+		[MonoTODO]	
 		public static SqlDateTime operator + (SqlDateTime x, TimeSpan t)
 		{
-			if (x == null || t == null) return SqlByte.Null;
-			return new SqlDateTime (x.Value + t);
+			throw new NotImplementedException ();
 		}
 
 		public static SqlBoolean operator == (SqlDateTime x, SqlDateTime y)
 		{
-			if (x == null || y == null) return SqlBoolean.Null;
+			if (x.IsNull || y.IsNull) return SqlBoolean.Null;
 			return new SqlBoolean (x.Value == y.Value);
 		}
 
 		public static SqlBoolean operator > (SqlDateTime x, SqlDateTime y)
 		{
-			if (x == null || y == null) return SqlBoolean.Null;
+			if (x.IsNull || y.IsNull) return SqlBoolean.Null;
 			return new SqlBoolean (x.Value > y.Value);
 		}
 
 		public static SqlBoolean operator >= (SqlDateTime x, SqlDateTime y)
 		{
-			if (x == null || y == null) return SqlBoolean.Null;
+			if (x.IsNull || y.IsNull) return SqlBoolean.Null;
 			return new SqlBoolean (x.Value >= y.Value);
 		}
 
 		public static SqlBoolean operator != (SqlDateTime x, SqlDateTime y)
 		{
-			if (x == null || y == null) return SqlBoolean.Null;
+			if (x.IsNull || y.IsNull) return SqlBoolean.Null;
 			return new SqlBoolean (!(x.Value == y.Value));
 		}
 
 		public static SqlBoolean operator < (SqlDateTime x, SqlDateTime y)
 		{
-			if (x == null || y == null) return SqlBoolean.Null;
+			if (x.IsNull || y.IsNull) return SqlBoolean.Null;
 			return new SqlBoolean (x.Value < y.Value);
 		}
 
 		public static SqlBoolean operator <= (SqlDateTime x, SqlDateTime y)
 		{
-			if (x == null || y == null) return SqlBoolean.Null;
+			if (x.IsNull || y.IsNull) return SqlBoolean.Null;
 			return new SqlBoolean (x.Value <= y.Value);
 		}
 
+		[MonoTODO]
 		public static SqlByte operator - (SqlDateTime x, TimeSpan t)
 		{
-			if (x == null || t == null) return SqlByte.Null;
-			return new SqlDateTime (x.Value + t);
+			throw new NotImplementedException ();
 		}
 
 		public static explicit operator DateTime (SqlDateTime x)

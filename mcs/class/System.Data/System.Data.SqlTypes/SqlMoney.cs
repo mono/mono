@@ -18,6 +18,8 @@ namespace System.Data.SqlTypes
 
 		public static readonly SqlMoney MaxValue = new SqlMoney (922337203685475.5807);
 		public static readonly SqlMoney MinValue = new SqlMoney (-922337203685477.5808);
+
+		[MonoTODO]
 		public static readonly SqlMoney Null;
 		public static readonly SqlMoney Zero = new SqlMoney (0);
 
@@ -30,22 +32,19 @@ namespace System.Data.SqlTypes
 			this.value = value;
 		}
 
-		[MonoTODO]
 		public SqlMoney (double value) 
 		{
-			throw new NotImplementedException ();
+			this.value = (decimal)value;
 		}
 
-		[MonoTODO]
 		public SqlMoney (int value) 
 		{
-			throw new NotImplementedException ();
+			this.value = (decimal)value;
 		}
 
-		[MonoTODO]
 		public SqlMoney (long value) 
 		{
-			throw new NotImplementedException ();
+			this.value = (decimal)value;
 		}
 
 		#endregion
@@ -54,7 +53,7 @@ namespace System.Data.SqlTypes
 
 		[MonoTODO]
 		public bool IsNull { 
-			get { throw new NotImplementedException (); }
+			get { return (bool) (this == SqlMoney.Null); }
 		}
 
 		public decimal Value { 
@@ -139,80 +138,68 @@ namespace System.Data.SqlTypes
 			return (x - y);
 		}
 
-		public static decimal ToDecimal ()
+		public decimal ToDecimal ()
 		{
 			return value;
 		}
 
-		[MonoTODO]
-		public static double ToDouble ()
+		public double ToDouble ()
 		{
-			throw new NotImplementedException ();
+			return (double)value;
 		}
 
-		[MonoTODO]
-		public static int ToInt32 ()
+		public int ToInt32 ()
 		{
-			throw new NotImplementedException ();
+			return (int)value;
 		}
 
-		[MonoTODO]
-		public static long ToInt64 ()
+		public long ToInt64 ()
 		{
-			throw new NotImplementedException ();
+			return (long)value;
 		}
 
-		public static SqlBoolean ToSqlBoolean ()
+		public SqlBoolean ToSqlBoolean ()
 		{
-			if (value != 0) return SqlBoolean.True;
-			if (value == 0) return SqlBoolean.False;
-
-			return SqlBoolean.Null;
+			return ((SqlBoolean)this);
 		}
 		
-		[MonoTODO]
-		public static SqlByte ToSqlByte ()
+		public SqlByte ToSqlByte ()
 		{
-			throw new NotImplementedException ();
+			return ((SqlByte)this);
 		}
 
-		public static SqlDecimal ToSqlDecimal ()
+		public SqlDecimal ToSqlDecimal ()
 		{
-			return new SqlDecimal (value);
+			return ((SqlDecimal)this);
 		}
 
-		[MonoTODO]
-		public static SqlDouble ToSqlDouble ()
+		public SqlDouble ToSqlDouble ()
 		{
-			throw new NotImplementedException ();
+			return ((SqlDouble)this);
 		}
 
-		[MonoTODO]
-		public static SqlInt16 ToSqlInt16 ()
+		public SqlInt16 ToSqlInt16 ()
 		{
-			throw new NotImplementedException ();
+			return ((SqlInt16)this);
 		}
 
-		[MonoTODO]
-		public static SqlInt32 ToSqlInt32 ()
+		public SqlInt32 ToSqlInt32 ()
 		{
-			throw new NotImplementedException ();
+			return ((SqlInt32)this);
 		}
 
-		[MonoTODO]
-		public static SqlMoney ToSqlInt64 ()
+		public SqlInt64 ToSqlInt64 ()
 		{
-			throw new NotImplementedException ();
+			return ((SqlInt64)this);
 		}
 
-		[MonoTODO]
-		public static SqlSingle ToSqlSingle ()
+		public SqlSingle ToSqlSingle ()
 		{
-			throw new NotImplementedException ();
+			return ((SqlSingle)this);
 		}
 
 		[MonoTODO]
-		public static SqlString ToSqlString ()
+		public SqlString ToSqlString ()
 		{
 			throw new NotImplementedException ();
 		}
@@ -235,37 +222,37 @@ namespace System.Data.SqlTypes
 
 		public static SqlBoolean operator == (SqlMoney x, SqlMoney y)
 		{
-			if (x == null || y == null) return SqlBoolean.Null;
+			if (x.IsNull || y.IsNull) return SqlBoolean.Null;
 			return new SqlBoolean (x.Value == y.Value);
 		}
 
 		public static SqlBoolean operator > (SqlMoney x, SqlMoney y)
 		{
-			if (x == null || y == null) return SqlBoolean.Null;
+			if (x.IsNull || y.IsNull) return SqlBoolean.Null;
 			return new SqlBoolean (x.Value > y.Value);
 		}
 
 		public static SqlBoolean operator >= (SqlMoney x, SqlMoney y)
 		{
-			if (x == null || y == null) return SqlBoolean.Null;
+			if (x.IsNull || y.IsNull) return SqlBoolean.Null;
 			return new SqlBoolean (x.Value >= y.Value);
 		}
 
 		public static SqlBoolean operator != (SqlMoney x, SqlMoney y)
 		{
-			if (x == null || y == null) return SqlBoolean.Null;
+			if (x.IsNull || y.IsNull) return SqlBoolean.Null;
 			return new SqlBoolean (!(x.Value == y.Value));
 		}
 
 		public static SqlBoolean operator < (SqlMoney x, SqlMoney y)
 		{
-			if (x == null || y == null) return SqlBoolean.Null;
+			if (x.IsNull || y.IsNull) return SqlBoolean.Null;
 			return new SqlBoolean (x.Value < y.Value);
 		}
 
 		public static SqlBoolean operator <= (SqlMoney x, SqlMoney y)
 		{
-			if (x == null || y == null) return SqlBoolean.Null;
+			if (x.IsNull || y.IsNull) return SqlBoolean.Null;
 			return new SqlBoolean (x.Value <= y.Value);
 		}
 
@@ -284,22 +271,19 @@ namespace System.Data.SqlTypes
 			return new SqlMoney (-(n.Value));
 		}
 
-		[MonoTODO]
 		public static explicit operator SqlMoney (SqlBoolean x)
 		{
-			return new NotImplementedException ();
+			return new SqlMoney ((decimal)x.ByteValue);
 		}
 
-		[MonoTODO]
 		public static explicit operator SqlMoney (SqlDecimal x)
 		{
-			return new NotImplementedException ();
+			return new SqlMoney (x.Value);
 		}
 
-		[MonoTODO]
 		public static explicit operator SqlMoney (SqlDouble x)
 		{
-			return new NotImplementedException ();
+			return new SqlMoney ((decimal)x.Value);
 		}
 
 		public static explicit operator decimal (SqlMoney x)
@@ -307,16 +291,15 @@ namespace System.Data.SqlTypes
 			return x.Value;
 		}
 
-		[MonoTODO]
 		public static explicit operator SqlMoney (SqlSingle x)
 		{
-			return new NotImplementedException ();
+			return new SqlMoney ((decimal)x.Value);
 		}
 
 		[MonoTODO]
 		public static explicit operator SqlMoney (SqlString x)
 		{
-			return new NotImplementedException ();
+			throw new NotImplementedException ();
 		}
 
 		public static explicit operator SqlMoney (decimal x)
@@ -324,28 +307,24 @@ namespace System.Data.SqlTypes
 			return new SqlMoney (x);
 		}
 
-		[MonoTODO]
 		public static explicit operator SqlMoney (SqlByte x)
 		{
-			return new NotImplementedException ();
+			return new SqlMoney ((decimal)x.Value);
 		}
 
-		[MonoTODO]
 		public static explicit operator SqlMoney (SqlInt16 x)
 		{
-			return new NotImplementedException ();
+			return new SqlMoney ((decimal)x.Value);
 		}
 
-		[MonoTODO]
 		public static explicit operator SqlMoney (SqlInt32 x)
 		{
-			return new NotImplementedException ();
+			return new SqlMoney ((decimal)x.Value);
 		}
 
-		[MonoTODO]
 		public static explicit operator SqlMoney (SqlInt64 x)
 		{
-			return new NotImplementedException ();
+			return new SqlMoney ((decimal)x.Value);
 		}
 
 		#endregion
