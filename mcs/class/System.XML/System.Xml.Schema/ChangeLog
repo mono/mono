@@ -1,3 +1,12 @@
+2004-01-14  Atsushi Enomoto <atsushi@ximian.com>
+
+	* Added SchemaDataValueType.cs.
+	* BuiltInDatatype.cs, XmlSchemaDatatype.cs : Adde ParseValueType() on
+	  all derived datatype classes.
+	* XmlSchemaComplexType.cs : Fixed ContentType value for simple types.
+	  Errata-considered simple content derivation check and simple content
+	  restriction should check this too.
+
 2004-01-13  Jackson Harper <jackson@ximian.com>
 
 	* XmlSchemaComplexType.cs: Comment out line that was breaking the build.

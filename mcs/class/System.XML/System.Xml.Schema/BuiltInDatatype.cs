@@ -84,6 +84,12 @@ namespace Mono.Xml.Schema
 			return Normalize (s);
 		}
 
+		internal override ValueType ParseValueType (string s,
+			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
+		{
+			return new StringValueType (Normalize (s));
+		}
+
 		internal string [] ParseListValue (string s, XmlNameTable nameTable)
 		{
 			return this.Normalize (s, XsdWhitespaceFacet.Collapse).Split (whitespaceArray);
@@ -272,6 +278,10 @@ namespace Mono.Xml.Schema
 			return s;
 		}
 
+		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, XmlNamespaceManager nsmgr) 
+		{
+			return new StringValueType (ParseValue (s, nameTable, nsmgr) as string);
+		}
 	}
 
 	// xs:NMTOKENS
@@ -292,6 +302,11 @@ namespace Mono.Xml.Schema
 		public override object ParseValue (string value, XmlNameTable nt, XmlNamespaceManager nsmgr)
 		{
 			return ParseListValue (value, nt);
+		}
+
+		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, XmlNamespaceManager nsmgr) 
+		{
+			return new StringArrayValueType (ParseListValue (s, nameTable));
 		}
 	}
 
@@ -316,6 +331,11 @@ namespace Mono.Xml.Schema
 			if (!XmlChar.IsName (s))
 				throw new ArgumentException ("'" + s + "' is an invalid name.");
 			return s;
+		}
+
+		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, XmlNamespaceManager nsmgr) 
+		{
+			return new StringValueType (ParseValue (s, nameTable, nsmgr) as string);
 		}
 	}
 
@@ -342,6 +362,10 @@ namespace Mono.Xml.Schema
 			return s;
 		}
 
+		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, XmlNamespaceManager nsmgr) 
+		{
+			return new StringValueType (ParseValue (s, nameTable, nsmgr) as string);
+		}
 	}
 
 	// xs:ID
@@ -399,6 +423,11 @@ namespace Mono.Xml.Schema
 		{
 			return ParseListValue (value, nt);
 		}
+
+		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, XmlNamespaceManager nsmgr) 
+		{
+			return new StringArrayValueType (ParseListValue (s, nameTable));
+		}
 	}
 
 	// xs:ENTITY
@@ -438,6 +467,11 @@ namespace Mono.Xml.Schema
 		public override object ParseValue (string value, XmlNameTable nt, XmlNamespaceManager nsmgr)
 		{
 			return ParseListValue (value, nt);
+		}
+
+		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, XmlNamespaceManager nsmgr) 
+		{
+			return new StringArrayValueType (ParseListValue (s, nameTable));
 		}
 	}
 
@@ -518,9 +552,13 @@ namespace Mono.Xml.Schema
 		public override object ParseValue (string s,
 			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
 		{
-			return XmlConvert.ToDecimal (this.Normalize (s));
+			return ParseValueType (s, nameTable, nsmgr);
 		}
 
+		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, XmlNamespaceManager nsmgr) 
+		{
+			return XmlConvert.ToDecimal (this.Normalize (s));
+		}
 	 
 		internal override XsdOrdering Compare(object x, object y) {
 			if ((x is Decimal) && (y is Decimal)) {
@@ -582,6 +620,11 @@ namespace Mono.Xml.Schema
 		public override object ParseValue (string s,
 			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
 		{
+			return ParseValueType (s, nameTable, nsmgr);
+		}
+
+		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, XmlNamespaceManager nsmgr) 
+		{
 			decimal d = XmlConvert.ToDecimal (Normalize (s));
 			if (Decimal.Floor (d) != d)
 				throw new FormatException ("Integer contains point number.");
@@ -601,6 +644,11 @@ namespace Mono.Xml.Schema
 
 		public override object ParseValue (string s,
 			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
+		{
+			return ParseValueType (s, nameTable, nsmgr);
+		}
+
+		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, XmlNamespaceManager nsmgr) 
 		{
 			return XmlConvert.ToInt64 (Normalize (s));
 		}
@@ -631,8 +679,14 @@ namespace Mono.Xml.Schema
 		public override object ParseValue (string s,
 			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
 		{
+			return ParseValueType (s, nameTable, nsmgr);
+		}
+
+		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, XmlNamespaceManager nsmgr) 
+		{
 			return XmlConvert.ToInt32 (Normalize (s));
 		}
+
 		internal override XsdOrdering Compare(object x, object y) {
 			if ((x is int) && (y is int)) {
 				if ((int)x==(int)y) {
@@ -660,8 +714,14 @@ namespace Mono.Xml.Schema
 		public override object ParseValue (string s,
 			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
 		{
+			return ParseValueType (s, nameTable, nsmgr);
+		}
+
+		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, XmlNamespaceManager nsmgr) 
+		{
 			return XmlConvert.ToInt16 (Normalize (s));
 		}
+
 		internal override XsdOrdering Compare(object x, object y) {
 			if ((x is short) && (y is short)) {
 				if ((short)x==(short)y) {
@@ -688,8 +748,14 @@ namespace Mono.Xml.Schema
 		public override object ParseValue (string s,
 			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
 		{
+			return ParseValueType (s, nameTable, nsmgr);
+		}
+
+		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, XmlNamespaceManager nsmgr) 
+		{
 			return XmlConvert.ToSByte (Normalize (s));
 		}
+
 		internal override XsdOrdering Compare(object x, object y) {
 			if ((x is sbyte) && (y is sbyte)) {
 				if ((sbyte)x==(sbyte)y) {
@@ -718,6 +784,11 @@ namespace Mono.Xml.Schema
 		public override object ParseValue (string s,
 			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
 		{
+			return ParseValueType (s, nameTable, nsmgr);
+		}
+
+		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, XmlNamespaceManager nsmgr) 
+		{
 			return XmlConvert.ToDecimal (Normalize (s));
 		}
 	}
@@ -733,8 +804,14 @@ namespace Mono.Xml.Schema
 		public override object ParseValue (string s,
 			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
 		{
+			return ParseValueType (s, nameTable, nsmgr);
+		}
+
+		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, XmlNamespaceManager nsmgr) 
+		{
 			return XmlConvert.ToUInt64 (Normalize (s));
 		}
+
 		internal override XsdOrdering Compare(object x, object y) {
 			if ((x is ulong) && (y is ulong)) {
 				if ((ulong)x==(ulong)y) {
@@ -762,8 +839,14 @@ namespace Mono.Xml.Schema
 		public override object ParseValue (string s,
 			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
 		{
+			return ParseValueType (s, nameTable, nsmgr);
+		}
+
+		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, XmlNamespaceManager nsmgr) 
+		{
 			return XmlConvert.ToUInt32 (Normalize (s));
 		}
+
 		internal override XsdOrdering Compare(object x, object y) {
 			if ((x is uint) && (y is uint)) {
 				if ((uint)x==(uint)y) {
@@ -792,8 +875,14 @@ namespace Mono.Xml.Schema
 		public override object ParseValue (string s,
 			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
 		{
+			return ParseValueType (s, nameTable, nsmgr);
+		}
+
+		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, XmlNamespaceManager nsmgr) 
+		{
 			return XmlConvert.ToUInt16 (Normalize (s));
 		}
+
 		internal override XsdOrdering Compare(object x, object y) {
 			if ((x is ushort) && (y is ushort)) {
 				if ((ushort)x==(ushort)y) {
@@ -821,8 +910,14 @@ namespace Mono.Xml.Schema
 		public override object ParseValue (string s,
 			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
 		{
+			return ParseValueType (s, nameTable, nsmgr);
+		}
+
+		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, XmlNamespaceManager nsmgr) 
+		{
 			return XmlConvert.ToByte(Normalize (s));
 		}
+
 		internal override XsdOrdering Compare(object x, object y) {
 			if ((x is byte) && (y is byte)) {
 				if ((byte)x==(byte)y) {
@@ -853,6 +948,11 @@ namespace Mono.Xml.Schema
 		public override object ParseValue (string s,
 			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
 		{
+			return ParseValueType (s, nameTable, nsmgr);
+		}
+
+		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, XmlNamespaceManager nsmgr) 
+		{
 			return XmlConvert.ToDecimal (Normalize (s));
 		}
 	}
@@ -866,6 +966,11 @@ namespace Mono.Xml.Schema
 
 		public override object ParseValue (string s,
 			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
+		{
+			return ParseValueType (s, nameTable, nsmgr);
+		}
+
+		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, XmlNamespaceManager nsmgr) 
 		{
 			return XmlConvert.ToDecimal (Normalize (s));
 		}
@@ -881,6 +986,11 @@ namespace Mono.Xml.Schema
 
 		public override object ParseValue (string s,
 			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
+		{
+			return ParseValueType (s, nameTable, nsmgr);
+		}
+
+		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, XmlNamespaceManager nsmgr) 
 		{
 			return XmlConvert.ToDecimal (Normalize (s));
 		}
@@ -919,8 +1029,14 @@ namespace Mono.Xml.Schema
 		public override object ParseValue (string s,
 			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
 		{
+			return ParseValueType (s, nameTable, nsmgr);
+		}
+
+		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, XmlNamespaceManager nsmgr) 
+		{
 			return XmlConvert.ToSingle (Normalize (s));
 		}
+
 		internal override XsdOrdering Compare(object x, object y) {
 			if ((x is float) && (y is float)) {
 				if ((float)x==(float)y) {
@@ -971,8 +1087,14 @@ namespace Mono.Xml.Schema
 		public override object ParseValue (string s,
 			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
 		{
+			return ParseValueType (s, nameTable, nsmgr);
+		}
+
+		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, XmlNamespaceManager nsmgr) 
+		{
 			return XmlConvert.ToDouble (Normalize (s));
 		}
+
 		internal override XsdOrdering Compare(object x, object y) {
 			if ((x is double) && (y is double)) {
 				if ((double)x==(double)y) {
@@ -1006,6 +1128,11 @@ namespace Mono.Xml.Schema
 		{
 			return Convert.FromBase64String (Normalize (s));
 		}
+
+		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, XmlNamespaceManager nsmgr) 
+		{
+			return new StringValueType (ParseValue (s, nameTable, nsmgr) as string);
+		}
 	}
 
 	// xs:hexBinary
@@ -1033,7 +1160,11 @@ namespace Mono.Xml.Schema
 		{
 			return XmlConvert.FromBinHexString (Normalize (s));
 		}
-		
+
+		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, XmlNamespaceManager nsmgr) 
+		{
+			return new StringValueType (ParseValue (s, nameTable, nsmgr) as string);
+		}
 
 		// Fundamental Facets ... no need to override
 	}
@@ -1069,7 +1200,11 @@ namespace Mono.Xml.Schema
 			return new XmlQualifiedName (localName, nsmgr.LookupNamespace (
 				colonAt < 0 ? "" : s.Substring (0, colonAt - 1)));
 		}
-		
+
+		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, XmlNamespaceManager nsmgr) 
+		{
+			return new QNameValueType (ParseValue (s, nameTable, nsmgr) as XmlQualifiedName);
+		}
 	}
 
 	// xs:boolean
@@ -1094,6 +1229,11 @@ namespace Mono.Xml.Schema
 
 		public override object ParseValue (string s,
 			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
+		{
+			return ParseValueType (s, nameTable, nsmgr);
+		}
+
+		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, XmlNamespaceManager nsmgr) 
 		{
 			return XmlConvert.ToBoolean (this.Normalize (s));
 		}
@@ -1130,7 +1270,12 @@ namespace Mono.Xml.Schema
 		public override object ParseValue (string s,
 			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
 		{
-			return new Uri (Normalize (s));
+			return ParseValueType (s, nameTable, nsmgr);
+		}
+
+		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, XmlNamespaceManager nsmgr) 
+		{
+			return new UriValueType (Normalize (s));
 		}
 	}
 	
@@ -1156,6 +1301,11 @@ namespace Mono.Xml.Schema
 
 		public override object ParseValue (string s,
 			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
+		{
+			return ParseValueType (s, nameTable, nsmgr);
+		}
+
+		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, XmlNamespaceManager nsmgr) 
 		{
 			return XmlConvert.ToTimeSpan (Normalize (s));
 		}
@@ -1222,6 +1372,11 @@ namespace Mono.Xml.Schema
 		public override object ParseValue (string s,
 			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
 		{
+			return ParseValueType (s, nameTable, nsmgr);
+		}
+
+		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, XmlNamespaceManager nsmgr) 
+		{
 			return XmlConvert.ToDateTime (Normalize (s));
 		}
 
@@ -1280,6 +1435,11 @@ namespace Mono.Xml.Schema
 
 		public override object ParseValue (string s,
 			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
+		{
+			return ParseValueType (s, nameTable, nsmgr);
+		}
+
+		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, XmlNamespaceManager nsmgr) 
 		{
 			return DateTime.ParseExact (Normalize (s), "yyyy-MM-dd", null);
 		}
@@ -1357,6 +1517,11 @@ namespace Mono.Xml.Schema
 		public override object ParseValue (string s,
 			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
 		{
+			return ParseValueType (s, nameTable, nsmgr);
+		}
+
+		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, XmlNamespaceManager nsmgr) 
+		{
 			return DateTime.ParseExact (Normalize (s), timeFormats, null, DateTimeStyles.None);
 		}
 
@@ -1402,6 +1567,11 @@ namespace Mono.Xml.Schema
 		public override object ParseValue (string s,
 			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
 		{
+			return ParseValueType (s, nameTable, nsmgr);
+		}
+
+		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, XmlNamespaceManager nsmgr) 
+		{
 			return DateTime.ParseExact (Normalize (s), "yyyy-MM", null);
 		}
 		
@@ -1441,6 +1611,11 @@ namespace Mono.Xml.Schema
 
 		public override object ParseValue (string s,
 			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
+		{
+			return ParseValueType (s, nameTable, nsmgr);
+		}
+
+		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, XmlNamespaceManager nsmgr) 
 		{
 			return DateTime.ParseExact (Normalize (s), "--MM-dd", null);
 		}
@@ -1484,6 +1659,11 @@ namespace Mono.Xml.Schema
 		public override object ParseValue (string s,
 			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
 		{
+			return ParseValueType (s, nameTable, nsmgr);
+		}
+
+		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, XmlNamespaceManager nsmgr) 
+		{
 			return DateTime.ParseExact (Normalize(s), "yyyy", null);
 		}
 		
@@ -1524,6 +1704,11 @@ namespace Mono.Xml.Schema
 		public override object ParseValue (string s,
 			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
 		{
+			return ParseValueType (s, nameTable, nsmgr);
+		}
+
+		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, XmlNamespaceManager nsmgr) 
+		{
 			return DateTime.ParseExact (Normalize(s), "--MM--", null);
 		}
 		
@@ -1563,6 +1748,11 @@ namespace Mono.Xml.Schema
 
 		public override object ParseValue (string s,
 			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
+		{
+			return ParseValueType (s, nameTable, nsmgr);
+		}
+
+		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, XmlNamespaceManager nsmgr) 
 		{
 			return DateTime.ParseExact (Normalize(s), "---dd", null);
 		}

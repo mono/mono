@@ -34,6 +34,9 @@ namespace System.Xml.Schema
 		public abstract object ParseValue (string s, 
 			XmlNameTable nameTable, XmlNamespaceManager nsmgr);
 
+		internal abstract ValueType ParseValueType (string s,
+			XmlNameTable nameTable, XmlNamespaceManager nsmgr);
+
 		static char [] wsChars = new char [] {' ', '\t', '\n', '\r'};
 
 		StringBuilder sb = new StringBuilder ();
