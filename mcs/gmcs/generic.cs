@@ -44,6 +44,7 @@ namespace Mono.CSharp {
 		string name;
 		Constraints constraints;
 		Location loc;
+		Type type;
 
 		public TypeParameter (string name, Constraints constraints, Location loc)
 		{
@@ -69,10 +70,17 @@ namespace Mono.CSharp {
 				return constraints;
 			}
 		}
+
+		public Type Type {
+			get {
+				return type;
+			}
+		}
 		
 		public Type Define (TypeBuilder tb)
 		{
-			return tb.DefineGenericParameter (name, new Type [0]);
+			type = tb.DefineGenericParameter (name, new Type [0]);
+			return type;
 		}
 
 		public override string ToString ()
@@ -87,23 +95,29 @@ namespace Mono.CSharp {
 	// These expressions are born in a fully resolved state.
 	//
 	public class TypeParameterExpr : TypeExpr {
-		string type_parameter;
+		TypeParameter type_parameter;
 
 		public string Name {
+			get {
+				return type_parameter.Name;
+			}
+		}
+
+		public TypeParameter TypeParameter {
 			get {
 				return type_parameter;
 			}
 		}
 		
-		public TypeParameterExpr (string type_parameter, Location l)
-			: base (typeof (object), l)
+		public TypeParameterExpr (TypeParameter type_parameter, Location loc)
+			: base (type_parameter.Type, loc)
 		{
 			this.type_parameter = type_parameter;
 		}
 
 		public override string ToString ()
 		{
-			return "TypeParameterExpr[" + type_parameter + "]";
+			return "TypeParameterExpr[" + type_parameter.Name + "]";
 		}
 
 		public void Error_CannotUseAsUnmanagedType (Location loc)

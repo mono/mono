@@ -373,6 +373,9 @@ namespace Mono.CSharp {
 		{
 			if (check_type == TypeBuilder)
 				return true;
+
+			if (check_type.IsUnboundGenericParameter)
+				return true; // FIXME
 			
 			TypeAttributes check_attr = check_type.Attributes & TypeAttributes.VisibilityMask;
 			
@@ -694,6 +697,20 @@ namespace Mono.CSharp {
 			get {
 				return type_params;
 			}
+		}
+
+		public TypeParameterExpr LookupGeneric (string name, Location loc)
+		{
+			foreach (TypeParameter type_param in TypeParameters) {
+				if (type_param.Name != name)
+					continue;
+
+				Report.Debug (64, "LOOKUP GENERIC", this, name, loc, type_param, type_param.Type);
+
+				return new TypeParameterExpr (type_param, loc);
+			}
+
+			return null;
 		}
 	}
 
