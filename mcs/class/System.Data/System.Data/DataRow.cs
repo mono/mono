@@ -45,6 +45,8 @@ namespace System.Data {
 		private int _rowId;
 		internal bool _inExpressionEvaluation = false;
 
+		private XmlDataDocument.XmlDataElement mappedElement;
+
 		#endregion
 
 		#region Constructors
@@ -87,7 +89,7 @@ namespace System.Data {
 			// create mapped XmlDataElement
 			DataSet ds = _table.DataSet;
 			if (ds != null && ds._xmlDataDocument != null)
-				new XmlDataDocument.XmlDataElement (this, _table.Prefix, _table.TableName, _table.Namespace, ds._xmlDataDocument);
+				mappedElement = new XmlDataDocument.XmlDataElement (this, _table.Prefix, _table.TableName, _table.Namespace, ds._xmlDataDocument);
 		}
 
 		
@@ -462,6 +464,11 @@ namespace System.Data {
 		/// </summary>
 		public DataTable Table {
 			get { return _table; }
+		}
+
+		internal XmlDataDocument.XmlDataElement DataElement {
+			get { return mappedElement; }
+			set { mappedElement = value; }
 		}
 
 		/// <summary>

@@ -1,3 +1,8 @@
+2004-05-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataRow.cs : Added DataElement property to avoid storing every row-
+	  element mapping. It stored even for nodes that should be removed.
+
 2004-05-13  Umadevi S <sumadevi@novell.com>
 
 	* RelationshipConverter.cs - Stubbed this class
