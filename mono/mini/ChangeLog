@@ -1,3 +1,8 @@
+2005-03-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* declsec.c: Skip linkdemand checks for intra-corlib calls. This skips
+	a lot of checks	and (anyway) permissions cannot work until corlib is 
+	loaded.
 
 Wed Mar 23 14:29:49 CET 2005 Paolo Molaro <lupus@ximian.com>
 
