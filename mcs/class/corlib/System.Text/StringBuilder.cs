@@ -290,12 +290,8 @@ namespace System.Text {
 			if (null != _cached_str || _str.Length < needed_cap)
 				InternalEnsureCapacity (needed_cap);
 
-			if (value != null) 
-			{
-				String.InternalStrcpy (_str, _length, value);
-				_length += value.Length;
-			}
-
+			String.InternalStrcpy (_str, _length, value);
+			_length += value.Length;
 			return this;
 		}
 
