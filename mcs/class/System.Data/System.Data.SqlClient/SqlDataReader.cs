@@ -405,37 +405,39 @@ namespace System.Data.SqlClient {
 						break;
 				}
 
+				// set default values
+				row ["AllowDBNull"] = true;
+				row ["BaseCatalogName"] = DBNull.Value;
+				row ["BaseColumnName"] = DBNull.Value;
+				row ["BaseSchemaName"] = DBNull.Value;
+				row ["BaseTableName"] = DBNull.Value;
+				row ["ColumnName"] = DBNull.Value;
+				row ["IsUnique"] = false;
+				row ["NumericPrecision"] = DBNull.Value;
+				row ["NumericScale"] = DBNull.Value;
+
+				// load schema values
 				row ["ColumnOrdinal"] = schema.ColumnOrdinal;
 				row ["ColumnSize"] = schema.ColumnSize;
 				row ["AllowDBNull"] = schema.AllowDBNull;
-				row ["IsReadOnly"] = schema.IsReadOnly;
+				row ["IsExpression"] = schema.IsExpression;
 				row ["IsIdentity"] = schema.IsIdentity;
+				row ["IsReadOnly"] = schema.IsReadOnly;
 				row ["IsKey"] = schema.IsKey;
 
-				// FIXME: Base Column Name and Column Name are not necessarily the same
-				if (schema.ColumnName == null)
-					row ["BaseColumnName"] = DBNull.Value;
-				else
-					row ["BaseColumnName"] = schema.ColumnName;
+				if (schema.BaseColumnName != null)
+					row ["BaseColumnName"] = schema.BaseColumnName;
 
-				if (schema.ColumnName == null)
-					row ["ColumnName"] = DBNull.Value;
-				else
+				if (schema.ColumnName != null)
 					row ["ColumnName"] = schema.ColumnName;
 
-				if (schema.TableName == null)
-					row ["BaseTableName"] = DBNull.Value;
-				else
-					row ["BaseTableName"] = schema.TableName;
+				if (schema.BaseTableName != null)
+					row ["BaseTableName"] = schema.BaseTableName;
 
-				if (schema.NumericScale == 0)
-					row ["NumericPrecision"] = DBNull.Value;
-				else
+				if (schema.NumericScale != 0)
 					row ["NumericPrecision"] = schema.NumericPrecision;
 
 				if (schema.NumericScale == 0)
-					row ["NumericScale"] = DBNull.Value;
-				else
 					row ["NumericScale"] = schema.NumericScale;
 
 				schemaTable.Rows.Add (row);

@@ -171,23 +171,23 @@ namespace System.Data.SqlClient {
 			if (commandType == CommandType.StoredProcedure)
 				return BuildProcedureCall (commandText, parameters);
 
+			string sql = String.Empty;
 			if ((behavior & CommandBehavior.KeyInfo) > 0)
-				commandText += " FOR BROWSE";
-
-			if (commandType == CommandType.Text)
-				return BuildExec ();
-
-			if (commandType == CommandType.TableDirect)
-				return BuildExec (String.Format ("select * from {0}", commandText));
-
-			throw new InvalidOperationException ("The CommandType was invalid.");
-		}
-
-		private string BuildExec ()
-		{
-			return BuildExec (commandText);	
-		}
+				sql = "SET FMTONLY OFF; SET NO_BROWSETABLE ON;";
 	
+			switch (commandType) {
+			case CommandType.Text :
+				sql += commandText;
+				break;
+			case CommandType.TableDirect :
+				sql += String.Format ("select * from {0}", commandText);
+				break;
+			default:
+				throw new InvalidOperationException ("The CommandType was invalid.");
+			}
+			return BuildExec (sql);
+		}
+
 		private string BuildExec (string sql)
 		{
 			StringBuilder parms = new StringBuilder ();

@@ -176,6 +176,7 @@ System.Data.SqlClient/SqlXmlTextReader.cs
 ../Mono.Data.TdsClient/Mono.Data.TdsClient.Internal/ITds.cs
 ../Mono.Data.TdsClient/Mono.Data.TdsClient.Internal/Tds.cs
 ../Mono.Data.TdsClient/Mono.Data.TdsClient.Internal/Tds70.cs
+../Mono.Data.TdsClient/Mono.Data.TdsClient.Internal/TdsColumnStatus.cs
 ../Mono.Data.TdsClient/Mono.Data.TdsClient.Internal/TdsColumnType.cs
 ../Mono.Data.TdsClient/Mono.Data.TdsClient.Internal/TdsComm.cs
 ../Mono.Data.TdsClient/Mono.Data.TdsClient.Internal/TdsContext.cs
