@@ -7,4 +7,6 @@ LIB_MCS_FLAGS = /r:$(corlib) /r:System.dll /r:System.Xml.dll
 NO_TEST = yes
 EXTRA_DISTFILES = SharpZipLib.key
 
+NO_SIGN_ASSEMBLY = yes
+
 include ../../build/library.make
