@@ -533,8 +533,10 @@ namespace System.Web.Compilation
 
 					return true;
 				} else {
-					Parser.VerbatimID = "script";
-					javascript = true;
+					if (tagtype != TagType.SelfClosing) {
+						Parser.VerbatimID = "script";
+						javascript = true;
+					}
 					TextParsed (location, location.PlainText);
 					return true;
 				}
