@@ -1,3 +1,8 @@
+2004-01-23  Ravindra <rkumar.novell.com>
+
+	* System.Drawing.dll.sources: Removed TextureBrush.cs. 
+	Was added by mistake during last check-in.
+
 2004-01-19  Ravindra <rkumar@novell.com>
 
 	* System.Drawing.dll.sources: Added Encoder.cs.

@@ -48,7 +48,6 @@ System.Drawing/SystemBrushes.cs
 System.Drawing/SystemColors.cs
 System.Drawing/SystemIcons.cs
 System.Drawing/SystemPens.cs
-System.Drawing/TextureBrush.cs
 System.Drawing/ToolboxBitmapAttribute.cs
 System.Drawing.Design/UITypeEditorEditStyle.cs
 System.Drawing.Design/IPropertyValueUIService.cs
