@@ -1,3 +1,16 @@
+2004-03-28  Martin Baulig  <martin@ximian.com>
+
+	* class.c (mono_class_init): Don't call init_properties() and
+	init_events() for generic instances; set `prop->parent' when
+	inflating properties.
+
+	* reflection.c (mono_generic_inst_get_object): Call
+	`mono_class_init (ginst->klass)'.
+	(mono_type_get_object): Only create a MonoGenericInst if your
+	generic type is a TypeBuilder.
+	(do_mono_reflection_bind_generic_parameters): Only set
+	`ginst->is_dynamic' if our generic type is a TypeBuilder.
+
 2004-03-28  Zoltan Varga  <vargaz@freemail.hu>
 
 	* appdomain.c (unload_thread_main): Do not clear proxy_vtable_hash.
