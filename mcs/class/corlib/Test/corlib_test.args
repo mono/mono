@@ -133,6 +133,8 @@ System.Security.Permissions/FileDialogPermissionAttributeTest.cs
 System.Security.Permissions/FileDialogPermissionTest.cs
 System.Security.Permissions/FileIOPermissionAttributeTest.cs
 System.Security.Permissions/FileIOPermissionTest.cs
+System.Security.Permissions/PrincipalIdentityPermissionAttributeTest.cs
+System.Security.Permissions/PrincipalIdentityPermissionTest.cs
 System.Security.Permissions/PublisherIdentityPermissionAttributeTest.cs
 System.Security.Permissions/PublisherIdentityPermissionTest.cs
 System.Security.Permissions/ReflectionPermissionAttributeTest.cs

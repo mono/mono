@@ -1,3 +1,9 @@
+2003-07-01  Sebastien Pouliot <spouliot@videotron.ca>
+
+	* corlib_test.args: Added PrincipalPermissionAttributeTest.cs and
+	PrincipalPermissionTest.cs in System.Security.Permissions.
+	* corlib_test.args: Same.
+
 2003-06-30  Zoltan Varga  <vargaz@freemail.hu>
 
 	* run_test.sh: Added 'all' option to run all tests. Add class libraries
