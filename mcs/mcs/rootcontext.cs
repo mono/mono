@@ -516,10 +516,8 @@ namespace Mono.CSharp {
 		{
 			Type t;
 
-			if (ds.Cache.Contains (name)){
+			if (ds.Cache.Contains (name)) {
 				t = (Type) ds.Cache [name];
-				if (t != null)
-					return t;
 			} else {
 				//
 				// For the case the type we are looking for is nested within this one
@@ -529,7 +527,8 @@ namespace Mono.CSharp {
 				while (containing_ds != null){
 					Type current_type = containing_ds.TypeBuilder;
 					
-					while (current_type != null) {
+					while (current_type != null &&
+					       current_type != TypeManager.object_type) {
 						//
 						// nested class
 						//
@@ -546,16 +545,14 @@ namespace Mono.CSharp {
 				}
 				
 				t = NamespaceLookup (ds, name, silent, loc);
-				if (t != null){
+				if (!silent)
 					ds.Cache [name] = t;
-					return t;
-				}
 			}
 
-			if (!silent)
+			if (t == null && !silent)
 				Report.Error (246, loc, "Cannot find type `"+name+"'");
 			
-			return null;
+			return t;
 		}
 
 		// <summary>

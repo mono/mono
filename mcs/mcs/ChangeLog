@@ -2,6 +2,18 @@
 
 	* convert.cs: add a trivial cache for overload operator resolution.
 
+2004-05-30  Martin Baulig  <martin@ximian.com>
+
+	* rootcontext.cs (RootContext.LookupType): Don't cache things if
+	we're doing a silent lookup.  Don't try to lookup nested types in
+	TypeManager.object_type (thanks to Ben Maurer).
+
+2004-05-30  Martin Baulig  <martin@ximian.com>
+
+	Committing a patch from Ben Maurer.
+
+	* rootcontext.cs (RootContext.LookupType): Cache negative results.
+
 2004-05-29  Martin Baulig  <martin@ximian.com>
 
 	* class.cs (IMethodData.ShouldIgnore): New method.
