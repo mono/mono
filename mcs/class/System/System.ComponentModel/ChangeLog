@@ -1,4 +1,11 @@
 2002-07-22  Tim Coleman <tim@timcoleman.com>
+	* ComponentCollection.cs: Added reference to
+		ReadOnlyCollectionBase to make sure
+		that we inherit the appropriate methods.
+		Not sure why the Dispose() method is
+		required, but left for now.
+
+2002-07-22  Tim Coleman <tim@timcoleman.com>
 	* TypeConverter.cs: Added new stubbs
 	* BindableAttribute.cs: Added
 	* BindableSupport.cs: Added
