@@ -866,20 +866,20 @@ opt_params
 	: /* empty */	{ $$ = Parameters.EmptyReadOnlyParameters; }
 	| OPEN_PARENS CLOSE_PARENS	{ $$ = Parameters.EmptyReadOnlyParameters; }
 	| OPEN_PARENS _mark_ opt_formal_parameter_list CLOSE_PARENS	{ $$ = $3; }
-	| OPEN_PARENS _mark_
+	| OPEN_PARENS _mark_ error
 	  {
 		Report.Error(30203,(Location)$2, "Identifier Expected"); 
 		$$ = Parameters.EmptyReadOnlyParameters;
    	  }
-	| OPEN_PARENS _mark_ opt_formal_parameter_list 
+	| OPEN_PARENS _mark_ opt_formal_parameter_list error
 	  {
 		Report.Error(30198,(Location)$2, "'(' is not having a matching ')'"); 
 		$$ = $3;
 	  }
-	| _mark_ opt_formal_parameter_list CLOSE_PARENS 
+	| error _mark_ opt_formal_parameter_list CLOSE_PARENS 
 	  {
-		Report.Error(30205,(Location)$1, "')' is not having a matching '('"); 
-		$$ = $2;
+		Report.Error(30205,(Location)$2, "')' is not having a matching '('"); 
+		$$ = $3;
 	  }
 	;
 
@@ -3357,12 +3357,12 @@ catch_args
         {
 		 $$ = new DictionaryEntry ($4, $1); 
 	}
-	| _mark_ AS type
+	| error _mark_ AS type
 	{
-		Report.Error(30203, (Location)$1, "Identifier Expected");
+		Report.Error(30203, (Location)$2, "Identifier Expected");
 		$$ = null;
 	}
-	| identifier AS _mark_   
+	| identifier AS _mark_ error  
 	{
 		Report.Error(30182, (Location)$3, "Type Expected");
 		$$ = null;
@@ -4414,9 +4414,8 @@ primary_expression
 	//| element_access
 	| new_expression
 	| cast_expression
-	| /*empty*/ _mark_ 
-					     { Report.Error(30201,(Location)$1,"Expression expected"); $$ = (Expression)null;}
-                             
+	| error _mark_ 
+	     { Report.Error(30201,(Location)$2,"Expression expected"); $$ = (Expression)null;}
 	;
 
 literal
@@ -4768,10 +4767,10 @@ shift_expression
 
 relational_expression
 	: shift_expression
-	| relational_expression _mark_ LIKE shift_expression
+	| relational_expression LIKE _mark_ shift_expression
 	  {
 		$$ = new Binary (Binary.Operator.Like,
-			         (Expression) $1, (Expression) $4, (Location)$2);
+			         (Expression) $1, (Expression) $4, (Location)$3);
 	  }
 	| relational_expression ASSIGN _mark_ shift_expression
 	  {
@@ -5156,8 +5155,6 @@ opt_end_block
 	  {$$ = 1;}
 	| LOOP
 	  {$$ = 2;}
-	| /* empty */ 
-	  {$$ = 0;} 
 	;
 
 opt_block_types

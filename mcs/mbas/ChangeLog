@@ -1,3 +1,8 @@
+2005-03-22 Satya Sudha K <ksathyasudha@novell.com>
+	   Sudharsan V <vsudharsan@novell.com>
+	* mb-parser.jay : 
+			Removed some conflicts in the grammar
+
 2005-03-21 Manjula GHM <mmanjula@novell.com>
 	* statement.cs: Implementation of 'End' Statement which terminates execution immediately
 
