@@ -1,3 +1,9 @@
+2004-06-02  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* mono-api-diff.cs: also report mismatches in protected members
+	* mono-api-info.cs: fixed issue where counters were not output
+	for missing attributes if there were no other mismatches
+
 2003-11-14  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* mono-api.xsl: handle <interface>, which is different from

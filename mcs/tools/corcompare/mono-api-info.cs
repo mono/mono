@@ -160,7 +160,7 @@ namespace Mono.AssemblyInfo
 					continue;
 
 				if (t.IsNestedPublic || t.IsNestedAssembly || t.IsNestedFamANDAssem ||
-				    t.IsNestedFamORAssem || t.IsNestedPrivate)
+					t.IsNestedFamORAssem || t.IsNestedPrivate)
 					continue;
 
 				if (t.DeclaringType != null)
@@ -237,12 +237,13 @@ namespace Mono.AssemblyInfo
 			get { return "NoTAG"; }
 		}
 	}
-	
+
 	class TypeData : MemberData
 	{
 		Type type;
 		const BindingFlags flags = BindingFlags.Public | BindingFlags.Static |
-					   BindingFlags.Instance | BindingFlags.DeclaredOnly;
+						BindingFlags.Instance | BindingFlags.DeclaredOnly | 
+						BindingFlags.NonPublic;
 		
 		public TypeData (XmlDocument document, XmlNode parent, Type type)
 			: base (document, parent, null)
@@ -282,49 +283,40 @@ namespace Mono.AssemblyInfo
 
 			ArrayList members = new ArrayList ();
 
-			FieldInfo [] fields = type.GetFields (flags);
-			if (fields != null && fields.Length > 0) {
-				fields = FieldRemoveSpecials (fields);
-				if (fields != null) {
-					Array.Sort (fields, MemberInfoComparer.Default);
-					FieldData fd = new FieldData (document, nclass, fields);
-					// Special case for enum fields
-					if (classType == "enum") {
-						string etype = fields [0].GetType ().FullName;
-						AddAttribute (nclass, "enumtype", etype);
-					}
-
-					members.Add (fd);
+			FieldInfo[] fields = GetFields (type);
+			if (fields.Length > 0) {
+				Array.Sort (fields, MemberInfoComparer.Default);
+				FieldData fd = new FieldData (document, nclass, fields);
+				// Special case for enum fields
+				if (classType == "enum") {
+					string etype = fields [0].GetType ().FullName;
+					AddAttribute (nclass, "enumtype", etype);
 				}
+				members.Add (fd);
 			}
 
-			// No .cctor
-			ConstructorInfo [] ctors = type.GetConstructors (flags);
-
+			ConstructorInfo [] ctors = GetConstructors (type);
 			if (ctors.Length > 0) {
-				Array.Sort (ctors, MethodBaseComparer.Default);
+				Array.Sort (ctors, MemberInfoComparer.Default);
 				members.Add (new ConstructorData (document, nclass, ctors));
 			}
 
-			PropertyInfo [] props = type.GetProperties (flags);
-			if (props != null && props.Length > 0) {
-				Array.Sort (props, MemberInfoComparer.Default);
-				members.Add (new PropertyData (document, nclass, props));
+			PropertyInfo[] properties = GetProperties (type);
+			if (properties.Length > 0) {
+				Array.Sort (properties, MemberInfoComparer.Default);
+				members.Add (new PropertyData (document, nclass, properties));
 			}
 
-			EventInfo [] events = type.GetEvents (flags);
-			if (events != null && events.Length > 0) {
+			EventInfo [] events = GetEvents (type);
+			if (events.Length > 0) {
 				Array.Sort (events, MemberInfoComparer.Default);
 				members.Add (new EventData (document, nclass, events));
 			}
 
-			MethodInfo [] methods = type.GetMethods (flags);
-			if (methods != null && methods.Length > 0) {
-				methods = MethodRemoveSpecials (methods);
-				if (methods != null) {
-					Array.Sort (methods, MethodBaseComparer.Default);
-					members.Add (new MethodData (document, nclass, methods));
-				}
+			MethodInfo [] methods = GetMethods (type);
+			if (methods.Length > 0) {
+				Array.Sort (methods, MemberInfoComparer.Default);
+				members.Add (new MethodData (document, nclass, methods));
 			}
 
 			foreach (MemberData md in members)
@@ -349,42 +341,10 @@ namespace Mono.AssemblyInfo
 			return ((int) type.Attributes).ToString ();
 		}
 
-		static MethodInfo [] MethodRemoveSpecials (MethodInfo [] methods)
+		public static bool MustDocumentMethod(MethodBase method)
 		{
-			ArrayList list = null;
-			foreach (MethodInfo method in methods) {
-				if (method.IsSpecialName)
-					continue;
-
-				if (list == null)
-					list = new ArrayList ();
-
-				list.Add (method);
-			}
-
-			if (list == null)
-				return null;
-
-			return (MethodInfo []) list.ToArray (typeof (MethodInfo));
-		}
-
-		static FieldInfo [] FieldRemoveSpecials (FieldInfo [] fields)
-		{
-			ArrayList list = null;
-			foreach (FieldInfo field in fields) {
-				if (field.IsSpecialName)
-					continue;
-
-				if (list == null)
-					list = new ArrayList ();
-
-				list.Add (field);
-			}
-
-			if (list == null)
-				return null;
-
-			return (FieldInfo []) list.ToArray (typeof (FieldInfo));
+			// All other methods
+			return (method.IsPublic || method.IsFamily || method.IsFamilyOrAssembly);
 		}
 
 		static string GetClassType (Type t)
@@ -402,6 +362,111 @@ namespace Mono.AssemblyInfo
 				return "delegate";
 
 			return "class";
+		}
+
+		private FieldInfo[] GetFields (Type type)
+		{
+			ArrayList list = new ArrayList ();
+
+			FieldInfo[] fields = type.GetFields (flags);
+			foreach (FieldInfo field in fields) {
+				if (field.IsSpecialName)
+					continue;
+
+				// we're only interested in public or protected members
+				if (!field.IsPublic && !field.IsFamily)
+					continue;
+
+				list.Add (field);
+			}
+
+			return (FieldInfo[]) list.ToArray (typeof (FieldInfo));
+		}
+
+		private PropertyInfo[] GetProperties (Type type)
+		{
+			ArrayList list = new ArrayList ();
+
+			PropertyInfo[] properties = type.GetProperties (flags);
+			foreach (PropertyInfo property in properties) {
+				MethodInfo getMethod = null;
+				MethodInfo setMethod = null;
+
+				if (property.CanRead) {
+					try { getMethod = property.GetGetMethod (true); }
+					catch (System.Security.SecurityException) { }
+				}
+				if (property.CanWrite) {
+					try { setMethod = property.GetSetMethod (true); }
+					catch (System.Security.SecurityException) { }
+				}
+
+				bool hasGetter = (getMethod != null) && MustDocumentMethod (getMethod);
+				bool hasSetter = (setMethod != null) && MustDocumentMethod (setMethod);
+
+				// if neither the getter or setter should be documented, then
+				// skip the property
+				if (!hasGetter && !hasSetter) {
+					continue;
+				}
+
+				list.Add (property);
+			}
+
+			return (PropertyInfo[]) list.ToArray (typeof (PropertyInfo));
+		}
+
+		private MethodInfo[] GetMethods (Type type)
+		{
+			ArrayList list = new ArrayList ();
+
+			MethodInfo[] methods = type.GetMethods (flags);
+			foreach (MethodInfo method in methods) {
+				if (method.IsSpecialName)
+					continue;
+
+				// we're only interested in public or protected members
+				if (!method.IsPublic && !method.IsFamily)
+					continue;
+
+				list.Add (method);
+			}
+
+			return (MethodInfo[]) list.ToArray (typeof (MethodInfo));
+		}
+
+		private ConstructorInfo[] GetConstructors (Type type)
+		{
+			ArrayList list = new ArrayList ();
+
+			// No .cctor
+			ConstructorInfo[] ctors = type.GetConstructors (flags);
+			foreach (ConstructorInfo constructor in ctors) {
+				// we're only interested in public or protected members
+				if (!constructor.IsPublic && !constructor.IsFamily)
+					continue;
+
+				list.Add (constructor);
+			}
+
+			return (ConstructorInfo[]) list.ToArray (typeof (ConstructorInfo));
+		}
+
+		private EventInfo[] GetEvents (Type type)
+		{
+			ArrayList list = new ArrayList ();
+
+			EventInfo[] events = type.GetEvents (flags);
+			foreach (EventInfo eventInfo in events) {
+				MethodInfo addMethod = eventInfo.GetAddMethod (true);
+
+				if (addMethod == null || !MustDocumentMethod (addMethod))
+					continue;
+
+				list.Add (eventInfo);
+			}
+
+			return (EventInfo[]) list.ToArray (typeof (EventInfo));
 		}
 	}
 
@@ -458,10 +523,10 @@ namespace Mono.AssemblyInfo
 			base.AddExtraData (p, member);
 			PropertyInfo prop = (PropertyInfo) member;
 			AddAttribute (p, "ptype", prop.PropertyType.FullName);
-			MethodInfo _get = prop.GetGetMethod ();
-			MethodInfo _set = prop.GetSetMethod ();
-			bool haveGet = (_get != null);
-			bool haveSet = (_set != null);
+			MethodInfo _get = prop.GetGetMethod (true);
+			MethodInfo _set = prop.GetSetMethod (true);
+			bool haveGet = (_get != null && TypeData.MustDocumentMethod(_get));
+			bool haveSet = (_set != null && TypeData.MustDocumentMethod(_set));
 			MethodInfo [] methods;
 
 			if (haveGet && haveSet) {

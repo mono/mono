@@ -952,7 +952,7 @@ namespace Mono.AssemblyCompare
 					att = new XMLAttributes ();
 
 				att.CompareTo (document, parent, oatt);
-				counters.AddPartialToTotal (att.Counters);
+				counters.AddPartialToPartial(att.Counters);
 				if (oatt != null && oatt.IsTodo) {
 					counters.Todo++;
 					counters.ErrorTotal++;
@@ -1039,6 +1039,9 @@ namespace Mono.AssemblyCompare
 
 		protected override void CompareToInner (string name, XmlNode parent, XMLNameGroup other)
 		{
+			Counters copy = counters;
+			counters = new Counters();
+
 			XMLProperties oprop = other as XMLProperties;
 			if (oprop != null) {
 				XMLMethods m = nameToMethod [name] as XMLMethods;
@@ -1047,17 +1050,16 @@ namespace Mono.AssemblyCompare
 					if (m == null)
 						m = new XMLMethods ();
 
-					Counters copy = counters;
-					m.CompareTo (document, parent, om);
-					counters = new Counters ();
-					counters.AddPartialToPartial (m.Counters);
-					AddCountersAttributes (parent);
-					counters = copy;
-					counters.AddPartialToPartial (m.Counters);
+					m.CompareTo(document, parent, om);
+					counters.AddPartialToPartial(m.Counters);
 				}
 			}
 
 			base.CompareToInner (name, parent, other);
+			AddCountersAttributes(parent);
+
+			copy.AddPartialToPartial(counters);
+			counters = copy;
 		}
 
 		protected override void LoadExtraData (string name, XmlNode node)
@@ -1082,8 +1084,8 @@ namespace Mono.AssemblyCompare
 		{
 			XmlAttributeCollection atts = node.Attributes;
 			return String.Format ("{0}:{1}:{2}", atts ["name"].Value,
-							     atts ["ptype"].Value,
-							     atts  ["params"].Value);
+								atts ["ptype"].Value,
+								atts ["params"].Value);
 		}
 
 		public override string GroupName {
@@ -1167,17 +1169,32 @@ namespace Mono.AssemblyCompare
 
 		protected override void CompareToInner (string name, XmlNode parent, XMLNameGroup other)
 		{
-			base.CompareToInner (name, parent, other);
-			if (returnTypes == null)
-				return;
+			// create backup of actual counters
+			Counters copy = counters;
+			// initialize counters for current method
+			counters = new Counters();
 
-			XMLMethods methods = (XMLMethods) other;
-			string rtype = returnTypes [name] as string;
-			string ortype = null;
-			if (methods.returnTypes != null)
-				ortype = methods.returnTypes [name] as string;
+			try {
+				base.CompareToInner(name, parent, other);
+				if (returnTypes == null)
+					return;
 
-			AddWarning (parent, "Event type is {0} and should be {1}", ortype, rtype);
+				XMLMethods methods = (XMLMethods)other;
+				string rtype = returnTypes[name] as string;
+				string ortype = null;
+				if (methods.returnTypes != null)
+					ortype = methods.returnTypes[name] as string;
+
+				AddWarning(parent, "Event type is {0} and should be {1}", ortype, rtype);
+			} finally {
+				// output counter attributes in result document
+				AddCountersAttributes(parent);
+
+				// add temporary counters to actual counters
+				copy.AddPartialToPartial(counters);
+				// restore backup of actual counters
+				counters = copy;
+			}
 		}
 
 		protected override string ConvertToString (int att)
