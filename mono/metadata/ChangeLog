@@ -1,4 +1,11 @@
 
+Sat Jun 19 19:04:50 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* class.h, class.c: more accessors.
+	* metadata.h, metadata.c: prepare for hiding MonoType and
+	MonoMethodSignature: people should use the accessors from now on
+	outside of the tree.
+
 Sat Jun 19 17:56:50 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
 	* *.c, *.h: more API cleanups.
