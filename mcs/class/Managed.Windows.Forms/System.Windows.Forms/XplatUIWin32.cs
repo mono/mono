@@ -906,7 +906,7 @@ namespace System.Windows.Forms {
 			return Win32TranslateMessage(ref msg);
 		}
 
-		internal override bool DispatchMessage(ref MSG msg) {
+		internal override IntPtr DispatchMessage(ref MSG msg) {
 			return Win32DispatchMessage(ref msg);
 		}
 
@@ -1141,7 +1141,7 @@ namespace System.Windows.Forms {
 		internal extern static bool Win32TranslateMessage(ref MSG msg);
 
 		[DllImport ("user32.dll", EntryPoint="DispatchMessageA", CallingConvention=CallingConvention.StdCall)]
-		internal extern static bool Win32DispatchMessage(ref MSG msg);
+		internal extern static IntPtr Win32DispatchMessage(ref MSG msg);
 
 		[DllImport ("user32.dll", EntryPoint="MoveWindow", CallingConvention=CallingConvention.StdCall)]
 		internal extern static bool Win32MoveWindow(IntPtr hWnd, int x, int y, int width, int height, bool repaint);
@@ -1280,6 +1280,9 @@ namespace System.Windows.Forms {
 
 		[DllImport ("user32.dll", EntryPoint="EnableWindow", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
 		private extern static IntPtr Win32EnableWindow(IntPtr hwnd, bool Enabled);
+
+		[DllImport ("user32.dll", EntryPoint="SetFocus", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		internal extern static IntPtr Win32SetFocus(IntPtr hwnd);
 		#endregion
 
 	}
