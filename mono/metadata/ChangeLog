@@ -1,3 +1,19 @@
+2003-05-09  Zoltan Varga  <vargaz@freemail.hu>
+
+	* class.c (mono_class_layout_fields): Add experimental GC aware
+	auto layout facility. Requires class library changes to work correctly.
+
+	(mono_class_setup_vtable): Avoid overriding explicit interface
+	method implementations. Fixes iface3.exe test.
+
+	* object.c (mono_class_compute_gc_descriptor): Type I can't hold an
+	object reference.
+	(mono_array_new_specific): Add MONO_ARCH_SAVE_REGS.
+	(mono_string_new_wrapper): Add MONO_ARCH_SAVE_REGS.
+
+	* metadata.h: Add new type classification macro which determines
+	whenever the type holds an object reference.
+
 2003-05-08  Dietmar Maurer  <dietmar@ximian.com>
 
 	* marshal.c (mono_marshal_get_native_wrapper): cleanups
