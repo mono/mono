@@ -1,3 +1,7 @@
+2003-03-29 Alan Tam <Tam@SiuLung.com>
+	* DataGrid.cs
+		stubbed a missing method
+
 2003-03-26 Alexandre Pigolkine <pigolkine@gmx.de>
 	* NumericUpDown.cs
 	* ScrollableControl.cs

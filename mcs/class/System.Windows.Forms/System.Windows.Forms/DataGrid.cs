@@ -507,6 +507,12 @@ namespace System.Windows.Forms {
 		}
 		
 		[MonoTODO]
+		public void Expand(int row) 
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
 		public Rectangle GetCellBounds(DataGridCell dgc) 
 		{
 			throw new NotImplementedException ();
