@@ -30,9 +30,10 @@
 				<excludes name="System/Object.cs"/>
 				<excludes name="System/ValueType.cs"/>
 				<excludes name="System/Type.cs"/>
+				<excludes name="System/Array.cs"/>
 				<excludes name="System/String.cs"/>
+				<excludes name="System/Console.cs"/>
 				<excludes name="System.Reflection.Emit/**"/>
-				<excludes name="System.Reflection/**"/>
 				<excludes name="System/RuntimeTypeHandle.cs"/>
 				<excludes name="System.PAL/IOperatingSystem.cs"/>
 				<excludes name="System.Collections/Queue.cs"/>

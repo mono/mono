@@ -7,5 +7,9 @@
 // (C) 2001 Ximian, Inc.
 //
 
-public class CodeTypeDeclaration : CodeTypeMember {
+namespace System.CodeDom
+{
+	public class CodeTypeDeclaration : CodeTypeMember
+	{
+	}
 }

@@ -7,6 +7,9 @@
 // (C) 2001 Ximian, Inc.
 //
 
-public class CodeMethodReturnStatement : CodeStatement {
-
+namespace System.CodeDom
+{
+	public class CodeMethodReturnStatement : CodeStatement
+	{
+	}
 }

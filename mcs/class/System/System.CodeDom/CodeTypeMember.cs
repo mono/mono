@@ -7,15 +7,18 @@
 // (C) 2001 Ximian, Inc.
 //
 
-public class CodeTypeMember : CodeObject {
-	private string name;
+namespace System.CodeDom
+{
+	public class CodeTypeMember : CodeObject {
+		private string name;
 
-	public string Name {
-		get {
-			return name;
-		}
-		set {
-			name = value;
+		public string Name {
+			get {
+				return name;
+			}
+			set {
+				name = value;
+			}
 		}
 	}
 }

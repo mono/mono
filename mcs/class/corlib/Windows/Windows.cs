@@ -34,18 +34,6 @@ namespace System.PAL
 		//OS Calls (P/Invoke)
 	
 	
-		// For StdInputStream
-		[DllImport("msvcrt.dll")]
-		private	static extern int _read(int handle, out	byte buffer, uint count);
-		//private static extern	int _read(int handle, byte[] buffer, uint count);
-
-
-		// For StdOutputStream
-		[DllImport("msvcrt.dll")]
-		private	static extern int _write(int handle, ref byte buffer, uint count);
-		//private static extern	int _write(int handle, byte[] buffer, uint count);
-	
-
 		/*DWORD	GetFullPathName(
 		    LPCTSTR lpFileName,	 // file name
 		    DWORD nBufferLength, // size of path buffer
@@ -438,181 +426,76 @@ namespace System.PAL
 
 		public int ReadStdInput(byte[] buffer, int offset, int count)
 		{
-			/*
-			* Note that a byte is being passed into	the native read
-			* function. But	importantly is that a reference, via the out, is being passed,
-			* so the the native read function pass the value back to this method. Doing it
-			* this away to avoid GC	issues with the	VM as value types (byte) do not	get
-			* moved	around like objects (byte[]) do. Downside is that the OS is being called
-			* many times in	this loop. Should WE USE Standard C Library getChar()? Optimally, 
-			* probably want	to call	the read function the second way (commented out) below...
-			* but maybe not. Doing it this way could be better since we are	forced to do some
-			* checks.
-			*/
-			byte b;
-			int nativeReadRetVal;
-			int charsRead =	0;
-
-			for (int i = 0;	i < count; i++)
-			{
-				if (isNextCharacterResidualNewline)
-				{
-					isNextCharacterResidualNewline = false;
-					buffer[i+offset] = residualNewlineByte;
-					charsRead++;
-					if (count == 1)
-					{
-						break;
-					}
-				}
-				else
-				{
-					// Returns 0 if	at the end of the stream, -1 if	an error;
-					nativeReadRetVal = _read(STDIN,	out b, 1);
-					if (nativeReadRetVal ==	-1)
-					{
-						throw new System.IO.IOException();
-					}
-					// The MS implementation needs the end of stream character on a	line by
-					// itself. So if end of	stream character (^Z, which is 0x0017) is reached, but
-					// the previous	character was not a newline character (and since we break
-					// once	a newline is hit, the only way this could be true is if	we are on
-					// the first iteration of ths loop), then it is	not
-					// technically the end of the stream. Is this a	correct	assumption?
-					if (nativeReadRetVal ==	0 && i == 0)
-					{
-						// TODO: Windows: Read:	What is	the better way to do this? Should I do this? MS	implementation seems to.
-						// Flush any characeters following the ^Z
-						while (!IsPartOfNewlineSequence(b))
-						{
-							nativeReadRetVal = _read(STDIN,	out b, 1);
-							if (nativeReadRetVal ==	-1)
-							{
-								throw new System.IO.IOException();
-							}
-						}
-						break;
-					}
-					// If the next byte is part of the newline sequence, place all of the characters
-					// of the newline in the the buffer, then break. The native read function
-					// combines the	newline	characters into	one (e.g. CR-LF	into just LF)
-					if (IsPartOfNewlineSequence(b))
-					{
-						char[] newlineArray = System.Environment.NewLine.ToCharArray();
-						for (int j = i;	j < (i+newlineArray.Length); j++)
-						{
-							// If we are at	the end	of the buffer (i.e. at the limit of number
-							// of characters to count) set static boolean to say next character
-							// should be newline character
-							// The loop is guaranteed to run to the	"else" successfully 
-							// once	since we could not have	gotten to this point if
-							// we were at count (the main for loop would have ended)
-							if (j == count)
-							{
-								isNextCharacterResidualNewline = true;
-								residualNewlineByte = (byte) newlineArray[j-i];
-							}
-							else
-							{
-								buffer[j+offset] = (byte) newlineArray[j-i];
-								charsRead++; 
-							}
-			    
-						}
-						break;
-					}
-					charsRead++;
-					buffer[i+offset] = b;
-				}
-			}
-	    
-			/*
-			 * SECOND POSSIBLE WAY
-			 * 
-			// Not just using 'buffer' parameter because of	the offset. Deal with the offset 
-			// below
-			byte[] ba = new	byte[count];
-			charsRead = _read(STDIN, ba, (uint) count);
-			if (charsRead == -1)
-			{
-			    throw new System.IO.IOException();
-			}
-			Array.Copy(ba, 0, buffer, offset, charsRead);
-			*/
-	    
-			return charsRead;	     
+			return ReadFile(new IntPtr(STDIN), buffer, offset, count);
 		}
 
 		public void FlushStdOutput(byte[] byteBuf)
 		{
-			byte b;
-			/*
-			* Note that a byte is being passed into	the native write
-			* function. Doing it
-			* this away to avoid GC	issues with the	VM as value types (byte) do not	get
-			* moved	around like objects (byte[]) do. Downside is that the OS is being called
-			* many times in	this loop. Should WE USE Standard C Library putChar()? Optimally, 
-			* probably want	to call	the write function the first way (commented out) below
-			*/
-			//if (_write(STDOUT, byteBuf, (uint) byteBuf.Length) ==	-1)
-			for (int i = 0;	i < byteBuf.Length; i++)
-			{
-				b = byteBuf[i];
-				if (_write(STDOUT, ref b, 1) ==	-1)
-				{
-					throw new System.IO.IOException();  // An I/O Exception	occurred");
-				}
-			}
-			// TODO: Windows: Flush: Determine if a	call to	a native flush should be called	in StdOutputStream
+			FlushFile (new IntPtr(STDOUT), byteBuf);
 		}
 	
-		public int ReadFile(IntPtr handle, byte[] buffer, int offset, int count)
+		public unsafe int ReadFile(IntPtr handle, byte[] buffer, int offset, int count)
 		{
-			System.Diagnostics.Debug.WriteLine("Windows:ReadFile(System.Int32, byte[], System.Int32, System.Int32):	Stub Method");
-			return -1;
+			int res;
+
+			fixed (void *p = &buffer[offset]) {
+				res = _read(handle, p, count);
+			}
+			return res;
 		}
 
-		public int WriteFile(IntPtr handle, byte[] buffer, int offset, int count)
+		public unsafe int WriteFile(IntPtr handle, byte[] buffer, int offset, int count)
 		{
-			return -1;
+			int res;
+
+			fixed (void *p = &buffer [offset]) {
+				res = _write(handle, p, count);
+			}
+			return res;
 		}
 
 		public int SetLengthFile(IntPtr handle, long length)
 		{
-			return 0;		
+			return _ftruncate (handle, (int)length);
 		}
 
 		public void FlushFile(IntPtr handle, byte[] byteBuf)
 		{
-			System.Diagnostics.Debug.WriteLine("Windows:FlushFile(System.Int32, byte[]): Stub Method");
+			WriteFile (handle, byteBuf, 0, byteBuf.Length);
 		}
 
 		public IntPtr OpenFile(string path, FileMode mode, FileAccess access, FileShare	share)
 		{
-			System.Diagnostics.Debug.WriteLine("Windows:OpenFile(System.String, System.IO.FileMode,	System.IO.FileAccess, System.IO.FileShare): Stub Method");
-			return new IntPtr(-1);
+			int flags = _getUnixFlags (mode, access);
+
+			return _open (path, flags, 0x1a4);
 		}
 	    
 		public void CloseFile(IntPtr handle)
 		{
-			System.Diagnostics.Debug.WriteLine("Windows:CloseFile(System.Int32): Stub Method");
+			_close (handle);
 		}
 	
 		public long SeekFile(IntPtr handle, long offset, SeekOrigin origin)
 		{
-			System.Diagnostics.Debug.WriteLine("Windows:SeekFile(System.Int32, System.Int64, System.IO.SeekOrigin):	Stub Method");
-			return -1;
+			switch (origin) {
+				case SeekOrigin.End:
+					return _lseek (handle, (int)offset, SEEK_END);
+				case SeekOrigin.Current:
+					return _lseek (handle, (int)offset, SEEK_CUR);
+				default:
+					return _lseek (handle, (int)offset, SEEK_SET);
+			}
 		}
 	
 		public IntPtr CreateFile(string	path, FileMode mode, FileAccess	access,	FileShare share)
 		{
-			System.Diagnostics.Debug.WriteLine("Windows:CreateFile(System.String, System.IO.FileMode, System.IO.FileAccess,	System.IO.FileShare): Stub Method");
-			return new IntPtr(-1);
+			return OpenFile(path, FileMode.CreateNew, access, share);
 		}
 	
 		public void DeleteFile(string path)
 		{
-			System.Diagnostics.Debug.WriteLine("Windows:DeleteFile(System.String): Stub Method");
+			_unlink(path);
 		}
 	
 		public bool ExistsFile(string path)
@@ -737,5 +620,75 @@ namespace System.PAL
 		[ DllImport("msvcrt", EntryPoint="tanh") ]
 		public extern static double Tanh(double d);
 
+		[ DllImport("msvcrt", EntryPoint="_read", CharSet=CharSet.Ansi) ]
+		private unsafe static extern int _read(IntPtr fd, void *buf, int count);
+
+		[ DllImport("msvcrt", EntryPoint="_write", CharSet=CharSet.Ansi) ]
+		private unsafe static extern int _write(IntPtr fd, void *buf, int count);
+
+		[ DllImport("msvcrt", EntryPoint="_lseek", CharSet=CharSet.Ansi) ]
+		private unsafe static extern int _lseek(IntPtr fd, int offset, int whence);
+
+		[ DllImport("msvcrt", EntryPoint="_chsize", CharSet=CharSet.Ansi) ]
+		private unsafe static extern int _ftruncate (IntPtr fd, int count);
+
+		[ DllImport("msvcrt", EntryPoint="_close", CharSet=CharSet.Ansi) ]
+		private unsafe static extern void _close(IntPtr fd);
+
+		[ DllImport("msvcrt", EntryPoint="_open", CharSet=CharSet.Ansi) ]
+		private unsafe static extern IntPtr _open(string path, int flags, int mode);
+
+		[ DllImport("msvcrt", EntryPoint="_unlink", CharSet=CharSet.Ansi) ]
+		private unsafe static extern int _unlink(string path);
+
+		private const int O_RDONLY  = 0x000;
+		private const int O_WRONLY  = 0x001;
+		private const int O_RDWR    = 0x002;
+		private const int O_CREAT   = 0x040;
+		private const int O_EXCL    = 0x080;
+		private const int O_TRUNC   = 0x200;
+		private const int O_APPEND  = 0x400;
+
+		private const int SEEK_SET = 0;
+		private const int SEEK_CUR = 1;
+		private const int SEEK_END = 2;
+
+		private int _getUnixFlags (FileMode mode, FileAccess access)
+		{
+			int flags = 0;
+			switch (access) {
+				case FileAccess.Read:
+					flags = O_RDONLY;
+					break;
+				case FileAccess.Write:
+					flags = O_WRONLY;
+					break;
+				case FileAccess.ReadWrite:
+					flags = O_RDWR;
+					break;
+			}
+
+			switch (mode) {
+				case FileMode.Append:
+					flags |= O_APPEND;
+					break;
+				case FileMode.Create:
+					flags |= O_CREAT;
+					break;
+				case FileMode.CreateNew:
+					flags |= O_CREAT | O_EXCL;
+					break;
+				case FileMode.Open:
+					break;
+				case FileMode.OpenOrCreate:
+					flags |= O_CREAT;
+					break;
+				case FileMode.Truncate:
+					flags |= O_TRUNC;
+					break;
+			}
+
+			return flags;
+		}
 	}
 }

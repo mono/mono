@@ -33,5 +33,6 @@
 
 	<target name="clean">
 		<nant basedir="Test" target="clean"/>
+		<delete file="../lib/System.dll" failonerror="false"/>
 	</target>
 </project>

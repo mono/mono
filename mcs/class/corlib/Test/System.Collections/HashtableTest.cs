@@ -70,7 +70,6 @@ namespace MonoTests.System.Collections {
 
 
 		public void TestUnderHeavyLoad() {
-			Console.WriteLine("Testing "+ht);
 			ht.Clear();
 			int max=100000;
 			String[] cache=new String[max*2];
@@ -200,7 +199,6 @@ namespace MonoTests.System.Collections {
 
 		public void TestUnderHeavyLoad ()
 		{
-			Console.WriteLine ("Testing "+ht);
 			ht.Clear ();
 
 			int max=100000;

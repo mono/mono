@@ -7,6 +7,9 @@
 // (C) 2001 Ximian, Inc.
 //
 
-public class CodeStatement : CodeObject {
-
+namespace System.CodeDom
+{
+	public class CodeStatement : CodeObject
+	{
+	}
 }
