@@ -1290,8 +1290,8 @@ namespace System.Windows.Forms {
 
 				case Msg.WM_NCPAINT: {
 					if (this.menu != null) {
-Console.WriteLine("This should be the origin for the menu: {0}, and the width:{1}", XplatUI.GetMenuOrigin(window.Handle), ClientSize.Width);
-						MenuAPI.DrawMenuBar (menu.Handle);
+						Point pnt = XplatUI.GetMenuOrigin(window.Handle);
+						MenuAPI.DrawMenuBar (menu.Handle, new Rectangle (pnt.X, pnt.Y, ClientSize.Width, 0));
 					}
 
 					base.WndProc(ref m);

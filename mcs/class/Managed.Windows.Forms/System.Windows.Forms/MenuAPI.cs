@@ -44,6 +44,8 @@ namespace System.Windows.Forms
 		public class MENU
 		{
 			public MF		Flags;		// Menu flags (MF_POPUP, MF_SYSMENU)
+			public int		X;		// Used in MenuBar only
+			public int		Y;		// Used in MenuBar only
 			public int		Width;		// Width of the whole menu
 			public int		Height;		// Height of the whole menu
 			public Control		Wnd;		// In a Popup menu is the PopupWindow and in a MenuBar the Form
@@ -61,7 +63,7 @@ namespace System.Windows.Forms
 				hParent = IntPtr.Zero;
 				items = new ArrayList ();
 				Flags = MF.MF_INSERT;
-				Width = Height = FocusedItem = 0;				
+				Width = Height = FocusedItem = X = Y = 0;
 				bMenubar = false;
 				bTracking = false;
 				menu = menu_obj;
@@ -262,21 +264,19 @@ namespace System.Windows.Forms
 			Menu handeling API
 		*/
 		
-		static public Point ClientAreaPointToScreen (Control wnd, Point pnt)		
+		static public Point ClientAreaPointToScreen (MENU menu, Point pnt)		
 		{
 			Point rslt;
-			pnt.Y -= ThemeEngine.Current.CaptionHeight;
-			pnt.Y -= ThemeEngine.Current.FixedFrameBorderSize.Height;
-			rslt = wnd.PointToScreen (pnt);			
+			pnt.Y -= menu.Y;
+			rslt = menu.Wnd.PointToScreen (pnt);			
 			return rslt;
 		}
 		
-		static public Point ClientAreaPointToClient (Control wnd, Point pnt)		
+		static public Point ClientAreaPointToClient (MENU menu, Point pnt)		
 		{
 			Point rslt;			
-			rslt = wnd.PointToClient (pnt);			
-			rslt.Y += ThemeEngine.Current.CaptionHeight;
-			rslt.Y += ThemeEngine.Current.FixedFrameBorderSize.Height;
+			rslt = menu.Wnd.PointToClient (pnt);			
+			rslt.Y += menu.Y;
 			return rslt;
 		}	
 
@@ -311,15 +311,21 @@ namespace System.Windows.Forms
 			return null;
 		}
 
-		// Little helper
-		static internal void DrawMenuBar (IntPtr hMenu) 
+		static internal void DrawMenuBar (IntPtr hMenu) 		
 		{
-			Rectangle rect;
+			MENU menu = GetMenuFromID (hMenu);
+			DrawMenuBar (hMenu, new Rectangle (menu.X, menu.Y, menu.Width, menu.Height));					
+		}
+
+		// Little helper
+		static internal void DrawMenuBar (IntPtr hMenu, Rectangle rect)
+		{
 			Graphics g;
 			MENU menu = GetMenuFromID (hMenu);
 
-			rect = new Rectangle (ThemeEngine.Current.FixedFrameBorderSize.Width, ThemeEngine.Current.CaptionHeight + ThemeEngine.Current.FixedFrameBorderSize.Height, 
-				menu.Width, menu.Height);
+			menu.X = rect.X;
+			menu.Y = rect.Y;
+			rect.Height = menu.Height;
 
 			g = XplatUI.GetMenuDC(menu.Wnd.window.Handle, IntPtr.Zero);
 			ThemeEngine.Current.DrawMenuBar (g, hMenu, rect);
@@ -518,7 +524,7 @@ namespace System.Windows.Forms
 		{
 			MENU menu = GetMenuFromID (hMenu);
 			Point pnt = new Point (item.rect.X, item.rect.Y + item.rect.Height + 1);
-			pnt = ClientAreaPointToScreen (menu.Wnd, pnt);
+			pnt = ClientAreaPointToScreen (menu, pnt);
 			MenuAPI.SelectItem (hMenu, item, false, tracker);
 			HideSubPopups (tracker.hCurrentMenu);
 			tracker.hCurrentMenu = hMenu;
@@ -532,9 +538,8 @@ namespace System.Windows.Forms
 
 			switch (eventype) {
 				case MenuMouseEvent.Down: {
-					
 					Point pnt = new Point (e.X, e.Y);
-					pnt = ClientAreaPointToClient (menu.Wnd, pnt);
+					pnt = ClientAreaPointToClient (menu, pnt);
 
 					MenuAPI.MENUITEM item = MenuAPI.FindItemByCoords (hMenu, pnt);
 
@@ -563,7 +568,7 @@ namespace System.Windows.Forms
 
 						Point pnt = new Point (e.X, e.Y);
 						//pnt = menu.Wnd.PointToClient (pnt);
-						pnt = ClientAreaPointToClient (menu.Wnd, pnt);
+						pnt = ClientAreaPointToClient (menu, pnt);
 
 						MenuAPI.MENUITEM item = MenuAPI.FindItemByCoords (hMenu, pnt);
 

@@ -1,3 +1,8 @@
+2005-03-11  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* Form.cs: fixes menu drawing on X11
+	* MenuAPI.cs:  fixes menu drawing on X11
+
 2005-03-11  Peter Bartok  <pbartok@novell.com>
 
 	* Form.cs:
