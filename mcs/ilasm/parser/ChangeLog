@@ -1,5 +1,10 @@
 2004-06-19  Jackson Harper  <jackson@ximian.com>
 
+	* ILParser.jay: Resolve method pointers that are being treated as
+	typerefs.
+	
+2004-06-19  Jackson Harper  <jackson@ximian.com>
+
 	* ILParser.jay: Resolve other modules global 'type'.
 	
 2004-06-14  Jackson Harper  <jackson@ximian.com>

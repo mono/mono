@@ -774,6 +774,9 @@ type			: K_CLASS class_ref
                                 $$ = base_type;
                           }
 			| K_METHOD call_conv type STAR OPEN_PARENS sig_args CLOSE_PARENS
+                          {
+                                $$ = new MethodPointerTypeRef ((CallConv) $2, (ITypeRef) $3, (ArrayList) $6);
+                          }
 			| K_TYPEDREF
                           {
                                 $$ = new PrimitiveTypeRef (PrimitiveType.TypedRef,
