@@ -1,3 +1,7 @@
+2002-07-16  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* expression.cs: fixed bug #27811.
+
 2002-07-14  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs (ParameterReference.AddressOf): Patch from Paolo

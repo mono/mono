@@ -5185,8 +5185,8 @@ namespace Mono.CSharp {
 				//
 
 				Expression ml = MemberLookup (
-					ec, ec.ContainerType,
-					ee.EventInfo.Name, MemberTypes.Event, AllBindingFlags, loc);
+					ec, ec.ContainerType, ee.EventInfo.Name, MemberTypes.Event,
+					AllBindingFlags | BindingFlags.DeclaredOnly, loc);
 
 				if (ml != null) {
 					MemberInfo mi = GetFieldFromEvent ((EventExpr) ml);
