@@ -1,5 +1,11 @@
 2004-02-10  Jackson Harper <jackson@ximian.com>
 
+	* AspTokenizer.cs: Collect discarded characters that might be used
+	in client side scripts. Patch by Liyu Liu.
+	* AspParser.cs: Add discarded characters. Patch by Liyu Liu.
+	
+2004-02-10  Jackson Harper <jackson@ximian.com>
+
 	* BaseCompiler.cs: Use the TempDirectory for compilation. Fixes
 	bug #54117.
 	

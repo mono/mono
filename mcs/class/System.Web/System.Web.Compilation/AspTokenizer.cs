@@ -29,7 +29,7 @@ namespace System.Web.Compilation
 	{
 		TextReader sr;
 		int current_token;
-		StringBuilder sb;
+		StringBuilder sb, odds;
 		int col, line;
 		int begcol, begline;
 		int position;
@@ -43,6 +43,7 @@ namespace System.Web.Compilation
 		{
 			this.sr = reader;
 			sb = new StringBuilder ();
+			odds= new StringBuilder();
 			col = line = 1;
 			hasPutBack = inTag = false;
 		}
@@ -152,6 +153,7 @@ namespace System.Web.Compilation
 			int c;
 			
 			sb.Length = 0;
+			odds.Length=0;
 			while ((c = read_char ()) != -1){
 				if (verbatim){
 					inTag = false;
@@ -219,6 +221,8 @@ namespace System.Web.Compilation
 					sb.Append  ((char) c);
 					return c;
 				}
+				// keep otherwise discarded characters in case we need.
+				odds.Append((char) c);
 			}
 
 			return Token.EOF;
@@ -232,6 +236,12 @@ namespace System.Web.Compilation
 				have_value = true;
 				val = sb.ToString ();
 				return val;
+			}
+		}
+
+		public string Odds {
+			get {
+				return odds.ToString();
 			}
 		}
 

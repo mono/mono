@@ -243,6 +243,12 @@ namespace System.Web.Compilation
 				}
 				break;
 			case Token.IDENTIFIER:
+				if (this.filename == "@@inner_string@@") {
+					// Actually not tag but "xxx < yyy" stuff in inner_string!
+					tagtype = TagType.Text;
+					tokenizer.InTag = false;
+					id = "<" + tokenizer.Odds + tokenizer.Value;
+				} else {
 				id = tokenizer.Value;
 				try {
 					attributes = GetAttributes ();
@@ -256,6 +262,7 @@ namespace System.Web.Compilation
 					tagtype = TagType.SelfClosing;
 				else if (!Eat ('>'))
 					OnError ("expecting '>'. Got '" + tokenizer.Value + "'");
+				}
 
 				break;
 			default:
