@@ -1,3 +1,19 @@
+2003-12-04  Zoltan Varga  <vargaz@freemail.hu>
+
+	* image.c (mono_image_load_file_for_image): Cache loaded images in the
+	image->files array.
+
+	* image.c (load_class_name): Load class names from the EXPORTEDTYPES
+	table as well.
+
+	* assembly.c (mono_assembly_load_references): Only load references
+	once.
+
+	* class.c (mono_class_from_name): Avoid linear search of the 
+	EXPORTEDTYPE table.
+
+	* loader.c (mono_field_from_token): Cache lookups of fieldrefs as well.
+
 2003-12-03  Zoltan Varga  <vargaz@freemail.hu>
 
 	* image.h (MonoImage): Add 'field_cache' field.
