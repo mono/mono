@@ -1,3 +1,6 @@
+2004-08-31 Francisco Figueiredo Jr. <fxjrlists@yahoo.com.br>
+	* DbDataAdapter.cs: Fix for out of memory exceptions when trying to fill a dataset with a query which doesn't return a resultset like insert, delete or update.
+
 2004-07-21 Umadevi S <sumadevi@novell.com>
 	* DbDataRecord.cs - Fix for bug 58163. Return DBNull instead of null
 

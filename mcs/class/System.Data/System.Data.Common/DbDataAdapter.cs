@@ -285,25 +285,30 @@ namespace System.Data.Common {
 			try {
 				string tableName = srcTable;
 				do {
-					tableName = SetupSchema (SchemaType.Mapped, tableName);
-					if (tableName != null) {
-						// check if the table exists in the dataset
-						if (dataSet.Tables.Contains (tableName)) 
-							// get the table from the dataset
-							dataTable = dataSet.Tables [tableName];
-						else {
-							dataTable = new DataTable(tableName);
-							dataSet.Tables.Add (dataTable);
+					// Non-resultset queries like insert, delete or update aren't processed.
+                    if (dataReader.FieldCount != -1)
+					{
+						tableName = SetupSchema (SchemaType.Mapped, tableName);
+						if (tableName != null) {
+						
+							// check if the table exists in the dataset
+							if (dataSet.Tables.Contains (tableName)) 
+								// get the table from the dataset
+								dataTable = dataSet.Tables [tableName];
+							else {
+								dataTable = new DataTable(tableName);
+								dataSet.Tables.Add (dataTable);
+							}
+	
+							if (!FillTable (dataTable, dataReader, startRecord, maxRecords, ref count)) {
+								continue;
+							}
+	
+							tableName = String.Format ("{0}{1}", srcTable, ++resultIndex);
+	
+							startRecord = 0;
+							maxRecords = 0;
 						}
-
-						if (!FillTable (dataTable, dataReader, startRecord, maxRecords, ref count)) {
-							continue;
-						}
-
-						tableName = String.Format ("{0}{1}", srcTable, ++resultIndex);
-
-						startRecord = 0;
-						maxRecords = 0;
 					}
 				} while (dataReader.NextResult ());
 			} 
