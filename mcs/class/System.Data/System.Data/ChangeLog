@@ -1,3 +1,8 @@
+2004-05-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataColumn.cs : Fixed set_Item[int]. Convert.ToInt64(DBNull.Value)
+	  always fails.
+
 2004-05-19  Boris Kirzner  <borisk@mainsoft.com>
 
 	* DataColumn.cs - removed default member attribute.
