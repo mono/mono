@@ -1,3 +1,18 @@
+2005-03-05 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Uri.cs: when unescaping in stages, handle the case when the next
+	substring is not a escaped sequence or the string ends. Fixes bug
+	#73316.
+
+2005-01-20  Miguel de Icaza  <miguel@ximian.com>
+
+	* Uri.cs: Set the UriSchemNews port default to 119 as well.
+	Fixes bug #71050.
+
+	When dealing with fragments use the `dontEscape' flag passed to
+	the Uri constructor to decide whether the fragment must or must
+	not be escaped, fixes 71051.
+
 2004-06-22  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Uri.cs : Such ctor arg string that starts with "//" should be 
