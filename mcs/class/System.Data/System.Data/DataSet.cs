@@ -294,7 +294,7 @@ namespace System.Data {
 
 		public void WriteXml(XmlWriter writer, XmlWriteMode mode)
 		{
-
+			((XmlTextWriter)writer).Formatting = Formatting.Indented;
 			WriteStartElement( writer, mode, Namespace, Prefix, DataSetName );
 			
 			if( mode == XmlWriteMode.WriteSchema )
