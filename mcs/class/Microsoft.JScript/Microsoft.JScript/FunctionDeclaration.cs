@@ -74,8 +74,10 @@ namespace Microsoft.JScript {
 				type.DefineField (name, typeof (Microsoft.JScript.ScriptFunction),
 						  FieldAttributes.Public | FieldAttributes.Static);
 
-			} else 
+			} else {
 				name = get_composite_name ();
+				ec.ig.DeclareLocal (typeof (Microsoft.JScript.ScriptFunction));
+			}
 
 			method = type.DefineMethod (name, Function.attr, 
 						    Function.return_type,

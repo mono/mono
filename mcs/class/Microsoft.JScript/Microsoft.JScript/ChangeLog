@@ -1,3 +1,8 @@
+2003-11-06 cesar lopez nataren <cesar@ciencias.unam.mx>
+
+	* FunctionDeclaration.cs: Build a ScriptFunction local variable,
+	if inside a nested block.
+
 2003-11-05 cesar lopez nataren <cesar@ciencias.unam.mx>
 
 	* jscript-lexer-parser.g: Now we take care of parents. This allows
