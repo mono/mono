@@ -1,3 +1,51 @@
+2001-09-05  Ravi Pratap  <ravi@ximian.com>
+
+	* cs-parser.jay (error): Add new modifier because we are hiding an inherited
+	member.
+	
+2001-09-04  Ravi Pratap  <ravi@ximian.com>
+
+	* cs-parser.jay (attribute_arguments): Implement actions.
+	(attribute): Fix bug in production. Implement action.
+	(attribute_list): Implement.
+	(attribute_target): Implement.
+	(attribute_target_specifier, opt_target_specifier): Implement
+	(CheckAttributeTarget): New method to check if the attribute target
+	is valid.
+	(attribute_section): Implement.
+	(opt_attributes): Implement.
+
+	* attribute.cs : New file to handle attributes.
+	(Attribute): Class to hold attribute info.
+
+	* cs-parser.jay (opt_attribute_target_specifier): Remove production
+	(attribute_section): Modify production to use 2 different rules to 
+	achieve the same thing. 1 s/r conflict down !
+	Clean out commented, useless, non-reducing dimension_separator rules.
+	
+	* class.cs (TypeContainer.attributes): New member to hold list
+	of attributes for a type.
+	(Struct::Struct): Modify to take one more argument, the attribute list.
+	(Class::Class): Ditto.
+	(Field::Field): Ditto.
+	(Method::Method): Ditto.
+	(Property::Property): Ditto.
+	
+	* cs-parser.jay (struct_declaration): Update constructor call to
+	pass in the attributes too.
+	(class_declaration): Ditto.
+	(constant_declaration): Ditto.
+	(field_declaration): Ditto.
+	(method_header): Ditto.
+	(fixed_parameter): Ditto.
+	(parameter_array): Ditto.
+	(property_declaration): Ditto.
+
+	* constant.cs (Constant::Constant): Update constructor similarly.
+	Use System.Collections.
+
+	* parameter.cs (Parameter::Parameter): Update as above.
+
 2001-09-02  Ravi Pratap  <ravi@ximian.com>
 
 	* class.cs (TypeContainer::AddDelegate): New method to add a delegate.

@@ -375,76 +375,114 @@ type_declaration
 	| struct_declaration		
 	| interface_declaration		
 	| enum_declaration		
-	| delegate_declaration		// finishme
+	| delegate_declaration	       
 	;
 
 //
 // Attributes 17.2
 //
 opt_attributes
-	: /* empty */
+	: /* empty */ { $$ = null; }
 	| attribute_section opt_attributes
+	  {
+		ArrayList attrs;
+		
+		if ($2 != null)
+			attrs = (ArrayList) $2;
+		else
+			attrs = new ArrayList ();
+
+		attrs.Add ($1);
+	  }
 	;
 
 attribute_section
-	: OPEN_BRACKET
-	  opt_attribute_target_specifier attribute_list 
-	  /* FIXME: opt_comma */ 
-	  CLOSE_BRACKET 
+	: OPEN_BRACKET attribute_target_specifier attribute_list CLOSE_BRACKET
+	  {
+		string target = null;
+		
+		if ($2 != null)
+			target = (string) $2;
+		
+		$$ = new Attribute (target, (ArrayList) $3);
+ 	  }
+        | OPEN_BRACKET attribute_list CLOSE_BRACKET
+	  {
+		$$ = new Attribute (null, (ArrayList) $2);
+	  }
 	;
-
-opt_attribute_target_specifier
-	: /* empty */
-	| attribute_target_specifier
-	;
-
+ 
 attribute_target_specifier
 	: attribute_target COLON
+	  {
+		$$ = $1;
+	  }
 	;
 
 attribute_target
-	: IDENTIFIER  { 
-	     // if (Collection.Contains ($$))... FIXME
-	     note  ("Allows: assembly, field, method, module, param, property, type"); 
-	}
-	| EVENT
-	| RETURN 
+	: IDENTIFIER
+	  {
+		CheckAttributeTarget ((string) $1);
+		$$ = $1;
+	  }
+        | EVENT  { $$ = "event"; }	  
+        | RETURN { $$ = "return"; }
 	;
 
 attribute_list
 	: attribute
+	  {
+		ArrayList attrs = new ArrayList ();
+		attrs.Add ($1);
+
+		$$ = attrs;
+	       
+	  }
 	| attribute_list COMMA attribute
+	  {
+		ArrayList attrs = (ArrayList) $1;
+		attrs.Add ($3);
+
+		$$ = attrs;
+	  }
 	;
 
 attribute
-	: attribute_name
-	| opt_attribute_arguments
+	: attribute_name opt_attribute_arguments
+	  {
+		$$ = new DictionaryEntry ($1, $2);
+	  }
 	;
 
 attribute_name
-	: type_name		{ /* reserved attribute name or identifier: 17.4 */ }
+	: type_name  { /* reserved attribute name or identifier: 17.4 */ }
 	;
 
 opt_attribute_arguments
-	: /* empty */
+	: /* empty */   { $$ = null; }
 	| OPEN_PARENS attribute_arguments CLOSE_PARENS
+	  {
+		$$ = $2;
+	  }
 	;
 
 attribute_arguments
 	: expression
+	  {
+		ArrayList args = new ArrayList ();
+		args.Add ($1);
+		
+		$$ = args;
+	  }
 	| attribute_arguments COMMA expression
+	  {
+		ArrayList args = (ArrayList) $1;
+		args.Add ($3);
+
+		$$ = args;
+	  }
 	;
 
-
-//  opt_dimension_separators
-//  	: /* empty */
-//  	| dimension_separators
-//  	;
-
-//  dimension_separators
-//  	: COMMA 
-//  	| dimension_separators COMMA 
-//  	;
 
 class_body
 	:  OPEN_BRACE opt_class_member_declarations CLOSE_BRACE
@@ -482,7 +520,7 @@ struct_declaration
 		Struct new_struct;
 		string full_struct_name = MakeName ((string) $4);
 
-		new_struct = new Struct (rc, current_container, full_struct_name, (int) $2);
+		new_struct = new Struct (rc, current_container, full_struct_name, (int) $2, (ArrayList) $1);
 		current_container = new_struct;
 		current_container.Namespace = current_namespace;
 		tree.RecordStruct (full_struct_name, new_struct);
@@ -552,7 +590,7 @@ constant_declaration
 		foreach (DictionaryEntry constant in (ArrayList) $5){
 			Constant c = new Constant (
 				(string) $4, (string) constant.Key, 
-				(Expression) constant.Value, (int) $2);
+				(Expression) constant.Value, (int) $2, (ArrayList) $1);
 
 			CheckDef (current_container.AddConstant (c), c.Name);
 		}
@@ -592,7 +630,7 @@ field_declaration
 
 		foreach (VariableDeclaration var in (ArrayList) $4){
 			Field field = new Field (type, mod, var.identifier, 
-						 var.expression_or_array_initializer);
+						 var.expression_or_array_initializer, (ArrayList) $1);
 
 			CheckDef (current_container.AddField (field), field.Name);
 		}
@@ -659,7 +697,7 @@ method_header
 	  member_name
 	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS 
 	  {
-		Method method = new Method ((string) $3, (int) $2, (string) $4, (Parameters) $6);
+		Method method = new Method ((string) $3, (int) $2, (string) $4, (Parameters) $6, (ArrayList) $1);
 
 		current_local_parameters = (Parameters) $6;
 
@@ -671,7 +709,7 @@ method_header
 	  member_name
 	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS 
 	  {
-		Method method = new Method ("System.Void", (int) $2, (string) $4, (Parameters) $6);
+		Method method = new Method ("System.Void", (int) $2, (string) $4, (Parameters) $6, (ArrayList) $1);
 
 		current_local_parameters = (Parameters) $6;
 		$$ = method;
@@ -736,7 +774,7 @@ fixed_parameter
 	  type
 	  IDENTIFIER
 	  {
-		$$ = new Parameter ((string) $3, (string) $4, (Parameter.Modifier) $2);
+		$$ = new Parameter ((string) $3, (string) $4, (Parameter.Modifier) $2, (ArrayList) $1);
 	  }
 	;
 
@@ -753,7 +791,7 @@ parameter_modifier
 parameter_array
 	: opt_attributes PARAMS type IDENTIFIER
 	  { 
-		$$ = new Parameter ((string) $3, (string) $4, Parameter.Modifier.PARAMS);
+		$$ = new Parameter ((string) $3, (string) $4, Parameter.Modifier.PARAMS, (ArrayList) $1);
 		note ("type must be a single-dimension array type"); 
 	  }
 	;
@@ -770,7 +808,7 @@ property_declaration
 	  OPEN_BRACE 
 	  {
 		Parameter implicit_value_parameter;
-		implicit_value_parameter = new Parameter ((string) $3, "value", Parameter.Modifier.NONE);
+		implicit_value_parameter = new Parameter ((string) $3, "value", Parameter.Modifier.NONE, null);
 
 		lexer.properties = true;
 		
@@ -793,7 +831,7 @@ property_declaration
 		if (pair.Value != null)
 			set_block = (Block) pair.Value;
 
-		prop = new Property ((string) $3, (string) $4, (int) $2, get_block, set_block);
+		prop = new Property ((string) $3, (string) $4, (int) $2, get_block, set_block, (ArrayList) $1);
 		
 		CheckDef (current_container.AddProperty (prop), prop.Name);
 		implicit_value_parameters = null;
@@ -1156,8 +1194,8 @@ constructor_initializer
 destructor_declaration
 	: opt_attributes TILDE IDENTIFIER OPEN_PARENS CLOSE_PARENS block
 	  {
-		Method d = new Method ("System.Void", 0, "Finalize", new Parameters (null, null));
-
+		Method d = new Method ("System.Void", 0, "Finalize", new Parameters (null, null), (ArrayList) $1);
+		  
 		d.Block = (Block) $6;
 		CheckDef (current_container.AddMethod (d), d.Name);
 	  }
@@ -2105,7 +2143,7 @@ class_declaration
 		Class new_class;
 		string full_class_name = MakeName ((string) $4);
 
-		new_class = new Class (rc, current_container, full_class_name, (int) $2);
+		new_class = new Class (rc, current_container, full_class_name, (int) $2, (ArrayList) $1);
 		current_container = new_class;
 		current_container.Namespace = current_namespace;
 		tree.RecordClass (full_class_name, new_class);
@@ -2919,6 +2957,28 @@ void CheckBoolean (Expression expr)
 	// finishme
 }
 
+void CheckAttributeTarget (string a)
+{
+	switch (a) {
+
+	case "assembly" : case "field" : case "method" : case "param" : case "property" : case "type" :
+		return;
+		
+	default :
+		// FIXME : Find the exact error number !! ;-)
+		error (-4,
+		       "Attribute target can only be one of assembly, field, method, param, property event, return or type");
+		break;
+	}
+
+}
+
+static new public void error (int code, string desc)
+{
+	Console.WriteLine ("Error CS"+code+": "+desc);
+	global_errors++;
+}
+
 void output (string s)
 {
 	Console.WriteLine (s);
@@ -2966,5 +3026,3 @@ public override int parse ()
 
 /* end end end */
 }
-
-

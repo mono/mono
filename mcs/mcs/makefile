@@ -11,6 +11,7 @@ COMPILER_SOURCES = \
 	driver.cs $(COMMON_SOURCES) 	\
 	class.cs 			\
 	delegate.cs			\
+	attribute.cs			\
 	codegen.cs			\
 	constant.cs			\
 	decl.cs				\

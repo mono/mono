@@ -3,12 +3,14 @@ namespace CIR {
 	using System;
 	using System.Reflection;
 	using System.Reflection.Emit;
+	using System.Collections;
 	
 	public class Constant : Expression {
 		string     name;
 		Expression expr;
 		string     constant_type;
 		int        mod_flags;
+		public readonly ArrayList  OptAttributes;
 
 		public const int AllowedModifiers =
 			Modifiers.NEW |
@@ -17,12 +19,13 @@ namespace CIR {
 			Modifiers.INTERNAL |
 			Modifiers.PRIVATE;
 
-		public Constant (string constant_type, string name, Expression expr, int mod_flags)
+		public Constant (string constant_type, string name, Expression expr, int mod_flags, ArrayList attrs)
 		{
 			this.constant_type = constant_type;
 			this.name = name;
 			this.expr = expr;
 			this.mod_flags = Modifiers.Check (AllowedModifiers, mod_flags, Modifiers.PRIVATE);
+			OptAttributes = attrs;
 		}
 
 		public string Name {

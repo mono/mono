@@ -14,7 +14,8 @@ namespace CIR {
 
 	using System;
 	using System.Reflection;
-
+	using System.Collections;
+	
 	public class Parameter {
 		public enum Modifier {
 			NONE,
@@ -26,12 +27,14 @@ namespace CIR {
 		public readonly string   Type;
 		public readonly string   Name;
 		public readonly Modifier ModFlags;
+		public readonly ArrayList OptAttributes;
 		
-		public Parameter (string type, string name, Modifier mod)
+		public Parameter (string type, string name, Modifier mod, ArrayList attrs)
 		{
 			Name = name;
 			ModFlags = mod;
 			Type = type = type;
+			OptAttributes = attrs;
 		}
 
 		public ParameterAttributes Attributes {
