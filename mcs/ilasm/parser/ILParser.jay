@@ -763,6 +763,9 @@ call_conv		: K_INSTANCE call_conv
 			;
 
 call_kind		: /* EMPTY */
+                          {
+                                $$ = new CallConv ();
+                          }
 			| K_DEFAULT
                           {
                                 $$ = CallConv.Default;
