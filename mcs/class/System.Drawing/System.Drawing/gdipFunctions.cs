@@ -1386,111 +1386,142 @@ namespace System.Drawing
 		//
 		// These are stuff that is unix-only
 		//
-
-
 		public delegate int StreamGetBytesDelegate (IntPtr buf, int bufsz, bool peek);
 		public delegate int StreamSeekDelegate (int offset, int whence);
 		public delegate int StreamPutBytesDelegate (IntPtr buf, int bufsz);
+		public delegate void StreamCloseDelegate ();
+		public delegate long StreamSizeDelegate ();
 
-		internal class GdiPlusStreamHelper {
-		  public Stream stream;
-		  public byte[] peekBytes;
+		internal class GdiPlusStreamHelper 
+		{
+			public Stream stream;
+			public byte[] peekBytes;
 
-		  public GdiPlusStreamHelper (Stream s) { stream = s; }
+			public GdiPlusStreamHelper (Stream s) { stream = s; }
 
-		  public int StreamGetBytesImpl (IntPtr buf, int bufsz, bool peek) {
-		    if (buf == IntPtr.Zero && peek)
-		      return -1;
+			public int StreamGetBytesImpl (IntPtr buf, int bufsz, bool peek) 
+			{
+				if (buf == IntPtr.Zero && peek)
+					return -1;
 
-		    byte[] managedBuf = new byte[bufsz];
-		    int bytesReturn = 0;
-		    int bytesRead = 0;
+				byte[] managedBuf = new byte[bufsz];
+				int bytesReturn = 0;
+				int bytesRead = 0;
 
-		    if (peekBytes != null) {
-		      if (bufsz < peekBytes.Length) {
-			Marshal.Copy (peekBytes, 0, buf, bufsz);
-			byte[] newPeekBytes = new byte[peekBytes.Length - bufsz];
-			Array.Copy (peekBytes, bufsz, newPeekBytes, 0, newPeekBytes.Length);
-			bytesReturn += bufsz;
-			bufsz = 0;
-			peekBytes = newPeekBytes;
-		      } else {
-			Marshal.Copy (peekBytes, 0, buf, peekBytes.Length);
-			bytesReturn += peekBytes.Length;
-			bufsz -= peekBytes.Length;
-			peekBytes = null;
-		      }
-		    }
+				if (peekBytes != null) {
+					if (bufsz < peekBytes.Length) {
+						Marshal.Copy (peekBytes, 0, buf, bufsz);
+						byte[] newPeekBytes = new byte[peekBytes.Length - bufsz];
+						Array.Copy (peekBytes, bufsz, newPeekBytes, 0, newPeekBytes.Length);
+						bytesReturn += bufsz;
+						bufsz = 0;
+						peekBytes = newPeekBytes;
+					} else {
+						Marshal.Copy (peekBytes, 0, buf, peekBytes.Length);
+						bytesReturn += peekBytes.Length;
+						bufsz -= peekBytes.Length;
+						peekBytes = null;
+					}
+				}
 
-		    if (bufsz > 0) {
-		      try {
-			bytesRead = stream.Read (managedBuf, 0, bufsz);
-		      } catch (IOException) {
-			return -1;
-		      }
+				if (bufsz > 0) {
+					try {
+						bytesRead = stream.Read (managedBuf, 0, bufsz);
+					} catch (IOException) {
+						return -1;
+					}
 			
-		      if (bytesRead > 0 && buf != IntPtr.Zero) {
-			Marshal.Copy (managedBuf, 0, (IntPtr) (buf.ToInt64() + bytesReturn), bytesRead);
-		      }
+					if (bytesRead > 0 && buf != IntPtr.Zero) {
+						Marshal.Copy (managedBuf, 0, (IntPtr) (buf.ToInt64() + bytesReturn), bytesRead);
+					}
 
-		      if (peek) {
-			peekBytes = new byte[bytesRead];
-			Array.Copy (managedBuf, peekBytes, bytesRead);
-		      }
-		      
-		      bytesReturn += bytesRead;
-		    }
+					if (peek) {
+						peekBytes = new byte[bytesRead];
+						Array.Copy (managedBuf, peekBytes, bytesRead);
+					}
+			      
+					bytesReturn += bytesRead;
+				}
 
-		    return bytesReturn;
-		  }
+				return bytesReturn;
+			}
 
-		  public StreamGetBytesDelegate GetBytesDelegate {
-		    get {
-		      if (stream.CanRead)
-			return new StreamGetBytesDelegate (StreamGetBytesImpl);
-		      return null;
-		    }
-		  }
+			public StreamGetBytesDelegate GetBytesDelegate {
+				get {
+					if (stream.CanRead)
+						return new StreamGetBytesDelegate (StreamGetBytesImpl);
+					return null;
+				}
+			}
 
-		  public int StreamSeekImpl (int offset, int whence) {
-		    if (whence == 0) {
-		      return (int) stream.Seek ((long) offset, SeekOrigin.Begin);
-		    } else if (whence == 1) {
-		      return (int) stream.Seek ((long) offset, SeekOrigin.Current);
-		    } else if (whence == 2) {
-		      return (int) stream.Seek ((long) offset, SeekOrigin.End);
-		    } else {
-		      return -1;
-		    }
-		  }
+			public int StreamSeekImpl (int offset, int whence) 
+			{
+				if (whence == 0) {
+					return (int) stream.Seek ((long) offset, SeekOrigin.Begin);
+				} else if (whence == 1) {
+					return (int) stream.Seek ((long) offset, SeekOrigin.Current);
+				} else if (whence == 2) {
+					return (int) stream.Seek ((long) offset, SeekOrigin.End);
+				} else {
+					return -1;
+				}
+			}
 
-		  public StreamSeekDelegate SeekDelegate {
-		    get {
-		      if (stream.CanSeek)
-			return new StreamSeekDelegate (StreamSeekImpl);
-		      return null;
-		    }
-		  }
+			public StreamSeekDelegate SeekDelegate {
+				get {
+					if (stream.CanSeek)
+						return new StreamSeekDelegate (StreamSeekImpl);
+					return null;
+				}
+			}
 
-		  public int StreamPutBytesImpl (IntPtr buf, int bufsz) {
-		    byte[] managedBuf = new byte[bufsz];
-		    Marshal.Copy (buf, managedBuf, 0, bufsz);
-		    stream.Write (managedBuf, 0, bufsz);
-		    return bufsz;
-		  }
+			public int StreamPutBytesImpl (IntPtr buf, int bufsz) 
+			{
+				byte[] managedBuf = new byte[bufsz];
+				Marshal.Copy (buf, managedBuf, 0, bufsz);
+				stream.Write (managedBuf, 0, bufsz);
+				return bufsz;
+			}
 
-		  public StreamPutBytesDelegate PutBytesDelegate {
-		    get {
-		      if (stream.CanWrite)
-			return new StreamPutBytesDelegate (StreamPutBytesImpl);
-		      return null;
-		    }
-		  }
+			public StreamPutBytesDelegate PutBytesDelegate {
+				get {
+					if (stream.CanWrite)
+						return new StreamPutBytesDelegate (StreamPutBytesImpl);
+					return null;
+				}
+			}
+			
+			public void StreamCloseImpl ()
+			{
+				stream.Close ();
+			}
+
+			public StreamCloseDelegate CloseDelegate {
+				get {
+					if (stream != null)
+						return new StreamCloseDelegate (StreamCloseImpl);
+					return null;
+				}
+			}
+			
+			public long StreamSizeImpl ()
+			{
+				return stream.Length;
+			}
+
+			public StreamSizeDelegate SizeDelegate {
+				get {
+					if (stream != null)
+						return new StreamSizeDelegate (StreamSizeImpl);
+					return null;
+				}
+			}
+
 		}
 
-
 		[DllImport("gdiplus.dll")]
-		static internal extern Status GdipLoadImageFromDelegate_linux ( StreamGetBytesDelegate getBytes, StreamSeekDelegate doSeek, out IntPtr image);
+		static internal extern Status GdipLoadImageFromDelegate_linux ( StreamGetBytesDelegate getBytes, StreamPutBytesDelegate putBytes, 
+							StreamSeekDelegate doSeek, StreamCloseDelegate close, StreamSizeDelegate size, out IntPtr image);
 		[DllImport("gdiplus.dll")]
 		static internal extern Status GdipSaveImageToDelegate_linux ( IntPtr image, StreamPutBytesDelegate putBytes, ref Guid encoderClsID, IntPtr encoderParameters );
 		

@@ -177,8 +177,8 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 			GDIPlus.GdiPlusStreamHelper sh = new GDIPlus.GdiPlusStreamHelper (stream);
 			IntPtr imagePtr;
 
-			Status st = GDIPlus.GdipLoadImageFromDelegate_linux (sh.GetBytesDelegate,
-										     sh.SeekDelegate,
+			Status st = GDIPlus.GdipLoadImageFromDelegate_linux (sh.GetBytesDelegate, sh.PutBytesDelegate,
+									sh.SeekDelegate, sh.CloseDelegate, sh.SizeDelegate,
 										     out imagePtr);
 			GDIPlus.CheckStatus (st);
 			nativeObject = imagePtr;

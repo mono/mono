@@ -1,3 +1,11 @@
+2004-06-15  Sanjay Gupta <gsanjay@novell.com>
+	
+	* gdipFunctions.cs: Added delegate and StreamHelper functions, Close
+	and Size, required by TIFFCodec. Modifed Function signature for 
+	GdipLoadImageFromDelegate_linux() method.
+	* image.cs: Modified function call GdipLoadImageFromDelegate_linux()
+	with new signature.
+
 2004-06-11  Ravindra <rkumar@novell.com>
 
 	* gdipFunctions.cs: (GdipCreateSolidFill): Changed one argument
