@@ -1412,10 +1412,6 @@ namespace Mono.CSharp {
 			if (mc != null) 
 				return mc.GetObsoleteAttribute ();
 
-			// TODO: remove after Constructor will be ready for IMethodData
-			if ((mb.DeclaringType is TypeBuilder) || mb.DeclaringType.IsGenericInstance)
-				return null;
-
 			return GetMemberObsoleteAttribute (mb);
 		}
 
@@ -1430,6 +1426,9 @@ namespace Mono.CSharp {
 
 			if (type_obsolete != null)
 				return (ObsoleteAttribute)type_obsolete;
+
+			if ((mi.DeclaringType is TypeBuilder) || mi.DeclaringType.IsGenericInstance)
+				return null;
 
 			ObsoleteAttribute oa = System.Attribute.GetCustomAttribute (mi, TypeManager.obsolete_attribute_type, false) as ObsoleteAttribute;
 			analyzed_member_obsolete.Add (mi, oa == null ? FALSE : oa);
