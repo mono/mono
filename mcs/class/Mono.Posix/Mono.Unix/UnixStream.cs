@@ -71,7 +71,7 @@ namespace Mono.Unix {
 				throw new ObjectDisposedException ("Invalid File Descriptor");
 		}
 
-		public int FileDescriptor {
+		public int Handle {
 			get {return fileDescriptor;}
 		}
 
@@ -322,7 +322,7 @@ namespace Mono.Unix {
 
 		public void SendTo (UnixStream output, ulong count)
 		{
-			SendTo (output.FileDescriptor, count);
+			SendTo (output.Handle, count);
 		}
 
 		public void SendTo (int out_fd, ulong count)

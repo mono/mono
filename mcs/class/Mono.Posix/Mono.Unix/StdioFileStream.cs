@@ -70,7 +70,7 @@ namespace Mono.Unix {
 				throw new ObjectDisposedException ("Invalid File Stream");
 		}
 
-		public IntPtr FileStream {
+		public IntPtr Handle {
 			get {return file;}
 		}
 

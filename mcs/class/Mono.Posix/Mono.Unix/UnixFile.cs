@@ -280,12 +280,12 @@ namespace Mono.Unix {
 
 		public static void AdviseNormalAccess (UnixStream stream, long offset, long len)
 		{
-			AdviseNormalAccess (stream.FileDescriptor, offset, len);
+			AdviseNormalAccess (stream.Handle, offset, len);
 		}
 
 		public static void AdviseNormalAccess (UnixStream stream)
 		{
-			AdviseNormalAccess (stream.FileDescriptor);
+			AdviseNormalAccess (stream.Handle);
 		}
 
 		public static void AdviseSequentialAccess (int fd, long offset, long len)
@@ -312,12 +312,12 @@ namespace Mono.Unix {
 
 		public static void AdviseSequentialAccess (UnixStream stream, long offset, long len)
 		{
-			AdviseSequentialAccess (stream.FileDescriptor, offset, len);
+			AdviseSequentialAccess (stream.Handle, offset, len);
 		}
 
 		public static void AdviseSequentialAccess (UnixStream stream)
 		{
-			AdviseSequentialAccess (stream.FileDescriptor);
+			AdviseSequentialAccess (stream.Handle);
 		}
 
 		public static void AdviseRandomAccess (int fd, long offset, long len)
@@ -344,12 +344,12 @@ namespace Mono.Unix {
 
 		public static void AdviseRandomAccess (UnixStream stream, long offset, long len)
 		{
-			AdviseRandomAccess (stream.FileDescriptor, offset, len);
+			AdviseRandomAccess (stream.Handle, offset, len);
 		}
 
 		public static void AdviseRandomAccess (UnixStream stream)
 		{
-			AdviseRandomAccess (stream.FileDescriptor);
+			AdviseRandomAccess (stream.Handle);
 		}
 
 		public static void AdviseNeedAccess (int fd, long offset, long len)
@@ -376,12 +376,12 @@ namespace Mono.Unix {
 
 		public static void AdviseNeedAccess (UnixStream stream, long offset, long len)
 		{
-			AdviseNeedAccess (stream.FileDescriptor, offset, len);
+			AdviseNeedAccess (stream.Handle, offset, len);
 		}
 
 		public static void AdviseNeedAccess (UnixStream stream)
 		{
-			AdviseNeedAccess (stream.FileDescriptor);
+			AdviseNeedAccess (stream.Handle);
 		}
 
 		public static void AdviseNoAccess (int fd, long offset, long len)
@@ -408,12 +408,12 @@ namespace Mono.Unix {
 
 		public static void AdviseNoAccess (UnixStream stream, long offset, long len)
 		{
-			AdviseNoAccess (stream.FileDescriptor, offset, len);
+			AdviseNoAccess (stream.Handle, offset, len);
 		}
 
 		public static void AdviseNoAccess (UnixStream stream)
 		{
-			AdviseNoAccess (stream.FileDescriptor);
+			AdviseNoAccess (stream.Handle);
 		}
 
 		public static void AdviseOnceAccess (int fd, long offset, long len)
@@ -440,12 +440,12 @@ namespace Mono.Unix {
 
 		public static void AdviseOnceAccess (UnixStream stream, long offset, long len)
 		{
-			AdviseOnceAccess (stream.FileDescriptor, offset, len);
+			AdviseOnceAccess (stream.Handle, offset, len);
 		}
 
 		public static void AdviseOnceAccess (UnixStream stream)
 		{
-			AdviseOnceAccess (stream.FileDescriptor);
+			AdviseOnceAccess (stream.Handle);
 		}
 	}
 }
