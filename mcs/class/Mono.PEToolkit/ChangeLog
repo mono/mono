@@ -1,5 +1,9 @@
 2003-02-22 Jackson Harper <jackson@latitudegeo.com>
 
+	* Image.cs: Write CorHeader
+
+2003-02-22 Jackson Harper <jackson@latitudegeo.com>
+
 	* Image.cs: Write Sections 
 
 2003-02-22 Jackson Harper <jackson@latitudegeo.com>
