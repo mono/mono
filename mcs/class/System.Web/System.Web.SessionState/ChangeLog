@@ -1,3 +1,8 @@
+2004-11-30 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* SessionStateModule.cs: set the path modifier when using cookie-less
+	sessions.
+
 2004-10-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* SessionStateModule.cs: use SetCurrentExePath instead of SetFilePath.

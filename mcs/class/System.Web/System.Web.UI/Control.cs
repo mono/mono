@@ -807,9 +807,6 @@ namespace System.Web.UI
 			if (ts == "" || !UrlUtils.IsRelativeUrl (relativeUrl))
 				return relativeUrl;
 
-			if (relativeUrl.IndexOf ('/') == -1 && relativeUrl [0] != '.' && relativeUrl != "..")
-				return relativeUrl;
-
 			HttpResponse resp = Context.Response;
 			return resp.ApplyAppPathModifier (UrlUtils.Combine (ts, relativeUrl));
 		}

@@ -1,3 +1,8 @@
+2004-11-30 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Control.cs: fixed ResolveUrl for relative URLs when using cookie-less
+	sessions.
+
 2004-11-09 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Control.cs: unified a few bool fields into an int one.

@@ -356,8 +356,15 @@ namespace System.Web
 				virtualPath = UrlUtils.Reduce (virtualPath);
 			}
 
-			if (app_path_mod != null && virtualPath.IndexOf (app_path_mod) > 0)
-				virtualPath = UrlUtils.Combine (app_path_mod, virtualPath);
+			if (app_path_mod != null && virtualPath.IndexOf (app_path_mod) < 0) {
+				string rvd = _Context.Request.RootVirtualDir;
+				string basevd = rvd.Replace (app_path_mod, "");
+
+				if (!virtualPath.StartsWith (basevd))
+					return virtualPath;
+
+				virtualPath = UrlUtils.Combine (rvd, virtualPath.Substring (basevd.Length));
+			}
 
 			return virtualPath;
 		}
