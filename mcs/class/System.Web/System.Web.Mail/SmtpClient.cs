@@ -153,6 +153,12 @@ namespace System.Web.Mail {
 		
 	    MailHeader partHeader = new MailHeader();
 	    partHeader.ContentType = bodyContentType;
+
+#if NET_1_1
+		// Add all the custom headers to body part as specified in 
+ 		//Fields property of MailMessageWrapper
+ 		partHeader.Data.Add(msg.Fields.Data);
+#endif
 		
 	    smtp.WriteHeader( partHeader );
 	    	

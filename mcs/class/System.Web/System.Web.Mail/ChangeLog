@@ -1,3 +1,10 @@
+2004-08-30 Sanjay Gupta <gsanjay@novell.com>
+
+	* MailMessage.cs:
+	* MailMessageWrapper.cs:
+	* SmtpClient.cs: Fields property of MailMessage from .Net 1.1 was not
+	handled completely.
+	
 2004-08-10 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* SmtpClient.cs: multipart mails default body format is now the same as
