@@ -1,5 +1,17 @@
 2002-03-23  Martin Baulig  <martin@gnome.org>
 
+	* rawbuffer.c (mono_raw_buffer_load_mmap): Use MAP_SHARED when
+	is_writeable is set.
+	(mono_raw_buffer_update): New function to write the modified map
+	back to disk.
+
+	* debug-symfile.h (MonoDebugSymbolFile): Added `raw_contents_size'.
+
+	* debug-symfile.c (mono_debug_update_symbol_file): Call
+	mono_raw_buffer_update() when done writing.
+
+2002-03-23  Martin Baulig  <martin@gnome.org>
+
 	* debug-symfile.h (MONO_DEBUG_SYMBOL_FILE_VERSION): Increased to 5.
 
 	* debug-symfile.c: Added support for arguments and local variables.
