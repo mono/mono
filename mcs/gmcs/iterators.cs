@@ -399,7 +399,7 @@ namespace Mono.CSharp {
 			}
 
 			if (container.CurrentType != null)
-				this_type = container.CurrentType.Type;
+				this_type = container.CurrentType;
 			else
 				this_type = container.TypeBuilder;
 
@@ -443,7 +443,7 @@ namespace Mono.CSharp {
 		protected override bool DefineNestedTypes ()
 		{
 			if (CurrentType != null)
-				current_type = CurrentType;
+				current_type = new TypeExpression (CurrentType, Location);
 			else
 				current_type = new TypeExpression (TypeBuilder, Location);
 

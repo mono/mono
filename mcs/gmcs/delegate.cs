@@ -79,6 +79,8 @@ namespace Mono.CSharp {
 			if (TypeBuilder != null)
 				return TypeBuilder;
 
+			ec = new EmitContext (this, this, Location, null, null, ModFlags, false);
+
 			if (IsGeneric) {
 				foreach (TypeParameter type_param in TypeParameters)
 					if (!type_param.Resolve (this))
@@ -107,12 +109,6 @@ namespace Mono.CSharp {
 			TypeManager.AddDelegateType (Name, TypeBuilder, this);
 
 			if (IsGeneric) {
-				CurrentType = new ConstructedType (
-					Name, TypeParameters, Location);
-
-				EmitContext ec = new EmitContext (
-					this, this, Location, null, null, ModFlags, false);
-
 				string[] param_names = new string [TypeParameters.Length];
 				for (int i = 0; i < TypeParameters.Length; i++)
 					param_names [i] = TypeParameters [i].Name;
@@ -128,6 +124,13 @@ namespace Mono.CSharp {
 					if (!type_param.DefineType (ec))
 						return null;
 				}
+
+				TypeExpr current = new ConstructedType (Name, TypeParameters, Location);
+				current = current.ResolveAsTypeTerminal (ec);
+				if (current == null)
+					return null;
+
+				CurrentType = current.Type;
 			}
 
 			return TypeBuilder;

@@ -1331,11 +1331,13 @@ namespace Mono.CSharp {
 			}
 
 			if (current_type != null) {
-				CurrentType = current_type.ResolveAsTypeTerminal (ec);
-				if (CurrentType == null) {
+				current_type = current_type.ResolveAsTypeTerminal (ec);
+				if (current_type == null) {
 					error = true;
 					return null;
 				}
+
+				CurrentType = current_type.Type;
 			}
 
 			//
@@ -1529,7 +1531,7 @@ namespace Mono.CSharp {
 			DefineContainerMembers (delegates);
 
 			if (CurrentType != null) {
-				GenericType = CurrentType.Type;
+				GenericType = CurrentType;
 
 				ec.ContainerType = GenericType;
 			}
@@ -4861,7 +4863,7 @@ namespace Mono.CSharp {
 				return false;
 
 			if (container.CurrentType != null)
-				declaring_type = container.CurrentType.Type;
+				declaring_type = container.CurrentType;
 			else
 				declaring_type = container.TypeBuilder;
 

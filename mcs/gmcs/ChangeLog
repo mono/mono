@@ -1,5 +1,12 @@
 2004-11-18  Martin Baulig  <martin@ximian.com>
 
+	* decl.cs
+	(DeclSpace.CurrentType): Changed type from `TypeExpr' to `Type'.
+
+	* delegate.cs (Delegate.DefineType): Always create the EmitContext.
+
+2004-11-18  Martin Baulig  <martin@ximian.com>
+
 	* ecore.cs (TypeExpr.ResolveType): Removed.
 	(Expression.ResolveAsTypeTerminal): We always return a fully
 	resolved `TypeExpr', so we can just access its `Type'.

@@ -2986,7 +2986,7 @@ namespace Mono.CSharp {
 				Type ctype;
 				if (!is_field_initializer &&
 				    (ec.TypeContainer.CurrentType != null))
-					ctype = ec.TypeContainer.CurrentType.Type;
+					ctype = ec.TypeContainer.CurrentType;
 				else
 					ctype = ec.ContainerType;
 

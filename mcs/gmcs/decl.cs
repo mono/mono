@@ -465,7 +465,7 @@ namespace Mono.CSharp {
 		///   currently defining.  We need to lookup members on this
 		///   instead of the TypeBuilder.
 		/// </summary>
-		public TypeExpr CurrentType;
+		public Type CurrentType;
 
 		//
 		// This is the namespace in which this typecontainer
@@ -1373,9 +1373,9 @@ namespace Mono.CSharp {
 				throw new InvalidOperationException ();
 
 			if (CurrentType != null)
-				return CurrentType;
-
-			return new TypeExpression (TypeBuilder, Location);
+				return new TypeExpression (CurrentType, Location);
+			else
+				return new TypeExpression (TypeBuilder, Location);
 		}
 
 		public override string[] ValidAttributeTargets {

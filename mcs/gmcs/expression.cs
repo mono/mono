@@ -7040,7 +7040,7 @@ namespace Mono.CSharp {
 			eclass = ExprClass.Variable;
 
 			if (ec.TypeContainer.CurrentType != null)
-				type = ec.TypeContainer.CurrentType.Type;
+				type = ec.TypeContainer.CurrentType;
 			else
 				type = ec.ContainerType;
 
