@@ -1,3 +1,14 @@
+2005-03-30 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* WebConnection.cs: we don't need to trigger the next queued request
+	until the response is closed.
+
+2005-03-29  Miguel de Icaza  <miguel@novell.com>
+
+	* HttpWebResponse.cs: Handle quotations in the cookies values, per
+	the spec http://www.faqs.org/rfcs/rfc2109.html, it is allowed to
+	have quotations.
+
 2005-03-18 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* BasicClient.cs:
