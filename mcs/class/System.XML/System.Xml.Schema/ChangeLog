@@ -1,3 +1,8 @@
+2003-12-08  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
+
+	* XmlSchemaSimpleTypeRestriction.cs : patch by David Sheldon. Check
+	  if max/min length range is valid.
+
 2003-12-07  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
 
 	* BuiltInDatatype.cs : XsdDecimal and XsdInteger defaults whitespace

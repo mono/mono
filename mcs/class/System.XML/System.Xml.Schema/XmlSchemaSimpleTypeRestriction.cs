@@ -127,10 +127,15 @@ namespace System.Xml.Schema
 				XmlSchemaLengthFacet lf = facets [i] as XmlSchemaLengthFacet;
 				if (lf != null) {
 					try {
+						if (minLengthFacet >=0 || maxLengthFacet>=0) 
+							lf.error(h, "It is an error for both length and minLength or maxLength to be present.");
 						if (lengthFacet >= 0)
 							lf.error (h, "There already length facet exists.");
-						else
+						else {
 							lengthFacet = decimal.Parse (lf.Value.Trim ());
+							if (lengthFacet < 0) 
+								lf.error(h, "The value '" + lengthFacet + "' is an invalid length");
+						}
 					} catch (Exception) { // FIXME: better catch ;-(
 						lf.error (h, "Invalid length facet specifidation");
 					}
@@ -139,10 +144,19 @@ namespace System.Xml.Schema
 				XmlSchemaMaxLengthFacet maxlf = facets [i] as XmlSchemaMaxLengthFacet;
 				if (maxlf != null) {
 					try {
+						if (lengthFacet >=0) 
+							maxlf.error(h, "It is an error for both length and minLength or maxLength to be present.");
 						if (maxLengthFacet >= 0)
 							maxlf.error (h, "There already maxLength facet exists.");
-						else
+						else {
 							maxLengthFacet = decimal.Parse (maxlf.Value.Trim ());
+							if (maxLengthFacet < 0) 
+								maxlf.error(h, "The value '" + maxLengthFacet + "' is an invalid maxLength");
+							if (minLengthFacet >=0 && minLengthFacet > maxLengthFacet)
+								maxlf.error(h, "minLength is greater than maxLength.");
+						}
+
+
 					} catch (Exception) { // FIXME: better catch ;-(
 						maxlf.error (h, "Invalid maxLength facet specifidation");
 					}
@@ -151,10 +165,17 @@ namespace System.Xml.Schema
 				XmlSchemaMinLengthFacet minlf = facets [i] as XmlSchemaMinLengthFacet;
 				if (minlf != null) {
 					try {
+						if (lengthFacet >=0) 
+							minlf.error(h, "It is an error for both length and minLength or maxLength to be present.");
 						if (minLengthFacet >= 0)
 							minlf.error (h, "There already minLength facet exists.");
-						else
+						else {
 							minLengthFacet = decimal.Parse (minlf.Value.Trim ());
+							if (minLengthFacet < 0) 
+								minlf.error(h, "The value '" + minLengthFacet + "' is an invalid minLength");
+							if (maxLengthFacet >=0 && minLengthFacet > maxLengthFacet)
+								minlf.error(h, "minLength is greater than maxLength.");
+						}
 					} catch (Exception) { // FIXME: better catch ;-(
 						minlf.error (h, "Invalid minLength facet specifidation");
 					}
@@ -184,6 +205,7 @@ namespace System.Xml.Schema
 		{
 			XmlSchemaSimpleType baseST = this.ActualBaseSchemaType as XmlSchemaSimpleType;
 			XmlSchemaSimpleTypeList listType = baseST != null ? baseST.Content as XmlSchemaSimpleTypeList : null;
+
 			// numeric
 			if (listType != null)
 				return ValidateListValueWithFacets (value, nt);
