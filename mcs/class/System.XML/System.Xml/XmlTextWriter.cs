@@ -619,13 +619,14 @@ openElements [openElementCount - 1]).IndentingOverriden;
 
 		public override void WriteRaw (string data)
 		{
+			if (ws == WriteState.Start)
+				ws = WriteState.Prolog;
 			WriteStringInternal (data, false);
 		}
 
 		public override void WriteRaw (char[] buffer, int index, int count)
 		{
-//			WriteRawInternal (new string (buffer, index, count));
-			WriteStringInternal (new string (buffer, index, count), false);
+			WriteRaw (new string (buffer, index, count));
 		}
 
 		public override void WriteStartAttribute (string prefix, string localName, string ns)

@@ -1,5 +1,10 @@
 2004-05-27  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlTextWriter.cs : WriteRaw() looks to proceed WriteState to Prolog
+	  (if it is Start). Fixed bug #59154.
+
+2004-05-27  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlTextReader.cs : simplified ReadCharsInternal(); use ReadEndTag()
 	  and don't bork against <foo></foo>. Also mofidied this method to skip
 	  <foo/>. Fixed bug #59142.
