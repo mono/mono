@@ -2,9 +2,10 @@
 // KeyInfoTest.cs - NUnit Test Cases for KeyInfo
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot <sebastien@ximian.com>
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com)
 //
 
 using System;
@@ -71,7 +72,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			AssertEquals ("dsa count", 1, info.Count);
 		}
 
-		static string xmlRSA = "<RSAKeyValue><Modulus>9DC4XNdQJwMRnz5pP2a6U51MHCODRilaIoVXqUPhCUb0lJdGroeqVYT84ZyIVrcarzD7Tqs3aEOIa3rKox0N1bxQpZPqayVQeLAkjLLtzJW/ScRJx3uEDJdgT1JnM1FH0GZTinmEdCUXdLc7+Y/c/qqIkTfbwHbRZjW0bBJyExM=</Modulus><Exponent>AQAB</Exponent></RSAKeyValue></KeyValue>";
+		static string xmlRSA = "<RSAKeyValue><Modulus>9DC4XNdQJwMRnz5pP2a6U51MHCODRilaIoVXqUPhCUb0lJdGroeqVYT84ZyIVrcarzD7Tqs3aEOIa3rKox0N1bxQpZPqayVQeLAkjLLtzJW/ScRJx3uEDJdgT1JnM1FH0GZTinmEdCUXdLc7+Y/c/qqIkTfbwHbRZjW0bBJyExM=</Modulus><Exponent>AQAB</Exponent></RSAKeyValue>";
 
 		[Test]
 		public void RSAKeyValue () 
@@ -80,7 +81,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			key.FromXmlString (xmlRSA);
 			RSAKeyValue rsa = new RSAKeyValue (key);
 			info.AddClause (rsa);
-			AssertEquals ("rsa", "<KeyInfo xmlns=\"http://www.w3.org/2000/09/xmldsig#\"><KeyValue xmlns=\"http://www.w3.org/2000/09/xmldsig#\">" + xmlRSA + "</KeyInfo>", (info.GetXml ().OuterXml));
+			AssertEquals ("rsa", "<KeyInfo xmlns=\"http://www.w3.org/2000/09/xmldsig#\"><KeyValue xmlns=\"http://www.w3.org/2000/09/xmldsig#\">" + xmlRSA + "</KeyValue></KeyInfo>", (info.GetXml ().OuterXml));
 			AssertEquals ("rsa count", 1, info.Count);
 		}
 

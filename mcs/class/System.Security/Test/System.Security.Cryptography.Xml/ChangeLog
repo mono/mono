@@ -1,5 +1,6 @@
 2004-02-11  Sebastien Pouliot  <sebastien@ximian.com>
 
+	* KeyInfoTest.cs: Corrected the xmlRSA XML string.
 	* ReferenceTest.cs: Tests fixed if XML is different (but equivalent)
 	to MS implementation.
 	* SignatureTest.cs: Tests fixed if XML is different (but equivalent) 
