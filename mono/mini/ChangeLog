@@ -1,5 +1,7 @@
 2005-01-23  Zoltan Varga  <vargaz@freemail.hu>
 
+	* inssel.brg (stmt): Add another dummy rule.
+
 	* driver.c: Fix warnings.
 
 	* driver.c (mono_main): If running under valgrind, instruct glib to use
