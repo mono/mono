@@ -1,3 +1,10 @@
+2004-12-09  Ravindra  <rkumar@novell.com>
+
+	* ToolBar.cs: Added support for displaying ContextMenu
+	attached to a button on ToolBar.
+	* ToolBarButton.cs: Uncomment/fixed the DropDownMenu
+	property.
+
 2004-12-09  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* Label.cs: autosize works in text change and removes unnecessary

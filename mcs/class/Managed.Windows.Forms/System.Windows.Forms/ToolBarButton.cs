@@ -26,7 +26,6 @@
 //	Ravindra (rkumar@novell.com)
 //
 // TODO:
-//     - DropDownMenu
 //     - Adding a button to two toolbars
 //
 // $Revision: 1.9 $
@@ -81,9 +80,9 @@ namespace System.Windows.Forms
 	public class ToolBarButton : Component
 	{
 		#region instance variable
-		//private ContextMenu menu; //NotImplemented
 		private bool enabled = true;
 		private int image_index = -1;
+		private ContextMenu menu;
 		private ToolBar parent;
 		private bool partial_push = false;
 		private bool pushed = false;
@@ -143,7 +142,6 @@ namespace System.Windows.Forms
 		#endregion internal properties
 
 		#region properties
-		/*
 		[DefaultValue (null)]
 		[TypeConverter (typeof (ReferenceConverter))]
 		public Menu DropDownMenu {
@@ -151,12 +149,11 @@ namespace System.Windows.Forms
 
 			set {
 				if (value is ContextMenu)
-					menu = value;
+					menu = (ContextMenu) value;
 				else
 					throw new ArgumentException ("DropDownMenu must be of type ContextMenu.");
 			}
 		}
-		*/
 
 		[DefaultValue (true)]
 		[Localizable (true)]

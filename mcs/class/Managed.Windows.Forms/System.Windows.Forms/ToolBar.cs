@@ -24,7 +24,6 @@
 //	Ravindra (rkumar@novell.com)
 //
 // TODO:
-//   - DropDown ContextMenu
 //   - Tooltip
 //
 // Copyright (C) Novell, Inc. 2004 (http://www.novell.com)
@@ -543,16 +542,18 @@ namespace System.Windows.Forms
 
 		protected virtual void OnButtonDropDown (ToolBarButtonClickEventArgs e) 
 		{
-			// if (e.Button.DropDownMenu == null) return;
-			// TODO: Display the dropdown menu
-
 			// Reset the flag set on DropDown
 			e.Button.dd_pressed = false;
 
 			if (ButtonDropDown != null)
 				ButtonDropDown (this, e);
-			else
+
+			if (e.Button.DropDownMenu == null)
 				return;
+
+			Point loc = new Point (e.Button.Location.X + 1,
+					       e.Button.Rectangle.Bottom + 2);
+			((ContextMenu) e.Button.DropDownMenu).Show (this, loc);
 		}
 
 		protected override void OnFontChanged (EventArgs e)
