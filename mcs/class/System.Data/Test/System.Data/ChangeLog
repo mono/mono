@@ -1,3 +1,11 @@
+2004-05-06  Atsushi Enomoto <atsushi@ximian.com>
+
+	* ConstraintCollectionTest.cs : Table name should not be the same as
+	  for the purpose of this test.
+	* DataSetReadXmlSchemaTest.cs : Added more tests based on schema files.
+	* DataSetTest.cs : Reordered attributes to pass test in 
+	  WriteDifferentNamespaceSchema().
+
 2004-05-05  Atsushi Enomoto <atsushi@ximian.com>
 
 	* ForeignKeyConstraintTest.cs : Made tests pass under MS.NET 1.1.

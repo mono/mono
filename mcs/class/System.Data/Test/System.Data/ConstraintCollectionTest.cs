@@ -219,6 +219,7 @@ namespace MonoTests.System.Data
 		{
 			DataSet ds = new DataSet();
 			ds.Tables.Add(_table);
+			_table2.TableName = "TestTable2";
 			ds.Tables.Add(_table2);
 
 			_table.Rows.Add(new object [] {1});
@@ -251,6 +252,7 @@ namespace MonoTests.System.Data
 			//are apart of the dataset
 			DataSet ds = new DataSet();
 			ds.Tables.Add(_table);
+			_table2.TableName = "TestTable2";
 			ds.Tables.Add(_table2);
 
 			_table.Rows.Add(new object [] {1});

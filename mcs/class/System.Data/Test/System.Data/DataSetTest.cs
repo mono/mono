@@ -173,7 +173,7 @@ namespace MonoTests.System.Data
 #if MS_NET // MS System.XML.dll + Mono System.Data.dll
 			AssertEquals ("test#02", "<xs:schema xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\" id=\"test_dataset\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">", substring);
 #else
-			AssertEquals ("test#02", "<xs:schema xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\" id=\"test_dataset\" xmlns=\"\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">", substring);
+			AssertEquals ("test#02", "<xs:schema xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\" id=\"test_dataset\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns=\"\">", substring);
 #endif
 			
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
@@ -944,17 +944,15 @@ namespace MonoTests.System.Data
 			 */
 #if MS_NET // MS System.XML.dll + Mono System.Data.dll
 			string schema = @"<?xml version='1.0' encoding='utf-16'?>
-<xs:schema xmlns:msdata='urn:schemas-microsoft-com:xml-msdata' xmlns:mstns='urn:bar' attributeFormDefault='qualified' elementFormDefault='qualified' targetNamespace='urn:bar' id='NewDataSet' xmlns:xs='http://www.w3.org/2001/XMLSchema' xmlns='urn:bar' xmlns:app1='urn:baz' xmlns:app2='urn:foo'>
-  <!--ATTENTION: This schema contains references to other imported schemas-->
-  <xs:import namespace='urn:baz' schemaLocation='_app1.xsd' />
-  <xs:import namespace='urn:foo' schemaLocation='_app2.xsd' />
-  <xs:element name='NewDataSet' msdata:IsDataSet='true' msdata:Locale='fi-FI'>
+<xs:schema xmlns:mstns='urn:bar' xmlns:msdata='urn:schemas-microsoft-com:xml-msdata' xmlns:app1='urn:baz' xmlns:app2='urn:foo' xmlns='urn:bar' attributeFormDefault='qualified' elementFormDefault='qualified' targetNamespace='urn:bar' id='NewDataSet' xmlns:xs='http://www.w3.org/2001/XMLSchema'>
+  <xs:import schemaLocation='_app1.xsd' namespace='urn:baz' />
+  <xs:import schemaLocation='_app2.xsd' namespace='urn:foo' />
+  <xs:element msdata:IsDataSet='true' msdata:Locale='fi-FI' name='NewDataSet'>
     <xs:complexType>
       <xs:choice maxOccurs='unbounded'>
         <xs:element ref='app2:NS1Table' />
         <xs:element name='NS2Table'>
-          <xs:complexType>
-          </xs:complexType>
+          <xs:complexType />
         </xs:element>
       </xs:choice>
     </xs:complexType>
@@ -962,7 +960,7 @@ namespace MonoTests.System.Data
 </xs:schema>";
 #else
 			string schema = @"<?xml version='1.0' encoding='utf-16'?>
-<xs:schema xmlns:msdata='urn:schemas-microsoft-com:xml-msdata' xmlns:mstns='urn:bar' id='NewDataSet' elementFormDefault='qualified' attributeFormDefault='qualified' targetNamespace='urn:bar' xmlns='urn:bar' xmlns:xs='http://www.w3.org/2001/XMLSchema' xmlns:app1='urn:baz' xmlns:app2='urn:foo'>
+<xs:schema xmlns:app1='urn:baz' xmlns:app2='urn:foo' xmlns:msdata='urn:schemas-microsoft-com:xml-msdata' xmlns:mstns='urn:bar' id='NewDataSet' elementFormDefault='qualified' attributeFormDefault='qualified' targetNamespace='urn:bar' xmlns:xs='http://www.w3.org/2001/XMLSchema' xmlns='urn:bar'>
   <!--ATTENTION: This schema contains references to other imported schemas-->
   <xs:import namespace='urn:baz' schemaLocation='_app1.xsd' />
   <xs:import namespace='urn:foo' schemaLocation='_app2.xsd' />
