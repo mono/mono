@@ -415,23 +415,23 @@ namespace System.Windows.Forms {
 
 	internal struct OSXCaret
 	{
-		internal Timer timer;
-		internal IntPtr hwnd;
-		internal int x;
-		internal int y;
-		internal int width;
-		internal int height;
-		internal int visible;
-		internal bool on;
-		internal bool paused;
+		internal Timer Timer;
+		internal IntPtr Hwnd;
+		internal int X;
+		internal int Y;
+		internal int Width;
+		internal int Height;
+		internal int Visible;
+		internal bool On;
+		internal bool Paused;
 	}
 
 	internal struct OSXHover {
-		internal Timer timer;
-		internal IntPtr hwnd;
-		internal int x;
-		internal int y;
-		internal int interval;
+		internal Timer Timer;
+		internal IntPtr Hwnd;
+		internal int X;
+		internal int Y;
+		internal int Interval;
 	}
 
 	internal struct CGAffineTransform
@@ -443,4 +443,29 @@ namespace System.Windows.Forms {
 		internal float tx;
 		internal float ty;
 	}
+	
+	internal enum MouseTrackingResult : ushort
+	{
+		kMouseTrackingMouseDown = 1,
+		kMouseTrackingMouseUp = 2,
+		kMouseTrackingMouseExited = 3,
+		kMouseTrackingMouseEntered = 4,
+		kMouseTrackingMouseDragged = 5,
+		kMouseTrackingKeyModifiersChanged = 6,
+		kMouseTrackingUserCancelled = 7,
+		kMouseTrackingTimedOut = 8,
+		kMouseTrackingMouseMoved = 9
+	}
+	
+	internal struct MouseTrackingRegionID
+	{
+		uint signature;
+		uint id;
+		
+		public MouseTrackingRegionID (uint signature, uint id) {
+			this.signature = signature;
+			this.id = id;
+		}
+	}
+	
 }	
