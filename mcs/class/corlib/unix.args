@@ -351,7 +351,7 @@ System.Reflection.Emit/UnmanagedMarshal.cs
 System.Resources/IResourceReader.cs
 System.Resources/IResourceWriter.cs
 System.Resources/MissingManifestResourceException.cs
-System.Resources/NeutralResoucesLanguageAttribute.cs
+System.Resources/NeutralResourcesLanguageAttribute.cs
 System.Resources/ResourceManager.cs
 System.Resources/ResourceReader.cs
 System.Resources/ResourceSet.cs
