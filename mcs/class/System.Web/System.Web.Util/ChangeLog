@@ -1,5 +1,12 @@
 2004-01-11  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
+	* TransactedCallback.cs:
+	* WorkItemCallback.cs:
+	* WorkItem.cs:
+	* Transactions.cs: Added and stubbed/ implemented
+
+2004-01-11  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
 	* WebEqualComparer.cs:
 	* WebHashCodeProvider.cs:
 	* FileAction.cs:
