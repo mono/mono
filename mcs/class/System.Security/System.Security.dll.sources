@@ -103,6 +103,8 @@ System.Security.Cryptography.Xml/XmlDsigBase64Transform.cs
 System.Security.Cryptography.Xml/XmlDsigC14NTransform.cs
 System.Security.Cryptography.Xml/XmlDsigC14NWithCommentsTransform.cs
 System.Security.Cryptography.Xml/XmlDsigEnvelopedSignatureTransform.cs
+System.Security.Cryptography.Xml/XmlDsigExcC14NTransform.cs
+System.Security.Cryptography.Xml/XmlDsigExcC14NWithCommentsTransform.cs
 System.Security.Cryptography.Xml/XmlDsigNodeList.cs
 System.Security.Cryptography.Xml/XmlDsigXPathTransform.cs
 System.Security.Cryptography.Xml/XmlDsigXsltTransform.cs

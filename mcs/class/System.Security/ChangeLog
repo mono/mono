@@ -1,3 +1,7 @@
+2004-09-02  Tim Coleman <tim@timcoleman.com>
+	* System.Security.dll.sources: 
+		Add new System.Security.Cryptography.Xml classes
+
 2004-07-09  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* System.Security_test.dll.sources: Fixed unit tests to work with Fx 
