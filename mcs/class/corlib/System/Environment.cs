@@ -41,7 +41,7 @@ using System.Text;
 
 namespace System {
 
-#if NET_2_0_WAIT_TILL_FIX_IS_MERGED_INTO_GMCS
+#if NET_2_0
 	public static class Environment {
 #else
 	public sealed class Environment {
@@ -291,14 +291,13 @@ namespace System {
 			if (off1 == len - 1 || (off2 = name.IndexOf ('%', off1 + 1)) == -1)
 				return name;
 
-			PlatformID platform = Platform;
 			StringBuilder result = new StringBuilder ();
 			result.Append (name, 0, off1);
 			Hashtable tbl = null;
 			do {
 				string var = name.Substring (off1 + 1, off2 - off1 - 1);
 				string value = GetEnvironmentVariable (var);
-				if (value == null && (int) platform != 128) {
+				if (value == null && Environment.IsRunningOnWindows) {
 					// On windows, env. vars. are case insensitive
 					if (tbl == null)
 						tbl = GetEnvironmentVariablesNoCase ();
@@ -416,7 +415,7 @@ namespace System {
 		{
 			string dir = null;
 
-			if ((int) Platform != 128) {
+			if (Environment.IsRunningOnWindows) {
 				dir = GetWindowsFolderPath ((int) folder);
 			} else {
 				dir = InternalGetFolderPath (folder);
@@ -589,7 +588,7 @@ namespace System {
 		}
 
 		[MonoTODO ("not much documented")]
-		// FIXME: doesn't seems to have any protection ?!? reported as FDBK20543
+		[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode=true)]
 		public static void FailFast (string message)
 		{
 			throw new NotImplementedException ();
@@ -598,9 +597,13 @@ namespace System {
                 
 		// private methods
 
+		internal static bool IsRunningOnWindows {
+			get { return ((int) Platform != 128); }
+		}
+
 		private static string GacPath {
 			get {
-				if ((int) Platform != 128) {
+				if (Environment.IsRunningOnWindows) {
 					/* On windows, we don't know the path where mscorlib.dll will be installed */
 					string corlibDir = new DirectoryInfo (Path.GetDirectoryName (typeof (int).Assembly.Location)).Parent.Parent.FullName;
 					return Path.Combine (Path.Combine (corlibDir, "mono"), "gac");
