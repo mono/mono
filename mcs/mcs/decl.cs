@@ -142,7 +142,9 @@ namespace Mono.CSharp {
 		bool GetClsCompliantAttributeValue (DeclSpace ds)
 		{
 			if (OptAttributes != null) {
-				Attribute cls_attribute = OptAttributes.GetClsCompliantAttribute (ds);
+				EmitContext ec = new EmitContext (ds.Parent, ds, ds.Location,
+								  null, null, ds.ModFlags, false);
+				Attribute cls_attribute = OptAttributes.GetClsCompliantAttribute (ec);
 				if (cls_attribute != null) {
 					caching_flags |= Flags.HasClsCompliantAttribute;
 					return cls_attribute.GetClsCompliantAttributeValue (ds);
@@ -978,7 +980,9 @@ namespace Mono.CSharp {
 			caching_flags &= ~Flags.HasCompliantAttribute_Undetected;
 
 			if (OptAttributes != null) {
-				Attribute cls_attribute = OptAttributes.GetClsCompliantAttribute (this);
+				EmitContext ec = new EmitContext (parent, this, Location,
+								  null, null, ModFlags, false);
+				Attribute cls_attribute = OptAttributes.GetClsCompliantAttribute (ec);
 				if (cls_attribute != null) {
 					caching_flags |= Flags.HasClsCompliantAttribute;
 					if (cls_attribute.GetClsCompliantAttributeValue (this)) {

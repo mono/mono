@@ -126,14 +126,14 @@ namespace Mono.CSharp {
 		}
 
 		/// <summary>
-		///   Tries to resolve the type of the attribute. Flags an error if it can't, and complain is true.
-		/// </summary>
-		protected virtual Type CheckAttributeType (DeclSpace ds, bool complain)
+                ///   Tries to resolve the type of the attribute. Flags an error if it can't, and complain is true.
+                /// </summary>
+		protected virtual Type CheckAttributeType (EmitContext ec, bool complain)
 		{
-			Type t1 = RootContext.LookupType (ds, Name, true, Location);
+			Type t1 = RootContext.LookupType (ec.DeclSpace, Name, true, Location);
 
 			// FIXME: Shouldn't do this for quoted attributes: [@A]
-			Type t2 = RootContext.LookupType (ds, Name + "Attribute", true, Location);
+			Type t2 = RootContext.LookupType (ec.DeclSpace, Name + "Attribute", true, Location);
 
 			String err0616 = null;
 
@@ -170,10 +170,10 @@ namespace Mono.CSharp {
 			return null;
 		}
 
-		public Type ResolveType (DeclSpace ds, bool complain)
+		public Type ResolveType (EmitContext ec, bool complain)
 		{
 			if (Type == null)
-				Type = CheckAttributeType (ds, complain);
+				Type = CheckAttributeType (ec, complain);
 			return Type;
 		}
 
@@ -225,7 +225,7 @@ namespace Mono.CSharp {
 			Type oldType = Type;
 			
 			// Sanity check.
-			Type = CheckAttributeType (ec.DeclSpace, true);
+			Type = CheckAttributeType (ec, true);
 			if (oldType == null && Type == null)
 				return null;
 			if (oldType != null && oldType != Type) {
@@ -896,7 +896,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			ResolveType (ec.DeclSpace, true);
+			ResolveType (ec, true);
 			if (Type == null)
 				return null;
 			
@@ -1058,12 +1058,12 @@ namespace Mono.CSharp {
 			ns = container.NamespaceEntry;
 		}
 
-		protected override Type CheckAttributeType (DeclSpace ds, bool complain)
+		protected override Type CheckAttributeType (EmitContext ec, bool complain)
 		{
-			NamespaceEntry old = ds.NamespaceEntry;
+			NamespaceEntry old = ec.DeclSpace.NamespaceEntry;
 			if (old == null || old.NS == null || old.NS == Namespace.Root) 
-				ds.NamespaceEntry = ns;
-			return base.CheckAttributeType (ds, complain);
+				ec.DeclSpace.NamespaceEntry = ns;
+			return base.CheckAttributeType (ec, complain);
 		}
 
 		protected override bool CanIgnoreInvalidAttribute (Attributable ias)
@@ -1118,18 +1118,18 @@ namespace Mono.CSharp {
 			}
 		}
 
-		private Attribute Search (Type t, DeclSpace ds, bool complain)
+		private Attribute Search (Type t, EmitContext ec, bool complain)
 		{
 			foreach (Attribute a in Attrs) {
-				if (a.ResolveType (ds, complain) == t)
+				if (a.ResolveType (ec, false) == t)
 					return a;
 			}
 			return null;
 		}
 
-		public Attribute Search (Type t, DeclSpace ds)
+		public Attribute Search (Type t, EmitContext ec)
 		{
-			return Search (t, ds, true);
+			return Search (t, ec, true);
 		}
 
 		public void Emit (EmitContext ec, Attributable ias)
@@ -1140,14 +1140,14 @@ namespace Mono.CSharp {
 				a.Emit (ec, ias, ld);
 		}
 
-		public bool Contains (Type t, DeclSpace ds)
+		public bool Contains (Type t, EmitContext ec)
 		{
-			return Search (t, ds) != null;
+                        return Search (t, ec) != null;
 		}
 
-		public Attribute GetClsCompliantAttribute (DeclSpace ds)
+		public Attribute GetClsCompliantAttribute (EmitContext ec)
 		{
-			return Search (TypeManager.cls_compliant_attribute_type, ds, false);
+			return Search (TypeManager.cls_compliant_attribute_type, ec, false);
 		}
 
 		/// <summary>
@@ -1155,7 +1155,7 @@ namespace Mono.CSharp {
 		/// </summary>
 		public string ScanForIndexerName (EmitContext ec)
 		{
-			Attribute a = Search (TypeManager.indexer_name_type, ec.DeclSpace);
+			Attribute a = Search (TypeManager.indexer_name_type, ec);
 			if (a == null)
 				return null;
 

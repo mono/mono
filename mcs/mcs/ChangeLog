@@ -1,3 +1,19 @@
+2004-05-20  Martin Baulig  <martin@ximian.com>
+
+	Merged this back from gmcs to keep the differences to a minumum.
+
+	* attribute.cs (Attribute.CheckAttributeType): Take an EmitContext
+	instead of a Declspace.
+	(Attribute.ResolveType): Likewise.
+	(Attributes.Search): Likewise.
+	(Attributes.Contains): Likewise.
+	(Attributes.GetClsCompliantAttribute): Likewise.
+
+	* class.cs (TypeContainer.VerifyMembers): Added EmitContext
+	argument.
+	(MethodData.ApplyAttributes): Take an EmitContext instead of a
+	DeclSpace.
+
 2004-04-20  Martin Baulig  <martin@ximian.com>
 
 	Merged latest changes into gmcs.  Please keep this comment in

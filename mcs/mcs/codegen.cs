@@ -795,7 +795,7 @@ namespace Mono.CSharp {
 				return null;
 
 			EmitContext temp_ec = new EmitContext (new TypeContainer (), Mono.CSharp.Location.Null, null, null, 0, false);
-			Attribute a = OptAttributes.Search (TypeManager.cls_compliant_attribute_type, temp_ec.DeclSpace);
+			Attribute a = OptAttributes.Search (TypeManager.cls_compliant_attribute_type, temp_ec);
 			if (a != null) {
 				a.Resolve (temp_ec);
 			}

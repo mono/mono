@@ -251,7 +251,7 @@ namespace Mono.CSharp {
 				OptAttributes.Emit (ec, this);
 	
 				if (par_attr == ParameterAttributes.Out){
-					if (OptAttributes.Contains (TypeManager.in_attribute_type, ec.DeclSpace))
+					if (OptAttributes.Contains (TypeManager.in_attribute_type, ec))
 						Report.Error (36, loc,	"Can not use [In] attribute on out parameter");
 				}
 			}

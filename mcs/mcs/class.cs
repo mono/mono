@@ -1722,7 +1722,7 @@ namespace Mono.CSharp {
 			return;
 		}
 
-		protected virtual void VerifyMembers ()
+		protected virtual void VerifyMembers (EmitContext ec)
 		{
 			//
 			// Check for internal or private fields that were never assigned
@@ -1839,7 +1839,7 @@ namespace Mono.CSharp {
 				if (Pending.VerifyPendingMethods ())
 					return;
 
-			VerifyMembers ();
+			VerifyMembers (ec);
 			
 //			if (types != null)
 //				foreach (TypeContainer tc in types)
@@ -2322,7 +2322,7 @@ namespace Mono.CSharp {
 		{
 		}
 
-		protected override void VerifyMembers () 
+		protected override void VerifyMembers (EmitContext ec) 
 		{
 			if (Fields != null) {
 				foreach (Field f in Fields) {
@@ -2330,7 +2330,7 @@ namespace Mono.CSharp {
 						continue;
 					if (hasExplicitLayout) {
 						if (f.OptAttributes == null 
-						    || !f.OptAttributes.Contains (TypeManager.field_offset_attribute_type, this)) {
+						    || !f.OptAttributes.Contains (TypeManager.field_offset_attribute_type, ec)) {
 							Report.Error (625, f.Location,
 								      "Instance field of type marked with" 
 								      + " StructLayout(LayoutKind.Explicit) must have a"
@@ -2339,7 +2339,7 @@ namespace Mono.CSharp {
 					}
 					else {
 						if (f.OptAttributes != null 
-						    && f.OptAttributes.Contains (TypeManager.field_offset_attribute_type, this)) {
+						    && f.OptAttributes.Contains (TypeManager.field_offset_attribute_type, ec)) {
 							Report.Error (636, f.Location,
 								      "The FieldOffset attribute can only be placed on members of "
 								      + "types marked with the StructLayout(LayoutKind.Explicit)");
@@ -2347,7 +2347,7 @@ namespace Mono.CSharp {
 					}
 				}
 			}
-			base.VerifyMembers ();
+			base.VerifyMembers (ec);
 		}
 
 		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
@@ -3486,26 +3486,27 @@ namespace Mono.CSharp {
 		string obsolete = null;
 		bool obsolete_error = false;
 
-		public virtual bool ApplyAttributes (Attributes opt_attrs, bool is_method, DeclSpace ds)
+		public virtual bool ApplyAttributes (Attributes opt_attrs, bool is_method,
+						     EmitContext ec)
 		{
 			if ((opt_attrs == null) || (opt_attrs.Attrs == null))
 				return true;
 
 			foreach (Attribute a in opt_attrs.Attrs) {
-					Type attr_type = a.ResolveType (ds, true);
-					if (attr_type == TypeManager.conditional_attribute_type) {
-						if (!ApplyConditionalAttribute (a))
-							return false;
-					} else if (attr_type == TypeManager.obsolete_attribute_type) {
-						if (!ApplyObsoleteAttribute (a))
-							return false;
-					} else if (attr_type == TypeManager.dllimport_type) {
-						if (!is_method) {
-							Attribute.Error_AttributeNotValidForElement (a, method.Location);
-							return false;
-						}
-						if (!ApplyDllImportAttribute (a))
-							return false;
+				Type attr_type = a.ResolveType (ec, true);
+				if (attr_type == TypeManager.conditional_attribute_type) {
+					if (!ApplyConditionalAttribute (a))
+						return false;
+				} else if (attr_type == TypeManager.obsolete_attribute_type) {
+					if (!ApplyObsoleteAttribute (a))
+						return false;
+				} else if (attr_type == TypeManager.dllimport_type) {
+					if (!is_method) {
+						Attribute.Error_AttributeNotValidForElement (a, method.Location);
+						return false;
+					}
+					if (!ApplyDllImportAttribute (a))
+						return false;
 				}
 			}
 
@@ -3663,8 +3664,10 @@ namespace Mono.CSharp {
 			MethodInfo implementing = null;
 			string prefix;
 
+			EmitContext ec = method.CreateEmitContext (container, null);
+				
 			if (method.OptAttributes != null)
-				if (!ApplyAttributes (method.OptAttributes, is_method, container))
+				if (!ApplyAttributes (method.OptAttributes, is_method, ec))
 					return false;
 
 			if (member.IsExplicitImpl)
@@ -3773,8 +3776,6 @@ namespace Mono.CSharp {
 						      "a method marked 'static' and 'extern'.");
 					return false;
 				}
-				
-				EmitContext ec = method.CreateEmitContext (container, null);
 				
 				builder = dllimport_attribute.DefinePInvokeMethod (
 					ec, container.TypeBuilder, method_name, flags,
