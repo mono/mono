@@ -40,7 +40,8 @@ namespace System.Runtime.Remoting.Metadata.W3cXsd2001
 	public sealed class SoapHexBinary : ISoapXsd
 	{
 		byte[] _value;
-		
+		StringBuilder sb = new StringBuilder ();
+
 		public SoapHexBinary ()
 		{
 		}
@@ -96,7 +97,7 @@ namespace System.Runtime.Remoting.Metadata.W3cXsd2001
 
 		public override string ToString()
 		{
-			StringBuilder sb = new StringBuilder ();
+			sb.Length = 0;
 			foreach (byte b in _value)
 				sb.Append (b.ToString ("X2"));
 			return sb.ToString ();

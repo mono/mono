@@ -1,3 +1,8 @@
+2004-06-15  Gert Driesen <drieseng@users.sourceforge.net>
+	
+	* SoapHexBinary.cs: fixed serialization compatibility with MS.NET
+	* SoapQName.cs: fixed serialization compatibility with MS.NET
+
 2003-11-28  Dick Porter  <dick@ximian.com>
 
 	* SoapQName.cs: Use the char form of IndexOf, so that the

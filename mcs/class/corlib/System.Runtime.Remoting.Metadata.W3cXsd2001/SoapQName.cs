@@ -39,7 +39,7 @@ namespace System.Runtime.Remoting.Metadata.W3cXsd2001
 	public sealed class SoapQName : ISoapXsd
 	{
 		string _name;
-		string _prefix;
+		string _key;
 		string _namespace;
 		
 		public SoapQName ()
@@ -51,22 +51,22 @@ namespace System.Runtime.Remoting.Metadata.W3cXsd2001
 			_name = localName;
 		}
 
-		public SoapQName (string prefix, string localName)
+		public SoapQName (string key, string localName)
 		{
-			_prefix = prefix;
+			_key = key;
 			_name = localName;
 		}
 
-		public SoapQName (string prefix, string localName, string namspace)
+		public SoapQName (string key, string localName, string namspace)
 		{
-			_prefix = prefix;
+			_key = key;
 			_name = localName;
 			_namespace = namspace;
 		}
 
 		public string Key {
-			get { return _prefix; } 
-			set { _prefix = value; }
+			get { return _key; } 
+			set { _key = value; }
 		}
 
 		public string Name {
@@ -104,8 +104,8 @@ namespace System.Runtime.Remoting.Metadata.W3cXsd2001
 
 		public override string ToString()
 		{
-			if (_prefix == null || _prefix == "") return _name;
-			else return _prefix + ":" + _name;
+			if (_key == null || _key == "") return _name;
+			else return _key + ":" + _name;
 		}
 	}
 }
