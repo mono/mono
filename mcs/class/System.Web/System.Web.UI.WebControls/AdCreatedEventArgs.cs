@@ -4,7 +4,7 @@
  * 
  * Author:  Gaurav Vaish
  * Contact: <gvaish@iitk.ac.in>
- * Status:  10??%
+ * Status:  100%
  * 
  * (C) Gaurav Vaish (2001)
  */
@@ -33,7 +33,7 @@ namespace System.Web.UI.WebControls
 		{
 			get
 			{
-				return this.adProperties;
+				return adProperties;
 			}
 		}
 		

@@ -35,10 +35,6 @@ namespace System.Web.UI.WebControls
 
 		private int editItemIndex;
 		private bool extractTemplateRows;
-		private bool hasFooter;
-		private bool hasHeader;
-		private bool hasSeparators;
-		private int  repeatedItemCount;
 		
 		public DataList()
 		{
@@ -102,7 +98,7 @@ namespace System.Web.UI.WebControls
 		 * CreateControlHeirarchy(bool)
 		 */
 		 
-		public virtual ITemplate EditItemTemplate
+		public virtual ITemplate editItemTemplate
 		{
 			get
 			{
@@ -143,29 +139,6 @@ namespace System.Web.UI.WebControls
 			set
 			{
 				footerTemplate = value;
-			}
-		}
-
-		public bool HasFooter {
-			get {
-				return hasFooter;
-			}
-		}
-
-		public bool HasHeader {
-			get {
-				return hasHeader;
-			}
-		}
-		public bool HasSeparators {
-			get {
-				return hasSeparators;
-			}
-		}
-
-		public int  RepeatedItemCount {
-			get {
-				return repeatedItemCount;
 			}
 		}
 	}

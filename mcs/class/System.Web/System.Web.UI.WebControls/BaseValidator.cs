@@ -10,7 +10,6 @@
  */
 
 using System;
-using System.ComponentModel;
 using System.Web;
 using System.Web.UI;
 using System.Drawing;
@@ -156,18 +155,43 @@ namespace System.Web.UI.WebControls
 			//TODO: I think it needs to be overridden. I may be wrong!
 			//TODO: When to throw HttpException(...)
 		}
-		
+
 		protected virtual bool ControlPropertiesValid()
 		{
 			// Do I need to do anything? But what?
 			// What do I do with ControlToValidate?
 			return true;
 		}
-		
+
 		protected virtual bool DetermineRenderUplevel()
 		{
 			// From where?
 			return true;
+		}
+
+		protected abstract bool EvaluateIsValid();
+
+		protected string GetControlRenderID(string name)
+		{
+			// TODO: What value? What is it?
+		}
+
+		protected string GetControlValidationValue(string name)
+		{
+			// TODO: What value? What is it?
+		}
+
+		protected void RegisterValidatorCommonScript()
+		{
+			// TODO: Still wondering!
+			// Note: This method is primarily used by control developers
+		}
+
+		protected void RegisterValidatorDeclaration()
+		{
+			// TODO: Still wondering!
+			// Note: This method is primarily used by control developers
+			// The documentation in M$ refers to: Page_Validators array
 		}
 	}
 }

@@ -173,19 +173,6 @@ namespace System.Web.UI.WebControls
 			
 		}
 
-		public virtual Color ForeColor {
-			get {
-				return Color.Empty;
-			}
-
-			set {
-				//
-				// FIXME: Set the Style color here
-				//
-				
-			}
-		}
-		
 /*
 		// Properties
 		public ControlCollection Controls { virtual get; }
@@ -193,6 +180,7 @@ namespace System.Web.UI.WebControls
 		public bool ControlStyleCreated { get; }
 		public bool EnableViewState { virtual get; virtual set; }
 		public FontInfo Font { virtual get; }
+		public Color ForeColor { virtual get; virtual set; }
 		public Unit Height { virtual get; virtual set; }
 		public string ID { virtual get; virtual set; }
 		public Control NamingContainer { virtual get; }

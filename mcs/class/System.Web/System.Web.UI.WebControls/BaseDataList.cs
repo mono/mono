@@ -10,6 +10,7 @@
  */
 
 using System;
+using System.Collections;
 using System.Web;
 using System.Web.UI;
 
@@ -23,18 +24,28 @@ namespace System.Web.UI.WebControls
 		private object dataSource = null;
 		private string dataKeyField = String.Empty;
 		private DataKeyCollection dataKeys;		// TODO: From where do get the values into it?
-		private string dataMember = String.Empty;
-		private GridLines gridLines = GridLines.Both;
-		private HorizontalAlign hAlign = HorizontalAlign.NotSet;
+		private string dataMember;
+		private GridLines gridLines;
+		private HorizontalAlign hAlign;
+		
+//		private EventArgs dataBindEventArgs;
 		
 		public BaseDataList()
 		{
 			// TODO Something
+			dataKeys = new DataKeyCollection(new ArrayList());
+			dataMember = String.Empty;
+			gridLines = GridLines.Both;
+			hAlign = HorizontalAlign.NotSet;
 		}
 		
 		public static bool IsBindableType(Type type)
 		{
 			//TODO: To see what has to be here
+			if(type.IsPrimitive)
+			{
+				//Type.GetTypeFromHandle(new RuntimeTypeHandle());
+			}
 			return false; //for the time being, to be able to make it compile
 		}
 		
@@ -129,18 +140,39 @@ namespace System.Web.UI.WebControls
 				hAlign = value;
 			}
 		}
-		
+
 		public override void DataBind()
 		{
 			// TODO: have to write the implementation
 			// I am not sure of whether it will be of any use here since 
 			// I am an abstract class, and have no identity of myself.
+			//dataBindEventArgs = EventArgs.Empty;
+			OnDataBinding(EventArgs.Empty);
 		}
-		
+
 		//TODO: Check - where are the following abstract methods?
 		/*
 		 * CreateControlHierarchy(bool)
 		 * PrepareControlHierarchy()
 		*/
+		
+		protected override void AddParsedSubObject(object o)
+		{
+			// Preventing literal controls from being added as children: Do nothing here.
+		}
+		
+		protected override void CreateChildControls()
+		{
+			Controls.Clear();
+			if(ViewState["_!ItemCount"]!=null)
+			{
+				CreateControlHierarchy(true);
+				ClearChildViewState();
+			}
+		}
+
+		protected override void 
+
+		protected abstract void CreateControlHierarchy(bool useDataSource);
 	}
 }
