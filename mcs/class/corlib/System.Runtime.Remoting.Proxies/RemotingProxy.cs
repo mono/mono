@@ -21,7 +21,7 @@ using System.Threading;
 namespace System.Runtime.Remoting.Proxies
 {
 
-	public class RemotingProxy : RealProxy 
+	internal class RemotingProxy : RealProxy 
 	{
 		static MethodInfo _cache_GetTypeMethod = typeof(System.Object).GetMethod("GetType");
 		static MethodInfo _cache_GetHashCodeMethod = typeof(System.Object).GetMethod("GetHashCode");

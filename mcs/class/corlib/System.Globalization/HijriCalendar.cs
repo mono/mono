@@ -8,6 +8,7 @@ namespace System.Globalization {
 using System;
 using System.IO;
 
+
 /// <summary>
 /// This is the Hijri calendar which might be called Islamic calendar. 
 /// </summary>
@@ -90,7 +91,7 @@ public class HijriCalendar : Calendar {
 	/// <value>An integer property representing the adjustment to the epoch
 	/// of the Hijri calendar. Not supported by .NET.
 	/// </value>
-	public virtual int AddHijriDate {
+	internal virtual int AddHijriDate {
 		get {
 			return M_AddHijriDate;
 		}
@@ -312,6 +313,11 @@ public class HijriCalendar : Calendar {
 		}
 	}
 
+#if false
+	//
+	// The following routines are commented out as they do not appear on the .NET Framework 1.1
+	//
+
 	/// <summary>
 	/// Overridden. Adds days to a given date.
 	/// </summary>
@@ -525,7 +531,8 @@ public class HijriCalendar : Calendar {
 		M_CheckDateTime(time);
 		return base.GetMinute(time);
 	}
-
+#endif
+	
 	/// <summary>
 	/// Overrideden. Adds months to a given date.
 	/// </summary>

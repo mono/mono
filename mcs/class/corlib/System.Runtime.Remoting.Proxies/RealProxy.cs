@@ -122,7 +122,7 @@ namespace System.Runtime.Remoting.Proxies
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public extern virtual object InternalGetTransparentProxy ();
+		internal extern virtual object InternalGetTransparentProxy ();
 
 		public virtual object GetTransparentProxy () 
 		{

@@ -20,6 +20,13 @@ namespace System.Runtime.Remoting
 {	
 	public class RemotingConfiguration
 	{
+		//
+		// Private constructor: nobody instantiates this.
+		//
+		private RemotingConfiguration ()
+		{
+		}
+		
 		static string applicationID = null;
 		static string applicationName = null;
 		static string configFile = "";

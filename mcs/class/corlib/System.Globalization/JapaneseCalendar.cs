@@ -216,7 +216,10 @@ public class JapaneseCalendar : Calendar {
 		return gregorianYear;
 	}
 
+#if false
 
+	// Ifdefed out because this is not on the .NET Framewokr.
+	
 	/// <summary>
 	/// Overridden. Adds days to a given date.
 	/// </summary>
@@ -431,7 +434,8 @@ public class JapaneseCalendar : Calendar {
 		M_CheckDateTime(time);
 		return base.GetMinute(time);
 	}
-
+#endif
+	
 	/// <summary>
 	/// Overrideden. Adds months to a given date.
 	/// </summary>

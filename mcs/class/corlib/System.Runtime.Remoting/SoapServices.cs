@@ -19,6 +19,9 @@ namespace System.Runtime.Remoting {
 	[ClassInterface (ClassInterfaceType.AutoDual)]
 	public class SoapServices
 	{
+		// Private constructor: nobody instantiates this class
+		private SoapServices () {}
+		
 		// properties
 	
 		public static string XmlNsForClrType 
@@ -125,11 +128,6 @@ namespace System.Runtime.Remoting {
 		{
 			string ns = CodeXmlNamespaceForClrTypeNamespace (mb.DeclaringType.Name, GetAssemblyName(mb));
 			return ns + "#" + mb.Name;
-		}
-
-		[MonoTODO]
-		public new Type GetType () {
-			throw new NotImplementedException (); 
 		}
 
 		public static bool GetTypeAndMethodNameFromSoapAction (string soapAction, 

@@ -1549,7 +1549,7 @@ internal class CCHebrewCalendar {
 /// </para>
 /// <seealso cref="T:CCFixed"/>
 /// </remarks>
-public class CCHijriCalendar {
+internal class CCHijriCalendar {
 	/// <summary>An integer defining the epoch of the Gregorian calendar
 	/// as fixed day number.</summary>
 	/// <remarks>
@@ -1822,7 +1822,7 @@ public class CCHijriCalendar {
 /// (e.g. <see cref="T:System.Gloablization.JapaneseCalendar"/>).
 /// </summary>
 [System.Serializable]
-public class CCGregorianEraHandler {
+internal class CCGregorianEraHandler {
 	/// <summary>
 	/// A struct that represents a single era.
 	/// </summary>
