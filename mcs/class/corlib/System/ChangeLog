@@ -1,3 +1,9 @@
+2004-07-12  Geoff Norton <gnorton@customerdna.com>
+
+	* DateTime.cs: Patch for bug #61112.  Our DateTime wasn't roundtripping over timezone
+	  boundaries properly.  This patch checkes ToLocalTime() to see if we're tripping over a boundary
+	  and will add/subtract the hour if needed
+
 2004-07-07  Geoff Norton <gnorton@customerdna.com>
 
 	* Monotype.cs: Patch for bug #58844.  Dont throw exceptions right away;

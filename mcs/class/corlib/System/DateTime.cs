@@ -1765,8 +1765,13 @@ namespace System
 					return DateTime.MinValue;
 				*/
 			}
+			
+			DateTime lt = new DateTime(true, ticks+offset);
+			TimeSpan ltoffset = tz.GetUtcOffset(lt);
+			if(ltoffset != offset)
+				lt = lt.Add(ltoffset.Subtract(offset));
 
-			return new DateTime (true, ticks + offset);
+			return lt;
 		}
 
 		public DateTime ToUniversalTime()
