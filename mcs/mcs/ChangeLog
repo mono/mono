@@ -1,5 +1,10 @@
 2002-10-09  Miguel de Icaza  <miguel@ximian.com>
 
+	* statement.cs (Using.ResolveExpression): Use
+	ConvertImplicitRequired, not ConvertImplicit which reports an
+	error on failture
+	(Using.ResolveLocalVariableDecls): ditto.
+
 	* expression.cs (Binary.ResolveOperator): Report errors in a few
 	places where we had to.
 

@@ -4467,10 +4467,6 @@ namespace Mono.CSharp {
 		}
 	}
 
-	//
-	// FIXME: We still do not support the expression variant of the using
-	// statement.
-	//
 	public class Using : Statement {
 		object expression_or_block;
 		Statement Statement;
@@ -4514,7 +4510,7 @@ namespace Mono.CSharp {
 					if (var == null)
 						return false;
 					
-					converted_vars [i] = Expression.ConvertImplicit (
+					converted_vars [i] = Expression.ConvertImplicitRequired (
 						ec, var, TypeManager.idisposable_type, loc);
 
 					if (converted_vars [i] == null)
@@ -4547,7 +4543,7 @@ namespace Mono.CSharp {
 		bool ResolveExpression (EmitContext ec)
 		{
 			if (!TypeManager.ImplementsInterface (expr_type, TypeManager.idisposable_type)){
-				conv = Expression.ConvertImplicit (
+				conv = Expression.ConvertImplicitRequired (
 					ec, expr, TypeManager.idisposable_type, loc);
 
 				if (conv == null)
