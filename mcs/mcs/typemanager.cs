@@ -53,6 +53,12 @@ public class MemberList : IList {
 
 	public static readonly MemberList Empty = new MemberList (new ArrayList ());
 
+	/// <summary>
+	///   Cast the MemberList into a MemberInfo[] array.
+	/// </summary>
+	/// <remarks>
+	///   This is an expensive operation, only use it if it's really necessary.
+	/// </remarks>
 	public static explicit operator MemberInfo [] (MemberList list)
 	{
 		Timer.StartTimer (TimerType.MiscTimer);
@@ -1068,11 +1074,18 @@ public class TypeManager {
 
 	static Hashtable type_hash = new Hashtable ();
 
+	/// <remarks>
+	///   This is the "old", non-cache based FindMembers() function.  We cannot use
+	///   the cache here because there is no member name argument.
+	/// </remarks>
 	public static MemberList FindMembers (Type t, MemberTypes mt, BindingFlags bf,
 					      MemberFilter filter, object criteria)
 	{
 		DeclSpace decl = (DeclSpace) builder_to_declspace [t];
 
+		//
+		// `builder_to_declspace' contains all dynamic types.
+		//
 		if (decl != null) {
 			MemberList list;
 			Timer.StartTimer (TimerType.FindMembers);
@@ -1086,7 +1099,6 @@ public class TypeManager {
 		// a TypeBuilder array will return a Type, not a TypeBuilder,
 		// and we can not call FindMembers on this type.
 		//
-
 		if (t.IsSubclassOf (TypeManager.array_type))
 			return new MemberList (TypeManager.array_type.FindMembers (mt, bf, filter, criteria));
 
@@ -1127,11 +1139,12 @@ public class TypeManager {
 	}
 
 
-	/// FIXME FIXME FIXME
-	///   This method is a big hack until the new MemberCache is finished, it will be gone in
-	///   a few days.
-	/// FIXME FIXME FIXME
-
+	/// <summary>
+	///   This method is only called from within MemberLookup.  It tries to use the member
+	///   cache if possible and falls back to the normal FindMembers if not.  The `searching'
+	///   flag is set to false if members from the parent classes are included in the return
+	///   value, otherwise it's left unchanged.
+	/// </summary>
 	private static MemberList MemberLookup_FindMembers (Type t, MemberTypes mt, BindingFlags bf,
 							    string name, ref bool searching)
 	{
@@ -1140,13 +1153,16 @@ public class TypeManager {
 		// a TypeBuilder array will return a Type, not a TypeBuilder,
 		// and we can not call FindMembers on this type.
 		//
-
 		if (t.IsSubclassOf (TypeManager.array_type)) {
 			searching = false;
 			return TypeHandle.ArrayType.MemberCache.FindMembers (
 				mt, bf, name, FilterWithClosure_delegate, null);
 		}
 
+		//
+		// If this is a dynamic type, it's always in the `builder_to_declspace' hash table
+		// and we can ask the DeclSpace for the MemberCache.
+		//
 		if (t is TypeBuilder) {
 			DeclSpace decl = (DeclSpace) builder_to_declspace [t];
 			MemberCache cache = decl.MemberCache;
@@ -1157,6 +1173,8 @@ public class TypeManager {
 					mt, bf, name, FilterWithClosure_delegate, null);
 			}
 
+			// If there is no MemberCache, we need to use the "normal" FindMembers.
+
 			MemberList list;
 			Timer.StartTimer (TimerType.FindMembers);
 			list = decl.FindMembers (mt, bf | BindingFlags.DeclaredOnly,
@@ -1165,6 +1183,11 @@ public class TypeManager {
 			return list;
 		}
 
+		//
+		// This call will always succeed.  There is exactly one TypeHandle instance per
+		// type, TypeHandle.GetTypeHandle() will either return it or create a new one
+		// if it didn't already exist.
+		//
 		IMemberFinder finder = TypeHandle.GetTypeHandle (t);
 
 		searching = false;
@@ -2301,6 +2324,8 @@ public class MemberCache {
 		Timer.IncrementCounter (CounterType.MemberCache);
 		Timer.StartTimer (TimerType.CacheInit);
 
+		// If we have a parent class (we have a parent class unless we're
+		// TypeManager.object_type), we deep-copy its MemberCache here.
 		if (Container.Parent != null)
 			member_hash = SetupCache (Container.Parent.MemberCache);
 		else if (Container.IsInterface)
@@ -2308,6 +2333,7 @@ public class MemberCache {
 		else
 			member_hash = new Hashtable ();
 
+		// Add all members from the current class.
 		AddMembers (Container);
 
 		Timer.StopTimer (TimerType.CacheInit);
@@ -2346,6 +2372,12 @@ public class MemberCache {
 		AddMembers (mt, BindingFlags.Instance | BindingFlags.NonPublic, container);
 	}
 
+
+	/// <summary>
+	///   Add all members from class `container' with the requested MemberTypes and BindingFlags
+	///   to the cache.  This method is called multiple times with different MemberTypes and
+	///   BindingFlags.
+	/// </summary>
 	void AddMembers (MemberTypes mt, BindingFlags bf, IMemberContainer container)
 	{
 		MemberList members = container.GetMembers (mt, bf);
@@ -2354,16 +2386,26 @@ public class MemberCache {
 		foreach (MemberInfo member in members) {
 			string name = member.Name;
 
+			// We use a name-based hash table of ArrayList's.
 			ArrayList list = (ArrayList) member_hash [name];
 			if (list == null) {
 				list = new ArrayList ();
 				member_hash.Add (name, list);
 			}
 
+			// When this method is called for the current class, the list will already
+			// contain all inherited members from our parent classes.  We cannot add
+			// new members in front of the list since this'd be a expensive operation,
+			// that's why the list is sorted in reverse order (ie. members from the
+			// current class are coming last).
 			list.Add (new CacheEntry (container, member, mt, new_bf));
 		}
 	}
 
+	/// <summary>
+	///   Compute and return a appropriate `EntryType' magic number for the given
+	///   MemberTypes and BindingFlags.
+	/// </summary>
 	protected static EntryType GetEntryType (MemberTypes mt, BindingFlags bf)
 	{
 		EntryType type = EntryType.None;
@@ -2397,6 +2439,11 @@ public class MemberCache {
 		return type;
 	}
 
+	/// <summary>
+	///   The `MemberTypes' enumeration type is a [Flags] type which means that it may
+	///   denote multiple member types.  Returns true if the given flags value denotes a
+	///   single member types.
+	/// </summary>
 	public static bool IsSingleMemberType (MemberTypes mt)
 	{
 		switch (mt) {
@@ -2413,6 +2460,10 @@ public class MemberCache {
 		}
 	}
 
+	/// <summary>
+	///   We encode the MemberTypes and BindingFlags of each members in a "magic"
+	///   number to speed up the searching process.
+	/// </summary>
 	[Flags]
 	protected enum EntryType {
 		None		= 0x000,
@@ -2451,6 +2502,11 @@ public class MemberCache {
 		}
 	}
 
+	/// <summary>
+	///   This is called each time we're walking up one level in the class hierarchy
+	///   and checks whether we can abort the search since we've already found what
+	///   we were looking for.
+	/// </summary>
 	protected bool DoneSearching (ArrayList list)
 	{
 		//
@@ -2526,6 +2582,9 @@ public class MemberCache {
 	}
 }
 
+/// <summary>
+///   There is exactly one instance of this class per type.
+/// </summary>
 public sealed class TypeHandle : IMemberContainer {
 	public readonly TypeHandle BaseType;
 
@@ -2599,13 +2658,7 @@ public sealed class TypeHandle : IMemberContainer {
 
 	public string Name {
 		get {
-			return Type.FullName;
-		}
-	}
-
-	public Type Type {
-		get {
-			return type;
+			return type.FullName;
 		}
 	}
 
@@ -2623,7 +2676,7 @@ public sealed class TypeHandle : IMemberContainer {
 
 	public MemberList GetMembers (MemberTypes mt, BindingFlags bf)
 	{
-		return new MemberList (Type.FindMembers (mt, bf | BindingFlags.DeclaredOnly, null, null));
+		return new MemberList (type.FindMembers (mt, bf | BindingFlags.DeclaredOnly, null, null));
 	}
 
 	// IMemberFinder methods
