@@ -1,3 +1,65 @@
+2002-04-12  Ravi Pratap  <ravi@ximian.com>
+
+	* cs-parser.jay (compilation_unit): Revamp completely to use
+	some new ideas that I got from Rhys' grammar to solve the problems
+	with assembly level attributes.
+
+	(outer_declaration): New grammar production.
+
+	(attribute_sections): Add.
+
+	(opt_attributes): Base on attribute_sections
+
+	(namespace_declaration): Allow opt_attributes to tackle the case
+	when we have assembly level attributes - we are clever in this
+	regard now ;-)
+
+	* attribute.cs (ApplyAttributes): Do not worry about assembly 
+	attributes in the non-global context.
+
+	* rootcontext.cs (AddGlobalAttributes): Go back to using this
+	instead of SetGlobalAttributes.
+
+	* class.cs, rootcontext.cs : Ensure we define and generate 
+	attribute types before anything else.
+
+	* attribute.cs (CheckAttribute and GetValidPlaces): Handle the exception
+	and flag the new error -20 for the case when the attribute type
+	does not have valid targets specified. csc does not catch this.
+
+	* ../errors/errors.txt : update for error # -20
+
+2002-04-11  Ravi Pratap  <ravi@ximian.com>
+
+	* support.cs (InternalParameters.ParameterModifier): Do some null
+	checking and return sane values.
+
+	* class.cs (Method.Define): If we are a PInvoke method, ensure
+	that we are static and extern. Report error # 601
+
+	* ../errors/cs0601.cs : Add test case for the above error.
+
+2002-04-07  Ravi Pratap  <ravi@ximian.com>
+
+	* rootcontext.cs (attribute_types): We need to keep type of
+	all attribute types separately and emit code for them first.
+
+	(RegisterAttribute) : Implement.
+
+	* class.cs (DefineType): Check if the current Type is a custom
+	attribute type and register it accordingly.
+
+	* rootcontext.cs (AddGlobalAttributes): Fix silly bug where we were
+	adding the first attribute twice and rename to
+
+	(SetGlobalAttributes): this.
+
+	* rootcontext.cs (NamespaceLookup): Run through the aliases too and perform
+	lookups.
+
+	* attribute.cs (ApplyAttributes): Take an additional argument telling us
+	if we are processing global arguments. Hmm, I am unsure of this.
+
 2002-04-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* expression.cs: added static array of strings to avoid calling

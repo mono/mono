@@ -128,7 +128,8 @@ namespace Mono.CSharp {
 						this.ImplOptions = (MethodImplOptions) pos_values [0];
 
 					if (MarshalAsAttr)
-						this.UnmanagedType = (System.Runtime.InteropServices.UnmanagedType) pos_values [0];
+						this.UnmanagedType =
+							(System.Runtime.InteropServices.UnmanagedType) pos_values [0];
 					
 				} else { 
 					error182 ();
@@ -261,8 +262,19 @@ namespace Mono.CSharp {
 			TypeContainer a = TypeManager.LookupAttr (attr.Type);
 
 			if (a == null) {
-				System.Attribute [] attrs = System.Attribute.GetCustomAttributes (attr.Type);
 				
+				System.Attribute [] attrs = null;
+				
+				try {
+					attrs = System.Attribute.GetCustomAttributes (attr.Type);
+					
+				} catch {
+					Report.Error (-20, attr.Location, "Cannot find attribute type " + attr.Name +
+						      " (maybe you forgot to set the usage using the" +
+						      " AttributeUsage attribute ?).");
+					return null;
+				}
+					
 				foreach (System.Attribute tmp in attrs)
 					if (tmp is AttributeUsageAttribute) 
 						targets = ((AttributeUsageAttribute) tmp).ValidOn;
@@ -330,8 +342,19 @@ namespace Mono.CSharp {
 			AttributeTargets targets = 0;
 			
 			if (attr == null) {
-				System.Attribute [] attrs = System.Attribute.GetCustomAttributes (a.Type);
 
+				System.Attribute [] attrs = null;
+				
+				try {
+					attrs = System.Attribute.GetCustomAttributes (a.Type);
+
+				} catch {
+					Report.Error (-20, a.Location, "Cannot find attribute type " + a.Name +
+						      " (maybe you forgot to set the usage using the" +
+						      " AttributeUsage attribute ?).");
+					return false;
+				}
+					
 				foreach (System.Attribute tmp in attrs)
 					if (tmp is AttributeUsageAttribute) 
 						targets = ((AttributeUsageAttribute) tmp).ValidOn;
@@ -403,11 +426,10 @@ namespace Mono.CSharp {
 
 			return false;
 		}
-
+		
 		public static void ApplyAttributes (EmitContext ec, object builder, object kind,
 						    Attributes opt_attrs, Location loc)
 		{
-			
 			if (opt_attrs == null)
 				return;
 
@@ -419,6 +441,9 @@ namespace Mono.CSharp {
 				if (asec.Attributes == null)
 					continue;
 
+				if (asec.Target == "assembly" && !(builder is AssemblyBuilder))
+					continue;
+				
 				foreach (Attribute a in asec.Attributes) {
 					CustomAttributeBuilder cb = a.Resolve (ec);
 
@@ -431,7 +456,6 @@ namespace Mono.CSharp {
 							return;
 						}
 
-					
 					if (kind is Method || kind is Operator) {
 
 						if (a.Type == TypeManager.methodimpl_attr_type) {

@@ -257,21 +257,29 @@ namespace Mono.CSharp
 %nonassoc HIGHPREC
 
 %start compilation_unit
-/*%start namespace_declaration */
 %%
 
 compilation_unit
-	: opt_using_directives opt_namespace_member_declarations opt_attributes opt_EOF
-	  {
-		// Check that using comes only before namespace elements
-	  }
-	;
-
+        : outer_declarations opt_EOF
+        | outer_declarations attribute_sections opt_EOF
+        | attribute_sections opt_EOF
+        ;
+	
 opt_EOF
 	: /* empty */
 	| EOF
 	;
 
+outer_declarations
+        : outer_declaration
+        | outer_declarations outer_declaration
+        ;
+ 
+outer_declaration
+        : using_directive
+        | namespace_member_declaration
+        ;
+  
 using_directives
 	: using_directive 
 	| using_directives using_directive
@@ -297,15 +305,24 @@ using_namespace_directive
           }
 	;
 
-//  namespace_declarations
-//  	: namespace_declaration
-//  	| namespace_declarations namespace_declaration
-
+//
+// Strictly speaking, namespaces don't have attributes but
+// we parse global attributes along with namespace declarations and then
+// detach them
+// 
 namespace_declaration
-	: NAMESPACE qualified_identifier 
-	  {
-		current_namespace = RootContext.Tree.RecordNamespace (current_namespace, name, (string) $2);
-	  } 
+	: opt_attributes NAMESPACE qualified_identifier 
+	{
+		Attributes attrs = (Attributes) $1;
+
+		if (attrs != null) {
+			foreach (AttributeSection asec in attrs.AttributeSections)
+				if (asec.Target == "assembly")
+					RootContext.AddGlobalAttribute (asec, lexer.Location);
+		}
+
+		current_namespace = RootContext.Tree.RecordNamespace (current_namespace, name, (string) $3);
+	} 
 	  namespace_body opt_semicolon
 	  { 
 		current_namespace = current_namespace.Parent;
@@ -401,26 +418,33 @@ type_declaration
 //
 // Attributes 17.2
 //
+
 opt_attributes
-	: /* empty */ { $$ = null; }
-	| attribute_section opt_attributes
-	  {
-		Attributes attrs = null;
+        : /* empty */
+	| attribute_sections { $$ = $1; }
+        ;
+ 
+attribute_sections
+	: attribute_section
+          {
 		AttributeSection sect = (AttributeSection) $1;
 
-		if (sect.Target == "assembly"){
-			RootContext.AddGlobalAttributes (sect, lexer.Location);
-			sect = null;
-		}
+		if (sect.Target == "assembly")
+			RootContext.AddGlobalAttribute (sect, lexer.Location);
+		  
+	        $$ = new Attributes ((AttributeSection) $1, lexer.Location);
+          }
+	| attribute_sections attribute_section
+	  {
+		Attributes attrs = null;
+		AttributeSection sect = (AttributeSection) $2;
 
-		if ($2 != null) {
-			if (sect != null){
-				attrs = (Attributes) $2;
-				attrs.AddAttribute (sect);
-			}
-		} else {
-			if (sect != null)
-				attrs = new Attributes (sect, lexer.Location);
+		if (sect.Target == "assembly")
+			RootContext.AddGlobalAttribute (sect, lexer.Location);
+
+		if ($1 != null) {
+			attrs = (Attributes) $1;
+			attrs.AddAttribute (sect);
 		}
 		
 		$$ = attrs;

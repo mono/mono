@@ -789,6 +789,7 @@ namespace Mono.CSharp {
 					parent = TypeManager.object_type;
 					start = 0;
 				}
+
 			} else {
 				start = 0;
 			}
@@ -878,7 +879,7 @@ namespace Mono.CSharp {
 					return null;
 				}
 			}
-			
+
 			// if (parent_builder is ModuleBuilder) {
 			if (IsTopLevel){
 				ModuleBuilder builder = CodeGen.ModuleBuilder;
@@ -925,9 +926,13 @@ namespace Mono.CSharp {
 			}
 
 			TypeManager.AddUserType (Name, TypeBuilder, this);
-			RootContext.RegisterOrder (this);
 
-			if (Interfaces != null){
+			if (parent == TypeManager.attribute_type)
+				RootContext.RegisterAttribute (this);
+			else
+				RootContext.RegisterOrder (this); 
+				
+			if (Interfaces != null) {
 				foreach (Interface iface in Interfaces)
 					iface.DefineType ();
 			}
@@ -2294,6 +2299,13 @@ namespace Mono.CSharp {
 			//
 
 			if ((flags & MethodAttributes.PinvokeImpl) != 0) {
+
+				if ((ModFlags & Modifiers.STATIC) == 0) {
+					Report.Error (601, Location, "The DllImport attribute must be specified on " +
+						      "a method marked 'static' and 'extern'.");
+					return false;
+				}
+				
 				EmitContext ec = new EmitContext (
 					parent, Location, null, GetReturnType (parent), ModFlags);
 				

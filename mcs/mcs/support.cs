@@ -162,8 +162,12 @@ namespace Mono.CSharp {
 
 		public Parameter.Modifier ParameterModifier (int pos)
 		{
-			if (parameters.FixedParameters == null)
-				return parameters.ArrayParameter.ModFlags;
+			if (parameters.FixedParameters == null) {
+				if (parameters.ArrayParameter != null) 
+					return parameters.ArrayParameter.ModFlags;
+				else
+					return Parameter.Modifier.NONE;
+			}
 			
 			if (pos >= parameters.FixedParameters.Length)
 				return parameters.ArrayParameter.ModFlags;

@@ -2,6 +2,7 @@
 // rootcontext.cs: keeps track of our tree representation, and assemblies loaded.
 //
 // Author: Miguel de Icaza (miguel@ximian.com)
+//         Ravi Pratap     (ravi@ximian.com)
 //
 // Licensed under the terms of the GNU GPL
 //
@@ -47,6 +48,7 @@ namespace Mono.CSharp {
 		//
 		static ArrayList type_container_resolve_order;
 		static ArrayList interface_resolve_order;
+		static ArrayList attribute_types;
 
 		//
 		// Holds a reference to the Private Implementation Details
@@ -82,6 +84,14 @@ namespace Mono.CSharp {
 		public static void RegisterOrder (TypeContainer tc)
 		{
 			type_container_resolve_order.Add (tc);
+		}
+
+		public static void RegisterAttribute (TypeContainer tc)
+		{
+			if (attribute_types == null)
+				attribute_types = new ArrayList ();
+			
+			attribute_types.Add (tc);
 		}
 		
 		// 
@@ -124,7 +134,14 @@ namespace Mono.CSharp {
 				foreach (Interface i in ifaces) 
 					i.DefineType ();
 			}
-						
+
+			//
+			// Process the attribute types separately and before anything else
+			//
+			if (attribute_types != null)
+				foreach (TypeContainer tc in attribute_types)
+					tc.DefineType ();
+				
 			foreach (TypeContainer tc in root.Types) 
 				tc.DefineType ();
 
@@ -351,6 +368,10 @@ namespace Mono.CSharp {
 				foreach (Enum en in root.Enums)
 					en.CloseType ();
 
+			if (attribute_types != null)
+				foreach (TypeContainer tc in attribute_types)
+					tc.CloseType ();
+			
 			if (interface_resolve_order != null){
 				foreach (Interface iface in interface_resolve_order)
 					iface.CloseType ();
@@ -423,6 +444,21 @@ namespace Mono.CSharp {
 			t = TypeManager.LookupType (name); 
 			if (t != null)
 				return t;
+
+			//
+			// Try the aliases in the current namespace
+			//
+			string alias = curr_ns.LookupAlias (name);
+
+			if (alias != null) {
+				t = TypeManager.LookupType (alias);
+				if (t != null)
+					return t;
+
+				t = TypeManager.LookupType (MakeFQN (alias, name));
+				if (t != null)
+					return t;
+			}
 			
 			for (Namespace ns = curr_ns; ns != null; ns = ns.Parent) {
 				//
@@ -440,8 +476,22 @@ namespace Mono.CSharp {
 				if (using_list == null)
 					continue;
 
-				foreach (string n in using_list){
+				foreach (string n in using_list) {
 					t = TypeManager.LookupType (MakeFQN (n, name));
+					if (t != null)
+						return t;
+				}
+
+				//
+				// Try with aliases
+				//
+				string a = ns.LookupAlias (name);
+				if (a != null) {
+					t = TypeManager.LookupType (a);
+					if (t != null)
+						return t;
+
+					t = TypeManager.LookupType (MakeFQN (a, name));
 					if (t != null)
 						return t;
 				}
@@ -530,6 +580,10 @@ namespace Mono.CSharp {
 		{
 			TypeContainer root = Tree.Types;
 
+			if (attribute_types != null)
+				foreach (TypeContainer tc in attribute_types)
+					tc.Define (root);
+			
 			if (interface_resolve_order != null){
 				foreach (Interface iface in interface_resolve_order)
 					if ((iface.ModFlags & Modifiers.NEW) == 0)
@@ -568,14 +622,10 @@ namespace Mono.CSharp {
 
 		static public void EmitCode ()
 		{
-			if (type_container_resolve_order != null){
-				foreach (TypeContainer tc in type_container_resolve_order)
-					tc.EmitConstants ();
-				
-				foreach (TypeContainer tc in type_container_resolve_order)
-					tc.Emit ();
-			}
-
+			//
+			// Because of the strange way in which we do things, global
+			// attributes must be processed first.
+			//
 			if (global_attributes != null){
 				EmitContext ec = new EmitContext (
 					tree.Types, Mono.CSharp.Location.Null, null, null, 0, false);
@@ -584,7 +634,19 @@ namespace Mono.CSharp {
 				Attribute.ApplyAttributes (ec, ab, ab, global_attributes,
 							   global_attributes.Location);
 			} 
-
+			
+			if (attribute_types != null)
+				foreach (TypeContainer tc in attribute_types)
+					tc.Emit ();
+			
+			if (type_container_resolve_order != null) {
+				foreach (TypeContainer tc in type_container_resolve_order)
+					tc.EmitConstants ();
+				
+				foreach (TypeContainer tc in type_container_resolve_order)
+					tc.Emit ();
+			}
+			
 			if (Unsafe) {
 				ConstructorInfo ci = TypeManager.unverifiable_code_type.GetConstructor (new Type [0]);
 					
@@ -639,12 +701,12 @@ namespace Mono.CSharp {
 			return fb;
 		}
 
-		static public void AddGlobalAttributes (AttributeSection sect, Location loc)
+		static public void AddGlobalAttribute (AttributeSection attr, Location loc)
 		{
 			if (global_attributes == null)
-				global_attributes = new Attributes (sect, loc);
-
-			global_attributes.AddAttribute (sect);
+				global_attributes = new Attributes (attr, loc);
+			else
+				global_attributes.AddAttribute (attr);
 		}
 	}
 }
