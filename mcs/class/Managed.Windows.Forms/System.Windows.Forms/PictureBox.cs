@@ -65,7 +65,7 @@ namespace System.Windows.Forms {
 
 				image = value;
 				UpdateSize ();
-				if (ImageAnimator.CanAnimate (image)) {
+				if (image != null && ImageAnimator.CanAnimate (image)) {
 					frame_handler = new EventHandler (OnAnimateImage);
 					ImageAnimator.Animate (image, frame_handler);
 				}
