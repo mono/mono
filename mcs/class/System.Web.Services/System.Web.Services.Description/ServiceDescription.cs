@@ -21,6 +21,7 @@ namespace System.Web.Services.Description {
 		#region Fields
 
 		public const string Namespace = "http://schemas.xmlsoap.org/wsdl/";
+
 		BindingCollection bindings;
 		ServiceDescriptionFormatExtensionCollection extensions;
 		ImportCollection imports;
@@ -28,15 +29,26 @@ namespace System.Web.Services.Description {
 		string name;
 		PortTypeCollection portTypes;
 		string retrievalUrl;
-		XmlSerializer serializer;
 		ServiceDescriptionCollection serviceDescriptions;
 		ServiceCollection services;
 		string targetNamespace;
 		Types types;
 
+		static XmlSerializer serializer;
+		static SoapReflectionImporter importer;
+		static XmlTypeMapping mapping;
+
+
 		#endregion // Fields
 
 		#region Constructors
+
+		static ServiceDescription ()
+		{
+			importer = new SoapReflectionImporter ();
+			mapping = importer.ImportTypeMapping (typeof (ServiceDescription));
+			serializer = new XmlSerializer (mapping);
+		}
 	
 		public ServiceDescription ()
 		{
@@ -47,7 +59,11 @@ namespace System.Web.Services.Description {
 			name = String.Empty;		
 			portTypes = new PortTypeCollection (this);
 			retrievalUrl = String.Empty;
-			serializer = null;
+
+			SoapReflectionImporter importer = new SoapReflectionImporter ();
+			XmlTypeMapping mapping = importer.ImportTypeMapping (typeof (ServiceDescription));
+			serializer = new XmlSerializer (mapping);
+
 			serviceDescriptions = null;
 			services = new ServiceCollection (this);
 			targetNamespace = String.Empty;
@@ -97,8 +113,7 @@ namespace System.Web.Services.Description {
 	
 		[XmlIgnore]	
 		public static XmlSerializer Serializer {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get { return serializer; }
 		}
 
 		[XmlIgnore]
@@ -131,58 +146,49 @@ namespace System.Web.Services.Description {
 
 		#region Methods
 
-		[MonoTODO]
 		public static bool CanRead (XmlReader reader)
 		{
-			throw new NotImplementedException ();
+			return serializer.CanDeserialize (reader);
 		}
 
-		[MonoTODO]
 		public static ServiceDescription Read (Stream stream)
 		{
-			throw new NotImplementedException ();
+			return (ServiceDescription) serializer.Deserialize (stream);
 		}
 
-		[MonoTODO]
 		public static ServiceDescription Read (string fileName)
 		{
-			throw new NotImplementedException ();
+			return Read (new FileStream (fileName, FileMode.Open));
 		}
 
-		[MonoTODO]
 		public static ServiceDescription Read (TextReader textReader)
 		{
-			throw new NotImplementedException ();
+			return (ServiceDescription) serializer.Deserialize (textReader);
 		}
 
-		[MonoTODO]
 		public static ServiceDescription Read (XmlReader reader)
 		{
-			throw new NotImplementedException ();
+			return (ServiceDescription) serializer.Deserialize (reader);
 		}
 
-		[MonoTODO]
 		public void Write (Stream stream)
 		{
-			throw new NotImplementedException ();
+			serializer.Serialize (stream, this);
 		}
 
-		[MonoTODO]
 		public void Write (string fileName)
 		{
-			throw new NotImplementedException ();
+			Write (new FileStream (fileName, FileMode.Create));
 		}
 
-		[MonoTODO]
 		public void Write (TextWriter writer)
 		{
-			throw new NotImplementedException ();
+			serializer.Serialize (writer, this);
 		}
 
-		[MonoTODO]
 		public void Write (XmlWriter writer)
 		{
-			throw new NotImplementedException ();
+			serializer.Serialize (writer, this);
 		}
 
 		internal void SetParent (ServiceDescriptionCollection serviceDescriptions)

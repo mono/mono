@@ -1,3 +1,16 @@
+2002-07-24  Tim Coleman <tim@timcoleman.com>
+	* ServiceDescription.cs:
+		Implement Read/Write methods for serialization/
+		deserialization.
+
+2002-07-23  Tim Coleman <tim@timcoleman.com>
+	* ServiceDescription.cs:
+		Add XmlIgnore attribute to ServiceDescriptions property
+	* OperationFlow.cs:
+	* ServiceDescriptionImportWarnings.cs:
+		Explicitly set values in enumeration to match
+		.NET.
+
 2002-07-22 Tim Coleman <tim@timcoleman.com>	
 	* Binding.cs:
 	* BindingCollection.cs:
