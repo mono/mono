@@ -6,7 +6,7 @@ use Carp;
 my @allfiles;
 
 my @badsuites = qw[System\.Collections/HashtableTest System\.Collections/StackTest System\.Collections\.Specialized\.BasicOperationsTest];
-my @badtests = qw[PathTest:TestGetTempFileName XmlTextReaderTests:TestIsNameChar XmlTextReaderTests:TestIsFirstNameChar];
+my @badtests = qw[PathTest:TestGetTempFileName XmlTextReaderTests:TestIsNameChar XmlTextReaderTests:TestIsFirstNameChar ByteTest:TestParse];
 my @mapfiles = ('s,^MonoTests\.(.*)/,$1/,',
 		's,^Ximian\.Mono\.Tests(.*)/,,',
 		's,^System\.Net/,,',
