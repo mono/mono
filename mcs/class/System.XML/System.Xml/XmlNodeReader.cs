@@ -37,7 +37,11 @@ using System.Text;
 
 namespace System.Xml
 {
+#if NET_2_0
+	public class XmlNodeReader : XmlReader, IXmlNamespaceResolver
+#else
 	public class XmlNodeReader : XmlReader
+#endif
 	{
 		XmlDocument document;
 		XmlNode startNode;
@@ -538,6 +542,37 @@ namespace System.Xml
 					current.BaseURI, XmlLang, XmlSpace, Encoding.Unicode);
 		}
 
+#if NET_2_0
+		[MonoTODO]
+		public IDictionary GetNamespacesInScope (XmlNamespaceScope scope)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
+
+		private XmlElement GetCurrentElement ()
+		{
+			XmlElement el = null;
+			switch (current.NodeType) {
+			case XmlNodeType.Attribute:
+				el = ((XmlAttribute) current).OwnerElement;
+				break;
+			case XmlNodeType.Element:
+				el = (XmlElement) current;
+				break;
+			case XmlNodeType.Text:
+			case XmlNodeType.CDATA:
+			case XmlNodeType.EntityReference:
+			case XmlNodeType.Comment:
+			case XmlNodeType.SignificantWhitespace:
+			case XmlNodeType.Whitespace:
+			case XmlNodeType.ProcessingInstruction:
+				el = current.ParentNode as XmlElement;
+				break;
+			}
+			return el;
+		}
+
 		public override string LookupNamespace (string prefix)
 		{
 			if (entityReader != null && entityReader.ReadState != ReadState.Initial)
@@ -546,26 +581,60 @@ namespace System.Xml
 			if (current == null)
 				return null;
 
-			XmlAttribute curAttr = current as XmlAttribute;
-			XmlNode target = curAttr != null ? curAttr.OwnerElement : current;
+			XmlElement el = GetCurrentElement ();
 
-			if (prefix == "") {
-				do {
-					XmlAttribute attr = target.Attributes ["xmlns"];
-					if (attr != null)
+			for (; el != null; el = el.ParentNode as XmlElement) {
+				for (int i = 0; i < el.Attributes.Count; i++) {
+					XmlAttribute attr = el.Attributes [i];
+					if (attr.NamespaceURI != XmlNamespaceManager.XmlnsXmlns)
+						continue;
+					if (prefix == "") {
+						if (attr.Prefix == "")
+							return attr.Value;
+					}
+					else if (attr.LocalName == prefix)
 						return attr.Value;
-					target = target.ParentNode;
-				} while (target.NodeType != XmlNodeType.Document);
-			} else {
-				string name = "xmlns:" + prefix;
-				do {
-					XmlAttribute attr = target.Attributes [name];
-					if (attr != null)
-						return attr.Value;
-					target = target.ParentNode;
-				} while (target.NodeType != XmlNodeType.Document);
+					continue;
+				}
 			}
-			return defaultNsmgr.LookupNamespace (prefix, false);
+
+			return defaultNsmgr.LookupNamespace (prefix);
+		}
+
+		public string LookupPrefix (string ns)
+		{
+			return LookupPrefix (ns, false);
+		}
+
+		public string LookupPrefix (string ns, bool atomizedNames)
+		{
+			if (entityReader != null && entityReader.ReadState != ReadState.Initial)
+				return ((IXmlNamespaceResolver) entityReader).LookupPrefix (ns, atomizedNames);
+
+			if (current == null)
+				return null;
+
+			XmlElement el = GetCurrentElement ();
+
+			for (; el != null; el = el.ParentNode as XmlElement) {
+				for (int i = 0; i < el.Attributes.Count; i++) {
+					XmlAttribute attr = el.Attributes [i];
+					if (atomizedNames) {
+						if (!Object.ReferenceEquals (attr.NamespaceURI, XmlNamespaceManager.XmlnsXmlns))
+							continue;
+						if (Object.ReferenceEquals (attr.Value, ns))
+							// xmlns:blah="..." -> LocalName, xmlns="..." -> String.Empty
+							return attr.Prefix != String.Empty ? attr.LocalName : String.Empty;
+					} else {
+						if (attr.NamespaceURI != XmlNamespaceManager.XmlnsXmlns)
+							continue;
+						if (attr.Value == ns)
+							// xmlns:blah="..." -> LocalName, xmlns="..." -> String.Empty
+							return attr.Prefix != String.Empty ? attr.LocalName : String.Empty;
+					}
+				}
+			}
+			return defaultNsmgr.LookupPrefix (ns, atomizedNames);
 		}
 
 		public override void MoveToAttribute (int attributeIndex)

@@ -161,7 +161,11 @@ namespace System.Xml {
 			get { return validatingReader == null ? null : validatingReader [localName, namespaceName]; }
 		}
 
+#if NET_2_0
+		public int LineNumber {
+#else
 		int IXmlLineInfo.LineNumber {
+#endif
 			get {
 				if (IsDefault)
 					return 0;
@@ -170,7 +174,11 @@ namespace System.Xml {
 			}
 		}
 
+#if NET_2_0
+		public int LinePosition {
+#else
 		int IXmlLineInfo.LinePosition {
+#endif
 			get {
 				if (IsDefault)
 					return 0;
@@ -358,7 +366,11 @@ namespace System.Xml {
 				dtdReader.ParserContext : null;
 		}
 
+#if NET_2_0
+		public bool HasLineInfo ()
+#else
 		bool IXmlLineInfo.HasLineInfo ()
+#endif
 		{
 			IXmlLineInfo info = validatingReader as IXmlLineInfo;
 			return info != null ? info.HasLineInfo () : false;

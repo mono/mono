@@ -177,7 +177,7 @@ namespace System.Xml
 
 		public static XmlReader Create (string url, XmlReaderSettings settings)
 		{
-			return Create (url, new XmlUrlResolver (), settings);
+			return Create (url, null, new XmlUrlResolver (), settings);
 		}
 
 		public static XmlReader Create (XmlReader reader, XmlReaderSettings settings)
@@ -191,8 +191,8 @@ namespace System.Xml
 			return CreateFilteredXmlReader (reader, resolver, settings);
 		}
 
-		[MonoTODO ("CheckCharacters, ConformanceLevel, IgnoreSchemaXXX etc.")]
-		public static XmlReader Create (string url, XmlResolver resolver, XmlReaderSettings settings)
+		[MonoTODO ("CheckCharacters, ConformanceLevel, IgnoreSchemaXXX etc.; Encoding")]
+		public static XmlReader Create (string url, Encoding encoding, XmlResolver resolver, XmlReaderSettings settings)
 		{
 			return CreateCustomizedTextReader (new XmlTextReader (url), resolver, settings);
 		}
@@ -336,6 +336,15 @@ namespace System.Xml
 		}
 
 		public abstract string LookupNamespace (string prefix);
+
+#if NET_2_0
+		public virtual string LookupNamespace (string prefix, bool atomizedNames)
+#else
+		internal virtual string LookupNamespace (string prefix, bool atomizedNames)
+#endif
+		{
+			return LookupNamespace (prefix);
+		}
 
 		public abstract void MoveToAttribute (int i);
 

@@ -49,7 +49,12 @@ using Mono.Xml;
 
 namespace System.Xml
 {
+#if NET_2_0
+	public class XmlTextReader : XmlReader,
+		IXmlLineInfo, IXmlNamespaceResolver
+#else
 	public class XmlTextReader : XmlReader, IXmlLineInfo
+#endif
 	{
 		#region Constructors
 
@@ -374,6 +379,13 @@ namespace System.Xml
 			return attributeTokens [idx].Value;
 		}
 
+#if NET_2_0
+		public IDictionary GetNamespacesInScope (XmlNamespaceScope scope)
+		{
+			return parserContext.NamespaceManager.GetNamespacesInScope (scope);
+		}
+#endif
+
 		public TextReader GetRemainder ()
 		{
 			if (peekCharsIndex == peekCharsLength)
@@ -381,7 +393,11 @@ namespace System.Xml
 			return new StringReader (new string (peekChars, peekCharsIndex, peekCharsLength - peekCharsIndex) + reader.ReadToEnd ());
 		}
 
+#if NET_2_0
+		public bool HasLineInfo ()
+#else
 		bool IXmlLineInfo.HasLineInfo ()
+#endif
 		{
 			return true;
 		}
@@ -391,10 +407,26 @@ namespace System.Xml
 			return LookupNamespace (prefix, false);
 		}
 
-		internal string LookupNamespace (string prefix, bool atomizedName)
+#if NET_2_0
+		public override string LookupNamespace (string prefix, bool atomizedName)
+#else
+		internal override string LookupNamespace (string prefix, bool atomizedName)
+#endif
 		{
 			return parserContext.NamespaceManager.LookupNamespace (prefix, atomizedName);
 		}
+
+#if NET_2_0
+		string IXmlNamespaceResolver.LookupPrefix (string ns)
+		{
+			return LookupPrefix (ns, false);
+		}
+
+		public string LookupPrefix (string ns, bool atomizedName)
+		{
+			return parserContext.NamespaceManager.LookupPrefix (ns, atomizedName);
+		}
+#endif
 
 		public override void MoveToAttribute (int i)
 		{

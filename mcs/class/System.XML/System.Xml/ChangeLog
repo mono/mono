@@ -1,3 +1,16 @@
+2004-07-21  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlConvert.cs : added internal ToBinHexString() (BTW according to
+	  MSDN documentation it should be public).
+	* XmlReader.cs : fixed one incorrect Create() overload. Added
+	  LookupNamespace (string, bool) (public for 2.0, internal for 1.x).
+	* XmlTextReader.cs : Mostly implemented IXmlNamespaceResolver
+	  interface. Fixed HasLineInfo() access modifier on 2.0.
+	* XmlNodeReader.cs : Mostly implemented IXmlNamespaceResolver
+	  interface. Wrote common namespace node lookup method and rewrote
+	  existing LookupNamespace().
+	* XmlValidatingReader.cs : Fixed 2.0 IXmlLineInfo members' signatures.
+
 2004-07-20  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlNode.cs : When the argument node being inserted is the existing

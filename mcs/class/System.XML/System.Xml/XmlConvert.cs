@@ -31,6 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 using System;
+using System.IO;
 using System.Text;
 using System.Globalization;
 using System.Xml.Schema;
@@ -216,6 +217,29 @@ namespace System.Xml {
 				default:
 					throw new FormatException(s + " is not a valid boolean value");
 			}
+		}
+
+		// LAMESPEC: It has been documented as public, but is marked as internal.
+		internal static string ToBinHexString (byte [] data)
+		{
+			if (data == null)
+				throw new ArgumentNullException ("data");
+			StringWriter w = new StringWriter ();
+			// Copied from XmlTextWriter.WriteBinHex ()
+			for (int i = 0; i < data.Length; i++) {
+				int val = data [i];
+				int high = val >> 4;
+				int low = val & 15;
+				if (high > 9)
+					w.Write ((char) (high + 55));
+				else
+					w.Write ((char) (high + 0x30));
+				if (low > 9)
+					w.Write ((char) (low + 55));
+				else
+					w.Write ((char) (low + 0x30));
+			}
+			return w.ToString ();
 		}
 
 		public static byte ToByte(string s)
