@@ -31,7 +31,14 @@ unsafe class X {
 			return 2;
 		if (cptr [b] != 10)
 			return 3;
-		
+
+		//
+		// Try to compile non-int values
+		//
+		byte* bptr = (byte*) 5;
+                ushort us = 3;
+                byte* ret = (byte*) (bptr + us);
+			
 		Console.WriteLine ("Ok");
 		return 0;
 	}
