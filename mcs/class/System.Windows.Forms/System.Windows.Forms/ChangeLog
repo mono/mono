@@ -1,3 +1,6 @@
+2003-08-24  Alexandre Pigolkine <pigolkine@gmx.de>
+	* CheckBox.cs		modified to be compatible with specification	
+
 2003-08-24  Duncan Mak  <duncan@ximian.com>
 
 	* ListControl.cs: Indentation, coding style fixes.
