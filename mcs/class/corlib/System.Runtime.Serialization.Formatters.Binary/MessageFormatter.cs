@@ -161,7 +161,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			else
 				contextFlag = MethodFlags.ExcludeLogicalCallContext;
 
-			if (resp.Properties.Count > internalProperties.Length)
+			if (resp.Properties.Count > internalProperties.Length && ((returnTypeTag & ReturnTypeTag.Exception) == 0))
 			{
 				extraProperties = GetExtraProperties (resp.Properties, internalProperties);
 				infoArrayLength++;
@@ -378,7 +378,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 				if ((typeTag & ReturnTypeTag.Exception) > 0) {
 					exception = (Exception) msgInfo[0];
 				}
-				if ((flags & MethodFlags.NoArguments) > 0 || (flags & MethodFlags.PrimitiveArguments) > 0) {
+				else if ((flags & MethodFlags.NoArguments) > 0 || (flags & MethodFlags.PrimitiveArguments) > 0) {
 					int n = 0;
 					if ((typeTag & ReturnTypeTag.ObjectType) > 0) returnValue = msgInfo [n++];
 					if (hasContextInfo) callContext = (LogicalCallContext)msgInfo[n++];

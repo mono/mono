@@ -1,5 +1,9 @@
 2003-02-04  Lluis Sanchez Gual <lluis@ideary.com>
 
+    * MessageFormatter.cs: Corrected some bugs that affected serialization of exceptions
+
+2003-02-04  Lluis Sanchez Gual <lluis@ideary.com>
+
     * MessageFormatter.cs: Implemented serialization of message properties.
 
 2003-01-24  Martin Baulig  <martin@ximian.com>
