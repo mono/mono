@@ -19,8 +19,8 @@ using NUnit.Framework;
 namespace MonoTests.System.Resources {
 
 	public class ResourceReaderTest : TestCase {
-		private static string m_ResourceFile = "MyResources.resources";
-		private static string m_BadResourceFile = "Empty.resources";
+		private static string m_ResourceFile = "System.Resources\\MyResources.resources";
+		private static string m_BadResourceFile = "System.Resources\\Empty.resources";
 		
 		public ResourceReaderTest(String name) : base(name) {
 		}
