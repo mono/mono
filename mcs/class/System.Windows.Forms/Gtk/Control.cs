@@ -186,10 +186,7 @@ namespace System.Windows.Forms {
 		internal virtual Widget CreateWidget ()
 		{
 			vbox = new Gtk.VBox(false, 0);
-
 			layout = new Gtk.Layout (new Gtk.Adjustment (IntPtr.Zero), new Gtk.Adjustment (IntPtr.Zero));
-			layout.Show ();
-
 			vbox.PackStart(layout, true, true, 0);
 			vbox.ShowAll ();
 			return vbox;
