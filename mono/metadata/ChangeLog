@@ -1,3 +1,8 @@
+
+Mon May 6 13:10:34 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* loader.c: print a big message when an icall can't be found.
+
 2002-05-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* string-icalls.c: fix bug 24248.
