@@ -4,6 +4,8 @@
 
 mcs_topdir=$(top_srcdir)/../mcs
 gacutil=$(srcdir)/../gacutil.exe
+corlib = mscorlib.dll
+corlibdir = net_2_0
 
 gac_assemblies_list = \
 	Accessibility.dll					\
@@ -33,7 +35,6 @@ gac_assemblies_list = \
 assemblies_DATA =	\
 	ByteFX.Data.dll						\
 	Commons.Xml.Relaxng.dll					\
-	mscorlib.dll						\
 	I18N.CJK.dll						\
 	I18N.dll						\
 	I18N.MidEast.dll					\
@@ -76,9 +77,14 @@ $(assemblies_DATA):
 $(gac_assemblies_list):
 	cp -f $(mcs_topdir)/class/lib/net_2_0/$@ $(srcdir)
 
-all-local: $(gac_assemblies_list)
+$(corlib):
+	cp -f $(mcs_topdir)/class/lib/net_2_0/mscorlib.dll $(srcdir)
+
+all-local: $(gac_assemblies_list) $(corlib)
 
 install-data-local:
+	$(mkinstalldirs) $(DESTDIR)/$(libdir)/$(corlibdir)
+	$(INSTALL_DATA) $(corlib) $(DESTDIR)/$(libdir)/$(corlibdir) 
 	@if test -n '$(gac_assemblies_list)'; then \
 	  for i in ''$(gac_assemblies_list); do	\
 		echo "$(top_builddir)/mono/mini/mono $(gacutil) /i $(srcdir)/$$i /f" ; \
@@ -91,11 +97,13 @@ uninstall-local:
 		echo "$(top_builddir)/mono/mini/mono $(gacutil) /u $(srcdir)/$$i" ; \
 		$(top_builddir)/mono/mini/mono $(gacutil) /u $(srcdir)/$$i || exit 1 ; \
 	  done; fi
+	rm -f $(DESTDIR)/$(libdir)/$(corlibdir)/$(corlib)
 
 dist-hook: $(gac_assemblies_list)
 	@for i in $(gac_assemblies_list); do \
 		cp $(srcdir)/$$i $(distdir)/. ; \
 	done
+	cp $(srcdir)/$(corlib) $(distdir)/.
 
 copy_dlls:
 	cp /nt/mono/mcs/class/*/*.dll .
