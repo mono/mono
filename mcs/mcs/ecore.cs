@@ -3601,7 +3601,7 @@ namespace Mono.CSharp {
 			loc = l;
 		}
 
-		public Expression DoResolveType (EmitContext ec)
+		public virtual Expression DoResolveType (EmitContext ec)
 		{
 			return this;
 		}
