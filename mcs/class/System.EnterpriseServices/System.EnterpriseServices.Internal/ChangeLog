@@ -1,5 +1,12 @@
 2004-05-13: Mike Kestner  <mkestner@ximian.com>
 
+	* SoapClientImportUtil.cs : add a TODO
+	* SoapServerTlb.cs : stub
+	* SoapServerVRoot.cs : stub
+	* SoapUtility.cs : stub
+
+2004-05-13: Mike Kestner  <mkestner@ximian.com>
+
 	* AppDomainHelper.cs : stub
 	* AssemblyLocator.cs : stub
 	* ClrObjectFactory.cs : stub

@@ -98,3 +98,6 @@ System.EnterpriseServices.Internal/ISoapServerVRoot.cs
 System.EnterpriseServices.Internal/ISoapUtility.cs
 System.EnterpriseServices.Internal/Publish.cs
 System.EnterpriseServices.Internal/SoapClientImport.cs
+System.EnterpriseServices.Internal/SoapServerTlb.cs
+System.EnterpriseServices.Internal/SoapServerVRoot.cs
+System.EnterpriseServices.Internal/SoapUtility.cs
