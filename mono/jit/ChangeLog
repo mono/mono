@@ -1,5 +1,7 @@
 2001-09-17  Dietmar Maurer  <dietmar@ximian.com>
 
+	* testjit.c (tree_get_address): impl. to fix address bug
+
 	* x86.brg: emit real code for calls
 
 	* testjit.c (create_jit_trampoline): creates a function to trigger jit
