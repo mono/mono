@@ -1,3 +1,19 @@
+2005-03-01  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* BinaryCommon.cs: Found the meaning of two unknown binary elements.
+	* CodeGenerator.cs: Derive generated classes from ClrTypeMetadata
+	instead of TypeMetadata. Added writeTypes parameter to WriteTypeData().
+	* ObjectWriter.cs: Use type and assembly names as keys for the type and
+	assembly caches. This is needed since ISerializable types can provide
+	fake type names (which are mapped to real types by a binder on
+	deserialization).
+	Implemented support for BinaryFormatter.TypeFormat.
+	* BinaryFormatter.cs, MessageFormatter.cs: Implemented support for
+	TypeFormat property.
+	* ObjectReader.cs: Added support for objects serialized without
+	member type information. This fixes bug #73114.
+	If a binder return null, use the default way of loading the type.
+
 2005-02-25  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* ObjectReader.cs: In ReadArrayOfPrimitiveType, added a specific

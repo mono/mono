@@ -40,22 +40,34 @@ namespace System.Runtime.Serialization.Formatters.Binary
 {
 	abstract class TypeMetadata
 	{
-		public TypeMetadata (Type instanceType)
-		{
-			InstanceType = instanceType;
-			TypeAssembly = instanceType.Assembly;
-		}
-		
-		public Assembly TypeAssembly;
-		public Type InstanceType;
+		public string TypeAssemblyName;
+		public string InstanceTypeName;
 		
 		public abstract void WriteAssemblies (ObjectWriter ow, BinaryWriter writer);
-		public abstract void WriteTypeData (ObjectWriter ow, BinaryWriter writer);
+		public abstract void WriteTypeData (ObjectWriter ow, BinaryWriter writer, bool writeTypes);
 		public abstract void WriteObjectData (ObjectWriter ow, BinaryWriter writer, object data);
 		
 		public virtual bool IsCompatible (TypeMetadata other)
 		{
 			return true;
+		}
+		
+		public abstract bool RequiresTypes { get; }
+	}
+	
+	abstract class ClrTypeMetadata: TypeMetadata
+	{
+		public Type InstanceType;
+
+		public ClrTypeMetadata (Type instanceType)
+		{
+			InstanceType = instanceType;
+			InstanceTypeName = instanceType.FullName;
+			TypeAssemblyName = instanceType.Assembly.FullName;
+		}
+		
+		public override bool RequiresTypes {
+			get { return false; }
 		}
 	}
 	
@@ -64,7 +76,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 		Type[] types;
 		string[] names;
 		
-		public SerializableTypeMetadata (Type itype, SerializationInfo info): base (itype)
+		public SerializableTypeMetadata (Type itype, SerializationInfo info)
 		{
 			types = new Type [info.MemberCount];
 			names = new string [info.MemberCount];
@@ -79,11 +91,8 @@ namespace System.Runtime.Serialization.Formatters.Binary
 				n++;
 			}
 
-			if (info.FullTypeName != InstanceType.FullName || info.AssemblyName != TypeAssembly.FullName) 
-			{
-				TypeAssembly = Assembly.Load (info.AssemblyName);
-				InstanceType = TypeAssembly.GetType (info.FullTypeName);
-			}
+			TypeAssemblyName = info.AssemblyName;
+			InstanceTypeName = info.FullTypeName;
 		}
 		
 		public override bool IsCompatible (TypeMetadata other)
@@ -92,8 +101,8 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			
 			SerializableTypeMetadata tm = (SerializableTypeMetadata)other;
 			if (types.Length != tm.types.Length) return false;
-			if (TypeAssembly != tm.TypeAssembly) return false;
-			if (InstanceType != tm.InstanceType) return false;
+			if (TypeAssemblyName != tm.TypeAssemblyName) return false;
+			if (InstanceTypeName != tm.InstanceTypeName) return false;
 			for (int n=0; n<types.Length; n++)
 			{
 				if (types[n] != tm.types[n]) return false;
@@ -114,7 +123,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			}
 		}
 		
-		public override void WriteTypeData (ObjectWriter ow, BinaryWriter writer)
+		public override void WriteTypeData (ObjectWriter ow, BinaryWriter writer, bool writeTypes)
 		{
 			writer.Write (types.Length);
 
@@ -139,9 +148,13 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			while (e.MoveNext ())
 				ow.WriteValue (writer, e.ObjectType, e.Value);
 		}
+		
+		public override bool RequiresTypes {
+			get { return true; }
+		}
 	}
 	
-	class MemberTypeMetadata: TypeMetadata
+	class MemberTypeMetadata: ClrTypeMetadata
 	{
 		MemberInfo[] members;
 		
@@ -162,7 +175,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			}
 		}
 		
-		public override void WriteTypeData (ObjectWriter ow, BinaryWriter writer)
+		public override void WriteTypeData (ObjectWriter ow, BinaryWriter writer, bool writeTypes)
 		{
 			writer.Write (members.Length);
 
@@ -174,13 +187,15 @@ namespace System.Runtime.Serialization.Formatters.Binary
 					writer.Write (field.DeclaringType.Name + "+" + field.Name);
 			}
 
-			// Types of fields
-			foreach (FieldInfo field in members)
-				ObjectWriter.WriteTypeCode (writer, field.FieldType);
-
-			// Type specs of fields
-			foreach (FieldInfo field in members)
-				ow.WriteTypeSpec (writer, field.FieldType);
+			if (writeTypes) {
+				// Types of fields
+				foreach (FieldInfo field in members)
+					ObjectWriter.WriteTypeCode (writer, field.FieldType);
+	
+				// Type specs of fields
+				foreach (FieldInfo field in members)
+					ow.WriteTypeSpec (writer, field.FieldType);
+			}
 		}
 		
 		public override void WriteObjectData (ObjectWriter ow, BinaryWriter writer, object data)
@@ -202,10 +217,12 @@ namespace System.Runtime.Serialization.Formatters.Binary
 		static Hashtable _cachedTypes = new Hashtable();
 
 		internal static Assembly CorlibAssembly = typeof(string).Assembly;
+		internal static string CorlibAssemblyName = typeof(string).Assembly.FullName;
 
 		ISurrogateSelector _surrogateSelector;
 		StreamingContext _context;
 		FormatterAssemblyStyle _assemblyFormat;
+		FormatterTypeStyle _typeFormat;
 		
 		class MetadataReference
 		{
@@ -219,11 +236,12 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			}
 		}
 		
-		public ObjectWriter (ISurrogateSelector surrogateSelector, StreamingContext context, FormatterAssemblyStyle assemblyFormat)
+		public ObjectWriter (ISurrogateSelector surrogateSelector, StreamingContext context, FormatterAssemblyStyle assemblyFormat, FormatterTypeStyle typeFormat)
 		{
 			_surrogateSelector = surrogateSelector;
 			_context = context;
 			_assemblyFormat = assemblyFormat;
+			_typeFormat = typeFormat;
 		}
 
 		public void WriteObjectGraph (BinaryWriter writer, object obj, Header[] headers)
@@ -242,7 +260,6 @@ namespace System.Runtime.Serialization.Formatters.Binary
 
 		public void WriteQueuedObjects (BinaryWriter writer)
 		{
-
 			while (_pendingObjects.Count > 0)
 				WriteObjectInstance (writer, _pendingObjects.Dequeue(), false);
 		}
@@ -280,7 +297,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			TypeMetadata metadata;
 
 			GetObjectData (obj, out metadata, out data);
-			MetadataReference metadataReference = (MetadataReference)_cachedMetadata [metadata.InstanceType];
+			MetadataReference metadataReference = (MetadataReference)_cachedMetadata [metadata.InstanceTypeName];
 
 			if (metadataReference != null && metadata.IsCompatible (metadataReference.Metadata))
 			{
@@ -298,22 +315,24 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			if (metadataReference == null)
 			{
 				metadataReference = new MetadataReference (metadata, id);
-				_cachedMetadata [metadata.InstanceType] = metadataReference;
+				_cachedMetadata [metadata.InstanceTypeName] = metadataReference;
 			}
+			
+			bool writeTypes = metadata.RequiresTypes || _typeFormat == FormatterTypeStyle.TypesAlways;
 
 			BinaryElement objectTag;
 
 			int assemblyId;
-			if (metadata.TypeAssembly == CorlibAssembly)
+			if (metadata.TypeAssemblyName == CorlibAssemblyName)
 			{
 				// A corlib type
-				objectTag = BinaryElement.RuntimeObject;
+				objectTag = writeTypes ? BinaryElement.RuntimeObject : BinaryElement.UntypedRuntimeObject;
 				assemblyId = -1;
 			}
 			else
 			{
-				objectTag = BinaryElement.ExternalObject;
-				assemblyId = WriteAssembly (writer, metadata.TypeAssembly);
+				objectTag = writeTypes ? BinaryElement.ExternalObject : BinaryElement.UntypedExternalObject;
+				assemblyId = WriteAssemblyName (writer, metadata.TypeAssemblyName);
 			}
 
 			// Registers the assemblies needed for each field
@@ -326,9 +345,9 @@ namespace System.Runtime.Serialization.Formatters.Binary
 
 			writer.Write ((byte) objectTag);
 			writer.Write ((int)id);
-			writer.Write (metadata.InstanceType.FullName);
+			writer.Write (metadata.InstanceTypeName);
 			
-			metadata.WriteTypeData (this, writer);
+			metadata.WriteTypeData (this, writer, writeTypes);
 			if (assemblyId != -1) writer.Write (assemblyId);
 			
 			metadata.WriteObjectData (this, writer, data);
@@ -338,7 +357,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 		{
 			Type instanceType = obj.GetType();
 
-			// Check if the formatter has a surrogate selector – if it does, 
+			// Check if the formatter has a surrogate selector, if it does, 
 			// check if the surrogate selector handles objects of the given type. 
 
 			if (_surrogateSelector != null)
@@ -699,7 +718,12 @@ namespace System.Runtime.Serialization.Formatters.Binary
 
 		public int WriteAssembly (BinaryWriter writer, Assembly assembly)
 		{
-			if (assembly == ObjectWriter.CorlibAssembly) return -1;
+			return WriteAssemblyName (writer, assembly.FullName);
+		}
+		
+		public int WriteAssemblyName (BinaryWriter writer, string assembly)
+		{
+			if (assembly == ObjectWriter.CorlibAssemblyName) return -1;
 			
 			bool firstTime;
 			int id = RegisterAssembly (assembly, out firstTime);
@@ -708,19 +732,27 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			writer.Write ((byte) BinaryElement.Assembly);
 			writer.Write (id);
 			if (_assemblyFormat == FormatterAssemblyStyle.Full)
-				writer.Write (assembly.GetName ().FullName);
-			else
-				writer.Write (assembly.GetName ().Name);
+				writer.Write (assembly);
+			else {
+				int i = assembly.IndexOf (',');
+				if (i != -1) assembly = assembly.Substring (0, i);
+				writer.Write (assembly);
+			}
 				
 			return id;
 		}
 
 		public int GetAssemblyId (Assembly assembly)
 		{
+			return GetAssemblyNameId (assembly.FullName);
+		}
+		
+		public int GetAssemblyNameId (string assembly)
+		{
 			return (int)_assemblyCache[assembly];
 		}
 
-		private int RegisterAssembly (Assembly assembly, out bool firstTime)
+		private int RegisterAssembly (string assembly, out bool firstTime)
 		{
 			if (_assemblyCache.ContainsKey (assembly))
 			{

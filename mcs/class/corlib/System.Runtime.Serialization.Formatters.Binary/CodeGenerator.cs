@@ -71,7 +71,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 				
 			MemberInfo[] members = FormatterServices.GetSerializableMembers (type, context);
 			
-			TypeBuilder typeBuilder = _module.DefineType (name, TypeAttributes.Public, typeof(TypeMetadata));
+			TypeBuilder typeBuilder = _module.DefineType (name, TypeAttributes.Public, typeof(ClrTypeMetadata));
 
 			Type[] parameters;
 			MethodBuilder method;
@@ -83,7 +83,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			parameters = new Type[0];
 
     		ConstructorBuilder ctor = typeBuilder.DefineConstructor (MethodAttributes.Public, CallingConventions.Standard, parameters);
-			ConstructorInfo baseCtor = typeof(TypeMetadata).GetConstructor (new Type[] { typeof(Type) });
+			ConstructorInfo baseCtor = typeof(ClrTypeMetadata).GetConstructor (new Type[] { typeof(Type) });
 			gen = ctor.GetILGenerator();
 
 			gen.Emit (OpCodes.Ldarg_0);
@@ -119,9 +119,9 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			typeBuilder.DefineMethodOverride (method, typeof(TypeMetadata).GetMethod ("WriteAssemblies"));
 			
 			// *********************
-			// METHOD public override void WriteTypeData (ObjectWriter ow, BinaryWriter writer);
+			// METHOD public override void WriteTypeData (ObjectWriter ow, BinaryWriter writer, bool writeTypes);
 			
-			parameters = new Type[] { typeof(ObjectWriter), typeof(BinaryWriter) };
+			parameters = new Type[] { typeof(ObjectWriter), typeof(BinaryWriter), typeof(bool) };
 			method = typeBuilder.DefineMethod ("WriteTypeData", MethodAttributes.Public | MethodAttributes.Virtual, typeof(void), parameters);
 			gen = method.GetILGenerator();
 			
@@ -143,6 +143,10 @@ namespace System.Runtime.Serialization.Formatters.Binary
 				EmitWrite (gen, typeof(string));
 			}
 
+			Label falseLabel = gen.DefineLabel ();
+			gen.Emit (OpCodes.Ldarg_3);
+			gen.Emit (OpCodes.Brfalse, falseLabel);
+					
 			// Types of fields
 			foreach (FieldInfo field in members)
 			{
@@ -158,6 +162,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 				// EMIT ow.WriteTypeSpec (writer, field.FieldType);
 				EmitWriteTypeSpec (gen, field.FieldType, field.Name);
 			}
+			gen.MarkLabel(falseLabel);
 			
 			gen.Emit(OpCodes.Ret);
 			typeBuilder.DefineMethodOverride (method, typeof(TypeMetadata).GetMethod ("WriteTypeData"));

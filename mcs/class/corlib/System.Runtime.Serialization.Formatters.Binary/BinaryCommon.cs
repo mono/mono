@@ -124,8 +124,8 @@ namespace System.Runtime.Serialization.Formatters.Binary
 	{
 		Header = 0,
 		RefTypeObject = 1,
-		_Unknown1 = 2,
-		_Unknown2 = 3,
+		UntypedRuntimeObject = 2,
+		UntypedExternalObject = 3,
 		RuntimeObject = 4,
 		ExternalObject = 5,
 		String = 6,

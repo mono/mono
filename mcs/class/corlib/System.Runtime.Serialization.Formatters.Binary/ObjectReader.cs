@@ -147,12 +147,20 @@ namespace System.Runtime.Serialization.Formatters.Binary
 					ReadRefTypeObjectInstance (reader, out objectId, out value, out info);
 					break;
 
+				case BinaryElement.UntypedRuntimeObject:
+					ReadObjectInstance (reader, true, false, out objectId, out value, out info);
+					break;
+
+				case BinaryElement.UntypedExternalObject:
+					ReadObjectInstance (reader, false, false, out objectId, out value, out info);
+					break;
+
 				case BinaryElement.RuntimeObject:
-					ReadObjectInstance (reader, true, out objectId, out value, out info);
+					ReadObjectInstance (reader, true, true, out objectId, out value, out info);
 					break;
 
 				case BinaryElement.ExternalObject:
-					ReadObjectInstance (reader, false, out objectId, out value, out info);
+					ReadObjectInstance (reader, false, true, out objectId, out value, out info);
 					break;
 
 				case BinaryElement.String:
@@ -222,11 +230,11 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			_registeredAssemblies [id] = assemblyName;
 		}
 
-		private void ReadObjectInstance (BinaryReader reader, bool isRuntimeObject, out long objectId, out object value, out SerializationInfo info)
+		private void ReadObjectInstance (BinaryReader reader, bool isRuntimeObject, bool hasTypeInfo, out long objectId, out object value, out SerializationInfo info)
 		{
 			objectId = (long) reader.ReadUInt32 ();
 
-			TypeMetadata metadata = ReadTypeMetadata (reader, isRuntimeObject);
+			TypeMetadata metadata = ReadTypeMetadata (reader, isRuntimeObject, hasTypeInfo);
 			ReadObjectContent (reader, metadata, objectId, out value, out info);
 		}
 
@@ -492,7 +500,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			val = array;
 		}
 
-		private TypeMetadata ReadTypeMetadata (BinaryReader reader, bool isRuntimeObject)
+		private TypeMetadata ReadTypeMetadata (BinaryReader reader, bool isRuntimeObject, bool hasTypeInfo)
 		{
 			TypeMetadata metadata = new TypeMetadata();
 
@@ -502,17 +510,20 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			Type[] types = new Type[fieldCount];
 			string[] names = new string[fieldCount];
 
-			TypeTag[] codes = new TypeTag[fieldCount];
-
 			for (int n=0; n<fieldCount; n++)
 				names [n] = reader.ReadString ();
 
-			for (int n=0; n<fieldCount; n++)
-				codes [n] = (TypeTag) reader.ReadByte ();
+			if (hasTypeInfo)
+			{
+				TypeTag[] codes = new TypeTag[fieldCount];
 
-			for (int n=0; n<fieldCount; n++)
-				types [n] = ReadType (reader, codes[n]);
-
+				for (int n=0; n<fieldCount; n++)
+					codes [n] = (TypeTag) reader.ReadByte ();
+	
+				for (int n=0; n<fieldCount; n++)
+					types [n] = ReadType (reader, codes[n]);
+			}
+			
 			// Gets the type
 
 			if (!isRuntimeObject) 
@@ -574,6 +585,10 @@ namespace System.Runtime.Serialization.Formatters.Binary
 							
 						if (field == null) throw new SerializationException ("Field \"" + names[n] + "\" not found in class " + metadata.Type.FullName);
 						metadata.MemberInfos [n] = field;
+						
+						if (!hasTypeInfo) {
+							types [n] = field.FieldType;
+						}
 					}
 					metadata.MemberNames = null;	// Info now in MemberInfos
 				}
@@ -702,13 +717,13 @@ namespace System.Runtime.Serialization.Formatters.Binary
 		{
 			string assemblyName = (string)_registeredAssemblies[assemblyId];
 
-			if (_binder == null)
-			{
-				Assembly assembly = Assembly.Load (assemblyName);
-				return assembly.GetType (className, true);
+			if (_binder != null) {
+				Type t = _binder.BindToType (assemblyName, className);
+				if (t != null) return t;
 			}
-			else
-				return _binder.BindToType (assemblyName, className);
+				
+			Assembly assembly = Assembly.Load (assemblyName);
+			return assembly.GetType (className, true);
 		}
 
 		public Type ReadType (BinaryReader reader, TypeTag code)

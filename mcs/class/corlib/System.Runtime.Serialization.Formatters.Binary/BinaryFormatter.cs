@@ -44,7 +44,7 @@ namespace System.Runtime.Serialization.Formatters.Binary {
 		private SerializationBinder binder;
 		private StreamingContext context;
 		private ISurrogateSelector surrogate_selector;
-		private FormatterTypeStyle type_format;			// TODO: Do something with this
+		private FormatterTypeStyle type_format = FormatterTypeStyle.TypesAlways;
 		
 #if NET_1_1
 		private TypeFilterLevel filter_level;
@@ -197,13 +197,13 @@ namespace System.Runtime.Serialization.Formatters.Binary {
 			WriteBinaryHeader (writer, headers!=null);
 
 			if (graph is IMethodCallMessage) {
-				MessageFormatter.WriteMethodCall (writer, graph, headers, surrogate_selector, context, assembly_format);
+				MessageFormatter.WriteMethodCall (writer, graph, headers, surrogate_selector, context, assembly_format, type_format);
 			}
 			else if (graph is IMethodReturnMessage)  {
-				MessageFormatter.WriteMethodResponse (writer, graph, headers, surrogate_selector, context, assembly_format);
+				MessageFormatter.WriteMethodResponse (writer, graph, headers, surrogate_selector, context, assembly_format, type_format);
 			}
 			else {
-				ObjectWriter serializer = new ObjectWriter (surrogate_selector, context, assembly_format);
+				ObjectWriter serializer = new ObjectWriter (surrogate_selector, context, assembly_format, type_format);
 				serializer.WriteObjectGraph (writer, graph, headers);
 			}
 			writer.Flush();
