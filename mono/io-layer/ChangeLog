@@ -1,3 +1,24 @@
+2003-01-16  Martin Baulig  <martin@ximian.com>
+
+	Added special support for the Mono Debugger to send it a
+	notification each time a thread is created or exited.
+
+	* timed-thread.h (TimedThread): Added `pid' and `start_sem'.
+
+	* timed-thread.c (timed_thread_start_routine): If
+	`mono_debugger_threads_debug' is non-zero, set `thread->pid' and
+	post the `thread->start_sem'.
+	(_wapi_timed_thread_create): If `mono_debugger_threads_debug' is
+	non-zero, wait for the `thread->start_sem' before returning.
+
+	* threads.c (mono_debugger_threads_debug): New global variable
+	which is set by the Mono Debugger.
+	(mono_debugger_thread_info): New global variable.
+	(update_debugger_thread_info): When running inside the Mono
+	Debugger (`mono_debugger_threads_debug' is non-zero), update the
+	`mono_debugger_thread_info' array.  This function is called (while
+	owning the `thread_hash_mutex') each time the `thread_hash' is
+	modified.
 
 Wed Jan 15 15:55:40 CET 2003 Paolo Molaro <lupus@ximian.com>
 
