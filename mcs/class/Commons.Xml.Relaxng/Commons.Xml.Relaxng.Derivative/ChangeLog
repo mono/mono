@@ -1,5 +1,9 @@
 2004-12-06  Atsushi Enomoto <atsushi@ximian.com>
 
+	* RdpPattern.cs : MakeOneOrMore() did not always set up internal table.
+
+2004-12-06  Atsushi Enomoto <atsushi@ximian.com>
+
 	* Util.cs : trivial debug string fix.
 	* RdpPattern.cs : trivial formatting fix.
 

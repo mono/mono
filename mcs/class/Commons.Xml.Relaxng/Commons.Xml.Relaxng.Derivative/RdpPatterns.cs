@@ -125,6 +125,7 @@ namespace Commons.Xml.Relaxng.Derivative
 
 		public RdpOneOrMore MakeOneOrMore (RdpPattern p)
 		{
+			Hashtable p1Table = setupTable (typeof (RdpOneOrMore), p);
 			Hashtable pTable = (Hashtable) patternPool [RelaxngPatternType.OneOrMore];
 			if (pTable == null) {
 				pTable = new Hashtable ();
