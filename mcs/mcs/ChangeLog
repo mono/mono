@@ -1,3 +1,9 @@
+2003-11-12 Jackson Harper <jackson@ximian.com>
+
+	* driver.cs: Use corlib.dll or mscorlib.dll when looking up the
+	system directory. Also use the full file name so users can
+	libraries names mscorlib-o-tron.dll in a non system dir.
+	
 2003-11-10  Martin Baulig  <martin@ximian.com>
 
 	* typemanager.cs (TypeManager.ResolveExpressionTypes): Removed.

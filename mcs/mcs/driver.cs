@@ -390,7 +390,8 @@ namespace Mono.CSharp
 
 			foreach (Assembly a in assemblies){
 				string codebase = a.Location;
-				if (codebase.EndsWith ("corlib.dll")){
+                                string fn = System.IO.Path.GetFileName (codebase);
+				if (fn == "corlib.dll" || fn == "mscorlib.dll"){
 					return codebase.Substring (0, codebase.LastIndexOf (System.IO.Path.DirectorySeparatorChar));
 				}
 			}
