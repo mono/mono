@@ -8,7 +8,7 @@ addresses.
 
 The mono relocation table contains of
 
-1. A 2-byte unsigned integer containing a version number, currently 1.
+1. A 2-byte unsigned integer containing a version number, currently 2.
 
 2. A 1-byte unsigned integer containing a flag specifying whether the
    object file containing this section has already been relocated.
@@ -17,7 +17,7 @@ The mono relocation table contains of
    if you write the relocated file back to disk.
 
 3. A 4-byte unsigned integer containing the total size of the
-   relocation type, but not including the size field itself.
+   relocation table, but not including the size field itself.
 
 4. One or more relocation entries.
 
@@ -30,7 +30,7 @@ Each entry in the relocation table has the following form:
 
 3. A 1-byte unsigned integer specifying the ELF section of this entry.
 
-4. A 2-byte unsigned offset from the beginning of the ELF section to
+4. A 4-byte unsigned offset from the beginning of the ELF section to
    the location which needs to be relocated. This is called the target.
 
 5. Optional additional data depending on the type of the entry.
@@ -49,6 +49,17 @@ b) IL_OFFSET - 0x02
    correct size) and contains an IL offset from the beginning of the
    current method which needs to be replaced with the corresponding
    machine address.
+
+   This entry has a 4-byte unsigned integer argument containing the
+   metadata token of the current method and a 4-byte unsigned integer
+   argument containing the IL offset.
+
+c) METHOD_START_ADDRESS - 0x03
+d) METHOD_END_ADDRESS - 0x04
+
+   The target is an integer of appropriate size to hold an address on
+   the target machine (the assembler ensures that the object has the
+   correct size).
 
    This entry has a 4-byte unsigned integer argument containing the
    metadata token of the current method.

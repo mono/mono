@@ -310,6 +310,7 @@ namespace Mono.CSharp.Debugger
 
 			private void SetLine (int line)
 			{
+				Console.WriteLine ("LINE: " + st_line + " -> " + line);
 				dw.WriteInt8 ((int) DW_LNS.LNS_advance_line);
 				dw.WriteSLeb128 (line - st_line);
 				st_line = line;
@@ -320,10 +321,35 @@ namespace Mono.CSharp.Debugger
 				dw.WriteUInt8 (0);
 				int end_index = dw.WriteShortSectionSize ();
 				dw.WriteUInt8 ((int) DW_LNE.LNE_set_address);
-				dw.AddRelocEntry (RelocEntryType.IL_OFFSET, token);
-				dw.WriteAddress (address);
+				dw.AddRelocEntry (RelocEntryType.IL_OFFSET, token, address);
+				dw.WriteAddress (0);
 				dw.WriteAnonLabel (end_index);
 				st_address = address;
+			}
+
+			private void SetStartAddress (int token)
+			{
+				dw.WriteUInt8 (0);
+				int end_index = dw.WriteShortSectionSize ();
+				dw.WriteUInt8 ((int) DW_LNE.LNE_set_address);
+				dw.AddRelocEntry (RelocEntryType.METHOD_START_ADDRESS, token);
+				dw.WriteAddress (0);
+				dw.WriteAnonLabel (end_index);
+			}
+
+			private void SetEndAddress (int token)
+			{
+				dw.WriteUInt8 (0);
+				int end_index = dw.WriteShortSectionSize ();
+				dw.WriteUInt8 ((int) DW_LNE.LNE_set_address);
+				dw.AddRelocEntry (RelocEntryType.METHOD_END_ADDRESS, token);
+				dw.WriteAddress (0);
+				dw.WriteAnonLabel (end_index);
+			}
+
+			private void SetBasicBlock ()
+			{
+				dw.WriteUInt8 ((int) DW_LNS.LNS_set_basic_block);
 			}
 
 			private void EndSequence ()
@@ -372,18 +398,26 @@ namespace Mono.CSharp.Debugger
 				foreach (ISourceMethod method in Methods) {
 					SetFile (method.SourceFile);
 					SetLine (method.FirstLine);
-					SetAddress (method.Token, 0);
+					SetStartAddress (method.Token);
+					SetBasicBlock ();
 					Commit ();
 
+					Console.WriteLine ("METHOD: " + method.MethodInfo.Name + " " +
+							   method.Token + " " + method.FirstLine + " " +
+							   method.LastLine);
+
 					foreach (ISourceLine line in method.Lines) {
+						Console.WriteLine ("WRITING LINE (" + method.Token + "): "
+								   + line.Line + " " + line.Offset);
 						SetLine (line.Line);
 						SetAddress (method.Token, line.Offset);
+						SetBasicBlock ();
 						Commit ();
 					}
 
 					SetLine (method.LastLine);
-					if (method.CodeSize >= 0)
-						SetAddress (method.Token, method.CodeSize);
+					SetEndAddress (method.Token);
+					SetBasicBlock ();
 					Commit ();
 
 					EndSequence ();
@@ -727,9 +761,9 @@ namespace Mono.CSharp.Debugger
 				if (dw.DoGeneric)
 					dw.WriteFlag (true);
 				else {
-					dw.AddRelocEntry (RelocEntryType.IL_OFFSET, method.Token);
+					dw.AddRelocEntry (RelocEntryType.METHOD_START_ADDRESS, method.Token);
 					dw.WriteAddress (0);
-					dw.AddRelocEntry (RelocEntryType.IL_OFFSET, method.Token);
+					dw.AddRelocEntry (RelocEntryType.METHOD_END_ADDRESS, method.Token);
 					dw.WriteAddress (0);
 				}
 				if (method.MethodInfo.ReturnType != typeof (void))
@@ -879,13 +913,13 @@ namespace Mono.CSharp.Debugger
 			}
 		}
 
-		protected const int reloc_table_version = 2;
+		protected const int reloc_table_version = 3;
 
 		protected enum Section {
-			DEBUG_INFO,
-			DEBUG_ABBREV,
-			DEBUG_LINE,
-			MONO_RELOC_TABLE
+			DEBUG_INFO		= 0x01,
+			DEBUG_ABBREV		= 0x02,
+			DEBUG_LINE		= 0x03,
+			MONO_RELOC_TABLE	= 0x04
 		}
 
 		public struct AbbrevEntry {
@@ -947,15 +981,21 @@ namespace Mono.CSharp.Debugger
 			// Size of an address on the target machine
 			TARGET_ADDRESS_SIZE	= 0x01,
 			// Map an IL offset to a machine address
-			IL_OFFSET		= 0x02
+			IL_OFFSET		= 0x02,
+			// Start address of machine code for this method
+			METHOD_START_ADDRESS	= 0x03,
+			// End address of machine code for this method
+			METHOD_END_ADDRESS	= 0x04
 		}
 
 		protected class RelocEntry {
-			public RelocEntry (RelocEntryType type, int token, Section section, int index)
+			public RelocEntry (RelocEntryType type, int token, int original,
+					   Section section, int index)
 			{
 				_type = type;
 				_section = section;
 				_token = token;
+				_original = original;
 				_index = index;
 			}
 
@@ -983,10 +1023,17 @@ namespace Mono.CSharp.Debugger
 				}
 			}
 
+			public int Original {
+				get {
+					return _original;
+				}
+			}
+
 			private RelocEntryType _type;
 			private Section _section;
 			private int _token;
 			private int _index;
+			private int _original;
 		}
 
 		private int next_anon_label_idx = 0;
@@ -1025,14 +1072,20 @@ namespace Mono.CSharp.Debugger
 			reloc_entries.Add (entry);
 		}
 
-		protected void AddRelocEntry (RelocEntryType type, int token, Section section, int index)
+		protected void AddRelocEntry (RelocEntryType type, int token, int original,
+					      Section section, int index)
 		{
-			AddRelocEntry (new RelocEntry (type, token, section, index));
+			AddRelocEntry (new RelocEntry (type, token, original, section, index));
+		}
+
+		protected void AddRelocEntry (RelocEntryType type, int token, int original)
+		{
+			AddRelocEntry (type, token, original, current_section, WriteAnonLabel ());
 		}
 
 		protected void AddRelocEntry (RelocEntryType type, int token)
 		{
-			AddRelocEntry (type, token, current_section, WriteAnonLabel ());
+			AddRelocEntry (type, token, 0);
 		}
 
 		protected void AddRelocEntry (RelocEntryType type)
@@ -1056,11 +1109,16 @@ namespace Mono.CSharp.Debugger
 				int tmp_index = WriteSectionSize ();
 
 				WriteUInt8 ((int) entry.Section);
-				WriteUInt16 (entry.Index);
+				WriteAbsoluteReference (".L_" + entry.Index);
 
 				switch (entry.RelocType) {
+				case RelocEntryType.METHOD_START_ADDRESS:
+				case RelocEntryType.METHOD_END_ADDRESS:
+					WriteUInt32 (entry.Token);
+					break;
 				case RelocEntryType.IL_OFFSET:
 					WriteUInt32 (entry.Token);
+					WriteUInt32 (entry.Original);
 					break;
 				}
 

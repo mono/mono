@@ -1,5 +1,11 @@
 2002-03-20  Martin Baulig  <martin@gnome.org>
 
+	* README.relocation-table: Updated documentation.
+
+	* MonoDwarfFileWriter.cs: Improved line number output.
+
+2002-03-20  Martin Baulig  <martin@gnome.org>
+
 	* IMonoSymbolWriter.cs (ISourceMethod): Added FirstLine, LastLine, CodeSize and
 	Token properties.
 
