@@ -1,5 +1,9 @@
 2004-12-21  Ben Maurer  <bmaurer@ximian.com>
 
+	* mini.c (mono_method_to_ir): It turns out that some of the
+	x-appdomain wrappers are lax with types, so just ignore this for
+	all wrappers.
+
 	* inssel.brg (OP_CHECK_ARRAY_TYPE): Optimize this by only looking
 	at the vtable->klass. If it is non-shared code we can just use the
 	vtable.
