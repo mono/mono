@@ -3491,6 +3491,16 @@ yield_statement
 			$$ = new Yield ((Expression) $2, lexer.Location);
 		}
 	  }
+	| YIELD expression SEMICOLON 
+	  {
+		if (iterator_container == null){
+			Report.Error (204, lexer.Location, "yield statement can only be used within a method, operator or property");
+			$$ = null;
+		} else {
+			iterator_container.SetYields ();
+			$$ = new Yield ((Expression) $2, lexer.Location);
+		}
+	  }
 	| YIELD BREAK SEMICOLON
 	  {
 		if (iterator_container == null){
