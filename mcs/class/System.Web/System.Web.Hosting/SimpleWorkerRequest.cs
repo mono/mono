@@ -17,7 +17,7 @@ namespace System.Web.Hosting
 	{
 		private string _Page;
 		private string _Query;
-		private string _PathInfo;
+		private string _PathInfo = String.Empty;
 		private string _AppVirtualPath;
 		private string _AppPhysicalPath;
 		private string _AppInstallPath;
@@ -116,7 +116,7 @@ namespace System.Web.Hosting
 
 		public override string GetFilePath ()
 		{
-			return CreatePath (false);
+                        return CreatePath (false);
 		}
 
 		public override string GetFilePathTranslated ()
@@ -153,7 +153,7 @@ namespace System.Web.Hosting
 
 		public override string GetPathInfo ()
 		{
-			return (null != _PathInfo) ? _PathInfo : String.Empty;
+			return _PathInfo;
 		}
 
 		public override string GetQueryString ()
@@ -163,8 +163,8 @@ namespace System.Web.Hosting
 
 		public override string GetRawUrl ()
 		{
-			string path = CreatePath (true);
-			if (null != _Query && _Query.Length > 0)
+                        string path = CreatePath (true);
+                        if (null != _Query && _Query.Length > 0)
 				return path + "?" + _Query;
 
 			return path;
@@ -262,41 +262,68 @@ namespace System.Web.Hosting
 		}
 
 		// Create's a path string
-		private string CreatePath (bool bIncludePathInfo)
-		{
-			string sPath = Path.Combine (_AppVirtualPath, _Page);
+                private string CreatePath (bool bIncludePathInfo)
+                {
+                        string sPath = Path.Combine (_AppVirtualPath, _Page);
 
-			if (bIncludePathInfo && null != _PathInfo)
+                        if (bIncludePathInfo)
                         {
-                                sPath = Path.Combine (sPath, _PathInfo);
+                                sPath += _PathInfo;
                         }
 
-			return sPath;
+                        return sPath;
 		}
 
-		// Parses out the string after / known as the "path info"
-		private void ExtractPagePathInfo ()
-		{
+                //  "The extra path information, as given by the client. In
+                //  other words, scripts can be accessed by their virtual
+                //  pathname, followed by extra information at the end of this
+                //  path. The extra information is sent as PATH_INFO."
+                private void ExtractPagePathInfo ()
+                {
                         if (_Page == null || _Page == String.Empty)
                         {
-                            return;
+                                return;
                         }
 
                         string FullPath = GetFilePathTranslated();
 
-                        StringBuilder PathInfo = new StringBuilder();
+                        int PathInfoLength = 0;
 
-                        while (!(Directory.Exists (FullPath) || File.Exists (FullPath)))
+                        string LastFile = String.Empty;
+
+                        while (PathInfoLength < _Page.Length)
                         {
-                            int last = FullPath.LastIndexOf (Path.DirectorySeparatorChar);
+                                if (LastFile.Length > 0)
+                                {
+                                        // increase it by the length of the file plus 
+                                        // a "/"
+                                        //
+                                        PathInfoLength += LastFile.Length + 1;
+                                }
 
-                            PathInfo.Insert (0, FullPath.Substring (last));
-                            FullPath = FullPath.Substring (0, last);
+                                if (File.Exists (FullPath) == true)
+                                {
+                                        break;
+                                }
+
+                                if (Directory.Exists (FullPath) == true)
+                                {
+                                        PathInfoLength -= (LastFile.Length + 1);
+                                        break;
+                                }
+
+                                LastFile = Path.GetFileName (FullPath);
+                                FullPath = Path.GetDirectoryName (FullPath);
                         }
 
-                        _Page = _Page.Substring (0, _Page.Length - PathInfo.Length);
-                        _PathInfo = PathInfo.ToString();
-		}
+                        if (PathInfoLength > _Page.Length)
+                        {
+                                return;
+                        }
+
+                        _PathInfo = _Page.Substring (_Page.Length - PathInfoLength);
+                        _Page = _Page.Substring (0, _Page.Length - PathInfoLength);
+                }
 	}
 }
 
