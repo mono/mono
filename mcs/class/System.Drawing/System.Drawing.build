@@ -11,6 +11,7 @@
 			<arg value="/unsafe"/>
 			<sources>
 				<includes name="**/*.cs"/> 
+				<excludes name="Test/**"/> 
 			</sources>
 			<references>
 				<includes name="../lib/corlib.dll"/>
