@@ -12,11 +12,11 @@ using System.Collections;
 using System.Data;
 
 namespace Mono.Data.SqlExpressions {
-	public enum AggregationFunction {
+	internal enum AggregationFunction {
 		Count, Sum, Min, Max, Avg, StDev, Var
 	}
 
-	public class Aggregation : IExpression {
+	internal class Aggregation : IExpression {
 		bool cacheResults;
 		DataRow[] rows;
 		ColumnReference column;
