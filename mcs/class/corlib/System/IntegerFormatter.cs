@@ -3694,7 +3694,7 @@ class FormatParse {
 			type = sec.TokenTypes [tokidx];
 			if (type == PH_0 || type == PH_NUMBER) {
 				//FIXME: PH_NUMBER should also check for significant digits
-				Console.WriteLine ("group : {0}", group);
+				// Console.WriteLine ("group : {0}", group);
 				int i = sec.tokens [tokidx].Length - 1;
 				while (i >= 0) {
 					if (insertComma && group == 3) {
