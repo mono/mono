@@ -2,6 +2,7 @@
 // System.Runtime.Remoting.Channels.BinaryClientFormatterSinkProvider.cs
 //
 // Author: Rodrigo Moya (rodrigo@ximian.com)
+//         Lluis Sanchez Gual (lluis@ximian.com)
 //
 // 2002 (C) Copyright, Ximian, Inc.
 //
@@ -15,6 +16,7 @@ namespace System.Runtime.Remoting.Channels
 	{
 		IClientChannelSinkProvider next = null;
 		BinaryCore _binaryCore;
+		static string[] allowedProperties = new string [] { "includeVersions", "strictBinding" };
 
 		public BinaryClientFormatterSinkProvider ()
 		{
@@ -24,7 +26,7 @@ namespace System.Runtime.Remoting.Channels
 		public BinaryClientFormatterSinkProvider (IDictionary properties,
 							  ICollection providerData)
 		{
-			_binaryCore = new BinaryCore (this, properties);
+			_binaryCore = new BinaryCore (this, properties, allowedProperties);
 		}
 
 		public IClientChannelSinkProvider Next

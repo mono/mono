@@ -2,6 +2,7 @@
 // System.Runtime.Remoting.Channels.BinaryServerFormatterSinkProvider.cs
 //
 // Author: Rodrigo Moya (rodrigo@ximian.com)
+//         Lluis Sanchez Gual (lluis@ximian.com)
 //
 // 2002 (C) Copyright, Ximian, Inc.
 //
@@ -15,6 +16,13 @@ namespace System.Runtime.Remoting.Channels
 	{
 		IServerChannelSinkProvider next = null;
 		BinaryCore _binaryCore;
+		
+#if NET_1_0
+		static string[] allowedProperties = new string [] { "includeVersions", "strictBinding" };
+#endif
+#if NET_1_1
+		static string[] allowedProperties = new string [] { "includeVersions", "strictBinding", "typeFilterLevel" };
+#endif
 
 		public BinaryServerFormatterSinkProvider ()
 		{
@@ -24,7 +32,7 @@ namespace System.Runtime.Remoting.Channels
 		public BinaryServerFormatterSinkProvider (IDictionary properties,
 							  ICollection providerData)
 		{
-			_binaryCore = new BinaryCore (this, properties);
+			_binaryCore = new BinaryCore (this, properties, allowedProperties);
 		}
 
 		public IServerChannelSinkProvider Next

@@ -9,6 +9,7 @@ namespace System.Runtime.Remoting.Channels {
 	{
 		private IClientChannelSinkProvider _nextClientChannelSinkProvider;
 		SoapCore _soapCore;
+		static string[] allowedProperties = new string [] { "includeVersions", "strictBinding" };
 		
 		public SoapClientFormatterSinkProvider() 
 		{
@@ -18,7 +19,7 @@ namespace System.Runtime.Remoting.Channels {
 		public SoapClientFormatterSinkProvider(IDictionary properties,
 		                                       ICollection providerData)
 		{
-			_soapCore = new SoapCore (this, properties);
+			_soapCore = new SoapCore (this, properties, allowedProperties);
 		}
 		
 		public virtual IClientChannelSinkProvider Next 

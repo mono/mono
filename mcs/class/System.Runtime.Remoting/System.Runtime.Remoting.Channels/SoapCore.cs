@@ -18,19 +18,24 @@ namespace System.Runtime.Remoting.Channels
 	{
 		SoapFormatter _serializationFormatter;
 		SoapFormatter _deserializationFormatter;
-		bool _includeVersions;
-		bool _strictBinding;
+		bool _includeVersions = true;
+		bool _strictBinding = false;
 		
-		public static SoapCore DefaultInstance = new SoapCore (true, false);
+#if NET_1_1
+		TypeFilterLevel _filterLevel = TypeFilterLevel.Low;
+#endif
+
+		public static SoapCore DefaultInstance = new SoapCore ();
 		
-		public SoapCore (object owner, IDictionary properties)
+		public SoapCore (object owner, IDictionary properties, string[] allowedProperties)
 		{
-			_includeVersions = true;
-			_strictBinding = false;
-			
 			foreach(DictionaryEntry property in properties)
 			{
-				switch((string)property.Key)
+				string key = (string) property.Key;
+				if (Array.IndexOf (allowedProperties, key) == -1)
+					throw new RemotingException (owner.GetType().Name + " does not recognize '" + key + "' configuration property");
+				
+				switch (key)
 				{
 					case "includeVersions": 
 						_includeVersions = Convert.ToBoolean (property.Value);
@@ -39,19 +44,24 @@ namespace System.Runtime.Remoting.Channels
 					case "strictBinding":
 						_strictBinding = Convert.ToBoolean (property.Value);
 						break;
-						
-					default:
-						throw new RemotingException (owner.GetType().Name + " does not recognize '" + property.Key + "' configuration property");
+#if NET_1_1
+					case "typeFilterLevel":
+						if (property.Value is TypeFilterLevel)
+							_filterLevel = (TypeFilterLevel) property.Value;
+						else {
+							string s = (string) property.Value;
+							_filterLevel = (TypeFilterLevel) Enum.Parse (typeof(TypeFilterLevel), s);
+						}
+						break;
+#endif
 				}
 			}
 			
 			Init ();
 		}
 		
-		public SoapCore (bool includeVersions, bool strictBinding)
+		public SoapCore ()
 		{
-			_includeVersions = includeVersions;
-			_strictBinding = strictBinding;
 			Init ();
 		}
 		
@@ -62,6 +72,11 @@ namespace System.Runtime.Remoting.Channels
 
 			_serializationFormatter = CreateFormatter (surrogateSelector, context);
 			_deserializationFormatter = CreateFormatter (null, context);
+
+#if NET_1_1
+			_serializationFormatter.FilterLevel = _filterLevel;
+			_deserializationFormatter.FilterLevel = _filterLevel;
+#endif
 		}
 		
 		SoapFormatter CreateFormatter (ISurrogateSelector selector, StreamingContext context)

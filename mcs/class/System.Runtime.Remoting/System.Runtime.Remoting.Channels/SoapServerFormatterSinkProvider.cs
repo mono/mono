@@ -2,6 +2,7 @@
 // System.Runtime.Remoting.Channels.SoapServerFormatterSinkProvider.cs
 //
 // Author: Rodrigo Moya (rodrigo@ximian.com)
+//         Lluis Sanchez Gual (lluis@ximian.com)
 //
 // 2002 (C) Copyright, Ximian, Inc.
 //
@@ -16,6 +17,13 @@ namespace System.Runtime.Remoting.Channels
 		private IServerChannelSinkProvider _next;
 		SoapCore _soapCore;
 
+#if NET_1_0
+		static string[] allowedProperties = new string [] { "includeVersions", "strictBinding" };
+#endif
+#if NET_1_1
+		static string[] allowedProperties = new string [] { "includeVersions", "strictBinding", "typeFilterLevel" };
+#endif
+
 		public SoapServerFormatterSinkProvider ()
 		{
 			_soapCore = SoapCore.DefaultInstance;
@@ -24,7 +32,7 @@ namespace System.Runtime.Remoting.Channels
 		public SoapServerFormatterSinkProvider (IDictionary properties,
 							ICollection providerData)
 		{
-			_soapCore = new SoapCore (this, properties);
+			_soapCore = new SoapCore (this, properties, allowedProperties);
 		}
 
 		public IServerChannelSinkProvider Next

@@ -18,40 +18,56 @@ namespace System.Runtime.Remoting.Channels
 	{
 		BinaryFormatter _serializationFormatter;
 		BinaryFormatter _deserializationFormatter;
+		bool _includeVersions = true;
+		bool _strictBinding = false;
 		
-		public static BinaryCore DefaultInstance = new BinaryCore (true, false);
+#if NET_1_1
+		TypeFilterLevel _filterLevel = TypeFilterLevel.Low;
+#endif
 		
-		public BinaryCore (object owner, IDictionary properties)
+		public static BinaryCore DefaultInstance = new BinaryCore ();
+		
+		public BinaryCore (object owner, IDictionary properties, string[] allowedProperties)
 		{
-			bool includeVersions = true;
-			bool strictBinding = false;
-			
 			foreach(DictionaryEntry property in properties)
 			{
-				switch((string)property.Key)
+				string key = (string) property.Key;
+				if (Array.IndexOf (allowedProperties, key) == -1)
+					throw new RemotingException (owner.GetType().Name + " does not recognize '" + key + "' configuration property");
+				
+				switch (key)
 				{
 					case "includeVersions": 
-						includeVersions = Convert.ToBoolean (property.Value);
+						_includeVersions = Convert.ToBoolean (property.Value);
 						break;
 						
 					case "strictBinding":
-						strictBinding = Convert.ToBoolean (property.Value);
+						_strictBinding = Convert.ToBoolean (property.Value);
 						break;
 						
-					default:
-						throw new RemotingException (owner.GetType().Name + " does not recognize '" + property.Key + "' configuration property");
+#if NET_1_1
+					case "typeFilterLevel":
+						if (property.Value is TypeFilterLevel)
+							_filterLevel = (TypeFilterLevel) property.Value;
+						else {
+							string s = (string) property.Value;
+							_filterLevel = (TypeFilterLevel) Enum.Parse (typeof(TypeFilterLevel), s);
+						}
+						break;
+#endif
+						
 				}
 			}
 			
-			Init (includeVersions, strictBinding);
+			Init ();
 		}
 		
-		public BinaryCore (bool includeVersions, bool stringBinding)
+		public BinaryCore ()
 		{
-			Init (includeVersions, stringBinding);
+			Init ();
 		}
 		
-		public void Init (bool includeVersions, bool stringBinding)
+		public void Init ()
 		{
 			RemotingSurrogateSelector surrogateSelector = new RemotingSurrogateSelector ();
 			StreamingContext context = new StreamingContext (StreamingContextStates.Remoting, null);
@@ -59,13 +75,18 @@ namespace System.Runtime.Remoting.Channels
 			_serializationFormatter = new BinaryFormatter (surrogateSelector, context);
 			_deserializationFormatter = new BinaryFormatter (null, context);
 			
-			if (!includeVersions)
+#if NET_1_1
+			_serializationFormatter.FilterLevel = _filterLevel;
+			_deserializationFormatter.FilterLevel = _filterLevel;
+#endif
+			
+			if (!_includeVersions)
 			{
 				_serializationFormatter.AssemblyFormat = FormatterAssemblyStyle.Simple;
 				_deserializationFormatter.AssemblyFormat = FormatterAssemblyStyle.Simple;
 			}
 
-			if (!stringBinding)
+			if (!_strictBinding)
 			{
 				_serializationFormatter.Binder = ChannelCore.SimpleBinder;
 				_deserializationFormatter.Binder = ChannelCore.SimpleBinder;

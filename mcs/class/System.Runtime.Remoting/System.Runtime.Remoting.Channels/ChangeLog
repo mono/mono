@@ -1,3 +1,11 @@
+2003-11-21  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* BinaryClientFormatterSinkProvider.cs, BinaryServerFormatterSinkProvider.cs,
+	  BinaryCore.cs, BinaryServerFormatterSinkProvider.cs,
+	  SoapClientFormatterSinkProvider.cs, SoapCore.cs, 
+	  SoapServerFormatterSinkProvider.cs.cs: Added support for TypeFilterLevel
+	  property.
+	
 2003-11-17  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* BinaryClientFormatterSinkProvider.cs, BinaryServerFormatterSinkProvider.cs:
