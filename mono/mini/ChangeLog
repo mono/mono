@@ -1,3 +1,8 @@
+2004-05-17 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* helpers.c: Add new env variable to pass args to objdump.
+	Specifically for those of us who love -Mintel. r=miguel, gonzalo.
+
 2004-05-17  Radek Doulik  <rodo@ximian.com>
 
 	* Makefile.am (common_sources): added abcremoval.h so it get
