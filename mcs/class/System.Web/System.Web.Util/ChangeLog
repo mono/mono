@@ -1,3 +1,7 @@
+2004-02-18  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* UrlUtils.cs: ~ is not always /. Fixed.
+
 2004-02-17  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* UrlUtils.cs:

@@ -104,7 +104,7 @@ namespace System.Web.Util
 					throw new HttpException(HttpRuntime.FormatResourceString("Physical_path_not_allowed", path));
 			}
 		}
-		
+
 		public static string Combine (string basePath, string relPath)
 		{
 			if (relPath == null)
@@ -115,6 +115,7 @@ namespace System.Web.Util
 				return "";
 
 			FailIfPhysicalPath (relPath);
+			relPath = relPath.Replace ("\\", "/");
 			if (IsRooted (relPath))
 				return Reduce (relPath);
 
@@ -128,8 +129,7 @@ namespace System.Web.Util
 					if (rlength == 1) {
 						relPath = "";
 					} else if (rlength > 1 && relPath [1] == '/') {
-						relPath = relPath.Substring (1);
-						basePath = "";
+						relPath = relPath.Substring (2);
 						slash = "";
 					}
 				}
