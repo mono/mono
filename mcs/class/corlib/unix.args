@@ -457,6 +457,7 @@ System.Runtime.Remoting.Contexts/IDynamicProperty.cs
 System.Runtime.Remoting.Contexts/SynchronizationAttribute.cs
 System.Runtime.Remoting.Messaging/AsyncResult.cs
 System.Runtime.Remoting.Messaging/Header.cs
+System.Runtime.Remoting.Messaging/HeaderHandler.cs
 System.Runtime.Remoting.Messaging/IMessage.cs
 System.Runtime.Remoting.Messaging/IMessageCtrl.cs
 System.Runtime.Remoting.Messaging/IMessageSink.cs

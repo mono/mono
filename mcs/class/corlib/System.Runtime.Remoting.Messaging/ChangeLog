@@ -1,5 +1,7 @@
 2002-07-23  Duncan Mak  <duncan@ximian.com>
 
+	* HeaderHandler.cs: Added.
+
 	* IRemotingFormatter.cs: Added to CVS.
 
 	* IMethodMessage.cs: IMethodMessage inherits from IMessage.

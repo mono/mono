@@ -1,7 +1,8 @@
 2002-07-23  Duncan Mak  <duncan@ximian.com>
 
 	* list: 
-	* unix.args: Added new Attributes in System.Runtim.CompilerServices.
+	* unix.args: Added new Attributes in
+	System.Runtime.CompilerServices and System.Runtime.Remoting.Messaging.
 
 	* System.Runtime.Remoting.Proxies/ProxyAttribute.cs: Added.
 
