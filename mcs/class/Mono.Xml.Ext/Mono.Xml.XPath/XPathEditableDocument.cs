@@ -6,7 +6,7 @@
 //
 // (C)2004 Novell Inc.
 //
-// Yet another implementation of editable XPathNavigator.
+// Yet another implementation of XPathEditableNavigator.
 // (Even runnable under MS.NET 2.0)
 //
 // By rewriting XPathEditableDocument.CreateNavigator() as just to 
@@ -99,18 +99,26 @@ namespace Mono.Xml.XPath
 		}
 		*/
 
-		XmlDocument document;
+		XmlNode node;
 
 		ArrayList changes = new ArrayList ();
 
-		public XPathEditableDocument (XmlDocument doc)
+		public XPathEditableDocument (XmlNode node)
 		{
-			document = doc;
+			this.node = node;
+		}
+
+		public virtual bool CanEdit {
+			get { return true; }
+		}
+
+		public XmlNode Node {
+			get { return node; }
 		}
 
 		public XPathNavigator CreateNavigator ()
 		{
-			return document.CreateNavigator ();
+			return new XmlDocumentEditableNavigator (this);
 		}
 
 		public XmlWriter CreateWriter ()
@@ -592,13 +600,25 @@ namespace Mono.Xml.XPath
 
 	public class XmlDocumentEditableNavigator : XPathNavigator, IHasXmlNode
 	{
+		static readonly bool isXmlDocumentNavigatorImpl;
+		
+		static XmlDocumentEditableNavigator ()
+		{
+			isXmlDocumentNavigatorImpl =
+				(typeof (XmlDocumentEditableNavigator).Assembly 
+				== typeof (XmlDocument).Assembly);
+		}
+
 		XPathEditableDocument document;
 		XPathNavigator navigator;
 
 		public XmlDocumentEditableNavigator (XPathEditableDocument doc)
 		{
 			document = doc;
-			navigator = doc.CreateNavigator ();
+			if (isXmlDocumentNavigatorImpl)
+				navigator = new XmlDocumentNavigator (doc.Node);
+			else
+				navigator = doc.CreateNavigator ();
 		}
 
 		public XmlDocumentEditableNavigator (XmlDocumentEditableNavigator nav)
@@ -755,7 +775,6 @@ namespace Mono.Xml.XPath
 			foreach (XmlNode c in n.ChildNodes)
 				document.DeleteNode (c);
 			XmlWriter w = document.CreateInsertionWriter (n, null);
-			// FIXME: Hmm, it does not look like using it.
 			w.WriteValue (value);
 			w.Close ();
 		}
