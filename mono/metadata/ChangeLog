@@ -1,3 +1,6 @@
+2002-05-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* string-icalls.c: fix bug 24248.
 
 Sat May 4 14:03:21 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
