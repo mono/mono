@@ -2,7 +2,8 @@
 //
 // This code was automatically generated from
 // ECMA CLI XML Library Specification.
-// Generator: libgen.xsl
+// Generator: libgen.xsl [1.0; (C) Sergey Chaban (serge@wildwestsoftware.com)]
+// Created: Wed, 5 Sep 2001 06:31:59 UTC
 // Source file: AllTypes.xml
 // URL: http://msdn.microsoft.com/net/ecma/AllTypes.xml
 //
@@ -13,110 +14,127 @@ namespace System.Net.Sockets {
 
 
 	/// <summary>
-	/// <para>Specifies the addressing schemes used by the <see cref="T:System.Net.Sockets.Socket" /> class.</para>
 	/// </summary>
-	/// <remarks>
-	/// <para>A <see cref="T:System.Net.Sockets.AddressFamily" /> member is required when instantiating the
-	/// <see cref="T:System.Net.Sockets.Socket" /> class 
-	///    to specify the addressing scheme that the instance uses to resolve an address. For example,
-	/// <see cref="F:System.Net.Sockets.AddressFamily.InterNetwork" /> indicates that an IP version 4 address is 
-	///    expected when a <see cref="T:System.Net.Sockets.Socket" />
-	///    instance connects to an endpoint.</para>
-	/// </remarks>
 	public enum AddressFamily {
 
-		/// <summary><para>Used to indicate an uninitialized state. This member is not to be 
-		///       used when instantiating the <see cref="T:System.Net.Sockets.Socket" /> class.</para></summary>
+		/// <summary>
+		/// </summary>
 		Unknown = -1,
 
-		/// <summary><para>Unspecified address family.</para></summary>
+		/// <summary>
+		/// </summary>
 		Unspecified = 0,
 
-		/// <summary><para>Address is local to the host.</para></summary>
+		/// <summary>
+		/// </summary>
 		Unix = 1,
 
-		/// <summary><para> Address for IP version 4.</para></summary>
+		/// <summary>
+		/// </summary>
 		InterNetwork = 2,
 
-		/// <summary><para>ARPANET IMP address.</para></summary>
+		/// <summary>
+		/// </summary>
 		ImpLink = 3,
 
-		/// <summary><para>Address for PUP protocols.</para></summary>
+		/// <summary>
+		/// </summary>
 		Pup = 4,
 
-		/// <summary><para>Address for MIT CHAOS protocols.</para></summary>
+		/// <summary>
+		/// </summary>
 		Chaos = 5,
 
-		/// <summary><para>Address for Xerox NS protocols.</para></summary>
+		/// <summary>
+		/// </summary>
 		NS = 6,
 
-		/// <summary><para>Internetwork Packet Exchange (IPX) or Sequenced Packet 
-		///  Exchange (SPX) address.</para></summary>
+		/// <summary>
+		/// </summary>
 		Ipx = 6,
 
-		/// <summary><para>Address for ISO protocols.</para><block subset="none" type="note"><para>Multiple names are defined for this value based on prior art. 
-		///          This value is identical to <see cref="F:System.Net.Sockets.AddressFamily.Osi" />.</para></block></summary>
+		/// <summary>
+		/// </summary>
 		Iso = 7,
 
-		/// <summary><para>Address for ISO protocols.</para><block subset="none" type="note"><para>Multiple names are defined for this value based on prior art. 
-		///          This value is identical to <see cref="F:System.Net.Sockets.AddressFamily.Iso" />.</para></block></summary>
+		/// <summary>
+		/// </summary>
 		Osi = 7,
 
-		/// <summary><para>European Computer Manufacturers Association (ECMA) address.</para></summary>
+		/// <summary>
+		/// </summary>
 		Ecma = 8,
 
-		/// <summary><para>Address for Datakit protocols.</para></summary>
+		/// <summary>
+		/// </summary>
 		DataKit = 9,
 
-		/// <summary><para>Addresses for CCITT protocols, such as X.25.</para></summary>
+		/// <summary>
+		/// </summary>
 		Ccitt = 10,
 
-		/// <summary><para>IBM SNA address.</para></summary>
+		/// <summary>
+		/// </summary>
 		Sna = 11,
 
-		/// <summary><para> DECnet address.</para></summary>
+		/// <summary>
+		/// </summary>
 		DecNet = 12,
 
-		/// <summary><para> Direct data-link interface address.</para></summary>
+		/// <summary>
+		/// </summary>
 		DataLink = 13,
 
-		/// <summary><para> LAT address.</para></summary>
+		/// <summary>
+		/// </summary>
 		Lat = 14,
 
-		/// <summary><para> NSC Hyperchannel address.</para></summary>
+		/// <summary>
+		/// </summary>
 		HyperChannel = 15,
 
-		/// <summary><para> AppleTalk address.</para></summary>
+		/// <summary>
+		/// </summary>
 		AppleTalk = 16,
 
-		/// <summary><para> NetBios address.</para></summary>
+		/// <summary>
+		/// </summary>
 		NetBios = 17,
 
-		/// <summary><para>VoiceView address.</para></summary>
+		/// <summary>
+		/// </summary>
 		VoiceView = 18,
 
-		/// <summary><para> FireFox address.</para></summary>
+		/// <summary>
+		/// </summary>
 		FireFox = 19,
 
-		/// <summary><para> Banyan address.</para></summary>
+		/// <summary>
+		/// </summary>
 		Banyan = 21,
 
-		/// <summary><para>Native Asynchronous Transfer Mode (ATM) services address.</para></summary>
+		/// <summary>
+		/// </summary>
 		Atm = 22,
 
-		/// <summary><para>Address for IP version 6.</para></summary>
+		/// <summary>
+		/// </summary>
 		InterNetworkV6 = 23,
 
-		/// <summary><para>Address for Microsoft cluster products.</para></summary>
+		/// <summary>
+		/// </summary>
 		Cluster = 24,
 
-		/// <summary><para> IEEE 1284.4 workgroup address.</para></summary>
+		/// <summary>
+		/// </summary>
 		Ieee12844 = 25,
 
-		/// <summary><para> Infrared Data Association (IrDA) address.</para></summary>
+		/// <summary>
+		/// </summary>
 		Irda = 26,
 
-		/// <summary><para> Address for Network Designers OSI gateway-enabled protocols.</para></summary>
+		/// <summary>
+		/// </summary>
 		NetworkDesigners = 28,
 	} // AddressFamily
 

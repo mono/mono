@@ -2,7 +2,8 @@
 //
 // This code was automatically generated from
 // ECMA CLI XML Library Specification.
-// Generator: libgen.xsl
+// Generator: libgen.xsl [1.0; (C) Sergey Chaban (serge@wildwestsoftware.com)]
+// Created: Wed, 5 Sep 2001 06:35:39 UTC
 // Source file: all.xml
 // URL: http://devresource.hp.com/devresource/Docs/TechPapers/CSharp/all.xml
 //
@@ -13,37 +14,22 @@ namespace System.Net {
 
 
 	/// <summary>
-	/// <para>
-	///                   Specifies the mode used to establish a connection with a server.
-	///                </para>
 	/// </summary>
 	public enum ConnectionModes {
 
 		/// <summary>
-		/// <para>
-		///                   Non-persistent, one request per connection.
-		///                </para>
 		/// </summary>
 		Single = 0,
 
 		/// <summary>
-		/// <para>
-		///                   Persistent connection, one request/response at a time.
-		///                </para>
 		/// </summary>
 		Persistent = 1,
 
 		/// <summary>
-		/// <para>
-		///                   Persistent connection, many requests/responses in order.
-		///                </para>
 		/// </summary>
 		Pipeline = 2,
 
 		/// <summary>
-		/// <para>
-		///                   Persistent connection, many requests/responses out of order.
-		///                </para>
 		/// </summary>
 		Mux = 3,
 	} // ConnectionModes

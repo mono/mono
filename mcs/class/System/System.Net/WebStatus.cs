@@ -2,7 +2,8 @@
 //
 // This code was automatically generated from
 // ECMA CLI XML Library Specification.
-// Generator: libgen.xsl
+// Generator: libgen.xsl [1.0; (C) Sergey Chaban (serge@wildwestsoftware.com)]
+// Created: Wed, 5 Sep 2001 06:37:37 UTC
 // Source file: all.xml
 // URL: http://devresource.hp.com/devresource/Docs/TechPapers/CSharp/all.xml
 //
@@ -13,44 +14,26 @@ namespace System.Net {
 
 
 	/// <summary>
-	/// <para>
-	///                   Specifies the status of a network request.
-	///                </para>
 	/// </summary>
 	public enum WebStatus {
 
 		/// <summary>
-		/// <para>
-		///                   No error was encountered.
-		///                </para>
 		/// </summary>
 		Success = 0,
 
 		/// <summary>
-		/// <para>
-		///                   The name resolver service could not resolve the host name.
-		///                </para>
 		/// </summary>
 		NameResolutionFailure = 1,
 
 		/// <summary>
-		/// <para>
-		///                   The remote service point could not be contacted at the transport level.
-		///                </para>
 		/// </summary>
 		ConnectFailure = 2,
 
 		/// <summary>
-		/// <para>
-		///                   A complete response was not received from the remote server.
-		///                </para>
 		/// </summary>
 		ReceiveFailure = 3,
 
 		/// <summary>
-		/// <para>
-		///                   A complete request could not be sent to the remote server.
-		///                </para>
 		/// </summary>
 		SendFailure = 4,
 
@@ -59,43 +42,35 @@ namespace System.Net {
 		PipelineFailure = 5,
 
 		/// <summary>
-		/// <para>
-		///                   The request was cancelled.
-		///                </para>
 		/// </summary>
 		RequestCanceled = 6,
 
 		/// <summary>
-		/// <para>
-		///                   The response received from the server was complete but indicated a
-		///                   protocol-level error. For example, an HTTP protocol error such as 401 Access
-		///                   Denied would use this status.
-		///                </para>
 		/// </summary>
 		ProtocolError = 7,
 
 		/// <summary>
-		/// <para>
-		///                   The connection was prematurely closed.
-		///                </para>
 		/// </summary>
 		ConnectionClosed = 8,
 
 		/// <summary>
-		/// <para>
-		///                   A server certificate could not be validated.
-		///                </para>
 		/// </summary>
 		TrustFailure = 9,
 
 		/// <summary>
-		/// <para>
-		///                   An error occurred in a secure channel link.
-		///                </para>
 		/// </summary>
 		SecureChannelFailure = 10,
+
+		/// <summary>
+		/// </summary>
 		ServerProtocolViolation = 11,
+
+		/// <summary>
+		/// </summary>
 		KeepAliveFailure = 12,
+
+		/// <summary>
+		/// </summary>
 		Pending = 13,
 	} // WebStatus
 

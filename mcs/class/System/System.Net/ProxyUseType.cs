@@ -2,7 +2,8 @@
 //
 // This code was automatically generated from
 // ECMA CLI XML Library Specification.
-// Generator: libgen.xsl
+// Generator: libgen.xsl [1.0; (C) Sergey Chaban (serge@wildwestsoftware.com)]
+// Created: Wed, 5 Sep 2001 06:36:08 UTC
 // Source file: all.xml
 // URL: http://devresource.hp.com/devresource/Docs/TechPapers/CSharp/all.xml
 //
@@ -11,33 +12,24 @@
 
 namespace System.Net {
 
+
+	/// <summary>
+	/// </summary>
 	public enum ProxyUseType {
 
 		/// <summary>
-		/// <para>
-		///                   Specifies that the proxy is a standard proxy.
-		///                </para>
 		/// </summary>
 		Standard = 0,
 
 		/// <summary>
-		/// <para>
-		///                   Specifies that the proxy is a tunneling proxy.
-		///                </para>
 		/// </summary>
 		Tunnel = 1,
 
 		/// <summary>
-		/// <para>
-		///                   Specifies that the proxy is an FTP gateway.
-		///                </para>
 		/// </summary>
 		FtpGateway = 2,
 
 		/// <summary>
-		/// <para>
-		///                   Specifies that the proxy is a SOCKS server.
-		///                </para>
 		/// </summary>
 		Socks = 3,
 	} // ProxyUseType

@@ -2,7 +2,8 @@
 //
 // This code was automatically generated from
 // ECMA CLI XML Library Specification.
-// Generator: libgen.xsl
+// Generator: libgen.xsl [1.0; (C) Sergey Chaban (serge@wildwestsoftware.com)]
+// Created: Wed, 5 Sep 2001 06:32:43 UTC
 // Source file: AllTypes.xml
 // URL: http://msdn.microsoft.com/net/ecma/AllTypes.xml
 //
@@ -13,23 +14,19 @@ namespace System.Net.Sockets {
 
 
 	/// <summary>
-	/// <para>Specifies whether the ability to send or receive data is terminated when the <see cref="M:System.Net.Sockets.Socket.Shutdown(System.Net.Sockets.SocketShutdown)" />
-	/// method is called on a connected <see cref="T:System.Net.Sockets.Socket" /> instance.</para>
 	/// </summary>
 	public enum SocketShutdown {
 
-		/// <summary><para> Specifies to terminate the ability to receive data on a 
-		///  <see cref="T:System.Net.Sockets.Socket" /> 
-		///  instance.</para></summary>
+		/// <summary>
+		/// </summary>
 		Receive = 0,
 
-		/// <summary><para>Specifies to terminate the ability to send data from a 
-		///  <see cref="T:System.Net.Sockets.Socket" /> 
-		///  instance.</para></summary>
+		/// <summary>
+		/// </summary>
 		Send = 1,
 
-		/// <summary><para> Specifies to terminate the ability to send and receive data 
-		///  on a <see cref="T:System.Net.Sockets.Socket" /> instance.</para></summary>
+		/// <summary>
+		/// </summary>
 		Both = 2,
 	} // SocketShutdown
 

@@ -2,7 +2,8 @@
 //
 // This code was automatically generated from
 // ECMA CLI XML Library Specification.
-// Generator: libgen.xsl
+// Generator: libgen.xsl [1.0; (C) Sergey Chaban (serge@wildwestsoftware.com)]
+// Created: Wed, 5 Sep 2001 06:32:30 UTC
 // Source file: AllTypes.xml
 // URL: http://msdn.microsoft.com/net/ecma/AllTypes.xml
 //
@@ -13,26 +14,19 @@ namespace System.Net.Sockets {
 
 
 	/// <summary>
-	/// <para> Specifies the mode used by the <see cref="M:System.Net.Sockets.Socket.Poll(System.Int32,System.Net.Sockets.SelectMode)" /> method of
-	///    the <see cref="T:System.Net.Sockets.Socket" /> class.
-	///    </para>
 	/// </summary>
-	/// <remarks>
-	/// <para>A <see cref="T:System.Net.Sockets.SelectMode" /> member specifies the
-	///    status information (read, write, or error) to retrieve from the
-	///    current <see cref="T:System.Net.Sockets.Socket" /> instance.</para>
-	/// </remarks>
 	public enum SelectMode {
 
-		/// <summary><para>Determine the read status of the current <see cref="T:System.Net.Sockets.Socket" /> 
-		/// instance.</para></summary>
+		/// <summary>
+		/// </summary>
 		SelectRead = 0,
 
-		/// <summary><para>Determine the write status of the current <see cref="T:System.Net.Sockets.Socket" /> instance.</para></summary>
+		/// <summary>
+		/// </summary>
 		SelectWrite = 1,
 
-		/// <summary><para>Determine the error status of the current <see cref="T:System.Net.Sockets.Socket" /> 
-		/// instance.</para></summary>
+		/// <summary>
+		/// </summary>
 		SelectError = 2,
 	} // SelectMode
 
