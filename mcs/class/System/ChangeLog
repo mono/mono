@@ -1,3 +1,9 @@
+2005-02-22  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* System.dll.sources: Added files.
+	System.Configuration/ConnectionStringSettingsCollection.cs
+	System.Configuration/ConnectionStringSettings.cs
+
 2005-02-17 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* System.dll.sources: added CodeDomConfigurationHandler.

@@ -1,3 +1,13 @@
+2005-02-22  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* ConnectionStringsSection.cs: Implemented all methods.
+
+	New Files Added:
+	* ConnectionStringSettings.cs: Configuration object for a
+	connection string element.
+	* ConnectionStringSettingsCollection.cs: Collection of
+	ConnectionStringSettings objects.
+
 2005-02-16 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Configuration.cs: (.ctor) don't fail if the file to load does not

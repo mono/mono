@@ -359,6 +359,8 @@ System.Configuration/ConfigurationUpdateMode.cs
 System.Configuration/ConfigurationUserLevel.cs
 System.Configuration/ConfigurationValidationAttribute.cs
 System.Configuration/ConnectionStringsSection.cs
+System.Configuration/ConnectionStringSettingsCollection.cs
+System.Configuration/ConnectionStringSettings.cs
 System.Configuration/DictionarySectionHandler.cs
 System.Configuration/IConfigXmlNode.cs
 System.Configuration/IConfigurationSectionHandler.cs

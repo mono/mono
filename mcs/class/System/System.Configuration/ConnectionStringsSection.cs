@@ -1,8 +1,13 @@
 //
 // System.Configuration.ConnectionStringsSection.cs
 //
-// Authors:
-//	Duncan Mak (duncan@ximian.com)
+// Author:
+//      Sureshkumar T <tsureshkumar@novell.com>
+//      Duncan Mak (duncan@ximian.com)
+//
+//
+//
+// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -23,44 +28,67 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
-//
 
 #if NET_2_0
 #if XML_DEP
+
+#region Using directives
 using System;
+#endregion
 
-namespace System.Configuration {
+namespace System.Configuration
+{
+        public sealed class ConnectionStringsSection : ConfigurationSection
+        {
 
-	public sealed class ConnectionStringsSection : ConfigurationSection
-	{
-		[MonoTODO]
-		public ConnectionStringsSection ()
-		{
-		}
+                #region Fields
+                private static readonly ConfigurationProperty _propConnectionStrings;
+                private static ConfigurationPropertyCollection _properties;
+                #endregion // Fields
 
-		[MonoTODO]
-		protected internal override object GetRuntimeObject ()
-		{
-			throw new NotImplementedException ();
-		}
+                #region Constructors
+                static ConnectionStringsSection ()
+                {
+                        _propConnectionStrings = new ConfigurationProperty (null, typeof (ConnectionStringSettingsCollection), 
+                                                                            null, ConfigurationPropertyFlags.DefaultCollection);
+                        _properties = new ConfigurationPropertyCollection ();
+                        _properties.Add (_propConnectionStrings);
+                }
+                public ConnectionStringsSection () : base ()
+                {
+                }
+                #endregion // Constructors
 
-		[MonoTODO]
-		protected internal override void InitializeDefault ()
-		{
-			throw new NotImplementedException ();
-		}
+                #region Properties
+                public ConnectionStringSettingsCollection ConnectionStrings
+                {
+                        get
+                        {
+                                return (ConnectionStringSettingsCollection) base [_propConnectionStrings];
+                        }
+                }
+                protected internal override ConfigurationPropertyCollection Properties
+                {
+                        get
+                        {
+                                return _properties;
+                        }
+                }
+                #endregion // Properties
 
-//		[MonoTODO ("Implement ConnectionStringsSettingsCollection")]
-//		public ConnectionStringsSettingsCollection ConnectionStrings {
-//			  get { throw new NotImplementedException (); }
-//		}
+            
+                #region Methods
+                protected internal override object GetRuntimeObject ()
+                {
+                        return base.GetRuntimeObject ();
+                }
+                protected internal override void InitializeDefault ()
+                {
 
-		[MonoTODO]
-		protected internal override ConfigurationPropertyCollection Properties {
-			get { throw new NotImplementedException (); }
-		}                                
-	}
+                }
+                #endregion // Methods
+        }
+
 }
-#endif
-#endif
+#endif // XML_DEP
+#endif // NET_2_0
