@@ -150,10 +150,17 @@ namespace Mono.WebServices
 				hasWarnings = true;
 			}
 			
-			ServiceDescription sdesc = (ServiceDescription)descriptions[0];
-			if (sdesc.Services.Count > 0)
+			ServiceDescription rootDesc = null;
+			foreach (ServiceDescription desc in descriptions) {
+				if (desc.Services.Count > 0) {
+					rootDesc = desc;
+					break;
+				}
+			}
+				
+			if (rootDesc != null)
 			{
-				string serviceName = sdesc.Services[0].Name;
+				string serviceName = rootDesc.Services[0].Name;
 				WriteCodeUnit(codeUnit, serviceName);
 			}
 			
@@ -519,7 +526,7 @@ namespace Mono.WebServices
 			}
 			catch (Exception exception)
 			{
-				Console.WriteLine("Error: {0}", exception);
+				Console.WriteLine("Error: {0}", exception.Message);
 				// FIXME: surpress this except for when debug is enabled
 				//Console.WriteLine("Stack:\n {0}", exception.StackTrace);
 				return 2;

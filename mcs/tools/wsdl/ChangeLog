@@ -1,3 +1,8 @@
+2004-05-24  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* MonoWSDL.cs: Get the name of the generated file from the first WSDL doc
+	  that has a service. Don't print exception on error.
+
 2004-03-02  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* MonoWSDL.cs: Use DiscoveryClientProtocol instead of WebClient to get the
