@@ -1,0 +1,10 @@
+2003-09-04  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* Reference.cs: Copied from System.Security assembly as MS duplicate 
+	the class (in WSE) to fixed some issues.
+	* SignedInfo.cs: Copied from System.Security assembly as MS duplicate 
+	the class (in WSE) to fixed some issues.
+	* SignedXml.cs: Copied from System.Security assembly as MS duplicate 
+	the class (in WSE) to fixed some issues.
+	* TransformChain.cs: Copied from System.Security assembly as MS duplicate 
+	the class (in WSE) to fixed some issues.
