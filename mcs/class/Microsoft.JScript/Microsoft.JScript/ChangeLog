@@ -1,3 +1,7 @@
+2004-11-24  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
+
+	* DateConstructor.cs: runtime support, ported parse method from Rhino.
+
 2004-11-22  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
 	* CodeGenerator.cs: (ff_emit_relational) receive a full
