@@ -1,5 +1,12 @@
 2005-03-13  Martin Baulig  <martin@ximian.com>
 
+	* generic.cs
+	(Nullable.NullLiteral): Renamed to `Nullable.NullableLiteral' to
+	avoid confusion with the `NullLiteral'.
+	(Nullable.LiftedBinaryOperator): Correctly implement `==' and '!='.
+
+2005-03-13  Martin Baulig  <martin@ximian.com>
+
 	* expression.cs (Binary.ResolveOperator): For `==' and `!=', allow
 	comparing arbitrary types with the null literal.
 

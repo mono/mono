@@ -1236,7 +1236,7 @@ namespace Mono.CSharp {
 					return TypeParameter_to_Null (expr, target_type, loc);
 
 				if (TypeManager.IsNullableType (target_type))
-					return new Nullable.NullLiteral (target_type, loc);
+					return new Nullable.NullableLiteral (target_type, loc);
 			}
 
 			if (TypeManager.IsNullableType (expr_type) && TypeManager.IsNullableType (target_type))
