@@ -34,8 +34,11 @@ namespace Microsoft.VisualBasic
 		public static System.Boolean IsDate (System.Object Expression) { throw new NotImplementedException (); }
 		[MonoTODO]
 		public static System.Boolean IsDBNull (System.Object Expression) { throw new NotImplementedException (); }
-		[MonoTODO]
-		public static System.Boolean IsNothing (System.Object Expression) { throw new NotImplementedException (); }
+
+		public static System.Boolean IsNothing (System.Object Expression) { 
+			return (Expression == null);
+		}
+
 		[MonoTODO]
 		public static System.Boolean IsError (System.Object Expression) { throw new NotImplementedException (); }
 		[MonoTODO]
