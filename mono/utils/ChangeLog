@@ -1,3 +1,9 @@
+
+Thu Feb 24 15:18:05 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* Makefile.am, mono-compiler.h: added header to deal with 
+	compiler-specific bugs and features.
+
 2005-01-30  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mono-logger.c (mono_trace_is_traced): Fix comment.
