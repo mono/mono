@@ -1,12 +1,10 @@
 //
-// System.Web.UI.WebControls.SiteMapDataSourceView
+// System.Web.UI.WebControls.SiteMapDataSource.cs
 //
 // Authors:
-//	Ben Maurer (bmaurer@users.sourceforge.net)
-//	Sanjay Gupta (gsanjay@novell.com)
+//	Lluis Sanchez Gual (lluis@novell.com)
 //
-// (C) 2003 Ben Maurer
-// (C) 2004 Novell, Inc. (http://www.novell.com)
+// (C) 2004 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -31,44 +29,46 @@
 //
 
 #if NET_2_0
+
+using System;
 using System.Collections;
-using System.Collections.Specialized;
-using System.Text;
 using System.Web.UI;
+using System.ComponentModel;
 
-namespace System.Web.UI.WebControls {
-	public class SiteMapDataSourceView : DataSourceView {
-		public SiteMapDataSourceView (SiteMapDataSource owner, string viewName, SiteMapNode node) : this (owner, viewName, new SiteMapNodeCollection (node)) {}
-		public SiteMapDataSourceView (SiteMapDataSource owner, string viewName, SiteMapNodeCollection collection)
-		{
-			this.collection = collection;
-			this.viewName = viewName;
-			this.owner = owner;
-		}
-		
+namespace System.Web.UI.WebControls
+{
+	public class SiteMapDataSource : HierarchicalDataSourceControl, IDataSource, IListSource
+	{
 		[MonoTODO]
-		public IEnumerable Select (DataSourceSelectArguments arguments)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		protected internal override IEnumerable ExecuteSelect (
-						DataSourceSelectArguments arguments)
+		public DataSourceView GetView (string viewName)
 		{
 			throw new NotImplementedException ();
 		}
 		
-		[MonoTODO ("Extra method to keep things compiling, need to remove later")]
-		public override IEnumerable Select ()
+		[MonoTODO]
+		public ICollection GetViewNames ()
 		{
 			throw new NotImplementedException ();
 		}
-
-		SiteMapNodeCollection collection;
-		string viewName;
-		SiteMapDataSource owner;
+		
+		[MonoTODO]
+		public IList GetList ()
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		public bool ContainsListCollection {
+			get { throw new NotImplementedException (); }
+		}
+		
+		[MonoTODO]
+		public event EventHandler DataSourceChanged {
+			add { throw new NotImplementedException (); }
+			remove { throw new NotImplementedException (); }
+		}
 	}
 }
+
 #endif
 

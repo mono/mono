@@ -1,12 +1,10 @@
 //
-// System.Web.UI.WebControls.SiteMapDataSourceView
+// System.Web.UI.WebControls.SiteMapHierarchicalDataSourceView
 //
 // Authors:
-//	Ben Maurer (bmaurer@users.sourceforge.net)
-//	Sanjay Gupta (gsanjay@novell.com)
+//	Lluis Sanchez Gual (lluis@novell.com)
 //
-// (C) 2003 Ben Maurer
-// (C) 2004 Novell, Inc. (http://www.novell.com)
+// (C) 2004 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -32,42 +30,24 @@
 
 #if NET_2_0
 using System.Collections;
-using System.Collections.Specialized;
-using System.Text;
-using System.Web.UI;
 
-namespace System.Web.UI.WebControls {
-	public class SiteMapDataSourceView : DataSourceView {
-		public SiteMapDataSourceView (SiteMapDataSource owner, string viewName, SiteMapNode node) : this (owner, viewName, new SiteMapNodeCollection (node)) {}
-		public SiteMapDataSourceView (SiteMapDataSource owner, string viewName, SiteMapNodeCollection collection)
+namespace System.Web.UI.WebControls
+{
+	public class SiteMapHierarchicalDataSourceView : HierarchicalDataSourceView
+	{
+		public SiteMapHierarchicalDataSourceView (SiteMapNode node) : this (new SiteMapNodeCollection (node)) {}
+		public SiteMapHierarchicalDataSourceView (SiteMapNodeCollection collection)
 		{
 			this.collection = collection;
-			this.viewName = viewName;
-			this.owner = owner;
-		}
-		
-		[MonoTODO]
-		public IEnumerable Select (DataSourceSelectArguments arguments)
-		{
-			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		protected internal override IEnumerable ExecuteSelect (
-						DataSourceSelectArguments arguments)
-		{
-			throw new NotImplementedException ();
-		}
-		
-		[MonoTODO ("Extra method to keep things compiling, need to remove later")]
-		public override IEnumerable Select ()
+		public override IHierarchicalEnumerable Select ()
 		{
 			throw new NotImplementedException ();
 		}
 
 		SiteMapNodeCollection collection;
-		string viewName;
-		SiteMapDataSource owner;
 	}
 }
 #endif

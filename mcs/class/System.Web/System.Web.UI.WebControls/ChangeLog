@@ -1,3 +1,8 @@
+2004-11-18 Lluis Sanchez Gual <lluis@novell.com>
+
+	* SiteMapHierarchicalDataSourceView.cs, SiteMapDataSource.cs: New files.
+	* SiteMapDataSourceView.cs: Minor fix.
+
 2004-11-18 Sanjay Gupta <gsanjay@novell.com>
 
 	* SqlDataSourceView.cs: Updated ExecuteSelect method.
