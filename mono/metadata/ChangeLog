@@ -1,3 +1,9 @@
+
+Tue Feb 17 21:40:16 CET 2004 Paolo Molaro <lupus@ximian.com>
+
+	* appdomain.h, domain.c: use a MonoCodeManager instead of a
+	MonoMempool to hold compiled native code.
+
 2004-02-17  Martin Baulig  <martin@ximian.com>
 
 	* icall.c (ves_icall_Type_GetFields): Renamed to
