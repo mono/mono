@@ -1,3 +1,7 @@
+2003-11-18  Zoltan Varga  <vargaz@freemail.hu>
+
+	* RuntimeHelpers.cs (Equals): Track changes to ValueType.
+
 2003-11-15  Zoltan Varga  <vargaz@freemail.hu>
 
 	* MethodImplOptions.cs MethodCodeType.cs: Add [Flags].

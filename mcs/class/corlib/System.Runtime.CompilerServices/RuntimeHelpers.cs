@@ -47,7 +47,7 @@ namespace System.Runtime.CompilerServices
 			if ((o1 == null) || (o2 == null))
 				return false;
 			if (o1 is ValueType)
-				return ValueType.InternalEquals (o1, o2);
+				return ValueType.DefaultEquals (o1, o2);
 			else
 				return Object.Equals (o1, o2);
 		}
