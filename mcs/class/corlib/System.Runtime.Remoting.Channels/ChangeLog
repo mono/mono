@@ -1,3 +1,8 @@
+2004-09-28  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* CrossAppDomainChannel.cs: In CreateMessageSink, ignore the url
+	  parameter, it is not needed.
+
 2004-07-02  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* ChannelServices.cs: In RegisterChannel, ignore name colisions if the

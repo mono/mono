@@ -125,28 +125,19 @@ namespace System.Runtime.Remoting.Channels
 		public virtual IMessageSink CreateMessageSink(String url, Object data, out String uri) 
 		{
 			uri = null;
-			IMessageSink sink = null;
             
-			if (url == null && data != null) 
+			if (data != null) 
 			{
 				// Get the data and then get the sink
 				CrossAppDomainData cadData = data as CrossAppDomainData;
 				if (cadData != null && cadData.ProcessID == RemotingConfiguration.ProcessId)
 					// GetSink creates a new sink if we don't have any (use contexts here later)
-					sink = CrossAppDomainSink.GetSink(cadData.DomainID);
+					return CrossAppDomainSink.GetSink(cadData.DomainID);
 			} 
-			else 
-			{
-				if (url != null && data == null) 
-				{
-					if (url.StartsWith(_strName)) 
-					{
-						throw new NotSupportedException("Can't create a named channel via crossappdomain");
-					}
-				}
-			}
+			if (url != null && url.StartsWith(_strName)) 
+				throw new NotSupportedException("Can't create a named channel via crossappdomain");
 
-			return sink;
+			return null;
 		}
 	}
 	
