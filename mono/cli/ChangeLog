@@ -1,3 +1,9 @@
+2001-08-20  Dietmar Maurer  <dietmar@ximian.com>
+
+	* class.h: replaced 'struct MonoMethod' with 'MonoMethod'
+
+	* cli.h: removed #include <mono/cli/object.h> 
+
 Sat Aug 18 12:42:26 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* class.c, class.h: load also the methods when loading a class.

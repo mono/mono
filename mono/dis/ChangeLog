@@ -1,3 +1,7 @@
+2001-08-20  Dietmar Maurer  <dietmar@ximian.com>
+
+	* get.c (dis_stringify_type): support pinned values
+
 Sat Aug 18 11:24:07 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* dump.c, get.c, get.h, main.c: dis_stringify_method_signature()
@@ -5,6 +9,14 @@ Sat Aug 18 11:24:07 CEST 2001 Paolo Molaro <lupus@ximian.com>
 	can figure out also the names and attributes of params.
 	parse_method_signature() and free_method_signature() removed as
 	they are useless now.
+
+2001-08-17  Dietmar Maurer  <dietmar@ximian.com>
+
+	* main.c (pinvoke_info): bug fix - use the right column in the table
+
+2001-08-14  Dietmar Maurer  <dietmar@ximian.com>
+
+	* get.c (dis_stringify_type): use strconcat instead of strjoin
 
 Sat Aug 4 12:36:54 CEST 2001 Paolo Molaro <lupus@ximian.com>
 

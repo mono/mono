@@ -1,7 +1,25 @@
+2001-08-20  Dietmar Maurer  <dietmar@ximian.com>
+
+	* metadata.c (mono_metadata_signature_equal): impl.
+
+	* *: void is now a realy MonoType (instead of using NULL)
+	
+	* metadata.c (do_mono_metadata_parse_type): use
+	mono_metadata_parse_type to parse void value.
+
 Sat Aug 18 12:51:28 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* metadata.c, metadata.h: in the signature and method header store
 	only the space required for holding the loca vars and incoming arguments.
+
+2001-08-15  Dietmar Maurer  <dietmar@ximian.com>
+
+	* metadata.c (do_mono_metadata_parse_type): treat void like any
+	other type (instead of assigning NULL);
+
+2001-08-14  Dietmar Maurer  <dietmar@ximian.com>
+
+	* metadata.c (mono_metadata_parse_mh): fixxed pinned/byref value
 
 2001-08-09  Dietmar Maurer  <dietmar@ximian.com>
 
