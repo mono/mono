@@ -10,13 +10,14 @@
 //
 
 using System;
+using System.Runtime.InteropServices;
+using System.ComponentModel.Design.Serialization;
 
 namespace System.ComponentModel
 {
 	[ComVisible (true),
 		TypeConverter (typeof (System.ComponentModel.ComponentConverter)),
 		Designer ("System.Windows.Forms.Design.ComponentDocumentDesigner, System.Design, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", typeof (System.ComponentModel.Design.IRootDesigner)),
-		Designer ("System.ComponentModel.Design.ComponentDesigner, System.Design, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", typeof (System.ComponentModel.Design.IDesigner)),
 		RootDesignerSerializer ("System.ComponentModel.Design.Serialization.RootCodeDomSerializer, System.Design, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.ComponentModel.Design.Serialization.CodeDomSerializer, System.Design, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", true)]
 	public interface IComponent : IDisposable
 	{

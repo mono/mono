@@ -7,6 +7,7 @@
 // (C) Ximian, Inc.  http://www.ximian.com
 //
 
+using System.Runtime.InteropServices;
 namespace System.ComponentModel {
 
 	[ComVisible (true)]
