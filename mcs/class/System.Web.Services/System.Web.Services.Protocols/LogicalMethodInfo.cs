@@ -130,7 +130,7 @@ namespace System.Web.Services.Protocols {
 		}
 
 		[MonoTODO]
-		public object EndInvoke (object target, IAsyncResult asyncResult)
+		public object[] EndInvoke (object target, IAsyncResult asyncResult)
 		{
 			throw new NotImplementedException ();
 		}

@@ -7,8 +7,6 @@
 // Copyright (C) Tim Coleman, 2002
 //
 
-using System.Web.Services;
-
 namespace System.Web.Services.Protocols {
 	[Serializable]
 	public enum LogicalMethodTypes {

@@ -45,7 +45,7 @@ namespace System.Web.Services.Protocols {
 		}
 
 		[MonoTODO]
-		public static object[] GetInitializers (Type type, LogicalMethodInfo methodInfos)
+		public static object[] GetInitializers (Type type, LogicalMethodInfo[] methodInfos)
 		{
 			throw new NotImplementedException ();
 		}

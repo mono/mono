@@ -29,6 +29,7 @@ namespace System.Web.Services.Protocols {
 
 		#region Properties
 
+		[XmlIgnore]
 		public XmlElement Element {
 			get { return element; }
 			set { element = value; }

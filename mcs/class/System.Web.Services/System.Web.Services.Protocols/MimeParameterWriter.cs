@@ -37,8 +37,6 @@ namespace System.Web.Services.Protocols {
 		public virtual bool UsesWriteRequest {
 			[MonoTODO]
 			get { throw new NotImplementedException (); }
-			[MonoTODO]
-			set { throw new NotImplementedException (); }
 		}
 
 		#endregion // Properties

@@ -38,13 +38,13 @@ namespace System.Web.Services.Protocols {
 		#region Methods
 
 		[MonoTODO]
-		public void Encode (TextWriter writer, object[] values)
+		protected void Encode (TextWriter writer, object[] values)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public void Encode (TextWriter writer, string name, object value)
+		protected void Encode (TextWriter writer, string name, object value)
 		{
 			throw new NotImplementedException ();
 		}

@@ -26,7 +26,7 @@ namespace System.Web.Services.Protocols {
 
 		#region Constructors
 
-		protected SoapHttpClientProtocol () 
+		public SoapHttpClientProtocol () 
 		{
 		}
 		

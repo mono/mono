@@ -19,7 +19,7 @@ namespace System.Web.Services.Protocols {
 		string requestElementName;
 		string requestNamespace;
 		string responseElementName;
-		string responseElementNamespace;
+		string responseNamespace;
 
 		#endregion // Fields
 
@@ -33,7 +33,7 @@ namespace System.Web.Services.Protocols {
 			requestElementName = ""; // FIXME
 			requestNamespace = "http://tempuri.org/";
 			responseElementName = "WebServiceNameResult"; // FIXME
-			responseElementNamespace = "http://tempuri.org/";
+			responseNamespace = "http://tempuri.org/";
 		}
 
 		public SoapRpcMethodAttribute (string action)
@@ -76,9 +76,9 @@ namespace System.Web.Services.Protocols {
 			set { responseElementName = value; }
 		}
 
-		public string ResponseElementNamespace {
-			get { return responseElementNamespace; }
-			set { responseElementNamespace = value; }
+		public string ResponseNamespace {
+			get { return responseNamespace; }
+			set { responseNamespace = value; }
 		}
 
 		#endregion // Properties

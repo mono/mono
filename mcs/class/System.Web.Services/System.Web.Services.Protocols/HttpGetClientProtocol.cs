@@ -15,7 +15,7 @@ namespace System.Web.Services.Protocols {
 
 		#region Constructors
 
-		protected HttpGetClientProtocol () 
+		public HttpGetClientProtocol () 
 		{
 		}
 		

@@ -12,7 +12,7 @@ namespace System.Web.Services.Protocols {
 	[Serializable]
 	public enum SoapHeaderDirection {
 		In,
-		Out,
-		InOut
+		InOut,
+		Out
 	}
 }

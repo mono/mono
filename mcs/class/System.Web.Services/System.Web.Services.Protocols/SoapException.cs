@@ -20,9 +20,9 @@ namespace System.Web.Services.Protocols {
 		public static readonly XmlQualifiedName ServerFaultCode = new XmlQualifiedName ("Server", "http://schemas.xmlsoap.org/soap/envelope/");
 		public static readonly XmlQualifiedName VersionMismatchFaultCode = new XmlQualifiedName ("VersionMismatch", "http://schemas.xmlsoap.org/soap/envelope/");
 
-		string actor;
-		XmlQualifiedName code;
-		XmlNode detail;
+		protected string actor;
+		protected XmlQualifiedName code;
+		protected XmlNode detail;
 
 		#endregion
 

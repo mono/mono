@@ -42,6 +42,7 @@ namespace System.Web.Services.Protocols {
 
 		#region Properties
 
+		[DefaultValue ("")]
 		public string ConnectionGroupName {
 			get { return connectionGroupName; }
 			set { connectionGroupName = value; }
@@ -52,21 +53,32 @@ namespace System.Web.Services.Protocols {
 			set { credentials = value; }
 		}
 
+		[DefaultValue (false)]
+		[WebServicesDescription ("Enables pre authentication of the request.")]
 		public bool PreAuthenticate {
 			get { return preAuthenticate; }
 			set { preAuthenticate = value; }
 		}
 
+		[DefaultValue ("")]
+		[RecommendedAsConfigurable (true)]
+		[WebServicesDescription ("The encoding to use for requests.")]
 		public Encoding RequestEncoding {
 			get { return requestEncoding; }
 			set { requestEncoding = value; }
 		}
 
+		[DefaultValue (100000)]
+		[RecommendedAsConfigurable (true)]
+		[WebServicesDescription ("Sets the timeout in milliseconds to be used for synchronous calls.  The default of -1 means infinite.")]
 		public int Timeout {
 			get { return timeout; }
 			set { timeout = value; }
 		}
 
+		[DefaultValue ("")]
+		[RecommendedAsConfigurable (true)]
+		[WebServicesDescription ("The base URL to the server to use for requests.")]
 		public string Url {
 			get { return url; }
 			set { url = value; }

@@ -47,6 +47,11 @@ namespace System.Web.Services.Protocols {
 			List.CopyTo (array, index);
 		}
 
+		public int IndexOf (SoapHeader header)
+		{
+			return List.IndexOf (header);
+		}
+
 		public void Insert (int index, SoapHeader header)
 		{
 			if (index < 0 || index > Count)
