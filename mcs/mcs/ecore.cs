@@ -672,16 +672,12 @@ namespace Mono.CSharp {
 			}
 
 			if (qualifier_type != null)
-				Report.Error (
-					122, loc, "`" + TypeManager.CSharpName (qualifier_type) + "." +
-					name + "' is inaccessible due to its protection level");
+				Report.Error_T (122, loc, TypeManager.CSharpName (qualifier_type) + "." + name);
 			else if (name == ".ctor") {
 				Report.Error (143, loc, String.Format ("The type {0} has no constructors defined",
 								       TypeManager.CSharpName (queried_type)));
 			} else {
-				Report.Error (
-					122, loc, "`" + name + "' is inaccessible due to its " +
-					"protection level");
+				Report.Error_T (122, loc, name);
 			}
 		}
 
@@ -3040,9 +3036,7 @@ namespace Mono.CSharp {
 				is_static = true;
 
 			if (setter == null && getter == null){
-				Error (122, "`" + PropertyInfo.Name + "' " +
-				       "is inaccessible because of its protection level");
-				
+				Report.Error_T (122, loc, PropertyInfo.Name);
 			}
 		}
 

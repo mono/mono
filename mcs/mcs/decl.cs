@@ -559,8 +559,7 @@ namespace Mono.CSharp {
 			}
 
 			if (!d.CheckAccessLevel (this)) {
-				Report.	Error (122, loc,  "`" + d.Name + "' " +
-				       "is inaccessible because of its protection level");
+				Report.Error_T (122, loc, d.Name);
 				return null;
 			}
 

@@ -6977,8 +6977,7 @@ namespace Mono.CSharp {
 			Type expr_type = expr.Type;
 			if (expr is TypeExpr){
 				if (!ec.DeclSpace.CheckAccessLevel (expr_type)){
-					Error (122, "`" + expr_type + "' " +
-					       "is inaccessible because of its protection level");
+					Report.Error_T (122, loc, expr_type);
 					return null;
 				}
 

@@ -194,6 +194,11 @@ namespace Mono.CSharp {
 			}
 		}
 
+		string GetFullMemberName (string member)
+		{
+			return Type.FullName + '.' + member;
+		}
+
 		//
 		// Given an expression, if the expression is a valid attribute-argument-expression
 		// returns an object that can be used to encode it, or null on failure.
@@ -354,6 +359,17 @@ namespace Mono.CSharp {
 					MemberTypes.Field | MemberTypes.Property,
 					BindingFlags.Public | BindingFlags.Instance,
 					Location);
+
+				if (member == null) {
+					member = Expression.MemberLookup (ec, Type, member_name,
+						MemberTypes.Field | MemberTypes.Property, BindingFlags.NonPublic | BindingFlags.Instance,
+						Location);
+
+					if (member != null) {
+						Report.Error_T (122, Location, GetFullMemberName (member_name));
+						return null;
+					}
+				}
 
 				if (member == null || !(member is PropertyExpr || member is FieldExpr)) {
 					Error_InvalidNamedArgument (member_name);
