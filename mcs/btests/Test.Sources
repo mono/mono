@@ -85,6 +85,8 @@ InheritanceI \
 MustInherit \
 MustInheritA \
 NotInheritable \
+ConstructorA \
+ConstructorB \
 Interface \
 InterfaceA \
 InterfaceB \
