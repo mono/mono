@@ -1,4 +1,8 @@
 
+Tue Feb 12 20:06:01 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* assembly.c: look for assemblies in the assembly dir, too.
+
 Tue Feb 12 14:03:42 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* class.c: fix thinko in mono_class_from_type().
