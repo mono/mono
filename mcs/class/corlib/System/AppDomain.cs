@@ -915,24 +915,6 @@ namespace System
 
 		// static methods
 
-		[MonoTODO]
-		// LAMESPEC: Only the fist argument (full path to application) is documented
-		public static bool Activate (string[] args)
-		{
-			if (args == null)
-				throw new ArgumentNullException ("args");
-			// TODO - what class implements IApplicationDescription ?
-			return ActivateNewProcess (null);
-		}
-
-		[MonoTODO]
-		public static bool ActivateNewProcess (IApplicationDescription appDescription)
-		{
-			if (appDescription == null)
-				throw new ArgumentNullException ("appDescription");
-			return false;
-		}
-
 		[MonoTODO ("add support for new delegate")]
 		public static AppDomain CreateDomain (string friendlyName, Evidence securityInfo, string appBasePath,
 			string appRelativeSearchPath, bool shadowCopy, AppDomainInitializer adInit, string[] adInitArgs)

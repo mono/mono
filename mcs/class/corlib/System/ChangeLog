@@ -1,3 +1,8 @@
+2005-01-11  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AppDomain.cs: Removed Activate and ActivateNewProcess methods. They
+	have been removed from 2.0.
+
 2005-01-11  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Boolean.cs Char.cs Single.cs Double.cs: Implement IComparable<T> in
