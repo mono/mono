@@ -616,6 +616,7 @@ namespace System.Xml
 			return defaultNsmgr.LookupNamespace (prefix);
 		}
 
+#if NET_2_0
 		public string LookupPrefix (string ns)
 		{
 			return LookupPrefix (ns, false);
@@ -651,6 +652,7 @@ namespace System.Xml
 			}
 			return defaultNsmgr.LookupPrefix (ns, atomizedNames);
 		}
+#endif
 
 		public override void MoveToAttribute (int attributeIndex)
 		{
