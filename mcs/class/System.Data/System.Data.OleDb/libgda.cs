@@ -15,6 +15,23 @@ namespace System.Data.OleDb
 {
 	sealed internal class libgda
 	{
+		private static IntPtr m_gdaClient = IntPtr.Zero;
+		
+		static libgda ()
+		{
+			gda_init ("System.Data.OleDb", "0.1", 0, null);
+		}
+
+		public static IntPtr GdaClient
+		{
+			get {
+				if (m_gdaClient == IntPtr.Zero)
+					m_gdaClient = gda_client_new ();
+
+				return m_gdaClient;
+			}
+		}
+		
 		[DllImport("gda-2")]
 		public static extern void gda_init (string app_id,
 						    string version,

@@ -15,17 +15,12 @@ namespace System.Data.OleDb
 {
 	public sealed class OleDbConnection : Component, ICloneable, IDbConnection
 	{
-		private IntPtr m_gdaClient = IntPtr.Zero;
 		private IntPtr m_gdaConnection = IntPtr.Zero;
 		private string m_string = "";
 		private int m_timeout = 15; // default is 15 seconds
 		
 		public OleDbConnection ()
 		{
-			libgda.gda_init ("System.Data.OleDb", "0.1", 0, null);
-
-			/* initialize our GDA client */
-			m_gdaClient = libgda.gda_client_new ();
 		}
 
 		public OleDbConnection (string cnc_string) : this ()

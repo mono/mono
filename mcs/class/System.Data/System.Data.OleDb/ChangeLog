@@ -1,5 +1,14 @@
 2002-05-29  Rodrigo Moya <rodrigo@ximian.com>
 
+	* libgda.cs: added static constructor.
+	(GdaClient): new static property to get the underlying GdaClient
+	object.
+
+	* OleDbConnection.cs: removed GDA initialization, which belongs to
+	the static 'libgda' class.
+
+2002-05-29  Rodrigo Moya <rodrigo@ximian.com>
+
 	* libgda.cs: static class for libgda API calls.
 
 	* OleDbConnection.cs: implemented constructors.
