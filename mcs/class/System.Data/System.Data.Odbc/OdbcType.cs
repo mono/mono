@@ -23,10 +23,10 @@ namespace System.Data.Odbc
 
 	// Unmapped SQL Types
 	//
-	//#define SQL_FLOAT					             6
-	//   could map to SQL_DOUBLE?
+	//#define SQL_FLOAT								6
+	//	could map to SQL_DOUBLE?
 	//#define SQL_INTERVAL							10
-	//   could map to SmallDateTime?
+	//	could map to SmallDateTime?
 
 	public enum OdbcType : short
 	{

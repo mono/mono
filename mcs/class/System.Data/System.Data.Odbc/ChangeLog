@@ -1,3 +1,7 @@
+2004-05-09  Gert Driesen (drieseng@users.sourceforge.net)
+	* OdbcType.cs : fixed linefeeds to DOS to match other sources
+	in System.Data.Odbc
+
 2003-12-01  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* OdbcTransaction.cs: applied patch from Jeff Seifert that makes
