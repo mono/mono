@@ -1,4 +1,8 @@
 
+Tue May 11 16:00:38 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* tramp-ppc.c, mini-ppc.c: more cleanups.
+
 2004-05-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* mini.c: no warnings.
