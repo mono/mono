@@ -1,3 +1,9 @@
+2003-12-25  Jackson Harper <jackson@ximian.com>
+
+	* SessionStateModule.cs: Handle SessionStateMode.Off properly in
+	Init. Only set session cookies if a new session is created. This
+	fixes bug #52501.
+	
 2003-12-18  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* IStateRuntime.cs:

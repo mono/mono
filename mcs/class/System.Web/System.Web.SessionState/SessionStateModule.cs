@@ -64,6 +64,9 @@ namespace System.Web.SessionState
 				
 				if (config.Mode == SessionStateMode.InProc)
 					handlerType = typeof (SessionInProcHandler);
+
+                                if (config.Mode == SessionStateMode.Off)
+                                        return;
 			}
 
 			if (config.CookieLess)
@@ -127,7 +130,7 @@ namespace System.Web.SessionState
 				context.Request.SetHeader (HeaderName, id);
 				context.Response.Redirect (UrlUtils.InsertSessionId (id,
 						context.Request.FilePath));
-			} else {
+			} else if (isNew) {
 				string id = context.Session.SessionID;
 				HttpCookie cookie = new HttpCookie (CookieName, id);
 				cookie.Path = UrlUtils.GetDirectory (context.Request.Path);
