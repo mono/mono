@@ -137,6 +137,9 @@ namespace System.Diagnostics {
 		[MonitoringDescription ("Determines if the process is still running.")]
 		public bool HasExited {
 			get {
+				if (process_handle == IntPtr.Zero)
+					throw new InvalidOperationException ("Process has not been started.");
+					
 				int exitcode = ExitCode_internal (process_handle);
 
 				if(exitcode==259) {
