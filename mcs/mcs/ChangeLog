@@ -1,3 +1,8 @@
+
+Tue Jun 18 10:36:22 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* rootcontext.cs: added a couple more types needed to bootstrap.
+
 2002-06-17  Miguel de Icaza  <miguel@ximian.com>
 
 	* typemanager.cs (GetConstructor): Use DeclaredOnly to look the
