@@ -17,13 +17,10 @@ using System.Runtime.CompilerServices;
 
 namespace System {
 	public sealed class String : IConvertible, IComparable, ICloneable, IEnumerable {
-		private char[] c_str;
 		private int length;
 
 		public static readonly String Empty = "";
 
-		// New constructors (to use when we change the internal structure of a string 
-		/*
 		[CLSCompliant(false), MethodImplAttribute(MethodImplOptions.InternalCall)]
 		unsafe public extern String(char *value);
 
@@ -47,119 +44,7 @@ namespace System {
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern String(char c, int count);
-		
-		*/
-
-		// Constructors (old one's from the old String.cs)
-		internal String (int storage) {
-			if (storage < 0)
-				throw new ArgumentOutOfRangeException ();
-			length = storage;
-			c_str = new char [storage];
-		}
-		
-		[CLSCompliant(false)]
-		unsafe public String (char *value) {
-			int i;
-
-			// FIXME: can I do value.Length here?
-			if (value == null) {
-				this.length = 0;
-			} else {
-				for (i = 0; *(value + i) != '\0'; i++);
-				this.length = i;
-			}
-
-			this.c_str = new char [this.length + 1];
-			for (i = 0; i < this.length; i++)
-				this.c_str[i] = *(value + i);
-		}
-
-		public String (char[] value) {
-			int i;
-
-			// FIXME: value.Length includes the terminating null char?
-			this.length = value != null ? value.Length : 0;
-			this.c_str = new char [this.length + 1];
-			for (i = 0; i < this.length; i++)
-				this.c_str[i] = value[i];
-		}
-
-		[CLSCompliant(false)]
-		unsafe public String (sbyte *value) {
-			// FIXME: consider unicode?
-			int i;
-
-			// FIXME: can I do value.Length here? */
-			if (value == null) {
-				this.length = 0;
-			} else {
-				for (i = 0; *(value + i) != '\0'; i++);
-				this.length = i;
-			}
-
-			this.c_str = new char [this.length + 1];
-			for (i = 0; i < this.length; i++)
-				this.c_str[i] = (char) *(value + i);
-		}
-
-		public String (char c, int count) {
-			int i;
-
-			this.length = count;
-			this.c_str = new char [count + 1];
-			for (i = 0; i < count; i++)
-				this.c_str[i] = c;
-		}
-
-		[CLSCompliant(false)]
-		unsafe public String (char *value, int startIndex, int length) {
-			int i;
-
-			if (value == null && startIndex != 0 && length != 0)
-				throw new ArgumentNullException ();
-
-			if (startIndex < 0 || length < 0)
-				throw new ArgumentOutOfRangeException ();
-
-			this.length = length;
-			this.c_str = new char [length + 1];
-			for (i = 0; i < length; i++)
-				this.c_str[i] = *(value + startIndex + i);
-		}
-
-		public String (char[] value, int startIndex, int length) {
-			int i;
-
-			if (value == null && startIndex != 0 && length != 0)
-				throw new ArgumentNullException ();
-
-			if (startIndex < 0 || length < 0)
-				throw new ArgumentOutOfRangeException ();
-
-			this.length = length;
-			this.c_str = new char [length + 1];
-			for (i = 0; i < length; i++)
-				this.c_str[i] = value[startIndex + i];
-		}
-
-		[CLSCompliant(false)]
-		unsafe public String (sbyte *value, int startIndex, int length) {
-			// FIXME: consider unicode?
-			int i;
-
-			if (value == null && startIndex != 0 && length != 0)
-				throw new ArgumentNullException ();
-
-			if (startIndex < 0 || length < 0)
-				throw new ArgumentOutOfRangeException ();
-
-			this.length = length;
-			this.c_str = new char [length + 1];
-			for (i = 0; i < length; i++)
-				this.c_str[i] = (char) *(value + startIndex + i);
-		}
-
+	
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern override int GetHashCode();
 
