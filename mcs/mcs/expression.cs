@@ -4197,12 +4197,17 @@ namespace Mono.CSharp {
 				ig.Emit (OpCodes.Ldloc, array);
 				IntConstant.EmitInt (ig, j - idx);
 
-				if (t.IsSubclassOf (TypeManager.value_type) && (!TypeManager.IsBuiltinType (t) || t == TypeManager.decimal_type))
+				bool is_stobj;
+				OpCode op = ArrayAccess.GetStoreOpcode (t, out is_stobj);
+				if (is_stobj)
 					ig.Emit (OpCodes.Ldelema, t);
-			
+
 				a.Emit (ec);
-				
-				ArrayAccess.EmitStoreOpcode (ig, t);
+
+				if (is_stobj)
+					ig.Emit (OpCodes.Stobj, t);
+				else
+					ig.Emit (op);
 			}
 			ig.Emit (OpCodes.Ldloc, array);
 		}
@@ -6207,28 +6212,45 @@ namespace Mono.CSharp {
 		/// </summary>
 		static public void EmitStoreOpcode (ILGenerator ig, Type t)
 		{
+			bool is_stobj;
+			OpCode op = GetStoreOpcode (t, out is_stobj);
+			if (is_stobj)
+				ig.Emit (OpCodes.Stobj, t);
+			else
+				ig.Emit (op);
+		}
+
+		/// <summary>
+		///    Returns the right opcode to store an object of Type `t'
+		///    from an array of T.  
+		/// </summary>
+		static public OpCode GetStoreOpcode (Type t, out bool is_stobj)
+		{
+			is_stobj = false;
 			t = TypeManager.TypeToCoreType (t);
 			if (TypeManager.IsEnumType (t) && t != TypeManager.enum_type)
 				t = TypeManager.EnumToUnderlying (t);
 			if (t == TypeManager.byte_type || t == TypeManager.sbyte_type ||
 			    t == TypeManager.bool_type)
-				ig.Emit (OpCodes.Stelem_I1);
-			else if (t == TypeManager.short_type || t == TypeManager.ushort_type || t == TypeManager.char_type)
-				ig.Emit (OpCodes.Stelem_I2);
+				return OpCodes.Stelem_I1;
+			else if (t == TypeManager.short_type || t == TypeManager.ushort_type ||
+				 t == TypeManager.char_type)
+				return OpCodes.Stelem_I2;
 			else if (t == TypeManager.int32_type || t == TypeManager.uint32_type)
-				ig.Emit (OpCodes.Stelem_I4);
+				return OpCodes.Stelem_I4;
 			else if (t == TypeManager.int64_type || t == TypeManager.uint64_type)
-				ig.Emit (OpCodes.Stelem_I8);
+				return OpCodes.Stelem_I8;
 			else if (t == TypeManager.float_type)
-				ig.Emit (OpCodes.Stelem_R4);
+				return OpCodes.Stelem_R4;
 			else if (t == TypeManager.double_type)
-				ig.Emit (OpCodes.Stelem_R8);
+				return OpCodes.Stelem_R8;
 			else if (t == TypeManager.intptr_type)
-				ig.Emit (OpCodes.Stelem_I);
-			else if (t.IsValueType){
-				ig.Emit (OpCodes.Stobj, t);
+				return OpCodes.Stelem_I;
+			else if (t.IsValueType) {
+				is_stobj = true;
+				return OpCodes.Stobj;
 			} else
-				ig.Emit (OpCodes.Stelem_Ref);
+				return OpCodes.Stelem_Ref;
 		}
 
 		MethodInfo FetchGetMethod ()
