@@ -1,5 +1,18 @@
 2003-06-08  Duncan Mak  <duncan@ximian.com>
 
+	* Array.cs: Throw more exceptions. This fixes the errors we see
+	from the Rotor testsuite.
+
+	(CreateInstance): Throw ArgumentNullException when the input are
+	null. Throw ArgumentOutOfRangeException when bounds + length is
+	greater than Int32.MaxValue.
+	(LastIndexOf): Throw ArgumentOutOfRangeException if index is outside
+	the valid range of indices of array.
+	(Sort): Throw InvalidOperationException when comparer is null and
+	none of the elements in keys implements IComparable.
+
+2003-06-08  Duncan Mak  <duncan@ximian.com>
+
 	* Array.cs (CreateInstance): Throw a TypeLoadException if the
 	Length of the input array 'lengths' is greater than 255 so that we
 	won't see the g_assert that is in mono_array_class_get in class.c.
