@@ -1,3 +1,8 @@
+2005-03-01 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* CSharpCodeCompiler.cs: mcs in 1-0 writes the errors to stdout while
+	mcs HEAD writes to stderr... Fixes bug #73081.
+
 2004-12-13 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CSharpCodeCompiler.cs: ignore the 'BETA SOFTWARE blah' from gmcs.

@@ -154,8 +154,11 @@ namespace Mono.CSharp
 			try {
 				mcs.Start();
 				// If there are a few kB in stdout, we might lock
-				mcs_output=mcs.StandardError.ReadToEnd();
-				mcs.StandardOutput.ReadToEnd ();
+
+				//FIXME: watch out for changes in mcs
+				// StandardError is used in HEAD, not in 1-0
+				// mcs_output=mcs.StandardError.ReadToEnd();
+				mcs_output = mcs.StandardOutput.ReadToEnd ();
 				mcs.WaitForExit();
 			} finally {
 				results.NativeCompilerReturnValue = mcs.ExitCode;
