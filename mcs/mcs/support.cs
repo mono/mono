@@ -207,7 +207,12 @@ namespace Mono.CSharp {
 			if (has_varargs && pos >= count)
 				return "__arglist";
 
-			string tmp = String.Empty;
+			Type t = ParameterType (pos);
+			return ModifierDesc (pos) + " " + TypeManager.CSharpName (t);
+		}
+
+		public string ModifierDesc (int pos)
+		{
 			Parameter p = GetParameter (pos);
 
 			//
@@ -215,15 +220,13 @@ namespace Mono.CSharp {
 			// extra flag ISBYREF will be set as well
 			//
 			if ((p.ModFlags & Parameter.Modifier.REF) != 0)
-				tmp = "ref ";
-			else if ((p.ModFlags & Parameter.Modifier.OUT) != 0)
-				tmp = "out ";
-			else if (p.ModFlags == Parameter.Modifier.PARAMS)
-				tmp = "params ";
+				return "ref";
+			if ((p.ModFlags & Parameter.Modifier.OUT) != 0)
+				return "out";
+			if (p.ModFlags == Parameter.Modifier.PARAMS)
+				return "params";
 
-			Type t = ParameterType (pos);
-
-			return tmp + TypeManager.CSharpName (t);
+			return "";
 		}
 
 		public Parameter.Modifier ParameterModifier (int pos)

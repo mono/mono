@@ -167,12 +167,6 @@ namespace Mono.CSharp {
 			invoke_mb = (MethodInfo) Delegate.GetInvokeMethod (ec, delegate_type, loc);
 			ParameterData invoke_pd = TypeManager.GetParameterData (invoke_mb);
 
-			//
-			// If implicit parameters are set, then we must check for out in the parameters
-			// and flag it accordingly.
-			//
-			bool out_invalid_check = false;
-			
 			if (Parameters == null){
 				int i, j;
 				out_invalid_check = true;
@@ -225,6 +219,16 @@ namespace Mono.CSharp {
 			
 			for (int i = 0; i < amp.Count; i++){
 				Parameter.Modifier amp_mod = amp.ParameterModifier (i);
+
+				if ((amp_mod & (Parameter.Modifier.OUT | Parameter.Modifier.REF)) != 0){
+					if (!probe){
+						Error_ParameterMismatch (delegate_type);
+						Report.Error (1677, loc, "Parameter '{0}' should not be declared with the '{1}' keyword", 
+							i+1, amp.ModifierDesc (i));
+					}
+					return null;
+				}
+
 				if (amp_mod != invoke_pd.ParameterModifier (i)){
 					if (!probe){
 						Report.Error (1676, loc, 
@@ -240,14 +244,6 @@ namespace Mono.CSharp {
 								      "Signature mismatch in parameter {0}: need `{1}' got `{2}'", i + 1,
 								      TypeManager.CSharpName (invoke_pd.ParameterType (i)),
 								      TypeManager.CSharpName (amp.ParameterType (i)));
-						Error_ParameterMismatch (delegate_type);
-					}
-					return null;
-				}
-				
-				if (out_invalid_check && (invoke_pd.ParameterModifier (i) & Parameter.Modifier.OUT) != 0){
-					if (!probe){
-						Report.Error (1676, loc,"Parameter {0} must include the `out' modifier ", i+1);
 						Error_ParameterMismatch (delegate_type);
 					}
 					return null;

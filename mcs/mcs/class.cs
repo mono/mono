@@ -3681,6 +3681,11 @@ namespace Mono.CSharp {
 			if (!DoDefine ())
 				return false;
 
+			if (RootContext.StdLib && (ReturnType == TypeManager.arg_iterator_type || ReturnType == TypeManager.typed_reference_type)) {
+				Error1599 (Location, ReturnType);
+				return false;
+			}
+
 			if (!CheckBase ())
 				return false;
 
@@ -3753,6 +3758,11 @@ namespace Mono.CSharp {
 
 			Block = null;
 			MethodData = null;
+		}
+
+		public static void Error1599 (Location loc, Type t)
+		{
+			Report.Error (1599, loc, "Method or delegate cannot return type '{0}'", TypeManager.CSharpName (t));
 		}
 
 		protected override MethodInfo FindOutBaseMethod (TypeContainer container, ref Type base_ret_type)

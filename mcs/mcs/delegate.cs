@@ -210,6 +210,11 @@ namespace Mono.CSharp {
 			if (ret_type.IsPointer && !UnsafeOK (Parent))
 				return false;
 
+			if (RootContext.StdLib && (ret_type == TypeManager.arg_iterator_type || ret_type == TypeManager.typed_reference_type)) {
+				Method.Error1599 (Location, ret_type);
+				return false;
+			}
+
 			//
 			// We don't have to check any others because they are all
 			// guaranteed to be accessible - they are standard types.
