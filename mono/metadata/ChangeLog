@@ -1,5 +1,14 @@
 2002-09-21  Martin Baulig  <martin@gnome.org>
 
+	* icall.c
+	("System.Reflection.Assembly::MonoDebugger_GetLocalTypeFromSignature"):
+	New interncall.
+
+	* debug-mono-symfile.c (ves_icall_MonoDebugger_GetLocalTypeFromSignature):
+	New interncall to get a method from its metadata token.
+
+2002-09-21  Martin Baulig  <martin@gnome.org>
+
 	* debug-mono-symfile.c: Create type table.
 
 2002-09-20  Martin Baulig  <martin@gnome.org>
