@@ -1,3 +1,14 @@
+2004-03-30  Martin Baulig  <martin@ximian.com>
+
+	* reflection.c (encode_new_constraint): New static function to add
+	the constructor constraint attribute to a type parameter.
+	(encode_constraints): Call encode_new_constraint() if necessary.
+
+	* reflection.h
+	(MonoReflectionGenericParam): Added `guint32 has_ctor_constraint'.
+
+	* row-indexes.h: Added CUSTOM_ATTR_GENERICPAR.
+
 2004-03-29 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* reflection.c, icall.c: add support for pinning variables. 
