@@ -1,3 +1,21 @@
+2003-02-21  Zoltan Varga  <vargaz@freemail.hu>
+
+	* appdomain.h appdomain.c:
+	(mono_domain_try_type_resolve): split the 
+	name_or_tb argument into a name and a tb argument.
+	(mono_domain_has_type_resolve): new function to check whenever the
+	application has registered a TypeResolve event handler.
+	
+	* icall.c reflection.h reflection.c: move the type resolve logic into
+	mono_reflection_get_type () so it will be invoked when 
+	Assembly::GetType () is called.
+
+	* reflection.c:
+	(mono_reflection_get_type): renamed to get_type_internal.
+	(mono_reflection_get_type): fixed type name generation so it works 
+	for nested types too.
+	(mono_reflection_get_type): call has_type_resolve () to avoid the 
+	costly type name generation if there is no resolve event handler.
 
 Fri Feb 21 11:36:57 CET 2003 Paolo Molaro <lupus@ximian.com>
 
