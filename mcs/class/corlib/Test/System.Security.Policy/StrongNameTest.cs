@@ -26,7 +26,7 @@ public class StrongNameTest : Assertion {
 	private Version version;
 
 	[SetUp]
-	void SetUp () 
+	public void SetUp () 
 	{
 		snpkb = new StrongNamePublicKeyBlob (pk);
 		name = "StrongNameName";
