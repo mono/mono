@@ -672,14 +672,13 @@ namespace System.Drawing.Imaging
 				info.Format = PixelFormat.Format8bppIndexed;
 			}
 			info.Size = new Size(cinfo.OutputWidth,cinfo.OutputHeight);
-			info.Stride = cinfo.Stride + pad_bytes;
+			info.Stride = row_width;
 			info.Palette = new ColorPalette(1, cinfo.ColorMap);
 			info.Format = PixelFormat.Format24bppRgb;
-			info.RawImageBytes = new byte[(cinfo.OutputHeight) * (cinfo.Stride + pad_bytes)];
+			info.RawImageBytes = new byte[(cinfo.OutputHeight) * row_width];
 
 			JSAMPARRAY outbuf = new JSAMPARRAY(cinfo.Stride);
-			int outputRow = 0;
-			int outputIndex = info.RawImageBytes.Length - cinfo.Stride - pad_bytes;
+			int outputIndex = info.RawImageBytes.Length - row_width;
 
 			while (cinfo.OutputScanLine < cinfo.OutputHeight) {
 				// FIXME: switch to the Length after fixing a run-time error
@@ -688,21 +687,20 @@ namespace System.Drawing.Imaging
 					// FIXME: switch to .JSAMPLES[i] after fix of run-time error
 					//Marshal.Copy(outbuf.JSAMPLES[i], info.RawImageBytes, outputIndex, cinfo.Stride);
 					Marshal.Copy(outbuf.JSAMPLE0, info.RawImageBytes, outputIndex, cinfo.Stride);
-					outputIndex -= cinfo.Stride + pad_bytes;
-					outputRow++;
+					outputIndex -= row_width;
 				}
 			}
-			// FIXME: analise count of color components here
+			// FIXME: not sure if this always works
 			switch_color_bytes(info.RawImageBytes);
 			jpeg_finish_decompress(cinfo.raw_struct);
 			jpeg_destroy_decompress(cinfo.raw_struct);
 			return true;
 		}
 
-		internal bool Encode( Stream stream, InternalImageInfo info) {
+		internal unsafe bool Encode( Stream stream, InternalImageInfo info) {
 			
 			int bpp = Image.GetPixelFormatSize(info.Format) / 8;
-			if( bpp != 3 ) {
+			if( bpp != 3 && bpp != 4) {
 				throw new ArgumentException(String.Format("Supplied pixel format is not yet supported: {0}, {1} bpp", info.Format, Image.GetPixelFormatSize(info.Format)));
 			}
 
@@ -755,36 +753,39 @@ namespace System.Drawing.Imaging
 
 			cinfo.ImageWidth = info.Size.Width;
 			cinfo.ImageHeight = info.Size.Height;
-			// FIXME: is it really only 24 bpp
-			cinfo.InputComponents = bpp;
+			cinfo.InputComponents = 3;
 			cinfo.InColorSpace = J_COLOR_SPACE.JCS_RGB;
 
 			jpeg_set_defaults( cinfo.raw_struct);
 
 			jpeg_start_compress( cinfo.raw_struct, 1);
 
-			// FIXME: is it really only 24 bpp ?
-			row_width *= bpp;
-			JSAMPARRAY inbuf = new JSAMPARRAY(row_width);
+			int row_bytes_width = row_width * 3;
+			int src_row_bytes_width = row_width * bpp;
+			JSAMPARRAY inbuf = new JSAMPARRAY(row_bytes_width);
 
-			// FIXME: analise count of color components here
-			switch_color_bytes(info.RawImageBytes);
-
-			int inputIndex = info.RawImageBytes.Length - row_width;
-			while (cinfo.NextScanLine < cinfo.ImageHeight) {
-				//Marshal.Copy(inbuf.JSAMPLES[0], info.RawImageBytes, outputIndex, cinfo.Stride);
-				Marshal.Copy(info.RawImageBytes, inputIndex, inbuf.JSAMPLE0, row_width);
-				//inputIndex += info.Size.Width * 3;
-				inputIndex -= row_width;
-				jpeg_write_scanlines(cinfo.raw_struct, ref inbuf, 1 /*inbuf.JSAMPLES.Length*/);
+			int inputIndex = info.RawImageBytes.Length - src_row_bytes_width;
+			byte[] buffer = new byte[row_bytes_width];
+			fixed( byte *psrc = info.RawImageBytes, pbuf = buffer) {
+				byte* curSrc = null;
+				byte* curDst = null;
+				while (cinfo.NextScanLine < cinfo.ImageHeight) {
+					curSrc = psrc + inputIndex;
+					curDst = pbuf;
+					for( int i = 0; i < row_width; i++) {
+						*curDst++ = *(curSrc+2);
+						*curDst++ = *(curSrc+1);
+						*curDst++ = *curSrc;
+						curSrc += bpp;
+					}
+					Marshal.Copy( buffer, 0, inbuf.JSAMPLE0, row_bytes_width);
+					inputIndex -= src_row_bytes_width;
+					jpeg_write_scanlines(cinfo.raw_struct, ref inbuf, 1 /*inbuf.JSAMPLES.Length*/);
+				}
 			}
 
 			jpeg_finish_compress(cinfo.raw_struct);
 			jpeg_destroy_compress(cinfo.raw_struct);
-
-			// FIXME: analise count of color components here
-			// put them back
-			switch_color_bytes(info.RawImageBytes);
 
 			return true;
 		}

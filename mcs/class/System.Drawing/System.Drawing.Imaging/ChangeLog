@@ -1,3 +1,6 @@
+2003-06-27 Alexandre Pigolkine <pigolkine@gmx.de>
+	* JPEGCodec.cs 	encode 32 bpp images
+
 2003-06-23 Alexandre Pigolkine <pigolkine@gmx.de>
 	* JPEGCodec.cs 	set pixel format in InternalImageInfo
 	
