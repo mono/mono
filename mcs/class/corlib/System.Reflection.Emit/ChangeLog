@@ -1,5 +1,7 @@
 2005-02-11  Zoltan Varga  <vargaz@freemail.hu>
 
+	* TypeBuilder.cs (IsAssignableTo): New helper method. Fixes #70838.
+	
 	* TypeBuilder.cs: Fix warning.
 
 2005-01-21 Rafael Teixeira <rafaelteixeirabr@hotmail.com>

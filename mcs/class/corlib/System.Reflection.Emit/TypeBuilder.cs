@@ -1338,6 +1338,27 @@ namespace System.Reflection.Emit {
 			return base.IsSubclassOf (c);
 		}
 
+		[MonoTODO ("arrays")]
+		internal bool IsAssignableTo (Type c)
+		{
+			if (c == this)
+				return true;
+
+			if (c.IsInterface) {
+				if (interfaces == null)
+					return false;
+				foreach (Type t in interfaces)
+					if (c.IsAssignableFrom (t))
+						return true;
+				return false;
+			}
+
+			if (parent == null)
+				return c == typeof (object);
+			else
+				return c.IsAssignableFrom (parent);
+		}
+
 #if NET_2_0 || BOOTSTRAP_NET_2_0
 		public bool IsCreated () {
 			return is_created;
