@@ -1,5 +1,13 @@
 2004-04-28  Sebastien Pouliot  <sebastien@ximian.com>
 
+	* corlib.dll.sources: Added X509ChainStatusFlags, X509CRL, X509Store, 
+	X509StoreManager, X509Stores, BasicConstraintsExtension, 
+	KeyUsageExtension and SubjectKeyIdentifierExtension to the build.
+	Removed ITrustAnchors.cs, TestAnchors.cs and TrustAnchors from the 
+	build.
+
+2004-04-28  Sebastien Pouliot  <sebastien@ximian.com>
+
 	* corlib_test.dll.sources: Added DESCryptoServiceProviderTest.cs.
 
 2004-04-28  Zoltan Varga  <vargaz@freemail.hu>
