@@ -1,5 +1,5 @@
 //
-// System.TypeLoadException
+// System.TypeLoadException.cs
 //
 // Author:
 //   Sean MacIsaac (macisaac@ximian.com)

@@ -13,19 +13,19 @@ using System.Runtime.CompilerServices;
 
 namespace System 
 {
-	[CLSCompliant(false)]
+	[CLSCompliant (false)]
 	public struct TypedReference 
 	{
 		RuntimeTypeHandle type;
 		IntPtr value;
 		IntPtr klass;
-		
-		public override bool Equals(object o)
+
+		public override bool Equals (object o)
 		{
-			throw new NotSupportedException("This operation is not supported for this type");
+			throw new NotSupportedException (Locale.GetText ("This operation is not supported for this type."));
 		}
 
-		public override int GetHashCode()
+		public override int GetHashCode ()
 		{
 			if (type.Value == IntPtr.Zero)
 				return 0;
@@ -38,31 +38,30 @@ namespace System
 		}
 
 		[MonoTODO]
-		public static TypedReference MakeTypedReference(object target, FieldInfo[] flds) 
+		public static TypedReference MakeTypedReference (object target, FieldInfo[] flds) 
 		{
-			if(target==null) {
-				throw new ArgumentNullException("target is null");
+			if (target == null) {
+				throw new ArgumentNullException ("target");
 			}
-			if(flds==null) {
-				throw new ArgumentNullException("flds is null");
+			if (flds == null) {
+				throw new ArgumentNullException ("flds");
 			}
-			if(flds.Length==0) {
-				throw new ArgumentException("flds has no elements");
+			if (flds.Length == 0) {
+				throw new ArgumentException (Locale.GetText ("flds has no elements"));
 			}
-			throw new NotImplementedException();
+			throw new NotImplementedException ();
 		}
 
 		/* how can we set something in value if it's passed by value? */
 		[MonoTODO]
-		public static void SetTypedReference(TypedReference target,
-						     object value) 
+		public static void SetTypedReference (TypedReference target, object value) 
 		{
-			if(value==null) {
-				throw new ArgumentNullException("value is null");
+			if (value == null) {
+				throw new ArgumentNullException ("value");
 			}
-			throw new NotImplementedException();
+			throw new NotImplementedException ();
 		}
-		
+
 		public static RuntimeTypeHandle TargetTypeToken (TypedReference value)
 		{
 			return value.type;

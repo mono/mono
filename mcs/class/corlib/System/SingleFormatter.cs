@@ -2,16 +2,12 @@
 // System.SingleFormatter.cs
 //
 // Author:
-//   Pedro Martinez Juliá  <yoros@wanadoo.es>
+//   Pedro Martinez Juliá (yoros@wanadoo.es)
 //
 // Copyright (C) 2003 Pedro Martínez Juliá <yoros@wanadoo.es>
 //
 
-using System;
-using System.Text;
-using System.Collections;
 using System.Globalization;
-
 
 namespace System {
 
@@ -29,15 +25,12 @@ namespace System {
 		const int dec_len2 = 7;
 		const int dec_len_min2 = -16;
 
-		public static string NumberToString (string format,
-				NumberFormatInfo nfi, double value) {
+		public static string NumberToString (string format, NumberFormatInfo nfi, double value)
+		{
 			if (fpf == null) {
-				fpf = new FloatingPointFormatter (p, p10, dec_len,
-					dec_len_min, p2, p102, dec_len2, dec_len_min2);
+				fpf = new FloatingPointFormatter (p, p10, dec_len, dec_len_min, p2, p102, dec_len2, dec_len_min2);
 			}
 			return fpf.GetStringFrom (format, nfi, value);
 		}
-		
 	}
-
 }

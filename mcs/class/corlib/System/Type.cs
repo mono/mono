@@ -44,16 +44,16 @@ namespace System {
 			string name = (string) filterCriteria;
 			return name.Equals (m.Name);
 		}
-		
+
 		static bool FilterNameIgnoreCase_impl (MemberInfo m, object filterCriteria)
 		{
 			string name = (string) filterCriteria;
-                        if (name.Length != m.Name.Length)
-                            return false;
-                        
+			if (name.Length != m.Name.Length)
+				return false;
+
 			return String.Compare (name, m.Name, true, CultureInfo.InvariantCulture) == 0;
 		}
-		
+
 		[MonoTODO]
 		static bool FilterAttribute_impl (MemberInfo m, object filterCriteria)
 		{
@@ -87,14 +87,14 @@ namespace System {
 				return GetAttributeFlagsImpl ();
 			}
 		}
-		
+
 		/// <summary>
 		///   Returns the basetype for this type
 		/// </summary>
 		public abstract Type BaseType {
 			get;
 		}
-			
+
 		/// <summary>
 		///   Returns the class that declares the member.
 		/// </summary>
@@ -112,7 +112,7 @@ namespace System {
 				return Binder.DefaultBinder;
 			}
 		}
-		
+
 		/// <summary>
 		///    The full name of the type including its namespace
 		/// </summary>
@@ -362,7 +362,7 @@ namespace System {
 				return false;
 			return Equals (cmp);
 		}
-		
+
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern bool Equals (Type type);
 		
@@ -521,12 +521,12 @@ namespace System {
 			if (interfaceType == null)
 				throw new ArgumentNullException ("interfaceType");
 			if (!interfaceType.IsInterface)
-				throw new ArgumentException ("type argument must be an interface", "interfaceType");
+				throw new ArgumentException (Locale.GetText ("Argument must be an interface."), "interfaceType");
 			res.TargetType = this;
 			res.InterfaceType = interfaceType;
 			GetInterfaceMapData (this, interfaceType, out res.TargetMethods, out res.InterfaceMethods);
 			if (res.TargetMethods == null)
-				throw new ArgumentException ("interface not found", "interfaceType");
+				throw new ArgumentException (Locale.GetText ("Interface not found"), "interfaceType");
 
 			return res;
 		}
@@ -587,23 +587,22 @@ namespace System {
 			return (int)_impl.Value;
 		}
 
-		public MemberInfo[] GetMember( string name)
+		public MemberInfo[] GetMember (string name)
 		{
 			return GetMember (name, DefaultBindingFlags);
 		}
 		
-		public virtual MemberInfo[] GetMember( string name, BindingFlags bindingAttr)
+		public virtual MemberInfo[] GetMember (string name, BindingFlags bindingAttr)
 		{
 			return GetMember (name, MemberTypes.All, bindingAttr);
 		}
 
-		public virtual MemberInfo[] GetMember (string name, MemberTypes type,
-						       BindingFlags bindingAttr)
+		public virtual MemberInfo[] GetMember (string name, MemberTypes type, BindingFlags bindingAttr)
 		{
 			return FindMembers (type, bindingAttr, FilterName, name);
 		}
 
-		public MemberInfo[] GetMembers()
+		public MemberInfo[] GetMembers ()
 		{
 			return GetMembers (DefaultBindingFlags);
 		}
@@ -630,23 +629,20 @@ namespace System {
 			return GetMethod (name, DefaultBindingFlags, null, CallingConventions.Any, types, null);
 		}
 
-		public MethodInfo GetMethod( string name, Type[] types, ParameterModifier[] modifiers)
+		public MethodInfo GetMethod (string name, Type[] types, ParameterModifier[] modifiers)
 		{
-			return GetMethod (name, DefaultBindingFlags, null,
-					  CallingConventions.Any, types, modifiers);
+			return GetMethod (name, DefaultBindingFlags, null, CallingConventions.Any, types, modifiers);
 		}
 
 		public MethodInfo GetMethod (string name, BindingFlags bindingAttr, Binder binder,
-					     Type[] types, ParameterModifier[] modifiers)
+		                             Type[] types, ParameterModifier[] modifiers)
 		{
 			
-			return GetMethod (name, bindingAttr, binder,
-					  CallingConventions.Any, types, modifiers);
+			return GetMethod (name, bindingAttr, binder, CallingConventions.Any, types, modifiers);
 		}
 
-		public MethodInfo GetMethod (string name, BindingFlags bindingAttr,
-					     Binder binder, CallingConventions callConvention,
-					     Type[] types, ParameterModifier[] modifiers)
+		public MethodInfo GetMethod (string name, BindingFlags bindingAttr, Binder binder,
+		                             CallingConventions callConvention, Type[] types, ParameterModifier[] modifiers)
 		{
 			if (name == null)
 				throw new ArgumentNullException ("name");
@@ -660,10 +656,9 @@ namespace System {
 			return GetMethodImpl (name, bindingAttr, binder, callConvention, types, modifiers);
 		}
 
-		protected abstract MethodInfo GetMethodImpl (string name, BindingFlags bindingAttr,
-							     Binder binder,
-							     CallingConventions callConvention,
-							     Type[] types, ParameterModifier[] modifiers);
+		protected abstract MethodInfo GetMethodImpl (string name, BindingFlags bindingAttr, Binder binder,
+		                                             CallingConventions callConvention, Type[] types,
+		                                             ParameterModifier[] modifiers);
 
 		public MethodInfo[] GetMethods ()
 		{
@@ -727,15 +722,13 @@ namespace System {
 			return GetProperty (name, DefaultBindingFlags, null, returnType, types, null);
 		}
 
-		public PropertyInfo GetProperty( string name, Type returnType, Type[] types,
-						 ParameterModifier[] modifiers)
+		public PropertyInfo GetProperty( string name, Type returnType, Type[] types, ParameterModifier[] modifiers)
 		{
 			return GetProperty (name, DefaultBindingFlags, null, returnType, types, modifiers);
 		}
 
-		public PropertyInfo GetProperty (string name, BindingFlags bindingAttr,
-						 Binder binder, Type returnType,
-						 Type[] types, ParameterModifier[] modifiers)
+		public PropertyInfo GetProperty (string name, BindingFlags bindingAttr, Binder binder, Type returnType,
+		                                 Type[] types, ParameterModifier[] modifiers)
 		{
 			if (name == null)
 				throw new ArgumentNullException ("name");
@@ -745,11 +738,8 @@ namespace System {
 			return GetPropertyImpl (name, bindingAttr, binder, returnType, types, modifiers);
 		}
 
-		protected abstract PropertyInfo GetPropertyImpl (string name,
-								 BindingFlags bindingAttr,
-								 Binder binder, Type returnType,
-								 Type[] types,
-								 ParameterModifier[] modifiers);
+		protected abstract PropertyInfo GetPropertyImpl (string name, BindingFlags bindingAttr, Binder binder,
+		                                                 Type returnType, Type[] types, ParameterModifier[] modifiers);
 
 		protected abstract ConstructorInfo GetConstructorImpl (BindingFlags bindingAttr,
 								       Binder binder,
@@ -915,8 +905,7 @@ namespace System {
 			return result;
 		}
 
-		public object InvokeMember (string name, BindingFlags invokeAttr, Binder binder,
-					    object target, object[] args)
+		public object InvokeMember (string name, BindingFlags invokeAttr, Binder binder, object target, object[] args)
 		{
 			return InvokeMember (name, invokeAttr, binder, target, args, null, null, null);
 		}

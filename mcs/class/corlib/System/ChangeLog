@@ -1,5 +1,21 @@
 2004-03-08  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
+	* TypedReference.cs
+	* TypeLoadException.cs
+	* TypeInitializationException.cs
+	* TypeCode.cs
+	* TimeZone.cs
+	* ThreadStaticAttribute.cs
+	* SystemException.cs
+	* STAThreadAttribute.cs
+	* StackOverflowException.cs
+	* SingleFormatter.cs
+	* Single.cs
+	* SerializableAttribute.cs: Mono styled, fixed exceptions/ locales
+	  removed excess usings
+
+2004-03-08  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
 	* UnauthorizedAccessException.cs: Exceptions set the HResult
 	* UInt64.cs: Implemented two missing methods
 	* UInt32.cs: Fix wrong parameters for ArgumentNullException, simpler convert

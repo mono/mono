@@ -1,18 +1,20 @@
 //
 // System.TypeInitializationException.cs
 //
-// Author:
+// Authors:
 //   Joe Shaw (joe@ximian.com)
 //   Duncan Mak (duncan@ximian.com)
 //
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
-using System.Globalization;
-using System.Runtime.Serialization;
-namespace System {
 
+using System.Runtime.Serialization;
+
+namespace System
+{
 	[Serializable]
-	public sealed class TypeInitializationException : SystemException {
+	public sealed class TypeInitializationException : SystemException
+	{
 		string type_name;
 
 		// Constructors
@@ -23,11 +25,11 @@ namespace System {
 		}
 
 		internal TypeInitializationException (SerializationInfo info, StreamingContext sc)
-		: base (info, sc)
+			: base (info, sc)
 		{
 			type_name = info.GetString ("TypeName");
 		}
-		
+
 		// Properties
 		public string TypeName {
 			get {
@@ -42,5 +44,4 @@ namespace System {
 			info.AddValue ("TypeName", type_name);
 		}
 	}
-
 }

@@ -8,34 +8,37 @@
 //
 
 using System.Globalization;
-using System.Runtime.CompilerServices;
 
-namespace System {
-	
+namespace System
+{
 	[Serializable]
-	public struct Single : IComparable, IFormattable, IConvertible {
+	public struct Single : IComparable, IFormattable, IConvertible
+	{
 		public const float Epsilon = 1.4e-45f;
 		public const float MaxValue =  3.40282346638528859e38f;
 		public const float MinValue = -3.40282346638528859e38f;
 		public const float NaN = 0.0f / 0.0f;
 		public const float PositiveInfinity =  1.0f / 0.0f;
 		public const float NegativeInfinity = -1.0f / 0.0f;
-			
+
 		internal float value;
-	       		
+
 		public int CompareTo (object v)
 		{
 			if (v == null)
 				return 1;
 
 			if (!(v is System.Single))
-				throw new ArgumentException (Locale.GetText ("Value is not a System.Single"));
+				throw new ArgumentException (Locale.GetText ("Value is not a System.Single."));
 
 			float fv = (float)v;
 
-			if (this.value == fv) return 0;
-			else if (this.value > fv) return 1;
-			else return -1;
+			if (this.value == fv)
+				return 0;
+			else if (this.value > fv)
+				return 1;
+			else
+				return -1;
 		}
 
 		public override bool Equals (object o)
@@ -77,17 +80,17 @@ namespace System {
 				s, (NumberStyles.Float | NumberStyles.AllowThousands), null);
 			if (parsed_value > (double) float.MaxValue)
 				throw new OverflowException();
-			
+
 			return (float) parsed_value;
 		}
 
-		public static float Parse (string s, IFormatProvider fp)
+		public static float Parse (string s, IFormatProvider provider)
 		{
 			double parsed_value = Double.Parse (
-				s, (NumberStyles.Float | NumberStyles.AllowThousands), fp);
+				s, (NumberStyles.Float | NumberStyles.AllowThousands), provider);
 			if (parsed_value > (double) float.MaxValue)
 				throw new OverflowException();
-			
+
 			return (float) parsed_value;
 		}
 		
@@ -96,16 +99,16 @@ namespace System {
 			double parsed_value = Double.Parse (s, style, null);
 			if (parsed_value > (double) float.MaxValue)
 				throw new OverflowException();
-			
+
 			return (float) parsed_value;
 		}
 
-		public static float Parse (string s, NumberStyles style, IFormatProvider fp) 
+		public static float Parse (string s, NumberStyles style, IFormatProvider provider) 
 		{
-			double parsed_value = Double.Parse (s, style, fp);
+			double parsed_value = Double.Parse (s, style, provider);
 			if (parsed_value > (double) float.MaxValue)
 				throw new OverflowException();
-			
+
 			return (float) parsed_value;
 		}
 
@@ -114,9 +117,9 @@ namespace System {
 			return ToString (null, null);
 		}
 
-		public string ToString (IFormatProvider fp)
+		public string ToString (IFormatProvider provider)
 		{
-			return ToString (null, fp);
+			return ToString (null, provider);
 		}
 
 		public string ToString (string format)
@@ -124,18 +127,15 @@ namespace System {
 			return ToString (format, null);
 		}
 
-		public string ToString (string format, IFormatProvider fp)
+		public string ToString (string format, IFormatProvider provider)
 		{
-			if (fp is CultureInfo)
-				return SingleFormatter.NumberToString(format,
-				((CultureInfo)fp).NumberFormat, value);
+			if (provider is CultureInfo)
+				return SingleFormatter.NumberToString (format, ((CultureInfo) provider).NumberFormat, value);
 			else
-				return SingleFormatter.NumberToString(format,
-				(NumberFormatInfo)fp, value);
+				return SingleFormatter.NumberToString (format, (NumberFormatInfo) provider, value);
 		}
 
 		// ============= IConvertible Methods ============ //
-
 		public TypeCode GetTypeCode ()
 		{
 			return TypeCode.Single;
@@ -191,7 +191,7 @@ namespace System {
 		{
 			return System.Convert.ToSByte (value);
 		}
-		
+
 		float IConvertible.ToSingle (IFormatProvider provider)
 		{
 			return System.Convert.ToSingle (value);

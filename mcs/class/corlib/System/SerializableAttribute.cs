@@ -7,8 +7,8 @@
 // (C) Ximian, Inc.  http://www.ximian.com
 //
 
-namespace System {
-
+namespace System
+{
 	/// <summary>
 	///   Serialization Attribute for classes. 
 	/// </summary>
@@ -33,6 +33,7 @@ namespace System {
 	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct 
 		| AttributeTargets.Enum | AttributeTargets.Delegate, 
 		Inherited=false, AllowMultiple=false)]
-	public sealed class SerializableAttribute : Attribute {
+	public sealed class SerializableAttribute : Attribute
+	{
 	}
 }
