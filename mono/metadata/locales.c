@@ -25,7 +25,7 @@
 
 #include <locale.h>
 
-//#undef DEBUG
+#undef DEBUG
 
 static gint32 string_invariant_compare_char (gunichar2 c1, gunichar2 c2,
 					     gint32 options);
@@ -1041,6 +1041,7 @@ void ves_icall_System_Globalization_CompareInfo_free_internal_collator (MonoComp
 	
 	coll=this->ICU_collator;
 	if(coll!=NULL) {
+		this->ICU_collator = NULL;
 		ucol_close (coll);
 	}
 }
@@ -1431,6 +1432,11 @@ MonoString *ves_icall_System_String_InternalReplace_Str_Comp (MonoString *this, 
 			 * does match properly...
 			 */
 			match_len = usearch_getMatchedLength (search);
+
+			if(match_len == 0) {
+				continue;
+			}
+			
 			match=(UChar *)g_malloc0 (sizeof(UChar) * (match_len + 1));
 			usearch_getMatchedText (search, match, match_len, &ec);
 
@@ -1467,6 +1473,11 @@ MonoString *ves_icall_System_String_InternalReplace_Str_Comp (MonoString *this, 
 		    pos!=USEARCH_DONE;
 		    pos=usearch_next (search, &ec)) {
 			match_len = usearch_getMatchedLength (search);
+
+			if (match_len == 0) {
+				continue;
+			}
+			
 			match=(UChar *)g_malloc0 (sizeof(UChar) * (match_len + 1));
 			usearch_getMatchedText (search, match, match_len, &ec);
 
@@ -1865,15 +1876,6 @@ static gint32 string_invariant_compare_char (gunichar2 c1, gunichar2 c2,
 		/* No options. Kana, symbol and spacing options don't
 		 * apply to the invariant culture.
 		 */
-		if (c1type == G_UNICODE_UPPERCASE_LETTER &&
-		    c2type == G_UNICODE_LOWERCASE_LETTER) {
-			return(1);
-		}
-					
-		if (c1type == G_UNICODE_LOWERCASE_LETTER &&
-		    c2type == G_UNICODE_UPPERCASE_LETTER) {
-			return(-1);
-		}
 		
 		result = (gint32) c1 - c2;
 	}

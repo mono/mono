@@ -151,6 +151,7 @@ reg: OP_LOCALLOC (OP_ICONST) {
 	if (tree->flags & MONO_INST_INIT) {
 		/* microcoded in mini-x86.c */
 		tree->sreg1 = mono_regstate_next_int (s->rs);
+		tree->dreg = state->reg1;
 		MONO_EMIT_NEW_ICONST (s, tree->sreg1, state->left->tree->inst_c0);
 		mono_bblock_add_inst (s->cbb, tree);
 	} else {
@@ -161,6 +162,7 @@ reg: OP_LOCALLOC (OP_ICONST) {
 
 reg: OP_LOCALLOC (reg) {
 	tree->sreg1 = state->left->tree->dreg;
+	tree->dreg = state->reg1;
 	mono_bblock_add_inst (s->cbb, tree);
 }
 
