@@ -1,3 +1,10 @@
+2004-12-24  Ben Maurer  <bmaurer@ximian.com>
+
+	* domain-internals.h, class.c: Change MonoGHashTable's into
+	GHashTables for some cases where no gc stuff is used
+
+	All users: update apis
+
 2004-12-23  Ben Maurer  <bmaurer@ximian.com>
 
 	* metadata.c (builtin_types): Make this `const'. Makes this get
