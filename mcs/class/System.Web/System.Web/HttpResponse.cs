@@ -667,6 +667,14 @@ namespace System.Web {
          Redirect(url, true);
       }
 
+      //FIXME: [1] this is an ugly hack to make it work until we have SimpleWorkerRequest!
+      private string redirectLocation;
+      public string RedirectLocation
+      {
+	      get {
+		      return redirectLocation;
+	      }
+      }
       public void Redirect(string url, bool endResponse) {
          if (_bHeadersSent) {
             throw new System.Web.HttpException("Headers has been sent to the client");
@@ -675,16 +683,19 @@ namespace System.Web {
          Clear();
 
          StatusCode = 302;
-         AppendHeader(HttpWorkerRequest.HeaderLocation, url);
+	 redirectLocation = url;
+         //[1]AppendHeader(HttpWorkerRequest.HeaderLocation, url);
 
          // Text for browsers that can't handle location header
          Write("<html><head><title>Object moved</title></head><body>\r\n");
          Write("<h2>Object moved to <a href='" + url + "'>here</a></h2>\r\n");
          Write("</body><html>\r\n");
 
-         if (endResponse) {
+         /* [1]
+	 if (endResponse) {
             End();
          }
+	 */
       }
 
       public void Write(char ch) {

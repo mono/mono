@@ -1,3 +1,8 @@
+2002-07-14  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpResponse.cs: quick&dirty hack to make redirection work. Should
+	be out of there once we have SimpleWorkerRequest.
+
 2002-07-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpUtility.cs: little typo, big headache.
