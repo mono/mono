@@ -1,3 +1,9 @@
+2002-01-07  John Barnette <jbarn@httcb.net>
+
+	* makefile: added todo target, fixed EnumCheck target, simplified clean
+
+	* todo.cs: new file.  generates todo list XML and compares assemblies
+
 2002-01-07  Gaurav Vaish <gvaish@iitk.ac.in>
 
 	* EnumCheck.cs:  Get the numerical values of an enumeration.
