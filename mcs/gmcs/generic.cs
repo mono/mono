@@ -1015,8 +1015,10 @@ namespace Mono.CSharp {
 				gt = nested.GetGenericTypeDefinition ();
 
 				TypeArguments new_args = new TypeArguments (loc);
-				foreach (TypeParameter param in ds.TypeParameters)
-					new_args.Add (new TypeParameterExpr (param, loc));
+				if (ds.IsGeneric) {
+					foreach (TypeParameter param in ds.TypeParameters)
+						new_args.Add (new TypeParameterExpr (param, loc));
+				}
 				new_args.Add (args);
 
 				args = new_args;
