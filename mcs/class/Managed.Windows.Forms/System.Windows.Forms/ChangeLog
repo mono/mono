@@ -1,3 +1,39 @@
+2004-12-28  Peter Bartok  <pbartok@novell.com>
+
+	* In preparation for making Managed.Windows.Forms the default build target
+	  for System.Windows.Forms, the following stubbed files were added.
+	  Dialogs are currently being implemented by contributors and are only 
+	  short-term place holders.
+	* ColorDialog.cs: Initial check-in (minmal stub)
+	* DataGrid.cs: Initial check-in (minimal stub)
+	* DataGridLineStyle.cs: Initial check-in (minimal stub)
+	* DataGridParentRowsLabelStyle.cs: Initial check-in (minimal stub)
+	* DataGridTableStyle.cs: Initial check-in (minimal stub)
+	* FontDialog.cs: Initial check-in (minimal stub)
+	* FileDialog.cs: Initial check-in (minimal stub)
+	* GridColumnStylesCollection.cs: Initial check-in (minimal stub)
+	* GridTableStylesCollection.cs: Initial check-in (minimal stub)
+	* OpenFileDialog: Initial check-in (minimal stub)
+	* IComponentEditorPageSite.cs: Initial check-in
+	* Splitter.cs: Initial check-in (for Jackson)
+	* SplitterEventArgs.cs: Initial check-in (for Jackson)
+	* SplitterEventHandler.cs: Initial check-in (for Jackson)
+	* TextBox.cs: Initial check-in; still needs some wiring to 
+	  TextControl backend
+	* Form.cs: Implemented ControlBox property
+	* MessageBox.cs: Added proper coding for Minimize/Maximize/ControlBox
+	* CommonDialog.cs: Added proper coding for Minimize/Maximize/ControlBox
+	* TextControl.cs: Added selection functionality; added todo header
+	* TextBoxBase.cs:
+	  - Implemented Lines property
+	  - Implemented TextHeight property
+	  - Implemented SelectedText property
+	  - Implemented SelectionLength property
+	  - Implemented SelectAll method
+	  - Implemented ToString method
+	  - Removed and cleaned up some debug code
+	  - Implemented (still buggy) mouse text selection
+
 2004-12-27  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* ComboBox.cs: Complete DropDownList implementation, fixes.
@@ -7,7 +43,6 @@
 	* ThemeWin32Classic, Theme.cs: ComboBox drawing methods
 	* ComboBoxStyle.cs: ComboBoxStyle enum
 	* ComboBox.cs: Initial work on ComboBox control
-
 
 2004-12-21  Peter Bartok  <pbartok@novell.com>
 

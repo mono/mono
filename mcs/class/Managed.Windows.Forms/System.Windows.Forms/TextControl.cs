@@ -26,6 +26,17 @@
 
 // NOT COMPLETE
 
+// There's still plenty of things missing, I've got most of it planned, just hadn't had
+// the time to write it all yet.
+// Stuff missing (in no particular order):
+// - Align text after RecalculateLine
+// - Implement tag types to support wrapping (ie have a 'newline' tag), for images, etc.
+// - Wrap and recalculate lines
+// - Implement CaretPgUp/PgDown
+// - Finish selection calculations (invalidate only changed, more ways to select)
+// - Implement C&P
+
+
 #undef Debug
 
 using System;
@@ -436,15 +447,12 @@ namespace System.Windows.Forms {
 		private Random		random = new Random();
 
 		internal bool		multiline;
-
-		private Line		selection_start_line;
-		private int		selection_start_pos;
-		private Line		selection_end_line;
-		private int		selection_end_pos;
+		internal bool		wrap;
 
 		internal Marker		caret;
 		internal Marker		selection_start;
 		internal Marker		selection_end;
+		internal bool		selection_visible;
 
 		internal int		viewport_x;
 		internal int		viewport_y;		// The visible area of the document
@@ -475,6 +483,14 @@ namespace System.Windows.Forms {
 			this.RecalculateDocument(owner.CreateGraphics());
 			PositionCaret(0, 0);
 			lines=1;
+
+			selection_visible = false;
+			selection_start.line = this.document;
+			selection_start.pos = 0;
+			selection_end.line = this.document;
+			selection_end.pos = 0;
+
+
 
 			// Default selection is empty
 
@@ -534,6 +550,18 @@ namespace System.Windows.Forms {
 
 			set {
 				viewport_y = value;
+			}
+		}
+
+		public int Width {
+			get {
+				return this.document_x;
+			}
+		}
+
+		public int Height {
+			get {
+				return this.document_y;
 			}
 		}
 
@@ -834,6 +862,31 @@ namespace System.Windows.Forms {
 		#endregion	// Private Methods
 
 		#region Public Methods
+		// Clear the document and reset state
+		public void Empty() {
+
+			document = sentinel;
+			last_found = sentinel;
+			lines = 0;
+
+			// We always have a blank line
+			Add(1, "", owner.Font, new SolidBrush(owner.ForeColor));
+			this.RecalculateDocument(owner.CreateGraphics());
+			PositionCaret(0, 0);
+
+			selection_visible = false;
+			selection_start.line = this.document;
+			selection_start.pos = 0;
+			selection_end.line = this.document;
+			selection_end.pos = 0;
+
+			viewport_x = 0;
+			viewport_y = 0;
+
+			document_x = 0;
+			document_y = 0;
+		}
+
 		public void PositionCaret(Line line, int pos) {
 			caret.tag = line.FindTag(pos);
 			caret.line = line;
@@ -842,23 +895,23 @@ namespace System.Windows.Forms {
 
 			XplatUI.DestroyCaret(owner.Handle);
 			XplatUI.CreateCaret(owner.Handle, 2, caret.height);
-			XplatUI.SetCaretPos(owner.Handle, (int)caret.tag.line.widths[caret.pos], caret.tag.line.Y + caret.tag.shift);
+			XplatUI.SetCaretPos(owner.Handle, (int)caret.tag.line.widths[caret.pos] - viewport_x, caret.tag.line.Y + caret.tag.shift - viewport_y);
 		}
 
 		public void PositionCaret(int x, int y) {
-			caret.tag = FindCursor(x, y, out caret.pos);
+			caret.tag = FindCursor(x + viewport_x, y + viewport_y, out caret.pos);
 			caret.line = caret.tag.line;
 			caret.height = caret.tag.height;
 
 			XplatUI.DestroyCaret(owner.Handle);
 			XplatUI.CreateCaret(owner.Handle, 2, caret.height);
-			XplatUI.SetCaretPos(owner.Handle, (int)caret.tag.line.widths[caret.pos], caret.tag.line.Y + caret.tag.shift);
+			XplatUI.SetCaretPos(owner.Handle, (int)caret.tag.line.widths[caret.pos] - viewport_x, caret.tag.line.Y + caret.tag.shift - viewport_y);
 		}
 
 		public void CaretHasFocus() {
 			if (caret.tag != null) {
 				XplatUI.CreateCaret(owner.Handle, 2, caret.height);
-				XplatUI.SetCaretPos(owner.Handle, (int)caret.tag.line.widths[caret.pos], caret.tag.line.Y + caret.tag.shift);
+				XplatUI.SetCaretPos(owner.Handle, (int)caret.tag.line.widths[caret.pos] - viewport_x, caret.tag.line.Y + caret.tag.shift - viewport_y);
 				XplatUI.CaretVisible(owner.Handle, true);
 			}
 		}
@@ -872,7 +925,7 @@ namespace System.Windows.Forms {
 			caret.height = caret.tag.height;
 
 			XplatUI.CreateCaret(owner.Handle, 2, caret.height);
-			XplatUI.SetCaretPos(owner.Handle, (int)caret.tag.line.widths[caret.pos], caret.tag.line.Y + caret.tag.shift);
+			XplatUI.SetCaretPos(owner.Handle, (int)caret.tag.line.widths[caret.pos] - viewport_x, caret.tag.line.Y + caret.tag.shift - viewport_y);
 			XplatUI.CaretVisible(owner.Handle, true);
 		}
 
@@ -881,7 +934,7 @@ namespace System.Windows.Forms {
 				caret.height = caret.tag.height;
 				XplatUI.CreateCaret(owner.Handle, 2, caret.height);
 			}
-			XplatUI.SetCaretPos(owner.Handle, (int)caret.tag.line.widths[caret.pos], caret.tag.line.Y + caret.tag.shift);
+			XplatUI.SetCaretPos(owner.Handle, (int)caret.tag.line.widths[caret.pos] - viewport_x, caret.tag.line.Y + caret.tag.shift - viewport_y);
 			XplatUI.CaretVisible(owner.Handle, true);
 		}
 
@@ -1095,7 +1148,79 @@ namespace System.Windows.Forms {
 				s = line.text.ToString();
 				while (tag != null) {
 					if (((tag.X + tag.width) > (clip.Left - viewport_x)) || (tag.X < (clip.Right - viewport_x))) {
-						g.DrawString(s.Substring(tag.start-1, tag.length), tag.font, tag.color, tag.X - viewport_x, line.Y + tag.shift  - viewport_y, StringFormat.GenericTypographic);
+						// Check for selection
+						if ((!selection_visible) || (line_no < selection_start.line.line_no) || (line_no > selection_end.line.line_no)) {
+							// regular drawing
+							g.DrawString(s.Substring(tag.start-1, tag.length), tag.font, tag.color, tag.X - viewport_x, line.Y + tag.shift  - viewport_y, StringFormat.GenericTypographic);
+						} else {
+							// we might have to draw our selection
+							if ((line_no != selection_start.line.line_no) && (line_no != selection_end.line.line_no)) {
+								g.FillRectangle(tag.color, tag.X - viewport_x, line.Y + tag.shift  - viewport_y, line.widths[tag.start + tag.length - 1], tag.height);
+								g.DrawString(s.Substring(tag.start-1, tag.length), tag.font, ThemeEngine.Current.ResPool.GetSolidBrush(owner.BackColor), tag.X - viewport_x, line.Y + tag.shift  - viewport_y, StringFormat.GenericTypographic);
+							} else {
+								int	middle;
+								bool	highlight;
+								bool	partial;
+
+								highlight = false;
+								partial = false;
+
+								// Check the partial drawings first
+								if ((selection_start.tag == tag) && (selection_end.tag == tag)) {
+									partial = true;
+
+									// First, the regular part
+									g.DrawString(s.Substring(tag.start - 1, selection_start.pos - tag.start + 1), tag.font, tag.color, tag.X - viewport_x, line.Y + tag.shift  - viewport_y, StringFormat.GenericTypographic);
+
+									// Now the highlight
+									g.FillRectangle(tag.color, line.widths[selection_start.pos], line.Y + tag.shift - viewport_y, line.widths[selection_end.pos] - line.widths[selection_start.pos], tag.height);
+									g.DrawString(s.Substring(selection_start.pos, selection_end.pos - selection_start.pos), tag.font, ThemeEngine.Current.ResPool.GetSolidBrush(owner.BackColor), line.widths[selection_start.pos], line.Y + tag.shift - viewport_y, StringFormat.GenericTypographic);
+
+									// And back to the regular
+									g.DrawString(s.Substring(selection_end.pos, tag.length - selection_end.pos), tag.font, tag.color, line.widths[selection_end.pos], line.Y + tag.shift - viewport_y, StringFormat.GenericTypographic);
+								} else if (selection_start.tag == tag) {
+									partial = true;
+
+									// The highlighted part
+									g.FillRectangle(tag.color, line.widths[selection_start.pos], line.Y + tag.shift - viewport_y, line.widths[tag.start + tag.length - 1], tag.height);
+									g.DrawString(s.Substring(selection_start.pos, tag.length - selection_start.pos), tag.font, ThemeEngine.Current.ResPool.GetSolidBrush(owner.BackColor), line.widths[selection_start.pos], line.Y + tag.shift - viewport_y, StringFormat.GenericTypographic);
+
+									// The regular part
+									g.DrawString(s.Substring(tag.start - 1, selection_start.pos - tag.start + 1), tag.font, tag.color, tag.X - viewport_x, line.Y + tag.shift  - viewport_y, StringFormat.GenericTypographic);
+								} else if (selection_end.tag == tag) {
+									partial = true;
+
+									// The highlighted part
+									g.FillRectangle(tag.color, tag.X - viewport_x, line.Y + tag.shift - viewport_y, line.widths[selection_end.pos], tag.height);
+									g.DrawString(s.Substring(tag.start - 1, selection_end.pos - tag.start + 1), tag.font, ThemeEngine.Current.ResPool.GetSolidBrush(owner.BackColor), tag.X - viewport_x, line.Y + tag.shift  - viewport_y, StringFormat.GenericTypographic);
+
+									// The regular part
+									g.DrawString(s.Substring(selection_end.pos, tag.length - selection_end.pos), tag.font, tag.color, line.widths[selection_end.pos], line.Y + tag.shift - viewport_y, StringFormat.GenericTypographic);
+								} else {
+									// no partially selected tags here, simple checks...
+									if (selection_start.line == line) {
+										if ((tag.start + tag.length - 1) > selection_start.pos) {
+											highlight = true;
+										}
+									}
+									if (selection_end.line == line) {
+										if ((tag.start + tag.length - 1) < selection_start.pos) {
+											highlight = true;
+										}
+									}
+								}
+
+								if (!partial) {
+									if (highlight) {
+										g.FillRectangle(tag.color, tag.X - viewport_x, line.Y + tag.shift  - viewport_y, line.widths[tag.start + tag.length - 1], tag.height);
+										g.DrawString(s.Substring(tag.start-1, tag.length), tag.font, ThemeEngine.Current.ResPool.GetSolidBrush(owner.BackColor), tag.X - viewport_x, line.Y + tag.shift  - viewport_y, StringFormat.GenericTypographic);
+									} else {
+										g.DrawString(s.Substring(tag.start-1, tag.length), tag.font, tag.color, tag.X - viewport_x, line.Y + tag.shift  - viewport_y, StringFormat.GenericTypographic);
+									}
+								}
+							}
+
+						}
 					}
 
 					tag = tag.next;
@@ -1109,6 +1234,62 @@ namespace System.Windows.Forms {
 			#endif
 
 		}
+
+
+		// Inserts a character at the given position
+		public void InsertString(Line line, int pos, string s) {
+			InsertString(line.FindTag(pos), pos, s);
+		}
+
+		// Inserts a string at the given position
+		public void InsertString(LineTag tag, int pos, string s) {
+			Line	line;
+			int	len;
+
+			len = s.Length;
+
+			line = tag.line;
+			line.text.Insert(pos, s);
+			tag.length += len;
+
+			tag = tag.next;
+			while (tag != null) {
+				tag.start += len;
+				tag = tag.next;
+			}
+			line.Grow(len);
+			line.recalc = true;
+
+			UpdateView(line, pos);
+		}
+
+		// Inserts a string at the caret position
+		public void InsertStringAtCaret(string s, bool move_caret) {
+			LineTag	tag;
+			int	len;
+
+			len = s.Length;
+
+			caret.line.text.Insert(caret.pos, s);
+			caret.tag.length += len;
+			
+			if (caret.tag.next != null) {
+				tag = caret.tag.next;
+				while (tag != null) {
+					tag.start += len;
+					tag = tag.next;
+				}
+			}
+			caret.line.Grow(len);
+			caret.line.recalc = true;
+
+			UpdateView(caret.line, caret.pos);
+			if (move_caret) {
+				caret.pos += len;
+				UpdateCaret();
+			}
+		}
+
 
 
 		// Inserts a character at the given position
@@ -1135,7 +1316,7 @@ namespace System.Windows.Forms {
 			UpdateView(line, pos);
 		}
 
-		// Inserts a character at the given position
+		// Inserts a character at the current caret position
 		public void InsertCharAtCaret(char ch, bool move_caret) {
 			LineTag	tag;
 
@@ -1159,12 +1340,69 @@ namespace System.Windows.Forms {
 			}
 		}
 
-
-		// Inserts a character at the given position; it will not delete past line limits
-		public void DeleteChar(LineTag tag, int pos, bool forward) {
+		// Inserts n characters at the given position; it will not delete past line limits
+		public void DeleteChars(LineTag tag, int pos, int count) {
 			Line	line;
 			bool	streamline;
 
+
+			streamline = false;
+			line = tag.line;
+
+			if (pos == line.text.Length) {
+				return;
+			}
+
+			line.text.Remove(pos, count);
+
+			// Check if we're crossing tag boundaries
+			if ((pos + count) > (tag.start + tag.length)) {
+				int	left;
+
+				// We have to delete cross tag boundaries
+				streamline = true;
+				left = count;
+
+				left -= pos - tag.start;
+				tag.length -= pos - tag.start;
+
+				tag = tag.next;
+				while ((tag != null) && (left > 0)) {
+					if (tag.length > left) {
+						tag.length -= left;
+						left = 0;
+					} else {
+						left -= tag.length;
+						tag.length = 0;
+	
+						tag = tag.next;
+					}
+				}
+			} else {
+				// We got off easy, same tag
+
+				tag.length -= count;
+			}
+
+			tag = tag.next;
+			while (tag != null) {
+				tag.start -= count;
+				tag = tag.next;
+			}
+
+			line.recalc = true;
+			if (streamline) {
+				line.Streamline();
+			}
+
+			UpdateView(line, pos);
+		}
+
+
+		// Deletes a character at or after the given position (depending on forward); it will not delete past line limits
+		public void DeleteChar(LineTag tag, int pos, bool forward) {
+			Line	line;
+			bool	streamline;
 
 			streamline = false;
 			line = tag.line;
@@ -1202,7 +1440,9 @@ namespace System.Windows.Forms {
 				tag = tag.next;
 			}
 			line.recalc = true;
-			line.Streamline();
+			if (streamline) {
+				line.Streamline();
+			}
 
 			UpdateView(line, pos);
 		}
@@ -1494,18 +1734,350 @@ namespace System.Windows.Forms {
 		}
 
 		// Set our selection markers
+		public void Invalidate(Line start, int start_pos, Line end, int end_pos) {
+			Line	l1;
+			Line	l2;
+			int	p1;
+			int	p2;
+	
+			// figure out what's before what so the logic below is straightforward
+			if (start.line_no < end.line_no) {
+				l1 = start;
+				p1 = start_pos;
+
+				l2 = end;
+				p2 = end_pos;
+			} else if (start.line_no > end.line_no) {
+				l1 = end;
+				p1 = end_pos;
+
+				l2 = start;
+				p2 = start_pos;
+			} else {
+				if (start_pos < end_pos) {
+					l1 = start;
+					p1 = start_pos;
+
+					l2 = end;
+					p2 = end_pos;
+				} else {
+					l1 = end;
+					p1 = end_pos;
+
+					l2 = start;
+					p2 = start_pos;
+				}
+
+				owner.Invalidate(new Rectangle((int)l1.widths[p1] - viewport_x, l1.Y - viewport_y, (int)l2.widths[p2] - (int)l1.widths[p1], l1.height));
+				return;
+			}
+
+			// Three invalidates:
+			// First line from start
+			owner.Invalidate(new Rectangle((int)l1.widths[p1] - viewport_x, l1.Y - viewport_y, owner.Width, l1.height));
+
+			// lines inbetween
+			if ((l1.line_no + 1) < l2.line_no) {
+				int	y;
+
+				y = GetLine(l1.line_no + 1).Y;
+				owner.Invalidate(new Rectangle(0 - viewport_x, y - viewport_y, owner.Width, GetLine(l2.line_no - 1).Y - y - viewport_y));
+			}
+
+			// Last line to end
+			owner.Invalidate(new Rectangle((int)l1.widths[p1] - viewport_x, l1.Y - viewport_y, owner.Width, l1.height));
+
+
+		}
+
+		// It's nothing short of pathetic to always invalidate the whole control
+		// I will find time to finish the optimization and make it invalidate deltas only
+		public void SetSelectionToCaret(bool start) {
+			if (start) {
+				selection_start.line = caret.line;
+				selection_start.tag = caret.tag;
+				selection_start.pos = caret.pos;
+
+				// start always also selects end
+				selection_end.line = caret.line;
+				selection_end.tag = caret.tag;
+				selection_end.pos = caret.pos;
+			} else {
+				selection_end.line = caret.line;
+				selection_end.tag = caret.tag;
+				selection_end.pos = caret.pos;
+			}
+
+
+			if ((selection_start.line == selection_end.line) && (selection_start.pos == selection_end.pos)) {
+				selection_visible = false;
+			} else {
+				selection_visible = true;
+			}
+			owner.Invalidate();
+		}
+
+#if buggy
 		public void SetSelection(Line start, int start_pos, Line end, int end_pos) {
-			selection_start_line = start;
-			selection_start_pos = start_pos;
-			selection_end_line = end;
-			selection_end_pos = end_pos;
+			// Ok, this is ugly, bad and slow, but I don't have time right now to optimize it.
+			if (selection_visible) {
+				// Try to only invalidate what's changed so we don't redraw the whole thing
+				if ((start != selection_start.line) || (start_pos != selection_start.pos) && ((end == selection_end.line) && (end_pos == selection_end.pos))) {
+					Invalidate(start, start_pos, selection_start.line, selection_start.pos);
+				} else if ((end != selection_end.line) || (end_pos != selection_end.pos) && ((start == selection_start.line) && (start_pos == selection_start.pos))) {
+					Invalidate(end, end_pos, selection_end.line, selection_end.pos);
+				} else {
+					// both start and end changed
+					Invalidate(selection_start.line, selection_start.pos, selection_end.line, selection_end.pos);
+				}
+			}
+			selection_start.line = start;
+			selection_start.pos = start_pos;
+if (start != null) {
+			selection_start.tag = LineTag.FindTag(start, start_pos);
+}
+
+			selection_end.line = end;
+			selection_end.pos = end_pos;
+if (end != null) {
+			selection_end.tag = LineTag.FindTag(end, end_pos);
+}
+
+			if (((start == end) && (start_pos == end_pos)) || start == null || end == null) {
+				selection_visible = false;
+			} else {
+				selection_visible = true;
+				
+			}
+		}
+#endif
+		// Make sure that start is always before end
+		private void FixupSelection() {
+			if (selection_start.line.line_no > selection_end.line.line_no) {
+				Line	line;
+				int	pos;
+				LineTag tag;
+
+				line = selection_start.line;
+				tag = selection_start.tag;
+				pos = selection_start.pos;
+
+				selection_start.line = selection_end.line;
+				selection_start.tag =  selection_end.tag;
+				selection_start.pos = selection_end.pos;
+				
+				selection_end.line = line;
+				selection_end.tag =  tag;
+				selection_end.pos = pos;
+
+				return;
+			}
+
+			if ((selection_start.line == selection_end.line) && (selection_start.pos > selection_end.pos)) {
+				int	pos;
+
+				pos = selection_start.pos;
+				selection_start.pos = selection_end.pos;
+				selection_end.pos = pos;
+				return;
+			}
+
+			return;
+		}
+
+		public void SetSelectionStart(Line start, int start_pos) {
+			selection_start.line = start;
+			selection_start.pos = start_pos;
+			selection_start.tag = LineTag.FindTag(start, start_pos);
+
+			FixupSelection();
+
+			if ((selection_end.line != selection_start.line) && (selection_end.pos != selection_start.pos)) {
+				selection_visible = true;
+			}
+
+			if (selection_visible) {
+				Invalidate(selection_start.line, selection_start.pos, selection_end.line, selection_end.pos);
+			}
+
+		}
+
+		public void SetSelectionEnd(Line end, int end_pos) {
+			selection_end.line = end;
+			selection_end.pos = end_pos;
+			selection_end.tag = LineTag.FindTag(end, end_pos);
+
+			FixupSelection();
+
+			if ((selection_end.line != selection_start.line) || (selection_end.pos != selection_start.pos)) {
+				selection_visible = true;
+			}
+
+			if (selection_visible) {
+				Invalidate(selection_start.line, selection_start.pos, selection_end.line, selection_end.pos);
+			}
 		}
 
 		public void SetSelection(Line start, int start_pos) {
-			selection_start_line = start;
-			selection_start_pos = start_pos;
-			selection_end_line = start;
-			selection_end_pos = start_pos;
+			if (selection_visible) {
+				Invalidate(selection_start.line, selection_start.pos, selection_end.line, selection_end.pos);
+			}
+
+
+			selection_start.line = start;
+			selection_start.pos = start_pos;
+			selection_start.tag = LineTag.FindTag(start, start_pos);
+
+			selection_end.line = start;
+			selection_end.tag = selection_start.tag;
+			selection_end.pos = start_pos;
+
+			selection_visible = false;
+		}
+
+		public void InvalidateSelectionArea() {
+			// implement me
+		}
+
+		// Return the current selection, as string
+		public string GetSelection() {
+			// We return String.Empty if there is no selection
+			if ((selection_start.pos == selection_end.pos) && (selection_start.line == selection_end.line)) {
+				return string.Empty;
+			}
+
+			if (!multiline || (selection_start.line == selection_end.line)) {
+				return selection_start.line.text.ToString(selection_start.pos, selection_end.pos - selection_start.pos);
+			} else {
+				StringBuilder	sb;
+				int		i;
+				int		start;
+				int		end;
+
+				sb = new StringBuilder();
+				start = selection_start.line.line_no;
+				end = selection_end.line.line_no;
+
+				sb.Append(selection_start.line.text.ToString(selection_start.pos, selection_start.line.text.Length - selection_start.pos) + "\n");
+
+				if ((start + 1) < end) {
+					for (i = start + 1; i < end; i++) {
+						sb.Append(GetLine(i).text.ToString() + "\n");
+					}
+				}
+
+				sb.Append(selection_end.line.text.ToString(0, selection_end.pos));
+
+				return sb.ToString();
+			}
+		}
+
+		public void ReplaceSelection(string s) {
+			// The easiest is to break the lines where the selection tags are and delete those lines
+			if ((selection_start.pos == selection_end.pos) && (selection_start.line == selection_end.line)) {
+				// Nothing to delete, simply insert
+				InsertString(selection_start.tag, selection_start.pos, s);
+			}
+
+			if (!multiline || (selection_start.line == selection_end.line)) {
+				DeleteChars(selection_start.tag, selection_start.pos, selection_end.pos - selection_start.pos);
+
+				// The tag might have been removed, we need to recalc it
+				selection_start.tag = selection_start.line.FindTag(selection_start.pos);
+
+				InsertString(selection_start.tag, selection_start.pos, s);
+			} else {
+				int		i;
+				int		start;
+				int		end;
+				int		base_line;
+				string[]	ins;
+				int		insert_lines;
+
+				start = selection_start.line.line_no;
+				end = selection_end.line.line_no;
+
+				// Delete first line
+				DeleteChars(selection_start.tag, selection_start.pos, selection_end.pos - selection_start.pos);
+
+				start++;
+				if (start < end) {
+					for (i = end - 1; i >= start; i++) {
+						Delete(i);
+					}
+				}
+
+				// Delete last line
+				DeleteChars(selection_end.line.tags, 0, selection_end.pos);
+
+				ins = s.Split(new char[] {'\n'});
+
+				insert_lines = ins.Length;
+
+				// Bump the text at insertion point a line down if we're inserting more than one line
+				if (insert_lines > 1) {
+					Split(selection_start.line, selection_start.pos);
+
+					// Reminder of start line is now in startline+1
+
+					// if the last line does not end with a \n we will insert the last line in front of the just moved text
+					if (s.EndsWith("\n")) {
+						insert_lines--;	// We don't want to insert the last line as part of the loop anymore
+
+						InsertString(GetLine(selection_start.line.line_no + 1), 0, ins[insert_lines - 1]);
+					}
+				}
+
+				// Insert the first line
+				InsertString(selection_start.line, selection_start.pos, ins[0]);
+
+
+				if (insert_lines > 1) {
+					base_line = selection_start.line.line_no + 1;
+
+					for (i = 1; i < insert_lines; i++) {
+						Add(base_line + i, ins[i], selection_start.tag.font, selection_start.tag.color);
+					}
+				}
+			}
+			selection_end.line = selection_start.line;
+			selection_end.pos = selection_start.pos;
+			selection_end.tag = selection_start.tag;
+			selection_visible = false;
+			InvalidateSelectionArea();
+		}
+
+		public int SelectionLength() {
+			if ((selection_start.pos == selection_end.pos) && (selection_start.line == selection_end.line)) {
+				return 0;
+			}
+
+			if (!multiline || (selection_start.line == selection_end.line)) {
+				return selection_end.pos - selection_start.pos;
+			} else {
+				int	i;
+				int	start;
+				int	end;
+				int	length;
+				Line	line;
+
+				// Count first and last line
+				length = selection_start.line.text.Length - selection_start.pos + selection_end.pos;
+
+				// Count the lines in the middle
+				start = selection_start.line.line_no + 1;
+				end = selection_end.line.line_no;
+
+				if (start < end) {
+					for (i = start; i < end; i++) {
+						length += GetLine(i).text.Length;
+					}
+				}
+
+				return length;
+			}
+
+			
 		}
 
 
@@ -1661,6 +2233,9 @@ namespace System.Windows.Forms {
 							// If the height changed, all subsequent lines change
 							end = this.lines;
 						}
+						if (line.widths[line.text.Length] > this.document_x) {
+							this.document_x = (int)line.widths[line.text.Length];
+						}
 					}
 
 					Y += line.height;
@@ -1672,6 +2247,9 @@ namespace System.Windows.Forms {
 					line = GetLine(line_no++);
 					line.Y = Y;
 					line.RecalculateLine(g);
+					if (line.widths[line.text.Length] > this.document_x) {
+						this.document_x = (int)line.widths[line.text.Length];
+					}
 					Y += line.height;
 				}
 				return true;
@@ -1741,6 +2319,8 @@ namespace System.Windows.Forms {
 		internal float		width;		// Width in pixels of the text this tag describes
 		internal int		ascent;		// Ascent of the font for this tag
 		internal int		shift;		// Shift down for this tag, to stay on baseline
+
+		internal int		soft_break;	// Tag is 'broken soft' and continues in the next line
 
 		// Administrative
 		internal Line		line;		// The line we're on
@@ -1834,7 +2414,7 @@ namespace System.Windows.Forms {
 
 				tag.previous = start_tag;
 				start_tag.next = tag;
-#if crap
+#if nope
 				if (tag.next.start > (tag.start + tag.length)) {
 					tag.next.length  += tag.next.start - (tag.start + tag.length);
 					tag.next.start = tag.start + tag.length;

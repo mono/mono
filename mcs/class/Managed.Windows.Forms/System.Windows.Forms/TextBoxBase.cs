@@ -30,6 +30,7 @@
 
 using System.Drawing;
 using System.Drawing.Text;
+using System.Text;
 
 namespace System.Windows.Forms {
 	public abstract class TextBoxBase : Control {
@@ -42,7 +43,6 @@ namespace System.Windows.Forms {
 		internal int		max_length;
 		internal bool		modified;
 		internal bool		multiline;
-		internal int		preferred_height;
 		internal bool		read_only;
 		internal bool		word_wrap;
 		internal Document	document;
@@ -50,9 +50,13 @@ namespace System.Windows.Forms {
 		internal int		caret_pos;		// position on the line our cursor is in (can be 0 = beginning of line)
 		internal int		viewport_x;		// left visible pixel
 		internal int		viewport_y;		// top visible pixel
+		internal HScrollBar	hscroll;
+		internal VScrollBar	vscroll;
+		internal ScrollBars	scrollbars;
+		internal bool		grabbed;
 
 		#if Debug
-		internal static bool	draw_lines = true;
+		internal static bool	draw_lines = false;
 		#endif
 
 		#endregion	// Local Variables
@@ -68,12 +72,27 @@ namespace System.Windows.Forms {
 			max_length = 32767;
 			modified = false;
 			multiline = false;
-			preferred_height = 10;
 			read_only = false;
 			word_wrap = true;
 			document = new Document(this);
 			this.MouseDown += new MouseEventHandler(TextBoxBase_MouseDown);
 			this.MouseUp += new MouseEventHandler(TextBoxBase_MouseUp);
+			this.MouseMove += new MouseEventHandler(TextBoxBase_MouseMove);
+			this.SizeChanged +=new EventHandler(TextBoxBase_SizeChanged);
+
+			
+			scrollbars = ScrollBars.None;
+
+			hscroll = new HScrollBar();
+			hscroll.ValueChanged +=new EventHandler(hscroll_ValueChanged);
+			hscroll.Enabled = true;
+			hscroll.Visible = false;
+
+			vscroll = new VScrollBar();
+			vscroll.Visible = false;
+
+			this.Controls.Add(hscroll);
+			this.Controls.Add(vscroll);
 
 			//SetStyle(ControlStyles.ResizeRedraw, true);
 			SetStyle(ControlStyles.AllPaintingInWmPaint, true);
@@ -164,17 +183,45 @@ namespace System.Windows.Forms {
 					hide_selection = value;
 					OnHideSelectionChanged(EventArgs.Empty);
 				}
+				if (hide_selection) {
+					document.selection_visible = false;
+				} else {
+					document.selection_visible = true;
+				}
+				document.InvalidateSelectionArea();
+
 			}
 		}
 
 		public string[] Lines {
 			get {
-				// FIXME
-				return null;
+				string[]	lines;
+				int		i;
+				int		l;
+
+				l = document.Lines;
+				lines = new string[l];
+
+				for (i = 0; i < l; i++) {
+					lines[i] = document.GetLine(i).text.ToString();
+				}
+
+				return lines;
 			}
 
 			set {
-				// FIXME
+				int	i;
+				int	l;
+				Brush	brush;
+
+				document.Empty();
+
+				l = value.Length;
+				brush = ThemeEngine.Current.ResPool.GetSolidBrush(this.BackColor);
+
+				for (i = 0; i < l; i++) {
+					document.Add(i+1, value[i], font, brush);
+				}
 			}
 		}
 
@@ -213,12 +260,14 @@ namespace System.Windows.Forms {
 					multiline = value;
 					OnMultilineChanged(EventArgs.Empty);
 				}
+
+				document.multiline = multiline;
 			}
 		}
 
 		public int PreferredHeight {
 			get {
-				return preferred_height;
+				return this.font.Height + 7;	// FIXME - consider border style as well
 			}
 		}
 
@@ -237,19 +286,17 @@ namespace System.Windows.Forms {
 
 		public virtual string SelectedText {
 			get {
-				// FIXME
-				return string.Empty;
+				return document.GetSelection();
 			}
 
 			set {
-				// FIXME
+				document.ReplaceSelection(value);
 			}
 		}
 
 		public virtual int SelectionLength {
 			get {
-				// FIXME
-				return 0;
+				return document.SelectionLength();
 			}
 
 			set {
@@ -326,14 +373,31 @@ namespace System.Windows.Forms {
 		}
 
 		public void SelectAll() {
+			Line	last;
+
+			last = document.GetLine(document.Lines);
+			document.SetSelectionStart(document.GetLine(1), 0);
+			document.SetSelectionEnd(last, last.text.Length);
 		}
 
 		public override string ToString() {
-			// FIXME
-			return base.ToString ();
+			StringBuilder	sb;
+			int		i;
+			int		end;
+
+			sb = new StringBuilder();
+
+			end = document.Lines;
+
+			for (i = 1; i < end; i++) {
+				sb.Append(document.GetLine(i).text.ToString() + "\n");
+			}
+
+			return sb.ToString();
 		}
 
 		public void Undo() {
+			return;
 		}
 		#endregion	// Public Instance Methods
 
@@ -492,6 +556,14 @@ Console.WriteLine("Destroying caret");
 							return;
 						}
 
+						case Keys.Tab: {
+							if (this.accepts_tab) {
+								document.InsertChar(document.CaretLine, document.CaretPosition, '\t');
+							}
+							return;
+						}
+
+
 						case Keys.Back: {
 							// delete only deletes on the line, doesn't do the combine
 							if (document.CaretPosition == 0) {
@@ -546,7 +618,6 @@ Console.WriteLine("Destroying caret");
 				}
 
 				case Msg.WM_CHAR: {
-Console.WriteLine("Got char, inserting at cursor");
 					if (m.WParam.ToInt32() >= 32) {	// FIXME, tabs should probably go through
 						document.InsertCharAtCaret((char)m.WParam, true);
 					}
@@ -597,36 +668,51 @@ Console.WriteLine("Received expose: {0}", pevent.ClipRectangle);
 			// Draw the viewable document
 			document.Draw(pevent.Graphics, pevent.ClipRectangle);
 
-#if Debug
-			int		start;
-			int		end;
-			Line		line;
-			int		line_no;
-			LineTag		tag;
-			Pen		p;
-
-			p = new Pen(Color.Red, 1);
-
-			// First, figure out from what line to what line we need to draw
-			start = document.GetLineByPixel(pevent.ClipRectangle.Top - viewport_y, false).line_no;
-			end = document.GetLineByPixel(pevent.ClipRectangle.Bottom - viewport_y, false).line_no;
-
-			Console.WriteLine("Starting drawing on line '{0}'", document.GetLine(start));
-			Console.WriteLine("Ending drawing on line '{0}'", document.GetLine(end));
-
-			line_no = start;
-			while (line_no <= end) {
-				line = document.GetLine(line_no);
-
-				if (draw_lines) {
-					for (int i = 0; i < line.text.Length; i++) {
-						pevent.Graphics.DrawLine(p, (int)line.widths[i] - viewport_x, line.Y - viewport_y, (int)line.widths[i] - viewport_x, line.Y + line.height  - viewport_y);
-					}
+			// Set the scrollbar
+			switch (scrollbars) {
+				case ScrollBars.Both: {
+					break;
 				}
-
-				line_no++;
+				case ScrollBars.Vertical: {
+					break;
+				}
+				case ScrollBars.Horizontal: {
+					hscroll.Minimum = 0;
+					hscroll.Maximum = document.Width - this.Width;
+					break;
+				}
 			}
-#endif
+
+			#if Debug
+				int		start;
+				int		end;
+				Line		line;
+				int		line_no;
+				LineTag		tag;
+				Pen		p;
+
+				p = new Pen(Color.Red, 1);
+
+				// First, figure out from what line to what line we need to draw
+				start = document.GetLineByPixel(pevent.ClipRectangle.Top - viewport_y, false).line_no;
+				end = document.GetLineByPixel(pevent.ClipRectangle.Bottom - viewport_y, false).line_no;
+
+				Console.WriteLine("Starting drawing on line '{0}'", document.GetLine(start));
+				Console.WriteLine("Ending drawing on line '{0}'", document.GetLine(end));
+
+				line_no = start;
+				while (line_no <= end) {
+					line = document.GetLine(line_no);
+
+					if (draw_lines) {
+						for (int i = 0; i < line.text.Length; i++) {
+							pevent.Graphics.DrawLine(p, (int)line.widths[i] - document.ViewPortX, line.Y - document.ViewPortY, (int)line.widths[i] - document.ViewPortX, line.Y + line.height  - document.ViewPortY);
+						}
+					}
+
+					line_no++;
+				}
+			#endif
 		}
 
 		private void TextBoxBase_MouseDown(object sender, MouseEventArgs e) {
@@ -634,50 +720,90 @@ Console.WriteLine("Received expose: {0}", pevent.ClipRectangle);
 			Line	line;
 			int	pos;
 
-if (e.Button == MouseButtons.Left) {
-			document.PositionCaret(e.X, e.Y);
-			return;
-}
+			if (e.Button == MouseButtons.Left) {
+				document.PositionCaret(e.X, e.Y);
+				document.SetSelectionToCaret(true);
+				this.grabbed = true;
+				this.Capture = true;
+				return;
+			}
 
-if (e.Button == MouseButtons.Right) {
-#if Debug
-	draw_lines = !draw_lines;
-#endif
-	((Control)sender).Invalidate();
-	return;
-}
-			tag = document.FindTag(e.X, e.Y, out pos, false);
+			#if Debug
+				if (e.Button == MouseButtons.Right) {
+					draw_lines = !draw_lines;
+					this.Invalidate();
+					return;
+				}
 
-bool recalc_line = false;
-Console.WriteLine("Click found tag {0}, character {1}", tag, pos);
-line = tag.line;
-switch(current) {
- case 4: recalc_line = LineTag.FormatText(tag.line, pos, (pos+10)<line.Text.Length ? 10 : line.Text.Length - pos+1, new Font("impact", 20, FontStyle.Bold, GraphicsUnit.Pixel), ThemeEngine.Current.ResPool.GetSolidBrush(Color.Red)); break;
- case 1: recalc_line = LineTag.FormatText(tag.line, pos, (pos+10)<line.Text.Length ? 10 : line.Text.Length - pos+1, new Font("arial unicode ms", 24, FontStyle.Italic, GraphicsUnit.Pixel), ThemeEngine.Current.ResPool.GetSolidBrush(Color.DarkGoldenrod)); break;
- case 2: recalc_line = LineTag.FormatText(tag.line, pos, (pos+10)<line.Text.Length ? 10 : line.Text.Length - pos+1, new Font("arial", 10, FontStyle.Regular, GraphicsUnit.Pixel), ThemeEngine.Current.ResPool.GetSolidBrush(Color.Aquamarine)); break;
- case 3: recalc_line = LineTag.FormatText(tag.line, pos, (pos+10)<line.Text.Length ? 10 : line.Text.Length - pos+1, new Font("times roman", 16, FontStyle.Underline, GraphicsUnit.Pixel), ThemeEngine.Current.ResPool.GetSolidBrush(Color.Turquoise)); break;
- case 0: recalc_line = LineTag.FormatText(tag.line, pos, (pos+10)<line.Text.Length ? 10 : line.Text.Length - pos+1, new Font("times roman", 64, FontStyle.Italic | FontStyle.Bold, GraphicsUnit.Pixel), ThemeEngine.Current.ResPool.GetSolidBrush(Color.LightSeaGreen)); break;
- case 5: recalc_line = LineTag.FormatText(tag.line, pos, (pos+10)<line.Text.Length ? 10 : line.Text.Length - pos+1, ((TextBoxBase)sender).Font, ThemeEngine.Current.ResPool.GetSolidBrush(ForeColor)); break;
-}
-current++;
-if (current==6) {
- current=0;
-}
+				tag = document.FindTag(e.X, e.Y, out pos, false);
 
-// Update/Recalculate what we see
-document.UpdateView(line, 0);
+				Console.WriteLine("Click found tag {0}, character {1}", tag, pos);
+				line = tag.line;
+				switch(current) {
+					case 4: LineTag.FormatText(tag.line, pos, (pos+10)<line.Text.Length ? 10 : line.Text.Length - pos+1, new Font("impact", 20, FontStyle.Bold, GraphicsUnit.Pixel), ThemeEngine.Current.ResPool.GetSolidBrush(Color.Red)); break;
+					case 1: LineTag.FormatText(tag.line, pos, (pos+10)<line.Text.Length ? 10 : line.Text.Length - pos+1, new Font("arial unicode ms", 24, FontStyle.Italic, GraphicsUnit.Pixel), ThemeEngine.Current.ResPool.GetSolidBrush(Color.DarkGoldenrod)); break;
+					case 2: LineTag.FormatText(tag.line, pos, (pos+10)<line.Text.Length ? 10 : line.Text.Length - pos+1, new Font("arial", 10, FontStyle.Regular, GraphicsUnit.Pixel), ThemeEngine.Current.ResPool.GetSolidBrush(Color.Aquamarine)); break;
+					case 3: LineTag.FormatText(tag.line, pos, (pos+10)<line.Text.Length ? 10 : line.Text.Length - pos+1, new Font("times roman", 16, FontStyle.Underline, GraphicsUnit.Pixel), ThemeEngine.Current.ResPool.GetSolidBrush(Color.Turquoise)); break;
+					case 0: LineTag.FormatText(tag.line, pos, (pos+10)<line.Text.Length ? 10 : line.Text.Length - pos+1, new Font("times roman", 64, FontStyle.Italic | FontStyle.Bold, GraphicsUnit.Pixel), ThemeEngine.Current.ResPool.GetSolidBrush(Color.LightSeaGreen)); break;
+					case 5: LineTag.FormatText(tag.line, pos, (pos+10)<line.Text.Length ? 10 : line.Text.Length - pos+1, ((TextBoxBase)sender).Font, ThemeEngine.Current.ResPool.GetSolidBrush(ForeColor)); break;
+				}
+				current++;
+				if (current==6) {
+					current=0;
+				}
 
-// Make sure our caret is properly positioned and sized
-document.AlignCaret();
+				// Update/Recalculate what we see
+				document.UpdateView(line, 0);
+
+				// Make sure our caret is properly positioned and sized
+				document.AlignCaret();
+			#endif
 		}
 
 		private void TextBoxBase_MouseUp(object sender, MouseEventArgs e) {
+			this.Capture = false;
+			this.grabbed = false;
 			if (e.Button == MouseButtons.Left) {
 				document.PositionCaret(e.X, e.Y);
+				if ((Control.ModifierKeys & Keys.Shift) == 0) {
+					document.SetSelectionToCaret(true);
+				} else {
+					document.SetSelectionToCaret(false);
+				}
+
 				document.DisplayCaret();
 				return;
 			}
 		}
 		#endregion	// Private Methods
+
+
+		private void TextBoxBase_SizeChanged(object sender, EventArgs e) {
+
+			// First, check which scrollbars we need
+			
+			hscroll.Bounds = new Rectangle (ClientRectangle.Left, ClientRectangle.Bottom - hscroll.Height, Width, hscroll.Height);
+			
+		}
+
+		private void hscroll_ValueChanged(object sender, EventArgs e) {
+			XplatUI.ScrollWindow(this.Handle, document.ViewPortX-this.hscroll.Value, 0);
+			document.ViewPortX = this.hscroll.Value;
+			document.UpdateCaret();
+			Console.WriteLine("Dude scrolled");
+		}
+
+		private void TextBoxBase_MouseMove(object sender, MouseEventArgs e) {
+			// FIXME - handle auto-scrolling if mouse is to the right/left of the window
+			if (grabbed) {
+				Line	line;
+				int	pos;
+//mcs bug requires this:
+pos = 0;
+				line = document.FindCursor(e.X + viewport_x, e.Y + viewport_y, out pos).line;
+				document.SetSelectionEnd(line, pos);
+				Invalidate();
+			}
+		}
 	}
 }

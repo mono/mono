@@ -39,7 +39,12 @@ namespace System.Windows.Forms {
 					get {
 						CreateParams	cp;
 
+						owner.ControlBox = true;
+						owner.MinimizeBox = false;
+						owner.MaximizeBox = false;
+
 						cp = base.CreateParams;
+
 						cp.Style = (int)(WindowStyles.WS_POPUP | WindowStyles.WS_CAPTION | WindowStyles.WS_SYSMENU);
 						return cp;
 					}

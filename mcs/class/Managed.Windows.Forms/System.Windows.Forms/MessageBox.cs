@@ -20,8 +20,9 @@
 // Copyright (c) 2004 Novell, Inc.
 //
 // Authors:
-//	Jordi Mas i Hernandez, jordi@ximian.com
-//	Benjamin Dasnois, benjamin.dasnois@gmail.com
+//	Jordi Mas i Hernandez	(jordi@ximian.com)
+//	Benjamin Dasnois	(benjamin.dasnois@gmail.com)
+//	Peter Bartok		(pbartok@novell.com)
 //
 // TODO:
 //	- Complete the implementation when icons are available, Form.BorderStyle is available.
@@ -51,8 +52,13 @@ namespace System.Windows.Forms
 					get {
 						CreateParams	cp;
 
+						owner.ControlBox = true;
+						owner.MinimizeBox = false;
+						owner.MaximizeBox = false;
+					
 						cp = base.CreateParams;
-						cp.Style = (int)(WindowStyles.WS_POPUP | WindowStyles.WS_CAPTION | WindowStyles.WS_SYSMENU);
+
+						cp.Style = (int)(WindowStyles.WS_POPUP | WindowStyles.WS_CAPTION);
 						return cp;
 					}
 				}

@@ -36,21 +36,16 @@ namespace System.Windows.Forms {
 	public class Form : ContainerControl {
 		#region Local Variables
 		internal bool			closing;
-
-		[Flags]
-		enum Flags {
-			ShowInTaskbar	= 0x0001,
-			MaximizeBox		= 0x0002,
-			MinimizeBox		= 0x0004,
-			TopMost			= 0x0008
-		}
-
-		Flags flags = Flags.ShowInTaskbar | Flags.MaximizeBox | Flags.MinimizeBox;
-		FormBorderStyle formBorderStyle = FormBorderStyle.Sizable;
+		FormBorderStyle			formBorderStyle;
 		private static bool		autoscale;
 		private static Size		autoscale_base_size;
 		internal bool			is_modal;
 		internal bool			end_modal;			// This var is being monitored by the application modal loop
+		private bool			control_box;
+		private bool			minimize_box;
+		private bool			maximize_box;
+		private bool			show_in_taskbar;
+		private bool			topmost;
 		private IButtonControl		accept_button;
 		private IButtonControl		cancel_button;
 		private DialogResult		dialog_result;
@@ -60,6 +55,9 @@ namespace System.Windows.Forms {
 		private bool			key_preview;
 		private MainMenu		menu;
 		internal FormParentWindow	form_parent_window;
+		private	Icon			icon;
+		private Size			maximum_size;
+		private Size			minimum_size;
 		#endregion	// Local Variables
 
 		#region Private Classes
@@ -102,6 +100,22 @@ namespace System.Windows.Forms {
 
 					cp.Width = 250;
 					cp.Height = 250;
+
+					if (owner.ShowInTaskbar) {
+						cp.ExStyle |= (int)WindowStyles.WS_EX_APPWINDOW;
+					}
+
+					if (owner.MaximizeBox) {
+						cp.Style |= (int)WindowStyles.WS_MAXIMIZEBOX;
+					}
+
+					if (owner.MinimizeBox) {
+						cp.Style |= (int)WindowStyles.WS_MINIMIZEBOX;
+					}
+
+					if (owner.ControlBox) {
+						cp.Style |= (int)WindowStyles.WS_SYSMENU;
+					}
 
 					return cp;
 				}
@@ -207,8 +221,16 @@ namespace System.Windows.Forms {
 			end_modal = false;
 			dialog_result = DialogResult.None;
 			start_position = FormStartPosition.WindowsDefaultLocation;
+			formBorderStyle = FormBorderStyle.Sizable;
 			key_preview = false;
 			menu = null;
+			icon = null;
+			minimum_size = new Size(0, 0);
+			maximum_size = new Size(0, 0);
+			control_box = true;
+			minimize_box = true;
+			maximize_box = true;
+			show_in_taskbar = true;
 
 			owned_forms = new Form.ControlCollection(this);
 		}
@@ -267,6 +289,18 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		public bool ControlBox {
+			get {
+				return control_box;
+			}
+
+			set {
+				if (control_box != value) {
+					control_box = value;
+				}
+			}
+		}
+
 		public DialogResult DialogResult {
 			get {
 				return dialog_result;
@@ -291,6 +325,18 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		public Icon Icon {
+			get {
+				return icon;
+			}
+
+			set {
+				if (icon != value) {
+					icon = value;
+				}
+			}
+		}
+
 
 		public bool KeyPreview {
 			get {
@@ -304,13 +350,24 @@ namespace System.Windows.Forms {
 
 		public bool MaximizeBox {
 			get {
-				return (flags & Flags.MaximizeBox) != 0;
+				return maximize_box;
 			}
 			set {
-				if (value)
-					flags &= ~Flags.MaximizeBox;
-				else
-					flags |= Flags.MaximizeBox;
+				if (maximize_box != value) {
+					maximize_box = value;
+				}
+			}
+		}
+
+		public Size MaximumSize {
+			get {
+				return maximum_size;
+			}
+
+			set {
+				if (maximum_size != value) {
+					maximum_size = value;
+				}
 			}
 		}
 
@@ -343,13 +400,24 @@ namespace System.Windows.Forms {
 
 		public bool MinimizeBox {
 			get {
-				return (flags & Flags.MinimizeBox) != 0;
+				return minimize_box;
 			}
 			set {
-				if (value)
-					flags &= ~Flags.MinimizeBox;
-				else
-					flags |= Flags.MinimizeBox;
+				if (minimize_box != value) {
+					minimize_box = value;
+				}
+			}
+		}
+
+		public Size MinimumSize {
+			get {
+				return minimum_size;
+			}
+
+			set {
+				if (minimum_size != value) {
+					minimum_size = value;
+				}
 			}
 		}
 
@@ -396,13 +464,12 @@ namespace System.Windows.Forms {
 
 		public bool ShowInTaskbar {
 			get {
-				return (flags & Flags.ShowInTaskbar) != 0;
+				return show_in_taskbar;
 			}
 			set {
-				if (value)
-					flags &= ~Flags.ShowInTaskbar;
-				else
-					flags |= Flags.ShowInTaskbar;
+				if (show_in_taskbar != value) {
+					show_in_taskbar = value;
+				}
 			}
 		}
 
@@ -444,18 +511,13 @@ namespace System.Windows.Forms {
 
 		public bool TopMost {
 			get {
-				return (flags & Flags.TopMost) != 0;
+				return topmost;
 			}
 			set {
-				if (TopMost == value)
-					return;
-
-				if (value)
-					flags &= ~Flags.TopMost;
-				else
-					flags |= Flags.TopMost;
-
-				XplatUI.SetTopmost(window.Handle, owner != null ? owner.window.Handle : IntPtr.Zero, TopMost);
+				if (topmost != value) {
+					topmost = value;
+					XplatUI.SetTopmost(window.Handle, owner != null ? owner.window.Handle : IntPtr.Zero, value);
+				}
 			}
 		}
 
@@ -486,13 +548,6 @@ namespace System.Windows.Forms {
 				cp.Style |= (int)WindowStyles.WS_VISIBLE;
 				cp.Style |= (int)WindowStyles.WS_CLIPSIBLINGS;
 				cp.Style |= (int)WindowStyles.WS_CLIPCHILDREN;
-
-				if (ShowInTaskbar)
-					cp.ExStyle |= (int)WindowStyles.WS_EX_APPWINDOW;
-				if (MaximizeBox)
-					cp.Style |= (int)WindowStyles.WS_MAXIMIZEBOX;
-				if (MinimizeBox)
-					cp.Style |= (int)WindowStyles.WS_MINIMIZEBOX;
 
 				return cp;
 			}
@@ -629,6 +684,23 @@ namespace System.Windows.Forms {
 			}
 			return base.ProcessKeyPreview (ref msg);
 		}
+
+		protected override void SetClientSizeCore(int x, int y) {
+			if ((minimum_size.Width != 0) && (x < minimum_size.Width)) {
+				x = minimum_size.Width;
+			} else if ((maximum_size.Width != 0) && (x > maximum_size.Width)) {
+				x = maximum_size.Width;
+			}
+
+			if ((minimum_size.Height != 0) && (y < minimum_size.Height)) {
+				y = minimum_size.Height;
+			} else if ((maximum_size.Height != 0) && (y > maximum_size.Height)) {
+				y = maximum_size.Height;
+			}
+
+			base.SetClientSizeCore (x, y);
+		}
+
 
 		protected override void WndProc(ref Message m) {
 			switch((Msg)m.Msg) {
