@@ -1,3 +1,9 @@
+2005-01-02  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SHA1CryptoServiceProvider.cs: Removed memory allocation in 
+	ProcessBlock method (now global). This gives up to 8% performance
+	increase when multiple blocks are being used.
+
 2004-12-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* RSA.cs: Throw the proper CryptographicException exception when 

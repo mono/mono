@@ -6,11 +6,7 @@
 //	Sebastien Pouliot (sebastien@ximian.com)
 //
 // Copyright 2001 by Matthew S. Ford.
-// (C) 2004 Novell (http://www.novell.com)
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004, 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -49,11 +45,13 @@ namespace System.Security.Cryptography {
 		private uint count;
 		private byte[] _ProcessingBuffer;   // Used to start data when passed less than a block worth.
 		private int _ProcessingBufferCount; // Counts how much data we have stored that still needs processed.
+		private uint[] buff;
 
 		public SHA1Internal () 
 		{
 			_H = new uint[5];
 			_ProcessingBuffer = new byte[BLOCK_SIZE_BYTES];
+			buff = new uint[80];
 			
 			Initialize();
 		}
@@ -117,7 +115,6 @@ namespace System.Security.Cryptography {
 
 		private void ProcessBlock(byte[] inputBuffer, int inputOffset) 
 		{
-			uint[] buff = new uint[80];
 			uint a, b, c, d, e;
 			int i;
 
