@@ -1,3 +1,7 @@
+2004-05-17  Sanjay Gupta <gsanjay@novell.com>
+
+	* System.Drawing_test.dll.sources: Added TestIconConverter.cs to the test sources list.
+
 2004-05-14  Sanjay Gupta <gsanjay@novell.com>
 
 	* System.Drawing_test.dll.sources: Added TestImageConverter.cs and 
