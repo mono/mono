@@ -1,3 +1,17 @@
+2002-08-01  Martin Baulig  <martin@gnome.org>
+
+	* ecore.cs (Expression.report118): Renamed to Error118 and made
+	it public static.
+
+	* statement.cs (Throw.Resolve): Check whether the expression is of
+	the correct type (CS0118) and whether the type derives from
+	System.Exception (CS0155).
+	(Catch.Resolve): New method.  Do the type lookup here and check
+	whether it derives from System.Exception (CS0155).
+	(Catch.CatchType, Catch.IsGeneral): New public properties.
+
+	* typemanager.cs (TypeManager.exception_type): Added.
+
 2002-07-31  Miguel de Icaza  <miguel@ximian.com>
 
 	* driver.cs: Updated About function.

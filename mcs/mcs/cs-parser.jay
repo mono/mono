@@ -3246,7 +3246,7 @@ try_statement
 		ArrayList s = new ArrayList ();
 		
 		foreach (Catch cc in (ArrayList) $3) {
-			if (cc.Type == null)
+			if (cc.IsGeneral)
 				g = cc;
 			else
 				s.Add (cc);
@@ -3265,7 +3265,7 @@ try_statement
 
 		if (catch_list != null){
 			foreach (Catch cc in catch_list) {
-				if (cc.Type == null)
+				if (cc.IsGeneral)
 					g = cc;
 				else
 					s.Add (cc);

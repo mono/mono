@@ -69,6 +69,7 @@ public class TypeManager {
 	static public Type param_array_type;
 	static public Type void_ptr_type;
 	static public Type indexer_name_type;
+	static public Type exception_type;
 	static public object obsolete_attribute_type;
 	static public object conditional_attribute_type;
 
@@ -677,6 +678,8 @@ public class TypeManager {
 		void_ptr_type         = CoreLookupType ("System.Void*");
 
 		indexer_name_type     = CoreLookupType ("System.Runtime.CompilerServices.IndexerNameAttribute");
+
+		exception_type        = CoreLookupType ("System.Exception");
 
 		//
 		// Attribute types

@@ -810,6 +810,22 @@ namespace Mono.CSharp {
 				expr = expr.Resolve (ec);
 				if (expr == null)
 					return false;
+
+				ExprClass eclass = expr.eclass;
+
+				if (!(eclass == ExprClass.Variable || eclass == ExprClass.PropertyAccess ||
+				      eclass == ExprClass.Value || eclass == ExprClass.IndexerAccess)) {
+					Expression.Error118 (loc, expr, "value, variable, property " +
+							     "or indexer access ");
+					return false;
+				}
+
+				if (!expr.Type.IsSubclassOf (TypeManager.exception_type)) {
+					Report.Error (155, loc,
+						      "The type caught or thrown must be derived " +
+						      "from System.Exception");
+					return false;
+				}
 			}
 
 			ec.CurrentBranching.CurrentUsageVector.Returns = FlowReturns.EXCEPTION;
@@ -3635,17 +3651,54 @@ namespace Mono.CSharp {
 	}
 	
 	public class Catch {
-		public readonly Expression Type;
 		public readonly string Name;
 		public readonly Block  Block;
 		public readonly Location Location;
+
+		Expression type;
 		
 		public Catch (Expression type, string name, Block block, Location l)
 		{
-			Type = type;
+			this.type = type;
 			Name = name;
 			Block = block;
 			Location = l;
+		}
+
+		public Type CatchType {
+			get {
+				if (type == null)
+					throw new InvalidOperationException ();
+
+				return type.Type;
+			}
+		}
+
+		public bool IsGeneral {
+			get {
+				return type == null;
+			}
+		}
+
+		public bool Resolve (EmitContext ec)
+		{
+			if (type != null) {
+				type = type.DoResolve (ec);
+				if (type == null)
+					return false;
+
+				if (!type.Type.IsSubclassOf (TypeManager.exception_type)) {
+					Report.Error (155, Location,
+						      "The type caught or thrown must be derived " +
+						      "from System.Exception");
+					return false;
+				}
+			}
+
+			if (!Block.Resolve (ec))
+				return false;
+
+			return true;
 		}
 	}
 
@@ -3697,7 +3750,7 @@ namespace Mono.CSharp {
 					vi.Number = -1;
 				}
 
-				if (!c.Block.Resolve (ec))
+				if (!c.Resolve (ec))
 					ok = false;
 
 				FlowBranching.UsageVector current = ec.CurrentBranching.CurrentUsageVector;
@@ -3712,7 +3765,7 @@ namespace Mono.CSharp {
 				ec.CurrentBranching.CreateSibling ();
 				Report.Debug (1, "STARTED SIBLING FOR GENERAL", ec.CurrentBranching);
 
-				if (!General.Block.Resolve (ec))
+				if (!General.Resolve (ec))
 					ok = false;
 
 				FlowBranching.UsageVector current = ec.CurrentBranching.CurrentUsageVector;
@@ -3770,13 +3823,9 @@ namespace Mono.CSharp {
 			DeclSpace ds = ec.DeclSpace;
 
 			foreach (Catch c in Specific){
-				Type catch_type = ds.ResolveType (c.Type, false, c.Location);
 				VariableInfo vi;
 				
-				if (catch_type == null)
-					return false;
-
-				ig.BeginCatchBlock (catch_type);
+				ig.BeginCatchBlock (c.CatchType);
 
 				if (c.Name != null){
 					vi = c.Block.GetVariableInfo (c.Name);

@@ -2147,7 +2147,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Reports that we were expecting `expr' to be of class `expected'
 		/// </summary>
-		protected void report118 (Location loc, Expression expr, string expected)
+		public static void Error118 (Location loc, Expression expr, string expected)
 		{
 			string kind = "Unknown";
 			

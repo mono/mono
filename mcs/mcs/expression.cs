@@ -776,7 +776,7 @@ namespace Mono.CSharp {
 
 				return null;
 			} else {
-				report118 (loc, expr, "variable, indexer or property access");
+				Error118 (loc, expr, "variable, indexer or property access");
 				return null;
 			}
 
@@ -1445,7 +1445,7 @@ namespace Mono.CSharp {
 			}
 
 			if (target_type.eclass != ExprClass.Type){
-				report118 (loc, target_type, "class");
+				Error118 (loc, target_type, "class");
 				return null;
 			}
 			
@@ -3826,7 +3826,7 @@ namespace Mono.CSharp {
 			}
 
 			if (!(expr is MethodGroupExpr)){
-				report118 (loc, this.expr, "method group");
+				Error118 (loc, this.expr, "method group");
 				return null;
 			}
 
@@ -4207,7 +4207,7 @@ namespace Mono.CSharp {
 			
 			if (! (ml is MethodGroupExpr)){
 				if (!is_struct){
-					report118 (loc, ml, "method group");
+					Error118 (loc, ml, "method group");
 					return null;
 				}
 			}
@@ -4659,7 +4659,7 @@ namespace Mono.CSharp {
 						   AllBindingFlags, loc);
 				
 				if (!(ml is MethodGroupExpr)) {
-					report118 (loc, ml, "method group");
+					Error118 (loc, ml, "method group");
 					return null;
 				}
 				
@@ -5755,7 +5755,7 @@ namespace Mono.CSharp {
 			// As long as the type is valid
 			if (!(eclass == ExprClass.Variable || eclass == ExprClass.PropertyAccess ||
 			      eclass == ExprClass.Value)) {
-				report118 (ea.loc, ea.Expr, "variable or value");
+				Error118 (ea.loc, ea.Expr, "variable or value");
 				return null;
 			}
 #endif
@@ -6436,7 +6436,7 @@ namespace Mono.CSharp {
 				return null;
 
 			if (left.eclass != ExprClass.Type){
-				report118 (loc, left, "type");
+				Error118 (loc, left, "type");
 				return null;
 			}
 			
