@@ -220,6 +220,14 @@ namespace Mono.CSharp {
 
 			Type gt = resolved.Type.GetGenericTypeDefinition ();
 
+			Type[] gen_params = gt.GetGenericParameters ();
+			if (args.Arguments.Length != gen_params.Length) {
+				Report.Error (-217, loc, "Generic type `" + gt.Name + "' takes " +
+					      gen_params.Length + " type parameters, but specified " +
+					      args.Arguments.Length + ".");
+				return null;
+			}
+
 			//
 			// Now bind the parameters.
 			//

@@ -1,3 +1,8 @@
+2003-09-07  Martin Baulig  <martin@ximian.com>
+
+	* generic.cs (ConstructedType.ResolveAsTypeStep): Report a CS8217
+	if the number of type parameters doesn't match.
+
 2003-09-04  Martin Baulig  <martin@ximian.com>
 
 	* expression.cs (ComposedCast.ResolveAsTypeStep): Added support
