@@ -62,22 +62,22 @@ namespace System.Windows.Forms {
 		private static bool getmessage_ret;
 
 		private static EventTypeSpec [] viewEvents = new EventTypeSpec [] {
-									new EventTypeSpec (1668183148, 7), 
-									new EventTypeSpec (1668183148, 13), 
-									new EventTypeSpec (1668183148, 2), 
-									new EventTypeSpec (1668183148, 154), 
-									new EventTypeSpec (1668183148, 4) 
+									new EventTypeSpec (OSXConstants.kEventClassControl, OSXConstants.kEventControlSetFocusPart), 
+									new EventTypeSpec (OSXConstants.kEventClassControl, OSXConstants.kEventControlClick), 
+									new EventTypeSpec (OSXConstants.kEventClassControl, OSXConstants.kEventControlSimulateHit), 
+									new EventTypeSpec (OSXConstants.kEventClassControl, OSXConstants.kEventControlBoundsChanged), 
+									new EventTypeSpec (OSXConstants.kEventClassControl, OSXConstants.kEventControlDraw) 
 									};
 		private static EventTypeSpec [] windowEvents = new EventTypeSpec[] {
-									new EventTypeSpec (1836021107, 1),
-									new EventTypeSpec (1836021107, 2),
-									new EventTypeSpec (1836021107, 5),
-									new EventTypeSpec (1836021107, 6),
-									new EventTypeSpec (1836021107, 10),
-									new EventTypeSpec (2003398244, 27),
-									new EventTypeSpec (1801812322, 1),
-									new EventTypeSpec (1801812322, 2),
-									new EventTypeSpec (1801812322, 3)
+									new EventTypeSpec (OSXConstants.kEventClassMouse, OSXConstants.kEventMouseDown),
+									new EventTypeSpec (OSXConstants.kEventClassMouse, OSXConstants.kEventMouseUp),
+									new EventTypeSpec (OSXConstants.kEventClassMouse, OSXConstants.kEventMouseMoved),
+									new EventTypeSpec (OSXConstants.kEventClassMouse, OSXConstants.kEventMouseDragged),
+									new EventTypeSpec (OSXConstants.kEventClassMouse, OSXConstants.kEventMouseWheelMoved),
+									new EventTypeSpec (OSXConstants.kEventClassWindow, OSXConstants.kEventWindowBoundsChanged),
+									new EventTypeSpec (OSXConstants.kEventClassKeyboard, OSXConstants.kEventRawKeyDown),
+									new EventTypeSpec (OSXConstants.kEventClassKeyboard, OSXConstants.kEventRawKeyRepeat),
+									new EventTypeSpec (OSXConstants.kEventClassKeyboard, OSXConstants.kEventRawKeyUp)
 									};
 
 		private ArrayList timer_list;
@@ -126,7 +126,7 @@ namespace System.Windows.Forms {
 			
 			IntPtr rect = IntPtr.Zero;
 			SetRect (ref rect, (short)0, (short)0, (short)0, (short)0);
-			CheckError (CreateNewWindow (6, 33554432 | 31 | 524288, ref rect, ref fosterParent), "CreateFosterParent ()");
+			CheckError (CreateNewWindow (WindowClass.kDocumentWindowClass, WindowAttributes.kWindowStandardHandlerAttribute | WindowAttributes.kWindowCloseBoxAttribute | WindowAttributes.kWindowFullZoomAttribute | WindowAttributes.kWindowCollapseBoxAttribute | WindowAttributes.kWindowResizableAttribute | WindowAttributes.kWindowCompositingAttribute, ref rect, ref fosterParent), "CreateFosterParent ()");
 			timer_list = new ArrayList ();
 
 			hover.interval = 500;
@@ -223,7 +223,7 @@ namespace System.Windows.Forms {
 				if ((cp.Style & (int)(WindowStyles.WS_CHILD))!=0) {
 					// This is a child view that is going to be parentless;
 					realWindow = false;
-					CheckError (HIViewFindByID (HIViewGetRoot (fosterParent), new HIViewID (2003398244, 1), ref parentHnd), "HIViewFindByID ()");
+					CheckError (HIViewFindByID (HIViewGetRoot (fosterParent), new HIViewID (OSXConstants.kEventClassWindow, 1), ref parentHnd), "HIViewFindByID ()");
 				} else if ((cp.Style & (int)(WindowStyles.WS_POPUP))!=0) {
 					// This is a popup window that will be real.
 					realWindow = true;
@@ -238,22 +238,22 @@ namespace System.Windows.Forms {
 			}
 
 			if (realWindow) {
-				int windowklass = 14;
-				uint attributes = (uint)((1L << 19) | (1L << 25));
+				WindowClass windowklass = WindowClass.kOverlayWindowClass;
+				WindowAttributes attributes = WindowAttributes.kWindowCompositingAttribute | WindowAttributes.kWindowStandardHandlerAttribute;
 				if ((cp.Style & ((int)WindowStyles.WS_MINIMIZEBOX)) != 0) { 
-					attributes |= (uint)(1L << 3);
+					attributes |= WindowAttributes.kWindowCollapseBoxAttribute;
 				}
 				if ((cp.Style & ((int)WindowStyles.WS_MAXIMIZEBOX)) != 0) {
-					attributes |= (uint)((1L << 4) | (1L << 1) | (1L << 2));
+					attributes |= WindowAttributes.kWindowResizableAttribute | WindowAttributes.kWindowHorizontalZoomAttribute | WindowAttributes.kWindowVerticalZoomAttribute;
 				}
 				if ((cp.Style & ((int)WindowStyles.WS_SYSMENU)) != 0) {
-					attributes |= (uint)(1L << 0);
+					attributes |= WindowAttributes.kWindowNoAttributes;
 				}
 				if ((cp.ExStyle & ((int)WindowStyles.WS_EX_TOOLWINDOW)) != 0) {
-					attributes = (uint)((1L << 19) | (1L << 25));
+					attributes = WindowAttributes.kWindowStandardHandlerAttribute | WindowAttributes.kWindowCompositingAttribute;
 				}
 				if ((cp.Style & ((int)WindowStyles.WS_CAPTION)) != 0) {
-					windowklass = 6;
+					windowklass = WindowClass.kDocumentWindowClass;
 				}
 					
 				IntPtr rect = IntPtr.Zero;
@@ -261,7 +261,7 @@ namespace System.Windows.Forms {
 				SetRect (ref rect, (short)cp.X, (short)cp.Y, (short)(cp.Width+cp.X), (short)(cp.Height+cp.Y));
 				CheckError (CreateNewWindow (windowklass, attributes, ref rect, ref windowHnd), "CreateNewWindow ()");
 				CheckError (InstallEventHandler (GetWindowEventTarget (windowHnd), windowEventHandler, (uint)windowEvents.Length, windowEvents, windowHnd, IntPtr.Zero), "InstallEventHandler ()");
-				CheckError (HIViewFindByID (HIViewGetRoot (windowHnd), new HIViewID (2003398244, 1), ref viewHnd), "HIViewFindByID ()");
+				CheckError (HIViewFindByID (HIViewGetRoot (windowHnd), new HIViewID (OSXConstants.kEventClassWindow, 1), ref viewHnd), "HIViewFindByID ()");
 				parentHnd = viewHnd;
 			}
 			HIRect r = new HIRect (0, 0, cp.Width, cp.Height);
@@ -497,7 +497,7 @@ namespace System.Windows.Forms {
 			IntPtr evt = IntPtr.Zero;
 			IntPtr rgn = NewRgn ();
 			SetRectRgn (rgn, (short)rc.X, (short)rc.Y, (short)(rc.X+rc.Width), (short)(rc.Y+rc.Height));
-			CreateEvent (IntPtr.Zero, 1668183148, 4, 0, 1, ref evt); 
+			CreateEvent (IntPtr.Zero, OSXConstants.kEventClassControl, 4, 0, 1, ref evt); 
                         IntPtr target = GetEventDispatcherTarget();
 			SendEventToEventTarget (target, evt);
 
@@ -527,14 +527,14 @@ namespace System.Windows.Forms {
 		}
 
 		internal int WindowHandler (IntPtr inCallRef, IntPtr inEvent, IntPtr controlHnd) {
-			int eventClass = GetEventClass (inEvent);
-			int eventKind = GetEventKind (inEvent);
+			uint eventClass = GetEventClass (inEvent);
+			uint eventKind = GetEventKind (inEvent);
 			MSG msg = new MSG ();
 			msg.hwnd = IntPtr.Zero; 
 			lock (carbonEvents) {
 				switch (eventClass) {
 					// keyboard
-					case 1801812322: {
+					case OSXConstants.kEventClassKeyboard: {
 						byte charCode = 0x00;
 						GetEventParameter (inEvent, 1801676914, 1413830740, IntPtr.Zero, (uint)Marshal.SizeOf (typeof (byte)), IntPtr.Zero, ref charCode);
 						IntPtr cntrl = IntPtr.Zero;
@@ -558,17 +558,17 @@ namespace System.Windows.Forms {
 						msg.wParam = (IntPtr)charCode;
 						switch (eventKind) {
 							// keydown
-							case 1: {
+							case OSXConstants.kEventRawKeyDown: {
 								msg.message = Msg.WM_KEYDOWN;
 								break;
 							}
 							// repeat
-							case 2: {
+							case OSXConstants.kEventRawKeyRepeat: {
 								msg.message = Msg.WM_KEYDOWN;
 								break;
 							}
 							// keyup
-							case 3: {
+							case OSXConstants.kEventRawKeyUp: {
 								msg.message = Msg.WM_KEYUP;
 								break;
 							}
@@ -576,9 +576,9 @@ namespace System.Windows.Forms {
 						carbonEvents.Enqueue (msg);
 						return -9874;
 					}
-					case 2003398244: {
+					case OSXConstants.kEventClassWindow: {
 						switch (eventKind) {
-							case 27: {
+							case OSXConstants.kEventWindowBoundsChanged: {
 								// This is our real window; so we have to resize the corresponding view as well
 								IDictionaryEnumerator e = view_window_mapping.GetEnumerator ();
 								while (e.MoveNext ()) {
@@ -603,10 +603,10 @@ namespace System.Windows.Forms {
 						}
 						break;
 					}
-					case 1836021107: {
+					case OSXConstants.kEventClassMouse: {
 						switch (eventKind) {
-							case 1: 
-							case 2: {
+							case OSXConstants.kEventMouseDown: 
+							case OSXConstants.kEventMouseUp: {
 								QDPoint point = new QDPoint ();
 								IntPtr pView = IntPtr.Zero;
 								IntPtr rView = IntPtr.Zero;
@@ -621,7 +621,7 @@ namespace System.Windows.Forms {
 								point.y = (short)(point.y-bounds.top);
 								// Swizzle it so its pointed at the right control
 								CGPoint hiPoint = new CGPoint (point.x, point.y);
-								CheckError (HIViewFindByID (HIViewGetRoot (controlHnd), new HIViewID (2003398244, 1), ref pView), "HIViewFindByID ()");
+								CheckError (HIViewFindByID (HIViewGetRoot (controlHnd), new HIViewID (OSXConstants.kEventClassWindow, 1), ref pView), "HIViewFindByID ()");
 								CheckError (HIViewGetSubviewHit (pView, ref hiPoint, true, ref rView));
 								HIViewConvertPoint (ref hiPoint, pView, rView);
 								if (grabWindow == IntPtr.Zero)
@@ -630,7 +630,7 @@ namespace System.Windows.Forms {
 									msg.hwnd = grabWindow;
 								switch (btn) {
 									case 1:
-										if (eventKind == 1) {
+										if (eventKind == OSXConstants.kEventMouseDown) {
 											mouse_state |= MouseButtons.Left;
 											msg.message = Msg.WM_LBUTTONDOWN;
 											wParam |= (int)MsgButtons.MK_LBUTTON;
@@ -641,7 +641,7 @@ namespace System.Windows.Forms {
 										}
 										break;
 									case 2:
-										if (eventKind == 1) {
+										if (eventKind == OSXConstants.kEventMouseDown) {
 											mouse_state |= MouseButtons.Middle;
 											msg.message = Msg.WM_MBUTTONDOWN;
 											wParam |= (int)MsgButtons.MK_MBUTTON;
@@ -652,7 +652,7 @@ namespace System.Windows.Forms {
 										}
 										break;
 									case 3:
-										if (eventKind == 1) {
+										if (eventKind == OSXConstants.kEventMouseDown) {
 											mouse_state |= MouseButtons.Right;
 											msg.message = Msg.WM_RBUTTONDOWN;
 											wParam |= (int)MsgButtons.MK_RBUTTON;
@@ -670,7 +670,7 @@ namespace System.Windows.Forms {
 								carbonEvents.Enqueue (msg);
 								return -9874;
 							}
-							case 5: {
+							case OSXConstants.kEventMouseMoved: {
 								QDPoint point = new QDPoint ();
 								IntPtr pView = IntPtr.Zero;
 								IntPtr rView = IntPtr.Zero;								
@@ -684,7 +684,7 @@ namespace System.Windows.Forms {
 								point.y = (short)(point.y-bounds.top);
 								// Swizzle it so its pointed at the right control
 								CGPoint hiPoint = new CGPoint (point.x, point.y);
-								CheckError (HIViewFindByID (HIViewGetRoot (controlHnd), new HIViewID (2003398244, 1), ref pView), "HIViewFindByID ()");
+								CheckError (HIViewFindByID (HIViewGetRoot (controlHnd), new HIViewID (OSXConstants.kEventClassWindow, 1), ref pView), "HIViewFindByID ()");
 								CheckError (HIViewGetSubviewHit (pView, ref hiPoint, true, ref rView));
 								HIViewConvertPoint (ref hiPoint, pView, rView);
 								if (mouseInWindow != rView && grabWindow == IntPtr.Zero) {
@@ -719,7 +719,7 @@ namespace System.Windows.Forms {
 								hover.timer.Interval = hover.interval;
 								return -9874;
 							}
-							case 6: {
+							case OSXConstants.kEventMouseDragged: {
 								QDPoint point = new QDPoint ();
 								IntPtr pView = IntPtr.Zero;
 								IntPtr rView = IntPtr.Zero;								
@@ -733,7 +733,7 @@ namespace System.Windows.Forms {
 								point.y = (short)(point.y-bounds.top);
 								// Swizzle it so its pointed at the right control
 								CGPoint hiPoint = new CGPoint (point.x, point.y);
-								CheckError (HIViewFindByID (HIViewGetRoot (controlHnd), new HIViewID (2003398244, 1), ref pView), "HIViewFindByID ()");
+								CheckError (HIViewFindByID (HIViewGetRoot (controlHnd), new HIViewID (OSXConstants.kEventClassWindow, 1), ref pView), "HIViewFindByID ()");
 								CheckError (HIViewGetSubviewHit (pView, ref hiPoint, true, ref rView));
 								HIViewConvertPoint (ref hiPoint, pView, rView);
 								if (mouseInWindow != rView && grabWindow != IntPtr.Zero) {
@@ -781,15 +781,15 @@ namespace System.Windows.Forms {
 			return -9874;
 		}
 		internal int ViewHandler (IntPtr inCallRef, IntPtr inEvent, IntPtr controlHnd) {
-			int eventClass = GetEventClass (inEvent);
-			int eventKind = GetEventKind (inEvent);
+			uint eventClass = GetEventClass (inEvent);
+			uint eventKind = GetEventKind (inEvent);
 			MSG msg = new MSG ();
 			msg.hwnd = controlHnd;
 			lock (carbonEvents) {
 				switch (eventClass) {
-					case 1668183148:
+					case OSXConstants.kEventClassControl:
 						switch (eventKind) {
-							case 4: {
+							case OSXConstants.kEventControlDraw: {
 								if (handle_data [controlHnd] == null)
 									handle_data [controlHnd] = new HandleData ();
 								HIRect bounds = new HIRect ();
@@ -809,11 +809,11 @@ namespace System.Windows.Forms {
 								carbonEvents.Enqueue (msg);
 								return 0;
 							}
-							case 2: {
+							case OSXConstants.kEventControlSimulateHit: {
 								Console.WriteLine ("Unicode thingie on {0:x}", msg.hwnd);
 								return 0;
 							}
-							case 154: {
+							case OSXConstants.kEventControlBoundsChanged: {
 /*
 								((HandleData) handle_data [msg.hwnd]).AddToInvalidArea ((int)bounds.origin.x, (int)bounds.origin.y, (int)bounds.size.width, (int)bounds.size.height);
 								msg.message = Msg.WM_PAINT;
@@ -823,12 +823,12 @@ namespace System.Windows.Forms {
 */
 								return 0;
 							}
-							case 13: {
+							case OSXConstants.kEventControlClick: {
 								IntPtr window = GetControlOwner (msg.hwnd);
 								SetKeyboardFocus (window, msg.hwnd, 1); 
 								return 0;
 							}
-							case 7: {
+							case OSXConstants.kEventControlSetFocusPart: {
 								short pcode = 1;
 								GetEventParameter (inEvent, 1668313716, 1668313716, IntPtr.Zero, (uint)Marshal.SizeOf (typeof (short)), IntPtr.Zero, ref pcode);
 								switch (pcode) {
@@ -1461,9 +1461,9 @@ DEBUG THIS:
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern int ReceiveNextEvent (uint evtCount, IntPtr evtTypes, double timeout, bool processEvt, ref IntPtr evt);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		static extern int GetEventClass (IntPtr eventRef);
+		static extern uint GetEventClass (IntPtr eventRef);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		static extern int GetEventKind (IntPtr eventRef);
+		static extern uint GetEventKind (IntPtr eventRef);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		static extern int GetEventParameter (IntPtr evt, uint inName, uint inType, IntPtr outActualType, uint bufSize, IntPtr outActualSize, ref byte outData);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
@@ -1523,7 +1523,7 @@ DEBUG THIS:
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern int EndAppModalStateForWindow (IntPtr window);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern int CreateNewWindow (int klass, uint attributes, ref IntPtr r, ref IntPtr window);
+		internal static extern int CreateNewWindow (WindowClass klass, WindowAttributes attributes, ref IntPtr r, ref IntPtr window);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern int DisposeWindow (IntPtr wHnd);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
