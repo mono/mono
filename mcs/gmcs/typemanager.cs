@@ -1614,6 +1614,16 @@ public class TypeManager {
 	{
 		if (a.IsGenericParameter) {
 			//
+			// If a is an array of a's type, they may never
+			// become equal.
+			//
+			while (b.IsArray) {
+				b = b.GetElementType ();
+				if (a.Equals (b))
+					return false;
+			}
+
+			//
 			// If b is a generic parameter or an actual type,
 			// they may become equal:
 			//
@@ -1659,6 +1669,20 @@ public class TypeManager {
 
 		if (a.IsGenericInstance || b.IsGenericInstance)
 			return MayBecomeEqualGenericInstances (a, b);
+
+		//
+		// If both of them are arrays.
+		//
+
+		if (a.IsArray && b.IsArray) {
+			if (a.GetArrayRank () != b.GetArrayRank ())
+				return false;
+			
+			a = a.GetElementType ();
+			b = b.GetElementType ();
+
+			return MayBecomeEqualGenericTypes (a, b);
+		}
 
 		//
 		// Ok, two ordinary types.
