@@ -1,3 +1,12 @@
+2002-11-07  Ville Palo <vi64pa@koti.soon.fi>
+
+	* System.Data.SqlTypes/SqlDecimalTest.cs
+	* System.Data.SqlTypes/SqlDoubleTest.cs
+	* System.Data.SqlTypes/SqlMoneyTest.cs
+	* System.Data.SqlTypes/SqlSingleTest.cs: 
+	mcs don't understand (currently) correctly what 1e10 means, 
+	with mcs it must be 1E+10.
+	
 2002-11-02  Ville Palo <vi64pa@koti.soon.fi>
 
 	* System.Data.SqlTypes/SqlDoubleTest.cs: More tests.

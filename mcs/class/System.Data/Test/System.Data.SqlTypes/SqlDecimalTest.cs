@@ -53,11 +53,11 @@ namespace MonoTests.System.Data.SqlTypes
                 	}
                 	
                 	// SqlDecimal (double)
-                	Test = new SqlDecimal (10e10d);
+                	Test = new SqlDecimal (10E+10d);
                 	AssertEquals ("#A05", 100000000000m, Test.Value);
                 	
                 	try {
-                		SqlDecimal test = new SqlDecimal (10e200d);
+                		SqlDecimal test = new SqlDecimal (10E+200d);
                 		Fail ("#A06");                		
                 	} catch (Exception e) {
                 		AssertEquals ("#A07", typeof (OverflowException), e.GetType ());
@@ -107,8 +107,10 @@ namespace MonoTests.System.Data.SqlTypes
                         AssertEquals ("#B02", (byte)38, SqlDecimal.MaxScale);
                         
                         // FIXME: on windows: Conversion overflow
-                        AssertEquals  ("#B03", Decimal.MaxValue, SqlDecimal.MaxValue.Value);
-                        AssertEquals ("#B04", Decimal.MinValue, SqlDecimal.MinValue.Value);
+			AssertEquals  ("#B03a", 1262177448, SqlDecimal.MaxValue.Data [3]);
+
+
+                        AssertEquals ("#B04", 1262177448, SqlDecimal.MinValue.Data [3]);
                 	Assert ("#B05", SqlDecimal.Null.IsNull);
                 	Assert ("#B06", !Test1.IsNull);
                 }
@@ -140,7 +142,7 @@ namespace MonoTests.System.Data.SqlTypes
 
 			// Abs
 			AssertEquals ("#D01", (SqlDecimal)6m, SqlDecimal.Abs (Test4));
-                	AssertEquals ("#D02", (SqlDecimal)6464.6464m, SqlDecimal.Abs (Test1));
+                	AssertEquals ("#D02", new SqlDecimal (6464.6464m).Value, SqlDecimal.Abs (Test1).Value);
                 	
                 	AssertEquals ("#D03", SqlDecimal.Null, SqlDecimal.Abs (SqlDecimal.Null));
                 	
@@ -211,7 +213,7 @@ namespace MonoTests.System.Data.SqlTypes
 		
 		public void TestConvertToPrecScale()
 		{
-			AssertEquals ("#F01", new SqlDecimal(6464.6m), SqlDecimal.ConvertToPrecScale (Test1, 5, 1));
+			AssertEquals ("#F01", new SqlDecimal(6464.6m).Value, SqlDecimal.ConvertToPrecScale (Test1, 5, 1).Value);
 			
 			try {
 				SqlDecimal test =  SqlDecimal.ConvertToPrecScale (Test1, 6, 5);
@@ -395,11 +397,13 @@ namespace MonoTests.System.Data.SqlTypes
 
                         // ToString ()
                         AssertEquals ("#N22", "6464.6464", Test1.ToString ());                        
+			AssertEquals ("#N23", (SqlDouble)1E+38, SqlDecimal.MaxValue.ToSqlDouble ());
+
                 }
                 
                 public void TestTruncate()
                 {
-                	AssertEquals ("#O01", (SqlDecimal)6464.64m, SqlDecimal.Truncate (Test1, 2));
+                	AssertEquals ("#O01", new SqlDecimal (6464.64m).Value, SqlDecimal.Truncate (Test1, 2).Value);
                 }
                 
                 // OPERATORS
@@ -516,13 +520,13 @@ namespace MonoTests.System.Data.SqlTypes
 
                 public void TestSqlDoubleToSqlDecimal()
                 {
-                        SqlDouble Test = new SqlDouble (12e10);
+                        SqlDouble Test = new SqlDouble (12E+10);
                         AssertEquals ("#U01", 120000000000m, ((SqlDecimal)Test).Value);
                 }
                 
                 public void TestSqlSingleToSqlDecimal()
                 {
-                	SqlSingle Test = new SqlSingle (1e9);
+                	SqlSingle Test = new SqlSingle (1E+9);
                 	AssertEquals ("#V01", 1000000000m, ((SqlDecimal)Test).Value);
                 	
                 	try {
@@ -548,7 +552,7 @@ namespace MonoTests.System.Data.SqlTypes
                         }
                         
                         try {
-                        	SqlDecimal test = (SqlDecimal)new SqlString("9e100");
+                        	SqlDecimal test = (SqlDecimal)new SqlString("9E+100");
                         	Fail ("#W04");
                         } catch (Exception e) {
                         	AssertEquals ("#W05", typeof (FormatException), e.GetType());

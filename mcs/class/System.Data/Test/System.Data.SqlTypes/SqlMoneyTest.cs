@@ -410,7 +410,7 @@ namespace MonoTests.System.Data.SqlTypes
 		public void TestSqlDecimalToSqlMoney()
 		{
 			SqlDecimal TestDecimal = new SqlDecimal (4000);
-			SqlDecimal TestDecimal2 = new SqlDecimal (1e20);
+			SqlDecimal TestDecimal2 = new SqlDecimal (1E+20);
 
 			SqlMoney TestMoney = (SqlMoney)TestDecimal;
 			AssertEquals ("#R01", TestMoney.Value, TestDecimal.Value);
@@ -425,8 +425,8 @@ namespace MonoTests.System.Data.SqlTypes
 	     
 		public void TestSqlDoubleToSqlMoney()
 		{
-			SqlDouble TestDouble = new SqlDouble (1e9);
-			SqlDouble TestDouble2 = new SqlDouble (1e20);
+			SqlDouble TestDouble = new SqlDouble (1E+9);
+			SqlDouble TestDouble2 = new SqlDouble (1E+20);
 			
 			SqlMoney TestMoney = (SqlMoney)TestDouble;
 			AssertEquals ("#S01", 1000000000m, TestMoney.Value);

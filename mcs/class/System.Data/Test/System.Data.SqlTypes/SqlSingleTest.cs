@@ -43,9 +43,9 @@ namespace MonoTests.System.Data.SqlTypes
                 // Test public fields
                 public void TestPublicFields()
                 {
-                        AssertEquals ("#B01", 3.40282346638528859e38f, 
+                        AssertEquals ("#B01", 3.40282346638528859E+38f, 
 				      SqlSingle.MaxValue.Value);
-                        AssertEquals ("#B02", -3.40282346638528859e38f, 
+                        AssertEquals ("#B02", -3.40282346638528859E+38f, 
 				      SqlSingle.MinValue.Value);
                         Assert ("#B03", SqlSingle.Null.IsNull);
                         AssertEquals ("#B04", 0f, SqlSingle.Zero.Value);
@@ -67,15 +67,15 @@ namespace MonoTests.System.Data.SqlTypes
                 public void TestArithmeticMethods()
                 {
                         SqlSingle Test0 = new SqlSingle (0);
-                        SqlSingle Test1 = new SqlSingle (15e18);
-                        SqlSingle Test2 = new SqlSingle (-65e6);
-                        SqlSingle Test3 = new SqlSingle (5e30);
-                        SqlSingle Test4 = new SqlSingle (5e18);
+                        SqlSingle Test1 = new SqlSingle (15E+18);
+                        SqlSingle Test2 = new SqlSingle (-65E+6);
+                        SqlSingle Test3 = new SqlSingle (5E+30);
+                        SqlSingle Test4 = new SqlSingle (5E+18);
                         SqlSingle TestMax = new SqlSingle (SqlSingle.MaxValue.Value);
 
                         // Add()
-                        AssertEquals ("#D01A", 15e18f, SqlSingle.Add (Test1, Test0).Value);
-                        AssertEquals ("#D02A", 1.5e19f, SqlSingle.Add (Test1, Test2).Value);
+                        AssertEquals ("#D01A", 15E+18f, SqlSingle.Add (Test1, Test0).Value);
+                        AssertEquals ("#D02A", 1.5E+19f, SqlSingle.Add (Test1, Test2).Value);
 
                         try {			  
                                 SqlSingle test = SqlSingle.Add (SqlSingle.MaxValue, 
@@ -87,7 +87,7 @@ namespace MonoTests.System.Data.SqlTypes
                         
                         // Divide()
                         AssertEquals ("#D01B", (SqlSingle)3, SqlSingle.Divide (Test1, Test4));
-                        AssertEquals ("#D02B", -1.3e-23f, SqlSingle.Divide (Test2, Test3).Value);
+                        AssertEquals ("#D02B", -1.3E-23f, SqlSingle.Divide (Test2, Test3).Value);
 
                         try {
                                 SqlSingle test = SqlSingle.Divide(Test1, Test0).Value;
@@ -98,7 +98,7 @@ namespace MonoTests.System.Data.SqlTypes
                         }
 
 			// Multiply()
-                        AssertEquals ("#D01D", (float)(7.5e37), 
+                        AssertEquals ("#D01D", (float)(7.5E+37), 
 				      SqlSingle.Multiply (Test1, Test4).Value);
                         AssertEquals ("#D02D", (float)0, SqlSingle.Multiply (Test1, Test0).Value);
 
@@ -111,7 +111,7 @@ namespace MonoTests.System.Data.SqlTypes
                                 
 
                         // Subtract()
-                        AssertEquals ("#D01F", (float)(-5e30), 
+                        AssertEquals ("#D01F", (float)(-5E+30), 
 				      SqlSingle.Subtract (Test1, Test3).Value);
 
                         try {
@@ -125,9 +125,9 @@ namespace MonoTests.System.Data.SqlTypes
 
                 public void TestCompareTo()
                 {
-                        SqlSingle Test1 = new SqlSingle (4e30);
-                        SqlSingle Test11 = new SqlSingle (4e30);
-                        SqlSingle Test2 = new SqlSingle (-9e30);
+                        SqlSingle Test1 = new SqlSingle (4E+30);
+                        SqlSingle Test11 = new SqlSingle (4E+30);
+                        SqlSingle Test2 = new SqlSingle (-9E+30);
                         SqlSingle Test3 = new SqlSingle (10000);
                         SqlString TestString = new SqlString ("This is a test");
 
@@ -257,8 +257,8 @@ namespace MonoTests.System.Data.SqlTypes
                 {
                         SqlSingle Test0 = new SqlSingle (0);
                         SqlSingle Test1 = new SqlSingle (250);
-                        SqlSingle Test2 = new SqlSingle (64e16);
-                        SqlSingle Test3 = new SqlSingle (64e30);
+                        SqlSingle Test2 = new SqlSingle (64E+16);
+                        SqlSingle Test3 = new SqlSingle (64E+30);
                         SqlSingle TestNull = SqlSingle.Null;
 
                         // ToSqlBoolean ()
@@ -349,14 +349,14 @@ namespace MonoTests.System.Data.SqlTypes
                 public void TestArithmeticOperators()
                 {
                         SqlSingle Test0 = new SqlSingle (0);
-                        SqlSingle Test1 = new SqlSingle (24e11);
-                        SqlSingle Test2 = new SqlSingle (64e32);
-                        SqlSingle Test3 = new SqlSingle (12e11);
-                        SqlSingle Test4 = new SqlSingle (1e10);
-                        SqlSingle Test5 = new SqlSingle (2e10);
+                        SqlSingle Test1 = new SqlSingle (24E+11);
+                        SqlSingle Test2 = new SqlSingle (64E+32);
+                        SqlSingle Test3 = new SqlSingle (12E+11);
+                        SqlSingle Test4 = new SqlSingle (1E+10);
+                        SqlSingle Test5 = new SqlSingle (2E+10);
 
                         // "+"-operator
-                        AssertEquals ("#N01", (SqlSingle)3e10, Test4 + Test5);
+                        AssertEquals ("#N01", (SqlSingle)3E+10, Test4 + Test5);
      
                         try {
                                 SqlSingle test = SqlSingle.MaxValue + SqlSingle.MaxValue;
@@ -382,7 +382,7 @@ namespace MonoTests.System.Data.SqlTypes
                         }
 
                         // "*"-operator
-                        AssertEquals ("#N07", (SqlSingle)2e20, Test4 * Test5);
+                        AssertEquals ("#N07", (SqlSingle)2E+20, Test4 * Test5);
 
                         try {
                                 SqlSingle test = SqlSingle.MaxValue * Test1;
@@ -404,10 +404,10 @@ namespace MonoTests.System.Data.SqlTypes
 
                 public void TestThanOrEqualOperators()
                 {
-                        SqlSingle Test1 = new SqlSingle (1e14);
-                        SqlSingle Test2 = new SqlSingle (9.7e11);
-                        SqlSingle Test22 = new SqlSingle (9.7e11);
-                        SqlSingle Test3 = new SqlSingle (2e22);
+                        SqlSingle Test1 = new SqlSingle (1.0E+14f);
+                        SqlSingle Test2 = new SqlSingle (9.7E+11);
+                        SqlSingle Test22 = new SqlSingle (9.7E+11);
+                        SqlSingle Test3 = new SqlSingle (2.0E+22f);
 
                         // == -operator
                         Assert ("#O01", (Test2 == Test22).Value);
@@ -422,6 +422,7 @@ namespace MonoTests.System.Data.SqlTypes
 
                         // > -operator
                         Assert ("#O08", (Test1 > Test2).Value);
+			System.Console.WriteLine ("NYT");
                         Assert ("#O09", !(Test1 > Test3).Value);
                         Assert ("#O10", !(Test2 > Test22).Value);
                         Assert ("#O11", (Test1 > SqlSingle.Null).IsNull);

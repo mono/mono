@@ -62,15 +62,15 @@ namespace MonoTests.System.Data.SqlTypes
                 public void TestArithmeticMethods()
                 {
                         SqlDouble Test0 = new SqlDouble (0);
-                        SqlDouble Test1 = new SqlDouble (15e108);
-                        SqlDouble Test2 = new SqlDouble (-65e64);
-                        SqlDouble Test3 = new SqlDouble (5e64);
-                        SqlDouble Test4 = new SqlDouble (5e108);
+                        SqlDouble Test1 = new SqlDouble (15E+108);
+                        SqlDouble Test2 = new SqlDouble (-65E+64);
+                        SqlDouble Test3 = new SqlDouble (5E+64);
+                        SqlDouble Test4 = new SqlDouble (5E+108);
                         SqlDouble TestMax = new SqlDouble (SqlDouble.MaxValue.Value);
 
                         // Add()
-                        AssertEquals ("#D01A", 15e108, SqlDouble.Add (Test1, Test0).Value);
-                        AssertEquals ("#D02A", 1.5e109, SqlDouble.Add (Test1, Test2).Value);
+                        AssertEquals ("#D01A", 15E+108, SqlDouble.Add (Test1, Test0).Value);
+                        AssertEquals ("#D02A", 1.5E+109, SqlDouble.Add (Test1, Test2).Value);
 
                         try {
                                 SqlDouble test = SqlDouble.Add (SqlDouble.MaxValue, SqlDouble.MaxValue);
@@ -91,7 +91,7 @@ namespace MonoTests.System.Data.SqlTypes
                         }
 
                         // Multiply()
-                        AssertEquals ("#D01D", (double)(75e216), SqlDouble.Multiply (Test1, Test4).Value);
+                        AssertEquals ("#D01D", (double)(75E+216), SqlDouble.Multiply (Test1, Test4).Value);
                         AssertEquals ("#D02D", (double)0, SqlDouble.Multiply (Test1, Test0).Value);
 
                         try {
@@ -103,7 +103,7 @@ namespace MonoTests.System.Data.SqlTypes
                                 
 
                         // Subtract()
-                        AssertEquals ("#D01F", (double)1.5e109, SqlDouble.Subtract (Test1, Test3).Value);
+                        AssertEquals ("#D01F", (double)1.5E+109, SqlDouble.Subtract (Test1, Test3).Value);
 
                         try {
                                 SqlDouble test = SqlDouble.Subtract(SqlDouble.MinValue, SqlDouble.MaxValue);
@@ -349,14 +349,14 @@ namespace MonoTests.System.Data.SqlTypes
                 public void TestArithmeticOperators()
                 {
                         SqlDouble Test0 = new SqlDouble (0);
-                        SqlDouble Test1 = new SqlDouble (24e100);
-                        SqlDouble Test2 = new SqlDouble (64e164);
-                        SqlDouble Test3 = new SqlDouble (12e100);
-                        SqlDouble Test4 = new SqlDouble (1e10);
-                        SqlDouble Test5 = new SqlDouble (2e10);
+                        SqlDouble Test1 = new SqlDouble (24E+100);
+                        SqlDouble Test2 = new SqlDouble (64E+164);
+                        SqlDouble Test3 = new SqlDouble (12E+100);
+                        SqlDouble Test4 = new SqlDouble (1E+10);
+                        SqlDouble Test5 = new SqlDouble (2E+10);
 
                         // "+"-operator
-                        AssertEquals ("#N01", (SqlDouble)3e10, Test4 + Test5);
+                        AssertEquals ("#N01", (SqlDouble)3E+10, Test4 + Test5);
      
                         try {
                                 SqlDouble test = SqlDouble.MaxValue + SqlDouble.MaxValue;
@@ -398,10 +398,10 @@ namespace MonoTests.System.Data.SqlTypes
 
                 public void TestThanOrEqualOperators()
                 {
-                        SqlDouble Test1 = new SqlDouble (1e164);
-                        SqlDouble Test2 = new SqlDouble (9.7e100);
-                        SqlDouble Test22 = new SqlDouble (9.7e100);
-                        SqlDouble Test3 = new SqlDouble (2e200);
+                        SqlDouble Test1 = new SqlDouble (1E+164);
+                        SqlDouble Test2 = new SqlDouble (9.7E+100);
+                        SqlDouble Test22 = new SqlDouble (9.7E+100);
+                        SqlDouble Test3 = new SqlDouble (2E+200);
 
                         // == -operator
                         Assert ("#O01", (Test2 == Test22).Value);
