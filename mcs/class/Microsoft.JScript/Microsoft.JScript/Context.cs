@@ -7,15 +7,15 @@
 // (C) 2003, Cesar Lopez Nataren
 //
 
-namespace Microsoft.JScript.Tmp
-{
-	using System;
+using System;
 
-	public class Context 
-	{
+namespace Microsoft.JScript {
+
+	public class Context  {
+
 		internal DocumentContext Document;
 
-		internal Context (string filename)
+		public Context (string filename)
 		{
 			Document = new DocumentContext (filename);
 		}

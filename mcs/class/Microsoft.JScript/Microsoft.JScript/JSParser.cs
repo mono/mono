@@ -7,12 +7,12 @@
 // (C) 2003, Cesar Lopez Nataren
 //
 
-namespace Microsoft.JScript.Tmp
-{
-	using System;
+using System;
 
-	public class JSParser
-	{
+namespace Microsoft.JScript {
+
+	public class JSParser {
+
 		internal JScriptParser Parser;
 
 		public JSParser (Context context)

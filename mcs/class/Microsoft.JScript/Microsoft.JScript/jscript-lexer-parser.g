@@ -9,7 +9,7 @@
 
 options {
     language = "CSharp";
-    namespace =  "Microsoft.JScript.Tmp";
+    namespace =  "Microsoft.JScript";
 }
 
 

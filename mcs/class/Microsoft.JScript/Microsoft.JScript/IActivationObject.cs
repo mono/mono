@@ -6,13 +6,13 @@
 // (C) 2003, Cesar Octavio Lopez Nataren, <cesar@ciencias.unam.mx>
 //
 
-namespace Microsoft.JScript.Tmp
-{
-	using System;
-	using System.Reflection;
+using System;
+using System.Reflection;
 
-	public interface IActivationObject
-	{
+namespace Microsoft.JScript {
+
+	public interface IActivationObject {
+
 		Object GetDefaultThisObject ();
 		GlobalScope GetGlobalScope ();
 		FieldInfo GetLocalField (string name);

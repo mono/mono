@@ -9,7 +9,7 @@
 
 using System;
 
-namespace Microsoft.JScript.Tmp {
+namespace Microsoft.JScript {
 
 	internal class StringLiteral : Literal {
 

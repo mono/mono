@@ -6,13 +6,13 @@
 // (C) 2003, Cesar Octavio Lopez Nataren, <cesar@ciencias.unam.mx>
 //
 
-namespace Microsoft.JScript.Tmp
-{
-	using System;
-	using System.Reflection;
+using System;
+using System.Reflection;
 
-	public abstract class JSField : FieldInfo 
-	{
+namespace Microsoft.JScript {
+
+	public abstract class JSField : FieldInfo  {
+
 		public override FieldAttributes Attributes {
 			get { throw new NotImplementedException (); }
 		}

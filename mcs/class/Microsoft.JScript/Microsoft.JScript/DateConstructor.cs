@@ -6,12 +6,12 @@
 // (C) 2003, Cesar Octavio Lopez Nataren, <cesar@ciencias.unam.mx>
 //
 
-namespace Microsoft.JScript.Tmp
-{
-	using System;
+using System;
 
-	public class DateConstructor : ScriptFunction
-	{
+namespace Microsoft.JScript {
+
+	public class DateConstructor : ScriptFunction {
+
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasVarArgs)]
 		public new DateObject CreateInstance (params Object[] args)
 		{

@@ -7,13 +7,13 @@
 // (C) 2003, Cesar Lopez Nataren, <cesar@ciencias.unam.mx>
 //
 
-namespace Microsoft.JScript.Tmp
-{
-	using System.Collections;
-	using System.Text;
+using System.Collections;
+using System.Text;
 
-	public class FormalParameterList
-	{
+namespace Microsoft.JScript {
+
+	public class FormalParameterList {
+
 		internal ArrayList ids;
 
 		public FormalParameterList ()

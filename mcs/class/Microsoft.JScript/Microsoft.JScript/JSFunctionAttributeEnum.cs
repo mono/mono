@@ -6,8 +6,8 @@
 // (C) 2003, Cesar Octavio Lopez Nataren, <cesar@ciencias.unam.mx>
 //
 
-namespace Microsoft.JScript.Tmp
-{
+namespace Microsoft.JScript {
+
 		public enum JSFunctionAttributeEnum {
 			HasArguments    = 0x01,
 			HasThisObject   = 0x02,

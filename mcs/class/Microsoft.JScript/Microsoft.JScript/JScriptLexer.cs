@@ -1,6 +1,6 @@
 // $ANTLR 2.7.2: "jscript-lexer-parser.g" -> "JScriptLexer.cs"$
 
-namespace Microsoft.JScript.Tmp
+namespace Microsoft.JScript
 {
 	// Generate header specific to lexer CSharp file
 	using System;

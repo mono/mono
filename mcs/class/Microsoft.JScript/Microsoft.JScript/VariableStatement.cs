@@ -7,13 +7,13 @@
 // (C) 2003, Cesar Octavio Lopez Nataren, <cesar@ciencias.unam.mx>
 //
 
-namespace Microsoft.JScript.Tmp
-{
-	using System.Collections;
-	using System.Text;
+using System.Collections;
+using System.Text;
 
-	public class VariableStatement : Statement
-	{
+namespace Microsoft.JScript {
+
+	public class VariableStatement : Statement {
+
 		internal ArrayList varDecls;
 
 		internal VariableStatement ()

@@ -6,12 +6,12 @@
 // (C) 2003, Cesar Octavio Lopez Nataren, <cesar@ciencias.unam.mx>
 //
 
-namespace Microsoft.JScript.Tmp
-{
-	using System;
+using System;
 
-	public class StringObject : JSObject
-	{
+namespace Microsoft.JScript {
+
+	public class StringObject : JSObject {
+
 		public int length {
 			get { throw new NotImplementedException (); }
 		}

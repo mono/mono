@@ -6,12 +6,12 @@
 // (C) 2003, Cesar Octavio Lopez Nataren
 //
 
-namespace Microsoft.JScript.Tmp
-{
-	using System;
+using System;
 
-	public class Closure : ScriptFunction
-	{
+namespace Microsoft.JScript {
+
+	public class Closure : ScriptFunction {
+
 		public Object args;
 		public Object caller;
 

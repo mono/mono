@@ -6,14 +6,14 @@
 // (C) Cesar Octavio Lopez Nataren, <cesar@ciencias.unam.mx>
 //
 
-namespace Microsoft.JScript.Vsa.Tmp
-{
-	using System;
-	using System.Reflection;
-	using Microsoft.Vsa;
+using System;
+using System.Reflection;
+using Microsoft.Vsa;
 
-	public class VsaEngine /* : BaseVsaEngine, IRedirectOutput */
-	{
+namespace Microsoft.JScript.Vsa {
+
+	public class VsaEngine /* : BaseVsaEngine, IRedirectOutput */ {
+
 		public VsaEngine ()
 		{
 			throw new NotImplementedException ();

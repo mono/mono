@@ -6,12 +6,12 @@
 // (C) Cesar Octavio Lopez Nataren, <cesar@ciencias.unam.mx>
 //
 
-namespace Microsoft.JScript.Tmp
-{
-	using System;
+using System;
 
-	public class ArrayConstructor : ScriptFunction
-	{
+namespace Microsoft.JScript {
+
+	public class ArrayConstructor : ScriptFunction {
+
 		public ArrayObject ConstructArray (Object [] args)
 		{
 			throw new NotImplementedException ();

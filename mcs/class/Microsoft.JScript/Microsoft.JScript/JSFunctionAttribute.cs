@@ -6,13 +6,13 @@
 // (C) 2003, Cesar Octavio Lopez Nataren, <cesar@ciencias.unam.mx>
 //
 
-namespace Microsoft.JScript.Tmp
-{
-	using System;
+using System;
+
+namespace Microsoft.JScript {
 
 	[AttributeUsage (AttributeTargets.Method |AttributeTargets.Constructor)]
-	public class JSFunctionAttribute : Attribute
-	{
+	public class JSFunctionAttribute : Attribute {
+
 		public JSFunctionAttribute (JSFunctionAttributeEnum value)
 		{
 			throw new NotImplementedException ();

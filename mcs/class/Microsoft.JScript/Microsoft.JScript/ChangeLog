@@ -1,3 +1,39 @@
+2003-09-22    <cesar@ciencias.unam.mx>
+
+	* DocumentContext.cs: changed constructor from internal to public,
+	this a kind of hack ;), but we can build mjs.exe with that change.
+
+	* driver.cs, ast.cs, VsaEngine.cs, VariableStatement.cs,
+	VariableDeclaration.cs, VBArrayConstructor.cs, StringObject.cs,
+	StringLiteral.cs, StringConstructor.cs, Statement.cs,
+	ScriptStream.cs, ScriptObject.cs, ScriptFunction.cs,
+	ScriptBlock.cs, RegExpObject.cs, RegExpConstructor.cs, Print.cs,
+	Package.cs, ObjectConstructor.cs, NumberObject.cs,
+	NumberConstructor.cs, MathObject.cs, Literal.cs,
+	LenientGlobalObject.cs, JSVariableField.cs, JSToken.cs,
+	JSScanner.cs, JSParser.cs, JSObject.cs, JSLocalField.cs,
+	JSFunctionAttributeEnum.cs, JSFunctionAttibute.cs, JSField.cs,
+	JSBuiltIn.cs, IVsaScriptScope.cs, IRedirectOutput.cs,
+	IActivationObject.cs, GlobalScope.cs, GlobalObject.cs,
+	FunctionObject.cs, FunctionExpression.cs, FunctionDeclaration.cs,
+	FunctionConstructor.cs, FormalParameterList.cs, ErrorObject.cs,
+	ErrorConstructor.cs, EnumeratorObject.cs,
+	EnumeratorConstructor.cs, Enum.cs, Empty.cs, DocumentContext.cs,
+	DateObject.cs, DateConstructor.cs, Context.cs, Closure.cs,
+	BooleanObject.cs, BooleanConstructor.cs, Block.cs, BinaryOp.cs,
+	BaseVsaEngine.cs, ArrayObject.cs, ArrayConstructor.cs,
+	ActiveXObjectConstructor.cs, ActivationObject.cs: 
+
+	indentation comformance to mono style. Returned to
+	Microsoft.JScript namespace name. Now we can build
+	Microsoft.JScript.dll on Linux/Windows, and build mjs.exe on
+	linux/Windows with our Microsoft.JScript.dll. To build mjs.exe:
+	$(CSC) /r:Microsoft.JScript.dll  driver.cs. Also changed my mind
+	about the namespace stuff, because I want people 
+	to contribute NUnit tests for Microsoft.JScript public API.
+		
+	* jscript-lexer-parser.g: Now we are back to Microsoft.JScript namespace.
+
 2003-09-21    <cesar@ciencias.unam.mx>
 
 	* jscript-lexer-parser.g: fixed typo and added SEMI_COLON to print_statement.

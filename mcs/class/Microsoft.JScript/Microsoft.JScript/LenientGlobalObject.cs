@@ -6,12 +6,12 @@
 // (C) Cesar Octavio Lopez Nataren, <cesar@ciencias.unam.mx>
 //
 
-namespace Microsoft.JScript.Tmp
-{
-	using System;
+using System;
 
-	public class LenientGlobalObject : GlobalObject
-	{
+namespace Microsoft.JScript {
+
+	public class LenientGlobalObject : GlobalObject {
+
 		public new Object Infinity;
 		public new Object NaN;
 		public new Object undefined;

@@ -6,13 +6,13 @@
 // (C) 2003, Cesar Octavio Lopez Nataren, <cesar@ciencias.unam.mx>
 //
 
-namespace Microsoft.JScript.Tmp
-{
-	using System;
-	using Microsoft.Vsa;
+using System;
+using Microsoft.Vsa;
 
-	public interface IVsaScriptScope : IVsaItem
-	{
+namespace Microsoft.JScript {
+
+	public interface IVsaScriptScope : IVsaItem {
+
 		IVsaScriptScope Parent { 
 			get; 
 		}

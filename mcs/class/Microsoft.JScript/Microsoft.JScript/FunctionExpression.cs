@@ -8,7 +8,7 @@
 
 using System;
 
-namespace Microsoft.JScript.Tmp {
+namespace Microsoft.JScript {
 
 	public class FunctionExpression : AST {
 

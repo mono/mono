@@ -6,12 +6,12 @@
 // (C) 2003, Cesar Octavio Lopez Nataren, <cesar@ciencias.unam.mx>
 //
 
-namespace Microsoft.JScript.Tmp
-{
-	using System;
+using System;
 
-	public class NumberConstructor : ScriptFunction
-	{
+namespace Microsoft.JScript {
+
+	public class NumberConstructor : ScriptFunction {
+
 		public const double MAX_VALUE = Double.MaxValue;
 		public const double MIN_VALUE = Double.Epsilon;
 		public const double NaN = Double.NaN;

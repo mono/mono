@@ -6,14 +6,14 @@
 // (C) 2003, Cesar Octavio Lopez Nataren, <cesar@ciencias.unam.mx>
 //
 
-namespace Microsoft.JScript.Tmp
-{
-	using System;
-	using System.Reflection;
-	using System.Globalization;
+using System;
+using System.Reflection;
+using System.Globalization;
 
-	public abstract class ScriptFunction : JSObject
-	{
+namespace Microsoft.JScript {
+
+	public abstract class ScriptFunction : JSObject {
+
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasVarArgs)]
 		public Object CreateInstance  (params Object [] args)
 		{

@@ -6,14 +6,14 @@
 // (C) 2003, Cesar Octavio Lopez Nataren, <cesar@ciencias.unam.mx>
 //
 
-namespace Microsoft.JScript.Tmp
-{
-	using System;
-	using System.Reflection;
-	using System.Globalization;
+using System;
+using System.Reflection;
+using System.Globalization;
 
-	public class JSLocalField : JSVariableField
-	{
+namespace Microsoft.JScript {
+
+	public class JSLocalField : JSVariableField {
+
 		public JSLocalField (string name, RuntimeTypeHandle handle, int number)
 		{
 			throw new NotImplementedException ();

@@ -6,7 +6,7 @@
 // (C) Cesar Octavio Lopez Nataren, <cesar@ciencias.unam.mx>
 //
 
-namespace Microsoft.JScript.Tmp {
+namespace Microsoft.JScript {
 
 	public class ScriptBlock : AST {
 

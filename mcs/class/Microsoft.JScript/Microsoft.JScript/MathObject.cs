@@ -6,12 +6,12 @@
 // (C) 2003, Cesar Octavio Lopez Nataren, <cesar@ciencias.unam.mx>
 //
 
-namespace Microsoft.JScript.Tmp
-{
-	using System;
+using System;
 
-	public class MathObject : JSObject
-	{
+namespace Microsoft.JScript {
+
+	public class MathObject : JSObject {
+
 		public const double E = 2.7182818284590452354;
 		public const double LN10 = 2.302585092994046;
 		public const double LN2 = 0.6931471805599453;

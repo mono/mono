@@ -6,12 +6,12 @@
 // (C) 2003, Cesar Octavio Lopez Nataren, <cesar@ciencias.unam.mx>
 //
 
-namespace Microsoft.JScript.Tmp
-{
-	using System;
+using System;
 
-	public class VBArrayConstructor : ScriptFunction
-	{
+namespace Microsoft.JScript {
+
+	public class VBArrayConstructor : ScriptFunction {
+
 		[JSFunctionAttribute(JSFunctionAttributeEnum.HasVarArgs)]
 		public new Object CreateInstance (params Object [] args)
 		{

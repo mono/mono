@@ -6,9 +6,9 @@
 // (C) 2003, Cesar Octavio Lopez Nataren, <cesar@ciencias.unam.mx>
 //
 
-namespace Microsoft.JScript.Tmp
-{
-	using System;
+using System;
+
+namespace Microsoft.JScript {
 
 	public enum ErrorType : int {
 		OtherError,
@@ -20,8 +20,8 @@ namespace Microsoft.JScript.Tmp
 		URIError
 	};
 
-	public class ErrorConstructor : ScriptFunction
-	{
+	public class ErrorConstructor : ScriptFunction {
+
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasVarArgs)]
 		public new ErrorObject CreateInstance (params Object [] args)
 		{

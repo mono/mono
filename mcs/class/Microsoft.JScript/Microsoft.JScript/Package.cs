@@ -9,7 +9,7 @@
 using Microsoft.JScript.Vsa;
 using System.Collections;
 
-namespace Microsoft.JScript.Tmp {
+namespace Microsoft.JScript {
 
 	public class Package : AST {
 

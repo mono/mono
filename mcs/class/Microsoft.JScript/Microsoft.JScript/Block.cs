@@ -9,7 +9,7 @@
 using System.Collections;
 using System.Text;
 
-namespace Microsoft.JScript.Tmp {
+namespace Microsoft.JScript {
 
 	public class Block : AST {
 

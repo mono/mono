@@ -6,12 +6,12 @@
 // (C) 2003, Cesar Octavio Lopez Nataren, <cesar@ciencias.unam.mx>
 //
 
-namespace Microsoft.JScript.Tmp
-{
-	using System;
+using System;
 
-	public class GlobalObject
-	{
+namespace Microsoft.JScript {
+
+	public class GlobalObject {
+
 		public const double Infinity = Double.PositiveInfinity;
 		public const double NaN = Double.NaN;
 		public static readonly Empty undefined = null;

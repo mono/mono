@@ -6,12 +6,12 @@
 // (C) 2003, Cesar Octavio Lopez Nataren, <cesar@ciencias.unam.mx>
 //
 
-namespace Microsoft.JScript.Tmp
-{
-	using System;
+using System;
 
-	public class RegExpConstructor : ScriptFunction
-	{
+namespace Microsoft.JScript {
+
+	public class RegExpConstructor : ScriptFunction {
+
 		public Object Construct (string pattern, bool ignoreCase, bool global, bool multiLine)
 		{
 			throw new NotImplementedException ();

@@ -6,8 +6,8 @@
 // (C) 2003, Cesar Octavio Lopez Nataren, <cesar@ciencias.unam.mx>
 //
 
-namespace Microsoft.JScript.Tmp
-{
+namespace Microsoft.JScript {
+
 	public enum JSToken : int {
 		None = -1,
 		EndOfFile,

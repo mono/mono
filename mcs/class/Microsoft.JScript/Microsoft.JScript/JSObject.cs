@@ -6,15 +6,15 @@
 // (C) 2003, Cesar Octavio Lopez Nataren, <cesar@ciencias.unam.mx>
 //
 
-namespace Microsoft.JScript.Tmp
-{
-	using System;
-	using System.Reflection;
-	using System.Collections;
-	using System.Runtime.InteropServices.Expando;
+using System;
+using System.Reflection;
+using System.Collections;
+using System.Runtime.InteropServices.Expando;
 
-	public class JSObject : ScriptObject, IEnumerable, IExpando
-	{
+namespace Microsoft.JScript {
+
+	public class JSObject : ScriptObject, IEnumerable, IExpando {
+
 		public JSObject ()
 		{}
 

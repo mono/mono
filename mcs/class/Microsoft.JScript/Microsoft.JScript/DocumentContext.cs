@@ -7,10 +7,10 @@
 // (C) 2003, Cesar Lopez Nataren
 //
 
-namespace Microsoft.JScript.Tmp
-{
-	public class DocumentContext
-	{
+namespace Microsoft.JScript {
+
+	public class DocumentContext {
+
 		internal string Name;
 
 		internal DocumentContext (string filename)

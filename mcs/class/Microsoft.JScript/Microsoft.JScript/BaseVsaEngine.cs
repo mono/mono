@@ -6,13 +6,13 @@
 // (C) 2003, Cesar Octavio Lopez Nataren, <cesar@ciencias.unam.mx>
 //
 
-namespace Microsoft.JScript.Tmp
-{
-	using Microsoft.Vsa;
-	using System;
+using Microsoft.Vsa;
+using System;
 
-	public abstract class BaseVsaEngine : IVsaEngine
-	{
+namespace Microsoft.JScript {
+
+	public abstract class BaseVsaEngine : IVsaEngine {
+
 		public BaseVsaEngine (string language, string version, bool supportDebug)
 		{
 			throw new NotImplementedException ();

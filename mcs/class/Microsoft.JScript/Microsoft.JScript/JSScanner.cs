@@ -7,13 +7,13 @@
 // (C) 2003, Cesar Lopez Nataren
 //
 
-namespace Microsoft.JScript.Tmp
-{
-	using System;
-	using System.IO;
+using System;
+using System.IO;
 
-	public sealed class JSScanner
-	{
+namespace Microsoft.JScript {
+
+	public sealed class JSScanner {
+
 		internal JScriptLexer Lexer;
 
 		public JSScanner ()

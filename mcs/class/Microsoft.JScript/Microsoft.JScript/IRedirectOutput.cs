@@ -6,10 +6,10 @@
 // (C) 2003, Cesar Octavio Lopez Nataren, <cesar@ciencias.unam.mx>
 //
 
-namespace Microsoft.JScript.Tmp
-{
-	using System;
-	using System.IO;
+using System;
+using System.IO;
+
+namespace Microsoft.JScript {
 
 	public interface IRedirectOutput
 	{
@@ -21,8 +21,8 @@ namespace Microsoft.JScript.Tmp
 		void Message (string strValue);
 	}
 
-	public class COMCharStream : Stream
-	{
+	public class COMCharStream : Stream {
+
 		public COMCharStream (IMessageReceiver messageReceiver)
 		{
 			throw new NotImplementedException ();

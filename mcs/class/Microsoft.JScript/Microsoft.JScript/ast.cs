@@ -6,7 +6,7 @@
 // (C) 2003, Cesar Octavio Lopez Nataren, <cesar@ciencias.unam.mx>
 //
 
-namespace Microsoft.JScript.Tmp {
+namespace Microsoft.JScript {
 
 	public abstract class AST {
 	}

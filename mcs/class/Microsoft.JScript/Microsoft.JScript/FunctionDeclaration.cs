@@ -11,7 +11,7 @@ using System;
 using System.Text;
 using Microsoft.JScript.Vsa;
 
-namespace Microsoft.JScript.Tmp {
+namespace Microsoft.JScript {
 
 	public class FunctionDeclaration : AST {
 

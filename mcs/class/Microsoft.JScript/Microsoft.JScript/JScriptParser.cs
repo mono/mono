@@ -1,6 +1,6 @@
 // $ANTLR 2.7.2: "jscript-lexer-parser.g" -> "JScriptParser.cs"$
 
-namespace Microsoft.JScript.Tmp
+namespace Microsoft.JScript
 {
 	// Generate the header common to all output files.
 	using System;

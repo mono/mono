@@ -6,10 +6,10 @@
 // (C) 2003, Cesar Octavio Lopez Nataren, <cesar@ciencias.unam.mx>
 //
 
-namespace Microsoft.JScript.Tmp
-{
-	public class Empty
-	{
+namespace Microsoft.JScript {
+
+	public class Empty {
+
 		public static readonly Empty Value = null;
 	}
 }

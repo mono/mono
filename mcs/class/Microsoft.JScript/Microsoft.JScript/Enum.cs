@@ -11,7 +11,7 @@ using System;
 using System.Text;
 using System.Collections;
 
-namespace Microsoft.JScript.Tmp {
+namespace Microsoft.JScript {
 
 	public class Enum : Statement {
 

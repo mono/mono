@@ -6,13 +6,13 @@
 // (C) 2003, Cesar Octavio Lopez Nataren, <cesar@ciencias.unam.mx>
 //
 
-namespace Microsoft.JScript.Tmp
-{
-	using System;
-	using System.Reflection;
+using System;
+using System.Reflection;
 
-	public abstract class ActivationObject : ScriptObject, IActivationObject
-	{
+namespace Microsoft.JScript {
+
+	public abstract class ActivationObject : ScriptObject, IActivationObject {
+
 		public virtual FieldInfo GetField (string name, int lexLevel)
 		{
 			throw new NotImplementedException ();

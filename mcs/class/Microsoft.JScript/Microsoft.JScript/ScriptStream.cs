@@ -7,13 +7,13 @@
 // (C) 2003, Cesar Lopez Nataren
 //
 
-namespace Microsoft.JScript.Tmp
-{
-	using System;
-	using System.IO;
+using System;
+using System.IO;
 
-	public class ScriptStream
-	{
+namespace Microsoft.JScript {
+
+	public class ScriptStream {
+
 		public static TextWriter Out = Console.Out;
 		public static TextWriter Error = Console.Error;
 
