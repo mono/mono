@@ -228,6 +228,7 @@ System.Web.UI.WebControls/BulletedListEventHandler.cs
 System.Web.UI.WebControls/Button.cs
 System.Web.UI.WebControls/ButtonColumn.cs
 System.Web.UI.WebControls/ButtonColumnType.cs
+System.Web.UI.WebControls/ButtonType.cs
 System.Web.UI.WebControls/Calendar.cs
 System.Web.UI.WebControls/CalendarDay.cs
 System.Web.UI.WebControls/CalendarSelectionMode.cs
@@ -301,6 +302,8 @@ System.Web.UI.WebControls/ListItemType.cs
 System.Web.UI.WebControls/ListSelectionMode.cs
 System.Web.UI.WebControls/Literal.cs
 System.Web.UI.WebControls/LiteralControlBuilder.cs
+System.Web.UI.WebControls/LoginFailureAction.cs
+System.Web.UI.WebControls/LoginTextLayout.cs
 System.Web.UI.WebControls/MonthChangedEventArgs.cs
 System.Web.UI.WebControls/MonthChangedEventHandler.cs
 System.Web.UI.WebControls/NextPrevFormat.cs
