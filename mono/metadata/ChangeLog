@@ -3,6 +3,7 @@
 	* object.c (mono_unhandled_exception): new function to handle
 	unhandled exceptions.
 	(mono_unhandled_exception): call the UnhandledException event.
+	(mono_runtime_delegate_invoke): impl.
 
 Wed May 15 15:59:55 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
