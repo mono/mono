@@ -322,6 +322,14 @@ namespace System.Web.Compilation
 
 		bool ProcessTag (string tagid, TagAttributes atts)
 		{
+			if ((atts == null || !atts.IsRunAtServer ()) && String.Compare (tagid, "tbody", true) == 0) {
+				// MS completely ignores tbody or, if runat="server", fails when compiling
+				if (stack.Count > 0)
+					return stack.Builder.ChildrenAsProperties;
+
+				return false;
+			}
+
 			ControlBuilder parent = stack.Builder;
 			ControlBuilder builder = null;
 			BuilderLocation bl = null;
@@ -405,6 +413,16 @@ namespace System.Web.Compilation
 		bool CloseControl (string tagid)
 		{
 			ControlBuilder current = stack.Builder;
+			if (String.Compare (tagid, "tbody", true) == 0) {
+				if (!current.ChildrenAsProperties) {
+					try {
+						TextParsed (location, location.PlainText);
+						FlushText ();
+					} catch {}
+				}
+				return true;
+			}
+			
 			string btag = current.TagName;
 			if (0 != String.Compare (tagid, btag, true))
 				return false;

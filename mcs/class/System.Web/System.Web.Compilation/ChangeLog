@@ -1,3 +1,9 @@
+2003-12-15  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AspGenerator.cs: ignore <tbody> when we're inside a server table and
+	fail when runat="server" is applied to <tbody> with a parse error
+	instead of waiting for a compilation error. Fixes bug #52157.
+
 2003-12-02  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AspGenerator.cs: basic checking of ID validity.  Throw a
