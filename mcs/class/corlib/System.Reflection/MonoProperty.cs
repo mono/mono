@@ -24,7 +24,7 @@ namespace System.Reflection {
 		public MethodInfo set_method;
 		public PropertyAttributes attrs;
 		
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		[MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.InternalCall)]
 		internal static extern void get_property_info (MonoProperty prop, out MonoPropertyInfo info);
 	}
 

@@ -22,7 +22,7 @@ namespace System.Reflection {
 		public String name;
 		public FieldAttributes attrs;
 		
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		[MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.InternalCall)]
 		internal static extern void get_field_info (MonoField field, out MonoFieldInfo info);
 	}
 
