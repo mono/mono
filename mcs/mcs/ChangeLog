@@ -1,5 +1,9 @@
 2004-04-29  Martin Baulig  <martin@ximian.com>
 
+	* typemanager.cs (TypeManager.CheckStructCycles): Fixed.
+
+2004-04-29  Martin Baulig  <martin@ximian.com>
+
 	Applying a patch from Benjamin Jemlich <pcgod@gmx.net>.
 
 	* ecore.cs (FieldExpr.AddressOf): Make this work for valuetypes.

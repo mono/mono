@@ -1886,11 +1886,6 @@ public class TypeManager {
 			return true;
 		seen.Add (tc, null);
 
-		//
-		// `hash' contains all types in the current path.
-		//
-		hash.Add (tc, null);
-
 		if (tc.Fields == null)
 			return true;
 
@@ -1911,7 +1906,16 @@ public class TypeManager {
 				return false;
 			}
 
-			if (!CheckStructCycles (ftc, seen, hash))
+			//
+			// `hash' contains all types in the current path.
+			//
+			hash.Add (tc, null);
+
+			bool ok = CheckStructCycles (ftc, seen, hash);
+
+			hash.Remove (tc);
+
+			if (!ok)
 				return false;
 		}
 
