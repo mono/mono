@@ -1,3 +1,10 @@
+
+Thu May 15 11:57:42 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ops.h, mini.c, inssel.brg: optimize access to 2D arrays.
+	* jit-icalls.c, exceptions.cs: fixed index out of range checks, added
+	test case.
+
 2003-05-14  Dietmar Maurer  <dietmar@ximian.com>
 
 	* inssel.brg: remove some common pop instructions without side effects
