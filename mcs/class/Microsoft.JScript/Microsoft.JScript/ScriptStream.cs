@@ -32,7 +32,7 @@ namespace Microsoft.JScript {
 
 		public static void Write (string str)
 		{
-			throw new NotImplementedException ();
+			Out.Write (str);
 		}
 
 

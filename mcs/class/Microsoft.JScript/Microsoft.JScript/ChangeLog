@@ -1,3 +1,9 @@
+2004-03-14  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
+
+	* ScriptStream.cs: let's print some messages.
+
+	* jscript-lexer-parser.g (STRING_LITERAL): Do not include the ' in the text of the rule.
+
 2004-03-13  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
 	* jscript-lexer-parser.g: keep track of return's parent.
