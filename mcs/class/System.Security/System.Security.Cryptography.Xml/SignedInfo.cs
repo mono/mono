@@ -20,6 +20,7 @@ namespace System.Security.Cryptography.Xml {
 		private string id;
 		private string signatureMethod;
 		private string signatureLength;
+		private XmlElement element;
 
 		public SignedInfo() 
 		{
@@ -29,7 +30,10 @@ namespace System.Security.Cryptography.Xml {
 
 		public string CanonicalizationMethod {
 			get { return c14nMethod; }
-			set { c14nMethod = value; }
+			set {
+				c14nMethod = value;
+				element = null;
+			}
 		}
 
 		// documented as not supported (and throwing exception)
@@ -39,7 +43,10 @@ namespace System.Security.Cryptography.Xml {
 
 		public string Id {
 			get { return id; }
-			set { id = value; }
+			set {
+				element = null;
+				id = value;
+			}
 		}
 
 		// documented as not supported (and throwing exception)
@@ -52,18 +59,27 @@ namespace System.Security.Cryptography.Xml {
 			get { throw new NotSupportedException (); }
 		}
 
+		// Manipulating this array never affects GetXml() when 
+		// LoadXml() was used. 
+		// (Actually, there is no way to detect modification.)
 		public ArrayList References {
 			get { return references; }
 		}
 
 		public string SignatureLength {
 			get { return signatureLength; }
-			set { signatureLength = value; }
+			set {
+				element = null;
+				signatureLength = value;
+			}
 		}
 
 		public string SignatureMethod {
 			get { return signatureMethod; }
-			set { signatureMethod = value; }
+			set {
+				element = null;
+				signatureMethod = value;
+			}
 		}
 
 		// documented as not supported (and throwing exception)
@@ -87,8 +103,11 @@ namespace System.Security.Cryptography.Xml {
 			return references.GetEnumerator ();
 		}
 
-		public XmlElement GetXml() 
+		public XmlElement GetXml ()
 		{
+			if (element != null)
+				return element;
+
 			if (signatureMethod == null)
 				throw new CryptographicException ("SignatureMethod");
 			if (references.Count == 0)
@@ -114,6 +133,10 @@ namespace System.Security.Cryptography.Xml {
 				}
 				xel.AppendChild (sm);
 			}
+
+			// This check is only done when element is created here.
+			if (references.Count == 0)
+				throw new CryptographicException ("At least one Reference element is required in SignedInfo.");
 
 			// we add References afterward so we don't end up with extraneous
 			// xmlns="..." in each reference elements.
@@ -162,6 +185,7 @@ namespace System.Security.Cryptography.Xml {
 					AddReference (r);
 				}
 			}
+			element = value;
 		}
 	}
 }

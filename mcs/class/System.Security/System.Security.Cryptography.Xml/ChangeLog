@@ -1,6 +1,14 @@
 2004-03-23  Atsushi Enomoto <atsushi@ximian.com>
 
-	* DataObject.cs : It now hold element instead of each parameters.
+	* SignedInfo.cs : It holds input element and directly returns it
+	  unless the properties are not set.
+	  Throw CryptographicException when Reference is empty *and* GetXml()
+	  is *created*. (when just returning input element, no exception is
+	  thrown).
+
+2004-03-23  Atsushi Enomoto <atsushi@ximian.com>
+
+	* DataObject.cs : It now holds element instead of each parameters.
 	  Avoid loading element content to different document unless its
 	  properties were modified (to keep namespace node context).
 
