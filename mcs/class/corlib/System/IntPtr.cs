@@ -21,9 +21,12 @@
 using System;
 using System.Runtime.Serialization;
 
+#if __MonoCS__
+#else
 [
     assembly: System.CLSCompliant(true)
 ]
+#endif
 
 namespace System {
 

@@ -49,3 +49,5 @@ numbers to match the Microsoft numbers:
 -17     A type has already been defined (try --nostdlib)
 
 -18	Do not know how to generate debugging information for this platform.
+
+-19     Can not find required utility function in the core libraries.

@@ -553,10 +553,14 @@ namespace Mono.CSharp {
 		// is `name'.
 		//
 		
-		Type GetInterfaceTypeByName (object builder, string name)
+		Type LookupInterfaceByName (object builder, string ns, string name, out bool error)
 		{
 			Interface parent;
-			Type t = RootContext.LookupType (this, name, false, Location);
+			Type t;
+
+			error = false;
+			name = TypeContainer.MakeFQN (ns, name);
+			t = TypeManager.LookupType (name);
 			
 			if (t != null) {
 				if (t.IsInterface)
@@ -571,6 +575,7 @@ namespace Mono.CSharp {
 				else
 					cause = "Should not happen.";
 
+				error = true;
 				Report.Error (527, Location, "`"+name+"' " + cause +
 					      ", need an interface instead");
 				
@@ -579,37 +584,102 @@ namespace Mono.CSharp {
 
 			Tree tree = RootContext.Tree;
 			parent = (Interface) tree.Interfaces [name];
-			if (parent == null){
-				string cause = null;
-				Hashtable container;
-				
-				container = tree.Classes;
-				if (container != null && container [name] != null)
-					cause = "is a class";
-				else {
-					container = tree.Structs;
-					
-					if (container != null && container [name] != null)
-						cause = "is a struct";
-				}
-
-				if (cause == null){
-					Report.Error (246, Location, "Can not find type `"+name+"'");
-				} else {
-					Report.Error (527, Location, "`"+name+"' " + cause +
-						      ", need an interface instead");
-				}
+			if (parent == null)
 				return null;
-			}
 			
 			t = parent.DefineInterface (builder);
 			if (t == null){
 				Report.Error (529,
 					      "Inherited interface `"+name+"' is circular");
+				error = true;
 				return null;
 			}
 
 			return t;
+		}
+
+		Type GetInterfaceTypeByName (object builder, string name)
+		{
+			//
+			// For the case the type we are looking for is nested within this one
+			// or is in any base class
+			//
+			DeclSpace containing_ds = this;
+			bool error = false;
+			Type t;
+			
+			while (containing_ds != null){
+				Type current_type = containing_ds.TypeBuilder;
+
+				while (current_type != null) {
+					string pre = current_type.FullName;
+					
+					t = LookupInterfaceByName (builder, pre, name, out error);
+					if (error)
+						return null;
+				
+					if (t != null) 
+						return t;
+
+					current_type = current_type.BaseType;
+				}
+				containing_ds = containing_ds.Parent;
+			}
+
+			//
+			// Attempt to lookup the class on our namespace and all it's implicit parents
+			//
+			for (string ns = Namespace.Name; ns != null; ns = RootContext.ImplicitParent (ns)){
+				t = LookupInterfaceByName (builder, ns, name, out error);
+				if (error)
+					return null;
+				if (t != null)
+					return t;
+			}
+
+			//
+			// Attempt to do a direct unqualified lookup
+			//
+			t = LookupInterfaceByName (builder, "", name, out error);
+			if (error)
+				return null;
+			
+			if (t != null)
+				return t;
+			
+			//
+			// Attempt to lookup the class on any of the `using'
+			// namespaces
+			//
+
+			for (Namespace ns = Namespace; ns != null; ns = ns.Parent){
+				t = LookupInterfaceByName (builder, ns.Name, name, out error);
+				if (error)
+					return null;
+
+				if (t != null)
+					return t;
+
+				//
+				// Now check the using clause list
+				//
+				ArrayList using_list = ns.UsingTable;
+				
+				if (using_list == null)
+					continue;
+
+				foreach (string n in using_list){
+					t = LookupInterfaceByName (builder, n, name, out error);
+					if (error)
+						return null;
+
+					if (t != null)
+						return t;
+				}
+			}
+
+			Report.Error (246, Location, "Can not find type `"+name+"'");
+			return null;
 		}
 		
 		//

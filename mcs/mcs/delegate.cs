@@ -58,8 +58,12 @@ namespace Mono.CSharp {
 		public void DefineDelegate (object parent_builder)
 		{
 			TypeAttributes attr;
-			string name = Name.Substring (1 + Name.LastIndexOf ('.'));
+
+			if (TypeBuilder != null)
+				return;
 			
+			string name = Name.Substring (1 + Name.LastIndexOf ('.'));
+
 			if (parent_builder is ModuleBuilder) {
 				ModuleBuilder builder = (ModuleBuilder) parent_builder;
 				attr = TypeAttributes.Public | TypeAttributes.Class | TypeAttributes.Sealed;

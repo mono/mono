@@ -272,6 +272,14 @@ OPTIMIZATIONS
 	If the types are the same, there is no need to compute the unionset,
  	we can just use the list from one of the types.
 
+* Factor all the `DefineBlah' in Classes, Interfaces, Delegates, Enums into the
+  same thing, use an abstract interface.
+
+* Factor all the FindMembers in all the FindMembers providers.
+
+* Factor the lookup code for class declarations an interfaces
+  (interface.cs:GetInterfaceByName)
+
 RECOMMENDATIONS
 ---------------
 

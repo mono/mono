@@ -1,3 +1,11 @@
+2002-03-25  Miguel de Icaza  <miguel@ximian.com>
+
+	* IntPtr.cs: Temporary work-around until I fix the assembly
+	attributes bug.
+
+	* String.cs (System): Removed enumeration, because it is pretty
+	hard to support enumerations in /nostdlib mode for the core types.
+
 Tue Mar 19 18:18:49 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* Array.cs: move error handling in the catch block.

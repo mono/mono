@@ -1,5 +1,10 @@
 2002-03-25  Miguel de Icaza  <miguel@ximian.com>
 
+	* interface.cs: Implement the same search algorithm for types in
+	the interface code.
+
+	* delegate.cs: Do not allow multiple definition.
+
 	* Recovered ChangeLog that got accidentally amputated
 
 	* interface.cs (Interface.DefineInterface): Prevent from double definitions.

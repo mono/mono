@@ -269,11 +269,9 @@ namespace System {
 			return null;
 		}
 
-		internal enum _StringCompareMode {
-			CompareDirect,
-			CompareCaseInsensitive,
-			CompareOrdinal
-		};
+		const int StringCompareModeDirect = 0;
+		const int StringCompareModeCaseSensitive = 1;
+		const int StringCompareModeOrdinal = 2;
 
 		internal static int _CompareGetLength (string strA, string strB)
 		{
@@ -289,7 +287,7 @@ namespace System {
 			int result = 0;
 
 			switch (mode) {
-			case _StringCompareMode.CompareDirect:
+			case StringCompareModeDirect:
 				// FIXME: We should do a culture based comparision here,
 				//        but for the moment let's do it by hand.
 				//        In the microsoft runtime, uppercase letters
@@ -301,10 +299,10 @@ namespace System {
 				return -1;
 				result = (int) (chrA - chrB);
 				break;
-			case _StringCompareMode.CompareCaseInsensitive:
+			case StringCompareModeCaseInsensitive:
 				result = (int) (Char.ToLower (chrA) - Char.ToLower (chrB));
 				break;
-			case _StringCompareMode.CompareOrdinal:
+			case StringCompareModeOrdinal:
 				result = (int) (tolowerordinal (chrA) - tolowerordinal (chrB));
 				break;
 			}
@@ -397,8 +395,8 @@ namespace System {
 		{
 			_StringCompareMode mode;
 
-			mode = ignoreCase ? _StringCompareMode.CompareCaseInsensitive :
-				_StringCompareMode.CompareDirect;
+			mode = ignoreCase ? StringCompareModeCaseInsensitive :
+				StringCompareModeDirect;
 
 			return _Compare (strA, indexA, strB, indexB, length, culture, mode);
 		}
@@ -412,7 +410,7 @@ namespace System {
 						  int length)
 		{
 			return _Compare (strA, indexA, strB, indexB, length, null,
-					 _StringCompareMode.CompareOrdinal);
+					 StringCompareModeOrdinal);
 		}
 
 		public int CompareTo (object obj)
