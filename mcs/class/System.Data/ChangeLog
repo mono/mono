@@ -1,3 +1,10 @@
+2002-04-15  Christopher Podurgiel <cpodurgiel@msn.com>
+	
+	* System.Data.IDbDataParameter: Added Interface to IDataParameter.
+	* System.Data.IDbTransaction: Added Interface to IDisposable.
+	* System.Data.IDbCommand: Fixed Capitalization of class name.
+	* System.Data.IDbConnection: Fixed Capitalization of class name.
+
 2002-04-15  Rodrigo Moya <rodrigo@ximian.com>
 
 	* System.Data.Common/DbDataPermissionAttribute.cs:
@@ -80,15 +87,9 @@
 	* System.Data.SqlClient/*: added skeletons for the SQL managed
 	provider for ADO.Net, to be based initially in PostgreSQL.
 
-2002-02-10  Christopher Podurgiel <cpodurgiel@msn.com>
+2002-03-15  Christopher Podurgiel <cpodurgiel@msn.com>
 	
-	* Removed *.cs from System.Data as the correct files are in mcs/class/System.Data/System.Data
-	* Updated all Enums, Interfaces, and Delegates in System.Data
-
-2002-02-11  Christopher Podurgiel <cpodurgiel@msn.com>
-
-	* DataColumnChangeEventArgs.cs : Added
-	* DataColumnCollection.cs : Added
+	Changed the Namespace on some Enums from mono.System.Data to System.Data
 
 2002-03-01  Christopher Podurgiel <cpodurgiel@msn.com>
 
@@ -99,6 +100,13 @@
 	* DataRelationCollection.cs : Added
 	* DataTableRelationCollection.cs : Added
 	* DataColumn : Added
-2002-03-15  Christopher Podurgiel <cpodurgiel@msn.com>
+
+2002-02-11  Christopher Podurgiel <cpodurgiel@msn.com>
+
+	* DataColumnChangeEventArgs.cs : Added
+	* DataColumnCollection.cs : Added
+
+2002-02-10  Christopher Podurgiel <cpodurgiel@msn.com>
 	
-	Changed the Namespace on some Enums from mono.System.Data to System.Data
+	* Removed *.cs from System.Data as the correct files are in mcs/class/System.Data/System.Data
+	* Updated all Enums, Interfaces, and Delegates in System.Data

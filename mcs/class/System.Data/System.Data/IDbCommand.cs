@@ -12,7 +12,7 @@ namespace System.Data
 	/// <summary>
 	/// Represents a SQL statement that is executed while connected to a data source, and is implemented by .NET data providers that access relational databases.
 	/// </summary>
-	public interface IDBCommand
+	public interface IDbCommand
 	{
 		void Cancel();
 		
