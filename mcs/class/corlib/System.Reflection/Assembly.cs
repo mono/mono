@@ -328,6 +328,17 @@ namespace System.Reflection {
 		}
 
 #if NET_1_1
+
+		[MonoTODO]
+		public static Assembly LoadFrom (String assemblyFile, Evidence securityEvidence, byte[] hashValue, AssemblyHashAlgorithm hashAlgorithm)
+		{
+			if (assemblyFile == null)
+				throw new ArgumentNullException ("assemblyFile");
+			if (assemblyFile == String.Empty)
+				throw new ArgumentException ("Name can't be the empty string", "assemblyFile");
+			throw new NotImplementedException ();
+		}
+
 		[MonoTODO]
 		public static Assembly LoadFile (String path, Evidence securityEvidence) {
 			if (path == null)
