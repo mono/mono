@@ -293,7 +293,7 @@ namespace System.Net.Sockets
 		internal bool blocking=true;
 		private int pendingEnds;
 		private int closeDelayed;
-		static readonly bool supportsAsync = GetSupportsAsync ();
+		static readonly bool supportsAsync = FakeGetSupportsAsync ();
 
 		delegate void SocketAsyncCall ();
 		/*
@@ -1632,6 +1632,14 @@ namespace System.Net.Sockets
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		extern static bool GetSupportsAsync ();
+
+		static bool FakeGetSupportsAsync ()
+		{
+			if (Environment.GetEnvironmentVariable ("MONO_ENABLE_SOCKET_AIO") != null)
+				return GetSupportsAsync ();
+			
+			return false;
+		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		extern static void AsyncReceiveInternal (SocketAsyncResult ares, out int error);

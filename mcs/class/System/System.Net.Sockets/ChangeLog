@@ -1,3 +1,8 @@
+2004-05-01  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Socket.cs: only enable socket AIO if MONO_ENABLE_SOCKET_AIO is there.
+	I will remove this once THE bug is hunted.
+
 2004-04-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Socket.cs: added support for unmanaged asynchronous IO. Speed up
