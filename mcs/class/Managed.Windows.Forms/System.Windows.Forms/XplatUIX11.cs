@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.2 $
+// $Revision: 1.3 $
 // $Modtime: $
 // $Log: XplatUIX11.cs,v $
+// Revision 1.3  2004/08/05 21:38:02  pbartok
+// - Attempted fix for reparenting problems
+//
 // Revision 1.2  2004/08/04 20:11:24  pbartok
 // - Added Invalidate handling
 //
@@ -51,10 +54,12 @@ namespace System.Windows.Forms {
 		private static int		ref_count;
 
 		private static IntPtr		DisplayHandle;		// X11 handle to display
+		private static IntPtr		FosterParent;		// Container to hold child windows until their parent exists
 		internal static Keys		key_state;
 		internal static MouseButtons	mouse_state;
 		internal static Point		mouse_position;
 		internal static Rectangle	paint_area;
+		internal static	bool		is_visible;
 		#endregion	// Local Variables
 
 		internal override Color BackColor {
@@ -117,6 +122,11 @@ namespace System.Windows.Forms {
 			mouse_position=Point.Empty;
 			paint_area=new Rectangle(0, 0, 0, 0);
 
+			// Create the foster parent
+			FosterParent=XCreateSimpleWindow(DisplayHandle, XRootWindow(DisplayHandle, 0), 0, 0, 1, 1, 4, 0, 0);
+			if (FosterParent==IntPtr.Zero) {
+				Console.WriteLine("XplatUIX11 Constructor failed to create FosterParent");
+			}
 			Console.WriteLine("XplatUIX11 Constructor called, DisplayHandle {0:X}", DisplayHandle);
 		}
 
@@ -177,22 +187,60 @@ namespace System.Windows.Forms {
 		}
 
 		internal override IntPtr CreateWindow(CreateParams cp) {
-			return CreateWindow(cp.Parent, cp.X, cp.Y, cp.Width, cp.Height);
-		}
-
-		internal override IntPtr CreateWindow(IntPtr Parent, int X, int Y, int Width, int Height) {
 			IntPtr	WindowHandle;
+			IntPtr	ParentHandle;
+			int	X;
+			int	Y;
+			int	Width;
+			int	Height;
+
+			ParentHandle=cp.Parent;
+
+			X=cp.X;
+			Y=cp.Y;
+			Width=cp.Width;
+			Height=cp.Height;
 
 			if (X<1) X=50;
 			if (Y<1) Y=50;
 			if (Width<1) Width=100;
 			if (Height<1) Height=100;
-			WindowHandle=XCreateSimpleWindow(DisplayHandle, Parent!=IntPtr.Zero ? Parent : XRootWindow(DisplayHandle, 0), X, Y, Width, Height, 4, 0, 0);
-			Console.WriteLine("Received window handle {0,8:X} at pos {1},{2} {3}x{4}", WindowHandle, X, Y, Width, Height);
+
+			if (ParentHandle==IntPtr.Zero) {
+				if ((cp.Style & (int)WindowStyles.WS_CHILD)!=0) {
+					// We need to use our foster parent window until this poor child gets it's parent assigned
+					ParentHandle=FosterParent;
+				} else {
+					ParentHandle=XRootWindow(DisplayHandle, 0);
+				}
+			}
+
+			WindowHandle=XCreateSimpleWindow(DisplayHandle, ParentHandle, X, Y, Width, Height, 4, 0, 0);
+Console.WriteLine("Received window handle {0,8:X} at pos {1},{2} {3}x{4}", WindowHandle, X, Y, Width, Height);
 			XMapWindow(DisplayHandle, WindowHandle);
+
 			XSelectInput(DisplayHandle, WindowHandle, 0xffffff);
 			XSetWindowBackground(DisplayHandle, WindowHandle, (uint)this.BackColor.ToArgb());
+			is_visible=true;
 			return(WindowHandle);
+		}
+
+		internal override IntPtr CreateWindow(IntPtr Parent, int X, int Y, int Width, int Height) {
+			CreateParams create_params = new CreateParams();
+
+			create_params.Caption = "";
+			create_params.X = X;
+			create_params.Y = Y;
+			create_params.Width = Width;
+			create_params.Height = Height;
+
+			create_params.ClassName=XplatUI.DefaultClassName;
+			create_params.ClassStyle = 0;
+			create_params.ExStyle=0;
+			create_params.Parent=IntPtr.Zero;
+			create_params.Param=0;
+
+			return CreateWindow(create_params);
 		}
 
 		internal override void DestroyWindow(IntPtr handle) {
@@ -374,13 +422,19 @@ Console.WriteLine("Moving window to {0}:{1} {2}x{3}", x, y, width, height);
 		}
 
 		internal override bool SetVisible(IntPtr handle, bool visible) {
+			if (visible) {
+				XMapWindow(DisplayHandle, handle);
+				is_visible=true;
+			} else {
+				XUnmapWindow(DisplayHandle, handle);
+				is_visible=false;
+			}
 			Console.WriteLine("Setting window visibility: {0}", visible);
 			return true;
 		}
 
 		internal override bool IsVisible(IntPtr handle) {
-			Console.WriteLine("Getting window visibility");
-			return true;
+			return is_visible;
 		}
 
 		internal override IntPtr SetParent(IntPtr handle, IntPtr parent) {
@@ -468,7 +522,9 @@ Console.WriteLine("Moving window to {0}:{1} {2}x{3}", x, y, width, height);
 		[DllImport ("libX11.so", EntryPoint="XCreateSimpleWindow")]
 		internal extern static IntPtr XCreateSimpleWindow(IntPtr display, IntPtr parent, int x, int y, int width, int height, int border_width, int border, int background);
 		[DllImport ("libX11.so", EntryPoint="XMapWindow")]
-		internal extern static IntPtr XMapWindow(IntPtr display, IntPtr window);
+		internal extern static int XMapWindow(IntPtr display, IntPtr window);
+		[DllImport ("libX11.so", EntryPoint="XUnmapWindow")]
+		internal extern static int XUnmapWindow(IntPtr display, IntPtr window);
 		[DllImport ("libX11.so", EntryPoint="XRootWindow")]
 		internal extern static IntPtr XRootWindow(IntPtr display, int screen_number);
 		[DllImport ("libX11.so", EntryPoint="XNextEvent")]
