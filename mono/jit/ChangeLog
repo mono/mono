@@ -1,5 +1,11 @@
 2002-09-26  Martin Baulig  <martin@gnome.org>
 
+	* trampoline.c (x86_magic_trampoline): Don't insert the breakpoint
+	trampoline into the vtable, also use it for non-virtual methods,
+	remove the breakpoint when done.
+
+2002-09-26  Martin Baulig  <martin@gnome.org>
+
 	* debug.c (debug_load_method_lines): Block SIGCHLD while running
 	monodis.
 
