@@ -66,7 +66,7 @@ namespace System.Data {
 		{
 			dataSet = null;
 			_columnCollection = new DataColumnCollection(this);
-			_constraintCollection = new ConstraintCollection(); 
+			_constraintCollection = new ConstraintCollection(this); 
 			_extendedProperties = new PropertyCollection();
 			_tableName = "";
 			_nameSpace = null;

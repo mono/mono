@@ -405,39 +405,54 @@ namespace System.Data {
 		[MonoTODO]
 		internal override void AssertConstraint(DataRow row)
 		{
-
 			if (_dataTable == null) return; //???
 			if (_dataColumns == null) return; //???
 
-
 			//Unique?
 			DataTable tbl = _dataTable;
-
+			bool isValid;
 			foreach(DataRow compareRow in tbl.Rows)
 			{
+				isValid = false;
 				//skip if it is the same row to be validated
 				if(!row.Equals(compareRow))
 				{
-					if(compareRow.HasVersion (DataRowVersion.Original))
+					//FIXME: should we compare to compareRow[DataRowVersion.Current]?
+					//FIXME: We need to compare to all columns the constraint is set to.
+					
+					for (int i = 0; i < _dataColumns.Length; i++)
 					{
-						//FIXME: should we compare to compareRow[DataRowVersion.Current]?
-						//FIXME: We need to compare to all columns the constraint is set to.
-						if(row[_dataColumns[0], DataRowVersion.Proposed].Equals( compareRow[_dataColumns[0], DataRowVersion.Current]))
+						// if the values in the row are not equal to the values of
+						// the original row from the table we can move to the next row.
+						if(!row[_dataColumns[i]].Equals( compareRow[_dataColumns[i]]))
 						{
-							string ExceptionMessage;
-							ExceptionMessage = "Column '" + _dataColumns[0].ColumnName + "' is constrained to be unique.";
-							ExceptionMessage += " Value '" + row[_dataColumns[0], DataRowVersion.Proposed].ToString();
-							ExceptionMessage += "' is already present.";
-
-							throw new ConstraintException (ExceptionMessage);
+							isValid = true;
+							break;
 						}
-
 					}
+				
+					if (!isValid)
+						throw new ConstraintException(GetErrorMessage(compareRow));
 
-		}
+				}
 
 			}
 
+		}
+
+		private string GetErrorMessage(DataRow row)
+		{
+			int i;
+			 
+			System.Text.StringBuilder sb = new System.Text.StringBuilder(row[_dataColumns[0]].ToString());
+			for (i = 1; i < _dataColumns.Length; i++)
+				sb = sb.Append(", ").Append(row[_dataColumns[i].ColumnName]);
+			string valStr = sb.ToString();
+			sb = new System.Text.StringBuilder(_dataColumns[0].ColumnName);
+			for (i = 1; i < _dataColumns.Length; i++)
+				sb = sb.Append(", ").Append(_dataColumns[i].ColumnName);
+			string colStr = sb.ToString();
+			return "Column '" + colStr + "' is constrained to be unique.  Value '" + valStr + "' is already present.";
 		}
 
 		#endregion // Methods

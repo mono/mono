@@ -479,6 +479,8 @@ namespace System.Data {
 
 					if( value )
 					{
+						if (Expression != null && Expression != "")
+							throw new ArgumentException("Cannot change Unique property for the expression column.");
 						if( _table != null )
 						{
 							UniqueConstraint uc = new UniqueConstraint(this);
@@ -489,8 +491,25 @@ namespace System.Data {
 					{
 						if( _table != null )
 						{
-							//FIXME: Add code to remove constraint from DataTable
-							throw new NotImplementedException ();
+							ConstraintCollection cc = _table.Constraints;
+							//foreach (Constraint c in cc) 
+							for (int i = 0; i < cc.Count; i++)
+							{
+								Constraint c = cc[i];
+								if (c is UniqueConstraint)
+								{
+									DataColumn[] cols = ((UniqueConstraint)c).Columns;
+									
+									if (cols.Length == 1 && cols[0] == this)
+									{
+										if (!cc.CanRemove(c))
+											throw new ArgumentException("Cannot remove unique constraint '" + c.ConstraintName + "'. Remove foreign key constraint first.");
+
+										cc.Remove(c);
+									}
+									
+								}
+							}
 						}
 					}
 

@@ -64,7 +64,11 @@ namespace System.Data
 
 			if (list.IndexOf(row) != -1)
 				throw new ArgumentException ("This row already belongs to this table.");
-				
+			
+			if (table.DataSet.EnforceConstraints)
+				// we have to check that the new row doesn't colide with existing row
+				ValidateDataRowInternal(row);
+			
 			list.Add (row);
 			row.AttachRow ();
 			row.Table.ChangedDataRow (row, DataRowAction.Add);
@@ -251,6 +255,8 @@ namespace System.Data
 			}
 
 		}
-
+		
 	}
+
+
 }

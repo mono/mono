@@ -169,8 +169,12 @@ namespace System.Data.Common {
 				dataTable = new DataTable ();
 				SetupSchema (SchemaType.Mapped, tableName, dataTable);
 
-				if (dataSet.Tables.Contains (dataTable.TableName))
-					dataTable = dataSet.Tables [tableName];
+				// check if the table exists in the dataset
+				if (dataSet.Tables.Contains (dataTable.TableName)) 
+					// get the table from the dataset
+					dataTable = dataSet.Tables [dataTable.TableName];
+				else
+					dataSet.Tables.Add (dataTable);
 				BuildSchema (dataReader, dataTable, SchemaType.Mapped);
 
 				for (int i = 0; i < startRecord; i += 1)
@@ -191,7 +195,6 @@ namespace System.Data.Common {
 					}
 				}
 
-				dataSet.Tables.Add (dataTable);
                                	tableName = String.Format ("{0}{1}", srcTable, ++resultIndex);
 
 				startRecord = 0;
@@ -264,6 +267,7 @@ namespace System.Data.Common {
 			int index = 0;
 
 			do {
+				// FixMe: Allocate table only if it doesn't exist already!
 				DataTable table = new DataTable ();
 				SetupSchema (schemaType, tableName, table);
 				if (dataSet.Tables.Contains (table.TableName))

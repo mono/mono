@@ -195,17 +195,25 @@ namespace System.Data {
 			
 			//see if unique constraint already exists
 			//if not create unique constraint
-			uc = UniqueConstraint.GetUniqueConstraintForColumnSet(collection, parentColumns);
+			if(parentColumns[0] != null)
+				uc = UniqueConstraint.GetUniqueConstraintForColumnSet(parentColumns[0].Table.Constraints, parentColumns);
 
-			if (null == uc)	uc = new UniqueConstraint(parentColumns, false); //could throw
+			if (null == uc)	{
+				uc = new UniqueConstraint(parentColumns, false); //could throw
+				parentColumns [0].Table.Constraints.Add (uc);
+			}
 
 			//keep reference
 			_parentUniqueConstraint = uc;
-			parentColumns [0].Table.Constraints.Add (uc);
+			//parentColumns [0].Table.Constraints.Add (uc);
 			//if this unique constraint is attempted to be removed before us
 			//we can fail the validation
-			collection.ValidateRemoveConstraint += new DelegateValidateRemoveConstraint(
-					_validateRemoveParentConstraint);
+			//collection.ValidateRemoveConstraint += new DelegateValidateRemoveConstraint(
+			//		_validateRemoveParentConstraint);
+
+			parentColumns [0].Table.Constraints.ValidateRemoveConstraint += new DelegateValidateRemoveConstraint(
+				_validateRemoveParentConstraint);
+
 		}
 		
 		
@@ -333,7 +341,7 @@ namespace System.Data {
 		internal override void AddToConstraintCollectionSetup(
 				ConstraintCollection collection)
 		{
-
+			
 			//run Ctor rules again
 			_validateColumns(_parentColumns, _childColumns);
 			
@@ -343,7 +351,8 @@ namespace System.Data {
 			//Make sure we can create this thing
 			AssertConstraint(); //TODO:if this fails and we created a unique constraint
 						//we should probably roll it back
-			
+			if (collection.Table != Table)
+				throw new InvalidConstraintException("This constraint cannot be added since ForeignKey doesn't belong to table " + RelatedTable.TableName + ".");
 		}
 					
 	
@@ -357,6 +366,7 @@ namespace System.Data {
 		[MonoTODO]
 		internal override void AssertConstraint()
 		{
+
 			//Constraint only works if both tables are part of the same dataset
 			
 			//if DataSet ...

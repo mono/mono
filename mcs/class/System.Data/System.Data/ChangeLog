@@ -1,3 +1,26 @@
+2003-09-25  Duncan Mak  <duncan@ximian.com>
+
+        Patches from Eran Domb <erand@mainsoft.com>.
+
+	* DataColumn.cs (Unique): Implemented.
+	
+	* DataTable.cs:
+	* ConstraintCollection.cs:
+	* ForeignKeyConstraint.cs (_ensureUniqueConstraintExists): Fixes
+	an Exception thrown. Details:
+	http://lists.ximian.com/archives/public/mono-devel-list/2003-September/002130.html
+	
+	* DataRowCollection.cs (Add): There is no checking that there is
+	no violation of the unique constrains.
+
+	* UniqueConstraint.cs (AssertConstraint): There is no checking on
+	all columns in the constraint.
+
+	* DataTableCollection (Add): Correctly throw an Exception, more
+	details here:
+	http://lists.ximian.com/archives/public/mono-devel-list/2003-September/002117.html
+	(Remove, RemoveAt): Implemented.
+
 2003-07-31  Duncan Mak  <duncan@ximian.com>
 
 	* DBConcurrencyException.cs: Added new NET_1_1 no-param constructor.

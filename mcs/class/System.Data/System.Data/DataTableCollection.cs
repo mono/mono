@@ -66,8 +66,23 @@ namespace System.Data {
 
 		public virtual void Add (DataTable table) 
 		{
+			
+			// check if the reference is a null reference
+			if(table == null)
+				throw new ArgumentNullException("table");
+            
+			// check if the list already contains this tabe.
+			if(list.Contains(table))
+				throw new ArgumentException("DataTable already belongs to this DataSet.");
+            
+			// if the table name is null or empty string.
+			// give her a name. 
 			if (table.TableName == null || table.TableName == string.Empty)
 				NameTable (table);
+		    
+			// check if the collection has a table with the same name.
+			if(Contains(table.TableName))
+				throw new DuplicateNameException("A DataTable named '" + table.TableName + "' already belongs to this DataSet.");
 				
 			list.Add (table);
 			table.dataSet = dataSet;
@@ -90,7 +105,7 @@ namespace System.Data {
 		[MonoTODO]
 		public bool CanRemove (DataTable table) 
 		{
-			throw new NotImplementedException ();
+			return CanRemove(table, false);
 		}
 
 		public void Clear () 
@@ -115,18 +130,22 @@ namespace System.Data {
 
 		public void Remove (DataTable table) 
 		{
-			this.Remove (table.TableName);
+			CanRemove(table, true);
+			list.Remove(table);
 			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Remove, table));
 		}
 
 		public void Remove (string name) 
 		{
-			list.Remove (this [name]);
+			Remove (this [name]);
 		}
 
 		public void RemoveAt (int index) 
 		{
+			DataTable t = this[index];
+			CanRemove(t, true);
 			list.RemoveAt (index);
+			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Remove, t));
 		}
 
 		#endregion
@@ -181,6 +200,64 @@ namespace System.Data {
 				i++;
 
 			Table.TableName = Name + i;			       
+		}
+		
+		// check if a table can be removed from this collectiuon.
+		// if the table can not be remved act according to throwException parameter.
+		// if it is true throws an Exception, else return false.
+		private bool CanRemove(DataTable table, bool throwException)
+		{
+			// check if table is null reference
+			if (table == null)
+			{
+				if(throwException)
+					throw new ArgumentNullException("table");
+				return false;
+			}
+			
+			// check if the table has the same DataSet as this collection.
+			if(table.DataSet != this.dataSet)
+			{
+				if(throwException)
+					throw new ArgumentException("Table " + table.TableName + " does not belong to this DataSet.");
+				return false;
+			}
+			
+			// check the table has a relation attached to it.
+			if (table.ParentRelations.Count > 0 || table.ChildRelations.Count > 0)
+			{
+				if(throwException)
+					throw new ArgumentException("Cannot remove a table that has existing relations. Remove relations first.");
+				return false;
+			}
+			
+
+			// now we check if any ForeignKeyConstraint is referncing 'table'.
+			IEnumerator tableEnumerator = this.dataSet.Tables.GetEnumerator();
+			
+			// loop on all tables in dataset
+			while (tableEnumerator.MoveNext())
+			{
+				IEnumerator constraintEnumerator = ((DataTable) tableEnumerator.Current).Constraints.GetEnumerator();
+				// loop on all constrains in the current table
+				while (constraintEnumerator.MoveNext())
+				{
+					Object o = (Constraint) constraintEnumerator.Current;
+					// we only check ForeignKeyConstraint
+					if (o is ForeignKeyConstraint)
+					{
+						ForeignKeyConstraint fc = (ForeignKeyConstraint) o;
+						if(fc.Table == table || fc.RelatedTable == table)
+						{
+							if(throwException)
+								throw new ArgumentException("Cannot remove table " + table.TableName + ", because it referenced in ForeignKeyConstraint " + fc.ConstraintName + ". Remove the constraint first.");
+							return false;
+						}
+					}
+				}
+			}
+
+			return true;
 		}
 
 		#endregion // Private methods

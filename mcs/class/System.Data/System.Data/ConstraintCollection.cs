@@ -30,10 +30,18 @@ namespace System.Data {
 		
 		public event CollectionChangeEventHandler CollectionChanged;
 		internal event DelegateValidateRemoveConstraint ValidateRemoveConstraint;
-		
+		private DataTable table;
 		//Don't allow public instantiation
 		//Will be instantianted from DataTable
-		internal ConstraintCollection(){} 
+		internal ConstraintCollection(DataTable table){
+			this.table = table;
+		} 
+
+		internal DataTable Table{
+			get{
+				return this.table;
+			}
+		}
 
 		public virtual Constraint this[string name] {
 			get {
@@ -342,5 +350,6 @@ namespace System.Data {
 			failReason = tmp;
 			return !cancel;
 		}
+
 	}
 }
