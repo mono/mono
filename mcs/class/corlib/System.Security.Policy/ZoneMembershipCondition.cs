@@ -132,10 +132,11 @@ namespace System.Security.Policy {
                 public SecurityElement ToXml (PolicyLevel level)
                 {
                         SecurityElement element = new SecurityElement ("IMembershipCondition");
+			Type type = this.GetType ();
+			string classString = type.FullName + ", " + type.Assembly;
+			element.AddAttribute ("class", classString);
                         element.AddAttribute ("version", "1");
-
                         element.AddAttribute ("Zone", zone.ToString ());
-
                         return element;
                 }
         }

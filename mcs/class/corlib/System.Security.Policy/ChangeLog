@@ -1,8 +1,11 @@
 2004-08-04  Sebastien Pouliot  <sebastien@ximian.com>
 
+	* Gac.cs: New. Implemented Gac evidence for NET_2_0.
+	* GacMembershipCondition.cs: New. for NET_2_0.
 	* Zone.cs: (Very) basic implementation of CreateFromUrl so we can
 	create a Zone evidence using an assembly location (file://...).
 	* ZoneMembershipCondition.cs: Fixed implementation wrt new unit tests.
+	Added missing "class" attribute in ToXml.
 
 2004-08-03  Sebastien Pouliot  <sebastien@ximian.com>
 
