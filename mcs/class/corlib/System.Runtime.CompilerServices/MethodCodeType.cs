@@ -11,7 +11,7 @@
 
 namespace System.Runtime.CompilerServices
 {
- 
+[Flags] 
 public enum MethodCodeType
 {
     IL,

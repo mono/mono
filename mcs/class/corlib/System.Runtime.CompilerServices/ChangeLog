@@ -1,3 +1,6 @@
+2003-11-15  Zoltan Varga  <vargaz@freemail.hu>
+
+	* MethodImplOptions.cs MethodCodeType.cs: Add [Flags].
 
 Tue Jul 29 12:15:13 CEST 2003 Paolo Molaro <lupus@ximian.com>
 

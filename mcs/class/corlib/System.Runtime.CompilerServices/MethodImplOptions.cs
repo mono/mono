@@ -15,6 +15,7 @@ namespace System.Runtime.CompilerServices {
 
 	/// <summary>
 	/// </summary>
+	[Flags]
 	public enum MethodImplOptions {
 
 		/// <summary>
