@@ -1,3 +1,7 @@
+2004-06-23  Raja R Harinath  <rharinath@novell.com>
+
+	* main.c (dis_event_signature): Decode and print event_flags.
+
 2004-06-20  Jackson Harper  <jackson@ximian.com>
 
 	* dis-cil.c: Handle switch statements with no labels.
