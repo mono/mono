@@ -61,7 +61,7 @@ namespace System
 			 
 		 public void Reset ()
 		 {
-			    idx = 0;
+			    idx = -1;
 		 }
    }
 }
