@@ -1961,13 +1961,13 @@ abstract_propery_declaration
 	  : PROPERTY identifier opt_type_character opt_property_parameters opt_type_with_ranks opt_implement_clause logical_end_of_line
 	  {
 		if ((current_modifiers & Modifiers.DEFAULT) > 0) {
-			if (current_container.IndexerName != null)
+			if (current_container.DefaultPropName != null)
 				Report.Error (30359, 
 						lexer.Location,
 						"Type '" + current_container.Name +
 						"' cannot have more than one 'Default Property' ");
 						
-			current_container.IndexerName = (string) $2;
+			current_container.DefaultPropName = (string) $2;
 		}		
 	  
 		get_implicit_value_parameter_type  = 

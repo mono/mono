@@ -34,7 +34,7 @@ namespace Mono.MonoBASIC {
 
 		// If a method is defined here, then we always need to
 		// create a proxy for it.  This is used when implementing
-		// an interface's indexer with a different IndexerName.
+		// an interface's indexer with a different DefaultPropName.
 		public MethodInfo [] need_proxy;
 	}
 
@@ -297,7 +297,7 @@ namespace Mono.MonoBASIC {
 		///   all the methods with the given signature.
 		///
 		///   The `MethodInfo need_proxy' is used when we're implementing an interface's
-		///   indexer in a class.  If the new indexer's IndexerName does not match the one
+		///   indexer in a class.  If the new indexer's DefaultPropName does not match the one
 		///   that was used in the interface, then we always need to create a proxy for it.
 		///
 		/// </remarks>
@@ -366,8 +366,8 @@ namespace Mono.MonoBASIC {
 						// implementation and we can always clear the method.
 						// `need_proxy' is not null if we're implementing an
 						// interface indexer.  In this case, we need to create
-						// a proxy if the implementation's IndexerName doesn't
-						// match the IndexerName in the interface.
+						// a proxy if the implementation's DefaultPropName doesn't
+						// match the DefaultPropName in the interface.
 						if ((t == null) && (need_proxy != null) && (name != m.Name))
 							tm.need_proxy [i] = need_proxy;
 						else

@@ -138,7 +138,7 @@ namespace Mono.MonoBASIC {
 		//
 		// The indexer name for this class
 		//
-		public string IndexerName;
+		public string DefaultPropName;
 
 		public TypeContainer (TypeContainer parent, string name, Attributes attrs, Location l)
 			: base (parent, name, attrs, l)
@@ -1417,8 +1417,8 @@ namespace Mono.MonoBASIC {
 				foreach (Property p in properties)
 					p.Emit (this);
 
-			if (this.IndexerName != null) {
-				CustomAttributeBuilder cb = new CustomAttributeBuilder (TypeManager.default_member_ctor, new string [] { IndexerName });
+			if (this.DefaultPropName != null) {
+				CustomAttributeBuilder cb = new CustomAttributeBuilder (TypeManager.default_member_ctor, new string [] { DefaultPropName });
 				TypeBuilder.SetCustomAttribute (cb);
 			}
 			

@@ -1869,17 +1869,17 @@ public class TypeManager {
 			if (t.IsInterface) {
 				Interface i = LookupInterface (t);
 
-				if ((i == null) || (i.IndexerName == null))
+				if ((i == null) || (i.DefaultPropName == null))
 					return "Item";
 
-				return i.IndexerName;
+				return i.DefaultPropName;
 			} else {
 				TypeContainer tc = LookupTypeContainer (t);
 
-				if ((tc == null) || (tc.IndexerName == null))
+				if ((tc == null) || (tc.DefaultPropName == null))
 					return "Item";
 
-				return tc.IndexerName;
+				return tc.DefaultPropName;
 			}
 		}
 		

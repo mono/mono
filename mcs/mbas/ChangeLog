@@ -1,4 +1,12 @@
 2004-12-21 Anirban Bhattacharjee <banirban@novell.com>
+	* class.cs:
+	* Attribute.cs
+	* mb-parser.jay
+	* pending.cs:
+	* typemanager.cs:
+		IndexerName variable is now known as DefaultPropName in the above files
+
+2004-12-21 Anirban Bhattacharjee <banirban@novell.com>
 	* mb-parser.jay: A check which restrict declaring more than one property
 			as default within same class
 

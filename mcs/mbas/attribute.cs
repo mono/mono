@@ -528,7 +528,7 @@ namespace Mono.MonoBASIC {
 		}
 
 		//
-		// This method should be invoked to pull the IndexerName attribute from an
+		// This method should be invoked to pull the DefaultPropName attribute from an
 		// Indexer if it exists.
 		//
 		public static string ScanForIndexerName (EmitContext ec, Attributes opt_attrs)
@@ -544,7 +544,7 @@ namespace Mono.MonoBASIC {
 					continue;
 
 				//
-				// So we have found an IndexerName, pull the data out.
+				// So we have found an DefaultPropName, pull the data out.
 				//
 				if (a.Arguments == null || a.Arguments [0] == null){
 					Error_AttributeConstructorMismatch (a.Location);
