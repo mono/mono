@@ -1,3 +1,10 @@
+2004-10-12  Martin Baulig  <martin@ximian.com>
+
+	* TypeBuilder.cs (TypeBuilder.setup_generic_class): Renamed to
+	create_generic_class() and added a new setup_generic_class().
+	(TypeBuilder.DefineGenericParameters): Call setup_generic_class()
+	before creating the type parameters.
+
 2004-10-11  Martin Baulig  <martin@ximian.com>
 
 	* TypeBuilder.cs (TypeBuilder.generic_container): New private field.

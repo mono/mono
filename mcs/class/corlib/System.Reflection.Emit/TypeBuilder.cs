@@ -88,7 +88,10 @@ namespace System.Reflection.Emit {
 		private extern void create_internal_class (TypeBuilder tb);
 		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern void setup_generic_class (TypeBuilder tb);
+		private extern void setup_generic_class ();
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private extern void create_generic_class ();
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern EventInfo get_event_info (EventBuilder eb);
@@ -1337,7 +1340,7 @@ namespace System.Reflection.Emit {
 
 		public override Type GetGenericTypeDefinition ()
 		{
-			setup_generic_class (this);
+			create_generic_class ();
 
 			return base.GetGenericTypeDefinition ();
 		}
@@ -1373,6 +1376,8 @@ namespace System.Reflection.Emit {
 
 		public GenericTypeParameterBuilder[] DefineGenericParameters (string[] names)
 		{
+			setup_generic_class ();
+
 			generic_params = new GenericTypeParameterBuilder [names.Length];
 			for (int i = 0; i < names.Length; i++)
 				generic_params [i] = new GenericTypeParameterBuilder (
