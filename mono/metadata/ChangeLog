@@ -1,5 +1,10 @@
 2003-11-11  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mono-debug.c (mono_debug_add_method): Ignore unknown modules.
+
+	* reflection.c (mono_image_build_metadata): Fix crash on modules
+	with no types.
+
 	* reflection.h (MonoMethodInfo): Track changes to the managed structure.
 
 	* icall.c (ves_icall_get_method_info): Return callingConvention as
