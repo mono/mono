@@ -330,6 +330,11 @@ namespace System.Data
 			return new CodeCastExpression (t, exp);
 		}
 
+		private CodeCastExpression Cast (CodeTypeReference t, CodeExpression exp)
+		{
+			return new CodeCastExpression (t, exp);
+		}
+
 		private CodeExpression New (Type t, params CodeExpression [] parameters)
 		{
 			return new CodeObjectCreateExpression (t, parameters);
@@ -991,7 +996,7 @@ namespace System.Data
 			string name = opts.ColumnName (col.ColumnName, gen);
 			CodeMemberProperty p = new CodeMemberProperty ();
 			p.Name = name + "Column";
-			p.Attributes = MemberAttributes.Public;
+			p.Attributes = MemberAttributes.Assembly;
 			p.Type = TypeRef (typeof (DataColumn));
 			p.HasSet = false;
 			p.GetStatements.Add (Return (FieldRef ("__column" + name)));
@@ -1160,12 +1165,6 @@ namespace System.Data
 
 
 #region Row class
-/*
-TODO:
-	if the table is parent of some relations
-
-		public [child]Row [] Get[child]Rows()
-*/
 
 		public CodeTypeDeclaration GenerateDataRowType (DataTable dt)
 		{
@@ -1185,10 +1184,10 @@ TODO:
 				}
 			}
 
-			// TODO: for parent table, create [foo]Row [foo]Row
-
-			// TODO: for each parent key column, create
-			// GetXxxRows()
+			foreach (DataRelation rel in dt.ParentRelations)
+				t.Members.Add (CreateRowParentRowProperty (dt, rel));
+			foreach (DataRelation rel in dt.ChildRelations)
+				t.Members.Add (CreateRowGetChildRows (dt, rel));
 
 			return t;
 		}
@@ -1271,6 +1270,53 @@ TODO:
 					opts.TableColName (col.ColumnName, gen) + "Column")),
 				PropRef (TypeRefExp (typeof (DBNull)), "Value")));
 
+			return m;
+		}
+
+		private CodeMemberProperty CreateRowParentRowProperty (DataTable dt, DataRelation rel)
+		{
+			CodeMemberProperty p = new CodeMemberProperty ();
+			p.Name = opts.TableMemberName (rel.ParentTable.TableName, gen) + "Row";
+			p.Attributes = MemberAttributes.Public;
+			p.Type = TypeRef (opts.RowName (rel.ParentTable.TableName, gen));
+			p.GetStatements.Add (Return (Cast (p.Type, MethodInvoke (
+				"GetParentRow",
+				IndexerRef (
+					PropRef (
+						PropRef (
+							PropRef ("Table"),
+							"DataSet"),
+						"Relations"),
+					Const (rel.RelationName))))));
+			p.SetStatements.Add (Eval (MethodInvoke (
+				"SetParentRow",
+				new CodePropertySetValueReferenceExpression (),
+				IndexerRef (
+					PropRef (
+						PropRef (
+							PropRef ("Table"),
+							"DataSet"),
+						"Relations"),
+					Const (rel.RelationName)))));
+
+			return p;
+		}
+
+		private CodeMemberMethod CreateRowGetChildRows (DataTable dt, DataRelation rel)
+		{
+			CodeMemberMethod m = new CodeMemberMethod ();
+			m.Name = "Get" + opts.TableMemberName (rel.ChildTable.TableName, gen) + "Rows";
+			m.Attributes = MemberAttributes.Public;
+			m.ReturnType = new CodeTypeReference (opts.RowName (rel.ChildTable.TableName, gen), 1);
+			m.Statements.Add (Return (Cast (m.ReturnType, MethodInvoke (
+				"GetChildRows",
+				IndexerRef (
+					PropRef (
+						PropRef (
+							PropRef ("Table"),
+							"DataSet"),
+						"Relations"),
+					Const (rel.RelationName))))));
 			return m;
 		}
 
