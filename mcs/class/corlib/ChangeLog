@@ -1,3 +1,7 @@
+2003-02-03  Patrik Torstensson
+
+	* unix.args: added CADMessages.cs
+
 2003-01-26  Lluis Sanchez Gual <lluis@ideary.com>
 
 	* unix.args: added RemoteActivator.cs.

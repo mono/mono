@@ -557,6 +557,7 @@ System.Runtime.Remoting.Messaging/ReturnMessage.cs
 System.Runtime.Remoting.Messaging/ServerContextTerminatorSink.cs
 System.Runtime.Remoting.Messaging/ServerObjectTerminatorSink.cs
 System.Runtime.Remoting.Messaging/StackBuilderSink.cs
+System.Runtime.Remoting.Messaging/CADMessages.cs
 System.Runtime.Remoting.Metadata/SoapAttribute.cs
 System.Runtime.Remoting.Metadata/SoapFieldAttribute.cs
 System.Runtime.Remoting.Metadata/SoapMethodAttribute.cs
