@@ -844,11 +844,25 @@ public class TypeManager {
 	/// </summary>
 	static public string GetFullNameSignature (MemberInfo mi)
 	{
-		string n = mi.Name;
-		if (n == ".ctor")
-			n = mi.DeclaringType.Name;
-		
-		return mi.DeclaringType.FullName.Replace ('+', '.') + '.' + n;
+		return mi.DeclaringType.FullName.Replace ('+', '.') + '.' + mi.Name;
+	}
+
+	static public string GetFullNameSignature (MethodBase mb)
+	{
+		string name = mb.Name;
+		if (name == ".ctor")
+			name = mb.DeclaringType.Name;
+
+		if (mb.IsSpecialName) {
+			if (name.StartsWith ("get_") || name.StartsWith ("set_")) {
+				name = name.Remove (0, 4);
+			}
+
+			if (name == "Item")
+				name = "this";
+		}
+
+		return mb.DeclaringType.FullName.Replace ('+', '.') + '.' + name;
 	}
 
 	/// <summary>
@@ -866,34 +880,44 @@ public class TypeManager {
 		return String.Format ("{0}.this[{1}]", signature.Substring (0, signature.LastIndexOf ('.')), arg);
 	}
 
-        /// <summary>
-        ///   Returns the signature of the method
-        /// </summary>
-        static public string CSharpSignature (MethodBase mb)
-        {
-                string sig = "(";
+	/// <summary>
+	///   Returns the signature of the method
+	/// </summary>
+	static public string CSharpSignature (MethodBase mb)
+	{
+		StringBuilder sig = new StringBuilder ("(");
 
 		//
 		// FIXME: We should really have a single function to do
 		// everything instead of the following 5 line pattern
 		//
-                ParameterData iparams = LookupParametersByBuilder (mb);
+		ParameterData iparams = LookupParametersByBuilder (mb);
 
-		if (iparams == null){
+		if (iparams == null) {
 			ParameterInfo [] pi = mb.GetParameters ();
 			iparams = new ReflectionParameters (pi);
 		}
-		
-                for (int i = 0; i < iparams.Count; i++) {
-                        if (i > 0) {
-                                sig += ", ";
-                        }
-                        sig += iparams.ParameterDesc(i);
-                }
-                sig += ")";
 
-                return GetFullNameSignature (mb) + sig;
-        }
+		// Is property
+		if (mb.IsSpecialName && iparams.Count == 0)
+			return GetFullNameSignature (mb);
+		
+		for (int i = 0; i < iparams.Count; i++) {
+			if (i > 0) {
+				sig.Append (", ");
+			}
+			sig.Append (iparams.ParameterDesc (i));
+		}
+		sig.Append (")");
+
+		// Is indexer
+		if (mb.IsSpecialName && iparams.Count == 1) {
+			sig.Replace ('(', '[');
+			sig.Replace (')', ']');
+		}
+
+		return GetFullNameSignature (mb) + sig.ToString ();
+	}
 
 	/// <summary>
 	///   Looks up a type, and aborts if it is not found.  This is used

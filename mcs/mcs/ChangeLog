@@ -1,5 +1,11 @@
 2004-06-02  Marek Safar  <marek.safar@seznam.cz>
 
+	Fixed #59072
+	* typemanager.cs (GetFullNameSignature): New method for
+	MethodBase types.
+
+2004-06-02  Marek Safar  <marek.safar@seznam.cz>
+
 	Fixed #56452
 	* class.cs (MemberBase.GetSignatureForError): New virtual method.
 	Use this method when MethodBuilder is null.
