@@ -7,6 +7,8 @@
 // (C) Ximian, Inc
 //
 
+using System.Data;
+
 namespace System.Data.Common
 {
 	/// <summary>
@@ -14,38 +16,43 @@ namespace System.Data.Common
 	/// </summary>
 	public sealed class DataColumnMapping : MarshalByRefObject, IColumnMapping, ICloneable
 	{
+		private string srcColumn;
+		private string dsColumn;
+		
+		public DataColumnMapping () {
+			this.srcColumn = null;
+			this.dsColumn = null;
+		}
+
+		public DataColumnMapping(string sc, string dc) {
+			this.srcColumn = sc;
+			this.dsColumn = dc;
+		}
+
 		[MonoTODO]
-		public DataColumnMapping()
-		{
+		public DataColumn GetDataColumnBySchemaAction (
+			DataTable dataTable,
+			Type dataType,
+			MissingSchemaAction schemaAction) {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
-		public DataColumnMapping(string src_column, string ds_column)
-		{
-			throw new NotImplementedException ();
+		public string DataSetColumn {
+			get {
+				return this.dsColumn;
+			}
+			set {
+				this.dsColumn = value;
+			}
 		}
 
-		[MonoTODO]
-		public DataColumn GetDataColumnBySchemaAction(DataTable dataTable,
-							      Type dataType,
-							      MissingSchemaAction schemaAction)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public string DataSetColumn
-		{
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
-		}
-
-		[MonoTODO]
-		public string SourceColumn
-		{
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+		public string SourceColumn {
+			get {
+				return this.srcColumn;
+			}
+			set {
+				this.srcColumn = value;
+			}
 		}
 	}
 }

@@ -7,6 +7,8 @@
 // (C) Ximian, Inc
 //
 
+using System.Security.Permissions;
+
 namespace System.Data.Common
 {
 	/// <summary>
@@ -15,70 +17,63 @@ namespace System.Data.Common
 	public abstract class DBDataPermission : CodeAccessPermission,
 		IUnrestrictedPermission
 	{
+		private bool allowBlankPassword;
+		private PermissionState permissionState;
+
+		protected DBDataPermission () {
+			this.allowBlankPassword = false;
+			this.permissionState = None;
+		}
+
+		protected DBDataPermission (PermissionState state) {
+			this.allowBlankPassword = false;
+			this.permissionState = state;
+		}
+
+		public DBDataPermission (PermissionState state, bool abp) {
+			this.allowBlankPassword = abp;
+			this.permissionState = state;
+		}
+
+		public override IPermission Copy () {
+			DbDataPermission copy = new DbDataPermission (
+				this.permissionState, this.allowBlankPassword);
+
+			return copy;
+		}
+
 		[MonoTODO]
-		protected DBDataPermission() {
+		public override void FromXml (SecurityElement securityElement) {
+			throw new NotImplementedException ();
+		}
+
+		public override IPermission Intersect (IPermission target) {
+		}
+
+		[MonoTODO]
+		public override bool IsSubsetOf (IPermission target) {
+			throw new NotImplementedException ();
+		}
+
+		public bool IsUnrestricted () {
+			if (this.permissionState == Unrestricted)
+				return true;
+			return false;
+		}
+
+		[MonoTODO]
+		public override SecurityElement ToXml () {
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		protected DBDataPermission(PermissionState) {
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public DBDataPermission(PermissionState, bool) {
+		public override IPermission Union (IPermission target) {
 			throw new NotImplementedException ();
 		}
 		
-		[MonoTODO]
-		protected DBDataPermission(PermissionState) {
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public DBDataPermission(PermissionState, bool) {
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public override IPermission Copy() {
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public override void FromXml(SecurityElement securityElement) {
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public override IPermission Intersect(IPermission target) {
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public override bool IsSubsetOf(IPermission target) {
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public bool IsUnrestricted() {
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public override SecurityElement ToXml() {
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public override IPermission Union(IPermission target) {
-			throw new NotImplementedException ();
-		}
-		
-		[MonoTODO]
 		public bool AllowBlankPassword {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return this.allowBlankPassword; }
+			set { this.allowBlankPassword = value; }
 		}
 	}
 }

@@ -7,6 +7,8 @@
 // (C) Ximian, Inc
 //
 
+using System.Data;
+
 namespace System.Data.Common
 {
 	/// <summary>
@@ -14,59 +16,77 @@ namespace System.Data.Common
 	/// </summary>
 	public abstract class DataAdapter : Component, IDataAdapter
 	{
-		[MonoTODO]
-		protected DataAdapter()
-		{
-			throw new NotImplementedException ();
+		private bool acceptChangesDuringFill;
+		private bool continueUpdateOnError;
+		private MissingMappingAction missingMappingAction;
+		private MissingSchemaAction missingSchemaAction;
+		private DataTableMappingCollection tableMappings;
+
+		protected DataAdapter () {
+			this.acceptChangesDuringFill = false;
+			this.continueUpdateOnError = false;
+			this.missingMappingAction = Error;
+			this.missingSchemaAction = Error;
+			this.tableMappings = null;
 		}
 		
-		public abstract int Fill(DataSet dataSet);
+		public abstract int Fill (DataSet dataSet);
 
-		public abstract DataTable[] FillSchema(DataSet dataSet,
-						       SchemaType schemaType);
+		public abstract DataTable[] FillSchema (DataSet dataSet,
+						        SchemaType schemaType);
 
-		public abstract IDataParameter[] GetFillParameters();
+		public abstract IDataParameter[] GetFillParameters ();
 
-		public abstract int Update(DataSet dataSet);
+		public abstract int Update (DataSet dataSet);
 
-		protected virtual DataAdapter CloneInternals();
+		protected virtual DataAdapter CloneInternals ();
 
-		protected virtual DataTableMappingCollection CreateTableMappings();
+		protected virtual DataTableMappingCollection CreateTableMappings ();
 
-		protected virtual bool ShouldSerializeTableMappings();
+		protected virtual bool ShouldSerializeTableMappings ();
 		
-		[MonoTODO]
-		public bool AcceptChangesDuringFill
-		{
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+		public bool AcceptChangesDuringFill {
+			get {
+				return this.acceptChangesDuringFill;
+			}
+			set {
+				this.acceptChangesDuringFill = value;
+			}
+		}
+		
+		public bool ContinueUpdateOnError {
+			get {
+				return this.continueUpdateOnError;
+			}
+			set {
+				this.continueUpdateOnError = value;
+			}
 		}
 
-		[MonoTODO]
-		public bool ContinueUpdateOnError
-		{
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+		public MissingMappingAction MissingMappingAction {
+			get {
+				return this.missingMappingAction;
+			}
+			set {
+				this.missingMappingAction = value;
+			}
 		}
 
-		[MonoTODO]
-		public MissingMappingAction MissingMappingAction
-		{
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+		public MissingSchemaAction MissingSchemaAction {
+			get {
+				return this.missingSchemaAction;
+			}
+			set {
+				this.missingSchemaAction = value;
+			}
 		}
 
-		[MonoTODO]
-		public MissingSchemaAction MissingSchemaAction
-		{
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
-		}
-
-		[MonoTODO]
-		public DataTableMappingCollection TableMappings
-		{
-			get { throw new NotImplementedException (); }
+		public DataTableMappingCollection TableMappings {
+			get {
+				if (this.tableMappings == null)
+					this.tableMappings = CreateTableMappings ();
+				return this.tableMappings;
+			}
 		}
 	}
 }

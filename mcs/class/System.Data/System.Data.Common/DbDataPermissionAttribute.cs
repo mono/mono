@@ -14,15 +14,21 @@ namespace System.Data.Common
 	/// </summary>
 	public abstract class DBDataPermissionAttribute : CodeAccessSecurityAttribute
 	{
-		[MonoTODO]
+		private SecurityAction securityAction;
+		private bool allowBlankPassword;
+
 		protected DBDataPermissionAttribute(SecurityAction action) {
-			throw new NotImplementedException ();
+			this.securityAction = action;
+			this.allowBlankPassword = false;
 		}
-		
-		[MonoTODO]
+
 		public bool AllowBlankPassword {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get {
+				return this.allowBlankPassword;
+			}
+			set {
+				this.allowBlankPassword = value;
+			}
 		}
 	}
 }
