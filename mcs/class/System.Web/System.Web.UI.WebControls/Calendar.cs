@@ -778,7 +778,7 @@ namespace System.Web.UI.WebControls
 				size = Unit.Percentage (14);
 			}
 
-			TableItemStyle [] styles = new TableItemStyle [16];
+			TableItemStyle [] styles = new TableItemStyle [32];
 			int definedStyles = MASK_SELECTED;
 			if (weekendStyle != null && !weekendStyle.IsEmpty)
 				definedStyles |= MASK_WEEKEND;
