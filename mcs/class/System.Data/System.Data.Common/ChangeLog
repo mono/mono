@@ -1,3 +1,12 @@
+2003-02-24  Aleksey Demakov <avd@openlinksw.com>
+
+	* DbDataAdapter.cs: The original code might pass a null DataTableMapping
+	value which is then used to create a RowUpdatingEventArgs
+	instance. So RowUpdatingEvent handler (for instance
+	CommandBuilder) could get null DataTableMapping which
+	might be unexpected. The patch makes sure that a non-null
+	DataTableMapping is passed.
+
 2003-01-26  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* DbEnumerator.cs: why does the runtime throw an invalid cast here? The

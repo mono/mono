@@ -447,11 +447,16 @@ namespace System.Data.Common {
 
 		public int Update (DataSet dataSet, string sourceTable) 
 		{
-			int result = 0;
-			DataTableMapping tableMapping = TableMappings [sourceTable];
-			foreach (DataTable dataTable in dataSet.Tables)
-				result += Update (dataTable, tableMapping);
-			return result;
+			MissingMappingAction mappingAction = MissingMappingAction;
+			if (mappingAction == MissingMappingAction.Ignore)
+				mappingAction = MissingMappingAction.Error;
+			DataTableMapping tableMapping = DataTableMappingCollection.GetTableMappingBySchemaAction (TableMappings, sourceTable, sourceTable, mappingAction);
+
+			DataTable dataTable = dataSet.Tables[tableMapping.DataSetTable];
+			if (dataTable == null)
+			    throw new ArgumentException ("sourceTable");
+
+			return Update (dataTable, tableMapping);
 		}
 
 		protected virtual void OnFillError (FillErrorEventArgs value) 
