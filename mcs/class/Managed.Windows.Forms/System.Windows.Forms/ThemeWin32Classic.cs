@@ -2176,30 +2176,23 @@ namespace System.Windows.Forms
 		#region PictureBox
 		public override void DrawPictureBox (Graphics dc, PictureBox pb) {
 			Rectangle client = pb.ClientRectangle;
-			int x, y, width, height;
 
 			dc.FillRectangle (new SolidBrush (pb.BackColor), client);
 
-			x = y = 0;
 			if (pb.Image != null) {
 				switch (pb.SizeMode) {
 				case PictureBoxSizeMode.StretchImage:
-					width = client.Width;
-					height = client.Height;
+					dc.DrawImage (pb.Image, 0, 0, client.Width, client.Height);
 					break;
+
 				case PictureBoxSizeMode.CenterImage:
-					width = client.Width;
-					height = client.Height;
-					x = width / 2;
-					y = (height - pb.Image.Height) / 2;
+					dc.DrawImage (pb.Image, (client.Width / 2) - (pb.Image.Width / 2), (client.Height / 2) - (pb.Image.Height / 2));
 					break;
 				default:
 					// Normal, AutoSize
-					width = client.Width;
-					height = client.Height;
+					dc.DrawImage(pb.Image, 0, 0);
 					break;
 				}
-				dc.DrawImage (pb.Image, x, y, width, height);
 			}
 			CPDrawBorderStyle (dc, client, pb.BorderStyle);
 		}

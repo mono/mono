@@ -1,5 +1,11 @@
 2005-03-18  Peter Bartok  <pbartok@novell.com>
 
+	* ThemeWin32Classic.cs (DrawPictureBox):
+	  - Fixed calculations for centered drawing
+	  - Fixed drawing for normal mode, not scaling the image on normal
+
+2005-03-18  Peter Bartok  <pbartok@novell.com>
+
 	* ComboBox.cs: Now also firing the OnKeyPress events for the embedded
 	  textbox
 	* FileDialog.cs:
