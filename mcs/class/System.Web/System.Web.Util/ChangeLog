@@ -1,3 +1,7 @@
+2003-11-25  Jackson Harper <jackson@ximian.com>
+
+	* AltSerialization.cs: Utility methods for optimized serializing.
+	
 2003-11-13  Jackson Harper  <jackson@ximian.com>
 
 	* TimeUtil.cs: Utility methods for dealing with time.
