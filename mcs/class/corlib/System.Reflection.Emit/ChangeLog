@@ -1,3 +1,8 @@
+2004-01-26  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* AssemblyBuilder.cs: Save will now strongname the assembly is (a) a
+	StrongName is present and (b) the signature isn't delayed.
+
 2004-01-24 David Sheldon <dave-mono@earth.li>
 
 	* AssemblyBuilder.cs: Added override for GetFiles() that throws

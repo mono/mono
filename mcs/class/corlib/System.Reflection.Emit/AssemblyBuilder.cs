@@ -85,6 +85,7 @@ namespace System.Reflection.Emit {
 		Win32VersionResource version_res;
 		bool created;
 		bool is_module_only;
+		private Mono.Security.StrongName sn;
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern void basic_init (AssemblyBuilder ab);
@@ -574,6 +575,11 @@ namespace System.Reflection.Emit {
 			// contain the hash of the other modules
 			mainModule.Save ();
 
+			// if not delayed then we directly strongname the assembly
+			if ((sn != null) && (!delay_sign)) {
+				sn.Sign (System.IO.Path.Combine (this.AssemblyDir, assemblyFileName));
+			}
+
 			created = true;
 		}
 
@@ -601,7 +607,7 @@ namespace System.Reflection.Emit {
 			string attrname = customBuilder.Ctor.ReflectedType.FullName;
 			byte[] data;
 			int len, pos;
-			Mono.Security.StrongName sn;
+
 			if (attrname == "System.Reflection.AssemblyVersionAttribute") {
 				version = create_assembly_version (customBuilder.string_arg ());
 				return;
