@@ -7,14 +7,14 @@
 // (C) 2003, Cesar Lopez Nataren
 //
 
-namespace Microsoft.JScript.Tmp
-{
-	using System;
-	using System.Reflection;
-	using System.Globalization;
+using System;
+using System.Reflection;
+using System.Globalization;
 
-	public sealed class JSFieldInfo : FieldInfo
-	{
+namespace Microsoft.JScript {
+
+	public sealed class JSFieldInfo : FieldInfo {
+
 		public override FieldAttributes Attributes {
 			get { throw new NotImplementedException (); }
 		}
