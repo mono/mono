@@ -21,10 +21,10 @@
 // at http://www.opensource.org/licenses/mit-license.html
 //
 
-// define MYSQL_CANDO_QUERY if the runtime can do a query
+// #define MYSQL_CANDO_QUERY if the runtime can do a query
 // define MYSQL_CANDO_THREADS if the runtime can use mysql_thread_* functions
-//#define MYSQL_CANDO_QUERY
-//#define MYSQL_CANDO_THREADS
+#define MYSQL_CANDO_QUERY
+#define MYSQL_CANDO_THREADS
 
 using System;
 using System.Runtime.InteropServices;
@@ -60,9 +60,10 @@ public class Test {
 	public static int Main() {
 		Console.WriteLine("Test for MySQL C# Bindings started...");
 		Console.Out.Flush();
+        int rcq;
 
 		string myDb = "test";
-		string myStmt = "SELECT * FROM db";
+		string myStmt = "SELECT * FROM sometable";
 		string insertStmt = "INSERT INTO SOMETABLE (TID,TDESC,AINT) VALUES ('MySQL','Mono.Data',12)";
 
 		Console.WriteLine("MySql Init...");
@@ -101,7 +102,7 @@ public class Test {
 
 		Console.WriteLine("Insert SQL:  "+insertStmt);
 		Console.Out.Flush();
-		int rcq = MySql.Query(db, insertStmt);
+		rcq = MySql.Query(db, insertStmt);
 		if (rcq != 0) {
 			Console.WriteLine("Couldn't execute ["+insertStmt+"] on server.");
 			Console.Out.Flush();
@@ -113,7 +114,7 @@ public class Test {
 #if MYSQL_CANDO_QUERY
 		Console.WriteLine("Query:  "+myStmt);
 		Console.Out.Flush();
-		int rcq = MySql.Query(db, myStmt);
+		rcq = MySql.Query(db, myStmt);
 		if (rcq != 0) {
 			Console.WriteLine("?Couldn't execute ["+myStmt+"] on server.");
 			Console.Out.Flush();
@@ -175,7 +176,14 @@ public class Test {
 		while ((row = MySql.FetchRow(res)) != IntPtr.Zero) {
 			Console.WriteLine("Record #" + recCnt + ":");
 			for (int i = 0, j = 1; i < numFields; i++, j++) {
+				Console.WriteLine(" Going to WriteLine Fld...\n");
+				Console.Out.Flush();
+				Console.WriteLine(" theField[[[" + fields[i] + "]]]\n");
+				Console.Out.Flush();
+				Console.WriteLine(" after theField... \n");
+				Console.Out.Flush();
 				Console.WriteLine("  Fld #"+j+" ("+fields[i]+"): "+rowVal(row, i));
+				Console.Out.Flush();
 			}
 			Console.WriteLine("==============================");
 		}
@@ -183,10 +191,18 @@ public class Test {
 	}
 
 	static string rowVal(IntPtr res, int index) {
+		Console.WriteLine("...Marshal.ReadIntPtr() BEFORE...\n");
+		Console.Out.Flush();
 		IntPtr str = Marshal.ReadIntPtr(res, index*IntPtr.Size);
+		Console.WriteLine("...Marshal.ReadIntPtr() AFTER...\n");
+		Console.Out.Flush();
 		if (str == IntPtr.Zero)
 			return "NULL";
+		Console.WriteLine("...Marshal.PtrToStringAnsi() BEFORE...");
+		Console.Out.Flush();
 		string s = Marshal.PtrToStringAnsi(str);
+		Console.WriteLine("...Marshal.PtrToStringAnsi() AFTER...");
+		Console.Out.Flush();
 		return s;
 	}
 

@@ -1,3 +1,16 @@
+2002-08-13  Daniel Morgan <danmorg@sc.rr.com>
+
+	* Mono.Data.MySql/MySqlCommand.cs: modified
+	rowsRetrieved should be rowsAffected in ExecuteNonQuery
+	because the number is only to show the rows affected
+	by an INSERT, UPDATE, or DELETE; anything else, the
+	number is -1
+	
+	* Mono.Data.MySql/Test.cs: modified
+	enable retrieving the results from a query.  even though
+	this still does not work for some reason, i thought
+	i would enable it so others could see the problem.
+
 2002-05-30  Daniel Morgan <danmorg@sc.rr.com>
 
 	* Mono.Data.MySql.build: modified

@@ -248,10 +248,10 @@ namespace Mono.Data.MySql {
 		/// library!
 		///</para>
 		///</summary>
-		//[DllImport("libmySQL",
-		//	 CharSet=System.Runtime.InteropServices.CharSet.Ansi,
-		//	 EntryPoint="mysql_thread_end", ExactSpelling=true)]
-		//public static extern void ThreadEnd();
+		[DllImport("libmySQL",
+			 CharSet=System.Runtime.InteropServices.CharSet.Ansi,
+			 EntryPoint="mysql_thread_end", ExactSpelling=true)]
+		public static extern void ThreadEnd();
 
 		///<summary>
 		///<para>
@@ -262,9 +262,9 @@ namespace Mono.Data.MySql {
 		/// This is automatically called by <see cref="Init"/>.
 		///</para>
 		///</summary>
-		//[DllImport("libmySQL",
-		//	 CharSet=System.Runtime.InteropServices.CharSet.Ansi,
-		//	 EntryPoint="mysql_thread_init", ExactSpelling=true)]
-		//public static extern void ThreadInit();
+		[DllImport("libmySQL",
+			 CharSet=System.Runtime.InteropServices.CharSet.Ansi,
+			 EntryPoint="mysql_thread_init", ExactSpelling=true)]
+		public static extern void ThreadInit();
 	}
 }

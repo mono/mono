@@ -94,7 +94,7 @@ namespace Mono.Data.MySql {
 
 		[MonoTODO]
 		public int ExecuteNonQuery () {	
-			int rowsRetrieved = -1;
+			int rowsAffected = -1;
 			//TODO: need to do this correctly
 			//      this is just something quick
 			//      thrown together to see if we can
@@ -110,13 +110,18 @@ namespace Mono.Data.MySql {
 				Console.Out.Flush();
 				return 0;
 			}
-			return rowsRetrieved;
+			// TODO: need to return the number of rows affected for an INSERT, UPDATE, or DELETE
+			//       otherwise, it is -1
+			return rowsAffected;
 		}
 		
 		[MonoTODO]
 		IDataReader IDbCommand.ExecuteReader () {
 			//return ExecuteReader ();
+			// FIXME: just a quick hack
+			ExecuteNonQuery();
 			return null;
+
 		}
 
 		/*
@@ -142,7 +147,9 @@ namespace Mono.Data.MySql {
 
 		[MonoTODO]
 		public object ExecuteScalar () {
-			throw new NotImplementedException();
+			// FIXME: just a quick hack
+			ExecuteNonQuery();
+			return null;
 		}
 
 		[MonoTODO]
