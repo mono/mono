@@ -283,10 +283,8 @@ namespace Microsoft.JScript {
 
 			if (member_exp != null)
 				r &= member_exp.Resolve (context);
-
 			if (args1 != null)
 				r &= args1.Resolve (context);
-
 			if (args2 != null)
 				r &= args2.Resolve (context);
 			return r;
@@ -294,7 +292,34 @@ namespace Microsoft.JScript {
 
 		internal override void Emit (EmitContext ec)
 		{
-			throw new NotImplementedException ();
+			ILGenerator ig = ec.ig;
+			Args a1 = args1 as Args;
+			
+			if (member_exp.ToString () == "print") {
+				AST ast;
+				int n = a1.Size - 1;				
+				Type script_stream = typeof (ScriptStream);
+				MethodInfo write = script_stream.GetMethod ("Write");
+				MethodInfo writeline = script_stream.GetMethod ("WriteLine");
+				MethodInfo to_string = typeof (Convert).GetMethod ("ToString",
+										   new Type [] { typeof (object), typeof (bool) });
+				for (int i = 0; i <= n; i++) {
+					ast = a1.get_element (i);
+					ast.Emit (ec);
+
+					if (ast is StringLiteral)
+						;
+					else {
+						ig.Emit (OpCodes.Ldc_I4_1);
+						ig.Emit (OpCodes.Call, to_string);
+					}
+
+					if (i == n)
+						ig.Emit (OpCodes.Call, writeline);
+					else
+						ig.Emit (OpCodes.Call, write);
+				}
+			}			
 		}
 	}
 
@@ -368,7 +393,7 @@ namespace Microsoft.JScript {
 					else
 						ig.Emit (OpCodes.Ldloc, bind.local_builder);
 				}
-			}
+			} 
 			if (!assign && no_effect)
 				ig.Emit (OpCodes.Pop);				
 		}
@@ -390,14 +415,27 @@ namespace Microsoft.JScript {
 
 		internal override bool Resolve (IdentificationTable context)
 		{
-			int i, size = elems.Count;
+			int i, n = elems.Count;
 			AST tmp;
+			bool r = true;
 
-			for (i = 0; i < size; i++) {
+			for (i = 0; i < n; i++) {
 				tmp = (AST) elems [i];
-				tmp.Resolve (context);
+				r &= tmp.Resolve (context);
 			}
-			return true;
+			return r;
+		}
+
+		internal AST get_element (int i)
+		{
+			if (i >= 0 && i < elems.Count)
+				return (AST) elems [i];
+			else
+				throw new IndexOutOfRangeException ();
+		}
+
+		internal int Size {
+			get { return elems.Count; }
 		}
 
 		internal override void Emit (EmitContext ec)
@@ -453,16 +491,18 @@ namespace Microsoft.JScript {
 					r &= ((AST) e).Resolve (context);
 			}
 			e = exprs [n];
-
 			if (e is Exp)
 				if (e is Assign)
 					r &= ((Assign) e).Resolve (context);
 				else
 					r &= ((Exp) e).Resolve (context, no_effect);
+			else 
+				((AST) e).Resolve (context);
+
 			return r;
 		}
 
-			internal override bool Resolve (IdentificationTable context, bool no_effect)
+		internal override bool Resolve (IdentificationTable context, bool no_effect)
 		{
 			this.no_effect = no_effect;
 			return Resolve (context);
@@ -494,7 +534,7 @@ namespace Microsoft.JScript {
 		}
 
 		internal override bool Resolve (IdentificationTable context)
-		{
+		{						
 			bool r;
 			if (left is IAssignable)
 				r = ((IAssignable) left).ResolveAssign (context);
