@@ -1,3 +1,7 @@
+2004-11-07  Jambunathan K  <kjambunathan@novell.com>
+	* LateBinding.cs (LateGet, LateSet): Ported the missing pieces
+	from Mainsoft's codebase.
+
 2004-10-11  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* IVbHost.cs: Completed API (needed to reference SWF for that).
 

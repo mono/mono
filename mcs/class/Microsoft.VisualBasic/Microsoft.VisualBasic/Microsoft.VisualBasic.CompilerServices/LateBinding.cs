@@ -55,6 +55,9 @@ namespace Microsoft.VisualBasic.CompilerServices {
 			object[] args,
 			string[] paramnames,
 			bool[] CopyBack) {
+
+			BindingFlags invokeAttr = 0;
+
 			if (objType == null) {
 				if (o == null)
 					throw new NullReferenceException();
@@ -68,42 +71,21 @@ namespace Microsoft.VisualBasic.CompilerServices {
 				}
 			}
 
-			// get the object's member by the name specified
 			MemberInfo[] memberInfo = objType.GetMember(name);
 
-			if (((memberInfo == null) || (memberInfo.Length == 0))) {
-				// no member with the name specified found
+			if (((memberInfo == null) || (memberInfo.Length == 0))) 
 				throw new NullReferenceException();
-			}
-			//TODO removed to fix compile warning, add when used.
-			//int invokeAttr = 0;
 
-			if (memberInfo[0] is MethodInfo) {
-				// the member is a method
-				// TODO: 
-				//invokeAttr = BindingFlags._InvokeMethod.getValue();
-				throw new NotImplementedException("LateBinding not implmented");
-			}
-			else if (memberInfo[0] is PropertyInfo) {
-				// the member is a property
-				// TODO: 
-				//invokeAttr = BindingFlags._GetProperty.getValue();
-				throw new NotImplementedException("LateBinding not implmented");
-			}
-			else if (memberInfo[0] is FieldInfo) {
-				// the member is a field
-				// TODO: 
-				//invokeAttr = BindingFlags._GetField.getValue();
-				throw new NotImplementedException("LateBinding not implmented");
-			}
-			else {
+			if (memberInfo[0] is MethodInfo) 
+				invokeAttr = BindingFlags.InvokeMethod;
+			else if (memberInfo[0] is PropertyInfo) 
+				invokeAttr = BindingFlags.GetProperty;
+			else if (memberInfo[0] is FieldInfo) 
+				invokeAttr = BindingFlags.GetField;
+			else 
 				throw new NullReferenceException();
-			}
 
-			// invoke member - takes care about all three cases : field,property and field.
-			// TODO: 
-			//throw new NotImplementedException("LateBinding not implmented");
-			//return objType.InvokeMember(name, invokeAttr, null, o, args);
+			return objType.InvokeMember(name, invokeAttr, null, o, args);
 		}
 
 		[System.Diagnostics.DebuggerStepThroughAttribute] 
@@ -115,7 +97,9 @@ namespace Microsoft.VisualBasic.CompilerServices {
 			object[] args,
 			string[] paramnames,
 			bool OptimisticSet,
-			bool RValueBase) {
+			bool RValueBase) 
+		{
+			LateSet(o, objType, name, args, paramnames);
 		}
 
 		[System.Diagnostics.DebuggerStepThroughAttribute] 
@@ -126,6 +110,9 @@ namespace Microsoft.VisualBasic.CompilerServices {
 			string name,
 			object[] args,
 			string[] paramnames) {
+
+			BindingFlags invokeAttr;
+
 			if (objType == null) {
 				if (o == null)
 					throw new NullReferenceException();
@@ -139,37 +126,20 @@ namespace Microsoft.VisualBasic.CompilerServices {
 				}
 			}
 
-			// get the object's member by the name specified
 			MemberInfo[] memberInfo = objType.GetMember(name);
 
 			if (((memberInfo == null) || (memberInfo.Length == 0))) {
-				// no member with the name specified found
 				throw new NullReferenceException();
 			}
 
-			// TODO: readd when used
-			//int invokeAttr = 0;
-
-			if (memberInfo[0] is PropertyInfo) {
-				// the member is a property
-				// TODO: 
-				throw new NotImplementedException("LateBinding not implmented");
-				//invokeAttr = BindingFlags._SetProperty.getValue();
-			}
-			else if (memberInfo[0] is FieldInfo) {
-				// the member is a field
-				// TODO: 
-				throw new NotImplementedException("LateBinding not implmented");
-				//invokeAttr = BindingFlags._SetField.getValue();
-			}
-			else {
+			if (memberInfo[0] is PropertyInfo) 
+				invokeAttr = BindingFlags.SetProperty;
+			else if (memberInfo[0] is FieldInfo) 
+				invokeAttr = BindingFlags.SetField;
+			else 
 				throw new NullReferenceException();
-			}
 
-			// invoke member - takes care about the cases : field and property.
-			// TODO: 
-			//throw new NotImplementedException("LateBinding not implmented");
-			//objType.InvokeMember(name, invokeAttr, null, o, args);
+			objType.InvokeMember(name, invokeAttr, null, o, args);
 		}
 		//mono implmentation
 		//		[System.Diagnostics.DebuggerStepThroughAttribute] 
