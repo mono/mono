@@ -1,5 +1,16 @@
 2004-10-03  Zoltan Varga  <vargaz@freemail.hu>
 
+	* icall.c (ves_icall_System_Reflection_Module_GetPEKind): Add support
+	for dynamic images.
+
+	* object-internals.h (MonoReflectionAssemblyBuilder): Add pe_kind and
+	machine fields.
+
+	* metadata-internals.h (MonoDynamicImage): Add pe_kind and machine fields.
+
+	* reflection.c: Save pe_kind and machine values into the generated
+	image file.
+
 	* appdomain.c: Bump corlib version number.
 
 	* object-internals.h: Reorganize layout of LocalBuilder.
