@@ -26,11 +26,7 @@ USE_MCS_FLAGS :=
 # Martin Baulig will manually move them into TEST_SOURCES_common after merging the code into GMCS.
 # He may also move some to TEST_EXCLUDE_net_2_0 if some of the merges are inappropriate for GMCS.
 #
-NEW_TEST_SOURCES_common = test-294 test-304 test-305 test-306 test-307 test-318 mtest-5-dll mtest-5-exe \
-			test-319-dll test-319-exe test-320 test-323 test-324 test-325 test-326 \
-			test-327 test-328 test-40 \
-			covariance-1 covariance-2 covariance-3 \
-			$(TEST_SOURCES_XML)
+NEW_TEST_SOURCES_common = test-304 test-305 test-306 test-307
 
 #
 # Please do _not_ add any tests here - all new tests should go into NEW_TEST_SOURCES_common
@@ -42,7 +38,7 @@ TEST_SOURCES_common = \
 	test-1   test-2   test-3   test-4   test-5   test-6   test-7   test-8   test-9   test-10  \
 	test-11  test-12  test-13  test-14  test-15  test-16  test-17  test-18  test-19  test-20  \
 	test-21  test-22  test-23  test-24  test-25  test-26  test-27  test-28  test-29  test-30  \
-	test-31  test-32  test-33  test-34  test-35  test-36  test-37  test-38  test-39           \
+	test-31  test-32  test-33  test-34  test-35  test-36  test-37  test-38  test-39  test-40  \
 	test-41  test-42  test-43  test-44  test-45  test-46  test-47  test-48  test-49  test-50  \
 	test-51  test-52  test-53  test-54  test-55  test-56  test-57  test-58  test-59  test-60  \
 	test-61	 test-62  test-63  test-64  test-65  test-66           test-68  test-69  test-70  \
@@ -68,9 +64,10 @@ TEST_SOURCES_common = \
 	test-261 test-262 test-263 test-264 test-265 test-266 test-267 test-268 test-269 test-270 \
 	test-271 test-272 test-273 test-274 test-275 test-276 test-277 test-278 test-279 test-280 \
 	test-281 test-282 test-283 test-284 test-285 test-286 test-287 test-288 test-289 test-290 \
-	test-291 test-292 test-293          test-295 test-296 test-297 test-298 test-299 test-300 \
+	test-291 test-292 test-293 test-294 test-295 test-296 test-297 test-298 test-299 test-300 \
 	test-301 test-302 test-303                                              test-309 test-310 \
-	test-311 test-312 test-313 test-314 test-315 test-316 test-317 \
+	test-311 test-312 test-313 test-314 test-315 test-316 test-317 test-318          test-320 \
+	test-321          test-323 test-324 test-325 test-326 test-327 test-328 \
 	cls-test-0 cls-test-1 cls-test-2 cls-test-3 cls-test-5 cls-test-6 cls-test-7 cls-test-10  \
 	cls-test-11 cls-test-14 cls-test-15 cls-test-16 \
 	2test-1  2test-2  2test-3  2test-4  2test-5  2test-6  2test-7  2test-8  2test-9  2test-10 \
@@ -80,6 +77,9 @@ TEST_SOURCES_common = \
 	mtest-2-dll mtest-2-exe \
 	mtest-3-dll mtest-3-exe \
 	mtest-4-dll mtest-4-exe \
+	mtest-5-dll mtest-5-exe \
+	test-319-dll test-319-exe \
+	covariance-1 covariance-2 covariance-3 \
 	conv-dll conv-exe \
 	vararg-dll vararg-exe \
 	module-1 module-2 module-3 \
@@ -91,6 +91,7 @@ TEST_SOURCES_common = \
 	a-capture3	a-capture9    a-nested-anon   	a-simple2			\
 	a-capture4	a-event       a-nested		a-simple			\
 	acc-modifiers	acc-modifiers2							\
+	$(TEST_SOURCES_XML)								\
 	$(NEW_TEST_SOURCES_common)
 
 TEST_EXCLUDES_common = test-50 test-120 a-parameter4
