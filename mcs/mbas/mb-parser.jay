@@ -767,7 +767,7 @@ opt_type_character
 
 qualified_identifier
 	: identifier
-	| qualified_identifier DOT identifier 
+	| qualified_identifier DOT identifier // FIXME: It should be qualified_identifier DOT identifier-or-keyword
 	  { 
 	    $$ = (($1).ToString ()) + "." + ($3.ToString ()); 
 	  }
@@ -793,11 +793,11 @@ imports_terms
 	;
 	
 imports_term
-	: qualified_identifier 
+	: namespace_or_type_name 
 	  {
 		RootContext.SourceBeingCompiled.Imports ((string) $1, lexer.Location);
 	  }
-	| qualified_identifier ASSIGN qualified_identifier //FIXME: Should it be identifier ASSIGN qualified_identifier
+	| identifier ASSIGN namespace_or_type_name 
 	  {
 		RootContext.SourceBeingCompiled.ImportsWithAlias ((string) $1, (string) $3, lexer.Location);
 	  }
@@ -883,23 +883,24 @@ attribute_name
 			
 opt_attribute_arguments
 	: /* empty */ 	{ $$ = null; }
-	| OPEN_PARENS attribute_arguments CLOSE_PARENS
+	| OPEN_PARENS opt_attribute_arguments_list CLOSE_PARENS
 	  {
 		$$ = $2;
 	  }	
 	;
+
+opt_attribute_arguments_list
+	: /* empty */
+	| attribute_arguments_list
+	;		
 	
-attribute_arguments
-	: opt_positional_argument_list
+attribute_arguments_list
+	: positional_argument_list
 	  {
-		if ($1 == null)
-			$$ = null;
-		else {
-			ArrayList args = new ArrayList ();
-			args.Add ($1);
-		
-			$$ = args;
-		}
+		ArrayList args = new ArrayList ();
+		args.Add ($1);
+	
+		$$ = args;
 	  }
         | positional_argument_list COMMA named_argument_list
 	  {
@@ -919,21 +920,15 @@ attribute_arguments
 	  }
         ;
 
-
-opt_positional_argument_list
-	: /* empty */ 		{ $$ = null; } 
-	| positional_argument_list
-	;
-
 positional_argument_list
-	: expression
+	: constant_expression
 	  {
 		ArrayList args = new ArrayList ();
 		args.Add (new Argument ((Expression) $1, Argument.AType.Expression));
 
 		$$ = args;
 	  }
-        | positional_argument_list COMMA expression
+        | positional_argument_list COMMA constant_expression
 	 {
 		ArrayList args = (ArrayList) $1;
 		args.Add (new Argument ((Expression) $3, Argument.AType.Expression));
@@ -960,7 +955,7 @@ named_argument_list
         ;
 
 named_argument
-	: identifier ATTR_ASSIGN expression
+	: identifier ATTR_ASSIGN constant_expression //FIXME: It should be identifier_or_keyword ATTR_ASSIGN constant_expression
 	  {
 		$$ = new DictionaryEntry (
 			(string) $1, 
@@ -969,19 +964,10 @@ named_argument
 	;
 				
 namespace_declaration
-	: opt_attributes NAMESPACE qualified_identifier logical_end_of_line
+	: NAMESPACE qualified_identifier logical_end_of_line
 	  {
-		Attributes attrs = (Attributes) $1;
-
-		if (attrs != null) {
-			foreach (AttributeSection asec in attrs.AttributeSections)
-				if (asec.Target == "assembly")
-					RootContext.AddGlobalAttributeSection (current_container, asec);
-		}
-			  
-		current_namespace = RootContext.Tree.RecordNamespace(current_namespace, name, (string)$3);
+		current_namespace = RootContext.Tree.RecordNamespace(current_namespace, name, (string)$2);
 	  } 
-	  opt_imports_directives
 	  opt_declarations
 	  END NAMESPACE logical_end_of_line
 	  { 
@@ -1489,7 +1475,7 @@ event_declaration
 	
 enum_declaration
 	: ENUM identifier opt_type_spec logical_end_of_line
-	  opt_enum_member_declarations
+	  opt_enum_member_declarations // FIXME: BC30280: Enum must contain atleast one member
 	  { 
 		Location enum_location = lexer.Location;
 		string full_name = MakeName ((string) $2);
@@ -4113,10 +4099,9 @@ assignment_expression
 	  }	  	  
 	;
 
-/*constant_expression
+constant_expression
 	: expression
 	;
-*/
 
 boolean_expression
 	: expression

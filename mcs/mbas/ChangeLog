@@ -9,6 +9,13 @@
 	2) Introduced new Tokens that correspond to reserved but unused
 	   VB.NET keywords. Added some comments as appropriate in the
 	   keywords hashtable of tokenizer - section 2.3 of VB.NET spec.
+
+	3) Corrected 'imports_term' - section 6.3.1 & 6.3.2 of VB.NET
+	   spec.
+
+	4) Introduced opt_argument_list - section 5.2 of VB.NET spec
+
+	5) Corrected namespace_declaration - section 6.4.1 of VB.NET spec
 	
 
 2004-08-04 Anirban Bhattacharjee <banirban@novell.com>
