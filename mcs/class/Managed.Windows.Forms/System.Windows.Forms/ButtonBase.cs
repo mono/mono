@@ -23,6 +23,9 @@
 //	Peter Bartok	pbartok@novell.com
 //
 // $Log: ButtonBase.cs,v $
+// Revision 1.13  2004/10/14 06:15:57  ravindra
+// Redraw () related improvements.
+//
 // Revision 1.12  2004/10/13 22:32:38  pbartok
 // - Now Redraws on MouseUp for FlatStyle Flat and Popup
 //
@@ -98,6 +101,7 @@ namespace System.Windows.Forms {
 		internal bool			has_focus;
 		internal bool			is_pressed;
 		internal bool			is_entered;
+		private bool			redraw;
 		internal StringFormat		text_format;
 		#endregion	// Local Variables
 
@@ -133,8 +137,8 @@ namespace System.Windows.Forms {
 
 		[MonoTODO("Make the FillRectangle use a global brush instead of creating one every time")]
 		internal virtual void Redraw() {
-			ThemeEngine.Current.DrawButtonBase(this.DeviceContext, this.ClientRectangle, this);
-			Refresh();
+			redraw = true;
+			Refresh ();
 		}
 
 		private void RedrawEvent(object sender, System.EventArgs e) {
@@ -156,6 +160,7 @@ namespace System.Windows.Forms {
 			is_entered	= false;
 			is_pressed	= false;
 			has_focus	= false;
+			redraw		= true;
 			text_format	= new StringFormat();
 			text_format.Alignment = StringAlignment.Center;
 			text_format.LineAlignment = StringAlignment.Center;
@@ -475,7 +480,13 @@ namespace System.Windows.Forms {
 		}
 
 		protected override void OnPaint(PaintEventArgs pevent) {
+			if (redraw) {
+				ThemeEngine.Current.DrawButtonBase(this.DeviceContext, pevent.ClipRectangle, this);
+				redraw = false;
+			}
+
 			pevent.Graphics.DrawImage(this.ImageBuffer, pevent.ClipRectangle, pevent.ClipRectangle, GraphicsUnit.Pixel);
+
 			base.OnPaint(pevent);
 		}
 
@@ -499,6 +510,7 @@ namespace System.Windows.Forms {
 
 		protected void ResetFlagsandPaint() {
 			// Nothing to do; MS internal
+			// Should we do Redraw (); ?
 		}
 
 		protected override void WndProc(ref Message m) {
