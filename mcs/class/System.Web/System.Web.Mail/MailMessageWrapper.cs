@@ -1,11 +1,19 @@
-// MailMessageWrapper.cs
-// author: Per Arneng <pt99par@student.bth.se>
+//
+// System.Web.Mail.MailMessageWrapper.cs
+//
+// Author(s):
+//   Per Arneng <pt99par@student.bth.se>
+//
+//
 using System;
 using System.Collections;
 using System.Text;
 
 namespace System.Web.Mail {
 
+    // wraps a MailMessage to make an easier
+    // interface to work with collections of
+    // addresses instead of a single string
     internal class MailMessageWrapper {
 		
 	private MailAddressCollection bcc = new MailAddressCollection();

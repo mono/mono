@@ -1,11 +1,17 @@
-// MailAddressCollection.cs
-// author: Per Arneng <pt99par@student.bth.se>
+//
+// System.Web.Mail.MailAddressCollection.cs
+//
+// Author(s):
+//   Per Arneng <pt99par@student.bth.se>
+//
+//
 using System;
 using System.Text;
 using System.Collections;
 
 namespace System.Web.Mail {
 
+    // represents a collection of MailAddress objects
     internal class MailAddressCollection : IEnumerable {
 	
 	protected ArrayList data = new ArrayList();

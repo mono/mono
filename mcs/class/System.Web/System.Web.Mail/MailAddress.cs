@@ -1,9 +1,15 @@
-// MailAddress.cs
-// author: Per Arneng <pt99par@student.bth.se>
+//
+// System.Web.Mail.MailAddress.cs
+//
+// Author(s):
+//   Per Arneng <pt99par@student.bth.se>
+//
+//
 using System;
 
 namespace System.Web.Mail {
 
+    // Reperesents a mail address
     internal class MailAddress {
 	
 	protected string user;
