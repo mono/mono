@@ -1,4 +1,8 @@
 2004-11-06  Jambunathan K  <kjambunathan@novell.com>
+	* rootcontext.cs: Removed the static field -
+	RootContext:global_attribute.
+
+2004-11-06  Jambunathan K  <kjambunathan@novell.com>
 	* class.cs: 
 	* attribute.cs: Removed the incomplete and (for now) unnecessary
 	Mono.MonoBASIC.Operator class. Let us bother about this later.

@@ -35,11 +35,6 @@ namespace Mono.MonoBASIC {
 		public static Hashtable AllDefines = new Hashtable ();
 		
 		//
-		// The list of global attributes (those that target the assembly)
-		//
-		static Hashtable global_attributes = new Hashtable ();
-		
-		//
 		// Whether we are being linked against the standard libraries.
 		// This is only used to tell whether `System.Object' should
 		// have a parent or not.
@@ -756,25 +751,6 @@ namespace Mono.MonoBASIC {
 
 		static public void EmitCode ()
 		{
-			//
-			// Because of the strange way in which we do things, global
-			// attributes must be processed first.
-			//
-			if (global_attributes.Count > 0){
-				AssemblyBuilder ab = CodeGen.AssemblyBuilder;
-				TypeContainer dummy = new TypeContainer (null, "", new Location (-1, 0));
-				EmitContext temp_ec = new EmitContext (
-					dummy, Mono.MonoBASIC.Location.Null, null, null, 0, false);
-			
-				foreach (DictionaryEntry de in global_attributes){
-					Namespace ns = (Namespace) de.Key;
-					Attributes attrs = (Attributes) de.Value;
-					
-					dummy.Namespace = ns;
-					Attribute.ApplyAttributes (temp_ec, ab, ab, attrs, attrs.Location);
-				}
-			}
-
 			if (attribute_types != null)
 				foreach (TypeContainer tc in attribute_types)
 					tc.Emit ();
