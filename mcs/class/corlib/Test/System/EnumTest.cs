@@ -412,18 +412,17 @@ public class EnumTest : TestCase
 			Assert("non-enum type not caught.", 
 			       errorThrown);
 		}
-		{
-			bool errorThrown = false;
-			try {
-				TestingEnum x = TestingEnum.Test;
-				short i = 4;
-				Enum.IsDefined(x.GetType(), i);
-			} catch (ArgumentException) {
-				errorThrown = true;
-			}
-			Assert("wrong underlying type not caught.", 
-			       errorThrown);
+
+		try {
+			TestingEnum x = TestingEnum.Test;
+			short i = 4;
+			Enum.IsDefined(x.GetType(), i);
+			Fail("wrong underlying type not caught.");
+		} catch (ArgumentException) {
+		} catch (Exception e) {
+			Fail("wrong Exception thrown ("+e.ToString()+")for underlying type not caught.");
 		}
+
 		// spec says yes, MS impl says no.
 		//{
 		//bool errorThrown = false;
@@ -442,7 +441,7 @@ public class EnumTest : TestCase
 			int i = 0;
 			for (i = 0; 
 			     i < Enum.GetValues(t1.GetType()).Length; i++) {
-				Assert("should have value",
+				Assert("should have value for i=" + i,
 				       Enum.IsDefined(t1.GetType(), i));
 			}
 			Assert("Shouldn't have value",
