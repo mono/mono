@@ -1,12 +1,13 @@
 // cs0053.cs: Inconsistent accessibility. Property type is less accessible than property.
-// Line: 10
+// Line: 11
 
 using System;
 
 class ErrorCS0053 {
+	public ErrorCS0053 () {}
 }
 
-class Foo {
+public class Foo {
 	public ErrorCS0053 Property {
 		get { return new ErrorCS0053 (); } 
 	}

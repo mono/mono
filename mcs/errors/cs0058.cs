@@ -4,9 +4,10 @@
 using System;
 
 class ErrorCS0058 {
+	public ErrorCS0058 () {}
 }
 
-class Foo {
+public class Foo {
 	public delegate ErrorCS0058 Delegate ();
 
 	public static void Main () {

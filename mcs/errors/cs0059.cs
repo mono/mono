@@ -6,7 +6,7 @@ using System;
 class ErrorCS0059 {
 }
 
-class Foo {
+public class Foo {
 	public delegate void ErrorCS0059Delegate (ErrorCS0059 e);
 
 	public static void Main () {

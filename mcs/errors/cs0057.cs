@@ -1,14 +1,15 @@
-// cs0057.cs: Inconsisten accessibility. Parameter type is less accessible than operator.
-// Line: 10
+// cs0057.cs: Inconsistent accessibility. Parameter type is less accessible than operator.
+// Line: 11
 
 using System;
 
 class ErrorCS0057 {
+	public ErrorCS0057 ();
 }
 
-class Foo {
-	public static implicit operator ErrorCS0057(Foo bar) {
-		return new ErrorCS0057 ();
+public class Foo {
+	public static implicit operator Foo(ErrorCS0057 bar) {
+		return new Foo ();
 	}
 
 	public static void Main () {
