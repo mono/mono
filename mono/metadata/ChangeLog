@@ -1,5 +1,7 @@
 2001-08-21  Dietmar Maurer  <dietmar@ximian.com>
 
+	* image.h: merged MonoMetadata into MonoImage
+
 	* class.h: cleanup of MonoArrayClass, use a MonoClass pointer to
 	identify the type of elements.
 
