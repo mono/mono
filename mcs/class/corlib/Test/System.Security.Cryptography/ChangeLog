@@ -1,3 +1,11 @@
+2002-10-13  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* AllTests.cs: Added suite for HashAlgorithm, KeyedHashAlgorithm and
+        HMACSHA1
+	* HashAlgorithmTest.cs: New. Test for Create and Clear
+        * KeyedHashAlgorithmTest.cs: New. Test for Create and key assignation
+        * HMACSHA1Test.cs: New. Test vectors from FIPS 198 and RFC2202
+
 2002-10-12  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* AllTests.cs: Added suite for RandomNumberGenerator, SHA1 and 

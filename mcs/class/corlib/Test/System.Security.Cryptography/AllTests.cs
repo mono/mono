@@ -57,6 +57,12 @@ namespace MonoTests.System.Security.Cryptography {
 				suite.AddTest (CryptoConfigTest.Suite);
 				suite.AddTest (DSATest.Suite);
 				suite.AddTest (RSATest.Suite);
+                                suite.AddTest (RandomNumberGeneratorTest.Suite);
+                                suite.AddTest (HashAlgorithmTest.Suite);
+                                suite.AddTest (SHA1Test.Suite);
+                                suite.AddTest (SHA1CryptoServiceProviderTest.Suite);
+				suite.AddTest (KeyedHashAlgorithmTest.Suite);
+				suite.AddTest (HMACSHA1Test.Suite);
                                 return suite;
                         }
                 }

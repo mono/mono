@@ -36,6 +36,11 @@ public class HashAlgorithmTest : TestCase {
 		}
 	}
 
+	public void AssertEquals (string msg, byte[] array1, byte[] array2) 
+	{
+		AllTests.AssertEquals (msg, array1, array2);
+	}
+
 	// Note: These tests will only be valid without a "machine.config" file
 	// or a "machine.config" file that do not modify the default algorithm
 	// configuration.
