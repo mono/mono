@@ -127,7 +127,8 @@ namespace Mono.Xml.Xsl
 	
 		public CompiledStylesheet Compile (XPathNavigator nav, XmlResolver res, Evidence evidence)
 		{
-			this.parser = new XPathParser (this);
+			this.xpathParser = new XPathParser (this);
+			this.patternParser = new XsltPatternParser (this);
 			this.res = res;
 			if (res == null)
 				this.res = new XmlUrlResolver ();
@@ -350,7 +351,8 @@ namespace Mono.Xml.Xsl
 			return p;
 		}
 
-		internal XPathParser parser;
+		internal XPathParser xpathParser;
+		internal XsltPatternParser patternParser;
 		internal CompiledExpression CompileExpression (string expression)
 		{
 			return CompileExpression (expression, false);
@@ -360,7 +362,7 @@ namespace Mono.Xml.Xsl
 		{
 			if (expression == null || expression == "") return null;
 
-			Expression expr = parser.Compile (expression);
+			Expression expr = xpathParser.Compile (expression);
 			if (isKey)
 				expr = new ExprKeyContainer (expr);
 			CompiledExpression e = new CompiledExpression (expression, expr);

@@ -43,7 +43,7 @@ namespace Mono.Xml.XPath
 	{
 		internal static Pattern Compile (string s, Compiler comp)
 		{		
-			return Compile (comp.parser.Compile (s));
+			return Compile (comp.patternParser.Compile (s));
 		}
 		
 		internal static Pattern Compile (Expression e)

@@ -1,5 +1,18 @@
 2005-03-22  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* Compiler.cs : Now it holds XPath parser and XSLT pattern parser.
+	* XslKey.cs : Use XSLT pattern parser for match.
+	  UsePattern is now "Use" (it is not a pattern). 
+	  Reimplemented Evaluate() to make full use of index table.
+	  Added Matches() to handle shorter match evaluation. For const value
+	  for key (e.g. key patterns), it could avoid Evaluate().
+	* XsltCompiledContext.cs : Added MatchesKey() that just delegates to
+	  new KeyIndexTable.Matches().
+	* XslFunctions.cs : Added PatternMatches() that just delegates to new
+	  XsltCompiledContext.MatchesKey().
+
+2005-03-22  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* GenericOutputter.cs : commented out warned fields.
 
 2005-03-15  Atsushi Enomoto  <atsushi@ximian.com>

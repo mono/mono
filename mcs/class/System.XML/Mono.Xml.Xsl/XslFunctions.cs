@@ -546,7 +546,16 @@ namespace Mono.Xml.Xsl
 		internal override bool Peer {
 			get { return arg0.Peer && arg1.Peer; }
 		}
-		
+
+		public bool PatternMatches (XPathNavigator nav, XsltContext nsmgr)
+		{
+			XsltCompiledContext ctx = nsmgr as XsltCompiledContext;
+			// for key pattern, it must contain literal value
+			return ctx.MatchesKey (nav, staticContext,
+				arg0.StaticValueAsString,
+				arg1.StaticValueAsString);
+		}
+
 		public override object Evaluate (BaseIterator iter)
 		{
 			XsltCompiledContext ctx = iter.NamespaceManager

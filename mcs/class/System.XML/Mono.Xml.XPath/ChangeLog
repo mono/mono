@@ -1,5 +1,11 @@
 2004-03-22  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* Pattern.cs : Pattern.Compile() now uses XSLT pattern parser instead
+	  of XPath parser.
+	* KeyPattern.cs : Matches() now just delegates to XsltKey.MatchesKey().
+
+2004-03-22  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DTMXPathDocumentBuilder.cs,
 	  DTMXPathDocumentWriter.cs,
 	  DTMXPathNavigator.cs,

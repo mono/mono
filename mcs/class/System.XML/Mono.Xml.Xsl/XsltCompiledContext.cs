@@ -83,6 +83,15 @@ namespace Mono.Xml.Xsl
 			return table.Evaluate (iter, valueExpr);
 		}
 
+		public bool MatchesKey (XPathNavigator nav,
+			IStaticXsltContext staticContext,
+			string name, string value)
+		{
+			QName qname = XslNameUtil.FromString (name, staticContext);
+			KeyIndexTable table = GetIndexTable (qname);
+			return table.Matches (nav, value, this);
+		}
+
 		private QName GetKeyName (IStaticXsltContext staticContext,
 			BaseIterator iter, Expression nameExpr)
 		{

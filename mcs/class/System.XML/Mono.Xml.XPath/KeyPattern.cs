@@ -51,11 +51,7 @@ namespace Mono.Xml.XPath
 		
 		public override bool Matches (XPathNavigator node, XsltContext ctx)
 		{
-			XPathNodeIterator iter = key.EvaluateNodeSet (new SelfIterator (node, ctx));
-			while (iter.MoveNext ())
-				if (iter.Current.IsSamePosition (node))
-					return true;
-			return false;
+			return key.PatternMatches (node, ctx);
 		}
 
 		public override double DefaultPriority { get { return 0.5; } }
