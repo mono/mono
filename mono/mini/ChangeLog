@@ -1,3 +1,22 @@
+2004-02-24  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-sparc.c (mono_sparc_is_virtual_call): New helper function.
+
+	* tramp-sparc.c (create_specific_trampoline): Use g5 register instead
+	of l0 since that is callee saved.
+
+	* tramp-sparc.c (sparc_magic_trampoline): Apply unbox trampoline only
+	to virtual calls.
+
+	* mini-sparc.c: Ongoing work + flag virtual calls with a special kind 
+	of delay instruction.
+
+	* inssel.brg (OP_CHECK_THIS): Set tree->sreg1 and dreg correctly.
+
+	* mini.h (MonoCallInst): Add 'virtual' flag.
+
+	* inssel.brg (mini_emit_virtual_call): Set 'virtual' flag.
+
 2004-02-23  Zoltan Varga  <vargaz@freemail.hu>
 
 	* *.cs: New regression tests.
