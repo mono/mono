@@ -9,16 +9,16 @@
 
 namespace System {
 	
-	public struct UInt16 : ValueType {
+	public struct UInt16 : ValueType, IComparable, IFormattable {
 		public const ushort MinValue = 0;
 		public const ushort MaxValue = 0xffff;
 		
-		short value;
+		ushort value;
 
 		public int CompareTo (object v)
 		{
 			if (!(value is System.UInt16))
-				throw new ArgumentException ("Value is not a System.Int16");
+				throw new ArgumentException ("Value is not a System.UInt16");
 
 			return value - ((ushort) v);
 		}
@@ -84,7 +84,7 @@ namespace System {
 			return "";
 		}
 
-		publig string ToString (string format, IFormatProvider fp)
+		public string ToString (string format, IFormatProvider fp)
 		{
 			// TODO: Implement me.
 			return "";

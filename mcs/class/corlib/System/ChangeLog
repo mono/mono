@@ -1,3 +1,23 @@
+2001-07-06  Joe Shaw  <joe@ximian.com>
+
+	* Int16.cs, Int32.cs, Int64.cs, UInt16.cs, UInt32.cs, UInt64.cs:
+	Implement the IComparable and IFormattable interfaces. Fix a
+	typo (publig -> public)
+
+	* ApplicationException.cs, ArgumentException.cs,
+	ArgumentNullException.cs, ArgumentOutOfRangeException.cs,
+	ArtithmeticException.cs, ArrayTypeMismatchException.cs,
+	DivideByZeroException.cs, DuplicateWaitObjectException.cs,
+	ExecutionEngineException.cs, FormatException.cs,
+	IndexOutOfRangeException.cs, InvalidCastException.cs,
+	InvalidOperationException.cs, InvalidProgramException.cs,
+	MulticateNotSupportedException.cs, NotFiniteNumberException.cs,
+	NotSupportedException.cs, NullReferenceException.cs,
+	OutOfMemoryException.cs, OverflowException.cs, RankException.cs,
+	StackOverflowException.cs, SystemException.cs,
+	TypeInitializationException.cs: Added all of the exceptions
+	specified by the language spec. Mmmm... bloat.
+
 2001-07-06  Miguel de Icaza  <miguel@ximian.com>
 
 	* Int64.cs, Int32.cs: Put.  Parsing and ToString missing.  Should

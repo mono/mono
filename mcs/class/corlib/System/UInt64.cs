@@ -9,7 +9,7 @@
 
 namespace System {
 	
-	public struct UInt64 : ValueType {
+	public struct UInt64 : ValueType, IComparable, IFormattable {
 		public const ulong MinValue = 0;
 		public const ulong MaxValue = 0xffffffffffffffff;
 		
@@ -84,7 +84,7 @@ namespace System {
 			return "";
 		}
 
-		publig string ToString (string format, IFormatProvider fp)
+		public string ToString (string format, IFormatProvider fp)
 		{
 			// TODO: Implement me.
 			return "";

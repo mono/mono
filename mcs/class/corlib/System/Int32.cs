@@ -9,7 +9,7 @@
 
 namespace System {
 	
-	public struct Int32 : ValueType {
+	public struct Int32 : ValueType, IComparable, IFormattable {
 		public const int MinValue = 0x80000000;
 		public const int MaxValue = 0x7fffffff;
 		
@@ -84,7 +84,7 @@ namespace System {
 			return "";
 		}
 
-		publig string ToString (string format, IFormatProvider fp)
+		public string ToString (string format, IFormatProvider fp)
 		{
 			// TODO: Implement me.
 			return "";
