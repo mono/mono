@@ -7,7 +7,6 @@
 // (C) 2003 Novell, Inc (http://www.novell.com)
 //
 
-
 using System;
 
 namespace System.Web.SessionState {
@@ -15,28 +14,29 @@ namespace System.Web.SessionState {
 	[Serializable]
 	public class StateServerItem {
 
-		private byte [] data;
-		//	  private HttpStaticObjectsCollection static_objects;
+		private byte [] dict_data;
+		private byte [] sobjs_data;
 		private DateTime last_access;
 		private int timeout;
 
-		public StateServerItem (byte[] data, int timeout)
+		public StateServerItem (byte [] dict_data, byte [] sobjs_data, int timeout)
 		{
-			this.data = data;
+			this.dict_data = dict_data;
+			this.sobjs_data = sobjs_data;
 			this.timeout = timeout;
 			this.last_access = DateTime.Now;
 		}
 
-		public byte [] Data {
-			get { return data; }
-			set { data = value; }
+		public byte [] DictionaryData {
+			get { return dict_data; }
+			set { dict_data = value; }
+		}
+
+		public byte [] StaticObjectsData {
+			get { return sobjs_data; }
+			set { sobjs_data = value; }
 		}
 		
-/*
-		internal HttpStaticObjectsCollection StaticObjects {
-			get { return static_objects; }
-		}
-*/		  
 		public void Touch ()
 		{
 			last_access = DateTime.Now;

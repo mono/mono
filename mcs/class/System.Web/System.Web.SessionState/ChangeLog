@@ -1,3 +1,15 @@
+2003-11-25  Jackson Harper <jackson@ximian.com>
+
+	* RemoteStateServer.cs: Update the session dictionary data and the
+	static objects data.
+	* SessionDictionary.cs: Remove type serialization methods, these
+	have been moved to a utility class. Add convenience methods for
+	converting to/from byte arrays.
+	* SessionSQLServerHandler.cs: 
+	* SessionStateServerHandler.cs: Save/Restore static objects. Use new
+	to/from byte array methods.
+	* StateServerItem.cs: Hold static objects data.
+	
 2003-11-24  Jackson Harper <jackson@ximian.com>
 
 	* SessionStateServerHandler.cs: Parse connection string. Need to

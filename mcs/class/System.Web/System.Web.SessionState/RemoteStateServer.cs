@@ -27,14 +27,15 @@ namespace System.Web.SessionState {
 			table.Add (id, item);
 		}
 
-		internal void Update (string id, byte [] data)
+		internal void Update (string id, byte [] dict_data, byte [] sobjs_data)
 		{
 			StateServerItem item = table [id] as StateServerItem;
 
 			if (item == null)
 				return;
 
-			item.Data = data;
+			item.DictionaryData = dict_data;
+			item.StaticObjectsData = sobjs_data;
 			item.Touch ();
 		}
 		
@@ -48,8 +49,6 @@ namespace System.Web.SessionState {
 			item.Touch ();
 			return item;
 		}
-
 	}
-
 }
 

@@ -146,30 +146,18 @@ namespace System.Web.SessionState {
 				if (!reader.Read ())
 					return null;
 
-				SessionDictionary dict = null;
-				MemoryStream stream = null;
-				int len = (int) reader.GetBytes (reader.FieldCount-1, 0, null, 0, 0);
-				byte[] data = new byte[len];
-				reader.GetBytes (reader.FieldCount-1, 0, data, 0, len);
-				try {
-					stream = new MemoryStream (data);
-					dict = SessionDictionary.Deserialize (new BinaryReader (stream));
-				} catch {
-					throw;
-				} finally {
-					if (stream != null)
-						stream.Close ();
-				}
-
-				session = new HttpSessionState (id, dict,
-						new HttpStaticObjectsCollection (),
-						100, true, false,
+				SessionDictionary dict; 
+				HttpStaticObjectsCollection sobjs;
+				
+				dict = SessionDictionary.FromByteArray (ReadBytes (reader, reader.FieldCount-1));
+				sobjs = HttpStaticObjectsCollection.FromByteArray (ReadBytes (reader, reader.FieldCount-2));
+				
+				session = new HttpSessionState (id, dict, sobjs, 100, true, false,
 						SessionStateMode.SQLServer, false);
 				return session;
 			} catch {
 				throw;
 			}
-
 		}
 
 		private void InsertSession (HttpSessionState session, int timeout)
@@ -178,7 +166,7 @@ namespace System.Web.SessionState {
 			IDataParameterCollection param;
 
 			string insert = "INSERT INTO ASPStateTempSessions VALUES " +
-			"(:SessionID, :Created, :Expires, :Timeout, :SessionData)";
+			"(:SessionID, :Created, :Expires, :Timeout, :StaticObjectsData, :SessionData)";
 
 			command.CommandText = insert;
 
@@ -187,8 +175,10 @@ namespace System.Web.SessionState {
 			param.Add (CreateParam (command, DbType.DateTime, ":Created", DateTime.Now));
 			param.Add (CreateParam (command, DbType.DateTime, ":Expires", Tommorow ()));
 			param.Add (CreateParam (command, DbType.Int32, ":Timeout", timeout));
+			param.Add (CreateParam (command, DbType.Binary, ":StaticObjectData",
+						   session.StaticObjects.ToByteArray ()));
 			param.Add (CreateParam (command, DbType.Binary, ":SessionData",
-						   GetDictData (session.SessionDictionary)));
+						   session.SessionDictionary.ToByteArray ()));
 
 			command.ExecuteNonQuery ();
 		}
@@ -206,7 +196,7 @@ namespace System.Web.SessionState {
 			param = command.Parameters;
 			param.Add (CreateParam (command, DbType.String, ":SessionID", id));
 			param.Add (CreateParam (command, DbType.Binary, ":SessionData",
-								GetDictData (dict)));
+								dict.ToByteArray ()));
 
 			command.ExecuteNonQuery ();
 		}
@@ -221,21 +211,6 @@ namespace System.Web.SessionState {
 			return result;
 		}
 
-		private byte[] GetDictData (SessionDictionary dict)
-		{
-			MemoryStream stream = null;
-			try {
-				stream = new MemoryStream ();
-				dict.Serialize (new BinaryWriter (stream));
-				return stream.GetBuffer ();
-			} catch {
-				throw;
-			} finally {
-				if (stream != null)
-					stream.Close ();
-			}
-		}
-
 		private DateTime Tommorow ()
 		{
 			return DateTime.Now.AddDays (1);
@@ -248,6 +223,14 @@ namespace System.Web.SessionState {
 				return context.Request.Cookies [CookieName].Value;
 
 			return null;
+		}
+
+		private byte [] ReadBytes (IDataReader reader, int index)
+		{
+			int len = (int) reader.GetBytes (reader.FieldCount-1, 0, null, 0, 0);
+			byte [] data = new byte [len];
+			reader.GetBytes (index, 0, data, 0, len);
+			return data;
 		}
 	}
 }

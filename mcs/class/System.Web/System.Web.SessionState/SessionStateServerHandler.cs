@@ -45,8 +45,8 @@ namespace System.Web.SessionState {
 			
 			string id = context.Session.SessionID;
 			SessionDictionary dict = context.Session.SessionDictionary;
-
-			state_server.Update (id, GetDictData (dict));
+			HttpStaticObjectsCollection sobjs = context.Session.StaticObjects;
+			state_server.Update (id, dict.ToByteArray (), sobjs.ToByteArray ());
 		}
 
 		public bool UpdateContext (HttpContext context, SessionStateModule module)
@@ -60,17 +60,9 @@ namespace System.Web.SessionState {
 			if (id != null) {
 				item = state_server.Get (id);
 				if (item != null) {
-					MemoryStream stream = null;
-					try {
-						stream = new MemoryStream (item.Data);
-						dict = SessionDictionary.Deserialize (new BinaryReader (stream));
-					} catch {
-						throw;
-					} finally {
-						if (stream != null)
-							stream.Close ();
-					}
-					session = new HttpSessionState (id, dict, new HttpStaticObjectsCollection (),
+					dict = SessionDictionary.FromByteArray (item.DictionaryData);
+					sobjs = HttpStaticObjectsCollection.FromByteArray (item.StaticObjectsData);
+					session = new HttpSessionState (id, dict, sobjs, 
 							config.Timeout, false, config.CookieLess,
 							SessionStateMode.StateServer, false);
 					context.SetSession (session);
@@ -78,12 +70,10 @@ namespace System.Web.SessionState {
 				}
 			}
 			
-			
 			id = SessionId.Create (module.Rng);
-
 			dict = new SessionDictionary ();
 			sobjs = new HttpStaticObjectsCollection ();
-			item = new StateServerItem (GetDictData (dict), config.Timeout);
+			item = new StateServerItem (dict.ToByteArray (), sobjs.ToByteArray (), config.Timeout);
 			
 			state_server.Insert (id, item);
 
