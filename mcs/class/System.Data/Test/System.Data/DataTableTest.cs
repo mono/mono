@@ -1139,8 +1139,8 @@ namespace MonoTests.System.Data
 		[Test]
 		public void ClearReset () //To test Clear and Reset methods
 		{
-			DataTable table = new DataTable ();
-			DataTable table1 = new DataTable ();
+			DataTable table = new DataTable ("table");
+			DataTable table1 = new DataTable ("table1");
                 
 			DataSet set = new DataSet ();
 			set.Tables.Add (table);
@@ -1186,14 +1186,14 @@ namespace MonoTests.System.Data
 			AssertEquals (1, table.ChildRelations.Count);
 			try {
 				table.Reset ();
-				Fail ("#A01");
+				Fail ("#A01, should have thrown ArgumentException");
 			}
                         catch (ArgumentException) {
 			}
-			AssertEquals (0, table.Rows.Count);
-			AssertEquals (0, table.ChildRelations.Count);
-			AssertEquals (0, table.ParentRelations.Count);
-			AssertEquals (0, table.Constraints.Count);
+			AssertEquals ("#CT01", 0, table.Rows.Count);
+			AssertEquals ("#CT02", 0, table.ChildRelations.Count);
+			AssertEquals ("#CT03", 0, table.ParentRelations.Count);
+			AssertEquals ("#CT04", 0, table.Constraints.Count);
 			table.Clear ();
 
 			table1.Reset ();

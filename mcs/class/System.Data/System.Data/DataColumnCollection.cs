@@ -308,9 +308,7 @@ namespace System.Data {
 						
 			//Check that the column does not have a null reference.
 			if (column == null)
-			{
-                return false;
-			}
+                                return false;
 
 			
 			//Check that the column is part of this collection.
@@ -372,8 +370,36 @@ namespace System.Data {
 				}
 			}
 			
-			//TODO: check constraints
-
+                        // check for part of pk
+                        UniqueConstraint uc = UniqueConstraint.GetPrimaryKeyConstraint (parentTable.Constraints);
+                        if (uc != null && uc.Contains (column)) 
+                                throw new ArgumentException (String.Format ("Cannot remove column {0}, because" +
+                                                             " it is part of primarykey",
+                                                             column.ColumnName));
+                        // check for part of fk
+                        DataSet ds = parentTable.DataSet;
+                        
+                        if (ds != null) {
+                                foreach (DataTable t in ds.Tables) {
+                                        if (t == parentTable)
+                                                continue;
+                                        foreach (Constraint c in t.Constraints) {
+                                                if (! (c is ForeignKeyConstraint))
+                                                        continue;
+                                                ForeignKeyConstraint fk = (ForeignKeyConstraint) c;
+                                                if (fk.Contains (column, true)      // look in parent
+                                                    || fk.Contains (column, false)) // look in children
+                                                        throw new ArgumentException (String.Format ("Cannot remove column {0}, because" +
+                                                                                     " it is part of foreign key constraint",
+                                                                                     column.ColumnName));
+                                                
+                                        }
+                                        
+                                }
+                                
+                                
+                        }
+                        
 			return true;
 		}
 
@@ -424,7 +450,13 @@ namespace System.Data {
 				}
 
 			}
-			
+
+                        // whether all columns can be removed
+                        foreach (DataColumn col in this) {
+                                if (!CanRemove (col))
+                                        throw new ArgumentException ("Cannot remove column {0}", col.ColumnName);
+                        }
+
 			try {
 				columnFromName.Clear();
 				autoIncrement.Clear();

@@ -124,19 +124,22 @@ namespace System.Data
 		/// </summary>
 		public void Clear () 
 		{
-			if (this.table.DataSet != null && this.table.DataSet.EnforceConstraints)
-			{
-				foreach (DataTable table in this.table.DataSet.Tables)
-				{
-					foreach (Constraint c in table.Constraints)
-					{
-						if (c is ForeignKeyConstraint)
-						{
-							if (((ForeignKeyConstraint) c).RelatedTable.Equals(this.table))
+			if (this.table.DataSet != null && this.table.DataSet.EnforceConstraints) {
+				foreach (DataTable table in this.table.DataSet.Tables) {
+					foreach (Constraint c in table.Constraints) {
+						if (c is ForeignKeyConstraint) {
+                                                                                                                ForeignKeyConstraint fk = (ForeignKeyConstraint) c;
+							if (fk.RelatedTable.Equals(this.table) 
+                                                            && fk.Table.Rows.Count > 0) // check does not make sense if we don't have rows
 #if NET_1_1
-								throw new InvalidConstraintException (String.Format ("Cannot clear table Parent because ForeignKeyConstraint {0} enforces Child.", c.ConstraintName));
+								throw new InvalidConstraintException (String.Format ("Cannot clear table Parent" + 
+                                                                                                                     " because ForeignKeyConstraint "+
+                                                                                                                     "{0} enforces Child.", 
+                                                                                                                     c.ConstraintName));
 #else
-								throw new ArgumentException (String.Format ("Cannot clear table Parent because ForeignKeyConstraint {0} enforces Child.", c.ConstraintName));
+								throw new ArgumentException (String.Format ("Cannot clear table Parent because " +
+                                                                                                            "ForeignKeyConstraint {0} enforces Child.", 
+                                                                                                            c.ConstraintName));
 #endif
 						}
 					}

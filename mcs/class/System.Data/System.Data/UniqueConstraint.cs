@@ -505,6 +505,14 @@ namespace System.Data {
 			return "Column '" + colStr + "' is constrained to be unique.  Value '" + valStr + "' is already present.";
 		}
 		
+                internal bool Contains (DataColumn c)
+                {
+                        foreach (DataColumn col in Columns)
+                                if (c == col)
+                                        return true;
+                        return false;
+                }
+                
 		
 		#endregion // Methods
 

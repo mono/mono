@@ -575,6 +575,15 @@ namespace System.Data {
 			}
 		}
 		
+                internal bool Contains (DataColumn c, bool asParent)
+                {
+                        DataColumn [] columns = asParent? RelatedColumns : Columns;
+                        foreach (DataColumn col in columns)
+                                if (col == c)
+                                        return true;
+                        return false;
+                }
+                
 		#endregion // Methods
 	}
 

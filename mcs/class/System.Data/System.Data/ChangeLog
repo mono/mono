@@ -1,5 +1,19 @@
 2005-02-02  Sureshkumar T  <tsureshkumar@novell.com>
 
+	* DataColumnCollection.cs: implemented todo item "check for
+	constraints" when removing columns from table.
+	* DataRowCollection.cs: Clear (): don't have to throw child key
+	constraint exception when the child table does not have any
+	rows. safe to remove parent rows.
+	* UniqueConstraint.cs: added method "Contains (DataColumn)" to
+	check whether a column is part of UniqueConstraint.
+	* ForeignKeyConstraint.cs: added method "Contains (DataColumn,
+	lookInParent)" to check whether a column is part of foreignkey.
+
+	fixes nunit failure: DataTableTest.ClearTest ()
+
+2005-02-02  Sureshkumar T  <tsureshkumar@novell.com>
+
 	* ForeignKeyConstraint.cs: validating columns: move checking
 	"tables are of same dataset" before "checking column types".
 
