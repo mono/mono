@@ -144,130 +144,7 @@ namespace System.Drawing
 
 		public Icon (Stream stream, int width, int height)
 		{
-			//read the icon header
-			if (stream == null || stream.Length == 0)
-				throw new System.ArgumentException ("The argument 'stream' must be a picture that can be used as a Icon", "stream");
-			
-			BinaryReader reader = new BinaryReader (stream);
-            
-			//iconDir = new IconDir ();
-			iconDir.idReserved = reader.ReadUInt16();
-			if (iconDir.idReserved != 0) //must be 0
-				throw new System.ArgumentException ("Invalid Argument", "stream");
-			
-			iconDir.idType = reader.ReadUInt16();
-			if (iconDir.idType != 1) //must be 1
-				throw new System.ArgumentException ("Invalid Argument", "stream");
-
-			ushort dirEntryCount = reader.ReadUInt16();
-			iconDir.idCount = dirEntryCount;
-			iconDir.idEntries = new IconDirEntry [dirEntryCount];
-			imageData = new IconImage [dirEntryCount];
-			bool sizeObtained = false;
-			//now read in the IconDirEntry structures
-			for (int i=0; i<dirEntryCount; i++){
-				IconDirEntry ide;
-				ide.width = reader.ReadByte ();
-				ide.height = reader.ReadByte ();
-				ide.colorCount = reader.ReadByte ();
-				ide.reserved = reader.ReadByte ();
-				ide.planes = reader.ReadUInt16 ();
-				ide.bitCount = reader.ReadUInt16 ();
-				ide.bytesInRes = reader.ReadUInt32 ();
-				ide.imageOffset = reader.ReadUInt32 ();
-				iconDir.idEntries [i] = ide;
-				//is this is the best fit??
-				if (!sizeObtained)   
-					if (ide.height==height && ide.width==width) {
-						this.id = (ushort) i;
-						sizeObtained = true;
-						this.iconSize.Height = ide.height;
-						this.iconSize.Width = ide.width;
-					}			
-			}
-			//if we havent found the best match, return the one with the
-			//largest size. Is this approach correct??
-			if (!sizeObtained){
-				uint largestSize = 0;
-				for (int j=0; j<dirEntryCount; j++){
-					if (iconDir.idEntries [j].bytesInRes >= largestSize)	{
-						largestSize = iconDir.idEntries [j].bytesInRes;
-						this.id = (ushort) j;
-						this.iconSize.Height = iconDir.idEntries [j].height;
-						this.iconSize.Width = iconDir.idEntries [j].width;
-					}
-				}
-			}
-			
-			//now read in the icon data
-			for (int j = 0; j<dirEntryCount; j++)
-			{
-				IconImage iidata = new IconImage();
-				BitmapInfoHeader bih = new BitmapInfoHeader();
-				stream.Seek (iconDir.idEntries [j].imageOffset, SeekOrigin.Begin);
-				byte [] buffer = new byte [iconDir.idEntries [j].bytesInRes];
-				stream.Read (buffer, 0, buffer.Length);
-				BinaryReader bihReader = new BinaryReader (new MemoryStream(buffer));
-				bih.biSize = bihReader.ReadUInt32 ();
-				bih.biWidth = bihReader.ReadInt32 ();
-				bih.biHeight = bihReader.ReadInt32 ();
-				bih.biPlanes = bihReader.ReadUInt16 ();
-				bih.biBitCount = bihReader.ReadUInt16 ();
-				bih.biCompression = bihReader.ReadUInt32 ();
-				bih.biSizeImage = bihReader.ReadUInt32 ();
-				bih.biXPelsPerMeter = bihReader.ReadInt32 ();
-				bih.biYPelsPerMeter = bihReader.ReadInt32 ();
-				bih.biClrUsed = bihReader.ReadUInt32 ();
-				bih.biClrImportant = bihReader.ReadUInt32 ();
-
-				iidata.iconHeader = bih;
-				//Read the number of colors used and corresponding memory occupied by
-				//color table. Fill this memory chunk into rgbquad[]
-				int numColors;
-				switch (bih.biBitCount){
-					case 1: numColors = 2;
-						break;
-					case 4: numColors = 16;
-						break;
-					case 8: numColors = 256;
-						break;
-					default: numColors = 0;
-						break;
-				}
-				
-				iidata.iconColors = new uint [numColors];
-				for (int i=0; i<numColors; i++)
-					iidata.iconColors [i] = bihReader.ReadUInt32 ();
-
-				//XOR mask is immediately after ColorTable and its size is 
-				//icon height* no. of bytes per line
-				
-				//icon height is half of BITMAPINFOHEADER.biHeight, since it contains
-				//both XOR as well as AND mask bytes
-				int iconHeight = bih.biHeight/2;
-				
-				//bytes per line should should be uint aligned
-				int numBytesPerLine = ((((bih.biWidth * bih.biPlanes * bih.biBitCount)+ 31)>>5)<<2);
-				
-				//Determine the XOR array Size
-				int xorSize = numBytesPerLine * iconHeight;
-				iidata.iconXOR = new byte [xorSize];
-				for (int i=0; i<xorSize; i++)
-					iidata.iconXOR[i] = bihReader.ReadByte();		
-				
-				//Determine the AND array size
-				//For this i subtract the current position from the length.
-				//ugly hack...
-				int andSize = (int) (bihReader.BaseStream.Length - bihReader.BaseStream.Position);
-				iidata.iconAND = new byte [andSize];
-				for (int i=0; i<andSize; i++)
-					iidata.iconAND[i] = bihReader.ReadByte();		
-				
-				imageData [j] = iidata;
-				bihReader.Close();
-			}			
-
-			reader.Close();
+			InitFromStreamWithSize (stream, width, height);
 		}
 
 		public Icon (string fileName) : this (new FileStream (fileName, FileMode.Open))
@@ -284,13 +161,25 @@ namespace System.Drawing
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("Implement")]
        		private Icon (SerializationInfo info, StreamingContext context)
 		{
-			//FIXME, need to check how MS stores Icon structure
-			//Will serialized form help
-			throw new NotImplementedException ();
-		}
+			MemoryStream dataStream = null;
+			int width=0;
+			int height=0;
+			foreach (SerializationEntry serEnum in info) {
+				if (String.Compare(serEnum.Name, "IconData", true) == 0) {
+					dataStream = new MemoryStream ((byte []) serEnum.Value);
+				}
+				if (String.Compare(serEnum.Name, "IconSize", true) == 0) {
+					Size iconSize = (Size) serEnum.Value;
+					width = iconSize.Width;
+					height = iconSize.Height;
+				}
+			}
+			if (dataStream != null && width != 0 && height != 0) {
+				InitFromStreamWithSize (dataStream, width, height);
+			}
+                }
 
 		[MonoTODO ("Implement")]
 		void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
@@ -493,5 +382,132 @@ namespace System.Drawing
 			Dispose ();
 		}
 			
+		private void InitFromStreamWithSize (Stream stream, int width, int height)
+		{
+			//read the icon header
+			if (stream == null || stream.Length == 0)
+				throw new System.ArgumentException ("The argument 'stream' must be a picture that can be used as a Icon", "stream");
+			
+			BinaryReader reader = new BinaryReader (stream);
+            
+			//iconDir = new IconDir ();
+			iconDir.idReserved = reader.ReadUInt16();
+			if (iconDir.idReserved != 0) //must be 0
+				throw new System.ArgumentException ("Invalid Argument", "stream");
+			
+			iconDir.idType = reader.ReadUInt16();
+			if (iconDir.idType != 1) //must be 1
+				throw new System.ArgumentException ("Invalid Argument", "stream");
+
+			ushort dirEntryCount = reader.ReadUInt16();
+			iconDir.idCount = dirEntryCount;
+			iconDir.idEntries = new IconDirEntry [dirEntryCount];
+			imageData = new IconImage [dirEntryCount];
+			bool sizeObtained = false;
+			//now read in the IconDirEntry structures
+			for (int i=0; i<dirEntryCount; i++){
+				IconDirEntry ide;
+				ide.width = reader.ReadByte ();
+				ide.height = reader.ReadByte ();
+				ide.colorCount = reader.ReadByte ();
+				ide.reserved = reader.ReadByte ();
+				ide.planes = reader.ReadUInt16 ();
+				ide.bitCount = reader.ReadUInt16 ();
+				ide.bytesInRes = reader.ReadUInt32 ();
+				ide.imageOffset = reader.ReadUInt32 ();
+				iconDir.idEntries [i] = ide;
+				//is this is the best fit??
+				if (!sizeObtained)   
+					if (ide.height==height && ide.width==width) {
+						this.id = (ushort) i;
+						sizeObtained = true;
+						this.iconSize.Height = ide.height;
+						this.iconSize.Width = ide.width;
+					}			
+			}
+			//if we havent found the best match, return the one with the
+			//largest size. Is this approach correct??
+			if (!sizeObtained){
+				uint largestSize = 0;
+				for (int j=0; j<dirEntryCount; j++){
+					if (iconDir.idEntries [j].bytesInRes >= largestSize)	{
+						largestSize = iconDir.idEntries [j].bytesInRes;
+						this.id = (ushort) j;
+						this.iconSize.Height = iconDir.idEntries [j].height;
+						this.iconSize.Width = iconDir.idEntries [j].width;
+					}
+				}
+			}
+			
+			//now read in the icon data
+			for (int j = 0; j<dirEntryCount; j++)
+			{
+				IconImage iidata = new IconImage();
+				BitmapInfoHeader bih = new BitmapInfoHeader();
+				stream.Seek (iconDir.idEntries [j].imageOffset, SeekOrigin.Begin);
+				byte [] buffer = new byte [iconDir.idEntries [j].bytesInRes];
+				stream.Read (buffer, 0, buffer.Length);
+				BinaryReader bihReader = new BinaryReader (new MemoryStream(buffer));
+				bih.biSize = bihReader.ReadUInt32 ();
+				bih.biWidth = bihReader.ReadInt32 ();
+				bih.biHeight = bihReader.ReadInt32 ();
+				bih.biPlanes = bihReader.ReadUInt16 ();
+				bih.biBitCount = bihReader.ReadUInt16 ();
+				bih.biCompression = bihReader.ReadUInt32 ();
+				bih.biSizeImage = bihReader.ReadUInt32 ();
+				bih.biXPelsPerMeter = bihReader.ReadInt32 ();
+				bih.biYPelsPerMeter = bihReader.ReadInt32 ();
+				bih.biClrUsed = bihReader.ReadUInt32 ();
+				bih.biClrImportant = bihReader.ReadUInt32 ();
+
+				iidata.iconHeader = bih;
+				//Read the number of colors used and corresponding memory occupied by
+				//color table. Fill this memory chunk into rgbquad[]
+				int numColors;
+				switch (bih.biBitCount){
+					case 1: numColors = 2;
+						break;
+					case 4: numColors = 16;
+						break;
+					case 8: numColors = 256;
+						break;
+					default: numColors = 0;
+						break;
+				}
+				
+				iidata.iconColors = new uint [numColors];
+				for (int i=0; i<numColors; i++)
+					iidata.iconColors [i] = bihReader.ReadUInt32 ();
+
+				//XOR mask is immediately after ColorTable and its size is 
+				//icon height* no. of bytes per line
+				
+				//icon height is half of BITMAPINFOHEADER.biHeight, since it contains
+				//both XOR as well as AND mask bytes
+				int iconHeight = bih.biHeight/2;
+				
+				//bytes per line should should be uint aligned
+				int numBytesPerLine = ((((bih.biWidth * bih.biPlanes * bih.biBitCount)+ 31)>>5)<<2);
+				
+				//Determine the XOR array Size
+				int xorSize = numBytesPerLine * iconHeight;
+				iidata.iconXOR = new byte [xorSize];
+				for (int i=0; i<xorSize; i++)
+					iidata.iconXOR[i] = bihReader.ReadByte();		
+				
+				//Determine the AND array size
+				//For this i subtract the current position from the length.
+				//ugly hack...
+				int andSize = (int) (bihReader.BaseStream.Length - bihReader.BaseStream.Position);
+				iidata.iconAND = new byte [andSize];
+				for (int i=0; i<andSize; i++)
+					iidata.iconAND[i] = bihReader.ReadByte();		
+				
+				imageData [j] = iidata;
+				bihReader.Close();
+			}			
+
+			reader.Close();
+		}
 	}
 }

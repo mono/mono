@@ -180,6 +180,18 @@ namespace System.Drawing
 			nativeObject = (IntPtr) bmp;						 								
 		}
 
+		private Bitmap (SerializationInfo info, StreamingContext context)
+		{
+			foreach (SerializationEntry serEnum in info) {
+				if (String.Compare(serEnum.Name, "Data", true) == 0) {
+					byte[] bytes = (byte[]) serEnum.Value;
+		
+					if (bytes != null) {
+						InitFromStream(new MemoryStream(bytes));
+					}
+				}
+			}
+		}
 		//The below function is not required. Call should resolve to base
 		//Moreover there is a problem with the declaration. Base class function
 		//is not declared as protected to access in descendent class

@@ -1,3 +1,8 @@
+2005-02-09  Geoff Norton  <gnorton@customerdna.com>
+
+	* Icon.cs: Implement deserializer
+	* Bitmap.cs: Implement deserializer
+
 2005-02-06  Ben Maurer  <bmaurer@ximian.com>
 
 	* Brushes.cs: Kill the static ctor here, it has tons of code bloat.
