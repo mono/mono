@@ -1,3 +1,8 @@
+2004-08-04  Bernie Solomon  <bernard@ugsolutions.com>
+
+	* mini-sparc.c (mono_arch_emit_epilog): fix check
+	for folding last op into restore instruction
+
 2004-08-05  Zoltan Varga  <vargaz@freemail.hu>
 
 	* exceptions-amd64.c (mono_arch_get_throw_exception_by_name): Allocate
