@@ -32,6 +32,7 @@ all-local:
 		make guilibrary; \
 	else \
 		echo WARNING: Skipping gdiplus library compilation; \
+		gcc -shared -Wl,-soname,libgdiplus.dll.so -o $(gdiplus) empty.c 
 	fi)
 
 clean-local:
