@@ -65,8 +65,18 @@ namespace MonoTests.System.IO
 					s.Close ();
 				DeleteFile (path);
 			}
-			
-			
+		}
+
+		[Test]
+		public void Exists_InvalidFileName () 
+		{
+			Assert ("><|", !File.Exists ("><|"));
+		}
+
+		[Test]
+		public void Exists_InvalidDirectory () 
+		{
+			Assert ("InvalidDirectory", !File.Exists (Path.Combine ("does not exist", "file.txt")));
 		}
 
 		[Test]

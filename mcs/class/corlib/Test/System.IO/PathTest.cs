@@ -129,15 +129,23 @@ namespace MonoTests.System.IO
 			AssertEquals ("ChangeExtension #17", String.Empty, testPath);
 			testPath = Path.ChangeExtension (null, null);
 			AssertNull ("ChangeExtension #18", testPath);
+		}
 
-			if (Windows) {
-				try {
-					testPath = Path.ChangeExtension ("<", ".extension");
-					Fail ("ChangeException Fail #01");
-				} catch (Exception e) {
-					AssertEquals ("ChangeExtension Exc. #01", typeof (ArgumentException), e.GetType ());
-				}
-			}
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ChangeExtension_BadPath () 
+		{
+			if (!Windows) throw new ArgumentException ("Test Only On Windows");
+			Path.ChangeExtension ("<", ".extension");
+		}
+
+		[Test]
+//		[ExpectedException (typeof (ArgumentException))]
+		public void ChangeExtension_BadExtension () 
+		{
+			if (!Windows) throw new ArgumentException ("Test Only On Windows");
+			string fn = Path.ChangeExtension ("file.ext", "<");
+			AssertEquals ("Invalid filename", "file.<", fn);
 		}
 
 		public void TestCombine ()
