@@ -58,7 +58,10 @@ namespace System.Data {
 			}
 			
 			reader.MoveToContent ();
-			if (reader.IsEmptyElement) return;
+			if (reader.IsEmptyElement) {
+				reader.Skip ();
+				return;
+			}
 			
 			reader.ReadStartElement ("diffgram", XmlConstants.DiffgrNamespace);
 			reader.MoveToContent ();

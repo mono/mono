@@ -63,10 +63,9 @@ namespace System.Data {
 			this.Locale = CultureInfo.CurrentCulture;
 		}
 
-		[MonoTODO]
 		protected DataSet (SerializationInfo info, StreamingContext context) : this ()
 		{
-			throw new NotImplementedException ();
+			GetSerializationData (info, context);
 		}
 
 		#endregion // Constructors
@@ -671,16 +670,23 @@ namespace System.Data {
 				SetRowsID();
 				WriteDiffGramElement(writer);
 			}
-			// FIXME: It should not write when there is no content to be written.
-			WriteStartElement (writer, mode, Namespace, Prefix, XmlConvert.EncodeName (DataSetName));
 			
-			if (mode == XmlWriteMode.WriteSchema) {
-				DoWriteXmlSchema (writer);
+			// It should not write when there is no content to be written
+			bool hasContent = (mode == XmlWriteMode.WriteSchema);
+			for (int n=0; n<tableCollection.Count && !hasContent; n++)
+				hasContent = tableCollection[n].Rows.Count > 0;
+				
+			if (hasContent) {
+				WriteStartElement (writer, mode, Namespace, Prefix, XmlConvert.EncodeName (DataSetName));
+				
+				if (mode == XmlWriteMode.WriteSchema)
+					DoWriteXmlSchema (writer);
+				
+				WriteTables (writer, mode, Tables, DataRowVersion.Default);
+				writer.WriteEndElement ();
 			}
 			
-			WriteTables (writer, mode, Tables, DataRowVersion.Default);
 			if (mode == XmlWriteMode.DiffGram) {
-				writer.WriteEndElement (); //DataSet name
 				if (HasChanges(DataRowState.Modified | DataRowState.Deleted)) {
 
 					DataSet beforeDS = GetChanges (DataRowState.Modified | DataRowState.Deleted);
@@ -689,7 +695,9 @@ namespace System.Data {
 					writer.WriteEndElement ();
 				}
 			}
-			writer.WriteEndElement (); // DataSet name or diffgr:diffgram
+			
+			if (mode == XmlWriteMode.DiffGram)
+				writer.WriteEndElement (); // diffgr:diffgram
 		}
 
 		public void WriteXmlSchema (Stream stream)
@@ -932,15 +940,32 @@ namespace System.Data {
 		#region ISerializable
 		void ISerializable.GetObjectData (SerializationInfo si, StreamingContext sc)
 		{
-			throw new NotImplementedException ();
+			StringWriter sw = new StringWriter ();
+			XmlTextWriter writer = new XmlTextWriter (sw);
+			DoWriteXmlSchema (writer);
+			writer.Flush ();
+			si.AddValue ("XmlSchema", sw.ToString ());
+			
+			sw = new StringWriter ();
+			writer = new XmlTextWriter (sw);
+			WriteXml (writer, XmlWriteMode.DiffGram);
+			writer.Flush ();
+			si.AddValue ("XmlDiffGram", sw.ToString ());
 		}
 		#endregion
 		
 		#region Protected Methods
 		protected void GetSerializationData (SerializationInfo info, StreamingContext context)
 		{
-			string s = info.GetValue ("XmlDiffGram", typeof (String)) as String;
-			if (s != null) ReadXmlSerializable (new XmlTextReader (new StringReader (s)));
+			string s = info.GetValue ("XmlSchema", typeof (String)) as String;
+			XmlTextReader reader = new XmlTextReader (new StringReader (s));
+			ReadXmlSchema (reader);
+			reader.Close ();
+			
+			s = info.GetValue ("XmlDiffGram", typeof (String)) as String;
+			reader = new XmlTextReader (new StringReader (s));
+			ReadXml (reader, XmlReadMode.DiffGram);
+			reader.Close ();
 		}
 		
 		
@@ -951,17 +976,19 @@ namespace System.Data {
 		
 		protected virtual void ReadXmlSerializable (XmlReader reader)
 		{
-			ReadXml (reader, XmlReadMode.DiffGram); // FIXME
+			reader.MoveToContent ();
+			reader.ReadStartElement ();
+			reader.MoveToContent ();
+			ReadXmlSchema (reader);
+			reader.MoveToContent ();
+			ReadXml (reader, XmlReadMode.DiffGram);
+			reader.MoveToContent ();
+			reader.ReadEndElement ();
 		}
 
 		void IXmlSerializable.ReadXml (XmlReader reader)
 		{
-
 			ReadXmlSerializable(reader);
-			
-			// the XmlSerializationReader does this lines!!!
-			//reader.MoveToContent ();
-			//reader.ReadEndElement ();	// </DataSet>
 		}
 		
 		void IXmlSerializable.WriteXml (XmlWriter writer)
