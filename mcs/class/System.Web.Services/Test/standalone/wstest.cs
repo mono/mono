@@ -542,15 +542,24 @@ public class Driver
 			proc.StartInfo.FileName = "wsdl";
 			proc.StartInfo.Arguments = "/out:" + pfile + " /nologo /namespace:" + ns + " /protocol:" + prot + " " + wsdl;
 			proc.Start();
-			proc.WaitForExit ();
 			
-			if (proc.ExitCode != 0)
+			if (!proc.WaitForExit (30000))
+			{
+				try {
+					proc.Kill ();
+				} catch {}
+				
+				Console.WriteLine ("FAIL (timeout)");
+				if (File.Exists (pfile)) File.Delete (pfile);
+				WriteError (errdoc, ns, "Errors found while generating " + prot + " proxy for WSDL: " + wsdl, "wsdl.exe timeout");
+			}
+			else if (proc.ExitCode != 0)
 			{
 				Console.WriteLine ("FAIL " + proc.ExitCode);
 				
 				string err = proc.StandardOutput.ReadToEnd ();
 				err += "\n" + proc.StandardError.ReadToEnd ();
-				
+
 				if (File.Exists (pfile))
 				{
 					if (proc.ExitCode == 1) {

@@ -1,3 +1,9 @@
+2004-09-29  Lluis Sanchez Gual <lluis@novell.com>
+
+	* Makefile: Remove error directory on every run.
+	* wstest.cs: Added a timeout when calling the wsdl tool. No more
+	  hangs there.
+
 2004-09-29  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (test-clients): nunit-console.exe is now in a
