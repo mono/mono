@@ -1,4 +1,5 @@
 Assembly/AssemblyInfo.cs
+Assembly/Locale.cs
 Mono.Xml.XPath/DTMXPathDocument.cs
 Mono.Xml.XPath/DTMXPathDocumentBuilder.cs
 Mono.Xml.XPath/DTMXPathNavigator.cs
