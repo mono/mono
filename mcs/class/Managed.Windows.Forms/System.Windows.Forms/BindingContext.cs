@@ -122,7 +122,7 @@ namespace System.Windows.Forms {
 				return res;
 			}
 
-			return new PropertyManager (data_source);
+			return new PropertyManager (data_source, data_member);
 		}
 
 		#region Public Instance Methods

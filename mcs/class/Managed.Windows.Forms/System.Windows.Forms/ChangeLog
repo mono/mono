@@ -3,6 +3,7 @@
 	* PropertyManager.cs: Implement property binding. This doesn't
 	seem to work yet though as (I think) there are some bugs in
 	System.ComponentModel.PropertyDescriptor.
+	* BindingContext.cs: Use new PropertyManager constructor.
 
 2005-02-23  Jordi Mas i Hernandez <jordi@ximian.com>
 
