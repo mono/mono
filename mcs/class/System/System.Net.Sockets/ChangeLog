@@ -1,3 +1,8 @@
+2003-07-31  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* NetworkStream.cs:
+	* Socket.cs: fixed array boundary checks. 0 sized arrays are allowed.
+
 2003-07-18  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* Socket.cs: Added GetHashCode method

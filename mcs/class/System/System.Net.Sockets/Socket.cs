@@ -857,10 +857,10 @@ namespace System.Net.Sockets
 			if(buf==null) {
 				throw new ArgumentNullException("buffer is null");
 			}
-			if(offset<0 || offset >= buf.Length) {
+			if(offset<0 || offset > buf.Length) {
 				throw new ArgumentOutOfRangeException("offset exceeds the size of buffer");
 			}
-			if(offset+size<0 || offset+size > buf.Length) {
+			if(size<0 || offset+size > buf.Length) {
 				throw new ArgumentOutOfRangeException("offset+size exceeds the size of buffer");
 			}
 			
@@ -913,10 +913,10 @@ namespace System.Net.Sockets
 			if(remote_end==null) {
 				throw new ArgumentNullException("remote endpoint is null");
 			}
-			if(offset<0 || offset>=buf.Length) {
+			if(offset<0 || offset>buf.Length) {
 				throw new ArgumentOutOfRangeException("offset exceeds the size of buffer");
 			}
-			if(offset+size<0 || offset+size>buf.Length) {
+			if(size<0 || offset+size>buf.Length) {
 				throw new ArgumentOutOfRangeException("offset+size exceeds the size of buffer");
 			}
 
@@ -1018,10 +1018,10 @@ namespace System.Net.Sockets
 			if(remote_end==null) {
 				throw new ArgumentNullException("remote endpoint is null");
 			}
-			if(offset<0 || offset>=buffer.Length) {
+			if(offset<0 || offset>buffer.Length) {
 				throw new ArgumentOutOfRangeException("offset exceeds the size of buffer");
 			}
-			if(offset+size<0 || offset+size>buffer.Length) {
+			if(size<0 || offset+size>buffer.Length) {
 				throw new ArgumentOutOfRangeException("offset+size exceeds the size of buffer");
 			}
 

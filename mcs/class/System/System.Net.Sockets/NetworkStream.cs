@@ -132,10 +132,10 @@ namespace System.Net.Sockets
 			if (buffer == null)
 				throw new ArgumentNullException ("buffer is null");
 			int len = buffer.Length;
-			if(offset<0 || offset>=len) {
+			if(offset<0 || offset>len) {
 				throw new ArgumentOutOfRangeException("offset exceeds the size of buffer");
 			}
-			if(offset+size<0 || offset+size>len) {
+			if(size<0 || offset+size>len) {
 				throw new ArgumentOutOfRangeException("offset+size exceeds the size of buffer");
 			}
 
@@ -158,10 +158,10 @@ namespace System.Net.Sockets
 				throw new ArgumentNullException ("buffer is null");
 
 			int len = buffer.Length;
-			if(offset<0 || offset>=len) {
+			if(offset<0 || offset>len) {
 				throw new ArgumentOutOfRangeException("offset exceeds the size of buffer");
 			}
-			if(offset+size<0 || offset+size>len) {
+			if(size<0 || offset+size>len) {
 				throw new ArgumentOutOfRangeException("offset+size exceeds the size of buffer");
 			}
 
@@ -245,10 +245,10 @@ namespace System.Net.Sockets
 
 			if (buffer == null)
 				throw new ArgumentNullException ("buffer is null");
-			if(offset<0 || offset>=buffer.Length) {
+			if(offset<0 || offset>buffer.Length) {
 				throw new ArgumentOutOfRangeException("offset exceeds the size of buffer");
 			}
-			if(offset+size < 0 || offset+size>buffer.Length) {
+			if(size < 0 || offset+size>buffer.Length) {
 				throw new ArgumentOutOfRangeException("offset+size exceeds the size of buffer");
 			}
 
