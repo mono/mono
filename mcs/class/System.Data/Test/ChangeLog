@@ -1,3 +1,10 @@
+2002/05/17  Nick Drochak <ndrochak@gol.com>
+
+	* System.Data_test.build: Remove RunTests from the default build. We
+	can add this later, but it keeps the build from breaking for now.
+
+	* TestSqlDataAdapter.cs: Fix build breaker.
+
 2002-05-11  Daniel Morgan <danmorg@sc.rr.com>
 
 	* Test/PostgresTest.cs: added call to PostgreSQL stored procedure

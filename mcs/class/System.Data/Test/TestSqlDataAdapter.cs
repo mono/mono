@@ -26,7 +26,7 @@ namespace TestSystemDataSqlClient
 			string connectionString;
 			string sqlQuery;
 			SqlDataAdapter adapter;
-			DataSet dataSet;
+			DataSet dataSet = null;
 			DataRow row;
 
 			connectionString =
@@ -56,10 +56,12 @@ namespace TestSystemDataSqlClient
 			}		
 			
 			System.Console.WriteLine ("get row...");
-			row = dataSet.Tables["Table"].Rows[0];
+			if (null != dataSet) {
+				row = dataSet.Tables["Table"].Rows[0];
 
-			Console.WriteLine("tablename: " + row["tablename"]);
-			System.Console.WriteLine("Done.");
+				Console.WriteLine("tablename: " + row["tablename"]);
+				System.Console.WriteLine("Done.");
+			}
 
 		}
 

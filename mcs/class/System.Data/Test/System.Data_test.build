@@ -31,7 +31,9 @@
 			</references>
 			<arg value="/r:..\..\lib\System.Data.dll"/>
 		</csc>
+	</target>
 
+	<target name="RunTests">
 		<csc target="exe" output="RunTests.System.Data.exe" debug="${debug}">
 			<sources>
 				<includes name="**/*.cs"/>
