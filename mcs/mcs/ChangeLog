@@ -1,3 +1,8 @@
+2002-06-18  Miguel de Icaza  <miguel@ximian.com>
+
+	* pending.cs: New file.  Move the code from class.cs here.
+	Support clearning the pending flag for all methods (when not doing
+	explicit interface implementation).
 
 Tue Jun 18 10:36:22 CEST 2002 Paolo Molaro <lupus@ximian.com>
 

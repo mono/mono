@@ -18,6 +18,8 @@ readonly variables and ref/out
 BUGS
 ----
 
+* Explicit indexer implementation is missing.
+
 * Check for Final when overriding, if the parent is Final, then we cant
   allow an override.
 
