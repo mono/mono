@@ -1,5 +1,10 @@
 2005-03-09  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XslText.cs : whitespace nodes should be written at any time, once
+	  they constructed this instance.
+
+2005-03-09  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XslVariable.cs : clone stored XPathNavigator items before storing.
 	* XslAttribute.cs : tiny code reduction.
 

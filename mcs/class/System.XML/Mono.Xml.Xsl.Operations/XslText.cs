@@ -58,8 +58,6 @@ namespace Mono.Xml.Xsl.Operations {
 
 		public override void Evaluate (XslTransformProcessor p)
 		{
-			if (isWhitespace && !p.PreserveWhitespace ())
-				return; // write nothing
 			if (!disableOutputEscaping) {
 				if (isWhitespace)
 					p.Out.WriteWhitespace (text);
