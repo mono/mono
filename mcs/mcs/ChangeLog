@@ -1,5 +1,10 @@
 2002-07-29  Martin Baulig  <martin@gnome.org>
 
+	* statement.cs (Using): Moved all code that does variable lookups
+	and resolvings from Emit to Resolve.
+
+2002-07-29  Martin Baulig  <martin@gnome.org>
+
 	* attribute.cs (Attribute.Resolve): Explicitly catch a
 	System.NullReferenceException when creating the
 	CustromAttributeBuilder and report a different warning message.

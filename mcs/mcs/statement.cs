@@ -2556,6 +2556,12 @@ namespace Mono.CSharp {
 	public class Using : Statement {
 		object expression_or_block;
 		Statement Statement;
+		ArrayList var_list;
+		Expression expr;
+		Type expr_type;
+		Expression conv;
+		Expression [] converted_vars;
+		ExpressionStatement [] assign;
 		
 		public Using (object expression_or_block, Statement stmt, Location l)
 		{
@@ -2565,29 +2571,28 @@ namespace Mono.CSharp {
 		}
 
 		//
-		// Emits the code for the case of using using a local variable declaration.
+		// Resolves for the case of using using a local variable declaration.
 		//
-		bool EmitLocalVariableDecls (EmitContext ec, Expression expr_type, ArrayList var_list)
+		bool ResolveLocalVariableDecls (EmitContext ec)
 		{
-			ILGenerator ig = ec.ig;
-			Expression [] converted_vars;
 			bool need_conv = false;
-			Type type = ec.DeclSpace.ResolveType (expr_type, false, loc);
+			expr_type = ec.DeclSpace.ResolveType (expr, false, loc);
 			int i = 0;
 
-			if (type == null)
+			if (expr_type == null)
 				return false;
-			
+
 			//
 			// The type must be an IDisposable or an implicit conversion
 			// must exist.
 			//
 			converted_vars = new Expression [var_list.Count];
-			if (!TypeManager.ImplementsInterface (type, TypeManager.idisposable_type)){
+			assign = new ExpressionStatement [var_list.Count];
+			if (!TypeManager.ImplementsInterface (expr_type, TypeManager.idisposable_type)){
 				foreach (DictionaryEntry e in var_list){
 					Expression var = (Expression) e.Key;
 
-					var = var.Resolve (ec);
+					var = var.ResolveLValue (ec, new EmptyExpression ());
 					if (var == null)
 						return false;
 					
@@ -2600,32 +2605,55 @@ namespace Mono.CSharp {
 				}
 				need_conv = true;
 			}
-			
+
 			i = 0;
-			bool old_in_try = ec.InTry;
-			ec.InTry = true;
-			bool error = false;
 			foreach (DictionaryEntry e in var_list){
 				LocalVariableReference var = (LocalVariableReference) e.Key;
-				Expression expr = (Expression) e.Value;
+				Expression new_expr = (Expression) e.Value;
 				Expression a;
 
-				a = new Assign (var, expr, loc);
+				a = new Assign (var, new_expr, loc);
 				a = a.Resolve (ec);
+				if (a == null)
+					return false;
+
 				if (!need_conv)
 					converted_vars [i] = var;
+				assign [i] = (ExpressionStatement) a;
 				i++;
-				if (a == null){
-					error = true;
-					continue;
-				}
-				((ExpressionStatement) a).EmitStatement (ec);
+			}
+
+			return true;
+		}
+
+		bool ResolveExpression (EmitContext ec)
+		{
+			if (!TypeManager.ImplementsInterface (expr_type, TypeManager.idisposable_type)){
+				conv = Expression.ConvertImplicit (
+					ec, expr, TypeManager.idisposable_type, loc);
+
+				if (conv == null)
+					return false;
+			}
+
+			return true;
+		}
+		
+		//
+		// Emits the code for the case of using using a local variable declaration.
+		//
+		bool EmitLocalVariableDecls (EmitContext ec)
+		{
+			ILGenerator ig = ec.ig;
+			int i = 0;
+
+			bool old_in_try = ec.InTry;
+			ec.InTry = true;
+			for (i = 0; i < assign.Length; i++) {
+				assign [i].EmitStatement (ec);
 				
 				ig.BeginExceptionBlock ();
-
 			}
-			if (error)
-				return false;
 			Statement.Emit (ec);
 			ec.InTry = old_in_try;
 
@@ -2651,19 +2679,8 @@ namespace Mono.CSharp {
 			return false;
 		}
 
-		bool EmitExpression (EmitContext ec, Expression expr)
+		bool EmitExpression (EmitContext ec)
 		{
-			Type expr_type = expr.Type;
-			Expression conv = null;
-			
-			if (!TypeManager.ImplementsInterface (expr_type, TypeManager.idisposable_type)){
-				conv = Expression.ConvertImplicit (
-					ec, expr, TypeManager.idisposable_type, loc);
-
-				if (conv == null)
-					return false;
-			}
-
 			//
 			// Make a copy of the expression and operate on that.
 			//
@@ -2697,25 +2714,36 @@ namespace Mono.CSharp {
 		
 		public override bool Resolve (EmitContext ec)
 		{
+			if (expression_or_block is DictionaryEntry){
+				expr = (Expression) ((DictionaryEntry) expression_or_block).Key;
+				var_list = (ArrayList)((DictionaryEntry)expression_or_block).Value;
+
+				if (!ResolveLocalVariableDecls (ec))
+					return false;
+
+			} else if (expression_or_block is Expression){
+				expr = (Expression) expression_or_block;
+
+				expr = expr.Resolve (ec);
+				if (expr == null)
+					return false;
+
+				expr_type = expr.Type;
+
+				if (!ResolveExpression (ec))
+					return false;
+			}			
+
 			return Statement.Resolve (ec);
 		}
 		
 		public override bool Emit (EmitContext ec)
 		{
-			if (expression_or_block is DictionaryEntry){
-				Expression expr_type = (Expression) ((DictionaryEntry) expression_or_block).Key;
-				ArrayList var_list = (ArrayList)((DictionaryEntry)expression_or_block).Value;
+			if (expression_or_block is DictionaryEntry)
+				return EmitLocalVariableDecls (ec);
+			else if (expression_or_block is Expression)
+				return EmitExpression (ec);
 
-				return EmitLocalVariableDecls (ec, expr_type, var_list);
-			} if (expression_or_block is Expression){
-				Expression e = (Expression) expression_or_block;
-
-				e = e.Resolve (ec);
-				if (e == null)
-					return false;
-
-				return EmitExpression (ec, e);
-			}
 			return false;
 		}
 	}
