@@ -2293,7 +2293,7 @@ namespace Mono.CSharp {
 			if (type is TypeBuilder) {
 				TypeContainer tc = TypeManager.LookupTypeContainer (type);
 
-				ArrayList fields = tc.Fields;
+				Field [] fields = tc.Fields;
 				if (fields != null) {
 					foreach (Field field in fields) {
 						if ((field.ModFlags & Modifiers.STATIC) != 0)

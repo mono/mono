@@ -659,6 +659,7 @@ namespace Mono.CSharp {
 				return;
 			}
 
+				Console.WriteLine ("EC is: " + ec.ContainerType);
 			if ((qualifier_type != null) && (qualifier_type != ec.ContainerType) &&
 			    ec.ContainerType.IsSubclassOf (qualifier_type)) {
 				// Although a derived class can access protected members of
@@ -667,6 +668,7 @@ namespace Mono.CSharp {
 				// ec.ContainerType and the lookup succeeds with the latter one,
 				// then we are in this situation.
 
+				Console.WriteLine ("EC is: " + ec);
 				lookup = TypeManager.MemberLookup (
 					ec.ContainerType, ec.ContainerType, ec.ContainerType,
 					AllMemberTypes, AllBindingFlags, name);
