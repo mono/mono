@@ -487,11 +487,11 @@ namespace MonoTests.System.IO
                 	Assertion.AssertEquals ("test#04", 4, time.Hour);
                 	Assertion.AssertEquals ("test#05", 4, time.Second);
                 	
-                	time = File.GetCreationTimeUtc (path);
+                	time = TimeZone.CurrentTimeZone.ToLocalTime (File.GetCreationTimeUtc (path));
                 	Assertion.AssertEquals ("test#06", 2002, time.Year);
                 	Assertion.AssertEquals ("test#07", 4, time.Month);
                 	Assertion.AssertEquals ("test#08", 6, time.Day);
-                	Assertion.AssertEquals ("test#09", 1, time.Hour);
+                	Assertion.AssertEquals ("test#09", 4, time.Hour);
                 	Assertion.AssertEquals ("test#10", 4, time.Second);                	
 
                 	File.SetCreationTimeUtc (path, new DateTime (2002, 4, 6, 4, 6, 4));
@@ -502,11 +502,11 @@ namespace MonoTests.System.IO
                 	Assertion.AssertEquals ("test#14", 4, time.Hour);
                 	Assertion.AssertEquals ("test#15", 4, time.Second);
                 	
-                	time = File.GetCreationTime (path);
+                	time = TimeZone.CurrentTimeZone.ToUniversalTime (File.GetCreationTime (path));
                 	Assertion.AssertEquals ("test#16", 2002, time.Year);
                 	Assertion.AssertEquals ("test#17", 4, time.Month);
                 	Assertion.AssertEquals ("test#18", 6, time.Day);
-                	Assertion.AssertEquals ("test#19", 7, time.Hour);
+                	Assertion.AssertEquals ("test#19", 4, time.Hour);
                 	Assertion.AssertEquals ("test#20", 4, time.Second);
                 }
 
@@ -528,11 +528,11 @@ namespace MonoTests.System.IO
                 	Assertion.AssertEquals ("test#04", 4, time.Hour);
                 	Assertion.AssertEquals ("test#05", 4, time.Second);
                 	
-                	time = File.GetLastAccessTimeUtc (path);
+                	time = TimeZone.CurrentTimeZone.ToLocalTime (File.GetLastAccessTimeUtc (path));
                 	Assertion.AssertEquals ("test#06", 2002, time.Year);
                 	Assertion.AssertEquals ("test#07", 4, time.Month);
                 	Assertion.AssertEquals ("test#08", 6, time.Day);
-                	Assertion.AssertEquals ("test#09", 1, time.Hour);
+                	Assertion.AssertEquals ("test#09", 4, time.Hour);
                 	Assertion.AssertEquals ("test#10", 4, time.Second);                	
 
                 	File.SetLastAccessTimeUtc (path, new DateTime (2002, 4, 6, 4, 6, 4));
@@ -543,11 +543,11 @@ namespace MonoTests.System.IO
                 	Assertion.AssertEquals ("test#14", 4, time.Hour);
                 	Assertion.AssertEquals ("test#15", 4, time.Second);
                 	
-                	time = File.GetLastAccessTime (path);
+                	time = TimeZone.CurrentTimeZone.ToUniversalTime (File.GetLastAccessTime (path));
                 	Assertion.AssertEquals ("test#16", 2002, time.Year);
                 	Assertion.AssertEquals ("test#17", 4, time.Month);
                 	Assertion.AssertEquals ("test#18", 6, time.Day);
-                	Assertion.AssertEquals ("test#19", 7, time.Hour);
+                	Assertion.AssertEquals ("test#19", 4, time.Hour);
                 	Assertion.AssertEquals ("test#20", 4, time.Second);
                 }
 
@@ -569,11 +569,11 @@ namespace MonoTests.System.IO
                 	Assertion.AssertEquals ("test#04", 4, time.Hour);
                 	Assertion.AssertEquals ("test#05", 4, time.Second);
                 	
-                	time = File.GetLastWriteTimeUtc (path);
+                	time = TimeZone.CurrentTimeZone.ToLocalTime (File.GetLastWriteTimeUtc (path));
                 	Assertion.AssertEquals ("test#06", 2002, time.Year);
                 	Assertion.AssertEquals ("test#07", 4, time.Month);
                 	Assertion.AssertEquals ("test#08", 6, time.Day);
-                	Assertion.AssertEquals ("test#09", 1, time.Hour);
+                	Assertion.AssertEquals ("test#09", 4, time.Hour);
                 	Assertion.AssertEquals ("test#10", 4, time.Second);                	
 
                 	File.SetLastWriteTimeUtc (path, new DateTime (2002, 4, 6, 4, 6, 4));
@@ -584,11 +584,11 @@ namespace MonoTests.System.IO
                 	Assertion.AssertEquals ("test#14", 4, time.Hour);
                 	Assertion.AssertEquals ("test#15", 4, time.Second);
                 	
-                	time = File.GetLastWriteTime (path);
+                	time = TimeZone.CurrentTimeZone.ToUniversalTime (File.GetLastWriteTime (path));
                 	Assertion.AssertEquals ("test#16", 2002, time.Year);
                 	Assertion.AssertEquals ("test#17", 4, time.Month);
                 	Assertion.AssertEquals ("test#18", 6, time.Day);
-                	Assertion.AssertEquals ("test#19", 7, time.Hour);
+                	Assertion.AssertEquals ("test#19", 4, time.Hour);
                 	Assertion.AssertEquals ("test#20", 4, time.Second);
                 }
 

@@ -531,20 +531,20 @@ public class DirectoryTest {
 		Assertion.AssertEquals ("test#05", 4, time.Minute);
 		Assertion.AssertEquals ("test#06", 0, time.Second);
 		
-		time = Directory.GetCreationTimeUtc (path);
+		time = TimeZone.CurrentTimeZone.ToLocalTime (Directory.GetCreationTimeUtc (path));
 		Assertion.AssertEquals ("test#07", 2003, time.Year);
 		Assertion.AssertEquals ("test#08", 6, time.Month);
 		Assertion.AssertEquals ("test#09", 4, time.Day);
-		Assertion.AssertEquals ("test#10", 3, time.Hour);
+		Assertion.AssertEquals ("test#10", 6, time.Hour);
 		Assertion.AssertEquals ("test#11", 4, time.Minute);
 		Assertion.AssertEquals ("test#12", 0, time.Second);
 
 		Directory.SetCreationTimeUtc (path, new DateTime (2003, 6, 4, 6, 4, 0));
-		time = Directory.GetCreationTime (path);
+		time = TimeZone.CurrentTimeZone.ToUniversalTime (Directory.GetCreationTime (path));
 		Assertion.AssertEquals ("test#13", 2003, time.Year);
 		Assertion.AssertEquals ("test#14", 6, time.Month);
 		Assertion.AssertEquals ("test#15", 4, time.Day);
-		Assertion.AssertEquals ("test#16", 9, time.Hour);
+		Assertion.AssertEquals ("test#16", 6, time.Hour);
 		Assertion.AssertEquals ("test#17", 4, time.Minute);
 		Assertion.AssertEquals ("test#18", 0, time.Second);
 
@@ -576,20 +576,20 @@ public class DirectoryTest {
 		Assertion.AssertEquals ("test#05", 4, time.Minute);
 		Assertion.AssertEquals ("test#06", 0, time.Second);
 		
-		time = Directory.GetLastAccessTimeUtc (path);
+		time = TimeZone.CurrentTimeZone.ToLocalTime (Directory.GetLastAccessTimeUtc (path));
 		Assertion.AssertEquals ("test#07", 2003, time.Year);
 		Assertion.AssertEquals ("test#08", 6, time.Month);
 		Assertion.AssertEquals ("test#09", 4, time.Day);
-		Assertion.AssertEquals ("test#10", 3, time.Hour);
+		Assertion.AssertEquals ("test#10", 6, time.Hour);
 		Assertion.AssertEquals ("test#11", 4, time.Minute);
 		Assertion.AssertEquals ("test#12", 0, time.Second);
 
 		Directory.SetLastAccessTimeUtc (path, new DateTime (2003, 6, 4, 6, 4, 0));
-		time = Directory.GetLastAccessTime (path);
+		time = TimeZone.CurrentTimeZone.ToUniversalTime (Directory.GetLastAccessTime (path));
 		Assertion.AssertEquals ("test#13", 2003, time.Year);
 		Assertion.AssertEquals ("test#14", 6, time.Month);
 		Assertion.AssertEquals ("test#15", 4, time.Day);
-		Assertion.AssertEquals ("test#16", 9, time.Hour);
+		Assertion.AssertEquals ("test#16", 6, time.Hour);
 		Assertion.AssertEquals ("test#17", 4, time.Minute);
 		Assertion.AssertEquals ("test#18", 0, time.Second);
 
@@ -621,20 +621,20 @@ public class DirectoryTest {
 		Assertion.AssertEquals ("test#05", 4, time.Minute);
 		Assertion.AssertEquals ("test#06", 0, time.Second);
 		
-		time = Directory.GetLastWriteTimeUtc (path);
+		time = TimeZone.CurrentTimeZone.ToLocalTime (Directory.GetLastWriteTimeUtc (path));
 		Assertion.AssertEquals ("test#07", 2003, time.Year);
 		Assertion.AssertEquals ("test#08", 6, time.Month);
 		Assertion.AssertEquals ("test#09", 4, time.Day);
-		Assertion.AssertEquals ("test#10", 3, time.Hour);
+		Assertion.AssertEquals ("test#10", 6, time.Hour);
 		Assertion.AssertEquals ("test#11", 4, time.Minute);
 		Assertion.AssertEquals ("test#12", 0, time.Second);
 
 		Directory.SetLastWriteTimeUtc (path, new DateTime (2003, 6, 4, 6, 4, 0));
-		time = Directory.GetLastWriteTime (path);
+		time = TimeZone.CurrentTimeZone.ToUniversalTime (Directory.GetLastWriteTime (path));
 		Assertion.AssertEquals ("test#13", 2003, time.Year);
 		Assertion.AssertEquals ("test#14", 6, time.Month);
 		Assertion.AssertEquals ("test#15", 4, time.Day);
-		Assertion.AssertEquals ("test#16", 9, time.Hour);
+		Assertion.AssertEquals ("test#16", 6, time.Hour);
 		Assertion.AssertEquals ("test#17", 4, time.Minute);
 		Assertion.AssertEquals ("test#18", 0, time.Second);
 
