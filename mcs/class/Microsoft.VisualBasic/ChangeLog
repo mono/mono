@@ -1,3 +1,7 @@
+2004-06-22  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile: Use $(PLATFORM_PATH_SEPARATOR) when setting MONO_PATH.
+
 2004-06-17  Jambunathan K  <kjambunathan@novell.com>
 	* Microsoft.VisualBasic.dll.sources: Included OutPutVBFile.cs
 
