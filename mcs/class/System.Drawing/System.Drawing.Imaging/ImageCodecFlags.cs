@@ -8,6 +8,7 @@ using System;
 namespace System.Drawing.Imaging
 {
 	[Flags]
+	[Serializable]
 	public enum ImageCodecFlags {
 		BlockingDecode = 32,
 		Builtin = 65536,

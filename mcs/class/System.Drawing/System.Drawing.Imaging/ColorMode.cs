@@ -7,6 +7,7 @@
 using System;
 namespace System.Drawing.Imaging 
 {
+	[Serializable]
 	public enum ColorMode {
 		Argb32Mode = 0,
 		Argb64Mode = 1

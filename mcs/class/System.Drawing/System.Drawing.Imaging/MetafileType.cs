@@ -9,6 +9,7 @@
 
 namespace System.Drawing.Imaging
 {
+	[Serializable]
 	public enum MetafileType
 	{
 		Invalid = 0,

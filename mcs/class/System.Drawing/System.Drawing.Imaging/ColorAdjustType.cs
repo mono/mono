@@ -7,6 +7,7 @@
 using System;
 namespace System.Drawing.Imaging 
 {
+	[Serializable]
 	public enum ColorAdjustType {
 		Any = 6,
 		Bitmap = 1,

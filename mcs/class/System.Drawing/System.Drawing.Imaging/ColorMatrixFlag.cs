@@ -7,6 +7,7 @@
 using System;
 namespace System.Drawing.Imaging 
 {
+	[Serializable]
 	public enum  ColorMatrixFlag{
 		AltGrays = 2,
 		Default = 0,

@@ -9,9 +9,12 @@
 using System;
 using System.IO;
 using System.Reflection;
+using System.Runtime.InteropServices;
 
 namespace System.Drawing.Imaging {
 
+	[Serializable]
+	[ComVisible (false)]
 	public sealed class Metafile : Image {
 
 		// constructors

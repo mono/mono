@@ -7,6 +7,7 @@
 using System;
 namespace System.Drawing.Imaging 
 {
+	[Serializable]
 	public enum EncoderParameterValueType {
 		ValueTypeAscii = 2,
 		ValueTypeByte = 1,

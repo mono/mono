@@ -7,6 +7,7 @@
 using System;
 namespace System.Drawing.Imaging 
 {
+	[Serializable]
 	public enum EncoderValue {
 		ColorTypeCMYK = 0,
 		ColorTypeYCCK = 1,

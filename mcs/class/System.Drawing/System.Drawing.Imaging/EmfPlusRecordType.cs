@@ -7,6 +7,7 @@
 using System;
 namespace System.Drawing.Imaging 
 {
+	[Serializable]
 	public enum EmfPlusRecordType {
 		BeginContainer = 16423,
 		BeginContainerNoParams = 16424,

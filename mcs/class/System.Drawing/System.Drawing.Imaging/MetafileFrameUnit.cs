@@ -7,6 +7,7 @@
 using System;
 namespace System.Drawing.Imaging 
 {
+	[Serializable]
 	public enum MetafileFrameUnit {
 		Document = 5,
 		GdiCompatible = 7,

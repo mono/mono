@@ -7,6 +7,7 @@
 using System;
 namespace System.Drawing.Imaging 
 {
+	[Serializable]
 	public enum ImageLockMode {
 		ReadOnly = 1,
 		ReadWrite = 3,

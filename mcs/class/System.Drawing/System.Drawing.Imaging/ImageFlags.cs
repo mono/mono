@@ -8,6 +8,7 @@ using System;
 namespace System.Drawing.Imaging
 {
 	[Flags]
+	[Serializable]
 	public enum ImageFlags {
 		Caching = 131072,
 		ColorSpaceCmyk = 32,

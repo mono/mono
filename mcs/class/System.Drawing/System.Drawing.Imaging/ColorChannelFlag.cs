@@ -7,6 +7,7 @@
 using System;
 namespace System.Drawing.Imaging
 {
+	[Serializable]
 	public enum ColorChannelFlag {
 		ColorChannelC = 0,
 		ColorChannelK = 3,

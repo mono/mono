@@ -7,6 +7,7 @@
 using System;
 namespace System.Drawing.Imaging 
 {
+	[Serializable]
 	public enum PaletteFlags {
 		GrayScale = 2,
 		Halftone = 4,

@@ -14,7 +14,7 @@ namespace System.Drawing.Imaging
 	/// <summary>
 	/// Summary description for ImageAttributes.
 	/// </summary>
-	public sealed class ImageAttributes : IDisposable {
+	public sealed class ImageAttributes : ICloneable, IDisposable {
 		public ImageAttributes() {
 		}
 
@@ -45,5 +45,10 @@ namespace System.Drawing.Imaging
 		~ImageAttributes() {
 		}
 
+		[MonoTODO]
+		object ICloneable.Clone()
+		{
+			throw new NotImplementedException ();
+		}
 	}
 }

@@ -1,3 +1,11 @@
+2004-01-10  Ravindra <rkumar@novell.com>
+
+	* All Enums: Made serializable.
+
+	* ImageAttributes.cs: Implements ICloneable.
+
+	* Metafile.cs: Made serializable and invisible to COM.
+
 2003-11-13  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* ColorMap.cs: Implemented

@@ -7,6 +7,7 @@
 using System;
 namespace System.Drawing.Imaging 
 {
+	[Serializable]
 	public enum EmfType {
 		EmfOnly = 3,
 		EmfPlusDual = 5,
