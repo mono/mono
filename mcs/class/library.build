@@ -57,6 +57,7 @@
 		<nant basedir="Npgsql" target="build" buildfile="Npgsql/Npgsql.build"/>
 		<nant basedir="ByteFX.Data" target="build" buildfile="ByteFX.Data/ByteFX.Data.build"/>
 		<nant basedir="Commons.Xml.Relaxng" target="build" buildfile="Commons.Xml.Relaxng/Commons.Xml.Relaxng.build"/>
+		<nant basedir="System.DirectoryServices" target="build" buildfile="System.DirectoryServices/System.DirectoryServices.build"/>
 	</target>
 
 	<target name="test">
@@ -114,5 +115,6 @@
 		<nant basedir="NPgsql" target="clean"/>
 		<nant basedir="ICSharpCode.SharpZipLib" target="clean"/>
 		<nant basedir="ByteFX.Data" target="clean"/>
+	<nant basedir="System.DirectoryServices" target="clean" />
 	</target>
 </project>

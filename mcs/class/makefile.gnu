@@ -12,6 +12,7 @@ DIRS =	corlib				\
 	System.Data			\
 	Mono.GetOptions			\
 	System.Web			\
+	System.DirectoryServices	\
 	System.Web.Services		\
 	System.Runtime.Serialization.Formatters.Soap \
 	System.Runtime.Remoting		\
