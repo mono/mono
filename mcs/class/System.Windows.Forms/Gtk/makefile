@@ -24,6 +24,7 @@ SOURCES = \
 	GroupBox.cs	\
 	ProgressBar.cs	\
 	PictureBox.cs	\
+	FileDialog.cs	\
 	ScrollableControl.cs
 
 all: demo.exe

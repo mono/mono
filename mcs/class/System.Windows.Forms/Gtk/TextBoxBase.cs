@@ -201,8 +201,8 @@ namespace System.Windows.Forms {
 			get
 			{
 				String selection = "";
-				Gtk.TextIter start = new Gtk.TextIter();
-				Gtk.TextIter end = new Gtk.TextIter();
+				Gtk.TextIter start = new Gtk.TextIter ();
+				Gtk.TextIter end = new Gtk.TextIter ();
 		
 				if (TextBuffer.GetSelectionBounds(ref start, ref end))
 					selection = TextBuffer.GetText(start, end, true);

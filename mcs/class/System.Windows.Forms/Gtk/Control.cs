@@ -189,6 +189,14 @@ namespace System.Windows.Forms {
 			}
      }
 		
+		public bool Enabled {
+			get {
+					return Widget.Sensitive;
+			}
+			set {
+						Widget.Sensitive = value;
+			}						
+		}		
 		public Size Size {
 			get { 
 				return size;
@@ -303,6 +311,5 @@ namespace System.Windows.Forms {
 			get { return anchor; }
 			set { anchor=value; }
     }
-
 	}
 }

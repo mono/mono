@@ -16,6 +16,7 @@ namespace demo
 	public class GtkForm : System.Windows.Forms.Form
   	{
 	    	private Button button1 = new Button(); 
+			private Button button2 = new Button(); 
 			private Label label1 = new Label();
 	    	private TextBox text1 = new TextBox(); 
 	    	private ProgressBar bar1 = new ProgressBar();
@@ -24,7 +25,8 @@ namespace demo
 			private RadioButton opt2 = new RadioButton();
 			private GroupBox frame1 = new GroupBox();
 			private PictureBox pbox = new PictureBox();
-			
+			private FileDialog fdialog = new FileDialog();
+		
 	    	private void InitializeWidgets()
 	    	{
     		  	button1.Location = new Point(150, 28);
@@ -32,7 +34,14 @@ namespace demo
     	  	  	button1.Size = new Size(128, 44);
        	 	button1.Text = "Apply";
     	  		button1.Click += new EventHandler(this.button1_Click);    
-            
+         	button1.Enabled = false;
+  
+				button2.Location = new Point(150, 85);
+       	  	button2.Name = "button2";
+    	  	  	button2.Size = new Size(128, 44);
+       	 	button2.Text = "File";
+    	  		button2.Click += new EventHandler(this.button2_Click); 
+ 
     	    	text1.Location = new Point(320,48);
     	    	text1.Name = "textBox1";
    	    	text1.Size = new Size(150, 22);
@@ -71,6 +80,7 @@ namespace demo
 
           this.Controls.AddRange(new System.Windows.Forms.Control[] { 
 									this.button1,
+									this.button2,
                      	this.text1, 
 									this.bar1, 
 									this.check1,
@@ -78,6 +88,7 @@ namespace demo
 									this.opt2,
 									this.frame1,
 									this.pbox,
+									fdialog,
 									this.label1 });
           this.Size = new Size(512, 250);
     		}
@@ -89,7 +100,7 @@ namespace demo
     	}
 
 		private void button1_Click(object sender, EventArgs e){ 
-			
+			pbox.File = fdialog.OpenFile;
 				if (this.check1.Checked) { 
 					this.pbox.Stretch = true;
 				}
@@ -97,6 +108,11 @@ namespace demo
 					this.pbox.Stretch = false;
 				}			
   		}
+
+		private void button2_Click(object sender, EventArgs e){ 							
+  			fdialog.ShowDialog();
+			button1.Enabled = true;
+		}
 
 		}
 	
