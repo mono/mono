@@ -1,3 +1,7 @@
+2003-11-03  Martin Baulig  <martin@ximian.com>
+
+	* OpCodes.cs: Added Ldelem_Any, Stelem_Any and Unbox_Any from .NET 1.2.
+
 2003-10-18  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* AssemblyBuilder.cs (SetCustomAttribute): Changed PK extraction to

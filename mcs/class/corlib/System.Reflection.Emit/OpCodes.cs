@@ -133,6 +133,9 @@ namespace System.Reflection.Emit {
   		public static readonly OpCode Ldelem_U2;
   		public static readonly OpCode Ldelem_U4;
   		public static readonly OpCode Ldelema;
+#if GENERICS
+		public static readonly OpCode Ldelem_Any;
+#endif
   		public static readonly OpCode Ldfld;
   		public static readonly OpCode Ldflda;
   		public static readonly OpCode Ldftn;
@@ -205,6 +208,9 @@ namespace System.Reflection.Emit {
   		public static readonly OpCode Stelem_R4;
   		public static readonly OpCode Stelem_R8;
   		public static readonly OpCode Stelem_Ref;
+#if GENERICS
+		public static readonly OpCode Stelem_Any;
+#endif
   		public static readonly OpCode Stfld;
   		public static readonly OpCode Stind_I;
   		public static readonly OpCode Stind_I1;
@@ -230,6 +236,9 @@ namespace System.Reflection.Emit {
   		public static readonly OpCode Throw;
   		public static readonly OpCode Unaligned;
   		public static readonly OpCode Unbox;
+#if GENERICS
+		public static readonly OpCode Unbox_Any;
+#endif
   		public static readonly OpCode Volatile;
   		public static readonly OpCode Xor;
   
@@ -368,6 +377,9 @@ namespace System.Reflection.Emit {
   			Isinst = new OpCode("isinst", 1, OpCodeType.Objmodel, OperandType.InlineType, StackBehaviour.Popref, StackBehaviour.Pushi, FlowControl.Next, 0xFF, 0x75);
   			Conv_R_Un = new OpCode("conv.r.un", 1, OpCodeType.Primitive, OperandType.InlineNone, StackBehaviour.Pop1, StackBehaviour.Pushr8, FlowControl.Next, 0xFF, 0x76);
   			Unbox = new OpCode("unbox", 1, OpCodeType.Primitive, OperandType.InlineType, StackBehaviour.Popref, StackBehaviour.Pushi, FlowControl.Next, 0xFF, 0x79);
+#if GENERICS
+  			Unbox_Any = new OpCode("unbox.any", 1, OpCodeType.Objmodel, OperandType.InlineType, StackBehaviour.Popref, StackBehaviour.Push1, FlowControl.Next, 0xFF, 0xa5);
+#endif
   			Throw = new OpCode("throw", 1, OpCodeType.Objmodel, OperandType.InlineNone, StackBehaviour.Popref, StackBehaviour.Push0, FlowControl.Throw, 0xFF, 0x7A);
   			Ldfld = new OpCode("ldfld", 1, OpCodeType.Objmodel, OperandType.InlineField, StackBehaviour.Popref, StackBehaviour.Push1, FlowControl.Next, 0xFF, 0x7B);
   			Ldflda = new OpCode("ldflda", 1, OpCodeType.Objmodel, OperandType.InlineField, StackBehaviour.Popref, StackBehaviour.Pushi, FlowControl.Next, 0xFF, 0x7C);
@@ -392,6 +404,9 @@ namespace System.Reflection.Emit {
   			Newarr = new OpCode("newarr", 1, OpCodeType.Objmodel, OperandType.InlineType, StackBehaviour.Popi, StackBehaviour.Pushref, FlowControl.Next, 0xFF, 0x8D);
   			Ldlen = new OpCode("ldlen", 1, OpCodeType.Objmodel, OperandType.InlineNone, StackBehaviour.Popref, StackBehaviour.Pushi, FlowControl.Next, 0xFF, 0x8E);
   			Ldelema = new OpCode("ldelema", 1, OpCodeType.Objmodel, OperandType.InlineType, StackBehaviour.Popref_popi, StackBehaviour.Pushi, FlowControl.Next, 0xFF, 0x8F);
+#if GENERICS
+  			Ldelem_Any = new OpCode("ldelem.any", 1, OpCodeType.Objmodel, OperandType.InlineType, StackBehaviour.Popref_popi, StackBehaviour.Push1, FlowControl.Next, 0xFF, 0xA3);
+#endif
   			Ldloc_3 = new OpCode("ldloc.3", 1, OpCodeType.Macro, OperandType.InlineNone, StackBehaviour.Pop0, StackBehaviour.Push1, FlowControl.Next, 0xFF, 0x9);
   			Ldarg = new OpCode("ldarg", 2, OpCodeType.Primitive, OperandType.InlineVar, StackBehaviour.Pop0, StackBehaviour.Push1, FlowControl.Next, 0xFE, 0x9);
   			Ldelem_I1 = new OpCode("ldelem.i1", 1, OpCodeType.Objmodel, OperandType.InlineNone, StackBehaviour.Popref_popi, StackBehaviour.Pushi, FlowControl.Next, 0xFF, 0x90);
@@ -415,6 +430,9 @@ namespace System.Reflection.Emit {
   			Stelem_R4 = new OpCode("stelem.r4", 1, OpCodeType.Objmodel, OperandType.InlineNone, StackBehaviour.Popref_popi_popr4, StackBehaviour.Push0, FlowControl.Next, 0xFF, 0xA0);
   			Stelem_R8 = new OpCode("stelem.r8", 1, OpCodeType.Objmodel, OperandType.InlineNone, StackBehaviour.Popref_popi_popr8, StackBehaviour.Push0, FlowControl.Next, 0xFF, 0xA1);
   			Stelem_Ref = new OpCode("stelem.ref", 1, OpCodeType.Objmodel, OperandType.InlineNone, StackBehaviour.Popref_popi_popref, StackBehaviour.Push0, FlowControl.Next, 0xFF, 0xA2);
+#if GENERICS
+  			Stelem_Any = new OpCode("stelem.any", 1, OpCodeType.Objmodel, OperandType.InlineType, StackBehaviour.Popref_popi_popref, StackBehaviour.Push0, FlowControl.Next, 0xFF, 0xA4);
+#endif
   			Stloc_1 = new OpCode("stloc.1", 1, OpCodeType.Macro, OperandType.InlineNone, StackBehaviour.Pop1, StackBehaviour.Push0, FlowControl.Next, 0xFF, 0xB);
   			Starg = new OpCode("starg", 2, OpCodeType.Primitive, OperandType.InlineVar, StackBehaviour.Pop1, StackBehaviour.Push0, FlowControl.Next, 0xFE, 0xB);
   			Conv_Ovf_I1 = new OpCode("conv.ovf.i1", 1, OpCodeType.Primitive, OperandType.InlineNone, StackBehaviour.Pop1, StackBehaviour.Pushi, FlowControl.Next, 0xFF, 0xB3);
