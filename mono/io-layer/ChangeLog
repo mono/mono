@@ -1,3 +1,9 @@
+
+Mon Dec 20 11:58:33 CET 2004 Paolo Molaro <lupus@ximian.com>
+
+	* threads.c, threads.h: add accessor to get the pthread_key_t for
+	a tls id.
+
 2004-12-13 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* io.c: check for the existence of 'dest' and set ERROR_ALREADY_EXISTS
