@@ -5,5 +5,5 @@ public abstract class X {
 }
 
 class Y : X {
-	void XX ();
+	void XX () {}
 }
