@@ -10,6 +10,7 @@
 // Copyright (C) Tim Coleman, 2002
 //
 
+using Mono.Data.Tds;
 using System;
 using System.ComponentModel;
 using System.Data;
@@ -23,6 +24,7 @@ namespace Mono.Data.SybaseClient {
 		#region Fields
 
 		ArrayList list = new ArrayList();
+		TdsMetaParameterCollection metaParameters;
 		SybaseCommand command;
 
 		#endregion // Fields
@@ -32,6 +34,7 @@ namespace Mono.Data.SybaseClient {
 		internal SybaseParameterCollection (SybaseCommand command)
 		{
 			this.command = command;
+			metaParameters = new TdsMetaParameterCollection ();
 		}
 
 		#endregion // Constructors
@@ -90,6 +93,10 @@ namespace Mono.Data.SybaseClient {
 		object ICollection.SyncRoot {
 			get { return list.SyncRoot; }
 		}
+
+		internal TdsMetaParameterCollection MetaParameters {
+			get { return metaParameters; }
+		}
 		
 		#endregion // Properties
 
@@ -110,6 +117,7 @@ namespace Mono.Data.SybaseClient {
 			
 			value.Container = this;
 			list.Add (value);
+			metaParameters.Add (value.MetaParameter);
 			return value;
 		}
 		
@@ -118,23 +126,24 @@ namespace Mono.Data.SybaseClient {
 			return Add (new SybaseParameter (parameterName, value));
 		}
 		
-		public SybaseParameter Add (string parameterName, SybaseType sqlDbType)
+		public SybaseParameter Add (string parameterName, SybaseType sybaseType)
 		{
-			return Add (new SybaseParameter (parameterName, sqlDbType));
+			return Add (new SybaseParameter (parameterName, sybaseType));
 		}
 
-		public SybaseParameter Add (string parameterName, SybaseType sqlDbType, int size)
+		public SybaseParameter Add (string parameterName, SybaseType sybaseType, int size)
 		{
-			return Add (new SybaseParameter (parameterName, sqlDbType, size));
+			return Add (new SybaseParameter (parameterName, sybaseType, size));
 		}
 
-		public SybaseParameter Add (string parameterName, SybaseType sqlDbType, int size, string sourceColumn)
+		public SybaseParameter Add (string parameterName, SybaseType sybaseType, int size, string sourceColumn)
 		{
-			return Add (new SybaseParameter (parameterName, sqlDbType, size, sourceColumn));
+			return Add (new SybaseParameter (parameterName, sybaseType, size, sourceColumn));
 		}
 
 		public void Clear()
 		{
+			metaParameters.Clear ();
 			list.Clear ();
 		}
 		
@@ -182,11 +191,13 @@ namespace Mono.Data.SybaseClient {
 
 		public void Remove (object value)
 		{
+			metaParameters.Remove (((SybaseParameter) value).MetaParameter);
 			list.Remove (value);
 		}
 
 		public void RemoveAt (int index)
 		{
+			metaParameters.RemoveAt (index);
 			list.RemoveAt (index);
 		}
 

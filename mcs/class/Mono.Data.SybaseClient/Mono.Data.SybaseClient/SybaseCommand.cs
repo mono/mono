@@ -11,6 +11,7 @@
 // Copyright (C) Tim Coleman, 2002
 //
 
+using Mono.Data.Tds;
 using Mono.Data.Tds.Protocol;
 using System;
 using System.Collections;
@@ -20,7 +21,6 @@ using System.Data;
 using System.Data.Common;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Xml;
 
 namespace Mono.Data.SybaseClient {
 	public sealed class SybaseCommand : Component, IDbCommand, ICloneable
@@ -28,19 +28,16 @@ namespace Mono.Data.SybaseClient {
 		#region Fields
 
 		bool disposed = false;
-
 		int commandTimeout;
 		bool designTimeVisible;
 		string commandText;
-
 		CommandType commandType;
 		SybaseConnection connection;
 		SybaseTransaction transaction;
 		UpdateRowSource updatedRowSource;
-
 		CommandBehavior behavior = CommandBehavior.Default;
-		NameValueCollection preparedStatements = new NameValueCollection ();
 		SybaseParameterCollection parameters;
+		string preparedStatement = null;
 
 		#endregion // Fields
 
@@ -86,7 +83,11 @@ namespace Mono.Data.SybaseClient {
 
 		public string CommandText {
 			get { return commandText; }
-			set { commandText = value; }
+			set { 
+				if (value != commandText && preparedStatement != null)
+					Unprepare ();
+				commandText = value; 
+			}
 		}
 
 		public int CommandTimeout {
@@ -166,132 +167,6 @@ namespace Mono.Data.SybaseClient {
 
 		#region Methods
 
-		private string BuildCommand ()
-		{
-			string statementHandle = preparedStatements [commandText];
-			if (statementHandle != null) {
-				string proc = String.Format ("sp_execute {0}", statementHandle);	
-				if (parameters.Count > 0)
-					proc += ",";
-				return BuildProcedureCall (proc, parameters);
-			}
-
-			if (commandType == CommandType.StoredProcedure)
-				return BuildProcedureCall (commandText, parameters);
-
-			string sql = String.Empty;
-			if ((behavior & CommandBehavior.KeyInfo) > 0)
-				sql += "SET FMTONLY OFF; SET NO_BROWSETABLE ON;";
-			if ((behavior & CommandBehavior.SchemaOnly) > 0)
-				sql += "SET FMTONLY ON;";
-	
-			switch (commandType) {
-			case CommandType.Text :
-				sql += commandText;
-				break;
-			default:
-				throw new InvalidOperationException ("The CommandType was invalid.");
-			}
-			return BuildExec (sql);
-		}
-
-		[MonoTODO ("This throws a SybaseException.")]
-		private string BuildExec (string sql)
-		{
-			StringBuilder declare = new StringBuilder ();
-			StringBuilder assign = new StringBuilder ();
-
-			sql = sql.Replace ("'", "''");
-			foreach (SybaseParameter parameter in parameters) {
-				declare.Append ("declare ");
-				declare.Append (parameter.Prepare (parameter.ParameterName));
-				if (parameter.Direction == ParameterDirection.Output)
-					declare.Append (" output");
-				declare.Append ('\n');
-				assign.Append (String.Format ("select {0}={1}\n", parameter.ParameterName, FormatParameter (parameter)));
-			}
-
-			return String.Format ("{0}{1}{2}", declare.ToString (), assign.ToString (), sql);
-		}
-
-		private string BuildPrepare ()
-		{
-			StringBuilder parms = new StringBuilder ();
-			foreach (SybaseParameter parameter in parameters) {
-				if (parms.Length > 0)
-					parms.Append (", ");
-				parms.Append (parameter.Prepare (parameter.ParameterName));
-				if (parameter.Direction == ParameterDirection.Output)
-					parms.Append (" output");
-			}
-
-			SybaseParameterCollection localParameters = new SybaseParameterCollection (this);
-			SybaseParameter parm;
-		
-			parm = new SybaseParameter ("@P1", SybaseType.Int);
-			parm.Direction = ParameterDirection.Output;
-			localParameters.Add (parm);
-
-			parm = new SybaseParameter ("@P2", SybaseType.NVarChar);
-			parm.Value = parms.ToString ();
-			parm.Size = ((string) parm.Value).Length;
-			localParameters.Add (parm);
-
-			parm = new SybaseParameter ("@P3", SybaseType.NVarChar);
-			parm.Value = commandText;
-			parm.Size = ((string) parm.Value).Length;
-			localParameters.Add (parm);
-
-			return BuildProcedureCall ("sp_prepare", localParameters);
-		}
-
-		private static string BuildProcedureCall (string procedure, SybaseParameterCollection parameters)
-		{
-			StringBuilder parms = new StringBuilder ();
-			StringBuilder declarations = new StringBuilder ();
-			StringBuilder outParms = new StringBuilder ();
-			StringBuilder set = new StringBuilder ();
-
-			int index = 1;
-			foreach (SybaseParameter parameter in parameters) {
-				string parmName = String.Format ("@P{0}", index);
-
-				switch (parameter.Direction) {
-				case ParameterDirection.Input :
-					if (parms.Length > 0)
-						parms.Append (", ");
-					parms.Append (FormatParameter (parameter));
-					break;
-				case ParameterDirection.Output :
-					if (parms.Length > 0)
-						parms.Append (", ");
-					parms.Append (parmName);
-					parms.Append (" output");
-
-					if (outParms.Length > 0) {
-						outParms.Append (", ");
-						declarations.Append (", ");
-					}
-					else {
-						outParms.Append ("select ");
-						declarations.Append ("declare ");
-					}
-
-					declarations.Append (parameter.Prepare (parmName));
-					set.Append (String.Format ("set {0}=NULL\n", parmName));
-					outParms.Append (parmName);
-					break;
-				default :
-					throw new NotImplementedException ("Only support input and output parameters.");
-				}
-				index += 1;
-			}
-			if (declarations.Length > 0)
-				declarations.Append ('\n');
-
-			return String.Format ("{0}{1}{2} {3}\n{4}", declarations.ToString (), set.ToString (), procedure, parms.ToString (), outParms.ToString ());
-		}
-
 		public void Cancel () 
 		{
 			if (Connection == null || Connection.Tds == null)
@@ -322,7 +197,10 @@ namespace Mono.Data.SybaseClient {
 			SybaseParameterCollection localParameters = new SybaseParameterCollection (this);
 			localParameters.Add ("@P1", SybaseType.NVarChar, commandText.Length).Value = commandText;
 
-			Connection.Tds.ExecuteQuery (BuildProcedureCall ("sp_procedure_params_rowset", localParameters));
+			string sql = "sp_procedure_params_rowset";
+
+			Connection.Tds.ExecProc (sql, localParameters.MetaParameters, 0, true);
+
 			SybaseDataReader reader = new SybaseDataReader (this);
 			parameters.Clear ();
 			object[] dbValues = new object[reader.FieldCount];
@@ -334,19 +212,52 @@ namespace Mono.Data.SybaseClient {
 			reader.Close ();	
 		}
 
+		private void Execute (CommandBehavior behavior, bool wantResults)
+		{
+			TdsMetaParameterCollection parms = Parameters.MetaParameters;
+			if (preparedStatement == null) {
+				bool schemaOnly = ((CommandBehavior & CommandBehavior.SchemaOnly) > 0);
+				bool keyInfo = ((CommandBehavior & CommandBehavior.SchemaOnly) > 0);
+
+				StringBuilder sql1 = new StringBuilder ();
+				StringBuilder sql2 = new StringBuilder ();
+
+				if (schemaOnly || keyInfo)
+					sql1.Append ("SET FMTONLY OFF;");
+				if (keyInfo) {
+					sql1.Append ("SET NO_BROWSETABLE ON;");
+					sql2.Append ("SET NO_BROWSETABLE OFF;");
+				}
+				if (schemaOnly) {
+					sql1.Append ("SET FMTONLY ON;");
+					sql2.Append ("SET FMTONLY OFF;");
+				}
+
+				switch (CommandType) {
+				case CommandType.StoredProcedure:
+					if (keyInfo || schemaOnly)
+						Connection.Tds.Execute (sql1.ToString ());
+					Connection.Tds.ExecProc (CommandText, parms, CommandTimeout, wantResults);
+					if (keyInfo || schemaOnly)
+						Connection.Tds.Execute (sql2.ToString ());
+					break;
+				case CommandType.Text:
+					string sql = String.Format ("{0}{1}{2}", sql1.ToString (), CommandText, sql2.ToString ());
+					Connection.Tds.Execute (sql, parms, CommandTimeout, wantResults);
+					break;
+				}
+			}
+			else 
+				Connection.Tds.ExecPrepared (preparedStatement, parms, CommandTimeout, wantResults);
+		}
+
 		public int ExecuteNonQuery ()
 		{
 			ValidateCommand ("ExecuteNonQuery");
-			string sql = String.Empty;
 			int result = 0;
 
-			if (Parameters.Count > 0)
-				sql = BuildCommand ();
-			else
-				sql = CommandText;
-
 			try {
-				result = Connection.Tds.ExecuteNonQuery (sql, CommandTimeout);
+				Execute (CommandBehavior.Default, false);
 			}
 			catch (TdsTimeoutException e) {
 				throw SybaseException.FromTdsInternalException ((TdsInternalException) e);
@@ -364,15 +275,12 @@ namespace Mono.Data.SybaseClient {
 		public SybaseDataReader ExecuteReader (CommandBehavior behavior)
 		{
 			ValidateCommand ("ExecuteReader");
-			this.behavior = behavior;
-
 			try {
-				Connection.Tds.ExecuteQuery (BuildCommand (), CommandTimeout);
+				Execute (behavior, true);
 			}
 			catch (TdsTimeoutException e) {
 				throw SybaseException.FromTdsInternalException ((TdsInternalException) e);
 			}
-		
 			Connection.DataReader = new SybaseDataReader (this);
 			return Connection.DataReader;
 		}
@@ -381,7 +289,7 @@ namespace Mono.Data.SybaseClient {
 		{
 			ValidateCommand ("ExecuteScalar");
 			try {
-				Connection.Tds.ExecuteQuery (BuildCommand (), CommandTimeout);
+				Execute (CommandBehavior.Default, true);
 			}
 			catch (TdsTimeoutException e) {
 				throw SybaseException.FromTdsInternalException ((TdsInternalException) e);
@@ -393,41 +301,6 @@ namespace Mono.Data.SybaseClient {
 			object result = Connection.Tds.ColumnValues [0];
 			CloseDataReader (true);
 			return result;
-		}
-
-		[MonoTODO ("Include offset from SybaseParameter for binary/string types.")]
-		static string FormatParameter (SybaseParameter parameter)
-		{
-			if (parameter.Value == null)
-				return "NULL";
-
-			switch (parameter.SybaseType) {
-				case SybaseType.BigInt :
-				case SybaseType.Decimal :
-				case SybaseType.Float :
-				case SybaseType.Int :
-				case SybaseType.Money :
-				case SybaseType.Real :
-				case SybaseType.SmallInt :
-				case SybaseType.SmallMoney :
-				case SybaseType.TinyInt :
-					return parameter.Value.ToString ();
-				case SybaseType.NVarChar :
-				case SybaseType.NChar :
-					return String.Format ("N'{0}'", parameter.Value.ToString ().Replace ("'", "''"));
-				case SybaseType.UniqueIdentifier :
-					return String.Format ("0x{0}", ((Guid) parameter.Value).ToString ("N"));
-				case SybaseType.Bit:
-					if (parameter.Value.GetType () == typeof (bool))
-						return (((bool) parameter.Value) ? "0x1" : "0x0");
-					return parameter.Value.ToString ();
-				case SybaseType.Image:
-				case SybaseType.Binary:
-				case SybaseType.VarBinary:
-					return String.Format ("0x{0}", BitConverter.ToString ((byte[]) parameter.Value).Replace ("-", "").ToLower ());
-				default:
-					return String.Format ("'{0}'", parameter.Value.ToString ().Replace ("'", "''"));
-			}
 		}
 
 		private void GetOutputParameters ()
@@ -472,17 +345,19 @@ namespace Mono.Data.SybaseClient {
 		public void Prepare ()
 		{
 			ValidateCommand ("Prepare");
-			Connection.Tds.ExecuteNonQuery (BuildPrepare ());
-
-			if (Connection.Tds.OutputParameters.Count == 0 || Connection.Tds.OutputParameters[0] == null)
-				throw new Exception ("Could not prepare the statement.");
-
-			preparedStatements [commandText] = ((int) Connection.Tds.OutputParameters [0]).ToString ();
+			if (CommandType == CommandType.Text) 
+				preparedStatement = Connection.Tds.Prepare (CommandText, Parameters.MetaParameters);
 		}
 
 		public void ResetCommandTimeout ()
 		{
 			commandTimeout = 30;
+		}
+
+		private void Unprepare ()
+		{
+			Connection.Tds.Unprepare (preparedStatement); 
+			preparedStatement = null;
 		}
 
 		private void ValidateCommand (string method)

@@ -61,7 +61,7 @@ namespace Mono.Data.SybaseClient {
 		{
 			if (!isOpen)
 				throw new InvalidOperationException ("The Transaction was not open.");
-			connection.Tds.ExecuteNonQuery ("COMMIT TRANSACTION");
+			connection.Tds.Execute ("COMMIT TRANSACTION");
 			connection.Transaction = null;
 			isOpen = false;
 		}		
@@ -90,7 +90,7 @@ namespace Mono.Data.SybaseClient {
 		{
 			if (!isOpen)
 				throw new InvalidOperationException ("The Transaction was not open.");
-			connection.Tds.ExecuteNonQuery (String.Format ("ROLLBACK TRANSACTION {0}", transactionName));
+			connection.Tds.Execute (String.Format ("ROLLBACK TRANSACTION {0}", transactionName));
 			isOpen = false;
 		}
 
@@ -98,7 +98,7 @@ namespace Mono.Data.SybaseClient {
 		{
 			if (!isOpen)
 				throw new InvalidOperationException ("The Transaction was not open.");
-			connection.Tds.ExecuteNonQuery (String.Format ("SAVE TRANSACTION {0}", savePointName));
+			connection.Tds.Execute (String.Format ("SAVE TRANSACTION {0}", savePointName));
 		}
 
 		#endregion // Methods

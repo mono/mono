@@ -10,6 +10,7 @@
 // Copyright (C) Tim Coleman, 2002
 //
 
+using Mono.Data.Tds;
 using Mono.Data.Tds.Protocol;
 using System;
 using System.ComponentModel;
@@ -23,22 +24,18 @@ namespace Mono.Data.SybaseClient {
 	{
 		#region Fields
 
+		TdsMetaParameter metaParameter;
+
 		SybaseParameterCollection container = null;
 		DbType dbType;
 		ParameterDirection direction = ParameterDirection.Input;
 		bool isNullable;
 		bool isSizeSet = false;
 		bool isTypeSet = false;
-		object objValue;
 		int offset;
-		string parameterName;
-		byte precision;
-		byte scale;
-		int size;
-		SybaseType sqlDbType;
+		SybaseType sybaseType;
 		string sourceColumn;
 		DataRowVersion sourceVersion;
-		string typeName;
 
 		#endregion // Fields
 
@@ -51,10 +48,9 @@ namespace Mono.Data.SybaseClient {
 
 		public SybaseParameter (string parameterName, object value) 
 		{
-			this.parameterName = parameterName;
-			this.objValue = value;
+			metaParameter = new TdsMetaParameter (parameterName, value);
 			this.sourceVersion = DataRowVersion.Current;
-			InferSqlType (value);
+			InferSybaseType (value);
 		}
 		
 		public SybaseParameter (string parameterName, SybaseType dbType) 
@@ -72,17 +68,13 @@ namespace Mono.Data.SybaseClient {
 		{
 		}
 		
+		[EditorBrowsable (EditorBrowsableState.Advanced)]	 
 		public SybaseParameter (string parameterName, SybaseType dbType, int size, ParameterDirection direction, bool isNullable, byte precision, byte scale, string sourceColumn, DataRowVersion sourceVersion, object value) 
 		{
-			SybaseType = dbType;
-			Size = size;
-			Value = value;
+			metaParameter = new TdsMetaParameter (parameterName, size, isNullable, precision, scale, value);
 
-			ParameterName = parameterName;
+			SybaseType = dbType;
 			Direction = direction;
-			IsNullable = isNullable;
-			Precision = precision;
-			Scale = scale;
 			SourceColumn = sourceColumn;
 			SourceVersion = sourceVersion;
 		}
@@ -92,33 +84,33 @@ namespace Mono.Data.SybaseClient {
 		// This is in SybaseCommand.DeriveParameters.
 		internal SybaseParameter (object[] dbValues)
 		{
-			precision = 0;
-			scale = 0;
-			direction = ParameterDirection.Input;
+			Precision = 0;
+			Scale = 0;
+			Direction = ParameterDirection.Input;
 
-			parameterName = (string) dbValues[3];
+			ParameterName = (string) dbValues[3];
 
 			switch ((short) dbValues[5]) {
 			case 1:
-				direction = ParameterDirection.Input;
+				Direction = ParameterDirection.Input;
 				break;
 			case 2:
-				direction = ParameterDirection.Output;
+				Direction = ParameterDirection.Output;
 				break;
 			case 3:
-				direction = ParameterDirection.InputOutput;
+				Direction = ParameterDirection.InputOutput;
 				break;
 			case 4:
-				direction = ParameterDirection.ReturnValue;
+				Direction = ParameterDirection.ReturnValue;
 				break;
 			}
 
-			isNullable = (bool) dbValues[8];
+			IsNullable = (bool) dbValues[8];
 
 			if (dbValues[12] != null)
-				precision = (byte) ((short) dbValues[12]);
+				Precision = (byte) ((short) dbValues[12]);
 			if (dbValues[13] != null)
-				scale = (byte) ((short) dbValues[13]);
+				Scale = (byte) ((short) dbValues[13]);
 
 			SetDbTypeName ((string) dbValues[16]);
 		}
@@ -144,17 +136,25 @@ namespace Mono.Data.SybaseClient {
 
 		public ParameterDirection Direction {
 			get { return direction; }
-			set { direction = value; }
+			set { 
+				direction = value; 
+				if (direction == ParameterDirection.Output)
+					MetaParameter.Direction = TdsParameterDirection.Output;
+			}
+		}
+
+		internal TdsMetaParameter MetaParameter {
+			get { return metaParameter; }
 		}
 
 		string IDataParameter.ParameterName {
-			get { return parameterName; }
-			set { parameterName = value; }
+			get { return metaParameter.ParameterName; }
+			set { metaParameter.ParameterName = value; }
 		}
 
 		public bool IsNullable	{
-			get { return isNullable; }
-			set { isNullable = value; }
+			get { return metaParameter.IsNullable; }
+			set { metaParameter.IsNullable = value; }
 		}
 
 		public int Offset {
@@ -163,26 +163,23 @@ namespace Mono.Data.SybaseClient {
 		}
 		
 		public string ParameterName {
-			get { return parameterName; }
-			set { parameterName = value; }
+			get { return metaParameter.ParameterName; }
+			set { metaParameter.ParameterName = value; }
 		}
 
 		public byte Precision {
-			get { return precision; }
-			set { precision = value; }
+			get { return metaParameter.Precision; }
+			set { metaParameter.Precision = value; }
 		}
 
                 public byte Scale {
-			get { return scale; }
-			set { scale = value; }
+			get { return metaParameter.Scale; }
+			set { metaParameter.Scale = value; }
 		}
 
                 public int Size {
-			get { return size; }
-			set { 
-				size = value; 
-				isSizeSet = true;
-			}
+			get { return metaParameter.Size; }
+			set { metaParameter.Size = value; }
 		}
 
 		public string SourceColumn {
@@ -196,7 +193,7 @@ namespace Mono.Data.SybaseClient {
 		}
 		
 		public SybaseType SybaseType {
-			get { return sqlDbType; }
+			get { return sybaseType; }
 			set { 
 				SetSybaseType (value); 
 				isTypeSet = true;
@@ -204,11 +201,11 @@ namespace Mono.Data.SybaseClient {
 		}
 
 		public object Value {
-			get { return objValue; }
+			get { return metaParameter.Value; }
 			set { 
 				if (!isTypeSet)
-					InferSqlType (value);
-				objValue = value; 
+					InferSybaseType (value);
+				metaParameter.Value = value; 
 			}
 		}
 
@@ -223,7 +220,7 @@ namespace Mono.Data.SybaseClient {
 
 		// If the value is set without the DbType/SybaseType being set, then we
 		// infer type information.
-		private void InferSqlType (object value)
+		private void InferSybaseType (object value)
 		{
 			Type type = value.GetType ();
 
@@ -274,37 +271,6 @@ namespace Mono.Data.SybaseClient {
 			}
 		}
 
-		internal string Prepare (string name)
-		{
-			StringBuilder result = new StringBuilder ();
-			result.Append (name);
-			result.Append (" ");
-			result.Append (typeName);
-
-			switch (sqlDbType) {
-			case SybaseType.VarBinary :
-			case SybaseType.NVarChar :
-			case SybaseType.VarChar :
-				if (!isSizeSet || size == 0)
-					throw new InvalidOperationException ("All variable length parameters must have an explicitly set non-zero size.");
-				result.Append (String.Format ("({0})", size));
-				break;
-			case SybaseType.NChar :
-			case SybaseType.Char :
-			case SybaseType.Binary :
-				if (size > 0) 
-					result.Append (String.Format ("({0})", size));
-				break;
-			case SybaseType.Decimal :
-				result.Append (String.Format ("({0},{1})", precision, scale));
-				break;
-                        default:
-                                break;
-                        }
-
-                        return result.ToString ();
-		}
-
 		// When the DbType is set, we also set the SybaseType, as well as the SQL Server
 		// string representation of the type name.  If the DbType is not convertible
 		// to an SybaseType, throw an exception.
@@ -314,77 +280,77 @@ namespace Mono.Data.SybaseClient {
 
 			switch (type) {
 			case DbType.AnsiString:
-				typeName = "varchar";
-				sqlDbType = SybaseType.VarChar;
+				MetaParameter.TypeName = "varchar";
+				sybaseType = SybaseType.VarChar;
 				break;
 			case DbType.AnsiStringFixedLength:
-				typeName = "char";
-				sqlDbType = SybaseType.Char;
+				MetaParameter.TypeName = "char";
+				sybaseType = SybaseType.Char;
 				break;
 			case DbType.Binary:
-				typeName = "varbinary";
-				sqlDbType = SybaseType.VarBinary;
+				MetaParameter.TypeName = "varbinary";
+				sybaseType = SybaseType.VarBinary;
 				break;
 			case DbType.Boolean:
-				typeName = "bit";
-				sqlDbType = SybaseType.Bit;
+				MetaParameter.TypeName = "bit";
+				sybaseType = SybaseType.Bit;
 				break;
 			case DbType.Byte:
-				typeName = "tinyint";
-				sqlDbType = SybaseType.TinyInt;
+				MetaParameter.TypeName = "tinyint";
+				sybaseType = SybaseType.TinyInt;
 				break;
 			case DbType.Currency:
-				sqlDbType = SybaseType.Money;
-				typeName = "money";
+				sybaseType = SybaseType.Money;
+				MetaParameter.TypeName = "money";
 				break;
 			case DbType.Date:
 			case DbType.DateTime:
-				typeName = "datetime";
-				sqlDbType = SybaseType.DateTime;
+				MetaParameter.TypeName = "datetime";
+				sybaseType = SybaseType.DateTime;
 				break;
 			case DbType.Decimal:
-				typeName = "decimal";
-				sqlDbType = SybaseType.Decimal;
+				MetaParameter.TypeName = "decimal";
+				sybaseType = SybaseType.Decimal;
 				break;
 			case DbType.Double:
-				typeName = "float";
-				sqlDbType = SybaseType.Float;
+				MetaParameter.TypeName = "float";
+				sybaseType = SybaseType.Float;
 				break;
 			case DbType.Guid:
-				typeName = "uniqueidentifier";
-				sqlDbType = SybaseType.UniqueIdentifier;
+				MetaParameter.TypeName = "uniqueidentifier";
+				sybaseType = SybaseType.UniqueIdentifier;
 				break;
 			case DbType.Int16:
-				typeName = "smallint";
-				sqlDbType = SybaseType.SmallInt;
+				MetaParameter.TypeName = "smallint";
+				sybaseType = SybaseType.SmallInt;
 				break;
 			case DbType.Int32:
-				typeName = "int";
-				sqlDbType = SybaseType.Int;
+				MetaParameter.TypeName = "int";
+				sybaseType = SybaseType.Int;
 				break;
 			case DbType.Int64:
-				typeName = "bigint";
-				sqlDbType = SybaseType.BigInt;
+				MetaParameter.TypeName = "bigint";
+				sybaseType = SybaseType.BigInt;
 				break;
 			case DbType.Object:
-				typeName = "sql_variant";
-				sqlDbType = SybaseType.Variant;
+				MetaParameter.TypeName = "sql_variant";
+				sybaseType = SybaseType.Variant;
 				break;
 			case DbType.Single:
-				typeName = "real";
-				sqlDbType = SybaseType.Real;
+				MetaParameter.TypeName = "real";
+				sybaseType = SybaseType.Real;
 				break;
 			case DbType.String:
-				typeName = "nvarchar";
-				sqlDbType = SybaseType.NVarChar;
+				MetaParameter.TypeName = "nvarchar";
+				sybaseType = SybaseType.NVarChar;
 				break;
 			case DbType.StringFixedLength:
-				typeName = "nchar";
-				sqlDbType = SybaseType.NChar;
+				MetaParameter.TypeName = "nchar";
+				sybaseType = SybaseType.NChar;
 				break;
 			case DbType.Time:
-				typeName = "datetime";
-				sqlDbType = SybaseType.DateTime;
+				MetaParameter.TypeName = "datetime";
+				sybaseType = SybaseType.DateTime;
 				break;
 			default:
 				throw new ArgumentException (exception);
@@ -480,110 +446,110 @@ namespace Mono.Data.SybaseClient {
 
 			switch (type) {
 			case SybaseType.BigInt:
-				typeName = "bigint";
+				MetaParameter.TypeName = "bigint";
 				dbType = DbType.Int64;
 				break;
 			case SybaseType.Binary:
-				typeName = "binary";
+				MetaParameter.TypeName = "binary";
 				dbType = DbType.Binary;
 				break;
 			case SybaseType.Timestamp:
-				typeName = "timestamp";
+				MetaParameter.TypeName = "timestamp";
 				dbType = DbType.Binary;
 				break;
 			case SybaseType.VarBinary:
-				typeName = "varbinary";
+				MetaParameter.TypeName = "varbinary";
 				dbType = DbType.Binary;
 				break;
 			case SybaseType.Bit:
-				typeName = "bit";
+				MetaParameter.TypeName = "bit";
 				dbType = DbType.Boolean;
 				break;
 			case SybaseType.Char:
-				typeName = "char";
+				MetaParameter.TypeName = "char";
 				dbType = DbType.AnsiStringFixedLength;
 				break;
 			case SybaseType.DateTime:
-				typeName = "datetime";
+				MetaParameter.TypeName = "datetime";
 				dbType = DbType.DateTime;
 				break;
 			case SybaseType.SmallDateTime:
-				typeName = "smalldatetime";
+				MetaParameter.TypeName = "smalldatetime";
 				dbType = DbType.DateTime;
 				break;
 			case SybaseType.Decimal:
-				typeName = "decimal";
+				MetaParameter.TypeName = "decimal";
 				dbType = DbType.Decimal;
 				break;
 			case SybaseType.Float:
-				typeName = "float";
+				MetaParameter.TypeName = "float";
 				dbType = DbType.Double;
 				break;
 			case SybaseType.Image:
-				typeName = "image";
+				MetaParameter.TypeName = "image";
 				dbType = DbType.Binary;
 				break;
 			case SybaseType.Int:
-				typeName = "int";
+				MetaParameter.TypeName = "int";
 				dbType = DbType.Int32;
 				break;
 			case SybaseType.Money:
-				typeName = "money";
+				MetaParameter.TypeName = "money";
 				dbType = DbType.Currency;
 				break;
 			case SybaseType.SmallMoney:
-				typeName = "smallmoney";
+				MetaParameter.TypeName = "smallmoney";
 				dbType = DbType.Currency;
 				break;
 			case SybaseType.NChar:
-				typeName = "nchar";
+				MetaParameter.TypeName = "nchar";
 				dbType = DbType.StringFixedLength;
 				break;
 			case SybaseType.NText:
-				typeName = "ntext";
+				MetaParameter.TypeName = "ntext";
 				dbType = DbType.String;
 				break;
 			case SybaseType.NVarChar:
-				typeName = "nvarchar";
+				MetaParameter.TypeName = "nvarchar";
 				dbType = DbType.String;
 				break;
 			case SybaseType.Real:
-				typeName = "real";
+				MetaParameter.TypeName = "real";
 				dbType = DbType.Single;
 				break;
 			case SybaseType.SmallInt:
-				typeName = "smallint";
+				MetaParameter.TypeName = "smallint";
 				dbType = DbType.Int16;
 				break;
 			case SybaseType.Text:
-				typeName = "text";
+				MetaParameter.TypeName = "text";
 				dbType = DbType.AnsiString;
 				break;
 			case SybaseType.VarChar:
-				typeName = "varchar";
+				MetaParameter.TypeName = "varchar";
 				dbType = DbType.AnsiString;
 				break;
 			case SybaseType.TinyInt:
-				typeName = "tinyint";
+				MetaParameter.TypeName = "tinyint";
 				dbType = DbType.Byte;
 				break;
 			case SybaseType.UniqueIdentifier:
-				typeName = "uniqueidentifier";
+				MetaParameter.TypeName = "uniqueidentifier";
 				dbType = DbType.Guid;
 				break;
 			case SybaseType.Variant:
-				typeName = "sql_variant";
+				MetaParameter.TypeName = "sql_variant";
 				dbType = DbType.Object;
 				break;
 			default:
 				throw new ArgumentException (exception);
 			}
-			sqlDbType = type;
+			sybaseType = type;
 		}
 
 		public override string ToString() 
 		{
-			return parameterName;
+			return ParameterName;
 		}
 
 		#endregion // Methods

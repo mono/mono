@@ -1,3 +1,14 @@
+2002-11-26  Tim Coleman <tim@timcoleman.com>
+	* Mono.Data.SybaseClient.build:
+		Copy dll into Test directory.
+	* Mono.Data.SybaseClient/SybaseCommand.cs:
+	* Mono.Data.SybaseClient/SybaseConnection.cs:
+	* Mono.Data.SybaseClient/SybaseParameter.cs:
+	* Mono.Data.SybaseClient/SybaseParameterCollection.cs:
+	* Mono.Data.SybaseClient/SybaseTransaction.cs:
+		Many changes around making PREPAREs work in
+		Sybase as well as SQL Server.
+
 2002-11-21  Tim Coleman <tim@timcoleman.com>
 	* Mono.Data.SybaseClient.build:
 	* Mono.Data.SybaseClient/SybaseCommand.cs:

@@ -182,7 +182,7 @@ namespace Mono.Data.SybaseClient {
 				break;
 			}
 
-			tds.ExecuteNonQuery (String.Format ("SET TRANSACTION ISOLATION LEVEL {0};BEGIN TRANSACTION {1}", isolevel, transactionName));
+			tds.Execute (String.Format ("SET TRANSACTION ISOLATION LEVEL {0}\nBEGIN TRANSACTION {1}", isolevel, transactionName));
 			transaction = new SybaseTransaction (this, iso);
 			return transaction;
 		}
@@ -193,7 +193,7 @@ namespace Mono.Data.SybaseClient {
 				throw new ArgumentException (String.Format ("The database name {0} is not valid."));
 			if (State != ConnectionState.Open)
 				throw new InvalidOperationException ("The connection is not open");
-			tds.ExecuteNonQuery (String.Format ("use {0}", database));
+			tds.Execute (String.Format ("use {0}", database));
 		}
 
 		private void ChangeState (ConnectionState currentState)

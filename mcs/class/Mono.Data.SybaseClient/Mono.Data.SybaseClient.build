@@ -33,6 +33,7 @@
 				<includes name="../lib/Mono.Data.Tds.dll"/>
 			</references>
 		</csc>
+		<copy file="../lib/Mono.Data.SybaseClient.dll" tofile="Test/Mono.Data.SybaseClient.dll"/>
 	</target>
 	<target name="test" depends="build">
 		<nant basedir="Test" target="test"/>
