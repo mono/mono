@@ -837,7 +837,7 @@ namespace System.Web {
 					qs = "?" + qs;
 
 				UriBuilder ub = new UriBuilder (_WorkerRequest.GetProtocol (),
-								_WorkerRequest.GetLocalAddress (),
+								_WorkerRequest.GetServerName (),
 								_WorkerRequest.GetLocalPort (),
 								Path,
 								qs);
