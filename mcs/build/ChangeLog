@@ -1,3 +1,10 @@
+2005-01-31  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* library.make: Exclude CAS category when running unit tests with 
+	Mono (they can be run manually using --security). Added a define
+	for WINDOWS (only on Windows) to be used for declarative security
+	attributes ONLY.
+
 2005-01-24  Raja R Harinath  <rharinath@novell.com>
 
 	* library.make (run-test-lib, run-test-ondotnet-lib): Print out
