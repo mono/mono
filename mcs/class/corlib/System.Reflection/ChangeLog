@@ -1,3 +1,8 @@
+
+Mon Mar 25 18:54:58 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* MonoEvent.cs: added the needed fields.
+
 2002-03-20  Martin Baulig  <martin@gnome.org>
 
 	* ConstructorInfo.cs (Invoke): Implemented, call the abstract Invoke.

@@ -12,6 +12,8 @@ using System.Reflection;
 
 namespace System.Reflection {
 	public sealed class MonoEvent: EventInfo {
+		IntPtr klass;
+		IntPtr handle;
 
 		public override EventAttributes Attributes {
 			get { return (EventAttributes)0;}
