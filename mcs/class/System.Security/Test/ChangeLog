@@ -1,0 +1,5 @@
+2002-11-28  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* AllTests.cs: New. Include System.Security.Cryptography.Xml
+	test suites.
+	* System.Security_test.build: New. Nant build file for Windows.
