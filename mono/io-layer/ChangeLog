@@ -1,3 +1,8 @@
+2003-09-02  Dick Porter  <dick@ximian.com>
+
+	* io.c: Work around glib brain-dead assumptions about utf8-encoded
+	filenames.  Fixes bug 30781.
+
 2003-08-28  Dick Porter  <dick@ximian.com>
 
 	* critical-sections.c:  Patch from Bernie Solomon
