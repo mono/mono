@@ -68,7 +68,7 @@ namespace Mono.CSharp {
 		static bool InitMonoSymbolWriter (string basename, string output_file,
 						  string[] debug_args)
 		{
-			string symbol_output = basename + "-debug.s";
+			string symbol_output = basename + ".dbg";
 
 			Type itype = SymbolWriter.GetType ();
 			if (itype == null)
