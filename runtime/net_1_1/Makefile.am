@@ -15,7 +15,7 @@ gac_assemblies_list = \
 	Accessibility					\
 	ByteFX.Data					\
 	Commons.Xml.Relaxng				\
-	Cscompmgd					\
+	cscompmgd					\
 	I18N.CJK					\
 	I18N						\
 	I18N.MidEast					\
