@@ -1,3 +1,10 @@
+2003-10-20 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* ControlDesigner.cs, DataBindingCollection.cs,
+	HtmlControlDesigner.cs, IHtmlControlDesignerBehavior.cs,
+	ReadWriteControlDesigner.cs, WebControlToolboxItem.cs: Stub out files
+
+
 2003-01-07	Gaurav Vaish <gvaish_mono AT lycos.com>
 
 	* DataBindingHandler.cs         : Implemented.
