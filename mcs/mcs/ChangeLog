@@ -1,5 +1,15 @@
 2001-12-18  Miguel de Icaza  <miguel@ximian.com>
 
+	* cs-tokenizer.cs: Add support for defines.
+	Add support for #if, #elif, #else, #endif
+	
+	(eval_var): evaluates a variable.
+	(eval): stubbed for evaluating functions.
+
+	* cs-parser.jay: Pass the defines information
+
+	* driver.cs: Add --define command line option.
+
 	* decl.cs: Move MemberCore here.
 
 	Make it the base class for DeclSpace.  This allows us to catch and

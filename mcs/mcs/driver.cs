@@ -44,6 +44,8 @@ namespace Mono.CSharp
 		static string target_ext = ".exe";
 
 		static bool parse_only = false;
+
+		static ArrayList defines;
 		
 		static int parse (string input_file)
 		{
@@ -58,7 +60,7 @@ namespace Mono.CSharp
 				return 1;
 			}
 
-			parser = new CSharpParser (input_file, input);
+			parser = new CSharpParser (input_file, input, defines);
 			parser.yacc_verbose = yacc_verbose;
 			try {
 				errors = parser.parse ();
@@ -78,6 +80,7 @@ namespace Mono.CSharp
 				"mcs [options] source-files\n" +
 				"   --about         About the Mono C# compiler\n" +
 				"   --checked       Set default context to checked\n" +
+				"   --define SYM    Defines the symbol SYM\n" + 
 				"   --fatal         Makes errors fatal\n" +
 				"   -L PATH         Adds PATH to the assembly link path\n" +
 				"   --nostdlib      Does not load core libraries\n" +
@@ -239,6 +242,16 @@ namespace Mono.CSharp
 					case "--help":
 						Usage (false);
 						return;
+
+					case "--define":
+						if ((i + 1) >= argc){
+							Usage (true);
+							return;
+						}
+						if (defines == null)
+							defines = new ArrayList ();
+						defines.Add (args [++i]);
+						continue;
 						
 					case "--probe": {
 						int code, line;

@@ -271,6 +271,11 @@ namespace Mono.CSharp {
 			return false;
 		}
 
+		static void Report1530 (Location loc)
+		{
+			Report.Error (1530, loc, "Keyword new not allowed for namespace elements");
+		}
+		
 		// <summary>
 		//   Populates the structs and classes with fields and methods
 		// </summary>
@@ -281,24 +286,40 @@ namespace Mono.CSharp {
 		{
 			TypeContainer root = Tree.Types;
 
-			if (interface_resolve_order != null)
+			if (interface_resolve_order != null){
 				foreach (Interface iface in interface_resolve_order)
-					iface.Define (root);
+					if ((iface.ModFlags & Modifiers.NEW) == 0)
+						iface.Define (root);
+					else
+						Report1530 (iface.Location);
+			}
 
-			if (type_container_resolve_order != null)
+
+			if (type_container_resolve_order != null){
 				foreach (TypeContainer tc in type_container_resolve_order)
-					tc.Define (root);
+					if ((tc.ModFlags & Modifiers.NEW) == 0)
+						tc.Define (root);
+					else
+						Report1530 (tc.Location);
+			}
 
 			ArrayList delegates = root.Delegates;
-			if (delegates != null)
+			if (delegates != null){
 				foreach (Delegate d in delegates)
-					d.Define (root);
+					if ((d.ModFlags & Modifiers.NEW) == 0)
+						d.Define (root);
+					else
+						Report1530 (d.Location);
+			}
 
 			ArrayList enums = root.Enums;
-			if (enums != null)
+			if (enums != null){
 				foreach (Enum en in enums)
-					en.Define (root);
-			
+					if ((en.ModFlags & Modifiers.NEW) == 0)
+						en.Define (root);
+					else
+						Report1530 (en.Location);
+			}
 		}
 
 		static public void EmitCode ()

@@ -1,5 +1,6 @@
 //
 // cs-tokenizer.cs: The Tokenizer for the C# compiler
+//                  This also implements the preprocessor
 //
 // Author: Miguel de Icaza (miguel@gnu.org)
 //
@@ -82,6 +83,16 @@ namespace Mono.CSharp
 		// Pre-processor
 		//
 		Hashtable defines;
+
+		const int TAKING        = 1;
+		const int TAKEN_BEFORE  = 2;
+		const int ELSE_SEEN     = 4;
+		const int PARENT_TAKING = 8;
+		
+		//
+		// pre-processor if stack state:
+		//
+		Stack ifstack;
 		
 		//
 		// Details about the error encoutered by the tokenizer
@@ -223,12 +234,16 @@ namespace Mono.CSharp
 			}
 		}
 		
-		public Tokenizer (System.IO.Stream input, string fname)
+		public Tokenizer (System.IO.Stream input, string fname, ArrayList defines)
 		{
 			this.ref_name = fname;
 			reader = new System.IO.StreamReader (input);
 			putback_char = -1;
 
+			if (defines != null)
+				foreach (string def in defines)
+					this.defines [def] = true;
+			
 			Location.Push (fname);
 		}
 
@@ -759,15 +774,21 @@ namespace Mono.CSharp
 
 			cmd = static_cmd_arg.ToString ();
 
-			if (c == '\n')
+			if (c == '\n'){
+				line++;
+				ref_line++;
 				return;
+			}
 
 			// skip over white space
 			while ((c = getChar ()) != -1 && (c != '\n') && (c == ' '))
 				;
 
-			if (c == '\n')
+			if (c == '\n'){
+				line++;
+				ref_line++;
 				return;
+			}
 			
 			static_cmd_arg.Length = 0;
 			static_cmd_arg.Append ((char) c);
@@ -775,7 +796,11 @@ namespace Mono.CSharp
 			while ((c = getChar ()) != -1 && (c != '\n'))
 				static_cmd_arg.Append ((char) c);
 
-			arg = static_cmd_arg.ToString ();
+			if (c == '\n'){
+				line++;
+				ref_line++;
+			}
+			arg = static_cmd_arg.ToString ().Trim ();
 		}
 
 		//
@@ -834,13 +859,49 @@ namespace Mono.CSharp
 					defines.Remove (arg);
 			}
 		}
+
+		bool eval_val (string s)
+		{
+			if (s == "true")
+				return true;
+			if (s == "false")
+				return false;
+			
+			if (defines == null)
+				return false;
+			if (defines.Contains (s))
+				return true;
+
+			return false;
+		}
 		
-		void handle_preprocessing_directive ()
+		//
+		// Evaluates an expression for `#if' or `#elif'
+		//
+		bool eval (string s)
+		{
+			return eval_val (s);
+		}
+
+		void report1028 (string extra)
+		{
+			Report.Error (
+				1028, Location,
+				"Unexpected processor directive (" + extra + ")");
+		}
+		
+		//
+		// if true, then the code continues processing the code
+		// if false, the code stays in a loop until another directive is
+		// reached.
+		//
+		bool handle_preprocessing_directive ()
 		{
 			char [] blank = { ' ', '\t' };
 			string cmd, arg;
 			
 			get_cmd_arg (out cmd, out arg);
+			Console.WriteLine ("Command: " + cmd + " Args: [" + arg + "]");
 
 			switch (cmd){
 			case "line":
@@ -848,23 +909,23 @@ namespace Mono.CSharp
 					Report.Error (
 						1576, Location,
 						"Argument to #line directive is missing or invalid");
-				return;
+				return true;
 
 			case "define":
 				PreProcessDefinition (true, arg);
-				return;
+				return true;
 
 			case "undef":
 				PreProcessDefinition (false, arg);
-				return;
+				return true;
 
 			case "error":
 				Report.Error (1029, Location, "#error: '" + arg + "'");
-				return;
+				return true;
 
 			case "warning":
 				Report.Warning (1030, Location, "#warning: '" + arg + "'");
-				return;
+				return true;
 
 			case "region":
 				arg = "true";
@@ -874,19 +935,100 @@ namespace Mono.CSharp
 				goto case "endif";
 				
 			case "if":
-				break;
+				if (arg == ""){
+					Report.Error (1517, Location, "Invalid pre-processor directive");
+					return true;
+				}
+				bool taking = false;
+				if (ifstack == null)
+					ifstack = new Stack ();
 
+				if (ifstack.Count == 0){
+					taking = true;
+				} else {
+					int state = (int) ifstack.Peek ();
+					if ((state & TAKING) != 0)
+						taking = true;
+				}
+					
+				if (eval (arg) && taking){
+					ifstack.Push (TAKING | TAKEN_BEFORE | PARENT_TAKING);
+					return true;
+				} else {
+					ifstack.Push (taking ? PARENT_TAKING : 0);
+					return false;
+				}
+				
 			case "endif":
-				break;
+				if (ifstack == null || ifstack.Count == 0){
+					report1028 ("no #if for this #endif");
+					return true;
+				} else {
+					ifstack.Pop ();
+					if (ifstack.Count == 0)
+						return true;
+					else {
+						int state = (int) ifstack.Peek ();
+
+						if ((state & TAKING) != 0)
+							return true;
+						else
+							return false;
+					}
+				}
 
 			case "elif":
-				break;
+				if (ifstack == null || ifstack.Count == 0){
+					report1028 ("no #if for this #elif");
+					return true;
+				} else {
+					int state = (int) ifstack.Peek ();
+
+					if ((state & ELSE_SEEN) != 0){
+						report1028 ("#elif not valid after #else");
+						return true;
+					}
+
+					if ((state & (TAKEN_BEFORE | TAKING)) != 0)
+						return false;
+
+					if (eval (arg) && ((state & PARENT_TAKING) != 0)){
+						state = (int) ifstack.Pop ();
+						ifstack.Push (state | TAKING | TAKEN_BEFORE);
+						return true;
+					} else 
+						return false;
+				}
 
 			case "else":
-				break;
+				if (ifstack == null || ifstack.Count == 0){
+					Report.Error (
+						1028, Location,
+						"Unexpected processor directive (no #if for this #else)");
+					return true;
+				} else {
+					int state = (int) ifstack.Peek ();
+
+					if ((state & ELSE_SEEN) != 0){
+						report1028 ("#else within #else");
+						return true;
+					}
+
+					ifstack.Pop ();
+					ifstack.Push (state | ELSE_SEEN);
+
+					if ((state & TAKEN_BEFORE) == 0){
+						if ((state & PARENT_TAKING) != 0)
+							return true;
+						else
+							return false;
+					}
+					return false;
+				}
 			}
 			
 			Report.Error (1024, "Preprocessor directive expected");
+			return true;
 		}
 		
 		public int xtoken ()
@@ -897,6 +1039,7 @@ namespace Mono.CSharp
 			int c;
 
 			val = null;
+			// optimization: eliminate col and implement #directive semantic correctly.
 			for (;(c = getChar ()) != -1; col++) {
 			
 				if (is_identifier_start_character ((char) c)){
@@ -968,9 +1111,29 @@ namespace Mono.CSharp
 				// FIXME: In C# the '#' is not limited to appear
 				// on the first column.
 				if (col == 1 && c == '#'){
-					handle_preprocessing_directive ();
-					line++;
-					ref_line++;
+				start_again:
+					
+					bool cont = handle_preprocessing_directive ();
+					Console.WriteLine ("=> " + cont);
+
+					if (cont){
+						col = 0;
+						continue;
+					}
+					col = 1;
+
+					for (;(c = getChar ()) != -1; col++){
+						Console.WriteLine ("Consuming " + (char) c + " cl: " +col);
+						if (c == '\n'){
+							col = 0;
+							line++;
+							ref_line++;
+						} else if (col == 1 && c == '#'){
+							goto start_again;
+						}
+					}
+					if (c == -1)
+						Report.Error (1027, Location, "#endif expected");
 					continue;
 				}
 				
@@ -1047,6 +1210,8 @@ namespace Mono.CSharp
 				return Token.ERROR;
 			}
 
+			if (ifstack != null && ifstack.Count > 1)
+				Report.Error (1027, Location, "#endif expected");
 			return Token.EOF;
 		}
 	}

@@ -3539,7 +3539,7 @@ public Tokenizer Lexer {
 	}
 }		   
 
-public CSharpParser (string name, System.IO.Stream input)
+public CSharpParser (string name, System.IO.Stream input, ArrayList defines)
 {
 	current_namespace = new Namespace (null, "");
 	this.name = name;
@@ -3548,7 +3548,7 @@ public CSharpParser (string name, System.IO.Stream input)
 	current_container.Namespace = current_namespace;
 	oob_stack = new Stack ();
 
-	lexer = new Tokenizer (input, name);
+	lexer = new Tokenizer (input, name, defines);
 }
 
 public override int parse ()

@@ -1628,7 +1628,7 @@ namespace Mono.CSharp {
 				accmods = Modifiers.INTERNAL;
 			else
 				accmods = Modifiers.PRIVATE;
-			
+
 			this.ModFlags = Modifiers.Check (AllowedModifiers, mod, accmods);
 			this.attributes = attrs;
 		}
