@@ -1,3 +1,17 @@
+
+Mon Nov 12 12:41:32 CET 2001 Paolo Molaro <lupus@ximian.com>
+
+	* decimal.c, decimal.h: mono_double2decimal() get the sign bit from
+	the value.
+	* icall.c: use mono_array_addr instead of array->vector: fixes the
+	reflection image writing.
+	* reflection.c: init call convention byte to 0 in method signature.
+	Encode the property signature. Don't output property-related methods
+	twice. Really process the properties for a type (don't cast a field to
+	a property, my mom always told me that).
+	Fix 64 bit issues in pointer alignment in a different and more
+	readable way.
+
 2001-11-10  Sean MacIsaac  <macisaac@ximian.com>
 
 	* loader.h: Removed type class from MonoDefaults, added monotype
