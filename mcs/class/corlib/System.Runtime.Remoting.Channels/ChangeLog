@@ -1,3 +1,6 @@
+2002-12-28  Patrik Torstensson
+	* CrossAppDomainChannel.cs: First version, without support for "going" into the right domain
+
 2002-12-26  Lluis Sanchez Gual  <lluis@ideary.com>
 
 	* ChannelServices.cs: small correction in CreateClientChannelSinkChain.
