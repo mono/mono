@@ -1,3 +1,10 @@
+2004-08-25  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* SerializationCodeGenerator.cs, XmlSerializationReaderInterpreter.cs: 
+	  When deserializing an encoded method response, assign to the return value
+	  the first element of the message, whatever it is. The return type doesn't
+	  need to be Object, it seems to be true for all return types.
+	  
 2004-07-26  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* MapCodeGenerator.cs: CreateFieldMember now adds the field to the class,

@@ -294,8 +294,7 @@ namespace System.Xml.Serialization
 
 			bool[] readFlag = new bool[(map.ElementMembers != null) ? map.ElementMembers.Count : 0];
 
-			bool hasAnyReturnMember = (isValueList && _format == SerializationFormat.Encoded && map.ReturnMember != null 
-										&& map.ReturnMember.TypeData.Type == typeof(object));
+			bool hasAnyReturnMember = (isValueList && _format == SerializationFormat.Encoded && map.ReturnMember != null);
 			
 			Reader.MoveToContent();
 

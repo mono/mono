@@ -1667,7 +1667,7 @@ namespace System.Xml.Serialization
 						if (info.IsTextElement || info.IsUnnamedAnyElement) continue;
 						string elemCond = first ? "" : "else ";
 						elemCond += "if (";
-						if (!(info.Member.IsReturnValue && info.TypeData.Type == typeof(object) && _format == SerializationFormat.Encoded)) {
+						if (!(info.Member.IsReturnValue && _format == SerializationFormat.Encoded)) {
 							elemCond += "Reader.LocalName == " + GetLiteral (info.ElementName);
 							if (!map.IgnoreMemberNamespace) elemCond += " && Reader.NamespaceURI == " + GetLiteral (info.Namespace);
 							elemCond += " && ";
