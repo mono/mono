@@ -366,6 +366,9 @@ namespace Mono.CSharp {
 			PropertyBuilder pb;
 			MethodBuilder get = null, set = null;
 			ip.Type = this.ResolveTypeExpr (ip.Type, false, ip.Location);
+			if (ip.Type == null)
+				return;
+			
 			Type prop_type = ip.Type.Type;
 			Type [] setter_args = new Type [1];
 
@@ -451,6 +454,9 @@ namespace Mono.CSharp {
 			MyEventBuilder eb;
 			MethodBuilder add = null, remove = null;
 			ie.Type = this.ResolveTypeExpr (ie.Type, false, ie.Location);
+			if (ie.Type == null)
+				return;
+			
 			Type event_type = ie.Type.Type;
 
 			if (event_type == null)
@@ -514,6 +520,9 @@ namespace Mono.CSharp {
 		{
 			PropertyBuilder pb;
 			ii.Type = this.ResolveTypeExpr (ii.Type, false, ii.Location);
+			if (ii.Type == null)
+				return;
+			
 			Type prop_type = ii.Type.Type;
 			Type [] arg_types = ii.ParameterTypes (this);
 			Type [] value_arg_types;

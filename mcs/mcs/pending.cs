@@ -182,6 +182,60 @@ namespace Mono.CSharp {
 				}
 			}
 		}
+
+		static Type [] GetMissingInterfaces (TypeBuilder type_builder)
+		{
+			//
+			// Notice that TypeBuilders will only return the interfaces that the Type
+			// is supposed to implement, not all the interfaces that the type implements.
+			//
+			// Completely broken.  Anyways, we take advantage of this, so we only register
+			// the implementations that we need, as they are those that are listed by the
+			// TypeBuilder.
+			//
+			Type [] implementing_ifaces = type_builder.GetInterfaces ();
+			int count = implementing_ifaces.Length;
+
+			if (count == 0)
+				return new Type [0];
+			
+			//
+			// Now, we have to extract the interfaces implements by our parents, and
+			// remove them from the implementing_ifaces array.
+			//
+			int removed = 0;
+			for (Type t = type_builder.BaseType; t != null; t = t.BaseType){
+				Type [] base_ifaces = t.GetInterfaces ();
+					
+				foreach (Type base_iface in base_ifaces){
+					for (int i = 0; i < count; i++){
+						if (implementing_ifaces [i] == base_iface){
+							implementing_ifaces [i] = null;
+							removed++;
+						}
+					}
+				}
+
+				//
+				// When we reach a `Type' instead of `TypeBuilder', the GetInterfaces
+				// call would have returned all of the parent implementations, so we can end.
+				//
+				if (!(t is TypeBuilder))
+					break;
+			}
+
+			if (removed == 0)
+				return implementing_ifaces;
+
+			Type [] ifaces = new Type [count-removed];
+			int j = 0;
+
+			for (int i = 0; i < count; i++)
+				if (implementing_ifaces [i] != null)
+					ifaces [j++] = implementing_ifaces [i];
+
+			return ifaces;
+		}
 		
 		//
 		// Factory method: if there are pending implementation methods, we return a PendingImplementation
@@ -197,32 +251,7 @@ namespace Mono.CSharp {
 			Type b = type_builder.BaseType;
 			int icount = 0;
 
-			//
-			// Notice that TypeBuilders will only return the interfaces that the Type
-			// is supposed to implement, not all the interfaces that the type implements.
-			//
-			// Completely broken.  Anyways, we take advantage of this, so we only register
-			// the implementations that we need, as they are those that are listed by the
-			// TypeBuilder.
-			//
-			ifaces = type_builder.GetInterfaces ();
-
-#if DEBUG
-			{
-				Type x = type_builder;
-
-				while (x != null){
-					Type [] iff = x.GetInterfaces ();
-					Console.WriteLine ("Type: " + x.Name);
-					
-					foreach (Type tt in iff){
-						Console.WriteLine ("  Iface: " + tt.Name);
-					}
-					x = x.BaseType;
-				}
-			}
-#endif
-					
+			ifaces = GetMissingInterfaces (type_builder);
 			icount = ifaces.Length;
 
 			//
