@@ -1,3 +1,45 @@
+2005-02-23  Raja R Harinath  <rharinath@novell.com>
+	    Abin Thomas  <projectmonokochi@rediffmail.com>
+	    Anoob V E  <projectmonokochi@rediffmail.com>
+	    Harilal P R  <projectmonokochi@rediffmail.com>
+
+	Fix #57851, #72718.
+	* class.cs (ConstructorBuilder.Resolve): Make sure that the second
+	MemberLookup (used for error reporting) actually returns a result.
+	Fix error report number (122, not 112).
+
+2005-02-22  Abin Thomas  <projectmonokochi@rediffmail.com>
+	    Anoob V E  <projectmonokochi@rediffmail.com>
+	    Harilal P R  <projectmonokochi@rediffmail.com>
+
+	Fix #71134.
+	* pending.cs (PendingImplementation.GetAbstractMethods):
+	Find NonPublic members too.
+
+2005-02-22  Marek Safar  <marek.safar@seznam.cz>
+
+	* expression.cs.cs (ConditionalLogicalOperator.DoResolve):
+	Fixed error 217.
+	
+	* class.cs (MethodCore.CheckMethodAgainstBase):
+	Add error 239 report.
+
+2005-02-21  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #68955.
+	* expression.cs (Invocation.IsApplicable): Make public.
+	(Invocation.IsParamsMethodApplicable): Likewise.
+	* delegate.cs (Delegate.VerifyApplicability): Don't use
+	Invocation.VerifyArgumentCompat for parameter applicability
+	testing.  Use Invocation.IsApplicable and
+	Invocation.IsParamsMethodApplicable.
+
+2005-02-21  Marek Safar  <marek.safar@seznam.cz>
+
+	* ecore.cs (PropertyExpr.DoResolve): Add error 214 report.
+	
+	* class.cs (Operator.Define): Add error 217 report.
+	
 2005-02-21  Raja R Harinath  <rharinath@novell.com>
 
 	* namespace.cs (UsingEntry.Resolve): Undo change below.

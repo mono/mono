@@ -3414,17 +3414,9 @@ namespace Mono.CSharp {
 				// Now we check that the overriden method is not final
 				
 				if (base_method.IsFinal) {
-					// This happens when implementing interface methods.
-					if (base_method.IsHideBySig && base_method.IsVirtual) {
-						Report.Error (
-							506, Location, Parent.MakeName (Name) +
-							": cannot override inherited member `" +
-							name + "' because it is not " +
-							"virtual, abstract or override");
-					} else
-						Report.Error (239, Location, Parent.MakeName (Name) + " : cannot " +
-							      "override inherited member `" + name +
-							      "' because it is sealed.");
+					Report.SymbolRelatedToPreviousError (base_method);
+					Report.Error (239, Location, "'{0}': cannot override inherited member '{1}' because it is sealed",
+							      GetSignatureForError (), TypeManager.CSharpSignature (base_method));
 					ok = false;
 				}
 				//
@@ -4318,6 +4310,7 @@ namespace Mono.CSharp {
 		{
 			Expression base_constructor_group;
 			Type t;
+			bool error = false;
 
 			ec.CurrentBlock = new ToplevelBlock (Block.Flags.Implicit, parameters, loc);
 
@@ -4348,34 +4341,34 @@ namespace Mono.CSharp {
 				loc);
 			
 			if (base_constructor_group == null){
+				error = true;
 				base_constructor_group = Expression.MemberLookup (
-					ec, t, ".ctor", MemberTypes.Constructor,
+					ec, t, null, t, ".ctor", MemberTypes.Constructor,
 					BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly,
 					loc);
+			}
 
-				if (base_constructor_group != null)
-					Report.Error (
-						112, loc, "`{0}.{1}' is inaccessible due to " +
-						"its protection level", t.FullName, t.Name);
-				else
-					Report.Error (
-						1501, loc, "Can not find a constructor for " +
-						"this argument list");
+			int errors = Report.Errors;
+			if (base_constructor_group != null)
+				base_constructor = (ConstructorInfo) Invocation.OverloadResolve (
+					ec, (MethodGroupExpr) base_constructor_group, argument_list,
+					false, loc);
+			
+			if (base_constructor == null) {
+				if (errors == Report.Errors)
+					Report.Error (1501, loc, "Can not find a constructor for this argument list");
 				return false;
 			}
-			
-			base_constructor = (ConstructorInfo) Invocation.OverloadResolve (
-				ec, (MethodGroupExpr) base_constructor_group, argument_list,
-				false, loc);
-			
-			if (base_constructor == null){
-				Report.Error (1501, loc,
-				       "Can not find a constructor for this argument list");
+
+			if (error) {
+				Report.Error (122, loc, "`{0}' is inaccessible due to its protection level",
+					      TypeManager.CSharpSignature (base_constructor));
+				base_constructor = null;
 				return false;
 			}
 			
 			if (base_constructor == caller_builder){
-				Report.Error (516, String.Format ("Constructor `{0}' can not call itself", TypeManager.CSharpSignature (caller_builder)));
+				Report.Error (516, loc, "Constructor `{0}' can not call itself", TypeManager.CSharpSignature (caller_builder));
 				return false;
 			}
 			
