@@ -486,6 +486,8 @@ internal class Win32VersionResource : Win32Resource {
 				w.Write (value.ToCharArray ());
 				w.Write ((short)0);
 
+				emit_padding (w);
+
 				patch_length (w, string_pos);
 			}
 
