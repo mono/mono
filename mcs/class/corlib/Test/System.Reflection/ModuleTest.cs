@@ -117,7 +117,29 @@ public class ModuleTest : Assertion
 		AssertEquals (m2.GetField ("DATA"), null);
 		AssertEquals (m2.GetField ("DATA", BindingFlags.Public), null);
 	}
-	
+
+	[Test]
+	public void FindTypes () {
+		Module m = typeof (ModuleTest).Module;
+
+		Type[] t;
+
+		t = m.FindTypes (Module.FilterTypeName, "FindTypesTest*");
+		AssertEquals (2, t.Length);
+		AssertEquals ("FindTypesTestFirstClass", t [0].Name);
+		AssertEquals ("FindTypesTestSecondClass", t [1].Name);
+		t = m.FindTypes (Module.FilterTypeNameIgnoreCase, "findtypestest*");
+		AssertEquals (2, t.Length);
+		AssertEquals ("FindTypesTestFirstClass", t [0].Name);
+		AssertEquals ("FindTypesTestSecondClass", t [1].Name);
+	}
+
+	class FindTypesTestFirstClass { 
+	}
+
+	class FindTypesTestSecondClass {
+	}
+
     private static void AssertArrayEqualsSorted (Array o1, Array o2) {
 		Array s1 = (Array)o1.Clone ();
 		Array s2 = (Array)o2.Clone ();

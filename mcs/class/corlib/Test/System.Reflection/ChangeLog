@@ -1,3 +1,7 @@
+2004-07-03  Zoltan Varga  <vargaz@freemail.hu>
+
+	* ModuleTest.cs: New tests for FindTypes.
+
 2004-06-10  Lluis Sanchez  <lluis@ximian.com>
 
 	* AssemblyNameTest.cs: AssertEqualsByteArrays(): don't crash if arrays are
