@@ -1,5 +1,8 @@
 2003-08-21  Zoltan Varga  <vargaz@freemail.hu>
 
+	* object.c (mono_object_isinst): Fix casts to TransparentProxy in
+	the interpreter. Patch by Bernie Solomon (bernard@ugsolutions.com).
+
 	* rawbuffer.c rawbuffer.h: Make this module thread safe.
 
 	* domain.c: Make this module thread safe.
