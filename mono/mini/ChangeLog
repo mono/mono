@@ -1,3 +1,9 @@
+2004-09-30  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* mini.c: Always generate a field read/write wrapper for members
+	of the class MarshalByRefObject since the actual instance could
+	be a CBO.
+
 2004-09-28  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* mini.c: Use mono_thread_exit() to stop threads, instead of ExitThread.
