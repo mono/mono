@@ -1,3 +1,9 @@
+2004-05-14  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Buffer.cs: Optimize BlockCopy.
+
+	* Environment.cs: Bump corlib version.
+
 2004-05-14  Atsushi Enomoto <atsushi@ximian.com>
 
 	* __ComObject.cs : This class is not regarded as CLSCompliant by csc.

@@ -65,12 +65,14 @@ namespace System
 				throw new ArgumentOutOfRangeException ("count", Locale.GetText (
 					"Non-negative number required."));
 
-			if (srcOffset + count > ByteLength (src) || destOffset + count > ByteLength (dest))
-				throw new ArgumentException (Locale.GetText (
-					"Offset and length were out of bounds for the array or count is greater than" + 
-					"the number of elements from index to the end of the source collection."));
-
-			BlockCopyInternal (src, srcOffset, dest, destOffset, count);
+			// We do the checks in unmanaged code for performance reasons
+			bool res = BlockCopyInternal (src, srcOffset, dest, destOffset, count);
+			if (!res) {
+				if (srcOffset + count > ByteLength (src) || destOffset + count > ByteLength (dest))
+					throw new ArgumentException (Locale.GetText (
+																 "Offset and length were out of bounds for the array or count is greater than" + 
+																 "the number of elements from index to the end of the source collection."));
+			}
 		}
 
 		// private
@@ -84,6 +86,6 @@ namespace System
 		private extern static void SetByteInternal (Array array, int index, int value);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal extern static void BlockCopyInternal (Array src, int src_offset, Array dest, int dest_offset, int count);
+		internal extern static bool BlockCopyInternal (Array src, int src_offset, Array dest, int dest_offset, int count);
 	}
 }
