@@ -34,5 +34,10 @@ namespace System.Runtime.InteropServices
 		public static void FreeHGlobal (IntPtr hglobal) {
 			throw new NotImplementedException ();
 		}
+
+		[MonoTODO]
+		public static void StructureToPtr (object structure, IntPtr ptr, bool fDeleteOld) {
+			throw new NotImplementedException ();
+		}
 	}
 }
