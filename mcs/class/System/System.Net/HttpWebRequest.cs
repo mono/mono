@@ -415,14 +415,6 @@ namespace System.Net
 			set { expectContinue = value; }
 		}
 		
-		internal string AuthRequestHeader {
-			get { return "WWW-Authenticate"; }
-		}
-
-		internal string AuthResponseHeader {
-			get { return "Authorization"; }
-		}
-
 		internal Uri AuthUri {
 			get { return actualUri; }
 		}
@@ -900,21 +892,26 @@ namespace System.Net
 			}
 		}
 
-		bool CheckAuthorization (WebResponse response)
+		bool CheckAuthorization (WebResponse response, HttpStatusCode code)
 		{
 			authCompleted = false;
-			if (credentials == null)
+			if (code == HttpStatusCode.Unauthorized && credentials == null)
 				return false;
 
-			string authHeader = response.Headers [AuthRequestHeader];
+			bool isProxy = (code == HttpStatusCode.ProxyAuthenticationRequired);
+			if (isProxy && (proxy == null || proxy.Credentials == null))
+				return false;
+
+			string authHeader = response.Headers [(isProxy) ? "Proxy-Authenticate" : "WWW-Authenticate"];
 			if (authHeader == null)
 				return false;
 
-			Authorization auth = AuthenticationManager.Authenticate (authHeader, this, credentials);
+			ICredentials creds = (!isProxy) ? credentials : proxy.Credentials;
+			Authorization auth = AuthenticationManager.Authenticate (authHeader, this, creds);
 			if (auth == null)
 				return false;
 
-			webHeaders [AuthResponseHeader] = auth.Message;
+			webHeaders [(isProxy) ? "Proxy-Authorization" : "Authorization"] = auth.Message;
 			authCompleted = auth.Complete;
 			return true;
 		}
@@ -932,10 +929,9 @@ namespace System.Net
 			HttpStatusCode code = 0;
 			if (throwMe == null && webResponse != null) {
 				code  = webResponse.StatusCode;
-				if (!authCompleted && code == HttpStatusCode.Unauthorized && credentials != null) {
-					// TODO: Proxy not supported yet.
-					// || code == HttpStatuscode.ProxyAuthenticationRequired)
-					if (CheckAuthorization (webResponse))
+				if (!authCompleted && ((code == HttpStatusCode.Unauthorized && credentials != null) ||
+							code == HttpStatusCode.ProxyAuthenticationRequired)) {
+					if (CheckAuthorization (webResponse, code))
 						return true;
 				}
 

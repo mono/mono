@@ -119,7 +119,7 @@ namespace Mono.CSharp
 			else
 				results.CompiledAssembly=null;
 
-			if (removeFiles) {
+			if (removeFiles && Environment.GetEnvironmentVariable ("MONO_CODEDOM_NODELETE") == null) {
 				foreach (string fi in fileNames) {
 					FileInfo info = new FileInfo (fi);
 					info.Delete ();

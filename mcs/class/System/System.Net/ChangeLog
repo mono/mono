@@ -1,5 +1,9 @@
 2004-02-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* HttpWebRequest.cs: support proxy authentication.
+
+2004-02-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* BasicClient.cs:
 	* DigestClient.cs: use IndexOf instead of StartsWith to deal with
 	servers that provide several authentication schemas.

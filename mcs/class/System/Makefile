@@ -8,7 +8,7 @@ LIBRARY = System.dll
 # 1st pass - build System.dll without System.Xml.dll reference
 # 2nd pass - build System.dll with System.Xml.dll reference
 
-LIB_MCS_FLAGS = /r:$(corlib) $(EXTRA_FLAGS)
+LIB_MCS_FLAGS = /r:$(corlib) $(EXTRA_FLAGS) /define:XML_DEP /r:System.Xml.dll
 TEST_MCS_FLAGS = /nowarn:1595 /nowarn:0618
 
 CYCLIC_DEP = System.Xml.dll
@@ -17,7 +17,6 @@ EXTRA_DISTFILES = \
 	System.Text.RegularExpressions/notes.txt	\
 	System.ComponentModel.Design/Changelog		\
 	Test/test-config-file
-
 
 ifdef SECOND_PASS
 	include ../../build/library.make
