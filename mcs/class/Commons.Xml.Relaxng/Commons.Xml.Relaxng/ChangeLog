@@ -1,3 +1,8 @@
+2004-07-14  Atsushi Enomoto <atsushi@ximian.com>
+
+	* RelaxngGrammar.cs : When definition is missing, the error message
+	  should show what definition is missing.
+
 2004-06-25  Atsushi Enomoto <atsushi@ximian.com>
 
 	* Misc.cs, RelaxngDatatype.cs, RelaxngDatatypeProvider.cs,

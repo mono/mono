@@ -371,7 +371,7 @@ namespace Commons.Xml.Relaxng
 			foreach (RdpUnresolvedRef pref in this.unresolvedPatterns) {
 				RdpPattern defP = assembledDefs [pref.Name] as RdpPattern;
 				if (defP == null)
-					throw new RelaxngException ("Target definition was not found.");
+					throw new RelaxngException (String.Format ("Target definition was not found: {0}", pref.Name));
 				ArrayList al = refPatterns [defP] as ArrayList;
 				if (al == null) {
 					al = new ArrayList ();
