@@ -211,6 +211,7 @@ namespace Mono.CSharp {
 			}
 		}
 
+                // Is not readonly because of IndexerName attribute
 		public MemberName MemberName;
 
 		/// <summary>

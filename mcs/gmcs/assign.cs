@@ -386,6 +386,21 @@ namespace Mono.CSharp {
 				}
 			}
 
+			FieldExpr field_exp = target as FieldExpr;
+			if (field_exp != null && !ec.IsConstructor && !ec.IsFieldInitializer) {
+				field_exp = field_exp.InstanceExpression as FieldExpr;
+				if (field_exp != null && field_exp.FieldInfo.IsInitOnly) {
+					if (field_exp.IsStatic) {
+						Report.Error (1650, loc, "Members of static readonly field '{0}' cannot be assigned to " +
+							"(except in a static constructor or a variable initializer)", TypeManager.GetFullNameSignature (field_exp.FieldInfo));
+					} else {
+						Report.Error (1648, loc, "Members of readonly field '{0}' cannot be assigned to " +
+							"(except in a constructor or a variable initializer)", TypeManager.GetFullNameSignature (field_exp.FieldInfo));
+					}
+					return null;
+				}
+			}
+
 			if (!(target is IAssignMethod) && (target.eclass != ExprClass.EventAccess)) {
 				Report.Error (131, loc,
 					      "Left hand of an assignment must be a variable, " +
