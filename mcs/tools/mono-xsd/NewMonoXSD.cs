@@ -114,7 +114,7 @@ namespace Mono.Util {
 					(arg.StartsWith ("/") && arg.IndexOfAny (Path.InvalidPathChars) == -1)
 					) 
 				{
-					if (arg.EndsWith (".dll") || arg.EndsWith (".exe"))
+					if ((arg.EndsWith (".dll") || arg.EndsWith (".exe")) && !arg.Substring (1).StartsWith ("generator:") && !arg.Substring (1).StartsWith ("g:"))
 					{
 						if (!readingFiles) throw new Exception (incorrectOrder);
 						assemblies.Add (arg);

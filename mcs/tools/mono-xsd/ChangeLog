@@ -1,3 +1,8 @@
+2004-08-07  Atsushi Enomoto <atsushi@ximian.com>
+
+	* NewMonoXSD.cs : /generator (/g) option didn't work, since it usually
+	  ends with .dll (or .exe) and regarded as mere assembly filename.
+
 2004-07-12  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* NewMonoXSD.cs: Accept files with absolute paths.
