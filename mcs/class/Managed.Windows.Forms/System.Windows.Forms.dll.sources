@@ -52,6 +52,9 @@ System.Windows.Forms/DrawItemEventArgs.cs
 System.Windows.Forms/DrawItemState.cs
 System.Windows.Forms/FlatStyle.cs
 System.Windows.Forms/Form.cs
+System.Windows.Forms/FormBorderStyle.cs
+System.Windows.Forms/FormStartPosition.cs
+System.Windows.Forms/FormWindowState.cs
 System.Windows.Forms/FrameStyle.cs
 System.Windows.Forms/GiveFeedbackEventArgs.cs
 System.Windows.Forms/GiveFeedbackEventHandler.cs
@@ -76,6 +79,7 @@ System.Windows.Forms/InputLanguageCollection.cs
 System.Windows.Forms/InputLanguage.cs
 System.Windows.Forms/InvalidateEventArgs.cs
 System.Windows.Forms/InvalidateEventHandler.cs
+System.Windows.Forms/ItemBoundsPortion.cs
 System.Windows.Forms/IWin32Window.cs
 System.Windows.Forms/KeyEventArgs.cs
 System.Windows.Forms/KeyEventHandler.cs
@@ -93,6 +97,7 @@ System.Windows.Forms/LinkLabel.cs
 System.Windows.Forms/LinkLabelLinkClickedEventArgs.cs
 System.Windows.Forms/LinkLabelLinkClickedEventHandler.cs
 System.Windows.Forms/LinkState.cs
+System.Windows.Forms/ListViewAlignment.cs
 System.Windows.Forms/GroupBox.cs
 System.Windows.Forms/MenuGlyph.cs
 System.Windows.Forms/MenuMerge.cs
@@ -154,6 +159,7 @@ System.Windows.Forms/UICues.cs
 System.Windows.Forms/UICuesEventArgs.cs
 System.Windows.Forms/UICuesEventHandler.cs
 System.Windows.Forms/UserControl.cs
+System.Windows.Forms/View.cs
 System.Windows.Forms/VScrollBar.cs
 System.Windows.Forms/X11Structs.cs
 System.Windows.Forms/XplatUI.cs
