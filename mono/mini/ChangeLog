@@ -1,3 +1,8 @@
+
+Fri May 23 15:28:32 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: get targets of branches before converting a method.
+
 2003-05-23  Dietmar Maurer  <dietmar@ximian.com>
 
 	* mini.c (optimize_branches): added some experimental code (disbaled) 
