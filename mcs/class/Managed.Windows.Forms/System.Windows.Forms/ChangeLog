@@ -1,3 +1,14 @@
+2004-11-11  Peter Bartok  <pbartok@novell.com>
+
+	* HandleData.cs: Added Visible property
+	* XplatUIX11.cs (IsVisible): Now uses Visible property from
+	  HandleData
+	* XplatUIX11.cs: Removed old debug leftovers
+	* XplatUIX11.cs (DefWndProc): Added WM_ERASEBKGND handler
+	* Control.cs (WndProc): Removed old debug leftovers,
+	  streamlined handling of WM_WINDOWPOSCHANGED, removed un-
+	  needed WM_SIZE handling
+
 2004-11-11  Jackson Harper  <jackson@ximian.com>
 
 	* OwnerDrawPropertyBag.cs:
