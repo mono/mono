@@ -1,11 +1,11 @@
+//
 // System.Security.Policy.ApplicationDirectory
 //
-// Author:
-//  Jackson Harper (Jackson@LatitudeGeo.com)
+// Authors:
+//	Jackson Harper (Jackson@LatitudeGeo.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002 Jackson Harper, All rights reserved.
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -28,11 +28,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
+using System.Globalization;
+using System.IO;
 
 namespace System.Security.Policy {
 
-	[MonoTODO("This class should use a URLString like class instead of just a string")]
 	[Serializable]
 	public sealed class ApplicationDirectory : IBuiltInEvidence {
 		
@@ -45,8 +45,15 @@ namespace System.Security.Policy {
 		public ApplicationDirectory (string name)
 		{
 			if (null == name)
-				throw new ArgumentNullException ("name");		
+				throw new ArgumentNullException ("name");
+			if (name.Length < 1)
+				throw new FormatException (Locale.GetText ("Empty"));
+#if !NET_2_0
+			ThrowOnInvalid (name);
 			directory = name;
+#else
+			directory = name;
+#endif
 		}
 
 		//
@@ -63,22 +70,21 @@ namespace System.Security.Policy {
 		
 		public object Copy ()
 		{	
-			return new ApplicationDirectory (Directory);
+			return new ApplicationDirectory (directory);
 		}
 		
-		[MonoTODO("This needs to check for security subsets")]
 		public override bool Equals (object other)
 		{
 			if (null != other && (other is ApplicationDirectory)) {
 				ApplicationDirectory compare = (ApplicationDirectory) other;
-				return compare.directory.Equals (directory);
+// FIXME: to duplicate (faulty ?) MS behaviour (see FDBK14362)
+				ThrowOnInvalid (compare.directory);
+				// no C14N or other mojo here (it's done elsewhere)
+				return (directory == compare.directory);
 			}
 			return false;
 		}
 		
-		/// <summary>
-		///   This does not return the exact same results as the MS version
-		/// </summary>
 		public override int GetHashCode ()
 		{
 			return directory.GetHashCode ();
@@ -86,23 +92,19 @@ namespace System.Security.Policy {
 		
 		public override string ToString ()
 		{
-			return ToXml ().ToString ();
-		}
-
-		private SecurityElement ToXml ()
-		{
-			SecurityElement element = new SecurityElement (GetType().FullName);
+// FIXME: to duplicate (faulty ?) MS behaviour (see FDBK14362)
+			ThrowOnInvalid (directory);
+			SecurityElement element = new SecurityElement ("System.Security.Policy.ApplicationDirectory");
 			element.AddAttribute ("version", "1");
-			element.AddAttribute ("Directory", Directory);
-			return element;
+			element.AddChild (new SecurityElement ("Directory", directory));
+			return element.ToString ();
 		}
 
 		// interface IBuiltInEvidence
 
-		[MonoTODO]
 		int IBuiltInEvidence.GetRequiredSize (bool verbose) 
 		{
-			return 0;
+			return ((verbose) ? 3 : 1) + directory.Length;
 		}
 
 		[MonoTODO]
@@ -115,6 +117,16 @@ namespace System.Security.Policy {
 		int IBuiltInEvidence.OutputToBuffer (char [] buffer, int position, bool verbose) 
 		{
 			return 0;
+		}
+
+		// internal stuff
+
+		private void ThrowOnInvalid (string appdir) 
+		{
+			if (appdir.IndexOfAny (Path.InvalidPathChars) != -1) {
+				string msg = Locale.GetText ("Invalid character(s) in directory {0}");
+				throw new ArgumentException (String.Format (msg, appdir), "other");
+			}
 		}
 	}
 }

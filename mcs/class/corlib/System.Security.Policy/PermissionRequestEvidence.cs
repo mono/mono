@@ -3,11 +3,9 @@
 //
 // Authors:
 //      Nick Drochak (ndrochak@gol.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Nick Drochak
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -30,32 +28,33 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Security;
-using System.Text;
+namespace System.Security.Policy {
 
-namespace System.Security.Policy
-{
 	[Serializable]
 	public sealed class PermissionRequestEvidence : IBuiltInEvidence {
-		PermissionSet requested, optional, denied;
 
-		public PermissionRequestEvidence(PermissionSet requested, 
-				PermissionSet optional, PermissionSet denied) {
-			this.requested = requested;
-			this.optional = optional;
-			this.denied = denied;
+		private PermissionSet requested, optional, denied;
+
+		public PermissionRequestEvidence (PermissionSet requested, PermissionSet optional, PermissionSet denied) 
+		{
+			if (requested != null)
+				this.requested = new PermissionSet (requested);
+			if (optional != null)
+				this.optional = new PermissionSet (optional);
+			if (denied != null)
+				this.denied = new PermissionSet (denied);
 		}
 
 		public PermissionSet DeniedPermissions {
-			get {return denied;}
+			get { return denied; }
 		}
 
 		public PermissionSet OptionalPermissions {
-			get {return optional;}
+			get { return optional; }
 		}
 
 		public PermissionSet RequestedPermissions {
-			get {return requested;}
+			get { return requested; }
 		}
 
 		public PermissionRequestEvidence Copy ()
@@ -91,7 +90,20 @@ namespace System.Security.Policy
 		[MonoTODO]
 		int IBuiltInEvidence.GetRequiredSize (bool verbose) 
 		{
-			return 0;
+			int size = verbose ? 3 : 1;
+			if (requested != null) {
+				int r = requested.ToXml ().ToString ().Length + (verbose ? 5 : 0);
+				size += r;
+			}
+			if (optional != null) {
+				int o = optional.ToXml ().ToString ().Length + (verbose ? 5 : 0);
+				size += o;
+			}
+			if (denied != null) {
+				int d = denied.ToXml ().ToString ().Length + (verbose ? 5 : 0);
+				size += d;
+			}
+			return size;
 		}
 
 		[MonoTODO]
@@ -105,6 +117,5 @@ namespace System.Security.Policy
 		{
 			return 0;
 		}
-
 	}
 }

@@ -33,7 +33,8 @@ using System.Globalization;
 using System.Reflection;
 using System.Runtime.Serialization;
 using System.Security.Cryptography;
-using System.Text;
+
+using Mono.Security.Cryptography;
 
 namespace System.Security.Policy {
 
@@ -61,7 +62,7 @@ namespace System.Security.Policy {
 				throw new ArgumentNullException ("hash_value");
 				
 			this.hash_algorithm = hash_algorithm;
-			this.hash_value = hash_value;
+			this.hash_value = (byte[]) hash_value.Clone ();
 		}
 
 		//
@@ -69,7 +70,11 @@ namespace System.Security.Policy {
 		//
 		
 		public HashAlgorithm HashAlgorithm {
-			get { return hash_algorithm; }
+			get {
+				if (hash_algorithm == null)
+					hash_algorithm = new SHA1Managed ();
+				return hash_algorithm;
+			}
 			set { 
 				if (value == null)
 					throw new ArgumentNullException ("HashAlgorithm");
@@ -78,11 +83,15 @@ namespace System.Security.Policy {
 		}
 
 		public byte[] HashValue {
-			get { return hash_value; }
+			get {
+				if (hash_value == null)
+					throw new ArgumentException (Locale.GetText ("No HashValue available."));
+				return (byte[]) hash_value.Clone ();
+			}
 			set { 
 				if (value == null)
 					throw new ArgumentNullException ("HashValue");
-				hash_value = value; 
+				hash_value = (byte[]) value.Clone ();
 			} 
 		}
 
@@ -132,7 +141,7 @@ namespace System.Security.Policy {
 		public SecurityElement ToXml (PolicyLevel level)
 		{
 			SecurityElement se = MembershipConditionHelper.Element (typeof (HashMembershipCondition), version);
-			se.AddAttribute ("HashValue", Encoding.Default.GetString (hash_value));
+			se.AddAttribute ("HashValue", CryptoConvert.ToHex (HashValue));
 			se.AddAttribute ("HashAlgorithm", hash_algorithm.GetType ().FullName);
 			return se;
 		}
@@ -146,34 +155,29 @@ namespace System.Security.Policy {
 		{
 			MembershipConditionHelper.CheckSecurityElement (e, "e", version, version);
 			
-			string value = (string)e.Attributes ["HashValue"];
-			string algorithm = (string)e.Attributes ["HashAlgorithm"];
+			hash_value = CryptoConvert.FromHex (e.Attribute ("HashValue"));
 
-			if (value == null || algorithm == null ) {
-				throw new ArgumentException (Locale.GetText (
-					"Missing either HashValue or HashAlgorithm"), "e");
-			}
-			
-			hash_value = Encoding.Default.GetBytes (value);
-			hash_algorithm = (HashAlgorithm)Assembly.GetExecutingAssembly ().CreateInstance (algorithm);
+			string algorithm = e.Attribute ("HashAlgorithm");
+			hash_algorithm = (algorithm == null) ? null : HashAlgorithm.Create (algorithm);
 		}
 
 		public override int GetHashCode ()
 		{
-			return hash_value.GetHashCode ();
+			// note: a Copy must have the same hash code
+			int code = hash_algorithm.GetType ().GetHashCode ();
+			if (hash_value != null) {
+				foreach (byte b in hash_value) {
+					code ^= b;
+				}
+			}
+			return code;
 		}
 		
 		public override string ToString ()
 		{
-			StringBuilder builder = new StringBuilder ();
-			Type alg_type = hash_algorithm.GetType ();
-
-			builder.Append ("Hash -");
-			builder.AppendFormat ("{0} {1}", alg_type.FullName, 
-				alg_type.Assembly);
-			builder.AppendFormat (" = ",  Encoding.Default.GetString (hash_value));
-
-			return builder.ToString ();
+			Type alg_type = this.HashAlgorithm.GetType ();
+			return String.Format ("Hash - {0} {1} = {2}", alg_type.FullName, 
+				alg_type.Assembly, CryptoConvert.ToHex (HashValue));
 		}
 
 		//

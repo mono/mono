@@ -31,7 +31,6 @@
 using System.Collections;
 using System.Globalization;
 using System.Reflection;
-using System.Security.Policy;
 using System.Security.Permissions;
 
 namespace System.Security.Policy {
@@ -116,6 +115,8 @@ namespace System.Security.Policy {
 
 		public virtual string PermissionSetName {
 			get {
+				if (m_policy == null)
+					return null;
 				if (m_policy.PermissionSet is Security.NamedPermissionSet)
 					return ((NamedPermissionSet)(m_policy.PermissionSet)).Name;
 				return null;

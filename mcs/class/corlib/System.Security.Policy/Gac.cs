@@ -28,7 +28,6 @@
 
 #if NET_2_0
 
-using System;
 using System.Security.Permissions;
 
 namespace System.Security.Policy {
@@ -73,19 +72,18 @@ namespace System.Security.Policy {
 
 		int IBuiltInEvidence.GetRequiredSize (bool verbose)
 		{
-			return (verbose ? 5 : 0);	// as documented
+			return 1;	// LAMESPEC
 		}
 
-		[MonoTODO]
 		int IBuiltInEvidence.InitFromBuffer (char[] buffer, int position)
 		{
-			return 0;
+			return position;
 		}
 
-		[MonoTODO]
 		int IBuiltInEvidence.OutputToBuffer (char[] buffer, int position, bool verbose)
 		{
-			return 0;
+			buffer [position] = '\t';
+			return position + 1;
 		}
 	}
 }

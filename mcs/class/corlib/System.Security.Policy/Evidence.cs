@@ -31,7 +31,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Collections;
 using System.Reflection;
 using System.Security.Permissions;
@@ -82,9 +81,13 @@ namespace System.Security.Policy {
 			get{ return false; }
 		}
 		
-		// LAMESPEC: Always TRUE (not FALSE)
 		public bool IsSynchronized {
+#if NET_2_0
+			get { return false; }
+#else
+			// LAMESPEC: Always TRUE (not FALSE)
 			get { return true; }
+#endif
 		}
 
 		public bool Locked {
@@ -208,16 +211,17 @@ namespace System.Security.Policy {
 
 		public void Merge (Evidence evidence) 
 		{
-			IEnumerator hostenum, assemblyenum;
-			
-			hostenum = evidence.GetHostEnumerator ();
-			while( hostenum.MoveNext () ) {
-				AddHost (hostenum.Current);
-			}
+			if ((evidence != null) && (evidence.Count > 0)) {
+				IEnumerator hostenum = evidence.GetHostEnumerator ();
+				while (hostenum.MoveNext ()) {
+					AddHost (hostenum.Current);
+				}
 
-			assemblyenum = evidence.GetAssemblyEnumerator ();
-			while( assemblyenum.MoveNext () ) {
-				AddAssembly (assemblyenum.Current);
+				IEnumerator assemblyenum = evidence.GetAssemblyEnumerator ();
+				while (assemblyenum.MoveNext ()) {
+					AddAssembly (assemblyenum.Current);
+				}
+				_hashCode = 0;
 			}
 		}
 
@@ -280,7 +284,7 @@ namespace System.Security.Policy {
 			if (a.GlobalAssemblyCache) {
 				e.AddHost (new Gac ());
 			}
-/*
+
 			// the current HostSecurityManager may add/remove some evidence
 			AppDomainManager dommgr = AppDomain.CurrentDomain.DomainManager;
 			if (dommgr != null) {
@@ -288,7 +292,7 @@ namespace System.Security.Policy {
 					HostSecurityManagerFlags.HostAssemblyEvidence) {
 					e = dommgr.HostSecurityManager.ProvideAssemblyEvidence (a, e);
 				}
-			}*/
+			}
 #endif
 			return e;
 		}

@@ -27,10 +27,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Security.Policy;
 using System.Security.Permissions;
 using System.Collections;
-using System;  // for MonoTODO attribute
 
 namespace System.Security.Policy {
 
@@ -42,9 +40,8 @@ namespace System.Security.Policy {
 		private CodeGroupGrantScope _scope = CodeGroupGrantScope.Assembly;
 #endif
 
-		public FileCodeGroup (IMembershipCondition membershipCondition,
-					FileIOPermissionAccess access) 
-			: base(membershipCondition, null)
+		public FileCodeGroup (IMembershipCondition membershipCondition, FileIOPermissionAccess access) 
+			: base (membershipCondition, null)
 		{
 			// note: FileIOPermissionAccess is a [Flag]
 			m_access = access;
@@ -75,13 +72,15 @@ namespace System.Security.Policy {
 			if (null == evidence)
 				throw new ArgumentNullException("evidence");
 
-			if (null == PolicyStatement)
-				throw new PolicyException();
-
-			if (!MembershipCondition.Check(evidence))
+			if (!MembershipCondition.Check (evidence))
 				return null;
 
-			PolicyStatement pst = this.PolicyStatement.Copy ();
+			PolicyStatement pst = null;
+			if (this.PolicyStatement != null)
+				pst = this.PolicyStatement.Copy ();
+			else
+				pst = PolicyStatement.Empty ();
+
 			if (this.Children.Count > 0) {
 				foreach (CodeGroup cg in this.Children) {
 					PolicyStatement child = cg.Resolve (evidence);
@@ -101,13 +100,12 @@ namespace System.Security.Policy {
 			if (!MembershipCondition.Check (evidence))
 				return null;
 
-			FileCodeGroup matchRoot = new FileCodeGroup(MembershipCondition, m_access);
+			FileCodeGroup matchRoot = new FileCodeGroup (MembershipCondition, m_access);
 
-			foreach (CodeGroup child in Children)
-			{
-				CodeGroup childMatchingCodeGroup = child.ResolveMatchingCodeGroups(evidence);
+			foreach (CodeGroup child in Children) {
+				CodeGroup childMatchingCodeGroup = child.ResolveMatchingCodeGroups (evidence);
 				if (childMatchingCodeGroup != null)
-					AddChild(childMatchingCodeGroup);
+					matchRoot.AddChild (childMatchingCodeGroup);
 			}
 
 			return matchRoot;
@@ -118,7 +116,7 @@ namespace System.Security.Policy {
 		}
 
 		public override string PermissionSetName {
-			get { return "Same directory FileIO - " + m_access.ToString(); }
+			get { return "Same directory FileIO - " + m_access.ToString (); }
 		}
 
 #if NET_2_0
@@ -144,14 +142,18 @@ namespace System.Security.Policy {
 			return m_access.GetHashCode ();
 		}
 
-		protected override void ParseXml(SecurityElement e, PolicyLevel level)
+		protected override void ParseXml (SecurityElement e, PolicyLevel level)
 		{
-			m_access = (FileIOPermissionAccess)Enum.Parse(typeof(FileIOPermissionAccess), e.Attribute("Access"), true);
+			string a = e.Attribute ("Access");
+			if (a != null)
+				m_access = (FileIOPermissionAccess) Enum.Parse (typeof (FileIOPermissionAccess), a, true);
+			else
+				m_access = FileIOPermissionAccess.NoAccess;
 		}
 		
-		protected override void CreateXml(SecurityElement element, PolicyLevel level)
+		protected override void CreateXml (SecurityElement element, PolicyLevel level)
 		{
-			element.AddAttribute("Access", m_access.ToString());
+			element.AddAttribute ("Access", m_access.ToString ());
 		}
 	}
 }

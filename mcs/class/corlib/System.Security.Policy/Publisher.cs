@@ -2,12 +2,9 @@
 // Publisher.cs: Publisher Policy using X509 Certificate
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -30,11 +27,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-using System.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Permissions;
-using System.Text;
 
 namespace System.Security.Policy {
 
@@ -61,7 +55,7 @@ public sealed class Publisher : IIdentityPermissionFactory, IBuiltInEvidence {
 
 	public object Copy () 
 	{
-		return (object) new Publisher (m_cert);
+		return new Publisher (m_cert);
 	}
 
 	public IPermission CreateIdentityPermission (Evidence evidence) 
@@ -98,7 +92,7 @@ public sealed class Publisher : IIdentityPermissionFactory, IBuiltInEvidence {
 	[MonoTODO]
 	int IBuiltInEvidence.GetRequiredSize (bool verbose) 
 	{
-		return 0;
+		return (verbose ? 3 : 1) + m_cert.GetRawCertData ().Length;
 	}
 
 	[MonoTODO]

@@ -2,12 +2,9 @@
 // StrongName.cs: Strong Name
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002 Motus Technologies Inc. (http://www.motus.com)
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -30,9 +27,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Security.Permissions;
-using System.Text;
 
 namespace System.Security.Policy {
 
@@ -111,7 +106,7 @@ public sealed class StrongName : IIdentityPermissionFactory, IBuiltInEvidence {
 	[MonoTODO]
 	int IBuiltInEvidence.GetRequiredSize (bool verbose) 
 	{
-		return 0;
+		return (verbose ? 5 : 1) + name.Length;
 	}
 
 	[MonoTODO]

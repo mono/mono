@@ -1,3 +1,25 @@
+2004-08-26  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ApplicationDirectory.cs: Fixed directory validation and ToString.
+	* CodeGroup.cs: Fixed PermissionSetName when policy is null.
+	* Evidence.cs: Fixed Merge for null case. Fixed IsSynchronized for
+	NET_2_0. Uncommented some code for NET_2_0 DomainManager usage.
+	* FileCodeGroup.cs: Fixed Resolve and ResolveMatchingGroup wrt new
+	unit tests.
+	* Gac.cs: Implemented IBuiltInEvidence methods.
+	* Hash.cs: Removed TODO from NET_2_0 as it's hashing seems compatible
+	with Mono ;-). Fixed properties for use with NET_2_0.
+	* HashMembershipCondition.cs: Fixed To|FromXml serialization. Make
+	copies of hash value (not references).
+	* PermissionRequestEvidence.cs: Now make copies of permission sets.
+	* Publisher.cs: Namespace cleanup, implemented GetRequiredSize.
+	* Site.cs: Namespace cleanup, implemented GetRequiredSize.
+	* StrongName.cs: Namespace cleanup.
+	* UnionCodeGroup.cs: Namespace cleanup, converted spaces to tabs.
+	* Url.cs: Namespace cleanup, implemented GetRequiredSize.
+	* Zone.cs: Namespace cleanup, globalization and added more details in 
+	exception.
+
 2004-08-24  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* UrlMembershipCondition.cs: Check now only iterate host provided

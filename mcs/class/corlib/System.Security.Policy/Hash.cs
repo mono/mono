@@ -29,7 +29,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.IO;
 using System.Text;
 using System.Reflection;
@@ -38,8 +37,12 @@ using System.Security.Cryptography;
 
 namespace System.Security.Policy {
 
-[Serializable]
+#if !NET_2_0
 [MonoTODO("This doesn't match the MS version perfectly.")]
+// but it does seems to works exactly like Fx 2.0 beta 1 !?!?!
+#endif
+
+[Serializable]
 public sealed class Hash : ISerializable, IBuiltInEvidence {
 
 	private Assembly assembly;
@@ -70,22 +73,44 @@ public sealed class Hash : ISerializable, IBuiltInEvidence {
 
 	public byte[] MD5 {
 		get {
-			if ((_md5 == null) && (data != null)) {
-				// fully named to avoid conflit between MD5 property and class name
-				HashAlgorithm hash = System.Security.Cryptography.MD5.Create ();
-				_md5 = GenerateHash (hash);
+			// Case 1: we have a MD5 value - either precalculated or static (FX 2.0)
+			if (_md5 != null)
+				return _md5;
+
+			// Case 2: we don't have a MD5 value precalculated so we either
+			// (a): have an assembly reference - and can calculate the hash; or
+			// (b): have been initialized with a static MD5 value (FX 2.0)
+#if NET_2_0
+			if ((assembly == null) && (_sha1 != null)) {
+				string msg = Locale.GetText ("No assembly data. This instance was initialized with an MSHA1 digest value.");
+				throw new SecurityException (msg);
 			}
+#endif
+			// fully named to avoid conflit between MD5 property and class name
+			HashAlgorithm hash = System.Security.Cryptography.MD5.Create ();
+			_md5 = GenerateHash (hash);
 			return _md5;
 		}
 	}
 
 	public byte[] SHA1 {
 		get {
-			if ((_sha1 == null) && (data != null)) {
-				// fully named to avoid conflit between SHA1 property and class name
-				HashAlgorithm hash = System.Security.Cryptography.SHA1.Create ();
-				_sha1 = GenerateHash (hash);
+			// Case 1: we have a SHA1 value - either precalculated or static (FX 2.0)
+			if (_sha1 != null)
+				return _sha1;
+			
+			// Case 2: we don't have a SHA1 value precalculated so we either
+			// (a): have an assembly reference - and can calculate the hash; or
+			// (b): have been initialized with a static MD5 value (FX 2.0)
+#if NET_2_0
+			if ((assembly == null) && (_md5 != null)) {
+				string msg = Locale.GetText ("No assembly data. This instance was initialized with an MD5 digest value.");
+				throw new SecurityException (msg);
 			}
+#endif
+			// fully named to avoid conflit between SHA1 property and class name
+			HashAlgorithm hash = System.Security.Cryptography.SHA1.Create ();
+			_sha1 = GenerateHash (hash);
 			return _sha1;
 		}
 	}
@@ -108,7 +133,6 @@ public sealed class Hash : ISerializable, IBuiltInEvidence {
 		info.AddValue ("RawData", GetData ());
 	}
 
-	[MonoTODO("The Raw data seems to be different than the raw data I have")]
 	public override string ToString () 
 	{
 		SecurityElement se = new SecurityElement (GetType ().FullName);
@@ -127,11 +151,10 @@ public sealed class Hash : ISerializable, IBuiltInEvidence {
 	// Private Methods
 	//
 
-	[MonoTODO("This doesn't match the MS version perfectly.")]
 	private byte[] GetData () 
 	{
 		if (null == data) {
-			// TODO we mustn't hash the complete assembly!
+			// TODO (Pre-Fx-2.0) we mustn't hash the complete assembly!
 			// ---- Look at ToString (MS version) for what to hash (and what not to)
 			// TODO we must drop the authenticode signature (if present)
 			FileStream stream = new 

@@ -28,22 +28,18 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Globalization;
 using System.Security.Permissions;
-using System.Security.Policy;
 
 namespace System.Security.Policy {
 
-        [Serializable]
-        public sealed class UnionCodeGroup : CodeGroup {
+	[Serializable]
+	public sealed class UnionCodeGroup : CodeGroup {
 
-                public UnionCodeGroup (
-                        IMembershipCondition membershipCondition,
-                        PolicyStatement policyStatement)
-                        : base (membershipCondition, policyStatement)
-                {
-                }
+		public UnionCodeGroup (IMembershipCondition membershipCondition, PolicyStatement policyStatement)
+			: base (membershipCondition, policyStatement)
+		{
+		}
 
 		// for PolicyLevel (to avoid validation duplication)
 		internal UnionCodeGroup (SecurityElement e, PolicyLevel level)
@@ -54,7 +50,7 @@ namespace System.Security.Policy {
 		public override CodeGroup Copy ()
 		{
 			return Copy (true);
-                }
+		}
 
 		internal CodeGroup Copy (bool childs) 
 		{
@@ -69,11 +65,11 @@ namespace System.Security.Policy {
 			return copy;
 		}
 
-                [MonoTODO ("no children processing")]
-                public override PolicyStatement Resolve (Evidence evidence)
-                {
+		[MonoTODO ("no children processing")]
+		public override PolicyStatement Resolve (Evidence evidence)
+		{
 			if (evidence == null)
-                                throw new ArgumentNullException ("evidence");
+				throw new ArgumentNullException ("evidence");
 
  			if (!MembershipCondition.Check (evidence))
 				return null;
@@ -88,10 +84,10 @@ namespace System.Security.Policy {
 				}
 			}
 			return pst;
-                }
+		}
 
-                public override CodeGroup ResolveMatchingCodeGroups (Evidence evidence)
-                {
+		public override CodeGroup ResolveMatchingCodeGroups (Evidence evidence)
+		{
 			if (evidence == null)
 				throw new ArgumentNullException ("evidence");
 

@@ -28,7 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Collections;
 using System.Globalization;
 
@@ -70,7 +69,11 @@ namespace System.Security.Policy {
 		}
 
 		public override string PermissionSetName {
+#if NET_2_0
+			get { return "Same site Web"; }
+#else
 			get { return "Same site Web."; }
+#endif
 		}
 
 #if NET_2_0

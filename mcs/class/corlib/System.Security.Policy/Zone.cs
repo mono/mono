@@ -26,8 +26,8 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-using System;
-using System.Security;
+
+using System.Globalization;
 using System.Security.Permissions;
 
 namespace System.Security.Policy {
@@ -38,8 +38,10 @@ namespace System.Security.Policy {
 		
 		public Zone (SecurityZone zone)
 		{
-			if (!Enum.IsDefined (typeof (SecurityZone), zone))
-				throw new ArgumentException ("invalid zone");
+			if (!Enum.IsDefined (typeof (SecurityZone), zone)) {
+				string msg = String.Format (Locale.GetText ("Invalid zone {0}."), zone);
+				throw new ArgumentException (msg, "zone");
+			}
 
 			this.zone = zone;
 		}
@@ -87,6 +89,8 @@ namespace System.Security.Policy {
 
 			return se.ToString ();
 		}
+
+		// interface IBuiltInEvidence
 
 		int IBuiltInEvidence.GetRequiredSize (bool verbose)
 		{

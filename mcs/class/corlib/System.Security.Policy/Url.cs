@@ -3,13 +3,10 @@
 //
 // Author
 //	Duncan Mak (duncan@ximian.com)
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Ximian, Inc (http://www.ximian.com)
 // (C) 2004 Motus Technologies Inc. (http://www.motus.com)
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -32,10 +29,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Globalization;
 using System.Security.Permissions;
-using System.Security.Policy;
 
 namespace System.Security.Policy {
 
@@ -85,10 +80,9 @@ namespace System.Security.Policy {
 
 		// interface IBuiltInEvidence
 
-		[MonoTODO]
 		int IBuiltInEvidence.GetRequiredSize (bool verbose) 
 		{
-			return 0;
+			return (verbose ? 3 : 1) + origin_url.Length;
 		}
 
 		[MonoTODO]
