@@ -1,3 +1,22 @@
+2004-07-13  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ApplicationDefaultCodeGroup.cs: New class in Fx 2.0.
+	* ApplicationInstallScope.cs: New enum in Fx 2.0.
+	* ApplicationTrust.cs: New class in Fx 2.0.
+	* ApplicationVersionMatch.cs: New enum in Fx 2.0.
+	* CodeConnectAccess.cs: New class in Fx 2.0.
+	* CodeGroupGrantScope.cs: New enum in Fx 2.0.
+	* IApplicationTrustManager.cs: New interface in Fx 2.0.
+	* ITrustLicenseIssuerCollection.cs: New interface in Fx 2.0.
+	* ITrustManager.cs: New interface in Fx 2.0.
+	* ITrustManagerConfig.cs: New interface in Fx 2.0.
+	* PromptingLevel.cs: New enum in Fx 2.0.
+	* ProvideAssemblyEvidenceEventArgs.cs: New class in Fx 2.0.
+	* TrustLicenseIssuer.cs: New class in Fx 2.0.
+	* TrustManagerContext.cs: New class in Fx 2.0.
+	* TrustManagerUIContext.cs: New enum in Fx 2.0.
+	* TrustManagerZoneConfig.cs: New class in Fx 2.0.
+
 2004-06-18  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* StrongNameMembershipCondition.cs: Added missing [Serializable] 
