@@ -7,9 +7,10 @@
 // (C) 2002,2003 Ximian, Inc (http://www.ximian.com)
 //
 using System;
+using System.CodeDom.Compiler;
 using System.IO;
 using System.Web.UI;
-using System.CodeDom.Compiler;
+using System.Reflection;
 //temp:
 using Microsoft.CSharp;
 
@@ -37,6 +38,13 @@ namespace System.Web.Compilation
 			if (wService.Program.Trim () == "")
 				return wService.GetTypeFromBin (wService.ClassName);
 
+			CompilationCacheItem item = CachingCompiler.GetCached (wService.PhysicalPath);
+			if (item != null) {
+				Assembly a = item.Result.CompiledAssembly;
+				if (a != null)
+					return a.GetType (wService.ClassName, true);
+			}
+
 			//FIXME: update when we support other languages
 			string fname = Path.ChangeExtension (Path.GetTempFileName (), ".cs");
 			StreamWriter sw = new StreamWriter (File.OpenWrite (fname));
@@ -44,7 +52,7 @@ namespace System.Web.Compilation
 			sw.Close ();
 
 			//TODO: get the compiler and default options from system.web/compileroptions
-			CompilerResults results = CachingCompiler.Compile (this, fname);
+			CompilerResults results = CachingCompiler.Compile (wService.PhysicalPath, fname, this);
 			CheckCompilerErrors (results);
 
 			return results.CompiledAssembly.GetType (wService.ClassName, true);

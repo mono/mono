@@ -129,22 +129,22 @@ namespace System.Web.Compilation
 			return results;
 		}
 
-		public static CompilerResults Compile (WebServiceCompiler compiler, string file)
+		public static CompilerResults Compile (string key, string file, WebServiceCompiler compiler)
 		{
-			CompilationCacheItem item = GetCached (file);
+			CompilationCacheItem item = GetCached (key);
 			if (item != null)
 				return item.Result;
 			
 			CompilerResults results = null;
 			lock (compilationLock) {
-				item = GetCached (file);
+				item = GetCached (key);
 				if (item != null)
 					return item.Result;
 
 				CompilerParameters options = GetOptions (compiler.Parser.Assemblies);
 				options.IncludeDebugInformation = compiler.Parser.Debug;
 				results = compiler.Compiler.CompileAssemblyFromFile (options, file);
-				cache [file] = new CompilationCacheItem (results, compiler.Parser.Dependencies);
+				cache [key] = new CompilationCacheItem (results, compiler.Parser.Dependencies);
 			}
 
 			return results;

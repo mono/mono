@@ -66,12 +66,6 @@ namespace System.Web.Compilation
 			CreateConstructor (null, null);
 		}
 
-		void BuildTree ()
-		{
-			Init ();
-			CreateMethods ();
-		}
-
 		protected virtual void CreateStaticFields ()
 		{
 			CodeMemberField fld = new CodeMemberField (typeof (bool), "__intialized");
@@ -148,11 +142,19 @@ namespace System.Web.Compilation
 
 		public virtual Type GetCompiledType () 
 		{
+			Init ();
+			CompilationCacheItem item = CachingCompiler.GetCached (parser.InputFile);
+			if (item != null) {
+				Assembly a = item.Result.CompiledAssembly;
+				if (a != null)
+					return a.GetType (mainClassExpr.Type.BaseType, true);
+			}
+
 			//TODO: get the compiler and default options from system.web/compileroptions
 			provider = new CSharpCodeProvider ();
 			compiler = provider.CreateCompiler ();
 
-			BuildTree ();
+			CreateMethods ();
 			compilerParameters.IncludeDebugInformation = parser.Debug;
 			CompilerResults results = CachingCompiler.Compile (this);
 			CheckCompilerErrors (results);

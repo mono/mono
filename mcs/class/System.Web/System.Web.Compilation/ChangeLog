@@ -1,3 +1,14 @@
+2003-07-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* BaseCompiler.cs: first look for cached items, then generate the tree.
+	This should speed things up.
+
+	* CachingCompiler.cs: when compiling web services, use the full path of
+	the .asmx file as key when caching.
+
+	* WebServiceCompiler.cs: first look for cached items, then generate
+	the source file.
+
 2003-07-04  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AspParser.cs: more useful error information,
