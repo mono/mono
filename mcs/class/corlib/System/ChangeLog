@@ -1,3 +1,8 @@
+2002-06-13  Nick Drochak  <ndrochak@gol.com>
+
+	* DateTime.cs: (Parse): Accept dates that have no hour,min,sec. in the
+	sortable format(s), e.g. "2002-02-25"
+
 2002/06/12  Nick Drochak <ndrochak@gol.com>
 
 	* Random.cs (Next): Fix math error.  Return a number within the range.

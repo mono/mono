@@ -616,7 +616,7 @@ namespace System
 			while (pos+num < len)
 			{
 				if (s.Length == 0)
-					return false;
+					break;
 
 				if (Char.IsWhiteSpace (s[0])) {
 					s = s.Substring (1);
