@@ -2041,7 +2041,7 @@ namespace Mono.CSharp {
 
 	public abstract class MethodCore : MemberBase {
 		public readonly Parameters Parameters;
-		Block block;
+		protected Block block;
 		
 		//
 		// Parameters, cached for semantic analysis.
