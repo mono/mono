@@ -1370,7 +1370,6 @@ namespace CIR {
 		// </summary>
 		public override Expression Reduce (EmitContext ec)
 		{
-			Console.WriteLine ("Reduce called");
 			
 			left = left.Reduce (ec);
 			right = right.Reduce (ec);

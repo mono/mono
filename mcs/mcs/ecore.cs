@@ -151,8 +151,6 @@ namespace CIR {
 		//
 		public Expression Resolve (EmitContext ec)
 		{
-			Console.WriteLine ("Resolving: " + this);
-			
 			Expression e = DoResolve (ec);
 
 			if (e != null){
@@ -176,7 +174,6 @@ namespace CIR {
 								     " did not set its type after Resolve");
 			}
 
-			Console.WriteLine ("Result: " + e.GetType ());
 			return e;
 		}
 
