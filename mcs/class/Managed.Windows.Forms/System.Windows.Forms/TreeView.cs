@@ -594,7 +594,9 @@ namespace System.Windows.Forms {
 
 		private void DrawNodePlusMinus (TreeNode node, int x, int y, int middle)
 		{
-			DeviceContext.DrawRectangle (SystemPens.ControlDark, x, middle - 4, 8, 8);
+			node.UpdatePlusMinusBounds (x, middle - 4, 8, 8);
+
+			DeviceContext.DrawRectangle (SystemPens.ControlDark, node.plus_minus_bounds);
 
 			if (node.IsExpanded) {
 				DeviceContext.DrawLine (SystemPens.ControlDarkDark, x + 2, middle, x + 6, middle); 
@@ -801,11 +803,8 @@ namespace System.Windows.Forms {
 			int half_height = ItemHeight / 2;
 			while (walk.MoveNext ()) {
 				TreeNode node = (TreeNode) walk.Current;
-				Rectangle pm = new Rectangle (node.Bounds.Left - indent - 9, node.Bounds.Top + half_height, 8, 8);
-				if (pm.Contains (e.X, e.Y)) {
-					Console.WriteLine ("toggling node:  " + node);
+				if (node.plus_minus_bounds.Contains (e.X, e.Y)) {
 					node.Toggle ();
-					Console.WriteLine ("node:   " + node.IsExpanded);
 					break;
 				}
 			}

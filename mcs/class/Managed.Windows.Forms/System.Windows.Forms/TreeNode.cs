@@ -43,6 +43,7 @@ namespace System.Windows.Forms {
 		
 		private bool is_expanded = true;
 		private Rectangle bounds = Rectangle.Empty;
+		internal Rectangle plus_minus_bounds = Rectangle.Empty;
 		private bool check;
 		internal OwnerDrawPropertyBag prop_bag;
 
@@ -410,6 +411,14 @@ namespace System.Windows.Forms {
 			bounds.Y = y;
 			bounds.Width = width;
 			bounds.Height = height;
+		}
+
+		internal void UpdatePlusMinusBounds (int x, int y, int width, int height)
+		{
+			plus_minus_bounds.X = x;
+			plus_minus_bounds.Y = y;
+			plus_minus_bounds.Width = width;
+			plus_minus_bounds.Height = height;
 		}
 
 		internal void SetAddedData (TreeView tree_view, TreeNode parent, int index)

@@ -1,5 +1,11 @@
 2004-12-15  Jackson Harper  <jackson@ximian.com>
 
+	* TreeView.cs: Store the treenodes plus/minus box bounds when it
+	is calculated and use this for click testing.
+	* TreeNode.cs: Add functionality to store the nodes plus minus box bounds.
+
+2004-12-15  Jackson Harper  <jackson@ximian.com>
+
 	* TreeView.cs: Pass the nodes image index to the image list when
 	drawing that image.
 
