@@ -1,3 +1,7 @@
+2005-01-28  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* SecurityExceptionCas.cs: New. Permission tests for SecurityException.
+
 2005-01-19  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SecurityManagerTest.cs: Added new tests for 2.0. Fixed a test to work
