@@ -54,6 +54,14 @@ namespace System.Drawing {
     		internal int Count;             // Number of color entries    		
 		//internal int[] Entries;     		
     	}
+    	
+    	[StructLayout(LayoutKind.Sequential)]
+    	internal struct  GdiColorMap 
+    	{
+    		internal int from;
+    		internal int to;
+	}
+
 
 }
 

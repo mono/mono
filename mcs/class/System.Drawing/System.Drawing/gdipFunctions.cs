@@ -976,33 +976,40 @@ namespace System.Drawing {
 
 		[DllImport ("gdiplus.dll")]     
 		internal static extern Status GdipSetImageAttributesGamma (IntPtr imageattr, 
-												ColorAdjustType type, bool enableFlag,  
+			ColorAdjustType type, bool enableFlag,  
 																			float gamma);
 		
 		[DllImport ("gdiplus.dll")]     
 		internal static extern Status GdipSetImageAttributesNoOp (IntPtr imageattr, 
-												ColorAdjustType type, bool enableFlag);
+			ColorAdjustType type, bool enableFlag);
 		
 		[DllImport ("gdiplus.dll")]     
 		internal static extern Status GdipSetImageAttributesOutputChannel (IntPtr imageattr,
-												ColorAdjustType type, bool enableFlag, 
-														ColorChannelFlag channelFlags);
+			ColorAdjustType type, bool enableFlag, 	ColorChannelFlag channelFlags);
 		
 		[DllImport ("gdiplus.dll", CharSet=CharSet.Auto)]     
 		internal static extern Status GdipSetImageAttributesOutputChannelColorProfile (IntPtr imageattr,
-												ColorAdjustType type, bool enableFlag, 
-										[MarshalAs (UnmanagedType.LPWStr)] string profileName);
+			ColorAdjustType type, bool enableFlag, [MarshalAs (UnmanagedType.LPWStr)] string profileName);
 				
 		[DllImport ("gdiplus.dll")]     
 		internal static extern Status GdipSetImageAttributesRemapTable (IntPtr imageattr,
-												ColorAdjustType type, bool enableFlag, 
-													uint mapSize, IntPtr colorMap);
+			ColorAdjustType type, bool enableFlag, 	uint mapSize, IntPtr colorMap);
 		
 		[DllImport ("gdiplus.dll")]     
 		internal static extern Status GdipSetImageAttributesThreshold (IntPtr imageattr, 
-												ColorAdjustType type, bool enableFlag, 
-																		float thresHold);
-		
+			ColorAdjustType type, bool enableFlag, float thresHold);
+			
+		[DllImport ("gdiplus.dll")]     
+		internal static extern Status GdipCloneImageAttributes(IntPtr imageattr, out IntPtr cloneImageattr);
+
+		[DllImport ("gdiplus.dll")]     
+		internal static extern Status GdipGetImageAttributesAdjustedPalette(IntPtr imageattr,
+    			out IntPtr colorPalette,  ColorAdjustType colorAdjustType);
+    			
+    		[DllImport ("gdiplus.dll")]     
+		internal static extern Status GdipSetImageAttributesWrapMode(IntPtr imageattr,  WrapMode wrap,
+    			int argb, bool clamp);
+
                                
 		// Font		
 		[DllImport("gdiplus.dll")]                   

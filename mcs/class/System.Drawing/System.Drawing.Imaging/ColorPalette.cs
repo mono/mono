@@ -9,6 +9,8 @@
 
 using System;
 using System.Drawing;
+using System.Runtime.InteropServices;
+
 namespace System.Drawing.Imaging
 {
 	public sealed class ColorPalette {
@@ -44,6 +46,38 @@ namespace System.Drawing.Imaging
 			get {
 				return flags;
 			}
+		}
+		
+		/* Caller should call FreeHGlobal*/
+		internal IntPtr getGDIPalette() 
+		{
+			GdiColorPalette palette = new GdiColorPalette ();			
+			Color[] entries = Entries;
+			int entry = 0;			
+			int size = Marshal.SizeOf (palette) + (Marshal.SizeOf (entry) * entries.Length);			
+			IntPtr lfBuffer = Marshal.AllocHGlobal(size);			
+			
+			palette.Flags = Flags;
+			palette.Count = entries.Length;
+			    			
+			int[] values = new int[palette.Count];
+			
+			for (int i = 0; i < values.Length; i++) {
+				values[i] = entries[i].ToArgb(); 
+				//Console.Write("{0:X} ;", values[i]);			
+			}   			
+			
+			//Console.WriteLine("pal size " + Marshal.SizeOf (palette) + " native " + NativeObject);			
+			
+			Marshal.StructureToPtr (palette, lfBuffer, false);	
+			Marshal.Copy (values, 0, (IntPtr) (lfBuffer.ToInt32() + Marshal.SizeOf (palette)), values.Length);						    								
+			
+			return lfBuffer;
+		}
+		
+		internal void setFromGDIPalette(IntPtr palette) 
+		{
+			
 		}
 	}
 }

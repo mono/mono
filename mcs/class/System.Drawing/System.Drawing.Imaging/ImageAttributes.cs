@@ -11,6 +11,8 @@
 
 using System;
 using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Runtime.InteropServices;
 
 namespace System.Drawing.Imaging
 {
@@ -27,15 +29,18 @@ namespace System.Drawing.Imaging
 			}
 		}
 		
-		public ImageAttributes() {	
-			
+		internal  ImageAttributes(IntPtr native)
+		{
+			nativeImageAttr = native;
+		}
+		
+		public ImageAttributes() {				
 			
 			Status status = GDIPlus.GdipCreateImageAttributes(out nativeImageAttr);
 						
 			if (status != Status.Ok)
 				throw new Exception ("Error calling GDIPlus.GdipCreateImageAttributes:" +status);
-				
-			Console.WriteLine("ImageAttributes().ImageAttributes()" + nativeImageAttr);
+			
 		}
 
 		public void ClearBrushRemapTable()
@@ -52,7 +57,7 @@ namespace System.Drawing.Imaging
 		public void ClearColorKey(ColorAdjustType type)
 		{
 			Status status = GDIPlus.GdipSetImageAttributesColorKeys (nativeImageAttr, 
-																	type, false, 0, 0);
+				type, false, 0, 0);
 			
 			GDIPlus.CheckStatus (status);			
 		}
@@ -65,7 +70,7 @@ namespace System.Drawing.Imaging
 		public void ClearColorMatrix(ColorAdjustType type)
 		{
 			Status status = GDIPlus.GdipSetImageAttributesColorMatrix (nativeImageAttr, 
-										type, false, null, null, ColorMatrixFlag.Default);
+				type, false, null, null, ColorMatrixFlag.Default);
 			
 			GDIPlus.CheckStatus (status);			
 		}
@@ -77,8 +82,7 @@ namespace System.Drawing.Imaging
 		
 		public void ClearGamma(ColorAdjustType type)
 		{
-			Status status = GDIPlus.GdipSetImageAttributesGamma (nativeImageAttr, 
-																	type, false, 0);
+			Status status = GDIPlus.GdipSetImageAttributesGamma (nativeImageAttr, 	type, false, 0);
 			
 			GDIPlus.CheckStatus (status);
 		}
@@ -90,8 +94,7 @@ namespace System.Drawing.Imaging
 		
 		public void ClearNoOp(ColorAdjustType type)
 		{
-			Status status = GDIPlus.GdipSetImageAttributesNoOp (nativeImageAttr, 
-																		type, false);
+			Status status = GDIPlus.GdipSetImageAttributesNoOp (nativeImageAttr, type, false);
 			
 			GDIPlus.CheckStatus (status);
 		}
@@ -103,8 +106,8 @@ namespace System.Drawing.Imaging
 		
 		public void ClearOutputChannel(ColorAdjustType type)
 		{
-			Status status = GDIPlus.GdipSetImageAttributesOutputChannel (nativeImageAttr, 
-																		type, false, ColorChannelFlag.ColorChannelLast );
+			Status status = GDIPlus.GdipSetImageAttributesOutputChannel (nativeImageAttr, 	
+				type, false, ColorChannelFlag.ColorChannelLast);
 			
 			GDIPlus.CheckStatus (status);
 		}
@@ -117,7 +120,7 @@ namespace System.Drawing.Imaging
 		public void ClearOutputChannelColorProfile(ColorAdjustType type)
 		{
 			Status status = GDIPlus.GdipSetImageAttributesOutputChannelColorProfile (nativeImageAttr, 
-																	type, false, null);
+				type, false, null);
 			
 			GDIPlus.CheckStatus (status);
 		}
@@ -130,7 +133,7 @@ namespace System.Drawing.Imaging
 		public void ClearRemapTable(ColorAdjustType type)
 		{
 			Status status = GDIPlus.GdipSetImageAttributesRemapTable (nativeImageAttr, 
-															type, false, 0, IntPtr.Zero);
+				type, false, 0, IntPtr.Zero);
 			
 			GDIPlus.CheckStatus (status);
 		}
@@ -142,8 +145,8 @@ namespace System.Drawing.Imaging
 		
 		public void ClearThreshold(ColorAdjustType type)
 		{
-			Status status = GDIPlus.GdipSetImageAttributesThreshold (nativeImageAttr, 
-																		type, false, 0);
+			Status status = GDIPlus.GdipSetImageAttributesThreshold (nativeImageAttr,
+				type, false, 0);
 			
 			GDIPlus.CheckStatus (status);
 		}
@@ -151,7 +154,7 @@ namespace System.Drawing.Imaging
 		//Sets the color keys for all GDI+ objects
 		public void SetColorKey(Color colorLow, Color colorHigh)
 		{
-			
+						
 			Status status = GDIPlus.GdipSetImageAttributesColorKeys(nativeImageAttr,
             				ColorAdjustType.Default, true,  colorLow.ToArgb(), colorHigh.ToArgb());
 
@@ -159,15 +162,18 @@ namespace System.Drawing.Imaging
 				throw new Exception ("Error calling GDIPlus.GdipSetImageAttributesColorKeys:" +status);
 		}
 
-		public void SetColorMatrix(ColorMatrix colorMatrix) {
+		public void SetColorMatrix(ColorMatrix colorMatrix) 
+		{
 			
 			Status status = GDIPlus.GdipSetImageAttributesColorMatrix(nativeImageAttr, ColorAdjustType.Default,
                                             true, colorMatrix, (ColorMatrix)null, ColorMatrixFlag.Default);
+                                            
 			if (status != Status.Ok)
 				throw new Exception ("Error calling GDIPlus.SetColorMatrix:" +status);                                           
 		}
 
-		public void SetColorMatrix(ColorMatrix colorMatrix, ColorMatrixFlag colorMatrixFlag) {
+		public void SetColorMatrix(ColorMatrix colorMatrix, ColorMatrixFlag colorMatrixFlag) 
+		{
 			
 			Status status = GDIPlus.GdipSetImageAttributesColorMatrix(nativeImageAttr, ColorAdjustType.Default,
                                             true, colorMatrix, (ColorMatrix)null, colorMatrixFlag);
@@ -198,7 +204,8 @@ namespace System.Drawing.Imaging
 		}
 
 
-		public void Dispose() {
+		public void Dispose() 
+		{
 			
 			Dispose (true);
 			System.GC.SuppressFinalize (this);
@@ -214,5 +221,205 @@ namespace System.Drawing.Imaging
 		{
 			throw new NotImplementedException ();
 		}
+		
+		
+		public object Clone()
+		{	
+			IntPtr imgclone;	
+			
+			Status status = GDIPlus.GdipCloneImageAttributes (nativeImageAttr, out imgclone);						
+			GDIPlus.CheckStatus (status);						
+			
+			return new ImageAttributes (imgclone);			
+		}		
+		
+		public void GetAdjustedPalette(ColorPalette palette,  ColorAdjustType type)
+		{
+			IntPtr colorPalette;
+			
+			Status status = GDIPlus.GdipGetImageAttributesAdjustedPalette (nativeImageAttr,
+    				out colorPalette,  type);
+    				
+    			palette.setFromGDIPalette (colorPalette);
+			
+		}		
+		
+		public void SetBrushRemapTable(ColorMap[] map)
+		{
+			GdiColorMap gdiclr = new GdiColorMap ();						
+			IntPtr clrmap, lpPointer;
+			int mapsize = Marshal.SizeOf (gdiclr); 
+			int size =  mapsize * map.Length;			
+			clrmap = lpPointer =  Marshal.AllocHGlobal (size);	
+			
+			for (int i=0; i < map.Length; i++)
+			{
+				gdiclr.from = map[i].OldColor.ToArgb();
+				gdiclr.to = map[i].NewColor.ToArgb();
+				
+				Marshal.StructureToPtr (gdiclr, lpPointer, false);				
+				lpPointer = (IntPtr) (lpPointer.ToInt32() + mapsize);								
+			}
+			
+			Status status = GDIPlus.GdipSetImageAttributesRemapTable (nativeImageAttr, 
+				ColorAdjustType.Brush, false, (uint) map.Length, clrmap);
+				
+			Marshal.FreeHGlobal (clrmap);   
+			
+			GDIPlus.CheckStatus (status);								        					
+		}
+		
+		
+		public void SetColorKey(Color colorLow,   Color colorHigh, ColorAdjustType type)
+		{
+			Status status = GDIPlus.GdipSetImageAttributesColorKeys (nativeImageAttr,                                            
+                                            type, true,  colorLow.ToArgb (), colorHigh.ToArgb ());
+                                            
+			GDIPlus.CheckStatus (status);					                                         
+		}
+		
+		
+		public void SetColorMatrices(ColorMatrix newColorMatrix,  ColorMatrix grayMatrix)
+		{
+			Status status = GDIPlus.GdipSetImageAttributesColorMatrix (nativeImageAttr, 
+				ColorAdjustType.Default, true, newColorMatrix, grayMatrix, ColorMatrixFlag.Default);
+			
+			GDIPlus.CheckStatus (status);			
+		}		
+		
+		public void SetColorMatrices(ColorMatrix newColorMatrix,  ColorMatrix grayMatrix, ColorMatrixFlag flags)
+		{
+			Status status = GDIPlus.GdipSetImageAttributesColorMatrix (nativeImageAttr, 
+				ColorAdjustType.Default, true, newColorMatrix, grayMatrix, flags);
+			
+			GDIPlus.CheckStatus (status);						
+		}		
+		
+		public void SetColorMatrices(ColorMatrix newColorMatrix,  ColorMatrix grayMatrix,  ColorMatrixFlag mode,   ColorAdjustType type)
+		{
+			Status status = GDIPlus.GdipSetImageAttributesColorMatrix (nativeImageAttr, 
+				ColorAdjustType.Default, true, newColorMatrix, grayMatrix, mode);
+			
+			GDIPlus.CheckStatus (status);			
+		}		
+
+		public void SetGamma(float gamma)
+		{
+			SetGamma (gamma, ColorAdjustType.Default);			
+		}		
+		
+		public void SetGamma(float gamma, ColorAdjustType coloradjust)
+		{
+			Status status = GDIPlus.GdipSetImageAttributesGamma (nativeImageAttr, coloradjust, true, 
+				gamma);
+			
+			GDIPlus.CheckStatus (status);						
+		}	
+		
+		public void SetNoOp()
+		{
+			SetNoOp (ColorAdjustType.Default);						
+		}			
+		
+		public void SetNoOp(ColorAdjustType type)
+		{
+			Status status = GDIPlus.GdipSetImageAttributesNoOp (nativeImageAttr, 
+				type, true);
+			
+			GDIPlus.CheckStatus (status);			
+		}					
+		
+		public void SetOutputChannel(ColorChannelFlag flags)
+		{
+			SetOutputChannel (flags, ColorAdjustType.Default);		
+		}
+		
+		public void SetOutputChannel(ColorChannelFlag flags,  ColorAdjustType type)
+		{
+			Status status = GDIPlus.GdipSetImageAttributesOutputChannel (nativeImageAttr, 	
+				type, true, flags);
+				
+			GDIPlus.CheckStatus (status);			
+		}		
+		
+		public void SetOutputChannelColorProfile(string colorProfileFilename)
+		{
+			SetOutputChannelColorProfile (colorProfileFilename, ColorAdjustType.Default);			
+		}		
+		
+		public void SetOutputChannelColorProfile(string colorProfileFilename,  ColorAdjustType type)
+		{
+			Status status = GDIPlus.GdipSetImageAttributesOutputChannelColorProfile (nativeImageAttr, 
+				type, true, colorProfileFilename);
+				
+			GDIPlus.CheckStatus (status);												
+		}		
+		
+		public void SetRemapTable(ColorMap[] map)
+		{			
+			SetRemapTable (map, ColorAdjustType.Default);
+		}
+
+		
+		public void SetRemapTable(ColorMap[] map, ColorAdjustType type)
+		{
+			GdiColorMap gdiclr = new GdiColorMap ();						
+			IntPtr clrmap, lpPointer;
+			int mapsize = Marshal.SizeOf (gdiclr); 
+			int size =  mapsize * map.Length;			
+			clrmap = lpPointer =  Marshal.AllocHGlobal (size);	
+			
+			for (int i=0; i < map.Length; i++)
+			{
+				gdiclr.from = map[i].OldColor.ToArgb();
+				gdiclr.to = map[i].NewColor.ToArgb();
+				
+				Marshal.StructureToPtr (gdiclr, lpPointer, false);				
+				lpPointer = (IntPtr) (lpPointer.ToInt32() + mapsize);								
+			}
+			
+			Status status = GDIPlus.GdipSetImageAttributesRemapTable (nativeImageAttr, 
+				type, false, (uint) map.Length, clrmap);
+				
+			Marshal.FreeHGlobal (clrmap);   
+			
+			GDIPlus.CheckStatus (status);								        					
+			
+		}		
+		
+		public void SetThreshold(float threshold)
+		{
+			SetThreshold (threshold, ColorAdjustType.Default);
+		}		
+		
+		public void SetThreshold(float threshold, ColorAdjustType type)
+		{
+			Status status = GDIPlus.GdipSetImageAttributesThreshold (nativeImageAttr,
+				type, true, 0);
+			
+			GDIPlus.CheckStatus (status);			
+		}		
+
+		[MonoTODO]
+		public void SetWrapMode(WrapMode mode)
+		{
+			
+		}
+		
+		
+		public void SetWrapMode(WrapMode mode,  Color color)
+		{
+			SetWrapMode (mode,  color, false);
+		}
+		
+		
+		public void SetWrapMode(WrapMode mode,  Color color, bool clamp)
+		{
+			Status status = GDIPlus.GdipSetImageAttributesWrapMode (nativeImageAttr,  mode,
+    				color.ToArgb(), clamp);	
+    			
+    			GDIPlus.CheckStatus (status);			
+		}		
+		
 	}
 }
