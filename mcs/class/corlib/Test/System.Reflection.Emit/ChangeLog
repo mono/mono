@@ -1,3 +1,8 @@
+2005-03-21  Nick Drochak <ndrochak@ieee.org>
+
+	* TypeBuilderTest.cs: Move asserts which fail on .NET to a new
+	test method and disable it on .NET.
+
 2005-03-09  Zoltan Varga  <vargaz@freemail.hu>
 
 	* TypeBuilderTest.cs: Reenable last test.

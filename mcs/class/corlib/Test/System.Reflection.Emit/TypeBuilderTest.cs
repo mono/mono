@@ -1764,23 +1764,34 @@ public class TypeBuilderTest : Assertion
 		TypeBuilder tb = module.DefineType (genTypeName (),
 											TypeAttributes.Public, null, new Type[] { icomparable, typeof (Bar) });
 
-		Assert (icomparable.IsAssignableFrom (tb));
-		Assert (!tb.IsAssignableFrom (icomparable));
+		Assert ("01", icomparable.IsAssignableFrom (tb));
+		Assert ("02", !tb.IsAssignableFrom (icomparable));
 
-		// Fails under MS.NET:
-		//Assert (typeof (Foo).IsAssignableFrom (tb));
-		Assert (typeof (Bar).IsAssignableFrom (tb));
-		Assert (!typeof (Baz).IsAssignableFrom (tb));
+		Assert ("03", typeof (Bar).IsAssignableFrom (tb));
+		Assert ("04", !typeof (Baz).IsAssignableFrom (tb));
 
-		Assert (tb.IsAssignableFrom (tb));
+		Assert ("05", tb.IsAssignableFrom (tb));
 
-		Assert (!tb.IsAssignableFrom (typeof (IDisposable)));
+		Assert ("06", !tb.IsAssignableFrom (typeof (IDisposable)));
 		tb.AddInterfaceImplementation (typeof (IDisposable));
-		// Fails under MS.NET:
-		//Assert (tb.IsAssignableFrom (typeof (IDisposable)));
+	}
+
+	[Test]
+	[Category("NotDotNet")]
+	public void TestIsAssignableTo_NotDotNet () {
+		Type icomparable = typeof (IComparable);
+
+		TypeBuilder tb = module.DefineType (genTypeName (),
+											TypeAttributes.Public, null, new Type[] { icomparable, typeof (Bar) });
+
+		Assert ("01", typeof (Foo).IsAssignableFrom (tb));
+
+		tb.AddInterfaceImplementation (typeof (IDisposable));
+
+		Assert ("02", tb.IsAssignableFrom (typeof (IDisposable)));
 
 		// bug #73469
-		Assert (typeof (Bar[]).IsAssignableFrom (module.GetType (tb.FullName + "[]")));
+		Assert ("07", typeof (Bar[]).IsAssignableFrom (module.GetType (tb.FullName + "[]")));
 	}
 }
 }
