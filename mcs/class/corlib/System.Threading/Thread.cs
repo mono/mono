@@ -302,7 +302,7 @@ namespace System.Threading
 		public CultureInfo CurrentCulture {
 			get {
 				if (current_culture == null) {
-					lock (synch_lock) {
+					lock (typeof (Thread)) {
 						if(current_culture==null) {
 							if(in_currentculture==true) {
 								/* Bail out */
