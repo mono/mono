@@ -1,3 +1,33 @@
+2003-10-17  Martin Baulig  <martin@ximian.com>
+
+	* class.h (MonoGenericInst): Moved this declaration here and added
+	`MonoMethod *generic_method'.
+
+	* icall.c
+	(ves_icall_MethodInfo_GetGenericArguments): New interncall.
+	(ves_icall_MethodInfo_BindGenericParameters): New interncall.
+
+	* metadata.c (mono_metadata_type_equal): Two types of
+	MONO_TYPE_VAR or MONO_TYPE_MVAR equals if they have the same
+	index; ie. don't compare the address of the `MonoGenericParam'
+	structure.
+	(mono_metadata_load_generic_params): Removed the `MonoMethod
+	*method' argument.
+
+	* metadata.h (MonoGenericInst): Moved declaration to class.h.
+	(MonoMethodHeader): Added `MonoGenericInst *geninst'.
+
+	* reflection.c (method_encode_signature): Encode the number of
+	generic parameters.
+	(encode_generic_method_sig): New static function.
+	(method_encode_methodspec): New static function; creates an entry
+	in the MethodSpec table for a generic method.
+	(mono_image_get_methodspec_token): New static function.
+	(mono_image_create_token): Call mono_image_get_methodspec_token()
+	for generic methods.
+	(mono_reflection_bind_generic_method_parameters): New public
+	function.  Instantiates a generic method.
+
 2003-10-16  Martin Baulig  <martin@ximian.com>
 
 	* metadata.h (MonoMethodSignature): Moved `MonoGenericParam
