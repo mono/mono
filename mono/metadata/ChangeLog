@@ -1,4 +1,8 @@
 
+Thu Sep 5 17:42:13 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* marshal.c: handle a boolean return type.
+
 Thu Sep 5 13:09:46 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* gc.c: put HIDE_POINTER/REVEAL_POINTER only here.
