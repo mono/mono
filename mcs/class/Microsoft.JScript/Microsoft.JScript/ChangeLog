@@ -1,5 +1,7 @@
 2004-05-24  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
+	* Statement.cs: Added code generation support for 'switch' statement.
+
 	* jscript-lexer-parser.g: added 'using' for
 	System.Collections. Allow 'switch' statement building of its
 	ast. Added parent parameter to constructor of With. Build

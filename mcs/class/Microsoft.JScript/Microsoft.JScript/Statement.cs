@@ -283,5 +283,102 @@ namespace Microsoft.JScript {
 			ig.Emit (OpCodes.Br, back);
 			ig.MarkLabel (forward);
 		}
-	}	
+	}
+
+	public class Switch : AST {	       
+
+		internal AST exp;
+		internal ArrayList case_clauses;
+		internal ArrayList default_clauses;
+		internal ArrayList sec_case_clauses;
+
+		internal Switch (AST parent)
+		{
+			this.parent = parent;
+		}
+
+		internal override bool Resolve (IdentificationTable context)
+		{
+			bool r = true;
+			if (exp != null)
+				r &= exp.Resolve (context);
+			if (case_clauses != null)
+				foreach (Clause c in case_clauses)
+					r &= c.Resolve (context);
+			if (default_clauses != null)
+				foreach (AST dc in default_clauses)
+					r &= dc.Resolve (context);
+			if (sec_case_clauses != null)
+				foreach (Clause sc in sec_case_clauses)
+					r &= sc.Resolve (context);
+			return r;
+		}
+
+		internal override void Emit (EmitContext ec)
+		{
+			if (exp != null)
+				exp.Emit (ec);
+			ILGenerator ig = ec.ig;
+			LocalBuilder loc = ig.DeclareLocal (typeof (object));
+			ig.Emit (OpCodes.Stloc, loc);
+			foreach (Clause c in case_clauses) {
+				ig.Emit (OpCodes.Ldloc, loc);
+				c.EmitConditional (ec);
+			}
+			Label end = ig.DefineLabel ();
+			ig.Emit (OpCodes.Br, end);
+			foreach (Clause c in case_clauses) {
+				ig.MarkLabel (c.matched_block);
+				c.EmitStms (ec);				
+			}
+			ig.MarkLabel (end);
+			foreach (AST ast in default_clauses)
+				ast.Emit (ec);
+			// FIXME: clauses after default clause are not being generated.
+			foreach (Clause sc in sec_case_clauses)
+				sc.Emit (ec);
+		}
+	}
+
+	public class Clause : AST {
+		internal AST exp;
+		internal ArrayList stm_list;
+		internal Label matched_block;
+
+		public Clause (AST parent)
+		{
+			this.parent = parent;
+		}
+
+		internal override bool Resolve (IdentificationTable context)
+		{
+			bool r = true;
+			if (exp != null)
+				r &= exp.Resolve (context);
+			foreach (AST ast in stm_list)
+				r &= ast.Resolve (context);
+			return r;			
+		}
+
+		internal void EmitConditional (EmitContext ec)
+		{
+			if (exp != null)
+				exp.Emit (ec);
+			ILGenerator ig = ec.ig;
+			matched_block = ig.DefineLabel ();
+			ig.Emit (OpCodes.Call, typeof (StrictEquality).GetMethod ("JScriptStrictEquals"));
+			ig.Emit (OpCodes.Brtrue, matched_block);
+		}
+		
+		internal void EmitStms (EmitContext ec)
+		{
+			ILGenerator ig = ec.ig;
+			foreach (AST ast in stm_list)
+				ast.Emit (ec);
+		}
+
+		internal override void Emit (EmitContext ec)
+		{
+		}
+	}
 }
