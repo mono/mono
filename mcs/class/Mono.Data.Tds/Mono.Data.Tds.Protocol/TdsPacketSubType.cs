@@ -1,10 +1,12 @@
 //
 // Mono.Data.Tds.Protocol.TdsPacketSubType.cs
 //
-// Author:
+// Authors:
 //   Tim Coleman (tim@timcoleman.com)
+//   Daniel Morgan (danielmorgan@verizon.net)
 //
 // Copyright (C) Tim Coleman, 2002
+// Portions (C) 2003 Daniel Morgan
 //
 
 namespace Mono.Data.Tds.Protocol {
@@ -17,6 +19,7 @@ namespace Mono.Data.Tds.Protocol {
 		Info = 0xab,
 		EED = 0xe5,
 		Param = 0xac,
+		Authentication = 0xed,
 		LoginAck = 0xad,
 		ReturnStatus = 0x79,
 		ProcId = 0x7c,

@@ -1,3 +1,16 @@
+2003-12-06  Sebastien Pouliot <spouliot@videotron.ca> 
+	for Daniel Morgan <danielmorgan@verizon.net>
+
+	Sebastien Pouliot (spouliot@motus.com) helped me greatly with his
+	NTLM stuff.
+	
+	* Mono.Data.Tds.Protocol/Tds.cs
+	* Mono.Data.Tds.Protocol/Tds70.cs
+	* Mono.Data.Tds.Protocol/TdsConnectionParameters.cs
+	* Mono.Data.Tds.Protocol/TdsPacketSubType.cs
+	* Mono.Data.Tds.Protocol/TdsPacketType.cs: added NT Authentication aka
+	Integrated Security aka Domain Login
+	
 2003-10-19  Joerg Rosenkranz <joergr@voelcker.com>
 
 	* Tds.cs (GetStringValue): A string length of 0xFF (255) is not

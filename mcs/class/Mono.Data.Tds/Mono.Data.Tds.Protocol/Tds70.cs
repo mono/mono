@@ -4,10 +4,15 @@
 // Author:
 //   Tim Coleman (tim@timcoleman.com)
 //   Diego Caravana (diego@toth.it)
+//   Sebastien Pouliot (spouliot@motus.com)
+//   Daniel Morgan (danielmorgan@verizon.net)
 //
 // Copyright (C) 2002 Tim Coleman
+// Portions (C) 2003 Motus Technologies Inc. (http://www.motus.com)
+// Portions (C) 2003 Daniel Morgan
 //
 
+using Mono.Security.Protocol.Ntlm;
 using System;
 using System.Text;
 
@@ -129,32 +134,68 @@ namespace Mono.Data.Tds.Protocol {
 			if (IsConnected)
 				throw new InvalidOperationException ("The connection is already open.");
 	
+			connectionParms = connectionParameters;
+
 			SetLanguage (connectionParameters.Language);
 			SetCharset ("utf-8");
-
+		
 			byte[] empty = new byte[0];
+			short authLen = 0;
 			byte pad = (byte) 0;
+			
+			byte[] domainMagic =  {	6, 0x7d, 0x0f, 0xfd, 0xff, 0x0, 0x0, 0x0,
+									0x0, 0xe0, 0x83, 0x0, 0x0,
+									0x68, 0x01, 0x00, 0x00, 0x09, 0x04, 0x00, 0x00 };
+			byte[] sqlserverMagic = { 6, 0x83, 0xf2, 0xf8,
+										0xff, 0x0, 0x0, 0x0,
+										0x0, 0xe0, 0x03, 0x0,
+										0x0, 0x88, 0xff, 0xff, 0xff, 0x36, 
+										0x04, 0x00, 0x00 };
+			byte[] magic = null;
+			
+			if (connectionParameters.DomainLogin == true)
+				magic = domainMagic;
+			else
+				magic = sqlserverMagic;
+			
+			string username = connectionParameters.User;
 
-			byte[] magic1 = {0x06, 0x83, 0xf2, 0xf8, 0xff, 0x00, 0x00, 0x00, 0x00, 0xe0, 0x03, 0x00, 0x00, 0x88, 0xff, 0xff, 0xff, 0x36, 0x04, 0x00, 0x00};
-			byte[] magic2 = {0x00, 0x40, 0x33, 0x9a, 0x6b, 0x50};
-			byte[] magic3 = {0x4e, 0x54, 0x4c, 0x4d, 0x53, 0x53, 0x50}; // NTLMSSP
-			short partialPacketSize = (short) (86 + 2 * (
-					connectionParameters.Hostname.Length + 
-					connectionParameters.User.Length + 
-					connectionParameters.ApplicationName.Length + 
-					connectionParameters.Password.Length + 
-					DataSource.Length +
-					connectionParameters.LibraryName.Length +
-					Language.Length +
-					connectionParameters.Database.Length)); 
-			short totalPacketSize = (short) (partialPacketSize + 48);
+			string domain = Environment.UserDomainName;
+			domain = connectionParameters.DefaultDomain = Environment.UserDomainName;
+
+			int idx = 0;
+			if ((idx = username.IndexOf (@"\")) > -1) {
+				domain = username.Substring (0, idx);
+				username = username.Substring (idx + 1);
+			}
+							
+			short partialPacketSize = (short) (86 + (
+				connectionParameters.Hostname.Length + 		
+				connectionParameters.ApplicationName.Length + 
+				DataSource.Length +
+				connectionParameters.LibraryName.Length +
+				Language.Length +
+				connectionParameters.Database.Length) * 2); 
+			
+			if(connectionParameters.DomainLogin == true) {
+				authLen = ((short) (32 + (connectionParameters.Hostname.Length +
+					domain.Length)));
+				partialPacketSize += authLen;
+			}
+			else 
+				partialPacketSize += ((short) ((username.Length + connectionParameters.Password.Length) * 2));
+			
+			short totalPacketSize = (short) partialPacketSize;
+			
 			Comm.StartPacket (TdsPacketType.Logon70);
+			
 			Comm.Append (totalPacketSize);
 			Comm.Append (empty, 5, pad);
 
-			Comm.Append ((byte) 0x70); // TDS VERSION 7
-			Comm.Append (empty, 7, pad);
-			Comm.Append (magic1);
+			Comm.Append ((byte) 0x70); // TDS Version 7
+			Comm.Append (empty, 3, pad);
+			Comm.Append (empty, 4, pad);
+			Comm.Append (magic);
 
 			short curPos = 86;
 
@@ -163,17 +204,27 @@ namespace Mono.Data.Tds.Protocol {
 			Comm.Append ((short) connectionParameters.Hostname.Length);
 			curPos += (short) (connectionParameters.Hostname.Length * 2);
 
-			// Username
-			Comm.Append (curPos);
-			Comm.Append ((short) connectionParameters.User.Length);
-			curPos += (short) (connectionParameters.User.Length * 2);
+			if(connectionParameters.DomainLogin.Equals(true))
+			{
+				Comm.Append((short)0);
+				Comm.Append((short)0);
+				Comm.Append((short)0);
+				Comm.Append((short)0);
+			}
+			else 
+			{
+				// Username
+				Comm.Append (curPos);
+				Comm.Append ((short) username.Length);
+				curPos += ((short) (username.Length * 2));
 
-			// Password
-			Comm.Append (curPos);
-			Comm.Append ((short) connectionParameters.Password.Length);
-			curPos += (short) (connectionParameters.Password.Length * 2);
+				// Password
+				Comm.Append (curPos);
+				Comm.Append ((short) connectionParameters.Password.Length);
+				curPos += (short) (connectionParameters.Password.Length * 2);
+			}
 
-			// AppName
+			// AppName			
 			Comm.Append (curPos);
 			Comm.Append ((short) connectionParameters.ApplicationName.Length);
 			curPos += (short) (connectionParameters.ApplicationName.Length * 2);
@@ -202,39 +253,61 @@ namespace Mono.Data.Tds.Protocol {
 			Comm.Append ((short) connectionParameters.Database.Length);
 			curPos += (short) (connectionParameters.Database.Length * 2);
 
-			Comm.Append (magic2);
-			Comm.Append (partialPacketSize);
-			Comm.Append ((short) 48);
-			Comm.Append (totalPacketSize);
+			// MAC Address
+			Comm.Append((byte) 0);
+			Comm.Append((byte) 0);
+			Comm.Append((byte) 0);
+			Comm.Append((byte) 0);
+			Comm.Append((byte) 0);
+			Comm.Append((byte) 0);
+
+			// Authentication Stuff
+			Comm.Append ((short) curPos);
+			if (connectionParameters.DomainLogin == true) 
+			{
+				Comm.Append ((short) authLen);
+				curPos += (short) authLen;
+			}
+			else
+				Comm.Append ((short) 0);
+			
+			// Unknown
+			Comm.Append (curPos);
 			Comm.Append ((short) 0);
-
-			string scrambledPwd = EncryptPassword (connectionParameters.Password);
-
+			
+			// Connection Parameters
 			Comm.Append (connectionParameters.Hostname);
-			Comm.Append (connectionParameters.User);
-			Comm.Append (scrambledPwd);
+			if (connectionParameters.DomainLogin == false) 
+			{
+				// SQL Server Authentication
+				Comm.Append (connectionParameters.User);
+				string scrambledPwd = EncryptPassword (connectionParameters.Password);
+				Comm.Append (scrambledPwd);
+			}
 			Comm.Append (connectionParameters.ApplicationName);
 			Comm.Append (DataSource);
 			Comm.Append (connectionParameters.LibraryName);
 			Comm.Append (Language);
 			Comm.Append (connectionParameters.Database);
-			Comm.Append (magic3);
 
-			Comm.Append ((byte) 0x0);
-			Comm.Append ((byte) 0x1);
-			Comm.Append (empty, 3, pad);
-			Comm.Append ((byte) 0x6);
-			Comm.Append ((byte) 0x82);
-			Comm.Append (empty, 22, pad);
-			Comm.Append ((byte) 0x30);
-			Comm.Append (empty, 7, pad);
-			Comm.Append ((byte) 0x30);
-			Comm.Append (empty, 3, pad);
-                        Comm.SendPacket ();
+			if (connectionParameters.DomainLogin) 
+			{
+				// the rest of the packet is NTLMSSP authentication
+				Type1Message msg = new Type1Message ();
+				msg.Domain = domain;
+				msg.Host = connectionParameters.Hostname;
+				msg.Flags = NtlmFlags.NegotiateUnicode | 
+					NtlmFlags.NegotiateNTLM | 
+					NtlmFlags.NegotiateDomainSupplied | 
+					NtlmFlags.NegotiateWorkstationSupplied | 
+					NtlmFlags.NegotiateAlwaysSign; // 0xb201
+				Comm.Append (msg.GetBytes ());
+			}
 
+			Comm.SendPacket ();
 			MoreResults = true;
 			SkipToEnd ();
-
+			
 			return IsConnected;
 		}
 

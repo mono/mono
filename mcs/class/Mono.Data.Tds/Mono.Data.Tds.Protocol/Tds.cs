@@ -3,10 +3,15 @@
 //
 // Author:
 //   Tim Coleman (tim@timcoleman.com)
+//   Sebastien Pouliot (spouliot@motus.com)
+//   Daniel Morgan (danielmorgan@verizon.net)
 //
 // Copyright (C) 2002 Tim Coleman
+// Portions (C) 2003 Motus Technologies Inc. (http://www.motus.com)
+// Portions (C) 2003 Daniel Morgan
 //
 
+using Mono.Security.Protocol.Ntlm;
 using System;
 using System.Collections;
 using System.ComponentModel;
@@ -21,6 +26,9 @@ namespace Mono.Data.Tds.Protocol {
 
 		TdsComm comm;
 		TdsVersion tdsVersion;
+		
+		protected internal TdsConnectionParameters connectionParms;
+		protected readonly byte[] NTLMSSP_ID = new byte[] {0x4e, 0x54, 0x4c, 0x4d, 0x53, 0x53, 0x50, 0x00};
 
 		int packetSize;
 		string dataSource;
@@ -36,7 +44,7 @@ namespace Mono.Data.Tds.Protocol {
 		bool moreResults;
 
 		Encoding encoder;
-		bool autoCommit;
+//		bool autoCommit;
 
 		bool doneProc;
 		TdsDataRow currentRow = null;
@@ -51,8 +59,8 @@ namespace Mono.Data.Tds.Protocol {
 		int cancelsRequested;
 		int cancelsProcessed;
 
-		bool isDone;
-		bool isDoneInProc;
+//		bool isDone;
+//		bool isDoneInProc;
 
 		ArrayList outputParameters = new ArrayList ();
 		protected TdsInternalErrorCollection messages = new TdsInternalErrorCollection ();
@@ -839,6 +847,30 @@ namespace Mono.Data.Tds.Protocol {
 			}
 		}
 
+		protected internal int ProcessAuthentication ()
+		{
+			int pdu_size = Comm.GetTdsShort ();
+			byte[] msg2 = Comm.GetBytes (pdu_size, true);
+
+			Type2Message t2 = new Type2Message (msg2);
+			// 0x0001	Negotiate Unicode
+			// 0x0200	Negotiate NTLM
+			// 0x8000	Negotiate Always Sign
+
+			Type3Message t3 = new Type3Message ();
+			t3.Challenge = t2.Nonce;
+			
+			t3.Domain = this.connectionParms.DefaultDomain;
+			t3.Host = this.connectionParms.Hostname;
+			t3.Username = this.connectionParms.User;
+			t3.Password = this.connectionParms.Password;
+
+			Comm.StartPacket (TdsPacketType.SspAuth); // 0x11
+			Comm.Append (t3.GetBytes ());
+			Comm.SendPacket ();
+			return 1; // TDS_SUCCEED
+		}
+
 		protected void ProcessColumnDetail ()
 		{
 			int len = GetSubPacketLength ();
@@ -1106,6 +1138,9 @@ namespace Mono.Data.Tds.Protocol {
 				break;
 			case TdsPacketSubType.LoginAck:
 				ProcessLoginAck ();
+				break;
+			case TdsPacketSubType.Authentication: // TDS 7.0
+				ProcessAuthentication ();
 				break;
 			case TdsPacketSubType.ReturnStatus :
 				Comm.Skip (4);
