@@ -36,7 +36,7 @@ namespace System.Runtime.Remoting {
 			get { return "http://schemas.microsoft.com/clr/ns/"; }
 		}
 
-		public static string XmlNsForClrTypeWithMsAndAssembly 
+		public static string XmlNsForClrTypeWithNsAndAssembly
 		{
 			get { return "http://schemas.microsoft.com/clr/nsassem/"; }
 		}
@@ -52,7 +52,7 @@ namespace System.Runtime.Remoting {
 			if (assemblyName == string.Empty)
 				return XmlNsForClrTypeWithNs + typeNamespace + "/" + assemblyName;
 			else
-				return XmlNsForClrTypeWithMsAndAssembly + typeNamespace + "/" + assemblyName;
+				return XmlNsForClrTypeWithNsAndAssembly + typeNamespace + "/" + assemblyName;
 		}
 
 		public static bool DecodeXmlNamespaceForClrTypeNamespace (string inNamespace, 
@@ -64,9 +64,9 @@ namespace System.Runtime.Remoting {
 			typeNamespace = null;
 			assemblyName = null;
 
-			if (inNamespace.StartsWith(XmlNsForClrTypeWithMsAndAssembly))
+			if (inNamespace.StartsWith(XmlNsForClrTypeWithNsAndAssembly))
 			{
-				int typePos = XmlNsForClrTypeWithMsAndAssembly.Length;
+				int typePos = XmlNsForClrTypeWithNsAndAssembly.Length;
 				if (typePos >= inNamespace.Length) return false;
 				int assemPos = inNamespace.IndexOf ('/', typePos+1);
 				if (assemPos == -1) return false;

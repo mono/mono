@@ -1,3 +1,8 @@
+2003-07-26  Duncan Mak  <duncan@ximian.com>
+
+	* XmlDocument.cs (GetIdenticalAttribute): Temporarily remove test
+	for OwnerElement.IsRooted to fix the build..
+
 2003-07-26  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XmlDocumentType.cs :

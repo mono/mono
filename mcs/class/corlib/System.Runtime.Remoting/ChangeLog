@@ -1,3 +1,8 @@
+2003-07-26  Duncan Mak  <duncan@ximian.com>
+
+	* SoapServices.cs (XmlNsForClrTypeWithNsAndAssembly):
+	Fixed typo. It's 'Ns', but 'Ms'.
+
 2003-07-25  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* RemotingServices.cs: If the type for a proxy is not available in
