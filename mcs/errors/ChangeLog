@@ -1,3 +1,7 @@
+2004-03-25  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* mcs-expect-no-errors: Removed cs1548 and cs1458-2.cs (fixed #55364).
+
 2004-03-25 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* cs1510-2.cs: test for 56016.
