@@ -33,7 +33,8 @@ namespace Mono.ILASM {
                         this.type_ref = type_ref;
                 }
 
-                public void Emit (CodeGen code_gen, PEAPI.CILInstructions cil)
+                public void Emit (CodeGen code_gen, MethodDef meth,
+				  PEAPI.CILInstructions cil)
                 {
                         if (field_ref != null) {
                                 field_ref.Resolve (code_gen);

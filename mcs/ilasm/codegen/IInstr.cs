@@ -17,7 +17,8 @@ namespace Mono.ILASM {
                 /// <summary>
                 ///  Add this instruction to the supplied codebuffer
                 /// </summary>
-                void Emit (CodeGen code_gen, PEAPI.CILInstructions cil);
+                void Emit (CodeGen code_gen, MethodDef meth, 
+			   PEAPI.CILInstructions cil);
         }
 
 }

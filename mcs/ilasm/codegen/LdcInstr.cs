@@ -30,7 +30,8 @@ namespace Mono.ILASM {
                         l_operand = operand;
                 }
 
-                public void Emit (CodeGen code_gen, PEAPI.CILInstructions cil)
+                public void Emit (CodeGen code_gen, MethodDef meth,
+				  PEAPI.CILInstructions cil)
                 {
                         switch (op) {
                         case MiscInstr.ldc_r8:

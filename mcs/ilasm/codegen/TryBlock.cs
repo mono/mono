@@ -15,7 +15,6 @@ namespace Mono.ILASM {
 
         public class TryBlock : IInstr {
 
-                private MethodDef method;
                 private string from_label;
                 private string to_label;
                 private ArrayList clause_list;
@@ -34,24 +33,20 @@ namespace Mono.ILASM {
 
                 }
 
-                public void SetMethod (MethodDef method)
-                {
-                        this.method = method;
-                }
-
                 public void AddSehClause (ISehClause clause)
                 {
                         clause_list.Add (clause);
                 }
 
-                public void Emit (CodeGen code_gen, PEAPI.CILInstructions cil)
+                public void Emit (CodeGen code_gen, MethodDef meth,
+				  PEAPI.CILInstructions cil)
                 {
-                        PEAPI.CILLabel from = method.GetLabelDef (from_label);
-                        PEAPI.CILLabel to = method.GetLabelDef (to_label);
+                        PEAPI.CILLabel from = meth.GetLabelDef (from_label);
+                        PEAPI.CILLabel to = meth.GetLabelDef (to_label);
                         PEAPI.TryBlock try_block = new PEAPI.TryBlock (from, to);
 
                         foreach (ISehClause clause in clause_list)
-                                try_block.AddHandler (clause.Resolve (code_gen, method));
+                                try_block.AddHandler (clause.Resolve (code_gen, meth));
 
                         cil.AddTryBlock (try_block);
                 }

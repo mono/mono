@@ -26,7 +26,8 @@ namespace Mono.ILASM {
                         this.param = param;
                 }
 
-                public void Emit (CodeGen code_gen, PEAPI.CILInstructions cil)
+                public void Emit (CodeGen code_gen, MethodDef meth,
+				  PEAPI.CILInstructions cil)
                 {
                         PEAPI.Type[] param_array;
                         PEAPI.CalliSig callisig;

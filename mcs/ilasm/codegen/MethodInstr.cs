@@ -24,7 +24,8 @@ namespace Mono.ILASM {
                         this.operand = operand;
                 }
 
-                public void Emit (CodeGen code_gen, PEAPI.CILInstructions cil)
+                public void Emit (CodeGen code_gen, MethodDef meth, 
+				  PEAPI.CILInstructions cil)
                 {
                         operand.Resolve (code_gen);
                         cil.MethInst (op, operand.PeapiMethod);

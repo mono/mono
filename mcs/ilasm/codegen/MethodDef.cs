@@ -344,7 +344,7 @@ namespace Mono.ILASM {
                                         if (label_pos >= label_info.Length)
                                                 next_label_pos = -1;
                                 }
-                                instr.Emit (code_gen, cil);
+                                instr.Emit (code_gen, this, cil);
                         }
 
                 }

@@ -1,3 +1,9 @@
+2003-07-29 Jackson Harper <jackson@latitudegeo.com>
+
+	* IInstr.cs: Instructions now get their parent method when being 
+	emitted.
+	* *Instr.cs: Adjust emit method to accept a methoddef
+	
 2003-07-27 Jackson Harper <jackson@latitudegeo.com>
 
 	* CodeGen.cs: Set the assembly name when creating the PEFile. 

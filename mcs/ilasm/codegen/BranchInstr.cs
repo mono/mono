@@ -16,19 +16,18 @@ namespace Mono.ILASM {
         public class BranchInstr : IInstr {
 
                 private PEAPI.BranchOp op;
-                private MethodDef method;
                 private string label;
 
-                public BranchInstr (PEAPI.BranchOp op, MethodDef method, string label)
+                public BranchInstr (PEAPI.BranchOp op, string label)
                 {
                         this.op = op;
-                        this.method = method;
                         this.label = label;
                 }
 
-                public void Emit (CodeGen code_gen, PEAPI.CILInstructions cil)
+                public void Emit (CodeGen code_gen, MethodDef meth,
+				  PEAPI.CILInstructions cil)
                 {
-                        cil.Branch (op, method.GetLabelDef (label));
+                        cil.Branch (op, meth.GetLabelDef (label));
                 }
         }
 

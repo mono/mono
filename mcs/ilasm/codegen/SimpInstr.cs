@@ -21,7 +21,8 @@ namespace Mono.ILASM {
                         this.op = op;
                 }
 
-                public void Emit (CodeGen code_gen, PEAPI.CILInstructions cil)
+                public void Emit (CodeGen code_gen, MethodDef meth, 
+				  PEAPI.CILInstructions cil)
                 {
                         cil.Inst (op);
                 }
