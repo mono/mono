@@ -1,3 +1,8 @@
+2005-01-18  Zoltan Varga  <vargaz@freemail.hu>
+
+	* monoburg.y (yyparsetail): Handle the case when the burg file does
+	not end with an empty line.
+
 2004-06-24  David Waite  <mass@akuma.org>
 
 	* monoburg.c: change to C90-style comments from C99/C++-style
