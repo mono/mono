@@ -487,7 +487,17 @@ namespace Mono.CSharp {
 				CurrentBranching.SetParameterAssigned (number);
 		}
 
+		// These are two overloaded methods for EmitTopBlock
+		// since in MonoBasic functions we need the Function name
+		// along with its top block, in order to be able to
+		// retrieve the return value when there is no explicit 
+		// 'Return' statement
 		public void EmitTopBlock (Block block, InternalParameters ip, Location loc)
+		{
+			EmitTopBlock (block, "", ip, loc);
+		}
+
+		public void EmitTopBlock (Block block, string bname, InternalParameters ip, Location loc)
 		{
 			bool has_ret = false;
 
@@ -535,11 +545,18 @@ namespace Mono.CSharp {
 
 			if (ReturnType != null && !has_ret){
 				//
-				// FIXME: we need full flow analysis to implement this
-				// correctly and emit an error instead of a warning.
+				// mcs here would report an error (and justly so), but functions without
+				// an explicit return value are perfectly legal in MonoBasic
 				//
-				//
-				Report.Error (161, loc, "Not all code paths return a value");
+				
+				VariableInfo vi = block.GetVariableInfo (bname);
+				if (vi != null) 
+				{
+					ig.Emit (OpCodes.Ldloc, vi.LocalBuilder);
+					ig.Emit (OpCodes.Ret);
+				}
+				else
+					Report.Error (-200, "This is not supposed to happen !");
 				return;
 			}
 

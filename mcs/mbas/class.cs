@@ -3081,11 +3081,11 @@ namespace Mono.CSharp {
 					} catch (Exception) {
 					}
 
-					ec.EmitTopBlock (block, ParameterInfo, Location);
+					ec.EmitTopBlock (block, member.Name, ParameterInfo, Location);
 
 					sw.CloseMethod ();
 				} else
-					ec.EmitTopBlock (block, ParameterInfo, Location);
+					ec.EmitTopBlock (block, member.Name, ParameterInfo, Location);
 			}
 		}
 
@@ -3644,6 +3644,18 @@ namespace Mono.CSharp {
 			Modifiers.EXTERN |
 			Modifiers.VIRTUAL;
 
+		string set_parameter_name;
+
+		public Property (Expression type, string name, int mod_flags,
+				Accessor get_block, Accessor set_block,
+				Attributes attrs, Location loc, string set_name)
+			: base (type, name, mod_flags, AllowedModifiers,
+				Parameters.EmptyReadOnlyParameters,
+				get_block, set_block, attrs, loc)
+		{
+			set_parameter_name = set_name;
+		}
+
 		public Property (Expression type, string name, int mod_flags,
 				 Accessor get_block, Accessor set_block,
 				 Attributes attrs, Location loc)
@@ -3651,6 +3663,7 @@ namespace Mono.CSharp {
 				Parameters.EmptyReadOnlyParameters,
 				get_block, set_block, attrs, loc)
 		{
+			set_parameter_name = "Value";
 		}
 
 		public override bool Define (TypeContainer parent)
@@ -3684,7 +3697,8 @@ namespace Mono.CSharp {
 				parameters [0] = MemberType;
 
 				Parameter [] parms = new Parameter [1];
-				parms [0] = new Parameter (Type, "value", Parameter.Modifier.NONE, null);
+				parms [0] = new Parameter (Type, /* was "value" */ set_parameter_name, 
+							Parameter.Modifier.NONE, null);
 				InternalParameters ip = new InternalParameters (
 					parent, new Parameters (parms, null, Location));
 
@@ -3696,7 +3710,8 @@ namespace Mono.CSharp {
 					return false;
 
 				SetBuilder = SetData.MethodBuilder;
-				SetBuilder.DefineParameter (1, ParameterAttributes.None, "value"); 
+				SetBuilder.DefineParameter (1, ParameterAttributes.None, 
+								/* was "value" */ set_parameter_name); 
 			}
 
 			// FIXME - PropertyAttributes.HasDefault ?
@@ -3912,7 +3927,7 @@ namespace Mono.CSharp {
 			parameter_types [0] = MemberType;
 
 			Parameter [] parms = new Parameter [1];
-			parms [0] = new Parameter (Type, "value", Parameter.Modifier.NONE, null);
+			parms [0] = new Parameter (Type, /* was "value" */ this.Name, Parameter.Modifier.NONE, null);
 			InternalParameters ip = new InternalParameters (
 				parent, new Parameters (parms, null, Location)); 
 
@@ -3931,7 +3946,7 @@ namespace Mono.CSharp {
 				return false;
 
 			AddBuilder = AddData.MethodBuilder;
-			AddBuilder.DefineParameter (1, ParameterAttributes.None, "value");
+			AddBuilder.DefineParameter (1, ParameterAttributes.None, /* was "value" */ this.Name);
 
 			RemoveData = new MethodData (this, "remove", TypeManager.void_type,
 						     parameter_types, ip, CallingConventions.Standard,
@@ -3942,7 +3957,7 @@ namespace Mono.CSharp {
 				return false;
 
 			RemoveBuilder = RemoveData.MethodBuilder;
-			RemoveBuilder.DefineParameter (1, ParameterAttributes.None, "value");
+			RemoveBuilder.DefineParameter (1, ParameterAttributes.None, /* was "value" */ this.Name);
 
 			if (!IsExplicitImpl){
 				EventBuilder = new MyEventBuilder (
@@ -4138,7 +4153,7 @@ namespace Mono.CSharp {
 
 				fixed_parms.CopyTo (tmp, 0);
 				tmp [fixed_parms.Length] = new Parameter (
-					Type, "value", Parameter.Modifier.NONE, null);
+					Type, /* was "value" */ this.Name, Parameter.Modifier.NONE, null);
 
 				Parameters set_formal_params = new Parameters (tmp, null, Location);
 				
@@ -4170,10 +4185,11 @@ namespace Mono.CSharp {
 						SetBuilder.DefineParameter (
 							i + 1, p [i].Attributes, p [i].Name);
 				}
+				
 
 				if (Set != null)
 					SetBuilder.DefineParameter (
-						i + 1, ParameterAttributes.None, "value");
+						i + 1, ParameterAttributes.None, /* was "value" */ this.Name);
 					
 				if (i != ParameterTypes.Length) {
 					Parameter array_param = Parameters.ArrayParameter;
