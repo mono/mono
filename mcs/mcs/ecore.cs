@@ -2999,6 +2999,7 @@ namespace Mono.CSharp {
 				if (iet != TypeManager.array_type && (iet.GetArrayRank () == 1)){
 					instance_expr.Emit (ec);
 					ec.ig.Emit (OpCodes.Ldlen);
+					ec.ig.Emit (OpCodes.Conv_I4);
 					return;
 				}
 			}
