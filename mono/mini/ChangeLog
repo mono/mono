@@ -1,3 +1,7 @@
+2004-03-09  Bernie Solomon  <bernard@ugsolutions.com>
+
+	* mini.c (add_signal_handler): ifdef out on Windows
+
 2004-03-08  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-sparc.h mini-sparc.c inssel-sparc.brg exceptions-sparc.c 
