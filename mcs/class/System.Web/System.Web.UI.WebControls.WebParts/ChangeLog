@@ -1,3 +1,7 @@
+2004-11-11  Martin Baulig  <martin@ximian.com>
+
+	* WebPart.cs: Don't use String.Empty in attributes.
+
 2004-09-29  Sanjay Gupta <gsanjay@novell.com>
 
 	* WebPartVerb.cs: Added attributes.

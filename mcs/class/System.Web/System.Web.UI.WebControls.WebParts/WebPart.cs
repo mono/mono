@@ -151,7 +151,7 @@ namespace System.Web.UI.WebControls.WebParts
 			get { return subtitle; }
 		}
 	
-		[DefaultValueAttribute (String.Empty), 
+		[DefaultValueAttribute (""), 
 		EditorAttribute ("System.Web.UI.Design.ImageUrlEditor, System.Design", 
 				"System.Drawing.Design.UITypeEditor, System.Drawing") , 
 		WebCategoryAttribute ("Appearance of the Web Part"),
@@ -172,7 +172,7 @@ namespace System.Web.UI.WebControls.WebParts
 			set { title = value; }
 		}
 
-		[DefaultValueAttribute (String.Empty),
+		[DefaultValueAttribute (""),
 		EditorAttribute ("System.Web.UI.Design.ImageUrlEditor, System.Design",
 				"System.Drawing.Design.UITypeEditor, System.Drawing"),
 		WebCategoryAttribute ("Appearance of the Web Part"),
@@ -184,7 +184,7 @@ namespace System.Web.UI.WebControls.WebParts
 			set { titleIconImageUrl = value; }
 		}
 
-		[DefaultValueAttribute (String.Empty),
+		[DefaultValueAttribute (""),
 		EditorAttribute ("System.Web.UI.Design.UrlEditor, System.Design",
 				"System.Drawing.Design.UITypeEditor, System.Drawing"),
 		WebCategoryAttribute ("Behavior of the Web Part"),
