@@ -1,5 +1,7 @@
 2005-03-13  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini-amd64.c: Allocate the signal stack using mmap.
+
 	* mini.c (sigsegv_signal_handler): Fix reading of context.
 
 	* mini-exceptions.c: Fix up stack overflow handling.
