@@ -1,6 +1,7 @@
 2004-05-27  Sebastien Pouliot  <sebastien@ximian.com>
 
-	* ConvertTest.cs: Added case where Convert.ToByte ("-0") is legal.
+	* ConvertTest.cs: Mode complete tests for unsigned type convertion wrt
+	-0, base != 10, ...
 
 2004-05-26  Sebastien Pouliot  <sebastien@ximian.com>
 

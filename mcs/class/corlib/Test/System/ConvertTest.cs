@@ -2993,12 +2993,108 @@ namespace MonoTests.System {
 		}
 
 		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ToByte_NegativeStringNonBase10 () 
+		{
+			Convert.ToByte ("-0", 16);
+		}
+
+		[Test]
+		[ExpectedException (typeof (OverflowException))]
+		public void ToByte_NegativeString_Base10 ()
+		{
+			Convert.ToByte ("-0", 10);
+		}
+
+		[Test]
 		public void ToByte_NegativeZeroString () 
 		{
-			// legal
 			Convert.ToByte ("-0");
-			// and so is this
 			Convert.ToByte ("-0", null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (OverflowException))]
+		public void ToUInt16_NegativeString () 
+		{
+			Convert.ToUInt16 ("-1");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ToUInt16_NegativeStringNonBase10 () 
+		{
+			Convert.ToUInt16 ("-0", 16);
+		}
+
+		[Test]
+		[ExpectedException (typeof (OverflowException))]
+		public void ToUInt16_NegativeString_Base10 ()
+		{
+			Convert.ToUInt16 ("-0", 10);
+		}
+
+		[Test]
+		public void ToUInt16_NegativeZeroString () 
+		{
+			Convert.ToUInt16 ("-0");
+			Convert.ToUInt16 ("-0", null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (OverflowException))]
+		public void ToUInt32_NegativeString () 
+		{
+			Convert.ToUInt32 ("-1");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ToUInt32_NegativeStringNonBase10 () 
+		{
+			Convert.ToUInt32 ("-0", 16);
+		}
+
+		[Test]
+		[ExpectedException (typeof (OverflowException))]
+		public void ToUInt32_NegativeString_Base10 ()
+		{
+			Convert.ToUInt32 ("-0", 10);
+		}
+
+		[Test]
+		public void ToUInt32_NegativeZeroString () 
+		{
+			Convert.ToUInt32 ("-0");
+			Convert.ToUInt32 ("-0", null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (OverflowException))]
+		public void ToUInt64_NegativeString () 
+		{
+			Convert.ToUInt64 ("-1");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ToUInt64_NegativeStringNonBase10 () 
+		{
+			Convert.ToUInt64 ("-0", 16);
+		}
+
+		[Test]
+		[ExpectedException (typeof (OverflowException))]
+		public void ToUInt64_NegativeString_Base10 ()
+		{
+			Convert.ToUInt64 ("-0", 10);
+		}
+
+		[Test]
+		public void ToUInt64_NegativeZeroString () 
+		{
+			Convert.ToUInt64 ("-0");
+			Convert.ToUInt64 ("-0", null);
 		}
 	}
 }
