@@ -1,3 +1,9 @@
+
+Tue Feb 25 10:56:16 CET 2003 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c: handle custom attributes for types and members
+	created with Reflection.Emit (bug#38422).
+
 2003-02-22  Zoltan Varga  <vargaz@freemail.hu>
 
 	* reflection.c: define RTSpecialName automatically for constructors for
