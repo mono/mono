@@ -1,0 +1,36 @@
+<gconfschemafile>
+    <schemalist>
+      <schema>
+        <key>/schemas/apps/nunitgtk/width</key>
+        <applyto>/apps/nunitgtk/width</applyto>
+        <owner>nunitgtk</owner>
+        <type>int</type>
+	<locale name="C"></locale>
+	<default>450</default>
+      </schema>
+      <schema>
+        <key>/schemas/apps/nunitgtk/height</key>
+        <applyto>/apps/nunitgtk/height</applyto>
+        <owner>nunitgtk</owner>
+        <type>int</type>
+	<locale name="C"></locale>
+	<default>300</default>
+      </schema>
+      <schema>
+        <key>/schemas/apps/nunitgtk/hpaned</key>
+        <applyto>/apps/nunitgtk/hpaned</applyto>
+        <owner>nunitgtk</owner>
+        <type>int</type>
+	<locale name="C"></locale>
+	<default>150</default>
+      </schema>
+      <schema>
+        <key>/schemas/apps/nunitgtk/recentassemblies</key>
+        <applyto>/apps/nunitgtk/recentassemblies</applyto>
+        <owner>nunitgtk</owner>
+        <type>string</type>
+	<locale name="C"></locale>
+	<default/>
+      </schema>
+    </schemalist>
+</gconfschemafile>  

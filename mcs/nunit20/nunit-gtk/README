@@ -1,0 +1,38 @@
+* nunit-gtk
+------------
+
+nunit-gtk is a frontend for running NUnit 2 test suites.
+
+* Directory layout
+-------------------
+
+	AUTHORS
+	NEWS
+	README
+	ChangeLog
+	makefile.gnu
+
+	src/
+		Source files for nunit-gtk.
+	art/
+		Actually this directory should be called pseudo-random-art.
+		It contains a few PNG images used in nunit-gtk.
+
+
+Installing nunit-gtk
+----------------------
+
+Just run:
+
+	make -f makefile.gnu install prefix=YOURPREFIX
+
+You need Gtk# and NUnit2.
+
+* Running nunit-gtk
+---------------------
+
+	mono nunit-gtk.exe [assembly name or filename]
+
+
+-Gonzalo
+

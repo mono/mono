@@ -1,0 +1,6 @@
+TODO List
+----------
+
+	* Allow plugins that would receive events as the tests are run.
+	This way we can generate reports or anything else.
+
