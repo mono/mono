@@ -42,7 +42,7 @@ namespace System.Xml
 		public override string Value {
 			get { return Data; }
 			set {
-				if (IsValidWhitespaceChar (value) == false)
+				if (!XmlChar.IsWhitespace (value))
 					throw new ArgumentException ("Invalid whitespace characters.");
 				base.Data = value;
 			}
@@ -59,14 +59,6 @@ namespace System.Xml
 		public override void WriteTo (XmlWriter w)
 		{
 			w.WriteWhitespace (Data);
-		}
-
-		private bool IsValidWhitespaceChar (string text)
-		{
-			foreach (char c in text)
-				if ((c != ' ') && (c != '\r') && (c != '\n') && (c != '\t'))
-					return false;
-			return true;
 		}
 	}
 }

@@ -614,8 +614,8 @@ namespace System.Xml
 				return false;
 			if (!IsFirstNameChar (str [0]))
 				return false;
-			foreach (char c in str)
-				if (!IsNameChar (c))
+			for (int i = 1; i < str.Length; i++)
+				if (!IsNameChar (str [i]))
 					return false;
 			return true;
 		}
@@ -626,8 +626,8 @@ namespace System.Xml
 				return false;
 			if (!IsFirstNameChar (str [0]))
 				return false;
-			foreach (char c in str)
-				if (!IsNCNameChar (c))
+			for (int i = 0; i < str.Length; i++)
+				if (!IsNCNameChar (str [i]))
 					return false;
 			return true;
 		}
@@ -636,8 +636,8 @@ namespace System.Xml
 		{
 			if (str.Length == 0)
 				return false;
-			foreach (char c in str)
-				if (!IsNameChar (c))
+			for (int i = 0; i < str.Length; i++)
+				if (!IsNameChar (str [i]))
 					return false;
 			return true;
 		}

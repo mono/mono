@@ -216,9 +216,11 @@ namespace Mono.Xml
 				return true;
 			}
 
-			foreach (string iter in attributes)
+			for (int i = 0; i < attributes.Count; i++) {
+				string iter = attributes [i];
 				if (attributeLocalNames [iter] == name)
 					return MoveToAttribute (iter);
+			}
 			return false;
 		}
 
@@ -392,8 +394,8 @@ namespace Mono.Xml
 
 				// Validity Constraints Check.
 				if (DTD.Errors.Length > 0)
-					foreach (XmlSchemaException ex in DTD.Errors)
-						HandleError (ex.Message, XmlSeverityType.Error);
+					for (int i = 0; i < DTD.Errors.Length; i++)
+						HandleError (DTD.Errors [i].Message, XmlSeverityType.Error);
 
 				// NData target exists.
 				foreach (DTDEntityDeclaration ent in dtd.EntityDecls.Values)
@@ -718,7 +720,8 @@ namespace Mono.Xml
 							missingIDReferences.Add (normalized);
 						break;
 					case XmlTokenizedType.IDREFS:
-						foreach (string idref in list) {
+						for (int i = 0; i < list.Length; i++) {
+							string idref = list [i];
 							if (!idList.Contains (idref))
 								missingIDReferences.Add (idref);
 						}
@@ -731,7 +734,8 @@ namespace Mono.Xml
 							HandleError ("The entity specified by entity type value must be an unparsed entity. The entity definition has no NDATA in attribute: " + reader.Name + ".", XmlSeverityType.Error);
 						break;
 					case XmlTokenizedType.ENTITIES:
-						foreach (string entref in list) {
+						for (int i = 0; i < list.Length; i++) {
+							string entref = list [i];
 							ent = dtd.EntityDecls [FilterNormalization (reader.Name, entref)];
 							if (ent == null)
 								HandleError ("Reference to undeclared entity was found in attribute: " + reader.Name + ".", XmlSeverityType.Error);
@@ -764,7 +768,8 @@ namespace Mono.Xml
 		{
 			// Check if all required attributes exist, and/or
 			// if there is default values, then add them.
-			foreach (DTDAttributeDefinition def in decl.Definitions) {
+			for (int i = 0; i < decl.Definitions.Count; i++) {
+				DTDAttributeDefinition def = (DTDAttributeDefinition) decl.Definitions [i];
 				if (!attributes.Contains (def.Name)) {
 					if (def.OccurenceType == DTDAttributeOccurenceType.Required) {
 						HandleError (String.Format ("Required attribute {0} in element {1} not found .",

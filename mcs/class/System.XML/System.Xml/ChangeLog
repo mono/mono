@@ -1,3 +1,21 @@
+2004-02-08  Atsushi Enomoto <atsushi@ximian.com>
+
+	* DTDObjectModel.cs : Limit external entity reference from DTD by 256.
+	  foreach elimination.  DTDParameterEntityDeclaration should set Root.
+	  Compute attribute default value without raising an error.
+	  (for non-error reporting reader)
+	* DTDReader.cs : Fixes for the above fixes. foreach elimination.
+	* DTDValidatingReader.cs, NameTable.cs, XmlAttribute.cs,
+	  XmlAttributeCollection.cs, XmlChar.cs, XmlConstruct.cs,
+	  XmlDocumentFragment.cs, XmlDocumentNavigator.cs, XmlElement.cs,
+	  XmlEntityReference.cs, XmlNamedNodeMap.cs, XmlNode.cs,
+	  XmlText.cs : foreach elimination.
+	* XmlDocument.cs, XmlSignificantWhitespace.cs, XmlWhitespace.cs :
+	  foreach elimination. Removed unnecesary methods.
+	* XmlTextReader.cs : code format refactory. Optimized some methods.
+	  foreach elimination. Replaced Stack with string array.
+	  Replaced StringBuilder with char array. Removed unnecessary methods.
+
 2004-02-06  Atsushi Enomoto <atsushi@ximian.com>
 
 	* DTDValidatingReader.cs : Fixed MoveToElement() that causes incorrect

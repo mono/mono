@@ -54,8 +54,8 @@ namespace System.Xml
 					return false;
 
 				if (node.Attributes != null)
-					foreach (XmlAttribute attribute in node.Attributes)
-						if (attribute.NamespaceURI != Xmlns)
+					for (int i = 0; i < node.Attributes.Count; i++)
+						if (node.Attributes [i].NamespaceURI != Xmlns)
 							return true;
 				return false;
 			}
@@ -214,7 +214,8 @@ namespace System.Xml
 		public override bool MoveToAttribute (string localName, string namespaceURI)
 		{
 			if (node.Attributes != null) {
-				foreach (XmlAttribute attr in node.Attributes) {
+				for (int i = 0; i < node.Attributes.Count; i++) {
+					XmlAttribute attr = node.Attributes [i];
 					if (attr.LocalName == localName
 						&& attr.NamespaceURI == namespaceURI) {
 						node = attr;
@@ -243,7 +244,8 @@ namespace System.Xml
 			if (node.Attributes == null)
 				return false;
 			if (NodeType == XPathNodeType.Element) {
-				foreach (XmlAttribute attr in node.Attributes) {
+				for (int i = 0; i < node.Attributes.Count; i++) {
+					XmlAttribute attr = node.Attributes [i];
 					if (attr.NamespaceURI != Xmlns) {
 						node = attr;
 						nsNode = null;
@@ -298,7 +300,8 @@ namespace System.Xml
 			XmlElement el = node as XmlElement;
 			if (node.Attributes != null) {
 				do {
-					foreach (XmlAttribute attr in el.Attributes) {
+					for (int i = 0; i < el.Attributes.Count; i++) {
+						XmlAttribute attr = el.Attributes [i];
 						if (attr.NamespaceURI == Xmlns) {
 							nsNode = attr;
 							return true;
@@ -341,8 +344,9 @@ namespace System.Xml
 			XmlElement el = node as XmlElement;
 			if (node.Attributes != null) {
 				do {
-					foreach (XmlAttribute attr in el.Attributes) {
-						if (attr.NamespaceURI == Xmlns && Name == name) {
+					for (int i = 0; i < el.Attributes.Count; i++) {
+						XmlAttribute attr = el.Attributes [i];
+						if (attr.NamespaceURI == Xmlns && attr.Name == name) {
 							nsNode = attr;
 							return true;
 						}
@@ -458,7 +462,8 @@ namespace System.Xml
 				return false;
 			owner = owner.ParentNode as XmlElement;
 			while (owner != null) {
-				foreach (XmlAttribute attr in owner.Attributes) {
+				for (int i = 0; i < owner.Attributes.Count; i++) {
+					XmlAttribute attr = owner.Attributes [i];
 					if (attr.NamespaceURI == Xmlns) {
 						nsNode = attr;
 						return true;

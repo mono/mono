@@ -60,8 +60,7 @@ namespace System.Xml
 
 		XmlDocument (XmlImplementation impl, XmlNameTable nt) : base (null)
 		{
-			implementation = (impl != null) ? impl : new XmlImplementation ();
-			nameTable = (nt != null) ? nt : implementation.internalNameTable;
+			nameTable = (nt != null) ? nt : implementation != null ? implementation.internalNameTable : new NameTable ();
 			AddDefaultNameTableKeys ();
 			resolver = new XmlUrlResolver ();
 		}
@@ -107,7 +106,8 @@ namespace System.Xml
 
 		public virtual XmlDocumentType DocumentType {
 			get {
-				foreach(XmlNode n in this.ChildNodes) {
+				for (int i = 0; i < ChildNodes.Count; i++) {
+					XmlNode n = ChildNodes [i];
 					if(n.NodeType == XmlNodeType.DocumentType)
 						return (XmlDocumentType)n;
 				}
@@ -210,13 +210,13 @@ namespace System.Xml
 
 		public override XmlNode CloneNode (bool deep)
 		{
-			XmlDocument doc = implementation.CreateDocument ();
+			XmlDocument doc = implementation != null ? implementation.CreateDocument () : new XmlDocument ();
 			doc.baseURI = baseURI;
 
 			if(deep)
 			{
-				foreach(XmlNode n in ChildNodes)
-					doc.AppendChild (doc.ImportNode (n, deep));
+				for (int i = 0; i < ChildNodes.Count; i++)
+					doc.AppendChild (doc.ImportNode (ChildNodes [i], deep));
 			}
 			return doc;
 		}
@@ -391,8 +391,7 @@ namespace System.Xml
 
 		public virtual XmlSignificantWhitespace CreateSignificantWhitespace (string text)
 		{
-			foreach (char c in text)
-				if ((c != ' ') && (c != '\r') && (c != '\n') && (c != '\t'))
+			if (!XmlChar.IsWhitespace (text))
 				    throw new ArgumentException ("Invalid whitespace characters.");
 			 
 			return new XmlSignificantWhitespace (text, this);
@@ -405,9 +404,8 @@ namespace System.Xml
 
 		public virtual XmlWhitespace CreateWhitespace (string text)
 		{
-			foreach (char c in text)
-				if ((c != ' ') && (c != '\r') && (c != '\n') && (c != '\t'))
-				    throw new ArgumentException ("Invalid whitespace characters.");
+			if (!XmlChar.IsWhitespace (text))
+			    throw new ArgumentException ("Invalid whitespace characters.");
 			 
 			return new XmlWhitespace (text, this);
 		}
@@ -487,8 +485,8 @@ namespace System.Xml
 			case XmlNodeType.Attribute:
 				XmlAttribute srcAtt = node as XmlAttribute;
 				XmlAttribute dstAtt = this.CreateAttribute (srcAtt.Prefix, srcAtt.LocalName, srcAtt.NamespaceURI);
-				foreach (XmlNode child in srcAtt.ChildNodes)
-					dstAtt.AppendChild (this.ImportNode (child, deep));
+				for (int i = 0; i < srcAtt.ChildNodes.Count; i++)
+					dstAtt.AppendChild (this.ImportNode (srcAtt.ChildNodes [i], deep));
 				return dstAtt;
 
 			case XmlNodeType.CDATA:
@@ -503,8 +501,8 @@ namespace System.Xml
 			case XmlNodeType.DocumentFragment:
 				XmlDocumentFragment df = this.CreateDocumentFragment ();
 				if(deep)
-					foreach(XmlNode n in node.ChildNodes)
-						df.AppendChild (this.ImportNode (n, deep));
+					for (int i = 0; i < node.ChildNodes.Count; i++)
+						df.AppendChild (this.ImportNode (node.ChildNodes [i], deep));
 				return df;
 
 			case XmlNodeType.DocumentType:
@@ -513,12 +511,14 @@ namespace System.Xml
 			case XmlNodeType.Element:
 				XmlElement src = (XmlElement)node;
 				XmlElement dst = this.CreateElement (src.Prefix, src.LocalName, src.NamespaceURI);
-				foreach(XmlAttribute attr in src.Attributes)
+				for (int i = 0; i < src.Attributes.Count; i++) {
+					XmlAttribute attr = src.Attributes [i];
 					if(attr.Specified)	// copies only specified attributes
-						dst.SetAttributeNode ((XmlAttribute)this.ImportNode (attr, deep));
+						dst.SetAttributeNode ((XmlAttribute) this.ImportNode (attr, deep));
+				}
 				if(deep)
-					foreach(XmlNode n in src.ChildNodes)
-						dst.AppendChild (this.ImportNode (n, deep));
+					for (int i = 0; i < src.ChildNodes.Count; i++)
+						dst.AppendChild (this.ImportNode (src.ChildNodes [i], deep));
 				return dst;
 
 			case XmlNodeType.EndElement:
@@ -884,9 +884,8 @@ namespace System.Xml
 
 		public override void WriteContentTo (XmlWriter w)
 		{
-			foreach(XmlNode childNode in ChildNodes) {
-				childNode.WriteTo (w);
-			}
+			for (int i = 0; i < ChildNodes.Count; i++)
+				ChildNodes [i].WriteTo (w);
 		}
 
 		public override void WriteTo (XmlWriter w)

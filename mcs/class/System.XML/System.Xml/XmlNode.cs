@@ -122,7 +122,8 @@ namespace System.Xml
 		[System.Runtime.CompilerServices.IndexerName("Item")]
 		public virtual XmlElement this [string name] {
 			get { 
-				foreach (XmlNode node in ChildNodes) {
+				for (int i = 0; i < ChildNodes.Count; i++) {
+					XmlNode node = ChildNodes [i];
 					if ((node.NodeType == XmlNodeType.Element) &&
 					    (node.Name == name)) {
 						return (XmlElement) node;
@@ -135,8 +136,9 @@ namespace System.Xml
 
 		[System.Runtime.CompilerServices.IndexerName("Item")]
 		public virtual XmlElement this [string localname, string ns] {
-			get { 
-				foreach (XmlNode node in ChildNodes) {
+			get {
+				for (int i = 0; i < ChildNodes.Count; i++) {
+					XmlNode node = ChildNodes [i];
 					if ((node.NodeType == XmlNodeType.Element) &&
 					    (node.LocalName == localname) && 
 					    (node.NamespaceURI == ns)) {
@@ -213,9 +215,11 @@ namespace System.Xml
 		internal virtual string XmlLang {
 			get {
 				if(Attributes != null)
-					foreach(XmlAttribute attr in Attributes)
+					for (int i = 0; i < Attributes.Count; i++) {
+						XmlAttribute attr = Attributes [i];
 						if(attr.Name == "xml:lang")
 							return attr.Value;
+					}
 				return (ParentNode != null) ? ParentNode.XmlLang : OwnerDocument.XmlLang;
 			}
 		}
@@ -223,7 +227,8 @@ namespace System.Xml
 		internal virtual XmlSpace XmlSpace {
 			get {
 				if(Attributes != null) {
-					foreach(XmlAttribute attr in Attributes) {
+					for (int i = 0; i < Attributes.Count; i++) {
+						XmlAttribute attr = Attributes [i];
 						if(attr.Name == "xml:space") {
 							switch(attr.Value) {
 							case "preserve": return XmlSpace.Preserve;
@@ -320,7 +325,8 @@ namespace System.Xml
 			}
 
 			while (node != null && node.Attributes != null) {
-				foreach (XmlAttribute attr in node.Attributes) {
+				for (int i = 0; i < Attributes.Count; i++) {
+					XmlAttribute attr = Attributes [i];
 					if (attr.Prefix == "xmlns" && attr.Value == namespaceURI)
 						return attr.LocalName;
 					else if (attr.Name == "xmlns" && attr.Value == namespaceURI)
@@ -645,7 +651,8 @@ namespace System.Xml
 			if (newChild == this || IsAncestor (newChild))
 				throw new ArgumentException("Cannot insert a node or any ancestor of that node as a child of itself.");
 			
-			foreach(XmlNode n in ChildNodes) {
+			for (int i = 0; i < ChildNodes.Count; i++) {
+				XmlNode n = ChildNodes [i];
 				if(n == oldChild) {
 					XmlNode prev = oldChild.PreviousSibling;
 					RemoveChild (oldChild);
@@ -658,7 +665,8 @@ namespace System.Xml
 
 		internal void SearchDescendantElements (string name, bool matchAll, ArrayList list)
 		{
-			foreach (XmlNode n in ChildNodes){
+			for (int i = 0; i < ChildNodes.Count; i++) {
+				XmlNode n = ChildNodes [i];
 				if (n.NodeType != XmlNodeType.Element)
 					continue;
 				if (matchAll || n.Name == name)
@@ -669,7 +677,8 @@ namespace System.Xml
 
 		internal void SearchDescendantElements (string name, bool matchAllName, string ns, bool matchAllNS, ArrayList list)
 		{
-			foreach (XmlNode n in ChildNodes){
+			for (int i = 0; i < ChildNodes.Count; i++) {
+				XmlNode n = ChildNodes [i];
 				if (n.NodeType != XmlNodeType.Element)
 					continue;
 				if ((matchAllName || n.LocalName == name)
@@ -749,8 +758,9 @@ namespace System.Xml
 				break;
 			}
 
-			while(el != null) {
-				foreach(XmlAttribute attr in el.Attributes) {
+			while (el != null) {
+				for (int i = 0; i < el.Attributes.Count; i++) {
+					XmlAttribute attr = el.Attributes [i];
 					if(attr.Prefix == "xmlns") {
 						if (nsmgr.LookupNamespace (attr.LocalName) != attr.Value)
 							nsmgr.AddNamespace (attr.LocalName, attr.Value);

@@ -233,8 +233,8 @@ namespace System.Xml
 			XmlNode node = new XmlAttribute (prefix, localName, namespaceURI,
 							 OwnerDocument, true, false);
 			if (deep) {
-				foreach (XmlNode child in this.ChildNodes)
-					node.AppendChild (child.CloneNode (deep));
+				for (int i = 0; i < ChildNodes.Count; i++)
+					node.AppendChild (ChildNodes [i].CloneNode (deep));
 			}
 
 			return node;
@@ -252,8 +252,8 @@ namespace System.Xml
 
 		public override void WriteContentTo (XmlWriter w)
 		{
-			foreach (XmlNode n in ChildNodes)
-				n.WriteTo (w);
+			for (int i = 0; i < ChildNodes.Count; i++)
+				ChildNodes [i].WriteTo (w);
 		}
 
 		public override void WriteTo (XmlWriter w)

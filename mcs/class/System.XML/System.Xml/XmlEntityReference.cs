@@ -63,15 +63,15 @@ namespace System.Xml
 
 		public override void WriteContentTo (XmlWriter w)
 		{
-			foreach (XmlNode n in ChildNodes)
-				n.WriteTo (w);
+			for (int i = 0; i < ChildNodes.Count; i++)
+				ChildNodes [i].WriteTo (w);
 		}
 
 		public override void WriteTo (XmlWriter w)
 		{
-			w.WriteRaw("&");
-			w.WriteName(Name);
-			w.WriteRaw(";");
+			w.WriteRaw ("&");
+			w.WriteName (Name);
+			w.WriteRaw (";");
 		}
 
 		internal void SetReferencedEntityContent ()

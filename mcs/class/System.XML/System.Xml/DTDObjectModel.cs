@@ -21,6 +21,12 @@ namespace Mono.Xml
 {
 	public class DTDObjectModel
 	{
+		// This specifies the max number of dependent external entities
+		// per a DTD can consume. A malicious external document server
+		// might send users' document processing server a large number
+		// of external entities.
+		public const int AllowedExternalEntitiesMax = 256;
+
 		DTDAutomataFactory factory;
 		DTDElementAutomata rootAutomata;
 		DTDEmptyAutomata emptyAutomata;
@@ -35,6 +41,8 @@ namespace Mono.Xml
 		ArrayList validationErrors;
 		XmlResolver resolver;
 		XmlNameTable nameTable;
+
+		Hashtable externalResources;
 
 		string baseURI;
 		string name;
@@ -56,6 +64,7 @@ namespace Mono.Xml
 			notationDecls = new DTDNotationDeclarationCollection (this);
 			factory = new DTDAutomataFactory (this);
 			validationErrors = new ArrayList ();
+			externalResources = new Hashtable ();
 		}
 
 		public string BaseURI {
@@ -126,6 +135,10 @@ namespace Mono.Xml
 
 		public XmlResolver XmlResolver {
 			set { resolver = value; }
+		}
+
+		internal Hashtable ExternalResources {
+			get { return externalResources; }
 		}
 
 		public DTDAutomataFactory Factory {
@@ -600,11 +613,17 @@ namespace Mono.Xml
 		public string NormalizedDefaultValue {
 			get {
 				if (resolvedNormalizedDefaultValue == null) {
-					object o = Datatype.ParseValue (ComputeDefaultValue (), null, null);
-					resolvedNormalizedDefaultValue = 
-						(o is string []) ? 
-						String.Join (" ", (string []) o) :
-						o.ToString ();
+					string s = ComputeDefaultValue ();
+					try {
+						object o = Datatype.ParseValue (s, null, null);
+						resolvedNormalizedDefaultValue = 
+							(o is string []) ? 
+							String.Join (" ", (string []) o) :
+							o.ToString ();
+					} catch (Exception) {
+						// This is for non-error-reporting reader
+						resolvedNormalizedDefaultValue = Datatype.Normalize (s);
+					}
 				}
 				return resolvedNormalizedDefaultValue;
 			}
@@ -623,7 +642,7 @@ namespace Mono.Xml
 			}
 		}
 
-		private string ComputeDefaultValue ()
+		internal string ComputeDefaultValue ()
 		{
 			if (UnresolvedDefaultValue == null)
 				return null;
@@ -704,7 +723,7 @@ namespace Mono.Xml
 				return null;
 		}
 
-		public ICollection Definitions {
+		public IList Definitions {
 			get { return attributes; }
 		}
 
@@ -734,6 +753,11 @@ namespace Mono.Xml
 		bool isInvalid;
 		Exception loadException;
 		bool loadFailed;
+
+		protected DTDEntityBase (DTDObjectModel root)
+		{
+			SetRoot (root);
+		}
 
 		internal bool IsInvalid {
 			get { return isInvalid; }
@@ -787,13 +811,19 @@ namespace Mono.Xml
 
 			Uri absUri = resolver.ResolveUri (baseUri, SystemId);
 			string absPath = absUri.ToString ();
-
+			if (Root.ExternalResources.ContainsKey (absPath))
+				LiteralEntityValue = (string) Root.ExternalResources [absPath];
 			try {
 				Stream s = resolver.GetEntity (absUri, null, typeof (Stream)) as Stream;
 				XmlTextReader xtr = new XmlTextReader (s);
 				// Don't skip Text declaration here. LiteralEntityValue contains it. See spec 4.5
 				this.BaseURI = absPath;
 				LiteralEntityValue = xtr.GetRemainder ().ReadToEnd ();
+
+				Root.ExternalResources.Add (absPath, LiteralEntityValue);
+				if (Root.ExternalResources.Count > DTDObjectModel.AllowedExternalEntitiesMax)
+					throw new InvalidOperationException ("The total amount of external entities exceeded the allowed number.");
+
 			} catch (Exception ex) {
 				loadException = ex;
 				LiteralEntityValue = String.Empty;
@@ -814,9 +844,8 @@ namespace Mono.Xml
 		bool recursed;
 		bool hasExternalReference;
 
-		internal DTDEntityDeclaration (DTDObjectModel root)
+		internal DTDEntityDeclaration (DTDObjectModel root) : base (root)
 		{
-			this.SetRoot (root);
 		}
 
 		public string NotationName {
@@ -1002,6 +1031,9 @@ namespace Mono.Xml
 
 	public class DTDParameterEntityDeclaration : DTDEntityBase
 	{
+		internal DTDParameterEntityDeclaration (DTDObjectModel root) : base (root)
+		{
+		}
 	}
 
 	public enum DTDContentOrderType

@@ -142,7 +142,8 @@ namespace System.Xml {
 				int csub1 = count - 1;
 				
 				Entry [] newBuckets = new Entry [count];
-				foreach (Entry root in buckets) {
+				for (int i = 0; i < buckets.Length; i++) {
+					Entry root = buckets [i];
 					Entry e = root;
 					while (e != null) {
 						int newLoc = e.hash & csub1;

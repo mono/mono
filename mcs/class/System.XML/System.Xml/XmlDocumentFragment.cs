@@ -31,10 +31,8 @@ namespace System.Xml
 		public override string InnerXml {
 			set {
 				// Copied from XmlElement.InnerXml (in the meantime;-))
-				foreach(XmlNode n in ChildNodes)
-				{
-					this.RemoveChild (n);
-				}		  
+				for (int i = 0; i < ChildNodes.Count; i++)
+					this.RemoveChild (ChildNodes [i]);
 
 				// I hope there are any well-performance logic...
 				XmlNamespaceManager nsmgr = this.ConstructNamespaceManager ();
@@ -52,8 +50,8 @@ namespace System.Xml
 			}
 			get {
 				StringBuilder sb = new StringBuilder ();
-				foreach(XmlNode n in ChildNodes)
-					sb.Append (n.OuterXml);
+				for (int i = 0; i < ChildNodes.Count; i++)
+					sb.Append (ChildNodes [i].OuterXml);
 				return sb.ToString ();
 			}
 		}
@@ -103,14 +101,14 @@ namespace System.Xml
 
 		public override void WriteContentTo (XmlWriter w)
 		{
-			foreach(XmlNode n in ChildNodes)
-				n.WriteContentTo (w);
+			for (int i = 0; i < ChildNodes.Count; i++)
+				ChildNodes [i].WriteContentTo (w);
 		}
 
 		public override void WriteTo (XmlWriter w)
 		{
-			foreach(XmlNode n in ChildNodes)
-				n.WriteTo (w);
+			for (int i = 0; i < ChildNodes.Count; i++)
+				ChildNodes [i].WriteTo (w);
 		}
 
 		#endregion

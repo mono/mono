@@ -36,7 +36,8 @@ namespace System.Xml
 
 		public virtual XmlNode GetNamedItem (string name)
 		{
-			foreach (XmlNode node in nodeList) {
+			for (int i = 0; i < nodeList.Count; i++) {
+				XmlNode node = (XmlNode) nodeList [i];
 				if (node.Name == name)
 					return node;
 			}
@@ -45,7 +46,8 @@ namespace System.Xml
 
 		public virtual XmlNode GetNamedItem (string localName, string namespaceURI)
 		{
-			foreach (XmlNode node in nodeList) {
+			for (int i = 0; i < nodeList.Count; i++) {
+				XmlNode node = (XmlNode) nodeList [i];
 				if ((node.LocalName == localName)
 				    && (node.NamespaceURI == namespaceURI))
 					return node;
@@ -63,26 +65,29 @@ namespace System.Xml
 		}
 
 		public virtual XmlNode RemoveNamedItem (string name)
-		{			
-			foreach (XmlNode node in nodeList)
+		{
+			for (int i = 0; i < nodeList.Count; i++) {
+				XmlNode node = (XmlNode) nodeList [i];
 				if (node.Name == name) {
 					if (node.IsReadOnly)
 						throw new InvalidOperationException ("Cannot remove. This node is read only: " + name);
 					nodeList.Remove (node);
 					return node;
 				}
+			}
 			return null;
 		}
 
 		public virtual XmlNode RemoveNamedItem (string localName, string namespaceURI)
 		{
-			foreach (XmlNode node in nodeList)
+			for (int i = 0; i < nodeList.Count; i++) {
+				XmlNode node = (XmlNode) nodeList [i];
 				if ((node.LocalName == localName)
 				    && (node.NamespaceURI == namespaceURI)) {
 					nodeList.Remove (node);
 					return node;
 				}
-
+			}
 			return null;
 		}
 
@@ -105,7 +110,8 @@ namespace System.Xml
 				parent.OwnerDocument.onNodeInserting (node, parent);
 
 			try {
-				foreach (XmlNode x in nodeList) {
+				for (int i = 0; i < nodeList.Count; i++) {
+					XmlNode x = (XmlNode) nodeList [i];
 					if(x.LocalName == node.LocalName && x.NamespaceURI == node.NamespaceURI) {
 						nodeList.Remove (x);
 						if (pos < 0)

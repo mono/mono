@@ -55,19 +55,18 @@ namespace System.Xml
 		public override XmlNode CloneNode (bool deep)
 		{
 			XmlText newText = OwnerDocument.CreateTextNode(Data);
-			if(deep)
-			{
-				foreach(XmlNode child in ChildNodes)
-					newText.AppendChild(child.CloneNode(deep));
+			if(deep) {
+				for (int i = 0; i < ChildNodes.Count; i++)
+					newText.AppendChild (ChildNodes [i].CloneNode (deep));
 			}
 			return newText;
 		}
 
 		public virtual XmlText SplitText (int offset)
 		{
-			XmlText next = OwnerDocument.CreateTextNode(this.Data.Substring(offset));
-			DeleteData(offset, Data.Length - offset);
-			this.ParentNode.InsertAfter(next, this);
+			XmlText next = OwnerDocument.CreateTextNode (this.Data.Substring (offset));
+			DeleteData (offset, Data.Length - offset);
+			this.ParentNode.InsertAfter (next, this);
 			return next;
 		}
 

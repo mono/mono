@@ -135,7 +135,8 @@ namespace System.Xml
 				throw new ArgumentException ("Specified node is in a different document.");
 
 			XmlAttribute retAttr = null;
-			foreach (XmlAttribute attr in Nodes) {
+			for (int i = 0; i < Nodes.Count; i++) {
+				XmlAttribute attr = (XmlAttribute) Nodes [i];
 				if (attr == node) {
 					retAttr = attr;
 					break;
@@ -220,7 +221,8 @@ namespace System.Xml
 			if (doctype == null || doctype.DTD == null)
 				return;
 			DTDElementDeclaration elem = doctype.DTD.ElementDecls [ownerElement.Name];
-			foreach (XmlAttribute node in this) {
+			for (int i = 0; i < Nodes.Count; i++) {
+				XmlAttribute node = (XmlAttribute) Nodes [i];
 				DTDAttributeDefinition attdef = elem == null ? null : elem.Attributes [node.Name];
 				if (attdef == null || attdef.Datatype.TokenizedType != XmlTokenizedType.ID)
 					continue;

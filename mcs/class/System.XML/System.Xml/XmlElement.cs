@@ -96,8 +96,8 @@ namespace System.Xml
 					FirstChild.Value = value;
 				else {
 					if (FirstChild != null) {
-						foreach (XmlNode n in ChildNodes)
-							this.RemoveChild (n);
+						for (int i = 0; i < ChildNodes.Count; i++)
+							this.RemoveChild (ChildNodes [i]);
 					}
 					// creates new Text node
 					AppendChild (OwnerDocument.CreateTextNode (value));
@@ -212,9 +212,9 @@ namespace System.Xml
 					Attributes [i].CloneNode (true));
 
 			if (deep) {
-				foreach (XmlNode child in this.ChildNodes)
-					node.AppendChild (child.CloneNode (true));
-			} // shallow cloning
+				for (int i = 0; i < ChildNodes.Count; i++)
+					node.AppendChild (ChildNodes [i].CloneNode (true));
+			}
 
 			return node;
 		}

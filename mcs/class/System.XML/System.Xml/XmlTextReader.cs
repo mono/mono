@@ -75,9 +75,8 @@ namespace System.Xml
 
 		public XmlTextReader (string url, XmlNameTable nt)
 		{
-			XmlUrlResolver xr = new XmlUrlResolver ();
-			Uri uri = xr.ResolveUri (null, url);
-			Stream s = xr.GetEntity (uri, null, typeof (Stream)) as Stream;
+			Uri uri = resolver.ResolveUri (null, url);
+			Stream s = resolver.GetEntity (uri, null, typeof (Stream)) as Stream;
 			XmlParserContext ctx = new XmlParserContext (nt,
 				new XmlNamespaceManager (nt),
 				String.Empty,
@@ -175,47 +174,32 @@ namespace System.Xml
 		}
 #endif
 
-		public override bool HasValue
-		{
-			get { 
-				if (this.valueBuilderAvailable)
-					return valueBuilder.Length != 0;
-				else
-					return cursorToken.Value != null;
-			}
+		public override bool HasValue {
+			get { return cursorToken.Value != null; }
 		}
 
-		public override bool IsDefault
-		{
-			get
-			{
-				// XmlTextReader does not expand default attributes.
-				return false;
-			}
+		public override bool IsDefault {
+			// XmlTextReader does not expand default attributes.
+			get { return false; }
 		}
 
-		public override bool IsEmptyElement
-		{
+		public override bool IsEmptyElement {
 			get { return cursorToken.IsEmptyElement; }
 		}
 
-		public override string this [int i]
-		{
+		public override string this [int i] {
 			get { return GetAttribute (i); }
 		}
 
-		public override string this [string name]
-		{
+		public override string this [string name] {
 			get { return GetAttribute (name); }
 		}
 
-		public override string this [string localName, string namespaceName]
-		{
+		public override string this [string localName, string namespaceName] {
 			get { return GetAttribute (localName, namespaceName); }
 		}
 
-		public int LineNumber
-		{
+		public int LineNumber {
 			get {
 				if (useProceedingLineInfo)
 					return line;
@@ -224,8 +208,7 @@ namespace System.Xml
 			}
 		}
 
-		public int LinePosition
-		{
+		public int LinePosition {
 			get {
 				if (useProceedingLineInfo)
 					return column;
@@ -234,18 +217,15 @@ namespace System.Xml
 			}
 		}
 
-		public override string LocalName
-		{
+		public override string LocalName {
 			get { return cursorToken.LocalName; }
 		}
 
-		public override string Name
-		{
+		public override string Name {
 			get { return cursorToken.Name; }
 		}
 
-		public bool Namespaces
-		{
+		public bool Namespaces {
 			get { return namespaces; }
 			set { 
 				if (readState != ReadState.Initial)
@@ -254,65 +234,53 @@ namespace System.Xml
 			}
 		}
 
-		public override string NamespaceURI
-		{
+		public override string NamespaceURI {
 			get { return cursorToken.NamespaceURI; }
 		}
 
-		public override XmlNameTable NameTable
-		{
+		public override XmlNameTable NameTable {
 			get { return parserContext.NameTable; }
 		}
 
-		public override XmlNodeType NodeType
-		{
+		public override XmlNodeType NodeType {
 			get { return cursorToken.NodeType; }
 		}
 
-		public bool Normalization
-		{
+		public bool Normalization {
 			get { return normalization; }
 			set { normalization = value; }
 		}
 
-		public override string Prefix
-		{
+		public override string Prefix {
 			get { return cursorToken.Prefix; }
 		}
 
-		public override char QuoteChar
-		{
+		public override char QuoteChar {
 			get { return cursorToken.QuoteChar; }
 		}
 
-		public override ReadState ReadState
-		{
+		public override ReadState ReadState {
 			get { return readState; }
 		}
 
-		public override string Value
-		{
+		public override string Value {
 			get { return cursorToken.Value != null ? cursorToken.Value : String.Empty; }
 		}
 
-		public WhitespaceHandling WhitespaceHandling
-		{
+		public WhitespaceHandling WhitespaceHandling {
 			get { return whitespaceHandling; }
 			set { whitespaceHandling = value; }
 		}
 
-		public override string XmlLang
-		{
+		public override string XmlLang {
 			get { return parserContext.XmlLang; }
 		}
 
-		public XmlResolver XmlResolver
-		{
+		public XmlResolver XmlResolver {
 			set { resolver = value; }
 		}
 
-		public override XmlSpace XmlSpace
-		{
+		public override XmlSpace XmlSpace {
 			get { return parserContext.XmlSpace; }
 		}
 
@@ -811,18 +779,8 @@ namespace System.Xml
 			public XmlNodeType NodeType;
 
 			public virtual string Value {
-				get {
-					if (valueCache != null)
-						return valueCache;
-					else if (Reader.valueBuilderAvailable) {
-						valueCache = Reader.valueBuilder.ToString ();
-						return valueCache;
-					}
-					return valueCache;
-				}
-				set {
-					valueCache = value;
-				}
+				get { return valueCache; }
+				set { valueCache = value; }
 			}
 
 			public virtual void Clear ()
@@ -838,7 +796,14 @@ namespace System.Xml
 			internal virtual void FillNames ()
 			{
 				if (Reader.Namespaces) {
-					int indexOfColon = Name.IndexOf (':');
+					int indexOfColon = -1;
+					switch (NodeType) {
+					case XmlNodeType.Attribute:
+					case XmlNodeType.Element:
+					case XmlNodeType.EndElement:
+						indexOfColon = Name.IndexOf (':');
+						break;
+					}
 
 					if (indexOfColon == -1) {
 						Prefix = String.Empty;
@@ -856,7 +821,7 @@ namespace System.Xml
 					// NamespaceURI
 					switch (NodeType) {
 					case XmlNodeType.Attribute:
-						if (Prefix == string.Empty)
+						if (Prefix.Length == 0)
 							NamespaceURI = string.Empty;
 						else
 							NamespaceURI = Reader.LookupNamespace (Prefix, true);
@@ -897,6 +862,7 @@ namespace System.Xml
 						valueCache = null;
 					if (valueCache != null)
 						return valueCache;
+
 					cachedNormalization = Reader.Normalization;
 
 					// An empty value should return String.Empty.
@@ -928,9 +894,8 @@ namespace System.Xml
 						NormalizeSpaces ();
 					return valueCache;
 				}
-				set {
-					valueCache = value;
-				}
+
+				set { valueCache = value; }
 			}
 
 			public override void Clear ()
@@ -988,13 +953,13 @@ namespace System.Xml
 		private bool depthUp;
 
 		private bool popScope;
-		private Stack elementStack = new Stack();
+
+		private string [] elementNames;
+		int elementNameStackPos;
+
 		private bool allowMultipleRoot;
 
 		private bool isStandalone;
-
-		private StringBuilder valueBuilder;
-		private bool valueBuilderAvailable = false;
 
 		private bool returnEntityReference;
 		private string entityReferenceName;
@@ -1002,9 +967,17 @@ namespace System.Xml
 		private char [] nameBuffer;
 		private int nameLength;
 		private int nameCapacity;
-		private const int initialNameCapacity = 256;
+		private const int initialNameCapacity = 32;
 
-		private StringBuilder valueBuffer = new StringBuilder (512);
+		private char [] valueBuffer;
+		private int valueLength;
+		private int valueCapacity;
+		private const int initialValueCapacity = 256;
+
+		private char [] currentTagBuffer;
+		private int currentTagLength;
+		private int currentTagCapacity;
+		private const int initialCurrentTagCapacity = 256;
 
 		private TextReader reader;
 		private bool can_seek;
@@ -1016,7 +989,6 @@ namespace System.Xml
 
 		private int line;
 		private int column;
-		private StringBuilder currentTag = new StringBuilder ();
 
 		private int currentLinkedNodeLineNumber;
 		private int currentLinkedNodeLinePosition;
@@ -1059,10 +1031,11 @@ namespace System.Xml
 			depthUp = false;
 
 			popScope = allowMultipleRoot = false;
-			elementStack.Clear ();
+//			elementStack.Clear ();
+			elementNames = new string [10];
+			elementNameStackPos = 0;
 
 			isStandalone = false;
-			valueBuilderAvailable = false;
 			returnEntityReference = false;
 			entityReferenceName = String.Empty;
 
@@ -1070,15 +1043,21 @@ namespace System.Xml
 			nameLength = 0;
 			nameCapacity = initialNameCapacity;
 
+			valueBuffer = new char [initialValueCapacity];
+			valueLength = 0;
+			valueCapacity = initialValueCapacity;
+
+			currentTagBuffer = new char [initialCurrentTagCapacity];
+			currentTagLength = 0;
+			currentTagCapacity = initialCurrentTagCapacity;
+
 			can_seek = has_peek = false;
 			peek_char = peekCharsIndex = 0;
 			peekChars = new char [6];
 
 			line = 1;
 			column = 0;
-			currentTag.Length = 0;
-
-			valueBuffer.Length = 0;
+			currentTagLength = 0;
 
 			currentLinkedNodeLineNumber = currentLinkedNodeLinePosition = 0;
 			useProceedingLineInfo = false;
@@ -1156,7 +1135,6 @@ namespace System.Xml
 			string value,
 			bool clearAttributes)
 		{
-			this.valueBuilderAvailable = false;
 			token.Clear ();
 			token.NodeType = nodeType;
 			token.Name = name;
@@ -1170,17 +1148,6 @@ namespace System.Xml
 			token.FillNames ();
 		}
 
-		private void SetProperties (
-			XmlNodeType nodeType,
-			string name,
-			bool isEmptyElement,
-			bool clearAttributes,
-			StringBuilder value) {
-			SetProperties (nodeType, name, isEmptyElement, (string)null, clearAttributes);
-			this.valueBuilderAvailable = true;
-			this.valueBuilder = value;
-		}
-
 		private void ClearAttributes ()
 		{
 			for (int i = 0; i < attributeCount; i++)
@@ -1192,9 +1159,6 @@ namespace System.Xml
 
 		private int PeekChar ()
 		{
-//			if (can_seek)
-//				return reader.Peek ();
-
 			if (hasPeekChars)
 				return peekChars [peekCharsIndex];
 
@@ -1206,8 +1170,6 @@ namespace System.Xml
 				int i = reader.Read ();
 				if (i >= 0xDC00 && i <= 0xDFFF)
 					peek_char += i;
-//				else
-//					peek_char = -1;
 			}
 			has_peek = true;
 			return peek_char;
@@ -1230,8 +1192,9 @@ namespace System.Xml
 					int i = reader.Read ();
 					if (i > 0xDC00 && i <= 0xDFFF)
 						ch += i;
-//					else
-//						ch = -1;
+					// otherwise, illegal character, 
+					// so leave it as is (and discard 
+					// the latter invalid piece of the pair)
 				}
 			}
 
@@ -1241,10 +1204,13 @@ namespace System.Xml
 			} else {
 				column++;
 			}
+			/*
 			if (ch < Char.MaxValue)
 				currentTag.Append ((char) ch);
 			else
 				currentTag.Append (ExpandSurrogateChar (ch));
+			*/
+			AppendCurrentTagChar (ch);
 			return ch;
 		}
 
@@ -1263,7 +1229,7 @@ namespace System.Xml
 		// element or text outside of the document element.
 		private bool ReadContent ()
 		{
-			currentTag.Length = 0;
+			currentTagLength = 0;
 			if (popScope) {
 				parserContext.NamespaceManager.PopScope ();
 				popScope = false;
@@ -1414,7 +1380,8 @@ namespace System.Xml
 			}
 			else {
 				depthUp = true;
-				elementStack.Push (name);
+//				elementStack.Push (name);
+				PushElementName (name);
 				parserContext.PushScope ();
 			}
 
@@ -1429,6 +1396,16 @@ namespace System.Xml
 			);
 		}
 
+		private void PushElementName (string name)
+		{
+			if (elementNames.Length == elementNameStackPos) {
+				string [] newArray = new string [elementNames.Length * 2];
+				Array.Copy (elementNames, 0, newArray, 0, elementNameStackPos);
+				elementNames = newArray;
+			}
+			elementNames [elementNameStackPos++] = name;
+		}
+
 		// The reader is positioned on the first character
 		// of the element's name.
 		private void ReadEndTag ()
@@ -1438,9 +1415,11 @@ namespace System.Xml
 					"End tag cannot appear in this state.");
 
 			string name = ReadName ();
-			if (elementStack.Count == 0)
+//			if (elementStack.Count == 0)
+			if (elementNameStackPos == 0)
 				throw new XmlException (this as IXmlLineInfo,"closing element without matching opening element");
-			string expected = (string)elementStack.Pop();
+//			string expected = (string)elementStack.Pop();
+			string expected = elementNames [--elementNameStackPos];
 			if (expected != name)
 				throw new XmlException (this as IXmlLineInfo,String.Format ("unmatched closing element: expected {0} but found {1}", expected, name));
 			parserContext.PopScope ();
@@ -1489,20 +1468,66 @@ namespace System.Xml
 
 		private void AppendValueChar (int ch)
 		{
+			CheckValueCapacity ();
 			if (ch < Char.MaxValue)
-				valueBuffer.Append ((char) ch);
-			else
-				valueBuffer.Append (ExpandSurrogateChar (ch));
+				valueBuffer [valueLength++] = (char) ch;
+			else {
+				valueBuffer [valueLength++] = (char) (ch / 0x10000 + 0xD800 - 1);
+				CheckValueCapacity ();
+				valueBuffer [valueLength++] = (char) (ch % 0x10000 + 0xDC00);
+			}
+		}
+
+		private void CheckValueCapacity ()
+		{
+			if (valueLength == valueCapacity) {
+				valueCapacity = valueCapacity * 2;
+				char [] oldValueBuffer = valueBuffer;
+				valueBuffer = new char [valueCapacity];
+				Array.Copy (oldValueBuffer, valueBuffer, valueLength);
+			}
 		}
 
 		private string CreateValueString ()
 		{
-			return valueBuffer.ToString ();
+			return new string (valueBuffer, 0, valueLength);
 		}
-		
+
 		private void ClearValueBuffer ()
 		{
-			valueBuffer.Length = 0;
+			valueLength = 0;
+		}
+
+		private void AppendCurrentTagChar (int ch)
+		{
+			CheckCurrentTagCapacity ();
+			if (ch < Char.MaxValue)
+				currentTagBuffer [currentTagLength++] = (char) ch;
+			else {
+				currentTagBuffer [currentTagLength++] = (char) (ch / 0x10000 + 0xD800 - 1);
+				CheckCurrentTagCapacity ();
+				currentTagBuffer [currentTagLength++] = (char) (ch % 0x10000 + 0xDC00);
+			}
+		}
+
+		private void CheckCurrentTagCapacity ()
+		{
+			if (currentTagLength == currentTagCapacity) {
+				currentTagCapacity = currentTagCapacity * 2;
+				char [] oldCurrentTagBuffer = currentTagBuffer;
+				currentTagBuffer = new char [currentTagCapacity];
+				Array.Copy (oldCurrentTagBuffer, currentTagBuffer, currentTagLength);
+			}
+		}
+
+		private string CreateCurrentTagString ()
+		{
+			return new string (currentTagBuffer, 0, currentTagLength);
+		}
+
+		private void ClearCurrentTagBuffer ()
+		{
+			currentTagLength = 0;
 		}
 
 		// The reader is positioned on the first character
@@ -1547,7 +1572,7 @@ namespace System.Xml
 				notWhitespace = true;
 			}
 
-			if (returnEntityReference && valueBuffer.Length == 0) {
+			if (returnEntityReference && valueLength == 0) {
 				SetEntityReferenceProperties ();
 			} else {
 				XmlNodeType nodeType = notWhitespace ? XmlNodeType.Text :
@@ -1556,8 +1581,8 @@ namespace System.Xml
 					nodeType, // nodeType
 					String.Empty, // name
 					false, // isEmptyElement
-					true, // clearAttributes
-					valueBuffer // value
+					CreateValueString (), // value
+					true // clearAttributes
 				);
 			}
 		}
@@ -1645,16 +1670,12 @@ namespace System.Xml
 
 			int predefined = XmlChar.GetPredefinedEntity (name);
 			if (predefined >= 0)
-//				AppendValueChar (predefined);
 				return predefined;
 			else {
 				if (ignoreEntityReferences) {
 					AppendValueChar ('&');
-
-					foreach (char ch2 in name) {
-						AppendValueChar (ch2);
-					}
-
+					for (int i = 0; i < name.Length; i++)
+						AppendValueChar (name [i]);
 					AppendValueChar (';');
 				} else {
 					returnEntityReference = true;
@@ -1794,7 +1815,7 @@ namespace System.Xml
 						loop = false;
 					break;
 				case '&':
-					int startPosition = currentTag.Length - 1;
+					int startPosition = currentTagLength - 1;
 					if (PeekChar () == '#') {
 						ReadChar ();
 						ch = ReadCharacterReference ();
@@ -1898,8 +1919,8 @@ namespace System.Xml
 				XmlNodeType.ProcessingInstruction, // nodeType
 				target, // name
 				false, // isEmptyElement
-				true, // clearAttributes
-				valueBuffer // value
+				CreateValueString (), // value
+				true // clearAttributes
 			);
 		}
 
@@ -1940,7 +1961,8 @@ namespace System.Xml
 				XmlNodeType.XmlDeclaration, // nodeType
 				"xml", // name
 				false, // isEmptyElement
-				currentTag.ToString (6, currentTag.Length - 6), // value
+//				currentTag.ToString (6, currentTagLength - 6), // value
+				new string (currentTagBuffer, 6, currentTagLength - 6), // value
 				false // clearAttributes
 			);
 
@@ -2107,8 +2129,8 @@ namespace System.Xml
 				XmlNodeType.Comment, // nodeType
 				String.Empty, // name
 				false, // isEmptyElement
-				true, // clearAttributes
-				valueBuffer // value
+				CreateValueString (), // value
+				true // clearAttributes
 			);
 		}
 
@@ -2152,8 +2174,8 @@ namespace System.Xml
 				XmlNodeType.CDATA, // nodeType
 				String.Empty, // name
 				false, // isEmptyElement
-				true, // clearAttributes
-				valueBuffer // value
+				CreateValueString (), // value
+				true // clearAttributes
 			);
 		}
 
@@ -2201,10 +2223,11 @@ namespace System.Xml
 				ReadChar ();
 				intSubsetStartLine = this.LineNumber;
 				intSubsetStartColumn = this.LinePosition;
-				int startPos = currentTag.Length;
+				int startPos = currentTagLength;
 				ReadInternalSubset ();
-				int endPos = currentTag.Length - 1;
-				parserContext.InternalSubset = currentTag.ToString (startPos, endPos - startPos);
+				int endPos = currentTagLength - 1;
+//				parserContext.InternalSubset = currentTag.ToString (startPos, endPos - startPos);
+				parserContext.InternalSubset = new string (currentTagBuffer, startPos, endPos - startPos);
 			}
 			// end of DOCTYPE decl.
 			ExpectAfterWhitespace ('>');
@@ -2442,7 +2465,7 @@ namespace System.Xml
 			else
 				SkipWhitespace ();
 			int quoteChar = ReadChar ();	// apos or quot
-			int startPos = currentTag.Length;
+			int startPos = currentTagLength;
 			int c = 0;
 			ClearValueBuffer ();
 			while (c != quoteChar) {
@@ -2452,7 +2475,7 @@ namespace System.Xml
 				if (c != quoteChar)
 					AppendValueChar (c);
 			}
-			return CreateValueString (); //currentTag.ToString (startPos, currentTag.Length - 1 - startPos);
+			return CreateValueString ();
 		}
 
 		private string ReadPubidLiteral()
@@ -2462,7 +2485,7 @@ namespace System.Xml
 				throw new XmlException (this as IXmlLineInfo,
 					"Whitespace is required after 'PUBLIC'.");
 			int quoteChar = ReadChar ();
-			int startPos = currentTag.Length;
+			int startPos = currentTagLength;
 			int c = 0;
 			ClearValueBuffer ();
 			while(c != quoteChar)
@@ -2474,34 +2497,16 @@ namespace System.Xml
 				if (c != quoteChar)
 					AppendValueChar (c);
 			}
-			return CreateValueString (); //currentTag.ToString (startPos, currentTag.Length - 1 - startPos);
+			return CreateValueString ();
 		}
 
 		// The reader is positioned on the first character
 		// of the name.
 		private string ReadName ()
 		{
-			return ReadNameOrNmToken(false);
-		}
-
-		// The reader is positioned on the first character
-		// of the name.
-		private string ReadNmToken ()
-		{
-			return ReadNameOrNmToken(true);
-		}
-
-		private string ReadNameOrNmToken (bool isNameToken)
-		{
 			int ch = PeekChar ();
-			if(isNameToken) {
-				if (!XmlChar.IsNameChar (ch))
-					throw new XmlException (this as IXmlLineInfo,String.Format ("a nmtoken did not start with a legal character {0} ({1})", ch, (char) ch));
-			}
-			else {
-				if (!XmlChar.IsFirstNameChar (ch))
-					throw new XmlException (this as IXmlLineInfo,String.Format ("a name did not start with a legal character {0} ({1})", ch, (char) ch));
-			}
+			if (!XmlChar.IsFirstNameChar (ch))
+				throw new XmlException (this as IXmlLineInfo,String.Format ("a name did not start with a legal character {0} ({1})", ch, (char) ch));
 
 			nameLength = 0;
 
@@ -2513,6 +2518,29 @@ namespace System.Xml
 
 			return CreateNameString ();
 		}
+
+		/*
+		private void PushbackChar (int ch)
+		{
+			if (ch == 10)
+				this.line--;
+			currentTagLength--;
+			if (!has_peek) {
+				peek_char = ch;
+				has_peek = true;
+			} else {
+				if (hasPeekChars) {
+					if (peekCharsIndex == 0)
+						throw new NotSupportedException ();
+					peekChars [peekCharsIndex--] = (char) ch;
+				} else {
+					peekCharsIndex = 0;
+					peekChars [0] = (char) ch;
+					hasPeekChars = true;
+				}
+			}
+		}
+		*/
 
 		// Read the next character and compare it against the
 		// specified character.
@@ -2542,7 +2570,7 @@ namespace System.Xml
 		{
 			while (true) {
 				int i = ReadChar ();
-				if (XmlChar.IsWhitespace (i))
+				if (i < 0x21 && XmlChar.IsWhitespace (i))
 					continue;
 				if (c != i)
 					throw new XmlException (String.Join (String.Empty, new string [] {"Expected ", c.ToString (), ", but found " + (char) i, "[", i.ToString (), "]"}));
@@ -2554,6 +2582,8 @@ namespace System.Xml
 		private bool SkipWhitespace ()
 		{
 			bool skipped = XmlChar.IsWhitespace (PeekChar ());
+			if (!skipped)
+				return false;
 			while (XmlChar.IsWhitespace (PeekChar ()))
 				ReadChar ();
 			return skipped;
@@ -2578,8 +2608,8 @@ namespace System.Xml
 				SetProperties (nodeType,
 					       String.Empty,
 					       false,
-					       true,
-					       valueBuffer);
+					       CreateValueString (),
+					       true);
 			}
 
 			return; // (PeekChar () != -1);
@@ -2636,7 +2666,8 @@ namespace System.Xml
 					// Seems to skip immediate EndElement
 					Expect ('/');
 					string name = ReadName ();
-					if (name != (string) this.elementStack.Peek ()) {
+//					if (name != (string) this.elementStack.Peek ()) {
+					if (name != elementNames [elementNameStackPos - 1]) {
 						if (i + 1 < length) {
 							buffer [bufIndex++] = '<';
 							buffer [bufIndex++] = '/';
@@ -2647,7 +2678,8 @@ namespace System.Xml
 					}
 					Expect ('>');
 					depth--;
-					this.elementStack.Pop ();
+					elementNames [--elementNameStackPos] = null;
+//					this.elementStack.Pop ();
 					shouldSkipUntilEndTag = false;
 					Read ();
 					return i;
@@ -2679,11 +2711,13 @@ namespace System.Xml
 						continue;
 					ReadChar ();
 					string name = ReadName ();
-					if (name != (string) this.elementStack.Peek ())
+//					if (name != (string) this.elementStack.Peek ())
+					if (name != elementNames [elementNameStackPos - 1])
 						continue;
 					Expect ('>');
 					depth--;
-					this.elementStack.Pop ();
+//					this.elementStack.Pop ();
+					elementNames [--elementNameStackPos] = null;
 					return Read ();
 				}
 			} while (true);

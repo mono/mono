@@ -159,6 +159,8 @@ namespace System.Xml
 					sc.Clear ();
 				}
 			}
+			// release unnecessary memory usage
+			DTD.ExternalResources.Clear ();
 
 			return DTD;
 		}
@@ -558,7 +560,7 @@ namespace System.Xml
 		private void ReadParameterEntityDecl ()
 		{
 			DTDParameterEntityDeclaration decl = 
-				new DTDParameterEntityDeclaration();
+				new DTDParameterEntityDeclaration (DTD);
 			decl.BaseURI = BaseURI;
 
 			decl.Name = ReadName ();
@@ -1282,8 +1284,8 @@ namespace System.Xml
 		private void Expect (string expected)
 		{
 			int len = expected.Length;
-			for(int i=0; i< len; i++)
-				Expect (expected[i]);
+			for (int i=0; i< len; i++)
+				Expect (expected [i]);
 		}
 
 		private void ExpectAfterWhitespace (char c)
