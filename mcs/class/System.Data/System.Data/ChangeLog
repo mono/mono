@@ -1,3 +1,15 @@
+2003-02-19  Daniel Morgan <danmorg@sc.rr.com>
+
+	* InternalDataCollectionBase.cs: revert change to field
+	to fix build
+	
+	* DataViewManager.cs
+	* DataView.cs
+	* DataTable.cs
+	* DataSet.cs: commented use of DesignerAttribute
+	because it broke the build.  According to MSDN,
+	DesignerAttribute does not have a zero-argument constructor
+
 2003-02-18  Ville Palo <vi64pa@kolumbus.fi>
 
 	* DataColumnCollectin.cs: Little fix for indexer and case sensitivity

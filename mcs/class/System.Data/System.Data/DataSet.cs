@@ -27,7 +27,7 @@ namespace System.Data {
 	/// <summary>
 	/// an in-memory cache of data 
 	/// </summary>
-	[Designer]
+	//[Designer]
 	[ToolboxItem (false)]
 	[DefaultProperty ("DataSetName")]
 	[Serializable]

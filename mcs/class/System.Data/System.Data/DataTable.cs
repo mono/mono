@@ -21,7 +21,7 @@ using System.Globalization;
 using System.Runtime.Serialization;
 
 namespace System.Data {
-	[Designer]
+	//[Designer]
 	[ToolboxItem (false)]
 	[DefaultEvent ("RowChanging")]
 	[DefaultProperty ("TableName")]

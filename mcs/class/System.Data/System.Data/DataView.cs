@@ -21,7 +21,7 @@ namespace System.Data {
 	/// a view of a DataTable for editing, filtering,
 	/// navigation, searching, and sorting.
 	/// </summary>
-	[Designer]
+	//[Designer]
 	[Editor]
 	[DefaultEvent ("PositionChanged")]
 	[DefaultProperty ("Table")]
