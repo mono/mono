@@ -6,30 +6,105 @@
 //
 // (C) 2002 Johannes Roith
 //
-namespace Microsoft.Win32 {
 
+namespace Microsoft.Win32 {
 	/// <summary>
 	/// </summary>
 public sealed class SystemEvents : System.EventArgs{
 
-public static void InvokeOnEventsThread(System.Delegate method)
-{
+	[MonoTODO]
+	public static void InvokeOnEventsThread(System.Delegate method)
+	{
+		throw new System.NotImplementedException ();
+	}
+
+
+
+	[MonoTODO]
+	public static event System.EventHandler DisplaySettingsChanged {
+		add 	{ throw new System.NotImplementedException ();}
+		remove 	{ throw new System.NotImplementedException ();}
+	}
+	
+		
+	[MonoTODO]
+	public static event System.EventHandler EventsThreadShutdown {
+		add 	{ throw new System.NotImplementedException ();}
+		remove 	{ throw new System.NotImplementedException ();}
+	}
+	
+	
+	[MonoTODO]
+	public static event System.EventHandler InstalledFontsChanged {
+		add 	{ throw new System.NotImplementedException ();}
+		remove 	{ throw new System.NotImplementedException ();}
+	}
+	
+	
+	[MonoTODO]
+	public static event System.EventHandler LowMemory {
+		add 	{ throw new System.NotImplementedException ();}
+		remove 	{ throw new System.NotImplementedException ();}
+	}
+	
+	
+	[MonoTODO]
+	public static event System.EventHandler PaletteChanged {
+		add 	{ throw new System.NotImplementedException ();}
+		remove 	{ throw new System.NotImplementedException ();}
+	}
+	
+	
+	[MonoTODO]
+	public static event System.EventHandler PowerModeChanged {
+		add 	{ throw new System.NotImplementedException ();}
+		remove 	{ throw new System.NotImplementedException ();}
+	}
+	
+	
+	[MonoTODO]
+		public static event SessionEndedEventHandler SessionEnded {
+		add 	{ throw new System.NotImplementedException ();}
+		remove 	{ throw new System.NotImplementedException ();}
+	}
+	
+	
+	[MonoTODO]
+	public static event System.EventHandler SessionEnding {
+		add 	{ throw new System.NotImplementedException ();}
+		remove 	{ throw new System.NotImplementedException ();}
+	}
+	
+
+	[MonoTODO]
+	public static event System.EventHandler TimeChanged {
+		add 	{ throw new System.NotImplementedException ();}
+		remove 	{ throw new System.NotImplementedException ();}
+	}
+	
+	
+	[MonoTODO]
+	public static event System.EventHandler TimerElapsed {
+		add 	{ throw new System.NotImplementedException ();}
+		remove 	{ throw new System.NotImplementedException ();}
+	}
+	
+	
+	[MonoTODO]
+	public static event System.EventHandler UserPreferenceChanged {
+		add 	{ throw new System.NotImplementedException ();}
+		remove 	{ throw new System.NotImplementedException ();}
+	}
+	
+	
+	[MonoTODO]
+	public static event System.EventHandler UserPreferenceChanging {
+		add 	{ throw new System.NotImplementedException ();}
+		remove 	{ throw new System.NotImplementedException ();}
+	}
+	
 
 }
 
-public static event System.EventHandler DisplaySettingsChanged;
-public static event System.EventHandler EventsThreadShutdown;
-public static event System.EventHandler InstalledFontsChanged;
-public static event System.EventHandler LowMemory;
-public static event System.EventHandler PaletteChanged;
-public static event System.EventHandler PowerModeChanged;
-public static event System.EventHandler SessionEnded;
-public static event System.EventHandler SessionEnding;
-public static event System.EventHandler TimeChanged;
-public static event System.EventHandler TimerElapsed;
-public static event System.EventHandler UserPreferenceChanged;
-public static event System.EventHandler UserPreferenceChanging;
-
-}
 
 }
