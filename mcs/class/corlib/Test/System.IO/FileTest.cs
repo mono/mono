@@ -276,6 +276,16 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
+		[ExpectedException(typeof (IOException))]
+		public void DeleteOpenStreamException ()
+		{
+			string path = "resources" + Path.DirectorySeparatorChar + "DeleteOpenStreamException";
+			DeleteFile (path);			
+			FileStream stream = new FileStream (path, FileMode.OpenOrCreate, FileAccess.ReadWrite);
+			File.Delete (path);
+		}
+		
+		[Test]
 		[ExpectedException(typeof (ArgumentNullException))]
 		public void MoveException1 ()
 		{
@@ -823,6 +833,359 @@ namespace MonoTests.System.IO
 			File.Delete (path);
 		}
 		
+		// SetCreationTime and SetCreationTimeUtc exceptions
+
+		[Test]
+		[ExpectedException(typeof (ArgumentNullException))]
+		public void SetCreationTimeArgumentNullException1 ()
+		{
+			File.SetCreationTime (null as string, new DateTime (2000, 12, 12, 11, 59, 59));
+		}
+
+		[Test]
+		[ExpectedException(typeof (ArgumentException))]
+		public void SetCreationTimeArgumenException1 ()
+		{
+			File.SetCreationTime ("", new DateTime (2000, 12, 12, 11, 59, 59));
+		}
+
+		[Test]
+		[ExpectedException(typeof (ArgumentException))]
+		public void SetCreationTimeArgumenException2 ()
+		{
+			File.SetCreationTime ("     ", new DateTime (2000, 12, 12, 11, 59, 59));
+		}
+
+		[Test]
+		[ExpectedException(typeof (ArgumentException))]
+		public void SetCreationTimeArgumenException3 ()
+		{
+			File.SetCreationTime (Path.InvalidPathChars [1].ToString (), new DateTime (2000, 12, 12, 11, 59, 59));
+		}
+
+		[Test]
+		[ExpectedException(typeof (FileNotFoundException))]
+		public void SetCreationTimeFileNotFoundException1 ()
+		{
+			string path = "resources" + Path.DirectorySeparatorChar + "SetCreationTimeFileNotFoundException1";
+			DeleteFile (path);
+			
+			File.SetCreationTime (path, new DateTime (2000, 12, 12, 11, 59, 59));
+		}
+
+		[Test]
+		[ExpectedException(typeof (ArgumentOutOfRangeException))]
+		public void SetCreationTimeArgumentOutOfRangeException1 ()
+		{
+			string path = "resources" + Path.DirectorySeparatorChar + "SetCreationTimeArgumentOutOfRangeException1";
+			DeleteFile (path);
+			File.Create (path).Close ();
+			File.SetCreationTime (path, new DateTime (1000, 12, 12, 11, 59, 59));
+		}
+
+		[Test]
+		[ExpectedException(typeof (IOException))]
+		public void SetCreationTimeIOException1 ()
+		{
+			string path = "resources" + Path.DirectorySeparatorChar + "CreationTimeIOException1";
+			DeleteFile (path);
+			File.Create (path);
+			File.SetCreationTime (path, new DateTime (1000, 12, 12, 11, 59, 59));
+		}
+
+		[Test]
+		[ExpectedException(typeof (ArgumentNullException))]
+		public void SetCreationTimeUtcArgumentNullException1 ()
+		{
+			File.SetCreationTimeUtc (null as string, new DateTime (2000, 12, 12, 11, 59, 59));
+		}
+
+		[Test]
+		[ExpectedException(typeof (ArgumentException))]
+		public void SetCreationTimeUtcArgumenException1 ()
+		{
+			File.SetCreationTimeUtc ("", new DateTime (2000, 12, 12, 11, 59, 59));
+		}
+
+		[Test]
+		[ExpectedException(typeof (ArgumentException))]
+		public void SetCreationTimeUtcArgumenException2 ()
+		{
+			File.SetCreationTimeUtc ("     ", new DateTime (2000, 12, 12, 11, 59, 59));
+		}
+
+		[Test]
+		[ExpectedException(typeof (ArgumentException))]
+		public void SetCreationTimeUtcArgumenException3 ()
+		{
+			File.SetCreationTimeUtc (Path.InvalidPathChars [1].ToString (), new DateTime (2000, 12, 12, 11, 59, 59));
+		}
+
+		[Test]
+		[ExpectedException(typeof (FileNotFoundException))]
+		public void SetCreationTimeUtcFileNotFoundException1 ()
+		{
+			string path = "resources" + Path.DirectorySeparatorChar + "SetCreationTimeUtcFileNotFoundException1";
+			DeleteFile (path);
+			
+			File.SetCreationTimeUtc (path, new DateTime (2000, 12, 12, 11, 59, 59));
+		}
+
+		[Test]
+		[ExpectedException(typeof (ArgumentOutOfRangeException))]
+		public void SetCreationTimeUtcArgumentOutOfRangeException1 ()
+		{
+			string path = "resources" + Path.DirectorySeparatorChar + "SetCreationTimeUtcArgumentOutOfRangeException1";
+			DeleteFile (path);
+			File.Create (path).Close ();
+			File.SetCreationTimeUtc (path, new DateTime (1000, 12, 12, 11, 59, 59));
+		}
+
+		[Test]
+		[ExpectedException(typeof (IOException))]
+		public void SetCreationTimeUtcIOException1 ()
+		{
+			string path = "resources" + Path.DirectorySeparatorChar + "SetCreationTimeUtcIOException1";
+			DeleteFile (path);
+			File.Create (path);
+			File.SetCreationTimeUtc (path, new DateTime (1000, 12, 12, 11, 59, 59));
+		}
+
+		// SetLastAccessTime and SetLastAccessTimeUtc exceptions
+
+		[Test]
+		[ExpectedException(typeof (ArgumentNullException))]
+		public void SetLastAccessTimeArgumentNullException1 ()
+		{
+			File.SetLastAccessTime (null as string, new DateTime (2000, 12, 12, 11, 59, 59));
+		}
+
+		[Test]
+		[ExpectedException(typeof (ArgumentException))]
+		public void SetLastAccessTimeArgumenException1 ()
+		{
+			File.SetLastAccessTime ("", new DateTime (2000, 12, 12, 11, 59, 59));
+		}
+
+		[Test]
+		[ExpectedException(typeof (ArgumentException))]
+		public void SetLastAccessTimeArgumenException2 ()
+		{
+			File.SetLastAccessTime ("     ", new DateTime (2000, 12, 12, 11, 59, 59));
+		}
+
+		[Test]
+		[ExpectedException(typeof (ArgumentException))]
+		public void SetLastAccessTimeArgumenException3 ()
+		{
+			File.SetLastAccessTime (Path.InvalidPathChars [1].ToString (), new DateTime (2000, 12, 12, 11, 59, 59));
+		}
+
+		[Test]
+		[ExpectedException(typeof (FileNotFoundException))]
+		public void SetLastAccessTimeFileNotFoundException1 ()
+		{
+			string path = "resources" + Path.DirectorySeparatorChar + "SetLastAccessTimeFileNotFoundException1";
+			DeleteFile (path);
+			
+			File.SetLastAccessTime (path, new DateTime (2000, 12, 12, 11, 59, 59));
+		}
+
+		[Test]
+		[ExpectedException(typeof (ArgumentOutOfRangeException))]
+		public void SetLastAccessTimeArgumentOutOfRangeException1 ()
+		{
+			string path = "resources" + Path.DirectorySeparatorChar + "SetLastTimeArgumentOutOfRangeException1";
+			DeleteFile (path);
+			File.Create (path).Close ();
+			File.SetLastAccessTime (path, new DateTime (1000, 12, 12, 11, 59, 59));
+		}
+
+		[Test]
+		[ExpectedException(typeof (IOException))]
+		public void SetLastAccessTimeIOException1 ()
+		{
+			string path = "resources" + Path.DirectorySeparatorChar + "LastAccessIOException1";
+			DeleteFile (path);
+			File.Create (path);
+			File.SetLastAccessTime (path, new DateTime (1000, 12, 12, 11, 59, 59));
+		}
+
+		[Test]
+		[ExpectedException(typeof (ArgumentNullException))]
+		public void SetLastAccessTimeUtcArgumentNullException1 ()
+		{
+			File.SetLastAccessTimeUtc (null as string, new DateTime (2000, 12, 12, 11, 59, 59));
+		}
+
+		[Test]
+		[ExpectedException(typeof (ArgumentException))]
+		public void SetCLastAccessTimeUtcArgumenException1 ()
+		{
+			File.SetLastAccessTimeUtc ("", new DateTime (2000, 12, 12, 11, 59, 59));
+		}
+
+		[Test]
+		[ExpectedException(typeof (ArgumentException))]
+		public void SetLastAccessTimeUtcArgumenException2 ()
+		{
+			File.SetLastAccessTimeUtc ("     ", new DateTime (2000, 12, 12, 11, 59, 59));
+		}
+
+		[Test]
+		[ExpectedException(typeof (ArgumentException))]
+		public void SetLastAccessTimeUtcArgumenException3 ()
+		{
+			File.SetLastAccessTimeUtc (Path.InvalidPathChars [1].ToString (), new DateTime (2000, 12, 12, 11, 59, 59));
+		}
+
+		[Test]
+		[ExpectedException(typeof (FileNotFoundException))]
+		public void SetLastAccessTimeUtcFileNotFoundException1 ()
+		{
+			string path = "resources" + Path.DirectorySeparatorChar + "SetLastAccessTimeUtcFileNotFoundException1";
+			DeleteFile (path);
+			
+			File.SetLastAccessTimeUtc (path, new DateTime (2000, 12, 12, 11, 59, 59));
+		}
+
+		[Test]
+		[ExpectedException(typeof (ArgumentOutOfRangeException))]
+		public void SetLastAccessTimeUtcArgumentOutOfRangeException1 ()
+		{
+			string path = "resources" + Path.DirectorySeparatorChar + "SetLastAccessTimeUtcArgumentOutOfRangeException1";
+			DeleteFile (path);
+			File.Create (path).Close ();
+			File.SetLastAccessTimeUtc (path, new DateTime (1000, 12, 12, 11, 59, 59));
+		}
+
+		[Test]
+		[ExpectedException(typeof (IOException))]
+		public void SetLastAccessTimeUtcIOException1 ()
+		{
+			string path = "resources" + Path.DirectorySeparatorChar + "SetLastAccessTimeUtcIOException1";
+			DeleteFile (path);
+			File.Create (path);
+			File.SetLastAccessTimeUtc (path, new DateTime (1000, 12, 12, 11, 59, 59));
+		}
+
+		// SetLastWriteTime and SetLastWriteTimeUtc exceptions
+
+		[Test]
+		[ExpectedException(typeof (ArgumentNullException))]
+		public void SetLastWriteTimeArgumentNullException1 ()
+		{
+			File.SetLastWriteTime (null as string, new DateTime (2000, 12, 12, 11, 59, 59));
+		}
+
+		[Test]
+		[ExpectedException(typeof (ArgumentException))]
+		public void SetLastWriteTimeArgumenException1 ()
+		{
+			File.SetLastWriteTime ("", new DateTime (2000, 12, 12, 11, 59, 59));
+		}
+
+		[Test]
+		[ExpectedException(typeof (ArgumentException))]
+		public void SetLastWriteTimeArgumenException2 ()
+		{
+			File.SetLastWriteTime ("     ", new DateTime (2000, 12, 12, 11, 59, 59));
+		}
+
+		[Test]
+		[ExpectedException(typeof (ArgumentException))]
+		public void SetLastWriteTimeArgumenException3 ()
+		{
+			File.SetLastWriteTime (Path.InvalidPathChars [1].ToString (), new DateTime (2000, 12, 12, 11, 59, 59));
+		}
+
+		[Test]
+		[ExpectedException(typeof (FileNotFoundException))]
+		public void SetLastWriteTimeFileNotFoundException1 ()
+		{
+			string path = "resources" + Path.DirectorySeparatorChar + "SetLastWriteTimeFileNotFoundException1";
+			DeleteFile (path);
+			
+			File.SetLastWriteTime (path, new DateTime (2000, 12, 12, 11, 59, 59));
+		}
+
+		[Test]
+		[ExpectedException(typeof (ArgumentOutOfRangeException))]
+		public void SetLastWriteTimeArgumentOutOfRangeException1 ()
+		{
+			string path = "resources" + Path.DirectorySeparatorChar + "SetLastWriteTimeArgumentOutOfRangeException1";
+			DeleteFile (path);
+			File.Create (path).Close ();
+			File.SetLastWriteTime (path, new DateTime (1000, 12, 12, 11, 59, 59));
+		}
+
+		[Test]
+		[ExpectedException(typeof (IOException))]
+		public void SetLastWriteTimeIOException1 ()
+		{
+			string path = "resources" + Path.DirectorySeparatorChar + "LastWriteTimeIOException1";
+			DeleteFile (path);
+			File.Create (path);
+			File.SetLastWriteTime (path, new DateTime (1000, 12, 12, 11, 59, 59));
+		}
+
+		[Test]
+		[ExpectedException(typeof (ArgumentNullException))]
+		public void SetLastWriteTimeUtcArgumentNullException1 ()
+		{
+			File.SetLastWriteTimeUtc (null as string, new DateTime (2000, 12, 12, 11, 59, 59));
+		}
+
+		[Test]
+		[ExpectedException(typeof (ArgumentException))]
+		public void SetCLastWriteTimeUtcArgumenException1 ()
+		{
+			File.SetLastWriteTimeUtc ("", new DateTime (2000, 12, 12, 11, 59, 59));
+		}
+
+		[Test]
+		[ExpectedException(typeof (ArgumentException))]
+		public void SetLastWriteTimeUtcArgumenException2 ()
+		{
+			File.SetLastWriteTimeUtc ("     ", new DateTime (2000, 12, 12, 11, 59, 59));
+		}
+
+		[Test]
+		[ExpectedException(typeof (ArgumentException))]
+		public void SetLastWriteTimeUtcArgumenException3 ()
+		{
+			File.SetLastWriteTimeUtc (Path.InvalidPathChars [1].ToString (), new DateTime (2000, 12, 12, 11, 59, 59));
+		}
+
+		[Test]
+		[ExpectedException(typeof (FileNotFoundException))]
+		public void SetLastWriteTimeUtcFileNotFoundException1 ()
+		{
+			string path = "resources" + Path.DirectorySeparatorChar + "SetLastWriteTimeUtcFileNotFoundException1";
+			DeleteFile (path);
+			
+			File.SetLastAccessTimeUtc (path, new DateTime (2000, 12, 12, 11, 59, 59));
+		}
+
+		[Test]
+		[ExpectedException(typeof (ArgumentOutOfRangeException))]
+		public void SetLastWriteTimeUtcArgumentOutOfRangeException1 ()
+		{
+			string path = "resources" + Path.DirectorySeparatorChar + "SetLastWriteTimeUtcArgumentOutOfRangeException1";
+			DeleteFile (path);
+			File.Create (path).Close ();
+			File.SetLastWriteTimeUtc (path, new DateTime (1000, 12, 12, 11, 59, 59));
+		}
+
+		[Test]
+		[ExpectedException(typeof (IOException))]
+		public void SetLastWriteTimeUtcIOException1 ()
+		{
+			string path = "resources" + Path.DirectorySeparatorChar + "SetLastWriteTimeUtcIOException1";
+			DeleteFile (path);
+			File.Create (path);
+			File.SetLastAccessTimeUtc (path, new DateTime (1000, 12, 12, 11, 59, 59));
+		}
 
 		private void DeleteFile (string path)
 		{
