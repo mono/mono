@@ -875,7 +875,7 @@ namespace Mono.Xml.Schema
 					break;
 				default:
 					if (xsiTypeName == null &&
-						(schemas.Contains (reader.NamespaceURI) ||
+						(schemas.Contains (reader.NamespaceURI) &&
 						!schemas.MissedSubComponents (reader.NamespaceURI)))
 						HandleError ("Element declaration for " + reader.LocalName + " is missing.");
 					break;
@@ -1653,6 +1653,8 @@ namespace Mono.Xml.Schema
 			currentQName = null;
 			thisElementId = null;
 			defaultAttributes = new XmlSchemaAttribute [0];
+			if (!schemas.IsCompiled)
+				schemas.Compile ();
 			if (popContext) {
 				elementQNameStack.RemoveAt (elementQNameStack.Count - 1);
 				popContext = false;
