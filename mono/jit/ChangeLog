@@ -1,4 +1,6 @@
-2002-12-02  root  <dietmar@ximian.com>
+2002-12-02  Dietmar Maurer  <dietmar@ximian.com>
+
+	* jit.c (mono_analyze_stack): added some additinal checks to verify IL code
 
 	* x86.brg (stmt): POP floating point stack correctly
 
