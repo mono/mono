@@ -913,7 +913,8 @@ namespace System.Data {
 				}
 			}
 			// Otherwise, read as dataset... but only when required.
-			bool inferedSchema = false;
+			XmlReadMode explicitReturnMode = XmlReadMode.Auto;
+			XmlDocument doc;
 			switch (mode) {
 			case XmlReadMode.Auto:
 				if (Tables.Count > 0)
@@ -921,8 +922,7 @@ namespace System.Data {
 				else
 					goto case XmlReadMode.InferSchema;
 			case XmlReadMode.InferSchema:
-#if true // sync with the switch immediately below
-				XmlDocument doc = new XmlDocument ();
+				doc = new XmlDocument ();
 				do {
 					doc.AppendChild (doc.ReadNode (reader));
 					reader.MoveToContent ();
@@ -931,8 +931,24 @@ namespace System.Data {
 				} while (!reader.EOF);
 				InferXmlSchema (doc, null);
 				reader = new XmlNodeReader (doc);
-#endif
-				inferedSchema = true;
+				explicitReturnMode = XmlReadMode.InferSchema;
+				break;
+			case XmlReadMode.ReadSchema:
+				doc = new XmlDocument ();
+				do {
+					doc.AppendChild (doc.ReadNode (reader));
+					reader.MoveToContent ();
+					if (doc.DocumentElement != null)
+						break;
+				} while (!reader.EOF);
+				if (doc.DocumentElement != null) {
+					XmlElement schema = doc.DocumentElement ["schema", XmlSchema.Namespace] as XmlElement;
+					if (schema != null) {
+						ReadXmlSchema (new XmlNodeReader (schema));
+						explicitReturnMode = XmlReadMode.ReadSchema;
+					}
+				}
+				reader = new XmlNodeReader (doc);
 				break;
 			case XmlReadMode.IgnoreSchema:
 			case XmlReadMode.Fragment:
@@ -941,15 +957,11 @@ namespace System.Data {
 				reader.Skip ();
 				return mode;
 			}
-#if true // sync with the switch immediately above
+
 			XmlDataReader.ReadXml (this, reader, mode);
-			if (inferedSchema)
-				return XmlReadMode.InferSchema;
+			if (explicitReturnMode != XmlReadMode.Auto)
+				return explicitReturnMode;
 			return mode == XmlReadMode.Auto ? XmlReadMode.IgnoreSchema : mode;
-#else
-			XmlDataLoader Loader = new XmlDataLoader (this);
-			return Loader.LoadData (reader, mode);
-#endif
 		}
 		#endregion // Public Methods
 

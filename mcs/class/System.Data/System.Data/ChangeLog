@@ -1,3 +1,10 @@
+2004-06-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataSet.cs : Fixed ReadXml(). When ReadMode is ReadSchema and the
+	  schema is inside the document element (as created in XmlWriteMode
+	  .WriteSchema), it should read schema from that non-document element.
+	  This fixes one case reported in bug #60470.
+
 2004-06-20  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlDataInferenceLoader.cs : Kindly reject xml schema document as a
