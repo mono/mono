@@ -7,7 +7,7 @@
 //
 // Copyright (C) Brian Ritchie, 2002
 // 
-//
+
 using System;
 using System.Xml;
 using System.Configuration;
@@ -19,8 +19,10 @@ namespace Mono.Data
 		public virtual object Create(object parent,object configContext,XmlNode section)
 		{
 			ProviderCollection providers=new ProviderCollection();
-			foreach (XmlElement ProviderNode in section.ChildNodes)
-			{
+			
+			XmlNodeList ProviderList = section.SelectNodes ("./provider");
+
+			foreach (XmlNode ProviderNode in ProviderList) {
 				Provider provider=new Provider(
 					GetStringValue(ProviderNode,"name",true),
 					GetStringValue(ProviderNode,"connection",true),
@@ -36,8 +38,7 @@ namespace Mono.Data
 		private string GetStringValue(XmlNode _node, string _attribute, bool required)
 		{
 			XmlNode a = _node.Attributes.RemoveNamedItem(_attribute);
-			if(a==null)
-			{
+			if (a == null) {
 				if (required)
 					throw new ConfigurationException("Attribute required: " + _attribute);
 				else
@@ -47,3 +48,4 @@ namespace Mono.Data
 		}
 	}
 }
+
