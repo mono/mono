@@ -444,7 +444,7 @@ namespace Mono.CSharp {
 		// from classes from the arraylist `type_bases' 
 		//
 		string     base_class_name;
-		public Type base_class_type;
+		TypeExpr parent_type;
 
 		ArrayList type_bases;
 
@@ -452,8 +452,8 @@ namespace Mono.CSharp {
 		bool members_defined_ok;
 
 		// The interfaces we implement.
-		TypeExpr [] ifaces;
-		protected Type[] base_inteface_types;
+		protected Type [] ifaces;
+		protected Type ptype;
 
 		// The parent member container and our member cache
 		IMemberContainer parent_container;
@@ -1115,7 +1115,7 @@ namespace Mono.CSharp {
 						      Name);
 			}
 
-			return TypeManager.ExpandInterfaces (ifaces);
+			return ifaces;
 		}
 
 		bool error = false;
@@ -1125,8 +1125,6 @@ namespace Mono.CSharp {
 		//
 		public override TypeBuilder DefineType ()
 		{
-			TypeExpr parent;
-
 			if (TypeBuilder != null)
 				return TypeBuilder;
 
@@ -1143,16 +1141,16 @@ namespace Mono.CSharp {
 
 			ec = new EmitContext (this, Mono.CSharp.Location.Null, null, null, ModFlags);
 
-			ifaces = GetClassBases (out parent, out error); 
+			TypeExpr[] iface_exprs = GetClassBases (out parent_type, out error);
 			if (error)
 				return null;
 
-			if (parent == null) {
+			if (parent_type == null) {
 				if (Kind == Kind.Class){
 					if (RootContext.StdLib)
-						parent = TypeManager.system_object_expr;
+						parent_type = TypeManager.system_object_expr;
 					else if (Name != "System.Object")
-						parent = TypeManager.system_object_expr;
+						parent_type = TypeManager.system_object_expr;
 				} else if (Kind == Kind.Struct) {
 					//
 					// If we are compiling our runtime,
@@ -1160,9 +1158,9 @@ namespace Mono.CSharp {
 					// parent is `System.Object'.
 					//
 					if (!RootContext.StdLib && Name == "System.ValueType")
-						parent = TypeManager.system_object_expr;
+						parent_type = TypeManager.system_object_expr;
 					else
-						parent = TypeManager.system_valuetype_expr;
+						parent_type = TypeManager.system_valuetype_expr;
 				}
 			}
 
@@ -1171,9 +1169,9 @@ namespace Mono.CSharp {
 
 			TypeAttributes type_attributes = TypeAttr;
 
-			if (parent != null) {
-				base_class_type = parent.ResolveType (ec);
-				if (base_class_type == null) {
+			if (parent_type != null) {
+				ptype = parent_type.ResolveType (ec);
+				if (ptype == null) {
 					error = true;
 					return null;
 				}
@@ -1188,7 +1186,7 @@ namespace Mono.CSharp {
 				
 					ModuleBuilder builder = CodeGen.Module.Builder;
 					TypeBuilder = builder.DefineType (
-						Name, type_attributes, base_class_type, null);
+						Name, type_attributes, ptype, null);
 				
 				} else {
 					TypeBuilder builder = Parent.DefineType ();
@@ -1196,7 +1194,7 @@ namespace Mono.CSharp {
 						return null;
 				
 					TypeBuilder = builder.DefineNestedType (
-						Basename, type_attributes, base_class_type, null);
+						Basename, type_attributes, ptype, null);
 				}
 			}
 			catch (ArgumentException) {
@@ -1217,20 +1215,17 @@ namespace Mono.CSharp {
 			}
 
 			// add interfaces that were not added at type creation
-			if (ifaces != null) {
-				base_inteface_types = new Type[ifaces.Length];
-				for (int i = 0; i < ifaces.Length; ++i) {
-					Type itype = ifaces [i].ResolveType (ec);
-					if (itype == null) {
-						error = true;
-						continue;
-					}
-					TypeBuilder.AddInterfaceImplementation (itype);
-					base_inteface_types [i] = itype;
+			if (iface_exprs != null) {
+				ifaces = TypeManager.ExpandInterfaces (ec, iface_exprs);
+				if (ifaces == null) {
+					error = true;
+					return null;
 				}
 
-				if (error)
-					return null;
+				foreach (Type itype in ifaces)
+					TypeBuilder.AddInterfaceImplementation (itype);
+
+				TypeManager.RegisterBuilder (TypeBuilder, ifaces);
 			}
 
 			//
@@ -1238,9 +1233,9 @@ namespace Mono.CSharp {
 			//
 			ec.ContainerType = TypeBuilder;
 
-			TypeManager.AddUserType (Name, TypeBuilder, this, ifaces);
+			TypeManager.AddUserType (Name, TypeBuilder, this);
 
-			if ((parent != null) && parent.IsAttribute) {
+			if ((parent_type != null) && parent_type.IsAttribute) {
 				RootContext.RegisterAttribute (this);
 			} else if (!(this is Iterator))
 				RootContext.RegisterOrder (this); 
@@ -1283,7 +1278,7 @@ namespace Mono.CSharp {
 			if (Parts != null) {
 				foreach (ClassPart part in Parts) {
 					part.TypeBuilder = TypeBuilder;
-					part.base_class_type = base_class_type;
+					part.ptype = ptype;
 					part.ec = new EmitContext (part, Mono.CSharp.Location.Null, null, null, ModFlags);
 				}
 			}
@@ -1929,8 +1924,8 @@ namespace Mono.CSharp {
 						members.AddRange (list);
 					}
 				}
-				if (base_inteface_types != null) {
-					foreach (Type base_type in base_inteface_types) {
+				if (ifaces != null) {
+					foreach (Type base_type in ifaces) {
 						MemberList list = TypeContainer.FindMembers (base_type, mt, bf, filter, criteria);
 
 						if (list.Count > 0) {
@@ -2343,8 +2338,8 @@ namespace Mono.CSharp {
 			bool found = false;
 
 			if (ifaces != null){
-				foreach (TypeExpr t in ifaces){
-					if (t.Type == interface_type){
+				foreach (Type t in ifaces){
+					if (t == interface_type){
 						found = true;
 						break;
 					}
@@ -2361,13 +2356,13 @@ namespace Mono.CSharp {
 
 		protected override void VerifyObsoleteAttribute()
 		{
-			CheckUsageOfObsoleteAttribute (base_class_type);
+			CheckUsageOfObsoleteAttribute (ptype);
 
 			if (ifaces == null)
 				return;
 
-			foreach (TypeExpr expr in ifaces) {
-				CheckUsageOfObsoleteAttribute (expr.Type);
+			foreach (Type iface in ifaces) {
+				CheckUsageOfObsoleteAttribute (iface);
 			}
 		}
 
@@ -2710,13 +2705,13 @@ namespace Mono.CSharp {
 			if (tb == null)
 				return null;
 
-			if (base_class_type != TypeManager.object_type) {
-				Report.Error (713, Location, "Static class '{0}' cannot derive from type '{1}'. Static classes must derive from object", GetSignatureForError (), TypeManager.CSharpName (base_class_type));
+			if (ptype != TypeManager.object_type) {
+				Report.Error (713, Location, "Static class '{0}' cannot derive from type '{1}'. Static classes must derive from object", GetSignatureForError (), TypeManager.CSharpName (ptype));
 				return null;
 			}
 
-			if (base_inteface_types != null) {
-				foreach (Type t in base_inteface_types)
+			if (ifaces != null) {
+				foreach (Type t in ifaces)
 					Report.SymbolRelatedToPreviousError (t);
 				Report.Error (714, Location, "'{0}': static classes cannot implement interfaces", GetSignatureForError ());
 			}
@@ -2775,7 +2770,7 @@ namespace Mono.CSharp {
 		public override void ApplyAttributeBuilder(Attribute a, CustomAttributeBuilder cb)
 		{
 			if (a.UsageAttribute != null) {
-				if (base_class_type != TypeManager.attribute_type && !base_class_type.IsSubclassOf (TypeManager.attribute_type) &&
+				if (ptype != TypeManager.attribute_type && !ptype.IsSubclassOf (TypeManager.attribute_type) &&
 					TypeBuilder.FullName != "System.Attribute") {
 					Report.Error (641, a.Location, "Attribute '{0}' is only valid on classes derived from System.Attribute", a.Name);
 				}
@@ -3984,7 +3979,7 @@ namespace Mono.CSharp {
 			if (parent_constructor == null)
 				return;
 
-			TypeContainer type_ds = TypeManager.LookupTypeContainer (tc.base_class_type);
+			TypeContainer type_ds = TypeManager.LookupTypeContainer (tc.TypeBuilder.BaseType);
 			if (type_ds == null) {
 				ObsoleteAttribute oa = AttributeTester.GetMemberObsoleteAttribute (parent_constructor);
 

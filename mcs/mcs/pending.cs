@@ -229,7 +229,7 @@ namespace Mono.CSharp {
 			//
 			// Completely broken.  So we do it ourselves!
 			//
-			TypeExpr [] impl = TypeManager.GetExplicitInterfaces (type_builder);
+			Type [] impl = TypeManager.GetExplicitInterfaces (type_builder);
 
 			if (impl == null || impl.Length == 0)
 				return EmptyMissingInterfacesInfo;
@@ -237,7 +237,7 @@ namespace Mono.CSharp {
 			MissingInterfacesInfo [] ret = new MissingInterfacesInfo [impl.Length];
 
 			for (int i = 0; i < impl.Length; i++)
-				ret [i] = new MissingInterfacesInfo (impl [i].Type);
+				ret [i] = new MissingInterfacesInfo (impl [i]);
 			
 			// we really should not get here because Object doesnt implement any
 			// interfaces. But it could implement something internal, so we have
@@ -245,11 +245,9 @@ namespace Mono.CSharp {
 			if (type_builder.BaseType == null)
 				return ret;
 			
-			TypeExpr [] parent_impls = TypeManager.GetInterfaces (type_builder.BaseType);
+			Type [] parent_impls = TypeManager.GetInterfaces (type_builder.BaseType);
 			
-			foreach (TypeExpr te in parent_impls) {
-				Type t = te.Type;
-				
+			foreach (Type t in parent_impls) {
 				for (int i = 0; i < ret.Length; i ++) {
 					if (t == ret [i].Type) {
 						ret [i].Optional = true;

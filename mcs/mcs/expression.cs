@@ -8030,10 +8030,9 @@ namespace Mono.CSharp {
 			if (!lookup_type.IsInterface)
 				return ix;
 
-			TypeExpr [] ifaces = TypeManager.GetInterfaces (lookup_type);
+			Type [] ifaces = TypeManager.GetInterfaces (lookup_type);
 			if (ifaces != null) {
-				foreach (TypeExpr iface in ifaces) {
-					Type itype = iface.Type;
+				foreach (Type itype in ifaces) {
 					MemberInfo [] mi = GetIndexersForTypeOrInterface (caller_type, itype);
 					if (mi != null){
 						if (ix == null)

@@ -1,3 +1,23 @@
+2004-11-16  Martin Baulig  <martin@ximian.com>
+
+	Merged back from gmcs; these changes already went into gmcs a
+	couple of weeks ago.
+
+	* typemanager.cs
+	(TypeManager.AddUserType): Removed the `ifaces' argument.
+	(TypeManager.RegisterBuilder): Take a `Type []' instead of a
+	`TypeExpr []'.
+	(TypeManager.AddUserInterface): Removed.
+	(TypeManager.ExpandInterfaces): Return a `Type []' instead of a
+	`TypeExpr []'.
+	(TypeManager.GetInterfaces): Likewise.
+	(TypeManager.GetExplicitInterfaces): Likewise.
+
+	* ecore.cs (TypeExpr.GetInterfaces): Removed.
+
+	* class.cs (TypeContainer.base_class_type): Replaced with `ptype'.
+	(TypeContainer.base_inteface_types): Replaced with `ifaces'.
+
 2004-11-14  Ben Maurer  <bmaurer@ximian.com>
 
 	* statement.cs: Avoid adding bools to a hashtable.

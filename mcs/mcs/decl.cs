@@ -1350,11 +1350,9 @@ namespace Mono.CSharp {
 		Hashtable SetupCacheForInterface (MemberCache parent)
 		{
 			Hashtable hash = SetupCache (parent);
-			TypeExpr [] ifaces = TypeManager.GetInterfaces (Container.Type);
+			Type [] ifaces = TypeManager.GetInterfaces (Container.Type);
 
-			foreach (TypeExpr iface in ifaces) {
-				Type itype = iface.Type;
-
+			foreach (Type itype in ifaces) {
 				IMemberContainer iface_container =
 					TypeManager.LookupMemberContainer (itype);
 
