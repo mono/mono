@@ -1,9 +1,11 @@
 2002-10-30  Miguel de Icaza  <miguel@ximian.com>
 
-	* expression.cs (ParameterReference.DoResolve, DoResolveLValue):
-	Do not use ISBYREF because that is a flag that says that either
-	REF or OUT are set, use REF when we mean ref.
+	* support.cs: Return proper flags REF/OUT fixing the previous
+	commit.  
 
+	* expression.cs: Reverted last patch, that was wrong.  Is_ref is
+	not used to mean `ref' but `ref or out' in ParameterReference
+	
 	* delegate.cs (FullDelegateDesc): use ParameterDesc to get the
 	full type signature instead of calling TypeManger.CSharpName
 	ourselves. 

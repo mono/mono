@@ -3011,7 +3011,7 @@ namespace Mono.CSharp {
 		public override Expression DoResolve (EmitContext ec)
 		{
 			type = pars.GetParameterInfo (ec.DeclSpace, idx, out mod);
-			is_ref = (mod & Parameter.Modifier.REF) != 0;
+			is_ref = (mod & Parameter.Modifier.ISBYREF) != 0;
 			is_out = (mod & Parameter.Modifier.OUT) != 0;
 			eclass = ExprClass.Variable;
 
@@ -3024,7 +3024,7 @@ namespace Mono.CSharp {
 		override public Expression DoResolveLValue (EmitContext ec, Expression right_side)
 		{
 			type = pars.GetParameterInfo (ec.DeclSpace, idx, out mod);
-			is_ref = (mod & Parameter.Modifier.REF) != 0;
+			is_ref = (mod & Parameter.Modifier.ISBYREF) != 0;
 			is_out = (mod & Parameter.Modifier.OUT) != 0;
 			eclass = ExprClass.Variable;
 

@@ -34,7 +34,6 @@ namespace Mono.CSharp {
 			object [] attrs;
 			
 			this.pi = pi;
-
 			int count = pi.Length-1;
 
 			if (count >= 0) {
@@ -95,14 +94,10 @@ namespace Mono.CSharp {
 			
 			Type t = pi [pos].ParameterType;
 			if (t.IsByRef){
-				//
-				// FIXME: this is broken, it should return one of:
-				//  ISBYREF | REF
-				//  ISBYREF | OUT
-				//
-				// How can we tell them apart?
-				//
-				return Parameter.Modifier.ISBYREF;
+				if ((pi [pos].Attributes & ParameterAttributes.Out) != 0)
+					return Parameter.Modifier.ISBYREF | Parameter.Modifier.OUT;
+				else
+					return Parameter.Modifier.ISBYREF | Parameter.Modifier.REF;
 			}
 			
 			return Parameter.Modifier.NONE;
