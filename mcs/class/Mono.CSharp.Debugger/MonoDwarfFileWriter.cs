@@ -1694,8 +1694,8 @@ namespace Mono.CSharp.Debugger
 					new AbbrevEntry (DW_AT.AT_type, DW_FORM.FORM_ref4),
 					new AbbrevEntry (DW_AT.AT_external, DW_FORM.FORM_flag),
 					new AbbrevEntry (DW_AT.AT_location, DW_FORM.FORM_block4),
-					new AbbrevEntry (DW_AT.AT_start_scope, DW_FORM.FORM_data4),
-					new AbbrevEntry (DW_AT.AT_end_scope, DW_FORM.FORM_data4)
+					new AbbrevEntry (DW_AT.AT_start_scope, DW_FORM.FORM_addr),
+					new AbbrevEntry (DW_AT.AT_end_scope, DW_FORM.FORM_addr)
 				};
 				AbbrevEntry[] entries_2 = {
 					new AbbrevEntry (DW_AT.AT_name, DW_FORM.FORM_string),
@@ -1818,10 +1818,10 @@ namespace Mono.CSharp.Debugger
 			{
 				dw.AddRelocEntry (RelocEntryType.VARIABLE_START_SCOPE,
 						  var.Token, var.Index);
-				aw.WriteUInt32 (0);
+				aw.WriteAddress (0);
 				dw.AddRelocEntry (RelocEntryType.VARIABLE_END_SCOPE,
 						  var.Token, var.Index);
-				aw.WriteUInt32 (0);
+				aw.WriteAddress (0);
 			}
 		}
 
