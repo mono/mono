@@ -1,3 +1,7 @@
+2004-07-08  Jackson Harper  <jackson@ximian.com>
+
+	* main.c: Spaces after visibility types.
+	
 2004-07-06  Jackson Harper  <jackson@ximian.com>
 
 	* get.c: Add float cast for outputing floats. Patch by Steve Brown.
