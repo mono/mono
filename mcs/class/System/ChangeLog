@@ -1,3 +1,14 @@
+2004-12-02  Geoff Norton  <gnorton@customerdna.com>
+
+	* System.IO/KeventWatcher.cs: Add IDisposable to our kevent struct
+	so the disposer gets called.  Fixes a small memory leak.  Dont monitor
+	LastAccessedTime for changed files, as this will cause AppUnloading in XSP
+	when global.asax is accessed after creation.  Use a case-insensitive IsMatch
+	to deal with OSX Case-aware/Case-insensitive filesystem.
+	* System.IO/SearchPattern.cs: Add a overload to IsMatch to explicitly set
+	the ignore field for OSX case-aware yet case-insensitive filesystem.  This
+	allows monitoring of global.asax to happen properly.
+
 2004-12-01 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* System_test.dll.sources: added CookieContainerTest.cs.

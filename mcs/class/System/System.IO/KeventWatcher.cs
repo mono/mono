@@ -37,7 +37,7 @@ using System.Threading;
 
 namespace System.IO {
 
-	struct kevent {
+	struct kevent : IDisposable {
 		public int ident;
 		public short filter;
 		public ushort flags;
@@ -259,7 +259,7 @@ namespace System.IO {
 					foreach (FileSystemInfo fsi in dir.GetFileSystemInfos() )
 						if (data.DirEntries.ContainsKey (fsi.FullName) && (fsi is FileInfo)) {
 							KeventFileData entry = (KeventFileData) data.DirEntries [fsi.FullName];
-							if ( (entry.LastWriteTime != fsi.LastWriteTime) || (entry.LastAccessTime != fsi.LastAccessTime) ) {
+							if (entry.LastWriteTime != fsi.LastWriteTime) {
 								filename = fsi.Name;
 								fa = FileAction.Modified;
 								data.DirEntries [fsi.FullName] = new KeventFileData(fsi, fsi.LastAccessTime, fsi.LastWriteTime);
@@ -330,7 +330,7 @@ namespace System.IO {
 				}
 			}
 		
-			if (!fsw.Pattern.IsMatch(filename))
+			if (!fsw.Pattern.IsMatch(filename, true))
 				return;
 
 			lock (fsw) {
