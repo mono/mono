@@ -1,3 +1,8 @@
+2003-10-05  Zoltan Varga  <vargaz@freemail.hu>
+
+	* inssel.brg: The empty value in class->interface_offsets is -1, not
+	0. Fixes #49287.
+
 2003-10-03  Zoltan Varga  <vargaz@freemail.hu>
 
 	* objects.cs: New test for 'is' operator on an array of interfaces.
