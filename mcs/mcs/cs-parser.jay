@@ -424,10 +424,11 @@ attribute_sections
           {
 		AttributeSection sect = (AttributeSection) $1;
 
-		if (sect.Target == "assembly")
+		if (sect.Target == "assembly") 
 			RootContext.AddGlobalAttribute (current_container, sect, lexer.Location);
-		  
-	        $$ = new Attributes ((AttributeSection) $1, lexer.Location);
+		
+
+		$$ = new Attributes ((AttributeSection) $1, lexer.Location);
           }
 	| attribute_sections attribute_section
 	  {

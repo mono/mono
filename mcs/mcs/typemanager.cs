@@ -1379,6 +1379,28 @@ public class TypeManager {
 		}
 	}
 
+	static Hashtable attr_to_allowmult;
+
+	public static void RegisterAttributeAllowMultiple (Type attr_type, bool allow)
+	{
+		if (attr_to_allowmult == null)
+			attr_to_allowmult = new PtrHashtable ();
+
+		if (attr_to_allowmult.Contains (attr_type))
+			return;
+
+		attr_to_allowmult.Add (attr_type, allow);
+			       
+	}
+
+	public static bool AreMultipleAllowed (Type attr_type)
+	{
+		if (attr_to_allowmult == null)
+			return false;
+
+		return (bool) attr_to_allowmult [attr_type];
+	}
+
 	static Hashtable builder_to_constant;
 
 	public static void RegisterConstant (FieldBuilder fb, Const c)

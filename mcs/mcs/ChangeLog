@@ -1,3 +1,24 @@
+2002-12-07  Ravi Pratap  <ravi@ximian.com>
+
+	* attribute.cs (Attribute.ApplyAttributes) : Keep track of which attribute
+	types have been emitted for a given element and flag an error
+	if something which does not have AllowMultiple set is used more
+	than once.
+
+	* typemanager.cs (RegisterAttributeAllowMultiple): Keep track of
+	attribute types and their corresponding AllowMultiple properties
+
+	(AreMultipleAllowed): Check the property for a given type.
+
+	* attribute.cs (Attribute.ApplyAttributes): Register the AllowMultiple
+	property in the case we have a TypeContainer.
+
+	(Attributes.AddAttribute): Detect duplicates and just skip on
+	adding them. This trivial fix catches a pretty gross error in our
+	attribute emission - global attributes were being emitted twice!
+
+	Bugzilla bug #33187 is now fixed.
+
 2002-12-06  Miguel de Icaza  <miguel@ximian.com>
 
 	* cs-tokenizer.cs (pp_expr): Properly recurse here (use pp_expr

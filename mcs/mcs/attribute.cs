@@ -666,6 +666,9 @@ namespace Mono.CSharp {
 		public static void ApplyAttributes (EmitContext ec, object builder, object kind,
 						    Attributes opt_attrs, Location loc)
 		{
+			ArrayList emitted_attrs = new ArrayList ();
+			Type attr_type = null;
+			
 			if (opt_attrs == null)
 				return;
 			if (opt_attrs.AttributeSections == null)
@@ -680,25 +683,35 @@ namespace Mono.CSharp {
 				
 				foreach (Attribute a in asec.Attributes) {
 					CustomAttributeBuilder cb = a.Resolve (ec);
+					attr_type = a.Type;
 
-					if (cb == null)
+					if (cb == null) 
 						continue;
-
+					
 					if (!(kind is TypeContainer))
 						if (!CheckAttribute (a, kind)) {
 							Error_AttributeNotValidForElement (a, loc);
 							return;
 						}
 
+					//
+					// Perform the check for duplicate attributes
+					//
+					if (emitted_attrs.Contains (attr_type) &&
+					    TypeManager.AreMultipleAllowed (attr_type) != true) {
+						Report.Error (579, loc, "Duplicate '" + a.Name + "' attribute");
+						return;
+					}
+
 					if (kind is Method || kind is Operator || kind is InterfaceMethod ||
 					    kind is Accessor) {
-						if (a.Type == TypeManager.methodimpl_attr_type) {
+						if (attr_type == TypeManager.methodimpl_attr_type) {
 							if (a.ImplOptions == MethodImplOptions.InternalCall)
 								((MethodBuilder) builder).
 								SetImplementationFlags (
 									MethodImplAttributes.InternalCall |
 									MethodImplAttributes.Runtime);
-						} else if (a.Type != TypeManager.dllimport_type){
+						} else if (attr_type != TypeManager.dllimport_type){
 							((MethodBuilder) builder).SetCustomAttribute (cb);
 						}
 					} else if (kind is Constructor) {
@@ -712,7 +725,7 @@ namespace Mono.CSharp {
 						((MyEventBuilder) builder).SetCustomAttribute (cb);
 					} else if (kind is ParameterBuilder) {
 
-						if (a.Type == TypeManager.marshal_as_attr_type) {
+						if (attr_type == TypeManager.marshal_as_attr_type) {
 							UnmanagedMarshal marshal =
 								UnmanagedMarshal.DefineUnmanagedMarshal (a.UnmanagedType);
 							
@@ -730,8 +743,11 @@ namespace Mono.CSharp {
 							tc.Targets = a.Targets;
 							tc.AllowMultiple = a.AllowMultiple;
 							tc.Inherited = a.Inherited;
+
+							TypeManager.RegisterAttributeAllowMultiple (tc.TypeBuilder,
+												    tc.AllowMultiple);
 							
-						} else if (a.Type == TypeManager.default_member_type) {
+						} else if (attr_type == TypeManager.default_member_type) {
 							if (tc.Indexers != null) {
 								Report.Error (646, loc,
 								      "Cannot specify the DefaultMember attribute on" +
@@ -761,7 +777,7 @@ namespace Mono.CSharp {
 					} else if (kind is Interface) {
 						Interface iface = (Interface) kind;
 
-						if ((a.Type == TypeManager.default_member_type) &&
+						if ((attr_type == TypeManager.default_member_type) &&
 						    (iface.InterfaceIndexers != null)) {
 							Report.Error (
 								646, loc,
@@ -784,7 +800,17 @@ namespace Mono.CSharp {
 						((FieldBuilder) builder).SetCustomAttribute (cb);
 					} else
 						throw new Exception ("Unknown kind: " + kind);
+
+					//
+					// Once an attribute type has been emitted once we
+					// keep track of the info to prevent multiple occurences
+					// for attributes which do not explicitly allow it
+					//
+					if (!emitted_attrs.Contains (attr_type))
+						emitted_attrs.Add (attr_type);
 				}
+				
+				
 			}
 		}
 
@@ -931,7 +957,7 @@ namespace Mono.CSharp {
 
 		public void AddAttribute (AttributeSection a)
 		{
-			if (a != null)
+			if (a != null && !AttributeSections.Contains (a))
 				AttributeSections.Add (a);
 		}
 	}
