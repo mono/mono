@@ -1,3 +1,9 @@
+2004-12-25  Zoltan Varga  <vargaz@freemail.hu>
+
+	* inssel.brg (ldind_to_load_membase): Handle CEE_LDIND_I8.
+
+	* inssel-amd64.brg: Add some optimization rules.
+
 2004-12-24  Ben Maurer  <bmaurer@ximian.com>
 
 	* aot.c: Remove the use of MonoGHashTable and other GC stuff. The
