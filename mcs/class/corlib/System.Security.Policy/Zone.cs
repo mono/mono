@@ -3,6 +3,7 @@
 //
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002 Ximian, Inc (http://www.ximian.com)
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
@@ -27,8 +28,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.IO;
 using System.Globalization;
 using System.Security.Permissions;
+
+using Mono.Security;
 
 namespace System.Security.Policy {
 
@@ -46,6 +50,14 @@ namespace System.Security.Policy {
 			this.zone = zone;
 		}
 
+		// properties
+
+		public SecurityZone SecurityZone {
+			get { return zone; }
+		}
+
+		// methods
+
 		public object Copy ()
 		{
 			return new Zone (zone);
@@ -56,16 +68,38 @@ namespace System.Security.Policy {
 			return new ZoneIdentityPermission (zone);
 		}
 
-		[MonoTODO("This depends on zone configuration in IE")]
+		[MonoTODO ("Not user configurable yet")]
 		public static Zone CreateFromUrl (string url)
 		{
 			if (url == null)
 				throw new ArgumentNullException ("url");
-			// while waiting for our own tool...
-			if (url.ToUpper ().StartsWith ("FILE://"))
-				return new Zone (SecurityZone.MyComputer);
-			else
-				return new Zone (SecurityZone.Untrusted);
+
+			SecurityZone z = SecurityZone.NoZone;
+			if (url.Length == 0)
+				return new Zone (z);
+
+			Uri uri = new Uri (url);
+			// TODO: apply zone configuration
+			// this is the only way to use the Trusted and Untrusted zones
+
+			if (z == SecurityZone.NoZone) {
+				// not part of configuration, the use default mapping
+				if (uri.IsFile) {
+					if (File.Exists (uri.LocalPath))
+						z = SecurityZone.MyComputer;
+					else
+						z = SecurityZone.Intranet;	// non accessible file:// 
+				}
+				else if (uri.IsLoopback) {			// e.g. http://localhost/x
+					z = SecurityZone.Intranet;
+				}
+				else {
+					// all protocols, including unknown ones
+					z = SecurityZone.Internet;
+				}
+			}
+
+			return new Zone (z);
 		}
 
 		public override bool Equals (object o)
@@ -83,10 +117,9 @@ namespace System.Security.Policy {
 
 		public override string ToString ()
 		{
-			SecurityElement se = new SecurityElement (GetType ().FullName);
+			SecurityElement se = new SecurityElement ("System.Security.Policy.Zone");
 			se.AddAttribute ("version", "1");
 			se.AddChild (new SecurityElement ("Zone", zone.ToString ()));
-
 			return se.ToString ();
 		}
 
@@ -109,11 +142,6 @@ namespace System.Security.Policy {
 			buffer [position++] = (char) (((int) zone) >> 16);
 			buffer [position++] = (char) (((int) zone) & 0x0FFFF);
 			return position;
-		}
-
-		public SecurityZone SecurityZone
-		{
-			get { return zone; }
 		}
 	}
 }

@@ -32,6 +32,8 @@
 using System.Globalization;
 using System.Security.Permissions;
 
+using Mono.Security;
+
 namespace System.Security.Policy {
 
         [Serializable]
@@ -42,7 +44,7 @@ namespace System.Security.Policy {
 		public Site (string name)
 		{
 			if (name == null)
-				throw new ArgumentNullException (Locale.GetText ("name is null"));
+				throw new ArgumentNullException ("url");
 			if (!IsValid (name))
 				throw new ArgumentException (Locale.GetText ("name is not valid"));
 			
@@ -51,7 +53,16 @@ namespace System.Security.Policy {
 
                 public static Site CreateFromUrl (string url)
                 {
-                        return new Site (url);
+			if (url == null)
+				throw new ArgumentNullException ("url");
+			if (url.Length == 0)
+				throw new FormatException (Locale.GetText ("Empty Url"));
+
+			string site = UrlToSite (url);
+			if (site == null)
+				throw new ArgumentException (Locale.GetText ("Invalid Url"), "url");
+
+                        return new Site (site);
                 }
 
                 public object Copy ()
@@ -79,7 +90,7 @@ namespace System.Security.Policy {
 
                 public override string ToString ()
                 {
-			SecurityElement element = new SecurityElement (typeof (System.Security.Policy.Site).FullName);
+			SecurityElement element = new SecurityElement ("System.Security.Policy.Site");
 			element.AddAttribute ("version", "1");
 			element.AddChild (new SecurityElement ("Name", origin_site));
 			return element.ToString ();
@@ -137,5 +148,21 @@ namespace System.Security.Policy {
 			}
                         return true;
                 }
+
+		// no exception - we return null if a site couldn't be created
+		// this is useful for creating the default evidence as the majority of URL will be local (file://)
+		// and throw an unrequired exception
+		internal static string UrlToSite (string url)
+		{
+			if (url == null)
+				return null;
+
+			Uri uri = new Uri (url);
+			if (uri.Scheme == Uri.UriSchemeFile)
+				return null;
+
+			string site = uri.Host;
+			return IsValid (site) ? site : null;
+		}
         }
 }

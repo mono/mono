@@ -32,21 +32,31 @@
 using System.Globalization;
 using System.Security.Permissions;
 
+using Mono.Security;
+
 namespace System.Security.Policy {
 
         [Serializable]
         public sealed class Url: IIdentityPermissionFactory, IBuiltInEvidence {
 
-                string origin_url;
+                private string origin_url;
                 
                 public Url (string name)
+			: this (name, false)
                 {
-			origin_url = Prepare (name);
                 }
+
+		internal Url (string name, bool validated) 
+		{
+			origin_url = validated ? name : Prepare (name);
+		}
+
+		// methods
 
                 public object Copy ()
                 {
-                        return new Url (origin_url);
+			// dont re-validate the Url
+                        return new Url (origin_url, true);
                 }
 
                 public IPermission CreateIdentityPermission (Evidence evidence)
@@ -68,7 +78,7 @@ namespace System.Security.Policy {
 
                 public override string ToString ()
                 {
-			SecurityElement element = new SecurityElement (typeof (System.Security.Policy.Url).FullName);
+			SecurityElement element = new SecurityElement ("System.Security.Policy.Url");
 			element.AddAttribute ("version", "1");
 			element.AddChild (new SecurityElement ("Url", origin_url));
 			return element.ToString ();
@@ -99,8 +109,7 @@ namespace System.Security.Policy {
 
 		// internal
 
-		[MonoTODO ("missing site validation")]
-		internal static string Prepare (string url) 
+		internal string Prepare (string url) 
 		{
 			if (url == null)
 				throw new ArgumentNullException ("Url");
@@ -108,31 +117,33 @@ namespace System.Security.Policy {
 				throw new FormatException (Locale.GetText ("Invalid (empty) Url"));
 
 			// is a protocol specified
-			int protocolPos = url.IndexOf ("://");
-			if (protocolPos == -1)
-				return "file://" + url.ToUpperInvariant ();
-			
-			if (url.StartsWith ("file://"))
-				return "file://" + url.Substring (7).ToUpperInvariant ();
-
-			// add a trailing slash if none (lonely one) is present
-			if (url.LastIndexOf ("/") == protocolPos + 2)
-				return url + "/";
-			else
-				return url;
-		}
-
-		internal static bool Compare (string mask, string url) 
-		{
-			int wildcard = mask.LastIndexOf ("*");
-			if (wildcard > 0) {
-				// partial match with a wildcard at the end
-				return (String.Compare (mask, 0, url, 0, wildcard, true, CultureInfo.InvariantCulture) == 0);
+			int protocolPos = url.IndexOf (Uri.SchemeDelimiter);	// '://'
+			if (protocolPos > 0) {
+				if (url.StartsWith ("file://")) {
+					// convert file url into uppercase
+					url = "file://" + url.Substring (7).ToUpperInvariant ();
+				}
+				else {
+					// add a trailing slash if none (lonely one) is present
+					if (url.LastIndexOf ("/") == protocolPos + 2)
+						url += "/";
+				}
 			}
 			else {
-				// exact match
-				return (String.Compare (mask, url, true, CultureInfo.InvariantCulture) == 0);
+				// add file scheme (default) and convert url to uppercase
+				url = "file://" + url.ToUpperInvariant ();
 			}
+
+			// don't escape and don't reduce (e.g. '.' and '..')
+			Uri uri = new Uri (url, false, false);
+			if ((uri.Host.IndexOf ('*') < 0) || (uri.Host.Length < 2)) // lone star case
+				url = uri.ToString ();
+			else {
+				string msg = Locale.GetText ("Invalid * character in url");
+				throw new ArgumentException (msg, "name");
+			}
+
+			return url;
 		}
-        }
+       }
 }

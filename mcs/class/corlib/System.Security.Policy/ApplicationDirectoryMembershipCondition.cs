@@ -30,8 +30,11 @@
 //
 
 using System.Collections;
+using System.Globalization;
 using System.IO;
 using System.Reflection;
+
+using Mono.Security;
 
 namespace System.Security.Policy {
 
@@ -45,14 +48,13 @@ namespace System.Security.Policy {
 		}
 
 		// Methods
-		[MonoTODO ("incomplete url c14n")]
 		public bool Check (Evidence evidence)
 		{
 			if (evidence == null)
 				return false;
 
 			string codebase = Assembly.GetCallingAssembly ().CodeBase;
-			string local = c14n (codebase);
+			Uri local = new Uri (codebase);
 			Url ucode = new Url (codebase);
 
 			// *both* ApplicationDirectory and Url must be in *Host* evidences
@@ -64,7 +66,8 @@ namespace System.Security.Policy {
 
 				if (!adir && (o is ApplicationDirectory)) {
 					ApplicationDirectory ad = (o as ApplicationDirectory);
-					adir = (c14n (ad.Directory).StartsWith (local));
+					string s = ad.Directory;
+					adir = (String.Compare (s, 0, local.ToString (), 0, s.Length, true, CultureInfo.InvariantCulture) == 0);
 				}
 				else if (!url && (o is Url)) {
 					url = ucode.Equals (o);
@@ -119,22 +122,6 @@ namespace System.Security.Policy {
 			SecurityElement se = MembershipConditionHelper.Element (typeof (ApplicationDirectoryMembershipCondition), version);
 			// nothing to add
 			return se;
-		}
-
-		// helpers
-
-		private string c14n (string filename) 
-		{
-			string fname = null;
-			// if present remove 'file:///'
-			if (filename.StartsWith ("file:///")) {
-				fname = filename.Substring (8);
-			}
-			else {
-				fname = filename;
-			}
-			// c14n filename (e.g. /../ are removed)
-			return Path.GetFullPath (fname);
 		}
 	}
 }

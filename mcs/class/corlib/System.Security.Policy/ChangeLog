@@ -1,3 +1,15 @@
+2004-08-30  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ApplicationDirectory.cs: Now use Uri class to create the local 
+	application directory.
+	* ApplicationDirectoryMembershipCondition.cs: Now use Uri class to
+	CheckEvidence.
+	* Site.cs: Implemented CreateFromUrl using Uri class.
+	* Url.cs: Now use Uri class to prepare URLs.
+	* UrlMembershipCondition.cs: Now use Url class (instead of a string)
+	for URLs.
+	* Zone.cs: Implemented default CreateFromUrl using Uri class.
+
 2004-08-26  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ApplicationSecurityManager.cs: New stub for Fx 2.0 application trust

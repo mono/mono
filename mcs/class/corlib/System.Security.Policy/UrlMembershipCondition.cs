@@ -39,30 +39,48 @@ namespace System.Security.Policy {
 
 		private readonly int version = 1;
 
-		private string url;
+		private Url url;
                 
                 public UrlMembershipCondition (string url)
                 {
-                        this.url = System.Security.Policy.Url.Prepare (url);
+                        this.url = new Url (url);
                 }
 
+		internal UrlMembershipCondition (Url url)
+		{
+			// as the Url object has already been validated there's no
+			// need to restart the whole process by converting to string
+			this.url = (Url) url.Copy ();
+		}
+
+		// properties
+
                 public string Url {
-                        get { return url; }
-			set { url = System.Security.Policy.Url.Prepare (value); }
+                        get { return url.Value; }
+			set { url = new Url (value); }
                 }
+
+		// methods
 
                 public bool Check (Evidence evidence)
                 {
 			if (evidence == null)
 				return false;
 
+			string u = url.Value;
+			int wildcard = u.LastIndexOf ("*");	// partial match with a wildcard at the end
+			if (wildcard == -1)
+				wildcard = u.Length;		// exact match
+
 			IEnumerator e = evidence.GetHostEnumerator ();
 			while (e.MoveNext ()) {
-				Url u = (e.Current as Url);
-				if (u != null) {
+				if (e.Current is Url) {
 					// note: there shouldn't be more than one Url evidence
-					if (System.Security.Policy.Url.Compare (url, u.Value))
+					if (String.Compare (u, 0, (e.Current as Url).Value, 0, wildcard,
+						true, CultureInfo.InvariantCulture) == 0) {
 						return true;
+					}
+					// but we must check for all of them!
 				}
 			}
                         return false;
@@ -73,13 +91,19 @@ namespace System.Security.Policy {
                         return new UrlMembershipCondition (url);
                 }
 
-                public override bool Equals (Object o)
-                {
+		public override bool Equals (object o)
+		{
 			if (o is UrlMembershipCondition) {
-				return System.Security.Policy.Url.Compare (url, ((UrlMembershipCondition) o).Url);
+				string u = url.Value;
+				int wildcard = u.LastIndexOf ("*");	// partial match with a wildcard at the end
+				if (wildcard == -1)
+					wildcard = u.Length;		// exact match
+
+				return (String.Compare (u, 0, (o as UrlMembershipCondition).Url,
+					0, wildcard, true, CultureInfo.InvariantCulture) == 0);
 			}
 			return false;
-                }
+		}
 
                 public void FromXml (SecurityElement element)
                 {
@@ -90,7 +114,8 @@ namespace System.Security.Policy {
 		{
 			MembershipConditionHelper.CheckSecurityElement (element, "element", version, version);
 			
-			url = element.Attribute ("Url");
+			string u = element.Attribute ("Url");
+			url = (u == null) ? null : new Url (u);
 		}
 
                 public override int GetHashCode ()
@@ -100,7 +125,7 @@ namespace System.Security.Policy {
 
                 public override string ToString ()
                 {
-                        return "Url - " + url;
+                        return "Url - " + url.Value;
                 }
 
                 public SecurityElement ToXml ()
@@ -112,7 +137,7 @@ namespace System.Security.Policy {
                 {
 			// PolicyLevel isn't used as there's no need to resolve NamedPermissionSet references
 			SecurityElement se = MembershipConditionHelper.Element (typeof (UrlMembershipCondition), version);
-                        se.AddAttribute ("Url", url);
+                        se.AddAttribute ("Url", url.Value);
                         return se;
                 }
         }
