@@ -1,3 +1,8 @@
+
+Thu May 23 17:17:28 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* Activator.cs: implemented CreateInstance ().
+
 2002-05-22  Duncan Mak  <duncan@ximian.com>
 
 	* Convert.cs (ConvertToBase): Added new 64bit version.
