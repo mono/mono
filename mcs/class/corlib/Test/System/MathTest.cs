@@ -327,6 +327,17 @@ public class MathTest : TestCase {
 			// MS docs say this should be PositiveInfinity
 			iTest++;
 			Assert ("Math.Pow(1, double.PositiveInfinity) should be NaN", double.IsNaN(Math.Pow(1, double.PositiveInfinity)));
+
+			//
+			// The following bugs were present because we tried to outsmart the C Pow:
+			//
+			double infinity = Double.PositiveInfinity;
+			Assert ("Math.Pow(0.5, infinity) should be 0.0", Math.Pow(0.5, infinity) == 0.0);
+			Assert ("pow 0.5,inf == inf", Math.Pow(0.5, -infinity) == infinity);
+			Assert ("pow 2,inf == inf", Math.Pow(2, infinity) == infinity);
+			Assert ("pow 2,-inf == 0", Math.Pow(2, -infinity) == 0.0);
+			Assert ("pow inf,0 == 1.0", Math.Pow(infinity, 0) == 1.0);
+			Assert ("pow -inf,- == 1.0", Math.Pow(-infinity, 0) == 1.0);
 		} catch (Exception e) {
 			Fail ("Unexpected exception at iTest=" + iTest + ". e=" + e);
 		}
