@@ -153,38 +153,7 @@ namespace Mono.Xml.Xsl {
 
 		public override bool PreserveWhitespace (XPathNavigator nav) 
 		{
-			/*
-			XPathNavigator tmp = nav.Clone ();
-			switch (tmp.NodeType) {
-			case XPathNodeType.Root:
-				return false;
-			case XPathNodeType.Element:
-				break;
-			default:
-				tmp.MoveToParent ();
-				break;
-			}
-
-			for (; tmp.NodeType == XPathNodeType.Element; tmp.MoveToParent ()) {
-				object o = p.CompiledStyle.Style.SpaceControls [new XmlQualifiedName (tmp.LocalName, tmp.NamespaceURI)];
-			*/
-				object o = p.CompiledStyle.Style.SpaceControls [new XmlQualifiedName (nav.LocalName, nav.NamespaceURI)];
-				if (o == null)
-//					continue;
-					return true;
-				XmlSpace space = (XmlSpace) o;
-				switch ((XmlSpace) o) {
-				case XmlSpace.Preserve:
-					return true;
-				case XmlSpace.Default:
-					return false;
-				// None: continue.
-				}
-			return true; // temporary
-			/*
-			}
-			return true;
-			*/
+			return p.CompiledStyle.Style.GetPreserveWhitespace (nav.LocalName, nav.NamespaceURI);
 		}
 
 		public override bool Whitespace { get { return WhitespaceHandling; } }

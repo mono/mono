@@ -155,6 +155,78 @@ namespace Mono.Xml.Xsl {
 			return null;
 		}
 
+		bool countedSpaceControlExistence;
+		bool cachedHasSpaceControls;
+		public bool HasSpaceControls {
+			get {
+				if (!countedSpaceControlExistence) {
+					countedSpaceControlExistence = true;
+					if (this.spaceControls.Count > 0)
+						cachedHasSpaceControls = true;
+					else if (imports.Count == 0)
+						cachedHasSpaceControls = false;
+					else {
+						for (int i = 0; i < imports.Count; i++)
+							if (((XslStylesheet) imports [i]).spaceControls.Count > 0)
+								countedSpaceControlExistence = true;
+						cachedHasSpaceControls = false;
+					}
+				}
+				return cachedHasSpaceControls;
+			}
+		}
+
+		public bool GetPreserveWhitespace (string localName, string ns)
+		{
+			if (!HasSpaceControls)
+				return true;
+
+			XmlQualifiedName qname = new XmlQualifiedName (localName, ns);
+			object o = spaceControls [qname];
+			if (o == null) {
+				foreach (XslStylesheet s in imports) {
+					o = s.SpaceControls [qname];
+					if (o != null)
+						break;
+				}
+			}
+
+			if (o == null) {
+				qname = new XmlQualifiedName ("*", ns);
+				o = spaceControls [qname];
+				if (o == null) {
+					foreach (XslStylesheet s in imports) {
+						o = s.SpaceControls [qname];
+						if (o != null)
+							break;
+					}
+				}
+			}
+
+			if (o == null) {
+				qname = new XmlQualifiedName ("*", String.Empty);
+				o = spaceControls [qname];
+				if (o == null) {
+					foreach (XslStylesheet s in imports) {
+						o = s.SpaceControls [qname];
+						if (o != null)
+							break;
+					}
+				}
+			}
+
+			if (o != null) {
+				XmlSpace space = (XmlSpace) o;
+				switch ((XmlSpace) o) {
+				case XmlSpace.Preserve:
+					return true;
+				case XmlSpace.Default:
+					return false;
+				}
+			}
+			return true;
+		}
+
 		private XslStylesheet (Compiler c, XslStylesheet importer) : this (c)
 		{
 			this.importer = importer;

@@ -38,7 +38,11 @@ namespace Mono.Xml.Xsl {
 
 		public override void WriteDocType (string type, string publicId, string systemId)
 		{
-			writer.WriteWhitespace (Environment.NewLine);
+			if (publicId != null && publicId != String.Empty &&
+				(systemId == null || systemId == String.Empty))
+				// This is an error.
+				// when PUBLIC id exists, SYSTEM id is required.
+				return;
 			writer.WriteDocType (type, publicId, systemId, null);
 		}
 
@@ -89,7 +93,12 @@ namespace Mono.Xml.Xsl {
 
 		public override void WriteCDataSection (string text)
 		{
-			writer.WriteCData (text);
+			int index = text.IndexOf ("]]>");
+			if (index >= 0) {
+				writer.WriteCData (text.Substring (0, index + 2));
+				WriteCDataSection (text.Substring (index + 2));
+			} else 
+				writer.WriteCData (text);
 		}
 
 		public override void WriteWhitespace (string value)

@@ -1,4 +1,16 @@
-2003-12-16 Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+2003-12-18 Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* GenericOutputter.cs : support for runtime-determined output type.
+	* HtmlEmitter.cs : Fixed invalid doctype output.
+	  Fixed incorrect double attribute output on non-HTML elements.
+	  Improved indentation. Fixed "selected" attribute output.
+	  Don't have to convert "'" to "&apos;".
+	* XmlWriterEmitter.cs : Now don't output incorrect doctype.
+	  Escapes CDATA section text "]]>" to "...]]]]><![CDATA[>..." .
+	* XslStylesheet.cs, XsltCompiledContext.cs :
+	  space resolution consideration for import and wildcard.
+
+2003-12-18 Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* Compiler.cs, XslTransformProcessor.cs :
 	  Use XmlValidatingReader to support id() for external stylesheets.

@@ -24,7 +24,7 @@ namespace Mono.Xml.Xsl
 		Stack elementNameStack;
 		bool openElement;
 		bool openAttribute;
-		int xmlDepth;
+		int nonHtmlDepth;
 		bool indent;
 		Encoding outputEncoding;
 
@@ -33,8 +33,8 @@ namespace Mono.Xml.Xsl
 			this.writer = writer;
 			indent = !(output.Indent == "no");
 			elementNameStack = new Stack ();
-			xmlDepth = -1;
-			outputEncoding = output.Encoding;
+			nonHtmlDepth = -1;
+			outputEncoding = writer.Encoding == null ? output.Encoding : writer.Encoding;
 		}
 
 		public override void WriteStartDocument (StandaloneType standalone)
@@ -53,13 +53,19 @@ namespace Mono.Xml.Xsl
 				writer.Write ("PUBLIC \"");
 				writer.Write (publicId);
 				writer.Write ("\" ");
-				writer.Write (systemId);
+				if (systemId != null && systemId != String.Empty) {
+					writer.Write ("\"");
+ 					writer.Write (systemId);
+					writer.Write ("\"");
+				}
 			} else if (systemId != null && systemId != String.Empty) {
 				writer.Write ("SYSTEM \"");
 				writer.Write (systemId);
 				writer.Write ('\"');
 			}
-			writer.Write (">\r\n");
+			writer.Write ('>');
+			if (indent)
+				writer.WriteLine ();
 		}
 
 		private void CloseAttribute ()
@@ -76,23 +82,32 @@ namespace Mono.Xml.Xsl
 			openElement = false;
 
 			if (outputEncoding != null && elementNameStack.Count > 0) {
-				string name = elementNameStack.Peek () as string;
-				if (name.ToUpper () == "HEAD") {
+				string name = ((string) elementNameStack.Peek ()).ToUpper ();
+				switch (name) {
+				case "HEAD":
 					WriteStartElement (String.Empty, "META", String.Empty);
 					WriteAttributeString (String.Empty, "http-equiv", String.Empty, "Content-Type");
 					WriteAttributeString (String.Empty, "content", String.Empty, "text/html; charset=" + outputEncoding.WebName);
 					WriteEndElement ();
+					break;
+				case "STYLE":
+				case "SCRIPT":
+					writer.WriteLine ();
+					for (int i = 0; i <= elementNameStack.Count; i++)
+						writer.Write ("  ");
+					break;
 				}
 			}
 		}
 
 		// FIXME: check all HTML elements' indentation.
-		private void Indent (string elementName, bool alwaysOutputNewLine)
+		private void Indent (string elementName, bool endIndent)
 		{
 			if (!indent)
 				return;
 			switch (elementName.ToUpper ()) {
 			case "ADDRESS":
+			case "APPLET":
 			case "BDO":
 			case "BLOCKQUOTE":
 			case "BODY":
@@ -106,12 +121,6 @@ namespace Mono.Xml.Xsl
 			case "DL":
 			case "DT":
 			case "FIELDSET":
-			case "H1":
-			case "H2":
-			case "H3":
-			case "H4":
-			case "H5":
-			case "H6":
 			case "HEAD":
 			case "HTML":
 			case "IFRAME":
@@ -122,14 +131,20 @@ namespace Mono.Xml.Xsl
 			case "NOFRAMES":
 			case "NOSCRIPT":
 			case "OBJECT":
-			case "P":
+			case "OPTION":
 			case "PRE":
+			case "TABLE":
 			case "TD":
 			case "TH":
-				if (alwaysOutputNewLine || elementNameStack.Count > 0)
-					writer.Write ("\r\n");
-				for (int i = 0; i < elementNameStack.Count; i++)
-						writer.Write ("  ");
+			case "TR":
+				writer.Write (Environment.NewLine);
+				int count = elementNameStack.Count;
+				for (int i = 0; i < count; i++)
+					writer.Write ("  ");
+				break;
+			default:
+				if (elementName.Length > 0 && nonHtmlDepth > 0)
+					goto case "HTML";
 				break;
 			}
 		}
@@ -138,25 +153,61 @@ namespace Mono.Xml.Xsl
 		{
 			if (openElement)
 				CloseStartElement ();
-			Indent (elementNameStack.Count > 0 ? elementNameStack.Peek () as string : String.Empty, false);
+			Indent (elementNameStack.Count > 0 ? elementNameStack.Peek () as String : String.Empty, false);
 			string formatName = localName;
 
 			writer.Write ('<');
-			if (nsURI != String.Empty) {
+			if (nsURI != String.Empty || !IsHtmlElement (localName)) {
 				// XML output
 				if (prefix != String.Empty) {
 					writer.Write (prefix);
 					writer.Write (':');
 					formatName = String.Concat (prefix, ":", localName);
 				}
-				// TODO: handle xmlns using namespaceManager
 				
-				if (xmlDepth < 0)
-					xmlDepth = elementNameStack.Count + 1;
+				if (nonHtmlDepth < 0)
+					nonHtmlDepth = elementNameStack.Count + 1;
 			}
 			writer.Write (formatName);
 			elementNameStack.Push (formatName);
 			openElement = true;
+		}
+
+		private bool IsHtmlElement (string localName)
+		{
+			// see http://www.w3.org/TR/html401/index/elements.html
+			switch (localName.ToUpper ()) {
+			case "A": case "ABBR": case "ACRONYM":
+			case "ADDRESS": case "APPLET": case "AREA":
+			case "B": case "BASE": case "BASEFONT": case "BDO": case "BIG": 
+			case "BLOCKQUOTE": case "BODY": case "BR": case "BUTTON":
+			case "CAPTION": case "CENTER": case "CITE":
+			case "CODE": case "COL": case "COLGROUP":
+			case "DD": case "DEL": case "DFN": case "DIR":
+			case "DIV": case "DL": case "DT":
+			case "EM":
+			case "FIELDSET": case "FONT": case "FORM": case "FRAME": case "FRAMESET":
+			case "H1": case "H2": case "H3": case "H4": case "H5": case "H6":
+			case "HEAD": case "HR": case "HTML":
+			case "I": case "IFRAME": case "IMG":
+			case "INPUT": case "INS": case "ISINDEX":
+			case "KBD":
+			case "LABEL": case "LEGEND": case "LI": case "LINK":
+			case "MAP": case "MENU": case "META":
+			case "NOFRAMES": case "NOSCRIPT":
+			case "OBJECT": case "OL": case "OPTGROUP": case "OPTION":
+			case "P": case "PARAM": case "PRE":
+			case "Q":
+			case "S": case "SAMP": case "SCRIPT": case "SELECT":
+			case "SMALL": case "SPAN": case "STRIKE": case "STRONG":
+			case "STYLE": case "SUB": case "SUP":
+			case "TABLE": case "TBODY": case "TD": case "TEXTAREA":
+			case "TFOOT": case "THEAD": case "TITLE": case "TR": case "TT":
+			case "U": case "UL":
+			case "VAR":
+				return true;
+			}
+			return false;
 		}
 
 		public override void WriteEndElement ()
@@ -166,8 +217,7 @@ namespace Mono.Xml.Xsl
 
 		public override void WriteFullEndElement ()
 		{
-			string element = elementNameStack.Pop () as string;
-
+			string element = elementNameStack.Peek () as string;
 			switch (element.ToUpper ()) {
 			case "AREA":
 			case "BASE":
@@ -185,25 +235,27 @@ namespace Mono.Xml.Xsl
 				if (openAttribute)
 					CloseAttribute ();
 				writer.Write ('>');
+				elementNameStack.Pop ();
 				break;
 			default:
 				if (openElement)
 					CloseStartElement ();
-				Indent (element, true);
+				elementNameStack.Pop ();
+				if (IsHtmlElement (element))
+					Indent (element as string, true);
 				writer.Write ("</");
 				writer.Write (element);
 				writer.Write (">");
 				break;
 			}
+			if (nonHtmlDepth > elementNameStack.Count)
+				nonHtmlDepth = -1;
 			openElement = false;
-
-			if (xmlDepth > elementNameStack.Count)
-				xmlDepth = -1;
 		}
 
 		public override void WriteAttributeString (string prefix, string localName, string nsURI, string value)
 		{
-			if (xmlDepth >= 0) {
+			if (nonHtmlDepth >= 0) {
 				writer.Write (' ');
 				writer.Write (localName);
 				writer.Write ("=\"");
@@ -211,6 +263,8 @@ namespace Mono.Xml.Xsl
 				WriteFormattedString (value);
 				openAttribute = false;
 				writer.Write ('\"');
+
+				return;
 			}
 
 			string attribute = localName.ToUpper ();
@@ -220,6 +274,7 @@ namespace Mono.Xml.Xsl
 			switch (attribute) {
 			case "OPTION":
 			case "CHECKED":
+			case "SELECTED":
 				return;
 			}
 
@@ -244,6 +299,10 @@ namespace Mono.Xml.Xsl
 				throw new ArgumentException ("Processing instruction cannot contain \"?>\" as its value.");
 			if (openElement)
 				CloseStartElement ();
+
+			if (elementNameStack.Count > 0)
+				Indent (elementNameStack.Peek () as string, false);
+
 			writer.Write ("<?");
 			writer.Write (name);
 			if (text != null && text != String.Empty) {
@@ -251,7 +310,7 @@ namespace Mono.Xml.Xsl
 				writer.Write (text);
 			}
 
-			if (xmlDepth >= 0)
+			if (nonHtmlDepth >= 0)
 				writer.Write ("?>");
 			else
 				writer.Write (">"); // HTML PI ends with '>'
@@ -282,7 +341,7 @@ namespace Mono.Xml.Xsl
 				switch (text [i]) {
 				case '&':
 					// '&' '{' should be "&{", not "&amp;{"
-					if (xmlDepth < 0 && i + 1 < text.Length && text [i + 1] == '{')
+					if (nonHtmlDepth < 0 && i + 1 < text.Length && text [i + 1] == '{')
 						continue;
 					writer.Write (text.ToCharArray (), start, i - start);
 					writer.Write ("&amp;");
@@ -295,11 +354,11 @@ namespace Mono.Xml.Xsl
 					writer.Write ("&lt;");
 					start = i + 1;
 					break;
-				case '\'':
-					if (!openAttribute)
+				case '>':
+					if (openAttribute)
 						continue;
 					writer.Write (text.ToCharArray (), start, i - start);
-					writer.Write ("&apos;");
+					writer.Write ("&gt;");
 					start = i + 1;
 					break;
 				case '\"':

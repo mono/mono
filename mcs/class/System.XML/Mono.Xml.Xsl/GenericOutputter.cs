@@ -12,6 +12,7 @@ using System;
 using System.Collections;
 using System.Xml;
 using System.IO;
+using System.Text;
 
 namespace Mono.Xml.Xsl
 {
@@ -27,6 +28,11 @@ namespace Mono.Xml.Xsl
 		private XslOutput _currentOutput;
 		//Underlying emitter
 		private Emitter _emitter;
+		// destination TextWriter,
+		// which is pended until the actual output is determined.
+		private TextWriter pendingTextWriter;
+		// also, whitespaces before the first element are cached.
+		StringBuilder pendingFirstSpaces;
 		//Outputting state
 		private WriteState _state;
 		// Collection of pending attributes. TODO: Can we make adding an attribute
@@ -65,26 +71,42 @@ namespace Mono.Xml.Xsl
 
 		public GenericOutputter (TextWriter writer, Hashtable outputs)
 			: this (outputs)
-		{			
-			XslOutput xslOutput = (XslOutput)outputs [String.Empty];
+		{
+			this.pendingTextWriter = writer;
+		}
+
+		private Emitter Emitter {
+			get {
+				if (_emitter == null)
+					DetermineOutputMethod (null, null);
+				return _emitter;
+			}
+		}
+
+		private void DetermineOutputMethod (string localName, string ns)
+		{
+			XslOutput xslOutput = (XslOutput)_outputs [String.Empty];
 			switch (xslOutput.Method) {
-				
-				case OutputMethod.HTML:
-					_emitter = new HtmlEmitter (writer, xslOutput);
-					break;
 				case OutputMethod.Unknown: //TODO: handle xml vs html
+					if (localName != null && localName.ToLower () == "html" && ns == String.Empty)
+						goto case OutputMethod.HTML;
+					goto case OutputMethod.XML;
+				case OutputMethod.HTML:
+					_emitter = new HtmlEmitter (pendingTextWriter, xslOutput);
+					break;
 				case OutputMethod.XML:
-					XmlTextWriter w = new XmlTextWriter (writer);
+					XmlTextWriter w = new XmlTextWriter (pendingTextWriter);
 					if (xslOutput.Indent == "yes")
 						w.Formatting = Formatting.Indented;
 					_emitter = new XmlWriterEmitter (w);					
 					break;
 				case OutputMethod.Text:
-					_emitter = new TextEmitter (writer);
+					_emitter = new TextEmitter (pendingTextWriter);
 					break;
 				case OutputMethod.Custom:
 					throw new NotImplementedException ("Custom output method is not implemented yet.");
-			}						
+			}
+			pendingTextWriter = null;
 		}
 
 		/// <summary>
@@ -107,14 +129,14 @@ namespace Mono.Xml.Xsl
 					string prefix = attr.Prefix;
 					if (prefix == String.Empty)
 						prefix = _nsManager.LookupPrefix (attr.Namespace);
-					_emitter.WriteAttributeString (prefix, attr.LocalName, attr.Namespace, attr.Value);
+					Emitter.WriteAttributeString (prefix, attr.LocalName, attr.Namespace, attr.Value);
 				}
 				foreach (string prefix in _currentNsPrefixes) {
 					string uri = _currentNamespaceDecls [prefix] as string;
 					if (prefix != String.Empty)
-						_emitter.WriteAttributeString ("xmlns", prefix, XmlNamespaceManager.XmlnsXmlns, uri);
+						Emitter.WriteAttributeString ("xmlns", prefix, XmlNamespaceManager.XmlnsXmlns, uri);
 					else
-						_emitter.WriteAttributeString (String.Empty, "xmlns", XmlNamespaceManager.XmlnsXmlns, uri);
+						Emitter.WriteAttributeString (String.Empty, "xmlns", XmlNamespaceManager.XmlnsXmlns, uri);
 				}
 				_currentNsPrefixes.Clear ();
 				_currentNamespaceDecls.Clear ();
@@ -129,19 +151,27 @@ namespace Mono.Xml.Xsl
 		public override void WriteStartDocument ()
 		{			
 			if (!_currentOutput.OmitXmlDeclaration)
-				_emitter.WriteStartDocument (_currentOutput.Standalone);
+				Emitter.WriteStartDocument (_currentOutput.Standalone);
 			
 			_state = WriteState.Prolog;
 		}
 		
 		public override void WriteEndDocument ()
 		{
-			_emitter.WriteEndDocument ();				
+			Emitter.WriteEndDocument ();				
 		}
 
 		int _nsCount;
 		public override void WriteStartElement (string prefix, string localName, string nsURI)
 		{
+			if (_emitter == null) {
+				this.DetermineOutputMethod (localName, nsURI);
+				if (pendingFirstSpaces != null) {
+					WriteWhitespace (pendingFirstSpaces.ToString ());
+					pendingFirstSpaces = null;
+				}
+			}
+
 			if (_state == WriteState.Start)
 				WriteStartDocument ();
 
@@ -149,11 +179,11 @@ namespace Mono.Xml.Xsl
 				//Seems to be the first element - take care of Doctype
 				// Note that HTML does not require SYSTEM identifier.
 				if (_currentOutput.DoctypePublic != null || _currentOutput.DoctypeSystem != null)
-					_emitter.WriteDocType (prefix + (prefix==null? ":" : "") + localName, 
+					Emitter.WriteDocType (prefix + (prefix==null? ":" : "") + localName, 
 						_currentOutput.DoctypePublic, _currentOutput.DoctypeSystem);
 			}
 			CheckState ();
-			_emitter.WriteStartElement (prefix, localName, nsURI);
+			Emitter.WriteStartElement (prefix, localName, nsURI);
 			_state = WriteState.Element;						
 			pendingAttributesPos = 0;
 			canProcessAttributes = true;
@@ -173,9 +203,9 @@ namespace Mono.Xml.Xsl
 		{
 			CheckState ();
 			if (fullEndElement)
-				_emitter.WriteFullEndElement ();
+				Emitter.WriteFullEndElement ();
 			else
-				_emitter.WriteEndElement ();
+				Emitter.WriteEndElement ();
 			_state = WriteState.Content;
 			//Pop namespace scope
 			_nsManager.PopScope ();
@@ -240,39 +270,47 @@ namespace Mono.Xml.Xsl
 		public override void WriteComment (string text)
 		{
 			CheckState ();
-			_emitter.WriteComment (text);
+			Emitter.WriteComment (text);
 		}
 
 		public override void WriteProcessingInstruction (string name, string text)
 		{
 			CheckState ();
-			_emitter.WriteProcessingInstruction (name, text);
+			Emitter.WriteProcessingInstruction (name, text);
 		}
 
 		public override void WriteString (string text)
 		{
 			CheckState ();
 			if (insideCData)
-				_emitter.WriteCDataSection (text);
+				Emitter.WriteCDataSection (text);
 			else
-				_emitter.WriteString (text);
+				Emitter.WriteString (text);
 		}
 
 		public override void WriteRaw (string data)
 		{
 			CheckState ();
-			_emitter.WriteRaw (data);
+			Emitter.WriteRaw (data);
 		}
 
 		public override void WriteWhitespace (string text)
 		{
-			CheckState ();
-			_emitter.WriteWhitespace (text);
+			if (_emitter == null) {
+				if (pendingFirstSpaces == null)
+					pendingFirstSpaces = new StringBuilder ();
+				pendingFirstSpaces.Append (text);
+				if (_state == WriteState.Start)
+					_state = WriteState.Prolog;
+			} else {
+				CheckState ();
+				Emitter.WriteWhitespace (text);
+			}
 		}
 
 		public override void Done ()
 		{
-			_emitter.Done ();
+			Emitter.Done ();
 			_state = WriteState.Closed;
 		}
 
