@@ -353,7 +353,7 @@ namespace System.Reflection.Emit {
 			int token = abuilder.GetToken (constructor);
 			make_room (6);
 			ll_emit (opcode);
-			if (constructor is ConstructorBuilder)
+			if (constructor.DeclaringType.Module == module)
 				add_token_fixup (constructor);
 			emit_int (token);
 			ParameterInfo[] mparams = constructor.GetParameters();
@@ -382,7 +382,7 @@ namespace System.Reflection.Emit {
 			int token = abuilder.GetToken (field);
 			make_room (6);
 			ll_emit (opcode);
-			if (field is FieldBuilder)
+			if (field.DeclaringType.Module == module)
 				add_token_fixup (field);
 			emit_int (token);
 		}
@@ -511,7 +511,7 @@ namespace System.Reflection.Emit {
 			int token = abuilder.GetToken (method);
 			make_room (6);
 			ll_emit (opcode);
-			if (method is MethodBuilder)
+			if (method.DeclaringType.Module == module)
 				add_token_fixup (method);
 			emit_int (token);
 			if (method.ReturnType != void_type)
@@ -556,8 +556,6 @@ namespace System.Reflection.Emit {
 		public virtual void Emit (OpCode opcode, Type type) {
 			make_room (6);
 			ll_emit (opcode);
-			if (type is TypeBuilder)
-				add_token_fixup (type);
 			emit_int (abuilder.GetToken (type));
 		}
 

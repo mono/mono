@@ -1,3 +1,9 @@
+2003-02-28  Zoltan Varga  <vargaz@freemail.hu>
+
+	* ILGenerator.cs (Emit): Add fixup for already created methods and
+	fields. Do not add fixup for types since their table index do not 
+	change any more.
+
 2003-02-26  Zoltan Varga  <vargaz@freemail.hu>
 
 	* TypeBuilder.cs (DefineInitializedData): Removed unnecessary assignments.
