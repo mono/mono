@@ -1,5 +1,10 @@
 2005-01-18 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* XmlSerializer.cs: only print the results if there's an error
+	compiling.
+
+2005-01-18 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* SerializationCodeGenerator.cs: don't use _config if it has not been
 	assigned.
 

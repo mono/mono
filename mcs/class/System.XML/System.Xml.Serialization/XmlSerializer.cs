@@ -684,8 +684,7 @@ namespace System.Xml.Serialization
 				cp.ReferencedAssemblies.Add ("System.Data");
 			
 			CompilerResults res = comp.CompileAssemblyFromFile (cp, file);
-			if (res.Errors.Count > 0)
-			{
+			if (res.Errors.HasErrors || res.CompiledAssembly == null) {
 				Console.WriteLine ("Error while compiling generated serializer");
 				foreach (CompilerError error in res.Errors)
 					Console.WriteLine (error);
