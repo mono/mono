@@ -1,3 +1,8 @@
+
+2003-06-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HashtableTest.cs: removed duplicate tests and unneeded inner class.
+
 2003-06-07  Ben Maurer <bmaurer@users.sourceforge.net>
 	* StackTest.cs: Added test for Contains (null)
 
