@@ -1,3 +1,8 @@
+2004-09-04 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* filewatcher.c: don't expect the development fam package to be
+	installed.
+
 2004-09-03  Zoltan Varga  <vargaz@freemail.hu>
 
 	* marshal.c: Make a copy of the signature cookie since it will be
