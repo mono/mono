@@ -22,7 +22,7 @@ USE_MCS_FLAGS :=
 # All new tests for 'mcs' go in here
 # These tests are not run by GMCS since the corresponding code is not yet in there.
 # Martin Baulig will manually move them into TEST_SOURCES_common after merging the code into GMCS.
-# He may also move some to EXCLUDE_net_2_0 if some of the merges are inappropriate for GMCS.
+# He may also move some to TEST_EXCLUDE_net_2_0 if some of the merges are inappropriate for GMCS.
 #
 NEW_TEST_SOURCES_common = \
 	test-297 test-287 test-294 test-299
@@ -76,8 +76,7 @@ TEST_SOURCES_common = \
 	module-1 module-2 module-3 \
 	ns0 ns
 
-# module-3: Once mono/metadata/reflection.c is fixed, this can be enabled
-TEST_EXCLUDES_common = module-3
+TEST_EXCLUDES_common = 
 
 TEST_SOURCES_default = $(NEW_TEST_SOURCES_common)
 
@@ -97,15 +96,14 @@ TEST_EXCLUDES_net_2_0 = test-55 test-289
 TEST_SOURCES = $(filter-out $(TEST_EXCLUDES_common) $(TEST_EXCLUDES_$(PROFILE)) $(TEST_EXCLUDES_$(PLATFORM)), \
 	$(TEST_SOURCES_common) $(TEST_SOURCES_$(PROFILE)) $(TEST_SOURCES_$(PLATFORM)))
 
-## FIXME: Need to audit.  Maybe rename to 'TEST_SOURCES_win32'
-WINDOWS_SOURCES = \
-	test-50 test-67
+# These tests load User32.dll and/or Kernel32.dll
+TEST_SOURCES_win32 = test-50 test-67
 
 ## FIXME: Need to audit.  Maybe move to 'TEST_EXCLUDES_linux' and 'TEST_EXCLUDES_win32' as approprate
 # A test is a 'no pass' if it fails on either windows or linux
 # Test 120 does not pass because the MS.NET runtime is buggy.
-TEST_NOPASS = \
-	test-28  test-45  test-53  test-91  test-102 test-106 test-107 test-120 test-122 test-132 test-133 test-66 test-177
+TEST_NOPASS = test-120 test-132 test-133
+#	test-28 test-45 test-53 test-91 test-102 test-106 test-107 test-122 test-66 test-177
 
 all-local install-local uninstall-local:
 

@@ -1,3 +1,11 @@
+2004-09-28  Raja R Harinath  <rharinath@novell.com>
+
+	* test-120.cs: Don't exit on the first failure.
+	* Makefile (TEST_EXCLUDES_common): Remove 'module-3'.
+	(TEST_SOURCES_win32): Rename from WINDOWS_SOURCES.
+	(TEST_NOPASS): Comment out tests that already are in
+	TEST_SOURCES_common.
+
 2004-09-27  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile: Re-apply patches from 2004-09-14.
