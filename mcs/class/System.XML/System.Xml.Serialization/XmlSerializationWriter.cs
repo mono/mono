@@ -30,6 +30,8 @@ namespace System.Xml.Serialization {
 		Hashtable callbacks;
 		Hashtable serializedObjects;
 		const string xmlNamespace = "http://www.w3.org/2000/xmlns/";
+		const string unexpectedTypeError = "The type {0} was not expected. Use the" +
+			" XmlInclude or SoapInclude attribute to specify types that are not known statically.";
 
 		#endregion // Fields
 
@@ -748,7 +750,7 @@ namespace System.Xml.Serialization {
 			if (xsiType)
 			{
 				if (td.SchemaType != SchemaTypes.Primitive)
-					throw new InvalidOperationException ("Invalid type: " + o.GetType().FullName);
+					throw new InvalidOperationException (string.Format (unexpectedTypeError, o.GetType().FullName));
 				WriteXsiType (td.XmlType, XmlSchema.Namespace);
 			}
 

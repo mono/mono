@@ -1,3 +1,9 @@
+2004-04-14  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* TypeTranslator.cs, XmlCustomFormatter.cs: Removed map from Uri to anyUri,
+	  not present in MS.NET.
+	* XmlSerializationWriter.cs: Improved error message.
+
 2004-03-30  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* SerializationCodeGenerator.cs, XmlReflectionImporter.cs, 
