@@ -165,7 +165,7 @@ namespace Mono.CSharp
 				"   --nowarn XXX    Ignores warning number XXX\n" +
 				"   -o FNAME        Specifies output file\n" +
 				"   --optimize      Optimizes\n" +
-				"   --debug         Write symbolic debugging information to FILE-debug.s\n" +
+				"   -g, --debug     Write symbolic debugging information to FILE-debug.s\n" +
 				"   --parse         Only parses the source file\n" +
 				"   --probe X       Probes for the source to generate code X on line L\n" +
 				"   --recurse SPEC  Recursively compiles the files in SPEC ([dir]/file)\n" + 
@@ -722,6 +722,10 @@ namespace Mono.CSharp
 						continue;
 
 					case "--debug":
+						want_debugging_support = true;
+						continue;
+
+					case "-g":
 						want_debugging_support = true;
 						continue;
 

@@ -1,3 +1,7 @@
+2002-03-25  Martin Baulig  <martin@gnome.org>
+
+	* driver.cs (-g): Made -g an alias for --debug.
+
 2002-03-24  Martin Baulig  <martin@gnome.org>
 
 	* codegen.cs (SymbolWriter): New public variable. Returns the
