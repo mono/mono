@@ -764,14 +764,8 @@ namespace System {
 			return new CharEnumerator (this);
 		}
 
-		public override int GetHashCode ()
-		{
-			int h = 0;
-			int i;
-			for (i = 0; i < length; ++i)
-				h = (h << 5) - h + c_str [i];
-			return h;
-		}
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern override int GetHashCode ();
 
 		public TypeCode GetTypeCode ()
 		{

@@ -405,7 +405,7 @@ namespace System
 				while (iMin < iMax)
 				{
 					int iMid = (iMin + iMax) / 2;
-					object elt = array.GetValue (iMid);
+					object elt = array.GetValueImpl (iMid);
 
 					// this order is from MSDN
 					if (comparer != null)
@@ -452,7 +452,7 @@ namespace System
 
 			for (int i = 0; i < length; i++) 
 			{
-				array.SetValue(null, index + i);
+				array.SetValueImpl(null, index + i);
 			}
 		}
 
@@ -575,7 +575,7 @@ namespace System
 
 			for (int i = 0; i < length; i++)
 			{
-				if (array.GetValue(index + i).Equals(value))
+				if (array.GetValueImpl(index + i).Equals(value))
 					return index + i;
 			}
 
@@ -612,7 +612,7 @@ namespace System
 
 			for (int i = index; i >= index-length+1; i--)
 			{
-				if (array.GetValue(i).Equals(value))
+				if (array.GetValueImpl(i).Equals(value))
 					return i;
 			}
 
@@ -645,9 +645,9 @@ namespace System
 			{
 				object tmp;
 
-				tmp = array.GetValue (index + i);
-				array.SetValue(array.GetValue (index + length - i - 1), index + i);
-				array.SetValue(tmp, index + length - i - 1);
+				tmp = array.GetValueImpl (index + i);
+				array.SetValueImpl(array.GetValueImpl (index + length - i - 1), index + i);
+				array.SetValueImpl(tmp, index + length - i - 1);
 			}
 		}		
 		
@@ -720,14 +720,14 @@ namespace System
 			int low = low0;
 			int high = high0;
 
-			object objPivot = keys.GetValue ((low + high) / 2);
+			object objPivot = keys.GetValueImpl ((low + high) / 2);
 
 			while (low <= high)
 			{
 				// Move the walls in
-				while (low < high0 && compare (keys.GetValue (low), objPivot, comparer) < 0)
+				while (low < high0 && compare (keys.GetValueImpl (low), objPivot, comparer) < 0)
 					++low;
-				while (high > low0 && compare (objPivot, keys.GetValue (high), comparer) < 0)
+				while (high > low0 && compare (objPivot, keys.GetValueImpl (high), comparer) < 0)
 					--high;
 
 				if (low <= high)
@@ -748,15 +748,15 @@ namespace System
 		{
 			object tmp;
 
-			tmp = keys.GetValue (i);
-			keys.SetValue (keys.GetValue (j), i);
-			keys.SetValue (tmp, j);
+			tmp = keys.GetValueImpl (i);
+			keys.SetValueImpl (keys.GetValue (j), i);
+			keys.SetValueImpl (tmp, j);
 
 			if (items != null)
 			{
-				tmp = items.GetValue (i);
-				items.SetValue (items.GetValue (j), i);
-				items.SetValue (tmp, j);
+				tmp = items.GetValueImpl (i);
+				items.SetValueImpl (items.GetValueImpl (j), i);
+				items.SetValueImpl (tmp, j);
 			}
 		}
 

@@ -1,4 +1,9 @@
 
+Thu Apr 11 12:28:13 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* String.cs: internalcall GetHashCode().
+	* Array.cS: optimize access to elements.
+
 Wed Apr 10 21:20:19 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* String.cs: make IndexOfAny() use an internalcall.
