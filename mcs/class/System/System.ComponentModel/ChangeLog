@@ -1,3 +1,8 @@
+2004-10-01 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AttributeCollection.cs: support attributes inherited from the one
+	we want. Fixes bug #67088. Thanks to Sander Rijken.
+
 2004-08-14  Jackson Harper  <jackson@ximian.com>
 
 	* Container.cs: Release all when we are supposed to release all.
