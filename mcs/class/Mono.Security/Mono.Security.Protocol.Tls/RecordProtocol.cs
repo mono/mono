@@ -148,6 +148,9 @@ namespace Mono.Security.Protocol.Tls
 					this.processAlert(
 						(AlertLevel)message.ReadByte(),
 						(AlertDescription)message.ReadByte());
+					// don't include alert data with application data
+					// anyway the data is already processed
+					result = null;
 					break;
 
 				case ContentType.ChangeCipherSpec:

@@ -1,3 +1,8 @@
+2004-09-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* RecordProtocol.cs: Fix alert data that could leak into appplication 
+	data (e.g. when closing the SSL session).
+
 2004-07-14  Carlos Guzman Alvarez  <carlosga@telefonica.net>
 
 	* Removed duplicate license header file from
