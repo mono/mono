@@ -1,3 +1,8 @@
+2002-05-02  Dietmar Maurer  <dietmar@ximian.com>
+
+	* delegate.c (mono_delegate_cleanup): signal semaphore in order to
+	exit threads.
+
 2002-04-30  Dick Porter  <dick@ximian.com>
 
 	* mono.c (main): Tell glib to not abort when g_log() etc print
