@@ -1,46 +1,17 @@
-RUNTIME=mono
-CSC = $(RUNTIME) ../../mcs/mcs.exe
+thisdir = tools/SqlSharp
+SUBDIRS = 
+include ../../build/rules.make
 
-CSCFLAGS = /out:$(PROGRAM) \
-	/noconfig \
-	/r:../../class/lib/System.dll \
-	/r:../../class/lib/System.Xml.dll \
-	/r:../../class/lib/System.Data.dll \
-	/debug+ /debug:full 
-# CSCFLAGS = /out:$(PROGRAM) \
-#	/noconfig \
-#	/r:../../class/lib/System.dll \
-#	/r:../../class/lib/System.Xml.dll \
-#	/r:../../class/lib/System.Data.dll \
-
-
+LOCAL_MCS_FLAGS = /r:System.dll /r:System.Xml.dll /r:System.Data.dll
 PROGRAM = sqlsharp.exe
+EXTRA_DISTFILES = README
+HAS_TEST = yes
+include ../../build/executable.make
 
-MONO = mono
+test-local: $(PROGRAM)
 
-PROGRAM_FILES =  \
-	SqlSharpCli.cs
+run-test-local: $(PROGRAM)
+	$(TEST_RUNTIME) $(PROGRAM) -A $(PROGRAM) $(ARGS)
 
-all: $(PROGRAM)
-
-$(PROGRAM) : $(PROGRAM_FILES)
-	$(CSC) $(CSCFLAGS) $(PROGRAM_FILES)
-
-test-run : $(PROGRAM)
-	$(MONO) $(PROGRAM) -A $(PROGRAM) $(ARGS)
-
-run : $(PROGRAM)
-	$(MONO) $(PROGRAM) $(ARGS)
-
-windows:
-	NAnt -buildfile:SqlSharpCli.build
-
-linux: 
-	mcs @unix.args
-
-clean:
-	rm -f *.exe *.pdb *.dbg *.dll *~
-
-linecount:
-	wc -l $(PROGRAM_FILES)
-
+run: $(PROGRAM)
+	$(RUNTIME) $(PROGRAM) $(ARGS)

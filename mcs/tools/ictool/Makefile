@@ -1,10 +1,8 @@
-CSC=csc.exe
-CSCFLAGS=/nologo /debug+ /debug:full 
+thisdir = tools/ictool
+SUBDIRS =
+include ../../build/rules.make
 
-all: ictool.exe
+PROGRAM = ictool.exe
+EXTRA_DISTFILES = ictool-config.xml
 
-ictool.exe: ictool.cs depgraph.cs peer.cs
-	$(CSC) $(CSCFLAGS) /out:ictool.exe ictool.cs depgraph.cs peer.cs
-
-clean:
-	rm -f *.exe *.pdb *.dll
+include ../../build/executable.make

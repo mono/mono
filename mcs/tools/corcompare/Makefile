@@ -1,13 +1,8 @@
-NANT	= ../../nant/NAnt.exe
+thisdir = tools/corcompare
+SUBDIRS = 
+include ../../build/rules.make
 
-all: linux
+PROGRAM = CorCompare.exe
+EXTRA_DISTFILES = cormissing.xsl TODO transform.js
 
-windows: linux
-
-linux: CorCompare.exe
-
-CorCompare.exe: *.cs
-	$(NANT) linux
-
-clean:
-	rm -f *.exe *.pdb *.dll
+include ../../build/executable.make
