@@ -1,3 +1,8 @@
+2003-06-29  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* WebConnection.cs: fixed header writing the reusing a connection and
+	the server does not send 100-continue response.
+
 2003-06-26  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* WebConnection.cs: close the socket and connection when disposing.

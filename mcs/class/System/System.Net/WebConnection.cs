@@ -109,14 +109,14 @@ namespace System.Net
 		internal bool WaitForContinue (byte [] headers, int offset, int size)
 		{
 			Data.StatusCode = 0;
-			if (!sPoint.SendContinue)
-				return false;
-
-			if (waitForContinue == null)
+			waitingForContinue = sPoint.SendContinue;
+			if (waitingForContinue && waitForContinue == null)
 				waitForContinue = new AutoResetEvent (false);
 
 			Write (headers, offset, size);
-			waitingForContinue = true;
+			if (!waitingForContinue)
+				return false;
+
 			bool result = waitForContinue.WaitOne (2000, false);
 			waitingForContinue = false;
 			if (result) {
