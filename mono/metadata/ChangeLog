@@ -1,4 +1,8 @@
 
+Sat May 31 15:22:07 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c: fixed bug #43905.
+
 Fri May 30 12:56:29 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* class.c, domain.c, icall.c, metadata.h, object.h: support for
