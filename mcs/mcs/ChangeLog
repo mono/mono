@@ -1,3 +1,7 @@
+2003-09-30  Miguel de Icaza  <miguel@ximian.com>
+
+	* cs-parser.jay: Upgrade: yield now needs the return clause.
+
 2003-09-19  Martin Baulig  <martin@ximian.com>
 
 	* decl.cs (MemberCache.SetupCacheForInterface): Take a

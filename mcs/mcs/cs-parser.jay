@@ -3481,7 +3481,7 @@ throw_statement
 	;
 
 yield_statement 
-	: YIELD expression SEMICOLON
+	: YIELD RETURN expression SEMICOLON
 	  {
 		if (iterator_container == null){
 			Report.Error (204, lexer.Location, "yield statement can only be used within a method, operator or property");
