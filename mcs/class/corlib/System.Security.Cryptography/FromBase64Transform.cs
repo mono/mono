@@ -186,10 +186,28 @@ namespace System.Security.Cryptography {
 			return res;
 		}
 
+		private void CheckInputParameters (byte[] inputBuffer, int inputOffset, int inputCount)
+		{
+			if (inputBuffer == null)
+				throw new ArgumentNullException ("inputBuffer");
+			if (inputOffset < 0)
+				throw new ArgumentOutOfRangeException ("inputOffset", "< 0");
+			if (inputCount > inputBuffer.Length)
+				throw new OutOfMemoryException ("inputCount " + Locale.GetText ("Overflow"));
+			if (inputOffset > inputBuffer.Length - inputCount)
+				throw new ArgumentException ("inputOffset", Locale.GetText ("Overflow"));
+			if (inputCount < 0)
+				throw new OverflowException ("inputCount < 0");
+		}
+
 		public int TransformBlock (byte[] inputBuffer, int inputOffset, int inputCount, byte[] outputBuffer, int outputOffset)
 		{
 			if (m_disposed)
 				throw new ObjectDisposedException ("FromBase64Transform");
+			// LAMESPEC: undocumented exceptions
+			CheckInputParameters (inputBuffer, inputOffset, inputCount);
+			if ((outputBuffer == null) || (outputOffset < 0) || (inputCount > outputBuffer.Length - outputOffset))
+				throw new FormatException ("outputBuffer");
 
 			int n;
 			byte [] src;
@@ -229,6 +247,8 @@ namespace System.Security.Cryptography {
 		{
 			if (m_disposed)
 				throw new ObjectDisposedException ("FromBase64Transform");
+			// LAMESPEC: undocumented exceptions
+			CheckInputParameters (inputBuffer, inputOffset, inputCount);
 
 			byte[] src;
 			int srcOff;

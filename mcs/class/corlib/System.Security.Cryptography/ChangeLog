@@ -1,7 +1,12 @@
 2004-05-26  Sebastien Pouliot  <sebastien@ximian.com>
 
+	* CryptoStream.cs: Fixed possible integer overflow.
+	* FromBase64Transform.cs: Better exception handling and fixed possible
+	integer overflow.
 	* RNGCryptoServiceProvider.cs: Changed RNG interface with the runtime
 	so it could be used in a thread-safe way with CryptoAPI.
+	* ToBase64Transform.cs: Better exception handling and fixed possible
+	integer overflow.
 
 2004-05-07  Sebastien Pouliot  <sebastien@ximian.com>
 

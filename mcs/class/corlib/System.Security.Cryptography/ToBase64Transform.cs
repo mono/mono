@@ -75,7 +75,19 @@ namespace System.Security.Cryptography {
 				throw new ArgumentNullException ("inputBuffer");
 			if (outputBuffer == null)
 				throw new ArgumentNullException ("outputBuffer");
-// To match MS implementation
+			if (inputCount < 0)
+				throw new ArgumentException ("inputCount", "< 0");
+			if (inputCount > inputBuffer.Length)
+				throw new ArgumentException ("inputCount", Locale.GetText ("Overflow"));
+			if (inputOffset < 0)
+				throw new ArgumentOutOfRangeException ("inputOffset", "< 0");
+			// ordered to avoid possible integer overflow
+			if (inputOffset > inputBuffer.Length - inputCount)
+				throw new ArgumentException ("inputOffset", Locale.GetText ("Overflow"));
+			// ordered to avoid possible integer overflow
+			if ((outputOffset < 0) || (outputOffset > outputBuffer.Length - inputCount))
+				throw new IndexOutOfRangeException ("outputOffset");
+/// To match MS implementation
 //			if (inputCount != this.InputBlockSize)
 //				throw new CryptographicException (Locale.GetText ("Invalid input length"));
 
@@ -99,6 +111,10 @@ namespace System.Security.Cryptography {
 				throw new ObjectDisposedException ("TransformFinalBlock");
 			if (inputBuffer == null)
 				throw new ArgumentNullException ("inputBuffer");
+			if (inputCount < 0)
+				throw new ArgumentException ("inputCount", "< 0");
+			if (inputOffset > inputBuffer.Length - inputCount)
+				throw new ArgumentException ("inputCount", Locale.GetText ("Overflow"));
 			if (inputCount > this.InputBlockSize)
 				throw new ArgumentOutOfRangeException (Locale.GetText ("Invalid input length"));
 			

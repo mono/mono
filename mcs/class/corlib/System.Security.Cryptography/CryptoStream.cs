@@ -118,7 +118,8 @@ namespace System.Security.Cryptography {
 			}
 			// yes - buffer.Length will throw a NullReferenceException if buffer is null
 			// but by doing so we match MS implementation
-			if (offset + count > buffer.Length) {
+			// re-ordered to avoid integer overflow
+			if (offset > buffer.Length - count) {
 				throw new ArgumentException ("(offset+count)", 
 					Locale.GetText ("buffer overflow"));
 			}
@@ -224,7 +225,8 @@ namespace System.Security.Cryptography {
 				throw new ArgumentOutOfRangeException ("count", 
 					Locale.GetText ("negative"));
 			}
-			if (offset + count > buffer.Length) {
+			// re-ordered to avoid integer overflow
+			if (offset > buffer.Length - count) {
 				throw new ArgumentException ("(offset+count)", 
 					Locale.GetText ("buffer overflow"));
 			}
