@@ -1,4 +1,14 @@
-EXTRA_DIST = gc-issues  jit-thoughts	object-layout	 unmanaged-calls \
-	exceptions  jit-trampolines	stack-alignment embedded-api \
-	assembly-bundle
-
+EXTRA_DIST = \
+	aot-compiler.txt	\
+	assembly-bundle		\
+	embedded-api 		\
+	exceptions  		\
+	gc-issues  		\
+	jit-thoughts		\
+	jit-trampolines		\
+	local-regalloc.txt	\
+	object-layout	 	\
+	mini-doc.txt		\
+	mini-porting.txt	\
+	unmanaged-calls 	\
+	stack-alignment 	\
