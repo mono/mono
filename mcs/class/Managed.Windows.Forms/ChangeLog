@@ -1,3 +1,9 @@
+2004-11-30  Peter Bartok  <pbartok@novell.com>
+
+	* System.Windows.Forms.dll.sources: Removed textbox
+	  references, accidentally checked those in, but textbox is
+	  not yet ready for primetime
+
 2004-11-29  Peter Bartok  <pbartok@novell.com>
 
 	* System.Windows.Forms.dll.sources: Removed tree
