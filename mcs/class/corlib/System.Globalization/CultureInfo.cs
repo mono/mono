@@ -2,8 +2,9 @@
 // System.Globalization.CultureInfo
 //
 // Miguel de Icaza (miguel@ximian.com)
+// Dick Porter (dick@ximian.com)
 //
-// (C) Ximian, Inc. 2001 (http://www.ximian.com)
+// (C) 2001, 2002 Ximian, Inc. (http://www.ximian.com)
 //
 
 using System.Threading;
@@ -11,7 +12,7 @@ using System.Threading;
 namespace System.Globalization
 {
 	[Serializable]
-	public class CultureInfo : IFormatProvider
+	public class CultureInfo : ICloneable, IFormatProvider
 	{
 		static CultureInfo invariant_culture_info;
 		bool is_read_only;
@@ -694,6 +695,7 @@ namespace System.Globalization
 				return Thread.CurrentThread.CurrentCulture;
 			}
 			
+			/* FIXME: the set method isnt listed in the spec */
 			set 
 			{
 				Thread.CurrentThread.CurrentCulture = value;
@@ -710,6 +712,7 @@ namespace System.Globalization
 				return Thread.CurrentThread.CurrentUICulture;
 			}
 			
+			/* FIXME: the set method isnt listed in the spec */
 			set 
 			{
 				Thread.CurrentThread.CurrentUICulture =	value;
@@ -728,18 +731,546 @@ namespace System.Globalization
 		// </summary>
 		public virtual string Name {
 			get {
+				/* FIXME: This long switch should be
+				 * moved into a hash, initialised in
+				 * the static class constructor
+				 */
 				switch (lcid){
 				case 0x007f:
 					return "iv";
+				case 0x0036:
+					return "af";
+				case 0x0436:
+					return "af-ZA";
+				case 0x001c:
+					return "sq";
+				case 0x041c:
+					return "sq-AL";
+				case 0x0001:
+					return "ar";
+				case 0x1401:
+					return "ar-DZ";
+				case 0x3c01:
+					return "ar-BH";
+				case 0x0c01:
+					return "ar-EG";
+				case 0x0801:
+					return "ar-IQ";
+				case 0x2c01:
+					return "ar-JO";
+				case 0x3401:
+					return "ar-KW";
+				case 0x3001:
+					return "ar-LB";
+				case 0x1001:
+					return "ar-LY";
+				case 0x1801:
+					return "ar-MA";
+				case 0x2001:
+					return "ar-OM";
+				case 0x4001:
+					return "ar-QA";
+				case 0x0401:
+					return "ar-SA";
+				case 0x2801:
+					return "ar-SY";
+				case 0x1c01:
+					return "ar-TN";
+				case 0x3801:
+					return "ar-AE";
+				case 0x2401:
+					return "ar-YE";
+				case 0x002b:
+					return "hy";
+				case 0x042b:
+					return "hy-AM";
+				case 0x002c:
+					return "az";
+				case 0x082c:
+					return "Cy-az-AZ";
+				case 0x042c:
+					return "Lt-az-AZ";
+				case 0x002d:
+					return "eu";
+				case 0x042d:
+					return "eu-ES";
+				case 0x0023:
+					return "be";
+				case 0x0423:
+					return "be-BY";
+				case 0x0002:
+					return "bg";
+				case 0x0402:
+					return "bg-BG";
+				case 0x0003:
+					return "ca";
+				case 0x0403:
+					return "ca-ES";
+				case 0x0c04:
+					return "zh-HK";
+				case 0x1404:
+					return "zh-MO";
+				case 0x0804:
+					return "zh-CN";
+				case 0x0004:
+					return "zh-CHS";
+				case 0x1004:
+					return "zh-SG";
+				case 0x0404:
+					return "zh-TW";
+				case 0x7c04:
+					return "zh-CHT";
+				case 0x001a:
+					return "hr";
+				case 0x041a:
+					return "hr-HR";
+				case 0x0005:
+					return "cs";
+				case 0x0405:
+					return "cs-CZ";
+				case 0x0006:
+					return "da";
+				case 0x0406:
+					return "da-DK";
+				case 0x0065:
+					return "div";
+				case 0x0465:
+					return "div-MV";
+				case 0x0013:
+					return "nl";
+				case 0x0813:
+					return "nl-BE";
+				case 0x0413:
+					return "nl-NL";
+				case 0x0009:
+					return "en";
+				case 0x0c09:
+					return "en-AU";
+				case 0x2809:
+					return "en-BZ";
+				case 0x1009:
+					return "en-CA";
+				case 0x2409:
+					return "en-CB";
+				case 0x1809:
+					return "en-IE";
+				case 0x2009:
+					return "en-JM";
+				case 0x1409:
+					return "en-NZ";
+				case 0x3409:
+					return "en-PH";
+				case 0x1c09:
+					return "en-ZA";
+				case 0x2c09:
+					return "en-TT";
+				case 0x0809:
+					return "en-GB";
+				case 0x0409:
+					return "en-US";
+				case 0x3009:
+					return "en-ZW";
+				case 0x0025:
+					return "et";
+				case 0x0425:
+					return "et-EE";
+				case 0x0038:
+					return "fo";
+				case 0x0438:
+					return "fo-FO";
+				case 0x0029:
+					return "fa";
+				case 0x0429:
+					return "fa-IR";
+				case 0x000b:
+					return "fi";
+				case 0x040b:
+					return "fi-FI";
+				case 0x000c:
+					return "fr";
+				case 0x080c:
+					return "fr-BE";
+				case 0x0c0c:
+					return "fr-CA";
+				case 0x040c:
+					return "fr-FR";
+				case 0x140c:
+					return "fr-LU";
+				case 0x180c:
+					return "fr-MC";
+				case 0x100c:
+					return "fr-CH";
+				case 0x0056:
+					return "gl";
+				case 0x0456:
+					return "gl-ES";
+				case 0x0037:
+					return "ka";
+				case 0x0437:
+					return "ka-GE";
+				case 0x0007:
+					return "de";
+				case 0x0c07:
+					return "de-AT";
+				case 0x0407:
+					return "de-DE";
+				case 0x1407:
+					return "de-LI";
+				case 0x1007:
+					return "de-LU";
+				case 0x0807:
+					return "de-CH";
+				case 0x0008:
+					return "el";
+				case 0x0408:
+					return "el-GR";
+				case 0x0047:
+					return "gu";
+				case 0x0447:
+					return "gu-IN";
+				case 0x000d:
+					return "he";
+				case 0x040d:
+					return "he-IL";
+				case 0x0039:
+					return "hi";
+				case 0x0439:
+					return "hi-IN";
+				case 0x000e:
+					return "hu";
+				case 0x040e:
+					return "hu-HU";
+				case 0x000f:
+					return "is";
+				case 0x040f:
+					return "is-IS";
+				case 0x0021:
+					return "id";
+				case 0x0421:
+					return "id-ID";
+				case 0x0010:
+					return "it";
+				case 0x0410:
+					return "it-IT";
+				case 0x0810:
+					return "it-CH";
+				case 0x0011:
+					return "ja";
+				case 0x0411:
+					return "ja-JP";
+				case 0x004b:
+					return "kn";
+				case 0x044b:
+					return "kn-IN";
+				case 0x003f:
+					return "kk";
+				case 0x043f:
+					return "kk-KZ";
+				case 0x0057:
+					return "kok";
+				case 0x0457:
+					return "kok-IN";
+				case 0x0012:
+					return "ko";
+				case 0x0412:
+					return "ko-KR";
+				case 0x0040:
+					return "ky";
+				case 0x0440:
+					return "ky-KZ";
+				case 0x0026:
+					return "lv";
+				case 0x0426:
+					return "lv-LV";
+				case 0x0027:
+					return "lt";
+				case 0x0427:
+					return "lt-LT";
+				case 0x002f:
+					return "mk";
+				case 0x042f:
+					return "mk-MK";
+				case 0x003e:
+					return "ms";
+				case 0x083e:
+					return "ms-BN";
+				case 0x043e:
+					return "ms-MY";
+				case 0x004e:
+					return "mr";
+				case 0x044e:
+					return "mr-IN";
+				case 0x0050:
+					return "mn";
+				case 0x0450:
+					return "mn-MN";
+				case 0x0014:
+					return "no";
+				case 0x0414:
+					return "nb-NO";
+				case 0x0814:
+					return "nn-NO";
+				case 0x0015:
+					return "pl";
+				case 0x0415:
+					return "pl-PL";
+				case 0x0016:
+					return "pt";
+				case 0x0416:
+					return "pt-BR";
+				case 0x0816:
+					return "pt-PT";
+				case 0x0046:
+					return "pa";
+				case 0x0446:
+					return "pa-IN";
+				case 0x0018:
+					return "ro";
+				case 0x0418:
+					return "ro-RO";
+				case 0x0019:
+					return "ru";
+				case 0x0419:
+					return "ru-RU";
+				case 0x004f:
+					return "sa";
+				case 0x044f:
+					return "sa-IN";
+				case 0x0c1a:
+					return "Cy-sr-SP";
+				case 0x081a:
+					return "Lt-sr-SP";
+				case 0x001b:
+					return "sk";
+				case 0x041b:
+					return "sk-SK";
+				case 0x0024:
+					return "sl";
+				case 0x0424:
+					return "sl-SI";
+				case 0x000a:
+					return "es";
+				case 0x2c0a:
+					return "es-AR";
+				case 0x400a:
+					return "es-BO";
+				case 0x340a:
+					return "es-CL";
+				case 0x240a:
+					return "es-CO";
+				case 0x140a:
+					return "es-CR";
+				case 0x1c0a:
+					return "es-DO";
+				case 0x300a:
+					return "es-EC";
+				case 0x440a:
+					return "es-SV";
+				case 0x100a:
+					return "es-GT";
+				case 0x480a:
+					return "es-HN";
+				case 0x080a:
+					return "es-MX";
+				case 0x4c0a:
+					return "es-NI";
+				case 0x180a:
+					return "es-PA";
+				case 0x3c0a:
+					return "es-PY";
+				case 0x280a:
+					return "es-PE";
+				case 0x500a:
+					return "es-PR";
+				case 0x0c0a:
+					return "es-ES";
+				case 0x380a:
+					return "es-UY";
+				case 0x200a:
+					return "es-VE";
+				case 0x0041:
+					return "sw";
+				case 0x0441:
+					return "sw-KE";
+				case 0x001d:
+					return "sv";
+				case 0x081d:
+					return "sv-FI";
+				case 0x041d:
+					return "sv-SE";
+				case 0x005a:
+					return "syr";
+				case 0x045a:
+					return "syr-SY";
+				case 0x0049:
+					return "ta";
+				case 0x0449:
+					return "ta-IN";
+				case 0x0044:
+					return "tt";
+				case 0x0444:
+					return "tt-RU";
+				case 0x004a:
+					return "te";
+				case 0x044a:
+					return "te-IN";
+				case 0x001e:
+					return "th";
+				case 0x041e:
+					return "th-TH";
+				case 0x001f:
+					return "tr";
+				case 0x041f:
+					return "tr-TR";
+				case 0x0022:
+					return "uk";
+				case 0x0422:
+					return "uk-UA";
+				case 0x0020:
+					return "ur";
+				case 0x0420:
+					return "ur-PK";
+				case 0x0043:
+					return "uz";
+				case 0x0843:
+					return "Cy-uz-UZ";
+				case 0x0443:
+					return "Lt-uz-UZ";
+				case 0x002a:
+					return "vi";
+				case 0x042a:
+					return "vi-VN";
 				}
 				throw new Exception ("Miss constructed object for LCID: " + lcid);
 			}
 		}
 
 		[MonoTODO]
+		public virtual string NativeName
+		{
+			get {
+				return("");
+			}
+		}
+		
+
+		[MonoTODO]
 		public virtual Calendar Calendar
 		{
 			get { return null; }
+		}
+
+		[MonoTODO]
+		public virtual Calendar[] OptionalCalendars
+		{
+			get {
+				return(null);
+			}
+		}
+
+		[MonoTODO]
+		public virtual CultureInfo Parent
+		{
+			get {
+				return(CultureInfo.InvariantCulture);
+			}
+		}
+
+		[MonoTODO]
+		public virtual TextInfo TextInfo
+		{
+			get {
+				return(null);
+			}
+		}
+
+		[MonoTODO]
+		public virtual string ThreeLetterISOLanguageName
+		{
+			get {
+				return("");
+			}
+		}
+
+		[MonoTODO]
+		public virtual string ThreeLetterWindowsLanguageName
+		{
+			get {
+				return("");
+			}
+		}
+
+		[MonoTODO]
+		public virtual string TwoLetterISOLanguageName
+		{
+			get {
+				return("");
+			}
+		}
+
+		[MonoTODO]
+		public bool UseUserOverride
+		{
+			get {
+				return(false);
+			}
+		}
+
+		[MonoTODO]
+		public void ClearCachedData()
+		{
+		}
+
+		[MonoTODO]
+		public virtual object Clone()
+		{
+			return(null);
+		}
+
+		/*
+		[MonoTODO]
+		public override bool Equals(object value)
+		{
+			return(false);
+		}
+		*/
+
+		[MonoTODO]
+		public static CultureInfo[] GetCultures(CultureTypes types)
+		{
+			return(null);
+		}
+
+		/*
+		[MonoTODO]
+		public override int GetHashCode()
+		{
+			return(0);
+		}
+		*/
+
+		[MonoTODO]
+		public static CultureInfo ReadOnly(CultureInfo ci)
+		{
+			if(ci==null) {
+				throw new ArgumentNullException("CultureInfo is null");
+			}
+			
+			return(null);
+		}
+
+		public override string ToString()
+		{
+			return(this.Name);
+		}
+		
+		
+		[MonoTODO]
+		public virtual CompareInfo CompareInfo
+		{
+			get {
+				return null;
+			}
 		}
 
 		internal static bool IsIDNeutralCulture (int lcid) {
@@ -806,6 +1337,38 @@ namespace System.Globalization
 				datetime_format = value;
 			}
 		}
+
+		[MonoTODO]
+		public virtual string DisplayName
+		{
+			get {
+				return("");
+			}
+		}
+
+		[MonoTODO]
+		public virtual string EnglishName
+		{
+			get {
+				return("");
+			}
+		}
+
+		[MonoTODO]
+		public static CultureInfo InstalledUICulture
+		{
+			get {
+				return(null);
+			}
+		}
+
+		public bool IsReadOnly 
+		{
+			get {
+				return(is_read_only);
+			}
+		}
+		
 
 		// 
 		// IFormatProvider implementation
