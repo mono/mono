@@ -1,3 +1,9 @@
+2004-09-06  Dick Porter  <dick@ximian.com>
+
+	* process.c (ves_icall_System_Diagnostics_Process_Start_internal):
+	Close the new process's thread handle, as we don't use it.  The
+	handle stays around forever otherwise.
+
 2004-09-06  Zoltan Varga  <vargaz@freemail.hu>
 
 	* object.c (arith_overflow): Fix warning.
