@@ -1,11 +1,14 @@
+2003-09-29  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* sockets.c: set last error when socket creation fails. This shed some
+	light on bug #49015.
+
 2003-09-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
-	* handles.c: fixed thinko. We now store the strings with their \0.
 	* processes.c: fixed bug #48973: we only change \ by / for the argument
 	to be used as command.
 	When getting the program name from the args, don't let the space between
 	them in the args.
-	Store the strings with their terminating \0.
 
 2003-09-24  Bernie Solomon <bernard@ugsolutions.com>
 
