@@ -1,13 +1,11 @@
 //
 // System.Security.Policy.PolicyStatement
 //
-// Author:
-//   Dan Lewis (dihlewis@yahoo.co.uk)
+// Authors:
+//	Dan Lewis (dihlewis@yahoo.co.uk)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -36,6 +34,10 @@ namespace System.Security.Policy {
 
 	[Serializable]
 	public sealed class PolicyStatement : ISecurityEncodable, ISecurityPolicyEncodable {
+
+		private PermissionSet perms;
+		private PolicyStatementAttribute attrs;
+
 		public PolicyStatement (PermissionSet perms) :
 			this (perms, PolicyStatementAttribute.Nothing)
 		{
@@ -104,7 +106,23 @@ namespace System.Security.Policy {
 			return element;
 		}
 
-		private PermissionSet perms;
-		private PolicyStatementAttribute attrs;
+#if NET_2_0
+		public override bool Equals (object obj)
+		{
+			if (obj == null)
+				return false;
+			PolicyStatement ps = (obj as PolicyStatement);
+			if (ps == null)
+				return false;
+
+			return (perms.Equals (obj) && (attrs == ps.attrs));
+		}
+
+		public override int GetHashCode ()
+		{
+			// return same hash code if two PolicyStatement are equals
+			return (perms.GetHashCode () ^ (int) attrs);
+		}
+#endif
 	}
 }

@@ -5,9 +5,6 @@
 //	Duncan Mak (duncan@ximian.com)
 //
 // 2002 (C) Ximian, Inc. http://www.ximian.com
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -32,13 +29,17 @@
 
 using System;
 using System.Globalization;
+using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 
-namespace System.Security.Policy
-{
+namespace System.Security.Policy {
+
 	   [Serializable]
-	   public class PolicyException : SystemException
-	   {
+#if NET_2_0
+	   public class PolicyException : SystemException, _Exception {
+#else
+	   public class PolicyException : SystemException {
+#endif
 			 // Constructors
 			 public PolicyException ()
 				    : base (Locale.GetText ("Cannot run because of policy."))

@@ -3,13 +3,10 @@
 //
 // Authors:
 //	Jackson Harper (Jackson@LatitudeGeo.com)
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002 Jackson Harper, All rights reserved.
 // Portions (C) 2002 Motus Technologies Inc. (http://www.motus.com)
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -42,10 +39,14 @@ using System.Security.Cryptography;
 namespace System.Security.Policy {
 
 [Serializable]
+[MonoTODO("This doesn't match the MS version perfectly.")]
 public sealed class Hash : ISerializable, IBuiltInEvidence {
 
 	private Assembly assembly;
-	private byte[] data = null;
+	private byte[] data;
+
+	internal byte[] _md5;
+	internal byte[] _sha1;
 
 	public Hash (Assembly assembly) 
 	{
@@ -54,23 +55,35 @@ public sealed class Hash : ISerializable, IBuiltInEvidence {
 		this.assembly = assembly;
 	}
 
+#if NET_2_0
+	internal Hash () 
+	{
+	}
+#endif
+
 	//
 	// Public Properties
 	//
 
 	public byte[] MD5 {
 		get {
-			// fully named to avoid conflit between MD5 property and class name
-			HashAlgorithm hash = System.Security.Cryptography.MD5.Create ();
-			return GenerateHash (hash);
+			if ((_md5 == null) && (data != null)) {
+				// fully named to avoid conflit between MD5 property and class name
+				HashAlgorithm hash = System.Security.Cryptography.MD5.Create ();
+				_md5 = GenerateHash (hash);
+			}
+			return _md5;
 		}
 	}
 
 	public byte[] SHA1 {
 		get {
-			// fully named to avoid conflit between SHA1 property and class name
-			HashAlgorithm hash = System.Security.Cryptography.SHA1.Create ();
-			return GenerateHash (hash);
+			if ((_sha1 == null) && (data != null)) {
+				// fully named to avoid conflit between SHA1 property and class name
+				HashAlgorithm hash = System.Security.Cryptography.SHA1.Create ();
+				_sha1 = GenerateHash (hash);
+			}
+			return _sha1;
 		}
 	}
 
@@ -147,6 +160,26 @@ public sealed class Hash : ISerializable, IBuiltInEvidence {
 	{
 		return 0;
 	}
+
+#if NET_2_0
+	static public Hash CreateMD5 (byte[] md5)
+	{
+		if (md5 == null)
+			throw new ArgumentNullException ("md5");
+		Hash h = new Hash ();
+		h._md5 = md5;
+		return h;
+	}
+
+	static public Hash CreateSHA1 (byte[] sha1)
+	{
+		if (sha1 == null)
+			throw new ArgumentNullException ("sha1");
+		Hash h = new Hash ();
+		h._sha1 = sha1;
+		return h;
+	}
+#endif
 }
 
 }

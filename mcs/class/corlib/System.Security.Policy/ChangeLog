@@ -1,5 +1,20 @@
 2004-07-13  Sebastien Pouliot  <sebastien@ximian.com>
 
+	* Evidence.cs: Implemented Equals/GetHashCode and added Clear and 
+	RemoveType methods for NET_2_0 profile. 
+	* FileCodeGroup.cs: Added Scope property for NET_2_0 profile.
+	* Hash.cs: Added static CreateMD5 and CreateSHA1 for NET_2_0 profile.
+	* HashMembershipCondition.cs: Implements IDeserializationCallback and 
+	ISerializable for NET_2_0 profile.
+	* NetCodeGroup.cs: Add methods related to CodeConnectAccess for 
+	NET_2_0 profile.
+	* PolicyException.cs: Implements _Exception for NET_2_0 profile.
+	* PolicyLevel.cs: Added Type property for NET_2_0 profile.
+	* PolicyStatement.cs: Implemented Equals/GetHashCode for NET_2_0 
+	profile.
+
+2004-07-13  Sebastien Pouliot  <sebastien@ximian.com>
+
 	* ApplicationDefaultCodeGroup.cs: New class in Fx 2.0.
 	* ApplicationInstallScope.cs: New enum in Fx 2.0.
 	* ApplicationTrust.cs: New class in Fx 2.0.

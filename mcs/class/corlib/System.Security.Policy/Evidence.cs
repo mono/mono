@@ -5,13 +5,10 @@
 //	Sean MacIsaac (macisaac@ximian.com)
 //	Nick Drochak (ndrochak@gol.com)
 //	Jackson Harper (Jackson@LatitudeGeo.com)
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2001 Ximian, Inc.
 // Portions (C) 2003, 2004 Motus Technologies Inc. (http://www.motus.com)
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -47,7 +44,8 @@ namespace System.Security.Policy {
 		private bool _locked;
 		private ArrayList hostEvidenceList;	
 		private ArrayList assemblyEvidenceList;
-		
+		private int _hashCode;
+
 		public Evidence () 
 		{
 			hostEvidenceList = ArrayList.Synchronized (new ArrayList ());
@@ -106,6 +104,7 @@ namespace System.Security.Policy {
 		public void AddAssembly (object id) 
 		{
 			assemblyEvidenceList.Add (id);
+			_hashCode = 0;
 		}
 
 		public void AddHost (object id) 
@@ -114,7 +113,17 @@ namespace System.Security.Policy {
 				new SecurityPermission (SecurityPermissionFlag.ControlEvidence).Demand ();
 			}
 			hostEvidenceList.Add (id);
+			_hashCode = 0;
 		}
+
+#if NET_2_0
+		public void Clear ()
+		{
+			hostEvidenceList.Clear ();
+			assemblyEvidenceList.Clear ();
+			_hashCode = 0;
+		}
+#endif
 
 		public void CopyTo (Array array, int index) 
 		{
@@ -123,6 +132,47 @@ namespace System.Security.Policy {
 			if (assemblyEvidenceList.Count > 0) 
 				assemblyEvidenceList.CopyTo (array, index + hostEvidenceList.Count);
 		}
+
+#if NET_2_0
+		public override bool Equals (object obj)
+		{
+			if (obj == null)
+				return false;
+			Evidence e = (obj as Evidence);
+			if (e == null)
+				return false;
+
+			if (hostEvidenceList.Count != e.hostEvidenceList.Count)
+				return false;
+			if (assemblyEvidenceList.Count != e.assemblyEvidenceList.Count)
+				return false;
+
+			for (int i = 0; i < hostEvidenceList.Count; i++) {
+				bool found = false;
+				for (int j = 0; j < e.hostEvidenceList.Count; i++) {
+					if (hostEvidenceList [i].Equals (e.hostEvidenceList [j])) {
+						found = true;
+						break;
+					}
+				}
+				if (!found)
+					return false;
+			}
+			for (int i = 0; i < assemblyEvidenceList.Count; i++) {
+				bool found = false;
+				for (int j = 0; j < e.assemblyEvidenceList.Count; i++) {
+					if (assemblyEvidenceList [i].Equals (e.assemblyEvidenceList [j])) {
+						found = true;
+						break;
+					}
+				}
+				if (!found)
+					return false;
+			}
+			
+			return true;
+		}
+#endif
 
 		public IEnumerator GetEnumerator () 
 		{
@@ -134,6 +184,20 @@ namespace System.Security.Policy {
 		{
 			return assemblyEvidenceList.GetEnumerator ();
 		}
+
+#if NET_2_0
+		public override int GetHashCode ()
+		{
+			// kind of long so we cache it
+			if (_hashCode == 0) {
+				for (int i = 0; i < hostEvidenceList.Count; i++)
+					_hashCode ^= hostEvidenceList [i].GetHashCode ();
+				for (int i = 0; i < assemblyEvidenceList.Count; i++)
+					_hashCode ^= assemblyEvidenceList [i].GetHashCode ();
+			}
+			return _hashCode;
+		}
+#endif
 
 		public IEnumerator GetHostEnumerator () 
 		{
@@ -154,6 +218,24 @@ namespace System.Security.Policy {
 				AddAssembly (assemblyenum.Current);
 			}
 		}
+
+#if NET_2_0
+		public void RemoveType (Type t)
+		{
+			for (int i = hostEvidenceList.Count; i >= 0; i--) {
+				if (hostEvidenceList.GetType () == t) {
+					hostEvidenceList.RemoveAt (i);
+					_hashCode = 0;
+				}
+			}
+			for (int i = assemblyEvidenceList.Count; i >= 0; i--) {
+				if (assemblyEvidenceList.GetType () == t) {
+					assemblyEvidenceList.RemoveAt (i);
+					_hashCode = 0;
+				}
+			}
+		}
+#endif
 	
 		private class EvidenceEnumerator : IEnumerator {
 			

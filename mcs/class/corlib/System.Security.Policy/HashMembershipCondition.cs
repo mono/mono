@@ -1,13 +1,11 @@
 //
 // System.Security.Policy.HashMembershipCondition
 //
-// Author(s):
-//  Jackson Harper (Jackson@LatitudeGeo.com)
+// Authors:
+//	Jackson Harper (Jackson@LatitudeGeo.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002 Jackson Harper, All rights reserved
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -30,26 +28,33 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Text;
+using System.Globalization;
 using System.Reflection;
+using System.Runtime.Serialization;
 using System.Security.Cryptography;
+using System.Text;
 
 namespace System.Security.Policy {
 
 	[Serializable]
-	public sealed class HashMembershipCondition : IMembershipCondition, 
-		ISecurityEncodable, ISecurityPolicyEncodable {
-
+#if NET_2_0
+	public sealed class HashMembershipCondition : IMembershipCondition, ISecurityEncodable, 
+		ISecurityPolicyEncodable, IDeserializationCallback, ISerializable {
+#else
+	public sealed class HashMembershipCondition : IMembershipCondition, ISecurityEncodable, 
+		ISecurityPolicyEncodable {
+#endif
 		private static readonly string XmlTag = "IMembershipCondition";
 
 		private HashAlgorithm hash_algorithm;
 		private byte[] hash_value;
 
-		public HashMembershipCondition (HashAlgorithm hash_algorithm,
-  			byte[] hash_value)
+		public HashMembershipCondition (HashAlgorithm hash_algorithm, byte[] hash_value)
 		{
-			if (hash_algorithm == null || hash_value == null)
-				throw new ArgumentNullException ();
+			if (hash_algorithm == null)
+				throw new ArgumentNullException ("hash_algorithm");
+			if (hash_value == null)
+				throw new ArgumentNullException ("hash_value");
 				
 			this.hash_algorithm = hash_algorithm;
 			this.hash_value = hash_value;
@@ -84,7 +89,7 @@ namespace System.Security.Policy {
 		public bool Check (Evidence evidence)
 		{
 			if (evidence == null)
-				throw new ArgumentNullException ();
+				throw new ArgumentNullException ("evidence");
 
 			// Loop through evidence finding the first Hash object
 			foreach (object obj in evidence) {
@@ -137,27 +142,28 @@ namespace System.Security.Policy {
 			FromXml (element, null);
 		}
 		
-		public void FromXml (SecurityElement e,
-			PolicyLevel level)
+		public void FromXml (SecurityElement e, PolicyLevel level)
 		{
 			if (e == null)
-				throw new ArgumentNullException ();
-			if (e.Tag != XmlTag)
-				throw new ArgumentException(
-					"e","The Tag of SecurityElement must be " + XmlTag);
+				throw new ArgumentNullException ("e");
+			if (e.Tag != XmlTag) {
+				throw new ArgumentException ("e", Locale.GetText (
+					"The Tag of SecurityElement must be " + XmlTag));
+			}
 			
-			string value = (string)e.Attributes["HashValue"];
-			string algorithm = (string)e.Attributes["HashAlgorithm"];
+			string value = (string)e.Attributes ["HashValue"];
+			string algorithm = (string)e.Attributes ["HashAlgorithm"];
 
-			if (value == null || algorithm == null )
-				throw new ArgumentException ();
+			if (value == null || algorithm == null ) {
+				throw new ArgumentException ("e", Locale.GetText (
+					"Missing either HashValue or HashAlgorithm"));
+			}
 			
 			hash_value = Encoding.Default.GetBytes (value);
 			hash_algorithm = (HashAlgorithm)Assembly.GetExecutingAssembly ().CreateInstance (algorithm);
 			
 		}
 
-		[MonoTODO("This is not right")]
 		public override int GetHashCode ()
 		{
 			return hash_value.GetHashCode ();
@@ -195,6 +201,18 @@ namespace System.Security.Policy {
 
 			return true;
 		}
+
+#if NET_2_0
+		[MonoTODO]
+		void IDeserializationCallback.OnDeserialization (object sender)
+		{
+		}
+
+		[MonoTODO]
+		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context) 
+		{
+		}
+#endif
 	}
 }
 

@@ -1,11 +1,10 @@
+//
 // System.Security.Policy.FileCodeGroup
 //
 // Author(s):
 //   Nick Drochak (ndrochak@gol.com)
 //
 // (C) 2001 Nick Drochak, All rights reserved.
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -38,7 +37,10 @@ namespace System.Security.Policy {
 	[Serializable]
 	public sealed class FileCodeGroup : CodeGroup {
 
-		FileIOPermissionAccess m_access;
+		private FileIOPermissionAccess m_access;
+#if NET_2_0
+		private CodeGroupGrantScope _scope = CodeGroupGrantScope.Assembly;
+#endif
 
 		public FileCodeGroup (IMembershipCondition membershipCondition,
 					FileIOPermissionAccess access) 
@@ -113,6 +115,13 @@ namespace System.Security.Policy {
 			get { return "Same directory FileIO - " + m_access.ToString(); }
 		}
 
+#if NET_2_0
+		public CodeGroupGrantScope Scope {
+			get { return _scope; }
+			set { _scope = value; }
+		}
+#endif
+
 		public override bool Equals(object o)
 		{
 			if (!(o is FileCodeGroup))
@@ -138,5 +147,5 @@ namespace System.Security.Policy {
 		{
 			element.AddAttribute("Access", m_access.ToString());
 		}
-	}  // public abstract class CodeGroup
-}  // namespace System.Security.Policy
+	}
+}

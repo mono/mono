@@ -4,14 +4,11 @@
 // Authors:
 //      Nick Drochak (ndrochak@gol.com)
 //      Duncan Mak (duncan@ximian.com)
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2001 Nick Drochak
 // (C) 2003 Duncan Mak, Ximian Inc.
 // Portions (C) 2004 Motus Technologies Inc. (http://www.motus.com)
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -53,6 +50,7 @@ namespace System.Security.Policy {
 		private ArrayList full_trust_assemblies;
 		private ArrayList named_permission_sets;
 		private string _location;
+		private PolicyLevelType _type;
 
 		internal PolicyLevel (string label)
                 {
@@ -125,6 +123,15 @@ namespace System.Security.Policy {
 		public string StoreLocation {
 			get { return _location; }
 		}
+
+#if NET_2_0
+		[MonoTODO ("assign type when loading policy")]
+		public PolicyLevelType Type {
+			get { return _type; }
+		}
+#endif
+
+		// methods
 
                 public void AddFullTrustAssembly (StrongName sn)
                 {

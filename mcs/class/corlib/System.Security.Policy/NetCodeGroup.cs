@@ -1,13 +1,11 @@
 //
 // System.Security.Policy.NetCodeGroup
 //
-// Author(s):
-//  Jackson Harper (Jackson@LatitudeGeo.com)
+// Authors:
+//	Jackson Harper (Jackson@LatitudeGeo.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002 Jackson Harper, All rights reserved
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -31,17 +29,32 @@
 //
 
 using System;
+using System.Collections;
+using System.Globalization;
 
 namespace System.Security.Policy {
 
 	[Serializable]
 	public sealed class NetCodeGroup : CodeGroup {
 
+#if NET_2_0
+		public static readonly string AbsentOriginScheme = String.Empty;
+		public static readonly string AnyOtherOriginScheme = "*";
+
+		private CodeGroupGrantScope _scope = CodeGroupGrantScope.Assembly;
+		private Hashtable _rules = new Hashtable ();
+#endif
+
 		public NetCodeGroup (IMembershipCondition condition) 
-			: base (condition, null) {}
+			: base (condition, null) 
+		{
+		}
 
 		// for PolicyLevel (to avoid validation duplication)
-		internal NetCodeGroup (SecurityElement e) : base (e) {}
+		internal NetCodeGroup (SecurityElement e) 
+			: base (e) 
+		{
+		}
 	
 		//
 		// Public Properties
@@ -59,9 +72,48 @@ namespace System.Security.Policy {
 			get { return "Same site Web."; }
 		}
 
+#if NET_2_0
+		public CodeGroupGrantScope Scope {
+			get { return _scope; }
+			set { _scope = value; }
+		}
+#endif
+
 		//
 		// Public Methods
 		//
+
+#if NET_2_0
+		[MonoTODO ("missing validations")]
+		public void AddConnectAccess (string originScheme, CodeConnectAccess connectAccess)
+		{
+			if (originScheme == null)
+				throw new ArgumentException ("originScheme");
+
+			// TODO - invalid characters in originScheme
+			if ((originScheme == AbsentOriginScheme) && (connectAccess.Scheme == CodeConnectAccess.OriginScheme)) {
+				throw new ArgumentOutOfRangeException ("connectAccess", Locale.GetText (
+					"Schema == CodeConnectAccess.OriginScheme"));
+			}
+
+			if (_rules.ContainsKey (originScheme)) {
+				// NULL has no effect
+				if (connectAccess != null) {
+					CodeConnectAccess[] existing = (CodeConnectAccess[]) _rules [originScheme];
+					CodeConnectAccess[] array = new CodeConnectAccess [existing.Length + 1];
+					Array.Copy (existing, 0, array, 0, existing.Length);
+					array [existing.Length] = connectAccess;
+					_rules [originScheme] = array;
+				}
+			}
+			else {
+				CodeConnectAccess[] array = new CodeConnectAccess [1];
+				array [0] = connectAccess;
+				_rules.Add (originScheme, array);
+				// add null to prevent access
+			}
+		}
+#endif
 
 		public override CodeGroup Copy ()
 		{
@@ -76,15 +128,31 @@ namespace System.Security.Policy {
 			return copy;
 		}
 
+#if NET_2_0
+		public DictionaryEntry[] GetConnectAccessRules ()
+		{
+			DictionaryEntry[] result = new DictionaryEntry [_rules.Count];
+			_rules.CopyTo (result, 0);
+			return result;
+		}
+#endif
+
 		[MonoTODO]
 		public override PolicyStatement Resolve (Evidence evidence)
 		{
 			if (evidence == null) 
-				throw new ArgumentNullException ();
+				throw new ArgumentNullException ("evidence");
 
 			throw new NotImplementedException ();
 		}
-	
+
+#if NET_2_0
+		public void ResetConnectAccess ()
+		{
+			_rules.Clear ();
+		}
+#endif
+
 		public override CodeGroup ResolveMatchingCodeGroups (Evidence evidence) 
 		{
 			if (evidence == null)
@@ -105,6 +173,20 @@ namespace System.Security.Policy {
 
 			return return_group;
 		}
+
+#if NET_2_0
+		[MonoTODO]
+		protected override void CreateXml (SecurityElement element, PolicyLevel level)
+		{
+			base.CreateXml (element, level);
+		}
+
+		[MonoTODO]
+		protected override void ParseXml (SecurityElement e, PolicyLevel level)
+		{
+			base.ParseXml (e, level);
+		}
+#endif
 	}
 }
 
