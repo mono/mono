@@ -681,7 +681,7 @@ namespace Microsoft.JScript {
 			} else if (tt == Token.ASSIGNOP) {
 				ts.GetToken ();
 				int op = ts.GetOp ();
-				pn = new Assign (parent, pn, AssignExpr (parent, in_for_init), JSToken.Assign, false);
+				pn = new Assign (parent, pn, AssignExpr (parent, in_for_init), ToJSToken (op, tt), false);
 			}
 			return pn;
 		}
@@ -895,8 +895,40 @@ namespace Microsoft.JScript {
 				return JSToken.Divide;
 			else if (tt == Token.MOD)
 				return JSToken.Modulo;
-			else 
-				return JSToken.None;
+			else
+				throw new NotImplementedException ();
+		}
+
+		//
+		// Takes care of +=, -=
+		//
+		JSToken ToJSToken (int left, int right)
+		{
+			if (right == Token.ASSIGNOP) {
+				if  (left == Token.ADD)
+					return JSToken.PlusAssign;
+				else if (left == Token.SUB)
+					return JSToken.MinusAssign;
+				else if (left == Token.MUL)
+					return JSToken.MultiplyAssign;
+				else if (left == Token.DIV)
+					return JSToken.DivideAssign;
+				else if (left == Token.BITAND)
+					return JSToken.BitwiseAndAssign;
+				else if (left == Token.BITOR)
+					return JSToken.BitwiseOrAssign;
+				else if (left == Token.BITXOR)
+					return JSToken.BitwiseXorAssign;
+				else if (left == Token.MOD)
+					return JSToken.ModuloAssign;
+				else if (left == Token.LSH)
+					return JSToken.LeftShiftAssign;
+				else if (left == Token.RSH)
+					return JSToken.RightShiftAssign;
+				else if (left == Token.URSH)
+					return JSToken.UnsignedRightShiftAssign;
+			}
+			throw new NotImplementedException ();
 		}
 
 		void ArgumentList (AST parent, ICallable list) 

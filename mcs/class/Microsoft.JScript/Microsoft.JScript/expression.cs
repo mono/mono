@@ -1175,20 +1175,23 @@ namespace Microsoft.JScript {
 
 		internal override void Emit (EmitContext ec)
 		{
-			ILGenerator ig = ec.ig;
-
-			if (is_embedded) {
-				Console.WriteLine ("embedded assignments not supported yet");
-				Environment.Exit (-1);
-			} 
-			left.Emit (ec);
+			if (op == JSToken.Assign) {
+				if (is_embedded) {
+					Console.WriteLine ("embedded assignments not supported yet");
+					Environment.Exit (-1);
+				} 
+				left.Emit (ec);
+			} else {
+				Console.WriteLine (this.ToString ());
+				throw new NotImplementedException ();
+			}
 		}
 		
 		public override string ToString ()
 		{
 			string l = left.ToString ();
 			string r = right.ToString ();
-			return l + " = " + r;			
+			return l + " " + op.ToString () + " " + r;
 		}
 	}
 
