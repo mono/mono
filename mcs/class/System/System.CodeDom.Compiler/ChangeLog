@@ -1,3 +1,7 @@
+2003-07-10  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* Executor.cs: Changed abstract to sealed
+
 2003-07-07  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* CodeDomProvider.cs: Removed unneccesary attribute according to corecompare

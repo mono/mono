@@ -13,7 +13,7 @@ using System.IO;
 namespace System.CodeDom.Compiler
 {
 
-	public abstract class Executor
+	public sealed class Executor
 	{
 
 		private Executor ()
