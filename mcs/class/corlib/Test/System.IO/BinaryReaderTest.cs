@@ -336,7 +336,629 @@ namespace MonoTests.System.IO
 				}
 			}
 
-		}			
+		}
+
+	/// <summary>
+	/// Throws an exception if stream is null
+	/// </summary>
+	[Test]
+	[ExpectedException(typeof(ArgumentNullException))]
+	public void CtorNullExceptionStream () 
+	{
+		BinaryReader reader = new BinaryReader (null);
+		Assertion.Fail();
+	}
+
+	/// <summary>
+	/// Throws an exception if encoding is null
+	/// </summary>
+	[Test]
+	[ExpectedException(typeof(ArgumentNullException))]
+	public void CtorNullExceptionEncoding () 
+	{
+		MemoryStream stream = new MemoryStream (64);	
+		BinaryReader reader = new BinaryReader (stream, null);
+		Assertion.Fail();
+	}
+	
+	/// <summary>
+	/// Throws an exception if stream does not support writing
+	/// </summary>
+	[Test]
+	[ExpectedException(typeof(ArgumentException))]
+	public void CtorArgumentExceptionCannotWrite ()
+	{
+		if (File.Exists (".BinaryReaderTestFile.1"))
+			File.Delete (".BinaryReaderTestFile.1");
+		
+		FileStream file = new FileStream (".BinaryReaderTestFile.1", FileMode.CreateNew, FileAccess.Read);
+		BinaryReader breader = new BinaryReader (file);
+
+		if (File.Exists (".BinaryReaderTestFile.1"))
+			File.Delete (".BinaryReaderTestFile.1");
+		
+		Assertion.Fail ();
+	}
+
+	/// <summary>
+	/// Throws an exception if stream is already closed
+	/// </summary>
+	[Test]
+	[ExpectedException(typeof(ArgumentException))]
+	public void CtorArgumentExceptionClosedStream ()
+	{
+		if (File.Exists (".BinaryReaderTestFile.2"))
+			File.Delete (".BinaryReaderTestFile.2");
+		
+		FileStream file = new FileStream (".BinaryReaderTestFile.1", FileMode.CreateNew, FileAccess.Write);
+		file.Close ();
+		BinaryReader breader = new BinaryReader (file);
+
+		if (File.Exists (".BinaryReaderTestFile.2"))
+			File.Delete (".BinaryReaderTestFile.2");		
+	}
+
+	/// <summary>
+	/// Throws an exception if stream is closed
+	/// </summary>
+	[Test]
+	[ExpectedException(typeof(ArgumentException))]
+	public void CtorArgumentExceptionEncoding () 
+	{
+		MemoryStream stream = new MemoryStream (64);	
+		stream.Close ();
+		
+		BinaryReader reader = new BinaryReader (stream, new ASCIIEncoding ());
+		Assertion.Fail();
+	}
+	
+	/// <summary>
+	/// Tests read () method
+	/// </summary>
+	[Test]
+	public void Read ()
+	{
+		byte [] bytes = new byte [] {0, 1, 2, 3};
+		MemoryStream stream = new MemoryStream (bytes);
+		BinaryReader reader = new BinaryReader (stream);
+		
+		Assertion.AssertEquals ("test#01", 0, reader.Read ());
+		Assertion.AssertEquals ("test#02", 1, reader.Read ());
+		Assertion.AssertEquals ("test#03", 2, reader.Read ());
+		Assertion.AssertEquals ("test#04", 3, reader.Read ());
+		Assertion.AssertEquals ("test#05", -1, reader.Read ());		
+	}
+	
+	[Test]
+	public void PeakChar ()
+	{
+		byte [] bytes = new byte [] {0, 1, 2, 3};
+		MemoryStream stream = new MemoryStream (bytes);
+		BinaryReader reader = new BinaryReader (stream);
+		
+		Assertion.AssertEquals ("test#01", 0, reader.PeekChar ());
+		Assertion.AssertEquals ("test#02", 0, reader.PeekChar ());
+		Assertion.AssertEquals ("test#03", 0, reader.Read ());
+		Assertion.AssertEquals ("test#03", 1, reader.Read ());
+		Assertion.AssertEquals ("test#03", 2, reader.PeekChar ());
+	}
+	
+	[Test]
+	[ExpectedException(typeof(ObjectDisposedException))]		
+	public void CloseRead ()
+	{
+		byte [] bytes = new byte [] {0, 1, 2, 3};
+		MemoryStream stream = new MemoryStream (bytes);
+		BinaryReader reader = new BinaryReader (stream);
+		reader.Close ();
+		reader.Read ();
+	}
+
+	[Test]
+	[ExpectedException(typeof(ObjectDisposedException))]		
+	public void ClosePeakChar ()
+	{
+		byte [] bytes = new byte [] {0, 1, 2, 3};
+		MemoryStream stream = new MemoryStream (bytes);
+		BinaryReader reader = new BinaryReader (stream);
+		reader.Close ();
+		reader.PeekChar ();
+	}
+
+	[Test]
+	[ExpectedException(typeof(ObjectDisposedException))]
+	public void CloseReadBytes ()
+	{
+		byte [] bytes = new byte [] {0, 1, 2, 3};
+		MemoryStream stream = new MemoryStream (bytes);
+		BinaryReader reader = new BinaryReader (stream);
+		reader.Close ();
+		reader.ReadBytes (1);
+	}
+
+	[Test]
+	public void BaseStream ()
+	{
+		byte [] bytes = new byte [] {0, 1, 2, 3};
+		MemoryStream stream = new MemoryStream (bytes);
+		BinaryReader reader = new BinaryReader (stream);
+		
+		Assertion.AssertEquals ("test#01", 4, reader.BaseStream.Length);
+		Assertion.AssertEquals ("test#02", true, reader.BaseStream.CanRead);		
+		reader.Close ();
+		Assertion.AssertEquals ("test#03", null, reader.BaseStream);
+	}
+
+	
+	/// <summary>
+	/// Tests read (byte [], int, int) method
+	/// </summary>
+	[Test]
+	public void ReadByteArray ()
+	{
+		byte [] bytes = new byte [] {0, 1, 2, 3, 4, 5};
+		MemoryStream stream = new MemoryStream (bytes);
+		BinaryReader reader = new BinaryReader (stream);
+		
+		bytes = new byte [3];
+		reader.Read (bytes, 0, 3);
+		Assertion.AssertEquals ("test#01", 0, bytes [0]);
+		Assertion.AssertEquals ("test#02", 1, bytes [1]);
+		Assertion.AssertEquals ("test#03", 2, bytes [2]);
+
+		bytes = new byte [6];
+		reader.Read (bytes, 3, 3);
+		Assertion.AssertEquals ("test#04", 0, bytes [0]);
+		Assertion.AssertEquals ("test#05", 0, bytes [1]);
+		Assertion.AssertEquals ("test#06", 0, bytes [2]);
+		Assertion.AssertEquals ("test#07", 3, bytes [3]);
+		Assertion.AssertEquals ("test#08", 4, bytes [4]);
+		Assertion.AssertEquals ("test#09", 5, bytes [5]);
+		
+		bytes = new byte [2];
+		reader.Read (bytes, 0, 2);
+		Assertion.AssertEquals ("test#10", 0, bytes [0]);
+		Assertion.AssertEquals ("test#11", 0, bytes [1]);				
+	}
+	
+	/// <summary>
+	/// Test Read (char [], int, int)
+	/// </summary>
+	[Test]
+	public void ReadCharArray ()
+	{
+		
+		MemoryStream stream = new MemoryStream (new byte [] {109, 111, 110, 111, 58, 58});
+		BinaryReader reader = new BinaryReader (stream);
+		
+		char [] chars = new char [3];
+		reader.Read (chars, 0, 3);
+		Assertion.AssertEquals ("test#01", 'm', chars [0]);
+		Assertion.AssertEquals ("test#02", 'o', chars [1]);
+		Assertion.AssertEquals ("test#03", 'n', chars [2]);
+
+		chars = new char [6];
+		reader.Read (chars, 3, 3);
+		Assertion.AssertEquals ("test#04", 0, chars [0]);
+		Assertion.AssertEquals ("test#05", 0, chars [1]);
+		Assertion.AssertEquals ("test#06", 0, chars [2]);
+		Assertion.AssertEquals ("test#07", 'o', chars [3]);
+		Assertion.AssertEquals ("test#08", ':', chars [4]);
+		Assertion.AssertEquals ("test#09", ':', chars [5]);
+		
+		chars = new char [2];
+		reader.Read (chars, 0, 2);
+		Assertion.AssertEquals ("test#08", 0, chars [0]);
+		Assertion.AssertEquals ("test#09", 0, chars [1]);
+
+	}
+	
+	/// <summary>
+	/// Test ReadBoolean () method.
+	/// </summary>
+	[Test]
+	public void ReadBoolean ()
+	{
+		MemoryStream stream = new MemoryStream (new byte [] {0, 1, 99, 0, 13});
+		BinaryReader reader = new BinaryReader (stream);
+		
+		Assertion.AssertEquals ("test#01", false, reader.ReadBoolean ());
+		Assertion.AssertEquals ("test#02", true, reader.ReadBoolean ());
+		Assertion.AssertEquals ("test#03", true, reader.ReadBoolean ());
+		Assertion.AssertEquals ("test#04", false, reader.ReadBoolean ());
+		Assertion.AssertEquals ("test#05", true, reader.ReadBoolean ());		
+	}
+	
+	/// <summary>
+	/// Test ReadBoolean () method exceptions.
+	/// </summary>
+	[Test]
+	[ExpectedException(typeof(EndOfStreamException))]	
+	public void ReadBooleanException ()
+	{
+		MemoryStream stream = new MemoryStream (new byte [] {0, 1});
+		BinaryReader reader = new BinaryReader (stream);
+		
+		reader.ReadBoolean ();
+		reader.ReadBoolean ();
+		reader.ReadBoolean ();
+		Assertion.Fail ();		
+	}
+	
+	/// <summary>
+	/// Test ReadByte () method.
+	/// </summary>
+	[Test]
+	public void ReadByte ()
+	{
+		MemoryStream stream = new MemoryStream (new byte [] {0, 1, 99, 0, 13});
+		BinaryReader reader = new BinaryReader (stream);
+		
+		Assertion.AssertEquals ("test#01", 0, reader.ReadByte ());
+		Assertion.AssertEquals ("test#02", 1, reader.ReadByte ());
+		Assertion.AssertEquals ("test#03", 99, reader.ReadByte ());
+		Assertion.AssertEquals ("test#04", 0, reader.ReadByte ());
+		Assertion.AssertEquals ("test#05", 13, reader.ReadByte ());		
+	}
+	
+	/// <summary>
+	/// Test ReadByte () method exceptions.
+	/// </summary>
+	[Test]
+	[ExpectedException(typeof(EndOfStreamException))]	
+	public void ReadByteException ()
+	{
+		MemoryStream stream = new MemoryStream (new byte [] {0, 1});
+		BinaryReader reader = new BinaryReader (stream);
+		reader.ReadByte ();
+		reader.ReadByte ();
+		reader.ReadByte ();
+		Assertion.Fail ();		
+	}
+	
+	/// <summary>
+	/// Test ReadBytes (int) method.
+	/// </summary>
+	[Test]
+	public void ReadBytes ()
+	{
+		MemoryStream stream = new MemoryStream (new byte [] {0, 1, 99, 0, 13});
+		BinaryReader reader = new BinaryReader (stream);
+		
+		byte [] bytes = reader.ReadBytes (2);
+		Assertion.AssertEquals ("test#01", 0, bytes [0]);
+		Assertion.AssertEquals ("test#02", 1, bytes [1]);
+		
+		bytes = reader.ReadBytes (2);
+		Assertion.AssertEquals ("test#03", 99, bytes [0]);
+		Assertion.AssertEquals ("test#04", 0, bytes [1]);
+		
+		bytes = reader.ReadBytes (2);
+		Assertion.AssertEquals ("test#05", 13, bytes [0]);
+		Assertion.AssertEquals ("test#06", 1, bytes.Length);
+	}
+	
+	/// <summary>
+	/// Test ReadBytes (int) method exception.
+	/// </summary>
+	[Test]
+	[ExpectedException(typeof(ArgumentOutOfRangeException))]
+	public void ReadBytesException ()
+	{
+		MemoryStream stream = new MemoryStream (new byte [] {0, 1, 99, 0, 13});
+		BinaryReader reader = new BinaryReader (stream);
+		reader.ReadBytes (-1);		
+	}
+	
+	/// <summary>
+	/// Test ReadChar () method.
+	/// </summary>
+	[Test]
+	public void ReadChar ()
+	{
+		MemoryStream stream = new MemoryStream (new byte [] {0, 1, 99, 0, 13});
+		BinaryReader reader = new BinaryReader (stream);
+		
+		Assertion.AssertEquals ("test#01", 0, reader.ReadChar ());
+		Assertion.AssertEquals ("test#02", 1, reader.ReadChar ());
+		Assertion.AssertEquals ("test#03", 99, reader.ReadChar ());
+		Assertion.AssertEquals ("test#04", 0, reader.ReadChar ());
+		Assertion.AssertEquals ("test#05", 13, reader.ReadChar ());
+	}
+	
+	/// <summary>
+	/// Test ReadChar () method exception.
+	/// </summary>
+	[Test]
+	[ExpectedException(typeof(EndOfStreamException))]	
+	public void ReadCharException ()
+	{
+		MemoryStream stream = new MemoryStream (new byte [] {0, 1});
+		BinaryReader reader = new BinaryReader (stream);
+		reader.ReadChar ();
+		reader.ReadChar ();
+		reader.ReadChar ();
+		Assertion.Fail ();
+	}
+
+	/// <summary>
+	/// Test ReadChars (int) method.
+	/// </summary>
+	[Test]
+	public void ReadChars ()
+	{
+		MemoryStream stream = new MemoryStream (new byte [] {0, 1, 99, 0, 13});
+		BinaryReader reader = new BinaryReader (stream);
+		
+		char [] chars = reader.ReadChars (2);
+		Assertion.AssertEquals ("test#01", 0, chars [0]);
+		Assertion.AssertEquals ("test#02", 1, chars [1]);
+		
+		chars = reader.ReadChars (2);
+		Assertion.AssertEquals ("test#03", 99, chars [0]);
+		Assertion.AssertEquals ("test#04", 0, chars [1]);
+		
+		chars = reader.ReadChars (2);
+		Assertion.AssertEquals ("test#05", 13, chars [0]);
+		Assertion.AssertEquals ("test#06", 1, chars.Length);
+	}
+	
+	/// <summary>
+	/// Test ReadChars (int value) exceptions. If value is negative exception is thrown
+	/// </summary>
+	[Test]
+	[ExpectedException(typeof(ArgumentOutOfRangeException))]
+	public void ReadCharsException ()
+	{
+		MemoryStream stream = new MemoryStream (new byte [] {0, 1, 99, 0, 13});
+		BinaryReader reader = new BinaryReader (stream);
+		reader.ReadChars (-1);
+	}
+	
+	
+	/// <summary>
+	/// Test ReadDecimal () method.
+	/// </summary>
+	[Test]
+	public void ReadDecimal ()
+	{
+		MemoryStream stream = new MemoryStream (new byte [] {0, 0, 0, 0, 0, 0, 65, 0, 0, 0, 0, 0, 0, 0, 0 ,87, 98, 0, 0, 0, 0});
+		BinaryReader reader = new BinaryReader (stream);		
+		Assertion.AssertEquals ("test#01", -18295873486192640, reader.ReadDecimal ());
+	}
+	
+	[Test]
+	[ExpectedException(typeof(EndOfStreamException))]
+	public void ReadDecimalException ()
+	{
+		MemoryStream stream = new MemoryStream (new byte [] {0, 0, 0, 0, 0, 0, 65, 0, 0, 0, 0, 0, 0, 0, 0 ,87, 98, 0, 0, 0, 0, 0});
+		BinaryReader reader = new BinaryReader (stream);		
+		reader.ReadDecimal ();
+		reader.ReadDecimal ();		
+	}
+	
+	[Test]
+	public void ReadDouble ()
+	{
+		MemoryStream stream = new MemoryStream (new byte [] {0, 0, 0, 0, 0, 0, 65, 0, 0, 0, 0, 0, 0, 0, 0 ,87, 98, 0, 0, 0, 0});
+		BinaryReader reader = new BinaryReader (stream);
+
+		Assertion.AssertEquals ("test#01", 1.89131277973112E-307, reader.ReadDouble ());
+		Assertion.AssertEquals ("test#02", 1.2024538023802E+111, reader.ReadDouble ());	
+	}
+	
+	[Test]
+	[ExpectedException(typeof(EndOfStreamException))]
+	public void ReadDoubleException ()
+	{
+		MemoryStream stream = new MemoryStream (new byte [] {0, 0, 0, 0, 0, 0, 65, 0, 0, 0, 0, 0, 0, 0, 0 ,87, 98, 0, 0, 0, 0});
+		BinaryReader reader = new BinaryReader (stream);
+
+		reader.ReadDouble ();
+		reader.ReadDouble ();
+		reader.ReadDouble ();
+	}
+	
+	[Test]
+	public void ReadInt16 ()
+	{
+		MemoryStream stream = new MemoryStream (new byte [] {65, 1, 32, 43, 5, 3, 54, 0});
+		BinaryReader reader = new BinaryReader (stream);
+		
+		Assertion.AssertEquals ("test#01", 321, reader.ReadInt16 ());
+		Assertion.AssertEquals ("test#02", 11040, reader.ReadInt16 ());
+		Assertion.AssertEquals ("test#03", 773, reader.ReadInt16 ());
+		Assertion.AssertEquals ("test#04", 54, reader.ReadInt16 ());		
+	}
+	
+	[Test]
+	[ExpectedException(typeof(EndOfStreamException))]	
+	public void ReadInt16Exception ()
+	{
+		MemoryStream stream = new MemoryStream (new byte [] {65, 1});
+		BinaryReader reader = new BinaryReader (stream);
+		reader.ReadInt16 ();
+		reader.ReadInt16 ();
+	}
+
+	[Test]
+	public void ReadInt32 ()
+	{
+		MemoryStream stream = new MemoryStream (new byte [] {65, 1, 32, 43, 5, 3, 54, 0});
+		BinaryReader reader = new BinaryReader (stream);
+		
+		Assertion.AssertEquals ("test#01", 723517761, reader.ReadInt32 ());
+		Assertion.AssertEquals ("test#02", 3539717, reader.ReadInt32 ());
+	}
+	
+	[Test]
+	[ExpectedException(typeof(EndOfStreamException))]	
+	public void ReadInt32Exception ()
+	{
+		MemoryStream stream = new MemoryStream (new byte [] {65, 1, 32, 43});
+		BinaryReader reader = new BinaryReader (stream);
+		
+		reader.ReadInt32 ();
+		reader.ReadInt32 ();
+	}
+
+	[Test]
+	public void ReadInt64 ()
+	{
+		MemoryStream stream = new MemoryStream (new byte [] {65, 1, 32, 43, 5, 3, 54, 0, 34, 5, 7, 4, 23, 4, 76, 34, 76, 2, 6,45});
+		BinaryReader reader = new BinaryReader (stream);
+		
+		Assertion.AssertEquals ("test#01", 15202969475612993, reader.ReadInt64 ());
+		Assertion.AssertEquals ("test#02", 2471354792417887522, reader.ReadInt64 ());
+	}
+	
+	[Test]
+	[ExpectedException(typeof(EndOfStreamException))]	
+	public void ReadInt64Exception ()
+	{
+		MemoryStream stream = new MemoryStream (new byte [] {65, 1, 32, 43, 5, 3, 54, 0, 34, 5, 7, 4, 23, 4, 76, 34, 76, 2, 6,45});
+		BinaryReader reader = new BinaryReader (stream);
+		
+		reader.ReadInt64 ();
+		reader.ReadInt64 ();
+		reader.ReadInt64 ();
+	}
+	
+	[Test]
+	public void ReadSByte ()
+	{
+		MemoryStream stream = new MemoryStream (new byte [] {65, 200, 32});
+		BinaryReader reader = new BinaryReader (stream);
+		
+		Assertion.AssertEquals ("test#01", 65, reader.ReadSByte ());
+		Assertion.AssertEquals ("test#02", -56, reader.ReadSByte ());
+		Assertion.AssertEquals ("test#03", 32, reader.ReadSByte ());
+	}
+	
+	[Test]
+	[ExpectedException(typeof(EndOfStreamException))]		
+	public void ReadSByteException ()
+	{
+		MemoryStream stream = new MemoryStream (new byte [] {65, 200});
+		BinaryReader reader = new BinaryReader (stream);
+		
+		reader.ReadSByte ();
+		reader.ReadSByte ();
+		reader.ReadSByte ();		
+	}
+	
+	[Test]
+	public void ReadSingle ()
+	{
+		MemoryStream stream = new MemoryStream (new byte [] {65, 200, 0, 0, 0, 1, 2, 3, 4});
+		BinaryReader reader = new BinaryReader (stream);
+		
+		Assertion.AssertEquals ("test#01", 7.183757E-41, reader.ReadSingle ());
+		Assertion.AssertEquals ("test#01", 3.820471E-37, reader.ReadSingle ());
+	}
+	
+	[Test]
+	[ExpectedException(typeof(EndOfStreamException))]		
+	public void ReadSingleException ()
+	{
+		MemoryStream stream = new MemoryStream (new byte [] {65, 200, 0, 0, 0, 1, 2, 3, 4});
+		BinaryReader reader = new BinaryReader (stream);
+		
+		reader.ReadSingle ();
+		reader.ReadSingle ();
+		reader.ReadSingle ();
+	}
+	
+	[Test]
+	public void ReadString ()
+	{
+		MemoryStream stream = new MemoryStream (new byte [] {6,109, 111, 110, 111, 58, 58});
+		BinaryReader reader = new BinaryReader (stream);
+		
+		Assertion.AssertEquals ("test#01", "mono::", reader.ReadString ());
+		
+		stream = new MemoryStream (new byte [] {2,109, 111, 3, 111, 58, 58});
+		reader = new BinaryReader (stream);
+		Assertion.AssertEquals ("test#02", "mo", reader.ReadString ());
+		Assertion.AssertEquals ("test#03", "o::", reader.ReadString ());
+	}
+	
+	[Test]
+	[ExpectedException(typeof(EndOfStreamException))]		
+	public void ReadStringException ()
+	{
+		MemoryStream stream = new MemoryStream (new byte [] {2,109, 111, 3, 111, 58, 58});
+		BinaryReader reader = new BinaryReader (stream);
+		reader.ReadString ();
+		reader.ReadString ();
+		reader.ReadString ();
+	}
+	
+	[Test]
+	public void ReadUInt16 ()
+	{
+		MemoryStream stream = new MemoryStream (new byte [] {200, 200, 32, 43, 5, 3, 54, 0});
+		BinaryReader reader = new BinaryReader (stream);
+		
+		Assertion.AssertEquals ("test#01", 51400, reader.ReadUInt16 ());
+		Assertion.AssertEquals ("test#02", 11040, reader.ReadUInt16 ());
+		Assertion.AssertEquals ("test#03", 773, reader.ReadUInt16 ());
+		Assertion.AssertEquals ("test#04", 54, reader.ReadUInt16 ());		
+	}
+	
+	[Test]
+	[ExpectedException(typeof(EndOfStreamException))]	
+	public void ReadUInt16Exception ()
+	{
+		MemoryStream stream = new MemoryStream (new byte [] {65, 1});
+		BinaryReader reader = new BinaryReader (stream);
+		reader.ReadUInt16 ();
+		reader.ReadUInt16 ();
+	}
+
+	[Test]
+	public void ReadUInt32 ()
+	{
+		MemoryStream stream = new MemoryStream (new byte [] {65, 1, 32, 43, 5, 3, 54, 0});
+		BinaryReader reader = new BinaryReader (stream);
+		
+		Assertion.AssertEquals ("test#01", 723517761, reader.ReadUInt32 ());
+		Assertion.AssertEquals ("test#02", 3539717, reader.ReadUInt32 ());
+	}
+	
+	[Test]
+	[ExpectedException(typeof(EndOfStreamException))]	
+	public void ReadUInt32Exception ()
+	{
+		MemoryStream stream = new MemoryStream (new byte [] {65, 1, 32, 43});
+		BinaryReader reader = new BinaryReader (stream);
+		
+		reader.ReadUInt32 ();
+		reader.ReadUInt32 ();
+	}
+
+	[Test]
+	public void ReadUInt64 ()
+	{
+		MemoryStream stream = new MemoryStream (new byte [] {65, 1, 32, 43, 5, 3, 54, 0, 34, 5, 7, 4, 23, 4, 76, 34, 76, 2, 6,45});
+		BinaryReader reader = new BinaryReader (stream);
+		
+		Assertion.AssertEquals ("test#01", 15202969475612993, reader.ReadUInt64 ());
+		Assertion.AssertEquals ("test#02", 2471354792417887522, reader.ReadUInt64 ());
+	}
+	
+	[Test]
+	[ExpectedException(typeof(EndOfStreamException))]	
+	public void ReadUInt64Exception ()
+	{
+		MemoryStream stream = new MemoryStream (new byte [] {65, 1, 32, 43, 5, 3, 54, 0, 34, 5, 7, 4, 23, 4, 76, 34, 76, 2, 6,45});
+		BinaryReader reader = new BinaryReader (stream);
+		
+		reader.ReadUInt64 ();
+		reader.ReadUInt64 ();
+		reader.ReadUInt64 ();
+	}	
+
 	}
 }
 

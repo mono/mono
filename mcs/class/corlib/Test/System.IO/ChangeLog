@@ -1,3 +1,8 @@
+2003-04-13  Ville Palo <vi64pa@kolumbus.fi>
+
+	* BinaryStreamReader.cs: Added lots of tests. Somehow I missed that
+	there are already testcases for BinaryStreamReader :/
+	
 2003-04-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* FileStreamTest.cs: added more tests by Gert Driesen
