@@ -33,6 +33,13 @@ namespace Mono.CSharp
 		// mscorlib.dll here.
 		static ArrayList references;
 
+		//
+		// If any of these fail, we ignore the problem.  This is so
+		// that we can list all the assemblies in Windows and not fail
+		// if they are missing on Linux.
+		//
+		static ArrayList soft_references;
+
 		// Lookup paths
 		static ArrayList link_paths;
 
@@ -51,6 +58,11 @@ namespace Mono.CSharp
 
 		static bool parse_only = false;
 		static bool timestamps = false;
+
+		//
+		// Whether to load the initial config file (what CSC.RSP has by default)
+		// 
+		static bool load_default_config = true;
 
 		static Hashtable response_file_list;
 		static Hashtable source_files = new Hashtable ();
@@ -146,6 +158,7 @@ namespace Mono.CSharp
 				"   --define SYM    Defines the symbol SYM\n" + 
 				"   --fatal         Makes errors fatal\n" +
 				"   -L PATH         Adds PATH to the assembly link path\n" +
+				"   --noconfig      Disables implicit references to assemblies\n" +
 				"   --nostdlib      Does not load core libraries\n" +
 				"   --nowarn XXX    Ignores warning number XXX\n" +
 				"   -o FNAME        Specifies output file\n" +
@@ -197,7 +210,7 @@ namespace Mono.CSharp
 			return (error_count + Report.Errors) != 0 ? 1 : 0;
 		}
 
-		static public int LoadAssembly (string assembly)
+		static public int LoadAssembly (string assembly, bool soft)
 		{
 			Assembly a;
 			string total_log = "";
@@ -207,6 +220,9 @@ namespace Mono.CSharp
 				RootContext.TypeManager.AddAssembly (a);
 				return 0;
 			} catch (FileNotFoundException){
+				if (soft)
+					return 0;
+				
 				foreach (string dir in link_paths){
 					string full_path = dir + "/" + assembly + ".dll";
 
@@ -246,8 +262,11 @@ namespace Mono.CSharp
 			int errors = 0;
 
 			foreach (string r in references)
-				errors += LoadAssembly (r);
+				errors += LoadAssembly (r, false);
 
+			foreach (string r in soft_references)
+				errors += LoadAssembly (r, true);
+			
 			return errors;
 		}
 
@@ -383,6 +402,45 @@ namespace Mono.CSharp
 
 			return errors;
 		}
+
+		static void DefineDefaultConfig ()
+		{
+			//
+			// For now the "default config" is harcoded into the compiler
+			// we can move this outside later
+			//
+			string [] default_config = {
+				"System",
+				"System.XML",
+#if false
+				//
+				// Is it worth pre-loading all this stuff?
+				//
+				"Accessibility",
+				"System.Configuration.Install",
+				"System.Data",
+				"System.Design",
+				"System.DirectoryServices",
+				"System.Drawing.Design",
+				"System.Drawing",
+				"System.EnterpriseServices",
+				"System.Management",
+				"System.Messaging",
+				"System.Runtime.Remoting",
+				"System.Runtime.Serialization.Formatters.Soap",
+				"System.Security",
+				"System.ServiceProcess",
+				"System.Web",
+				"System.Web.RegularExpressions",
+				"System.Web.Services",
+				"System.Windows.Forms"
+#endif
+			};
+			
+			int p = 0;
+			foreach (string def in default_config)
+				soft_references.Insert (p++, def);
+		}
 		
 		/// <summary>
 		///    Parses the arguments, and drives the compilation
@@ -400,6 +458,7 @@ namespace Mono.CSharp
 			bool parsing_options = true;
 			
 			references = new ArrayList ();
+			soft_references = new ArrayList ();
 			link_paths = new ArrayList ();
 
 			SetupDefaultDefines ();
@@ -659,6 +718,15 @@ namespace Mono.CSharp
 						timestamps = true;
 						last_time = DateTime.Now;
 						continue;
+
+					case "--noconfig":
+						load_default_config = false;
+						continue;
+
+					default:
+						Console.WriteLine ("Unknown option: " + arg);
+						errors++;
+						continue;
 					}
 				}
 
@@ -682,10 +750,11 @@ namespace Mono.CSharp
 			//
 			// Load Core Library for default compilation
 			//
-			if (RootContext.StdLib){
+			if (RootContext.StdLib)
 				references.Insert (0, "mscorlib");
-				references.Insert (1, "System");
-			}
+
+			if (load_default_config)
+				DefineDefaultConfig ();
 
 			if (errors > 0){
 				error ("Parsing failed");

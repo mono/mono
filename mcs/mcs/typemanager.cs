@@ -310,6 +310,13 @@ public class TypeManager {
 			}
 		}
 
+		//
+		// Hack to emulate the csc behavior
+		//
+		if (name.StartsWith ("System")){
+			
+		}
+		
 		return null;
 	}
 

@@ -1343,6 +1343,7 @@ namespace Mono.CSharp
 						line++;
 						ref_line++;
 						col = 0;
+						tokens_seen = false;
 						continue;
 					} else if (d == '*'){
 						getChar ();
@@ -1357,6 +1358,7 @@ namespace Mono.CSharp
 								line++;
 								ref_line++;
 								col = 0;
+								tokens_seen = false;
 							}
 						}
 						continue;

@@ -1,5 +1,11 @@
 2002-03-19  Miguel de Icaza  <miguel@ximian.com>
 
+	* driver.cs: Add default assemblies (the equivalent to the
+	Microsoft CSC.RSP file)
+
+	* cs-tokenizer.cs: When updating `cols and setting it to zero,
+	also update tokens_seen and set it to false.
+
 	* driver.cs: Implement --recurse for Mike.
 
 	* driver.cs (SplitPathAndPattern): Small bug fix, I was not
