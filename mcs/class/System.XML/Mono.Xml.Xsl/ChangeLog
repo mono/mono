@@ -1,3 +1,7 @@
+2003-08-01 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* XslTransformProcessor.cs: Add EvaluateNumber method.
+
 2003-07-31 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* XsltCompiledContext.cs: Implement more functions.

@@ -76,7 +76,75 @@ namespace Mono.Xml.Xsl.Operations {
 
 		public override void Evaluate (XslTransformProcessor p)
 		{
-			throw new NotImplementedException ();
+			p.Out.WriteString (GetFormat (p));
+		}
+		
+		XslNumberFormatter GetNumberFormatter (XslTransformProcessor p)
+		{
+			string format = "1. ";
+			string lang = null;
+			string letterValue = null;
+			char groupingSeparator = '\0';
+			int groupingSize = 0;
+			
+			if (this.format != null)
+				format = this.format.Evaluate (p);
+			
+			if (this.lang != null)
+				lang = this.lang.Evaluate (p);
+			
+			if (this.letterValue != null)
+				letterValue = this.letterValue.Evaluate (p);
+			
+			if (this.groupingSeparator != null)
+				groupingSeparator = this.groupingSeparator.Evaluate (p) [0];
+			
+			if (this.groupingSize != null)
+				groupingSize = int.Parse (this.groupingSize.Evaluate (p));
+			
+			return new XslNumberFormatter (format, lang, letterValue, groupingSeparator, groupingSize);
+		}
+		
+		string GetFormat (XslTransformProcessor p)
+		{
+			XslNumberFormatter nf = GetNumberFormatter (p);
+			
+			if (this.value != null)
+				return nf.Format ((int)p.EvaluateNumber (this.value)); // TODO: Correct rounding
+			
+			switch (this.level) {
+				case XslNumberingLevel.Single:
+					throw new NotImplementedException ();
+				case XslNumberingLevel.Multiple:
+					throw new NotImplementedException ();
+				case XslNumberingLevel.Any:
+					throw new NotImplementedException ();
+				default:
+					throw new Exception ("Should not get here");
+			}
+		}
+		
+		class XslNumberFormatter {
+			public XslNumberFormatter (string format, string lang, string letterValue, char groupingSeparator, int groupingSize)
+			{
+				throw new NotImplementedException ();
+			}
+			
+			public int NumbersNeeded {
+				get { throw new NotImplementedException (); }
+			}
+			
+			// return the format for a single value, ie, if using Single or Any
+			public string Format (int value)
+			{
+				throw new NotImplementedException ();
+			}
+			
+			// format for an array of numbers.
+			public string Format (int [] values)
+			{
+				throw new NotImplementedException ();
+			}
 		}
 	}
 	

@@ -248,6 +248,14 @@ namespace Mono.Xml.Xsl {
 			return itr.Current.EvaluateBoolean (expr, itr);
 		}
 		
+		public double EvaluateNumber (XPathExpression expr)
+		{
+			expr = CompiledStyle.ExpressionStore.PrepForExecution (expr, this);
+			
+			XPathNodeIterator itr = CurrentNodeset;
+			return itr.Current.EvaluateNumber (expr, itr);
+		}
+		
 		public XPathNodeIterator Select (XPathExpression expr)
 		{
 			expr = CompiledStyle.ExpressionStore.PrepForExecution (expr, this);
