@@ -37,18 +37,59 @@ namespace System.Reflection.Emit {
 		}
 		
 		public CustomAttributeBuilder( ConstructorInfo con, object[] constructorArgs)
-			: this (con, constructorArgs, null, null, null, null) {
+		{
+			Initialize (con, constructorArgs, new PropertyInfo [0], new object [0],
+					new FieldInfo [0], new object [0]);
 		}
-		public CustomAttributeBuilder( ConstructorInfo con, object[] constructorArgs, FieldInfo[] namedFields, object[] fieldValues)
-			: this (con, constructorArgs, null, null, namedFields, fieldValues) {
+		public CustomAttributeBuilder( ConstructorInfo con, object[] constructorArgs,
+				FieldInfo[] namedFields, object[] fieldValues) 
+		{
+			Initialize (con, constructorArgs, new PropertyInfo [0], new object [0],
+					namedFields, fieldValues);
 		}
-		public CustomAttributeBuilder( ConstructorInfo con, object[] constructorArgs, PropertyInfo[] namedProperties, object[] propertyValues)
-			: this (con, constructorArgs, namedProperties, propertyValues, null, null) {
+		public CustomAttributeBuilder( ConstructorInfo con, object[] constructorArgs,
+				PropertyInfo[] namedProperties, object[] propertyValues)
+		{
+			Initialize (con, constructorArgs, namedProperties, propertyValues, new FieldInfo [0],
+					new object [0]);
 		}
-		public CustomAttributeBuilder( ConstructorInfo con, object[] constructorArgs, PropertyInfo[] namedProperties, object[] propertyValues, FieldInfo[] namedFields, object[] fieldValues) {
+		public CustomAttributeBuilder( ConstructorInfo con, object[] constructorArgs,
+				PropertyInfo[] namedProperties, object[] propertyValues,
+				FieldInfo[] namedFields, object[] fieldValues)
+		{
+			Initialize (con, constructorArgs, namedProperties, propertyValues, namedFields, fieldValues);
+		}
+
+		private void Initialize (ConstructorInfo con, object [] constructorArgs,
+				PropertyInfo [] namedProperties, object [] propertyValues,
+				FieldInfo [] namedFields, object [] fieldValues)
+		{
 			ctor = con;
+			if (con == null)
+				throw new ArgumentNullException ("con");
 			if (constructorArgs == null)
 				throw new ArgumentNullException ("constructorArgs");
+			if (namedProperties == null)
+				throw new ArgumentNullException ("namedProperties");
+			if (propertyValues == null)
+				throw new ArgumentNullException ("propertyValues");
+			if (namedFields == null)
+				throw new ArgumentNullException ("namedFields");
+			if (fieldValues == null)
+				throw new ArgumentNullException ("fieldValues");
+			if (con.GetParameterCount () != constructorArgs.Length)
+				throw new ArgumentException ("Parameter count does not match " +
+						"passed in argument value count.");
+			if (namedProperties.Length != propertyValues.Length)
+				throw new ArgumentException ("Array lengths must be the same.",
+						"namedProperties, propertyValues");
+			if (namedFields.Length != fieldValues.Length)
+				throw new ArgumentException ("Array lengths must be the same.",
+						"namedFields, fieldValues");
+			if ((con.Attributes & MethodAttributes.Static) == MethodAttributes.Static ||
+					(con.Attributes & MethodAttributes.Private) == MethodAttributes.Private)
+				throw new ArgumentException ("Cannot have private or static constructor.");
+				
 			data = GetBlob (con, constructorArgs, namedProperties, propertyValues, namedFields, fieldValues);
 		}
 

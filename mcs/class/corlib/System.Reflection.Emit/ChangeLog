@@ -1,3 +1,8 @@
+2004-03-09  Jackson Harper  <jackson@ximian.com>
+
+	* CustomAttributeBuilder.cs: Add some argument checking. Handle
+	default arguments properly.
+
 2004-03-09  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* AssemblyBuilder.cs: The strong name key file existance will now be
