@@ -819,7 +819,14 @@ namespace Mono.CSharp {
 				}
 			}
 
-			IPermission perm = sa.CreatePermission ();
+			IPermission perm;
+			try {
+				perm = sa.CreatePermission ();
+			}
+			catch (Exception e) {
+				Error_AttributeEmitError (String.Format ("{0} was thrown during attribute processing: {1}", e.GetType (), e.Message));
+				return;
+			}
 			SecurityAction action = GetSecurityActionValue ();
 
 			// IS is correct because for corlib we are using an instance from old corlib
@@ -839,7 +846,11 @@ namespace Mono.CSharp {
 
 			PermissionSet ps = (PermissionSet)permissions [action];
 			if (ps == null) {
-				ps = new PermissionSet (sa.Unrestricted ? PermissionState.Unrestricted : PermissionState.None);
+				if (sa is PermissionSetAttribute)
+					ps = new PermissionSet (sa.Unrestricted ? PermissionState.Unrestricted : PermissionState.None);
+				else
+					ps = new PermissionSet (PermissionState.None);
+
 				permissions.Add (action, ps);
 			} else if (!ps.IsUnrestricted () && sa.Unrestricted) {
 				ps = ps.Union (new PermissionSet (PermissionState.Unrestricted));
