@@ -1,5 +1,9 @@
 2004-11-25  Martin Baulig  <martin@ximian.com>
 
+	* expression.cs (Invocation.InferType): Added support for byref types.
+
+2004-11-25  Martin Baulig  <martin@ximian.com>
+
 	* statement.cs (Foreach.FetchMethodMoveNext): Wrap `mi.ReturnType'
 	in TypeManager.TypeToCoreType().
 

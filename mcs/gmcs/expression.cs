@@ -5172,6 +5172,10 @@ namespace Mono.CSharp {
 						  ref infered);
 			}
 
+			if (pt.IsByRef && at.IsByRef)
+				return InferType (pt.GetElementType (), at.GetElementType (),
+						  ref infered);
+
 			ArrayList list = new ArrayList ();
 			if (at.IsGenericInstance)
 				list.Add (at);
