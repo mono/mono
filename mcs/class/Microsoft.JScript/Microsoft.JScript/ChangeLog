@@ -1,5 +1,7 @@
 2004-09-22  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
+	* expression.cs: Binary, use ResolveFieldAccess only in case the operator is JSToken.AccessField.
+
 	* Parser.cs: use ToJSToken to set the operator properly.
 	* FunctionDeclaration.cs: delete spaces.
 

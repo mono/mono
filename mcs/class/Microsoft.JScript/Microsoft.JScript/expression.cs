@@ -123,8 +123,8 @@ namespace Microsoft.JScript {
 			bool r = true;
 			if (left != null)
 				r &= left.Resolve (context);
-			if (right != null)
-				if (right is IAccesible)
+			if (right != null) 
+				if (op == JSToken.AccessField && right is IAccesible)
 					r &= ((IAccesible) right).ResolveFieldAccess (left);
 				else
 					r &= right.Resolve (context);
