@@ -49,6 +49,17 @@ namespace System.Globalization
 
 		public virtual int Compare (string string1, string string2)
 		{
+			/* Short cuts... */
+			if(string1 == String.Empty) {
+				if(string2 == String.Empty) {
+					return(0);
+				} else {
+					return(-1);
+				}
+			} else if(string2 == String.Empty) {
+				return(1);
+			}
+
 			return(internal_compare (string1, 0, string1.Length,
 						 string2, 0, string2.Length,
 						 CompareOptions.None));
@@ -57,6 +68,17 @@ namespace System.Globalization
 		public virtual int Compare (string string1, string string2,
 					    CompareOptions options)
 		{
+			/* Short cuts... */
+			if(string1 == String.Empty) {
+				if(string2 == String.Empty) {
+					return(0);
+				} else {
+					return(-1);
+				}
+			} else if(string2 == String.Empty) {
+				return(1);
+			}
+
 			return(internal_compare (string1, 0, string1.Length,
 						 string2, 0, string2.Length,
 						 options));
@@ -65,11 +87,33 @@ namespace System.Globalization
 		public virtual int Compare (string string1, int offset1,
 					    string string2, int offset2)
 		{
-			if(offset1 >= string1.Length) {
+			/* Not in the spec, but ms does these short
+			 * cuts before checking the offsets (breaking
+			 * the offset >= string length specified check
+			 * in the process...)
+			 */
+			if(string1 == String.Empty ||
+			   offset1 == string1.Length) {
+				if(string2 == String.Empty ||
+				   offset2 == string2.Length) {
+					return(0);
+				} else {
+					return(-1);
+				}
+			} else if(string2 == String.Empty ||
+				  offset2 == string2.Length) {
+				return(1);
+			}
+
+			if(offset1 < 0 || offset2 < 0) {
+				throw new ArgumentOutOfRangeException ("Offsets must not be less than zero");
+			}
+			
+			if(offset1 > string1.Length) {
 				throw new ArgumentOutOfRangeException ("Offset1 is greater than or equal to the length of string1");
 			}
 			
-			if(offset2 >= string2.Length) {
+			if(offset2 > string2.Length) {
 				throw new ArgumentOutOfRangeException ("Offset2 is greater than or equal to the length of string2");
 			}
 			
@@ -84,11 +128,33 @@ namespace System.Globalization
 					    string string2, int offset2,
 					    CompareOptions options)
 		{
-			if(offset1 >= string1.Length) {
+			/* Not in the spec, but ms does these short
+			 * cuts before checking the offsets (breaking
+			 * the offset >= string length specified check
+			 * in the process...)
+			 */
+			if(string1 == String.Empty ||
+			   offset1 == string1.Length) {
+				if(string2 == String.Empty ||
+				   offset2 == string2.Length) {
+					return(0);
+				} else {
+					return(-1);
+				}
+			} else if(string2 == String.Empty ||
+				  offset2 == string2.Length) {
+				return(1);
+			}
+
+			if(offset1 < 0 || offset2 < 0) {
+				throw new ArgumentOutOfRangeException ("Offsets must not be less than zero");
+			}
+			
+			if(offset1 > string1.Length) {
 				throw new ArgumentOutOfRangeException ("Offset1 is greater than or equal to the length of string1");
 			}
 			
-			if(offset2 >= string2.Length) {
+			if(offset2 > string2.Length) {
 				throw new ArgumentOutOfRangeException ("Offset2 is greater than or equal to the length of string2");
 			}
 			
@@ -103,11 +169,37 @@ namespace System.Globalization
 					    int length1, string string2,
 					    int offset2, int length2)
 		{
-			if(offset1 >= string1.Length) {
+			/* Not in the spec, but ms does these short
+			 * cuts before checking the offsets (breaking
+			 * the offset >= string length specified check
+			 * in the process...)
+			 */
+			if(string1 == String.Empty ||
+			   offset1 == string1.Length ||
+			   length1 == 0) {
+				if(string2 == String.Empty ||
+				   offset2 == string2.Length ||
+				   length2 == 0) {
+					return(0);
+				} else {
+					return(-1);
+				}
+			} else if(string2 == String.Empty ||
+				  offset2 == string2.Length ||
+				  length2 == 0) {
+				return(1);
+			}
+
+			if(offset1 < 0 || length1 < 0 ||
+			   offset2 < 0 || length2 < 0) {
+				throw new ArgumentOutOfRangeException ("Offsets and lengths must not be less than zero");
+			}
+			
+			if(offset1 > string1.Length) {
 				throw new ArgumentOutOfRangeException ("Offset1 is greater than or equal to the length of string1");
 			}
 			
-			if(offset2 >= string2.Length) {
+			if(offset2 > string2.Length) {
 				throw new ArgumentOutOfRangeException ("Offset2 is greater than or equal to the length of string2");
 			}
 			
@@ -129,11 +221,37 @@ namespace System.Globalization
 					    int offset2, int length2,
 					    CompareOptions options)
 		{
-			if(offset1 >= string1.Length) {
+			/* Not in the spec, but ms does these short
+			 * cuts before checking the offsets (breaking
+			 * the offset >= string length specified check
+			 * in the process...)
+			 */
+			if(string1 == String.Empty ||
+			   offset1 == string1.Length ||
+			   length1 == 0) {
+				if(string2 == String.Empty ||
+				   offset2 == string2.Length ||
+				   length2 == 0) {
+					return(0);
+				} else {
+					return(-1);
+				}
+			} else if(string2 == String.Empty ||
+				  offset2 == string2.Length ||
+				  length2 == 0) {
+				return(1);
+			}
+
+			if(offset1 < 0 || length1 < 0 ||
+			   offset2 < 0 || length2 < 0) {
+				throw new ArgumentOutOfRangeException ("Offsets and lengths must not be less than zero");
+			}
+			
+			if(offset1 > string1.Length) {
 				throw new ArgumentOutOfRangeException ("Offset1 is greater than or equal to the length of string1");
 			}
 			
-			if(offset2 >= string2.Length) {
+			if(offset2 > string2.Length) {
 				throw new ArgumentOutOfRangeException ("Offset2 is greater than or equal to the length of string2");
 			}
 			

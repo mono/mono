@@ -1,3 +1,10 @@
+2003-12-19  Dick Porter  <dick@ximian.com>
+
+	* CompareInfo.cs: Added assorted shortcuts when comparing empty
+	strings.  Fixed offset and length range checks to flag when <0.
+	Broke test that offset >= string length to match actual ms
+	behaviour (sigh.)  Fixes bug 52310.
+
 2003-12-06  Dick Porter  <dick@ximian.com>
 
 	* CompareInfo.cs: Don't build strings in Compare, IndexOf and

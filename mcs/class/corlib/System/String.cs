@@ -240,6 +240,10 @@ namespace System {
 			   (i1 < 0) || (i2 < 0) || (length < 0)) {
 				throw new ArgumentOutOfRangeException ();
 			}
+
+			if (length==0) {
+				return(0);
+			}
 			
 			if (s1 == null) {
 				if (s2 == null) {

@@ -75,7 +75,8 @@ public class StringTest : Assertion
 		AssertEquals("wrong length", 11, str.Length);
 	}
 
-	public void TestCompare ()
+	[Test]
+	public void Compare ()
 	{
 		string lesser = "abc";
 		string medium = "abcd";
@@ -141,6 +142,8 @@ public class StringTest : Assertion
 				AssertEquals("loop substring check #8/" + i, 1, String.Compare(needle, 0, haystack, i, 2, false));
 			}
 		}
+
+		AssertEquals ("Compare with 0 length", 0, String.Compare (needle, 0, haystack, 0, 0));
 
 		// TODO - extended format call with CultureInfo
 	}
