@@ -1,6 +1,10 @@
 2004-08-02  Duncan Mak  <duncan@ximian.com>
 
 	* IAppManagerAppDomainFactory.cs:
+	* IProcessHostSupportFunction.cs: signature fixes.
+	
+2004-08-02  Duncan Mak  <duncan@ximian.com>
+
 	* IApplicationHost.cs:
 	* IHttpWorkerRequestHandler.cs:
 	* IProcessHost.cs:

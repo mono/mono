@@ -40,7 +40,7 @@ namespace System.Web.Hosting
                         out string physical_path,
                         out string site_name);
 
-                IntPtr GetConfigToken (string s);
+                IntPtr GetConfigToken ([In] string s);
 
                 string GetProcessID ();
 
