@@ -1,5 +1,8 @@
 2003-09-26  Zoltan Varga  <vargaz@freemail.hu>
 
+	* driver.c (compile_all_methods): Run the compilation in a thread
+	managed by mono. Fixes #44023.
+
 	* mini.c (mono_codegen): Print full method name in verbose output.
 
 	* mini-x86.c (mono_arch_patch_code): Fix warning.
