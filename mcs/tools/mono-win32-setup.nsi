@@ -147,7 +147,15 @@ Section "Uninstall"
   GoNext1:
 
   DeleteRegKey HKLM SOFTWARE\Mono\${MILESTONE}
-  MessageBox MB_YESNO "Mono ${MILESTONE} has been removed. Should the wrappers and the Mono registry key be removed also? This could disable other Mono installations as well, but will remove Mono ${MILESTONE} 100%." IDNO GoNext2
+
+  ; If the Default-Key is the current Milestone, we just remove the wrappers
+
+  ReadRegStr $0 HKEY_LOCAL_MACHINE SOFTWARE\Mono\ DefaultCLR
+  StrCmp $0 ${MILESTONE} DeleteWrappers
+
+  MessageBox MB_YESNO "Mono ${MILESTONE} has been removed, but the default installation of Mono differs form this version. Should the wrappers and the Mono registry key be still be removed? This could disable other Mono installations." IDNO GoNext2
+
+  DeleteWrappers:
 
   ; Complete Uninstall
 
