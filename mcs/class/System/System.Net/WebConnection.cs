@@ -667,10 +667,12 @@ namespace System.Net
 					nbytes = nstream.EndRead (wr.InnerAsyncResult);
 
 				chunkStream.WriteAndReadBack (wr.Buffer, wr.Offset, wr.Size, ref nbytes);
-				if (nbytes < wr.Size && chunkStream.WantMore) {
+				while (nbytes == 0 && chunkStream.WantMore) {
 					int size = chunkStream.ChunkLeft;
-					if (size < 0) // not read chunk size yet
+					if (size <= 0) // not read chunk size yet
 						size = 1024;
+					else if (size > 16384)
+						size = 16384;
 
 					byte [] morebytes = new byte [size];
 					int nread;
