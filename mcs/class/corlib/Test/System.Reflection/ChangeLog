@@ -1,3 +1,8 @@
+2003-11-24  Zoltan Varga  <vargaz@freemail.hu>
+
+	* ModuleTest.cs: Make the assembly name unique to fix the GlobalData
+	test.
+
 2003-11-17  Zoltan Varga  <vargaz@freemail.hu>
 
 	* ModuleTest.cs: Fix temp folder path

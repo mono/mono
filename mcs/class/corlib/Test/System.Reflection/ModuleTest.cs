@@ -48,8 +48,11 @@ public class ModuleTest : Assertion
 	[Test]
 	public void TestGlobalData () {
 
+		string name = "moduletest-assembly";
+		string fileName = name + ".dll";
+
 		AssemblyName assemblyName = new AssemblyName();
-		assemblyName.Name = "foo";
+		assemblyName.Name = name;
 
 		AssemblyBuilder ab
 			= Thread.GetDomain().DefineDynamicAssembly(
@@ -60,10 +63,9 @@ public class ModuleTest : Assertion
 			sw.WriteLine ("FOO");
 		}
 
-		// Why the hell do linked resources need to be in the same dir as the assembly ???
 		ab.AddResourceFile ("res", "res");
 
-		ModuleBuilder mb = ab.DefineDynamicModule("foo.dll", "foo.dll");
+		ModuleBuilder mb = ab.DefineDynamicModule(fileName, fileName);
 
 		mb.DefineInitializedData ("DATA", new byte [100], FieldAttributes.Public);
 		mb.DefineInitializedData ("DATA2", new byte [100], FieldAttributes.Public);
@@ -72,9 +74,9 @@ public class ModuleTest : Assertion
 		mb.DefineInitializedData ("DATA_PRIVATE", new byte [100], 0);
 		mb.CreateGlobalFunctions ();
 
-		ab.Save ("foo.dll");
+		ab.Save (fileName);
 
-		Assembly assembly = Assembly.LoadFrom (Path.Combine (TempFolder, "foo.dll"));
+		Assembly assembly = Assembly.LoadFrom (Path.Combine (TempFolder, fileName));
 
 		Module module = assembly.GetLoadedModules ()[0];
 
