@@ -68,7 +68,7 @@ namespace MonoTests.System.IO
 			} else if ('\\' == DSC) {
 				OS = OsType.Windows;
 				path1 = "c:\\foo\\test.txt";
-				path2 = "c:\\winnt"; //FIXME: what if it's not installed there?
+				path2 = Environment.GetEnvironmentVariable ("SYSTEMROOT");
 				path3 = "system32";
 			} else {
 				OS = OsType.Mac;
@@ -125,11 +125,13 @@ namespace MonoTests.System.IO
 			testPath = Path.ChangeExtension ("path.ext1.ext2", "doc");
 			AssertEquals ("ChangeExtension #06", "path.ext1.doc", testPath);
 
-			try {
-				testPath = Path.ChangeExtension ("<", ".extension");
-				Fail ("ChangeException Fail #01");
-			} catch (Exception e) {
-				AssertEquals ("ChangeExtension Exc. #01", typeof (ArgumentException), e.GetType ());
+			if (Windows) {
+				try {
+					testPath = Path.ChangeExtension ("<", ".extension");
+					Fail ("ChangeException Fail #01");
+				} catch (Exception e) {
+					AssertEquals ("ChangeExtension Exc. #01", typeof (ArgumentException), e.GetType ());
+				}
 			}
 		}
 
@@ -137,7 +139,7 @@ namespace MonoTests.System.IO
 		{
 			string [] files = new string [3];
 			files [(int) OsType.Unix] = "/etc/init.d";
-			files [(int) OsType.Windows] = "c:\\winnt\\system32";
+			files [(int) OsType.Windows] = "C:\\WINNT\\system32";
 			files [(int) OsType.Mac] = "foo:bar";
 
 			string testPath = Path.Combine (path2, path3);
@@ -192,25 +194,27 @@ namespace MonoTests.System.IO
 				AssertEquals ("Combine Exc. #02", typeof (ArgumentNullException), e.GetType ());
 			}
 
-			try {
-				testPath = Path.Combine ("a>", "one");
-				Fail ("Combine Fail #03");
-			} catch (Exception e) {
-				AssertEquals ("Combine Exc. #03", typeof (ArgumentException), e.GetType ());
-			}
+			if (Windows) {
+				try {
+					testPath = Path.Combine ("a>", "one");
+					Fail ("Combine Fail #03");
+				} catch (Exception e) {
+					AssertEquals ("Combine Exc. #03", typeof (ArgumentException), e.GetType ());
+				}
 
-			try {
-				testPath = Path.Combine ("one", "aaa<");
-				Fail ("Combine Fail #04");
-			} catch (Exception e) {
-				AssertEquals ("Combine Exc. #04", typeof (ArgumentException), e.GetType ());
+				try {
+					testPath = Path.Combine ("one", "aaa<");
+					Fail ("Combine Fail #04");
+				} catch (Exception e) {
+					AssertEquals ("Combine Exc. #04", typeof (ArgumentException), e.GetType ());
+				}
 			}
 		}
 
 		public void TestDirectoryName ()
 		{
 			string [] files = new string [3];
-			files [(int) OsType.Unix] = "/etc";
+			files [(int) OsType.Unix] = "/foo";
 			files [(int) OsType.Windows] = "c:\\foo";
 			files [(int) OsType.Mac] = "foo";
 
@@ -227,11 +231,13 @@ namespace MonoTests.System.IO
 				AssertEquals ("GetDirectoryName Exc. #01", typeof (ArgumentException), e.GetType ());
 			}
 
-			try {
-				testDirName = Path.GetDirectoryName ("aaa>");
-				Fail ("GetDirectoryName Fail #02");
-			} catch (Exception e) {
-				AssertEquals ("GetDirectoryName Exc. #02", typeof (ArgumentException), e.GetType ());
+			if (Windows) {
+				try {
+					testDirName = Path.GetDirectoryName ("aaa>");
+					Fail ("GetDirectoryName Fail #02");
+				} catch (Exception e) {
+					AssertEquals ("GetDirectoryName Exc. #02", typeof (ArgumentException), e.GetType ());
+				}
 			}
 
 			try {
@@ -266,11 +272,13 @@ namespace MonoTests.System.IO
 			testExtn = Path.GetExtension (path1 + ".doc" + DSC + "a.txt");
 			AssertEquals ("GetExtension #07", ".txt", testExtn);
 
-			try {
-				testExtn = Path.GetExtension ("hi<there.txt");
-				Fail ("GetExtension Fail #01");
-			} catch (Exception e) {
-				AssertEquals ("GetExtension Exc. #01", typeof (ArgumentException), e.GetType ());
+			if (Windows) {
+				try {
+					testExtn = Path.GetExtension ("hi<there.txt");
+					Fail ("GetExtension Fail #01");
+				} catch (Exception e) {
+					AssertEquals ("GetExtension Exc. #01", typeof (ArgumentException), e.GetType ());
+				}
 			}
 		}
 
@@ -286,11 +294,13 @@ namespace MonoTests.System.IO
 			testFileName = Path.GetFileName (" ");
 			AssertEquals ("GetFileName #04", " ", testFileName);
 
-			try {
-				testFileName = Path.GetFileName ("hi<");
-				Fail ("GetFileName Fail #01");
-			} catch (Exception e) {
-				AssertEquals ("GetFileName Exc. #01", typeof (ArgumentException), e.GetType ());
+			if (Windows) {
+				try {
+					testFileName = Path.GetFileName ("hi<");
+					Fail ("GetFileName Fail #01");
+				} catch (Exception e) {
+					AssertEquals ("GetFileName Exc. #01", typeof (ArgumentException), e.GetType ());
+				}
 			}
 		}
 
@@ -332,10 +342,18 @@ namespace MonoTests.System.IO
 		
 		public void TestGetPathRoot ()
 		{
-			//string current = Directory.GetCurrentDirectory ();
-			string current = @"J:\Some\Strange Directory\Name";
+			string current;
+			string expected;
+			if (!Windows){
+				current = Directory.GetCurrentDirectory ();
+				expected = current [0].ToString ();
+			} else {
+				current = @"J:\Some\Strange Directory\Name";
+				expected = "J:\\";
+			}
+
 			string pathRoot = Path.GetPathRoot (current);
-			AssertEquals ("GetPathRoot #01", "J:\\", pathRoot);
+			AssertEquals ("GetPathRoot #01", expected, pathRoot);
 
 			pathRoot = Path.GetPathRoot ("hola");
 			AssertEquals ("GetPathRoot #02", String.Empty, pathRoot);
