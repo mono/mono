@@ -1,3 +1,8 @@
+2003-07-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* WebServicesConfigurationSectionHandler.cs: added <soapExtensionTypes>
+	support.
+
 2003-07-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* WebServicesConfigurationSectionHandler.cs: support remove/clear for

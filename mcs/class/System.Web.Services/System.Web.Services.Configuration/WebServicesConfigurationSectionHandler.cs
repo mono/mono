@@ -8,6 +8,7 @@
 //
 
 using System;
+using System.Collections;
 using System.Configuration;
 using System.Xml;
 
@@ -28,6 +29,7 @@ namespace System.Web.Services.Configuration
 		static WSConfig instance;
 		WSProtocol protocols;
 		string wsdlHelpPage;
+		ArrayList extensionTypes;
 		
 		public WSConfig (WSConfig parent)
 		{
@@ -88,6 +90,14 @@ namespace System.Web.Services.Configuration
 			protocols = 0;
 		}
 
+		public void AddExtensionType (WSExtensionConfig wsExtension)
+		{
+			if (extensionTypes == null)
+				extensionTypes = new ArrayList ();
+
+			extensionTypes.Add (wsExtension);
+		}
+
 		// Methods to query/get configuration
 		public static bool IsSupported (WSProtocol proto)
 		{
@@ -115,6 +125,81 @@ namespace System.Web.Services.Configuration
 
 				return instance;
 			}
+		}
+
+		public ArrayList ExtensionTypes {
+			get { return extensionTypes; }
+		}
+	}
+	
+	enum WSExtensionGroup
+	{
+		Low,
+		High
+	}
+	
+	class WSExtensionConfig
+	{
+		Type type;
+		int priority;
+		WSExtensionGroup group;
+
+		public Exception SetType (string typeName)
+		{
+			Exception exc = null;
+			
+			try {
+				type = Type.GetType (typeName, true);
+			} catch (Exception e) {
+				exc = e;
+			}
+
+			return exc;
+		}
+		
+		public Exception SetPriority (string prio)
+		{
+			if (prio == null || prio == "")
+				return null;
+
+			Exception exc = null;
+			try {
+				priority = Int32.Parse (prio);
+			} catch (Exception e) {
+				exc = e;
+			}
+
+			return exc;
+		}
+		
+		public Exception SetGroup (string grp)
+		{
+			if (grp == null || grp == "")
+				return null;
+
+			Exception exc = null;
+			try {
+				group = (WSExtensionGroup) Int32.Parse (grp);
+				if (group < WSExtensionGroup.Low || group > WSExtensionGroup.High)
+					throw new ArgumentOutOfRangeException ("group", "Must be 0 or 1");
+			} catch (Exception e) {
+				exc = e;
+			}
+
+			return exc;
+		}
+		
+		// Getters
+		public Type Type {
+			get { return type; }
+		}
+
+		public int Priority {
+			get { return priority; }
+		}
+
+		public WSExtensionGroup Group {
+			get { return group; }
 		}
 	}
 	
@@ -144,7 +229,7 @@ namespace System.Web.Services.Configuration
 				}
 
 				if (name == "soapExtensionTypes") {
-					//TODO: Not supported by now
+					ConfigSoapExtensionTypes (child, config);
 					continue;
 				}
 
@@ -221,6 +306,50 @@ namespace System.Web.Services.Configuration
 						HandlersUtil.ThrowException ("Unrecognized attribute", child);
 
 					config.ClearProtocol ();
+					continue;
+				}
+
+				ThrowException ("Unexpected element", child);
+			}
+		}
+		
+		static void ConfigSoapExtensionTypes (XmlNode section, WSConfig config)
+		{
+			if (section.Attributes != null && section.Attributes.Count != 0)
+				ThrowException ("Unrecognized attribute", section);
+
+			XmlNodeList nodes = section.ChildNodes;
+			foreach (XmlNode child in nodes) {
+				XmlNodeType ntype = child.NodeType;
+				if (ntype == XmlNodeType.Whitespace || ntype == XmlNodeType.Comment)
+					continue;
+
+				if (ntype != XmlNodeType.Element)
+					ThrowException ("Only elements allowed", child);
+				
+				string name = child.Name;
+				string error;
+				if (name == "add") {
+					string seType = AttValue ("type", child, false);
+					string priority = AttValue ("priority", child);
+					string group = AttValue ("group", child);
+					if (child.Attributes != null && child.Attributes.Count != 0)
+						HandlersUtil.ThrowException ("Unrecognized attribute", child);
+
+					WSExtensionConfig wse = new WSExtensionConfig ();
+					Exception e = wse.SetType (seType);
+					if (e != null)
+						ThrowException (e.Message, child);
+
+					e = wse.SetPriority (priority);
+					if (e != null)
+						ThrowException (e.Message, child);
+
+					e = wse.SetGroup (group);
+					if (e != null)
+						ThrowException (e.Message, child);
+
+					config.AddExtensionType (wse);
 					continue;
 				}
 
