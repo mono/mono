@@ -49,7 +49,7 @@ static char sccsid[] = "@(#)main.c	5.5 (Berkeley) 5/24/93";
 
 char tflag;
 char vflag;
-char csharp = 0;
+int csharp = 0;
 
 char *file_prefix = "y";
 char *myname = "yacc";
