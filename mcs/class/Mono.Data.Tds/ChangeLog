@@ -1,3 +1,8 @@
+2002-11-21  Daniel Morgan <danmorg@sc.rr.com>
+
+	* Mono.Data.Tds.build: added missing file
+	for Windows build
+
 2002-11-21  Tim Coleman <tim@timcoleman.com>
 	* list:
 	* ChangeLog:
