@@ -1,3 +1,9 @@
+2004-03-27  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpRequestStream.cs: patch from Jan Jaros that fixes bug #56080.
+	Now the posted file content does not have the boundaries and headers
+	included.
+
 2004-03-25  Alon Gazit <along@mainsoft.com>
 
 	* HttpRequest.cs: fix ValidateCookieCollection() to prevent
