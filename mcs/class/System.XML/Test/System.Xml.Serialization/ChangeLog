@@ -1,3 +1,7 @@
+2003-05-20  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* added DeserializeTests.cs and XmlAttributesTest.cs
+
 2003-05-18  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XmlSerializerTests.cs : fixed some AssertEquals() argument orders.
