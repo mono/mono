@@ -3053,7 +3053,7 @@ namespace Mono.CSharp {
 				LocalInfo vi = (LocalInfo) p.First;
 				Expression e = (Expression) p.Second;
 
-				vi.VariableInfo = null;
+				vi.VariableInfo.SetAssigned (ec);
 				vi.ReadOnly = true;
 
 				//

@@ -1,5 +1,12 @@
 2004-09-16  Marek Safar  <marek.safar@seznam.cz>
 
+	* rootcontext.cs: WarningLevel is 4 by default now.
+
+	* statement.cs (Fixed.Resolve): Do not null
+	VariableInfo.
+
+2004-09-16  Marek Safar  <marek.safar@seznam.cz>
+
 	Fixed bug #55780
 	* ecore.cs (PropertyExpr.FindAccessors): Do not perform
 	deep search when property is not virtual.
