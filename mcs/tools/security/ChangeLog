@@ -1,3 +1,8 @@
+2004-12-13  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* certmgr.cs: Add a new -ssl action to download and add the 
+	certificates from an SSL connection into thr right stores.
+
 2004-12-10  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AssemblyInfo.cs: Added a class to get informations from assembly
