@@ -1,3 +1,8 @@
+2004-06-11  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TimeSpanTest.cs: Added valid cases to parse MinValue and MaxValue.
+	Added invalid cases to parse under MinValue and over MaxValue.
+
 2004-06-10  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DecimalTest.cs: Added rounding tests for negative values. Added more
