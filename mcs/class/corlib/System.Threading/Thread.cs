@@ -8,6 +8,7 @@
 //
 
 using System.Runtime.Remoting.Contexts;
+using System.Security.Permissions;
 using System.Security.Principal;
 using System.Globalization;
 using System.Runtime.CompilerServices;
@@ -41,6 +42,7 @@ namespace System.Threading
 		private ThreadStart threadstart;
 		private string thread_name=null;
 		
+		private IPrincipal _principal;
 		
 		public static Context CurrentContext {
 			get {
@@ -48,16 +50,19 @@ namespace System.Threading
 			}
 		}
 
-		[MonoTODO]
 		public static IPrincipal CurrentPrincipal {
 			get {
-				// FIXME -
-				// System.Security.Principal.IPrincipal
-				// not yet implemented
-				return(null);
+				IPrincipal p = null;
+				lock (typeof (Thread)) {
+					p = CurrentThread._principal;
+					if (p == null)
+						p = GetDomain ().DefaultPrincipal;
+				}
+				return p;
 			}
-			
 			set {
+				new SecurityPermission (SecurityPermissionFlag.ControlPrincipal).Demand ();
+				CurrentThread._principal = value;
 			}
 		}
 

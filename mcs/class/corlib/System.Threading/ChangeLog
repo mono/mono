@@ -1,3 +1,7 @@
+2004-02-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Thread.cs: Implemented CurrentPrincipal.
+
 2004-01-22  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Thread.cs: delayed thread creation until Start is called. If we
