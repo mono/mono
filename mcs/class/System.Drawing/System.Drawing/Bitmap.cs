@@ -40,9 +40,7 @@ namespace System.Drawing {
 			raw_format = ImageFormat.Bmp;
 			IntPtr bmp;
 			Status s = GDIPlus.GdipCreateBitmapFromGraphics (width, height, g.nativeObject, out bmp);
-			if (s != Status.Ok)
-				throw new Exception ("Could not create Bitmap from Graphics: " + s);
-				
+			GDIPlus.CheckStatus (s);
 			nativeObject = (IntPtr)bmp;
 			
 		}
@@ -55,16 +53,11 @@ namespace System.Drawing {
 			stride = (stride + 3) & ~3;
 			int bmp_size = stride * height;		
 			
-			Console.WriteLine("Bitmap.cs: stride:" + stride);	
-			
 			IntPtr bmp;
 			Status s = GDIPlus.GdipCreateBitmapFromScan0 (width, height, stride, PixelFormat.Format32bppArgb, IntPtr.Zero, 
 				out bmp);
-				
-			if (s != Status.Ok)
-				throw new ArgumentException ("Could not allocate the GdiPlus image: " + s);
-				
-			nativeObject = (IntPtr)bmp;
+			GDIPlus.CheckStatus (s);
+			nativeObject = (IntPtr) bmp;
 		}
 
 		public Bitmap (Image original) : this (original, original.Size)
@@ -103,9 +96,8 @@ namespace System.Drawing {
 				
 				IntPtr bmp;
 				Status s = GDIPlus.GdipCloneBitmapAreaI (0, 0, newSize.Width, newSize.Height, bmpOriginal.PixelFormat, bmpOriginal.nativeObject, out bmp);
-				if (s != Status.Ok)
-					throw new ArgumentException ("Could not allocate the GdiPlus image: " + s);
-				nativeObject = (IntPtr)bmp;
+				GDIPlus.CheckStatus (s);
+				nativeObject = (IntPtr) bmp;
 			}
 			else {
 				throw new NotImplementedException ();
@@ -154,11 +146,8 @@ namespace System.Drawing {
 			IntPtr bmp;
 			
 			Status status = GDIPlus.GdipCreateBitmapFromScan0 (width, height, stride, format, scan0, out bmp);
-			
-			if (status != Status.Ok)
-				throw new ArgumentException ("Could not allocate the GdiPlus image: " + status);
-				
-			nativeObject = (IntPtr)bmp;						 
+			GDIPlus.CheckStatus (status);	
+			nativeObject = (IntPtr) bmp;						 
 			raw_format = ImageFormat.Bmp;
 			
 		}
@@ -177,19 +166,15 @@ namespace System.Drawing {
 			int argb;				
 			
 			Status s = GDIPlus.GdipBitmapGetPixel(nativeObject, x, y, out argb);
-								
-			if (s != Status.Ok)
-				throw new Exception ("Unable to GetPixel: " + x +":" +y + ";status: " + s);					
-			
+			GDIPlus.CheckStatus (s);
+
 			return Color.FromArgb(argb);		
 		}
 
 		public void SetPixel (int x, int y, Color color)
 		{									
 			Status s = GDIPlus.GdipBitmapSetPixel(nativeObject, x, y, color.ToArgb());
-								
-			if (s != Status.Ok)
-				throw new Exception ("Unable to SetPixel: " + x +":" +y + ";status: " + s);									
+			GDIPlus.CheckStatus (s);
 		}
 
 		public Bitmap Clone (Rectangle rect,PixelFormat format)
@@ -198,8 +183,7 @@ namespace System.Drawing {
    			Status status = GDIPlus.GdipCloneBitmapAreaI(rect.X, rect.Top, rect.Width, rect.Height,
                                PixelFormat, nativeObject,  out bmp);
                                
-			if (status != Status.Ok)
-				throw new Exception ("Error calling GdipBitmapUnlockBits " +status);		
+			GDIPlus.CheckStatus (status);
 
 			Bitmap bmpnew = new Bitmap (rect.Width, rect.Height,  PixelFormat, (IntPtr) bmp);
        		return bmpnew;
@@ -208,11 +192,9 @@ namespace System.Drawing {
 		public Bitmap Clone (RectangleF rect, PixelFormat format)
 		{
 			IntPtr bmp;			
-   			Status status = GDIPlus.GdipCloneBitmapArea(rect.X, rect.Top, rect.Width, rect.Height,
+   			Status status = GDIPlus.GdipCloneBitmapArea (rect.X, rect.Top, rect.Width, rect.Height,
                                PixelFormat, nativeObject,  out bmp);
-                               
-			if (status != Status.Ok)
-				throw new Exception ("Error calling GdipBitmapUnlockBits " +status);		
+			GDIPlus.CheckStatus (status);
 
 			Bitmap bmpnew = new Bitmap (rect.Width, rect.Height,  PixelFormat, (IntPtr) bmp);
 	       		return bmpnew;
@@ -222,12 +204,9 @@ namespace System.Drawing {
 		{	
 			IntPtr bitmap;	
 				
-			Status status = GDIPlus.GdipCreateBitmapFromHICON(hicon, out bitmap);
-			    
-			if (status != Status.Ok)
-				throw new Exception ("Error calling GdipCreateBitmapFromHICON " +status);		
-				
-			
+			Status status = GDIPlus.GdipCreateBitmapFromHICON (hicon, out bitmap);
+			GDIPlus.CheckStatus (status);
+
 			return new Bitmap (0,0, PixelFormat.Format32bppArgb, bitmap);	// FIXME
 		}
 
@@ -235,11 +214,9 @@ namespace System.Drawing {
 		{
 			IntPtr bitmap;	
 				
-			Status status = GDIPlus.GdipCreateBitmapFromResource(hinstance, bitmapName, out bitmap);
-			    
-			if (status != Status.Ok)
-				throw new Exception ("Error calling GdipCreateBitmapFromResource " +status);		
-			
+			Status status = GDIPlus.GdipCreateBitmapFromResource (hinstance, bitmapName, out bitmap);
+			GDIPlus.CheckStatus (status);
+
 			return new Bitmap (0,0, PixelFormat.Format32bppArgb, bitmap); // FIXME
 		}
 
@@ -252,11 +229,9 @@ namespace System.Drawing {
 		{
 			IntPtr HandleBmp;
 			
-			Status status = GDIPlus.GdipCreateHBITMAPFromBitmap(nativeObject, out HandleBmp, background.ToArgb());
-                               
-			if (status != Status.Ok)
-				throw new Exception ("GdipCreateHBITMAPFromBitmap " +status);				
-				
+			Status status = GDIPlus.GdipCreateHBITMAPFromBitmap (nativeObject, out HandleBmp, background.ToArgb ());
+			GDIPlus.CheckStatus (status);
+
 			return  HandleBmp;
 		}
 
@@ -264,18 +239,14 @@ namespace System.Drawing {
 		{
 			IntPtr HandleIcon;
 			
-			Status status = GDIPlus.GdipCreateHICONFromBitmap(nativeObject, out HandleIcon);
-                               
-			if (status != Status.Ok)
-				throw new Exception ("GdipCreateHICONFromBitmap " +status);				
-				
+			Status status = GDIPlus.GdipCreateHICONFromBitmap (nativeObject, out HandleIcon);
+			GDIPlus.CheckStatus (status);
+
 			return  HandleIcon;			
 		}
 
 		public BitmapData LockBits (Rectangle rect, ImageLockMode flags, PixelFormat format)
 		{
-			Console.WriteLine("Bitmap.LockBits");
-			
 			BitmapData result = new BitmapData();
 
 			if (nativeObject == (IntPtr) 0)
@@ -289,12 +260,8 @@ namespace System.Drawing {
 			result = (BitmapData) Marshal.PtrToStructure(lfBuffer,  typeof(BitmapData));											
 			Marshal.FreeHGlobal (lfBuffer);			
 			//NOTE: scan0 points to piece of memory allocated in the unmanaged space
-			
-			if (status != Status.Ok)
-				throw new Exception ("Could not lock bits: " + status);
-							
-			Console.WriteLine("Bitmap.LockBits->height "+ result.height+ " scan"+ result.address);
-							
+			GDIPlus.CheckStatus (status);
+
 			return  result;
 		}
 
@@ -328,18 +295,14 @@ namespace System.Drawing {
 
 		public void SetResolution (float xDpi, float yDpi)
 		{
-			Status status = GDIPlus.GdipBitmapSetResolution(nativeObject, xDpi, yDpi);
-			
-			if (status != Status.Ok)
-				throw new Exception ("Error calling GdipBitmapSetResolution " +status);		
+			Status status = GDIPlus.GdipBitmapSetResolution (nativeObject, xDpi, yDpi);
+			GDIPlus.CheckStatus (status);
 		}
 
 		public void UnlockBits (BitmapData bitmap_data)
 		{
 			Status status = GDIPlus.GdipBitmapUnlockBits (nativeObject, bitmap_data);
-
-			if (status != Status.Ok)
-				throw new Exception ("Error calling GdipBitmapUnlockBits " +status);		
+			GDIPlus.CheckStatus (status);
 		}
 
 		// properties

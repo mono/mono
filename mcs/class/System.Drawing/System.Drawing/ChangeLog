@@ -1,3 +1,9 @@
+2004-04-29  Ravindra <rkumar@novell.com>
+
+	* Font.cs: Added checks for status.
+	* Bitmap.cs: Added checks for status.
+	* Pen.cs: Added checks for status.
+
 2004-04-28  Sanjay Gupta  <gsanjay@novell.com>
 
 	* ColorTranslator.cs, StringFormat.cs, SystemIcons.cs, ToolBoxBitmapAttributes.cs:

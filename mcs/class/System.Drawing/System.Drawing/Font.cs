@@ -35,9 +35,9 @@ namespace System.Drawing {
 
 		public void Dispose ()
 		{
-			if (fontObject!=IntPtr.Zero){				
-				GDIPlus.GdipDeleteFont(fontObject);			
-				GC.SuppressFinalize(this);
+			if (fontObject!=IntPtr.Zero) {
+				GDIPlus.CheckStatus (GDIPlus.GdipDeleteFont (fontObject));
+				GC.SuppressFinalize (this);
 			}
 		}		
 		
@@ -142,7 +142,8 @@ namespace System.Drawing {
 				// If we're on Unix we use our private gdiplus API to avoid Wine 
 				// dependencies in S.D
 
-				GDIPlus.GdipCreateFontFromHfont(Hfont, out newObject, ref lf);
+				Status s = GDIPlus.GdipCreateFontFromHfont(Hfont, out newObject, ref lf);
+				GDIPlus.CheckStatus (s);
 			} else {
 
 				// This needs testing, but I don't have a working win32 mono
@@ -153,12 +154,12 @@ namespace System.Drawing {
 
 				newStyle=FontStyle.Regular;
 
-				hdc=GDIPlus.GetDC(IntPtr.Zero);
-				oldFont=GDIPlus.SelectObject(hdc, Hfont);
-				GDIPlus.GdipCreateFontFromDC(hdc, out newObject);
-				GDIPlus.GdipGetLogFontA(newObject, IntPtr.Zero, ref lf);
-				GDIPlus.SelectObject(hdc, oldFont);
-				GDIPlus.ReleaseDC(hdc);
+				hdc=GDIPlus.GetDC (IntPtr.Zero);
+				oldFont=GDIPlus.SelectObject (hdc, Hfont);
+				GDIPlus.CheckStatus (GDIPlus.GdipCreateFontFromDC (hdc, out newObject));
+				GDIPlus.CheckStatus (GDIPlus.GdipGetLogFontA (newObject, IntPtr.Zero, ref lf));
+				GDIPlus.SelectObject (hdc, oldFont);
+				GDIPlus.ReleaseDC (hdc);
 			}
 
 			if (lf.lfItalic!=0) {
@@ -194,14 +195,14 @@ namespace System.Drawing {
 
 			if ((int)osInfo.Platform==128) {
 				// If we're on Unix we use our private gdiplus API
-				GDIPlus.GdipGetHfont(fontObject, out Hfont);
+				GDIPlus.CheckStatus (GDIPlus.GdipGetHfont (fontObject, out Hfont));
 			} else {
 				// This needs testing, but I don't have a working win32 mono
 				// environment. 
-				LOGFONTA	lf       = new LOGFONTA();
+				LOGFONTA lf = new LOGFONTA ();
 
-				GDIPlus.GdipGetLogFontA(fontObject, IntPtr.Zero, ref lf);
-				Hfont=GDIPlus.CreateFontIndirectA(ref lf);
+				GDIPlus.CheckStatus (GDIPlus.GdipGetLogFontA (fontObject, IntPtr.Zero, ref lf));
+				Hfont = GDIPlus.CreateFontIndirectA (ref lf);
 			}
 			return(Hfont);
 		}
@@ -216,10 +217,12 @@ namespace System.Drawing {
 
 		public Font(Font original, FontStyle style)
 		{
-			setProperties(original.FontFamily, original.Size, style, original.Unit, 
+			Status status;
+			setProperties (original.FontFamily, original.Size, style, original.Unit, 
 				original.GdiCharSet, original.GdiVerticalFont);
 			
-			GDIPlus.GdipCreateFont(_fontFamily.NativeObject,	Size,  Style,   Unit,  out fontObject);
+			status = GDIPlus.GdipCreateFont (_fontFamily.NativeObject,	Size,  Style,   Unit,  out fontObject);
+			GDIPlus.CheckStatus (status);
 		}
 		
 		public Font(FontFamily family, float emSize,  GraphicsUnit unit)
@@ -255,9 +258,11 @@ namespace System.Drawing {
 		}
 		
 		public Font(FontFamily family, float emSize, FontStyle style, GraphicsUnit unit, byte charSet, bool isVertical)
-		{	
-			setProperties(family, emSize, style, unit, charSet, isVertical);		
-			GDIPlus.GdipCreateFont(family.NativeObject,	emSize,  style,   unit,  out fontObject);					
+		{
+			Status status;
+			setProperties (family, emSize, style, unit, charSet, isVertical);		
+			status = GDIPlus.GdipCreateFont (family.NativeObject, emSize,  style,   unit,  out fontObject);
+			GDIPlus.CheckStatus (status);
 		}
 
 		public Font(string familyName, float emSize)
@@ -282,10 +287,12 @@ namespace System.Drawing {
 		
 		public Font(string familyName, float emSize, FontStyle style, GraphicsUnit unit, byte charSet, bool isVertical)
 		{
-			FontFamily family = new FontFamily(familyName);			
-			setProperties(family, emSize, style, unit, charSet, isVertical);
+			Status status;
+			FontFamily family = new FontFamily (familyName);
+			setProperties (family, emSize, style, unit, charSet, isVertical);
 			
-			GDIPlus.GdipCreateFont(family.NativeObject,	emSize,  style,   unit,  out fontObject);					
+			status = GDIPlus.GdipCreateFont (family.NativeObject, emSize,  style,   unit,  out fontObject);
+			GDIPlus.CheckStatus (status);
 		}		
 		
 		public object Clone()

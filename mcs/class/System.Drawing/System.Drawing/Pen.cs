@@ -40,23 +40,28 @@ namespace System.Drawing {
 		public Pen (Brush brush, float width)
 		{
 			int pen;
-			GDIPlus.GdipCreatePen2 (brush.nativeObject, width, Unit.UnitWorld, out pen);
+			Status status = GDIPlus.GdipCreatePen2 (brush.nativeObject, width, Unit.UnitWorld, out pen);
+			GDIPlus.CheckStatus (status);
+
 			nativeObject = (IntPtr) pen;
 			this.brush = brush;
 			if (brush is SolidBrush) {
 				color = ((SolidBrush) brush).Color;
-				GDIPlus.GdipSetPenColor (nativeObject, color.ToArgb ());
+				status = GDIPlus.GdipSetPenColor (nativeObject, color.ToArgb ());
+				GDIPlus.CheckStatus (status);
 			}
 		}
 
 		public Pen (Color color, float width)
 		{
 			int pen;
-			GDIPlus.GdipCreatePen1 (color.ToArgb (), width, Unit.UnitWorld, out pen);
+			Status status = GDIPlus.GdipCreatePen1 (color.ToArgb (), width, Unit.UnitWorld, out pen);
+			GDIPlus.CheckStatus (status);
 			nativeObject = (IntPtr)pen;
 			this.color = color;
 			brush = new SolidBrush (color);
-			GDIPlus.GdipSetPenBrushFill (nativeObject, brush.nativeObject);
+			status = GDIPlus.GdipSetPenBrushFill (nativeObject, brush.nativeObject);
+			GDIPlus.CheckStatus (status);
 		}
 
 		//
@@ -65,14 +70,16 @@ namespace System.Drawing {
 		public PenAlignment Alignment {
 			get {
 				PenAlignment retval;
-                                GDIPlus.GdipGetPenMode (nativeObject, out retval);
-
+                                Status status = GDIPlus.GdipGetPenMode (nativeObject, out retval);
+				GDIPlus.CheckStatus (status);
                                 return retval;
                         }
 
 			set {
-				if (isModifiable)
-					GDIPlus.GdipSetPenMode (nativeObject, value);
+				if (isModifiable) {
+					Status status = GDIPlus.GdipSetPenMode (nativeObject, value);
+					GDIPlus.CheckStatus (status);
+				}
 				else
 					throw new ArgumentException ("You may not change this Pen because it does not belong to you.");
 
@@ -88,14 +95,18 @@ namespace System.Drawing {
 				if (isModifiable) {
 					brush = value;
 					if (value is SolidBrush) {
-						GDIPlus.GdipSetPenBrushFill (nativeObject, value.nativeObject);
+						Status status = GDIPlus.GdipSetPenBrushFill (nativeObject, value.nativeObject);
+						GDIPlus.CheckStatus (status);
 						color = ((SolidBrush) brush).Color;
-						GDIPlus.GdipSetPenColor (nativeObject, color.ToArgb ());
+						status = GDIPlus.GdipSetPenColor (nativeObject, color.ToArgb ());
+						GDIPlus.CheckStatus (status);
 					}
 					else {
 						// other brushes should clear the color property
-						GDIPlus.GdipSetPenBrushFill (nativeObject, value.nativeObject);
-						GDIPlus.GdipSetPenColor (nativeObject, 0);
+						Status status = GDIPlus.GdipSetPenBrushFill (nativeObject, value.nativeObject);
+						GDIPlus.CheckStatus (status);
+						status = GDIPlus.GdipSetPenColor (nativeObject, 0);
+						GDIPlus.CheckStatus (status);
 						color = Color.Empty;
 					}
 				}
@@ -112,9 +123,11 @@ namespace System.Drawing {
 			set {
 				if (isModifiable) {
 					color = value;
-					GDIPlus.GdipSetPenColor (nativeObject, value.ToArgb ());
+					Status status = GDIPlus.GdipSetPenColor (nativeObject, value.ToArgb ());
+					GDIPlus.CheckStatus (status);
 					brush = new SolidBrush (color);
-					GDIPlus.GdipSetPenBrushFill (nativeObject, brush.nativeObject);
+					status = GDIPlus.GdipSetPenBrushFill (nativeObject, brush.nativeObject);
+					GDIPlus.CheckStatus (status);
 				}
 				else
 					throw new ArgumentException ("You may not change this Pen because it does not belong to you.");
@@ -125,10 +138,10 @@ namespace System.Drawing {
                         get {
                                 throw new NotImplementedException ();
 //                                 int count;
-//                                 GDIPlus.GdipGetPenCompoundArrayCount (nativeObject, out count);
+//                                 Status status = GDIPlus.GdipGetPenCompoundArrayCount (nativeObject, out count);
 
 //                                 IntPtr tmp = Marshal.AllocHGlobal (8 * count);
-//                                 GDIPlus.GdipGetPenCompoundArray (nativeObject, out tmp, out count);
+//                                 status = GDIPlus.GdipGetPenCompoundArray (nativeObject, out tmp, out count);
 
 //                                 float [] retval = new float [count];
 //                                 Marshal.Copy (tmp, retval, 0, count);
@@ -144,7 +157,7 @@ namespace System.Drawing {
 //                                 int length = value.Length;
 //                                 IntPtr tmp = Marshal.AllocHGlobal (8 * length);
 //                                 Marshal.Copy (value, 0, tmp, length);
-//                                 GDIPlus.GdipSetPenCompoundArray (nativeObject, tmp, length);
+//                                 Status status = GDIPlus.GdipSetPenCompoundArray (nativeObject, tmp, length);
 
 //                                 Marshal.FreeHGlobal (tmp);
 //                              }
@@ -182,14 +195,16 @@ namespace System.Drawing {
 
                         get {
                                 DashCap retval;
-                                GDIPlus.GdipGetPenDashCap (nativeObject, out retval);
-
+                                Status status = GDIPlus.GdipGetPenDashCap (nativeObject, out retval);
+				GDIPlus.CheckStatus (status);
                                 return retval;
                         }
 
                         set {
-				if (isModifiable)
-                                	GDIPlus.GdipSetPenDashCap (nativeObject, value);
+				if (isModifiable) {
+                                	Status status = GDIPlus.GdipSetPenDashCap (nativeObject, value);
+					GDIPlus.CheckStatus (status);
+				}
 				else
 					throw new ArgumentException ("You may not change this Pen because it does not belong to you.");
                         }
@@ -199,14 +214,16 @@ namespace System.Drawing {
 
                         get {
                                 float retval;
-                                GDIPlus.GdipGetPenDashOffset (nativeObject, out retval);
-
+                                Status status = GDIPlus.GdipGetPenDashOffset (nativeObject, out retval);
+				GDIPlus.CheckStatus (status);
                                 return retval;
                         }
 
                         set {
-				if (isModifiable)
-                                	GDIPlus.GdipSetPenDashOffset (nativeObject, value);
+				if (isModifiable) {
+                                	Status status = GDIPlus.GdipSetPenDashOffset (nativeObject, value);
+					GDIPlus.CheckStatus (status);
+				}
 				else
 					throw new ArgumentException ("You may not change this Pen because it does not belong to you.");
                         }
@@ -215,16 +232,15 @@ namespace System.Drawing {
                 public float [] DashPattern {
                         get {
                                 int count;
-                                GDIPlus.GdipGetPenDashCount (nativeObject, out count);
-
+                                Status status = GDIPlus.GdipGetPenDashCount (nativeObject, out count);
+				GDIPlus.CheckStatus (status);
                                 IntPtr tmp = Marshal.AllocHGlobal (8 * count);
-                                GDIPlus.GdipGetPenDashArray (nativeObject, out tmp, out count);
-
+                                status = GDIPlus.GdipGetPenDashArray (nativeObject, out tmp, out count);
                                 float [] retval = new float [count];
                                 Marshal.Copy (tmp, retval, 0, count);
 
                                 Marshal.FreeHGlobal (tmp);
-
+				GDIPlus.CheckStatus (status);
                                 return retval;
                         }
 
@@ -233,9 +249,9 @@ namespace System.Drawing {
                                 	int length = value.Length;
                                 	IntPtr tmp = Marshal.AllocHGlobal (8 * length);
                                 	Marshal.Copy (value, 0, tmp, length);
-                                	GDIPlus.GdipSetPenDashArray (nativeObject, tmp, length);
-
+                                	Status status = GDIPlus.GdipSetPenDashArray (nativeObject, tmp, length);
                                 	Marshal.FreeHGlobal (tmp);
+					GDIPlus.CheckStatus (status);
 				}
 				else
 					throw new ArgumentException ("You may not change this Pen because it does not belong to you.");
@@ -245,14 +261,16 @@ namespace System.Drawing {
 		public DashStyle DashStyle {
 			get {
 				DashStyle retval;
-                                GDIPlus.GdipGetPenDashStyle (nativeObject, out retval);
-
+                                Status status = GDIPlus.GdipGetPenDashStyle (nativeObject, out retval);
+				GDIPlus.CheckStatus (status);
                                 return retval;
 			}
 
 			set {
-				if (isModifiable)
-					GDIPlus.GdipSetPenDashStyle (nativeObject, value);
+				if (isModifiable) {
+					Status status = GDIPlus.GdipSetPenDashStyle (nativeObject, value);
+					GDIPlus.CheckStatus (status);
+				}
 				else
 					throw new ArgumentException ("You may not change this Pen because it does not belong to you.");
 			}
@@ -262,7 +280,7 @@ namespace System.Drawing {
 			get {
                                 throw new NotImplementedException ();
 // 				LineCap retval;
-//                                 GDIPlus.GdipGetPenStartCap (nativeObject, out retval);
+//                                 Status status = GDIPlus.GdipGetPenStartCap (nativeObject, out retval);
 
 //                                 return retval;
 			}
@@ -270,7 +288,7 @@ namespace System.Drawing {
 			set {
                                 throw new NotImplementedException ();                                
 //			if (isModifiable)
-// 				GDIPlus.GdipSetPenStartCap (nativeObject, value);
+// 				Status status = GDIPlus.GdipSetPenStartCap (nativeObject, value);
 //			else
 //				throw new ArgumentException ("You may not change this Pen because it does not belong to you.");
 			}
@@ -280,7 +298,7 @@ namespace System.Drawing {
 			get {
                                 throw new NotImplementedException ();                                
 // 				LineCap retval;
-//                                 GDIPlus.GdipGetPenEndCap (nativeObject, out retval);
+//                                 Status status = GDIPlus.GdipGetPenEndCap (nativeObject, out retval);
 
 //                                 return retval;
 			}
@@ -288,7 +306,7 @@ namespace System.Drawing {
 			set {
                                 throw new NotImplementedException ();                                
 //			if (isModifiable)
-// 				GDIPlus.GdipSetPenEndCap (nativeObject, value);
+// 				Status status = GDIPlus.GdipSetPenEndCap (nativeObject, value);
 //			else
 //				throw new ArgumentException ("You may not change this Pen because it does not belong to you.");
 			}
@@ -298,13 +316,16 @@ namespace System.Drawing {
 
                         get {
                                 LineJoin result;
-                                GDIPlus.GdipGetPenLineJoin (nativeObject, out result);
+                                Status status = GDIPlus.GdipGetPenLineJoin (nativeObject, out result);
+				GDIPlus.CheckStatus (status);
                                 return result;
                         }
 
                         set {
-				if (isModifiable)
-                                	GDIPlus.GdipSetPenLineJoin (nativeObject, value);
+				if (isModifiable) {
+                                	Status status = GDIPlus.GdipSetPenLineJoin (nativeObject, value);
+					GDIPlus.CheckStatus (status);
+				}
 				else
 					throw new ArgumentException ("You may not change this Pen because it does not belong to you.");
                         }
@@ -315,13 +336,16 @@ namespace System.Drawing {
 
                         get {
                                 float result;
-                                GDIPlus.GdipGetPenMiterLimit (nativeObject, out result);
+                                Status status = GDIPlus.GdipGetPenMiterLimit (nativeObject, out result);
+				GDIPlus.CheckStatus (status);
                                 return result;
                         }
 
                         set {
-				if (isModifiable)
-                                	GDIPlus.GdipSetPenMiterLimit (nativeObject, value);
+				if (isModifiable) {
+                                	Status status = GDIPlus.GdipSetPenMiterLimit (nativeObject, value);
+					GDIPlus.CheckStatus (status);
+				}
 				else
 					throw new ArgumentException ("You may not change this Pen because it does not belong to you.");
                         }
@@ -349,7 +373,8 @@ namespace System.Drawing {
                         get {
 				if (matrix == null) {
 					IntPtr m;
-					GDIPlus.GdipGetPenTransform (nativeObject, out m);
+					Status status = GDIPlus.GdipGetPenTransform (nativeObject, out m);
+					GDIPlus.CheckStatus (status);
 					matrix = new Matrix (m);
 				}
 				return matrix;
@@ -357,7 +382,8 @@ namespace System.Drawing {
 
                         set {
 				if (isModifiable) {
-                                	GDIPlus.GdipSetPenTransform (nativeObject, value.nativeMatrix);
+                                	Status status = GDIPlus.GdipSetPenTransform (nativeObject, value.nativeMatrix);
+					GDIPlus.CheckStatus (status);
 					matrix = value;
 				}
 				else
@@ -368,12 +394,15 @@ namespace System.Drawing {
 		public float Width {
 			get {
 				float f;
-                                GDIPlus.GdipGetPenWidth (nativeObject, out f);
+                                Status status = GDIPlus.GdipGetPenWidth (nativeObject, out f);
+				GDIPlus.CheckStatus (status);
                                 return f;
 			}
 			set {
-				if (isModifiable)
-					GDIPlus.GdipSetPenWidth (nativeObject, value);
+				if (isModifiable) {
+					Status status = GDIPlus.GdipSetPenWidth (nativeObject, value);
+					GDIPlus.CheckStatus (status);
+				}
 				else
 					throw new ArgumentException ("You may not change this Pen because it does not belong to you.");
 			}
@@ -382,8 +411,8 @@ namespace System.Drawing {
 		public object Clone ()
 		{
                         IntPtr ptr;
-                        GDIPlus.GdipClonePen (nativeObject, out ptr);
-
+                        Status status = GDIPlus.GdipClonePen (nativeObject, out ptr);
+			GDIPlus.CheckStatus (status);
                         return new Pen (ptr);
 		}
 
@@ -396,8 +425,10 @@ namespace System.Drawing {
 		void Dispose (bool disposing)
 		{
 			// Let the GC collect it
-			if (isModifiable || disposing == false)
-                        	GDIPlus.GdipDeletePen (nativeObject);
+			if (isModifiable || disposing == false) {
+                        	Status status = GDIPlus.GdipDeletePen (nativeObject);
+				GDIPlus.CheckStatus (status);
+			}
 			else
 				throw new ArgumentException ("You may not change this Pen because it does not belong to you.");
 		}
@@ -414,12 +445,14 @@ namespace System.Drawing {
 
                 public void MultiplyTransform (Matrix matrix, MatrixOrder order)
                 {
-                        GDIPlus.GdipMultiplyPenTransform (nativeObject, matrix.nativeMatrix, order);
+                        Status status = GDIPlus.GdipMultiplyPenTransform (nativeObject, matrix.nativeMatrix, order);
+			GDIPlus.CheckStatus (status);
                 }
 
                 public void ResetTransform ()
                 {
-                        GDIPlus.GdipResetPenTransform (nativeObject);
+                        Status status = GDIPlus.GdipResetPenTransform (nativeObject);
+			GDIPlus.CheckStatus (status);
                 }
 
                 public void RotateTransform (float angle)
@@ -429,7 +462,8 @@ namespace System.Drawing {
 
                 public void RotateTransform (float angle, MatrixOrder order)
                 {
-                        GDIPlus.GdipRotatePenTransform (nativeObject, angle, order);
+                        Status status = GDIPlus.GdipRotatePenTransform (nativeObject, angle, order);
+			GDIPlus.CheckStatus (status);
                 }
 
                 public void ScaleTransform (float sx, float sy)
@@ -439,13 +473,14 @@ namespace System.Drawing {
 
                 public void ScaleTransform (float sx, float sy, MatrixOrder order)
                 {
-                        GDIPlus.GdipScalePenTransform (nativeObject, sx, sy, order);
+                        Status status = GDIPlus.GdipScalePenTransform (nativeObject, sx, sy, order);
+			GDIPlus.CheckStatus (status);
                 }
 
                 public void SetLineCap (LineCap startCap, LineCap endCap, DashCap dashCap)
                 {
 			// do a check for isModifiable when implementing this method
-                        // GDIPlus.GdipSetLineCap197819 (nativeObject, startCap, endCap, dashCap);
+                        // Status status = GDIPlus.GdipSetLineCap197819 (nativeObject, startCap, endCap, dashCap);
                 }
 
                 public void TranslateTransform (float dx, float dy)
@@ -455,7 +490,8 @@ namespace System.Drawing {
 
                 public void TranslateTransform (float dx, float dy, MatrixOrder order)
                 {
-                        GDIPlus.GdipTranslatePenTransform (nativeObject, dx, dy, order);
+                        Status status = GDIPlus.GdipTranslatePenTransform (nativeObject, dx, dy, order);
+			GDIPlus.CheckStatus (status);
                 }
 	}
 }
