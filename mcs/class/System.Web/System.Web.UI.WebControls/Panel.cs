@@ -1,24 +1,23 @@
-/**
- * Namespace: System.Web.UI.WebControls
- * Class:     Panel
- *
- * Author:  Gaurav Vaish
- * Maintainer: gvaish@iitk.ac.in
- * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
- * Implementation: yes
- * Status:  100%
- *
- * (C) Gaurav Vaish (2002)
- */
+//
+// System.Web.UI.WebControls.Panel.cs
+//
+// Authors:
+//   Gaurav Vaish (gvaish@iitk.ac.in)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//
+// (C) Gaurav Vaish (2002)
+// (C) 2003 Andreas Nahr
+//
 
 using System;
 using System.ComponentModel;
+using System.ComponentModel.Design;
 using System.Web;
 using System.Web.UI;
 
 namespace System.Web.UI.WebControls
 {
-	//[Designer("??")]
+	[Designer ("System.Web.UI.Design.WebControls.PanelDesigner, " + Consts.AssemblySystem_Design, typeof (IDesigner))]
 	[ParseChildren(false)]
 	[PersistChildren(true)]
 	[ToolboxData("<{0}:Panel runat=\"server\">Panel</{0}:Panel>")]
@@ -28,6 +27,9 @@ namespace System.Web.UI.WebControls
 		{
 		}
 
+		[DefaultValue (""), Bindable (true), WebCategory ("Appearance")]
+		[Editor ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
+		[WebSysDescription ("An Url specifying the background image for the panel.")]
 		public virtual string BackImageUrl
 		{
 			get
@@ -43,6 +45,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (typeof (HorizontalAlign), "NotSet"), Bindable (true), WebCategory ("Layout")]
+		[WebSysDescription ("The horizonal alignment of the panel.")]
 		public virtual HorizontalAlign HorizontalAlign
 		{
 			get
@@ -56,12 +60,14 @@ namespace System.Web.UI.WebControls
 			{
 				if(!Enum.IsDefined(typeof(HorizontalAlign), value))
 				{
-					throw new ArgumentException();
+					throw new ArgumentOutOfRangeException ("value", "Only valid enumeration members are allowed");
 				}
 				ViewState["HorizontalAlign"] = value;
 			}
 		}
 
+		[DefaultValue (true), Bindable (true), WebCategory ("Layout")]
+		[WebSysDescription ("Determines if the content wraps at line-end.")]
 		public virtual bool Wrap
 		{
 			get

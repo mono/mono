@@ -1,19 +1,19 @@
-/**
- * Namespace: System.Web.UI.WebControls
- * Class:     BaseValidator
- *
- * Authors:  Gaurav Vaish, Gonzalo Paniagua Javier
- * Maintainer: gvaish@iitk.ac.in
- * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>, <gonzalo@ximian.com>
- * Implementation: yes
- * Status:  80%
- *
- * (C) Gaurav Vaish (2001)
- * (c) 2002 Ximian, Inc. (http://www.ximian.com)
- */
+//
+// System.Web.UI.WebControls.BaseValidator.cs
+//
+// Authors:
+//   Gaurav Vaish (gvaish@iitk.ac.in)
+//   Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//
+// (c) 2002 Ximian, Inc. (http://www.ximian.com)
+// (C) Gaurav Vaish (2002)
+// (C) 2003 Andreas Nahr
+//
 
 using System;
 using System.ComponentModel;
+using System.ComponentModel.Design;
 using System.Web;
 using System.Web.UI;
 using System.Drawing;
@@ -21,7 +21,7 @@ using System.Drawing;
 namespace System.Web.UI.WebControls
 {
 	[DefaultProperty("ErrorMessage")]
-	//TODO: [Designer("??")]
+	[Designer ("System.Web.UI.Design.WebControls.BaseValidatorDesigner, " + Consts.AssemblySystem_Design, typeof (IDesigner))]
 	public abstract class BaseValidator: Label, IValidator
 	{
 		private bool isValid;
@@ -39,6 +39,9 @@ namespace System.Web.UI.WebControls
 			renderUplevel = false;
 		}
 
+		[DefaultValue (""), WebCategory ("Behavior")]
+		[TypeConverter (typeof (ValidatedControlConverter))]
+		[WebSysDescription ("The ID of the control to validate.")]
 		public string ControlToValidate
 		{
 			get
@@ -56,6 +59,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (typeof (ValidatorDisplay), "Static"), Bindable (true), WebCategory ("Appearance")]
+		[WebSysDescription ("Determines how the validator is displayed.")]
 		public ValidatorDisplay Display
 		{
 			get
@@ -77,6 +82,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (true), WebCategory ("Behavior")]
+		[WebSysDescription ("Determines if client script is activated on uplevel browsers.")]
 		public bool EnableClientScript
 		{
 			get
@@ -108,6 +115,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (""), Bindable (true), WebCategory ("Appearance")]
+		[WebSysDescription ("An error message that is displayed if the control validates to false.")]
 		public string ErrorMessage
 		{
 			get
@@ -125,6 +134,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (null)]
 		public override Color ForeColor
 		{
 			get
@@ -137,6 +147,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (true), Browsable (false), WebCategory ("Misc")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription ("Indicates if the control validated to false.")]
 		public bool IsValid
 		{
 			get { return isValid; }

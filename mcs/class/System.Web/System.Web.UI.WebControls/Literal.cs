@@ -1,15 +1,13 @@
-/**
- * Namespace: System.Web.UI.WebControls
- * Class:     Literal
- *
- * Author:  Gaurav Vaish
- * Maintainer: gvaish@iitk.ac.in
- * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
- * Implementation: yes
- * Status:  100%
- *
- * (C) Gaurav Vaish (2001)
- */
+//
+// System.Web.UI.WebControls.Literal.cs
+//
+// Authors:
+//   Gaurav Vaish (gvaish@iitk.ac.in)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//
+// (C) Gaurav Vaish (2002)
+// (C) 2003 Andreas Nahr
+//
 
 using System;
 using System.Web;
@@ -20,13 +18,15 @@ namespace System.Web.UI.WebControls
 {
 	[DefaultProperty("Text")]
 	[ControlBuilder(typeof(LiteralControlBuilder))]
-	//[DataBindingHandler("??")]
+	[DataBindingHandler("System.Web.UI.Design.TextDataBindingHandler, " + Consts.AssemblySystem_Design)]
 	public class Literal : Control
 	{
 		public Literal () : base ()
 		{
 		}
 
+		[DefaultValue (""), Bindable (true), WebCategory ("Appearance")]
+		[WebSysDescription ("The text for the literal WebControl.")]
 		public string Text
 		{
 			get {

@@ -1,15 +1,13 @@
-/**
- * Namespace: System.Web.UI.WebControls
- * Class:     ButtonColumn
- * 
- * Author:  Gaurav Vaish
- * Maintainer: gvaish@iitk.ac.in
- * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
- * Implementation: yes
- * Status:  100%
- * 
- * (C) Gaurav Vaish (2002)
- */
+//
+// System.Web.UI.WebControls.ButtonColumn.cs
+//
+// Authors:
+//   Gaurav Vaish (gvaish@iitk.ac.in)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//
+// (C) Gaurav Vaish (2002)
+// (C) 2003 Andreas Nahr
+//
 
 using System;
 using System.ComponentModel;
@@ -107,7 +105,12 @@ namespace System.Web.UI.WebControls
 			}
 			return retVal;
 		}
-		
+
+		// LAMESPEC The framework uses Description values for metadata here. However they should be WebSysDescriptions
+		// because all metadata in this namespace has WebSysDescriptions
+
+		[DefaultValue (typeof (ButtonColumnType), "LinkButton"), Bindable (true), WebCategory ("Misc")]
+		[Description ("The type of button used in this column.")]
 		public virtual ButtonColumnType ButtonType
 		{
 			get
@@ -124,7 +127,9 @@ namespace System.Web.UI.WebControls
 				ViewState["ButtonType"] = value;
 			}
 		}
-		
+
+		[DefaultValue (""), Bindable (true), WebCategory ("Misc")]
+		[Description ("The command assigned to this column.")]
 		public virtual string CommandName
 		{
 			get
@@ -140,6 +145,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (""), Bindable (true), WebCategory ("Misc")]
+		[Description ("The datafield that is bound to the text property.")]
 		public virtual string DataTextField
 		{
 			get
@@ -155,6 +162,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (""), Bindable (true), WebCategory ("Misc")]
+		[Description ("A format that is applied to the bound text property.")]
 		public virtual string DataTextFormatString
 		{
 			get
@@ -170,6 +179,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (""), Bindable (true), WebCategory ("Misc")]
+		[Description ("The text used for this button.")]
 		public virtual string Text
 		{
 			get

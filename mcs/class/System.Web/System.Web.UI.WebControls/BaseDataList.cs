@@ -1,18 +1,17 @@
-/**
- * Namespace: System.Web.UI.WebControls
- * Class:     BaseDataList
- *
- * Author:  Gaurav Vaish
- * Maintainer: gvaish@iitk.ac.in
- * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
- * Implementation: yes
- * Status:  100%
- *
- * (C) Gaurav Vaish (2001)
- */
+//
+// System.Web.UI.WebControls.BaseDataList.cs
+//
+// Authors:
+//   Gaurav Vaish (gvaish@iitk.ac.in)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//
+// (C) Gaurav Vaish (2001)
+// (C) 2003 Andreas Nahr
+//
 
 using System;
 using System.ComponentModel;
+using System.ComponentModel.Design;
 using System.Collections;
 using System.Web;
 using System.Web.UI;
@@ -21,9 +20,7 @@ namespace System.Web.UI.WebControls
 {
 	[DefaultEvent("SelectedIndexChanged")]
 	[DefaultProperty("DataSource")]
-	[ParseChildren(true)]
-	[PersistChildren(false)]
-	//TODO: [Designer("??")]
+	[Designer("System.Web.UI.Design.WebControls.BaseDataListDesigner, " + Consts.AssemblySystem_Design, typeof (IDesigner))]
 	public abstract class BaseDataList: WebControl
 	{
 		private  static readonly object SelectedIndexChangedEvent = new object();
@@ -126,7 +123,7 @@ namespace System.Web.UI.WebControls
 		}
 
 		[Browsable(true)]
-		//[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		[WebSysDescription("BaseDataList_DataKeys")]
 		public DataKeyCollection DataKeys
 		{
@@ -158,8 +155,8 @@ namespace System.Web.UI.WebControls
 		}
 
 		[Bindable(true)]
-		//[DefaultValue(null)]
-		//[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[DefaultValue(null)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		[WebCategory("Data")]
 		[WebSysDescription("BaseDataList_DataSource")]
 		public virtual object DataSource
@@ -198,9 +195,12 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		// LAMESPEC HorizontalAlign has a Category attribute, this should obviously be a WebCategory attribute
+		// but is defined incorrectly in the MS framework
+
 		[Bindable(true)]
 		[DefaultValue(HorizontalAlign.NotSet)]
-		[WebCategory("Layout")]
+		[Category("Layout")]
 		[WebSysDescription("BaseDataList_HorizontalAlign")]
 		public virtual HorizontalAlign HorizontalAlign
 		{

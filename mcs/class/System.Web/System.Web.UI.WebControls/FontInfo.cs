@@ -1,15 +1,15 @@
-/**
- * Namespace: System.Web.UI.WebControls
- * Class:     FontInfo
- * 
- * Author:  Gaurav Vaish
- * Maintainer: gvaish@iitk.ac.in
- * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
- * Implementation: yes
- * Status:  100%
- * 
- * (C) Gaurav Vaish (2001)
- */
+//
+// System.Web.UI.WebControls.FontInfo.cs
+//
+// Authors:
+//   Gaurav Vaish (gvaish@iitk.ac.in)
+//   Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//
+// (c) 2002 Ximian, Inc. (http://www.ximian.com)
+// (C) Gaurav Vaish (2002)
+// (C) 2003 Andreas Nahr
+//
 
 using System;
 using System.Text;
@@ -41,6 +41,9 @@ namespace System.Web.UI.WebControls
 		{
 		}
 		
+		[DefaultValue (false), Bindable (true), WebCategory ("Font")]
+		[NotifyParentProperty (true)]
+		[WebSysDescription ("The 'bold' style of the font.")]
 		public bool Bold
 		{
 			get
@@ -56,6 +59,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
+		[DefaultValue (false), Bindable (true), WebCategory ("Font")]
+		[NotifyParentProperty (true)]
+		[WebSysDescription ("The 'italic' style of the font.")]
 		public bool Italic
 		{
 			get
@@ -71,6 +77,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
+		[DefaultValue (false), Bindable (true), WebCategory ("Font")]
+		[NotifyParentProperty (true)]
+		[WebSysDescription ("The 'overline' style of the font.")]
 		public bool Overline
 		{
 			get
@@ -86,6 +95,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
+		[DefaultValue (false), Bindable (true), WebCategory ("Font")]
+		[NotifyParentProperty (true)]
+		[WebSysDescription ("The 'strikeout' style of the font.")]
 		public bool Strikeout
 		{
 			get
@@ -101,6 +113,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
+		[DefaultValue (false), Bindable (true), WebCategory ("Font")]
+		[NotifyParentProperty (true)]
+		[WebSysDescription ("The 'underline' style of the font.")]
 		public bool Underline
 		{
 			get
@@ -115,8 +130,11 @@ namespace System.Web.UI.WebControls
 				infoOwner.Set(Style.FONT_ULINE);
 			}
 		}
-		
+
 		//TODO: How do I check if the value is negative. FontUnit is struct not enum
+		[DefaultValue (null), Bindable (true), WebCategory ("Font")]
+		[NotifyParentProperty (true)]
+		[WebSysDescription ("The size of the font.")]
 		public FontUnit Size
 		{
 			get
@@ -131,7 +149,12 @@ namespace System.Web.UI.WebControls
 				infoOwner.Set(Style.FONT_SIZE);
 			}
 		}
-		
+
+		[DefaultValue (""), Bindable (true), WebCategory ("Font")]
+		[NotifyParentProperty (true), DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Editor ("System.Drawing.Design.FontNameEditor, " + Consts.AssemblySystem_Drawing_Design, typeof (System.Drawing.Design.UITypeEditor))]
+		[TypeConverter (typeof (FontConverter.FontNameConverter))]
+		[WebSysDescription ("The name of the font that this control should be rendered with.")]
 		public string Name
 		{
 			get
@@ -153,7 +176,12 @@ namespace System.Web.UI.WebControls
 				Names = strArray;
 			}
 		}
-		
+
+		[WebCategory ("Font")]
+		[NotifyParentProperty (true)]
+		[Editor ("System.Windows.Forms.Design.StringArrayEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
+		[TypeConverter (typeof (FontNamesConverter))]
+		[WebSysDescription ("Multiple fonts that can be used to render the control.")]
 		public string[] Names
 		{
 			get

@@ -1,15 +1,13 @@
-/**
- * Namespace: System.Web.UI.WebControls
- * Class:     ImageButton
- *
- * Author:  Gaurav Vaish
- * Maintainer: gvaish@iitk.ac.in
- * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
- * Implementation: yes
- * Status:  100%
- *
- * (C) Gaurav Vaish (2001)
- */
+//
+// System.Web.UI.WebControls.ImageButton.cs
+//
+// Authors:
+//   Gaurav Vaish (gvaish@iitk.ac.in)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//
+// (C) Gaurav Vaish (2002)
+// (C) 2003 Andreas Nahr
+//
 
 using System;
 using System.Collections;
@@ -32,6 +30,8 @@ namespace System.Web.UI.WebControls
 		{
 		}
 
+		[DefaultValue (true), Bindable (false), WebCategory ("Behavior")]
+		[WebSysDescription ("Determines if validation is performed when clicked.")]
 		public bool CausesValidation
 		{
 			get
@@ -47,6 +47,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (""), Bindable (true), WebCategory ("Behavior")]
+		[WebSysDescription ("An argument for the Command of this control.")]
 		public string CommandArgument
 		{
 			get
@@ -62,6 +64,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (""), WebCategory ("Behavior")]
+		[WebSysDescription ("The name of the Command of this control.")]
 		public string CommandName
 		{
 			get
@@ -85,6 +89,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[WebCategory ("Action")]
+		[WebSysDescription ("Raised when the LinkButton is clicked.")]
 		public event ImageClickEventHandler Click
 		{
 			add
@@ -97,6 +103,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[WebCategory ("Action")]
+		[WebSysDescription ("Raised when a LinkButton Command is executed.")]
 		public event CommandEventHandler Command
 		{
 			add

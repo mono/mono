@@ -1,16 +1,15 @@
-/**
- * Namespace: System.Web.UI.WebControls
- * Class:     AdRotator
- *
- * Authors:  Gaurav Vaish, Gonzalo Paniagua
- * Maintainer: gvaish@iitk.ac.in, gonzalo@ximian.com
- * Implementation: yes
- * Contact: <gvaish@iitk.ac.in>
- * Status:  100%
- *
- * (C) Gaurav Vaish (2001)
- * (C) 2003 Ximian, Inc. (http://www.ximian.com)
- */
+//
+// System.Web.UI.WebControls.AdRotator.cs
+//
+// Authors:
+//   Gaurav Vaish (gvaish@iitk.ac.in)
+//   Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//
+// (c) 2002 Ximian, Inc. (http://www.ximian.com)
+// (C) Gaurav Vaish (2002)
+// (C) 2003 Andreas Nahr
+//
 
 using System;
 using System.IO;
@@ -22,12 +21,13 @@ using System.Web.UI;
 using System.Xml;
 using System.Web.Util;
 using System.ComponentModel;
+using System.ComponentModel.Design;
 
 namespace System.Web.UI.WebControls
 {
 	[DefaultEvent("AdCreated")]
 	[DefaultProperty("AdvertisementFile")]
-	//TODO: [Designer("??")]
+	[Designer ("System.Web.UI.Design.WebControls.AdRotatorDesigner, " + Consts.AssemblySystem_Design, typeof (IDesigner))]
 	[ToolboxData("<{0}:AdRotator runat=\"server\" Height=\"60px\" "
 	+ "Width=\"468\"></{0}:AdRotator>")]
 	public class AdRotator: WebControl
@@ -195,7 +195,7 @@ namespace System.Web.UI.WebControls
 
 		[Bindable(true)]
 		[DefaultValue("")]
-		//[Editor("??")]
+		[Editor ("System.Web.UI.Design.XmlUrlEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
 		[WebCategory("Behaviour")]
 		[WebSysDescription("AdRotator_AdvertisementFile")]
 		public string AdvertisementFile {
@@ -203,6 +203,8 @@ namespace System.Web.UI.WebControls
 			set { advertisementFile = value; }
 		}
 
+		[Browsable (false), EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public override FontInfo Font {
 			get { return base.Font; }
 		}

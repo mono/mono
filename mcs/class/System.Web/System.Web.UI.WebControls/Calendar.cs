@@ -1,16 +1,15 @@
-/**
- * Namespace: System.Web.UI.WebControls
- * Class:     Calendar
- *
- * Authors:  Gaurav Vaish, Gonzalo Paniagua Javier
- * Maintainer: gvaish@iitk.ac.in
- * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>, <gonzalo@ximian.com>
- * Implementation: yes
- * Status:  98%
- *
- * (C) Gaurav Vaish (2001)
- * (c) 2002 Ximian, Inc. (http://www.ximian.com)
- */
+//
+// System.Web.UI.WebControls.Calendar.cs
+//
+// Authors:
+//   Gaurav Vaish (gvaish@iitk.ac.in)
+//   Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//
+// (c) 2002 Ximian, Inc. (http://www.ximian.com)
+// (C) Gaurav Vaish (2002)
+// (C) 2003 Andreas Nahr
+//
 
 using System;
 using System.IO;
@@ -21,13 +20,14 @@ using System.Web;
 using System.Web.UI;
 using System.Drawing;
 using System.ComponentModel;
+using System.ComponentModel.Design;
 
 namespace System.Web.UI.WebControls
 {
 	[DefaultEvent("SelectionChanged")]
 	[DefaultProperty("SelectedDate")]
-	//TODO: [Designer("??")]
-	//[DataBindingHandler("??")]
+	[Designer("System.Web.UI.Design.WebControls.CalendarDesigner, " + Consts.AssemblySystem_Design, typeof (IDesigner))]
+	[DataBindingHandler("System.Web.UI.Design.WebControls.CalendarDataBindingHandler, " + Consts.AssemblySystem_Design)]
 	public class Calendar : WebControl, IPostBackEventHandler
 	{
 		//
@@ -63,6 +63,9 @@ namespace System.Web.UI.WebControls
 			//TODO: Initialization
 		}
 
+
+		[DefaultValue (2), Bindable (true), WebCategory ("Layout")]
+		[WebSysDescription ("The border left within the calendar days.")]
 		public int CellPadding
 		{
 			get
@@ -74,10 +77,14 @@ namespace System.Web.UI.WebControls
 			}
 			set
 			{
+				if (value < -1)
+					throw new ArgumentOutOfRangeException ("value", "CellPadding value has to be -1 for 'not set' or > -1.");
 				ViewState["CellPadding"] = value;
 			}
 		}
 
+		[DefaultValue (0), Bindable (true), WebCategory ("Layout")]
+		[WebSysDescription ("The border left between calendar days.")]
 		public int CellSpacing
 		{
 			get
@@ -89,12 +96,16 @@ namespace System.Web.UI.WebControls
 			}
 			set
 			{
-				if(value<-1)
-					throw new ArgumentOutOfRangeException();
+				if (value < -1)
+					throw new ArgumentOutOfRangeException ("value", "CellSpacing value has to be -1 for 'not set' or > -1.");
 				ViewState["CellSpacing"] = value;
 			}
 		}
 
+		[NotifyParentProperty (true), WebCategory ("Style")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[WebSysDescription ("The style applied to the day header.")]
 		public TableItemStyle DayHeaderStyle
 		{
 			get
@@ -107,6 +118,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (typeof (DayNameFormat), "Short"), Bindable (true), WebCategory ("Appearance")]
+		[WebSysDescription ("The format for the day name display.")]
 		public DayNameFormat DayNameFormat
 		{
 			get
@@ -119,11 +132,16 @@ namespace System.Web.UI.WebControls
 			set
 			{
 				if(!System.Enum.IsDefined(typeof(DayNameFormat),value))
-					throw new ArgumentException();
+					throw new ArgumentOutOfRangeException ("value", "Only valid enumeration members are allowed");
 				ViewState["DayNameFormat"] = value;
 			}
 		}
 
+		[DefaultValue (null)]
+		[NotifyParentProperty (true), WebCategory ("Style")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[WebSysDescription ("The style applied to the day entry.")]
 		public TableItemStyle DayStyle
 		{
 			get
@@ -136,6 +154,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (typeof (FirstDayOfWeek), "Default"), Bindable (true), WebCategory ("Appearance")]
+		[WebSysDescription ("The day that a week begins with.")]
 		public FirstDayOfWeek FirstDayOfWeek
 		{
 			get
@@ -148,11 +168,13 @@ namespace System.Web.UI.WebControls
 			set
 			{
 				if(!System.Enum.IsDefined(typeof(FirstDayOfWeek), value))
-					throw new ArgumentException();
+					throw new ArgumentOutOfRangeException ("value", "Only valid enumeration members are allowed");
 				ViewState["FirstDayOfWeek"] = value;
 			}
 		}
 
+		[DefaultValue (">"), Bindable (true), WebCategory ("Appearance")]
+		[WebSysDescription ("The text for selecting the next month.")]
 		public string NextMonthText
 		{
 			get
@@ -168,6 +190,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (typeof (NextPrevFormat), "CustomText"), Bindable (true), WebCategory ("Appearance")]
+		[WebSysDescription ("The format for the month navigation.")]
 		public NextPrevFormat NextPrevFormat
 		{
 			get
@@ -180,11 +204,15 @@ namespace System.Web.UI.WebControls
 			set
 			{
 				if(!System.Enum.IsDefined(typeof(NextPrevFormat), value))
-					throw new ArgumentException();
+					throw new ArgumentOutOfRangeException ("value", "Only valid enumeration members are allowed");
 				ViewState["NextPrevFormat"] = value;
 			}
 		}
 
+		[NotifyParentProperty (true), WebCategory ("Style")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[WebSysDescription ("The style applied to the month navigation.")]
 		public TableItemStyle NextPrevStyle
 		{
 			get
@@ -197,6 +225,11 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (null)]
+		[NotifyParentProperty (true), WebCategory ("Style")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[WebSysDescription ("The style applied to day entries belonging to another month.")]
 		public TableItemStyle OtherMonthDayStyle
 		{
 			get
@@ -209,6 +242,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue ("<"), Bindable (true), WebCategory ("Appearance")]
+		[WebSysDescription ("The text for selecting the previous month.")]
 		public string PrevMonthText
 		{
 			get
@@ -224,6 +259,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (null), Bindable (true)]
+		[WebSysDescription ("The currently selected date.")]
 		public DateTime SelectedDate
 		{
 			get
@@ -246,6 +283,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[Browsable (false), DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription ("All currently selected dates.")]
 		public SelectedDatesCollection SelectedDates
 		{
 			get
@@ -260,6 +299,11 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (null)]
+		[NotifyParentProperty (true), WebCategory ("Style")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[WebSysDescription ("The style applied to the selected day.")]
 		public TableItemStyle SelectedDayStyle
 		{
 			get
@@ -272,6 +316,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (typeof (CalendarSelectionMode), "Day"), Bindable (true), WebCategory ("Behavior")]
+		[WebSysDescription ("The mode in which days or other entries are selected.")]
 		public CalendarSelectionMode SelectionMode
 		{
 			get
@@ -284,11 +330,13 @@ namespace System.Web.UI.WebControls
 			set
 			{
 				if(!System.Enum.IsDefined(typeof(CalendarSelectionMode), value))
-					throw new ArgumentException();
+					throw new ArgumentOutOfRangeException ("value", "Only valid enumeration members are allowed");
 				ViewState["SelectionMode"] = value;
 			}
 		}
 
+		[DefaultValue (">>"), Bindable (true), WebCategory ("Appearance")]
+		[WebSysDescription ("The text that is used for selection of months.")]
 		public string SelectMonthText
 		{
 			get
@@ -304,6 +352,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[NotifyParentProperty (true), WebCategory ("Style")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[WebSysDescription ("The style applied to the selector.")]
 		public TableItemStyle SelectorStyle
 		{
 			get
@@ -314,6 +366,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (">"), Bindable (true), WebCategory ("Appearance")]
+		[WebSysDescription ("The text that is used for selection of weeks.")]
 		public string SelectWeekText
 		{
 			get
@@ -329,6 +383,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (true), Bindable (true), WebCategory ("Appearance")]
+		[WebSysDescription ("Determines if the header for days is shown.")]
 		public bool ShowDayHeader
 		{
 			get
@@ -344,6 +400,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (false), Bindable (true), WebCategory ("Appearance")]
+		[WebSysDescription ("Determines if gridlines are shown.")]
 		public bool ShowGridLines
 		{
 			get
@@ -359,6 +417,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (true), Bindable (true), WebCategory ("Appearance")]
+		[WebSysDescription ("Determines if month navigation is shown.")]
 		public bool ShowNextPrevMonth
 		{
 			get
@@ -374,6 +434,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (true), Bindable (true), WebCategory ("Appearance")]
+		[WebSysDescription ("Determines if the title is shown.")]
 		public bool ShowTitle
 		{
 			get
@@ -389,6 +451,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (typeof (TitleFormat), "MonthYear"), Bindable (true), WebCategory ("Appearance")]
+		[WebSysDescription ("The format in which the title is rendered.")]
 		public TitleFormat TitleFormat
 		{
 			get
@@ -401,11 +465,15 @@ namespace System.Web.UI.WebControls
 			set
 			{
 				if(!System.Enum.IsDefined(typeof(TitleFormat), value))
-					throw new ArgumentException();
+					throw new ArgumentOutOfRangeException ("value", "Only valid enumeration members are allowed");
 				ViewState["TitleFormat"] = value;
 			}
 		}
 
+		[NotifyParentProperty (true), WebCategory ("Style")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[WebSysDescription ("The style applied to the title.")]
 		public TableItemStyle TitleStyle
 		{
 			get
@@ -418,6 +486,11 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (null)]
+		[NotifyParentProperty (true), WebCategory ("Style")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[WebSysDescription ("The style applied to the today's date display.")]
 		public TableItemStyle TodayDayStyle
 		{
 			get
@@ -430,6 +503,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[Bindable (true), Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription ("The current date.")]
 		public DateTime TodaysDate
 		{
 			get
@@ -445,6 +521,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (null), Bindable (true)]
+		[WebSysDescription ("The month that is displayed.")]
 		public DateTime VisibleDate
 		{
 			get
@@ -460,6 +538,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[NotifyParentProperty (true), WebCategory ("Style")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[WebSysDescription ("The style applied to weekend days.")]
 		public TableItemStyle WeekendDayStyle
 		{
 			get
@@ -474,6 +556,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[WebCategory ("Action")]
+		[WebSysDescription ("Raised when a day entry is rendered.")]
 		public event DayRenderEventHandler DayRender
 		{
 			add
@@ -486,6 +570,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[WebCategory ("Action")]
+		[WebSysDescription ("Raised when another entry is selected.")]
 		public event EventHandler SelectionChanged
 		{
 			add
@@ -498,6 +584,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[WebCategory ("Action")]
+		[WebSysDescription ("Raised when a the currently visible month has changed.")]
 		public event MonthChangedEventHandler VisibleMonthChanged
 		{
 			add

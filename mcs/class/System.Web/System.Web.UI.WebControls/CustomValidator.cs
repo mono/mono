@@ -1,15 +1,13 @@
-/**
- * Namespace: System.Web.UI.WebControls
- * Class:     CustomValidator
- *
- * Author:  Gaurav Vaish
- * Maintainer: gvaish@iitk.ac.in
- * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
- * Implementation: yes
- * Status:  100%
- *
- * (C) Gaurav Vaish (2002)
- */
+//
+// System.Web.UI.WebControls.CustomValidator.cs
+//
+// Authors:
+//   Gaurav Vaish (gvaish@iitk.ac.in)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//
+// (C) Gaurav Vaish (2002)
+// (C) 2003 Andreas Nahr
+//
 
 using System;
 using System.Web;
@@ -30,6 +28,8 @@ namespace System.Web.UI.WebControls
 		{
 		}
 
+		[DefaultValue (""), WebCategory ("Behavior")]
+		[WebSysDescription ("A client script that performs the validation.")]
 		public string ClientValidationFunction
 		{
 			get
@@ -47,6 +47,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[WebSysDescription ("Raised for validation on the server.")]
 		public event ServerValidateEventHandler ServerValidate
 		{
 			add

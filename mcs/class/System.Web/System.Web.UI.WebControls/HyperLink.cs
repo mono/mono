@@ -1,27 +1,28 @@
-/**
- * Namespace: System.Web.UI.WebControls
- * Class:     HyperLink
- *
- * Author:  Gaurav Vaish
- * Maintainer: gvaish@iitk.ac.in
- * Contact: gvaish@iitk.ac.in, myscripts_2001@yahoo.com
- * Implementation: yes
- * Status:  100%
- *
- * (C) Gaurav Vaish (2001)
- */
+//
+// System.Web.UI.WebControls.HyperLink.cs
+//
+// Authors:
+//   Gaurav Vaish (gvaish@iitk.ac.in)
+//   Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//
+// (c) 2002 Ximian, Inc. (http://www.ximian.com)
+// (C) Gaurav Vaish (2002)
+// (C) 2003 Andreas Nahr
+//
 
 using System;
 using System.Web;
 using System.Web.UI;
 using System.ComponentModel;
+using System.ComponentModel.Design;
 
 namespace System.Web.UI.WebControls
 {
 	[DefaultProperty("Text")]
-	//[Designer(??)]
 	[ControlBuilder(typeof(HyperLinkControlBuilder))]
-	//[DataBindingHandler("??")]
+	[Designer("System.Web.UI.Design.WebControls.HyperLinkDesigner, " + Consts.AssemblySystem_Design, typeof (IDesigner))]
+	[DataBindingHandler("System.Web.UI.Design.HyperLinkDataBindingHandler, " + Consts.AssemblySystem_Design)]
 	[ParseChildren(false)]
 	[ToolboxData("<{0}:HyperLink runat=\"server\">HyperLink</{0}:HyperLink>")]
 	public class HyperLink: WebControl
@@ -32,6 +33,9 @@ namespace System.Web.UI.WebControls
 		{
 		}
 
+		[DefaultValue (""), Bindable (true), WebCategory ("Appearance")]
+		[Editor ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
+		[WebSysDescription ("The URL to the image file.")]
 		public virtual string ImageUrl
 		{
 			get
@@ -47,6 +51,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (""), Bindable (true), WebCategory ("Navigation")]
+		[Editor ("System.Web.UI.Design.UrlEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
+		[WebSysDescription ("The URL to navigate to.")]
 		public string NavigateUrl
 		{
 			get
@@ -62,6 +69,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (""), Bindable (true), WebCategory ("Navigation")]
+		[TypeConverter (typeof (TargetConverter))]
+		[WebSysDescription ("The target frame in which the navigation target should be opened.")]
 		public string Target
 		{
 			get
@@ -77,6 +87,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (""), Bindable (true), WebCategory ("Appearance")]
+		[PersistenceMode (PersistenceMode.InnerDefaultProperty)]
+		[WebSysDescription ("The text that should be shown on this HyperLink.")]
 		public virtual string Text
 		{
 			get {

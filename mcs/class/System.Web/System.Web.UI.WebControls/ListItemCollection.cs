@@ -20,7 +20,7 @@ using System.Reflection;
 
 namespace System.Web.UI.WebControls
 {
-	//[Editor("??", typeof(Design.WebControls.ListItemCollectionEditor))]
+	[Editor ("System.Web.UI.Design.WebControls.ListItemsCollectionEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
 	public sealed class ListItemCollection : IList, ICollection, IEnumerable, IStateManager
 	{
 		private ArrayList items;

@@ -1,15 +1,15 @@
-/**
- * Namespace: System.Web.UI.WebControls
- * Class:     HyperLinkColumn
- *
- * Author:  Gaurav Vaish
- * Maintainer: gvaish@iitk.ac.in
- * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
- * Implementation: yes
- * Status:  100%
- *
- * (C) Gaurav Vaish (2002)
- */
+//
+// System.Web.UI.WebControls.HyperLinkColumn.cs
+//
+// Authors:
+//   Gaurav Vaish (gvaish@iitk.ac.in)
+//   Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//
+// (c) 2002 Ximian, Inc. (http://www.ximian.com)
+// (C) Gaurav Vaish (2002)
+// (C) 2003 Andreas Nahr
+//
 
 using System;
 using System.ComponentModel;
@@ -27,6 +27,8 @@ namespace System.Web.UI.WebControls
 		{
 		}
 
+		[DefaultValue (""), WebCategory ("Misc")]
+		[WebSysDescription ("The field that gets data-bound to the NavigateUrl.")]
 		public virtual string DataNavigateUrlField {
 			get {
 				object o = ViewState ["DataNavigateUrlField"];
@@ -41,6 +43,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (""), WebCategory ("Misc")]
+		[WebSysDescription ("The formatting rule for the text content that gets data-bound to the NavigateUrl.")]
 		public virtual string DataNavigateUrlFormatString {
 			get {
 				object o = ViewState ["DataNavigateUrlFormatString"];
@@ -55,6 +59,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (""), WebCategory ("Misc")]
+		[WebSysDescription ("The field that gets data-bound to the Text property.")]
 		public virtual string DataTextField {
 			get {
 				object o = ViewState ["DataTextField"];
@@ -68,6 +74,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (""), WebCategory ("Misc")]
+		[WebSysDescription ("The formatting rule for the text content that gets data-bound to the Text property.")]
 		public virtual string DataTextFormatString {
 			get {
 				object o = ViewState ["DataTextFormatString"];
@@ -82,6 +90,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (""), WebCategory ("Misc")]
+		[WebSysDescription ("The URL that this hyperlink links to.")]
 		public virtual string NavigateUrl {
 			get {
 				object o = ViewState ["NavigateUrl"];
@@ -96,6 +106,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (""), WebCategory ("Misc")]
+		[WebSysDescription ("The target frame in which the NavigateUrl property should be opened.")]
 		public virtual string Target {
 			get {
 				object o = ViewState ["Target"];
@@ -110,6 +122,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (""), WebCategory ("Misc")]
+		[WebSysDescription ("The Text for the hyperlink.")]
 		public virtual string Text {
 			get {
 				object o = ViewState ["Text"];

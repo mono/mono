@@ -1,16 +1,15 @@
-/**
- * Namespace: System.Web.UI.WebControls
- * Class:     Repeater
- *
- * Author:  Gaurav Vaish, Gonzalo Paniagua (gonzalo@ximian.com)
- * Maintainer: gvaish@iitk.ac.in
- * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
- * Implementation: yes
- * Status:  100%
- *
- * (C) Gaurav Vaish (2002)
- * (c) 2002 Ximian, Inc. (http://www.ximian.com)
- */
+//
+// System.Web.UI.WebControls.Repeater.cs
+//
+// Authors:
+//   Gaurav Vaish (gvaish@iitk.ac.in)
+//   Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//
+// (c) 2002 Ximian, Inc. (http://www.ximian.com)
+// (C) Gaurav Vaish (2002)
+// (C) 2003 Andreas Nahr
+//
 
 using System;
 using System.Collections;
@@ -18,12 +17,13 @@ using System.Web;
 using System.Web.UI;
 using System.Web.Util;
 using System.ComponentModel;
+using System.ComponentModel.Design;
 
 namespace System.Web.UI.WebControls
 {
 	[DefaultEvent("ItemCommand")]
 	[DefaultProperty("DataSource")]
-	//[Designer("??")]
+	[Designer ("System.Web.UI.Design.WebControls.RepeaterDesigner, " + Consts.AssemblySystem_Design, typeof (IDesigner))]
 	[ParseChildren(true)]
 	[PersistChildren(false)]
 	public class Repeater : Control, INamingContainer
@@ -48,6 +48,8 @@ namespace System.Web.UI.WebControls
 		{
 		}
 
+		[WebCategory ("Action")]
+		[WebSysDescription ("Raised when a command is executed in the DataList.")]
 		public event RepeaterCommandEventHandler ItemCommand
 		{
 			add
@@ -60,6 +62,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[WebCategory ("Behavior")]
+		[WebSysDescription ("Raised when an item gets created.")]
 		public event RepeaterItemEventHandler ItemCreated
 		{
 			add
@@ -72,6 +76,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[WebCategory ("Behavior")]
+		[WebSysDescription ("Raised when an item gets data-bound.")]
 		public event RepeaterItemEventHandler ItemDataBound
 		{
 			add
@@ -84,6 +90,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (null), Browsable (false), PersistenceMode (PersistenceMode.InnerProperty)]
+		[TemplateContainer (typeof (RepeaterItem))]
+		[WebSysDescription ("The template that is used to create an alternating item.")]
 		public virtual ITemplate AlternatingItemTemplate
 		{
 			get
@@ -105,6 +114,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (""), WebCategory ("Data")]
+		[WebSysDescription ("The name of the table that is used for binding when a DataSource is specified.")]
 		public virtual string DataMember
 		{
 			get
@@ -122,6 +133,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (null), Bindable (true), WebCategory ("Data")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription ("The DataSource that is used for data-binding.")]
 		public virtual object DataSource
 		{
 			get
@@ -134,6 +148,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (null), Browsable (false), PersistenceMode (PersistenceMode.InnerProperty)]
+		[TemplateContainer (typeof (RepeaterItem))]
+		[WebSysDescription ("The template that is used to create a footer.")]
 		public virtual ITemplate FooterTemplate
 		{
 			get
@@ -146,6 +163,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (null), Browsable (false), PersistenceMode (PersistenceMode.InnerProperty)]
+		[TemplateContainer (typeof (RepeaterItem))]
+		[WebSysDescription ("The template that is used to create a header.")]
 		public virtual ITemplate HeaderTemplate
 		{
 			get
@@ -158,6 +178,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription ("A collection containing all items.")]
 		public virtual RepeaterItemCollection Items
 		{
 			get
@@ -174,6 +197,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (null), Browsable (false), PersistenceMode (PersistenceMode.InnerProperty)]
+		[TemplateContainer (typeof (RepeaterItem))]
+		[WebSysDescription ("The template that is used to create an item.")]
 		public virtual ITemplate ItemTemplate
 		{
 			get
@@ -186,6 +212,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (null), Browsable (false), PersistenceMode (PersistenceMode.InnerProperty)]
+		[TemplateContainer (typeof (RepeaterItem))]
+		[WebSysDescription ("The template that is used to create a seperator.")]
 		public virtual ITemplate SeparatorTemplate
 		{
 			get

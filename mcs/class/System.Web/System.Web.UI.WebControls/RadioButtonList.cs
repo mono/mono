@@ -1,15 +1,13 @@
-/**
- * Namespace: System.Web.UI.WebControls
- * Class:     RadioButtonList
- *
- * Author:  Gaurav Vaish
- * Maintainer: gvaish@iitk.ac.in
- * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
- * Implementation: yes
- * Status:  95%
- *
- * (C) Gaurav Vaish (2002)
- */
+//
+// System.Web.UI.WebControls.RadioButtonList.cs
+//
+// Authors:
+//   Gaurav Vaish (gvaish@iitk.ac.in)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//
+// (C) Gaurav Vaish (2002)
+// (C) 2003 Andreas Nahr
+//
 
 using System;
 using System.Collections.Specialized;
@@ -31,6 +29,8 @@ namespace System.Web.UI.WebControls
 			selectionIndexChanged = false;
 		}
 
+		[DefaultValue (-1), Bindable (true), WebCategory ("Layout")]
+		[WebSysDescription ("The border left within a RadioButton.")]
 		public virtual int CellPadding
 		{
 			get
@@ -41,12 +41,15 @@ namespace System.Web.UI.WebControls
 				}
 				return -1;
 			}
-			set
-			{
+			set {
+				if (value < -1)
+					throw new ArgumentOutOfRangeException ("value", "CellPadding value has to be -1 for 'not set' or > -1.");
 				((TableStyle)ControlStyle).CellPadding = value;
 			}
 		}
 
+		[DefaultValue (-1), Bindable (true), WebCategory ("Layout")]
+		[WebSysDescription ("The border left between RadioButtons.")]
 		public virtual int CellSpacing
 		{
 			get
@@ -57,12 +60,15 @@ namespace System.Web.UI.WebControls
 				}
 				return -1;
 			}
-			set
-			{
+			set {
+				if (value < -1)
+					throw new ArgumentOutOfRangeException ("value", "CellSpacing value has to be -1 for 'not set' or > -1.");
 				((TableStyle)ControlStyle).CellSpacing = value;
 			}
 		}
 
+		[DefaultValue (0), Bindable (true), WebCategory ("Layout")]
+		[WebSysDescription ("The number of columns that should be used to display the RadioButtons.")]
 		public virtual int RepeatColumns
 		{
 			get
@@ -72,14 +78,15 @@ namespace System.Web.UI.WebControls
 					return (int)o;
 				return 0;
 			}
-			set
-			{
-				if(value < 0)
-					throw new ArgumentOutOfRangeException("value");
+			set {
+				if (value < 0)
+					throw new ArgumentOutOfRangeException ("value", "RepeatColumns value has to be 0 for 'not set' or > 0.");
 				ViewState["RepeatColumns"] = value;
 			}
 		}
 
+		[DefaultValue (typeof (RepeatDirection), "Vertical"), Bindable (true), WebCategory ("Layout")]
+		[WebSysDescription ("The direction that is followed when doing the layout.")]
 		public virtual RepeatDirection RepeatDirection
 		{
 			get
@@ -92,11 +99,13 @@ namespace System.Web.UI.WebControls
 			set
 			{
 				if(!Enum.IsDefined(typeof(RepeatDirection), value))
-					throw new ArgumentException();
+					throw new ArgumentOutOfRangeException ("value", "Only valid enumeration members are allowed");
 				ViewState["RepeatDirection"] = value;
 			}
 		}
 
+		[DefaultValue (typeof (RepeatLayout), "Table"), Bindable (true), WebCategory ("Layout")]
+		[WebSysDescription ("The method used to create the layout.")]
 		public virtual RepeatLayout RepeatLayout
 		{
 			get
@@ -109,11 +118,13 @@ namespace System.Web.UI.WebControls
 			set
 			{
 				if(!Enum.IsDefined(typeof(RepeatLayout), value))
-					throw new ArgumentException();
+					throw new ArgumentOutOfRangeException ("value", "Only valid enumeration members are allowed");
 				ViewState["RepeatLayout"] = value;
 			}
 		}
 
+		[DefaultValue (typeof (TextAlign), "Right"), Bindable (true), WebCategory ("Appearance")]
+		[WebSysDescription ("The alignment of the RadioButton text.")]
 		public virtual TextAlign TextAlign
 		{
 			get
@@ -126,7 +137,7 @@ namespace System.Web.UI.WebControls
 			set
 			{
 				if(!Enum.IsDefined(typeof(TextAlign), value))
-					throw new ArgumentException();
+					throw new ArgumentOutOfRangeException ("value", "Only valid enumeration members are allowed");
 				ViewState["TextAlign"] = value;
 			}
 		}

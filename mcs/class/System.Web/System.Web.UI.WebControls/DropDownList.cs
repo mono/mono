@@ -1,15 +1,13 @@
-/**
- * Namespace: System.Web.UI.WebControls
- * Class:     DropDownList
- *
- * Author:  Gaurav Vaish
- * Maintainer: gvaish@iitk.ac.in
- * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
- * Implementation: yes
- * Status:  100%
- *
- * (C) Gaurav Vaish (2002)
- */
+//
+// System.Web.UI.WebControls.DropDownList.cs
+//
+// Authors:
+//   Gaurav Vaish (gvaish@iitk.ac.in)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//
+// (C) Gaurav Vaish (2002)
+// (C) 2003 Andreas Nahr
+//
 
 using System;
 using System.Collections.Specialized;
@@ -27,6 +25,7 @@ namespace System.Web.UI.WebControls
 		{
 		}
 
+		[Browsable (false)]
 		public override Color BorderColor
 		{
 			get
@@ -39,6 +38,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[Browsable (false)]
 		public override BorderStyle BorderStyle
 		{
 			get
@@ -51,6 +51,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[Browsable (false)]
 		public override Unit BorderWidth
 		{
 			get
@@ -63,6 +64,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (0), WebCategory ("Misc")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription ("The index number of the currently selected ListItem.")]
 		public override int SelectedIndex
 		{
 			get
@@ -80,6 +84,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[Browsable (false), DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Bindable (false), EditorBrowsable (EditorBrowsableState.Never)]
 		public override string ToolTip
 		{
 			// MS ignores the tooltip for this one

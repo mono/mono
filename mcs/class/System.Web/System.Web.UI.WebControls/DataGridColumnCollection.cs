@@ -12,6 +12,7 @@
  */
 
 using System;
+using System.ComponentModel;
 using System.Collections;
 using System.Web;
 using System.Web.UI;
@@ -30,6 +31,7 @@ namespace System.Web.UI.WebControls
 			this.columns = columns;
 		}
 
+		[Browsable (false)]
 		public int Count
 		{
 			get
@@ -38,6 +40,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[Browsable (false)]
 		public bool IsReadOnly
 		{
 			get
@@ -46,6 +49,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[Browsable (false)]
 		public bool IsSynchronized
 		{
 			get
@@ -54,6 +58,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[Browsable (false)]
 		public DataGridColumn this[int index]
 		{
 			get
@@ -62,6 +67,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[Browsable (false)]
 		public object SyncRoot
 		{
 			get

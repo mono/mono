@@ -1,15 +1,13 @@
-/**
- * Namespace: System.Web.UI.WebControls
- * Class:     Image
- *
- * Author:  Gaurav Vaish
- * Maintainer: gvaish@iitk.ac.in
- * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
- * Implementation: yes
- * Status:  100%
- *
- * (C) Gaurav Vaish (2001)
- */
+//
+// System.Web.UI.WebControls.Image.cs
+//
+// Authors:
+//   Gaurav Vaish (gvaish@iitk.ac.in)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//
+// (C) Gaurav Vaish (2002)
+// (C) 2003 Andreas Nahr
+//
 
 using System;
 using System.Web;
@@ -25,6 +23,8 @@ namespace System.Web.UI.WebControls
 		{
 		}
 
+		[DefaultValue (""), Bindable (true), WebCategory ("Appearance")]
+		[WebSysDescription ("An alternative text that is shown if the image cannot be displayed.")]
 		public virtual string AlternateText
 		{
 			get
@@ -40,6 +40,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[Browsable (false), EditorBrowsable (EditorBrowsableState.Never)]
 		public override bool Enabled
 		{
 			get
@@ -52,6 +53,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[Browsable (false), EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public override FontInfo Font
 		{
 			get
@@ -60,6 +63,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (typeof (ImageAlign), "NotSet"), Bindable (true), WebCategory ("Layout")]
+		[WebSysDescription ("The alignment of the image.")]
 		public virtual ImageAlign ImageAlign
 		{
 			get
@@ -75,6 +80,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (""), Bindable (true), WebCategory ("Appearance")]
+		[Editor ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
+		[WebSysDescription ("The URL to the image file.")]
 		public virtual string ImageUrl
 		{
 			get

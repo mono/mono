@@ -1,18 +1,17 @@
-/**
- * Namespace: System.Web.UI.WebControls
- * Class:     Button
- *
- * Author:  Gaurav Vaish
- * Maintainer: gvaish@iitk.ac.in
- * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
- * Implementation: yes
- * Status:  100%
- *
- * (C) Gaurav Vaish (2001)
- */
+//
+// System.Web.UI.WebControls.Button.cs
+//
+// Authors:
+//   Gaurav Vaish (gvaish@iitk.ac.in)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//
+// (C) Gaurav Vaish (2002)
+// (C) 2003 Andreas Nahr
+//
 
 using System;
 using System.ComponentModel;
+using System.ComponentModel.Design;
 using System.Web;
 using System.Web.UI;
 
@@ -20,8 +19,8 @@ namespace System.Web.UI.WebControls
 {
 	[DefaultEvent("Click")]
 	[DefaultProperty("Text")]
-	//TODO: [Designer("??")]
-	//TODO: [DataBindingHandler("??UI.Design.TextDataBindingHandler??")]
+	[Designer("System.Web.UI.Design.WebControls.ButtonDesigner, " + Consts.AssemblySystem_Design, typeof (IDesigner))]
+	[DataBindingHandler("System.Web.UI.Design.TextDataBindingHandler, " + Consts.AssemblySystem_Design)]
 	[ToolboxData("<{0}:Button runat=\"server\" Text=\"Button\"></{0}:Button>")]
 	public class Button : WebControl, IPostBackEventHandler
 	{
@@ -34,6 +33,8 @@ namespace System.Web.UI.WebControls
 		{
 		}
 
+		[DefaultValue (true), Bindable (false), WebCategory ("Behavior")]
+		[WebSysDescription ("Determines if validation is performed when clicked.")]
 		public bool CausesValidation
 		{
 			get
@@ -49,6 +50,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (""), Bindable (true), WebCategory ("Behavior")]
+		[WebSysDescription ("An argument for the Command of this control.")]
 		public string CommandArgument
 		{
 			get
@@ -64,6 +67,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (""), WebCategory ("Behavior")]
+		[WebSysDescription ("The name of the Command of this control.")]
 		public string CommandName
 		{
 			get
@@ -79,6 +84,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (""), Bindable (true), WebCategory ("Appearance")]
+		[WebSysDescription ("The text that should be shown on this Button.")]
 		public string Text
 		{
 			get
@@ -94,6 +101,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[WebCategory ("Action")]
+		[WebSysDescription ("Raised when the Button is clicked.")]
 		public event EventHandler Click
 		{
 			add
@@ -106,6 +115,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[WebCategory ("Action")]
+		[WebSysDescription ("Raised when a Button Command is executed.")]
 		public event CommandEventHandler Command
 		{
 			add

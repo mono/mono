@@ -1,28 +1,26 @@
-/**
- * Namespace: System.Web.UI.WebControls
- * Class:     Label
- *
- * Author:  Gaurav Vaish
- * Maintainer: gvaish@iitk.ac.in
- * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
- * Implementation: yes
- * Status:  100%
- *
- * (C) Gaurav Vaish (2001)
- */
+//
+// System.Web.UI.WebControls.Label.cs
+//
+// Authors:
+//   Gaurav Vaish (gvaish@iitk.ac.in)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//
+// (C) Gaurav Vaish (2002)
+// (C) 2003 Andreas Nahr
+//
 
 using System;
 using System.ComponentModel;
+using System.ComponentModel.Design;
 using System.Web;
 using System.Web.UI;
 
 namespace System.Web.UI.WebControls
 {
 	[DefaultProperty("Text")]
-	//[Designer("??")]
-	//Currently mono does not handle Type in attributes
+	[Designer("System.Web.UI.Design.WebControls.LabelDesigner, " + Consts.AssemblySystem_Design, typeof (IDesigner))]
+	[DataBindingHandler("System.Web.UI.Design.TextDataBindingHandler, " + Consts.AssemblySystem_Design)]
 	[ControlBuilder(typeof(LabelControlBuilder))] 
-	//[DataBindingHandler("??")]
 	[ParseChildren(false)]
 	[ToolboxData("<{0}:Label runat=\"server\">Label</{0}:Label>")]
 	public class Label : WebControl
@@ -35,6 +33,9 @@ namespace System.Web.UI.WebControls
 		{
 		}
 
+		[DefaultValue (""), Bindable (true), WebCategory ("Appearance")]
+		[PersistenceMode (PersistenceMode.InnerDefaultProperty)]
+		[WebSysDescription ("The text that should be shown on this Label.")]
 		public virtual string Text
 		{
 			get {

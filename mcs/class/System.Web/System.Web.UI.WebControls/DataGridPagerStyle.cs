@@ -1,17 +1,16 @@
-/**
- * Namespace: System.Web.UI.WebControls
- * Class:     DataGridPagerStyle
- *
- * Author:  Gaurav Vaish
- * Maintainer: gvaish@iitk.ac.in
- * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
- * Implementation: yes
- * Status:  100%
- *
- * (C) Gaurav Vaish (2002)
- */
+//
+// System.Web.UI.WebControls.DataGridPagerStyle.cs
+//
+// Authors:
+//   Gaurav Vaish (gvaish@iitk.ac.in)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//
+// (C) Gaurav Vaish (2002)
+// (C) 2003 Andreas Nahr
+//
 
 using System;
+using System.ComponentModel;
 using System.Web;
 using System.Web.UI;
 
@@ -48,7 +47,10 @@ namespace System.Web.UI.WebControls
 				return (p == PagerPosition.Bottom || p == PagerPosition.TopAndBottom);
 			}
 		}
-		
+
+		[DefaultValue (typeof (PagerMode), "NextPrev"), Bindable (true), WebCategory ("Misc")]
+		[NotifyParentProperty (true)]
+		[WebSysDescription ("The mode used for displaying multiple pages.")]
 		public PagerMode Mode
 		{
 			get
@@ -70,6 +72,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (">"), Bindable (true), WebCategory ("Misc")]
+		[NotifyParentProperty (true)]
+		[WebSysDescription ("The text for the 'next page' button.")]
 		public string NextPageText
 		{
 			get
@@ -87,6 +92,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue ("<"), Bindable (true), WebCategory ("Misc")]
+		[NotifyParentProperty (true)]
+		[WebSysDescription ("The text for the 'previous page' button.")]
 		public string PrevPageText
 		{
 			get
@@ -104,6 +112,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (10), Bindable (true), WebCategory ("Misc")]
+		[NotifyParentProperty (true)]
+		[WebSysDescription ("The maximum number of pages to show as direct links.")]
 		public int PageButtonCount
 		{
 			get
@@ -121,6 +132,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (typeof (PagerPosition), "Bottom"), Bindable (true), WebCategory ("Misc")]
+		[NotifyParentProperty (true)]
+		[WebSysDescription ("The position for the page display.")]
 		public PagerPosition Position
 		{
 			get
@@ -142,6 +156,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (true), Bindable (true), WebCategory ("Misc")]
+		[NotifyParentProperty (true)]
+		[WebSysDescription ("Determines if paging functionallity is visible to the user.")]
 		public bool Visible
 		{
 			get

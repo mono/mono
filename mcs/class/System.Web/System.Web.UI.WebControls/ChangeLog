@@ -1,3 +1,42 @@
+2003-08-01  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* AdRotator.cs: Added all attributes
+	* BaseDataList.cs: Added all attributes, added lamespec, removed additional attributes
+	* BaseValidator.cs: Added all attributes
+	* BoundColumn.cs: Added all attributes
+	* Button.cs: Added all attributes
+	* ButtonColumn.cs: Added all attributes, added lamespec
+	* Calendar.cs: Added all attributes, added error checks, throws more exceptions
+	* CheckBox.cs: Added all attributes
+	* CheckBoxList.cs: Added all attributes
+	* CompareValidator.cs: Added all attributes
+	* CustomValidator.cs: Added all attributes
+	* DataGrid.cs: Added all attributes, more verbose exceptions, fixed signature, removed additional attributes
+	* DataGridColumn.cs: Added all attributes
+	* DataGridColumnCollection.cs: Added all attributes
+	* DataGridPagerStyle.cs: Added all attributes
+	* DataGridTableInternal.cs: Made DataGridTableInternal internal
+	* DataList.cs: Added all attributes, more verbose exceptions, removed non-existing member
+	* DropDownList.cs: Added all attributes
+	* FontInfo.cs: Added all attributes
+	* HyperLink.cs: Added all attributes
+	* HyperLinkColumn.cs: Added all attributes
+	* Image.cs: Added all attributes
+	* ImageButton.cs: Added all attributes
+	* Label.cs: Added all attributes
+	* LinkButton.cs: Added all attributes
+	* ListBox.cs: Added all attributes, added error checks, throws more exceptions
+	* ListControl.cs: Added all attributes
+	* ListItem.cs: Added all attributes
+	* ListItemCollection.cs: Added attribute
+	* Literal.cs: Added all attributes
+	* Panel.cs: Added all attributes
+	* RadioButton.cs: Added all attributes
+	* RadioButtonList.cs: Added all attributes, added error checks, throws more exceptions
+	* RangeValidator.cs: Added all attributes
+	* RegularExpressionValidator.cs: Added all attributes
+	* Repeater.cs: Added all attributes
+
 2003-07-30  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* RequiredFieldValidator.cs: Added all attributes

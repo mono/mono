@@ -1,17 +1,15 @@
-/**
- * Namespace: System.Web.UI.WebControls
- * Class:     CheckBox
- *
- * Author:  Gaurav Vaish
- * Maintainer: gvaish@iitk.ac.in
- * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
- * Implementation: yes
- * Status:  100%
- *
- * (C) Gaurav Vaish (2001)
- * Thanks to Leen Toelen (toelen@hotmail.com)'s classes that helped me
- * to write the contents of the function LoadPostData(...)
- */
+//
+// System.Web.UI.WebControls.CheckBox.cs
+//
+// Authors:
+//   Gaurav Vaish (gvaish@iitk.ac.in)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//
+// (C) Gaurav Vaish (2002)
+// (C) 2003 Andreas Nahr
+// Thanks to Leen Toelen (toelen@hotmail.com)'s classes that helped me
+// to write the contents of the function LoadPostData(...)
+//
 
 using System;
 using System.Collections;
@@ -20,13 +18,14 @@ using System.Globalization;
 using System.Web;
 using System.Web.UI;
 using System.ComponentModel;
+using System.ComponentModel.Design;
 
 namespace System.Web.UI.WebControls
 {
 	[DefaultEvent("CheckedChanged")]
 	[DefaultProperty("Text")]
-	//[DataBindingHanlder("??")]
-	//[Designer("??")]
+	[DataBindingHandler("System.Web.UI.Design.TextDataBindingHandler, " + Consts.AssemblySystem_Design)]
+	[Designer ("System.Web.UI.Design.WebControls.CheckBoxDesigner, " + Consts.AssemblySystem_Design, typeof (IDesigner))]
 	public class CheckBox : WebControl, IPostBackDataHandler
 	{
 		private static readonly object CheckedChangedEvent = new object();
@@ -34,7 +33,9 @@ namespace System.Web.UI.WebControls
 		public CheckBox(): base(HtmlTextWriterTag.Input)
 		{
 		}
-		
+
+		[DefaultValue (false), WebCategory ("Behavior")]
+		[WebSysDescription ("The control automatically posts back after changing the text.")]
 		public virtual bool AutoPostBack
 		{
 			get {
@@ -44,7 +45,10 @@ namespace System.Web.UI.WebControls
 
 			set { ViewState ["AutoPostBack"] = value; }
 		}
-		
+
+
+		[DefaultValue (false), Bindable (true)]
+		[WebSysDescription ("Determines if the control is checked.")]
 		public virtual bool Checked
 		{
 			get {
@@ -54,7 +58,9 @@ namespace System.Web.UI.WebControls
 
 			set { ViewState ["Checked"] = value; }
 		}
-		
+
+		[DefaultValue (""), Bindable (true), WebCategory ("Appearance")]
+		[WebSysDescription ("The text that this control displays.")]
 		public virtual string Text
 		{
 			get {
@@ -82,7 +88,10 @@ namespace System.Web.UI.WebControls
 				return true;
 			}
 		}
-		
+
+
+		[DefaultValue (typeof (TextAlign), "Right"), WebCategory ("Appearance")]
+		[WebSysDescription ("The alignment of the text.")]
 		public virtual TextAlign TextAlign
 		{
 			get {
@@ -96,7 +105,9 @@ namespace System.Web.UI.WebControls
 				ViewState ["TextAlign"] = value;
 			}
 		}
-		
+
+		[WebCategory ("Action")]
+		[WebSysDescription ("Raised when the control is checked or unchecked.")]
 		public event EventHandler CheckedChanged
 		{
 			add { Events.AddHandler (CheckedChangedEvent, value); }

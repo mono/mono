@@ -1,15 +1,13 @@
-/**
- * Namespace: System.Web.UI.WebControls
- * Class:     RadioButton
- *
- * Author:  Gaurav Vaish
- * Maintainer: gvaish@iitk.ac.in
- * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
- * Implementation: yes
- * Status:  100%
- *
- * (C) Gaurav Vaish (2001)
- */
+//
+// System.Web.UI.WebControls.RadioButton.cs
+//
+// Authors:
+//   Gaurav Vaish (gvaish@iitk.ac.in)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//
+// (C) Gaurav Vaish (2002)
+// (C) 2003 Andreas Nahr
+//
 
 using System;
 using System.Collections;
@@ -18,16 +16,19 @@ using System.Globalization;
 using System.Web;
 using System.Web.UI;
 using System.ComponentModel;
+using System.ComponentModel.Design;
 
 namespace System.Web.UI.WebControls
 {
-	//[Designer("??")]
+	[Designer ("System.Web.UI.Design.WebControls.CheckBoxDesigner, " + Consts.AssemblySystem_Design, typeof (IDesigner))]
 	public class RadioButton : CheckBox, IPostBackDataHandler
 	{
 		public RadioButton () : base ()
 		{
 		}
 
+		[DefaultValue (""), WebCategory ("Behavior")]
+		[WebSysDescription ("The name of the group that this control belongs to.")]
 		public virtual string GroupName
 		{
 			get {

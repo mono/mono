@@ -13,7 +13,7 @@ using System.Web.UI;
 
 namespace System.Web.UI.WebControls
 {
-	public class DataGridTableInternal : Table
+	internal class DataGridTableInternal : Table
 	{
 		public DataGridTableInternal() : base()
 		{

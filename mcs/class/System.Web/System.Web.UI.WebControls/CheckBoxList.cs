@@ -1,15 +1,13 @@
-/**
-* Namespace: System.Web.UI.WebControls
-* Class:     CheckBoxList
-*
-* Author:  Gaurav Vaish
-* Maintainer: gvaish@iitk.ac.in
-* Contact: <gvaish@iitk.ac.in>
-* Implementation: yes
-* Status:  100%
-*
-* (C) Gaurav Vaish (2001)
-*/
+//
+// System.Web.UI.WebControls.CheckBoxList.cs
+//
+// Authors:
+//   Gaurav Vaish (gvaish@iitk.ac.in)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//
+// (C) Gaurav Vaish (2002)
+// (C) 2003 Andreas Nahr
+//
 
 using System;
 using System.Collections.Specialized;
@@ -34,6 +32,8 @@ namespace System.Web.UI.WebControls
 			isChangeNotified = false;
 		}
 
+		[DefaultValue (-1), Bindable (true), WebCategory ("Layout")]
+		[WebSysDescription ("The border left within a CheckBox.")]
 		public virtual int CellPadding
 		{
 			get
@@ -46,6 +46,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (-1), Bindable (true), WebCategory ("Layout")]
+		[WebSysDescription ("The border left between CheckBoxes.")]
 		public virtual int CellSpacing
 		{
 			get
@@ -58,6 +60,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (0), Bindable (true), WebCategory ("Layout")]
+		[WebSysDescription ("The number of columns that should be used to display the CheckBoxes.")]
 		public virtual int RepeatColumns
 		{
 			get
@@ -75,6 +79,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (typeof (RepeatDirection), "Vertical"), Bindable (true), WebCategory ("Layout")]
+		[WebSysDescription ("The direction that is followed when doing the layout.")]
 		public virtual RepeatDirection RepeatDirection
 		{
 			get
@@ -92,6 +98,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (typeof (RepeatLayout), "Table"), Bindable (true), WebCategory ("Layout")]
+		[WebSysDescription ("The method used to create the layout.")]
 		public virtual RepeatLayout RepeatLayout
 		{
 			get
@@ -109,6 +117,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (typeof (TextAlign), "Right"), Bindable (true), WebCategory ("Appearance")]
+		[WebSysDescription ("The alignment of the CheckBox text.")]
 		public virtual TextAlign TextAlign
 		{
 			get

@@ -1,27 +1,26 @@
-/**
- * Namespace: System.Web.UI.WebControls
- * Class:     DataList
- *
- * Author:  Gaurav Vaish
- * Maintainer: gvaish@iitk.ac.in
- * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
- * Implementation: yes
- * Status:  98%
- *
- * (C) Gaurav Vaish (2001)
- */
+//
+// System.Web.UI.WebControls.DataList.cs
+//
+// Authors:
+//   Gaurav Vaish (gvaish@iitk.ac.in)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//
+// (C) Gaurav Vaish (2002)
+// (C) 2003 Andreas Nahr
+//
 
 using System;
 using System.Collections;
 using System.ComponentModel;
+using System.ComponentModel.Design;
 using System.Web;
 using System.Web.UI;
 using System.Web.Util;
 
 namespace System.Web.UI.WebControls
 {
-	//TODO: [Designer("??")]
-	//TODO: [Editor("??")]
+	[Designer("System.Web.UI.Design.WebControls.DataListDesigner, " + Consts.AssemblySystem_Design, typeof (IDesigner))]
+	[Editor ("System.Web.UI.Design.WebControls.DataListComponentEditor, " + Consts.AssemblySystem_Design, typeof (ComponentEditor))]
 	public class DataList: BaseDataList, INamingContainer, IRepeatInfoUser
 	{
 		public const string CancelCommandName = "Cancel";
@@ -53,7 +52,6 @@ namespace System.Web.UI.WebControls
 		ITemplate itemTemplate;
 		ITemplate selectedItemTemplate;
 		ITemplate separatorTemplate;
-		ITemplate separatorItemTemplate;
 
 		ArrayList itemsArray;
 		DataListItemCollection items;
@@ -64,11 +62,12 @@ namespace System.Web.UI.WebControls
 		{
 		}
 
-		[DefaultValue(null)]
+		[DefaultValue (null)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
-		[NotifyParentProperty(true)]
-		[WebCategory("Style")]
-		[WebSysDescription("The style applied to alternating items.")]
+		[NotifyParentProperty (true)]
+		[WebCategory ("Style")]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[WebSysDescription ("The style applied to alternating items.")]
 		public virtual TableItemStyle AlternatingItemStyle {
 			get {
 				if (alternatingItemStyle == null) {
@@ -81,18 +80,19 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[Browsable(false)]
-		[DefaultValue(null)]
-		[TemplateContainer(typeof(DataListItem))]
-		[WebSysDescription("The template used for alternating items.")]
+		[Browsable (false)]
+		[DefaultValue (null)]
+		[TemplateContainer (typeof (DataListItem))]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[WebSysDescription ("The template used for alternating items.")]
 		public virtual ITemplate AlternatingItemTemplate {
 			get { return alternatingItemTemplate; }
 			set { alternatingItemTemplate = value; }
 		}
 
-		[DefaultValue(-1)]
-		[WebCategory("Misc")]
-		[WebSysDescription("The index of the item shown in edit mode.")]
+		[DefaultValue (-1)]
+		[WebCategory ("Misc")]
+		[WebSysDescription ("The index of the item shown in edit mode.")]
 		public virtual int EditItemIndex {
 			get {
 				object o = ViewState ["EditItemIndex"];
@@ -105,11 +105,12 @@ namespace System.Web.UI.WebControls
 			set { ViewState ["EditItemIndex"] = value; }
 		}
 
-		[DefaultValue(null)]
+		[DefaultValue (null)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
-		[NotifyParentProperty(true)]
-		[WebCategory("Style")]
-		[WebSysDescription("The style applied to items in edit mode.")]
+		[NotifyParentProperty (true)]
+		[WebCategory ("Style")]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[WebSysDescription ("The style applied to items in edit mode.")]
 		public virtual TableItemStyle EditItemStyle {
 			get {
 				if (editItemStyle == null) {
@@ -122,11 +123,19 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[Browsable (false)]
+		[DefaultValue (null)]
+		[TemplateContainer (typeof (DataListItem))]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[WebSysDescription ("The template used for items in edit mode.")]
 		public virtual ITemplate EditItemTemplate {
 			get { return editItemTemplate; }
 			set { editItemTemplate = value; }
 		}
 
+
+		[DefaultValue (false), WebCategory ("Misc")]
+		[WebSysDescription ("Extract rows in the template.")]
 		public virtual bool ExtractTemplateRows {
 			get {
 				object o = ViewState ["ExtractTemplateRows"];
@@ -139,6 +148,12 @@ namespace System.Web.UI.WebControls
 			set { ViewState ["ExtractTemplateRows"] = value; }
 		}
 
+		[DefaultValue (null)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		[NotifyParentProperty (true)]
+		[WebCategory ("Style")]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[WebSysDescription ("The style applied to the footer.")]
 		public virtual TableItemStyle FooterStyle {
 			get {
 				if (footerStyle == null) {
@@ -151,16 +166,28 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[Browsable (false)]
+		[DefaultValue (null)]
+		[TemplateContainer (typeof (DataListItem))]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[WebSysDescription ("The template used for the footer.")]
 		public virtual ITemplate FooterTemplate {
 			get { return footerTemplate; }
 			set { footerTemplate = value; }
 		}
 
+		[DefaultValue (typeof (GridLines), "None")]
 		public override GridLines GridLines {
 			get { return base.GridLines; }
 			set { base.GridLines = value; }
 		}
 
+		[DefaultValue (null)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		[NotifyParentProperty (true)]
+		[WebCategory ("Style")]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[WebSysDescription ("The style applied to the header.")]
 		public virtual TableItemStyle HeaderStyle {
 			get {
 				if (headerStyle == null) {
@@ -173,11 +200,19 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[Browsable (false)]
+		[DefaultValue (null)]
+		[TemplateContainer (typeof (DataListItem))]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[WebSysDescription ("The template used for the header.")]
 		public virtual ITemplate HeaderTemplate {
 			get { return headerTemplate; }
 			set { headerTemplate = value; }
 		}
 
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription ("A colletion containing all items.")]
 		public virtual DataListItemCollection Items {
 			get {
 				if (items == null) {
@@ -192,6 +227,12 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (null)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		[NotifyParentProperty (true)]
+		[WebCategory ("Style")]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[WebSysDescription ("The style applied to items.")]
 		public virtual TableItemStyle ItemStyle {
 			get {
 				if (itemStyle == null) {
@@ -204,11 +245,19 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[Browsable (false)]
+		[DefaultValue (null)]
+		[TemplateContainer (typeof (DataListItem))]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[WebSysDescription ("The template used for items.")]
 		public virtual ITemplate ItemTemplate {
 			get { return itemTemplate; }
 			set { itemTemplate = value; }
 		}
 
+
+		[DefaultValue (0), Bindable (true), WebCategory ("Layout")]
+		[WebSysDescription ("The number of columns that should be used.")]
 		public virtual int RepeatColumns {
 			get {
 				object o = ViewState ["RepeatColumns"];
@@ -219,12 +268,14 @@ namespace System.Web.UI.WebControls
 			}
 			set {
 				if (value < 0)
-					throw new ArgumentOutOfRangeException ("value");
+					throw new ArgumentOutOfRangeException ("value", "RepeatColumns value has to be 0 for 'not set' or > 0.");
 
 				ViewState ["RepeatColumns"] = value;
 			}
 		}
 
+		[DefaultValue (typeof (RepeatDirection), "Vertical"), Bindable (true), WebCategory ("Layout")]
+		[WebSysDescription ("Which direction should be used when filling the columns.")]
 		public virtual RepeatDirection RepeatDirection {
 			get {
 				object o = ViewState ["RepeatDirection"];
@@ -235,12 +286,14 @@ namespace System.Web.UI.WebControls
 			}
 			set {
 				if (!Enum.IsDefined (typeof (RepeatDirection), value))
-					throw new ArgumentException ("value");
+					throw new ArgumentOutOfRangeException ("value", "Only valid enumeration members are allowed");
 
 				ViewState ["RepeatDirection"] = value;
 			}
 		}
 
+		[DefaultValue (typeof (RepeatLayout), "Table"), Bindable (true), WebCategory ("Layout")]
+		[WebSysDescription ("The type of layout - mechanism that is used.")]
 		public virtual RepeatLayout RepeatLayout {
 			get {
 				object o = ViewState ["RepeatLayout"];
@@ -251,12 +304,14 @@ namespace System.Web.UI.WebControls
 			}
 			set {
 				if (!Enum.IsDefined (typeof (RepeatLayout), value))
-					throw new ArgumentException ("value");
+					throw new ArgumentOutOfRangeException ("value", "Only valid enumeration members are allowed");
 
 				ViewState ["RepeatLayout"] = value;
 			}
 		}
 
+		[DefaultValue (-1), Bindable (true)]
+		[WebSysDescription ("The currently selected item index number.")]
 		public virtual int SelectedIndex {
 			get {
 				object o = ViewState ["SelectedIndex"];
@@ -298,6 +353,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription ("The currently selected item.")]
 		public virtual DataListItem SelectedItem {
 			get {
 				if (SelectedIndex == -1)
@@ -307,6 +365,12 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (null)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		[NotifyParentProperty (true)]
+		[WebCategory ("Style")]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[WebSysDescription ("The style used for the currently selected item.")]
 		public virtual TableItemStyle SelectedItemStyle {
 			get {
 				if (selectedItemStyle == null) {
@@ -319,11 +383,22 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[Browsable (false)]
+		[DefaultValue (null)]
+		[TemplateContainer (typeof (DataListItem))]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[WebSysDescription ("The template used for currently selected items.")]
 		public virtual ITemplate SelectedItemTemplate {
 			get { return selectedItemTemplate; }
 			set { selectedItemTemplate = value; }
 		}
 
+		[DefaultValue (null)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		[NotifyParentProperty (true)]
+		[WebCategory ("Style")]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[WebSysDescription ("The style applied to separators.")]
 		public virtual TableItemStyle SeparatorStyle {
 			get {
 				if (separatorStyle == null) {
@@ -336,16 +411,18 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[Browsable (false)]
+		[DefaultValue (null)]
+		[TemplateContainer (typeof (DataListItem))]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[WebSysDescription ("The template used for separators.")]
 		public virtual ITemplate SeparatorTemplate {
 			get { return separatorTemplate; }
 			set { separatorTemplate = value; }
 		}
 
-		public virtual ITemplate SeparatorItemTemplate {
-			get { return separatorItemTemplate; }
-			set { separatorItemTemplate = value; }
-		}
-
+		[DefaultValue (true), Bindable (true), WebCategory ("Appearance")]
+		[WebSysDescription ("Display the header for the DataList.")]
 		public virtual bool ShowHeader {
 			get {
 				object o = ViewState ["ShowHeader"];
@@ -357,6 +434,8 @@ namespace System.Web.UI.WebControls
 			set { ViewState ["ShowHeader"] = value; }
 		}
 
+		[DefaultValue (true), Bindable (true), WebCategory ("Appearance")]
+		[WebSysDescription ("Display the footer for the DataList.")]
 		public virtual bool ShowFooter {
 			get {
 				object o = ViewState ["ShowFooter"];
@@ -371,36 +450,50 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[WebCategory ("Action")]
+		[WebSysDescription ("Raised when a cancel command is generated.")]
 		public event DataListCommandEventHandler CancelCommand {
 			add { Events.AddHandler (CancelCommandEvent, value); }
 			remove { Events.RemoveHandler (CancelCommandEvent, value); }
 		}
 
+		[WebCategory ("Action")]
+		[WebSysDescription ("Raised when a delete command is generated.")]
 		public event DataListCommandEventHandler DeleteCommand {
 			add { Events.AddHandler (DeleteCommandEvent, value); }
 			remove { Events.RemoveHandler (DeleteCommandEvent, value); }
 		}
 
+		[WebCategory ("Action")]
+		[WebSysDescription ("Raised when an edit command is generated.")]
 		public event DataListCommandEventHandler EditCommand {
 			add { Events.AddHandler (EditCommandEvent, value); }
 			remove { Events.RemoveHandler (EditCommandEvent, value); }
 		}
 
+		[WebCategory ("Action")]
+		[WebSysDescription ("Raised when an item command is generated.")]
 		public event DataListCommandEventHandler ItemCommand {
 			add { Events.AddHandler (ItemCommandEvent, value); }
 			remove { Events.RemoveHandler (ItemCommandEvent, value); }
 		}
 
+		[WebCategory ("Behavior")]
+		[WebSysDescription ("Raised when a new item is created.")]
 		public event DataListItemEventHandler ItemCreated {
 			add { Events.AddHandler (ItemCreatedEvent, value); }
 			remove { Events.RemoveHandler (ItemCreatedEvent, value); }
 		}
 
+		[WebCategory ("Behavior")]
+		[WebSysDescription ("Raised when a item gets data-bound.")]
 		public event DataListItemEventHandler ItemDataBound {
 			add { Events.AddHandler (ItemDataBoundEvent, value); }
 			remove { Events.RemoveHandler (ItemDataBoundEvent, value); }
 		}
 
+		[WebCategory ("Action")]
+		[WebSysDescription ("Raised when an update command is generated.")]
 		public event DataListCommandEventHandler UpdateCommand {
 			add { Events.AddHandler (UpdateCommandEvent, value); }
 			remove { Events.RemoveHandler (UpdateCommandEvent, value); }
@@ -844,7 +937,7 @@ namespace System.Web.UI.WebControls
 		}
 
 		bool IRepeatInfoUser.HasSeparators {
-			get { return (separatorItemTemplate != null); }
+			get { return (separatorTemplate != null); }
 		}
 
 		int IRepeatInfoUser.RepeatedItemCount {

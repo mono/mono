@@ -1,15 +1,13 @@
-/**
- * Namespace: System.Web.UI.WebControls
- * Class:     DataGridColumn
- *
- * Author:  Gaurav Vaish
- * Maintainer: gvaish@iitk.ac.in
- * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
- * Implementation: yes
- * Status:  100%
- *
- * (C) Gaurav Vaish (2002)
- */
+//
+// System.Web.UI.WebControls.DataGridColumn.cs
+//
+// Authors:
+//   Gaurav Vaish (gvaish@iitk.ac.in)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//
+// (C) Gaurav Vaish (2002)
+// (C) 2003 Andreas Nahr
+//
 
 using System;
 using System.Web;
@@ -59,6 +57,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (null), WebCategory ("Misc")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[WebSysDescription ("The style applied to the footer of this column.")]
 		public virtual TableItemStyle FooterStyle
 		{
 			get
@@ -75,6 +77,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (null), WebCategory ("Misc")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[WebSysDescription ("The style applied to the header of this column.")]
 		public virtual TableItemStyle HeaderStyle
 		{
 			get
@@ -91,6 +97,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (null), WebCategory ("Misc")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[WebSysDescription ("The style applied to the rows of this column.")]
 		public virtual TableItemStyle ItemStyle
 		{
 			get
@@ -107,6 +117,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (""), WebCategory ("Misc")]
+		[WebSysDescription ("The text within the footer of this column.")]
 		public virtual string FooterText
 		{
 			get
@@ -125,6 +137,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (""), WebCategory ("Misc")]
+		[WebSysDescription ("The URL to an image that is displayed in the header of this column.")]
 		public virtual string HeaderImageUrl
 		{
 			get
@@ -143,6 +157,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (""), WebCategory ("Misc")]
+		[WebSysDescription ("The text within the header of this column.")]
 		public virtual string HeaderText
 		{
 			get
@@ -161,6 +177,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (""), WebCategory ("Misc")]
+		[WebSysDescription ("An expression that determines how the colum should be sorted.")]
 		public virtual string SortExpression
 		{
 			get
@@ -179,6 +197,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (true), WebCategory ("Misc")]
+		[WebSysDescription ("The visibility of this column.")]
 		public bool Visible
 		{
 			get

@@ -1,15 +1,13 @@
-/**
- * Namespace: System.Web.UI.WebControls
- * Class:     ListBox
- *
- * Author:  Gaurav Vaish
- * Maintainer: gvaish@iitk.ac.in
- * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
- * Implementation: yes
- * Status:  100%
- *
- * (C) Gaurav Vaish (2002)
- */
+//
+// System.Web.UI.WebControls.ListBox.cs
+//
+// Authors:
+//   Gaurav Vaish (gvaish@iitk.ac.in)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//
+// (C) Gaurav Vaish (2002)
+// (C) 2003 Andreas Nahr
+//
 
 using System;
 using System.Drawing;
@@ -29,24 +27,30 @@ namespace System.Web.UI.WebControls
 		{
 		}
 
+		[Browsable (false)]
 		public override Color BorderColor
 		{
 			get { return base.BorderColor; }
 			set { base.BorderColor = value; }
 		}
 
+		[Browsable (false)]
 		public override BorderStyle BorderStyle
 		{
 			get { return base.BorderStyle; }
 			set { base.BorderStyle = value; }
 		}
 
+		[Browsable (false)]
 		public override Unit BorderWidth
 		{
 			get { return base.BorderWidth; }
 			set { base.BorderWidth = value; }
 		}
 
+
+		[DefaultValue (4), Bindable (true), WebCategory ("Appearance")]
+		[WebSysDescription ("The number of rows displayed by the control.")]
 		public virtual int Rows
 		{
 			get {
@@ -56,12 +60,14 @@ namespace System.Web.UI.WebControls
 
 			set {
 				if (value < 1 || value > 2000)
-					throw new ArgumentOutOfRangeException ();
+					throw new ArgumentOutOfRangeException ("value", "Rows value has to be >= 0 and <= 2000.");
 
 				ViewState ["Rows"] = value;
 			}
 		}
 
+		[DefaultValue (typeof (ListSelectionMode), "Single"), WebCategory ("Behavior")]
+		[WebSysDescription ("The mode describing how the entries can be selected.")]
 		public virtual ListSelectionMode SelectionMode
 		{
 			get
@@ -72,11 +78,13 @@ namespace System.Web.UI.WebControls
 			set
 			{
 				if (!Enum.IsDefined (typeof (ListSelectionMode), value))
-					throw new ArgumentException ();
+					throw new ArgumentOutOfRangeException ("value", "Only valid enumeration members are allowed");
 				ViewState ["SelectionMode"] = value;
 			}
 		}
 
+		[Browsable (false), DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Bindable (false), EditorBrowsable (EditorBrowsableState.Never)]
 		public override string ToolTip
 		{
 			get { return String.Empty; }

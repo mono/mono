@@ -1,18 +1,18 @@
-/**
-* Namespace: System.Web.UI.WebControls
-* Class:     CompareValidator
-*
-* Author:  Gaurav Vaish
-* Maintainer: gvaish@iitk.ac.in
-* Implementation: yes
-* Status:  80%
-*
-* (C) Gaurav Vaish (2001)
-*/
+//
+// System.Web.UI.WebControls.CompareValidator.cs
+//
+// Authors:
+//   Gaurav Vaish (gvaish@iitk.ac.in)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//
+// (C) Gaurav Vaish (2002)
+// (C) 2003 Andreas Nahr
+//
 
 using System;
 using System.Web;
 using System.Web.UI;
+using System.ComponentModel;
 
 namespace System.Web.UI.WebControls
 {
@@ -25,6 +25,9 @@ namespace System.Web.UI.WebControls
 			// Intitalize();
 		}
 
+		[DefaultValue (""), WebCategory ("Behavior")]
+		[TypeConverter (typeof (ValidatedControlConverter))]
+		[WebSysDescription ("The ID of a control that is compared.")]
 		public string ControlToCompare
 		{
 			get
@@ -41,6 +44,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (typeof (ValidationCompareOperator), "Equal"), WebCategory ("Behavior")]
+		[WebSysDescription ("The operator that is used for comparison.")]
 		public ValidationCompareOperator Operator
 		{
 			get
@@ -58,6 +63,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (""), Bindable (true), WebCategory ("Behavior")]
+		[WebSysDescription ("The value that is compared to.")]
 		public string ValueToCompare
 		{
 			get

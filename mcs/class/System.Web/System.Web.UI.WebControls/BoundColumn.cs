@@ -1,15 +1,13 @@
-/**
- * Namespace: System.Web.UI.WebControls
- * Class:     BoundColumn
- *
- * Author:  Gaurav Vaish
- * Maintainer: gvaish@iitk.ac.in
- * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
- * Implementation: yes
- * Status:  60%
- *
- * (C) Gaurav Vaish (2001)
- */
+//
+// System.Web.UI.WebControls.BoundColumn.cs
+//
+// Authors:
+//   Gaurav Vaish (gvaish@iitk.ac.in)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//
+// (C) Gaurav Vaish (2002)
+// (C) 2003 Andreas Nahr
+//
 
 using System;
 using System.ComponentModel;
@@ -116,6 +114,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (""), WebCategory ("Misc")]
+		[WebSysDescription ("The field that this column is bound to.")]
 		public virtual string DataField
 		{
 			get
@@ -132,6 +132,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (""), WebCategory ("Misc")]
+		[WebSysDescription ("A format string that is applied to the data value.")]
 		public virtual string DataFormatString
 		{
 			get
@@ -148,6 +150,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (false), WebCategory ("Misc")]
+		[WebSysDescription ("Determines if the databound field can only be displayed or also edited.")]
 		public virtual bool ReadOnly
 		{
 			get

@@ -1,19 +1,18 @@
-/**
- * Namespace: System.Web.UI.WebControls
- * Class:     ListControl
- *
- * Author:  Gaurav Vaish
- * Maintainer: gvaish@iitk.ac.in
- * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
- * Implementation: yes
- * Status:  100%
- *
- * (C) Gaurav Vaish (2001)
- */
+//
+// System.Web.UI.WebControls.ListControl.cs
+//
+// Authors:
+//   Gaurav Vaish (gvaish@iitk.ac.in)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//
+// (C) Gaurav Vaish (2002)
+// (C) 2003 Andreas Nahr
+//
 
 using System;
 using System.Collections;
 using System.ComponentModel;
+using System.ComponentModel.Design;
 using System.Web;
 using System.Web.UI;
 using System.Web.Util;
@@ -22,8 +21,8 @@ namespace System.Web.UI.WebControls
 {
 	[DefaultEvent("SelectedIndexChanged")]
 	[DefaultProperty("DataSource")]
-	//[Designer("??")]
-	//[DataBindingHandler("??")]
+	[Designer ("System.Web.UI.Design.WebControls.ListControlDesigner, " + Consts.AssemblySystem_Design, typeof (IDesigner))]
+	[DataBindingHandler("System.Web.UI.Design.ListControlDataBindingHandler, " + Consts.AssemblySystem_Design)]
 	[ParseChildren(true, "Items")]
 	public abstract class ListControl: WebControl
 	{
@@ -38,6 +37,8 @@ namespace System.Web.UI.WebControls
 		{
 		}
 
+		[WebCategory ("Action")]
+		[WebSysDescription ("Raised when the selected index entry has changed.")]
 		public event EventHandler SelectedIndexChanged
 		{
 			add
@@ -50,6 +51,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (false), WebCategory ("Behavior")]
+		[WebSysDescription ("The control automatically posts back after changing the text.")]
 		public virtual bool AutoPostBack
 		{
 			get
@@ -65,6 +68,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (""), WebCategory ("Data")]
+		[WebSysDescription ("The name of the table that is used for binding when a DataSource is specified.")]
 		public virtual string DataMember
 		{
 			get
@@ -80,6 +85,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+
+		[DefaultValue (null), Bindable (true), WebCategory ("Data")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription ("The DataSource that is used for data-binding.")]
 		public virtual object DataSource
 		{
 			get
@@ -100,6 +109,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (""), WebCategory ("Data")]
+		[WebSysDescription ("The field in the datatable that provides the text entry.")]
 		public virtual string DataTextField
 		{
 			get
@@ -115,6 +126,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (""), WebCategory ("Data")]
+		[WebSysDescription ("Specifies a formatting rule for the texts that are returned.")]
 		public virtual string DataTextFormatString
 		{
 			get
@@ -130,6 +143,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (""), WebCategory ("Data")]
+		[WebSysDescription ("The field in the datatable that provides the entry value.")]
 		public virtual string DataValueField
 		{
 			get
@@ -145,6 +160,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (null), MergableProperty (false), WebCategory ("Misc")]
+		[PersistenceMode (PersistenceMode.InnerDefaultProperty)]
+		[WebSysDescription ("A collection of all items contained in this list.")]
 		public virtual ListItemCollection Items
 		{
 			get
@@ -161,6 +179,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (0), Bindable (true), WebCategory ("Misc")]
+		[Browsable (false), DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription ("The index number of the currently selected ListItem.")]
 		public virtual int SelectedIndex
 		{
 			get {
@@ -182,6 +203,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (null), WebCategory ("Misc")]
+		[Browsable (false), DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription ("The currently selected ListItem.")]
 		public virtual ListItem SelectedItem
 		{
 			get
@@ -195,6 +219,9 @@ namespace System.Web.UI.WebControls
 		}
 
 #if NET_1_1
+		[DefaultValue (""), Bindable (true), WebCategory ("Misc")]
+		[Browsable (false), DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription ("The value of the currently selected ListItem.")]
 		public virtual string SelectedValue {
 			get {
 				int idx = SelectedIndex;

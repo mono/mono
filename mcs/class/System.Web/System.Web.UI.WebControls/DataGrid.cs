@@ -1,15 +1,13 @@
-/**
- * Namespace: System.Web.UI.WebControls
- * Class:     DataGrid
- *
- * Author:  Gaurav Vaish
- * Maintainer: gvaish@iitk.ac.in
- * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
- * Implementation: yes
- * Status:  95%
- *
- * (C) Gaurav Vaish (2002)
- */
+//
+// System.Web.UI.WebControls.DataGrid.cs
+//
+// Authors:
+//   Gaurav Vaish (gvaish@iitk.ac.in)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//
+// (C) Gaurav Vaish (2002)
+// (C) 2003 Andreas Nahr
+//
 
 using System;
 using System.Collections;
@@ -18,16 +16,13 @@ using System.Web;
 using System.Web.UI;
 using System.Web.Util;
 using System.ComponentModel;
+using System.ComponentModel.Design;
 using System.Reflection;
 
 namespace System.Web.UI.WebControls
 {
-	//TODO: [Designer("??")]
-	//TODO: [Editor("??")]
-	[DefaultEvent("SelectedIndexChanged")]
-	[DefaultProperty("DataSource")]
-	[ParseChildren(true)]
-	[PersistChildren(false)]
+	[Designer ("System.Web.UI.Design.WebControls.DataGridDesigner, " + Consts.AssemblySystem_Design, typeof (IDesigner))]
+	[Editor ("System.Web.UI.Design.WebControls.DataGridComponentEditor, " + Consts.AssemblySystem_Design, typeof (ComponentEditor))]
 	public class DataGrid : BaseDataList, INamingContainer
 	{
 		public const string CancelCommandName       = "Cancel";
@@ -73,6 +68,8 @@ namespace System.Web.UI.WebControls
 		{
 		}
 
+		[DefaultValue (false), WebCategory ("Paging")]
+		[WebSysDescription ("Allows custom paging.")]
 		public virtual bool AllowCustomPaging
 		{
 			get
@@ -88,6 +85,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (false), WebCategory ("Paging")]
+		[WebSysDescription ("Allow using multiple pages.")]
 		public virtual bool AllowPaging
 		{
 			get
@@ -103,6 +102,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (false), WebCategory ("Behavior")]
+		[WebSysDescription ("Allows the user to sort the table by clicking on column headers.")]
 		public virtual bool AllowSorting
 		{
 			get
@@ -118,6 +119,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[NotifyParentProperty (true), WebCategory ("Style")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[WebSysDescription ("The style applied to alternating items.")]
 		public virtual TableItemStyle AlternatingItemStyle
 		{
 			get
@@ -134,6 +139,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (true), WebCategory ("Behavior")]
+		[WebSysDescription ("Automatically generate columns at runtime for each field found in the datasource.")]
 		public virtual bool AutoGenerateColumns
 		{
 			get
@@ -149,6 +156,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (""), Bindable (true), WebCategory ("Appearance")]
+		[Editor ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
+		[WebSysDescription ("The URL to the image file used as background.")]
 		public virtual string BackImageUrl
 		{
 			get
@@ -164,6 +174,11 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (true), WebCategory ("Behavior")]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[MergableProperty (false)]
+		[Editor ("System.Web.UI.Design.WebControls.DataGridColumnCollectionEditor, " + Consts.AssemblySystem_Design, typeof (ComponentEditor))]
+		[WebSysDescription ("Automatically generate columns at runtime for each field found in the datasource.")]
 		public virtual DataGridColumnCollection Columns
 		{
 			get
@@ -181,6 +196,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[Browsable (false), Bindable (true)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription ("The index number for the currently selected page.")]
 		public int CurrentPageIndex
 		{
 			get
@@ -193,11 +211,14 @@ namespace System.Web.UI.WebControls
 			set
 			{
 				if(value < 0)
-					throw new ArgumentOutOfRangeException();
+					throw new ArgumentOutOfRangeException ("value", "CurrentPageIndex value has to be 0 for 'not set' or > 0.");
 				ViewState["CurrentPageIndex"] = value;
 			}
 		}
 
+
+		[DefaultValue (-1), WebCategory ("Misc")]
+		[WebSysDescription ("The index number for the currently edited item.")]
 		public virtual int EditItemIndex
 		{
 			get
@@ -210,11 +231,15 @@ namespace System.Web.UI.WebControls
 			set
 			{
 				if(value < -1)
-					throw new ArgumentOutOfRangeException();
+					throw new ArgumentOutOfRangeException ("value", "EditItemIndex value has to be -1 for 'not set' or > -1.");
 				ViewState["EditItemIndex"] = value;
 			}
 		}
 
+		[NotifyParentProperty (true), WebCategory ("Style")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[WebSysDescription ("The style applied to items that are currently being edited.")]
 		public virtual TableItemStyle EditItemStyle
 		{
 			get
@@ -231,6 +256,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[NotifyParentProperty (true), WebCategory ("Style")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[WebSysDescription ("The style applied to the footer.")]
 		public virtual TableItemStyle FooterStyle
 		{
 			get
@@ -247,6 +276,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[NotifyParentProperty (true), WebCategory ("Style")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[WebSysDescription ("The style applied to the header.")]
 		public virtual TableItemStyle HeaderStyle
 		{
 			get
@@ -263,6 +296,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription ("A collection containing all items.")]
 		public virtual DataGridItemCollection Items
 		{
 			get
@@ -281,6 +317,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[NotifyParentProperty (true), WebCategory ("Style")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[WebSysDescription ("The style applied to items.")]
 		public virtual TableItemStyle ItemStyle
 		{
 			get
@@ -297,6 +337,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription ("The number of pages.")]
 		public int PageCount
 		{
 			get
@@ -312,6 +355,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[NotifyParentProperty (true), WebCategory ("Style")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[WebSysDescription ("The style applied to the pager.")]
 		public virtual DataGridPagerStyle PagerStyle
 		{
 			get
@@ -328,6 +375,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (10), WebCategory ("Paging")]
+		[WebSysDescription ("The maximum number of entries that are created per page.")]
 		public virtual int PageSize
 		{
 			get
@@ -345,6 +394,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (-1), Bindable (true)]
+		[WebSysDescription ("The index number for the currently selected item.")]
 		public virtual int SelectedIndex
 		{
 			get
@@ -379,6 +430,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription ("The currently selected item.")]
 		public virtual DataGridItem SelectedItem
 		{
 			get
@@ -389,6 +443,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[NotifyParentProperty (true), WebCategory ("Style")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[WebSysDescription ("The style applied to the currently selected item.")]
 		public virtual TableItemStyle SelectedItemStyle
 		{
 			get
@@ -405,6 +463,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (false), Bindable (true), WebCategory ("Appearance")]
+		[WebSysDescription ("Determines if the footer should be shown.")]
 		public virtual bool ShowFooter
 		{
 			get
@@ -420,6 +480,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (false), Bindable (true), WebCategory ("Appearance")]
+		[WebSysDescription ("Determines if the header should be shown.")]
 		public virtual bool ShowHeader
 		{
 			get
@@ -435,6 +497,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription ("The number of items that are visible.")]
 		public virtual int VirtualItemCount
 		{
 			get
@@ -447,11 +512,13 @@ namespace System.Web.UI.WebControls
 			set
 			{
 				if(value < 0)
-					throw new ArgumentOutOfRangeException();
+					throw new ArgumentOutOfRangeException ("value", "VirtualItemCount value has to be >= 0.");
 				ViewState["VirtualItemCount"] = value;
 			}
 		}
 
+		[WebCategory ("Action")]
+		[WebSysDescription ("Raised when a cancel command is generated.")]
 		public event DataGridCommandEventHandler CancelCommand
 		{
 			add
@@ -464,6 +531,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[WebCategory ("Action")]
+		[WebSysDescription ("Raised when a delete command is generated.")]
 		public event DataGridCommandEventHandler DeleteCommand
 		{
 			add
@@ -476,6 +545,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[WebCategory ("Action")]
+		[WebSysDescription ("Raised when an edit command is generated.")]
 		public event DataGridCommandEventHandler EditCommand
 		{
 			add
@@ -488,6 +559,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[WebCategory ("Action")]
+		[WebSysDescription ("Raised when an item command is generated.")]
 		public event DataGridCommandEventHandler ItemCommand
 		{
 			add
@@ -500,6 +573,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[WebCategory ("Behavior")]
+		[WebSysDescription ("Raised when a new item is created.")]
 		public event DataGridItemEventHandler ItemCreated
 		{
 			add
@@ -512,6 +587,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[WebCategory ("Behavior")]
+		[WebSysDescription ("Raised when a item gets data-bound.")]
 		public event DataGridItemEventHandler ItemDataBound
 		{
 			add
@@ -524,6 +601,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[WebCategory ("Action")]
+		[WebSysDescription ("Raised when the currently selected page changes.")]
 		public event DataGridPageChangedEventHandler PageIndexChanged
 		{
 			add
@@ -536,6 +615,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[WebCategory ("Action")]
+		[WebSysDescription ("Raised when a sort command is generated.")]
 		public event DataGridSortCommandEventHandler SortCommand
 		{
 			add
@@ -548,6 +629,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[WebCategory ("Action")]
+		[WebSysDescription ("Raised when an update command is generated.")]
 		public event DataGridCommandEventHandler UpdateCommand
 		{
 			add
@@ -1301,7 +1384,7 @@ namespace System.Web.UI.WebControls
 		///<summary>
 		/// UnDocumented method
 		/// </summary>
-		protected ArrayList CreateColumnSet(PagedDataSource source, bool useDataSource)
+		protected virtual ArrayList CreateColumnSet(PagedDataSource source, bool useDataSource)
 		{
 			DataGridColumn[] cols = new DataGridColumn [Columns.Count];
 			Columns.CopyTo (cols, 0);
