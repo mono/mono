@@ -1,4 +1,7 @@
-
+2004-07-14  Ben Maurer  <bmaurer@ximain.com>
+	
+	* inssel-{long32,x86,}.brg: trivial optimizations.
+	
 Mon Jul 12 20:25:57 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
 	* mini.c: load value when emitting box operation in
