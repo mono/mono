@@ -1,3 +1,12 @@
+2002-07-19  Dietmar Maurer  <dietmar@ximian.com>
+
+	* x86.brg: correctly align valuetype arguments on the stack
+
+	* jit.c (mono_analyze_stack): do not compute frame size here.
+
+	* x86.brg: use macros to avoid code duplication for CALL opcodes,
+	compute frame size in x86.brg
+
 2002-07-18  Dietmar Maurer  <dietmar@ximian.com>
 
 	* x86.brg (ARG_OBJ): allow zero sized ARG_OBJ
