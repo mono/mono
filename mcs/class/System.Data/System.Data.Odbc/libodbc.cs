@@ -91,8 +91,41 @@ namespace System.Data.Odbc
                 NoTotal         = -4,
                 NullData        = -1
         }
-
-	[StructLayout(LayoutKind.Sequential)]
+        
+        // Keep this sorted.
+        internal enum FieldIdentifier 
+        {
+                AutoUniqueValue              = 11,    /* SQL_DESC_AUTO_UNIQUE_VALUE */
+                BaseColumnName               = 22,    /* SQL_DESC_BASE_COLUMN_NAME */
+                BaseTableName                = 23,    /* SQL_DESC_BASE_TABLE_NAME */
+                CaseSensitive                = 12,    /* SQL_DESC_CASE_SENSITIVE */
+                CatelogName                  = 17,    /* SQL_DESC_CATALOG_NAME */
+                ConsiseType                  = 2,     /* SQL_DESC_CONCISE_TYPE */
+                Count                        = 1001,  /* SQL_DESC_COUNT */
+                DisplaySize                  = 6,     /* SQL_DESC_DISPLAY_SIZE */
+                FixedPrecScale               = 9,     /* SQL_DESC_FIXED_PREC_SCALE */
+                Label                        = 18,    /* SQL_DESC_LABEL */
+                Length                       = 1003,  /* SQL_DESC_LENGTH */
+                LiteralPrefix                = 27,    /* SQL_DESC_LITERAL_PREFIX */
+                LiteralSuffix                = 28,    /* SQL_DESC_LITERAL_SUFFIX */
+                LocalTypeName                = 29,    /* SQL_DESC_LOCAL_TYPE_NAME */
+                Name                         = 1011,  /* SQL_DESC_NAME */
+                Nullable                     = 1008,  /* SQL_DESC_NULLABLE */
+                NumPrecRadix                 = 32,    /* SQL_DESC_NUM_PREC_RADIX */
+                OctetLength                  = 1013,  /* SQL_DESC_OCTET_LENGTH */
+                Precision                    = 1005,  /* SQL_DESC_PRECISION */
+                Scale                        = 1006,  /* SQL_DESC_SCALE */
+                SchemaName                   = 16,    /* SQL_DESC_SCHEMA_NAME */
+                Searchable                   = 13,    /* SQL_DESC_SEARCHABLE */
+                TableName                    = 15,    /* SQL_DESC_TABLE_NAME */
+                Type                         = 1002,  /* SQL_DESC_TYPE */
+                TypeName                     = 14,    /* SQL_DESC_TYPE_NAME */
+                Unnamed                      = 1012,  /* SQL_DESC_UNNAMED */
+                Unsigned                     = 8,     /* SQL_DESC_UNSIGNED */
+                Updatable                    = 10     /* SQL_DESC_UPDATABLE */                
+        }
+        
+        [StructLayout(LayoutKind.Sequential)]
 	internal struct OdbcTimestamp
 	{
 		internal short year;
@@ -261,7 +294,32 @@ namespace System.Data.Odbc
                                                               byte [] buffer, 
                                                               short buffLength, 
                                                               ref short remainingStrLen);
+                [DllImport ("odbc32.dll")]
+                internal static extern OdbcReturn SQLColAttribute (IntPtr StmtHandle,
+                                                                   int column,
+                                                                   FieldIdentifier fieldId,
+                                                                   byte [] charAttributePtr, 
+                                                                   int bufferLength,
+                                                                   ref int strLengthPtr,
+                                                                   ref int numericAttributePtr
+                                                                   );
+                [DllImport ("odbc32.dll")]
+                internal static extern OdbcReturn SQLPrimaryKeys (IntPtr StmtHandle,
+                                                                   string catalog,
+                                                                   int catalogLength,
+                                                                   string schema, 
+                                                                   int schemaLength,
+                                                                   string tableName,
+                                                                   int tableLength
+                                                                   );
 
-
+                [DllImport ("odbc32.dll")]
+                internal static extern OdbcReturn SQLBindCol (IntPtr StmtHandle,
+                                                                   int column,
+                                                                   SQL_C_TYPE targetType,
+                                                                   byte [] buffer, 
+                                                                   int bufferLength,
+                                                                   ref int indicator
+                                                                   );
 	}
 }

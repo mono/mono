@@ -1,3 +1,12 @@
+2005-03-22  Sureshkumar T  <tsureshkumar@novell.com>
+            Appsamy <appasamy@rediffmail.com>
+
+	* libodbc.cs (System.Data.Odbc): Added enum FieldIdentifier. Added
+	library functions SQLPrimaryKeys, SQLBindCol and SQLColAttribute.
+
+	* OdbcDataReader.cs: Implemented GetPrimaryKeys to get the primary
+	keys associated with resultset using SQLPrimaryKeys.
+
 2005-03-15  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* OdbcConnection.cs: re-throw error on exception in Open method.

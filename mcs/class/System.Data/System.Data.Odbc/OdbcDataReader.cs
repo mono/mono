@@ -501,6 +501,7 @@ namespace System.Data.Odbc
 			// otherwise, DataTable is null reference
 			if(cols.Length > 0) 
 			{
+                                string [] keys = GetPrimaryKeys ();
 				
 				dataTableSchema = new DataTable ();
 				
@@ -545,8 +546,16 @@ namespace System.Data.Odbc
 					schemaRow["NumericPrecision"] = 0;
 					schemaRow["NumericScale"] = 0;
 					// TODO: need to get KeyInfo
+
 					schemaRow["IsUnique"] = false;
-					schemaRow["IsKey"] = DBNull.Value;					
+					schemaRow["IsKey"] = DBNull.Value;
+                                       
+                                        for (int j=0; j < keys.Length; j++) {
+                                                if (keys [j] == col.ColumnName) {
+                                                        schemaRow ["IsUnique"] = true;
+                                                        schemaRow ["IsKey"] = true;
+                                                }
+                                        }
 
 					schemaRow["BaseCatalogName"] = "";				
 					schemaRow["BaseColumnName"] = col.ColumnName;
@@ -811,6 +820,101 @@ namespace System.Data.Odbc
 			}
 			return (ret == OdbcReturn.Success);
 		}
+
+
+                private int GetColumnAttribute (int column, FieldIdentifier fieldId)
+                {
+                        OdbcReturn ret = OdbcReturn.Error;
+                        byte [] buffer = new byte [255];
+                        int outsize = 0;
+                        int val = 0;
+                        ret = libodbc.SQLColAttribute (hstmt, column, fieldId, 
+                                                       buffer, buffer.Length, 
+                                                       ref outsize, ref val);
+                        if (ret != OdbcReturn.Success && ret != OdbcReturn.SuccessWithInfo)
+                                throw new OdbcException (new OdbcError ("SQLColAttribute",
+                                                                        OdbcHandleType.Stmt,
+                                                                        hstmt)
+                                                         );
+                        return val;
+                        
+                }
+
+                private string GetColumnAttributeStr (int column, FieldIdentifier fieldId)
+                {
+                        OdbcReturn ret = OdbcReturn.Error;
+                        byte [] buffer = new byte [255];
+                        int outsize = 0;
+                        int val = 0;
+                        ret = libodbc.SQLColAttribute (hstmt, column, fieldId, 
+                                                       buffer, buffer.Length, 
+                                                       ref outsize, ref val);
+                        if (ret != OdbcReturn.Success && ret != OdbcReturn.SuccessWithInfo)
+                                throw new OdbcException (new OdbcError ("SQLColAttribute",
+                                                                        OdbcHandleType.Stmt,
+                                                                        hstmt)
+                                                         );
+                        string value = Encoding.Default.GetString (buffer);
+                        return value;
+                }
+
+                private string [] GetPrimaryKeys ()
+                {
+                        if (cols.Length <= 0)
+                                return new string [0];
+
+                        string [] keys = new string [cols.Length];
+                        IntPtr handle = IntPtr.Zero;
+                        OdbcReturn ret = OdbcReturn.Error;                  
+                        try {
+                                ret=libodbc.SQLAllocHandle(OdbcHandleType.Stmt, 
+                                                           command.Connection.hDbc, ref handle);
+				if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
+					throw new OdbcException(new OdbcError("SQLAllocHandle",
+                                                                              OdbcHandleType.Dbc,
+                                                                              command.Connection.hDbc));
+
+                                string tableName   = GetColumnAttributeStr (1, FieldIdentifier.TableName);
+                                string schemaName  = GetColumnAttributeStr (1, FieldIdentifier.SchemaName);
+                                string catalogName = GetColumnAttributeStr (1, FieldIdentifier.CatelogName);
+                                ret = libodbc.SQLPrimaryKeys (handle, catalogName, -3,  
+                                                              schemaName, -3, 
+                                                              tableName, -3);
+                                if (ret != OdbcReturn.Success && ret != OdbcReturn.SuccessWithInfo)
+                                        throw new OdbcException (new OdbcError ("SQLPrimaryKeys", OdbcHandleType.Stmt, handle));
+                        
+                                int length = 0;
+                                byte [] primaryKey = new byte [255];
+                        
+                                ret = libodbc.SQLBindCol (handle, 4, SQL_C_TYPE.CHAR, primaryKey, primaryKey.Length, ref length);
+                                if (ret != OdbcReturn.Success && ret != OdbcReturn.SuccessWithInfo)
+                                        throw new OdbcException (new OdbcError ("SQLBindCol", OdbcHandleType.Stmt, handle));
+                        
+                                int i = 0;                              
+                                while (true) {
+                                        ret = libodbc.SQLFetch (handle);
+                                        if (ret != OdbcReturn.Success && ret != OdbcReturn.SuccessWithInfo)
+                                                break;
+                                        string pkey = Encoding.Default.GetString (primaryKey);
+                                        keys [i++] = pkey;
+                                }
+                        } catch (OdbcException){
+                                // FIXME: Try using SQLStatistics
+                        } finally {
+                                if (handle != IntPtr.Zero) {
+                                        ret = libodbc.SQLFreeStmt (handle, libodbc.SQLFreeStmtOptions.Close);
+                                        if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
+                                                throw new OdbcException(new OdbcError("SQLFreeStmt",OdbcHandleType.Stmt,handle));
+                                        
+                                        ret = libodbc.SQLFreeHandle( (ushort) OdbcHandleType.Stmt, handle);
+                                                if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
+                                                        throw new OdbcException(new OdbcError("SQLFreeHandle",OdbcHandleType.Stmt,handle));
+                                }                             
+                                        
+                        }
+                        
+                        return keys;
+                }
 
 		public
 #if NET_2_0
