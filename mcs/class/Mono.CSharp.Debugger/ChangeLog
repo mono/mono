@@ -1,5 +1,10 @@
 2003-12-28 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	* MonoSymbolTable.cs (MethodEntry): kill more
+	useless fields.
+
+2003-12-28 Ben Maurer  <bmaurer@users.sourceforge.net>
+
 	* MonoSymbolTable.cs (MethodEntry): Remove the
 	SourceFileIndex field, we already have the info.
 
