@@ -1,3 +1,11 @@
+2002-05-13  Miguel de Icaza  <miguel@ximian.com>
+
+	* Double.cs (Parse): Reimplement by cleaning up the string first,
+	and then passing to strtof in the mono runtime.
+
+	* Single.cs (Parse): Use the Double implementation and cast to
+	float. 
+
 2002-05-21  Nick Drochak  <ndrochak@gol.com>
 
 	* Math.cs 
