@@ -3840,6 +3840,33 @@ namespace Mono.CSharp {
 			return null;
 		}
 
+		//
+		// Retrieves a `public void Dispose ()' method from the Type `t'
+		//
+		static MethodInfo FetchMethodDispose (Type t)
+		{
+			MemberList dispose_list;
+			
+			dispose_list = TypeContainer.FindMembers (
+				t, MemberTypes.Method,
+				BindingFlags.Public | BindingFlags.Instance,
+				Type.FilterName, "Dispose");
+			if (dispose_list.Count == 0)
+				return null;
+
+			foreach (MemberInfo m in dispose_list){
+				MethodInfo mi = (MethodInfo) m;
+				Type [] args;
+				
+				args = TypeManager.GetArgumentTypes (mi);
+				if (args != null && args.Length == 0){
+					if (mi.ReturnType == TypeManager.void_type)
+						return mi;
+				}
+			}
+			return null;
+		}
+
 		// 
 		// This struct records the helper methods used by the Foreach construct
 		//
@@ -4145,18 +4172,33 @@ namespace Mono.CSharp {
 		public override void EmitFinally (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
-			Label call_dispose = ig.DefineLabel ();
 
-			enumerator.EmitThis ();
-			enumerator.EmitLoad ();
-			ig.Emit (OpCodes.Isinst, TypeManager.idisposable_type);
-			ig.Emit (OpCodes.Dup);
-			ig.Emit (OpCodes.Brtrue_S, call_dispose);
-			ig.Emit (OpCodes.Pop);
-			ig.Emit (OpCodes.Endfinally);
+			if (hm.enumerator_type.IsValueType) {
+				enumerator.EmitThis ();
 
-			ig.MarkLabel (call_dispose);
-			ig.Emit (OpCodes.Callvirt, TypeManager.void_dispose_void);
+				MethodInfo mi = FetchMethodDispose (hm.enumerator_type);
+				if (mi != null) {
+					enumerator.EmitLoadAddress ();
+					ig.Emit (OpCodes.Call, mi);
+				} else {
+					enumerator.EmitLoad ();
+					ig.Emit (OpCodes.Box, hm.enumerator_type);
+					ig.Emit (OpCodes.Callvirt, TypeManager.void_dispose_void);
+				}					
+			} else {
+				Label call_dispose = ig.DefineLabel ();
+
+				enumerator.EmitThis ();
+				enumerator.EmitLoad ();
+				ig.Emit (OpCodes.Isinst, TypeManager.idisposable_type);
+				ig.Emit (OpCodes.Dup);
+				ig.Emit (OpCodes.Brtrue_S, call_dispose);
+				ig.Emit (OpCodes.Pop);
+				ig.Emit (OpCodes.Endfinally);
+
+				ig.MarkLabel (call_dispose);
+				ig.Emit (OpCodes.Callvirt, TypeManager.void_dispose_void);
+			}
 		}
 
 		//

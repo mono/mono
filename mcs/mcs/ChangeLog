@@ -1,3 +1,9 @@
+2004-08-04  Martin Baulig  <martin@ximian.com>
+
+	* codegen.cs (VariableStorage.EmitLoadAddress): New public method.
+
+	* statement.cs (Foreach.EmitFinally): Make this work for valuetypes.
+
 2004-08-03  Marek Safar  <marek.safar@seznam.cz>
 
 	* report.cs (Message): New enum for better error, warning reference in

@@ -218,6 +218,14 @@ namespace Mono.CSharp {
 			else 
 				ig.Emit (OpCodes.Ldfld, fb);
 		}
+
+		public void EmitLoadAddress ()
+		{
+			if (fb == null)
+				ig.Emit (OpCodes.Ldloca, local);
+			else 
+				ig.Emit (OpCodes.Ldflda, fb);
+		}
 		
 		public void EmitCall (MethodInfo mi)
 		{
