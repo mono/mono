@@ -241,6 +241,8 @@ namespace System {
 
 			long retVal = 0;
 			string[] names = value.Split(new char[] {','});
+			for (i = 0; i < names.Length; ++i)
+				names [i] = names [i].Trim ();
 			TypeCode typeCode = ((Enum) info.values.GetValue (0)).GetTypeCode ();
 			foreach (string name in names) {
 				bool found = false;

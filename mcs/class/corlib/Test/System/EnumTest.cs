@@ -541,6 +541,10 @@ public class EnumTest : TestCase
 				     TestingEnum.Test, 
 				     Enum.Parse(t1.GetType(), "Test"));
 
+			AssertEquals("parse last enum with whitespace",
+				     TestingEnum.Test, 
+				     Enum.Parse(t1.GetType(), "    \n\nTest\t"));
+
 			AssertEquals("parse bitwise-or enum",
 				     TestingEnum.Is, 
 				     Enum.Parse(t1.GetType(), "This,Is"));
@@ -550,6 +554,10 @@ public class EnumTest : TestCase
 			AssertEquals("parse bitwise-or enum",
 				     TestingEnum.Test, 
 				     Enum.Parse(t1.GetType(), "This,Is,A"));
+
+			AssertEquals("parse bitwise-or enum with whitespace",
+				     TestingEnum.Test, 
+				     Enum.Parse(t1.GetType(), "   \n\tThis \t\n,    Is,A \n"));
 		}
 	}
 	public void TestParse2() {
@@ -649,6 +657,10 @@ public class EnumTest : TestCase
 				     TestingEnum.Test, 
 				     Enum.Parse(t1.GetType(), "test", true));
 
+			AssertEquals("parse last enum with whitespace",
+				     TestingEnum.Test, 
+				     Enum.Parse(t1.GetType(), "    \n\ntest\t", true));
+
 			AssertEquals("parse bitwise-or enum",
 				     TestingEnum.Is, 
 				     Enum.Parse(t1.GetType(), "This,is", true));
@@ -658,6 +670,11 @@ public class EnumTest : TestCase
 			AssertEquals("parse bitwise-or enum",
 				     TestingEnum.Test, 
 				     Enum.Parse(t1.GetType(), "This,is,A", true));
+
+			AssertEquals("parse bitwise-or enum with whitespace",
+				     TestingEnum.Test, 
+					 Enum.Parse(t1.GetType(), "   \n\tThis \t\n,    is,a \n",
+						        true));
 		}
 	}
 

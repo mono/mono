@@ -1,3 +1,7 @@
+2002-10-29  Zoltan Varga  <vargaz@freemail.hu>
+
+	* EnumTest.cs: Added tests for whitespaces in Enum:Parse().
+
 2002-10-16  Nick Drochak  <ndrochak@gol.com>
 
 	* EnumTest.cs: Find out which Assert is causing the error on mono.
