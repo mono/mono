@@ -197,6 +197,11 @@ public class HebrewCalendar : Calendar {
 			era));
 	}
 
+#if false
+	//
+	// The following routines are commented out as they do not appear on the .NET Framework 1.1
+	//
+	
 	/// <summary>
 	/// Overridden. Adds days to a given date.
 	/// </summary>
@@ -410,7 +415,8 @@ public class HebrewCalendar : Calendar {
 		M_CheckDateTime(time);
 		return base.GetMinute(time);
 	}
-
+#endif
+	
 	/// <summary>
 	/// Overrideden. Adds months to a given date.
 	/// </summary>
@@ -871,12 +877,6 @@ public class HebrewCalendar : Calendar {
 			hour, minute, second, milliseconds);
 	}
 
-	[MonoTODO]
-	public override int ToFourDigitYear(int year)
-	{
-		throw new NotImplementedException();
-	}
-	
 } // class HebrewCalendar
 	
 } // namespace System.Globalization

@@ -29,10 +29,12 @@ public class COMException : ExternalException {
 	protected COMException (SerializationInfo info, StreamingContext context) 
 		: base (info, context) {}
 
-	[MonoTODO()]
 	public override string ToString ()
 	{
-		return null;
+		return String.Format (
+			"{0} (0x{1:x}) {2} {3}\n{4}",
+			GetType (), HResult, Message, InnerException == null ? "" : InnerException.ToString (),
+			StackTrace != null ? StackTrace : "");
 	}
 } 
 

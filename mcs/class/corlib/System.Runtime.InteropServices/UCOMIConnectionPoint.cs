@@ -13,10 +13,10 @@ namespace System.Runtime.InteropServices
 	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 	public interface UCOMIConnectionPoint
 	{
-		void Advise (object pUnkSink, ref int pdwCookie);
-		void EnumConnections (ref UCOMIEnumConnections ppEnum);
-		void GetConnectionInterface (ref Guid pIID);
-		void GetConnectionPointContainer (ref UCOMIConnectionPointContainer ppCPC);
+		void Advise (object pUnkSink, out int pdwCookie);
+		void EnumConnections (out UCOMIEnumConnections ppEnum);
+		void GetConnectionInterface (out Guid pIID);
+		void GetConnectionPointContainer (out UCOMIConnectionPointContainer ppCPC);
 		void Unadvise (int dwCookie);
 	}
 }

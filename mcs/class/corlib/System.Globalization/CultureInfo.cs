@@ -1096,12 +1096,6 @@ namespace System.Globalization
 			{
 				return Thread.CurrentThread.CurrentCulture;
 			}
-			
-			/* FIXME: the set method isnt listed in the spec */
-			set 
-			{
-				Thread.CurrentThread.CurrentCulture = value;
-			}
 		}
 
 		public static CultureInfo CurrentUICulture 
@@ -1109,12 +1103,6 @@ namespace System.Globalization
 			get 
 			{
 				return Thread.CurrentThread.CurrentUICulture;
-			}
-			
-			/* FIXME: the set method isnt listed in the spec */
-			set 
-			{
-				Thread.CurrentThread.CurrentUICulture =	value;
 			}
 		}
 

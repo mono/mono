@@ -13,7 +13,7 @@ namespace System.Runtime.InteropServices
 	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 	public interface UCOMIConnectionPointContainer
 	{
-		void EnumConnectionPoints (ref UCOMIEnumConnectionPoints ppEnum);
-		void FindConnectionPoint (ref Guid riid, ref UCOMIConnectionPoint ppCP);
+		void EnumConnectionPoints (out UCOMIEnumConnectionPoints ppEnum);
+		void FindConnectionPoint (ref Guid riid, out UCOMIConnectionPoint ppCP);
 	}
 }

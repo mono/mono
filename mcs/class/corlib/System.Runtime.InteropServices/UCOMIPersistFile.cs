@@ -13,8 +13,8 @@ namespace System.Runtime.InteropServices
 	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 	public interface UCOMIPersistFile
 	{
-		void GetClassID (ref Guid pClassID);
-		void GetCurFile (ref string ppszFileName);
+		void GetClassID (out Guid pClassID);
+		void GetCurFile (out string ppszFileName);
 		int IsDirty ();
 		void Load (string pszFileName, int dwMode);
 		void Save (string pszFileName, bool fRemember);

@@ -12,7 +12,7 @@
 
 namespace System.Configuration.Assemblies {
 
-
+#if ECMA
 	/// <summary>
 	/// </summary>
 	public enum ProcessorID {
@@ -97,5 +97,6 @@ namespace System.Configuration.Assemblies {
 		/// </summary>
 		ARM_7TDMI = 70001,
 	} // ProcessorID
-
+#endif
+	
 } // System.Configuration.Assemblies

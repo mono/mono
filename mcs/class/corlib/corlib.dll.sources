@@ -430,8 +430,10 @@ System.Runtime.CompilerServices/MethodImplAttribute.cs
 System.Runtime.CompilerServices/MethodImplOptions.cs
 System.Runtime.CompilerServices/RequiredAttributeAttribute.cs
 System.Runtime.CompilerServices/RuntimeHelpers.cs
+System.Runtime.InteropServices/ArrayWithOffset.cs
 System.Runtime.InteropServices/AssemblyRegistrationFlags.cs
 System.Runtime.InteropServices/AutomationProxyAttribute.cs
+System.Runtime.InteropServices/BestFitMappingAttribute.cs
 System.Runtime.InteropServices/BIND_OPTS.cs
 System.Runtime.InteropServices/BINDPTR.cs
 System.Runtime.InteropServices/CALLCONV.cs

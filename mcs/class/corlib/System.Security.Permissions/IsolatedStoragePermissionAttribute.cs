@@ -31,11 +31,6 @@ namespace System.Security.Permissions {
 			set { user_quota = value; }
 		}
 
-		[MonoTODO]
-		public override IPermission CreatePermission () {
-			return null;
-		}
-
 		// private
 
 		private IsolatedStorageContainment usage_allowed;

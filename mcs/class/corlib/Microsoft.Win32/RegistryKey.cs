@@ -128,6 +128,10 @@ namespace Microsoft.Win32 {
 		{
 			throw new NotImplementedException ();
 		}
+
+		private RegistryKey ()
+		{
+		}
 		
 	}
 }

@@ -18,7 +18,7 @@ namespace System.Globalization {
 	{
 		private int lcid;
 		
-		public TextInfo ()
+		internal TextInfo ()
 		{
 		}
 

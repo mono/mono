@@ -354,7 +354,7 @@ namespace System.Runtime.InteropServices
 		public extern static byte ReadByte (IntPtr ptr, int ofs);
 
 		[MonoTODO]
-		public static byte ReadByte (object ptr, int ofs) {
+		public static byte ReadByte ([In] object ptr, int ofs) {
 			throw new NotImplementedException ();
 		}
 
@@ -366,7 +366,7 @@ namespace System.Runtime.InteropServices
 		public extern static short ReadInt16 (IntPtr ptr, int ofs);
 
 		[MonoTODO]
-		public static short ReadInt16 (object ptr, int ofs) {
+		public static short ReadInt16 ([In] object ptr, int ofs) {
 			throw new NotImplementedException ();
 		}
 
@@ -378,7 +378,7 @@ namespace System.Runtime.InteropServices
 		public extern static int ReadInt32 (IntPtr ptr, int ofs);
 
 		[MonoTODO]
-		public static int ReadInt32 (object ptr, int ofs) {
+		public static int ReadInt32 ([In] object ptr, int ofs) {
 			throw new NotImplementedException ();
 		}
 
@@ -496,7 +496,7 @@ namespace System.Runtime.InteropServices
 		public extern static void WriteByte (IntPtr ptr, int ofs, byte val);
 
 		[MonoTODO]
-		public static void WriteByte(object ptr, int ofs, byte val) {
+		public static void WriteByte([In,Out] object ptr, int ofs, byte val) {
 			throw new NotImplementedException ();
 		}
 
@@ -508,7 +508,7 @@ namespace System.Runtime.InteropServices
 		public extern static void WriteInt16 (IntPtr ptr, int ofs, short val);
 
 		[MonoTODO]
-		public static void WriteInt16(object ptr, int ofs, short val) {
+		public static void WriteInt16([In,Out] object ptr, int ofs, short val) {
 			throw new NotImplementedException ();
 		}
 
@@ -520,7 +520,7 @@ namespace System.Runtime.InteropServices
 		public extern static void WriteInt32 (IntPtr ptr, int ofs, int val);
 
 		[MonoTODO]
-		public static void WriteInt32(object ptr, int ofs, int val) {
+		public static void WriteInt32([In,Out] object ptr, int ofs, int val) {
 			throw new NotImplementedException ();
 		}
 

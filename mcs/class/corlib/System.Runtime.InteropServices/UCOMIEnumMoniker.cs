@@ -13,8 +13,8 @@ namespace System.Runtime.InteropServices
 	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 	public interface UCOMIEnumMoniker
 	{
-		void Clone (ref UCOMIEnumMoniker ppenum);
-		int Next (int celt, out UCOMIMoniker[] rgelt, ref int pceltFetched);
+		void Clone (out UCOMIEnumMoniker ppenum);
+		int Next (int celt, [Out] UCOMIMoniker[] rgelt, out int pceltFetched);
 		int Reset ();
 		int Skip (int celt);
 	}

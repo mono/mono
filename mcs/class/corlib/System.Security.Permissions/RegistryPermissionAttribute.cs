@@ -30,6 +30,7 @@ namespace System.Security.Permissions
 		public string All
 		{
 			set { all = value; }
+			get { return all; }
 		}
 		
 		public string Create

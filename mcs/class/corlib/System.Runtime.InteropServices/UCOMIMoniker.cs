@@ -13,25 +13,25 @@ namespace System.Runtime.InteropServices
 	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 	public interface UCOMIMoniker
 	{
-		void BindToObject (UCOMIBindCtx pbc, UCOMIMoniker pmkToLeft, [In] ref Guid riidResult, ref object ppvResult);
-		void BindToStorage (UCOMIBindCtx pbc, UCOMIMoniker pmkToLeft, [In] ref Guid riid, ref object ppvObj);
-		void CommonPrefixWith (UCOMIMoniker pmkOther, ref UCOMIMoniker ppmkPrefix);
-		void ComposeWith (UCOMIMoniker pmkRight, bool fOnlyIfNotGeneric, ref UCOMIMoniker ppmkComposite);
-		void Enum (bool fForward, ref UCOMIEnumMoniker ppenumMoniker);
-		void GetClassID (ref Guid pClassID);
-		void GetDisplayName (UCOMIBindCtx pbc, UCOMIMoniker pmkToLeft, ref string ppszDisplayName);
-		void GetSizeMax (ref long pcbSize);
-		void GetTimeOfLastChange (UCOMIBindCtx pbc, UCOMIMoniker pmkToLeft, ref FILETIME pFileTime);
-		void Hash (ref int pdwHash);
-		void Inverse (ref UCOMIMoniker ppmk);
+		void BindToObject (UCOMIBindCtx pbc, UCOMIMoniker pmkToLeft, [In] ref Guid riidResult, out object ppvResult);
+		void BindToStorage (UCOMIBindCtx pbc, UCOMIMoniker pmkToLeft, [In] ref Guid riid, out object ppvObj);
+		void CommonPrefixWith (UCOMIMoniker pmkOther, out UCOMIMoniker ppmkPrefix);
+		void ComposeWith (UCOMIMoniker pmkRight, bool fOnlyIfNotGeneric, out UCOMIMoniker ppmkComposite);
+		void Enum (bool fForward, out UCOMIEnumMoniker ppenumMoniker);
+		void GetClassID (out Guid pClassID);
+		void GetDisplayName (UCOMIBindCtx pbc, UCOMIMoniker pmkToLeft, out string ppszDisplayName);
+		void GetSizeMax (out long pcbSize);
+		void GetTimeOfLastChange (UCOMIBindCtx pbc, UCOMIMoniker pmkToLeft, out FILETIME pFileTime);
+		void Hash (out int pdwHash);
+		void Inverse (out UCOMIMoniker ppmk);
 		int IsDirty ();
 		void IsEqual (UCOMIMoniker pmkOtherMoniker);
 		void IsRunning (UCOMIBindCtx pbc, UCOMIMoniker pmkToLeft, UCOMIMoniker pmkNewlyRunning);
-		void IsSystemMoniker (ref int pdwMksys);
+		void IsSystemMoniker (out int pdwMksys);
 		void Load (UCOMIStream pStm);
-		void ParseDisplayName (UCOMIBindCtx pbc, UCOMIMoniker pmkToLeft, string pszDisplayName, ref int pchEaten, ref UCOMIMoniker ppmkOut);
-		void Reduce (UCOMIBindCtx pbc, int dwReduceHowFar, ref UCOMIMoniker ppmkToLeft, ref UCOMIMoniker ppmkReduced);
-		void RelativePathTo (UCOMIMoniker pmkOther, ref UCOMIMoniker ppmkRelPath);
+		void ParseDisplayName (UCOMIBindCtx pbc, UCOMIMoniker pmkToLeft, string pszDisplayName, out int pchEaten, out UCOMIMoniker ppmkOut);
+		void Reduce (UCOMIBindCtx pbc, int dwReduceHowFar, ref UCOMIMoniker ppmkToLeft, out UCOMIMoniker ppmkReduced);
+		void RelativePathTo (UCOMIMoniker pmkOther, out UCOMIMoniker ppmkRelPath);
 		void Save (UCOMIStream pStm, bool fClearDirty);
 	}
 }

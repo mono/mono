@@ -13,10 +13,10 @@ namespace System.Runtime.InteropServices
 	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 	public interface UCOMIBindCtx
 	{
-		void EnumObjectParam (ref UCOMIEnumString ppenum);
+		void EnumObjectParam (out UCOMIEnumString ppenum);
 		void GetBindOptions (ref BIND_OPTS pbindopts);
-		void GetObjectParam (string pszKey, ref object ppunk);
-		void GetRunningObjectTable (ref UCOMIRunningObjectTable pprot);
+		void GetObjectParam (string pszKey, out object ppunk);
+		void GetRunningObjectTable (out UCOMIRunningObjectTable pprot);
 		void RegisterObjectBound (object punk);
 		void RegisterObjectParam (string pszKey, object punk);
 		void ReleaseBoundObjects ();

@@ -21,10 +21,11 @@ namespace System.Reflection {
 	[Serializable]
 	[ClassInterface(ClassInterfaceType.AutoDual)]
 	public abstract class FieldInfo : MemberInfo {
-
 		public abstract FieldAttributes Attributes {get;}
 		public abstract RuntimeFieldHandle FieldHandle {get;}
 
+		internal FieldInfo () {}
+		
 		public abstract Type FieldType { get; }
 
 		public abstract object GetValue(object obj);

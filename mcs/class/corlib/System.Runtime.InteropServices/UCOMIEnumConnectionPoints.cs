@@ -13,8 +13,8 @@ namespace System.Runtime.InteropServices
 	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 	public interface UCOMIEnumConnectionPoints
 	{
-		void Clone (ref UCOMIEnumConnectionPoints ppenum);
-		int Next (int celt,out UCOMIConnectionPoint[] rgelt, ref int pceltFetched);
+		void Clone (out UCOMIEnumConnectionPoints ppenum);
+		int Next (int celt, [Out] UCOMIConnectionPoint[] rgelt, out int pceltFetched);
 		int Reset ();
 		int Skip (int celt);
 	}
