@@ -859,6 +859,7 @@ namespace Mono.Xml.Schema
 				case ContentProc.Lax:
 					break;
 				default:
+					// FIXME: why is it not invalid if xsi:type exists?
 					if (xsiTypeName == null &&
 						(schemas.Contains (reader.NamespaceURI) ||
 						!schemas.MissedSubComponents (reader.NamespaceURI)))
@@ -885,8 +886,10 @@ namespace Mono.Xml.Schema
 			Context.State = next;
 
 #region Key Constraints
-			if (checkKeyConstraints)
-				AssessStartIdentityConstraints ();
+			if (checkKeyConstraints) {
+				ValidateKeySelectors ();
+				ValidateKeyFields ();
+			}
 #endregion
 
 		}
@@ -913,6 +916,7 @@ namespace Mono.Xml.Schema
 					HandleError ("Schema instance nil was specified, where the element declaration for " + qname + "has fixed value constraints.");
 			}
 			// 4.
+			// FIXME: Actually xsi:type is handled in AssessElementSchemaValidity(). So it should be double-checked if it is really required.
 			string xsiType = reader.GetAttribute ("type", XmlSchema.InstanceNamespace);
 			if (xsiType != null) {
 				Context.XsiType = GetXsiType (xsiType);
@@ -1170,7 +1174,7 @@ namespace Mono.Xml.Schema
 						if (entry.StartDepth == reader.Depth) {
 							if (entry.KeyFound)
 								seq.FinishedEntries.Add (entry);
-							else if (entry.KeySequence.SourceSchemaIdentity is XmlSchemaKey)
+							else if (seq.SourceSchemaIdentity is XmlSchemaKey)
 								HandleError ("Key sequence is missing.");
 							seq.Entries.RemoveAt (k);
 							k--;
@@ -1198,7 +1202,7 @@ namespace Mono.Xml.Schema
 		}
 
 		// 3.11.4 Identity Constraint Satisfied
-		private void AssessStartIdentityConstraints ()
+		private void ValidateKeySelectors ()
 		{
 			if (tmpKeyrefPool != null)
 				tmpKeyrefPool.Clear ();
@@ -1218,31 +1222,53 @@ namespace Mono.Xml.Schema
 			// (b) Evaluate current key sequences.
 			for (int i = 0; i < keyTables.Count; i++) {
 				XsdKeyTable seq  = (XsdKeyTable) keyTables [i];
-				if (seq.SelectorMatches (this.elementQNameStack, reader) != null) {
+				if (seq.SelectorMatches (this.elementQNameStack, reader.Depth) != null) {
 					// creates and registers new entry.
 					XsdKeyEntry entry = new XsdKeyEntry (seq, reader.Depth, reader as IXmlLineInfo);
 					seq.Entries.Add (entry);
 				}
 			}
+		}
 
+		private void ValidateKeyFields ()
+		{
 			// (c) Evaluate field paths.
 			for (int i = 0; i < keyTables.Count; i++) {
 				XsdKeyTable seq  = (XsdKeyTable) keyTables [i];
 				// If possible, create new field entry candidates.
 				for (int j = 0; j < seq.Entries.Count; j++) {
-					XsdKeyEntry entry = seq.Entries [j];
 					try {
-						entry.FieldMatches (this.elementQNameStack, this);
-					} catch (Exception ex) { // FIXME: (wishlist) It is bad manner ;-(
-						HandleError ("Identity field value is invalid against its data type.", ex);
+						ProcessKeyEntry (seq.Entries [j]);
+					} catch (XmlSchemaException ex) {
+						HandleError (ex);
 					}
+				}
+			}
+		}
+
+		private void ProcessKeyEntry (XsdKeyEntry entry)
+		{
+			bool isNil = XsiNilDepth == Depth;
+			bool found = entry.ProcessMatch (false, elementQNameStack, this, NameTable, BaseURI, SchemaType, ParserContext.NamespaceManager, this as IXmlLineInfo, Depth, null, null, null, isNil, CurrentKeyFieldConsumers);
+			if (MoveToFirstAttribute ()) {
+				try {
+					do {
+						switch (NamespaceURI) {
+						case XmlNamespaceManager.XmlnsXmlns:
+						case XmlSchema.InstanceNamespace:
+							continue;
+						}
+						found = entry.ProcessMatch (true, elementQNameStack, this, NameTable, BaseURI, SchemaType, ParserContext.NamespaceManager, this as IXmlLineInfo, Depth, LocalName, NamespaceURI, Value, false, CurrentKeyFieldConsumers);
+					} while (MoveToNextAttribute ());
+				} finally {
+					MoveToElement ();
 				}
 			}
 		}
 
 		private XsdKeyTable CreateNewKeyTable (XmlSchemaIdentityConstraint ident)
 		{
-			XsdKeyTable seq = new XsdKeyTable (ident, this);
+			XsdKeyTable seq = new XsdKeyTable (ident);
 			seq.StartDepth = reader.Depth;
 			this.keyTables.Add (seq);
 			return seq;
@@ -1250,49 +1276,59 @@ namespace Mono.Xml.Schema
 
 		private void EndIdentityValidation (XsdKeyTable seq)
 		{
-			ArrayList errors = new ArrayList ();
+			ArrayList errors = null;
 			for (int i = 0; i < seq.Entries.Count; i++) {
 				XsdKeyEntry entry = (XsdKeyEntry) seq.Entries [i];
 				if (entry.KeyFound)
 					continue;
-				if (seq.SourceSchemaIdentity is XmlSchemaKey)
+				if (seq.SourceSchemaIdentity is XmlSchemaKey) {
+					if (errors == null)
+						errors = new ArrayList ();
 					errors.Add ("line " + entry.SelectorLineNumber + "position " + entry.SelectorLinePosition);
+				}
 			}
-			if (errors.Count > 0)
+			if (errors != null)
 				HandleError ("Invalid identity constraints were found. Key was not found. "
 					+ String.Join (", ", errors.ToArray (typeof (string)) as string []));
 
-			errors.Clear ();
-			// Find reference target
+			// If it is keyref, then find reference target
 			XmlSchemaKeyref xsdKeyref = seq.SourceSchemaIdentity as XmlSchemaKeyref;
-			if (xsdKeyref != null) {
-				for (int i = this.keyTables.Count - 1; i >= 0; i--) {
-					XsdKeyTable target = this.keyTables [i] as XsdKeyTable;
-					if (target.SourceSchemaIdentity == xsdKeyref.Target) {
-						seq.ReferencedKey = target;
-						for (int j = 0; j < seq.FinishedEntries.Count; j++) {
-							XsdKeyEntry entry = (XsdKeyEntry) seq.FinishedEntries [j];
-							for (int k = 0; k < target.FinishedEntries.Count; k++) {
-								XsdKeyEntry targetEntry = (XsdKeyEntry) target.FinishedEntries [k];
-								if (entry.CompareIdentity (targetEntry)) {
-									entry.KeyRefFound = true;
-									break;
-								}
-							}
+			if (xsdKeyref != null)
+				EndKeyrefValidation (seq, xsdKeyref.Target);
+		}
+
+		private void EndKeyrefValidation (XsdKeyTable seq, XmlSchemaIdentityConstraint targetIdent)
+		{
+			for (int i = this.keyTables.Count - 1; i >= 0; i--) {
+				XsdKeyTable target = this.keyTables [i] as XsdKeyTable;
+				if (target.SourceSchemaIdentity != targetIdent)
+					continue;
+				seq.ReferencedKey = target;
+				for (int j = 0; j < seq.FinishedEntries.Count; j++) {
+					XsdKeyEntry entry = (XsdKeyEntry) seq.FinishedEntries [j];
+					for (int k = 0; k < target.FinishedEntries.Count; k++) {
+						XsdKeyEntry targetEntry = (XsdKeyEntry) target.FinishedEntries [k];
+						if (entry.CompareIdentity (targetEntry)) {
+							entry.KeyRefFound = true;
+							break;
 						}
 					}
 				}
-				if (seq.ReferencedKey == null)
-					HandleError ("Target key was not found.");
-				for (int i = 0; i < seq.FinishedEntries.Count; i++) {
-					XsdKeyEntry entry = (XsdKeyEntry) seq.FinishedEntries [i];
-					if (!entry.KeyRefFound)
-						errors.Add (" line " + entry.SelectorLineNumber + ", position " + entry.SelectorLinePosition);
-				}
-				if (errors.Count > 0)
-					HandleError ("Invalid identity constraints were found. Referenced key was not found: "
-						+ String.Join (" / ", errors.ToArray (typeof (string)) as string []));
 			}
+			if (seq.ReferencedKey == null)
+				HandleError ("Target key was not found.");
+			ArrayList errors = null;
+			for (int i = 0; i < seq.FinishedEntries.Count; i++) {
+				XsdKeyEntry entry = (XsdKeyEntry) seq.FinishedEntries [i];
+				if (!entry.KeyRefFound) {
+					if (errors == null)
+						errors = new ArrayList ();
+					errors.Add (" line " + entry.SelectorLineNumber + ", position " + entry.SelectorLinePosition);
+				}
+			}
+			if (errors != null)
+				HandleError ("Invalid identity constraints were found. Referenced key was not found: "
+					+ String.Join (" / ", errors.ToArray (typeof (string)) as string []));
 		}
 #endregion
 
@@ -1545,6 +1581,23 @@ namespace Mono.Xml.Schema
 				return false;
 		}
 
+		private XmlSchema ReadExternalSchema (string uri)
+		{
+			Uri absUri = resolver.ResolveUri ((BaseURI != "" ? new Uri (BaseURI) : null), uri);
+			XmlTextReader xtr = null;
+			try {
+				xtr = new XmlTextReader (absUri.ToString (),
+					(Stream) resolver.GetEntity (
+						absUri, null, typeof (Stream)),
+					NameTable);
+				return XmlSchema.Read (
+					xtr, ValidationEventHandler);
+			} finally {
+				if (xtr != null)
+					xtr.Close ();
+			}
+		}
+
 		private void ExamineAdditionalSchema ()
 		{
 			if (resolver == null)
@@ -1564,21 +1617,11 @@ namespace Mono.Xml.Schema
 				if (tmp.Length % 2 != 0)
 					HandleError ("Invalid schemaLocation attribute format.");
 				for (int i = 0; i < tmp.Length; i += 2) {
-					Uri absUri = null;
-					XmlTextReader xtr = null;
 					try {
-						absUri = new Uri ((this.BaseURI != "" ? new Uri (BaseURI) : null), tmp [i + 1]);
-						xtr = new XmlTextReader (
-							absUri.ToString (),
-							(Stream) resolver.GetEntity (absUri, null, typeof (Stream)),
-							NameTable);
-						schema = XmlSchema.Read (xtr, ValidationEventHandler);
+						schema = ReadExternalSchema (tmp [i + 1]);
 					} catch (Exception) { // FIXME: (wishlist) It is bad manner ;-(
-						HandleError ("Could not resolve schema location URI: " + absUri, null, true);
+						HandleError ("Could not resolve schema location URI: " + tmp [i + 1], null, true);
 						continue;
-					} finally {
-						if (xtr != null)
-							xtr.Close ();
 					}
 					if (schema.TargetNamespace == null)
 						schema.TargetNamespace = tmp [i];
@@ -1595,20 +1638,10 @@ namespace Mono.Xml.Schema
 			schema = null;
 			string noNsSchemaLocation = reader.GetAttribute ("noNamespaceSchemaLocation", XmlSchema.InstanceNamespace);
 			if (noNsSchemaLocation != null) {
-				Uri absUri = null;
-				XmlTextReader xtr = null;
 				try {
-					absUri = new Uri ((this.BaseURI != "" ? new Uri (BaseURI) : null), noNsSchemaLocation);
-					xtr = new XmlTextReader (
-						absUri.ToString (),
-						(Stream) resolver.GetEntity (absUri, null, typeof (Stream)),
-						NameTable);
-					schema = XmlSchema.Read (xtr, ValidationEventHandler);
+					schema = ReadExternalSchema (noNsSchemaLocation);
 				} catch (Exception) { // FIXME: (wishlist) It is bad manner ;-(
-					HandleError ("Could not resolve schema location URI: " + absUri, null, true);
-				} finally {
-					if (xtr != null)
-						xtr.Close ();
+					HandleError ("Could not resolve schema location URI: " + noNsSchemaLocation, null, true);
 				}
 				if (schema != null && schema.TargetNamespace != null)
 					HandleError ("Specified schema has different target namespace.");

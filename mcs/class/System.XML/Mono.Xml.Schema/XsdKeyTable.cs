@@ -67,9 +67,9 @@ namespace Mono.Xml.Schema
 		public int StartDepth;
 		public XsdKeyTable ReferencedKey;
 
-		public XsdKeyTable (XmlSchemaIdentityConstraint source, XmlReader reader)
+		public XsdKeyTable (XmlSchemaIdentityConstraint source)
 		{
-			Reset (source, reader);
+			Reset (source);
 		}
 
 		public XmlQualifiedName QualifiedName {
@@ -88,7 +88,7 @@ namespace Mono.Xml.Schema
 			get { return selector; }
 		}
 
-		public void Reset (XmlSchemaIdentityConstraint source, XmlReader reader)
+		public void Reset (XmlSchemaIdentityConstraint source)
 		{
 			this.source = source;
 			this.selector = source.CompiledSelector;
@@ -100,28 +100,28 @@ namespace Mono.Xml.Schema
 		}
 
 		// In this method, attributes are ignored.
-		public XsdIdentityPath SelectorMatches (ArrayList qnameStack, XmlReader reader)
+		public XsdIdentityPath SelectorMatches (ArrayList qnameStack, int depth)
 		{
 			for (int i = 0; i < Selector.Paths.Length; i++) {
 				XsdIdentityPath path = Selector.Paths [i];
 				// Only "." hits.
-				if (reader.Depth == this.StartDepth) {
+				if (depth == this.StartDepth) {
 					if (path.OrderedSteps.Length == 0)
 						return path;
 					else
 						continue;
 				}
 				// It does not hit as yet (too shallow to hit).
-				if (reader.Depth - this.StartDepth < path.OrderedSteps.Length - 1)
+				if (depth - this.StartDepth < path.OrderedSteps.Length - 1)
 					continue;
 
 				int iter = path.OrderedSteps.Length;
 				if (path.OrderedSteps [iter-1].IsAttribute)
 					iter--;
 
-				if (path.Descendants && reader.Depth < this.StartDepth + iter)
+				if (path.Descendants && depth < this.StartDepth + iter)
 					continue;
-				else if (!path.Descendants && reader.Depth != this.StartDepth + iter)
+				else if (!path.Descendants && depth != this.StartDepth + iter)
 					continue;
 
 				iter--;

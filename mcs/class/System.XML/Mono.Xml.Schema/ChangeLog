@@ -1,4 +1,21 @@
-2004-12-11  Atsushi Enomoto <atsushi@ximian.com>
+2004-12-13  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XsdKeyTable.cs : eliminated XmlReader dependency.
+	* XsdValidatingReader.cs :
+	  AssertIdentityConstraints() is now splited to selector validation
+	  and field validation. Extracted EndKeyrefValidation() to process
+	  keyref constraints.
+	  Added ReadExternalSchema() and commonized xsi:schemaLocation
+	  handling and xsi:noNamespaceSchemaLocation handling.
+	* XsdIdentityState.cs :
+	  Eliminated XsdValidatingReader dependency.
+	  In XsdKeyEntryField, renamed KeySequence to OwnerSequence.
+	  XsdKeyEntryFieldCollection is now based on CollectionBase.
+	  In XsdKeyEntry, FieldMatches() is renamed to ProcessMatch() and
+	  modified to accept splited XsdValidatingReader members.
+	* XsdIdentityPath.cs : added default .ctor() and IsAttribute property.
+
+2004-12-13  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XsdIdentityState.cs,
 	  XsdIdentityPath.cs,
