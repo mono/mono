@@ -166,14 +166,7 @@ namespace System.Security.Cryptography.Xml {
 					if (xel == null)
 						throw new CryptographicException ("Manifest targeted by Reference was not found: " + r.Uri.Substring (1));
 					doc.LoadXml (xel.OuterXml);
-					// add namespace nodes
-					foreach (XmlAttribute attr in xel.SelectNodes ("namespace::*")) {
-						if (attr.LocalName == "xml")
-							continue;
-						if (attr.OwnerElement == xel)
-							continue;
-						doc.DocumentElement.SetAttributeNode (doc.ImportNode (attr, true) as XmlAttribute);
-					}
+					FixupNamespaceNodes (xel, doc.DocumentElement);
 				}
 			}
 			else if (xmlResolver != null) {
@@ -191,6 +184,18 @@ namespace System.Security.Cryptography.Xml {
 				return doc;
 			}
 			return null;
+		}
+
+		private void FixupNamespaceNodes (XmlElement src, XmlElement dst)
+		{
+			// add namespace nodes
+			foreach (XmlAttribute attr in src.SelectNodes ("namespace::*")) {
+				if (attr.LocalName == "xml")
+					continue;
+				if (attr.OwnerElement == src)
+					continue;
+				dst.SetAttributeNode (dst.OwnerDocument.ImportNode (attr, true) as XmlAttribute);
+			}
 		}
 
 		[MonoTODO("incomplete")]
@@ -211,7 +216,18 @@ namespace System.Security.Cryptography.Xml {
 				if (r.Uri [0] == '#') {
 					foreach (DataObject obj in signature.ObjectList) {
 						if ("#" + obj.Id == r.Uri) {
-							doc.LoadXml (obj.GetXml ().OuterXml);
+							XmlElement xel = obj.GetXml ();
+							doc.LoadXml (xel.OuterXml);
+							/*
+							foreach (XmlAttribute attr in xel.SelectNodes ("namespace::*")) {
+								if (attr.LocalName == "xml")
+									continue;
+								if (attr.OwnerElement == xel)
+									continue;
+								doc.DocumentElement.SetAttributeNode (doc.ImportNode (attr, true) as XmlAttribute);
+							}
+							*/
+							FixupNamespaceNodes (xel, doc.DocumentElement);
 							break;
 						}
 					}

@@ -1,5 +1,11 @@
 2004-03-27  Atsushi Enomoto <atsushi@ximian.com>
 
+	* SignedXml.cs : namespace nodes also should be supplied for enveloped
+	  objects.
+	* KeyInfoRetrievalMethod.cs : Keep input element as well as others.
+
+2004-03-27  Atsushi Enomoto <atsushi@ximian.com>
+
 	* SignedXml.cs : XPath transformation output is not type of Stream.
 	  Fix to support them by canonicalizing it.
 

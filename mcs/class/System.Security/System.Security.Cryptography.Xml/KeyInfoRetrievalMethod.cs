@@ -16,6 +16,7 @@ namespace System.Security.Cryptography.Xml {
 	public class KeyInfoRetrievalMethod : KeyInfoClause {
 
 		private string URI;
+		private XmlElement element;
 
 #if NET_1_2
 		string type;
@@ -37,18 +38,27 @@ namespace System.Security.Cryptography.Xml {
 
 		public string Type {
 			get { return type; }
-			set { type = value; }
+			set {
+				element = null;
+				type = value;
+			}
 		}
 #endif
 
 		public string Uri {
 			get { return URI; }
-			set { URI = value; }
+			set {
+				element = null;
+				URI = value;
+			}
 		}
 
 
 		public override XmlElement GetXml () 
 		{
+			if (element != null)
+				return element;
+
 			XmlDocument document = new XmlDocument ();
 			XmlElement xel = document.CreateElement (XmlSignature.ElementNames.RetrievalMethod, XmlSignature.NamespaceURI);
 			if (URI != null)
@@ -73,6 +83,7 @@ namespace System.Security.Cryptography.Xml {
 				if (value.HasAttribute (XmlSignature.AttributeNames.Type))
 					Type = value.Attributes [XmlSignature.AttributeNames.Type].Value;
 #endif
+				element = value;
 			}
 		}
 	}
