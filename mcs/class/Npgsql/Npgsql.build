@@ -6,6 +6,7 @@
 	<property name="debug" value="false"/>
 
 	<target name="build">
+		<copy file="Npgsql/Npgsql.snk" tofile="../lib/Npgsql.snk"/>
 		<csc target="library" output="../lib/Npgsql.dll" debug="${debug}">
 			<arg value="/nowarn:1595"/>
 			<arg value="/nowarn:0067"/>
