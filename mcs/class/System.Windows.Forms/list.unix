@@ -340,4 +340,3 @@ System.Windows.Forms.Design/ParentControlDesigner.cs
 System.Windows.Forms.Design/PropertyTab.cs
 System.Windows.Forms.Design/ScrollableControlDesigner.cs
 System.Windows.Forms.Design/SelectionRules.cs
-System.Windows.Forms.Design/UITypeEditor.cs
