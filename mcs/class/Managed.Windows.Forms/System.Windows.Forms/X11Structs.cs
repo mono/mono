@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.7 $
+// $Revision: 1.8 $
 // $Modtime: $
 // $Log: X11Structs.cs,v $
+// Revision 1.8  2004/08/20 19:11:56  jackson
+// Use IntPtrs for ClientMessage extra data (TODO: This will screw up on 64 bit systems)
+//
 // Revision 1.7  2004/08/19 21:51:59  pbartok
 // - Removed packing hints (Paolo suggested this a while back)
 // - fixed colormap type
@@ -471,11 +474,11 @@ namespace System.Windows.Forms {
 		internal IntPtr		window;
 		internal IntPtr		message_type;
 		internal int		format;
-		internal int		l0;
-		internal int		l1;
-		internal int		l2;
-		internal int		l3;
-		internal int		l4;
+		internal IntPtr		ptr1;
+		internal IntPtr		ptr2;
+		internal IntPtr		ptr3;
+		internal IntPtr		ptr4;
+		internal IntPtr		ptr5;
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
