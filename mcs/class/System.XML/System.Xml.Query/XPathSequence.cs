@@ -479,13 +479,13 @@ namespace Mono.Xml.XPath2
 	internal class FilteredIterator : XPathSequence
 	{
 		XPathSequence left;
-		PredicateList filter;
+		ExprSequence filter;
 
 		public FilteredIterator (XPathSequence iter, FilterStepExpr source)
 			: base (iter.Context)
 		{
 			left = source.Expr.Evaluate (iter);
-			filter = source.Predicates;
+			filter = source.Predicate;
 		}
 
 		private FilteredIterator (FilteredIterator other)
@@ -502,25 +502,31 @@ namespace Mono.Xml.XPath2
 
 		protected override bool MoveNextCore ()
 		{
+			// FIXME: as for numeric predicates, it is MUCH faster
+			// when it skips apparent non-candidates, with possible
+			// method implementation "XPathSequence.SkipTo (int)".
+			// When it comes true, iteration won't be done first.
 			while (left.MoveNext ()) {
-				bool skipThisItem = false;
-				// Examine all filters
-				foreach (ExprSequence expr in filter) {
-					bool doesntPass = true;
-					// Treat as OK if any of expr passed.
-					// FIXME: handle numeric predicate.
-					foreach (ExprSingle single in expr) {
-						if (single.EvaluateAsBoolean (left)) {
+				bool doesntPass = true;
+				// Treat as OK if any of filter expr passed.
+				// FIXME: handle numeric predicate.
+				foreach (ExprSingle single in filter) {
+					XPathAtomicValue av = single.EvaluateAsAtomic (left);
+					if (av == null)
+						continue;
+					if (SequenceType.IsNumeric (av.XmlType.TypeCode)) {
+						// numeric filter
+						if (av.ValueAsInt32 == left.Position) {
 							doesntPass = false;
 							break;
 						}
 					}
-					if (doesntPass) {
-						skipThisItem = true;
+					else if (single.EvaluateAsBoolean (left)) {
+						doesntPass = false;
 						break;
 					}
 				}
-				if (skipThisItem)
+				if (doesntPass)
 					continue;
 				return true;
 			}

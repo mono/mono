@@ -137,7 +137,7 @@ namespace Mono.Xml.XPath2
 				XPathNavigator nav = item as XPathNavigator;
 				if (w.WriteState != WriteState.Start && nav.NodeType == XPathNodeType.Root)
 					throw new XmlQueryException ("Current output can not accept root node.");
-				nav.WriteSubtree (w);
+				w.WriteNode (nav, false);
 			} else
 				w.WriteString (item.Value);
 		}
@@ -1842,38 +1842,36 @@ namespace Mono.Xml.XPath2
 
 	internal class FilterStepExpr : PathExpr
 	{
-		public FilterStepExpr (ExprSingle expr, PredicateList predicates)
+		public FilterStepExpr (ExprSingle expr, ExprSequence predicate)
 		{
 			this.expr = expr;
-			this.predicates = predicates;
+			this.predicate = predicate;
 		}
 
 		ExprSingle expr;
-		PredicateList predicates;
+		ExprSequence predicate;
 
 		public ExprSingle Expr {
 			get { return expr; }
 			set { expr = value; }
 		}
 
-		public PredicateList Predicates {
-			get { return predicates; }
+		public ExprSequence Predicate {
+			get { return predicate; }
 		}
 
 		internal override void CheckReference (XQueryASTCompiler compiler)
 		{
 			expr.CheckReference (compiler);
-			foreach (ExprSequence seq in predicates)
-				seq.CheckReference (compiler);
+			predicate.CheckReference (compiler);
 		}
 
 #region CompileAndEvaluate
 		internal override ExprSingle CompileCore (XQueryASTCompiler compiler)
 		{
 			Expr = Expr.Compile (compiler);
-			foreach (ExprSequence seq in Predicates)
-				for (int i = 0; i < seq.Count; i++)
-					seq [i] = seq [i].Compile (compiler);
+			for (int i = 0; i < predicate.Count; i++)
+				predicate [i] = predicate [i].Compile (compiler);
 			return this;
 		}
 
@@ -1888,6 +1886,7 @@ namespace Mono.Xml.XPath2
 #endregion
 	}
 
+/*
 	// predicates == exprsequence list == list of list of exprsingle
 	internal class PredicateList : CollectionBase
 	{
@@ -1905,6 +1904,7 @@ namespace Mono.Xml.XPath2
 			get { return (ExprSequence) List [i]; }
 		}
 	}
+*/
 
 	internal class XPath2NodeTest
 	{

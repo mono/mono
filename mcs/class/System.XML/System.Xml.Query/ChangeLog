@@ -1,3 +1,9 @@
+2004-10-04  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XQueryParser.jay, XPath2Expression.cs, XPathSequence.cs :
+	  two or more Filter expressions could be simply constructed as
+	  nested FilterExpr objects.
+
 2004-09-22  Atsushi Enomoto <atsushi@ximian.com>
 
 	* SequenceType.cs : return TypedValue instead of null in case of

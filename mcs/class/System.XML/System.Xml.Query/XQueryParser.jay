@@ -1649,13 +1649,10 @@ StepExpr // returns ExprSingle
 	;
 
 AxisStep // returns PathExpr 
-	: ForwardOrReverseStep Predicates
+	: ForwardOrReverseStep
+	| AxisStep Predicate
 	{
-		PredicateList p = (PredicateList) $2;
-		if (p == null)
-			$$ = $1;
-		else
-			$$ = new FilterStepExpr ((ExprSingle) $1, (PredicateList) $2);
+		$$ = new FilterStepExpr ((ExprSingle) $1, (ExprSequence) $2);
 	}
 	;
 
@@ -1664,13 +1661,20 @@ ForwardOrReverseStep // returns ExprSingle
 	| ReverseStep
 	;
 
-FilterStep // returns ExprSingle 
-	: PrimaryExpr Predicates
+Predicate
+	: OPEN_BRACKET Expr CLOSE_BRACKET {
+		tokenizer.State = ParseState.Operator;
+	  }
 	{
-		if ($2 == null)
-			$$ = (ExprSingle) $1;
-		else
-			$$ = new FilterStepExpr ((ExprSingle) $1, (PredicateList) $2);
+		$$ = $2;
+	}
+	;
+
+FilterStep // returns ExprSingle 
+	: PrimaryExpr
+	| FilterStep Predicate
+	{
+		$$ = new FilterStepExpr ((ExprSingle) $1, (ExprSequence) $2);
 	}
 	;
 
@@ -1761,23 +1765,6 @@ AbbrevReverseStep // returns AxisStepExpr
 	: DOT2
 	{
 		$$ = new AxisStepExpr (XPathAxis.Parent, null);
-	}
-	;
-
-Predicates // returns PredicateList or null 
-	: // empty
-	{
-		$$ = null;
-	}
-	| OPEN_BRACKET Expr CLOSE_BRACKET {
-		tokenizer.State = ParseState.Operator;
-	  } Predicates
-	{
-		PredicateList l = (PredicateList) $5;
-		if (l == null)
-			l = new PredicateList ();
-		l.Insert (0, (ExprSequence) $2);
-		$$ = l;
 	}
 	;
 
