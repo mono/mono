@@ -1,3 +1,8 @@
+2004-01-27  Martin Baulig  <martin@ximian.com>
+
+	* class.c (mono_class_from_generic_parameter): Don't create
+	`klass->methods' here.	
+
 2004-01-26  Zoltan Varga  <vargaz@freemail.hu>
 
 	* loader.c (mono_lookup_pinvoke_call): Disable trimming of .dll
