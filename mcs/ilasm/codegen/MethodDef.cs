@@ -338,7 +338,7 @@ namespace Mono.ILASM {
                         if (entry_point)
                                 methoddef.DeclareEntryPoint ();
 
-                        if (local_list != null) {
+                        if (local_list.Count > 0) {
                                 int ec = code_gen.Report.ErrorCount;
                                 PEAPI.Local[] local_array = new PEAPI.Local[local_list.Count];
                                 int i = 0;

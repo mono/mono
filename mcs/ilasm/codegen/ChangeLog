@@ -1,3 +1,8 @@
+2004-07-12  Jackson Harper  <jackson@ximian.com>
+
+	* MethodDef.cs: Local lists are not lazyily allocated so they were
+	getting added to every method. This is legal but wastes space.
+
 2004-07-08  Jackson Harper  <jackson@ximian.com>
 
 	* CodeGen.cs: Add assembly custom attributes to the pe file.
