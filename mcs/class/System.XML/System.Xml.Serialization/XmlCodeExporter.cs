@@ -19,7 +19,6 @@ namespace System.Xml.Serialization {
 
 		CodeNamespace codeNamespace;
 		CodeCompileUnit codeCompileUnit;
-		CodeAttributeDeclarationCollection includeMetadata;
 		bool encodedFormat;
 		XmlMapCodeGenerator codeGenerator;
 
@@ -35,7 +34,6 @@ namespace System.Xml.Serialization {
 
 		public XmlCodeExporter (CodeNamespace codeNamespace, CodeCompileUnit codeCompileUnit)
 		{
-			includeMetadata = new CodeAttributeDeclarationCollection ();
 			this.codeCompileUnit = codeCompileUnit;
 			this.codeNamespace = codeNamespace;
 			
@@ -47,7 +45,7 @@ namespace System.Xml.Serialization {
 		#region Properties
 
 		public CodeAttributeDeclarationCollection IncludeMetadata {
-			get { return includeMetadata; }
+			get { return codeGenerator.IncludeMetadata; }
 		}
 
 		#endregion Properties
@@ -139,11 +137,11 @@ namespace System.Xml.Serialization {
 			AddCustomAttribute (codeClass, ratt, false);
 		}
 		
-		protected override void GenerateClassInclude (CodeTypeDeclaration codeClass, XmlTypeMapping map)
+		protected override void GenerateClassInclude (CodeAttributeDeclarationCollection attributes, XmlTypeMapping map)
 		{
 			CodeAttributeDeclaration iatt = new CodeAttributeDeclaration ("System.Xml.Serialization.XmlInclude");
 			iatt.Arguments.Add (new CodeAttributeArgument (new CodeTypeOfExpression(map.TypeData.FullTypeName)));
-			AddCustomAttribute (codeClass, iatt, true);
+			attributes.Add (iatt);
 		}
 		
 		protected override void GenerateAnyAttribute (CodeMemberField codeField)

@@ -27,7 +27,6 @@ namespace System.Xml.Serialization {
 		bool encodedFormat = false;
 		XmlReflectionImporter auxXmlRefImporter;
 		SoapReflectionImporter auxSoapRefImporter;
-		Hashtable forcedBaseTypes;
 
 		static readonly XmlQualifiedName anyType = new XmlQualifiedName ("anyType",XmlSchema.Namespace);
 		static readonly XmlQualifiedName arrayType = new XmlQualifiedName ("Array",XmlSerializer.EncodingNamespace);
@@ -127,22 +126,77 @@ namespace System.Xml.Serialization {
 			}
 			
 			XmlTypeMapping map = GetRegisteredTypeMapping (qname);
-			if (map != null) return map;
-			
-			RegisterForcedBaseType (qname, baseType);
+			if (map != null)
+			{
+				// If the type has already been imported, make sure that the map 
+				// has the requested base type
+				
+				SetMapBaseType (map, baseType);
+				map.SetRoot (name);
+				return map;
+			}
 			
 			map = CreateTypeMapping (qname, SchemaTypes.Class, name);
 			map.Documentation = GetDocumentation (stype);
 			RegisterMapFixup (map, qname, (XmlSchemaComplexType)stype);
 			
 			BuildPendingMaps ();
+			SetMapBaseType (map, baseType);
+			
 			return map;
 		}
-
-		[MonoTODO]
-		public XmlTypeMapping ImportDerivedTypeMapping (XmlQualifiedName name, bool baseTypeCanBeIndirect)
+		
+		void SetMapBaseType (XmlTypeMapping map, Type baseType)
 		{
-			throw new NotImplementedException ();
+			// This method sets the base type for a given map.
+			// If the map already inherits from this type, it does nothing.
+			
+			// Fiirst of all, check if the map already inherits from baseType
+				
+			XmlTypeMapping topMap = null;
+			while (map != null)
+			{
+				if (map.TypeData.Type == baseType)
+					return;
+				topMap = map;
+				map = map.BaseMap;
+			}
+			
+			// Does not have the requested base type.
+			// Then, get/create a map for that base type.
+			
+			XmlTypeMapping baseMap;
+			if (!encodedFormat)
+			{
+				if (auxXmlRefImporter == null) auxXmlRefImporter = new XmlReflectionImporter ();
+				baseMap = auxXmlRefImporter.ImportTypeMapping (baseType);
+			}
+			else
+			{
+				if (auxSoapRefImporter == null) auxSoapRefImporter = new SoapReflectionImporter ();
+				baseMap = auxSoapRefImporter.ImportTypeMapping (baseType);
+			}
+			
+			// Add this map as a derived map of the base map
+
+			topMap.BaseMap = baseMap;
+			baseMap.DerivedTypes.Add (topMap);
+			baseMap.DerivedTypes.AddRange (topMap.DerivedTypes);
+			
+			// Now add the base type fields to all derived maps
+
+			ClassMap baseClassMap = (ClassMap)baseMap.ObjectMap;
+			
+			ClassMap cmap = (ClassMap)topMap.ObjectMap;
+			foreach (XmlTypeMapMember member in baseClassMap.AllMembers)
+				cmap.AddMember (member);
+				
+			foreach (XmlTypeMapping derivedMap in topMap.DerivedTypes)
+			{
+				cmap = (ClassMap)derivedMap.ObjectMap;
+				foreach (XmlTypeMapMember member in baseClassMap.AllMembers)
+					cmap.AddMember (member);
+			}
 		}
 
 		public XmlMembersMapping ImportMembersMapping (XmlQualifiedName name)
@@ -189,7 +243,7 @@ namespace System.Xml.Serialization {
 			return new XmlMembersMapping (mapping);
 		}
 		
-		public XmlMembersMapping ImportEncodedMembersMapping (string name, string ns, SoapSchemaMember[] members, bool hasWrapperElement)
+		internal XmlMembersMapping ImportEncodedMembersMapping (string name, string ns, SoapSchemaMember[] members, bool hasWrapperElement)
 		{
 			XmlMemberMapping[] mapping = new XmlMemberMapping [members.Length];
 			for (int n=0; n<members.Length; n++)
@@ -202,7 +256,7 @@ namespace System.Xml.Serialization {
 			return new XmlMembersMapping (name, ns, hasWrapperElement, false, mapping);
 		}
 		
-		public XmlMembersMapping ImportEncodedMembersMapping (string name, string ns, SoapSchemaMember member)
+		internal XmlMembersMapping ImportEncodedMembersMapping (string name, string ns, SoapSchemaMember member)
 		{
 			XmlSchemaComplexType stype = schemas.Find (member.MemberType, typeof (XmlSchemaComplexType)) as XmlSchemaComplexType;
 			if (stype == null) throw new InvalidOperationException ("Schema type '" + member.MemberType + "' not found or not valid");
@@ -211,7 +265,7 @@ namespace System.Xml.Serialization {
 			return new XmlMembersMapping (name, ns, mapping);
 		}
 		
-		public XmlMemberMapping[] ImportMembersMappingComposite (XmlSchemaComplexType stype, XmlQualifiedName refer)
+		XmlMemberMapping[] ImportMembersMappingComposite (XmlSchemaComplexType stype, XmlQualifiedName refer)
 		{
 			if (stype.Particle == null) 
 				return new XmlMemberMapping [0];
@@ -330,7 +384,7 @@ namespace System.Xml.Serialization {
 		{
 			XmlTypeMapping map = GetRegisteredTypeMapping (name);
 			if (map != null) return map;
-
+			
 			if (stype is XmlSchemaComplexType)
 				return ImportClassComplexType (name, (XmlSchemaComplexType) stype, root);
 			else if (stype is XmlSchemaSimpleType)
@@ -428,12 +482,7 @@ namespace System.Xml.Serialization {
 			bool isMixed = stype.IsMixed;
 
 			if (stype.Particle != null)
-			{
-				if  (HasForcedBaseType (typeQName))
-					ImportForcedDerivedType (map, typeQName, ref isMixed);
-					
 				ImportParticleComplexContent (typeQName, cmap, stype.Particle, classIds, isMixed);
-			}
 			else
 			{
 				if (stype.ContentModel is XmlSchemaSimpleContent) {
@@ -446,6 +495,8 @@ namespace System.Xml.Serialization {
 
 			ImportAttributes (typeQName, cmap, stype.Attributes, stype.AnyAttribute, classIds);
 			ImportExtensionTypes (typeQName);
+			
+			GetTypeMapping (TypeTranslator.GetTypeData (typeof(object))).DerivedTypes.Add (map);
 		}
 		
 		void ImportAttributes (XmlQualifiedName typeQName, ClassMap cmap, XmlSchemaObjectCollection atts, XmlSchemaAnyAttribute anyat, CodeIdentifiers classIds)
@@ -607,7 +658,7 @@ namespace System.Xml.Serialization {
 		void ImportParticleComplexContent (XmlQualifiedName typeQName, ClassMap cmap, XmlSchemaParticle particle, CodeIdentifiers classIds, bool isMixed)
 		{
 			ImportParticleContent (typeQName, cmap, particle, classIds, false, ref isMixed);
-			if (isMixed)
+			if (isMixed && cmap.XmlTextCollector == null)
 			{
 				XmlTypeMapMemberFlatList member = new XmlTypeMapMemberFlatList ();
 				member.Name = classIds.AddUnique ("Text", member);
@@ -951,9 +1002,6 @@ namespace System.Xml.Serialization {
 			if (ext != null) qname = ext.BaseTypeName;
 			else qname = ((XmlSchemaComplexContentRestriction)content.Content).BaseTypeName;
 			
-			if (HasForcedBaseType (typeQName))
-				RegisterForcedBaseType (qname, GetForcedBaseType (typeQName));
-				
 			// Add base map members to this map
 
 			XmlTypeMapping baseMap = ImportType (qname, null);
@@ -979,34 +1027,6 @@ namespace System.Xml.Serialization {
 			else {
 				if (isMixed) ImportParticleComplexContent (typeQName, cmap, null, classIds, true);
 			}
-		}
-		
-		public void ImportForcedDerivedType (XmlTypeMapping map, XmlQualifiedName qname, ref bool isMixed)
-		{
-			ClassMap cmap = (ClassMap)map.ObjectMap;
-
-			XmlTypeMapping baseMap;
-			Type baseType = GetForcedBaseType (qname);
-			if (encodedFormat)
-			{
-				if (auxXmlRefImporter == null) auxXmlRefImporter = new XmlReflectionImporter ();
-				baseMap = auxXmlRefImporter.ImportTypeMapping (baseType);
-			}
-			else
-			{
-				if (auxSoapRefImporter == null) auxSoapRefImporter = new SoapReflectionImporter ();
-				baseMap = auxSoapRefImporter.ImportTypeMapping (baseType);
-			}
-
-			ClassMap baseClassMap = (ClassMap)baseMap.ObjectMap;
-
-			foreach (XmlTypeMapMember member in baseClassMap.AllMembers)
-				cmap.AddMember (member);
-
-			if (baseClassMap.XmlTextCollector != null) isMixed = false;
-
-			map.BaseMap = baseMap;
-			baseMap.DerivedTypes.Add (map);
 		}
 		
 		void ImportExtensionTypes (XmlQualifiedName qname)
@@ -1223,24 +1243,6 @@ namespace System.Xml.Serialization {
 			return (seq.Items[1] is XmlSchemaAny);
 		}
 		
-		void RegisterForcedBaseType (XmlQualifiedName tname, Type type)
-		{
-			if (forcedBaseTypes == null) forcedBaseTypes = new Hashtable ();
-			forcedBaseTypes [tname] = type;
-		}
-		
-		bool HasForcedBaseType (XmlQualifiedName tname)
-		{
-			if (forcedBaseTypes == null) return false;
-			return forcedBaseTypes.ContainsKey (tname);
-		}
-
-		Type GetForcedBaseType (XmlQualifiedName tname)
-		{
-			if (forcedBaseTypes == null) return null;
-			return (Type) forcedBaseTypes [tname];
-		}
-
 		XmlTypeMapElementInfo CreateElementInfo (string ns, XmlTypeMapMember member, string name, TypeData typeData, bool isNillable, XmlSchemaForm form)
 		{
 			if (typeData.IsComplexType)
@@ -1448,6 +1450,22 @@ namespace System.Xml.Serialization {
 				map = new XmlTypeMapping (typeData.XmlType, XmlSchema.Namespace, typeData, typeData.XmlType, XmlSchema.Namespace);
 				map.IncludeInSchema = false;
 				dataMappedTypes [typeData] = map;
+				
+				if (typeData.Type == typeof(object))
+				{
+					// All complex types are subtypes of anyType, so all of them 
+					// must also be imported
+					
+					foreach (XmlSchema schema in schemas) {
+						foreach (XmlSchemaObject sob in schema.Items) 
+						{
+							XmlSchemaComplexType sct = sob as XmlSchemaComplexType;
+							if (sct != null)
+								ImportType (new XmlQualifiedName (sct.Name, schema.TargetNamespace), sct, null);
+						}
+					}					
+				}
+				
 				return map;
 			}
 			

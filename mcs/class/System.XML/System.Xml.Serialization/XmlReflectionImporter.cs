@@ -508,7 +508,7 @@ namespace System.Xml.Serialization {
 			}
 		}
 
-		public ICollection GetReflectionMembers (Type type)
+		ICollection GetReflectionMembers (Type type)
 		{
 			ArrayList members = new ArrayList();
 			MemberInfo[] tmembers = type.GetMembers (BindingFlags.Instance | BindingFlags.Public);
@@ -782,7 +782,15 @@ namespace System.Xml.Serialization {
 				throw new ArgumentNullException ("type");
 
 			if (includedTypes == null) includedTypes = new ArrayList ();
-			includedTypes.Add (type);
+			if (!includedTypes.Contains (type))
+				includedTypes.Add (type);
+		}
+
+		public void IncludeTypes (ICustomAttributeProvider provider)
+		{ 
+			object[] ats = provider.GetCustomAttributes (typeof(XmlIncludeAttribute), true);
+			foreach (XmlIncludeAttribute at in ats)
+				IncludeType (at.Type);
 		}
 
 		#endregion // Methods

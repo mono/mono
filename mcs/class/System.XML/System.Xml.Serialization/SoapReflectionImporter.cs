@@ -185,13 +185,13 @@ namespace System.Xml.Serialization {
 			for (int n=0; n<includes.Length; n++)
 			{
 				Type includedType = includes[n].Type;
-				ImportTypeMapping (includedType, defaultNamespace);
+				ImportTypeMapping (includedType);
 			}
 
 			if (type == typeof (object) && includedTypes != null)
 			{
 				foreach (Type intype in includedTypes)
-					map.DerivedTypes.Add (ImportTypeMapping (intype, defaultNamespace));
+					map.DerivedTypes.Add (ImportTypeMapping (intype));
 			}
 
 			// Register inheritance relations
@@ -274,8 +274,17 @@ namespace System.Xml.Serialization {
 			list.Add (elem);
 
 			obmap.ItemInfo = list;
-			ImportTypeMapping (typeof(object), defaultNamespace).DerivedTypes.Add (map);
+			XmlTypeMapping objMap = ImportTypeMapping (typeof(object), defaultNamespace);
+			objMap.DerivedTypes.Add (map);
 
+			// Register any of the including types as a derived class of object
+			SoapIncludeAttribute[] includes = (SoapIncludeAttribute[])type.GetCustomAttributes (typeof (SoapIncludeAttribute), false);
+			for (int i = 0; i < includes.Length; i++)
+			{
+				Type includedType = includes[i].Type;
+				objMap.DerivedTypes.Add(ImportTypeMapping (includedType, defaultNamespace));
+			}
+			
 			return map;
 		}
 		
@@ -317,7 +326,7 @@ namespace System.Xml.Serialization {
 			return map;
 		}
 
-		public ICollection GetReflectionMembers (Type type)
+		ICollection GetReflectionMembers (Type type)
 		{
 			ArrayList members = new ArrayList();
 			PropertyInfo[] properties = type.GetProperties (BindingFlags.Instance | BindingFlags.Public);
@@ -405,13 +414,15 @@ namespace System.Xml.Serialization {
 				throw new ArgumentNullException ("type");
 
 			if (includedTypes == null) includedTypes = new ArrayList ();
-			includedTypes.Add (type);
+			if (!includedTypes.Contains (type))
+				includedTypes.Add (type);
 		}
 
-		[MonoTODO]
 		public void IncludeTypes (ICustomAttributeProvider provider)
 		{ 
-			throw new NotImplementedException ();
+			object[] ats = provider.GetCustomAttributes (typeof(SoapIncludeAttribute), true);
+			foreach (SoapIncludeAttribute at in ats)
+				IncludeType (at.Type);
 		}
 
 		Exception CreateTypeException (Type type)

@@ -17,16 +17,35 @@ namespace System.Xml.Serialization {
 		CodeNamespace codeNamespace;
 		CodeCompileUnit codeCompileUnit;
 		CodeAttributeDeclarationCollection includeMetadata;
+		XmlTypeMapping exportedAnyType = null;
 		bool encodedFormat;
 
 		Hashtable exportedMaps = new Hashtable ();
 
 		public MapCodeGenerator (CodeNamespace codeNamespace, CodeCompileUnit codeCompileUnit)
 		{
+			includeMetadata = new CodeAttributeDeclarationCollection ();
 			this.codeCompileUnit = codeCompileUnit;
 			this.codeNamespace = codeNamespace;
 		}
 
+		public CodeAttributeDeclarationCollection IncludeMetadata 
+		{
+			get 
+			{ 
+				if (exportedAnyType != null)
+				{
+					foreach (XmlTypeMapping map in exportedAnyType.DerivedTypes) 
+					{
+						if (IsMapExported (map)) continue;
+						ExportTypeMapping (map);
+						GenerateClassInclude (includeMetadata, map);
+					}
+				}
+				return includeMetadata; 
+			}
+		}
+		
 		#region Code generation methods
 
 		public void ExportMembersMapping (XmlMembersMapping xmlMembersMapping)
@@ -69,6 +88,12 @@ namespace System.Xml.Serialization {
 			if (IsMapExported (map)) return;
 			SetMapExported (map);
 
+			if (map.TypeData.Type == typeof(object))
+			{
+				exportedAnyType = map;
+				return;
+			}
+			
 			CodeTypeDeclaration codeClass = new CodeTypeDeclaration (map.TypeData.TypeName);
 			AddCodeType (codeClass, map.Documentation);
 			codeClass.Attributes = MemberAttributes.Public;
@@ -91,7 +116,10 @@ namespace System.Xml.Serialization {
 		{
 			foreach (XmlTypeMapping tm in map.DerivedTypes)
 			{
-				GenerateClassInclude (codeClass, tm);
+				if (codeClass.CustomAttributes == null) 
+					codeClass.CustomAttributes = new CodeAttributeDeclarationCollection ();
+
+				GenerateClassInclude (codeClass.CustomAttributes, tm);
 				ExportMapCode (tm);
 				ExportDerivedTypes (tm, codeClass);
 			}
@@ -359,15 +387,14 @@ namespace System.Xml.Serialization {
 		
 		bool IsMapExported (XmlTypeMapping map)
 		{
-			if (exportedMaps.Contains (map)) return true;
-			if (map.TypeData.Type == typeof(object)) return true;
-			if (!map.IncludeInSchema) return true;
+			if (exportedMaps.Contains (map.TypeData.FullTypeName)) return true;
+			if (!map.IncludeInSchema && map.TypeData.Type != typeof(object)) return true;
 			return false;
 		}
 
 		void SetMapExported (XmlTypeMapping map)
 		{
-			exportedMaps.Add (map,map);
+			exportedMaps.Add (map.TypeData.FullTypeName, map);
 		}
 
 		public static void AddCustomAttribute (CodeTypeMember ctm, CodeAttributeDeclaration att, bool addIfNoParams)
@@ -424,7 +451,7 @@ namespace System.Xml.Serialization {
 		{
 		}
 		
-		protected virtual void GenerateClassInclude (CodeTypeDeclaration codeClass, XmlTypeMapping map)
+		protected virtual void GenerateClassInclude (CodeAttributeDeclarationCollection attributes, XmlTypeMapping map)
 		{
 		}
 		

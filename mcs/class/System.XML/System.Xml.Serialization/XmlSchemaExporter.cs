@@ -192,6 +192,13 @@ namespace System.Xml.Serialization {
 		{
 			if (IsMapExported (map)) return;
 			SetMapExported (map);
+			
+			if (map.TypeData.Type == typeof(object))
+			{
+				foreach (XmlTypeMapping dmap in map.DerivedTypes)
+					if (dmap.TypeData.SchemaType == SchemaTypes.Class) ExportClassSchema (dmap);
+				return;
+			}
 
 			XmlSchema schema = GetSchema (map.XmlTypeNamespace);
 			XmlSchemaComplexType stype = new XmlSchemaComplexType ();
@@ -437,10 +444,11 @@ namespace System.Xml.Serialization {
 						if (einfo.MappedType.TypeData.Type != typeof(object)) {
 							selem.SchemaTypeName = new XmlQualifiedName (einfo.MappedType.XmlType, einfo.MappedType.XmlTypeNamespace);
 							ImportNamespace (currentSchema, einfo.MappedType.XmlTypeNamespace);
-							ExportClassSchema (einfo.MappedType);
 						}
 						else if (encodedFormat)
 							selem.SchemaTypeName = new XmlQualifiedName (einfo.MappedType.XmlType, einfo.MappedType.XmlTypeNamespace);
+							
+						ExportClassSchema (einfo.MappedType);
 						break;
 
 					case SchemaTypes.Primitive:
@@ -611,8 +619,7 @@ namespace System.Xml.Serialization {
 							ExportArraySchema (einfo.MappedType, schemaNs); 
 							break;
 						case SchemaTypes.Class:
-							if (einfo.MappedType.TypeData.Type != typeof(object))
-								ExportClassSchema (einfo.MappedType);
+							ExportClassSchema (einfo.MappedType);
 							break;
 					}
 				}
@@ -655,7 +662,6 @@ namespace System.Xml.Serialization {
 		bool IsMapExported (XmlTypeMapping map)
 		{
 			if (exportedMaps.ContainsKey (GetMapKey(map))) return true;
-			if (map.TypeData.Type == typeof(object)) return true;
 			return false;
 		}
 

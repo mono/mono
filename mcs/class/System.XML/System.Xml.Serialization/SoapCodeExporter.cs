@@ -17,7 +17,6 @@ namespace System.Xml.Serialization {
 
 		CodeNamespace codeNamespace;
 		CodeCompileUnit codeCompileUnit;
-		CodeAttributeDeclarationCollection includeMetadata;
 		SoapMapCodeGenerator codeGenerator;
 
 		#endregion
@@ -30,7 +29,6 @@ namespace System.Xml.Serialization {
 
 		public SoapCodeExporter (CodeNamespace codeNamespace, CodeCompileUnit codeCompileUnit)
 		{
-			includeMetadata = new CodeAttributeDeclarationCollection ();
 			this.codeCompileUnit = codeCompileUnit;
 			this.codeNamespace = codeNamespace;
 			
@@ -42,7 +40,7 @@ namespace System.Xml.Serialization {
 		#region Properties
 
 		public CodeAttributeDeclarationCollection IncludeMetadata {
-			get { return includeMetadata; }
+			get { return codeGenerator.IncludeMetadata; }
 		}
 		
 		#endregion // Properties
@@ -97,11 +95,11 @@ namespace System.Xml.Serialization {
 			AddCustomAttribute (codeClass, att, false);
 		}
 		
-		protected override void GenerateClassInclude (CodeTypeDeclaration codeClass, XmlTypeMapping map)
+		protected override void GenerateClassInclude (CodeAttributeDeclarationCollection attributes, XmlTypeMapping map)
 		{
 			CodeAttributeDeclaration iatt = new CodeAttributeDeclaration ("System.Xml.Serialization.SoapInclude");
 			iatt.Arguments.Add (new CodeAttributeArgument (new CodeTypeOfExpression(map.TypeData.FullTypeName)));
-			AddCustomAttribute (codeClass, iatt, true);
+			attributes.Add (iatt);
 		}
 	
 		protected override void GenerateAttributeMember (CodeAttributeDeclarationCollection attributes, XmlTypeMapMemberAttribute attinfo, string defaultNamespace, bool forceUseMemberName)

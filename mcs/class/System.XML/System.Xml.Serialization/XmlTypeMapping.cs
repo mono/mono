@@ -128,6 +128,12 @@ namespace System.Xml.Serialization
 			
 			return null;
 		}
+		
+		internal void SetRoot (XmlQualifiedName qname)
+		{
+			this.elementName = qname.Name;
+			this.ns = qname.Namespace;
+		}
 	}
 
 	// Mapping info for classes and structs

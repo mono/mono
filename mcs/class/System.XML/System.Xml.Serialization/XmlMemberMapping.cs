@@ -101,6 +101,13 @@ namespace System.Xml.Serialization
 			get { return _form; }
 		}
 
+#if NET_1_1
+		public bool CheckSpecified
+		{
+			get { return _mapMember.IsOptionalValueType; }
+		}
+#endif
+
 		#endregion // Properties
 	}
 }

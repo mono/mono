@@ -1,3 +1,27 @@
+2004-02-27  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* MapCodeGenerator.cs: Added IncludeMetadata property, which returns a list
+	  of XmlInclude attributes needed for the service class.
+	  IsMapExported: Removed check for object type, since it can now be exported.
+	  SetMapExported: Use the type name as key, since different importers may
+	  be used to create a map for the same type.
+	  GenerateClassInclude: Updated signature.
+	* SoapCodeExporter.cs: Moved management of IncludeMetadata to MapCodeGenerator.
+	  GenerateClassInclude(): Updated signature.
+	* SoapReflectionImporter.cs: Support SoapIncludeAttribute in array members.
+	  Implemented IncludeTypes.
+	* XmlCodeExporter.cs: Moved management of IncludeMetadata to MapCodeGenerator.
+	  GenerateClassInclude(): Updated signature.
+	* XmlMemberMapping.cs: Added missing property.
+	* XmlReflectionImporter.cs: GetReflectionMembers must be private.
+	  Implemented IncludeTypes().
+	* XmlSchemaExporter.cs: Added support for exporting typeof(object).
+	* XmlSchemaImporter.cs: Changed the implementation of ImportDerivedTypeMapping.
+	  Now, it does a regular import and then assign the required base class to
+	  the imported map. In this way it is possible to assign a base type for a 
+	  map that was previously imported without a base type.
+	* XmlTypeMapping.cs: Added internal method SetRoot().
+
 2004-02-24  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* SerializationCodeGenerator.cs: Added support for generation of readers
