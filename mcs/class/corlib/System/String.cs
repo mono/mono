@@ -435,6 +435,10 @@ namespace System {
 			return InternalIndexOfAny(arr, sindex, this.length - sindex);
 		}
 
+		public int IndexOfAny(char [] arr, int sindex, int count) {
+			return InternalIndexOfAny(arr, sindex, count);
+		}
+
 		public int IndexOf(char value) {
 			return InternalIndexOf(value, 0, this.length);
 		}
@@ -493,10 +497,23 @@ namespace System {
 			if (sindex < 0 || sindex > this.length)
 				throw new ArgumentOutOfRangeException();
 
-			if (sindex == 0 && this.length == 0)
+			if (this.length == 0)
 				return -1;
 
 			return InternalLastIndexOfAny(arr, sindex, sindex + 1);
+		}
+
+		public int LastIndexOfAny(char [] arr, int sindex, int count) {
+			if (null == arr) 
+				throw new ArgumentNullException();
+
+			if (sindex < 0 || count < 0 || sindex > this.length || sindex - count < -1)
+				throw new ArgumentOutOfRangeException();
+
+			if (this.length == 0)
+				return -1;
+
+			return InternalLastIndexOfAny(arr, sindex, count);
 		}
 
 		public int LastIndexOf(char value) {
