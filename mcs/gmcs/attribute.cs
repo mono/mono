@@ -603,7 +603,7 @@ namespace Mono.CSharp {
 					return true;
 				else
 					return false;
-			} else if (element is Event || element is InterfaceEvent) {
+			} else if (element is Event) {
 				if ((targets & AttributeTargets.Event) != 0)
 					return true;
 				else
@@ -619,7 +619,7 @@ namespace Mono.CSharp {
 				else
 					return false;
 			} else if (element is Method || element is Operator ||
-                                   element is InterfaceMethod || element is Accessor) {
+                                   element is Accessor) {
 				if ((targets & AttributeTargets.Method) != 0)
 					return true;
 				else
@@ -631,7 +631,7 @@ namespace Mono.CSharp {
 				else
 					return false;
 			} else if (element is Property || element is Indexer ||
-				   element is InterfaceProperty || element is InterfaceIndexer || element is InterfaceProperty.PropertyAccessor) {
+				   element is Accessor) {
 				if ((targets & AttributeTargets.Property) != 0)
 					return true;
 				else
@@ -880,9 +880,7 @@ namespace Mono.CSharp {
 							attributeSupport.SetCustomAttribute (cb);
 						}
 					}
-					else if (kind is Method || kind is Operator || kind is InterfaceMethod ||
-
-					    kind is Accessor) {
+					else if (kind is Method || kind is Operator || kind is Accessor) {
 						if (attr_type == TypeManager.methodimpl_attr_type) {
 							if (a.ImplOptions == MethodImplOptions.InternalCall)
 								((MethodBuilder) builder).
@@ -909,8 +907,7 @@ namespace Mono.CSharp {
 						} else { 
 							((FieldBuilder) builder).SetCustomAttribute (cb);
 						}
-					} else if (kind is Property || kind is Indexer ||
-						   kind is InterfaceProperty || kind is InterfaceIndexer) {
+					} else if (kind is Property || kind is Indexer) {
 
                                                 if (builder is PropertyBuilder) 
 						((PropertyBuilder) builder).SetCustomAttribute (cb);
@@ -920,7 +917,7 @@ namespace Mono.CSharp {
                                                 //
                                                 else if (builder is MethodBuilder)
                                                         ((MethodBuilder) builder).SetCustomAttribute (cb);
-					} else if (kind is Event || kind is InterfaceEvent) {
+					} else if (kind is Event) {
 						((MyEventBuilder) builder).SetCustomAttribute (cb);
 					} else if (kind is ParameterBuilder) {
 
@@ -1005,7 +1002,7 @@ namespace Mono.CSharp {
 						Interface iface = (Interface) kind;
 
 						if ((attr_type == TypeManager.default_member_type) &&
-						    (iface.InterfaceIndexers != null)) {
+						    (iface.Indexers != null)) {
 							Report.Error (
 								646, loc,
 								"Cannot specify the DefaultMember attribute on" +

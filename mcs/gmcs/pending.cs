@@ -154,7 +154,7 @@ namespace Mono.CSharp {
 
 					iface = TypeManager.LookupInterface (t);
 					
-					mi = iface.GetMethods (container);
+					mi = iface.GetMethods ();
 				} else 
 					mi = t.GetMethods ();
 				

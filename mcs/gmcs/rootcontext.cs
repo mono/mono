@@ -732,7 +732,7 @@ namespace Mono.CSharp {
 
                         if (interface_resolve_order != null){
 				foreach (Interface iface in interface_resolve_order)
-                                        iface.Emit (Tree.Types);
+                                        iface.Emit ();
 			}                        
 			
 			if (type_container_resolve_order != null) {

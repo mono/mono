@@ -22,7 +22,6 @@ COMPILER_SOURCES = \
 	expression.cs 			\
 	flowanalysis.cs			\
 	generic.cs			\
-	interface.cs			\
 	iterators.cs			\
 	literal.cs			\
 	location.cs			\

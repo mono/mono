@@ -110,7 +110,8 @@ namespace Mono.CSharp {
 
 			// If we do not have static constructors, static methods
 			// can be invoked without initializing the type.
-			if (!caller.UserDefinedStaticConstructor)
+			if (!caller.UserDefinedStaticConstructor &&
+			    !(caller is Interface))
 				t |= TypeAttributes.BeforeFieldInit;
 				
 			return t;
