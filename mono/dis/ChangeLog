@@ -1,3 +1,7 @@
+2001-06-27  Miguel de Icaza  <miguel@ximian.com>
+
+	* main.c: Split code.
+
 2001-06-22  Miguel de Icaza  <miguel@ximian.com>
 
 	* main.c: More work on the disassembler and on the understanding
