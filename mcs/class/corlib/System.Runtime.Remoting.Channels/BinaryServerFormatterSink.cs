@@ -7,6 +7,8 @@
 //
 
 using System.Collections;
+using System.IO;
+using System.Runtime.Remoting.Messaging;
 
 namespace System.Runtime.Remoting.Channels {
 

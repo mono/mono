@@ -6,6 +6,10 @@
 // 2002 (C) Copyright, Ximian, Inc.
 //
 
+using System.Collections;
+using System.IO;
+using System.Runtime.Remoting.Messaging;
+
 namespace System.Runtime.Remoting.Channels {
 
 	public class SoapServerFormatterSink : IServerChannelSink, IChannelSinkBase
