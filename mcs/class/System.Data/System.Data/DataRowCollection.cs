@@ -57,6 +57,7 @@ namespace System.Data
 			//TODO: validation
 			list.Add (row);
 			row.RowStateInternal = DataRowState.Added;
+			row.Table.ChangedDataRow (row, DataRowAction.Add);
 		}
 
 		/// <summary>

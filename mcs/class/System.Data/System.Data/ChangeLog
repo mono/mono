@@ -1,3 +1,10 @@
+2002-12-04  Ville Palo <vi64pa@koti.soon.fi>
+
+	* DataRow.cs: 
+	* DataRowCollection.cs: Added some event handlins stuff.
+	* DataSet.cs: Some fixes.
+	* DataTable.cs: Added event handlers.
+	
 2002-11-30  Ville Palo <vi64pa@koti.soon.fi>
 
 	* DataRowChangeEventArgs.cs: Implemented Action and Row properties 

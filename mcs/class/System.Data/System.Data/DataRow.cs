@@ -32,7 +32,7 @@ namespace System.Data {
 		private string[] columnErrors;
 		private string rowError;
 		private DataRowState rowState;
-		protected internal int xmlRowID = 0;
+		internal int xmlRowID = 0;
 
 		#endregion
 
@@ -82,7 +82,7 @@ namespace System.Data {
 			[MonoTODO]
 			set {
 				DataColumn column = _table.Columns[columnName];
-				if (column == null) 
+				if (column == null)
 					throw new IndexOutOfRangeException ();
 				this[column] = value;
 			}
@@ -123,6 +123,7 @@ namespace System.Data {
 						current[columnIndex] = DBNull.Value;
 					else
 						current[columnIndex] = value;
+					_table.ChangedDataColumn (this, column, value);
 				}
 				else {
 					BeginEdit ();  // implicitly called
@@ -133,6 +134,7 @@ namespace System.Data {
 						proposed[columnIndex] = DBNull.Value;
 					else
 						proposed[columnIndex] = value;
+					_table.ChangedDataColumn (this, column, value);
 				}
 
 				//Don't know if this is the rigth thing to do,
@@ -395,6 +397,7 @@ namespace System.Data {
 			switch (rowState) {
 			case DataRowState.Added:
 				Table.Rows.Remove (this);
+				_table.DeletedDataRow (this, DataRowAction.Delete);
 				break;
 			case DataRowState.Deleted:
 				throw new DeletedRowInaccessibleException ();
@@ -666,6 +669,8 @@ namespace System.Data {
 						rowState = DataRowState.Unchanged;
 						break;
 				}
+				
+				_table.ChangedDataRow (this, DataRowAction.Rollback);
 			}
 		}
 

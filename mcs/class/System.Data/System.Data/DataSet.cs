@@ -7,6 +7,7 @@
 //   Rodrigo Moya <rodrigo@ximian.com>
 //   Stuart Caborn <stuart.caborn@virgin.net>
 //   Tim Coleman (tim@timcoleman.com)
+//   Ville Palo <vi64pa@koti.soon.fi>
 //
 // (C) Ximian, Inc. 2002
 // Copyright (C) Tim Coleman, 2002
@@ -190,9 +191,11 @@ namespace System.Data {
 
 		#region Public Methods
 
+		[MonoTODO]
 		public void AcceptChanges()
 		{
-			throw new NotImplementedException ();
+			foreach (DataTable tempTable in tableCollection)
+				tempTable.AcceptChanges ();
 		}
 
 		public void Clear()
@@ -717,7 +720,7 @@ namespace System.Data {
 
 				// TODO: other types!
 				if ((e = schema.Items [i] as XmlSchemaElement) != null) {
-				
+
 					dataSetName = e.Name;
 					
 					if (dataSetName != oldSchemaName) {
@@ -726,7 +729,7 @@ namespace System.Data {
 					}
 
 					if ((t = e.SchemaType as XmlSchemaComplexType) != null) {
-						
+
 						if ((c = t.Particle as XmlSchemaChoice) != null) {
 							
 							for (int j = 0; j < c.Items.Count; j++) {
@@ -750,13 +753,17 @@ namespace System.Data {
 					}
 					else {
 						// If not known type then it's declared after this
-						schemaTypeName = e.SchemaTypeName.ToString ();		
+						schemaTypeName = e.SchemaTypeName.ToString ();
+						
+						// FIXME: when xmlschema works correcty this is not needed anymore
+						if (schemaTypeName.StartsWith (":"))
+							schemaTypeName = schemaTypeName.Substring (1);
 					}
 				} // TODO: SimpleType
 				else if ((t = schema.Items [i] as XmlSchemaComplexType) != null) {
 										
 					if (t.Name == schemaTypeName) {
-						
+
 						if ((s = t.Particle as XmlSchemaSequence) != null) {
 							
 							for (int j  = 0; j < s.Items.Count; j++) {
@@ -779,13 +786,18 @@ namespace System.Data {
 								else {
 									// If table type is not known it's declared after this
 									tableTypeName = e.SchemaTypeName.ToString ();
+
+									// FIXME: when XmlSchema works correctly this is not 
+									// needed anymore
+									if (tableTypeName.StartsWith (":"))
+										tableTypeName = tableTypeName.Substring (1);
 								}
 							}	    															
 						}
 					}
 					
 					else if (t.Name == tableTypeName) { // table type declaration
-						
+
 						if ((s = t.Particle as XmlSchemaSequence) != null) {
 							
 							for (int j  = 0; j < s.Items.Count; j++) {

@@ -112,6 +112,24 @@ namespace System.Data {
 		}
 
 
+		internal void ChangedDataColumn (DataRow dr, DataColumn dc, object pv)
+		{
+			DataColumnChangeEventArgs e = new DataColumnChangeEventArgs (dr, dc, pv);
+			OnColumnChanged(e);
+		}
+
+		internal void DeletedDataRow (DataRow dr, DataRowAction action)
+		{
+			DataRowChangeEventArgs e = new DataRowChangeEventArgs (dr, action);
+			OnRowDeleted (e);
+		}
+
+		internal void ChangedDataRow (DataRow dr, DataRowAction action)
+		{
+			DataRowChangeEventArgs e = new DataRowChangeEventArgs (dr, action);
+			OnRowChanged (e);
+		}
+
 		/// <summary>
 		/// Gets the collection of child relations for this DataTable.
 		/// </summary>
@@ -584,6 +602,11 @@ namespace System.Data {
 		[MonoTODO]
 		public void RejectChanges()
 		{
+			foreach(DataRow myRow in _rows)
+			{
+				if (myRow.RowState != DataRowState.Unchanged)
+					myRow.RejectChanges();
+			}
 		}
 
 		/// <summary>
@@ -715,6 +738,7 @@ namespace System.Data {
 				RowChanged(this, e);
 			}
 		}
+
 
 		/// <summary>
 		/// Raises the RowChanging event.
