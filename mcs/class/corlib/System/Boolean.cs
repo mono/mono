@@ -239,7 +239,7 @@ namespace System {
 		
 		public string ToString (IFormatProvider provider)
 		{
-			return System.Convert.ToString(value);
+			return ToString();
 		}
 		
 		[CLSCompliant(false)]

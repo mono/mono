@@ -11,7 +11,7 @@ using System.Globalization;
 
 namespace System {
 	
-	public struct Byte : IComparable, IFormattable { //, IConvertible {
+	public struct Byte : IComparable, IFormattable, IConvertible {
 		private static Type Type = typeof (byte);
 		
 		public const byte MinValue = 0;
@@ -136,14 +136,14 @@ namespace System {
 			return ToString ("G", null);
 		}
 
-		public string ToString (IFormatProvider fp)
-		{
-			return ToString ("G", fp);
-		}
-
 		public string ToString (string format)
 		{
 			return ToString (format, null);
+		}
+
+		public string ToString (IFormatProvider provider)
+		{
+			return ToString ("G", provider);
 		}
 
 		public string ToString (string format, IFormatProvider fp)
@@ -170,6 +170,91 @@ namespace System {
 		public TypeCode GetTypeCode ()
 		{
 			return TypeCode.Byte;
+		}
+
+		public object ToType (Type conversionType, IFormatProvider provider)
+		{
+			return System.Convert.ToType(value, conversionType, provider);
+		}
+		
+		public bool ToBoolean (IFormatProvider provider)
+		{
+			return System.Convert.ToBoolean(value);
+		}
+		
+		public byte ToByte (IFormatProvider provider)
+		{
+			return value;
+		}
+		
+		public char ToChar (IFormatProvider provider)
+		{
+			return System.Convert.ToChar(value);
+		}
+		
+		[CLSCompliant(false)]
+		public DateTime ToDateTime (IFormatProvider provider)
+		{
+			throw new InvalidCastException();
+		}
+		
+		public decimal ToDecimal (IFormatProvider provider)
+		{
+			return System.Convert.ToDecimal(value);
+		}
+		
+		public double ToDouble (IFormatProvider provider)
+		{
+			return System.Convert.ToDouble(value);
+		}
+		
+		public short ToInt16 (IFormatProvider provider)
+		{
+			return System.Convert.ToInt16(value);
+		}
+		
+		public int ToInt32 (IFormatProvider provider)
+		{
+			return System.Convert.ToInt32(value);
+		}
+		
+		public long ToInt64 (IFormatProvider provider)
+		{
+			return System.Convert.ToInt64(value);
+		}
+		
+		[CLSCompliant(false)] 
+		public sbyte ToSByte (IFormatProvider provider)
+		{
+			return System.Convert.ToSByte(value);
+		}
+		
+		public float ToSingle (IFormatProvider provider)
+		{
+			return System.Convert.ToSingle(value);
+		}
+		
+		string IConvertible.ToString (IFormatProvider provider)
+		{
+			return ToString("G", provider);
+		}
+
+		[CLSCompliant(false)]
+		public ushort ToUInt16 (IFormatProvider provider)
+		{
+			return System.Convert.ToUInt16(value);
+		}
+		
+		[CLSCompliant(false)]
+		public uint ToUInt32 (IFormatProvider provider)
+		{
+			return System.Convert.ToUInt32(value);
+		}
+		
+		[CLSCompliant(false)]
+		public ulong ToUInt64 (IFormatProvider provider)
+		{
+			return System.Convert.ToUInt64(value);
 		}
 	}
 }

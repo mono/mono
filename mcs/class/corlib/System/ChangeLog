@@ -1,3 +1,10 @@
+2002-01-20  Andrei Zmievski <andrei@php.net>
+
+	* Byte.cs:
+	* Char.cs: implemented IConvertible interface.
+
+	* Boolean.cs: use our own ToString() method directly.
+
 2002-01-20  Duncan Mak  <duncan@ximian.com>
 
 	* Files I commited recently: Fixed indentation style.
