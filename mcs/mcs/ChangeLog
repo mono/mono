@@ -1,5 +1,8 @@
 2002-03-27  Miguel de Icaza  <miguel@ximian.com>
 
+	* report.cs: Use new formats, since Gonzalo finished the missing
+	bits. 
+
 	* expression.cs (Binary.ResolveOperator): added missing operator|
 	operator& and operator^ for bool/bool.
 
