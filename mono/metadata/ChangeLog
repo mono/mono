@@ -1,3 +1,16 @@
+2002-02-05  Dietmar Maurer  <dietmar@ximian.com>
+
+	* object.h (MONO_CHECK_ARG, MONO_CHECK_ARG_NULL): new macro for
+	icalls. 
+
+	* class.c (class_compute_field_layout): set element_class for enums
+	(mono_class_create_from_typedef): set element_class for normal classes
+
+	* icall.c (ves_icall_System_Enum_get_value): impl.
+
+	* class.c (mono_class_create_from_typedef): do not set valuetype
+	flag for System.ValueType and System.Enum
+
 2002-02-04  Dietmar Maurer  <dietmar@ximian.com>
 
 	* unicode.c (iconv_convert): fix big endian problem.
