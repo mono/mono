@@ -1,3 +1,8 @@
+2002-07-22  Peter Williams  <peterw@ximian.com>
+
+	* class/library.make: Oops, the deps weren't right -- touching a .cs
+	file didn't cause the libraries to be rebuilt.
+
 2002-07-20  Martin Baulig  <martin@gnome.org>
 
 	* class/makefile.gnu: Added System.Data.
