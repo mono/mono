@@ -1,3 +1,7 @@
+2001-08-26  Miguel de Icaza  <miguel@ximian.com>
+
+	* interp.c (main): Add option handling for the interpreter,
+	support the `--trace' option.
 
 Sun Aug 26 23:04:46 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
