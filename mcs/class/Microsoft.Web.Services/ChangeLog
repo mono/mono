@@ -1,3 +1,16 @@
+2003-10-22  Todd Berman <tberman@gentoo.org>
+
+	* Microsoft.Web.Services.dll.2.sources: Added SoapDimeFormatter.cs
+	* Microsoft.Web.Services.dll.2.sources: Added SoapChannelCollection.cs
+	* Microsoft.Web.Services.dll.2.sources: Added SoapChannel.cs
+	* Microsoft.Web.Services.dll.2.sources: Added SoapTransport.cs
+	* Microsoft.Web.Services.dll.2.sources: Added MessagingConfiguration.cs
+	* Microsoft.Web.Services.dll.2.sources: Added SoapPlainFormatter.cs
+	* Microsoft.Web.Services.dll.2.sources: Added SoapTcpTransport.cs
+	* Microsoft.Web.Services.dll.2.sources: Added SoapTcpChannel.cs
+	* Microsoft.Web.Services.dll.2.sources: Added SoapTcpListener.cs
+	* Microsoft.Web.Services.dll.2.sources: Added AsyncResult.cs
+
 2003-10-12  Todd Berman <tberman@gentoo.org>
 
 	* Makefile: Fixed up the test target so it works now
