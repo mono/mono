@@ -412,11 +412,22 @@ namespace Mono.CSharp {
 		//   Ends a code branching.  Merges the state of locals and parameters
 		//   from all the children of the ending branching.
 		// </summary>
-		public FlowBranching.Reachability EndFlowBranching ()
+		public FlowBranching.UsageVector DoEndFlowBranching ()
 		{
 			FlowBranching cfb = (FlowBranching) FlowStack.Pop ();
 
 			return CurrentBranching.MergeChild (cfb);
+		}
+
+		// <summary>
+		//   Ends a code branching.  Merges the state of locals and parameters
+		//   from all the children of the ending branching.
+		// </summary>
+		public FlowBranching.Reachability EndFlowBranching ()
+		{
+			FlowBranching.UsageVector vector = DoEndFlowBranching ();
+
+			return vector.Reachability;
 		}
 
 		// <summary>

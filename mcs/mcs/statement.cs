@@ -1365,6 +1365,7 @@ namespace Mono.CSharp {
 				variables = new Hashtable ();
 
 			this_variable = new LocalInfo (tc, this, l);
+			this_variable.Used = true;
 
 			variables.Add ("this", this_variable);
 
@@ -1674,23 +1675,20 @@ namespace Mono.CSharp {
 			}
 		}
 
-		void UsageWarning (EmitContext ec)
+		void UsageWarning (FlowBranching.UsageVector vector)
 		{
 			string name;
-			
+
 			if (variables != null){
 				foreach (DictionaryEntry de in variables){
 					LocalInfo vi = (LocalInfo) de.Value;
 					
-					Report.Debug (4, "USAGE VARNING", this, (string) de.Key,
-						      vi, vi.Used, vi.IsAssigned (ec));
-						
 					if (vi.Used)
 						continue;
 					
 					name = (string) de.Key;
 
-					if (vi.IsAssigned (ec)){
+					if (vector.IsAssigned (vi.VariableInfo)){
 						Report.Warning (
 							219, vi.Location, "The variable `" + name +
 							"' is assigned but its value is never used");
@@ -1702,10 +1700,6 @@ namespace Mono.CSharp {
 					} 
 				}
 			}
-
-			if (children != null)
-				foreach (Block b in children)
-					b.UsageWarning (ec);
 		}
 
 		public override bool Resolve (EmitContext ec)
@@ -1750,13 +1744,15 @@ namespace Mono.CSharp {
 
 			Report.Debug (4, "RESOLVE BLOCK DONE", StartLocation, ec.CurrentBranching);
 
-			FlowBranching.Reachability reachability = ec.EndFlowBranching ();
+
+			FlowBranching.UsageVector vector = ec.DoEndFlowBranching ();
+
 			ec.CurrentBlock = prev_block;
 
 			// If we're a non-static `struct' constructor which doesn't have an
 			// initializer, then we must initialize all of the struct's fields.
 			if ((this_variable != null) &&
-			    (reachability.Throws != FlowBranching.FlowReturns.Always) &&
+			    (vector.Reachability.Throws != FlowBranching.FlowReturns.Always) &&
 			    !this_variable.IsThisAssigned (ec, loc))
 				ok = false;
 
@@ -1767,16 +1763,16 @@ namespace Mono.CSharp {
 								"This label has not been referenced");
 			}
 
-			Report.Debug (4, "RESOLVE BLOCK DONE #2", StartLocation, reachability);
+			Report.Debug (4, "RESOLVE BLOCK DONE #2", StartLocation, vector);
 
-			if ((reachability.Returns == FlowBranching.FlowReturns.Always) ||
-			    (reachability.Throws == FlowBranching.FlowReturns.Always) ||
-			    (reachability.Reachable == FlowBranching.FlowReturns.Never))
+			if ((vector.Reachability.Returns == FlowBranching.FlowReturns.Always) ||
+			    (vector.Reachability.Throws == FlowBranching.FlowReturns.Always) ||
+			    (vector.Reachability.Reachable == FlowBranching.FlowReturns.Never))
 				flags |= Flags.HasRet;
 
 			if (ok && (errors == Report.Errors)) {
 				if (RootContext.WarningLevel >= 3)
-					UsageWarning (ec);
+					UsageWarning (vector);
 			}
 
 			return ok;

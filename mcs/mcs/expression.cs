@@ -3568,11 +3568,9 @@ namespace Mono.CSharp {
 				Block.LiftVariable (local_info);
 #endif
 		}
-		
-		public override Expression DoResolve (EmitContext ec)
-		{
-			DoResolveBase (ec);
 
+		protected Expression DoResolve (EmitContext ec, bool is_lvalue)
+		{
 			Expression e = Block.GetConstantExpression (Name);
 			if (e != null) {
 				local_info.Used = true;
@@ -3584,12 +3582,20 @@ namespace Mono.CSharp {
 			if ((variable_info != null) && !variable_info.IsAssigned (ec, loc))
 				return null;
 
-			local_info.Used = true;
+			if (!is_lvalue)
+				local_info.Used = true;
 
 			if (local_info.LocalBuilder == null)
 				return ec.RemapLocal (local_info);
 			
 			return this;
+		}
+		
+		public override Expression DoResolve (EmitContext ec)
+		{
+			DoResolveBase (ec);
+
+			return DoResolve (ec, false);
 		}
 
 		override public Expression DoResolveLValue (EmitContext ec, Expression right_side)
@@ -3600,7 +3606,7 @@ namespace Mono.CSharp {
 			if (variable_info != null)
 				variable_info.SetAssigned (ec);
 
-			Expression e = DoResolve (ec);
+			Expression e = DoResolve (ec, true);
 
 			if (e == null)
 				return null;

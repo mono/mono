@@ -621,7 +621,7 @@ namespace Mono.CSharp
 				if (result.ParameterVector != null)
 					parameters.Or (result.ParameterVector);
 
-				Report.Debug (2, "  MERGING CHILD DONE", this);
+				Report.Debug (2, "  MERGING CHILD DONE", this, result);
 
 				IsDirty = true;
 
@@ -986,11 +986,9 @@ namespace Mono.CSharp
 		// <summary>
 		//   Merge a child branching.
 		// </summary>
-		public Reachability MergeChild (FlowBranching child)
+		public UsageVector MergeChild (FlowBranching child)
 		{
-			UsageVector result = CurrentUsageVector.MergeChild (child);
-
-			return result.Reachability;
+			return CurrentUsageVector.MergeChild (child);
  		}
 
 		// <summary>

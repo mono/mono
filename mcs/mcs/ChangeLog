@@ -1,3 +1,14 @@
+2003-12-20  Martin Baulig  <martin@ximian.com>
+
+	* expression.cs (LocalVariableReference.DoResolve): Don't set
+	`vi.Used' if we're called from DoResolveLValue().
+
+	* statement.cs (Block.DoResolve): `ec.DoEndFlowBranching()' now
+	returns the usage vector it just merged into the current one -
+	pass this one to UsageWarning().
+	(Block.UsageWarning): Take the `FlowBranching.UsageVector' instead
+	of the `EmitContext', don't call this recursively on our children.
+
 2003-12-19  Zoltan Varga  <vargaz@freemail.hu>
 
 	* driver.cs: Implement /target:module.
