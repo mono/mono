@@ -7,6 +7,7 @@
 // Copyright (C) Tim Coleman, 2002
 //
 
+using Mono.Data.TdsClient.Internal;
 using System;
 using System.Collections;
 using System.ComponentModel;
@@ -65,13 +66,13 @@ namespace Mono.Data.TdsClient {
 			get { return false; }
 		}
 
-		[System.MonoTODO]
 		bool ICollection.IsSynchronized {
+			[MonoTODO]
 			get { throw new NotImplementedException (); }
 		}
 
-		[System.MonoTODO]
 		object ICollection.SyncRoot {
+			[MonoTODO]
 			get { throw new NotImplementedException (); }
 		}
 

@@ -13,6 +13,7 @@ using System.Collections;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Data;
+using System.Net;
 using System.Text;
 
 namespace Mono.Data.TdsClient {
@@ -21,16 +22,18 @@ namespace Mono.Data.TdsClient {
 		#region Fields
 
 		bool autoCommit = true;
-		string connectionString;
+		string connectionString = String.Empty;
 		int connectionTimeout = 15;
 		string database;
 		IsolationLevel isolationLevel = IsolationLevel.ReadCommitted;
 		ConnectionState state = ConnectionState.Closed;
 
 		ArrayList tdsPool = null;
+		int minPoolSize;
+		int maxPoolSize;
 
-		TdsServerType serverType = TdsServerType.Generic;
 		TdsConnectionParameters parms = new TdsConnectionParameters ();
+		TdsTransaction transaction = null;
 
 		#endregion // Fields
 
@@ -45,6 +48,8 @@ namespace Mono.Data.TdsClient {
 		{
 			parms.PacketSize = 512;
 			parms.TdsVersion = TdsVersion.tds42;
+			parms.User = null;
+			parms.Password = null;
 			SetConnectionString (connectionString);
 		}
 			
@@ -62,9 +67,9 @@ namespace Mono.Data.TdsClient {
 			set { parms.Database = value; }
 		}
 
-		public string Host {
-			get { return parms.Host; }
-			set { parms.Host = value; }
+		public string DataSource {
+			get { return parms.DataSource; }
+			set { parms.DataSource = value; }
 		}
 
 		public ConnectionState State {
@@ -95,12 +100,20 @@ namespace Mono.Data.TdsClient {
 
 		#region Methods
 
-		private Tds AllocateTds ()
+		internal Tds AllocateTds ()
 		{
 			Tds result;
 
+			// Make sure we have at least the minimum pool size.
+			while (tdsPool.Count < minPoolSize)
+				tdsPool.Add (new TdsInstance (new Tds (parms)));
+
 			int index = FindAnAvailableTds ();
 			if (index == -1) {
+				// Make sure we don't exceed the maximum
+				if (tdsPool.Count > maxPoolSize)
+					throw new TdsException ("Connection pool has reached maximum size and cannot be expanded.");
+
 				Tds tmpTds = new Tds (parms);
 				TdsInstance tmp = new TdsInstance (tmpTds);
 				tdsPool.Add (tmp);
@@ -125,7 +138,10 @@ namespace Mono.Data.TdsClient {
 
 		public TdsTransaction BeginTransaction (IsolationLevel il)
 		{
-			return new TdsTransaction (this, il);
+			if (transaction != null)
+				throw new InvalidOperationException ("TdsConnection does not support parallel transactions.");
+			transaction = new TdsTransaction (this, il);
+			return transaction;
 		}
 
 		public void ChangeDatabase (string databaseName)
@@ -135,6 +151,7 @@ namespace Mono.Data.TdsClient {
 
 			foreach (TdsInstance instance in tdsPool) {
 				lock (instance.Tds) {
+					instance.Tds.ChangeDatabase (databaseName);
 					/*
 					TdsCommand command = instance.Tds.Command;
 					object o = (command == null ? (object) instance.Tds : command);
@@ -148,9 +165,10 @@ namespace Mono.Data.TdsClient {
 			}
 		}
 
-		[System.MonoTODO]
+		[MonoTODO]
 		public void Close ()
 		{
+			this.state = ConnectionState.Closed;
 			throw new NotImplementedException ();
 		}
 
@@ -203,7 +221,7 @@ namespace Mono.Data.TdsClient {
 
 		public void Open ()
 		{
-			if (User == String.Empty || User == null)
+			if (User == null)
 			{
 				throw new ArgumentException ();
 			}
@@ -219,9 +237,11 @@ namespace Mono.Data.TdsClient {
 			database = tmpTds.Database;
 			FreeTds (tmpTds);
 			tmpTds.Logon (parms);
+
+			this.state = ConnectionState.Open;
 		}
 
-		[System.MonoTODO]
+		[MonoTODO]
 		private void SetConnectionString (string connectionString)
 		{
 			connectionString += ";";
@@ -286,113 +306,103 @@ namespace Mono.Data.TdsClient {
 
 		private void SetDefaultConnectionParameters (NameValueCollection parameters)
 		{
-                        if (null == parameters.Get ("APPLICATION NAME"))
-                                parameters["APPLICATION NAME"] = ".Net SqlClient Data Provider";
-                        if (null == parameters.Get ("CONNECT TIMEOUT") && null == parameters.Get ("CONNECTION TIMEOUT"))
-                                parameters["CONNECT TIMEOUT"] = "15";
-                        if (null == parameters.Get ("CONNECTION LIFETIME"))
-                                parameters["CONNECTION LIFETIME"] = "0";
-                        if (null == parameters.Get ("CONNECTION RESET"))
-                                parameters["CONNECTION RESET"] = "true";
-                        if (null == parameters.Get ("ENLIST"))
-                                parameters["ENLIST"] = "true";
-                        if (null == parameters.Get ("INTEGRATED SECURITY") && null == parameters.Get ("TRUSTED_CONNECTION"))
-                                parameters["INTEGRATED SECURITY"] = "false";
-                        if (null == parameters.Get ("MAX POOL SIZE"))
-                                parameters["MAX POOL SIZE"] = "100";
-                        if (null == parameters.Get ("MIN POOL SIZE"))
-                                parameters["MIN POOL SIZE"] = "0";
-                        if (null == parameters.Get ("NETWORK LIBRARY") && null == parameters.Get ("NET"))
-                                parameters["NETWORK LIBRARY"] = "dbmssocn";
-                        if (null == parameters.Get ("PACKET SIZE"))
-                                parameters["PACKET SIZE"] = "8192";
-                        if (null == parameters.Get ("PERSIST SECURITY INFO"))
-                                parameters["PERSIST SECURITY INFO"] = "false";
-                        if (null == parameters.Get ("POOLING"))
-                                parameters["POOLING"] = "true";
+			if (null == parameters.Get ("APPLICATION NAME"))
+				parameters["APPLICATION NAME"] = ".Net SqlClient Data Provider";
+			if (null == parameters.Get ("CONNECT TIMEOUT") && null == parameters.Get ("CONNECTION TIMEOUT"))
+				parameters["CONNECT TIMEOUT"] = "15";
+			if (null == parameters.Get ("CONNECTION LIFETIME"))
+				parameters["CONNECTION LIFETIME"] = "0";
+			if (null == parameters.Get ("CONNECTION RESET"))
+				parameters["CONNECTION RESET"] = "true";
+			if (null == parameters.Get ("ENLIST"))
+				parameters["ENLIST"] = "true";
+			if (null == parameters.Get ("INTEGRATED SECURITY") && null == parameters.Get ("TRUSTED_CONNECTION"))
+				parameters["INTEGRATED SECURITY"] = "false";
+			if (null == parameters.Get ("MAX POOL SIZE"))
+				parameters["MAX POOL SIZE"] = "100";
+			if (null == parameters.Get ("MIN POOL SIZE"))
+				parameters["MIN POOL SIZE"] = "0";
+			if (null == parameters.Get ("NETWORK LIBRARY") && null == parameters.Get ("NET"))
+				parameters["NETWORK LIBRARY"] = "dbmssocn";
+			if (null == parameters.Get ("PACKET SIZE"))
+				parameters["PACKET SIZE"] = "8192";
+			if (null == parameters.Get ("PERSIST SECURITY INFO"))
+				parameters["PERSIST SECURITY INFO"] = "false";
+			if (null == parameters.Get ("POOLING"))
+				parameters["POOLING"] = "true";
+			if (null == parameters.Get ("WORKSTATION ID"))
+				parameters["WORKSTATION ID"] = Dns.GetHostByName ("localhost").HostName;
 		}
 
-                private void SetProperties (NameValueCollection parameters)
-                {
-                        string value;
+		private void SetProperties (NameValueCollection parameters)
+		{
+			string value;
+			foreach (string name in parameters) {
+				value = parameters[name];
 
-                        foreach (string name in parameters) {
-                                value = parameters[name];
-
-                                switch (name) {
-                                case "APPLICATION NAME" :
-                                        break;
-                                case "ATTACHDBFILENAME" :
-                                        break;
-                                case "EXTENDED PROPERTIES" :
-                                        break;
-                                case "INITIAL FILE NAME" :
-                                        break;
-                                case "CONNECT TIMEOUT" :
-                                        ConnectionTimeout = Int32.Parse (value);
-                                        break;
-                                case "CONNECTION TIMEOUT" :
-                                        ConnectionTimeout = Int32.Parse (value);
-                                        break;
-                                case "CONNECTION LIFETIME" :
-                                        break;
-                                case "CONNECTION RESET" :
-                                        break;
-                                case "CURRENT LANGUAGE" :
-                                        break;
-                                case "DATA SOURCE" :
-                                        Host = value;
-                                        break;
-                                case "SERVER" :
-                                        Host = value;
-                                        break;
-                                case "ADDRESS" :
-                                        Host = value;
-                                        break;
-                                case "ADDR" :
-                                        Host = value;
-                                        break;
-                                case "NETWORK ADDRESS" :
-                                        Host = value;
-                                        break;
-                                case "ENLIST" :
-                                        break;
-                                case "INITIAL CATALOG" :
-                                        Database = value;
-                                        break;
-                                case "DATABASE" :
-                                        Database = value;
-                                        break;
-                                case "INTEGRATED SECURITY" :
-                                        break;
-                                case "TRUSTED_CONNECTION" :
-                                        break;
-                                case "MAX POOL SIZE" :
-                                        break;
-                                case "MIN POOL SIZE" :
-                                        break;
-                                case "NETWORK LIBRARY" :
-                                        break;
-                                case "NET" :
-                                        break;
-                                case "PACKET SIZE" :
-					PacketSize = Int32.Parse (value);
-                                        break;
-                                case "PASSWORD" :
-                                        Password = value;
-                                        break;
-                                case "PWD" :
-                                        Password = value;
-                                        break;
-                                case "PERSIST SECURITY INFO" :
-                                        break;
-                                case "POOLING" :
-                                        break;
-                                case "USER ID" :
-                                        User = value;
-                                        break;
-                                case "WORKSTATION ID" :
-                                        break;
+				switch (name) {
+				case "APPLICATION NAME" :
+					parms.ApplicationName = value;
+					break;
+				case "ATTACHDBFILENAME" :
+				case "EXTENDED PROPERTIES" :
+				case "INITIAL FILE NAME" :
+					break;
+				case "CONNECT TIMEOUT" :
+				case "CONNECTION TIMEOUT" :
+					this.ConnectionTimeout = Int32.Parse (value);
+					break;
+				case "CONNECTION LIFETIME" :
+					break;
+				case "CONNECTION RESET" :
+					break;
+				case "CURRENT LANGUAGE" :
+					parms.Language = value;
+					break;
+				case "DATA SOURCE" :
+				case "SERVER" :
+				case "ADDRESS" :
+				case "ADDR" :
+				case "NETWORK ADDRESS" :
+					parms.DataSource = value;
+					break;
+				case "ENLIST" :
+					break;
+				case "INITIAL CATALOG" :
+				case "DATABASE" :
+					parms.Database = value;
+					break;
+				case "INTEGRATED SECURITY" :
+				case "TRUSTED_CONNECTION" :
+					break;
+				case "MAX POOL SIZE" :
+					maxPoolSize = Int32.Parse (value);
+					break;
+				case "MIN POOL SIZE" :
+					minPoolSize = Int32.Parse (value);
+					break;
+				case "NET" :
+				case "NETWORK LIBRARY" :
+					if (!value.ToUpper ().Equals ("DBMSSOCN"))
+						throw new TdsException ("Unsupported network library.");
+					break;
+				case "PACKET SIZE" :
+					parms.PacketSize = Int32.Parse (value);
+					break;
+				case "PASSWORD" :
+				case "PWD" :
+					parms.Password = value;
+					break;
+				case "PERSIST SECURITY INFO" :
+					break;
+				case "POOLING" :
+					break;
+				case "USER ID" :
+					parms.User = value;
+					break;
+				case "WORKSTATION ID" :
+					parms.Hostname = value;
+					break;
 				}
 			}
 		}
@@ -400,7 +410,6 @@ namespace Mono.Data.TdsClient {
 
 		private class TdsInstance 
 		{
-
 			#region Fields
 
 			bool inUse;

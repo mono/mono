@@ -30,13 +30,13 @@ namespace Mono.Data.TdsClient {
 			get { return (TdsError) list[index]; }
 		}
 
-		[System.MonoTODO]
 		bool ICollection.IsSynchronized {
+			[MonoTODO]
 			get { throw new NotImplementedException (); }
 		}
 
-		[System.MonoTODO]
 		object ICollection.SyncRoot {
+			[MonoTODO]
 			get { throw new NotImplementedException (); }
 		}
 
@@ -44,7 +44,7 @@ namespace Mono.Data.TdsClient {
 
 		#region Methods
 
-		[System.MonoTODO]
+		[MonoTODO]
 		public void CopyTo (Array array, int index)
 		{
 			throw new NotImplementedException ();

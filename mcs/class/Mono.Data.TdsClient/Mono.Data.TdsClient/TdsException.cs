@@ -7,6 +7,7 @@
 // Copyright (C) 2002 Tim Coleman
 //
 
+using Mono.Data.TdsClient.Internal;
 using System;
 using System.Runtime.Serialization;
 
@@ -79,7 +80,7 @@ namespace Mono.Data.TdsClient {
 
 		#region Methods
 
-		[System.MonoTODO]
+		[MonoTODO]
 		public override void GetObjectData (SerializationInfo si, StreamingContext context)
 		{
 			throw new NotImplementedException ();
