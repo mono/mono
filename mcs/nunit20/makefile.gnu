@@ -1,4 +1,4 @@
-DIRS=framework util nunit-console
+DIRS=framework util nunit-console nunit-gtk
 
 default: all
 
