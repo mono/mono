@@ -128,6 +128,8 @@ namespace System.Security.Cryptography.X509Certificates {
 			get { 
 				return _cert.RSA; 
 			}
+			[MonoTODO]
+			set { throw new NotImplementedException (); }
 		} 
 
 		public PublicKey PublicKey {

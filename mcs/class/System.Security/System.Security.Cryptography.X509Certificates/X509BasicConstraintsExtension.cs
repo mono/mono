@@ -3,8 +3,10 @@
 //
 // Author:
 //	Sebastien Pouliot (spouliot@motus.com)
+//	Tim Coleman (tim@timcoleman.com)
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
+// Copyright (C) Tim Coleman, 2004
 //
 
 //
@@ -38,18 +40,31 @@ namespace System.Security.Cryptography.X509Certificates {
 
 	public sealed class X509BasicConstraintsExtension : X509Extension {
 
+		bool certificateAuthority;
+		bool hasPathLengthConstraint;
+		int pathLengthConstraint;
+		bool critical;
+
 		public X509BasicConstraintsExtension () {}
 
+		public X509BasicConstraintsExtension (bool certificateAuthority, bool hasPathLengthConstraint, int pathLengthConstraint, bool critical)
+		{
+			this.certificateAuthority = certificateAuthority;
+			this.hasPathLengthConstraint = hasPathLengthConstraint;
+			this.pathLengthConstraint = pathLengthConstraint;
+			this.critical = critical;
+		}
+
 		public bool CertificateAuthority {
-			get { return false; }
+			get { return certificateAuthority; }
 		}
 
 		public bool HasPathLengthConstraint {
-			get { return false; }
+			get { return hasPathLengthConstraint; }
 		}
 
 		public int PathLengthConstraint {
-			get { return 0; }
+			get { return pathLengthConstraint; }
 		}
 	}
 }

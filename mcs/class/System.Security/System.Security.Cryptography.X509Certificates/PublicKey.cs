@@ -3,8 +3,10 @@
 //
 // Author:
 //	Sebastien Pouliot (spouliot@motus.com)
+//	Tim Coleman (tim@timcoleman.com)
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
+// Copyright (C) Tim Coleman, 2004
 //
 
 //
@@ -42,6 +44,14 @@ namespace System.Security.Cryptography.X509Certificates {
 		private AsnEncodedData _keyValue;
 		private AsnEncodedData _params;
 		private Oid _oid;
+
+		[MonoTODO]
+		public PublicKey (Oid oid, AsnEncodedData parameters, AsnEncodedData keyValue)
+		{
+			_oid = oid;
+			_params = parameters;
+			_keyValue = keyValue;
+		}
 
 		internal PublicKey (Mono.Security.X509.X509Certificate certificate)
 		{

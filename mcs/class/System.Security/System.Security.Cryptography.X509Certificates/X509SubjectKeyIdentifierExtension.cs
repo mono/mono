@@ -1,11 +1,9 @@
 //
-// System.Security.Cryptography.X509Certificates.X509Extension
+// System.Security.Cryptography.X509Certificates.X509SubjectKeyIdentifierExtension
 //
 // Author:
-//	Sebastien Pouliot  <sebastien@ximian.com>
 //	Tim Coleman (tim@timcoleman.com)
 //
-// (C) 2003 Motus Technologies Inc. (http://www.motus.com)
 // Copyright (C) Tim Coleman, 2004
 // Copyright (C) 2004 Novell Inc. (http://www.novell.com)
 //
@@ -35,49 +33,55 @@ using System;
 
 namespace System.Security.Cryptography.X509Certificates {
 
-	public class X509Extension : AsnEncodedData {
+	public sealed class X509SubjectKeyIdentifierExtension : X509Extension 
+	{
+		#region Fields
 
-		private bool _critical;
+		string subjectKeyIdentifier;
 
-		// constructors
+		#endregion // Fields
 
-		protected X509Extension () 
+		#region Constructors
+
+		[MonoTODO]
+		public X509SubjectKeyIdentifierExtension ()
 		{
-		}
-
-		public X509Extension (AsnEncodedData encodedExtension, bool critical)
-			: base (encodedExtension)
-		{
-			_critical = critical;
-		}
-
-		public X509Extension (Oid oid, byte[] rawData, bool critical)
-			: base (oid, rawData)
-		{
-			_critical = critical;
 		}
 
 		[MonoTODO]
-		public X509Extension (string oid, byte[] rawData, bool critical)
-			: base (oid, rawData)
+		public X509SubjectKeyIdentifierExtension (AsnEncodedData encodedSubjectKeyIdentifier, bool critical)
 		{
-			_critical = critical;
 		}
 
-		// properties
-
-		public bool Critical {
-			get { return _critical; }
-		}
-
-		// methods
-
-		[MonoTODO ("decode with Mono.Security")]
-		public override void CopyFrom (AsnEncodedData asnEncodedData) 
+		[MonoTODO]
+		public X509SubjectKeyIdentifierExtension (byte[] subjectKeyIdentifier, bool critical)
 		{
-			if (asnEncodedData == null)
-				throw new ArgumentNullException ("asnEncodedData");
 		}
+
+		[MonoTODO]
+		public X509SubjectKeyIdentifierExtension (string subjectKeyIdentifier, bool critical)
+		{
+		}
+
+		#endregion // Constructors
+
+		#region Properties
+
+		public string SubjectKeyIdentifier {
+			get { return subjectKeyIdentifier; }
+		}
+
+		#endregion // Properties
+
+		#region Methods
+
+		[MonoTODO]
+		public override void CopyFrom (AsnEncodedData encodedData)
+		{
+			throw new NotImplementedException ();
+		}
+
+		#endregion // Methods
 	}
 }
 

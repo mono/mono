@@ -3,8 +3,10 @@
 //
 // Author:
 //	Sebastien Pouliot (spouliot@motus.com)
+//	Tim Coleman (tim@timcoleman.com)
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
+// Copyright (C) Tim Coleman, 2004
 //
 
 //
@@ -63,6 +65,7 @@ namespace System.Security.Cryptography.X509Certificates {
 					throw new ArgumentOutOfRangeException ("index >= Count");
 				return (X509CertificateEx) InnerList [index];
 			}
+			set { InnerList [index] = value; }
 		}
 
 		// methods

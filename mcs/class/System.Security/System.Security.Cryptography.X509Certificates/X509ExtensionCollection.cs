@@ -3,8 +3,10 @@
 //
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
+//	Tim Coleman (tim@timcoleman.com)
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
+// Copyright (C) Tim Coleman, 2004
 // Copyright (C) 2004 Novell Inc. (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -61,9 +63,14 @@ namespace System.Security.Cryptography.X509Certificates {
 			get { return (X509Extension) _list [index]; }
 		}
 
-		[MonoTODO ("iterate to find oid")]
 		public X509Extension this [string oid] {
-			get { return (X509Extension) null; }
+			get { 
+				foreach (X509Extension extension in this) {
+					if (extension.Oid.Value.Equals (oid))
+						return extension;
+				}
+				return null;
+			}
 		}
 
 		// methods
