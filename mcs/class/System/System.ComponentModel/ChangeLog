@@ -1,3 +1,8 @@
+
+Wed Jul 24 13:14:30 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* Component.cs: don't die if Disposed is null.
+
 2002-07-22  Tim Coleman <tim@timcoleman.com>
 	* RecommendedAsConfigurableAttribute.cs: new file added
 		for System.Web.Services build

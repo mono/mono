@@ -77,7 +77,6 @@ namespace System.ComponentModel {
 		{
 			// FIXME: Not sure this is correct.
 			Dispose(true);
-			Disposed(this, EventArgs.Empty);
 		}
 
 		// <summary>
@@ -88,7 +87,8 @@ namespace System.ComponentModel {
 		{
 			// FIXME: Not sure this is correct.
 			Dispose(false);
-			Disposed(this, EventArgs.Empty);
+			if (Disposed != null)
+				Disposed(this, EventArgs.Empty);
 		}
 
 		// <summary>
