@@ -13,6 +13,7 @@ using Microsoft.CSharp;
 
 namespace MonoTests.Microsoft.CSharp
 {
+	[TestFixture]
 	public class CodeGeneratorIdentifierTest : Assertion
 	{
 		private ICodeGenerator gen;
