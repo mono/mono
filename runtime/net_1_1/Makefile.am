@@ -23,6 +23,7 @@ gac_assemblies_list = \
 	I18N.Other					\
 	I18N.Rare					\
 	I18N.West					\
+	IBM.Data.DB2					\
 	ICSharpCode.SharpZipLib				\
 	Microsoft.VisualBasic				\
 	Microsoft.VisualC				\
@@ -83,7 +84,7 @@ install-data-local:
 	    echo "MONO_PATH=$(srcdir) $(mono_runtime) --config ../../data/config $(sn) -q -R $(srcdir)/$$i $(mono_snk)" ; \
 	    MONO_PATH=$(srcdir) \
 	      $(LIBTOOL) --mode=execute $(mono_runtime) --config ../../data/config $(sn) -q -R $(srcdir)/$$i $(mono_snk) || exit 1 ; \
-            echo "MONO_PATH=$(srcdir) $(mono_runtime) --config ../../data/config $(gacutil) /i $(srcdir)/$$i /f /package 1.0 /root $(DESTDIR)$(libdir)" ; \
+	    echo "MONO_PATH=$(srcdir) $(mono_runtime) --config ../../data/config $(gacutil) /i $(srcdir)/$$i /f /package 1.0 /root $(DESTDIR)$(libdir)" ; \
 	    MONO_PATH=$(srcdir) \
 	      $(LIBTOOL) --mode=execute $(mono_runtime) --config ../../data/config $(gacutil) /i $(srcdir)/$$i /f /package 1.0 /root $(DESTDIR)$(libdir) || exit 1 ; \
 	  done; fi
