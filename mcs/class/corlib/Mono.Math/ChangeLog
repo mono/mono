@@ -1,3 +1,7 @@
+2003-11-20 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* BigInteger.cs: Fix prob. prime test for small numbers (Pieter Philippaerts)
+
 2003-06-11  Sebastien Pouliot <spouliot@motus.com>
 
 	* BigInteger.cs: Added Clear to zeroize big integers and code to allow

@@ -723,7 +723,7 @@ namespace Mono.Math {
 
 			for (int p = 0; p < smallPrimes.Length; p++) {
 				if (this % smallPrimes [p] == 0)
-					return false;
+					return this == smallPrimes [p];
 			}
 
 			return
@@ -736,7 +736,7 @@ namespace Mono.Math {
 
 			for (int p = 0; p < smallPrimes.Length; p++) {
 				if (this % smallPrimes [p] == 0)
-					return false;
+					return this == smallPrimes [p];
 			}
 
 			return
