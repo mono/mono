@@ -1,4 +1,14 @@
 
+Mon Mar 11 14:45:42 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* verify.c, verify.h: moved here the corlib/runtime consistency checks.
+
+Mon Mar 11 11:12:23 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* debug-helpers.{c,h}: moved here from monograph some useful functions
+	to locate a method by name/signature in a class or image. Included
+	also a small and flexible IL disassembler.
+
 Fri Mar 8 16:29:29 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* reflection.c: fixup tokens in methods with small header size, too.
