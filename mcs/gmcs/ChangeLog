@@ -1,3 +1,15 @@
+2005-02-22  Martin Baulig  <martin@ximian.com>
+
+	* generic.cs
+	(Constraints.ResolveTypes): Protect against being called twice.
+	(Constraints.CheckInterfaceMethod): Don't call ResolveTypes().
+	(TypeParameter.ResolveType): New public method; calls
+	constraints.ResolveTypes().
+	(TypeParameter.DefineType): Moved constraints.ResolveType() out
+	into the new ResolveType().
+	(GenericMethod.Define): Call ResolveType() on all our
+	TypeParameter's.	
+
 2005-02-21  Martin Baulig  <martin@ximian.com>
 
 	* generic.cs

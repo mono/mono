@@ -272,6 +272,9 @@ namespace Mono.CSharp {
 
 		public bool ResolveTypes (EmitContext ec)
 		{
+			if (effective_base_type != null)
+				return true;
+
 			foreach (object obj in constraints) {
 				ConstructedType cexpr = obj as ConstructedType;
 				if (cexpr == null)
@@ -451,9 +454,6 @@ namespace Mono.CSharp {
 
 		public bool CheckInterfaceMethod (EmitContext ec, GenericConstraints gc)
 		{
-			if (!ResolveTypes (ec))
-				return false;
-
 			if (gc.Attributes != attrs)
 				return false;
 
@@ -556,6 +556,16 @@ namespace Mono.CSharp {
 				constraints.Define (type);
 		}
 
+		public bool ResolveType (EmitContext ec)
+		{
+			if (constraints != null) {
+				if (!constraints.ResolveTypes (ec))
+					return false;
+			}
+
+			return true;
+		}
+
 		public bool DefineType (EmitContext ec)
 		{
 			return DefineType (ec, null, null, false);
@@ -564,6 +574,9 @@ namespace Mono.CSharp {
 		public bool DefineType (EmitContext ec, MethodBuilder builder,
 					MethodInfo implementing, bool is_override)
 		{
+			if (!ResolveType (ec))
+				return false;
+
 			if (implementing != null) {
 				if (is_override && (constraints != null)) {
 					Report.Error (
@@ -613,11 +626,6 @@ namespace Mono.CSharp {
 					return false;
 				}
 			} else {
-				if (constraints != null) {
-					if (!constraints.ResolveTypes (ec))
-						return false;
-				}
-
 				gc = (GenericConstraints) constraints;
 			}
 
@@ -1440,6 +1448,11 @@ namespace Mono.CSharp {
 
 			ec = new EmitContext (
 				this, this, Location, null, return_type, ModFlags, false);
+
+			for (int i = 0; i < TypeParameters.Length; i++) {
+				if (!TypeParameters [i].ResolveType (ec))
+					return false;
+			}
 
 			return true;
 		}
