@@ -1432,8 +1432,9 @@ namespace Mono.CSharp {
 						    !type.IsSubclassOf (TypeManager.multicast_delegate_type)) {
 							Report.SymbolRelatedToPreviousError (base_method);
 							Report.Warning (-28, 
-								"The method '{0}' is marked 'override', but doesn't appear to override any virtual or abstract method:" + 
-								" it may be ignored during overload resolution", 
+								"The method '{0}' is marked 'override'," + 
+								" but doesn't appear to override any virtual or abstract method:" + 
+								" it may be ignored during overload resolution",
 								TypeManager.CSharpSignature (base_method));
 						}
 						goto skip;
@@ -1451,8 +1452,9 @@ namespace Mono.CSharp {
 						if (new_base_method == base_method) {
 							Report.SymbolRelatedToPreviousError (base_method);
 							Report.Warning (-28, 
-								"The method '{0}' is marked virtual, but doesn't appear to have a slot." + 
-								"  The method may be ignored during overload resolution", 
+								"The method '{0}' is marked 'override'," +
+								" but doesn't appear to overrided any virtual or abstract method:" + 
+								" it may be ignored during overload resolution",
 								TypeManager.CSharpSignature (base_method));
 						}
 						base_method = new_base_method;
