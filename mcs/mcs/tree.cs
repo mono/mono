@@ -56,11 +56,12 @@ namespace Mono.CSharp
 		public void RecordDecl (string name, DeclSpace ds)
 		{
 			if (decls.Contains (name)){
+				DeclSpace other = (DeclSpace) decls [name];
+				Report.SymbolRelatedToPreviousError (other.Location, other.GetSignatureForError ());
+
 				Report.Error (
 					101, ds.Location,
 					"There is already a definition for `" + name + "'");
-				DeclSpace other = (DeclSpace) decls [name];
-				Report.LocationOfPreviousError (other.Location);
 				return;
 			}
 

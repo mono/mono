@@ -627,8 +627,8 @@ namespace Mono.CSharp {
 
 					string enumerator_name = ordered_enums [ii] as string;
 					if (String.Compare (checked_name, enumerator_name, true) == 0) {
+						Report.SymbolRelatedToPreviousError ((Location)member_to_location [enumerator_name], enumerator_name);
 						Report.Error_T (3005, (Location)member_to_location [checked_name], GetEnumeratorName (checked_name));
-						Report.LocationOfPreviousError ((Location)member_to_location [enumerator_name]);
 						break;
 					}
 				}

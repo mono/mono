@@ -193,7 +193,8 @@ namespace Mono.CSharp {
 				return true;
 
 			bool error3006 = false;
-			foreach (MemberInfo mi in ml) {
+			for (int i = 0; i < ml.Count; ++i) {
+				MemberInfo mi = ml [i];
 				if (name == mi.Name) {
 					MethodBase method = mi as MethodBase;
 					if (method == null || method == methodBuilder || paramTypes == null || paramTypes.Length == 0)
@@ -222,6 +223,13 @@ namespace Mono.CSharp {
 					MemberCore mc = temp_ds.GetDefinition (tmp_name) as MemberCore;
 					if (!mc.IsClsCompliaceRequired (ds))
 						continue;
+				}
+
+				for (int ii = 0; ii < ml.Count; ++ii) {
+					mi = ml [ii];
+					if (name == mi.Name)
+						continue;
+					Report.SymbolRelatedToPreviousError (mi);
 				}
 
 				if (error3006)
@@ -997,9 +1005,11 @@ namespace Mono.CSharp {
 						continue;
 
 					if (String.Compare (Name, type_name, true) == 0 && 
-						AttributeTester.IsClsCompliant (TypeManager.all_imported_types [type_name] as Type))
+						AttributeTester.IsClsCompliant (TypeManager.all_imported_types [type_name] as Type)) {
+						Report.SymbolRelatedToPreviousError ((Type)TypeManager.all_imported_types [type_name]);
 						return false;
 				}
+			}
 			}
 
 			// Seek through generated types
@@ -1013,9 +1023,11 @@ namespace Mono.CSharp {
 						continue;
 					
 					DeclSpace found_ds = RootContext.Tree.Decls[name] as DeclSpace;
-					if (found_ds.IsClsCompliaceRequired (found_ds.Parent))
+					if (found_ds.IsClsCompliaceRequired (found_ds.Parent)) {
+						Report.SymbolRelatedToPreviousError (found_ds.Location, found_ds.GetSignatureForError ());
 						return false;
 				}
+			}
 			}
 
 			return true;

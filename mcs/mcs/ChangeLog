@@ -1,3 +1,13 @@
+2004-04-29  Marek Safar  <marek.safar@seznam.cz>
+
+	* decl.cs, enum.cs: Improved error 3005 reporting.
+  
+	* report.cs (SymbolRelatedToPreviousError): New method for error reporting.
+        (related_symbols): New private member for list of symbols
+	related to reported error/warning.
+        
+	* tree.cs: Do not use now obsolete Report.LocationOfPreviousError.
+
 2004-04-29  Martin Baulig  <martin@ximian.com>
 
 	* ecore.cs (Expression.Constantify): If we're an enum and
