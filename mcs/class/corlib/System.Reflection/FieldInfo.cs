@@ -45,6 +45,68 @@ namespace System.Reflection {
 		{
 			get {return (Attributes & FieldAttributes.InitOnly) != 0;}
 		} 
+		public Boolean IsPublic
+		{ 
+			get
+			{
+				return (Attributes & FieldAttributes.FieldAccessMask) == FieldAttributes.Public;
+			}
+		}
+		public Boolean IsPrivate
+		{
+			get
+			{
+				return (Attributes & FieldAttributes.FieldAccessMask) == FieldAttributes.Private;
+			}
+		}
+		public Boolean IsFamily
+		{
+			get
+			{
+				return (Attributes & FieldAttributes.FieldAccessMask) == FieldAttributes.Family;
+			}
+		}
+		public Boolean IsAssembly
+		{
+			get
+			{
+				return (Attributes & FieldAttributes.FieldAccessMask) == FieldAttributes.Assembly;
+			}
+		}
+		public Boolean IsFamilyAndAssembly
+		{
+			get {
+				return (Attributes & FieldAttributes.FieldAccessMask) == FieldAttributes.FamANDAssem;
+			}
+		}
+		public Boolean IsFamilyOrAssembly
+		{
+			get
+			{
+				return (Attributes & FieldAttributes.FieldAccessMask) == FieldAttributes.FamORAssem;
+			}
+		}
+		public Boolean IsPinvokeImpl
+		{
+			get
+			{
+				return (Attributes & FieldAttributes.PinvokeImpl) == FieldAttributes.PinvokeImpl;
+			}
+		}
+		public Boolean IsSpecialName
+		{
+			get
+			{
+				return (Attributes & FieldAttributes.SpecialName) == FieldAttributes.SpecialName;
+			}
+		}
+		public Boolean IsNotSerialized
+		{
+			get
+			{
+				return (Attributes & FieldAttributes.NotSerialized) == FieldAttributes.NotSerialized;
+			}
+		}
 
 		public abstract void SetValue (object obj, object val, BindingFlags invokeAttr, Binder binder, CultureInfo culture);
 

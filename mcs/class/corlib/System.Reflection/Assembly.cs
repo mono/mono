@@ -211,6 +211,18 @@ namespace System.Reflection {
 			return AppDomain.CurrentDomain.Load (rawAssembly, rawSymbolStore, securityEvidence);
 		}
 
+		public static Assembly LoadWithPartialName (string partialName)
+		{
+			return LoadWithPartialName (partialName, null);
+		}
+
+		[MonoTODO]
+		public static Assembly LoadWithPartialName (string partialName, Evidence securityEvidence)
+		{
+			return AppDomain.CurrentDomain.Load (partialName, securityEvidence);
+		}
+
+
 		public Object CreateInstance (String typeName) 
 		{
 			throw new NotImplementedException ();
