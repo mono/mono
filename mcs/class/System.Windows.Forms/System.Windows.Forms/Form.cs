@@ -98,6 +98,7 @@
 			maximumSize = Size.Empty;
 			minimumSize = Size.Empty;
 			formStartPosition = FormStartPosition.WindowsDefaultLocation;
+			visible = false;
     		}
     		
     		static Form ()

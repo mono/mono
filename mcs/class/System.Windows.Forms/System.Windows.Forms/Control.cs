@@ -86,7 +86,7 @@
     		RightToLeft rightToLeft;
     		bool tabStop;
     		protected string text;
-    		bool visible;
+    		protected bool visible;
     		protected ControlStyles controlStyles_;
 
 		int clientWidth;
@@ -524,6 +524,9 @@
   						createParams.Parent = ParkingWindowHandle;
 	  
   					createParams.Style = (int) WindowStyles.WS_OVERLAPPED;
+					if( visible) {
+						createParams.Style |= (int) WindowStyles.WS_VISIBLE;
+					}
 	  
     				return createParams;
     			}
@@ -1717,7 +1720,6 @@
     		
     		protected virtual void OnLocationChanged (EventArgs e) 
     		{
-			PerformLayout ( this, "Location" );
     			if (LocationChanged != null)
     				LocationChanged (this, e);
     		}
@@ -1917,7 +1919,7 @@
     			if (Resize != null)
     				Resize (this, e);
 
-			PerformLayout ( );
+			PerformLayout ( this, "Bounds" );
     		}
     		
     		protected virtual void OnRightToLeftChanged (EventArgs e) 
@@ -1929,7 +1931,6 @@
     		protected virtual void OnSizeChanged (EventArgs e) 
     		{
 			OnResize ( e );
-			PerformLayout ( this, "Size" );
     			if (SizeChanged != null)
     				SizeChanged (this, e);
     		}
@@ -2426,6 +2427,9 @@
 
 			visible = value;
 
+			if ( visibleChanged )
+				OnVisibleChanged ( EventArgs.Empty );
+
 			if ( IsHandleCreated ) {
 				SetWindowPosFlags flags = value ? SetWindowPosFlags.SWP_SHOWWINDOW : SetWindowPosFlags.SWP_HIDEWINDOW;
 				flags |= SetWindowPosFlags.SWP_NOZORDER | SetWindowPosFlags.SWP_NOMOVE | SetWindowPosFlags.SWP_NOSIZE;
@@ -2434,9 +2438,6 @@
 
 			foreach ( Control c in Controls )
 				c.Visible = value ;
-
-			if ( visibleChanged )
-				OnVisibleChanged ( EventArgs.Empty );
 		}
     		
     		public void Show () 
@@ -2789,8 +2790,6 @@
 					}
 					break;
     			case Msg.WM_SIZE:
-    				OnResize (eventArgs);
-				UpdateBounds ( );
     				if( GetStyle(ControlStyles.ResizeRedraw)) {
     					Invalidate();		
     				}
@@ -2851,6 +2850,37 @@
     			}
     		}
 
+		private void DoAnchor(Control ctrl) {
+			int deltaWidth = Bounds.Width - oldBounds.Width;
+			int deltaHeight = Bounds.Height - oldBounds.Height;
+			int halfDeltaWidth = deltaWidth / 2;
+			int halfDeltaHeight = deltaHeight / 2;
+			Rectangle controlBounds = ctrl.Bounds;
+			if ((ctrl.Anchor & AnchorStyles.Left) == 0) {
+				controlBounds.X += halfDeltaWidth;
+			}
+			if ((ctrl.Anchor & AnchorStyles.Top) == 0) {
+				controlBounds.Y += halfDeltaHeight;
+			}
+			if ((ctrl.Anchor & AnchorStyles.Right) == AnchorStyles.Right) {
+				if ((ctrl.Anchor & AnchorStyles.Left) == AnchorStyles.Left) {
+					controlBounds.Width += deltaWidth;
+				}
+				else {
+					controlBounds.X += halfDeltaWidth;
+				}
+			}
+			if ((ctrl.Anchor & AnchorStyles.Bottom) == AnchorStyles.Bottom) {
+				if ((ctrl.Anchor & AnchorStyles.Top) == AnchorStyles.Top) {
+					controlBounds.Height += deltaHeight;
+				}
+				else {
+					controlBounds.Y += halfDeltaHeight;
+				}
+			}
+			ctrl.Bounds = controlBounds;
+		}
+
 		private void DoDockAndAnchorLayout ( LayoutEventArgs e ) {
 			Rectangle area = DisplayRectangle;
 			
@@ -2877,6 +2907,9 @@
 					control.SetBounds ( area.Left, area.Y, control.Width, area.Height );
 					area.X += control.Width;
 					area.Width -= control.Width;
+				break;
+				case DockStyle.None:
+					DoAnchor(control);
 				break;
 				}
 			}

@@ -102,7 +102,7 @@ namespace System.Windows.Forms {
 				createParams.Caption = "Hello World";
 				createParams.ClassName = Win32.DEFAULT_WINDOW_CLASS;
   				
-				createParams.Style = (int) (WindowStyles.WS_VISIBLE | WindowStyles.WS_CLIPCHILDREN | WindowStyles.WS_CHILD);
+				createParams.Style = (int) (WindowStyles.WS_CLIPCHILDREN | WindowStyles.WS_CHILD);
 				//test version with scroll bars.
 				//createParams.Style = (int) (WindowStyles.WS_OVERLAPPEDWINDOW | WindowStyles.WS_HSCROLL | WindowStyles.WS_VSCROLL);
 				
