@@ -1,5 +1,5 @@
 thisdir = tools/macpack
-SUBDIRS = 
+SUBDIRS =
 
 RESOURCE_FILES = \
 	LOADER \
@@ -11,5 +11,7 @@ LOCAL_MCS_FLAGS = \
 	$(RESOURCE_FILES:%=/resource:%)
 
 PROGRAM = macpack.exe
+
+EXTRA_DISTFILES = $(RESOURCE_FILES)
 
 include ../../build/executable.make
