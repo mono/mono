@@ -1,3 +1,8 @@
+2002-05-08  Ravi Pratap  <ravi@ximian.com>
+
+	* ecore.cs (FindMostEncompass*): Fix trivial bug where the set of 
+	applicable operators was not being considered correctly. This closes
+	the bug Miguel reported.
 
 Wed May 8 16:40:50 CEST 2002 Paolo Molaro <lupus@ximian.com>
 

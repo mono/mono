@@ -1071,7 +1071,31 @@ namespace Mono.CSharp {
 				if (param_type == source_type)
 					return param_type;
 
-				src_types_set.Add (param_type);
+				if (apply_explicit_conv_rules) {
+					//
+					// From the spec :
+					// Find the set of applicable user-defined conversion operators, U.  This set
+					// consists of the
+					// user-defined implicit or explicit conversion operators declared by
+					// the classes or structs in D that convert from a type encompassing
+					// or encompassed by S to a type encompassing or encompassed by T
+					//
+					priv_fms_expr.SetType (param_type);
+					if (StandardConversionExists (priv_fms_expr, source_type))
+						src_types_set.Add (param_type);
+					else {
+						priv_fms_expr.SetType (source_type);
+						if (StandardConversionExists (priv_fms_expr, param_type))
+							src_types_set.Add (param_type);
+					}
+				} else {
+					//
+					// Only if S is encompassed by param_type
+					//
+					priv_fms_expr.SetType (source_type);
+					if (StandardConversionExists (priv_fms_expr, param_type))
+						src_types_set.Add (param_type);
+				}
 			}
 			
 			//
@@ -1132,7 +1156,31 @@ namespace Mono.CSharp {
 				if (ret_type == target)
 					return ret_type;
 
-				tgt_types_set.Add (ret_type);
+				if (apply_explicit_conv_rules) {
+					//
+					// From the spec :
+					// Find the set of applicable user-defined conversion operators, U.  This set
+					// consists of the
+					// user-defined implicit or explicit conversion operators declared by
+					// the classes or structs in D that convert from a type encompassing
+					// or encompassed by S to a type encompassing or encompassed by T
+					//
+					priv_fms_expr.SetType (ret_type);
+					if (StandardConversionExists (priv_fms_expr, target))
+						tgt_types_set.Add (ret_type);
+					else {
+						priv_fms_expr.SetType (target);
+						if (StandardConversionExists (priv_fms_expr, ret_type))
+							tgt_types_set.Add (ret_type);
+					}
+				} else {
+					//
+					// Only if T is encompassed by param_type
+					//
+					priv_fms_expr.SetType (ret_type);
+					if (StandardConversionExists (priv_fms_expr, target))
+						tgt_types_set.Add (ret_type);
+				}
 			}
 
 			//
