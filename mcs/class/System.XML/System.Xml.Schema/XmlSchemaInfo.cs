@@ -42,6 +42,21 @@ namespace System.Xml.Schema
 		XmlSchemaType type;
 		XmlSchemaValidity validity;
 
+		public XmlSchemaInfo ()
+		{
+		}
+
+		internal XmlSchemaInfo (IXmlSchemaInfo info)
+		{
+			isDefault = info.IsDefault;
+			isNil = info.IsNil;
+			memberType = info.MemberType;
+			attr = info.SchemaAttribute;
+			elem = info.SchemaElement;
+			type = info.SchemaType;
+			validity = info.Validity;
+		}
+
 		[MonoTODO]
 		public bool IsDefault {
 			get { return isDefault; }

@@ -1,5 +1,9 @@
 2004-12-16  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlSchemaInfo.cs : added internal copy constructor.
+
+2004-12-16  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlSchemaValidator.cs : implemented GetExpectedParticles() and
 	  SkipToEndElement ().
 

@@ -34,6 +34,9 @@ using System;
 using System.Text;
 using System.Xml.XPath;
 using Mono.Xml;
+#if NET_2_0
+using System.Xml.Schema;
+#endif
 
 namespace System.Xml
 {
@@ -46,6 +49,9 @@ namespace System.Xml
 		private string prefix;
 		internal bool isDefault;
 		private XmlElement ownerElement;
+#if NET_2_0
+		private IXmlSchemaInfo schemaInfo;
+#endif
 
 		#endregion
 
@@ -205,6 +211,13 @@ namespace System.Xml
 				return prefix;
 			}
 		}
+
+#if NET_2_0
+		public override IXmlSchemaInfo SchemaInfo {
+			get { return schemaInfo; }
+			internal set { schemaInfo = value; }
+		}
+#endif
 
 		public virtual bool Specified {
 			get {

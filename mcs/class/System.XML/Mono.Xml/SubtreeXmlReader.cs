@@ -31,6 +31,7 @@
 using System;
 using System.Collections;
 using System.Xml;
+using System.Xml.Schema;
 
 namespace Mono.Xml
 {
@@ -109,6 +110,10 @@ namespace Mono.Xml
 
 		public override ReadState ReadState {
 			get { return initial ? ReadState.Initial : eof ? ReadState.EndOfFile : Reader.ReadState ; }
+		}
+
+		public override IXmlSchemaInfo SchemaInfo {
+			get { return Reader.SchemaInfo; }
 		}
 
 		public override XmlReaderSettings Settings {

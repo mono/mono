@@ -35,6 +35,9 @@ using System.Collections;
 using System.Xml;
 using System.Text;
 using Mono.Xml;
+#if NET_2_0
+using System.Xml.Schema;
+#endif
 
 namespace System.Xml
 {
@@ -351,6 +354,12 @@ namespace System.Xml
 		public override ReadState ReadState {
 			get { return state; }
 		}
+
+#if NET_2_0
+		public override IXmlSchemaInfo SchemaInfo {
+			get { return entityReader != null ? entityReader.SchemaInfo : current != null ? current.SchemaInfo : null; }
+		}
+#endif
 
 		public override string Value {
 			get {

@@ -36,6 +36,9 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Xml.XPath;
+#if NET_2_0
+using System.Xml.Schema;
+#endif
 
 namespace System.Xml
 {
@@ -266,6 +269,13 @@ namespace System.Xml
 				return (ParentNode != null) ? ParentNode.XmlSpace : OwnerDocument.XmlSpace;
 			}
 		}
+
+#if NET_2_0
+		public virtual IXmlSchemaInfo SchemaInfo {
+			get { return null; }
+			internal set { }
+		}
+#endif
 
 		#endregion
 

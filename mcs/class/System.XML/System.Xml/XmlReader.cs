@@ -757,6 +757,24 @@ namespace System.Xml
 		}
 
 		[MonoTODO]
+		public virtual bool ReadToFollowing (string name)
+		{
+			while (Read ())
+				if (NodeType == XmlNodeType.Element && name == Name)
+					return true;
+			return false;
+		}
+
+		[MonoTODO]
+		public virtual bool ReadToFollowing (string localName, string namespaceURI)
+		{
+			while (Read ())
+				if (NodeType == XmlNodeType.Element && localName == Name && namespaceURI == NamespaceURI)
+					return true;
+			return false;
+		}
+
+		[MonoTODO]
 		public virtual bool ReadToNextSibling (string name)
 		{
 			if (NodeType != XmlNodeType.Element || IsEmptyElement)

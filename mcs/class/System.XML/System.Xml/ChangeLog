@@ -1,3 +1,13 @@
+2004-12-16  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlReader.cs : added MoveToFollowing().
+	* XmlNode.cs,
+	  XmlElement.cs,
+	  XmlAttribute.cs : added SchemaInfo support.
+	* XmlDocument.cs : added Schemas and Validate().
+	  ReadNode() now copies xmlReader's SchemaInfo.
+	* XmlNodeReader.cs : ditto (just reflects node's SchemaInfo).
+
 2004-12-15  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlReader.cs :

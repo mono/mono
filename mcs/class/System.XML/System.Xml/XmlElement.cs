@@ -36,6 +36,9 @@ using System.Xml.XPath;
 using System.IO;
 using System.Text;
 using Mono.Xml;
+#if NET_2_0
+using System.Xml.Schema;
+#endif
 
 namespace System.Xml
 {
@@ -48,6 +51,9 @@ namespace System.Xml
 		private string namespaceURI;
 		private string prefix;
 		private bool isNotEmpty;
+#if NET_2_0
+		IXmlSchemaInfo schemaInfo;
+#endif
 
 		#endregion
 
@@ -220,6 +226,13 @@ namespace System.Xml
 				prefix = OwnerDocument.NameTable.Add (value);
 			}
 		}
+
+#if NET_2_0
+		public override IXmlSchemaInfo SchemaInfo {
+			get { return schemaInfo; }
+			internal set { schemaInfo = value; }
+		}
+#endif
 
 		#endregion
 

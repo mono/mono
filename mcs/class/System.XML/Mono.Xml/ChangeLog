@@ -1,3 +1,8 @@
+2004-12-16  Atsushi Enomoto <atsushi@ximian.com>
+
+	* SubtreeXmlReader.cs, XmlFilterReader.cs :
+	  Override SchemaInfo to return input reader's SchemaInfo.
+
 2004-12-15  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlFilterReader.cs : don't expect XmlReaderSettings of its source.

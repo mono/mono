@@ -33,6 +33,7 @@
 #if NET_2_0
 using System;
 using System.Xml;
+using System.Xml.Schema;
 
 namespace Mono.Xml
 {
@@ -146,6 +147,10 @@ namespace Mono.Xml
 
 		public override XmlNameTable NameTable {
 			get { return reader.NameTable; }
+		}
+
+		public override IXmlSchemaInfo SchemaInfo {
+			get { return reader.SchemaInfo; }
 		}
 
 		public override XmlReaderSettings Settings {

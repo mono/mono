@@ -44,6 +44,7 @@ using System.Diagnostics;
 using System.Collections;
 using Mono.Xml;
 #if NET_2_0
+using System.Xml.Schema;
 using Mono.Xml.XPath;
 #endif
 
@@ -59,6 +60,9 @@ namespace System.Xml
 		bool preserveWhitespace = false;
 		XmlResolver resolver;
 		Hashtable idTable = new Hashtable ();
+#if NET_2_0
+		XmlSchemaSet schemas;
+#endif
 
 		// MS.NET rejects undeclared entities _only_ during Load(),
 		// while ReadNode() never rejects such node. So it signs
@@ -228,6 +232,13 @@ namespace System.Xml
 				return Encoding.GetEncoding (dec.Encoding);
 			}
 		}
+
+#if NET_2_0
+		public XmlSchemaSet Schemas {
+			get { return schemas; }
+			set { schemas = value; }
+		}
+#endif
 
 		#endregion
 
@@ -635,6 +646,10 @@ namespace System.Xml
 					if (preserveWhitespace || n.NodeType != XmlNodeType.Whitespace)
 						AppendChild (n);
 				} while (true);
+#if NET_2_0
+				if (xmlReader.Settings != null)
+					schemas = xmlReader.Settings.Schemas;
+#endif
 			} finally {
 				loadMode = false;
 			}
@@ -718,13 +733,17 @@ namespace System.Xml
 		}
 
 		// Reads XmlReader and creates Attribute Node.
-		private XmlAttribute ReadAttributeNode(XmlReader reader)
+		private XmlAttribute ReadAttributeNode (XmlReader reader)
 		{
-			if(reader.NodeType == XmlNodeType.Element)
+			if (reader.NodeType == XmlNodeType.Element)
 				reader.MoveToFirstAttribute ();
-			else if(reader.NodeType != XmlNodeType.Attribute)
+			else if (reader.NodeType != XmlNodeType.Attribute)
 				throw new InvalidOperationException (MakeReaderErrorMessage ("bad position to read attribute.", reader));
 			XmlAttribute attribute = CreateAttribute (reader.Prefix, reader.LocalName, reader.NamespaceURI, false, false); // different NameTable
+#if NET_2_0
+			if (reader.SchemaInfo != null)
+				SchemaInfo = new XmlSchemaInfo (reader.SchemaInfo);
+#endif
 			ReadAttributeNodeValue (reader, attribute);
 
 			// Keep the current reader position on attribute.
@@ -777,6 +796,10 @@ namespace System.Xml
 
 			case XmlNodeType.Element:
 				XmlElement element = CreateElement (reader.Prefix, reader.LocalName, reader.NamespaceURI);
+#if NET_2_0
+				if (reader.SchemaInfo != null)
+					SchemaInfo = new XmlSchemaInfo (reader.SchemaInfo);
+#endif
 				element.IsEmpty = reader.IsEmptyElement;
 
 				// set the element's attributes.
@@ -946,6 +969,39 @@ namespace System.Xml
 			nameTable.Add ("#document");
 			nameTable.Add ("#significant-whitespace");
 		}
+
+#if NET_2_0
+		public void Validate (ValidationEventHandler handler)
+		{
+			Validate (handler, this,
+				XmlSchemaValidationFlags.IgnoreValidationWarnings);
+		}
+
+		public void Validate (ValidationEventHandler handler,
+			XmlNode node)
+		{
+			Validate (handler, node,
+				XmlSchemaValidationFlags.IgnoreValidationWarnings |
+				XmlSchemaValidationFlags.IgnoreIdentityConstraints);
+		}
+
+		private void Validate (ValidationEventHandler handler,
+			XmlNode node, XmlSchemaValidationFlags flags)
+		{
+			XmlReaderSettings settings = new XmlReaderSettings ();
+			settings.NameTable = NameTable;
+			settings.Schemas = schemas;
+			settings.Schemas.XmlResolver = resolver;
+			settings.XmlResolver = resolver;
+			settings.ValidationFlags = flags;
+			settings.ValidationType = ValidationType.Schema;
+			XmlReader r = XmlReader.Create (
+				new XmlNodeReader (node), settings);
+			while (!r.EOF)
+				r.Read ();
+		}
+#endif
+
 		#endregion
 	}
 }
