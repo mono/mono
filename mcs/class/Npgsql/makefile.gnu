@@ -5,7 +5,7 @@ LIBRARY = $(topdir)/class/lib/Npgsql.dll
 LIB_LIST = list
 LIB_FLAGS = -r corlib -r System -r System.Xml -r System.Data
 
-SOURCES_INCLUDE=*.cs
+SOURCES_INCLUDE=*.cs ./NpgsqlTypes/*.cs ./Npgsql/*.cs
 SOURCES_EXCLUDE=\
 	./Test*
 
