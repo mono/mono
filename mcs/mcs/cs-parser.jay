@@ -2468,6 +2468,11 @@ array_creation_expression
 	  {
 		$$ = new ArrayCreation ((Expression) $2, (string) $3, (ArrayList) $4, lexer.Location);
 	  }
+	| NEW error
+	  {
+		Report.Error (1031, lexer.Location, "Type expected");
+                $$ = null;
+	  }          
 	| NEW type error 
 	  {
 		Report.Error (1526, lexer.Location, "new expression requires () or [] after type");

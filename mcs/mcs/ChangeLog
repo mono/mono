@@ -1,3 +1,9 @@
+2004-11-01  Marek Safar  <marek.safar@seznam.cz>
+
+	* cs-parser.jay: Add error 1031 report.
+
+	* cs-tokenizer.cs: Add location for error 1038.
+
 2004-10-31  Marek Safar  <marek.safar@seznam.cz>
 
 	* cs-parser.jay: Add error 1016 report.
