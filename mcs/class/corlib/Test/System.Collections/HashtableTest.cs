@@ -582,7 +582,7 @@ public class HashtableTest : TestCase {
 	}
 
 	
-	private class  HashtableTest2 : TestCase {
+	public class  HashtableTest2 : TestCase {
 
 		protected Hashtable ht;
 		private static Random rnd;
