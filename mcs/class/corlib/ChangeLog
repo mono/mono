@@ -1,3 +1,8 @@
+2004-03-11  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile, corlib.dll.win32-excludes : 
+	  now csc build includes SecurityPermissionAttribute.cs.
+
 2004-03-09  Jackson Harper  <jackson@ximian.com>
 
 	* corlib_test.dll.sources: Add new test cases to the build.

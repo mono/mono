@@ -1,6 +1,7 @@
 thisdir = class/corlib
 SUBDIRS =
 include ../../build/rules.make
+export __SECURITY_BOOTSTRAP_DB=$(topdir)/class/corlib
 
 # corlib is crazy to build so we skip build/library.make and do stuff
 # ourselves.
