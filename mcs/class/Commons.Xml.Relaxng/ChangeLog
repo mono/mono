@@ -1,3 +1,7 @@
+2004-03-01  Atsushi Enomoto <atsushi@ximian.com>
+
+	* README : added usage descriptions.
+
 2004-02-28  Atsushi Enomoto <atsushi@ximian.com>
 
 	* Commons.Xml.Relaxng_test.dll.sources : Added XsdDatatypeTests.cs

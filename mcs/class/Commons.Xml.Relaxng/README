@@ -11,6 +11,63 @@
   It supports RELAX NG predefined datatypes and XML Schema datatypes (its
   DatatypeLibrary is http://www.w3.org/2001/XMLSchema-datatypes ).
 
+  All classes which is expected to use are in namespace Commons.Xml.Relaxng.
+  There is another namespace Commons.Xml.Relaxng.Derivative which is not
+  expected to be used in users custom classes, though the classes are public
+  as yet.
+
+** Validating Reader usage
+
+  RelaxngValidatingReader is used to validate XML document with RELAX NG
+  grammar. The usage is simple:
+
+	XmlReader instance = new XmlTextReader ("instance.xml");
+	XmlReader grammar = new XmlTextReader ("my.rng");
+	RelaxngValidatingReader reader = 
+		new RelaxngValidatingReader (instance, grammar);
+
+  You can also use RelaxngPattern class to reuse grammar instance:
+
+	RelaxngPattern pattern = RelaxngPattern.Read (
+		new XmlTextReader ("relaxng.rng");
+
+  And also, RelaxngGrammar and its contents can be created with managed code
+  like System.Xml.Schema.XmlSchema.
+
+  Then Read() method (and other reading methods such as ReadElementString())
+  reads the instance, validating with the grammar.
+
+
+** Datatype support
+
+  Commons.Xml.Relaxng now supports custom datatype library. There are two 
+  classes from which you have to write classes derived.
+
+  <ul>
+	* RelaxngDatatype: it represents the actual data type
+
+	* RelaxngDatatypeProvider: it provides the way to get RelaxngDatatype from QName and parameters
+  </ul>
+
+  RelaxngDatatype class has Parse() method which is used for validation.
+  Basically RelaxngValidatingReader is only aware of that if the typed
+  elements or attributes are parsable (you can override IsValid() method
+  to change this behavior) using Parse() method for each datatype.
+
+  To enable custom datatype support, first you have to implement concrete
+  RelaxngDatatype implementations (it only requires to override Parse(), 
+  Name and NamespaceURI) and then RelaxngDatatypeProvider implementations
+  (only GetDatatype() is required) to return the datatypes you implemented
+  as above.
+
+  Basically RelaxngDatatypeProvider is designed to allow to contain 
+  datatypes in different namespaces (e.g. supporting both XML schema
+  datatypes and default namespace types). You can also use 
+  RelaxngMergedProvider class to combine existing two or more datatype
+  providers. However, for ease of datatype search, it is indexed by the
+  namespace URI (if you want to mix namespace-overrapped providers, you can
+  implement your own merging provider). 
+
 
 ** Known bugs
 
