@@ -1,3 +1,7 @@
+2004-09-10  Martin Baulig  <martin@ximian.com>
+
+	* gen-76.cs: New test.
+
 2004-09-09  Marek Safar <marek.safar@seznam.cz>
 
 	* test-291.cs: New test for #pragma warning.
