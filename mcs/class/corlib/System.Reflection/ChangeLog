@@ -1,5 +1,7 @@
 2004-11-05  Zoltan Varga  <vargaz@freemail.hu>
 
+	* Assembly.cs: Implement GetFiles (bool).
+
 	* Binder.cs: Add support for byref types. Fixes #69140.
 
 2004-10-12  Martin Baulig  <martin@ximian.com>

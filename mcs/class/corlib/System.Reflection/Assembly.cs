@@ -182,11 +182,16 @@ namespace System.Reflection {
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern object GetFilesInternal (String name);
+		private extern object GetFilesInternal (String name, bool getResourceModules);
 
 		public virtual FileStream[] GetFiles ()
 		{
-			string[] names = (string[]) GetFilesInternal (null);
+			return GetFiles (false);
+		}
+
+		public virtual FileStream [] GetFiles (bool getResourceModules)
+		{
+			string[] names = (string[]) GetFilesInternal (null, getResourceModules);
 			if (names == null)
 				return new FileStream [0];
 
@@ -196,14 +201,6 @@ namespace System.Reflection {
 			return res;
 		}
 
-		[MonoTODO ("true == not implemented")]
-		public virtual FileStream [] GetFiles (bool getResourceModules)
-		{
-			if (!getResourceModules)
-				return GetFiles ();
-			throw new NotImplementedException ();
-		}
-
 		public virtual FileStream GetFile (String name)
 		{
 			if (name == null)
@@ -211,7 +208,7 @@ namespace System.Reflection {
 			if (name.Length == 0)
 				throw new ArgumentException ("name");
 
-			string filename = (string)GetFilesInternal (name);
+			string filename = (string)GetFilesInternal (name, true);
 			if (filename != null)
 				return new FileStream (filename, FileMode.Open, FileAccess.Read);
 			else
