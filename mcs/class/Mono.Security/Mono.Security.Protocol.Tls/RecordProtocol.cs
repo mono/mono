@@ -23,6 +23,7 @@
 //
 
 using System;
+using System.Collections;
 using System.IO;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
@@ -79,58 +80,28 @@ namespace Mono.Security.Protocol.Tls
 					AlertDescription.InternalError,
 					"The session is finished and it's no longer valid.");
 			}
-			
+	
 			// Try to read the Record Content Type
 			int type = this.innerStream.ReadByte();
-
-			// There are no more data for read
 			if (type == -1)
 			{
 				return null;
 			}
 
 			ContentType	contentType	= (ContentType)type;
-			short		protocol	= this.readShort();
-			short		length		= this.readShort();
-			
-			// Read Record data
-			int		received	= 0;
-			byte[]	buffer		= new byte[length];
-			while (received != length)
-			{
-				received += this.innerStream.Read(
-					buffer, received, buffer.Length - received);
-			}
-
-			DebugHelper.WriteLine(
-				">>>> Read record ({0}|{1})", 
-				this.context.DecodeProtocolCode(protocol),
-				contentType);
-			DebugHelper.WriteLine("Record data", buffer);
+			byte[] buffer = this.ReadRecordBuffer(contentType);
 
 			TlsStream message = new TlsStream(buffer);
 		
-			// Check that the message has a valid protocol version
-			if (protocol != this.context.Protocol && 
-				this.context.ProtocolNegotiated)
-			{
-				throw new TlsException(
-					AlertDescription.ProtocolVersion,
-					"Invalid protocol version on message received from server");
-			}
-
 			// Decrypt message contents if needed
-			if (contentType == ContentType.Alert && length == 2)
+			if (contentType == ContentType.Alert && buffer.Length == 2)
 			{
 			}
 			else
 			{
-				if (this.context.IsActual &&
-					contentType != ContentType.ChangeCipherSpec)
+				if (this.context.IsActual && contentType != ContentType.ChangeCipherSpec)
 				{
-					message = this.decryptRecordFragment(
-						contentType, 
-						message.ToArray());
+					message = this.decryptRecordFragment(contentType, message.ToArray());
 
 					DebugHelper.WriteLine("Decrypted record data", message.ToArray());
 				}
@@ -144,12 +115,14 @@ namespace Mono.Security.Protocol.Tls
 
 			switch (contentType)
 			{
+				case ContentType.ClientHelloV2:
+					// Set the last handshake message received as the standard ClientHello
+					this.context.LastHandshakeMsg = HandshakeType.ClientHello;
+					result = null;
+					break;
+
 				case ContentType.Alert:
-					this.processAlert(
-						(AlertLevel)message.ReadByte(),
-						(AlertDescription)message.ReadByte());
-					// don't include alert data with application data
-					// anyway the data is already processed
+					this.ProcessAlert((AlertLevel)message.ReadByte(), (AlertDescription)message.ReadByte());
 					result = null;
 					break;
 
@@ -179,7 +152,100 @@ namespace Mono.Security.Protocol.Tls
 			return result;
 		}
 
-		private short readShort()
+		private byte[] ReadRecordBuffer(ContentType contentType)
+		{
+			switch (contentType)
+			{
+				case ContentType.ClientHelloV2:
+					return this.ReadClientHelloV2();
+
+				default:
+					if (!Enum.IsDefined(typeof(ContentType), contentType))
+					{
+						throw new TlsException(AlertDescription.DecodeError);
+					}
+					return this.ReadStandardRecordBuffer();
+			}
+		}
+
+		private byte[] ReadClientHelloV2()
+		{
+			short protocol			= this.ReadShort();
+			short cipherSpecLength	= this.ReadShort();
+			short sessionIdLength	= this.ReadShort();
+			short challengeLength	= this.ReadShort();
+			short length = (challengeLength > 32) ? (short)32 : challengeLength;
+
+			// Read CipherSpecs
+			byte[] cipherSpecV2 = new byte[cipherSpecLength];
+			this.innerStream.Read(cipherSpecV2, 0, cipherSpecV2.Length);			
+
+			// Read session ID
+			byte[] sessionId = new byte[sessionIdLength];
+			this.innerStream.Read(sessionId, 0, sessionId.Length);
+
+			// Read challenge ID
+			byte[] challenge = new byte[challengeLength];
+			this.innerStream.Read(challenge, 0, challenge.Length);
+
+			// Check that the message has a valid protocol version
+			SecurityProtocolType protocolType = this.context.DecodeProtocolCode(protocol);
+			if (protocolType != SecurityProtocolType.Ssl3 && protocolType != SecurityProtocolType.Tls)
+			{
+				throw new TlsException(
+					AlertDescription.ProtocolVersion, "Invalid protocol version on message received");
+			}
+		
+			if (challengeLength < 16 || cipherSpecLength == 0 || (cipherSpecLength % 3) != 0)
+			{
+				throw new TlsException(AlertDescription.DecodeError);
+			}
+
+			// Updated the Session ID
+			if (sessionId.Length > 0)
+			{
+				this.context.SessionId = sessionId;
+			}
+
+			// Select the cipher suite collection
+			this.Context.SupportedCiphers = CipherSuiteFactory.GetSupportedCiphers(protocolType);
+
+			// Select the Cipher suite
+			this.ProcessCipherSpecV2Buffer(protocolType, cipherSpecV2);
+
+			// Updated the Client Random
+			this.context.ClientRandom = new byte[32];			
+			Buffer.BlockCopy(challenge, 0, this.context.ClientRandom, 0, length);
+
+			return new byte[0];
+		}
+
+		private byte[] ReadStandardRecordBuffer()
+		{
+			short protocol	= this.ReadShort();
+			short length	= this.ReadShort();
+			
+			// Read Record data
+			int		received	= 0;
+			byte[]	buffer		= new byte[length];
+			while (received != length)
+			{
+				received += this.innerStream.Read(buffer, received, buffer.Length - received);
+			}
+
+			// Check that the message has a valid protocol version
+			if (protocol != this.context.Protocol && this.context.ProtocolNegotiated)
+			{
+				throw new TlsException(
+					AlertDescription.ProtocolVersion, "Invalid protocol version on message received");
+			}
+
+			DebugHelper.WriteLine("Record data", buffer);
+
+			return buffer;
+		}
+
+		private short ReadShort()
 		{
 			byte[] b = new byte[2];
 			this.innerStream.Read(b, 0, b.Length);
@@ -189,9 +255,7 @@ namespace Mono.Security.Protocol.Tls
 			return System.Net.IPAddress.HostToNetworkOrder(val);
 		}
 
-		private void processAlert(
-			AlertLevel			alertLevel, 
-			AlertDescription	alertDesc)
+		private void ProcessAlert(AlertLevel alertLevel, AlertDescription alertDesc)
 		{
 			switch (alertLevel)
 			{
@@ -446,6 +510,97 @@ namespace Mono.Security.Protocol.Tls
 			this.context.ReadSequenceNumber++;
 
 			return new TlsStream(dcrFragment);
+		}
+
+		#endregion
+
+		#region CipherSpecV2 processing
+
+		private void ProcessCipherSpecV2Buffer(SecurityProtocolType protocol, byte[] buffer)
+		{
+			TlsStream codes = new TlsStream(buffer);
+
+			string prefix = (protocol == SecurityProtocolType.Ssl3) ? "SSL_" : "TLS_";
+
+			while (codes.Position < codes.Length)
+			{
+				byte check = codes.ReadByte();
+
+				if (check == 0)
+				{
+					// SSL/TLS cipher spec
+					int index = 0;
+					short code = codes.ReadInt16();					
+					if ((index = this.Context.SupportedCiphers.IndexOf(code)) != -1)
+					{
+						this.Context.Cipher	= this.Context.SupportedCiphers[index];
+						break;
+					}
+				}
+				else
+				{
+					byte[] tmp = new byte[2];
+					codes.Read(tmp, 0, tmp.Length);
+
+					int tmpCode = ((check & 0xff) << 16) | ((tmp[0] & 0xff) << 8) | (tmp[1] & 0xff);
+					CipherSuite cipher = this.MapV2CipherCode(prefix, tmpCode);
+
+					if (cipher != null)
+					{
+						this.Context.Cipher = cipher;
+						break;
+					}
+				}
+			}
+
+			if (this.Context.Cipher == null)
+			{
+				throw new TlsException(AlertDescription.InsuficientSecurity, "Insuficient Security");
+			}
+		}
+
+		private CipherSuite MapV2CipherCode(string prefix, int code)
+		{
+			try
+			{
+				switch (code)
+				{
+					case 65664:
+						// TLS_RC4_128_WITH_MD5
+						return this.Context.SupportedCiphers[prefix + "RSA_WITH_RC4_128_MD5"];
+					
+					case 131200:
+						// TLS_RC4_128_EXPORT40_WITH_MD5
+						return this.Context.SupportedCiphers[prefix + "RSA_EXPORT_WITH_RC4_40_MD5"];
+					
+					case 196736:
+						// TLS_RC2_CBC_128_CBC_WITH_MD5
+						return this.Context.SupportedCiphers[prefix + "RSA_EXPORT_WITH_RC2_CBC_40_MD5"];
+					
+					case 262272:
+						// TLS_RC2_CBC_128_CBC_EXPORT40_WITH_MD5
+						return this.Context.SupportedCiphers[prefix + "RSA_EXPORT_WITH_RC2_CBC_40_MD5"];
+					
+					case 327808:
+						// TLS_IDEA_128_CBC_WITH_MD5
+						return null;
+					
+					case 393280:
+						// TLS_DES_64_CBC_WITH_MD5
+						return null;
+
+					case 458944:
+						// TLS_DES_192_EDE3_CBC_WITH_MD5
+						return null;
+
+					default:
+						return null;
+				}
+			}
+			catch
+			{
+				return null;
+			}
 		}
 
 		#endregion
