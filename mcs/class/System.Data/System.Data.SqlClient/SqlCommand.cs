@@ -310,16 +310,19 @@ namespace System.Data.SqlClient {
 
 			try {
 				Execute (CommandBehavior.Default, false);
-				// .NET documentation says that except for INSERT, UPDATE and
-				// DELETE  where the return value is the number of rows affected
-				// for the rest of the commands the return value is -1.	
-				if ((CommandText.ToUpper().IndexOf("UPDATE")!=-1) ||
-				    (CommandText.ToUpper().IndexOf("INSERT")!=-1) ||  	
-				    (CommandText.ToUpper().IndexOf("DELETE")!=-1))	
-						result = Connection.Tds.RecordsAffected;
-				else
+				if (commandType == CommandType.StoredProcedure)
 					result = -1;
-				
+				else {
+					// .NET documentation says that except for INSERT, UPDATE and
+					// DELETE  where the return value is the number of rows affected
+					// for the rest of the commands the return value is -1.	
+					if ((CommandText.ToUpper().IndexOf("UPDATE")!=-1) ||
+					    (CommandText.ToUpper().IndexOf("INSERT")!=-1) ||  	
+					    (CommandText.ToUpper().IndexOf("DELETE")!=-1))	
+						result = Connection.Tds.RecordsAffected;
+					else
+						result = -1;
+				      }		
 			}
 			catch (TdsTimeoutException e) {
 				throw SqlException.FromTdsInternalException ((TdsInternalException) e);
