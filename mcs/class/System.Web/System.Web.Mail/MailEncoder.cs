@@ -1,3 +1,5 @@
+// System.Web.Mail.MailEncoder
+// author: Per Arneng <pt99par@student.bth.se>
 using System;
 using System.IO;
 using System.Security.Cryptography;
