@@ -1,3 +1,8 @@
+2005-01-20  Jackson Harper  <jackson@ximian.com>
+
+	* X11Structs.cs: Add the modmaps to the keymask struct and tabify.
+	* X11Keyboard.cs: Set the AltGr mask when we get a key event.
+
 2005-01-19  Peter Bartok  <pbartok@novell.com>
 
 	* Control.cs: Un-selecting the control when it is loosing focus

@@ -978,11 +978,19 @@ namespace System.Windows.Forms {
 		FullApplicationMondal	= 3
 	}
 
-        internal enum KeyMasks {
-                ShiftMask               = (1 << 0),
-                LockMask 		= (1 << 1),
-                ControlMask		= (1 << 2)
-        }
+	[Flags]
+	internal enum KeyMasks {
+		ShiftMask		= (1 << 0),
+		LockMask		= (1 << 1),
+		ControlMask		= (1 << 2),
+		Mod1Mask		= (1 << 3),
+		Mod2Mask		= (1 << 4),
+		Mod3Mask		= (1 << 5),
+		Mod4Mask		= (1 << 6),
+		Mod5Mask		= (1 << 7),
+
+		ModMasks		= Mod1Mask | Mod2Mask | Mod3Mask | Mod4Mask | Mod5Mask
+	}
 
 	[StructLayout (LayoutKind.Sequential)]
 	internal struct XModifierKeymap {

@@ -76,8 +76,9 @@ namespace System.Windows.Forms {
 				xevent.KeyEvent.keycode = xevent.KeyEvent.keycode & 0xFF;
 
 			int event_time = (int)xevent.KeyEvent.time;
-			int vkey = EventToVkey (xevent);
 
+			AltGrMask = xevent.KeyEvent.state & (0x6000 | (int) KeyMasks.ModMasks);
+			int vkey = EventToVkey (xevent);
 			if (vkey == 0)
 				return;
 
@@ -132,10 +133,12 @@ namespace System.Windows.Forms {
 			switch (tu) {
 			case 1:
 				message = (msg.message == Msg.WM_KEYDOWN ? Msg.WM_CHAR : Msg.WM_SYSCHAR);
+				Console.WriteLine ("char:  {0}", buffer);
 				XplatUIX11.PostMessage (msg.hwnd, message, (IntPtr) buffer [0], msg.lParam);
 				break;
 			case -1:
 				message = (msg.message == Msg.WM_KEYDOWN ? Msg.WM_DEADCHAR : Msg.WM_SYSDEADCHAR);
+				Console.WriteLine ("char:  {0}", buffer);
 				XplatUIX11.PostMessage (msg.hwnd, message, (IntPtr) buffer [0], msg.lParam);
 				return true;
 			}
