@@ -1,3 +1,8 @@
+2004-02-04  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* CryptoStreamTest.cs: Added many more tests for every problem found
+	with CryptoStream using code samples from the internet.
+
 2003-12-15  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* CryptoConfigTest.cs: Converted unit tests to NUnit2.

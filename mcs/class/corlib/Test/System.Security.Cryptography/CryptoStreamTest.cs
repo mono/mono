@@ -2,18 +2,122 @@
 // CryptoStreamTest.cs - NUnit Test Cases for CryptoStream
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com)
 //
+
+/* WARNING * WARNING * WARNING * WARNING * WARNING * WARNING * WARNING *
+ * 
+ * DO NOT USE ANY OF THE TEST CASE AS SAMPLES FOR YOUR OWN CODE. MANY
+ * CASES CONTAINS ERRORS AND AREN'T SECURE IN THEIR USE.
+ * 
+ * WARNING * WARNING * WARNING * WARNING * WARNING * WARNING * WARNING */
 
 using NUnit.Framework;
 using System;
 using System.IO;
+using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
 
 namespace MonoTests.System.Security.Cryptography {
+
+	// much useful for debugging
+	public class DebugStream : MemoryStream {
+
+		// constructor
+
+		public DebugStream () : base () {}
+		public DebugStream (byte[] buffer) : base (buffer) {}
+		public DebugStream (int capacity) : base (capacity) {}
+
+		public override bool CanRead {
+			get { return base.CanRead; }
+		}
+
+		public override bool CanSeek {
+			get { return base.CanSeek; }
+		}
+
+		public override bool CanWrite {
+			get { return base.CanWrite; }
+		}
+
+		public override int Capacity {
+			get { return base.Capacity; }
+			set { base.Capacity = value; }
+		}
+
+		public override long Length {
+			get { return base.Length; }
+		}
+		
+		public override long Position {
+			get { return base.Position; }
+			set { base.Position = value; }
+		}
+
+		// methods
+		
+		public override void Close () 
+		{
+			base.Close ();
+		}
+		
+		public override void Flush () 
+		{
+			base.Flush ();
+		}
+
+		public override byte[] GetBuffer () 
+		{
+			return base.GetBuffer ();
+		}
+
+		public override int Read ([In,Out] byte[] buffer, int offset, int count)
+		{
+			int len = base.Read (buffer, offset, count);
+			return len;
+		}
+
+		public override int ReadByte () 
+		{
+			return base.ReadByte ();
+		}
+
+		public override long Seek (long offset, SeekOrigin loc)
+		{
+			return base.Seek (offset, loc);
+		}
+		
+		public override void SetLength (long value)
+		{
+			base.SetLength (value);
+		}
+		
+		public override byte[] ToArray () 
+		{
+			return base.ToArray ();
+		}
+
+		public override void Write (byte[] buffer, int offset, int count) 
+		{
+			base.Write (buffer, offset, count);
+		}
+
+		public override void WriteByte (byte value) 
+		{
+			base.WriteByte (value);
+		}
+
+		public override void WriteTo (Stream stream) 
+		{
+			base.WriteTo (stream);
+		}
+	}
 
 	[TestFixture]
 	public class CryptoStreamTest : Assertion {
@@ -37,6 +141,18 @@ namespace MonoTests.System.Security.Cryptography {
 			}
 		}
 
+		[TearDown]
+		void CleanUp () 
+		{
+			try {
+				if (File.Exists ("read"))
+					File.Delete ("read");
+				if (File.Exists ("write"))
+					File.Delete ("write");
+			}
+			catch {}
+		}
+
 		public void AssertEquals (string msg, byte[] array1, byte[] array2)
 		{
 			AllTests.AssertEquals (msg, array1, array2);
@@ -50,9 +166,13 @@ namespace MonoTests.System.Security.Cryptography {
 		}
 
 		[Test]
+		[ExpectedException (typeof (NullReferenceException))]
 		public void TransformNull ()
 		{
-			cs = new CryptoStream (readStream, null, CryptoStreamMode.Read);
+			MemoryStream write = new MemoryStream (8);
+			byte[] data = {0, 1, 2, 3, 4, 5, 6, 7};
+			cs = new CryptoStream (write, null, CryptoStreamMode.Write);
+			cs.Write (data, 0, 8);
 		}
 
 		[Test]
@@ -143,12 +263,191 @@ namespace MonoTests.System.Security.Cryptography {
 			cs.FlushFinalBlock ();
 		}
 
-		// bugzilla 46143 (adapted from test case by Joerg Rosenkranz)
 		[Test]
-		public void PartialRead () 
+		[ExpectedException (typeof (NotSupportedException))]
+		public void FlushFinalBlock_Dual () 
+		{
+			byte[] data = {0, 1, 2, 3, 4, 5, 6, 7};
+			cs = new CryptoStream (writeStream, encryptor, CryptoStreamMode.Write);
+			cs.Write (data, 0, data.Length);
+			cs.FlushFinalBlock ();
+			cs.FlushFinalBlock ();
+		}
+
+		[Test]
+		// LAMESPEC or MS BUG [ExpectedException (typeof (ObjectDisposedException))]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void FlushFinalBlock_Disposed () 
+		{
+			cs = new CryptoStream (writeStream, encryptor, CryptoStreamMode.Write);
+			cs.Clear ();
+			cs.FlushFinalBlock ();
+		}
+
+		[Test]
+		// LAMESPEC or MS BUG [ExpectedException (typeof (ObjectDisposedException))]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void Read_Disposed () 
+		{
+			byte[] buffer = new byte [8];
+			cs = new CryptoStream (readStream, encryptor, CryptoStreamMode.Read);
+			cs.Clear ();
+			cs.Read (buffer, 0, 8);
+		}
+
+		[Test]
+		// MS BUG [ExpectedException (typeof (ObjectDisposedException))]
+		[Ignore ("Test cause System.ExecutionEngineException on MS runtime")]
+		public void Read_Disposed_Break () 
+		{
+			byte[] buffer = new byte [8];
+			cs = new CryptoStream (readStream, encryptor, CryptoStreamMode.Read);
+			int len = cs.Read (buffer, 0, 4);
+			AssertEquals ("Read 4", 4, len);
+			cs.Clear ();
+			len = cs.Read (buffer, 3, 4);
+		}
+
+		[Test]
+		[ExpectedException (typeof (NotSupportedException))]
+		public void Read_WriteStream () 
+		{
+			cs = new CryptoStream (writeStream, encryptor, CryptoStreamMode.Write);
+			byte[] buffer = new byte [8];
+			cs.Read (buffer, 0, 8);
+		}
+
+		[Test]
+		// [ExpectedException (typeof (ArgumentNullException))]
+		[ExpectedException (typeof (NullReferenceException))]
+		public void Read_NullBuffer () 
+		{
+			cs = new CryptoStream (readStream, encryptor, CryptoStreamMode.Read);
+			cs.Read (null, 0, 8);
+		}
+
+		[Test]
+		public void Read_EmptyBuffer_ZeroCount () 
+		{
+			byte[] buffer = new byte [0];
+			cs = new CryptoStream (readStream, encryptor, CryptoStreamMode.Read);
+			int len = cs.Read (buffer, 0, 0);
+			AssertEquals ("Read 0", 0, len);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void Read_NegativeOffset () 
+		{
+			byte[] buffer = new byte [8];
+			cs = new CryptoStream (readStream, encryptor, CryptoStreamMode.Read);
+			cs.Read (buffer, -1, 8);
+		}
+
+		[Test]
+		public void Read_ZeroCount () 
+		{
+			byte[] buffer = new byte [8];
+			cs = new CryptoStream (readStream, encryptor, CryptoStreamMode.Read);
+			int len = cs.Read (buffer, 0, 0);
+			AssertEquals ("Read 0", 0, len);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void Read_NegativeCount () 
+		{
+			byte[] buffer = new byte [8];
+			cs = new CryptoStream (readStream, encryptor, CryptoStreamMode.Read);
+			cs.Read (buffer, 0, -1);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void Read_InvalidOffset () 
+		{
+			byte[] buffer = new byte [8];
+			cs = new CryptoStream (readStream, encryptor, CryptoStreamMode.Read);
+			cs.Read (buffer, 5, 4);
+		}
+
+		[Test]
+		// MS BUG [ExpectedException (typeof (ObjectDisposedException))]
+		[Ignore ("Test cause System.ExecutionEngineException on MS runtime")]
+		public void Write_Disposed () 
+		{
+			byte[] buffer = new byte [8];
+			cs = new CryptoStream (writeStream, encryptor, CryptoStreamMode.Write);
+			cs.Clear ();
+			cs.Write (buffer, 0, 8);
+		}
+
+		[Test]
+		[ExpectedException (typeof (NotSupportedException))]
+		public void Write_ReadStream () 
+		{
+			cs = new CryptoStream (readStream, encryptor, CryptoStreamMode.Read);
+			byte[] buffer = new byte [8];
+			cs.Write (buffer, 0, 8);
+		}
+
+		[Test]
+		// [ExpectedException (typeof (ArgumentNullException))]
+		[ExpectedException (typeof (NullReferenceException))]
+		public void Write_NullBuffer () 
+		{
+			cs = new CryptoStream (writeStream, encryptor, CryptoStreamMode.Write);
+			cs.Write (null, 0, 8);
+		}
+
+		[Test]
+		public void Write_EmptyBuffer_ZeroCount () 
+		{
+			byte[] buffer = new byte [0];
+			cs = new CryptoStream (writeStream, encryptor, CryptoStreamMode.Write);
+			cs.Write (buffer, 0, 0);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void Write_NegativeOffset () 
+		{
+			byte[] buffer = new byte [8];
+			cs = new CryptoStream (writeStream, encryptor, CryptoStreamMode.Write);
+			cs.Write (buffer, -1, 8);
+		}
+
+		[Test]
+		public void Write_ZeroCount () 
+		{
+			byte[] buffer = new byte [8];
+			cs = new CryptoStream (writeStream, encryptor, CryptoStreamMode.Write);
+			cs.Write (buffer, 0, 0);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void Write_NegativeCount () 
+		{
+			byte[] buffer = new byte [8];
+			cs = new CryptoStream (writeStream, encryptor, CryptoStreamMode.Write);
+			cs.Write (buffer, 0, -1);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void Write_InvalidOffset () 
+		{
+			byte[] buffer = new byte [8];
+			cs = new CryptoStream (writeStream, encryptor, CryptoStreamMode.Write);
+			cs.Write (buffer, 5, 4);
+		}
+
+		[Test]
+		public void FullRoundtripRead () 
 		{
 			byte[] encrypted;
-	                using (MemoryStream mem1 = new MemoryStream ()) {
+			using (DebugStream mem1 = new DebugStream ()) {
 				byte[] toEncrypt = Encoding.Unicode.GetBytes ("Please encode me!");
 				using (CryptoStream crypt = new CryptoStream (mem1, aes.CreateEncryptor (), CryptoStreamMode.Write)) {
 					crypt.Write (toEncrypt, 0, toEncrypt.Length);
@@ -157,12 +456,38 @@ namespace MonoTests.System.Security.Cryptography {
 				encrypted = mem1.ToArray ();
 			}
 					
-			using (MemoryStream mem2 = new MemoryStream (encrypted)) {
-				byte[] buffer = new byte[1024];
+			using (DebugStream mem2 = new DebugStream (encrypted)) {
+				byte[] buffer = new byte [1024];
 				CryptoStream cr = new CryptoStream (mem2, aes.CreateDecryptor (), CryptoStreamMode.Read);
-				cr.Read (buffer, 0, 20);
+				int len = cr.Read (buffer, 0, buffer.Length);
 				cr.Close ();
-				Assert ("Partial Block Read", Encoding.Unicode.GetString (buffer).StartsWith ("Please enc"));
+				AssertEquals ("Full Length Read", 34, len);
+				AssertEquals ("Full Block Read", "Please encode me!", Encoding.Unicode.GetString (buffer, 0, len));
+			}
+		}
+
+		// bugzilla 46143 (adapted from test case by Joerg Rosenkranz)
+		[Test]
+		public void PartialRoundtripRead () 
+		{
+			byte[] encrypted;
+	                using (DebugStream mem1 = new DebugStream ()) {
+				byte[] toEncrypt = Encoding.Unicode.GetBytes ("Please encode me!");
+				using (CryptoStream crypt = new CryptoStream (mem1, aes.CreateEncryptor (), CryptoStreamMode.Write)) {
+					crypt.Write (toEncrypt, 0, toEncrypt.Length);
+					crypt.FlushFinalBlock ();
+				}
+				encrypted = mem1.ToArray ();
+			}
+					
+			using (DebugStream mem2 = new DebugStream (encrypted)) {
+				byte[] buffer = new byte [1024];
+				CryptoStream cr = new CryptoStream (mem2, aes.CreateDecryptor (), CryptoStreamMode.Read);
+				int len = cr.Read (buffer, 0, 20);
+				cr.Clear ();
+				cr.Close ();
+				AssertEquals ("Partial Length Read", 20, len);
+				AssertEquals ("Partial Block Read", "Please enc", Encoding.Unicode.GetString (buffer, 0, len));
 	                }
 		}
 
@@ -318,6 +643,428 @@ namespace MonoTests.System.Security.Cryptography {
 			AssertEquals ("MultiblocksWithPartial", expected, encrypted);
 		}
 
-		// TODO: Test with Hash object
+		// Adapted from Subba Rao Thirumoorthy email on mono-devel-list (december 2003)
+		private byte[] NonMultipleOfBlockSize_Encrypt (ICryptoTransform ct, byte[] data)
+		{
+			DebugStream stream = new DebugStream ();
+			CryptoStream CryptStream = new CryptoStream (stream, ct, CryptoStreamMode.Write);
+
+			int len = 0;
+			long myLength = 0;
+			byte[] Buffer = new byte [1024];
+			
+			DebugStream fout = new DebugStream (data);
+			while (myLength < data.Length) {
+				len = fout.Read (Buffer, 0, 1023);
+				if (len == 0)
+					break;
+				CryptStream.Write (Buffer, 0, len);
+				CryptStream.Flush ();
+				myLength = myLength + len;
+			}
+			CryptStream.FlushFinalBlock ();
+			// we must ensure that the result is correct
+			AssertEquals ("Length(final)", 64, len);
+			byte[] result = stream.ToArray ();
+			string end = BitConverter.ToString (result, 65520, 16);
+			AssertEquals ("End part", "04-70-19-1D-28-C5-BD-9A-23-C6-60-E2-28-96-38-65", end);
+
+			CryptStream.Close();
+			stream.Close();
+			return result;
+		}
+
+		private byte[] NonMultipleOfBlockSize_Decrypt (ICryptoTransform ct, byte[] data) 
+		{
+			DebugStream stream = new DebugStream (data);
+			CryptoStream CryptStream = new CryptoStream (stream, ct, CryptoStreamMode.Read);
+
+			int len = 0;
+			long myLength = 0;
+			byte[] Buffer = new Byte [1024];
+
+			DebugStream fout = new DebugStream ();
+			// each returned block must be 1023 bytes long 
+			// even if this isn't a multiple of the block size
+			while ((len = CryptStream.Read (Buffer, 0, 1023)) != 0) {
+				fout.Write (Buffer, 0, len);
+				fout.Flush ();
+				myLength = myLength + len;
+			}
+
+			byte[] result = fout.ToArray ();
+			CryptStream.Close ();
+			stream.Close ();
+			return result;
+		}
+
+		[Test]
+		public void NonMultipleOfBlockSize ()
+		{
+			byte[] key = { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16 };
+			byte[] iv  = { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16 };
+			byte[] data = new byte [65536];
+
+			RijndaelManaged aes = new RijndaelManaged ();
+			ICryptoTransform encryptor = aes.CreateEncryptor (key, iv);
+			byte[] encdata = NonMultipleOfBlockSize_Encrypt (encryptor, data);
+			AssertEquals ("Encrypted Data Length", (data.Length + (aes.BlockSize >> 3)), encdata.Length);
+			
+			ICryptoTransform decryptor = aes.CreateDecryptor (key, iv);
+			byte[] decdata = NonMultipleOfBlockSize_Decrypt (decryptor, encdata);
+			AssertEquals ("Decrypted Data Length", data.Length, decdata.Length);
+
+			int i = 0;
+			bool b = true;
+			while (b && (i < data.Length)) {
+				b = (data [i] == decdata [i]);
+				i++;
+			}
+			Assert ("NonMultipleOfBlockSize", b);
+		}
+
+		// bugzilla: 51322 - indirectly related but it explains why my first (unapplied) patch didn't work
+		[Test]
+		public void DecryptPartial_TransformFinalBlock_required () 
+		{
+			byte[] key = {0, 1, 2, 3, 4, 5, 6, 7};
+			byte[] iv = {0, 1, 2, 3, 4, 5, 6, 7};
+			DES des = DES.Create ();
+
+			byte[] data = Encoding.Unicode.GetBytes ("ximian");	// 12 bytes, 1.5 DES block size
+			DebugStream encrypted = new DebugStream ();
+			cs = new CryptoStream (encrypted, des.CreateEncryptor (key, iv), CryptoStreamMode.Write);
+			cs.Write (data, 0, data.Length);
+			cs.Close ();
+
+			data = encrypted.ToArray ();
+			DebugStream decrypted = new DebugStream (data);
+			cs = new CryptoStream (decrypted, des.CreateDecryptor (key, iv), CryptoStreamMode.Read);
+			int len = cs.Read (data, 0, data.Length);
+			cs.Close ();
+			AssertEquals ("Length", 12, len);
+			AssertEquals ("Unicode DES Roundtrip", "ximian", Encoding.Unicode.GetString (data, 0, len));
+		}
+
+		[Test]
+		public void DecryptPartial_TransformFinalBlock_2Pass () 
+		{
+			byte[] key = {0, 1, 2, 3, 4, 5, 6, 7};
+			byte[] iv = {0, 1, 2, 3, 4, 5, 6, 7};
+			DES des = DES.Create ();
+
+			byte[] data = Encoding.Unicode.GetBytes ("ximian");	// 12 bytes, 1.5 DES block size
+			DebugStream encrypted = new DebugStream ();
+			cs = new CryptoStream (encrypted, des.CreateEncryptor (key, iv), CryptoStreamMode.Write);
+			cs.Write (data, 0, data.Length);
+			cs.Close ();
+
+			data = encrypted.ToArray ();
+			DebugStream decrypted = new DebugStream (data);
+			cs = new CryptoStream (decrypted, des.CreateDecryptor (key, iv), CryptoStreamMode.Read);
+			int len = cs.Read (data, 0, 6);
+			AssertEquals ("Length (1st pass)", 6, len);
+			AssertEquals ("Partial DES Roundtrip", "xim", Encoding.Unicode.GetString (data, 0, len));
+			len += cs.Read (data, 6, 8);
+			AssertEquals ("Length (1st+2nd)", 12, len);
+			AssertEquals ("Full DES Roundtrip", "ximian", Encoding.Unicode.GetString (data, 0, len));
+			cs.Close ();
+		}
+
+		// based on http://www.c-sharpcorner.com/Code/2002/May/FileEncryption.asp
+		[Test]
+		public void WriteByteReadByte () 
+		{
+			DebugStream original = new DebugStream (Encoding.Unicode.GetBytes ("ximian"));
+
+			DebugStream encrypted = new DebugStream ();
+			byte[] key = {0, 1, 2, 3, 4, 5, 6, 7};
+			byte[] iv = {0, 1, 2, 3, 4, 5, 6, 7};
+			DES des = DES.Create ();
+			cs = new CryptoStream (encrypted, des.CreateEncryptor (key, iv), CryptoStreamMode.Write);
+
+			int data;
+			while ((data = original.ReadByte ()) != -1)
+				cs.WriteByte((byte) data);
+			cs.Close ();
+
+			byte[] result = encrypted.ToArray ();
+			AssertEquals ("Encrypted", "18-EA-93-3F-20-86-D2-AA-78-02-D7-6F-E4-47-17-9C", BitConverter.ToString (result));
+
+			encrypted = new DebugStream (result);
+			DebugStream decrypted = new DebugStream ();
+			cs = new CryptoStream (encrypted, des.CreateDecryptor (key, iv), CryptoStreamMode.Read);
+
+			while ((data = cs.ReadByte ()) != -1)
+				decrypted.WriteByte((byte) data);
+			cs.Close ();
+			decrypted.Close ();
+
+			AssertEquals ("W/R Byte Roundtrip", "ximian", Encoding.Unicode.GetString (decrypted.ToArray ()));
+		}
+
+		// based http://www.4guysfromrolla.com/webtech/090501-1.shtml
+
+		public string EncryptData (ICryptoTransform des, string strData) 
+		{
+			strData = String.Format("{0,5:00000}" + strData, strData.Length);
+			byte[] data = Encoding.ASCII.GetBytes (strData);
+
+			MemoryStream mStream = new MemoryStream (data); 
+			CryptoStream cs = new CryptoStream (mStream, des, CryptoStreamMode.Read);        
+			MemoryStream mOut = new MemoryStream ();
+	
+			int bytesRead; 
+			byte[] output = new byte [1024]; 
+			do { 
+				bytesRead = cs.Read (output, 0, 1024);
+				if (bytesRead != 0) 
+					mOut.Write (output, 0, bytesRead); 
+			} 
+			while (bytesRead > 0); 
+	
+			return Convert.ToBase64String (mOut.ToArray ());
+		}
+
+		public string DecryptData (ICryptoTransform des, string strData) 
+		{
+			MemoryStream mOut = new MemoryStream ();
+			byte[] data = Convert.FromBase64String (strData);
+			CryptoStream cs = new CryptoStream (mOut, des, CryptoStreamMode.Write);        
+			cs.Write (data, 0, (int)data.Length);
+			cs.FlushFinalBlock ();
+			return Encoding.ASCII.GetString (mOut.ToArray ()).Substring (5);
+		}
+
+		[Test]
+		public void EncryptOnRead () 
+		{
+			SHA1 sha = SHA1.Create ();
+			byte[] vector = sha.ComputeHash (Encoding.ASCII.GetBytes ("s3kr3t"));
+			byte[] key = new byte [8];
+			Buffer.BlockCopy (vector, 0, key, 0, key.Length);
+			byte[] iv = new byte [8];
+			Buffer.BlockCopy (vector, 8, iv, 0, iv.Length);
+
+			DES des = DES.Create ();
+
+			StringBuilder sb = new StringBuilder ();
+			sb.Append ("a");
+			string data = sb.ToString ();
+			string encdata = EncryptData (des.CreateEncryptor (key, iv), data);
+			string decdata = DecryptData (des.CreateDecryptor (key, iv), encdata);
+			AssertEquals ("Encrypt-" + data, "9YVfvrh5yj0=", encdata);
+			AssertEquals ("Decrypt-" + data, data, decdata);
+
+			sb.Append ("a");
+			data = sb.ToString ();
+			encdata = EncryptData (des.CreateEncryptor (key, iv), data);
+			decdata = DecryptData (des.CreateDecryptor (key, iv), encdata);
+			AssertEquals ("Encrypt-" + data, "qNe4d0UlkU8=", encdata);
+			AssertEquals ("Decrypt-" + data, data, decdata);
+
+			sb.Append ("a");
+			data = sb.ToString ();
+			encdata = EncryptData (des.CreateEncryptor (key, iv), data);
+			decdata = DecryptData (des.CreateDecryptor (key, iv), encdata);
+			AssertEquals ("Encrypt-" + data, "OcernYAQ1NAME/Gny+ZuaA==", encdata);
+			AssertEquals ("Decrypt-" + data, data, decdata);
+
+			sb.Append ("a");
+			data = sb.ToString ();
+			encdata = EncryptData (des.CreateEncryptor (key, iv), data);
+			decdata = DecryptData (des.CreateDecryptor (key, iv), encdata);
+			AssertEquals ("Encrypt-" + data, "H5UveR2lds1T+IWN4pks2Q==", encdata);
+			AssertEquals ("Decrypt-" + data, data, decdata);
+
+			sb.Append ("a");
+			data = sb.ToString ();
+			encdata = EncryptData (des.CreateEncryptor (key, iv), data);
+			decdata = DecryptData (des.CreateDecryptor (key, iv), encdata);
+			AssertEquals ("Encrypt-" + data, "dDQ3HAVtTbiRwwUqWANaeA==", encdata);
+			AssertEquals ("Decrypt-" + data, data, decdata);
+
+			sb.Append ("a");
+			data = sb.ToString ();
+			encdata = EncryptData (des.CreateEncryptor (key, iv), data);
+			decdata = DecryptData (des.CreateDecryptor (key, iv), encdata);
+			AssertEquals ("Encrypt-" + data, "At1r7dVDjJlQidf4QzCNkw==", encdata);
+			AssertEquals ("Decrypt-" + data, data, decdata);
+
+			sb.Append ("a");
+			data = sb.ToString ();
+			encdata = EncryptData (des.CreateEncryptor (key, iv), data);
+			decdata = DecryptData (des.CreateDecryptor (key, iv), encdata);
+			AssertEquals ("Encrypt-" + data, "DFDJWJGaNrFVBDXovsq1ew==", encdata);
+			AssertEquals ("Decrypt-" + data, data, decdata);
+
+			sb.Append ("a");
+			data = sb.ToString ();
+			encdata = EncryptData (des.CreateEncryptor (key, iv), data);
+			decdata = DecryptData (des.CreateDecryptor (key, iv), encdata);
+			AssertEquals ("Encrypt-" + data, "gM040QGMPOBj3u1lEK4XHQ==", encdata);
+			AssertEquals ("Decrypt-" + data, data, decdata);
+
+			sb.Append ("a");
+			data = sb.ToString ();
+			encdata = EncryptData (des.CreateEncryptor (key, iv), data);
+			decdata = DecryptData (des.CreateDecryptor (key, iv), encdata);
+			AssertEquals ("Encrypt-" + data, "P5hRUhrxOWFX0ER/IjJL/Q==", encdata);
+			AssertEquals ("Decrypt-" + data, data, decdata);
+
+			sb.Append ("a");
+			data = sb.ToString ();
+			encdata = EncryptData (des.CreateEncryptor (key, iv), data);
+			decdata = DecryptData (des.CreateDecryptor (key, iv), encdata);
+			AssertEquals ("Encrypt-" + data, "uDIaQ1uXtWUIboGFLt306Q==", encdata);
+			AssertEquals ("Decrypt-" + data, data, decdata);
+
+			sb.Append ("a");
+			data = sb.ToString ();
+			encdata = EncryptData (des.CreateEncryptor (key, iv), data);
+			decdata = DecryptData (des.CreateDecryptor (key, iv), encdata);
+			AssertEquals ("Encrypt-" + data, "giJKTXfad5Z8hebhXtYZ4hmKX/EC8w6x", encdata);
+			AssertEquals ("Decrypt-" + data, data, decdata);
+
+			sb.Append ("a");
+			data = sb.ToString ();
+			encdata = EncryptData (des.CreateEncryptor (key, iv), data);
+			decdata = DecryptData (des.CreateDecryptor (key, iv), encdata);
+			AssertEquals ("Encrypt-" + data, "lBehBplIrjjrlIrMjYcNz1DOoXLHjZdn", encdata);
+			AssertEquals ("Decrypt-" + data, data, decdata);
+
+			sb.Append ("a");
+			data = sb.ToString ();
+			encdata = EncryptData (des.CreateEncryptor (key, iv), data);
+			decdata = DecryptData (des.CreateDecryptor (key, iv), encdata);
+			AssertEquals ("Encrypt-" + data, "2elWrUnjmsAOpo2s4voJyZXEJ/rtKB7P", encdata);
+			AssertEquals ("Decrypt-" + data, data, decdata);
+
+			sb.Append ("a");
+			data = sb.ToString ();
+			encdata = EncryptData (des.CreateEncryptor (key, iv), data);
+			decdata = DecryptData (des.CreateDecryptor (key, iv), encdata);
+			AssertEquals ("Encrypt-" + data, "GB3BaIZGf9K+T82j7T8Fri2rQ2/YUdSe", encdata);
+			AssertEquals ("Decrypt-" + data, data, decdata);
+
+			sb.Append ("a");
+			data = sb.ToString ();
+			encdata = EncryptData (des.CreateEncryptor (key, iv), data);
+			decdata = DecryptData (des.CreateDecryptor (key, iv), encdata);
+			AssertEquals ("Encrypt-" + data, "Gc+wkJL+CVjdJchgcIoi8dkH2BVpHJgB", encdata);
+			AssertEquals ("Decrypt-" + data, data, decdata);
+
+			sb.Append ("a");
+			data = sb.ToString ();
+			encdata = EncryptData (des.CreateEncryptor (key, iv), data);
+			decdata = DecryptData (des.CreateDecryptor (key, iv), encdata);
+			AssertEquals ("Encrypt-" + data, "loeuyII/PvWb91M4pFVkyaPxQoQVYpNb", encdata);
+			AssertEquals ("Decrypt-" + data, data, decdata);
+
+			sb.Append ("a");
+			data = sb.ToString ();
+			encdata = EncryptData (des.CreateEncryptor (key, iv), data);
+			decdata = DecryptData (des.CreateDecryptor (key, iv), encdata);
+			AssertEquals ("Encrypt-" + data, "PHXmi/sxNIgApXAfdm+Bf54/nCM//N8o", encdata);
+			AssertEquals ("Decrypt-" + data, data, decdata);
+
+			sb.Append ("a");
+			data = sb.ToString ();
+			encdata = EncryptData (des.CreateEncryptor (key, iv), data);
+			decdata = DecryptData (des.CreateDecryptor (key, iv), encdata);
+			AssertEquals ("Encrypt-" + data, "xpb+wj/8LmH2ScTg3OU4JOsE5Owj6flF", encdata);
+			AssertEquals ("Decrypt-" + data, data, decdata);
+
+			sb.Append ("a");
+			data = sb.ToString ();
+			encdata = EncryptData (des.CreateEncryptor (key, iv), data);
+			decdata = DecryptData (des.CreateDecryptor (key, iv), encdata);
+			AssertEquals ("Encrypt-" + data, "WJz4VfsZ2emzhYWoSf+PNBDpHooxEregqMWnzm4gcqU=", encdata);
+			AssertEquals ("Decrypt-" + data, data, decdata);
+
+			sb.Append ("a");
+			data = sb.ToString ();
+			encdata = EncryptData (des.CreateEncryptor (key, iv), data);
+			decdata = DecryptData (des.CreateDecryptor (key, iv), encdata);
+			AssertEquals ("Encrypt-" + data, "PaouZu1iOKbCMRJSu04y/kB+TcOk4yp8K2BOGDs1PPE=", encdata);
+			AssertEquals ("Decrypt-" + data, data, decdata);
+
+			sb.Append ("a");
+			data = sb.ToString ();
+			encdata = EncryptData (des.CreateEncryptor (key, iv), data);
+			decdata = DecryptData (des.CreateDecryptor (key, iv), encdata);
+			AssertEquals ("Encrypt-" + data, "qbTDs4dFy7eERdn5vV7JRPk2/m9smtwvZjA6+TmGlkI=", encdata);
+			AssertEquals ("Decrypt-" + data, data, decdata);
+
+			sb.Append ("a");
+			data = sb.ToString ();
+			encdata = EncryptData (des.CreateEncryptor (key, iv), data);
+			decdata = DecryptData (des.CreateDecryptor (key, iv), encdata);
+			AssertEquals ("Encrypt-" + data, "f2FsphcpM7Fu90S5V17ptly44lL4GvFCCaFdnnU4twk=", encdata);
+			AssertEquals ("Decrypt-" + data, data, decdata);
+
+			sb.Append ("a");
+			data = sb.ToString ();
+			encdata = EncryptData (des.CreateEncryptor (key, iv), data);
+			decdata = DecryptData (des.CreateDecryptor (key, iv), encdata);
+			AssertEquals ("Encrypt-" + data, "imD+ntHsUmp9ALJedzC1JmAJY0r2O4KkP8271+XuG4g=", encdata);
+			AssertEquals ("Decrypt-" + data, data, decdata);
+
+			sb.Append ("a");
+			data = sb.ToString ();
+			encdata = EncryptData (des.CreateEncryptor (key, iv), data);
+			decdata = DecryptData (des.CreateDecryptor (key, iv), encdata);
+			AssertEquals ("Encrypt-" + data, "80QLLUmHwx1fcEYGeFz1WXlS13kUy994sQLI6GhcjuM=", encdata);
+			AssertEquals ("Decrypt-" + data, data, decdata);
+
+			sb.Append ("a");
+			data = sb.ToString ();
+			encdata = EncryptData (des.CreateEncryptor (key, iv), data);
+			decdata = DecryptData (des.CreateDecryptor (key, iv), encdata);
+			AssertEquals ("Encrypt-" + data, "DtIIlj8BCOppmIgQ9AEdUj7pBB49S/9Q38kbWLjwiVs=", encdata);
+			AssertEquals ("Decrypt-" + data, data, decdata);
+
+			sb.Append ("a");
+			data = sb.ToString ();
+			encdata = EncryptData (des.CreateEncryptor (key, iv), data);
+			decdata = DecryptData (des.CreateDecryptor (key, iv), encdata);
+			AssertEquals ("Encrypt-" + data, "LNkprYaaUFtyan204OzX+a2pzOb/Pg5WXzXJ6WWB1rQ=", encdata);
+			AssertEquals ("Decrypt-" + data, data, decdata);
+
+			sb.Append ("a");
+			data = sb.ToString ();
+			encdata = EncryptData (des.CreateEncryptor (key, iv), data);
+			decdata = DecryptData (des.CreateDecryptor (key, iv), encdata);
+			AssertEquals ("Encrypt-" + data, "FRgx9m2lT2PxtYSIdRwc+SznJetNiRk1MEIZDl3D13pvo2yOtJ1MSQ==", encdata);
+			AssertEquals ("Decrypt-" + data, data, decdata);
+
+			sb.Append ("a");
+			data = sb.ToString ();
+			encdata = EncryptData (des.CreateEncryptor (key, iv), data);
+			decdata = DecryptData (des.CreateDecryptor (key, iv), encdata);
+			AssertEquals ("Encrypt-" + data, "V7JlnpJscrdIpX4z5S+/Q5WDjKzK4aB5TiqI3JZOYJ+KE1CWQNNeow==", encdata);
+			AssertEquals ("Decrypt-" + data, data, decdata);
+
+			sb.Append ("a");
+			data = sb.ToString ();
+			encdata = EncryptData (des.CreateEncryptor (key, iv), data);
+			decdata = DecryptData (des.CreateDecryptor (key, iv), encdata);
+			AssertEquals ("Encrypt-" + data, "wVwPv1c2KQynbwiOBCAhmQlReOQT52qFR34AX4dtjEeQ1oCQ1N1tHg==", encdata);
+			AssertEquals ("Decrypt-" + data, data, decdata);
+
+			sb.Append ("a");
+			data = sb.ToString ();
+			encdata = EncryptData (des.CreateEncryptor (key, iv), data);
+			decdata = DecryptData (des.CreateDecryptor (key, iv), encdata);
+			AssertEquals ("Encrypt-" + data, "Zi+G0yfmuFjSjP455pjVeKBDDWB4qvTb0K0h20UtflrYG6wcWqUzDw==", encdata);
+			AssertEquals ("Decrypt-" + data, data, decdata);
+
+			sb.Append ("a");
+			data = sb.ToString ();
+			encdata = EncryptData (des.CreateEncryptor (key, iv), data);
+			decdata = DecryptData (des.CreateDecryptor (key, iv), encdata);
+			AssertEquals ("Encrypt-" + data, "0hGoonZ8jrLhMNDKBuWrlvFnq15ZLvnyq+Ilq8r4aYUEDxttQMwi5w==", encdata);
+			AssertEquals ("Decrypt-" + data, data, decdata);
+		}
 	}
 }
