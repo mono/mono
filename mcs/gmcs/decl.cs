@@ -139,6 +139,13 @@ namespace Mono.CSharp {
 			this.Name = name;
 		}
 
+		public MemberName (string type, MemberName name)
+		{
+			this.TypeName = new TypeName (type);
+			this.Name = name.Name;
+			this.TypeParameters = name.TypeParameters;
+		}
+
 		public MemberName (TypeName type, string name, ArrayList type_params)
 			: this (type, name)
 		{
@@ -165,12 +172,29 @@ namespace Mono.CSharp {
 				return Name;
 		}
 
+		public static explicit operator string (MemberName name)
+		{
+			if (name.TypeName != null)
+				return name.TypeName + "." + name.Name;
+			else
+				return name.Name;
+		}
+
 		public override string ToString ()
 		{
 			string full_name;
-			if (TypeParameters != null)
-				full_name = Name + "<" + TypeParameters + ">";
-			else
+			if (TypeParameters != null) {
+				StringBuilder sb = new StringBuilder ();
+				sb.Append (Name);
+				sb.Append ("<");
+				for (int i = 0; i < TypeParameters.Length; i++) {
+					if (i > 0)
+						sb.Append (",");
+					sb.Append (TypeParameters [i]);
+				}
+				sb.Append (">");
+				full_name = sb.ToString ();
+			} else
 				full_name = Name;
 
 			if (TypeName != null)
@@ -190,6 +214,8 @@ namespace Mono.CSharp {
 		/// </summary>
 		public string Name;
 
+		public readonly MemberName MemberName;
+
 		/// <summary>
 		///   Modifier flags that the user specified in the source code
 		/// </summary>
@@ -205,9 +231,10 @@ namespace Mono.CSharp {
 		/// </summary>
  		Attributes attributes;
 
-		public MemberCore (string name, Attributes attrs, Location loc)
+		public MemberCore (MemberName name, Attributes attrs, Location loc)
 		{
-			Name = name;
+			Name = (string) name;
+			MemberName = name;
 			Location = loc;
 			attributes = attrs;
 		}
@@ -292,7 +319,7 @@ namespace Mono.CSharp {
 		/// </summary>
 		protected Hashtable defined_names;
 
-		bool is_generic;
+		readonly bool is_generic;
 
 		//
 		// Whether we are Generic
@@ -310,12 +337,15 @@ namespace Mono.CSharp {
 
 		TypeContainer parent;
 
-		public DeclSpace (NamespaceEntry ns, TypeContainer parent, string name, Attributes attrs, Location l)
+		public DeclSpace (NamespaceEntry ns, TypeContainer parent, MemberName name,
+				  Attributes attrs, Location l)
 			: base (name, attrs, l)
 		{
 			NamespaceEntry = ns;
-			Basename = name.Substring (1 + name.LastIndexOf ('.'));
+			Basename = name.Name;
 			defined_names = new Hashtable ();
+			if (name.TypeParameters != null)
+				is_generic = true;
 			this.parent = parent;
 		}
 
@@ -1126,35 +1156,26 @@ namespace Mono.CSharp {
 			return type_param_list;
 		}
 
-		///
-		/// Called by the parser to configure the type_parameter_list for this
-		/// declaration space
-		///
-		public AdditionResult SetParameterInfo (TypeArguments args,
-							ArrayList constraints_list)
+		public AdditionResult SetParameterInfo (ArrayList constraints_list)
 		{
-			string[] type_parameter_list = args.GetDeclarations ();
-			if (type_parameter_list == null)
-				return AdditionResult.Error;
+			if (!is_generic) {
+				if (constraints_list != null) {
+					Report.Error (
+						80, Location, "Contraints are not allowed " +
+						"on non-generic declarations");
+					return AdditionResult.Error;
+				}
 
-			return SetParameterInfo (type_parameter_list, constraints_list);
-		}
+				return AdditionResult.Success;
+			}
 
-		public AdditionResult SetParameterInfo (IList type_parameter_list,
-							ArrayList constraints_list)
-		{
-			type_params = new TypeParameter [type_parameter_list.Count];
-
-			//
-			// Mark this type as Generic
-			//
-			is_generic = true;
+			type_params = new TypeParameter [MemberName.TypeParameters.Length];
 
 			//
 			// Register all the names
 			//
-			for (int i = 0; i < type_parameter_list.Count; i++) {
-				string name = (string) type_parameter_list [i];
+			for (int i = 0; i < MemberName.TypeParameters.Length; i++) {
+				string name = MemberName.TypeParameters [i];
 
 				AdditionResult res = IsValid (name, name);
 

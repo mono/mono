@@ -696,10 +696,10 @@ class_member_declaration
 struct_declaration
 	: opt_attributes
 	  opt_modifiers
-	  STRUCT IDENTIFIER
+	  STRUCT member_name
 	  { 
 		Struct new_struct;
-		string full_struct_name = MakeName ((string) $4);
+		MemberName full_struct_name = MakeName ((MemberName) $4);
 
 		new_struct = new Struct (current_namespace, current_container, full_struct_name,
 					 (int) $2, (Attributes) $1, lexer.Location);
@@ -707,7 +707,6 @@ struct_declaration
 		RootContext.Tree.RecordDecl (full_struct_name, new_struct);
 		lexer.ConstraintsParsing = true;
 	  }
-	  opt_type_parameter_list
 	  opt_class_base
 	  opt_type_parameter_constraints_clauses
 	  {
@@ -718,14 +717,10 @@ struct_declaration
 	  {
 		Struct new_struct = (Struct) current_container;
 
-		if ($8 != null && $6 == null)
-			Report.Error (80, lexer.Location,
-				      "Contraints are not allowed on non-generic declarations");
-		if ($6 != null)
-			CheckDef (new_struct.SetParameterInfo ((ArrayList) $6, (ArrayList) $8), new_struct.Name, new_struct.Location);
+		CheckDef (new_struct.SetParameterInfo ((ArrayList) $7), new_struct.Name, new_struct.Location);
 
-		if ($7 != null)
-			new_struct.Bases = (ArrayList) $7;
+		if ($6 != null)
+			new_struct.Bases = (ArrayList) $6;
 
 		current_container = current_container.Parent;
 		CheckDef (current_container.AddStruct (new_struct), new_struct.Name, new_struct.Location);
@@ -956,10 +951,9 @@ method_header
 		GenericMethod generic = null;
 		if (name.TypeParameters != null) {
 			generic = new GenericMethod (current_namespace, current_container,
-						     name.Name, (Attributes) $1,
-						     lexer.Location);
+						     name, (Attributes) $1, lexer.Location);
 
-			CheckDef (generic.SetParameterInfo (name.TypeParameters, (ArrayList) $9), name.Name, lexer.Location);
+			CheckDef (generic.SetParameterInfo ((ArrayList) $9), name.Name, lexer.Location);
 
 			method = new Method (generic, (Expression) $3, (int) $2, false, name,
 					     (Parameters) $6, (Attributes) $1, lexer.Location);
@@ -994,11 +988,10 @@ method_header
 		GenericMethod generic = null;
 		if (name.TypeParameters != null) {
 			generic = new GenericMethod (current_namespace, current_container,
-						     name.Name, (Attributes) $1,
-						     lexer.Location);
+						     name, (Attributes) $1, lexer.Location);
 
 
-			CheckDef (generic.SetParameterInfo (name.TypeParameters, (ArrayList) $9), name.Name, lexer.Location);
+			CheckDef (generic.SetParameterInfo ((ArrayList) $9), name.Name, lexer.Location);
 
 			method = new Method (generic, TypeManager.system_void_expr, (int) $2,
 					     false, name, (Parameters) $6, (Attributes) $1,
@@ -1015,14 +1008,17 @@ method_header
 	| opt_attributes
 	  opt_modifiers
 	  type 
-	  modifiers member_name OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS
+	  modifiers namespace_or_type_name OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS
 	  {
 		Report.Error (1585, lexer.Location, 
 			String.Format ("Modifier {0} should appear before type", 
 				Modifiers.Name ((int) $4)));
+		TypeName type_name = (TypeName) $4;
+		MemberName name = type_name.GetMemberName ();
+
 		Method method = new Method (current_container, TypeManager.system_void_expr,
-					    0, false, (MemberName) $5, (Parameters) $6,
-					    (Attributes) $1, lexer.Location);
+					    0, false, name, (Parameters) $6, (Attributes) $1,
+					    lexer.Location);
 
 		current_local_parameters = (Parameters) $6;
 		$$ = method;
@@ -1123,7 +1119,7 @@ parameter_array
 property_declaration
 	: opt_attributes
 	  opt_modifiers
-	  type member_name
+	  type namespace_or_type_name
 	  OPEN_BRACE 
 	  {
 		implicit_value_parameter_type = (Expression) $3;
@@ -1145,9 +1141,11 @@ property_declaration
 		Accessor get_block = (Accessor) pair.First;
 		Accessor set_block = (Accessor) pair.Second;
 
-		MemberName name = (MemberName) $4;
-		if (name.TypeParameters != null)
+		TypeName type_name = (TypeName) $4;
+		if (type_name.TypeArguments != null)
 			syntax_error (lexer.Location, "a property can't have type arguments");
+
+		MemberName name = type_name.GetMemberName ();
 
 		Location loc = (Location) $6;
 		prop = new Property (current_container, (Expression) $3, (int) $2, false,
@@ -1246,10 +1244,10 @@ accessor_body
 interface_declaration
 	: opt_attributes
 	  opt_modifiers
-	  INTERFACE IDENTIFIER
+	  INTERFACE member_name
 	  {
 		Interface new_interface;
-		string full_interface_name = MakeName ((string) $4);
+		MemberName full_interface_name = MakeName ((MemberName) $4);
 
 		new_interface = new Interface (current_namespace, current_container, full_interface_name,
 					       (int) $2, (Attributes) $1, lexer.Location);
@@ -1262,7 +1260,6 @@ interface_declaration
 		RootContext.Tree.RecordDecl (full_interface_name, new_interface);
 		lexer.ConstraintsParsing = true;
 	  }
-	  opt_type_parameter_list
 	  opt_class_base
 	  opt_type_parameter_constraints_clauses
 	  {
@@ -1272,13 +1269,9 @@ interface_declaration
 	  { 
 		Interface new_interface = (Interface) current_interface;
 
-		if ($8 != null && $6 == null)
-			Report.Error (80, lexer.Location,
-				      "Contraints are not allowed on non-generic declarations");
+		CheckDef (new_interface.SetParameterInfo ((ArrayList) $7), new_interface.Name, new_interface.Location);
 		if ($6 != null)
-			CheckDef (new_interface.SetParameterInfo ((ArrayList) $6, (ArrayList) $8), new_interface.Name, new_interface.Location);
-		if ($7 != null)
-			new_interface.Bases = (ArrayList) $7;
+			new_interface.Bases = (ArrayList) $6;
 
 		current_interface = null;
 		current_container = current_container.Parent;
@@ -1712,7 +1705,7 @@ event_declaration
 	  }
 	| opt_attributes
 	  opt_modifiers
-	  EVENT type member_name
+	  EVENT type namespace_or_type_name
 	  OPEN_BRACE
 	  {
 		implicit_value_parameter_type = (Expression) $4;  
@@ -1740,9 +1733,11 @@ event_declaration
 		if (pair.Second != null)
 			rem_accessor = (Accessor) pair.Second;
 
-		MemberName name = (MemberName) $5;
-		if (name.TypeParameters != null)
+		TypeName type_name = (TypeName) $5;
+		if (type_name.TypeArguments != null)
 			syntax_error (lexer.Location, "an event can't have type arguments");
+
+		MemberName name = type_name.GetMemberName ();
 
 		Event e = new Event ((Expression) $4, (int) $2, false, name, null,
 				     (Attributes) $1, add_accessor, rem_accessor, loc);
@@ -1901,7 +1896,7 @@ enum_declaration
 	  { 
 		Location enum_location = lexer.Location;
 
-		string full_name = MakeName ((string) $4);
+		MemberName full_name = MakeName (new MemberName ((string) $4));
 		Enum e = new Enum (current_namespace, current_container, (Expression) $5, (int) $2,
 				   full_name, (Attributes) $1, enum_location);
 		
@@ -1914,7 +1909,7 @@ enum_declaration
 				  ev.identifier, loc);
 		}
 
-		CheckDef (current_container.AddEnum (e), full_name, enum_location);
+		CheckDef (current_container.AddEnum (e), (string) full_name, enum_location);
 		RootContext.Tree.RecordDecl (full_name, e);
 
 	  }
@@ -1973,14 +1968,13 @@ enum_member_declaration
 delegate_declaration
 	: opt_attributes
 	  opt_modifiers
-	  DELEGATE type IDENTIFIER
-	  opt_type_parameter_list
+	  DELEGATE type member_name
 	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS
 	  {
 		Location l = lexer.Location;
-		Delegate del = new Delegate (current_namespace, current_container, (Expression) $4,
-					     (int) $2, MakeName ((string) $5), (Parameters) $8, 
-					     (Attributes) $1, l);
+		Delegate del = new Delegate (
+			current_namespace, current_container, (Expression) $4, (int) $2,
+			MakeName ((MemberName) $5), (Parameters) $7, (Attributes) $1, l);
 		  
 		CheckDef (current_container.AddDelegate (del), del.Name, l);
 
@@ -1994,26 +1988,20 @@ delegate_declaration
 	  }
 	  SEMICOLON
 	  {
-		if ($11 != null && $6 == null)
-			Report.Error (80, lexer.Location,
-				      "Contraints are not allowed on non-generic declarations");
-
-		if ($6 != null)
-			CheckDef (current_delegate.SetParameterInfo ((ArrayList) $6, (ArrayList) $11), current_delegate.Name, current_delegate.Location);
+		CheckDef (current_delegate.SetParameterInfo ((ArrayList) $9), current_delegate.Name, current_delegate.Location);
 
 		current_delegate = null;
 	  }
 	| opt_attributes
 	  opt_modifiers
-	  DELEGATE VOID IDENTIFIER
-	  opt_type_parameter_list
+	  DELEGATE VOID member_name
 	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS 
 	  {
 		Location l = lexer.Location;
 		Delegate del = new Delegate (
 			current_namespace, current_container,
-			TypeManager.system_void_expr, (int) $2, MakeName ((string) $5), 
-			(Parameters) $8, (Attributes) $1, l);
+			TypeManager.system_void_expr, (int) $2, MakeName ((MemberName) $5), 
+			(Parameters) $7, (Attributes) $1, l);
 
 		CheckDef (current_container.AddDelegate (del), del.Name, l);
 
@@ -2027,12 +2015,7 @@ delegate_declaration
 	  }
 	  SEMICOLON
 	  {
-		if ($11 != null && $6 == null)
-			Report.Error (80, lexer.Location,
-				      "Contraints are not allowed on non-generic declarations");
-
-		if ($6 != null)
-			CheckDef (current_delegate.SetParameterInfo ((ArrayList) $6, (ArrayList) $11), current_delegate.Name, current_delegate.Location);
+		CheckDef (current_delegate.SetParameterInfo ((ArrayList) $9), current_delegate.Name, current_delegate.Location);
 
 		current_delegate = null;
 	  }
@@ -2056,9 +2039,6 @@ namespace_or_type_name
 member_name
 	: IDENTIFIER opt_type_parameter_list {
 		$$ = new MemberName (null, (string) $1, (ArrayList) $2);
-	  }
-	| namespace_or_type_name DOT IDENTIFIER opt_type_parameter_list {
-		$$ = new MemberName ((TypeName) $1, (string) $3, (ArrayList) $4);
 	  }
 	;
 
@@ -3004,12 +2984,11 @@ boolean_expression
 class_declaration
 	: opt_attributes
 	  opt_modifiers
-	  CLASS IDENTIFIER
+	  CLASS member_name
 	  {
 		Class new_class;
-		string name;
 
-		name = MakeName ((string) $4);
+		MemberName name = MakeName ((MemberName) $4);
 
 		new_class = new Class (current_namespace, current_container, name, (int) $2, 
 				       (Attributes) $1, lexer.Location);
@@ -3018,7 +2997,6 @@ class_declaration
 
 		lexer.ConstraintsParsing = true;
 	  }
-	  opt_type_parameter_list
 	  opt_class_base
 	  opt_type_parameter_constraints_clauses
 	  {
@@ -3029,18 +3007,13 @@ class_declaration
 	  {
 		Class new_class = (Class) current_container;
 
-		if ($8 != null && $6 == null)
-			Report.Error (80, lexer.Location,
-				      "Contraints are not allowed on non-generic declarations");
-
-		if ($6 != null)
-			CheckDef (new_class.SetParameterInfo ((ArrayList) $6, (ArrayList) $8), new_class.Name, new_class.Location);
-		if ($7 != null) {
+		CheckDef (new_class.SetParameterInfo ((ArrayList) $7), new_class.Name, new_class.Location);
+		if ($6 != null) {
 			if (new_class.Name == "System.Object") {
 				Report.Error (537, new_class.Location, "The class System.Object cannot have a base class or implement an interface.");
 			}
 
-			new_class.Bases = (ArrayList) $7;
+			new_class.Bases = (ArrayList) $6;
 		}
 		current_container = current_container.Parent;
 		CheckDef (current_container.AddClass (new_class), new_class.Name, new_class.Location);
@@ -4261,19 +4234,19 @@ void Error_ExpectingTypeName (Location l, Expression expr)
 //   Given the @class_name name, it creates a fully qualified name
 //   based on the containing declaration space
 // </summary>
-string 
-MakeName (string class_name)
+MemberName
+MakeName (MemberName class_name)
 {
 	string ns = current_namespace.FullName;
 	string container_name = current_container.Name;
 
 	if (container_name == ""){
 		if (ns != "")
-			return ns + "." + class_name;
+			return new MemberName (ns, class_name);
 		else
 			return class_name;
 	} else
-		return container_name + "." + class_name;
+		return new MemberName (container_name, class_name);
 }
 
 // <summary>

@@ -137,10 +137,11 @@ namespace Mono.CSharp {
 		Type GenericType;
 
 		public TypeContainer ():
-			this (null, null, "", null, new Location (-1)) {
+			this (null, null, MemberName.Null, null, new Location (-1)) {
 		}
 
-		public TypeContainer (NamespaceEntry ns, TypeContainer parent, string name, Attributes attrs, Location l)
+		public TypeContainer (NamespaceEntry ns, TypeContainer parent,
+				      MemberName name, Attributes attrs, Location l)
 			: base (ns, parent, name, attrs, l)
 		{
 			types = new ArrayList ();
@@ -2377,8 +2378,8 @@ namespace Mono.CSharp {
 			Modifiers.SEALED |
 			Modifiers.UNSAFE;
 
-		public Class (NamespaceEntry ns, TypeContainer parent, string name, int mod,
-			      Attributes attrs, Location l)
+		public Class (NamespaceEntry ns, TypeContainer parent, MemberName name,
+			      int mod, Attributes attrs, Location l)
 			: base (ns, parent, name, attrs, l)
 		{
 			int accmods;
@@ -2414,7 +2415,8 @@ namespace Mono.CSharp {
 			Modifiers.UNSAFE    |
 			Modifiers.PRIVATE;
 
-		public Struct (NamespaceEntry ns, TypeContainer parent, string name, int mod, Attributes attrs, Location l)
+		public Struct (NamespaceEntry ns, TypeContainer parent, MemberName name,
+			       int mod, Attributes attrs, Location l)
 			: base (ns, parent, name, attrs, l)
 		{
 			int accmods;
@@ -2459,8 +2461,8 @@ namespace Mono.CSharp {
 		 	Modifiers.UNSAFE    |
 			Modifiers.PRIVATE;
 
-		public Interface (NamespaceEntry ns, TypeContainer parent, string name, int mod,
-				  Attributes attrs, Location l)
+		public Interface (NamespaceEntry ns, TypeContainer parent, MemberName name,
+				  int mod, Attributes attrs, Location l)
 			: base (ns, parent, name, attrs, l)
 		{
 			int accmods;
@@ -3970,8 +3972,6 @@ namespace Mono.CSharp {
 
 		protected readonly int explicit_mod_flags;
 
-		public readonly MemberName MemberName;
-
 		//
 		// The "short" name of this property / indexer / event.  This is the
 		// name without the explicit interface.
@@ -4018,11 +4018,10 @@ namespace Mono.CSharp {
 		//
 		protected MemberBase (Expression type, int mod, int allowed_mod, int def_mod,
 				      MemberName name, Attributes attrs, Location loc)
-			: base (name.GetMemberName (), attrs, loc)
+			: base (name, attrs, loc)
 		{
 			explicit_mod_flags = mod;
 			Type = type;
-			MemberName = name;
 			ModFlags = Modifiers.Check (allowed_mod, mod, def_mod, loc);
 		}
 

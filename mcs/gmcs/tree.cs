@@ -53,8 +53,10 @@ namespace Mono.CSharp
 
 		DoubleHash decl_ns_name = new DoubleHash ();
 		
-		public void RecordDecl (string name, DeclSpace ds)
+		public void RecordDecl (MemberName member_name, DeclSpace ds)
 		{
+			string name = (string) member_name;
+
 			if (decls.Contains (name)){
 				Report.Error (
 					101, ds.Location,

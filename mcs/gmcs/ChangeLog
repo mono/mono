@@ -1,5 +1,25 @@
 2004-04-03  Martin Baulig  <martin@ximian.com>
 
+	* decl.cs (MemberCore.ctor): Take a MemberName instead of a sting.
+	(MemberCore.MemberName): Moved here from MemberBase.
+	(DeclSpace.SetParameterInfo): Just take the constraints as an
+	ArrayList; we already have the type parameters in our
+	`MemberName'; also do the CS0080 reporting here.
+
+	* cs-parser.jay (struct_declaration): Use `member_name' instead of
+	`IDENTIFIER opt_type_parameter_list'; when constructing our
+	`MemberName', it'll already include our type parameters.
+	(class_declaration, interface_declaration): Likewise.
+	(delegate_declaration): Likewise.
+	(MakeName): Take a MemberName and return a MemberName.
+	The following two changes are required to avoid shift/reduce conflicts:
+	(member_name): Don't include a TypeName anymore; ie. this is now
+	just 'IDENTIFIER opt_type_parameter_list'.
+	(property_declaration, event_declaration): Use a
+	`namespace_or_type_name' instead of a `member_name'.		
+
+2004-04-03  Martin Baulig  <martin@ximian.com>
+
 	* decl.cs (MemberName): Renamed to `TypeName' and created a new
 	`MemberName' class.
 	(TypeName): Formerly known as MemberName.
