@@ -42,8 +42,7 @@ namespace System.IO {
 
 		public override int Peek() {
 
-			if (disposed) 
-				throw new ObjectDisposedException ("StringReader", "Cannot read from a closed StringReader");
+			CheckObjectDisposedException ();
 
 			if( nextChar >= sourceLength ) {
 				return -1;
@@ -54,8 +53,7 @@ namespace System.IO {
 
 		public override int Read() {
 
-			if (disposed) 
-				throw new ObjectDisposedException ("StringReader", "Cannot read from a closed StringReader");
+			CheckObjectDisposedException ();
 
 			if( nextChar >= sourceLength ) {
 				return -1;
@@ -72,8 +70,7 @@ namespace System.IO {
 
 		public override int Read( char[] buffer, int index, int count ) {
 
-			if (disposed) 
-				throw new ObjectDisposedException ("StringReader", "Cannot read from a closed StringReader");
+			CheckObjectDisposedException ();
 
 			if( buffer == null ) {
 				throw new ArgumentNullException();
@@ -145,13 +142,16 @@ namespace System.IO {
 
                 public override string ReadToEnd() {
 
-			if (disposed) 
-				throw new ObjectDisposedException ("StringReader", "Cannot read from a closed StringReader");
-
+			CheckObjectDisposedException ();
                         string toEnd = source.Substring( nextChar, sourceLength - nextChar );
                         nextChar = sourceLength;
                         return toEnd;
                 }
 
+		private void CheckObjectDisposedException ()
+		{
+			if (disposed) 
+				throw new ObjectDisposedException ("StringReader", "Cannot read from a closed StringReader");
+		}
 	}
 }

@@ -284,9 +284,10 @@ namespace System.IO
 
 		public override void SetLength (long value)
 		{
-			CheckIfClosedThrowDisposed ();
 			if (!expandable && value > capacity)
 				throw new NotSupportedException ("Expanding this MemoryStream is not supported");
+
+			CheckIfClosedThrowDisposed ();
 
 			if (!canWrite)
 				throw new IOException ("Cannot write to this MemoryStream");

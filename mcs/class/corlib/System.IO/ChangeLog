@@ -1,3 +1,9 @@
+2003-04-19  Ville Palo <vi64pa@kolumbus.fi>
+
+	* BufferedStream.cs: Some fixes, mostly throwing exceptions.
+	* MemoryStream.cs: Changed the order of exception checking
+	* StringReader.cs: little clean up
+	
 2003-04-14  Ville Palo <vi64pa@kolumbus.fi>
 
 	* BinaryWriter.cs: Fixed decimal writing and lots of 
