@@ -110,7 +110,7 @@ namespace System.Data.SqlClient
 		public override string ToString ()
 		{
 			String toStr;
-			String stackTrace = 
+			String stackTrace;
 			stackTrace = " <Stack Trace>";
 			// FIXME: generate the correct SQL error string
 			toStr = "SqlError:" + message + stackTrace;

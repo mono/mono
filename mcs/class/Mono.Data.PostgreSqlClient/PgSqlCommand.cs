@@ -78,6 +78,7 @@ namespace System.Data.SqlClient
 		[MonoTODO]
 		public void Cancel ()
 		{
+			// FIXME: use non-blocking Exec for this
 			throw new NotImplementedException ();
 		}
 
@@ -134,7 +135,7 @@ namespace System.Data.SqlClient
 			}
 			else
 			{
-				String errorMessage = "ExecuteNonQuery execution failure";
+				String errorMessage;
 				
 				errorMessage = PostgresLibrary.
 					PQresStatus(execStatus);

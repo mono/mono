@@ -18,10 +18,10 @@ namespace System.Data.SqlClient
 	/// </summary>
 	public sealed class SqlException : SystemException
 	{
-		private SqlErrorCollection errors = new SqlErrorCollection();
+		private SqlErrorCollection errors; 
 
 		internal SqlException() {
-			
+			errors = new SqlErrorCollection();
 		}
 
 		internal SqlException(byte theClass, int lineNumber,
@@ -86,7 +86,7 @@ namespace System.Data.SqlClient
 					for(i = 0; i < errors.Count - 1; i++) {
 						msg = msg + errors[i].Message + "\n";
                                         }
-					msg = msg + errors[i];
+					msg = msg + errors[i].Message;
 
 					return msg;
 				}

@@ -117,6 +117,7 @@ namespace System.Data.SqlClient
 				case IsolationLevel.Serializable:
 					sSql += "SERIALIZABLE";
 					break;
+
 				default:
 					// FIXME: generate exception here
 					// PostgreSQL only supports:

@@ -19,7 +19,8 @@ namespace System.Data
 	/// Represents one table of in-memory data.
 	/// </summary>
 	[Serializable]
-	public class DataTable : MarshalByValueComponent, IListSource, ISupportInitialize, ISerializable
+	public class DataTable : MarshalByValueComponent, IListSource, 
+		ISupportInitialize, ISerializable
 	{
 		
 		private bool _caseSensitive;

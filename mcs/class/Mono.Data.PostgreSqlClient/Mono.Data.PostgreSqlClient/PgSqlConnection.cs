@@ -160,14 +160,14 @@ namespace System.Data.SqlClient
 		// PostgreSQL does not support named transactions/savepoint
 		//            nor nested transactions
 		[Obsolete]
-		public SqlTransaction BeginTransaction(	string transactionName) {
+		public SqlTransaction BeginTransaction(string transactionName) {
 			return TransactionBegin (); // call private method
 		}
 
 		[Obsolete]
 		public SqlTransaction BeginTransaction(IsolationLevel iso,
 						string transactionName) {
-			return TransactionBegin (); // call private method
+			return TransactionBegin (iso); // call private method
 		}
 
 		[MonoTODO]
@@ -388,7 +388,7 @@ namespace System.Data.SqlClient
 					break;
 
 				case "dbname":
-				// set Database property
+					// set Database property
 					dbname = parmValue;
 					break;
 
