@@ -1,6 +1,6 @@
 //------------------------------------------------------------------------------
 // 
-// System.Environment.cs 
+// System.OperatingSystem.cs 
 //
 // Copyright (C) 2001 Moonlight Enterprises, All Rights Reserved
 // 
@@ -11,7 +11,7 @@
 
 using System;
 
-namespace Mono.System
+namespace System
 {
 	// this seemed like a logical place to put this enumeration
 	public enum PlatformID
