@@ -1,6 +1,6 @@
 2004-11-25  Raja R Harinath  <rharinath@novell.com>
 
-	* Makefile.am (MPH_SOURCE): Distribute map.h.
+	* Makefile.am (MPH_SOURCE): Distribute old-map.h and map.h.
 
 2004-11-18  Jonathan Pryor  <jonpryor@vt.edu>
 
