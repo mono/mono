@@ -1,10 +1,11 @@
-CSC=csc.exe
+RUNTIME=mono
+CSC = $(RUNTIME) ../../mcs/mcs.exe
 CSCFLAGS=/nologo /debug+ /debug:full /out:$@
 SECFLAGS=/r:../../class/lib/Mono.Security.dll
 
 windows: linux
 
-linux: cert2spc.exe secutil.exe sn.exe
+linux: secutil.exe
 
 cert2spc.exe: cert2spc.cs AssemblyInfo.cs
 	$(CSC) $(CSCFLAGS) $(SECFLAGS) cert2spc.cs AssemblyInfo.cs

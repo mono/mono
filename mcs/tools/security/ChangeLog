@@ -1,3 +1,9 @@
+2003-03-09  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* makefile: Removed cert2spc and sn from linux build (as
+	Mono.Security assembly isn't, yet, part of the linux build).
+	* makefile.gnu: Removed (not required for tools).
+
 2003-03-08  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* makefile: Added SN.
