@@ -1,3 +1,7 @@
+2003-07-22  Zoltan Varga  <vargaz@freemail.hu>
+
+	* interp.c: Use the new metadata_section lock instead of metadata_lock.
+	Patch by Bernie Solomon (bernard@ugsolutions.com).
 
 Fri Jul 18 15:11:44 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
