@@ -1,3 +1,31 @@
+2002-05-21  Martin Baulig  <martin@gnome.org>
+
+	Work around a hard-to-fix bug in GDB and create a single dwarf/stabs
+	file for all assemblies.  Currently, the JIT doesn't put all methods
+	from a single assembly into a continuous region of memory.  We were
+	previously creating valid DWARF 2 files for this, but unfortunately
+	GDB's symbol tables get messed up when it reads more than one such file.
+
+	* debug-private.h (AssemblyDebugInfo): Moved `f', `producer_name',
+	`next_idx', `methods', `type_hash', `source_files' and `format'
+	into the MonoDebugHandle.
+
+	* debug.c (mono_debug_get_type): This now operates on the MonoDebugHandle,
+	not on the AssemblyDebugInfo.
+	(mono_debug_open_file): Moved some stuff here from mono_debug_open_assembly().
+
+	* debug-dwarf2.c (mono_debug_write_assembly_dwarf2): Renamed into
+	mono_debug_write_dwarf2().
+	(mono_debug_open_assembly_dwarf2): Removed.
+	(mono_debug_close_assembly_dwarf2): Removed.
+
+	* debug-stabs.c (mono_debug_write_assembly_stabs): Renamed into
+	mono_debug_write_stabs().
+	(mono_debug_open_assembly_stabs): Removed.
+	(mono_debug_close_assembly_stabs).
+
+	* debug-dwarf2-plus.c: This is currently broken. :-(
+
 2002-05-20  Martin Baulig  <martin@gnome.org>
 
 	* debug.h (mono_debug_format): New global variable.
