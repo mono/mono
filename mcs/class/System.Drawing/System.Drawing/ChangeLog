@@ -1,3 +1,9 @@
+2003-04-26  Alexandre Pigolkine <pigolkine@gmx.de>
+	* Bitmap.cs
+	* ChangeLog
+	* Image.cs
+	* SystemBrushes.cs		switch to Linux style line terminators
+
 2003-03-29 Alan Tam <Tam@SiuLung.com>
 	* ToolboxBitmapAttribute
 		stubbed more constructors and fixed base class
