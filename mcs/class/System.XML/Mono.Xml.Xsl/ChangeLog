@@ -1,5 +1,10 @@
 2003-09-13 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	* Compiler.cs, XslKey.cs, XslTransformProcessor.cs: dont clone
+	exprs on use, pass to nav.
+
+2003-09-13 Ben Maurer  <bmaurer@users.sourceforge.net>
+
 	* Compiler.cs: pass satic context to Pattern ctor.
 
 2003-08-30 Oleg Tkachenko <oleg@tkachenko.com>

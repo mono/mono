@@ -71,7 +71,7 @@ namespace Mono.Xml.Xsl {
 					return value == XPathFunctions.ToString (o);
 				}
 			default:
-				return value == nav.EvaluateString (UsePattern, null);
+				return value == nav.EvaluateString (UsePattern, null, null);
 			}
 		}
 	}

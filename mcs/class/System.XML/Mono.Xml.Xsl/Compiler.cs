@@ -628,15 +628,14 @@ namespace Mono.Xml.Xsl {
 		
 		public XPathExpression PrepForExecution (XPathExpression e, XslTransformProcessor p)
 		{
-			XPathExpression expr = e.Clone ();
-
-			expr.SetContext (p.XPathContext);
 			if (exprToSorts != null && exprToSorts.Contains (e))
 			{
+				XPathExpression expr = e.Clone ();
 				foreach (Sort s in (ArrayList)exprToSorts [e])
 					s.AddToExpr (expr,p);
+				return expr;
 			}
-			return expr;
+			return e;
 		}
 		
 		public bool PatternMatches (Pattern p, XslTransformProcessor proc, XPathNavigator n)

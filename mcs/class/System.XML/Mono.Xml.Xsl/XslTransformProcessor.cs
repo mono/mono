@@ -127,7 +127,7 @@ namespace Mono.Xml.Xsl {
 		StringBuilder avtSB;
 	
 		#if DEBUG
-		bool avtSBlock = false
+		bool avtSBlock = false;
 		#endif
 	
 		public StringBuilder GetAvtStringBuilder ()
@@ -347,7 +347,7 @@ namespace Mono.Xml.Xsl {
 			expr = CompiledStyle.ExpressionStore.PrepForExecution (expr, this);
 			
 			XPathNodeIterator itr = CurrentNodeset;
-			return itr.Current.Evaluate (expr, itr);
+			return itr.Current.Evaluate (expr, itr, XPathContext);
 		}
 		
 		public string EvaluateString (XPathExpression expr)
@@ -355,7 +355,7 @@ namespace Mono.Xml.Xsl {
 			expr = CompiledStyle.ExpressionStore.PrepForExecution (expr, this);
 			
 			XPathNodeIterator itr = CurrentNodeset;
-			return itr.Current.EvaluateString (expr, itr);
+			return itr.Current.EvaluateString (expr, itr, XPathContext);
 		}
 				
 		public bool EvaluateBoolean (XPathExpression expr)
@@ -363,7 +363,7 @@ namespace Mono.Xml.Xsl {
 			expr = CompiledStyle.ExpressionStore.PrepForExecution (expr, this);
 			
 			XPathNodeIterator itr = CurrentNodeset;
-			return itr.Current.EvaluateBoolean (expr, itr);
+			return itr.Current.EvaluateBoolean (expr, itr, XPathContext);
 		}
 		
 		public double EvaluateNumber (XPathExpression expr)
@@ -371,13 +371,13 @@ namespace Mono.Xml.Xsl {
 			expr = CompiledStyle.ExpressionStore.PrepForExecution (expr, this);
 			
 			XPathNodeIterator itr = CurrentNodeset;
-			return itr.Current.EvaluateNumber (expr, itr);
+			return itr.Current.EvaluateNumber (expr, itr, XPathContext);
 		}
 		
 		public XPathNodeIterator Select (XPathExpression expr)
 		{
 			expr = CompiledStyle.ExpressionStore.PrepForExecution (expr, this);
-			return CurrentNodeset.Current.Select (expr);
+			return CurrentNodeset.Current.Select (expr, XPathContext);
 		}
 		
 		#endregion
