@@ -11,14 +11,20 @@ using System;
 
 namespace System.Security.Principal
 {
+	[MonoTODO]
 	public class WindowsImpersonationContext
 	{
-		internal WindowsImpersonationContext ()
+		private IntPtr _token;
+
+		internal WindowsImpersonationContext (IntPtr token)
 		{
+			_token = token;
+			throw new NotImplementedException ();
 		}
 
 		~WindowsImpersonationContext ()
 		{
+			_token = (IntPtr) 0;
 		}
 
 		[MonoTODO]
