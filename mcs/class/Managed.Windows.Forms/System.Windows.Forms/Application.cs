@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.5 $
+// $Revision: 1.6 $
 // $Modtime: $
 // $Log: Application.cs,v $
+// Revision 1.6  2004/09/22 20:05:41  pbartok
+// - Added message loop for modal dialogs
+//
 // Revision 1.5  2004/09/21 00:54:15  jackson
 // New message loop that uses poll so we don't get a busy loop
 //
@@ -82,6 +85,30 @@ namespace System.Windows.Forms {
 			messageloop_started = false;
 			safe_caption_format = "{1} - {0} - {2}";
 		}
+
+		#region Private and Internal Methods
+		internal static void ModalRun(Form form) {
+			MSG	msg = new MSG();
+
+			if (form == null) {
+				return;
+			}
+
+			while (!exiting && XplatUI.GetMessage(ref msg, IntPtr.Zero, 0, 0)) {
+				if (form.end_modal) {
+					break;
+				}
+
+				XplatUI.TranslateMessage(ref msg);
+				XplatUI.DispatchMessage(ref msg);
+
+				// Handle exit, Form might have received WM_CLOSE and set 'closing' in response
+				if (form.closing) {
+					form.end_modal = true;
+				}
+			}
+		}
+		#endregion	// Private and Internal Methods
 
 		#region Public Static Properties
 		public static bool AllowQuit {
