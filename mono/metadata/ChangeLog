@@ -1,3 +1,12 @@
+
+Sat Mar 16 19:18:38 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* class.c, class.h: rename and export mono_ptr_class_get().
+	* metadata.c: support MONO_TYPE_ARRAY in MonoType compare.
+	* reflection.c, reflection.h, icall.c: better/saner type name
+	parsing and MonoType creation. Handle MONO_TYPE_ARRAY in
+	method signatures.
+
 2002-03-14  Dietmar Maurer  <dietmar@ximian.com>
 
 	* class.c (mono_class_init): removed hardcoded GHC_SLOT
