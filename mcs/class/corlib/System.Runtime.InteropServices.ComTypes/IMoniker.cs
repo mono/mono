@@ -33,6 +33,7 @@ using System;
 
 namespace System.Runtime.InteropServices.ComTypes
 {
+	[ComImport]
 	[Guid ("0000000f-0000-0000-c000-000000000046")]
 	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 	public interface IMoniker
@@ -48,8 +49,10 @@ namespace System.Runtime.InteropServices.ComTypes
 		void Reduce (IBindCtx pbc, int dwReduceHowFar, ref IMoniker ppmkToLeft, out IMoniker ppmkReduced);
 		void ComposeWith (IMoniker pmkRight, [MarshalAs (UnmanagedType.LPWStr)] bool fOnlyIfNotGeneric, out IMoniker ppmkComposite);
 		void Enum ([MarshalAs(UnmanagedType.Bool)] bool fForward, out IEnumMoniker ppenumMoniker);
+		[PreserveSig]
 		void IsEqual (IMoniker pmkOtherMoniker);
 		void Hash (out int pdwHash);
+		[PreserveSig]
 		void IsRunning (IBindCtx pbc, IMoniker pmkToLeft, IMoniker pmkNewlyRunning);
 		void GetTimeOfLastChange (IBindCtx pbc, IMoniker pmkToLeft, out FILETIME pFileTime);
 		void Inverse (out IMoniker ppmk);
@@ -57,6 +60,7 @@ namespace System.Runtime.InteropServices.ComTypes
 		void RelativePathTo (IMoniker pmkOther, out IMoniker ppmkRelPath);
 		void GetDisplayName (IBindCtx pbc, IMoniker pmkToLeft, [MarshalAs (UnmanagedType.LPWStr)] out string ppszDisplayName);
 		void ParseDisplayName (IBindCtx pbc, IMoniker pmkToLeft, [MarshalAs (UnmanagedType.LPWStr)] string pszDisplayName, out int pchEaten, out IMoniker ppmkOut);
+		[PreserveSig]
 		void IsSystemMoniker (out int pdwMksys);
 	}
 }

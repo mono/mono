@@ -33,15 +33,15 @@ using System;
 
 namespace System.Runtime.InteropServices.ComTypes
 {
+	[ComImport]
 	[Guid ("00000101-0000-0000-c000-000000000046")]
 	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 	public interface IEnumString
 	{
 		[PreserveSigAttribute]
-		int Next (int celt, [Out, MarshalAs (UnmanagedType.LPArray, ArraySubType = Consts.UnmanagedType_80, SizeParamIndex = 0)] string[] rgelt, out int pceltFetched);
+		int Next (int celt, [Out, MarshalAs (UnmanagedType.LPArray, ArraySubType = Consts.UnmanagedType_80, SizeParamIndex = 0)] string[] rgelt, IntPtr pceltFetched);
 		[PreserveSigAttribute]
 		int Skip (int celt);
-		[PreserveSigAttribute]
 		int Reset ();
 		void Clone (out IEnumString ppenum);
 	}

@@ -33,6 +33,7 @@ using System;
 
 namespace System.Runtime.InteropServices.ComTypes
 {
+	[ComImport]
 	[Guid("00020403-0000-0000-c000-000000000046")]
 	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	public interface ITypeComp {

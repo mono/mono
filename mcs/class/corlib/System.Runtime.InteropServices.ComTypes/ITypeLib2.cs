@@ -10,7 +10,8 @@ using System;
 
 namespace System.Runtime.InteropServices.ComTypes
 {
-	[Guid ("00020412-0000-0000-C000-000000000046")]
+	[ComImport]
+	[Guid ("00020411-0000-0000-C000-000000000046")]
 	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	public interface ITypeLib2 : ITypeLib
 	{

@@ -31,6 +31,7 @@
 #if NET_2_0
 namespace System.Runtime.InteropServices.ComTypes
 {
+	[Serializable]
 	[ComVisible (false)]
 	[StructLayout (LayoutKind.Sequential, CharSet = CharSet.Unicode)]
 	public struct TYPELIBATTR

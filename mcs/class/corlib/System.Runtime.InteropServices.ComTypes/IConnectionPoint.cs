@@ -33,6 +33,7 @@ using System;
 
 namespace System.Runtime.InteropServices.ComTypes
 {
+	[ComImport]
 	[Guid ("b196b286-bab4-101a-b69c-00aa00341d07")]
 	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 	public interface IConnectionPoint

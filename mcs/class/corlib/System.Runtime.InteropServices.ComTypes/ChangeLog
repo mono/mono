@@ -1,3 +1,29 @@
+2005-03-03  Kazuki Oikawa  <kazuki@panicode.com>
+
+	* IBindCtx.cs
+	* IConnectionPoint.cs
+	* IConnectionPointContainer.cs
+	* IEnumConnectionPoints.cs
+	* IEnumConnections.cs
+	* IEnumMoniker.cs
+	* IEnumString.cs
+	* IEnumVARIANT.cs
+	* IMoniker.cs
+	* IPersistFile.cs
+	* IRunningObjectTable.cs
+	* IStream.cs
+	* ITypeComp.cs
+	* ITypeInfo.cs
+	* ITypeInfo2.cs
+	* ITypeLib.cs
+	* ITypeLib2.cs
+	* EXCEPINFO.cs
+	* IDLDESC.cs
+	* TYPELIBATTR.cs
+	* VARDESC.cs
+	* INVOKEKIND.cs
+	* SYSKIND.cs: Added missing attributes and corrected wrong declaration.
+
 2005-02-26  Kazuki Oikawa  <kazuki@panicode.com>
 
 	* BINDPTR.cs

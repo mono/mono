@@ -33,15 +33,19 @@ using System;
 
 namespace System.Runtime.InteropServices.ComTypes
 {
+	[ComImport]
 	[Guid ("00000010-0000-0000-c000-000000000046")]
 	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 	public interface IRunningObjectTable
 	{
-		void Register (int grfFlags, [MarshalAs (UnmanagedType.Interface)] object punkObject, IMoniker pmkObjectName, out int pdwRegister);
+		void Register (int grfFlags, [MarshalAs (UnmanagedType.Interface)] object punkObject, IMoniker pmkObjectName, IntPtr pdwRegister);
 		void Revoke (int dwRegister);
+		[PreserveSig]
 		void IsRunning (IMoniker pmkObjectName);
+		[PreserveSig]
 		void GetObject (IMoniker pmkObjectName, [MarshalAs (UnmanagedType.Interface)] out object ppunkObject);
 		void NoteChangeTime (int dwRegister, ref FILETIME pfiletime);
+		[PreserveSig]
 		void GetTimeOfLastChange (IMoniker pmkObjectName, out FILETIME pfiletime);
 		void EnumRunning (out IEnumMoniker ppenumMoniker);
 	}

@@ -47,6 +47,7 @@ namespace System.Runtime.InteropServices.ComTypes
 		public int dwHelpContext;
 		public IntPtr pvReserved;
 		public IntPtr pfnDeferredFillIn;
+		public int scode;
 	}
 }
 #endif

@@ -33,17 +33,18 @@ using System;
 
 namespace System.Runtime.InteropServices.ComTypes
 {
+	[ComImport]
 	[Guid ("00020404-0000-0000-c000-000000000046")]
 	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 	public interface IEnumVARIANT
 	{
 		[PreserveSigAttribute]
-		int Next (int celt, int rgvar, int pceltFetched);
+		int Next (int celt, [Out] object[] rgvar, int pceltFetched);
 		[PreserveSigAttribute]
 		int Skip (int celt);
 		[PreserveSigAttribute]
 		int Reset ();
-		void Clone (int ppenum);
+		void Clone ();
 	}
 }
 #endif

@@ -37,9 +37,10 @@ namespace System.Runtime.InteropServices.ComTypes
 	{
 		public int memid;
 		public string lpstrSchema;
+		public DESCUNION desc;
 		public ELEMDESC elemdescVar;
 		public short wVarFlags;
-		public VarEnum varkind;
+		public VARKIND varkind;
 
 		[ComVisible (false)]
 		[StructLayout (LayoutKind.Explicit, CharSet = CharSet.Unicode)]
