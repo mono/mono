@@ -1,5 +1,5 @@
 thisdir = tools
-SUBDIRS = al cilc corcompare ictool mono-xsd security wsdl genxs SqlSharp disco soapsuds browsercaps-updater
+SUBDIRS = al cilc corcompare ictool mono-xsd security wsdl genxs SqlSharp disco soapsuds browsercaps-updater monop
 include ../build/rules.make
 
 MONO_TOOLS = \

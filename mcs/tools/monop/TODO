@@ -1,0 +1,19 @@
+TODO
+----
+
+	* Need to distinguish between static and instance things
+	* Show the base class (public class Foo : Bar)
+	* Add options like /show-private. For example, if you view System.String
+	  you should only see public methods etc unless you specify /private. Similar
+	  thing for other scope things.
+	* Add support for events
+	* Support for params (show the params keyword)
+	* Support for out (it shows as ref)
+	* Handle interfaces:
+		* public class Foo : Blah, IBar
+		* handle explicit vs. implicit impl
+	* Show virtual/override?
+	* Fields
+	* Show valuetypes as `struct'
+	* Do enums
+	* Do delegates

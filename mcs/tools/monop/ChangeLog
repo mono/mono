@@ -1,0 +1,5 @@
+2004-03-07 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* monop.cs: New tool, clone of javap. Allows you to get
+	an outline view of a class.
+
