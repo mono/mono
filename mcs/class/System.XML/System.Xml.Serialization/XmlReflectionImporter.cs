@@ -373,7 +373,8 @@ namespace System.Xml.Serialization {
 				members.Add (new EnumMap.EnumMapMember (xmlName, name));
 			}
 
-			map.ObjectMap = new EnumMap ((EnumMap.EnumMapMember[])members.ToArray (typeof(EnumMap.EnumMapMember)));
+			bool isFlags = type.GetCustomAttributes (typeof(FlagsAttribute),false).Length > 0;
+			map.ObjectMap = new EnumMap ((EnumMap.EnumMapMember[])members.ToArray (typeof(EnumMap.EnumMapMember)), isFlags);
 			ImportTypeMapping (typeof(object)).DerivedTypes.Add (map);
 			return map;
 		}

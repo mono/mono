@@ -297,6 +297,7 @@ namespace System.Xml.Serialization
 	internal class EnumMap: ObjectMap
 	{
 		EnumMapMember[] _members;
+		bool _isFlags;
 
 		public class EnumMapMember
 		{
@@ -320,9 +321,10 @@ namespace System.Xml.Serialization
 			}
 		}
 
-		public EnumMap (EnumMapMember[] members)
+		public EnumMap (EnumMapMember[] members, bool isFlags)
 		{
 			_members = members;
+			_isFlags = isFlags;
 		}
 
 		public EnumMapMember[] Members
@@ -333,6 +335,23 @@ namespace System.Xml.Serialization
 		public string GetXmlName (object enumValue)
 		{
 			string enumName = enumValue.ToString();
+
+			if (_isFlags && enumName.IndexOf (',') != -1)
+			{
+				System.Text.StringBuilder sb = new System.Text.StringBuilder ();
+				string[] enumNames = enumValue.ToString().Split (',');
+				foreach (string name in enumNames)
+				{
+					foreach (EnumMapMember mem in _members)
+						if (mem.EnumName == name.Trim()) {
+							sb.Append (mem.XmlName).Append (' ');
+							break;
+						}
+				}
+				sb.Remove (sb.Length-1, 1);
+				return sb.ToString ();
+			}
+
 			foreach (EnumMapMember mem in _members)
 				if (mem.EnumName == enumName) return mem.XmlName;
 			
@@ -341,6 +360,24 @@ namespace System.Xml.Serialization
 
 		public string GetEnumName (string xmlName)
 		{
+			if (_isFlags && xmlName.Trim().IndexOf (' ') != -1)
+			{
+				System.Text.StringBuilder sb = new System.Text.StringBuilder ();
+				string[] enumNames = xmlName.ToString().Split (' ');
+				foreach (string name in enumNames)
+				{
+					if (name == string.Empty) continue;
+					string foundEnumValue = null;
+					foreach (EnumMapMember mem in _members)
+						if (mem.XmlName == name) { foundEnumValue = mem.EnumName; break; }
+
+					if (foundEnumValue != null) sb.Append (foundEnumValue).Append (','); 
+					else throw new InvalidOperationException ("Invalid enum value '" + name + "'");
+				}
+				sb.Remove (sb.Length-1, 1);
+				return sb.ToString ();
+			}
+
 			foreach (EnumMapMember mem in _members)
 				if (mem.XmlName == xmlName) return mem.EnumName;
 				

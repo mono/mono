@@ -261,7 +261,8 @@ namespace System.Xml.Serialization {
 				members[n] = new EnumMap.EnumMapMember (xmlName, names[n]);
 			}
 
-			map.ObjectMap = new EnumMap (members);
+			bool isFlags = type.GetCustomAttributes (typeof(FlagsAttribute),false).Length > 0;
+			map.ObjectMap = new EnumMap (members, isFlags);
 			ImportTypeMapping (typeof(object)).DerivedTypes.Add (map);
 			return map;
 		}

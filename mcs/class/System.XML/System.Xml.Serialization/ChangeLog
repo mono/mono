@@ -1,5 +1,10 @@
 2003-06-30  Lluis Sanchez Gual <lluis@ximian.com>
 
+	* SoapReflectionImporter.cs, XmlReflectionImporter.cs, XmlTypeMapping.cs: 
+	  Added support for serialization of enums with the Flags attribute.
+
+2003-06-30  Lluis Sanchez Gual <lluis@ximian.com>
+
 	* SoapReflectionImporter.cs: Fix support for DataType in class members.
 	* TypeData.cs: Don't use "Index" name to get indexer property. Indexer properties
 	  can have other names.
