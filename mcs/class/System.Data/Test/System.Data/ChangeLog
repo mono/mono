@@ -1,3 +1,8 @@
+2005-02-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataColumnTest.cs : added testcase for setting negative value on
+	  DataColumn whose mapping is SimpleContent.
+
 2005-02-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataSetAssertion.cs : don't exclude those attribute whose namespace

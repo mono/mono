@@ -1,3 +1,8 @@
+2005-02-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataColumn.cs : setting negative value on MaxLength of SimpleContent
+	  column is still valid.
+
 2005-02-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlSchemaWriter.cs : new file for outputting XmlSchema.

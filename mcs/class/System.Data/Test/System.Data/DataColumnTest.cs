@@ -553,13 +553,25 @@ namespace MonoTests.System.Data
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
-		public void SetMaxColumn ()
+		public void SetMaxLengthException ()
 		{
+			// Setting MaxLength on SimpleContent -> exception
 			DataSet ds = new DataSet("Example");
 			ds.Tables.Add("MyType");
 			ds.Tables["MyType"].Columns.Add(new DataColumn("Desc", 
 				typeof (string), "", MappingType.SimpleContent));
 			ds.Tables["MyType"].Columns["Desc"].MaxLength = 32;
+		}
+
+		[Test]
+		public void SetMaxLengthNegativeValue ()
+		{
+			// however setting MaxLength on SimpleContent is OK
+			DataSet ds = new DataSet ("Example");
+			ds.Tables.Add ("MyType");
+			ds.Tables ["MyType"].Columns.Add (
+				new DataColumn ("Desc", typeof (string), "", MappingType.SimpleContent));
+			ds.Tables ["MyType"].Columns ["Desc"].MaxLength = -1;
 		}
 
 		[Test]

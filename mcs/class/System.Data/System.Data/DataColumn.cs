@@ -481,7 +481,8 @@ namespace System.Data {
 				return maxLength;
 			}
 			set {
-				if (_columnMapping == MappingType.SimpleContent)
+				if (value >= 0 &&
+					_columnMapping == MappingType.SimpleContent)
 					throw new ArgumentException (String.Format ("Cannot set MaxLength property on '{0}' column which is mapped to SimpleContent.", ColumnName));
 				//only applies to string columns
 				maxLength = value;
