@@ -27,13 +27,13 @@ namespace System.Runtime.Remoting.Messaging
 		public ConstructionCall(IMessage msg): base (msg)
 		{
 			_activationTypeName = TypeName;
-
-/*			object[] attribs = ActivationType.GetCustomAttributes (typeof (IContextProperty), true);
-
-			if (attribs.Length > 0)
-				_contextProperties = new ArrayList (attribs);
-*/
 			_activationAttributes = null;	// FIXME: put something here
+		}
+
+		public ConstructionCall (Type type)
+		{
+			_activationType = type;
+			_activationTypeName = type.AssemblyQualifiedName;
 		}
 
 		public ConstructionCall (Header[] headers): base (headers)
@@ -76,9 +76,18 @@ namespace System.Runtime.Remoting.Messaging
 			get { return _activationAttributes; }
 		}
 
+		internal void SetActivationAttributes (object [] attributes)
+		{
+			_activationAttributes = attributes;
+		}
+
 		public IList ContextProperties 
 		{
-			get { return _contextProperties; }
+			get 
+			{
+				if (_contextProperties == null) _contextProperties = new ArrayList ();
+				return _contextProperties; 
+			}
 		}
 
 		internal override void InitMethodProperty(string key, object value)
@@ -98,10 +107,13 @@ namespace System.Runtime.Remoting.Messaging
 		{
 			base.GetObjectData (info, context);
 
+			IList props = _contextProperties;
+			if (props != null && props.Count == 0) props = null;
+
 			info.AddValue ("__Activator", _activator);
 			info.AddValue ("__CallSiteActivationAttributes", _activationAttributes);
 			info.AddValue ("__ActivationType", null);
-			info.AddValue ("__ContextProperties", _contextProperties);
+			info.AddValue ("__ContextProperties", props);
 			info.AddValue ("__ActivationTypeName", _activationTypeName);
 		} 
 	}

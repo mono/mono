@@ -1,3 +1,10 @@
+2003-03-03  Lluis Sanchez Gual <lluis@ideary.com>
+
+	* ConstructionCall.cs: Added internal constructor. Added setter for activation attributes.
+	  Some other minor corrections.
+	* EnvoyTerminatorSink.cs: Message now redirected to current context's client sink chain.
+	* MethodCall.cs: Added method for copying messages.
+
 2003-02-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* MethodCall.cs:

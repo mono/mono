@@ -73,7 +73,26 @@ namespace System.Runtime.Remoting.Messaging {
 
 		public MethodCall (IMessage msg)
 		{
-			IMethodMessage call = (IMethodMessage) msg;
+			CopyFrom ((IMethodMessage) msg);
+		}
+
+		internal MethodCall (string uri, string typeName, string methodName, object[] args)
+		{
+			_uri = uri;
+			_typeName = typeName;
+			_methodName = methodName;
+			_args = args;
+
+			Init();
+			ResolveMethod();
+		}
+
+		internal MethodCall ()
+		{
+		}
+		
+		internal void CopyFrom (IMethodMessage call)
+		{
 			_uri = call.Uri;
 			_typeName = call.TypeName;
 			_methodName = call.MethodName;
@@ -83,18 +102,6 @@ namespace System.Runtime.Remoting.Messaging {
 			_callContext = call.LogicalCallContext;
 
 			Init();
-			
-		}
-
-		public MethodCall (string uri, string typeName, string methodName, object[] args)
-		{
-			_uri = uri;
-			_typeName = typeName;
-			_methodName = methodName;
-			_args = args;
-
-			Init();
-			ResolveMethod();
 		}
 		
 		internal virtual void InitMethodProperty(string key, object value)
