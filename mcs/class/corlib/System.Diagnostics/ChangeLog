@@ -1,0 +1,3 @@
+2001-08-21  Nick Drochak <ndrochak@gol.com>
+
+	* Implemented ConditionalAttribute.cs and DebuggableAttribute.cs
