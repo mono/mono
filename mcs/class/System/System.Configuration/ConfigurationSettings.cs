@@ -34,8 +34,7 @@ namespace System.Configuration
 		}
 
 		/// <summary>
-		///		Returns configuration settings for a user-defined configuration 
-section.
+		///		Returns configuration settings for a user-defined configuration section.
 		/// </summary>
 		/// <param name="sectionName"></param>
 		/// <returns></returns>

@@ -74,8 +74,7 @@ namespace System.Configuration
 		/// <summary>
 		///		ConfigurationException Constructor.
 		/// </summary>
-		public ConfigurationException (string message, Exception inner, XmlNode 
-node)
+		public ConfigurationException (string message, Exception inner, XmlNode node)
 		{
 			_stringBareMessage = message + " " + inner.ToString();
 			_stringFilename = GetXmlNodeFilename(node);
@@ -97,8 +96,7 @@ node)
 		/// <summary>
 		///		ConfigurationException Constructor.
 		/// </summary>
-		public ConfigurationException (string message, Exception inner, string 
-filename, int line)
+		public ConfigurationException (string message, Exception inner, string filename, int line)
 		{
 			_stringBareMessage = message + " " + inner.ToString();
 			_stringFilename = filename;
@@ -109,8 +107,7 @@ filename, int line)
 
 
 		/// <summary>
-		///		Returns the name of the file containing the configuration section 
-node.
+		///		Returns the name of the file containing the configuration section node.
 		/// </summary>
 		/// <param name="node"></param>
 		/// <returns></returns>
@@ -167,8 +164,7 @@ node.
 		}
 
 		/// <summary>
-		///		Gets a string containing the concatenated file name and line number 
-where the error occurred.
+		///		Gets a string containing the concatenated file name and line number where the error occurred.
 		/// </summary>
 		public override string Message
 		{
