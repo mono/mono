@@ -1,3 +1,8 @@
+2002-10-08  Martin Baulig  <martin@gnome.org>
+
+	* debug-mono-symfile.c: Ignore classes with a pending init for the
+	moment.
+
 2002-10-03  Dick Porter  <dick@ximian.com>
 
 	* threads.c: Freebsd pthread_t is a pointer
