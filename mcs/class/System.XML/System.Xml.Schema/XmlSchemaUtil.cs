@@ -163,6 +163,10 @@ namespace System.Xml.Schema
 					return false;
 				if (st2 is XsdName && (st1 is XsdLanguage || st1 is XsdNMToken))
 					return false;
+				if (st1 is XsdID && st2 is XsdIDRef)
+					return false;
+				if (st1 is XsdIDRef && st2 is XsdID)
+					return false;
 			}
 			else if (st1 != st2)
 				return false;

@@ -405,6 +405,7 @@ namespace System.Xml.Schema
 			if (ContentModel != null)
 				ValidateContentModel (h, schema);
 			else {
+				// leave resolvedDerivedBy as Empty
 				if (Particle != null)
 					ValidateImmediateParticle (h, schema);
 				if (contentTypeParticle == null || contentTypeParticle == XmlSchemaParticle.Empty) {
@@ -413,6 +414,11 @@ namespace System.Xml.Schema
 						resolvedContentType = XmlSchemaContentType.TextOnly;
 					else
 						resolvedContentType = XmlSchemaContentType.Empty;
+				} else {
+					if (this.IsMixed)
+						resolvedContentType = XmlSchemaContentType.Mixed;
+					else
+						resolvedContentType = XmlSchemaContentType.ElementOnly;
 				}
 				// ContentModel never has them.
 				ValidateImmediateAttributes (h, schema);
@@ -434,7 +440,7 @@ namespace System.Xml.Schema
 //			contentTypeParticle = contentTypeParticle.GetParticleithoutPointless ();
 
 			// FIXME: move to ValidateContentModel()
-			if (contentModel != null && contentModel.Content is XmlSchemaSimpleContent)
+			if (contentModel != null && contentModel is XmlSchemaSimpleContent)
 				resolvedContentType = GetContentType (true);
 
 			// 3.4.6 Properties Correct :: 5 (Two distinct ID attributes)
@@ -573,6 +579,24 @@ namespace System.Xml.Schema
 				// otherwise, it might be missing sub components.
 				else if (baseType == null && !schema.IsNamespaceAbsent (baseTypeName.Namespace))// && schema.Schemas [baseTypeName.Namespace] != null)
 					error (h, "Referenced base schema type " + baseTypeName + " was not found in the corresponding schema.");
+
+				// 3.4.3 Complex Type Definition Representation OK :: 2.
+				// Note that baseSimpleType is also allowed as to Errata E1-27 (http://www.w3.org/2001/05/xmlschema-errata)
+				if (baseComplexType != null) {
+					if (baseComplexType.ContentType == XmlSchemaContentType.TextOnly) {
+						// 2.1.1
+					} else if (scr != null && baseComplexType.ContentType == XmlSchemaContentType.Mixed && baseComplexType.Particle.ValidateIsEmptiable () && scr.BaseType != null) {
+						// 2.1.2 && 2.2: OK
+					}
+					else
+						error (h, "Base complex type of a simple content restriction must be text only.");
+				} else {
+					if (sce != null && baseComplexType == null) {
+						// 2.1.3 : OK
+					}
+					else
+						error (h, "Not allowed base type of a simple content restriction.");
+				}
 			}
 
 			// complexType/complexContent/extension
@@ -713,26 +737,21 @@ namespace System.Xml.Schema
 			}
 			// complexType/simpleContent/restriction
 			if (scr != null) {
-				if (baseComplexType == null) {
-					// 3.4.3 :: 2.
-					error (h, "Base type of a simple content restriction must be a complex type.");
-				} else {
-					// Attributes
-					baseAnyAttribute = baseComplexType.AttributeWildcard;
+				// Attributes
+				baseAnyAttribute = baseComplexType != null ? baseComplexType.AttributeWildcard : null;
 
-					localAnyAttribute = scr.AnyAttribute;
-					if (localAnyAttribute != null && baseAnyAttribute != null)
-						// 1.3 attribute wildcard subset. (=> 3.10.6)
-						localAnyAttribute.ValidateWildcardSubset (baseAnyAttribute, h, schema);
-					// TODO: 3.4.6 :: 5.1. Beware that There is an errata for 5.1!!
-					// http://www.w3.org/2001/05/xmlschema-errata#Errata1
+				localAnyAttribute = scr.AnyAttribute;
+				if (localAnyAttribute != null && baseAnyAttribute != null)
+					// 1.3 attribute wildcard subset. (=> 3.10.6)
+					localAnyAttribute.ValidateWildcardSubset (baseAnyAttribute, h, schema);
+				// TODO: 3.4.6 :: 5.1. Beware that There is an errata for 5.1!!
+				// http://www.w3.org/2001/05/xmlschema-errata#Errata1
 
-					// FIXME: Check 3.4.2 Complex Type Definition with simple content Schema Component
-					// and its {attribute uses} and {attribute wildcard}
-					errorCount += XmlSchemaUtil.ValidateAttributesResolved (
-						this.attributeUses, h, schema, scr.Attributes, 
-						scr.AnyAttribute, ref attributeWildcard, null);
-				}
+				// FIXME: Check 3.4.2 Complex Type Definition with simple content Schema Component
+				// and its {attribute uses} and {attribute wildcard}
+				errorCount += XmlSchemaUtil.ValidateAttributesResolved (
+					this.attributeUses, h, schema, scr.Attributes, 
+					scr.AnyAttribute, ref attributeWildcard, null);
 			}
 
 			// Common process of AttributeWildcard.
@@ -787,7 +806,7 @@ namespace System.Xml.Schema
 			XmlSchemaType bst = b as XmlSchemaType;
 			if (b == this)	// 1 and 2.1
 				return;
-			if (bst != null && (resolvedDerivedBy & bst.FinalResolved) != 0) // 1
+			if (bst != null && (resolvedDerivedBy & bst.FinalResolved) != 0) // 1.
 				error (h, "Derivation type " + resolvedDerivedBy + " is prohibited by the base type.");
 			if (BaseSchemaType == b) // 2.2
 				return;
