@@ -61,7 +61,7 @@ namespace Npgsql
   																   "",
   																   "");
   		  
-  			startupPacket.WriteToStream( context.getStream(), context.Encoding );
+  			startupPacket.WriteToStream( context.BufferedStream, context.Encoding );
   			ProcessBackendResponses( context );
 		  }
 		  else if (context.BackendProtocolVersion == ProtocolVersion.Version2)
@@ -76,7 +76,7 @@ namespace Npgsql
   																   "",
   																   "");
   		  
-  			startupPacket.WriteToStream( new BufferedStream(context.SecuredStream), context.Encoding );
+  			startupPacket.WriteToStream( new BufferedStream(context.NormalStream), context.Encoding );
   			ProcessBackendResponses( context );
 		    
 		    

@@ -67,7 +67,7 @@ namespace Npgsql
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "Close");
 			if ( context.State == ConnectionState.Open )
 			{
-				Stream stream = context.getNormalStream();
+				Stream stream = context.NormalStream;
 				if ( stream.CanWrite )
 				{
 					stream.WriteByte((Byte)'X');
@@ -101,7 +101,7 @@ namespace Npgsql
 		{
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "ProcessBackendResponses");
             
-			BufferedStream 	stream = context.getStream();
+			BufferedStream 	stream = context.BufferedStream;
 			Int32	authType;
 			Boolean readyForQuery = false;
 						

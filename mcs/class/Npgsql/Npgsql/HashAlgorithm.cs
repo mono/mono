@@ -37,6 +37,13 @@ namespace Npgsql
 		{
 			disposed = false;
 		}
+
+		/// <summary>
+		/// Finalizer for HashAlgorithm
+		/// </summary>
+		~HashAlgorithm () {
+			Dispose(false);
+		}
 	
 		/// <summary>
 		/// Get whether or not the hash can transform multiple blocks at a time.

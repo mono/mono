@@ -94,6 +94,13 @@ namespace Npgsql {
 			type = CommandType.Text;
 		  this.Transaction = transaction;
 		}
+
+		/// <summary>
+		/// Finalizer for <see cref="Npgsql.NpgsqlCommand">NpgsqlCommand</see>.
+		/// </summary>
+		~NpgsqlCommand () {
+			Dispose(false);
+		}
 				
 		// Public properties.
 		/// <summary>
@@ -581,8 +588,14 @@ namespace Npgsql {
 		/// <summary>
 		/// Releases the resources used by the <see cref="Npgsql.NpgsqlCommand">NpgsqlCommand</see>.
 		/// </summary>
-		public new void Dispose() {
-			NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "Dispose");
+		protected override void Dispose (bool disposing) {
+			if (disposing) {
+				if (connection != null) {
+					connection.Dispose();
+				}
+				base.Dispose(disposing);
+				NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "Dispose");
+			}
 		}
 		
 		///<summary>

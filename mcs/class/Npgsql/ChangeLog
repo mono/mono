@@ -1,3 +1,17 @@
+2003-11-23  Pedro Martínez Juliá  <yoros@wanadoo.es>
+
+	* Npgsql/HashAlgorithm.cs:
+	* Npgsql/NpgsqlClosedState.cs:
+	* Npgsql/NpgsqlCommand.cs:
+	* Npgsql/NpgsqlConnectedState.cs:
+	* Npgsql/NpgsqlConnection.cs:
+	* Npgsql/NpgsqlReadyState.cs:
+	* Npgsql/NpgsqlStartupState.cs:
+	* Npgsql/NpgsqlState.cs: Apply Disposable pattern, when using
+	ADO.NET we need to call Dispose after using any Component like
+	NpgsqlDataAdapter, NpgsqlConnection, etc... Change a few internal
+	methods to Properties.
+
 2003-11-22  Pedro Martínez Juliá  <yoros@wanadoo.es>
 
 	* Npgsql/NpgsqlClosedState.cs:

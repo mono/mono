@@ -68,14 +68,14 @@ namespace Npgsql {
 		// as I didn't want to add another interface for internal access
 		// --brar
 		// In the connection string
-    internal readonly Char CONN_DELIM 		= ';';  // Delimeter
-		internal readonly Char CONN_ASSIGN 	= '=';
+		internal readonly Char CONN_DELIM	= ';';  // Delimeter
+		internal readonly Char CONN_ASSIGN	= '=';
 		internal readonly String CONN_SERVER 	= "SERVER";
 		internal readonly String CONN_USERID 	= "USER ID";
-		internal readonly String CONN_PASSWORD = "PASSWORD";
-		internal readonly String CONN_DATABASE = "DATABASE";
-		internal readonly String CONN_PORT 		= "PORT";
-        internal readonly String SSL_ENABLED	= "SSL";
+		internal readonly String CONN_PASSWORD	= "PASSWORD";
+		internal readonly String CONN_DATABASE	= "DATABASE";
+		internal readonly String CONN_PORT 	= "PORT";
+		internal readonly String SSL_ENABLED	= "SSL";
 		// Postgres default port
 		internal readonly String PG_PORT = "5432";
 		
@@ -139,6 +139,13 @@ namespace Npgsql {
     	
 			if (connection_string != String.Empty)
 				ParseConnectionString();
+		}
+
+		/// <summary>
+		/// Finalizer for NpgsqlConnection
+		/// </summary>
+		~NpgsqlConnection () {
+			Dispose(false);
 		}
 
 		/// <summary>
@@ -533,33 +540,34 @@ namespace Npgsql {
 		/// This method is required to set all the version dependent features flags.
 		/// SupportsPrepare means the server can use prepared query plans (7.3+)
 		/// </summary>
-		private void ProcessServerVersion() {
+		private void ProcessServerVersion () {
 			NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "ProcessServerVersion");
-			
-			
-			if (BackendProtocolVersion == ProtocolVersion.Version2)
+
+			if (BackendProtocolVersion == ProtocolVersion.Version2) {
 			  SupportsPrepare = (_serverVersion.IndexOf("PostgreSQL 7.3") != -1);
-		  else
-		    // 3.0+ version is set by ParameterStatus message.
-		    SupportsPrepare = (_serverVersion.IndexOf("7.4") != -1);
-			
+			}
+			else {
+				// 3.0+ version is set by ParameterStatus message.
+				SupportsPrepare = (_serverVersion.IndexOf("7.4") != -1);
+			}
 		}
-    
-        internal BufferedStream getStream()
-		{
-			return bstream;
+
+		internal BufferedStream BufferedStream {
+			get {
+				return bstream;
+			}
+			set {
+				bstream = value;
+			}
 		}
-		internal void setStream(BufferedStream bs)
-		{
-			bstream=bs;
-		}
-		internal Stream getNormalStream()
-		{
-			return stream;
-		}
-		internal void setNormalStream(Stream tns)
-		{
-			stream = tns;
+
+		internal Stream NormalStream {
+			get {
+				return stream;
+			}
+			set {
+				stream = value;
+			}
 		}
         
 		/*
@@ -573,41 +581,38 @@ namespace Npgsql {
 		*/
 
 		// State 
-		internal void Query( NpgsqlCommand queryCommand ) {
-			CurrentState.Query( this, queryCommand );
+		internal void Query (NpgsqlCommand queryCommand) {
+			CurrentState.Query(this, queryCommand );
 		}
-		internal void Authenticate(string password) {
-			CurrentState.Authenticate( this, password );
+
+		internal void Authenticate (string password) {
+			CurrentState.Authenticate(this, password );
 		}
-		internal void Startup() {
-			CurrentState.Startup( this );
+
+		internal void Startup () {
+			CurrentState.Startup(this);
 		}
-		
-		internal void Parse(NpgsqlParse parse)
-		{
-		  CurrentState.Parse(this, parse);
+
+		internal void Parse (NpgsqlParse parse) {
+  			CurrentState.Parse(this, parse);
 		}
-		
-		internal void Flush()
-		{
-		  CurrentState.Flush(this);
+
+		internal void Flush () {
+  			CurrentState.Flush(this);
 		}
-		
-		internal void Sync()
-		{
-		  CurrentState.Sync(this);
+
+		internal void Sync () {
+			CurrentState.Sync(this);
 		}
-		
-		internal void Bind(NpgsqlBind bind)
-		{
-		  CurrentState.Bind(this, bind);
+
+		internal void Bind (NpgsqlBind bind) {
+			CurrentState.Bind(this, bind);
 		}
-		
-		internal void Execute(NpgsqlExecute execute)
-		{
-		  CurrentState.Execute(this, execute);
+
+		internal void Execute (NpgsqlExecute execute) {
+			CurrentState.Execute(this, execute);
 		}
-		
+
 		internal NpgsqlState CurrentState {
 			get {
 				return state;
@@ -616,7 +621,6 @@ namespace Npgsql {
 				state = value;
 			}
 		}
-		// Internal properties
 
 		internal NpgsqlBackEndKeyData BackEndKeyData {
 			get {
@@ -632,43 +636,37 @@ namespace Npgsql {
 				return (String)connection_string_values[CONN_SERVER];
 			}
 		}
+
 		internal String ServerPort {
 			get {
 				return   (String)connection_string_values[CONN_PORT];
 			}
 		}
+
 		internal String DatabaseName {
 			get {
 				return (String)connection_string_values[CONN_DATABASE];
 			}
 		}
+
 		internal String UserName {
 			get {
 				return (String)connection_string_values[CONN_USERID];
 			}
 		}
+
 		internal String ServerPassword {
 			get {
 				return (String)connection_string_values[CONN_PASSWORD];
 			}
 		}
-        internal String SSL 
-		{
-			get 
-			{
+
+        internal String SSL {
+			get {
 				return (String)connection_string_values[SSL_ENABLED];
 			}
-
 		}
 
-        internal Stream SecuredStream 
-		{
-			get 
-			{
-				return stream;
-			}
-		}
-        
 		internal Encoding Encoding {
 			get {
 				return connection_encoding;
@@ -685,7 +683,6 @@ namespace Npgsql {
 			get {
 				return _inTransaction;
 			}
-			
 			set {
 				_inTransaction = value;
 			}
@@ -695,7 +692,6 @@ namespace Npgsql {
 			get {
 				return _supportsPrepare;
 			}
-			
 			set {
 				_supportsPrepare = value;
 			}
@@ -705,8 +701,7 @@ namespace Npgsql {
 			get {
 				return _serverVersion;
 			}
-			set
-			{
+			set {
 			  _serverVersion = value;
 			}
 		}
@@ -715,23 +710,21 @@ namespace Npgsql {
 			get {
 				return _oidToNameMapping;
 			}
-			
 			set {
 				_oidToNameMapping = value;
 			}
 			
 		}
-		internal Int32 BackendProtocolVersion
-		{
-		  get
-		  {
-		    return _backendProtocolVersion;
-		  }
-		  
-		  set
-		  {
-		    _backendProtocolVersion = value;
-		  }
+
+		internal Int32 BackendProtocolVersion {
+			get {
+				return _backendProtocolVersion;
+  			}
+  			set {
+				_backendProtocolVersion = value;
+  			}
 		}
+
 	}
+
 }

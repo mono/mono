@@ -28,32 +28,26 @@ using System.Net.Sockets;
 using System.Resources;
 using Mono.Security.Protocol.Tls;
 
-namespace Npgsql
-{
+namespace Npgsql {
 	
-	
-	internal sealed class NpgsqlClosedState : NpgsqlState
-	{
+	internal sealed class NpgsqlClosedState : NpgsqlState {
+
 		private static NpgsqlClosedState _instance = null;
-		
         private static readonly String CLASSNAME = "NpgsqlClosedState";
-	            
+
 		private NpgsqlClosedState() : base() { }
         
-		public static NpgsqlClosedState Instance
-		{
-			get
-			{
-                NpgsqlEventLog.LogPropertyGet(LogLevel.Debug, CLASSNAME, "Instance");
-				if ( _instance == null )
-				{
+		public static NpgsqlClosedState Instance {
+			get {
+				NpgsqlEventLog.LogPropertyGet(LogLevel.Debug, CLASSNAME, "Instance");
+				if (_instance == null) {
 					_instance = new NpgsqlClosedState();
 				}
-				return _instance;	
+				return _instance;
 			}
 		}
-		public override void Open(NpgsqlConnection context)
-		{
+
+		public override void Open(NpgsqlConnection context) {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "Open");
             
 			IPEndPoint serverEndPoint;
@@ -63,56 +57,41 @@ namespace Npgsql
 			// (i.e.:192.168.0.1), there may be a long delay trying
 			// resolve it when it is not necessary.
 			// So, try first connect as if it was a dotted ip address.	    
-			try
-			{
+			try {
 				IPAddress ipserver = IPAddress.Parse(context.ServerName);
 				serverEndPoint = new IPEndPoint(ipserver, Int32.Parse(context.ServerPort));
 			}
-			catch(FormatException)	// The exception isn't used.
-			{
+			catch(FormatException) {		// The exception isn't used.
 				// Server isn't in dotted decimal format. Just connect using DNS resolves.
 				IPHostEntry serverHostEntry = Dns.GetHostByName(context.ServerName);
 				serverEndPoint = new IPEndPoint(serverHostEntry.AddressList[0], Int32.Parse(context.ServerPort));	
 			}
-			
+
             // Create a new TLS Session
-			try 
-			{
+			try {
 				TcpClient tcpc = new TcpClient(context.ServerName, Int32.Parse(context.ServerPort));
 				Stream stream = tcpc.GetStream();
-				/*
 				// If the PostgreSQL server has SSL connections enabled Open SslClientStream if (response == 'S') {
-				if (context.SSL=="yes")
-				{
+				if (context.SSL == "yes") {
 					PGUtil.WriteInt32(stream, 8);
 					PGUtil.WriteInt32(stream,80877103);
 					// Receive response
 					Char response = (Char)stream.ReadByte();
-
-					if (response == 'S') 
-					{
+					if (response == 'S') {
 						stream = new SslClientStream(tcpc.GetStream(), context.ServerName, true, Mono.Security.Protocol.Tls.SecurityProtocolType.Default);
 					} 
-					
 				}
-				*/
-				BufferedStream bstream = new BufferedStream(stream);
-				context.setNormalStream(stream);
-				context.setStream(bstream);
-				BinaryReader receive = new BinaryReader(stream);
-				BinaryWriter send = new BinaryWriter(stream);
-				
+				context.NormalStream = stream;
+				context.BufferedStream = new BufferedStream(stream);
 			}
-			catch (TlsException e) 
-			{
+			catch (TlsException e) {
 				throw new NpgsqlException(e.ToString());
 			}
-			// Create objects for read & write
-   		    // context.TcpClient.Connect(serverEndPoint);	
-            NpgsqlEventLog.LogMsg(resman, "Log_ConnectedTo", LogLevel.Normal, serverEndPoint.Address, serverEndPoint.Port);
-					
-			ChangeState( context, NpgsqlConnectedState.Instance );
+			NpgsqlEventLog.LogMsg(resman, "Log_ConnectedTo", LogLevel.Normal, serverEndPoint.Address, serverEndPoint.Port);
+			ChangeState(context, NpgsqlConnectedState.Instance);
 			context.Startup();
 		}
+
 	}
+
 }
