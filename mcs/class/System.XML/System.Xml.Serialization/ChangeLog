@@ -1,3 +1,8 @@
+2003-10-09  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* XmlSerializer.cs, XmlSerializationWriter.cs: Fixed bug #49353
+	  (XmlSerializer.Serialize() handles namespace parameter incorrectly)
+
 2003-10-05  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* XmlReflectionImporter.cs, SoapReflectionImporter.cs: Fixed bug #49349

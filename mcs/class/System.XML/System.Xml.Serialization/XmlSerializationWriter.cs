@@ -680,19 +680,22 @@ namespace System.Xml.Serialization {
 			} else
 				Writer.WriteStartElement (name, ns);
 
-			if (topLevelElement) {
-				if (Writer.LookupPrefix (XmlSchema.Namespace) == null)
-					WriteAttribute ("xmlns","xsd",xmlNamespace,XmlSchema.Namespace);
-				if (Writer.LookupPrefix (XmlSchema.InstanceNamespace) == null)
-					WriteAttribute ("xmlns","xsi",xmlNamespace,XmlSchema.InstanceNamespace);
-					
-				if (namespaces != null)
-				{
+			if (topLevelElement) 
+			{
+				if (namespaces != null) {
 					foreach (XmlQualifiedName qn in namespaces)
+					{
+						if (qn.Namespace == XmlSchema.Namespace || qn.Namespace == XmlSchema.InstanceNamespace) {
+							if (Writer.LookupPrefix (qn.Namespace) == qn.Name) continue;
+						}
+						else 
+							if (Writer.LookupPrefix (qn.Namespace) != null) continue;
+						
 						WriteAttribute ("xmlns",qn.Name,xmlNamespace,qn.Namespace);
+					}
 				}
+				topLevelElement = false;
 			}
-			topLevelElement = false;
 		}
 
 		protected void WriteTypedPrimitive (string name, string ns, object o, bool xsiType)

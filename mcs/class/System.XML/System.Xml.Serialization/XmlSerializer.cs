@@ -279,6 +279,13 @@ namespace System.Xml.Serialization
 			else
 				xsWriter = new XmlSerializationWriterInterpreter (typeMapping);
 				
+			if (namespaces == null || namespaces.Count == 0)
+			{
+				namespaces = new XmlSerializerNamespaces ();
+				namespaces.Add ("xsd", XmlSchema.Namespace);
+				namespaces.Add ("xsi", XmlSchema.InstanceNamespace);
+			}
+			
 			xsWriter.Initialize (writer, namespaces);
 			Serialize (o, xsWriter);
 			writer.Flush ();
