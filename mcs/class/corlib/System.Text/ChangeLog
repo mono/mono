@@ -1,3 +1,11 @@
+2002-05-19  Martin Baulig  <martin@gnome.org>
+
+	* Encoder.cs (IConvEncoder.GetByteCount, IConvEncoder.GetBytes):
+	Added exception handling.
+
+	* Decoder.cs (IConvDecoder.GetCharCount, IConvDecoder.GetChars):
+	Added exception handling.
+
 2002/04/02  Nick Drochak <ndrochak@gol.com>
 
 	* StringBuilder.cs (Append): Removed obsolete overload.

@@ -58,12 +58,30 @@ namespace System.Text
 
 		public override int GetCharCount (byte[] bytes, int index, int count)
 		{
+			if (bytes == null)
+				throw new ArgumentNullException ();
+
+			if (index + count > bytes.Length)
+				throw new ArgumentOutOfRangeException ();
+
 			return Encoding.IConvGetCharCount (converter, bytes, index, count);
 		}
 
 		public override int GetChars (byte[] bytes, int byteIndex, int byteCount,
 					      char[] chars, int charIndex)
 		{
+			if ((bytes == null) || (chars == null))
+				throw new ArgumentNullException ();
+
+			if ((byteIndex < 0) || (byteCount < 0) || (charIndex < 0))
+				throw new ArgumentOutOfRangeException ();
+
+			if (byteIndex + byteCount > bytes.Length)
+				throw new ArgumentOutOfRangeException ();
+
+			if (charIndex > chars.Length)
+				throw new ArgumentOutOfRangeException ();
+
 			return Encoding.IConvGetChars (converter, bytes, byteIndex, byteCount,
 						       chars, charIndex);
 		}
