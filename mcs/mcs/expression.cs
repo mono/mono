@@ -409,8 +409,8 @@ namespace Mono.CSharp {
 
 				// According to the specs, a variable is considered definitely assigned if you take
 				// its address.
-				if (variable != null)
-					variable.SetAssigned (ec);
+				if ((variable != null) && (variable.VariableInfo != null))
+					variable.VariableInfo.SetAssigned (ec);
 
 				type = TypeManager.GetPointerType (Expr.Type);
 				return this;
