@@ -39,6 +39,9 @@
 	* Test.Sources: Included newly added tests
 
 2004-08-05 Anirban Bhattacharjee <banirban@novell.com>
+	* InterfaceH.vb: New test case
+
+2004-08-05 Anirban Bhattacharjee <banirban@novell.com>
 	* InterfaceA.vb: Test now covers all Interface members.
 
 2004-08-04  Jambunathan K  <kjambunathan@novell.com>
