@@ -1,3 +1,9 @@
+2004-02-13  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Mono.Security.dll.sources: Added Diffie-Hellman contribution from
+	Pieter Philippaerts (mentalis.org) to Mono.Security.Cryptography.
+	* Mono.Security_test.dll.sources: Added Diffie-Hellman unit tests.
+
 2004-02-10 Carlos Guzmán Álvarez  <carlosga@telefonica.net>
 
     * Mono.Security.Cryptography/PKCS1.cs:

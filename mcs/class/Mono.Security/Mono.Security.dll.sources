@@ -16,6 +16,10 @@
 ./Mono.Security.Cryptography/ARC4Managed.cs
 ./Mono.Security.Cryptography/CryptoConvert.cs
 ./Mono.Security.Cryptography/CryptoTools.cs
+./Mono.Security.Cryptography/DHKeyGeneration.cs
+./Mono.Security.Cryptography/DHParameters.cs
+./Mono.Security.Cryptography/DiffieHellman.cs
+./Mono.Security.Cryptography/DiffieHellmanManaged.cs
 ./Mono.Security.Cryptography/KeyPairPersistence.cs
 ./Mono.Security.Cryptography/MD2.cs
 ./Mono.Security.Cryptography/MD2Managed.cs

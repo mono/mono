@@ -11,6 +11,7 @@ Mono.Security/StrongNameTest.cs
 Mono.Security.Authenticode/PrivateKeyTest.cs
 Mono.Security.Authenticode/SoftwarePublisherCertificateTest.cs
 Mono.Security.Cryptography/ARC4ManagedTest.cs
+Mono.Security.Cryptography/DiffieHellmanManagedTest.cs
 Mono.Security.Cryptography/KeyPairPersistenceTest.cs
 Mono.Security.Cryptography/MD2ManagedTest.cs
 Mono.Security.Cryptography/MD2Test.cs
@@ -22,3 +23,4 @@ Mono.Security.Protocol.Ntlm/Type1MessageTest.cs
 Mono.Security.Protocol.Ntlm/Type2MessageTest.cs
 Mono.Security.Protocol.Ntlm/Type3MessageTest.cs
 Mono.Security.X509/PKCS12Test.cs
+
