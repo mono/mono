@@ -469,21 +469,19 @@ namespace Mono.CSharp {
 			MethodGroupExpr mg = GetInvokeMethod (ec, delegate_type, loc);
 			if (mg == null)
 				return null;
+			ParameterData pd = TypeManager.GetParameterData (mb);
 
 			MethodBase invoke_mb = mg.Methods [0];
-			ParameterData invoke_pd = Invocation.GetParameterData (invoke_mb);
+			ParameterData invoke_pd = TypeManager.GetParameterData (invoke_mb);
 
 			if (!mg.HasTypeArguments &&
 			    !TypeManager.InferTypeArguments (ec, invoke_pd, ref mb))
 				return null;
 
-			ParameterData pd = Invocation.GetParameterData (mb);
-			int pd_count = pd.Count;
-
-			if (invoke_pd.Count != pd_count)
+			if (invoke_pd.Count != pd.Count)
 				return null;
 
-			for (int i = pd_count; i > 0; ) {
+			for (int i = pd.Count; i > 0; ) {
 				i--;
 
 				Type invoke_pd_type = invoke_pd.ParameterType (i);
@@ -545,7 +543,7 @@ namespace Mono.CSharp {
 			}
 			
 			MethodBase mb = ((MethodGroupExpr) ml).Methods [0];
-			ParameterData pd = Invocation.GetParameterData (mb);
+			ParameterData pd = TypeManager.GetParameterData (mb);
 
 			int pd_count = pd.Count;
 
@@ -601,7 +599,7 @@ namespace Mono.CSharp {
 			}
 			
 			MethodBase mb = ((MethodGroupExpr) ml).Methods [0];
-			ParameterData pd = Invocation.GetParameterData (mb);
+			ParameterData pd = TypeManager.GetParameterData (mb);
 
 			Expression probe_ml = Expression.MemberLookup (
 				ec, delegate_type, "Invoke", loc);
@@ -612,7 +610,7 @@ namespace Mono.CSharp {
 			}
 			
 			MethodBase probe_mb = ((MethodGroupExpr) probe_ml).Methods [0];
-			ParameterData probe_pd = Invocation.GetParameterData (probe_mb);
+			ParameterData probe_pd = TypeManager.GetParameterData (probe_mb);
 			
 			if (((MethodInfo) mb).ReturnType != ((MethodInfo) probe_mb).ReturnType)
 				return false;
@@ -764,7 +762,7 @@ namespace Mono.CSharp {
 				ec, type, "Invoke", MemberTypes.Method,
 				Expression.AllBindingFlags, loc);
 			MethodBase method = ((MethodGroupExpr) invoke_method).Methods [0];
-			ParameterData param = Invocation.GetParameterData (method);
+			ParameterData param = TypeManager.GetParameterData (method);
 			string delegate_desc = Delegate.FullDelegateDesc (type, method, param);
 
 			if (!mg.HasTypeArguments &&
@@ -810,33 +808,32 @@ namespace Mono.CSharp {
 
 		protected Expression ResolveMethodGroupExpr (EmitContext ec, MethodGroupExpr mg)
 		{
-				foreach (MethodInfo mi in mg.Methods){
-					delegate_method = Delegate.VerifyMethod (
-						ec, type, mi, loc);
-
-					if (delegate_method != null)
-						break;
-				}
-					
-				if (delegate_method == null) {
-					Error_NoMatchingMethodForDelegate (ec, mg, type, loc);
-					return null;
-				}
-
-				//
-				// Check safe/unsafe of the delegate
-				//
-				if (!ec.InUnsafe){
-					ParameterData param = Invocation.GetParameterData (delegate_method);
-					int count = param.Count;
-					
-					for (int i = 0; i < count; i++){
-						if (param.ParameterType (i).IsPointer){
-							Expression.UnsafeError (loc);
-							return null;
-						}
+			foreach (MethodInfo mi in mg.Methods){
+				delegate_method  = Delegate.VerifyMethod (ec, type, mi, loc);
+				
+				if (delegate_method != null)
+					break;
+			}
+			
+			if (delegate_method == null) {
+				Error_NoMatchingMethodForDelegate (ec, mg, type, loc);
+				return null;
+			}
+			
+			//
+			// Check safe/unsafe of the delegate
+			//
+			if (!ec.InUnsafe){
+				ParameterData param = TypeManager.GetParameterData (delegate_method);
+				int count = param.Count;
+				
+				for (int i = 0; i < count; i++){
+					if (param.ParameterType (i).IsPointer){
+						Expression.UnsafeError (loc);
+						return null;
 					}
 				}
+			}
 						
 			//TODO: implement caching when performance will be low
 			IMethodData md = TypeManager.GetMethod (delegate_method);

@@ -4316,13 +4316,6 @@ namespace Mono.CSharp {
 		Expression expr;
 		MethodBase method = null;
 		
-		static Hashtable method_parameter_cache;
-
-		static Invocation ()
-		{
-			method_parameter_cache = new PtrHashtable ();
-		}
-			
 		//
 		// arguments is an ArrayList, but we do not want to typecast,
 		// as it might be null.
@@ -4340,31 +4333,6 @@ namespace Mono.CSharp {
 		public Expression Expr {
 			get {
 				return expr;
-			}
-		}
-
-		/// <summary>
-		///   Returns the Parameters (a ParameterData interface) for the
-		///   Method `mb'
-		/// </summary>
-		public static ParameterData GetParameterData (MethodBase mb)
-		{
-			object pd = method_parameter_cache [mb];
-			object ip;
-			
-			if (pd != null)
-				return (ParameterData) pd;
-
-			ip = TypeManager.LookupParametersByBuilder (mb);
-			if (ip != null){
-				method_parameter_cache [mb] = ip;
-
-				return (ParameterData) ip;
-			} else {
-				ReflectionParameters rp = new ReflectionParameters (mb);
-				method_parameter_cache [mb] = rp;
-
-				return (ParameterData) rp;
 			}
 		}
 
@@ -4483,8 +4451,8 @@ namespace Mono.CSharp {
 					   MethodBase candidate, bool candidate_params,
 					   MethodBase best, bool best_params, Location loc)
 		{
-			ParameterData candidate_pd = GetParameterData (candidate);
-			ParameterData best_pd = GetParameterData (best);
+			ParameterData candidate_pd = TypeManager.GetParameterData (candidate);
+			ParameterData best_pd = TypeManager.GetParameterData (best);
 		
 			int cand_count = candidate_pd.Count;
 
@@ -4589,7 +4557,7 @@ namespace Mono.CSharp {
 			sb.Append (".");
 			sb.Append (mb.Name);
 			
-			ParameterData pd = GetParameterData (mb);
+			ParameterData pd = TypeManager.GetParameterData (mb);
 
 			int count = pd.Count;
 			sb.Append (" (");
@@ -4683,7 +4651,7 @@ namespace Mono.CSharp {
 						      int arg_count, MethodBase candidate,
 						      bool do_varargs)
 		{
-			ParameterData pd = GetParameterData (candidate);
+			ParameterData pd = TypeManager.GetParameterData (candidate);
 			
 			int pd_count = pd.Count;
 
@@ -4781,7 +4749,7 @@ namespace Mono.CSharp {
 		static bool IsApplicable (EmitContext ec, ArrayList arguments, int arg_count,
 					  MethodBase candidate)
 		{
-			ParameterData pd = GetParameterData (candidate);
+			ParameterData pd = TypeManager.GetParameterData (candidate);
 
 			if (arg_count != pd.Count)
 				return false;
@@ -4931,7 +4899,7 @@ namespace Mono.CSharp {
 				//
 				for (int i = 0; i < methods.Length; ++i) {
 					MethodBase c = (MethodBase) methods [i];
-					ParameterData pd = GetParameterData (c);
+					ParameterData pd = TypeManager.GetParameterData (c);
 
 					if (pd.Count != arg_count)
 						continue;
@@ -4951,7 +4919,7 @@ namespace Mono.CSharp {
                                         
 					for (int i = 0; i < methods.Length; ++i) {
 						MethodBase c = methods [i];
-						ParameterData pd = GetParameterData (c);
+						ParameterData pd = TypeManager.GetParameterData (c);
 
 						if (pd.Count != arg_count)
 							continue;
@@ -5119,7 +5087,7 @@ namespace Mono.CSharp {
 							  Type delegate_type, bool may_fail,
 							  Location loc)
 		{
-			ParameterData pd = GetParameterData (method);
+			ParameterData pd = TypeManager.GetParameterData (method);
 			int pd_count = pd.Count;
 			
 			for (int j = 0; j < arg_count; j++) {
@@ -5362,7 +5330,7 @@ namespace Mono.CSharp {
 		{
 			ParameterData pd;
 			if (mb != null)
-				pd = GetParameterData (mb);
+				pd = TypeManager.GetParameterData (mb);
 			else
 				pd = null;
 			
@@ -5432,7 +5400,7 @@ namespace Mono.CSharp {
 		static Type[] GetVarargsTypes (EmitContext ec, MethodBase mb,
 					       ArrayList arguments)
 		{
-			ParameterData pd = GetParameterData (mb);
+			ParameterData pd = TypeManager.GetParameterData (mb);
 
 			if (arguments == null)
 				return new Type [0];

@@ -165,7 +165,7 @@ namespace Mono.CSharp {
 
 			MethodGroupExpr invoke_mg = Delegate.GetInvokeMethod (ec, delegate_type, loc);
 			invoke_mb = (MethodInfo) invoke_mg.Methods [0];
-			ParameterData invoke_pd = Invocation.GetParameterData (invoke_mb);
+			ParameterData invoke_pd = TypeManager.GetParameterData (invoke_mb);
 
 			//
 			// If implicit parameters are set, then we must check for out in the parameters

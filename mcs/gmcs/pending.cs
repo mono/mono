@@ -467,7 +467,7 @@ namespace Mono.CSharp {
 				CallingConventions.Standard | CallingConventions.HasThis,
 				base_method.ReturnType, args);
 
-			ParameterData pd = Invocation.GetParameterData (iface_method);
+			ParameterData pd = TypeManager.GetParameterData (iface_method);
 			proxy.DefineParameter (0, ParameterAttributes.None, "");
 			for (int i = 0; i < pd.Count; i++) {
 				string name = pd.ParameterName (i);

@@ -3558,7 +3558,7 @@ namespace Mono.CSharp {
 
 		protected override bool CheckGenericOverride (MethodInfo method, string name)
 		{
-			ParameterData pd = Invocation.GetParameterData (method);
+			ParameterData pd = TypeManager.GetParameterData (method);
 
 			for (int i = 0; i < ParameterTypes.Length; i++) {
 				GenericConstraints ogc = pd.GenericConstraints (i);
