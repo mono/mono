@@ -52,6 +52,9 @@ namespace System.Runtime.Remoting.Channels.Tcp
 
 			try
 			{
+				if (headers == null) headers = new TransportHeaders();
+				headers [CommonTransportKeys.RequestUri] = ((IMethodCallMessage)msg).Uri;
+				
 				// Sends the stream using a connection from the pool
 				// and creates a WorkItem that will wait for the
 				// response of the server
@@ -135,6 +138,9 @@ namespace System.Runtime.Remoting.Channels.Tcp
 			TcpConnection connection = null;
 			try
 			{
+				if (requestHeaders == null) requestHeaders = new TransportHeaders();
+				requestHeaders [CommonTransportKeys.RequestUri] = ((IMethodCallMessage)msg).Uri;
+				
 				// Sends the message
 				connection = TcpConnectionPool.GetConnection (_host, _port);
 				TcpMessageIO.SendMessageStream (connection.Stream, requestStream, requestHeaders, connection.Buffer);

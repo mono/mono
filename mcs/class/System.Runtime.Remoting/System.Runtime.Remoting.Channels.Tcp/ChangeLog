@@ -1,4 +1,9 @@
-2004-02-23  Lluis Sanchez Gual <lluis@ximian.com>
+﻿2004-02-27  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* TcpClientTransportSink.cs: Set the RequestUri transport header before 
+	  sending the request.
+
+﻿2004-02-23  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* TcpClientTransportSink.cs: Release the connection after sending an
 	  OneWay call. This fixes bug #54671.
