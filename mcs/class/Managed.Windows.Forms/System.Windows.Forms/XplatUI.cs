@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.3 $
+// $Revision: 1.4 $
 // $Modtime: $
 // $Log: XplatUI.cs,v $
+// Revision 1.4  2004/08/09 17:02:29  jackson
+// Get default window properties from the theme
+//
 // Revision 1.3  2004/08/09 15:56:44  jackson
 // Remove defaults, these are handled by the theme now.
 //
