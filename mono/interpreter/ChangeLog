@@ -1,3 +1,9 @@
+
+Fri Jul 18 15:11:44 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* interp.c: 64 bit fixes from Laurent Morichetti <l_m@pacbell.net>.
+	Install cleanup function.
+
 2003-07-13  Zoltan Varga  <vargaz@freemail.hu>
 
 	* interp.c: Keep alloca()-d data on a free list to prevent stack
