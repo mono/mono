@@ -85,8 +85,9 @@ namespace System.Windows.Forms {
 		private static int		atom;			// X Atom
 		private static int		wm_state_modal;		// X Atom
 		private static int		net_wm_state;		// X Atom
+		private static int		net_active_window;	// X Atom
 		private static int		async_method;
-		private static int		post_message;
+		private static int		post_message;		// X Atom send to generate a PostMessage event
 		private static uint		default_colormap;	// X Colormap ID
 		internal static MouseButtons	mouse_state;
 		internal static Point		mouse_position;
@@ -100,7 +101,9 @@ namespace System.Windows.Forms {
 		internal static int		click_pending_time;	// Last time we received a mouse click
 		internal static bool		click_pending;		// True if we haven't sent the last mouse click
 		internal static int		double_click_interval;	// in milliseconds, how fast one has to click for a double click
+		internal static Stack		modal_window;		// Stack of modal window handles
 		internal static Hover		hover;
+		internal static bool		getmessage_ret;		// Return value for GetMessage function; 0 to terminate app
 
 		internal static Caret		caret;			// To display a blinking caret
 
@@ -198,6 +201,8 @@ namespace System.Windows.Forms {
 			// Handle singleton stuff first
 			ref_count=0;
 
+			getmessage_ret = true;
+
 			message_queue = new XEventQueue ();
 			timer_list = new ArrayList ();
 
@@ -223,6 +228,8 @@ namespace System.Windows.Forms {
 			hover.timer.Tick +=new EventHandler(MouseHover);
 			hover.x = -1;
 			hover.y = -1;
+
+			modal_window = new Stack(3);
 
 #if __MonoCS__
 			pollfds = new Pollfd [2];
@@ -361,6 +368,7 @@ namespace System.Windows.Forms {
 				wm_no_taskbar=XInternAtom(display_handle, "_NET_WM_STATE_NO_TASKBAR", false);
 				wm_state_above=XInternAtom(display_handle, "_NET_WM_STATE_ABOVE", false);
 				wm_state_modal = XInternAtom(display_handle, "_NET_WM_STATE_MODAL", false);
+				net_active_window = XInternAtom(display_handle, "_NET_ACTIVE_WINDOW", false);
 
 				atom=XInternAtom(display_handle, "ATOM", false);
 				async_method = XInternAtom(display_handle, "_SWF_AsyncAtom", false);
@@ -388,7 +396,7 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void Exit() {
-			Console.WriteLine("XplatUIX11.Exit");
+			getmessage_ret = false;
 		}
 
 		internal override void GetDisplaySize(out Size size) {
@@ -463,6 +471,12 @@ namespace System.Windows.Forms {
 				attr.bit_gravity = Gravity.NorthWestGravity;
 				attr.win_gravity = Gravity.NorthWestGravity;
 
+				if (attr.override_redirect) {
+					if ((cp.Style & ((int)WindowStyles.WS_CAPTION)) != 0) {
+						attr.override_redirect = false;
+					}
+				}
+
 				WindowHandle=XCreateWindow(DisplayHandle, ParentHandle, X, Y, Width, Height, BorderWidth, (int)CreateWindowArgs.CopyFromParent, (int)CreateWindowArgs.InputOutput, IntPtr.Zero, SetWindowValuemask.BitGravity | SetWindowValuemask.WinGravity | SetWindowValuemask.SaveUnder | SetWindowValuemask.OverrideRedirect, ref attr);
 
 				// Set the appropriate window manager hints
@@ -528,9 +542,11 @@ namespace System.Windows.Forms {
 				}
 				XChangeProperty(DisplayHandle, WindowHandle, net_wm_state, atom, 32, PropertyMode.Replace, ref atoms, atom_count);
 
-				XMapWindow(DisplayHandle, WindowHandle);
-
 				XSelectInput(DisplayHandle, WindowHandle, SelectInputMask);
+
+				if ((cp.Style & ((int)WindowStyles.WS_VISIBLE)) != 0) {
+					XMapWindow(DisplayHandle, WindowHandle);
+				}
 
 				protocols=wm_delete_window;
 				XSetWMProtocols(DisplayHandle, WindowHandle, ref protocols, 1);
@@ -683,8 +699,16 @@ namespace System.Windows.Forms {
 		internal override void Activate(IntPtr handle) {
 
 			lock (xlib_lock) {
-				// Not sure this is the right method, but we don't use ICs either...	
-				XRaiseWindow(DisplayHandle, handle);
+				XEvent	xev = new XEvent();
+
+				xev.ClientMessageEvent.type = XEventName.ClientMessage;
+				xev.ClientMessageEvent.send_event = true;
+				xev.ClientMessageEvent.window = handle;
+				xev.ClientMessageEvent.message_type = (IntPtr) net_active_window;
+				xev.ClientMessageEvent.format = 32;
+				XSendEvent(DisplayHandle, root_window, false, EventMask.SubstructureRedirectMask | EventMask.SubstructureNotifyMask, ref xev);
+
+				//XRaiseWindow(DisplayHandle, handle);
 			}
 			return;
 		}
@@ -694,18 +718,19 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void SetModal(IntPtr handle, bool Modal) {
-			XEvent	xevent = new XEvent();
-
-			xevent.ClientMessageEvent.type = XEventName.ClientMessage;
-			xevent.ClientMessageEvent.serial = 0;
-			xevent.ClientMessageEvent.send_event = true;
-			xevent.ClientMessageEvent.window = handle;
-			xevent.ClientMessageEvent.message_type = (IntPtr) net_wm_state;
-			xevent.ClientMessageEvent.format = 32;
-			xevent.ClientMessageEvent.ptr1 = (IntPtr) (Modal ? NetWindowManagerState.Add : NetWindowManagerState.Remove);
-			xevent.ClientMessageEvent.ptr2 = (IntPtr) wm_state_modal;
-
-			XSendEvent(DisplayHandle, root_window, false, EventMask.SubstructureRedirectMask | EventMask.SubstructureNotifyMask, ref xevent);
+			if (Modal) {
+				modal_window.Push(handle);
+				XSelectInput(DisplayHandle, root_window, EventMask.PropertyChangeMask);
+			} else {
+				if (modal_window.Contains(handle)) {
+					modal_window.Pop();
+				}
+				if (modal_window.Count > 0) {
+					Activate((IntPtr)modal_window.Peek());
+				} else {
+					XSelectInput(DisplayHandle, root_window, EventMask.NoEventMask);
+				}
+			}
 		}
 
 		internal override void Invalidate (IntPtr handle, Rectangle rc, bool clear) {
@@ -900,6 +925,32 @@ namespace System.Windows.Forms {
 				case XEventName.ClientMessage:
 					message_queue.Enqueue (xevent);
 					break;
+
+				case XEventName.PropertyNotify:
+					if (xevent.PropertyEvent.atom == (IntPtr)net_active_window) {
+						if (modal_window.Count > 0) {
+							Atom	actual_atom;
+							int	actual_format;
+							int	nitems;
+							int	bytes_after;
+							IntPtr	prop = IntPtr.Zero;
+							IntPtr	active_window = (IntPtr)modal_window.Peek();	// if GetWindowProperty fails this prevents the reset trigger below
+
+							XGetWindowProperty(DisplayHandle, root_window, net_active_window, 0, 1, false, Atom.XA_WINDOW, out actual_atom, out actual_format, out nitems, out bytes_after, ref prop);
+							if ((nitems > 0) && (prop != IntPtr.Zero)) {
+								active_window = (IntPtr)Marshal.ReadInt32(prop);
+								XFree(prop);
+							}
+
+							if (active_window != (IntPtr)modal_window.Peek()) {
+								if (NativeWindow.FindWindow(active_window) != null) {
+									Activate((IntPtr)modal_window.Peek());
+								}
+							}
+						}
+					}
+					break;
+
 				}
 
 				lock (xlib_lock) {
@@ -1151,11 +1202,6 @@ namespace System.Windows.Forms {
 						msg.hwnd = xevent.ClientMessageEvent.window;
 						msg.wParam = xevent.ClientMessageEvent.ptr2;
 						msg.lParam = xevent.ClientMessageEvent.ptr3;
-					} else {
-						msg.message=Msg.WM_QUIT;
-						msg.wParam=IntPtr.Zero;
-						msg.lParam=IntPtr.Zero;
-						return false;
 					}
 					break;
 				}
@@ -1171,7 +1217,7 @@ namespace System.Windows.Forms {
 				}
 			}
 
-			return true;
+			return getmessage_ret;
 		}
 
 		internal override bool TranslateMessage(ref MSG msg) {
@@ -1754,6 +1800,9 @@ namespace System.Windows.Forms {
 		internal extern static int XChangeProperty(IntPtr display, IntPtr window, int property, int type, int format, PropertyMode  mode, ref MotifWmHints data, int nelements);
 
 		[DllImport ("libX11", EntryPoint="XChangeProperty")]
+		internal extern static int XChangeProperty(IntPtr display, IntPtr window, int property, Atom format, int type, PropertyMode  mode, ref uint[] atoms, int nelements);
+
+		[DllImport ("libX11", EntryPoint="XChangeProperty")]
 		internal extern static int XChangeProperty(IntPtr display, IntPtr window, int property, int format, int type, PropertyMode  mode, ref uint[] atoms, int nelements);
 
 		[DllImport ("libX11", EntryPoint="XChangeProperty")]
@@ -1783,6 +1832,12 @@ namespace System.Windows.Forms {
 
 		[DllImport ("libX11", EntryPoint="XCopyArea")]
 		internal extern static int XCopyArea(IntPtr display, IntPtr src, IntPtr dest, IntPtr gc, int src_x, int src_y, int width, int height, int dest_x, int dest_y);
+
+		[DllImport ("libX11", EntryPoint="XGetAtomName")]
+		internal extern static string XGetAtomName(IntPtr display, int atom);
+
+		[DllImport ("libX11", EntryPoint="XGetWindowProperty")]
+		internal extern static int XGetWindowProperty(IntPtr display, IntPtr window, int atom, int long_offset, int long_length, bool delete, Atom req_type, out Atom actual_type, out int actual_format, out int nitems, out int bytes_after, ref IntPtr prop);
 		#endregion
 	}
 }

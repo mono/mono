@@ -26,6 +26,8 @@
 
 // COMPLETE
 
+#undef ExternalExceptionHandler
+
 using System.Runtime.Remoting;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
@@ -60,6 +62,13 @@ namespace System.Windows.Forms
 			return window;
 		}
 		#endregion	// Public Static Methods
+
+		#region Private and Internal Static Methods
+		internal static NativeWindow FindWindow(IntPtr handle) {
+			return (NativeWindow)window_collection[handle];
+			
+		}
+		#endregion
 
 		#region Public Instance Methods
 		public void AssignHandle(IntPtr handle) {
@@ -113,16 +122,16 @@ namespace System.Windows.Forms
 		}
 
 		protected virtual void WndProc(ref Message m) {
-#if debug
-			Console.WriteLine("NativeWindow.cs: WndProc(ref Message m) called");
-#endif
 			DefWndProc(ref m);
 		}
 
 		internal static IntPtr WndProc(IntPtr hWnd, Msg msg, IntPtr wParam, IntPtr lParam) {
 			Message		m = new Message();
 			NativeWindow	window = null;
+
+			#if !ExternalExceptionHandler
 			try {
+			#endif
 				window = (NativeWindow)window_collection[hWnd];
 				m.HWnd=hWnd;
 				m.Msg=(int)msg;
@@ -135,6 +144,7 @@ namespace System.Windows.Forms
 				} else {
 					m.Result=XplatUI.DefWndProc(ref m);
 				}
+			#if !ExternalExceptionHandler
 			}
 
 			catch(System.Exception ex) {
@@ -142,10 +152,11 @@ namespace System.Windows.Forms
 					window.OnThreadException(ex);
 				}
 			}
+			#endif
 
-#if debug
-			Console.WriteLine("NativeWindow.cs: Message {0}, result {1}", msg, m.Result);
-#endif
+			#if debug
+				Console.WriteLine("NativeWindow.cs: Message {0}, result {1}", msg, m.Result);
+			#endif
 
 			return m.Result;
 		}
