@@ -942,6 +942,16 @@ namespace Mono.CSharp {
 				if (name.IndexOf ('.') > 0)
 					continue;
 
+				string alias_value = ns.LookupAlias (name);
+				if (alias_value != null) {
+					t = LookupInterfaceOrClass ("", alias_value, out error);
+					if (error)
+						return null;
+
+					if (t != null)
+						return t;
+				}
+
 				//
 				// Now check the using clause list
 				//

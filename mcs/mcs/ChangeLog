@@ -1,5 +1,10 @@
 2004-05-24  Martin Baulig  <martin@ximian.com>
 
+	* decl.cs (DeclSpace.FindType): Try doing an alias lookup before
+	walking the `using' list.  Fixes #53921.
+
+2004-05-24  Martin Baulig  <martin@ximian.com>
+
 	* const.cs (Const.LookupConstantValue): Added support for
 	EmptyCast's; fixes #55251.
 
