@@ -1,3 +1,8 @@
+2004-10-01  Raja R Harinath  <rharinath@novell.com>
+
+	* cs0122-5.cs, cs0122-6.cs: New tests.
+	* gmcs-expect-no-error: Update.
+
 2004-09-27  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile: Re-apply changes from 2004-09-14.
