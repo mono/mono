@@ -1,4 +1,8 @@
 2004-11-06  Jambunathan K  <kjambunathan@novell.com>
+	* class.cs: Removed the incomplete and (for now) unnecessary
+	operator methods. Let us bother about this later.
+
+2004-11-06  Jambunathan K  <kjambunathan@novell.com>
 	* attribute.cs: Removed the redundant AttributeSection class and
 	moved it's functionality to Attributes class. 
 	* class.cs: 

@@ -86,9 +86,6 @@ namespace Mono.MonoBASIC {
 		// Holds the indexers
 		ArrayList indexers;
 
-		// Holds the operators
-		ArrayList operators;
-
 		// Holds AddHandlers stements for events
 		ArrayList handlers;
 
@@ -409,16 +406,6 @@ namespace Mono.MonoBASIC {
 			return AdditionResult.Success;
 		}
 
-		public AdditionResult AddOperator (Operator op)
-		{
-			if (operators == null)
-				operators = new ArrayList ();
-
-			operators.Add (op);
-
-			return AdditionResult.Success;
-		}
-
 		public AdditionResult AddEventHandler (Statement stmt)
 		{
 			if (handlers == null)
@@ -513,12 +500,6 @@ namespace Mono.MonoBASIC {
 		public ArrayList Indexers {
 			get {
 				return indexers;
-			}
-		}
-
-		public ArrayList Operators {
-			get {
-				return operators;
 			}
 		}
 
@@ -1155,12 +1136,6 @@ namespace Mono.MonoBASIC {
 			} else
 				IndexerName = "Item";
 
-			if (operators != null){
-				DefineMembers (operators, null);
-
-				CheckPairedOperators ();
-			}
-
 			if (enums != null)
 				DefineMembers (enums, defined_names);
 			
@@ -1306,19 +1281,6 @@ namespace Mono.MonoBASIC {
 
 						if (mb != null && filter (mb, criteria) == true)
 							members.Add (mb);
-					}
-				}
-
-				if (operators != null){
-					foreach (Operator o in operators) {
-						if ((o.ModFlags & modflags) == 0)
-							continue;
-						if ((o.ModFlags & static_mask) != static_flags)
-							continue;
-						
-						MethodBuilder ob = o.OperatorMethodBuilder;
-						if (ob != null && filter (ob, criteria) == true)
-							members.Add (ob);
 					}
 				}
 
@@ -1542,10 +1504,6 @@ namespace Mono.MonoBASIC {
 			if (methods != null)
 				foreach (Method m in methods)
 					m.Emit (this);
-
-			if (operators != null)
-				foreach (Operator o in operators)
-					o.Emit (this);
 
 			if (properties != null)
 				foreach (Property p in properties)
@@ -1972,130 +1930,6 @@ namespace Mono.MonoBASIC {
 			return FindMembers (mt, bf | BindingFlags.DeclaredOnly, null, null);
 		}
 
-		//
-		// Operator pair checking
-		//
-
-		class OperatorEntry {
-			public int flags;
-			public Type ret_type;
-			public Type type1, type2;
-			public Operator op;
-			public Operator.OpType ot;
-			
-			public OperatorEntry (int f, Operator o)
-			{
-				flags = f;
-
-				ret_type = o.OperatorMethod.GetReturnType ();
-				Type [] pt = o.OperatorMethod.ParameterTypes;
-				type1 = pt [0];
-				type2 = pt [1];
-				op = o;
-				ot = o.OperatorType;
-			}
-
-			public override int GetHashCode ()
-			{	
-				return ret_type.GetHashCode ();
-			}
-
-			public override bool Equals (object o)
-			{
-				OperatorEntry other = (OperatorEntry) o;
-
-				if (other.ret_type != ret_type)
-					return false;
-				if (other.type1 != type1)
-					return false;
-				if (other.type2 != type2)
-					return false;
-				return true;
-			}
-		}
-				
-		//
-		// Checks that some operators come in pairs:
-		//  == and !=
-		// > and <
-		// >= and <=
-		//
-		// They are matched based on the return type and the argument types
-		//
-		void CheckPairedOperators ()
-		{
-			Hashtable pairs = new Hashtable (null, null);
-
-			// Register all the operators we care about.
-			foreach (Operator op in operators){
-				int reg = 0;
-				
-				switch (op.OperatorType){
-				case Operator.OpType.Equality:
-					reg = 1; break;
-				case Operator.OpType.Inequality:
-					reg = 2; break;
-					
-				case Operator.OpType.GreaterThan:
-					reg = 1; break;
-				case Operator.OpType.LessThan:
-					reg = 2; break;
-					
-				case Operator.OpType.GreaterThanOrEqual:
-					reg = 1; break;
-				case Operator.OpType.LessThanOrEqual:
-					reg = 2; break;
-				}
-				if (reg == 0)
-					continue;
-
-				OperatorEntry oe = new OperatorEntry (reg, op);
-
-				object o = pairs [oe];
-				if (o == null)
-					pairs [oe] = oe;
-				else {
-					oe = (OperatorEntry) o;
-					oe.flags |= reg;
-				}
-			}
-
-			//
-			// Look for the mistakes.
-			//
-			foreach (DictionaryEntry de in pairs){
-				OperatorEntry oe = (OperatorEntry) de.Key;
-
-				if (oe.flags == 3)
-					continue;
-
-				string s = "";
-				switch (oe.ot){
-				case Operator.OpType.Equality:
-					s = "!=";
-					break;
-				case Operator.OpType.Inequality: 
-					s = "==";
-					break;
-				case Operator.OpType.GreaterThan: 
-					s = "<";
-					break;
-				case Operator.OpType.LessThan:
-					s = ">";
-					break;
-				case Operator.OpType.GreaterThanOrEqual:
-					s = "<=";
-					break;
-				case Operator.OpType.LessThanOrEqual:
-					s = ">=";
-					break;
-				}
-				Report.Error (216, oe.op.Location,
-					      "The operator `" + oe.op + "' requires a matching operator `" + s + "' to also be defined");
-			}
-		}
-		
-		
 	}
 
 	public class Class : TypeContainer {
