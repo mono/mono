@@ -97,6 +97,13 @@ namespace MonoTests.System.Xml
 			xs.Serialize(xtw, o);
 		}
 		
+		// test constructors
+		[Test]
+		public void TestConstructor()
+		{
+			XmlSerializer ser=new XmlSerializer(null, "");
+		}
+
 		// test basic types ////////////////////////////////////////////////////////
 		[Test]
 		public void TestSerializeInt()
