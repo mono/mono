@@ -1,3 +1,7 @@
+2003-10-14  Miguel de Icaza  <miguel@ximian.com>
+
+	* convert.cs: Fix error report.
+
 2003-10-13 Jackson Harper <jackson@ximian.com>
 
 	* typemanager.cs (TypeToCoreType): Add float and double this fixes

@@ -1613,8 +1613,8 @@ namespace Mono.CSharp {
 			//
 			if (expr_type == TypeManager.object_type && target_type.IsValueType){
 				if (expr is NullLiteral){
-					Report.Error (37, "Cannot convert null to value type `" +
-                                                      TypeManager.CSharpName (expr_type) + "'");
+					Report.Error (37, loc, "Cannot convert null to value type `" +
+                                                      TypeManager.CSharpName (target_type) + "'");
 					return null;
 				}
 				return new UnboxCast (expr, target_type);
