@@ -1007,7 +1007,7 @@ namespace System {
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern Type make_array_type (int rank);		
+		extern Type make_array_type (int rank);
 
 		public virtual Type MakeArrayType ()
 		{
@@ -1019,6 +1019,14 @@ namespace System {
 			if (rank < 1)
 				throw new IndexOutOfRangeException ();
 			return make_array_type (rank);
+		}
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		extern Type make_byref_type ();
+
+		public virtual Type MakeByRefType ()
+		{
+			return make_byref_type ();
 		}
 #endif
 	}

@@ -1,3 +1,7 @@
+2003-12-08  Martin Baulig  <martin@ximian.com>
+
+	* Type.cs (MakeByRefType): New public method.
+
 2003-12-08  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Environment.cs: Add a version number for the corlib-runtime interface
