@@ -4553,12 +4553,13 @@ namespace Mono.CSharp {
 					if (!((vt == TypeManager.bool_type) ||
 					      (vt == TypeManager.sbyte_type) ||
 					      (vt == TypeManager.byte_type) ||
-					      (vt == TypeManager.short_type) ||    
+					      (vt == TypeManager.short_type) ||
 					      (vt == TypeManager.ushort_type) ||
-					      (vt == TypeManager.int32_type) ||    
+					      (vt == TypeManager.int32_type) ||
 					      (vt == TypeManager.uint32_type) ||    
-					      (vt == TypeManager.char_type) ||    
-					      (vt == TypeManager.float_type))){
+					      (vt == TypeManager.char_type) ||
+					      (vt == TypeManager.float_type) ||
+					      (!vt.IsValueType))){
 						Report.Error (
 							677, Location, container.MakeName (Name) +
 							" A volatile field can not be of type `" +
