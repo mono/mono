@@ -16,7 +16,11 @@ namespace N1 {
 			name = s;
 		}
 	}
-	
+
+	interface A {
+		[Mine ("hello")]
+		void Hello ();
+	}	
 	public class Foo {	
 		
 		int i;
