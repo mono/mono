@@ -1,4 +1,9 @@
 
+Wed Dec 17 15:31:41 CET 2003 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: make CEE_NEWARR calls and other emulated opcodes 
+	not overlap with other call's arguments, too.
+
 Wed Dec 17 12:49:23 CET 2003 Paolo Molaro <lupus@ximian.com>
 
 	* mini.h, mini.c, mini-ppc.c, mini-sparc.c, mini-x86.c: 
