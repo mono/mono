@@ -1,9 +1,8 @@
 2005-03-22  Martin Baulig  <martin@ximian.com>
 
-	* decl.cs (MemberCache.AddMethods): Reverted Hari's change from
-	r40402 in this method: in the generics-land, we cannot compare the
-	MethodInfo.MethodHandle's since we may be dealing with
-	instantiated method.
+	* decl.cs (MemberCache.DeepCopy): Manually copy the entries and
+	clear the `BindingFlags.DeclaredOnly'.
+	(MemberCache.AddMethods): Add `BindingFlags.DeclaredOnly'.
 
 2005-03-22  Martin Baulig  <martin@ximian.com>
 

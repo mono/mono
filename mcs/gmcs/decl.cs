@@ -1813,9 +1813,15 @@ namespace Mono.CSharp {
 
 			IDictionaryEnumerator it = other.GetEnumerator ();
 			while (it.MoveNext ()) {
-				hash [it.Key] = ((ArrayList) it.Value).Clone ();
-			 }
-                                
+				ArrayList old_list = (ArrayList) it.Value;
+				ArrayList new_list = new ArrayList ();
+
+				foreach (CacheEntry entry in old_list)
+					new_list.Add (new CacheEntry (entry));
+
+				hash [it.Key] = new_list;
+			}
+
 			return hash;
 		}
 
@@ -1926,7 +1932,7 @@ namespace Mono.CSharp {
 			// When processing 'Y', the method_cache will already have a copy of 'f', 
 			// with ReflectedType == X.  However, we want to ensure that its ReflectedType == Y
 			// 
-			MethodBase [] members = type.GetMethods (bf);
+			MethodBase [] members = type.GetMethods (bf | BindingFlags.DeclaredOnly);
 
 			Array.Reverse (members);
 
@@ -1945,6 +1951,7 @@ namespace Mono.CSharp {
 				BindingFlags new_bf = bf;
 				if (member.DeclaringType == type)
 					new_bf |= BindingFlags.DeclaredOnly;
+
 				list.Add (new CacheEntry (Container, member, MemberTypes.Method, new_bf));
 			}
 		}
@@ -2047,11 +2054,11 @@ namespace Mono.CSharp {
 				this.EntryType = GetEntryType (mt, bf);
 			}
 
-			public CacheEntry (CacheEntry other, MemberInfo update)
+			public CacheEntry (CacheEntry other)
 			{
 				this.Container = other.Container;
 				this.EntryType = other.EntryType & ~EntryType.Declared;
-				this.Member = update;
+				this.Member = other.Member;
 			}
 
 			public override string ToString ()
