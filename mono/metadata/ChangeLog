@@ -1,3 +1,7 @@
+2001-12-17  Dietmar Maurer  <dietmar@ximian.com>
+
+	* icall.c (ves_icall_System_DateTime_GetNow): added EPOCH adjustment
+
 2001-12-16  Dietmar Maurer  <dietmar@ximian.com>
 
 	* file-io.c: raise exceptions if handle is invalid.
