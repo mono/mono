@@ -1,3 +1,8 @@
+2005-03-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* GenericOutputter.cs : Prefix "xml" is only allowed to the fixed XML
+	  namespace. Rewrite prefix only when there is non-empty namespace.
+
 2005-03-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XslStylesheet.cs : Now namespace aliases are collected in prior to

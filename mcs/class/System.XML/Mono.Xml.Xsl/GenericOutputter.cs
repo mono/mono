@@ -189,18 +189,24 @@ namespace Mono.Xml.Xsl
 				{
 					Attribute attr = pendingAttributes [i];
 					string prefix = attr.Prefix;
+					if (prefix == XmlNamespaceManager.PrefixXml &&
+						attr.Namespace != XmlNamespaceManager.XmlnsXml)
+						// don't allow mapping from "xml" to other namespaces.
+						prefix = String.Empty;
 					string existing = _nsManager.LookupPrefix (attr.Namespace, false);
 					if (prefix.Length == 0 && attr.Namespace.Length > 0)
 						prefix = existing;
-					if (prefix == null) {
-						prefix = "xp_" + _xpCount++;
+					if (attr.Namespace.Length > 0) {
+						if (prefix == null || prefix == String.Empty)
+							// empty prefix is not allowed
+							// for non-local attributes.
+							prefix = "xp_" + _xpCount++;
+						if (existing != prefix) {
+							newNamespaces.Add (prefix);
+							_currentNamespaceDecls [prefix] = attr.Namespace;
+							_nsManager.AddNamespace (prefix, attr.Namespace);
+						}
 					}
-					if (existing != prefix && attr.Namespace.Length > 0) {
-						newNamespaces.Add (prefix);
-						_currentNamespaceDecls [prefix] = attr.Namespace;
-						_nsManager.AddNamespace (prefix, attr.Namespace);
-					}
-					
 					Emitter.WriteAttributeString (prefix, attr.LocalName, attr.Namespace, attr.Value);
 				}
 				for (int i = 0; i < newNamespaces.Count; i++)
