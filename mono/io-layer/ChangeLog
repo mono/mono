@@ -1,4 +1,8 @@
 
+Mon Jan 26 16:15:03 CET 2004 Paolo Molaro <lupus@ximian.com>
+
+	* sockets.h: remove obsolete soklen_t typedef.
+
 Fri Jan 23 21:07:02 CET 2004 Paolo Molaro <lupus@ximian.com>
 
 	* socket-wrappers.h, sockets.h, sockets.c, Makefile.am: move socket
