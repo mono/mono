@@ -1,3 +1,7 @@
+2004-11-25  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlQualifiedNameTable.cs : oops, it was not implemented.
+
 2004-11-24  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlQualifiedName.cs : in 2.0 it is [Serializable].

@@ -31,27 +31,52 @@
 using System;
 using System.Collections;
 
+using QName = System.Xml.XmlQualifiedName;
+
 namespace System.Xml
 {
 	public class XmlQualifiedNameTable
 	{
-		public XmlQualifiedNameTable (XmlNameTable nt)
+		XmlNameTable nameTable;
+		Hashtable namespaces = new Hashtable ();
+
+		public XmlQualifiedNameTable (XmlNameTable nameTable)
 		{
-			throw new NotImplementedException ();
+			this.nametable = nameTable;
 		}
 
 		public XmlNameTable NameTable {
-			 get { throw new NotImplementedException (); }
+			 get { return nameTable; }
 		} 
 
 		public XmlQualifiedName Add (string name, string ns)
 		{
-			throw new NotImplementedException ();
+			return AddInternal (name, ns, false);
 		}
 
 		public XmlQualifiedName AtomizedAdd (string name, string ns)
 		{
-			throw new NotImplementedException ();
+			return AddInternal (name, ns, true);
+		}
+
+		private XmlQualifiedName AddInternal (string name, string ns,
+			bool atomized)
+		{
+			if (!atomized) {
+				name = nameTable.Add (name);
+				ns = nameTable.Add (ns);
+			}
+			Hashtable nsTable = namespaces [ns] as Hashtable;
+			if (nsTable == null) {
+				nsTable = new Hashtable ();
+				namespaces [ns] = nsTable;
+			}
+			QName qname = nsTable [name] as QName;
+			if (name == null) {
+				qname = new QName (name, ns);
+				nsTable [name] = qname;
+			}
+			return qname;
 		}
 
 		public XmlQualifiedName AtomizedGet (string name, string ns)
@@ -64,9 +89,48 @@ namespace System.Xml
 			throw new NotImplementedException ();
 		}
 
-		public IEnumerator GetEnumerator()
+		private XmlQualifiedName GetInternal (string name, string ns,
+			bool atomized)
 		{
-			throw new NotImplementedException ();
+			if (atomized) {
+				if (nameTable.Get (name) == null ||
+					nameTable.Get (ns) == null)
+					return null;
+			}
+			Hashtable nsTable = namespaces [ns] as Hashtable;
+			return nsTable != null ?
+				nsTable [name] as QName : null;
+		}
+
+		public IEnumerator GetEnumerator ()
+		{
+			return new XmlQualifiedNameTableEnumerator (this);
+		}
+
+		internal class XmlQualifiedNameTableEnumerator : IEnumerator
+		{
+			public XmlQualifiedNameTableEnumerator (
+				XmlQualifiedNameTable qnameTable)
+			{
+				namespaces = qnameTable.namespaces.GetEnumerator ();
+			}
+
+			IEnumerator namespaces;
+			IEnumerator names;
+
+			public bool MoveNext ()
+			{
+				while (names == null || !names.MoveNext ()) {
+					if (!namespaces.MoveNext ())
+						return false;
+					names = ((Hashtable) namespaces.Current).GetEnumerator ();
+				}
+				return true;
+			}
+
+			public object Current {
+				get { return names.Current; }
+			}
 		}
 	}
 }
