@@ -299,7 +299,7 @@ namespace System.Drawing
 
 				xrPen.SetXrValues (native_object);
 				Xr.XrMoveTo (native_object, cx + rx, cy);
-
+				
 				// Do an approprimation of the ellipse by drawing a curve in each quatrant
 				Xr.XrCurveTo (native_object,
 						cx + rx, cy - C1 * ry,
@@ -1025,28 +1025,52 @@ namespace System.Drawing
 				throw new NotImplementedException ();
 			}
 
-			[MonoTODO]
 			void IGraphics.FillEllipse (System.Drawing.Brush brush, Rectangle rect)
 			{
-				throw new NotImplementedException ();
+				((IGraphics) this).FillEllipse (brush, rect.X, rect.Y, rect.Width, rect.Height);
 			}
 
-			[MonoTODO]
 			void IGraphics.FillEllipse (System.Drawing.Brush brush, RectangleF rect)
 			{
-				throw new NotImplementedException ();
+				((IGraphics) this).FillEllipse (brush, rect.X, rect.Y, rect.Width, rect.Height);
 			}
 
-			[MonoTODO]
 			void IGraphics.FillEllipse (System.Drawing.Brush brush, float x, float y, float width, float height)
-			{
-				throw new NotImplementedException ();
+			{				 
+				double rx = width / 2;
+				double ry = height / 2;
+				double cx = x + rx;
+				double cy = y + ry;
+				
+				Brush xrBrush = ConvertBrush (brush);
+//				xrBrush.SetXrValues (native_object);
+				Xr.XrMoveTo (native_object, cx + rx, cy);
+
+				Xr.XrCurveTo (native_object,
+						cx + rx, cy - C1 * ry,
+						cx + C1 * rx, cy - ry,
+						cx, cy - ry);
+				Xr.XrCurveTo (native_object,
+						cx - C1 * rx, cy - ry,
+						cx - rx, cy - C1 * ry,
+						cx - rx, cy);
+				Xr.XrCurveTo (native_object,
+						cx - rx, cy + C1 * ry,
+						cx - C1 * rx, cy + ry,
+						cx, cy + ry);
+				Xr.XrCurveTo (native_object,
+						cx + C1 * rx, cy + ry,
+						cx + rx, cy + C1 * ry,
+						cx + rx, cy);
+
+				Xr.XrClosePath (native_object);
+				
+				Xr.XrFill (native_object);
 			}
 
-			[MonoTODO]
 			void IGraphics.FillEllipse (System.Drawing.Brush brush, int x, int y, int width, int height)
 			{
-				throw new NotImplementedException ();
+				((IGraphics) this).FillEllipse (brush, (float) x, (float) y, (float) width, (float) height);
 			}
 
 			[MonoTODO]
