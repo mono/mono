@@ -1,5 +1,11 @@
-// cs0502.cs: 'Sample' cannot be both abstract and sealed
-// Line: 4
+// cs0502.cs: 'Main.Test()' cannot be both abstract and sealed
+// Line: 10
 
-abstract sealed class Sample {
+abstract class Base {
+    public abstract void Test () {}
+}
+
+abstract class Main: Base
+{
+    public abstract sealed override void Test () {}
 }

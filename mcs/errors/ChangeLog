@@ -1,3 +1,11 @@
+2004-12-14 Marek Safar <marek.safar@seznam.cz>
+
+	* cs0418-2.cs, cs0418.cs, cs0441.cs, cs0662.cs
+	cs0724.cs, cs1004.cs, cs1521-2.cs, cs1521.cs,
+	cs1558.cs, cs1576.cs, cs3017.cs, cs3018-2.cs,
+	cs3018.cs, cs3021.cs, cs3022.cs, cs3023.cs, cs3025.cs:
+	New error tests.
+
 2004-12-08  Martin Baulig  <martin@ximian.com>
 
 	* gcs3024.cs: New test.
