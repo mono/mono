@@ -1,4 +1,11 @@
 
+Fri Feb 22 18:47:08 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* MonoType.cs: disable constructor.
+	* Object.cs: make GetType() an internalcall.
+	* Type.cs: added correct bindingflags to GetMethods ().
+	All such calls should be reviewed to use the correct flags.
+
 Thu Feb 21 19:23:46 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* Type.cs, MonoType.cs: type_is_subtype_of () changed to include extra

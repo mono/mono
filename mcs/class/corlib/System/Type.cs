@@ -557,7 +557,7 @@ namespace System {
 
 		public MethodInfo[] GetMethods ()
 		{
-			return GetMethods (BindingFlags.Public);
+			return GetMethods (BindingFlags.Public|BindingFlags.Instance|BindingFlags.Static);
 		}
 
 		public abstract MethodInfo[] GetMethods (BindingFlags bindingAttr);

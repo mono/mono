@@ -72,10 +72,8 @@ namespace System {
 		// <summary>
 		//   Returns the Type associated with the object.
 		// </summary>
-		public Type GetType ()
-		{
-			return new MonoType (this);
-		}
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern Type GetType ();
 
 		// <summary>
 		//   Shallow copy of the object.

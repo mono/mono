@@ -32,7 +32,9 @@ namespace System
 		private static extern void get_type_info (RuntimeTypeHandle type, out MonoTypeInfo info);
 
 		internal MonoType (Object obj) {
+			// this should not be used - lupus
 			type_from_obj (this, obj);
+			throw new NotImplementedException ();
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
