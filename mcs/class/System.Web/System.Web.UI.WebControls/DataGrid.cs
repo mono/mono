@@ -536,7 +536,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		public event DataGridCommandEventHandler SortCommand
+		public event DataGridSortCommandEventHandler SortCommand
 		{
 			add
 			{
