@@ -366,6 +366,32 @@ namespace Mono.CSharp
 			return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_' || (c >= '0' && c <= '9') || Char.IsLetter (c);
 		}
 
+		bool parse_less_than ()
+		{
+		start:
+			int the_token = token ();
+			if (the_token != Token.IDENTIFIER)
+				return false;
+
+		again:
+			the_token = token ();
+
+			if (the_token == Token.OP_GENERICS_GT)
+				return true;
+			else if (the_token == Token.COMMA)
+				goto start;
+			else if (the_token == Token.OP_GENERICS_LT) {
+				if (!parse_less_than ())
+					return false;
+				goto again;
+			}
+
+			return false;
+		}
+
+		bool parsing_less_than = false;
+		int parsing_generic_less_than = 0;
+
 		int is_punct (char c, ref bool doread)
 		{
 			int d;
@@ -416,6 +442,60 @@ namespace Mono.CSharp
 				return Token.TILDE;
 			case '?':
 				return Token.INTERR;
+			}
+
+			if (c == '<') {
+				if (parsing_generic_less_than++ > 0)
+					return Token.OP_GENERICS_LT;
+
+				// Save current position and parse next token.
+				int old = reader.Position;
+				bool is_generic_lt = parse_less_than ();
+				reader.Position = old;
+				putback_char = -1;
+
+				if (is_generic_lt) {
+					parsing_generic_less_than++;
+					return Token.OP_GENERICS_LT;
+				} else
+					parsing_generic_less_than = 0;
+
+				d = peekChar ();
+				if (d == '<'){
+					getChar ();
+					d = peekChar ();
+
+					if (d == '='){
+						doread = true;
+						return Token.OP_SHIFT_LEFT_ASSIGN;
+					}
+					return Token.OP_SHIFT_LEFT;
+				} else if (d == '='){
+					doread = true;
+					return Token.OP_LE;
+				}
+				return Token.OP_LT;
+			} else if (c == '>') {
+				if (parsing_generic_less_than > 0) {
+					parsing_generic_less_than--;
+					return Token.OP_GENERICS_GT;
+				}
+
+				d = peekChar ();
+				if (d == '>'){
+					getChar ();
+					d = peekChar ();
+
+					if (d == '='){
+						doread = true;
+						return Token.OP_SHIFT_RIGHT_ASSIGN;
+					}
+					return Token.OP_SHIFT_RIGHT;
+				} else if (d == '='){
+					doread = true;
+					return Token.OP_GE;
+				}
+				return Token.OP_GT;
 			}
 
 			d = peekChar ();
@@ -513,39 +593,37 @@ namespace Mono.CSharp
 				return Token.CARRET;
 			}
 
-			if (c == '<'){
-				if (d == '<'){
-					getChar ();
-					d = peekChar ();
-
-					if (d == '='){
-						doread = true;
-						return Token.OP_SHIFT_LEFT_ASSIGN;
-					}
-					return Token.OP_SHIFT_LEFT;
-				} else if (d == '='){
-					doread = true;
-					return Token.OP_LE;
-				}
-				return Token.OP_LT;
-			}
-
+#if FIXME
 			if (c == '>'){
-				if (d == '>'){
-					getChar ();
-					d = peekChar ();
+				if (deambiguate_greater_than == 0)
+					return Token.OP_GT;
 
-					if (d == '='){
-						doread = true;
-						return Token.OP_SHIFT_RIGHT_ASSIGN;
-					}
-					return Token.OP_SHIFT_RIGHT;
-				} else if (d == '='){
-					doread = true;
-					return Token.OP_GE;
+				--deambiguate_greater_than;
+
+				// Save current position and parse next token.
+				int old = reader.Position;
+				int new_token = token ();
+				reader.Position = old;
+				putback_char = -1;
+
+				switch (new_token) {
+				case Token.OPEN_PARENS:
+				case Token.CLOSE_PARENS:
+				case Token.CLOSE_BRACKET:
+				case Token.OP_GT:
+				case Token.COLON:
+				case Token.SEMICOLON:
+				case Token.COMMA:
+				case Token.DOT:
+				case Token.INTERR:
+					return Token.OP_GENERICS_GT;
+
+				default:
+					return Token.OP_GT;
 				}
-				return Token.OP_GT;
 			}
+#endif
+
 			return Token.ERROR;
 		}
 

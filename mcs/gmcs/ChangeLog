@@ -1,3 +1,15 @@
+2003-08-28  Martin Baulig  <martin@ximian.com>
+
+	* cs-parser.jay (opt_type_argument_list): Use
+	`OP_GENERICS_LT type_arguments OP_GENERICS_GT'.
+	(primary_expression): Replace `qualified_identifier' with `type_name'.
+	(type_parameter_list): Use `OP_GENERICS_LT type_parameters OP_GENERICS_GT'.
+
+	* cs-tokenizer.cs (is_punct): When reading a `<', invoke a custom
+	parser to check whether it is syntactically a type parameter list;
+	return OP_GENERICS_LT/OP_GENERICS_GT instead of OP_LT/OP_GT in
+	this case.
+
 2003-08-26  Martin Baulig  <martin@ximian.com>
 
 	* ecore.cs (SimpleName.SimpleNameResolve): Look for members before

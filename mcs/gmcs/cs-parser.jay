@@ -210,6 +210,7 @@ namespace Mono.CSharp
 %token OP_LT          "<"
 %token OP_GENERICS_LT "<"
 %token OP_GT          ">"
+%token OP_GENERICS_GT ">"
 %token BITWISE_AND    "&"
 %token BITWISE_OR     "|"
 %token STAR           "*"
@@ -1888,7 +1889,10 @@ namespace_or_type_name
 //
 opt_type_argument_list
 	: /* empty */ 		     { $$ = null; } 
-	| OP_GENERICS_LT type_arguments OP_GT { $$ = $2; } 
+	| OP_GENERICS_LT type_arguments OP_GENERICS_GT
+	  {
+		$$ = $2;
+	  }
 	;
 
 type_arguments
@@ -2028,12 +2032,9 @@ primary_expression
 		// 7.5.1: Literals
 	  }
  
-	| qualified_identifier
+	| type_name
 	  {
-		string name = (string) $1;
-
-		$$ = null;
-		$$ = DecomposeQI (name, lexer.Location);
+		$$ = $1;
 	  }
 	| parenthesized_expression
 	| member_access
@@ -2214,7 +2215,7 @@ element_access
 		Expression expr = (Expression) $1;  
 		if (expr is ComposedCast){
 			$$ = new ComposedCast (expr, (string) $2, lexer.Location);
-		} else if (!(expr is SimpleName || expr is MemberAccess)){
+		} else if (!(expr is SimpleName || expr is MemberAccess || expr is ConstructedType)){
 			Error_ExpectingTypeName (lexer.Location, expr);
 			$$ = TypeManager.system_object_expr;
 		} else {
@@ -2914,7 +2915,7 @@ opt_type_parameter_list
 	;
 
 type_parameter_list
-	: OP_LT type_parameters OP_GT { $$ = $2; }
+	: OP_GENERICS_LT type_parameters OP_GENERICS_GT { $$ = $2; }
 	;
 
 type_parameters
@@ -3115,7 +3116,7 @@ local_variable_type
 		// Blah i;
 		  
 		Expression expr = (Expression) $1;  
-		if (!(expr is SimpleName || expr is MemberAccess || expr is ComposedCast)) {
+		if (!(expr is SimpleName || expr is MemberAccess || expr is ComposedCast || expr is ConstructedType)) {
 			Error_ExpectingTypeName (lexer.Location, expr);
 			$$ = null;
 		} else {
@@ -3145,7 +3146,7 @@ local_variable_pointer_type
 		Expression expr = (Expression) $1;  
 		Location l = lexer.Location;
 
-		if (!(expr is SimpleName || expr is MemberAccess || expr is ComposedCast)) {
+		if (!(expr is SimpleName || expr is MemberAccess || expr is ComposedCast || expr is ConstructedType)) {
 			Error_ExpectingTypeName (l, expr);
 
 			$$ = null;
