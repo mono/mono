@@ -1,5 +1,8 @@
 2003-11-16  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini-x86.c (mono_arch_local_regalloc): Fix regalloc for div 
+	instruction when the result is discarded.
+
 	* iltests.il (test_0_div_regalloc): New regression test.
 
 	* arrays.cs: Fix compilation error.
