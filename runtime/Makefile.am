@@ -21,6 +21,17 @@ EXTRA_DIST = $(monobins_DATA) $(assemblies_DATA)
 assembliesdir = $(libdir)
 monobinsdir = $(bindir)
 
+$(assemblies_DATA):
+	cp $(top_srcdir)/../mcs/class/lib/$@ . || cp $(assembliesdir)/$@ . || touch $@
+
+$(monobins_DATA):
+	cp $(top_srcdir)/../mcs/mcs/$@ . || cp $(monobinsdir)/$@ . || touch $@
+
+dist-hook:
+	for i in $(monobins_DATA) $(assemblies_DATA); do	\
+		if test ! -s $$i; then echo $$i is empty && exit 1; fi	\
+	done
+
 copy_dlls:
 	cp /nt/mono/mcs/class/*/*.dll .
 
