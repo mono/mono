@@ -1,3 +1,10 @@
+
+Fri Jul 19 18:58:27 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* appdomain.h, domain.c, threads-types.h: don't include config.h in headers.
+	Constify mono_domain_assembly_open().
+	* loader.c: handle null namespace in icalls.
+
 2002-07-19  Dietmar Maurer  <dietmar@ximian.com>
 
 	* marshal.c (emit_ptr_to_str_conv): marshal object as structs
