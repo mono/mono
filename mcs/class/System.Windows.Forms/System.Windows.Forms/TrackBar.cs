@@ -150,11 +150,13 @@ namespace System.Windows.Forms {
 		// --- Public Methods
 		
 		[MonoTODO]
-		public void SetRange(int minValue, int maxValue) {
+		public void SetRange(int minValue, int maxValue) 
+		{
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		public override string ToString() {
+		public override string ToString() 
+		{
 			throw new NotImplementedException ();
 		}
 		
@@ -189,31 +191,38 @@ namespace System.Windows.Forms {
 		// --- Protected Methods
 		//
 		[MonoTODO]
-		protected override void CreateHandle() {
+		protected override void CreateHandle() 
+		{
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		protected override bool IsInputKey(Keys keyData) {
+		protected override bool IsInputKey(Keys keyData) 
+		{
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		protected override void OnBackColorChanged(EventArgs e) {
+		protected override void OnBackColorChanged(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		protected override void OnHandleCreated(EventArgs e) {
+		protected override void OnHandleCreated(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		protected virtual void OnScroll(EventArgs e) {
+		protected virtual void OnScroll(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		protected override void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified) {
+		protected override void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified) 
+		{
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		protected override void WndProc(ref Message m) {
+		protected override void WndProc(ref Message m) 
+		{
 			throw new NotImplementedException ();
 		}
 	}

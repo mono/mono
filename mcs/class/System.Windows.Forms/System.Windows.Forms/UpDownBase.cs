@@ -10,8 +10,8 @@ using System;
 using System.Drawing;
 using System.ComponentModel;
 
-namespace System.Windows.Forms
-{
+namespace System.Windows.Forms {
+
 	// <summary>
 	//	This is only a template.  Nothing is implemented yet.
 	// </summary>
@@ -21,10 +21,11 @@ namespace System.Windows.Forms
 	/// The up-down control consists of a text box and a small vertical scroll 
 	/// bar, commonly referred to as a spinner control.
 	/// </summary>
-	public abstract class UpDownBase : ContainerControl
-	{
+	public abstract class UpDownBase : ContainerControl {
+
 		/// --- Constructor ---
-		public UpDownBase()	{
+		public UpDownBase()	
+		{
 			throw new NotImplementedException ();
 		}
 
@@ -173,7 +174,8 @@ namespace System.Windows.Forms
 	
 		// Selects a range of text in the up-down control specifying the 
 		// starting position and number of characters to select.
-		public void Select(int start,int length) {
+		public void Select(int start,int length) 
+		{
 			throw new NotImplementedException ();
 		}
 		
@@ -228,47 +230,56 @@ namespace System.Windows.Forms
 		#region Protected Methods
 
 		// Raises the FontChanged event
-		protected override void OnFontChanged(EventArgs e) {
+		protected override void OnFontChanged(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 
 		// Raises the HandleCreated event
-		protected override void OnHandleCreated(EventArgs e) {
+		protected override void OnHandleCreated(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 
 		// Raises the Layout event
-		protected override void OnLayout(LayoutEventArgs e) {
+		protected override void OnLayout(LayoutEventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 	
 		// Raises the MouseWheel event
-		protected override void OnMouseWheel(MouseEventArgs e) {
+		protected override void OnMouseWheel(MouseEventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 
 		// Raises the KeyDown event
-		protected virtual void OnTextBoxKeyDown(object source, KeyEventArgs e) {
+		protected virtual void OnTextBoxKeyDown(object source, KeyEventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 
 		// Raises the KeyPress event
-		protected virtual void OnTextBoxKeyPress(object source, KeyPressEventArgs e) {
+		protected virtual void OnTextBoxKeyPress(object source, KeyPressEventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 
 		// Raises the LostFocus event
-		protected virtual void OnTextBoxLostFocus(object source, EventArgs e) {
+		protected virtual void OnTextBoxLostFocus(object source, EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 
 		// Raises the Resize event
-		protected virtual void OnTextBoxResize(object source, EventArgs e) {
+		protected virtual void OnTextBoxResize(object source, EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		// Raises the TextChanged event.
-		protected virtual void OnTextBoxTextChanged(object source, EventArgs e) {
+		protected virtual void OnTextBoxTextChanged(object source, EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
@@ -284,7 +295,8 @@ namespace System.Windows.Forms
 
 		// When overridden in a derived class, validates the text displayed in the
 		// up-down control
-		protected virtual void ValidateEditText() {
+		protected virtual void ValidateEditText() 
+		{
 			throw new NotImplementedException ();
 		}
 		#endregion // Protected Methods

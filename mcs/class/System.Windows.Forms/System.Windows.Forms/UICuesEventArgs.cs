@@ -8,8 +8,8 @@
 //
 using System;
 
-namespace Sytem.Windows.Forms
-{
+namespace System.Windows.Forms {
+
 	// <summary>
 	//	This is only a template.  Nothing is implemented yet.
 	// </summary>
@@ -18,8 +18,8 @@ namespace Sytem.Windows.Forms
 	/// <summary>
 	/// UICuesEventArgs specifies which user interface feature changed and its new value.
 	/// </summary>
-	public class UICuesEventArgs : EventArgs
-	{
+	public class UICuesEventArgs : EventArgs {
+
 //		// Specifies the state of the user interface
 		public enum UICues {
 			// FIXME add real enums values
@@ -34,7 +34,8 @@ namespace Sytem.Windows.Forms
 		};
 		UICues uicues;
 //		/// --- Constructor ---
-		public UICuesEventArgs(UICues uicues) {
+		public UICuesEventArgs(UICues uicues) 
+		{
 			this.uicues = uicues;
 		}
 

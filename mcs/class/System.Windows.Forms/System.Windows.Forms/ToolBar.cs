@@ -197,7 +197,8 @@ namespace System.Windows.Forms {
 		// --- Public Methods
 		
 		[MonoTODO]
-		public override string ToString() {
+		public override string ToString() 
+		{
 			throw new NotImplementedException ();
 		}
 		
@@ -232,39 +233,48 @@ namespace System.Windows.Forms {
 		// --- Protected Methods
 		
 		[MonoTODO]
-		protected override void CreateHandle() {
+		protected override void CreateHandle() 
+		{
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		protected override void Dispose(bool disposing) {
+		protected override void Dispose(bool disposing) 
+		{
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		protected virtual void OnButtonClick(ToolBarButtonClickEventArgs e) {
+		protected virtual void OnButtonClick(ToolBarButtonClickEventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		protected virtual void OnButtonDropDown(ToolBarButtonClickEventArgs e) {
+		protected virtual void OnButtonDropDown(ToolBarButtonClickEventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		protected override void OnFontChanged(EventArgs e) {
+		protected override void OnFontChanged(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		protected override void OnHandleCreated(EventArgs e) {
+		protected override void OnHandleCreated(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		protected override void OnResize(EventArgs e) {
+		protected override void OnResize(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		protected override void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified) {
+		protected override void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified) 
+		{
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		protected override void WndProc(ref Message m) {
+		protected override void WndProc(ref Message m) 
+		{
 			throw new NotImplementedException ();
 		}
 		public class ToolBarButtonCollection : IList, ICollection, IEnumerable {
@@ -304,35 +314,43 @@ namespace System.Windows.Forms {
 			// --- Public Methods
 			//
 			[MonoTODO]
-			public int Add(string text) {
+			public int Add(string text) 
+			{
 				throw new NotImplementedException ();
 			}
 			[MonoTODO]
-			public int Add(ToolBarButton button) {
+			public int Add(ToolBarButton button) 
+			{
 				throw new NotImplementedException ();
 			}
 			[MonoTODO]
-			public void AddRange(ToolBarButton[] buttons) {
+			public void AddRange(ToolBarButton[] buttons) 
+			{
 				throw new NotImplementedException ();
 			}
 			[MonoTODO]
-			public void Clear() {
+			public void Clear() 
+			{
 				throw new NotImplementedException ();
 			}
 			[MonoTODO]
-			public bool Contains(ToolBarButton button) {
+			public bool Contains(ToolBarButton button) 
+			{
 				throw new NotImplementedException ();
 			}
 			[MonoTODO]
-			public IEnumerator GetEnumerator() {
+			public IEnumerator GetEnumerator() 
+			{
 				throw new NotImplementedException ();
 			}
 			[MonoTODO]
-			public int IndexOf(ToolBarButton button) {
+			public int IndexOf(ToolBarButton button) 
+			{
 				throw new NotImplementedException ();
 			}
 			[MonoTODO]
-			public void Insert(int index, ToolBarButton button) {
+			public void Insert(int index, ToolBarButton button) 
+			{
 				throw new NotImplementedException ();
 			}
 			//[MonoTODO]
@@ -340,11 +358,13 @@ namespace System.Windows.Forms {
 			//	throw new NotImplementedException ();
 			//}
 			[MonoTODO]
-			public void Remove(ToolBarButton button) {
+			public void Remove(ToolBarButton button) 
+			{
 				throw new NotImplementedException ();
 			}
 			[MonoTODO]
-			public void RemoveAt(int index) {
+			public void RemoveAt(int index) 
+			{
 				throw new NotImplementedException ();
 			}
 		}

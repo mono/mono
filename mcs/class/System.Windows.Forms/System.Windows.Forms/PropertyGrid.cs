@@ -3,7 +3,6 @@
 //
 // Author:
 //   stubbed out by Jaak Simm (jaaksimm@firm.ee)
-//	Dennis Hayes (dennish@raytek.com)
 //
 // (C) Ximian, Inc., 2002
 //
@@ -14,8 +13,8 @@ using System.ComponentModel;
 using System.Collections;
 //using System.Windows.Forms.Design;
 
-namespace System.Windows.Forms
-{
+namespace System.Windows.Forms {
+
 	/// <summary>
 	/// Provides a user interface for browsing the properties of an object.
 	///
@@ -24,8 +23,8 @@ namespace System.Windows.Forms
 	/// </summary>
 
 	[MonoTODO]
-	public class PropertyGrid : ContainerControl
-	{
+	public class PropertyGrid : ContainerControl {
+
 		#region Fields
 		AttributeCollection browsableAttributes;
 		Color commandsBackColor;
@@ -47,7 +46,8 @@ namespace System.Windows.Forms
 		
 		#region Constructors
 		[MonoTODO]
-		public PropertyGrid() {
+		public PropertyGrid() 
+		{
 			browsableAttributes = new AttributeCollection( 
 			 new Attribute[] {BrowsableAttribute.Yes} //Attribute[] attributes
 			);
@@ -245,7 +245,8 @@ namespace System.Windows.Forms
 		
 		#region Methods
 		[MonoTODO]
-		public void CollapseAllGridItems() {
+		public void CollapseAllGridItems() 
+		{
 			throw new NotImplementedException ();
 		}
 		
@@ -255,117 +256,140 @@ namespace System.Windows.Forms
 //		}
 		
 		[MonoTODO]
-		protected override void Dispose(bool disposing) {
+		protected override void Dispose(bool disposing) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public void ExpandAllGridItems() {
+		public void ExpandAllGridItems() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override void OnFontChanged(EventArgs e) {
+		protected override void OnFontChanged(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override void OnGotFocus(EventArgs e) {
+		protected override void OnGotFocus(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override void OnHandleCreated(EventArgs e) {
+		protected override void OnHandleCreated(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override void OnHandleDestroyed(EventArgs e) {
+		protected override void OnHandleDestroyed(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override void OnMouseDown(MouseEventArgs me) {
+		protected override void OnMouseDown(MouseEventArgs me) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override void OnMouseMove(MouseEventArgs me) {
+		protected override void OnMouseMove(MouseEventArgs me) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override void OnMouseUp(MouseEventArgs me) {
+		protected override void OnMouseUp(MouseEventArgs me) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override void OnPaint(PaintEventArgs pevent) {
+		protected override void OnPaint(PaintEventArgs pevent) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected virtual void OnPropertyTabChanged(PropertyTabChangedEventArgs e) {
+		protected virtual void OnPropertyTabChanged(PropertyTabChangedEventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected virtual void OnPropertyValueChanged(PropertyValueChangedEventArgs e) {
+		protected virtual void OnPropertyValueChanged(PropertyValueChangedEventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override void OnResize(EventArgs e) {
+		protected override void OnResize(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected virtual void OnSelectedGridItemChanged(SelectedGridItemChangedEventArgs e) {
+		protected virtual void OnSelectedGridItemChanged(SelectedGridItemChangedEventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected virtual void OnSelectedObjectsChanged(EventArgs e) {
+		protected virtual void OnSelectedObjectsChanged(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override void OnSystemColorsChanged(EventArgs e) {
+		protected override void OnSystemColorsChanged(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override void OnVisibleChanged(EventArgs e) {
+		protected override void OnVisibleChanged(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override bool ProcessDialogKey(Keys keyData) {
+		protected override bool ProcessDialogKey(Keys keyData) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public override void Refresh() {
+		public override void Refresh() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public void RefreshTabs(PropertyTabScope tabScope) {
+		public void RefreshTabs(PropertyTabScope tabScope) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public void ResetSelectedProperty() {
+		public void ResetSelectedProperty() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override void ScaleCore(float dx,float dy) {
+		protected override void ScaleCore(float dx,float dy) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override void WndProc(ref Message m) {
+		protected override void WndProc(ref Message m) 
+		{
 			throw new NotImplementedException ();
 		}
 		#endregion
@@ -449,32 +473,38 @@ namespace System.Windows.Forms
 			
 			#region Methods
 			[MonoTODO]
-			public void AddTabType(Type propertyTabType) {
+			public void AddTabType(Type propertyTabType) 
+			{
 				throw new NotImplementedException ();
 			}
 			
 			[MonoTODO]
-			public void AddTabType(Type propertyTabType,PropertyTabScope tabScope) {
+			public void AddTabType(Type propertyTabType,PropertyTabScope tabScope) 
+			{
 				throw new NotImplementedException ();
 			}
 			
 			[MonoTODO]
-			public void Clear(PropertyTabScope tabScope) {
+			public void Clear(PropertyTabScope tabScope) 
+			{
 				throw new NotImplementedException ();
 			}
 			
 			[MonoTODO]
-			public IEnumerator GetEnumerator() {
+			public IEnumerator GetEnumerator() 
+			{
 				throw new NotImplementedException ();
 			}
 			
 			[MonoTODO]
-			void ICollection.CopyTo(Array dest,int index) {
+			void ICollection.CopyTo(Array dest,int index) 
+			{
 				throw new NotImplementedException ();
 			}
 			
 			[MonoTODO]
-			public void RemoveTabType(Type propertyTabType) {
+			public void RemoveTabType(Type propertyTabType) 
+			{
 				throw new NotImplementedException ();
 			}
 			

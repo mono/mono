@@ -8,13 +8,13 @@
 // (C) Ximian, Inc., 2002
 //
 using System.Drawing;
-namespace System.Windows.Forms
-{
+namespace System.Windows.Forms {
+
 	/// <summary>
 	/// Provides data for the DrawItem event.
 	/// </summary>
-	public class StatusBarDrawItemEventArgs : DrawItemEventArgs
-	{
+	public class StatusBarDrawItemEventArgs : DrawItemEventArgs {
+
 		private StatusBarPanel panel;
 
 		/// --- Constructor ---
@@ -40,7 +40,8 @@ namespace System.Windows.Forms
 		///	Index, Panel, and State properties of the two
 		///	StatusBarDrawItemEventArgs.
 		/// </remarks>
-		public static bool operator == (StatusBarDrawItemEventArgs objA, StatusBarDrawItemEventArgs objB) {
+		public static bool operator == (StatusBarDrawItemEventArgs objA, StatusBarDrawItemEventArgs objB) 
+		{
 			return ((objA.panel == objB.panel) && ((DrawItemEventArgs) objA == (DrawItemEventArgs) objB));
 		}
 		
@@ -55,7 +56,8 @@ namespace System.Windows.Forms
 		///	Index, Panel, and State properties of the two
 		///	StatusBarDrawItemEventArgs.
 		/// </remarks>
-		public static bool operator != (StatusBarDrawItemEventArgs objA, StatusBarDrawItemEventArgs objB) {
+		public static bool operator != (StatusBarDrawItemEventArgs objA, StatusBarDrawItemEventArgs objB) 
+		{
 			return ((objA.panel != objB.panel) || ((DrawItemEventArgs) objA != (DrawItemEventArgs) objB));
 		}
 
@@ -67,7 +69,8 @@ namespace System.Windows.Forms
 		///	Checks equivalence of this
 		///	StatusBarDrawItemEventArgs and another object.
 		/// </remarks>
-		public override bool Equals (object o) {
+		public override bool Equals (object o) 
+		{
 			if (!(o is StatusBarDrawItemEventArgs))return false;
 			return (this == (StatusBarDrawItemEventArgs) o);
 		}
@@ -80,7 +83,8 @@ namespace System.Windows.Forms
 		///	Calculates a hashing value.
 		///	Returns DrawItemEventArgs.GetHashCode().
 		/// </remarks>
-		public override int GetHashCode () {
+		public override int GetHashCode () 
+		{
 			// FIXME: In a perfect world, get hashcode would include
 			//		  Panel, but this shouldbe good enough.
 			return base.GetHashCode;
@@ -93,7 +97,8 @@ namespace System.Windows.Forms
 		/// <remarks>
 		///	Formats the StatusBarDrawItemEventArgs as a string.
 		/// </remarks>
-		public override string ToString () {
+		public override string ToString () 
+		{
 			return base.ToString() + panel.ToString();
 		}
 	}

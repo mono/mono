@@ -139,14 +139,16 @@ using System.ComponentModel;
 		// --- Public Methods
 		
 		[MonoTODO]
-		public override string ToString() {
+		public override string ToString() 
+		{
 			throw new NotImplementedException ();
 		}
 		//
 		// --- Protected Methods
 		//
 		[MonoTODO]
-		protected override void Dispose(bool disposing) {
+		protected override void Dispose(bool disposing) 
+		{
 			throw new NotImplementedException ();
 		}
 	}

@@ -8,8 +8,8 @@
 // (C) 2002 Ximian, Inc.  http://www.ximian.com
 //
 
-namespace System.Windows.Forms
-{
+namespace System.Windows.Forms {
+
 	/// <summary>
 	/// Represents the method that handles the Invoke event for a method.
 	/// </summary>

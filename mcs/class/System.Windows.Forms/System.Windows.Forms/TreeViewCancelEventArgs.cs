@@ -14,7 +14,7 @@ namespace System.Windows.Forms {
 
     public class TreeViewCancelEventArgs : CancelEventArgs {
 		private TreeNode node;
-		private TreeViewaction action;
+		private TreeViewAction action;
 		//
 		//  --- Public Constructors
 		//

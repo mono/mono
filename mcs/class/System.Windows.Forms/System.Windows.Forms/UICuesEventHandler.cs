@@ -8,8 +8,8 @@
 // (C) 2002 Ximian, Inc.  http://www.ximian.com
 //
 
-namespace System.Windows.Forms
-{
+namespace System.Windows.Forms {
+
 	/// <summary>
 	/// Represents a method that will handle the ChangeUICues event of a Control.
 	/// </summary>

@@ -54,15 +54,18 @@ using System.ComponentModel;
 		// --- Public Methods
 		//
 		[MonoTODO]
-		public void Start() {
+		public void Start() 
+		{
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		public void Stop() {
+		public void Stop() 
+		{
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		public override string ToString() {
+		public override string ToString() 
+		{
 			throw new NotImplementedException ();
 		}
 		//
@@ -74,11 +77,13 @@ using System.ComponentModel;
 		// --- Protected Methods
 		//
 		[MonoTODO]
-		protected override void Dispose(bool disposing) {
+		protected override void Dispose(bool disposing) 
+		{
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		protected virtual void OnTick(EventArgs e) {
+		protected virtual void OnTick(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 	}

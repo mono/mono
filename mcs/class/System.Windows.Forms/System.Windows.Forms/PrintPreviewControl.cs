@@ -11,8 +11,8 @@ using System.Drawing;
 using System.Drawing.Printing;
 using System.ComponentModel;
 
-namespace System.Windows.Forms
-{
+namespace System.Windows.Forms {
+
 	/// <summary>
 	/// The raw "preview" part of print previewing, without any dialogs or buttons. Most PrintPreviewControl objects are found on PrintPreviewDialog objects, but they do not have to be.
 	///
@@ -21,8 +21,8 @@ namespace System.Windows.Forms
 	/// </summary>
 
 	[MonoTODO]
-	public class PrintPreviewControl : Control
-	{
+	public class PrintPreviewControl : Control {
+
 		#region Fields
 		bool autoZoom;
 		int columns;
@@ -38,7 +38,8 @@ namespace System.Windows.Forms
 		
 		#region Constructors
 		[MonoTODO]
-		public PrintPreviewControl() {
+		public PrintPreviewControl() 
+		{
 			autoZoom=true;
 			columns=1;
 			document=null;
@@ -105,37 +106,44 @@ namespace System.Windows.Forms
 		
 		#region Methods
 		[MonoTODO]
-		public void InvalidatePreview() {
+		public void InvalidatePreview() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override void OnPaint(PaintEventArgs pevent) {
+		protected override void OnPaint(PaintEventArgs pevent) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override void OnResize(EventArgs eventargs) {
+		protected override void OnResize(EventArgs eventargs) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected virtual void OnStartPageChanged(EventArgs e) {
+		protected virtual void OnStartPageChanged(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public override void ResetBackColor() {
+		public override void ResetBackColor() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public override void ResetForeColor() {
+		public override void ResetForeColor() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override void WndProc(ref Message m) {
+		protected override void WndProc(ref Message m) 
+		{
 			throw new NotImplementedException ();
 		}
 		#endregion

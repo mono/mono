@@ -3,7 +3,6 @@
 //
 // Author:
 //   stubbed out by Paul Osman (paul.osman@sympatico.ca)
-//	Dennis Hayes (dennish@raytek.com)
 //
 // (C) 2002 Ximian, Inc
 //
@@ -119,7 +118,8 @@ namespace System.Windows.Forms {
 		//  --- Protected Methods
 		//
 		[MonoTODO]
-		protected override AccessibleObject CreateAccessibilityInstance() {
+		protected override AccessibleObject CreateAccessibilityInstance() 
+		{
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
@@ -128,19 +128,23 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		protected virtual void OnValueChanged(EventArgs e) {
+		protected virtual void OnValueChanged(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		protected void ParseEditText() {
+		protected void ParseEditText() 
+		{
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		protected override void UpdateEditText() {
+		protected override void UpdateEditText() 
+		{
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		protected override void ValidateEditText() {
+		protected override void ValidateEditText() 
+		{
 			throw new NotImplementedException ();
 		}
 

@@ -15,16 +15,16 @@ using System.Drawing;
 using System.Collections;
 using System.Runtime.Remoting;
 
-namespace System.Windows.Forms 
-{
+namespace System.Windows.Forms  {
+
 
 	/// <summary>
 	/// ToDo note:
 	///  - Nothing is implemented
 	/// </summary>
 using System.ComponentModel;
-	public abstract class Menu : Component
-	{
+	public abstract class Menu : Component {
+
 		//
 		// -- Public Methods
 		//
@@ -138,48 +138,48 @@ using System.ComponentModel;
 		// -- Public Properties
 		//
 
-		public IContainer Container
-		{
+		public IContainer Container {
+
 			get
 			{
 				throw new NotImplementedException();
 			}
 		}
 
-		public IntPtr Handle
-		{
+		public IntPtr Handle {
+
 			get
 			{
 				throw new NotImplementedException();
 			}
 		}
 
-		public virtual bool IsParent
-		{
+		public virtual bool IsParent {
+
 			get
 			{
 				throw new NotImplementedException();
 			}
 		}
 
-		public MenuItem MdiListItem
-		{
+		public MenuItem MdiListItem {
+
 			get
 			{
 				throw new NotImplementedException();
 			}
 		}
 
-		public Menu.MenuItemCollection MenuItems
-		{
+		public Menu.MenuItemCollection MenuItems {
+
 			get
 			{
 				throw new NotImplementedException();
 			}
 		}
 
-		public virtual ISite Site
-		{
+		public virtual ISite Site {
+
 			get
 			{
 				throw new NotImplementedException();
@@ -194,16 +194,16 @@ using System.ComponentModel;
 		// -- Protected Properties
 		//
 
-		protected bool DesignMode
-		{
+		protected bool DesignMode {
+
 			get
 			{
 				throw new NotImplementedException();
 			}
 		}
 
-		protected EventHandlerList Events
-		{
+		protected EventHandlerList Events {
+
 			get
 			{
 				throw new NotImplementedException();

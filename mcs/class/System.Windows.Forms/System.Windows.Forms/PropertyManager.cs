@@ -13,8 +13,8 @@ using System.ComponentModel;
 using System.Collections;
 //using System.Windows.Forms.Design;
 
-namespace System.Windows.Forms
-{
+namespace System.Windows.Forms {
+
 	/// <summary>
 	/// Maintains a Binding between an object's property and a data-bound control property.
 	///
@@ -23,8 +23,8 @@ namespace System.Windows.Forms
 	/// </summary>
 
 	[MonoTODO]
-	public class PropertyManager : BindingManagerBase
-	{
+	public class PropertyManager : BindingManagerBase {
+
 		/*
 		#region Fields
 		#endregion
@@ -34,7 +34,8 @@ namespace System.Windows.Forms
 		
 		#region Constructor
 		[MonoTODO]
-		public PropertyManager() {
+		public PropertyManager() 
+		{
 			throw new NotImplementedException ();
 		}
 		#endregion
@@ -65,52 +66,62 @@ namespace System.Windows.Forms
 		
 		#region Methods
 		[MonoTODO]
-		public override void AddNew() {
+		public override void AddNew() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public override void CancelCurrentEdit() {
+		public override void CancelCurrentEdit() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public override void EndCurrentEdit() {
+		public override void EndCurrentEdit() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public override PropertyDescriptorCollection GetItemProperties() {
+		public override PropertyDescriptorCollection GetItemProperties() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected internal override string GetListName(ArrayList listAccessors) {
+		protected internal override string GetListName(ArrayList listAccessors) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected internal override void OnCurrentChanged(EventArgs ea) {
+		protected internal override void OnCurrentChanged(EventArgs ea) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public override void RemoveAt(int index) {
+		public override void RemoveAt(int index) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public override void ResumeBinding() {
+		public override void ResumeBinding() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public override void SuspendBinding() {
+		public override void SuspendBinding() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override void UpdateIsBinding() {
+		protected override void UpdateIsBinding() 
+		{
 			throw new NotImplementedException ();
 		}
 		#endregion

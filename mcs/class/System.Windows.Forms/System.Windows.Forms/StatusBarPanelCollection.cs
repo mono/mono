@@ -3,21 +3,20 @@
 //
 // Author:
 //   stubbed out by Richard Baumann (biochem333@nyc.rr.com)
-//	Dennis Hayes(dennish@raytek.com)
 //
 // (C) Ximian, Inc., 2002
 //
 using System.Collections;
 
-namespace System.Windows.Forms
-{
+namespace System.Windows.Forms {
+
 	// <summary>
 	//	This is only a template. Nothing is implemented yet.
 	//	Represents the collection of panels in a StatusBar control.
 	// </summary>
 
-	public class StatusBarPanelCollection : IList, ICollection, IEnumerable
-	{
+	public class StatusBarPanelCollection : IList, ICollection, IEnumerable {
+
 		
 		//  --- Public Methods
 		
@@ -90,21 +89,21 @@ namespace System.Windows.Forms
 		//  --- Public Properties
 		
 		[MonoTODO]
-		public int Count
-		{
+		public int Count {
+
 			get{ throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public bool IsReadOnly
-		{
+		public bool IsReadOnly {
+
 			get
 			{
 				return false; // for this collection, this is always false
 			}
 		}
 		[MonoTODO]
-		public virtual StatusBarPanel this[int index]
-		{
+		public virtual StatusBarPanel this[int index] {
+
 			get{ throw new NotImplementedException (); }
 			set{ throw new NotImplementedException (); }
 		}

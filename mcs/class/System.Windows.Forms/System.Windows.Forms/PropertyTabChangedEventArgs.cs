@@ -3,7 +3,6 @@
 //
 // Author:
 //   stubbed out by Jaak Simm (jaaksimm@firm.ee)
-//	Dennis Hayes (dennish@raytek.com)
 //
 // (C) Ximian, Inc., 2002
 //
@@ -15,8 +14,8 @@
 //using System.Windows.Forms.Design;
 using System.Runtime.InteropServices;
 
-namespace System.Windows.Forms
-{
+namespace System.Windows.Forms {
+
 	/// <summary>
 	/// Provides data for the PropertyTabChanged event of a PropertyGrid.
 	///

@@ -16,23 +16,23 @@ namespace System.Windows.Forms {
 
     public class TreeViewImageIndexConverter : ImageIndexConverter {
 
-		//
+		
 		//  --- Public Constructors
-		//
-		//[MonoTODO]
-		//public TreeViewImageIndexConverter()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//
+		
+		[MonoTODO]
+		public TreeViewImageIndexConverter()
+		{
+			throw new NotImplementedException ();
+		}
+		
 		// --- Protected Properties
-		//
-		//[MonoTODO]
-		//protected override bool IncludeNoneAsStandardValue {
-		//	get
-		//	{
-		//		throw new NotImplementedException ();
-		//	}
-		//}
+		
+		[MonoTODO]
+		protected override bool IncludeNoneAsStandardValue {
+			get
+			{
+				throw new NotImplementedException ();
+			}
+		}
 	}
 }

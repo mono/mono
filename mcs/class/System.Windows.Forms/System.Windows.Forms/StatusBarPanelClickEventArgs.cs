@@ -8,17 +8,18 @@
 // (C) Ximian, Inc., 2002
 //
 
-namespace System.Windows.Forms
-{
+namespace System.Windows.Forms {
+
 	/// <summary>
 	/// Provides data for the PanelClick event.
 	/// </summary>
-	public class StatusBarPanelClickEventArgs : MouseEventArgs
-	{
+	public class StatusBarPanelClickEventArgs : MouseEventArgs {
+
 		private StatusBarPanel panel;
 
 		/// --- Constructor ---
-		public StatusBarPanelClickEventArgs(StatusBarPanel panel, MouseButtons button, int clicks, int x, int y) : base(button, clicks, x, y, 0) {
+		public StatusBarPanelClickEventArgs(StatusBarPanel panel, MouseButtons button, int clicks, int x, int y) : base(button, clicks, x, y, 0) 
+		{
 			this.panel = panel;
 		}
 
@@ -39,7 +40,8 @@ namespace System.Windows.Forms
 		///	the StatusBarPanel, Button, Clicks, X, and Y
 		///	properties of the two StatusBarPanelClickEventArgs.
 		/// </remarks>
-		public static bool operator == (StatusBarPanelClickEventArgs objA, StatusBarPanelClickEventArgs objB) {
+		public static bool operator == (StatusBarPanelClickEventArgs objA, StatusBarPanelClickEventArgs objB) 
+		{
 			return ((objA.panel == objB.panel) && (objA.Button == objB.Button) && (objA.Clicks == objB.Clicks) && (objA.X == objB.X) && (objA.Y == objB.Y));
 		}
 		
@@ -53,7 +55,8 @@ namespace System.Windows.Forms
 		///	the StatusBarPanel, Button, Clicks, X, and Y
 		///	properties of the two StatusBarPanelClickEventArgs.
 		/// </remarks>
-		public static bool operator != (StatusBarPanelClickEventArgs objA, StatusBarPanelClickEventArgs objB) {
+		public static bool operator != (StatusBarPanelClickEventArgs objA, StatusBarPanelClickEventArgs objB) 
+		{
 			return ((objA.panel != objB.panel) || (objA.Button != objB.Button) || (objA.Clicks != objB.Clicks) || (objA.X != objB.X) || (objA.Y != objB.Y));
 		}
 
@@ -66,7 +69,8 @@ namespace System.Windows.Forms
 		///	StatusBarPanelClickEventArgs and another
 		///	object.
 		/// </remarks>
-		public override bool Equals (object o) {
+		public override bool Equals (object o) 
+		{
 			if (!(o is StatusBarPanelClickEventArgs))return false;
 			return (this == (StatusBarPanelClickEventArgs) o);
 		}
@@ -78,7 +82,8 @@ namespace System.Windows.Forms
 		/// <remarks>
 		///	Calculates a hashing value.
 		/// </remarks>
-		public override int GetHashCode () {
+		public override int GetHashCode () 
+		{
 			return unchecked(panel.GetHashCode() * base.GetHashCode());
 		}
 
@@ -90,7 +95,8 @@ namespace System.Windows.Forms
 		///	Formats the StatusBarPanelClickEventArgs as a string.
 		/// </remarks>
 		[MonoTODO]
-		public override string ToString () {
+		public override string ToString () 
+		{
 			//FIXME: add class specific stuff;
 			return base.ToString();
 		}

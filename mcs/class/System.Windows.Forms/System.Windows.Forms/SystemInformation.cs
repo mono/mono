@@ -3,20 +3,19 @@
 //
 // Author:
 //   stubbed out by Richard Baumann (biochem333@nyc.rr.com)
-//	Dennis Hayes(dennish@raytek.com)
 //
 // (C) Ximian, Inc., 2002
 //
 using System.Drawing;
-namespace System.Windows.Forms
-{
+namespace System.Windows.Forms {
+
 	// <summary>
 	//	This is only a template. Nothing is implemented yet.
 	//	Provides information about the operating system.
 	// </summary>
 
-	public class SystemInformation
-	{
+	public class SystemInformation {
+
 		//
 		//  --- Protected Methods
 		//
@@ -30,303 +29,303 @@ namespace System.Windows.Forms
 		//  --- Public Properties
 		//
 		[MonoTODO]
-		public static ArrangeDirection ArrangeDirection
-		{
+		public static ArrangeDirection ArrangeDirection {
+
 			get{ throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public static ArrangeStartingPosition ArrangeStartingPosition
-		{
+		public static ArrangeStartingPosition ArrangeStartingPosition {
+
 			get{ throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public static BootMode BootMode
-		{
+		public static BootMode BootMode {
+
 			get{ throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public static Size Border3DSize
-		{
+		public static Size Border3DSize {
+
 			get{ throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public static Size BorderSize
-		{
+		public static Size BorderSize {
+
 			get{ throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public static Size CaptionButtonSize
-		{
+		public static Size CaptionButtonSize {
+
 			get{ throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public static int CaptionHeight
-		{
+		public static int CaptionHeight {
+
 			get{ throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public static string ComputerName
-		{
+		public static string ComputerName {
+
 			get{ throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public static Size CursorSize
-		{
+		public static Size CursorSize {
+
 			get{ throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public static bool DbcsEnabled
-		{
+		public static bool DbcsEnabled {
+
 			get{ throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public static bool DebugOS
-		{
+		public static bool DebugOS {
+
 			get{ throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public static Size DoubleClickSize
-		{
+		public static Size DoubleClickSize {
+
 			get{ throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public static int DoubleClickTime
-		{
+		public static int DoubleClickTime {
+
 			get{ throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public static bool DragFullWindows
-		{
+		public static bool DragFullWindows {
+
 			get{ throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public static Size DragSize
-		{
+		public static Size DragSize {
+
 			get{ throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public static Size FixedFrameBorderSize
-		{
+		public static Size FixedFrameBorderSize {
+
 			get{ throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public static Size FrameBorderSize
-		{
+		public static Size FrameBorderSize {
+
 			get{ throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public static bool HighContrast
-		{
+		public static bool HighContrast {
+
 			get{ throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public static int HorizontalScrollBarArrowWidth
-		{
+		public static int HorizontalScrollBarArrowWidth {
+
 			get{ throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public static int HorizontalScrollBarHeight
-		{
+		public static int HorizontalScrollBarHeight {
+
 			get{ throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public static int HorizontalScrollBarThumbWidth
-		{
+		public static int HorizontalScrollBarThumbWidth {
+
 			get{ throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public static Size IconSize
-		{
+		public static Size IconSize {
+
 			get{ throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public static Size IconSpacingSize
-		{
+		public static Size IconSpacingSize {
+
 			get{ throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public static int KanjiWindowHeight
-		{
+		public static int KanjiWindowHeight {
+
 			get{ throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public static Size MaxWindowTrackSize
-		{
+		public static Size MaxWindowTrackSize {
+
 			get{ throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public static Size MenuButtonSize
-		{
+		public static Size MenuButtonSize {
+
 			get{ throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public static Size MenuCheckSize
-		{
+		public static Size MenuCheckSize {
+
 			get{ throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public static Font MenuFont
-		{
+		public static Font MenuFont {
+
 			get{ throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public static int MenuHeight
-		{
+		public static int MenuHeight {
+
 			get{ throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public static bool MidEastEnabled
-		{
+		public static bool MidEastEnabled {
+
 			get{ throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public static Size MinimizedWindowSize
-		{
+		public static Size MinimizedWindowSize {
+
 			get{ throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public static Size MinimizedWindowSpacingSize
-		{
+		public static Size MinimizedWindowSpacingSize {
+
 			get{ throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public static Size MinimumWindowSize
-		{
+		public static Size MinimumWindowSize {
+
 			get{ throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public static Size MinWindowTrackSize
-		{
+		public static Size MinWindowTrackSize {
+
 			get{ throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public static int MonitorCount
-		{
+		public static int MonitorCount {
+
 			get{ throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public static bool MonitorsSameDisplayFormat
-		{
+		public static bool MonitorsSameDisplayFormat {
+
 			get{ throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public static int MouseButtons
-		{
+		public static int MouseButtons {
+
 			get{ throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public static bool MouseButtonsSwapped
-		{
+		public static bool MouseButtonsSwapped {
+
 			get{ throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public static bool MousePresent
-		{
+		public static bool MousePresent {
+
 			get{ throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public static bool MouseWheelPresent
-		{
+		public static bool MouseWheelPresent {
+
 			get{ throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public static int MouseWheelScrollLines
-		{
+		public static int MouseWheelScrollLines {
+
 			get{ throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public static bool NativeMouseWheelSupport
-		{
+		public static bool NativeMouseWheelSupport {
+
 			get{ throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public static bool Network
-		{
+		public static bool Network {
+
 			get{ throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public static bool PenWindows
-		{
+		public static bool PenWindows {
+
 			get{ throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public static Size PrimaryMonitorMaximizedWindowSize
-		{
+		public static Size PrimaryMonitorMaximizedWindowSize {
+
 			get{ throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public static Size PrimaryMonitorSize
-		{
+		public static Size PrimaryMonitorSize {
+
 			get{ throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public static bool RightAlignedMenus
-		{
+		public static bool RightAlignedMenus {
+
 			get{ throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public static bool Secure
-		{
+		public static bool Secure {
+
 			get{ throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public static bool ShowSounds
-		{
+		public static bool ShowSounds {
+
 			get{ throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public static Size SmallIconSize
-		{
+		public static Size SmallIconSize {
+
 			get{ throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public static Size ToolWindowCaptionButtonSize
-		{
+		public static Size ToolWindowCaptionButtonSize {
+
 			get{ throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public static int ToolWindowCaptionHeight
-		{
+		public static int ToolWindowCaptionHeight {
+
 			get{ throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public static string UserDomainName
-		{
+		public static string UserDomainName {
+
 			get{ throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public static bool UserInteractive
-		{
+		public static bool UserInteractive {
+
 			get{ throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public static string UserName
-		{
+		public static string UserName {
+
 			get{ throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public static int VerticalScrollBarArrowHeight
-		{
+		public static int VerticalScrollBarArrowHeight {
+
 			get{ throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public static int VerticalScrollBarThumbHeight
-		{
+		public static int VerticalScrollBarThumbHeight {
+
 			get{ throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public static int VerticalScrollBarWidth
-		{
+		public static int VerticalScrollBarWidth {
+
 			get{ throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public static Rectangle VirtualScreen
-		{
+		public static Rectangle VirtualScreen {
+
 			get{ throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public static Rectangle WorkingArea
-		{
+		public static Rectangle WorkingArea {
+
 			get{ throw new NotImplementedException (); }
 		}
 	}

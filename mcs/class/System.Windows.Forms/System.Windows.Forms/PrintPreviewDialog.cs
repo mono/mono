@@ -11,8 +11,8 @@ using System.Drawing;
 using System.Drawing.Printing;
 using System.ComponentModel;
 
-namespace System.Windows.Forms
-{
+namespace System.Windows.Forms {
+
 	/// <summary>
 	/// Represents a dialog box form that contains a PrintPreviewControl.
 	///
@@ -21,8 +21,8 @@ namespace System.Windows.Forms
 	/// </summary>
 
 	[MonoTODO]
-	public class PrintPreviewDialog : Form
-	{
+	public class PrintPreviewDialog : Form {
+
 		#region Fields
 		IButtonControl acceptButton;
 		string accessibleDescription;
@@ -66,7 +66,8 @@ namespace System.Windows.Forms
 
 		#region Constructor
 		[MonoTODO]
-		public PrintPreviewDialog() {
+		public PrintPreviewDialog() 
+		{
 			document=null;
 			
 			accessibleDescription=null;
@@ -367,12 +368,14 @@ namespace System.Windows.Forms
 
 		#region Methods
 		[MonoTODO]
-		protected override void CreateHandle() {
+		protected override void CreateHandle() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override void OnClosing(CancelEventArgs e) {
+		protected override void OnClosing(CancelEventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		#endregion

@@ -11,8 +11,8 @@ using System.Drawing;
 using System.Drawing.Printing;
 using System.ComponentModel;
 
-namespace System.Windows.Forms
-{
+namespace System.Windows.Forms {
+
 	/// <summary>
 	/// Represents a Windows progress bar control.
 	///
@@ -21,8 +21,8 @@ namespace System.Windows.Forms
 	/// </summary>
 
 	[MonoTODO]
-	public sealed class ProgressBar : Control
-	{
+	public sealed class ProgressBar : Control {
+
 		#region Fields
 		int maximum;
 		int minimum;
@@ -35,7 +35,8 @@ namespace System.Windows.Forms
 		
 		#region Constructor
 		[MonoTODO]
-		public ProgressBar() {
+		public ProgressBar() 
+		{
 			maximum=100;
 			minimum=0;
 			step=10;
@@ -139,27 +140,32 @@ namespace System.Windows.Forms
 		
 		#region Methods
 		[MonoTODO]
-		protected override void CreateHandle() {
+		protected override void CreateHandle() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public void Increment(int value) {
+		public void Increment(int value) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override void OnHandleCreated(EventArgs e) {
+		protected override void OnHandleCreated(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public void PerformStep() {
+		public void PerformStep() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public override string ToString() {
+		public override string ToString() 
+		{
 			throw new NotImplementedException ();
 		}
 		#endregion

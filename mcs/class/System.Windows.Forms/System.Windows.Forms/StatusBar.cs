@@ -11,14 +11,14 @@
 using System;
 using System.Collections;
 using System.Drawing;
-namespace System.Windows.Forms
-{
+namespace System.Windows.Forms {
+
 	// <summary>
 	//	This is only a template.  Nothing is implemented yet.
 	//	Represents a Windows status bar control.
 	// </summary>
-      public class StatusBar : Control
-	{
+      public class StatusBar : Control {
+
 		//
 		//  --- Private Fields
 		//
@@ -110,67 +110,67 @@ namespace System.Windows.Forms
 		//  --- Public Properties
 		//
 		[MonoTODO]
-		public override Color BackColor
-		{
+		public override Color BackColor {
+
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public override Image BackgroundImage
-		{
+		public override Image BackgroundImage {
+
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public override DockStyle Dock
-		{
+		public override DockStyle Dock {
+
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public override Font Font
-		{
+		public override Font Font {
+
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public override Color ForeColor
-		{
+		public override Color ForeColor {
+
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public new ImeMode ImeMode
-		{
+		public new ImeMode ImeMode {
+
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public StatusBar.StatusBarPanelCollection Panels
-		{
+		public StatusBar.StatusBarPanelCollection Panels {
+
 			get { throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public bool ShowPanels // default false
-		{
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
-		}
-		[MonoTODO]
-		public bool SizingGrip // default true
-		{
+		public bool ShowPanels // default false {
+
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public new bool TabStop
-		{
+		public bool SizingGrip // default true {
+
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public override string Text
-		{
+		public new bool TabStop {
+
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
+		}
+		[MonoTODO]
+		public override string Text {
+
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
@@ -179,18 +179,18 @@ namespace System.Windows.Forms
 		//  --- Protected Properties
 		//
 		[MonoTODO]
-		protected override CreateParams CreateParams
-		{
+		protected override CreateParams CreateParams {
+
 			get { throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		protected override ImeMode DefaultImeMode
-		{
+		protected override ImeMode DefaultImeMode {
+
 			get { throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		protected override Size DefaultSize
-		{
+		protected override Size DefaultSize {
+
 			get { throw new NotImplementedException (); }
 		}
 
@@ -205,8 +205,8 @@ namespace System.Windows.Forms
 		// <summary>
 		//	Represents the collection of panels in a StatusBar control.
 		// </summary>
-		public class StatusBarPanelCollection : IList, ICollection, IEnumerable
-		{
+		public class StatusBarPanelCollection : IList, ICollection, IEnumerable {
+
 			//
 			//  --- Private Fields
 			//
@@ -229,12 +229,12 @@ namespace System.Windows.Forms
 			public virtual int Add(StatusBarPanel panel)
 			{
 				string method_string = "Add(StatusBarPanel) ";
-				if (panel == null)
-				{
+				if (panel == null) {
+
 					throw new ArgumentNullException(class_string + method_string + "panel == null");
 				}
-				if (panel.Parent == null)
-				{
+				if (panel.Parent == null) {
+
 					throw new ArgumentException(class_string + method_string + "panel.Parent != null");
 				}
 				panel.Parent = owner;
@@ -251,12 +251,12 @@ namespace System.Windows.Forms
 			public virtual void AddRange(StatusBarPanel[] panels)
 			{
 				string method_string = "AddRange(StatusBarPanel[]) ";
-				if (panels == null)
-				{
+				if (panels == null) {
+
 					throw new ArgumentNullException(class_string + method_string + "panels == null");
 				}
-				for (int i = 0; i < panels.Length; i++)
-				{
+				for (int i = 0; i < panels.Length; i++) {
+
 					panels[i].Parent = owner;
 				}
 				list.AddRange(panels);
@@ -280,12 +280,12 @@ namespace System.Windows.Forms
 			public virtual void Insert(int index, StatusBarPanel panel)
 			{
 				string method_string = "Insert(int,StatusBarPanel) ";
-				if (panel == null)
-				{
+				if (panel == null) {
+
 					throw new ArgumentNullException(class_string + method_string + "panel == null");
 				}
-				if (panel.Parent == null)
-				{
+				if (panel.Parent == null) {
+
 					throw new ArgumentException(class_string + method_string + "panel.Parent != null");
 				}
 				if  (panel.AutoSize != StatusBarPanelAutoSize.None &&
@@ -302,8 +302,8 @@ namespace System.Windows.Forms
 			public virtual void Remove(StatusBarPanel panel)
 			{
 				string method_string = "Remove(StatusBarPanel) ";
-				if (panel == null)
-				{
+				if (panel == null) {
+
 					throw new ArgumentNullException(class_string + method_string + "panel == null");
 				}
 				list.Remove(panel);
@@ -315,53 +315,53 @@ namespace System.Windows.Forms
 			void ICollection.CopyTo(Array dest, int index)
 			{
 				string method_string = "ICollection.CopyTo(Array,int) ";
-				if (dest == null)
-				{
+				if (dest == null) {
+
 					throw new ArgumentNullException(class_string + method_string + "array == null");
 				}
-				if (index < 0)
-				{
+				if (index < 0) {
+
 					throw new ArgumentOutOfRangeException(class_string + method_string + "index < 0");
 				}
-				if (dest.Rank != 1)
-				{
+				if (dest.Rank != 1) {
+
 					throw new ArgumentException(class_string + method_string + "array is multidimensional");
 				}
-				if (index >= dest.Length)
-				{
+				if (index >= dest.Length) {
+
 					throw new ArgumentException(class_string + method_string + "index >= array.Length");
 				}
-				if (Count+index >= dest.Length)
-				{
+				if (Count+index >= dest.Length) {
+
 					throw new ArgumentException(class_string + method_string + "insufficient array capacity");
 				}
 				// easier/quicker to let the runtime throw the invalid cast exception if necessary
-				for (int i = 0; index < dest.Length; i++, index++)
-				{
+				for (int i = 0; index < dest.Length; i++, index++) {
+
 					dest.SetValue(list[i], index);
 				}
 			}
 			int IList.Add(object panel)
 			{
 				string method_string = "IList.Add(object) ";
-				if (!(panel is StatusBarPanel))
-				{
+				if (!(panel is StatusBarPanel)) {
+
 					throw new ArgumentException(class_string + method_string + "panel is not a StatusBarPanel");
 				}
 				return Add((StatusBarPanel) panel);
 			}
 			bool IList.Contains(object panel)
 			{
-				if (!(panel is StatusBarPanel))
-				{
+				if (!(panel is StatusBarPanel)) {
+
 					return false;
 				}
 				return Contains((StatusBarPanel) panel);
 			}
 			int IList.IndexOf(object panel)
 			{
-				if (!(panel is StatusBarPanel))
-				{
+				if (!(panel is StatusBarPanel)) {
+
 					return -1;
 				}
 				return IndexOf((StatusBarPanel) panel);
@@ -369,8 +369,8 @@ namespace System.Windows.Forms
 			void IList.Insert(int index, object panel)
 			{
 				string method_string = "IList.Insert(int,object) ";
-				if (!(panel is StatusBarPanel))
-				{
+				if (!(panel is StatusBarPanel)) {
+
 					throw new ArgumentException(class_string + method_string + "panel is not a StatusBarPanel");
 				}
 				Insert(index, (StatusBarPanel) panel);
@@ -378,8 +378,8 @@ namespace System.Windows.Forms
 			void IList.Remove(object panel)
 			{
 				string method_string = "IList.Remove(object) ";
-				if (!(panel is StatusBarPanel))
-				{
+				if (!(panel is StatusBarPanel)) {
+
 					throw new ArgumentException(class_string + method_string + "panel is not a StatusBarPanel");
 				}
 				Remove((StatusBarPanel) panel);
@@ -388,16 +388,16 @@ namespace System.Windows.Forms
 			
 			//  --- Public Properties
 			
-			public int Count
-			{
+			public int Count {
+
 				get {/* return list.Count;*/ }
 			}
-			public bool IsReadOnly
-			{
+			public bool IsReadOnly {
+
 				get { return false; }
 			}
-			public virtual StatusBarPanel this[int index]
-			{
+			public virtual StatusBarPanel this[int index] {
+
 				get
 				{
 					// The same checks are done by the list, so this is redundant
@@ -437,8 +437,8 @@ namespace System.Windows.Forms
 			
 			//  --- Private Properties
 			
-			private bool IsFixedSize { get { return false; } }
-			private bool IsSynchronized { get { return false; } }
+			private bool IsFixedSize { get { return false; } } {
+
 			private object SyncRoot { get { return null; } }
 //			private object ILList.this[int index]
 //			{

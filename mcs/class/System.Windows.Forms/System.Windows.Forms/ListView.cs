@@ -21,7 +21,8 @@ namespace System.Windows.Forms {
 		//  --- Constructor
 		//
 		[MonoTODO]
-		public ListView() {
+		public ListView() 
+		{
 			throw new NotImplementedException ();
 		}
 
@@ -285,115 +286,143 @@ namespace System.Windows.Forms {
 		//  --- Public Methods
 		//
 		[MonoTODO]
-		public void ArrangeIcons() {
+		public void ArrangeIcons() 
+		{
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		public void ArrangeIcons(ListViewAlignment align) {
+		public void ArrangeIcons(ListViewAlignment align) 
+		{
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		public IAsyncResult BeginInvoke(Delegate del) {
+		public IAsyncResult BeginInvoke(Delegate del) 
+		{
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		public IAsyncResult BeginInvoke(Delegate del, object[] objs) {
+		public IAsyncResult BeginInvoke(Delegate del, object[] objs) 
+		{
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		public void BeginUpdate() {
+		public void BeginUpdate() 
+		{
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		public void Clear() {
+		public void Clear() 
+		{
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		public void EndUpdate() {
+		public void EndUpdate() 
+		{
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		public void EnsureVisible(int index) {
+		public void EnsureVisible(int index) 
+		{
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		public ListViewItem GetItemAt(int x, int y) {
+		public ListViewItem GetItemAt(int x, int y) 
+		{
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		public Rectangle RetItemRect(int val) {
+		public Rectangle RetItemRect(int val) 
+		{
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		public Rectangle RetItemRect(int val, ItemBoundsPortion portion) {
+		public Rectangle RetItemRect(int val, ItemBoundsPortion portion) 
+		{
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		public void Invalidate() {
+		public void Invalidate() 
+		{
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		public void Invalidate(bool b) {
+		public void Invalidate(bool b) 
+		{
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		public void Invalidate(Rectangle rect) {
+		public void Invalidate(Rectangle rect) 
+		{
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		public void Invalidate(Region reg) {
+		public void Invalidate(Region reg) 
+		{
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		public void Invalidate(Rectangle rect, bool b) {
+		public void Invalidate(Rectangle rect, bool b) 
+		{
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		public object Invoke(Delegate del) {
+		public object Invoke(Delegate del) 
+		{
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		public object Invoke(Delegate del, object[] objs) {
+		public object Invoke(Delegate del, object[] objs) 
+		{
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		public void PerformLayout() {
+		public void PerformLayout() 
+		{
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		public void PerformLayout(Control ctl, string str) {
+		public void PerformLayout(Control ctl, string str) 
+		{
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		public void ResumeLayout() {
+		public void ResumeLayout() 
+		{
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		public void ResumeLayout(bool b) {
+		public void ResumeLayout(bool b) 
+		{
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		public void Scale(float val1) {
+		public void Scale(float val1) 
+		{
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		public void Scale(float val1, float val2) {
+		public void Scale(float val1, float val2) 
+		{
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		public void Select() {
+		public void Select() 
+		{
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		public void SetBounds(int val1, int val2, int val3, int val4) {
+		public void SetBounds(int val1, int val2, int val3, int val4) 
+		{
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		public void SetBounds(int val1, int val2, int val3, int val4, BoundsSpecified bounds) {
+		public void SetBounds(int val1, int val2, int val3, int val4, BoundsSpecified bounds) 
+		{
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		public override string ToString() {
+		public override string ToString() 
+		{
 			throw new NotImplementedException ();
 		}
 
@@ -429,79 +458,97 @@ namespace System.Windows.Forms {
 		//  --- Protected Methods
 		//
 		[MonoTODO]
-		protected override void CreateHandle() {
+		protected override void CreateHandle() 
+		{
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		protected override void Dispose(bool b) {
+		protected override void Dispose(bool b) 
+		{
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		protected override bool IsInputKey(Keys keyData) {
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		protected virtual void  OnAfterLabelEdit(LabelEditEventArgs e) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void  OnBeforeLabelEdit(LabelEditEventArgs e) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void  OnColumnClick(ColumnClickEventArgs e) {
+		protected override bool IsInputKey(Keys keyData) 
+		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		protected override void OnEnabledChanged(EventArgs e) {
+		protected virtual void  OnAfterLabelEdit(LabelEditEventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		protected override void OnFontChanged(EventArgs e) {
+		protected virtual void  OnBeforeLabelEdit(LabelEditEventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		protected override void OnHandleCreated(EventArgs e) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected override void OnHandleDestroyed(EventArgs e) {
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		protected virtual void  OnItemActivate(EventArgs e) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void  OnItemCheck(ItemCheckEventArgs e) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void  OnItemDrag(ItemDragEventArgs e) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void  OnSelectedItemChanged(EventArgs e) {
+		protected virtual void  OnColumnClick(ColumnClickEventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		protected override void OnSystemColorsChanged(EventArgs e) {
+		protected override void OnEnabledChanged(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		protected virtual void Select(bool val1, bool val2) {
+		protected override void OnFontChanged(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		protected void UpdateExtendedStyles() {
+		protected override void OnHandleCreated(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		protected override void WndProc(ref Message m) {
+		protected override void OnHandleDestroyed(EventArgs e) 
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		protected virtual void  OnItemActivate(EventArgs e) 
+		{
+			throw new NotImplementedException ();
+		}
+		[MonoTODO]
+		protected virtual void  OnItemCheck(ItemCheckEventArgs e) 
+		{
+			throw new NotImplementedException ();
+		}
+		[MonoTODO]
+		protected virtual void  OnItemDrag(ItemDragEventArgs e) 
+		{
+			throw new NotImplementedException ();
+		}
+		[MonoTODO]
+		protected virtual void  OnSelectedItemChanged(EventArgs e) 
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		protected override void OnSystemColorsChanged(EventArgs e) 
+		{
+			throw new NotImplementedException ();
+		}
+		[MonoTODO]
+		protected virtual void Select(bool val1, bool val2) 
+		{
+			throw new NotImplementedException ();
+		}
+		[MonoTODO]
+		protected void UpdateExtendedStyles() 
+		{
+			throw new NotImplementedException ();
+		}
+		[MonoTODO]
+		protected override void WndProc(ref Message m) 
+		{
 			throw new NotImplementedException ();
 		}
 		//start subclasses
@@ -524,7 +571,8 @@ namespace System.Windows.Forms {
 			//  --- Constructor
 			//
 			[MonoTODO]
-			public SelectedListViewItemCollection(ListView owner) {
+			public SelectedListViewItemCollection(ListView owner) 
+			{
 				throw new NotImplementedException ();
 			}
 
@@ -554,31 +602,38 @@ namespace System.Windows.Forms {
 			//  --- Public Methods
 			//
 			[MonoTODO]
-			public void Clear() {
+			public void Clear() 
+			{
 				throw new NotImplementedException ();
 			}
 			[MonoTODO]
-			public bool Contains(ListViewItem item) {
+			public bool Contains(ListViewItem item) 
+			{
 				throw new NotImplementedException ();
 			}
 			[MonoTODO]
-			public void CopyTo(Array dest, int index) {
+			public void CopyTo(Array dest, int index) 
+			{
 				throw new NotImplementedException ();
 			}
 			[MonoTODO]
-			public virtual bool Equals(object o) {
+			public virtual bool Equals(object o) 
+			{
 				throw new NotImplementedException ();
 			}
 			[MonoTODO]
-			public static bool Equals(object o1, object o2) {
+			public static bool Equals(object o1, object o2) 
+			{
 				throw new NotImplementedException ();
 			}
 			[MonoTODO]
-			public IEnumerator GetEnumerator() {
+			public IEnumerator GetEnumerator() 
+			{
 				throw new NotImplementedException ();
 			}
 			[MonoTODO]
-			public int IndexOf(ListViewItem item) {
+			public int IndexOf(ListViewItem item) 
+			{
 				throw new NotImplementedException ();
 			}
 			//
@@ -600,7 +655,8 @@ namespace System.Windows.Forms {
 				//  --- Constructor
 				//
 				[MonoTODO]
-				public CheckedListViewItemCollection(ListView owner) {
+				public CheckedListViewItemCollection(ListView owner) 
+				{
 					throw new NotImplementedException ();
 				}
 
@@ -630,27 +686,33 @@ namespace System.Windows.Forms {
 				//  --- Public Methods
 				//
 				[MonoTODO]
-				public bool Contains(ListViewItem item) {
+				public bool Contains(ListViewItem item) 
+				{
 					throw new NotImplementedException ();
 				}
 				[MonoTODO]
-				public object CopyTo(Array dest, int index) {
+				public object CopyTo(Array dest, int index) 
+				{
 					throw new NotImplementedException ();
 				}
 				[MonoTODO]
-				public virtual bool Equals(object o) {
+				public virtual bool Equals(object o) 
+				{
 					throw new NotImplementedException ();
 				}
 				[MonoTODO]
-				public static bool Equals(object o1, object o2) {
+				public static bool Equals(object o1, object o2) 
+				{
 					throw new NotImplementedException ();
 				}
 				[MonoTODO]
-				public IEnumerator GetEnumerator() {
+				public IEnumerator GetEnumerator() 
+				{
 					throw new NotImplementedException ();
 				}
 				[MonoTODO]
-				public int IndexOf(ListViewItem item) {
+				public int IndexOf(ListViewItem item) 
+				{
 					throw new NotImplementedException ();
 				}
 			}
@@ -673,7 +735,8 @@ namespace System.Windows.Forms {
 				//  --- Constructor
 				//
 				[MonoTODO]
-				public ColumnHeaderCollection(ListView owner) {
+				public ColumnHeaderCollection(ListView owner) 
+				{
 					throw new NotImplementedException ();
 				}
 
@@ -703,55 +766,68 @@ namespace System.Windows.Forms {
 				//  --- Public Methods
 				//
 				[MonoTODO]
-				public virtual int Add(ColumnHeader value) {
+				public virtual int Add(ColumnHeader value) 
+				{
 					throw new NotImplementedException ();
 				}
 				[MonoTODO]
-				public virtual ColumnHeader Add(string s, int b, HorizontalAlignment align) {
+				public virtual ColumnHeader Add(string s, int b, HorizontalAlignment align) 
+				{
 					throw new NotImplementedException ();
 				}
 				[MonoTODO]
-				public virtual void AddRange(ColumnHeader[] values) {
+				public virtual void AddRange(ColumnHeader[] values) 
+				{
 					throw new NotImplementedException ();
 				}
 				[MonoTODO]
-				public void Clear() {
+				public void Clear() 
+				{
 					throw new NotImplementedException ();
 				}
 				[MonoTODO]
-				public bool Contains(ColumnHeader value) {
+				public bool Contains(ColumnHeader value) 
+				{
 					throw new NotImplementedException ();
 				}
 				[MonoTODO]
-				public virtual bool Equals(object o) {
+				public virtual bool Equals(object o) 
+				{
 					throw new NotImplementedException ();
 				}
 				[MonoTODO]
-				public static bool Equals(object o1, object o2) {
+				public static bool Equals(object o1, object o2) 
+				{
 					throw new NotImplementedException ();
 				}
 				[MonoTODO]
-				public IEnumerator GetEnumerator() {
+				public IEnumerator GetEnumerator() 
+				{
 					throw new NotImplementedException ();
 				}
 				[MonoTODO]
-				public int IndexOf(ColumnHeader value) {
+				public int IndexOf(ColumnHeader value) 
+				{
 					throw new NotImplementedException ();
 				}
 				[MonoTODO]
-				public void Insert(int b, ColumnHeader value) {
+				public void Insert(int b, ColumnHeader value) 
+				{
 					throw new NotImplementedException ();
 				}
 				[MonoTODO]
-				public void Insert(int val1, string str, int val2, HorizontalAlignment align) {
+				public void Insert(int val1, string str, int val2, HorizontalAlignment align) 
+				{
 					throw new NotImplementedException ();
 				}
 				[MonoTODO]
-				public virtual void Remove(ColumnHeader value) {
+				public virtual void Remove(ColumnHeader value) 
+				{
 					throw new NotImplementedException ();
 				}
 				[MonoTODO]
-				public virtual void RemoveAt(int index) {
+				public virtual void RemoveAt(int index) 
+				{
 					throw new NotImplementedException ();
 				}
 			}
@@ -775,7 +851,8 @@ namespace System.Windows.Forms {
 			//  --- Constructor
 			//
 			[MonoTODO]
-			public ListViewItemCollection (ListView owner) {
+			public ListViewItemCollection (ListView owner) 
+			{
 				throw new NotImplementedException ();
 			}
 
@@ -808,55 +885,68 @@ namespace System.Windows.Forms {
 			//  --- Public Methods
 			//
 			[MonoTODO]
-			public virtual ListViewItem Add (ListViewItem item) {
+			public virtual ListViewItem Add (ListViewItem item) 
+			{
 				throw new NotImplementedException ();
 			}
 			[MonoTODO]
-			public virtual ListViewItem Add (string str) {
+			public virtual ListViewItem Add (string str) 
+			{
 				throw new NotImplementedException ();
 			}
 			[MonoTODO]
-			public virtual ListViewItem Add (string str, int val) {
+			public virtual ListViewItem Add (string str, int val) 
+			{
 				throw new NotImplementedException ();
 			}
 			[MonoTODO]
-			public void AddRange(ListViewItem[] values) {
+			public void AddRange(ListViewItem[] values) 
+			{
 				throw new NotImplementedException ();
 			}
 			[MonoTODO]
-			public void Clear() {
+			public void Clear() 
+			{
 				throw new NotImplementedException ();
 			}
 			[MonoTODO]
-			public bool Contains(ListViewItem item) {
+			public bool Contains(ListViewItem item) 
+			{
 				throw new NotImplementedException ();
 			}
 			[MonoTODO]
-			public void CopyTo(Array dest, int index) {
+			public void CopyTo(Array dest, int index) 
+			{
 				throw new NotImplementedException ();
 			}
 			[MonoTODO]
-			public virtual bool Equals(object o) {
+			public virtual bool Equals(object o) 
+			{
 				throw new NotImplementedException ();
 			}
 			[MonoTODO]
-			public static bool Equals(object o1, object o2) {
+			public static bool Equals(object o1, object o2) 
+			{
 				throw new NotImplementedException ();
 			}
 			[MonoTODO]
-			public IEnumerator GetEnumerator() {
+			public IEnumerator GetEnumerator() 
+			{
 				throw new NotImplementedException ();
 			}
 			[MonoTODO]
-			public int IndexOf(ListViewItem item) {
+			public int IndexOf(ListViewItem item) 
+			{
 				throw new NotImplementedException ();
 			}
 			[MonoTODO]
-			public virtual void Remove(ListViewItem item) {
+			public virtual void Remove(ListViewItem item) 
+			{
 				throw new NotImplementedException ();
 			}
 			[MonoTODO]
-			public virtual void RemoveAt(int index) {
+			public virtual void RemoveAt(int index) 
+			{
 				throw new NotImplementedException ();
 			}
 		}
@@ -880,7 +970,8 @@ namespace System.Windows.Forms {
 			//  --- Constructor
 			//
 			[MonoTODO]
-			public SelectedIndexCollection(ListView owner) {
+			public SelectedIndexCollection(ListView owner) 
+			{
 				throw new NotImplementedException ();
 			}
 
@@ -910,27 +1001,33 @@ namespace System.Windows.Forms {
 			//  --- Public Methods
 			//
 			[MonoTODO]
-			public bool Contains(ListView item) {
+			public bool Contains(ListView item) 
+			{
 				throw new NotImplementedException ();
 			}
 			[MonoTODO]
-			public void CopyTo(Array dest, int index) {
+			public void CopyTo(Array dest, int index) 
+			{
 				throw new NotImplementedException ();
 			}
 			[MonoTODO]
-			public virtual bool Equals(object o) {
+			public virtual bool Equals(object o) 
+			{
 				throw new NotImplementedException ();
 			}
 			[MonoTODO]
-			public static bool Equals(object o1, object o2) {
+			public static bool Equals(object o1, object o2) 
+			{
 				throw new NotImplementedException ();
 			}
 			[MonoTODO]
-			public IEnumerator GetEnumerator() {
+			public IEnumerator GetEnumerator() 
+			{
 				throw new NotImplementedException ();
 			}
 			[MonoTODO]
-			public int IndexOf(int index) {
+			public int IndexOf(int index) 
+			{
 				throw new NotImplementedException ();
 			}
 		}
@@ -954,7 +1051,8 @@ namespace System.Windows.Forms {
 			//  --- Constructor
 			//
 			[MonoTODO]
-			public CheckedIndexCollection(ListView owner) {
+			public CheckedIndexCollection(ListView owner) 
+			{
 				throw new NotImplementedException ();
 			}
 
@@ -987,23 +1085,28 @@ namespace System.Windows.Forms {
 			//  --- Public Methods
 			//
 			[MonoTODO]
-			public bool Contains(int checkedIndex) {
+			public bool Contains(int checkedIndex) 
+			{
 				throw new NotImplementedException ();
 			}
 			[MonoTODO]
-			public virtual bool Equals(object o) {
+			public virtual bool Equals(object o) 
+			{
 				throw new NotImplementedException ();
 			}
 			[MonoTODO]
-			public static bool Equals(object o1, object o2) {
+			public static bool Equals(object o1, object o2) 
+			{
 				throw new NotImplementedException ();
 			}
 			[MonoTODO]
-			public IEnumerator GetEnumerator() {
+			public IEnumerator GetEnumerator() 
+			{
 				throw new NotImplementedException ();
 			}
 			[MonoTODO]
-			public int IndexOf(int checkedIndex) {
+			public int IndexOf(int checkedIndex) 
+			{
 				throw new NotImplementedException ();
 			}
 		}

@@ -8,8 +8,8 @@
 // (C) 2002 Ximian, Inc.  http://www.ximian.com
 //
 
-namespace System.Windows.Forms
-{
+namespace System.Windows.Forms {
+
 	/// <summary>
 	/// The event handler class that is invoked when 
 	/// a property in the grid is modified by the user. 
