@@ -1,3 +1,22 @@
+2005-03-03  Kazuki Oikawa  <kazuki@panicode.com>
+
+	* _ConstructorInfo.cs
+	* _EventInfo.cs
+	* _FieldInfo.cs
+	* _MemberInfo.cs
+	* _MethodBase.cs
+	* _MethodInfo.cs
+	* _PropertyInfo.cs
+	* _Type.cs
+	* BStrWrapper.cs
+	* ComDefaultInterfaceAttribute.cs
+	* ComObjectInUseException.cs
+	* CriticalHandle.cs
+	* DefaultCharSetAttribute.cs
+	* ExposeAsClassToComAttribute.cs
+	* RegistrationClassContext.cs
+	* RegistrationConnectionType.cs: Add
+
 2005-02-21  Zoltan Varga  <vargaz@freemail.hu>
 
 	* UnmanagedFunctionPointerAttribute.cs: Add #region directives.

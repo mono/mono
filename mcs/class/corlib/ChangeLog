@@ -1,3 +1,11 @@
+2005-03-23  Kazuki Oikawa  <kazuki@panicode.com>
+
+	* corlib.dll.sources: Added _ConstructorInfo, _EventInfo,
+	_FieldInfo, _MemberInfo, _MethodBase, _MethodInfo, _PropertyInfo,
+	_Type, BStrWrapper, ComDefaultInterfaceAttribute, ComObjectInUseException,
+	CriticalHandle, DefaultCharSetAttribute, ExposeAsClassToComAttribute,
+	RegistrationClassContext, RegistrationConnectionType
+
 2005-03-02  Chris Toshok  <toshok@ximian.com>
 
 	* corlib.dll.sources: add DebuggerBrowsableState,
