@@ -1,15 +1,32 @@
-using System;
+//
+// System.Xml.XmlImplementation.cs
+//
+// Author: Duncan Mak (duncan@ximian.com)
+//
+// (C) Ximian, Inc.
+//
 
 namespace System.Xml
 {
-	/// <summary>
-	/// 
-	/// </summary>
 	public class XmlImplementation
 	{
-		// Private data members
+		public XmlImplementation ()
+			: base ()
+		{
+		}
 
-		// public properties
-		
+		public virtual XmlDocument CreateDocument ()
+		{
+			return new XmlDocument (this);
+		}
+
+		public bool HasFeature (string strFeature, string strVersion)
+		{
+			if ((strVersion == "XML") || (strVersion == "xml") // not case-sensitive
+			    && (strVersion == "1.0") || (strVersion == "2.0"))
+				return true;
+			else
+				return false;
+		}
 	}
 }

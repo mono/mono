@@ -8,6 +8,8 @@
 
 2002-02-25  Duncan Mak  <duncan@ximian.com>
 
+	* NameTable.cs: Implemented.
+
 	* XmlDeclaration.cs: It should inherit from XmlLinkedNode, not XmlNode.
 
 2002-02-24  Duncan Mak  <duncan@ximian.com>
