@@ -1,3 +1,7 @@
+2002-04-05  Christian Meyer  <Christian.Meye@cs.tum.edu>
+
+	* color.cs: Fixed a typo in GetSaturation ().
+
 2002-02-26  Christian Meyer  <Christian.Meyer@cs.tum.edu>
 
 	* Bitmap.cs: Added method headers.

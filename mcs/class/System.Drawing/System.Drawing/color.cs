@@ -225,7 +225,7 @@ namespace System.Drawing
 		public float GetSaturation (){
 			// S = 1 - I * Min(r,g,b)
 			return (255 - 
-				(((float)(R + g +b))/3)*Math.Min(r,Math.Min(g,b))
+				(((float)(r + g +b))/3)*Math.Min(r,Math.Min(g,b))
 				)/255;
 		}
 
