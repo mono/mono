@@ -1,26 +1,23 @@
-// cs0197.cs: You cant pass by ref or out a member or field of a MarshalByRefObjectClass.
-// Line: 14
+//cs0197.cs: Can not pass fields of a MarshalByRefObject by ref or out
+// Line: 15
+using System;
+class T : MarshalByRefObject {
+	int bar;
 
-namespace cs0197
-{
-	public class A: MarshalByRefObject
+	static void Foo (ref int i)
 	{
-		public string s;
 	}
-		
-	public class B
+
+	static void Main()
 	{
-		public class ConCat (ref string s)
-		{
-			s += ' Error';
-		}
-		
-		static void Main()
-		{
-			A Foo = new A ();
-			Foo.s = 'cs0197';
-			this.ConCat (ref Foo.s);
-			Console.WriteLine (Foo.s);			
-		}
+		T t = new T ();
+		t.bar = 12;
+		Foo (ref t.bar);
 	}
 }
+
+
+
+
+
+
