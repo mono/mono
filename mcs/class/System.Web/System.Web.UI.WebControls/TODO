@@ -44,8 +44,8 @@ EditCommandColumn
 FontNamesConverter
 FontUnitConverter
 * HyperLink
-HyperLinkColumn
-HyperLinkControlBuilder
+* HyperLinkColumn
+* HyperLinkControlBuilder
 * Image
 * ImageButton
 * Label
@@ -101,7 +101,7 @@ Xml
 * IRepeatInfoUser
 
 * FontUnit
-Unit
+* Unit
 
 * AdCreatedEventHandler
 * CommandEventHandler

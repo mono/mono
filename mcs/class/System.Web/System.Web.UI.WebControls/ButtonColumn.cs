@@ -8,7 +8,7 @@
  * Implementation: yes
  * Status:  100%
  * 
- * (C) Gaurav Vaish (2001)
+ * (C) Gaurav Vaish (2002)
  */
 
 using System;
@@ -35,7 +35,7 @@ namespace System.Web.UI.WebControls
 		public override void InitializeCell(TableCell cell, int columnIndex, ListItemType itemType)
 		{
 			InitializeCell(cell, columnIndex, itemType);
-			if(Enum.IsDefined(ListItemType, itemType) && itemType != ListItemType.Footer)
+			if(Enum.IsDefined(typeof(ListItemType), itemType) && itemType != ListItemType.Footer)
 			{
 				WebControl toDisplay = null;
 				if(ButtonType == ButtonColumnType.PushButton)
@@ -96,7 +96,7 @@ namespace System.Web.UI.WebControls
 			{
 				if(DataTextFormatString.Length > 0)
 				{
-					retVal = String.Format(dataTextValue, DataTextFormatString);
+					retVal = String.Format((string)dataTextValue, DataTextFormatString);
 				}
 				else
 				{
