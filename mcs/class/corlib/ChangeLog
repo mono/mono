@@ -1,3 +1,7 @@
+2003-08-20  Duncan Mak  <duncan@ximian.com>
+
+	* corlib_test.dll.sources: Added DictionaryBaseTest.cs
+
 2003-08-19 Nick Drochak <ndrochak@gol.com>
 
 	* Makefile: Turn on debug for the corlib tests on .NET.
