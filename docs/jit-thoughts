@@ -1,0 +1,43 @@
+Just some thoughts for the JITer:
+
+X86 register allocation:
+========================
+
+We can use 8bit or 16bit registers on the x86. If we use that feature we have
+more registers to allocate, which maybe prevents some register spills. We
+currently ignore that ability and always allocate 32 bit registers, because I
+think we would gain very little from that optimisation and it would complicate
+the code.
+
+
+Forest generation:
+==================
+
+Monoburg can't handle DAGs, instead we need real trees as input for
+the code generator. So we have two problems:
+
+1.) DUP instruction: This one is obvious - we need to store the value
+into a temporary variable to solve the problem.
+
+2.) function calls: Chapter 12.8, page 343 of "A retargetable C compiler"
+explains that: "because listing a call node will give it a hidden reference
+from the code list". I don't understand that (can someone explain that?), but
+there is another reason to save return values to temporaries: Consider the
+following code:
+
+x = f(y) + g(z); // all functions return integers
+
+We could generate such a tree for this expression: STLOC(ADD(CALL,CALL))
+
+The problem is that both calls returns the value in the same register,
+so it is non trivial to generate code for that tree. We must copy one
+register into another one, which make register allocation more complex.
+The easier solution is store the result of function calls to
+temporaries. This leads to the following forest:
+
+STLOC(CALL)
+STLOC(CALL)
+STLOC(ADD (LDLOC, LDLOC))
+
+This is what lcc is doing, if I understood 12.8, page 342, 343?
+
