@@ -1,3 +1,12 @@
+2005-02-21  Martin Baulig  <martin@ximian.com>
+
+	* generic.cs
+	(TypeManager.generic_nullable_type): New static public field.
+	(TypeManager.InitGenericCoreType): Lookup "System.Nullable`1".
+
+	* rootcontext.cs
+	(RootContext.ResolveCore): Resolve "System.Nullable`1".
+
 2005-02-15  Martin Baulig  <martin@ximian.com>
 
 	* generic.cs (ConstructedType.Constraints): Correctly check
