@@ -26,7 +26,7 @@
 
 namespace System.Windows.Forms.Design
 {
-	public class PropertyTab
+	public abstract class PropertyTab
 	{
 		public PropertyTab()
 		{

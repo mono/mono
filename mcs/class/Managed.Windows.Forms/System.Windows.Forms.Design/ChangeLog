@@ -1,3 +1,7 @@
+2005-02-14  Peter Bartok  <pbartok@novell.com>
+
+	* PropertyTab.cs: Made class abstract
+
 2004-04-14  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* AssemblyInfo.cs: Removed
