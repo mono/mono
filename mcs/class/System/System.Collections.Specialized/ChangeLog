@@ -1,3 +1,10 @@
+2004-06-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HybridDictionary.cs: Fixed Contains for null argument (again). Return
+	false when dictionary is empty or else throw an ArgumentNullException.
+	* NameValueCollection.cs: Added missing Rank check in CopyTo (Array,
+	int).
+
 2004-06-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* HybridDictionary.cs: Fixed Contains for null argument.

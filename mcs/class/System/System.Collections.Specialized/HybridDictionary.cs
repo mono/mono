@@ -136,8 +136,12 @@ namespace System.Collections.Specialized {
 		
 		public bool Contains (object key)
 		{
-			if (key == null)
-				return false;
+			if (key == null) {
+				if (this.Count == 0)
+					return false;
+				else
+					throw new ArgumentNullException ("key");
+			}
 			if (list != null)
 				return list.Contains (key);
 			return hashtable.Contains (key);

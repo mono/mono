@@ -5,6 +5,7 @@
 //   Gleb Novodran
 //
 // (C) Ximian, Inc.  http://www.ximian.com
+// Copyright (C) 2004 Novell (http://www.novell.com)
 //
 
 using System;
@@ -212,6 +213,8 @@ namespace System.Collections.Specialized{
 				throw new ArgumentNullException("dest", "Null argument - dest");
 			if (index<0)
 				throw new ArgumentOutOfRangeException("index", "index is less than 0");
+			if (dest.Rank > 1)
+				throw new ArgumentException ("dest", "multidim");
 
 			if (cachedAll==null)
 				RefreshCachedAll();
