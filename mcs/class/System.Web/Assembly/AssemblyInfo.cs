@@ -107,6 +107,7 @@ using System.Web.UI;
 [assembly: WebResource ("warning.gif", "image/gif")]
 
 [assembly: WebResource ("TreeView.js", "text/javascript")]
+[assembly: WebResource ("Menu.js", "text/javascript")]
 [assembly: WebResource ("callback.js", "text/javascript")]
 
 #endif
