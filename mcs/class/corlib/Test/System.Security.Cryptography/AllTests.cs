@@ -21,7 +21,8 @@ namespace MonoTests.System.Security.Cryptography {
                         {
                                 TestSuite suite =  new TestSuite();
                                 suite.AddTest(SymmetricAlgorithmTest.Suite);
-				suite.AddTest(AsymmetricAlgorithmTest.Suite); 	
+				suite.AddTest(AsymmetricAlgorithmTest.Suite); 
+                        	suite.AddTest(RNGCryptoServiceProviderTest.Suite);
                                 return suite;
                         }
                 }
