@@ -1,3 +1,5 @@
+// cs1518-2.cs : Attributes cannot be applied to namespaces.
+// Line: 5
 using System;
 
 [error_1518(11)]
