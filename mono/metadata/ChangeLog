@@ -1,5 +1,7 @@
 2003-02-04  Dietmar Maurer  <dietmar@ximian.com>
 
+	* icall.c (ves_icall_InternalExecute): removed wrong assertion
+
 	* marshal.c (mono_marshal_get_remoting_invoke): generate valid IL
 
 2003-02-04  Zoltan Varga  <vargaz@freemail.hu>
