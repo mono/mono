@@ -307,7 +307,7 @@ using_alias_directive
 	: USING IDENTIFIER ASSIGN 
 	  namespace_or_type_name SEMICOLON
 	  {
-		  current_namespace.UsingAlias ((string) $2, (string) $4, lexer.Location);
+		  current_namespace.UsingAlias ((string) $2, (string) ($4).ToString (), lexer.Location);
 	  }
 	| USING error {
 		CheckIdentifierToken (yyToken);
@@ -341,7 +341,7 @@ namespace_declaration
 					+ " Expected class, delegate, enum, interface, or struct");
 		}
 
-		current_namespace = RootContext.Tree.RecordNamespace (current_namespace, file, (string) $3, lexer.Location);
+		current_namespace = RootContext.Tree.RecordNamespace (current_namespace, file, (string) ($3).ToString (), lexer.Location);
 	} 
 	  namespace_body opt_semicolon
 	  { 
@@ -360,14 +360,15 @@ opt_comma
 	;
 
 qualified_identifier
-	: IDENTIFIER
+	: IDENTIFIER { $$ = new QualifiedIdentifier ((string) $1); }
 	| qualified_identifier DOT IDENTIFIER { 
-	    $$ = (($1).ToString ()) + "." + ($3.ToString ()); }
+	 	$$ = new QualifiedIdentifier ((QualifiedIdentifier) $1, (string) $3);
+	  }
 	;
 
 
 namespace_name
-	: namespace_or_type_name
+	: namespace_or_type_name { $$ = ($1).ToString (); } 
 	;
 
 namespace_body
@@ -534,7 +535,7 @@ attribute
 	  }
 	  opt_attribute_arguments
 	  {
-		$$ = new Attribute ((string) $1, (ArrayList) $3, (Location) $2);
+		$$ = new Attribute ((string) ($1).ToString (), (ArrayList) $3, (Location) $2);
 	  }
 	;
 
@@ -1007,7 +1008,7 @@ parameter_array
 	;
 
 member_name 
-	: qualified_identifier
+	: qualified_identifier { $$ = ($1).ToString (); } 
 	;
 
 property_declaration
@@ -1172,13 +1173,13 @@ interface_type_list
 	  {
 		ArrayList interfaces = new ArrayList (4);
 
-		interfaces.Add ($1);
+		interfaces.Add (($1).ToString ());
 		$$ = interfaces;
 	  }
 	| interface_type_list COMMA interface_type
 	  {
 		ArrayList interfaces = (ArrayList) $1;
-		interfaces.Add ($3);
+		interfaces.Add (($3).ToString ());
 		$$ = interfaces;
 	  }
 	;
@@ -1735,7 +1736,7 @@ indexer_declarator
 		if (pars.FixedParameters == null && pars.ArrayParameter == null){
 			Report.Error (1551, lexer.Location, "Indexers must have at least one parameter");
 		}
-		$$ = new IndexerDeclaration ((Expression) $1, (string) $2, pars);
+		$$ = new IndexerDeclaration ((Expression) $1, (string) ($2).ToString (), pars);
 	  }
 	;
 
@@ -1872,7 +1873,7 @@ type
 	           This does interfaces, delegates, struct_types, class_types, 
 	           parent classes, and more! 4.2 
 	         */
-		$$ = DecomposeQI ((string) $1, lexer.Location);
+		$$ = DecomposeQI ((QualifiedIdentifier) $1, lexer.Location);
 	  }
 	| builtin_types
 	| array_type
@@ -1991,10 +1992,7 @@ primary_expression
  
 	| qualified_identifier
 	  {
-		string name = (string) $1;
-
-		$$ = null;
-		$$ = DecomposeQI (name, lexer.Location);
+		$$ = DecomposeQI ((QualifiedIdentifier) $1, lexer.Location);
 	  }
 	| parenthesized_expression
 	| member_access
@@ -3837,7 +3835,6 @@ public class VariableDeclaration {
 // <summary>
 //   A class used to hold info about an indexer declarator
 // </summary>
-
 public class IndexerDeclaration {
 	public Expression type;
 	public string interface_type;
@@ -3854,7 +3851,6 @@ public class IndexerDeclaration {
 // <summary>
 //  A class used to hold info about an operator declarator
 // </summary>
-
 public class OperatorDeclaration {
 	public Operator.OpType optype;
 	public Expression ret_type, arg1type, arg2type;
@@ -3874,6 +3870,51 @@ public class OperatorDeclaration {
 		this.location = location;
 	}
 
+}
+
+public class QualifiedIdentifier {
+	public string s;
+	public QualifiedIdentifier prev;
+
+	public QualifiedIdentifier (string s)
+	{	
+		this.s = s;
+		prev = null;
+	}
+
+	public QualifiedIdentifier (QualifiedIdentifier prev, string s)
+	{
+		this.s = s;
+		this.prev = prev;
+	}
+
+	public override string ToString ()
+	{
+		if (prev == null)
+			return s;
+
+		// Common cases
+
+		if (prev.prev == null)
+			return prev.s + "." + s;
+		if (prev.prev.prev == null)
+			return prev.prev.s + "." + prev.s + "." + s;
+
+		// Uncommon cases.
+		QualifiedIdentifier ptr = this.prev;
+		int count = 1;
+		while (ptr != null){
+			count++;
+			ptr = ptr.prev;
+		}
+		string [] ss = new string [count];
+		ptr = this;
+		for (int i = count; i-- > 0;){
+			ss [i] = ptr.s;
+			ptr = ptr.prev;
+		}
+		return String.Join (".", ss, 0, ss.Length);
+	}
 }
 
 void Error_ExpectingTypeName (Location l, Expression expr)
@@ -3955,20 +3996,15 @@ CheckDef (bool result, string name, Location l)
 	CheckDef (DeclSpace.AdditionResult.NameExists, name, l);
 }
 
-Expression DecomposeQI (string name, Location loc)
+Expression DecomposeQI (QualifiedIdentifier qi, Location loc)
 {
 	Expression o;
 
-	if (name.IndexOf ('.') == -1){
-		return new SimpleName (name, loc);
-	} else {
-		int pos = name.LastIndexOf (".");
-		string left = name.Substring (0, pos);
-		string right = name.Substring (pos + 1);
-
-		o = DecomposeQI (left, loc);
-
-		return new MemberAccess (o, right, loc);
+	if (qi.prev == null)
+		return new SimpleName (qi.s, loc);
+	else {
+		o = DecomposeQI (qi.prev, loc);
+		return new MemberAccess (o, qi.s, loc);
 	}
 }
 

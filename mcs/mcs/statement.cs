@@ -1755,7 +1755,10 @@ namespace Mono.CSharp {
 			ArrayList new_statements = new ArrayList ();
 			bool unreachable = false, warning_shown = false;
 
- 			foreach (Statement s in statements){
+			int statement_count = statements.Count;
+			for (int ix = 0; ix < statement_count; ix++){
+				Statement s = (Statement) statements [ix];
+				
 				if (unreachable && !(s is LabeledStatement)) {
 					if (!warning_shown && !(s is EmptyStatement)) {
 						warning_shown = true;
@@ -1810,8 +1813,11 @@ namespace Mono.CSharp {
 		
 		protected override bool DoEmit (EmitContext ec)
 		{
-			foreach (Statement s in statements)
+			int statement_count = statements.Count;
+			for (int ix = 0; ix < statement_count; ix++){
+				Statement s = (Statement) statements [ix];
 				s.Emit (ec);
+			}
 
 			return (flags & Flags.HasRet) != 0;
 		}

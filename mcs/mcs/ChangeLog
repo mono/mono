@@ -1,3 +1,28 @@
+2003-11-29  Miguel de Icaza  <miguel@ximian.com>
+
+	* statement.cs (Block.Resolve, Block.Emit): Avoid foreach on
+	ArrayLists, use for loops with bounds.  
+
+	* flowanalysis.cs (FlowBranching.Merge): Avoid foreach on
+	arraylist.
+
+	* expression.cs (Invocation.OverloadResolve): Avoid foreach on
+	arraylists, use for loop with bounds.
+
+	The above three changes give us a 0.071 second performance
+	improvement out of 3.294 seconds down to 3.223.  On my machine
+	the above changes reduced the memory usage by 1,387 KB during
+	compiler bootstrap.
+
+	* cs-parser.jay (QualifiedIdentifier): New class used to represent
+	QualifiedIdentifiers.  Before we created a new string through
+	concatenation, and mostly later on, the result would be
+	manipulated by DecomposeQI through string manipulation.
+
+	This reduced the compiler memory usage for bootstrapping from
+	59380 KB to 59007 KB on my machine, 373 KB, and also reduced the
+	compile times in 0.05 seconds.
+
 2003-11-28  Dick Porter  <dick@ximian.com>
 
 	* support.cs: Do string compares with the Invariant culture.

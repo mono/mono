@@ -718,7 +718,10 @@ namespace Mono.CSharp
 
 			Report.Debug (2, "MERGING CHILDREN", this, Type, children.Count);
 
-			foreach (UsageVector child in children) {
+			int children_count = children.Count;
+			for (int ix = 0; ix < children_count; ix++){
+				UsageVector child = (UsageVector) children [ix];
+				
 				Report.Debug (2, "  MERGING CHILD", child, child.AlwaysBreaks, child.AlwaysReturns,
 					      child.IsUnreachable, child.Locals, child.Parameters,
 					      child.Returns, child.Breaks, child.Reachable);

@@ -4563,7 +4563,9 @@ namespace Mono.CSharp {
                         }
 
                         bool found_applicable = false;
-			foreach (MethodBase candidate in me.Methods) {
+
+			MethodBase [] methods = me.Methods;
+			foreach (MethodBase candidate in me.Methods){
                                 Type decl_type = candidate.DeclaringType;
 
                                 //
@@ -4599,7 +4601,10 @@ namespace Mono.CSharp {
                         //
                         // Now we actually find the best method
                         //
-                        foreach (MethodBase candidate in candidates) {
+			int candidate_top = candidates.Count;
+			for (int ix = 0; ix < candidate_top; ix++){
+				MethodBase candidate = (MethodBase) candidates [ix];
+				
                                 bool cand_params = (bool) candidate_to_form [candidate];
                                 bool method_params = false;
 
@@ -4658,7 +4663,8 @@ namespace Mono.CSharp {
 			//
                         bool best_params = (bool) candidate_to_form [method];
 
-			foreach (MethodBase candidate in candidates){
+			for (int ix = 0; ix < candidate_top; ix++){
+				MethodBase candidate = (MethodBase) candidates [ix];
 
                                 if (candidate == method)
                                         continue;
