@@ -1,3 +1,12 @@
+2005-03-27  Alexander Olk  <xenomorph2@onlinehome.de>
+
+	* FileDialog.cs, OpenFileDialog.cs, SaveFileDialog.cs:
+	  - Added missing CreatePrompt property in SaveDialog
+	  - Overall SaveDialog handling should be better now
+	  - Added non standard ShowHiddenFiles property
+	  - Added extension, CreatePrompt and OverwritePrompt support in SaveDialog
+	  - Added InitialDirectory and RestoreDirectory support
+
 2005-03-26  Alexander Olk  <xenomorph2@onlinehome.de>
 
 	* FileDialog.cs: Made dirComboBox usable

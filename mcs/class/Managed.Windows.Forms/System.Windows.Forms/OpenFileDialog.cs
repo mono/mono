@@ -51,6 +51,8 @@ namespace System.Windows.Forms
 			
 			FileDialogShowReadOnly = showReadOnly;
 			
+			fileDialogType = FileDialogType.OpenFileDialog;
+			
 			fileDialogPanel = new FileDialogPanel( this );
 		}
 		#endregion	// Public Constructors

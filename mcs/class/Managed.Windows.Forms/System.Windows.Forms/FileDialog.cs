@@ -26,6 +26,9 @@
 
 // NOT COMPLETE - work in progress
 
+// TODO:
+// file/path security stuff ???
+
 using System;
 using System.Drawing;
 using System.ComponentModel;
@@ -38,6 +41,12 @@ namespace System.Windows.Forms
 {
 	public abstract class FileDialog : CommonDialog
 	{
+		internal enum FileDialogType
+		{
+			OpenFileDialog,
+			SaveFileDialog
+		}
+		
 		internal FileDialogPanel fileDialogPanel;
 		
 		private bool addExtension = true;
@@ -59,6 +68,12 @@ namespace System.Windows.Forms
 		internal string searchSaveLabelText;
 		internal bool fileDialogShowReadOnly;
 		internal bool fileDialogMultiSelect;
+		internal bool saveDialogCreatePrompt = false;
+		internal bool saveDialogOverwritePrompt = true;
+		
+		private bool showHiddenFiles = false;
+		
+		internal FileDialogType fileDialogType;
 		
 		public bool AddExtension
 		{
@@ -109,9 +124,20 @@ namespace System.Windows.Forms
 			set
 			{
 				defaultExt = value;
+				
+				// if there is a dot remove it and everything before it
+				if ( defaultExt.LastIndexOf( '.' ) != - 1 )
+				{
+					string[] split = defaultExt.Split( new char[] { '.' } );
+					defaultExt = split[ split.Length - 1 ];
+				}
 			}
 		}
 		
+		// in MS.NET it doesn't make a difference if
+		// DerefenceLinks is true or false
+		// if the selected file is a link FileDialog
+		// always returns the link
 		public bool DereferenceLinks
 		{
 			get
@@ -237,6 +263,17 @@ namespace System.Windows.Forms
 			}
 		}
 		
+		// this one is a hard one ;)
+		// Win32 filename:
+		// - up to MAX_PATH characters (windef.h) = 260
+		// - no trailing dots or spaces
+		// - case preserving
+		// - etc...
+		// NTFS/Posix filename:
+		// - up to 32,768 Unicode characters
+		// - trailing periods or spaces
+		// - case sensitive
+		// - etc...
 		public bool ValidateNames
 		{
 			get
@@ -263,7 +300,7 @@ namespace System.Windows.Forms
 			}
 		}
 		
-		public string SearchSaveLabelText
+		internal string SearchSaveLabelText
 		{
 			set
 			{
@@ -276,7 +313,7 @@ namespace System.Windows.Forms
 			}
 		}
 		
-		public bool FileDialogShowReadOnly
+		internal bool FileDialogShowReadOnly
 		{
 			set
 			{
@@ -308,6 +345,46 @@ namespace System.Windows.Forms
 			get
 			{
 				return filterArrayList;
+			}
+		}
+		
+		// extension to MS.NET framework...
+		public bool ShowHiddenFiles
+		{
+			set
+			{
+				showHiddenFiles = value;
+			}
+			
+			get
+			{
+				return showHiddenFiles;
+			}
+		}
+		
+		internal bool SaveDialogCreatePrompt
+		{
+			set
+			{
+				saveDialogCreatePrompt = value;
+			}
+			
+			get
+			{
+				return saveDialogCreatePrompt;
+			}
+		}
+		
+		internal bool SaveDialogOverwritePrompt
+		{
+			set
+			{
+				saveDialogOverwritePrompt = value;
+			}
+			
+			get
+			{
+				return saveDialogOverwritePrompt;
 			}
 		}
 		
@@ -453,6 +530,8 @@ namespace System.Windows.Forms
 			
 			private string currentDirectoryName;
 			
+			internal string currentFileName = "";
+			
 			// store current directoryInfo
 			private DirectoryInfo directoryInfo;
 			
@@ -462,11 +541,11 @@ namespace System.Windows.Forms
 			// store DirectoryInfo for backButton
 			internal Stack directoryStack = new Stack();
 			
-			internal string currentFileName = "";
-			
 			private MenuItem previousCheckedMenuItem;
 			
 			private bool multiSelect = false;
+			
+			private string restoreDirectory = "";
 			
 			public FileDialogPanel( FileDialog fileDialog )
 			{
@@ -666,14 +745,19 @@ namespace System.Windows.Forms
 				
 				if ( fileDialog.InitialDirectory == String.Empty )
 					currentDirectoryName = Environment.CurrentDirectory;
+				else
+					currentDirectoryName = fileDialog.InitialDirectory;
 				
 				directoryInfo = new DirectoryInfo( currentDirectoryName );
 				
 				dirComboBox.CurrentPath = currentDirectoryName;
 				
+				if ( fileDialog.RestoreDirectory )
+					restoreDirectory = currentDirectoryName;
+				
 				fileListView.UpdateFileListView( );
 				
-				openSaveButton.Click += new EventHandler( OnClickOpenButton );
+				openSaveButton.Click += new EventHandler( OnClickOpenSaveButton );
 				cancelButton.Click += new EventHandler( OnClickCancelButton );
 				helpButton.Click += new EventHandler( OnClickHelpButton );
 				
@@ -738,11 +822,12 @@ namespace System.Windows.Forms
 				}
 			}
 			
-			void OnClickOpenButton( object sender, EventArgs e )
+			void OnClickOpenSaveButton( object sender, EventArgs e )
 			{
 				if ( !multiSelect )
 				{
 					string fileFromComboBox = fileNameComboBox.Text.Trim( );
+					
 					if ( fileFromComboBox.Length > 0 )
 						fileFromComboBox = Path.Combine( currentDirectoryName, fileFromComboBox );
 					
@@ -752,22 +837,72 @@ namespace System.Windows.Forms
 					if ( currentFileName.Length == 0 )
 						return;
 					
-					if ( fileDialog.CheckFileExists )
+					
+					if ( fileDialog.fileDialogType == FileDialogType.OpenFileDialog )
 					{
-						if ( !File.Exists( currentFileName ) )
+						if ( fileDialog.CheckFileExists )
 						{
-							string message = currentFileName + " doesn't exist. Please verify that you have entered the correct file name.";
-							MessageBox.Show( message, fileDialog.OpenSaveButtonText, MessageBoxButtons.OK, MessageBoxIcon.Warning );
-							
-							currentFileName = "";
-							
-							return;
+							if ( !File.Exists( currentFileName ) )
+							{
+								string message = currentFileName + " doesn't exist. Please verify that you have entered the correct file name.";
+								MessageBox.Show( message, fileDialog.OpenSaveButtonText, MessageBoxButtons.OK, MessageBoxIcon.Warning );
+								
+								currentFileName = "";
+								
+								return;
+							}
+						}
+					}
+					else // FileDialogType == SaveFileDialog
+					{
+						if ( fileDialog.SaveDialogOverwritePrompt )
+						{
+							if ( File.Exists( currentFileName ) )
+							{
+								string message = currentFileName + " exists. Overwrite ?";
+								DialogResult dr = MessageBox.Show( message, fileDialog.OpenSaveButtonText, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning );
+								
+								if ( dr == DialogResult.Cancel )
+								{
+									currentFileName = "";
+									
+									return;
+								}
+							}
+						}
+						
+						if ( fileDialog.SaveDialogCreatePrompt )
+						{
+							if ( !File.Exists( currentFileName ) )
+							{
+								string message = currentFileName + " doesn't exist. Create ?";
+								DialogResult dr = MessageBox.Show( message, fileDialog.OpenSaveButtonText, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning );
+								
+								if ( dr == DialogResult.Cancel )
+								{
+									currentFileName = "";
+									
+									return;
+								}
+							}
+						}
+					}
+					
+					if ( fileDialog.fileDialogType == FileDialogType.SaveFileDialog )
+					{
+						if ( fileDialog.AddExtension && fileDialog.DefaultExt.Length > 0 )
+						{
+							if ( !currentFileName.EndsWith( fileDialog.DefaultExt ) )
+							{
+								currentFileName += "." + fileDialog.DefaultExt;
+							}
 						}
 					}
 					
 					fileDialog.FileName = currentFileName;
 				}
 				else // multiSelect = true
+				if ( fileDialog.fileDialogType != FileDialogType.SaveFileDialog )
 				{
 					if ( fileListView.SelectedItems.Count > 0 )
 					{
@@ -804,11 +939,17 @@ namespace System.Windows.Forms
 						string message = currentDirectoryName + " doesn't exist. Please verify that you have entered the correct directory name.";
 						MessageBox.Show( message, fileDialog.OpenSaveButtonText, MessageBoxButtons.OK, MessageBoxIcon.Warning );
 						
-						currentDirectoryName = Environment.CurrentDirectory;
+						if ( fileDialog.InitialDirectory == String.Empty )
+							currentDirectoryName = Environment.CurrentDirectory;
+						else
+							currentDirectoryName = fileDialog.InitialDirectory;
 						
 						return;
 					}
 				}
+				
+				if ( fileDialog.RestoreDirectory )
+					currentDirectoryName = restoreDirectory;
 				
 				CancelEventArgs cancelEventArgs = new CancelEventArgs( );
 				
@@ -822,6 +963,9 @@ namespace System.Windows.Forms
 			
 			void OnClickCancelButton( object sender, EventArgs e )
 			{
+				if ( fileDialog.RestoreDirectory )
+					currentDirectoryName = restoreDirectory;
+				
 				CancelEventArgs cancelEventArgs = new CancelEventArgs( );
 				
 				cancelEventArgs.Cancel = true;
@@ -956,7 +1100,7 @@ namespace System.Windows.Forms
 			
 			public void ForceDialogEnd( )
 			{
-				OnClickOpenButton( this, EventArgs.Empty );
+				OnClickOpenSaveButton( this, EventArgs.Empty );
 			}
 			
 			private void PushDirectory( DirectoryInfo di )
@@ -1065,6 +1209,10 @@ namespace System.Windows.Forms
 					
 					foreach ( DirectoryInfo directoryInfoi in directoryInfoArray )
 					{
+						if ( !fileDialogPanel.fileDialog.ShowHiddenFiles )
+							if ( directoryInfoi.Name.StartsWith( "." ) || directoryInfoi.Attributes == FileAttributes.Hidden )
+								continue;
+						
 						FileStruct fileStruct = new FileStruct( );
 						
 						fileStruct.fullname = directoryInfoi.FullName;
@@ -1086,6 +1234,10 @@ namespace System.Windows.Forms
 					
 					foreach ( FileInfo fileInfo in fileInfoArrayList )
 					{
+						if ( !fileDialogPanel.fileDialog.ShowHiddenFiles )
+							if ( fileInfo.Name.StartsWith( "." )  || fileInfo.Attributes == FileAttributes.Hidden )
+								continue;
+						
 						FileStruct fileStruct = new FileStruct( );
 						
 						fileStruct.fullname = fileInfo.FullName;

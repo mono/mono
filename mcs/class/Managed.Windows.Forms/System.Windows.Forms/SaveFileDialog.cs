@@ -34,6 +34,7 @@ namespace System.Windows.Forms
 {
 	public sealed class SaveFileDialog : FileDialog
 	{
+		private bool createPrompt = false;
 		private bool overwritePrompt = true;
 		
 		#region Public Constructors
@@ -47,6 +48,8 @@ namespace System.Windows.Forms
 			
 			SearchSaveLabelText = "Save in:";
 			
+			fileDialogType = FileDialogType.SaveFileDialog;
+			
 			fileDialogPanel = new FileDialogPanel( this );
 		}
 		#endregion	// Public Constructors
@@ -57,11 +60,26 @@ namespace System.Windows.Forms
 			set
 			{
 				overwritePrompt = value;
+				SaveDialogOverwritePrompt = overwritePrompt;
 			}
 			
 			get
 			{
 				return overwritePrompt;
+			}
+		}
+		
+		public bool CreatePrompt
+		{
+			set
+			{
+				createPrompt = value;
+				SaveDialogCreatePrompt = createPrompt;
+			}
+			
+			get
+			{
+				return createPrompt;
 			}
 		}
 		#endregion	// Public Instance Properties
