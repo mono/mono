@@ -1,3 +1,20 @@
+2004-07-28  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* assembly.c: Load mscorlib from the correct framework directory
+	  (mono/<version>/mscorlib.dll).
+	* appdomain.h: Added prototypes for new functions.
+	* internals.h: Added some prototypes.
+	* domain.c: When initializing the runtime, get from the executable and
+	  the configuration files the runtime version that the app supports.
+	  Added support methods for reading app.exe.config. Added list of versions
+	  supported by the JIT. Added two new methods: mono_init_from_assembly,
+	  which initializes the runtime and determines the required version from
+	  the provided exe file, and mono_init_version, which initializes
+	  the runtime using the provided version.
+	* icall.c: Get machine.config from version-specific directory.
+	* reflection.c: When generating an image, embed the version number
+	  of the current runtime.
+
 2004-07-28  Dick Porter  <dick@ximian.com>
 
 	* socket-io.c
