@@ -1,3 +1,9 @@
+2005-01-20  Jackson Harper  <jackson@ximian.com>
+
+	* TreeView.cs: Set the bounds for nodes properly. They were
+	getting screwed up when checkboxes were not enabled, but images
+	were.
+
 2005-01-20  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* ListBox.cs:

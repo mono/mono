@@ -607,8 +607,6 @@ namespace System.Windows.Forms {
 			Invalidate (invalid);
 		}
 
-		int draw_count = 0;
-
 		private void DoPaint (PaintEventArgs pe)
 		{
 			if (Width <= 0 || Height <=  0 || Visible == false)
@@ -618,7 +616,7 @@ namespace System.Windows.Forms {
 			
 			pe.Graphics.DrawImage (ImageBuffer, pe.ClipRectangle, pe.ClipRectangle, GraphicsUnit.Pixel);
 		}
-		
+
 		private void Draw (Rectangle clip)
 		{
 			if (top_node == null && Nodes.Count > 0)
@@ -803,14 +801,7 @@ namespace System.Windows.Forms {
 		private void UpdateNodeBounds (TreeNode node, int x, int y, int item_height)
 		{
 			int width = (int) (node.Text.Length * Font.Size);
-			int xoff = indent;
-
-			if (!show_root_lines && node.Parent == null)
-				xoff = 0;
-
-			if (image_list != null)
-				xoff += image_list.ImageSize.Width;
-			node.UpdateBounds (x + xoff, y, width, item_height);
+			node.UpdateBounds (x, y, width, item_height);
 		}
 
 		private void DrawNode (TreeNode node, Rectangle clip, ref int depth, int item_height,
@@ -855,20 +846,20 @@ namespace System.Windows.Forms {
 				ox += ImageList.ImageSize.Width + 3; // leave a little space so the text isn't against the image
 			}
 
-			UpdateNodeBounds (node, x, y, item_height);
+			UpdateNodeBounds (node, ox, y, item_height);
 
 			bool bounds_in_clip = clip.IntersectsWith (node.Bounds);
 			if (visible &&	bounds_in_clip && !node.IsEditing) {
 				Rectangle r = node.Bounds;
 				StringFormat format = new StringFormat ();
 				format.LineAlignment = StringAlignment.Center;
-				r.Y += 2; // we have to adjust this to get nice middle alignment
-				r.X = ox;
 
+				r.Y += 2; // we have to adjust this to get nice middle alignment
+				
 				Color text_color = (Focused && SelectedNode == node ? ThemeEngine.Current.ColorHilightText : node.ForeColor);
 				if (Focused) {
 					if (SelectedNode == node)
-						DeviceContext.FillRectangle (new SolidBrush (ThemeEngine.Current.ColorHilight), node.Bounds);
+						DeviceContext.FillRectangle (new SolidBrush (ThemeEngine.Current.ColorHilight), r);
 					if (focused_node == node) {
 						Pen dot_pen = new Pen (ThemeEngine.Current.ColorButtonHilight, 1);
 						dot_pen.DashStyle = DashStyle.Dot;
