@@ -387,6 +387,7 @@ namespace System.Windows.Forms {
 
 			lock (xlib_lock) {
 				XSetWindowBackground(DisplayHandle, handle, xcolor.pixel);
+				XClearWindow(DisplayHandle, handle);
 			}
 		}
 
@@ -457,35 +458,9 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void Invalidate(IntPtr handle, Rectangle rc, bool clear) {
-			XEvent			xevent = new XEvent();
-
-			xevent.type=XEventName.Expose;
-			xevent.ExposeEvent.display=DisplayHandle;
-			xevent.ExposeEvent.window=handle;
-			xevent.ExposeEvent.count=0;
-
+			// FIXME - we're not properly interpreting the clear flag, we're assuming it's always true
 			lock (xlib_lock) {
-
-				if (clear) {
-					// Need to clear the whole window, so we force a redraw for the whole window
-					XWindowAttributes	attributes=new XWindowAttributes();
-
-					// We need info about our window to generate the expose 
-					XGetWindowAttributes(DisplayHandle, handle, ref attributes);
-
-					xevent.ExposeEvent.x=0;
-					xevent.ExposeEvent.y=0;
-					xevent.ExposeEvent.width=attributes.width;
-					xevent.ExposeEvent.height=attributes.height;
-				} else {
-					xevent.ExposeEvent.x=rc.Left;
-					xevent.ExposeEvent.y=rc.Top;
-					xevent.ExposeEvent.width=rc.Width;
-					xevent.ExposeEvent.height=rc.Height;
-				}
-
-				XSendEvent(DisplayHandle, handle, false, EventMask.ExposureMask, ref xevent);
-				// Flush is not needed, invalidate does not guarantee an immediate effect
+				XClearArea(DisplayHandle, handle, rc.Left, rc.Top, (uint)rc.Width, (uint)rc.Height, true);
 			}
 		}
 
@@ -1112,6 +1087,20 @@ namespace System.Windows.Forms {
 			y = dest_y_return;
 		}
 
+		internal override void ClientToScreen(IntPtr handle, ref int x, ref int y) {
+			int	dest_x_return;
+			int	dest_y_return;
+			IntPtr	child;
+
+			lock (xlib_lock) {
+				XTranslateCoordinates (DisplayHandle, handle, root_window,
+					x, y, out dest_x_return, out dest_y_return, out child);
+			}
+
+			x = dest_x_return;
+			y = dest_y_return;
+		}
+
 		internal override void SendAsyncMethod (AsyncMethodData method)
 		{
 			XEvent xevent = new XEvent ();
@@ -1297,6 +1286,12 @@ namespace System.Windows.Forms {
 
 		[DllImport ("libX11.so", EntryPoint="XWarpPointer")]
 		internal extern static uint XWarpPointer(IntPtr display, IntPtr src_w, IntPtr dest_w, int src_x, int src_y, uint src_width, uint src_height, int dest_x, int dest_y);
+
+		[DllImport ("libX11.so", EntryPoint="XClearWindow")]
+		internal extern static int XClearWindow(IntPtr display, IntPtr window);
+
+		[DllImport ("libX11.so", EntryPoint="XClearArea")]
+		internal extern static int XClearArea(IntPtr display, IntPtr window, int x, int y, uint width, uint height, bool exposures);
 
 		// Colormaps
 		[DllImport ("libX11.so", EntryPoint="XDefaultScreenOfDisplay")]
