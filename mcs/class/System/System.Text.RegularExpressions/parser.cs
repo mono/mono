@@ -894,7 +894,13 @@ namespace System.Text.RegularExpressions.Syntax {
 
 			// character codes
 
-			case '0': return ParseOctal (pattern, ref ptr);
+			case '0':
+				int prevptr = ptr;
+				int result = ParseOctal (pattern, ref ptr);
+				if (result == -1 && prevptr == ptr)
+					return 0;
+
+				return result;
 
 			case 'x':
 				c = ParseHex (pattern, ref ptr, 2);
