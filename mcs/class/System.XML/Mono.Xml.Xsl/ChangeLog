@@ -1,3 +1,8 @@
+2003-08-17 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* XsltCompiledContext.cs, Compiler.cs: copy the XPathNavigator
+	from the stylesheet for correct namespace resolution.
+
 2003-08-14 Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* Compiler.cs : 1) Changed public .ctor() to receive Evidence argument 

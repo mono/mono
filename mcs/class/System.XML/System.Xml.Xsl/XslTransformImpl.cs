@@ -35,7 +35,9 @@ namespace System.Xml.Xsl {
 		public virtual void Transform (string inputfile, string outputfile, XmlResolver resolver)
 		{
 			using (FileStream fs =  new FileStream (outputfile, FileMode.Create, FileAccess.ReadWrite)) {
-				Transform(new XPathDocument (inputfile).CreateNavigator (), null, new XmlTextWriter (fs, null), resolver);
+				XmlTextWriter t = new XmlTextWriter (fs, null);
+				Transform(new XPathDocument (inputfile).CreateNavigator (), null, t, resolver);
+				t.Close ();
 			}
 		}
 	}

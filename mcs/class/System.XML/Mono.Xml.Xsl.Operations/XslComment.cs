@@ -20,14 +20,11 @@ namespace Mono.Xml.Xsl.Operations {
 	public class XslComment : XslCompiledElement {
 		bool disableOutputEscaping = false;
 		XslOperation value;
-		XPathNavigator nav;
 		
 		public XslComment (Compiler c) : base (c) {}
 
 		protected override void Compile (Compiler c)
 		{
-			this.nav = c.Input.Clone ();
-
 			if (c.Input.MoveToFirstChild ()) {
 				value = c.CompileTemplateContent ();
 				c.Input.MoveToParent ();

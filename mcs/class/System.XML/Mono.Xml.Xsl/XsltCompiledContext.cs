@@ -45,13 +45,15 @@ namespace Mono.Xml.Xsl {
 			
 		XslTransformProcessor p;
 		VariableScope v;
+		XPathNavigator doc;
 			
 		public XslTransformProcessor Processor { get { return p; }}
 			
-		public XsltCompiledContext (XslTransformProcessor p, VariableScope v)
+		public XsltCompiledContext (XslTransformProcessor p, VariableScope v, XPathNavigator doc)
 		{
 			this.p = p;
 			this.v = v;
+			this.doc = doc;
 		}
 
 		public override string DefaultNamespace { get { return String.Empty; }}
@@ -62,7 +64,7 @@ namespace Mono.Xml.Xsl {
 			if (prefix == "" || prefix == null)
 				return "";
 			
-			return p.CompiledStyle.NamespaceManager.LookupNamespace (prefix);
+			return this.doc.GetNamespace (prefix);
 		}
 		
 		public override IXsltContextFunction ResolveFunction (string prefix, string name, XPathResultType[] argTypes)

@@ -1,3 +1,7 @@
+2003-08-17 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* XslComment.cs, XslTemplateContent.cs: remove dead variables.
+
 2003-08-14  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* XslComment.cs: patch by BenM that implements Evaluate.

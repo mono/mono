@@ -18,7 +18,6 @@ using System.Xml.Xsl;
 namespace Mono.Xml.Xsl.Operations {
 	public class XslTemplateContent : XslCompiledElement {
 		ArrayList content = new ArrayList ();
-		ArrayList variables;
 		
 		bool hasStack;
 		int stackSize;

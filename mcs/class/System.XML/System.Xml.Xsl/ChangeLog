@@ -1,3 +1,7 @@
+2003-08-17 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* XslTransformImpl.cs: close XmlTextWriter when we create it.
+
 2003-08-14  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XslTransformImpl.cs, XslTransform.cs, Multiplexer.cs,

@@ -441,10 +441,12 @@ namespace Mono.Xml.Xsl {
 	
 		Hashtable exprToVarCtx = new Hashtable ();
 		Hashtable exprToSorts = new Hashtable ();
+		Hashtable exprToDocument = new Hashtable ();
 		
 		public void AddExpression (XPathExpression e, Compiler c)
 		{
 			exprToVarCtx [e] = c.CurrentVariableScope;
+			exprToDocument [e] = c.Input.Clone ();
 		}
 		
 		public void AddSort (XPathExpression e, Sort s)
@@ -462,7 +464,7 @@ namespace Mono.Xml.Xsl {
 		{
 			XPathExpression expr = e.Clone ();
 
-			expr.SetContext (new XsltCompiledContext (p, (VariableScope)exprToVarCtx [e]));
+			expr.SetContext (new XsltCompiledContext (p, (VariableScope)exprToVarCtx [e], (XPathNavigator)exprToDocument [e]));
 			if (exprToSorts.Contains (e))
 			{
 				foreach (Sort s in (ArrayList)exprToSorts [e])
