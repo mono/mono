@@ -16,19 +16,29 @@ using System.Xml;
 
 namespace Commons.Xml
 {
-	public class XmlDefaultReader : XmlReader
+	public class XmlDefaultReader : XmlReader, IXmlLineInfo
 	{
 		XmlReader reader;
+		IXmlLineInfo lineInfo;
 
 		public XmlDefaultReader (XmlReader reader)
 		{
 			this.reader = reader;
+			this.lineInfo = reader as IXmlLineInfo;
 		}
 
 		#region Properties
 		// This is the only one non-overriden property.
 		public XmlReader Reader {
 			get { return reader; }
+		}
+
+		public int LineNumber {
+			get { return lineInfo != null ? lineInfo.LineNumber : 0; }
+		}
+		
+		public int LinePosition {
+			get { return lineInfo != null ? lineInfo.LinePosition : 0; }
 		}
 		
 		public override XmlNodeType NodeType 
@@ -132,6 +142,11 @@ namespace Commons.Xml
 		public override string GetAttribute (int i)
 		{
 			return reader.GetAttribute (i);
+		}
+
+		public bool HasLineInfo ()
+		{
+			return lineInfo != null ? lineInfo.HasLineInfo () : false;
 		}
 
 		public override bool MoveToAttribute (string name)
