@@ -173,9 +173,11 @@ namespace System.Xml
 				else {
 					int depth = reader.Depth;
 					reader.Read ();
-					do {
-						WriteNode (reader, defattr);
-					} while (depth < reader.Depth);
+					if (reader.NodeType != XmlNodeType.EndElement) {
+						do {
+							WriteNode (reader, defattr);
+						} while (depth < reader.Depth);
+					}
 					WriteFullEndElement ();
 				}
 				break;
