@@ -799,6 +799,36 @@ public class EnumTest : TestCase
 				Enum.Format (typeof (E2), invalidValue, "g"));
 	}
 
+	enum E3 {A=0,B=1,C=2,D=3,}
+	enum UE : ulong {A=1,B=2,C=4,D=8,} 
+	enum EA {A=0, B=2, C=3, D=4}
+	
+	[Test]
+	public void AnotherFormatBugPinned ()
+	{
+		Assertion.AssertEquals ("#01", "100", Enum.Format (typeof (E3), 100, "f"));
+	}
+	
+	[Test]
+	public void LogicBugPinned ()
+	{
+		string format=null;
+		string[] names=new string[] {"A","B","C","D",};
+		string[] fmtSpl=null;
+		UE ue = UE.A | UE.B | UE.C | UE.D;
+		
+		//all flags must be in format return
+		format = Enum.Format (typeof (UE), ue, "f");
+		fmtSpl = format.Split (',');
+		for( int i=0 ; i<fmtSpl.Length ; ++i )
+			fmtSpl [i] = fmtSpl[i].Trim ();
+
+		foreach (string nval in fmtSpl)
+			Assertion.Assert (nval + " is not a valid enum value name", Array.IndexOf (names, nval) >= 0);
+
+		foreach (string nval in names)
+			Assertion.Assert (nval + " is not contained in format return.", Array.IndexOf (fmtSpl, nval) >= 0);
+	}
 	// TODO - ToString with IFormatProviders
 }
 }

@@ -1,3 +1,7 @@
+2003-05-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* EnumTest.cs: added tests from bug #41522.
+
 2003-05-12  Zoltan Varga  <vargaz@freemail.hu>
 
 	* StringTest.cs: New tests for IndexOf and LastIndexOf + conversion
