@@ -1,8 +1,22 @@
-// cs0199.cs: A static readonly field cannot be passed ref or out (except in a static constructor)// Line: 19
-class ClassMain {        static readonly int index;
+// cs0199.cs: A static readonly field cannot be passed ref or out (except in a static constructor)
+// Line: 19
+
+class ClassMain {
+        static readonly int index;
+
         static ClassMain ()
-        {                GetMaxIndex (ref index);        }
+        {
+                GetMaxIndex (ref index);
+        }
+
         static void GetMaxIndex (ref int value)
-        {                value = 5;        }
+        {
+                value = 5;
+        }
+
         public static void Main ()
-        {                GetMaxIndex (ref index);        }}
+        {
+                GetMaxIndex (ref index);
+        }
+}
+

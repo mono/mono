@@ -1,2 +1,2 @@
 using System.Reflection;
-[assembly: AssemblyKeyName("")]
+[assembly: AssemblyKeyName("")]
