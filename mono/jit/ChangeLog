@@ -1,5 +1,7 @@
 2002-09-12  Dietmar Maurer  <dietmar@ximian.com>
 
+	* exception.c: added patch from Julio Merno to fix bug #30048
+
 	* jit.c (mono_analyze_stack): code cleanup, fix bug #29365
 
 2002-09-09  Dietmar Maurer  <dietmar@ximian.com>
