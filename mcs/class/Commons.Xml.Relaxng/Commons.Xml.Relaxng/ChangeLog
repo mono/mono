@@ -1,0 +1,7 @@
+2003-04-29  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* Started.
+	* added ChangeLog, RelaxngReader.cs, RelaxngValidatingReader.cs,
+	  RngGrammar.cs, RngNameClasses.cs, RngPattern.cs, RngPatternType.cs
+	  and Misc.cs.
+
