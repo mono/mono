@@ -93,7 +93,7 @@ namespace System.Net.Configuration
 		#region Methods
 
 		[MonoTODO]
-		public static NetSectionGroup GetSectionGroup (Configuration config)
+		public static NetSectionGroup GetSectionGroup (System.Configuration.Configuration config)
 		{
 			throw new NotImplementedException ();
 		}
