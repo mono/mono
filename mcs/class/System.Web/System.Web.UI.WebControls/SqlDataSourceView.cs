@@ -250,16 +250,6 @@ namespace System.Web.UI.WebControls {
 			get { return UpdateCommand != ""; }
 		}
 	
-		EventHandlerList events;
-		protected EventHandlerList Events {
-			get {
-				if (events == null)
-					events = new EventHandlerList ();
-				
-				return events;
-			}
-		}
-
 		void ParametersChanged (object source, EventArgs args)
 		{
 			OnDataSourceViewChanged (EventArgs.Empty);
@@ -332,28 +322,13 @@ namespace System.Web.UI.WebControls {
 	
 		string name;
 		SqlDataSource owner;
-		
-		static readonly object EventDataSourceViewChanged = new object ();
-				
-		protected virtual void OnDataSourceViewChanged (EventArgs e)
-		{
-			if (events == null) return;
-			EventHandler h = events [EventDataSourceViewChanged] as EventHandler;
-			if (h != null)
-				h (this, e);
-		}
-		
-		public event EventHandler DataSourceViewChanged {
-			add { Events.AddHandler (EventDataSourceViewChanged, value); }
-			remove { Events.RemoveHandler (EventDataSourceViewChanged, value); }
-		}
 
 		#region OnDelete
 		static readonly object EventDeleted = new object ();
 		protected virtual void OnDeleted (SqlDataSourceStatusEventArgs e)
 		{
-			if (events == null) return;
-			SqlDataSourceStatusEventHandler h = events [EventDeleted] as SqlDataSourceStatusEventHandler;
+			if (!HasEvents ()) return;
+			SqlDataSourceStatusEventHandler h = Events [EventDeleted] as SqlDataSourceStatusEventHandler;
 			if (h != null)
 				h (this, e);
 		}
@@ -366,8 +341,8 @@ namespace System.Web.UI.WebControls {
 		static readonly object EventDeleting = new object ();
 		protected virtual void OnDeleting (SqlDataSourceCommandEventArgs e)
 		{
-			if (events == null) return;
-			SqlDataSourceCommandEventHandler h = events [EventDeleting] as SqlDataSourceCommandEventHandler;
+			if (!HasEvents ()) return;
+			SqlDataSourceCommandEventHandler h = Events [EventDeleting] as SqlDataSourceCommandEventHandler;
 			if (h != null)
 				h (this, e);
 		}
@@ -381,8 +356,8 @@ namespace System.Web.UI.WebControls {
 		static readonly object EventInserted = new object ();
 		protected virtual void OnInserted (SqlDataSourceStatusEventArgs e)
 		{
-			if (events == null) return;
-			SqlDataSourceStatusEventHandler h = events [EventInserted] as SqlDataSourceStatusEventHandler;
+			if (!HasEvents ()) return;
+			SqlDataSourceStatusEventHandler h = Events [EventInserted] as SqlDataSourceStatusEventHandler;
 			if (h != null)
 				h (this, e);
 		}
@@ -395,8 +370,8 @@ namespace System.Web.UI.WebControls {
 		static readonly object EventInserting = new object ();
 		protected virtual void OnInserting (SqlDataSourceCommandEventArgs e)
 		{
-			if (events == null) return;
-			SqlDataSourceCommandEventHandler h = events [EventInserting] as SqlDataSourceCommandEventHandler;
+			if (!HasEvents ()) return;
+			SqlDataSourceCommandEventHandler h = Events [EventInserting] as SqlDataSourceCommandEventHandler;
 			if (h != null)
 				h (this, e);
 		}
@@ -410,8 +385,8 @@ namespace System.Web.UI.WebControls {
 		static readonly object EventSelected = new object ();
 		protected virtual void OnSelected (SqlDataSourceStatusEventArgs e)
 		{
-			if (events == null) return;
-			SqlDataSourceStatusEventHandler h = events [EventSelected] as SqlDataSourceStatusEventHandler;
+			if (!HasEvents ()) return;
+			SqlDataSourceStatusEventHandler h = Events [EventSelected] as SqlDataSourceStatusEventHandler;
 			if (h != null)
 				h (this, e);
 		}
@@ -424,8 +399,8 @@ namespace System.Web.UI.WebControls {
 		static readonly object EventSelecting = new object ();
 		protected virtual void OnSelecting (SqlDataSourceCommandEventArgs e)
 		{
-			if (events == null) return;
-			SqlDataSourceCommandEventHandler h = events [EventSelecting] as SqlDataSourceCommandEventHandler;
+			if (!HasEvents ()) return;
+			SqlDataSourceCommandEventHandler h = Events [EventSelecting] as SqlDataSourceCommandEventHandler;
 			if (h != null)
 				h (this, e);
 		}
@@ -439,8 +414,8 @@ namespace System.Web.UI.WebControls {
 		static readonly object EventUpdated = new object ();
 		protected virtual void OnUpdated (SqlDataSourceStatusEventArgs e)
 		{
-			if (events == null) return;
-			SqlDataSourceStatusEventHandler h = events [EventUpdated] as SqlDataSourceStatusEventHandler;
+			if (!HasEvents ()) return;
+			SqlDataSourceStatusEventHandler h = Events [EventUpdated] as SqlDataSourceStatusEventHandler;
 			if (h != null)
 				h (this, e);
 		}
@@ -453,8 +428,8 @@ namespace System.Web.UI.WebControls {
 		static readonly object EventUpdating = new object ();
 		protected virtual void OnUpdating (SqlDataSourceCommandEventArgs e)
 		{
-			if (events == null) return;
-			SqlDataSourceCommandEventHandler h = events [EventUpdating] as SqlDataSourceCommandEventHandler;
+			if (!HasEvents ()) return;
+			SqlDataSourceCommandEventHandler h = Events [EventUpdating] as SqlDataSourceCommandEventHandler;
 			if (h != null)
 				h (this, e);
 		}

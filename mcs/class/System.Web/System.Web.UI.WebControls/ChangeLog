@@ -1,3 +1,8 @@
+2004-11-15 Lluis Sanchez Gual <lluis@novell.com>
+
+	* SqlDataSourceView.cs: Removed implementation of Events (it is inherited
+	from DataSourceView.cs).
+
 2004-11-10  Raja R Harinath  <rharinath@novell.com>
 
 	* SqlDataSourceView.cs (Select): Add 'override' to make it compile.
