@@ -8,6 +8,7 @@
 using NUnit.Framework;
 using System;
 using System.Globalization;
+using System.Threading;
 
 namespace MonoTests.System
 {
@@ -22,7 +23,7 @@ public class ByteTest : TestCase
 	private const string MyString3 = "255";
 	private string[] Formats1 = {"c", "d", "e", "f", "g", "n", "p", "x" };
 	private string[] Formats2 = {"c5", "d5", "e5", "f5", "g5", "n5", "p5", "x5" };
-	private string[] Results1 = {NumberFormatInfo.CurrentInfo.CurrencySymbol+"0.00", 
+	private string[] Results1 = {	"",
 					"0", "0.000000e+000", "0.00",
 					"0", "0.00", "0.00 %", "0"};
 	private string[] Results1_Nfi = {NumberFormatInfo.InvariantInfo.CurrencySymbol+"0.00",
@@ -40,8 +41,14 @@ public class ByteTest : TestCase
 	public ByteTest() : base ("MonoTests.System.ByteTests testcase") {}
 	public ByteTest(string name) : base(name) {}
 
-	protected override void SetUp() 
-	{
+	protected override void SetUp() {
+		int cdd = NumberFormatInfo.CurrentInfo.CurrencyDecimalDigits;
+		string csym = NumberFormatInfo.CurrentInfo.CurrencySymbol;
+		string csuffix = (cdd > 0 ? "." : "").PadRight(cdd + (cdd > 0 ? 1 : 0), '0');
+		Results1[0] = csym + "0" + csuffix;
+	}
+
+        protected override void TearDown () {
 	}
 
 	public static ITest Suite {

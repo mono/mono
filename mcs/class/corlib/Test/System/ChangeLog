@@ -1,3 +1,8 @@
+2002/06/04  Nick Drochak <ndrochak@gol.com>
+
+	* ByteTest.cs: Fix currency constant that we use for the expected
+	value.  Try to be more culture-diverse.
+
 2002/06/03  Nick Drochak <ndrochak@gol.com>
 
 	* DecimalTest.cs: Fix some errors that were showing up when run against
