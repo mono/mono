@@ -13,7 +13,8 @@ using System.Globalization;
 namespace MonoTests.System
 {
 
-public class Int32Test : TestCase
+[TestFixture]
+public class Int32Test : Assertion
 {
 	private const Int32 MyInt32_1 = -42;
 	private const Int32 MyInt32_2 = -2147483648;
@@ -37,11 +38,10 @@ public class Int32Test : TestCase
 					"2.1475e+09", "2,147,483,647.00000", "214,748,364,700.00000 %", "7fffffff"};
 	private NumberFormatInfo Nfi = NumberFormatInfo.InvariantInfo;
 	
-	public Int32Test() {}
-
 	private CultureInfo old_culture;
 
-	protected override void SetUp() 
+	[TestFixtureSetUp]
+	public void SetUp() 
 	{
 		old_culture = Thread.CurrentThread.CurrentCulture;
 
@@ -62,7 +62,8 @@ public class Int32Test : TestCase
 		Results2 [6] = perPattern.Replace ("n","214,748,364,700.00000");
 	}
 
-	protected override void TearDown()
+	[TestFixtureTearDown]
+	public void TearDown()
 	{
 		Thread.CurrentThread.CurrentCulture = old_culture;
 	}
@@ -239,6 +240,22 @@ public class Int32Test : TestCase
 		AssertEquals ("Custom format string ####", "0123", i.ToString ("0###"));
 		AssertEquals ("Custom format string ####", "0123", i.ToString ("#0###"));
 		AssertEquals ("Custom format string ####", "000123", i.ToString ("0#0###"));
+	}
+
+	[Test]
+	public void ToString_Defaults () 
+	{
+		Int32 i = 254;
+		// everything defaults to "G"
+		string def = i.ToString ("G");
+		AssertEquals ("ToString()", def, i.ToString ());
+		AssertEquals ("ToString((IFormatProvider)null)", def, i.ToString ((IFormatProvider)null));
+		AssertEquals ("ToString((string)null)", def, i.ToString ((string)null));
+		AssertEquals ("ToString(empty)", def, i.ToString (String.Empty));
+		AssertEquals ("ToString(null,null)", def, i.ToString (null, null));
+		AssertEquals ("ToString(empty,null)", def, i.ToString (String.Empty, null));
+
+		AssertEquals ("ToString(G)", "254", def);
 	}
 }
 

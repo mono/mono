@@ -13,7 +13,8 @@ using System.Globalization;
 namespace MonoTests.System
 {
 
-public class UInt16Test : TestCase
+[TestFixture]
+public class UInt16Test : Assertion
 {
 	private const UInt16 MyUInt16_1 = 42;
 	private const UInt16 MyUInt16_2 = 0;
@@ -38,11 +39,10 @@ public class UInt16Test : TestCase
 
 	private NumberFormatInfo Nfi = NumberFormatInfo.InvariantInfo;
 	
-	public UInt16Test() {}
-
 	private CultureInfo old_culture;
 
-	protected override void SetUp() 
+	[TestFixtureSetUp]
+	public void SetUp () 
 	{
 		old_culture = Thread.CurrentThread.CurrentCulture;
 
@@ -61,7 +61,8 @@ public class UInt16Test : TestCase
 		Results2 [6] = perPattern.Replace ("n","6,553,500.00000");
 	}
 
-	protected override void TearDown()
+	[TestFixtureTearDown]
+	public void TearDown ()
 	{
 		Thread.CurrentThread.CurrentCulture = old_culture;
 	}
@@ -190,7 +191,22 @@ public class UInt16Test : TestCase
 			Assert("A8", typeof(FormatException) == e.GetType());
 		}
 	}
-}
 
+	[Test]
+	public void ToString_Defaults () 
+	{
+		UInt16 i = 254;
+		// everything defaults to "G"
+		string def = i.ToString ("G");
+		AssertEquals ("ToString()", def, i.ToString ());
+		AssertEquals ("ToString((IFormatProvider)null)", def, i.ToString ((IFormatProvider)null));
+		AssertEquals ("ToString((string)null)", def, i.ToString ((string)null));
+		AssertEquals ("ToString(empty)", def, i.ToString (String.Empty));
+		AssertEquals ("ToString(null,null)", def, i.ToString (null, null));
+		AssertEquals ("ToString(empty,null)", def, i.ToString (String.Empty, null));
+
+		AssertEquals ("ToString(G)", "254", def);
+	}
+}
 
 }

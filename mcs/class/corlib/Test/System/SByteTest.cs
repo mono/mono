@@ -171,6 +171,22 @@ public class SByteTest : Assertion
 			Assert("typeof(FormatException) == e.GetType()", typeof(FormatException) == e.GetType());
 		}
 	}
+
+	[Test]
+	public void ToString_Defaults () 
+	{
+		SByte i = 100;
+		// everything defaults to "G"
+		string def = i.ToString ("G");
+		AssertEquals ("ToString()", def, i.ToString ());
+		AssertEquals ("ToString((IFormatProvider)null)", def, i.ToString ((IFormatProvider)null));
+		AssertEquals ("ToString((string)null)", def, i.ToString ((string)null));
+		AssertEquals ("ToString(empty)", def, i.ToString (String.Empty));
+		AssertEquals ("ToString(null,null)", def, i.ToString (null, null));
+		AssertEquals ("ToString(empty,null)", def, i.ToString (String.Empty, null));
+
+		AssertEquals ("ToString(G)", "100", def);
+	}
 }
 
 }

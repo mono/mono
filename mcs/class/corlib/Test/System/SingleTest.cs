@@ -67,5 +67,21 @@ namespace MonoTests.System  {
 			Assert ("12", !Single.IsPositiveInfinity (12));		
 			Assert ("NaN", !Single.IsPositiveInfinity (Single.NaN));		
 		}
+
+		[Test]
+		public void ToString_Defaults () 
+		{
+			Single i = 254.9f;
+			// everything defaults to "G"
+			string def = i.ToString ("G");
+			AssertEquals ("ToString()", def, i.ToString ());
+			AssertEquals ("ToString((IFormatProvider)null)", def, i.ToString ((IFormatProvider)null));
+			AssertEquals ("ToString((string)null)", def, i.ToString ((string)null));
+			AssertEquals ("ToString(empty)", def, i.ToString (String.Empty));
+			AssertEquals ("ToString(null,null)", def, i.ToString (null, null));
+			AssertEquals ("ToString(empty,null)", def, i.ToString (String.Empty, null));
+
+			AssertEquals ("ToString(G)", "254.9", def);
+		}
 	}
 }

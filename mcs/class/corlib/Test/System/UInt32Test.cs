@@ -13,7 +13,8 @@ using System.Threading;
 namespace MonoTests.System
 {
 
-public class UInt32Test : TestCase
+[TestFixture]
+public class UInt32Test : Assertion
 {
 	private const UInt32 MyUInt32_1 = 42;
 	private const UInt32 MyUInt32_2 = 0;
@@ -37,11 +38,10 @@ public class UInt32Test : TestCase
 					"4.295e+09", "4,294,967,295.00000", "429,496,729,500.00000 %", "ffffffff"};
 	private NumberFormatInfo Nfi = NumberFormatInfo.InvariantInfo;
 	
-	public UInt32Test() {}
-
 	private CultureInfo old_culture;
 
-	protected override void SetUp() 
+	[TestFixtureSetUp]
+	public void SetUp () 
 	{
 		old_culture = Thread.CurrentThread.CurrentCulture;
 
@@ -62,7 +62,8 @@ public class UInt32Test : TestCase
 		Results2 [6] = perPattern.Replace ("n","429,496,729,500.00000");
 	}
 
-	protected override void TearDown()
+	[TestFixtureTearDown]
+	public void TearDown ()
 	{
 		Thread.CurrentThread.CurrentCulture = old_culture;
 	}
@@ -231,6 +232,22 @@ public class UInt32Test : TestCase
 		catch (Exception e) {
 			Assert(typeof(FormatException) == e.GetType());
 		}
+	}
+
+	[Test]
+	public void ToString_Defaults () 
+	{
+		UInt32 i = 254;
+		// everything defaults to "G"
+		string def = i.ToString ("G");
+		AssertEquals ("ToString()", def, i.ToString ());
+		AssertEquals ("ToString((IFormatProvider)null)", def, i.ToString ((IFormatProvider)null));
+		AssertEquals ("ToString((string)null)", def, i.ToString ((string)null));
+		AssertEquals ("ToString(empty)", def, i.ToString (String.Empty));
+		AssertEquals ("ToString(null,null)", def, i.ToString (null, null));
+		AssertEquals ("ToString(empty,null)", def, i.ToString (String.Empty, null));
+
+		AssertEquals ("ToString(G)", "254", def);
 	}
 }
 

@@ -14,7 +14,7 @@ using NUnit.Framework;
 namespace MonoTests.System {
 
 	[TestFixture]
-	public class DoubleTest {
+	public class DoubleTest : Assertion {
 		
 		private const Double d_zero = 0.0;
 		private const Double d_neg = -1234.5678;
@@ -444,6 +444,20 @@ namespace MonoTests.System {
 			
 		}
 
+		[Test]
+		public void ToString_Defaults () 
+		{
+			Double i = 254.9d;
+			// everything defaults to "G"
+			string def = i.ToString ("G");
+			AssertEquals ("ToString()", def, i.ToString ());
+			AssertEquals ("ToString((IFormatProvider)null)", def, i.ToString ((IFormatProvider)null));
+			AssertEquals ("ToString((string)null)", def, i.ToString ((string)null));
+			AssertEquals ("ToString(empty)", def, i.ToString (String.Empty));
+			AssertEquals ("ToString(null,null)", def, i.ToString (null, null));
+			AssertEquals ("ToString(empty,null)", def, i.ToString (String.Empty, null));
+
+			AssertEquals ("ToString(G)", "254.9", def);
+		}
 	}
-	
 }

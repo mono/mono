@@ -405,5 +405,21 @@ public class Int64Test : Assertion
 		{
 			Int64.Parse (Int64.MinValue.ToString () + "1");
 		}
+
+		[Test]
+		public void ToString_Defaults () 
+		{
+			Int64 i = 254;
+			// everything defaults to "G"
+			string def = i.ToString ("G");
+			AssertEquals ("ToString()", def, i.ToString ());
+			AssertEquals ("ToString((IFormatProvider)null)", def, i.ToString ((IFormatProvider)null));
+			AssertEquals ("ToString((string)null)", def, i.ToString ((string)null));
+			AssertEquals ("ToString(empty)", def, i.ToString (String.Empty));
+			AssertEquals ("ToString(null,null)", def, i.ToString (null, null));
+			AssertEquals ("ToString(empty,null)", def, i.ToString (String.Empty, null));
+
+			AssertEquals ("ToString(G)", "254", def);
+		}
 	}
 }

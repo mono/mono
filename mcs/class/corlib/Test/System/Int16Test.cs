@@ -13,7 +13,8 @@ using System.Globalization;
 namespace MonoTests.System
 {
 
-public class Int16Test : TestCase
+[TestFixture]
+public class Int16Test : Assertion
 {
 	private const Int16 MyInt16_1 = -42;
 	private const Int16 MyInt16_2 = -32768;
@@ -33,11 +34,10 @@ public class Int16Test : TestCase
 	                                  "32767", "32,767.00000", "3,276,700.00000 %", "07fff"};
 	private NumberFormatInfo Nfi = NumberFormatInfo.InvariantInfo;
 	
-	public Int16Test() {}
-
 	private CultureInfo old_culture;
 
-	protected override void SetUp() 
+	[TestFixtureSetUp]
+	public void SetUp () 
 	{
 		old_culture = Thread.CurrentThread.CurrentCulture;
 
@@ -49,7 +49,8 @@ public class Int16Test : TestCase
 		Results2 [0] = NumberFormatInfo.CurrentInfo.CurrencySymbol+"32,767.00000";
 	}
 
-	protected override void TearDown()
+	[TestFixtureTearDown]
+	public void TearDown ()
 	{
 		Thread.CurrentThread.CurrentCulture = old_culture;
 	}
@@ -180,6 +181,22 @@ public class Int16Test : TestCase
 		catch (Exception e) {
 			Assert(typeof(FormatException) == e.GetType());
 		}
+	}
+
+	[Test]
+	public void ToString_Defaults () 
+	{
+		Int16 i = 254;
+		// everything defaults to "G"
+		string def = i.ToString ("G");
+		AssertEquals ("ToString()", def, i.ToString ());
+		AssertEquals ("ToString((IFormatProvider)null)", def, i.ToString ((IFormatProvider)null));
+		AssertEquals ("ToString((string)null)", def, i.ToString ((string)null));
+		AssertEquals ("ToString(empty)", def, i.ToString (String.Empty));
+		AssertEquals ("ToString(null,null)", def, i.ToString (null, null));
+		AssertEquals ("ToString(empty,null)", def, i.ToString (String.Empty, null));
+
+		AssertEquals ("ToString(G)", "254", def);
 	}
 }
 

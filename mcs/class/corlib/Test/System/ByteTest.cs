@@ -218,14 +218,19 @@ public class ByteTest : Assertion
 	}
 
 	[Test]
-	public void ToString_Default () 
+	public void ToString_Defaults () 
 	{
-		byte value = 255;
-		string def = value.ToString ("G");
-		string format = null;
-		AssertEquals ("null", def, value.ToString (format));
-		format = String.Empty;
-		AssertEquals ("empty", def, value.ToString (format));
+		byte i = 254;
+		// everything defaults to "G"
+		string def = i.ToString ("G");
+		AssertEquals ("ToString()", def, i.ToString ());
+		AssertEquals ("ToString((IFormatProvider)null)", def, i.ToString ((IFormatProvider)null));
+		AssertEquals ("ToString((string)null)", def, i.ToString ((string)null));
+		AssertEquals ("ToString(empty)", def, i.ToString (String.Empty));
+		AssertEquals ("ToString(null,null)", def, i.ToString (null, null));
+		AssertEquals ("ToString(empty,null)", def, i.ToString (String.Empty, null));
+
+		AssertEquals ("ToString(G)", "254", def);
 	}
 }
 
