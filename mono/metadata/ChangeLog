@@ -1,9 +1,20 @@
+2004-01-20  Zoltan Varga  <vargaz@freemail.hu>
+
+	* reflection.c (fixup_cattrs): New function to fixup the methoddef
+	tokens in the cattr table. Fixes #53108.
+
 2004-01-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* loader.c: don't trim ".dll" before looking up in the config file.
 	Don't leak orig_scope. Reopened bug #22532 in the meanwhile.
 
 2004-01-19  Zoltan Varga  <vargaz@freemail.hu>
+
+	* icall.c (ves_icall_System_Reflection_Assembly_GetManifestResourceInternal): 
+	Return the module which contains the resource as well.
+	(ves_icall_System_Reflection_Module_Close): New icall.
+
+	* appdomain.c: Bump corlib version number.
 
 	* image.c (mono_image_addref): New public function.
 
