@@ -100,6 +100,14 @@ namespace Mono.CSharp {
 				return full_name;
 		}
 
+		public static string MakeName (string name, TypeArguments args)
+		{
+			if (args == null)
+				return name;
+			else
+				return name + "!" + args.Count;
+		}
+
 		public static string MakeName (string name, int count)
 		{
 			return name + "!" + count;
@@ -110,9 +118,9 @@ namespace Mono.CSharp {
 			string suffix = "";
 			if (Left != null)
 				return Left.GetTypeName () + "." +
-					MakeName (Name, TypeArguments.Count);
+					MakeName (Name, TypeArguments);
 			else
-				return MakeName (Name, TypeArguments.Count);
+				return MakeName (Name, TypeArguments);
 		}
 
 		public Expression GetTypeExpression (Location loc)
@@ -132,7 +140,7 @@ namespace Mono.CSharp {
 		public string Basename {
 			get {
 				if (TypeArguments != null)
-					return MakeName (Name, TypeArguments.Count);
+					return MakeName (Name, TypeArguments);
 				else
 					return Name;
 			}
