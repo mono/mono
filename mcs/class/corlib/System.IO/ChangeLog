@@ -1,3 +1,8 @@
+2002-10-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* FileStream.cs: throw an exception if trying to open a directory.
+	Thanks to Martin Aliger.
+
 2002-10-02  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Path.cs: fixes bug #28046.

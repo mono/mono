@@ -60,6 +60,10 @@ namespace System.IO
 			if (name == "" || name.IndexOfAny (Path.InvalidPathChars) != -1)
 				throw new ArgumentException ();
 
+			if (Directory.Exists (name))
+				throw new UnauthorizedAccessException ("Access to the path '" + Path.GetFullPath (name) +
+								       "' is denied.");
+
 			this.name = name;
 
 			// TODO: demand permissions
