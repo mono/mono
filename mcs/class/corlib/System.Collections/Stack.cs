@@ -63,6 +63,7 @@ namespace System.Collections {
 				}
 			}
 			
+/*
 			public override bool IsReadOnly {
 				get { 
 					lock (stack) {
@@ -70,6 +71,7 @@ namespace System.Collections {
 					}
 				}
 			}
+*/
 			
 			public override bool IsSynchronized {
 				get { return true; }
@@ -132,9 +134,11 @@ namespace System.Collections {
 			get { return count; }
 		}
 
+/*
 		public virtual bool IsReadOnly {
 			get { return false; }
 		}
+*/
 
 		public virtual bool IsSynchronized {
 			get { return false; }
