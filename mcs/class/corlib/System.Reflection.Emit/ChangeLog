@@ -1,3 +1,10 @@
+2001-10-07  Miguel de Icaza  <miguel@ximian.com>
+
+	* AssemblyBuilder.cs: Reformatted.
+
+	Added override keywords to those that needed them.
+
+	Removed methods that we do not override, but just inherit
 
 Tue Sep 25 16:53:08 CEST 2001 Paolo Molaro <lupus@ximian.com>
 

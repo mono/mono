@@ -19,8 +19,7 @@ namespace System {
 	//
 	
 	public abstract class Type : MemberInfo /* IReflect */ {
-
-		private RuntimeTypeHandle _impl;
+		private RuntimeTypeHandle type_handle;
 
 		/// <summary>
 		///   The assembly where the type is defined.
@@ -94,14 +93,22 @@ namespace System {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern Type internal_from_name (string name);
 		
-		public static Type GetType(string typeName) {
+		public static Type GetType(string typeName)
+		{
 			return internal_from_name (typeName);
 		}
 
-		public static Type GetTypeFromHandle (RuntimeTypeHandle handle) { 
+		public static Type GetTypeFromHandle (RuntimeTypeHandle handle)
+		{ 
 			return internal_from_handle (handle);
 		}
 
+		public RuntimeTypeHandle TypeHandle {
+			get {
+				return type_handle;
+			}
+		}
+		
 		public bool IsValueType {
 			get {
 				// FIXME

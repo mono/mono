@@ -28,9 +28,9 @@ namespace System.Text {
                         return 0;
                 }
 
-                public override char[] GetChars(byte[] bytes, int byteIndex, int byteCount, char[] chars, int charIndex) {
+                public override int GetChars(byte[] bytes, int byteIndex, int byteCount, char[] chars, int charIndex) {
                         // FIXME
-                        return null;
+                        return 0;
                 }
 
                 public override int GetMaxByteCount(int charCount) {

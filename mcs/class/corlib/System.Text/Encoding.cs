@@ -190,9 +190,9 @@ namespace System.Text {
 
                 public abstract int GetBytes(char[] chars, int charIndex, int charCount, byte[] bytes, int byteIndex);
 
-                public virtual byte[] GetBytes(string s, int charIndex, int charCount, byte[] bytes, int byteIndex) {
+                public virtual int GetBytes(string s, int charIndex, int charCount, byte[] bytes, int byteIndex) {
                         // FIXME
-                        return null;
+                        return 0;
                 }
 
                 public virtual int GetCharCount(byte[] bytes) {
@@ -215,7 +215,7 @@ namespace System.Text {
                         return null;
                 }
 
-                public abstract char[] GetChars(byte[] bytes, int byteIndex, int byteCount, char[] chars, int charIndex);
+                public abstract int GetChars(byte[] bytes, int byteIndex, int byteCount, char[] chars, int charIndex);
 
                 public virtual Decoder GetDecoder() {
                         // FIXME

@@ -166,8 +166,8 @@ namespace System.IO
 				throw new IOException();
 			   //break; generates warning CS0162 unreachable code
 			}
-			inited = true;
 			*/
+			inited = true;
 		}
 
 		private DateTime c2csharpTime(double seconds)

@@ -49,10 +49,8 @@ byte[] bytes, int byteIndex)
 					}
 					else
 					{
-						// LAME: if chars[] come as UTF-16 - here we have to decode the 
-surrogate pair, before proceeding
-						// charCode = some magic with charCode and (int)chars[++i + charIndex] 
-if needed
+						// LAME: if chars[] come as UTF-16 - here we have to decode the surrogate pair, before proceeding
+						// charCode = some magic with charCode and (int)chars[++i + charIndex] if needed
 						if (charCode < 0x10000)
 						{
 							bytes [outputIndex++] = (byte)((charCode >> 12) | 0xE0);
@@ -91,8 +89,7 @@ if needed
 			return (outputIndex - byteIndex);
 		}
 
-		public override int GetBytes(string s, int charIndex, int charCount, 
-byte[] bytes, int byteIndex)
+		public override int GetBytes(string s, int charIndex, int charCount, byte[] bytes, int byteIndex)
 		{
 				char[] chars = s.ToCharArray(charIndex, charCount);
 				return 	GetBytes(chars, 0, charCount, bytes, byteIndex);

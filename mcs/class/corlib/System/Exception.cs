@@ -16,6 +16,7 @@ namespace System {
 		Exception inner_exception;
 		string message;
 		string help_link;
+		string class_name;
 		string stack_trace = "TODO: implement stack traces";
 		int hresult;
 		private string source;
@@ -34,12 +35,15 @@ namespace System {
 
 		protected Exception (SerializationInfo info, StreamingContext sc)
 		{
-			if (info == null){
+			if (info == null)
 				throw new ArgumentNullException ("info");
-			}
-			
-			// TODO: Implement the restoration of an Exception
-			// from a stream.
+
+			class_name      = info.GetString ("ClassName");
+			message         = info.GetString ("Message");
+			inner_exception = (Exception) info.GetValue  ("InnerException", typeof (Exception));
+			help_link       = info.GetString ("HelpURL");
+			stack_trace     = info.GetString ("StackTraceString");
+			hresult         = info.GetInt32  ("HResult");
 		}
 
 		public Exception (string msg, Exception e)

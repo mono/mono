@@ -20,12 +20,24 @@ namespace System {
 				return (IntPtr) value;
 			}
 		}
+
+		RuntimeFieldHandle (SerializationInfo info, StreamingContext context)
+		{
+			Type t;
+			
+			if (info == null)
+				throw new ArgumentNullException ("info");
+
+			t = (Type) info.GetValue ("TypeObj", typeof (Type));
+
+			value = t.TypeHandle.Value;
+			if (value == (IntPtr) 0)
+				throw new SerializationException ("Insufficient state");
+		}
 		
-                // This is from ISerializable
                 public void GetObjectData (SerializationInfo info, StreamingContext context)
                 {
-                        // TODO: IMPLEMENT ME.
+			info.AddValue ("TypeObj", value, value.GetType ());
                 }
-
 	}
 }
