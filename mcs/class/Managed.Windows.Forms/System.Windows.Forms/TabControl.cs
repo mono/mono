@@ -184,17 +184,31 @@ namespace System.Windows.Forms {
 				}
 
 				SuspendLayout ();
-				if (selected_index != -1)
+
+				Rectangle invalid = Rectangle.Empty;
+
+				if (selected_index != -1) {
+					invalid = GetTabRect (selected_index);
 					Controls [selected_index].Visible = false;
+				}
 				selected_index = value;
-				if (selected_index != -1) 
+				if (selected_index != -1) {
+					invalid = Rectangle.Union (invalid, GetTabRect (selected_index));
 					Controls [selected_index].Visible = true;
+				}
+
 				ResumeLayout ();
 
-				if (SelectedIndex != -1 && TabPages [SelectedIndex].Row != BottomRow) 
+				if (SelectedIndex != -1 && TabPages [SelectedIndex].Row != BottomRow) {
 					DropRow (TabPages [selected_index].Row);
-				SizeTabs ();
-				Refresh ();
+					// calculating what to invalidate here seems to be slower then just
+					// refreshing the whole thing
+					SizeTabs ();
+					Refresh ();
+				} else {
+					SizeTabs ();
+					Invalidate (invalid);
+                                }
 			}
 		}
 
