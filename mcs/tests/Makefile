@@ -69,16 +69,16 @@ all-local install-local uninstall-local:
 # casts
 
 bootstrap-cast.exe: gen-cast-test.cs
-	$(BOOT_COMPILE) /target:exe /out:$@ $<
+	$(BOOT_COMPILE) -target:exe /out:$@ $<
 
 casts.cs: bootstrap-cast.exe
 	$(RUNTIME) $< >$@
 
 casts-mcs.exe: casts.cs
-	$(CSCOMPILE) /target:exe /out:$@ $<
+	$(CSCOMPILE) -target:exe /out:$@ $<
 
 casts-boot.exe: casts.cs
-	$(BOOT_COMPILE) /target:exe /out:$@ $<
+	$(BOOT_COMPILE) -target:exe /out:$@ $<
 
 boot-casts.out: casts-boot.exe
 	$(RUNTIME) $< >$@
@@ -161,8 +161,8 @@ multi: multi-1 multi-2 multi-3 multi-5 ilasm
 	echo Multi-assembly test passes
 
 multi-1:
-	$(INTERNAL_MCS) /target:library dll-1.cs
-	$(INTERNAL_MCS) /r:dll-1.dll prog-1.cs /out:prog-1.exe
+	$(INTERNAL_MCS) -target:library dll-1.cs
+	$(INTERNAL_MCS) -r:dll-1.dll prog-1.cs /out:prog-1.exe
 	$(TEST_RUNTIME) prog-1.exe
 
 #
@@ -172,26 +172,30 @@ multi-1:
 # in a library. (eg, that it is not confused by two Main methods)
 #
 multi-2:
-	$(INTERNAL_MCS) /target:library pi.cs
-	$(INTERNAL_MCS) /target:library pp.cs
+	$(INTERNAL_MCS) -target:library pi.cs
+	$(INTERNAL_MCS) -target:library pp.cs
 	$(INTERNAL_MCS) pu.cs -r:pi.dll -r:pp.dll
 	$(INTERNAL_MCS) pu.cs -r:pp.dll -r:pi.dll
 
 multi-3:
-	$(INTERNAL_MCS) /target:library conv-lib.cs
-	$(INTERNAL_MCS) /r:conv-lib.dll conv-main.cs
+	$(INTERNAL_MCS) -target:library conv-lib.cs
+	$(INTERNAL_MCS) -r:conv-lib.dll conv-main.cs
 	$(TEST_RUNTIME) conv-main.exe
 
 multi-4:
-	$(INTERNAL_MCS) /target:module module-1.cs
-	$(INTERNAL_MCS) /target:module module-2.cs
+	$(INTERNAL_MCS) -target:module module-1.cs
+	$(INTERNAL_MCS) -target:module module-2.cs
 	$(INTERNAL_MCS) /addmodule:module-1.netmodule /addmodule:module-2.netmodule module-3.cs
 	$(TEST_RUNTIME) module-3.exe
 
 multi-5:
-	$(INTERNAL_MCS) /target:library dll-2.cs
-	$(INTERNAL_MCS) /r:dll-2.dll prog-2.cs /out:prog-2.exe
+	$(INTERNAL_MCS) -target:library dll-2.cs
+	$(INTERNAL_MCS) -r:dll-2.dll prog-2.cs /out:prog-2.exe
 	$(TEST_RUNTIME) prog-2.exe
+
+multi-6:
+	$(INTERNAL_MCS) -target:library ns0.cs
+	$(INTERNAL_MCS) ns.cs -r:ns0.dll
 
 ilasm:
 	$(INTERNAL_ILASM) /dll property-il.il
