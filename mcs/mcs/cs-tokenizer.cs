@@ -1055,7 +1055,6 @@ namespace Mono.CSharp
 			val = null;
 			// optimization: eliminate col and implement #directive semantic correctly.
 			for (;(c = getChar ()) != -1; col++) {
-			
 				if (is_identifier_start_character ((char) c)){
 					System.Text.StringBuilder id = new System.Text.StringBuilder ();
 					string ids;

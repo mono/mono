@@ -1,3 +1,7 @@
+2001-12-20  Miguel de Icaza  <miguel@ximian.com>
+
+	* cs-parser.jay: Do not require EOF token at the end.
+
 2001-12-20  Ravi Pratap  <ravi@ximian.com>
 
 	* rootcontext.cs (LookupType): Concatenate type names with
