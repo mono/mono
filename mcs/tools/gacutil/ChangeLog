@@ -1,5 +1,11 @@
 2004-05-21  Jackson Harper  <jackson@ximian.com>
 
+	* driver.cs: Add uninstall-specific option. This takes an assembly
+	file and uninstalls a matching named one from the GAC. Fix search
+	string shenanigans when uninstalling.
+
+2004-05-21  Jackson Harper  <jackson@ximian.com>
+
 	* driver.cs: This is the new gacutil. Right now it wont get built,
 	after I do a little more testing I will make it the built/installed
 	gacutil.

@@ -28,6 +28,7 @@ namespace Mono.Tools {
 			Unknown,
 			Install,
 			Uninstall,
+			UninstallSpecific,
 			List,
 			Help
 		}
@@ -112,6 +113,13 @@ namespace Mono.Tools {
 					Environment.Exit (1);
 				}
 				Uninstall (name, package, gacdir, libdir);
+				break;
+			case Command.UninstallSpecific:
+				if (name == null) {
+					Console.WriteLine ("Opetion " + args [0] + " takes 1 argument");
+					Environment.Exit (1);
+				}
+				UninstallSpecific (name, package, gacdir, libdir);
 				break;
 			case Command.List:
 				List (name, gacdir);
@@ -212,19 +220,11 @@ namespace Mono.Tools {
 			}
 
 			string searchString = GetSearchString (asm_info);
-
-			if (asm_info.Keys.Count != 1) {
-				if (asm_info["version"] != null)
-					searchString += (string) asm_info["version"] + "*";
-			} else {
-				searchString += "*";
-			}
-
-			string [] directories = Directory.GetDirectories (gacdir, searchString);
+			string [] directories = Directory.GetDirectories (asmdir, searchString);
 
 			foreach (string dir in directories) {
 				Directory.Delete (dir, true);
-				if (package != String.Empty) {
+				if (package != null) {
 					string link_dir = Path.Combine (libdir, package);
 					string link = Path.Combine (link_dir, (string) asm_info ["assembly"] + ".dll");
 					File.Delete (link);
@@ -240,6 +240,29 @@ namespace Mono.Tools {
 				Console.WriteLine ("Cleaning assembly dir, its empty");
 				Directory.Delete (asmdir);
 			}
+		}
+
+		private static void UninstallSpecific (string name, string package,
+				string gacdir, string libdir)
+		{
+			string failure_msg = "Failure to remove assembly from the cache: ";
+
+			if (!File.Exists (name)) {
+				Console.WriteLine (failure_msg + "The system cannot find the file specified.");
+				Environment.Exit (1);
+			}
+
+			AssemblyName an = null;
+
+			try {
+				an = AssemblyName.GetAssemblyName (name);
+			} catch {
+				Console.WriteLine (failure_msg + "The file specified is not a valid assembly.");
+				Environment.Exit (1);
+			}
+
+			Uninstall (an.FullName.Replace (" ", String.Empty),
+					package, gacdir, libdir);
 		}
 
 		private static void List (string name, string gacdir)
@@ -299,12 +322,12 @@ namespace Mono.Tools {
 			string version, culture, token;
 
 			version = asm_info ["version"] as string;
-			version = (version == null ? String.Empty : version);
+			version = (version == null ? "*" : version);
 			culture = asm_info ["culture"] as string;
-			culture = (culture == null ? String.Empty : version.ToLower (CultureInfo.InvariantCulture));
+			culture = (culture == null ? "*" : culture.ToLower (CultureInfo.InvariantCulture));
 			token = asm_info ["publickeytoken"] as string;
-			token = (token == null ? String.Empty : token.ToLower (CultureInfo.InvariantCulture));
-
+			token = (token == null ? "*" : token.ToLower (CultureInfo.InvariantCulture));
+			
 			return String.Format ("{0}_{1}_{2}", version, culture, token);
 		}
 
@@ -336,6 +359,11 @@ namespace Mono.Tools {
 			case "/uf":
 			case "--uninstall":
 				c = Command.Uninstall;
+				break;
+			case "-us":
+			case "/us":
+			case "--uninstall-specific":
+				c = Command.UninstallSpecific;
 				break;
 			case "-l":
 			case "/l":
