@@ -75,7 +75,6 @@ namespace System.Xml
 				resolver = new XmlUrlResolver ();
 			entityHandling = EntityHandling.ExpandEntities;
 			validationType = ValidationType.Auto;
-			schemas = new XmlSchemaSet ();
 			storedCharacters = new StringBuilder ();
 		}
 
@@ -280,6 +279,8 @@ namespace System.Xml
 
 		public XmlSchemaCollection Schemas {
 			get {
+				if (schemas == null)
+					schemas = new XmlSchemaSet ();
 				return schemas.SchemaCollection;
 			}
 		}

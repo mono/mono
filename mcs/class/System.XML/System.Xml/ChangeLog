@@ -1,5 +1,9 @@
 2005-03-22  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlValidatingReader.cs : create schema set on demand.
+
+2005-03-22  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlParserInput.cs,
 	  XmlNode.cs,
 	  XmlUrlResolver.cs,
