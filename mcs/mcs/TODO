@@ -15,23 +15,11 @@ Major tasks:
 
 readonly variables and ref/out
 
-Important:
-----------
-
-	During enumeration definition, a set of extra operators are 
-	allowed.
-	
 BUGS
 ----
 
 * Check for Final when overriding, if the parent is Final, then we cant
   allow an override.
-
-* Implement visibility.
-
-* Visibility
-
-	I am not reporting errors on visibility yet.
 
 * Interface indexers
 
@@ -45,11 +33,6 @@ BUGS
 
 	We need to make sure at *compile time* that the arguments in
 	the expression list of an array creation are always positive.
-
-* Implement dead code elimination in statement.cs
-
-	It is pretty simple to implement dead code elimination in 
-	if/do/while
 
 * Indexer bugs:
 
@@ -142,8 +125,6 @@ OPTIMIZATIONS
   resolve.  
  
 * User Defined Conversions is doing way too many calls to do union sets that are not needed
-
-* Implement loop inversion for our loops
 
 * Add test case for destructors
 
@@ -253,12 +234,6 @@ RECOMMENDATIONS
 	Not sure that this grammar is correct, we might have to
 	resolve this during semantic analysis.
 
-* Optimizations
-
-	Only create one `This' instance per class, and reuse it.
-
-	Maybe keep a pool of constants/literals (zero, 1)?
-
 * Idea
 
 	MethodGroupExpr
@@ -277,28 +252,3 @@ RECOMMENDATIONS
 	Otherwise, a resolution will return a MethodGroupExpr which is
 	not guaranteed to have set its `Expression.Type' to a non-null
 	value.
-
-
-************
-Potential bug:
-
-	We would need to decode the shortname before we lookup members?
-	
-	Maybe not.
-
-interface I {
-	void A ();
-}
-
-class X : I {
-	void I.A ();
-}
-
-class Y : X, I {
-	void I.A () {}
-}
-
-
-
-*************
-

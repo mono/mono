@@ -96,6 +96,11 @@ namespace Mono.CSharp {
 
 		public CustomAttributeBuilder Resolve (EmitContext ec)
 		{
+			return Resolve (ec, false);
+		}
+		
+		public CustomAttributeBuilder Resolve (EmitContext ec, bool partial)
+		{
 			//
 			// We might call resolve twice, because Structs will call
 			// things in advance, so they can find out any attribute information
@@ -104,15 +109,30 @@ namespace Mono.CSharp {
 			//
 			if (cb != null)
 				return cb;
+
+			//
+			// Also, we might back out if we are not a StructLayout, because
+			// only then we care about getting the extra type flags
+			//
+			if (Type == null){
+				Type = CheckAttributeType (ec);
+			
+				if (Type == null)
+					return null;
+			}
+
+			if (Type == TypeManager.structlayout_type){
+				StructLayout = true;
+				StructLayoutAttributes = TypeAttributes.AnsiClass;
+			}
+
+			if (partial && !StructLayout)
+				return null;
 			
 			bool MethodImplAttr = false;
 			bool MarshalAsAttr = false;
 
 			UsageAttr = false;
-
-			Type = CheckAttributeType (ec);
-			if (Type == null)
-				return null;
 
 			if (Type == TypeManager.attribute_usage_type)
 				UsageAttr = true;
@@ -120,11 +140,7 @@ namespace Mono.CSharp {
 				MethodImplAttr = true;
 			if (Type == TypeManager.marshal_as_attr_type)
 				MarshalAsAttr = true;
-			if (Type == TypeManager.structlayout_type){
-				StructLayout = true;
-				StructLayoutAttributes = TypeAttributes.AnsiClass;
-			}
-			
+
 			// Now we extract the positional and named arguments
 			
 			ArrayList pos_args = new ArrayList ();
@@ -246,7 +262,7 @@ namespace Mono.CSharp {
 					if (e is Constant){
 						object value = ((Constant) e).GetValue ();
 						
-						if (StructLayout && fi.Name == "CharSet"){
+						if (false && StructLayout && fi.Name == "CharSet"){
 							CharSet cs = (CharSet) value;
 
 							switch (cs){
@@ -275,6 +291,8 @@ namespace Mono.CSharp {
 					field_infos.Add (fi);
 				}
 			}
+
+			StructLayout = false;
 			
 			Expression mg = Expression.MemberLookup (
 				ec, Type, ".ctor", MemberTypes.Constructor,
@@ -495,6 +513,9 @@ namespace Mono.CSharp {
 		//
 		public static TypeAttributes GetExtraTypeInfo (EmitContext ec, Attributes opt_attrs)
 		{
+#if DO_NO_PERFORM_UGLY_HACK
+			return 0;
+#else
 			if (opt_attrs.AttributeSections == null)
 				return 0;
 
@@ -507,7 +528,7 @@ namespace Mono.CSharp {
 					continue;
 				
 				foreach (Attribute a in asec.Attributes) {
-					CustomAttributeBuilder cb = a.Resolve (ec);
+					CustomAttributeBuilder cb = a.Resolve (ec, true);
 
 					if (cb == null)
 						continue;
@@ -518,6 +539,7 @@ namespace Mono.CSharp {
 			}
 
 			return 0;
+#endif
 		}
 		
 		public static void ApplyAttributes (EmitContext ec, object builder, object kind,

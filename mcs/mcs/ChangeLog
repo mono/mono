@@ -1,3 +1,17 @@
+2002-05-14  Miguel de Icaza  <miguel@ximian.com>
+
+	* attribute.cs (DoResolve): More uglyness, we now only try to
+	resolve the attribute partially, to extract the CharSet
+	information (only if we are a StructLayout attribute).  Otherwise 
+
+	(GetExtraTypeInfo): Add some code to conditionally kill in the
+	future this.   I am more and more convinced that the .NET
+	framework has special code to handle the attribute setting on
+	certain elements.
+
+	* expression.cs (IsParamsMethodApplicable): Revert my previous
+	foreach change here, it was wrong.
+
 2002-05-13  Miguel de Icaza  <miguel@ximian.com>
 
 	* cs-tokenizer.cs: (pp_primary): Eat the ')' at the end.

@@ -3312,7 +3312,9 @@ namespace Mono.CSharp {
 
 			Type element_type = pd.ParameterType (pd_count - 1).GetElementType ();
 
-			foreach (Argument a in arguments){
+			for (int i = pd_count - 1; i < arg_count; i++) {
+				Argument a = (Argument) arguments [i];
+				
 				if (!StandardConversionExists (a.Expr, element_type))
 					return false;
 			}

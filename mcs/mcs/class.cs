@@ -945,6 +945,11 @@ namespace Mono.CSharp {
 				}
 			}
 
+			//
+			// Finish the setup for the EmitContext
+			//
+			ec.ContainerType = TypeBuilder;
+			
 			TypeManager.AddUserType (Name, TypeBuilder, this);
 
 			if (parent == TypeManager.attribute_type ||
