@@ -1,3 +1,8 @@
+2004-05-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* library.make: build NUnit if we try to run 'make test' and the dll
+	is not found.
+
 2004-04-29  Jackson Harper  <jackson@ximian.com>
 
 	* library.make: Fix uninstall

@@ -26,7 +26,8 @@ test_sourcefile = $(test_lib).sources
 test_response = $(depsdir)/$(PROFILE)_$(test_lib).response
 test_makefrag = $(depsdir)/$(PROFILE)_$(test_lib).makefrag
 test_stampfile = $(depsdir)/$(PROFILE)_$(test_lib).stamp
-test_flags = /r:$(the_lib) /r:$(topdir)/class/lib/$(PROFILE)/NUnit.Framework.dll $(TEST_MCS_FLAGS)
+test_nunitfw = $(topdir)/class/lib/$(PROFILE)/NUnit.Framework.dll 
+test_flags = /r:$(the_lib) /r:$(test_nunitfw) $(TEST_MCS_FLAGS)
 endif
 
 gacutil = $(topdir)/tools/gacutil/gacutil.exe
@@ -53,9 +54,12 @@ ifdef PLATFORM_CHANGE_SEPARATOR_CMD
 endif
 
 ifndef NO_TEST
-test-local: $(the_lib) $(test_lib)
+$(test_nunitfw):
+	(cd ${topdir}/nunit20 && make)
 
-run-test-local:
+test-local: $(test_nunitfw) $(the_lib) $(test_lib)
+
+run-test-local: test-local
 	$(TEST_RUNTIME) $(TEST_HARNESS) $(test_lib)
 
 else
