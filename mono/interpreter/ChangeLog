@@ -1,3 +1,9 @@
+2003-08-18  Zoltan Varga  <vargaz@freemail.hu>
+
+	* interp.c: Get rid of duplicate definition of CHECK_MUL_OVERFLOW.
+	* interp.h interp.c: Get rid of VAL_VALUETA, use VAL_MP instead. Fix
+	the INITOBJ opcode which was the only user of VALUETA.
+
 2003-08-16  Zoltan Varga  <vargaz@freemail.hu>
 
 	* interp.c (ves_exec_method): Implemented mul.ovf correctly for int32
