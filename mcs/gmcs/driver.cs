@@ -1338,8 +1338,6 @@ namespace Mono.CSharp
 			int i;
 			bool parsing_options = true;
 
-			Console.WriteLine ("BETA SOFTWARE: Mono C# Compiler {0} for Generics",
-					   Assembly.GetExecutingAssembly ().GetName ().Version.ToString ());
 			try {
 				encoding = Encoding.GetEncoding (28591);
 			} catch {
