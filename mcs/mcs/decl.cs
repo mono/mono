@@ -109,7 +109,7 @@ namespace Mono.CSharp {
 			if (parent.UnsafeContext)
 				return true;
 
-			Report.Error (214, Location, "Pointers can only be used in an unsafe context");
+			Expression.UnsafeError (Location);
 			return false;
 		}
 	}

@@ -1249,6 +1249,15 @@ namespace Mono.CSharp {
 				if (expr_type.IsPointer){
 					if (target_type == TypeManager.void_ptr_type)
 						return new EmptyCast (expr, target_type);
+
+					//
+					// yep, comparing pointer types cant be done with
+					// t1 == t2, we have to compare their element types.
+					//
+					if (target_type.IsPointer){
+						if (target_type.GetElementType()==expr_type.GetElementType())
+							return expr;
+					}
 				}
 				
 				if (target_type.IsPointer){
@@ -1907,6 +1916,11 @@ namespace Mono.CSharp {
 			Report.Error (31, l, "Constant value `" + val + "' cannot be converted to " +
 				      TypeManager.CSharpName (t));
 		}
+
+		public static void UnsafeError (Location loc)
+		{
+			Report.Error (214, loc, "Pointers may only be used in an unsafe context");
+		}
 		
 		/// <summary>
 		///   Converts the IntConstant, UIntConstant, LongConstant or
@@ -2175,8 +2189,80 @@ namespace Mono.CSharp {
 			}
 			error31 (loc, s, target_type);
 			return null;
-		}		
-			
+		}
+
+		//
+		// Load the object from the pointer.  The `IsReference' is used
+		// to control whether we should use Ldind_Ref or LdObj if the
+		// value is not a `core' type.
+		//
+		// Maybe we should try to extract this infromation form the type?
+		// TODO: Maybe this is a bug.  The reason we have this flag is because
+		// I had almost identical code in ParameterReference (for handling
+		// references) and in UnboxCast.
+		//
+		public static void LoadFromPtr (ILGenerator ig, Type t, bool IsReference)
+		{
+			if (t == TypeManager.int32_type)
+				ig.Emit (OpCodes.Ldind_I4);
+			else if (t == TypeManager.uint32_type)
+				ig.Emit (OpCodes.Ldind_U4);
+			else if (t == TypeManager.short_type)
+				ig.Emit (OpCodes.Ldind_I2);
+			else if (t == TypeManager.ushort_type)
+				ig.Emit (OpCodes.Ldind_U2);
+			else if (t == TypeManager.char_type)
+				ig.Emit (OpCodes.Ldind_U2);
+			else if (t == TypeManager.byte_type)
+				ig.Emit (OpCodes.Ldind_U1);
+			else if (t == TypeManager.sbyte_type)
+				ig.Emit (OpCodes.Ldind_I1);
+			else if (t == TypeManager.uint64_type)
+				ig.Emit (OpCodes.Ldind_I8);
+			else if (t == TypeManager.int64_type)
+				ig.Emit (OpCodes.Ldind_I8);
+			else if (t == TypeManager.float_type)
+				ig.Emit (OpCodes.Ldind_R4);
+			else if (t == TypeManager.double_type)
+				ig.Emit (OpCodes.Ldind_R8);
+			else if (t == TypeManager.bool_type)
+				ig.Emit (OpCodes.Ldind_I1);
+			else if (t == TypeManager.intptr_type)
+				ig.Emit (OpCodes.Ldind_I);
+			else if (TypeManager.IsEnumType (t)){
+				LoadFromPtr (ig, TypeManager.EnumToUnderlying (t), IsReference);
+			} else {
+				if (IsReference)
+					ig.Emit (OpCodes.Ldind_Ref);
+				else 
+					ig.Emit (OpCodes.Ldobj, t);
+			}
+		}
+
+		//
+		// Returns the size of type `t' if known, otherwise, 0
+		//
+		public static int GetTypeSize (Type t)
+		{
+			if (t == TypeManager.int32_type ||
+			    t == TypeManager.uint32_type ||
+			    t == TypeManager.float_type)
+			        return 4;
+			else if (t == TypeManager.int64_type ||
+				 t == TypeManager.uint64_type ||
+				 t == TypeManager.double_type)
+			        return 8;
+			else if (t == TypeManager.byte_type ||
+				 t == TypeManager.sbyte_type ||
+				 t == TypeManager.bool_type) 	
+			        return 1;
+			else if (t == TypeManager.short_type ||
+				 t == TypeManager.char_type ||
+				 t == TypeManager.ushort_type)
+				return 2;
+			else
+				return 0;
+		}
 	}
 
 	/// <summary>
@@ -2378,42 +2464,7 @@ namespace Mono.CSharp {
 			base.Emit (ec);
 			ig.Emit (OpCodes.Unbox, t);
 
-			//
-			// Load the object from the pointer
-			//
-		basic_type:
-			
-			if (t == TypeManager.int32_type)
-				ig.Emit (OpCodes.Ldind_I4);
-			else if (t == TypeManager.uint32_type)
-				ig.Emit (OpCodes.Ldind_U4);
-			else if (t == TypeManager.short_type)
-				ig.Emit (OpCodes.Ldind_I2);
-			else if (t == TypeManager.ushort_type)
-				ig.Emit (OpCodes.Ldind_U2);
-			else if (t == TypeManager.char_type)
-				ig.Emit (OpCodes.Ldind_U2);
-			else if (t == TypeManager.byte_type)
-				ig.Emit (OpCodes.Ldind_U1);
-			else if (t == TypeManager.sbyte_type)
-				ig.Emit (OpCodes.Ldind_I1);
-			else if (t == TypeManager.uint64_type)
-				ig.Emit (OpCodes.Ldind_I8);
-			else if (t == TypeManager.int64_type)
-				ig.Emit (OpCodes.Ldind_I8);
-			else if (t == TypeManager.float_type)
-				ig.Emit (OpCodes.Ldind_R4);
-			else if (t == TypeManager.double_type)
-				ig.Emit (OpCodes.Ldind_R8);
-			else if (t == TypeManager.bool_type)
-				ig.Emit (OpCodes.Ldind_I1);
-			else if (t == TypeManager.intptr_type)
-				ig.Emit (OpCodes.Ldind_I);
-			else if (TypeManager.IsEnumType (t)){
-				t = TypeManager.EnumToUnderlying (t);
-				goto basic_type;
-			} else
-				ig.Emit (OpCodes.Ldobj, t);
+			LoadFromPtr (ig, t, false);
 		}
 	}
 	
@@ -2859,6 +2910,10 @@ namespace Mono.CSharp {
 				FieldExpr fe = (FieldExpr) e;
 				FieldInfo fi = fe.FieldInfo;
 
+				if (fi.FieldType.IsPointer && !ec.InUnsafe){
+					UnsafeError (Location);
+				}
+				
 				if (ec.IsStatic){
 					if (!allow_static && !fi.IsStatic){
 						Error120 (Location, Name);

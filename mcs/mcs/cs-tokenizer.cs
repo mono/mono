@@ -329,7 +329,7 @@ namespace Mono.CSharp
 				else if (d == '=')
 					t = Token.OP_SUB_ASSIGN;
 				else if (d == '>')
-					return Token.OP_PTR;
+					t = Token.OP_PTR;
 				else
 					return Token.MINUS;
 				doread = true;

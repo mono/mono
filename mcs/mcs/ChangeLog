@@ -1,3 +1,28 @@
+2002-01-25  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (UnaryMutator.IsIncrementableNumber): Allow also
+	pointer types to be incretemented.
+
+	(SizeOf): Implement.
+
+	* cs-parser.jay (pointer_member_access): Implement
+	expr->IDENTIFIER production.
+
+	* expression.cs (IndexerAccess.DoResolve, ArrayAccess.DoResolve,
+	MemberAccess.DoResolve, Invocation.DoResolve): Check for pointers
+	on safe contexts.
+
+	(Unary): Implement indirection.
+
+	* ecore.cs (Expression.UnsafeError): Reports error 214 (pointer
+	use in non-unsafe context).
+
+	(SimpleName.DoResolve): Check for pointers in field access on safe
+	contexts. 
+
+	(Expression.LoadFromPtr): Factor the load-indirect code in this
+	function.  This was duplicated in UnboxCast and ParameterReference
+
 2002-01-24  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs (ComposedCast): report an error if a pointer cast

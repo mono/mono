@@ -402,12 +402,33 @@ namespace Mono.CSharp {
 				}
 
 				if (!ec.InUnsafe) {
-					Error (214, loc, "Pointers may only be used in an unsafe context");
+					UnsafeError (loc); 
 					return null;
 				}
 
-				type = Type.GetType (expr.Type.ToString () + "*");
+				string ptr_type_name = expr.Type.FullName + "*";
+				type = Type.GetType (ptr_type_name);
+				if (type == null){
+					type = RootContext.ModuleBuilder.GetType (ptr_type_name);
+				}
+				
+				return this;
+			}
 
+			if (oper == Operator.Indirection){
+				if (!ec.InUnsafe){
+					UnsafeError (loc);
+					return null;
+				}
+
+				if (!expr_type.IsPointer){
+					Report.Error (
+						193, loc,
+						"The * or -> operator can only be applied to pointers");
+					return null;
+				}
+				
+				type = expr_type.GetElementType ();
 				return this;
 			}
 			
@@ -457,7 +478,9 @@ namespace Mono.CSharp {
 				break;
 				
 			case Operator.Indirection:
-				throw new Exception ("Not implemented yet");
+				expr.Emit (ec);
+				LoadFromPtr (ig, Type, false);
+				break;
 				
 			default:
 				throw new Exception ("This should not happen: Operator = "
@@ -550,7 +573,8 @@ namespace Mono.CSharp {
 				(t == TypeManager.char_type) ||
 				(t.IsSubclassOf (TypeManager.enum_type)) ||
 				(t == TypeManager.float_type) ||
-				(t == TypeManager.double_type);
+				(t == TypeManager.double_type) ||
+				(t.IsPointer && t != TypeManager.void_ptr_type);
 		}
 
 		Expression ResolveOperator (EmitContext ec)
@@ -629,8 +653,13 @@ namespace Mono.CSharp {
 			eclass = ExprClass.Value;
 			return ResolveOperator (ec);
 		}
-		
 
+		static int PtrTypeSize (Type t)
+		{
+			return GetTypeSize (t.GetElementType ());
+		}
+		
+		
 		//
 		// FIXME: We need some way of avoiding the use of temp_storage
 		// for some types of storage (parameters, local variables,
@@ -658,7 +687,14 @@ namespace Mono.CSharp {
 						ig.Emit (OpCodes.Ldc_R8, 1.0);
 					else if (expr_type == TypeManager.float_type)
 						ig.Emit (OpCodes.Ldc_R4, 1.0F);
-					else
+					else if (expr_type.IsPointer){
+						int n = PtrTypeSize (expr_type);
+
+						if (n == 0)
+							ig.Emit (OpCodes.Sizeof, expr_type);
+						else
+							IntConstant.EmitInt (ig, n);
+					} else 
 						ig.Emit (OpCodes.Ldc_I4_1);
 				
 					if (mode == Mode.PreDecrement)
@@ -692,7 +728,14 @@ namespace Mono.CSharp {
 						ig.Emit (OpCodes.Ldc_R8, 1.0);
 					else if (expr_type == TypeManager.float_type)
 						ig.Emit (OpCodes.Ldc_R4, 1.0F);
-					else
+					else if (expr_type.IsPointer){
+						int n = PtrTypeSize (expr_type);
+
+						if (n == 0)
+							ig.Emit (OpCodes.Sizeof, expr_type);
+						else
+							IntConstant.EmitInt (ig, n);
+					} else
 						ig.Emit (OpCodes.Ldc_I4_1);
 				
 					if (mode == Mode.PostDecrement)
@@ -2416,31 +2459,7 @@ namespace Mono.CSharp {
 			// If we are a reference, we loaded on the stack a pointer
 			// Now lets load the real value
 			//
-
-			if (type == TypeManager.int32_type)
-				ig.Emit (OpCodes.Ldind_I4);
-			else if (type == TypeManager.uint32_type)
-				ig.Emit (OpCodes.Ldind_U4);
-			else if (type == TypeManager.int64_type || type == TypeManager.uint64_type)
-				ig.Emit (OpCodes.Ldind_I8);
-			else if (type == TypeManager.char_type)
-				ig.Emit (OpCodes.Ldind_U2);
-			else if (type == TypeManager.short_type)
-				ig.Emit (OpCodes.Ldind_I2);
-			else if (type == TypeManager.ushort_type)
-				ig.Emit (OpCodes.Ldind_U2);
-			else if (type == TypeManager.float_type)
-				ig.Emit (OpCodes.Ldind_R4);
-			else if (type == TypeManager.double_type)
-				ig.Emit (OpCodes.Ldind_R8);
-			else if (type == TypeManager.byte_type)
-				ig.Emit (OpCodes.Ldind_U1);
-			else if (type == TypeManager.sbyte_type || type == TypeManager.bool_type)
-				ig.Emit (OpCodes.Ldind_I1);
-			else if (type == TypeManager.intptr_type)
-				ig.Emit (OpCodes.Ldind_I);
-			else
-				ig.Emit (OpCodes.Ldind_Ref);
+			LoadFromPtr (ig, type, true);
 		}
 
 		public void EmitAssign (EmitContext ec, Expression source)
@@ -3311,6 +3330,13 @@ namespace Mono.CSharp {
 			if (method is MethodInfo)
 				type = ((MethodInfo)method).ReturnType;
 
+			if (type.IsPointer){
+				if (!ec.InUnsafe){
+					UnsafeError (loc);
+					return null;
+				}
+			}
+			
 			eclass = ExprClass.Value;
 			return this;
 		}
@@ -3989,23 +4015,8 @@ namespace Mono.CSharp {
 
 			int count = ArrayData.Count;
 
-			if (underlying_type == TypeManager.int32_type ||
-			    underlying_type == TypeManager.uint32_type ||
-			    underlying_type == TypeManager.float_type)
-			        factor = 4;
-			else if (underlying_type == TypeManager.int64_type ||
-				 underlying_type == TypeManager.uint64_type ||
-				 underlying_type == TypeManager.double_type)
-			        factor = 8;
-			else if (underlying_type == TypeManager.byte_type ||
-				 underlying_type == TypeManager.sbyte_type ||
-				 underlying_type == TypeManager.bool_type) 	
-			        factor = 1;
-			else if (underlying_type == TypeManager.short_type ||
-				 underlying_type == TypeManager.char_type ||
-				 underlying_type == TypeManager.ushort_type)
-				factor = 2;
-			else
+			factor = GetTypeSize (underlying_type);
+			if (factor == 0)
 				return null;
 
 			data = new byte [(count * factor + 4) & ~3];
@@ -4383,22 +4394,35 @@ namespace Mono.CSharp {
 	/// </summary>
 	public class SizeOf : Expression {
 		public readonly string QueriedType;
+		Type type_queried;
+		Location loc;
 		
-		public SizeOf (string queried_type)
+		public SizeOf (string queried_type, Location l)
 		{
 			this.QueriedType = queried_type;
+			loc = l;
 		}
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			// FIXME: Implement;
-			throw new Exception ("Unimplemented");
-			// return this;
+			type_queried = RootContext.LookupType (
+				ec.TypeContainer, QueriedType, false, loc);
+			if (type_queried == null)
+				return null;
+
+			type = TypeManager.int32_type;
+			eclass = ExprClass.Value;
+			return this;
 		}
 
 		public override void Emit (EmitContext ec)
 		{
-			throw new Exception ("Implement me");
+			int size = GetTypeSize (type_queried);
+
+			if (size == 0)
+				ec.ig.Emit (OpCodes.Sizeof, type_queried);
+			else
+				IntConstant.EmitInt (ec.ig, size);
 		}
 	}
 
@@ -4516,6 +4540,7 @@ namespace Mono.CSharp {
 					if (c != null) {
 						object o = c.LookupConstantValue (ec);
 						object real_value = ((Constant) c.Expr).GetValue ();
+
 						return Constantify (real_value, fi.FieldType);
 					}
 				}
@@ -4553,6 +4578,11 @@ namespace Mono.CSharp {
 					}
 					
 					return exp;
+				}
+
+				if (fi.FieldType.IsPointer && !ec.InUnsafe){
+					UnsafeError (loc);
+					return null;
 				}
 				
 				if (left is TypeExpr){
@@ -4688,6 +4718,9 @@ namespace Mono.CSharp {
 			}
 					
 			//
+			// TODO: I mailed Ravi about this, and apparently we can get rid
+			// of this and put it in the right place.
+			// 
 			// Handle enums here when they are in transit.
 			// Note that we cannot afford to hit MemberLookup in this case because
 			// it will fail to find any members at all
@@ -4708,6 +4741,13 @@ namespace Mono.CSharp {
 				}
 			}
 
+			if (expr_type.IsPointer){
+				Report.Error (23, loc,
+					      "The `.' operator can not be applied to pointer operands (" +
+					      TypeManager.CSharpName (expr_type) + ")");
+				return null;
+			}
+			
 			member_lookup = MemberLookup (ec, expr_type, Identifier, loc);
 
 			if (member_lookup == null){
@@ -4909,6 +4949,11 @@ namespace Mono.CSharp {
 				return null;
 			}
 			type = t.GetElementType ();
+			if (type.IsPointer && !ec.InUnsafe){
+				UnsafeError (ea.loc);
+				return null;
+			}
+			
 			eclass = ExprClass.Variable;
 
 			return this;
@@ -5221,6 +5266,11 @@ namespace Mono.CSharp {
 			}
 
 			type = get.ReturnType;
+			if (type.IsPointer && !ec.InUnsafe){
+				UnsafeError (ea.loc);
+				return null;
+			}
+			
 			eclass = ExprClass.IndexerAccess;
 			return this;
 		}
@@ -5472,7 +5522,7 @@ namespace Mono.CSharp {
 				return null;
 
 			if (!ec.InUnsafe && type.IsPointer){
-				Report.Error (214, loc, "Pointers can only be used in an unsafe context");
+				UnsafeError (loc);
 				return null;
 			}
 			

@@ -27,6 +27,14 @@ AddressOf
 	to track usage errors in variables (since AddressOf does not
 	really know what is it being used for, it could be either)
 
+Unsafe code:
+	Pointer arithmetic operators (++ and -- are done)
+	Test for ++ and -- for non-builtin-types
+	sizeof
+	fixed
+
+readonly variables and ref/out
+	
 BUGS
 ----
 
@@ -135,10 +143,10 @@ BUGS
 PENDING TASKS
 -------------
 
-* Unsafe contexts:
-	Done: class, struct, interface
-	Everywhere where we lookup a type, we should test for unsafe pointers.
-	
+* Revisit
+
+	Primary-expression, as it has now been split into 
+	non-array-creation-expression and array-creation-expression.
 		
 * Static flow analysis
 

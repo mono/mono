@@ -1822,6 +1822,9 @@ primary_expression
 	| sizeof_expression
 	| checked_expression
 	| unchecked_expression
+	| pointer_member_access
+	// TODO: pointer_element_access
+	// TODO: sizeof-expression
 	;
 
 literal
@@ -2141,7 +2144,7 @@ typeof_expression
 
 sizeof_expression
 	: SIZEOF OPEN_PARENS type CLOSE_PARENS { 
-		$$ = new SizeOf ((string) $3);
+		$$ = new SizeOf ((string) $3, lexer.Location);
 
 		note ("Verify type is unmanaged"); 
 		note ("if (5.8) builtin, yield constant expression");
@@ -2161,6 +2164,15 @@ unchecked_expression
 		$$ = new UnCheckedExpr ((Expression) $3);
 	  }
 	;
+
+pointer_member_access 
+	: primary_expression OP_PTR IDENTIFIER
+	  {
+		Expression deref;
+
+		deref = new Unary (Unary.Operator.Indirection, (Expression) $1, lexer.Location);
+		$$ = new MemberAccess (deref, (string) $3, lexer.Location);
+	  }
 
 unary_expression
 	: primary_expression
@@ -2637,6 +2649,7 @@ embedded_statement
 	| lock_statement
 	| using_statement
 	| unsafe_statement
+	| fixed_statement
 	;
 
 empty_statement
@@ -3271,7 +3284,30 @@ unsafe_statement
 	} block {
 		$$ = new Unsafe ((Block) $3);
 	}
+	;
 
+fixed_statement
+	: FIXED OPEN_PARENS 
+	  // FIXME: pointer_type fixed_pointer_declarators 
+	  CLOSE_PARENS embedded_statement
+	  {
+		// $$ = new Fixed ((string) $3, $4, (Statement) $6, lexer.Location);
+	  }
+	;
+
+fixed_pointer_declarators
+	: fixed_pointer_declarator
+	| fixed_pointer_declarators COMMA fixed_pointer_declarator
+	;
+
+fixed_pointer_declarator
+	: IDENTIFIER EQUALS fixed_pointer_initializer
+	;
+
+fixed_pointer_initializer
+	: BITWISE_AND variable_reference
+	| expression
+	;
 
 lock_statement
 	: LOCK OPEN_PARENS expression CLOSE_PARENS 

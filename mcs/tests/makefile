@@ -11,8 +11,10 @@ TEST_SOURCES = \
 	test-41 test-42 test-43 test-44 test-45 test-46 test-47 test-48 test-49 test-50 \
 	test-51 test-52	test-53 test-54 test-55 test-56 test-57		test-59 	\
 	test-61	test-62 test-63	test-64 test-65 test-66 test-67 test-68 test-69 test-70	\
-	test-71 test-72
+	test-71 test-72 
 
+UNSAFE_SOURCES = \
+	unsafe-1
 
 TEST_NOPASS = \
 	test-29 test-38 
@@ -21,6 +23,19 @@ test-compiler:
 	-rm *.exe
 	for i in $(TEST_SOURCES); do \
 		if $(MCS) $$i.cs > /dev/null; then \
+			if ./$$i.exe; then \
+				echo $$i: ok; \
+			else \
+				echo test $$i failed; exit; \
+			fi; \
+		else \
+			echo compiler failed on $$i;   exit; \
+		fi \
+	done
+
+test-unsafe:
+	for i in $(UNSAFE_SOURCES); do \
+		if $(MCS) --unsafe $$i.cs > /dev/null; then \
 			if ./$$i.exe; then \
 				echo $$i: ok; \
 			else \
