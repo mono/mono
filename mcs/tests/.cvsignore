@@ -1,4 +1,5 @@
-boot-casts.out
-mcs-casts.out
 *.dll
 *.log
+boot-casts.out
+mcs-casts.out
+semantic.cache

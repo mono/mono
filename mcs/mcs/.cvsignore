@@ -1,15 +1,16 @@
-compiler.pdb
-compiler.exe
-compiler.suo
-compiler.csproj
-compiler.csproj.user
-cs-parser.cs
-y.output
+*.mdb
 *.pdb
-mcs
+Web References
+Web References
 Web References
 bin
+compiler.csproj
+compiler.csproj.user
+compiler.exe
+compiler.pdb
+compiler.suo
+cs-parser.cs
+mcs
 obj
-Web References
-Web References
-*.mdb
+semantic.cache
+y.output

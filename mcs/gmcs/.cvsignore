@@ -1,4 +1,5 @@
-y.output
-cs-parser.cs
 *.dll
 *.mdb
+cs-parser.cs
+semantic.cache
+y.output

@@ -1,2 +1,3 @@
-pre-config.make
 config.make
+pre-config.make
+semantic.cache

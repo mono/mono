@@ -1,4 +1,5 @@
 .makefrag
 .response
+System.Drawing_test*
+TestResult.xml
 library-deps.stamp
-System.Drawing_test.dll

@@ -2,3 +2,4 @@
 *.exe
 *.log
 *.mdb
+semantic.cache

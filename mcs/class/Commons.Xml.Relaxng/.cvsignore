@@ -1,7 +1,7 @@
-Commons.Xml.Relaxng_test.dll
-Commons.Xml.Relaxng_test.pdby.output
+
 .makefrag
 .response
+Commons.Xml.Relaxng_test*
+TestResult.xml
 library-deps.stamp
-
 y.output

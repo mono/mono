@@ -1,8 +1,8 @@
-System_test.dll
-System_test.pdb
-System.dll
-list
+*.mdb
 .makefrag
 .response
+System.dll
+System_test*
+TestResult.xml
 library-deps.stamp
-*.mdb
+list

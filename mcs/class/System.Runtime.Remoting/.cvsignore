@@ -1,6 +1,8 @@
-System.Runtime.Remoting_test.dll
-System.Runtime.Remoting_test.pdb
-list
+*.dll
+*.mdb
+*.pdb
 .makefrag
 .response
+TestResult.xml
 library-deps.stamp
+list

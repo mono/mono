@@ -1,6 +1,7 @@
-System.Runtime.Serialization.Formatters.Soap_test.dll
-System.Runtime.Serialization.Formatters.Soap_test.pdb
-list
 .makefrag
 .response
+System.Runtime.Serialization.Formatters.Soap_test*
+TestResult.xml
 library-deps.stamp
+list
+semantic.cache

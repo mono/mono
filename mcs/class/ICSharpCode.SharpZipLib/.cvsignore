@@ -1,3 +1,4 @@
 .makefrag
 .response
 library-deps.stamp
+semantic.cache

@@ -1,10 +1,11 @@
-*.dll
-list
-*.suo
 *.csproj.user
-bin
-obj
+*.dll
+*.mdb
+*.suo
 .makefrag
 .response
+TestResult.xml
+bin
 library-deps.stamp
-*.mdb
+list
+obj

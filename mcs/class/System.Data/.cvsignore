@@ -1,8 +1,8 @@
 .makefrag
 .response
 System.Data.dll
-System.Data_test.dll
-System.Data_test.pdb
-library-deps.stamp
+System.Data_test*
 Temp
+TestResult.xml
+library-deps.stamp
 tmp

@@ -1,6 +1,6 @@
-System.Security_test.dll
-System.Security_test.pdb
-list
 .makefrag
 .response
+System.Security_test*
+TestResult.xml
 library-deps.stamp
+list

@@ -1,6 +1,6 @@
-Mono.Security_test.dll
-Mono.Security_test.pdb
-list
 .makefrag
 .response
+Mono.Security_test*
+TestResult.xml
 library-deps.stamp
+list
