@@ -1,4 +1,9 @@
 
+Mon Aug 27 15:23:23 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* class.c, loader.c, loader.h: More types handled in mono_class_from_mono_type ().
+	* metadata.c: fix small problem introduced with the latest commit.
+
 Mon Aug 27 12:17:17 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* loader.c, metadata.c, metadata.h: Export mono_metadata_type_equal().
