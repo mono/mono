@@ -1,0 +1,56 @@
+.\" 
+.\" certmgr manual page.
+.\" Copyright 2004 Novell
+.\" Author:
+.\"   Sebastien Pouliot <sebastien@ximian.com>
+.\"
+.TH Mono "certmgr"
+.SH NAME
+certmgr \- Mono Certificate Manager (CLI version)
+.SH SYNOPSIS
+.PP
+.B certmgr [action] [object type] [options] store [filename]
+.SH DESCRIPTION
+This tool allow to add, remove or extract certificates, certificate revocation 
+lists (CRL) or certificate trust lists (CTL) to/from a certificate store. 
+Certificate stores are used to build and validate certificate chains for 
+Authenticode(r) code signing validation and SSL server certificates.
+.SH ACTIONS
+.TP
+.I "-add"
+Add a certificate, CRL or CTL to specified store.
+.TP
+.I "-del"
+Remove a certificate, CRL or CTL from specified store.
+.TP
+.I "-put"
+Copy a certificate, CRL or CTL from a store to a file.
+.SH OBJECT TYPES
+.TP
+.I "-c", "-cert", "-certificate"
+Add, Delete or Put certificates. That is the specified file must/will contains
+X.509 certificates in DER binary encoding.
+.TP
+.I "-crl"
+Add, Delete or Put certificate revocation lists (CRL). That is the specified 
+file must/will contains X.509 CRL in DER binary encoding.
+.TP
+.I "-ctl"
+Add, Delete or Put certificate trust lists (CRL). UNSUPPORTED.
+.SH OPTIONS
+.TP
+.I "-v", "-verbose"
+More details displayed on the console.
+.TP
+.I "-help", "-h", "-?", "/?"
+Display help about this tool.
+.SH AUTHOR
+Written by Sebastien Pouliot
+.SH COPYRIGHT
+Copyright (C) 2004 Novell.
+.SH MAILING LISTS
+Visit http://mail.ximian.com/mailman/mono-list for details.
+.SH WEB SITE
+Visit: http://www.go-mono.com for details
+.SH SEE ALSO
+.BR makecert(1), setreg(1)

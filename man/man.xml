@@ -18,4 +18,6 @@
 <manpage name="wsdl" page="wsdl.1" />
 <manpage name="disco" page="disco.1" />
 <manpage name="soapsuds" page="soapsuds.1" />
+<manpage name="setreg" page="setreg.1" />
+<manpage name="certmgr" page="certmgr.1" />
 </manpages>
