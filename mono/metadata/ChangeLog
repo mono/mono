@@ -1,3 +1,11 @@
+2003-07-10  Zoltan Varga  <vargaz@freemail.hu>
+
+	* image.h image.c: Store the metadata version string in MonoImage.
+	* icall.c: New icall to retrieve the image version.
+	* reflection.c (create_dynamic_image): Fill in the image version field
+	* reflection.c (build_compressed_metadata): Use the image version
+	from the image structure.
+
 2003-07-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* appdomain.c: modified comment.
