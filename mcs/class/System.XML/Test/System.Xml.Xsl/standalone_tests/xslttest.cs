@@ -28,6 +28,8 @@ namespace XsltTest
 		static XsltTest ()
 		{
 			skipTargets = new ArrayList (new string [] {
+"Keys__91834",
+"Keys__91835",
 "Keys_PerfRepro3"
 			}); 
 		}

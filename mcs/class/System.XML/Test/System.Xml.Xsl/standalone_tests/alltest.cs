@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.IO;
 using System.Xml;
 using System.Xml.Xsl;
@@ -8,6 +9,12 @@ namespace simpleTests
 {
 	class TestRunner
 	{
+		static ArrayList excludedTests = new ArrayList (new string [] {
+"Keys_PerfRepro3",
+"Keys__91834",
+"Keys__91835",
+});
+
 		static void Process (string id, string path, string data,
 			string stylesheet, string output, string resDirName)
 		{
@@ -25,12 +32,12 @@ namespace simpleTests
 
 			XslTransform xslt = new XslTransform();
 			StreamWriter strWr = new StreamWriter (resFileName, false, System.Text.Encoding.UTF8);
-//			XmlTextWriter wr = new XmlTextWriter (strWr);
+			XmlTextWriter wr = new XmlTextWriter (strWr);
 			try {
 				XmlDocument xml = new XmlDocument();
 				xml.Load (data);
 				xslt.Load (stylesheet);
-				xslt.Transform (xml, null, strWr, null);
+				xslt.Transform (xml, null, wr, null);
 			} catch(Exception x) {
 				strWr.Close();
 				strWr = new StreamWriter (resFileName, false, System.Text.Encoding.UTF8);
@@ -58,6 +65,9 @@ namespace simpleTests
 				if (node.SelectSingleNode ("@ignore")!=null)
 					continue;
 				string id = node.SelectSingleNode ("@id").InnerText;
+				// check if the test is excluded.
+				if (excludedTests.Contains (id))
+					continue;
 				string path = node.SelectSingleNode ("path").InnerText;
 				string data = node.SelectSingleNode ("data").InnerText;
 				string stylesheet = node.SelectSingleNode ("stylesheet").InnerText;

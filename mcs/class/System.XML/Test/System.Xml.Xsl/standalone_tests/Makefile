@@ -16,17 +16,23 @@ TARGET_RESULTS = Results
 MSTEST_RESULTS = testsuite/TESTS/ExpectedResults
 TEST_ARCHIVE = xslt-testsuite-03.ZIP
 XSLTTEST_RESULTS_ARCHIVE = xslttest-reference-output.zip
-MSTEST_RESULTS_ARCHIVE = mono-xslttest-ExpectedResults-20050221.zip
+MSTEST_RESULTS_ARCHIVE = mono-xslttest-ExpectedResults-20050214.zip
 
-all : xslttest.exe alltest.exe
+test : xslttest.exe alltest.exe prepare
 
-xslttest.exe : xslttest.cs $(TESTS) $(XSLTTEST_RESULTS)
+prepare : $(TESTS) prepare-xslt prepare-mstest
+
+prepare-xslt : xslttest.exe $(XSLTTEST_RESULTS)
+
+prepare-mstest : alltest.exe $(MSTEST_RESULTS)
+
+xslttest.exe : xslttest.cs
 	$(CSCOMPILE) xslttest.cs
 
 xmlnorm.exe : XmlNormalizer.cs
 	$(CSCOMPILE) XmlNormalizer.cs -out:xmlnorm.exe
 
-alltest.exe : alltest.cs $(TESTS) $(MSTEST_RESULTS)
+alltest.exe : alltest.cs
 	$(CSCOMPILE) alltest.cs
 
 # WARNING: It removes catalog.xml. If you want to keep catalog.xml, comment
