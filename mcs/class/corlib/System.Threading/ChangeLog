@@ -1,8 +1,3 @@
-2004-12-15 Gonzalo Paniagua Javier <gonzalo@ximian.com>
-
-	* Thread.cs: don't bother serializing if the CultureInfo we're setting
-	has the same LCID as the CurrentCulture.
-
 2004-12-14  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Thread.cs: Optimize CurrentCulture to avoid initializing the

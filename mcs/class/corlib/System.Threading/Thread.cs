@@ -398,8 +398,6 @@ namespace System.Threading
 				in_currentculture = true;
 
 				try {
-					if (CurrentCulture.LCID == value.LCID)
-						return;
 					BinaryFormatter bf = new BinaryFormatter();
 					MemoryStream ms = new MemoryStream ();
 					bf.Serialize (ms, value);
