@@ -117,11 +117,11 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 			elementType = typeof(string);
 			if(typeFormat == FormatterTypeStyle.XsdString)
 			{
-				elementString = new Element("string", XmlSchema.Namespace);
+				elementString = new Element("xsd", "string", XmlSchema.Namespace);
 			}
 			else
 			{
-				elementString = new Element("string", SoapEncodingNamespace);
+				elementString = new Element(SoapEncodingPrefix, "string", SoapEncodingNamespace);
 			}
 //			typeToXmlNodeTable.Add(elementType.AssemblyQualifiedName, element);
 		}
@@ -245,6 +245,7 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 		{
 			get 
 			{
+				if(type == typeof(string)) return elementString;
 				Element element = (Element) typeToXmlNodeTable[type.AssemblyQualifiedName];
 				if(element == null)
 				{

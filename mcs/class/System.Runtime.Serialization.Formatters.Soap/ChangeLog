@@ -1,3 +1,7 @@
+2004-05-06  Jean-Marc Andre <jeanmarc.andre@cpe.fr>
+	* SoapTypeMapper.cs:
+		Small fix about string type information not correctly formatted.
+
 2004-04-15  Jean-Marc Andre <jeanmarc.andre@cpe.fr>
 	* SoapFormatter.cs, SoapReader.cs, SoapWriter.cs, SoapTypeMapper.cs:
 		Rewrote almost completly to make the code easier to understand
