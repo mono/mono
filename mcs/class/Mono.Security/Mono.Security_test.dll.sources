@@ -11,3 +11,4 @@ Mono.Security.Protocol.Ntlm/ChallengeResponseTest.cs
 Mono.Security.Protocol.Ntlm/Type1MessageTest.cs
 Mono.Security.Protocol.Ntlm/Type2MessageTest.cs
 Mono.Security.Protocol.Ntlm/Type3MessageTest.cs
+Mono.Security.X509/PKCS12Test.cs

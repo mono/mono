@@ -1,3 +1,8 @@
+2003-12-07  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* Mono.Security.dll.sources: Added PKCS#12 support for X.509 certificates.
+	* Mono.Security_test.dll.sources: Added unit tests for PKCS#12.
+
 2003-12-01  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* Mono.Security.dll.sources: Added Mono.Security.Protocol.Ntlm namespace
