@@ -1,3 +1,9 @@
+2004-05-31  Miguel de Icaza  <miguel@ximian.com>
+
+	* Reverted patch to namespace.cs (Use lookuptypedirect).  This
+	caused a regression: #59343.  Referencing nested classes from an
+	assembly stopped working.
+
 2004-05-31  Martin Baulig  <martin@ximian.com>
 
 	MCS is now frozen for beta 2.
