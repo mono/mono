@@ -55,28 +55,28 @@ public class MethodBuilderTest : Assertion
 			genMethodName (), MethodAttributes.Public, typeof (void), new Type [0]);
 
 		AssertEquals ("Attributes works", 
-					  mb.Attributes, MethodAttributes.Public);
+					  MethodAttributes.Public, mb.Attributes);
 	}
 
 	public void TestCallingConvention () {
 		MethodBuilder mb = genClass.DefineMethod (
 			genMethodName (), 0, typeof (void), new Type[0]);
 		AssertEquals ("CallingConvetion defaults to Standard+HasThis",
-					  mb.CallingConvention, 
-					  CallingConventions.Standard | CallingConventions.HasThis);
+					  CallingConventions.Standard | CallingConventions.HasThis,
+					  mb.CallingConvention);
 
 		MethodBuilder mb3 = genClass.DefineMethod (
 			genMethodName (), 0, CallingConventions.VarArgs, typeof (void), new Type[0]);
 		AssertEquals ("CallingConvetion works",
-					  mb3.CallingConvention, 
-					  CallingConventions.VarArgs | CallingConventions.HasThis);
+					  CallingConventions.VarArgs | CallingConventions.HasThis,
+					  mb3.CallingConvention);
 
 		MethodBuilder mb4 = genClass.DefineMethod (
 			genMethodName (), MethodAttributes.Static, CallingConventions.Standard,
 			typeof (void), new Type [0]);
 		AssertEquals ("Static implies !HasThis",
-					  mb4.CallingConvention,
-					  CallingConventions.Standard);
+					  CallingConventions.Standard,
+					  mb4.CallingConvention);
 	}
 
 	public void TestDeclaringType () {
@@ -84,16 +84,16 @@ public class MethodBuilderTest : Assertion
 			genMethodName (), 0, typeof (void), new Type[0]);
 
 		AssertEquals ("DeclaringType works",
-					  mb.DeclaringType, genClass);
+					  genClass, mb.DeclaringType);
 	}
 
 	public void TestInitLocals () {
 		MethodBuilder mb = genClass.DefineMethod (
 			genMethodName (), 0, typeof (void), new Type[0]);
 
-		AssertEquals ("InitLocals defaults to true", mb.InitLocals, true);
+		Assert ("InitLocals defaults to true", mb.InitLocals);
 		mb.InitLocals = false;
-		AssertEquals ("InitLocals is settable", mb.InitLocals, false);
+		Assert ("InitLocals is settable", !mb.InitLocals);
 	}
 
 	public void TestMethodHandle () {
@@ -112,7 +112,7 @@ public class MethodBuilderTest : Assertion
 		MethodBuilder mb = genClass.DefineMethod (
 			name, 0, typeof (void), new Type [0]);
 
-		AssertEquals ("Name works", mb.Name, name);
+		AssertEquals ("Name works", name, mb.Name);
 	}
 
 	public void TestReflectedType () {
@@ -127,23 +127,23 @@ public class MethodBuilderTest : Assertion
 		MethodBuilder mb = genClass.DefineMethod (
 			genMethodName (), 0, typeof (Console), new Type [0]);
 
-		AssertEquals ("ReturnType works", 
-					  mb.ReturnType, typeof (Console));
+		AssertEquals ("ReturnType works", typeof (Console),
+					  mb.ReturnType);
 
 		
 		MethodBuilder mb2 = genClass.DefineMethod (
 			genMethodName (), 0, null, new Type [0]);
 
-		AssertEquals ("ReturnType is null",
-					  mb2.ReturnType, null);
+		AssertEquals ("ReturnType is null", null,
+					  mb2.ReturnType);
 	}
 
 	public void TestReturnTypeCustomAttributes () {
 		MethodBuilder mb = genClass.DefineMethod (
 			genMethodName (), 0, typeof (Console), new Type [0]);
 
-		AssertEquals ("ReturnTypeCustomAttributes must be null",
-					  mb.ReturnTypeCustomAttributes, null);
+		AssertEquals ("ReturnTypeCustomAttributes must be null", null,
+					  mb.ReturnTypeCustomAttributes);
 	}
 
 	/*
@@ -281,14 +281,14 @@ public class MethodBuilderTest : Assertion
 			genMethodName (), 0, typeof (void), new Type [0]);
 
 		AssertEquals ("MethodImplementationFlags defaults to Managed+IL",
-					  mb.GetMethodImplementationFlags (),
-					  MethodImplAttributes.Managed | MethodImplAttributes.IL);
+					  MethodImplAttributes.Managed | MethodImplAttributes.IL,
+					  mb.GetMethodImplementationFlags ());
 
 		mb.SetImplementationFlags (MethodImplAttributes.OPTIL);
 
 		AssertEquals ("SetImplementationFlags works",
-					  mb.GetMethodImplementationFlags (),
-					  MethodImplAttributes.OPTIL);
+					  MethodImplAttributes.OPTIL, 
+					  mb.GetMethodImplementationFlags ());
 
 		// Can not be called on a created type
 		mb.CreateMethodBody (new byte[2], 0);
@@ -306,8 +306,8 @@ public class MethodBuilderTest : Assertion
 		MethodBuilder mb = genClass.DefineMethod (
 			genMethodName (), 0, typeof (void), new Type [0]);
 
-		AssertEquals ("GetMethod works",
-					  mb.GetModule (), module);
+		AssertEquals ("GetMethod works", module, 
+					  mb.GetModule ());
 	}
 
 	public void TestGetParameters () {
@@ -418,8 +418,8 @@ public class MethodBuilderTest : Assertion
 		Type t = tb.CreateType ();
 
 		AssertEquals ("Setting MethodImplAttributes works",
-					  MethodImplAttributes.Synchronized,
-					  t.GetMethod (name).GetMethodImplementationFlags ());
+					  t.GetMethod (name).GetMethodImplementationFlags (),
+					  MethodImplAttributes.Synchronized);
 
 		// Null arguments again
 		try {
