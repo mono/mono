@@ -14,6 +14,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace System.Data.SqlClient {
 	/// <summary>
@@ -38,6 +39,8 @@ namespace System.Data.SqlClient {
 		byte scale;
 		DataRowVersion sourceVersion;
 		int offset;
+
+		bool sizeSet = false;
 
 		#endregion // Fields
 
@@ -174,7 +177,10 @@ namespace System.Data.SqlClient {
 		[MonoTODO]
                 public int Size {
 			get { return size; }
-			set { size = value; }
+			set { 
+				sizeSet = true;
+				size = value; 
+			}
 		}
 
 		#endregion // Properties
@@ -185,6 +191,40 @@ namespace System.Data.SqlClient {
 		object ICloneable.Clone ()
 		{
 			throw new NotImplementedException ();
+		}
+
+		internal string Prepare ()
+		{
+			StringBuilder result = new StringBuilder ();
+			result.Append (parmName);
+			result.Append (" ");
+			result.Append (dbtype.ToString ());
+
+			switch (dbtype) {
+			case SqlDbType.Image :
+			case SqlDbType.NVarChar :
+			case SqlDbType.VarBinary :
+			case SqlDbType.VarChar :
+				if (!sizeSet || size == 0)
+					throw new InvalidOperationException ("All variable length parameters must have an explicitly set non-zero size.");
+				result.Append ("(");
+				result.Append (size.ToString ());
+				result.Append (")");
+				break;
+			case SqlDbType.Decimal :
+			case SqlDbType.Money :
+			case SqlDbType.SmallMoney :
+				result.Append ("(");
+				result.Append (precision.ToString ());
+				result.Append (",");
+				result.Append (scale.ToString ());
+				result.Append (")");
+				break;
+                        default:
+                                break;
+                        }
+
+                        return result.ToString ();
 		}
 
 		public override string ToString() 

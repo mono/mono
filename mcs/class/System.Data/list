@@ -93,8 +93,11 @@ System.Data.Common/DataTableMappingCollection.cs
 System.Data.Common/DbDataAdapter.cs
 System.Data.Common/DbDataPermission.cs
 System.Data.Common/DbDataPermissionAttribute.cs
+System.Data.Common/DbDataRecord.cs
+System.Data.Common/FieldNameLookup.cs
 System.Data.Common/RowUpdatedEventArgs.cs
 System.Data.Common/RowUpdatingEventArgs.cs
+System.Data.Common/SchemaInfo.cs
 System.Data.OleDb/libgda.cs
 System.Data.OleDb/OleDbCommand.cs
 System.Data.OleDb/OleDbCommandBuilder.cs
@@ -168,10 +171,10 @@ System.Data.SqlClient/SqlRowUpdatedEventHandler.cs
 System.Data.SqlClient/SqlRowUpdatingEventArgs.cs
 System.Data.SqlClient/SqlRowUpdatingEventHandler.cs
 System.Data.SqlClient/SqlTransaction.cs
+System.Data.SqlClient/SqlXmlTextReader.cs
 ../Mono.Data.TdsClient/Mono.Data.TdsClient.Internal/ITds.cs
 ../Mono.Data.TdsClient/Mono.Data.TdsClient.Internal/Tds.cs
 ../Mono.Data.TdsClient/Mono.Data.TdsClient.Internal/Tds70.cs
-../Mono.Data.TdsClient/Mono.Data.TdsClient.Internal/TdsColumnSchema.cs
 ../Mono.Data.TdsClient/Mono.Data.TdsClient.Internal/TdsColumnType.cs
 ../Mono.Data.TdsClient/Mono.Data.TdsClient.Internal/TdsComm.cs
 ../Mono.Data.TdsClient/Mono.Data.TdsClient.Internal/TdsContext.cs

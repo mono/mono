@@ -16,6 +16,7 @@ using System;
 using System.Collections;
 using System.ComponentModel;
 using System.Data;
+using System.Data.Common;
 
 namespace System.Data.SqlClient {
 	public sealed class SqlDataReader : MarshalByRefObject, IEnumerable, IDataReader, IDisposable, IDataRecord
@@ -28,8 +29,12 @@ namespace System.Data.SqlClient {
 		int recordsAffected;
 		bool moreResults;
 
+		int resultsRead;
+		int rowsRead;
+
 		SqlCommand command;
 		DataTable schemaTable;
+		FieldNameLookup lookup;
 
 		#endregion // Fields
 
@@ -38,12 +43,12 @@ namespace System.Data.SqlClient {
 		internal SqlDataReader (SqlCommand command)
 		{
 			schemaTable = ConstructSchemaTable ();
+			this.resultsRead = 0;
 			this.command = command;
 			this.fieldCount = 0;
 			this.isClosed = false;
-			moreResults = command.Tds.NextResult ();
-			if (command.Tds.Errors.Count > 0)
-				throw SqlException.FromTdsError (command.Tds.Errors);
+
+			NextResult ();
 		}
 
 		#endregion
@@ -73,9 +78,17 @@ namespace System.Data.SqlClient {
 		public object this [string name] {
 			get { return GetValue (GetOrdinal (name)); }
 		}
+		
+		internal FieldNameLookup Lookup {
+			get { return lookup; }
+		}
 
 		public int RecordsAffected {
 			get { return recordsAffected; }
+		}
+
+		internal SchemaInfo[] Schema {
+			get { return command.Tds.Schema; }
 		}
 
 		#endregion // Properties
@@ -259,7 +272,7 @@ namespace System.Data.SqlClient {
 
 			fieldCount = 0;
 
-			foreach (TdsColumnSchema schemaObject in command.Tds.ColumnInfo) {
+			foreach (SchemaInfo schemaObject in command.Tds.Schema) {
 				DataRow schemaRow = schemaTable.NewRow ();
 
 				schemaRow ["ColumnName"] = schemaObject.ColumnName;
@@ -311,39 +324,107 @@ namespace System.Data.SqlClient {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		IEnumerator IEnumerable.GetEnumerator ()
 		{
-			throw new NotImplementedException ();
+			return new SqlDataReaderEnumerator (this);
 		}
 
-		[MonoTODO]
 		public bool IsDBNull (int i)
 		{
-			throw new NotImplementedException ();
+			return GetValue (i) == null;
 		}
 
 		public bool NextResult ()
 		{
+			if ((command.CommandBehavior & CommandBehavior.SingleResult) != 0 && resultsRead > 0)
+				return false;
+
 			schemaTable.Rows.Clear ();
+
+			if (lookup != null)
+				lookup.Clear ();
+
 			moreResults = command.Tds.NextResult ();
-			if (command.Tds.Errors.Count > 0)
-				throw SqlException.FromTdsError (command.Tds.Errors);
+			command.Connection.CheckForErrors ();
+			if (moreResults)
+				lookup = new FieldNameLookup (command.Tds.Schema);
+			rowsRead = 0;
+			resultsRead += 1;
 			return moreResults;
 		}
 
 		public bool Read ()
 		{
-			if (!moreResults) 
+			if ((command.CommandBehavior & CommandBehavior.SingleRow) != 0 && rowsRead > 0)
+				return false;
+			if ((command.CommandBehavior & CommandBehavior.SchemaOnly) != 0)
+				return false;
+			if (!moreResults)
 				return false;
 
 			bool result = command.Tds.NextRow ();
+			command.Connection.CheckForErrors ();
 
-			if (command.Tds.Errors.Count > 0)
-				throw SqlException.FromTdsError (command.Tds.Errors);
+			rowsRead += 1;
+
 			return result;
 		}
 
 		#endregion // Methods
+
+		private class SqlDataReaderEnumerator : IEnumerator, ICloneable 
+		{
+
+			#region Fields
+
+			SqlDataReader reader;
+			
+			#endregion // Fields
+
+			#region Constructors
+
+			public SqlDataReaderEnumerator (SqlDataReader reader)
+			{
+				this.reader = reader;
+			}
+
+			#endregion // Constructors
+	
+			#region Properties
+
+			public virtual object Current {
+				get { 
+					SchemaInfo[] schema = reader.Schema;
+					object[] values = new object[schema.Length];
+					reader.GetValues (values);
+					return new DbDataRecord (schema, values, reader.Lookup); 
+				}
+			}
+
+			#endregion // Properties
+
+			#region Methods
+
+			object ICloneable.Clone ()
+			{
+				return new SqlDataReaderEnumerator (reader);
+			}
+			
+			public virtual bool MoveNext ()
+			{
+				if (reader.Read ()) 
+					return true;
+				if (reader.NextResult () && reader.Read ())
+					return true;
+				return false;
+			}
+
+			public virtual void Reset ()
+			{
+				throw new InvalidOperationException ("This enumerator can only go forward.");	
+			}
+			
+			#endregion // Methods
+		}
 	}
 }

@@ -81,8 +81,7 @@ namespace System.Data.SqlClient {
 				return;
 			}
 			connection.Tds.ExecuteNonQuery (commandText);
-			if (connection.Tds.Errors.Count > 0)
-				throw SqlException.FromTdsError (connection.Tds.Errors);
+			connection.CheckForErrors ();
 		}
 
 		public void Commit ()
@@ -104,8 +103,7 @@ namespace System.Data.SqlClient {
 			if (!isOpen)
 				throw new InvalidOperationException ("The Transaction was not open.");
 			connection.Tds.ExecuteNonQuery ("IF @@TRANCOUNT>0 ROLLBACK TRAN");
-			if (connection.Tds.Errors.Count > 0)
-				throw SqlException.FromTdsError (connection.Tds.Errors);
+			connection.CheckForErrors ();
 			isOpen = false;
 		}
 
@@ -114,8 +112,7 @@ namespace System.Data.SqlClient {
 			if (!isOpen)
 				throw new InvalidOperationException ("The Transaction was not open.");
 			connection.Tds.ExecuteNonQuery (String.Format ("IF @@TRANCOUNT > 0 ROLLBACK TRAN {0}", transactionName));
-			if (connection.Tds.Errors.Count > 0)
-				throw SqlException.FromTdsError (connection.Tds.Errors);
+			connection.CheckForErrors ();
 			isOpen = false;
 		}
 
@@ -124,8 +121,7 @@ namespace System.Data.SqlClient {
 			if (!isOpen)
 				throw new InvalidOperationException ("The Transaction was not open.");
 			connection.Tds.ExecuteNonQuery (String.Format ("SAVE TRAN {0}", savePointName));
-			if (connection.Tds.Errors.Count > 0)
-				throw SqlException.FromTdsError (connection.Tds.Errors);
+			connection.CheckForErrors ();
 		}
 
 		#endregion // Methods

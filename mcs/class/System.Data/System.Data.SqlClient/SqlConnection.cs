@@ -148,9 +148,7 @@ namespace System.Data.SqlClient {
 				throw new InvalidOperationException ("SqlConnection does not support parallel transactions.");
 
 			tds.ExecuteNonQuery (String.Format ("BEGIN TRANSACTION {0}", transactionName));
-
-			if (tds.Errors.Count > 0)
-				throw SqlException.FromTdsError (tds.Errors);
+			CheckForErrors ();
 
 			transaction = new SqlTransaction (this, iso);
 			return transaction;
@@ -165,10 +163,14 @@ namespace System.Data.SqlClient {
 				throw new InvalidOperationException ("The connection is not open");
 
 			tds.ExecuteNonQuery (String.Format ("use {0}", database));
+			CheckForErrors ();
+		}
 
+		internal void CheckForErrors ()
+		{
 			if (tds.Errors.Count > 0)
 				throw SqlException.FromTdsError (tds.Errors);
-		}
+                }
 
 		public void Close () 
 		{
@@ -244,10 +246,13 @@ namespace System.Data.SqlClient {
 
 			if (!tds.IsConnected) {
 				tds.Connect (parms);
+				CheckForErrors ();
 				ChangeDatabase (parms.Database);
 			} 
-			else if (connectionReset) 
+			else if (connectionReset) {
 				tds.ExecuteNonQuery ("EXEC sp_connection_reset");
+				CheckForErrors ();
+			}
 		}
 
                 void SetConnectionString (string connectionString)
