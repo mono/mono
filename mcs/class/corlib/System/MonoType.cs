@@ -16,6 +16,7 @@ namespace System
 		public Type etype;
 		public Type[] interfaces;
 		public Assembly assembly;
+		public TypeAttributes attrs;
 	}
 
 	internal class MonoType : Type
