@@ -10,7 +10,7 @@
 using System;
 using System.Collections;
 
-namespace Microsoft.JScript.Tmp {
+namespace Microsoft.JScript {
 
 	public class ForIn : AST {
 
