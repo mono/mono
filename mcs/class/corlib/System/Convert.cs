@@ -75,6 +75,9 @@ namespace System {
   
 	[CLSCompliant(false)]
 	public sealed class Convert {
+
+		// Fields
+		public static readonly object DBNull;
 	
 		// ========== BASE 64 Conversions ========== //
 		// the BASE64 convert methods are using the Base64 converting methods
@@ -116,7 +119,7 @@ namespace System {
 				return Type.GetTypeCode (value.GetType ());
 		}
 
-		public static bool ISDBNull (object value)
+		public static bool IsDBNull (object value)
 		{
 			TypeCode tc = Type.GetTypeCode (value.GetType ());
 			
@@ -376,6 +379,11 @@ namespace System {
 		public static byte ToByte (string value, IFormatProvider provider) 
 		{
 			return Byte.Parse (value, provider);
+		}
+
+		public static byte ToByte (string value, int fromBase)
+		{
+			return (byte) ConvertFromBase (value, fromBase);
 		}
 	
 		public static byte ToByte (uint value) 
@@ -1511,6 +1519,14 @@ namespace System {
 			return value.ToString (provider); 
 		}
 
+		public static string ToString (byte value, int toBase)
+		{
+			if (NotValidBase (toBase))
+				throw new ArgumentException ("toBase is not valid.");
+			
+			return ConvertToBase ((int) value, int toBase);
+		}
+
 		public static string ToString (char value) 
 		{ 
 			return value.ToString (); 
@@ -1568,7 +1584,8 @@ namespace System {
 
 		public static string ToString (int value, int fromBase)
 		{
-			return (ConvertFromBase (value.ToString (), fromBase)).ToString ();
+			int retVal = ConvertFromBase (value.ToString (), fromBase);
+			return retVal.ToString ();
 		}
 
 		public static string ToString (int value, IFormatProvider provider) 
@@ -2180,6 +2197,26 @@ namespace System {
 			return result;
 		}
 
+		private static string ConvertToBase (value, toBase)
+		{
+			StringBuilder sb = new StringBuilder ();
+			BuildConvertedString (sb, value, toBase);
+			return sb.ToString ();
+		}
+
+		internal static void BuildConvertedString (StringBuilder sb, int value, int toBase)
+		{
+			int divided = value / toBase;
+			int reminder = value % toBase;		
+
+			if (divided > 0)
+				SBFromBase (sb, divided, toBase);
+		
+			if (reminder >= 10)
+				sb.Append ((char) (reminder + 'a' - 10));
+			else
+				sb.Append ((char) (reminder + '0'));
+		}
                 // Lookup table for the conversion ToType method. Order
 		// is important! Used by ToType for comparing the target
 		// type, and uses hardcoded array indexes.

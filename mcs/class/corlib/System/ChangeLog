@@ -1,11 +1,20 @@
 2002-03-05  Duncan Mak  <duncan@ximian.com>
 
+	* Convert.cs:
+	(DBNull) Added the missing field.
+	(IsDBNull) Fixed typo.
+	(ToByte (string, int)) Implemented.
+	(ToString (byte, int)) Implemented.
+	(ConvertToBase)
+	(BuildConvertedString) internal functions used for converting values to
+	a specific base.
+
 	* Int16.cs: 
 	* Int32.cs:
 	* Int64.cs:
 	* Single.cs:
 	* UInt16.cs: 
-	* UInt32.cs: Implement the IConvertible interface.	
+	* UInt32.cs: Implemented the IConvertible interface.	
 
 	* CharEnumerator.cs: Renamed to variables to be clearer and
 	changed some of the tests to conform to the 1.0 spec.
