@@ -52,7 +52,6 @@ namespace Mono.Xml.XPath
 		public int NextSibling;
 		public int FirstAttribute;
 		public int FirstNamespace;
-		public int Depth;
 		public XPathNodeType NodeType;
 		public int BaseURI;
 		public bool IsEmptyElement;

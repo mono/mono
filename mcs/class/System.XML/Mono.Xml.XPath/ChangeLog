@@ -1,5 +1,11 @@
 2004-03-15  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DTMXPathDocumentWriter2.cs : Eliminated Depth as well as -builder.
+	* DTMXPathNode2.cs, DTMXPathDocumentBuilder2.cs :
+	  Eliminated Depth at all.
+
+2004-03-15  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DTMXPathDocumentBuilder2.cs : Eliminating Depth. Store parent index
 	  stack instead of depending on Depth.
 	  Just use hasAttributes and hasLocalNs instead of indices.
