@@ -1,5 +1,9 @@
 2002-07-03  Nick Drochak  <ndrochak@gol.com>
 
+	* DoubleTest.cs: Fix some Assert/AssertEquals usage.
+
+2002-07-03  Nick Drochak  <ndrochak@gol.com>
+
 	* ArrayTest.cs: Re-enable some tests.  Let's see what's broken still.
 
 2002-06-20  Nick Drochak  <ndrochak@gol.com>

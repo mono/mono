@@ -67,10 +67,10 @@ public class DoubleTest : TestCase
 
 	public void TestCompareTo () {
 		//If you do int foo =  d_ninf.CompareTo(d_pinf); Assert(".." foo < 0, true) this works.... WHY???
-		AssertEquals("CompareTo Infinity failed", d_ninf.CompareTo(d_pinf) < 0, true);		
+		Assert("CompareTo Infinity failed", d_ninf.CompareTo(d_pinf) < 0);		
 
-		AssertEquals("CompareTo Failed01", d_neg.CompareTo(d_pos) < 0, true);
-		AssertEquals("CompareTo NaN Failed", d_nan.CompareTo(d_neg) < 0, true);				
+		Assert("CompareTo Failed01", d_neg.CompareTo(d_pos) < 0);
+		Assert("CompareTo NaN Failed", d_nan.CompareTo(d_neg) < 0);				
 
 		AssertEquals("CompareTo Failed02", 0, d_pos.CompareTo(d_pos2));		
 		AssertEquals("CompareTo Failed03", 0, d_pinf.CompareTo(d_pinf));		
@@ -86,7 +86,7 @@ public class DoubleTest : TestCase
 			Fail("CompareTo should raise a System.ArgumentException");
 		}
 		catch (Exception e) {
-			Assert("CompareTo should be a System.ArgumentException", typeof(ArgumentException) == e.GetType());
+			AssertEquals ("CompareTo should be a System.ArgumentException", typeof(ArgumentException), e.GetType());
 		}		
 		
 	}
