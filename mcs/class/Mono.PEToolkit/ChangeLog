@@ -1,3 +1,7 @@
+2003-03-01 Jackson Harper <jackson@latitudegeo.com>
+
+	* Image.cs: Write Metadata root
+
 2003-02-23  Peter Williams  <peterw@ximian.com>
 
 	* makefile.gnu (all): Give this dependencies

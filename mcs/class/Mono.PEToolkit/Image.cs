@@ -149,18 +149,17 @@ namespace Mono.PEToolkit {
 			coffHdr.Write (writer);
 			peHdr.Write (writer);
 		
-			
 			WriteSections (writer);
 			
 			if (this.IsCLI) {
 				
 				writer.BaseStream.Position = RVAToVA (peHdr.CLIHdrDir.virtAddr);
 				corHdr.Write (writer);
-			/*	
-				mdRoot = new MetaDataRoot(this);
-				reader.BaseStream.Position = RVAToVA(corHdr.MetaData.virtAddr);
-				mdRoot.Read(reader);
-			*/	
+
+				long pos = RVAToVA (corHdr.MetaData.virtAddr);
+				writer.BaseStream.Position = pos;
+				mdRoot.Write (writer);
+				
 			}
 			
 		}
