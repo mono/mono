@@ -188,22 +188,21 @@ namespace System.Xml
 
 		public virtual XmlNodeType MoveToContent ()
 		{
-			bool loop = true;
+			XmlNodeType nodeType = NodeType;
+			if (IsEmptyElement)
+				return nodeType;
+
+			if (nodeType == XmlNodeType.Attribute) {
+				MoveToElement ();
+				return nodeType;
+			}
+
 			do {
-				switch (NodeType) {
-				case XmlNodeType.XmlDeclaration:
-				case XmlNodeType.DocumentType:
-				case XmlNodeType.ProcessingInstruction:
-				case XmlNodeType.Comment:
-				case XmlNodeType.Whitespace:
-				case XmlNodeType.SignificantWhitespace:
-					Read ();
-					break;
-				default:
-					loop = false;
-					break;
-				}
-			} while (!EOF && loop);
+				Read ();
+				nodeType = NodeType;
+				if (IsContent (nodeType))
+					return nodeType;
+			} while (ReadState != ReadState.EndOfFile);
 			return XmlNodeType.None;
 		}
 

@@ -1,3 +1,10 @@
+2003-04-23  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* XmlReader.cs: reverted last patch. It breaks System.Configuration 
+	because 1. it considers XmlDeclaration as content and 2. always
+	returns XmlNodeType.None.
+	
+
 2003-04-23  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* Added missing ChangeLog of 4/4/2003.
