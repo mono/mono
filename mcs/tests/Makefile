@@ -26,7 +26,7 @@ USE_MCS_FLAGS :=
 #
 NEW_TEST_SOURCES_common = \
 	test-297 test-287 test-294 test-299 test-300 \
-	test-301 test-302 test-303 test-304 test-305 test-306 test-307
+	test-301 test-302 test-303 test-304 test-305 test-306 test-307 test-259 test-309
 
 #
 # Please do _not_ add any tests here - all new tests should go into NEW_TEST_SOURCES_common
@@ -59,7 +59,7 @@ TEST_SOURCES_common = \
 	test-221 test-222 test-223 test-224 test-225 test-226 test-227          test-229 test-230 \
 	test-231 test-232 test-233 test-234 test-235 test-236 test-237 test-238 test-239 test-240 \
 	test-241 test-242 test-243 test-244 test-245 test-246 test-247 test-248 test-249 test-250 \
-	test-251 test-252 test-253 test-254 test-255 test-256 test-257 test-258 test-259 test-260 \
+	test-251 test-252 test-253 test-254 test-255 test-256 test-257 test-258          test-260 \
 	test-261 test-262 test-263 test-264 test-265 test-266 test-267 test-268 test-269 test-270 \
 	test-271 test-272 test-273 test-274 test-275 test-276 test-277 test-278 test-279 test-280 \
 	test-281 test-282 test-283 test-284 test-285 test-286          test-288 test-289 test-290 \
@@ -93,7 +93,7 @@ TEST_SOURCES_net_2_0 = \
 	gen-71  gen-72  gen-73  gen-74  gen-75  gen-76  gen-77  gen-78  gen-79  gen-80 \
 	gen-81  gen-82  gen-83  gen-84
 
-TEST_EXCLUDES_net_2_0 = test-55 test-289 test-259
+TEST_EXCLUDES_net_2_0 = test-55 test-289
 
 TEST_SOURCES = $(filter-out $(TEST_EXCLUDES_common) $(TEST_EXCLUDES_$(PROFILE)) $(TEST_EXCLUDES_$(PLATFORM)), \
 	$(TEST_SOURCES_common) $(TEST_SOURCES_$(PROFILE)) $(TEST_SOURCES_$(PLATFORM)))
