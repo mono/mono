@@ -369,54 +369,54 @@ namespace Mono.Util {
                         string type_name;
 
                         switch (type) {
-			case "System.Uri":
-				type_name =  "anyURI";
-				break;
-			case "System.Boolean":
-				type_name = "Boolean";
-				break;
-			case "System.SByte":
-				type_name = "Byte";
-				break;
-			case "System.DateTime":
-				type_name = "dateTime";
-				break;
-			case "System.Decimal":
-				type_name = "decimal";
-				break;
-			case "System.Double":
-				type_name = "Double";
-				break;
-			case "System.Int16":
-				type_name = "short";
-				break;
-			case "System.Int32":
-				type_name =  "int";
-				break;
-			case "System.Int64":
-				type_name = "long";
-				break;
-			case "System.Xml.XmlQualifiedName":
-				type_name = "QName";
-				break;
-			case "System.TimeSpan":
-				type_name = "duration";
-				break;
-			case "System.String":
-				type_name = "string";
-				break;
-			case "System.UInt16":
-				type_name = "unsignedShort";
-				break;
-			case "System.UInt32":
-				type_name = "unsignedInt";
-				break;
-			case "System.UInt64":
-				type_name = "unsignedLong";		
-				break;           
-			default:
-				type_name = null;
-				break;
+				case "System.Uri":
+					type_name =  "anyURI";
+					break;
+				case "System.Boolean":
+					type_name = "Boolean";
+					break;
+				case "System.SByte":
+					type_name = "Byte";
+					break;
+				case "System.DateTime":
+					type_name = "dateTime";
+					break;
+				case "System.Decimal":
+					type_name = "decimal";
+					break;
+				case "System.Double":
+					type_name = "Double";
+					break;
+				case "System.Int16":
+					type_name = "short";
+					break;
+				case "System.Int32":
+					type_name =  "int";
+					break;
+				case "System.Int64":
+					type_name = "long";
+					break;
+				case "System.Xml.XmlQualifiedName":
+					type_name = "QName";
+					break;
+				case "System.TimeSpan":
+					type_name = "duration";
+					break;
+				case "System.String":
+					type_name = "string";
+					break;
+				case "System.UInt16":
+					type_name = "unsignedShort";
+					break;
+				case "System.UInt32":
+					type_name = "unsignedInt";
+					break;
+				case "System.UInt64":
+					type_name = "unsignedLong";		
+					break;           
+				default:
+					type_name = null;
+					break;
                         }       
                                 
                         if (type_name == null)
