@@ -1,3 +1,9 @@
+2003-02-05  Lluis Sanchez Gual  <lluis@ideary.com>
+
+	* CrossAppDomainChannel.cs: Corrected CADSerializer.DeserializeMessage. 
+	  Now it uses the method DeserializeMethodResponse to deserialize the message
+	  when the msg is provided.	  
+
 2003-02-04  Lluis Sanchez Gual  <lluis@ideary.com>
 
 	* ChannelServices.cs: Modified to work with new types of identities.

@@ -239,7 +239,10 @@ namespace System.Runtime.Remoting.Channels
 			serializer.SurrogateSelector = null;
 			mem.Position = 0;
 
-			return (IMessage) serializer.Deserialize(mem, null);
+			if (msg == null)
+				return (IMessage) serializer.Deserialize(mem, null);
+			else
+				return (IMessage) serializer.DeserializeMethodResponse(mem, null, msg);
 		}
 		
 		internal static MemoryStream SerializeMessage(IMessage msg)
