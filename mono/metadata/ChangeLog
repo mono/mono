@@ -1,3 +1,8 @@
+
+Thu Oct 10 14:56:51 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* metadata.c, metadata.h: added helper function to allocate signatures.
+
 2002-10-09  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* icall.c: added internal call to get the location of machine.config.
