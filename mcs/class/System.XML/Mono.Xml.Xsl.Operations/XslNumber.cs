@@ -329,7 +329,6 @@ namespace Mono.Xml.Xsl.Operations {
 				if (formatContent)
 					((FormatItem)fmtList [0]).Format (b, value);
 				if (lastSep != null) b.Append (lastSep);
-
 				return b.ToString ();
 			}
 			
@@ -399,8 +398,13 @@ namespace Mono.Xml.Xsl.Operations {
 					switch (item [0])
 					{
 						default: // See XSLT 1.0 spec 7.7.1.
+							return new DigitItem (sep, 1, gpSep, gpSize);
 						case '0': case '1':
-							return new DigitItem (sep, item.Length, gpSep, gpSize);
+							int len = 1;
+							for (; len < item.Length; len++)
+								if (!Char.IsDigit (item, len))
+									break;
+							return new DigitItem (sep, len, gpSep, gpSize);
 						case 'a':
 							return new AlphaItem (sep, false);
 						case 'A':
