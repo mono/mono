@@ -662,8 +662,14 @@ namespace Mono.CSharp
 
 		protected override string QuoteSnippetString( string value )
 		{
-			return "\"" + value + "\"";
-			// FIXME: escape quotes
+			// FIXME: this is weird, but works.
+			string output = value.Replace ("\\", "\\\\");
+			output = output.Replace ("\"", "\\\"");
+			output = output.Replace ("\t", "\\t");
+			output = output.Replace ("\r", "\\r");
+			output = output.Replace ("\n", "\\n");
+
+			return "\"" + output + "\"";
 		}
 
 		private void GenerateDeclaration( CodeTypeReference type, string name, CodeExpression initExpression )

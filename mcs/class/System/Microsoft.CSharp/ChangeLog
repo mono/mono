@@ -1,3 +1,8 @@
+2003-04-25  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* CSharpCodeGenerator.cs:
+	(QuoteSnippetString): add a few common escape sequences.
+
 2003-04-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CSharpCodeGenerator.cs: implemented GenerateSnippetMember and some

@@ -385,12 +385,20 @@ namespace System.CodeDom.Compiler {
 				return;
 			}
 
-			if (e.Value is bool) {
+			Type type = e.Value.GetType ();
+			if (type == typeof (bool)) {
 				output.Write (e.Value.ToString ().ToLower ());
-				return;
+			} else if (type == typeof (char)) {
+				output.Write ("'" + e.Value.ToString () + "'");
+			} else if (type == typeof (string)) {
+				output.Write (QuoteSnippetString ((string) e.Value));
+			} else if (type == typeof (byte) || type == typeof (sbyte) || type == typeof (short) ||
+				   type == typeof (int) || type == typeof (long) || type == typeof (float) ||
+				   type == typeof (double) || type == typeof (decimal)) {
+				output.Write (e.Value.ToString ());
+			} else {
+				throw new ArgumentException ("Value type (" + type + ") is not a primitive type");
 			}
-
-			output.Write (e.Value);
 		}
 
 		protected abstract void GenerateProperty (CodeMemberProperty p, CodeTypeDeclaration d);

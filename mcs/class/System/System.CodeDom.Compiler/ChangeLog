@@ -1,3 +1,10 @@
+2003-04-25  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* CodeGenerator.cs:
+	(GenerateCodePrimitive): special case strings and chars (bool was
+	already a special case). Throw an exception if the type is not a
+	primitive type.
+
 2003-04-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CodeGenerator.cs: more fixes and sorted the output.
