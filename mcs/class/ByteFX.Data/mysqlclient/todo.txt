@@ -1,0 +1,27 @@
+0.65
+====================
+[done]Protocol compression
+[done]Support for GetSchemaTable
+[done]Named pipes for Windows working
+[done]Fix issue with ASP.Net data grid  
+[done]Transactions
+[done]Fixed date/time handling
+MySQLCommandBuilder
+ 
+0.7
+=================================
+Support for all CommandBehaviors
+make XSD internal only
+Different character sets
+
+0.8
+================================
+Designer support for MySQLCommandBuilder
+
+0.9
+===============================
+?????
+
+1.0
+====================
+Oh yeah!

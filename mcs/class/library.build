@@ -54,6 +54,7 @@
 		<nant basedir="PEAPI" target="build" buildfile="PEAPI/PEAPI.build"/>
 		<nant basedir="ICSharpCode.SharpZipLib" target="build" buildfile="ICSharpCode.SharpZipLib/SharpZipLib.build"/>
 		<nant basedir="Npgsql" target="build" buildfile="Npgsql/Npgsql.build"/>
+		<nant basedir="ByteFX.Data" target="build" buildfile="ByteFX.Data/ByteFX.Data.build"/>
 	</target>
 
 	<target name="test">
@@ -78,7 +79,7 @@
 			<fileset basedir="lib">
 				<includes name="*.dll"/>
 			</fileset>
-		</delete>
+		</delete>	
 		<nant basedir="corlib" target="clean"/>
 		<nant basedir="Cscompmgd" target="clean"/>
 		<nant basedir="I18N" target="clean"/>
@@ -88,6 +89,7 @@
 		<nant basedir="System.XML" target="clean"/>
 		<nant basedir="Mono.Data.Tds" target="clean"/>
 		<nant basedir="System.Data" target="clean"/>
+		<nant basedir="System.Data.OracleClient" target="clean"/>
 		<nant basedir="Mono.Data.MySql" target="clean"/>
 		<nant basedir="Mono.Data.PostgreSqlClient" target="clean"/>
 		<nant basedir="Mono.Data.SqliteClient" target="clean"/>
@@ -105,5 +107,9 @@
 		<nant basedir="Mono.Security" target="clean"/>
 		<nant basedir="Mono.Security.Win32" target="clean"/>
 		<nant basedir="System.Management" target="clean"/>
+		<nant basedir="PEAPI" target="clean"/>
+		<nant basedir="NPgsql" target="clean"/>
+		<nant basedir="ICSharpCode.SharpZipLib" target="clean"/>
+		<nant basedir="ByteFX.Data" target="clean"/>
 	</target>
 </project>

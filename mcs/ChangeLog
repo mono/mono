@@ -1,3 +1,57 @@
+2002-03-14  Daniel Morgan <danmorg@sc.rr.com>
+
+	* makefile: added ByteFX.Data.dll to windows install
+	
+	* class/library.build: added ByteFX.Data.dll 
+	to windows build.  added additional clean targets
+	
+	* class/Microsoft.VisualC/Microsoft.VisualC.build: fix 
+	windows clean
+	
+	* class/ByteFX.Data: added directory for ByteFX.Data.dll
+	which includes a MySQL ADO.NET Provider.  
+	Contributed by Reggie Burnett <rykr@bellsouth.net>
+	from ByteFX, Inc.
+	ByteFX.Data 0.6.5 is Copyright 2002-2003, ByteFX, Inc.
+	
+	Added the following files and directories:
+		
+	class/ByteFX.Data/AssemblyInfo.cs    
+	class/ByteFX.Data/list
+	class/ByteFX.Data/ByteFX.Data.build  
+	class/ByteFX.Data/makefile.gnu
+	class/ByteFX.Data/ChangeLog.txt      
+	class/ByteFX.Data/readme.txt
+	class/ByteFX.Data/lgpl.txt: new files
+		
+	BitStream.cs  
+	Connection.cs        
+	Field.cs        
+	Inflater.cs
+    ConnectionString.cs  
+    HuffmanTree.cs  
+    NamedPipeStream.cs
+    class/ByteFX.Data/Common: added files to new directory
+
+	Driver.cs     
+	command.resx            
+	todo.txt
+	CommandBuilder.cs  
+	Exception.cs  
+	dataadapter.cs           
+	transcaction.cs
+	Connection.cs      
+	Field.cs      
+	datareader.cs
+	Connection.resx    
+	MysqlDefs.cs  
+	parameter.cs
+	class/ByteFX.Data/mysqlclient: added files to new directory
+
+	command.cs    
+	parameter_collection.cs
+	class/ByteFX.Data/mysqlclient/Designers: added files to new directory
+	
 2003-03-14  Daniel Morgan <danmorg@sc.rr.com>
 
 	* makefile: add ilasm.exe to windows build and add missing assemblies

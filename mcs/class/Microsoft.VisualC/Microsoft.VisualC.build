@@ -34,7 +34,7 @@
 	</target>
 
 	<target name="clean">
-		<nant basedir="Test" target="clean"/>
 		<delete file="../lib/Microsoft.VisualC.dll" failonerror="false"/>
+		<delete file="Test/Microsoft.VisualC.dll" failonerror="false"/>
 	</target>
 </project>

@@ -1,0 +1,22 @@
+0.65
+====================
+* MySQLCommandBuilder now implemented
+* Transaction support now implemented (not all table types support this)
+* GetSchemaTable fixed to not use xsd (for Mono)
+* Driver is now Mono-compatible!!
+* TIME data type now supported
+* More work to improve Timestamp data type handling
+* Changed signatures of all classes to match corresponding SqlClient classes
+
+0.60
+======================
+* Protocol compression  using SharpZipLib (www.icsharpcode.net)
+* Named pipes on Windows now working properly
+* Work done to improve Timestamp data type handling
+* Implemented IEnumerable on DataReader so DataGrid would work
+ 
+0.50
+======================
+* Speed increased dramatically by removing bugging network sync code
+* Driver no longer buffers rows of data (more ADO.Net compliant)
+* Conversion bugs related to TIMESTAMP and DATETIME fields fixed

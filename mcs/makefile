@@ -72,6 +72,7 @@ windowsinstall:
 MONO_WIN_INSTALL_LIB=	\
 	class/lib/Accessibility.dll	\
 	class/lib/ICSharpCode.SharpZipLib.dll \
+	class/lib/ByteFX.Data.dll \
 	class/lib/I18N.CJK.dll	\
 	class/lib/I18N.MidEast.dll	\
 	class/lib/I18N.Other.dll	\
