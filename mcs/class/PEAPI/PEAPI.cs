@@ -632,7 +632,7 @@ namespace PEAPI
                       unbox = 0x79, stobj = 0x81, box = 0x8C, newarr, 
                       ldelema = 0x8F, refanyval = 0xC2, mkrefany = 0xC6, 
                       ldtoken = 0xD0, initobj = 0xFE15, sizeOf = 0xFE1C,
-                      ldelem = 0xA3, stelem = 0xA4 }
+                      ldelem = 0xA3, stelem = 0xA4, unbox_any }
 
   /// <summary>
   /// CIL branch instructions
