@@ -1,3 +1,8 @@
+2003-12-24  Atsushi Enomoto <atsushi@ximian.com>
+
+	* profiler.c: workaround for --profile null reference exception on
+	  cygwin. Patch by Patrik Torstensson.
+
 2003-12-22  Bernie Solomon  <bernard@ugsolutions.com>
 
 	* marshal.c: (ves_icall_System_Runtime_InteropServices_Marshal_Read/WriteXXX)
