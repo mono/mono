@@ -1,3 +1,20 @@
+2004-02-12  Martin Baulig  <martin@ximian.com>
+
+	* metadata.h (MonoMethodHeader, MonoMethodSignature): Moved the
+	`gen_method' field from MonoMethodHeader to MonoMethodSignature.
+
+	* reflection.c (mono_image_get_methodspec_token): Take a
+	`MonoMethod *' instead of a `MonoReflectionInflatedMethod *'.
+	(mono_image_create_token): Check whether we have a
+	`method->signature->gen_method' and call
+	mono_image_get_methodspec_token() if appropriate.
+	(inflated_method_get_object): Removed.
+	(mono_reflection_bind_generic_method_parameters): Return a
+	`MonoReflectionMethod *', not a `MonoReflectionInflatedMethod *'.
+	(mono_reflection_inflate_method_or_ctor): Likewise.
+
+	* reflection.h (MonoReflectionInflatedMethod): Removed.
+
 2004-02-12  Zoltan Varga  <vargaz@freemail.hu>
 
 	* marshal.c (mono_marshal_get_native_wrapper): Implement proper support
