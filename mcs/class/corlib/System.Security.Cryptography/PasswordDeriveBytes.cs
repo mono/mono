@@ -5,10 +5,6 @@
 //	Sebastien Pouliot (sebastien@ximian.com)
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
-// (C) 2004 Novell (http://www.novell.com)
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -60,13 +56,16 @@ public class PasswordDeriveBytes : DeriveBytes {
 
 	public PasswordDeriveBytes (string strPassword, byte[] rgbSalt) 
 	{
-		Prepare (strPassword, rgbSalt, "SHA1", 1);
+		Prepare (strPassword, rgbSalt, "SHA1", 100);
 	}
 
 	public PasswordDeriveBytes (string strPassword, byte[] rgbSalt, CspParameters cspParams) 
 	{
-		throw new NotSupportedException (
-			Locale.GetText ("CspParameters not supported by Mono"));
+		Prepare (strPassword, rgbSalt, "SHA1", 100);
+		if (cspParams != null) {
+			throw new NotSupportedException (
+				Locale.GetText ("CspParameters not supported by Mono for PasswordDeriveBytes."));
+		}
 	}
 
 	public PasswordDeriveBytes (string strPassword, byte[] rgbSalt, string strHashName, int iterations) 
@@ -76,8 +75,11 @@ public class PasswordDeriveBytes : DeriveBytes {
 
 	public PasswordDeriveBytes (string strPassword, byte[] rgbSalt, string strHashName, int iterations, CspParameters cspParams) 
 	{
-		throw new NotSupportedException (
-			Locale.GetText ("CspParameters not supported by Mono"));
+		Prepare (strPassword, rgbSalt, strHashName, iterations);
+		if (cspParams != null) {
+			throw new NotSupportedException (
+				Locale.GetText ("CspParameters not supported by Mono for PasswordDeriveBytes."));
+		}
 	}
 
 	~PasswordDeriveBytes () 
@@ -93,16 +95,34 @@ public class PasswordDeriveBytes : DeriveBytes {
 
 	private void Prepare (string strPassword, byte[] rgbSalt, string strHashName, int iterations) 
 	{
-		HashNameValue = strHashName;
-		SaltValue = rgbSalt;
-		IterationsValue = iterations;
-		state = 0;
+#if NET_2_0
+		if (strPassword == null)
+			throw new ArgumentNullException ("strPassword");
 		password = Encoding.UTF8.GetBytes (strPassword);
+
+		Salt = rgbSalt;
+#else
+		if (strPassword == null)
+			password = null;
+		else
+			password = Encoding.UTF8.GetBytes (strPassword);
+
+		if (rgbSalt == null)
+			SaltValue = null;
+		else
+			SaltValue = (byte[]) rgbSalt.Clone ();
+#endif
+
+		HashName = strHashName;
+		IterationCount = iterations;
+		state = 0;
 	}
 
 	public string HashName {
 		get { return HashNameValue; } 
 		set {
+			if (value == null)
+				throw new ArgumentNullException ("HashName");
 			if (state != 0) {
 				throw new CryptographicException (
 					Locale.GetText ("Can't change this property at this stage"));
@@ -114,6 +134,8 @@ public class PasswordDeriveBytes : DeriveBytes {
 	public int IterationCount {
 		get { return IterationsValue; }
 		set {
+			if (value < 1)
+				throw new ArgumentOutOfRangeException ("> 0", "IterationCount");
 			if (state != 0) {
 				throw new CryptographicException (
 					Locale.GetText ("Can't change this property at this stage"));
@@ -123,18 +145,25 @@ public class PasswordDeriveBytes : DeriveBytes {
 	}
 
 	public byte[] Salt {
-		get { return (byte[]) SaltValue.Clone ();  }
+		get { 
+			if (SaltValue == null)
+				return null;
+			return (byte[]) SaltValue.Clone ();
+		}
 		set {
 			if (state != 0) {
 				throw new CryptographicException (
 					Locale.GetText ("Can't change this property at this stage"));
 			}
-
-// For Fx 1.0/1.1 compatibility
-//			if (value != null)
+#if NET_2_0
+			if (value != null)
 				SaltValue = (byte[]) value.Clone ();
-//			else
-//				SaltValue = null;
+			else
+				SaltValue = null;
+#else
+			// this will cause a NullReferenceException if set to null (like 1.0/1.1)
+			SaltValue = (byte[]) value.Clone ();
+#endif
 		}
 	}
 
@@ -151,6 +180,11 @@ public class PasswordDeriveBytes : DeriveBytes {
 	// note: Key is returned - we can't zeroize it ourselve :-(
 	public override byte[] GetBytes (int cb) 
 	{
+#if ! NET_2_0
+		// 1.0/1.1 was a little late at throwing the argument exception ;-)
+		if (password == null)
+			throw new ArgumentNullException ("Password");
+#endif
 		if (cb < 1)
 			throw new IndexOutOfRangeException ("cb");
 
