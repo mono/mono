@@ -1,3 +1,7 @@
+2004-07-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HostProtectionResource.cs: New enum for Fx 2.0.
+
 2004-07-07  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* FileDialogPermission.cs: Removed the unrequired override ToString
