@@ -17,6 +17,10 @@ using Mono.Security;
 using Mono.Security.Authenticode;
 using Mono.Security.X509;
 
+#if !(NET_1_0 || NET_1_1)
+using System.Runtime.Serialization;
+#endif
+
 namespace System.Security.Cryptography.X509Certificates {
 
 	// References:
@@ -26,9 +30,12 @@ namespace System.Security.Cryptography.X509Certificates {
 	// LAMESPEC: the MSDN docs always talks about X509v3 certificates
 	// and/or Authenticode certs. However this class works with older
 	// X509v1 certificates and non-authenticode (code signing) certs.
+#if (NET_1_0 || NET_1_1)
 	[Serializable]
 	public class X509Certificate {
-	
+#else
+	public class X509Certificate : IDeserializationCallback, ISerializable {
+#endif
 		// typedef struct _CERT_CONTEXT {
                 //	DWORD                   dwCertEncodingType;
                 //	BYTE                    *pbCertEncoded;
@@ -83,99 +90,18 @@ namespace System.Security.Cryptography.X509Certificates {
 			return new X509Certificate (data);
 		}
 	
-		/*static private int ReadWord (Stream s) 
-		{
-			int word = s.ReadByte ();
-			word = (s.ReadByte () << 8) + word;
-			return word;
-		}
-	
-		static private int ReadDWord (Stream s) 
-		{
-			int b1 = s.ReadByte ();
-			int b2 = s.ReadByte ();
-			int b3 = s.ReadByte ();
-			int b4 = s.ReadByte ();
-			return (b4 << 24) + (b3 << 16) + (b2 << 8) + b1;
-		}
-	
-		// http://www.mycgiserver.com/~ultraschall/files/pefile.htm
-		static private byte[] GetAuthenticodeSignature (string fileName) 
-		{
-			FileStream fs = new FileStream (fileName, FileMode.Open, FileAccess.Read);
-			try {
-				// MZ - DOS header
-				if (ReadWord (fs) != 0x5a4d)
-					return null;
-				// find offset of PE header
-				fs.Seek (60, SeekOrigin.Begin);
-				int peOffset = ReadDWord (fs);
-	
-				// PE - NT header
-				fs.Seek (peOffset, SeekOrigin.Begin);
-				if (ReadWord (fs) != 0x4550)
-					return null;
-	
-				fs.Seek (150, SeekOrigin.Current);
-	
-				// IMAGE_DIRECTORY_ENTRY_SECURITY
-				int secOffset = ReadDWord (fs);
-				if (secOffset == 0)
-					return null;
-				int secSize = ReadDWord (fs);
-				if (secSize == 0)
-					return null;
-	
-				// Authenticode signature
-				fs.Seek (secOffset, SeekOrigin.Begin);
-				if (ReadDWord (fs) != secSize)
-					return null;
-				if (ReadDWord (fs) != 0x00020200)
-					return null;
-				
-				byte[] signature = new byte [secSize - 8];
-				fs.Read (signature, 0, signature.Length);
-				fs.Close ();
-				return signature;
-			}
-			catch {
-				fs.Close ();
-				return null;
-			}
-		}*/
-
-		// LAMESPEC: How does it differ from CreateFromCertFile ?
-		// It seems to get the certificate inside a PE file (maybe a CAB too ?)
-		[MonoTODO ("Incomplete - no validation in this version")]
+		[MonoTODO ("Incomplete - minimal validation in this version")]
 		public static X509Certificate CreateFromSignedFile (string filename)
 		{
 			AuthenticodeDeformatter a = new AuthenticodeDeformatter (filename);
-			if ((a.Certificates != null) && (a.Certificates.Count > 0)) {
-				return new X509Certificate (a.Certificates [0].RawData);
+			if (a.SigningCertificate != null) {
+				return new X509Certificate (a.SigningCertificate.RawData);
 			}
 			else {
 				// if no signature is present return an empty certificate
 				byte[] cert = null; // must not confuse compiler about null ;)
 				return new X509Certificate (cert);
 			}
-/*
-			byte[] signature = GetAuthenticodeSignature (filename);
-			if (signature == null)
-				throw new COMException ("File doesn't have a signature", -2146762496);
-	
-			// this is a big bad ASN.1 structure
-			// Reference: http://www.cs.auckland.ac.nz/~pgut001/pubs/authenticode.txt
-			// next we must find the last certificate inside the structure
-			try {
-				ASN1 sign = new ASN1 (signature);
-				// we don't have to understand much of it to get the certificate
-				ASN1 certs = sign [1][0][3];
-				byte[] lastCert = certs [certs.Count - 1].GetBytes();
-				return new X509Certificate (lastCert);
-			}
-			catch {
-				return null;
-			}*/
 		}
 	
 		// constructors
@@ -209,7 +135,27 @@ namespace System.Security.Cryptography.X509Certificates {
 				hideDates = false;
 			}
 		}
-	
+
+#if !(NET_1_0 || NET_1_1)
+		public X509Certificate () {}
+
+		public X509Certificate (byte[] rawData, string password) {}
+
+		public X509Certificate (byte[] rawData, string password, X509KeyStorageFlags keyStorageFlags) {}
+
+		public X509Certificate (string fileName)
+		{
+		}
+
+		public X509Certificate (string fileName, string password)
+		{
+		}
+
+		public X509Certificate (string fileName, string password, X509KeyStorageFlags keyStorageFlags) {}
+
+		public X509Certificate (SerializationInfo info, StreamingContext context) {}
+#endif
+
 		// public methods
 	
 		public virtual bool Equals (System.Security.Cryptography.X509Certificates.X509Certificate cert)
@@ -408,5 +354,37 @@ namespace System.Security.Cryptography.X509Certificates {
 			else
 				return base.ToString ();
 		}
+
+#if !(NET_1_0 || NET_1_1)
+		public virtual byte[] Export (X509ContentType contentType)
+		{
+			return null;
+		}
+
+		public virtual byte[] Export (X509ContentType contentType, string password)
+		{
+			return null;
+		}
+
+		void IDeserializationCallback.OnDeserialization (object sender) {}
+
+		public virtual void Import (byte[] rawData) {}
+
+		public virtual void Import (byte[] rawData, string password, X509KeyStorageFlags keyStorageFlags) {}
+
+		public virtual void Import (string fileName) {}
+
+		public virtual void Import (string fileName, string password, X509KeyStorageFlags keyStorageFlags) {}
+
+		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context) {}
+
+		public virtual void Reset() {}
+
+		// properties
+
+		public IntPtr Handle {
+			get { return (IntPtr) 0; }
+		}
+#endif
 	}
 }
