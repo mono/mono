@@ -1,3 +1,23 @@
+2002-11-17  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* AllTests.cs: Added a common RSA keypair for tests and all RSA 
+	suites for new tests.
+	* RSACryptoServiceProviderTest.cs: Include tests for keygen,
+	import/export and signature (no encryption yet).
+	* RSAOAEPKeyExchangeDeformatterTest.cs: Compare results with 
+	pre-generated vectors from Mono/Windows (cannot yet compare 
+	with CryptoAPI/Windows as OAEP isn't available on my system).
+	* RSAOAEPKeyExchangeFormatterTest.cs: Test that the Formatter output
+	is compatible with the Deformatter.
+	* RSAPKCS1KeyExchangeDeformatterTest.cs: Compare results with 
+	pre-generated vectors from Mono/Windows and CryptoAPI/Windows.
+	* RSAPKCS1KeyExchangeFormatterTest.cs: Test that the Formatter output
+	is compatible with the Deformatter.
+	* RSAPKCS1SignatureDeformatterTest.cs: Compare results with 
+	pre-generated vectors from Mono/Windows and CryptoAPI/Windows.
+	* RSAPKCS1SignatureFormatterTest.cs: Test that the Formatter output
+	is compatible with the Deformatter.
+
 2002-11-16  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* AllTests.cs: Added suites for DSASignatureDeformatter, 
