@@ -1,8 +1,34 @@
-EXTRA_DIST = mcs.in mbas.in ilasm.in cilc.in monoresgen.in resgen.in secutil.in sqlsharp.in xsd.in wsdl2.in wsdl.in genxs.in soapsuds.in chktrust.in signcode.in disco.in sn.in al.in cert2spc.in setreg.in makecert.in certmgr.in monop.in gacutil.in gmcs.in mono-find-provides.in mono-find-requires.in
+EXTRA_DIST = script.in script2.in
 
 bin2dir = $(bindir)
 
-bin_SCRIPTS = mcs mbas ilasm cilc monoresgen resgen secutil sqlsharp xsd wsdl al genxs soapsuds chktrust signcode disco sn cert2spc setreg makecert certmgr monop gacutil mono-find-requires mono-find-provides
+bin_SCRIPTS = \
+	al			\
+	cert2spc		\
+	certmgr			\
+	chktrust		\
+	cilc			\
+	disco			\
+	gacutil			\
+	genxs			\
+	ilasm			\
+	makecert		\
+	mbas			\
+	mcs			\
+	mkbundle		\
+	mono-find-provides	\
+	mono-find-requires	\
+	monop			\
+	monoresgen		\
+	resgen			\
+	secutil			\
+	setreg			\
+	signcode		\
+	sn			\
+	soapsuds		\
+	sqlsharp		\
+	wsdl			\
+	xsd
 
 bin2_SCRIPTS = gmcs wsdl2
 
