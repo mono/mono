@@ -1,0 +1,4 @@
+2001-09-06  Dietmar Maurer  <dietmar@ximian.com>
+
+	* monoburg.c (emit_header): use macros to access the tree (like in iburg)
+
