@@ -1,3 +1,9 @@
+2003-06-29  Sebastien Pouliot <spouliot@videotron.ca>
+
+	* corlib_test.args: Added ReflectionPermissionAttributeTest.cs and
+	ReflectionPermissionTest.cs in System.Security.Permissions.
+	* corlib_test.args: Same.
+
 2003-06-28  Sebastien Pouliot <spouliot@videotron.ca>
 
 	* corlib_test.args: Added PermissionSetTest.cs and NamedPermissionSetTest.cs

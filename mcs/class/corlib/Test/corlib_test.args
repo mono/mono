@@ -135,6 +135,8 @@ System.Security.Permissions/FileIOPermissionAttributeTest.cs
 System.Security.Permissions/FileIOPermissionTest.cs
 System.Security.Permissions/PublisherIdentityPermissionAttributeTest.cs
 System.Security.Permissions/PublisherIdentityPermissionTest.cs
+System.Security.Permissions/ReflectionPermissionAttributeTest.cs
+System.Security.Permissions/ReflectionPermissionTest.cs
 System.Security.Permissions/StrongNamePublicKeyBlobTest.cs
 System.Security.Policy/CodeGroupTest.cs
 System.Security.Policy/EvidenceTest.cs
