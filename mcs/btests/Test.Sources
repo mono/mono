@@ -143,6 +143,7 @@ ArrayA \
 ArrayB \
 ArrayC \
 ArrayD \
+ArrayE \
 EnumA \
 EnumB \
 PropertyA \
@@ -217,7 +218,8 @@ ForEachB \
 LoopStatementsA \
 ExceptionHandlingA \
 ExceptionHandlingB \
-ExceptionHandlingC
+ExceptionHandlingC \
+InvocationStatementA
 
 # All negetive test cases which should
 # fail during compilation goes here
