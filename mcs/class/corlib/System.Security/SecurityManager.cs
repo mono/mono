@@ -124,7 +124,7 @@ namespace System.Security {
 				grant = (CodeAccessPermission) a.GrantedPermissionSet.GetPermission (perm.GetType ());
 				if (grant == null) {
 					if (!a.GrantedPermissionSet.IsUnrestricted () || !(perm is IUnrestrictedPermission)) {
-						return false;
+						return perm.IsSubsetOf (null);
 					}
 				} else if (!perm.IsSubsetOf (grant)) {
 					return false;

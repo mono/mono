@@ -1,3 +1,8 @@
+2005-03-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SecurityManager.cs: Fix CodeAccessPermissionTest.CustomCAS unit test
+	when --security is enabled (code was over-optimized ;-).
+
 2005-03-11  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SecurityManager.cs: Added methods to support reflection query and 
