@@ -131,6 +131,7 @@ System.Web.UI/SimpleHandlerFactory.cs
 System.Web.UI/TagPrefixAttribute.cs
 System.Web.UI/TemplateContainerAttribute.cs
 System.Web.UI/TemplateControlParser.cs
+System.Web.UI/UserControlParser.cs
 System.Web.UI/ValidatorCollection.cs
 System.Web.UI/ValidationPropertyAttribute.cs
 System.Web.UI/AttributeCollection.cs
@@ -353,7 +354,11 @@ System.Web.Compilation/AspElements.cs
 System.Web.Compilation/AspGenerator.cs
 System.Web.Compilation/AspParser.cs
 System.Web.Compilation/AspTokenizer.cs
+System.Web.Compilation/BaseCompiler.cs
+System.Web.Compilation/CachingCompiler.cs
+System.Web.Compilation/CompilationResult.cs
+System.Web.Compilation/CompilationException.cs
 System.Web.Compilation/PageCompiler.cs
-System.Web.Compilation/TemplateFactory.cs
+System.Web.Compilation/UserControlCompiler.cs
 System.Web.Compilation/WebServiceCompiler.cs
 System.Web.Handlers/TraceHandler.cs

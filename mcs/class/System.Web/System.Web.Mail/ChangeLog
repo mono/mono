@@ -1,3 +1,7 @@
+2002-11-26  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* SmtpMail.cs: i don't wanna see that warning :-).
+
 2002-04-26  Lawrence Pit <loz@cable.a2000.nl>
 
 	* MailAttachment.cs: Implemented

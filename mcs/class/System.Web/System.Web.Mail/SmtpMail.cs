@@ -42,6 +42,7 @@ namespace System.Web.Mail
 			
 			throw new NotImplementedException("Mono.Mail component is work in progress");
 
+		/*
 			try {
 				// TODO: possibly cache ctor info object..
 				Type stype = Type.GetType ("Mono.Mail.Smtp.SmtpSender");
@@ -58,6 +59,7 @@ namespace System.Web.Mail
 			} catch (Exception) {
 				throw new Exception ("Unable to call Mono.Mail.Smtp.SmtpSender");
 			}
+		*/
 		}
 		
 		public static void Send (string from, string to, string subject, string messageText) 

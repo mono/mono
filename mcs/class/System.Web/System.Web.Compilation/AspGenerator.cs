@@ -271,7 +271,6 @@ class AspGenerator
 {
 	private object [] parts;
 	private ArrayListWrapper elements;
-	private StringBuilder buildOptions;
 	private StringBuilder prolog;
 	private StringBuilder declarations;
 	private StringBuilder script;
@@ -292,12 +291,14 @@ class AspGenerator
 	private string fullPath;
 	private static string enableSessionStateLiteral =  ", System.Web.SessionState.IRequiresSessionState";
 
+	Hashtable options;
+	string privateBinPath;
+
 	enum UserControlResult
 	{
 		OK = 0,
 		FileNotFound = 1,
-		XspFailed = 2,
-		CompilationFailed = 3
+		CompilationFailed = 2
 	}
 
 	public AspGenerator (string pathToFile, ArrayList elements)
@@ -310,6 +311,7 @@ class AspGenerator
 		this.className = filename.Replace ('.', '_'); // Overridden by @ Page classname
 		this.className = className.Replace ('-', '_'); 
 		this.className = className.Replace (' ', '_');
+		Options ["ClassName"] = this.className;
 		this.fullPath = Path.GetFullPath (pathToFile);
 		/*
 		if (IsUserControl) {
@@ -322,6 +324,14 @@ class AspGenerator
 		//
 		//*/
 		this.has_form_tag = false;
+		AppDomainSetup setup = AppDomain.CurrentDomain.SetupInformation;
+		privateBinPath = setup.PrivateBinPath;
+		if (privateBinPath == null || privateBinPath.Length == 0)
+			privateBinPath = "bin";
+			
+		if (!Path.IsPathRooted (privateBinPath))
+			privateBinPath = Path.Combine (setup.ApplicationBase, privateBinPath);
+		
 		Init ();
 	}
 
@@ -350,6 +360,15 @@ class AspGenerator
 		}
 	}
 
+	public Hashtable Options {
+		get {
+			if (options == null)
+				options = new Hashtable ();
+
+			return options;
+		}
+	}
+	
 	public void AddInterface (string iface)
 	{
 		if (interfaces == "") {
@@ -381,20 +400,18 @@ class AspGenerator
 		constructor = new StringBuilder ();
 		init_funcs = new StringBuilder ();
 		epilog = new StringBuilder ();
-		buildOptions = new StringBuilder ();
 
 		current_function = new StringBuilder ();
 		functions = new Stack ();
 		functions.Push (current_function);
 
-		parts = new Object [7];
-		parts [0] = buildOptions;
-		parts [1] = prolog;
-		parts [2] = declarations;
-		parts [3] = script;
-		parts [4] = constructor;
-		parts [5] = init_funcs;
-		parts [6] = epilog;
+		parts = new Object [6];
+		parts [0] = prolog;
+		parts [1] = declarations;
+		parts [2] = script;
+		parts [3] = constructor;
+		parts [4] = init_funcs;
+		parts [5] = epilog;
 
 		prolog.Append ("namespace ASP {\n" +
 			      "\tusing System;\n" + 
@@ -459,6 +476,7 @@ class AspGenerator
 	{
 		if (att ["ClassName"] != null){
 			this.className = (string) att ["ClassName"];
+			Options ["ClassName"] = className;
 		}
 
 		if (att ["EnableSessionState"] != null){
@@ -482,12 +500,21 @@ class AspGenerator
 		}
 		*/
 
-		if (att ["CompilerOptions"] != null){
-			string compilerOptions = (string) att ["CompilerOptions"];
-			buildOptions.AppendFormat ("//<compileroptions options=\"{0}\"/>\n", compilerOptions);
-		}
+		if (att ["CompilerOptions"] != null)
+			Options ["CompilerOptions"] = (string) att ["CompilerOptions"];
 
 		//FIXME: add support for more attributes.
+	}
+
+	void AddReference (string dll)
+	{
+		string references = Options ["References"] as string;
+		if (references == null)
+			references = dll;
+		else
+			references = references + " " + dll;
+
+		Options ["References"] = references;
 	}
 
 	private void RegisterDirective (TagAttributes att)
@@ -503,9 +530,9 @@ class AspGenerator
 				throw new ApplicationException ("Invalid attributes for @ Register: " +
 								att.ToString ());
 			prolog.AppendFormat ("\tusing {0};\n", name_space);
-			string dll = "output" + Path.DirectorySeparatorChar + assembly_name + ".dll";
+			string dll = privateBinPath + Path.DirectorySeparatorChar + assembly_name + ".dll";
 			Foundry.RegisterFoundry (tag_prefix, dll, name_space);
-			buildOptions.AppendFormat ("//<reference dll=\"{0}\"/>\n", dll);
+			AddReference (dll);
 			return;
 		}
 
@@ -532,13 +559,10 @@ class AspGenerator
 				prolog.AppendFormat ("\tusing {0};\n", "ASP");
 				string dll = "output" + Path.DirectorySeparatorChar + data.assemblyName + ".dll";
 				Foundry.RegisterFoundry (tag_prefix, data.assemblyName, "ASP", data.className);
-				buildOptions.AppendFormat ("//<reference dll=\"{0}\"/>\n", data.assemblyName);
+				AddReference (data.assemblyName);
 				break;
 			case UserControlResult.FileNotFound:
 				throw new ApplicationException ("File '" + src + "' not found.");
-			case UserControlResult.XspFailed:
-				//TODO
-				throw new NotImplementedException ();
 			case UserControlResult.CompilationFailed:
 				//TODO: should say where the generated .cs file is for the server to
 				//show the source and the compiler error
@@ -1474,8 +1498,6 @@ class AspGenerator
 
 	private void End ()
 	{
-		buildOptions.AppendFormat ("//<class name=\"{0}\"/>\n", className);
-		buildOptions.Append ("\n");
 		classDecl = "\tpublic class " + className + " : " + parent + interfaces + " {\n"; 
 		prolog.Append ("\n" + classDecl);
 		declarations.Append ("\t\tprivate static bool __intialized = false;\n\n");
@@ -1583,110 +1605,20 @@ class AspGenerator
 			return data;
 		}
 
-		string noExt = Path.GetFileNameWithoutExtension (src);
-		string csName = "output" + dirSeparator + "xsp_ctrl_" + noExt + ".cs";
-		if (!Directory.Exists ("output"))
-			Directory.CreateDirectory ("output");
-
-		if (Xsp (src, csName) == false) {
-			data.result = UserControlResult.XspFailed;
+		string csName = Path.GetTempFileName () + ".cs";
+		string dll = Path.ChangeExtension (csName, ".dll");
+		UserControlCompiler compiler = new UserControlCompiler (new UserControlParser (src), csName);
+		Type t = compiler.GetCompiledType ();
+		if (t == null) {
+			data.result = UserControlResult.CompilationFailed;
 			return data;
 		}
 		
-		StreamReader fileReader = new StreamReader (File.Open (csName, FileMode.Open));
-		data.className = src.Replace ('.', '_');
-		
-		StringBuilder compilerOptions = new StringBuilder ("/r:System.Web.dll /r:System.Drawing.dll ");
-		compilerOptions.Append ("/target:library ");
-
-		string line;
-		while ((line = fileReader.ReadLine ()) != null && line != "") {
-			if (line.StartsWith ("//<class ")) {
-				data.className = GetAttributeValue (line, "name");
-			} else if (line.StartsWith ("//<reference ")) {
-				string dllName = GetAttributeValue (line, "dll");
-				compilerOptions.AppendFormat ("/r:{0} ", dllName);
-			} else if (line.StartsWith ("//<compileroptions ")) {
-				string options = GetAttributeValue (line, "options");
-				compilerOptions.Append (" " + options + " ");
-			} else {
-				Console.Error.WriteLine ("Ignoring build option: {0}", line);
-			}
-		}
-		fileReader.Close ();
-
-		string dll = Path.ChangeExtension (csName, ".dll");
+		data.className = t.FullName;
 		data.assemblyName = dll;
-		if (Compile (csName, dll, compilerOptions) == false) {
-			data.result = UserControlResult.CompilationFailed;
-		}
 		
 		return data;
 	}
-
-	private static string GetAttributeValue (string line, string att)
-	{
-		string att_start = att + "=\"";
-		int begin = line.IndexOf (att_start);
-		int end = line.Substring (begin + att_start.Length).IndexOf ('"');
-		if (begin == -1 || end == -1)
-			throw new ApplicationException ("Error in compilation option:\n" + line);
-
-		return line.Substring (begin + att_start.Length, end);
-	}
-		
-	private static bool Xsp (string fileName, string csFileName)
-	{
-#if MONO
-		return RunProcess ("mono", 
-				   "xsp.exe --control " + fileName, 
-				   csFileName,
-				   "output" + dirSeparator + "xsp_ctrl_" + Path.GetFileName (fileName) + 
-				   ".sh");
-#else
-		return RunProcess ("xsp", 
-				   "--control " + fileName, 
-				   csFileName,
-				   "output" + dirSeparator + "xsp_ctrl_" + fileName + ".bat");
-#endif
-	}
-
-	private static bool Compile (string csName, string dllName, StringBuilder compilerOptions)
-	{
-		compilerOptions.AppendFormat ("/out:{0} ", dllName);
-		compilerOptions.Append (csName + " ");
-
-		string cmdline = compilerOptions.ToString ();
-		string noext = Path.GetFileNameWithoutExtension (csName);
-		string output_file = "output" + dirSeparator + "output_from_compilation_" + noext + ".txt";
-		string bat_file = "output" + dirSeparator + "last_compilation_" + noext + ".bat";
-		return RunProcess ("mcs", cmdline, output_file, bat_file);
-	}
-
-	private static bool RunProcess (string exe, string arguments, string output_file, string script_file)
-	{
-		Process proc = new Process ();
-
-		proc.StartInfo.FileName = exe;
-		proc.StartInfo.Arguments = arguments;
-		proc.StartInfo.UseShellExecute = false;
-		proc.StartInfo.RedirectStandardOutput = true;
-		proc.Start ();
-		string poutput = proc.StandardOutput.ReadToEnd();
-		proc.WaitForExit ();
-		int result = proc.ExitCode;
-		proc.Close ();
-
-		StreamWriter cmd_output = new StreamWriter (File.Create (output_file));
-		cmd_output.Write (poutput);
-		cmd_output.Close ();
-		StreamWriter bat_output = new StreamWriter (File.Create (script_file));
-		bat_output.Write (exe + " " + arguments);
-		bat_output.Close ();
-
-		return (result == 0);
-	}
-
 }
 
 }

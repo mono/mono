@@ -8,30 +8,36 @@
 //
 using System;
 using System.IO;
+using System.Reflection;
 using System.Web.UI;
 
 namespace System.Web.Compilation
 {
-	class WebServiceCompiler
+	class WebServiceCompiler : BaseCompiler
 	{
-		private WebServiceCompiler ()
+		SimpleWebHandlerParser wService;
+		string sourceFile;
+
+		private WebServiceCompiler (SimpleWebHandlerParser wService)
 		{
+			this.wService = wService;
 		}
 
 		public static Type CompileIntoType (SimpleWebHandlerParser wService)
 		{
-			string sourceFile = GenerateSourceFile (wService);
-			Type type = TemplateFactory.GetTypeFromSource (wService.PhysicalPath, sourceFile);
-			if (type.FullName != wService.ClassName)
-				throw new ApplicationException (String.Format (
-								"Class={0}, but the class compiled is {1}",
-								wService.ClassName,
-								type.FullName));
-								
-			return type;
+			CompilationCacheItem item = CachingCompiler.GetCached (wService.PhysicalPath);
+			if (item != null && item.Result != null) {
+				if (item.Result != null)
+					return item.Result.Data as Type;
+
+				throw new CompilationException (item.Result);
+			}
+
+			WebServiceCompiler wsc = new WebServiceCompiler (wService);
+			return wsc.GetCompiledType ();
 		}
 
-		private static string GenerateSourceFile (SimpleWebHandlerParser wService)
+		static string GenerateSourceFile (SimpleWebHandlerParser wService)
 		{
 			//FIXME: should get Tmp dir for this application
 			string csName = Path.GetTempFileName ();
@@ -39,6 +45,40 @@ namespace System.Web.Compilation
 			output.Write (wService.Program);
 			output.Close ();
 			return csName;
+		}
+
+		public override Type GetCompiledType ()
+		{
+			sourceFile = GenerateSourceFile (wService);
+
+			CachingCompiler compiler = new CachingCompiler (this);
+			CompilationResult result = new CompilationResult ();
+			if (compiler.Compile (result) == false)
+				throw new CompilationException (result);
+				
+			Assembly assembly = Assembly.LoadFrom (result.OutputFile);
+			Type [] types = assembly.GetTypes ();
+			Type type = types [0];
+			if (type.FullName != wService.ClassName)
+				throw new ApplicationException (String.Format (
+								"Class={0}, but the class compiled is {1}",
+								wService.ClassName,
+								type.FullName));
+								
+			result.Data = type;
+			return type;
+		}
+
+		public override string Key {
+			get {
+				return wService.PhysicalPath;
+			}
+		}
+
+		public override string SourceFile {
+			get {
+				return sourceFile;
+			}
 		}
 	}
 }

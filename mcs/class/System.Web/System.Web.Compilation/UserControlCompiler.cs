@@ -1,5 +1,5 @@
 //
-// System.Web.Compilation.PageCompiler
+// System.Web.Compilation.UserControlCompiler
 //
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
@@ -7,30 +7,29 @@
 // (C) 2002 Ximian, Inc (http://www.ximian.com)
 //
 using System;
-using System.Collections;
 using System.IO;
 using System.Reflection;
-using System.Text;
 using System.Web.UI;
 using System.Web.Util;
 
 namespace System.Web.Compilation
 {
-	class PageCompiler : BaseCompiler
+	class UserControlCompiler : BaseCompiler
 	{
-		PageParser pageParser;
+		UserControlParser userControlParser;
 		string sourceFile;
-		Hashtable options;
+		string targetFile;
 
-		private PageCompiler (PageParser pageParser)
+		internal UserControlCompiler (UserControlParser userControlParser, string targetFile)
 		{
-			this.pageParser = pageParser;
+			this.userControlParser = userControlParser;
+			this.targetFile = targetFile;
 		}
 
 		public override Type GetCompiledType ()
 		{
-			string inputFile = pageParser.InputFile;
-			sourceFile = GenerateSourceFile ();
+			string inputFile = userControlParser.InputFile;
+			sourceFile = GenerateSourceFile (userControlParser);
 
 			CachingCompiler compiler = new CachingCompiler (this);
 			CompilationResult result = new CompilationResult ();
@@ -40,7 +39,7 @@ namespace System.Web.Compilation
 			Assembly assembly = Assembly.LoadFrom (result.OutputFile);
 			Type [] types = assembly.GetTypes ();
 			if (types.Length != 1)
-				throw new CompilationException ("More than 1 Type in a page?", result);
+				throw new CompilationException ("More than 1 Type in a user control?", result);
 
 			result.Data = types [0];
 			return types [0];
@@ -48,7 +47,7 @@ namespace System.Web.Compilation
 
 		public override string Key {
 			get {
-				return pageParser.InputFile;
+				return userControlParser.InputFile;
 			}
 		}
 
@@ -58,33 +57,18 @@ namespace System.Web.Compilation
 			}
 		}
 
-		public override string CompilerOptions {
+		public override string TargetFile {
 			get {
-				if (options == null)
-					return base.CompilerOptions;
+				if (targetFile == null)
+					targetFile = Path.ChangeExtension (sourceFile, ".dll");
 
-				StringBuilder sb = new StringBuilder (base.CompilerOptions);
-				string compilerOptions = options ["CompilerOptions"] as string;
-				if (compilerOptions != null) {
-					sb.Append (' ');
-					sb.Append (compilerOptions);
-				}
-
-				string references = options ["References"] as string;
-				if (references == null)
-					return sb.ToString ();
-
-				string [] split = references.Split (' ');
-				foreach (string s in split)
-					sb.AppendFormat (" /r:{0}", s);
-
-				return sb.ToString ();
+				return targetFile;
 			}
 		}
 
-		public static Type CompilePageType (PageParser pageParser)
+		public static Type CompileUserControlType (UserControlParser userControlParser)
 		{
-			CompilationCacheItem item = CachingCompiler.GetCached (pageParser.InputFile);
+			CompilationCacheItem item = CachingCompiler.GetCached (userControlParser.InputFile);
 			if (item != null && item.Result != null) {
 				if (item.Result != null)
 					return item.Result.Data as Type;
@@ -92,28 +76,27 @@ namespace System.Web.Compilation
 				throw new CompilationException (item.Result);
 			}
 
-			PageCompiler pc = new PageCompiler (pageParser);
+			UserControlCompiler pc = new UserControlCompiler (userControlParser, null);
 			return pc.GetCompiledType ();
 		}
 
-		string GenerateSourceFile ()
+		static string GenerateSourceFile (UserControlParser userControlParser)
 		{
-			string inputFile = pageParser.InputFile;
+			string inputFile = userControlParser.InputFile;
 
 			Stream input = File.OpenRead (inputFile);
 			AspParser parser = new AspParser (inputFile, input);
 			parser.Parse ();
 			AspGenerator generator = new AspGenerator (inputFile, parser.Elements);
-			generator.BaseType = pageParser.BaseType.ToString ();
+			generator.BaseType = userControlParser.BaseType.ToString ();
 			generator.ProcessElements ();
-			pageParser.Text = generator.GetCode ().ReadToEnd ();
-			options = generator.Options;
+			userControlParser.Text = generator.GetCode ().ReadToEnd ();
 
 			//FIXME: should get Tmp dir for this application
 			string csName = Path.GetTempFileName () + ".cs";
 			WebTrace.WriteLine ("Writing {0}", csName);
 			StreamWriter output = new StreamWriter (File.OpenWrite (csName));
-			output.Write (pageParser.Text);
+			output.Write (userControlParser.Text);
 			output.Close ();
 			return csName;
 		}

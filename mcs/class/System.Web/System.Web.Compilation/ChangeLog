@@ -1,3 +1,25 @@
+2002-11-26  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AspGenerator.cs: reworked user control
+	compilation. Provide the options as a Hashtable for use in compilation.
+	Create the user controls in the private bin path of the domain.
+
+	* BaseCompiler.cs: base class for the various compiler types.
+
+	* CachingCompiler.cs: actually executes mcs and do some poor caching
+	(it will use Cache when finished).
+
+	* CompilationException.cs: this exception has enough information to
+	generate a nice error page.
+	* CompilationResult.cs: used in caching.
+
+	* PageCompiler.cs: now derives from BaseCompiler
+
+	* TemplateFactory.cs: no longer needed.
+
+	* UserControlCompiler.cs: new class used when compiling user controls.
+	* WebServiceCompiler.cs: derives from BaseCompiler.
+
 2002-11-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AspElements.cs: added ServerComment class.

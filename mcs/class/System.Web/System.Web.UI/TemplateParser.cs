@@ -16,7 +16,6 @@ namespace System.Web.UI
 	{
 		private string inputFile;
 		private string text;
-		private Type baseType;
 
 		protected abstract Type CompileIntoType ();
 
@@ -38,8 +37,7 @@ namespace System.Web.UI
 
 		internal Type BaseType
 		{
-			get { return baseType; }
-			set { baseType = value; }
+			get { return DefaultBaseType; }
 		}
 	}
 }

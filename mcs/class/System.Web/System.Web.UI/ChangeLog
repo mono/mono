@@ -1,3 +1,8 @@
+2002-11-26  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* TemplateParser.cs: fixed BaseType.
+	* UserControlParser.cs: helper class to compile user controls.
+
 2002-11-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* LosFormatter.cs: added DateTime to special types.
