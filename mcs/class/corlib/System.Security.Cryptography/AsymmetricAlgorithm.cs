@@ -10,6 +10,8 @@
 
 using System;
 
+using Mono.Xml;
+
 namespace System.Security.Cryptography {
 
 	// to import keypairs parameters using MiniParser

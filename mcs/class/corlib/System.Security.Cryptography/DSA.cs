@@ -11,12 +11,14 @@
 using System;
 using System.Text;
 
+using Mono.Xml;
+
 // References:
 // a.	FIPS PUB 186-2: Digital Signature Standard (DSS) 
 //	http://csrc.nist.gov/publications/fips/fips186-2/fips186-2-change1.pdf
 
-namespace System.Security.Cryptography
-{
+namespace System.Security.Cryptography {
+
 	internal class DSAHandler : MiniParser.IHandler {
 
 		private DSAParameters dsa;

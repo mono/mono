@@ -14,6 +14,8 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 
+using Mono.Xml;
+
 namespace System.Security.Cryptography {
 
 internal class CorlibReader : MiniParser.IReader {

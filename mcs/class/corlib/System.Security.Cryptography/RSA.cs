@@ -2,8 +2,8 @@
 // System.Security.Cryptography.RSA.cs
 //
 // Authors:
-//   Dan Lewis (dihlewis@yahoo.co.uk)
-//   Sebastien Pouliot (spouliot@motus.com)
+//	Dan Lewis (dihlewis@yahoo.co.uk)
+//	Sebastien Pouliot (spouliot@motus.com)
 //
 // (C) 2002
 // Portions (C) 2002 Motus Technologies Inc. (http://www.motus.com)
@@ -12,8 +12,10 @@
 using System;
 using System.Text;
 
-namespace System.Security.Cryptography 
-{
+using Mono.Xml;
+
+namespace System.Security.Cryptography {
+
 	internal class RSAHandler : MiniParser.IHandler {
 
 		private RSAParameters rsa;
@@ -21,10 +23,11 @@ namespace System.Security.Cryptography
 
 		public RSAHandler () 
 		{
-			rsa = new RSAParameters();
+			rsa = new RSAParameters ();
 		}
 
-		public RSAParameters GetParams () {
+		public RSAParameters GetParams () 
+		{
 			return rsa;
 		}
 

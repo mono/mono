@@ -1,6 +1,7 @@
 2003-02-08  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* Changes to refer Mono.Math and Mono.Security.Cryptography
+	* Changes to refer Mono.Xml
 
 2003-02-04  Sebastien Pouliot  <spouliot@videotron.ca>
 
