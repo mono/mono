@@ -1646,13 +1646,22 @@ namespace System.Data
 				Element = s.Substring (1, s.Length - 2);
 				_ResultType = typeof (string);
 			}
+			else if (s.StartsWith ("#") && s.EndsWith ("#")) {
+				Element = DateTime.Parse (s.Substring (1, s.Length - 2));
+				_ResultType = typeof (DateTime);
+			}
 			else if (!Char.IsDigit (s [0]) && s [0] != '-' && s [0] != '+') {
 				Element = s;
 				_ResultType = typeof (DataColumn);
 			}
 			else {
-				_ResultType = typeof (int);
-				Element = int.Parse (s);
+				try {
+					Element = int.Parse (s);
+					_ResultType = typeof (int);
+				} catch (OverflowException) {
+					Element = Decimal.Parse (s);
+					_ResultType = typeof (Decimal);
+				}
 			}				
         	}
 
@@ -1768,8 +1777,8 @@ namespace System.Data
 			Type RT1 = E1.ResultType (Row);
 			Type RT2 = E2.ResultType (Row);
 
-			// If one of elements are string they both should be??? FIXME 
 			if (t1 == typeof (string) || t2 == typeof (string)) {
+				// FIXME: If one of elements are string they both should be???				
 				
 				//TempType = typeof (string);				
 				if (t1 != typeof (string))
@@ -1783,12 +1792,7 @@ namespace System.Data
 					value2 = ((string)value2).ToLower ();
 				}
 			}
-			else if (t1 != t2) {
-				
-				value2 = Convert.ChangeType (value2, Type.GetTypeCode (t1));
-			}
-
-			else if (t1 != t2) {
+			} else if (t1 != t2) {
 
 				value2 = Convert.ChangeType (value2, Type.GetTypeCode (t1));
 			}
