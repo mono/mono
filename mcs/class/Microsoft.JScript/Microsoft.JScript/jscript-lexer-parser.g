@@ -65,11 +65,19 @@ statement returns [Statement stm]
     |
 	if_statement	    
     |
-	iteration_statement	    
+	iteration_statement
+    |
+	continue_statement
+    |
+	break_statement
+    |
+	return_statement
     |
 	with_statement
     |
 	switch_statement
+    |
+	throw_statement	    
     |
 	labelled_statement
     |
@@ -102,6 +110,22 @@ iteration_statement
     |
 	"for" LPAREN left_hand_side_expression "in" expression RPAREN statement
     ;
+
+
+// ContinueStatement, Ecma-262, section 12.7
+// FIXME: Make sure that no LineSeparator appears between the continue keyword and the identifier or semicolon
+continue_statement: "continue" (IDENTIFIER | ) SEMI_COLON ;
+
+
+// BreakStatemen, Ecma-262, section 12.8
+// FIXME: Make sure that no LineSeparator appears between the break keyword and the identifier or semicolon
+break_statement: "break" (IDENTIFIER | ) SEMI_COLON ;
+
+
+// ReturnStatement, Ecma-262, section 12.9
+// FIXME: Make sure that no LineSeparator appears between the return keyword and the identifier or semicolon
+return_statement: "return" (expression | ) SEMI_COLON ;
+
 
 // WithStatement, see Ecma-262 3d. Edition, section 12.8, page 67.
 with_statement
@@ -140,6 +164,11 @@ labelled_statement
     :
 	IDENTIFIER COLON statement
     ;
+
+
+// ThrowStatement, Ecma-262, section 12.13
+// FIXME: Make sure no LineSeparator appears between the throw keyword and the expression or semicolon.
+throw_statement: "throw" expression SEMI_COLON ;
 
 
 // See section 12.14 from Ecma-262, 3d. Edition.
@@ -516,7 +545,7 @@ NO_BREAK_SPACE
 LINE_FEED
     :
         '\u000A'
-        { newline ();  { _ttype =Token.SKIP; }}
+        { newline (); { _ttype =Token.SKIP; }}
     ;
 
 
@@ -530,7 +559,7 @@ CARRIGE_RETURN
 LINE_SEPARATOR
     :
         '\u2028'
-        { newline ();  { _ttype =Token.SKIP; }}
+        { newline (); { _ttype =Token.SKIP; }}
     ;
 
 
@@ -603,10 +632,16 @@ STRING_LITERAL
     ;
 
 
-// Fixme: this a temporal definition. W
+// FIXME: this a temporal definition.
 //        We must handle the UNICODE charset, see section 7.6 of the Ecma-262 spec
 IDENTIFIER
 options { testLiterals=true; }
     : 
 	('a'..'z' | 'A'..'Z') ('a'..'z' | 'A'..'Z' | '0'..'9')*
+    ;
+
+
+SL_COMMENT
+    :
+	"//" (~('\u000A' | '\u000D' | '\u2028' | '\u2029'))* { $setType (Token.SKIP); newline (); }
     ;

@@ -1,3 +1,12 @@
+2003-04-11	Cesar Octavio Lopez Nataren <cesar@ciencias.unam.mx>
+
+	* jscript-lexer-parser.g:
+	- Added rules for: continue_statement, break_statement,
+	return_statement, throw statement (all of them do not ensure that
+	no LineSeparator appears between the keyword on the left and the
+	identifier, expression or semicolon on the right, that must be fixed).
+	- Added single line comments rule.
+
 2003-04-08	Cesar Octavio Lopez Nataren <cesar@ciencias.unam.mx>
 
 	* jscript-lexer-parser.g: Added syntatic rule for:
