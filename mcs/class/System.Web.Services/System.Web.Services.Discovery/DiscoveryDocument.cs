@@ -28,6 +28,9 @@ namespace System.Web.Services.Discovery {
 		[XmlElement(typeof(SchemaReference))]
 		internal ArrayList references = new ArrayList();
 		
+		[XmlElement(typeof(SoapBinding), ElementName="soap", Namespace="http://schemas/xmlsoap.org/disco/schema/soap/")]
+		internal ArrayList additionalInfo = new ArrayList();
+		
 		#endregion // Fields
 		
 		#region Constructors
@@ -43,6 +46,11 @@ namespace System.Web.Services.Discovery {
 		[XmlIgnore]
 		public IList References {
 			get { return references; }
+		}
+		
+		[XmlIgnore]
+		internal IList AdditionalInfo {
+			get { return additionalInfo; }
 		}
 		
 		#endregion // Properties
@@ -106,13 +114,13 @@ namespace System.Web.Services.Discovery {
 		protected override void Serialize (object o, XmlSerializationWriter writer)
 		{
 			DiscoveryDocumentWriter xsWriter = writer as DiscoveryDocumentWriter;
-			xsWriter.WriteTree ((DiscoveryDocument)o);
+			xsWriter.WriteRoot_DiscoveryDocument (o);
 		}
 		
 		protected override object Deserialize (XmlSerializationReader reader)
 		{
 			DiscoveryDocumentReader xsReader = reader as DiscoveryDocumentReader;
-			return xsReader.ReadTree ();
+			return xsReader.ReadRoot_DiscoveryDocument ();
 		}
 		
 		protected override XmlSerializationWriter CreateWriter ()

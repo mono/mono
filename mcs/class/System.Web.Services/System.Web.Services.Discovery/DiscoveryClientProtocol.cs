@@ -23,7 +23,7 @@ namespace System.Web.Services.Discovery {
 
 		#region Fields
 
-		private IList additionalInformation;
+		private IList additionalInformation = new ArrayList ();
 		private DiscoveryClientDocumentCollection documents = new DiscoveryClientDocumentCollection();
 		private DiscoveryExceptionDictionary errors = new DiscoveryExceptionDictionary();
 		private DiscoveryClientReferenceCollection references = new DiscoveryClientReferenceCollection();
@@ -70,13 +70,7 @@ namespace System.Web.Services.Discovery {
 			DiscoveryDocument doc = DiscoveryDocument.Read (reader);
 			reader.Close ();
 			documents.Add (url, doc);
-			
-			foreach (DiscoveryReference re in doc.References)
-			{
-				re.ClientProtocol = this;
-				references.Add (re);
-			}
-				
+			AddDiscoReferences (doc);
 			return doc;
 		}
 
@@ -124,11 +118,7 @@ namespace System.Web.Services.Discovery {
 				doc = DiscoveryDocument.Read (reader);
 				documents.Add (url, doc);
 				refe = new DiscoveryDocumentReference ();
-				foreach (DiscoveryReference re in doc.References)
-				{
-					re.ClientProtocol = this;
-					references.Add (re.Url, re);
-				}
+				AddDiscoReferences (doc);
 			}
 			else if (ServiceDescription.CanRead (reader))
 			{
@@ -154,6 +144,18 @@ namespace System.Web.Services.Discovery {
 				
 			reader.Close ();
 			return doc;
+		}
+		
+		void AddDiscoReferences (DiscoveryDocument doc)
+		{
+			foreach (DiscoveryReference re in doc.References)
+			{
+				re.ClientProtocol = this;
+				references.Add (re.Url, re);
+			}
+			
+			foreach (object info in doc.AdditionalInfo)
+				additionalInformation.Add (info);
 		}
 		
 		public Stream Download (ref string url)

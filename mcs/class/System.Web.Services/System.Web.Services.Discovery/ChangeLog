@@ -1,3 +1,11 @@
+2004-03-10  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* DiscoveryClientProtocol.cs: Read additional information (such as soap
+	  bindings) from the discovery documents.
+	* DiscoveryDocument.cs: Added support for additional discovery information.
+	* DiscoveryDocumentSerializer.cs: Updated serializer, added support for
+	  soap bindings.
+
 2004-03-02  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* DiscoveryClientProtocol.cs: Now it can get alternate urls from HTML pages
