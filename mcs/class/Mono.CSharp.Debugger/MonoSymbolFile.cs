@@ -174,29 +174,22 @@ namespace Mono.CSharp.Debugger
 	{
 		ArrayList methods = new ArrayList ();
 		ArrayList sources = new ArrayList ();
-		Hashtable source_hash = new Hashtable ();
 		Hashtable method_source_hash = new Hashtable ();
 		Hashtable type_hash = new Hashtable ();
 
 		OffsetTable ot;
 		int last_type_index;
 		int last_method_index;
+		int last_source_index;
+		int last_namespace_index;
 
 		public MonoSymbolFile ()
 		{ }
 
-		public SourceFileEntry DefineSource (string source_file)
+		internal int AddSource (SourceFileEntry source)
 		{
-			if (reader != null)
-				throw new InvalidOperationException ();
-
-			SourceFileEntry source = (SourceFileEntry) source_hash [source_file];
-			if (source == null) {
-				source = new SourceFileEntry (this, source_file, sources.Count + 1);
-				source_hash.Add (source_file, source);
-				sources.Add (source);
-			}
-			return source;
+			sources.Add (source);
+			return ++last_source_index;
 		}
 
 		internal int DefineType (Type type)
@@ -222,6 +215,11 @@ namespace Mono.CSharp.Debugger
 		internal int GetNextMethodIndex ()
 		{
 			return ++last_method_index;
+		}
+
+		internal int GetNextNamespaceIndex ()
+		{
+			return ++last_namespace_index;
 		}
 
 		internal void WriteString (BinaryWriter bw, string text)
@@ -309,9 +307,10 @@ namespace Mono.CSharp.Debugger
 			using (MyMemoryStream stream = new MyMemoryStream ()) {
 				Write (new BinaryWriter (stream));
 				Console.WriteLine ("WROTE SYMFILE: {0} sources, {1} methods, {2} types, " +
-						   "{3} line numbers, {4} locals, {5} bytes of string data",
+						   "{3} line numbers, {4} locals, {5} namespaces, " +
+						   "{6} bytes of string data",
 						   SourceCount, MethodCount, TypeCount, LineNumberCount,
-						   LocalCount, StringSize);
+						   LocalCount, NamespaceCount, StringSize);
 				Console.WriteLine (ot);
 				return stream.GetContents ();
 			}
@@ -362,6 +361,10 @@ namespace Mono.CSharp.Debugger
 
 		public int TypeCount {
 			get { return ot.TypeCount; }
+		}
+
+		public int NamespaceCount {
+			get { return last_namespace_index; }
 		}
 
 		internal int LineNumberCount = 0;

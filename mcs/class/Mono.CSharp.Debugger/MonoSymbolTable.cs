@@ -18,7 +18,7 @@ namespace Mono.CSharp.Debugger
 {
 	public struct OffsetTable
 	{
-		public const int  Version = 29;
+		public const int  Version = 30;
 		public const long Magic   = 0x45e82623fd7fa614;
 
 		public int TotalFileSize;
@@ -178,34 +178,48 @@ namespace Mono.CSharp.Debugger
 		MonoSymbolFile file;
 		string file_name;
 		ArrayList methods;
+		ArrayList namespaces;
 		int index, count, name_offset, method_offset;
+		int namespace_count, nstable_offset;
 		bool creating;
 
 		internal static int Size {
 			get { return 16; }
 		}
 
-		internal SourceFileEntry (MonoSymbolFile file, string file_name, int index)
+		internal SourceFileEntry (MonoSymbolFile file, string file_name)
 		{
 			this.file = file;
 			this.file_name = file_name;
-			this.index = index;
+			this.index = file.AddSource (this);
 
 			creating = true;
 			methods = new ArrayList ();
+			namespaces = new ArrayList ();
 		}
 
 		public void DefineMethod (MethodBase method, int token, LocalVariableEntry[] locals,
-					  LineNumberEntry[] lines, int start, int end)
+					  LineNumberEntry[] lines, int start, int end, int namespace_id)
 		{
 			if (!creating)
 				throw new InvalidOperationException ();
 
 			MethodEntry entry = new MethodEntry (
-				file, this, method, token, locals, lines, start, end);
+				file, this, method, token, locals, lines, start, end, namespace_id);
 
 			methods.Add (entry);
 			file.AddMethod (entry);
+		}
+
+		public int DefineNamespace (string name, string[] using_clauses, int parent)
+		{
+			if (!creating)
+				throw new InvalidOperationException ();
+
+			int index = file.GetNextNamespaceIndex ();
+			NamespaceEntry ns = new NamespaceEntry (name, index, using_clauses, parent);
+			namespaces.Add (ns);
+			return index;
 		}
 
 		internal void WriteData (BinaryWriter bw)
@@ -222,14 +236,21 @@ namespace Mono.CSharp.Debugger
 			method_offset = (int) bw.BaseStream.Position;
 			foreach (MethodSourceEntry method in list)
 				method.Write (bw);
+
+			namespace_count = namespaces.Count;
+			nstable_offset = (int) bw.BaseStream.Position;
+			foreach (NamespaceEntry ns in namespaces)
+				ns.Write (file, bw);
 		}
 
 		internal void Write (BinaryWriter bw)
 		{
 			bw.Write (index);
 			bw.Write (count);
+			bw.Write (namespace_count);
 			bw.Write (name_offset);
 			bw.Write (method_offset);
+			bw.Write (nstable_offset);
 		}
 
 		internal SourceFileEntry (MonoSymbolFile file, BinaryReader reader)
@@ -238,8 +259,10 @@ namespace Mono.CSharp.Debugger
 
 			index = reader.ReadInt32 ();
 			count = reader.ReadInt32 ();
+			namespace_count = reader.ReadInt32 ();
 			name_offset = reader.ReadInt32 ();
 			method_offset = reader.ReadInt32 ();
+			nstable_offset = reader.ReadInt32 ();
 
 			file_name = file.ReadString (name_offset);
 		}
@@ -346,6 +369,7 @@ namespace Mono.CSharp.Debugger
 		public readonly int NumParameters;
 		public readonly int NumLocals;
 		public readonly int NumLineNumbers;
+		public readonly int NamespaceID;
 
 		int NameOffset;
 		int FullNameOffset;
@@ -368,7 +392,7 @@ namespace Mono.CSharp.Debugger
 		public static int Size
 		{
 			get {
-				return 48;
+				return 52;
 			}
 		}
 
@@ -396,6 +420,7 @@ namespace Mono.CSharp.Debugger
 			TypeIndexTableOffset = reader.ReadInt32 ();
 			LocalVariableTableOffset = reader.ReadInt32 ();
 			LineNumberTableOffset = reader.ReadInt32 ();
+			NamespaceID = reader.ReadInt32 ();
 
 			name = file.ReadString (NameOffset);
 			full_name = file.ReadString (FullNameOffset);
@@ -444,7 +469,7 @@ namespace Mono.CSharp.Debugger
 
 		internal MethodEntry (MonoSymbolFile file, SourceFileEntry source, MethodBase method,
 				      int token, LocalVariableEntry[] locals, LineNumberEntry[] lines,
-				      int start_row, int end_row)
+				      int start_row, int end_row, int namespace_id)
 		{
 			index = file.GetNextMethodIndex ();
 
@@ -453,6 +478,7 @@ namespace Mono.CSharp.Debugger
 			SourceFile = source;
 			StartRow = start_row;
 			EndRow = end_row;
+			NamespaceID = namespace_id;
 
 			LineNumbers = BuildLineNumberTable (lines);
 			NumLineNumbers = LineNumbers.Length;
@@ -496,8 +522,6 @@ namespace Mono.CSharp.Debugger
 
 		LineNumberEntry[] BuildLineNumberTable (LineNumberEntry[] line_numbers)
 		{
-			Array.Sort (line_numbers, LineNumberEntry.OffsetComparer);
-
 			ArrayList list = new ArrayList ();
 			int last_offset = -1;
 			int last_row = -1;
@@ -566,6 +590,7 @@ namespace Mono.CSharp.Debugger
 			bw.Write (TypeIndexTableOffset);
 			bw.Write (LocalVariableTableOffset);
 			bw.Write (LineNumberTableOffset);
+			bw.Write (NamespaceID);
 
 			return new MethodSourceEntry (index, file_offset, StartRow, EndRow);
 		}
@@ -582,6 +607,37 @@ namespace Mono.CSharp.Debugger
 					      index, Token, SourceFileIndex, StartRow, EndRow,
 					      SourceFile, FullName, ThisTypeIndex, NumParameters,
 					      NumLocals, NumLineNumbers);
+		}
+	}
+
+	public struct NamespaceEntry
+	{
+		public readonly string Name;
+		public readonly int Index;
+		public readonly int Parent;
+		public readonly string[] UsingClauses;
+
+		public NamespaceEntry (string name, int index, string[] using_clauses, int parent)
+		{
+			this.Name = name;
+			this.Index = index;
+			this.Parent = parent;
+			this.UsingClauses = using_clauses != null ? using_clauses : new string [0];
+		}
+
+		internal void Write (MonoSymbolFile file, BinaryWriter bw)
+		{
+			file.WriteString (bw, Name);
+			bw.Write (Index);
+			bw.Write (Parent);
+			bw.Write (UsingClauses.Length);
+			foreach (string uc in UsingClauses)
+				file.WriteString (bw, uc);
+		}
+
+		public override string ToString ()
+		{
+			return String.Format ("[Namespace {0}:{1}:{2}]", Name, Index, Parent);
 		}
 	}
 }

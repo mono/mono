@@ -20,28 +20,15 @@ using System.IO;
 	
 namespace Mono.CSharp.Debugger
 {
-	internal class SourceFile : ISymbolDocumentWriter
+	internal class SourceFile : SourceFileEntry, ISymbolDocumentWriter
 	{
 		private ArrayList _methods = new ArrayList ();
-		private string _file_name;
 
-		public SourceFile (string filename)
-		{
-			this._file_name = filename;
-		}
+		public SourceFile (MonoSymbolFile file, string filename)
+			: base (file, filename)
+		{ }
 
-		public override string ToString ()
-		{
-			return _file_name;
-		}
-
-		public string FileName {
-			get {
-				return _file_name;
-			}
-		}
-
-		public SourceMethod[] Methods {
+		public new SourceMethod[] Methods {
 			get {
 				SourceMethod[] retval = new SourceMethod [_methods.Count];
 				_methods.CopyTo (retval);
@@ -70,14 +57,6 @@ namespace Mono.CSharp.Debugger
 		static private int next_index;
 		private readonly int _index;
 
-		public SourceBlock (SourceMethod method, LineNumberEntry start, LineNumberEntry end)
-		{
-			this._method = method;
-			this._start = start;
-			this._end = end;
-			this._index = ++next_index;
-		}
-
 		internal SourceBlock (SourceMethod method, int startOffset)
 		{
 			this._method = method;
@@ -87,22 +66,12 @@ namespace Mono.CSharp.Debugger
 
 		public override string ToString ()
 		{
-			return "SourceBlock #" + ID + " (" + Start + " - " + End + ")";
+			return "SourceBlock #" + ID;
 		}
 
 		private readonly SourceMethod _method;
 		private ArrayList _blocks = new ArrayList ();
-		internal LineNumberEntry _start = LineNumberEntry.Null;
-		internal LineNumberEntry _end = LineNumberEntry.Null;
 		internal int _start_offset, _end_offset;
-		bool _has_source;
-
-		internal void SetSourceRange (int startLine, int endLine)
-		{
-			_start = new LineNumberEntry (startLine, _start_offset);
-			_end = new LineNumberEntry (endLine, _end_offset);
-			_has_source = true;
-		}
 
 		private ArrayList _locals = new ArrayList ();
 
@@ -123,24 +92,6 @@ namespace Mono.CSharp.Debugger
 		public void AddBlock (SourceBlock block)
 		{
 			_blocks.Add (block);
-		}
-
-		public bool HasSource {
-			get {
-				return _has_source;
-			}
-		}
-
-		public LineNumberEntry Start {
-			get {
-				return _start;
-			}
-		}
-
-		public LineNumberEntry End {
-			get {
-				return _end;
-			}
 		}
 
 		public int ID {
@@ -173,28 +124,23 @@ namespace Mono.CSharp.Debugger
 		internal readonly MethodBase _method_base;
 		internal SourceFile _source_file;
 		internal int _token;
+		private int _namespace_id;
+		private LineNumberEntry _start, _end;
 
 		private SourceBlock _implicit_block;
 
-		public SourceMethod (MethodBase method_base, SourceFile source_file)
-			: this (method_base)
-		{
-			this._source_file = source_file;
-		}
-
-		internal SourceMethod (MethodBase method_base)
+		internal SourceMethod (SourceFile source_file, int startLine, int startColumn,
+				       int endLine, int endColumn, MethodBase method_base,
+				       int namespace_id)
 		{
 			this._method_base = method_base;
+			this._source_file = source_file;
+			this._namespace_id = namespace_id;
+
+			this._start = new LineNumberEntry (startLine, 0);
+			this._end = new LineNumberEntry (endLine, 0);
 
 			this._implicit_block = new SourceBlock (this, 0);
-		}
-
-		public void SetSourceRange (SourceFile sourceFile,
-					    int startLine, int startColumn,
-					    int endLine, int endColumn)
-		{
-			_source_file = sourceFile;
-			_implicit_block.SetSourceRange (startLine, endLine);
 		}
 
 		public void StartBlock (SourceBlock block)
@@ -318,19 +264,25 @@ namespace Mono.CSharp.Debugger
 
 		public bool HasSource {
 			get {
-				return _implicit_block.HasSource && (_source_file != null);
+				return _source_file != null;
 			}
 		}
 
 		public LineNumberEntry Start {
 			get {
-				return _implicit_block.Start;
+				return _start;
 			}
 		}
 
 		public LineNumberEntry End {
 			get {
-				return _implicit_block.End;
+				return _end;
+			}
+		}
+
+		public int NamespaceID {
+			get {
+				return _namespace_id;
 			}
 		}
 	}
@@ -343,6 +295,7 @@ namespace Mono.CSharp.Debugger
 		protected ArrayList methods = null;
 		protected Hashtable sources = null;
 		private ArrayList mbuilder_array = null;
+		private MonoSymbolFile file = null;
 
 		internal SourceMethod[] Methods {
 			get {
@@ -374,6 +327,7 @@ namespace Mono.CSharp.Debugger
 			this.orphant_methods = new ArrayList ();
 			this.locals = new ArrayList ();
 			this.mbuilder_array = mbuilder_array;
+			this.file = new MonoSymbolFile ();
 		}
 
 		public void Close ()
@@ -397,7 +351,7 @@ namespace Mono.CSharp.Debugger
 							     Guid languageVendor,
 							     Guid documentType)
 		{
-			SourceFile source_info = new SourceFile (url);
+			SourceFile source_info = new SourceFile (file, url);
 			sources.Add (url, source_info);
 			return source_info;
 		}
@@ -480,18 +434,7 @@ namespace Mono.CSharp.Debugger
 
 		public void OpenMethod (SymbolToken symbol_token)
 		{
-			int token = symbol_token.GetToken ();
-
-			if ((token & 0xff000000) != 0x06000000)
-				throw new ArgumentException ();
-
-			int index = (token & 0xffffff) - 1;
-
-			MethodBase mb = (MethodBase) mbuilder_array [index];
-
-			current_method = new SourceMethod (mb);
-
-			methods.Add (current_method);
+			throw new NotSupportedException ();
 		}
 
 		public void SetMethodSourceRange (ISymbolDocumentWriter startDoc,
@@ -499,26 +442,39 @@ namespace Mono.CSharp.Debugger
 						  ISymbolDocumentWriter endDoc,
 						  int endLine, int endColumn)
 		{
-			if (current_method == null)
-				return;
-			if ((startDoc == null) || (endDoc == null))
+			throw new NotSupportedException ();
+		}
+
+		public void OpenMethod (ISymbolDocumentWriter document, int startLine, int startColumn,
+					int endLine, int endColumn, MethodBase method, int namespace_id)
+		{
+			SourceFile source_info = document as SourceFile;
+
+			if ((source_info == null) || (method == null))
 				throw new NullReferenceException ();
-			if (!(startDoc is SourceFile) || !(endDoc is SourceFile))
-				throw new ArgumentException ("both startDoc and endDoc must be created " +
-							     "with DefineDocument()");
-			if (!startDoc.Equals (endDoc))
-				throw new ArgumentException ("startDoc and endDoc must be the same");
 
-			SourceFile source_info = (SourceFile) startDoc;
+			current_method = new SourceMethod (source_info, startLine, startColumn,
+							   endLine, endColumn, method, namespace_id);
 
-			current_method.SetSourceRange (source_info, startLine, startColumn,
-						       endLine, endColumn);
-
+			methods.Add (current_method);
 			source_info.AddMethod (current_method);
 		}
 
 		public void CloseMethod () {
 			current_method = null;
+		}
+
+		public int DefineNamespace (string name, ISymbolDocumentWriter document,
+					    string[] using_clauses, int parent)
+		{
+			if ((document == null) || (using_clauses == null))
+				throw new NullReferenceException ();
+			if (!(document is SourceFile))
+				throw new ArgumentException ();
+
+			SourceFile source_info = (SourceFile) document;
+
+			return source_info.DefineNamespace (name, using_clauses, parent);
 		}
 
 		public void OpenNamespace (string name)
@@ -594,18 +550,16 @@ namespace Mono.CSharp.Debugger
 
 		protected byte[] CreateOutput (Assembly assembly)
 		{
-			MonoSymbolFile file = new MonoSymbolFile ();
-
 			foreach (SourceMethod method in Methods) {
 				if (!method.HasSource) {
 					Console.WriteLine ("INGORING METHOD: {0}", method);
 					continue;
 				}
 
-				SourceFileEntry source = file.DefineSource (method.SourceFile.FileName);
-
-				source.DefineMethod (method.MethodBase, method.Token, method.Locals,
-						     method.Lines, method.Start.Row, method.End.Row);
+				method.SourceFile.DefineMethod (
+					method.MethodBase, method.Token, method.Locals,
+					method.Lines, method.Start.Row, method.End.Row,
+					method.NamespaceID);
 			}
 
 			return file.CreateSymbolFile ();

@@ -1,5 +1,17 @@
 2003-02-09  Martin Baulig  <martin@ximian.com>
 
+	* MonoSymbolWrtier.cs (SourceFile): Derive from SourceFileEntry.
+	(SourceBlock): We don't need source lines here.
+	(SourceMethod): We're always constructed with source info.
+
+	* MonoSymbolTable.cs: Added support for namespaces.
+	(NamespaceEntry): New struct.
+	(SourceFileEntry.DefineNamespace): New method.
+	(MethodEntry.BuildLineNumberTable): The table is already sorted,
+	so we don't need to do this here.
+
+2003-02-09  Martin Baulig  <martin@ximian.com>
+
 	* IMonoSymbolWriter.cs: Ooops, I forgot to remove this.
 
 2003-02-08  Martin Baulig  <martin@ximian.com>
