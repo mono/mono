@@ -12,10 +12,24 @@
 	</target>
 
 	<target name="assemblies">
+		<csc target="library" output="System_linux_test.dll" debug="${debug}">
+			<sources>
+				<includes name="**/*.cs"/>
+			</sources>
+			<references basedir="..\..\..\nunit">
+				<includes name="NUnitCore_mono.dll"/>
+			</references>
+
+			<arg value="/r:.\System.dll"/>
+			<arg value="/r:..\..\lib\corlib.dll"/>
+			<arg value="/nowarn:1595"/>
+			<arg value="/nostdlib"/> 	<!-- don't reference mscorlib -->
+			<arg value="/noconfig"/>	<!-- don't reference ms assemblies -->
+		</csc>
+
 		<csc target="library" output="System_test.dll" debug="${debug}">
 			<sources>
 				<includes name="**/*.cs"/>
-				<excludes name="TheTests.cs"/>
 			</sources>
 			<references basedir="..\..\..\nunit">
 				<includes name="NUnitCore.dll"/>
@@ -28,8 +42,6 @@
 		<csc target="exe" output="RunTests.System.exe" debug="${debug}">
 			<sources>
 				<includes name="**/*.cs"/>
-				<excludes name="**/AllTests.cs"/>
-				<excludes name="**/MartinTests.cs"/>
 			</sources>
 			<references basedir="..\..\..\nunit">
 				<includes name="NUnitBase.dll"/>
@@ -50,5 +62,6 @@
 
 	<target name="clean">
 		<delete file="System_test.dll" failonerror="false"/>
+		<delete file="System_linux_test.dll" failonerror="false"/>
 	</target>
 </project>
