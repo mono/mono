@@ -74,8 +74,7 @@ namespace CIR {
 		static Expression ExprClassFromMemberInfo (MemberInfo mi)
 		{
 			if (mi is EventInfo){
-				// FIXME: Implement
-				return null;
+				return new EventExpr ((EventInfo) mi);
 			} else if (mi is FieldInfo){
 				return new FieldExpr ((FieldInfo) mi);
 			} else if (mi is PropertyInfo){
@@ -1030,6 +1029,30 @@ namespace CIR {
 		}
 	}
 
+	// <summary>
+	//   Fully resolved expression that evaluates to a Property
+	// </summary>
+	public class EventExpr : Expression {
+		public readonly EventInfo EventInfo;
+		
+		public EventExpr (EventInfo ei)
+		{
+			EventInfo = ei;
+			eclass = ExprClass.EventAccess;
+		}
+
+		override public Expression Resolve (TypeContainer tc)
+		{
+			// We are born in resolved state. 
+			return this;
+		}
+
+		override public void Emit (EmitContext ec)
+		{
+			// FIXME: Implement.
+		}
+	}
+	
 	public class CheckedExpr : Expression {
 
 		public readonly Expression Expr;

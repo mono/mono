@@ -1,3 +1,8 @@
+2001-09-09  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (EventExpr): New kind of expressions.
+	(Expressio::ExprClassFromMemberInfo): finish
+
 2001-09-08  Miguel de Icaza  <miguel@ximian.com>
 
 	* assign.cs: Emit stores to static fields differently.

@@ -7,6 +7,7 @@
 // (C) 2001 Ximian, Inc.
 //
 
+using System.Reflection;
 using System.Reflection.Emit;
 
 namespace CIR {
@@ -93,10 +94,13 @@ namespace CIR {
 
 		public void EmitFieldAssign (FieldExpr field, ILGenerator ig)
 		{
-			if (field.IsStatic)
-				ig.Emit (OpCodes.Stsfld, field.FieldInfo);
+			FieldInfo fi = field.FieldInfo;
+			
+			if (fi.IsStatic)
+				ig.Emit (OpCodes.Stsfld, fi);
 			else
-				ig.Emit (OpCodes.Stfld, field.FieldInfo);
+				
+				ig.Emit (OpCodes.Stfld, fi);
 		}
 		
 		public override void Emit (EmitContext ec)
