@@ -1,3 +1,7 @@
+2004-09-14 Sanjay Gupta <gsanjay@novell.com>
+	
+	* Literal.cs: Added new method Focus().
+
 2004-09-12 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* RadioButton.cs: fix GroupName when the control is inside a

@@ -99,12 +99,11 @@ namespace System.Web.UI.WebControls
 			set { literalMode = value; }
 		}
 
-		//No information as to which Focus() method is being overridden
-		/*[MonoTODO]
+		[MonoTODO]
 		public override void Focus ()
 		{
-			throw new Exception ("No information provided"); 
-		}*/
+			throw new NotImplementedException ("MS .NET throws non-visual control does not support the Focus operation"); 
+		}
 #endif
 	}
 }
