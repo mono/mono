@@ -1,3 +1,13 @@
+2003-05-27  Nick Drochak <ndrochak@gol.com>
+
+	* basic-long.cs: add regression test for (long)int * (long)int
+	* cpu-pentium.md: add op_bigmul specification
+	* inssel-long32.brg: add OP_BIGMUL rule
+	* mini-ops.h: add OP_BIGMUL
+	* mini-x86.c: register allocator: handle case where src1 needs to be
+	in EAX.
+	* mini.c: substitute special BIGMUL opcode in the tree for 
+	(long)int * (long)int
 
 Mon May 26 20:20:13 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
