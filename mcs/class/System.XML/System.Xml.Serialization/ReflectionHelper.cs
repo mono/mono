@@ -41,7 +41,7 @@ namespace System.Xml.Serialization
 		public void RegisterSchemaType (XmlTypeMapping map, string xmlType, string ns)
 		{
 			string mapKey = xmlType + "/" + ns;
-			if (!_schemaTypes.ContainsKey (xmlType))
+			if (!_schemaTypes.ContainsKey (mapKey))
 				_schemaTypes.Add (mapKey, map);
 		}
 

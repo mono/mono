@@ -1,3 +1,8 @@
+2004-07-12  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* ReflectionHelper.cs: Fixed bug when registering a map as exported.
+	  Thanks to Juan C. Olivares.
+
 2004-07-10  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* CodeExporter.cs: Added private constructor.
