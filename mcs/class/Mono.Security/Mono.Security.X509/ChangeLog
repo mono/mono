@@ -1,3 +1,11 @@
+2004-02-20  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X509Chain.cs: Added an option to use a pre-built chain (like TLS
+	offers) to save time rebuilding it. Added some validations and more
+	detailled status. Still a LOT to do!
+	* X509ChainStatusFlags.cs: New. Status code for the results of the
+	chain building and verification.
+
 2003-12-15  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* TrustAnchors.cs: Added a new trusted root, Thawte, for code signing.

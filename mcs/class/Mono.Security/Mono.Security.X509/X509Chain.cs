@@ -1,14 +1,21 @@
 //
 // X509Chain.cs: X.509 Certificate Path
-//	This is a VERY simplified and minimal version (for Authenticode support)
+//	This is a VERY simplified and minimal version
+//	used for
+//		Authenticode support
+//		TLS/SSL support
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com)
 //
 
 using System;
+using System.Net;
+
+using Mono.Security.X509.Extensions;
 
 namespace Mono.Security.X509 {
 
@@ -16,12 +23,46 @@ namespace Mono.Security.X509 {
 
 		private X509CertificateCollection roots;
 		private X509CertificateCollection certs;
-		private X509Certificate root;
+		private X509Certificate _root;
+
+		private X509CertificateCollection _chain;
+		private X509ChainStatusFlags _status;
+
+		// constructors
 
 		public X509Chain ()
 		{
 			certs = new X509CertificateCollection ();
 		}
+
+		// get a pre-builded chain
+		public X509Chain (X509CertificateCollection chain) : this ()
+		{
+			_chain = new X509CertificateCollection ();
+			_chain.AddRange (chain);
+		}
+
+		// properties
+
+		public X509CertificateCollection Chain {
+			get { return _chain; }
+		}
+
+		// the root of the specified certificate (may not be trusted!)
+		public X509Certificate Root {
+			get { return _root; }
+		}
+
+		public X509ChainStatusFlags Status {
+			get { return _status; }
+		}
+
+		public X509CertificateCollection TrustAnchors {
+			get { return ((roots == null) ? GetTrustAnchors () : roots); }
+			set { roots = value; }
+		}
+
+		// methods
 
 		public void LoadCertificate (X509Certificate x509) 
 		{
@@ -42,25 +83,66 @@ namespace Mono.Security.X509 {
 			return null;
 		}
 
-		public X509CertificateCollection GetChain (X509Certificate x509) 
+		public bool Build (X509Certificate leaf) 
 		{
-			X509CertificateCollection path = new X509CertificateCollection ();
-			X509Certificate x = FindCertificateParent (x509);
-			if (x != null) {
-				while (x != null) {
-					x509 = x;
-					path.Add (x509);
-					x = FindCertificateParent (x509);
-					if ((x != null) && (x.IsSelfSigned))
-						x = null;
+			_status = X509ChainStatusFlags.NoError;
+			if (_chain == null) {
+				// chain not supplied - we must built it ourselve
+				_chain = new X509CertificateCollection ();
+				X509Certificate x = leaf;
+				X509Certificate tmp = null;
+				while ((x != null) && (!x.IsSelfSigned)) {
+					tmp = FindCertificateParent (x);
+					if (x != null) {
+						_chain.Add (x);
+						tmp = x;	// last valid
+					}
+				}
+				// find a trusted root
+				_root = FindCertificateRoot (tmp);
+			}
+			else {
+				// chain supplied - still have to check signatures!
+				int last = _chain.Count;
+				if (last > 0) {
+					if (IsParent (leaf, _chain [0])) {
+						int i = 1;
+						for (; i < last; i++) {
+							if (!IsParent (_chain [i-1], _chain [i]))
+								break;
+						}
+						if (i == last)
+							_root = FindCertificateRoot (_chain [last - 1]);
+					}
+				}
+				else {
+					// is the leaf a root ? (trusted or untrusted)
+					_root = FindCertificateRoot (leaf);
 				}
 			}
-			// find a trusted root
-			x = FindCertificateRoot (x509);
-			if (x == null)
-				return null;
-			root = x;
-			return path;
+
+			// validate the chain
+			if ((_chain != null) && (_status == X509ChainStatusFlags.NoError)) {
+				foreach (X509Certificate x in _chain) {
+					// validate dates for each certificate in the chain
+					// note: we DO NOT check for nested date/time
+					if (!IsValid (x)) {
+						return false;
+					}
+				}
+				// check leaf
+				if (!IsValid (leaf)) {
+					// switch status code if the failure is expiration
+					if (_status == X509ChainStatusFlags.NotTimeNested)
+						_status = X509ChainStatusFlags.NotTimeValid;
+					return false;
+				}
+				// check root
+				if ((_root != null) && !IsValid (_root)) {
+					return false;
+				}
+			}
+			return (_status == X509ChainStatusFlags.NoError);
 		}
 
 		private X509CertificateCollection GetTrustAnchors () 
@@ -70,20 +152,34 @@ namespace Mono.Security.X509 {
 			return trust.Anchors;
 		}
 
-		public X509CertificateCollection TrustAnchors {
-			get { return ((roots == null) ? GetTrustAnchors () : roots); }
-			set { roots = value; }
-		}
-
-		public X509Certificate Root {
-			get { return root; }
-		}
+		//
 
 		public void Reset () 
 		{
-			// this force a reload
-			roots = null;
+			_status = X509ChainStatusFlags.NoError;
+			roots = null; // this force a reload
 			certs.Clear ();
+			_chain.Clear ();
+		}
+
+		// private stuff
+
+		private bool IsValid (X509Certificate cert) 
+		{
+			if (!cert.IsCurrent) {
+				// FIXME: nesting isn't very well implemented
+				_status = X509ChainStatusFlags.NotTimeNested;
+				return false;
+			}
+
+			// TODO - we should check for CRITICAL but unknown extensions
+			// X509ChainStatusFlags.InvalidExtension
+			if (ServicePointManager.CheckCertificateRevocationList) {
+				// TODO - check revocation (CRL, OCSP ...)
+				// X509ChainStatusFlags.RevocationStatusUnknown
+				// X509ChainStatusFlags.Revoked
+			}
+			return true;
 		}
 
 		private X509Certificate FindCertificateParent (X509Certificate child) 
@@ -95,25 +191,64 @@ namespace Mono.Security.X509 {
 			return null;
 		}
 
-		private X509Certificate FindCertificateRoot (X509Certificate x509) 
+		private X509Certificate FindCertificateRoot (X509Certificate potentialRoot) 
 		{
-			// if the trusted root is in the path
-			if (TrustAnchors.Contains (x509))
-				return x509;
-
-			foreach (X509Certificate root in TrustAnchors) {
-				if (IsParent (x509, root))
-					return root;
+			if (potentialRoot == null) {
+				_status = X509ChainStatusFlags.PartialChain;
+				return null;
 			}
 
+			// if the trusted root is in the chain
+			if (IsTrusted (potentialRoot)) {
+				return potentialRoot;
+			}
+
+			// if the root isn't in the chain
+			foreach (X509Certificate root in TrustAnchors) {
+				if (IsParent (potentialRoot, root)) {
+					return root;
+				}
+			}
+
+			// is it a (untrusted) root ?
+			if (potentialRoot.IsSelfSigned) {
+				_status = X509ChainStatusFlags.UntrustedRoot;
+				return potentialRoot;
+			}
+
+			_status = X509ChainStatusFlags.PartialChain;
 			return null;
+		}
+
+		private bool IsTrusted (X509Certificate potentialTrusted) 
+		{
+			return TrustAnchors.Contains (potentialTrusted);
 		}
 
 		private bool IsParent (X509Certificate child, X509Certificate parent) 
 		{
 			if (child.IssuerName != parent.SubjectName)
 				return false;
-			return (child.VerifySignature (parent.RSA));
+
+			// parent MUST have the Basic Constraint CA=true (except for trusted roots)
+			// see why at http://www.microsoft.com/technet/security/bulletin/MS02-050.asp
+			if ((parent.Version > 2) && (!IsTrusted (parent))) {
+				// TODO: we do not support pathLenConstraint
+				X509Extension ext = parent.Extensions ["2.5.29.19"];
+				if (ext != null) {
+					BasicConstraintsExtension bc = new BasicConstraintsExtension (ext);
+					if (!bc.CertificateAuthority)
+						_status = X509ChainStatusFlags.InvalidBasicConstraints;
+				}
+				else
+					_status = X509ChainStatusFlags.InvalidBasicConstraints;
+			}
+
+			if (!child.VerifySignature (parent.RSA)) {
+				_status = X509ChainStatusFlags.NotSignatureValid;
+				return false;
+			}
+			return true;
 		}
 	}
 }
