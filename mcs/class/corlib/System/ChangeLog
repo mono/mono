@@ -1,3 +1,7 @@
+2001-07-19  Duco Fijma (duco@lorentz.xs4all.nl)
+
+	* TimeSpan.cs: New implementation.
+
 2001-07-18  Scott Sanders scott@stonecobra.com
 
          * UriFormatExcpetion.cs: Add - 85% complete
