@@ -1,3 +1,10 @@
+2002-03-20  Martin Baulig  <martin@gnome.org>
+
+	* icall.c (ves_icall_InternalInvoke): Create a new object if the
+	method is a constructor.
+	(icall_map): Added "System.Reflection.MonoCMethod::InternalInvoke",
+	points to ves_icall_InternalInvoke().
+
 2002-03-20  Dan Lewis <dihlewis@yahoo.co.uk>
 
 	* file-io.c: Flush shouldn't throw exceptions.
