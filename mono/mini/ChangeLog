@@ -1,5 +1,8 @@
 2003-06-17  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini.h mini.c: Rework last patch based on suggestions by Paolo.
+	
+2003-06-17  Zoltan Varga  <vargaz@freemail.hu>
 	* mini.h mini.c mini-x86.c: Added instruction level coverage 
 	info collection support.
 
