@@ -2,13 +2,14 @@
  * Namespace: System.Web.UI.WebControls
  * Class:     Xml
  *
- * Author:  Gaurav Vaish
+ * Author:  Gaurav Vaish, Gonzalo Paniagua Javier
  * Maintainer: gvaish@iitk.ac.in
- * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
+ * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>, <gonzalo@ximian.com>
  * Implementation: yes
- * Status:  75%
+ * Status:  95%
  *
  * (C) Gaurav Vaish (2002)
+ * (c) 2002 Ximian, Inc. (http://www.ximian.com)
  */
 
 using System;
@@ -53,10 +54,19 @@ namespace System.Web.UI.WebControls
 		{
 		}
 
-		[MonoTODO("Initialize_Document")]
-		private void LoadXmlDoc()
+		[MonoTODO("security")]
+		private void LoadXmlDoc ()
 		{
-			throw new NotImplementedException();
+			if (documentContent != null && documentContent.Length > 0) {
+				document = new XmlDocument();
+				document.LoadXml (documentContent);
+				return;
+			}
+
+			if (documentSource != null && documentSource.Length != 0) {
+				document = new XmlDocument();
+				document.Load (documentSource);
+			}
 		}
 
 		public XmlDocument Document
@@ -154,31 +164,38 @@ namespace System.Web.UI.WebControls
 				DocumentContent = ((LiteralControl)obj).Text;
 				return;
 			}
-			throw new HttpException(HttpRuntime.FormatResourceString("Cannot_Have_Children_of_Type", "Xml", GetType().Name.ToString()));
+			throw new HttpException (HttpRuntime.FormatResourceString (
+							"Cannot_Have_Children_of_Type",
+							"Xml",
+							GetType().Name));
 		}
 
-		[MonoTODO("Initialize_xpathDocument")]
-		private void LoadXpathDoc()
+		[MonoTODO("security")]
+		private void LoadXpathDoc ()
 		{
-			if(documentContent != null && documentContent.Length > 0)
-			{
-				xpathDoc = new XPathDocument(new StringReader(documentContent));
+			if(documentContent != null && documentContent.Length > 0) {
+				xpathDoc = new XPathDocument (new StringReader (documentContent));
 				return;
 			}
-			if(documentSource == null || documentSource.Length == 0)
-			{
+
+			if (documentSource != null && documentSource.Length != 0) {
+				xpathDoc = new XPathDocument (documentSource);
 				return;
 			}
-			throw new NotImplementedException();
 		}
 
-		[MonoTODO("Initialize_Transform")]
-		private void LoadTransform()
+		[MonoTODO("security")]
+		private void LoadTransform ()
 		{
-			throw new ArgumentException();
+			if (transform != null)
+				return;
+
+			if (transformSource != null && transformSource.Length != 0) {
+				transform = new XslTransform ();
+				transform.Load (transformSource);
+			}
 		}
 
-		[MonoTODO]
 		protected override void Render(HtmlTextWriter output)
 		{
 			if(document == null)
@@ -204,3 +221,4 @@ namespace System.Web.UI.WebControls
 		}
 	}
 }
+
