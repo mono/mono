@@ -1,3 +1,15 @@
+REM LineNo: 18
+REM ExpectedError: BC31408
+REM ErrorMessage: 'Private' and 'MustOverride' cannot be combined.
+
+REM LineNo: 19
+REM ExpectedError: BC30188
+REM ErrorMessage: Declaration expected.
+
+REM LineNo: 20
+REM ExpectedError: BC30430
+REM ErrorMessage: 'End Function' must be preceded by a matching 'Function'.
+
 Imports System
 
 'Testing a mustoverride method with a method body

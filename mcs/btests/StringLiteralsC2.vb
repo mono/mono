@@ -1,3 +1,11 @@
+REM LineNo: 13
+REM ExpectedError: BC30201
+REM ErrorMessage: Expression expected.
+
+REM LineNo: 14
+REM ExpectedError: BC30451
+REM ErrorMessage: Name 'Hello' is not declared.
+
 Imports System
 Module StringLiteral
 	Sub Main()

@@ -1,3 +1,11 @@
+REM LineNo: 10
+REM ExpectedError: BC30438
+REM ErrorMessage: Constants must have a value.
+
+REM LineNo: 10
+REM ExpectedError: BC30438
+REM ErrorMessage: Constants must have a value.
+
 Module ConstantC5
     Const a As Integer, b As Integer
     Sub main()

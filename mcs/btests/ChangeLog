@@ -1,3 +1,11 @@
+2004-10-14  Jambunathan K  <kjambunathan@novell.com>
+	* Added LineNo, ExpectedError and ErrorMessage to all negative
+	test case files that emit just a single compile time error. All
+	these files have multiple errors. Each of these files need to be
+	broken in to multiple files so that no more than one error gets
+	reported by a test case.
+
+
 2004-10-13  Jambunathan K  <kjambunathan@novell.com>
 	* InheritanceK.vb: Yet another test case
 	* test-mbas.pl: Perl driver for regressing mbas - first cut

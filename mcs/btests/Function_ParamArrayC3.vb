@@ -1,3 +1,15 @@
+REM LineNo: 21
+REM ExpectedError: BC30192
+REM ErrorMessage: ParamArray parameter must be last in parameter list.
+
+REM LineNo: 24
+REM ExpectedError: BC30451
+REM ErrorMessage: Name 'b' is not declared.
+
+REM LineNo: 35
+REM ExpectedError: BC30311
+REM ErrorMessage: Value of type '1-dimensional array of Integer' cannot be converted to 'Integer'.
+
 '============================================================================================
 'Name:Manish Kumar Sinha 
 'Email Address: manishkumarsinha@sify.com

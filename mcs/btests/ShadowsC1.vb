@@ -1,3 +1,11 @@
+REM LineNo: 31
+REM ExpectedError: BC30057
+REM ErrorMessage: Too many arguments to 'Public Shadows Function F() As Object'.
+
+REM LineNo: 32
+REM ExpectedError: BC30057
+REM ErrorMessage: Too many arguments to 'Public Shadows Function F() As Object'.
+
 Class B
     Function F()
     End Function

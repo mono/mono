@@ -1,3 +1,11 @@
+REM LineNo: 20
+REM ExpectedError: BC30512
+REM ErrorMessage: Option Strict On disallows implicit conversions from 'Boolean' to 'Long'.
+
+REM LineNo: 20
+REM ExpectedError: BC30512
+REM ErrorMessage: Option Strict On disallows implicit conversions from 'Double' to 'Long'.
+
 ' BC30512: Option Strict On disallows implicit conversions from 'Double' to 'Long'.
 
 Option Strict On

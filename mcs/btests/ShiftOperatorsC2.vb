@@ -1,3 +1,11 @@
+REM LineNo: 18
+REM ExpectedError: BC30201
+REM ErrorMessage: Expression expected.
+
+REM LineNo: 21
+REM ExpectedError: BC30201
+REM ErrorMessage: Expression expected.
+
 ' BC30201: Expression expected
 
 Imports System

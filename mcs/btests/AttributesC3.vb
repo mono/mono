@@ -1,3 +1,15 @@
+REM LineNo: 26
+REM ExpectedError: BC30644
+REM ErrorMessage: Attribute cannot be used on 'C1'.
+
+REM LineNo: 26
+REM ExpectedError: BC31506
+REM ErrorMessage: 'AuthorAttribute' cannot be used as an attribute because it is declared 'MustInherit'.
+
+REM LineNo: 28
+REM ExpectedError: BC30644
+REM ErrorMessage: Attribute cannot be used on 'S1'.
+
 'Using MustInherit on a attribute class
 Imports System
 

@@ -1,3 +1,19 @@
+REM LineNo: 29
+REM ExpectedError: BC30201
+REM ErrorMessage: Expression expected.
+
+REM LineNo: 34
+REM ExpectedError: BC30201
+REM ErrorMessage: Expression expected.
+
+REM LineNo: 39
+REM ExpectedError: BC30512
+REM ErrorMessage: Option Strict On disallows implicit conversions from 'Integer' to 'String'.
+
+REM LineNo: 39
+REM ExpectedError: BC30512
+REM ErrorMessage: Option Strict On disallows implicit conversions from 'Integer' to 'String'.
+
 ' BC30201: Expression expected 
 ' BC30512: Option Strict On disallows implicit conversions from 'Integer' to 'String'
 

@@ -1,3 +1,11 @@
+REM LineNo: 20
+REM ExpectedError: BC30202
+REM ErrorMessage: 'Optional' expected.
+
+REM LineNo: 21
+REM ExpectedError: BC30815
+REM ErrorMessage: 'name' is not declared. File I/O functionality is available in the 'Microsoft.VisualBasic' namespace.
+
 '=============================================================================================
 'Name:Manish Kumar Sinha 
 'Email Address: manishkumarsinha@sify.com

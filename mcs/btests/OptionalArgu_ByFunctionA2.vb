@@ -1,3 +1,15 @@
+REM LineNo: 24
+REM ExpectedError: BC30202
+REM ErrorMessage: 'Optional' expected.
+
+REM LineNo: 25
+REM ExpectedError: BC30815
+REM ErrorMessage: 'name' is not declared. File I/O functionality is available in the 'Microsoft.VisualBasic' namespace.
+
+REM LineNo: 36
+REM ExpectedError: BC30057
+REM ErrorMessage: Too many arguments to 'Public Function F(telephoneNo As Long, [code As Integer = 80], [code1 As Integer = 91]) As Boolean'.
+
 '=============================================================================================
 'Name:Manish Kumar Sinha 
 'Email Address: manishkumarsinha@sify.com

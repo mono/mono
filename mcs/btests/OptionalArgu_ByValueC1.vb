@@ -1,3 +1,11 @@
+REM LineNo: 19
+REM ExpectedError: BC30812
+REM ErrorMessage: Optional parameters must specify a default value.
+
+REM LineNo: 28
+REM ExpectedError: BC30455
+REM ErrorMessage: Argument not specified for parameter 'name' of 'Public Sub F(telephoneNo As Long, [code As Integer = 80], [code1 As Integer = 91], ByRef name As String)'.
+
 '=============================================================================================
 'Name:Manish Kumar Sinha 
 'Email Address: manishkumarsinha@sify.com

@@ -1,3 +1,11 @@
+REM LineNo: 19
+REM ExpectedError: BC30542
+REM ErrorMessage: Division by zero occurred while evaluating this expression.
+
+REM LineNo: 25
+REM ExpectedError: BC30542
+REM ErrorMessage: Division by zero occurred while evaluating this expression.
+
 '  BC30542: Division by zero occurred while evaluating this expression.
 
 Imports System

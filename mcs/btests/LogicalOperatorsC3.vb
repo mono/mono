@@ -1,3 +1,15 @@
+REM LineNo: 37
+REM ExpectedError: BC30512
+REM ErrorMessage: Option Strict On disallows implicit conversions from 'Integer' to 'Boolean'.
+
+REM LineNo: 38
+REM ExpectedError: BC30512
+REM ErrorMessage: Option Strict On disallows implicit conversions from 'Integer' to 'Boolean'.
+
+REM LineNo: 38
+REM ExpectedError: BC30512
+REM ErrorMessage: Option Strict On disallows implicit conversions from 'Integer' to 'Boolean'.
+
 ' BC30512: Option Strict On disallows implicit conversions from 'Integer' to 'Boolean'.
 
 Option Strict On

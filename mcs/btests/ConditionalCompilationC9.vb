@@ -1,3 +1,11 @@
+REM LineNo: 24
+REM ExpectedError: BC30028
+REM ErrorMessage: '#Else' must be preceded by a matching '#If' or '#ElseIf'.
+
+REM LineNo: 28
+REM ExpectedError: BC32030
+REM ErrorMessage: '#ElseIf' cannot follow '#Else' as part of a '#If' block.
+
 'BC32030: '#Else' cannot follow another '#Else' in a conditional compilation block
 
 Imports System

@@ -1,3 +1,35 @@
+REM LineNo: 44
+REM ExpectedError: BC30390
+REM ErrorMessage: 'C1.Private Sub S()' is not accessible in this context because it is 'Private'.
+
+REM LineNo: 45
+REM ExpectedError: BC30390
+REM ErrorMessage: 'C1.a' is not accessible in this context because it is 'Private'.
+
+REM LineNo: 52
+REM ExpectedError: BC30390
+REM ErrorMessage: 'C1.Private Sub S()' is not accessible in this context because it is 'Private'.
+
+REM LineNo: 53
+REM ExpectedError: BC30390
+REM ErrorMessage: 'C1.a' is not accessible in this context because it is 'Private'.
+
+REM LineNo: 54
+REM ExpectedError: BC30390
+REM ErrorMessage: 'C1.b' is not accessible in this context because it is 'Protected'.
+
+REM LineNo: 60
+REM ExpectedError: BC30390
+REM ErrorMessage: 'C1.Private Sub S()' is not accessible in this context because it is 'Private'.
+
+REM LineNo: 61
+REM ExpectedError: BC30390
+REM ErrorMessage: 'C1.a' is not accessible in this context because it is 'Private'.
+
+REM LineNo: 62
+REM ExpectedError: BC30390
+REM ErrorMessage: 'C1.b' is not accessible in this context because it is 'Protected'.
+
 Imports System 'Should generate five compilation errors
 Class C1
 	Private a As Integer=10

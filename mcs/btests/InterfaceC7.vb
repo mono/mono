@@ -1,3 +1,15 @@
+REM LineNo: 24
+REM ExpectedError: BC31034
+REM ErrorMessage: Interface 'I' is already implemented by base class 'C1'.
+
+REM LineNo: 25
+REM ExpectedError: BC40004
+REM ErrorMessage: sub 'S' conflicts with sub 'S' in the base class 'C1' and so should be declared 'Shadows'.
+
+REM LineNo: 25
+REM ExpectedError: BC31037
+REM ErrorMessage: 'I.S' is already implemented by base class 'C1' and cannot be implemented again.
+
 Imports System
 Interface I
 	Sub S()

@@ -1,3 +1,23 @@
+REM LineNo: 31
+REM ExpectedError: BC30046
+REM ErrorMessage: Method cannot have both a ParamArray and Optional parameters.
+
+REM LineNo: 32
+REM ExpectedError: BC30451
+REM ErrorMessage: Name 'args' is not declared.
+
+REM LineNo: 33
+REM ExpectedError: BC30451
+REM ErrorMessage: Name 'args' is not declared.
+
+REM LineNo: 39
+REM ExpectedError: BC30311
+REM ErrorMessage: Value of type '1-dimensional array of Integer' cannot be converted to 'Integer'.
+
+REM LineNo: 40
+REM ExpectedError: BC30057
+REM ErrorMessage: Too many arguments to 'Public Sub F([length As Integer = 3])'.
+
 '============================================================================================
 'Name:Manish Kumar Sinha 
 'Email Address: manishkumarsinha@sify.com

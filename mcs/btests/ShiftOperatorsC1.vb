@@ -1,3 +1,11 @@
+REM LineNo: 18
+REM ExpectedError: BC30512
+REM ErrorMessage: Option Strict On disallows implicit conversions from 'Double' to 'Long'.
+
+REM LineNo: 18
+REM ExpectedError: BC30512
+REM ErrorMessage: Option Strict On disallows implicit conversions from 'Double' to 'Integer'.
+
 'BC30512: Option Strict On disallows implicit conversions from double to long
 
 Option Strict On
