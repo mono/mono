@@ -1720,6 +1720,24 @@ namespace Mono.CSharp {
 		{
 			VariableInfo vi = VariableInfo;
 
+			if (Block.IsConstant (Name)) {
+				Expression e = Block.GetConstantExpression (Name);
+
+				e = e.Resolve (ec);
+				if (e == null)  
+					return null;
+
+				e = Expression.Reduce (ec, e);
+
+				if (!(e is Literal)) {
+					Report.Error (150, vi.Location, "A constant value is expected");
+					return null;
+				}
+
+				vi.Used = true;
+				return e;
+			}
+
 			type = vi.VariableType;
 			return this;
 		}
@@ -3709,6 +3727,11 @@ namespace Mono.CSharp {
 					
 					Expression exp = Literalize (o, t);
 					exp.Resolve (ec);
+
+					if (!(expr is TypeExpr)) {
+						error176 (loc, fe.FieldInfo.Name);
+						return null;
+					}
 					
 					return exp;
 				}

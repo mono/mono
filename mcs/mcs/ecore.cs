@@ -368,9 +368,9 @@ namespace Mono.CSharp {
 				return null;
 
 			// Empty array ...
+			// This arises when we use FindMembers from SRE. Our code prefers to send a null back
 			if (mi.Length == 0) 
 				return null;
-
 			
 			if (mi.Length == 1 && !(mi [0] is MethodBase))
 				return Expression.ExprClassFromMemberInfo (ec, mi [0], loc);

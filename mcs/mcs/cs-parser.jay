@@ -692,7 +692,7 @@ field_declaration
 	  type 
 	  variable_declarators
 	  SEMICOLON
-	{ 
+	  { 
 		string type = (string) $3;
 		int mod = (int) $2;
 
@@ -702,8 +702,7 @@ field_declaration
 
 			CheckDef (current_container.AddField (field), field.Name);
 		}
-	}
-
+	  }
 	;
 
 variable_declarators
@@ -2533,7 +2532,12 @@ declaration_statement
 		$$ = declare_local_variables ((string) de.Key, (ArrayList) de.Value);
 	  }
 
-	| local_constant_declaration SEMICOLON		// finishme
+	| local_constant_declaration SEMICOLON
+	  {
+		DictionaryEntry de = (DictionaryEntry) $1;
+
+		$$ = declare_local_constant ((string) de.Key, (VariableDeclaration) de.Value);
+	  }
 	;
 
 /* 
@@ -2597,8 +2601,10 @@ local_variable_declaration
 	;
 
 local_constant_declaration
-	: CONST type constant_declarator
-	 	// finishme	
+	: CONST local_variable_type constant_declarator
+	  {
+		$$ = new DictionaryEntry ($2, $3);
+	  }
 	;
 
 expression_statement
@@ -3337,6 +3343,24 @@ Block declare_local_variables (string type, ArrayList variable_declarators)
 
 		assign = new Assign (new LocalVariableReference (implicit_block, decl.identifier), expr, decl.Location);
 		implicit_block.AddStatement (new StatementExpression (assign));
+	}
+	
+	return implicit_block;
+}
+
+Block declare_local_constant (string type, VariableDeclaration decl)
+{
+	Block implicit_block;
+
+	if (current_block.Used)
+		implicit_block = new Block (current_block, true);
+	else
+		implicit_block = current_block;
+
+	if (!(implicit_block.AddConstant (type, decl.identifier, (Expression) decl.expression_or_array_initializer,
+					  decl.Location))){
+		Report.Error (128, decl.Location, "A local variable `" + decl.identifier +
+			      "' is already defined in this scope");
 	}
 	
 	return implicit_block;

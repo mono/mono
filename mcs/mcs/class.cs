@@ -1126,10 +1126,19 @@ namespace Mono.CSharp {
 			if (filter == null)
 				filter = accepting_filter; 
 			
-			if ((mt & MemberTypes.Field) != 0 && Fields != null) {
-				foreach (Field f in Fields) {
-					if (filter (f.FieldBuilder, criteria) == true)
-						members.Add (f.FieldBuilder);
+			if ((mt & MemberTypes.Field) != 0) {
+				if (Fields != null) {
+					foreach (Field f in Fields) {
+						if (filter (f.FieldBuilder, criteria) == true)
+							members.Add (f.FieldBuilder);
+					}
+				}
+
+				if (Constants != null) {
+					foreach (Constant con in Constants) {
+						if (filter (con.FieldBuilder, criteria) == true)
+							members.Add (con.FieldBuilder);
+					}
 				}
 			}
 

@@ -432,8 +432,8 @@ namespace Mono.CSharp {
 		
 		int  idx;
 		public bool Used;
-		public bool Assigned; 
-		
+		public bool Assigned;
+
 		public VariableInfo (string type, Location l)
 		{
 			Type = type;
@@ -496,6 +496,10 @@ namespace Mono.CSharp {
 		// Keeps track of (name, type) pairs
 		//
 		Hashtable variables;
+
+		//
+		// Keeps track of constants
+		Hashtable constants;
 
 		//
 		// Maps variable names to ILGenerator.LocalBuilders
@@ -589,6 +593,19 @@ namespace Mono.CSharp {
 			return true;
 		}
 
+		public bool AddConstant (string type, string name, Expression value, Location l)
+		{
+			if (!AddVariable (type, name, l))
+				return false;
+			
+			if (constants == null)
+				constants = new Hashtable ();
+
+			constants.Add (name, value);
+
+			return true;
+		}
+
 		public Hashtable Variables {
 			get {
 				return variables;
@@ -622,15 +639,51 @@ namespace Mono.CSharp {
 			return null;
 		}
 
+		public Expression GetConstantExpression (string name)
+		{
+			if (constants != null) {
+				object temp;
+				temp = constants [name];
+				
+				if (temp != null)
+					return (Expression) temp;
+			}
+			
+			if (Parent != null)
+				return Parent.GetConstantExpression (name);
+
+			return null;
+		}
+		
 		/// <summary>
 		///   True if the variable named @name has been defined
 		///   in this block
 		/// </summary>
 		public bool IsVariableDefined (string name)
 		{
-			return GetVariableType (name) != null;
+			if (variables != null) {
+				if (variables.Contains (name))
+					return true;
+			}
+			
+			if (Parent != null)
+				return Parent.IsVariableDefined (name);
+
+			return false;
 		}
 
+		/// <summary>
+		///   True if the variable named @name is a constant
+		///  </summary>
+		public bool IsConstant (string name)
+		{
+			Expression e = null;
+			
+			e = GetConstantExpression (name);
+			
+			return e != null;
+		}
+		
 		/// <summary>
 		///   Use to fetch the statement associated with this label
 		/// </summary>

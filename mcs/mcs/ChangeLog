@@ -1,3 +1,32 @@
+2001-11-28  Ravi Pratap  <ravi@ximian.com>
+
+	* cs-parser.jay (local_constant_declaration): Use declare_local_constant.
+
+	(declare_local_constant): New helper function.
+
+	* statement.cs (AddConstant): Keep a separate record of constants
+
+	(IsConstant): Implement to determine if a variable is a constant.
+
+	(GetConstantExpression): Implement.
+
+	* expression.cs (LocalVariableReference): Handle the case when it is a constant.
+
+	* statement.cs (IsVariableDefined): Re-write.
+
+2001-11-27  Ravi Pratap  <ravi@ximian.com>
+
+	* class.cs (TypeContainer::FindMembers): Look for constants
+	in the case when we are looking for MemberTypes.Field
+
+	* expression.cs (MemberAccess::DoResolve): Check that in the
+	case we are a FieldExpr and a Literal, we are not being accessed
+	by an instance reference.
+
+	* cs-parser.jay (local_constant_declaration): Implement.
+
+	(declaration_statement): Implement for constant declarations.
+
 2001-11-26  Miguel de Icaza  <miguel@ximian.com>
 
 	* statement.cs (Switch): Catch double defaults
