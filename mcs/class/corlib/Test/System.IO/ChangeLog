@@ -1,3 +1,7 @@
+2003-05-07  Ben Maurer <bmaurer@users.sourceforge.net>
+	* PathTest.cs
+	Even more GetFullPath () tests. Includes UNC tests.
+	
 2003-05-06  Ville Palo <vi64pa@kolumbus.fi>
 
 	* DirectoryInfoTest.cs: Removed OS-specific test
@@ -261,3 +265,6 @@
 	* MemoryStreamTest.cs: wrapped try-catch blocks around read/write/seek
 	tests. These were throwing exceptions that NUnit wasn't catching.  I 
 	don't think it used to behave this way before .NET.1.0.
+2003-05-04  Ben Maurer <bmaurer@users.sourceforge.net>
+	* Path.cs 
+	(CanonicalizePath) Added optimizations per Miguel's requests.

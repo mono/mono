@@ -170,19 +170,37 @@ namespace System.IO
 			return CanonicalizePath (path);
 		}
 
+		static bool IsDsc (char c) {
+			return c == DirectorySeparatorChar || c == AltDirectorySeparatorChar;
+		}
+		
 		public static string GetPathRoot (string path)
 		{
-			if (path == null)
-				return null;
-
-			if (!IsPathRooted (path))
-				return String.Empty;
-
-			int i = path.IndexOfAny (new char [] {DirectorySeparatorChar, AltDirectorySeparatorChar});
-			if (i == -1)
-				return null; // This should never happen, cause IsPathRooted returned true
-
-			return path.Substring (0, i + 1);
+			if (path == null) return null;
+			if (!IsPathRooted (path)) return String.Empty;
+			
+			if (DirectorySeparatorChar == '/') {
+				// UNIX
+				return IsDsc (path [0]) ? DirectorySeparatorChar.ToString () : String.Empty;
+			} else {
+				// Windows
+				int len = 2;
+				
+				if (path.Length <= 2) return String.Empty;
+					
+				if (IsDsc (path [0]) && IsDsc (path[1])) {
+					// UNC: \\server or \\server\share
+					// Get server
+					while (len < path.Length && !IsDsc (path [len])) len++;
+					// Get share
+					while (len < path.Length && !IsDsc (path [len])) len++;				
+				} else if (path[1] == VolumeSeparatorChar) {
+					// C:\folder
+					if (path.Length >= 3 && (IsDsc (path [2]))) len++;
+				}
+				
+				return path.Substring (0, len);
+			}
 		}
 
 		public static string GetTempFileName ()
@@ -282,7 +300,7 @@ namespace System.IO
 		static string CanonicalizePath (string path) {
 			
 			// STEP 1: Check for empty string
-			if (path == null || path == String.Empty) return path;
+			if (path == null) return path;
 			path.Trim ();
 			if (path == String.Empty) return path;
 			
@@ -294,34 +312,27 @@ namespace System.IO
 			if (dir == String.Empty) return path;
 			
 			string file = GetFileName (path);
-			string result = root;
+			
 			// STEP 3: split the directories, this gets rid of consecutative "/"'s
 			string [] dirs = dir.Split (DirectorySeparatorChar, AltDirectorySeparatorChar);
 			
 			// STEP 4: Get rid of directories containing . and ..
+			int target = 0;
+			
 			for (int i = 0; i < dirs.Length; i++) {
-				if (dirs [i] == ".")
-					dirs [i] = String.Empty;
+				if (dirs [i] == "." || dirs [i] == String.Empty) continue;
 				else if (dirs [i] == "..") {
-					dirs [i] = String.Empty;
-					int j = i;
-					while (i-- > 0) {
-						if (dirs [i] != String.Empty) {
-							dirs [i] = String.Empty;
-							break;
-						}
-					}
+					if (target != 0) target--;
 				}
+				else
+					dirs [target++] = dirs [i];
 			}
 			
 			// STEP 5: Combine everything.
-			for (int i = 0; i < dirs.Length; i++) {
-				if (dirs [i] != String.Empty)
-					result += dirs [i] + DirectorySeparatorChar;
-			}
-			
-			result += file;
-			return result;
+			if (target == 0)
+				return root + file;
+			else
+				return root + String.Join (DirectorySeparatorChar.ToString (), dirs, 0, target) + DirectorySeparatorChar + file;
 		}
 	}
 }

@@ -4,9 +4,13 @@
 // Authors:
 // 	Marcin Szczepanski (marcins@zipworld.com.au)
 // 	Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//	Ben Maurer (bmaurer@users.sf.net)
+//	Gilles Freart (gfr@skynet.be)
 //
 // (c) Marcin Szczepanski 
 // (c) 2002 Ximian, Inc. (http://www.ximian.com)
+// (c) 2003 Ben Maurer
+// (c) 2003 Gilles Freart
 //
 
 #define NUNIT // Comment out this one if you wanna play with the test without using NUnit
@@ -314,11 +318,73 @@ namespace MonoTests.System.IO
 			string testFullPath = Path.GetFullPath ("foo.txt");
 			string expected = current + DSC + "foo.txt";
 			AssertEquals ("GetFullPath #01", expected, testFullPath);
-			
-			testFullPath = Path.GetFullPath ("a/./../foo.txt");
-			expected = current + DSC + "foo.txt";
-			AssertEquals ("GetFullPath #02", expected, testFullPath);
 
+			testFullPath = Path.GetFullPath ("a//./.././foo.txt");
+			AssertEquals ("GetFullPath #02", expected, testFullPath);
+			string root = Windows ? "C:\\" : "/";
+			string [,] test = new string [,] {		
+				{"root////././././././../root/././../root", "root"},
+				{"root/", "root/"},
+				{"root/./", "root/"},
+				{"root/./", "root/"},
+				{"root/../", ""},
+				{"root/../", ""},
+				{"root/../..", ""},
+				{"root/.hiddenfile", "root/.hiddenfile"},
+				{"root/. /", "root/. /"},
+				{"root/.. /", "root/.. /"},
+				{"root/..weirdname", "root/..weirdname"},
+				{"root/..", ""},
+				{"root/../a/b/../../..", ""},
+				{"root/./..", ""},
+				{"..", ""},
+				{".", ""},
+				{"root//dir", "root/dir"},
+				{"root/.              /", "root/.              /"},
+				{"root/..             /", "root/..             /"},
+				{"root/      .              /", "root/      .              /"},
+				{"root/      ..             /", "root/      ..             /"},
+				{"root/./", "root/"},
+				{"root/..                      /", "root/..                   /"},
+				{".//", ""}
+			};
+			for (int i = 0; i < test.GetUpperBound (1); i++) {
+				AssertEquals (String.Format ("GetFullPath #{0}", i), root + test [i, 1], Path.GetFullPath (root + test [i, 0]));
+			}
+			
+			if (Windows) {
+				string uncroot = @"\\server\share\";
+				string [,] testunc = new string [,] {		
+					{"root////././././././../root/././../root", "root"},
+					{"root/", "root/"},
+					{"root/./", "root/"},
+					{"root/./", "root/"},
+					{"root/../", ""},
+					{"root/../", ""},
+					{"root/../..", ""},
+					{"root/.hiddenfile", "root/.hiddenfile"},
+					{"root/. /", "root/. /"},
+					{"root/.. /", "root/.. /"},
+					{"root/..weirdname", "root/..weirdname"},
+					{"root/..", ""},
+					{"root/../a/b/../../..", ""},
+					{"root/./..", ""},
+					{"..", ""},
+					{".", ""},
+					{"root//dir", "root/dir"},
+					{"root/.              /", "root/.              /"},
+					{"root/..             /", "root/..             /"},
+					{"root/      .              /", "root/      .              /"},
+					{"root/      ..             /", "root/      ..             /"},
+					{"root/./", "root/"},
+					{"root/..                      /", "root/..                   /"},
+					{".//", ""}
+				};
+				for (int i = 0; i < test.GetUpperBound (1); i++) {
+					AssertEquals (String.Format ("GetFullPath UNC #{0}", i), uncroot + test [i, 1], Path.GetFullPath (uncroot + test [i, 0]));
+				}	
+			}
+			
 			try {
 				testFullPath = Path.GetFullPath (null);
 				Fail ("GetFullPath Fail #01");
