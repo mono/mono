@@ -1,3 +1,7 @@
+2003-07-22  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug-debugger.c: Reworked the type support a bit more;
+	distinguish between types and classes.
 
 Tue Jul 22 15:48:50 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
