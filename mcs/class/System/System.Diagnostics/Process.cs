@@ -590,13 +590,13 @@ namespace System.Diagnostics {
 			MonoIOError error;
 			
 			if (!ret) {
-				if (stdin_rd != IntPtr.Zero)
+				if (startInfo.RedirectStandardInput == true)
 					MonoIO.Close (stdin_rd, out error);
 
-				if (stdout_wr != IntPtr.Zero)
+				if (startInfo.RedirectStandardOutput == true)
 					MonoIO.Close (stdout_wr, out error);
 
-				if (stderr_wr != IntPtr.Zero)
+				if (startInfo.RedirectStandardError == true)
 					MonoIO.Close (stderr_wr, out error);
 
 				throw new Win32Exception ();
