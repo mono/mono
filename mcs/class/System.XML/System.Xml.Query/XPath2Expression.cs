@@ -1470,7 +1470,7 @@ namespace Mono.Xml.XPath2
 
 		public override XPathSequence Evaluate (XPathSequence iter)
 		{
-			if (iter.MoveNext ())
+			if (!iter.MoveNext ())
 				return new XPathEmptySequence (iter);
 			XPathNavigator nav = iter.Current as XPathNavigator;
 			if (nav == null)
@@ -1482,21 +1482,20 @@ namespace Mono.Xml.XPath2
 #endregion
 	}
 
-	// 'foo/bar'
-	internal class PathChildExpr : PathExpr
+	internal abstract class PathStepExpr : PathExpr
 	{
-		ExprSingle left;
+		ExprSingle first;
 		ExprSingle next;
 
-		public PathChildExpr (ExprSingle left, ExprSingle next)
+		public PathStepExpr (ExprSingle first, ExprSingle next)
 		{
-			this.left = left;
+			this.first = first;
 			this.next = next;
 		}
 
-		public ExprSingle Left {
-			get { return left; }
-			set { left = value; }
+		public ExprSingle First {
+			get { return first; }
+			set { first = value; }
 		}
 
 		public ExprSingle Next {
@@ -1506,18 +1505,28 @@ namespace Mono.Xml.XPath2
 
 		internal override void CheckReference (XQueryASTCompiler compiler)
 		{
-			left.CheckReference (compiler);
+			first.CheckReference (compiler);
 			next.CheckReference (compiler);
 		}
 
-#region CompileAndEvaluate
 		internal override ExprSingle CompileCore (XQueryASTCompiler compiler)
 		{
-			Left = Left.Compile (compiler);
-			Next = Next.Compile (compiler);
+			first = first.Compile (compiler);
+			next = next.Compile (compiler);
 			return this;
 		}
 
+	}
+
+	// 'foo/bar'
+	internal class PathSlashExpr : PathStepExpr
+	{
+		public PathSlashExpr (ExprSingle first, ExprSingle next)
+			: base (first, next)
+		{
+		}
+
+#region CompileAndEvaluate
 		// FIXME: It can be optimized by comparing l/r value types.
 		public override SequenceType StaticType {
 			get { return SequenceType.Node; }
@@ -1525,47 +1534,20 @@ namespace Mono.Xml.XPath2
 
 		public override XPathSequence Evaluate (XPathSequence iter)
 		{
-			return new ChildPathIterator (iter, this);
+			return new PathStepIterator (First.Evaluate (iter), this);
 		}
 #endregion
 	}
 
 	// 'foo//bar'
-	internal class PathDescendantExpr : PathExpr
+	internal class PathSlash2Expr : PathStepExpr
 	{
-		ExprSingle left;
-		ExprSingle descendant;
-
-		public PathDescendantExpr (ExprSingle left, ExprSingle descendant)
+		public PathSlash2Expr (ExprSingle first, ExprSingle next)
+			: base (first, next)
 		{
-			this.left = left;
-			this.descendant = descendant;
-		}
-
-		public ExprSingle Left {
-			get { return left; }
-			set { left = value; }
-		}
-
-		public ExprSingle Descendant {
-			get { return descendant; }
-			set { descendant = value; }
-		}
-
-		internal override void CheckReference (XQueryASTCompiler compiler)
-		{
-			left.CheckReference (compiler);
-			descendant.CheckReference (compiler);
 		}
 
 #region CompileAndEvaluate
-		internal override ExprSingle CompileCore (XQueryASTCompiler compiler)
-		{
-			Left = Left.Compile (compiler);
-			Descendant = Descendant.Compile (compiler);
-			return this;
-		}
-
 		// FIXME: It can be optimized by comparing l/r value types.
 		public override SequenceType StaticType {
 			get { return SequenceType.Node; }
@@ -1573,7 +1555,9 @@ namespace Mono.Xml.XPath2
 
 		public override XPathSequence Evaluate (XPathSequence iter)
 		{
-			return new DescendantPathIterator (iter, this);
+//			return new DescendantPathIterator (iter, this);
+			return new PathStepIterator (
+				new DescendantOrSelfIterator (First.Evaluate (iter)), this);
 		}
 #endregion
 	}

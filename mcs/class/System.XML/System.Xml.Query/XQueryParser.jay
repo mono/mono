@@ -1622,11 +1622,11 @@ PathExpr // returns PathExpr
 	}
 	| Slash RelativePathExpr
 	{
-		$$ = new PathChildExpr (new PathRootExpr (), (ExprSingle) $2);
+		$$ = new PathSlashExpr (new PathRootExpr (), (ExprSingle) $2);
 	}
 	| Slash2 RelativePathExpr
 	{
-		$$ = new PathDescendantExpr (new PathRootExpr (), (ExprSingle) $2);
+		$$ = new PathSlash2Expr (new PathRootExpr (), (ExprSingle) $2);
 	}
 	| RelativePathExpr
 	;
@@ -1635,11 +1635,11 @@ RelativePathExpr // returns PathExpr
 	: StepExpr
 	| StepExpr Slash RelativePathExpr
 	{
-		$$ = new PathChildExpr ((ExprSingle) $1, (ExprSingle) $3);
+		$$ = new PathSlashExpr ((ExprSingle) $1, (ExprSingle) $3);
 	}
 	| StepExpr Slash2 RelativePathExpr
 	{
-		$$ = new PathDescendantExpr ((ExprSingle) $1, (ExprSingle) $3);
+		$$ = new PathSlash2Expr ((ExprSingle) $1, (ExprSingle) $3);
 	}
 	;
 

@@ -63,9 +63,9 @@ namespace Mono.Xml.XPath2
 				if (countCache >= 0)
 					return countCache;
 				XPathSequence clone = Clone ();
-				countCache = 0;
 				while (clone.MoveNext ())
-					countCache++;
+					;
+				countCache = clone.Position;
 				return countCache;
 			}
 		}
@@ -93,7 +93,7 @@ namespace Mono.Xml.XPath2
 			return true;
 		}
 
-		public abstract bool MoveNextCore ();
+		protected abstract bool MoveNextCore ();
 
 		public abstract XPathSequence Clone ();
 
@@ -122,7 +122,7 @@ namespace Mono.Xml.XPath2
 			get { return 0; }
 		}
 
-		public override bool MoveNextCore ()
+		protected override bool MoveNextCore ()
 		{
 			return false;
 		}
@@ -131,7 +131,7 @@ namespace Mono.Xml.XPath2
 			get { throw new InvalidOperationException ("Should not happen. In XPathEmptySequence.Current."); }
 		}
 
-		// Don't return clone
+		// Don't return clone. It's waste of resource.
 		public override XPathSequence Clone ()
 		{
 			return this;
@@ -169,11 +169,10 @@ namespace Mono.Xml.XPath2
 			return new SingleItemIterator (this);
 		}
 
-		public override bool MoveNextCore ()
+		protected override bool MoveNextCore ()
 		{
-			if (item != null) {
+			if (current == null) {
 				current = item;
-				item = null;
 				return true;
 			}
 			return false;
@@ -218,7 +217,7 @@ namespace Mono.Xml.XPath2
 			return new IntegerRangeIterator (this);
 		}
 
-		public override bool MoveNextCore ()
+		protected override bool MoveNextCore ()
 		{
 			if (current == null)
 				next = start;
@@ -236,74 +235,255 @@ namespace Mono.Xml.XPath2
 	}
 
 	// Slash iterator
-	internal class ChildPathIterator : XPathSequence
+	// <copy original='System.Xml.XPath/Iterator.cs,
+	//	System.Xml.XPath/XPathComparer.cs'>
+	internal class PathStepIterator : XPathSequence
 	{
 		XPathSequence left;
-		ExprSingle child;
+		XPathSequence right;
+		PathStepExpr step;
+		ArrayList nodeStore;
+		SortedList storedIterators;
+		bool finished;
+		XPathSequence nextRight;
 
-		public ChildPathIterator (XPathSequence iter, PathChildExpr source)
+		public PathStepIterator (XPathSequence iter, PathStepExpr source)
 			: base (iter.Context)
 		{
-			left = source.Left.Evaluate (iter);
-			child = source.Next;
+			left = iter;
+			step = source;
 		}
 
-		private ChildPathIterator (ChildPathIterator other)
+		private PathStepIterator (PathStepIterator other)
 			: base (other)
 		{
 			left = other.left.Clone ();
-			child = other.child;
+			step = other.step;
+			if (other.right != null)
+				right = other.right.Clone ();
+			if (other.nodeStore != null)
+				nodeStore = (ArrayList) other.nodeStore.Clone ();
+			if (other.storedIterators != null)
+				storedIterators = (SortedList) other.storedIterators.Clone ();
+			if (other.nextRight != null)
+				nextRight = other.nextRight.Clone ();
 		}
 
 		public override XPathSequence Clone ()
 		{
-			return new ChildPathIterator (this);
+			return new PathStepIterator (this);
 		}
 
-		public override bool MoveNextCore ()
+		protected override bool MoveNextCore ()
 		{
-			throw new NotImplementedException ();
+			if (finished)
+				return false;
+//			if (RequireSorting) {
+			if (step.RequireSorting) {
+				// Mainly '//' ('/descendant-or-self::node()/')
+				if (nodeStore == null) {
+					CollectResults ();
+					if (nodeStore.Count == 0) {
+						finished = true;
+						return false;
+					}
+				}
+				if (nodeStore.Count == Position) {
+					finished = true;
+					return false;
+				}
+				while (nodeStore.Count > Position) {
+					if (((XPathNavigator) nodeStore [Position]).ComparePosition (
+						(XPathNavigator) nodeStore [Position - 1]) == XmlNodeOrder.Same)
+						nodeStore.RemoveAt (Position);
+					else
+						break;
+				}
+
+				return true;
+			} else { // Sorting not required
+				if (right == null) { // First time
+					if (!left.MoveNext ())
+						return false;
+					right = step.Next.Evaluate (left);
+					storedIterators = new SortedList (XPathSequenceComparer.Instance);
+				}
+
+				while (true) {
+					while (!right.MoveNext ()) {
+						if (storedIterators.Count > 0) {
+							int last = storedIterators.Count - 1;
+							XPathSequence tmpIter = (XPathSequence) storedIterators.GetByIndex (last);
+							storedIterators.RemoveAt (last);
+							switch (((XPathNavigator) tmpIter.Current).ComparePosition ((XPathNavigator) right.Current)) {
+							case XmlNodeOrder.Same:
+							case XmlNodeOrder.Before:
+								right = tmpIter;
+								continue;
+							default:
+								right = tmpIter;
+								break;
+							}
+							break;
+						} else if (nextRight != null) {
+							right = nextRight;
+							nextRight = null;
+							break;
+						} else if (!left.MoveNext ()) {
+							finished = true;
+							return false;
+						}
+						else
+							right = step.Next.Evaluate (left);
+					}
+					bool loop = true;
+					while (loop) {
+						loop = false;
+						if (nextRight == null) {
+							bool noMoreNext = false;
+							while (nextRight == null || !nextRight.MoveNext ()) {
+								if(left.MoveNext ())
+									nextRight = step.Next.Evaluate (left);
+								else {
+									noMoreNext = true;
+									break;
+								}
+							}
+							if (noMoreNext)
+								nextRight = null; // FIXME: More efficient code. Maybe making noMoreNext class scope would be better.
+						}
+						if (nextRight != null) {
+							switch (((XPathNavigator) right.Current).ComparePosition ((XPathNavigator) nextRight.Current)) {
+							case XmlNodeOrder.After:
+								storedIterators.Add (storedIterators.Count, right);
+								right = nextRight;
+								nextRight = null;
+								loop = true;
+								break;
+							case XmlNodeOrder.Same:
+								if (!nextRight.MoveNext ())
+									nextRight = null;
+
+								else {
+									int last = storedIterators.Count;
+									if (last > 0) {
+										storedIterators.Add (last, nextRight);
+										nextRight = (XPathSequence) storedIterators.GetByIndex (last);
+										storedIterators.RemoveAt (last);
+									}
+								}
+
+								loop = true;
+								break;
+							}
+						}
+					}
+					return true;
+				}
+			}
 		}
 
-		public override XPathItem CurrentCore {
-			get { return left.Current; }
+		private void CollectResults ()
+		{
+			if (nodeStore != null)
+				return;
+			nodeStore = new ArrayList ();
+			while (true) {
+				while (right == null || !right.MoveNext ()) {
+					if (!left.MoveNext ()) {
+						nodeStore.Sort (XPathNavigatorComparer2.Instance);
+						return;
+					}
+					right = step.Next.Evaluate (left);
+				}
+				XPathNavigator nav = (XPathNavigator) right.Current;
+				nodeStore.Add (nav);
+			}
+		}
+
+		public override XPathItem CurrentCore { 
+			get {
+				if (Position <= 0) return null;
+//				if (RequireSorting) {
+				if (step.RequireSorting) {
+					return (XPathNavigator) nodeStore [Position - 1];
+				} else {
+					return right.Current;
+				}
+			}
+		}
+
+/*
+		public override bool RequireSorting {
+			get {
+				return left.RequireSorting || step.Next.RequireSorting;
+			}
+		}
+*/
+
+		public override int Count {
+			get {
+				if (nodeStore == null)
+					return base.Count;
+				else
+					return nodeStore.Count;
+			}
+		}
+
+
+		internal class XPathSequenceComparer : IComparer
+		{
+			public static XPathSequenceComparer Instance = new XPathSequenceComparer ();
+			private XPathSequenceComparer ()
+			{
+			}
+
+			public int Compare (object o1, object o2)
+			{
+				XPathSequence nav1 = o1 as XPathSequence;
+				XPathSequence nav2 = o2 as XPathSequence;
+				if (nav1 == null)
+					return -1;
+				if (nav2 == null)
+					return 1;
+				switch (((XPathNavigator) nav1.Current).ComparePosition ((XPathNavigator) nav2.Current)) {
+				case XmlNodeOrder.Same:
+					return 0;
+				case XmlNodeOrder.After:
+					return -1;
+				default:
+					return 1;
+				}
+			}
+		}
+
+		internal class XPathNavigatorComparer2 : IComparer
+		{
+			public static XPathNavigatorComparer2 Instance = new XPathNavigatorComparer2 ();
+			private XPathNavigatorComparer2 ()
+			{
+			}
+
+			public int Compare (object o1, object o2)
+			{
+				XPathNavigator nav1 = o1 as XPathNavigator;
+				XPathNavigator nav2 = o2 as XPathNavigator;
+				if (nav1 == null)
+					return -1;
+				if (nav2 == null)
+					return 1;
+				switch (nav1.ComparePosition (nav2)) {
+				case XmlNodeOrder.Same:
+					return 0;
+				case XmlNodeOrder.After:
+					return 1;
+				default:
+					return -1;
+				}
+			}
 		}
 	}
-
-	// Slash2 iterator
-	internal class DescendantPathIterator : XPathSequence
-	{
-		XPathSequence left;
-		ExprSingle descendant;
-
-		public DescendantPathIterator (XPathSequence iter, PathDescendantExpr source)
-			: base (iter.Context)
-		{
-			left = source.Left.Evaluate (iter);
-			descendant = source.Descendant;
-		}
-
-		private DescendantPathIterator (DescendantPathIterator other)
-			: base (other)
-		{
-			left = other.left.Clone ();
-			descendant = other.descendant;
-		}
-
-		public override XPathSequence Clone ()
-		{
-			return new DescendantPathIterator (this);
-		}
-
-		public override bool MoveNextCore ()
-		{
-			throw new NotImplementedException ();
-		}
-
-		public override XPathItem CurrentCore {
-			get { return left.Current; }
-		}
-	}
+	// </copy>
 
 	// Filter step iterator
 	internal class FilteredIterator : XPathSequence
@@ -330,7 +510,7 @@ namespace Mono.Xml.XPath2
 			return new FilteredIterator (this);
 		}
 
-		public override bool MoveNextCore ()
+		protected override bool MoveNextCore ()
 		{
 			throw new NotImplementedException ();
 		}
@@ -365,11 +545,12 @@ namespace Mono.Xml.XPath2
 			return new AxisIterator (this);
 		}
 
-		public override bool MoveNextCore ()
+		protected override bool MoveNextCore ()
 		{
-			while (iter.MoveNext ())
+			while (iter.MoveNext ()) {
 				if (source.Matches (iter.Current as XPathNavigator))
 					return true;
+			}
 			return false;
 		}
 
@@ -384,16 +565,17 @@ namespace Mono.Xml.XPath2
 		XPathNavigator current;
 
 		public NodeIterator (XPathSequence iter)
-			: base (iter)
+			: base (iter.Context)
 		{
-			XPathItem item = iter.Context.CurrentItem;
+//			XPathItem item = iter.Context.CurrentItem;
+			XPathItem item = iter.Current;
 			node = item as XPathNavigator;
 			if (node == null)
 				throw new XmlQueryException (String.Format ("Current item is expected to be a node, but it is {0} ({1}).", item.XmlType.QualifiedName, item.XmlType.TypeCode));
 			node = node.Clone ();
 		}
 
-		internal NodeIterator (NodeIterator other)
+		internal NodeIterator (NodeIterator other, bool cloneFlag)
 			: base (other)
 		{
 			node = other.node.Clone ();
@@ -403,7 +585,7 @@ namespace Mono.Xml.XPath2
 			get { return node; }
 		}
 
-		public override bool MoveNextCore ()
+		protected override bool MoveNextCore ()
 		{
 			if (!base.MoveNext ())
 				return false;
@@ -437,17 +619,17 @@ namespace Mono.Xml.XPath2
 		{
 		}
 
-		private ParentIterator (ParentIterator other) 
-			: base (other)
+		private ParentIterator (ParentIterator other, bool cloneFlag) 
+			: base (other, true)
 		{
 		}
 
 		public override XPathSequence Clone ()
 		{
-			return new ParentIterator (this);
+			return new ParentIterator (this, true);
 		}
 
-		public override bool MoveNextCore ()
+		protected override bool MoveNextCore ()
 		{
 			if (Position == 0 && Node.MoveToParent ())
 				return true;
@@ -466,17 +648,17 @@ namespace Mono.Xml.XPath2
 		{
 		}
 
-		private ChildIterator (ChildIterator other) 
-			: base (other)
+		private ChildIterator (ChildIterator other, bool cloneFlag) 
+			: base (other, true)
 		{
 		}
 
 		public override XPathSequence Clone ()
 		{
-			return new ChildIterator (this);
+			return new ChildIterator (this, true);
 		}
 
-		public override bool MoveNextCore ()
+		protected override bool MoveNextCore ()
 		{
 			if (Position == 0)
 				return Node.MoveToFirstChild ();
@@ -492,17 +674,17 @@ namespace Mono.Xml.XPath2
 		{
 		}
 
-		private FollowingSiblingIterator (FollowingSiblingIterator other) 
-			: base (other)
+		private FollowingSiblingIterator (FollowingSiblingIterator other, bool cloneFlag) 
+			: base (other, true)
 		{
 		}
 
 		public override XPathSequence Clone ()
 		{
-			return new FollowingSiblingIterator (this);
+			return new FollowingSiblingIterator (this, true);
 		}
 
-		public override bool MoveNextCore ()
+		protected override bool MoveNextCore ()
 		{
 			return Node.MoveToNext ();
 		}
@@ -520,8 +702,8 @@ namespace Mono.Xml.XPath2
 			startPosition = Node.Clone ();
 		}
 
-		private PrecedingSiblingIterator (PrecedingSiblingIterator other) 
-			: base (other)
+		private PrecedingSiblingIterator (PrecedingSiblingIterator other, bool cloneFlag) 
+			: base (other, true)
 		{
 			startPosition = other.startPosition;
 			started = other.started;
@@ -530,10 +712,10 @@ namespace Mono.Xml.XPath2
 
 		public override XPathSequence Clone ()
 		{
-			return new ParentIterator (this);
+			return new PrecedingSiblingIterator (this, true);
 		}
 
-		public override bool MoveNextCore ()
+		protected override bool MoveNextCore ()
 		{
 			if (finished)
 				return false;
@@ -566,8 +748,8 @@ namespace Mono.Xml.XPath2
 		{
 		}
 
-		private AncestorIterator (AncestorIterator other) 
-			: base (other)
+		private AncestorIterator (AncestorIterator other, bool cloneFlag) 
+			: base (other, true)
 		{
 			finished = other.finished;
 			nodes = other.nodes;
@@ -575,10 +757,10 @@ namespace Mono.Xml.XPath2
 
 		public override XPathSequence Clone ()
 		{
-			return new AncestorIterator (this);
+			return new AncestorIterator (this, true);
 		}
 
-		public override bool MoveNextCore ()
+		protected override bool MoveNextCore ()
 		{
 			if (finished)
 				return false;
@@ -617,8 +799,8 @@ namespace Mono.Xml.XPath2
 		{
 		}
 
-		private AncestorOrSelfIterator (AncestorOrSelfIterator other) 
-			: base (other)
+		private AncestorOrSelfIterator (AncestorOrSelfIterator other, bool cloneFlag) 
+			: base (other, true)
 		{
 			finished = other.finished;
 			nodes = other.nodes;
@@ -626,10 +808,10 @@ namespace Mono.Xml.XPath2
 
 		public override XPathSequence Clone ()
 		{
-			return new AncestorOrSelfIterator (this);
+			return new AncestorOrSelfIterator (this, true);
 		}
 
-		public override bool MoveNextCore ()
+		protected override bool MoveNextCore ()
 		{
 			if (finished)
 				return false;
@@ -669,8 +851,8 @@ namespace Mono.Xml.XPath2
 		{
 		}
 
-		private DescendantIterator (DescendantIterator other)
-			: base (other)
+		private DescendantIterator (DescendantIterator other, bool cloneFlag) 
+			: base (other, true)
 		{
 			finished = other.finished;
 			depth = other.depth;
@@ -678,10 +860,10 @@ namespace Mono.Xml.XPath2
 
 		public override XPathSequence Clone ()
 		{
-			return new DescendantIterator (this);
+			return new DescendantIterator (this, true);
 		}
 
-		public override bool MoveNextCore ()
+		protected override bool MoveNextCore ()
 		{
 			if (finished)
 				return false;
@@ -713,8 +895,8 @@ namespace Mono.Xml.XPath2
 		{
 		}
 
-		protected DescendantOrSelfIterator (DescendantOrSelfIterator other)
-			: base (other)
+		protected DescendantOrSelfIterator (DescendantOrSelfIterator other, bool cloneFlag) 
+			: base (other, true)
 		{
 			depth = other.depth;
 			finished = other.finished;
@@ -722,10 +904,10 @@ namespace Mono.Xml.XPath2
 
 		public override XPathSequence Clone ()
 		{
-			return new DescendantOrSelfIterator (this);
+			return new DescendantOrSelfIterator (this, true);
 		}
 
-		public override bool MoveNextCore ()
+		protected override bool MoveNextCore ()
 		{
 			if (finished)
 				return false;
@@ -760,18 +942,18 @@ namespace Mono.Xml.XPath2
 		{
 		}
 
-		protected FollowingIterator (FollowingIterator other)
-			: base (other)
+		protected FollowingIterator (FollowingIterator other, bool cloneFlag) 
+			: base (other, true)
 		{
 			finished = other.finished;
 		}
 
 		public override XPathSequence Clone ()
 		{
-			return new FollowingIterator (this);
+			return new FollowingIterator (this, true);
 		}
 
-		public override bool MoveNextCore ()
+		protected override bool MoveNextCore ()
 		{
 			if (finished)
 				return false;
@@ -809,8 +991,8 @@ namespace Mono.Xml.XPath2
 			startPosition = Node.Clone ();
 		}
 
-		private PrecedingIterator (PrecedingIterator other)
-			: base (other) 
+		private PrecedingIterator (PrecedingIterator other, bool cloneFlag) 
+			: base (other, true)
 		{
 			startPosition = other.startPosition;
 			started = other.started;
@@ -819,10 +1001,10 @@ namespace Mono.Xml.XPath2
 
 		public override XPathSequence Clone ()
 		{
-			return new PrecedingIterator (this);
+			return new PrecedingIterator (this, true);
 		}
 
-		public override bool MoveNextCore ()
+		protected override bool MoveNextCore ()
 		{
 			if (finished)
 				return false;
@@ -867,17 +1049,17 @@ namespace Mono.Xml.XPath2
 		{
 		}
 
-		private NamespaceIterator (NamespaceIterator other)
-			: base (other)
+		private NamespaceIterator (NamespaceIterator other, bool cloneFlag) 
+			: base (other, true)
 		{
 		}
 
 		public override XPathSequence Clone ()
 		{
-			return new NamespaceIterator (this);
+			return new NamespaceIterator (this, true);
 		}
 
-		public override bool MoveNextCore ()
+		protected override bool MoveNextCore ()
 		{
 			if (Position == 0) {
 				if (Node.MoveToFirstNamespace ())
@@ -898,17 +1080,17 @@ namespace Mono.Xml.XPath2
 		{
 		}
 
-		private AttributeIterator (AttributeIterator other)
-			: base (other)
+		private AttributeIterator (AttributeIterator other, bool cloneFlag) 
+			: base (other, true)
 		{
 		}
 
 		public override XPathSequence Clone ()
 		{
-			return new AttributeIterator (this);
+			return new AttributeIterator (this, true);
 		}
 
-		public override bool MoveNextCore ()
+		protected override bool MoveNextCore ()
 		{
 			if (Position == 0) {
 				if (Node.MoveToFirstAttribute ())
@@ -950,7 +1132,7 @@ namespace Mono.Xml.XPath2
 			return new ExprSequenceIterator (this);
 		}
 
-		public override bool MoveNextCore ()
+		protected override bool MoveNextCore ()
 		{
 			if (iter != null && iter.MoveNext ())
 				return true;
@@ -992,7 +1174,7 @@ namespace Mono.Xml.XPath2
 			return new FLWORIterator (this);
 		}
 
-		public override bool MoveNextCore ()
+		protected override bool MoveNextCore ()
 		{
 			throw new NotImplementedException ();
 		}
@@ -1023,7 +1205,7 @@ namespace Mono.Xml.XPath2
 			return new AtomizingIterator (this);
 		}
 
-		public override bool MoveNextCore ()
+		protected override bool MoveNextCore ()
 		{
 			return iter.MoveNext ();
 		}
@@ -1067,7 +1249,7 @@ namespace Mono.Xml.XPath2
 			return new ConvertingIterator (this);
 		}
 
-		public override bool MoveNextCore ()
+		protected override bool MoveNextCore ()
 		{
 			return iter.MoveNext ();
 		}
@@ -1101,7 +1283,7 @@ namespace Mono.Xml.XPath2
 			return new TracingIterator (this);
 		}
 
-		public override bool MoveNextCore ()
+		protected override bool MoveNextCore ()
 		{
 			if (!iter.MoveNext ())
 				return false;
@@ -1140,7 +1322,7 @@ namespace Mono.Xml.XPath2
 			return new ListIterator (this);
 		}
 
-		public override bool MoveNextCore ()
+		protected override bool MoveNextCore ()
 		{
 			return (Position < list.Count);
 		}
