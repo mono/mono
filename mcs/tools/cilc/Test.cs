@@ -55,7 +55,7 @@ namespace Demo
 			set { title = value; }
 		}
 
-		public void Method3 (string arg1string)
+		public void Echo (string arg1string)
 		{
 			Console.WriteLine ("string: " + arg1string);
 		}

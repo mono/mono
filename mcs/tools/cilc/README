@@ -18,13 +18,6 @@ Then run:
 $ make test
 $ cd generated
 $ ./demo
-$ make test
-$ cd generated
-$ ./demo
-c# static method invoked
-c# ctor invoked
-c# instance method invoked
-c# method with an unusual name invoked
 
 -- 
 Alp Toker <alp@atoker.com>

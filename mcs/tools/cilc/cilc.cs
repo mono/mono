@@ -12,20 +12,42 @@ class cilc
 	public static CodeWriter C, H, Cindex, Hindex;
 	static string ns, dllname;
 	static string cur_class;
+	static string target_dir;
 
 	static ArrayList funcs_done;
 
-	public static void Main(string[] args)
+	public static int Main(string[] args)
 	{
+		if (args.Length != 2) {
+			Console.WriteLine ("Mono CIL-to-C binding generator");
+			Console.WriteLine ("Usage: cilc [options] assembly target");
+			return 1;
+		}
+
 		ns = "Unnamed";
-		Generate (args[0]);
+		Generate (args[0], args[1]);
+
+		return 0;
 	}
 
-	static void Generate (string assembly)
+	static void Generate (string assembly, string target)
 	{
+		target_dir = target + Path.DirectorySeparatorChar;
+		if (!Directory.Exists (target_dir)) Directory.CreateDirectory (target_dir);
+
 		Assembly a = Assembly.LoadFrom (assembly);
 		dllname = Path.GetFileName (assembly);
 		AssemblyGen (a);
+
+		//create a makefile
+		CodeWriter makefile = new CodeWriter (target_dir + "Makefile");
+		makefile.Indenter = "\t";
+		makefile.WriteLine ("all: lib" + ns.ToLower () + ".so");
+		makefile.LineBreak ();
+		makefile.WriteLine ("lib" + ns.ToLower () + ".so: *.c");
+		makefile.Indent ();
+		makefile.WriteLine ("gcc -Wall -fpic -shared `pkg-config --cflags --libs glib-2.0 mono` -lpthread *.c -o lib" + ns.ToLower () + ".so");
+		makefile.Close ();
 	}
 
 	static void AssemblyGen (Assembly a)
@@ -33,8 +55,8 @@ class cilc
 		Type[] types = a.GetTypes ();
 
 		ns = types[0].Namespace;
-		Hindex = new CodeWriter (ns.ToLower () + ".h");
-		Cindex = new CodeWriter (ns.ToLower () + ".c");
+		Hindex = new CodeWriter (target_dir + ns.ToLower () + ".h");
+		Cindex = new CodeWriter (target_dir + ns.ToLower () + ".c");
 
 		string Hindex_id = "__" + ns.ToUpper () + "_H__";
 		Hindex.WriteLine ("#ifndef " + Hindex_id);
@@ -85,8 +107,8 @@ class cilc
 
 		//ns = t.Namespace;
 		string fname = ns.ToLower () + t.Name.ToLower ();
-		C = new CodeWriter (fname + ".c");
-		H = new CodeWriter (fname + ".h");
+		C = new CodeWriter (target_dir + fname + ".c");
+		H = new CodeWriter (target_dir + fname + ".h");
 		Hindex.WriteLine ("#include <" + fname + ".h" + ">");
 
 
@@ -363,7 +385,7 @@ class CodeWriter
 
 	public CodeWriter (string fname)
 	{
-		FileStream fs = new FileStream ("generated/" + fname, FileMode.OpenOrCreate, FileAccess.Write);
+		FileStream fs = new FileStream (fname, FileMode.OpenOrCreate, FileAccess.Write);
 		w = new StreamWriter (fs);
 	}
 

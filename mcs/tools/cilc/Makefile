@@ -7,9 +7,9 @@ all: cilc.exe
 test: cilc.exe Test.dll
 	rm -rf generated
 	mkdir generated
-	mono cilc.exe Test.dll
-	gcc -Wall -fpic -shared `pkg-config --cflags --libs glib-2.0 mono` -lpthread generated/*.c -o generated/libtest.so
-	gcc -Wall `pkg-config --cflags --libs glib-2.0 mono` -Igenerated -Lgenerated -ltest demo.c -o generated/demo
+	mono cilc.exe Test.dll generated
+	$(MAKE) -C generated
+	gcc -Wall `pkg-config --cflags --libs glib-2.0 mono` -Igenerated -Lgenerated -ldemo demo.c -o generated/demo
 	cp Test.dll generated
 
 cilc.exe: cilc.cs

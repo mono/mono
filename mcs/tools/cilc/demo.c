@@ -16,7 +16,10 @@ int main () {
   demo_test_add_number (my_test, 2);
 
   //run an instance method with arguments
-  demo_test_set_title (my_test, "hello from c");
+  demo_test_echo (my_test, "hello from c");
+
+  //run a property set accessor
+  demo_test_set_title (my_test, "set property from c");
   
   //TODO: return value
   //g_printf ("returned string: %s\n", demo_test_get_title (my_test));
