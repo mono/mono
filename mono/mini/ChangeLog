@@ -1,5 +1,7 @@
 2004-08-23  Zoltan Varga  <vargaz@freemail.hu>
 
+	* inssel-x86.brg inssel-amd64: Add yet another missing tree->dreg assignment.
+
 	* mini-x86.c (mono_arch_local_regalloc): Fix bug in long register
 	allocation. Fixes #63085.
 
