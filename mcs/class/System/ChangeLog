@@ -1,3 +1,9 @@
+2004-12-03  Geoff Norton  <gnorton@customerdna.com>
+
+	* System.IO/SearchPattern.cs:  Have IsMatch(string) 
+	call IsMatch(string, bool) to avoid setting a instance variable in a 
+	method that logically should not be changing it.
+
 2004-12-02  Geoff Norton  <gnorton@customerdna.com>
 
 	* System.IO/KeventWatcher.cs: Add IDisposable to our kevent struct

@@ -49,18 +49,17 @@ namespace System.IO {
 
 		// OSX has a retarded case-insensitive yet case-aware filesystem
 		// so we need a overload in here for the Kqueue watcher
-		public bool IsMatch (string text, bool ignore)
+		public bool IsMatch (string text, bool ignorecase)
 		{
-			this.ignore = ignore;
-			return IsMatch (text);
+			if (!hasWildcard)
+				return (String.Compare (pattern, text, ignorecase) == 0);
+
+			return Match (ops, text, 0);
 		}
 
 		public bool IsMatch (string text)
 		{
-			if (!hasWildcard)
-				return (String.Compare (pattern, text, ignore) == 0);
-
-			return Match (ops, text, 0);
+			return IsMatch (text, ignore);
 		}
 
 		public bool HasWildcard {
