@@ -1,3 +1,9 @@
+
+Tue Jan 14 10:36:49 CET 2003 Paolo Molaro <lupus@ximian.com>
+
+	* class.cs, rootcontext.cs: small changes to avoid unnecessary memory
+	allocations.
+
 2003-01-13 Jackson Harper <jackson@latitudegeo.com>
 
 	* cs-parser.jay: Add cleanup call.

@@ -1577,7 +1577,6 @@ namespace Mono.CSharp {
 			const int va = (Modifiers.VIRTUAL | Modifiers.ABSTRACT);
 			const int nv = (Modifiers.NEW | Modifiers.VIRTUAL);
 			bool ok = true;
-			string name = MakeName (n);
 			
 			//
 			// At most one of static, virtual or override
@@ -1585,7 +1584,7 @@ namespace Mono.CSharp {
 			if ((flags & Modifiers.STATIC) != 0){
 				if ((flags & vao) != 0){
 					Report.Error (
-						112, loc, "static method " + name + "can not be marked " +
+						112, loc, "static method " + MakeName (n) + "can not be marked " +
 						"as virtual, abstract or override");
 					ok = false;
 				}
@@ -1600,7 +1599,7 @@ namespace Mono.CSharp {
 
 			if ((flags & Modifiers.OVERRIDE) != 0 && (flags & nv) != 0){
 				Report.Error (
-					113, loc, name +
+					113, loc, MakeName (n) +
 					" marked as override cannot be marked as new or virtual");
 				ok = false;
 			}
@@ -1612,19 +1611,19 @@ namespace Mono.CSharp {
 			if ((flags & Modifiers.ABSTRACT) != 0){
 				if ((flags & Modifiers.EXTERN) != 0){
 					Report.Error (
-						180, loc, name + " can not be both abstract and extern");
+						180, loc, MakeName (n) + " can not be both abstract and extern");
 					ok = false;
 				}
 
 				if ((flags & Modifiers.VIRTUAL) != 0){
 					Report.Error (
-						503, loc, name + " can not be both abstract and virtual");
+						503, loc, MakeName (n) + " can not be both abstract and virtual");
 					ok = false;
 				}
 
 				if ((ModFlags & Modifiers.ABSTRACT) == 0){
 					Report.Error (
-						513, loc, name +
+						513, loc, MakeName (n) +
 						" is abstract but its container class is not");
 					ok = false;
 
@@ -1634,7 +1633,7 @@ namespace Mono.CSharp {
 			if ((flags & Modifiers.PRIVATE) != 0){
 				if ((flags & vao) != 0){
 					Report.Error (
-						621, loc, name +
+						621, loc, MakeName (n) +
 						" virtual or abstract members can not be private");
 					ok = false;
 				}
@@ -1643,7 +1642,7 @@ namespace Mono.CSharp {
 			if ((flags & Modifiers.SEALED) != 0){
 				if ((flags & Modifiers.OVERRIDE) == 0){
 					Report.Error (
-						238, loc, name +
+						238, loc, MakeName (n) +
 						" cannot be sealed because it is not an override");
 					ok = false;
 				}
