@@ -1,3 +1,7 @@
+2002-11-09  Nick Drochak  <ndrochak@gol.com>
+
+	* makefile: have test target be smart about windows/linux
+
 2002-11-07  Nick Drochak  <ndrochak@gol.com>
 
 	* makefile: for the clean target, handle linux and windows differently.

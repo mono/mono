@@ -19,6 +19,9 @@ linux:
 	done
 
 test:
+	if test x$(OS) = xWindows_NT; then make testwindows; else make -f makefile.gnu test; fi
+
+testwindows:
 	(cd nunit; make)
 	(cd class; make test)
 
