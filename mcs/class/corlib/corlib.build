@@ -20,7 +20,6 @@
 				<excludes name="Test/**"/>
 				<excludes name="Windows/**"/>
 				<excludes name="System.PAL/IOperatingSystem.cs"/>
-				<excludes name="System.Resources/*"/>
 			</sources>
 		</csc>
 		<csc target="library" output="../lib/corlib_cmp.dll" debug="${debug}">
@@ -35,7 +34,6 @@
 				<excludes name="Test/**"/>
 				<excludes name="Windows/**"/>
 				<excludes name="System.PAL/IOperatingSystem.cs"/>
-				<excludes name="System.Resources/*"/>
 				<excludes name="System/Object.cs" />
 				<excludes name="System/ValueType.cs" />
 			</sources>
