@@ -1,3 +1,9 @@
+2004-06-23  Sureshkumar T (tsureshkumar@novell.com)
+        * OdbcConnection.cs: Fix: Moved env allocation to Open method. 
+			     Disconnection & freeing handles are done in Close 
+			     method to avoid simultaneous connections.
+	* libodbc.cs	   : Added constants for odbc version.
+				    
 2004-06-16  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* OdbcError.cs: fixed serialization compatibility with MS.NET

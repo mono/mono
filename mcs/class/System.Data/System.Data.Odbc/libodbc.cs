@@ -99,6 +99,9 @@ namespace System.Data.Odbc
 	internal class libodbc
 	{
                 #region global constants
+		internal static int		SQL_OV_ODBC2		= 2;
+		internal static int		SQL_OV_ODBC3		= 3;
+
                 internal static string          SQLSTATE_RIGHT_TRUNC    = "01004";
                 internal static char            C_NULL                  = '\0';
                 #endregion

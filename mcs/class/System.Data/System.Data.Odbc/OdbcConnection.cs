@@ -53,17 +53,6 @@ namespace System.Data.Odbc
 		
 		public OdbcConnection ()
 		{
-			OdbcReturn ret;
-		
-			// allocate Environment handle	
-			ret=libodbc.SQLAllocHandle(OdbcHandleType.Env, IntPtr.Zero, ref henv);
-			if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
-				throw new OdbcException(new OdbcError("SQLAllocHandle"));
-		
-			ret=libodbc.SQLSetEnvAttr(henv, OdbcEnv.OdbcVersion, (IntPtr) 3 , 0); 
-			if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
-				throw new OdbcException(new OdbcError("SQLSetEnvAttr",OdbcHandleType.Env,henv));
-		
 			connectionTimeout = 15;
 			connectionString = null;
 		}
@@ -203,13 +192,32 @@ namespace System.Data.Odbc
 
 		public void Close ()
 		{
+			OdbcReturn ret = OdbcReturn.Error;
 			if (State == ConnectionState.Open) {
-				// TODO: Free handles
+				// disconnect
+				ret = libodbc.SQLDisconnect (hdbc);
+				if ( (ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
+					throw new OdbcException (new OdbcError ("SQLConnect", OdbcHandleType.Dbc,hdbc));
+
+				// free handles
+				if (hdbc != IntPtr.Zero) {
+					ret = libodbc.SQLFreeHandle ( (ushort) OdbcHandleType.Dbc, hdbc);	
+					if ( (ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
+						throw new OdbcException (new OdbcError ("SQLConnect", OdbcHandleType.Dbc,hdbc));
+				}
 				hdbc = IntPtr.Zero;
-				transaction=null;
+
+				if (henv != IntPtr.Zero) {
+					ret = libodbc.SQLFreeHandle ( (ushort) OdbcHandleType.Env, henv);	
+					if ( (ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
+						throw new OdbcException (new OdbcError ("SQLConnect", OdbcHandleType.Dbc,hdbc));
+				}
+				henv = IntPtr.Zero;
+
+				transaction = null;
 			}
 			else
-				throw new InvalidOperationException();
+				throw new InvalidOperationException ();
 		}
 
 		public OdbcCommand CreateCommand ()
@@ -243,11 +251,22 @@ namespace System.Data.Odbc
 		{
 			if (State == ConnectionState.Open)
 				throw new InvalidOperationException ();
-						
-			// allocate connection handle
-			OdbcReturn ret=libodbc.SQLAllocHandle(OdbcHandleType.Dbc, henv, ref hdbc);
+
+			OdbcReturn ret = OdbcReturn.Error;
+		
+			// allocate Environment handle	
+			ret = libodbc.SQLAllocHandle (OdbcHandleType.Env, IntPtr.Zero, ref henv);
+			if ( (ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
+				throw new OdbcException (new OdbcError ("SQLAllocHandle"));
+		
+			ret=libodbc.SQLSetEnvAttr (henv, OdbcEnv.OdbcVersion, (IntPtr) libodbc.SQL_OV_ODBC3 , 0); 
 			if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
-				throw new OdbcException(new OdbcError("SQLAllocHandle",OdbcHandleType.Env,henv));
+				throw new OdbcException (new OdbcError ("SQLSetEnvAttr", OdbcHandleType.Env,henv));
+		
+			// allocate connection handle
+			ret=libodbc.SQLAllocHandle (OdbcHandleType.Dbc, henv, ref hdbc);
+			if ( (ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
+				throw new OdbcException (new OdbcError ("SQLAllocHandle",OdbcHandleType.Env,henv));
 			
 			// DSN connection
 			if (connectionString.ToLower().IndexOf("dsn=")>=0)
