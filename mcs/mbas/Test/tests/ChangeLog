@@ -1,3 +1,46 @@
+2005-03-14 Ritvik Mayank <mritvik@novell.com>
+	Added the following test cases
+	* ExpressionStringB.vb
+	* ExpressionsWithOrElseB.vb
+	* ExpressionLiteralNothingA.vb
+	* ExpressionLiteralStringB.vb
+	* ExpressionReclassifiedB.vb
+	* ExpressionsWithAndAlsoC.vb
+	* ExpressionLiteralNumericE.vb
+	* ExpressionMemberAccess.vb
+	* ExpressionsWithOrElseC.vb
+	* ExpressionLiteralNothingB.vb
+	* ExpressionMemberAccessDict.vb
+	* ExpressionLiteralStringC.vb
+	* ExpressionReclassifiedC.vb
+	* ExpressionLiteralNumericF.vb
+	* ExpressionLiteralNumericG.vb
+	* ExpressionSimpleWithA.vb
+	* ExpressionParenthesizedA.vb
+	* ExpressionSimpleNameTypeOfA.vb
+	* ExpressionSimpleWithB.vb
+	* ExpressionLiteralCharA.vb
+	* ExpressionInstanceMyBaseA.vb
+	* ExpressionParenthesizedB.vb
+	* ExpressionSimpleWithC.vb
+	* ExpressionLiteralCharB.vb
+	* ExpressionOverLoadMethodA.vb
+	* ExpressionParenthesizedC.vb
+	* ExpressionInstanceMyClassA.vb
+	* ExpressionLiteralNumericA.vb
+	* ExpressionSimpleNameGetTypeA.vb
+	* ExpressionLiteralNumericB.vb
+	* ExpressionsWithAndAlsoA.vb
+	* ExpressionLiteralNumericC.vb
+	* ExpressionStringA.vb
+	* ExpressionsWithOrElseA.vb
+	* ExpressionSimpleNameAddressOfA.vb
+	* ExpressionLiteralStringA.vb
+	* ExpressionInstanceMeA.vb
+	* ExpressionsWithAndAlsoB.vb
+	* ExpressionLiteralNumericD.vb
+	* ExpressionReclassificationA.vb
+
 2005-03-11 Ritvik Mayank <mritvik@novell.com>
 	* Modified the Following Test Cases: 
 	* teststack.vb
