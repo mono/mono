@@ -1,4 +1,8 @@
 
+Tue Aug 21 18:51:05 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* dis-cil.c: correctly print the label for multi-byte opcodes.
+
 Mon Aug 20 19:33:34 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* util.c: add a space when decoding multiple flags.
