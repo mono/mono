@@ -39,7 +39,7 @@ using System.Xml.XPath;
 
 namespace System.Xml
 {
-	internal class XQueryConvert // Won't be public in the final stage
+	public class XQueryConvert
 	{
 		[MonoTODO]
 		public static bool ShouldCheckValueFacets (XmlSchemaType schemaTypeDest)

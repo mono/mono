@@ -1,3 +1,7 @@
+2004-10-22  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XQueryConvert.cs : now it is in System.Xml and made as public.
+
 2004-10-08  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XQueryParser.jay : I was mixing XPath1 class and XPath2.
