@@ -216,6 +216,17 @@ public class ByteTest : Assertion
 		}
 		
 	}
+
+	[Test]
+	public void ToString_Default () 
+	{
+		byte value = 255;
+		string def = value.ToString ("G");
+		string format = null;
+		AssertEquals ("null", def, value.ToString (format));
+		format = String.Empty;
+		AssertEquals ("empty", def, value.ToString (format));
+	}
 }
 
 }

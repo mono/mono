@@ -203,6 +203,22 @@ public class ArrayTest : Assertion
 		AssertEquals("#B30", 49, Array.BinarySearch(array, 10));
 	}
 
+	[Test]
+	public void BinarySearch_NullValue () 
+	{
+		int[] array = new int[1];
+		AssertEquals ("I=a,o", -1, Array.BinarySearch (array, null));
+		AssertEquals ("I=a,o,c", -1, Array.BinarySearch (array, null, null));
+		AssertEquals ("I=a,i,i,o", -1, Array.BinarySearch (array, 0, 1, null));
+		AssertEquals ("I=a,i,i,o,c", -1, Array.BinarySearch (array, 0, 1, null,null));
+
+		object[] o = new object [3] { this, this, null };
+		AssertEquals ("O=a,o", -1, Array.BinarySearch (array, null));
+		AssertEquals ("O=a,o,c", -1, Array.BinarySearch (array, null, null));
+		AssertEquals ("O=a,i,i,o", -1, Array.BinarySearch (array, 0, 3, null));
+		AssertEquals ("O=a,i,i,o,c", -1, Array.BinarySearch (array, 0, 3, null, null));
+	}
+
 	// TODO - testBinarySearch with explicit IComparer args
 
 	[Test]

@@ -1,3 +1,8 @@
+2004-05-30  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ArrayTest.cs: Added tests for null values in BinarySearch.
+	* Byte.cs: Added test for default ToString format value.
+
 2004-05-30  David Sheldon <dave-mono@earth.li>
 
   * DecimalTest.cs: Moved the rounding test that fails due to 
