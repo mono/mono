@@ -1,3 +1,6 @@
+2004-12-19  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com>
+	* Npgsql/NpgsqlCommand.cs: Fixed gborg 1088 and 1080. Thanks Neri (neri at gborg dot postgresql dot org) for help. Now mapped output parameters are correctly updated regardless their position in Parameters collection.
+
 2004-12-16  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com>
 	* Npgsql/NpgsqlConnector.cs: Changed name of portal and prepare prefixes to be all lower case in order to not have case problems when deallocating them.
 	* Npgsql/NpgsqlCommand.cs: Fixed gborg 1082. Added support to implicit parameters when calling stored procedures. 

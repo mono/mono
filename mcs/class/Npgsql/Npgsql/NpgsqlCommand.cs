@@ -401,15 +401,54 @@ namespace Npgsql
                     NpgsqlAsciiRow nar = (NpgsqlAsciiRow)nrs[0];
                     
                     Int32 i = 0;
+                    Boolean hasMapping = false;
+                                        
+                    // First check if there is any mapping between parameter name and resultset name.
+                    // If so, just update output parameters which has mapping.
+                    
                     foreach (NpgsqlParameter p in Parameters)
                     {
-                        if (((p.Direction == ParameterDirection.Output) ||
-                            (p.Direction == ParameterDirection.InputOutput)) && (i < nrs.RowDescription.NumFields ))
+                        try
                         {
-                            p.Value = nar[i];
-                            i++;
+                            if (nrs.RowDescription.FieldIndex(p.ParameterName.Substring(1)) > -1)
+                            {
+                                hasMapping = true;
+                                break;
+                            }
                         }
+                        catch(ArgumentOutOfRangeException)
+                        {}
                     }
+                                        
+                    
+                    if (hasMapping)
+                    {
+                        foreach (NpgsqlParameter p in Parameters)
+                        {
+                            if (((p.Direction == ParameterDirection.Output) ||
+                                (p.Direction == ParameterDirection.InputOutput)) && (i < nrs.RowDescription.NumFields ))
+                            {
+                                try
+                                {
+                                    p.Value = nar[nrs.RowDescription.FieldIndex(p.ParameterName.Substring(1))];
+                                    i++;
+                                }
+                                catch(ArgumentOutOfRangeException)
+                                {}
+                            }
+                        }
+                        
+                    }
+                    else
+                        foreach (NpgsqlParameter p in Parameters)
+                        {
+                            if (((p.Direction == ParameterDirection.Output) ||
+                                (p.Direction == ParameterDirection.InputOutput)) && (i < nrs.RowDescription.NumFields ))
+                            {
+                                p.Value = nar[i];
+                                i++;
+                            }
+                        }
                 }
                 
             }   
