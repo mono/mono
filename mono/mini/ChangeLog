@@ -1,3 +1,7 @@
+2004-09-23  Zoltan Varga  <vargaz@freemail.hu>
+
+	* cpu-amd64.md: Fix instruction lengths of membase opcodes. Fixes
+	#66650.
 
 Wed Sep 22 19:03:20 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
@@ -10,7 +14,7 @@ Wed Sep 22 19:03:20 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
 2004-09-17  Zoltan Varga  <vargaz@freemail.hu>
 
-	* mini.c (mono_method_to_ir): Fix LDSTR in dynamic methods.
+	* mini.c (mono_method_to_ir): Fix LDSTR in dynamic methods. Fixes #66132.
 
 2004-09-13  Zoltan Varga  <vargaz@freemail.hu>
 
