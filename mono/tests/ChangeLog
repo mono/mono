@@ -1,3 +1,7 @@
+2004-11-10  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* cross-domain.cs: New tests for cross-domain calls.
+
 2004-11-05  Zoltan Varga  <vargaz@freemail.hu>
 
 	* loader.cs: Add test for loading dynamic assemblies using 
