@@ -109,6 +109,11 @@ public class AssemblyNameTest : TestCase {
 		AssertEquals ("PublicKey.Length", 0, an.GetPublicKey ().Length);
 	}
 
+	public void TestFullName () 
+	{
+		AssemblyName an = typeof(int).Assembly.GetName ();
+		AssertNotNull ("FullName", an.ToString ());
+	}
 
 	private AssemblyName GetAssemblyName (string assemblyFile) 
 	{
