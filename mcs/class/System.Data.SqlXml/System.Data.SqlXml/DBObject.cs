@@ -65,7 +65,7 @@ namespace System.Data.SqlXml {
 		}
 
 		[MonoTODO]
-		public void Retrieve (Stream stream, XmlQueryArgumentList argumentList, IDbConnection connection)
+		public void Retrieve (Stream stream, XmlArgumentList argumentList, IDbConnection connection)
 		{
 			throw new NotImplementedException ();
 		}
@@ -77,7 +77,7 @@ namespace System.Data.SqlXml {
 		}
 
 		[MonoTODO]
-		public IDataReader Retrieve (XmlQueryArgumentList argumentList, IDbConnection connection)
+		public IDataReader Retrieve (XmlArgumentList argumentList, IDbConnection connection)
 		{
 			throw new NotImplementedException ();
 		}
@@ -89,7 +89,7 @@ namespace System.Data.SqlXml {
 		}
 
 		[MonoTODO]
-		public void Update (Stream insertStream, XmlQueryArgumentList argumentList, IDbConnection connection)
+		public void Update (Stream insertStream, XmlArgumentList argumentList, IDbConnection connection)
 		{
 			throw new NotImplementedException ();
 		}
@@ -101,7 +101,7 @@ namespace System.Data.SqlXml {
 		}
 
 		[MonoTODO]
-		public void Update (byte[] inputBytes, XmlQueryArgumentList argumentList, IDbConnection connection)
+		public void Update (byte[] inputBytes, XmlArgumentList argumentList, IDbConnection connection)
 		{
 			throw new NotImplementedException ();
 		}
