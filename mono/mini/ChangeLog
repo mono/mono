@@ -1,3 +1,10 @@
+
+Tue May 18 11:05:18 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* mini.h, exceptions-x86.c, exceptions-sparc.c, exceptions-s390.c,
+	exceptions-ppc.c: added helper function to get the instruction address
+	from a signal handler context.
+
 2004-05-17 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* helpers.c: use g_get_tmp_dir. Invokes happyness 
