@@ -1,3 +1,7 @@
+2004-07-10  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* SendOrPostCallback.cs: New delegate.
+
 2004-06-24  Dick Porter  <dick@ximian.com>
 
 	* Mutex.cs: Implement the createdNew parameter
