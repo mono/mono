@@ -6,7 +6,9 @@
 	slow operation).
 	(ves_icall_System_Net_Sockets_Socket_SetSocketOption_internal):
 	Don't attempt to add or drop memberships unless the system
-	supports it.
+	supports it. Also use the appropriate struct when the system does
+	support it. Ie, not all systems have struct ip_mreqn so use struct
+	ip_mreq when appropriate.
 
 Fri Feb 15 18:15:44 CET 2002 Paolo Molaro <lupus@ximian.com>
 
