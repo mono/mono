@@ -1,3 +1,7 @@
+2005-01-08  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* TripleDESTest.cs: Testing weak key with null throws a NRE.
+
 2005-01-06  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* DESTest.cs: Updated weak key and semi-weak key tests with more 

@@ -126,5 +126,12 @@ namespace MonoTests.System.Security.Cryptography {
 			TripleDES algo = TripleDES.Create ();
 			algo.Key = wk192;
 		}
+
+		[Test]
+		[ExpectedException (typeof (NullReferenceException))]
+		public void IsSemiWeakKey_Null () 
+		{
+			TripleDES.IsWeakKey (null);
+		}
 	}
 }
