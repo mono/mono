@@ -1,5 +1,11 @@
 2004-11-24  Marek Safar  <marek.safar@seznam.cz>
 
+	* expression.cs (Unary.ResolveOperator): Do not report warning;
+	AddressOf reads from variable.
+	(LocalVariableReferences.DoResolveBase): Improved my previous fix.
+
+2004-11-24  Marek Safar  <marek.safar@seznam.cz>
+
 	Fix bug #69462
 
 	* attribute.cs (Attributable): Removed CheckTargets.
