@@ -21,11 +21,12 @@ namespace System.Xml
 		protected TextWriter w;
 		protected bool nullEncoding = false;
 		protected bool openWriter = true;
-		protected bool openStartElement;
+		protected bool openStartElement = false;
+		protected bool openStartAttribute = false;
 		protected bool documentStarted = false;
 		protected bool namespaces = true;
+		protected bool openAttribute = false;
 		protected Stack openElements = new Stack ();
-		protected XmlNamespaceManager namespaceManager = new XmlNamespaceManager (new NameTable ());
 		protected Formatting formatting = Formatting.None;
 		protected int indentation = 2;
 		protected char indentChar = ' ';
@@ -179,6 +180,15 @@ namespace System.Xml
 			openWriter = false;
 		}
 
+		private void CloseStartAttribute ()
+		{
+			if (openStartAttribute) 
+			{
+				w.Write("={0}", quoteChar);
+				openStartAttribute = false;
+			}
+		}
+
 		private void CloseStartElement ()
 		{
 			if (openStartElement) 
@@ -262,10 +272,19 @@ namespace System.Xml
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public override void WriteEndAttribute ()
 		{
-			throw new NotImplementedException ();
+			if (!openAttribute)
+				throw new InvalidOperationException("Token EndAttribute in state Start would result in an invalid XML document.");
+
+			CheckState ();
+
+			if (openStartAttribute)
+				CloseStartAttribute ();
+
+			w.Write ("{0}", quoteChar);
+
+			openAttribute = false;
 		}
 
 		[MonoTODO]
@@ -348,10 +367,39 @@ namespace System.Xml
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public override void WriteStartAttribute (string prefix, string localName, string ns)
 		{
-			throw new NotImplementedException ();
+			if ((prefix == "xmlns") && (localName == "xmlns"))
+				throw new ArgumentException ("Prefixes beginning with \"xml\" (regardless of whether the characters are uppercase, lowercase, or some combination thereof) are reserved for use by XML.");
+
+			CheckState ();
+
+			if (prefix == null)
+				prefix = String.Empty;
+
+			if (ns == null)
+				ns = String.Empty;
+
+			string formatPrefix = "";
+
+			if (ns != String.Empty) 
+			{
+				string existingPrefix = namespaceManager.LookupPrefix (ns);
+
+				if (prefix == String.Empty)
+					prefix = existingPrefix;
+			}
+
+			if (prefix != String.Empty) 
+			{
+				formatPrefix = prefix + ":";
+			}
+
+			w.Write (" {0}{1}", formatPrefix, localName);
+
+			openAttribute = true;
+			ws = WriteState.Attribute;
+			openStartAttribute = true;
 		}
 
 		public override void WriteStartDocument ()
@@ -364,9 +412,9 @@ namespace System.Xml
 			string standaloneFormatting;
 
 			if (standalone == true)
-				standaloneFormatting = " standalone=\"yes\"";
+				standaloneFormatting = String.Format (" standalone={0}yes{0}", quoteChar);
 			else
-				standaloneFormatting = " standalone=\"no\"";
+				standaloneFormatting = String.Format (" standalone={0}no{0}", quoteChar);
 
 			WriteStartDocument (standaloneFormatting);
 		}
@@ -381,9 +429,9 @@ namespace System.Xml
 			string encodingFormatting = "";
 
 			if (!nullEncoding)
-				encodingFormatting = " encoding=\"" + w.Encoding.HeaderName + "\"";
+				encodingFormatting = String.Format (" encoding={0}{1}{0}", quoteChar, w.Encoding.HeaderName);
 
-			w.Write("<?xml version=\"1.0\"{0}{1}?>", encodingFormatting, standaloneFormatting);
+			w.Write("<?xml version={0}1.0{0}{1}{2}?>", quoteChar, encodingFormatting, standaloneFormatting);
 			ws = WriteState.Prolog;
 		}
 
@@ -421,12 +469,12 @@ namespace System.Xml
 					prefix = existingPrefix;
 
 				if (prefix != existingPrefix)
-					formatXmlns = " xmlns:" + prefix + "=\"" + ns + "\"";
+					formatXmlns = String.Format (" xmlns:{0}={1}{2}{1}", prefix, quoteChar, ns);
 				else if (existingPrefix == String.Empty)
-					formatXmlns = " xmlns=\"" + ns + "\"";
+					formatXmlns = String.Format (" xmlns={0}{1}{0}", quoteChar, ns);
 			}
 			else if ((prefix == String.Empty) && (namespaceManager.LookupNamespace(prefix) != String.Empty)) {
-				formatXmlns = " xmlns=\"\"";
+				formatXmlns = String.Format (" xmlns={0}{0}", quoteChar);
 			}
 
 			if (prefix != String.Empty) {
@@ -445,12 +493,33 @@ namespace System.Xml
 			indentLevel++;
 		}
 
-		[MonoTODO("Haven't done any entity replacements yet.")]
 		public override void WriteString (string text)
 		{
+			if (ws == WriteState.Prolog)
+				throw new InvalidOperationException ("Token content in state Prolog would result in an invalid XML document.");
+
+			if (text == null)
+				text = String.Empty;
+
 			if (text != String.Empty) {
 				CheckState ();
-				CloseStartElement ();
+
+				text = text.Replace ("&", "&amp;");
+				text = text.Replace ("<", "&lt;");
+				text = text.Replace (">", "&gt;");
+				
+				if (openStartAttribute) {
+					if (quoteChar == '"')
+						text = text.Replace ("\"", "&quot;");
+					else
+						text = text.Replace ("'", "&apos;");
+				}
+
+				if (openStartAttribute)
+					CloseStartAttribute ();
+				else
+					CloseStartElement ();
+
 				w.Write (text);
 			}
 

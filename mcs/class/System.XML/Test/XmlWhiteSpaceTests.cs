@@ -61,7 +61,7 @@ namespace Ximian.Mono.Tests
 			} catch (ArgumentException) {
 				return;
 
-			} catch (Exception e) {
+			} catch (Exception) {
 				Fail ("Incorrect Exception thrown.");
 			}
 		}

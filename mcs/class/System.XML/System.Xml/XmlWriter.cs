@@ -16,6 +16,7 @@ namespace System.Xml
 		#region Fields
 
 		protected WriteState ws = WriteState.Start;
+		protected XmlNamespaceManager namespaceManager = new XmlNamespaceManager (new NameTable ());
 
 		#endregion
 
@@ -49,22 +50,34 @@ namespace System.Xml
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public void WriteAttributeString (string localName, string value)
 		{
-			throw new NotImplementedException ();
+			WriteAttributeString ("", localName, "", value);
 		}
 
-		[MonoTODO]
 		public void WriteAttributeString (string localName, string ns, string value)
 		{
-			throw new NotImplementedException ();
+			WriteAttributeString ("", localName, ns, value);
 		}
 
-		[MonoTODO]
 		public void WriteAttributeString (string prefix, string localName, string ns, string value)
 		{
-			throw new NotImplementedException ();
+			if ((prefix == "xmlns") || (localName == "xmlns"))
+				ns = value;
+			
+			WriteStartAttribute (prefix, localName, ns);
+			WriteString (value);
+			WriteEndAttribute ();
+
+			if ((prefix == "xmlns") || (localName == "xmlns")) 
+			{
+				namespaceManager.PushScope ();
+
+				if (prefix == "xmlns")
+					namespaceManager.AddNamespace (localName, ns);
+				else
+					namespaceManager.AddNamespace ("", ns);
+			}
 		}
 
 		public abstract void WriteBase64 (byte[] buffer, int index, int count);
@@ -123,10 +136,9 @@ namespace System.Xml
 
 		public abstract void WriteRaw (char[] buffer, int index, int count);
 
-		[MonoTODO]
 		public void WriteStartAttribute (string localName, string ns)
 		{
-			throw new NotImplementedException ();
+			WriteStartAttribute ("", localName, ns);
 		}
 
 		public abstract void WriteStartAttribute (string prefix, string localName, string ns);

@@ -30,6 +30,58 @@ namespace Ximian.Mono.Tests
 			xtw = new XmlTextWriter (sw);
 		}
 
+		// TODO : Seeing weird behavior from Microsoft on namespace declarations via WriteAttributeString
+		// so saving until it can be figured out.
+		public void saveTestAttributeNamespaces ()
+		{
+			xtw.QuoteChar = '\'';
+			xtw.WriteStartElement ("foo");
+
+			try {
+				xtw.WriteAttributeString ("xmlns", "xmlns", null, "http://abc.def");
+				Fail ("Expected an ArgumentException to be thrown.");
+			}
+			catch (ArgumentException) {}
+
+			xtw.WriteAttributeString ("xmlns", "abc", null, "http://abc.def");
+			AssertEquals ("<foo   xmlns:abc='http://abc.def'", sw.GetStringBuilder().ToString());
+
+			xtw.WriteAttributeString ("xmlns", "def", "http://somenamespace.com", "http://def.ghi");
+			AssertEquals ("<foo xmlns='http://netsack.com' xmlns:abc='http://abc.def'", sw.GetStringBuilder().ToString());
+
+			xtw.WriteAttributeString ("xmlns", null, "http://ghi.jkl");
+			AssertEquals ("<foo xmlns='http://netsack.com' xmlns:abc='http://abc.def' xmlns='http://ghi.jkl'", sw.GetStringBuilder().ToString());
+
+			xtw.WriteAttributeString ("xmlns", null, "http://netsack.com");
+			AssertEquals ("<foo xmlns='http://netsack.com'", sw.GetStringBuilder().ToString());
+
+			xtw.WriteAttributeString ("xmlns", "foo", "http://netsack.com", "bar");
+			AssertEquals ("<foo xmlns:foo='http://netsack.com'", sw.GetStringBuilder().ToString());
+		}
+
+		public void TestAttributeWriteAttributeString ()
+		{
+			xtw.WriteStartElement ("foo");
+			xtw.QuoteChar = '\'';
+
+			xtw.WriteAttributeString ("foo", "bar");
+			AssertEquals ("<foo foo='bar'", sw.GetStringBuilder().ToString());
+
+			xtw.WriteAttributeString ("bar", "");
+			AssertEquals ("<foo foo='bar' bar=''", sw.GetStringBuilder ().ToString ());
+
+			xtw.WriteAttributeString ("baz", null);
+			AssertEquals ("<foo foo='bar' bar='' baz=''", sw.GetStringBuilder ().ToString ());
+
+			// TODO: Why does this pass Microsoft?
+			xtw.WriteAttributeString ("", "quux");
+			AssertEquals ("<foo foo='bar' bar='' baz='' ='quux'", sw.GetStringBuilder ().ToString ());
+
+			// TODO: Why does this pass Microsoft?
+			xtw.WriteAttributeString (null, "quuux");
+			AssertEquals ("<foo foo='bar' bar='' baz='' ='quux' ='quuux'", sw.GetStringBuilder ().ToString ());
+		}
+
 		public void TestCDataValid ()
 		{
 			xtw.WriteCData ("foo");
@@ -93,6 +145,16 @@ namespace Ximian.Mono.Tests
 				Fail ("WriteStartElement after Close Should have thrown an InvalidOperationException.");
 			} 
 			catch (InvalidOperationException e) {
+				AssertEquals ("Exception message is incorrect.", "The Writer is closed.", e.Message);
+			}
+
+			try 
+			{
+				xtw.WriteAttributeString ("foo", "bar");
+				Fail ("WriteAttributeString after Close Should have thrown an InvalidOperationException.");
+			} 
+			catch (InvalidOperationException e) 
+			{
 				AssertEquals ("Exception message is incorrect.", "The Writer is closed.", e.Message);
 			}
 
@@ -215,6 +277,18 @@ namespace Ximian.Mono.Tests
 		{
 			xtw.WriteElementString ("foo", "bar");
 			AssertEquals ("WriteElementString has incorrect output.", "<foo>bar</foo>", sw.GetStringBuilder().ToString());
+
+			xtw.WriteElementString ("baz", "");
+			AssertEquals ("<foo>bar</foo><baz />", sw.GetStringBuilder ().ToString ());
+
+			xtw.WriteElementString ("quux", null);
+			AssertEquals ("<foo>bar</foo><baz /><quux />", sw.GetStringBuilder ().ToString ());
+
+			xtw.WriteElementString ("", "quuux");
+			AssertEquals ("<foo>bar</foo><baz /><quux /><>quuux</>", sw.GetStringBuilder ().ToString ());
+
+			xtw.WriteElementString (null, "quuuux");
+			AssertEquals ("<foo>bar</foo><baz /><quux /><>quuux</><>quuuux</>", sw.GetStringBuilder ().ToString ());
 		}
 
 		public void TestFormatting ()
@@ -258,9 +332,24 @@ namespace Ximian.Mono.Tests
 		}
 
 
-		// TODO: Need some tests for attributes with namespaces here...
-		public void saveTestNamespacesAttributesPassingInNamespaces ()
+		public void TestNamespacesAttributesPassingInNamespaces ()
 		{
+			xtw.QuoteChar = '\'';
+			xtw.Namespaces = false;
+			xtw.WriteStartElement ("foo");
+
+			// These shouldn't throw any exceptions since they don't pass in
+			// a namespace.
+			xtw.WriteAttributeString ("bar", "baz");
+			xtw.WriteAttributeString ("", "a", "", "b");
+			xtw.WriteAttributeString (null, "c", "", "d");
+			xtw.WriteAttributeString ("", "e", null, "f");
+			xtw.WriteAttributeString (null, "g", null, "h");
+
+			AssertEquals ("<foo bar='baz' a='b' c='d' e='f' g='h'", sw.GetStringBuilder ().ToString ());
+
+			// These should throw ArgumentException because they pass in a
+			// namespace when Namespaces = false.
 		}
 
 		public void TestNamespacesElementsPassingInNamespaces ()
@@ -401,12 +490,38 @@ namespace Ximian.Mono.Tests
 			catch (ArgumentException) { }
 		}
 
+		public void TestQuoteCharSingleQuote ()
+		{
+			xtw.QuoteChar = '\'';
+
+			// version, encoding, standalone
+			xtw.WriteStartDocument (true);
+			
+			// namespace declaration
+			xtw.WriteElementString ("foo", "http://netsack.com", "bar");
+
+			AssertEquals ("<?xml version='1.0' encoding='utf-16' standalone='yes'?><foo xmlns='http://netsack.com'>bar</foo>",
+				sw.GetStringBuilder ().ToString ());
+
+
+		}
+
 		public void TestQuoteCharInvalid ()
 		{
 			try {
 				xtw.QuoteChar = 'x';
 				Fail ("Should have thrown an ArgumentException.");
 			} catch (ArgumentException) {}
+		}
+
+		public void TestWriteEndAttribute ()
+		{
+			try 
+			{
+				xtw.WriteEndAttribute ();
+				Fail ("Should have thrown an InvalidOperationException.");
+			}
+			catch (InvalidOperationException) {}
 		}
 
 		public void TestWriteEndElement ()
@@ -433,6 +548,130 @@ namespace Ximian.Mono.Tests
 			AssertEquals (WriteState.Content, xtw.WriteState);
 			xtw.Close ();
 			AssertEquals (WriteState.Closed, xtw.WriteState);
+		}
+
+		public void TestWriteString ()
+		{
+			xtw.WriteStartDocument ();
+			try {
+				xtw.WriteString("foo");
+			} catch (InvalidOperationException) {}
+
+			// Testing attribute values
+
+			xtw.WriteStartElement ("foo");
+			xtw.WriteAttributeString ("bar", "&<>");
+			AssertEquals ("<?xml version=\"1.0\" encoding=\"utf-16\"?><foo bar=\"&amp;&lt;&gt;\"",
+				sw.GetStringBuilder ().ToString ());
+
+			// When QuoteChar is double quote then replaces double quotes within attributes
+			// but not single quotes.
+			sw.GetStringBuilder ().Remove (0, sw.GetStringBuilder ().Length);
+			xtw.WriteStartElement ("foo");
+			xtw.WriteAttributeString ("bar", "\"baz\"");
+			xtw.WriteAttributeString ("quux", "'baz'");
+			AssertEquals ("><foo bar=\"&quot;baz&quot;\" quux=\"'baz'\"",
+				sw.GetStringBuilder ().ToString ());
+
+			// When QuoteChar is single quote then replaces single quotes within attributes
+			// but not double quotes.
+			xtw.QuoteChar = '\'';
+			sw.GetStringBuilder ().Remove (0, sw.GetStringBuilder ().Length);
+			xtw.WriteStartElement ("foo");
+			xtw.WriteAttributeString ("bar", "\"baz\"");
+			xtw.WriteAttributeString ("quux", "'baz'");
+			AssertEquals ("><foo bar='\"baz\"' quux='&apos;baz&apos;'",
+				sw.GetStringBuilder ().ToString ());
+
+			// Testing element values
+
+			sw.GetStringBuilder ().Remove (0, sw.GetStringBuilder ().Length);
+			xtw.WriteElementString ("foo", "&<>\"'");
+			AssertEquals ("><foo>&amp;&lt;&gt;\"'</foo>",
+				sw.GetStringBuilder ().ToString ());
+		}
+
+		// TODO: need attribute methods to be implemented before this test will pass.
+		public void saveTestXmlLang ()
+		{
+			AssertNull (xtw.XmlLang);
+			xtw.WriteStartElement ("foo");
+			xtw.WriteAttributeString ("xml", "lang", null, "langfoo");
+			AssertEquals ("langfoo", xtw.XmlLang);
+
+			xtw.WriteAttributeString ("boo", "yah");
+			AssertEquals ("langfoo", xtw.XmlLang);
+			
+			xtw.WriteElementString("bar", "baz");
+			AssertEquals ("langfoo", xtw.XmlLang);
+			
+			xtw.WriteString("baz");
+			AssertEquals ("langfoo", xtw.XmlLang);
+			
+			xtw.WriteStartElement ("quux");
+			xtw.WriteStartAttribute ("xml", "lang", null);
+			AssertEquals ("langfoo", xtw.XmlLang);
+			
+			xtw.WriteString("langbar");
+			AssertEquals ("langfoo", xtw.XmlLang);
+			
+			xtw.WriteEndAttribute ();
+			AssertEquals ("langbar", xtw.XmlLang);
+			
+			xtw.WriteElementString ("quuux", "squonk");
+			AssertEquals ("langbar", xtw.XmlLang);
+			
+			xtw.WriteEndElement ();
+			AssertEquals ("langfoo", xtw.XmlLang);
+			
+			xtw.WriteEndElement ();
+			AssertNull (xtw.XmlLang);
+			
+			xtw.Close ();
+			AssertNull (xtw.XmlLang);
+		}
+
+		// TODO: test operational aspects
+		public void saveTestXmlSpace ()
+		{
+			xtw.WriteStartElement ("foo");
+			AssertEquals (XmlSpace.None, xtw.XmlSpace);
+
+			xtw.WriteString ("foo");
+			xtw.WriteWhitespace (" ");
+			xtw.WriteString ("bar");
+			xtw.WriteString (" baz quux");
+			AssertEquals ("<foo>foo bar baz quux",
+				sw.GetStringBuilder ().ToString ());
+
+			xtw.WriteStartElement ("bar");
+			xtw.WriteAttributeString ("xml", "space", null, "preserve");
+			AssertEquals (XmlSpace.Preserve, xtw.XmlSpace);
+
+			xtw.WriteString ("foo");
+			xtw.WriteWhitespace (" ");
+			xtw.WriteString ("bar");
+			xtw.WriteString (" baz quux");
+			AssertEquals ("<foo>foo bar baz quux<bar xml:space=\"preserve\">foo bar baz quux",
+				sw.GetStringBuilder ().ToString ());
+
+			xtw.WriteStartElement ("baz");
+			xtw.WriteAttributeString ("xml", "space", null, "default");
+			AssertEquals (XmlSpace.Default, xtw.XmlSpace);
+
+			xtw.WriteString ("foo");
+			xtw.WriteWhitespace (" ");
+			xtw.WriteString ("bar");
+			xtw.WriteString (" baz quux");
+			AssertEquals ("<foo>foo bar baz quux<bar xml:space=\"preserve\">foo bar baz quux<baz xml:space=\"default\">foo bar baz quux",
+				sw.GetStringBuilder ().ToString ());
+
+			xtw.WriteStartElement ("quux");
+			try {
+				xtw.WriteAttributeString ("xml", "space", null, "bubba");
+			} catch (ArgumentException e) {
+				AssertEquals ("'{0}' is an invalid xml:space value.", e.Message);
+			}
 		}
 	}
 }

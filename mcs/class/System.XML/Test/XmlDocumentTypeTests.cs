@@ -71,7 +71,7 @@ namespace Ximian.Mono.Tests
 			} catch (InvalidOperationException) {
 				return;
 
-			} catch (Exception e) {				
+			} catch (Exception) {				
 				Fail ("Incorrect Exception thrown.");
 			}
 		}
