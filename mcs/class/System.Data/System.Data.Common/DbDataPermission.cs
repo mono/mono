@@ -6,9 +6,10 @@
 //   Tim Coleman (tim@timcoleman.com)
 //
 // (C) Ximian, Inc
-// Copyright (C) Tim Coleman, 2002
+// Copyright (C) Tim Coleman, 2002-2003
 //
 
+using System.Data;
 using System.Security;
 using System.Security.Permissions;
 
@@ -25,16 +26,29 @@ namespace System.Data.Common {
 
 		#region Constructors
 
+#if NET_1_2
+		[Obsolete ("use DBDataPermission (PermissionState.None)", true)]
+#endif
 		protected DBDataPermission () 
 			: this (PermissionState.None, false)
 		{
 		}
+
+#if NET_1_2
+		[MonoTODO]
+		protected DBDataPermission (DbConnectionString constr)
+		{
+		}
+#endif
 
 		protected DBDataPermission (PermissionState state) 
 			: this (state, false)
 		{
 		}
 
+#if NET_1_2
+		[Obsolete ("use DBDataPermission (PermissionState.None)", true)]
+#endif
 		public DBDataPermission (PermissionState state, bool allowBlankPassword) 
 		{
 			this.state = state;
@@ -58,6 +72,22 @@ namespace System.Data.Common {
 		#endregion // Properties
 
 		#region Methods
+
+#if NET_1_1
+		[MonoTODO]
+		public virtual void Add (string connectionString, string restrictions, KeyRestrictionBehavior behavior)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
+
+#if NET_1_2
+		[MonoTODO]
+		protected void AddConnectionString (DbConnectionString constr)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 
 		public override IPermission Copy () 
 		{
@@ -94,6 +124,20 @@ namespace System.Data.Common {
 		{
 			return (state == PermissionState.Unrestricted);
 		}
+
+#if NET_1_2
+		[MonoTODO]
+		protected void SetConnectionString (DbConnectionString constr)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public virtual void SetRestriction (string connectionString, string restrictions, KeyRestrictionBehavior behavior)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 
 		[MonoTODO]
 		public override SecurityElement ToXml () 

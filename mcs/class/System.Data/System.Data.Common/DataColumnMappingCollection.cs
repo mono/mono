@@ -6,7 +6,7 @@
 //   Tim Coleman (tim@timcoleman.com)
 //
 // (C) Ximian, Inc
-// Copyright (C) Tim Coleman, 2002
+// Copyright (C) Tim Coleman, 2002-2003
 //
 
 using System;
@@ -122,6 +122,14 @@ namespace System.Data.Common {
 			return mapping;
 		}
 
+#if NET_1_2
+		[MonoTODO]
+		public void AddRange (Array values)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
+
 		public void AddRange (DataColumnMapping[] values) 
 		{
 			foreach (DataColumnMapping mapping in values)
@@ -164,6 +172,14 @@ namespace System.Data.Common {
 				throw new InvalidOperationException (String.Format ("Missing SourceColumn mapping for '{0}'", sourceColumn));
 			return new DataColumnMapping (sourceColumn, sourceColumn);
 		}
+
+#if NET_1_2
+		[MonoTODO]
+		public static DataColumn GetDataColumn (DataColumnMappingCollection columnMappings, string sourceColumn, Type dataType, DataTable dataTable, MissingMappingAction mappingAction, MissingSchemaAction schemaAction)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 
 		public IEnumerator GetEnumerator ()
 		{

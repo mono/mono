@@ -6,13 +6,14 @@
 //   Tim Coleman (tim@timcoleman.com)
 //
 // (C) Ximian, Inc
-// Copyright (C) 2002 Tim Coleman
+// Copyright (C) Tim Coleman, 2002-2003
 //
 
 using System;
 using System.Collections;
 using System.ComponentModel;
 using System.Data;
+using System.Runtime.InteropServices;
 
 namespace System.Data.Common {
 	public abstract class DbDataAdapter : DataAdapter, ICloneable
@@ -34,18 +35,63 @@ namespace System.Data.Common {
 
 		#region Properties
 
+#if NET_1_2
+		[MonoTODO]
+		protected virtual IDbConnection BaseConnection {
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
+		}
+
+		public IDbConnection Connection { 
+			get { return BaseConnection; }
+			set { BaseConnection = value; }
+		}
+#endif
+
 		IDbCommand DeleteCommand {
 			get { return ((IDbDataAdapter) this).DeleteCommand; }
 		}
+
+#if NET_1_2
+		protected internal CommandBehavior FillCommandBehavior {
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
+		}
+#endif
 
 		IDbCommand InsertCommand {
 			get { return ((IDbDataAdapter) this).InsertCommand; }
 		}
 
+#if NET_1_2
+		[MonoTODO]
+		protected virtual IDbCommand this [[Optional] StatementType statementType] {
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
+		}
+
+		protected virtual DbProviderFactory ProviderFactory {
+			get { throw new NotImplementedException (); }
+		}
+#endif
+
 		IDbCommand SelectCommand {
 			get { return ((IDbDataAdapter) this).SelectCommand; }
 		}
 
+#if NET_1_2
+		[MonoTODO]
+		public IDbTransaction Transaction {
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
+		}
+
+		[MonoTODO]
+		public int UpdateBatchSize {
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
+		}
+#endif
 
 		IDbCommand UpdateCommand {
 			get { return ((IDbDataAdapter) this).UpdateCommand; }
@@ -55,13 +101,24 @@ namespace System.Data.Common {
 		
 		#region Events
 
+#if ONLY_1_0 || ONLY_1_1
+
 		[DataCategory ("Fill")]
 		[DataSysDescription ("Event triggered when a recoverable error occurs during Fill.")]
 		public event FillErrorEventHandler FillError;
 
+#endif
 		#endregion // Events
 
 		#region Methods
+
+#if NET_1_2
+		[MonoTODO]
+		public virtual void BeginInit ()
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 
 		protected abstract RowUpdatedEventArgs CreateRowUpdatedEvent (DataRow dataRow, IDbCommand command, StatementType statementType, DataTableMapping tableMapping);
 		protected abstract RowUpdatingEventArgs CreateRowUpdatingEvent (DataRow dataRow, IDbCommand command, StatementType statementType, DataTableMapping tableMapping);
@@ -97,6 +154,14 @@ namespace System.Data.Common {
 			}
 		}
 
+#if NET_1_2
+		[MonoTODO]
+		public virtual void EndInit ()
+		{
+			throw new NotImplementedException ();
+		}
+#endif
+
 		public override int Fill (DataSet dataSet)
 		{
 			return Fill (dataSet, 0, 0, DefaultSourceTableName, SelectCommand, CommandBehavior.Default);
@@ -115,7 +180,11 @@ namespace System.Data.Common {
 			return Fill (dataSet, 0, 0, srcTable, SelectCommand, CommandBehavior.Default);
 		}
 
+#if NET_1_2
+		protected override int Fill (DataTable dataTable, IDataReader dataReader) 
+#else
 		protected virtual int Fill (DataTable dataTable, IDataReader dataReader) 
+#endif
 		{
 			int count = 0;
 			bool doContinue = true;
@@ -180,12 +249,32 @@ namespace System.Data.Common {
 			return Fill (dataTable, command.ExecuteReader (commandBehavior));
 		}
 
+#if NET_1_2
+		[MonoTODO]
+		public int Fill (int startRecord, int maxRecords, DataTable[] dataTables)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
+
 		public int Fill (DataSet dataSet, int startRecord, int maxRecords, string srcTable) 
 		{
 			return this.Fill (dataSet, startRecord, maxRecords, srcTable, SelectCommand, CommandBehavior.Default);
 		}
 
+#if NET_1_2
+		[MonoTODO]
+		protected virtual int Fill (DataTable[] dataTables, int startRecord, int maxRecords, IDbCommand command, CommandBehavior behavior)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
+
+#if NET_1_2
+		protected override int Fill (DataSet dataSet, string srcTable, IDataReader dataReader, int startRecord, int maxRecords) 
+#else
 		protected virtual int Fill (DataSet dataSet, string srcTable, IDataReader dataReader, int startRecord, int maxRecords) 
+#endif
 		{
 			if (startRecord < 0)
 				throw new ArgumentException ("The startRecord parameter was less than 0.");
@@ -358,6 +447,20 @@ namespace System.Data.Common {
 			}
 			return (DataTable[]) output.ToArray (typeof (DataTable));
 		}
+
+#if NET_1_2
+		[MonoTODO]
+		public DataSet GetDataSet ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public DataTable GetDataTable ()
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 
 		private string SetupSchema (SchemaType schemaType, string sourceTableName)
 		{
@@ -635,11 +738,13 @@ namespace System.Data.Common {
 			return Update (dataTable, tableMapping);
 		}
 
+#if ONLY_1_0 || ONLY_1_1
 		protected virtual void OnFillError (FillErrorEventArgs value) 
 		{
 			if (FillError != null)
 				FillError (this, value);
 		}
+#endif
 
 		protected abstract void OnRowUpdated (RowUpdatedEventArgs value);
 		protected abstract void OnRowUpdating (RowUpdatingEventArgs value);

@@ -11,7 +11,12 @@ using System.Collections;
 using System.Data;
 
 namespace System.Data.Common {
+#if NET_1_2
+// FIXME: Need to clean this up
+	public sealed class FieldNameLookup
+#else
 	internal sealed class FieldNameLookup : ICollection, IEnumerable
+#endif
 	{
 		#region Fields
 
@@ -86,10 +91,12 @@ namespace System.Data.Common {
 			list.CopyTo (array, index);
 		}
 
+#if ONLY_1_0 || ONLY_1_1
 		IEnumerator IEnumerable.GetEnumerator ()
 		{
 			return list.GetEnumerator (); 
 		}
+#endif
 
 		public int IndexOf (object value)
 		{

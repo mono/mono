@@ -6,7 +6,7 @@
 //   Tim Coleman (tim@timcoleman.com)
 //
 // (C) Ximian, Inc
-// Copyright (C) Tim Coleman, 2002
+// Copyright (C) Tim Coleman, 2002-2003
 //
 
 using System.ComponentModel;
@@ -82,6 +82,14 @@ namespace System.Data.Common {
 		{
 			return DataColumnMappingCollection.GetColumnMappingBySchemaAction (columnMappings, sourceColumn, mappingAction);
 		}
+
+#if NET_1_2
+		[MonoTODO]
+		public DataColumn GetDataColumn (string sourceColumn, Type dataType, DataTable dataTable, MissingMappingAction mappingAction, MissingSchemaAction schemaAction)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public DataTable GetDataTableBySchemaAction (DataSet dataSet, MissingSchemaAction schemaAction) 

@@ -4,7 +4,7 @@
 // Author:
 //   Tim Coleman (tim@timcoleman.com)
 //
-// Copyright (C) Tim Coleman, 2002
+// Copyright (C) Tim Coleman, 2002-2003
 //
 
 using System.Collections;
@@ -24,6 +24,18 @@ namespace System.Data.Common {
 		#endregion
 		
 		#region Constructors
+
+#if NET_1_2
+		[MonoTODO]
+		public DbDataRecord (object[] values, PropertyDescriptorCollection descriptors, FieldNameLookup fieldNameLookup)
+		{
+		}
+
+		[MonoTODO]
+		public DbDataRecord (SchemaInfo[] schemaInfo, object[] values, PropertyDescriptorCollection descriptors, FieldNameLookup fieldNameLookup)
+		{
+		}
+#endif
 
 		internal DbDataRecord (SchemaInfo[] schema, object[] values, FieldNameLookup lookup)
 		{
@@ -141,6 +153,14 @@ namespace System.Data.Common {
 		{
 			return (string) lookup [i];
 		}
+
+#if NET_1_2
+		[MonoTODO]
+		public virtual object GetObjectRef (int i)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 
 		public int GetOrdinal (string name)
 		{
@@ -269,6 +289,17 @@ namespace System.Data.Common {
 		{
 			return GetValue (i) == null;
 		}
+#if NET_1_2
+		public virtual bool IsSetAsDefault (int i)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public void SetSchemaInfo (SchemaInfo[] schemaInfo)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 
 		#endregion // Methods
 	}

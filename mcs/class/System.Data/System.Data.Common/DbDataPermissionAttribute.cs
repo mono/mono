@@ -43,5 +43,21 @@ namespace System.Data.Common {
 		}
 
 		#endregion // Properties
+
+		#region // Methods
+#if NET_1_2
+		[MonoTODO]
+		public bool ShouldSerializeConnectionString ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public bool ShouldSerializeKeyRestrictions ()
+		{
+			throw new NotImplementedException ();
+		}
+#endif
+		#endregion // Methods
 	}
 }

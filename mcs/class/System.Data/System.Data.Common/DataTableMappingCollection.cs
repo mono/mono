@@ -6,7 +6,7 @@
 //   Tim Coleman (tim@timcoleman.com)
 //
 // (C) Ximian, Inc
-// Copyright (C) 2002 Tim Coleman
+// Copyright (C) Tim Coleman, 2002-2003
 //
 
 using System;
@@ -119,6 +119,14 @@ namespace System.Data.Common {
 			Add (mapping);
 			return mapping;
 		}
+
+#if NET_1_2
+		[MonoTODO]
+		public void AddRange (Array values)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 
 		public void AddRange (DataTableMapping[] values) 
 		{

@@ -6,7 +6,7 @@
 //   Tim Coleman (tim@timcoleman.com)
 //
 // (C) Ximian, Inc
-// Copyright (C) 2002 Tim Coleman
+// Copyright (C) Tim Coleman, 2002-2003
 //
 
 using System.ComponentModel;
@@ -26,6 +26,12 @@ namespace System.Data.Common
 		private MissingMappingAction missingMappingAction;
 		private MissingSchemaAction missingSchemaAction;
 		private DataTableMappingCollection tableMappings;
+
+#if NET_1_2
+		private bool acceptChangesDuringUpdate;
+		private LoadOption fillLoadOption;
+		private bool returnProviderSpecificTypes;
+#endif
 
 		#endregion
 
@@ -52,6 +58,13 @@ namespace System.Data.Common
 			set { acceptChangesDuringFill = value; }
 		}
 
+#if NET_1_2
+		public bool AcceptChangesDuringUpdate {
+			get { return acceptChangesDuringUpdate; }
+			set { acceptChangesDuringUpdate = value; }
+		}
+#endif
+
 		[DataCategory ("Update")]
 		[DataSysDescription ("Whether or not to continue to the next DataRow when the Update events, RowUpdating and RowUpdated, Status is UpdateStatus.ErrorsOccurred.")]
 		[DefaultValue (false)]
@@ -59,6 +72,13 @@ namespace System.Data.Common
 			get { return continueUpdateOnError; }
 			set { continueUpdateOnError = value; }
 		}
+
+#if NET_1_2
+		public LoadOption FillLoadOption {
+			get { return fillLoadOption; }
+			set { fillLoadOption = value; }
+		}
+#endif
 
 		ITableMappingCollection IDataAdapter.TableMappings {
 			get { return TableMappings; }
@@ -80,12 +100,27 @@ namespace System.Data.Common
 			set { missingSchemaAction = value; }
 		}
 
+#if NET_1_2
+		public virtual bool ReturnProviderSpecificTypes {
+			get { return returnProviderSpecificTypes; }
+			set { returnProviderSpecificTypes = value; }
+		}
+#endif
+
 		[DataCategory ("Mapping")]
 		[DataSysDescription ("How to map source table to DataSet table.")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		public DataTableMappingCollection TableMappings {
 			get { return tableMappings; }
 		}
+
+		#endregion
+
+		#region Events
+
+#if NET_1_2
+		public event FillErrorEventHandler FillError;
+#endif
 
 		#endregion
 
@@ -113,8 +148,88 @@ namespace System.Data.Common
 		}
 
 		public abstract int Fill (DataSet dataSet);
+
+#if NET_1_2
+		[MonoTODO]
+		protected virtual int Fill (DataTable dataTable, IDataReader dataReader)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		protected virtual int Fill (DataTable[] dataTables, IDataReader dataReader, int startRecord, int maxRecords)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		protected virtual int Fill (DataSet dataSet, string srcTable, IDataReader dataReader, int startRecord, int maxRecords)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static int FillDataSet (IDataReader dataReader, LoadOption fillLoadOption, DataSet dataSet)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static int FillDataTable (IDataReader dataReader, LoadOption fillLoadOption, DataTable[] dataTables)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
+
 		public abstract DataTable[] FillSchema (DataSet dataSet, SchemaType schemaType);
+
+#if NET_1_2
+		[MonoTODO]
+		protected virtual DataTable FillSchema (DataTable dataTable, SchemaType schemaType, IDataReader dataReader)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		protected virtual DataTable[] FillSchema (DataSet dataSet, SchemaType schemaType, string srcTable, IDataReader dataReader)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
+
 		public abstract IDataParameter[] GetFillParameters ();
+
+#if NET_1_2
+		[MonoTODO]
+		protected bool HasTableMappings ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		protected virtual void OnFillError (FillErrorEventArgs value)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public void ResetFillLoadOption ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public virtual bool ShouldSerializeAcceptChangesDuringFill ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public virtual bool ShouldSerializeFillLoadOption ()
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 
 		[MonoTODO]
 		protected virtual bool ShouldSerializeTableMappings ()

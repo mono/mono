@@ -6,7 +6,7 @@
 //   Tim Coleman (tim@timcoleman.com)
 //
 // (C) Ximian, Inc
-// Copyright (C) Tim Coleman, 2002
+// Copyright (C) Tim Coleman, 2002-2003
 //
 
 using System.ComponentModel;
@@ -69,6 +69,14 @@ namespace System.Data.Common {
 				throw new InvalidOperationException (String.Format ("Missing the DataColumn '{0}' in the DataTable '{1}' for the SourceColumn '{2}'", DataSetColumn, dataTable.TableName, SourceColumn));
 			return new DataColumn (dataSetColumn, dataType);
 		}
+
+#if NET_1_2
+		[MonoTODO]
+		public static DataColumn GetDataColumnBySchemaAction (string sourceColumn, string dataSetColumn, DataTable dataTable, Type dataType, MissingSchemaAction schemaAction)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 
 		object ICloneable.Clone ()
 		{

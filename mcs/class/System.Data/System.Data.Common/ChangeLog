@@ -1,3 +1,20 @@
+2003-12-16  Tim Coleman <tim@timcoleman.com>
+	* CatalogLocation.cs DbCommand.cs DbCommandBuilder.cs
+	* DbCommandOptionalFeatures.cs DbCommandSet.cs DbConnection.cs
+	* DbConnectionString.cs DbDataSourceEnumerator.cs
+	* DbDataUpdatableRecord.cs DbParameter.cs DbParameterCollection.cs
+	* DbProviderConfigurationHandler.cs DbProviderFactories.cs
+	* DbProviderFactoriesConfigurationHandler.cs DbProviderFactory.cs
+	* DbProviderSupportedClasses.cs DbTable.cs DbTransaction.cs
+	* GroupByBehavior.cs IdentifierCase.cs SchemaLocation.cs
+	* SchemaTableColumn.cs:
+		New stubs added for .NET 1.2
+	* DataAdapter.cs DataColumnMapping.cs DataColumnMappingCollection.cs
+	* DataTableMapping.cs DataTableMappingCollection.cs DbDataAdapter.cs
+	* DbDataPermission.cs DbDataPermissionAttribute.cs DbDataRecord.cs
+	* FieldNameLookup.cs SchemaInfo.cs:
+		Changes made for .NET 1.2
+
 2003-10-22  Eran Domb  <erand@miansoft.com>
 	* DbDataAdapter.cs : Check if there is mapping to avoid exception.
 
