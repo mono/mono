@@ -1,3 +1,9 @@
+2001-11-28  Ravi Pratap  <ravi@ximian.com>
+
+	* test-48.cs : Add for constant emission tests.
+
+	* makefile : Update for the above as it passes nicely :-)
+
 2001-11-22  Ravi Pratap  <ravi@ximian.com>
 
 	* test-45.cs : Augment some more to test shorthand declaration
