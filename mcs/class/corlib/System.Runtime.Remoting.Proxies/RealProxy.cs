@@ -16,6 +16,7 @@ namespace System.Runtime.Remoting.Proxies
 {
 	internal class TransparentProxy {
 		public RealProxy _rp;
+		IntPtr _class;
 	}
 	
 	public abstract class RealProxy {
