@@ -5,6 +5,11 @@ Thu Jun 26 16:06:35 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 2003-06-26  Lluis Sanchez Gual <lluis@ximian.com>
 
+	* DateTime.cs: Modified constructor. Check for valid value of TimeSpan must
+	  be done after the correspondig UTC offset has been applied.
+
+2003-06-26  Lluis Sanchez Gual <lluis@ximian.com>
+
 	* Object.cs: Object must have the Serializable attribute.
 	* DateTime.cs: Fixed _DoParse() so it correctly applies the utc offset
 	  to the resulting date. Also fixed _ToString so now correctly formates the

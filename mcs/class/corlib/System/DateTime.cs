@@ -78,6 +78,7 @@ namespace System
 			int temp = 0, m=1 ;
 
 
+
 		
 			days = (IsLeapYear(year) ? daysmonthleap  : daysmonth);
 			
@@ -141,8 +142,8 @@ namespace System
 			: this (false, newticks) {}
 
 		internal DateTime (bool local, long newticks)
-			: this (true, new TimeSpan (newticks))
 		{
+			ticks = new TimeSpan (newticks);
 			if (local) {
 				TimeZone tz = TimeZone.CurrentTimeZone;
 
@@ -150,6 +151,8 @@ namespace System
 
 				ticks = ticks + utcoffset;
 			}
+			if (ticks.Ticks < MinValue.Ticks || ticks.Ticks > MaxValue.Ticks)
+			    throw new ArgumentOutOfRangeException ();
 		}
 
 		public DateTime (int year, int month, int day)
@@ -190,13 +193,13 @@ namespace System
 		internal DateTime (bool check, TimeSpan value)
 		{
 			if (check && (value.Ticks < MinValue.Ticks || value.Ticks > MaxValue.Ticks))
-				throw new ArgumentOutOfRangeException ();
+			    throw new ArgumentOutOfRangeException ();
 
 			ticks = value;
 		}
 
 		/* Properties  */
-		 
+
 		public DateTime Date 
 		{
 			get	
@@ -1354,7 +1357,7 @@ namespace System
 
 			TimeSpan offset = tz.GetUtcOffset (this);
 
-			return new DateTime (true, ticks - offset);
+			return new DateTime (false, ticks - offset);
 		}
 
 		/*  OPERATORS */
@@ -1481,6 +1484,7 @@ namespace System
 
 		[CLSCompliant(false)]
 		UInt64 IConvertible.ToUInt64(IFormatProvider provider)
+
 		{
 			throw new InvalidCastException();
 		}
