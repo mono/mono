@@ -1,7 +1,10 @@
 // cs1530.cs: Keyword new not allowed on namespace elements
-// Line: 5
+// Line: 8
 
-namespace A {
-	new class X {
-	}
+class Base
+{
 }
+
+new class X: Base {
+}
+

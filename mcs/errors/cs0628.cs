@@ -1,6 +1,7 @@
-// cs0628.cs: protected member in sealed class
-// Line:4
+// cs0628.cs: 'D.a': new protected member declared in sealed class
+// Line: 6
+// Compiler options: -warnaserror -warn:4
+
 sealed class D {
 	protected int a;
-	static void Main () {}
 }
