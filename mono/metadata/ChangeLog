@@ -1,3 +1,7 @@
+2003-11-12  Zoltan Varga  <vargaz@freemail.hu>
+
+	* debug-mono-symfile.c: Add patch from FreeBSD ports tree.
+
 2003-11-11  Miguel de Icaza  <miguel@ximian.com>
 
 	* appdomain.h: Added loader_optimization here to sync with the C#
