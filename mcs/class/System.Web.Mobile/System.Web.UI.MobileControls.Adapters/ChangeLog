@@ -1,4 +1,9 @@
 
 2003-04-08	Gaurav Vaish <gvaish_mono AT lycos.com>
 
+	* ControlAdapter.cs     : Initial implementation.
+	* HtmlControlAdapter.cs : Corrected the namesapce.
+
+2003-04-08	Gaurav Vaish <gvaish_mono AT lycos.com>
+
 	* HtmlControlAdapter.cs     : Initial implementation.

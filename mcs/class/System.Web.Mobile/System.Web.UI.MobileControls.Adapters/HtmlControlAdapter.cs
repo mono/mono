@@ -9,11 +9,8 @@
  */
 
 using System;
-using System.Collections;
-using System.Web;
-using System.Web.UI;
 
-namespace System.Web.Mobile
+namespace System.Web.UI.MobileControls.Adapters
 {
 	public class HtmlControlAdapter //: ControlAdapter
 	{
