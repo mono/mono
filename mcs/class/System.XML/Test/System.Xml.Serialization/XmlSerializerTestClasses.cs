@@ -85,4 +85,35 @@ namespace MonoTests.System.Xml.TestClasses
 		Protected = 1,
 	}
 	
+	public class MyList : ArrayList
+	{
+		object container;
+		
+		// NOTE: MyList has no public constructor
+		public MyList (object container) : base()
+		{
+			this.container = container;
+		}
+	}
+	
+	public class Container
+	{
+		public MyList Items;
+		
+		public Container () {
+			Items = new MyList(this);
+		}
+	}
+	
+	public class Container2
+	{
+		public MyList Items;
+		
+		public Container2 () {
+		}
+		
+		public Container2 (bool b) {
+			Items = new MyList(this);
+		}
+	}
 }

@@ -1,3 +1,8 @@
+2004-09-02  Lluis Sanchez Gual <lluis@novell.com>
+
+	* XmlSerializerTestClasses.cs: Added some test classes.
+	* DeserializeTests.cs: Added tests for bug #61464.
+
 2004-03-24  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* XmlSerializerTests.cs: Added some identifiers for AssertEquals.

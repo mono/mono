@@ -74,5 +74,35 @@ namespace MonoTests.System.XmlSerialization
 			Field f = Deserialize (typeof (Field), "<field modifiers=\"\" />") as Field;
 			Assertion.AssertEquals (MapModifiers.Public, f.Modifiers);
 		}
+		
+		[Test]
+		public void DeserializePrivateCollection ()
+		{
+			MemoryStream ms = new MemoryStream ();
+			Container c = new Container();
+			c.Items.Add(1);
+			
+			XmlSerializer serializer = new XmlSerializer(typeof(Container));
+			serializer.Serialize(ms, c);
+			
+			ms.Position = 0;
+			c = (Container) serializer.Deserialize (ms);
+			Assertion.AssertEquals (1, c.Items[0]);
+		}
+		
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void DeserializeEmptyPrivateCollection ()
+		{
+			MemoryStream ms = new MemoryStream ();
+			Container2 c = new Container2(true);
+			c.Items.Add(1);
+			
+			XmlSerializer serializer = new XmlSerializer(typeof(Container2));
+			serializer.Serialize(ms, c);
+			
+			ms.Position = 0;
+			c = (Container2) serializer.Deserialize (ms);
+		}
 	}
 }
