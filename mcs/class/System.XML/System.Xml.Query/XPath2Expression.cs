@@ -137,7 +137,10 @@ namespace Mono.Xml.XPath2
 				XPathNavigator nav = item as XPathNavigator;
 				if (w.WriteState != WriteState.Start && nav.NodeType == XPathNodeType.Root)
 					throw new XmlQueryException ("Current output can not accept root node.");
-				w.WriteNode (nav, false);
+				if (w.WriteState == WriteState.Attribute)
+					w.WriteString (nav.Value);
+				else
+					w.WriteNode (nav, false);
 			} else
 				w.WriteString (item.Value);
 		}

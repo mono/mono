@@ -1,3 +1,11 @@
+2004-10-05  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XQueryParser.jay, XQueryTokenizer.cs :
+	  Added attribute value template support.
+	* XPath2Expression.cs : Inside attribute value, expressions must not
+	  serialize attributes as attribute node but should just pick value up.
+	  e.g. attr="{foo/@bar}" and <elem>{foo/@bar}</elem> are different.
+
 2004-10-04  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XQueryParser.jay, XPath2Expression.cs, XPathSequence.cs :

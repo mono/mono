@@ -178,6 +178,14 @@ namespace Mono.Xml.XQuery.Parser
 		{
 			bufferIndex = 0;
 
+			switch (state) {
+			case ParseState.StartTag:
+				break;
+			default:
+				SkipWhitespaces ();
+				break;
+			}
+			/*
 			switch (ws) {
 			case WhitespaceHandling.Arbitrary:
 				SkipWhitespaces ();
@@ -187,6 +195,7 @@ namespace Mono.Xml.XQuery.Parser
 					throw Error ("Whitespace is required.");
 				goto case WhitespaceHandling.Arbitrary;
 			}
+			*/
 
 			int c = PeekChar ();
 			if (c < 0)
@@ -207,6 +216,12 @@ namespace Mono.Xml.XQuery.Parser
 				return ParseXmlCommentContent ();
 			case ParseState.ElementContent:
 				return ParseElementContent ();
+			case ParseState.StartTag:
+				return ParseStartTag ();
+			case ParseState.QuotAttributeContent:
+				return ParseAttributeContent ('"');
+			case ParseState.AposAttributeContent:
+				return ParseAttributeContent ('\'');
 			default:
 				return ParseDefault ();
 			}
@@ -405,6 +420,75 @@ namespace Mono.Xml.XQuery.Parser
 				return Token.PLUS;
 			default:
 				return ParseOperator ();
+			}
+		}
+
+		private int ParseStartTag ()
+		{
+			int c = PeekChar ();
+			switch (c) {
+			case '\'':
+				ReadChar ();
+				return Token.APOS;
+			case '"':
+				ReadChar ();
+				return Token.QUOT;
+			case '>':
+				ReadChar ();
+				return Token.GREATER;
+			case '/':
+				ReadChar ();
+				Expect (">");
+				return Token.EMPTY_TAG_CLOSE;
+			}
+			// FIXME: there seems a bug in the spec that StartTag
+			// state must accept QName without heading space for
+			// start tag name.
+//			if (!XmlChar.IsWhitespace (PeekChar ()))
+//				throw Error ("Whitespace is required.");
+			SkipWhitespaces ();
+			return ParseDefault (); // only QName is allowed here.
+		}
+
+		private int ParseAttributeContent (char closeChar)
+		{
+			int t = Token.ATT_VALUE_LITERAL;
+			while (true) {
+				int c = PeekChar ();
+				if (c < 0)
+					throw Error ("Unexpected end of attribute value content.");
+				if (c == closeChar) {
+					ReadChar ();
+					c = PeekChar ();
+					if (c == closeChar) {
+						ReadChar ();
+						AddValueChar (closeChar);
+					}
+					else
+						t = closeChar == '"' ? Token.QUOT : Token.APOS;
+				}
+				else if (c == '{') {
+					ReadChar ();
+					c = PeekChar ();
+					if (c == '{') {
+						ReadChar ();
+						AddValueChar ('{');
+					}
+					else
+						t = Token.OPEN_CURLY;
+				}
+				else
+					AddValueChar ((char) ReadChar ());
+
+				if (t != Token.ATT_VALUE_LITERAL) {
+					if (bufferIndex > 0) {
+						lookAheadToken = t;
+						tokenValue = CreateValueString ();
+						return Token.ATT_VALUE_LITERAL;
+					}
+					else
+						return t;
+				}
 			}
 		}
 

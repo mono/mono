@@ -2248,7 +2248,7 @@ FollowDirElemConstructor // returns ExprSequence
 	  } ElementContentList END_TAG_START {
 		tokenizer.State = ParseState.EndTag;
 	  } QName {
-	  	tokenizer.Space = WhitespaceHandling.Arbitrary;
+//	  	tokenizer.Space = WhitespaceHandling.Arbitrary;
 	  } GREATER
 	{
 		$$ = $3;
@@ -2282,14 +2282,15 @@ AttributeList // returns XmlAttrConstructorList
 	;
 
 Attribute // returns XmlAttrConstructor
-	: QName EQUAL AttributeValue /* note: whitespace handling */
+	: QName /* opt-space */ EQUAL /* opt-space */ AttributeValue
 	{
 		$$ = new XmlAttrConstructor ((XmlQualifiedName) $1, (ExprSequence) $3);
 	}
 	;
 
+/*
 // FIXME: it should be more complex
-AttributeValue
+AttributeValue // returns ExprSequence
 	: STRING_LITERAL
 	{
 		ExprSequence es = new ExprSequence ();
@@ -2297,16 +2298,24 @@ AttributeValue
 		$$ = es;
 	}
 	;
+*/
 
-/*
 AttributeValue // returns ExprSequence
-	: QUOT AttributeValueContentSequence QUOT
+	: QUOT {
+		tokenizer.State = ParseState.QuotAttributeContent;
+	  } AttributeValueContentSequence QUOT {
+		tokenizer.State = ParseState.StartTag;
+	  }
 	{
-		$$ = $2;
+		$$ = $3;
 	}
-	| APOS AttributeValueContentSequence APOS
+	| APOS {
+		tokenizer.State = ParseState.AposAttributeContent;
+	  } AttributeValueContentSequence APOS {
+		tokenizer.State = ParseState.StartTag;
+	  }
 	{
-		$$ = $2;
+		$$ = $3;
 	}
 	;
 
@@ -2330,14 +2339,21 @@ AttributeValueContent // returns ExprSingle
 		$$ = new ExprLiteral ((string) $1);
 	}
 	| EnclosedExpr
+	{
+		$$ = $1;
+	}
 	;
-*/
 
 EnclosedExpr // returns EnclosedExpr 
 	// FIXME: check if this state transition is valid for ElementContent and AttributeValueContent
 	: OPEN_CURLY {
-		if (tokenizer.State == ParseState.ElementContent)
+		switch (tokenizer.State) {
+		case ParseState.ElementContent:
+		case ParseState.QuotAttributeContent:
+		case ParseState.AposAttributeContent:
 			tokenizer.PushState (tokenizer.State);
+			break;
+		}
 		tokenizer.State = ParseState.Default;
 	  } Expr CloseCurly
 	{
