@@ -1,3 +1,8 @@
+2003-05-29  Nick Drochak <ndrochak@gol.com>
+
+	* System_test.dll.config: Nunit loads configs with the same name as the
+	test assembly. This is for the Swithes test.
+
 2003-12-08  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System_test.dll.sources : Added UriTest2.cs
