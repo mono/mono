@@ -1,3 +1,8 @@
+2004-09-21  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* DataRow.cs: Added a new original row cache, if the current row happens
+	to be the original row. fixed bug #63097
+
 2004-08-06  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataSet.cs : DataSet's ExtendedProperties were not XmlConverted.
