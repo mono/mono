@@ -20,13 +20,13 @@ all:
 	@echo "'make unix' is broken for now."
 
 windows: make-list
-	$(CSC) /unsafe /target:library /out:corlibx.dll /nowarn:1595 @list
+	$(CSC) /unsafe /target:library /out:corlib.dll /nowarn:1595 @list
 
 monolib: make-list
 	$(CSC) /unsafe /nostdlib /target:library /out:corlib.dll /nowarn:1595 @listmono
 
 monolib2: make-list
-	$(CSC) /unsafe /target:library /out:corlib.dll /nowarn:1595 @listmono
+	$(CSC) /unsafe /target:library /out:corlib.dll /nowarn:1595 @list
 
 unix:
 	@echo "'make unix' is broken for now."
