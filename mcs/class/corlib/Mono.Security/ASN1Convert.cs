@@ -46,7 +46,7 @@ namespace Mono.Security {
 
 		static public ASN1 FromInt32 (Int32 value) 
 		{
-			byte[] integer = BitConverter.GetBytes (value);
+			byte[] integer = BitConverterLE.GetBytes (value);
 			int x = 3;
 			while (integer [x] == 0x00)
 				x--;
