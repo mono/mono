@@ -402,6 +402,10 @@ namespace Mono.Tools
 
 		private static string GetGacPath () {
 			PropertyInfo gac = typeof (System.Environment).GetProperty ("GacPath", BindingFlags.Static|BindingFlags.NonPublic);
+			if (gac == null) {
+				Console.WriteLine ("ERROR: MS.Net runtime detected, please use the mono runtime for gacutil.exe");
+				Environment.Exit (1);
+			}
 			MethodInfo getGac = gac.GetGetMethod (true);
 			return Path.Combine ((string) getGac.Invoke (null, null), "");
 		}

@@ -1,9 +1,3 @@
 The gacutil.exe is mostly feature complete with the ms.net impl.
 
-Right now the gac_path is hardcoded to a very unportable value:
-
-/usr/lib/mono/gac
-
-This will be changed when the icall to retreive the location of the gac is put into the runtime.
-
 NOTE: not all exceptions are caught, if you get one, file a bug and I will fix it.

@@ -1,3 +1,9 @@
+2003-12-10  Todd Berman  <tberman@gentoo.org>
+
+	* gacutil.cs: Properly detect and fail gracefully on ms.net runtime
+	* README:
+	* TODO: Updated
+
 2003-12-10  Zoltan Varga  <vargaz@freemail.hu>
 
 	* gacutil.cs: Fix binding flags.

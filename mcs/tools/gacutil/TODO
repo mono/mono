@@ -1,5 +1,3 @@
 Items that need to be completed, in a relative scale of importance:
 
-1) icall to get gac location.
-2) Checking for valid strong names before installing to gac. (spoulit)
-3) Code audit.
+1) Code audit.
