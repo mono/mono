@@ -1,3 +1,9 @@
+2005-03-29  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* aot.c, mini.h: Added mono-compiler.h header to allow/ease 
+	compilation with non-GCC compilers.
+	* mini-exceptions.c, mini-x86.c|h: Patches to make compilation of mono
+	possible using VS.NET. Adapted from the work of J Lothian (for VC6).
 
 Tue Mar 29 11:43:01 CEST 2005 Paolo Molaro <lupus@ximian.com>
 
