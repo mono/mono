@@ -114,11 +114,7 @@ namespace System.Windows.Forms {
 
 		protected override CreateParams CreateParams {
 			get {
-				CreateParams createParams = base.CreateParams;
-				createParams.ClassName = String.Empty;
-				createParams.Style = (int) (WindowStyles.WS_CHILD |
-					WindowStyles.WS_VISIBLE);
-				return createParams;
+				return base.CreateParams;
 			}
 		}
 
