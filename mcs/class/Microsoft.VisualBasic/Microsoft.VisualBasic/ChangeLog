@@ -1,3 +1,9 @@
+2004-07-30  Jochen Wezel  <jwezel@compumaster.de>
+
+	* Several files: added System.Serializable attribute to NET_2_0,
+	                 fixed usage of System.Flags instead of 
+			 System.FlagsAttribute
+
 2004-07-22  Jambunathan K  <kjambunathan@novell.com>
 
 	* Constants.cs : Fixed the vbCr, vbLf, vbCrLf and vbNewLine
