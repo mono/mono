@@ -1,3 +1,7 @@
+2004-01-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlDataInferenceLoader.cs : test driver class should be excluded.
+
 2004-12-01  Miguel de Icaza  <miguel@ximian.com>
 
 	* DataView.cs: Patch from Marc Haisenko that ensures that rowCache

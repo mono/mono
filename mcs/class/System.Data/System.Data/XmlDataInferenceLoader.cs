@@ -517,7 +517,7 @@ namespace System.Data
 }
 
 
-#region FOR_TEST
+#if TEST_STANDALONE_INFERENCE
 internal class Driver
 {
 	private static void DumpDataTable (DataTable dt)
@@ -666,7 +666,7 @@ sw = Console.Out;
 	}
 }
 
-#endregion
+#endif
 
 //
 // * Design Notes
